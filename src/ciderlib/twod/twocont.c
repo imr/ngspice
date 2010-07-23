@@ -32,8 +32,7 @@ $Id$
 void 
   TWO_jacBuild(TWOdevice *pDevice)
 {
-  char *matrix = pDevice->matrix;
-  double *spGetElement();
+  SMPmatrix *matrix = pDevice->matrix;
   TWOelem *pElem;
   TWOnode *pNode;
   TWOchannel *pCh;
@@ -304,7 +303,7 @@ void
   double ds;
   double dPsiT, dPsiB, dPsiL, dPsiR;
   double rhsN, rhsP;
-  double generation, TWOavalanche();
+  double generation;
   double nConc, pConc;
   double perTime = 0.0;
   
@@ -518,7 +517,6 @@ void
   int nextIndex;			/* index of node to find next element */
   double dx, dy, dxdy, dyOverDx, dxOverDy;
   double ds;
-  void spClear(), TWO_commonTerms();
   
   /* first compute the currents and derivatives */
   TWO_commonTerms( pDevice, FALSE, FALSE, NIL(TWOtranInfo) );
@@ -675,10 +673,9 @@ void
   double dx, dy, dxdy, dyOverDx, dxOverDy;
   double dPsiT, dPsiB, dPsiL, dPsiR;
   double rhsN, rhsP;
-  double generation, TWOavalanche();
+  double generation;
   double nConc, pConc;
   double perTime;
-  void TWO_commonTerms();
   
   /* first compute the currents */
   TWO_commonTerms( pDevice, TRUE, tranAnalysis, info );

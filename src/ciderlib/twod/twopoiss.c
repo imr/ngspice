@@ -20,7 +20,7 @@ $Id$
 void 
 TWOQjacBuild(TWOdevice *pDevice)
 {
-  char *matrix = pDevice->matrix;
+  SMPmatrix *matrix = pDevice->matrix;
   TWOelem *pElem;
   TWOnode *pNode, *pNode1;
   int eIndex, nIndex;

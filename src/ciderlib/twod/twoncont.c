@@ -33,7 +33,7 @@ $Id$
 void 
   TWONjacBuild(TWOdevice *pDevice)
 {
-  char *matrix = pDevice->matrix;
+  SMPmatrix *matrix = pDevice->matrix;
   TWOelem *pElem;
   TWOnode *pNode;
   TWOchannel *pCh;

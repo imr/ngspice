@@ -1,4 +1,15 @@
 2010-07-23  Robert Larice
+ * src/ciderlib/oned/onecont.c ,
+ * src/ciderlib/oned/onepoiss.c ,
+ * src/ciderlib/twod/twocont.c ,
+ * src/ciderlib/twod/twoncont.c ,
+ * src/ciderlib/twod/twopcont.c ,
+ * src/ciderlib/twod/twopoiss.c :
+    use the type SMPmatrix instead of char *
+    remove some redundant forward function declarations
+    remove some redundant nested function declarations
+
+2010-07-23  Robert Larice
  * src/ngmultidec.c ,
  * src/include/onedev.h ,
  * src/include/smpdefs.h ,

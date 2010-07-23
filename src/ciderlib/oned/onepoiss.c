@@ -16,13 +16,10 @@ $Id$
 /* Functions to setup and solve the 1D poisson equation. */
 
 
-/* Forward Declarations */
-void ONEQcommonTerms(ONEdevice *pDevice);
-
 void
 ONEQjacBuild(ONEdevice *pDevice)
 {
-  char *matrix = pDevice->matrix;
+  SMPmatrix *matrix = pDevice->matrix;
   ONEelem *pElem;
   ONEnode *pNode, *pNode1;
   int index;

@@ -17,11 +17,6 @@ $Id$
 #include "../../maths/misc/bernoull.h"
 
 
-/* Forward Declarations */
-
-void  ONE_commonTerms( ONEdevice *, BOOLEAN, BOOLEAN, ONEtranInfo *);
-
-
 /* functions to setup and solve the continuity equations */
 /* Both continuity equations are solved */
 
@@ -29,7 +24,7 @@ void  ONE_commonTerms( ONEdevice *, BOOLEAN, BOOLEAN, ONEtranInfo *);
 void 
 ONE_jacBuild(ONEdevice *pDevice)
 {
-  char *matrix = pDevice->matrix;
+  SMPmatrix *matrix = pDevice->matrix;
   ONEelem *pElem;
   ONEnode *pNode;
   int index, eIndex;
