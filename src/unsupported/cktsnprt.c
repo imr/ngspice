@@ -25,7 +25,6 @@ void
 CKTsenPrint(ckt)
 register CKTcircuit *ckt;
 {
-    extern SPICEdev *DEVices[];
     register int i;
 
     for (i=0;i<DEVmaxnum;i++) {

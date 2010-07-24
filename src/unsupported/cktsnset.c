@@ -28,8 +28,6 @@ CKTsenSetup(ckt)
 register CKTcircuit *ckt;
 
 {
-    extern SPICEdev *DEVices[];
-
     register int i;
     int error;
     register SENstruct *info;

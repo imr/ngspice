@@ -26,7 +26,6 @@ int
 CKTsenLoad(ckt)
 register CKTcircuit *ckt;
 {
-    extern SPICEdev *DEVices[];
     register int i;
     int size,row,col;
     int error;

@@ -54,9 +54,6 @@ NON-STANDARD FEATURES
 
 
 
-extern SPICEdev **DEVices;        /* info about all device types */
-
-
 /* define macro for easy creation of matrix entries/pointers for outputs */
 #define TSTALLOC(ptr,first,second) \
         if((smp_data_out->ptr = \

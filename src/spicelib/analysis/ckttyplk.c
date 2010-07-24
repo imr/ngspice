@@ -12,9 +12,6 @@ Author: 1985 Thomas L. Quarles
 #include "devdefs.h"
 
 
-
-extern SPICEdev **DEVices;
-
 int
 CKTtypelook(char *type)
 {

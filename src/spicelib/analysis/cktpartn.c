@@ -16,8 +16,6 @@ Author: 1992 David A. Gates, UC Berkeley CADgroup
 #include "sperror.h"
 
 
-
-extern SPICEdev **DEVices;
 #ifdef XSPICE
 extern int *DEVicesfl;
 #endif

@@ -54,14 +54,6 @@ NON-STANDARD FEATURES
 /* #include "suffix.h" */
 
 
-
-extern  SPICEdev    **DEVices;
-extern  int         DEVmaxnum;
-
-
-
-
-
 /*
 MIFask
 

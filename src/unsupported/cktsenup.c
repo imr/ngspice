@@ -25,7 +25,6 @@ int
 CKTsenUpdate(ckt)
 register CKTcircuit *ckt;
 {
-    extern SPICEdev *DEVices[];
     register int i;
     int error;
 

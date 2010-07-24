@@ -7,6 +7,7 @@ Author: 1985 Thomas L. Quarles
 
 #include "ngspice.h"
 #include "cktdefs.h"
+#include "devdefs.h"
 #include "ifsim.h"
 #include "sperror.h"
 

@@ -17,9 +17,6 @@ Author: 1985 Thomas L. Quarles
 #include "sperror.h"
 
 
-
-extern SPICEdev **DEVices;
-
 /* ARGSUSED */
 int
 CKTpModName(char *parm, IFvalue *val, CKTcircuit *ckt, int type, IFuid name, GENmodel **modfast)

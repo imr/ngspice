@@ -63,8 +63,6 @@ NON-STANDARD FEATURES
                                /* See CKT/SPIinit.c                           */
 
 extern int *DEVicesfl; /*flags for the devices */
-extern  SPICEdev  **DEVices;   /* info about all device types */
-extern  int       DEVmaxnum;    /* size of DEVices array       */
 
 
 static void  MIFinit_inst(MIFmodel *mdfast, MIFinstance *fast);

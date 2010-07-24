@@ -401,7 +401,6 @@ endsweep:
 int
 CKTacLoad(CKTcircuit *ckt)
 {
-    extern SPICEdev **DEVices;
     int i;
     int size;
     int error;

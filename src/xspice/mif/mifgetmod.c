@@ -64,8 +64,6 @@ NON-STANDARD FEATURES
     It is now defined in inpmkmod.c.      */
 extern INPmodel *modtab;
 
-extern SPICEdev **DEVices;        /* info about all device types */
-
 /*
 MIFgetMod
 

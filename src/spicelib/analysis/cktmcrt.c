@@ -20,7 +20,6 @@ Author: 1985 Thomas L. Quarles
 int
 CKTmodCrt(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid name)
 {
-    extern SPICEdev **DEVices;
     GENmodel *mymodfast = NULL;
     int error;
 

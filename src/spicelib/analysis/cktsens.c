@@ -33,8 +33,6 @@ static int sens_temp(sgen *sg, CKTcircuit *ckt);
 static int count_steps(int type, double low, double high, int steps, double *stepsize);
 static double inc_freq(double freq, int type, double step_size);
 
-extern SPICEdev **DEVices;
-
 
 /*
  *	Procedure:

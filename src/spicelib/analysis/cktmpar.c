@@ -14,11 +14,6 @@ Author: 1985 Thomas L. Quarles
 #include "sperror.h"
 
 
-
-extern SPICEdev **DEVices;
-
-
-
 /* ARGSUSED */
 int
 CKTmodParam(CKTcircuit *ckt, GENmodel *modfast, int param, IFvalue *val, IFvalue *selector)

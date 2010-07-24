@@ -9,8 +9,6 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #include "ifsim.h"
 #include "sensgen.h"
 
-extern SPICEdev **DEVices;
-
 	/* XXX */
 extern char	*Sfilter;
 

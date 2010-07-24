@@ -106,6 +106,10 @@ typedef struct SPICEdev {
 } SPICEdev;  /* instance of structure for each possible type of device */
 
 
+extern SPICEdev **DEVices;
+extern int        DEVmaxnum;    /* size of DEVices array */
+
+
 /* IOP( )		Input/output parameter
  * IOPP( )	IO parameter which the principle value of a device (used
  *			for naming output variables in sensetivity)

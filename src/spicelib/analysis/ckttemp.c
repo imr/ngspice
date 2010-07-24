@@ -17,11 +17,6 @@ Author: 1985 Thomas L. Quarles
 #include "sperror.h"
 
 
-
-extern SPICEdev **DEVices;
-
-
-
 int
 CKTtemp(CKTcircuit *ckt)
 {

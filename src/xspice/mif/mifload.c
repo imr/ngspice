@@ -65,10 +65,6 @@ NON-STANDARD FEATURES
 
 
 
-extern SPICEdev **DEVices;        /* info about all device types */
-
-
-
 static void MIFauto_partial(
     MIFinstance     *here,
     void            (*cm_func) (Mif_Private_t *),

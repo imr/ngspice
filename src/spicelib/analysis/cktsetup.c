@@ -26,8 +26,6 @@ Author: 1985 Thomas L. Quarles
 extern void SetAnalyse( char * Analyse, int Percent);
 #endif
 
-extern SPICEdev **DEVices;
-
 
 int
 CKTsetup(CKTcircuit *ckt)

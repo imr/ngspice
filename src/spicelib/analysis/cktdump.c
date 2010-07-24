@@ -26,8 +26,6 @@ TODO:
 #include "gendefs.h"
 #include "devdefs.h"
  
-extern SPICEdev **DEVices;
-
 /* End cider integration */
 #endif
 

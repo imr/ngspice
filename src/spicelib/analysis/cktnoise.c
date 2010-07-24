@@ -25,7 +25,6 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 {
     double outNdens;
     int i;
-    extern SPICEdev **DEVices;
     IFvalue outData;    /* output variable (points to list of outputs)*/
     IFvalue refVal; /* reference variable (always 0)*/
     int error;

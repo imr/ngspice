@@ -5,6 +5,7 @@ Author: 1985 Thomas L. Quarles
 
 #include <config.h>
 #include <cktdefs.h>
+#include <devdefs.h>
 #include <sperror.h>
 #include "string.h"
 

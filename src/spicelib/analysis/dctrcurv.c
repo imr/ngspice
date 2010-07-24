@@ -23,7 +23,6 @@ Modified: 1999 Paolo Nenzi
 #endif
 
 #include <devdefs.h>
-extern SPICEdev **DEVices;
 
 #ifdef HAS_WINDOWS
 void SetAnalyse( char * Analyse, int Percent);

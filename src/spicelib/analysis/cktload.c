@@ -29,7 +29,6 @@ static int ZeroNoncurRow(SMPmatrix *matrix, CKTnode *nodes, int rownum);
 int
 CKTload(CKTcircuit *ckt)
 {
-    extern SPICEdev **DEVices;
     int i;
     int size;
     double startTime;

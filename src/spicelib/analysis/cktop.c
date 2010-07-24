@@ -93,7 +93,6 @@ ckt->CKTmode = firstmode;
 int
 CKTconvTest (CKTcircuit * ckt)
 {
-  extern SPICEdev **DEVices;
   int i;
   int error = OK;
 #ifdef PARALLEL_ARCH

@@ -19,8 +19,6 @@ Author: 1985 Thomas L. Quarles
 
 
 
-extern SPICEdev **DEVices;
-
 int
 CKTinst2Node(CKTcircuit *ckt, void *instPtr, int terminal, CKTnode **node, IFuid *nodeName)
 {

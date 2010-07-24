@@ -55,12 +55,6 @@ NON-STANDARD FEATURES
 #include "evtproto.h"
 
 
-
-
-extern SPICEdev **DEVices;
-
-
-
 static void EVTcreate_state(
     CKTcircuit  *ckt,
     int         inst_index);
