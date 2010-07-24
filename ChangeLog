@@ -1,4 +1,25 @@
 2010-07-24  Robert Larice
+ * src/spicelib/devices/bsim3soi/b4soi.c ,
+ * src/spicelib/devices/bsim3soi/b4soiacld.c ,
+ * src/spicelib/devices/bsim3soi/b4soiask.c ,
+ * src/spicelib/devices/bsim3soi/b4soicheck.c ,
+ * src/spicelib/devices/bsim3soi/b4soicvtest.c ,
+ * src/spicelib/devices/bsim3soi/b4soidel.c ,
+ * src/spicelib/devices/bsim3soi/b4soidest.c ,
+ * src/spicelib/devices/bsim3soi/b4soigetic.c ,
+ * src/spicelib/devices/bsim3soi/b4soild.c ,
+ * src/spicelib/devices/bsim3soi/b4soimask.c ,
+ * src/spicelib/devices/bsim3soi/b4soimdel.c ,
+ * src/spicelib/devices/bsim3soi/b4soimpar.c ,
+ * src/spicelib/devices/bsim3soi/b4soinoi.c ,
+ * src/spicelib/devices/bsim3soi/b4soipar.c ,
+ * src/spicelib/devices/bsim3soi/b4soipzld.c ,
+ * src/spicelib/devices/bsim3soi/b4soiset.c ,
+ * src/spicelib/devices/bsim3soi/b4soitemp.c ,
+ * src/spicelib/devices/bsim3soi/b4soitrunc.c :
+    remove static char rcsid[] = "$Id$" to muffle `unused variable' warnings
+
+2010-07-24  Robert Larice
  * src/include/inpdefs.h ,
  * src/spicelib/devices/ndev/ndevacld.c ,
  * src/spicelib/devices/ndev/ndevask.c ,

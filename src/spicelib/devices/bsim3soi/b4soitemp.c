@@ -1,7 +1,5 @@
 /***  B4SOI 05/14/2010 Released by Tanvir Morshed  ***/
 
-static char rcsid[] = "$Id$";
-
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
