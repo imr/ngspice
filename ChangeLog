@@ -1,4 +1,19 @@
 2010-07-24  Robert Larice
+    fix dangerous things, potential bugs, at least for big endian machines
+ * src/frontend/inp.c ,
+    a bool (unsigned char) and an int have been mixed,
+      and the address of the thing was taken.
+    should fail on a big endian machine
+ * src/frontend/spiceif.c ,
+    the value of an union, made of a bool (unsigned char), an int, etc,
+	is silently cast into an int.
+    This can introduce stack noise, in the CP_BOOL case
+ * src/frontend/variable.c :
+    a `variable' is created with type CP_NUM,
+      but only bool was initialized.
+    This can introduce stack noise.
+
+2010-07-24  Robert Larice
  * src/include/onedev.h ,
  * src/include/twodev.h :
     add two #include files,

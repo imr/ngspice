@@ -449,7 +449,7 @@ cp_remvar(char *varname)
 	ZERO(v, struct variable);
         v->va_name = copy(varname);
         v->va_type = CP_NUM;
-        v->va_bool = 0;
+        v->va_num = 0;
         found = FALSE;
     }
 

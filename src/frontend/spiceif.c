@@ -472,8 +472,12 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
                 goto badtype;
             break;
         case IF_FLAG:
-            /* Do nothing. */
-            pval.iValue = *((int *) value);
+            if (type == CP_BOOL)
+                pval.iValue = *((bool *) value) ? 1 : 0;
+            else if (type == CP_NUM) /* FIXME, shall we allow this ? */
+                pval.iValue = *((int *) value);
+            else
+                goto badtype;
             break;
         default:
             fprintf(cp_err, 

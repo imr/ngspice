@@ -697,7 +697,6 @@ inp_dodeck(
     wordlist *wl;
     bool noparse, ii;
     int print_listing;
-    static int one;
 
     /* First throw away any old error messages there might be and fix
        the case of the lines.  */
@@ -882,7 +881,7 @@ inp_dodeck(
         }
 */
         for (eev = ct->ci_vars; eev; eev = eev->va_next) {
-	    one = 1;
+	    bool one = TRUE;   /* FIXME, actually eev->va_bool should be TRUE anyway */
             switch (eev->va_type) {
                 case CP_BOOL:
 		  if_option(ct->ci_ckt, eev->va_name, 
