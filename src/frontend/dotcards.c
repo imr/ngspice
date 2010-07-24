@@ -369,9 +369,10 @@ ft_cktcoms(bool terse)
     }
 
  nocmds:
-    /* Now the node table */
+    /* Now the node table
     if (ft_nodesprint)
         ;
+    */
     
     /* The options */
     if (ft_optsprint) {

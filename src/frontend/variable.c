@@ -552,9 +552,14 @@ cp_getvar(char *name, enum cp_types type, void *retval)
     fprintf(stderr,"in cp_getvar, trying to get value of variable %s.\n", name);
 #endif
 
-    for (v = variables; v && !eq(name, v->va_name); v = v->va_next);
-    if (v == NULL) for (v = uv1; v && !eq(name, v->va_name); v = v->va_next);
-    if (v == NULL) for (v = uv2; v && !eq(name, v->va_name); v = v->va_next);
+    for (v = variables; v && !eq(name, v->va_name); v = v->va_next)
+        ;
+    if (v == NULL)
+        for (v = uv1; v && !eq(name, v->va_name); v = v->va_next)
+            ;
+    if (v == NULL)
+        for (v = uv2; v && !eq(name, v->va_name); v = v->va_next)
+            ;
 
     if (v == NULL) {
         if (type == CP_BOOL && retval)

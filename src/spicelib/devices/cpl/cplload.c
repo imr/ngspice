@@ -748,7 +748,8 @@ get_pvs_vi(int t1, int t2,
 			ratio[i] = f = (tb[i] -	t1) / (t2 - t1);
 
 			if (vi)
-			   for (; vi->next; vi = vi->next);
+			   for (; vi->next; vi = vi->next)
+			       ;
 			else
 			   vi =	vi1;
 			f = 1 -	f;

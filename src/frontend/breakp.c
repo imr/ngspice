@@ -112,7 +112,8 @@ com_stop(wordlist *wl)
     }
     if (thisone) {
         if (dbs) {
-            for (d = dbs; d->db_next; d = d->db_next);
+            for (d = dbs; d->db_next; d = d->db_next)
+                ;
             d->db_next = thisone;
         } else
             dbs = thisone;

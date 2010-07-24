@@ -72,7 +72,8 @@ com_scirc(wordlist *wl)
         clearerr(cp_in);
         if ((sscanf(buf, " %d ", &i) != 1) || (i < 0) || (i > j))
             return;
-        for (p = ft_circuits; --i > 0; p = p->ci_next);
+        for (p = ft_circuits; --i > 0; p = p->ci_next)
+            ;
     } else {
 	for (p = ft_circuits; p; p = p->ci_next) 
 		j++;
@@ -80,7 +81,8 @@ com_scirc(wordlist *wl)
 	p=NULL;
 	if ((sscanf(wl->wl_word, " %d ", &i) != 1) || (i < 0) || (i > j));
 	else
-		for (p = ft_circuits; --i > 0; p = p->ci_next);
+		for (p = ft_circuits; --i > 0; p = p->ci_next)
+		    ;
         /* for (p = ft_circuits; p; p = p->ci_next)
          *   if (ciprefix(wl->wl_word, p->ci_name))
 	     *    break;

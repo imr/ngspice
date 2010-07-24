@@ -41,7 +41,8 @@ asubst(wordlist *wlist)
         cp_lastone->hi_wlist = wl_copy(wl);
     } else {
         /* If it had no history args, then append the rest of the wl */
-        for (w = wl; w->wl_next; w = w->wl_next);
+        for (w = wl; w->wl_next; w = w->wl_next)
+            ;
         w->wl_next = wl_copy(wlist->wl_next);
         if (w->wl_next)
             w->wl_next->wl_prev = w;

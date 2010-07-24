@@ -446,7 +446,8 @@ get_pvs_vi_txl(int t1, int t2, TXLine *tx, double *v1_i, double	*v2_i, double *i
        */
       ratio[0] = f = (tb - t1) / (t2 - t1);
       if (vi)
-	 for (;	vi->time != t1;	vi = vi->next);
+	 for (;	vi->time != t1;	vi = vi->next)
+	    ;
       else 
 	 vi = vi1;
       f	= 1 - f;

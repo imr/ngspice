@@ -163,7 +163,8 @@ wl_append(wordlist *wlist, wordlist *nwl)
         return (nwl);
     if (nwl == NULL)
         return (wlist);
-    for (wl = wlist; wl->wl_next; wl = wl->wl_next);
+    for (wl = wlist; wl->wl_next; wl = wl->wl_next)
+        ;
     wl->wl_next = nwl;
     nwl->wl_prev = wl;
     return (wlist);

@@ -92,7 +92,8 @@ MESHiBounds(MESHcoord *coordList, int *ixMin, int *ixMax)
 
   if (coordList) {
    *ixMin = coordList->number;
-   for ( last = coordList; last->next != NIL(MESHcoord); last = last->next );
+   for ( last = coordList; last->next != NIL(MESHcoord); last = last->next )
+      ;
    *ixMax = last->number;
   }
   else {
@@ -118,7 +119,8 @@ MESHlBounds(MESHcoord *coordList, double *lcMin, double *lcMax)
 
   if (coordList) {
    *lcMin = coordList->location;
-   for ( last = coordList; last->next != NIL(MESHcoord); last = last->next );
+   for ( last = coordList; last->next != NIL(MESHcoord); last = last->next )
+      ;
    *lcMax = last->location;
   }
   else {

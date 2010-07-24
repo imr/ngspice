@@ -62,7 +62,8 @@ com_define(wordlist *wlist)
                 wl = wl->wl_next)
         (void) strcat(buf, wl->wl_word);
     if (wl) {
-        for (t = buf; *t; t++);
+        for (t = buf; *t; t++)
+            ;
         for (s = wl->wl_word; *s && (*s != /* ( */ ')'); s++, t++)
             *t = *s;
         *t++ = /* ( */ ')';
@@ -219,7 +220,8 @@ prtree(struct udfunc *ud)
     /* Print the head. */
     buf[0] = '\0';
     (void) strcat(buf, ud->ud_name); 
-    for (s = ud->ud_name; *s; s++);
+    for (s = ud->ud_name; *s; s++)
+        ;
     (void) strcat(buf, " (");
     s++;
     while (*s) {
@@ -329,7 +331,8 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
                     break;
                 else
                     i++;
-                while (*s++);   /* Get past the last '\0'. */
+                while (*s++)   /* Get past the last '\0'. */
+                    ;
             }
             if (*s)
                 return (ntharg(i, nn));

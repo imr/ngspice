@@ -2139,8 +2139,8 @@ nupa_assignment (tdico * dico, char *s, char mode)
 
       if ((i < ls) && (s[i - 1] != ';'))
           error = message (dico, " ; sign expected.");
-      else
-        /* i++ */;
+      /* else
+            i++; */
     }
   spice_dstring_free(&tstr) ;
   spice_dstring_free(&ustr) ;

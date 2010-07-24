@@ -258,7 +258,7 @@ gettok_iv(char **s)
     spice_dstring_init(&buf);
     // add v or i to buf
     spice_dstring_append_char( &buf, *(*s)++ ) ;
-    while (c = **s) {
+    while ((c = **s) != '\0') {
         if (c == '('/*)*/)
             paren += 1;
         else if (c == /*(*/')')

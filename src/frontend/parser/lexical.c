@@ -165,8 +165,8 @@ gotchar:
         if ((c == cp_hash) && !cp_interactive && (j == 1)) {
             if (string)
                 return (NULL);
-            while (((c = input(cp_inp_cur)) != '\n') &&
-                    (c != EOF));
+            while (((c = input(cp_inp_cur)) != '\n') && (c != EOF))
+                ;
             goto nloop;
         }
 

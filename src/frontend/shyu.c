@@ -90,8 +90,9 @@ if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
         }
         ft_curckt->ci_curOpt  = ft_curckt->ci_specOpt;
     } 
-    else ;
-    { /* in DEEP trouble */
+    else {
+      /* in DEEP trouble */
+        ;
     }
     ft_curckt->ci_curTask = ft_curckt->ci_specTask;
     which = -1;

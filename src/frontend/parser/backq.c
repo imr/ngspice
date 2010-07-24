@@ -61,7 +61,8 @@ loop:   	s =strchr(t, cp_back);
 	
 	    (void) strcpy(tbuf, t);
     	    wl = wl_splice(wl, nwl);
-		for(wlist = wl; wlist->wl_prev; wlist = wlist->wl_prev);
+		for(wlist = wl; wlist->wl_prev; wlist = wlist->wl_prev)
+		    ;
 		/* MW. We must move to the begging of new wordlist. */
 		
         (void) strcpy(buf, wl->wl_word);

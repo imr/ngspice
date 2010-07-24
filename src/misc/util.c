@@ -93,7 +93,8 @@ canonicalize_pathname(char *path)
            /* Handle `../' or trailing `..' by itself. */
            if (result[i + 1] == '.' &&
               (result[i + 2] == '/' || !result[i + 2])) {
-               while (--start > -1 && result[start] != '/');
+               while (--start > -1 && result[start] != '/')
+                   ;
                strcpy(result + start + 1, result + i + 2);
                i = (start < 0) ? 0 : start;
                continue;

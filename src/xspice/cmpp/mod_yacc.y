@@ -128,7 +128,8 @@ int
 local_strcmpi(char *s, char *t)
      /* string compare -  case insensitive */
 {
-   for (; *s && t && tolower(*s) == tolower(*t); s++, t++);
+   for (; *s && t && tolower(*s) == tolower(*t); s++, t++)
+      ;
    if (*s && !*t) {
       return 1;
    }

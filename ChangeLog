@@ -1,4 +1,28 @@
 2010-07-24  Robert Larice
+ * src/ciderlib/input/meshset.c ,
+ * src/frontend/breakp.c ,
+ * src/frontend/com_alias.c ,
+ * src/frontend/define.c ,
+ * src/frontend/dotcards.c ,
+ * src/frontend/inpcom.c ,
+ * src/frontend/numparam/xpressn.c ,
+ * src/frontend/parser/backq.c ,
+ * src/frontend/parser/lexical.c ,
+ * src/frontend/runcoms.c ,
+ * src/frontend/shyu.c ,
+ * src/frontend/variable.c ,
+ * src/misc/string.c ,
+ * src/misc/util.c ,
+ * src/misc/wlist.c ,
+ * src/spicelib/devices/cpl/cplload.c ,
+ * src/spicelib/devices/txl/txlload.c ,
+ * src/spicelib/parser/inp2dot.c ,
+ * src/xspice/cmpp/mod_yacc.y :
+    muffle compiler warnings
+      suggest a space before ';' or explicit braces around empty
+    and similar things.
+
+2010-07-24  Robert Larice
  * src/frontend/inpcom.c ,
  * src/spicelib/devices/ndev/ndevparm.c ,
  * src/spicelib/parser/inp2n.c ,

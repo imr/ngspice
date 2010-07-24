@@ -96,8 +96,8 @@ dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 	    /* now see if "ptspersum" has been specified by the user */
 
-	    for (found = 0, point = line; (!found) && (*point != '\0');
-		 found = ((*point != ' ') && (*(point++) != '\t')));
+	    for (found = 0, point = line; (!found) && (*point != '\0'); found = ((*point != ' ') && (*(point++) != '\t')))
+            ;
 	    if (found) {
 		parm = INPgetValue(ckt, &line, IF_INTEGER, tab);
 		error = INPapName(ckt, which, foo, "ptspersum", parm);

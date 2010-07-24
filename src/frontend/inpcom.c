@@ -1162,7 +1162,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
       /* now handle .title statement */
       if (ciprefix(".title", buffer)) {
-         for   ( s = buffer; *s && !isspace(*s); s++ ); /* skip over .title */
+         for ( s = buffer; *s && !isspace(*s); s++ ) /* skip over .title */
+             ;
          while ( isspace(*s) ) s++;             /* advance past space chars */
 
          /* only the last title line remains valid */
@@ -1173,19 +1174,22 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
       /* now handle .lib statements */
       if (ciprefix(".lib", buffer)) {
-         for   ( s = buffer; *s && !isspace(*s); s++ );         /* skip over .lib           */
+         for ( s = buffer; *s && !isspace(*s); s++ )            /* skip over .lib           */
+             ;
          while ( isspace(*s) || isquote(*s) ) s++;              /* advance past space chars              */
          if    ( !*s ) {                                        /* if at end of line, error              */
             fprintf(cp_err, "Error: .lib filename missing\n");
             tfree(buffer);		                           /* was allocated by readline()           */
             continue;
          }                                                      /* Now s points to first char after .lib */
-         for   ( t = s; *t && !isspace(*t) && !isquote(*t); t++ );         /* skip to end of word      */
+         for ( t = s; *t && !isspace(*t) && !isquote(*t); t++ )         /* skip to end of word      */
+             ;
          y = t;
          while ( isspace(*y) || isquote(*y) ) y++;              /* advance past space chars */
          // check if rest of line commented out
          if    ( *y && *y != '$' ) {                            /* .lib <file name> <lib name> */
-            for ( z = y; *z && !isspace(*z) && !isquote(*z); z++ );
+            for ( z = y; *z && !isspace(*z) && !isquote(*z); z++ )
+                ;
             c  = *t;
             *t = '\0';
             *z = '\0';
@@ -1442,9 +1446,11 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                   controlled_exit(EXIT_FAILURE);
                }
 
-               for   ( s = buffer; *s && !isspace(*s); s++ );            /* skip over .lib                        */
+               for   ( s = buffer; *s && !isspace(*s); s++ )             /* skip over .lib                        */
+                   ;
                while ( isspace(*s) || isquote(*s) ) s++;                 /* advance past space chars              */
-               for   ( t = s; *t && !isspace(*t) && !isquote(*t); t++ ); /* skip to end of word                   */
+               for ( t = s; *t && !isspace(*t) && !isquote(*t); t++ )    /* skip to end of word                   */
+                   ;
                keep_char = *t;
                *t = '\0';
                /* see if library we want to copy */
@@ -1803,9 +1809,11 @@ inp_fix_subckt( char *s )
 
   if ( !strstr( s, "params:" ) && equal != NULL ) {
     /* get subckt name (ptr1 will point to name) */
-    for ( ptr1 = s; *ptr1 && !isspace(*ptr1); ptr1++ );
+    for ( ptr1 = s; *ptr1 && !isspace(*ptr1); ptr1++ )
+        ;
     while ( isspace(*ptr1) ) ptr1++;
-    for ( ptr2 = ptr1; *ptr2 && !isspace(*ptr2) && !isquote(*ptr2); ptr2++ );
+    for ( ptr2 = ptr1; *ptr2 && !isspace(*ptr2) && !isquote(*ptr2); ptr2++ )
+        ;
 
     keep  = *ptr2;
     *ptr2 = '\0';
@@ -1817,8 +1825,10 @@ inp_fix_subckt( char *s )
     /* go to beginning of first parameter word  */
     /* s    will contain only subckt definition */
     /* beg  will point to start of param list   */
-    for ( beg = equal-1; *beg && isspace(*beg); beg-- );
-    for (              ; *beg && !isspace(*beg); beg-- );
+    for ( beg = equal-1; *beg && isspace(*beg); beg-- )
+        ;
+    for (              ; *beg && !isspace(*beg); beg-- )
+        ;
     *beg = '\0';
     beg++;
 
@@ -2005,9 +2015,11 @@ inp_determine_libraries( struct line *deck, char *lib_name )
     if ( ciprefix( ".endl", line ) && lib_name != NULL ) read_line = FALSE;
 
     if ( ciprefix( "*lib", line ) || ciprefix( ".lib", line ) ) {
-      for ( s = line; *s && !isspace(*s); s++);
+      for ( s = line; *s && !isspace(*s); s++)
+          ;
       while ( isspace(*s) || isquote(*s) ) s++;
-      for ( t = s; *t && !isspace(*t) && !isquote(*t); t++ );
+      for ( t = s; *t && !isspace(*t) && !isquote(*t); t++ )
+          ;
       y = t;
       while ( isspace(*y) || isquote(*y) ) y++;
 
@@ -2021,7 +2033,8 @@ inp_determine_libraries( struct line *deck, char *lib_name )
       }
       /* .lib <file name> <lib name> */
       else if ( read_line == TRUE ) {
-	for ( z = y; *z && !isspace(*z) && !isquote(*z); z++ );
+	for ( z = y; *z && !isspace(*z) && !isquote(*z); z++ )
+	  ;
 	keep_char1 = *t; keep_char2 = *z;
 	*t = '\0'; *z = '\0';
 
@@ -2071,14 +2084,16 @@ inp_get_subckt_name( char *s )
   if ( end_ptr != NULL ) {
     end_ptr--;
     while ( isspace(*end_ptr) ) end_ptr--;
-    for( ;*end_ptr && !isspace(*end_ptr); end_ptr--);
+    for(; *end_ptr && !isspace(*end_ptr); end_ptr--)
+        ;
   } else {
     end_ptr = s + strlen(s);
   }
 
   subckt_name = end_ptr;
   while ( isspace( *subckt_name ) ) subckt_name--;
-  for( ; !isspace(*subckt_name); subckt_name-- );
+  for(; !isspace(*subckt_name); subckt_name-- )
+    ;
   subckt_name++;
 
   keep     = *end_ptr;
@@ -2294,7 +2309,8 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
             while ( d != NULL ) {
                subckt_line = d->li_line;
                if ( ciprefix( ".subckt", subckt_line ) ) {
-                  for ( ; *subckt_line && !isspace(*subckt_line); subckt_line++ );
+                  for ( ; *subckt_line && !isspace(*subckt_line); subckt_line++ )
+                      ;
                   while ( isspace(*subckt_line) ) subckt_line++;
 
                   sprintf( name_w_space, "%s ", subckt_name );
@@ -2344,7 +2360,8 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
                while ( d != NULL ) {
                   subckt_line = d->li_line;
                   if ( ciprefix( ".subckt", subckt_line ) ) {
-                     for ( ; *subckt_line && !isspace(*subckt_line); subckt_line++ );
+                     for ( ; *subckt_line && !isspace(*subckt_line); subckt_line++ )
+                         ;
                      while ( isspace(*subckt_line) ) subckt_line++;
 
                      if ( strncmp( subckt_line, name_w_space, strlen(name_w_space) ) == 0 ) {
@@ -2571,7 +2588,8 @@ inp_expand_macro_in_str( char *str )
    while ( ( open_paren_ptr = strstr( search_ptr, "(" ) ) ) {
       fcn_name = open_paren_ptr;
       if ( open_paren_ptr != search_ptr) {
-         while ( --fcn_name != search_ptr && (isalnum(*fcn_name) || *fcn_name == '_') );
+         while ( --fcn_name != search_ptr && (isalnum(*fcn_name) || *fcn_name == '_') )
+             ;
          if ( !isalnum(*fcn_name) && *fcn_name != '_' ) fcn_name++;
       }
 
@@ -3917,7 +3935,7 @@ static void inp_compat(struct line *deck)
      */
         else if ( *curr_line == '.' ) {
             // replace .probe by .save
-            if(str_ptr = strstr(curr_line, ".probe"))
+            if((str_ptr = strstr(curr_line, ".probe")) != NULL)
                 memcpy(str_ptr, ".save ", 6);
 
   /* Various formats for measure statement:
@@ -3964,7 +3982,7 @@ static void inp_compat(struct line *deck)
                 if (strstr(curr_line, "par") == NULL) continue;
                  cut_line = curr_line;
                  // search for 'par'
-                 while(str_ptr = strstr(cut_line, "par")) {
+                 while((str_ptr = strstr(cut_line, "par")) != NULL) {
                      if (i > 99) {
                          fprintf(stderr, "ERROR: No more than 99 'par' per input file\n", 
                              curr_line);
@@ -4081,7 +4099,7 @@ static void inp_compat(struct line *deck)
                 if (strstr(curr_line, "par") == NULL) continue;
                  cut_line = curr_line;
                  // search for 'par'
-                 while(str_ptr = strstr(cut_line, "par")) {
+                 while((str_ptr = strstr(cut_line, "par")) != NULL) {
                      if (pai > 99) {
                          fprintf(stderr, "ERROR: No more than 99 'par' per input file!\n", 
                              curr_line);
