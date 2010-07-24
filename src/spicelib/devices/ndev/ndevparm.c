@@ -17,7 +17,6 @@ NDEVparam(
   GENinstance *inInst,
   IFvalue *select )
 {
-  NDEVinstance *inst = (NDEVinstance *) inInst;
   switch (param) {
   case NDEV_MOD_NDEV:
     /* no action , but this */

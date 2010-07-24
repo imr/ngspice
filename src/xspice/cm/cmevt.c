@@ -72,8 +72,6 @@ void cm_event_alloc(
     MIFinstance *here;
     CKTcircuit  *ckt;
 
-    void        *ptr;
-
     Evt_State_Desc_t    **desc_ptr;
     Evt_State_Desc_t    *desc;
 

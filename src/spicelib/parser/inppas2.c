@@ -35,7 +35,9 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, void *task)
     char *gname;
     void *gnode;
     int error;			/* used by the macros defined above */
+#ifdef HAS_WINDOWS
     int linecount = 0, actcount = 0;
+#endif
 
 #ifdef TRACE
     /* SDB debug statement */

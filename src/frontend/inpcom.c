@@ -175,10 +175,11 @@ FILE *
 inp_pathopen(char *name, char *mode)
 {
     FILE *fp;
-    char buf[BSIZE_SP], buf2[BSIZE_SP];
+    char buf[BSIZE_SP];
     struct variable *v;
 
 #if defined(HAS_WINDOWS)
+    char buf2[BSIZE_SP];
     /* search in the path where the source (input) file has been found,
        but only if "name" is just a file name */
     if (!(index(name, DIR_TERM)) && cp_getvar("sourcefile", CP_STRING, buf2)) {

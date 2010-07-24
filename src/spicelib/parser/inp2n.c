@@ -37,13 +37,11 @@ void INP2N(CKTcircuit *ckt, INPtables * tab, card * current)
     void *node[7];		/* the array of CKT node's node pointer */
     
     int error;			/* error code temporary */
-    int error1;			/* secondary error code temporary */
     int i;            
     INPmodel *thismodel;	/* pointer to model structure describing our model */
     GENmodel *mdfast = NULL;	/* pointer to the actual model */
     GENinstance *fast;		/* pointer to the actual instance */
     NDEVinstance *pinst;
-    IFvalue ptemp;		/* a value structure to package resistance into */
     int waslead;		/* flag to indicate that funny unlabeled number was found */
     double leadval;		/* actual value of unlabeled number */
 

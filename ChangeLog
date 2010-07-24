@@ -1,4 +1,12 @@
 2010-07-24  Robert Larice
+ * src/frontend/inpcom.c ,
+ * src/spicelib/devices/ndev/ndevparm.c ,
+ * src/spicelib/parser/inp2n.c ,
+ * src/spicelib/parser/inppas2.c ,
+ * src/xspice/cm/cmevt.c :
+    muffle `unused variable' warnings
+
+2010-07-24  Robert Larice
  * src/frontend/plotting/x11.c :
     muffle `may be used uninitialized' warnings
 
