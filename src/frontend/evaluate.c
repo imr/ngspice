@@ -150,7 +150,7 @@ static struct dvec *
 doop(char what,
      void*(*func) (void *data1, void *data2,
 		   short int datatype1, short int datatype2,
-		   int length, ...),
+		   int length),
      struct pnode *arg1,
      struct pnode *arg2)
 {
@@ -845,7 +845,7 @@ apply_func(struct func *func, struct pnode *arg)
 	if (eq(func->fu_name, "interpolate") || eq(func->fu_name, "deriv") || eq(func->fu_name, "group_delay"))       /* Ack */
 	{
 	    void *(*f)(void *data, short int type, int length,
-                       int *newlength, short int *newtype, ...)=func->fu_func;
+                       int *newlength, short int *newtype, struct plot *, struct plot *, int) = (void *(*)(void *, short int, int, int *, short int *, struct plot *, struct plot *, int)) func->fu_func;
             data = ((*f) ((isreal(v) ? (void *) v->v_realdata : (void *) v->v_compdata),
 		          (short) (isreal(v) ? VF_REAL : VF_COMPLEX),
 		          v->v_length, &len, &type,

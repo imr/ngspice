@@ -136,6 +136,8 @@ struct op uops[] = {
  * we do for vm(), etc won't work. This is caught in evaluate(). Bad kludge.
  */
 
+typedef void* cx_function_t(void*,short int,int,int*,short int*);
+
 struct func ft_funcs[] = {
         { "mag",    cx_mag } ,
         { "magnitude",  cx_mag } ,
@@ -162,15 +164,15 @@ struct func ft_funcs[] = {
         { "pos",    cx_pos } ,
         { "mean",   cx_mean } ,
         { "avg",   cx_avg } ,                /* A.Roldan 03/06/05 incremental average new function */
-        { "group_delay",  cx_group_delay } , /* A.Roldan 10/06/05 group delay new function */
+        { "group_delay",  (cx_function_t*) cx_group_delay } , /* A.Roldan 10/06/05 group delay new function */
         { "vector", cx_vector } ,
         { "unitvec",    cx_unitvec } ,
         { "length", cx_length } ,
         { "vecmin", cx_min } ,
         { "vecmax", cx_max } ,
         { "vecd", cx_d } ,
-        { "interpolate", cx_interpolate } ,
-        { "deriv",       cx_deriv } ,
+        { "interpolate", (cx_function_t*) cx_interpolate } ,
+        { "deriv",       (cx_function_t*) cx_deriv } ,
         { "v",      NULL } ,
         { NULL,     NULL }
 } ;
