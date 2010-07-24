@@ -1,4 +1,12 @@
 2010-07-24  Robert Larice
+ * src/frontend/help/help.c ,
+ * src/frontend/misccoms.c ,
+ * src/spicelib/devices/dev.c ,
+ * src/xspice/cmpp/pp_mod.c ,
+ * src/xspice/cmpp/read_ifs.c :
+    muffle `nested extern' warnings, and drop a handcrafted malloc prototype
+
+2010-07-24  Robert Larice
  * src/ciderlib/input/meshset.c ,
  * src/frontend/breakp.c ,
  * src/frontend/com_alias.c ,

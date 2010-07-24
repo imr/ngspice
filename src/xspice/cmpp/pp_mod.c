@@ -63,6 +63,18 @@ NON-STANDARD FEATURES
 extern int mod_yyparse(void);
 extern void mod_yyrestart (FILE*);
 
+extern FILE *mod_yyin;
+extern FILE *mod_yyout;
+extern int   mod_yylineno;
+extern char *mod_yytext;
+
+extern int   mod_num_errors;
+
+extern Ifs_Table_t *mod_ifs_table;
+
+extern char *current_filename;
+extern char *prog_name;
+
 /*---------------------------------------------------------------------------*/
 static void change_extension (char *filename, char *ext, char *new_filename)
 {
@@ -99,12 +111,7 @@ utilities.
 void preprocess_mod_file (
     char *filename)         /* The file to read */
 {
-   extern FILE *mod_yyin;
-   extern FILE *mod_yyout;
-   extern char *current_filename;
-   extern int mod_yylineno;
-   extern int mod_num_errors;
-   extern Ifs_Table_t     *mod_ifs_table;
+   
    
    Ifs_Table_t     ifs_table;   /* info read from ifspec.ifs file */
    Status_t        status;      /* Return status */
@@ -177,11 +184,6 @@ void preprocess_mod_file (
 int
 mod_yyerror (char *str)
 {
-   extern int mod_yylineno;
-   extern char *mod_yytext;
-   extern char *current_filename;
-   extern char *prog_name;
-   
    fprintf (stderr, "%s: Error: \"%s\": line %d (near \'%s\'):\n\t%s.\n",
             prog_name, current_filename, mod_yylineno, mod_yytext, str);
 

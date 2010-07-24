@@ -54,7 +54,12 @@ extern char *prog_name;
 extern int ifs_yyparse (void);
 extern void ifs_yyrestart (FILE*);
 
-void  *malloc(unsigned size);
+extern FILE *ifs_yyin;
+extern int   ifs_yylineno;
+extern char *ifs_yytext;
+
+extern Ifs_Table_t *parser_ifs_table;
+extern Boolean_t    parser_just_names;
 
 static Status_t read_ifs_table(FILE *fp, int mode, Ifs_Table_t *ifs_table);
 
@@ -143,11 +148,6 @@ static Status_t read_ifs_table(
     Ifs_Table_t *ifs_table)   /* Table to put info in */
 {
 
-   extern FILE *ifs_yyin;
-   extern Ifs_Table_t *parser_ifs_table;
-   extern Boolean_t parser_just_names;
-   extern int ifs_yylineno;
-   
    assert (ifs_table);
    assert (fp);
 
@@ -166,12 +166,10 @@ static Status_t read_ifs_table(
 }
 
 /*---------------------------------------------------------------------------*/
+   
 int
 ifs_yyerror (char *str)
 {
-   extern int ifs_yylineno;
-   extern char *ifs_yytext;
-   
    fprintf (stderr, "%s: Error: \"%s\": line %d (near \'%s\'):\n\t%s.\n",
 	    prog_name, current_filename, ifs_yylineno, ifs_yytext, str);
 

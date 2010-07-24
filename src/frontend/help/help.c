@@ -14,6 +14,8 @@ Modified 1999 Emmanuel Rouat
 #include "hlpdefs.h"
 #include "suffix.h"
 
+extern char *cp_tildexpand(char *string);
+
 char *hlp_directory;
 extern char *hlp_filelist[];
 int hlp_ftablesize = 0;
@@ -136,7 +138,6 @@ hlp_pathfix(char *buf)
 {
     char *s, *t, *u, bufx[1025];
     char *dir_pathsep;
-    extern char *cp_tildexpand(char *string);
 
     dir_pathsep = DIR_PATHSEP;
 

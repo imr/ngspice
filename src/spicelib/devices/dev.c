@@ -355,8 +355,6 @@ void load_alldevs(void){
 #include "cktdefs.h" /* for DEVmaxnum */
 
 static void relink(void) {
-  /*  added by SDB; DEVmaxnum is an external int defined in cktdefs.h  */
-  extern int DEVmaxnum;
 
 /*
  * This replacement done by SDB on 6.11.2003

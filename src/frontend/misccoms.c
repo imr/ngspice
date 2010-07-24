@@ -17,12 +17,15 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #ifdef HAVE_GNUREADLINE
 #include <readline/readline.h>
 #include <readline/history.h>
+extern char history_file[];
 #endif /* HAVE_GNUREADLINE */
 
 #ifdef HAVE_BSDEDITLINE
 /* SJB added edit line support 2005-05-05 */
 #include <editline/readline.h>
+extern char history_file[];
 #endif /* HAVE_BSDEDITLINE */
+
 extern IFsimulator SIMinfo;
 static void byemesg(void);
 
@@ -242,8 +245,6 @@ byemesg(void)
 {
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
-    extern char history_file[];
-
     /*  write out command history only when saying goodbye.  */
     if (cp_interactive && (cp_maxhistlength > 0)) {
       stifle_history(cp_maxhistlength);
