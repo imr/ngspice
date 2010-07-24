@@ -1,4 +1,8 @@
 2010-07-24  Robert Larice
+ * src/frontend/plotting/x11.c :
+    muffle `may be used uninitialized' warnings
+
+2010-07-24  Robert Larice
  * src/spicelib/devices/bsim3soi/b4soi.c ,
  * src/spicelib/devices/bsim3soi/b4soiacld.c ,
  * src/spicelib/devices/bsim3soi/b4soiask.c ,

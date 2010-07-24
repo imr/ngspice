@@ -829,8 +829,6 @@ zoomin(GRAPH *graph)
 void
 hardcopy(Widget w, caddr_t client_data, caddr_t call_data)
 {
-    X11devdep tempdevdep;
-	Bool hasdevdep = FALSE;
 	/* com_hardcopy() -> gr_resize() -> setcolor() dirung postscript
 	printing will act on currentgraph with a DEVDEP inherited from PSdevdep.
 	But currentgraph had not changed its devdep, which was derived from
@@ -838,16 +836,17 @@ hardcopy(Widget w, caddr_t client_data, caddr_t call_data)
 	temporary remedy, until there will be a cleanup of graph handling. E.g.
 	CopyGraph() does not make a copy of its devdep, but just copies the pointer,
 	so keeping the old devdep. */
-    if (currentgraph->devdep) {
-        tempdevdep = DEVDEP(currentgraph);
-		hasdevdep = TRUE;
-    }
+
     lasthardcopy = (GRAPH *) client_data;
-    com_hardcopy(NULL);
-    if (hasdevdep)
-	    DEVDEP(currentgraph) = tempdevdep;
-    else
-	    currentgraph->devdep = NULL;
+
+    if (currentgraph->devdep) {
+        X11devdep tempdevdep = DEVDEP(currentgraph);
+        com_hardcopy(NULL);
+        DEVDEP(currentgraph) = tempdevdep;
+    } else {
+        com_hardcopy(NULL);
+        currentgraph->devdep = NULL;
+    }
 }
 
 void
