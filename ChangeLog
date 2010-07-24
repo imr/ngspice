@@ -1,4 +1,10 @@
 2010-07-24  Robert Larice
+ * src/include/onedev.h ,
+ * src/include/twodev.h :
+    add two #include files,
+      to fix broken cider compilation, caused by the changes from 2010-07-23
+
+2010-07-24  Robert Larice
  * src/frontend/evaluate.c ,
  * src/frontend/parse.c ,
  * src/include/fteext.h ,

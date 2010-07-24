@@ -15,6 +15,7 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 #define TWODEV_H
 
 #include "gendev.h"
+#include "smpdefs.h"
 
 typedef struct sTWOdevice
 {
