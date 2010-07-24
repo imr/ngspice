@@ -40,7 +40,7 @@ void INP2N(CKTcircuit *ckt, INPtables * tab, card * current)
     int error1;			/* secondary error code temporary */
     int i;            
     INPmodel *thismodel;	/* pointer to model structure describing our model */
-    void *mdfast = NULL;	/* pointer to the actual model */
+    GENmodel *mdfast = NULL;	/* pointer to the actual model */
     GENinstance *fast;		/* pointer to the actual instance */
     NDEVinstance *pinst;
     IFvalue ptemp;		/* a value structure to package resistance into */

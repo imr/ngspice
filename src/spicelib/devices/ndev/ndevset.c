@@ -19,7 +19,7 @@ if (size && (!(var =(type *)calloc(1, (unsigned)(size)*sizeof(type))))) {\
    return(E_NOMEM);\
 }
 
-int NDEVmodelConnect(GENmodel *inModel);
+int NDEVmodelConnect(NDEVmodel *inModel);
 
 
 int NDEVsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
@@ -73,9 +73,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 
 }
 
-int NDEVmodelConnect(GENmodel *inModel)
+int NDEVmodelConnect(NDEVmodel *inModel)
 {
-  NDEVmodel *model = (NDEVmodel *)inModel;
+  NDEVmodel *model = inModel;
   struct hostent *hostlist; /* List of hosts returned by gethostbyname. */
   char dotted_ip[15];       /* Buffer for converting
                                the resolved address to

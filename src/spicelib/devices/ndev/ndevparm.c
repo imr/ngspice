@@ -11,11 +11,11 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NDEVparam(param, value, inInst, select)
-  int param;
-  IFvalue *value;
-  GENinstance *inInst;
-  IFvalue *select;
+NDEVparam(
+  int param,
+  IFvalue *value,
+  GENinstance *inInst,
+  IFvalue *select )
 {
   NDEVinstance *inst = (NDEVinstance *) inInst;
   switch (param) {

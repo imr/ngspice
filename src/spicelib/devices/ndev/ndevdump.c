@@ -21,9 +21,9 @@ static int state_numDC = 0;
 static int state_numTR = 0;
 
 void
-NDEV_dump(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+NDEV_dump(
+  GENmodel *inModel,
+  CKTcircuit *ckt )
 {
   
 }
@@ -31,10 +31,10 @@ NDEV_dump(inModel, ckt)
 
 
 void
-NDEV_acct(inModel, ckt, file)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-  FILE *file;
+NDEV_acct(
+  GENmodel *inModel,
+  CKTcircuit *ckt,
+  FILE *file )
 {
   
 }

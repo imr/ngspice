@@ -12,10 +12,10 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NDEVtrunc(inModel, ckt, timeStep)
-  GENmodel *inModel;
-  register CKTcircuit *ckt;
-  double *timeStep;
+NDEVtrunc(
+  GENmodel *inModel,
+  register CKTcircuit *ckt,
+  double *timeStep )
 
 {
 

@@ -12,10 +12,10 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NDEVpzLoad(inModel, ckt, s)
-  GENmodel *inModel;
-  register CKTcircuit *ckt;
-  SPcomplex *s;
+NDEVpzLoad(
+  GENmodel *inModel,
+  register CKTcircuit *ckt,
+  SPcomplex *s )
 {
  
   return (OK);

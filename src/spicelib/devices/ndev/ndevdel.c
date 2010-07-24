@@ -10,10 +10,10 @@ University of Science and Technology of China
 #include "suffix.h"
 
 int
-NDEVdelete(inModel, name, kill)
-  GENmodel *inModel;
-  IFuid name;
-  GENinstance **kill;
+NDEVdelete(
+  GENmodel *inModel,
+  IFuid name,
+  GENinstance **kill )
 
 {
     NDEVmodel *model = (NDEVmodel *)inModel;

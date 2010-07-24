@@ -17,9 +17,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NDEVacLoad(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+NDEVacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
  
   return (OK);

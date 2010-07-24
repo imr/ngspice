@@ -132,6 +132,7 @@ void INP2J(CKTcircuit *, INPtables *, card *);
 void INP2K(CKTcircuit *, INPtables *, card *);
 void INP2L(CKTcircuit *, INPtables *, card *);
 void INP2M(CKTcircuit *, INPtables *, card *);
+void INP2N(CKTcircuit *, INPtables *, card *);
 void INP2O(CKTcircuit *, INPtables *, card *);
 void INP2P(CKTcircuit *, INPtables *, card *);
 void INP2Q(CKTcircuit *, INPtables *, card *, void *);

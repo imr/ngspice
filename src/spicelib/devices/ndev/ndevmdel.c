@@ -9,10 +9,10 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NDEVmDelete(inModel, modname, kill)
-  GENmodel **inModel;
-  IFuid modname;
-  GENmodel *kill;
+NDEVmDelete(
+  GENmodel **inModel,
+  IFuid modname,
+  GENmodel *kill )
 {
 
 

@@ -16,12 +16,12 @@ Author: 1987 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-NDEVask(ckt, inInst, which, value, select)
-  CKTcircuit *ckt;
-  GENinstance *inInst;
-  int which;
-  IFvalue *value;
-  IFvalue *select;
+NDEVask(
+  CKTcircuit *ckt,
+  GENinstance *inInst,
+  int which,
+  IFvalue *value,
+  IFvalue *select )
 {
   return (OK);
   /* NOTREACHED */

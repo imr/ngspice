@@ -1,4 +1,20 @@
 2010-07-24  Robert Larice
+ * src/include/inpdefs.h ,
+ * src/spicelib/devices/ndev/ndevacld.c ,
+ * src/spicelib/devices/ndev/ndevask.c ,
+ * src/spicelib/devices/ndev/ndevdel.c ,
+ * src/spicelib/devices/ndev/ndevdump.c ,
+ * src/spicelib/devices/ndev/ndevmdel.c ,
+ * src/spicelib/devices/ndev/ndevparm.c ,
+ * src/spicelib/devices/ndev/ndevpzld.c ,
+ * src/spicelib/devices/ndev/ndevset.c ,
+ * src/spicelib/devices/ndev/ndevtemp.c ,
+ * src/spicelib/devices/ndev/ndevtrun.c ,
+ * src/spicelib/parser/inp2n.c :
+    convert K&R function definitions to ansi style
+    use the GENmodel and GENinstance type instead of void*
+
+2010-07-24  Robert Larice
     fix dangerous things, potential bugs, at least for big endian machines
  * src/frontend/inp.c ,
     a bool (unsigned char) and an int have been mixed,
@@ -6,7 +22,7 @@
     should fail on a big endian machine
  * src/frontend/spiceif.c ,
     the value of an union, made of a bool (unsigned char), an int, etc,
-	is silently cast into an int.
+      is silently cast into an int.
     This can introduce stack noise, in the CP_BOOL case
  * src/frontend/variable.c :
     a `variable' is created with type CP_NUM,
