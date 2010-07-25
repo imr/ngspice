@@ -1,3 +1,7 @@
+2010-07-25  Holger Vogt
+ * inpcom.c: correct loop parameter i -> pai, remove
+   unnecessary output
+ 
 2010-07-24  Robert Larice
  * src/include/cktdefs.h ,
  * src/include/devdefs.h ,

@@ -3983,9 +3983,8 @@ static void inp_compat(struct line *deck)
                  cut_line = curr_line;
                  // search for 'par'
                  while((str_ptr = strstr(cut_line, "par")) != NULL) {
-                     if (i > 99) {
-                         fprintf(stderr, "ERROR: No more than 99 'par' per input file\n", 
-                             curr_line);
+                     if (pai > 99) {
+                         fprintf(stderr, "ERROR: No more than 99 'par' per input file\n");
                          controlled_exit(EXIT_FAILURE);
                      }
 
@@ -4101,8 +4100,7 @@ static void inp_compat(struct line *deck)
                  // search for 'par'
                  while((str_ptr = strstr(cut_line, "par")) != NULL) {
                      if (pai > 99) {
-                         fprintf(stderr, "ERROR: No more than 99 'par' per input file!\n", 
-                             curr_line);
+                         fprintf(stderr, "ERROR: No more than 99 'par' per input file!\n");
                          controlled_exit(EXIT_FAILURE);
                      }
 
