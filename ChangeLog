@@ -1,4 +1,25 @@
 2010-07-30  Robert Larice
+ * src/frontend/com_dl.c ,
+ * src/frontend/com_help.c ,
+ * src/frontend/com_set.c ,
+ * src/frontend/com_sysinfo.c ,
+ * src/frontend/hcomp.c ,
+ * src/frontend/parse.h ,
+ * src/include/pzdefs.h ,
+ * src/include/sen2defs.h ,
+ * src/include/typedefs.h ,
+ * src/main.c ,
+ * src/maths/misc/accuracy.c ,
+ * src/maths/misc/bernoull.c ,
+ * src/maths/misc/norm.c ,
+ * src/ngsconvert.c ,
+ * src/spicelib/analysis/cktdelt.c ,
+ * src/spicelib/devices/limit.c ,
+ * src/xspice/evt/evtaccept.c :
+    add #include's for visibility of prototypes to their function definitions
+    move some typedefs to "typedef.h"
+
+2010-07-30  Robert Larice
  * src/include/ifsim.h ,
  * src/include/inpptree.h ,
  * src/ngproc2mod.c ,

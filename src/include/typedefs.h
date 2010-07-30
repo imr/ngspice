@@ -35,4 +35,11 @@ typedef struct graph GRAPH;
 struct dbcomm;
 
 
+typedef struct PZtrial PZtrial;
+typedef struct PZAN PZAN;
+
+
+typedef struct SENstruct SENstruct;
+
+
 #endif

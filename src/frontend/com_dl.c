@@ -2,6 +2,7 @@
 #include "ftedefs.h"
 #include <devdefs.h> /* solve deps in dev.h*/
 #include <../spicelib/devices/dev.h> /*for load library commands*/
+#include "com_dl.h"
 
 #ifdef XSPICE
 void com_codemodel(wordlist *wl){

@@ -5,6 +5,7 @@ Modified: 2001 Paolo Nenzi
 **********/
 
 #include "ngspice.h"
+#include "accuracy.h"
 
 
 /* XXX Globals are hiding here.

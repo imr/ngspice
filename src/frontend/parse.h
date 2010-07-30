@@ -16,5 +16,6 @@ struct pnode * ft_getpnames(wordlist *wl, bool check);
 #endif
 void free_pnode_x(struct pnode *t);
 
+void free_pnode_o(struct pnode *t);
 
 #endif

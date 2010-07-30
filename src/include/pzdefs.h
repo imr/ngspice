@@ -6,18 +6,19 @@
 #include "jobdefs.h"
 #include <math.h>
 #include "complex.h"
+#include "typedefs.h"
 
-typedef struct strial {
+struct PZtrial {
     SPcomplex	s, f_raw, f_def;
-    struct strial *next, *prev;
+    PZtrial	*next, *prev;
     int		mag_raw, mag_def;
     int		multiplicity;
     int		flags;
     int		seq_num;
     int		count;
-} PZtrial;
+};
 
-typedef struct {
+struct PZAN {
     int JOBtype;
     JOB *JOBnextJob;
     IFuid JOBname;
@@ -36,7 +37,7 @@ typedef struct {
     int PZnZeros;
     double *PZdrive_pptr;
     double *PZdrive_nptr;
-} PZAN;
+};
 
 #define PZ_DO_POLES	0x1
 #define PZ_DO_ZEROS	0x2

@@ -7,6 +7,7 @@
 #include <bool.h>
 
 #include "hcomp.h"
+#include "com_help.h"
 
 
 void

@@ -5,6 +5,7 @@
 #include <wordlist.h>
 
 #include "variable.h"
+#include "com_set.h"
 
 
 /* The set command. Syntax is set [opt ...] [opt = val ...]. Val may

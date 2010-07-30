@@ -5,6 +5,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 #include "ngspice.h"
 #include "accuracy.h"
+#include "bernoull.h"
 
 /*
  * this function computes the bernoulli function 

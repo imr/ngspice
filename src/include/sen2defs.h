@@ -11,8 +11,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 #include "smpdefs.h"
 #include "jobdefs.h"
+#include "typedefs.h"
 
-typedef struct {
+struct SENstruct {
     int JOBtype;
     JOB *JOBnextJob;    /* pointer to next thing to do */
     char *JOBname;      /* name of this job */
@@ -47,7 +48,7 @@ typedef struct {
     double  *SEN_parmVal;   /* table containing values of design parameters */
     char    **SEN_parmName; /* table containing names of design parameters */
 
-} SENstruct;
+};
 
 /* SENmode */
 #define DCSEN  0x1

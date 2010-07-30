@@ -15,6 +15,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <ftedefs.h>
 #include <sim.h>
 #include "suffix.h"
+#include "frontend/display.h"
 
 FILE *cp_in = NULL;
 FILE *cp_out = NULL;

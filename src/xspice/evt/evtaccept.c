@@ -46,6 +46,7 @@ NON-STANDARD FEATURES
 
 #include "mif.h"
 #include "evt.h"
+#include "evtproto.h"
 
 
 

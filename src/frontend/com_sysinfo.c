@@ -11,6 +11,7 @@
 #include "config.h"
 #include "ngspice.h" 
 #include "cpdefs.h"
+#include "fteext.h"
 
 /* We might compile for Windows, but only as a console application (e.g. tcl) */
 #if defined(HAS_WINDOWS) || defined(__MINGW32__) || defined(_MSC_VER)
