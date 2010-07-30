@@ -1610,18 +1610,12 @@ typedef struct sBSIM3v1model
 
 #include "bsim3v1ext.h"
 
-#ifdef __STDC__
 extern void BSIM3v1evaluate(double,double,double,BSIM3v1instance*,BSIM3v1model*,
         double*,double*,double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, CKTcircuit*);
 extern int BSIM3v1debug(BSIM3v1model*, BSIM3v1instance*, CKTcircuit*, int);
 extern int BSIM3v1checkModel(BSIM3v1model*, BSIM3v1instance*, CKTcircuit*);
-#else /* stdc */
-extern void BSIM3v1evaluate();
-extern int BSIM3v1debug();
-extern int BSIM3v1checkModel();
-#endif /* stdc */
 
 #endif /*BSIM3v1*/
 

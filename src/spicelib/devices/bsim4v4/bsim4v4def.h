@@ -2903,7 +2903,6 @@ typedef struct sBSIM4v4model
 #define BSIM4v4_IGCS		   1009
 #define BSIM4v4_IGCD		   1010
 
-#
 #include "bsim4v4ext.h"
 
 

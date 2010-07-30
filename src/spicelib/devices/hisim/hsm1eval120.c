@@ -72,7 +72,7 @@
 #include "hisim.h"
 #include "hsm1evalenv.h"
 
-#ifdef __STDC__
+
 /*-----------------------------------*
  * Constants for Smoothing functions
  *---------------*/
@@ -86,41 +86,19 @@ static const double pol_vds_dlt = 2.0e-2 ;
 static const double qme_vgs_dlt = 9.5e-3 ;
 static const double lp_vds_dlt = 2.0e-2 ;
 static const double sc_vds_dlt = 2.0e-2 ;
-#endif
+
 
 /*===========================================================*
 * Function hsm1eval.
 *=================*/
-#ifdef __STDC__
+
 int HSM1evaluate120
 (
  HiSIM_input     sIN,
  HiSIM_output    *pOT,
  HiSIM_messenger *pMS 
 ) 
-#else
-int HSM1evaluate120( sIN , pOT , pMS ) 
-     HiSIM_input     sIN ;
-     HiSIM_output    *pOT ;
-     HiSIM_messenger *pMS ;
-#endif
 {
-
-#ifndef __STDC__
-/*-----------------------------------*
- * Constants for Smoothing functions
- *---------------*/
-static double Vgsz_pol_sat = 2.0 ;
-static double Vdsz_pol_sat = 3.5 ;
-static double Vgsz_qme_sat = 2.0 ;
-static double Vdsz_lp_sat = 3.5 ;
-static double Vdsz_sc_sat = 3.5 ;
-static double pol_vgs_dlt = 2.0e-2 ;
-static double pol_vds_dlt = 2.0e-2 ;
-static double qme_vgs_dlt = 9.5e-3 ;
-static double lp_vds_dlt = 2.0e-2 ;
-static double sc_vds_dlt = 2.0e-2 ;
-#endif
 
 /*---------------------------------------------------*
 * Local variables. 

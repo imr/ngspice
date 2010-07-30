@@ -1,4 +1,28 @@
-2010-07-30  Robert Larice  <>
+2010-07-30  Robert Larice
+ * src/include/ifsim.h ,
+ * src/include/inpptree.h ,
+ * src/ngproc2mod.c ,
+ * src/spicelib/devices/bsim3/bsim3def.h ,
+ * src/spicelib/devices/bsim3/bsim3ext.h ,
+ * src/spicelib/devices/bsim3soi/b4soidef.h ,
+ * src/spicelib/devices/bsim3soi/b4soiext.h ,
+ * src/spicelib/devices/bsim3v1/bsim3v1def.h ,
+ * src/spicelib/devices/bsim4/bsim4def.h ,
+ * src/spicelib/devices/bsim4/bsim4ext.h ,
+ * src/spicelib/devices/bsim4v2/bsim4v2def.h ,
+ * src/spicelib/devices/bsim4v2/bsim4v2ext.h ,
+ * src/spicelib/devices/bsim4v3/bsim4v3def.h ,
+ * src/spicelib/devices/bsim4v3/bsim4v3ext.h ,
+ * src/spicelib/devices/bsim4v4/bsim4v4def.h ,
+ * src/spicelib/devices/bsim4v5/bsim4v5def.h ,
+ * src/spicelib/devices/bsim4v5/bsim4v5ext.h ,
+ * src/spicelib/devices/hisim/hsm1eval102.c ,
+ * src/spicelib/devices/hisim/hsm1eval112.c ,
+ * src/spicelib/devices/hisim/hsm1eval120.c ,
+ * src/spicelib/devices/jfet2/psmodel.h :
+    remove some #ifdef __STDC__ wrappers, and some stray '#'
+
+2010-07-30  Robert Larice
  * src/frontend/plotting/agraf.c ,
  * src/spicelib/devices/bsim2/b2set.c ,
  * src/spicelib/devices/bsim4v2/b4v2set.c ,

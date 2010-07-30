@@ -3555,17 +3555,11 @@ typedef struct sBSIM4model
 
 #include "bsim4ext.h"
 
-#ifdef __STDC__
 extern void BSIM4evaluate(double,double,double,BSIM4instance*,BSIM4model*,
         double*,double*,double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, CKTcircuit*);
 extern int BSIM4debug(BSIM4model*, BSIM4instance*, CKTcircuit*, int);
 extern int BSIM4checkModel(BSIM4model*, BSIM4instance*, CKTcircuit*);
-#else /* stdc */
-extern void BSIM4evaluate();
-extern int BSIM4debug();
-extern int BSIM4checkModel();
-#endif /* stdc */
 
 #endif /*BSIM4*/

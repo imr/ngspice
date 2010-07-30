@@ -1818,18 +1818,12 @@ typedef struct sBSIM3model
 
 #include "bsim3ext.h"
 
-#ifdef __STDC__
 extern void BSIM3evaluate(double,double,double,BSIM3instance*,BSIM3model*,
         double*,double*,double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, CKTcircuit*);
 extern int BSIM3debug(BSIM3model*, BSIM3instance*, CKTcircuit*, int);
 extern int BSIM3checkModel(BSIM3model*, BSIM3instance*, CKTcircuit*);
-#else /* stdc */
-extern void BSIM3evaluate();
-extern int BSIM3debug();
-extern int BSIM3checkModel();
-#endif /* stdc */
 
 #endif /*BSIM3*/
 

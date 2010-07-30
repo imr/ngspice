@@ -2647,20 +2647,13 @@ typedef struct sBSIM4v2model
 #define BSIM4v2_IGCD		   1010
 
 
-#
 #include "bsim4v2ext.h"
 
-#ifdef __STDC__
 extern void BSIM4v2evaluate(double,double,double,BSIM4v2instance*,BSIM4v2model*,
         double*,double*,double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, CKTcircuit*);
 extern int BSIM4v2debug(BSIM4v2model*, BSIM4v2instance*, CKTcircuit*, int);
 extern int BSIM4v2checkModel(BSIM4v2model*, BSIM4v2instance*, CKTcircuit*);
-#else /* stdc */
-extern void BSIM4v2evaluate();
-extern int BSIM4v2debug();
-extern int BSIM4v2checkModel();
-#endif /* stdc */
 
 #endif /*BSIM4v2*/

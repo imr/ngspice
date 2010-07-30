@@ -11,11 +11,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "suffix.h"
 
 
-#ifdef __STDC__
 void getdata(double*,int,int);
-#else /* stdc */
-void getdata();
-#endif /* stdc */
 
 typedef struct snmod {
     struct snmod *nnext;

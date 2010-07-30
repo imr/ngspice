@@ -22,19 +22,12 @@ typedef  CKTcircuit    cref; /* circuit specific variables */
 typedef  JFET2model     modl; /* model parameters for this type of device */
 typedef  JFET2instance  inst; /* parameters specific to this device instance */
 
-#ifdef __STDC__
 extern	void	PSinstanceinit(modl *,inst *);
 extern	double	PSids(cref *,modl *,inst *,double,double,
 		        double *,double *,double *,double *,double *,double *);
 extern	void	PScharge(cref *,modl *,inst *,double,double,double *,double *);
 extern  void    PSacload(cref *,modl *,inst *,double,double,double,double,
                                           double *,double *,double *,double *);
-#else
-extern	void	PSinstanceinit();
-extern  double	PSids();
-extern  void	PScharge();
-extern  void	PSacload();
-#endif
 
 #ifdef PSMODEL_C /* PSMODEL_C defined when included from "psmodel.c" */
 /* The following glue definitions need to be changed to suit the specific

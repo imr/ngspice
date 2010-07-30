@@ -4249,18 +4249,12 @@ typedef struct sB4SOImodel
 
 #include "b4soiext.h"
 
-#ifdef __STDC__
 extern void B4SOIevaluate(double,double,double,B4SOIinstance*,B4SOImodel*,
         double*,double*,double*, double*, double*, double*, double*,
         double*, double*, double*, double*, double*, double*, double*,
         double*, double*, double*, double*, CKTcircuit*);
 extern int B4SOIdebug(B4SOImodel*, B4SOIinstance*, CKTcircuit*, int);
 extern int B4SOIcheckModel(B4SOImodel*, B4SOIinstance*, CKTcircuit*);
-#else /* stdc */
-extern void B4SOIevaluate();
-extern int B4SOIdebug();
-extern int B4SOIcheckModel();
-#endif /* stdc */
 
 #endif /*B4SOI*/
 

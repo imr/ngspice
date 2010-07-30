@@ -169,11 +169,8 @@ struct IFparseTree {
     int numVars;            /* number of variables used */
     int *varTypes;          /* array of types of variables */
     IFvalue *vars;          /* array of structures describing values */
-#ifdef __STDC__
     int (*IFeval) (IFparseTree *, double, double *, double *, double *);
-#else
-    int (*IFeval) ();      /* function to call to get evaluated */
-#endif /* STDC */
+                            /* function to call to get evaluated */
 };
 
 

@@ -5,7 +5,6 @@ Author: 2001 Xuemei Xi
 File: bsim4ext.h
 **********/
 
-#ifdef __STDC__
 extern int BSIM4v2acLoad(GENmodel *,CKTcircuit*);
 extern int BSIM4v2ask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int BSIM4v2convTest(GENmodel *,CKTcircuit*);
@@ -29,26 +28,3 @@ extern int BSIM4v2temp(GENmodel*,CKTcircuit*);
 extern int BSIM4v2trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM4v2noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM4v2unsetup(GENmodel*,CKTcircuit*);
-
-#else /* stdc */
-extern int BSIM4v2acLoad();
-extern int BSIM4v2delete();
-extern void BSIM4v2destroy();
-extern int BSIM4v2getic();
-extern int BSIM4v2load();
-extern int BSIM4v2mDelete();
-extern int BSIM4v2ask();
-extern int BSIM4v2mAsk();
-extern int BSIM4v2convTest();
-extern int BSIM4v2temp();
-extern int BSIM4v2mParam();
-extern void BSIM4v2mosCap();
-extern int BSIM4v2param();
-extern int BSIM4v2pzLoad();
-extern int BSIM4v2setup();
-extern int BSIM4v2trunc();
-extern int BSIM4v2noise();
-extern int BSIM4v2unsetup();
-
-#endif /* stdc */
-

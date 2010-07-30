@@ -75,19 +75,13 @@
 /*===========================================================*
 * Function hsm1eval. (HiSIM1.0.1)
 *=================*/
-#ifdef __STDC__
+
 int HSM1evaluate102
 (
  HiSIM_input     sIN,
  HiSIM_output    *pOT,
  HiSIM_messenger *pMS 
 )
-#else
-int HSM1evaluate102( sIN , pOT , pMS ) 
-     HiSIM_input     sIN ;
-     HiSIM_output    *pOT ;
-     HiSIM_messenger *pMS ;
-#endif
 {
 
 /*---------------------------------------------------*
