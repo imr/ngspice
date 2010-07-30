@@ -397,7 +397,7 @@ B2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->B2gateBulkOverlapCap = 0.0;
         }
         if( ! model->B2channelChargePartitionFlagGiven) {
-            model->B2channelChargePartitionFlag = 0.0;
+            model->B2channelChargePartitionFlag = 0;
         }
         if( ! model->B2sheetResistanceGiven) {
             model->B2sheetResistance = 0.0;

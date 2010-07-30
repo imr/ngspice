@@ -1,3 +1,12 @@
+2010-07-30  Robert Larice  <>
+ * src/frontend/plotting/agraf.c ,
+ * src/spicelib/devices/bsim2/b2set.c ,
+ * src/spicelib/devices/bsim4v2/b4v2set.c ,
+ * src/spicelib/devices/bsim4v3/b4v3set.c ,
+ * src/spicelib/devices/bsim4v4/b4v4set.c ,
+ * src/spicelib/devices/bsim4v5/b4v5set.c :
+    fix some literal floating point constants, which should have been integers
+
 2010-07-25  Holger Vogt
  * inpcom.c: correct loop parameter i -> pai, remove
    unnecessary output

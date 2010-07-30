@@ -1410,7 +1410,7 @@ JOB   *job;
             if (!here->BSIM4v2geoModGiven)
                 here->BSIM4v2geoMod = model->BSIM4v2geoMod;
             if (!here->BSIM4v2rgeoModGiven)
-                here->BSIM4v2rgeoMod = 0.0;
+                here->BSIM4v2rgeoMod = 0;
             if (!here->BSIM4v2trnqsModGiven)
                 here->BSIM4v2trnqsMod = model->BSIM4v2trnqsMod;
             else if ((here->BSIM4v2trnqsMod != 0) && (here->BSIM4v2trnqsMod != 1))

@@ -1739,7 +1739,7 @@ JOB   *job;
             if (!here->BSIM4v5geoModGiven)
                 here->BSIM4v5geoMod = model->BSIM4v5geoMod;
             if (!here->BSIM4v5rgeoModGiven)
-                here->BSIM4v5rgeoMod = 0.0;
+                here->BSIM4v5rgeoMod = 0;
             if (!here->BSIM4v5trnqsModGiven)
                 here->BSIM4v5trnqsMod = model->BSIM4v5trnqsMod;
             else if ((here->BSIM4v5trnqsMod != 0) && (here->BSIM4v5trnqsMod != 1))

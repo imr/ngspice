@@ -146,8 +146,8 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     else if (dst == 1) {
         dst = 10;
         mag++;
-        hmt *= 10.0;
-        lmt *= 10.0;
+        hmt *= 10;
+        lmt *= 10;
     } else if (dst == 0) {
         dst = 2;
 	lmt -= 1;
