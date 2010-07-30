@@ -1,4 +1,9 @@
 2010-07-30  Robert Larice
+ * src/frontend/evaluate.c :
+    fix an ancient typo, responsible for segfault or garbage
+      when operating on vectors
+
+2010-07-30  Robert Larice
  * src/main.c :
     need an #ifdef for one of the just added #includes
 

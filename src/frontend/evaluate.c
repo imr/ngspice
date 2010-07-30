@@ -264,7 +264,7 @@ doop(char what,
             for (i = 0; i < v2->v_length; i++)
                 c2[i] = v2->v_compdata[i];
             if (length > 0)
-                lc = v2->v_compdata[v1->v_length - 1];
+                lc = v2->v_compdata[v2->v_length - 1];
             for ( ; i < length; i++)
                 c2[i] = lc;
         }
