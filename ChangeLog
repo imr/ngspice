@@ -1,4 +1,8 @@
 2010-07-30  Robert Larice
+ * src/main.c :
+    need an #ifdef for one of the just added #includes
+
+2010-07-30  Robert Larice
  * src/frontend/com_dl.c ,
  * src/frontend/com_help.c ,
  * src/frontend/com_set.c ,

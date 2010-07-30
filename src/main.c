@@ -60,15 +60,14 @@ extern int rl_catch_signals;        /* missing from editline/readline.h */
 #include "ipctiein.h"
 #include "mif.h"
 #include "enh.h"
+#include "mifproto.h"
+#include "evtproto.h"
 #endif
 
 #ifdef CIDER
 #include "numenum.h"
 #include "maths/misc/accuracy.h"
 #endif
-
-#include "mifproto.h"
-#include "evtproto.h"
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
 char history_file[512] = {'\0'};
