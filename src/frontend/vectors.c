@@ -1010,7 +1010,7 @@ vec_mkfamily(struct dvec *v)
                     (char *) d->v_realdata, totalsize);
         } else {
 	    totalsize = sizeof (complex) * size;
-            d->v_realdata = (double *) tmalloc(totalsize);
+            d->v_compdata = (complex *) tmalloc(totalsize);
             bcopy((char *) v->v_compdata + totalsize * j,
                     (char *) d->v_compdata, totalsize);
         }

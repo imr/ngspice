@@ -1,3 +1,8 @@
+2010-07-31  Robert Larice
+ * src/frontend/vectors.c :
+    fix an ancient typo, responsible for segfault or garbage
+      when plotting multidimensional complex vectors
+
 2010-07-30  Robert Larice
  * src/frontend/evaluate.c :
     fix an ancient typo, responsible for segfault or garbage
