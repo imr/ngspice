@@ -1,4 +1,10 @@
 2010-07-31  Robert Larice
+ * src/frontend/parse.c :
+    work around a segmentation fault, when plotting
+      plot something vs vec
+    vec was freed too early
+
+2010-07-31  Robert Larice
  * src/frontend/vectors.c :
     fix an ancient typo, responsible for segfault or garbage
       when plotting multidimensional complex vectors

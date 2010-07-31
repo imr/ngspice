@@ -416,7 +416,7 @@ free_pnode_x(struct pnode *t)
 	free_pnode(t->pn_right);
 	free_pnode(t->pn_next);
 	tfree(t->pn_name); /* va: it is a copy() of original string, can be free'd */
-	if (t->pn_value)
+	if (t->pn_value && !(t->pn_value->v_flags & VF_PERMANENT))
 	    vec_free(t->pn_value); /* patch by Stefan Jones */
 	tfree(t);
     }
