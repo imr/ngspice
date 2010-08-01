@@ -41,6 +41,14 @@ echo "$PROJECT autogen.sh 1.0"
 echo
 }
 
+end_on_error()
+{
+if test "$ADMS" -eq 1; then
+  mv configure.temp configure.in
+fi
+
+exit 1
+}
 
 check_autoconf()
 {
@@ -170,27 +178,27 @@ fi
 
 echo "Running libtoolize"
 libtoolize --copy --force
-if [ $? -ne 0 ];then  echo "libtoolize failed"; goto errorhandler ; fi
+if [ $? -ne 0 ];then  echo "libtoolize failed"; end_on_error ; fi
 
 echo "Running aclocal $ACLOCAL_FLAGS"
 aclocal $ACLOCAL_FLAGS
-if [ $? -ne 0 ]; then  echo "aclocal failed"; goto errorhandler ; fi
+if [ $? -ne 0 ]; then  echo "aclocal failed"; end_on_error ; fi
 
 # optional feature: autoheader
 (autoheader --version)  < /dev/null > /dev/null 2>&1
 if [ $? -eq 0 ]; then
   echo "Running autoheader"
   autoheader
-  if [ $? -ne 0 ]; then  echo "autoheader failed"; goto errorhandler ; fi
+  if [ $? -ne 0 ]; then  echo "autoheader failed"; end_on_error ; fi
 fi
 
 echo "Running automake -Wall --copy --add-missing"
 automake -Wall --copy --add-missing $am_opt
-if [ $? -ne 0 ]; then  echo "automake failed"; goto errorhandler ; fi
+if [ $? -ne 0 ]; then  echo "automake failed"; end_on_error ; fi
 
 echo "Running autoconf"
 autoconf
-if [ $? -ne 0 ]; then  echo "autoconf failed"; goto errorhandler ; fi
+if [ $? -ne 0 ]; then  echo "autoconf failed"; end_on_error ; fi
 
 if test "$ADMS" -eq 1; then
   mv configure.temp configure.in
@@ -199,10 +207,3 @@ fi
 echo "Success."
 
 exit 0
-
-errorhandler:
-if test "$ADMS" -eq 1; then
-  mv configure.temp configure.in
-fi
-
-exit 1

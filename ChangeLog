@@ -1,3 +1,6 @@
+2010-08-01  Holger Vogt
+ * autogen.sh: update for adms
+ 
 2010-08-01  Robert Larice
  * src/pkgIndex.tcl.in ,
  * src/tclspice.c ,
