@@ -1,3 +1,23 @@
+2010-08-01  Robert Larice
+ * src/pkgIndex.tcl.in ,
+ * src/tclspice.c ,
+ * src/frontend/display.c ,
+ * src/frontend/display.h ,
+ * src/frontend/hpgl.c ,
+ * src/frontend/postsc.c ,
+ * src/frontend/plotting/grid.c ,
+ * src/frontend/plotting/plot5.c ,
+ * src/frontend/plotting/x11.c ,
+ * src/frontend/wdisp/windisp.c ,
+ * src/frontend/wdisp/winprint.c ,
+ * src/include/ftedev.h :
+    bug fix, implementation of the X11 draw arc implementation.
+    parameter change for all Arc() functions.
+      from theta1, theta2  to   theta,delta_theta
+    the previous interface was ambiguous.
+    fix the x11lineararcs implementation, which could loop forever.
+    but don't use it anyways, since the real X11 draw arc works properly now.
+
 2010-08-01  Holger Vogt
  * autogen.sh, spicelib/parser/inp2q.c: update for adms
 

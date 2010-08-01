@@ -285,18 +285,16 @@ PS_DrawLine(int x1, int y1, int x2, int y2)
 }
 
 int
-PS_Arc(int x0, int y0, int r, double theta1, double theta2)
+PS_Arc(int x0, int y0, int r, double theta, double delta_theta)
 {
     double x1, y1;
     double angle1, angle2;
     PS_Stroke();
-    while (theta1 >= theta2)
-        theta2 += 2 * M_PI;
 
-    angle1 = (double) (RAD_TO_DEG * theta1);
-    angle2 = (double) (RAD_TO_DEG * theta2);
-    x1 = (double) x0 + r * cos(theta1);
-    y1 = (double) y0 + r * sin(theta1);
+    angle1 = (double) (RAD_TO_DEG * theta);
+    angle2 = (double) (RAD_TO_DEG * (theta + delta_theta));
+    x1 = (double) x0 + r * cos(theta);
+    y1 = (double) y0 + r * sin(theta);
 
     fprintf(plotfile, "%f %f moveto ", x1+(double)xoff, y1+(double)yoff);
     fprintf(plotfile, "%d %d %d %f %f arc\n", x0+xoff, y0+yoff, r,

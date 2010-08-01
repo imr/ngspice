@@ -44,10 +44,10 @@ proc Loadspice { version dir } {
 	puts "draw"
 	.c create line [expr $x1 + 25] [expr 375 - $y1] [expr $x2 + 25] [expr 375 - $y2] 	
     }
-    proc spice_gr_Arc { x0 y0 radius theta1 theta2 } { 
+    proc spice_gr_Arc { x0 y0 radius theta delta_theta } { 
 	.c create arc [expr $x0 - $radius + 25] [expr 375 - $y0 - $radius] \
 	    [expr $x1 + $radius + 25 ] [expr 375 - $y1 + $radius] \
-	    -start $theta1 -extent $theta2 
+	    -start $theta -extent [expr $theta + $delta_theta]
     }
     proc spice_gr_Text {text x y} { 
 	.c create text [expr $x + 25] [expr 375 - $y] -text $text

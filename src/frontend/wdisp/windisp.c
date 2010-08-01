@@ -717,11 +717,11 @@ int WIN_DrawLine(int x1, int y1, int x2, int y2)
 }
 
 
-int WIN_Arc(int x0, int y0, int radius, double theta1, double theta2)
+int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
     /*
      * Notes:
      *    Draws an arc of <radius> and center at (x0,y0) beginning at
-     *    angle theta1 (in rad) and ending at theta2
+     *    angle theta (in rad) and ending at theta + delta_theta
      */
 {
    tpWindowData wd;
@@ -741,10 +741,9 @@ int WIN_Arc(int x0, int y0, int radius, double theta1, double theta2)
    if (!wd) return 0;
 
    direction = AD_COUNTERCLOCKWISE;
-   if (theta1 > theta2) {
-      temp   = theta1;
-      theta1 = theta2;
-      theta2 = temp;
+   if (delta_theta < 0) {
+      theta = theta + delta_theta;
+      delta_theta = - delta_theta;
       direction = AD_CLOCKWISE;
    }
    SetArcDirection( wd->hDC, direction);
@@ -759,15 +758,15 @@ int WIN_Arc(int x0, int y0, int radius, double theta1, double theta2)
    r = radius;
    dx0 = x0;
    dy0 = y0;
-   xs = (dx0 + (r * cos(theta1)));
-   ys = (dy0 + (r * sin(theta1)));
-   xe = (dx0 + (r * cos(theta2)));
-   ye = (dy0 + (r * sin(theta2)));
+   xs = (dx0 + (r * cos(theta)));
+   ys = (dy0 + (r * sin(theta)));
+   xe = (dx0 + (r * cos(theta + delta_theta)));
+   ye = (dy0 + (r * sin(theta + delta_theta)));
 
    /* plot */
    NewPen = CreatePen( LType(wd->ColorIndex), linewidth, ColorTable[wd->ColorIndex] );
    OldPen = SelectObject(wd->hDC, NewPen);
-   Arc( wd->hDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
+   Arc( wd->hDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);/*FIXME name clash*/
    OldPen = SelectObject(wd->hDC, OldPen);
    DeleteObject( NewPen);
 

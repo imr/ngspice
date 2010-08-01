@@ -93,7 +93,7 @@ static int numdispplanes;
 static void initlinestyles (void);
 static void initcolors (GRAPH *graph);
 static void X_ScreentoData (GRAPH *graph, int x, int y, double *fx, double *fy);
-static void linear_arc(int x0, int y0, int radius, double theta1, double theta2);
+static void linear_arc(int x0, int y0, int radius, double theta, double delta_theta);
 
 int
 errorhandler(Display *display, XErrorEvent *errorev)
@@ -503,20 +503,19 @@ X11_DrawLine(int x1, int y1, int x2, int y2)
 
 
 int
-X11_Arc(int x0, int y0, int radius, double theta1, double theta2)
+
+X11_Arc(int x0, int y0, int radius, double theta, double delta_theta)
 {
 
     int	t1, t2;
 
-    if (!cp_getvar("x11lineararcs", CP_BOOL, NULL)) {
-	linear_arc(x0, y0, radius, theta1, theta2);
+    if (0 && !cp_getvar("x11lineararcs", CP_BOOL, NULL)) {
+	linear_arc(x0, y0, radius, theta, delta_theta);
     }
 
     if (DEVDEP(currentgraph).isopen) {
-	if (theta1 >= theta2)
-	    theta2 = 2 * M_PI + theta2;
-	t1 = 64 * (180.0 / M_PI) * theta1;
-	t2 = 64 * (180.0 / M_PI) * theta2 - t1;
+	t1 = 64 * (180.0 / M_PI) * theta;
+	t2 = 64 * (180.0 / M_PI) * delta_theta;
 	if (t2 == 0)
 		return 0;
 	XDrawArc(display, DEVDEP(currentgraph).window, DEVDEP(currentgraph).gc,
@@ -1027,48 +1026,35 @@ out:
 }
 
 static void
-linear_arc(int x0, int y0, int radius, double theta1, double theta2)
+linear_arc(int x0, int y0, int radius, double theta, double delta_theta)
               /* x coordinate of center */
               /* y coordinate of center */
 	      /* radius of arc */
 	      /* initial angle ( +x axis = 0 rad ) */
-	      /* final angle ( +x axis = 0 rad ) */
+	      /* delta angle
     /*
      * Notes:
      *    Draws an arc of radius and center at (x0,y0) beginning at
-     *    angle theta1 (in rad) and ending at theta2
+     *    angle theta (in rad) and ending at theta + delta_theta
      */
 {
     int x1, y1, x2, y2;
-    int s = 60;
-    double dphi, phi;
+    int i, s = 60;
+    double dphi;
 
-    x2 = x0 + (int) (radius * cos(theta1));
-    y2 = y0 + (int) (radius * sin(theta1));
+    x2 = x0 + (int) (radius * cos(theta));
+    y2 = y0 + (int) (radius * sin(theta));
 
-    while(theta1 >= theta2)
-	theta2 += 2 * M_PI;
-    dphi = (theta2 - theta1) / s;
-
-    if ((theta1 + dphi) == theta1) {
-	theta2 += 2 * M_PI;
-	dphi = (theta2 - theta1) / s;
-    }
+    dphi = delta_theta / s;
 
 
-    for(phi = theta1 + dphi; phi < theta2; phi += dphi) {
+    for(i=1; i<=s; i++) {
 	x1 = x2;
 	y1 = y2;
-	x2 = x0 + (int)(radius * cos(phi));
-	y2 = y0 + (int)(radius * sin(phi));
+	x2 = x0 + (int)(radius * cos(theta + i*dphi));
+	y2 = y0 + (int)(radius * sin(theta + i*dphi));
 	X11_DrawLine(x1,y1,x2,y2);
     }
-
-    x1 = x2;
-    y1 = y2;
-    x2 = x0 + (int)(radius * cos(theta2));
-    y2 = y0 + (int)(radius * sin(theta2));
-    X11_DrawLine(x1,y1,x2,y2);
 }
 
 #else 

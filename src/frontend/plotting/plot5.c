@@ -116,7 +116,7 @@ Plt5_DrawLine(int x1, int y1, int x2, int y2)
 
 /* ARGSUSED */ /* until some code gets written */
 int
-Plt5_Arc(int x0, int y0, int radius, double theta1, double theta2)
+Plt5_Arc(int x0, int y0, int radius, double theta, double delta_theta)
 {
 
     return 0;

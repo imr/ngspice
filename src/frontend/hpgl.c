@@ -224,8 +224,9 @@ int x1, int y1, int x2, int y2)
 /* ARGSUSED */
 int GL_Arc(
 int x0, int y0, int r,
-double theta1, double theta2)
+double theta, double delta_theta)
 {
+/*
     double x1, y1;
     double angle1, angle2;
 
@@ -236,7 +237,7 @@ double theta1, double theta2)
     angle2 = (double) (RAD_TO_DEG * theta2);
     x1 = (double) x0 + r * cos(theta1);
     y1 = (double) y0 + r * sin(theta1);
-/*
+
     fprintf(plotfile, "%lf %lf moveto ", x1+(double)xoff, y1+(double)yoff);
     fprintf(plotfile, "%d %d %d %lf %lf arc\n", x0+xoff, y0+yoff, r,
         angle1, angle2);
