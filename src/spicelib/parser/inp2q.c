@@ -84,12 +84,16 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, void *gnode)
            INPinsert(&model, tab);
            current->error = INPgetMod(ckt, model, &thismodel, tab);
 #ifdef ADMS
-           if ((thismodel->INPmodType == INPtypelook("hicum0"))
+           if (thismodel == NULL) {
+        	   fprintf(stderr, "%s\nPlease check model, level or number of terminals!\n", current->error);
+        	   controlled_exit(EXIT_BAD);
+           }
+           else if ((thismodel->INPmodType == INPtypelook("hicum0"))
             || (thismodel->INPmodType == INPtypelook("hicum2"))
             || (thismodel->INPmodType == INPtypelook("mextram")))
            {
                node5 = gnode; /* 4-terminal adms device - thermal node to ground */
-               nname5 = "0";
+               nname5 = copy("0");
                INPtermInsert(ckt, &nname5, tab, &node5);
                nodeflag = 1;  /* now specify a 5 node device  */
            }
@@ -139,9 +143,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, void *gnode)
         }
 #endif
         type = (thismodel->INPmodType);
-        mdfast = (thismodel->INPmodfast);    
+        mdfast = (thismodel->INPmodfast);
     } else {
-       /* no model found */ 
+       /* no model found */
        type = INPtypelook("BJT");
         if (type < 0) {
             LITERR("Device type BJT not supported by this binary\n");
@@ -159,7 +163,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, void *gnode)
         }
         mdfast = tab->defQmod;
     }
-    
+
 #ifdef TRACE
     printf("INP2Q: Type: %d nodeflag: %d instancename: %s\n", type, nodeflag, name);
 #endif
@@ -187,5 +191,5 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, void *gnode)
         }
 #ifdef CIDER
    }
-#endif   
+#endif
 }

@@ -114,16 +114,27 @@ test $TEST_TYPE $FILE || {
 }
 
 
-cp -p configure.in configure.temp
+
 
 if test "$ADMS" -eq 1; then
 
+cp -p configure.in configure.temp
+
   # automake needs these entries in configure.in for adms enabled
-  sed 's/${VLAMKF}/src\/spicelib\/devices\/adms\/ekv\/Makefile\
-                   src\/spicelib\/devices\/adms\/hicum0\/Makefile\
-                   src\/spicelib\/devices\/adms\/hicum2\/Makefile\
-                   src\/spicelib\/devices\/adms\/mextram\/Makefile\
-                   src\/spicelib\/devices\/adms\/psp102\/Makefile/g' configure.temp >configure.in
+#  sed 's/${VLAMKF}/src\/spicelib\/devices\/adms\/ekv\/Makefile\
+#                   src\/spicelib\/devices\/adms\/hicum0\/Makefile\
+#                   src\/spicelib\/devices\/adms\/hicum2\/Makefile\
+#                   src\/spicelib\/devices\/adms\/mextram\/Makefile\
+#                   src\/spicelib\/devices\/adms\/psp102\/Makefile/g' configure.temp >configure.test
+  
+  sed 's/tests\/vbic\/Makefile/tests\/vbic\/Makefile\
+                 src\/spicelib\/devices\/adms\/ekv\/Makefile\
+                 src\/spicelib\/devices\/adms\/hicum0\/Makefile\
+                 src\/spicelib\/devices\/adms\/hicum2\/Makefile\
+                 src\/spicelib\/devices\/adms\/mextram\/Makefile\
+                 src\/spicelib\/devices\/adms\/psp102\/Makefile/g' configure.temp >configure.in
+  
+#  cp -p configure.in configure.test
   
   currentdir=`pwd`
   
@@ -155,36 +166,43 @@ if test "$ADMS" -eq 1; then
     fi 
   done
 
-else
-
-  sed '/${VLAMKF}/d' configure.temp >configure.in
-
 fi
 
 echo "Running libtoolize"
 libtoolize --copy --force
-if [ $? -ne 0 ];then  echo "libtoolize failed"; exit 1 ; fi
+if [ $? -ne 0 ];then  echo "libtoolize failed"; goto errorhandler ; fi
 
 echo "Running aclocal $ACLOCAL_FLAGS"
 aclocal $ACLOCAL_FLAGS
-if [ $? -ne 0 ]; then  echo "aclocal failed"; exit 1 ; fi
+if [ $? -ne 0 ]; then  echo "aclocal failed"; goto errorhandler ; fi
 
 # optional feature: autoheader
 (autoheader --version)  < /dev/null > /dev/null 2>&1
 if [ $? -eq 0 ]; then
   echo "Running autoheader"
   autoheader
-  if [ $? -ne 0 ]; then  echo "autoheader failed"; exit 1 ; fi
+  if [ $? -ne 0 ]; then  echo "autoheader failed"; goto errorhandler ; fi
 fi
 
 echo "Running automake -Wall --copy --add-missing"
 automake -Wall --copy --add-missing $am_opt
-if [ $? -ne 0 ]; then  echo "automake failed"; exit 1 ; fi
+if [ $? -ne 0 ]; then  echo "automake failed"; goto errorhandler ; fi
 
 echo "Running autoconf"
 autoconf
-if [ $? -ne 0 ]; then  echo "autoconf failed"; exit 1 ; fi
+if [ $? -ne 0 ]; then  echo "autoconf failed"; goto errorhandler ; fi
 
-mv configure.temp configure.in
+if test "$ADMS" -eq 1; then
+  mv configure.temp configure.in
+fi
 
 echo "Success."
+
+exit 0
+
+errorhandler:
+if test "$ADMS" -eq 1; then
+  mv configure.temp configure.in
+fi
+
+exit 1

@@ -1,3 +1,6 @@
+2010-08-01  Holger Vogt
+ * autogen.sh, spicelib/parser/inp2q.c: update for adms
+
 2010-07-31  Robert Larice
  * src/frontend/parse.c :
     work around a segmentation fault, when plotting
