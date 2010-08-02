@@ -1,3 +1,8 @@
+2010-08-02  Robert Larice
+ * src/frontend/hpgl.c ,
+ * src/frontend/plotting/plot5.c :
+    implement Arc() for plot5 and hpgl (smith diagram)
+
 2010-08-01  Holger Vogt
  * autogen.sh: update for adms
  

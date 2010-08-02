@@ -114,10 +114,49 @@ Plt5_DrawLine(int x1, int y1, int x2, int y2)
     return 0;
 }
 
-/* ARGSUSED */ /* until some code gets written */
 int
-Plt5_Arc(int x0, int y0, int radius, double theta, double delta_theta)
+Plt5_Arc(int xc, int yc, int radius, double theta, double delta_theta)
 {
+    int x0,y0,x1,y1;
+
+    if(delta_theta < 0) {
+        theta += delta_theta;
+        delta_theta = -delta_theta;
+    }
+
+    if((2*M_PI - delta_theta)*radius < 0.5) {
+
+       putc('c', plotfile);
+       putsi(xc);
+       putsi(yc);
+       putsi(radius);
+
+       return 0;
+    }
+
+    while(delta_theta*radius > 0.5) {
+
+        double delta_phi = M_PI/2;
+
+        if(delta_phi > delta_theta)
+            delta_phi = delta_theta;
+
+        x0 = xc + (radius * cos(theta));
+        y0 = yc + (radius * sin(theta));
+        x1 = xc + (radius * cos(theta + delta_phi));
+        y1 = yc + (radius * sin(theta + delta_phi));
+
+        putc('a', plotfile);
+        putsi(xc);
+        putsi(yc);
+        putsi(x0);
+        putsi(y0);
+        putsi(x1);
+        putsi(y1);
+
+        delta_theta -= delta_phi;
+        theta       += delta_phi;
+    }
 
     return 0;
 }

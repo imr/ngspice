@@ -226,23 +226,16 @@ int GL_Arc(
 int x0, int y0, int r,
 double theta, double delta_theta)
 {
-/*
-    double x1, y1;
-    double angle1, angle2;
+    int  x1, y1, angle;
 
-    while (theta1 >= theta2)
-        theta2 += 2 * M_PI;
+    x1 = x0 + r * cos(theta);
+    y1 = y0 + r * sin(theta);
 
-    angle1 = (double) (RAD_TO_DEG * theta1);
-    angle2 = (double) (RAD_TO_DEG * theta2);
-    x1 = (double) x0 + r * cos(theta1);
-    y1 = (double) y0 + r * sin(theta1);
+    angle = RAD_TO_DEG * delta_theta;
 
-    fprintf(plotfile, "%lf %lf moveto ", x1+(double)xoff, y1+(double)yoff);
-    fprintf(plotfile, "%d %d %d %lf %lf arc\n", x0+xoff, y0+yoff, r,
-        angle1, angle2);
-    fprintf(plotfile, "stroke\n");
-  */
+    fprintf(plotfile, "PU;PA %d , %d;", jgmult*(x1+xoff+XTADJ), jgmult*(y1+yoff+YTADJ));
+    fprintf(plotfile, "PD;AA %d , %d, %d;", jgmult*(x0+xoff+XTADJ), jgmult*(y0+yoff+YTADJ), angle);
+
     DEVDEP(currentgraph).linecount = 0;
 
     return 0;
