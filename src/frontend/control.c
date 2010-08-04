@@ -239,8 +239,10 @@ docommand(wordlist *wlist)
         /* Now fix the pointers and advance wlist. */
     out:        wlist->wl_prev = ee;
         if (nextc) {
-            if (nextc->wl_prev)
-                nextc->wl_prev->wl_next = nextc;
+            for(wl=wlist; wl->wl_next; wl=wl->wl_next)
+                ;
+            wl->wl_next = nextc;
+            nextc->wl_prev = wl;
             wlist = nextc->wl_next;
         }
     } while (nextc && wlist);

@@ -1,3 +1,10 @@
+2010-08-04  Robert Larice
+ * src/frontend/control.c :
+    fix an ancient bug, trampling on freed memory causing segfaults and sickness.
+    getlims() {a function used by plot} does surgery to a wordlist,
+      freeing some words.
+    yet docommand() relied on the wordlist being unmodified.
+
 2010-08-02  Robert Larice
  * src/frontend/hpgl.c ,
  * src/frontend/plotting/plot5.c :
