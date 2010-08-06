@@ -34,6 +34,7 @@ $Id$
 #include "variable.h"
 #include "breakp2.h"
 #include "../misc/util.h" /* dirname() */
+#include "error.h" /* controlled_exit() */
 
 #ifdef XSPICE
 /* include new stuff */
@@ -757,6 +758,11 @@ inp_dodeck(
                     break;
                 case CP_STRING:
                     break;
+                default:
+                {
+                    fprintf(stderr, "ERROR: enumeration value `CP_LIST' not handled in inp_dodeck\nAborting...\n" );
+                    controlled_exit(EXIT_FAILURE);
+                }
             } /* switch  . . . */
         }
         options = opt_beg; // back to the beginning
@@ -899,6 +905,11 @@ inp_dodeck(
 		  if_option(ct->ci_ckt, eev->va_name, 
 			    eev->va_type, eev->va_string);
 		  break;
+                default:
+                {
+                    fprintf(stderr, "ERROR: enumeration value `CP_LIST' not handled in inp_dodeck\nAborting...\n" );
+                    controlled_exit(EXIT_FAILURE);
+                }
 	    } // switch  . . . 
         }
     } // if (!noparse)  . . .

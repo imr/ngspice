@@ -19,6 +19,7 @@ $Id$
 #include "variable.h"
 #include "vectors.h"
 #include "plotting/plotting.h"
+#include "error.h" /* controlled_exit() */
 
 #ifdef XSPICE
 /* gtri - begin - add function prototype for EVTfindvec */
@@ -519,6 +520,11 @@ vec_get(const char *vec_name)
 		case  CP_NUM:
 			fprintf(stdout,"%s=%d\n",nv->va_name,nv->va_num);
 			break;	
+                default:
+                {
+                    fprintf(stderr, "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not handled in vec_get\nAborting...\n" );
+                    controlled_exit(EXIT_FAILURE);
+                }
 	}
 	nv = nv->va_next;
 	

@@ -220,6 +220,11 @@ inp_pathopen(char *name, char *mode)
             case CP_REAL:   /* This is foolish */
 		(void) sprintf(buf, "%g%s%s", v->va_real, DIR_PATHSEP, name);
 		break;
+            default:
+            {
+                fprintf(stderr, "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not handled in inp_pathopen\nAborting...\n" );
+                controlled_exit(EXIT_FAILURE);
+            }
         }
         if ((fp = fopen(buf, mode)))
             return (fp);

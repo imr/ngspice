@@ -17,6 +17,8 @@
 #include "dotcards.h"
 #include "com_measure2.h"
 
+#include "error.h" /* controlled_exit() */
+
 typedef enum {
    MEASUREMENT_OK = 0,
    MEASUREMENT_FAILURE = 1
@@ -1685,6 +1687,12 @@ get_measure2(
          printf("Error: measure  %s  :\n", mName);
          printf("\tfunction '%s' currently not supported\n", mFunction);
          break;
+      }
+
+      default:
+      {
+         fprintf(stderr, "ERROR: enumeration value `AT_UNKNOWN' not handled in get_measure2\nAborting...\n" );
+         controlled_exit(EXIT_FAILURE);
       }
    }
    return MEASUREMENT_FAILURE;
