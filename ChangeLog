@@ -1,3 +1,7 @@
+2010-08-06 Dietmar Warning
+ * spicelib/parser/inp2q.c: add prototype for controlled_exit
+ * frontend/com_measure2.c, inp.c, inpcom.c, vectors.c: fallback for not handled enumeration values in switch
+
 2010-08-04  Robert Larice
  * src/frontend/control.c :
     fix an ancient bug, trampling on freed memory causing segfaults and sickness.
