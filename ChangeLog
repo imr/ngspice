@@ -1,3 +1,10 @@
+2010-08-07  Robert Larice
+ * configure.in :
+    for gcc, don't report `unused parameter' Warnings
+ * src/Makefile.am
+    (bug tracker ID: 3019263)
+    add missing $(EXEEXT) for cygwin, thank you marco atzeri
+
 2010-08-06 Dietmar Warning
  * spicelib/parser/inp2q.c: add prototype for controlled_exit
  * frontend/com_measure2.c, inp.c, inpcom.c, vectors.c: fallback for not handled enumeration values in switch
