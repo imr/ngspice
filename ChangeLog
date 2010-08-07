@@ -1,3 +1,7 @@
+2010-08-07 Dietmar Warning
+ spicelib/devices/*/b4soimask.c, csw*.c, mos6load.c, soi3load.c, swnoise.c: 
+    fix some wrong 'double' to 'int' assignments
+
 2010-08-07  Robert Larice
  * src/main.c :
     bug fix, segfault caused by an ancient `editline' workaround
