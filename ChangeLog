@@ -1,4 +1,12 @@
 2010-08-07  Robert Larice
+ * src/tclspice.c ,
+ * src/include/tclspice.h :
+    bug fix, I've recently broken compilation of tclspice.
+    - missing #include
+    - use the GENmodel and GENinstance type instead of void*
+    - muffle some type warnings.
+
+2010-08-07  Robert Larice
  * configure.in :
     for gcc, don't report `unused parameter' Warnings
  * src/Makefile.am

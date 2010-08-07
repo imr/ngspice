@@ -680,7 +680,7 @@ static int _run(int argc,char **argv){
 
   /* Catch Ctrl-C to break simulations */
 #ifndef _MSC_VER_
-  oldHandler = signal(SIGINT,ft_sigintr);
+  oldHandler = signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
   if(SETJMP(jbuf, 1)!=0) {
       signal(SIGINT,oldHandler);
       return TCL_OK;
@@ -1200,8 +1200,8 @@ static int get_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 int get_mod_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   char *name;
   char *paramname;
-  void *devptr=NULL;
-  void *modptr=NULL;
+  GENinstance *devptr=NULL;
+  GENmodel *modptr=NULL;
   IFdevice *device;
   IFparm *opt;
   IFvalue pv;
@@ -1235,7 +1235,7 @@ int get_mod_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   err = (*(ft_sim->findInstance))(ft_curckt->ci_ckt,&typecode,&devptr,name,NULL,NULL);
   if (err != OK) {
     typecode = -1;
-    devptr   = (void *)NULL;
+    devptr   = NULL;
     err = (*(ft_sim->findModel))(ft_curckt->ci_ckt,&typecode,&modptr,name);
   }
   if (err != OK) {
@@ -1253,10 +1253,10 @@ int get_mod_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
       found=TRUE;
     } else if (strcmp(paramname,opt->keyword)==0) {
       if (devptr)
-        err = (*(ft_sim->askInstanceQuest))(ft_curckt->ci_ckt, (GENinstance*) devptr, 
+        err = (*(ft_sim->askInstanceQuest))(ft_curckt->ci_ckt, devptr,
                 opt->id, &pv, (IFvalue *)NULL);
       else
-        err = (*(ft_sim->askModelQuest))(ft_curckt->ci_ckt, (GENmodel*) modptr, 
+        err = (*(ft_sim->askModelQuest))(ft_curckt->ci_ckt, modptr,
                 opt->id, &pv, (IFvalue *)NULL);
       if (err==OK) {
       	sprintf(buf,"%g",pv.rValue); /* dataType is here always real */
@@ -2202,7 +2202,7 @@ int Spice_Init(Tcl_Interp *interp) {
 
     /* Read the user config files */
     /* To catch interrupts during .spiceinit... */
-    old_sigint = signal(SIGINT, ft_sigintr);
+    old_sigint = signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
     if (SETJMP(jbuf, 1) == 1) {
         fprintf(cp_err, "Warning: error executing .spiceinit.\n");
         goto bot;

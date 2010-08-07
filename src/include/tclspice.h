@@ -12,6 +12,7 @@ extern void blt_lockvec(int index);
 int Tcl_ExecutePerLoop();
 
 #include <graph.h>
+#include <ftedev.h>
 
 /* For tk ploting */
 disp_fn_Init_t             sp_Tk_Init;
