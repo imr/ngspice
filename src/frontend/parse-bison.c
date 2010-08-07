@@ -161,7 +161,7 @@ typedef union YYSTYPE
   const char  *str;
   struct pnode *pnode;
 }
-/* Line 193 of yacc.c.  */
+/* Line 187 of yacc.c.  */
 #line 166 "parse-bison.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -1579,7 +1579,7 @@ yyreduce:
 
   case 19:
 #line 142 "parse-bison.y"
-    { (yyval.pnode) = mkfnode((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].pnode)); ;}
+    { (yyval.pnode) = mkfnode((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].pnode)); if(!(yyval.pnode)) YYABORT; ;}
     break;
 
   case 20:

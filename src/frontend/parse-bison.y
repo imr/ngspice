@@ -139,7 +139,7 @@ exp:
   | '-' exp  %prec NEG                { $$ = mkunode(UMINUS, $2); }
   | '~' exp                           { $$ = mkunode(NOT, $2); }
 
-  | TOK_STR '(' exp ')'               { $$ = mkfnode($1, $3); }
+  | TOK_STR '(' exp ')'               { $$ = mkfnode($1, $3); if(!$$) YYABORT; }
 
   | exp '=' exp                       { $$ = mkbnode(EQ, $1, $3); }
   | exp TOK_NE exp                    { $$ = mkbnode(NE, $1, $3); }

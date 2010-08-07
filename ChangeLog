@@ -1,3 +1,10 @@
+2010-08-07  Robert Larice
+ * src/frontend/parse-bison.c ,
+ * src/frontend/parse-bison.h ,
+ * src/frontend/parse-bison.y :
+    bug fix,
+      avoid segfault, caused when parsing an unknown function in parse-bison.y
+
 2010-08-07 Dietmar Warning
  spicelib/devices/*/b4soimask.c, csw*.c, mos6load.c, soi3load.c, swnoise.c: 
     fix some wrong 'double' to 'int' assignments
