@@ -1231,10 +1231,10 @@ IFvalue *value)
             value->iValue = model->B4SOIrgateMod;
             return(OK);
         case B4SOI_MOD_XRCRG1:
-            value->iValue = model->B4SOIxrcrg1; /* FIXME rValue to iValue ? */
+            value->rValue = model->B4SOIxrcrg1; /* Changed from iValue to rvalue */
             return(OK);
         case B4SOI_MOD_XRCRG2:
-            value->iValue = model->B4SOIxrcrg2; /* FIXME rValue to iValue ? */
+            value->rValue = model->B4SOIxrcrg2; /* Changed from iValue to rvalue */
             return(OK);
         case B4SOI_MOD_RSHG:
             value->rValue = model->B4SOIrshg;

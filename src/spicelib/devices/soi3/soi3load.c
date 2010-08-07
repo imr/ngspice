@@ -958,7 +958,7 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
 
             double vdsat;
             double Dvdsat_Dvgfb,Dvdsat_Dvsb,Dvdsat_Dvdb,Dvdsat_DdeltaT;
-            int    m,i;
+            int    i;
             double vds2m,vdsat2m,Em,vdslim;
             double Dvdslim_Dvgfb,Dvdslim_Dvdb,Dvdslim_Dvsb,Dvdslim_DdeltaT;
             double Vmx;

@@ -35,7 +35,7 @@ CSWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
                 here=here->CSWnextInstance) {
 	    if (here->CSWowner != ARCHme) continue;
 
-            current_state = *(ckt->CKTstate0 + here->CSWstate);
+            current_state = (int)*(ckt->CKTstate0 + here->CSWstate);
 
             g_now = current_state?(model->CSWonConduct):(model->CSWoffConduct);
 

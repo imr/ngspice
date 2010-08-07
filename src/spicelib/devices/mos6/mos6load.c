@@ -82,7 +82,7 @@ MOS6load(GENmodel *inModel, CKTcircuit *ckt)
 #endif /* CAPBYPASS */ 
     int SenCond;
 
-    int m;
+    double m;
 
 #ifdef CAPBYPASS
     senflag = 0;

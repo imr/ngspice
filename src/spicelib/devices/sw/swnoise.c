@@ -97,7 +97,7 @@ if (!data->namelist) return(E_NOMEM);
 		switch (mode) {
 
 		case N_DENS:
-		    current_state = *(ckt->CKTstate0 + inst->SWstate);
+		    current_state = (int)*(ckt->CKTstate0 + inst->SWstate);
 		    NevalSrc(&noizDens,&lnNdens,ckt,THERMNOISE,
 				 inst->SWposNode,inst->SWnegNode,
 				 current_state?(model->SWonConduct):(model->SWoffConduct));
