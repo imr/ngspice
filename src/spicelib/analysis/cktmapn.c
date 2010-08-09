@@ -40,7 +40,7 @@ CKTmapNode(CKTcircuit *ckt, void **node, IFuid name)
 				      (IFuid) NULL,
 				      name,
 				      UID_SIGNAL,
-				      (void**)mynode);  /* get a uid for it */
+				      (void**)&mynode);  /* get a uid for it */
     if(error) return(error);
     mynode->name = uid;     /* set the info we have */
     mynode->type = SP_VOLTAGE;
