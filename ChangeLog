@@ -1,3 +1,7 @@
+2010-08-09  Robert Larice
+ * src/spicelib/parser/inpgval.c :
+    fix assignment to a member of union IFvalue
+
 2010-08-07  Robert Larice
  * src/frontend/parse-bison.c ,
  * src/frontend/parse-bison.h ,

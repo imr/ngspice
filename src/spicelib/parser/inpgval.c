@@ -65,7 +65,7 @@ IFvalue *INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables * tab)
     } else if (type == IF_INSTANCE) {
 	INPgetTok(line, &word, 1);
 	INPinsert(&word, tab);
-	temp.nValue = word;
+	temp.uValue = word;
     } else if (type == IF_STRING) {
 	INPgetStr(line, &word, 1);
 	temp.sValue = word;
