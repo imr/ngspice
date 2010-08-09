@@ -320,8 +320,8 @@ gen_Input(REQUEST *request, RESPONSE *response)
 
     switch (request->option) {
       case char_option:
-        response->reply.ch = inchar(request->fp);
-        response->option = request->option;
+	if (response)
+	    response->option = request->option;
         break;
       default:
         /* just ignore, since we don't want a million error messages */

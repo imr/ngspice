@@ -162,12 +162,15 @@ static void app_rl_readlines(void);
 static char * prompt(void);
 #endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
 
+#ifndef X_DISPLAY_MISSING
+#include "frontend/plotting/x11.h"
 #ifdef HAVE_GNUREADLINE
-static int rl_event_func(void) ;
+static int app_event_func(void) ;
 #endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
 #ifdef HAVE_BSDEDITLINE
-static void rl_event_func(void) ;
+static void app_event_func(void) ;
 #endif /* HAVE_BSDEDITLINE */
+#endif
 
 static void show_help(void);
 static void show_version(void);
@@ -481,16 +484,18 @@ prompt(void)
 }
 #endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
 
+#ifndef X_DISPLAY_MISSING
 #ifdef HAVE_GNUREADLINE
 /* -------------------------------------------------------------------------- */
 /* Process device events in Readline's hook since there is no where
    else to do it now - AV */
 static int
-rl_event_func(void)
+app_event_func(void)
 /* called by GNU readline periodically to know what to do about keypresses */
 {
-    static REQUEST reqst = { checkup_option, 0 };
-    Input(&reqst, NULL);
+    static REQUEST reqst = { char_option, 0 };
+    reqst.fp = rl_instream;
+    X11_Input(&reqst, NULL);
     return 0;
 }
 #endif /* HAVE_GNUREADLINE */
@@ -500,13 +505,15 @@ rl_event_func(void)
 /* Process device events in Editline's hook.
    similar to the readline function above but returns void */
 static void
-rl_event_func()
+app_event_func(void)
 /* called by GNU readline periodically to know what to do about keypresses */
 {
-    static REQUEST reqst = { checkup_option, 0 };
-    Input(&reqst, NULL);
+    static REQUEST reqst = { char_option, 0 };
+    reqst.fp = rl_instream;
+    X11_Input(&reqst, NULL);
 }
 #endif /* HAVE_BSDEDITLINE */
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* This is the command processing loop for spice and nutmeg.
@@ -532,7 +539,10 @@ app_rl_readlines(void)
     rl_readline_name = application_name;
     rl_instream = cp_in;
     rl_outstream = cp_out;
-    rl_event_hook = rl_event_func;
+#ifndef X_DISPLAY_MISSING
+    if(dispdev->Input == X11_Input)
+        rl_event_hook = app_event_func;
+#endif
     rl_catch_signals = 0;   /* disable signal handling  */
 
     /* sjb - what to do for editline?

@@ -984,7 +984,6 @@ X11_Input(REQUEST *request, RESPONSE *response)
 		      }
 
 		      if (FD_ISSET (fileno(request->fp), &rfds)) {
-			    response->reply.ch = inchar(request->fp);
 			    goto out;
 		      }
 

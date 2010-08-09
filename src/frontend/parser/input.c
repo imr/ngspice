@@ -57,6 +57,6 @@ input(FILE *fp)
     request.option = char_option;
     request.fp = fp;
     Input(&request, &response);
-    return(response.reply.ch);
+    return(inchar(fp));
 
 }

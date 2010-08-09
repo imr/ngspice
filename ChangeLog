@@ -1,4 +1,13 @@
 2010-08-09  Robert Larice
+ * src/frontend/display.c ,
+ * src/frontend/parser/input.c ,
+ * src/frontend/plotting/x11.c ,
+ * src/main.c :
+    fix a busy waiting loop when using editline. rl_event_hook must block until
+      there is some work to do. (select on stdin and the X11 socket).
+    For non-X11, don't use rl_event_hook at all.
+
+2010-08-09  Robert Larice
  * src/spicelib/analysis/cktmapn.c :
     bug fix, incorrect indirection level, yet without consequence,
       function CKTmapNode() is unused.
