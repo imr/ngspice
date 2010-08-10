@@ -287,7 +287,7 @@ extern int CKTdelTask(CKTcircuit *, void *);
 extern int CKTdestroy(CKTcircuit *);
 extern int CKTdltAnal(void *, void *, void *);
 extern int CKTdltInst(CKTcircuit *, void *);
-extern int CKTdltMod(CKTcircuit *, void *);
+extern int CKTdltMod(CKTcircuit *, GENmodel *);
 extern int CKTdltNNum(CKTcircuit *, int);
 extern int CKTdltNod(CKTcircuit *, void *);
 extern int CKTdoJob(CKTcircuit *, int , void *);

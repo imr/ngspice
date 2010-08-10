@@ -383,7 +383,7 @@ struct IFsimulator {
                                     /* ask a questions about a model */
     int (*findModel) (CKTcircuit *, int *, GENmodel **, IFuid);
                                     /* find a specific model */
-    int (*deleteModel) (CKTcircuit *, void *);
+    int (*deleteModel) (CKTcircuit *, GENmodel *);
                                     /* delete a model from the circuit*/
 
     int (*newTask) (CKTcircuit *, void **, IFuid, void **); /*CDHW*/

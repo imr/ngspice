@@ -30,7 +30,7 @@ int CKTdelTask( CKTcircuit *, void *);
 int CKTdestroy( CKTcircuit *);
 int CKTdltAnal( void *, void *, void *);
 int CKTdltInst( CKTcircuit *, void *);
-int CKTdltMod( CKTcircuit *, void *);
+int CKTdltMod( CKTcircuit *, GENmodel *);
 int CKTdltNod( CKTcircuit *, void *);
 int CKTdoJob( CKTcircuit *, int , void *);
 void CKTdump( CKTcircuit *, double, void *);

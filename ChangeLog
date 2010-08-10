@@ -1,4 +1,11 @@
 2010-08-10  Robert Larice
+ * src/include/cktdefs.h ,
+ * src/include/ifsim.h ,
+ * src/spicelib/analysis/ckt.h ,
+ * src/spicelib/analysis/cktdltm.c :
+    use GENmodel*, instead of void*
+
+2010-08-10  Robert Larice
  * src/maths/ni/niniter.c' :
     drop (SMPmatrix*) casts, which are no longer necessary
 
