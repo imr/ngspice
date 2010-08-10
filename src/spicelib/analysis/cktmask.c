@@ -18,10 +18,10 @@ Author: 1985 Thomas L. Quarles
 int
 CKTmodAsk(CKTcircuit *ckt, GENmodel *modfast, int which, IFvalue *value, IFvalue *selector)
 {
-    int type = ((GENmodel *)modfast)->GENmodType;
+    int type = modfast->GENmodType;
     if((*DEVices[type]).DEVmodAsk) {
         return( (*((*DEVices[type]).DEVmodAsk)) (ckt,
-                (GENmodel *)modfast,which,value) );
+                modfast, which, value) );
     }
     return(E_BADPARM);
 }

@@ -77,7 +77,7 @@ int CLUsetup(CKTcircuit *ckt){
 
   /* count the number of connections expected */
   i = INPtypelook("Isource");
-  for(mod = (GENmodel *)ckt->CKThead[i];
+  for(mod = ckt->CKThead[i];
       mod != NULL;
       mod = mod->GENnextModel)
     for (inst = mod->GENinstances;
@@ -115,7 +115,7 @@ static int setup_output(CKTcircuit *ckt){
   lastTimeSent = 0;
   type = INPtypelook("Isource");
 
-  for(mod = (GENmodel *)ckt->CKThead[type];
+  for(mod = ckt->CKThead[type];
       mod != NULL;
       mod = mod->GENnextModel)
 
@@ -238,7 +238,7 @@ static int setup_input(CKTcircuit *ckt){
     input->time = -1;
 
     /*Find the Isource to control*/
-    for(mod = (GENmodel *)ckt->CKThead[type];
+    for(mod = ckt->CKThead[type];
 	mod != NULL;
 	mod = mod->GENnextModel)
       

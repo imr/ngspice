@@ -305,10 +305,10 @@ resume:
                          1/(((RESinstance *)(cv->TRCVvElt[i]))->RESresist); 
                          /* Note: changing the resistance does nothing */
                          /* changing the conductance 1/r instead */
-                DEVices[rcode]->DEVload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 		
+                DEVices[rcode]->DEVload(cv->TRCVvElt[i]->GENmodPtr, ckt);
       
       /*
-       * RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 
+       * RESload(cv->TRCVvElt[i]->GENmodPtr, ckt);
        */
         
         
@@ -496,9 +496,9 @@ nextstep:;
             /* This code should update resistance and conductance */    
             ((RESinstance*)(cv->TRCVvElt[i]))->RESconduct =
                 1/(((RESinstance*)(cv->TRCVvElt[i]))->RESresist);
-            DEVices[rcode]->DEVload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 	    
+            DEVices[rcode]->DEVload(cv->TRCVvElt[i]->GENmodPtr, ckt);
             /*
-        * RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt);
+        * RESload(cv->TRCVvElt[i]->GENmodPtr, ckt);
         */ 
         }
         /* PN Temp Sweep - serban */
@@ -540,10 +540,10 @@ nextstep:;
                 1/(((RESinstance*)(cv->TRCVvElt[i]))->RESresist);
        
             ((RESinstance*)(cv->TRCVvElt[i]))->RESresGiven = cv->TRCVgSave[i];
-            DEVices[rcode]->DEVload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 
+            DEVices[rcode]->DEVload(cv->TRCVvElt[i]->GENmodPtr, ckt);
        
        /*
-        * RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt);
+        * RESload(cv->TRCVvElt[i]->GENmodPtr, ckt);
         */ 
         }
         else if(cv->TRCVvType[i] == TEMP_CODE) {

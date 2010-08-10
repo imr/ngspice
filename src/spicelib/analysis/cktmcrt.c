@@ -29,8 +29,8 @@ CKTmodCrt(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid name)
         if(mymodfast == (GENmodel *)NULL) return(E_NOMEM);
         mymodfast->GENmodType = type;
         mymodfast->GENmodName = name;
-        mymodfast->GENnextModel =(GENmodel *)(ckt->CKThead[type]);
-        ckt->CKThead[type]=(GENmodel *)mymodfast;
+        mymodfast->GENnextModel = ckt->CKThead[type];
+        ckt->CKThead[type] = mymodfast;
         if(modfast) *modfast=mymodfast;
         return(OK);
     } else if (error==0) {

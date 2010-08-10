@@ -46,7 +46,7 @@ CKTfndDev(CKTcircuit *Ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
    if (*type >= 0 && *type < DEVmaxnum) {
       /* have device type, need to find model & device */
       /* look through all models */
-      for (mods = (GENmodel *)ckt->CKThead[*type];
+      for (mods = ckt->CKThead[*type];
 	     mods != NULL ; 
 	     mods = mods->GENnextModel) 
       {
@@ -73,7 +73,7 @@ CKTfndDev(CKTcircuit *Ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
       for(*type = 0; *type < DEVmaxnum; (*type)++) {
          /* need to find model & device */
          /* look through all models */
-         for(mods=(GENmodel *)ckt->CKThead[*type];mods!=NULL;
+         for(mods = ckt->CKThead[*type]; mods != NULL;
             mods = mods->GENnextModel) 
          {
             /* and all instances */

@@ -843,7 +843,7 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val )
     fprintf(cp_err, "Error: no such model %s.\n", val);
     return;
   }
-  newMod = (GENmodel*)(inpmod->INPmodfast);
+  newMod = inpmod->INPmodfast;
 
   /* see if new model name same as current model name */
   if ( newMod->GENmodName == curMod->GENmodName ) {

@@ -1,3 +1,13 @@
+2010-08-10  Robert Larice
+ * src/frontend/spiceif.c ,
+ * src/spicelib/analysis/cktmask.c ,
+ * src/spicelib/analysis/cktmcrt.c ,
+ * src/spicelib/analysis/cluster.c ,
+ * src/spicelib/analysis/dctrcurv.c ,
+ * src/spicelib/devices/cktcrte.c ,
+ * src/spicelib/devices/cktfinddev.c :
+    drop (GENmodel*) casts, which are no longer necessary
+
 2010-08-09  Robert Larice
  * src/frontend/display.c ,
  * src/frontend/parser/input.c ,

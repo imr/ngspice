@@ -19,7 +19,7 @@ int
 CKTcrtElt(CKTcircuit *ckt, GENmodel *inModPtr, GENinstance **inInstPtr, IFuid name)
 {
   GENinstance *instPtr = NULL;             /* instPtr points to the data struct for per-instance data */
-  GENmodel *modPtr = (GENmodel*)inModPtr;  /* modPtr points to the data struct for per-model data */
+  GENmodel *modPtr = /*fixme*/ inModPtr;  /* modPtr points to the data struct for per-model data */
 
     SPICEdev **DEVices;
     int error;
@@ -27,10 +27,10 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *inModPtr, GENinstance **inInstPtr, IFuid na
 
     DEVices = devices();
 
-    if( (GENmodel *)modPtr == (GENmodel*)NULL ) 
+    if(!modPtr)
 	return E_NOMOD;
 
-    type = ((GENmodel*)modPtr)->GENmodType; 
+    type = modPtr->GENmodType;
 
     error = CKTfndDev(ckt, &type, &instPtr, name, inModPtr,
 		      (char *)NULL );
