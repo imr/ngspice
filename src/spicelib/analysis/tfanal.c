@@ -79,8 +79,8 @@ TFanal(CKTcircuit *ckt, int restart)
     }
 
     if(((TFan*)ckt->CKTcurJob)->TFinIsI) {
-        ckt->CKTrhs[((GENinstance*)ptr)->GENnode1] -= 1;
-        ckt->CKTrhs[((GENinstance*)ptr)->GENnode2] += 1;
+        ckt->CKTrhs[ptr->GENnode1] -= 1;
+        ckt->CKTrhs[ptr->GENnode2] += 1;
     } else {
         insrc = CKTfndBranch(ckt,((TFan*)ckt->CKTcurJob)->TFinSrc);
         ckt->CKTrhs[insrc] += 1;
@@ -127,8 +127,8 @@ TFanal(CKTcircuit *ckt, int restart)
 
     /* now for input resistance */
     if(((TFan*)ckt->CKTcurJob)->TFinIsI) {
-        outputs[1] = ckt->CKTrhs[((GENinstance*)ptr)->GENnode2] -
-                ckt->CKTrhs[((GENinstance*)ptr)->GENnode1];
+        outputs[1] = ckt->CKTrhs[ptr->GENnode2] -
+                ckt->CKTrhs[ptr->GENnode1];
     } else {
         if(fabs(ckt->CKTrhs[insrc])<1e-20) {
             outputs[1]=1e20;
