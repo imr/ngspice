@@ -16,10 +16,10 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTparam(CKTcircuit *ckt, void *fast, int param, IFvalue *val, IFvalue *selector)
+CKTparam(CKTcircuit *ckt, GENinstance *fast, int param, IFvalue *val, IFvalue *selector)
 {
     int type;
-    GENinstance *myfast = (GENinstance *)fast;
+    GENinstance *myfast = /*fixme*/ fast;
     type = myfast->GENmodPtr->GENmodType;
     if(((*DEVices[type]).DEVparam)) {
         return(((*((*DEVices[type]).DEVparam)) (param,val,myfast,selector)));

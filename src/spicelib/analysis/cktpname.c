@@ -36,7 +36,7 @@ CKTpName(char *parm, IFvalue *val, CKTcircuit *ckt, int dev, char *name, GENinst
     for(i=0;i<(*(*DEVices[dev]).DEVpublic.numInstanceParms);i++) {
         if(strcmp(parm,
                 ((*DEVices[dev]).DEVpublic.instanceParms[i].keyword))==0) {
-            error = CKTparam(ckt,(void *)*fast,
+            error = CKTparam(ckt, *fast,
                     (*DEVices[dev]).DEVpublic.instanceParms[i].id,val,
                     (IFvalue *)NULL);
             if(error) return(error);

@@ -52,7 +52,7 @@ int INPapName(CKTcircuit *ckt, int type, void *analPtr, char *parmname, IFvalue 
 void INPcaseFix(register char *string);
 char * INPdomodel(CKTcircuit *ckt, card *image, INPtables *tab);
 void INPdoOpts(CKTcircuit *ckt, void *anal, card *optCard, INPtables *tab);
-char * INPdevParse(char **line, CKTcircuit *ckt, int dev, void *fast, double *leading, 
+char * INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast, double *leading,
 		   int *waslead, INPtables *tab);
 char * INPerrCat(char *a, char *b);
 char * INPerror(int type);

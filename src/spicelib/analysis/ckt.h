@@ -64,7 +64,7 @@ CKTnode * CKTnum2nod( CKTcircuit *, int );
 int CKTop(CKTcircuit *, long, long, int );
 int CKTpModName( char *, IFvalue *, CKTcircuit *, int , IFuid , GENmodel **);
 int CKTpName( char *, IFvalue *, CKTcircuit *, int , char *, GENinstance **);
-int CKTparam( CKTcircuit *, void *, int , IFvalue *, IFvalue *);
+int CKTparam( CKTcircuit *, GENinstance *, int , IFvalue *, IFvalue *);
 int CKTpzFindZeros( CKTcircuit *, PZtrial **, int * );
 int CKTpzLoad( CKTcircuit *, SPcomplex * );
 int CKTpzSetup( CKTcircuit *, int);

@@ -92,7 +92,7 @@ int INPaName(char *, IFvalue *, CKTcircuit *, int *, char *, GENinstance **, IFs
         IFvalue *);
 int INPapName(CKTcircuit *, int, void *, char *, IFvalue *);
 void INPcaseFix(char *);
-char *INPdevParse(char **, CKTcircuit *, int, void *, double *, int *, INPtables *);
+char *INPdevParse(char **, CKTcircuit *, int, GENinstance *, double *, int *, INPtables *);
 char *INPdomodel(CKTcircuit *, card *, INPtables *);
 void INPdoOpts(CKTcircuit *, void *, card *, INPtables *);
 char *INPerrCat(char *, char *);

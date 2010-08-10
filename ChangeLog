@@ -1,6 +1,17 @@
 2010-08-10  Robert Larice
  * src/include/cktdefs.h ,
  * src/include/ifsim.h ,
+ * src/include/inpdefs.h ,
+ * src/spicelib/analysis/ckt.h ,
+ * src/spicelib/analysis/cktparam.c ,
+ * src/spicelib/analysis/cktpname.c ,
+ * src/spicelib/parser/inp.h ,
+ * src/spicelib/parser/inpdpar.c :
+    use GENinstance*, instead of void*
+
+2010-08-10  Robert Larice
+ * src/include/cktdefs.h ,
+ * src/include/ifsim.h ,
  * src/spicelib/analysis/ckt.h ,
  * src/spicelib/analysis/cktdltm.c :
     use GENmodel*, instead of void*

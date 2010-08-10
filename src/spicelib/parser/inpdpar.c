@@ -20,7 +20,7 @@ Author: 1985 Thomas L. Quarles
 #include "fteext.h"
 #include "inp.h"
 
-char *INPdevParse(char **line, CKTcircuit *ckt, int dev, void *fast,
+char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 		  double *leading, int *waslead, INPtables * tab)
 		    /* the line to parse */
 		 /* the circuit this device is a member of */

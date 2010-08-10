@@ -366,7 +366,7 @@ struct IFsimulator {
 
     int (*newInstance) (CKTcircuit *, GENmodel *, GENinstance **, IFuid);
                                     /* create new instance */
-    int (*setInstanceParm) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
+    int (*setInstanceParm) (CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on an instance */
     int (*askInstanceQuest) (CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
                                     /* ask a question about an instance */
