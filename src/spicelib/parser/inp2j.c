@@ -66,7 +66,7 @@ void INP2J(CKTcircuit *ckt, INPtables * tab, card * current)
 	if (!tab->defJmod) {
 	    /* create default J model */
 	    IFnewUid(ckt, &uid, (IFuid) NULL, "J", UID_MODEL,
-		     (void **) NULL);
+		     NULL);
 	    IFC(newModel, (ckt, type, &(tab->defJmod), uid));
 	}
 	mdfast = tab->defJmod;

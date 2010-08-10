@@ -109,7 +109,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
 
 /*CDHW Create a task DDD with a new UID. ci_defTask will point to it CDHW*/
 
-    err = IFnewUid(ckt,&taskUid,(IFuid)NULL,"default",UID_TASK,(void**)NULL);
+    err = IFnewUid(ckt, &taskUid, (IFuid)NULL, "default", UID_TASK, NULL);
     if(err) {
         ft_sperror(err,"newUid");
         return(NULL);
@@ -138,7 +138,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
 
     if(which != -1) {
         err = IFnewUid(ckt,&optUid,(IFuid)NULL,"options",UID_ANALYSIS,
-                (void**)NULL);
+                NULL);
         if(err) {
             ft_sperror(err,"newUid");
             return(NULL);
@@ -246,7 +246,7 @@ if_run(CKTcircuit *t, char *what, wordlist *args, INPtables *tab)
 ci_specTask will point to it CDHW*/
 	
         err = IFnewUid(ft_curckt->ci_ckt,&specUid,(IFuid)NULL,"special",
-                UID_TASK,(void**)NULL);
+                UID_TASK,NULL);
         if(err) {
             ft_sperror(err,"newUid");
             return(2);
@@ -274,7 +274,7 @@ ci_specTask will point to it CDHW*/
         } 
         if(which != -1) { /*CDHW options are available CDHW*/
             err = IFnewUid(ft_curckt->ci_ckt,&optUid,(IFuid)NULL,"options",
-                    UID_ANALYSIS,(void**)NULL);
+                    UID_ANALYSIS,NULL);
             if(err) {
                 ft_sperror(err,"newUid");
                 return(2);
@@ -1210,7 +1210,7 @@ if_tranparams(struct circ *ci, double *start, double *stop, double *step)
     if(which == -1) return(FALSE);
 
     err = IFnewUid(ci->ci_ckt,&tranUid,(IFuid)NULL,"Transient Analysis",
-	UID_ANALYSIS, (void**)NULL);
+	UID_ANALYSIS, NULL);
     if(err != OK) return(FALSE);
     err =(*(ft_sim->findAnalysis))(ci->ci_ckt,&which, &anal,tranUid,
             ci->ci_curTask,(IFuid )NULL);
@@ -1529,7 +1529,7 @@ do {\
 	return;
       }
       (*(SPfrontEnd->IFnewUid))(ckt,&timeUid,(IFuid)NULL,
-				"time", UID_OTHER, (void **)NULL);
+				"time", UID_OTHER, NULL);
       error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
 	     (void*)ckt->CKTcurJob,
 	     ckt->CKTcurJob->JOBname,timeUid,IF_REAL,numNames,nameList,

@@ -252,7 +252,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
       if (!tab->defMmod)
 	{
 	  /* create default M model */
-	  IFnewUid (ckt, &uid, (IFuid) NULL, "M", UID_MODEL, (void **) NULL);
+	  IFnewUid (ckt, &uid, (IFuid) NULL, "M", UID_MODEL, NULL);
 	  IFC (newModel, (ckt, type, &(tab->defMmod), uid));
 	}
       mdfast = tab->defMmod;

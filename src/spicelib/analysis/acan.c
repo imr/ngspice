@@ -162,7 +162,7 @@ ACan(CKTcircuit *ckt, int restart)
 	}
 
         (*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
-                "frequency", UID_OTHER,(void **)NULL);
+                "frequency", UID_OTHER, NULL);
         error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
 		(void*)ckt->CKTcurJob,
                 ckt->CKTcurJob->JOBname,freqUid,IF_REAL,numNames,nameList,

@@ -123,7 +123,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 		declared before an OUTpBeginplot */
 
 	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
-		"frequency", UID_OTHER,(void **)NULL);
+		"frequency", UID_OTHER, NULL);
 
 	data->numPlots = 0;                /* we don't have any plots  yet */
         error = CKTnoise(ckt,N_DENS,N_OPEN,data);

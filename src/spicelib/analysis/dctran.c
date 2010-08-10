@@ -139,7 +139,7 @@ DCtran(CKTcircuit *ckt,
         error = CKTnames(ckt,&numNames,&nameList);
         if(error) return(error);
         (*(SPfrontEnd->IFnewUid))(ckt,&timeUid,(IFuid)NULL,
-                "time", UID_OTHER, (void **)NULL);
+                "time", UID_OTHER, NULL);
         error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
 		(void*)ckt->CKTcurJob,
                 ckt->CKTcurJob->JOBname,timeUid,IF_REAL,numNames,nameList,
@@ -332,7 +332,7 @@ DCtran(CKTcircuit *ckt,
         if(error) return(error);
 		/* get timeUiD again */
         (*(SPfrontEnd->IFnewUid))(ckt,&timeUid,(IFuid)NULL,
-                "time", UID_OTHER, (void **)NULL);        
+                "time", UID_OTHER, NULL);
 	error = (*(SPfrontEnd->OUTpBeginPlot))(ckt, (void*)ckt->CKTcurJob,
 					       ckt->CKTcurJob->JOBname,timeUid,IF_REAL,666,nameList,
 					       666,&(((TRANan*)ckt->CKTcurJob)->TRANplot));/*magic 666 nums as flags */

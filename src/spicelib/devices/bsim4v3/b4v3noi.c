@@ -143,7 +143,7 @@ int i;
 		                       (*(SPfrontEnd->IFnewUid)) (ckt,
 			                  &(data->namelist[data->numPlots++]),
 			                  (IFuid) NULL, name, UID_OTHER,
-					  (void **) NULL);
+					  NULL);
 				       /* we've added one more plot */
 			          }
 			          break;
@@ -161,7 +161,7 @@ int i;
 		                       (*(SPfrontEnd->IFnewUid)) (ckt,
 			                  &(data->namelist[data->numPlots++]),
 			                  (IFuid) NULL, name, UID_OTHER,
-					  (void **) NULL);
+					  NULL);
 				       /* we've added one more plot */
 
 			               (void) sprintf(name, "inoise_total.%s%s",
@@ -176,7 +176,7 @@ int i;
 		                       (*(SPfrontEnd->IFnewUid)) (ckt,
 			                  &(data->namelist[data->numPlots++]),
 			                  (IFuid) NULL, name, UID_OTHER,
-					  (void **)NULL);
+					  NULL);
 				       /* we've added one more plot */
 			          }
 			          break;

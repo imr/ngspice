@@ -96,7 +96,7 @@ int num, i;
                     type = mytype;
                     if(!tab->defPmod) {
                             /* create default P model */
-                            IFnewUid(ckt,&uid,(IFuid)NULL,"P",UID_MODEL,(void**)NULL);
+                            IFnewUid(ckt, &uid, (IFuid)NULL, "P", UID_MODEL, NULL);
                             IFC(newModel, (ckt,type,&(tab->defPmod),uid))
                     }
                     mdfast = tab->defPmod;

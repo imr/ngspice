@@ -521,7 +521,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
 	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
-		"frequency", UID_OTHER,(void **)NULL);
+		"frequency", UID_OTHER, NULL);
 	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
 	    (void*)ckt->CKTcurJob,"DISTORTION - 2nd harmonic",
 	    freqUid,IF_REAL, numNames,nameList,IF_COMPLEX,&acPlot);
@@ -545,7 +545,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
 	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
-		"frequency", UID_OTHER,(void **)NULL);
+		"frequency", UID_OTHER, NULL);
 	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
 	(void*)ckt->CKTcurJob,"DISTORTION - 3rd harmonic",freqUid,IF_REAL,
 	numNames,nameList,IF_COMPLEX,&acPlot);
@@ -567,7 +567,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
 	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
-		"frequency", UID_OTHER,(void **)NULL);
+		"frequency", UID_OTHER, NULL);
 	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
 	(void*)ckt->CKTcurJob,"DISTORTION - IM: f1+f2",freqUid,IF_REAL,
 	numNames,nameList,IF_COMPLEX,&acPlot);
@@ -587,7 +587,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
 	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
-		"frequency", UID_OTHER,(void **)NULL);
+		"frequency", UID_OTHER, NULL);
 	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
 	(void*)ckt->CKTcurJob,"DISTORTION - IM: f1-f2",freqUid,IF_REAL,
 	numNames,nameList,IF_COMPLEX,&acPlot);
@@ -608,7 +608,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
 	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
-		"frequency", UID_OTHER,(void **)NULL);
+		"frequency", UID_OTHER, NULL);
 	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
 	(void*)ckt->CKTcurJob,"DISTORTION - IM: 2f1-f2",freqUid,IF_REAL,
 	numNames,nameList,IF_COMPLEX,&acPlot);

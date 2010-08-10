@@ -76,7 +76,7 @@ BJT2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 			if (!data->namelist) return(E_NOMEM);
 			(*(SPfrontEnd->IFnewUid))(ckt,
 			    &(data->namelist[data->numPlots++]),
-			    (IFuid)NULL,name,UID_OTHER,(void **)NULL);
+			    (IFuid)NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 			}
 			break;
@@ -92,7 +92,7 @@ BJT2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 			if (!data->namelist) return(E_NOMEM);
 			(*(SPfrontEnd->IFnewUid))(ckt,
 			    &(data->namelist[data->numPlots++]),
-			    (IFuid)NULL,name,UID_OTHER,(void **)NULL);
+			    (IFuid)NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 			    (void)sprintf(name,"inoise_total_%s%s",
@@ -102,7 +102,7 @@ data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*s
 if (!data->namelist) return(E_NOMEM);
 		(*(SPfrontEnd->IFnewUid))(ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL,name,UID_OTHER,(void **)NULL);
+			(IFuid)NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 			}
 			break;

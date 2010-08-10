@@ -66,7 +66,7 @@ void INP2W(CKTcircuit *ckt, INPtables * tab, card * current)
 	if (!tab->defWmod) {
 	    /* create deafult W model */
 	    IFnewUid(ckt, &uid, (IFuid) NULL, "W", UID_MODEL,
-		     (void **) NULL);
+		     NULL);
 	    IFC(newModel, (ckt, type, &(tab->defWmod), uid));
 	}
 	mdfast = tab->defWmod;

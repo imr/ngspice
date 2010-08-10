@@ -191,26 +191,26 @@ found:;
     
     if (cv->TRCVvType[i]==vcode)
          (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
-            "v-sweep", UID_OTHER, (void **)NULL);
+            "v-sweep", UID_OTHER, NULL);
         
     else {
         if (cv->TRCVvType[i]==icode)
             (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
-                 "i-sweep", UID_OTHER, (void **)NULL);
+                 "i-sweep", UID_OTHER, NULL);
                      
         else {
             if (cv->TRCVvType[i]==TEMP_CODE)
                 (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
-                   "temp-sweep", UID_OTHER, (void **)NULL);
+                   "temp-sweep", UID_OTHER, NULL);
        
             else {
                 if (cv->TRCVvType[i]==rcode)
                     (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
-                        "res-sweep", UID_OTHER, (void **)NULL);
+                        "res-sweep", UID_OTHER, NULL);
                                 
                 else
                     (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
-                        "?-sweep", UID_OTHER, (void **)NULL);	    
+                        "?-sweep", UID_OTHER, NULL);
             } /* icode */
         } /* TEMP_CODE */
     } /* rcode*/

@@ -81,7 +81,7 @@ void INP2C(CKTcircuit *ckt, INPtables * tab, card * current)
           type = mytype;
           if (!tab->defCmod) {    /* create default C model */
           IFnewUid(ckt, &uid, (IFuid) NULL, "C", UID_MODEL,
-               (void **) NULL);
+               NULL);
           IFC(newModel, (ckt, type, &(tab->defCmod), uid));
           }
           mdfast = tab->defCmod;
@@ -94,7 +94,7 @@ void INP2C(CKTcircuit *ckt, INPtables * tab, card * current)
       if (!tab->defCmod) {
           /* create default C model */
           IFnewUid(ckt, &uid, (IFuid) NULL, "C", UID_MODEL,
-               (void **) NULL);
+               NULL);
           IFC(newModel, (ckt, type, &(tab->defCmod), uid));
       }
       IFC(newInstance, (ckt, tab->defCmod, &fast, name));

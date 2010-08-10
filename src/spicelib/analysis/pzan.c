@@ -139,12 +139,12 @@ PZpost(CKTcircuit *ckt)
     for (i = 0; i < pzan->PZnPoles; i++) {
 	sprintf(name, "pole(%-u)", i+1);
 	(*(SPfrontEnd->IFnewUid))(ckt,&(namelist[j++]),(IFuid)NULL,
-		name,UID_OTHER,(void **)NULL);
+		name, UID_OTHER, NULL);
     }
     for (i = 0; i < pzan->PZnZeros; i++) {
 	sprintf(name, "zero(%-u)", i+1);
 	(*(SPfrontEnd->IFnewUid))(ckt,&(namelist[j++]),(IFuid)NULL,
-		name,UID_OTHER,(void **)NULL);
+		name, UID_OTHER, NULL);
     }
 
     (*SPfrontEnd->OUTpBeginPlot)(ckt, (void *)pzan, pzan->JOBname,

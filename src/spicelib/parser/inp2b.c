@@ -55,7 +55,7 @@ void INP2B(CKTcircuit *ckt, INPtables * tab, card * current)
 
     if (!tab->defBmod) {
         /* create default B model */
-        IFnewUid(ckt, &uid, (IFuid) NULL, "B", UID_MODEL, (void **) NULL);
+        IFnewUid(ckt, &uid, (IFuid) NULL, "B", UID_MODEL, NULL);
         IFC(newModel, (ckt, type, &(tab->defBmod), uid));
     }
     IFC(newInstance, (ckt, tab->defBmod, &fast, name));

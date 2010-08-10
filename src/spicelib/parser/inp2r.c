@@ -184,7 +184,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
           type = mytype;
           if (!tab->defRmod) {	/* create default R model */
             IFnewUid(ckt, &uid, (IFuid) NULL, "R", UID_MODEL,
-                (void **) NULL);
+                NULL);
             IFC(newModel, (ckt, type, &(tab->defRmod), uid));
           }
           mdfast = tab->defRmod;
@@ -197,7 +197,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
       if (!tab->defRmod) {
           /* create default R model */
           IFnewUid(ckt, &uid, (IFuid) NULL, "R", UID_MODEL,
-              (void **) NULL);
+              NULL);
           IFC(newModel, (ckt, type, &(tab->defRmod), uid));
       }
       IFC(newInstance, (ckt, tab->defRmod, &fast, name));

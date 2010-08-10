@@ -80,7 +80,7 @@ void INP2Z(CKTcircuit *ckt, INPtables * tab, card * current)
 	if (!tab->defZmod) {
 	    /* create default Z model */
 	    IFnewUid(ckt, &uid, (IFuid) NULL, "Z", UID_MODEL,
-		     (void **) NULL);
+		     NULL);
 	    IFC(newModel, (ckt, type, &(tab->defZmod), uid));
 	}
 	mdfast = tab->defZmod;

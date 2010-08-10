@@ -99,7 +99,7 @@ HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 
 		(ckt, &(data->namelist[data->numPlots++]),
-		 (IFuid) NULL, name, UID_OTHER, (void **) NULL);
+		 (IFuid) NULL, name, UID_OTHER, NULL);
 	    }
 	    break;
 	  case INT_NOIZ:
@@ -113,7 +113,7 @@ HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 
 		(ckt, &(data->namelist[data->numPlots++]),
-		 (IFuid) NULL, name, UID_OTHER, (void **) NULL);
+		 (IFuid) NULL, name, UID_OTHER, NULL);
 	      
 	      (void) sprintf(name, "inoise_total.%s%s", 
 			     (char *)here->HSM1name, HSM1nNames[i]);
@@ -124,7 +124,7 @@ HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 
 		(ckt, &(data->namelist[data->numPlots++]),
-		 (IFuid) NULL, name, UID_OTHER, (void **)NULL);
+		 (IFuid) NULL, name, UID_OTHER, NULL);
 	    }
 	    break;
 	  }

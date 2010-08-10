@@ -96,7 +96,7 @@ data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*s
 if (!data->namelist) return(E_NOMEM);
 		(*(SPfrontEnd->IFnewUid))(ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL,name,UID_OTHER,(void **)NULL);
+			(IFuid)NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 
@@ -112,7 +112,7 @@ data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*s
 if (!data->namelist) return(E_NOMEM);
 		(*(SPfrontEnd->IFnewUid))(ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL,name,UID_OTHER,(void **)NULL);
+			(IFuid)NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
              (void)sprintf(name,"inoise_total_%s%s",inst->SOI3name,SOI3nNames[i]);
@@ -122,7 +122,7 @@ data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*s
 if (!data->namelist) return(E_NOMEM);
 		(*(SPfrontEnd->IFnewUid))(ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL,name,UID_OTHER,(void **)NULL);
+			(IFuid)NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 

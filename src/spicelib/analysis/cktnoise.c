@@ -55,13 +55,13 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 		    (data->numPlots + 1)*sizeof(IFuid));
 
 	    (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
-		    (IFuid)NULL,"onoise_spectrum",UID_OTHER,(void **)NULL);
+		    (IFuid)NULL, "onoise_spectrum", UID_OTHER, NULL);
 
 	    data->namelist = (IFuid *)trealloc((char *)data->namelist,
 		    (data->numPlots + 1)*sizeof(IFuid));
 
 	    (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
-		    (IFuid)NULL,"inoise_spectrum",UID_OTHER,(void **)NULL);
+		    (IFuid)NULL, "inoise_spectrum", UID_OTHER, NULL);
 
 	    /* we've added two more plots */
 
@@ -74,12 +74,12 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 	    data->namelist = (IFuid *)trealloc((char *)data->namelist,
 		    (data->numPlots + 1)*sizeof(IFuid));
 	    (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
-		(IFuid)NULL,"onoise_total",UID_OTHER,(void **)NULL);
+		(IFuid)NULL, "onoise_total", UID_OTHER, NULL);
 
 	    data->namelist = (IFuid *)trealloc((char *)data->namelist,
 		    (data->numPlots + 1)*sizeof(IFuid));
 	    (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
-		(IFuid)NULL,"inoise_total",UID_OTHER,(void **)NULL);
+		(IFuid)NULL, "inoise_total", UID_OTHER, NULL);
 	    /* we've added two more plots */
 
 	    data->outpVector =

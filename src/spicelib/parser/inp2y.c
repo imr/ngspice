@@ -127,7 +127,7 @@ int lenvalgiven = 0;
                             INPtermInsert(ckt, &internal1, tab, &inode1);
                             if(!tab->defRmod) {
                                     /* create default R model */
-                                    IFnewUid(ckt,&uid,(IFuid)NULL,"R",UID_MODEL,(void**)NULL);
+                                    IFnewUid(ckt, &uid, (IFuid)NULL, "R", UID_MODEL, NULL);
                                     IFC(newModel, (ckt,type,&(tab->defRmod),uid))
                             }
                             mdfast = tab->defRmod;
@@ -162,7 +162,7 @@ int lenvalgiven = 0;
                             /* capacitor on node1 */
                             type = INPtypelook("Capacitor");
                             if(!tab->defCmod) {
-                                    IFnewUid(ckt,&uid,(IFuid)NULL,"C",UID_MODEL,(void**)NULL);
+                                    IFnewUid(ckt, &uid, (IFuid)NULL, "C", UID_MODEL, NULL);
                                     IFC(newModel,(ckt,type,&(tab->defCmod),uid))
                             }
                             mdfast4 = tab->defCmod;
@@ -210,7 +210,7 @@ int lenvalgiven = 0;
                     type = mytype;
                     if(!tab->defYmod) {
                             /* create default Y model */
-                            IFnewUid(ckt,&uid,(IFuid)NULL,"Y",UID_MODEL,(void**)NULL);
+                            IFnewUid(ckt, &uid, (IFuid)NULL, "Y", UID_MODEL, NULL);
                             IFC(newModel, (ckt,type,&(tab->defYmod),uid))
                     }
                     mdfast = tab->defYmod;
