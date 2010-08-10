@@ -16,11 +16,11 @@ Author: 1985 Thomas L. Quarles
 #include "dev.h"
 
 int
-CKTbindNode(CKTcircuit *ckt, void *fast, int term, void *node)
+CKTbindNode(CKTcircuit *ckt, GENinstance *fast, int term, void *node)
 {
     int mappednode;
     SPICEdev **devs;
-    GENinstance *instance = (GENinstance *) fast;
+    GENinstance *instance = /*fixme*/ fast;
     int type = instance->GENmodPtr->GENmodType;
 
     devs = devices();

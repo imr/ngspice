@@ -278,7 +278,7 @@ extern int CKTacct(CKTcircuit *, void *, int , IFvalue *);
 extern int CKTask(CKTcircuit *, GENinstance *, int , IFvalue *, IFvalue *);
 extern int CKTaskAnalQ(CKTcircuit *, void *, int , IFvalue *, IFvalue *);
 extern int CKTaskNodQst(CKTcircuit *, void *, int , IFvalue *, IFvalue *);
-extern int CKTbindNode(CKTcircuit *, void *, int , void *);
+extern int CKTbindNode(CKTcircuit *, GENinstance *, int , void *);
 extern void CKTbreakDump(CKTcircuit *);
 extern int CKTclrBreak(CKTcircuit *);
 extern int CKTconvTest(CKTcircuit *);

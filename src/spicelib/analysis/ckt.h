@@ -21,7 +21,7 @@ int CKTacct( CKTcircuit *, void *, int , IFvalue *);
 int CKTask( CKTcircuit *, GENinstance *, int , IFvalue *, IFvalue *);
 int CKTaskAnalQ( CKTcircuit *, void *, int , IFvalue *, IFvalue *);
 int CKTaskNodQst( CKTcircuit *, void *, int , IFvalue *, IFvalue *);
-int CKTbindNode( CKTcircuit *, void *, int , void *);
+int CKTbindNode( CKTcircuit *, GENinstance *, int , void *);
 void CKTbreakDump( CKTcircuit *);
 int CKTclrBreak( CKTcircuit *);
 int CKTconvTest( CKTcircuit *);

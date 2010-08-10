@@ -153,9 +153,9 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 error = CKTcrtElt(ckt,rmodfast,
                         &fast,eltUid);
                 if(error) return(error);
-                error = CKTbindNode(ckt,(void *)fast,1,lowl);
+                error = CKTbindNode(ckt,fast,1,lowl);
                 if(error) return(error);
-                error = CKTbindNode(ckt,(void *)fast,2,lowr);
+                error = CKTbindNode(ckt,fast,2,lowr);
                 if(error) return(error);
                 ptemp.rValue = r;
                 error = CKTpName("resistance",&ptemp,ckt,rtype,nameelt,&fast);
@@ -170,9 +170,9 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 error = CKTcrtElt(ckt,rmodfast,
                         &fast,eltUid);
                 if(error) return(error);
-                error = CKTbindNode(ckt,(void *)fast,1,hil);
+                error = CKTbindNode(ckt,fast,1,hil);
                 if(error) return(error);
-                error = CKTbindNode(ckt,(void *)fast,2,hir);
+                error = CKTbindNode(ckt,fast,2,hir);
                 if(error) return(error);
                 ptemp.rValue = r;
                 error = CKTpName("resistance",&ptemp,ckt,rtype,nameelt,&fast);
@@ -190,9 +190,9 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                     error = CKTcrtElt(ckt,modfast,
                             &fast, eltUid);
                     if(error) return(error);
-                    error = CKTbindNode(ckt,(void *)fast,1,lowr);
+                    error = CKTbindNode(ckt,fast,1,lowr);
                     if(error) return(error);
-                    error = CKTbindNode(ckt,(void *)fast,2,
+                    error = CKTbindNode(ckt,fast,2,
                             (void *)CKTnum2nod(ckt, here->URCgndNode));
                     if(error) return(error);
                     ptemp.rValue = prop;
@@ -209,9 +209,9 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                     error = CKTcrtElt(ckt,modfast,
                             &fast, eltUid);
                     if(error) return(error);
-                    error = CKTbindNode(ckt,(void *)fast,1,lowr);
+                    error = CKTbindNode(ckt,fast,1,lowr);
                     if(error) return(error);
-                    error = CKTbindNode(ckt,(void *)fast,2,
+                    error = CKTbindNode(ckt,fast,2,
                             (void  *)CKTnum2nod(ckt, here->URCgndNode));
                     if(error) return(error);
                     ptemp.rValue = c;
@@ -233,9 +233,9 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                         error = CKTcrtElt(ckt,modfast,
                                 &fast,eltUid);
                         if(error) return(error);
-                        error = CKTbindNode(ckt,(void *)fast,1,hil);
+                        error = CKTbindNode(ckt,fast,1,hil);
                         if(error) return(error);
-                        error = CKTbindNode(ckt,(void *)fast,2,
+                        error = CKTbindNode(ckt,fast,2,
                                 (void *)CKTnum2nod(ckt, here->URCgndNode));
                         if(error) return(error);
                         ptemp.rValue = prop;
@@ -253,9 +253,9 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                         error = CKTcrtElt(ckt,modfast,
                                 &fast,eltUid);
                         if(error) return(error);
-                        error = CKTbindNode(ckt,(void *)fast,1,hil);
+                        error = CKTbindNode(ckt,fast,1,hil);
                         if(error) return(error);
-                        error = CKTbindNode(ckt,(void *)fast,2,
+                        error = CKTbindNode(ckt,fast,2,
                                 (void *)CKTnum2nod(ckt, here->URCgndNode));
                         if(error) return(error);
                         ptemp.rValue = c;

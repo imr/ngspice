@@ -351,7 +351,7 @@ struct IFsimulator {
                                     /* create new node */
     int (*groundNode) (CKTcircuit *, void **, IFuid);
                                     /* create ground node */
-    int (*bindNode) (CKTcircuit *, void *, int, void *);
+    int (*bindNode) (CKTcircuit *, GENinstance *, int, void *);
                                     /* bind a node to a terminal */
     int (*findNode) (CKTcircuit *, void **, IFuid);
                                     /* find a node by name */

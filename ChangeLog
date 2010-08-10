@@ -1,4 +1,13 @@
 2010-08-10  Robert Larice
+ * src/include/cktdefs.h ,
+ * src/include/ifsim.h ,
+ * src/spicelib/analysis/ckt.h ,
+ * src/spicelib/devices/cktbindnode.c ,
+ * src/spicelib/devices/urc/urcsetup.c ,
+ * src/spicelib/parser/inp2y.c :
+    use GENinstance*, instead of void*
+
+2010-08-10  Robert Larice
  * src/frontend/plotting/x11.c :
     fix comment
 

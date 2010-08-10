@@ -229,7 +229,7 @@ int lenvalgiven = 0;
     IFC(bindNode,(ckt,fast,1,node1))
     IFC(bindNode,(ckt,fast,2,node2))
 
-    txl = (GENinstance *)fast;
+    txl = /*fixme*/ fast;
 
     return;
 }
