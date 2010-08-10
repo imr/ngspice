@@ -26,7 +26,7 @@ NInzIter(CKTcircuit *ckt, int posDrive, int negDrive)
 
     /* clear out the right hand side vector */
 
-    for (i=0; i<= SMPmatSize((SMPmatrix *)ckt->CKTmatrix); i++) {
+    for (i = 0; i <= SMPmatSize(ckt->CKTmatrix); i++) {
 	*((ckt->CKTrhs) + i) = 0.0;
 	*((ckt->CKTirhs) + i) = 0.0;
     }
