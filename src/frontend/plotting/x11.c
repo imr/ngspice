@@ -1030,7 +1030,7 @@ linear_arc(int x0, int y0, int radius, double theta, double delta_theta)
               /* y coordinate of center */
 	      /* radius of arc */
 	      /* initial angle ( +x axis = 0 rad ) */
-	      /* delta angle
+	      /* delta angle */
     /*
      * Notes:
      *    Draws an arc of radius and center at (x0,y0) beginning at

@@ -1,4 +1,8 @@
 2010-08-10  Robert Larice
+ * src/frontend/plotting/x11.c :
+    fix comment
+
+2010-08-10  Robert Larice
  * src/spicelib/analysis/ckt.h :
     missing `extern'
 
