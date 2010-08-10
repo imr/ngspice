@@ -1,4 +1,8 @@
 2010-08-10  Robert Larice
+ * src/spicelib/analysis/ckt.h :
+    missing `extern'
+
+2010-08-10  Robert Larice
  * src/include/cktdefs.h ,
  * src/include/ifsim.h ,
  * src/include/inpdefs.h ,

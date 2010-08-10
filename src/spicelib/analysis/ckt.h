@@ -125,6 +125,6 @@ int NIpzSym(PZtrial **, PZtrial *);
 int NIpzSym2(PZtrial **, PZtrial *);
 int NIreinit( CKTcircuit *);
 int NIsenReinit( CKTcircuit *);
-IFfrontEnd *SPfrontEnd;
+extern IFfrontEnd *SPfrontEnd;
 
 #endif /*CKT*/
