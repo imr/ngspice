@@ -300,7 +300,7 @@ ci_specTask will point to it CDHW*/
 
 /*CDHW ci_curTask and ci_specTask point to the interactive task AAA CDHW*/  
         
-      INPpas2(ckt, (card *) &deck, (INPtables *)tab, ft_curckt->ci_specTask);
+      INPpas2(ckt, (card *) &deck, tab, ft_curckt->ci_specTask);
         
         if (deck.li_error) {
             fprintf(cp_err, "Warning: %s\n", deck.li_error);
@@ -547,7 +547,7 @@ if_cktfree(CKTcircuit *ckt, INPtables *tab)
     CKTcircuit *cc = /* fixme, drop that */ ckt;
 
     (*(ft_sim->deleteCircuit))(cc);
-    INPtabEnd((INPtables *) tab);
+    INPtabEnd(tab);
     return;
 }
 

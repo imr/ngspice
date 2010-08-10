@@ -1,4 +1,8 @@
 2010-08-10  Robert Larice
+ * src/frontend/spiceif.c' :
+    drop (INPtables*) casts, which are no longer necessary
+
+2010-08-10  Robert Larice
  * src/frontend/spiceif.c ,
  * src/spicelib/analysis/cktmask.c ,
  * src/spicelib/analysis/cktmcrt.c ,
