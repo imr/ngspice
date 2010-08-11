@@ -19,7 +19,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED *//* fixme abandoned */
 int
-CKTmapNode(CKTcircuit *ckt, void **node, IFuid name)
+CKTmapNode(CKTcircuit *ckt, CKTnode **node, IFuid name)
 {
     CKTnode *here;
     int error;
@@ -28,7 +28,7 @@ CKTmapNode(CKTcircuit *ckt, void **node, IFuid name)
 
     for (here = ckt->CKTnodes; here; here = here->next)  {
         if(here->name == name) {
-            if(node) *node = (char *)here;
+            if(node) *node = here;
             return(E_EXISTS);
         }
     }
@@ -40,11 +40,11 @@ CKTmapNode(CKTcircuit *ckt, void **node, IFuid name)
 				      (IFuid) NULL,
 				      name,
 				      UID_SIGNAL,
-				      (void**)&mynode);  /* get a uid for it */
+				      &mynode);  /* get a uid for it */
     if(error) return(error);
     mynode->name = uid;     /* set the info we have */
     mynode->type = SP_VOLTAGE;
     error = CKTlinkEq(ckt,mynode); /* and link it in */
-    if(node) *node = (void *)mynode; /* and finally, return it */
+    if(node) *node = mynode; /* and finally, return it */
     return(OK);
 }

@@ -34,9 +34,9 @@ char rname1[10], rname2[10], rname3[10];
 char cname1[10], cname2[10], cname3[10], cname4[10];
 char *internal1, *internal2;
 char *ground1, *ground2;
-void *node1; /* the first node's node pointer */
-void *node2; /* the second node's node pointer */
-void *gnode1, *gnode2, *inode1, *inode2;
+CKTnode *node1; /* the first node's node pointer */
+CKTnode *node2; /* the second node's node pointer */
+CKTnode *gnode1, *gnode2, *inode1, *inode2;
 int error;      /* error code temporary */
 int error1=0;   /* secondary error code temporary */
 INPmodel *thismodel;    /* pointer to model structure describing our model */

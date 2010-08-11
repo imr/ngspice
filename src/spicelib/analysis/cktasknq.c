@@ -19,21 +19,21 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTaskNodQst(CKTcircuit *ckt, void *node, int parm, IFvalue *value, IFvalue *selector)
+CKTaskNodQst(CKTcircuit *ckt, CKTnode *node, int parm, IFvalue *value, IFvalue *selector)
 {
     if(!node) return(E_BADPARM);
     switch(parm) {
 
     case PARM_NS:
-        value->rValue = ((CKTnode *)node)->nodeset;
+        value->rValue = node->nodeset;
         break;
 
     case PARM_IC:
-        value->rValue = ((CKTnode *)node)->ic;
+        value->rValue = node->ic;
         break;
 
     case PARM_NODETYPE:
-        value->iValue = ((CKTnode *)node)->type;
+        value->iValue = node->type;
         break;
 
     default:

@@ -23,9 +23,9 @@ void INP2U(CKTcircuit *ckt, INPtables * tab, card * current)
     char *nname1;		/* the first node's name */
     char *nname2;		/* the second node's name */
     char *nname3;		/* the third node's name */
-    void *node1;		/* the first node's node pointer */
-    void *node2;		/* the second node's node pointer */
-    void *node3;		/* the third node's node pointer */
+    CKTnode *node1;		/* the first node's node pointer */
+    CKTnode *node2;		/* the second node's node pointer */
+    CKTnode *node3;		/* the third node's node pointer */
     int error;			/* error code temporary */
     GENinstance *fast;		/* pointer to the actual instance */
     int waslead;		/* flag to indicate that funny unlabeled number was found */

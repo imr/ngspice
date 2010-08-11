@@ -18,13 +18,13 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTfndNode(CKTcircuit *ckt, void **node, IFuid name)
+CKTfndNode(CKTcircuit *ckt, CKTnode **node, IFuid name)
 {
     CKTnode *here;
 
     for (here = ckt->CKTnodes; here; here = here->next)  {
         if(here->name == name) {
-            if(node) *node = (char *)here;
+            if(node) *node = here;
             return(OK);
         }
     }

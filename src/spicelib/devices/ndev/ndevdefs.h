@@ -33,7 +33,7 @@ typedef struct sNDEVinstance {
   int NDEVstate;		/* pointer to start of state vector for diode */
   int pin[7];                   /* max 7 terminals are allowed */
   int  term;                    /* the real number of terminals */
-  void *node[7];		/* the array of CKT node's node pointer */
+  CKTnode *node[7];		/* the array of CKT node's node pointer */
   char *bname[7];               /* the electrode boundary label for numerical solver */
   sCKTinfo    CKTInfo;
   sDeviceinfo Ndevinfo;

@@ -33,7 +33,7 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, void *task)
     char c;
     char *groundname = "0";
     char *gname;
-    void *gnode;
+    CKTnode *gnode;
     int error;			/* used by the macros defined above */
 #ifdef HAS_WINDOWS
     int linecount = 0, actcount = 0;

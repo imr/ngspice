@@ -21,8 +21,8 @@ void INP2F(CKTcircuit *ckt, INPtables * tab, card * current)
     char *name;			/* the resistor's name */
     char *nname1;		/* the first node's name */
     char *nname2;		/* the second node's name */
-    void *node1;		/* the first node's node pointer */
-    void *node2;		/* the second node's node pointer */
+    CKTnode *node1;		/* the first node's node pointer */
+    CKTnode *node2;		/* the second node's node pointer */
     int error;			/* error code temporary */
     GENinstance *fast;		/* pointer to the actual instance */
     IFvalue ptemp;		/* a value structure to package resistance into */

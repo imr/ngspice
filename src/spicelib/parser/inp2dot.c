@@ -16,7 +16,7 @@ Modified: 2000 AlansFixes
 
 static int
 dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-	  void *task, void *gnode, void *foo)
+	  void *task, CKTnode *gnode, void *foo)
 {
     int which;			/* which analysis we are performing */
     int i;			/* generic loop variable */
@@ -24,8 +24,8 @@ dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
     char *name;			/* the resistor's name */
     char *nname1;		/* the first node's name */
     char *nname2;		/* the second node's name */
-    void *node1;		/* the first node's node pointer */
-    void *node2;		/* the second node's node pointer */
+    CKTnode *node1;		/* the first node's node pointer */
+    CKTnode *node2;		/* the second node's node pointer */
     IFvalue ptemp;		/* a value structure to package resistance into */
     IFvalue *parm;		/* a pointer to a value struct for function returns */
     char *steptype;		/* ac analysis, type of stepping function */
@@ -59,15 +59,15 @@ dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 	    INPgetNetTok(&line, &nname1, 0);
 	    INPtermInsert(ckt, &nname1, tab, &node1);
-	    ptemp.nValue = (IFnode) node1;
+	    ptemp.nValue = node1;
 	    GCA(INPapName, (ckt, which, foo, "output", &ptemp))
 
 		if (*line != ')') {
 		    INPgetNetTok(&line, &nname2, 1);
 		    INPtermInsert(ckt, &nname2, tab, &node2);
-		    ptemp.nValue = (IFnode) node2;
+		    ptemp.nValue = node2;
 		} else {
-		    ptemp.nValue = (IFnode) gnode;
+		    ptemp.nValue = gnode;
 		}
 	    GCA(INPapName, (ckt, which, foo, "outputref", &ptemp))
 
@@ -320,7 +320,7 @@ dot_dc(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 static int
 dot_tf(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-       void *task, void *gnode, void *foo)
+       void *task, CKTnode *gnode, void *foo)
 {
     char *name;			/* the resistor's name */
     int error;			/* error code temporary */
@@ -329,8 +329,8 @@ dot_tf(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
     int i;			/* generic loop variable */
     char *nname1;		/* the first node's name */
     char *nname2;		/* the second node's name */
-    void *node1;		/* the first node's node pointer */
-    void *node2;		/* the second node's node pointer */
+    CKTnode *node1;		/* the first node's node pointer */
+    CKTnode *node2;		/* the second node's node pointer */
 
     /* .tf v( node1, node2 ) src */
     /* .tf vsrc2             src */
@@ -354,12 +354,12 @@ dot_tf(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	}
 	INPgetNetTok(&line, &nname1, 0);
 	INPtermInsert(ckt, &nname1, tab, &node1);
-	ptemp.nValue = (IFnode) node1;
+	ptemp.nValue = node1;
 	GCA(INPapName, (ckt, which, foo, "outpos", &ptemp));
 	if (*line != ')') {
 	    INPgetNetTok(&line, &nname2, 1);
 	    INPtermInsert(ckt, &nname2, tab, &node2);
-	    ptemp.nValue = (IFnode) node2;
+	    ptemp.nValue = node2;
 	    GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
 	    ptemp.sValue =
 		(char *) MALLOC(sizeof(char) *
@@ -367,7 +367,7 @@ dot_tf(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	    (void) sprintf(ptemp.sValue, "V(%s,%s)", nname1, nname2);
 	    GCA(INPapName, (ckt, which, foo, "outname", &ptemp));
 	} else {
-	    ptemp.nValue = (IFnode) gnode;
+	    ptemp.nValue = gnode;
 	    GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
 	    ptemp.sValue =
 		(char *) MALLOC(sizeof(char) * (4 + strlen(nname1)));
@@ -447,7 +447,7 @@ dot_tran(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 static int
 dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-	 void *task, void *gnode, void *foo)
+	 void *task, CKTnode *gnode, void *foo)
 {
     char *name;			/* the resistor's name */
     int error;			/* error code temporary */
@@ -457,8 +457,8 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
     int i;			/* generic loop variable */
     char *nname1;		/* the first node's name */
     char *nname2;		/* the second node's name */
-    void *node1;		/* the first node's node pointer */
-    void *node2;		/* the second node's node pointer */
+    CKTnode *node1;		/* the first node's node pointer */
+    CKTnode *node2;		/* the second node's node pointer */
     char *steptype;		/* ac analysis, type of stepping function */
 
     which = -1;			/* Bug fix from Glao Dezai */
@@ -489,13 +489,13 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	}
 	INPgetNetTok(&line, &nname1, 0);
 	INPtermInsert(ckt, &nname1, tab, &node1);
-	ptemp.nValue = (IFnode) node1;
+	ptemp.nValue = node1;
 	GCA(INPapName, (ckt, which, foo, "outpos", &ptemp))
 
 	    if (*line != ')') {
 		INPgetNetTok(&line, &nname2, 1);
 		INPtermInsert(ckt, &nname2, tab, &node2);
-		ptemp.nValue = (IFnode) node2;
+		ptemp.nValue = node2;
 		GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
 		ptemp.sValue = (char *)
 		    MALLOC(sizeof(char) *
@@ -503,7 +503,7 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 		(void) sprintf(ptemp.sValue, "V(%s,%s)", nname1, nname2);
 		GCA(INPapName, (ckt, which, foo, "outname", &ptemp));
 	    } else {
-		ptemp.nValue = (IFnode) gnode;
+		ptemp.nValue = gnode;
 		GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
 		ptemp.sValue =
 		    (char *) MALLOC(sizeof(char) * (4 + strlen(nname1)));
@@ -633,7 +633,7 @@ dot_options(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 
 int
-INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, void *task, void *gnode)
+INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, void *task, CKTnode *gnode)
 {
 
     /* .<something> Many possibilities */

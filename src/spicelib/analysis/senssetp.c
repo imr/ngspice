@@ -19,14 +19,14 @@ SENSsetParam(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
     switch(which) {
 
     case SENS_POS:
-        sinfo->output_pos = (CKTnode *) value->nValue;
+        sinfo->output_pos = value->nValue;
         sinfo->output_neg = NULL;
         sinfo->output_volt = 1;
         sinfo->step_type = SENS_DC;
         break;
 
     case SENS_NEG:
-        sinfo->output_neg = (CKTnode *) value->nValue;
+        sinfo->output_neg = value->nValue;
         break;
 
     case SENS_SRC:

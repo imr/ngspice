@@ -14,7 +14,7 @@ int IFeval(IFparseTree *tree, double gmin, double *result, double *vals,
 /* ifnewuid.c */
 
 int IFnewUid(CKTcircuit *ckt, IFuid *newuid, IFuid olduid, char *suffix, int type, 
-	     void **nodedata);
+	     CKTnode **nodedata);
 int IFdelUid(CKTcircuit *ckt, IFuid uid, int type);
 
 /* inp2xx.c */
@@ -33,7 +33,7 @@ void INP2L(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2M(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2O(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2P(CKTcircuit *ckt, INPtables *tab, card *current);
-void INP2Q(CKTcircuit *ckt, INPtables *tab, card *current, void *gnode);
+void INP2Q(CKTcircuit *ckt, INPtables *tab, card *current, CKTnode *gnode);
 void INP2R(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2S(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2T(CKTcircuit *ckt, INPtables *tab, card *current);
@@ -42,7 +42,7 @@ void INP2V(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2W(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2Y(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2Z(CKTcircuit *ckt, INPtables *tab, card *current);
-int INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, void *task, void *gnode);
+int INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, void *task, CKTnode *gnode);
 
 /* inpxxxx.c */
 
@@ -82,9 +82,9 @@ void INPgetTree(char **line, INPparseTree **pt, CKTcircuit *ckt, INPtables *tab)
 /* inpsymt.c */
 
 INPtables * INPtabInit(int numlines);
-int INPtermInsert(CKTcircuit *ckt, char **token, INPtables *tab, void **node);
-int INPmkTerm(CKTcircuit *ckt, char **token, INPtables *tab, void **node);
-int INPgndInsert(CKTcircuit *ckt, char **token, INPtables *tab, void **node);
+int INPtermInsert(CKTcircuit *ckt, char **token, INPtables *tab, CKTnode **node);
+int INPmkTerm(CKTcircuit *ckt, char **token, INPtables *tab, CKTnode **node);
+int INPgndInsert(CKTcircuit *ckt, char **token, INPtables *tab, CKTnode **node);
 int INPretrieve(char **token, INPtables *tab);
 int INPinsert(char **token, INPtables *tab);
 int INPinsertNofree(char **token, INPtables *tab);

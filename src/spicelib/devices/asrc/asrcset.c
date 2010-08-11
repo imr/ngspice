@@ -53,7 +53,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 #define MY_TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix,here->first,((CKTnode*)(second))->number))\
+if((here->ptr = SMPmakeElt(matrix, here->first, (second)->number))\
         ==(double *)NULL){\
     return(E_NOMEM);\
 }

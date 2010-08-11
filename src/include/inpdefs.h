@@ -25,7 +25,7 @@ struct INPtab {
 
 struct INPnTab {
     char *t_ent;
-    void *t_node;
+    CKTnode *t_node;
     struct INPnTab *t_next;
 };
 
@@ -86,7 +86,7 @@ struct INPmodel{
 #define LOGICAL 1
 #define PHYSICAL 2
 
-int IFnewUid(CKTcircuit *, IFuid *, IFuid, char *, int, void **);
+int IFnewUid(CKTcircuit *, IFuid *, IFuid, char *, int, CKTnode **);
 int IFdelUid(CKTcircuit *, IFuid, int);
 int INPaName(char *, IFvalue *, CKTcircuit *, int *, char *, GENinstance **, IFsimulator *, int *,
         IFvalue *);
@@ -105,7 +105,7 @@ int INPgetTok(char **, char **, int);
 int INPgetNetTok(char **, char **, int);
 void INPgetTree(char **, INPparseTree **, CKTcircuit *, INPtables *);
 IFvalue *INPgetValue(CKTcircuit *, char **, int, INPtables *);
-int INPgndInsert(CKTcircuit *, char **, INPtables *, void **);
+int INPgndInsert(CKTcircuit *, char **, INPtables *, CKTnode **);
 int INPinsertNofree(char **token, INPtables *tab);
 int INPinsert(char **, INPtables *);
 int INPretrieve(char **, INPtables *);
@@ -117,8 +117,8 @@ void INPpas1(CKTcircuit *, card *, INPtables *);
 void INPpas2(CKTcircuit *, card *, INPtables *, void *);
 void INPpas3(CKTcircuit *, card *, INPtables *, void *, IFparm *, int);
 int INPpName(char *, IFvalue *, CKTcircuit *, int, GENinstance *);
-int INPtermInsert(CKTcircuit *, char **, INPtables *, void **);
-int INPmkTerm(CKTcircuit *, char **, INPtables *, void **);
+int INPtermInsert(CKTcircuit *, char **, INPtables *, CKTnode **);
+int INPmkTerm(CKTcircuit *, char **, INPtables *, CKTnode **);
 int INPtypelook(char *);
 void INP2B(CKTcircuit *, INPtables *, card *);
 void INP2C(CKTcircuit *, INPtables *, card *);
@@ -135,7 +135,7 @@ void INP2M(CKTcircuit *, INPtables *, card *);
 void INP2N(CKTcircuit *, INPtables *, card *);
 void INP2O(CKTcircuit *, INPtables *, card *);
 void INP2P(CKTcircuit *, INPtables *, card *);
-void INP2Q(CKTcircuit *, INPtables *, card *, void *);
+void INP2Q(CKTcircuit *, INPtables *, card *, CKTnode *);
 void INP2R(CKTcircuit *, INPtables *, card *);
 void INP2S(CKTcircuit *, INPtables *, card *);
 void INP2T(CKTcircuit *, INPtables *, card *);
@@ -144,7 +144,7 @@ void INP2V(CKTcircuit *, INPtables *, card *);
 void INP2W(CKTcircuit *, INPtables *, card *);
 void INP2Y(CKTcircuit *, INPtables *, card *);
 void INP2Z(CKTcircuit *, INPtables *, card *);
-int INP2dot(CKTcircuit *, INPtables *, card *, void *, void *);
+int INP2dot(CKTcircuit *, INPtables *, card *, void *, CKTnode *);
 INPtables *INPtabInit(int);
 void INPkillMods(void);
 void INPtabEnd(INPtables *);

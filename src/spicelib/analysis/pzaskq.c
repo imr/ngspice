@@ -18,19 +18,19 @@ PZaskQuest(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
     switch(which) {
 
     case PZ_NODEI:
-        value->nValue = (IFnode)CKTnum2nod(ckt,((PZAN*)anal)->PZin_pos);
+        value->nValue = CKTnum2nod(ckt, ((PZAN*)anal)->PZin_pos);
         break;
 
     case PZ_NODEG:
-        value->nValue = (IFnode)CKTnum2nod(ckt,((PZAN*)anal)->PZin_neg);
+        value->nValue = CKTnum2nod(ckt, ((PZAN*)anal)->PZin_neg);
         break;
 
     case PZ_NODEJ:
-        value->nValue = (IFnode)CKTnum2nod(ckt,((PZAN*)anal)->PZout_pos);
+        value->nValue = CKTnum2nod(ckt, ((PZAN*)anal)->PZout_pos);
         break;
 
     case PZ_NODEK:
-        value->nValue = (IFnode)CKTnum2nod(ckt,((PZAN*)anal)->PZout_neg);
+        value->nValue = CKTnum2nod(ckt, ((PZAN*)anal)->PZout_neg);
         break;
 
     case PZ_V:

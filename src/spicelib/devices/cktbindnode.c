@@ -16,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 #include "dev.h"
 
 int
-CKTbindNode(CKTcircuit *ckt, GENinstance *fast, int term, void *node)
+CKTbindNode(CKTcircuit *ckt, GENinstance *fast, int term, CKTnode *node)
 {
     int mappednode;
     SPICEdev **devs;
@@ -24,7 +24,7 @@ CKTbindNode(CKTcircuit *ckt, GENinstance *fast, int term, void *node)
     int type = instance->GENmodPtr->GENmodType;
 
     devs = devices();
-    mappednode = ((CKTnode *)node)->number;
+    mappednode = node->number;
 
     if (*((*devs[type]).DEVpublic.terms) >= term && term >0 ) {
         switch(term) {

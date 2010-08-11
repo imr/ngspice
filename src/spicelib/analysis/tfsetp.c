@@ -18,12 +18,12 @@ TFsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
     switch(which) {
 
     case TF_OUTPOS:
-        ((TFan *)anal)->TFoutPos = (CKTnode *)value->nValue;
+        ((TFan *)anal)->TFoutPos = value->nValue;
         ((TFan *)anal)->TFoutIsV = TRUE;
         ((TFan *)anal)->TFoutIsI = FALSE;
         break;
     case TF_OUTNEG:
-        ((TFan *)anal)->TFoutNeg = (CKTnode *)value->nValue;
+        ((TFan *)anal)->TFoutNeg = value->nValue;
         ((TFan *)anal)->TFoutIsV = TRUE;
         ((TFan *)anal)->TFoutIsI = FALSE;
         break;

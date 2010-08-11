@@ -27,9 +27,9 @@ char *model;    /* the name of the cpl's model */
 char **nname1;   /* the first node's name */
 char **nname2;   /* the second node's name */
 char *ground;
-void **node1; /* the first node's node pointer */
-void **node2; /* the second node's node pointer */
-void *groundnode;
+CKTnode **node1; /* the first node's node pointer */
+CKTnode **node2; /* the second node's node pointer */
+CKTnode *groundnode;
 int error;      /* error code temporary */
 int error1=0;   /* secondary error code temporary */
 INPmodel *thismodel;    /* pointer to model structure describing our model */
@@ -64,8 +64,8 @@ int num, i;
 
     nname1 = (char **) tmalloc(num * sizeof(char *));
     nname2 = (char **) tmalloc(num * sizeof(char *));
-    node1 = (void **) tmalloc(num * sizeof(void *));
-    node2 = (void **) tmalloc(num * sizeof(void *));
+    node1 = (CKTnode **) tmalloc(num * sizeof(CKTnode *));
+    node2 = (CKTnode **) tmalloc(num * sizeof(CKTnode *));
 
     for (i = 0; i < num; i++) {
             INPgetNetTok(&line,&(nname1[i]),1);

@@ -28,7 +28,7 @@ CKTmkVolt(CKTcircuit *ckt, CKTnode **node, IFuid basename, char *suffix)
     if(error) return(error);
     checknode = mynode;
     error = (*(SPfrontEnd->IFnewUid))(ckt,&uid,basename,
-            suffix,UID_SIGNAL,(void**)&checknode);
+            suffix, UID_SIGNAL, &checknode);
     if(error) {
         FREE(mynode);
         if(node) *node = checknode;

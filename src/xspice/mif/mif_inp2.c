@@ -853,7 +853,7 @@ MIFget_port(
     case MIF_DIFF_RESISTANCE:
 
         /* Call the spice3c1 function to put this node in the node list in ckt */
-        INPtermInsert(ckt, next_token, tab,(void **)pos_node);
+        INPtermInsert(ckt, next_token, tab, pos_node);
 
         /* store the equation number and node identifier */
         /* This is the equivalent of what CKTbindNode() does in 3C1 */
@@ -920,7 +920,7 @@ MIFget_port(
 //		node = "0";		// deleted by K.A. March 5th 2000, this is incorrect, it creates a new pointer
 						// that cause a crash in INPtermInsert()
 
-		INPtermInsert(ckt, &node, tab,(void **)neg_node);
+		INPtermInsert(ckt, &node, tab, neg_node);
 
         fast->conn[conn_num]->port[port_num]->neg_node_str = node;
         fast->conn[conn_num]->port[port_num]->smp_data.neg_node = neg_node[0]->number;
@@ -936,7 +936,7 @@ MIFget_port(
             *status = MIF_ERROR;
             return;
         }
-        INPtermInsert(ckt, next_token, tab,(void **)neg_node);
+        INPtermInsert(ckt, next_token, tab, neg_node);
         fast->conn[conn_num]->port[port_num]->neg_node_str = *next_token;
         fast->conn[conn_num]->port[port_num]->smp_data.neg_node = neg_node[0]->number;
         *next_token = MIFget_token(line, next_token_type);

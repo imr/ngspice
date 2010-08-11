@@ -26,10 +26,10 @@ void INP2S(CKTcircuit *ckt, INPtables * tab, card * current)
     char *nname2;		/* the second node's name */
     char *nname3;		/* the third node's name */
     char *nname4;		/* the fourth node's name */
-    void *node1;		/* the first node's node pointer */
-    void *node2;		/* the second node's node pointer */
-    void *node3;		/* the third node's node pointer */
-    void *node4;		/* the fourth node's node pointer */
+    CKTnode *node1;		/* the first node's node pointer */
+    CKTnode *node2;		/* the second node's node pointer */
+    CKTnode *node3;		/* the third node's node pointer */
+    CKTnode *node4;		/* the fourth node's node pointer */
     int error;			/* error code temporary */
     INPmodel *thismodel;	/* pointer to model structure describing our model */
     GENmodel *mdfast;		/* pointer to the actual model */

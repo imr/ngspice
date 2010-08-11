@@ -20,7 +20,7 @@ Author: 1985 Thomas L. Quarles
 
 /* should just call CKTnewEQ and set node type afterwards */
 int
-CKTnewNode(CKTcircuit *inCkt, void **node, IFuid name)
+CKTnewNode(CKTcircuit *inCkt, CKTnode **node, IFuid name)
 {
     CKTcircuit *ckt = /* fixme, drop that */ inCkt;
     if(!(ckt->CKTnodes)) { /*  starting the list - allocate both ground and 1 */
@@ -39,6 +39,6 @@ CKTnewNode(CKTcircuit *inCkt, void **node, IFuid name)
     ckt->CKTlastNode->type = SP_VOLTAGE;
     ckt->CKTlastNode->next = (CKTnode *)NULL;
 
-    if(node) *node = (void *)ckt->CKTlastNode;
+    if(node) *node = ckt->CKTlastNode;
     return(OK);
 }

@@ -193,7 +193,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                     error = CKTbindNode(ckt,fast,1,lowr);
                     if(error) return(error);
                     error = CKTbindNode(ckt,fast,2,
-                            (void *)CKTnum2nod(ckt, here->URCgndNode));
+                            CKTnum2nod(ckt, here->URCgndNode));
                     if(error) return(error);
                     ptemp.rValue = prop;
                     error = CKTpName("area",&ptemp,ckt,dtype,nameelt,&fast);
@@ -212,7 +212,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                     error = CKTbindNode(ckt,fast,1,lowr);
                     if(error) return(error);
                     error = CKTbindNode(ckt,fast,2,
-                            (void  *)CKTnum2nod(ckt, here->URCgndNode));
+                            CKTnum2nod(ckt, here->URCgndNode));
                     if(error) return(error);
                     ptemp.rValue = c;
                     error = CKTpName("capacitance",&ptemp,ckt,ctype,nameelt,
@@ -236,7 +236,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                         error = CKTbindNode(ckt,fast,1,hil);
                         if(error) return(error);
                         error = CKTbindNode(ckt,fast,2,
-                                (void *)CKTnum2nod(ckt, here->URCgndNode));
+                                CKTnum2nod(ckt, here->URCgndNode));
                         if(error) return(error);
                         ptemp.rValue = prop;
                         error=CKTpName("area",&ptemp,ckt,dtype,nameelt,&fast);
@@ -256,7 +256,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                         error = CKTbindNode(ckt,fast,1,hil);
                         if(error) return(error);
                         error = CKTbindNode(ckt,fast,2,
-                                (void *)CKTnum2nod(ckt, here->URCgndNode));
+                                CKTnum2nod(ckt, here->URCgndNode));
                         if(error) return(error);
                         ptemp.rValue = c;
                         error =CKTpName("capacitance",&ptemp,ckt,ctype,nameelt,

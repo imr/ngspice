@@ -14,8 +14,8 @@ typedef struct {
     int JOBtype;
     JOB *JOBnextJob;          /* pointer to next thing to do */
     char *JOBname;            /* name of this job */
-    IFnode output;        /* noise output summation node */
-    IFnode outputRef;     /* noise output reference node */
+    CKTnode *output;        /* noise output summation node */
+    CKTnode *outputRef;     /* noise output reference node */
     IFuid input;      /* name of the AC source used as input reference */
     double NstartFreq;
     double NstopFreq;

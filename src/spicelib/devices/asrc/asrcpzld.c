@@ -53,7 +53,7 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
                      int branch = CKTfndBranch(ckt,here->ASRCtree->vars[i].uValue);
                      asrc_vals[i] = *(ckt->CKTrhsOld + branch);
                 } else {
-                    int node_num = ((CKTnode *)(here->ASRCtree->vars[i].nValue)) -> number;
+                    int node_num = (here->ASRCtree->vars[i].nValue) -> number;
                     asrc_vals[i] = *(ckt->CKTrhsOld + node_num);
                 }
             }

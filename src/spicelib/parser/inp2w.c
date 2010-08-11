@@ -24,8 +24,8 @@ void INP2W(CKTcircuit *ckt, INPtables * tab, card * current)
     char *model;		/* the name of the resistor's model */
     char *nname1;		/* the first node's name */
     char *nname2;		/* the second node's name */
-    void *node1;		/* the first node's node pointer */
-    void *node2;		/* the second node's node pointer */
+    CKTnode *node1;		/* the first node's node pointer */
+    CKTnode *node2;		/* the second node's node pointer */
     int error;			/* error code temporary */
     INPmodel *thismodel;	/* pointer to model structure describing our model */
     GENmodel *mdfast;		/* pointer to the actual model */

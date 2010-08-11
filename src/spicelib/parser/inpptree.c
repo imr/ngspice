@@ -833,7 +833,7 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
     int i;
     INPparseNode *p;
     char buf[128], *name, *s;
-    IFnode temp;
+    CKTnode *temp;
 
     /* Make sure the case is ok. */
     (void) strcpy(buf, fname);

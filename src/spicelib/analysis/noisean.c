@@ -43,8 +43,8 @@ NOISEan (CKTcircuit *ckt, int restart)
     NOISEAN *job = (NOISEAN*) (ckt->CKTcurJob);
     static char *noacinput =    "noise input source has no AC value";
 
-    posOutNode = ((CKTnode*) (job->output))->number;
-    negOutNode = ((CKTnode*) (job->outputRef))->number;
+    posOutNode = (job->output) -> number;
+    negOutNode = (job->outputRef) -> number;
 
     /* see if the source specified is AC */
     inst = NULL;

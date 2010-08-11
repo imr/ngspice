@@ -17,14 +17,14 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTground(CKTcircuit *inCkt, void **node, IFuid name)
+CKTground(CKTcircuit *inCkt, CKTnode **node, IFuid name)
 {
     CKTcircuit *ckt = /* fixme, drop that */ inCkt;
 
     if(ckt->CKTnodes) {
         if(ckt->CKTnodes->name) {
             /*already exists - keep old name, but return it */
-            if(node)*node = (char *)ckt->CKTnodes;
+            if(node) *node = ckt->CKTnodes;
             return(E_EXISTS);
         }
         ckt->CKTnodes->name = name;
@@ -39,7 +39,7 @@ CKTground(CKTcircuit *inCkt, void **node, IFuid name)
         ckt->CKTnodes->next = (CKTnode *)NULL;
         ckt->CKTlastNode = ckt->CKTnodes;
     }
-    if(node)*node = (char *)ckt->CKTnodes;
+    if(node) *node = ckt->CKTnodes;
     return(OK);
 
 }

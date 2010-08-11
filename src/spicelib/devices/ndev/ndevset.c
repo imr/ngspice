@@ -60,7 +60,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 
 	    for(i=0;i<here->term;i++)   
 	    {
-	         node = (CKTnode *)here->node[i];
+	         node = here->node[i];
 		 here->PINinfos[i].pin=node->number;
 	         strncpy(here->PINinfos[i].name,here->bname[i],32);
 		 here->PINinfos[i].V  = 0.0;

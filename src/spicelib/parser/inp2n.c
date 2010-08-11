@@ -34,7 +34,7 @@ void INP2N(CKTcircuit *ckt, INPtables * tab, card * current)
     char *nnamex;               /* serve as a temporary name */ 
     char *nname[7];		/* the array of CKT node's name */
     char *bname[7];		/* the array of NDEV electrode's name */
-    void *node[7];		/* the array of CKT node's node pointer */
+    CKTnode *node[7];		/* the array of CKT node's node pointer */
     
     int error;			/* error code temporary */
     int i;            

@@ -14,9 +14,9 @@ int CKTdltNNum(CKTcircuit *cktp, int num);
 
 /* ARGSUSED */
 int
-CKTdltNod(CKTcircuit *ckt, void *node)
+CKTdltNod(CKTcircuit *ckt, CKTnode *node)
 {
-    return CKTdltNNum(ckt, ((CKTnode *) node)->number);
+    return CKTdltNNum(ckt, node->number);
 }
 
 int

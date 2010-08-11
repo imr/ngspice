@@ -19,19 +19,19 @@ PZsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
     switch(which) {
 
     case PZ_NODEI:
-        ((PZAN*)anal)->PZin_pos = ((CKTnode*)value->nValue)->number;
+        ((PZAN*)anal)->PZin_pos = (value->nValue)->number;
         break;
 
     case PZ_NODEG:
-        ((PZAN*)anal)->PZin_neg = ((CKTnode*)value->nValue)->number;
+        ((PZAN*)anal)->PZin_neg = (value->nValue)->number;
         break;
 
     case PZ_NODEJ:
-        ((PZAN*)anal)->PZout_pos = ((CKTnode*)value->nValue)->number;
+        ((PZAN*)anal)->PZout_pos = (value->nValue)->number;
         break;
 
     case PZ_NODEK:
-        ((PZAN*)anal)->PZout_neg = ((CKTnode*)value->nValue)->number;
+        ((PZAN*)anal)->PZout_neg = (value->nValue)->number;
         break;
 
     case PZ_V:

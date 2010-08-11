@@ -18,23 +18,23 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTsetNodPm(CKTcircuit *ckt, void *node, int parm, IFvalue *value, IFvalue *selector)
+CKTsetNodPm(CKTcircuit *ckt, CKTnode *node, int parm, IFvalue *value, IFvalue *selector)
 {
     if(!node) return(E_BADPARM);
     switch(parm) {
 
     case PARM_NS:
-        ((CKTnode *)node)->nodeset = value->rValue;
-        ((CKTnode *)node)->nsGiven = 1;
+        node->nodeset = value->rValue;
+        node->nsGiven = 1;
         break;
 
     case PARM_IC:
-        ((CKTnode *)node)->ic = value->rValue;
-        ((CKTnode *)node)->icGiven = 1;
+        node->ic = value->rValue;
+        node->icGiven = 1;
         break;
 
     case PARM_NODETYPE:
-        ((CKTnode *)node)->type = value->iValue;
+        node->type = value->iValue;
         break;
 
     default:

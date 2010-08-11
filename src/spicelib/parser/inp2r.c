@@ -30,8 +30,8 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
     char *model;		/* the name of the resistor's model */
     char *nname1;		/* the first node's name */
     char *nname2;		/* the second node's name */
-    void *node1;		/* the first node's node pointer */
-    void *node2;		/* the second node's node pointer */
+    CKTnode *node1;		/* the first node's node pointer */
+    CKTnode *node2;		/* the second node's node pointer */
     double val;			/* temp to held resistance */
     int error;			/* error code temporary */
     int error1;			/* secondary error code temporary */

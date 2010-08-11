@@ -25,7 +25,7 @@ Author: 1988 Thomas L. Quarles
 /* va: we should use tmalloc, whith also makes failure test */
 int
 IFnewUid(CKTcircuit *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
-	 void **nodedata)
+	 CKTnode **nodedata)
 {
     char *newname;
     int error;

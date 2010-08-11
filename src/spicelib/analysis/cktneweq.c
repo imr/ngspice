@@ -19,7 +19,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTnewEq(CKTcircuit *inCkt, void **node, IFuid name)
+CKTnewEq(CKTcircuit *inCkt, CKTnode **node, IFuid name)
 {
     CKTnode *mynode;
     CKTcircuit *ckt = /* fixme, drop that */ inCkt;
@@ -28,7 +28,7 @@ CKTnewEq(CKTcircuit *inCkt, void **node, IFuid name)
     error = CKTmkNode(ckt,&mynode);
     if(error) return(error);
 
-    if(node) *node = (void *)mynode;
+    if(node) *node = mynode;
     mynode->name = name;
 
     error = CKTlinkEq(ckt,mynode);

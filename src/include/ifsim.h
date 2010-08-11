@@ -236,7 +236,7 @@ union IFvalue {
     IFcomplex cValue;       /* complex valued data */
     char *sValue;           /* string valued data */
     IFuid uValue;           /* UID valued data */
-    IFnode nValue;          /* node valued data */
+    CKTnode *nValue;        /* node valued data */
     IFparseTree *tValue;    /* parse tree */
     struct {
         int numValue;       /* length of vector */
@@ -347,21 +347,21 @@ struct IFsimulator {
     int (*deleteCircuit) (CKTcircuit *);
                                     /* destroy old circuit's data structures*/
 
-    int (*newNode) (CKTcircuit *, void **, IFuid);
+    int (*newNode) (CKTcircuit *, CKTnode **, IFuid);
                                     /* create new node */
-    int (*groundNode) (CKTcircuit *, void **, IFuid);
+    int (*groundNode) (CKTcircuit *, CKTnode **, IFuid);
                                     /* create ground node */
-    int (*bindNode) (CKTcircuit *, GENinstance *, int, void *);
+    int (*bindNode) (CKTcircuit *, GENinstance *, int, CKTnode *);
                                     /* bind a node to a terminal */
-    int (*findNode) (CKTcircuit *, void **, IFuid);
+    int (*findNode) (CKTcircuit *, CKTnode **, IFuid);
                                     /* find a node by name */
     int (*instToNode) (CKTcircuit *, void *, int, void **, IFuid *);
                                     /* find the node attached to a terminal */
-    int (*setNodeParm) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
+    int (*setNodeParm) (CKTcircuit *, CKTnode *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on a node */
-    int (*askNodeQuest) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
+    int (*askNodeQuest) (CKTcircuit *, CKTnode *, int, IFvalue *, IFvalue *);
                                     /* ask a question about a node */
-    int (*deleteNode) (CKTcircuit *, void *);
+    int (*deleteNode) (CKTcircuit *, CKTnode *);
                                     /* delete a node from the circuit */
 
     int (*newInstance) (CKTcircuit *, GENmodel *, GENinstance **, IFuid);
@@ -429,7 +429,7 @@ struct IFsimulator {
  */
 
 struct IFfrontEnd {
-    int (*IFnewUid) (CKTcircuit *, IFuid *, IFuid, char *, int, void **);
+    int (*IFnewUid) (CKTcircuit *, IFuid *, IFuid, char *, int, CKTnode **);
                             /* create a new UID in the circuit */
     int (*IFdelUid) (CKTcircuit *, IFuid, int);
                             /* create a new UID in the circuit */

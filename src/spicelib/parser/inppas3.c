@@ -37,7 +37,7 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, void *task,
                                    resistance into */
     int which;			/* which analysis we are performing */
     int length;			/* length of a name */
-    void *node1;		/* the first node's node pointer */
+    CKTnode *node1;		/* the first node's node pointer */
 
 #ifdef TRACE
     /* SDB debug statement */
