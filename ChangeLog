@@ -1,3 +1,8 @@
+2010-08-11  Robert Larice
+ * src/spicelib/devices/cktinit.c ,
+ * src/spicelib/parser/inp2b.c :
+    cleanup
+
 2010-08-10  Robert Larice
  * src/frontend/spiceif.c ,
  * src/spicelib/analysis/acan.c ,

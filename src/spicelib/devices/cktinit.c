@@ -24,9 +24,8 @@ int
 CKTinit(CKTcircuit **ckt)		/* new circuit to create */
 {
     int i;
-    CKTcircuit *sckt;
-    *ckt = (CKTcircuit *) tmalloc(sizeof(CKTcircuit));
-    sckt = (CKTcircuit * /*fixme*/)(*ckt);
+    CKTcircuit *sckt = (CKTcircuit *) tmalloc(sizeof(CKTcircuit));
+    *ckt = sckt;
     if (sckt == NULL)
 	return(E_NOMEM);
 /* gtri - begin - dynamically allocate the array of model lists */

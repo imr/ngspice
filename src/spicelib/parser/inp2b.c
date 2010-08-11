@@ -30,8 +30,6 @@ void INP2B(CKTcircuit *ckt, INPtables * tab, card * current)
     double leadval;		/* actual value of unlabeled number */
     IFuid uid;			/* uid for default model name */
 
-    CKTcircuit* inckt = (CKTcircuit*) ckt; /* get circuit struct for hertz-flag */
-
     /* Arbitrary source. */
     type = INPtypelook("ASRC");
     if (type < 0) {
@@ -41,7 +39,7 @@ void INP2B(CKTcircuit *ckt, INPtables * tab, card * current)
 
     /* if we find 'hertz' variable, set flag to actual circuit */
     if(strstr(current->line, "hertz"))
-        inckt->CKTvarHertz = 1;
+        ckt->CKTvarHertz = 1;
         
     line = current->line;
     INPgetTok(&line, &name, 1);
