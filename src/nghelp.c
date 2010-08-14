@@ -93,7 +93,7 @@ out:
 
     return EXIT_NORMAL;
 }
-
+/* 
 void
 fatal(char *s)
 {
@@ -101,7 +101,7 @@ fatal(char *s)
     exit(1);
 }
 
-/* There is a conflict with another cp_printword in cp/quote.c 
+There is a conflict with another cp_printword in cp/quote.c 
 static void
 cp_printword(s)
     char *s;
@@ -113,7 +113,7 @@ cp_printword(s)
 */
 
 bool
-cp_getvar(char *n, int t, void *r)
+cp_getvar(char *n, enum cp_types type, void *r)
 {
     return (FALSE);
 }
