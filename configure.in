@@ -31,6 +31,8 @@ AC_CONFIG_HEADER([config.h])
 dnl Initialise automake stuff
 AM_INIT_AUTOMAKE
 
+AC_CONFIG_MACRO_DIR([m4])
+
 dnl Package Options
 dnl ---------------
 
@@ -295,15 +297,13 @@ AC_CANONICAL_HOST
 dnl
 dnl The tclSpice options
 dnl
-AM_CONDITIONAL(TCL_MODULE, false)
-AM_CONDITIONAL(TCLWIN, false)
 if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
-   AM_CONDITIONAL(TCL_MODULE, true)
+   has_tcl_module=true
    AC_DEFINE(TCL_MODULE,1,[Tcl Module])
    case $host_os in
      *mingw* )
-       AM_CONDITIONAL(TCLWIN, true)
-       AM_CONDITIONAL(NO_HELP, true)
+       has tclwin=true
+       has_no_help=true
        AC_DEFINE(HAS_TCLWIN,1,[Tcl Windows]);;
      *)
      ;;  
@@ -435,6 +435,9 @@ else
    enable_static=yes
 fi
 
+AM_CONDITIONAL([TCL_MODULE], [test x$has_tcl_module = xtrue])
+AM_CONDITIONAL([TCLWIN], [test x$has_tclwin = xtrue])
+ 
 AC_SUBST(TCL_PACKAGE_PATH)
 AC_SUBST(TCL_LIB_SPEC)
 ##################################################################
@@ -469,15 +472,14 @@ case $with_windows in
 	yes )
 		AC_DEFINE(X_DISPLAY_MISSING)
 		AC_MSG_RESULT(No X display!)
-		AM_CONDITIONAL(NO_X, test x$with_windows = xyes)
+		has_no_x=true
 		if test "x$enable_help" = "xyes"; then
-		  AM_CONDITIONAL(NO_HELP, test ! x$with_windows = xyes)
+		  has_no_help=false
 		else
-		  AM_CONDITIONAL(NO_HELP, true)
+		  Has_no_help=true
 		fi
 		CFLAGS="$CFLAGS -mwindows";;
 	* )
-
 
 dnl Check for /proc (virtual process information file system)
 AC_CHECK_HEADERS( /proc/meminfo)
@@ -579,21 +581,24 @@ if test ! "$no_x" = "yes" ; then
 	X_LIBS="$X_LIBS -lXt"
 	AC_CHECK_LIB(Xext, XShmAttach,X_LIBS="$X_LIBS -lXext",AC_MSG_ERROR(Couldn't find Xext library), $X_LIBS $X_EXTRA_LIBS)
 	X_LIBS="$X_LIBS -lX11"
-	AM_CONDITIONAL(NO_X, false)
+	has_no_x=false
 else
 	AC_DEFINE(X_DISPLAY_MISSING)
 	AC_MSG_RESULT(No X display!)
-	AM_CONDITIONAL(NO_X, true)
+	has_no_x=true
 fi 
   
 if ( test "x$enable_help" = "xyes" ) && ! ( test "$no_x" = "yes" ) ; then
-	AM_CONDITIONAL(NO_HELP, false)
+	has_no_help=false
 else
-	AM_CONDITIONAL(NO_HELP, true)
+	has_no_help=true
 fi ;;
 
 esac
+# end of case --with-windows
 
+AM_CONDITIONAL([NO_X], [test x$has_no_x = xtrue])
+AM_CONDITIONAL([NO_HELP], [test x$has_no_help = xtrue])
 
 dnl Check for a few typdefs:
 AC_TYPE_PID_T
@@ -691,7 +696,6 @@ AC_CHECK_FUNCS(dirname,,AC_CHECK_LIB(gen,dirname,AC_DEFINE(HAVE_DIRNAME,1,[Have 
 
 AC_CHECK_HEADERS(getopt.h)
 AC_CHECK_FUNC(getopt_long, getopt_long=true)
-# AM_CONDITIONAL(HAVE_GETOPT_LONG, test "$getopt_long" = "true")
 if test "$getopt_long" = "true"; then
   AC_DEFINE(HAVE_GETOPT_LONG,1,[Have fcn getopt_long()])
 fi
@@ -812,13 +816,20 @@ fi
 AC_SUBST(XGRAPHDIR)
 AC_SUBST(NOTXGRAPH)
 
+AC_CHECK_PROGS(YACC, 'bison -y' byacc yacc) 
+
 dnl Add new code models to the build by pointing to them here.
 if test "$enable_xspice" = "yes"; then
+    if test -z "${YACC}" ; then
+        AC_MSG_ERROR([XSPICE build requires bison, byacc or yacc parser generator])
+    fi
     AC_MSG_RESULT(X-Spice features included)
     AC_DEFINE(XSPICE, [1], [The xspice enhancements])
-dnl Define variables for YACC and LEX
-    AC_PROG_YACC
-    AM_PROG_LEX
+dnl Define variables for LEX
+    AC_CHECK_PROGS(LEX, flex lex)
+	if test -z $LEX ; then
+	  AC_MSG_ERROR(Flex is required for building XSPICE)
+	fi
     XSPICEDIR="xspice"
     case $host_os in
      *mingw* )
@@ -854,6 +865,10 @@ else
     XSPICELIB2=""
     XSPICETESTS=""
     XSPICEINIT="*"
+    
+    if test -z "${YACC}" ; then
+        AC_MSG_WARN([No bison, byacc, yacc found: Uses prebuilt default parsers])
+    fi    
 fi
 AC_SUBST(XSPICEDIR)
 AC_SUBST(XSPICELIB1)
@@ -918,11 +933,11 @@ if test "$enable_adms" = "yes"; then
                adms/mextram \
                adms/psp102 "
    
-   VLAMKF=" src/spicelib/devices/adms/ekv/Makefile \
-            src/spicelib/devices/adms/hicum0/Makefile \
-            src/spicelib/devices/adms/hicum2/Makefile \
-            src/spicelib/devices/adms/mextram/Makefile \
-            src/spicelib/devices/adms/psp102/Makefile "
+#   VLAMKF=" src/spicelib/devices/adms/ekv/Makefile \
+#            src/spicelib/devices/adms/hicum0/Makefile \
+#            src/spicelib/devices/adms/hicum2/Makefile \
+#            src/spicelib/devices/adms/mextram/Makefile \
+#            src/spicelib/devices/adms/psp102/Makefile "
 
    NOTVLADEVDIR=""
 
@@ -934,7 +949,7 @@ if test "$enable_adms" = "yes"; then
 
 else
 
-    VLAMKF=""
+#    VLAMKF=""
     VLADEVDIR=""
     NOTVLADEVDIR="adms"
 
@@ -942,7 +957,7 @@ fi
 
 AC_SUBST(ADMSXML)
 AC_SUBST(VLADEVDIR)
-AC_SUBST(VLAMKF)
+#AC_SUBST(VLAMKF)
 AC_SUBST(VLADEV)
 AC_SUBST(NOTVLADEVDIR)
 

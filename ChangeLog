@@ -1,3 +1,15 @@
+2010-08-13  Holger Vogt
+ * autogen.sh: keep configure.in untouched by generating temporary 
+   configure.ac if --adms is selected
+ * configure.in: remove VLAMKF; move AM_CONDITIONAL out of 
+   conditional clauses; replace AC_PROG_YACC, AC_PROG_LEX by
+   appropriate AC_CHECK_PROGS with warning if BISON is missing w/o XSPICE,
+   but fail if w/ XSPICE and BISON or FLEX missing; AC_CONFIG_MACRO_DIR([m4])
+   added
+ * Makefile.am: ACLOCAL_AMFLAGS = -I m4	 added 
+ * .cvsignore: m4 added
+ * nghelp.c: adapt function types
+
 2010-08-11  Robert Larice
  * src/include/cktdefs.h ,
  * src/include/ifsim.h ,

@@ -7,6 +7,11 @@
 #
 # $Id$
 #
+# configure.temp: temporary storage place of configure.in 
+# maybe recovered if .autogen.sh is killed manually 
+#
+# configure.ac: modified configure.in if --adms is selected
+# will be deleted automatically while configure.in is recovered
 
 PROJECT=ngspice
 TEST_TYPE=-f
@@ -44,7 +49,9 @@ echo
 end_on_error()
 {
 if test "$ADMS" -eq 1; then
-  mv configure.temp configure.in
+  cp -p configure.ac configure.err
+  rm -f configure.ac
+  mv -f configure.temp configure.in
 fi
 
 exit 1
@@ -126,23 +133,19 @@ test $TEST_TYPE $FILE || {
 
 if test "$ADMS" -eq 1; then
 
-cp -p configure.in configure.temp
+  rm -f configure.ac
+  mv -f configure.in configure.temp
 
   # automake needs these entries in configure.in for adms enabled
-#  sed 's/${VLAMKF}/src\/spicelib\/devices\/adms\/ekv\/Makefile\
-#                   src\/spicelib\/devices\/adms\/hicum0\/Makefile\
-#                   src\/spicelib\/devices\/adms\/hicum2\/Makefile\
-#                   src\/spicelib\/devices\/adms\/mextram\/Makefile\
-#                   src\/spicelib\/devices\/adms\/psp102\/Makefile/g' configure.temp >configure.test
   
   sed 's/tests\/vbic\/Makefile/tests\/vbic\/Makefile\
                  src\/spicelib\/devices\/adms\/ekv\/Makefile\
                  src\/spicelib\/devices\/adms\/hicum0\/Makefile\
                  src\/spicelib\/devices\/adms\/hicum2\/Makefile\
                  src\/spicelib\/devices\/adms\/mextram\/Makefile\
-                 src\/spicelib\/devices\/adms\/psp102\/Makefile/g' configure.temp >configure.in
+                 src\/spicelib\/devices\/adms\/psp102\/Makefile/g' configure.temp >configure.ac
   
-#  cp -p configure.in configure.test
+#  cp -p configure.ac configure.test
   
   currentdir=`pwd`
   
@@ -165,7 +168,7 @@ cp -p configure.in configure.temp
         echo "-->"$ADMSDIR/$adms_dir
         cd $ADMSDIR/$adms_dir
         file=`ls admsva/*.va`
-        $ADMSXML $file -Iadmsva -e ../admst/ngspiceVersion.xml \
+        $ADMSXML $file -Iadmsva -xv -e ../admst/ngspiceVersion.xml \
         -e ../admst/ngspiceMakefile.am.xml
         
         cd $currentdir
@@ -201,7 +204,8 @@ autoconf
 if [ $? -ne 0 ]; then  echo "autoconf failed"; end_on_error ; fi
 
 if test "$ADMS" -eq 1; then
-  mv configure.temp configure.in
+  rm -f configure.ac
+  mv -f configure.temp configure.in
 fi
 
 echo "Success."
