@@ -1,4 +1,8 @@
 2010-08-15  Robert Larice
+ * src/frontend/evaluate.c :
+    change for readability
+
+2010-08-15  Robert Larice
  * src/spicelib/devices/cktask.c ,
  * src/spicelib/parser/inp2m.c :
     drop (GENinstance*) casts, which are no longer necessary

@@ -226,8 +226,8 @@ doop(char what,
             d1 = (double *) tmalloc(length * sizeof (double));
             for (i = 0; i < v1->v_length; i++)
                 d1[i] = v1->v_realdata[i];
-            if (length > 0)
-                ld = v1->v_realdata[v1->v_length - 1];
+            if (i > 0)
+                ld = v1->v_realdata[i - 1];
             for ( ; i < length; i++)
                 d1[i] = ld;
         } else {
@@ -236,8 +236,8 @@ doop(char what,
             c1 = (complex *) tmalloc(length * sizeof (complex));
             for (i = 0; i < v1->v_length; i++)
                 c1[i] = v1->v_compdata[i];
-            if (length > 0)
-                lc = v1->v_compdata[v1->v_length - 1];
+            if (i > 0)
+                lc = v1->v_compdata[i - 1];
             for ( ; i < length; i++)
                 c1[i] = lc;
         }
@@ -253,8 +253,8 @@ doop(char what,
             d2 = (double *) tmalloc(length * sizeof (double));
             for (i = 0; i < v2->v_length; i++)
                 d2[i] = v2->v_realdata[i];
-            if (length > 0)
-                ld = v2->v_realdata[v2->v_length - 1];
+            if (i > 0)
+                ld = v2->v_realdata[i - 1];
             for ( ; i < length; i++)
                 d2[i] = ld;
         } else {
@@ -263,8 +263,8 @@ doop(char what,
             c2 = (complex *) tmalloc(length * sizeof (complex));
             for (i = 0; i < v2->v_length; i++)
                 c2[i] = v2->v_compdata[i];
-            if (length > 0)
-                lc = v2->v_compdata[v2->v_length - 1];
+            if (i > 0)
+                lc = v2->v_compdata[i - 1];
             for ( ; i < length; i++)
                 c2[i] = lc;
         }
