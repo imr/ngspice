@@ -64,6 +64,13 @@ if((here->ptr = SMPmakeElt(matrix, here->first, (second)->number))\
 		return E_PARMVAL;
 
 	    if( here->ASRCtype == ASRC_VOLTAGE) {
+
+                if(here->ASRCposNode == here->ASRCnegNode) {
+                    (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                              "instance %s is a shorted ASRC", &here->ASRCname);
+                    return(E_UNSUPP);
+                }
+
             	here->ASRCposptr = (double **)
             	  REALLOC(here->ASRCposptr, (sizeof(double *)*(j+5)));
             	TSTALLOC(ASRCposptr[j++],ASRCposNode,ASRCbranch);

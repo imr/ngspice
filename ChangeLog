@@ -1,4 +1,11 @@
 2010-08-15  Robert Larice
+ * src/spicelib/devices/asrc/asrcset.c ,
+ * src/spicelib/devices/ccvs/ccvsset.c ,
+ * src/spicelib/devices/vcvs/vcvsset.c ,
+ * src/spicelib/devices/vsrc/vsrcset.c :
+    check for shorted voltage sources, to avoid a segmentation fault
+
+2010-08-15  Robert Larice
  * src/maths/sparse/spdefs.h :
     fix txfree() prototype
 

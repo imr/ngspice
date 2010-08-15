@@ -29,6 +29,12 @@ VSRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
         for (here = model->VSRCinstances; here != NULL ;
                 here=here->VSRCnextInstance) {
             
+            if(here->VSRCposNode == here->VSRCnegNode) {
+                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                        "instance %s is a shorted VSRC", &here->VSRCname);
+                return(E_UNSUPP);
+            }
+
             if(here->VSRCbranch == 0) {
                 error = CKTmkCur(ckt,&tmp,here->VSRCname,"branch");
                 if(error) return(error);

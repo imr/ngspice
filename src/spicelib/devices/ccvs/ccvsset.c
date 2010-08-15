@@ -29,6 +29,12 @@ CCVSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         for (here = model->CCVSinstances; here != NULL ;
                 here=here->CCVSnextInstance) {
             
+            if(here->CCVSposNode == here->CCVSnegNode) {
+                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                        "instance %s is a shorted CCVS", &here->CCVSname);
+                return(E_UNSUPP);
+            }
+
             if(here->CCVSbranch==0) {
                 error = CKTmkCur(ckt,&tmp,here->CCVSname, "branch");
                 if(error) return(error);
