@@ -1,3 +1,7 @@
+2010-08-15  Robert Larice
+ * src/maths/sparse/spdefs.h :
+    fix txfree() prototype
+
 2010-08-13  Holger Vogt
  * autogen.sh: keep configure.in untouched by generating temporary 
    configure.ac if --adms is selected

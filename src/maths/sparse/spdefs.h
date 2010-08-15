@@ -369,7 +369,7 @@ typedef  struct
 /* Allocation */
 
 extern void * tmalloc(size_t);
-extern void * txfree(void *);
+extern void   txfree(void *);
 extern void * trealloc(void *, size_t);
 
 #define ALLOC(type,number)  ((type *)tmalloc((size_t)(sizeof(type)*(number))))
