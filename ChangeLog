@@ -1,3 +1,10 @@
+2010-08-15  Holger Vogt
+ * configure.in: add a small section starting with *VLAMKF, containing
+   the adms makefiles to be made 
+ * autogen.sh:  if --adms is selected, read the section from configure.in
+   and store it in AC_CONFIG_FILES of temporary configure.ac 
+ Tested with MINGW, CYGWIN, SUSE Linux, may need more tests on other OSs!  
+
 2010-08-15  Robert Larice
  * src/misc/string.c ,
  * src/xspice/cmpp/mod_yacc.y :

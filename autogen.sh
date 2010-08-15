@@ -138,14 +138,21 @@ if test "$ADMS" -eq 1; then
 
   # automake needs these entries in configure.in for adms enabled
   
-  sed 's/tests\/vbic\/Makefile/tests\/vbic\/Makefile\
-                 src\/spicelib\/devices\/adms\/ekv\/Makefile\
-                 src\/spicelib\/devices\/adms\/hicum0\/Makefile\
-                 src\/spicelib\/devices\/adms\/hicum2\/Makefile\
-                 src\/spicelib\/devices\/adms\/mextram\/Makefile\
-                 src\/spicelib\/devices\/adms\/psp102\/Makefile/g' configure.temp >configure.ac
+#  sed 's/tests\/vbic\/Makefile/tests\/vbic\/Makefile\
+#                src\/spicelib\/devices\/adms\/ekv\/Makefile\
+#               src\/spicelib\/devices\/adms\/hicum0\/Makefile\
+#                 src\/spicelib\/devices\/adms\/hicum2\/Makefile\
+#                 src\/spicelib\/devices\/adms\/mextram\/Makefile\
+#                 src\/spicelib\/devices\/adms\/psp102\/Makefile/g' configure.temp >configure.ac
   
-#  cp -p configure.ac configure.test
+  z=""
+  # Find all lines with "#VLAMKF" and put the second token of each line into shell variable z
+  z=`cat configure.temp | awk -v z=${z} '$1 ~ /#VLAMKF/{ z=$2; print "                 "z"\\\" }' `
+
+  # Find "tests/vbic/Makefile" and replace by tests/vbic/Makefile plus contents of variable z
+  sed -e "
+  s,tests\\/vbic\\/Makefile,tests\\/vbic\\/Makefile\\
+  $z ," configure.temp >configure.ac
   
   currentdir=`pwd`
   
