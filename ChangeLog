@@ -1,4 +1,10 @@
 2010-08-15  Robert Larice
+ * src/include/jobdefs.h ,
+ * src/include/tskdefs.h ,
+ * src/include/typedefs.h :
+    typedefs for JOB and TSKtask into "typedefs.h"
+
+2010-08-15  Robert Larice
  * src/spicelib/parser/inp2dot.c :
     use the type CKTnode instead of void*
 

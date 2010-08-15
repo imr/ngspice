@@ -7,14 +7,14 @@ Author: 1985 Thomas L. Quarles
 #define JOBdef
 
 
+#include "typedefs.h"
 #include "ifsim.h"
 
-typedef struct sJOB{
+struct JOB {
     int JOBtype;                /* type of job */
-    struct sJOB *JOBnextJob;    /* next job in list */
+    struct JOB *JOBnextJob;     /* next job in list */
     IFuid JOBname;              /* name of this job */
-
-} JOB;
+};
 
 #define NODOMAIN	0
 #define TIMEDOMAIN	1

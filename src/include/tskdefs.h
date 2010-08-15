@@ -9,9 +9,10 @@ Modified: 2000 AlansFixes
 #define TSK
 
 
+#include "typedefs.h"
 #include "jobdefs.h"
 
-typedef struct {
+struct TSKtask {
     JOB taskOptions;    /* job structure at the front to hold options */
     JOB *jobs;
     char *TSKname;
@@ -64,7 +65,6 @@ typedef struct {
     unsigned int TSKnodeDamping:1;  /* flag for node damping */
     double TSKabsDv;                 /* abs limit for iter-iter voltage change */
     double TSKrelDv;                 /* rel limit for iter-iter voltage change */
-
-}TSKtask;
+};
 
 #endif /*TSK*/
