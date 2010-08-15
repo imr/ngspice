@@ -1,4 +1,8 @@
 2010-08-15  Robert Larice
+ * src/frontend/vectors.c :
+    change for readability
+
+2010-08-15  Robert Larice
  * src/frontend/evaluate.c :
     change for readability
 

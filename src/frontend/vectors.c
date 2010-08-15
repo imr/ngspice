@@ -971,7 +971,6 @@ struct dvec *
 vec_mkfamily(struct dvec *v)
 {
     int size, numvecs, i, j, count[MAXDIMS];
-    int totalsize;
     struct dvec *vecs, *d;
     char buf[BSIZE_SP], buf2[BSIZE_SP];
 
@@ -1010,15 +1009,11 @@ vec_mkfamily(struct dvec *v)
         d->v_length = size;
 
         if (isreal(v)) {
-	    totalsize = sizeof (double) * size;
-            d->v_realdata = (double *) tmalloc(totalsize);
-            bcopy((char *) v->v_realdata + totalsize * j,
-                    (char *) d->v_realdata, totalsize);
+            d->v_realdata = (double *) tmalloc(size * sizeof(double));
+            bcopy(v->v_realdata + size*j, d->v_realdata, size*sizeof(double));
         } else {
-	    totalsize = sizeof (complex) * size;
-            d->v_compdata = (complex *) tmalloc(totalsize);
-            bcopy((char *) v->v_compdata + totalsize * j,
-                    (char *) d->v_compdata, totalsize);
+            d->v_compdata = (complex *) tmalloc(size * sizeof(complex));
+            bcopy(v->v_compdata + size*j, d->v_compdata, size*sizeof(complex));
         }
 	/* Add one to the counter. */
 	(void) incindex(count, v->v_numdims - 1, v->v_dims, v->v_numdims);
