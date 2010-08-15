@@ -1,4 +1,9 @@
 2010-08-15  Robert Larice
+ * src/spicelib/devices/cktask.c ,
+ * src/spicelib/parser/inp2m.c :
+    drop (GENinstance*) casts, which are no longer necessary
+
+2010-08-15  Robert Larice
  * src/spicelib/devices/asrc/asrcset.c ,
  * src/spicelib/devices/ccvs/ccvsset.c ,
  * src/spicelib/devices/vcvs/vcvsset.c ,

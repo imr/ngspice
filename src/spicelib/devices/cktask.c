@@ -17,7 +17,7 @@ Author: 1985 Thomas L. Quarles
 int
 CKTask(CKTcircuit *ckt, GENinstance *fast, int which, IFvalue *value, IFvalue *selector)
 {
-    GENinstance *instance = (GENinstance *) fast;
+    GENinstance *instance = /*fixme*/ fast;
     int type = instance->GENmodPtr->GENmodType;
     int error;
 #ifdef PARALLEL_ARCH
@@ -29,7 +29,7 @@ CKTask(CKTcircuit *ckt, GENinstance *fast, int which, IFvalue *value, IFvalue *s
     DEVices = devices();
     if((*DEVices[type]).DEVask) {
         error = DEVices[type]->DEVask(ckt,
-                (GENinstance *)fast,which,value,selector);
+                fast, which, value, selector);
     } else {
 	error = E_BADPARM;
     }
