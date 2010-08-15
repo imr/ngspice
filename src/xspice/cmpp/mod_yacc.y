@@ -124,7 +124,7 @@ static char *subscript (Sub_Id_t sub_id)
 }
 
 /*--------------------------------------------------------------------------*/
-int
+static int
 local_strcmpi(char *s, char *t)
      /* string compare -  case insensitive */
 {
@@ -492,7 +492,7 @@ macro			: TOK_INIT
 			| TOK_STATIC_VAR_SIZE TOK_LPAREN id TOK_RPAREN
 			   {int i = valid_subid ($3, STATIC_VAR);
 			    fprintf (mod_yyout, "private->inst_var[%d]->size",
-				    i, subscript($3));}
+				    i);}
 			| TOK_OUTPUT_DELAY TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
 			    check_dir (i, OUT, "OUTPUT_DELAY");

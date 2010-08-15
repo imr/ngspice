@@ -264,7 +264,7 @@ gettok_iv(char **s)
         else if (c == /*(*/')')
             paren -= 1;
         if (isspace(c)) 
-            *(*s)++;
+            (*s)++;
         else {
             spice_dstring_append_char( &buf, *(*s)++ ) ;
             if (paren == 0) break;

@@ -1,4 +1,9 @@
 2010-08-15  Robert Larice
+ * src/misc/string.c ,
+ * src/xspice/cmpp/mod_yacc.y :
+    chomp some warnings
+
+2010-08-15  Robert Larice
  * src/include/jobdefs.h ,
  * src/include/tskdefs.h ,
  * src/include/typedefs.h :
