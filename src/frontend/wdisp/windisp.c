@@ -731,7 +731,6 @@ int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
    int   xs, ys, xe, ye;
    int      yb;
    int   direction;
-   double   temp;
    double   r;
    double  dx0;
    double   dy0;

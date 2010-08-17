@@ -10,9 +10,11 @@ static void *tcalloc(size_t a, size_t b) {
   return tmalloc(a*b);          /* FIXME, tcalloc must zero !?!? */
 }
 
+#ifdef HAVE_LIBGC
 static void no_free(void *p) {
   U(p);
 }
+#endif
 
 static FILE * no_file(void) {
   return NULL;

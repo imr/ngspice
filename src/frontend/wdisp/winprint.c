@@ -354,7 +354,6 @@ int WPRINT_Arc(int x0, int y0, int radius, double theta, double delta_theta)
 	int    	yb;
 	int		direction;
 	int		ColIndex;
-	double	temp;
 	double	r;
 	double  dx0;
 	double	dy0;
