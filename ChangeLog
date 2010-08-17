@@ -1,3 +1,6 @@
+2010-08-17 Dietmar Warning
+ * windisp.c, winprint.c, xspice/cm/cmexport.c: omit warnings
+
 2010-08-15  Holger Vogt
  * configure.in: add a small section starting with *VLAMKF, containing
    the adms makefiles to be made 
