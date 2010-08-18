@@ -54,6 +54,15 @@ fi
 exit 1
 }
 
+check_awk()
+{
+(awk --version) < /dev/null > /dev/null 2>&1 || {
+	echo
+	echo "You must have awk installed to compile $PROJECT with --adms."
+	exit 1
+        }
+}		
+		
 check_autoconf()
 {
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
@@ -127,6 +136,8 @@ test $TEST_TYPE $FILE || {
 
 # only for --adms:
 if test "$ADMS" -eq 1; then
+
+check_awk
 
 #  sed 's/tests\/vbic\/Makefile/tests\/vbic\/Makefile\
 #                src\/spicelib\/devices\/adms\/ekv\/Makefile\

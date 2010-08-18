@@ -1,7 +1,8 @@
 2010-08-19  Holger Vogt
  * configure.in: add TCLCYG 
  * autogen.sh:  if --adms is selected, read the section from configure.in
-   and store it in AC_CONFIG_FILES of temporary temp-adms.ac 
+   and store it in AC_CONFIG_FILES of temporary temp-adms.ac. 
+   Testing for availability of awk
  Tested with MINGW, CYGWIN, SUSE Linux, may need more tests on other OSs!  
 
 2010-08-17 Dietmar Warning
