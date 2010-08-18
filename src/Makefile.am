@@ -280,6 +280,10 @@ if TCLWIN
 libspice_la_LDFLAGS +=  -no-undefined
 libspice_la_LDFLAGS += --def spice.def @TCL_LIB_SPEC@
 endif
+if TCLCYG
+libspice_la_LDFLAGS +=  -no-undefined
+libspice_la_LDFLAGS += --def spice.def @TCL_LIB_SPEC@
+endif
 
 CLEANFILES = pkgIndex.tcl libspice.so
 

@@ -7,11 +7,9 @@
 #
 # $Id$
 #
-# configure.temp: temporary storage place of configure.in 
-# maybe recovered if .autogen.sh is killed manually 
-#
-# configure.ac: modified configure.in if --adms is selected
-# will be deleted automatically while configure.in is recovered
+# temp-adms.ac: modified configure.in if --adms is selected
+# for temporary use by autoconf, will be deleted automatically
+# configure.in stays untouched
 
 PROJECT=ngspice
 TEST_TYPE=-f
@@ -49,9 +47,8 @@ echo
 end_on_error()
 {
 if test "$ADMS" -eq 1; then
-  cp -p configure.ac configure.err
-  rm -f configure.ac
-  mv -f configure.temp configure.in
+#  cp -p temp-adms.ac configure.err
+  rm -f temp-adms.ac
 fi
 
 exit 1
@@ -128,16 +125,9 @@ test $TEST_TYPE $FILE || {
 	exit 1
 }
 
-
-
-
+# only for --adms:
 if test "$ADMS" -eq 1; then
 
-  rm -f configure.ac
-  mv -f configure.in configure.temp
-
-  # automake needs these entries in configure.in for adms enabled
-  
 #  sed 's/tests\/vbic\/Makefile/tests\/vbic\/Makefile\
 #                src\/spicelib\/devices\/adms\/ekv\/Makefile\
 #               src\/spicelib\/devices\/adms\/hicum0\/Makefile\
@@ -145,14 +135,19 @@ if test "$ADMS" -eq 1; then
 #                 src\/spicelib\/devices\/adms\/mextram\/Makefile\
 #                 src\/spicelib\/devices\/adms\/psp102\/Makefile/g' configure.temp >configure.ac
   
+  # automake and autoconf need these entries in configure.in for adms enabled  
   z=""
+  znew=""
   # Find all lines with "#VLAMKF" and put the second token of each line into shell variable z
-  z=`cat configure.temp | awk -v z=${z} '$1 ~ /#VLAMKF/{ z=$2; print "                 "z"\\\" }' `
-
-  # Find "tests/vbic/Makefile" and replace by tests/vbic/Makefile plus contents of variable z
+  # as input to additional automake call for the adms directories
+  z=`cat configure.in | awk -v z=${z} '$1 ~ /#VLAMKF/{ z=$2; print "./"z }' `
+  # same as above, sed requires \ at line endings, to be added to temp-adms.ac used by autoconf
+  znew=`cat configure.in | awk -v z=${znew} '$1 ~ /#VLAMKF/{ znew=$2; print "             "znew"\\\" }' `
+ 
+ # Find "tests/vbic/Makefile" and replace by tests/vbic/Makefile plus contents of variable z
   sed -e "
   s,tests\\/vbic\\/Makefile,tests\\/vbic\\/Makefile\\
-  $z ," configure.temp >configure.ac
+  $znew ," configure.in >temp-adms.ac
   
   currentdir=`pwd`
   
@@ -162,13 +157,10 @@ if test "$ADMS" -eq 1; then
      
      case "$adms_dir" in
         "CVS")
-        echo "Skipping CVS"
-        ;;
+        echo "Skipping CVS" ;;
         
         "admst")
-        echo "Skipping scripts dir"
-        
-        ;;
+        echo "Skipping scripts dir" ;;
         
         *)
         echo "Entering into directory: $adms_dir"
@@ -203,17 +195,23 @@ if [ $? -eq 0 ]; then
 fi
 
 echo "Running automake -Wall --copy --add-missing"
-automake -Wall --copy --add-missing $am_opt
+automake  -Wall --copy --add-missing
 if [ $? -ne 0 ]; then  echo "automake failed"; end_on_error ; fi
 
-echo "Running autoconf"
-autoconf
-if [ $? -ne 0 ]; then  echo "autoconf failed"; end_on_error ; fi
-
 if test "$ADMS" -eq 1; then
-  rm -f configure.ac
-  mv -f configure.temp configure.in
+echo "Running automake for adms"
+automake  -Wall --copy --add-missing $z
+if [ $? -ne 0 ]; then  echo "automake failed"; end_on_error ; fi
 fi
+
+echo "Running autoconf"
+if test "$ADMS" -eq 1; then
+  autoconf temp-adms.ac > configure
+  rm -f temp-adms.ac
+else
+autoconf
+fi
+if [ $? -ne 0 ]; then  echo "autoconf failed"; end_on_error ; fi
 
 echo "Success."
 

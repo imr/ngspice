@@ -302,9 +302,11 @@ if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
    AC_DEFINE(TCL_MODULE,1,[Tcl Module])
    case $host_os in
      *mingw* )
-       has tclwin=true
+       has_tclwin=true
        has_no_help=true
        AC_DEFINE(HAS_TCLWIN,1,[Tcl Windows]);;
+	 *cygwin* )
+       has_tclcyg=true ;;	 
      *)
      ;;  
    esac   
@@ -437,6 +439,7 @@ fi
 
 AM_CONDITIONAL([TCL_MODULE], [test x$has_tcl_module = xtrue])
 AM_CONDITIONAL([TCLWIN], [test x$has_tclwin = xtrue])
+AM_CONDITIONAL([TCLCYG], [test x$has_tclcyg = xtrue])
  
 AC_SUBST(TCL_PACKAGE_PATH)
 AC_SUBST(TCL_LIB_SPEC)
