@@ -953,7 +953,7 @@ fetchoperator (tdico * dico,
       state = 2;
       level = 2;
     }
-  else if (cpos (c, "=<>#GL") > 0)
+  else if (cpos (c, "=<>#GL") >= 0)
     {
       state = 2;
       level = 5;

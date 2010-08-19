@@ -1,4 +1,8 @@
 2010-08-19  Holger Vogt
+ * xpressn.c: bug no. 3047884 fixed
+   inp.c: prevent crash if .param is last line in input deck
+ 
+2010-08-18  Holger Vogt
  * configure.in: add TCLCYG 
  * autogen.sh:  if --adms is selected, read the section from configure.in
    and store it in AC_CONFIG_FILES of temporary temp-adms.ac. 

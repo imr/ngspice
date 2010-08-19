@@ -591,9 +591,17 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
          if ( ciprefix( ".param", dd->li_line ) ) {
             ft_curckt->ci_param = dd;
             /* find end of .param statements */
-            while ( ciprefix( ".param", dd->li_line ) ) { prev_param = dd; dd = dd->li_next; }
+            while ( ciprefix( ".param", dd->li_line ) ) { 
+                prev_param = dd; 
+                dd = dd->li_next;
+                if (dd == NULL) break; // no line after .param line
+            }
             prev_card->li_next  = dd;
-            prev_param->li_next = NULL;
+            prev_param->li_next = NULL;                
+            if (dd == NULL) {
+                fprintf(cp_err, "Warning: Missing .end card!\n");
+                break; // no line after .param line
+            }
          }
 
          if ( ciprefix( ".meas", dd->li_line ) ) {
