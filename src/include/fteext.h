@@ -95,6 +95,7 @@ extern void *cx_atan(void *, short int , int , int *, short int *);
 extern void *cx_norm(void *, short int , int , int *, short int *);
 extern void *cx_uminus(void *, short int , int , int *, short int *);
 extern void *cx_rnd(void *, short int , int , int *, short int *);
+extern void *cx_sgauss(void *, short int , int , int *, short int *);
 extern void *cx_mean(void *, short int , int , int *, short int *);
 extern void *cx_avg(void *, short int , int , int *, short int *);
 extern void *cx_length(void *, short int , int , int *, short int *);
@@ -381,6 +382,8 @@ extern void do_measure(char *what, bool chk_only);
 extern bool check_autostop(char *what);
 extern void com_meas(wordlist *wl);
 
+/* randnumb.c */
+extern void TausSeed(void);
 /* resource.c */
 
 extern void com_rusage(wordlist *wl);
