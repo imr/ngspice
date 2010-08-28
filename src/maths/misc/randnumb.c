@@ -36,7 +36,7 @@ Copyright 2008 Holger Vogt
    // [0.0 .. 1.0[ by calls to CombLCGTaus().
    double randvar = CombLCGTaus(void);
 */
-
+//#define HVDEBUG
 
 #include "ngspice.h"
 #include "cpdefs.h"
@@ -210,9 +210,9 @@ double gauss(void)
   double fac,r,v1,v2;
   if (gliset) {
     do {
-//      v1 = drand();  v2 = drand();
-      v1 = 2.0 * CombLCGTaus() - 1.0;
-      v2 = 2.0 * CombLCGTaus() - 1.0;
+      v1 = drand();  v2 = drand();
+//      v1 = 2.0 * CombLCGTaus() - 1.0;
+//      v2 = 2.0 * CombLCGTaus() - 1.0;
       r = v1*v1 + v2*v2;
     } while (r >= 1.0);
 /*    printf("v1 %f, v2 %f\n", v1, v2); */
