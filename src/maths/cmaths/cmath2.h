@@ -12,6 +12,7 @@ void * cx_atan(void *data, short int type, int length, int *newlength, short int
 void * cx_norm(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_uminus(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_rnd(void *data, short int type, int length, int *newlength, short int *newtype);
+void * cx_sgauss(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_mean(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_length(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_vector(void *data, short int type, int length, int *newlength, short int *newtype);

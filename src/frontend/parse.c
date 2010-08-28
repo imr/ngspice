@@ -161,6 +161,7 @@ struct func ft_funcs[] = {
         { "atan",   cx_atan } ,
         { "norm",   cx_norm } ,
         { "rnd",    cx_rnd } ,
+        { "sgauss", cx_sgauss } ,
         { "pos",    cx_pos } ,
         { "mean",   cx_mean } ,
         { "avg",   cx_avg } ,                /* A.Roldan 03/06/05 incremental average new function */

@@ -1,3 +1,8 @@
+2010-08-29  Holger Vogt
+ * fteext.h, main.c, randnumb.c, parse.c, cmath2.c, cmath2.h: 
+   new function sgauss(), new random number generator with very
+   high run length
+
 2010-08-19  Holger Vogt
  * xpressn.c: bug no. 3047884 fixed
    inp.c: prevent crash if .param is last line in input deck
