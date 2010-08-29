@@ -1,3 +1,9 @@
+2010-08-29 Dietmar Warning
+ * fteext.h, parse.c, cmath2.c, cmath2.h,: 
+   new function sunif(), uniform random generator usable in control blocks
+ * examples/control_structs/MonteCarlo.sp: Simple example to perform MC runs
+   in ngspice using uniform and gaussian distributions
+
 2010-08-29  Holger Vogt
  * fteext.h, main.c, randnumb.c, parse.c, cmath2.c, cmath2.h: 
    new function sgauss(), new random number generator with very
