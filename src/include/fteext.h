@@ -95,6 +95,7 @@ extern void *cx_atan(void *, short int , int , int *, short int *);
 extern void *cx_norm(void *, short int , int , int *, short int *);
 extern void *cx_uminus(void *, short int , int , int *, short int *);
 extern void *cx_rnd(void *, short int , int , int *, short int *);
+extern void *cx_sunif(void *, short int , int , int *, short int *);
 extern void *cx_sgauss(void *, short int , int , int *, short int *);
 extern void *cx_mean(void *, short int , int , int *, short int *);
 extern void *cx_avg(void *, short int , int , int *, short int *);

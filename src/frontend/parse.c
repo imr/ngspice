@@ -140,7 +140,7 @@ typedef void* cx_function_t(void*,short int,int,int*,short int*);
 
 struct func ft_funcs[] = {
         { "mag",    cx_mag } ,
-        { "magnitude",  cx_mag } ,
+        { "magnitude", cx_mag } ,
         { "ph",     cx_ph } ,
         { "phase",  cx_ph } ,
         { "j",      cx_j } ,
@@ -161,13 +161,14 @@ struct func ft_funcs[] = {
         { "atan",   cx_atan } ,
         { "norm",   cx_norm } ,
         { "rnd",    cx_rnd } ,
+        { "sunif",  cx_sunif } ,
         { "sgauss", cx_sgauss } ,
         { "pos",    cx_pos } ,
         { "mean",   cx_mean } ,
-        { "avg",   cx_avg } ,                /* A.Roldan 03/06/05 incremental average new function */
-        { "group_delay",  (cx_function_t*) cx_group_delay } , /* A.Roldan 10/06/05 group delay new function */
+        { "avg",    cx_avg } ,               /* A.Roldan 03/06/05 incremental average new function */
+        { "group_delay", (cx_function_t*) cx_group_delay } , /* A.Roldan 10/06/05 group delay new function */
         { "vector", cx_vector } ,
-        { "unitvec",    cx_unitvec } ,
+        { "unitvec", cx_unitvec } ,
         { "length", cx_length } ,
         { "vecmin", cx_min } ,
         { "vecmax", cx_max } ,

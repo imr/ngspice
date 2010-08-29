@@ -31,6 +31,7 @@ extern void srandom (unsigned int seed);
 #endif
 
 extern void checkseed(void); /* seed random or set by 'set rndseed=value'*/
+extern double drand(void);  /* from randnumb.c */
 extern double gauss(void);  /* from randnumb.c */
 
 static double *
@@ -246,13 +247,41 @@ cx_rnd(void *data, short int type, int length, int *newlength, short int *newtyp
 }
 
 void *
+cx_sunif(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    *newlength = length;
+    checkseed();
+    if (type == VF_COMPLEX) {
+      complex *c;
+      int i;
+
+      c = alloc_c(length);
+      *newtype = VF_COMPLEX;
+      for (i = 0; i < length; i++) {
+        realpart(&c[i]) = drand();
+        imagpart(&c[i]) = drand();
+      }
+      return ((void *) c);
+    } else {
+      double *d;
+      int i;
+
+      d = alloc_d(length);
+      *newtype = VF_REAL;
+      for (i = 0; i < length; i++) {
+        d[i] = drand();
+    }
+    return ((void *) d);
+  }
+}
+
+void *
 cx_sgauss(void *data, short int type, int length, int *newlength, short int *newtype)
 {
     *newlength = length;
     checkseed();
     if (type == VF_COMPLEX) {
       complex *c;
-      complex *cc = (complex *) data;
       int i;
 
       c = alloc_c(length);
@@ -264,7 +293,6 @@ cx_sgauss(void *data, short int type, int length, int *newlength, short int *new
       return ((void *) c);
     } else {
       double *d;
-      double *dd = (double *) data;
       int i;
 
       d = alloc_d(length);
@@ -275,7 +303,6 @@ cx_sgauss(void *data, short int type, int length, int *newlength, short int *new
     return ((void *) d);
   }
 }
-
 
 /* Compute the avg of a vector.
    Created by A.M.Roldan 2005-05-21  */
