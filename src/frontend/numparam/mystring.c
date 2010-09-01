@@ -1042,7 +1042,9 @@ np_round (double x)
   double u;
   long z;
   int n;
-  Str (40, s);
+//  Str (40, s);
+  SPICE_DSTRING s ;
+  spice_dstring_init(&s) ;
   u = 2e9;
   if (x > u)
     x = u;

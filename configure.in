@@ -662,9 +662,6 @@ if test "$ac_cv_have_decl_isnan" != yes; then
   AC_CHECK_FUNC(isnan)
 fi
 
-dnl Check for the random function:
-AC_CHECK_FUNCS(random,,AC_CHECK_LIB(iberty,random,AC_DEFINE([HAVE_RANDOM],1,[Have random in libiberty]) LIBS="$LIBS -liberty"))
-
 dnl If user enables garbage collection, look for garbage collector
 if test "$TCL_PACKAGE_PATH" = ""; then
   if test "$enable_gc" = "yes"; then

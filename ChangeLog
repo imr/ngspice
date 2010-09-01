@@ -1,3 +1,9 @@
+2010-08-29 Holger Vogt
+ * cmath2.c, randnumb.c, main.c, ngspice.h, configure.in, tclspice.c: 
+   remove fcns random() and srandom(), only use rand() and srand() or
+   internal random number generator.
+ * mystring.c: replace Str() by SPICE_DSTRING  
+
 2010-08-29 Dietmar Warning
  * fteext.h, parse.c, cmath2.c, cmath2.h,: 
    new function sunif(), uniform random generator usable in control blocks

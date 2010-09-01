@@ -24,12 +24,12 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cmath2.h"
 
 
-/* MINGW: random, srandom in libiberty.a, but not in libiberty.h */
+/* MINGW: random, srandom in libiberty.a, but not in libiberty.h 
 #if defined(__MINGW32__) && defined(HAVE_RANDOM)
 extern long int random (void);
 extern void srandom (unsigned int seed);
 #endif
-
+*/
 extern void checkseed(void); /* seed random or set by 'set rndseed=value'*/
 extern double drand(void);  /* from randnumb.c */
 extern double gauss(void);  /* from randnumb.c */
@@ -225,8 +225,8 @@ cx_rnd(void *data, short int type, int length, int *newlength, short int *newtyp
         int j, k;
         j = (int)floor(realpart(&cc[i]));
         k = (int)floor(imagpart(&cc[i]));
-        realpart(&c[i]) = j ? random() % j : 0;
-        imagpart(&c[i]) = k ? random() % k : 0;
+        realpart(&c[i]) = j ? rand() % j : 0; //random() % j : 0;
+        imagpart(&c[i]) = k ? rand() % k : 0; //random() % k : 0;
       }
       return ((void *) c);
     } else {
@@ -240,7 +240,7 @@ cx_rnd(void *data, short int type, int length, int *newlength, short int *newtyp
       int j;
 
       j = (int)floor(dd[i]);
-      d[i] = j ? random() % j : 0;
+      d[i] = j ? rand() % j : 0; //random() % j : 0;
     }
     return ((void *) d);
   }

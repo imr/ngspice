@@ -54,23 +54,18 @@ Copyright 2008 Holger Vogt
 
 /* Tausworthe state variables for double variates*/
 static unsigned CombState1 = 129, CombState2 = 130, CombState3 = 131;  
-static unsigned CombState4; /* LCG state variable */ 
+static unsigned CombState4 = 132; /* LCG state variable */ 
 
-/* Tausworthe state variables for double variates*/
+/* Tausworthe state variables for integer variates*/
 static unsigned CombState5 = 133, CombState6 = 135, CombState7 = 137;  
-static unsigned CombState8; /* LCG state variable */ 
+static unsigned CombState8 = 138; /* LCG state variable */ 
 
-unsigned TauS(unsigned *state, int C1, int C2, int C3, unsigned m);
-unsigned LGCS(unsigned *state, unsigned A1, unsigned A2);
+static unsigned TauS(unsigned *state, int C1, int C2, int C3, unsigned m);
+static unsigned LGCS(unsigned *state, unsigned A1, unsigned A2);
+
 void TausSeed(void);
-
-
-
-/* MINGW: random, srandom in libiberty.a, but not in libiberty.h */
-#if defined(__MINGW32__) && defined(HAVE_RANDOM)
-extern long int random (void);
-extern void srandom (unsigned int seed);
-#endif
+double CombLCGTaus(void);
+unsigned int CombLCGTausInt(void);
 
 void checkseed(void);
 double drand(void);
@@ -89,7 +84,7 @@ void checkseed(void)
 /*   printf("Enter checkseed()\n"); */
    if (cp_getvar("rndseed", CP_NUM, &newseed)) {
       if ((newseed > 0) && (oldseed != newseed)) {
-         srandom(newseed);
+         srand(newseed); //srandom(newseed);
          TausSeed();
          oldseed = newseed;
          printf("Seed value for random number generator is set to %d\n", newseed);
@@ -103,50 +98,39 @@ void checkseed(void)
 double drand(void)
 {
    checkseed();
-   return ( 2.0*((double) (RR_MAX-abs(random())) / (double)RR_MAX-0.5));
+//   return ( 2.0*((double) (RR_MAX-abs(rand())) / (double)RR_MAX-0.5));
+   return 2.0 * CombLCGTaus() - 1.0;
 }
-
 
 
 void TausSeed(void)
 {    
-   CombState1 = CombState2 = CombState3 = 0;
-   /* The Tausworthe initial states should be greater than 128 */
-   while (CombState1 < 129)
-      CombState1 = rand();
-   while (CombState2 < 129)
-      CombState2 = rand();
-   while (CombState3 < 129)
-      CombState3 = rand();
-   while (CombState4 < 129)
-      CombState4 = rand();
+   /* The Tausworthe initial states should be greater than 128.
+      We restrict the values up to 32767 */
+   CombState1 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
+   CombState2 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
+   CombState3 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
+   CombState4 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
+   CombState5 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
+   CombState6 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
+   CombState7 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
+   CombState8 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
+
 #ifdef HVDEBUG
    printf("\nTausworthe Double generator init states: %d, %d, %d, %d\n", 
       CombState1, CombState2, CombState3, CombState4);
-#endif
-   CombState5 = CombState6 = CombState7 = 0;
-   /* The Tausworthe initial states should be greater than 128 */
-   while (CombState5 < 129)
-      CombState5 = rand();
-   while (CombState6 < 129)
-      CombState6 = rand();
-   while (CombState7 < 129)
-      CombState7 = rand();
-   while (CombState8 < 129)
-      CombState8 = rand();
-#ifdef HVDEBUG
    printf("Tausworthe Integer generator init states: %d, %d, %d, %d\n", 
       CombState5, CombState6, CombState7, CombState8);
 #endif
 }   
 
-unsigned TauS(unsigned *state, int C1, int C2, int C3, unsigned m)
+static unsigned TauS(unsigned *state, int C1, int C2, int C3, unsigned m)
 {
    unsigned b = (((*state << C1) ^ *state) >> C2);
    return *state = (((*state & m) << C3) ^ b);
 }
 
-unsigned LGCS(unsigned *state, unsigned A1, unsigned A2)
+static unsigned LGCS(unsigned *state, unsigned A1, unsigned A2)
 {
    return *state = (A1 * *state + A2);
 }
@@ -211,8 +195,6 @@ double gauss(void)
   if (gliset) {
     do {
       v1 = drand();  v2 = drand();
-//      v1 = 2.0 * CombLCGTaus() - 1.0;
-//      v2 = 2.0 * CombLCGTaus() - 1.0;
       r = v1*v1 + v2*v2;
     } while (r >= 1.0);
 /*    printf("v1 %f, v2 %f\n", v1, v2); */

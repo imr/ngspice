@@ -787,7 +787,7 @@ main(int argc, char **argv)
     }
     cp_program = ft_sim->simulator;
 
-    srandom(getpid());
+    srand(getpid()); //srandom(getpid());
     TausSeed();
 
     /* --- Process command line options --- */

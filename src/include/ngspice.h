@@ -175,6 +175,7 @@ extern struct timeb timebegin;
 #define inline _inline
 #endif
 
+/*
 #ifndef HAVE_RANDOM
 #define srandom(a) srand(a)
 #define random rand
@@ -182,6 +183,8 @@ extern struct timeb timebegin;
 #else
 #define RR_MAX LONG_MAX
 #endif
+*/
+#define RR_MAX RAND_MAX
 
 #ifdef HAVE_INDEX
 #   define strchr index

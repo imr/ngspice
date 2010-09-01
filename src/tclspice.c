@@ -66,17 +66,11 @@ typedef pthread_t threadId_t;
     #undef BOOLEAN
     #include <windef.h>
     #include <winbase.h>  /* Sleep */
-	#ifndef srandom
-	    #define  srandom(a) srand(a) /* srandom */
-	#endif
 #elif defined(_MSC_VER)
    #include <stdarg.h>
    /* remove type incompatibility with winnt.h*/
    #undef BOOLEAN
    #include <windows.h> /* Sleep */
-	#ifndef srandom
-	    #define  srandom(a) srand(a) /* srandom */
-	#endif
    #include <process.h> /* _getpid */
    #define dup _dup
    #define dup2 _dup2
