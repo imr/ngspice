@@ -1,4 +1,7 @@
-2010-08-29 Holger Vogt
+2010-09-02 Holger Vogt
+ * randnumb.c: inproved comments
+
+ 2010-08-29 Holger Vogt
  * cmath2.c, randnumb.c, main.c, ngspice.h, configure.in, tclspice.c: 
    remove fcns random() and srandom(), only use rand() and srand() or
    internal random number generator.

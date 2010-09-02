@@ -32,8 +32,6 @@ Copyright 2008 Holger Vogt
    Calling sequence:
    srand(seed);
    TausSeed();
-   // generate random variates randvar uniformly distributed in 
-   // [0.0 .. 1.0[ by calls to CombLCGTaus().
    double randvar = CombLCGTaus(void);
 */
 //#define HVDEBUG
@@ -75,7 +73,7 @@ double gauss(void);
 /* Check if a seed has been set by the command 'set rndseed=value'
    in spinit with integer value > 0. If available, call srand(value).
    This will override the call to srand in main.c.
-   Checkseed should be put in front of any call to random or rand.
+   Checkseed should be put in front of any call to rand or CombLCGTaus.. .
 */
 void checkseed(void)
 {
@@ -94,7 +92,7 @@ void checkseed(void)
    
 }
 
-/* uniform random number generator, interval -1 .. +1 */
+/* uniform random number generator, interval [-1 .. +1[ */
 double drand(void)
 {
    checkseed();
@@ -106,15 +104,18 @@ double drand(void)
 void TausSeed(void)
 {    
    /* The Tausworthe initial states should be greater than 128.
-      We restrict the values up to 32767 */
-   CombState1 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
-   CombState2 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
-   CombState3 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
-   CombState4 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
-   CombState5 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
-   CombState6 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
-   CombState7 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
-   CombState8 = (unsigned int)((double)rand()/(double)RR_MAX * 32638.) + 129;
+      We restrict the values up to 32767. 
+      Here we use the standard random functions srand, called in main.c
+      upon ngspice startup or later in fcn checkseed(),
+      rand() and the maximum return value RAND_MAX*/
+   CombState1 = (unsigned int)((double)rand()/(double)RAND_MAX * 32638.) + 129;
+   CombState2 = (unsigned int)((double)rand()/(double)RAND_MAX * 32638.) + 129;
+   CombState3 = (unsigned int)((double)rand()/(double)RAND_MAX * 32638.) + 129;
+   CombState4 = (unsigned int)((double)rand()/(double)RAND_MAX * 32638.) + 129;
+   CombState5 = (unsigned int)((double)rand()/(double)RAND_MAX * 32638.) + 129;
+   CombState6 = (unsigned int)((double)rand()/(double)RAND_MAX * 32638.) + 129;
+   CombState7 = (unsigned int)((double)rand()/(double)RAND_MAX * 32638.) + 129;
+   CombState8 = (unsigned int)((double)rand()/(double)RAND_MAX * 32638.) + 129;
 
 #ifdef HVDEBUG
    printf("\nTausworthe Double generator init states: %d, %d, %d, %d\n", 
@@ -135,7 +136,10 @@ static unsigned LGCS(unsigned *state, unsigned A1, unsigned A2)
    return *state = (A1 * *state + A2);
 }
 
-
+/* generate random variates randvar uniformly distributed in 
+   [0.0 .. 1.0[ by calls to CombLCGTaus() like:
+   double randvar = CombLCGTaus(); 
+*/
 double CombLCGTaus()
 {
    return 2.3283064365387e-10 * (
@@ -145,7 +149,11 @@ double CombLCGTaus()
    LGCS(&CombState4, 1664525, 1013904223UL)
    );
 }
-   
+
+/* generate random variates randvarint uniformly distributed in 
+   [0 .. 4294967296[ (32 bit unsigned int) by calls to CombLCGTausInt() like:
+   unsigned int randvarint = CombLCGTausInt(); 
+*/   
 unsigned int CombLCGTausInt()
 {
    return (
@@ -156,7 +164,7 @@ unsigned int CombLCGTausInt()
    );
 }
   
-
+/* test versions of the generators listed above */
 float CombLCGTaus2()
 {
    unsigned long b;
