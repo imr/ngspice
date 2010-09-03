@@ -64,6 +64,7 @@ int INPgetStr(char **line, char **token, int gobble);
 int INPgetTitle(CKTcircuit **ckt, card **data);
 int INPgetTok(char **line, char **token, int gobble);
 int INPgetUTok(char **line, char **token, int gobble);
+int INPgetU2Tok(char **line, char **token, int gobble);
 IFvalue * INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab);
 void INPkillMods(void);
 void INPlist(FILE *file, card *deck, int type);

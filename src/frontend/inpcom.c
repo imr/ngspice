@@ -4438,7 +4438,7 @@ static void inp_bsource_compat(struct line *deck)
                 else if (isdigit(actchar))
                 {
                     /* allow 100p, 5MEG etc. */
-                    dvalue = INPevaluate(&str_ptr, &error1, 1);
+                    dvalue = INPevaluate(&str_ptr, &error1, 2);
                     cvalue = (char*) tmalloc(19);
                     sprintf(cvalue,"%18.10e", dvalue);
                     /* unary -, change sign */

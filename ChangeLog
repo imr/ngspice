@@ -1,3 +1,7 @@
+2010-09-03 Holger Vogt
+ * inpcom.c, inp.h, inpeval.c, inpgtok.c:
+   bug removed in B source parsing, as reported by sdaau
+
 2010-09-02 Holger Vogt
  * randnumb.c: inproved comments
 
