@@ -82,7 +82,7 @@ tildexpand(char *string)
        /* Emulate the old behavior to prevent side effects. -- ro */
        return copy(string);
     }
+    return NULL;
 #endif
-	return NULL;
 }
 
