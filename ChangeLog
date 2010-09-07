@@ -1,3 +1,6 @@
+2010-09-07 Holger Vogt
+ * vectors.c: add plot [alli | allv | ally]
+
 2010-09-04 Dietmar Warning
  * misc/tilde.c: prevent unreached statement if pwd.h available
  * define.h: recover signaltype for SunStudio compiler signal function

@@ -56,6 +56,60 @@ findvec(char *word, struct plot *pl)
         return (newv);
     }
 
+    if (cieq(word, "allv")) {
+        for (d = pl->pl_dvecs; d; d = d->v_next) {
+            if ((d->v_flags & VF_PERMANENT) && (d->v_type == 3)) {
+                if (d->v_link2) {
+                    v = vec_copy(d);
+                    vec_new(v);
+                } else
+                    v = d;
+                if (end)
+                    end->v_link2 = v;
+                else
+                    newv = v;
+                end = v;
+            }
+        }
+        return (newv);
+    }
+
+    if (cieq(word, "alli")) {
+        for (d = pl->pl_dvecs; d; d = d->v_next) {
+            if ((d->v_flags & VF_PERMANENT) && (d->v_type == 4)) {
+                if (d->v_link2) {
+                    v = vec_copy(d);
+                    vec_new(v);
+                } else
+                    v = d;
+                if (end)
+                    end->v_link2 = v;
+                else
+                    newv = v;
+                end = v;
+            }
+        }
+        return (newv);
+    }
+
+    if (cieq(word, "ally")) {
+        for (d = pl->pl_dvecs; d; d = d->v_next) {
+            if ((d->v_flags & VF_PERMANENT) && (!cieq(d->v_name, pl->pl_scale->v_name))) {
+                if (d->v_link2) {
+                    v = vec_copy(d);
+                    vec_new(v);
+                } else
+                    v = d;
+                if (end)
+                    end->v_link2 = v;
+                else
+                    newv = v;
+                end = v;
+            }
+        }
+        return (newv);
+    }
+
     for (d = pl->pl_dvecs; d; d = d->v_next)
         if (cieq(word, d->v_name) && (d->v_flags & VF_PERMANENT))
             break;
