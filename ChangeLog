@@ -1,4 +1,14 @@
 2010-09-07  Robert Larice
+ * examples/tclspice/tcl-testbench2/example.cir ,
+ * examples/xspice/xspice_c2.cir ,
+ * examples/xspice/xspice_c3.cir ,
+ * src/frontend/help/ChangeLog ,
+ * src/spicelib/devices/adms/mextram/admsva/COPYRIGHT_NOTICE ,
+ * visualc/how-to-ngspice-vstudio.txt ,
+ * xgraph/.cvsignore :
+    whitespace cleanup, add missing trailing newlines
+
+2010-09-07  Robert Larice
  * contrib/vbic/sgp2vbic ,
  * contrib/vbic/vbic2sgp ,
  * src/spicelib/devices/mos9/mos9temp.c ,
