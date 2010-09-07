@@ -650,7 +650,12 @@ static void measure_minMaxAvg(
  
    for (i=0; i < d->v_length; i++) {
       if (ac_check) {
-         value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         if (d->v_compdata)
+            value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         else {
+            fprintf(cp_err, "Error: 'meas ac' requires complex input vector!\n");
+            return;
+         }
          svalue = dScale->v_compdata[i].cx_real;
       }
       else if (sp_check) {

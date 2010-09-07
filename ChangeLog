@@ -1,5 +1,6 @@
 2010-09-07 Holger Vogt
  * vectors.c: add plot [alli | allv | ally]
+ * com_measure2.c: prevent seg fault if wrong meas type is chosen
 
 2010-09-04 Dietmar Warning
  * misc/tilde.c: prevent unreached statement if pwd.h available
