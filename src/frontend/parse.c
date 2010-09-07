@@ -104,31 +104,31 @@ checkvalid(struct pnode *pn)
 
 static
 struct op ops[] = { 
-        { PLUS,     "+",   2, {(void*) op_plus} } ,
-        { MINUS,    "-",   2, {(void*) op_minus} } ,
-        { TIMES,    "*",   2, {(void*) op_times} } ,
-        { MOD,      "%",   2, {(void*) op_mod} } ,
-        { DIVIDE,   "/",   2, {(void*) op_divide} } ,
-        { COMMA,    ",",   2, {(void*) op_comma} } ,
-        { POWER,    "^",   2, {(void*) op_power} } ,
-        { EQ,       "=",   2, {(void*) op_eq} } ,
-        { GT,       ">",   2, {(void*) op_gt} } ,
-        { LT,       "<",   2, {(void*) op_lt} } ,
-        { GE,       ">=",  2, {(void*) op_ge} } ,
-        { LE,       "<=",  2, {(void*) op_le} } ,
-        { NE,       "<>",  2, {(void*) op_ne} } ,
-        { AND,       "&",  2, {(void*) op_and} } ,
-        { OR,       "|",   2, {(void*) op_or} } ,
-        { INDX,     "[",   2, {(void*) op_ind} } ,
-        { RANGE,    "[[",  2, {(void*) op_range} } ,
+        { PLUS,     "+",   2, {(void(*)(void)) op_plus} } ,
+        { MINUS,    "-",   2, {(void(*)(void)) op_minus} } ,
+        { TIMES,    "*",   2, {(void(*)(void)) op_times} } ,
+        { MOD,      "%",   2, {(void(*)(void)) op_mod} } ,
+        { DIVIDE,   "/",   2, {(void(*)(void)) op_divide} } ,
+        { COMMA,    ",",   2, {(void(*)(void)) op_comma} } ,
+        { POWER,    "^",   2, {(void(*)(void)) op_power} } ,
+        { EQ,       "=",   2, {(void(*)(void)) op_eq} } ,
+        { GT,       ">",   2, {(void(*)(void)) op_gt} } ,
+        { LT,       "<",   2, {(void(*)(void)) op_lt} } ,
+        { GE,       ">=",  2, {(void(*)(void)) op_ge} } ,
+        { LE,       "<=",  2, {(void(*)(void)) op_le} } ,
+        { NE,       "<>",  2, {(void(*)(void)) op_ne} } ,
+        { AND,       "&",  2, {(void(*)(void)) op_and} } ,
+        { OR,       "|",   2, {(void(*)(void)) op_or} } ,
+        { INDX,     "[",   2, {(void(*)(void)) op_ind} } ,
+        { RANGE,    "[[",  2, {(void(*)(void)) op_range} } ,
         { TERNARY,  "?:",  2, {NULL} } ,
         { 0,         NULL, 0, {NULL} }
 } ;
 
 static
 struct op uops[] = {
-    { UMINUS, "-",  1, {(void*) op_uminus} } ,
-    { NOT,    "~",  1, {(void*) op_not} } ,
+    { UMINUS, "-",  1, {(void(*)(void)) op_uminus} } ,
+    { NOT,    "~",  1, {(void(*)(void)) op_not} } ,
     { 0,      NULL, 0, {NULL} }
 } ;
 

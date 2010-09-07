@@ -1,4 +1,12 @@
 2010-09-07  Robert Larice
+ * src/frontend/parse.c ,
+ * src/include/fteparse.h ,
+ * src/spicelib/parser/inpptree.c :
+    muffle some visual-C warnings
+        data pointer -> function pointer conversion
+    void* versus void(*)(void)
+
+2010-09-07  Robert Larice
  * ng-spice-rework/src/maths/misc/randnumb.c :
     convert K&R function definitions to ansi style
 
