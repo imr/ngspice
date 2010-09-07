@@ -140,7 +140,7 @@ static unsigned LGCS(unsigned *state, unsigned A1, unsigned A2)
    [0.0 .. 1.0[ by calls to CombLCGTaus() like:
    double randvar = CombLCGTaus(); 
 */
-double CombLCGTaus()
+double CombLCGTaus(void)
 {
    return 2.3283064365387e-10 * (
    TauS(&CombState1, 13, 19, 12, 4294967294UL) ^
@@ -154,7 +154,7 @@ double CombLCGTaus()
    [0 .. 4294967296[ (32 bit unsigned int) by calls to CombLCGTausInt() like:
    unsigned int randvarint = CombLCGTausInt(); 
 */   
-unsigned int CombLCGTausInt()
+unsigned int CombLCGTausInt(void)
 {
    return (
    TauS(&CombState5, 13, 19, 12, 4294967294UL) ^
@@ -165,7 +165,7 @@ unsigned int CombLCGTausInt()
 }
   
 /* test versions of the generators listed above */
-float CombLCGTaus2()
+float CombLCGTaus2(void)
 {
    unsigned long b;
    b = (((CombState1 << 13) ^ CombState1) >> 19);
@@ -179,7 +179,7 @@ float CombLCGTaus2()
 }
 
 
-unsigned int CombLCGTausInt2()
+unsigned int CombLCGTausInt2(void)
 {
    unsigned long b;
    b = (((CombState5 << 13) ^ CombState5) >> 19);

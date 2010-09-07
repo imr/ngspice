@@ -1,4 +1,8 @@
 2010-09-07  Robert Larice
+ * ng-spice-rework/src/maths/misc/randnumb.c :
+    convert K&R function definitions to ansi style
+
+2010-09-07  Robert Larice
  * src/xspice/ipc/ipcstdio.c :
     convert K&R function definitions to ansi style
 
