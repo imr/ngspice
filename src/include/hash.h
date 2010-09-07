@@ -144,7 +144,7 @@ we want to intentionally assign it.  The compiler is warning unnecessarily.
 	char *string ; \
 	hsum = 0 ; \
 	string = (char *) str ; \
-	while(1) { \
+	for (;;) { \
 	  c = *string ; \
 	  string++ ; \
 	  if( c == 0) { \

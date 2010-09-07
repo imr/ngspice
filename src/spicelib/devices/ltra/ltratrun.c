@@ -144,7 +144,7 @@ LTRAtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
 	      x = ckt->CKTtime;
 	      y = current_lte;
-	      while (1) {
+	      for (;;) {
 		deriv_delta = 0.01 * (x - *(ckt->CKTtimePoints +
 			ckt->CKTtimeIndex));
 

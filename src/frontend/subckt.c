@@ -797,7 +797,7 @@ bxx_printf(struct bxx_buffer *t, const char *fmt, ...)
 {
     va_list ap;
 
-    while(1) {
+    for (;;) {
         int ret;
         int size = t->limit - t->dst;
 		va_start(ap, fmt);
@@ -967,7 +967,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 
             next_name = MIFgettok(&s);
 
-            while(1) {
+            for (;;) {
 
                 /* rotate the tokens and get the the next one */
 
@@ -1779,7 +1779,7 @@ devmodtranslate(struct line *deck, char *subname)
             
             /* now do remainder of line. */
             next_name = gettok(&t);
-            while(1) {
+            for (;;) {
                    name = next_name;
                    next_name = gettok(&t);
             
@@ -2075,7 +2075,7 @@ devmodtranslate(struct line *deck, char *subname)
 
             /* now do remainder of line. */
             next_name = gettok(&t);
-            while(1) {
+            for (;;) {
                    name = next_name;
                    next_name = gettok(&t);
                    if((next_name == NULL) ||

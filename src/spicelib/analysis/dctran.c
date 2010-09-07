@@ -598,7 +598,7 @@ resume:
 
 /* gtri - begin - wbk - Modify Breakpoint stuff */
     /* Throw out any permanent breakpoint times <= current time */
-    while(1) {
+    for (;;) {
 #ifdef STEPDEBUG
       printf("    brk_pt: %g    ckt_time: %g    ckt_min_break: %g\n",*(ckt->CKTbreaks), ckt->CKTtime, ckt->CKTminBreak);
 #endif
@@ -702,7 +702,7 @@ resume:
     ckt->CKTstates[0] = temp;
 
 /* 600 */
-    while (1) {
+    for (;;) {
 #ifdef CLUSTER
       redostep = 1;
 #endif

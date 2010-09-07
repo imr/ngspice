@@ -95,7 +95,7 @@ main(void) {
         exit(1);
     }
     INPcaseFix(typeline);
-    while(1) {
+    for (;;) {
         while(*typeline == ' ' || *typeline == '\t' || *typeline == ',' ||
                 *typeline == '\n' ) {
             typeline ++;

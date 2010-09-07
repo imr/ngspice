@@ -48,7 +48,7 @@ CKTterr(int qcap, CKTcircuit *ckt, double *timeStep)
         deltmp[i] = ckt->CKTdeltaOld[i];
     }
     j = ckt->CKTorder;
-    while(1) {
+    for (;;) {
         for(i=0;i <= j;i++) {
             diff[i] = (diff[i] - diff[i+1])/deltmp[i];
         }

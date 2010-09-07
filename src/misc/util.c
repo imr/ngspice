@@ -37,7 +37,7 @@ canonicalize_pathname(char *path)
 
     /* Walk along RESULT looking for things to compact. */
     i = 0;
-    while (1) {
+    for (;;) {
        if (!result[i])
            break;
 

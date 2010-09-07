@@ -126,7 +126,7 @@ MIFgetValue (
 
     /* now get the values into val */
 
-    while(1) {
+    for (;;) {
 
         token = MIFget_token(line, &token_type);
 

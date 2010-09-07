@@ -1,4 +1,24 @@
 2010-09-07  Robert Larice
+ * src/frontend/inpcom.c ,
+ * src/frontend/plotting/x11.c ,
+ * src/frontend/resource.c ,
+ * src/frontend/subckt.c ,
+ * src/include/hash.h ,
+ * src/main.c ,
+ * src/misc/util.c ,
+ * src/ngproc2mod.c ,
+ * src/spicelib/analysis/cktterr.c ,
+ * src/spicelib/analysis/dctran.c ,
+ * src/spicelib/devices/ltra/ltratemp.c ,
+ * src/spicelib/devices/ltra/ltratrun.c ,
+ * src/winmain.c ,
+ * src/xspice/evt/evtbackup.c ,
+ * src/xspice/ipc/ipcaegis.c ,
+ * src/xspice/mif/mifgetvalue.c ,
+ * src/xspice/mif/miftrunc.c :
+    use for(;;) instead of while(1) to muffle some visual-C warnings
+
+2010-09-07  Robert Larice
  * examples/tclspice/tcl-testbench2/example.cir ,
  * examples/xspice/xspice_c2.cir ,
  * examples/xspice/xspice_c3.cir ,

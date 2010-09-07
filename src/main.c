@@ -552,7 +552,7 @@ app_rl_readlines(void)
 #endif
 
     /* note that we want some mechanism to detect ctrl-D and expand it to exit */
-    while (1) {
+    for (;;) {
        history_set_pos(history_length);
 
        SETJMP(jbuf, 1);    /* Set location to jump to after handling SIGINT (ctrl-C)  */
@@ -791,7 +791,7 @@ main(int argc, char **argv)
     TausSeed();
 
     /* --- Process command line options --- */
-    while (1) {
+    for(;;) {
         int option_index = 0;
         static struct option long_options[] = {
             {"help", 0, 0, 'h'},

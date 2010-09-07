@@ -1100,7 +1100,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 #ifdef XSPICE
 
    /* First read in all lines & put them in the struct cc */
-   while (1) {
+   for (;;) {
       /* If IPC is not enabled, do equivalent of what SPICE did before */
       if(! g_ipc.enabled) {
          if ( call_depth == 0 && line_count == 0 ) {

@@ -157,7 +157,7 @@ Ipc_Status_t ipc_transport_get_line (str, len, wait)
    assert ((mbx_state == IPC_MBX_CONNECTED_TO_CLIENT) ||
            (mbx_state == IPC_MBX_INITIALIZED));
    
-   do {
+   for (;;) {
       if (wait == IPC_WAIT) {
          mbx_$get_rec (mbx_handle, &mbx_recieve_msg_buf, mbx_$serv_msg_max,
                        &mbx_ret_ptr, &mbx_ret_len, &status);
@@ -231,7 +231,7 @@ Ipc_Status_t ipc_transport_get_line (str, len, wait)
          fprintf (stderr, "ERROR: IPC: Bad message type (0x%x) recieved\n",
                   mbx_ret_ptr->mt);
       }
-   } while (1); 
+   }
    return IPC_STATUS_ERROR;
 }
  

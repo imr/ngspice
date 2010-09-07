@@ -163,7 +163,7 @@ static void EVTbackup_node_data(
         /* for tail, and splice later data into the free list */
         node_ptr = node_data->last_step[node_index];
         node = *node_ptr;
-        while(1) {
+        for (;;) {
             if((node->next == NULL) || (node->next->step > new_time)) {
 
                 /* Splice rest of list, if any, into free list */
@@ -252,7 +252,7 @@ static void EVTbackup_state_data(
         /* for tail, and splice later data into the free list */
         state_ptr = state_data->last_step[inst_index];
         state = *state_ptr;
-        while(1) {
+        for (;;) {
             if((state->next == NULL) || (state->next->step > new_time)) {
 
                 /* Splice rest of list, if any, into free list */
@@ -333,7 +333,7 @@ static void EVTbackup_msg_data(
         /* for tail, and splice later data into the free list */
         msg_ptr = msg_data->last_step[port_index];
         msg = *msg_ptr;
-        while(1) {
+        for (;;) {
             if((msg->next == NULL) || (msg->next->step > new_time)) {
 
                 /* Splice rest of list, if any, into free list */

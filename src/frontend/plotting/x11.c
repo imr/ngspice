@@ -955,7 +955,7 @@ X11_Input(REQUEST *request, RESPONSE *response)
 		    ConnectionNumber(display) :
 		    fileno(request->fp);
 
-		while (1) {
+		for (;;) {
 
 		      /* first read off the queue before doing the select */
 		      while (XtPending()) {

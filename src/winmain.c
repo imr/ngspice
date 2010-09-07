@@ -1023,13 +1023,13 @@ int fp_u_t_s(const char * __s, FILE * __stream)
 
         int c = SE;
         if (!__s) return EOF;
-        do {
+        for (;;) {
             if (*__s) {
                 c = *__s++;
                 fp_u_t_c(c, __stream);
             } else
                 return c;
-        } while (TRUE);
+        }
     } else
         return fputs( __s, __stream);
 }

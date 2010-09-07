@@ -639,7 +639,7 @@ baseaddr(void)
 
     orig_signal = signal(SIGSEGV, (SIGNAL_FUNCTION) fault);
 
-    do {
+    for (;;) {
 
 	at = (char *) ((((long)low >> LOG2_PAGESIZE)
 	    + ((long)high >> LOG2_PAGESIZE))
@@ -663,7 +663,7 @@ baseaddr(void)
 
 	high = at;
 
-    } while (1);
+    }
 
     (void) signal(SIGSEGV, (SIGNAL_FUNCTION) orig_signal);
     return (void *) high;

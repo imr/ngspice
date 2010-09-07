@@ -100,7 +100,7 @@ LTRAtemp(GENmodel *inModel, CKTcircuit *ckt)
 	y1small = LTRArlcH2Func(xsmall, model->LTRAtd, model->LTRAalpha, model->LTRAbeta);
 	y2small = LTRArlcH3dashFunc(xsmall, model->LTRAtd, model->LTRAbeta, model->LTRAbeta);
 	iters = 0;
-	while (1) {
+	for (;;) {
 
 	  iters++;
 	  y1big = LTRArlcH2Func(xbig, model->LTRAtd, model->LTRAalpha, model->LTRAbeta);
