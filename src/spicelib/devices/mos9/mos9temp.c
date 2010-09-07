@@ -37,7 +37,7 @@ MOS9temp(GENmodel *inModel, CKTcircuit *ckt)
     double ni_temp, nifact;
     /* loop through all the mosfet models */
     for( ; model != NULL; model = model->MOS9nextModel) {
-        
+
         if(!model->MOS9tnomGiven) {
             model->MOS9tnom = ckt->CKTnomTemp;
         }
@@ -52,7 +52,7 @@ MOS9temp(GENmodel *inModel, CKTcircuit *ckt)
         nifact=(model->MOS9tnom/300)*sqrt(model->MOS9tnom/300);
         nifact*=exp(0.5*egfet1*((1/(double)300)-(1/model->MOS9tnom))/
                                                                   CONSTKoverQ);
-        ni_temp=1.45e16*nifact;  
+        ni_temp=1.45e16*nifact;
 
 
         model->MOS9oxideCapFactor = 3.9 * 8.854214871e-12/
@@ -87,11 +87,11 @@ MOS9temp(GENmodel *inModel, CKTcircuit *ckt)
                         1e6 /*(cm**3/m**3)*/ )/ model->MOS9oxideCapFactor;
                 }
                 if(!model->MOS9vt0Given) {
-                    if(!model->MOS9surfaceStateDensityGiven) 
+                    if(!model->MOS9surfaceStateDensityGiven)
                             model->MOS9surfaceStateDensity=0;
-                    vfb = wkfngs - model->MOS9surfaceStateDensity * 1e4 
+                    vfb = wkfngs - model->MOS9surfaceStateDensity * 1e4
                             * CHARGE/model->MOS9oxideCapFactor;
-                    model->MOS9vt0 = vfb + model->MOS9type * 
+                    model->MOS9vt0 = vfb + model->MOS9type *
                             (model->MOS9gamma * sqrt(model->MOS9phi)+
                              model->MOS9phi);
                 } else {
@@ -109,12 +109,12 @@ MOS9temp(GENmodel *inModel, CKTcircuit *ckt)
             }
         }
     /* now model parameter preprocessing */
-        model->MOS9narrowFactor = model->MOS9delta * 0.5 * M_PI * EPSSIL / 
+        model->MOS9narrowFactor = model->MOS9delta * 0.5 * M_PI * EPSSIL /
             model->MOS9oxideCapFactor ;
 
-    
+
         /* loop through all instances of the model */
-        for(here = model->MOS9instances; here!= NULL; 
+        for(here = model->MOS9instances; here!= NULL;
                 here = here->MOS9nextInstance) {
 
             double czbd;    /* zero voltage bulk-drain capacitance */
@@ -167,7 +167,7 @@ MOS9temp(GENmodel *inModel, CKTcircuit *ckt)
             } else if (model->MOS9sheetResistanceGiven) {
                 if ((model->MOS9sheetResistance != 0) &&
                                               (here->MOS9drainSquares != 0)) {
-                    here->MOS9drainConductance = 
+                    here->MOS9drainConductance =
                         here->MOS9m /
                           (model->MOS9sheetResistance*here->MOS9drainSquares);
                 } else {
@@ -186,7 +186,7 @@ MOS9temp(GENmodel *inModel, CKTcircuit *ckt)
             } else if (model->MOS9sheetResistanceGiven) {
                 if ((model->MOS9sheetResistance != 0) &&
                                               (here->MOS9sourceSquares != 0)) {
-                    here->MOS9sourceConductance = 
+                    here->MOS9sourceConductance =
                         here->MOS9m /
                           (model->MOS9sheetResistance*here->MOS9sourceSquares);
                 } else {
@@ -218,15 +218,15 @@ MOS9temp(GENmodel *inModel, CKTcircuit *ckt)
             here->MOS9tSurfMob = model->MOS9surfaceMobility/ratio4;
             phio= (model->MOS9phi-pbfact1)/fact1;
             here->MOS9tPhi = fact2 * phio + pbfact;
-            here->MOS9tVbi = 
+            here->MOS9tVbi =
                     model->MOS9delvt0 +
-                    model->MOS9vt0 - model->MOS9type * 
+                    model->MOS9vt0 - model->MOS9type *
                         (model->MOS9gamma* sqrt(model->MOS9phi))
-                    +.5*(egfet1-egfet) 
+                    +.5*(egfet1-egfet)
                     + model->MOS9type*.5* (here->MOS9tPhi-model->MOS9phi);
-            here->MOS9tVto = here->MOS9tVbi + model->MOS9type * 
+            here->MOS9tVto = here->MOS9tVbi + model->MOS9type *
                     model->MOS9gamma * sqrt(here->MOS9tPhi);
-            here->MOS9tSatCur = model->MOS9jctSatCur* 
+            here->MOS9tSatCur = model->MOS9jctSatCur*
                     exp(-egfet/vt+egfet1/vtnom);
             here->MOS9tSatCurDens = model->MOS9jctSatCurDensity *
                     exp(-egfet/vt+egfet1/vtnom);

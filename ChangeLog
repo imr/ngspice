@@ -1,3 +1,24 @@
+2010-09-07  Robert Larice
+ * contrib/vbic/sgp2vbic ,
+ * contrib/vbic/vbic2sgp ,
+ * src/spicelib/devices/mos9/mos9temp.c ,
+ * src/xspice/examples/d_to_real/Makefile ,
+ * src/xspice/examples/d_to_real/cfunc.mod ,
+ * src/xspice/examples/d_to_real/ifspec.ifs ,
+ * src/xspice/examples/nco/Makefile ,
+ * src/xspice/examples/nco/ifspec.ifs ,
+ * src/xspice/examples/print_param_types/Makefile ,
+ * src/xspice/examples/print_param_types/cfunc.mod ,
+ * src/xspice/examples/print_param_types/ifspec.ifs ,
+ * src/xspice/examples/real_delay/Makefile ,
+ * src/xspice/examples/real_delay/ifspec.ifs ,
+ * src/xspice/examples/real_gain/Makefile ,
+ * src/xspice/examples/real_gain/cfunc.mod ,
+ * src/xspice/examples/real_gain/ifspec.ifs ,
+ * src/xspice/examples/real_to_v/Makefile ,
+ * src/xspice/examples/real_to_v/ifspec.ifs :
+    whitespace cleanup, \r\n -> \n
+
 2010-09-07 Holger Vogt
  * vectors.c: add plot [alli | allv | ally]
  * com_measure2.c: prevent seg fault if wrong meas type is chosen

@@ -37,7 +37,3 @@ void ucm_d_to_real (ARGS)
         OUTPUT_DELAY(out) = delay;
 
 }
-
-
-
-

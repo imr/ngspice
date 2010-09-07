@@ -11,20 +11,20 @@ INCLUDE = -I. -I$(ROOT)/include/sim
 CFLAGS = -g
 
 #-----------------------------------------------------------------------------
-# Edit the following definition to specify the object files that comprise 
-# your code model. If your code model is completely specified in the 
-# cfunc.mod file, there is no need to edit this definition. 
-# DO NOT include the ifspec.o file. 
+# Edit the following definition to specify the object files that comprise
+# your code model. If your code model is completely specified in the
+# cfunc.mod file, there is no need to edit this definition.
+# DO NOT include the ifspec.o file.
 
-CODE_MODEL_OBJECTS = cfunc.o 
+CODE_MODEL_OBJECTS = cfunc.o
 
 #-----------------------------------------------------------------------------
 # DO NOT MODIFY THE FOLLOWING DEFINITIONS:
 
 .SUFFIXES: $(SUFFIXES) .mod .ifs
 
-.mod.c: 
-	$(BINDIR)/cmpp -mod $< 
+.mod.c:
+	$(BINDIR)/cmpp -mod $<
 
 .ifs.c:
 	$(BINDIR)/cmpp -ifs
@@ -36,5 +36,3 @@ all : ifspec.o $(CODE_MODEL_OBJECTS)
 
 cfunc.o : cfunc.c
 ifspec.o : ifspec.c
-
-

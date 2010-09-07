@@ -35,5 +35,3 @@ void ucm_real_gain (ARGS)
         OUTPUT_DELAY(out) = delay;
     }
 }
-
-

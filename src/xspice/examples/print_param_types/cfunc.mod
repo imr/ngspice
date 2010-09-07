@@ -27,7 +27,3 @@ void ucm_print_param_types (ARGS)
 
     }
 }
-
-
-
-
