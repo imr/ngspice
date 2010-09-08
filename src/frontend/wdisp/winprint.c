@@ -392,7 +392,7 @@ int WPRINT_Arc(int x0, int y0, int radius, double theta, double delta_theta)
 	/* Zeichnen */
 	NewPen = CreatePen( LineTable[pd->LineIndex], 0, ColorTable[ColIndex] );
 	OldPen = SelectObject(PrinterDC, NewPen);
-	DevDrawArc( PrinterDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);/*FIXME name clash*/
+	Arc( PrinterDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
 	OldPen = SelectObject(PrinterDC, OldPen);
 	DeleteObject( NewPen);
 

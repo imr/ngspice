@@ -1,4 +1,9 @@
 2010-09-08  Robert Larice
+ * src/frontend/wdisp/windisp.c ,
+ * src/frontend/wdisp/winprint.c :
+    fix commit from today, `function rename, Arc() -> DevDrawArc()`
+
+2010-09-08  Robert Larice
  * src/include/const.h :
     rename include file wrapper, #ifndef CONST  ->  CONST_H
 
