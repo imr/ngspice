@@ -274,7 +274,7 @@ handlekeypressed(Widget w, caddr_t clientdata, caddr_t calldata)
     PushGraphContext(graph);
     text[nbytes] = '\0';
     SetColor(1);
-    Text(text, keyev->x, graph->absolute.height - keyev->y);
+    DevDrawText(text, keyev->x, graph->absolute.height - keyev->y);
     /* save it */
     SaveText(graph, text, keyev->x, graph->absolute.height - keyev->y);
     /* warp mouse so user can type in sequence */

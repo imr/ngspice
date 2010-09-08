@@ -282,7 +282,7 @@ gr_point(struct dvec *dv,
 	if ((tics = (double *) currentgraph->ticdata)) {
 	    for (; *tics < HUGE; tics++) {
 		if (*tics == (double) np) {
-		    Text("x", (int) (tox - currentgraph->fontwidth / 2),
+		    DevDrawText("x", (int) (tox - currentgraph->fontwidth / 2),
 			(int) (toy - currentgraph->fontheight / 2));
 		/* gr_redraw will redraw this w/o our having to save it
                    Guenther Roehrich 22-Jan-99 */
@@ -296,7 +296,7 @@ gr_point(struct dvec *dv,
 	    && (np % currentgraph->ticmarks == 0))
 	{
 	    /* Draw an 'x' */
-	    Text("x", (int) (tox - currentgraph->fontwidth / 2),
+	    DevDrawText("x", (int) (tox - currentgraph->fontwidth / 2),
 		(int) (toy - currentgraph->fontheight / 2));
 	 /* gr_redraw will redraw this w/o our having to save it
                   Guenther Roehrich 22-Jan-99 */ 
@@ -315,7 +315,7 @@ gr_point(struct dvec *dv,
         /* Here, gi_linestyle is the character used for the point.  */
         pointc[0] = dv->v_linestyle;
         pointc[1] = '\0';
-        Text(pointc, (int) (tox - currentgraph->fontwidth / 2),
+        DevDrawText(pointc, (int) (tox - currentgraph->fontwidth / 2),
             (int) (toy - currentgraph->fontheight / 2));
       default:
         break;
@@ -427,14 +427,14 @@ drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
     SetColor(dv->v_color);
     if (graph->plottype == PLOT_POINT) {
         (void) sprintf(buf, "%c : ", dv->v_linestyle);
-        Text(buf, x + graph->viewport.width / 20
+        DevDrawText(buf, x + graph->viewport.width / 20
                 - 3 * graph->fontwidth, y);
     } else {
         SetLinestyle(dv->v_linestyle);
         DrawLine(x, i, x + graph->viewport.width / 20, i);
     }
     SetColor(1);
-    Text(dv->v_name, x + graph->viewport.width / 20
+    DevDrawText(dv->v_name, x + graph->viewport.width / 20
             + graph->fontwidth, y);
 
 }
@@ -463,7 +463,7 @@ gr_pmsg(char *text)
 	
 	/* MW. grid.xlabel may be NULL */
 	if (currentgraph->grid.xlabel)
-	    Text(text, currentgraph->viewport.width
+	    DevDrawText(text, currentgraph->viewport.width
 		 - (strlen(currentgraph->grid.xlabel) + 3)
 		 * currentgraph->fontwidth,
 		 currentgraph->absolute.height - currentgraph->fontheight);
@@ -598,7 +598,7 @@ gr_restoretext(GRAPH *graph)
     /* restore text */
     for (k=graph->keyed; k; k = k->next) {
       SetColor(k->colorindex);
-      Text(k->text, k->x, k->y);
+      DevDrawText(k->text, k->x, k->y);
     }
 
 }
