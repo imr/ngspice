@@ -765,7 +765,7 @@ int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
    /* plot */
    NewPen = CreatePen( LType(wd->ColorIndex), linewidth, ColorTable[wd->ColorIndex] );
    OldPen = SelectObject(wd->hDC, NewPen);
-   Arc( wd->hDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);/*FIXME name clash*/
+   DevDrawArc( wd->hDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);/*FIXME name clash*/
    OldPen = SelectObject(wd->hDC, OldPen);
    DeleteObject( NewPen);
 

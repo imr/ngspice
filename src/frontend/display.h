@@ -18,7 +18,7 @@ int NewViewport(GRAPH *pgraph);
 void DevClose(void);
 void DevClear(void);
 void DrawLine(int x1, int y1, int x2, int y2);
-void Arc(int x0, int y0, int radius, double theta, double delta_theta);
+void DevDrawArc(int x0, int y0, int radius, double theta, double delta_theta);
 void Text(char *text, int x, int y);
 void DefineColor(int colorid, double red, double green, double blue);
 void DefineLinestyle(int linestyleid, int mask);

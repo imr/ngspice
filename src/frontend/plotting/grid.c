@@ -845,7 +845,7 @@ drawpolargrid(GRAPH *graph)
     dist = sqrt((double) (relcx * relcx + relcy * relcy));
 
     SetLinestyle(0);
-    Arc(graph->grid.xaxis.circular.center,
+    DevDrawArc(graph->grid.xaxis.circular.center,
             graph->grid.yaxis.circular.center,
             graph->grid.xaxis.circular.radius,
             (double) 0.0, 2*M_PI);
@@ -1264,7 +1264,7 @@ drawsmithgrid(GRAPH *graph)
 
     SetLinestyle(0);
 
-    Arc(gr_xcenter, gr_ycenter, gr_radius, 0.0, 2*M_PI);
+    DevDrawArc(gr_xcenter, gr_ycenter, gr_radius, 0.0, 2*M_PI);
 /*
     if ((xoff > - gr_radius) && (xoff < gr_radius)) {
         zheight = gr_radius * sin(acos((double) xoff / gr_radius));
@@ -1412,7 +1412,7 @@ cliparc(double cx, double cy, double rad, double start, double end, int iclipx, 
         return(-1);
     if (dist + rad < cliprad) {
         /* The arc is entirely in the boundary. */
-        Arc((int)cx, (int)cy, (int)rad, start, end-start);
+        DevDrawArc((int)cx, (int)cy, (int)rad, start, end-start);
         return(flag?start:end);
     } else if ((dist - rad >= cliprad) || (rad - dist >= cliprad)) {
         /* The arc is outside of the boundary. */
@@ -1484,7 +1484,7 @@ cliparc(double cx, double cy, double rad, double start, double end, int iclipx, 
 	    start = d;
 	    d = tmp;
 	}
-        Arc((int)cx, (int)cy, (int)rad, start, d-start);
+        DevDrawArc((int)cx, (int)cy, (int)rad, start, d-start);
 	sclip = start;
 	eclip = d;
     }
@@ -1511,7 +1511,7 @@ cliparc(double cx, double cy, double rad, double start, double end, int iclipx, 
     }
 
     if (in) {
-        Arc((int)cx, (int)cy, (int)rad, l, d-l);
+        DevDrawArc((int)cx, (int)cy, (int)rad, l, d-l);
 	sclip = l;
 	eclip = d;
     }
@@ -1521,7 +1521,7 @@ cliparc(double cx, double cy, double rad, double start, double end, int iclipx, 
     
     /* And from here to the end. */
     if (in) {
-        Arc((int)cx, (int)cy, (int)rad, d, end-d);
+        DevDrawArc((int)cx, (int)cy, (int)rad, d, end-d);
 	/* special case */
 	if (flag != 2) {
 	  sclip = d;
