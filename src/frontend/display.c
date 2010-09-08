@@ -212,7 +212,7 @@ void DevDrawLine(int x1, int y1, int x2, int y2)
 void DevDrawArc(int x0, int y0, int radius, double theta, double delta_theta)
 {
 
-    (*(dispdev->Arc))(x0, y0, radius, theta, delta_theta);
+    (*(dispdev->DrawArc))(x0, y0, radius, theta, delta_theta);
 
 }
 

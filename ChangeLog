@@ -1,5 +1,10 @@
 2010-09-08  Robert Larice
  * src/frontend/display.c ,
+ * src/include/ftedev.h :
+    function rename, struct DISPDEVICE . Arc() -> DrawArc()
+
+2010-09-08  Robert Larice
+ * src/frontend/display.c ,
  * src/frontend/display.h ,
  * src/frontend/plotting/graf.c ,
  * src/frontend/plotting/grid.c :
