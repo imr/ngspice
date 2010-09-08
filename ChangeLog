@@ -2,6 +2,13 @@
  * src/frontend/display.c ,
  * src/frontend/display.h ,
  * src/frontend/plotting/graf.c ,
+ * src/frontend/plotting/grid.c :
+    function rename, DrawLine() -> DevDrawLine()
+
+2010-09-08  Robert Larice
+ * src/frontend/display.c ,
+ * src/frontend/display.h ,
+ * src/frontend/plotting/graf.c ,
  * src/frontend/plotting/grid.c ,
  * src/frontend/plotting/x11.c :
     function rename, Text() -> DevDrawText()

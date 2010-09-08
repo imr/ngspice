@@ -101,10 +101,10 @@ gr_fixgrid(GRAPH *graph, double xdelta, double ydelta, int xtype, int ytype)
 /* do we really need this? */
 /*
     SetLinestyle(0);
-    DrawLine(graph->viewportxoff, graph->viewportyoff,
+    DevDrawLine(graph->viewportxoff, graph->viewportyoff,
             graph->viewport.width + graph->viewportxoff,
             graph->viewportyoff);
-    DrawLine(graph->viewportxoff, graph->viewportyoff,
+    DevDrawLine(graph->viewportxoff, graph->viewportyoff,
             graph->viewportxoff,
             graph->viewport.height + graph->viewportyoff);
     SetLinestyle(1);
@@ -496,11 +496,11 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
             SetLinestyle(0);
         if (graph->grid.gridtype != GRID_NONE) {
             if (axis == x_axis)
-                DrawLine(graph->viewportxoff + i,
+                DevDrawLine(graph->viewportxoff + i,
                   graph->viewportyoff, graph->viewportxoff + i,
                   graph->viewport.height + graph->viewportyoff);
             else
-                DrawLine(graph->viewportxoff,
+                DevDrawLine(graph->viewportxoff,
                   graph->viewportyoff + i,
                   graph->viewport.width + graph->viewportxoff,
                   graph->viewportyoff + i);
@@ -654,13 +654,13 @@ drawloggrid(GRAPH *graph, char *units, int hmt, int lmt, int decsp, int subs, in
         /* Draw the decade line */
 	if (graph->grid.gridtype != GRID_NONE) {
 	    if (axis == x_axis)
-		DrawLine(graph->viewportxoff + i,
+		DevDrawLine(graph->viewportxoff + i,
 		    graph->viewportyoff,
 		    graph->viewportxoff + i,
 		    graph->viewport.height
 		      +graph->viewportyoff);
 	    else
-		DrawLine(graph->viewportxoff,
+		DevDrawLine(graph->viewportxoff,
 		    graph->viewportyoff + i, 
 		    graph->viewport.width
 		      + graph->viewportxoff,
@@ -698,13 +698,13 @@ drawloggrid(GRAPH *graph, char *units, int hmt, int lmt, int decsp, int subs, in
 		m = i + decsp * log10((double) t * k);
 		if (graph->grid.gridtype != GRID_NONE) {
 		    if (axis == x_axis)
-			DrawLine(graph->viewportxoff + m,
+			DevDrawLine(graph->viewportxoff + m,
 			    graph->viewportyoff,
 			    graph->viewportxoff + m,
 			    graph->viewport.height
 			      + graph->viewportyoff);
 		    else
-			DrawLine(graph->viewportxoff,
+			DevDrawLine(graph->viewportxoff,
 			    graph->viewportyoff + m,
 			    graph->viewport.width
 			      + graph->viewportxoff,
@@ -896,7 +896,7 @@ drawpolargrid(GRAPH *graph)
                     graph->grid.yaxis.circular.center,
                     graph->grid.xaxis.circular.radius))
             {
-	        DrawLine(x1, y1, x2, y2); 
+	        DevDrawLine(x1, y1, x2, y2); 
                 /* Add a label here */
 		/*XXXX*/
                 adddeglabel(graph, i * 30, x2, y2, x1, y1,
@@ -932,7 +932,7 @@ drawpolargrid(GRAPH *graph)
                     graph->grid.xaxis.circular.center,
                     graph->grid.yaxis.circular.center,
                     graph->grid.xaxis.circular.radius)) {
-                DrawLine(x1, y1, x2, y2);
+                DevDrawLine(x1, y1, x2, y2);
                 /* Put on the label */
                 adddeglabel(graph, i, x2, y2, x1, y1,
 		    graph->grid.xaxis.circular.center,
@@ -1270,7 +1270,7 @@ drawsmithgrid(GRAPH *graph)
         zheight = gr_radius * sin(acos((double) xoff / gr_radius));
         if (zheight < 0)
             zheight = - zheight;
-        DrawLine(gr_xcenter + xoff, gr_ycenter - zheight,
+        DevDrawLine(gr_xcenter + xoff, gr_ycenter - zheight,
                 gr_xcenter + xoff, gr_ycenter + zheight);
     }
  */
@@ -1278,7 +1278,7 @@ drawsmithgrid(GRAPH *graph)
         zheight = gr_radius * cos(asin((double) yoff / gr_radius));
         if (zheight < 0)
             zheight = - zheight;
-        DrawLine(gr_xcenter - zheight, gr_ycenter + yoff,
+        DevDrawLine(gr_xcenter - zheight, gr_ycenter + yoff,
                 gr_xcenter + zheight, gr_ycenter + yoff);
 	DevDrawText("0", gr_xcenter + zheight + gi_fntwidth, gr_ycenter + yoff - 
             gi_fntheight / 2);

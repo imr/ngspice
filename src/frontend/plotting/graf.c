@@ -278,7 +278,7 @@ gr_point(struct dvec *dv,
 	/* If it's a linear plot, ignore first point since we don't
 	   want to connect with oldx and oldy. */
 	if (np)
-	    DrawLine(fromx, fromy, tox, toy);
+	    DevDrawLine(fromx, fromy, tox, toy);
 	if ((tics = (double *) currentgraph->ticdata)) {
 	    for (; *tics < HUGE; tics++) {
 		if (*tics == (double) np) {
@@ -309,7 +309,7 @@ gr_point(struct dvec *dv,
         DatatoScreen(currentgraph,
                 (double) 0, currentgraph->datawindow.ymin,
                 &dummy, &ymin);
-        DrawLine(tox, ymin, tox, toy);
+        DevDrawLine(tox, ymin, tox, toy);
         break;
       case PLOT_POINT:
         /* Here, gi_linestyle is the character used for the point.  */
@@ -431,7 +431,7 @@ drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
                 - 3 * graph->fontwidth, y);
     } else {
         SetLinestyle(dv->v_linestyle);
-        DrawLine(x, i, x + graph->viewport.width / 20, i);
+        DevDrawLine(x, i, x + graph->viewport.width / 20, i);
     }
     SetColor(1);
     DevDrawText(dv->v_name, x + graph->viewport.width / 20

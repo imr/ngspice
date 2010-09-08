@@ -203,7 +203,7 @@ void DevClear(void)
 
 }
 
-void DrawLine(int x1, int y1, int x2, int y2)
+void DevDrawLine(int x1, int y1, int x2, int y2)
 {
     (*(dispdev->DrawLine))(x1, y1, x2, y2);
 
@@ -275,7 +275,7 @@ gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny)
     /* have to handle several types of grids */
 
     /* note: we can't compensate for X's demented y-coordinate system here
-        since the grid routines use DrawLine w/o calling this routine */
+        since the grid routines use DevDrawLine w/o calling this routine */
     if ((graph->grid.gridtype == GRID_LOGLOG) ||
             (graph->grid.gridtype == GRID_YLOG)) {
       low = mylog10(graph->datawindow.ymin);
