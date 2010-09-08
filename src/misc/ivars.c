@@ -56,8 +56,8 @@ void
 ivars(void)
 {
     char *temp=NULL;
-	 /* $dprefix has been set to /usr/local or C:/Spice (Windows) in configure.in,
-    NGSPICEBINDIR has been set to $dprefix/bin in configure.in, 
+	 /* $dprefix has been set to /usr/local or C:/Spice (Windows) in configure.ac,
+    NGSPICEBINDIR has been set to $dprefix/bin in configure.ac, 
     Spice_Exec_Dir has been set to NGSPICEBINDIR in conf.c,
     may be overridden here by environmental variable SPICE_EXEC_DIR */
     env_overr(&Spice_Exec_Dir, "SPICE_EXEC_DIR");

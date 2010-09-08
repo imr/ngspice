@@ -7,9 +7,9 @@
 #
 # $Id$
 #
-# temp-adms.ac: modified configure.in if --adms is selected
+# temp-adms.ac: modified configure.ac if --adms is selected
 # for temporary use by autoconf, will be deleted automatically
-# configure.in stays untouched
+# configure.ac stays untouched
 
 PROJECT=ngspice
 TEST_TYPE=-f
@@ -146,19 +146,19 @@ check_awk
 #                 src\/spicelib\/devices\/adms\/mextram\/Makefile\
 #                 src\/spicelib\/devices\/adms\/psp102\/Makefile/g' configure.temp >configure.ac
   
-  # automake and autoconf need these entries in configure.in for adms enabled  
+  # automake and autoconf need these entries in configure.ac for adms enabled  
   z=""
   znew=""
   # Find all lines with "#VLAMKF" and put the second token of each line into shell variable z
   # as input to additional automake call for the adms directories
-  z=`cat configure.in | awk -v z=${z} '$1 ~ /#VLAMKF/{ z=$2; print "./"z }' `
+  z=`cat configure.ac | awk -v z=${z} '$1 ~ /#VLAMKF/{ z=$2; print "./"z }' `
   # same as above, sed requires \ at line endings, to be added to temp-adms.ac used by autoconf
-  znew=`cat configure.in | awk -v z=${znew} '$1 ~ /#VLAMKF/{ znew=$2; print "             "znew"\\\" }' `
+  znew=`cat configure.ac | awk -v z=${znew} '$1 ~ /#VLAMKF/{ znew=$2; print "             "znew"\\\" }' `
  
  # Find "tests/vbic/Makefile" and replace by tests/vbic/Makefile plus contents of variable z
   sed -e "
   s,tests\\/vbic\\/Makefile,tests\\/vbic\\/Makefile\\
-  $znew ," configure.in >temp-adms.ac
+  $znew ," configure.ac >temp-adms.ac
   
   currentdir=`pwd`
   

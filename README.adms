@@ -77,7 +77,7 @@ Limitations:
   Once you have found the (device_type, device_level) couple you have
   identified the files you have to edit:  
 
-    <ngspice-data-tree>/configure.in
+    <ngspice-data-tree>/configure.ac
      Here you have to add the entries in adms section for your new directory 
      and library. 
 
@@ -157,7 +157,7 @@ Limitations:
   06.01 Manual changes
     In directory <ngspice-data-tree> edit file configure.ac, add new device 'hicum0'
     (use the name of the directory - not the name of the module):
-      $ grep hicum0 configure.in
+      $ grep hicum0 configure.ac
       src/spicelib/devices/adms/hicum0/Makefile       \
     In directory <ngspice-data-tree>/src/spicelib/devices edit file Makefile.am, add new device 'hicum0':
       $ grep hicum0 Makefile.am

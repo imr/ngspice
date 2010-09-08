@@ -212,7 +212,7 @@ ft_cpinit(void)
     /* Reset this for the front end. */
     cp_hash = '*';
 
-    /* NGSPICEDATADIR has been set to path "$dprefix/share/ngspice" in configure.in, 
+    /* NGSPICEDATADIR has been set to path "$dprefix/share/ngspice" in configure.ac, 
        Spice_Lib_Dir has been set to NGSPICEDATADIR in conf.c, 
        may be overridden by environmental variable SPICE_LIB_DIR in ivars().
        Lib_Path has been set to Spice_Lib_Dir adding /scripts in ivars() */

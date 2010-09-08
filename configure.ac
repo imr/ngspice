@@ -1,4 +1,4 @@
-dnl configure.in script for ngspice
+dnl configure.ac script for ngspice
 dnl
 dnl This file is part of ngspice.
 dnl

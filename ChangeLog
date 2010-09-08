@@ -1,3 +1,12 @@
+2010-09-08  Robert Larice
+ * README.adms ,
+ * autogen.sh ,
+ * configure.ac ,
+ * configure.in ,
+ * src/frontend/cpitf.c ,
+ * src/misc/ivars.c :
+    rename configure.in -> configure.ac
+
 2010-09-08 Holger Vogt
  * visualc/include/config.h, vngspice.sln, vngspice.vcproj:
    prepare for ngspice22
