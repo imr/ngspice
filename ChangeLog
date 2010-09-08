@@ -1,6 +1,11 @@
 2010-09-08  Robert Larice
  * src/frontend/display.c ,
  * src/include/ftedev.h :
+    function rename, struct DISPDEVICE . Text() -> DrawText()
+
+2010-09-08  Robert Larice
+ * src/frontend/display.c ,
+ * src/include/ftedev.h :
     function rename, struct DISPDEVICE . Arc() -> DrawArc()
 
 2010-09-08  Robert Larice

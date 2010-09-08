@@ -46,7 +46,7 @@ typedef struct {
     disp_fn_Clear_t            *Clear;
     disp_fn_DrawLine_t         *DrawLine;
     disp_fn_Arc_t              *DrawArc;
-    disp_fn_Text_t             *Text;
+    disp_fn_Text_t             *DrawText;
     disp_fn_DefineColor_t      *DefineColor;
     disp_fn_DefineLinestyle_t  *DefineLinestyle;
     disp_fn_SetLinestyle_t     *SetLinestyle;
