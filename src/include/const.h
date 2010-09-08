@@ -4,8 +4,8 @@ Author: 1985 Thomas L. Quarles
 **********/
 /*
  */
-#ifndef CONST
-#define CONST
+#ifndef CONST_H
+#define CONST_H
 
 #define CHARGE (1.6021918e-19)
 #define CONSTCtoK (273.15)
@@ -20,4 +20,4 @@ Author: 1985 Thomas L. Quarles
     extern double CONSTKoverQ;
     extern double CONSTe;
 
-#endif /*CONST*/
+#endif

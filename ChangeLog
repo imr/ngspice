@@ -1,4 +1,8 @@
 2010-09-08  Robert Larice
+ * src/include/const.h :
+    rename include file wrapper, #ifndef CONST  ->  CONST_H
+
+2010-09-08  Robert Larice
  * src/frontend/display.c ,
  * src/include/ftedev.h :
     function rename, struct DISPDEVICE . Text() -> DrawText()
