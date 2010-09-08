@@ -41,4 +41,7 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		AMDCaProjectFile = D:\Spice_general\ng-spice-rework\visualc\CodeAnalyst\vngspice.caw
+	EndGlobalSection
 EndGlobal
