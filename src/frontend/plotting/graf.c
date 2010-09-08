@@ -443,7 +443,7 @@ drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
 void
 gr_end(struct dvec *dv)
 {
-    Update();
+    DevUpdate();
 }
 
 /* Print text in the bottom line. */
@@ -454,7 +454,7 @@ gr_pmsg(char *text)
     char buf[BSIZE_SP];
     buf[0] = 0;
 
-    Update();
+    DevUpdate();
 
     if (cp_getvar("device", CP_STRING, buf)
 	    && !(strcmp("/dev/tty", buf) == 0))
@@ -470,14 +470,14 @@ gr_pmsg(char *text)
 	else
 	    fprintf(cp_err, " %s \n", text);
 	
-    Update();
+    DevUpdate();
     return;
 }
 
 void
 gr_clean(void)
 {
-    Update();
+    DevUpdate();
     return;
 }
 
@@ -819,7 +819,7 @@ iplot(struct plot *pl, int id)
                 }
         }
     }
-    Update();
+    DevUpdate();
     return(inited);
 }
 

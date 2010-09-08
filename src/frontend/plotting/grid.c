@@ -530,7 +530,7 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
     else
         DevDrawText(units, graph->fontwidth,
             (int) (graph->absolute.height - 2 * graph->fontheight));
-    Update();
+    DevUpdate();
 
 }
 
@@ -720,7 +720,7 @@ drawloggrid(GRAPH *graph, char *units, int hmt, int lmt, int decsp, int subs, in
     else
         DevDrawText(units, graph->fontwidth,
             (int) (graph->absolute.height - 2 * graph->fontheight));
-    Update();
+    DevUpdate();
 }
 
 /* Polar grids */
@@ -946,7 +946,7 @@ drawpolargrid(GRAPH *graph)
               + graph->grid.xaxis.circular.radius,
             graph->grid.yaxis.circular.center
               - graph->grid.xaxis.circular.radius);
-    Update();
+    DevUpdate();
     return;
 }
 
@@ -1292,7 +1292,7 @@ drawsmithgrid(GRAPH *graph)
     (void) sprintf(buf, "e%d", 0);
     DevDrawText(buf, gr_xcenter + gr_radius, gr_ycenter - gr_radius);
 
-    Update();
+    DevUpdate();
     return;
 }
 

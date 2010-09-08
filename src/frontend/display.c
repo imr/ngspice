@@ -251,7 +251,7 @@ void SetColor(int colorid)
 
 }
 
-void Update(void)
+void DevUpdate(void)
 {
 
     if (dispdev)
