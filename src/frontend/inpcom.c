@@ -37,11 +37,6 @@ Author: 1985 Wayne A. Christopher
 #define HAVE_DECL_BASENAME 1
 #endif
 
-#ifdef HAVE_LIBIBERTY_H /* asprintf etc. */
-#include <libiberty.h>
-#undef AND /* obsolete macro in ansidecl.h */
-#endif
-
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "fteext.h"

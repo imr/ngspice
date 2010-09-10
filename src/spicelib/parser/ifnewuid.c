@@ -5,9 +5,15 @@ Author: 1988 Thomas L. Quarles
 
 #include "ngspice.h"
 
+#ifdef HAVE_ASPRINTF
 #ifdef HAVE_LIBIBERTY_H /* asprintf */
 #include <libiberty.h>
 #undef AND /* obsolete macro in ansidecl.h */
+#else /* we have asprintf, but not libiberty.h */
+#include <stdarg.h>
+extern int asprintf(char **out, const char *fmt, ...);
+extern int vasprintf(char **out, const char *fmt, va_list ap);
+#endif
 #endif
 
 #include <wordlist.h>

@@ -16,11 +16,6 @@ $Id$
 #define HAVE_DECL_BASENAME 1
 #endif
 
-#ifdef HAVE_LIBIBERTY_H /* asprintf etc. */
-#include <libiberty.h>
-#undef AND /* obsolete macro in ansidecl.h */
-#endif
-
 #include "cpdefs.h"
 #include "inpdefs.h"
 #include "ftedefs.h"

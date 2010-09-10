@@ -22,6 +22,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #endif
 #include "pnode.h"
 
+#undef AND /* obsolete macro in ansidecl.h */
+
 /* Operations. These should really be considered functions. */
 
 struct op {
