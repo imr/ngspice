@@ -629,7 +629,7 @@ show_version(void)
 static void
 append_to_stream(FILE *dest, FILE *source)
 {
-    char *buf[BSIZE_SP];
+    char buf[BSIZE_SP];
     int i;
 
     while ((i = fread(buf, 1, BSIZE_SP, source)) > 0)
@@ -1083,6 +1083,11 @@ bot:
             has_smk = TRUE;
         }
 #endif
+
+        if(!tempfile) {
+            perror("tmpfile()");
+            exit(1);
+        }
 
         if (optind == argc && !istty) {
             append_to_stream(tempfile, stdin);
