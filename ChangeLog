@@ -1,5 +1,6 @@
 2010-09-15 Holger Vogt
  * com_measure2.c: prevent seg fault in meas ac, if real input
+ * examples/control_structs/MonteCarlo.sp: update, add measure
 
 2010-09-12  Robert Larice
  * src/main.c :
