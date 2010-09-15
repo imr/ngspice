@@ -1,3 +1,6 @@
+2010-09-15 Holger Vogt
+ * com_measure2.c: prevent seg fault in meas ac, if real input
+
 2010-09-12  Robert Larice
  * src/main.c :
     fix incorrect buffer type, and exit(1) on failure to open a tempfile

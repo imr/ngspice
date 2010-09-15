@@ -421,7 +421,10 @@ static void com_measure_when(
 //      timeValue = dTime->v_realdata[i];
 
       if (ac_check) {
-         value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         if (d->v_compdata)
+             value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         else
+            value = d->v_realdata[i];
          timeValue = dTime->v_compdata[i].cx_real;
       }
       else if (sp_check) {
@@ -653,8 +656,8 @@ static void measure_minMaxAvg(
          if (d->v_compdata)
             value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          else {
-            fprintf(cp_err, "Error: 'meas ac' requires complex input vector!\n");
-            return;
+            value = d->v_realdata[i];    
+            fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
          }
          svalue = dScale->v_compdata[i].cx_real;
       }
@@ -791,7 +794,12 @@ static void measure_rms_integral(
    /* create new set of values over interval [from, to] -- interpolate if necessary */
    for (i=0; i < d->v_length; i++) {
       if (cieq (meas->m_analysis,"ac")) {
-         value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         if (d->v_compdata)
+            value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         else {
+            value = d->v_realdata[i];    
+            fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
+         }
          xvalue = xScale->v_compdata[i].cx_real;
       }
       else {
@@ -865,7 +873,12 @@ static void measure_rms_integral(
    /* Now set the measurement values if not set */
    if( toVal < 0.0 ){
       if (cieq (meas->m_analysis,"ac")) {
-         value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         if (d->v_compdata)
+            value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         else {
+            value = d->v_realdata[i];    
+            fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
+         }
          xvalue = xScale->v_compdata[i].cx_real;
          toVal = xScale->v_compdata[d->v_length-1].cx_real;
       }
