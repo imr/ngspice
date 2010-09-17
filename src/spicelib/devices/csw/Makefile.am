@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libcsw.la
 
-libcsw_la_SOURCES = 		\
+libcsw_la_SOURCES =	\
 	csw.c		\
 	cswacld.c	\
 	cswask.c	\
@@ -20,8 +20,8 @@ libcsw_la_SOURCES = 		\
 	cswnoise.c	\
 	cswparam.c	\
 	cswpzld.c	\
-	cswsetup.c \
-	cswtrunc.c 
+	cswsetup.c	\
+	cswtrunc.c
 
 
 

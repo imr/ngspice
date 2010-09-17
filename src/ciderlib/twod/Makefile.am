@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libcidertwod.la
 
-libcidertwod_la_SOURCES = 	\
+libcidertwod_la_SOURCES =	\
 		twoadmit.c	\
 		twoaval.c	\
 		twocond.c	\
@@ -26,7 +26,7 @@ libcidertwod_la_SOURCES = 	\
 		tworead.c	\
 		twosetbc.c	\
 		twosetup.c	\
-		twosolve.c	
+		twosolve.c
 
 EXTRA_DIST = readme
 AM_CPPFLAGS = -I$(top_srcdir)/src/include

@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libltra.la
 
-libltra_la_SOURCES = 		\
+libltra_la_SOURCES =	\
 	ltra.c		\
 	ltraacct.c	\
 	ltraacld.c	\

@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libsw.la
 
-libsw_la_SOURCES = 	\
+libsw_la_SOURCES =	\
 	sw.c		\
 	swacload.c	\
 	swask.c		\
@@ -21,7 +21,7 @@ libsw_la_SOURCES = 	\
 	swparam.c	\
 	swpzload.c	\
 	swsetup.c	\
-	swtrunc.c 
+	swtrunc.c
 
 
 

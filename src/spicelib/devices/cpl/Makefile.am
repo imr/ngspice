@@ -2,8 +2,8 @@
 
 noinst_LTLIBRARIES = libcpl.la
 
-libcpl_la_SOURCES = 	\
-	cpl.c	   \
+libcpl_la_SOURCES = \
+	cpl.c      \
 	cplask.c   \
 	cpldefs.h  \
 	cpldest.c  \
@@ -18,7 +18,7 @@ libcpl_la_SOURCES = 	\
 	cplmpar.c  \
 	cplsetup.c \
 	cplinit.c
-    
+
 AM_CPPFLAGS = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in

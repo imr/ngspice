@@ -15,17 +15,17 @@ libcmaths_la_SOURCES = \
 
 ## Test programs fail to build on Windows
 if !WINDOWS
-if !TCLWIN 
+if !TCLWIN
 
 noinst_PROGRAMS = test_cx_mag test_cx_j test_cx_ph
- 
+
 test_cx_ph_SOURCES = \
 		test_cx_ph.c
 
 test_cx_ph_LDADD = \
 		libcmaths.la \
 		../../misc/libmisc.la \
- 		$(TCL_LIB_SPEC)
+		$(TCL_LIB_SPEC)
 
 test_cx_mag_SOURCES = \
 		test_cx_mag.c
@@ -33,7 +33,7 @@ test_cx_mag_SOURCES = \
 test_cx_mag_LDADD = \
 		libcmaths.la \
 		../../misc/libmisc.la \
- 		$(TCL_LIB_SPEC)
+		$(TCL_LIB_SPEC)
 
 test_cx_j_SOURCES = \
 		test_cx_j.c
@@ -41,7 +41,7 @@ test_cx_j_SOURCES = \
 test_cx_j_LDADD = \
 		libcmaths.la \
 		../../misc/libmisc.la \
- 		$(TCL_LIB_SPEC)
+		$(TCL_LIB_SPEC)
 
 TESTS = test_cx_mag test_cx_j test_cx_ph
 

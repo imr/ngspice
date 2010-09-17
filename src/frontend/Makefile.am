@@ -9,7 +9,7 @@ EXTRA_DIST += parse-bison.c parse-bison.h
 
 noinst_LTLIBRARIES = libfte.la
 
-libfte_la_SOURCES = \
+libfte_la_SOURCES =	\
 	com_measure2.c	\
 	com_measure2.h	\
 	commands.c	\
@@ -18,8 +18,8 @@ libfte_la_SOURCES = \
 	com_ahelp.h	\
 	com_alias.c	\
 	com_alias.h	\
-	com_asciiplot.c \
-	com_asciiplot.h \
+	com_asciiplot.c	\
+	com_asciiplot.h	\
 	com_cdump.c	\
 	com_cdump.h	\
 	com_chdir.c	\
@@ -64,9 +64,9 @@ libfte_la_SOURCES = \
 	com_fft.h	\
 	com_state.c	\
 	com_state.h	\
-	com_strcmp.c \
-	com_strcmp.h \
-	com_sysinfo.c \
+	com_strcmp.c	\
+	com_strcmp.h	\
+	com_sysinfo.c	\
 	com_unset.c	\
 	com_unset.h	\
 	com_xgraph.c	\
@@ -87,7 +87,7 @@ libfte_la_SOURCES = \
 	terminal.h	\
 	variable.c	\
 	variable.h	\
-	\
+			\
 	arg.c		\
 	arg.h		\
 	aspice.c	\
@@ -130,7 +130,7 @@ libfte_la_SOURCES = \
 	interp.h	\
 	linear.c	\
 	linear.h	\
-	measure.c       \
+	measure.c	\
 	misccoms.c	\
 	misccoms.h	\
 	miscvars.c	\
@@ -165,8 +165,8 @@ libfte_la_SOURCES = \
 	runcoms2.h	\
 	shyu.c		\
 	shyu.h		\
-	signal_handler.c\
-	signal_handler.h\
+	signal_handler.c \
+	signal_handler.h \
 	spec.c		\
 	spec.h		\
 	spiceif.c	\
@@ -178,16 +178,16 @@ libfte_la_SOURCES = \
 	vectors.c	\
 	vectors.h	\
 	where.c		\
-	where.h	
+	where.h
 
 # TESTS = testcommands
-# 
+#
 # bin_PROGRAMS = testcommands
-# 
+#
 # testcommands_SOURCES = \
 # 	testcommands.c \
 # 	testcommands.h
-# 
+#
 # testcommands_LDADD = libfte.a plotting/libplotting.a ../misc/libmisc.a
 
 

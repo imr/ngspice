@@ -5,22 +5,22 @@
 noinst_LTLIBRARIES = libevtxsp.la
 
 libevtxsp_la_SOURCES = \
-evtaccept.c  \
-evtcall_hybrids.c  \
-evtdump.c  \
-evtiter.c  \
-evtnext_time.c \
-evtop.c     \
-evtprint.c  \
-evtsetup.c  \
-evtbackup.c  \
-evtdeque.c  \
-evtinit.c  \
-evtload.c  \
-evtnode_copy.c  \
-evtplot.c  \
-evtqueue.c  \
-evttermi.c
+	evtaccept.c  \
+	evtcall_hybrids.c  \
+	evtdump.c  \
+	evtiter.c  \
+	evtnext_time.c \
+	evtop.c     \
+	evtprint.c  \
+	evtsetup.c  \
+	evtbackup.c  \
+	evtdeque.c  \
+	evtinit.c  \
+	evtload.c  \
+	evtnode_copy.c  \
+	evtplot.c  \
+	evtqueue.c  \
+	evttermi.c
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include
 

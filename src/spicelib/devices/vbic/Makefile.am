@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libvbic.la
 
-libvbic_la_SOURCES = 	\
+libvbic_la_SOURCES =	\
 	vbic.c		\
 	vbicacld.c	\
 	vbicask.c	\

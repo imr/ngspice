@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libmes.la
 
-libmes_la_SOURCES = 	\
+libmes_la_SOURCES =	\
 	mes.c		\
 	mesacl.c	\
 	mesask.c	\

@@ -27,7 +27,7 @@ initdatadir = $(pkgdatadir)/scripts
 initdata_DATA = spinit setplot spectrum @CIDERSCRIPTS@
 
 
-DYNAMIC_DEVICELIBS = 					\
+DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/asrc/libasrc.la		\
 	spicelib/devices/bjt/libbjt.la			\
 	spicelib/devices/bjt2/libbjt2.la		\
@@ -47,7 +47,7 @@ DYNAMIC_DEVICELIBS = 					\
 	spicelib/devices/cap/libcap.la			\
 	spicelib/devices/bsim3soi/libbsim4soi.la	\
 	spicelib/devices/bsim3soi_pd/libbsim3soipd.la	\
-	spicelib/devices/bsim3soi_fd/libbsim3soifd.la  	\
+	spicelib/devices/bsim3soi_fd/libbsim3soifd.la	\
 	spicelib/devices/bsim3soi_dd/libbsim3soidd.la	\
 	spicelib/devices/cccs/libcccs.la		\
 	spicelib/devices/ccvs/libccvs.la		\
@@ -63,7 +63,7 @@ DYNAMIC_DEVICELIBS = 					\
 	spicelib/devices/jfet2/libjfet2.la		\
 	spicelib/devices/ltra/libltra.la		\
 	spicelib/devices/mes/libmes.la			\
-	spicelib/devices/mesa/libmesa.la         	\
+	spicelib/devices/mesa/libmesa.la		\
 	spicelib/devices/mos1/libmos1.la		\
 	spicelib/devices/mos2/libmos2.la		\
 	spicelib/devices/mos3/libmos3.la		\
@@ -80,7 +80,7 @@ DYNAMIC_DEVICELIBS = 					\
 	spicelib/devices/vcvs/libvcvs.la		\
 	spicelib/devices/vsrc/libvsrc.la		\
 	@NDEV_LIB@					\
-	@VLADEV@		\
+	@VLADEV@					\
 	@NUMDEV@
 
 
@@ -105,11 +105,11 @@ ngspice_LDADD = \
 	$(DYNAMIC_DEVICELIBS)  \
 	spicelib/analysis/libckt.la \
 	spicelib/devices/libdev.la \
-	@XSPICELIB2@		  \
+	@XSPICELIB2@ \
 	frontend/parser/libparser.la \
 	frontend/numparam/libnumparam.la \
 	spicelib/parser/libinp.la \
-	@CIDERSIM@		\
+	@CIDERSIM@ \
 	maths/deriv/libderiv.la \
 	maths/cmaths/libcmaths.la \
 	maths/misc/libmathmisc.la \
@@ -193,7 +193,7 @@ ngsconvert_LDADD =  \
 	maths/misc/libmathmisc.la \
 	misc/libmisc.la
 
-	
+
 ## proc2mod:
 
 ngproc2mod_SOURCES = ngproc2mod.c
@@ -261,11 +261,11 @@ libspice_la_LIBADD = ngspice.lo conf.lo \
 	$(DYNAMIC_DEVICELIBS)  \
 	spicelib/analysis/libckt.la \
 	spicelib/devices/libdev.la \
-	@XSPICELIB2@		  \
+	@XSPICELIB2@ \
 	frontend/parser/libparser.la \
-        frontend/numparam/libnumparam.la \
+	frontend/numparam/libnumparam.la \
 	spicelib/parser/libinp.la \
-	@CIDERSIM@		\
+	@CIDERSIM@ \
 	maths/deriv/libderiv.la \
 	maths/cmaths/libcmaths.la \
 	maths/misc/libmathmisc.la \

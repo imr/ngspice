@@ -15,7 +15,7 @@ TESTS = \
 	test12.cir	\
 	test13.cir	\
 	test14.cir
-	
+
 
 TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 

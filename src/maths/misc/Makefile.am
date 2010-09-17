@@ -3,10 +3,10 @@
 noinst_LTLIBRARIES = libmathmisc.la
 
 libmathmisc_la_SOURCES = \
-	accuracy.c 	\
-	accuracy.h 	\
+	accuracy.c	\
+	accuracy.h	\
 	bernoull.h	\
-	bernoull.c 	\
+	bernoull.c	\
 	erfc.c		\
 	equality.c	\
 	isinf.c		\
@@ -15,7 +15,7 @@ libmathmisc_la_SOURCES = \
 	scalb.c		\
 	norm.h		\
 	norm.c		\
-	randnumb.c 
+	randnumb.c
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include
 

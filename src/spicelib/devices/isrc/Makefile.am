@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libisrc.la
 
-libisrc_la_SOURCES = 	\
+libisrc_la_SOURCES =	\
 	isrc.c		\
 	isrcacct.c	\
 	isrcacld.c	\

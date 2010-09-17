@@ -2,8 +2,8 @@
 
 noinst_LTLIBRARIES = libbsim4soi.la
 
-libbsim4soi_la_SOURCES = 	\
-	b4soi.c	\
+libbsim4soi_la_SOURCES = \
+	b4soi.c		\
 	b4soiacld.c	\
 	b4soiask.c	\
 	b4soicheck.c	\

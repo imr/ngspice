@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libnumd2.la
 
-libnumd2_la_SOURCES = 	\
+libnumd2_la_SOURCES =	\
 	nud2.c		\
 	nud2acld.c	\
 	nud2ask.c	\
@@ -21,7 +21,7 @@ libnumd2_la_SOURCES = 	\
 	nud2pzld.c	\
 	nud2set.c	\
 	nud2temp.c	\
-	nud2trun.c	
+	nud2trun.c
 
 
 

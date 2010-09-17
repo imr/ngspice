@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libtxl.la
 
-libtxl_la_SOURCES = 	\
+libtxl_la_SOURCES = \
 	txl.c      \
 	txlacct.c  \
 	txlask.c   \
@@ -20,7 +20,7 @@ libtxl_la_SOURCES = 	\
 	txlmpar.c  \
 	txlsetup.c \
 	txlinit.c
-    
+
 AM_CPPFLAGS = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in

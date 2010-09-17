@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libind.la
 
-libind_la_SOURCES = 	\
+libind_la_SOURCES =	\
 	ind.c		\
 	indacld.c	\
 	indask.c	\

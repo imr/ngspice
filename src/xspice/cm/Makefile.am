@@ -5,11 +5,11 @@
 noinst_LTLIBRARIES = libcmxsp.la
 
 libcmxsp_la_SOURCES = \
-cm.c       \
-cmevt.c    \
-cmmeters.c \
-cmutil.c \
-cmexport.c
+	cm.c       \
+	cmevt.c    \
+	cmmeters.c \
+	cmutil.c   \
+	cmexport.c
 
 
 

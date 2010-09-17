@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libhfet2.la
 
-libhfet2_la_SOURCES = 	\
+libhfet2_la_SOURCES =	\
 	hfet2.c		\
 	hfet2acl.c	\
 	hfet2ask.c	\

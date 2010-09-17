@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libnumd.la
 
-libnumd_la_SOURCES = 	\
+libnumd_la_SOURCES =	\
 	numd.c		\
 	numdacld.c	\
 	numdask.c	\
@@ -21,7 +21,7 @@ libnumd_la_SOURCES = 	\
 	numdpzld.c	\
 	numdset.c	\
 	numdtemp.c	\
-	numdtrun.c	
+	numdtrun.c
 
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include

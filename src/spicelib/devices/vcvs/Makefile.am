@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libvcvs.la
 
-libvcvs_la_SOURCES = 	\
+libvcvs_la_SOURCES =	\
 	vcvs.c		\
 	vcvsask.c	\
 	vcvsdefs.h	\

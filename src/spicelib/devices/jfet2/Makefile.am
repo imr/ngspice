@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libjfet2.la
 
-libjfet2_la_SOURCES = 	\
+libjfet2_la_SOURCES =	\
 	jfet2.c		\
 	jfet2acld.c	\
 	jfet2ask.c	\

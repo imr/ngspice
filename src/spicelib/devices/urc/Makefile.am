@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = liburc.la
 
-liburc_la_SOURCES = 	\
+liburc_la_SOURCES =	\
 	urc.c		\
 	urcask.c	\
 	urcdefs.h	\

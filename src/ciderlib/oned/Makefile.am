@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libcideroned.la
 
-libcideroned_la_SOURCES = 	\
+libcideroned_la_SOURCES =	\
 		oneadmit.c	\
 		oneaval.c	\
 		onecond.c	\
@@ -18,7 +18,7 @@ libcideroned_la_SOURCES = 	\
 		oneproj.c	\
 		oneread.c	\
 		onesetup.c	\
-		onesolve.c	
+		onesolve.c
 
 EXTRA_DIST = notes readme
 AM_CPPFLAGS = -I$(top_srcdir)/src/include

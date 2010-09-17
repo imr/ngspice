@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libnumos.la
 
-libnumos_la_SOURCES = 	\
+libnumos_la_SOURCES =	\
 	numm.c		\
 	nummacld.c	\
 	nummask.c	\
@@ -21,7 +21,7 @@ libnumos_la_SOURCES = 	\
 	nummpzld.c	\
 	nummset.c	\
 	nummtemp.c	\
-	nummtrun.c	
+	nummtrun.c
 
 
 

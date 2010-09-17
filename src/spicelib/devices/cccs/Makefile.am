@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libcccs.la
 
-libcccs_la_SOURCES = 		\
+libcccs_la_SOURCES =	\
 	cccs.c		\
 	cccsask.c	\
 	cccsdefs.h	\

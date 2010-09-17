@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libmos2.la
 
-libmos2_la_SOURCES = 	\
+libmos2_la_SOURCES =	\
 	mos2.c		\
 	mos2acld.c	\
 	mos2ask.c	\

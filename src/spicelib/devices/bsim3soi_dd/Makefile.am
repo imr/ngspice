@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libbsim3soidd.la
 
-libbsim3soidd_la_SOURCES = 	\
+libbsim3soidd_la_SOURCES = \
 	b3soidd.c	\
 	b3soiddacld.c	\
 	b3soiddask.c	\

@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libasrc.la
 
-libasrc_la_SOURCES = 	\
+libasrc_la_SOURCES =	\
 	asrc.c		\
 	asrcacld.c	\
 	asrcask.c	\

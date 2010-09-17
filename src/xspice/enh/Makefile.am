@@ -5,8 +5,8 @@
 noinst_LTLIBRARIES = libenhxsp.la
 
 libenhxsp_la_SOURCES = \
-enh.c  \
-enhtrans.c
+	enh.c  \
+	enhtrans.c
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include
 

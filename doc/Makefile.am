@@ -4,7 +4,7 @@ EXTRA_DIST = ngspice.ps ngspice.pdf
 
 info_TEXINFOS = ngspice.texi
 
-CLEANFILES = *.fns *.pg *.tp *.aux  *.cp *.ky *.vr *.fn *.log *.toc *.vrs 
+CLEANFILES = *.fns *.pg *.tp *.aux  *.cp *.ky *.vr *.fn *.log *.toc *.vrs
 
 DISTCLEANFILES = $(CLEANFILES) *.ps *.dvi *.info*
 

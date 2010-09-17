@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libdio.la
 
-libdio_la_SOURCES = 	\
+libdio_la_SOURCES =	\
 	dio.c		\
 	dioacld.c	\
 	dioask.c	\

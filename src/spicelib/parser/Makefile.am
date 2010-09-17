@@ -22,7 +22,7 @@ libinp_la_SOURCES = \
 		inp2k.c		\
 		inp2l.c		\
 		inp2m.c		\
-		inp2n.c         \
+		inp2n.c		\
 		inp2o.c		\
 		inp2p.c		\
 		inp2q.c		\
@@ -38,7 +38,7 @@ libinp_la_SOURCES = \
 		inpapnam.c	\
 		inpcfix.c	\
 		inpdomod.c	\
-		inpdoopt.c \
+		inpdoopt.c	\
 		inpdpar.c	\
 		inperrc.c	\
 		inperror.c	\
@@ -59,8 +59,8 @@ libinp_la_SOURCES = \
 		inppas1.h	\
 		inppas2.c	\
 		inppas2.h	\
-		inppas3.c \
-		inppas3.h \
+		inppas3.c	\
+		inppas3.h	\
 		inppname.c	\
 		inpptree.c	\
 		inpsymt.c	\

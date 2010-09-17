@@ -8,13 +8,13 @@ SUBDIRS = \
 	bsim2	\
 	bsim3	\
 	bsim3soi	\
-	bsim4	\
-	bsim4v2	\
-	bsim4v3	\
-	bsim4v4	\
-	bsim4v5	\
-	bsim3v0	\
-	bsim3v1 \
+	bsim4		\
+	bsim4v2		\
+	bsim4v3		\
+	bsim4v4		\
+	bsim4v5		\
+	bsim3v0		\
+	bsim3v1		\
 	bsim3v1a	\
 	bsim3v1s	\
 	bsim3v32	\
@@ -41,8 +41,8 @@ SUBDIRS = \
 	mos2	\
 	mos3	\
 	mos6	\
-	mos9 	\
-	@NDEV_DIR@    \
+	mos9	\
+	@NDEV_DIR@ \
 	res	\
 	soi3	\
 	sw	\
@@ -65,13 +65,13 @@ DIST_SUBDIRS = \
 	bsim2	\
 	bsim3	\
 	bsim3soi	\
-	bsim4	\
-	bsim4v2	\
-	bsim4v3	\
-	bsim4v4	\
-	bsim4v5	\
-	bsim3v0	\
-	bsim3v1 \
+	bsim4		\
+	bsim4v2		\
+	bsim4v3		\
+	bsim4v4		\
+	bsim4v5		\
+	bsim3v0		\
+	bsim3v1		\
 	bsim3v1a	\
 	bsim3v1s	\
 	bsim3v32	\
@@ -98,8 +98,8 @@ DIST_SUBDIRS = \
 	mos2	\
 	mos3	\
 	mos6	\
-	mos9 	\
-	@NDEV_DIR@    \
+	mos9	\
+	@NDEV_DIR@ \
 	res	\
 	soi3	\
 	sw	\
@@ -119,7 +119,7 @@ DIST_SUBDIRS = \
 
 noinst_LTLIBRARIES = libdev.la
 
-libdev_la_SOURCES = 	\
+libdev_la_SOURCES =	\
 	dev.c		\
 	dev.h		\
 	devsup.c	\

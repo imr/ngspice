@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libcidersuprt.la
 
-libcidersuprt_la_SOURCES = 	\
+libcidersuprt_la_SOURCES =	\
 		database.c	\
 		devprint.c	\
 		geominfo.c	\

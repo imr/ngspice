@@ -5,11 +5,11 @@
 noinst_LTLIBRARIES = libipcxsp.la
 
 libipcxsp_la_SOURCES = \
-ipcaegis.c   \
-ipc.c        \
-ipcsockets.c \
-ipcstdio.c   \
-ipctiein.c
+	ipcaegis.c   \
+	ipc.c        \
+	ipcsockets.c \
+	ipcstdio.c   \
+	ipctiein.c
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 

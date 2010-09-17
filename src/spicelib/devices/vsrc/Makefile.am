@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libvsrc.la
 
-libvsrc_la_SOURCES = 	\
+libvsrc_la_SOURCES =	\
 	vsrc.c		\
 	vsrcacct.c	\
 	vsrcacld.c	\

@@ -25,7 +25,7 @@ libmisc_la_SOURCES = \
 		tilde.h		\
 		misc_time.c	\
 		misc_time.h	\
-		wlist.c	    \
+		wlist.c		\
 		util.c		\
 		util.h
 

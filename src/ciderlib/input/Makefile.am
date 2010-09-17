@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libciderinput.la
 
-libciderinput_la_SOURCES = 	\
+libciderinput_la_SOURCES =	\
 		bdryset.c	\
 		boundary.c	\
 		cards.c		\
@@ -25,7 +25,7 @@ libciderinput_la_SOURCES = 	\
 		modlset.c	\
 		optionsc.c	\
 		outpset.c	\
-		output.c	
+		output.c
 
 
 EXTRA_DIST = readme

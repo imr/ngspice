@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libderiv.la
 
-libderiv_la_SOURCES = 		\
+libderiv_la_SOURCES =		\
 		atander.c	\
 		cosderiv.c	\
 		cubeder.c	\

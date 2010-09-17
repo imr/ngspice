@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libmos6.la
 
-libmos6_la_SOURCES = 	\
+libmos6_la_SOURCES =	\
 	mos6.c		\
 	mos6ask.c	\
 	mos6conv.c	\

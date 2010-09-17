@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libcap.la
 
-libcap_la_SOURCES = 	\
+libcap_la_SOURCES =	\
 	cap.c		\
 	capacld.c	\
 	capask.c	\

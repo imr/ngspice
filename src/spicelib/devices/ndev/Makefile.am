@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libndev.la
 
-libndev_la_SOURCES = 	\
+libndev_la_SOURCES =	\
 	ndev.c		\
 	ndevacld.c	\
 	ndevaccept.c	\
@@ -22,7 +22,7 @@ libndev_la_SOURCES = 	\
 	ndevpzld.c	\
 	ndevset.c	\
 	ndevtemp.c	\
-	ndevtrun.c	
+	ndevtrun.c
 
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include

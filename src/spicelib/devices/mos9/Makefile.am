@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libmos9.la
 
-libmos9_la_SOURCES = 	\
+libmos9_la_SOURCES =	\
 	mos9.c		\
 	mos9acld.c	\
 	mos9ask.c	\

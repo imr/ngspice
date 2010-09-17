@@ -14,8 +14,8 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 			missing mkinstalldirs stamp-h.in ltconfig \
 			ltmain.sh autom4te.cache
 
-ACLOCAL_AMFLAGS = -I m4			
-			
+ACLOCAL_AMFLAGS = -I m4
+
 dist-hook:
 	rm -rf `find $(distdir)/contrib -name CVS`
 	rm -rf `find $(distdir)/patches -name CVS`
@@ -28,11 +28,11 @@ dist-hook:
 	rm -rf `find $(distdir)/xgraph -name config.status`
 	rm -rf `find $(distdir)/xgraph -name config.log`
 	rm -rf `find $(distdir)/xgraph -name aclocal.m4`
-	rm -rf `find $(distdir)/xgraph -name Makefile`	
+	rm -rf `find $(distdir)/xgraph -name Makefile`
 	rm -rf `find $(distdir)/xgraph/bitmaps -name CVS`
 	rm -rf `find $(distdir)/xgraph/examples -name CVS`
 	rm -rf `find $(distdir)/unsupported -name CVS`
-	
+
 mrproper: maintainer-clean
 	rm -f `find . -type f -name "*~" -print`
 	rm -f `find . -type f -name "*.orig" -print`

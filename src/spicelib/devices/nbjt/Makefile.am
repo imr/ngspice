@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libnbjt.la
 
-libnbjt_la_SOURCES = 	\
+libnbjt_la_SOURCES =	\
 	nbjt.c		\
 	nbjtacld.c	\
 	nbjtask.c	\
@@ -21,7 +21,7 @@ libnbjt_la_SOURCES = 	\
 	nbjtpzld.c	\
 	nbjtset.c	\
 	nbjttemp.c	\
-	nbjttrun.c	
+	nbjttrun.c
 
 
 

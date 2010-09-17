@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libmesa.la
 
-libmesa_la_SOURCES = 	\
+libmesa_la_SOURCES =	\
 	mesa.c		\
 	mesaacl.c	\
 	mesaask.c	\

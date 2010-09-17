@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libres.la
 
-libres_la_SOURCES = 		\
+libres_la_SOURCES =	\
 	res.c		\
 	resask.c	\
 	resdefs.h	\

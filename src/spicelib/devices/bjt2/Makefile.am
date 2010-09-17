@@ -6,7 +6,7 @@
 
 noinst_LTLIBRARIES = libbjt2.la
 
-libbjt2_la_SOURCES = 	\
+libbjt2_la_SOURCES =	\
 	bjt2.c		\
 	bjt2acld.c	\
 	bjt2ask.c	\
@@ -29,12 +29,12 @@ libbjt2_la_SOURCES = 	\
 	bjt2noise.c	\
 	bjt2param.c	\
 	bjt2pzld.c	\
-	bjt2sacl.c      \
+	bjt2sacl.c	\
 	bjt2setup.c	\
-	bjt2sload.c     \
-	bjt2sprt.c      \
-	bjt2sset.c      \
-	bjt2supd.c      \
+	bjt2sload.c	\
+	bjt2sprt.c	\
+	bjt2sset.c	\
+	bjt2supd.c	\
 	bjt2temp.c	\
 	bjt2trun.c
 

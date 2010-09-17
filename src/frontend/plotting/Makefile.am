@@ -22,7 +22,7 @@ libplotting_la_SOURCES = \
 	plotcurv.c	\
 	plotcurv.h	\
 	plotit.c	\
-	plotit.h	
+	plotit.h
 
 if !NO_X
 libplotting_la_SOURCES += \
@@ -32,6 +32,6 @@ libplotting_la_SOURCES += \
 	xgraph.h
 endif
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend @X_CFLAGS@ 
+AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend @X_CFLAGS@
 
 MAINTAINERCLEANFILES = Makefile.in

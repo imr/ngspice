@@ -1,66 +1,66 @@
 ## Process this file with automake to produce Makefile.in
 ## $Id$
 
-noinst_HEADERS = 	\
+noinst_HEADERS =	\
 	tclspice.h	\
-	acdefs.h 	\
+	acdefs.h	\
 	bdrydefs.h	\
-	bool.h 		\
+	bool.h		\
 	carddefs.h	\
 	ciderinp.h	\
 	cidersupt.h	\
-	cktdefs.h 	\
+	cktdefs.h	\
 	cluster.h	\
 	cmconstants.h	\
 	cm.h		\
 	cmproto.h	\
 	cmtypes.h	\
 	compatmode.h	\
-	complex.h 	\
-	const.h 	\
+	complex.h	\
+	const.h		\
 	contdefs.h	\
-	cpdefs.h 	\
-	cpextern.h 	\
-	cpstd.h 	\
-	defines.h 	\
-	devdefs.h 	\
-	dgen.h 		\
-	distodef.h 	\
+	cpdefs.h	\
+	cpextern.h	\
+	cpstd.h		\
+	defines.h	\
+	devdefs.h	\
+	dgen.h		\
+	distodef.h	\
 	dllitf.h	\
 	domndefs.h	\
 	dopdefs.h	\
 	dstring.h	\
-	dvec.h 		\
+	dvec.h		\
 	elctdefs.h	\
 	enh.h		\
 	evt.h		\
 	evtproto.h	\
 	evtudn.h	\
-	ftedbgra.h 	\
-	ftedebug.h 	\
-	ftedefs.h 	\
-	ftedev.h 	\
-	fteext.h 	\
-	fteinp.h 	\
-	fteinput.h 	\
-	fteparse.h 	\
-	gendefs.h 	\
+	ftedbgra.h	\
+	ftedebug.h	\
+	ftedefs.h	\
+	ftedev.h	\
+	fteext.h	\
+	fteinp.h	\
+	fteinput.h	\
+	fteparse.h	\
+	gendefs.h	\
 	gendev.h	\
-	graph.h 	\
-	grid.h 		\
-	hash.h 		\
-	hlpdefs.h 	\
-	iferrmsg.h 	\
-	ifsim.h 	\
-	inpdefs.h 	\
-	inpmacs.h 	\
-	inpptree.h 	\
+	graph.h		\
+	grid.h		\
+	hash.h		\
+	hlpdefs.h	\
+	iferrmsg.h	\
+	ifsim.h		\
+	inpdefs.h	\
+	inpmacs.h	\
+	inpptree.h	\
 	ipc.h		\
 	ipcproto.h	\
 	ipctiein.h	\
-	jobdefs.h 	\
+	jobdefs.h	\
 	lsort.h		\
-	macros.h 	\
+	macros.h	\
 	material.h	\
 	matldefs.h	\
 	memory.h	\
@@ -73,12 +73,12 @@ noinst_HEADERS = 	\
 	mifparse.h	\
 	mifproto.h	\
 	miftypes.h	\
-	missing_math.h 	\
+	missing_math.h	\
 	mobdefs.h	\
 	modldefs.h	\
 	multi_line.h	\
-	ngspice.h 	\
-	noisedef.h 	\
+	ngspice.h	\
+	noisedef.h	\
 	numcards.h	\
 	numconst.h	\
 	numenum.h	\
@@ -86,27 +86,27 @@ noinst_HEADERS = 	\
 	numglobs.h	\
 	onedev.h	\
 	onemesh.h	\
-	opdefs.h 	\
-	optdefs.h 	\
+	opdefs.h	\
+	optdefs.h	\
 	optndefs.h	\
 	outpdefs.h	\
-	plot.h 		\
-	pnode.h 	\
+	plot.h		\
+	pnode.h		\
 	profile.h	\
-	pzdefs.h 	\
-	sen2defs.h 	\
-	sensdefs.h 	\
-	sensgen.h 	\
-	sim.h 		\
-	smpdefs.h 	\
-	sperror.h 	\
-	spmatrix.h 	\
-	suffix.h 	\
+	pzdefs.h	\
+	sen2defs.h	\
+	sensdefs.h	\
+	sensgen.h	\
+	sim.h		\
+	smpdefs.h	\
+	sperror.h	\
+	spmatrix.h	\
+	suffix.h	\
 	swec.h		\
-	tfdefs.h 	\
-	trandefs.h 	\
-	trcvdefs.h 	\
-	tskdefs.h 	\
+	tfdefs.h	\
+	trandefs.h	\
+	trcvdefs.h	\
+	tskdefs.h	\
 	twodev.h	\
 	twomesh.h	\
 	wordlist.h	\

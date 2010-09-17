@@ -22,12 +22,12 @@ SUBDIRS = bsim1			\
 	transient		\
 	transmission		\
 	vbic
-		
 
-DIST_SUBDIRS = 	bsim1	\
+
+DIST_SUBDIRS =	bsim1	\
 	bsim2		\
 	bsim3		\
-	bsim3soi		\
+	bsim3soi	\
 	bsim3soidd	\
 	bsim3soifd	\
 	bsim3soipd	\
@@ -51,6 +51,6 @@ TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/sr
 
 EXTRA_DIST = \
 	README bin
- 
+
 
 MAINTAINERCLEANFILES = Makefile.in

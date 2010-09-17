@@ -1,3 +1,7 @@
+2010-09-17  Robert Larice
+ * **/Makefile.am :
+    whitespace cleanup
+
 2010-09-15 Holger Vogt
  * com_measure2.c: prevent seg fault in meas ac, if real input
  * examples/control_structs/MonteCarlo.sp: update, add measure
