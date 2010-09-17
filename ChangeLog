@@ -1,4 +1,8 @@
 2010-09-17  Robert Larice
+ * src/frontend/Makefile.am :
+    fix parse-bison.y dependencies
+
+2010-09-17  Robert Larice
  * autogen.sh :
     run aclocal first, then libtoolize
 
