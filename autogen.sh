@@ -189,13 +189,13 @@ check_awk
 
 fi
 
-echo "Running libtoolize"
-libtoolize --copy --force
-if [ $? -ne 0 ];then  echo "libtoolize failed"; end_on_error ; fi
-
 echo "Running aclocal $ACLOCAL_FLAGS"
 aclocal $ACLOCAL_FLAGS
 if [ $? -ne 0 ]; then  echo "aclocal failed"; end_on_error ; fi
+
+echo "Running libtoolize"
+libtoolize --copy --force
+if [ $? -ne 0 ];then  echo "libtoolize failed"; end_on_error ; fi
 
 # optional feature: autoheader
 (autoheader --version)  < /dev/null > /dev/null 2>&1

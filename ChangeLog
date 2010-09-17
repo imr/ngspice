@@ -1,4 +1,8 @@
 2010-09-17  Robert Larice
+ * autogen.sh :
+    run aclocal first, then libtoolize
+
+2010-09-17  Robert Larice
  * Makefile.am ,
  * src/include/Makefile.am ,
  * src/maths/misc/Makefile.am ,
