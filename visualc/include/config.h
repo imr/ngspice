@@ -444,14 +444,20 @@
 /* Do not trigger unwanted traps by default */
 /* #undef NEWTRUNC */
 
-/* Define the directory for executables */
-#define NGSPICEBINDIR "C:/Spice/bin"
-
 /* Define the build date */
 #define NGSPICEBUILDDATE "Mon Sep 06 23:06:55 GMT 2010"
 
+#ifdef CONFIG64
+/* Define the directory for executables */
+#define NGSPICEBINDIR "C:/Spice64/bin"
+/* Define the directory for architecture independent data files */
+#define NGSPICEDATADIR "C:/Spice64/share/ngspice"
+#else
+/* Define the directory for executables */
+#define NGSPICEBINDIR "C:/Spice/bin"
 /* Define the directory for architecture independent data files */
 #define NGSPICEDATADIR "C:/Spice/share/ngspice"
+#endif
 
 /* Define if we want NOBYPASS */
 /* #undef NOBYPASS */

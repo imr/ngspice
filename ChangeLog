@@ -1,3 +1,7 @@
+2010-09-17 Holger Vogt
+ * visualc/include/config.h, vngspice.sln, vngspice.vcproj:
+   new configurations release, Debug, and ReleaseOMP
+   
 2010-09-17  Robert Larice
  * .cvsignore ,
  * Makefile.am ,

@@ -141,7 +141,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONFIG64"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -165,7 +165,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\vngspice_d.exe"
+				OutputFile="$(OutDir)\bin\vngspice64_d.exe"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
@@ -232,13 +232,13 @@
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="0"
 				RuntimeTypeInfo="true"
-				OpenMP="true"
+				OpenMP="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
@@ -328,7 +328,7 @@
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONFIG64"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -353,7 +353,7 @@
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\$(ProjectName).exe"
+				OutputFile="$(OutDir)\bin\$(ProjectName)64.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -759,16 +759,20 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="release64|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			Name="ReleaseOMP|Win32"
+			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				Description="Custom defined Build: Recompile conf.c with actual date"
+				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
+				Outputs="$(IntDir)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -781,6 +785,23 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP"
+				MinimalRebuild="false"
+				ExceptionHandling="1"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="0"
+				RuntimeTypeInfo="true"
+				OpenMP="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="3"
+				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -793,6 +814,22 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				UseUnicodeResponseFiles="false"
+				AdditionalDependencies="psapi.lib"
+				OutputFile="$(OutDir)\bin\$(ProjectName)o.exe"
+				LinkIncremental="1"
+				GenerateDebugInformation="false"
+				SubSystem="2"
+				HeapReserveSize="0"
+				HeapCommitSize="0"
+				StackReserveSize="0"
+				StackCommitSize="0"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="1"
+				RandomizedBaseAddress="2"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -817,16 +854,20 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="release64|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			Name="ReleaseOMP|x64"
+			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				Description="Custom defined Build: Recompile conf.c with actual date"
+				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
+				Outputs="$(IntDir)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -840,12 +881,22 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="3"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR,PSAPI_VERSION=1"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP;CONFIG64"
+				MinimalRebuild="false"
+				ExceptionHandling="1"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="0"
+				RuntimeTypeInfo="true"
+				OpenMP="true"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
 			<Tool
@@ -859,8 +910,21 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Psapi.lib"
+				UseUnicodeResponseFiles="false"
+				AdditionalDependencies="psapi.lib"
+				OutputFile="$(OutDir)\bin\$(ProjectName)64o.exe"
+				LinkIncremental="1"
+				GenerateDebugInformation="false"
+				SubSystem="2"
+				HeapReserveSize="0"
+				HeapCommitSize="0"
+				StackReserveSize="0"
+				StackCommitSize="0"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
+				RandomizedBaseAddress="2"
+				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -1807,11 +1871,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\plotting\grid.h"
+				RelativePath="..\src\include\grid.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\grid.h"
+				RelativePath="..\src\frontend\plotting\grid.h"
 				>
 			</File>
 			<File
@@ -1919,11 +1983,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp.h"
+				RelativePath="..\src\frontend\inp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\inp.h"
+				RelativePath="..\src\spicelib\parser\inp.h"
 				>
 			</File>
 			<File
