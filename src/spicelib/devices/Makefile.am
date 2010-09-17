@@ -99,7 +99,7 @@ DIST_SUBDIRS = \
 	mos3	\
 	mos6	\
 	mos9	\
-	@NDEV_DIR@ \
+	ndev	\
 	res	\
 	soi3	\
 	sw	\
@@ -132,7 +132,7 @@ libdev_la_SOURCES =	\
 	cktinit.c	\
 	limit.c
 
-EXTRA_DIST = @NOTNDEV_DIR@ @NOTVLADEVDIR@
+EXTRA_DIST = @NOTVLADEVDIR@
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 

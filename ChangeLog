@@ -1,4 +1,9 @@
 2010-09-17  Robert Larice
+ * configure.ac ,
+ * src/spicelib/devices/Makefile.am :
+    `make dist' improvements for `NDEV'
+
+2010-09-17  Robert Larice
  * Makefile.am ,
  * .cvsignore ,
  * config/.cvsignore ,

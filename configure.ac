@@ -968,18 +968,15 @@ if test "$enable_ndev" = "yes"; then
     AC_DEFINE(NDEV,[],[The NDEV interface])
     NDEV=""
     NDEV_DIR=" ndev "
-    NOTNDEV_DIR=""
     NDEV_LIB=" spicelib/devices/ndev/libndev.la "
     
 else
     NDEV=""
     NDEV_DIR=""
     NDEV_LIB=""
-    NOTNDEV_DIR="ndev"
 fi
 AC_SUBST(NDEV_DIR)
 AC_SUBST(NDEV_LIB)
-AC_SUBST(NOTNDEV_DIR)
 
 
 dnl Cluster option
