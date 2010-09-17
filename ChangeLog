@@ -1,4 +1,11 @@
 2010-09-17  Robert Larice
+ * Makefile.am ,
+ * .cvsignore ,
+ * config/.cvsignore ,
+ * configure.ac :
+    use a subdirectory `config' for autoconfigure related artifacts
+
+2010-09-17  Robert Larice
  * **/Makefile.am :
     whitespace cleanup
 
