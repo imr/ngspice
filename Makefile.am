@@ -10,11 +10,11 @@ EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		doc examples visualc @NOTXGRAPH@ \
 		xgraph/aclocal.m4
 
-MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config/config.guess \
-			config.h.in config/config.sub configure config/install-sh \
-			config/missing mkinstalldirs stamp-h.in ltconfig \
-			config/ltmain.sh autom4te.cache \
-			config/depcomp config/ylwrap
+MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
+			config.h.in config.sub configure install-sh \
+			missing mkinstalldirs stamp-h.in ltconfig \
+			ltmain.sh autom4te.cache \
+			depcomp ylwrap
 
 ACLOCAL_AMFLAGS = -I m4
 

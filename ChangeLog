@@ -1,4 +1,12 @@
 2010-09-17  Robert Larice
+ * .cvsignore ,
+ * Makefile.am ,
+ * configure.ac ,
+ * config/.cvsignore :
+    undo "use a subdirectory `config' for autoconfigure ..." from today
+    this has broken `configure' for xgraph
+
+2010-09-17  Robert Larice
  * src/frontend/Makefile.am :
     fix parse-bison.y dependencies
 

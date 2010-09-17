@@ -22,8 +22,6 @@ dnl Older versions may not work with this script and this will report the
 dnl problem to the user.  (2.52 is a guess and might need some adjustment)
 AC_PREREQ(2.59)
 
-AC_CONFIG_AUX_DIR(config)
-
 dnl Revison stamp the generated ./configure script
 AC_REVISION($Revision$)
 
