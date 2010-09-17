@@ -15,4 +15,6 @@ EXTRA_DIST = \
 	$(TESTS)		\
 	$(TESTS:.cir=.out)
 
+EXTRA_DIST += ring51.cir lib.h
+
 MAINTAINERCLEANFILES = Makefile.in

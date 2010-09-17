@@ -12,6 +12,7 @@ libndev_la_SOURCES =	\
 	ndevdest.c	\
 	ndevdump.c	\
 	ndevext.h	\
+	ndevexch.h	\
 	ndevinit.c	\
 	ndevinit.h	\
 	ndevitf.h	\

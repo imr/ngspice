@@ -20,4 +20,6 @@ EXTRA_DIST = \
 	$(TESTS)		\
 	$(TESTS:.cir=.out)
 
+EXTRA_DIST += ring51_41.cir ring51_41.out
+
 MAINTAINERCLEANFILES = Makefile.in

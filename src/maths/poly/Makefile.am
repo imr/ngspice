@@ -12,6 +12,7 @@ libpoly_la_SOURCES = \
 	polyeval.c \
 	polyeval.h
 
+EXTRA_DIST = poly.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include
 

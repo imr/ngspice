@@ -1,4 +1,18 @@
 2010-09-17  Robert Larice
+ * Makefile.am ,
+ * src/include/Makefile.am ,
+ * src/maths/misc/Makefile.am ,
+ * src/maths/poly/Makefile.am ,
+ * src/spicelib/devices/ndev/Makefile.am ,
+ * src/xspice/Makefile.am ,
+ * tests/bsim3soi/Makefile.am ,
+ * tests/bsim3soidd/Makefile.am ,
+ * tests/bsim3soifd/Makefile.am ,
+ * tests/bsim3soipd/Makefile.am ,
+ * tests/mesa/Makefile.am :
+    `make dist' add some missing artifacts
+
+2010-09-17  Robert Larice
  * configure.ac ,
  * src/spicelib/devices/Makefile.am :
     `make dist' improvements for `NDEV'

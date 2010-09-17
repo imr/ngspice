@@ -109,6 +109,7 @@ noinst_HEADERS =	\
 	tskdefs.h	\
 	twodev.h	\
 	twomesh.h	\
+	typedefs.h	\
 	wordlist.h	\
 	wstdio.h
 

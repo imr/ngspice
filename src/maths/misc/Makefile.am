@@ -17,6 +17,9 @@ libmathmisc_la_SOURCES = \
 	norm.c		\
 	randnumb.c
 
+
+EXTRA_DIST = test_accuracy.c test_erfc.c
+
 AM_CPPFLAGS = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in

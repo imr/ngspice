@@ -7,7 +7,8 @@ EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		ANALYSES BUGS AUTHORS ChangeLog \
 		DEVICES NEWS README README.tcl \
 		README.adms contrib \
-		examples visualc @NOTXGRAPH@
+		doc examples visualc @NOTXGRAPH@ \
+		xgraph/aclocal.m4
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config/config.guess \
 			config.h.in config/config.sub configure config/install-sh \
@@ -28,7 +29,6 @@ dist-hook:
 	rm -rf `find $(distdir)/xgraph -name CVS`
 	rm -rf `find $(distdir)/xgraph -name config.status`
 	rm -rf `find $(distdir)/xgraph -name config.log`
-	rm -rf `find $(distdir)/xgraph -name aclocal.m4`
 	rm -rf `find $(distdir)/xgraph -name Makefile`
 	rm -rf `find $(distdir)/xgraph/bitmaps -name CVS`
 	rm -rf `find $(distdir)/xgraph/examples -name CVS`

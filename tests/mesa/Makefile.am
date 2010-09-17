@@ -17,4 +17,6 @@ EXTRA_DIST = \
 	$(TESTS) \
 	$(TESTS:.cir=.out)
 
+EXTRA_DIST += mesa12.cir mesa-12.cir
+
 MAINTAINERCLEANFILES = Makefile.in
