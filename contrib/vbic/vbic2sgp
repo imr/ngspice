@@ -1,4 +1,4 @@
-#!/bin/sh --  # perl
+#!/bin/bash --  # perl
 eval 'exec perl -S -x -w $0 ${1+"$@"}'
 if 0;
 

@@ -1,10 +1,20 @@
+2010-09-18  Robert Larice
+ * contrib/mslib/liblook ,
+ * contrib/mslib/libprm ,
+ * contrib/scripts/liblook ,
+ * contrib/scripts/libprm ,
+ * contrib/vbic/sgp2vbic ,
+ * contrib/vbic/vbic2sgp *
+    some scripts need bash
+      this patch is from debian, thanks
+
 2010-09-18 Dietmar Warning
  * src/spicelib/devices/*/isrcacct.c, vsrcacct.c: Correct bitwise operation
 
 2010-09-17 Holger Vogt
  * visualc/include/config.h, vngspice.sln, vngspice.vcproj:
    new configurations release, Debug, and ReleaseOMP
-   
+
 2010-09-17  Robert Larice
  * .cvsignore ,
  * Makefile.am ,
