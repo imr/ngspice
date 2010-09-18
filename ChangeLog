@@ -1,3 +1,6 @@
+2010-09-18 Dietmar Warning
+ * src/spicelib/devices/*/isrcacct.c, vsrcacct.c: Correct bitwise operation
+
 2010-09-17 Holger Vogt
  * visualc/include/config.h, vngspice.sln, vngspice.vcproj:
    new configurations release, Debug, and ReleaseOMP
