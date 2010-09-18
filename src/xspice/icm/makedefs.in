@@ -40,6 +40,9 @@ CMPP = $(TOPDIR)$(top_builddir)/src/xspice/cmpp/cmpp
 
 # Flags to use when linking shared library
 LDFLAGS = -shared
+ifeq ($(ISMINGW), 1)
+  LDFLAGS = -shared @LDFLAGS@
+endif
 ifeq "$(strip $(uname))" "Darwin"
   LDFLAGS = -bundle -flat_namespace -undefined suppress
 endif

@@ -1,3 +1,6 @@
+2010-09-18 Holger Vogt
+ * src/XSPICE/icm/makedefs.in: external LDFLAGS enabled for MINGW
+
 2010-09-18  Robert Larice
  * contrib/mslib/liblook ,
  * contrib/mslib/libprm ,
