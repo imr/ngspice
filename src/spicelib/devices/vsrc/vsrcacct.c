@@ -30,7 +30,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
         for (here = model->VSRCinstances; here != NULL ;
                 here=here->VSRCnextInstance) {
             
-            if(!ckt->CKTmode & (MODETRAN | MODETRANOP)) {
+            if(~ckt->CKTmode & (MODETRAN | MODETRANOP)) {
                 /* not transient, so shouldn't be here */
                 return(OK);
             } else {
