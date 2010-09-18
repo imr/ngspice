@@ -25,7 +25,7 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
         for (here = model->ISRCinstances; here != NULL ;
                 here=here->ISRCnextInstance) {
             
-            if(~ckt->CKTmode & (MODETRAN | MODETRANOP)) {
+            if(!(ckt->CKTmode & (MODETRAN | MODETRANOP))) {
                 /* not transient, so shouldn't be here */
                 return(OK);
             } else {
