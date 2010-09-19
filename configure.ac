@@ -286,7 +286,18 @@ fi
 dnl Check system we're on , and tune accordingly
 AC_CANONICAL_HOST
 
-
+dnl Expand the prefix variable
+if eval "test x$prefix = xNONE"; then
+dnl  with the MS WINDOWS executable we suggest C:/Spice/bin as *.exe-path
+  if test "$with_windows" = "yes"; then
+    dprefix="C:/Spice"
+    prefix=$dprefix
+  else
+    dprefix=$ac_default_prefix
+  fi
+else
+  dprefix=$prefix
+fi
 
 ##########################################################################
 #
@@ -700,18 +711,6 @@ if test "$getopt_long" = "true"; then
   AC_DEFINE(HAVE_GETOPT_LONG,1,[Have fcn getopt_long()])
 fi
 
-# Expand the prefix variable (this is really annoying!)
-if eval "test x$prefix = xNONE"; then
-dnl  with the MS WINDOWS executable we suggest C:/Spice/bin as *.exe-path
-  if test "$with_windows" = "yes"; then
-    dprefix="C:/Spice"
-    prefix=$dprefix
-  else
-    dprefix=$ac_default_prefix
-  fi
-else
-  dprefix=$prefix
-fi
 AC_DEFINE_UNQUOTED(NGSPICEBINDIR,"`echo $dprefix/bin`",[Define the directory for executables])
 AC_DEFINE_UNQUOTED(NGSPICEDATADIR,"`echo $dprefix/share/ngspice`",[Define the directory for architecture independent data files])
 AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE,"`date`",[Define the build date])
@@ -818,7 +817,9 @@ AC_SUBST(NOTXGRAPH)
 
 AC_CHECK_PROGS(YACC, 'bison -y' byacc yacc) 
 
+#################  XSPICE ##################################################
 dnl Add new code models to the build by pointing to them here.
+libname="lib"
 if test "$enable_xspice" = "yes"; then
     if test -z "${YACC}" ; then
         AC_MSG_ERROR([XSPICE build requires bison, byacc or yacc parser generator])
@@ -859,6 +860,14 @@ dnl Define variables for LEX
     XSPICETESTS=""
     AC_CHECK_FUNCS([modf])
     AC_CHECK_HEADERS([libintl.h malloc.h])
+dnl Find the library directory (lib or lib64) for XSPICE libs
+    if test -n $libdir ; then
+        libtest=`expr $libdir : '.*\/lib64$'`
+        if test $libtest -gt 5 ; then
+            libname="lib64"
+        fi
+        echo XSPICE libraries in directory $libname
+    fi	
 else
     XSPCIEDIR=""
     XSPICELIB1=""
@@ -875,6 +884,7 @@ AC_SUBST(XSPICELIB1)
 AC_SUBST(XSPICELIB2)
 AC_SUBST(XSPICETESTS)
 AC_SUBST(XSPICEINIT)
+AC_SUBST(libname)
 
 dnl Add CIDER enhancements to ngspice.
 if test "$enable_cider" = "yes"; then
