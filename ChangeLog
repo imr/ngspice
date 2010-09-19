@@ -1,4 +1,9 @@
 2010-09-19  Robert Larice
+ * src/frontend/plotting/graf.c ,
+ * src/frontend/plotting/grid.c :
+    fix some ancient \n\r and \r\n typos
+
+2010-09-19  Robert Larice
  * src/frontend/quote.c :
     cp_unqoute(), avoid segfault when applied to a single quote "\""
     testcase:

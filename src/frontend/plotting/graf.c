@@ -641,7 +641,7 @@ iplot(struct plot *pl, int id)
     if (!j)
         return(0);
     if (ft_grdb)
-        fprintf(cp_err, "Entering iplot, len = %d\n\r", len);
+        fprintf(cp_err, "Entering iplot, len = %d\n", len);
 
     if (len < IPOINTMIN) {
         /* Nothing yet */
@@ -666,7 +666,7 @@ iplot(struct plot *pl, int id)
             }
         if (ft_grdb)
             fprintf(cp_err, 
-              "iplot: after 5, xlims = %G, %G, ylims = %G, %G\n\r", 
+              "iplot: after 5, xlims = %G, %G, ylims = %G, %G\n", 
               xlims[0],
               xlims[1],
               ylims[0],
@@ -700,7 +700,7 @@ iplot(struct plot *pl, int id)
         dy = (isreal(xs) ? xs->v_realdata[len - 1] :
                 realpart(&xs->v_compdata[len - 1]));
         if (ft_grdb)
-            fprintf(cp_err, "x = %G\n\r", dy);
+            fprintf(cp_err, "x = %G\n", dy);
         if (!if_tranparams(ft_curckt, &start, &stop, &step) ||
                 !ciprefix("tran", pl->pl_typename)) {
             stop = HUGE;
@@ -710,7 +710,7 @@ iplot(struct plot *pl, int id)
         while (dy < currentgraph->data.xmin) {
             changed = TRUE;
             if (ft_grdb)
-              fprintf(cp_err, "resize: xlo %G -> %G\n\r",
+              fprintf(cp_err, "resize: xlo %G -> %G\n",
                   currentgraph->data.xmin,
                   currentgraph->data.xmin -
                     (currentgraph->data.xmax -
@@ -734,7 +734,7 @@ iplot(struct plot *pl, int id)
         while (dy > currentgraph->data.xmax) {
             changed = TRUE;
             if (ft_grdb)
-                fprintf(cp_err, "resize: xhi %G -> %G\n\r",
+                fprintf(cp_err, "resize: xhi %G -> %G\n",
                   currentgraph->data.xmax,
                   currentgraph->data.xmax +
                     (currentgraph->data.xmax - 
@@ -756,12 +756,12 @@ iplot(struct plot *pl, int id)
             dy = (isreal(v) ? v->v_realdata[len - 1] :
                     realpart(&v->v_compdata[len - 1]));
             if (ft_grdb)
-                fprintf(cp_err, "y = %G\n\r", dy);
+                fprintf(cp_err, "y = %G\n", dy);
             /* checking for y lo */
             while (dy < currentgraph->data.ymin) {
                 changed = TRUE;
                 if (ft_grdb)
-                  fprintf(cp_err, "resize: ylo %G -> %G\n\r",
+                  fprintf(cp_err, "resize: ylo %G -> %G\n",
                     currentgraph->data.ymin,
                     currentgraph->data.ymin -
                     (currentgraph->data.ymax - 
@@ -781,7 +781,7 @@ iplot(struct plot *pl, int id)
             while (dy > currentgraph->data.ymax) {
                 changed = TRUE;
                 if (ft_grdb)
-                  fprintf(cp_err, "resize: yhi %G -> %G\n\r",
+                  fprintf(cp_err, "resize: yhi %G -> %G\n",
                     currentgraph->data.ymax,
                     currentgraph->data.ymax +
                       (currentgraph->data.ymax -

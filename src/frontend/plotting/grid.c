@@ -57,7 +57,7 @@ gr_fixgrid(GRAPH *graph, double xdelta, double ydelta, int xtype, int ytype)
     if ((graph->data.xmin > graph->data.xmax)
             || (graph->data.ymin > graph->data.ymax)) {
       fprintf(cp_err, 
-        "gr_fixgrid: Internal Error - bad limits: %g, %g, %g, %g\r\n",
+        "gr_fixgrid: Internal Error - bad limits: %g, %g, %g, %g\n",
         graph->data.xmin, graph->data.xmax, 
         graph->data.ymin, graph->data.ymax);
       return;
