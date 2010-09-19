@@ -81,7 +81,7 @@ cp_unquote(char *string)
 	l = strlen(string);
 	s = (char*) MALLOC(l+1);
 	
-	if (*string == '"' && string[l-1] == '"') {
+	if (l>=2 && *string == '"' && string[l-1] == '"') {
 	    strncpy(s,string+1,l-2);
 	    s[l-2] = '\0';
 	} else
