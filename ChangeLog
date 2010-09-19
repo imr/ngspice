@@ -1,6 +1,7 @@
 2010-09-19 Holger Vogt
  * src/spinit.in, configure.ac: allow lib64 in spinit (bug no. 3054424)
    if libdir contains lib64
+ * compile_min.sh: new script for compiling MINGW 32 and 64 bit  
 
 2010-09-18 Holger Vogt
  * src/XSPICE/icm/makedefs.in: external LDFLAGS enabled for MINGW
