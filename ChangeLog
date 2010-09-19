@@ -1,3 +1,8 @@
+2010-09-19 Dietmar Warning
+ * adms/hicum2/admsva/hicum2.va: update to version 2.24 with small exceptions
+   from the original source code, seems the last update because model provider
+   has limited the access only to authorized partners
+
 2010-09-19  Robert Larice
  * autogen.sh :
     cleanup
