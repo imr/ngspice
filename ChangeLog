@@ -1,4 +1,8 @@
 2010-09-19  Robert Larice
+ * autogen.sh :
+    cleanup
+
+2010-09-19  Robert Larice
  * src/frontend/plotting/graf.c ,
  * src/frontend/plotting/grid.c :
     fix some ancient \n\r and \r\n typos
