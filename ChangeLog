@@ -1,3 +1,11 @@
+2010-09-21  Robert Larice
+ * autogen.sh :
+    there are several implementations of `sed'.
+    Some can't swallow a '\n' escape sequence on the RHS.
+    And some want a plain newline in the RHS to be escaped.
+    see http://sed.sourceforge.net/sedfaq4.html#s4.1
+     `4.1. How do I insert a newline into the RHS of a substitution?'
+
 2010-09-19 Dietmar Warning
  * adms/hicum2/admsva/hicum2.va: update to version 2.24 with small exceptions
    from the original source code, seems the last update because model provider

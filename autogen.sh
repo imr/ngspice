@@ -147,8 +147,12 @@ if [ "$ADMS" -eq 1 ]; then
     znew=`awk '$1 ~ /#VLAMKF/ { print " " $2 "\\\\" }' < configure.ac`
 
     # Find "tests/vbic/Makefile" and insert the list of Makefiles
+    # some sed's fail to process the '\n' escape on the RHS,
+    #   thus use an escaped plain newline
     sed \
-        -e "s,tests\\/vbic\\/Makefile,&\\n  $znew ," \
+        -e "s,tests\\/vbic\\/Makefile,&\\
+$znew
+ ," \
         configure.ac > temp-adms.ac
 
     for adms_dir in `ls $ADMSDIR` ; do
