@@ -1,3 +1,6 @@
+2010-09-22 Dietmar Warning
+ * devices/mesa/mesaload.c: initialize some variables
+
 2010-09-21  Robert Larice
  * autogen.sh :
     there are several implementations of `sed'.
