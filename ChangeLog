@@ -1,3 +1,9 @@
+2010-09-23  Robert Larice
+ * Makefile.am ,
+ * m4/.cvsignore :
+    add an empty m4/.cvsignore file, to make sure the directory exists
+    add this directory and the file compile_min.sh to the tarball
+
 2010-09-22 Dietmar Warning
  * devices/mesa/mesaload.c: initialize some variables
 
