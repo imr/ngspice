@@ -79,7 +79,13 @@ This file describes the procedures to install ngspice from sources.
  --with-editline=yes (if not available, --with-readline=yes will work, but has
  a licensing issue) and --disable-debug (for smaller and speed optimized
  executable). 
-
+ 
+ A fully featured ngspice on LINUX may be obtained with the following commands:
+ $ ./autogen.sh --adms
+ $ ./configure --with-x --enable-xspice  --disable-debug --enable-cider --with-readline=yes --enable-openmp --enable-adms 
+ $ make
+ $ sudo make install
+ 
  If a problem is found with the build proccess, please submit a report to 
  the Ngspice development team. Please provide information about your system 
  and any ./configure arguments you are using, together with any error 
@@ -461,7 +467,7 @@ This file describes the procedures to install ngspice from sources.
  The procedure of compiling a distribution (for example, a tarball from
  the ngspice website), is as follows:
 
- $ cd ng-spice-rework-18
+ $ cd ng-spice-rework
  $ ./configure --with-windows ...and other options
  $ make
  $ make install
@@ -470,11 +476,16 @@ This file describes the procedures to install ngspice from sources.
  --enable-xspice (this requires FLEX and BISON available in MSYS, see below).
  --enable-cider
  --disable-debug (-O2 optimization, no debug information)
-
+  
+ A fully featured ngspice on Windows may be obtained with the following commands:
+ $ ./autogen.sh --adms
+ $ ./configure --with-windows --enable-cider --disable-debug --enable-openmp --enable-xspice --enable-adms
+ $ make install
+ 
  However, to compile code extracted from the CVS repository the procedure is
  a little different, thus:
 
- $ cd ng-spice-rework-18
+ $ cd ng-spice-rework
  $ ./autogen.sh
  $ ./configure --enable-maintainer-mode --with-windows ...and other options
  $ make

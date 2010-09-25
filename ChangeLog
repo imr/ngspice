@@ -1,7 +1,7 @@
 2010-09-23  Holger Vogt
  * conf.c, conf.h, ngspice.h, visualc/config.h, configure.ac:
    update welcome message, version 22
- * FAQ, COPYING, NEWS: update to version 22  
+ * FAQ, COPYING, NEWS, INSTALL: update to version 22  
  * examples/Monte_Carlo: new folder with example files
 
 2010-09-23  Robert Larice
