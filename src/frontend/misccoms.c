@@ -159,6 +159,7 @@ com_version(wordlist *wl)
 	fprintf(cp_out, "** The U. C. Berkeley CAD Group\n");
 	fprintf(cp_out,
 	  "** Copyright 1985-1994, Regents of the University of California.\n");
+	fprintf(cp_out, "** %s\n", Spice_Manual);
 	if (Spice_Notice != NULL && *Spice_Notice != 0)
 	    fprintf(cp_out, "** %s\n", Spice_Notice);
 	if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
@@ -171,6 +172,7 @@ com_version(wordlist *wl)
 	    fprintf(cp_out, "******\n");
 	    fprintf(cp_out, "** %s-%s\n", ft_sim->simulator,
 		    ft_sim->version);
+	    fprintf(cp_out, "** %s\n", Spice_Manual);
 	    if (Spice_Notice != NULL && *Spice_Notice != 0)
 		fprintf(cp_out, "** %s\n", Spice_Notice);
 	    if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
@@ -185,6 +187,7 @@ com_version(wordlist *wl)
 	    fprintf(cp_out, "** The U. C. Berkeley CAD Group\n");
 	    fprintf(cp_out,
 	            "** Copyright 1985-1994, Regents of the University of California.\n");
+	    fprintf(cp_out, "** %s\n", Spice_Manual);
 	    if (Spice_Notice != NULL && *Spice_Notice != 0)
 	        fprintf(cp_out, "** %s\n", Spice_Notice);
 	    if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)

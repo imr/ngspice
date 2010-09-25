@@ -240,6 +240,7 @@ extern char *Spiced_Log;
 extern char Spice_Version[];
 extern char Spice_Notice[];
 extern char Spice_Build_Date[];
+extern char Spice_Manual[];
 
 extern char *News_File;
 extern char *Default_MFB_Cap;

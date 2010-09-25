@@ -472,7 +472,7 @@
 #define PACKAGE "ngspice"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "ngspice-bugs@lists.sourceforge.net"
+#define PACKAGE_BUGREPORT "http://ngspice.sourceforge.net/bugrep.html"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "ngspice"
