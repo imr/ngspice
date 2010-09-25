@@ -1,8 +1,8 @@
 *********************************************************************************
 *Copied and written by Stefan Jones (stefan.jones@multigig.com) at Multigig Ltd *
 *Code based on and copied from ScriptEDA                                        *
-*(http://www-cad.eecs.berkeley.edu/~pinhong/scriptEDA )                         *
-*Copyright (C) 200   Author                                                     *
+*(http://embedded.eecs.berkeley.edu/Alumni/pinhong/scriptEDA/)                  *
+*Copyright (C) 2001   Author  Pinhong Chen                                      *
 *                                                                               *
 *This program is free software; you can redistribute it and/or                  *
 *modify it under the terms of the GNU Lesser General Public License             *
@@ -69,7 +69,7 @@ plain ngspice, that is a standalone program. This flag is --with-tcl. It accepts
 argument the path to tclConfig.sh
 
 If you don't provide any argument, configure script will try to find it automatically.
-  ./configure --enable-xspice --disable-cider --disable-xgraph --enable-numparam --with-readline=no --enable-adms=non --with-tcl
+  ./configure --enable-xspice --disable-cider --disable-xgraph --enable-numparam --with-readline=no --enable-adms=no --with-tcl
 
 If its does not, then it will propose you some possible locations.
   can't find Tcl configuration script "tclConfig.sh"
