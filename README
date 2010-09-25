@@ -33,7 +33,7 @@ Ngspice is part of the gEDA project.
 MAILING LISTS:
 -------------
 
- There are three mailing lists dedicated to the development of ngspice. 
+ There are two mailing lists dedicated to the use and development of ngspice. 
 
  * ngspice-users@lists.sourceforge.net: 
    This list is the list for the users of the ngspice simulator. 
@@ -41,15 +41,19 @@ MAILING LISTS:
  * ngspice-devel@lists.sourceforge.net: 
    ngspice development issues. Developers and "want to be" developers should 
    subscribe here.
-                                         
- * ngspice-bugs@list.sourceforge.net: 
-   Bug reports should be posted here.
-
+       
  To subscribe the list(s), send a message to:
    <ngspice-users-subscribe@lists.sourceforge.net>
    <ngspice-devel-subscribe@lists.sourceforge.net>
-   <ngspice-bugs-subscribe@lists.sourceforge.net>
 
+   
+OBSOLETE MAILING LISTS:
+-------------	   
+ * ngspice-bugs@list.sourceforge.net: 
+   This list is no longer used by the ngspice maintainers. Bug reports should 
+   go to the ngspice bug tracker.
+
+   
 WEB SITEs:
 --------
 
