@@ -1,6 +1,6 @@
-  Ngspice F.A.Q.Version 1.6 (rework-21 release)
+  Ngspice F.A.Q.Version 1.7 (rework-22 release)
   Maintained by Paolo Nenzi, Holger Vogt
-  Last update: 12-06-2010
+  Last update: 25-09-2010
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -209,13 +209,13 @@
  1.12.  Where should I look on the World Wide Web for Spice documenta-
         tion?
 
-  There are a lot of Internet sites that have information on spice, the
-  best way is to point to your preferred search engine. Some interesting
-  sites are:
-  
-  Pages on ngspice
+  There is a detailed ngspice manual available at:
   http://ngspice.sourceforge.net/docs.html
-  
+ 
+  There are a lot of Internet sites that have information on spice. The
+  best way is to ask your preferred search engine. Some interesting
+  sites are: 
+ 
   Pages on Spice:
    http://bwrc.eecs.berkeley.edu/Classes/IcBook/SPICE/
    http://embedded.eecs.berkeley.edu/pubs/downloads/spice/index.htm
@@ -236,30 +236,30 @@
 
   The latest version released is: 
   
-  * ngspice-rework-21 (released on 13/06/2010)
+  * ngspice-rework-22 (released on 26/09/2010)
   
 
  2.2.  What are the latest features in the current release?
 
   New features:
-
-
-    + BSIM 4.6.5, BSIMSOI 4.3.1
-    + Compatibility: C, L, R, devices and E, G sources with expressions 
-	  Variables HERTZ, TIME, TEMPER added
-    + E, G sources with TABLE function
-    + New manual
-	+ Plotting with Gnuplot, wrdata for simple table output
-	+ .measure vastly improved
-	+ transmission line models improved
+    + OpenMP multicore support for BSIM3, BSIM4, and BSIMSOI4
+    + reinstate {$var} expansion in interactive interpreter
+    + .TITLE line added
+    + update to 'spectrum' script
+    + par('expression') in .four, .plot, .print, .meas, .save commands
+    + command 'option' for use in spinit, .spiceinit, and in scripts
+    + adms procedure updated
+    + new random number generator, random functions sunif() and sgauss()
+    + ngspice manual updated 
 
   Bug fixes:
+    + Major code cleanup to reduce compiler/linker warnings: ansi function prototypes, 
+      void/char pointers to named pointers, explicit type casts and many more  
+    + Many small bugs
 
-    + Many small bugs, memory leaks, memory overflow
 
 
-
- 2.3.  What does it looks like?
+ 2.3.  What does it look like?
 
   Ngspice, as the original Spice3 (and Xspice and Cider) is a command
   line simulator.
@@ -270,17 +270,17 @@
   The development is open to anyone who wish to contribute. If the 
   original Spice3 was made with the contribution of "a cast of 
   thousand", ngspice can only increase that number. An incomplete
-  list of contributor makes the "acknowledgements" page of ngspice
-  documentation.  
+  list of contributor makes the "acknowledgements" page of the ngspice
+  manual.  
 
 
  2.5.  How can I report a bug/request for a feature?
 
   The ngspice summary page (hosted on Sourceforge) has bug-reporting,
   feature-request and bugs trackers. You can use them or subscribe to
-  mailing lists and post there. The latter is preferred since almost
-  all developers/contributors read the lists but only a few of them
-  use trackers.
+  mailing lists and post there. The former is preferred since almost
+  it allows to track all necessary actions upon a bug. The web site at
+  http://ngspice.sourceforge.net/bugrep.html will give you more details.
 
  
  2.6.  How can I join the development?
