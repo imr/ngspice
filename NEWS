@@ -1,3 +1,23 @@
+Ngspice-22, Sept 26th, 2010
+============
+
+- New features:
+    + OpenMP multicore support for BSIM3, BSIM4, and BSIMSOI4
+    + reinstate {$var} expansion in interactive interpreter
+    + .TITLE line added
+    + update to 'spectrum' script
+    + par('expression') in .four, .plot, .print, .meas, .save commands
+    + command 'option' for use in spinit, .spiceinit, and in scripts
+    + adms procedure updated
+    + new random number generator, random functions sunif() and sgauss()
+    + ngspice manual updated 
+
+- Bug fixes:
+    + Major code cleanup to reduce compiler/linker warnings: ansi function prototypes, 
+      void/char pointers to named pointers, explicit type casts and many more  
+    + Many small bugs
+
+
 Ng-spice-rework-21, Jun3, 13th 2010
 ============
 
