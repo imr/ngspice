@@ -1,3 +1,5 @@
+============================ Rework-22 ==================================
+
 2010-09-23  Holger Vogt
  * conf.c, conf.h, ngspice.h, visualc/config.h, configure.ac:
    update welcome message, version 22
