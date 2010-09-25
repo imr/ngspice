@@ -3,16 +3,11 @@ This file contains a list of known but not yet fixed bugs in ngspice.
 
 How to submit a bug report:
 
-There are three ways to report a bug you have discovered in ngspice:
+There are two methods to report a bug you have discovered in ngspice:
 
     * Bug tracker: This is the preferred method of reporting a bug. 
-      Using the tracker on Sourceforge.ner site will make your report 
+      Using the tracker on Sourceforge.net site will make your report 
       open by everyone and the chances of finding a fix will increase.
-      
-    * ngspice-bugs list: If you have used ngspice, you probably noticed 
-      that the banner that appears when ngspice starts says that you can 
-      send bug reports to the ngspice-bugs@lists.sourceforge.net address. 
-      This is the address of a mailing list dedicated to receive bug reports.
     
     * ngspice-devel list: If you are a member of this list, you can write 
       directly to the developers' list. Do not subscribe to the list only 
@@ -29,7 +24,7 @@ OPEN BUGS:
 * return value:
 
   When ngspice is called in batch mode it returns 1 even if the simulations
-  are run. The problem arise when there is a .control section but no
+  are run. The problem arises when there is a .control section but no
   .print, .plot or .fourier lines. Ngspice outputs:
   
     Note: No ".plot", ".print", or ".fourier" lines; no simulations run 
@@ -37,3 +32,6 @@ OPEN BUGS:
   and exits returning 1.
   
   Workaround: add -r <dummyfile> to the command line to avoid this. 
+  
+* please refer to the sourceforge bug tracker at 
+  http://sourceforge.net/tracker/?group_id=38962&atid=423915  
