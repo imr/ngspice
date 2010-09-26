@@ -1,4 +1,6 @@
 ============================ Rework-22 ==================================
+2010-09-26  Holger Vogt
+ * .cvsignore: m4 entry removed
 
 2010-09-25  Holger Vogt
  * conf.c, conf.h, ngspice.h, visualc/config.h, configure.ac:
