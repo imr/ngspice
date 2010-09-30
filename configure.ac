@@ -618,6 +618,13 @@ dnl Check for a few typdefs:
 AC_TYPE_PID_T
 AC_TYPE_SIGNAL
 
+dnl sighandler_t is the type of the signal handler on GNU variants,
+dnl sig_t is the type of a signal handler on 4.4BSD's,
+dnl other systems use __sighandler_t.
+AC_CHECK_TYPES([sighandler_t, sig_t, __sighandler_t], , ,
+   [#include <sys/types.h>
+    #include <signal.h> ])
+
 dnl Check for a few libraries and headers:
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS(unistd.h ctype.h pwd.h fcntl.h sys/ioctl.h stropts.h)

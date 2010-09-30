@@ -112,11 +112,15 @@
 
 
 #ifndef SIGNAL_FUNCTION
-#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__CYGWIN__) || defined(__SUNPRO_C)
-#  define SIGNAL_FUNCTION RETSIGTYPE (*)(int)
-#else
+# ifdef HAVE_SIGHANDLER_T
 #  define SIGNAL_FUNCTION sighandler_t
-#endif
+# elif HAVE_SIG_T
+#  define SIGNAL_FUNCTION sig_t
+# elif HAVE___SIGHANDLER_T
+#  define SIGNAL_FUNCTION __sighandler_t
+# else
+#  define SIGNAL_FUNCTION RETSIGTYPE (*)(int)
+# endif
 #endif
 
 #define BSIZE_SP      512

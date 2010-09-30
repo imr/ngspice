@@ -1,4 +1,9 @@
 2010-09-30  Robert Larice
+ * configure.ac ,
+ * src/include/defines.h :
+    use autoconf to find a suitable signal function type
+
+2010-09-30  Robert Larice
  * src/xspice/icm/Makefile :
     use $(MAKE) instead of `make'
 
