@@ -12,9 +12,9 @@ DEPS_MAGIC := $(shell mkdir .deps > /dev/null 2>&1 || :)
 -include .deps/cm.P
 -include .deps/dlmain.P
 
-UPMAKE = make -f $(TOPDIR)../Makefile TOPDIR=$(TOPDIR)../
+UPMAKE := $(MAKE) -f $(TOPDIR)../Makefile TOPDIR=$(TOPDIR)../
 
-MAKE = make -f $(TOPDIR)Makefile TOPDIR=$(TOPDIR)
+MAKE := $(MAKE) -f $(TOPDIR)Makefile TOPDIR=$(TOPDIR)
 
 COMPILE = $(CC) $(INCLUDES) $(CFLAGS)
 
