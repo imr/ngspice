@@ -1,3 +1,13 @@
+2010-09-30  Robert Larice
+ * src/xspice/cmpp/Makefile.am ,
+ * src/xspice/cmpp/ifs_lex.l ,
+ * src/xspice/cmpp/mod_lex.l :
+    always use flex instead of an arbitrary lex,
+    use flex specific %options, to clean up the Makefile
+    don't write the lexer via stdout, to improve gcc warning readability
+    this works around a bug as well, which caused erronous lexer c files
+    to be included in the distribution tar ball
+
 ============================ Rework-22 ==================================
 2010-09-26  Holger Vogt
  * .cvsignore: m4 entry removed

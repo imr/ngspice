@@ -1,3 +1,5 @@
+%option case-insensitive
+%option prefix="ifs_yy"
 %option yylineno
 %option noyywrap
 %{ /* $Id$ */
