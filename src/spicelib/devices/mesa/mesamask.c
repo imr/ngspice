@@ -211,6 +211,7 @@ MESAmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
                 value->sValue = "nmf";
 	    else
                 value->sValue = "pmf";
+	    return (OK);
         default:
             return (E_BADPARM);
     }

@@ -148,6 +148,7 @@ HFET2mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
                 value->sValue = "nhfet";
 	    else
                 value->sValue = "phfet";
+	    return (OK);
         default:
             return (E_BADPARM);
     }

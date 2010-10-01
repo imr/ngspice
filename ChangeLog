@@ -1,3 +1,10 @@
+2010-10-01  Robert Larice
+ * src/spicelib/devices/hfet1/hfetmask.c ,
+ * src/spicelib/devices/hfet2/hfet2mask.c ,
+ * src/spicelib/devices/mes/mesmask.c ,
+ * src/spicelib/devices/mesa/mesamask.c :
+    bugfix, missing return(OK) in some switch statements
+
 2010-09-30  Robert Larice
  * configure.ac ,
  * src/include/defines.h :
