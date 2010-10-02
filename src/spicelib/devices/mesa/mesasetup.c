@@ -28,6 +28,9 @@ MESAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = model->MESAnextModel ) {
+        if( (model->MESAtype != NMF) ) {
+            model->MESAtype = NMF;
+        }
         if(!model->MESAthresholdGiven) {
             model->MESAthreshold = -1.26;
         }
@@ -207,7 +210,20 @@ MESAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }                      
         if(!model->MESAcbsGiven) {
             model->MESAcbs = 1;
-        }                      
+        }
+
+        if(model->MESAdrainResist != 0) {
+            model->MESAdrainConduct = 1./model->MESAdrainResist;
+        } else {
+            model->MESAdrainConduct = 0.;
+        }
+        if(model->MESAsourceResist != 0) {
+            model->MESAsourceConduct = 1./model->MESAsourceResist;
+        } else {
+            model->MESAsourceConduct = 0.;
+        }
+
+        model->MESAvcrit = 0.; /* until model has changed */
 
         /* loop through all the instances of the model */
         for (here = model->MESAinstances; here != NULL ;

@@ -68,6 +68,12 @@ JFETmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case JFET_MOD_SOURCECONDUCT:
             value->rValue = model->JFETsourceConduct;
             return(OK);
+        case JFET_MOD_KF:
+            value->rValue = model->JFETfNcoef;
+            return(OK);
+        case JFET_MOD_AF:
+            value->rValue = model->JFETfNexp;
+            return(OK);
         case JFET_MOD_TYPE:
 	    if (model->JFETtype == NJF)
                 value->sValue = "njf";

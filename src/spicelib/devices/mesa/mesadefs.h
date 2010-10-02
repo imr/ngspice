@@ -250,6 +250,8 @@ typedef struct sMESAmodel {       /* model structure for a MESAfet */
     double MESArsi;
     double MESAdrainResist;
     double MESAsourceResist;
+    double MESAdrainConduct;
+    double MESAsourceConduct;
     double MESAgateResist;
     double MESAri;
     double MESArf;
@@ -284,7 +286,8 @@ typedef struct sMESAmodel {       /* model structure for a MESAfet */
     double MESAepsi;
     double MESAcbs;
     double MESAcas;
-    
+    double MESAvcrit;
+
     double MESAsigma;
     double MESAvpo;
     double MESAvpou;

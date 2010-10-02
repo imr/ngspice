@@ -206,12 +206,21 @@ MESAmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case MESA_MOD_CAS:
             value->rValue = here->MESAcas;
             return (OK);  
-	   case MESA_MOD_TYPE:
-	    if (here->MESAtype == NMF)
+        case MESA_MOD_TYPE:
+            if (here->MESAtype == NMF)
                 value->sValue = "nmf";
-	    else
+            else
                 value->sValue = "pmf";
-	    return (OK);
+            return (OK);
+        case MESA_MOD_DRAINCONDUCT:
+            value->rValue = here->MESAdrainConduct;
+            return (OK);
+        case MESA_MOD_SOURCECONDUCT:
+            value->rValue = here->MESAsourceConduct;
+            return (OK);
+        case MESA_MOD_VCRIT:
+            value->rValue = here->MESAvcrit;
+            return (OK); 
         default:
             return (E_BADPARM);
     }

@@ -1,3 +1,9 @@
+============================ Rework-22 ==================================
+
+2010-09-26  Holger Vogt
+ * mesadefs.h, mesamsak.c, mesamparam.c, mesasetup.c
+   jfetmask.c: remove NAN or exp -312 outputs
+
 2010-10-01  Robert Larice
  * src/spicelib/devices/hfet1/hfetmask.c ,
  * src/spicelib/devices/hfet2/hfet2mask.c ,
@@ -24,7 +30,6 @@
     this works around a bug as well, which caused erronous lexer c files
     to be included in the distribution tar ball
 
-============================ Rework-22 ==================================
 2010-09-26  Holger Vogt
  * .cvsignore: m4 entry removed
 

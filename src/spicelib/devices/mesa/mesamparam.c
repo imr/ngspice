@@ -165,6 +165,9 @@ MESAmParam(int param, IFvalue *value, GENmodel *inModel)
             model->MESAtc = value->rValue;
             break;
         case MESA_MOD_NMF:
+            if(value->iValue) {
+                model->MESAtype = NMF;
+            }
             break;
         case MESA_MOD_TVTO:
             model->MESAtvtoGiven = TRUE;
