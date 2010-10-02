@@ -169,6 +169,12 @@ MESAmParam(int param, IFvalue *value, GENmodel *inModel)
                 model->MESAtype = NMF;
             }
             break;
+        case MESA_MOD_PMF:
+            if(value->iValue) {
+                fprintf(stderr, "Only nmf model type supported, set to nmf\n");
+                model->MESAtype = NMF;
+            }
+            break;
         case MESA_MOD_TVTO:
             model->MESAtvtoGiven = TRUE;
             model->MESAtvto = value->rValue;

@@ -111,7 +111,7 @@ IFparm MESAmPTable[] = { /* model parameters */
  IOP( "epsi",   MESA_MOD_EPSI,   IF_REAL,""), 
  IOP( "cas",    MESA_MOD_CAS,    IF_REAL,""),
  IOP( "cbs",    MESA_MOD_CBS,    IF_REAL,""),
- IP( "pmf",	 MESA_MOD_PMF,	   IF_FLAG,"P type MESfet model"), 
+ IP( "pmf",	    MESA_MOD_PMF,    IF_FLAG,"P type MESfet model"), 
  IP( "nmf",     MESA_MOD_NMF,    IF_FLAG,"N type MESfet model"),
  OP( "gd",      MESA_MOD_DRAINCONDUCT,   IF_REAL,"Drain conductance"),
  OP( "gs",      MESA_MOD_SOURCECONDUCT,  IF_REAL,"Source conductance"),
