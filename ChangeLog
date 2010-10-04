@@ -1,5 +1,7 @@
 ============================ Rework-22 ==================================
-
+2010-10-04  Holger Vogt
+ * miscoms.c: remove bug no. 3080398
+ 
 2010-10-02  Holger Vogt
  * mesadefs.h, mesamsak.c, mesamparam.c, mesasetup.c
    jfetmask.c: remove NAN or exp -312 outputs

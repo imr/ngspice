@@ -84,7 +84,7 @@ com_quit(wordlist *wl)
             fprintf(cp_out, 
                 "\nAre you sure you want to quit (yes)? ");
             (void) fflush(cp_out);
-            if (!fgets(buf, BSIZE_SP, stdin)) {
+            if (!fgets(buf, sizeof(buf), stdin)) {
                 clearerr(stdin);
                 *buf = 'y';
             }
