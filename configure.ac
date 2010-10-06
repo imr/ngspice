@@ -71,7 +71,7 @@ AC_ARG_ENABLE(capbypass,
 
 AC_ARG_ENABLE(capzerobypass,
     AS_HELP_STRING([--enable-capzerobypass],[Bypass all the cbd/cbs calculations if Czero is zero. (default=enabled)]),
-            [],[enable_capzerobypass=yes])            
+            [],[enable_capzerobypass=yes])
 
 dnl --enable-nodelimiting: define NODELIMITING for the code
 AC_ARG_ENABLE(nodelimiting,
@@ -166,10 +166,10 @@ dnl Xgraph is a plotting package for X11 once very popular.
 AC_ARG_ENABLE(xgraph,
     AS_HELP_STRING([--enable-xgraph],[Enable xgraph compilation.]))
 
-dnl --enable-x: Compile software using x libraries. A GUI will be provided then. 
+dnl --enable-x: Compile software using x libraries. A GUI will be provided then.
 AC_ARG_ENABLE(x,
     AS_HELP_STRING([--enable-x],[Enable X11 gui]))
-	
+
 dnl --with-readline:  Includes GNU readline support into CLI.  Default is "no".
 dnl Including readline into ngspice is a violation of GPL license. It's use
 dnl is discouraged.
@@ -182,7 +182,7 @@ AC_ARG_WITH(editline,
 
 dnl --with-tcl: define TCL_MODULE in the code. This is for tcl support
 AC_ARG_WITH(tcl,
-    [  --with-tcl[=tcldir]         Compiles the tcl module instead, experimental, see README.Tcl])
+    [  --with-tcl[=tcldir] Compiles the tcl module instead, experimental, see README.Tcl])
 
 dnl --enable-openmp: Use OpenMP on multi-core processors
 AC_ARG_ENABLE(openmp,
@@ -244,7 +244,7 @@ if test "$enable_gprof" = "yes"; then
         CFLAGS="$CFLAGS -pg"
         LDFLAGS="$LDFLAGS -pg"
     else
-            AC_MSG_ERROR(We only support --enable-gprof with GCC right now.)
+        AC_MSG_ERROR(We only support --enable-gprof with GCC right now.)
     fi
 fi
 
@@ -317,11 +317,11 @@ if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
        has_no_help=true
        AC_DEFINE(HAS_TCLWIN,1,[Tcl Windows]);;
 	 *cygwin* )
-       has_tclcyg=true ;;	 
+       has_tclcyg=true ;;
      *)
-     ;;  
-   esac   
-   
+     ;;
+   esac
+
    with_x=no
    enable_shared=yes
    enable_static=no
@@ -451,7 +451,7 @@ fi
 AM_CONDITIONAL([TCL_MODULE], [test x$has_tcl_module = xtrue])
 AM_CONDITIONAL([TCLWIN], [test x$has_tclwin = xtrue])
 AM_CONDITIONAL([TCLCYG], [test x$has_tclcyg = xtrue])
- 
+
 AC_SUBST(TCL_PACKAGE_PATH)
 AC_SUBST(TCL_LIB_SPEC)
 ##################################################################
@@ -586,8 +586,8 @@ dnl for MacOSX or Linux, but
 dnl			-lXaw -lXmu -lXt -lXext -lX11
 dnl seems to be the popular choice.
 dnl (The previous order was -lX11 -lXt -lXext -lXmu -lXaw)
-if test "x$enable_x" = "xno"; then 
-	no_x = "no"	
+if test "x$enable_x" = "xno"; then
+	no_x = "no"
 fi
 if test ! "$no_x" = "yes" ; then
 	AC_CHECK_LIB(Xaw,main,X_LIBS="$X_LIBS -lXaw",AC_MSG_ERROR(Couldn't find Xaw library),$X_LIBS  $X_EXTRA_LIBS)
@@ -600,8 +600,8 @@ else
 	AC_DEFINE(X_DISPLAY_MISSING)
 	AC_MSG_RESULT(No X display!)
 	has_no_x=true
-fi 
-  
+fi
+
 if ( test "x$enable_help" = "xyes" ) && ! ( test "$no_x" = "yes" ) ; then
 	has_no_help=false
 else
@@ -822,7 +822,7 @@ fi
 AC_SUBST(XGRAPHDIR)
 AC_SUBST(NOTXGRAPH)
 
-AC_CHECK_PROGS(YACC, 'bison -y' byacc yacc) 
+AC_CHECK_PROGS(YACC, 'bison -y' byacc yacc)
 
 #################  XSPICE ##################################################
 dnl Add new code models to the build by pointing to them here.
@@ -848,10 +848,10 @@ dnl Define variables for LEX
         DLLIBS="" ;;
      *freebsd* )
         AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-        DLLIBS="";;     
+        DLLIBS="";;
      *openbsd* )
         AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-        DLLIBS="";;        
+        DLLIBS="";;
      * )
         AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
         DLLIBS="-ldl";;
@@ -874,17 +874,17 @@ dnl Find the library directory (lib or lib64) for XSPICE libs
             libname="lib64"
         fi
         echo XSPICE libraries in directory $libname
-    fi	
+    fi
 else
     XSPCIEDIR=""
     XSPICELIB1=""
     XSPICELIB2=""
     XSPICETESTS=""
     XSPICEINIT="*"
-    
+
     if test -z "${YACC}" ; then
         AC_MSG_WARN([No bison, byacc, yacc found: Uses prebuilt default parsers])
-    fi    
+    fi
 fi
 AC_SUBST(XSPICEDIR)
 AC_SUBST(XSPICELIB1)
@@ -940,17 +940,17 @@ if test "$enable_adms" = "yes"; then
    AC_CHECK_PROGS(ADMSXML, admsXml admsXml.exe,no)
 
    if test "$ADMSXML" = "no"; then
-      AC_MSG_ERROR(If you want adms models you should install admsXml)
+      AC_MSG_ERROR(If you want Verilog-A models you should install admsXml)
    fi
-   AC_DEFINE(ADMS,[1],[Support for Verilog-A(MS) models])
+   AC_DEFINE(ADMS,[1],[Support for Verilog-A models])
 
    VLADEVDIR=" adms/ekv \
                adms/hicum0 \
                adms/hicum2 \
                adms/mextram \
                adms/psp102 "
-   
-dnl The makefiles for adms (to be added to AC_CONFIG_FILES by ./autogen.sh --adms)  
+
+dnl The makefiles for adms (to be added to AC_CONFIG_FILES by ./autogen.sh --adms)
 #VLAMKF    src/spicelib/devices/adms/ekv/Makefile
 #VLAMKF    src/spicelib/devices/adms/hicum0/Makefile
 #VLAMKF    src/spicelib/devices/adms/hicum2/Makefile
@@ -984,7 +984,7 @@ if test "$enable_ndev" = "yes"; then
     NDEV=""
     NDEV_DIR=" ndev "
     NDEV_LIB=" spicelib/devices/ndev/libndev.la "
-    
+
 else
     NDEV=""
     NDEV_DIR=""
@@ -1035,7 +1035,7 @@ if test "$with_editline" != "yes"; then
     AC_MSG_RESULT(BSD editline disabled.)
 else
     AC_MSG_RESULT(Checking for editline:)
-    AC_CHECK_HEADERS([editline/readline.h], 
+    AC_CHECK_HEADERS([editline/readline.h],
                      [AC_DEFINE([HAVE_BSDEDITLINE],[1],[Define to enable BSD editline])],
                      [AC_MSG_ERROR(Couldn't find BSD editline headers.)])
     AC_SEARCH_LIBS(tputs,ncurses termcap,
@@ -1056,10 +1056,14 @@ dnl test for header
      AC_CHECK_HEADERS([omp.h],
           [AC_DEFINE(USE_OMP,[1],[OpenMP parallel processing])],
                      [AC_MSG_ERROR(Couldn't find OpenMP headers.)])
-     CFLAGS="$CFLAGS -fopenmp"					 
-dnl test if function is o.k.
+     if test "x$GCC" = "xyes"; then
+          CFLAGS="$CFLAGS -fopenmp"
+     else
+          CFLAGS="$CFLAGS -xopenmp"
+     fi
+dnl test if timing function is o.k.
      AC_CHECK_FUNC(omp_get_wtime, [AC_MSG_RESULT(OpenMP features enabled)],
-                     [AC_MSG_ERROR(OpenMP not working correctly.)])					 
+                     [AC_MSG_ERROR(OpenMP not working correctly.)])
 fi
 
 dnl Output Files
@@ -1067,7 +1071,7 @@ dnl ------------
 
 AC_CONFIG_FILES([Makefile
                  man/Makefile
-				 man/man1/Makefile
+                 man/man1/Makefile
                  src/Makefile
                  src/spinit
                  src/tclspinit

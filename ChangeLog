@@ -1,3 +1,9 @@
+2010-10-05 Dietmar Warning
+ * configure.ac: enabling openMP under SunStudio compiler
+ * terminal.c, ivars.c, ifnewuid.c, inperror.c, main.c:
+   asprintf definition also for sun compiler - can not be concentrated in 
+   ngspice.h because of libgen - libiberty conflict
+
 ============================ Rework-22 ==================================
 2010-10-04  Holger Vogt
  * miscoms.c: remove bug no. 3080398

@@ -10,19 +10,19 @@
 
 #include "ngspice.h"
 
-#include <setjmp.h>
-#include <signal.h>
-
 #ifdef HAVE_ASPRINTF
 #ifdef HAVE_LIBIBERTY_H /* asprintf */
 #include <libiberty.h>
 #undef AND /* obsolete macro in ansidecl.h */
-#elif defined(__MINGW32__)/* we have asprintf, but not libiberty.h */
+#elif defined(__MINGW32__) || defined(__SUNPRO_C) /* we have asprintf, but not libiberty.h */
 #include <stdarg.h>
 extern int asprintf(char **out, const char *fmt, ...);
 extern int vasprintf(char **out, const char *fmt, va_list ap);
 #endif
 #endif
+
+#include <setjmp.h>
+#include <signal.h>
 
 /* MINGW: random, srandom in libiberty.a, but not in libiberty.h */
 #if defined(__MINGW32__) && defined(HAVE_RANDOM)
@@ -648,7 +648,7 @@ read_initialisation_file(char * dir, char * name)
 {
 #ifndef HAVE_UNISTD_H
     FILE * fp = NULL;
-#endif /* not HAVE_ASPRINTF */
+#endif /* not HAVE_UNISTD_H */
     char * path;
     bool result = FALSE;
 
