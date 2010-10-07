@@ -1,3 +1,6 @@
+2010-10-04  Holger Vogt
+ * subckt.c: b. in i(b.xxx.byyy)
+
 2010-10-05 Dietmar Warning
  * configure.ac: enabling openMP under SunStudio compiler
  * terminal.c, ivars.c, ifnewuid.c, inperror.c, main.c:

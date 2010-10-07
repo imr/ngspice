@@ -875,167 +875,143 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
     /* settrans builds the table holding the translated netnames.  */
     i = settrans(formal, actual, subname);
     if (i < 0) {
-	fprintf(stderr,
-	"Too few parameters for subcircuit type \"%s\" (instance: x%s)\n",
-		subname, scname);
-	goto quit;
+        fprintf(stderr,
+            "Too few parameters for subcircuit type \"%s\" (instance: x%s)\n",
+            subname, scname);
+        goto quit;
     } else if (i > 0) {
-	fprintf(stderr,
-	"Too many parameters for subcircuit type \"%s\" (instance: x%s)\n",
-		subname, scname);
-	goto quit;
+        fprintf(stderr,
+            "Too many parameters for subcircuit type \"%s\" (instance: x%s)\n",
+            subname, scname);
+        goto quit;
     }
 
     /* now iterate through the .subckt deck and translate the cards. */
     for (c = deck; c; c = c->li_next) {  
-
-      dev_type = *(c->li_line);   
+        dev_type = *(c->li_line);   
 
 #ifdef TRACE
-      /* SDB debug statement */
-      printf("\nIn translate, examining line (dev_type: %c, subname: %s, instance: %s) %s \n", dev_type, subname, scname, c->li_line );
+        /* SDB debug statement */
+        printf("\nIn translate, examining line (dev_type: %c, subname: %s, instance: %s) %s \n", dev_type, subname, scname, c->li_line );
 #endif
 
-      if ( ciprefix( ".ic", c->li_line ) || ciprefix( ".nodeset", c->li_line ) ) {
-	paren_ptr = s = c->li_line;
-	while ( ( paren_ptr = strstr( paren_ptr, "(" ) ) ) {
-	  *paren_ptr = '\0';
-	  paren_ptr++;
-	  name       = paren_ptr;
+        if ( ciprefix( ".ic", c->li_line ) || ciprefix( ".nodeset", c->li_line ) ) {
+            paren_ptr = s = c->li_line;
+            while ( ( paren_ptr = strstr( paren_ptr, "(" ) ) ) {
+                *paren_ptr = '\0';
+                paren_ptr++;
+                name = paren_ptr;
 	  
-	  if ( !( paren_ptr = strstr( paren_ptr, ")" ) ) ) {
-	    *(name-1) = '(';
-	    fprintf(cp_err, "Error: missing closing ')' for .ic|.nodeset statement %s\n", c->li_line);
-	    goto quit;
-	  }
-	  *paren_ptr = '\0';
-	  t          = gettrans(name, NULL);
+                if ( !( paren_ptr = strstr( paren_ptr, ")" ) ) ) {
+                    *(name-1) = '(';
+                    fprintf(cp_err, "Error: missing closing ')' for .ic|.nodeset statement %s\n", c->li_line);
+                    goto quit;
+                }
+                *paren_ptr = '\0';
+                t = gettrans(name, NULL);
 
-	  if (t) {
-	    new_str = (char*) tmalloc( strlen(s) + strlen(t) + strlen(paren_ptr+1) + 3 );
-	    sprintf( new_str, "%s(%s)%s", s, t, paren_ptr+1 ); 
-	  } else {
-	    new_str = (char*) tmalloc( strlen(s) + strlen(scname) + strlen(name) + strlen(paren_ptr+1) + 4 );
-	    sprintf( new_str, "%s(%s.%s)%s", s, scname, name, paren_ptr+1 );
-	  }
+                if (t) {
+                    new_str = (char*) tmalloc( strlen(s) + strlen(t) + strlen(paren_ptr+1) + 3 );
+                    sprintf( new_str, "%s(%s)%s", s, t, paren_ptr+1 ); 
+                } else {
+                    new_str = (char*) tmalloc( strlen(s) + strlen(scname) + strlen(name) + strlen(paren_ptr+1) + 4 );
+                    sprintf( new_str, "%s(%s.%s)%s", s, scname, name, paren_ptr+1 );
+                }
 
-	  paren_ptr = new_str + strlen(s) + 1;
+                paren_ptr = new_str + strlen(s) + 1;
 
-	  tfree(s);
-	  s = new_str;
-	}
-	c->li_line = s;
-	continue;
-      }
+                tfree(s);
+                s = new_str;
+            }
+            c->li_line = s;
+            continue;
+        }
 
-      /* Rename the device. */
+        /* Rename the device. */
         switch (dev_type) {
-        case '\0':
-        case '*': case '$':
-        case '.':
+            case '\0':
+            case '*': case '$':
+            case '.':
             /* Just a pointer to the line into s and then break */
-	  bxx_rewind(&buffer);
-	  s = c->li_line;
-	  break;
-
+                bxx_rewind(&buffer);
+                s = c->li_line;
+            break;
 
 #ifdef XSPICE
 /*===================  case A  ====================*/
 /* gtri - add - wbk - 10/23/90 - process A devices specially */
 /* since they have a more involved and variable length node syntax */
 	    
-        case 'a':
-        case 'A':
+            case 'a':
+            case 'A':
 	  
             /* translate the instance name according to normal rules */
+                s = c->li_line;
+                name = MIFgettok(&s);
 
-
-            s = c->li_line;
-            name = MIFgettok(&s);
-
-            bxx_rewind(&buffer);
-
-	    /* maschmann 
-            bxx_printf(&buffer, "%s:%s ", name, scname);   */
-            bxx_printf(&buffer, "a.%s.%s ", scname, name );  
+                bxx_rewind(&buffer);
+                bxx_printf(&buffer, "a.%s.%s ", scname, name );  
                    
-
 
             /* Now translate the nodes, looking ahead one token to recognize */
             /* when we reach the model name which should not be translated   */
             /* here.                                                         */
 
-            next_name = MIFgettok(&s);
-
-            for (;;) {
-
-                /* rotate the tokens and get the the next one */
-
-                name = next_name;
                 next_name = MIFgettok(&s);
 
-                /* if next token is NULL, name holds the model name, so exit */
-
-                if(next_name == NULL)
-                    break;
-
-                /* Process the token in name.  If it is special, then don't */
-                /* translate it.                                            */
-
-                switch(*name) {
-
-                case '[':
-                case ']':
-                case '~':
-                    bxx_printf(&buffer, "%s ", name);
-                    break;
-
-                case '%':
-
-                    bxx_printf(&buffer, "%%");
-
-                    /* don't translate the port type identifier */
-
+                for (;;) {
+                    /* rotate the tokens and get the the next one */
                     name = next_name;
                     next_name = MIFgettok(&s);
 
-                    bxx_printf(&buffer, "%s ", name);
-                    break;
+                /* if next token is NULL, name holds the model name, so exit */
+                    if(next_name == NULL)
+                        break;
 
-                default:
+                /* Process the token in name.  If it is special, then don't */
+                /* translate it.                                            */
+                    switch(*name) {
+                        case '[':
+                        case ']':
+                        case '~':
+                            bxx_printf(&buffer, "%s ", name);
+                        break;
 
-                    /* must be a node name at this point, so translate it */
+                        case '%':
+                            bxx_printf(&buffer, "%%");
+                            /* don't translate the port type identifier */
+                            name = next_name;
+                            next_name = MIFgettok(&s);
+                            bxx_printf(&buffer, "%s ", name);
+                        break;
 
-                    t = gettrans(name, NULL);
+                        default:
 
-                    if (t) {
-                        bxx_printf(&buffer, "%s ", t);
-                    } else {
-		      /* maschmann:  changed order 
-                        bxx_printf(&buffer, "%s:%s ", name, scname); */
-                      if(name[0]=='v' || name[0]=='V') {
-                        bxx_printf(&buffer, "v.%s.%s ", scname, name);
-                      } else { 
-                        bxx_printf(&buffer, "%s.%s ", scname, name);
-                      }
-                    }
-                    break;
+                        /* must be a node name at this point, so translate it */
+                            t = gettrans(name, NULL);
+                            if (t) {
+                                bxx_printf(&buffer, "%s ", t);
+                            } else {
+                                if(name[0]=='v' || name[0]=='V') {
+                                    bxx_printf(&buffer, "v.%s.%s ", scname, name);
+                                } else { 
+                                    bxx_printf(&buffer, "%s.%s ", scname, name);
+                                }
+                            }
+                        break;
                     
-                } /* switch */
+                    } /* switch */
 
-            } /* while */
+                } /* while */
 
-
-            /* copy in the last token, which is the model name */
-
-            if(name) {
-                bxx_printf(&buffer, "%s ", name);
-            }
-            /* Set s to null string for compatibility with code */
-            /* after switch statement                           */
-
-            s = "";
-            break;
+                /* copy in the last token, which is the model name */
+                if(name) {
+                    bxx_printf(&buffer, "%s ", name);
+                }
+                /* Set s to null string for compatibility with code */
+                /* after switch statement                           */
+                s = "";
+            break; /* case 'a' */
 
 /* gtri - end - wbk - 10/23/90 */
 #endif
@@ -1046,255 +1022,245 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
  * changes were made in here.
  * 4.21.2003 -- SDB.  mailto:sdb@cloud9.net
  */
-	case 'E': case 'e':
-	case 'F': case 'f':
-	case 'G': case 'g':
-	case 'H': case 'h':
+            case 'E': case 'e':
+            case 'F': case 'f':
+            case 'G': case 'g':
+            case 'H': case 'h':
 
-
-	  s = c->li_line;       /* s now holds the SPICE line */
-	  t = name = gettok(&s);    /* name points to the refdes  */
-	  if (!name)
-	    continue;
-	  if (!*name) {
-	    tfree(name);
-	    continue;
-	  }
+                s = c->li_line;       /* s now holds the SPICE line */
+                t = name = gettok(&s);    /* name points to the refdes  */
+                if (!name)
+                    continue;
+                if (!*name) {
+                    tfree(name);
+                    continue;
+                }
 	  
 /* Here's where we translate the refdes to e.g. F:subcircuitname:57
  * and stick the translated name into buffer.
  */
-	  ch = *name;           /* ch identifies the type of component */
-
-	  bxx_rewind(&buffer);
-	  bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
-	  tfree(t);
+                ch = *name;           /* ch identifies the type of component */
+                bxx_rewind(&buffer);
+                bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
+                tfree(t);
 	  
-
 /* Next iterate over all nodes (netnames) found and translate them. */
-	  nnodes = numnodes(c->li_line);
+                nnodes = numnodes(c->li_line);
 	  
-	  while (nnodes-- > 0) {
-	    name = gettok_node(&s);
-	    if (name == NULL) {
-	      fprintf(cp_err, "Error: too few nodes: %s\n",
-		      c->li_line);
-	      goto quit;
-	    }
+                while (nnodes-- > 0) {
+                    name = gettok_node(&s);
+                    if (name == NULL) {
+                        fprintf(cp_err, "Error: too few nodes: %s\n",
+                        c->li_line);
+                        goto quit;
+                    }
 	      
 	    /* call gettrans and see if netname was used in the invocation */
-	    t = gettrans(name, NULL);     
+                    t = gettrans(name, NULL);     
 	      
-	    if (t) {   /* the netname was used during the invocation; print it into the buffer */
-	      bxx_printf(&buffer, "%s ", t);
-	    }
-	    else {    /* net netname was not used during the invocation; place a 
-		       * translated name into the buffer.
-		       */
-	      bxx_printf(&buffer, "%s.%s ", scname, name);
-	    }
-	    tfree(name);
-	  }  /* while (nnodes-- . . . . */
+                    if (t) {   /* the netname was used during the invocation; print it into the buffer */
+                        bxx_printf(&buffer, "%s ", t);
+                    }
+                    else {    /* net netname was not used during the invocation; place a 
+                               * translated name into the buffer.*/
+                        bxx_printf(&buffer, "%s.%s ", scname, name);
+                    }
+                    tfree(name);
+                }  /* while (nnodes-- . . . . */
   
 
 /*  Next we handle the POLY (if any) */
 	  /* get next token */
-	  t = s;
-	  next_name = (char *)gettok_noparens(&t);
-	  if ( (strcmp(next_name, "POLY") == 0) ||
-	       (strcmp(next_name, "poly") == 0)) {         /* found POLY . . . . */
+                t = s;
+                next_name = (char *)gettok_noparens(&t);
+                if ( (strcmp(next_name, "POLY") == 0) ||
+                    (strcmp(next_name, "poly") == 0)) {         /* found POLY . . . . */
 
 #ifdef TRACE
 	      /* SDB debug statement */
 	      printf("In translate, looking at e, f, g, h found poly\n");
 #endif
 
-	      /* move pointer ahead of (  */
-	      if( get_l_paren(&s) == 1 ) {   
-	      	fprintf(cp_err, "Error: no left paren after POLY %s\n",
-	      		c->li_line);
-	      	tfree(next_name);
-	      	goto quit;
-	      }
+                    /* move pointer ahead of (  */
+                    if( get_l_paren(&s) == 1 ) {   
+                        fprintf(cp_err, "Error: no left paren after POLY %s\n",
+                            c->li_line);
+                        tfree(next_name);
+                        goto quit;
+                    }
 
-	      nametofree = gettok_noparens(&s);
-	      dim = atoi(nametofree);  /* convert returned string to int */
-	      tfree(nametofree);
+                    nametofree = gettok_noparens(&s);
+                    dim = atoi(nametofree);  /* convert returned string to int */
+                    tfree(nametofree);
 	      
-	      /* move pointer ahead of ) */
-	      if( get_r_paren(&s) == 1 ) {   
-	      	fprintf(cp_err, "Error: no right paren after POLY %s\n",
-	      		c->li_line);
-	      	tfree(next_name);
-	      	goto quit;
-	      }
+                    /* move pointer ahead of ) */
+                    if( get_r_paren(&s) == 1 ) {   
+                        fprintf(cp_err, "Error: no right paren after POLY %s\n",
+                            c->li_line);
+                        tfree(next_name);
+                        goto quit;
+                    }
 
-	      /* Write POLY(dim) into buffer */
-	      bxx_printf(&buffer, "POLY( %d ) ", dim);
+                    /* Write POLY(dim) into buffer */
+                    bxx_printf(&buffer, "POLY( %d ) ", dim);
 	      
-
-	  } /* if ( (strcmp(next_name, "POLY") == 0) . . .  */
-	  else
-	    dim = 1;    /* only one controlling source . . . */
-	  tfree(next_name);
+                } /* if ( (strcmp(next_name, "POLY") == 0) . . .  */
+                else
+                    dim = 1;    /* only one controlling source . . . */
+                tfree(next_name);
 
 /* Now translate the controlling source/nodes */
-	  nnodes = dim * numdevs(c->li_line);     
-	  while (nnodes-- > 0) {
-	    nametofree = name = gettok_node(&s);   /* name points to the returned token  */
-	    if (name == NULL) {
-	      fprintf(cp_err, "Error: too few devs: %s\n",
-		      c->li_line);
-	      goto quit;
-	    }
+                nnodes = dim * numdevs(c->li_line);     
+                while (nnodes-- > 0) {
+                    nametofree = name = gettok_node(&s);   /* name points to the returned token  */
+                    if (name == NULL) {
+                        fprintf(cp_err, "Error: too few devs: %s\n", c->li_line);
+                        goto quit;
+                    }
 
-	    if ( (dev_type == 'f') ||
-		 (dev_type == 'F') ||
-		 (dev_type == 'h') ||
-		 (dev_type == 'H') ) {   
+                    if ( (dev_type == 'f') ||
+                        (dev_type == 'F') ||
+                        (dev_type == 'h') ||
+                        (dev_type == 'H') ) {   
 
-	      /* Handle voltage source name */
+                         /* Handle voltage source name */
 
 #ifdef TRACE 
 	      /* SDB debug statement */
 	      printf("In translate, found type f or h\n");
 #endif
 
-	      ch = *name;         /*  ch is the first char of the token.  */
+                         ch = *name;         /*  ch is the first char of the token.  */
 
-	      bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);  
-	      /* From Vsense and Urefdes creates V:Urefdes:sense */
-	    }
-	    else {                              /* Handle netname */
+                         bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);  
+                         /* From Vsense and Urefdes creates V.Urefdes.sense */
+                    }
+                    else {                              /* Handle netname */
 
 #ifdef TRACE 
 	      /* SDB debug statement */
 	      printf("In translate, found type e or g\n");
 #endif
 
-	      /* call gettrans and see if netname was used in the invocation */
-	      t = gettrans(name, NULL);
+                       /* call gettrans and see if netname was used in the invocation */
+                       t = gettrans(name, NULL);
 	      
-	      if (t) {   /* the netname was used during the invocation; print it into the buffer */
-	        bxx_printf(&buffer, "%s ", t);
-	      }
-	      else {    /* net netname was not used during the invocation; place a 
-			 * translated name into the buffer.
-			 */
-	        bxx_printf(&buffer, "%s.%s ", scname, name);
-		/* From netname and Urefdes creates Urefdes:netname */
-	      }
-	    }
-	    tfree(nametofree);
-	  }      /* while (nnodes--. . . . */
+                       if (t) {   /* the netname was used during the invocation; print it into the buffer */
+                           bxx_printf(&buffer, "%s ", t);
+                       }
+                       else { /* net netname was not used during the invocation; place a 
+                               * translated name into the buffer.
+                               */
+                           bxx_printf(&buffer, "%s.%s ", scname, name);
+                           /* From netname and Urefdes creates Urefdes:netname */
+                       }
+                    }
+                    tfree(nametofree);
+                }      /* while (nnodes--. . . . */
 	  
 /* Now write out remainder of line (polynomial coeffs) */
-	  finishLine(&buffer, s, scname);
-	  s = "";
-	  break;
+                finishLine(&buffer, s, scname);
+                s = "";
+            break;
 
 
 /*=================   Default case  ===================*/
-        default:            /* this section handles ordinary components */
-	  s = c->li_line;
-	  nametofree = name = gettok_node(&s);  /* changed to gettok_node to handle netlists with ( , ) */
-	  if (!name)
-	    continue;
-	  if (!*name) {
-	    tfree(name);
-	    continue;
-	  }
+            default:            /* this section handles ordinary components */
+                s = c->li_line;
+                nametofree = name = gettok_node(&s);  /* changed to gettok_node to handle netlists with ( , ) */
+                if (!name)
+                    continue;
+                if (!*name) {
+                    tfree(name);
+                    continue;
+                }
 
 /* Here's where we translate the refdes to e.g. R:subcircuitname:57
  * and stick the translated name into buffer.
  */
-	  ch = *name;
+                ch = *name;
 
-	  bxx_rewind(&buffer);
+                bxx_rewind(&buffer);
 
-	  if ( ch != 'x' ) {
-	    bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
-	  } else {
-	    bxx_printf(&buffer, "%s.%s ", scname, name);
-	  }
+                if ( ch != 'x' ) {
+                    bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
+                } else {
+                    bxx_printf(&buffer, "%s.%s ", scname, name);
+                }
 
-	  tfree(nametofree);
-
+                tfree(nametofree);
 
 /* Next iterate over all nodes (netnames) found and translate them. */
-	  nnodes = numnodes(c->li_line);
-	  while (nnodes-- > 0) {
-	    name = gettok_node(&s);
-	    if (name == NULL ) {
-	      fprintf(cp_err, "Error: too few nodes: %s\n",
-		      c->li_line);
-	      goto quit;
-	    }
+                nnodes = numnodes(c->li_line);
+                while (nnodes-- > 0) {
+                    name = gettok_node(&s);
+                    if (name == NULL ) {
+                        fprintf(cp_err, "Error: too few nodes: %s\n", c->li_line);
+                        goto quit;
+                    }
 	      
 	    /* call gettrans and see if netname was used in the invocation */
-	    t = gettrans(name, NULL);
+                    t = gettrans(name, NULL);
 	      
-	    if (t) {   /* the netname was used during the invocation; print it into the buffer */
-	      bxx_printf(&buffer, "%s ", t);
-	    }
-	    else {    /* net netname was not used during the invocation; place a 
-		       * translated name into the buffer.
-		       */
-	      bxx_printf(&buffer, "%s.%s ", scname, name);
-	    }
-	    tfree(name);
-	  }  /* while (nnodes-- . . . . */
+                    if (t) {   /* the netname was used during the invocation; print it into the buffer */
+                        bxx_printf(&buffer, "%s ", t);
+                    }
+                    else {    /* net netname was not used during the invocation; place a 
+                               * translated name into the buffer.
+                               */
+                       bxx_printf(&buffer, "%s.%s ", scname, name);
+                    }
+                    tfree(name);
+                }  /* while (nnodes-- . . . . */
   
 /* Now translate any devices (i.e. controlling sources).  
  * This may be superfluous because we handle dependent
  * source devices above . . . .
  */
-	  nnodes = numdevs(c->li_line);     
-	  while (nnodes-- > 0) {
-	    t = name = gettok_node(&s);
-	    if (name == NULL) {
-	      fprintf(cp_err, "Error: too few devs: %s\n",
-		      c->li_line);
-	      goto quit;
-	    }
-	    ch = *name;
+                nnodes = numdevs(c->li_line);     
+                while (nnodes-- > 0) {
+                    t = name = gettok_node(&s);
+                    if (name == NULL) {
+                        fprintf(cp_err, "Error: too few devs: %s\n", c->li_line);
+                        goto quit;
+                    }
+                    ch = *name;
 	    
-	    if ( ch != 'x' ) {
-	      bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
-	    } else {
-	      bxx_printf(&buffer, "%s ", scname);
-	    }
-
-	    tfree(t);
-	  } /* while (nnodes--. . . . */
+                    if ( ch != 'x' ) {
+                        bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
+                    } else {
+                        bxx_printf(&buffer, "%s ", scname);
+                    }
+                    tfree(t);
+                } /* while (nnodes--. . . . */
 	    
 /* Now we finish off the line.  For most components (R, C, etc),
  * this involves adding the component value to the buffer.
  * We also scan through the line for v(something) and
  * i(something)...
  */
-	  finishLine(&buffer, s, scname);
-	  s = "";
+                finishLine(&buffer, s, scname);
+                s = "";
 
-	} /* switch(c->li_line . . . . */
+            } /* switch(c->li_line . . . . */
 
-	bxx_printf(&buffer, "%s", s);
-	tfree(c->li_line);
-	c->li_line = copy(bxx_buffer(&buffer));
+            bxx_printf(&buffer, "%s", s);
+            tfree(c->li_line);
+            c->li_line = copy(bxx_buffer(&buffer));
 
 #ifdef TRACE 
 	/* SDB debug statement */
 	printf("In translate, translated line = %s \n", c->li_line);
 #endif
 
-    }  /* for (c = deck . . . . */
-    rtn = 1;
+        }  /* for (c = deck . . . . */
+        rtn = 1;
 quit:
-    for (i = 0; ; i++) {
-	if(!table[i].t_old && !table[i].t_new)
-	    break;
-	FREE(table[i].t_old);
-	FREE(table[i].t_new);
+        for (i = 0; ; i++) {
+        if(!table[i].t_old && !table[i].t_new)
+            break;
+        FREE(table[i].t_old);
+        FREE(table[i].t_new);
     }
 
     bxx_free(&buffer);
@@ -1360,9 +1326,11 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
 	       i(vname) -> i(v.subckt.vname)
            i(ename) -> i(e.subckt.ename)
            i(hname) -> i(h.subckt.hname)
+           i(bname) -> i(b.subckt.hname)
 	     */
              if ((which == 'i' || which == 'I') &&
-	        (buf[0] == 'v' || buf[0] == 'V' || buf[0] == 'e' || buf[0] == 'h')) {
+	        (buf[0] == 'v' || buf[0] == 'V' || buf[0] == 'e' || buf[0] == 'h'
+			|| buf[0] == 'b' || buf[0] == 'B')) {
 		bxx_putc(t, buf[0]);
 		bxx_putc(t, '.');
 		/*i = 1; */
