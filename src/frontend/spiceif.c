@@ -1532,7 +1532,7 @@ do {\
       (*(SPfrontEnd->IFnewUid))(ckt,&timeUid,(IFuid)NULL,
 				"time", UID_OTHER, NULL);
       error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
-	     (void*)ckt->CKTcurJob,
+	     ckt->CKTcurJob,
 	     ckt->CKTcurJob->JOBname,timeUid,IF_REAL,numNames,nameList,
 	     IF_REAL,&(((TRANan*)ckt->CKTcurJob)->TRANplot));
       if(error) {

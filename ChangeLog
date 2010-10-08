@@ -1,4 +1,21 @@
 2010-10-08  Robert Larice
+ * src/frontend/outitf.c ,
+ * src/frontend/outitf.h ,
+ * src/frontend/spiceif.c ,
+ * src/include/ifsim.h ,
+ * src/main.c ,
+ * src/spicelib/analysis/acan.c ,
+ * src/spicelib/analysis/cktsens.c ,
+ * src/spicelib/analysis/dcop.c ,
+ * src/spicelib/analysis/dctran.c ,
+ * src/spicelib/analysis/dctrcurv.c ,
+ * src/spicelib/analysis/distoan.c ,
+ * src/spicelib/analysis/noisean.c ,
+ * src/spicelib/analysis/pzan.c ,
+ * src/spicelib/analysis/tfanal.c :
+    use the type JOB, remove redundant casts
+
+2010-10-08  Robert Larice
  * src/frontend/shyu.c ,
  * src/frontend/spiceif.c ,
  * src/include/cktdefs.h ,
