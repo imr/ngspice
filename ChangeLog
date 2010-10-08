@@ -1,16 +1,21 @@
+2010-10-08  Robert Larice
+ * src/include/inpptree.h ,
+ * src/spicelib/parser/inpptree.c :
+    fix a compiler warning,  void* versus void(*)(void)
+
 2010-10-07  Holger Vogt
  * subckt.c: b. in i(b.xxx.byyy)
 
 2010-10-05 Dietmar Warning
  * configure.ac: enabling openMP under SunStudio compiler
  * terminal.c, ivars.c, ifnewuid.c, inperror.c, main.c:
-   asprintf definition also for sun compiler - can not be concentrated in 
+   asprintf definition also for sun compiler - can not be concentrated in
    ngspice.h because of libgen - libiberty conflict
 
 ============================ Rework-22 ==================================
 2010-10-04  Holger Vogt
  * miscoms.c: remove bug no. 3080398
- 
+
 2010-10-02  Holger Vogt
  * mesadefs.h, mesamsak.c, mesamparam.c, mesasetup.c
    jfetmask.c: remove NAN or exp -312 outputs
@@ -47,8 +52,8 @@
 2010-09-25  Holger Vogt
  * conf.c, conf.h, ngspice.h, visualc/config.h, configure.ac:
    update welcome message, version 22
- * FAQ, COPYING, NEWS, INSTALL, README, README.tcl, BUGS: 
-   update to version 22  
+ * FAQ, COPYING, NEWS, INSTALL, README, README.tcl, BUGS:
+   update to version 22
  * examples/Monte_Carlo: new folder with example files
 
 2010-09-23  Robert Larice
@@ -323,42 +328,42 @@
  * randnumb.c: inproved comments
 
  2010-08-29 Holger Vogt
- * cmath2.c, randnumb.c, main.c, ngspice.h, configure.in, tclspice.c: 
+ * cmath2.c, randnumb.c, main.c, ngspice.h, configure.in, tclspice.c:
    remove fcns random() and srandom(), only use rand() and srand() or
    internal random number generator.
- * mystring.c: replace Str() by SPICE_DSTRING  
+ * mystring.c: replace Str() by SPICE_DSTRING
 
 2010-08-29 Dietmar Warning
- * fteext.h, parse.c, cmath2.c, cmath2.h,: 
+ * fteext.h, parse.c, cmath2.c, cmath2.h,:
    new function sunif(), uniform random generator usable in control blocks
  * examples/control_structs/MonteCarlo.sp: Simple example to perform MC runs
    in ngspice using uniform and gaussian distributions
 
 2010-08-29  Holger Vogt
- * fteext.h, main.c, randnumb.c, parse.c, cmath2.c, cmath2.h: 
+ * fteext.h, main.c, randnumb.c, parse.c, cmath2.c, cmath2.h:
    new function sgauss(), new random number generator with very
    high run length
 
 2010-08-19  Holger Vogt
  * xpressn.c: bug no. 3047884 fixed
    inp.c: prevent crash if .param is last line in input deck
- 
+
 2010-08-18  Holger Vogt
- * configure.in: add TCLCYG 
+ * configure.in: add TCLCYG
  * autogen.sh:  if --adms is selected, read the section from configure.in
-   and store it in AC_CONFIG_FILES of temporary temp-adms.ac. 
+   and store it in AC_CONFIG_FILES of temporary temp-adms.ac.
    Testing for availability of awk
- Tested with MINGW, CYGWIN, SUSE Linux, may need more tests on other OSs!  
+ Tested with MINGW, CYGWIN, SUSE Linux, may need more tests on other OSs!
 
 2010-08-17 Dietmar Warning
  * windisp.c, winprint.c, xspice/cm/cmexport.c: omit warnings
 
 2010-08-15  Holger Vogt
  * configure.in: add a small section starting with *VLAMKF, containing
-   the adms makefiles to be made 
+   the adms makefiles to be made
  * autogen.sh:  if --adms is selected, read the section from configure.in
-   and store it in AC_CONFIG_FILES of temporary configure.ac 
- Tested with MINGW, CYGWIN, SUSE Linux, may need more tests on other OSs!  
+   and store it in AC_CONFIG_FILES of temporary configure.ac
+ Tested with MINGW, CYGWIN, SUSE Linux, may need more tests on other OSs!
 
 2010-08-15  Robert Larice
  * src/misc/string.c ,
@@ -400,14 +405,14 @@
     fix txfree() prototype
 
 2010-08-13  Holger Vogt
- * autogen.sh: keep configure.in untouched by generating temporary 
+ * autogen.sh: keep configure.in untouched by generating temporary
    configure.ac if --adms is selected
- * configure.in: remove VLAMKF; move AM_CONDITIONAL out of 
+ * configure.in: remove VLAMKF; move AM_CONDITIONAL out of
    conditional clauses; replace AC_PROG_YACC, AC_PROG_LEX by
    appropriate AC_CHECK_PROGS with warning if BISON is missing w/o XSPICE,
    but fail if w/ XSPICE and BISON or FLEX missing; AC_CONFIG_MACRO_DIR([m4])
    added
- * Makefile.am: ACLOCAL_AMFLAGS = -I m4	 added 
+ * Makefile.am: ACLOCAL_AMFLAGS = -I m4	 added
  * .cvsignore: m4 added
  * nghelp.c: adapt function types
 
@@ -631,7 +636,7 @@
       avoid segfault, caused when parsing an unknown function in parse-bison.y
 
 2010-08-07 Dietmar Warning
- spicelib/devices/*/b4soimask.c, csw*.c, mos6load.c, soi3load.c, swnoise.c: 
+ spicelib/devices/*/b4soimask.c, csw*.c, mos6load.c, soi3load.c, swnoise.c:
     fix some wrong 'double' to 'int' assignments
 
 2010-08-07  Robert Larice
@@ -672,7 +677,7 @@
 
 2010-08-01  Holger Vogt
  * autogen.sh: update for adms
- 
+
 2010-08-01  Robert Larice
  * src/pkgIndex.tcl.in ,
  * src/tclspice.c ,
@@ -773,7 +778,7 @@
 2010-07-25  Holger Vogt
  * inpcom.c: correct loop parameter i -> pai, remove
    unnecessary output
- 
+
 2010-07-24  Robert Larice
  * src/include/cktdefs.h ,
  * src/include/devdefs.h ,
@@ -1035,7 +1040,7 @@
 
 2010-07-19  Holger Vogt
  * b4ld.c: correct typo which led to non-convergence of ro_17.cir
- 
+
  2010-07-17  Robert Larice
  * src/main.c ,
  * src/frontend/inp.c ,
@@ -1149,10 +1154,10 @@
  * src/xspice/icm/spice2poly/icm_spice2poly/cfunc.mod ,
  * src/xspice/icm/xtradev/zener/cfunc.mod :
         xspice, cast so called `STATIC_VAR' pointers to their concrete type
-		
+
 2010-07-14  Holger Vogt
  * commands.c, options.c, fteext.h, inp.c: option command in spinit or
-   control section as enhancement to .options command		
+   control section as enhancement to .options command
 
 2010-07-14  Robert Larice
  * src/frontend/commands.c :
@@ -1285,11 +1290,11 @@
         FIXME, the switch() in mifsetup.c looks suspicious.
 
 2010-07-10 Holger Vogt
- * com_measure2.c: allow variables v(n1)=v(n2) 
+ * com_measure2.c: allow variables v(n1)=v(n2)
  * inpcom.c: par('expression') in .four, .plot, .print, .meas, .save,
    command .probe added
  * string.c, ngspice.h: new fcn gettok_iv()
- 
+
 2010-07-09  Robert Larice
  * src/frontend/spiceif.c ,
  * src/spicelib/analysis/tfanal.c ,
@@ -1564,10 +1569,10 @@
         make use of the new include file.
 
 2010-07-06 Holger Vogt
- * defines.h: void fcn prototype instead of sighandler_t 
+ * defines.h: void fcn prototype instead of sighandler_t
    for MINGW, CYGWIN and MSC
  * src/spectrum: update of script with explanations
- * b4soild.c: debug warnings removed 
+ * b4soild.c: debug warnings removed
 
 2010-07-05  Robert Larice
  * src/xspice/cmpp/writ_ifs.c :
@@ -1837,9 +1842,9 @@
  * inpcom.c, inpcom.h, nutinp.c, inp.c, fteext.h:
    Command files spinit and .spiceinit (comfile==TRUE) will not be
    treated by numparam processing.
-   Comment_out_unused_subckt() will no longer process lines inside 
+   Comment_out_unused_subckt() will no longer process lines inside
    control section.
- 
+
 2010-06-28  Holger Vogt
  * bsim3/b3set.c b3ld.c bsim3def.h: new preproc flag USE_OMP3
  * bsim4/b4set.c b4ld.c bsim4def.h: OpenMP support for BSIM4 model
@@ -2046,7 +2051,7 @@
 
 2010-06-19 Holger Vogt
  * inpdomod.c: refernces to not existing MOS levels 60, 61 deleted.
- 
+
 2010-06-19 Holger Vogt
  * subckt.c: line indentations
    com_measure2.c: remove bug, see support tracker no. 3013968
@@ -2064,7 +2069,7 @@
 	  switched from $(YACC) to $(BISON)
 
 2010-06-17 Holger Vogt
- * inpcom.c: in inp_fix_gnd_name() remove excessive white spaces 
+ * inpcom.c: in inp_fix_gnd_name() remove excessive white spaces
    around 0 after replacing "gnd" by " 0 "
 
 2010-06-16 Holger Vogt
@@ -2122,7 +2127,7 @@
  * /visualc/include/config.h: update to version 21
  * configure.in: version 21
  * FAQ: update
- 
+
 2010-06-11 Holger Vogt
  * DEVICES: update 4.6.5
    /man/man1/ngnutmeg.1 ngspice.1: updated with link to actual
@@ -2130,11 +2135,11 @@
 
 2010-06-11 Holger Vogt
  * ngspice.txt: notice to users: help file outdated
- 
+
 2010-06-04 Holger Vogt
- * inpcom.c: bug report 3008000, overflow of fixed array of 
+ * inpcom.c: bug report 3008000, overflow of fixed array of
    used_subckt_names, used_model_names in fcn comment_out_unused_subckt_models
-   removed by dynamic memory allocation 
+   removed by dynamic memory allocation
 
 2010-06-03 Holger Vogt
  * src\spicelib\devices\bsim3soi
@@ -2144,11 +2149,11 @@
    b4soimdel.c b4soimpar.c b4soinoi.c b4soipar.c b4soipzld.c
    b4soiset.c b4soitemp.c b4soitrunc.c:
    update to BSIM4SOI vers. 4.3.1
- * misc/tilde.c: return path NULL added  
+ * misc/tilde.c: return path NULL added
 
 2010-05-30 Holger Vogt
  * xgraph/dialog.c: fcn getline renamed to getline_xgraph
- * Makefile.am, frontend/Makefile.am include/Makefile.am 
+ * Makefile.am, frontend/Makefile.am include/Makefile.am
    spicelib/parser/Makefile.am, tests/bsim3soi/Makefile.am
    configure.in:
    updates to allow 'make dist'
@@ -2225,13 +2230,13 @@
 2010-05-14 Holger Vogt
  * dllitf.h, cplsetup.c, cmexport.c, int/udnfunc.c, real/udnfunc.c, xspice.c:
    tmalloc patch by R Larice
-   vngspice.sln, vngspice.proj: 64 bit support 
-   inpcom.c: exclude .control ... .endc lines from fcn inp_bsource_compat   
+   vngspice.sln, vngspice.proj: 64 bit support
+   inpcom.c: exclude .control ... .endc lines from fcn inp_bsource_compat
 
 2010-05-11 Holger Vogt
  * inpcom.c: new fcn inp_fix_gnd_name: 'gnd' replaced by ' 0 ', if delimiters
    are '(' or ' ' or ',' on the left and ')' or ' ' or ',' on the right.
-   fcn inp_bsource_compat: 'm={m}' replaced by '     '   
+   fcn inp_bsource_compat: 'm={m}' replaced by '     '
 
 2010-05-10 Holger Vogt
  * subckt.c:1349: fcn finishLine: add e. and h. to net name
@@ -2248,7 +2253,7 @@
  * inpcom.c, line 3707: put expression for dependent resistor in brackets
 
 2010-04-26 Dietmar Warning
- * parser/inpgval.c: correct parsing of integer model parameter given as double 
+ * parser/inpgval.c: correct parsing of integer model parameter given as double
    (e.g. capmod=3.000e+00)
 
 2010-04-23 Holger Vogt
@@ -2267,9 +2272,9 @@
  * numparam/*.c, *.h, *.txt, misc/hash.c, string.c: local and global hash lists for subckts
  * misc/dstring.c, include/dstring.h, Makefile.am: dynamic string feature
  * analysis/cktop.c: remove the CR in some printf's
- 
+
 2010-03-20 Holger Vogt
- * variable.c:450 prevent ngspice from crashing after command 'unset zzz', 
+ * variable.c:450 prevent ngspice from crashing after command 'unset zzz',
    when zzz is not defined
 
 2010-03-20 Holger Vogt
@@ -2282,14 +2287,14 @@
 
 2010-03-09 Dietmar Warning
  * analysis/cktop.c: remove the CR in some printf's, need some tests with different terminals
- * frontend/inp.c: cut the ouput message if wrong parameter warning to have a chance 
+ * frontend/inp.c: cut the ouput message if wrong parameter warning to have a chance
    to read it
  * parser/inpgmod.c: want only the parameter names in output - not the values
- * devices/vbic/vbic.c: correct a typo of eais/eaic model parameter leading in wrong 
+ * devices/vbic/vbic.c: correct a typo of eais/eaic model parameter leading in wrong
    temperature model
 
 2010-03-08 Holger Vogt
- * parse.c, inpptree.c, inpptree-parser.y, inpptree-parser.c, inpptree-parser.h: 
+ * parse.c, inpptree.c, inpptree-parser.y, inpptree-parser.c, inpptree-parser.h:
    patches by R. Larice
 
 2010-03-07 Holger Vogt
@@ -2300,7 +2305,7 @@
    variables to B source
 
 2010-03-07 Dietmar Warning
- * analysis/ninteg.c: limiting exp() in noise integration to prevent overflow and NAN 
+ * analysis/ninteg.c: limiting exp() in noise integration to prevent overflow and NAN
   (ID: 2950943).
 
 2010-02-28 Dietmar Warning
@@ -2311,10 +2316,10 @@
  * cplsetup.c, cplload.c: omit complains from icc
 
 2010-02-28 Holger Vogt
- * inpcom.c, xpressn.c, inpptree.h, spicelib/parser/makefile.am, inpptree.c, 
+ * inpcom.c, xpressn.c, inpptree.h, spicelib/parser/makefile.am, inpptree.c,
    ptfuncs.c, inpptree-parser.y: replace parser for B source with BISON generated one.
    Patch 2 from R. Larice
-   
+
 2010-02-27 Holger Vogt
  * command.c, gnuplot.c, gnuplot.h, com_gnuplot.c, com_gnuplot.h, plotit.c:
    new command 'wrdata file vecs' for simple tabular printout of data
@@ -2325,7 +2330,7 @@
    (td=value)
 
 2010-02-25 Holger Vogt
- * inpcom.c, general.h, mystring.c, numparam.h, spicenum.c, xpressn.c, 
+ * inpcom.c, general.h, mystring.c, numparam.h, spicenum.c, xpressn.c,
    include/makefile.am, misc/makefile.am, hash.c, hash.h:
    major bug-fix on numparam by Bill Swartz
  * subckt.c: bugfix on bxx_printf()
@@ -2335,7 +2340,7 @@
  * vngspice.sln, vngspice.vcproj: new files hash.c, .h added to project
 
 2010-02-22 Dietmar Warning
- * xpressn.c, spicenum.c: more characters for real number insertion (up to 15) by 
+ * xpressn.c, spicenum.c: more characters for real number insertion (up to 15) by
    introducing a long long placeholder
 
 2010-02-21 Dietmar Warning
@@ -2347,15 +2352,15 @@
  * wdisp/makedefs, visualc/include/strings.h: removed
 
 2010-02-13 Holger Vogt
- * icm/dllmain.c, evtload.c, ngspice.h, terminal.c, evaluate.c, twomesh.c, 
+ * icm/dllmain.c, evtload.c, ngspice.h, terminal.c, evaluate.c, twomesh.c,
    tclspice.c, conf.h, conf.c: patches by R. Larice 100213
  * K&R -> ANSI patches by R. Larice 100103
- 
+
 2010-02-11 Holger Vogt
  * terminal.h, cpextern.h: use format (__printf__, 1, 2)
  * pzan.c, nipzmeth.c, cktpzstr.c, macros.h: remove conflicting macro definition
-  (MS Visual Studio) ERROR -> MERROR 
- 
+  (MS Visual Studio) ERROR -> MERROR
+
 2010-02-08 Holger Vogt
  * com_sysinfo.c: 64 bit support enabled
  * terminal.c, terminal.h, cpextern.h, ngsconvert.c, inpgmod.c, ipcsockets.c: patches by
@@ -2363,10 +2368,10 @@
 
 2010-02-07 Dietmar Warning
  * cpl/cplload.c, cplsetup.c, /txl/txlload.c, txlsetup.c, include/swec.h, multi_line.h,
-   frontend/subckt.c, parser/inp2p.c, inppas2.c: no more float's, improve dc solution by 
+   frontend/subckt.c, parser/inp2p.c, inppas2.c: no more float's, improve dc solution by
    introducing gmin deembedding, better model check, automatic maxStep adaption in tran
    analysis, correct handling of kspice models in subckt's, kspice models are working now
-   more stable but accuracy in steady state of transient is not sufficient 
+   more stable but accuracy in steady state of transient is not sufficient
  * examples/TransmissionLines/*.sp: ommit itl5-warning
  * tests/transmission/*.out: adapt reference files to new code behaviour, but this is still
    a mess
@@ -2375,11 +2380,11 @@
  * inpcom.c: bug no. 2936702
  * vngspice.sln, vngspice.vcproj: add 64 bit support
  * measure.c, numpaif.h, numparam-h, spicenum.c, xpressn.c, subckt.c:
-   Put original input deck line number into numparam error message. 
+   Put original input deck line number into numparam error message.
 
 2010-01-30 Dietmar Warning
- * b3soiddld.c, b3soifdld.c, cplload.c, cplsetup.c, inpcom.c, measure.c, 
-   mystring.c, spicenum.c, txlsetup.c: using a controlled_exit to see error 
+ * b3soiddld.c, b3soifdld.c, cplload.c, cplsetup.c, inpcom.c, measure.c,
+   mystring.c, spicenum.c, txlsetup.c: using a controlled_exit to see error
    messages in some places and get better program termination
  * frontend/error.c, error.h: provide a simple controlled_exit function
  * misc/util.c, util.h: remove controlled_exit function
@@ -2402,13 +2407,13 @@
 
 2010-01-17 Holger Vogt
  * subckt.c: .global bug  by R. Larice
-   various files: patches by Robert (Neval, Nintegrate) from Jan 3 2010 and 
+   various files: patches by Robert (Neval, Nintegrate) from Jan 3 2010 and
    10 patches from Jan 16, 2010
  * com_hardcopy.c: switching graphics context correctly for postscript output
  * winmain.c: parameter 4 to SystemParametersInfo() corrected
 
 2010-01-16 Dietmar Warning
- * tests/transmission: Only few tests should be easier, more examples under 
+ * tests/transmission: Only few tests should be easier, more examples under
    examples/TransmissionLine at next
  * tests/bin/check.sh: extend codemodel word in list
  * devices/cpl/cplsetup.c: few polishments
@@ -2430,7 +2435,7 @@
    does not work for Windows and gnuplot 4.4.
  * x11.c: add xfont parameter
  * windisp.c: add wfont and wfont_size parameter
- * winmain.c: use SystemParametersInfo() to get screen size to 
+ * winmain.c: use SystemParametersInfo() to get screen size to
    improve placement of GUI on the screen.
 
 2010-01-01 Holger Vogt
@@ -2443,13 +2448,13 @@
 
 2009-12-30 Holger Vogt
  * gnuplot.c: some additions
- 
+
 2009-12-29 Holger Vogt
  * ngproc2mod.c: patch by R. Larice
    gnuplot.c filename arrays enlarged
- 
+
 2009-12-28 Holger Vogt
- * measure.c: comments, 
+ * measure.c: comments,
    /examples/control_structs/repeat3.sp: new examples snippets included
 
 2009-12-22 Holger Vogt
@@ -2459,7 +2464,7 @@
  * com_measure2.com, measure.c: add vectors to the meas command.
    inpcom.c: no parsing of ternary function in .control section (not
    yet defined anyway).
-   /examples/measure /examples/control_structs /examples/control_xspice: 
+   /examples/measure /examples/control_structs /examples/control_xspice:
    new or updated example files.
 
 2009-12-20 Holger Vogt
@@ -2471,8 +2476,8 @@
 
 2009-12-19 Paolo Nenzi
  * src/spicelib/devices/isrc/isrcacct.c, src/spicelib/devices/vsrc/vsrcacct.c:
-   fixed bug reported by Holger. "time" value in accept routine was incorrectly 
-   computed when xspice extensions were compiled in. 
+   fixed bug reported by Holger. "time" value in accept routine was incorrectly
+   computed when xspice extensions were compiled in.
 
 2009-12-19 Holger Vogt
  * main.c, inpcom.c: source file path added as additional search path for
@@ -2485,7 +2490,7 @@
  * devices/bsim3/b3set.c: add the ngspice specific copyNodesets approach and remove
    the tnom celsius -> kelvin transformation
  * devices/bsim3/b3mpar.c: make the tnom celsius -> kelvin transformation in first run
- * devices/bsim3v32/b3v32ld.c: reconstruct NEWCONV code, also if it is not 
+ * devices/bsim3v32/b3v32ld.c: reconstruct NEWCONV code, also if it is not
    used because macro is set in macros.h, but is now inline with UCB code
  * inpcom.c, spicenum.c, xpressn.c: prevent int to unsigned compare
  * tests/transmission/ibm2.cir: wrong cpl model instantiation
@@ -2495,13 +2500,13 @@
  * /examples/transimpedanceamp/output.net: correct .plot statement
  * string.c: '^' added to is_arith_char(), to allow parsing of '^' in
    .func function definitions
- 
+
 2009-12-11 Holger Vogt
  * bug 2909730, patch for parsing expressions applied
  * measure.c: Proper warning that .measure is not available in batch mode with -b
 
 2009-12-10 Dietmar Warning
- * spicelib/parser/inptree.c: omit some debug printf's  
+ * spicelib/parser/inptree.c: omit some debug printf's
 
 2009-12-07 Holger Vogt
  * windisp.c: allow setting of linewidth by keyboard "set xbrushwidth=3"
@@ -2525,17 +2530,17 @@
  * com_sysinfo.c: bugfix no. 2902374
 
 2009-11-21 Holger Vogt
- * spicelib/parser/inptree.c: memory allocation of struct pwldata->vals 
+ * spicelib/parser/inptree.c: memory allocation of struct pwldata->vals
    failed in MS Visual Studio 2008, changed.
 
 2009-11-20 Holger Vogt
  * postsc.c: some cosmetics to postscript plot, hcopypstxcolor for
-   setting text color 
+   setting text color
 
 2009-11-19 Holger Vogt
  * com_hardcopy.c, postsc.c: hardcopy set to default postscript (under Windows),
    LINUX and others require set hcopydevtype=postscript in spinit.
-   set hcopypscolor=0 in spinit will set background color (0==black, 1==white ...) 
+   set hcopypscolor=0 in spinit will set background color (0==black, 1==white ...)
 
 2009-11-17 Holger Vogt
  * runcoms.c: comments added
@@ -2549,15 +2554,15 @@
 
 2009-11-16 Holger Vogt
  * com_sysinfo.c: line 355 changed, allow mingw console compilation
-   runcoms2.c: cosmetics 
+   runcoms2.c: cosmetics
    cpitf.c, how-to-ngspice-vstudio.txt, visualc/include/config.h,
    vngspice.sln, vngspice.vcproj: add console app to configuration
-   manager of Visual Studio 
- 
+   manager of Visual Studio
+
 2009-11-15 Holger Vogt
  * main.c, src/include/compatmode.h: compatibility mode flag for HSPICE and SPICE3
    xpressn.c: compatmode removed
-   
+
 ============================ Rework-20 ==================================
 2009-11-09 Dietmar Warning
  * subckt.c: support of 5-terminal bjt's in subckt's by prepending subckt name (similar
@@ -2572,7 +2577,7 @@
 
 2009-10-31 Holger Vogt
  * winmain.c: windows updated more often
-   how-to-ngspice-vstudio.txt: updated 
+   how-to-ngspice-vstudio.txt: updated
 
 2009-10-24: Dietmar Warning
  * main.c: correct the command completion under X11, cooments and formatting
@@ -2594,49 +2599,49 @@
 2009-10-04 Holger Vogt
  * configure.in, /visualc/include/config.h, vngspice.vcproj:
    version 20
- * com_sysinfo.c: update for Cygwin  
+ * com_sysinfo.c: update for Cygwin
 
 2009-10-04: Dietmar Warning
  * com_sysinfo.c, ftext.h: sys_memory struct w/o static type, sysinfo w/o void Parameter
- * inpcom.c, gnuplot.c, device.c, inp.c, resource.c, subckt.c, 
+ * inpcom.c, gnuplot.c, device.c, inp.c, resource.c, subckt.c,
    com_fft.c, com_gnuplot.c, com_xgraph.c: initialize local variables
  * b4soild.c, line 6394: Cbg1 wrong assignment
 
 2009-10-04: Dietmar Warning
- * b4ld.c, b4temp.c: better formatting to find the typo in 
+ * b4ld.c, b4temp.c: better formatting to find the typo in
    b4temp.c, line 1758: needs real compare (==) instead of assignment (=)
    b4check.c: correct version now 4.6.5
 
 2009-10-01 Holger Vogt
  * /frontend com_sysinfo.c, commands.c, fteext.h, makefile.am:
    command sysinfo added
- * compatmode.c, compatmode.h: typo removed  
+ * compatmode.c, compatmode.h: typo removed
 
 2009-09-26 Holger Vogt
  * windisp.c, compatmode.c, compatmode.h: CVS header added
    (still not working with compatmode)
 
 2009-09-22: Paolo Nenzi
- * b4ld.c, b4temp.c: Updated BSIM4 code to BSIM 4.6.5 
-   according to BSIM 4.6.5 bug report. 
+ * b4ld.c, b4temp.c: Updated BSIM4 code to BSIM 4.6.5
+   according to BSIM 4.6.5 bug report.
 
 2009-09-20 Holger Vogt
  * inpmkmod.c: fix bug no. 2859013
  * INSTALL corrected
  * xspice/mif/mifgetmod.c: comments
- 
+
 2009-09-19 Holger Vogt
- * fteext.h, inpcom.c, inp.c, options.c, winmain.c: 
-   variable ngdebug added, sets ft_ngdebug, 
+ * fteext.h, inpcom.c, inp.c, options.c, winmain.c:
+   variable ngdebug added, sets ft_ngdebug,
    used for additional debug info printing
- * dctran.c: setup info added  
+ * dctran.c: setup info added
  * inpdefs.h, inpmkmod.c: try to fix bug no. 2859013
-   
+
 2009-09-16 Holger Vogt
  * inpcom.c: .global was disabled, reinstated
- 
+
 2009-09-15 Holger Vogt
- * winmain.c: will output the time required for the setup stages, 
+ * winmain.c: will output the time required for the setup stages,
    if compiled with preprocessor flag NGDEBUG
 
 2009-09-09 Holger Vogt
@@ -2652,27 +2657,27 @@
  * com_measure2.c: some comments added
  * windisp.c: white backgrond in plot with set color0=white, thicker
    lines with set xbrushwidth=2 (0: standard) in spinit
-   
+
 2009-08-29 Holger Vogt
  * measure.c, com-measure2.c, com-measure2.h: add DC and AC measurement
  * /examples/measure: example file for .measure dc, ac, and tran added.
 
 2009-08-25 Dietmar Warning
- * src/spicelib/parser/inpptree.c: wrong derivative for u2 function - 
+ * src/spicelib/parser/inpptree.c: wrong derivative for u2 function -
    bug reported and corrected by Robert Larice
 
 2009-08-23 Holger Vogt
  * upload of /frontend/compatmode.c, compatmode.h  /misc/hash.c, hash.h
    failed.
- * xpressn.c: contents of compatmode.c and compatmode.h added as a 
+ * xpressn.c: contents of compatmode.c and compatmode.h added as a
    preliminary solution.
  * misc/makefile.am: hash.c, mempool.c removed again
  * forntend/makefile.am: compatmode.c removed again
- 
+
 2009-08-23 Holger Vogt
  * /frontend/compatmode.c, compatmode.h  /misc/hash.c, hash.h,
    --> new .measurement code
-   
+
 2009-08-23 Holger Vogt
  * /frontend/makefile.am, com_measure2.c, com_measure2.h, dotcards.c, dotcards.h, measure.c
    /numparam/numparam.h, xpressn.c, /include/bool.h, macros.h, misc/makefile.am, tclspice.c,
@@ -2688,11 +2693,11 @@
  * dctran.c, spiceif.c, options.c, fteext.h: option noinit added.
    This option suppresses the printout of "Initial Transient Solution".
    noinit may be combined with acct. noacct will suppress both printouts.
- * spsmp.c, ngspice.h: reference to _logb added for _MSC_VER  
+ * spsmp.c, ngspice.h: reference to _logb added for _MSC_VER
 
 2009-08-17 Holger Vogt
  * inp.c: some comments added
-  
+
 2009-08-15 Holger Vogt
  * cpitf.c: MS Windows: search for spinit also in local (ngspice.exe) directory
  * cpextern.h: function parameters added in declaration
@@ -2703,9 +2708,9 @@
    the limit warning.
 
 2009-08-08 Holger Vogt
- * measure.c, com_measure2.c, com_measure2.h, xpressn.c: 
+ * measure.c, com_measure2.c, com_measure2.h, xpressn.c:
    Patches from Bill Swartz added
- * examples/inverter3.sp: test of new features  
+ * examples/inverter3.sp: test of new features
 
 2009-08-08 Holger Vogt
  * measure.c: add more comments
@@ -2722,7 +2727,7 @@
  * cmath2.c: init vector d
 
 2009-07-30 Dietmar Warning
- * frontend/inpcom.c: refurbish spice3 syntax for r models with alternative 
+ * frontend/inpcom.c: refurbish spice3 syntax for r models with alternative
    value like: "r1 a b 2k rmodel"
  * parser/inp2r.c, inp2l.c, inp2c.c: allow r,l,c element instantiation e.g. r=50
 
@@ -2736,7 +2741,7 @@
  * main.c, winmain.c: small cosmetics
 
 2009-07-21 Dietmar Warning
- * bsim3v32/b3v32temp.c, bsim4/b4temp.c: backup to the original code - 
+ * bsim3v32/b3v32temp.c, bsim4/b4temp.c: backup to the original code -
    without the FREE(model->pSizeDependParamKnot), if we want call models in a loop,
    we should introduce this unique to all models
 
@@ -2755,7 +2760,7 @@
 2009-05-21 Holger Vogt
  * evaluate.c, outitf.c, sim.h: use SV_ADMITTANCE for plotting @dev[gxx]
  * defines.h change signal prototype for _MSC_VER
- 
+
 2009-05-21 Paolo Nenzi
  * src/frontend/postcoms.c: Fix from Lemaitre Laurent to avoid a segmentation
    fault when v->v_plot->pl_scale is NULL.
@@ -2768,10 +2773,10 @@
 
 2009-05-16 Holger Vogt
  * inpcom.c  lines 2940ff fix case 'q'
- * inp.c:788 error message with original line number from 
-   input deck 
+ * inp.c:788 error message with original line number from
+   input deck
  * inp2q.c:155 error message if no model is found and default
-   BJT is selected instead 
+   BJT is selected instead
 
 2009-05-12 Holger Vogt
  * inpcom.c  fcn inp_fix_gnd_name() remove excessive white
@@ -2779,16 +2784,16 @@
 
 2009-05-11 Holger Vogt
  * src/makefile.am replace -lBLT24.dll by -lBLT24 in line 247
- 
+
 2009-05-10 Holger Vogt
  * subckt.c:1348 find last dot, not first dot in model_name
 
 2009-05-09 Holger Vogt
- * graf.c: graphics scaling during iplot made a little more 
+ * graf.c: graphics scaling during iplot made a little more
    convenient
 
 2009-05-06 Holger Vogt
- * pp_lst.c:428 malloc(len+1) +1 added (bug report 2787072) 
+ * pp_lst.c:428 malloc(len+1) +1 added (bug report 2787072)
    configure.in:803, 958 (bug reports 1834772, 2787076 and 2787079)
 
 2009-05-02 Holger Vogt
@@ -2797,14 +2802,14 @@
    restore SIGSEGV signal handling for error message after seg fault
    (not in debug mode, now only for Windows)
    dctrcurv.c: winmessage about dc
-   
+
 2009-05-01 Holger Vogt
  * cktdojob.c, cktsopt.c: moved to cktsopt.c:
    maxord set to min 2 or max 6
-  
+
 2009-04-28 Holger Vogt
  * winmain.c, inp.c, cktop.c: SetAnalyse() modified/added
-   cktdojob.c: maxord set to minimum 2 (prevent crash in dctran.c:774) 
+   cktdojob.c: maxord set to minimum 2 (prevent crash in dctran.c:774)
 
 2009-04-26 Dietmar Warning
  * devices/cktinit.c: prototype load_alldevs not needed
@@ -2831,14 +2836,14 @@
 
 2009-04-22 Holger Vogt
  * bsim4v2init.c, bsim4v3init.c: CIDER added
-   
+
 2009-04-22 Holger Vogt
- * inpcom.c measure.c mystring.c alloc.c: show Windows error 
+ * inpcom.c measure.c mystring.c alloc.c: show Windows error
    message before exiting
 
 2009-04-21 Dietmar Warning
  * devices/bsim4/*.c, /vbic/*.c: Parameter declaration in function header
- 
+
 2009-04-20 Holger Vogt
  * src/spice.def: for creating dll
  * src/makefile.am: libs for tclspice MINGW added
@@ -2846,10 +2851,10 @@
  * tclspice.c: some additions for MS Visual 2008
 
 2009-04-18 Dietmar Warning
- * devices/bsim3soi/*.c, *.h, tests/bsim3soi/*.cir, *.out, *.mod, DEVICES: 
+ * devices/bsim3soi/*.c, *.h, tests/bsim3soi/*.cir, *.out, *.mod, DEVICES:
    Update to actual version 4.1, contrary to the comment in Berkeley doc's the model
    is not full downward compatibel to version 4.0
- * spicelib/parser/inpgmod.c, 251: using strcmp again, instead of strstr - 
+ * spicelib/parser/inpgmod.c, 251: using strcmp again, instead of strstr -
    we need absolute equality to distinguish between node and model names.
 
 2009-04-18 Holger Vogt
@@ -2860,35 +2865,35 @@
 
 2009-04-14 Holger Vogt
   * control.c: remove bug no. 2724127 repeat loop inside another loop
-  * dotcards.c, inp.c, measure.c: patch submitted by Bill Swartz added 
+  * dotcards.c, inp.c, measure.c: patch submitted by Bill Swartz added
 
 2009-04-12 Holger Vogt
-  * spicenum.c, xpressn.c: dico and inst_dico no longer removed in nupa_done 
+  * spicenum.c, xpressn.c: dico and inst_dico no longer removed in nupa_done
     because they are needed in .measure
   * lexical.c: size of arrays doubled in cp_lexer() to avoid "line too long"
     message
   * runcoms.c: enter do_measure() only if ft_curckt->ci_last_an has a value
-    (bug no. 2751855) 
+    (bug no. 2751855)
   * winmain.c: winmessage() only if message not into log file
   * windisp.c: WIN_Text() now uses True Type Fonts and may display text
     vertically
   * misc/getopt_long_bsd.c getopt_bsd.h: add a BSD version of getopt_long()
     getopt.c, getopt1.c, getopt.h removed
-  * misc/makefile.am: add (remove) files  
-  * configure.in: check for getopt.h and getopt_long(), if not found, use 
-    internal functions in getopt_long_bsd.c 
+  * misc/makefile.am: add (remove) files
+  * configure.in: check for getopt.h and getopt_long(), if not found, use
+    internal functions in getopt_long_bsd.c
     Replace package name ng-spice-rework with ngspice
     Change version number to 19
   * main.c: chosse proper getopt_long(), winmessage()
   * visualc/vngspice.vcproj: files added (removed)
-  * visualc/include/config.h: new version 19      
+  * visualc/include/config.h: new version 19
 
 2009-04-10 Holger Vogt
   * spicenum.c: memory leak removed
-  
+
 2009-04-05 Holger Vogt
-  * com_fft.c, inpcom.c, variable.c, variable.h, resource.c, cpitf.c, 
-    plotit.c, inpgtok.c: 
+  * com_fft.c, inpcom.c, variable.c, variable.h, resource.c, cpitf.c,
+    plotit.c, inpgtok.c:
     some more memory leaks removed
   * spicenum.c: release of memory for dico->dyncategory corrected
   * subckt.c, inp.c, inpcom.c: more on memory leaks
@@ -2910,10 +2915,10 @@
   * inpcom.c: readline() now returns /n for an empty line, dynLlen consists of
     maximum line length plus some space for parameter substitution and has a
     minimum size of 512.
-  * spicenum.c, xpressn.c, general.h, numparam.h: dynamic memory allocation 
-    also for all string manipultions, Strbig now is a macro using tmalloc, 
+  * spicenum.c, xpressn.c, general.h, numparam.h: dynamic memory allocation
+    also for all string manipultions, Strbig now is a macro using tmalloc,
     the macro Strrem deallocates the memory, the size of the arrays is dynLlen.
-      
+
 2009-03-21 Holger Vogt
   * inpcom.c, fteinp.h, inpdefs.h: line renumbering of input deck added
     to the end of fcn inp_readall(). cc->li_line_original now contains
@@ -2922,10 +2927,10 @@
 2009-03-15 Holger Vogt
   * cktfinddev.c: some (optical) cleanup
   * numparam.h, xpressn.c, spicenum.c, inpcom.c: dynamic memory
-    allocation for numparam (the easier part) 
+    allocation for numparam (the easier part)
 
 2009-03-08 Holger Vogt
-  * dctran.c no printout of 'Initial transient solution' if 
+  * dctran.c no printout of 'Initial transient solution' if
     .options noacct is set
 
 2009-03-08 Holger Vogt
@@ -2946,18 +2951,18 @@
     Defined in inpcom.c: dynmaxline dynnLen dynMaxckt dynsubst
 
 2009-03-03 Dietmar Warning
- * tests/bsim3/*_sim/*.out: adapt output format to spice3 numdgt convention, most 
+ * tests/bsim3/*_sim/*.out: adapt output format to spice3 numdgt convention, most
    tests are running except tran tests and op-amp ac test.
  * test/bin/check.sh: extend the filter rules by two keywords, not nice but works
 
 2009-03-01 Dietmar Warning
  * spicelib/parser/inp2q.c: allow 4-terminal instances for adms, then the fifth
-   node will be set to ground (same as substrate node for gp if fourth node 
+   node will be set to ground (same as substrate node for gp if fourth node
    isn't set). Checked with lots of examples but not 100% waterproof.
  * tests/bsim3: reorganized the entire directory structure with focus only to the
    latest published Berkeley testbench for bsim3. ac and tran test included but
    there are still problems in comparing their spice3 results to ngspice.
- * adms/hicum0,hicum2,mextram/*.va: Using GMIN from simulator will improve op 
+ * adms/hicum0,hicum2,mextram/*.va: Using GMIN from simulator will improve op
    solution, e.g. by gmin stepping. The coupling of _circuit_gmin to ckt->CKTgmin
    is generated by adms in ngspiceMODULEdefs.h.
 
@@ -2969,9 +2974,9 @@
  * inpdomod.c:436 error message adapted to existing devices
  * /frontend/numparam/numparam.h, general.h: length of char arrays
    set to 40000
- * inpcom.c: preprocessor flag OUTDECK, if set will save complete 
+ * inpcom.c: preprocessor flag OUTDECK, if set will save complete
    deck into debug-out.txt
-     
+
 2009-02-25 Dietmar Warning
  * spicelib/parser/inp2q.c,155: 5-terminal only for adms bipolars
 
@@ -2986,7 +2991,7 @@
  * /tests/.../*.cir: add level parameter for bjts to suppress the long line warning
 
 2009-02-22 Holger Vogt
- * xspice/icm/makefile: *.cm for CYGWIN need to be made executable 
+ * xspice/icm/makefile: *.cm for CYGWIN need to be made executable
    (755 instead of 644)
  *  fteext.h spiceif.c options.c dotcards.c: .options NOACCT added
  * /tests/.../*.cir  .options noacct added (except BSIM3 files)
@@ -3008,7 +3013,7 @@
  * x11disp.c: allow closing of help windows with WM x-button
 
 2009-02-14 Dietmar Warning
- * src/spicelib/parser/inpdomod.c: map level 10 to bsimsoi4 and map ancient 
+ * src/spicelib/parser/inpdomod.c: map level 10 to bsimsoi4 and map ancient
    version 4.0 and 4.1 of bsim4 to available version 4.2
  * DEVICES: corrections and actualizations, add short adms model descriptions
  * adms/hicum0/admsva/hicum0.va: a slight fix of TFH in version 1.12
@@ -3016,7 +3021,7 @@
 
 2009-02-12 Dietmar Warning
  * src/include/missing_math.h, src/maths/misc/isinf.c: fix a conflict under
-   certain conditions 
+   certain conditions
 
 2009-02-12 Holger Vogt
  * device.c:908 remove bug: reset i to 0
@@ -3026,8 +3031,8 @@
  * windisp.c, X11.c, postcom.c
    'destroy plot1' now deletes all graphs (plot windows)
    associated with the plot 'plot1' before the data of plot1
-   are deleted, to prevent a crash due to unsuccessful redrawing  
- 
+   are deleted, to prevent a crash due to unsuccessful redrawing
+
 2009-02-07 Holger Vogt
  * device.c, inpcom.c
    alter and altermod commands reinstated and improved
@@ -3037,15 +3042,15 @@
  * resource.c: meminfo api usage not for commandline version
 
 2009-02-01 Holger Vogt
- * alloc.c, outitf.c: Use the new heap only for tclspice in Windows 
-   (HAS_TCLWIN defined) because of a crash in the 'destroy' command  
+ * alloc.c, outitf.c: Use the new heap only for tclspice in Windows
+   (HAS_TCLWIN defined) because of a crash in the 'destroy' command
    inpcom.c:1807 do not remove white spaces in an alter or altermod command
 
 2009-01-31 Holger Vogt
  * xpressn.c, spicenum.c, numparam.h, runcoms.c, runcoms2.c:
    Incompatibilty to MAC OSX removed by proper variable declarations
  * subckt.c: bug no. 2293284: preliminary change, further tests required
- 
+
 2009-01-26 Lionel Sainte Cluque
  * man/man1/ngspice.1,
  * man/man1/nutmeg.1:
@@ -3055,46 +3060,46 @@
  * src/frontend/plotting/plotit.c,
  * src/frontend/plotting/plotcurv.c:
    33: Fixed some of the existing problemass SMITH PLOT. There were 2 errors:
-       one in plotit() to calculate the transformation line (r-1) / (r +1) 
+       one in plotit() to calculate the transformation line (r-1) / (r +1)
        where a mistake was made in the process of plotting a single real point
        and the other in ft_graf() that would print imaginary part = real part
        for real data. A. Roldan - espice
-   32: Fixed some problems the existing polar PLOT. To summarize the 
-       problems were in the wrong calculation of the size of x and y axes 
-       for the plot. A. Roldan - espice		
+   32: Fixed some problems the existing polar PLOT. To summarize the
+       problems were in the wrong calculation of the size of x and y axes
+       for the plot. A. Roldan - espice
 
 2009-01-18 Holger Vogt
  * src/frontend/mw_coms.c: variable declarations to top of function
- * outif.c, alloc.c: add HAS_TCLWIN flag to allow coimpilation of 
+ * outif.c, alloc.c: add HAS_TCLWIN flag to allow coimpilation of
    tclspice under MS VC++
 
 2009-01-16 Paolo Nenzi
- * src/frontend/mw_coms.c, src/frontend/commands.c, 
+ * src/frontend/mw_coms.c, src/frontend/commands.c,
  * src/frontend/runcoms.c, src/include/fteext.h:
-   34, 
-   36, 
-   38: Added the removecirc command. This command removes the current        
+   34,
+   36,
+   38: Added the removecirc command. This command removes the current
        circuit and its associated plots. This comes from an old function
        written by M. Widlok and updated by A. Roldan for espice.
        Note: I have changed the code to eliminate GTK functions and tested.
        Things work but in ngspice there is a problem due to model redefinitions,
-       as it seems that in ngspice models are globals. Need further 
+       as it seems that in ngspice models are globals. Need further
        investigation. P. Nenzi
 
  * src/frontend/commands.c, src/frontend/misccomms.c:
    24: Added the parameter "noask" to quit command to avoid the question
        before exiting ngspice. A. Roldan - Espice
- 
+
  * src/frontend/evaluate.c, src/frontend/typedefs.c, src/include/sim.h:
    Added some vector types from Espice (impedance, admittance, power etc.)
    The original implementation by A. Roldan did not fit immediatly. I had
-   to comment two definitions. I could not test "plotab". 
+   to comment two definitions. I could not test "plotab".
 
 2009-01-16 Paolo Nenzi
  * src/frontend/evaluate.c, src/frontend/typedefs.c, src/include/sim.h:
    Added some vector types from Espice (impedance, admittance, power etc.)
    The original implementation by A. Roldan did not fit immediatly. I had
-   to comment two definitions. I could not test "plotab". 
+   to comment two definitions. I could not test "plotab".
 
 2009-01-15 Paolo Nenzi
  * src/spicelib/devices/vsrc/vsrc.c,
@@ -3105,32 +3110,32 @@
  * src/frontend/vectors.c:
    17: New capability of print command. It is now possible to print and
        alter vectors of reals like print @vin_sin[sin] to print the vector
-       of parameters defining the sinusoidal source (it works with both the 
+       of parameters defining the sinusoidal source (it works with both the
        sources type). It is possible to alter the parameters with the command
        alter @vin_sin[sin] = ( 1 1 3000Hz ). A. Roldan -Espice
        Note: alter syntax does not work in full yet, it still generate an
-       error but modifies the parameters. P. Nenzi  
+       error but modifies the parameters. P. Nenzi
 
 2009-01-15 Paolo Nenzi
  * src/frontend/vectors.c:
    57: Fixed  I(vx), before the if I(*) (upper case) was not recognized as the
        function to plot the current of vx. A. Roldan - Espice
  * src/frontend/postcoms.c:
-   7:  Fixed plot number after "destroy all" command. A. Roldan - Espice 
+   7:  Fixed plot number after "destroy all" command. A. Roldan - Espice
  * src/include/fteext.h
- * src/frontend/evaluate.c, src/frontend/cpitf.c, src/frontend/parse.c 
+ * src/frontend/evaluate.c, src/frontend/cpitf.c, src/frontend/parse.c
  * src/maths/cmaths/cmath2.c, src/cmaths/cmath4.c, src/cmaths/cmath4.h:
    16: New function to compute the group delay has been implemented.
        Group delay is defined as -(dphase/dfrequency) and can be printed or
        plotted by writing vg(x), where x is a complex vector. A. Roldan - Espice
-   15: Fixed existing problems in this function due to the complex nature of 
+   15: Fixed existing problems in this function due to the complex nature of
        the frequency vector. To get the data from frequency[i], the real part
        must be accessed. A. Roldan - Espice
    14: New function to compute the moving average. A. Roldan - Espice
 
 2009-01-15 Paolo Nenzi
  * src/frontend/{spiceif.c, spiceif.h, vectors.c}, src/include/fteext.h,
- * src/main.c: 
+ * src/main.c:
    3: A new function finddev_special() has been introduced to look for
       references like @BC107[is] and to verify if we asked for a model
       or a device and thus call the spif_getparam_special() correctly
@@ -3142,10 +3147,10 @@
 2009-01-15 Dietmar Warning
  * src/include/wstdio.h: read fct. prototype for older MSC compiler
  * src/misc/alloc.c: heap also needed under windows with tcl
- * src/frontend/resource.c: resource info under Windows w/o psapi, still not yet perfect 
+ * src/frontend/resource.c: resource info under Windows w/o psapi, still not yet perfect
 
 2009-01-11 Dietmar Warning
- * src/spicelib/devices/hisim/hsm1eval1xx.c, 
+ * src/spicelib/devices/hisim/hsm1eval1xx.c,
    src/spicelib/devices/bsim3soi_x/b3soild.c: using ngspice.h as a central place
 
 2009-01-10 Holger Vogt
@@ -3155,27 +3160,27 @@
  * src/misc/alloc.c, src/frontend/outitf.c: heap only needed under windows for zoom
 
 2009-01-05 Dietmar Warning
- * src/math/misc/isinf.c, isnan.c, src/include/missing_math.h: small polish for 
+ * src/math/misc/isinf.c, isnan.c, src/include/missing_math.h: small polish for
    HAVE_DECL_XXX macros, more elaborate isinf function
  * src/include/memory.h: prototype for hrealloc fct.
- * adms/hicum2/amsva/hicum2.va: update to actual version 2.22, very small 
+ * adms/hicum2/amsva/hicum2.va: update to actual version 2.22, very small
    modifications compared to the original va code.
 
 2009-01-04 Dietmar Warning
- * src/math/misc/isinf.c, Makefile.am: a simple (but ugly) workaround for isinf 
+ * src/math/misc/isinf.c, Makefile.am: a simple (but ugly) workaround for isinf
    needed by some adms generated models
  * src/include/ngspice.h, missing_math.h: try to catch isinf by ieeefp.h
  * adms/ekv/amsva/ekv.va: compatibility regarding S/D diode behaviour
 
 2009-01-02 Dietmar Warning
- * adms/ekv/amsva/ekv.va: EPFL-EKV version 2.63, replacement of the long channel 
-   version with a code according to the official manual (revision II) available 
+ * adms/ekv/amsva/ekv.va: EPFL-EKV version 2.63, replacement of the long channel
+   version with a code according to the official manual (revision II) available
    at http://legwww.epfl.ch/ekv, contribution of Ivan Riis Nielsen 11/2006.
- * /src/frontend/wdisp/windisp.c, 398: windows zoom was broken - %le for double 
+ * /src/frontend/wdisp/windisp.c, 398: windows zoom was broken - %le for double
    seems not more ignored, changed to more suitable %e
 
 2009-01-01 Dietmar Warning
- * configure.in, include/missing_math.h, src/math/misc/isnan.c: POSIX conform 
+ * configure.in, include/missing_math.h, src/math/misc/isnan.c: POSIX conform
    configure isnan, isinf macros and finite function
  * admst/ngspiceMODULEdefs.h.xml: some cc needs double cast for isinf macro
 
@@ -3184,11 +3189,11 @@
   * tclspice integration under Windows: dctran.c, inpfindl.c, outitf.c, alloc.c,
     tclspice.c, winmain.c: type definitions, printf -> fprintf,
     new heap for plot data to prevent memory fragmentation
-  * configure.in: new flags for TCL under Windows: HAS_TCLWIN 
-    (is set instead of HAS_WINDOWS), TCLWIN (for generating makefiles, 
+  * configure.in: new flags for TCL under Windows: HAS_TCLWIN
+    (is set instead of HAS_WINDOWS), TCLWIN (for generating makefiles,
     instead of WINDOWS)
   * cmath/makefile.am: prevent making test executables under TCL/Windows
-    
+
 2008-12-26 Dietmar Warning
  * autogen.sh, configure.in: A hopeful way to integrate adms - ugly, but tested
    under linux, sunOS and msys with and w/o adms enabled.
@@ -3201,11 +3206,11 @@
   * outitf.c, cktdojob.c: printf replaced by fprintf
   * cpitf.c:216 s replaced by copys
   * tclspice.c:2168 init_rlimits( ) added to get startup system info
-  
+
 2008-12-22 Holger Vogt
  * /spicelib/parser/inpdomod.c: checks for BSIM3 and BSIM4 look for
-   major versions 3.2, 3.3, 4.2 - 4.6   
- 
+   major versions 3.2, 3.3, 4.2 - 4.6
+
 2008-12-22 Dietmar Warning
  * adms/admst/ngspiceMakefile.am.xml: switch to libtool (unfortunately!)
 
@@ -3213,17 +3218,17 @@
  * bug 2449483 removed: inpdomod.c:293 added as in b3v32check.c:42
 
 2008-12-14 Dietmar Warning
- * src/Makefile.am: "hard wired" makefile dependency generation compiler options 
-   removed for main.c - this should be done by libtool, left it for tclspice and 
+ * src/Makefile.am: "hard wired" makefile dependency generation compiler options
+   removed for main.c - this should be done by libtool, left it for tclspice and
    xspice codemodels (see below)
  * src/xspice/icm: removed Makefile.am - not used, configuration relays
-   on makedefs.in and fixed Makefile, these files have now sun compiler 
+   on makedefs.in and fixed Makefile, these files have now sun compiler
    specific options DEPFLAGS added
  * src/xspice/ipc/ipc*.c: prevent some warnings under sun compiler
- 
+
 2008-12-07 Dietmar Warning
  * src/main.c: double semikolon in nutmeginfo decl. gives:
-               "syntax error:  empty declaration" under solaris ss12 
+               "syntax error:  empty declaration" under solaris ss12
 
 2008-12-06 Holger Vogt
  * frontend/spec.c, com_fft.c: free_pnode(first_name); moved further down to allow
@@ -3238,16 +3243,16 @@
         directories hierarchy. (One level more)
 
 2008-11-29 Holger Vogt
- * frontend/numparam/xpressn.c: rand() and gauss() moved to 
+ * frontend/numparam/xpressn.c: rand() and gauss() moved to
    math/misc/randnumb.c
    -> 'set rndseed=value' value = integer > 0 in spinit will yield
       deterministic pseudo random number sequence.
-   -> random() and rand() with correspongding max value  
+   -> random() and rand() with correspongding max value
 
 2008-11-26 Dietmar Warning
  * src/spicelib/devices/bsim4v4, bsim4v5: this is a backup because the patch
-   of Phil Barker are providing only a placeholder for propriarity sti stress 
-   model - not any equation. If the stimod feature is some time published we 
+   of Phil Barker are providing only a placeholder for propriarity sti stress
+   model - not any equation. If the stimod feature is some time published we
    can implement it again.
 
 2008-11-26 Holger Vogt
@@ -3307,7 +3312,7 @@
  * spicelib/parser/inp2y.c: changed some malloc into tmalloc
 
 2008-11-20 Paolo Nenzi
- * src/frontend/diff.c: currents in rawfiles are written as i(xxx) and no more as xxx#branch. The diff 
+ * src/frontend/diff.c: currents in rawfiles are written as i(xxx) and no more as xxx#branch. The diff
    interactive command (used to compare plots) did not work anymore. This new version traslates back
    i(xxx) to xxx#branch.
 
@@ -3332,7 +3337,7 @@
    (but will cover all 4.6.x versions)
 
 2008-11-09 Dietmar Warning
- * src/spicelib/devices/bsim4/*.c,*.h src/spicelib/parser/inpdomod.c: 
+ * src/spicelib/devices/bsim4/*.c,*.h src/spicelib/parser/inpdomod.c:
    This is the new and actual BSIM4 version 4.6.3 from UCB. All files are 4.6.2 except
    b4temp.c which is the only bugfix for 4.6.3 (see bsim website). Tested so far with simple
    testcases - but should be proved further with more practical examples.
@@ -3340,14 +3345,14 @@
 2008-11-09 Holger Vogt
  * visualc/:
    Directory with project files to compile ngspice with MS Visual
-   Studio 2008 
+   Studio 2008
 
 2008-11-04 Holger Vogt
  * src/frontend/com_ghelp.c:
-   Notify user that internal help is no longer available in Windows port 
+   Notify user that internal help is no longer available in Windows port
 
 2008-11-04 Paolo Nenzi
- * src/frontend/parser/lexical.c: 
+ * src/frontend/parser/lexical.c:
    53: Fixed the problem of segmentation fault when redirecting output putting spaces
        around "<" or ">". A. Roldan - Espice
 
@@ -3391,7 +3396,7 @@
 2008-09-13 Holger Vogt
  * configure.in: add /mingw as search path for tcl
  * tclspice.c: replace sigsetjump and sigjmp_buf with macros from macros.h
- 
+
 2008-09-09 Lionel Sainte Cluque
  * configure.in: tclspice checks moved before Operating System checks: To set
  no_x flag before it is used.
@@ -3399,17 +3404,17 @@
 
 2008-09-01
  * configure.in: CAPZEROBYPASS is enabled by default now. To disable it you
-   can add --disable-capzerobypass to configure command.  
+   can add --disable-capzerobypass to configure command.
 
 2008-08-27 Paolo Nenzi
  * --- TCLSPICE initial integration (Lionel Sainte Cluque) ---
  * Makefile.am: Makefiles changed for libtool. We use still .a files but we let
    libtool to create them in a portable manner. This slows compilation a little
    bit but improves portability of ngspice/tclspice.
- * src/tclspice.c, src/tclspice.map, pkgIndex.tcl.in, src/include/tclspice.h: 
+ * src/tclspice.c, src/tclspice.map, pkgIndex.tcl.in, src/include/tclspice.h:
    tclspice main and include file. (Readded files).
- * src/tests/tcl/, src/tests/tcl-testbench1/, src/tests/tcl-testbench2/, 
-   src/tests/tcl-testbench3/, src/tests/tcl-testbench4/: testbenches for 
+ * src/tests/tcl/, src/tests/tcl-testbench1/, src/tests/tcl-testbench2/,
+   src/tests/tcl-testbench3/, src/tests/tcl-testbench4/: testbenches for
    the tclspice simulator. (New dirs).
  * src/frontend/plotit.c: added blt_plot for blt output device if TCL defined.
  * src/frontend/com_plot.c, src/frontend/com_plot.h: added com_bltplot.
@@ -3420,17 +3425,17 @@
  * src/include/ngspice.h: added definitions for TCL functions.
  * src/misc/alloc.c: Using TCL allocation functions when tclspice is enabled.
  * src/frontend/com_measure2.c,.h: new measure command (to link and test)
- * src/main.c: some static function moved for TCL interface (nutmeginfo, etc.) 
+ * src/main.c: some static function moved for TCL interface (nutmeginfo, etc.)
 
 2008-08-25 Paolo Nenzi
- * configure.in, src/spicelib/analysis/noisean.c: removed the compilation switch 
+ * configure.in, src/spicelib/analysis/noisean.c: removed the compilation switch
    --enable-intnoise. Noise analyses now generate two plot, the first one for
    spectrum and the second one the integrated noise.
 
 2008-08-24 Paolo Nenzi
  * src/main.c: Moved the #ifdef CIDER declaration. Machine accuracy limits now are
    defined even if CIDER is not compiled. This is needed for the subsequent integration
-   of TCL patch.  
+   of TCL patch.
 
 2008-06-14 Holger Vogt
  * examples/numparam: adapt examples to new numparam code
@@ -3443,7 +3448,7 @@
  * src/frontend/spec.c: Progress status display for Windows added
 
 2008-05-18 Dietmar Warning
- * Small changes to compile under Sun Studio 11 for Solaris - may be useful in other 
+ * Small changes to compile under Sun Studio 11 for Solaris - may be useful in other
    configurations too
  * configure.in
  * src/frontend/control.c
@@ -3462,30 +3467,30 @@
 
 2008-05-11 Dietmar Warning
  * src/misc/missing_math.c,h, src/math/misc/*.*: move math function to one place
- * src/include/ngspice.h, src/main.c, src/Makefile.am, src/maths/Makefile.am, 
+ * src/include/ngspice.h, src/main.c, src/Makefile.am, src/maths/Makefile.am,
    src/maths/misc/Makefile.am, src/misc/Makefile.am, configure.in: organization of libmathmisc.a
  * src/maths/misc/erfc.c: better erfc for lossy transmission line
 
 2008-05-10 Holger Vogt
- * src/frontend/resource.c: Memory information is now stemming from the 
-   /proc file system (LINUX) or using GlobalMemoryStatusEx and 
+ * src/frontend/resource.c: Memory information is now stemming from the
+   /proc file system (LINUX) or using GlobalMemoryStatusEx and
    GetProcessMemoryInfo (Windows).
-   The old info system with sbrk(0) may still be used.  
+   The old info system with sbrk(0) may still be used.
 
 2008-05-06 Holger Vogt
  * src/frontend/outitf.c: suppress printing of "Reference value" into log-file
-   under Windows 
+   under Windows
 
 2008-05-03 Dietmar Warning
- * src/include/ngspice.h, src/main.c: srandom has a macro in ngspice.h as a 
+ * src/include/ngspice.h, src/main.c: srandom has a macro in ngspice.h as a
    central place - should be sufficient also under windows
 
 2008-05-01 Holger Vogt
- * src/frontend/com_hardcopy.c: bug no. 1885979 removed: currentgraph saved 
-   and restored after hardcopy. 
+ * src/frontend/com_hardcopy.c: bug no. 1885979 removed: currentgraph saved
+   and restored after hardcopy.
 
 2008-04-28 Holger Vogt
- * src/frontend/plotting/graf.c: remove iplot bug by changing line 686. 
+ * src/frontend/plotting/graf.c: remove iplot bug by changing line 686.
 
 2008-04-27 Dietmar Warning
  * src/frontend/inpcom.c: change _DEBUG to TRACE - unique debug switches
@@ -3493,16 +3498,16 @@
 
 2008-04-26 Holger Vogt
  * src/frontend/inpcom.c: inp_sort_params() now uses dynamic memory allocation
-   on the heap: no enlargement of stack size is necessary. 
+   on the heap: no enlargement of stack size is necessary.
 
 2008-04-25 Holger Vogt
- * src/frontend/inpcom.c: In inp_fix_param_values() xspice variables of type 
+ * src/frontend/inpcom.c: In inp_fix_param_values() xspice variables of type
    complex are recognized also in vectors.
 
 2008-04-23 Holger Vogt
- * src/frontend/inpcom.c: In inp_fix_param_values() xspice variables of type 
+ * src/frontend/inpcom.c: In inp_fix_param_values() xspice variables of type
    complex are recognized. Vectors of complex variables still missing.
-   
+
 2008-04-20 Holger Vogt
  * src/frontend/inpcom.c: .cmodel added for xspice compatibility:
    inp_fix_param_values() replaces .cmodel with .model and then skips entire
@@ -3514,7 +3519,7 @@
    default in spice3f4 which is used by UCB for testing. Now same behaviour in ngspice
    - tested and should not impact convergence behaviour.
  * src/frontend/winprint.c: pragmas only for MSC.
- * configure.in tests/Makefile.am, tests/bsim3soi/*.cir, *.out, *.mod: new testcase 
+ * configure.in tests/Makefile.am, tests/bsim3soi/*.cir, *.out, *.mod: new testcase
    for bsim3soi (origin UCB small modifications).
 
 2008-04-19 Holger Vogt
@@ -3524,7 +3529,7 @@
 2008-04-16 Dietmar Warning
  * src/spicelib/devices/bsim3soi/*.c,*.h, src/spicelib/parser/inpdomod.c, inp2m.c,
    src/spicelib/devices/dev.c, DEVICES: New bsim3soi version 4.0
- * src/include/macros.h: redefine NEWCONV because we are using Berkeley spice3f4 code 
+ * src/include/macros.h: redefine NEWCONV because we are using Berkeley spice3f4 code
    for bsim models.
 
 2008-04-13 Holger Vogt
@@ -3536,9 +3541,9 @@
    between arguments, allows CYGWIN handling, winmessage() for error messages
  * src/main.c: temporary file for Windows non admin users, printed info independent
    from sequence of options
- * src/include/bool.h: BOOLEAN definition added again  
+ * src/include/bool.h: BOOLEAN definition added again
    src/spicelib/devices/dev.c: #undef BOOLEAN added
-   
+
 2008-04-05 Dietmar Warning
  * src/frontend/inpcom.c: define the missing buffer nam_buf for mos devices
  * src/misc/string.c, stringutil.h: moving some string functions from inpcom.c
@@ -3550,8 +3555,8 @@
  * src/winmain.c: larger printf buffer
 
 2008-03-22 Paolo Nenzi <p.nenzi@ieee.org>
- * src/frontend/{commands.c, com_gnuplot.c, com_gnuplot.h}, 
- * src/frontend/plotting/{gnuplot.c, gnuplot.h,plotit.c}: added 
+ * src/frontend/{commands.c, com_gnuplot.c, com_gnuplot.h},
+ * src/frontend/plotting/{gnuplot.c, gnuplot.h,plotit.c}: added
    initial support for gnuplot plotting of simulation outputs.
    Gnuplot interface code has been sent by Stefano Pedretti.
 
@@ -3559,18 +3564,18 @@
  * configure.in: w/o optimization better debug
  * src/main.c: fix conflict for own shutdown function
  * src/frontend/numparam/xpressn.c: more precise recognition of subckt names
- * src/frontend/numparam/spicenum.c: avoid access to uninitialized memory 
+ * src/frontend/numparam/spicenum.c: avoid access to uninitialized memory
    because of pascal convention
 
 2008-01-12 Dietmar Warning
  * configure.in, src/xspice/ipc/*.c: xspice ipc is possible
- * src/include/ngspice.h: reflect the extended autoconfigure 
+ * src/include/ngspice.h: reflect the extended autoconfigure
 
 2008-01-06 Dietmar Warning
- * src/frontend/subckt.c: correct compare of binned model names. Fixed a bug 
+ * src/frontend/subckt.c: correct compare of binned model names. Fixed a bug
    of incorrect subckt expansion when MOS model inside.
- * src/spicelib/parser/inpdomod.c, DEVICES: Compatibility issue - now all 
-   bsim3 models running under level 8 and 49 and all bsim4 models under 
+ * src/spicelib/parser/inpdomod.c, DEVICES: Compatibility issue - now all
+   bsim3 models running under level 8 and 49 and all bsim4 models under
    level 14 and 54. Distinction must be made by version parameter.
 
 2008-01-04 Paolo Nenzi <p.nenzi@ieee.org>
@@ -3591,7 +3596,7 @@
 
 2008-01-02 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/rawfile.c: Fixed rawfile ascii generation. The prevoius patch
-   produced incorrect string like v(v(1)) for v(1) in the output file. 
+   produced incorrect string like v(v(1)) for v(1) in the output file.
 
 2007-12-31 Holger Vogt
 don't need buffer w/o getcwd fix for the crashing of ngspice under Windows when
@@ -3615,7 +3620,7 @@ don't need buffer w/o getcwd fix for the crashing of ngspice under Windows when
  * src/misc/missing_math.*: AlmostEqualUlps in double is needed
 
 2007-12-26 Paolo Nenzi <p.nenzi@ieee.org>
- * src/frontend/numparam/*: downgraded all files to standard C syntax with 
+ * src/frontend/numparam/*: downgraded all files to standard C syntax with
    the included washprog.c tool.
 
 2007-12-14 Dietmar Warning
@@ -3698,14 +3703,14 @@ don't need buffer w/o getcwd fix for the crashing of ngspice under Windows when
  * src/spicelib/analysis/acan.c: unused variable step
  * src/spicelib/parser/inp2q.c: 5 nodes only for adms
  * src/misc/string.c: comment was nonsens
- * src/misc/stringutil.h: no prototypes index/rindex for non-provided functions 
- * src/misc/misc_time.h: providing prototype for timediff 
+ * src/misc/stringutil.h: no prototypes index/rindex for non-provided functions
+ * src/misc/misc_time.h: providing prototype for timediff
  * src/main.c: unused variable rflag
  * src/xspice/mif/mifsetup.c: no c++ comments
 
 2007-11-14 Dietmar Warning
- * src/frontend/inp.c: No title message to stderr - stdout is enough 
- * src/frontend/spiceif.c: reenable INPkillMods after deck processing 
+ * src/frontend/inp.c: No title message to stderr - stdout is enough
+ * src/frontend/spiceif.c: reenable INPkillMods after deck processing
  * src/spicelib/parser/inpdomod.c: til now only bsim4 has version processing
 
 2007-11-13 Paolo Nenzi <p.nenzi@ieee.org>
@@ -3714,12 +3719,12 @@ don't need buffer w/o getcwd fix for the crashing of ngspice under Windows when
  loading with #ifdef TRACE.
 
 2007-11-12 Paolo Nenzi <p.nenzi@ieee.org>
- * src/frontend/inp.c: corrected option processing. Now "scale" option 
+ * src/frontend/inp.c: corrected option processing. Now "scale" option
    is special and is processed before netlist parsing. The implementation
-   is not very clean. 
+   is not very clean.
 
 2007-11-04 Dietmar Warning
- * configure.in, src/Makefile.am, src/spicelib/devices/Makefile.am, 
+ * configure.in, src/Makefile.am, src/spicelib/devices/Makefile.am,
    src/spicelib/parser/inpgmod.c, src/spicelib/parser/inp2m.c
    BSIM4 has changed (based on Phil Barker patch):
    version code 4.2.1/4.3.0/4.5.0 added
@@ -3727,9 +3732,9 @@ don't need buffer w/o getcwd fix for the crashing of ngspice under Windows when
    4.6.0 updated to 4.6.1
 
 2007-10-12 Paolo Nenzi <p.nenzi@ieee.org>
- * src/frontend/{cpitf.c, inp.c, miscvars.c}, src/spinit.in: 
+ * src/frontend/{cpitf.c, inp.c, miscvars.c}, src/spinit.in:
    reimplemented "brief" option as a boolean and defaulted to
-   TRUE. Now the netlist is not printed anymore when you load 
+   TRUE. Now the netlist is not printed anymore when you load
    a circuit. For the original behavior uncomment "unset brief"
    in the spice init file.
 
@@ -3740,8 +3745,8 @@ don't need buffer w/o getcwd fix for the crashing of ngspice under Windows when
    always run, both in interactive and batch mode.
 
 2007-10-09 Paolo Nenzi <p.nenzi@ieee.org>
- * src/frontend/{device.c, miscvars.c}: added "altshow" option to 
-   enable the new (Phil Barker) version of the show command. The 
+ * src/frontend/{device.c, miscvars.c}: added "altshow" option to
+   enable the new (Phil Barker) version of the show command. The
    old show command looks better in interactive mode while the
    new format is more suitable for automatic processing of the
    data.
@@ -3753,34 +3758,34 @@ don't need buffer w/o getcwd fix for the crashing of ngspice under Windows when
  * src/spicelib/parser/inp2m.c: Added model binning code left out in the
    previous commit.
  * src/frontend/variable.c: Added SIMVARS from Phil Barker.
- * src/frontend/{outitf.c,runcoms2.c}, src/include/cpextern.h: Patch from 
+ * src/frontend/{outitf.c,runcoms2.c}, src/include/cpextern.h: Patch from
    Phil Barker.
- * src/frontend/subckt.c: allow for .ic, .nodeset names to be embedded 
-   in a subckt;enhanced subckt.c to created appropriate node names for 
+ * src/frontend/subckt.c: allow for .ic, .nodeset names to be embedded
+   in a subckt;enhanced subckt.c to created appropriate node names for
    flattened simulation netlist (Phil Barker).
  * src/spicelib/devices/cap/cap.c: aliased capacitance parameter with "c"
    and "cap" (patch from Phil Barker).
  * src/spicelib/devices/res/res.c: aliased some parameters. Originally got
   the patch from Phil Barker but used IOPR (redundant) instead of IOPZ.
- * src/spicelib/devices/res/resparam.c: Added fix for zero valued 
+ * src/spicelib/devices/res/resparam.c: Added fix for zero valued
    resistors (Phil Barker).
  * src/spicelib/devices/vsrc/{vsrc.c, vsrcacct.c, vsrcask.c, vsrcdefs.h,
-   vsrcload.c, vsrcpar.c, vsrctemp.c}: Added "repeat" parameter to the 
+   vsrcload.c, vsrcpar.c, vsrctemp.c}: Added "repeat" parameter to the
    PWL model.
  * src/xspice/icm/analog/multi_input_pwl/*: added new element from Phil
-   Barker: added new multi-input gate VCVS using XSPICE extensions that 
+   Barker: added new multi-input gate VCVS using XSPICE extensions that
    supports nand, and, nor, or.  Currently only supports 2-inputs (x,y).
-   The x's and y's represent the piecewise linear variation of output as 
-   a function of input.  Only 1 input determines the state of the outputs: 
+   The x's and y's represent the piecewise linear variation of output as
+   a function of input.  Only 1 input determines the state of the outputs:
    and/nand: controlling input is chosen on the basis of the smallest value,
    or/nor:   controlling input is chosen on the basis of the largest value.
- 
+
 
 2007-10-08 Paolo Nenzi <p.nenzi@ieee.org>
- * src/main.c, src/frontend/{spiceif.c, spiceif.h, subckt.c}, 
-   src/include/{fteext.h, inpdefs.h}, 
+ * src/main.c, src/frontend/{spiceif.c, spiceif.h, subckt.c},
+   src/include/{fteext.h, inpdefs.h},
    src/spicelib/parser/{inp.h, inp2dot.c, inpdomod.c, inpfindv.c,
-   inpgmod.c}: other improvements by Phil Barker: 
+   inpgmod.c}: other improvements by Phil Barker:
  - Added model binning function
  - Added model version function
  - enhanced the interactive command 'alter' to allow for changing the model
@@ -3792,37 +3797,37 @@ don't need buffer w/o getcwd fix for the crashing of ngspice under Windows when
  several improvements mad by Phil Barker:
  - .measure statements: trig/targ, max, min, avg, rms, integral, param
  - autostop option: which causes the simulation to stop if all .measure
-   statements are satisfied; option is ignored if any max, min, avg, rms 
-   or integ measurements defined. 
+   statements are satisfied; option is ignored if any max, min, avg, rms
+   or integ measurements defined.
  - fixed some floating point number comparisons where the code was checking for
    equality with '==' by adding a routine called 'AlmostEqualUlps'.
  - parametrized subcircuits
  - added support for ".lib" syntax
- - added ability to recursively call spice netlist parser; this allows for 
+ - added ability to recursively call spice netlist parser; this allows for
    reading in additional .include and .lib files defined in other netlist files
  - changed the flattened netlist names created in 'subckt.c' to match other
    spice simulators
 
 2007-10-08 Paolo Nenzi <p.nenzi@ieee.org>
- * src/frontend/{rawfile.c, outitf.c, runcoms.c}, src/include/ftedefs.h: 
+ * src/frontend/{rawfile.c, outitf.c, runcoms.c}, src/include/ftedefs.h:
  modified current vectors output amd added struct elements for holding the
  name of the last analysis run (all from Phil Barker patch).
 
 2007-10-08 Paolo Nenzi <p.nenzi@ieee.org>
- *src/frontend/{device.c, device.h}: modified 'show' command to match 
+ *src/frontend/{device.c, device.h}: modified 'show' command to match
  SmartSpice syntax from Phil Barker patch.
 
 2007-10-08 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/plotting/plotit.c, src/frontend/{nutimp.c, parse.c},
-   src/maths/ni/{niconv.c, niiter.c}, src/spicelib/analysis/dctran.c: 
+   src/maths/ni/{niconv.c, niiter.c}, src/spicelib/analysis/dctran.c:
  Applied patch from Phil barker, iproved error/warning reporting.
 
 2007-10-08 Paolo Nenzi <p.nenzi@ieee.org>
- * src/frontend/numparam/{general.h, mystring.c, numpaif.h, numparam.h, 
-   nupatest.c, spicenum.c, washprog.c, xpressn.c}: Applied patch from Phil 
- Barker that improves the capabilites of numparam library. Now numparam 
- supports fully parametrized netlists and can handle a larger set of 
- parameters than the previous implementation. Added 'nupa_add_param' routine 
+ * src/frontend/numparam/{general.h, mystring.c, numpaif.h, numparam.h,
+   nupatest.c, spicenum.c, washprog.c, xpressn.c}: Applied patch from Phil
+ Barker that improves the capabilites of numparam library. Now numparam
+ supports fully parametrized netlists and can handle a larger set of
+ parameters than the previous implementation. Added 'nupa_add_param' routine
  and ability to reevaluate parameter set using 'nupa_eval' by keeping parameter
  value set. Added support for 'ternary' operators in parameters as well as 'max'
  and 'min'.
@@ -3834,26 +3839,26 @@ don't need buffer w/o getcwd fix for the crashing of ngspice under Windows when
  an error instead. The patch has been submitted by Friedrich Schmidt.
 
 2007-09-14 Paolo Nenzi <p.nenzi@ieee.org>
- * src/frontend/inp.c: fixed a bug in com_list() that skipped a line number 
- when in displaying the ".end" line. I just moved the line increment at the 
+ * src/frontend/inp.c: fixed a bug in com_list() that skipped a line number
+ when in displaying the ".end" line. I just moved the line increment at the
  end of the for cicle (after the instruction that skips the ".end" line).
 
 
 2007-09-12 Dietmar Warning
- * src/frontend/terminal.c: fixed segmentation fault occurring when messages 
+ * src/frontend/terminal.c: fixed segmentation fault occurring when messages
    >4096 bytes are sent to out_printf() function. The fix uses asprintf if
    available.
 
 2007-08-12 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/inpcom.c: fixed segmentation fault with empty .include file
    or directory include. This is a hack the full inpcom shoud be rewritten.
- 
+
 2007-06-17 Gong Ding <gdiso@ustc.edu>
  * src/spicelib/devices/dev.c: use a more flexiable way to define device.
  If it doesn't work, one can returen to old version (rename as dev_old.c).
- 
+
 These files are modified for avoiding NULL DEVices[] pointer.
- * spicelib/analysis/acan.c:  
+ * spicelib/analysis/acan.c:
  * spicelib/analysis/cktdest.c:
  * spicelib/analysis/cktdisto.c:
  * spicelib/analysis/cktdump.c:
@@ -3869,7 +3874,7 @@ These files are modified for avoiding NULL DEVices[] pointer.
  * spicelib/analysis/ckttrunc.c:
  * spicelib/analysis/ckttyplk.c:
  * spicelib/parser/inptyplk.c:
-The modifications should not affect ngspice's function. 
+The modifications should not affect ngspice's function.
 
 2007-06-14 Paolo Nenzi <p.nenzi@ieee.org>
 
@@ -3885,18 +3890,18 @@ The modifications should not affect ngspice's function.
 
  * src/spicelib/devices/adms/admst/ngspiceMODULEguesstopology.c.xml,
    src/spicelib/devices/adms/admst/ngspiceVersion.xml,
-   src/spicelib/devices/adms/admst/ngspiceMODULEdefs.h.xml: 
+   src/spicelib/devices/adms/admst/ngspiceMODULEdefs.h.xml:
    added support to "div" builtin function.
 
 
 2007-05-09 Dietmar Warning
- 
+
  * src/spicelib/devices/dev.c: reserved space for ekv model.
 
 2007-05-08 Dietmar Warning
 
  * src/spicelib/devices/amds/ekv/: Initial import of the ekv model (long
-   channel). 
+   channel).
 
 2007-05-06 Dietmar Warning
 
@@ -3904,29 +3909,29 @@ The modifications should not affect ngspice's function.
 
 
 2007-04-30 Gong Ding <gdiso@ustc.edu>
-  
-  Add NDEV (numerical device) to device library. It is an interface 
-  to call my 2d semiconductor simulation code via network. 
+
+  Add NDEV (numerical device) to device library. It is an interface
+  to call my 2d semiconductor simulation code via network.
   The device simulation code can be found at http://gss-tcad.sourceforge.net
- 
- *     src/spicelib/device/ndev/*.*   : The NDEV implement code  
+
+ *     src/spicelib/device/ndev/*.*   : The NDEV implement code
  *     src/spicelib/device/dev.c      : Add ndev to spice device library
- *     src/spicelib/parser/inppas2.c  : Add element name 'N' to describe NDEV  
+ *     src/spicelib/parser/inppas2.c  : Add element name 'N' to describe NDEV
  *     src/spicelib/parser/inp2n.c    : Routine to parse NDEV element
  *     src/spicelib/parser/inpdomod.c : Routine to parse NDEV model
  *     src/frontend/misccoms.c        : When quit, call CKTdestroy function
  *     src/spicelib/analysis/dctran.c : Show a time process indicator
  *     src/ciderlib/oned/onedest.c    : Fix a invalid memory read problem
- *     src/frontend/terminal.c        : change <termcap.h> to <ncurses/termcap.h> 
-  
+ *     src/frontend/terminal.c        : change <termcap.h> to <ncurses/termcap.h>
+
 2007-04-26 Paolo Nenzi <p.nenzi@ieee.org>
 
  *     src/spicelib/devices/bsim4/: updated bsim4 model to 4.6.0.
 
 2007-04-25 Paolo Nenzi <p.nenzi@ieee.org>
 
- *    src/spicelib/parser/{inp2m.c, inpdomod.c}, 
-      src/spicelib/devices/dev.c, src/spicelib/devices/adms/psp102/: 
+ *    src/spicelib/parser/{inp2m.c, inpdomod.c},
+      src/spicelib/devices/dev.c, src/spicelib/devices/adms/psp102/:
       added support for psp102 model.
 
 2007-04-24 Laurent Lemaitre <r29173@users.sourceforge.net>
@@ -3940,51 +3945,51 @@ The modifications should not affect ngspice's function.
 
 2006-02-21 Paolo Nenzi <p.nenzi@ieee.org>
 
- *   src/frontend/subckt.c, src/spicelib/parser/inp2q.c, 
+ *   src/frontend/subckt.c, src/spicelib/parser/inp2q.c,
      src/spicelib/parser/inpdomod.c: Added fifth node on bipolar devices
      (Dietmar Warning) to support newer (adms) models. Updated number of
-     nodes for subcircuits. 
+     nodes for subcircuits.
 
 2006-02-19 Paolo Nenzi <p.nenzi@ieee.org>
 
- *   tests/bin/check.sh: added patch from Gary R. Van Sickle 
+ *   tests/bin/check.sh: added patch from Gary R. Van Sickle
      <g.r.vansickle@worldnet.att.net>. CYGWIN system is recognized as
      an UNIX flavour (for testing).
-     
+
 
 2006-02-17 Paolo Nenzi <p.nenzi@ieee.org>
 
- *   src/spicelib/devices/dev.c: Added support for adms devices (Dietmar 
+ *   src/spicelib/devices/dev.c: Added support for adms devices (Dietmar
      Warning). Devices implemented: hicum0 and mextram.
-     
+
 
 2006-02-16 Paolo Nenzi <p.nenzi@ieee.org>
 
  *   src/spicelib/devices/dev.c: removed EKV ifdefs. In future versions of
      ngspice EKV (and other models) will be introduced as verilog-a models.
-     
 
-2006-01-31 Paolo Nenzi <p.nenzi@ieee.org>: 
 
- *   Committed the admst tree from the adms system. Laurent Lamaitre 
+2006-01-31 Paolo Nenzi <p.nenzi@ieee.org>:
+
+ *   Committed the admst tree from the adms system. Laurent Lamaitre
      <r29173@users.sourceforge.net> sent the XML code needed to generate
      ready-to-compile C code conforming to ngspice api from Verilog-AMS
      compact model description.
-     
+
      Files changed: src/spicelib/devices/Makefile.am: added adms directory
                     to DIST_SUBDIRS target.
-     Files added: README.adms, src/spicelib/devices/adms/, 
+     Files added: README.adms, src/spicelib/devices/adms/,
                   src/spicelib/devices/adms/admst/,
 		  src/spicelib/devices/adms/admst/{COPYING,
 		  ngspiceMakefile.am.xml,ngspiceMODULEacld.c.xml,
 		  ngspiceMODULEask.c.xml, ngspiceMODULE.c.xml,
 		  ngspiceMODULEdefs.h.xml, ngspiceMODULEext.h.xml,
 		  ngspiceMODULEguesstopology.c.xml, ngspiceMODULEinit.c.xml,
-		  ngspiceMODULEinit.h.xml,ngspiceMODULEitf.h.xml, 
+		  ngspiceMODULEinit.h.xml,ngspiceMODULEitf.h.xml,
 		  ngspiceMODULEload.c.xml, ngspiceMODULEmask.c.xml,
 		  ngspiceMODULEmpar.c.xml, ngspiceMODULEpar.c.xml,
 		  ngspiceMODULEsetup.c.xml,ngspiceMODULEtemp.c.xml,
-		  ngspiceVersion.xml}	    
+		  ngspiceVersion.xml}
 
 
 2005-12-06  Dietmar Warning <warning@danalyse.de>
@@ -3994,79 +3999,79 @@ The modifications should not affect ngspice's function.
 
 2005-12-04  Paolo Nenzi <p.nenzi@ieee.org>
 
- *   src/spicelib/devices/bsim4/b4ld.c: As written by Dietmar, the changes 
+ *   src/spicelib/devices/bsim4/b4ld.c: As written by Dietmar, the changes
      introduced into this file around line 4015 - 4020 are wrong. Back to
      original Berkeley's code.
 
 2005-12-02  Paolo Nenzi <p.nenzi@ieee.org>
 
- *  src/maths/cmaths/test_cx_ph.c: added a missing include 
+ *  src/maths/cmaths/test_cx_ph.c: added a missing include
     (patch by Paul Reich).
-    
+
  *  src/maths/sparse/spconfig.h: removed include directive (ngspice.h).
-    
- *  src/frontend/numparam/general.h, src/maths/ni/niiter.c, 
-    src/spicelib/devices/csw/{cswload.c, cswmpar.c}, 
+
+ *  src/frontend/numparam/general.h, src/maths/ni/niiter.c,
+    src/spicelib/devices/csw/{cswload.c, cswmpar.c},
     src/spicelib/devices/hfet1/{hfetload.c, hfetsetup.c},
     src/spicelib/devices/hfet2/{hfet2load.c, hfet2setup.c},
-    src/spicelib/devices/hisim/hisim.h, src/spicelib/parser/ptfuncs.c: 
+    src/spicelib/devices/hisim/hisim.h, src/spicelib/parser/ptfuncs.c:
     partially applied Paul Reich patch that removed C++ style comments.
 
 
 2005-11-27  Paolo Nenzi <p.nenzi@ieee.org>
 
- *  Added manual page for ngmultidec. The man page has been written 
+ *  Added manual page for ngmultidec. The man page has been written
     by John Murdie.
 
 
 2005-11-13  Paolo Nenzi <p.nenzi@ieee.org>
- 
+
  *  src/spicelib/devices/bsim4/*: Updated bsim4 to version 4.5.0 using the
     code hacked by Hitoshi Tanaka and Dietmar Warning. Changes from original
     Berkeley's device group implementation:
     - Added multiplier parameter (m parameter).
     - Added NodeSet for internal nodes.
     - Removed #ifdef STDC and non STDC function prototypes
-    - Added missing "pParam->BSIM4ku0we" to fprintf in b4temp.c.    
- 
+    - Added missing "pParam->BSIM4ku0we" to fprintf in b4temp.c.
+
  *  src/spicelib/devices/bsim4/b4temp.c: fixed the following bug (Dietmar
     Warning):
-    
+
     - Freed old node adding FREE(model->pSizeDependParamKnot); near line 146.
-     
- *  src/spicelib/devices/bsim4/b4set.c: fixed the following bug (Dietmar 
+
+ *  src/spicelib/devices/bsim4/b4set.c: fixed the following bug (Dietmar
     Warning):
-    
-    - Removed double testing for model->BSIM4prtGiven.  
- 
+
+    - Removed double testing for model->BSIM4prtGiven.
+
  *  src/spicelib/devices/bsim4/b4ld.c: fixed the following bugs:
- 
+
     - In the computation of ggts and ggtd near line 4014 here->BSIM4gcrgd
       and here->BSIM4gcrgs were exchanged. (Dietmar Warning).
-    
+
     - In the computation of gcqdb and gcqsb near line 4019 here->BSIM4cqsb
-      and here->BSIM4cqdb were exchanged (Hitoshi Tanaka).  
-    
+      and here->BSIM4cqdb were exchanged (Hitoshi Tanaka).
+
 
 2005-11-07  Paolo Nenzi <p.nenzi@ieee.org>
 
  *  src/spicelib/devices/vbic/*: Dietmar Warning sent a patch to his last
     vbic implementation:
-     - Added temperature dependence for RB and RC, 
+     - Added temperature dependence for RB and RC,
      - fixed a bug in current sign (reversing vbei and vbci),
      - removed double allocation of substrate node.
-        
+
 
 2005-10-19  Steven Borley <steven.borley@virgin.net>
 
- * src/Makefile.am: Implemented fix to prevent 'multiple definition' errors 
+ * src/Makefile.am: Implemented fix to prevent 'multiple definition' errors
    during link of nghelp when built on systems that use the latest versions of
-   the GNU tools. Solution provided by Andreas Unger <a_unger@gmx.de>. 
+   the GNU tools. Solution provided by Andreas Unger <a_unger@gmx.de>.
 
 2005-10-15  Steven Borley <steven.borley@virgin.net>
 
-  * src/frontend/spiceif.c: Fixed code to avoid errors (invalid lvalue in 
-    assignment) under gcc v4.0.2 or and warnings under gcc 4.0.0 (target of 
+  * src/frontend/spiceif.c: Fixed code to avoid errors (invalid lvalue in
+    assignment) under gcc v4.0.2 or and warnings under gcc 4.0.0 (target of
     assignment not really an lvalue).
 
 2005-10-15  Steven Borley <steven.borley@virgin.net>
@@ -4080,7 +4085,7 @@ The modifications should not affect ngspice's function.
     that can occur when HAVE_TERMCAP is undefined.
 
   * src/spicelib/devices/isrc/isrcload.c and vsrcload.c: Implemented patches
-    supplied by Andreas Unger <a_unger@gmx.de>. Fixes XSpice bug; variable PER 
+    supplied by Andreas Unger <a_unger@gmx.de>. Fixes XSpice bug; variable PER
     was being used before initialisation.
 
 2005-09-19  Steven Borley <steven.borley@virgin.net>
@@ -4110,7 +4115,7 @@ The modifications should not affect ngspice's function.
 
 2005-09-08  Paolo Nenzi <p.nenzi@ieee.org>
 
-  *  src/frontend/streams.{c,h}: applied Hitoshi's fix for undefined 
+  *  src/frontend/streams.{c,h}: applied Hitoshi's fix for undefined
      symbols when compiling ngspice under Linux.
 
 
@@ -4138,29 +4143,29 @@ The modifications should not affect ngspice's function.
 
 2005-09-04  Paolo Nenzi <p.nenzi@ieee.org>
 
-  *  src/spicelib/devices/ltra/{ltraload.c, ltraacld.c, ltratrun.c}:    
-     Applied Hitoshi's patches to fix ltra code. The bug produced a 
-     "Timestep too small" in simulations and uninitialized variables 
+  *  src/spicelib/devices/ltra/{ltraload.c, ltraacld.c, ltratrun.c}:
+     Applied Hitoshi's patches to fix ltra code. The bug produced a
+     "Timestep too small" in simulations and uninitialized variables
      produced wrong results in some files under MinGW.
-     
-  *  src/spicelib/parser/inp2d.c:     
-     Fixed a bug that causes an "unknown parameter(save)" error if there 
+
+  *  src/spicelib/parser/inp2d.c:
+     Fixed a bug that causes an "unknown parameter(save)" error if there
      is the expression like the following in the netlist of Cider analysis.
 
      D1  1 2 M_PN AREA=100 save
      (Fix from Hitoshi Tanaka).
 
   *  src/frontend/streams.c:
-     Fix to a bug that caused crash when I input "listing" command after 
-     loading Cider examples under Ngspice compiled by Visual C++. 
+     Fix to a bug that caused crash when I input "listing" command after
+     loading Cider examples under Ngspice compiled by Visual C++.
      (Fix from Hitoshi Tanaka).
-          
-      
+
+
 
 2005-08-30  Paolo Nenzi <p.nenzi@ieee.org>
 
   ============================ Rework-17 ==================================
-  
+
   *  src/frontend/numparam/Makefile.am: added missing include that prevented
      its dist-ribution.
 
@@ -4169,25 +4174,25 @@ The modifications should not affect ngspice's function.
   ============================ Rework-16 ==================================
 
 
-2005-08-26  Paolo Nenzi <p.nenzi@ieee.org> 
+2005-08-26  Paolo Nenzi <p.nenzi@ieee.org>
 
   *  src/fronted/dotcards.c: expressions were not parsed correctly, the bug
      was in the offset from string base: corrected.
-     
+
 2005-08-23  Paolo Nenzi <p.nenzi@ieee.org>
 
   *  src/xspice/icm/xtradev/aswitch/cfunc.mod: Added minimum on resistance
-     for aswitch to avoid unreasonable high values (due to near zero 
+     for aswitch to avoid unreasonable high values (due to near zero
      resistance) in current of connected voltage source. Change supplied by
      Hitoshi Tanaka.
-     
+
   *  src/xspice/icm/{cfunc.mod}: updated cfunc.mod files. Changes sent by
-     Hitoshi Tanaka.   
+     Hitoshi Tanaka.
 
 2005-08-22  Paolo Nenzi <p.nenzi@ieee.org>
 
   *  src/frontend/plotting/x11.c: removed casting in a macro. It conflicts
-     with the strictier syntax of recent gcc compilers. 
+     with the strictier syntax of recent gcc compilers.
 
 2005-08-15  Steven Borley <steven.borley@virgin.net>
 
@@ -4213,11 +4218,11 @@ The modifications should not affect ngspice's function.
   *  Corrected many spelling errors in doc/ngspice.texi
 
 2005-08-08  Paolo Nenzi <p.nenzi@ieee.org>
-  
-  *    src/frontend/dotcards.c: Applied patch from Mike Waters 
+
+  *    src/frontend/dotcards.c: Applied patch from Mike Waters
        <M.Waters@bom.gov.au> to parse probes in the form:
-       vm(4,0) or vm(0,4). Where one of the nodes is ground ie. 0, if 
-       the probe is "v" everything works but anything else ie. "vm", "vp", 
+       vm(4,0) or vm(0,4). Where one of the nodes is ground ie. 0, if
+       the probe is "v" everything works but anything else ie. "vm", "vp",
        etc. fails.
 
 2005-08-06  Paolo Nenzi <p.nenzi@ieee.org>
@@ -4230,7 +4235,7 @@ The modifications should not affect ngspice's function.
 
   *   Fixed a bug in memory management of xspice/ngspice that caused
       segmentation fault for codemodels that adds their own states to
-      the state vector. Changes supplied by Hitoshi Tanaka 
+      the state vector. Changes supplied by Hitoshi Tanaka
       (HDA01055@nifty.com):
 
       * src/math/ni/niiter.c: removed the first malloc for OldCKTstate0
@@ -4245,7 +4250,7 @@ The modifications should not affect ngspice's function.
         unsetup function from NULL to MIFunsetup.
 
       * src/include/mifproto.h: added prototype for MIFunsetup.
-      
+
       * src/spicelib/analysis/cktsetup.c: cleared node if initial condition
         of nodeset are given to fix a segfaults on second run of xspice
         netlists.
@@ -4254,28 +4259,28 @@ The modifications should not affect ngspice's function.
 2005-06-30  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/frontend/resource.c: added IPC stuff
-  
+
   *   src/spicelib/parser/inpptree.c: fixed bug in power function.
 
 2005-06-25  Paolo Nenzi <p.nenzi@ieee.org>
 
-  *  src/spicelib/analysis/acan.c: modified original integration of xspice 
+  *  src/spicelib/analysis/acan.c: modified original integration of xspice
      event driven algorithm into spice3 code. Now CKTncDump() is used by
-     xspice too. 
+     xspice too.
 
   *  src/spicelib/analysis/cktdojob.c: added ipc stuff.
 
   *  src/spicelib/analysis/cktload.c: cosmetics.
 
-  *  src/spicelib/analysis/cktop.c: modularized the source and gmin stepping 
+  *  src/spicelib/analysis/cktop.c: modularized the source and gmin stepping
      algorithm. I have extracted the code for gmin and source stepping to
-     improve CKTop readability and maintainability. 
-     
+     improve CKTop readability and maintainability.
+
   *  src/spicelib/analysis/dcop.c: added event driven algorithm and ipc stuff.
 
   *  src/spicelib/analysis/dctran.c: added xspice breakpoint control.
 
-  *  src/spicelib/analysis/dctrcurv.c: added event driven algorithm and ipc 
+  *  src/spicelib/analysis/dctrcurv.c: added event driven algorithm and ipc
      stuff.
 
 
@@ -4292,30 +4297,30 @@ The modifications should not affect ngspice's function.
 2005-06-09  Steven Borley <steven.borley@virgin.net>
 
   *  Fixed *# command operation (src/frontend/inp.c)
-  
+
   *  Added 'hack' to allow the 'numparams' variable to be set (or unset) before
      the netlist part of a file is parsed. This is based on code supplied by
      Dietmar Warning, with  changes to allow it to work with the *# syntax, the
      unset keyword and variable amounts of white space. (src/frontend/inp.c)
-     
+
   *  line_free(line,flag) is now a macro so that line is set to NULL when it is
      freed. (src/frontend/inp.c) This is a safty mechnism.
 
 2005-05-31  Steven Borley <steven.borley@virgin.net>
 
   *  Applied fix for logging supplied by Dietmar Warning (src/main.c)
-  
+
   *  Miscellaneous tidying in src.main.c for format, indentation, #include
      style ("" vis-a-vis <>)  and removal of some compile time warnings.
 
 2005-05-30  Steven Borley <steven.borley@virgin.net>
-  
+
   *  Corrected return types (where necessary) for the functions that make up the
      devices[] array initialised in src/frontend/display.c, and used specific
      #includes rather than extern references. Added new headers as required.
-     
-  *  Moved jbuf from src/main.c to src/frontend/signal_handler.c 
-  
+
+  *  Moved jbuf from src/main.c to src/frontend/signal_handler.c
+
   *  Tidy up of the header files in src/frontend and sub-directories. Motivation
      is to remove extern declarations within .c files and place in .h files. New
      header files where necessary.
@@ -4324,28 +4329,28 @@ The modifications should not affect ngspice's function.
 
   *  Fix bug introduced in my last change. Fix supplied by Hitoshi Tanaka.
      Bug can cause a segmentation fault.
-     
+
   *  Fixed the format of section 5.3.37. Save* in src/ngsoice.txt
-  
+
   *  In src/frontend/plotting replaced extern references in .c files wiith
      #include of suitable header files.
-    
+
   *  Added src/frontend/numparam/numpaif.h for the external interface to the
      numparam library.
 
 2005-05-26  Steven Borley <steven.borley@virgin.net>
 
-  *  Fixed bug with define (see bug reference [ 999546 ] 'define' is broken 
+  *  Fixed bug with define (see bug reference [ 999546 ] 'define' is broken
      in ngspice-15).
-     
-  *  Fixed bug with 'plot title title_name' (see bug [ 557638 ] plot 
+
+  *  Fixed bug with 'plot title title_name' (see bug [ 557638 ] plot
      segmentation fault).
 
 2005-05-23  Steven Borley <steven.borley@virgin.net>
 
   *  Fixed a divide-by-zero bug in the MOS level=2 device model
      the fix was supplied by Hitoshi Tanaka.
-     
+
   *  Fixed a 'core-dump' that could be caused by the interactive 'write' command
      when the plot contains more than one dimension. This was due to improper
      use of a buffer in rawfile.c as pointed out by Dietmar Warning. Bug also
@@ -4421,7 +4426,7 @@ The modifications should not affect ngspice's function.
      Fix to src/maths/cmaths/Makefile.am to exclude test programs that don't
      compile under MinGW. Fix to src/spicelib/devices/dev.c to exclude local
      isnan() when it exists as a library function.
-     
+
   *  Fixes to src/Makefile.am to exclude programs that don't compile under
      Windows (MinGW). Fix to avoid dependence problem with linking in winmain.o
 
@@ -4432,7 +4437,7 @@ The modifications should not affect ngspice's function.
      tidy with the aim of following guidelines in the autoconf manual. Fixed an
      issue with CFLAGS usage and --disable-debug. Some fixes aimed as support
      for MinGW (more to follow).
-     
+
   *  Removed acconfig.h (see above for reason).
 
   *  Updated various file to allow build using MinGW. Affected files: src/main.c,
@@ -4447,13 +4452,13 @@ The modifications should not affect ngspice's function.
 2005-05-11  Steven Borley <steven.borley@virgin.net>
 
   *  Changed line-ending on several files from DOS to UNIX.
-  
+
   *  Translated German in to English in comments for several files
      (where the German was simple and meaning clear from the context
       - and Babel fish helped too). This also removes the non-ASCII
       characters from these files, which was giving problems on
       at least one platform.
-      
+
   *  In the above files I have also replaced c++ comment style with
      c comments (i.e. // go to /* ... */).
 
@@ -4466,7 +4471,7 @@ The modifications should not affect ngspice's function.
         as these devices are only used when CIDER is defined but it keeps
         symmetry with other devices.
       - Added some extra TRACE debug statments in in the parser
-  
+
   *  Added conditional on the ngspice program to prevent errors when spiceinit
      file is used with ngnutmeg (spiceinit.in)
 
@@ -4475,20 +4480,20 @@ The modifications should not affect ngspice's function.
   *  src/spicelib/devices/isrc/*,src/spicelib/devices/vsrc/*: added
      XSPICE extensions: PHASE parameter and current in isrc. Added AM
      transient function (Amplitude Modulation):
-     
+
         AM (sig_ampl offset_const mod_freq carrier_freq t_delay)
-     
+
         The waveform will follow:
-     
+
         value = sig_ampl*{offset_const + SIN(2*PI*mod_freq*(t-t_delay))}*
                 SIN(2*PI*carrier_freq*(t-t_delay))
-       
+
         As an example you can use:
-      
-              V1 1 0 AM(10 1 1K 100 1M) 
+
+              V1 1 0 AM(10 1 1K 100 1M)
 
               R1 1 0 1
-      
+
 2005-05-09  Steven Borley <steven.borley@virgin.net>
 
   *  Added new syntax to the the resistor card to support HSpice style
@@ -4498,21 +4503,21 @@ The modifications should not affect ngspice's function.
        Rxxx <n1> n2> <val> TC1=<val1>
        Rxxx <n1> n2> <val> TC1=<val1> TC2=<val2>
        Rxxx <n1> n2> <val> TC=<val1> <val2>
-     The the first pair are equivalent, and the last pair are equivalent.     
+     The the first pair are equivalent, and the last pair are equivalent.
 
 2005-05-07  Steven Borley <steven.borley@virgin.net>
 
   *  Added support for the BSD licensed editline library
      This includes a work-around to fix a problem found in the current version
      of this library (see prompt() in src/main.c).
-     
+
   *  Added and updated infomation in the INSTALL file.
 
 2005-05-06  Steven Borley <steven.borley@virgin.net>
 
   *  Added code by by H.Tanaka for the .global keyword. This is enabled by
      supplying the new --enable-dot-global argument to ./configure.
-     
+
   *  Also added configuration for a new --with-editline=yes|no argument to
      ./configure for future support of the BSD editline library as an
      alternative to the GNU readline library.
@@ -4528,10 +4533,10 @@ The modifications should not affect ngspice's function.
       and src/include/cpextern.h) - a format problem when used with readline and
       a buffer overrun. Also reduced max number of chevrons to 16 and added + at
       start when command stack is holding than 16.
-  
+
   *   Translations for German comments provided by Dietmar Warning, to fix
       issue with UTF-8 observed on Windows (src/main.c)
-      
+
   *   Fixed readline operation within ngnutmeg (src/main.c). Also include some
       minor tidy-up to avoid some compiler warnings. Updated copyright date
       for --help.
@@ -4539,18 +4544,18 @@ The modifications should not affect ngspice's function.
 2005-04-29  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/frontend/inpcom.c: end-of-line comments starting with
-      the "$" (dollar) sign can be confused with a variable. To 
+      the "$" (dollar) sign can be confused with a variable. To
       avoid this, the new syntax for such and-of-line comment is:
-        $ <any comment> (the space is mandatory). 
+        $ <any comment> (the space is mandatory).
       Patch sent from Steven Borley <steven.borley@diode.demon.co.uk>.
-      
+
 
 2005-04-26  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/main.c, src/frontend{inp.c, nutinp.c}, src/include/defines.h:
-      New logic for ngspice initialization (patch from Steven Borley 
+      New logic for ngspice initialization (patch from Steven Borley
       <steven.borley@diode.demon.co.uk>):
-      
+
               Load the standard start up file 'spinit'
               Then look for '.spiceinit' in current directory
               If this fails look for 'spice.rc' in currect directory
@@ -4558,38 +4563,38 @@ The modifications should not affect ngspice's function.
               if HOME is set then:
                 Look for for '.spiceinit' in user's home directory
                 If this fails look for 'spice.rc' in user's home directory.
-       
-       Fixed a memory leak in main.c   
-  
+
+       Fixed a memory leak in main.c
+
   *  src/include/{complex.h, fteext.h, ngspice.h, sperror.h}:
      code cleaning and removed some warning (patch from Steven Borley).
-    
+
 2005-04-25  Paolo Nenzi <p.nenzi@ieee.org>
 
-  *   src/frontend/numparam/{general.h, numparam.h, nupatest.c, 
+  *   src/frontend/numparam/{general.h, numparam.h, nupatest.c,
       spicenum.c, washprog.c, xpressn.c}: Applied patch from Steven
       Borley <steven.borley@virgin.net>. The patch removed the numparam
       support for end-of-line comments and moved it into frontend code.
       Line buffer for numparam is increased from 250 to 1000 to accomodate
       large model cards. Fixed compilation on Cygwin and MacOSX.
-  
-  *   src/frontend/subckt.c: numparams, once compiled in, must be 
+
+  *   src/frontend/subckt.c: numparams, once compiled in, must be
       enabled, during interactive session, using "set numparams". Since
       library is experimental and under continuos testing, it is not
       yet intended for general use and support is provided for interactive
-      sessions only (patch from Steven Borley). 
-      
-  *   src/frontend/{device.c, spiceif.c}: fixed case sensitivity problems 
+      sessions only (patch from Steven Borley).
+
+  *   src/frontend/{device.c, spiceif.c}: fixed case sensitivity problems
       in key-word identification (patch from Steven Borley).
-  
+
   *   src/frontend/inp.c: Fix a bug where the wrong argument to 'listing'
       would error, but still produce a listing (patch from Steven Borley).
-      
+
   *   src/frontend/inpcom.c: From Steven Borley <steven.borley@virgin.net>
       patch:
-        End-of-line comments have been fixed and can be used on a line 
-        that is followed by a continuation line.  This functionality 
-        has been moved from the numparams library and in to the front 
+        End-of-line comments have been fixed and can be used on a line
+        that is followed by a continuation line.  This functionality
+        has been moved from the numparams library and in to the front
         end code. All the following can be used to start a comment:
                ;       for compatibility with PSpice
                $       for compatibility with HSpice
@@ -4597,53 +4602,53 @@ The modifications should not affect ngspice's function.
                --      as per numparams
               This was a full re-write of this code, not a conversion of the
         numparams code. It is not dependent on the numparams library.
-  
+
   *   src/frontend/resource.c:  Fixed a compile bug under window & cygwin
       (patch from Steven Borley).
-      
-  *   src/frontend/plotting/x11.c: Applied patch from Steven Borley. 
-  
+
+  *   src/frontend/plotting/x11.c: Applied patch from Steven Borley.
+
   *   src/spicelib/analysis/cktsetbk.c: Added some code to track
       breakpoints (you need to define TRACE_BREAKPOINT macro).
-            
+
 
 2005-04-16  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/frontend/{subckt.c, inpcom.c}, src/frontend/numparam/{general.h,
        mystring.c, readme.txt, spicenum.c, xpressn.c}: Applied patch from
        Steven Borley <steven.borley@virgin.net> that fixed numparam
-       library. Patch description follow (extracted from Steven's 
+       library. Patch description follow (extracted from Steven's
        message):
-       
-       > Fixes problem with logfile not being opened before we have 
+
+       > Fixes problem with logfile not being opened before we have
          something to write to it,
-             > Renamed round() and trunc() to avoid clash with functions in 
+             > Renamed round() and trunc() to avoid clash with functions in
          math.h,
              > Numparam now only stops execution when it finds errors,
              > Added some debug tracing (normally off),
              > Added some debug tracing (normally off),
              > Fixes a #ifdef that had a typo and thus stopped numparams,
          working,
-             > Renames a local variable to avoid confusion (of the 
+             > Renames a local variable to avoid confusion (of the
                developer/maintainer),
              > Fixes the renumbering of lines from a .include file.
-       
+
   *    examples/numparam/{example.cir, pintest.cir,pin.mod}: added
        netlists sent with Steven's patch.
-  
 
-  *   src/frontend/subckt.c: Added fix sent by Hitoshi Tanaka 
+
+  *   src/frontend/subckt.c: Added fix sent by Hitoshi Tanaka
       <HDA01055@nifty.com>. Now nodes starting with the letter "v"
       in subcircuits are translated correctly (as internal nodes)
       and not as voltage sources v<NIL>.
-      
+
   *   src/xspice/cmpp/pp_lst.c: malloc did not consider the null
       terminating character in "path". Applied patch from Mac OSX
       patch file maintained by Khairulmizam Samsudin <kmbs2002@yahoo.com>.
-      
-  *   src/xspice/icm/makedefs.in: Mac OSX requires different flags 
-      for shared libraries linking. Applied patch from Mac OSX patch 
-      file maintained by Khairulmizam Samsudin <kmbs2002@yahoo.com>.      
+
+  *   src/xspice/icm/makedefs.in: Mac OSX requires different flags
+      for shared libraries linking. Applied patch from Mac OSX patch
+      file maintained by Khairulmizam Samsudin <kmbs2002@yahoo.com>.
 
 2005-04-06  Paolo Nenzi <p.nenzi@ieee.org>
 
@@ -4657,19 +4662,19 @@ The modifications should not affect ngspice's function.
       name translation that shows in nested subckts reported by
       Hitoshi Tanaka <HDA01055@nifty.com> (for which he sent a patch that
       was supersed by Steven's one).
-      
+
   *   configure.in: As Stuart Brorson suggested now the garbage collector
-      library is compiled only on explicit request by the user.     
+      library is compiled only on explicit request by the user.
 
 2005-03-20  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/spicelib/analysis/cktntask.c: The default parallel
-      multiplier (m=1) for  mosfet levels 1, 2, 3 and 9 was not set 
-      in interactive analyses. Applied fix sent by Steven Borley 
+      multiplier (m=1) for  mosfet levels 1, 2, 3 and 9 was not set
+      in interactive analyses. Applied fix sent by Steven Borley
       <steven.borley@diode.demon.co.uk>.
-      
+
   *   Changed value of trtol to 1 when xspice extensions are compiled
-      (as in xspice source code).    
+      (as in xspice source code).
 
 2005-03-17  Paolo Nenzi <p.nenzi@ieee.org>
 
@@ -4678,25 +4683,25 @@ The modifications should not affect ngspice's function.
       declaration application_name and gnu_history_file, removed the
       "static" keyword in shutdown() and set NULL as return value in
       function prompt() when non prompt is passed to readline().
-      
-  *   src/ngspice.txt: Applied patch sent by Steven Borley 
-      <steven.borley@diode.demon.co.uk> that fixed a few errors that 
+
+  *   src/ngspice.txt: Applied patch sent by Steven Borley
+      <steven.borley@diode.demon.co.uk> that fixed a few errors that
       corrupted text output.
-      
-  *   configure.in:   Applied patch sent by Steven Borley 
+
+  *   configure.in:   Applied patch sent by Steven Borley
       <steven.borley@diode.demon.co.uk> that fixes compiler warnings
-      on MAC OSX (related to the linking order of X libraries). The 
-      remaining changes fix errors in spelling. 
-      
-  *   tests/bin/check.sh: Applied patch sent by Steven Borley 
+      on MAC OSX (related to the linking order of X libraries). The
+      remaining changes fix errors in spelling.
+
+  *   tests/bin/check.sh: Applied patch sent by Steven Borley
       <steven.borley@diode.demon.co.uk> that added support for Mac OSX
       and a default case for not (yet) supported architectures.
-      
-  *   src/frontend/aspice.c: Applied patch sent by Steven Borley 
-      <steven.borley@diode.demon.co.uk> that fixed compiler warnings on 
+
+  *   src/frontend/aspice.c: Applied patch sent by Steven Borley
+      <steven.borley@diode.demon.co.uk> that fixed compiler warnings on
       Mac OSX in definition of "status".
-      
-  *   src/spicelib/devices/bsim3/b3set.c: Applied patch sent by Steven 
+
+  *   src/spicelib/devices/bsim3/b3set.c: Applied patch sent by Steven
       Borley <steven.borley@diode.demon.co.uk> that remove the compiler
       warnings about ambiguous "else".
 
@@ -4704,11 +4709,11 @@ The modifications should not affect ngspice's function.
 
   *   tests/bin/check.sh: Changed the previous check script with the one
       supplied by Dietmar warning <warning@danalyse.de>. This new script
-      adds support for different architectures (MINGW32, Linux, SunOS). 
-  
+      adds support for different architectures (MINGW32, Linux, SunOS).
+
   *   src/spicelib/device/vbic/vbicpzld.c: Corrected an error in pole-zero
       routine. Dietmar Warning <warning@danalyse.de> sent the fix.
-       
+
 2005-03-07  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/spicelib/devices/bsim4/b4ld.c: commented out NEWCONV section.
@@ -4717,26 +4722,26 @@ The modifications should not affect ngspice's function.
 
   *   src/spicelib/devices/bsim4: removed uninitialized variables in model
       files.
-  
+
   *   src/spicelib/analysis/dctrcurv.c: Dietmar Warning
       <warning@danalyse.de> has changed the way the lst point in a dc
-      sweep is computed. This new scheme is more accurate.    
-    
+      sweep is computed. This new scheme is more accurate.
+
 
 2005-02-28  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   DEVICES: Updated (again) changing BSIM4 level from 60 to 14 since
       older model revisions are not yet in ngspice. This is consistent
       with model developers: newer models are compatible with older ones.
-      
+
   *   src/spicelib/devices/bsim4/: updated to revision 4.4.0 with "m"
       parallel multiplier enhancements. Thanks to Mick Tooher
       <micktooher@yahoo.com> and Dietmar Warning <warning@danalyse.de> for
       this update.
-  
+
   *   tests/bsim4/: updated test files for bsim4 4.4.0. The old files have
       been replaced with new ones coming from BSIM4 site.  There are new
-      tests: (*_gedl*) and ro_17.cir.         
+      tests: (*_gedl*) and ro_17.cir.
 
 2005-02-25  Paolo Nenzi <p.nenzi@ieee.org>
 
@@ -4754,58 +4759,58 @@ The modifications should not affect ngspice's function.
   *   src/spicelib/devices/jfet/jfet.c: model type (njf or pjf) was
       defined as input/output parameter. Now is an input-only parameter,
       as in other models.
-      
+
   *   tests/jfet/jfet_vds-vgs.out: Corrected the output after the change
       in jfet.c. With the old code the number associated to njf or pjf
       (meaningless) changed each run of ngspice and caused the check
       process to fail.
-      
+
   *   src/spicelib/devices/mesa/mesa.c: model type was reported
       incorrectly. Declared parameter vt0 as "redundant", since it has
       the same meaning of vto.
-  
+
   *   tests/mesa/mesa11.out: changed test file output according to
-      changes in mesa.c. Now model type ic correct.        
-       
+      changes in mesa.c. Now model type ic correct.
+
 
 2004-09-01  Paolo Nenzi <p.nenzi@ieee.org>
-  
+
   *   src/conf.c: Modified bug reports address. Now it points to a
       mailing list dedicated to bug reports.
-      
+
 
 2004-08-29  Paolo Nenzi <p.nenzi@ieee.org>
 
-  *   src/fronted/aspice.c: Added a define for FreeBSD (from 
+  *   src/fronted/aspice.c: Added a define for FreeBSD (from
       FreeBSD ports archive).
 
 
 2004-08-22  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/xspice/enhtrans.c: Removed code introduced by Stuart Brorson to
-      limit parsing of POLY statements to dimension 2. Now functions 
+      limit parsing of POLY statements to dimension 2. Now functions
       returns a copy of the error strings that i freed by higher level
       code once processed and write the error on the expanded netlist (as
       comments) instead of expanded lines (this fixes a segmentation fault
-      since INPpas1() does not check if the returned line is not null and 
-      makes expanded netlist more informative). 
+      since INPpas1() does not check if the returned line is not null and
+      makes expanded netlist more informative).
 
 2004-08-20  Paolo Nenzi <p.nenzi@ieee.org>
-  
-  *   src/frontend/{gens.h, gens.c, device.c}: Committed another Vera 
+
+  *   src/frontend/{gens.h, gens.c, device.c}: Committed another Vera
       Albrecht's patch for the "show" command. This closes the bug
       definitively.
-      
-  *   src/include/{cktdefs.h, dgen.h, ftedebug.h, missing_math.h, 
-      ngspice.h, noisedef.h, sensdef.h}, 
-      src/spicelib/analysis/{ckt.h, ckti2nod.c}: committed Vera 
-      Albrecht patch to remove some compiler warnings. 
+
+  *   src/include/{cktdefs.h, dgen.h, ftedebug.h, missing_math.h,
+      ngspice.h, noisedef.h, sensdef.h},
+      src/spicelib/analysis/{ckt.h, ckti2nod.c}: committed Vera
+      Albrecht patch to remove some compiler warnings.
 
 
 2004-08-16  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/frontend/{device.c, gens.c}: Committed Vera Albrecht's patch
-      to the "show command" I closed on 2004-08-13. Vera's patch is 
+      to the "show command" I closed on 2004-08-13. Vera's patch is
       better.
 
 
@@ -4819,68 +4824,68 @@ The modifications should not affect ngspice's function.
 
   *   src/main.c: The code for -o option contained an error that
       prevented the correct operation of output redirection. The
-      masking #ifdef has been changed to #ifndef. 
+      masking #ifdef has been changed to #ifndef.
 
 2004-08-13  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/frontend/device.c: "show" command leaked 28 bytes for each
       group of words since an allocated pointer in line 33 of gens.c
-      was never freed. It is not possible to free allocated memory 
+      was never freed. It is not possible to free allocated memory
       using that pointer since it is used and its value altered. I
       used "listdg" copying original pointer value to it and freeing
-      memory using "listdg" instead. There were sone "tfree" that 
-      caused problems for incorrect inputs, I have removed them and  
-      tested against some bad syntax. Results shows no leaks. 
-  
+      memory using "listdg" instead. There were sone "tfree" that
+      caused problems for incorrect inputs, I have removed them and
+      tested against some bad syntax. Results shows no leaks.
+
   *   src/spicelibe/devices/{res/resparam.c, cap/capparam.c,
       ind/indparam.c}: Fixed a bug introduced with m and acResistance
-      parameters. Since show command works as soon as a circuit is 
+      parameters. Since show command works as soon as a circuit is
       loaded, before any call to DEVsetup or DEVtemp is made, some
-      parameters, in this early call showed incorrect results. 
+      parameters, in this early call showed incorrect results.
       Simulations are not affected by this bug, but it is annoying.
       Now principal parameters are display correctly.
-  
+
   *   src/spicelib/analysis/cktncdump.c: fixed a typo that prevents
-      compilation on some systems.      
+      compilation on some systems.
 
 2004-08-09  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   Updated and corrected test files in "tests" directory. Added
       "examples" directory.
-      
-  *   src/spicelib/devices/bsim3/b3set.c: Added Dietmar Warning 
-      <warning@danalyse.de> patch to solve a bug that shows up when 
-      acm=2 was used. From Dietmar's mail message: 
-        if we use the acm=2 option we must set the nrd and nrs 
-        defaults to 0.
-  
-  *   src/spicelib/devices/mos3/mos3temp.c: As suggested by Dietmar 
-      Warning <warning@danalyse.de> I removed the >1um limit for the 
-      model.    
 
- 
+  *   src/spicelib/devices/bsim3/b3set.c: Added Dietmar Warning
+      <warning@danalyse.de> patch to solve a bug that shows up when
+      acm=2 was used. From Dietmar's mail message:
+        if we use the acm=2 option we must set the nrd and nrs
+        defaults to 0.
+
+  *   src/spicelib/devices/mos3/mos3temp.c: As suggested by Dietmar
+      Warning <warning@danalyse.de> I removed the >1um limit for the
+      model.
+
+
 2004-07-08  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   Applied Al Niessner <Al.Niessner@jpl.nasa.gov> negabyte patch
-      that removed all compiler warnings. 
-      
+      that removed all compiler warnings.
+
   *   configure.in, src/xspice/icm/makedefs.in, tests/Makefile.am,
-      xgraph/aclocal.m4, xgraph/configure.in, xgraph/configure: updated 
+      xgraph/aclocal.m4, xgraph/configure.in, xgraph/configure: updated
       configuration files for autoconf V2.59 automake V1.8.
 
 2004-07-05  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/frontend/resource.c: added __APPLE__ for mac osx support as in
       patch sent by Khairulmizam Samsudin <kmbs@hotmail.com>
-  
+
   *   src/spicelib/parser/inpdomod.c: fixed some typos as in patch
       sent by Khairulmizam Samsudin <kmbs@hotmail.com>
-      
+
 2004-06-22  Paolo Nenzi <p.nenzi@ieee.org>
 
-  *   src/spicelib/devices/vbic: Vbic code updated. Thanks to Dietmar 
-      Warning (warning@danalyse.de )now we have the four terminal 
-      version of the VBIC model. The old three terminal version has 
+  *   src/spicelib/devices/vbic: Vbic code updated. Thanks to Dietmar
+      Warning (warning@danalyse.de )now we have the four terminal
+      version of the VBIC model. The old three terminal version has
       been discarded.
 
 2004-06-21  Paolo Nenzi <p.nenzi@ieee.org>
@@ -4888,20 +4893,20 @@ The modifications should not affect ngspice's function.
   *   src/frontend/subckt.c: patch from Stuart Brorson
       <sdb@cloud9.net>. This patch adresses the following
       problem (as written by Stuart):
-      Modified modtranslate and devmodtranslate to fix bug noticed 
-      by Liu:  codemodel names called out in the device instantiation 
-      line ("A1 1 2 3 4 lim") were not translated correctly if they 
-      were invoked inside a .subckt.  Fix involved explicitly adding 
-      code to handle "A" device types when translating the line.  
-      SDB 6.18.2004.      
-      
+      Modified modtranslate and devmodtranslate to fix bug noticed
+      by Liu:  codemodel names called out in the device instantiation
+      line ("A1 1 2 3 4 lim") were not translated correctly if they
+      were invoked inside a .subckt.  Fix involved explicitly adding
+      code to handle "A" device types when translating the line.
+      SDB 6.18.2004.
+
 
 2004-05-30  Paolo Nenzi <p.nenzi@ieee.org>
 
-  *   src/frontend/subckt.c: patch from Dietmar Warning 
-      (warning@danalyse.de) to fix memory errors when using very 
+  *   src/frontend/subckt.c: patch from Dietmar Warning
+      (warning@danalyse.de) to fix memory errors when using very
       long model card.
-      
+
       src/spicelibe/devices/vbic/vbicsetup.c: patch from Dietmar Warning
       (warning@danalyse.de) to fix vbic behavior.
 
@@ -4919,10 +4924,10 @@ The modifications should not affect ngspice's function.
 
 2004-02-10  Paolo Nenzi <p.nenzi@ieee.org>
 
-  *   src/frontend/inpcom.c: Applied patch from Dietmar Warning 
-      to solve the bug discovered by Jelle Haandrikman: wrong 
+  *   src/frontend/inpcom.c: Applied patch from Dietmar Warning
+      to solve the bug discovered by Jelle Haandrikman: wrong
       subcircuit expansion when leading spaces are present in the
-      subcircuit netlist. 
+      subcircuit netlist.
 
 2004-01-28  Paolo Nenzi <p.nenzi@ieee.org>
 
@@ -4932,17 +4937,17 @@ The modifications should not affect ngspice's function.
 
   *   configure.in: changed version to rework15-pre3 and other
       small changes for release.
-  
+
   *   AUTHORS, FAQ: Updates
 
-  *   src/spicelib/devices/bjt/bjtpzld.c, 
+  *   src/spicelib/devices/bjt/bjtpzld.c,
       src/spicelib/devices/bjt2/bjt2pzld.c: there was an error
       in the pole-zero routine. The collector resistance was
       loaded into the matrix instead of the condictance.
 
         *   inpdomod.c: Updated HiSIM level to 64.
 
-  *   src/spicelib/devices/vbic/*, src/Makefile.am, 
+  *   src/spicelib/devices/vbic/*, src/Makefile.am,
       src/spicelib/devices/dev.c, src/spicelibe/parser/inp2q.c,
       src/spicelib/parser/inpdomod.c,src/spicelib/devices/Makefile.am,
       tests/vbic, contrib/vbic, DEVICES: Added VBIC model from
@@ -4954,7 +4959,7 @@ The modifications should not affect ngspice's function.
   *   DEVICES: updated isrc an vsrc status
 
   *   src/spicelib/devices{isrc,vsrc}: Cleaned up code
-      
+
 
   *   tests/cider: Added example files for cider simulator.
 
@@ -4967,13 +4972,13 @@ The modifications should not affect ngspice's function.
 2004-01-23  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   xgraph: Added xgraph plotting program. It can be added to
-      the ngspice binaries by adding --enable-xgraph in the 
-      configuration phase. 
+      the ngspice binaries by adding --enable-xgraph in the
+      configuration phase.
 
 2004-01-21  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/include/ifsim.h, src/include/cktdefs.h, src/frontend/spiceif.c,
-      src/frontend/shyu.c, src/spicelib/cktntask.c: Applied the options 
+      src/frontend/shyu.c, src/spicelib/cktntask.c: Applied the options
       patch made by Charles Williams <C.D.H.Williams@exeter.ac.uk>
 
 2004-01-20  Paolo Nenzi <p.nenzi@ieee.org>
@@ -4986,15 +4991,15 @@ The modifications should not affect ngspice's function.
 
   *   src/spicelib/devices/csw/*, src/spicelib/devices/sw/*: cleaned
       up the code.
-      
-  *   DEVICES: updated switches status.    
+
+  *   DEVICES: updated switches status.
 
 2004-01-14  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/spicelib/devices/txl/*: Added TXLunsetup function to allow
-      for multiple simulations. 
-  
-  *   DEVICES: Updated txl status. 
+      for multiple simulations.
+
+  *   DEVICES: Updated txl status.
 
 2004-01-11  Paolo Nenzi <p.nenzi@ieee.org>
 
@@ -5013,17 +5018,17 @@ The modifications should not affect ngspice's function.
       util.h}
       src/{main.c, nghelp.c, ngmultidec.c}
       configure.in:
-      
+
       Applied Stuart's patch tclspice-0.2.14_12-03-2003.diff.gz but
-      with libreadline disabled by default. (Stuart Brorson 
+      with libreadline disabled by default. (Stuart Brorson
       <sdb@cloud9.net>).
 
-  *   Fixed makefiles in src/xspice/icm and src/xspice/cmpp to make 
+  *   Fixed makefiles in src/xspice/icm and src/xspice/cmpp to make
       distclean without barfing. (Stuart Brorson <sdb@cloud9.net>).
 
-  *   configure.in 
+  *   configure.in
       src/xspice/cmpp/Makefile src/xspice/cmpp/Makefile.in:
-      Make configure automatically set paths for lex yacc and 
+      Make configure automatically set paths for lex yacc and
       install dir (Stefan Jones <stefan.jones@multigig.com>).
 
   *  src/Makefile.am Makefile.am README.Tcl
@@ -5036,20 +5041,20 @@ The modifications should not affect ngspice's function.
      Remove linux specific includes which are not needed
      (Stefan Jones <stefan.jones@multigig.com>).
 
-  *  src/xspice/{Makefile.am,xspice.c} 
+  *  src/xspice/{Makefile.am,xspice.c}
      src/xspice/cm/{cmexport.c,Makefile.am}:
      Moved the xspice library hooks into the cm directory
      (Stefan Jones <stefan.jones@multigig.com>).
 
   *  src/xspice/enh/enhtrans.c src/xspice/mif/mif_inp2.c:
-     Fixed version from Stuart Brorson <sdb@cloud9.net>, 
+     Fixed version from Stuart Brorson <sdb@cloud9.net>,
      http://www.brorson.com/gEDA/ngspice/
 
   *  src/spinit, arc/spinit.in, configure.in: parametrized spinit paths
      for codemodel devices.
 
   *  src/Makefile.am, src/ngspice.idx: removed ngspice.idx
-     and make it auto-generated and installed 
+     and make it auto-generated and installed
      (Stefan Jones <stefan.jones@multigig.com>).
 
   *  src/frontend/aspice.c: Added #ifdef for SOLARIS.
@@ -5059,24 +5064,24 @@ The modifications should not affect ngspice's function.
   *  src/spicelib/devices/cpl/*: Added CPLask and CPLmAsk functions to
      access device's internals. Added CPLunsetup function to allow
      for multiple simulations.
-     
-  *  DEVICES: updated with cpl changes.       
+
+  *  DEVICES: updated with cpl changes.
 
 2003-12-31  Paolo Nenzi <p.nenzi@ieee.org>
 
         *  src/spicelib/devices/tra/*: Cleaned code.
-  
+
   *  src/spicelib/devices/ltra/*: Cleaned code.
-  
+
   *  src/spicelib/devices/urc/*: Cleaned code.
 
         *  tests/transmission/{cpl*, txl*, ibm*}: Added test files for the
-     kspice's cpl and txl devices. 
-  
+     kspice's cpl and txl devices.
+
   *  src/spicelib/devices/cpl/*: Cleaned the cpl code.
-  
+
   *  src/spicelib/devices/txl/*: Cleaned the txl code.
-  
+
   *  src/frontend/subckt.c, src/spicelib/analysis/cktdojob.c,
      src/spicelib/analysis/dctran.c: added some txl an cpl specific
      code from kspice.
@@ -5085,7 +5090,7 @@ The modifications should not affect ngspice's function.
      pole-zero analysis and parallel code switches.
 
   *  src/spicelib/devices/mes/*: Added parallel multiplier.
-  
+
   *  tests/mes, tests/mes/subth.cir: added test netlist for mes devices.
 
   *  DEVICES: updated documentation including MES, MESA, CPL, TXL, TRA,
@@ -5094,40 +5099,40 @@ The modifications should not affect ngspice's function.
 2003-12-30  Paolo Nenzi <p.nenzi@ieee.org>
 
         * src/spicelibe/devices/hfet2/*: Added parallel multiplier and "dtemp"
-    parameters. Added pole-zero analysis and parallel code switches. 
-  
+    parameters. Added pole-zero analysis and parallel code switches.
+
   * src/spicelib/devices/jfet/jfetpzld.c: gspr and gdpr were initialized
     with Resist and not Conduct, corrected!
 
   * src/spicelib/devices/hfet1/*: Added parallel multiplier and "dtemp" to
     the code. Added the pole-zero analysis and parallel code checks.
     Corrected a bug in the unsetup function that caused a segfault.
-  
+
   * tests/hfet/, tests/hfet/id_vgs.cir, tests/inverter.cir: added hfet
     test netlists.
-    
-  * DEVICES: updated hfet1 status.  
+
+  * DEVICES: updated hfet1 status.
 
 2003-12-27  Paolo Nenzi <p.nenzi@ieee.org>
 
   * src/spicelib/devices/jfet2/*: Added parallel multiplier and "dtemp"
     parameter. Added Alan's CopyNodeSet, and inserted a missing
     instruction in JFET2temp (for parallel code).
-  
+
   * DEVICES: Updated documentation for JFET2 model
-    
+
 2003-12-26  Paolo Nenzi <p.nenzi@ieee.org>
 
   * src/spicelib/devices/jfet/*: Added parallel multiplier and
     "dtemp" parameter.
-    
+
   * src/spicelib/devices/jfet/jfetload.c: reintroduces the old model
     code, superseded by Sydney code (Parker Skellern). The code is
-    not used but is left as reference.   
-  
+    not used but is left as reference.
+
   * DEVICES: Updated jfet status
-  
-  * tests/jfet, tests/jfet/jfet_vds-vgs.cir: added jfet directory 
+
+  * tests/jfet, tests/jfet/jfet_vds-vgs.cir: added jfet directory
     and one netlist.
 
 2003-12-24  Paolo Nenzi <p.nenzi@ieee.org>
@@ -5135,67 +5140,67 @@ The modifications should not affect ngspice's function.
   * src/maths/cmaths/cmath4.c: Applied
   Vera Albrecht patch to enable interpolate
   function.
-  
+
   * src/frontend/{come_let.c, control.c, evaluate.c, outitf.c, parse.c},
     src/frontend/parser/lexical.c: Applied Vera Albrecht patch that
-    fixes ngspice bugs in its control language (c shell). 
+    fixes ngspice bugs in its control language (c shell).
 
 2003-12-08  Paolo Nenzi <p.nenzi@ieee.org>
 
-  * src/spicelib/devices/mos9/*: Added 
+  * src/spicelib/devices/mos9/*: Added
           "dtemp" parameters.
 
-        * DEVICES: Updated MOS9 status. 
+        * DEVICES: Updated MOS9 status.
 
 2003-12-08  Paolo Nenzi <p.nenzi@ieee.org>
 
   * src/spicelib/devices/mos6/*: Added "m"
           "dtemp" parameters.
 
-        * DEVICES: Updated MOS6 status. 
+        * DEVICES: Updated MOS6 status.
 
 2003-11-22  Paolo Nenzi <p.nenzi@ieee.org>
 
-  * src/spicelib/devices/bsim2/*: Added "m" 
-    parameter and noise routine. 
-  
-  * DEVICES: Updated file with bsim2 changes.  
+  * src/spicelib/devices/bsim2/*: Added "m"
+    parameter and noise routine.
+
+  * DEVICES: Updated file with bsim2 changes.
 
 2003-11-21  Paolo Nenzi <p.nenzi@ieee.org>
 
-  * src/spicelib/devices/bsim1/*: Added "m" 
-    parameter and noise routine. 
-  
-  * DEVICES: Updated file with bsim1 changes.  
+  * src/spicelib/devices/bsim1/*: Added "m"
+    parameter and noise routine.
+
+  * DEVICES: Updated file with bsim1 changes.
 
 2003-11-12  Paolo Nenzi <p.nenzi@ieee.org>
 
   * src/spicelib/devices/mos2/*: Added "dtemp"
     parameter.
-  
+
   * src/spicelib/devices/mos3/*: Added "dtemp"
-    parameter.  
-    
-  * DEVICES: updated file.  
+    parameter.
+
+  * DEVICES: updated file.
 
 2003-11-11  Paolo Nenzi <p.nenzi@ieee.org>
 
   * src/spicelib/devices/mos1/*: Added "dtemp"
     parameter.
-    
-  * DEVICES: Updated MOS1 status.  
+
+  * DEVICES: Updated MOS1 status.
 
 2003-11-02  Paolo Nenzi <p.nenzi@ieee.org>
-  
+
   * doc/ngspice.texi: updated documentation.
 
 2003-10-29  Paolo Nenzi <p.nenzi@ieee.org>
 
   * src/spicelib/devices/bjt2/*: Enhanced bjt level 2
-    model adding dtemp, parallel mutliplier "m" and 
+    model adding dtemp, parallel mutliplier "m" and
     support for CIDER multiprocessor compilation.
-    
-  * DEVICES: Updated status of Diode and BJT's.  
+
+  * DEVICES: Updated status of Diode and BJT's.
 
 2003-10-26  Paolo Nenzi <p.nenzi@ieee.org>
 
@@ -5208,7 +5213,7 @@ The modifications should not affect ngspice's function.
   sent by Diermar Warning and mine improvements. Forward/Reverse
   knee currents, periphery effect, temperature corrections of
   some parameters and parallel multiplier.
-  
+
   * doc/ngspice.texi: updated documentation with new diode model.
 
 2003-10-01  Paolo Nenzi <p.nenzi@ieee.org>
@@ -5216,9 +5221,9 @@ The modifications should not affect ngspice's function.
   * src/spicelib/analysis/noisean.c: fixed an arror that caused segfault
     when resuming an halted long lasting noise analysis. The source fo
     this fix is Vera Albrecht <albrecht@danalyse.de>
-    
+
   * src/spicelib/devices/res/restemp.c: Changed default value for flicker
-    noise exponent to 1.0 (was 0.0), as in others spice devices. 
+    noise exponent to 1.0 (was 0.0), as in others spice devices.
 
 2003-09-27  Paolo Nenzi <p.nenzi@ieee.org>
 
@@ -5226,28 +5231,28 @@ The modifications should not affect ngspice's function.
     src/spicelib/parser/inpdomod.c, src/include/defines.h,
     src/include/const.h: Improved inductor model. Added parallel
     multiplier, temperature correction and solenoid/toroid model.
-    
+
   * DEVICES, doc/ngspice.texi: updated documentation to reflect changes
-    in inductor code.   
+    in inductor code.
 
 2003-09-25  Paolo Nenzi <p.nenzi@ieee.org>
 
   * src/spicelib/devices/bsim3/*: Added new multirevision bsim3 code sent
   by Dietmar Warning. This model implements bsim 3v3.2 up to 3v3.2.4 and
   has enahnced with ACM.
-  
-  * DEVICES: updated bsim3 status. 
+
+  * DEVICES: updated bsim3 status.
 
   * src/spicelib/devices/bjt2/*, DEVICES, Changelog: Added bjt2 code sent
   by Dietmar Warning, containing some fixes over the original code and
-  a new feature: temperature correction of re,rb,rc. 
-  
+  a new feature: temperature correction of re,rb,rc.
+
   * src/frontend/numparam/*, src/frontend/Makefile.am, src/Makefile.am,
-    configure.in, acconfig.h, src/frontend/subckt.c: Added numparam 
+    configure.in, acconfig.h, src/frontend/subckt.c: Added numparam
     library contributed by Georg Post. This library let users to
     input parametric netlists in ngspice. Look at readme in library
-    directory. 
-    
+    directory.
+
   * src/spicelib/analysis/dctrcurv.c: small bug fix. CKTtime was confused
     with CKTtemp.
 
@@ -5258,9 +5263,9 @@ The modifications should not affect ngspice's function.
     capacitor model. Added temperature dependence, model capacitance
     and cj computation based on insulator thickness and relative
     dielectric constant.
-  
+
   * doc/ngspice.tex, DEVICES: updated documentation reflecting
-    capacitor model changes.  
+    capacitor model changes.
 
 2003-09-24  Paolo Nenzi <p.nenzi@ieee.org>
 
@@ -5271,15 +5276,15 @@ The modifications should not affect ngspice's function.
 2003-09-20  Paolo Nenzi <p.nenzi@ieee.org>
 
   * src/spicelib/devices/res/*, src/spicelib/analysis/nevalsrc.c,
-    doc/ngspice.texi, DEVICES: Added new features to resistors: 
-    flicker noise, temperature difference with the rest of the 
-    circuit, noiseless resistors. The implementation of dtemp 
-    required a change in the nevalsrc.c file in the function that 
-    computes the noise densities. Updated documentation. 
-    
+    doc/ngspice.texi, DEVICES: Added new features to resistors:
+    flicker noise, temperature difference with the rest of the
+    circuit, noiseless resistors. The implementation of dtemp
+    required a change in the nevalsrc.c file in the function that
+    computes the noise densities. Updated documentation.
+
 
 2003-09-18  Paolo Nenzi <p.nenzi@ieee.org>
-  
+
   * src/spicelib/analysis/dctrcurv.c: Corrected temperature sweep.
     Initial temp was the circuit temperature and not the start
     value in the input line. There was a missing call to CKTtemp().
@@ -5293,17 +5298,17 @@ The modifications should not affect ngspice's function.
     an interface between spice and a generic matrix library.
     In the future the current sparse code will be upgraded to
     version 1.4 (http://sparse.sourceforge.net).
-  
-    src/frontend/misccoms.c, doc/ngspice.texi: Modified "version" 
+
+    src/frontend/misccoms.c, doc/ngspice.texi: Modified "version"
     command to include compilation information when called with
     the new "-f" option.
-    
+
     src/frontend/(parse.c,define.c): Applied Stefan patches
     that close a memory leak.
-    
+
     src/spicelib/parser/inpgmod.c: Patched Stuart INPgetNetTok
-    function to correct a parsing error emerged in pole-zero 
-    analysis.  
+    function to correct a parsing error emerged in pole-zero
+    analysis.
 
 2003-08-14  Paolo Nenzi <p.nenzi@ieee.org>
 
@@ -5311,7 +5316,7 @@ The modifications should not affect ngspice's function.
     src/frontend/com_history.c, src/frontend/misccoms.h,
     src/frontend/signal_handler.c, src/frontend/plotting/x11.c,
     src/frontend/parser/glob.c, src/include/ngspice.h:
-    
+
     Added Andrew Veliath patch for readline support. Using
     readline with ngspice IS A VIOLATION OF GPL LICENSE, you
     have been warned. The final decision is up to you. The
@@ -5319,10 +5324,10 @@ The modifications should not affect ngspice's function.
     readline library with libedit. Libedit aims to be a
     replacement of readline and is covered by BSD license.
     Libedit is available at the URL: libedit.sourceforge.net.
-    
+
     Readline code has been extrapolated from a patch available
-    on  http://www.btae.mam.gov.tr/~genc/ngspice/. 
-    
+    on  http://www.btae.mam.gov.tr/~genc/ngspice/.
+
 2003-08-11  Paolo Nenzi <p.nenzi@ieee.org>
 
   * doc/ngspice.texi: updated documentation. Still incomplete
@@ -5331,8 +5336,8 @@ The modifications should not affect ngspice's function.
   * main.c, ngnutmeg.c, ngspice.c, frontend/resource.c,
     include/bool.h, include/cktdefs.h, include/complex.h,
     include/defines.h, include/devdefs.h, include/macros.h,
-    include/ngspice.h, maths/cmaths/cmath1.c, 
-    maths/cmaths/test_cx_ph.c, maths/ni/nidest.c,  
+    include/ngspice.h, maths/cmaths/cmath1.c,
+    maths/cmaths/test_cx_ph.c, maths/ni/nidest.c,
     maths/ni/nipred.h, maths/ni/nireinit.c, misc/misc_time.c,
     misc/string.c, misc/stringutil.h, spicelib/analysis/cktdltn.c,
     spicelib/analysis/cktdojob.c, spicelib/analysis/cktdump.c,
@@ -5343,105 +5348,105 @@ The modifications should not affect ngspice's function.
     spicelib/parser/inp2d.c, spicelib/parser/inp2m.c,
     spicelib/parser/inp2q.c, spicelib/parser/inpdomod.c,
     spicelib/parser/inpgmod.c:
-    
+
     Updated code for CIDER integration.
 
-  
+
         * src/spicelib/devices/bsim3v2: removed because the V3.2 code
     is now in bsim3 directory.
-       
+
         * src/spicelib/devices: various enhancements on models. Mainly
-    code cleaning (removed spurious #include <stdio.h>). Added 
+    code cleaning (removed spurious #include <stdio.h>). Added
     parallel multiplier on some device and corrected implementation
     of cpl an txl devices.
 
         *  bdrydefs.h, carddefs.h, ciderinp.h, cidersupt.h, contdefs.h,
-     domndefs.h, dopdefs.h, elctdefs.h, gendev.h, lsort.h, 
+     domndefs.h, dopdefs.h, elctdefs.h, gendev.h, lsort.h,
      material.h,  matldefs.h, meshdefs.h, meshext.h, methdefs.h,
      mobdefs.h, modldefs.h, numcards.h, numconst.h, numenum.h,
      numgen.h, numglobs.h, onedev.h, onemesh.h, optndefs.h,
      outpdefs.h, profile.h, twodev.h, twomesh.h:
      new include files imported with CIDER.
 
-  
+
   * src/ciderlib/*, src/maths/misc, src/spicelib/devices/nbjt,
     src/spicelib/devices/nbjt2, src/spicelib/devices/numd,
     src/spicelib/devices/numd2, src/spicelib/devices/numos:
-    
+
     Added CIDER simulator routines, support math functions and
     numerical devices.
-  
+
   * src/spicelib/devices/bsim3soi: added bsim3soi v3.x model
-  
+
   * src/spicelib/devices/bsim3v0: added version 3.0 of
     bsim model.
-  
+
   * src/spicelib/devices/bsim3v1a: version 3.1 of bsim model.
     This model has been hacked by Alan Gillespie.
-  
+
   * src/spicelib/devices/bsim3v1s: version 3.1 of bsim model.
     This model has been hacked by Serban Popescu.
-  
-  * src/spicelib/devices/hisim: added hisim model.       
-      
+
+  * src/spicelib/devices/hisim: added hisim model.
+
 2003-08-06  Paolo Nenzi <p.nenzi@ieee.org>
 
   * Another big commit: Stefan Jones has worked on the xspice
     part and added some fix from Vera Albrecht. Tclspice 0.2.13
     Changelog (applicable parts) follows:
-    
+
     2003-08-01 Stefan Jones <stefan.jones@multigig.com>
-   
+
        * src/xspice/mif/mif_inp2.c:
        Reverted to version 1.1.2.2 so POLY and codemodels work
-    
+
        * src/Makefile.am:
        Fixed libspice.so dependencies
-   
-  
+
+
       * src/frontend/{com_let.c,device.c,evaluate.c}:
       more memory leak fixes by Vera Albrecht <albrecht@danalyse.de>
-  
-      * configure.in src/xspice/icm/* src/xspice/lib/*.cm 
+
+      * configure.in src/xspice/icm/* src/xspice/lib/*.cm
       src/xspice/Makefile.am :
       Added some easy to use makefiles for codemodels and reordered
       Removed binary files
       Added icm to build list
-  
+
       * src/xspice/icm/{analog,digital,xtradev,xtraevt}:
       added the codemodels from xspice in the same
       structure as spiceopus
-    
+
       * src/frontend/misccoms.c src/spinit src/conf.c configure.in:
       updated email address for bug reports and package version.
-  
+
 2003-07-25  Paolo Nenzi <p.nenzi@ieee.org>
 
   * src/main.c: Studied Vera's main.d and introduced changes
   following her advice.
-  
+
   * src/frontend/vectors.c: Applied Vera patch.
-  
+
   * src/spicelib/devices/bsim3soi_{dd,fd,pd}:
   Corrected bsim3soi{pd,fd,dd}def.h, owner and states fields
   were swapped. Thanks to Jon Elngelbert.
-  
+
 2003-07-23  Paolo Nenzi <p.nenzi@ieee.org>
 
-  * A lot of changes that touched too many files to mention each one. 
-  I have introduced the xspice code into ngspice. I take xspice code 
+  * A lot of changes that touched too many files to mention each one.
+  I have introduced the xspice code into ngspice. I take xspice code
   from tclspice (0.2.12). Since tclspice started as a branch of
   ngspice, I have applied the patches developed for it that correcting
   some bugs common to tclspice and ngspice. What follows is the
   extract of tclspice Changelog file that describes the changes:
-  
+
   2003-07-18 Vera Albrecht <albrecht@danalyse.de>
 
     * src/{main.c,tclspice.c}
     src/frontend/{Makefile.am,control.c,control.h,display.c,
     dotcards.c, hcomp.c,hpgl.c,outitf.c,parse.c,postcoms.c,
     postsc.c,runcoms.c, spiceif.c,variable.c,variable.h,
-    parser/complete.c,plotting/pvec.c} 
+    parser/complete.c,plotting/pvec.c}
     src/include/{cktdefs.h,ngspice.h}
     src/misc/{ivars.c,string.c,stringutil.h}
     src/spicelib/analysis/{acan.c,ckt.h,dcop.c}
@@ -5451,9 +5456,9 @@ The modifications should not affect ngspice's function.
 
   2003-07-17 Stefan Jones <stefan.jones@multigig.com>
 
-    * src/frontend/{subckt.c,vectors.c} 
-    src/spicelib/analysis/dctran.c 
-    src/spicelib/parser/inperror.c 
+    * src/frontend/{subckt.c,vectors.c}
+    src/spicelib/analysis/dctran.c
+    src/spicelib/parser/inperror.c
     src/xspice/idn/idndig.c src/xspice/mif/mif_inp2.c :
     More memory leak fixes
 
@@ -5478,7 +5483,7 @@ The modifications should not affect ngspice's function.
     src/frontend/plotting/plotit.c src/include/ngspice.h
     src/spicelib/parser/{inp2dot.c,inp2r.c,inpdomod.c,inpdpar.c,
     inpgmod.c,inppas3.c} :
-    Rest of the serious deck reader leaks, plus fixes for the 
+    Rest of the serious deck reader leaks, plus fixes for the
     last batch.
 
   2003-07-15 Stefan Jones <stefan.jones@multigig.com>
@@ -5494,78 +5499,78 @@ The modifications should not affect ngspice's function.
     as archives not shared libraries, and don't install them
 
   2003-06-22  Stuart Brorson  <sdb@cloud9.net>
- 
-     *  Finally got SPICE2 POLY stuff working.  This involved 
-    lots of changes in src/xspice/mif and src/xspice/enh.  
+
+     *  Finally got SPICE2 POLY stuff working.  This involved
+    lots of changes in src/xspice/mif and src/xspice/enh.
     Particular changes were made in:
         --  MIF_INP2A: re-arranged logic to fix parsing problems.
         --  two2three_translate: fixed some stupid pointer problems.
         --  etc.
- 
+
      *  Revamped src/xspice/icm/ and src/xspice/icm/icm_spice2poly
-     directories to enable build of POLY codemodel.  
-    Makefiles were fixed, and some stuff was added to enable 
-    cmpp (from SPICE Opus) to build the codemodel precursors 
-    correctly.  (Note that you need to download and install 
-    SPICE Opus to rebuild the codemodel stuff.  See  
+     directories to enable build of POLY codemodel.
+    Makefiles were fixed, and some stuff was added to enable
+    cmpp (from SPICE Opus) to build the codemodel precursors
+    correctly.  (Note that you need to download and install
+    SPICE Opus to rebuild the codemodel stuff.  See
     src/xspice/icm/README for more details.)
- 
-     *  Hacked Makefile.am's for much of the directory hierarchy, 
-    particularly for src/xspice/icm and 
-    src/xspice/icm/icm_spice2poly to build the POLY codemodel 
-    correctly.  Note that top level make still doesn't detect 
-     changes in the xspice hierarchy; read the NOTES file for 
+
+     *  Hacked Makefile.am's for much of the directory hierarchy,
+    particularly for src/xspice/icm and
+    src/xspice/icm/icm_spice2poly to build the POLY codemodel
+    correctly.  Note that top level make still doesn't detect
+     changes in the xspice hierarchy; read the NOTES file for
     a workaround.
- 
-     *  Added a SPICE netlist incorporating vendor models with 
-    SPICE2 POLYs in tests/TransImpedanceAmp/.  Running this 
-    model successfully demonstrates that you have built the 
-    XSpice POLY codemodel correctly and that life is good 
+
+     *  Added a SPICE netlist incorporating vendor models with
+    SPICE2 POLYs in tests/TransImpedanceAmp/.  Running this
+    model successfully demonstrates that you have built the
+    XSpice POLY codemodel correctly and that life is good
     . . . .
- 
-     *  Moved #define TRACE out of src/ngspice.h and made it 
-    a compiler option (-DTRACE) invoked in src/Makefile when 
+
+     *  Moved #define TRACE out of src/ngspice.h and made it
+    a compiler option (-DTRACE) invoked in src/Makefile when
     making spice.o.
 
   2003-05-02  Stuart Brorson  <sdb@cloud9.net>
- 
-     *  Added #define TRACE to main.c for use in debugging.  
-    Added lots of printf's in the code which are turned on 
-    by defining TRACE. This is used to help figure out what 
+
+     *  Added #define TRACE to main.c for use in debugging.
+    Added lots of printf's in the code which are turned on
+    by defining TRACE. This is used to help figure out what
     the program is doing at each step . . . . .
-   
-     *  Added lots of comments all over the source tree.  
-    This should help explain what the prog is doing for 
+
+     *  Added lots of comments all over the source tree.
+    This should help explain what the prog is doing for
     future hackers.
-   
-     *  Fixed parser to allow POLY attributes in dependent 
-    sources (major changes  in src/frontend/subckt.c, as 
-    well as move location of call to ENHtranslate_poly in 
+
+     *  Fixed parser to allow POLY attributes in dependent
+    sources (major changes  in src/frontend/subckt.c, as
+    well as move location of call to ENHtranslate_poly in
     src/frontend/inp.c)
-   
-     *  Fixed bug in device init files 
+
+     *  Fixed bug in device init files
     (src/spicelib/devices/*init.c)
      so that Deviceinfo structures operated with XSPICE.
- 
-     *  Fixed nasty malloc problem in src/xspice/mif/mifgetmod.c 
+
+     *  Fixed nasty malloc problem in src/xspice/mif/mifgetmod.c
     which casued frequent segfaults (when compiled with XSPICE).
 
-  
+
 2002-01-03  Paolo Nenzi <p.nenzi@ieee.org>
 
   * acconfig.h: added define needed for Windows and some aesthetic
     rework (from Holger Vogt patch).
-  
-  * configure.in: added macros to handle windows related 
+
+  * configure.in: added macros to handle windows related
     issues (Holger patch and me).
-  
+
   * INSTALL: added documentation on ngspice compilation under
     Windows (Holger Vogt patch).
-  
+
   * Makefile.am: added Windows compilation code (Holger Vogt patch and
     me).
-  
-   
+
+
 
 2001-12-05  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
@@ -5582,19 +5587,19 @@ The modifications should not affect ngspice's function.
 
 2001-01-21  Paolo Nenzi <p.nenzi@ieee.org>
 
-  * bsim3soi_dd/*: BSIM3SOI (DD) support added as level 11. Added tests in 
+  * bsim3soi_dd/*: BSIM3SOI (DD) support added as level 11. Added tests in
     tests directory (tests/bsim3soidd/*).
 
   * ???: Integrated patch form Alan Gillespie <Alan.Gillespie@analog.com>
-  to revert the spice raw format to the spice3 original. 
+  to revert the spice raw format to the spice3 original.
 
   * configure.in: corrected a bug that broke the on line help system.
   Help system now works again but its text is a little bit outdated.
 
   * ???: all binaries now have ng prepended, so ngspice can be installed
   with other spice flavours.
-  
-  
+
+
 2000-10-18  Arno W. Peters  <A.W.Peters@ieee.org>
 
   * Makefile.am: Changes for notes dir -> NOTES file conversion.
@@ -5660,7 +5665,7 @@ The modifications should not affect ngspice's function.
 
   * src/include/spmatrix.h: Removed include of
   src/include/spconfig.h.
-  
+
   * src/maths/sparse/spalloc.c, src/maths/sparse/spbuild.c,
   src/maths/sparse/spcombin.c, src/maths/sparse/spdefs.h,
   src/maths/sparse/spfactor.c, src/maths/sparse/spoutput.c,
@@ -5674,7 +5679,7 @@ The modifications should not affect ngspice's function.
   now a typedef for void, instead of char.  Updated all function
   declarations to match this.  Also added function prototypes not
   previously mentioned in src/include/smpdefs.h.
-  
+
   * src/include/complex.h: Updates of cast from char * to void *
 
   * src/analysis/cktsens.c: Matrices cannot be created non-complex.
@@ -5691,10 +5696,10 @@ The modifications should not affect ngspice's function.
 2000-06-19  Arno W. Peters  <A.W.Peters@ieee.org>
 
   * src/analysis/cktask.c: moved to src/devices.
-  
+
   * src/analysis/cktbindn.c: moved, renamed to
   src/devices/cktbindnode.c.
-  
+
   * src/analysis/cktfdev.c: moved, renamed to
   src/devices/cktfinddev.c.
 
@@ -5842,7 +5847,7 @@ The modifications should not affect ngspice's function.
 
 1999-08-23  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-  * configure.in: added tests ('make check') 
+  * configure.in: added tests ('make check')
 
   * ng-spice.patch: added cleanup patch by Arno Peters
 
@@ -5875,7 +5880,7 @@ ng-spice-0.0:
   * put src/lib/dev/devsup.c into src/lib/dev/devsup/
 
   * added header files into Makefile.am's
-  
+
 Chianti:
 --------
   (27/07/99)
@@ -5884,8 +5889,8 @@ Chianti:
 
   * cleaned up some directories (examples, patches..)
 
-  * removed all .orig files 
-  
+  * removed all .orig files
+
 Pizza:
 ------
   (25/07/99)
@@ -5893,15 +5898,15 @@ Pizza:
   * added installation of man pages
 
   * emptied 'COPYING' file until we know what to put in it
-  
+
   * fixed missing install of help and init files (created tune.c.in
   to support this)
 
   * added missing -DWANT_X11 and -DWANT_MFB in several compiles
   (fixed some headers in: src/lib/fte/x11.c
                           src/lib/fte/x11disp.c )
-  
-  
+
+
 Spaghetti:
 ----------
   (25/07/99)

@@ -50,7 +50,7 @@ typedef struct INPparseNode {
     int valueIndex;         /* If INP_VAR, index into vars array. */
     char *funcname;         /* If INP_FUNCTION, name of function, */
     int funcnum;            /* ... one of PTF_*, */
-    void *function;         /* ... and pointer to the function. */
+    void (*function)(void); /* ... and pointer to the function. */
     void *data;                 /* private data for certain functions, currently PTF_PWL */
 } INPparseNode;
 

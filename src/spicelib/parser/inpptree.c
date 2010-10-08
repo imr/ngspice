@@ -42,7 +42,7 @@ extern IFsimulator *ft_sim;	/* XXX */
 static struct op {
     int number;
     char *name;
-    void *funcptr;
+    void (*funcptr)(void);
 } ops[] = {
     {
     PT_COMMA,  ",", NULL}, {
@@ -58,7 +58,7 @@ static struct op {
 static struct func {
     char *name;
     int number;
-    void *funcptr;
+    void (*funcptr)(void);
 } funcs[] = {
     { "abs",    PTF_ABS,    (void(*)(void)) PTabs } ,
     { "acos",   PTF_ACOS,   (void(*)(void)) PTacos } ,
