@@ -124,5 +124,13 @@ int INP2dot(CKTcircuit *, INPtables *, card *, TSKtask *, CKTnode *);
 INPtables *INPtabInit(int);
 void INPkillMods(void);
 void INPtabEnd(INPtables *);
+char * INPfindVer(char *line, char *version);
+int INPgetStr(char **line, char **token, int gobble);
+int INPgetTitle(CKTcircuit **ckt, card **data);
+int INPgetUTok(char **line, char **token, int gobble);
+int INPgetU2Tok(char **line, char **token, int gobble);
+int INPremTerm(char *token, INPtables *tab);
+
+
 
 #endif /*INP*/
