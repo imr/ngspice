@@ -1,4 +1,8 @@
 2010-10-08  Robert Larice
+ * src/frontend/com_measure2.h :
+    com_dotmeasure() prototype
+
+2010-10-08  Robert Larice
  * src/include/evtproto.h :
     EVTfindvec() prototyp
 
