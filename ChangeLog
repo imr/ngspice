@@ -1,4 +1,8 @@
 2010-10-08  Robert Larice
+ * src/xspice/idn/idndig.c :
+    static function definition
+
+2010-10-08  Robert Larice
  * src/include/ipcproto.h :
     #ifdef include file wrapper
 

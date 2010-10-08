@@ -47,7 +47,7 @@ NON-STANDARD FEATURES
  
 /* ************************************************************************ */
 
-void idn_digital_create(void **evt_struct)
+static void idn_digital_create(void **evt_struct)
 {
     /* Malloc space for a digital struct */
 
@@ -57,7 +57,7 @@ void idn_digital_create(void **evt_struct)
 
 /* ************************************************************************ */
 
-void idn_digital_dismantle(void *evt_struct)
+static void idn_digital_dismantle(void *evt_struct)
 {
     /* Do nothing.  There are no internally malloc'ed things to dismantle */
 }
@@ -65,7 +65,7 @@ void idn_digital_dismantle(void *evt_struct)
 
 /* ************************************************************************ */
 
-void idn_digital_initialize(void *evt_struct)
+static void idn_digital_initialize(void *evt_struct)
 {
     Digital_t  *dig_struct = (Digital_t *) evt_struct;
 
@@ -78,7 +78,7 @@ void idn_digital_initialize(void *evt_struct)
 
 /* ************************************************************************ */
 
-void idn_digital_invert(void *evt_struct)
+static void idn_digital_invert(void *evt_struct)
 {
     Digital_t  *dig_struct = (Digital_t *) evt_struct;
 
@@ -103,7 +103,7 @@ void idn_digital_invert(void *evt_struct)
 
 /* ************************************************************************ */
 
-void idn_digital_copy(void *evt_from_struct, void *evt_to_struct)
+static void idn_digital_copy(void *evt_from_struct, void *evt_to_struct)
 {
     Digital_t  *dig_from_struct = (Digital_t *) evt_from_struct;
     Digital_t  *dig_to_struct   = (Digital_t *) evt_to_struct;
@@ -116,7 +116,7 @@ void idn_digital_copy(void *evt_from_struct, void *evt_to_struct)
 
 /* ************************************************************************ */
 
-void idn_digital_resolve(int num_struct,
+static void idn_digital_resolve(int num_struct,
     void **evt_struct_array, void *evt_struct)
 {
     Digital_t   **dig_struct_array;
@@ -172,7 +172,7 @@ void idn_digital_resolve(int num_struct,
 
 /* ************************************************************************ */
 
-void idn_digital_compare(void *evt_struct1, void *evt_struct2,
+static void idn_digital_compare(void *evt_struct1, void *evt_struct2,
     Boolean_t *equal)
 {
     Digital_t  *dig_struct1 = (Digital_t *) evt_struct1;
@@ -190,7 +190,7 @@ void idn_digital_compare(void *evt_struct1, void *evt_struct2,
 
 /* ************************************************************************ */
 
-void idn_digital_plot_val(void *evt_struct, char *member, double *val)
+static void idn_digital_plot_val(void *evt_struct, char *member, double *val)
 {
     Digital_t   *dig_struct = (Digital_t *) evt_struct;
 
@@ -242,7 +242,7 @@ void idn_digital_plot_val(void *evt_struct, char *member, double *val)
 
 /* ************************************************************************ */
 
-void idn_digital_print_val(void *evt_struct, char *member, char **val)
+static void idn_digital_print_val(void *evt_struct, char *member, char **val)
 {
     Digital_t   *dig_struct = (Digital_t *) evt_struct;
 
@@ -318,7 +318,7 @@ void idn_digital_print_val(void *evt_struct, char *member, char **val)
 
 /* ************************************************************************ */
 
-void idn_digital_ipc_val(void *evt_struct, void **ipc_val, int *ipc_val_size)
+static void idn_digital_ipc_val(void *evt_struct, void **ipc_val, int *ipc_val_size)
 {
     /* Return the digital data structure and its size */
     *ipc_val = evt_struct;
