@@ -95,7 +95,7 @@ dlmain.o: cmextrn.h cminfo.h udnextrn.h udninfo.h
 	-rm -f cmextrn.h cminfo.h objects.inc udnextrn.h udninfo.h \
 	dlmain.c dlmain.o
 	-rm -rf .deps
-	
+
 
 objs: ifspec.o cfunc.o
 
@@ -110,7 +110,7 @@ uobjs-clean:
 	-rm -rf .deps
 
 %.o: %.c
-	@echo '$(COMPILE) $(DEPFLAGS) .deps/$(*F).pp -c $<'; \
+	@echo $(COMPILE) $(DEPFLAGS) .deps/$(*F).pp -c $< ; \
 	$(COMPILE) $(DEPFLAGS) .deps/$(*F).pp -c $<
 	@-cp .deps/$(*F).pp .deps/$(*F).P; \
 	tr ' ' '\012' < .deps/$(*F).pp \

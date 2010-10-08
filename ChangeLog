@@ -1,4 +1,9 @@
 2010-10-08  Robert Larice
+ * src/xspice/icm/Makefile :
+    too much quoting caused an error for quoted things in CFLAGS
+      ( CFLAGS=-D"SIGNAL_FUNCTION='void(*)(int)'" ./configure )
+
+2010-10-08  Robert Larice
  * src/frontend/spiceif.c ,
  * src/frontend/spiceif.h ,
  * src/include/cktdefs.h ,
