@@ -1,4 +1,10 @@
 2010-10-08  Robert Larice
+ * src/frontend/inpcom.c ,
+ * src/frontend/numparam/xpressn.c ,
+ * src/include/compatmode.h :
+    ngspice_compat_mode() prototype  -->  include files
+
+2010-10-08  Robert Larice
  * src/include/distodef.h ,
  * src/spicelib/devices/bjt/bjtdset.c ,
  * src/spicelib/devices/bjt2/bjt2dset.c :

@@ -10,4 +10,6 @@ typedef enum {
   COMPATMODE_ALL = 3,
 } COMPATMODE_T ;
 
+extern COMPATMODE_T ngspice_compat_mode(void) ;
+
 #endif

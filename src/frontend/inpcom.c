@@ -89,8 +89,6 @@ int dynMaxckt = 0; /* subckt.c 307 */
 /* number of parameter substitutions */
 long dynsubst; /* spicenum.c 221 */
 
-extern COMPATMODE_T ngspice_compat_mode(void) ;
-
 /* static declarations */
 static char * readline(FILE *fd);
 static int  get_number_terminals( char *c );

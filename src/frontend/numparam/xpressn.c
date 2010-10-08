@@ -18,7 +18,6 @@
 
 /* random numbers in /maths/misc/randnumb.c */
 extern double gauss(void);
-extern COMPATMODE_T ngspice_compat_mode(void) ;
 
 void debugwarn(tdico *d, char *s);
 
