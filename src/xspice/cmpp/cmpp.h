@@ -275,7 +275,9 @@ void preprocess_lst_files(void);
 void preprocess_mod_file(char *filename);
 
 
+void init_error (char *program_name);
 void print_error(char *message);
+void str_to_lower(char *s);
 
 
 Status_t read_ifs_file(char *filename, int mode, Ifs_Table_t *ifs_table);

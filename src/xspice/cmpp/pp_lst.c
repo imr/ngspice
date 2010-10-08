@@ -53,8 +53,6 @@ NON-STANDARD FEATURES
 #include  <string.h>
 
 
-extern int str_to_lower(char *s);
-
 /*
 void    *malloc(unsigned size);
 void    *realloc(void *ptr, unsigned size);

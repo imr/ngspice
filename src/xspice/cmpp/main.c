@@ -54,8 +54,6 @@ NON-STANDARD FEATURES
 /* *********************************************************************** */
 
 
-extern void init_error (char *program_name);
-
 /*
 main
 

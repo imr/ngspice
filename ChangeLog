@@ -1,4 +1,10 @@
 2010-10-08  Robert Larice
+ * src/xspice/cmpp/cmpp.h ,
+ * src/xspice/cmpp/main.c ,
+ * src/xspice/cmpp/pp_lst.c :
+    str_to_lower() init_error() protoypes  -->  include files
+
+2010-10-08  Robert Larice
  * src/include/distodef.h ,
  * src/spicelib/analysis/distoan.c :
     DkerProc() CKTdisto() prototypes  -->  include files
