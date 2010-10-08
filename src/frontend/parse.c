@@ -15,6 +15,7 @@ $Id$
 #include <fteext.h>
 #include <sim.h>
 
+#include "evaluate.h"
 #include "parse.h"
 
 

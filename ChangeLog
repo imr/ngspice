@@ -1,4 +1,9 @@
 2010-10-08  Robert Larice
+ * src/frontend/parse.c ,
+ * src/include/fteext.h :
+    consider the op_*() functions to be less public
+
+2010-10-08  Robert Larice
  * src/spicelib/devices/bsim3soi/b4soiinit.c ,
  * src/spicelib/devices/bsim3soi_dd/b3soiddinit.c ,
  * src/spicelib/devices/bsim3soi_fd/b3soifdinit.c ,
