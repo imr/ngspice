@@ -16,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 int 
 SENsetParm(ckt,anal,which,value)
     CKTcircuit *ckt;
-    GENERIC *anal;
+    JOB *anal;
     int which;
     IFvalue *value;
 {

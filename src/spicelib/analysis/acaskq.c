@@ -14,7 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int 
-ACaskQuest(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
+ACaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     switch(which) {
 

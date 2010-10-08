@@ -114,7 +114,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	if (ckt->CKTkeepOpInfo) {
 	    /* Dump operating point. */
 	    error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
-		(void*)ckt->CKTcurJob, "Distortion Operating Point",
+		ckt->CKTcurJob, "Distortion Operating Point",
 		(IFuid)NULL,IF_REAL,numNames,nameList, IF_REAL,&acPlot);
 	    if(error) return(error);
 	    CKTdump(ckt,(double)0,acPlot);
@@ -523,7 +523,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
 		"frequency", UID_OTHER, NULL);
 	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
-	    (void*)ckt->CKTcurJob,"DISTORTION - 2nd harmonic",
+	    ckt->CKTcurJob, "DISTORTION - 2nd harmonic",
 	    freqUid,IF_REAL, numNames,nameList,IF_COMPLEX,&acPlot);
         if (job->DstepType != LINEAR) {
 	    (*(SPfrontEnd->OUTattributes))((void *)acPlot,NULL,
@@ -547,7 +547,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
 		"frequency", UID_OTHER, NULL);
 	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
-	(void*)ckt->CKTcurJob,"DISTORTION - 3rd harmonic",freqUid,IF_REAL,
+	ckt->CKTcurJob, "DISTORTION - 3rd harmonic", freqUid, IF_REAL,
 	numNames,nameList,IF_COMPLEX,&acPlot);
        for (i=0; i< displacement ; i++)
        {
@@ -569,7 +569,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
 		"frequency", UID_OTHER, NULL);
 	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
-	(void*)ckt->CKTcurJob,"DISTORTION - IM: f1+f2",freqUid,IF_REAL,
+	ckt->CKTcurJob, "DISTORTION - IM: f1+f2", freqUid, IF_REAL,
 	numNames,nameList,IF_COMPLEX,&acPlot);
 	   for (i=0; i< displacement ; i++)
 	   {
@@ -589,7 +589,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
 		"frequency", UID_OTHER, NULL);
 	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
-	(void*)ckt->CKTcurJob,"DISTORTION - IM: f1-f2",freqUid,IF_REAL,
+	ckt->CKTcurJob, "DISTORTION - IM: f1-f2", freqUid, IF_REAL,
 	numNames,nameList,IF_COMPLEX,&acPlot);
 	   for (i=0; i< displacement ; i++)
 	   {
@@ -610,7 +610,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
 		"frequency", UID_OTHER, NULL);
 	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
-	(void*)ckt->CKTcurJob,"DISTORTION - IM: 2f1-f2",freqUid,IF_REAL,
+	ckt->CKTcurJob, "DISTORTION - IM: 2f1-f2", freqUid, IF_REAL,
 	numNames,nameList,IF_COMPLEX,&acPlot);
 	   for (i=0; i< displacement ; i++)
 	   {

@@ -1174,7 +1174,7 @@ finddev(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr)
 /* get an analysis parameter by name instead of id */
 
 int 
-if_analQbyName(CKTcircuit *ckt, int which, void *anal, char *name, IFvalue *parm)
+if_analQbyName(CKTcircuit *ckt, int which, JOB *anal, char *name, IFvalue *parm)
 {
     int i;
     for(i=0;i<ft_sim->analyses[which]->numParms;i++) {
@@ -1198,7 +1198,7 @@ if_tranparams(struct circ *ci, double *start, double *stop, double *step)
     int err;
     int which = -1;
     int i;
-    void *anal;
+    JOB *anal;
     IFuid tranUid;
 
     if(!ci->ci_curTask) return(FALSE);

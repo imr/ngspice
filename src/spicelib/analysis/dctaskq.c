@@ -12,7 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int 
-DCTaskQuest(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
+DCTaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     switch(which) {
 

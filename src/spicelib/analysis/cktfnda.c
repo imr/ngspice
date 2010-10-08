@@ -20,14 +20,14 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTfndAnal(CKTcircuit *ckt, int *analIndex, void **anal, IFuid name, TSKtask *inTask, IFuid taskName)
+CKTfndAnal(CKTcircuit *ckt, int *analIndex, JOB **anal, IFuid name, TSKtask *inTask, IFuid taskName)
 {
     TSKtask *task = /* fixme, drop that */ inTask;
     JOB *here;
 
     for (here = task->jobs; here; here = here->JOBnextJob) {
         if(strcmp(here->JOBname,name)==0) {
-            if(anal) *anal = (void *)here;
+            if(anal) *anal = here;
             return(OK);
         }
     }

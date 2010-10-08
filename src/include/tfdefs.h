@@ -36,7 +36,7 @@ struct TFan {
 #define TF_INSRC 4
 #define TF_OUTNAME 5
 
-extern int TFsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value);
-extern int TFaskQuest(CKTcircuit *ckt, void *anal, int which, IFvalue *value);
+extern int TFsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value);
+extern int TFaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value);
 
 #endif  /*TF*/

@@ -12,7 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int 
-DCOaskQuest(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
+DCOaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     return(E_BADPARM);
 }

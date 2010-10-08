@@ -12,7 +12,7 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 
 /* ARGSUSED */
 int 
-SENSsetParam(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
+SENSsetParam(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     SENS_AN	*sinfo = (SENS_AN *) anal;
 

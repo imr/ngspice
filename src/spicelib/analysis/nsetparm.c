@@ -12,7 +12,7 @@ Author: 1987 Gary W. Ng
 #include "analysis.h"
 
 int 
-NsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
+NsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     switch(which) {
 

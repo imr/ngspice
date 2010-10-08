@@ -14,7 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int 
-PZsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
+PZsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     switch(which) {
 

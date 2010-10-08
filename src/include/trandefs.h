@@ -32,6 +32,6 @@ typedef struct {
 #define TRAN_TSTEP 3
 #define TRAN_TMAX 4
 #define TRAN_UIC 5
-extern int TRANsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value);
-extern int TRANaskQuest(CKTcircuit *ckt, void *anal, int which,IFvalue *value);
+extern int TRANsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value);
+extern int TRANaskQuest(CKTcircuit *ckt, JOB *anal, int which,IFvalue *value);
 #endif /*TRAN*/

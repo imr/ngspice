@@ -200,9 +200,9 @@ bool ft_nutmeg = FALSE;
 extern struct comm spcp_coms[ ];
 struct comm *cp_coms = spcp_coms;
 
-extern int OUTpBeginPlot(CKTcircuit *,void *,IFuid,IFuid,int,int,IFuid *,int,void **); 
+extern int OUTpBeginPlot(CKTcircuit *,JOB *,IFuid,IFuid,int,int,IFuid *,int,void **); 
 extern int OUTpData(void *,IFvalue *,IFvalue *); 
-extern int OUTwBeginPlot(CKTcircuit *,void *,IFuid,IFuid,int,int,IFuid *,int,void **); 
+extern int OUTwBeginPlot(CKTcircuit *,JOB *,IFuid,IFuid,int,int,IFuid *,int,void **); 
 extern int OUTwReference(void *,IFvalue *,void **);
 extern int OUTwData(void *,int,IFvalue *,void *), OUTwEnd(void *), OUTendPlot(void *); 
 extern int OUTbeginDomain(void *,IFuid,int,IFvalue *);

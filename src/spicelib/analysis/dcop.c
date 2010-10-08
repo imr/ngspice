@@ -44,7 +44,7 @@ DCop(CKTcircuit *ckt, int notused)
     error = CKTnames(ckt,&numNames,&nameList);
     if(error) return(error);
     error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
-	(void*)ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
+	ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
 	(IFuid)NULL,IF_REAL,numNames,nameList, IF_REAL,&plot);
     tfree(nameList); /* va: nameList not used any longer, it was a memory leak */
     if(error) return(error);

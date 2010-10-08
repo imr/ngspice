@@ -11,7 +11,7 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 
 /* ARGSUSED */
 int 
-SENSask(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
+SENSask(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     SENS_AN	*sinfo = (SENS_AN *) anal;
 

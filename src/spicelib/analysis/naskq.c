@@ -11,7 +11,7 @@ Author: 1987 Gary W. Ng
 
 
 int 
-NaskQuest(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
+NaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     switch(which) {
 

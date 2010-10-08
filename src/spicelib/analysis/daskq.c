@@ -12,7 +12,7 @@ Author: 1988 Jaijeet S Roychowdhury
 
 /* ARGSUSED */
 int 
-DaskQuest(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
+DaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     switch(which) {
 

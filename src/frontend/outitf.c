@@ -37,7 +37,7 @@ extern char *spice_analysis_get_description(int index);
 
 
 /* static declarations */
-static int beginPlot(void *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName, 
+static int beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName, 
 		     char *refName, int refType, int numNames, char **dataNames, int dataType, 
 		     bool windowed, runDesc **runp);
 static int addDataDesc(runDesc *run, char *name, int type, int ind);
@@ -87,7 +87,7 @@ static bool shouldstop = FALSE; /* Tell simulator to stop next time it asks. */
 /* The two "begin plot" routines share all their internals... */
 
 int
-OUTpBeginPlot(CKTcircuit *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName, int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr)
+OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr, IFuid analName, IFuid refName, int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr)
 {
   char *name;   
 
@@ -108,7 +108,7 @@ if (ARCHme != 0) return(OK);
 }
 
 int
-OUTwBeginPlot(CKTcircuit *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName, int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr)
+OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr, IFuid analName, IFuid refName, int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr)
 {
 #ifdef PARALLEL_ARCH
     if (ARCHme != 0) return(OK);
@@ -121,7 +121,7 @@ OUTwBeginPlot(CKTcircuit *circuitPtr, void *analysisPtr, IFuid analName, IFuid r
 }
 
 static int
-beginPlot(void *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName, char *refName, int refType, int numNames, char **dataNames, int dataType, bool windowed, runDesc **runp)
+beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName, char *refName, int refType, int numNames, char **dataNames, int dataType, bool windowed, runDesc **runp)
 {
     runDesc *run;
     struct save_info *saves;
@@ -158,7 +158,7 @@ beginPlot(void *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNa
     run->windowed = windowed;
     run->numData = 0;
 
-    an_name = spice_analysis_get_name(((JOB *) analysisPtr)->JOBtype);
+    an_name = spice_analysis_get_name(analysisPtr->JOBtype);
     ft_curckt->ci_last_an = an_name;
 
     /* Now let's see which of these things we need.  First toss in the
@@ -350,7 +350,7 @@ beginPlot(void *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNa
        || (run->numData == 0 && run->refIndex == -1)) ) /* va: suggested parentheses */
     {
 	fprintf(cp_err, "Error: no data saved for %s; analysis not run\n",
-		spice_analysis_get_description(((JOB *) analysisPtr)->JOBtype));
+		spice_analysis_get_description(analysisPtr->JOBtype));
 	return E_NOTFOUND;
     }
     

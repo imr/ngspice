@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
 int 
 SENaskQuest(ckt,anal,which,value)
     CKTcircuit *ckt;
-    GENERIC *anal;
+    JOB *anal;
     int which;
     IFvalue *value;
 {

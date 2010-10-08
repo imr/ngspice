@@ -67,7 +67,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         i = cv->TRCVnestState;
         /* resume to work? saj*/
         error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
-           (void*)ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
+           ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
            varUid,IF_REAL,666,nameList, 666,&plot);	
         goto resume;
     }
@@ -216,7 +216,7 @@ found:;
     } /* rcode*/
     
     error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
-        (void*)ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
+        ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
         varUid,IF_REAL,numNames,nameList, IF_REAL,&plot);
     
     if(error) return(error);

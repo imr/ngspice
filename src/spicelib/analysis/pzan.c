@@ -44,7 +44,7 @@ PZan(CKTcircuit *ckt, int reset)
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
 	error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
-	    (void*)ckt->CKTcurJob, "Distortion Operating Point",
+	    ckt->CKTcurJob, "Distortion Operating Point",
 	    (IFuid)NULL,IF_REAL,numNames,nameList, IF_REAL,&plot);
 	if(error) return(error);
 	CKTdump(ckt,(double)0,plot);
@@ -147,7 +147,7 @@ PZpost(CKTcircuit *ckt)
 		name, UID_OTHER, NULL);
     }
 
-    (*SPfrontEnd->OUTpBeginPlot)(ckt, (void *)pzan, pzan->JOBname,
+    (*SPfrontEnd->OUTpBeginPlot)(ckt, (JOB *)pzan, pzan->JOBname,
 	    (IFuid)NULL, (int)0, pzan->PZnPoles + pzan->PZnZeros, namelist,
 	    IF_COMPLEX, &pzPlotPtr);
 

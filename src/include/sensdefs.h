@@ -67,8 +67,8 @@ struct st_devsenlist {
 };
 
 /* va, with prototypes */
-extern int SENSask(CKTcircuit *,void *,int ,IFvalue *);
-extern int SENSsetParam(CKTcircuit *,void *,int ,IFvalue *);
+extern int SENSask(CKTcircuit *,JOB *,int ,IFvalue *);
+extern int SENSsetParam(CKTcircuit *,JOB *,int ,IFvalue *);
 extern int sens_sens(CKTcircuit *,int);
 
 #define	SENS_POS			2

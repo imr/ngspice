@@ -129,7 +129,7 @@ ACan(CKTcircuit *ckt, int restart)
          * Moreover the begin plot has not even been done yet at this 
          * point... 
          */
-        (*(SPfrontEnd->OUTpBeginPlot))(ckt,(void*)ckt->CKTcurJob,
+        (*(SPfrontEnd->OUTpBeginPlot))(ckt, ckt->CKTcurJob,
             ckt->CKTcurJob->JOBname,(IFuid)NULL,IF_REAL,numNames,nameList,
             IF_REAL,&acPlot);
         tfree(nameList);
@@ -153,7 +153,7 @@ ACan(CKTcircuit *ckt, int restart)
 	if (ckt->CKTkeepOpInfo) {
 	    /* Dump operating point. */
 	    error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
-		(void*)ckt->CKTcurJob, "AC Operating Point",
+		ckt->CKTcurJob, "AC Operating Point",
 		(IFuid)NULL,IF_REAL,numNames,nameList, IF_REAL,&plot);
 	    if(error) return(error);
 	    CKTdump(ckt,(double)0,plot);
@@ -164,7 +164,7 @@ ACan(CKTcircuit *ckt, int restart)
         (*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
                 "frequency", UID_OTHER, NULL);
         error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
-		(void*)ckt->CKTcurJob,
+		ckt->CKTcurJob,
                 ckt->CKTcurJob->JOBname,freqUid,IF_REAL,numNames,nameList,
                 IF_COMPLEX,&acPlot);
 	tfree(nameList);		
@@ -181,7 +181,7 @@ ACan(CKTcircuit *ckt, int restart)
         ((ACAN*)ckt->CKTcurJob)->ACsaveFreq = 0; /* clear the 'old' frequency */
 	/* fix resume? saj*/
 	error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
-		(void*)ckt->CKTcurJob,
+		ckt->CKTcurJob,
                 ckt->CKTcurJob->JOBname,freqUid,IF_REAL,numNames,nameList,
                 IF_COMPLEX,&acPlot);
 	/* saj*/    

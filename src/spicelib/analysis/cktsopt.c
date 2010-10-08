@@ -28,7 +28,7 @@ Modified: 2000 AlansFixes
 
 /* ARGSUSED */
 int
-CKTsetOpt(CKTcircuit *ckt, void *anal, int opt, IFvalue *val)
+CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
 {
     TSKtask *task = (TSKtask *)anal;
 

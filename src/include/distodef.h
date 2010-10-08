@@ -166,8 +166,8 @@ typedef struct {
 #define D_RHSF1		9
 #define D_RHSF2		10
 
-extern int DsetParm(CKTcircuit*,void *,int,IFvalue*);
-extern int DaskQuest(CKTcircuit*,void *,int,IFvalue*);
+extern int DsetParm(CKTcircuit*,JOB *,int,IFvalue*);
+extern int DaskQuest(CKTcircuit*,JOB *,int,IFvalue*);
 extern double D1i2F1(double, double, double);
 extern double D1i3F1(double, double, double, double, double, double);
 extern double D1iF12(double, double, double, double, double);

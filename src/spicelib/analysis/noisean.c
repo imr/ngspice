@@ -134,7 +134,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 	 * plot
 	 */
 
-	error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,(void *)(ckt->CKTcurJob),
+	error = (*(SPfrontEnd->OUTpBeginPlot))(ckt, ckt->CKTcurJob,
 	   "Noise Spectral Density Curves - (V^2 or A^2)/Hz",
 	   freqUid,IF_REAL,data->numPlots,data->namelist,IF_REAL,
 	   &(data->NplotPtr));
@@ -168,7 +168,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 	data->outNoiz = job->NsavOnoise;
 	data->inNoise = job->NsavInoise;
 	/* saj resume rawfile fix*/
-	error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,(void *)(ckt->CKTcurJob),
+	error = (*(SPfrontEnd->OUTpBeginPlot))(ckt, ckt->CKTcurJob,
 	   "Noise Spectral Density Curves - (V^2 or A^2)/Hz",
 	   freqUid,IF_REAL,666,data->namelist,666,
 	   &(data->NplotPtr));
@@ -279,7 +279,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 
 	if (error) return(error);
 
-	(*(SPfrontEnd->OUTpBeginPlot))(ckt,(void *)(ckt->CKTcurJob),
+	(*(SPfrontEnd->OUTpBeginPlot))(ckt, ckt->CKTcurJob,
 	       "Integrated Noise - V^2 or A^2",
 	       (IFuid)NULL,(int)0,data->numPlots,data->namelist,IF_REAL,
 	       &(data->NplotPtr));

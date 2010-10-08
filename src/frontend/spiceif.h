@@ -17,7 +17,7 @@ struct variable * spif_getparam(CKTcircuit *ckt, char **name, char *param, int i
 struct variable * spif_getparam_special(CKTcircuit *ckt,char **name,char *param,int ind,int do_model);
 void if_setparam_model(CKTcircuit *ckt, char **name, char *val);
 void if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_model);
-int  if_analQbyName(CKTcircuit *ckt, int which, void *anal, char *name, IFvalue *parm);
+int  if_analQbyName(CKTcircuit *ckt, int which, JOB *anal, char *name, IFvalue *parm);
 bool if_tranparams(struct circ *ci, double *start, double *stop, double *step);
 struct variable * if_getstat(CKTcircuit *ckt, char *name);
 

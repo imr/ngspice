@@ -13,7 +13,7 @@ Author: 1988 Jaijeet S Roychowdhury
 
 /* ARGSUSED */
 int 
-DsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
+DsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     switch(which) {
 

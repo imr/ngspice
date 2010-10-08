@@ -13,7 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int 
-ACsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
+ACsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     switch(which) {
 

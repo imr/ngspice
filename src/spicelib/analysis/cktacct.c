@@ -22,7 +22,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTacct(CKTcircuit *ckt, void *anal, int which, IFvalue *val)
+CKTacct(CKTcircuit *ckt, JOB *anal, int which, IFvalue *val)
 {
     switch(which) {
         

@@ -183,7 +183,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		}
 
 		error = (*SPfrontEnd->OUTpBeginPlot)(ckt,
-			(void *) ckt->CKTcurJob,
+			ckt->CKTcurJob,
 			ckt->CKTcurJob->JOBname, freq_name, IF_REAL, num_vars,
 			output_names, type, (void **) &sen_data);
 		if (error)

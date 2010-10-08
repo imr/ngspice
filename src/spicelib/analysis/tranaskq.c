@@ -11,7 +11,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int 
-TRANaskQuest(CKTcircuit *ckt, void *anal, int which,IFvalue *value)
+TRANaskQuest(CKTcircuit *ckt, JOB *anal, int which,IFvalue *value)
 {
     switch(which) {
 

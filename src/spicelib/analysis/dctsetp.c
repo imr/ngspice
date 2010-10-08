@@ -13,7 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int 
-DCTsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
+DCTsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     TRCV* cv= (TRCV*)anal;
     switch(which) {

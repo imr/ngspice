@@ -111,7 +111,7 @@ TFanal(CKTcircuit *ckt, int restart)
                 name, UID_OTHER, NULL);
     }
 
-    error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,(void *)(ckt->CKTcurJob),
+    error = (*(SPfrontEnd->OUTpBeginPlot))(ckt, ckt->CKTcurJob,
             ((TFan*)(ckt->CKTcurJob))->JOBname,(IFuid)NULL,(int)0,3,
             uids,IF_REAL,&plotptr);
     if(error) return(error);
