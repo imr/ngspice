@@ -88,31 +88,6 @@ extern void *cx_sqrt(void *, short int , int , int *, short int *);
 extern void *cx_sin(void *, short int , int , int *, short int *);
 extern void *cx_cos(void *, short int , int , int *, short int *);
 
-/* cmath2.c */
-
-extern void *cx_tan(void *, short int , int , int *, short int *);
-extern void *cx_atan(void *, short int , int , int *, short int *);
-extern void *cx_norm(void *, short int , int , int *, short int *);
-extern void *cx_uminus(void *, short int , int , int *, short int *);
-extern void *cx_rnd(void *, short int , int , int *, short int *);
-extern void *cx_sunif(void *, short int , int , int *, short int *);
-extern void *cx_sgauss(void *, short int , int , int *, short int *);
-extern void *cx_mean(void *, short int , int , int *, short int *);
-extern void *cx_avg(void *, short int , int , int *, short int *);
-extern void *cx_length(void *, short int , int , int *, short int *);
-extern void *cx_vector(void *, short int , int , int *, short int *);
-extern void *cx_unitvec(void *, short int , int , int *, short int *);
- 
-/* Routoure JM : somme useful functions */
-extern void *cx_min(void *, short int , int , int *, short int *);
-extern void *cx_max(void *, short int , int , int *, short int *);
-extern void *cx_d(void *, short int , int , int *, short int *);
-
-extern void *cx_plus(void *, void *, short int , short int , int);
-extern void *cx_minus(void *, void *, short int , short int , int);
-extern void *cx_times(void *, void *, short int , short int , int);
-extern void *cx_mod(void *, void *, short int , short int , int);
-
 /* cmath3.c */
 
 extern void *cx_divide(void *, void *, short int , short int , int);

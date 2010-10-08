@@ -18,6 +18,7 @@ $Id$
 #include "evaluate.h"
 #include "parse.h"
 
+#include "../maths/cmaths/cmath2.h"
 
 /* static declarations */
 static bool checkvalid(struct pnode *pn);

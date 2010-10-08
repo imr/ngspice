@@ -1,4 +1,10 @@
 2010-10-08  Robert Larice
+ * src/frontend/evaluate.c ,
+ * src/frontend/parse.c ,
+ * src/include/fteext.h :
+    collect some cx_*() prototypes in "cmath2.h"
+
+2010-10-08  Robert Larice
  * src/main.c :
     remove winmessage() prototype, there is no such thing (hopefully)
 
