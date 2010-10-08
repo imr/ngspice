@@ -42,16 +42,16 @@ void INP2V(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2W(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2Y(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2Z(CKTcircuit *ckt, INPtables *tab, card *current);
-int INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, void *task, CKTnode *gnode);
+int INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, TSKtask *task, CKTnode *gnode);
 
 /* inpxxxx.c */
 
 int INPaName(char *parm, IFvalue *val, CKTcircuit *ckt, int *dev, char *devnam, 
 	     GENinstance **fast, IFsimulator *sim, int *dataType, IFvalue *selector);
-int INPapName(CKTcircuit *ckt, int type, void *analPtr, char *parmname, IFvalue *value);
+int INPapName(CKTcircuit *ckt, int type, JOB *analPtr, char *parmname, IFvalue *value);
 void INPcaseFix(register char *string);
 char * INPdomodel(CKTcircuit *ckt, card *image, INPtables *tab);
-void INPdoOpts(CKTcircuit *ckt, void *anal, card *optCard, INPtables *tab);
+void INPdoOpts(CKTcircuit *ckt, JOB *anal, card *optCard, INPtables *tab);
 char * INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast, double *leading,
 		   int *waslead, INPtables *tab);
 char * INPerrCat(char *a, char *b);
@@ -72,7 +72,7 @@ int INPlookMod(char *name);
 int INPmakeMod(char *token, int type, card *line);
 char * INPmkTemp(char *string);
 void INPpas1(CKTcircuit *ckt, card *deck, INPtables *tab);
-void INPpas2(CKTcircuit *ckt, card *data, INPtables *tab, void *task);
+void INPpas2(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task);
 int INPpName(char *parm, IFvalue *val, CKTcircuit *ckt, int dev, GENinstance *fast);
 
 /* inpptree.c */

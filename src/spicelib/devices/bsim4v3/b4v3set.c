@@ -48,7 +48,7 @@ double Rtot, DMCGeff, DMCIeff, DMDGeff;
 JOB   *job;
 
     /* Search for a noise analysis request */
-    for (job = ((TSKtask *)ft_curckt->ci_curTask)->jobs;job;job = job->JOBnextJob) {
+    for (job = ft_curckt->ci_curTask->jobs; job; job = job->JOBnextJob) {
         if(strcmp(job->JOBname,"Noise Analysis")==0) {
             noiseAnalGiven = 1;
             break;

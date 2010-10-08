@@ -16,7 +16,7 @@ Modified: 2000 AlansFixes
 
 static int
 dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-	  void *task, CKTnode *gnode, void *foo)
+	  TSKtask *task, CKTnode *gnode, JOB *foo)
 {
     int which;			/* which analysis we are performing */
     int i;			/* generic loop variable */
@@ -124,7 +124,7 @@ dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 static int
 dot_op(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-       void *task, CKTnode *gnode, void *foo)
+       TSKtask *task, CKTnode *gnode, JOB *foo)
 {
     int which;			/* which analysis we are performing */
     int i;			/* generic loop variable */
@@ -149,7 +149,7 @@ dot_op(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 static int
 dot_disto(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-	  void *task, CKTnode *gnode, void *foo)
+	  TSKtask *task, CKTnode *gnode, JOB *foo)
 {
     int which;			/* which analysis we are performing */
     int i;			/* generic loop variable */
@@ -190,7 +190,7 @@ dot_disto(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 static int
 dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-       void *task, CKTnode *gnode, void *foo)
+       TSKtask *task, CKTnode *gnode, JOB *foo)
 {
     int error;			/* error code temporary */
     IFvalue ptemp;		/* a value structure to package resistance into */
@@ -227,7 +227,7 @@ dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 static int
 dot_pz(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-       void *task, CKTnode *gnode, void *foo)
+       TSKtask *task, CKTnode *gnode, JOB *foo)
 {
     int error;			/* error code temporary */
     IFvalue ptemp;		/* a value structure to package resistance into */
@@ -269,7 +269,7 @@ dot_pz(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 static int
 dot_dc(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-       void *task, CKTnode *gnode, void *foo)
+       TSKtask *task, CKTnode *gnode, JOB *foo)
 {
     char *name;			/* the resistor's name */
     int error;			/* error code temporary */
@@ -320,7 +320,7 @@ dot_dc(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 static int
 dot_tf(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-       void *task, CKTnode *gnode, void *foo)
+       TSKtask *task, CKTnode *gnode, JOB *foo)
 {
     char *name;			/* the resistor's name */
     int error;			/* error code temporary */
@@ -393,7 +393,7 @@ dot_tf(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 static int
 dot_tran(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-	 void *task, CKTnode *gnode, void *foo)
+	 TSKtask *task, CKTnode *gnode, JOB *foo)
 {
     int error;			/* error code temporary */
     IFvalue ptemp;		/* a value structure to package resistance into */
@@ -447,7 +447,7 @@ dot_tran(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 static int
 dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-	 void *task, CKTnode *gnode, void *foo)
+	 TSKtask *task, CKTnode *gnode, JOB *foo)
 {
     char *name;			/* the resistor's name */
     int error;			/* error code temporary */
@@ -549,7 +549,7 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 #ifdef WANT_SENSE2
 static int
 dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-	  void *task, CKTnode *gnode, void *foo)
+	  TSKtask *task, CKTnode *gnode, JOB *foo)
 {
     int error;			/* error code temporary */
     IFvalue ptemp;		/* a value structure to package resistance into */
@@ -621,24 +621,24 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 static int
 dot_options(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
-	  void *task, CKTnode *gnode, void *foo)
+	  TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	/* .option - specify program options - rather complicated */
 	/* use a subroutine to handle all of them to keep this    */
 	/* subroutine managable.                                  */
     	
-    	INPdoOpts(ckt, &(((TSKtask *)task)->taskOptions), current, tab);
+    	INPdoOpts(ckt, &(task->taskOptions), current, tab);
     	return (0);
 }
 
 
 int
-INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, void *task, CKTnode *gnode)
+INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, TSKtask *task, CKTnode *gnode)
 {
 
     /* .<something> Many possibilities */
     char *token;		/* a token from the line, tmalloc'ed */
-    void *foo = NULL;		/* pointer to analysis */
+    JOB *foo = NULL;		/* pointer to analysis */
     /* the part of the current line left to parse */
     char *line = current->line;
     int rtn = 0;

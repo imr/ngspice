@@ -18,7 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTfndTask(CKTcircuit *ckt, void **taskPtr, IFuid taskName)
+CKTfndTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName)
 {
     return(E_UNSUPP);
 }

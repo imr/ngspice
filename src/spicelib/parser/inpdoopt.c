@@ -20,7 +20,7 @@ Modified: 2000 AlansFixes
 void
 INPdoOpts(
     CKTcircuit *ckt,
-    void *anal,
+    JOB *anal,
     card *optCard,
     INPtables *tab)
 {

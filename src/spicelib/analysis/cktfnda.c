@@ -20,12 +20,12 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTfndAnal(CKTcircuit *ckt, int *analIndex, void **anal, IFuid name, void *inTask, IFuid taskName)
+CKTfndAnal(CKTcircuit *ckt, int *analIndex, void **anal, IFuid name, TSKtask *inTask, IFuid taskName)
 {
-    TSKtask *task = (TSKtask *)inTask;
+    TSKtask *task = /* fixme, drop that */ inTask;
     JOB *here;
 
-    for (here = ((TSKtask *)task)->jobs;here;here = here->JOBnextJob) {
+    for (here = task->jobs; here; here = here->JOBnextJob) {
         if(strcmp(here->JOBname,name)==0) {
             if(anal) *anal = (void *)here;
             return(OK);

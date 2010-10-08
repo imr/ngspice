@@ -16,20 +16,20 @@ extern SPICEanalysis *analInfo[];
 
 /* ARGSUSED */
 int
-CKTnewAnal(CKTcircuit *ckt, int type, IFuid name, void **analPtr, void *taskPtr)
+CKTnewAnal(CKTcircuit *ckt, int type, IFuid name, JOB **analPtr, TSKtask *taskPtr)
 {
     if(type==0) {
         /* special case for analysis type 0 == option card */
-        *analPtr = &(((TSKtask *)taskPtr)->taskOptions); /* pointer to the task itself */
-        (*(JOB **)analPtr)->JOBname = name;
-        (*(JOB **)analPtr)->JOBtype = type;
+        *analPtr = &(taskPtr->taskOptions); /* pointer to the task itself */
+        (*analPtr)->JOBname = name;
+        (*analPtr)->JOBtype = type;
         return(OK); /* doesn't need to be created */
     }
-    *analPtr = (void *)MALLOC(analInfo[type]->size);
+    *analPtr = (JOB *)MALLOC(analInfo[type]->size);
     if(*analPtr==NULL) return(E_NOMEM);
-    (*(JOB **)analPtr)->JOBname = name;
-    (*(JOB **)analPtr)->JOBtype = type;
-    (*(JOB **)analPtr)->JOBnextJob = ((TSKtask *)taskPtr)->jobs;
-    ((TSKtask *)taskPtr)->jobs = (JOB *)*analPtr;
+    (*analPtr)->JOBname = name;
+    (*analPtr)->JOBtype = type;
+    (*analPtr)->JOBnextJob = taskPtr->jobs;
+    taskPtr->jobs = *analPtr;
     return(OK);
 }

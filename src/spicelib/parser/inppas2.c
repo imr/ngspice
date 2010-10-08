@@ -26,7 +26,7 @@ extern void SetAnalyse( char * Analyse, int Percent);
 /* pass 2 - Scan through the lines.  ".model" cards have processed in
  *  pass1 and are ignored here.  */
 
-void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, void *task)
+void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 {
 
     card *current;

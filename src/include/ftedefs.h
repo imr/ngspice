@@ -41,12 +41,12 @@ struct circ {
     char *ci_nodes;     /* ccom structs for the nodes... */
     char *ci_devices;   /* and devices in the circuit. */
     char *ci_filename;  /* Where this circuit came from. */
-    char *ci_defTask;   /* the default task for this circuit */
-    char *ci_specTask;  /* the special task for command line jobs */
-    char *ci_curTask;   /* the most recent task for this circuit */
-    char *ci_defOpt;    /* the default options anal. for this circuit */
-    char *ci_specOpt;   /* the special options anal. for command line jobs */
-    char *ci_curOpt;    /* the most recent options anal. for the circuit */
+    TSKtask *ci_defTask;   /* the default task for this circuit */
+    TSKtask *ci_specTask;  /* the special task for command line jobs */
+    TSKtask *ci_curTask;   /* the most recent task for this circuit */
+    JOB *ci_defOpt;    /* the default options anal. for this circuit */
+    JOB *ci_specOpt;   /* the special options anal. for command line jobs */
+    JOB *ci_curOpt;    /* the most recent options anal. for the circuit */
     char *ci_last_an;   /* name of last analysis run */
 } ;
 

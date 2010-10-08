@@ -19,18 +19,18 @@ int
 CKTnewTask(CKTcircuit *ckt, void **taskPtr, IFuid taskName)
  */
 int
-CKTnewTask(CKTcircuit *ckt, void **taskPtr, IFuid taskName, void **defPtr)
+CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
 /*CDHW See notes in spiceif.c for an explanation of these fixes CDHW*/
 {
     TSKtask *tsk, *def=NULL;
 
-    *taskPtr = (void *)tmalloc(sizeof(TSKtask));
+    *taskPtr = (TSKtask *)tmalloc(sizeof(TSKtask));
     if(*taskPtr==NULL) return(E_NOMEM);
-    tsk = *(TSKtask **)taskPtr;
+    tsk = *taskPtr;
     tsk->TSKname = taskName;
 #if (1) /*CDHW*/
     if(defPtr) 
-       def = *(TSKtask **)defPtr;
+       def = *defPtr;
     if ((strcmp(taskName,"special")==0) && def )  {
     /* create options by copying the circuit's defaults */  
         tsk->TSKtemp = def->TSKtemp;    

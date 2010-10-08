@@ -386,22 +386,22 @@ struct IFsimulator {
     int (*deleteModel) (CKTcircuit *, GENmodel *);
                                     /* delete a model from the circuit*/
 
-    int (*newTask) (CKTcircuit *, void **, IFuid, void **); /*CDHW*/
+    int (*newTask) (CKTcircuit *, TSKtask **, IFuid, TSKtask **); /*CDHW*/
                                     /* create a new task */
-    int (*newAnalysis) (CKTcircuit *, int, IFuid, void **, void *);
+    int (*newAnalysis) (CKTcircuit *, int, IFuid, JOB **, TSKtask *);
                                     /* create new analysis within a task */
-    int (*setAnalysisParm) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
+    int (*setAnalysisParm) (CKTcircuit *, JOB *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on an analysis  */
     int (*askAnalysisQuest) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
                                     /* ask a question about an analysis */
-    int (*findAnalysis) (CKTcircuit *, int *, void **, IFuid, void *, IFuid);
+    int (*findAnalysis) (CKTcircuit *, int *, void **, IFuid, TSKtask *, IFuid);
                                     /* find a specific analysis */
-    int (*findTask) (CKTcircuit *, void **, IFuid);
+    int (*findTask) (CKTcircuit *, TSKtask **, IFuid);
                                     /* find a specific task */
-    int (*deleteTask) (CKTcircuit *, void *);
+    int (*deleteTask) (CKTcircuit *, TSKtask *);
                                     /* delete a task */
 
-    int (*doAnalyses) (CKTcircuit *, int, void *);
+    int (*doAnalyses) (CKTcircuit *, int, TSKtask *);
     char *(*nonconvErr) (CKTcircuit *, char *); /* return nonconvergence error */
 
     int numDevices;                 /* number of device types supported */

@@ -13,11 +13,11 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTdelTask(CKTcircuit *ckt, void *task)
+CKTdelTask(CKTcircuit *ckt, TSKtask *task)
 {
     JOB *job;
     JOB *old=NULL;
-    for(job = ((TSKtask*)task)->jobs; job; job=job->JOBnextJob){
+    for(job = task->jobs; job; job=job->JOBnextJob){
         if(old) FREE(old);
         old=job;
     }

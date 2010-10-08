@@ -116,11 +116,11 @@ if_inpdeck(struct line *deck, INPtables **tab)
     }
 #if (0)
        err = 
-     (*(ft_sim->newTask))(ckt,(void**)&(ft_curckt->ci_defTask),taskUid);
+     (*(ft_sim->newTask))(ckt, &(ft_curckt->ci_defTask), taskUid);
 #else /*CDHW*/
        err = 
-       (*(ft_sim->newTask))(ckt,(void**)&(ft_curckt->ci_defTask),taskUid,
-       (void**)NULL);
+       (*(ft_sim->newTask))(ckt, &(ft_curckt->ci_defTask), taskUid,
+       NULL);
 #endif
     if(err) {
         ft_sperror(err,"newTask");
@@ -145,8 +145,8 @@ if_inpdeck(struct line *deck, INPtables **tab)
         }
 
         err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,optUid,
-                (void**)&(ft_curckt->ci_defOpt),
-                (void*)ft_curckt->ci_defTask);
+                &(ft_curckt->ci_defOpt),
+                ft_curckt->ci_defTask);
 		
 /*CDHW ci_defTask and ci_defOpt point to parameters DDD CDHW*/		
 		
@@ -254,11 +254,11 @@ ci_specTask will point to it CDHW*/
         }
 #if (0)
         err = (*(ft_sim->newTask))(ft_curckt->ci_ckt, 
-                (void**)&(ft_curckt->ci_specTask),specUid);
+                &(ft_curckt->ci_specTask), specUid);
 #else /*CDHW*/
         err = (*(ft_sim->newTask))(ft_curckt->ci_ckt, 
-                 (void**)&(ft_curckt->ci_specTask),
-                 specUid,(void**)&(ft_curckt->ci_defTask));
+                 &(ft_curckt->ci_specTask),
+                 specUid, &(ft_curckt->ci_defTask));
 #endif        
         if(err) {
             ft_sperror(err,"newTask");
@@ -281,8 +281,8 @@ ci_specTask will point to it CDHW*/
                 return(2);
             }
             err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,optUid,
-                    (void**)&(ft_curckt->ci_specOpt),
-                    (void*)ft_curckt->ci_specTask);
+                    &(ft_curckt->ci_specOpt),
+                    ft_curckt->ci_specTask);
 		    
 /*CDHW 'options' ci_specOpt points to AAA in this case CDHW*/		    
 		    
@@ -495,12 +495,12 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
     }
 
 #if (0)
-     if ((err = (*(ft_sim->setAnalysisParm))(cc, (void *)ft_curckt->ci_curOpt,
+     if ((err = (*(ft_sim->setAnalysisParm))(cc, ft_curckt->ci_curOpt,
              ft_sim->analyses[which]->analysisParms[i].id, &pval,
              (IFvalue *)NULL)) != OK)
          ft_sperror(err, "setAnalysisParm(options) ci_curOpt");
 #else /*CDHW*/
-     if ((err = (*(ft_sim->setAnalysisParm))(cc, (void *)ft_curckt->ci_defOpt,
+     if ((err = (*(ft_sim->setAnalysisParm))(cc, ft_curckt->ci_defOpt,
              ft_sim->analyses[which]->analysisParms[i].id, &pval,
              (IFvalue *)NULL)) != OK)
          ft_sperror(err, "setAnalysisParm(options) ci_curOpt");
@@ -1257,7 +1257,7 @@ if_getstat(CKTcircuit *ckt, char *name)
                 break;
         if (i == ft_sim->analyses[which]->numParms)
             return (NULL);
-        if ((*(ft_sim->askAnalysisQuest))(ckt, &(((TSKtask*)ft_curckt->ci_curTask)->taskOptions),
+        if ((*(ft_sim->askAnalysisQuest))(ckt, &(ft_curckt->ci_curTask->taskOptions),
                 ft_sim->analyses[which]->analysisParms[i].id, &parm, 
                 (IFvalue *)NULL) == -1) {
             fprintf(cp_err, 
@@ -1271,7 +1271,7 @@ if_getstat(CKTcircuit *ckt, char *name)
             if(!(ft_sim->analyses[which]->analysisParms[i].dataType&IF_ASK)) {
                 continue;
             }
-            if ((*(ft_sim->askAnalysisQuest))(ckt, &(((TSKtask*)ft_curckt->ci_curTask)->taskOptions), 
+            if ((*(ft_sim->askAnalysisQuest))(ckt, &(ft_curckt->ci_curTask->taskOptions), 
                     ft_sim->analyses[which]->analysisParms[i].id, 
                     &parm, (IFvalue *)NULL) == -1) {
                 fprintf(cp_err, 
@@ -1488,28 +1488,28 @@ do {\
     _foo(ckt->CKTbreaks,double,ckt->CKTbreakSize);
     
     {	/* avoid invalid lvalue assignment errors in the macro _foo() */
-    	TSKtask * lname = (TSKtask *)ft_curckt->ci_curTask;
+    	TSKtask * lname = ft_curckt->ci_curTask;
     	_foo(lname,TSKtask,1);
     }
 
     /* To stop the Free */
-    ((TSKtask *)ft_curckt->ci_curTask)->TSKname = NULL;
-    ((TSKtask *)ft_curckt->ci_curTask)->jobs = NULL;
+    ft_curckt->ci_curTask->TSKname = NULL;
+    ft_curckt->ci_curTask->jobs = NULL;
 
-    _foo(((TSKtask *)ft_curckt->ci_curTask)->TSKname,char,-1);
+    _foo(ft_curckt->ci_curTask->TSKname, char, -1);
     
     {	/* avoid invalid lvalue assignment errors in the macro _foo() */
-    	TRANan * lname = (TRANan *)((TSKtask *)ft_curckt->ci_curTask)->jobs;
+    	TRANan * lname = (TRANan *)ft_curckt->ci_curTask->jobs;
     	_foo(lname,TRANan,1);
     }
-    ((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBname = NULL;
-    ckt->CKTcurJob = (&(((TSKtask *)ft_curckt->ci_curTask)->taskOptions))->jobs;
+    ft_curckt->ci_curTask->jobs->JOBname = NULL;
+    ckt->CKTcurJob = (&(ft_curckt->ci_curTask->taskOptions)) -> jobs;
     
-    _foo(((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBname,char,-1);
+    _foo(ft_curckt->ci_curTask->jobs->JOBname, char, -1);
 
-    ((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBnextJob = NULL;
+    ft_curckt->ci_curTask->jobs->JOBnextJob = NULL;
     
-    ((TRANan *)((TSKtask *)ft_curckt->ci_curTask)->jobs)->TRANplot = NULL;
+    ((TRANan *)ft_curckt->ci_curTask->jobs)->TRANplot = NULL;
 
     _foo(ckt->CKTstat,STATistics,1);
 
@@ -1564,7 +1564,7 @@ void com_savesnap(wordlist *wl) {
   
   ckt = ft_curckt->ci_ckt;
     
-  task = (TSKtask *)ft_curckt->ci_curTask;
+  task = ft_curckt->ci_curTask;
 
   if(task->jobs->JOBtype != 4) {
     fprintf(cp_err,"Only saving of tran analysis is implemented\n");

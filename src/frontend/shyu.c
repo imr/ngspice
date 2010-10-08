@@ -28,11 +28,11 @@ int
 if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
 {
     CKTcircuit *ckt = /* fixme, drop that */ t;
-    void *senseJob;
-    void *acJob;
-    void *opJob;
-    void *dcJob;
-    void *tranJob;
+    JOB *senseJob;
+    JOB *acJob;
+    JOB *opJob;
+    JOB *dcJob;
+    JOB *tranJob;
     card *current;
     IFvalue ptemp;
     IFvalue *parm;
@@ -69,8 +69,8 @@ if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
         }
     }
     err = (*(ft_sim->newTask))(ft_curckt->ci_ckt,
-	    (void **) &(ft_curckt->ci_specTask),"special",
-	    (void**)&(ft_curckt->ci_defTask));
+	    &(ft_curckt->ci_specTask), "special",
+	    &(ft_curckt->ci_defTask));
     if(err) {
         ft_sperror(err,"newTask");
         return(0); /* temporary */
@@ -83,7 +83,7 @@ if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
     } 
     if(which != -1) {
         err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,"options",
-		(void **) &(ft_curckt->ci_specOpt),ft_curckt->ci_specTask);
+		&(ft_curckt->ci_specOpt), ft_curckt->ci_specTask);
         if(err) {
             ft_sperror(err,"createOptions");
             return(0);/* temporary */

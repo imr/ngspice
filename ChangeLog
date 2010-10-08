@@ -1,4 +1,34 @@
 2010-10-08  Robert Larice
+ * src/frontend/shyu.c ,
+ * src/frontend/spiceif.c ,
+ * src/include/cktdefs.h ,
+ * src/include/ftedefs.h ,
+ * src/include/ifsim.h ,
+ * src/include/inpdefs.h ,
+ * src/spicelib/analysis/ckt.h ,
+ * src/spicelib/analysis/cktdelt.c ,
+ * src/spicelib/analysis/cktdojob.c ,
+ * src/spicelib/analysis/cktfnda.c ,
+ * src/spicelib/analysis/cktftask.c ,
+ * src/spicelib/analysis/cktnewan.c ,
+ * src/spicelib/analysis/cktntask.c ,
+ * src/spicelib/analysis/cktsetap.c ,
+ * src/spicelib/devices/bsim4/b4set.c ,
+ * src/spicelib/devices/bsim4v2/b4v2set.c ,
+ * src/spicelib/devices/bsim4v3/b4v3set.c ,
+ * src/spicelib/devices/bsim4v4/b4v4set.c ,
+ * src/spicelib/devices/bsim4v5/b4v5set.c ,
+ * src/spicelib/parser/inp.h ,
+ * src/spicelib/parser/inp2dot.c ,
+ * src/spicelib/parser/inpapnam.c ,
+ * src/spicelib/parser/inpdoopt.c ,
+ * src/spicelib/parser/inppas2.c ,
+ * src/spicelib/parser/inppas2.h ,
+ * src/spicelib/parser/inppas3.c ,
+ * src/spicelib/parser/inppas3.h :
+    use the types TSKtask and JOB, instead of void
+
+2010-10-08  Robert Larice
  * src/frontend/spiceif.c ,
  * src/spicelib/analysis/cktnewan.c ,
  * src/spicelib/parser/inp2dot.c :

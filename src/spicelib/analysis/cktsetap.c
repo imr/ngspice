@@ -16,9 +16,9 @@ extern SPICEanalysis *analInfo[];
 
 /* ARGSUSED */
 int
-CKTsetAnalPm(CKTcircuit *ckt, void *analPtr, int parm, IFvalue *value, IFvalue *selector)
+CKTsetAnalPm(CKTcircuit *ckt, JOB *analPtr, int parm, IFvalue *value, IFvalue *selector)
 {
-    int type = ((JOB *)analPtr)->JOBtype;
+    int type = analPtr->JOBtype;
     if((analInfo[type]->setParm)==NULL) return(E_BADPARM);
     return( (*(analInfo[type]->setParm))(ckt,analPtr,parm,value) );
 }
