@@ -1,4 +1,8 @@
 2010-10-08  Robert Larice
+ * src/main.c :
+    remove winmessage() prototype, there is no such thing (hopefully)
+
+2010-10-08  Robert Larice
  * src/include/inpdefs.h ,
  * src/spicelib/parser/inp.h :
     collect the other INP*() prototypes in "inpdefs.h"

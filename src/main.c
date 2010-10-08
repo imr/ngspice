@@ -344,13 +344,6 @@ struct dvec *EVTfindvec(char *node){
 
 #endif /* SIMULATOR */
 
-#ifndef HAS_WINDOWS
-/* dummy of MS Windows message function */
-void winmessage(char* new_msg) {
-   return;
-}
-#endif
-
 char *hlp_filelist[] = { "ngspice", 0 };
 
 
