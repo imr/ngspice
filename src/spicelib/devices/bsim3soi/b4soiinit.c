@@ -3,7 +3,6 @@
 #include "devdefs.h"
 
 #include "b4soiitf.h"
-#include "b4soiext.h"
 #include "b4soiinit.h"
 
 SPICEdev B4SOIinfo = {

@@ -3,7 +3,6 @@
 #include "devdefs.h"
 
 #include "b3soipditf.h"
-#include "b3soipdext.h"
 #include "b3soipdinit.h"
 
 

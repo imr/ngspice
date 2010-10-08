@@ -3,7 +3,6 @@
 #include "devdefs.h"
 
 #include "b3soifditf.h"
-#include "b3soifdext.h"
 #include "b3soifdinit.h"
 
 SPICEdev B3SOIFDinfo = {

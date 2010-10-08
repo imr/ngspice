@@ -1,4 +1,13 @@
 2010-10-08  Robert Larice
+ * src/spicelib/devices/bsim3soi/b4soiinit.c ,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddinit.c ,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdinit.c ,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdinit.c ,
+ * src/spicelib/devices/dio/dioinit.c ,
+ * src/spicelib/devices/hisim/hsm1init.c :
+    avoid function redeclaration (devices)
+
+2010-10-08  Robert Larice
  * src/include/sensgen.h ,
  * src/spicelib/analysis/cktsgen.c :
     sens_getp() prototype  -->  include file

@@ -4,7 +4,6 @@
 
 #include "hsm1def.h"
 #include "hsm1itf.h"
-#include "hsm1ext.h"
 #include "hsm1init.h"
 
 SPICEdev HSM1info = {

@@ -5,7 +5,6 @@
 
 #include "diodefs.h"
 #include "dioitf.h"
-#include "dioext.h"
 #include "dioinit.h"
 
 
