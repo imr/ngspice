@@ -54,6 +54,7 @@ int CKTmodAsk( CKTcircuit *, GENmodel *, int , IFvalue *, IFvalue *);
 int CKTmodCrt( CKTcircuit *, int , GENmodel **, IFuid );
 int CKTmodParam( CKTcircuit *, GENmodel *, int , IFvalue *, IFvalue *);
 int CKTnames(CKTcircuit *, int *, IFuid **);
+int CKTdnames(CKTcircuit *);
 int CKTnewAnal( CKTcircuit *, int , IFuid , JOB **, TSKtask *);
 int CKTnewEq( CKTcircuit *, CKTnode **, IFuid );
 int CKTnewNode( CKTcircuit *, CKTnode **, IFuid );

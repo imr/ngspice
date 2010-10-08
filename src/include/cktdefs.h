@@ -316,6 +316,7 @@ extern int CKTmodAsk(CKTcircuit *, GENmodel *, int , IFvalue *, IFvalue *);
 extern int CKTmodCrt(CKTcircuit *, int , GENmodel **, IFuid);
 extern int CKTmodParam(CKTcircuit *, GENmodel *, int , IFvalue *, IFvalue *);
 extern int CKTnames(CKTcircuit *, int *, IFuid **);
+extern int CKTdnames(CKTcircuit *);
 extern int CKTnewAnal(CKTcircuit *, int , IFuid , JOB **, TSKtask *);
 extern int CKTnewEq(CKTcircuit *, CKTnode **, IFuid);
 extern int CKTnewNode(CKTcircuit *, CKTnode **, IFuid);

@@ -1,4 +1,9 @@
 2010-10-08  Robert Larice
+ * src/include/cktdefs.h ,
+ * src/spicelib/analysis/ckt.h :
+    CKTdnames() prototype
+
+2010-10-08  Robert Larice
  * src/xspice/icm/Makefile :
     too much quoting caused an error for quoted things in CFLAGS
       ( CFLAGS=-D"SIGNAL_FUNCTION='void(*)(int)'" ./configure )
