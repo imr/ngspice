@@ -1,4 +1,9 @@
 2010-10-08  Robert Larice
+ * src/include/sensgen.h ,
+ * src/spicelib/analysis/cktsgen.c :
+    sens_getp() prototype  -->  include file
+
+2010-10-08  Robert Larice
  * src/xspice/idn/idndig.c :
     static function definition
 
