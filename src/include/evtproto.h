@@ -121,4 +121,6 @@ void EVTaccept(
     CKTcircuit *ckt,    /* main circuit struct */
     double     time);    /* time at which analog soln was accepted */
 
+struct dvec *EVTfindvec(char *node);
+
 #endif /* EVTPROTO_HEADER */

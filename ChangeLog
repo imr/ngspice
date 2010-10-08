@@ -1,4 +1,8 @@
 2010-10-08  Robert Larice
+ * src/include/evtproto.h :
+    EVTfindvec() prototyp
+
+2010-10-08  Robert Larice
  * src/include/cktdefs.h ,
  * src/spicelib/analysis/ckt.h :
     CKTdnames() prototype
