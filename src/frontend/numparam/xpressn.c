@@ -20,6 +20,8 @@
 extern double gauss(void);
 extern COMPATMODE_T ngspice_compat_mode(void) ;
 
+void debugwarn(tdico *d, char *s);
+
 /************ keywords ************/
 
 /* SJB - 150 chars is ample for this - see initkeys() */

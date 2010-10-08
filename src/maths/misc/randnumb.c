@@ -63,7 +63,9 @@ static unsigned LGCS(unsigned *state, unsigned A1, unsigned A2);
 
 void TausSeed(void);
 double CombLCGTaus(void);
+float  CombLCGTaus2(void);
 unsigned int CombLCGTausInt(void);
+unsigned int CombLCGTausInt2(void);
 
 void checkseed(void);
 double drand(void);

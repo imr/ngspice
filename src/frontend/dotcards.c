@@ -30,6 +30,7 @@ $Id$
 static void fixdotplot(wordlist *wl);
 static void fixdotprint(wordlist *wl);
 static char * fixem(char *string);
+void ft_savemeasure(void);
 
 
 static struct plot *

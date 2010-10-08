@@ -16,6 +16,7 @@ Author: 1985 Thomas L. Quarles
 #include "inpdefs.h"
 #include "inp.h"
 
+extern void INPlist(FILE *file, card *deck, int type);  /* nowhere used function */
 
 void INPlist(FILE * file, card * deck, int type)
 {

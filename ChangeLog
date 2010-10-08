@@ -1,4 +1,12 @@
 2010-10-08  Robert Larice
+ * src/frontend/dotcards.c ,
+ * src/frontend/numparam/spicenum.c ,
+ * src/frontend/numparam/xpressn.c ,
+ * src/maths/misc/randnumb.c ,
+ * src/spicelib/parser/inplist.c :
+    some .c file local prototypes
+
+2010-10-08  Robert Larice
  * src/maths/cmaths/cmath2.h :
     cx_avg() prototype
 
