@@ -20,8 +20,6 @@ Author: 1987 Gary W. Ng
  *    "OnDens".
  */
 
-extern void   NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param);
-extern double Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data);
 
 int
 SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data, double *OnDens)

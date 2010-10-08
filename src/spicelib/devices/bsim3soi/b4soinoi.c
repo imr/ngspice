@@ -45,8 +45,6 @@
     Flicker noise         = Unified model
 */
 
-extern void   NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param);
-extern double Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data);
 
 double
 B4SOIEval1ovFNoise(

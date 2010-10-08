@@ -39,8 +39,6 @@ File:  b3v1snoi.c
     Flicker noise         = SPICE2 model
  */
 
-extern void   NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param);
-extern double Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data);
 
 double
 StrongInversionNoiseEval_b3v1s(double vgs, double vds, BSIM3v1Smodel *model, 

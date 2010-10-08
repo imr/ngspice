@@ -21,8 +21,6 @@ Modified: Alan Gillespie
  *    all of the BJT2's is summed with the variable "OnDens".
  */
 
-extern void   NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param);
-extern double Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data);
 
 int
 BJT2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, 

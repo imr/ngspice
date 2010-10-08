@@ -49,8 +49,6 @@
     Flicker noise         = BSIM3 model
  */
 
-extern void   NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param);
-extern double Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data);
 
 /*
  * JX: 1/f noise model is smoothed out 12/18/01.

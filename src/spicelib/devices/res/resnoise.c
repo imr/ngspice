@@ -25,9 +25,6 @@ Modified: Apr 2000 - Paolo Nenzi
  *    Added "noisy" switch to simulate noiseless resistors.
  */
 
-extern void NevalSrc2 (double *noise, double *lnNoise, CKTcircuit *ckt, int type, 
-                         int node1, int node2, double param, double param2);
-extern double Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data);
 
 int
 RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, 

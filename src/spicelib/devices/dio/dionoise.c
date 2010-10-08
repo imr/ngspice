@@ -21,8 +21,6 @@ Modified by Dietmar Warning 2003
  *     "OnDens".
  */
 
-extern void   NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param);
-extern double Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data);
 
 int
 DIOnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, 
