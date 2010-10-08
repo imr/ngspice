@@ -12,7 +12,7 @@ Modified: 2000 AlansFixes
 #include "fteext.h"
 #include "inp.h"
 #include "cpdefs.h"
-
+#include "tskdefs.h"
 
 static int
 dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
@@ -627,7 +627,7 @@ dot_options(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	/* use a subroutine to handle all of them to keep this    */
 	/* subroutine managable.                                  */
     	
-    	INPdoOpts(ckt,task,current,tab);	
+    	INPdoOpts(ckt, &(((TSKtask *)task)->taskOptions), current, tab);
     	return (0);
 }
 

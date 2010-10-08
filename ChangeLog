@@ -1,4 +1,12 @@
 2010-10-08  Robert Larice
+ * src/frontend/spiceif.c ,
+ * src/spicelib/analysis/cktnewan.c ,
+ * src/spicelib/parser/inp2dot.c :
+    type bistromatic
+      in preparation for the next patches
+      Note: offsetof struct TSKtask.taskOptions === 0
+
+2010-10-08  Robert Larice
  * src/frontend/spiceif.c :
     remove a redundant cast
 

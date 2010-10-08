@@ -20,7 +20,7 @@ CKTnewAnal(CKTcircuit *ckt, int type, IFuid name, void **analPtr, void *taskPtr)
 {
     if(type==0) {
         /* special case for analysis type 0 == option card */
-        *analPtr=taskPtr; /* pointer to the task itself */
+        *analPtr = &(((TSKtask *)taskPtr)->taskOptions); /* pointer to the task itself */
         (*(JOB **)analPtr)->JOBname = name;
         (*(JOB **)analPtr)->JOBtype = type;
         return(OK); /* doesn't need to be created */
