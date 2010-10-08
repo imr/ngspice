@@ -1,4 +1,10 @@
 2010-10-08  Robert Larice
+ * src/include/inpdefs.h ,
+ * src/spicelib/parser/inp.h ,
+ * src/spicelib/parser/inppas2.c :
+    collect the INP2?() prototypes in "inp.h"
+
+2010-10-08  Robert Larice
  * src/include/inpptree.h ,
  * src/spicelib/parser/inp.h :
     collect the PT*() prototypes in "inp.h"

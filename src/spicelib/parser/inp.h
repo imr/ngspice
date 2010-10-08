@@ -31,6 +31,7 @@ void INP2J(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2K(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2L(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2M(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2N(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2O(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2P(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2Q(CKTcircuit *ckt, INPtables *tab, card *current, CKTnode *gnode);
