@@ -19,7 +19,7 @@ Author: 1988 Jaijeet S Roychowdhury
 
 /* actually load the current resistance value into the sparse matrix
  * previously provided */
-void TanDeriv(Dderivs *new, Dderivs *old);
+
 int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     BJTmodel *model = (BJTmodel*)inModel;

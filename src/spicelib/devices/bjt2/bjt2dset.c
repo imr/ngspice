@@ -17,7 +17,7 @@ Modified: Alan Gillespie
  * This function initialises the Taylor coeffs for the
  * BJT2's in the circuit
  */
-void TanDeriv(Dderivs *new, Dderivs *old);
+
 int BJT2dSetup(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the 
          * sparse matrix previously provided 

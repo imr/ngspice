@@ -210,6 +210,7 @@ extern void DivDeriv(Dderivs *, Dderivs *, Dderivs *);
 extern void PowDeriv(Dderivs *, Dderivs *, double);
 extern void AtanDeriv(Dderivs *, Dderivs *);
 extern void CosDeriv(Dderivs *, Dderivs *);
+extern void TanDeriv(Dderivs *, Dderivs *);
 extern void ExpDeriv(Dderivs *, Dderivs *);
 
 extern int CKTdisto(CKTcircuit *ckt, int mode);

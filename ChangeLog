@@ -1,4 +1,10 @@
 2010-10-08  Robert Larice
+ * src/include/distodef.h ,
+ * src/spicelib/devices/bjt/bjtdset.c ,
+ * src/spicelib/devices/bjt2/bjt2dset.c :
+    TanDeriv() prototype  -->  include files
+
+2010-10-08  Robert Larice
  * src/xspice/cmpp/cmpp.h ,
  * src/xspice/cmpp/main.c ,
  * src/xspice/cmpp/pp_lst.c :
