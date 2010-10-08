@@ -1,4 +1,8 @@
 2010-10-08  Robert Larice
+ * src/include/ipcproto.h :
+    #ifdef include file wrapper
+
+2010-10-08  Robert Larice
  * src/include/noisedef.h ,
  * src/spicelib/devices/bjt/bjtnoise.c ,
  * src/spicelib/devices/bjt2/bjt2noise.c ,

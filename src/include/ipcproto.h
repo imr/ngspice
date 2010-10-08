@@ -1,3 +1,5 @@
+#ifndef IPCPROTO_H
+#define IPCPROTO_H
 
 /* IPC.c */
 Ipc_Boolean_t kw_match (char *keyword , char *str );
@@ -50,3 +52,4 @@ Ipc_Status_t ipc_transport_get_line (char *str , int *len , Ipc_Wait_t wait );
 Ipc_Status_t ipc_transport_terminate_server (void );
 Ipc_Status_t ipc_transport_send_line (char *str , int len );
 
+#endif
