@@ -212,7 +212,9 @@ extern void AtanDeriv(Dderivs *, Dderivs *);
 extern void CosDeriv(Dderivs *, Dderivs *);
 extern void ExpDeriv(Dderivs *, Dderivs *);
 
+extern int CKTdisto(CKTcircuit *ckt, int mode);
 
+extern int DkerProc(int type, double *rPtr, double *iPtr, int size, DISTOAN *job);
 
 
 #endif /*DISTODEFS*/

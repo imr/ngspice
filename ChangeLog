@@ -1,4 +1,9 @@
 2010-10-08  Robert Larice
+ * src/include/distodef.h ,
+ * src/spicelib/analysis/distoan.c :
+    DkerProc() CKTdisto() prototypes  -->  include files
+
+2010-10-08  Robert Larice
  * src/ciderlib/oned/onedext.h ,
  * src/spicelib/parser/inp.h :
     remove some stuttered prototypes

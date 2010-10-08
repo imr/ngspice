@@ -34,14 +34,6 @@ DstorAlloc(double ***header, int size)
 }
 
 
-#ifdef STDC
-extern int CKTdisto(CKTcircuit*, int);
-extern int DkerProc(int,double*,double*,int,DISTOan*);
-#else
-extern int CKTdisto(CKTcircuit *ckt, int mode);
-extern int DkerProc(int type, double *rPtr, double *iPtr, int size, DISTOAN *job);
-#endif
-
 
 int
 DISTOan(CKTcircuit *ckt, int restart)
