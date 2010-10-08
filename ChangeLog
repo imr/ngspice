@@ -1,4 +1,9 @@
 2010-10-08  Robert Larice
+ * src/include/inpptree.h ,
+ * src/spicelib/parser/inp.h :
+    collect the PT*() prototypes in "inp.h"
+
+2010-10-08  Robert Larice
  * src/frontend/parse.c ,
  * src/include/fteext.h :
     consider the op_*() functions to be less public

@@ -121,7 +121,20 @@ double PTsin(double arg);
 double PTsinh(double arg);
 double PTsqrt(double arg);
 double PTtan(double arg);
+double PTtanh(double arg);
 double PTuminus(double arg);
+double PTustep2(double arg);
+double PTpwl(double arg, void *data);
+double PTpwl_derivative(double arg, void *data);
+double PTmin(double arg1, double arg2);
+double PTmax(double arg1, double arg2);
+double PTeq0(double arg);
+double PTne0(double arg);
+double PTgt0(double arg);
+double PTlt0(double arg);
+double PTge0(double arg);
+double PTle0(double arg);
+
 
 /* sperror.c */
 

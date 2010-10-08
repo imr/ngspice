@@ -159,47 +159,6 @@ typedef struct PTelement {
 
 #define PT_STACKSIZE 200
 
-/* These are things defined in PTfunctions.c */
-
-extern double PTplus(double arg1, double arg2);
-extern double PTminus(double arg1, double arg2);
-extern double PTtimes(double arg1, double arg2);
-extern double PTdivide(double arg1, double arg2);
-extern double PTpower(double arg1, double arg2);
-extern double PTacos(double arg);
-extern double PTabs(double arg);
-extern double PTacosh(double arg);
-extern double PTasin(double arg);
-extern double PTasinh(double arg);
-extern double PTatan(double arg);
-extern double PTatanh(double arg);
-extern double PTcos(double arg);
-extern double PTcosh(double arg);
-extern double PTexp(double arg);
-extern double PTln(double arg);
-extern double PTlog(double arg);
-extern double PTsgn(double arg);
-extern double PTsin(double arg);
-extern double PTsinh(double arg);
-extern double PTsqrt(double arg);
-extern double PTtan(double arg);
-extern double PTtanh(double arg);
-extern double PTustep(double arg);
-/* MW. PTcif declaration */
-extern double PTustep2(double arg);
-extern double PTpwl(double arg, void *data);
-extern double PTpwl_derivative(double arg, void *data);
-extern double PTuramp(double arg);
-extern double PTuminus(double arg);
-extern double PTmin(double arg1, double arg2);
-extern double PTmax(double arg1, double arg2);
-extern double PTeq0(double arg);
-extern double PTne0(double arg);
-extern double PTgt0(double arg);
-extern double PTlt0(double arg);
-extern double PTge0(double arg);
-extern double PTle0(double arg);
-
 /* And in IFeval.c */
 
 extern int IFeval(IFparseTree *tree, double gmin, double *result, double *vals, double *derivs);
