@@ -1,4 +1,9 @@
 2010-10-08  Robert Larice
+ * src/ciderlib/oned/onedext.h ,
+ * src/spicelib/parser/inp.h :
+    remove some stuttered prototypes
+
+2010-10-08  Robert Larice
  * src/frontend/dotcards.c ,
  * src/frontend/numparam/spicenum.c ,
  * src/frontend/numparam/xpressn.c ,

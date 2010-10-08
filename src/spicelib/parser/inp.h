@@ -102,7 +102,6 @@ double PTsgn(double arg);
 double PTplus(double arg1, double arg2);
 double PTminus(double arg1, double arg2);
 double PTtimes(double arg1, double arg2);
-double PTtimes(double arg1, double arg2);
 double PTdivide(double arg1, double arg2);
 double PTpower(double arg1, double arg2);
 double PTacos(double arg);
