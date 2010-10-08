@@ -240,7 +240,8 @@ if_run(CKTcircuit *t, char *what, wordlist *args, INPtables *tab)
                 ft_sperror(err,"deleteTask");
                 return(2);
             }
-	    ft_curckt->ci_specTask = ft_curckt->ci_specOpt = NULL; /*CDHW*/
+	    ft_curckt->ci_specTask = NULL;
+	    ft_curckt->ci_specOpt  = NULL; /*CDHW*/
         }
        /*CDHW Create an interactive task AAA with a new UID.  
 ci_specTask will point to it CDHW*/

@@ -1,4 +1,9 @@
 2010-10-08  Robert Larice
+ * src/frontend/spiceif.c ,
+ * src/spicelib/analysis/ckt.h :
+    fix an incorrect prototype
+
+2010-10-08  Robert Larice
  * src/include/inpptree.h ,
  * src/spicelib/parser/inpptree.c :
     fix a compiler warning,  void* versus void(*)(void)

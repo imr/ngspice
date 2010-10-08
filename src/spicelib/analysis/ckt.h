@@ -57,7 +57,7 @@ int CKTnames(CKTcircuit *, int *, IFuid **);
 int CKTnewAnal( CKTcircuit *, int , IFuid , void **, void *);
 int CKTnewEq( CKTcircuit *, CKTnode **, IFuid );
 int CKTnewNode( CKTcircuit *, CKTnode **, IFuid );
-int CKTnewTask( CKTcircuit *, void **, IFuid );
+int CKTnewTask( CKTcircuit *, void **, IFuid, void**);
 IFuid CKTnodName( CKTcircuit *, int );
 void CKTnodOut( CKTcircuit *);
 CKTnode * CKTnum2nod( CKTcircuit *, int );
