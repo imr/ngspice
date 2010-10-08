@@ -1503,7 +1503,7 @@ do {\
     	_foo(lname,TRANan,1);
     }
     ((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBname = NULL;
-    ckt->CKTcurJob = (JOB *)((TSKtask *)ft_curckt->ci_curTask)->jobs;
+    ckt->CKTcurJob = ((TSKtask *)ft_curckt->ci_curTask)->jobs;
     
     _foo(((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBname,char,-1);
 

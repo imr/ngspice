@@ -1,4 +1,8 @@
 2010-10-08  Robert Larice
+ * src/frontend/spiceif.c :
+    remove a redundant cast
+
+2010-10-08  Robert Larice
  * src/frontend/spiceif.c ,
  * src/spicelib/analysis/ckt.h :
     fix an incorrect prototype
