@@ -25,6 +25,7 @@ void * cx_mod(void *data1, void *data2, short int datatype1, short int datatype2
 void * cx_max(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_min(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_d(void *data, short int type, int length, int *newlength, short int *newtype);
+void  *cx_avg(void *data, short int type, int length, int *newlength, short int *newtype);
 
 
 #endif
