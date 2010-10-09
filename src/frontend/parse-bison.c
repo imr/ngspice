@@ -123,7 +123,6 @@
   #include "parse-bison.h"
 
   extern int PPlex (YYSTYPE *lvalp, struct PPltype *llocp, char **line);
-  extern int PPparse (char **line, struct pnode **retval);
   extern int PPdebug;
 
   static void PPerror (YYLTYPE *locp, char **line, struct pnode **retval, char const *);
@@ -155,14 +154,14 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 51 "parse-bison.y"
+#line 50 "parse-bison.y"
 {
   double num;
   const char  *str;
   struct pnode *pnode;
 }
 /* Line 187 of yacc.c.  */
-#line 166 "parse-bison.c"
+#line 165 "parse-bison.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -187,7 +186,7 @@ typedef struct YYLTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 191 "parse-bison.c"
+#line 190 "parse-bison.c"
 
 #ifdef short
 # undef short
@@ -484,10 +483,10 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   109,   109,   110,   114,   115,   119,   126,   127,   129,
-     130,   131,   132,   133,   134,   135,   137,   139,   140,   142,
-     144,   145,   146,   147,   148,   149,   151,   152,   154,   155,
-     156
+       0,   108,   108,   109,   113,   114,   118,   125,   126,   128,
+     129,   130,   131,   132,   133,   134,   136,   138,   139,   141,
+     143,   144,   145,   146,   147,   148,   150,   151,   153,   154,
+     155
 };
 #endif
 
@@ -1495,22 +1494,22 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 109 "parse-bison.y"
+#line 108 "parse-bison.y"
     { *retval = NULL; ;}
     break;
 
   case 3:
-#line 110 "parse-bison.y"
+#line 109 "parse-bison.y"
     { *retval = (yyvsp[(1) - (1)].pnode); ;}
     break;
 
   case 5:
-#line 115 "parse-bison.y"
+#line 114 "parse-bison.y"
     { (yyvsp[(1) - (2)].pnode)->pn_next = (yyvsp[(2) - (2)].pnode); (yyvsp[(2) - (2)].pnode)->pn_use ++; (yyval.pnode) = (yyvsp[(1) - (2)].pnode); ;}
     break;
 
   case 6:
-#line 119 "parse-bison.y"
+#line 118 "parse-bison.y"
     {
         (yyvsp[(1) - (1)].pnode)->pn_name = copy_substring((yylsp[(1) - (1)]).start, (yylsp[(1) - (1)]).stop);
         (yyval.pnode) = (yyvsp[(1) - (1)].pnode);
@@ -1518,129 +1517,129 @@ yyreduce:
     break;
 
   case 7:
-#line 126 "parse-bison.y"
+#line 125 "parse-bison.y"
     { (yyval.pnode) = mknnode((yyvsp[(1) - (1)].num)); ;}
     break;
 
   case 8:
-#line 127 "parse-bison.y"
+#line 126 "parse-bison.y"
     { (yyval.pnode) = mksnode((yyvsp[(1) - (1)].str)); ;}
     break;
 
   case 9:
-#line 129 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(COMMA,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 128 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_COMMA,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 10:
-#line 130 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(PLUS,   (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 129 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_PLUS,   (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 11:
-#line 131 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(MINUS,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 130 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_MINUS,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 12:
-#line 132 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(TIMES,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 131 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_TIMES,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 13:
-#line 133 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(MOD,    (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 132 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_MOD,    (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 14:
-#line 134 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(DIVIDE, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 133 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_DIVIDE, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 15:
-#line 135 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(POWER,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 134 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_POWER,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 16:
-#line 137 "parse-bison.y"
+#line 136 "parse-bison.y"
     { (yyval.pnode) = (yyvsp[(2) - (3)].pnode); ;}
     break;
 
   case 17:
-#line 139 "parse-bison.y"
-    { (yyval.pnode) = mkunode(UMINUS, (yyvsp[(2) - (2)].pnode)); ;}
+#line 138 "parse-bison.y"
+    { (yyval.pnode) = mkunode(PT_OP_UMINUS, (yyvsp[(2) - (2)].pnode)); ;}
     break;
 
   case 18:
-#line 140 "parse-bison.y"
-    { (yyval.pnode) = mkunode(NOT, (yyvsp[(2) - (2)].pnode)); ;}
+#line 139 "parse-bison.y"
+    { (yyval.pnode) = mkunode(PT_OP_NOT, (yyvsp[(2) - (2)].pnode)); ;}
     break;
 
   case 19:
-#line 142 "parse-bison.y"
+#line 141 "parse-bison.y"
     { (yyval.pnode) = mkfnode((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].pnode)); if(!(yyval.pnode)) YYABORT; ;}
     break;
 
   case 20:
-#line 144 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(EQ, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 143 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_EQ, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 21:
-#line 145 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(NE, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 144 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_NE, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 22:
-#line 146 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(GT, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 145 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_GT, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 23:
-#line 147 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(LT, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 146 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_LT, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 24:
-#line 148 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(GE, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 147 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_GE, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 25:
-#line 149 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(LE, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 148 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_LE, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 26:
-#line 151 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(AND, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 150 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_AND, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 27:
-#line 152 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(OR,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
+#line 151 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_OR,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 28:
-#line 154 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(INDX,  (yyvsp[(1) - (4)].pnode), (yyvsp[(3) - (4)].pnode)); ;}
+#line 153 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_INDX,  (yyvsp[(1) - (4)].pnode), (yyvsp[(3) - (4)].pnode)); ;}
     break;
 
   case 29:
-#line 155 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(RANGE, (yyvsp[(1) - (4)].pnode), (yyvsp[(3) - (4)].pnode)); ;}
+#line 154 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_RANGE, (yyvsp[(1) - (4)].pnode), (yyvsp[(3) - (4)].pnode)); ;}
     break;
 
   case 30:
-#line 156 "parse-bison.y"
-    { (yyval.pnode) = mkbnode(TERNARY,(yyvsp[(1) - (5)].pnode),
-                                                     mkbnode(COMMA,(yyvsp[(3) - (5)].pnode),(yyvsp[(5) - (5)].pnode))); ;}
+#line 155 "parse-bison.y"
+    { (yyval.pnode) = mkbnode(PT_OP_TERNARY,(yyvsp[(1) - (5)].pnode),
+                                                     mkbnode(PT_OP_COMMA,(yyvsp[(3) - (5)].pnode),(yyvsp[(5) - (5)].pnode))); ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1644 "parse-bison.c"
+#line 1643 "parse-bison.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1860,7 +1859,7 @@ yyreturn:
 }
 
 
-#line 160 "parse-bison.y"
+#line 159 "parse-bison.y"
 
 
 

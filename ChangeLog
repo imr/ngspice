@@ -1,4 +1,11 @@
 2010-10-09  Robert Larice
+ * src/frontend/parse-bison.c ,
+ * src/frontend/parse-bison.h ,
+ * src/spicelib/parser/inpptree-parser.c ,
+ * src/spicelib/parser/inpptree-parser.h :
+    update the bison generated files
+
+2010-10-09  Robert Larice
  * src/frontend/parse-bison.y ,
  * src/spicelib/parser/inpptree-parser.y :
     avoid function redeclaration, PPparse() and PTparse()
