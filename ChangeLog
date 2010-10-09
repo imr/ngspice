@@ -1,4 +1,8 @@
 2010-10-09  Robert Larice
+ * src/include/fteparse.h :
+    remove obsolete #defines for MAXARITY NUM STRING PNODE
+
+2010-10-09  Robert Larice
  * src/include/complex.h :
     remove typedef for _complex, which is used nowhere
 

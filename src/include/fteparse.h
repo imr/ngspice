@@ -60,7 +60,6 @@ struct udfunc {
     struct udfunc *ud_next;	/* Link pointer. */
 } ;
 
-#define MAXARITY    32
 
 /* Parser elements. */
 
@@ -105,8 +104,5 @@ struct element {
 #define RANGE   22
 #define TERNARY   23
 
-#define NUM 1
-#define STRING  2
-#define PNODE   3
 
 #endif /* FTEPARSE */
