@@ -1,3 +1,7 @@
+2010-10-09  Robert Larice
+ * src/include/complex.h :
+    remove typedef for _complex, which is used nowhere
+
 2010-10-08  Robert Larice
  * src/frontend/evaluate.c ,
  * src/frontend/parse.c ,
