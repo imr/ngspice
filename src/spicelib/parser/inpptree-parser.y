@@ -5,7 +5,6 @@
   #include "inpptree-parser.h"
 
   extern int PTlex (YYSTYPE *lvalp, char **line);
-  extern int PTparse (char **line, struct INPparseNode **retval, void *ckt);
 
   static void PTerror (char **line, struct INPparseNode **retval, void *ckt, char const *);
 

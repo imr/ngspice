@@ -1,4 +1,9 @@
 2010-10-09  Robert Larice
+ * src/frontend/parse-bison.y ,
+ * src/spicelib/parser/inpptree-parser.y :
+    avoid function redeclaration, PPparse() and PTparse()
+
+2010-10-09  Robert Larice
  * src/frontend/define.c ,
  * src/frontend/evaluate.c ,
  * src/frontend/parse-bison.y ,

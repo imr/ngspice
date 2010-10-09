@@ -22,7 +22,6 @@
   #include "parse-bison.h"
 
   extern int PPlex (YYSTYPE *lvalp, struct PPltype *llocp, char **line);
-  extern int PPparse (char **line, struct pnode **retval);
   extern int PPdebug;
 
   static void PPerror (YYLTYPE *locp, char **line, struct pnode **retval, char const *);
