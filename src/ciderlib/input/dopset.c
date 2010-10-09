@@ -15,6 +15,8 @@ $Id$
 #include "sperror.h"
 #include "suffix.h"
 #include "cidersupt.h"
+#include "carddefs.h"
+#include "ciderinp.h"
 
 extern int DOPnewCard(void**,void*);
 extern int DOPparam(int,IFvalue*,void*);
