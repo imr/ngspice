@@ -4,7 +4,10 @@ DESCRIPTION:This file contains the routines for manipulating dynamic strings.
 CONTENTS:   
 DATE:	    Wed Mar 24 18:38:28 CDT 2010
 REVISIONS:  $Log$
-REVISIONS:  Revision 1.2  2010-07-01 19:52:26  rlar
+REVISIONS:  Revision 1.3  2010-10-09 11:42:10  rlar
+REVISIONS:  remove #define for EOS  use '\0' instead
+REVISIONS:
+REVISIONS:  Revision 1.2  2010/07/01 19:52:26  rlar
 REVISIONS:  cast the return values of malloc() function calls
 REVISIONS:
 REVISIONS:  Revision 1.1  2010/03/25 22:44:38  dwarning
@@ -43,7 +46,7 @@ void spice_dstring_init(SPICE_DSTRINGPTR dsPtr)
     dsPtr->string = dsPtr->staticSpace ;
     dsPtr->length = 0 ;
     dsPtr->spaceAvl = SPICE_DSTRING_STATIC_SIZE ;
-    dsPtr->staticSpace[0] = EOS;
+    dsPtr->staticSpace[0] = '\0';
 } /* end spice_dstring_init() */
 
 /*
@@ -103,7 +106,7 @@ char *spice_dstring_append(SPICE_DSTRINGPTR dsPtr,char *string,int length)
 	    string < end; string++, dst++) {
 	*dst = *string ;
     }
-    *dst = EOS ;
+    *dst = '\0' ;
     dsPtr->length += length ;
 
     return(dsPtr->string) ;
@@ -119,7 +122,7 @@ char *spice_dstring_append_char( SPICE_DSTRINGPTR dstr_p, char c)
   char *val_p ;				/* return value */
 
   tmp_str[0] = c ;
-  tmp_str[1] = EOS ;
+  tmp_str[1] = '\0' ;
   val_p = spice_dstring_append( dstr_p, tmp_str, -1 ) ;
   return(val_p) ;
 } /* end spice_dstring_append_char() */
@@ -319,7 +322,7 @@ char *spice_dstring_setlength(SPICE_DSTRINGPTR dsPtr,int length)
     char *str_p ;			/* newly create string */
 
     str_p = _spice_dstring_setlength( dsPtr,length) ;
-    str_p[length] = EOS ;
+    str_p[length] = '\0' ;
     return( str_p ) ;
 
 } /* end spice_dstring_setlength() */
@@ -350,6 +353,6 @@ void spice_dstring_free(SPICE_DSTRINGPTR dsPtr)
     dsPtr->string = dsPtr->staticSpace ;
     dsPtr->length = 0 ;
     dsPtr->spaceAvl = SPICE_DSTRING_STATIC_SIZE;
-    dsPtr->staticSpace[0] = EOS ;
+    dsPtr->staticSpace[0] = '\0' ;
 
 } /* end spice_dstring_free() */

@@ -22,8 +22,6 @@
 
 #include "../error.h" /* controlled_exit() */
 
-#define EOS  '\0'
-
 /***** primitive input-output ***/
 
 int
@@ -347,7 +345,7 @@ pscopy (SPICE_DSTRINGPTR dstr_p, char *t, int start, int leng)
     s_p = spice_dstring_value(dstr_p) ;
     for (i = 0; i < leng; i++)
       s_p[i] = t[start + i];
-    s_p[leng] = EOS ;
+    s_p[leng] = '\0' ;
   } else {
     s_p = spice_dstring_reinit(dstr_p) ;
   }
@@ -373,7 +371,7 @@ pscopy_up (SPICE_DSTRINGPTR dstr_p, char *t, int start, int leng)
     s_p = spice_dstring_value(dstr_p) ;
     for (i = 0; i < leng; i++)
       s_p[i] = upcase ( t[start + i] ) ;
-    s_p[leng] = EOS ;
+    s_p[leng] = '\0' ;
   } else {
     s_p = spice_dstring_reinit(dstr_p) ;
   }

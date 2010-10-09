@@ -21,8 +21,6 @@
 
 #include "error.h" /* controlled_exit() */
  
-#define EOS  '\0'
-
 static wordlist *measure_parse_line( char *line ) ;
 
 static bool measure_valid[20000];/* TRUE: if measurement no. [xxx] has been done successfully
@@ -264,7 +262,7 @@ do_measure(
 
     /* New way of processing measure statements using common code 
        in fcn get_measure2() (com_measure2.c)*/
-    out_line[0] = EOS ;
+    out_line[0] = '\0' ;
     measure_word_list = measure_parse_line( meas_card->li_line) ;
     if( measure_word_list ){
       fail = get_measure2(measure_word_list,&result,out_line,chk_only) ;

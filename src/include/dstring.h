@@ -3,7 +3,6 @@
 #ifndef DSTRING_H
 #define DSTRING_H
 
-#define EOS  '\0'
 /* -----------------------------------------------------------------
  * This structure is modified from Tcl.   We do this to avoid a
  * conflict and later add a conditional compile to just use the Tcl

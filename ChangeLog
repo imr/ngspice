@@ -1,4 +1,11 @@
 2010-10-09  Robert Larice
+ * src/frontend/measure.c ,
+ * src/frontend/numparam/mystring.c ,
+ * src/include/dstring.h ,
+ * src/misc/dstring.c :
+    remove #define for EOS  use '\0' instead
+
+2010-10-09  Robert Larice
  * src/frontend/terminal.c ,
  * src/include/complex.h ,
  * src/include/fteparse.h ,
