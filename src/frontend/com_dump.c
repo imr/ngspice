@@ -5,7 +5,7 @@
 #include <inpdefs.h>
 #include "circuits.h"
 #include "com_dump.h"
-#include "streams.h"
+#include "cpextern.h"
 #include "fteext.h"
 
 

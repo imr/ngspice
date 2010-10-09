@@ -10,7 +10,7 @@
 
 #include "com_echo.h"
 #include "quote.h"
-#include "streams.h"
+#include "cpextern.h"
 
 void
 com_echo(wordlist *wlist)

@@ -13,7 +13,7 @@
 
 #include "com_chdir.h"
 #include "quote.h"
-#include "streams.h"
+#include "cpextern.h"
 
 
 void

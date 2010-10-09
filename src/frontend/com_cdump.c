@@ -3,7 +3,7 @@
 #include <wordlist.h>
 
 #include "control.h"
-#include "streams.h"
+#include "cpextern.h"
 
 #include "com_cdump.h"
 

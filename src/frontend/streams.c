@@ -11,6 +11,7 @@
 #include "variable.h"
 #include "terminal.h"
 #include "quote.h"
+#include "cpextern.h"
 #include "streams.h"
 
 bool cp_debug = FALSE;

@@ -7,7 +7,7 @@
 
 #include "circuits.h"
 #include "com_state.h"
-#include "streams.h"
+#include "cpextern.h"
 #include "plotting/plotting.h"
 
 

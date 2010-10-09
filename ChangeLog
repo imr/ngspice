@@ -1,4 +1,21 @@
 2010-10-09  Robert Larice
+ * src/frontend/com_cdump.c ,
+ * src/frontend/com_chdir.c ,
+ * src/frontend/com_dump.c ,
+ * src/frontend/com_echo.c ,
+ * src/frontend/com_ghelp.c ,
+ * src/frontend/com_rehash.c ,
+ * src/frontend/com_setscale.c ,
+ * src/frontend/com_shell.c ,
+ * src/frontend/com_shift.c ,
+ * src/frontend/com_state.c ,
+ * src/frontend/parser/unixcom.c ,
+ * src/frontend/streams.c ,
+ * src/frontend/streams.h ,
+ * src/frontend/variable.c :
+    collect cp_* prototypes / extern-declarations in "cpextern.h"
+
+2010-10-09  Robert Larice
  * src/ciderlib/input/dopset.c :
     additional #includes for prototype visibility
 

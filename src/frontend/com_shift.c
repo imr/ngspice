@@ -10,7 +10,7 @@
 
 #include "com_shift.h"
 #include "variable.h"
-#include "streams.h"
+#include "cpextern.h"
 
 
 /* Shift a list variable, by default argv, one to the left (or more if

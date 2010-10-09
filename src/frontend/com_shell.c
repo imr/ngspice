@@ -8,6 +8,7 @@
 #include <wordlist.h>
 
 #include "com_shell.h"
+#include "streams.h"
 #include "cpextern.h"
 
 /* Fork a shell. */

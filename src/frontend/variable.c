@@ -20,7 +20,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "circuits.h"
 #include "com_history.h"
 #include "quote.h"
-#include "streams.h"
+#include "cpextern.h"
 #include "variable.h"
 
 

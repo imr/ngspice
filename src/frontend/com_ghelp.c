@@ -5,7 +5,7 @@
 #include <variable.h>
 
 #include "variable.h"
-#include "streams.h"
+#include "cpextern.h"
 #include "cpextern.h"
 #include <hlpdefs.h>
 #endif

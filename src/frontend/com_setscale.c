@@ -4,7 +4,7 @@
 
 #include "com_setscale.h"
 #include "quote.h"
-#include "streams.h"
+#include "cpextern.h"
 #include "vectors.h"
 #include "plotting/plotting.h"
 #include "plotting/pvec.h"

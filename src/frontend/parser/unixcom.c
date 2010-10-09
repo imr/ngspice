@@ -11,6 +11,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "unixcom.h"
+#include "../frontend/streams.h"
 
 #ifdef HAVE_VFORK_H
 

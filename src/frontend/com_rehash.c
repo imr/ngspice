@@ -8,7 +8,7 @@
 
 #include <wordlist.h>
 #include "com_rehash.h"
-#include "streams.h"
+#include "cpextern.h"
 #include "control.h"
 #include "parser/unixcom.h"
 
