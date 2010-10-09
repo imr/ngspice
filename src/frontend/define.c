@@ -274,7 +274,7 @@ ft_substdef(const char *name, struct pnode *args)
 
     if (args)
         arity = 1;
-    for (tp = args; tp && tp->pn_op && (tp->pn_op->op_num == COMMA); tp =
+    for (tp = args; tp && tp->pn_op && (tp->pn_op->op_num == PT_OP_COMMA); tp =
             tp->pn_right)
         arity++;
     for (udf = udfuncs; udf; udf = udf->ud_next)
@@ -393,7 +393,7 @@ ntharg(int num, struct pnode *args)
     if (num > 1) {
         while (--num > 0) {
             if (ptry && ptry->pn_op &&
-		(ptry->pn_op->op_num != COMMA)) {
+		(ptry->pn_op->op_num != PT_OP_COMMA)) {
                 if (num == 1)
                     break;
                 else
@@ -402,7 +402,7 @@ ntharg(int num, struct pnode *args)
             ptry = ptry->pn_right;
         }
     }
-    if (ptry && ptry->pn_op && (ptry->pn_op->op_num == COMMA))
+    if (ptry && ptry->pn_op && (ptry->pn_op->op_num == PT_OP_COMMA))
         ptry = ptry->pn_left;
     return (ptry);
 }

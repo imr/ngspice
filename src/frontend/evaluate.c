@@ -61,7 +61,7 @@ ft_evaluate(struct pnode *node)
         if (node->pn_op->op_arity == 1)
             d = ((*node->pn_op->op_func.unary) (node->pn_left));
         else if (node->pn_op->op_arity == 2) {
-            if(node->pn_op->op_num == TERNARY)
+            if(node->pn_op->op_num == PT_OP_TERNARY)
                 d = ft_ternary(node);
             else
                 d = (*node->pn_op->op_func.binary) (node->pn_left, node->pn_right);

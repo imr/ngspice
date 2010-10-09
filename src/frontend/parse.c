@@ -106,32 +106,32 @@ checkvalid(struct pnode *pn)
 
 static
 struct op ops[] = { 
-        { PLUS,     "+",   2, {(void(*)(void)) op_plus} } ,
-        { MINUS,    "-",   2, {(void(*)(void)) op_minus} } ,
-        { TIMES,    "*",   2, {(void(*)(void)) op_times} } ,
-        { MOD,      "%",   2, {(void(*)(void)) op_mod} } ,
-        { DIVIDE,   "/",   2, {(void(*)(void)) op_divide} } ,
-        { COMMA,    ",",   2, {(void(*)(void)) op_comma} } ,
-        { POWER,    "^",   2, {(void(*)(void)) op_power} } ,
-        { EQ,       "=",   2, {(void(*)(void)) op_eq} } ,
-        { GT,       ">",   2, {(void(*)(void)) op_gt} } ,
-        { LT,       "<",   2, {(void(*)(void)) op_lt} } ,
-        { GE,       ">=",  2, {(void(*)(void)) op_ge} } ,
-        { LE,       "<=",  2, {(void(*)(void)) op_le} } ,
-        { NE,       "<>",  2, {(void(*)(void)) op_ne} } ,
-        { AND,       "&",  2, {(void(*)(void)) op_and} } ,
-        { OR,       "|",   2, {(void(*)(void)) op_or} } ,
-        { INDX,     "[",   2, {(void(*)(void)) op_ind} } ,
-        { RANGE,    "[[",  2, {(void(*)(void)) op_range} } ,
-        { TERNARY,  "?:",  2, {NULL} } ,
-        { 0,         NULL, 0, {NULL} }
+        { PT_OP_PLUS,     "+",   2, {(void(*)(void)) op_plus} } ,
+        { PT_OP_MINUS,    "-",   2, {(void(*)(void)) op_minus} } ,
+        { PT_OP_TIMES,    "*",   2, {(void(*)(void)) op_times} } ,
+        { PT_OP_MOD,      "%",   2, {(void(*)(void)) op_mod} } ,
+        { PT_OP_DIVIDE,   "/",   2, {(void(*)(void)) op_divide} } ,
+        { PT_OP_COMMA,    ",",   2, {(void(*)(void)) op_comma} } ,
+        { PT_OP_POWER,    "^",   2, {(void(*)(void)) op_power} } ,
+        { PT_OP_EQ,       "=",   2, {(void(*)(void)) op_eq} } ,
+        { PT_OP_GT,       ">",   2, {(void(*)(void)) op_gt} } ,
+        { PT_OP_LT,       "<",   2, {(void(*)(void)) op_lt} } ,
+        { PT_OP_GE,       ">=",  2, {(void(*)(void)) op_ge} } ,
+        { PT_OP_LE,       "<=",  2, {(void(*)(void)) op_le} } ,
+        { PT_OP_NE,       "<>",  2, {(void(*)(void)) op_ne} } ,
+        { PT_OP_AND,       "&",  2, {(void(*)(void)) op_and} } ,
+        { PT_OP_OR,       "|",   2, {(void(*)(void)) op_or} } ,
+        { PT_OP_INDX,     "[",   2, {(void(*)(void)) op_ind} } ,
+        { PT_OP_RANGE,    "[[",  2, {(void(*)(void)) op_range} } ,
+        { PT_OP_TERNARY,  "?:",  2, {NULL} } ,
+        { 0,               NULL, 0, {NULL} }
 } ;
 
 static
 struct op uops[] = {
-    { UMINUS, "-",  1, {(void(*)(void)) op_uminus} } ,
-    { NOT,    "~",  1, {(void(*)(void)) op_not} } ,
-    { 0,      NULL, 0, {NULL} }
+    { PT_OP_UMINUS, "-",  1, {(void(*)(void)) op_uminus} } ,
+    { PT_OP_NOT,    "~",  1, {(void(*)(void)) op_not} } ,
+    { 0,            NULL, 0, {NULL} }
 } ;
 
 /* We have 'v' declared as a function, because if we don't then the defines
@@ -289,8 +289,8 @@ mkfnode(const char *func, struct pnode *arg)
             return (NULL);
     }
 
-    if (!f->fu_func && arg->pn_op && arg->pn_op->op_num == COMMA) {
-	p = mkbnode(MINUS, mkfnode(func, arg->pn_left),
+    if (!f->fu_func && arg->pn_op && arg->pn_op->op_num == PT_OP_COMMA) {
+	p = mkbnode(PT_OP_MINUS, mkfnode(func, arg->pn_left),
 		mkfnode(func, arg->pn_right));
 	tfree(arg);
 	return p;

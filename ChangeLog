@@ -1,4 +1,12 @@
 2010-10-09  Robert Larice
+ * src/frontend/define.c ,
+ * src/frontend/evaluate.c ,
+ * src/frontend/parse-bison.y ,
+ * src/frontend/parse.c ,
+ * src/include/fteparse.h :
+    add `PT_OP_' prefix to avoid name collision (END, PLUS, MINUS, ...)
+
+2010-10-09  Robert Larice
  * src/frontend/com_cdump.c ,
  * src/frontend/com_chdir.c ,
  * src/frontend/com_dump.c ,

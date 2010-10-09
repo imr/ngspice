@@ -126,35 +126,35 @@ exp:
     TOK_NUM                           { $$ = mknnode($1); }
   | TOK_STR                           { $$ = mksnode($1); }
 
-  | exp ',' exp                       { $$ = mkbnode(COMMA,  $1, $3); }
-  | exp '+' exp                       { $$ = mkbnode(PLUS,   $1, $3); }
-  | exp '-' exp                       { $$ = mkbnode(MINUS,  $1, $3); }
-  | exp '*' exp                       { $$ = mkbnode(TIMES,  $1, $3); }
-  | exp '%' exp                       { $$ = mkbnode(MOD,    $1, $3); }
-  | exp '/' exp                       { $$ = mkbnode(DIVIDE, $1, $3); }
-  | exp '^' exp                       { $$ = mkbnode(POWER,  $1, $3); }
+  | exp ',' exp                       { $$ = mkbnode(PT_OP_COMMA,  $1, $3); }
+  | exp '+' exp                       { $$ = mkbnode(PT_OP_PLUS,   $1, $3); }
+  | exp '-' exp                       { $$ = mkbnode(PT_OP_MINUS,  $1, $3); }
+  | exp '*' exp                       { $$ = mkbnode(PT_OP_TIMES,  $1, $3); }
+  | exp '%' exp                       { $$ = mkbnode(PT_OP_MOD,    $1, $3); }
+  | exp '/' exp                       { $$ = mkbnode(PT_OP_DIVIDE, $1, $3); }
+  | exp '^' exp                       { $$ = mkbnode(PT_OP_POWER,  $1, $3); }
 
   | '(' exp ')'                       { $$ = $2; }
 
-  | '-' exp  %prec NEG                { $$ = mkunode(UMINUS, $2); }
-  | '~' exp                           { $$ = mkunode(NOT, $2); }
+  | '-' exp  %prec NEG                { $$ = mkunode(PT_OP_UMINUS, $2); }
+  | '~' exp                           { $$ = mkunode(PT_OP_NOT, $2); }
 
   | TOK_STR '(' exp ')'               { $$ = mkfnode($1, $3); if(!$$) YYABORT; }
 
-  | exp '=' exp                       { $$ = mkbnode(EQ, $1, $3); }
-  | exp TOK_NE exp                    { $$ = mkbnode(NE, $1, $3); }
-  | exp '>' exp                       { $$ = mkbnode(GT, $1, $3); }
-  | exp '<' exp                       { $$ = mkbnode(LT, $1, $3); }
-  | exp TOK_GE exp                    { $$ = mkbnode(GE, $1, $3); }
-  | exp TOK_LE exp                    { $$ = mkbnode(LE, $1, $3); }
+  | exp '=' exp                       { $$ = mkbnode(PT_OP_EQ, $1, $3); }
+  | exp TOK_NE exp                    { $$ = mkbnode(PT_OP_NE, $1, $3); }
+  | exp '>' exp                       { $$ = mkbnode(PT_OP_GT, $1, $3); }
+  | exp '<' exp                       { $$ = mkbnode(PT_OP_LT, $1, $3); }
+  | exp TOK_GE exp                    { $$ = mkbnode(PT_OP_GE, $1, $3); }
+  | exp TOK_LE exp                    { $$ = mkbnode(PT_OP_LE, $1, $3); }
 
-  | exp '&' exp                       { $$ = mkbnode(AND, $1, $3); }
-  | exp '|' exp                       { $$ = mkbnode(OR,  $1, $3); }
+  | exp '&' exp                       { $$ = mkbnode(PT_OP_AND, $1, $3); }
+  | exp '|' exp                       { $$ = mkbnode(PT_OP_OR,  $1, $3); }
 
-  | exp '[' exp ']'                   { $$ = mkbnode(INDX,  $1, $3); }
-  | exp TOK_LRANGE exp TOK_RRANGE     { $$ = mkbnode(RANGE, $1, $3); }
-  | exp '?' exp ':' exp               { $$ = mkbnode(TERNARY,$1,
-                                                     mkbnode(COMMA,$3,$5)); }
+  | exp '[' exp ']'                   { $$ = mkbnode(PT_OP_INDX,  $1, $3); }
+  | exp TOK_LRANGE exp TOK_RRANGE     { $$ = mkbnode(PT_OP_RANGE, $1, $3); }
+  | exp '?' exp ':' exp               { $$ = mkbnode(PT_OP_TERNARY,$1,
+                                                     mkbnode(PT_OP_COMMA,$3,$5)); }
 ;
 
 %%
