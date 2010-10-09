@@ -1,4 +1,10 @@
 2010-10-09  Robert Larice
+ * src/include/ciderinp.h ,
+ * src/spicelib/devices/nbjt/nbjtset.c ,
+ * src/spicelib/devices/numd/numdset.c :
+    collect MESH*() prototypes in "meshext.h"
+
+2010-10-09  Robert Larice
  * src/spicelib/devices/bsim4/b4geo.c ,
  * src/spicelib/devices/bsim4v2/b4v2geo.c ,
  * src/spicelib/devices/bsim4v3/b4v3geo.c ,

@@ -35,14 +35,6 @@ extern int ELCTsetup(ELCTcard *, ELCTelectrode **, MESHcoord *,
 extern int MATLcheck(MATLcard *);
 extern int MATLsetup(MATLcard *, MaterialInfo **);
 
-/* externals for meshset.c */
-extern double *MESHmkArray(MESHcoord *, int);
-extern void MESHiBounds(MESHcoord *, int *, int *);
-extern void MESHlBounds(MESHcoord *, double *, double *);
-extern int MESHlocate(MESHcoord *, double);
-extern int MESHcheck(char, MESHcard *);
-extern int MESHsetup(char, MESHcard *, MESHcoord **, int *);
-
 /* externals for mobset.c */
 extern int MOBcheck(MOBcard *, MaterialInfo *);
 extern int MOBsetup(MOBcard *, MaterialInfo *);

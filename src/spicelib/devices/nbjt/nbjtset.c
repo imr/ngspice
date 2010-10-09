@@ -14,6 +14,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "cidersupt.h"
 #include "ciderinp.h"
 #include "suffix.h"
+#include "meshext.h"
 
 #define NIL(type)   ((type *)0)
 #define TSCALLOC(var, size, type)\
