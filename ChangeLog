@@ -1,4 +1,8 @@
 2010-10-09  Robert Larice
+ * src/include/profile.h :
+    remove obsolete #defines for BEGIN END LENGTH FORWARD
+
+2010-10-09  Robert Larice
  * src/include/fteparse.h :
     remove obsolete #defines for MAXARITY NUM STRING PNODE
 

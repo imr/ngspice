@@ -23,11 +23,6 @@ typedef struct sDOPprofile {
     struct sDOPprofile *next;
 } DOPprofile;
 
-#define BEGIN ???
-#define END ???
-#define LENGTH ???
-#define FORWARD ???
-
 #define CONC        param[1]
 #define PEAK_CONC   param[1]
 #define IMPID       param[1]
