@@ -61,9 +61,6 @@
 #define  BOOLEAN        int
 #define  NO             0
 #define  YES            1
-#define  NOT            !
-#define  AND            &&
-#define  OR             ||
 
 #define  SPARSE_ID      0x772773        /* Arbitrary (is Sparse on phone). */
 #define  IS_SPARSE(matrix)      ((matrix) != NULL &&            \
@@ -312,8 +309,8 @@ typedef  struct
 /* Complex division:  to = num / den */
 #define CMPLX_DIV(to,num,den)                                           \
 {   RealNumber  r_, s_;                                                 \
-    if (((den).Real >= (den).Imag AND (den).Real > -(den).Imag) OR      \
-        ((den).Real < (den).Imag AND (den).Real <= -(den).Imag))        \
+    if (((den).Real >= (den).Imag && (den).Real > -(den).Imag) ||       \
+        ((den).Real < (den).Imag && (den).Real <= -(den).Imag))         \
     {   r_ = (den).Imag / (den).Real;                                   \
         s_ = (den).Real + r_*(den).Imag;                                \
         (to).Real = ((num).Real + r_*(num).Imag)/s_;                    \
@@ -330,8 +327,8 @@ typedef  struct
 /* Complex division and assignment:  num /= den */
 #define CMPLX_DIV_ASSIGN(num,den)                                       \
 {   RealNumber  r_, s_, t_;                                             \
-    if (((den).Real >= (den).Imag AND (den).Real > -(den).Imag) OR      \
-        ((den).Real < (den).Imag AND (den).Real <= -(den).Imag))        \
+    if (((den).Real >= (den).Imag && (den).Real > -(den).Imag) ||       \
+        ((den).Real < (den).Imag && (den).Real <= -(den).Imag))         \
     {   r_ = (den).Imag / (den).Real;                                   \
         s_ = (den).Real + r_*(den).Imag;                                \
         t_ = ((num).Real + r_*(num).Imag)/s_;                           \

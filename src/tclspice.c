@@ -140,7 +140,6 @@ extern JMP_BUF jbuf;
 #ifdef HAVE_ASPRINTF
 #ifdef HAVE_LIBIBERTY_H /* asprintf */
 #include <libiberty.h>
-#undef AND /* obsolete macro in ansidecl.h */
 #else /* we have asprintf, but not libiberty.h */
 #include <stdarg.h>
 extern int asprintf(char **out, const char *fmt, ...);

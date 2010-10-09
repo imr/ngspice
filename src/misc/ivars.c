@@ -8,7 +8,6 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #ifdef HAVE_ASPRINTF
 #ifdef HAVE_LIBIBERTY_H /* asprintf */
 #include <libiberty.h>
-#undef AND /* obsolete macro in ansidecl.h */
 #elif defined(__MINGW32__) || defined(__SUNPRO_C) /* we have asprintf, but not libiberty.h */
 #include <stdarg.h>
 extern int asprintf(char **out, const char *fmt, ...);

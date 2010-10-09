@@ -495,8 +495,8 @@ typedef struct {
 /* Complex division:  to = num / den */
 #define CMPLX_DIV(to,num,den)                                           \
 {   realNumber  r_, s_;                                                 \
-    if (((den).real >= (den).imag AND (den).real > -(den).imag) OR      \
-        ((den).real < (den).imag AND (den).real <= -(den).imag))        \
+    if (((den).real >= (den).imag && (den).real > -(den).imag) ||       \
+        ((den).real < (den).imag && (den).real <= -(den).imag))         \
     {   r_ = (den).imag / (den).real;                                   \
         s_ = (den).real + r_*(den).imag;                                \
         (to).real = ((num).real + r_*(num).imag)/s_;                    \
@@ -513,8 +513,8 @@ typedef struct {
 /* Complex division and assignment:  num /= den */
 #define CMPLX_DIV_ASSIGN(num,den)                                       \
 {   realNumber  r_, s_, t_;                                             \
-    if (((den).real >= (den).imag AND (den).real > -(den).imag) OR      \
-        ((den).real < (den).imag AND (den).real <= -(den).imag))        \
+    if (((den).real >= (den).imag && (den).real > -(den).imag) ||       \
+        ((den).real < (den).imag && (den).real <= -(den).imag))         \
     {   r_ = (den).imag / (den).real;                                   \
         s_ = (den).real + r_*(den).imag;                                \
         t_ = ((num).real + r_*(num).imag)/s_;                           \

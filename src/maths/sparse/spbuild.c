@@ -187,9 +187,9 @@ MatrixPtr  Matrix = eMatrix;
 RealNumber  *pElement;
 
 /* Begin `spFindElement'. */
-    assert( IS_SPARSE( Matrix ) AND Row >= 0 AND Col >= 0 );
+    assert( IS_SPARSE( Matrix ) && Row >= 0 && Col >= 0 );
 
-    if ((Row == 0) OR (Col == 0))
+    if ((Row == 0) || (Col == 0))
         return &Matrix->TrashCan.Real;
 
 #if TRANSLATE
@@ -197,8 +197,8 @@ RealNumber  *pElement;
     if (Matrix->Error == spNO_MEMORY) return NULL;
 #endif
 
-#if NOT TRANSLATE
-    assert(Row <= Matrix->Size AND Col <= Matrix->Size);
+#if ! TRANSLATE
+    assert(Row <= Matrix->Size && Col <= Matrix->Size);
 #endif
 
 /*
@@ -211,7 +211,7 @@ RealNumber  *pElement;
  * is the first record in the MatrixElement structure.
  */
 
-    if ((Row != Col) OR ((pElement = (RealNumber *)Matrix->Diag[Row]) == NULL))
+    if ((Row != Col) || ((pElement = (RealNumber *)Matrix->Diag[Row]) == NULL))
     {
 /*
  * Element does not exist or does not reside along diagonal.  Search

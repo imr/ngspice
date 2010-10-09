@@ -1,4 +1,17 @@
 2010-10-09  Robert Larice
+ * src/frontend/terminal.c ,
+ * src/include/complex.h ,
+ * src/include/fteparse.h ,
+ * src/main.c ,
+ * src/maths/sparse/spbuild.c ,
+ * src/maths/sparse/spdefs.h ,
+ * src/misc/ivars.c ,
+ * src/spicelib/parser/ifnewuid.c ,
+ * src/spicelib/parser/inperror.c ,
+ * src/tclspice.c :
+    remove ancient #defines for AND OR NOT   substitute with && || !
+
+2010-10-09  Robert Larice
  * src/include/profile.h :
     remove obsolete #defines for BEGIN END LENGTH FORWARD
 
