@@ -9,6 +9,7 @@
  **********/
 
 #include "ngspice.h"
+#include "bsim4v5def.h"
 
 /*
  * WDLiu:

@@ -11,6 +11,7 @@
 #include "ngspice.h"
 #include <stdio.h>
 #include <math.h>
+#include "bsim4v3def.h"
 
 int
 BSIM4v3RdsEndIso(double, double, double, double, double, double, int, int, double *);

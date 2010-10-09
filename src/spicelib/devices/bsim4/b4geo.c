@@ -11,6 +11,7 @@
  **********/
 
 #include "ngspice.h"
+#include "bsim4def.h"
 
 /*
  * WDLiu:

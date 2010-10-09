@@ -1,4 +1,12 @@
 2010-10-09  Robert Larice
+ * src/spicelib/devices/bsim4/b4geo.c ,
+ * src/spicelib/devices/bsim4v2/b4v2geo.c ,
+ * src/spicelib/devices/bsim4v3/b4v3geo.c ,
+ * src/spicelib/devices/bsim4v4/b4v4geo.c ,
+ * src/spicelib/devices/bsim4v5/b4v5geo.c :
+    include bsim4*def.h  (bsim4*geo.c files)
+
+2010-10-09  Robert Larice
  * src/spicelib/devices/bsim4/b4set.c ,
  * src/spicelib/devices/bsim4/b4temp.c ,
  * src/spicelib/devices/bsim4/bsim4def.h ,
