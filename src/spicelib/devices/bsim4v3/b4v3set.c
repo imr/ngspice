@@ -29,8 +29,6 @@
 #define PI 3.141592654
 #define Charge_q 1.60219e-19
 
-int
-BSIM4v3RdseffGeo(double nf, int geo, int rgeo, int minSD, double Weffcj, double Rsh, double DMCG, double DMCI, double DMDG, int Type,double *Rtot);
 
 int
 BSIM4v3setup(

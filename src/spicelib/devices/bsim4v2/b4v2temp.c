@@ -29,11 +29,6 @@
 #define EXP_THRESHOLD 34.0
 #define Charge_q 1.60219e-19
 
-int
-BSIM4v2RdseffGeo(double nf, int geo, int rgeo, int minSD, double Weffcj, double Rsh, double DMCG, double DMCI, double DMDG, int Type,double *Rtot);
-
-int
-BSIM4v2PAeffGeo(double nf, int geo, int minSD, double Weffcj, double DMCG, double DMCI, double DMDG, double *Ps, double *Pd, double *As, double *Ad);
 
 int
 BSIM4v2DioIjthVjmEval(

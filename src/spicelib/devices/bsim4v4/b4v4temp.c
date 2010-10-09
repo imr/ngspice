@@ -42,10 +42,6 @@
     }
 
 
-int
-BSIM4v4PAeffGeo(double, int, int, double, double, double, double, double *, double *, double *, double *);
-int
-BSIM4v4RdseffGeo(double, int, int, int, double, double, double, double, double, int, double *);
 
 int
 BSIM4v4DioIjthVjmEval(

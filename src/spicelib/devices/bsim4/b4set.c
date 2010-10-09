@@ -45,11 +45,6 @@ int nthreads;
 #define Charge_q 1.60219e-19
 
 int
-BSIM4PAeffGeo(double, int, int, double, double, double, double, double *, double *, double *, double *);
-int
-BSIM4RdseffGeo(double, int, int, int, double, double, double, double, double, int, double *);
-
-int
 BSIM4setup(
 SMPmatrix *matrix,
 GENmodel *inModel,

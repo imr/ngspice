@@ -1,4 +1,22 @@
 2010-10-09  Robert Larice
+ * src/spicelib/devices/bsim4/b4set.c ,
+ * src/spicelib/devices/bsim4/b4temp.c ,
+ * src/spicelib/devices/bsim4/bsim4def.h ,
+ * src/spicelib/devices/bsim4v2/b4v2set.c ,
+ * src/spicelib/devices/bsim4v2/b4v2temp.c ,
+ * src/spicelib/devices/bsim4v2/bsim4v2def.h ,
+ * src/spicelib/devices/bsim4v3/b4v3set.c ,
+ * src/spicelib/devices/bsim4v3/b4v3temp.c ,
+ * src/spicelib/devices/bsim4v3/bsim4v3def.h ,
+ * src/spicelib/devices/bsim4v4/b4v4set.c ,
+ * src/spicelib/devices/bsim4v4/b4v4temp.c ,
+ * src/spicelib/devices/bsim4v4/bsim4v4def.h ,
+ * src/spicelib/devices/bsim4v5/b4v5set.c ,
+ * src/spicelib/devices/bsim4v5/b4v5temp.c ,
+ * src/spicelib/devices/bsim4v5/bsim4v5def.h :
+    BSIM*Geo() prototypes  -->  include files
+
+2010-10-09  Robert Larice
  * src/frontend/measure.c ,
  * src/frontend/numparam/mystring.c ,
  * src/include/dstring.h ,

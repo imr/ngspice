@@ -21,10 +21,6 @@
 #include "const.h"
 #include "sperror.h"
 
-int
-BSIM4v3PAeffGeo(double, int, int, double, double, double, double, double *, double *, double *, double *);
-int
-BSIM4v3RdseffGeo(double, int, int, int, double, double, double, double, double, int, double *);
 
 #define Kb 1.3806226e-23
 #define KboQ 8.617087e-5 
