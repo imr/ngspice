@@ -21,8 +21,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -74,7 +74,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\vngspice_d.exe"
+				OutputFile="$(OutDir)\$(ProjectName)_d.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Visual Leak Detector\lib&quot;"
 				GenerateManifest="false"
@@ -112,8 +112,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -165,7 +165,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\vngspice64_d.exe"
+				OutputFile="$(OutDir)\$(ProjectName)64_d.exe"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
@@ -202,8 +202,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -258,7 +258,7 @@
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\$(ProjectName).exe"
+				OutputFile="$(OutDir)\$(ProjectName).exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -297,8 +297,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -336,7 +336,7 @@
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -353,7 +353,7 @@
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\$(ProjectName)64.exe"
+				OutputFile="$(OutDir)\$(ProjectName)64.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -392,7 +392,7 @@
 		</Configuration>
 		<Configuration
 			Name="console_debug|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -444,7 +444,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\vngspice_dc.exe"
+				OutputFile="$(OutDir)\$(ProjectName)_cd.exe"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
@@ -481,8 +481,8 @@
 		</Configuration>
 		<Configuration
 			Name="console_debug|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -534,7 +534,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\vngspice_dc.exe"
+				OutputFile="$(OutDir)\$(ProjectName)64_cd.exe"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
@@ -571,7 +571,7 @@
 		</Configuration>
 		<Configuration
 			Name="console_release|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
@@ -626,7 +626,7 @@
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\$(ProjectName)c.exe"
+				OutputFile="$(OutDir)\$(ProjectName)_c.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				SubSystem="1"
@@ -665,8 +665,8 @@
 		</Configuration>
 		<Configuration
 			Name="console_release|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -721,7 +721,7 @@
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\$(ProjectName)c.exe"
+				OutputFile="$(OutDir)\$(ProjectName)64_c.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				SubSystem="1"
@@ -760,7 +760,7 @@
 		</Configuration>
 		<Configuration
 			Name="ReleaseOMP|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
@@ -816,7 +816,7 @@
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\$(ProjectName)o.exe"
+				OutputFile="$(OutDir)\$(ProjectName)_omp.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -855,8 +855,8 @@
 		</Configuration>
 		<Configuration
 			Name="ReleaseOMP|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -912,7 +912,7 @@
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\$(ProjectName)64o.exe"
+				OutputFile="$(OutDir)\$(ProjectName)64_omp.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				SubSystem="2"
