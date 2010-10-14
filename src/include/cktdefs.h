@@ -234,6 +234,9 @@ struct CKTcircuit {
                                    point brute force, but to use gmin stepping
                                    first */
     unsigned int CKTisSetup:1;  /* flag to indicate if CKTsetup done */
+#ifdef XSPICE
+    unsigned int CKTadevFlag:1; /* flag indicates 'A' devices in the circuit */
+#endif
     JOB *CKTcurJob;             /* Next analysis to be performed ??? */
 
     SENstruct *CKTsenInfo;      /* the sensitivity information */
@@ -255,11 +258,11 @@ struct CKTcircuit {
     double CKTrelDv;            /* rel limit for iter-iter voltage change */
     int CKTtroubleNode;         /* Non-convergent node number */
     GENinstance *CKTtroubleElt; /* Non-convergent device instance */
-    int CKTvarHertz; /* variable HERTZ in B source */
+    int CKTvarHertz;            /* variable HERTZ in B source */
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 #ifdef XSPICE
-    Evt_Ckt_Data_t *evt;  /* all data about event driven stuff */
-    Enh_Ckt_Data_t *enh;  /* data used by general enhancements */
+    Evt_Ckt_Data_t *evt;        /* all data about event driven stuff */
+    Enh_Ckt_Data_t *enh;        /* data used by general enhancements */
 #endif
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 

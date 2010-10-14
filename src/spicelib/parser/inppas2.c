@@ -3,10 +3,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include <config.h>
-#include <ngspice.h>
-#include <iferrmsg.h>
-#include <inpmacs.h>
+#include "ngspice.h"
+#include "iferrmsg.h"
+#include "inpmacs.h"
 
 #include "inppas2.h"
 #include "inp.h"
@@ -45,6 +44,10 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
     printf("Entered INPpas2 . . . .\n");
 #endif
 
+#ifdef XSPICE
+    if (!ckt->CKTadevFlag) ckt->CKTadevFlag = 0;
+#endif
+
     error = INPgetTok(&groundname, &gname, 1);
     if (error)
 	data->error =
@@ -62,12 +65,12 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 #ifdef TRACE 
     printf("Examining this deck:\n");
     for (current = data; current != NULL; current = current->nextcard) {
-	printf("%s\n", current->line);
+      printf("%s\n", current->line);
     }
     printf("\n");
 #endif
 
-    
+
 #ifdef HAS_WINDOWS
     for (current = data; current != NULL; current = current->nextcard)
         linecount++;
@@ -100,14 +103,15 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 
 #ifdef XSPICE
 	    /* gtri - add - wbk - 10/23/90 - add case for 'A' devices */
-	    
-        case 'A':   /* Aname <cm connections> <mname> */
-	    MIF_INP2A(ckt,tab,current);
+
+	case 'A':   /* Aname <cm connections> <mname> */
+	    MIF_INP2A(ckt, tab, current);
+	    ckt->CKTadevFlag = 1; /* an 'A' device is requested */
 	    break;
-	  
+
 	  /* gtri - end - wbk - 10/23/90 */
 #endif
-	  
+
 	case 'R':
 	    /* Rname <node> <node> [<val>][<mname>][w=<val>][l=<val>] */
 	    INP2R(ckt, tab, current);
@@ -168,7 +172,7 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 	    INP2M(ckt, tab, current);
 	    break;
 #ifdef  NDEV   
-        case 'N':
+	case 'N':
 	    /* Nname [<node>...]  [<mname>] */
 	    INP2N(ckt, tab, current);
 	    break;
@@ -230,7 +234,7 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 	    INP2Y(ckt, tab, current);
 	    break;
 	/* end Kspice */
-			
+
 	case 'K':
 	    /* Kname Lname Lname <val> */
 	    INP2K(ckt, tab, current);
@@ -246,10 +250,10 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 	    INP2B(ckt, tab, current);
 	    break;
 
-        case '.':   /* .<something> Many possibilities */
-            if (INP2dot(ckt,tab,current,task,gnode))
-		return;
-            break;
+	case '.':   /* .<something> Many possibilities */
+	    if (INP2dot(ckt,tab,current,task,gnode))
+	    return;
+	    break;
 
 	case 0:
 	    break;
@@ -259,7 +263,7 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 	    LITERR(" unknown device type - error \n");
 	    break;
 	}
-    }
+  }
 
     return;
 }

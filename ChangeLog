@@ -1,3 +1,12 @@
+2010-10-13  Dietmar Warning
+ * src/frontend/com_option.c: better formatting the output and 
+   add some useful parameters if command 'option' is given
+ * src/include/cktdefs.h,
+ * src/spicelib/analysis/cktdojob.c, cktntask.c,
+ * src/spicelib/devices/cktinit.c,
+ * src/spicelib/parser/inppas2.c:
+   Reduction of trtol to 1 only if 'A' devices in the circuit and xspice is enabled
+
 2010-10-09  Robert Larice
  * src/include/complex.h :
     !REVERT! remove typedef for _complex, which is used nowhere

@@ -71,7 +71,15 @@ CKTdoJob(CKTcircuit *inCkt, int reset, TSKtask *inTask)
     ckt->CKTgmin  = task->TSKgmin;
     ckt->CKTgshunt  = task->TSKgshunt;
     ckt->CKTdelmin  = task->TSKdelmin;
-    ckt->CKTtrtol  = task->TSKtrtol;
+#ifdef XSPICE
+/* Lower default value of trtol to give more accuracy */
+/* but only if there are 'A' devices in the circuit */
+    if (ckt->CKTadevFlag  &&  (ckt->CKTtrtol > 1)) {
+      printf("Reducing trtol to 1 for xspice 'A' devices\n");
+      ckt->CKTtrtol  = 1;
+    } else
+#endif
+      ckt->CKTtrtol  = task->TSKtrtol; 
     ckt->CKTdefaultMosM  = task->TSKdefaultMosM;
     ckt->CKTdefaultMosL  = task->TSKdefaultMosL;
     ckt->CKTdefaultMosW  = task->TSKdefaultMosW;

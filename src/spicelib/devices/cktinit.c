@@ -54,6 +54,9 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
     sckt->CKTtrtol = 7;
     sckt->CKTbypass = 0;
     sckt->CKTisSetup = 0;
+#ifdef XSPICE
+    sckt->CKTadevFlag = 0; /* flag indicates A devices in the circuit */
+#endif
     sckt->CKTtranMaxIter = 10;
     sckt->CKTdcMaxIter = 100;
     sckt->CKTdcTrcvMaxIter = 50;
