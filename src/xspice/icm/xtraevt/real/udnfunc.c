@@ -50,7 +50,7 @@ void *tmalloc(size_t);
 
 /* ************************************************************************ */
 
-void udn_real_create(CREATE_ARGS)
+static void udn_real_create(CREATE_ARGS)
 {
     /* Malloc space for a real struct */
     MALLOCED_PTR = tmalloc(sizeof(double));
@@ -59,7 +59,7 @@ void udn_real_create(CREATE_ARGS)
 
 /* ************************************************************************ */
 
-void udn_real_dismantle(DISMANTLE_ARGS)
+static void udn_real_dismantle(DISMANTLE_ARGS)
 {
     /* Do nothing.  There are no internally malloc'ed things to dismantle */
 }
@@ -67,7 +67,7 @@ void udn_real_dismantle(DISMANTLE_ARGS)
 
 /* ************************************************************************ */
 
-void udn_real_initialize(INITIALIZE_ARGS)
+static void udn_real_initialize(INITIALIZE_ARGS)
 {
     double  *real_struct = (double *) STRUCT_PTR;
 
@@ -79,7 +79,7 @@ void udn_real_initialize(INITIALIZE_ARGS)
 
 /* ************************************************************************ */
 
-void udn_real_invert(INVERT_ARGS)
+static void udn_real_invert(INVERT_ARGS)
 {
     double      *real_struct = (double *) STRUCT_PTR;
 
@@ -91,7 +91,7 @@ void udn_real_invert(INVERT_ARGS)
 
 /* ************************************************************************ */
 
-void udn_real_resolve(RESOLVE_ARGS)
+static void udn_real_resolve(RESOLVE_ARGS)
 {
     double **array    = (double**)INPUT_STRUCT_PTR_ARRAY;
     double *out       = (double *) OUTPUT_STRUCT_PTR;
@@ -110,7 +110,7 @@ void udn_real_resolve(RESOLVE_ARGS)
 
 /* ************************************************************************ */
 
-void udn_real_copy(COPY_ARGS)
+static void udn_real_copy(COPY_ARGS)
 {
     double  *real_from_struct = (double *) INPUT_STRUCT_PTR;
     double  *real_to_struct   = (double *) OUTPUT_STRUCT_PTR;
@@ -122,7 +122,7 @@ void udn_real_copy(COPY_ARGS)
 
 /* ************************************************************************ */
 
-void udn_real_compare(COMPARE_ARGS)
+static void udn_real_compare(COMPARE_ARGS)
 {
     double  *real_struct1 = (double *) STRUCT_PTR_1;
     double  *real_struct2 = (double *) STRUCT_PTR_2;
@@ -137,7 +137,7 @@ void udn_real_compare(COMPARE_ARGS)
 
 /* ************************************************************************ */
 
-void udn_real_plot_val(PLOT_VAL_ARGS)
+static void udn_real_plot_val(PLOT_VAL_ARGS)
 {
     double   *real_struct = (double *) STRUCT_PTR;
 
@@ -149,7 +149,7 @@ void udn_real_plot_val(PLOT_VAL_ARGS)
 
 /* ************************************************************************ */
 
-void udn_real_print_val(PRINT_VAL_ARGS)
+static void udn_real_print_val(PRINT_VAL_ARGS)
 {
     double   *real_struct = (double *) STRUCT_PTR;
 
@@ -165,7 +165,7 @@ void udn_real_print_val(PRINT_VAL_ARGS)
 
 /* ************************************************************************ */
 
-void udn_real_ipc_val(IPC_VAL_ARGS)
+static void udn_real_ipc_val(IPC_VAL_ARGS)
 {
     /* Simply return the structure and its size */
     IPC_VAL = STRUCT_PTR;

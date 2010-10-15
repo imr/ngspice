@@ -50,7 +50,7 @@ void *tmalloc(size_t);
 
 /* ************************************************************************ */
 
-void udn_int_create(CREATE_ARGS)
+static void udn_int_create(CREATE_ARGS)
 {
     /* Malloc space for an int */
     MALLOCED_PTR = tmalloc(sizeof(int));
@@ -59,7 +59,7 @@ void udn_int_create(CREATE_ARGS)
 
 /* ************************************************************************ */
 
-void udn_int_dismantle(DISMANTLE_ARGS)
+static void udn_int_dismantle(DISMANTLE_ARGS)
 {
     /* Do nothing.  There are no internally malloc'ed things to dismantle */
 }
@@ -67,7 +67,7 @@ void udn_int_dismantle(DISMANTLE_ARGS)
 
 /* ************************************************************************ */
 
-void udn_int_initialize(INITIALIZE_ARGS)
+static void udn_int_initialize(INITIALIZE_ARGS)
 {
     int  *int_struct = (int *) STRUCT_PTR;
 
@@ -79,7 +79,7 @@ void udn_int_initialize(INITIALIZE_ARGS)
 
 /* ************************************************************************ */
 
-void udn_int_invert(INVERT_ARGS)
+static void udn_int_invert(INVERT_ARGS)
 {
     int      *int_struct = (int *) STRUCT_PTR;
 
@@ -91,7 +91,7 @@ void udn_int_invert(INVERT_ARGS)
 
 /* ************************************************************************ */
 
-void udn_int_copy(COPY_ARGS)
+static void udn_int_copy(COPY_ARGS)
 {
     int  *int_from_struct = (int *) INPUT_STRUCT_PTR;
     int  *int_to_struct   = (int *) OUTPUT_STRUCT_PTR;
@@ -102,7 +102,7 @@ void udn_int_copy(COPY_ARGS)
 
 /* ************************************************************************ */
 
-void udn_int_resolve(RESOLVE_ARGS)
+static void udn_int_resolve(RESOLVE_ARGS)
 {
     int **array    = (int**)INPUT_STRUCT_PTR_ARRAY;
     int *out       = (int *) OUTPUT_STRUCT_PTR;
@@ -121,7 +121,7 @@ void udn_int_resolve(RESOLVE_ARGS)
 
 /* ************************************************************************ */
 
-void udn_int_compare(COMPARE_ARGS)
+static void udn_int_compare(COMPARE_ARGS)
 {
     int  *int_struct1 = (int *) STRUCT_PTR_1;
     int  *int_struct2 = (int *) STRUCT_PTR_2;
@@ -136,7 +136,7 @@ void udn_int_compare(COMPARE_ARGS)
 
 /* ************************************************************************ */
 
-void udn_int_plot_val(PLOT_VAL_ARGS)
+static void udn_int_plot_val(PLOT_VAL_ARGS)
 {
     int   *int_struct = (int *) STRUCT_PTR;
 
@@ -147,7 +147,7 @@ void udn_int_plot_val(PLOT_VAL_ARGS)
 
 /* ************************************************************************ */
 
-void udn_int_print_val(PRINT_VAL_ARGS)
+static void udn_int_print_val(PRINT_VAL_ARGS)
 {
     int   *int_struct = (int *) STRUCT_PTR;
 
@@ -162,7 +162,7 @@ void udn_int_print_val(PRINT_VAL_ARGS)
 
 /* ************************************************************************ */
 
-void udn_int_ipc_val(IPC_VAL_ARGS)
+static void udn_int_ipc_val(IPC_VAL_ARGS)
 {
     /* Simply return the structure and its size */
     IPC_VAL = STRUCT_PTR;

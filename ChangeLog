@@ -1,4 +1,9 @@
 2010-10-15  Robert Larice
+ * src/xspice/icm/xtraevt/int/udnfunc.c ,
+ * src/xspice/icm/xtraevt/real/udnfunc.c :
+    declare udn_int_ and udn_real_functions `static'
+
+2010-10-15  Robert Larice
  * src/include/ngspice.h ,
  * src/main.c ,
  * src/misc/misc_time.h :
