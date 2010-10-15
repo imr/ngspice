@@ -7,6 +7,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 
 #include "ngspice.h"
 #include "optndefs.h"
+#include "cidersupt.h"
 
 void
 printVoltages(FILE *file, char *mName, char *iName, int devType, 
