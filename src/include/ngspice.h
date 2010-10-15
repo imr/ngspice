@@ -260,17 +260,5 @@ extern int tcl_fprintf(FILE *f, const char *format, ...);
 
 #endif
 
-#ifdef CIDER
-/* Definitions of globals for Machine Accuracy Limits 
- * Imported from cider
-*/
-
-extern double BMin;          /* lower limit for B(x) */
-extern double BMax;          /* upper limit for B(x) */
-extern double ExpLim;        /* limit for exponential */
-extern double Accuracy;      /* accuracy of the machine */
-extern double Acc, MuLim, MutLim;
-#endif /* CIDER */ 
-
 
 #endif /* NGSPICE_H_INCLUDED */

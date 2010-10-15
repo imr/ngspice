@@ -15,6 +15,8 @@ extern double BMin;          /* lower limit for B(x) */
 extern double BMax;          /* upper limit for B(x) */
 extern double ExpLim;        /* limit for exponential */
 extern double Accuracy;      /* accuracy of the machine */
+extern double MuLim, MutLim;
+
 
 extern void evalAccLimits(void);
 

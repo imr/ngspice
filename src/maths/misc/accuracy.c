@@ -70,17 +70,13 @@ evalAccLimits(void)
     double xhold, dif;  /* Introduced to avoid numerical trap if
                       using non IEEE754 FPU */
 
-#ifndef CIDER
-    double Acc, BMin, BMax, ExpLim, MuLim, MutLim;
-#endif
-
 /* First we compute accuracy */ 
  
     for( ; (acc + 1.0) > 1.0 ; ) {
 	acc *= 0.5;	
     }
     acc *= 2.0;
-    Acc = acc;
+    Accuracy = acc;
 
 /*  
  * This loop has been modified to include a variable to track 

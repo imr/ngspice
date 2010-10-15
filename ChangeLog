@@ -1,4 +1,11 @@
 2010-10-15  Robert Larice
+ * src/include/ngspice.h ,
+ * src/main.c ,
+ * src/maths/misc/accuracy.c ,
+ * src/maths/misc/accuracy.h :
+    collect BMin BMax ExpLim Accuracy in "accuracy.h", kill `Acc'
+
+2010-10-15  Robert Larice
  * src/xspice/cmpp/pp_mod.c :
     cmpp shall add a function prototype to the generated "cfunc.c" file
 

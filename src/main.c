@@ -119,7 +119,7 @@ double BMin;                /* lower limit for B(x) */
 double BMax;                /* upper limit for B(x) */
 double ExpLim;              /* limit for exponential */
 double Accuracy;            /* accuracy of the machine */
-double Acc, MuLim, MutLim;
+double MuLim, MutLim;
 
 #ifdef CIDER
 /* Global debug flags from CIDER, soon they will become
