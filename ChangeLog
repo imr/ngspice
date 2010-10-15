@@ -1,3 +1,7 @@
+2010-10-15  Holger Vogt
+ * src/ciderlib/input/output.c : #include "../misc/tilde.h"
+ * inpcom.c: line 2800ff, allow -.5 token
+
 2010-10-15  Robert Larice
  * src/include/ngspice.h ,
  * src/main.c ,

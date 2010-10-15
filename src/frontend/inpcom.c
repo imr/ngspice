@@ -2797,9 +2797,14 @@ inp_fix_param_values( struct line *deck )
       beg_of_str = equal_ptr + 1;
       while ( isspace(*beg_of_str) ) beg_of_str++;
       /* all cases where no {} have to be put around selected token */
-      if ( isdigit(*beg_of_str) || *beg_of_str == '{' || *beg_of_str == '.' ||
-         *beg_of_str == '"' || ( *beg_of_str == '-' && isdigit(*(beg_of_str+1)) ) ||
-         ciprefix("true", beg_of_str) || ciprefix("false", beg_of_str) ) {
+      if ( isdigit(*beg_of_str) 
+          || *beg_of_str == '{' 
+          || *beg_of_str == '.' 
+          || *beg_of_str == '"' 
+          || ( *beg_of_str == '-' && isdigit(*(beg_of_str+1)) ) 
+          || ( *beg_of_str == '-' && (*(beg_of_str+1) == '.')  && isdigit(*(beg_of_str+2)) ) 
+          || ciprefix("true", beg_of_str) 
+          || ciprefix("false", beg_of_str) ) {
          line = equal_ptr + 1;
       } else if (*beg_of_str == '[') {
       	/* A vector following the '=' token: code to put curly brackets around all params 
