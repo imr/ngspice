@@ -175,7 +175,10 @@ false				{return TOK_BOOL_NO;}
 %%
 
 /*--------------------------------------------------------------------------*/
+
+#if 0
 void reset_lex_context (void)
 {
    BEGIN 0;
 }
+#endif

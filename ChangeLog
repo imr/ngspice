@@ -1,4 +1,8 @@
 2010-10-15  Robert Larice
+ * src/xspice/cmpp/ifs_lex.l :
+    disable dangling artifact
+
+2010-10-15  Robert Larice
  * src/spicelib/devices/dev.c :
     add local prototype for add_device()
 
