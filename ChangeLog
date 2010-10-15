@@ -1,4 +1,8 @@
 2010-10-15  Robert Larice
+ * src/include/fteext.h :
+    avoid redeclaration, signalhandler
+
+2010-10-15  Robert Larice
  * src/frontend/com_fft.c ,
  * src/frontend/com_fft.h :
     remove static fftext() from "com_fft.h"
