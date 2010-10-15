@@ -8,6 +8,4 @@
 
 void com_fft(wordlist *wl);
 
-static void fftext(double*, double*, long int, long int, int);
-
 #endif

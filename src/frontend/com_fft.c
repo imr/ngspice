@@ -17,6 +17,9 @@ Author:   2008 Holger Vogt
 #include "parse.h"
 #include "../misc/misc_time.h"
 
+static void fftext(double*, double*, long int, long int, int);
+
+
 void
 com_fft(wordlist *wl)
 {

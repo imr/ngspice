@@ -1,5 +1,10 @@
 2010-10-15  Robert Larice
  * src/frontend/com_fft.c ,
+ * src/frontend/com_fft.h :
+    remove static fftext() from "com_fft.h"
+
+2010-10-15  Robert Larice
+ * src/frontend/com_fft.c ,
  * src/frontend/com_fft.h ,
  * src/frontend/spec.c ,
  * src/frontend/spec.h :
