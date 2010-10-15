@@ -1,4 +1,11 @@
 2010-10-15  Robert Larice
+ * src/xspice/cmpp/mod_lex.l ,
+ * src/xspice/cmpp/mod_yacc.y ,
+ * src/xspice/cmpp/mod_yacc_y.h ,
+ * src/xspice/cmpp/pp_mod.c :
+    collect prototype for mod_yyerror() in "mod_yacc_y.h", and fix return type
+
+2010-10-15  Robert Larice
  * src/ciderlib/input/output.c :
     visibility for tildexpand() prototyp
 

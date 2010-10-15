@@ -47,3 +47,5 @@ typedef struct {
    Boolean_t has_subscript;
    char *subscript;
 } Sub_Id_t;
+
+extern void mod_yyerror(char*);

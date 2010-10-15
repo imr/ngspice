@@ -100,7 +100,6 @@ Ifs_Table_t *mod_ifs_table;
 
 extern char *mod_yytext;
 extern FILE* mod_yyout;
- extern void mod_yyerror(char*);
 
 #include <string.h>
 #include <ctype.h>

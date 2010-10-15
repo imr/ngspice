@@ -58,7 +58,7 @@ NON-STANDARD FEATURES
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include  "cmpp.h"
+#include  "mod_yacc_y.h"
 
 extern int mod_yyparse(void);
 extern void mod_yyrestart (FILE*);
@@ -181,12 +181,10 @@ void preprocess_mod_file (
 }
 
 /*---------------------------------------------------------------------------*/
-int
+void
 mod_yyerror (char *str)
 {
    fprintf (stderr, "%s: Error: \"%s\": line %d (near \'%s\'):\n\t%s.\n",
             prog_name, current_filename, mod_yylineno, mod_yytext, str);
-
-   return 0;
 }
 
