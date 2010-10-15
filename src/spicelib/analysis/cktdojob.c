@@ -71,15 +71,15 @@ CKTdoJob(CKTcircuit *inCkt, int reset, TSKtask *inTask)
     ckt->CKTgmin  = task->TSKgmin;
     ckt->CKTgshunt  = task->TSKgshunt;
     ckt->CKTdelmin  = task->TSKdelmin;
+    ckt->CKTtrtol  = task->TSKtrtol; 
 #ifdef XSPICE
-/* Lower default value of trtol to give more accuracy */
+/* Lower value of trtol to give smaller stepsize and more accuracy */
 /* but only if there are 'A' devices in the circuit */
     if (ckt->CKTadevFlag  &&  (ckt->CKTtrtol > 1)) {
       printf("Reducing trtol to 1 for xspice 'A' devices\n");
       ckt->CKTtrtol  = 1;
-    } else
+    }
 #endif
-      ckt->CKTtrtol  = task->TSKtrtol; 
     ckt->CKTdefaultMosM  = task->TSKdefaultMosM;
     ckt->CKTdefaultMosL  = task->TSKdefaultMosL;
     ckt->CKTdefaultMosW  = task->TSKdefaultMosW;
@@ -101,8 +101,8 @@ CKTdoJob(CKTcircuit *inCkt, int reset, TSKtask *inTask)
     ckt->CKTlteAbstol = task->TSKlteAbstol;
 #endif /* NEWTRUNC */
 
-fprintf(stdout, "Doing analysis at TEMP = %f and TNOM = %f\n\n", 
-        ckt->CKTtemp - CONSTCtoK, ckt->CKTnomTemp - CONSTCtoK);
+    fprintf(stdout, "Doing analysis at TEMP = %f and TNOM = %f\n\n", 
+    ckt->CKTtemp - CONSTCtoK, ckt->CKTnomTemp - CONSTCtoK);
     error = 0;
 
     if (reset) {
