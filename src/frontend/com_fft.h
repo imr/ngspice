@@ -6,8 +6,6 @@
 #ifndef FFT_H_INCLUDED
 #define FFT_H_INCLUDED
 
-extern void free_pnode_o(struct pnode *t);
-
 void com_fft(wordlist *wl);
 
 static void fftext(double*, double*, long int, long int, int);

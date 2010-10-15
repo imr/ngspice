@@ -1,4 +1,11 @@
 2010-10-15  Robert Larice
+ * src/frontend/com_fft.c ,
+ * src/frontend/com_fft.h ,
+ * src/frontend/spec.c ,
+ * src/frontend/spec.h :
+    collect free_pnode_o() in "parse.h"
+
+2010-10-15  Robert Larice
  * src/frontend/plotting/graphdb.c ,
  * src/frontend/plotting/graphdb.h ,
  * src/frontend/postcoms.c ,

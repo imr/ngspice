@@ -11,6 +11,5 @@ extern void SetAnalyse( char * Analyse, int Percent);
 #endif
 
 void com_spec(wordlist *wl);
-extern void free_pnode_o(struct pnode *t);
 
 #endif

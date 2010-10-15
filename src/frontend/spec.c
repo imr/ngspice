@@ -14,6 +14,7 @@ $Id$
 #include "sim.h"
 
 #include "spec.h"
+#include "parse.h"
 #include "variable.h"
 #include "missing_math.h"
 #include "../misc/misc_time.h"
