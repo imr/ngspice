@@ -1,4 +1,8 @@
 2010-10-15  Robert Larice
+ * src/ciderlib/input/output.c :
+    visibility for tildexpand() prototyp
+
+2010-10-15  Robert Larice
  * src/frontend/com_measure2.c ,
  * src/frontend/com_sysinfo.c ,
  * src/frontend/control.c ,

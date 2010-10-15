@@ -12,6 +12,7 @@ Modified: 2001 Paolo Nenzi
 #include "devdefs.h"
 #include "sperror.h"
 #include "suffix.h"
+#include "src/misc/tilde.h"
 
 extern int OUTPnewCard(void**,void*);
 extern int OUTPparam(int,IFvalue*,void*);
