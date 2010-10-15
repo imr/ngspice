@@ -1,4 +1,8 @@
 2010-10-15  Robert Larice
+ * src/spicelib/devices/dev.c :
+    add local prototype for add_device()
+
+2010-10-15  Robert Larice
  * src/xspice/cmpp/ifs_lex.l ,
  * src/xspice/cmpp/ifs_yacc.y ,
  * src/xspice/cmpp/ifs_yacc_y.h ,

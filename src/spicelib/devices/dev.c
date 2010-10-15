@@ -67,7 +67,7 @@ int g_evt_num_udn_types = 0;
 
 /*The digital node type */
 extern Evt_Udn_Info_t idn_digital_info;
-
+int add_device(int n, SPICEdev **devs, int flag);
 int add_udn(int,Evt_Udn_Info_t **);
 /*saj*/
 #endif
