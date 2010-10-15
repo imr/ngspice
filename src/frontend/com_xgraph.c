@@ -5,6 +5,7 @@
 #include <wordlist.h>
 
 #include "plotting/plotit.h"
+#include "../misc/mktemp.h"
 
 #include "com_xgraph.h"
 

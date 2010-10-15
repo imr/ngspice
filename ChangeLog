@@ -1,5 +1,16 @@
+2010-10-15  Robert Larice
+ * src/frontend/aspice.c ,
+ * src/frontend/com_gnuplot.c ,
+ * src/frontend/com_hardcopy.c ,
+ * src/frontend/com_xgraph.c ,
+ * src/frontend/inp.c ,
+ * src/frontend/nutinp.c ,
+ * src/include/ngspice.h ,
+ * src/ngsconvert.c :
+    collect smktemp() in "mktemp.h"
+
 2010-10-13  Dietmar Warning
- * src/frontend/com_option.c: better formatting the output and 
+ * src/frontend/com_option.c: better formatting the output and
    add some useful parameters if command 'option' is given
  * src/include/cktdefs.h,
  * src/spicelib/analysis/cktdojob.c, cktntask.c,

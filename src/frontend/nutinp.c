@@ -15,6 +15,7 @@ $Id$
 #include "fteinp.h"
 #include "nutinp.h"
 #include "variable.h"
+#include "../misc/mktemp.h"
 
 /* The routine to source a spice input deck. We read the deck in, take out
  * the front-end commands, and create a CKT structure. Also we filter out

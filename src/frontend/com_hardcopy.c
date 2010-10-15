@@ -13,6 +13,7 @@
 #include "plotting/plotit.h"
 #include "plotting/graphdb.h"
 #include "plotting/graf.h"
+#include "../misc/mktemp.h"
 
 #include "arg.h"
 #include "display.h"

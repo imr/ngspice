@@ -36,6 +36,8 @@ $Id$
 #include "fteinp.h"
 #include "dvec.h"
 
+#include "../misc/mktemp.h"
+
 /*
  This is required for the GCC pre-processor and might be needed for others
  Added to resolve ngspice bug 1293746

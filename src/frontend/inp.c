@@ -29,6 +29,7 @@ $Id$
 #include "variable.h"
 #include "breakp2.h"
 #include "../misc/util.h" /* dirname() */
+#include "../misc/mktemp.h"
 #include "error.h" /* controlled_exit() */
 
 #ifdef XSPICE
