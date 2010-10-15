@@ -12,6 +12,7 @@ $Id$
 #include <ftedebug.h>
 #include <fteext.h>
 
+#include "ftedbgra.h"
 #include "graphdb.h"
 #include "../breakp2.h"
 #include "../error.h"

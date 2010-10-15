@@ -14,7 +14,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <sim.h>
 #include <plot.h>
 #include <graph.h>
-#include "plotting/graphdb.h"
+#include "ftedbgra.h"
 
 #include "completion.h"
 #include "postcoms.h"
@@ -25,13 +25,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* static declarations */
 static void killplot(struct plot *pl);
 static void DelPlotWindows(struct plot *pl);
-
-/* External function */
-/* Either defined in windisp.c or in x11.c */
-/* Do this only if Windows or X11 is defined. */
-#if defined(HAS_WINDOWS) || !defined(X_DISPLAY_MISSING)
-extern void RemoveWindow(GRAPH*);
-#endif
 
 void
 com_unlet(wordlist *wl)

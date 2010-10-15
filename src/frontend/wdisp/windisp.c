@@ -48,7 +48,6 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,     /* window procedure */
 UINT uMsg, WPARAM wParam, LPARAM lParam);
 void WPRINT_PrintInit( HWND hwnd);              /* Windows printer init */
 void WaitForIdle(void);                         /* wait until no more events */
-void RemoveWindow(GRAPH *pgraph);
 static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy);
 static void RealClose(void);    
 /* externals */

@@ -16,3 +16,5 @@ extern GRAPH *NewGraph(void);
 extern GRAPH *FindGraph(int id);
 
 extern GRAPH *CopyGraph(GRAPH *graph);
+
+extern void RemoveWindow(GRAPH*);

@@ -1,4 +1,12 @@
 2010-10-15  Robert Larice
+ * src/frontend/plotting/graphdb.c ,
+ * src/frontend/plotting/graphdb.h ,
+ * src/frontend/postcoms.c ,
+ * src/frontend/wdisp/windisp.c ,
+ * src/include/ftedbgra.h :
+    collect NewGraph() FindGraph() CopyGraph() RemoveWindow() in "ftedbgra.h"
+
+2010-10-15  Robert Larice
  * src/frontend/com_fft.c ,
  * src/frontend/outitf.c ,
  * src/frontend/rawfile.c ,
