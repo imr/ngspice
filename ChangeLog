@@ -1,4 +1,10 @@
 2010-10-15  Robert Larice
+ * src/include/ngspice.h ,
+ * src/main.c ,
+ * src/misc/misc_time.h :
+    collect extern timebegin in "misc_time.h"
+
+2010-10-15  Robert Larice
  * src/ciderlib/support/globals.c ,
  * src/ciderlib/support/mater.c ,
  * src/frontend/numparam/spicenum.c ,

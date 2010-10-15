@@ -49,6 +49,7 @@ extern int rl_catch_signals;        /* missing from editline/readline.h */
 #include "spicelib/devices/dev.h"
 #include "spicelib/analysis/analysis.h"
 #include "misc/ivars.h"
+#include "misc/misc_time.h"
 #if defined(HAVE_GETOPT_LONG) && defined(HAVE_GETOPT_H)
 #include <getopt.h>
 #else
@@ -184,12 +185,6 @@ static bool read_initialisation_file(char * dir, char * name);
 static void append_to_stream(FILE *dest, FILE *source);
 #endif /* SIMULATOR */
 
-
-#ifndef HAVE_GETRUSAGE
-#ifdef HAVE_FTIME
-extern struct timeb timebegin;      /* for use w/ ftime */
-#endif
-#endif
 
 extern IFsimulator SIMinfo;
 

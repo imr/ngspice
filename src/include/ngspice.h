@@ -124,7 +124,6 @@
 #  else
 #    ifdef HAVE_FTIME
 #      include <sys/timeb.h>
-extern struct timeb timebegin;
 #    endif
 #  endif
 #endif
