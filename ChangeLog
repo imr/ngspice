@@ -1,4 +1,8 @@
 2010-10-15  Robert Larice
+ * src/ngsconvert.c :
+    remove obsolete artifact XtDispatchEvent() (dummy implementation)
+
+2010-10-15  Robert Larice
  * src/ciderlib/support/devprint.c :
     visibility for the printVoltages() prototype
 

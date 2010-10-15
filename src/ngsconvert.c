@@ -453,4 +453,4 @@ void cp_ccom(wordlist *w, char *b, bool e) { return; }
 int cp_usrset(struct variable *v, bool i) { return(US_OK); }
 
 int disptype;
-void XtDispatchEvent(char *pev) { }
+
