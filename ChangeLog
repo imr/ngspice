@@ -1,4 +1,14 @@
 2010-10-15  Robert Larice
+ * src/frontend/com_fft.c ,
+ * src/frontend/outitf.c ,
+ * src/frontend/rawfile.c ,
+ * src/frontend/spec.c ,
+ * src/frontend/vectors.c ,
+ * src/include/ngspice.h ,
+ * src/tclspice.c :
+    collect datestring() and seconds() in "misc_time.h"
+
+2010-10-15  Robert Larice
  * src/frontend/aspice.c ,
  * src/frontend/com_gnuplot.c ,
  * src/frontend/com_hardcopy.c ,

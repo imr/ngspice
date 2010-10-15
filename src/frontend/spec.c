@@ -16,6 +16,7 @@ $Id$
 #include "spec.h"
 #include "variable.h"
 #include "missing_math.h"
+#include "../misc/misc_time.h"
 
 void
 com_spec(wordlist *wl)

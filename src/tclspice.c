@@ -28,6 +28,7 @@
 /**********************************************************************/
 
 #include "ngspice.h"
+#include "misc/misc_time.h"
 #include <tcl.h>
 
 /*Use Tcl threads if on W32 without pthreads*/

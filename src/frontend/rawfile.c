@@ -15,6 +15,7 @@ $Id$
 
 #include "rawfile.h"
 #include "variable.h"
+#include "../misc/misc_time.h"
 
 /* static declarations */
 static void fixdims(struct dvec *v, char *s);

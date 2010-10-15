@@ -31,6 +31,7 @@ $Id$
 #include "breakp2.h"
 #include "runcoms.h"
 #include "plotting/graf.h"
+#include "../misc/misc_time.h"
 
 extern char *spice_analysis_get_name(int index);
 extern char *spice_analysis_get_description(int index);

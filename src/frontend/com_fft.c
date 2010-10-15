@@ -14,6 +14,7 @@ Author:   2008 Holger Vogt
 
 #include "com_fft.h"
 #include "variable.h"
+#include "../misc/misc_time.h"
 
 void
 com_fft(wordlist *wl)

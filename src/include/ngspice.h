@@ -222,9 +222,6 @@ extern int prefix(char *p, char *str);
 extern int substring(char *sub, char *str);
 extern void cp_printword(char *str, FILE *fp);
 
-extern char *datestring(void);
-extern double seconds(void);
-
 /* Some external variables */
 
 extern char *Spice_Exec_Dir;
