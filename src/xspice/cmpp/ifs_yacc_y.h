@@ -79,3 +79,6 @@ typedef struct ctype_list_s {
    My_Port_Type_t      ctype;
    struct ctype_list_s *next;
 } Ctype_List_t;
+
+
+extern void ifs_yyerror(char*);

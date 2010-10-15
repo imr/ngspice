@@ -92,7 +92,6 @@ extern int yylineno;
 extern int yyival;
 extern double yydval;
 extern char *ifs_yytext;
-extern void yyerror (char*);
  extern int ifs_yylex(void);
 
 Boolean_t parser_just_names;

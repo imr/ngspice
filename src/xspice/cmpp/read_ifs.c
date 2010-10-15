@@ -48,7 +48,7 @@ NON-STANDARD FEATURES
 
 #include <assert.h>
 #include <stdio.h>
-#include  "cmpp.h"
+#include  "ifs_yacc_y.h"
 
 extern char *prog_name;
 extern int ifs_yyparse (void);
@@ -167,12 +167,10 @@ static Status_t read_ifs_table(
 
 /*---------------------------------------------------------------------------*/
    
-int
+void
 ifs_yyerror (char *str)
 {
    fprintf (stderr, "%s: Error: \"%s\": line %d (near \'%s\'):\n\t%s.\n",
 	    prog_name, current_filename, ifs_yylineno, ifs_yytext, str);
-
-   return 0;
 }
 

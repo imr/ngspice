@@ -51,7 +51,6 @@ NON-STANDARD FEATURES
 
 int yyival;
 double yydval;
-extern void ifs_yyerror (char*);
 
 /*
  * IFS specs are case insensitive:
