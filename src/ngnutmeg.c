@@ -64,6 +64,7 @@ IFsimulator SIMinfo = {
 
 #ifdef CIDER
 /* An ugly hack */
+#include "cktdefs.h"
 void
 NDEVacct(CKTcircuit *ckt, FILE *file)
 {
