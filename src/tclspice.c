@@ -108,7 +108,7 @@ typedef pthread_t threadId_t;
 typedef void (*sighandler)(int);
 
 #include <setjmp.h>
-extern JMP_BUF jbuf;
+#include "frontend/signal_handler.h"
 
 /*Included for the module to access data*/
 #include <dvec.h>
