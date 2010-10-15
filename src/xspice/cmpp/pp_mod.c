@@ -153,6 +153,8 @@ void preprocess_mod_file (
 
    fprintf (mod_yyout, "#line 1 \"%s\"\n", filename);
    fprintf (mod_yyout, "#include \"cm.h\"\n");
+   fprintf (mod_yyout, "extern void %s(Mif_Private_t *);\n",
+      ifs_table.name.c_fcn_name);
    fprintf (mod_yyout, "#line 1 \"%s\"\n", filename);
 
    mod_yylineno = 1;
