@@ -45,6 +45,7 @@ NON-STANDARD FEATURES
 /*                                         12/17/90      */
 
 
+#include  <stdio.h>
 #include "cmtypes.h"
 
 
@@ -91,5 +92,14 @@ Complex_t cm_complex_add(Complex_t x, Complex_t y);
 Complex_t cm_complex_subtract(Complex_t x, Complex_t y);
 Complex_t cm_complex_multiply(Complex_t x, Complex_t y);
 Complex_t cm_complex_divide(Complex_t x, Complex_t y);
+
+FILE *cm_stream_out(void);
+FILE *cm_stream_in(void);
+FILE *cm_stream_err(void);
+
+void *malloc_pj(size_t s);
+void *calloc_pj(size_t s1, size_t s2);
+void *realloc_pj(void *ptr, size_t s);
+void  free_pj(void *ptr);
 
 #endif /* CMPROTO_DEFINED */

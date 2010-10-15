@@ -1,4 +1,10 @@
 2010-10-15  Robert Larice
+ * src/include/cmproto.h :
+   add prototypes for some functions --> "cmproto.h"
+     cm_stream_out() cm_stream_in(v) cm_stream_err()
+     malloc_pj() calloc_pj() realloc_pj() free_pj()
+
+2010-10-15  Robert Larice
  * src/xspice/icm/xtraevt/int/udnfunc.c ,
  * src/xspice/icm/xtraevt/real/udnfunc.c :
     declare udn_int_ and udn_real_functions `static'
