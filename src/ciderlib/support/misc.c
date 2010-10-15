@@ -13,6 +13,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 #include "numglobs.h"
 #include "numenum.h"
 #include "spmatrix.h"
+#include "cidersupt.h"
 
 
 /* Used in Solution Projection Calculations */

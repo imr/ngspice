@@ -1,4 +1,18 @@
 2010-10-15  Robert Larice
+ * src/ciderlib/support/database.c ,
+ * src/ciderlib/support/geominfo.c ,
+ * src/ciderlib/support/globals.c ,
+ * src/ciderlib/support/integset.c ,
+ * src/ciderlib/support/integuse.c ,
+ * src/ciderlib/support/logfile.c ,
+ * src/ciderlib/support/mater.c ,
+ * src/ciderlib/support/misc.c ,
+ * src/ciderlib/support/mobil.c ,
+ * src/ciderlib/support/recomb.c ,
+ * src/ciderlib/support/suprmitf.c :
+    prototypes, make use of "cidersupt.h"
+
+2010-10-15  Robert Larice
  * src/tclspice.c :
     collect extern JMP_BUF jbuf in "frontend/signal_handler.h"
 

@@ -8,6 +8,7 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #include "numglobs.h"
 #include "numconst.h"
 #include "numenum.h"
+#include "cidersupt.h"
 
 /* Forward Declarations */
 void GLOBputGlobals(GLOBvalues *);

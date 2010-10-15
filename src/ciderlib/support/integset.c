@@ -6,6 +6,7 @@ $Id$
 
 #include "ngspice.h"
 #include "numenum.h"
+#include "cidersupt.h"
 
 /* compute the coefficient for the integration and predictor methods */
 /* based on the Lagrange polynomial method in Liniger et. al. */

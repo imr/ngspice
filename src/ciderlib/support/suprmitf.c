@@ -10,6 +10,7 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 
 
 #include "ngspice.h"
+#include "cidersupt.h"
 
 #define MAXMAT 10
 #define MAXIMP 4

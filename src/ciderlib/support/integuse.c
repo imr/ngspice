@@ -7,6 +7,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "numglobs.h"
 #include "numenum.h"
 #include "gendev.h"
+#include "cidersupt.h"
 
 /* function to compute the integrated variables discretization */
 

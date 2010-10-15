@@ -9,6 +9,7 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #include "numconst.h"
 #include "numenum.h"
 #include "material.h"
+#include "cidersupt.h"
 
 /* Forward Declarations */
 void printMaterialInfo(MaterialInfo *info);

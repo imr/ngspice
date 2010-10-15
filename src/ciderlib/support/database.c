@@ -6,6 +6,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "fteext.h"
 /* #include "ftedata.h" */
+#include "cidersupt.h"
 
 struct plot *
 DBread( char *fileName )

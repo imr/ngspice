@@ -4,6 +4,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
 #include "ngspice.h"
+#include "cidersupt.h"
 
 static char *LogFileName = "cider.log";
 static int LogError = 0;

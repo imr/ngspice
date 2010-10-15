@@ -10,6 +10,7 @@ $Id$
 #include "numenum.h"
 #include "macros.h"
 #include "material.h"
+#include "cidersupt.h"
 
 void MOBdefaults(MaterialInfo *info , int carrier, int type, 
                  int concmodel, int fieldmodel )

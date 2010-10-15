@@ -8,6 +8,7 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #include "gendev.h"
 #include "macros.h"
 #include "memory.h"
+#include "cidersupt.h"
 
 void printCoordInfo(CoordInfo *pFirstCoord)
 {

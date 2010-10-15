@@ -5,6 +5,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 #include "ngspice.h"
 #include "numglobs.h"
+#include "cidersupt.h"
 
 /*
  * function recomb calculates the recobination rates and the 
