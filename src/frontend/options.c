@@ -232,8 +232,6 @@ inp_getoptsc(char *in_line, struct line *com_options)
 }
 
 
-static void setdb(char *str);
-
 /* The one variable that we consider read-only so far is plots.  The ones
  * that are 'dontrecord' are curplottitle, curplotname, and curplotdate.
  * Also things already in the plot env are 'dontrecord'.

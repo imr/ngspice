@@ -24,9 +24,6 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 /* Check out this one */
 extern int NBJT2initSmSig(NBJT2instance *);
 
-extern int TWOdcDebug;
-extern int TWOtranDebug;
-extern int TWOacDebug;
 
 
 

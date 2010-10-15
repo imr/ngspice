@@ -16,7 +16,6 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 
 #define NIL(type)   ((type *)0)
 extern int ONEdcDebug;
-extern double LNorm;
 
 int 
 NBJTtemp(GENmodel *inModel, CKTcircuit *ckt)

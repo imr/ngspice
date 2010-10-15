@@ -203,7 +203,7 @@ This function deallocates the interprocess communication channel
 mailbox or socket.
 */
 
-Ipc_Status_t ipc_transport_terminate_server (void);
+
 
 Ipc_Status_t
 ipc_terminate_server (void)

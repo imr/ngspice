@@ -21,11 +21,6 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 
-/* External Declarations */
-extern int TWOdcDebug;
-extern int TWOtranDebug;
-extern int TWOacDebug;
-
 /* Forward Declarations */
 
 int NUMOSinitSmSig(NUMOSinstance *inst);

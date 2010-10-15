@@ -17,8 +17,6 @@ Author: 1987 Gary W. Ng
  */
 
 
-extern void SMPcaSolve(SMPmatrix *Matrix, double RHS[], double iRHS[], double Spare[], double iSpare[]);
-
 void
 NInzIter(CKTcircuit *ckt, int posDrive, int negDrive)
 {

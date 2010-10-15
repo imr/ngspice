@@ -10,8 +10,6 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 #include "ifsim.h"
 #include "sperror.h"
 
-int CKTdltNNum(CKTcircuit *cktp, int num);
-
 /* ARGSUSED */
 int
 CKTdltNod(CKTcircuit *ckt, CKTnode *node)

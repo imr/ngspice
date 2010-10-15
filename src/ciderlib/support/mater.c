@@ -11,12 +11,6 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #include "material.h"
 #include "cidersupt.h"
 
-/* Forward Declarations */
-void printMaterialInfo(MaterialInfo *info);
-
-/* External Symbols */
-extern void MOBtempDep (MaterialInfo *, double);
-
 
 /*
  * Set material info values to their defaults.

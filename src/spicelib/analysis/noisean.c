@@ -19,8 +19,6 @@ Modified: 2001 AlansFixes
 #include "isrc/isrcdefs.h"
 #include "../maths/ni/niniter.h" /* va, NInzIter */
 
-extern int CKTnoise( CKTcircuit *, int, int, Ndata * );
-
 
 int
 NOISEan (CKTcircuit *ckt, int restart)

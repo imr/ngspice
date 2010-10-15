@@ -61,7 +61,6 @@ static unsigned CombState8 = 138; /* LCG state variable */
 static unsigned TauS(unsigned *state, int C1, int C2, int C3, unsigned m);
 static unsigned LGCS(unsigned *state, unsigned A1, unsigned A2);
 
-void TausSeed(void);
 double CombLCGTaus(void);
 float  CombLCGTaus2(void);
 unsigned int CombLCGTausInt(void);

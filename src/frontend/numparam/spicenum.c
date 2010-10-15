@@ -29,7 +29,6 @@ Todo:
 
 #include "../error.h" /* controlled_exit() */
 
-extern void txfree (void *ptr);
 void dump_symbols(tdico *dico_p);
 
 char *nupa_inst_name;

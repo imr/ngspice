@@ -10,11 +10,6 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #include "numenum.h"
 #include "cidersupt.h"
 
-/* Forward Declarations */
-void GLOBputGlobals(GLOBvalues *);
-void GLOBgetGlobals(GLOBvalues *);
-void GLOBprnGlobals(FILE *, GLOBvalues *);
-
 /* Global Variable Declarations 
 char *LogFileName = "cider.log";
 

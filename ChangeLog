@@ -1,4 +1,27 @@
 2010-10-15  Robert Larice
+ * src/ciderlib/support/globals.c ,
+ * src/ciderlib/support/mater.c ,
+ * src/frontend/numparam/spicenum.c ,
+ * src/frontend/options.c ,
+ * src/frontend/plotting/graf.c ,
+ * src/maths/misc/randnumb.c ,
+ * src/maths/ni/niniter.c ,
+ * src/spicelib/analysis/cktdltn.c ,
+ * src/spicelib/analysis/noisean.c ,
+ * src/spicelib/devices/nbjt/nbjttemp.c ,
+ * src/spicelib/devices/nbjt2/nbt2acld.c ,
+ * src/spicelib/devices/nbjt2/nbt2load.c ,
+ * src/spicelib/devices/nbjt2/nbt2pzld.c ,
+ * src/spicelib/devices/numd2/nud2acld.c ,
+ * src/spicelib/devices/numd2/nud2load.c ,
+ * src/spicelib/devices/numd2/nud2pzld.c ,
+ * src/spicelib/devices/numos/nummacld.c ,
+ * src/spicelib/devices/numos/nummload.c ,
+ * src/spicelib/devices/numos/nummpzld.c ,
+ * src/xspice/ipc/ipc.c :
+    remove local prototypes, which are allready included
+
+2010-10-15  Robert Larice
  * src/ciderlib/support/database.c ,
  * src/ciderlib/support/geominfo.c ,
  * src/ciderlib/support/globals.c ,

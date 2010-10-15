@@ -24,10 +24,6 @@ $Id$
 /* Forward declarations */
 int NUMD2initSmSig(NUMD2instance *);
 
-/* External Declarations */
-extern int TWOdcDebug;
-extern int TWOtranDebug;
-extern int TWOacDebug;
 
 int
 NUMD2load(GENmodel *inModel, CKTcircuit *ckt)

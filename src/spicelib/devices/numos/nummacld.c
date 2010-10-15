@@ -18,8 +18,6 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "../../../ciderlib/twod/twodext.h"
 #include "cidersupt.h"
 
-/* External Declarations */
-extern int TWOacDebug;
 
 int
 NUMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)

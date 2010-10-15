@@ -13,9 +13,6 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "cidersupt.h"
 #include "suffix.h"
 
-/* External Declarations */
-extern int TWOacDebug;
-
 
 int
 NUMOSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)

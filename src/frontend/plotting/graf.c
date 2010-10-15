@@ -52,7 +52,6 @@ static char pointchars[128];
 static char ticbuf[1024];
 static char *ticlist = ticbuf;
 #define MAXTICS 100
-double *readtics(char *string);
 
 #define XFACTOR 1       /* How much to expand the X scale during iplot. */
 #define YFACTOR 0.2     /* How much to expand the Y scale during iplot. */
