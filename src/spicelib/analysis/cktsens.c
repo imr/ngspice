@@ -606,7 +606,7 @@ inc_freq(double freq, int type, double step_size)
 	return freq;
 }
 
-double
+static double
 next_freq(int type, double freq, double stepsize)
 {
 	double	s=0;

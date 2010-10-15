@@ -95,7 +95,7 @@ static void initcolors (GRAPH *graph);
 static void X_ScreentoData (GRAPH *graph, int x, int y, double *fx, double *fy);
 static void linear_arc(int x0, int y0, int radius, double theta, double delta_theta);
 
-int
+static int
 errorhandler(Display *display, XErrorEvent *errorev)
 {
     XGetErrorText(display, errorev->error_code, ErrorMessage, 1024);

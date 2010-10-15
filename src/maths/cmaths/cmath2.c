@@ -116,7 +116,7 @@ cx_atan(void *data, short int type, int length, int *newlength, short int *newty
 }
 
 
-double
+static double
 cx_max_local(void *data, short int type, int length)
 {
     double largest = 0.0;

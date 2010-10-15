@@ -25,7 +25,7 @@ BSIM4RdsEndIso(double, double, double, double, double, double, int, int, double 
 int
 BSIM4RdsEndSha(double, double, double, double, double, double, int, int, double *);
 
-int
+static int
 BSIM4NumFingerDiff(double nf, int minSD, double *nuIntD, double *nuEndD, double *nuIntS, double *nuEndS)
 {
 int NF;

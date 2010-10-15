@@ -55,7 +55,7 @@
  */
 
 
-double
+static double
 StrongInversionNoiseEval(
 double Vds,
 BSIM3model *model,

@@ -9,7 +9,7 @@ Author: 1988 Jaijeet S Roychowdhury
 #include "sperror.h"
 
 
-void
+static void
 DISswap(double **a, double **b)
 {
 double *c;
@@ -19,7 +19,7 @@ c = *a;
 *b = c;
 }
 
-void
+static void
 DmemAlloc(double **a, int size)
 {
 *a = (double *) MALLOC( sizeof(double) * size + 1);
@@ -27,7 +27,7 @@ DmemAlloc(double **a, int size)
 
 
 
-void
+static void
 DstorAlloc(double ***header, int size)
 {
 *header = (double **) MALLOC( sizeof(double *)*size);

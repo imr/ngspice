@@ -1403,7 +1403,7 @@ settrans(char *formal, char *actual, char *subname)
  *   the substring itself is required to be free of a '\0'
  */
 
-int
+static int
 eq_substr(const char* str, const char *end, const char *cstring)
 {
     while(str < end)

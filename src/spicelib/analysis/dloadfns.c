@@ -19,7 +19,7 @@ Author: 1988 Jaijeet S Roychowdhury
  * for the imaginary sub functions, the v is replaced by an i
  *
  */
-double
+static double
 S2v2F1(double cxy, double r1h1x, double i1h1x, double r1h1y, double i1h1y)
            
                     		/* 5 arguments */
@@ -28,7 +28,7 @@ S2v2F1(double cxy, double r1h1x, double i1h1x, double r1h1y, double i1h1y)
 return(cxy*(r1h1x*r1h1y - i1h1x*i1h1y));
 }
 
-double
+static double
 S2i2F1(double cxy, double r1h1x, double i1h1x, double r1h1y, double i1h1y)
            
                                /* 5 arguments */
@@ -37,7 +37,7 @@ S2i2F1(double cxy, double r1h1x, double i1h1x, double r1h1y, double i1h1y)
 return(cxy*(r1h1x*i1h1y + i1h1x*r1h1y));
 }
 
-double
+static double
 S2v3F1(double cxy, double r1h1x, double i1h1x, double r1h1y, double i1h1y, double r2h11x, double i2h11x, double r2h11y, double i2h11y)
 
 			/* 9 arguments */
@@ -49,7 +49,7 @@ return(cxy*(r1h1x*r2h11y - i1h1x*i2h11y + r1h1y*r2h11x - i1h1y*
 }
 
 
-double
+static double
 S2i3F1(double cxy, double r1h1x, double i1h1x, double r1h1y, double i1h1y, double r2h11x, double i2h11x, double r2h11y, double i2h11y)
 
 			/* 9 arguments */
@@ -60,7 +60,7 @@ return(cxy*(r1h1x*i2h11y + i1h1x*r2h11y + r1h1y*i2h11x + i1h1y*
 			r2h11x));
 }
 
-double
+static double
 S2vF12(double cxy, double r1h1x, double i1h1x, double r1h1y, double i1h1y, double r1h2x, double i1h2x, double r1h2y, double i1h2y)
 
 				/* 9 arguments */
@@ -70,7 +70,7 @@ S2vF12(double cxy, double r1h1x, double i1h1x, double r1h1y, double i1h1y, doubl
 return(cxy*(r1h1x*r1h2y - i1h1x*i1h2y + r1h1y*r1h2x - i1h1y*i1h2x));
 }
 
-double
+static double
 S2iF12(double cxy, double r1h1x, double i1h1x, double r1h1y, double i1h1y, double r1h2x, double i1h2x, double r1h2y, double i1h2y)
 
 				/* 9 arguments */
@@ -80,7 +80,7 @@ S2iF12(double cxy, double r1h1x, double i1h1x, double r1h1y, double i1h1y, doubl
 return(cxy*(r1h1x*i1h2y + i1h1x*r1h2y + r1h1y*i1h2x + i1h1y*r1h2x));
 }
 
-double
+static double
 S2v2F12(double cxy, double r1h1x, double i1h1x, double r1h1y, double i1h1y, double r1h2x, double i1h2x, double r1h2y, double i1h2y, double r2h11x, double i2h11x, double r2h11y, double i2h11y, double h2f1f2x, double ih2f1f2x, double h2f1f2y, double ih2f1f2y)
 
 				/* 17 arguments */
@@ -97,7 +97,7 @@ return ( cxy * (
 		));
 }
 
-double
+static double
 S2i2F12(double cxy, double r1h1x, double i1h1x, double r1h1y, double i1h1y, double r1h2x, double i1h2x, double r1h2y, double i1h2y, double r2h11x, double i2h11x, double r2h11y, double i2h11y, double h2f1f2x, double ih2f1f2x, double h2f1f2y, double ih2f1f2y)
 
 				/* 17 arguments */
@@ -114,7 +114,7 @@ return ( cxy * (
 		));
 }
 
-double
+static double
 S3v3F1(double cxyz, double r1h1x, double i1h1x, double r1h1y, double i1h1y, double r1h1z, double i1h1z)
 
 				/* 7 arguments */
@@ -126,7 +126,7 @@ return( cxyz * (
 	       ));
 }
 
-double
+static double
 S3i3F1(double cxyz, double r1h1x, double i1h1x, double r1h1y, double i1h1y, double r1h1z, double i1h1z)
 
 				/* 7 arguments */
@@ -138,7 +138,7 @@ return( cxyz * (
 	       ));
 }
 
-double
+static double
 S3v2F12(double cxyz, double r1h1x, double i1h1x, double r1h1y, double i1h1y, double r1h1z, double i1h1z, double r1h2x, double i1h2x, double r1h2y, double i1h2y, double r1h2z, double i1h2z)
 
 				/* 13 arguments */
@@ -155,7 +155,7 @@ return ( cxyz * (
 		 ));
 }
 
-double
+static double
 S3i2F12(double cxyz, double r1h1x, double i1h1x, double r1h1y, double i1h1y, double r1h1z, double i1h1z, double r1h2x, double i1h2x, double r1h2y, double i1h2y, double r1h2z, double i1h2z)
 
 				/* 13 arguments */

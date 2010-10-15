@@ -111,7 +111,7 @@ LTRAlinInterp(double t, double t1, double t2, double *c1, double *c2)
  * respectively this is used only locally
  */
 
-double
+static double
 intlinfunc(double lolimit, double hilimit, double lovalue, double hivalue, double t1, double t2)
 {
   double width, m;
@@ -134,7 +134,7 @@ intlinfunc(double lolimit, double hilimit, double lovalue, double hivalue, doubl
  * locally
  */
 
-double
+static double
 twiceintlinfunc(double lolimit, double hilimit, double otherlolimit, double lovalue, double hivalue, double t1, double t2)
 {
   double width, m, dummy;
@@ -163,7 +163,7 @@ twiceintlinfunc(double lolimit, double hilimit, double otherlolimit, double lova
  * t1 and t2 respectively this is used only locally
  */
 
-double
+static double
 thriceintlinfunc(double lolimit, double hilimit, double secondlolimit, double thirdlolimit, double lovalue, double hivalue, double t1, double t2)
 {
   double width, m, dummy;
@@ -200,7 +200,7 @@ thriceintlinfunc(double lolimit, double hilimit, double secondlolimit, double th
  * 
  */
 
-double
+static double
 bessI0(double x)
 {
   double ax, ans;
@@ -221,7 +221,7 @@ bessI0(double x)
   return (ans);
 }
 
-double
+static double
 bessI1(double x)
 {
   double ax, ans;
@@ -243,7 +243,7 @@ bessI1(double x)
   return (x < 0.0 ? -ans : ans);
 }
 
-double
+static double
 bessI1xOverX(double x)
 {
   double ax, ans;

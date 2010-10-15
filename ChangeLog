@@ -1,4 +1,43 @@
 2010-10-15  Robert Larice
+ * src/frontend/com_measure2.c ,
+ * src/frontend/com_sysinfo.c ,
+ * src/frontend/control.c ,
+ * src/frontend/plotting/x11.c ,
+ * src/frontend/subckt.c ,
+ * src/maths/cmaths/cmath2.c ,
+ * src/spicelib/analysis/cktsens.c ,
+ * src/spicelib/analysis/distoan.c ,
+ * src/spicelib/analysis/dloadfns.c ,
+ * src/spicelib/devices/bsim3/b3noi.c ,
+ * src/spicelib/devices/bsim3soi/b4soild.c ,
+ * src/spicelib/devices/bsim3soi/b4soinoi.c ,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddld.c ,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddnoi.c ,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdld.c ,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdnoi.c ,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdld.c ,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdnoi.c ,
+ * src/spicelib/devices/bsim3v0/b3v0noi.c ,
+ * src/spicelib/devices/bsim3v1/b3v1noi.c ,
+ * src/spicelib/devices/bsim3v1a/b3v1anoi.c ,
+ * src/spicelib/devices/bsim3v1s/b3v1snoi.c ,
+ * src/spicelib/devices/bsim3v32/b3v32noi.c ,
+ * src/spicelib/devices/bsim4/b4geo.c ,
+ * src/spicelib/devices/bsim4/b4noi.c ,
+ * src/spicelib/devices/bsim4/b4temp.c ,
+ * src/spicelib/devices/bsim4v2/b4v2geo.c ,
+ * src/spicelib/devices/bsim4v2/b4v2noi.c ,
+ * src/spicelib/devices/bsim4v2/b4v2temp.c ,
+ * src/spicelib/devices/bsim4v3/b4v3geo.c ,
+ * src/spicelib/devices/bsim4v3/b4v3temp.c ,
+ * src/spicelib/devices/bsim4v4/b4v4geo.c ,
+ * src/spicelib/devices/bsim4v4/b4v4temp.c ,
+ * src/spicelib/devices/bsim4v5/b4v5geo.c ,
+ * src/spicelib/devices/bsim4v5/b4v5temp.c ,
+ * src/spicelib/devices/ltra/ltramisc.c :
+    declare some functions `static'
+
+2010-10-15  Robert Larice
  * src/include/cmproto.h :
    add prototypes for some functions --> "cmproto.h"
      cm_stream_out() cm_stream_in(v) cm_stream_err()

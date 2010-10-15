@@ -23,7 +23,7 @@ BSIM4v4RdsEndIso(double, double, double, double, double, double, int, int, doubl
 int
 BSIM4v4RdsEndSha(double, double, double, double, double, double, int, int, double *);
 
-int
+static int
 BSIM4v4NumFingerDiff(
 double nf,
 int minSD,

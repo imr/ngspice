@@ -44,7 +44,7 @@
 
 
 
-int
+static int
 BSIM4v5DioIjthVjmEval(
 double Nvtm, double Ijth, double Isb, double XExpBV,
 double *Vjm)

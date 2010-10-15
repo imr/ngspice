@@ -33,7 +33,7 @@
 #define Charge_q 1.60219e-19
 #define DELTA  1.0E-9
 
-int
+static int
 BSIM4v3DioIjthVjmEval(
 double Nvtm, double Ijth, double Isb, double XExpBV,
 double *Vjm)

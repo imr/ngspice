@@ -64,7 +64,7 @@ Modified by Paolo Nenzi 2002
      *  limits the per-iteration change of any absolute voltage value
      */
 
-double
+static double
 B3SOIPDlimit(double vnew, double vold, double limit, int *check)
 {
     double T0, T1;

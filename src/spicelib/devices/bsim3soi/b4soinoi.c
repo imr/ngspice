@@ -46,7 +46,7 @@
 */
 
 
-double
+static double
 B4SOIEval1ovFNoise(
 double vds,
 B4SOImodel *model,

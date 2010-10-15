@@ -105,7 +105,7 @@ pwlist_echo(wordlist *wlist, char *name)   /*CDHW used to perform function of se
 
 /*CDHW Remove control structure and free the memory its hogging CDHW*/
 
-void ctl_free(struct control *ctrl) {
+static void ctl_free(struct control *ctrl) {
    if (!ctrl) return;
    wl_free(ctrl->co_cond); ctrl->co_cond = NULL;
    tfree(ctrl->co_foreachvar); ctrl->co_foreachvar = NULL;

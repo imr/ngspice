@@ -30,7 +30,7 @@
 #define Charge_q 1.60219e-19
 
 
-int
+static int
 BSIM4v2DioIjthVjmEval(
 double Nvtm, double Ijth, double Isb, double XExpBV,
 double *Vjm)

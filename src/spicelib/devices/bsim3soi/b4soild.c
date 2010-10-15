@@ -70,7 +70,7 @@ extern int nthreads;
  *  limits the per-iteration change of any absolute voltage value
  */
 
-double
+static double
 B4SOIlimit(
     double vnew,
     double vold,

@@ -46,7 +46,7 @@ Modofied by Paolo Nenzi 2002
  */
 
 
-double
+static double
 B3SOIDDStrongInversionNoiseEval(double vgs, double vds, B3SOIDDmodel *model, 
                                 B3SOIDDinstance *here, double freq, 
 				double temp)

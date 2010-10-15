@@ -23,7 +23,7 @@ File:  b3v1anoi.c
  */
 
 
-double
+static double
 StrongInversionNoiseEval_b3v1a(double vgs, double vds, BSIM3v1Amodel *model, 
                          BSIM3v1Ainstance *here, double freq, double temp)
 {

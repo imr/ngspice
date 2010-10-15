@@ -33,7 +33,7 @@
  * conversion into the SI unit system.
  */
 
-double
+static double
 Eval1ovFNoise(double Vds, BSIM4model *model, BSIM4instance *here, double freq, double temp)
 {
 struct bsim4SizeDependParam *pParam;

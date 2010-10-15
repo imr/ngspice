@@ -53,7 +53,7 @@ File: b3soifdld.c          98/5/01
      *  Smart Vbs guess.
      */
 
-double
+static double
 B3SOIFDSmartVbs(double New, double Old, B3SOIFDinstance *here, 
                 CKTcircuit *ckt, int *check)
 {
@@ -71,7 +71,7 @@ B3SOIFDSmartVbs(double New, double Old, B3SOIFDinstance *here,
      *  limits the per-iteration change of any absolute voltage value
      */
 
-double
+static double
 B3SOIFDlimit(double vnew, double vold, double limit, int *check)
 {
     double T0, T1;

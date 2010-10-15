@@ -61,7 +61,7 @@
  * JX: 1/f noise model is smoothed out 12/18/01.
  */
 
-double
+static double
 StrongInversionNoiseEvalNew(double Vds, BSIM3v32model *model,
 			    BSIM3v32instance *here, double freq, double temp)
 {
@@ -107,7 +107,7 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
  * follows
  */
 
-double
+static double
 StrongInversionNoiseEvalOld(double vgs, double vds, BSIM3v32model *model,
 			    BSIM3v32instance *here, double freq, double temp)
 {

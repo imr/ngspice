@@ -25,7 +25,7 @@ BSIM4v2RdsEndSha(double, double, double, double, double, double, int, int, doubl
  * for multi-fingers and varous GEO and RGEO options.
  */
 
-int
+static int
 BSIM4v2NumFingerDiff(
 double nf,
 int minSD,

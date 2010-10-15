@@ -173,7 +173,7 @@ static size_t get_sysmem(struct sys_memory *memall) {
 
 
 /* Return length of first line in a string */
-tInt getLineLength(const char *str) {
+static tInt getLineLength(const char *str) {
 	tInt length = strlen(str);
 	char c = str[0];
 	tInt index = 0;
@@ -187,7 +187,7 @@ tInt getLineLength(const char *str) {
 
 /* Checks if number 'match' is found in a vector 'set' of size 'size'
    Returns 1 if yes, otherwise, 0 */
-tInt searchInSet(const tInt *set, tInt size, tInt match) {
+static tInt searchInSet(const tInt *set, tInt size, tInt match) {
 	tInt index;
 	for(index = 0; index < size; index++) {
 		if(match == set[index]) {
