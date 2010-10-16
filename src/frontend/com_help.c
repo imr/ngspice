@@ -8,6 +8,7 @@
 
 #include "hcomp.h"
 #include "com_help.h"
+#include "fteext.h"
 
 
 void

@@ -196,7 +196,6 @@ extern void cp_periodic(void);
 extern void ft_cpinit(void);
 extern struct comm *cp_coms;
 extern char *cp_program;
-extern bool ft_nutmeg;
 extern struct variable *cp_enqvar(char *word);
 extern void cp_usrvars(struct variable **v1, struct variable **v2);
 int cp_usrset(struct variable *var, bool isset);

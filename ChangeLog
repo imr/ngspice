@@ -1,4 +1,9 @@
 2010-10-16  Robert Larice
+ * src/frontend/com_help.c ,
+ * src/include/cpextern.h :
+    collect ft_nutmeg() in "fteext.h"
+
+2010-10-16  Robert Larice
  * src/ciderlib/oned/oneadmit.c ,
  * src/ciderlib/oned/onesolve.c :
     remove local prototypes, which are already included
