@@ -71,29 +71,18 @@
 /* gtri - end - wbk - add include files */
 #endif
 
-/* Information about spice commands (strucct comm). */
-    /* The name of the command. */
-//    char *co_comname;
-    /* The function that handles the command. */
-//    void (*co_func) (wordlist *wl);
-    /* These can't be used from nutmeg. */
-//    bool co_spiceonly;
-    /* Is this a "major" command? */
-//    bool co_major;
-    /* Bitmasks for command completion. */
-//    long co_cctypes[4];
-    /* print help message on this environment mask */
-//    unsigned int co_env;
-    /* minimum number of arguments required */
-//    int co_minargs;
-    /* maximum number of arguments allowed */
-//    int co_maxargs;
-    /* The fn that prompts the user. */
-//    void (*co_argfn) (wordlist *wl, struct comm *command);
-    /* When these are printed, printf(string, av[0]) .. */
-//    char *co_help;  
-
-/* Bool fields: spiceonly, major */
+/* Information about spice commands (struct comm). */
+    
+// char *co_comname;  /* The name of the command. */
+// void (*co_func) (wordlist *wl);  /* The function that handles the command. */
+// bool co_spiceonly;  /* These can't be used from nutmeg. */
+// bool co_major; /* Is this a "major" command? */
+// long co_cctypes[4]; /* Bitmasks for command completion. */
+// unsigned int co_env; /* print help message on this environment mask */
+// int co_minargs; /* minimum number of arguments required */
+// int co_maxargs; /* maximum number of arguments allowed */
+// void (*co_argfn) (wordlist *wl, struct comm *command); /* The fn that prompts the user. */
+// char *co_help;  /* When these are printed, printf(string, av[0]) .. */
 
 struct comm spcp_coms[] = {
     { "let", com_let, FALSE, TRUE,
@@ -189,6 +178,10 @@ struct comm spcp_coms[] = {
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 2, LOTS,
       NULL,
       "file plotargs : Send plot data to file." } ,
+    { "wrs2p", com_write_sparam, FALSE, TRUE,
+      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 0, LOTS,
+      NULL,
+      "file : Send s-param data to file." } ,
     { "hardcopy", com_hardcopy, FALSE, TRUE,
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 0, LOTS,
       NULL,
@@ -605,6 +598,10 @@ struct comm nutcp_coms[] = {
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 2, LOTS,
       NULL,
       "file plotargs : Send plot data to file." } ,
+    { "wrs2p", com_write_sparam, FALSE, TRUE,
+      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 0, LOTS,
+      NULL,
+      "file : Send s-param data to file." } ,
     { "hardcopy", com_hardcopy, FALSE, TRUE,
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 0, LOTS,
       NULL,

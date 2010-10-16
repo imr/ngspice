@@ -1,4 +1,10 @@
 2010-10-15  Holger Vogt
+ * examples/control_structs/s-param.cir new example
+ * commands.c, postcoms.h, postcoms.c, rawfile.h, rawfile.c
+   fteext.h: new command wrs2p, write a s-parameter file 
+   using Touchstone vers. 1 format.
+
+2010-10-15  Holger Vogt
  * src/ciderlib/input/output.c : #include "../misc/tilde.h"
  * inpcom.c: line 2800ff, allow -.5 token
 

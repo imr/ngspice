@@ -1,0 +1,116 @@
+Test for Scattering Parameters
+** Two ports
+** Examples: Bipolar,  Tschebyschef, RC
+
+.param Rbase=50 Vbias_in=0 Vbias_out=0
+
+*** The two-port circuit: 
+** port 1: in 0
+** port 2: out 0
+** Bias on both ports through resistor Rbase (to obtain operating point)
+
+** Example RF Bipolar mrf5711
+** VCE 1 V, IE = 5mA
+** QXXXXXXX nc nb ne
+** model obtained from
+** http://141.69.160.32/~krausg/Spice_Model_CD/Vendor%20List/Motorola/Spice/RFBJT/
+*.include MRF5711.lib
+*XMRF5711 out in e  MRF5711
+*Ie e 0 5m
+*Ce e 0 1
+
+** Example Tschebyschef Low Pass filter
+C1 in 0 33.2p
+L1 in 2 99.2n
+C2 2 0 57.2p
+L2 2 out 99.2n
+C3 out 0 33.2p
+
+** Example RC
+** see
+** http://www.allenhollister.com/allen/files/scatteringparameters.pdf
+*R2 in out 10
+*C1 out int5 30p
+*R1 int5 0 10
+
+*** End of circuit
+
+
+** The following subcircuit to be changed only by an experienced user!
+
+*** Driver and readout
+X1 in out S22 S12 S_PARAM
+
+.SUBCKT S_PARAM 22 66 5 7
+* Resistors emulate switches with Ron=0.001 and Roff=1e12
+* to switch driver to input and readout to output (and vice versa, see below)
+RS1 22 2 0.001
+RS2 66 6 0.001
+RS3 22 6 1e12
+RS4 66 2 1e12
+*Driver
+Vacdc 1 0 DC 'Vbias_in' AC 1 $ ac voltage and dc bias at input (applied through load resistor)
+R1 1 2 'Rbase'
+E1 3 0 2 0 2       $ amplify in port ac voltage by 2
+Vac 3 4 DC 0 AC 1  $ subtract driving ac voltage
+R_loop 4 5 0.001
+R3 5 0 1           $ ground return for measure node 5
+*Readout
+E2 7 0 6 0 2       $ amplify out port ac voltage by 2
+R4 6 8 'Rbase'     $ load resistor at output (ac)
+Vdc 8 0 DC 'Vbias_out' AC 0 $ dc bias at output (applied through load resistor)
+.ends
+
+** Check the two ac lines below for being equal!
+.control
+set noaskquit
+set filetype=ascii
+** measurement for s11 and s21
+op
+** save bias voltages to vector
+let Vdcnew=V(X1.1) $ former Vacdc 
+let Vacdcnew=v(X1.8) $ former Vdc 
+*ac lin 20 0.1G 2G $ use for bip transistor
+ac lin 100 2.5MEG 250MEG $ use for Tschebyschef 
+*ac lin 101 1k 10G $ use for RC 
+** switch input and output
+alter R.X1.RS1=1e12
+alter R.X1.RS2=1e12
+alter R.X1.RS3=0.001
+alter R.X1.RS4=0.001
+** switch bias voltages between in and out
+alter V.X1.Vacdc DC=op1.Vacdcnew
+alter V.X1.Vdc DC=op1.Vdcnew
+** measurement for s12 and s22
+op
+*ac lin 20 0.1G 2G $ use for bip transistor
+ac lin 100 2.5MEG 250MEG $ use for Tschebyschef 
+*ac lin 101 1 10G $ use for RC 
+let s11=ac1.s22
+let s21=ac1.s12
+settype s-param S11 S21 S22 S12
+
+let S11db = db(s11)
+let S12db = db(s12)
+let S21db = db(s21)
+let S22db = db(s22)
+settype decibel S11db S21db S22db S12db
+
+let P11=180*ph(s11)/pi
+let P21=180*ph(s21)/pi
+let P22=180*ph(S22)/pi
+let P12=180*ph(S12)/pi
+settype phase P11 P21 P22 P12
+
+let Rbase=@R.X1.R4[Resistance]
+settype impedance Rbase
+
+*plot s11db s21db S22db S12db ylimit -50 0 xlog $ used with RC 
+plot s11db s21db S22db S12db ylimit -0.5 0 $ used with Tschebyschef  
+plot P11 P21 P22 P12
+plot smithgrid S11 S12
+*wrdata s3046 mag(S11) P11 mag(S21) P21 mag(S22) P22 mag(S12) P12 $ write simple table
+wrs2p s3046.s2p $ write touchstone vers. 1 file s3046.s2p
+.endc
+
+.end

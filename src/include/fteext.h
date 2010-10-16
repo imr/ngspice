@@ -324,6 +324,7 @@ extern void com_unlet(wordlist *wl);
 extern void com_load(wordlist *wl);
 extern void com_print(wordlist *wl);
 extern void com_write(wordlist *wl);
+extern void com_write_sparam(wordlist *wl);
 extern void com_destroy(wordlist *wl);
 extern void com_splot(wordlist *wl);
 extern void com_setscale(wordlist *wl);
@@ -332,6 +333,7 @@ extern void com_transpose(wordlist *wl);
 /* rawfile.c */
 extern int raw_prec;
 extern void raw_write(char *name, struct plot *pl, bool app, bool binary);
+extern void spar_write(char *name, struct plot *pl, double val);
 extern struct plot *raw_read(char *name);
 
 /* meas.c */

@@ -524,6 +524,149 @@ com_write(wordlist *wl)
     return;
 }
 
+/* Write scattering parameters into a file with Touchstone File Format Version 1
+with command wrs2p file .
+Format info from http://www.eda.org/ibis/touchstone_ver2.0/touchstone_ver2_0.pdf
+See example 13 on page 15: Two port, ASCII, real-imaginary
+Check if S11, S21, S12, S22 and frequency vectors are available
+Check if vector Rbase is available
+Call spar_write()
+ */
+
+void
+com_write_sparam(wordlist *wl)
+{
+    char *file;
+    char* sbuf[6];
+    wordlist *wl_sparam;
+    struct pnode *n;
+    struct dvec *d, *vecs = NULL, *lv = NULL, *end, *vv, *Rbasevec=NULL;
+    struct pnode *names;
+    bool scalefound, appendwrite=FALSE;
+    struct plot *tpl, newplot;
+    double Rbaseval;
+
+    if (wl) {
+        file = wl->wl_word;
+    } else
+        file = "s_param.s2p";
+    /* generate wordlist with all vectors required*/
+    sbuf[0] = "frequency";
+    sbuf[1] = "S11";
+    sbuf[2] = "S21";
+    sbuf[3] = "S12";
+    sbuf[4] = "S22";
+    sbuf[5] = NULL;
+    wl_sparam = wl_build(sbuf);
+
+    names = ft_getpnames(wl_sparam, TRUE);
+    if (names == NULL)
+        return;
+    for (n = names; n; n = n->pn_next) {
+        d = ft_evaluate(n);
+        if (!d)
+            return;
+        if (vecs)
+            lv->v_link2 = d;
+        else
+            vecs = d;
+        for (lv = d; lv->v_link2; lv = lv->v_link2)
+            ;
+    }
+    Rbasevec = vec_get("Rbase");
+    if (Rbasevec)
+        Rbaseval = Rbasevec->v_realdata[0];
+    else {
+        fprintf(stderr, "Error: No Rbase vector given\n");
+        return;
+    }
+
+    /* Now we have to write them out plot by plot. */
+
+    while (vecs) {
+        tpl = vecs->v_plot;
+        tpl->pl_written = TRUE;
+        end = NULL;
+        bcopy(tpl, &newplot, sizeof (struct plot));
+        scalefound = FALSE;
+
+        /* Figure out how many vectors are in this plot. Also look
+         * for the scale, or a copy of it, which may have a different
+         * name.
+         */
+        for (d = vecs; d; d = d->v_link2) {
+            if (d->v_plot == tpl) {
+                vv = vec_copy(d);
+                /* Note that since we are building a new plot
+                 * we don't want to vec_new this one...
+                 */
+                vv->v_name = vec_basename(vv);
+
+                if (end)
+                    end->v_next = vv;
+                else
+                    end = newplot.pl_dvecs = vv;
+                end = vv;
+
+                if (vec_eq(d, tpl->pl_scale)) {
+                    newplot.pl_scale = vv;
+                    scalefound = TRUE;
+                }
+            }
+        }
+        end->v_next = NULL;
+
+        /* Maybe we shouldn't make sure that the default scale is
+         * present if nobody uses it.
+         */
+        if (!scalefound) {
+            newplot.pl_scale = vec_copy(tpl->pl_scale);
+            newplot.pl_scale->v_next = newplot.pl_dvecs;
+            newplot.pl_dvecs = newplot.pl_scale;
+        }
+
+        /* Now let's go through and make sure that everything that 
+         * has its own scale has it in the plot.
+         */
+        for (;;) {
+            scalefound = FALSE;
+            for (d = newplot.pl_dvecs; d; d = d->v_next) {
+                if (d->v_scale) {
+                    for (vv = newplot.pl_dvecs; vv; vv =
+                            vv->v_next)
+                        if (vec_eq(vv, d->v_scale))
+                            break;
+                    /* We have to grab it... */
+                    vv = vec_copy(d->v_scale);
+                    vv->v_next = newplot.pl_dvecs;
+                    newplot.pl_dvecs = vv;
+                    scalefound = TRUE;
+                }
+            }
+            if (!scalefound)
+                break;
+            /* Otherwise loop through again... */
+        }
+
+        spar_write(file, &newplot, Rbaseval);
+
+        /* Now throw out the vectors we have written already... */
+        for (d = vecs, lv = NULL;  d; d = d->v_link2)
+            if (d->v_plot == tpl) {
+                if (lv) {
+                    lv->v_link2 = d->v_link2;
+                    d = lv;
+                } else
+                    vecs = d->v_link2;
+            } else
+                lv = d;
+        /* If there are more plots we want them appended... */
+        appendwrite = TRUE;
+    }
+    return;
+}
+
+
 /* If the named vectors have more than 1 dimension, then consider
  * to be a collection of one or more matrices.  This command transposes
  * each named matrix.
