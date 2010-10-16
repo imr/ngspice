@@ -22,14 +22,12 @@ void DEVqmeyer(double,double,double,double,double,double*,double*,double*,
         double,double);
 double DEVpred(CKTcircuit*,int);
 
-#ifdef CIDER
 /* Cider integration */
 double limitResistorVoltage( double, double, int * );
 double limitJunctionVoltage( double, double, int * );
 double limitVbe( double, double, int * );
 double limitVce( double, double, int * );
 double limitVgb( double, double, int * );
-#endif
  
  
 

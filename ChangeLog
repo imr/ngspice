@@ -1,4 +1,8 @@
 2010-10-16  Robert Larice
+ * src/include/devdefs.h :
+    unconditional visibility of the cider prototypes limit*()
+
+2010-10-16  Robert Larice
  * src/frontend/rawfile.c :
     remove unused variables
 
