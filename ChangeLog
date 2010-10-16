@@ -1,4 +1,8 @@
 2010-10-16  Robert Larice
+ * src/frontend/vectors.h :
+    collect vec_get() in "fteext.h"
+
+2010-10-16  Robert Larice
  * src/frontend/com_setscale.c ,
  * src/frontend/plotting/plotting.h :
     collect plot_cur in "fteext.h"
