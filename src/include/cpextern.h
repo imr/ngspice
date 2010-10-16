@@ -18,8 +18,6 @@ Modified: 2000  AlansFixes
 /* com_alias.c */
 
 extern struct alias *cp_aliases;
-extern void com_alias(wordlist *wl);
-extern void com_unalias(wordlist *wl);
 extern void cp_paliases(char *word);
 extern void cp_setalias(char *word, wordlist *wlist);
 extern void cp_unalias(char *word);
@@ -57,11 +55,6 @@ extern bool cp_debug;
 extern char cp_amp;
 extern char cp_gt;
 extern char cp_lt;
-extern void com_chdir(wordlist *wl);
-extern void com_echo(wordlist *wl);
-extern void com_strcmp(wordlist *wl);
-extern void com_rehash(wordlist *wl);
-extern void com_shell(wordlist *wl);
 extern void cp_ioreset(void);
 extern wordlist *cp_redirect(wordlist *wlist);
 extern wordlist *cp_parse(char *string);
@@ -77,10 +70,6 @@ extern void cp_resetcontrol(void);
 extern void cp_toplevel(void);
 extern void cp_popcontrol(void);
 extern void cp_pushcontrol(void);
-
-/* com_cdump.c */
-
-extern void com_cdump(wordlist *wl);
 
 /* glob.c */
 
@@ -103,7 +92,6 @@ extern char cp_bang;
 extern char cp_hat;
 extern int cp_maxhistlength;
 extern struct histent *cp_lastone;
-extern void com_history(wordlist *wl);
 extern void cp_addhistent(int event, wordlist *wlist);
 void cp_hprint(int eventhi, int eventlo, bool rev);
 extern wordlist *cp_histsubst(wordlist *wlist);
@@ -179,11 +167,6 @@ extern wordlist *vareval(char *string);
 
 /* var2.c */
 extern void cp_vprint(void);
-extern void com_set(wordlist *wl);
-extern void com_option(wordlist *wl);
-extern void com_state(wordlist *wl);
-extern void com_unset(wordlist *wl);
-extern void com_shift(wordlist *wl);
 extern bool cp_getvar(char *name, enum cp_types type, void *retval);
 
 /* cpinterface.c etc -- stuff CP needs from FTE */

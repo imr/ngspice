@@ -6,8 +6,6 @@
 #ifndef MISCCOMS_H_INCLUDED
 #define MISCCOMS_H_INCLUDED
 
-void com_help(wordlist *wl);
-void com_ahelp(wordlist *wl);
 void com_ghelp(wordlist *wl);
 void com_quit(wordlist *wl);
 void com_bug(wordlist *wl);

@@ -21,6 +21,7 @@ $Id$
 #include "runcoms.h"
 #include "variable.h"
 #include "spiceif.h"
+#include "runcoms2.h"
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include ipc stuff */

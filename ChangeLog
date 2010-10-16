@@ -1,4 +1,31 @@
 2010-10-16  Robert Larice
+ * src/main.c ,
+ * src/frontend/Makefile.am ,
+ * src/frontend/breakp.c ,
+ * src/frontend/com_ahelp.c ,
+ * src/frontend/com_measure2.c ,
+ * src/frontend/com_option.c ,
+ * src/frontend/com_sysinfo.c ,
+ * src/frontend/commands.c ,
+ * src/frontend/cpitf.c ,
+ * src/frontend/device.c ,
+ * src/frontend/device.h ,
+ * src/frontend/dotcards.c ,
+ * src/frontend/inp.c ,
+ * src/frontend/measure.c ,
+ * src/frontend/misccoms.h ,
+ * src/frontend/postcoms.c ,
+ * src/frontend/postcoms.h ,
+ * src/frontend/runcoms.c ,
+ * src/frontend/plotting/x11.c ,
+ * src/include/cpextern.h ,
+ * src/include/fteext.h ,
+ * visualc/vngspice.vcproj ,
+New include File:
+ * src/frontend/com_commands.h :
+    move the com_*() prototypes around.
+
+2010-10-16  Robert Larice
  * src/include/devdefs.h :
     unconditional visibility of the cider prototypes limit*()
 

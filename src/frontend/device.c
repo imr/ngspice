@@ -18,6 +18,7 @@ Modified: 2000 AlansFixes
 #include "circuits.h"
 #include "device.h"
 #include "variable.h"
+#include "com_commands.h"
 
 #include "gens.h" /* wl_forall */
 
@@ -846,6 +847,8 @@ old_show(wordlist *wl)
  * but no strings ... for booleans, use 0/1).
  */
 
+static void com_alter_common(wordlist *wl, int do_model);
+
 void
 com_alter(wordlist *wl)
 {
@@ -864,7 +867,7 @@ com_altermod(wordlist *wl)
     com_alter_common(wl, 1);
 }
 
-void
+static void
 com_alter_common(wordlist *wl, int do_model)
 {
     wordlist *eqword = NULL, *words;

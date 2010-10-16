@@ -15,6 +15,7 @@ $Id$
 #include "ftedebug.h"
 #include "breakp.h"
 #include "breakp2.h"
+#include "runcoms2.h"
 
 #include "completion.h"
 

@@ -60,6 +60,7 @@ extern int rl_catch_signals;        /* missing from editline/readline.h */
 #include "frontend/variable.h"
 #include "frontend/display.h"  /* added by SDB to pick up Input() fcn */
 #include "frontend/signal_handler.h"
+#include "frontend/misccoms.h"
 #include "compatmode.h"
 
 /* saj xspice headers */

@@ -12,6 +12,10 @@ $Id$
 #include "dvec.h"
 #include "fteparse.h"
 #include "cpitf.h"
+#include "com_let.h"
+#include "com_set.h"
+#include "define.h"
+#include "misccoms.h"
 
 #include <terminal.h>
 

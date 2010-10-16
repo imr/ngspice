@@ -24,22 +24,11 @@ Modified: 1999 Paolo Nenzi - 2000 AlansFixes
 
 /* aspice.c */
 
-extern void com_aspice(wordlist *wl);
-extern void com_jobs(wordlist *wl);
-extern void com_rspice(wordlist *wl);
 extern void ft_checkkids(void);
 
 /* breakpoint.c */
 
 extern bool ft_bpcheck(struct plot *runplot, int iteration);
-extern void com_delete(wordlist *wl);
-extern void com_iplot(wordlist *wl);
-extern void com_save(wordlist *wl);
-extern void com_save2(wordlist *wl, char *name);
-extern void com_step(wordlist *wl);
-extern void com_stop(wordlist *wl);
-extern void com_sttus(wordlist *wl);
-extern void com_trce(wordlist *wl);
 extern void dbfree(struct dbcomm *db);
 
 
@@ -100,39 +89,10 @@ extern void *cx_deriv(void *, short int , int , int *, short int *, struct plot 
 extern void *cx_group_delay(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
 
 
-/* compose.c */
-
-extern void com_compose(wordlist *wl);
-
-/* debugcoms.c */
-
-extern void com_dump(wordlist *wl);
-extern void com_state(wordlist *wl);
-
 /* define.c */
 
 extern struct pnode *ft_substdef(const char *name, struct pnode *args);
-extern void com_define(wordlist *wl);
-extern void com_undefine(wordlist *wl);
 extern void ft_pnode(struct pnode *pn);
-
-/* device.c */
-
-extern void com_show(wordlist *wl);
-extern void com_showmod(wordlist *wl);
-extern void com_alter(wordlist *wl);
-extern void com_altermod(wordlist *wl);
-
-/* diff.c */
-
-extern void com_diff(wordlist *wl);
-
-/* doplot.c */
-
-extern void com_asciiplot(wordlist *wl);
-extern void com_hardcopy(wordlist *wl);
-extern void com_plot(wordlist *wl);
-extern void com_xgraph(wordlist *wl);
 
 /* dotcards.c */
 
@@ -161,15 +121,6 @@ extern void externalerror(char *);
 /* evaluate.c */
 
 extern struct dvec *ft_evaluate(struct pnode *node);
-
-/* spec.c */
-extern void com_spec(wordlist *wl);
-
-/* com_fft.c */
-extern void com_fft(wordlist*);
-
-/* com_sysinfo.c */
-extern void com_sysinfo(wordlist *wl);
 
 /* ginterface.c 
 
@@ -210,9 +161,6 @@ extern bool gr_circular;
 
 /* inp.c */
 
-extern void com_edit(wordlist *wl);
-extern void com_listing(wordlist *wl);
-extern void com_source(wordlist *wl);
 void inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, 
 		struct line *options, char *filename);
 extern void inp_source(char *file);
@@ -235,20 +183,6 @@ extern bool ft_interpolate(double *data, double *ndata, double *oscale, int olen
 extern bool ft_polyfit(double *xdata, double *ydata, double *result, int degree, double *scratch);
 extern double ft_peval(double x, double *coeffs, int degree);
 extern void ft_polyderiv(double *coeffs, int degree);
-extern void com_linearize(wordlist *wl);
-
-/* misccoms.c */
-
-extern void com_bug(wordlist *wl);
-extern void com_ahelp(wordlist *wl);
-extern void com_ghelp(wordlist *wl);
-extern void com_help(wordlist *wl);
-extern void com_quit(wordlist *wl);
-extern void com_version(wordlist *wl);
-extern void com_where(wordlist *wl);
-
-/* mw_coms.c */
-extern void com_removecirc(wordlist *wl);
 
 /* numparse.c */
 
@@ -285,21 +219,6 @@ extern int ft_findpoint(double pt, double *lims, int maxp, int minp, bool islog)
 extern double * ft_minmax(struct dvec *v, bool real);
 extern void ft_graf(struct dvec *v, struct dvec *xs, bool nostart);
 
-/* postcoms.c */
-
-extern void com_cross(wordlist *wl);
-extern void com_display(wordlist *wl);
-extern void com_let(wordlist *wl);
-extern void com_unlet(wordlist *wl);
-extern void com_load(wordlist *wl);
-extern void com_print(wordlist *wl);
-extern void com_write(wordlist *wl);
-extern void com_write_sparam(wordlist *wl);
-extern void com_destroy(wordlist *wl);
-extern void com_splot(wordlist *wl);
-extern void com_setscale(wordlist *wl);
-extern void com_transpose(wordlist *wl);
-
 /* rawfile.c */
 extern int raw_prec;
 extern void raw_write(char *name, struct plot *pl, bool app, bool binary);
@@ -309,30 +228,15 @@ extern struct plot *raw_read(char *name);
 /* meas.c */
 extern void do_measure(char *what, bool chk_only);
 extern bool check_autostop(char *what);
-extern void com_meas(wordlist *wl);
 
 /* randnumb.c */
 extern void TausSeed(void);
 /* resource.c */
 
-extern void com_rusage(wordlist *wl);
 extern void ft_ckspace(void);
 
 /* runcoms.c */
 
-extern void com_ac(wordlist *wl);
-extern void com_dc(wordlist *wl);
-extern void com_op(wordlist *wl);
-extern void com_pz(wordlist *wl);
-extern void com_sens(wordlist *wl);
-extern void com_rset(wordlist *wl);
-extern void com_resume(wordlist *wl);
-extern void com_run(wordlist *wl);
-extern void com_tran(wordlist *wl);
-extern void com_tf(wordlist *wl);
-extern void com_scirc(wordlist *wl);
-extern void com_disto(wordlist *wl);
-extern void com_noise(wordlist *wl);
 extern int ft_dorun(char *file);
 
 extern bool ft_getOutReq(FILE **, struct plot **, bool *, char *, char *);
@@ -360,8 +264,6 @@ extern struct variable *if_getstat(CKTcircuit *ckt, char *name);
 
 /* typesdef.c */
 
-extern void com_dftype(wordlist *);
-extern void com_stype(wordlist *);
 extern char *ft_typabbrev(int);
 extern char *ft_typenames(int);
 extern char *ft_plotabbrev(char *);
@@ -396,9 +298,6 @@ extern void vec_transpose(struct dvec *v);
 /* main.c */
 extern bool ft_intrpt;
 extern bool ft_setflag;
-
-/* newcoms.c */
-extern void com_reshape(wordlist *wl);
 
 /* dimens.c */
 extern void dimstring(int *data, int length, char *retstring);

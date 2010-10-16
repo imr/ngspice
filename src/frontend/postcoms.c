@@ -15,6 +15,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <plot.h>
 #include <graph.h>
 #include "ftedbgra.h"
+#include "com_display.h"
 
 #include "completion.h"
 #include "postcoms.h"

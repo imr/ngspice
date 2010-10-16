@@ -5,6 +5,7 @@
 #include "circuits.h"
 #include <wordlist.h>
 #include "variable.h"
+#include "com_option.h"
 
 
 /* The option command. Syntax is option [opt ...] [opt = val ...].

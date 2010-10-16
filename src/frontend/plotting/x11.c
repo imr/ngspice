@@ -23,6 +23,7 @@ $Id$
 #  include <cpdefs.h>
 #  include <ftedefs.h>
 #  include <variable.h>
+#  include "../com_hardcopy.h"
 
 /* Added X11/ prefix to the next includes - ER */
 

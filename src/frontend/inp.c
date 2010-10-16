@@ -23,6 +23,7 @@ $Id$
 #include "fteinp.h"
 #include "inp.h"
 
+#include "runcoms.h"
 #include "inpcom.h"
 #include "circuits.h"
 #include "completion.h"

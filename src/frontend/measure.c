@@ -18,6 +18,9 @@
 #include "numparam/numpaif.h"
 #include "missing_math.h"
 #include "com_measure2.h"
+#include "com_let.h"
+#include "com_commands.h"
+#include "com_display.h"
 
 #include "error.h" /* controlled_exit() */
  

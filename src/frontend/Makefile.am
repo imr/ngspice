@@ -26,6 +26,7 @@ libfte_la_SOURCES =	\
 	com_chdir.h	\
 	com_compose.c	\
 	com_compose.h	\
+	com_commands.h	\
 	com_dl.c	\
 	com_dl.h	\
 	com_display.c	\

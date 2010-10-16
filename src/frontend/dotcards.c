@@ -11,19 +11,21 @@ $Id$
 
 #include "ngspice.h"
 #include <assert.h>
-
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "dvec.h"
 #include "fteinp.h"
 #include <sim.h>
-
 #include "circuits.h"
 #include "dotcards.h"
 #include "variable.h"
 #include "fourier.h"
 #include "breakp2.h"
 #include "com_measure2.h"
+#include "com_commands.h"
+#include "com_asciiplot.h"
+#include "resource.h"
+#include "postcoms.h"
 
 /* Extract all the .save lines */
 
@@ -45,8 +47,6 @@ setcplot(char *name)
     }
     return NULL;
 }
-
-
 
 /* All lines with .width, .plot, .print, .save, .op, .meas, .tf
    have been assembled into a wordlist (wl_first) in inp.c:inp_spsource(),

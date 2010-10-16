@@ -7,6 +7,7 @@
 
 #include "variable.h"
 #include "com_help.h"
+#include "com_ahelp.h"
 #include "hcomp.h"
 #include "ftehelp.h"
 
