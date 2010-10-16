@@ -27,18 +27,6 @@ extern IFfrontEnd *SPfrontEnd;
 
 
 
-/* Forward Declarations */
-void ONEdcSolve(ONEdevice *, int, BOOLEAN, BOOLEAN, ONEtranInfo *);
-BOOLEAN ONEpsiDeltaConverged(ONEdevice *, int *);
-BOOLEAN ONEdeltaConverged(ONEdevice *);
-int ONEnewDelta(ONEdevice *, BOOLEAN , ONEtranInfo *);
-void ONEstoreNeutralGuess(ONEdevice *);
-void ONEstoreEquilibGuess(ONEdevice *);
-void ONEstoreInitialGuess(ONEdevice *pDevice);
-double ONEnuNorm(ONEdevice *);
-void ONEjacCheck(ONEdevice *, BOOLEAN , ONEtranInfo *);
-
-
 /* The iteration driving loop and convergence check */
 void
 ONEdcSolve(ONEdevice *pDevice, int iterationLimit, BOOLEAN newSolver, 

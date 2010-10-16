@@ -1,4 +1,9 @@
 2010-10-16  Robert Larice
+ * src/ciderlib/oned/oneadmit.c ,
+ * src/ciderlib/oned/onesolve.c :
+    remove local prototypes, which are already included
+
+2010-10-16  Robert Larice
  * src/include/ngspice.h :
     remove prototypes, avoid redeclarations
 

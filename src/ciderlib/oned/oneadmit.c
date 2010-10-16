@@ -31,11 +31,6 @@ extern IFfrontEnd *SPfrontEnd;
  SPcomplex yAc;
 
 
-/* Forward Declarations */
-SPcomplex *computeAdmittance(ONEnode *, BOOLEAN, double *, 
-                  double *, SPcomplex *);
-BOOLEAN ONEsorSolve(ONEdevice *pDevice, double *xReal, 
-                    double *xImag, double omega);
 
 int
 NUMDadmittance(ONEdevice *pDevice, double omega, SPcomplex *yd)
