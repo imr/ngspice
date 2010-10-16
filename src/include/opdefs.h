@@ -21,6 +21,4 @@ typedef struct {
     char *JOBname;
 } OP;
 
-extern int DCOsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value);
-extern int DCOaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value);
 #endif /*DCOP*/

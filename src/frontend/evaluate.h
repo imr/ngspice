@@ -9,7 +9,6 @@
 #include <dvec.h>
 #include <pnode.h>
 
-struct dvec * ft_evaluate(struct pnode *node);
 struct dvec * op_plus(struct pnode *arg1, struct pnode *arg2);
 struct dvec * op_minus(struct pnode *arg1, struct pnode *arg2);
 struct dvec * op_comma(struct pnode *arg1, struct pnode *arg2);

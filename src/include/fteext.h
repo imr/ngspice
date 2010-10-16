@@ -22,10 +22,6 @@ Modified: 1999 Paolo Nenzi - 2000 AlansFixes
 #include "ftedefs.h"
 #include "fteinp.h"
 
-/* arg.c */
-
-extern void outmenuprompt(char *string);
-
 /* aspice.c */
 
 extern void com_aspice(wordlist *wl);
@@ -44,7 +40,6 @@ extern void com_step(wordlist *wl);
 extern void com_stop(wordlist *wl);
 extern void com_sttus(wordlist *wl);
 extern void com_trce(wordlist *wl);
-extern void ft_trquery(void);
 extern void dbfree(struct dbcomm *db);
 
 
@@ -105,15 +100,9 @@ extern void *cx_deriv(void *, short int , int , int *, short int *, struct plot 
 extern void *cx_group_delay(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
 
 
-/* cmdtab.c */
-
-extern struct comm *cp_coms;
-
 /* compose.c */
 
 extern void com_compose(wordlist *wl);
-
-/* cpinterface.c symbols declared in CPextern.h */
 
 /* debugcoms.c */
 
@@ -161,7 +150,6 @@ extern int ft_savedotargs(void);
 
 /* error.c */
 
-extern void fatal(void);
 extern void fperror(char *mess, int code);
 extern void ft_sperror(int code, char *mess);
 extern char ErrorMessage[];
@@ -211,8 +199,6 @@ extern void gi_update();
 
 extern bool gr_gmode;
 extern bool gr_hmode;
-extern void gr_iplot(struct plot *plot);
-extern void gr_pmsg(char *text);
 extern double gr_xrange[2];
 extern double gr_yrange[2];
 extern int gr_xmargin;
@@ -282,7 +268,6 @@ extern bool ft_asyncdb;
 extern char *ft_setkwords[];
 extern struct line *inp_getopts(struct line *deck);
 extern struct line *inp_getoptsc(char *in_line, struct line *com_options);
-extern struct variable *cp_enqvar(char *word);
 extern bool ft_ngdebug;
 
 /* parse.c */
@@ -332,7 +317,6 @@ extern void TausSeed(void);
 
 extern void com_rusage(wordlist *wl);
 extern void ft_ckspace(void);
-extern void init_rlimits(void);
 
 /* runcoms.c */
 
@@ -358,7 +342,6 @@ extern bool ft_getOutReq(FILE **, struct plot **, bool *, char *, char *);
 extern bool ft_nutmeg;
 extern IFsimulator *ft_sim;
 extern char *ft_rawfile;
-extern char *cp_program;
 extern int main(int argc, char **argv);
 
 /* spiceif.c & nutmegif.c */

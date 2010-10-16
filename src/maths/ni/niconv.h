@@ -6,7 +6,6 @@
 #ifndef NICONV_H_INCLUDED
 #define NICONV_H_INCLUDED
 
-int NIconvTest(register CKTcircuit *ckt);
 
 
 #endif

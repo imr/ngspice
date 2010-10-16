@@ -6,7 +6,6 @@
 #ifndef NINITER_H_INCLUDED
 #define NINITER_H_INCLUDED
 
-void NInzIter(CKTcircuit *ckt, int posDrive, int negDrive);
 
 
 #endif

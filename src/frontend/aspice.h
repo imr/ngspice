@@ -9,7 +9,6 @@
 
 void com_aspice(wordlist *wl);
 void com_jobs(wordlist *wl);
-void ft_checkkids(void);
 void com_rspice(wordlist *wl);
 
 

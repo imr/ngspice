@@ -13,10 +13,8 @@ struct subcirc {
 } ;
 
 
-extern struct circ *ft_curckt;  /* The default active circuit. */
 
 
-void ft_newcirc(struct circ *ckt);
 
 
 #endif

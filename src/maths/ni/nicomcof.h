@@ -6,7 +6,6 @@
 #ifndef NICOMCOF_H_INCLUDED
 #define NICOMCOF_H_INCLUDED
 
-int NIcomCof(CKTcircuit *ckt);
 
 
 #endif

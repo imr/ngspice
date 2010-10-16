@@ -9,7 +9,6 @@
 void init_rlimits(void);
 void init_time(void);
 void com_rusage(wordlist *wl);
-void ft_ckspace(void);
 
 
 struct proc_mem {

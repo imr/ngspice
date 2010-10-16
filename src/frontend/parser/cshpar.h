@@ -7,6 +7,5 @@
 #ifndef CSHPAR_H_INCLUDED
 #define CSHPAR_H_INCLUDED
 
-wordlist * cp_parse(char *string);
 
 #endif

@@ -31,7 +31,6 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 extern char *tildexpand(char *string);
 extern void printnum(char *buf, double num);
 extern int cp_numdgt;
-extern void fatal(void);
 
 extern void cp_printword(char *string, FILE *fp);
 

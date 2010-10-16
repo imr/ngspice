@@ -6,6 +6,5 @@
 #ifndef NISENRE_H_INCLUDED
 #define NISENRE_H_INCLUDED
 
-int NIsenReinit(register CKTcircuit *ckt);
 
 #endif

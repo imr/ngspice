@@ -37,21 +37,11 @@ struct xxx {
 
 
 extern struct variable *variables;
-extern bool cp_noglob;
-extern bool cp_nonomatch;
-extern bool cp_noclobber;
-extern bool cp_ignoreeof;
 extern bool cp_echo;
 
 /* extern struct variable *variables; */
 wordlist * cp_varwl(struct variable *var);
-void cp_vset(char *varname, enum cp_types type, void *value);
-struct variable * cp_setparse(wordlist *wl);
-void cp_remvar(char *varname);
-bool cp_getvar(char *name, enum cp_types type, void *retval);
 wordlist * cp_variablesubst(wordlist *wlist);
-wordlist * vareval(char *string);
-void cp_vprint(void);
 void free_struct_variable(struct variable *v);
 
 #endif /* _VARIABLE_H */

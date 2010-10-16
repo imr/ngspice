@@ -28,17 +28,6 @@ struct ccom {
 } ;
 
 
-void cp_ccom(wordlist *wlist, char *buf, bool esc);
-wordlist * cp_cctowl(char *stuff);
-void cp_ccon(bool on);
-bool cp_comlook(char *word);
-void cp_addcomm(char *word, long int bits0, long int bits1, long int bits2, 
-		long int bits3);
-void cp_remcomm(char *word);
-void cp_addkword(int class, char *word);
-void cp_remkword(int class, char *word);
-char * cp_kwswitch(int class, char *tree);
-void cp_ccrestart(bool kwords);
 void throwaway(struct ccom *dbase);
 
 

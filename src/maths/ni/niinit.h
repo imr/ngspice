@@ -7,7 +7,6 @@
 #define NIINIT_H_INCLUDED
 
 
-int NIinit(CKTcircuit *ckt);
 
 
 #endif

@@ -148,7 +148,6 @@ extern char *cp_unquote(char *string);
 extern void cp_quoteword(char *str);
 extern void cp_striplist(wordlist *wlist);
 extern void cp_wstrip(char *str);
-extern void cp_printword(char *string, FILE *fp); 
 
 
 

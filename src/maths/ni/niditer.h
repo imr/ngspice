@@ -7,7 +7,6 @@
 #define NIDITER_H_INCLUDED
 
 
-int NIdIter(register CKTcircuit *ckt);
 
 
 #endif

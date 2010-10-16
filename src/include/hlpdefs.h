@@ -118,7 +118,6 @@ extern void hlp_pathfix(char *buf);
 extern topic *hlp_read(fplace *place);
 extern void hlp_free(void);
 extern long findsubject(char *filename, char *subject);
-extern bool hlp_approvedfile(char *filename);
 
 /* provide.c */
 

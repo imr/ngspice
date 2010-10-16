@@ -7,8 +7,6 @@
 #define LEXICAL_H_INCLUDED
 
 
-wordlist * cp_lexer(char *string);
-int inchar(FILE *fp);
 int input(FILE *fp);
 
 

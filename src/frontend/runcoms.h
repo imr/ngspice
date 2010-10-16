@@ -18,8 +18,6 @@ void com_sens(wordlist *wl);
 void com_disto(wordlist *wl);
 void com_noise(wordlist *wl);
 void com_run(wordlist *wl);
-int ft_dorun(char *file);
-bool ft_getOutReq(FILE **fpp, struct plot **plotp, bool *binp, char *name, char *title);
 
 extern FILE *rawfileFp;
 extern bool rawfileBinary;

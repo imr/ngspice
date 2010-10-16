@@ -7,8 +7,6 @@
 #ifndef BACKQ_H_INCLUDED
 #define BACKQ_H_INCLUDED
 
-extern char cp_back;
 
-wordlist * cp_bquote(wordlist *wlist);
 
 #endif

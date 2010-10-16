@@ -7,7 +7,6 @@
 #define NUMPARSE_H_INCLUDED
 
 
-double * ft_numparse(char **s, bool whole);
 
 
 

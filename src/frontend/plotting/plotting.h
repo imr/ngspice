@@ -4,8 +4,5 @@
 #include <plot.h>
 
 extern struct plot constantplot;
-extern struct plot *plot_list;
-extern int plotl_changed;
-extern int plot_num;
 
 #endif

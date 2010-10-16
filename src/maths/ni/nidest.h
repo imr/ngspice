@@ -7,6 +7,5 @@
 #define NIDEST_H_INCLUDED
 
 
-void NIdestroy(register CKTcircuit *ckt);
 
 #endif

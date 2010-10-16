@@ -6,6 +6,5 @@
 #ifndef NIREINIT_H_INCLUDED
 #define NIREINIT_H_INCLUDED
 
-int NIreinit(register CKTcircuit *ckt);
 
 #endif

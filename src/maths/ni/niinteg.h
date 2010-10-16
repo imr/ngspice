@@ -7,7 +7,6 @@
 #define NIINTEG_H_INCLUDED
 
 
-int NIintegrate(register CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap);
 
 
 #endif

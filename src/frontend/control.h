@@ -48,6 +48,5 @@ enum co_command {
 extern struct control *control[CONTROLSTACKSIZE];
 extern struct control *cend[CONTROLSTACKSIZE];
 extern int stackp;
-extern bool cp_dounixcom;
 
 #endif /* CONTROL_H */

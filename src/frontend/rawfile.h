@@ -6,9 +6,6 @@
 #ifndef RAWFILE_H_INCLUDED
 #define RAWFILE_H_INCLUDED
 
-void raw_write(char *name, struct plot *pl, bool app, bool binary);
-void spar_write(char *name, struct plot *pl, double val);
-struct plot * raw_read(char *name);
 
 
 

@@ -7,7 +7,6 @@
 #define NIITER_H_INCLUDED
 
 
-int NIiter(register CKTcircuit *ckt, int maxIter);
 
 
 #endif
