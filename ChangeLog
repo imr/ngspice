@@ -1,4 +1,9 @@
 2010-10-16  Robert Larice
+ * src/frontend/com_setscale.c ,
+ * src/frontend/plotting/plotting.h :
+    collect plot_cur in "fteext.h"
+
+2010-10-16  Robert Larice
  * src/frontend/com_dump.c ,
  * src/frontend/inp.c ,
  * src/frontend/mw_coms.c ,

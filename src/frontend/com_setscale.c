@@ -8,6 +8,7 @@
 #include "vectors.h"
 #include "plotting/plotting.h"
 #include "plotting/pvec.h"
+#include "fteext.h"
 
 
 /* Set the default scale to the named vector.  If no vector named,
