@@ -1,4 +1,9 @@
 2010-10-16  Robert Larice
+ * src/frontend/commands.c ,
+ * src/include/fteext.h :
+    collect arg_*() prototypes in "arg.h"
+
+2010-10-16  Robert Larice
  * src/frontend/vectors.h :
     collect vec_get() in "fteext.h"
 

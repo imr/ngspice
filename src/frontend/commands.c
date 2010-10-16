@@ -58,6 +58,8 @@
 #include "com_unset.h"
 #include "fourier.h"
 
+#include "arg.h"
+
 #ifdef EXPERIMENTAL_CODE
 #include "com_option.h"
 #include "spiceif.h" /* for com_loadsnap() and com_savesnap() */
