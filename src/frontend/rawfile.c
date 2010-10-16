@@ -747,9 +747,8 @@ void
 spar_write(char *name, struct plot *pl, double Rbaseval)
 {
     FILE *fp;
-    bool realflag = TRUE;
-    int length, numdims, dims[MAXDIMS];
-    int i, j, prec;
+    int length, numdims;
+    int i, prec;
     struct dvec *v, *lv;
 
     /* Why bother printing out an empty plot? */

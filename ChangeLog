@@ -1,4 +1,8 @@
 2010-10-16  Robert Larice
+ * src/frontend/rawfile.c :
+    remove unused variables
+
+2010-10-16  Robert Larice
  * src/frontend/aspice.h ,
  * src/frontend/breakp.h ,
  * src/frontend/breakp2.h ,
