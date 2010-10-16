@@ -1,3 +1,6 @@
+2010-10-16  Holger Vogt
+ * windisp.h, windisp.c: prototypes
+
 2010-10-16  Robert Larice
  * configure.ac :
   stronger warning levels, redeclarations, missing prototypes, k&r style ...

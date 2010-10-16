@@ -19,6 +19,6 @@ disp_fn_SetLinestyle_t     WIN_SetLinestyle;
 disp_fn_SetColor_t         WIN_SetColor;
 disp_fn_Update_t           WIN_Update;
 
-extern int WIN_DiagramReady();
+//extern int WIN_DiagramReady();
 
 #endif /* WINDISP_H */

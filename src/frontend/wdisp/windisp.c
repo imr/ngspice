@@ -17,6 +17,7 @@
 #include "fteext.h"
 #include "../plotting/graf.h"
 #include "../plotting/graphdb.h"
+#include "windisp.h"
 
 /*
  * The ngspice.h file included above defines BOOLEAN (via bool.h) and this
@@ -49,14 +50,19 @@ UINT uMsg, WPARAM wParam, LPARAM lParam);
 void WPRINT_PrintInit( HWND hwnd);              /* Windows printer init */
 void WaitForIdle(void);                         /* wait until no more events */
 static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy);
-static void RealClose(void);    
+static LRESULT HcpyPlot( HWND hwnd);
+static LRESULT HcpyPlotBW( HWND hwnd);
+static LRESULT PrintPlot( HWND hwnd);
+static LRESULT PrintInit( HWND hwnd);
+//static void RealClose(void);    
 /* externals */
 extern HINSTANCE   hInst;         /* application instance */
 extern int         WinLineWidth;  /* width of text window */
 extern HWND        swString;      /* string input window of main window */
-extern struct plot *plot_cur;
+//extern struct plot *plot_cur;
 extern int         DevSwitch(char *devname);
 extern int         NewViewport(GRAPH *pgraph);
+extern void        com_hardcopy(wordlist *wl);
 
 /* defines */
 #define RAD_TO_DEG   (180.0 / M_PI)
@@ -100,7 +106,7 @@ WIN_Init() returns 0, if no error ocurred.
 WIN_Init() does not yet open a window, this happens only in WIN_NewViewport()
 ******************************************************************************/
 
-int WIN_Init( )
+int WIN_Init(void)
 {
    char colorstring[BSIZE_SP];
 
@@ -228,15 +234,15 @@ static int LType( int ColorIndex)
  
  /* postscript hardcopy from a plot window */
 /* called by SystemMenue / Postscript hardcopy */
-LRESULT HcpyPlot( HWND hwnd)
+static LRESULT HcpyPlot( HWND hwnd)
 {
-	int colorval = isblack? 0 : 1;
-   cp_vset("hcopypscolor", CP_NUM, &colorval);
-	com_hardcopy(NULL); 
-	return 0;
+    int colorval = isblack? 0 : 1;
+    cp_vset("hcopypscolor", CP_NUM, &colorval);
+    com_hardcopy(NULL); 
+    return 0;
 }
  
-LRESULT HcpyPlotBW( HWND hwnd)
+static LRESULT HcpyPlotBW( HWND hwnd)
 {
    int bgcolor;
    if (cp_getvar("hcopypscolor", CP_NUM, &bgcolor))
@@ -248,7 +254,7 @@ LRESULT HcpyPlotBW( HWND hwnd)
 
 /* print a plot window */
 /* called by SystemMenue / Print */
-LRESULT PrintPlot( HWND hwnd)
+static LRESULT PrintPlot( HWND hwnd)
 {
    GRAPH * graph;
    GRAPH * temp;
@@ -293,7 +299,7 @@ PrintEND:
 }
 
 /* initialze printer */
-LRESULT PrintInit( HWND hwnd)
+static LRESULT PrintInit( HWND hwnd)
 {
    /* hand over to printer module */
    WPRINT_PrintInit(hwnd);
@@ -592,9 +598,9 @@ int WIN_NewViewport( GRAPH * graph)
    /* change the background color of all windows (both new and already plotted) 
       by assessing the registered window class */
    if (isblack)
-      SetClassLong(window, GCLP_HBRBACKGROUND, (int)GetStockObject( BLACK_BRUSH));
+      SetClassLong(window, GCLP_HBRBACKGROUND, (long)GetStockObject( BLACK_BRUSH));
    else
-      SetClassLong(window, GCLP_HBRBACKGROUND, (int)GetStockObject( WHITE_BRUSH));	   
+      SetClassLong(window, GCLP_HBRBACKGROUND, (long)GetStockObject( WHITE_BRUSH));	   
    
    
    wd->wnd = window;
@@ -662,14 +668,14 @@ to the printer. Therefore WIN_Close is not allowed to do anything, cancelling
 of the structures occurs at program termination.
 ******************************************************************************/
 
-int WIN_Close()
+int WIN_Close(void)
 {
    return (0);
 }
-
+/*
 static void RealClose(void)
 {
-   /* delete window class */
+   // delete window class
    if (IsRegistered) {
       if (TheWndClass.hIcon) {
          DestroyIcon( TheWndClass.hIcon);
@@ -679,8 +685,8 @@ static void RealClose(void)
       IsRegistered = FALSE;
    }
 }
-
-int WIN_Clear()
+ */
+int WIN_Clear(void)
 {
    tpWindowData wd;
    if (!currentgraph) return 0;
@@ -863,7 +869,7 @@ int WIN_SetColor( int color)
    return (0);
 }
 
-int WIN_Update()
+int WIN_Update(void)
 {
    tpWindowData wd;
    if (!currentgraph) return 0;
@@ -876,12 +882,12 @@ int WIN_Update()
    wd->FirstFlag = 0;
    return 0;
 }
-
-int WIN_DiagramReady()
+/*
+int WIN_DiagramReady(void)
 {
    return 0;
 }
-
+*/
 void RemoveWindow(GRAPH* dgraph)
 {
    tpWindowData wd;
