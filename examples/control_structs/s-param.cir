@@ -65,14 +65,16 @@ Vdc 8 0 DC 'Vbias_out' AC 0 $ dc bias at output (applied through load resistor)
 .control
 set noaskquit
 set filetype=ascii
-** measurement for s11 and s21
+*** measurement for s11 and s21
 op
 ** save bias voltages to vector
 let Vdcnew=V(X1.1) $ former Vacdc 
 let Vacdcnew=v(X1.8) $ former Vdc 
+** first ac measurement (change this line only together with following ac line)
 *ac lin 20 0.1G 2G $ use for bip transistor
 ac lin 100 2.5MEG 250MEG $ use for Tschebyschef 
-*ac lin 101 1k 10G $ use for RC 
+*ac lin 101 1k 10G $ use for RC
+** 
 ** switch input and output
 alter R.X1.RS1=1e12
 alter R.X1.RS2=1e12
@@ -81,11 +83,13 @@ alter R.X1.RS4=0.001
 ** switch bias voltages between in and out
 alter V.X1.Vacdc DC=op1.Vacdcnew
 alter V.X1.Vdc DC=op1.Vdcnew
-** measurement for s12 and s22
+*** measurement for s12 and s22
 op
+** second ac measurement (change this line only together with ac line above)
 *ac lin 20 0.1G 2G $ use for bip transistor
 ac lin 100 2.5MEG 250MEG $ use for Tschebyschef 
 *ac lin 101 1 10G $ use for RC 
+**
 let s11=ac1.s22
 let s21=ac1.s12
 settype s-param S11 S21 S22 S12
