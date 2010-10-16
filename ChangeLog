@@ -146,6 +146,7 @@
  * commands.c, postcoms.h, postcoms.c, rawfile.h, rawfile.c
    fteext.h: new command wrs2p, write a s-parameter file
    using Touchstone vers. 1 format.
+ * device.c: Improved error message "no graphics interface ...  
 
 2010-10-15  Holger Vogt
  * src/ciderlib/input/output.c : #include "../misc/tilde.h"

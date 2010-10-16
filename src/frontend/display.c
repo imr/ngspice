@@ -170,7 +170,7 @@ DevInit(void)
 
     if (!dispdev) {
 	externalerror(
-	 "no graphics interface; please check compiling instructions");
+	 "no graphics interface;\n please check if X-server is running, \n or ngspice is compiled properly (see INSTALL)");
 	dispdev = FindDev("error");
     } else if ((*(dispdev->Init))()) {
       fprintf(cp_err,
