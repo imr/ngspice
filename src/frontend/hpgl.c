@@ -34,6 +34,7 @@ Author: Jim Groves
 #include "ftedbgra.h"
 #include "ftedev.h"
 #include "fteinput.h"
+#include "fteext.h"
 #include "variable.h"
 #include "error.h"
 #include "plotting/graphdb.h"

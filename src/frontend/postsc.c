@@ -14,6 +14,7 @@ $Id$
 #include "ftedbgra.h"
 #include "ftedev.h"
 #include "fteinput.h"
+#include "fteext.h"
 
 #include "postsc.h"
 #include "variable.h"

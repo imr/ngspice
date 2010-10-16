@@ -1,4 +1,11 @@
 2010-10-16  Robert Larice
+ * src/frontend/error.h ,
+ * src/frontend/hpgl.c ,
+ * src/frontend/plotting/plot5.c ,
+ * src/frontend/postsc.c :
+    collect internalerror() in "fteext.h"
+
+2010-10-16  Robert Larice
  * src/frontend/com_help.c ,
  * src/include/cpextern.h :
     collect ft_nutmeg() in "fteext.h"

@@ -9,7 +9,7 @@ $Id$
 
 #include "plot5.h"
 #include "graf.h"
-#include "../error.h"
+#include "fteext.h"
 
 static FILE *plotfile;
 
