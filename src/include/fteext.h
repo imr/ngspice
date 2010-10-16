@@ -375,11 +375,6 @@ extern void if_setparam_model(CKTcircuit *ckt, char **name, char *val );
 extern void if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_model);
 extern struct variable *if_getstat(CKTcircuit *ckt, char *name);
 
-/* subckt.c */
-
-extern struct line *inp_deckcopy(struct line *deck);
-extern struct line *inp_subcktexpand(struct line *deck);
-
 /* typesdef.c */
 
 extern void com_dftype(wordlist *);

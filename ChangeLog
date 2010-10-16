@@ -1,4 +1,10 @@
 2010-10-16  Robert Larice
+ * src/frontend/inp.c ,
+ * src/frontend/nutinp.c ,
+ * src/include/fteext.h :
+    collect inp_deckcopy() inp_subcktexpand() in "subckt.h"
+
+2010-10-16  Robert Larice
  * src/frontend/commands.c ,
  * src/include/fteext.h :
     collect arg_*() prototypes in "arg.h"
