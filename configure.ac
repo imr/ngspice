@@ -214,7 +214,7 @@ dnl the above AC_PROG_CC may set CFLAGS to "-O2 -g"
 if test "$enable_debug" = "no"; then
 	if test "x$GCC" = "xyes"; then
 		AC_MSG_WARN(Removing debugging option!)
-		CFLAGS="$ext_CFLAGS -O2 -Wall -Wno-unused-parameter -s"
+		CFLAGS="$ext_CFLAGS -O2 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wimplicit-function-declaration -Wnested-externs -Wold-style-definition -Wredundant-decls -Wno-unused-parameter -s"
 	else
 		AC_MSG_WARN(Removing debugging option!)
 		CFLAGS="$ext_CFLAGS -O2"
@@ -222,7 +222,7 @@ if test "$enable_debug" = "no"; then
 else
     AC_DEFINE(NGDEBUG,1,[Compile with debug info])
 	if test "x$GCC" = "xyes"; then
-		CFLAGS="$ext_CFLAGS -g -O0 -Wall -Wno-unused-parameter"
+		CFLAGS="$ext_CFLAGS -g -O0 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wimplicit-function-declaration -Wnested-externs -Wold-style-definition -Wredundant-decls -Wno-unused-parameter"
 	else
 		CFLAGS="$ext_CFLAGS -g"
 	fi

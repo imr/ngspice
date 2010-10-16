@@ -1,4 +1,8 @@
 2010-10-16  Robert Larice
+ * configure.ac :
+  stronger warning levels, redeclarations, missing prototypes, k&r style ...
+
+2010-10-16  Robert Larice
  * src/main.c ,
  * src/frontend/Makefile.am ,
  * src/frontend/breakp.c ,
