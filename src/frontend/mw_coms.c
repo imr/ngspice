@@ -13,6 +13,7 @@
 #include "mw_coms.h"
 #include "variable.h"
 #include "runcoms.h"
+#include "spiceif.h"
 
 /* Clears ckt and removes current circ. form database */
  

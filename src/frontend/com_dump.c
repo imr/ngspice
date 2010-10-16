@@ -7,6 +7,7 @@
 #include "com_dump.h"
 #include "cpextern.h"
 #include "fteext.h"
+#include "spiceif.h"
 
 
 void

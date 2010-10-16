@@ -21,6 +21,7 @@ $Id$
 #include "options.h"
 #include "variable.h"
 #include "control.h"
+#include "spiceif.h"
 
 
 /* static declarations */

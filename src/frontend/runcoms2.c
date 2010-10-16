@@ -21,6 +21,7 @@ $Id$
 #include "variable.h"
 #include "breakp2.h"
 #include "plotting/graf.h"
+#include "spiceif.h"
 
 #include "inpdefs.h"
 

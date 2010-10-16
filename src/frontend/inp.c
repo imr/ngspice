@@ -30,6 +30,7 @@ $Id$
 #include "breakp2.h"
 #include "../misc/util.h" /* dirname() */
 #include "../misc/mktemp.h"
+#include "spiceif.h"
 #include "error.h" /* controlled_exit() */
 
 #ifdef XSPICE

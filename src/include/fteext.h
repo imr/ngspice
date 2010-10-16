@@ -371,16 +371,11 @@ extern int main(int argc, char **argv);
 
 extern bool if_tranparams(struct circ *ci, double *start, double *stop, double *step);
 extern char *if_errstring(int code);
-extern CKTcircuit *if_inpdeck(struct line *deck, INPtables **tab);
-extern int if_run(CKTcircuit *t, char *what, wordlist *args, INPtables *tab);
 extern int if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab);
 extern struct variable *(*if_getparam)(CKTcircuit *ckt, char** name, char* param, int ind, int do_model);
 extern struct variable * nutif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model);
 extern struct variable *spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model);
 extern struct variable *spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do_model);
-extern void if_cktfree(CKTcircuit *ckt, INPtables *tab);
-extern void if_dump(CKTcircuit *ckt, FILE *file);
-extern int if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value);
 extern void if_setndnames(char *line);
 extern void if_setparam_model(CKTcircuit *ckt, char **name, char *val );
 extern void if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_model);

@@ -55,6 +55,7 @@ extern int rl_catch_signals;        /* missing from editline/readline.h */
 #else
 #include "misc/getopt_bsd.h"
 #endif
+#include "frontend/spiceif.h"
 #include "frontend/resource.h"
 #include "frontend/variable.h"
 #include "frontend/display.h"  /* added by SDB to pick up Input() fcn */

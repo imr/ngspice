@@ -1,4 +1,15 @@
 2010-10-16  Robert Larice
+ * src/frontend/com_dump.c ,
+ * src/frontend/inp.c ,
+ * src/frontend/mw_coms.c ,
+ * src/frontend/options.c ,
+ * src/frontend/runcoms.c ,
+ * src/frontend/runcoms2.c ,
+ * src/include/fteext.h ,
+ * src/main.c :
+    collect if_inpdeck() if_run() if_cktfree() if_dump() if_option() in "spiceif.h"
+
+2010-10-16  Robert Larice
  * src/frontend/misccoms.c ,
  * src/frontend/plotting/plotcurv.c ,
  * src/frontend/signal_handler.c ,
