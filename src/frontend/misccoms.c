@@ -11,7 +11,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "hlpdefs.h"
 #include "misccoms.h"
 #include "circuits.h"
-#include "hcomp.h"
 #include "variable.h"
 
 #ifdef HAVE_GNUREADLINE

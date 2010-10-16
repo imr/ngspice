@@ -1,4 +1,10 @@
 2010-10-16  Robert Larice
+ * src/frontend/hcomp.c ,
+ * src/frontend/misccoms.c ,
+ * src/include/fteext.h :
+    collect hcomp() in "hcomp.h"
+
+2010-10-16  Robert Larice
  * src/frontend/error.h ,
  * src/frontend/hpgl.c ,
  * src/frontend/plotting/plot5.c ,

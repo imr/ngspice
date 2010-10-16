@@ -273,7 +273,6 @@ extern void com_ghelp(wordlist *wl);
 extern void com_help(wordlist *wl);
 extern void com_quit(wordlist *wl);
 extern void com_version(wordlist *wl);
-extern int  hcomp(const void *a, const void *b);
 extern void com_where(wordlist *wl);
 
 /* mw_coms.c */

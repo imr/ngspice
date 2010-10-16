@@ -1,6 +1,6 @@
 #include <cpdefs.h>
 #include <string.h>
-#include "fteext.h"
+#include "hcomp.h"
 
 int
 hcomp(const void *a, const void *b)
