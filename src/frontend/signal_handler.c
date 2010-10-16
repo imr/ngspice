@@ -16,6 +16,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <setjmp.h>
 #include <signal.h>
 #include "signal_handler.h"
+#include "plotting/graf.h"
 
 #ifdef HAS_WINDOWS
 void winmessage(char* new_msg);

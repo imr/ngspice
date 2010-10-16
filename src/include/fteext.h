@@ -217,12 +217,8 @@ extern void gi_update();
 
 extern bool gr_gmode;
 extern bool gr_hmode;
-extern void gr_clean(void);
-extern void gr_end(struct dvec *dv);
 extern void gr_iplot(struct plot *plot);
 extern void gr_pmsg(char *text);
-extern void gr_point(struct dvec *dv, double newx, double newy, double oldx, double oldy, int np);
-extern void gr_start(struct dvec *dv);
 extern double gr_xrange[2];
 extern double gr_yrange[2];
 extern int gr_xmargin;
@@ -231,10 +227,6 @@ extern int gr_xcenter;
 extern int gr_ycenter;
 extern int gr_radius;
 extern bool gr_circular;
-
-/* grid.c */
-
-extern void gr_fixgrid(GRAPH *graph, double xdelta, double ydelta, int xtype, int ytype);
 
 /* inp.c */
 

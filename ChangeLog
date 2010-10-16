@@ -1,4 +1,11 @@
 2010-10-16  Robert Larice
+ * src/frontend/misccoms.c ,
+ * src/frontend/plotting/plotcurv.c ,
+ * src/frontend/signal_handler.c ,
+ * src/include/fteext.h :
+    collect gr_clean() gr_end() gr_point() gr_start() gr_fixgrid() in "graf.h"
+
+2010-10-16  Robert Larice
  * src/frontend/hcomp.c ,
  * src/frontend/misccoms.c ,
  * src/include/fteext.h :

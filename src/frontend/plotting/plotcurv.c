@@ -12,6 +12,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <ftedefs.h>
 #include <dvec.h>
 #include <graph.h>
+#include "graf.h"
 #include <ftedbgra.h>
 
 #include "plotcurv.h"

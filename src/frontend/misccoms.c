@@ -12,6 +12,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "misccoms.h"
 #include "circuits.h"
 #include "variable.h"
+#include "plotting/graf.h"
 
 #ifdef HAVE_GNUREADLINE
 #include <readline/readline.h>
