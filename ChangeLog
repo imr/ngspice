@@ -1,4 +1,4 @@
-2010-10-15  Holger Vogt
+2010-10-16  Holger Vogt
  * examples/control_structs/s-param.cir new example
  * commands.c, postcoms.h, postcoms.c, rawfile.h, rawfile.c
    fteext.h: new command wrs2p, write a s-parameter file 
