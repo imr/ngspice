@@ -200,26 +200,11 @@
 #define HUGE HUGE_VAL
 #endif
 
-extern char *gettok(char **s);
 extern char *gettok_noparens(char **s);
 extern char *gettok_node(char **s);
 extern char *gettok_iv(char **s);
 extern int get_l_paren(char **s);
 extern int get_r_paren(char **s);
-extern void appendc(char *s, char c);
-extern int scannum(char *str);
-extern int ciprefix(register char *p, register char *s);
-extern int cieq(register char *p, register char *s);
-extern void strtolower(char *str);
-extern char *tildexpand(char *str);
-
-extern char *canonicalize_pathname(char *path);
-extern char *absolute_pathname(char *str, char *dot_path);
-
-extern char *copy(const char *str);
-extern int prefix(char *p, char *str);
-extern int substring(char *sub, char *str);
-extern void cp_printword(char *str, FILE *fp);
 
 /* Some external variables */
 
