@@ -50,6 +50,9 @@ extern int rl_catch_signals;        /* missing from editline/readline.h */
 #include "spicelib/analysis/analysis.h"
 #include "misc/ivars.h"
 #include "misc/misc_time.h"
+#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
+#include "misc/mktemp.h"
+#endif
 #if defined(HAVE_GETOPT_LONG) && defined(HAVE_GETOPT_H)
 #include <getopt.h>
 #else

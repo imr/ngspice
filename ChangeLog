@@ -1,3 +1,6 @@
+2010-10-17  Holger Vogt
+ * main.c: add mktemp.h
+
 2010-10-16  Holger Vogt
  * windisp.h, windisp.c: prototypes
 
