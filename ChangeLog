@@ -1,4 +1,10 @@
 2010-10-24  Robert Larice
+ * src/frontend/com_compose.c ,
+ * src/frontend/plotting/plotcurv.c ,
+ * src/maths/poly/interpolate.c :
+  tmalloc usage unification, parenthesize some terms
+
+2010-10-24  Robert Larice
  * src/spicelib/devices/asrc/asrcset.c ,
  * src/xspice/mif/mif_inp2.c :
   RALLOC usage unification, drop braces around the second argument

@@ -180,11 +180,11 @@ com_compose(wordlist *wl)
         for (i = 0, blocksize = 1; i < dim - 1; i++)
             blocksize *= dims[i];
         if (realflag)
-            data = (double *) tmalloc(sizeof (double) * length *
-                    blocksize);
+            data = (double *) tmalloc(sizeof (double) * (length *
+                    blocksize));
         else
-            cdata = (ngcomplex_t *) tmalloc(sizeof(ngcomplex_t) * length *
-                    blocksize);
+            cdata = (ngcomplex_t *) tmalloc(sizeof(ngcomplex_t) * (length *
+                    blocksize));
 
         /* Now copy all the data over... If the sizes are too small
          * then the extra elements are left as 0.

@@ -55,7 +55,7 @@ ft_interpolate(double *data, double *ndata, double *oscale, int olen,
     else
         sign = 1;
 
-    scratch = (double *) tmalloc((degree + 1) * (degree + 2) * 
+    scratch = (double *) tmalloc(((degree + 1) * (degree + 2)) * 
             sizeof (double));
     result = (double *) tmalloc((degree + 1) * sizeof (double));
     xdata = (double *) tmalloc((degree + 1) * sizeof (double));

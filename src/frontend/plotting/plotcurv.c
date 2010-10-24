@@ -211,7 +211,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     /* We need to do curve fitting now. First get some scratch 
      * space
      */
-    scratch = (double *) tmalloc((degree + 1) * (degree + 2) * 
+    scratch = (double *) tmalloc(((degree + 1) * (degree + 2)) * 
             sizeof (double));
     result = (double *) tmalloc((degree + 1) * sizeof (double));
     xdata = (double *) tmalloc((degree + 1) * sizeof (double));
