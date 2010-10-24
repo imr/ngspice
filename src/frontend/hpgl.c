@@ -118,9 +118,9 @@ GRAPH *graph)
 
     hcopygraphid = graph->graphid;
 
-    if (!(plotfile = fopen(graph->devdep, "w"))) {
-      perror(graph->devdep);
-      graph->devdep = (char *) NULL;
+    if (!(plotfile = fopen((char*) graph->devdep, "w"))) {
+        perror((char*) graph->devdep);
+      graph->devdep = NULL;
       return(1);
     }
 
@@ -154,7 +154,7 @@ GRAPH *graph)
     if (!screenflag)
 #endif
 
-    graph->devdep = (char*) tmalloc(sizeof(GLdevdep));
+    graph->devdep = (GLdevdep*) tmalloc(sizeof(GLdevdep));
     DEVDEP(graph).lastlinestyle = -1;
     DEVDEP(graph).lastx = -1;
     DEVDEP(graph).lasty = -1;

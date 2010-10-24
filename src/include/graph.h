@@ -126,7 +126,7 @@ struct graph {
     /* Space here is allocated by NewViewport
         and de-allocated by DestroyGraph.
     */
-    char *devdep;
+    void *devdep;
 
 };
 

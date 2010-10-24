@@ -168,9 +168,9 @@ PS_NewViewport(GRAPH *graph)
     int x1,x2,y1,y2;
     hcopygraphid = graph->graphid;
     /* devdep initially contains name of output file */
-    if (!(plotfile = fopen(graph->devdep, "w"))) {
-      perror(graph->devdep);
-      graph->devdep = (char *) NULL;
+    if (!(plotfile = fopen((char*)graph->devdep, "w"))) {
+        perror((char*)graph->devdep);
+      graph->devdep = NULL;
       return(1);
     }
 
@@ -218,7 +218,7 @@ PS_NewViewport(GRAPH *graph)
     fprintf(plotfile, "/%s findfont %d scalefont setfont\n\n",
 	    psfont, (int) (fontsize * scale));
 
-    graph->devdep = (char*) tmalloc(sizeof(PSdevdep));
+    graph->devdep = (PSdevdep*) tmalloc(sizeof(PSdevdep));
     DEVDEP(graph).lastlinestyle = -1;
     DEVDEP(graph).lastcolor = -1;
     DEVDEP(graph).lastx = -1;

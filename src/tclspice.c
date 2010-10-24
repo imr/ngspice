@@ -1343,7 +1343,7 @@ int  sp_Tk_Init(void) {
 int  sp_Tk_NewViewport(GRAPH *graph) {
   const char *result;
   int width, height, fontwidth, fontheight;
-  graph->devdep = (char *) NULL;
+  graph->devdep = NULL;
     
   if(Tcl_GlobalEval(spice_interp,"spice_gr_NewViewport") != TCL_OK) {
     Tcl_ResetResult(spice_interp);

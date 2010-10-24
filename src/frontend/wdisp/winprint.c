@@ -242,7 +242,7 @@ int WPRINT_NewViewport( GRAPH * graph)
 	/* Device dep. Info allocieren */
 	pd = calloc(1, sizeof(tPrintData));
 	if (!pd) return 1;
-	graph->devdep = (char *)pd;
+	graph->devdep = pd;
 
 	/* Setze den Color-Index */
 	pd->ColorIndex = 0;

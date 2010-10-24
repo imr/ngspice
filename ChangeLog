@@ -1,4 +1,22 @@
 2010-10-24  Robert Larice
+ * src/frontend/hpgl.c ,
+ * src/frontend/plotting/plot5.c ,
+ * src/frontend/plotting/x11.c ,
+ * src/frontend/postsc.c ,
+ * src/frontend/wdisp/windisp.c ,
+ * src/frontend/wdisp/winprint.c ,
+ * src/include/graph.h ,
+ * src/tclspice.c :
+  struct member devdep, use void* instead of char*
+
+2010-10-24  Robert Larice
+ * src/frontend/help/readhelp.c ,
+ * src/ngmultidec.c ,
+ * src/tclspice.c :
+  tmalloc usage, drop explicit (unsigned) cast
+    later to be reinstated in a tmalloc wrapper macro
+
+2010-10-24  Robert Larice
  * src/frontend/com_display.c ,
  * src/frontend/device.c ,
  * src/frontend/help/x11disp.c :

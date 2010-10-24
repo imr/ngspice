@@ -587,7 +587,7 @@ int WIN_NewViewport( GRAPH * graph)
    /* allocate device dependency info */
    wd = calloc(1, sizeof(tWindowData));
    if (!wd) return 1;
-   graph->devdep = (char *)wd;
+   graph->devdep = wd;
 
    /* Create the window */
    i = GetSystemMetrics( SM_CYSCREEN) / 3;

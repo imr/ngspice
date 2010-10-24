@@ -40,9 +40,9 @@ int
 Plt5_NewViewport(GRAPH *graph)
 {
 
-    if (!(plotfile = fopen(graph->devdep, "w"))) {
-      graph->devdep = (char *) NULL;
-      perror(graph->devdep);
+    if (!(plotfile = fopen((char*) graph->devdep, "w"))) {
+      graph->devdep = NULL;
+      perror((char*) graph->devdep);
       return(1);
     }
 
@@ -77,7 +77,7 @@ Plt5_NewViewport(GRAPH *graph)
     }
 
     /* set to NULL so graphdb doesn't incorrectly de-allocate it */
-    graph->devdep = (char *) NULL;
+    graph->devdep = NULL;
 
     return(0);
 
