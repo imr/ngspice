@@ -164,7 +164,7 @@ hlp_xdisplay(topic *top)
 		commandWidgetClass, top->subboxwidget, buttonargs,
 		XtNumber(buttonargs));
                                 /* core leak XXX */
-        hand = (handle *) tmalloc(sizeof (struct handle));
+        hand = (handle *) tmalloc(sizeof (handle));
         hand->result = tl;
         hand->parent = top;
         XtAddCallback(buttonwidget, XtNcallback, (XtCallbackProc) newtopic, hand);
@@ -196,7 +196,7 @@ hlp_xdisplay(topic *top)
         XtSetArg(buttonargs[0], XtNlabel, tl->button.text);
         buttonwidget = XtCreateManagedWidget(tl->button.text,
 		commandWidgetClass, top->seeboxwidget, buttonargs, 1);
-		hand = (handle *) tmalloc(sizeof (struct handle));
+		hand = (handle *) tmalloc(sizeof (handle));
                                 /* core leak XXX */
         hand->result = tl;
         hand->parent = top;

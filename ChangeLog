@@ -1,4 +1,10 @@
 2010-10-24  Robert Larice
+ * src/frontend/com_display.c ,
+ * src/frontend/device.c ,
+ * src/frontend/help/x11disp.c :
+  tmalloc usage, minor usage unification
+
+2010-10-24  Robert Larice
  * src/frontend/com_sysinfo.c ,
  * src/frontend/plotting/graf.c ,
  * src/misc/util.c ,

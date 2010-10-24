@@ -61,7 +61,7 @@ com_display(wordlist *wl)
         return;
     }
     out_printf("Here are the vectors currently active:\n\n");
-    dvs = (struct dvec **) tmalloc(len * (sizeof (struct dvec *)));
+    dvs = (struct dvec **) tmalloc(len * sizeof(struct dvec *));
     for (d = plot_cur->pl_dvecs, i = 0; d; d = d->v_next, i++)
         dvs[i] = d;
     if (!cp_getvar("nosort", CP_BOOL, NULL))

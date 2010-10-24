@@ -917,8 +917,8 @@ com_alter_common(wordlist *wl, int do_model)
                     eqfound = TRUE;
                     arglist = (char**)tmalloc(4*sizeof(char*));
                     arglist[3] = NULL;
-                    arglist[0] = (char*)tmalloc(i*sizeof(char) + 1);
-                    arglist[2] = (char*)tmalloc(strlen(&argument[i+1])*sizeof(char) + 1);
+                    arglist[0] = (char*)tmalloc(i + 1);
+                    arglist[2] = (char*)tmalloc(strlen(&argument[i+1]) + 1);
                     /* copy argument */
                     strncpy(arglist[0],argument,i);
                     arglist[0][i] = '\0';
