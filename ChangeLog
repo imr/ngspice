@@ -1,4 +1,8 @@
 2010-10-24  Robert Larice
+ * src/spicelib/devices/ndev/ndevset.c :
+  use char* instead of void*
+
+2010-10-24  Robert Larice
  * src/frontend/hpgl.c ,
  * src/frontend/plotting/plot5.c ,
  * src/frontend/plotting/x11.c ,

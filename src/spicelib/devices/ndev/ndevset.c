@@ -81,7 +81,7 @@ int NDEVmodelConnect(NDEVmodel *inModel)
                                the resolved address to
                                a readable format. */
   struct sockaddr_in sa;    /* Connection address. */
-  void * buf = tmalloc(128);
+  char *buf = (char*) tmalloc(128);
 
   /* Look up the hostname with DNS. gethostbyname
   (at least most UNIX versions of it) properly
@@ -139,17 +139,17 @@ int NDEVmodelConnect(NDEVmodel *inModel)
     return  E_PRIVATE;
   }
   
-  sprintf((char *)buf,NG_QUERY);
-  send(model->sock,buf,128,0);
-  if(recv(model->sock,buf,128,MSG_WAITALL)<128)
+  sprintf(buf, NG_QUERY);
+  send(model->sock, buf, 128, 0);
+  if(recv(model->sock, buf, 128, MSG_WAITALL) < 128)
   {
     fprintf(stderr, "NDEV: Remote answer error. %s\n",strerror(errno));
     return  E_PRIVATE;
   }
   
-  if(strncmp((char *)buf,NDEV_REPLY,sizeof(NDEV_REPLY)))
+  if(strncmp(buf, NDEV_REPLY, sizeof(NDEV_REPLY)))
   {
-    fprintf(stderr, "NDEV: Remote answer error. %s\n",(char *)buf);
+    fprintf(stderr, "NDEV: Remote answer error. %s\n", buf);
     return  E_PRIVATE;
   }  
   
