@@ -106,7 +106,7 @@ int EVTinit(
     /* Will probably remove this restriction later... */
 /*
     if(ckt->evt->counts.num_hybrids == 0) {
-        errMsg = MALLOC(strlen(err_no_hybrids) + 1);
+        errMsg = (char*) MALLOC(strlen(err_no_hybrids) + 1);
         strcpy(errMsg, err_no_hybrids);
         return(E_PRIVATE);
     }

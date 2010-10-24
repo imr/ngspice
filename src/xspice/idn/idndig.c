@@ -51,7 +51,7 @@ static void idn_digital_create(void **evt_struct)
 {
     /* Malloc space for a digital struct */
 
-	*evt_struct = tmalloc(sizeof(Digital_t));
+	*evt_struct = (Digital_t*) tmalloc(sizeof(Digital_t));
 }
 
 

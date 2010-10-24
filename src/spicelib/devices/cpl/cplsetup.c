@@ -1844,7 +1844,7 @@ insert_ND(char *name, NDnamePt *ndn)
    NDnamePt  p;
 
    if (*ndn == NULL) {
-      p = *ndn = (NDnamePt) tmalloc(sizeof (NDname));
+      p = *ndn = (NDname*) tmalloc(sizeof (NDname));
       p->nd = NULL;
       p->right = p->left = NULL;
       strcpy(p->id, name);
@@ -1963,7 +1963,7 @@ ordering(void)
             mv = ABS(ZY[i][j]);
             m = j;
          }
-      e = (MAXE_PTR) tmalloc(sizeof (MAXE));
+      e = (MAXE*) tmalloc(sizeof (MAXE));
       row = sort(row, mv, i, m, e);
    }
 }

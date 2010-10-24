@@ -1482,7 +1482,7 @@ static void dvecToBlt(Blt_Vector *Data, struct dvec *x) {
     double *data;
     int i;
 
-    data = tmalloc(x->v_length * sizeof(double));
+    data = (double*) tmalloc(x->v_length * sizeof(double));
 
     for(i=0;i<x->v_length;i++) {
       data[i] = realpart(&x->v_compdata[i]);

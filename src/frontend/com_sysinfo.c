@@ -457,7 +457,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
     }
 
     RegQueryValueExA(hkBaseCPU,"ProcessorNameString",0,0,NULL,&dwLen);
-    freeStr = procStr = tmalloc(dwLen+1);
+    freeStr = procStr = (char*) tmalloc(dwLen+1);
     RegQueryValueExA(hkBaseCPU,"ProcessorNameString",0,0,(LPBYTE)procStr,&dwLen);
     procStr[dwLen] = '\0';
     while (*procStr == ' ') procStr++;

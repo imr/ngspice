@@ -53,7 +53,7 @@ void *tmalloc(size_t);
 static void udn_real_create(CREATE_ARGS)
 {
     /* Malloc space for a real struct */
-    MALLOCED_PTR = tmalloc(sizeof(double));
+    MALLOCED_PTR = (double*) tmalloc(sizeof(double));
 }
 
 

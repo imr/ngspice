@@ -1,4 +1,19 @@
 2010-10-24  Robert Larice
+ * src/frontend/com_sysinfo.c ,
+ * src/frontend/plotting/graf.c ,
+ * src/misc/util.c ,
+ * src/spicelib/devices/cpl/cplsetup.c ,
+ * src/spicelib/devices/soi3/soi3ask.c ,
+ * src/spicelib/devices/txl/txlsetup.c ,
+ * src/tclspice.c ,
+ * src/xspice/evt/evtinit.c ,
+ * src/xspice/evt/evtload.c ,
+ * src/xspice/icm/xtraevt/int/udnfunc.c ,
+ * src/xspice/icm/xtraevt/real/udnfunc.c ,
+ * src/xspice/idn/idndig.c :
+  cast the tmalloc, MALLOC, return value
+
+2010-10-24  Robert Larice
  * src/misc/wlist.c ,
  * src/spicelib/devices/bsim3/b3set.c ,
  * src/spicelib/devices/bsim3soi/b4soiset.c ,

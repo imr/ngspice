@@ -346,7 +346,7 @@ static void EVTcreate_state(
 	{
 		
         new_state = (Evt_State_t *) MALLOC(sizeof(Evt_State_t));
-        new_state->block = (void *) MALLOC(total_size);
+        new_state->block = MALLOC(total_size);
 
     }
 

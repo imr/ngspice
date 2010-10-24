@@ -53,7 +53,7 @@ void *tmalloc(size_t);
 static void udn_int_create(CREATE_ARGS)
 {
     /* Malloc space for an int */
-    MALLOCED_PTR = tmalloc(sizeof(int));
+    MALLOCED_PTR = (int*) tmalloc(sizeof(int));
 }
 
 
