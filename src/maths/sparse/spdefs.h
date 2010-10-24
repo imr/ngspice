@@ -369,20 +369,20 @@ extern void * tmalloc(size_t);
 extern void   txfree(void *);
 extern void * trealloc(void *, size_t);
 
-#define ALLOC(type,number)  ((type *)tmalloc((size_t)(sizeof(type)*(number))))
-#define REALLOC(ptr,type,number)  \
+#define SP_MALLOC(type,number)  ((type *)tmalloc((size_t)(sizeof(type)*(number))))
+#define SP_REALLOC(ptr,type,number)  \
            ptr = (type *)trealloc((char *)ptr,(unsigned)(sizeof(type)*(number)))
-#define FREE(ptr) { if ((ptr) != NULL) txfree((char *)(ptr)); (ptr) = NULL; }
+#define SP_FREE(ptr) { if ((ptr) != NULL) txfree((char *)(ptr)); (ptr) = NULL; }
 
 
 
 /* A new calloc */
 #ifndef HAVE_LIBGC
-#define CALLOC(ptr,type,number)                    	     \
+#define SP_CALLOC(ptr,type,number)                    	     \
 { ptr = (type *) calloc(number, sizeof(type)); 		             \
 }
 #else /* HAVE_LIBCG */
-#define CALLOC(ptr,type,number)                         	\
+#define SP_CALLOC(ptr,type,number)                         	\
 { ptr = (type *) tmalloc(((size_t)number) * sizeof(type));	\
 }
 #endif

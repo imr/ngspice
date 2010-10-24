@@ -148,11 +148,11 @@ spPrint(MatrixPtr eMatrix, int PrintReordered, int Data, int Header)
     /* Begin `spPrint'. */
     assert( IS_SPARSE( Matrix ) );
     Size = Matrix->Size;
-    CALLOC(pImagElements, ElementPtr, Printer_Width / 10 + 1);
+    SP_CALLOC(pImagElements, ElementPtr, Printer_Width / 10 + 1);
     if ( pImagElements == NULL)
     {
 	Matrix->Error = spNO_MEMORY;
-	FREE(pImagElements);
+	SP_FREE(pImagElements);
 	return;
     }
 
@@ -163,19 +163,19 @@ spPrint(MatrixPtr eMatrix, int PrintReordered, int Data, int Header)
 #else
     Top = Matrix->AllocatedSize;
 #endif
-    CALLOC( PrintOrdToIntRowMap, int, Top + 1 );
+    SP_CALLOC( PrintOrdToIntRowMap, int, Top + 1 );
     if ( PrintOrdToIntRowMap == NULL)
     {
 	Matrix->Error = spNO_MEMORY;
-	FREE(pImagElements);
+	SP_FREE(pImagElements);
         return;
     }
-    CALLOC( PrintOrdToIntColMap, int, Top + 1 );
+    SP_CALLOC( PrintOrdToIntColMap, int, Top + 1 );
     if (PrintOrdToIntColMap == NULL)
     {
 	Matrix->Error = spNO_MEMORY;
-	FREE(pImagElements);
-        FREE(PrintOrdToIntRowMap);
+	SP_FREE(pImagElements);
+        SP_FREE(PrintOrdToIntRowMap);
         return;
     }
     for (I = 1; I <= Size; I++)
@@ -377,8 +377,8 @@ spPrint(MatrixPtr eMatrix, int PrintReordered, int Data, int Header)
     putchar('\n');
     (void)fflush(stdout);
 
-    FREE(PrintOrdToIntColMap);
-    FREE(PrintOrdToIntRowMap);
+    SP_FREE(PrintOrdToIntColMap);
+    SP_FREE(PrintOrdToIntRowMap);
     return;
 }
 

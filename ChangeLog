@@ -1,4 +1,14 @@
 2010-10-24  Robert Larice
+ * src/maths/sparse/spalloc.c ,
+ * src/maths/sparse/spbuild.c ,
+ * src/maths/sparse/spdefs.h ,
+ * src/maths/sparse/spfactor.c ,
+ * src/maths/sparse/spoutput.c ,
+ * src/maths/sparse/sputils.c :
+  rename ALLOC, REALLOC, CALLOC, FREE, in the "src/maths/sparse" domain
+    -> SP_MALLOC, SP_REALLOC, SP_CALLOC, SP_FREE
+
+2010-10-24  Robert Larice
  * src/include/complex.h :
   ngcomplex_t instead of complex, #2/2
     rename the structure as well

@@ -1634,7 +1634,7 @@ int *pError;
 
     Size = Matrix->Size;
     T = (ComplexVector)Matrix->Intermediate;
-    Tm = ALLOC( ComplexNumber, Size+1 );
+    Tm = SP_MALLOC( ComplexNumber, Size+1 );
     if (Tm == NULL)
     {
 	*pError = spNO_MEMORY;
@@ -1800,7 +1800,7 @@ int *pError;
     /* Compute 1-norm of T, which now contains z. */
     for (ASz = 0.0, I = Size; I > 0; I--) ASz += CMPLX_1_NORM(T[I]);
 
-    FREE( Tm );
+    SP_FREE( Tm );
 
     Linpack = ASy / ASz;
     OLeary = E / MaxY;

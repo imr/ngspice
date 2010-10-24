@@ -972,27 +972,27 @@ EnlargeMatrix(MatrixPtr Matrix, int  NewSize)
     NewSize = MAX( NewSize, EXPANSION_FACTOR * OldAllocatedSize );
     Matrix->AllocatedSize = NewSize;
 
-    if (( REALLOC(Matrix->IntToExtColMap, int, NewSize+1)) == NULL)
+    if (( SP_REALLOC(Matrix->IntToExtColMap, int, NewSize+1)) == NULL)
     {
 	Matrix->Error = spNO_MEMORY;
         return;
     }
-    if (( REALLOC(Matrix->IntToExtRowMap, int, NewSize+1)) == NULL)
+    if (( SP_REALLOC(Matrix->IntToExtRowMap, int, NewSize+1)) == NULL)
     {
 	Matrix->Error = spNO_MEMORY;
         return;
     }
-    if (( REALLOC(Matrix->Diag, ElementPtr, NewSize+1)) == NULL)
+    if (( SP_REALLOC(Matrix->Diag, ElementPtr, NewSize+1)) == NULL)
     {
 	Matrix->Error = spNO_MEMORY;
         return;
     }
-    if (( REALLOC(Matrix->FirstInCol, ElementPtr, NewSize+1)) == NULL)
+    if (( SP_REALLOC(Matrix->FirstInCol, ElementPtr, NewSize+1)) == NULL)
     {
 	Matrix->Error = spNO_MEMORY;
         return;
     }
-    if (( REALLOC(Matrix->FirstInRow, ElementPtr, NewSize+1)) == NULL)
+    if (( SP_REALLOC(Matrix->FirstInRow, ElementPtr, NewSize+1)) == NULL)
     {
 	Matrix->Error = spNO_MEMORY;
         return;
@@ -1000,12 +1000,12 @@ EnlargeMatrix(MatrixPtr Matrix, int  NewSize)
 
     /* Destroy the Markowitz and Intermediate vectors, they will be
      * recreated in spOrderAndFactor().  */
-    FREE( Matrix->MarkowitzRow );
-    FREE( Matrix->MarkowitzCol );
-    FREE( Matrix->MarkowitzProd );
-    FREE( Matrix->DoRealDirect );
-    FREE( Matrix->DoCmplxDirect );
-    FREE( Matrix->Intermediate );
+    SP_FREE( Matrix->MarkowitzRow );
+    SP_FREE( Matrix->MarkowitzCol );
+    SP_FREE( Matrix->MarkowitzProd );
+    SP_FREE( Matrix->DoRealDirect );
+    SP_FREE( Matrix->DoCmplxDirect );
+    SP_FREE( Matrix->Intermediate );
     Matrix->InternalVectorsAllocated = NO;
 
     /* Initialize the new portion of the vectors. */
@@ -1062,12 +1062,12 @@ ExpandTranslationArrays(MatrixPtr Matrix, int  NewSize)
     NewSize = MAX( NewSize, EXPANSION_FACTOR * OldAllocatedSize );
     Matrix->AllocatedExtSize = NewSize;
 
-    if (( REALLOC(Matrix->ExtToIntRowMap, int, NewSize+1)) == NULL)
+    if (( SP_REALLOC(Matrix->ExtToIntRowMap, int, NewSize+1)) == NULL)
     {
 	Matrix->Error = spNO_MEMORY;
         return;
     }
-    if (( REALLOC(Matrix->ExtToIntColMap, int, NewSize+1)) == NULL)
+    if (( SP_REALLOC(Matrix->ExtToIntColMap, int, NewSize+1)) == NULL)
     {
 	Matrix->Error = spNO_MEMORY;
         return;

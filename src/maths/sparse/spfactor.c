@@ -744,33 +744,33 @@ spcCreateInternalVectors( MatrixPtr Matrix )
 
     if (Matrix->MarkowitzRow == NULL)
     {
-	if (( Matrix->MarkowitzRow = ALLOC(int, Size+1)) == NULL)
+	if (( Matrix->MarkowitzRow = SP_MALLOC(int, Size+1)) == NULL)
 	    Matrix->Error = spNO_MEMORY;
     }
     if (Matrix->MarkowitzCol == NULL)
     {
-	if (( Matrix->MarkowitzCol = ALLOC(int, Size+1)) == NULL)
+	if (( Matrix->MarkowitzCol = SP_MALLOC(int, Size+1)) == NULL)
 	    Matrix->Error = spNO_MEMORY;
     }
     if (Matrix->MarkowitzProd == NULL)
     {
-	if (( Matrix->MarkowitzProd = ALLOC(long, Size+2)) == NULL)
+	if (( Matrix->MarkowitzProd = SP_MALLOC(long, Size+2)) == NULL)
 	    Matrix->Error = spNO_MEMORY;
     }
 
     /* Create DoDirect vectors for use in spFactor(). */
     if (Matrix->DoRealDirect == NULL) {
-	if (( Matrix->DoRealDirect = ALLOC(int, Size+1)) == NULL)
+	if (( Matrix->DoRealDirect = SP_MALLOC(int, Size+1)) == NULL)
 	    Matrix->Error = spNO_MEMORY;
     }
     if (Matrix->DoCmplxDirect == NULL) {
-	if (( Matrix->DoCmplxDirect = ALLOC(int, Size+1)) == NULL)
+	if (( Matrix->DoCmplxDirect = SP_MALLOC(int, Size+1)) == NULL)
 	    Matrix->Error = spNO_MEMORY;
     }
 
     /* Create Intermediate vectors for use in MatrixSolve. */
     if (Matrix->Intermediate == NULL) {
-	if ((Matrix->Intermediate = ALLOC(RealNumber,2*(Size+1))) == NULL)
+	if ((Matrix->Intermediate = SP_MALLOC(RealNumber,2*(Size+1))) == NULL)
 	    Matrix->Error = spNO_MEMORY;
     }
 
