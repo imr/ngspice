@@ -170,11 +170,11 @@ savetree(struct pnode *pn)
                     pn->pn_value->v_realdata,
                     sizeof (double) * d->v_length);
             } else {
-                pn->pn_value->v_compdata = (complex *) 
-                    tmalloc(sizeof (complex) * d->v_length);
+                pn->pn_value->v_compdata = (ngcomplex_t *)
+                    tmalloc(sizeof(ngcomplex_t) * d->v_length);
                 bcopy(d->v_compdata,
                     pn->pn_value->v_compdata,
-                    sizeof (complex) * d->v_length);
+                    sizeof(ngcomplex_t) * d->v_length);
             }
         }
     } else if (pn->pn_op) {

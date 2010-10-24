@@ -79,7 +79,7 @@ com_diff(wordlist *wl)
     struct plot *p1, *p2 = NULL;
     struct dvec *v1, *v2;
     double d1, d2;
-    complex c1, c2, c3;
+    ngcomplex_t c1, c2, c3;
     int i, j;
     wordlist *tw;
     char numbuf[BSIZE_SP],numbuf2[BSIZE_SP] ,numbuf3[BSIZE_SP], numbuf4[BSIZE_SP]; /* For printnum */

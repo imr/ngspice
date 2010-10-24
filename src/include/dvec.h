@@ -39,7 +39,7 @@ struct dvec {
     int v_type;			/* Same as so_vtype. */
     short v_flags;		/* Flags (a combination of VF_*). */
     double *v_realdata;		/* Real data. */
-    complex *v_compdata;	/* Complex data. */
+    ngcomplex_t *v_compdata;	/* Complex data. */
     double v_minsignal;		/* Minimum value to plot. */
     double v_maxsignal;		/* Maximum value to plot. */
     GRIDTYPE v_gridtype;	/* One of GRID_*. */

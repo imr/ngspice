@@ -984,8 +984,8 @@ plotAddRealValue(dataDesc *desc, double value)
       v->v_realdata[v->v_length] = value;
     } else {
       /* a real parading as a VF_COMPLEX */
-      v->v_compdata = (complex *) newrealloc((char *) v->v_compdata,
-            sizeof (complex) * (v->v_length + 1));
+      v->v_compdata = (ngcomplex_t *) newrealloc((char *) v->v_compdata,
+            sizeof(ngcomplex_t) * (v->v_length + 1));
       v->v_compdata[v->v_length].cx_real = value;
       v->v_compdata[v->v_length].cx_imag = (double) 0;
     }
@@ -1000,8 +1000,8 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 {
     struct dvec *v = desc->vec;
 
-    v->v_compdata = (complex *) newrealloc((char *) v->v_compdata,
-            sizeof (complex) * (v->v_length + 1));
+    v->v_compdata = (ngcomplex_t *) newrealloc((char *) v->v_compdata,
+            sizeof(ngcomplex_t) * (v->v_length + 1));
     v->v_compdata[v->v_length].cx_real = value.real;
     v->v_compdata[v->v_length].cx_imag = value.imag;
     v->v_length++;

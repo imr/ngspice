@@ -90,7 +90,7 @@ static void
 xtend(struct dvec *v, int length)
 {
     int i;
-    complex c, *oc;
+    ngcomplex_t c, *oc;
     double d, *od;
 
     if (v->v_length == length)
@@ -110,7 +110,7 @@ xtend(struct dvec *v, int length)
         tfree(od);
     } else {
         oc = v->v_compdata;
-        v->v_compdata = (complex *) tmalloc(length * sizeof (complex));
+        v->v_compdata = (ngcomplex_t *) tmalloc(length * sizeof(ngcomplex_t));
         for (i = 0; i < v->v_length; i++) {
             realpart(&v->v_compdata[i]) = realpart(&oc[i]);
             imagpart(&v->v_compdata[i]) = imagpart(&oc[i]);
@@ -136,9 +136,9 @@ static void
 compress(struct dvec *d, double *xcomp, double *xind)
 {
     int cfac, ihi, ilo, newlen, i;
-    int sz = isreal(d) ? sizeof (double) : sizeof (complex);
+    int sz = isreal(d) ? sizeof(double) : sizeof(ngcomplex_t);
     double *dd;
-    complex *cc;
+    ngcomplex_t *cc;
 
     if (xind) {
         ilo = (int) xind[0];
@@ -147,7 +147,7 @@ compress(struct dvec *d, double *xcomp, double *xind)
                 (ihi > 1) && (ihi <= d->v_length)) {
             newlen = ihi - ilo;
             dd = (double *) tmalloc(newlen * sz);
-            cc = (complex *) dd;
+            cc = (ngcomplex_t *) dd;
             if (isreal(d)) {
                 bcopy(d->v_realdata + ilo, dd, newlen * sz);
                 tfree(d->v_realdata);

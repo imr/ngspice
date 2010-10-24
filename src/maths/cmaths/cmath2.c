@@ -48,10 +48,10 @@ d_tan(double *dd, int length)
     return d;
 }
 
-static complex *
-c_tan(complex *cc, int length)
+static ngcomplex_t *
+c_tan(ngcomplex_t *cc, int length)
 {
-    complex *c;
+    ngcomplex_t *c;
     int i;
 
     c = alloc_c(length);
@@ -85,7 +85,7 @@ cx_tan(void *data, short int type, int length, int *newlength, short int *newtyp
 	return (void *) d_tan((double *) data, length);
     } else {
         *newtype = VF_COMPLEX;
-        return (void *) c_tan((complex *) data, length);
+        return (void *) c_tan((ngcomplex_t *) data, length);
     }
 }
 
@@ -100,7 +100,7 @@ cx_atan(void *data, short int type, int length, int *newlength, short int *newty
     *newtype = VF_REAL;
     *newlength = length;
     if (type == VF_COMPLEX) {
-	complex *cc = (complex *) data;
+	ngcomplex_t *cc = (ngcomplex_t *) data;
 	int i;
 
         for (i = 0; i < length; i++)
@@ -122,7 +122,7 @@ cx_max_local(void *data, short int type, int length)
     double largest = 0.0;
 
     if (type == VF_COMPLEX) {
-	complex *cc = (complex *) data;
+	ngcomplex_t *cc = (ngcomplex_t *) data;
 	int i;
 
         for (i = 0; i < length; i++)
@@ -154,8 +154,8 @@ cx_norm(void *data, short int type, int length, int *newlength, short int *newty
 
     *newlength = length;
     if (type == VF_COMPLEX) {
-	complex *c;
-	complex *cc = (complex *) data;
+	ngcomplex_t *c;
+	ngcomplex_t *cc = (ngcomplex_t *) data;
 	int i;
 
         c = alloc_c(length);
@@ -185,8 +185,8 @@ cx_uminus(void *data, short int type, int length, int *newlength, short int *new
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
-	complex *c;
-	complex *cc = (complex *) data;
+	ngcomplex_t *c;
+	ngcomplex_t *cc = (ngcomplex_t *) data;
 	int i;
 
         c = alloc_c(length);
@@ -215,8 +215,8 @@ cx_rnd(void *data, short int type, int length, int *newlength, short int *newtyp
     *newlength = length;
     checkseed();
     if (type == VF_COMPLEX) {
-      complex *c;
-      complex *cc = (complex *) data;
+      ngcomplex_t *c;
+      ngcomplex_t *cc = (ngcomplex_t *) data;
       int i;
 
       c = alloc_c(length);
@@ -252,7 +252,7 @@ cx_sunif(void *data, short int type, int length, int *newlength, short int *newt
     *newlength = length;
     checkseed();
     if (type == VF_COMPLEX) {
-      complex *c;
+      ngcomplex_t *c;
       int i;
 
       c = alloc_c(length);
@@ -281,7 +281,7 @@ cx_sgauss(void *data, short int type, int length, int *newlength, short int *new
     *newlength = length;
     checkseed();
     if (type == VF_COMPLEX) {
-      complex *c;
+      ngcomplex_t *c;
       int i;
 
       c = alloc_c(length);
@@ -310,9 +310,9 @@ cx_sgauss(void *data, short int type, int length, int *newlength, short int *new
 void 
 *cx_avg(void *data, short int type, int length, int *newlength, short int *newtype)
 {
-    complex *c;
+    ngcomplex_t *c;
     double *d = NULL, sum_real = 0.0,sum_imag = 0.0;
-    complex *cc = (complex *) data;
+    ngcomplex_t *cc = (ngcomplex_t *) data;
     double *dd = (double *) data;
     int i;
 
@@ -368,8 +368,8 @@ cx_mean(void *data, short int type, int length, int *newlength, short int *newty
         *d /= length;
         return ((void *) d);
     } else {
-	complex *c;
-	complex *cc = (complex *) data;
+	ngcomplex_t *c;
+	ngcomplex_t *cc = (ngcomplex_t *) data;
 	int i;
 
         c = alloc_c(1);
@@ -405,7 +405,7 @@ cx_length(void *data, short int type, int length, int *newlength, short int *new
 void *
 cx_vector(void *data, short int type, int length, int *newlength, short int *newtype)
 {
-    complex *cc = (complex *) data;
+    ngcomplex_t *cc = (ngcomplex_t *) data;
     double *dd = (double *) data;
     int i, len;
     double *d;
@@ -430,7 +430,7 @@ cx_vector(void *data, short int type, int length, int *newlength, short int *new
 void *
 cx_unitvec(void *data, short int type, int length, int *newlength, short int *newtype)
 {
-    complex *cc = (complex *) data;
+    ngcomplex_t *cc = (ngcomplex_t *) data;
     double *dd = (double *) data;
     int i, len;
     double *d;
@@ -463,9 +463,9 @@ cx_plus(void *data1, void *data2, short int datatype1, short int datatype2, int 
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex *c, c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t *c, c1, c2;
     int i;
 
     if ((datatype1 == VF_REAL) && (datatype2 == VF_REAL)) {
@@ -503,9 +503,9 @@ cx_minus(void *data1, void *data2, short int datatype1, short int datatype2, int
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex *c, c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t *c, c1, c2;
     int i;
 
     if ((datatype1 == VF_REAL) && (datatype2 == VF_REAL)) {
@@ -543,9 +543,9 @@ cx_times(void *data1, void *data2, short int datatype1, short int datatype2, int
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex *c, c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t *c, c1, c2;
     int i;
 
     if ((datatype1 == VF_REAL) && (datatype2 == VF_REAL)) {
@@ -585,9 +585,9 @@ cx_mod(void *data1, void *data2, short int datatype1, short int datatype2, int l
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex *c, c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t *c, c1, c2;
     int i, r1, r2, i1, i2, r3, i3;
 
     if ((datatype1 == VF_REAL) && (datatype2 == VF_REAL)) {
@@ -660,8 +660,8 @@ cx_max(void *data, short int type, int length, int *newlength, short int *newtyp
     } else { 
       double largest_real=0.0;
       double largest_complex=0.0;
-      complex *c;
-      complex *cc = (complex *) data;
+      ngcomplex_t *c;
+      ngcomplex_t *cc = (ngcomplex_t *) data;
       int i;
       
       c = alloc_c(1);
@@ -701,8 +701,8 @@ cx_min(void *data, short int type, int length, int *newlength, short int *newtyp
     } else { 
       double smallest_real;
       double smallest_complex;
-      complex *c;
-      complex *cc = (complex *) data;
+      ngcomplex_t *c;
+      ngcomplex_t *cc = (ngcomplex_t *) data;
       int i;
       
       c = alloc_c(1);
@@ -743,8 +743,8 @@ cx_d(void *data, short int type, int length, int *newlength, short int *newtype)
       return ((void *) d);
     } else { 
 
-      complex *c;
-      complex *cc = (complex *) data;
+      ngcomplex_t *c;
+      ngcomplex_t *cc = (ngcomplex_t *) data;
       int i;
       
       c = alloc_c(length);

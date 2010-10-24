@@ -17,7 +17,7 @@
 static void
 dimxpand(struct dvec *v, int *newdims, double *data)
 {
-    complex *cdata = (complex *) data;
+    ngcomplex_t *cdata = (ngcomplex_t *) data;
     bool realflag = isreal(v);
     int i, j, o, n, t, u;
     int ncount[MAXDIMS], ocount[MAXDIMS];
@@ -112,7 +112,7 @@ com_compose(wordlist *wl)
     char *resname, *s, *var, *val;
     double *td, tt;
     double *data = NULL;
-    complex *cdata = NULL;
+    ngcomplex_t *cdata = NULL;
     int length = 0;
     int dim, type = SV_NOTYPE, blocksize;
     bool realflag = TRUE;
@@ -183,7 +183,7 @@ com_compose(wordlist *wl)
             data = (double *) tmalloc(sizeof (double) * length *
                     blocksize);
         else
-            cdata = (complex *) tmalloc(sizeof (complex) * length *
+            cdata = (ngcomplex_t *) tmalloc(sizeof(ngcomplex_t) * length *
                     blocksize);
 
         /* Now copy all the data over... If the sizes are too small

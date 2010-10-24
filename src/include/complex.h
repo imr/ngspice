@@ -16,7 +16,7 @@ struct _complex1 {   /* IBM portability... renamed due to double definition in M
 typedef struct _complex1 _complex;
 #endif
 
-typedef struct _complex1 complex;
+typedef struct _complex1 ngcomplex_t;
 
 #define realpart(cval)  ((struct _complex1 *) (cval))->cx_real
 #define imagpart(cval)  ((struct _complex1 *) (cval))->cx_imag
@@ -25,15 +25,15 @@ typedef struct _complex1 complex;
 /* From Cider numcomplex.h 
    pn:leave it here until I decide what to do about 
 struct mosAdmittances {
-    complex yIdVdb;
-    complex yIdVsb;
-    complex yIdVgb;
-    complex yIsVdb;
-    complex yIsVsb;
-    complex yIsVgb;
-    complex yIgVdb;
-    complex yIgVsb;
-    complex yIgVgb;
+    ngcomplex_t yIdVdb;
+    ngcomplex_t yIdVsb;
+    ngcomplex_t yIdVgb;
+    ngcomplex_t yIsVdb;
+    ngcomplex_t yIsVsb;
+    ngcomplex_t yIsVgb;
+    ngcomplex_t yIgVdb;
+    ngcomplex_t yIgVsb;
+    ngcomplex_t yIgVgb;
    }; 
    */
 #endif

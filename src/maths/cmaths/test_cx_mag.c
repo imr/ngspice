@@ -13,7 +13,7 @@ FILE *cp_err;
 int
 main(void)
 {
-    complex *c = NULL;
+    ngcomplex_t *c = NULL;
     double *d = NULL;
     short int t1;
     short int t2;

@@ -23,9 +23,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cmath3.h"
 
 
-static complex *cexp_sp3(complex *c); /* cexp exist's in some newer compiler */
-static complex *cln(complex *c);
-static complex *ctimes(complex *c1, complex *c2);
+static ngcomplex_t *cexp_sp3(ngcomplex_t *c); /* cexp exist's in some newer compiler */
+static ngcomplex_t *cln(ngcomplex_t *c);
+static ngcomplex_t *ctimes(ngcomplex_t *c1, ngcomplex_t *c2);
 
 void *
 cx_divide(void *data1, void *data2, short int datatype1, short int datatype2, int length)
@@ -33,9 +33,9 @@ cx_divide(void *data1, void *data2, short int datatype1, short int datatype2, in
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex *c, c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t *c, c1, c2;
     int i;
 
     if ((datatype1 == VF_REAL) && (datatype2 == VF_REAL)) {
@@ -81,9 +81,9 @@ cx_comma(void *data1, void *data2, short int datatype1, short int datatype2, int
 {
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex *c, c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t *c, c1, c2;
     int i;
 
     c = alloc_c(length);
@@ -115,9 +115,9 @@ cx_power(void *data1, void *data2, short int datatype1, short int datatype2, int
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex *c, c1, c2, *t;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t *c, c1, c2, *t;
     int i;
 
     if ((datatype1 == VF_REAL) && (datatype2 == VF_REAL)) {
@@ -167,10 +167,10 @@ cx_power(void *data1, void *data2, short int datatype1, short int datatype2, int
 
 /* These are unnecessary... Only cx_power uses them... */
 
-static complex *
-cexp_sp3(complex *c)
+static ngcomplex_t *
+cexp_sp3(ngcomplex_t *c)
 {
-    static complex r;
+    static ngcomplex_t r;
     double d;
 
     d = exp(realpart(c));
@@ -182,10 +182,10 @@ cexp_sp3(complex *c)
     return (&r);
 }
 
-static complex *
-cln(complex *c)
+static ngcomplex_t *
+cln(ngcomplex_t *c)
 {
-    static complex r;
+    static ngcomplex_t r;
 
     rcheck(cmag(c) != 0, "ln");
     realpart(&r) = log(cmag(c));
@@ -196,10 +196,10 @@ cln(complex *c)
     return (&r);
 }
 
-static complex *
-ctimes(complex *c1, complex *c2)
+static ngcomplex_t *
+ctimes(ngcomplex_t *c1, ngcomplex_t *c2)
 {
-    static complex r;
+    static ngcomplex_t r;
 
     realpart(&r) = realpart(c1) * realpart(c2) - 
                imagpart(c1) * imagpart(c2);
@@ -221,9 +221,9 @@ cx_eq(void *data1, void *data2, short int datatype1, short int datatype2, int le
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t c1, c2;
     int i;
 
     d = alloc_d(length);
@@ -262,9 +262,9 @@ cx_gt(void *data1, void *data2, short int datatype1, short int datatype2, int le
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t c1, c2;
     int i;
 
     d = alloc_d(length);
@@ -303,9 +303,9 @@ cx_lt(void *data1, void *data2, short int datatype1, short int datatype2, int le
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t c1, c2;
     int i;
 
     d = alloc_d(length);
@@ -344,9 +344,9 @@ cx_ge(void *data1, void *data2, short int datatype1, short int datatype2, int le
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t c1, c2;
     int i;
 
     d = alloc_d(length);
@@ -385,9 +385,9 @@ cx_le(void *data1, void *data2, short int datatype1, short int datatype2, int le
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t c1, c2;
     int i;
 
     d = alloc_d(length);
@@ -426,9 +426,9 @@ cx_ne(void *data1, void *data2, short int datatype1, short int datatype2, int le
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t c1, c2;
     int i;
 
     d = alloc_d(length);

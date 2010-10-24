@@ -156,7 +156,7 @@ doop(char what,
      struct pnode *arg2)
 {
     struct dvec *v1, *v2, *res;
-    complex *c1 = NULL, *c2 = NULL , lc;
+    ngcomplex_t *c1 = NULL, *c2 = NULL , lc;
     double *d1 = NULL, *d2 = NULL, ld;
     int length = 0, i;
     void *data;
@@ -234,7 +234,7 @@ doop(char what,
         } else {
             realpart(&lc) = 0.0;
             imagpart(&lc) = 0.0;
-            c1 = (complex *) tmalloc(length * sizeof (complex));
+            c1 = (ngcomplex_t *) tmalloc(length * sizeof(ngcomplex_t));
             for (i = 0; i < v1->v_length; i++)
                 c1[i] = v1->v_compdata[i];
             if (i > 0)
@@ -261,7 +261,7 @@ doop(char what,
         } else {
             realpart(&lc) = 0.0;
             imagpart(&lc) = 0.0;
-            c2 = (complex *) tmalloc(length * sizeof (complex));
+            c2 = (ngcomplex_t *) tmalloc(length * sizeof(ngcomplex_t));
             for (i = 0; i < v2->v_length; i++)
                 c2[i] = v2->v_compdata[i];
             if (i > 0)
@@ -304,7 +304,7 @@ doop(char what,
     } else {
         res->v_flags = (v1->v_flags | v2->v_flags |
                         VF_COMPLEX) & ~ VF_REAL;
-        res->v_compdata = (complex *) data;
+        res->v_compdata = (ngcomplex_t *) data;
     }
 
     res->v_name = mkcname(what, v1->v_name, v2->v_name);
@@ -603,7 +603,7 @@ op_range(struct pnode *arg1, struct pnode *arg2)
     if (isreal(res))
         res->v_realdata = (double *) tmalloc(sizeof (double) * len);
     else
-        res->v_compdata = (complex *) tmalloc(sizeof (complex) * len);
+        res->v_compdata = (ngcomplex_t *) tmalloc(sizeof(ngcomplex_t) * len);
 
     /* Toss in the data */
 
@@ -754,7 +754,7 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
     if (isreal(res))
         res->v_realdata = (double *) tmalloc(sizeof (double) * length);
     else
-        res->v_compdata = (complex *) tmalloc(sizeof (complex) * length);
+        res->v_compdata = (ngcomplex_t *) tmalloc(sizeof(ngcomplex_t) * length);
 
     /* And toss in the new data */
     for (j = 0; j < up - down + 1; j++) {
@@ -880,7 +880,7 @@ apply_func(struct func *func, struct pnode *arg)
 	if (isreal(t))
 	    t->v_realdata = (double *) data;
 	else
-	    t->v_compdata = (complex *) data;
+	    t->v_compdata = (ngcomplex_t *) data;
 	if (eq(func->fu_name, "minus"))
 	    t->v_name = mkcname('a', func->fu_name, v->v_name);
 	else if (eq(func->fu_name, "not"))

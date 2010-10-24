@@ -571,8 +571,8 @@ raw_read(char *name)
                     v->v_realdata = (double *) tmalloc(
                         npoints * sizeof (double));
                 else
-                    v->v_compdata = (complex *) tmalloc(
-                        npoints * sizeof (complex));
+                    v->v_compdata = (ngcomplex_t *) tmalloc(
+                        npoints * sizeof(ngcomplex_t));
             }
         } else if (ciprefix("values:", buf) || 
                 ciprefix("binary:", buf)) {

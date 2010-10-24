@@ -23,7 +23,7 @@ static void fftext(double*, double*, long int, long int, int);
 void
 com_fft(wordlist *wl)
 {
-    complex **fdvec;
+    ngcomplex_t **fdvec;
     double  **tdvec;
     double  *freq, *win, *time;
     double  delta_t, span;
@@ -202,10 +202,10 @@ com_fft(wordlist *wl)
 
 
     tdvec = (double  **) tmalloc(ngood * sizeof(double  *));
-    fdvec = (complex **) tmalloc(ngood * sizeof(complex *));
+    fdvec = (ngcomplex_t **) tmalloc(ngood * sizeof(ngcomplex_t *));
     for (i = 0, vec = vlist; i<ngood; i++) {
        tdvec[i] = vec->v_realdata; /* real input data */
-       fdvec[i] = (complex *) tmalloc(fpts * sizeof(complex)); /* complex output data */
+       fdvec[i] = (ngcomplex_t *) tmalloc(fpts * sizeof(ngcomplex_t)); /* complex output data */
        f = alloc(struct dvec);
        ZERO(f, struct dvec);
        f->v_name = vec_basename(vec);

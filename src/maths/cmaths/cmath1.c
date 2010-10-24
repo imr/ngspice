@@ -39,7 +39,7 @@ cx_mag(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     double *d = alloc_d(length);
     double *dd = (double *) data;
-    complex *cc = (complex *) data;
+    ngcomplex_t *cc = (ngcomplex_t *) data;
     int i;
 
     *newlength = length;
@@ -57,7 +57,7 @@ void *
 cx_ph(void *data, short int type, int length, int *newlength, short int *newtype)
 {
     double *d = alloc_d(length);
-    complex *cc = (complex *) data;
+    ngcomplex_t *cc = (ngcomplex_t *) data;
     int i;
 
     *newlength = length;
@@ -75,8 +75,8 @@ cx_ph(void *data, short int type, int length, int *newlength, short int *newtype
 void *
 cx_j(void *data, short int type, int length, int *newlength, short int *newtype)
 {
-    complex *c = alloc_c(length);
-    complex *cc = (complex *) data;
+    ngcomplex_t *c = alloc_c(length);
+    ngcomplex_t *cc = (ngcomplex_t *) data;
     double *dd = (double *) data;
     int i;
 
@@ -100,7 +100,7 @@ cx_real(void *data, short int type, int length, int *newlength, short int *newty
 {
     double *d = alloc_d(length);
     double *dd = (double *) data;
-    complex *cc = (complex *) data;
+    ngcomplex_t *cc = (ngcomplex_t *) data;
     int i;
 
     *newlength = length;
@@ -119,7 +119,7 @@ cx_imag(void *data, short int type, int length, int *newlength, short int *newty
 {
     double *d = alloc_d(length);
     double *dd = (double *) data;
-    complex *cc = (complex *) data;
+    ngcomplex_t *cc = (ngcomplex_t *) data;
     int i;
 
     *newlength = length;
@@ -140,7 +140,7 @@ cx_pos(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     double *d = alloc_d(length);
     double *dd = (double *) data;
-    complex *cc = (complex *) data;
+    ngcomplex_t *cc = (ngcomplex_t *) data;
     int i;
 
     *newlength = length;
@@ -159,7 +159,7 @@ cx_db(void *data, short int type, int length, int *newlength, short int *newtype
 {
     double *d = alloc_d(length);
     double *dd = (double *) data;
-    complex *cc = (complex *) data;
+    ngcomplex_t *cc = (ngcomplex_t *) data;
     double tt;
     int i;
 
@@ -194,8 +194,8 @@ cx_log(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
-	complex *c;
-	complex *cc = (complex *) data;
+	ngcomplex_t *c;
+	ngcomplex_t *cc = (ngcomplex_t *) data;
 	int i;
 
         c = alloc_c(length);
@@ -241,8 +241,8 @@ cx_ln(void *data, short int type, int length, int *newlength, short int *newtype
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
-	complex *c;
-	complex *cc = (complex *) data;
+	ngcomplex_t *c;
+	ngcomplex_t *cc = (ngcomplex_t *) data;
 	int i;
 
         c = alloc_c(length);
@@ -285,8 +285,8 @@ cx_exp(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
-	complex *c;
-	complex *cc = (complex *) data;
+	ngcomplex_t *c;
+	ngcomplex_t *cc = (ngcomplex_t *) data;
 	int i;
 
         c = alloc_c(length);
@@ -316,9 +316,9 @@ void *
 cx_sqrt(void *data, short int type, int length, int *newlength, short int *newtype)
 {
     double *d = NULL;
-    complex *c = NULL;
+    ngcomplex_t *c = NULL;
     double *dd = (double *) data;
-    complex *cc = (complex *) data;
+    ngcomplex_t *cc = (ngcomplex_t *) data;
     int i, cres = (type == VF_REAL) ? 0 : 1;
 
     if (type == VF_REAL)
@@ -401,8 +401,8 @@ cx_sin(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
-	complex *c;
-	complex *cc = (complex *) data;
+	ngcomplex_t *c;
+	ngcomplex_t *cc = (ngcomplex_t *) data;
 	int i;
 
         c = alloc_c(length);
@@ -432,8 +432,8 @@ cx_cos(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
-	complex *c;
-	complex *cc = (complex *) data;
+	ngcomplex_t *c;
+	ngcomplex_t *cc = (ngcomplex_t *) data;
 	int i;
 
         c = alloc_c(length);

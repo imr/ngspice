@@ -13,8 +13,8 @@ FILE *cp_err;
 int
 main(void)
 {
-    complex *c = NULL;
-    complex *d = NULL;
+    ngcomplex_t *c = NULL;
+    ngcomplex_t *d = NULL;
     short int t1;
     short int t2;
     int n1;
@@ -26,7 +26,7 @@ main(void)
     c = alloc_c(n1);
     realpart(&c[0]) = .0;
     imagpart(&c[0]) = 1.0;
-    d = (complex *) cx_j((void *) c, t1, n1, &n2, &t2);
+    d = (ngcomplex_t *) cx_j((void *) c, t1, n1, &n2, &t2);
     if (realpart(&d[0]) == -1 && imagpart(&d[0]) == 0)
 	return 0;
     else

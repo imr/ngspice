@@ -22,7 +22,7 @@ $Id$
 void
 com_spec(wordlist *wl)
 {
-    complex **fdvec;
+    ngcomplex_t **fdvec;
     double  **tdvec;
     double  *freq, *win, *time, *dc;
     double  startf, stopf, stepf, span;
@@ -214,10 +214,10 @@ com_spec(wordlist *wl)
     vec_new(f);
 
     tdvec = (double  **) tmalloc(ngood * sizeof(double  *));
-    fdvec = (complex **) tmalloc(ngood * sizeof(complex *));
+    fdvec = (ngcomplex_t **) tmalloc(ngood * sizeof(ngcomplex_t *));
     for (i = 0, vec = vlist; i<ngood; i++) {
        tdvec[i] = vec->v_realdata;
-       fdvec[i] = (complex *) tmalloc(fpts * sizeof(complex));
+       fdvec[i] = (ngcomplex_t *) tmalloc(fpts * sizeof(ngcomplex_t));
        f = alloc(struct dvec);
        ZERO(f, struct dvec);
        f->v_name = vec_basename(vec);

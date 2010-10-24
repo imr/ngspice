@@ -1,3 +1,30 @@
+2010-10-24  Robert Larice
+ * src/frontend/com_compose.c ,
+ * src/frontend/com_fft.c ,
+ * src/frontend/com_let.c ,
+ * src/frontend/define.c ,
+ * src/frontend/diff.c ,
+ * src/frontend/evaluate.c ,
+ * src/frontend/outitf.c ,
+ * src/frontend/plotting/plotit.c ,
+ * src/frontend/postcoms.c ,
+ * src/frontend/rawfile.c ,
+ * src/frontend/spec.c ,
+ * src/frontend/vectors.c ,
+ * src/include/complex.h ,
+ * src/include/dvec.h ,
+ * src/maths/cmaths/cmath.h ,
+ * src/maths/cmaths/cmath1.c ,
+ * src/maths/cmaths/cmath2.c ,
+ * src/maths/cmaths/cmath3.c ,
+ * src/maths/cmaths/cmath4.c ,
+ * src/maths/cmaths/test_cx_j.c ,
+ * src/maths/cmaths/test_cx_mag.c ,
+ * src/maths/cmaths/test_cx_ph.c ,
+ * src/ngsconvert.c :
+  ngcomplex_t instead of complex, #1/2
+    purpose: avoid name collision
+
 2010-10-17  Holger Vogt
  * main.c: add mktemp.h
 

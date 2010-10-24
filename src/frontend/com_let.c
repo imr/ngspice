@@ -168,7 +168,7 @@ com_let(wordlist *wl)
 	if (isreal(t))
 	    n->v_realdata = (double *) tmalloc(n->v_length * sizeof(double));
 	else
-	    n->v_compdata = (complex *) tmalloc(n->v_length * sizeof(complex));
+	    n->v_compdata = (ngcomplex_t *) tmalloc(n->v_length * sizeof(ngcomplex_t));
 	newvec = 1;
 	vec_new(n);
     }
@@ -216,7 +216,7 @@ com_let(wordlist *wl)
 		length * sizeof (double));
     } else {
 	bcopy(t->v_compdata, n->v_compdata + offset,
-		length * sizeof (complex));
+		length * sizeof(ngcomplex_t));
     }
 
     n->v_minsignal = 0.0; /* How do these get reset ??? */

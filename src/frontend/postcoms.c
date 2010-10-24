@@ -745,7 +745,7 @@ com_cross(wordlist *wl)
     v->v_flags |= VF_PERMANENT;
     v->v_flags = comp ? VF_COMPLEX : VF_REAL;
     if (comp)
-        v->v_compdata = (complex *) tmalloc(i * sizeof (complex));
+        v->v_compdata = (ngcomplex_t *) tmalloc(i * sizeof(ngcomplex_t));
     else
         v->v_realdata = (double *) tmalloc(i * sizeof (double));
     

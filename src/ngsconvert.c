@@ -179,7 +179,7 @@ oldread(char *name)
             v->v_realdata = (double *) tmalloc(sizeof (double)
                     * np);
         } else {
-            v->v_compdata = (complex *) tmalloc(sizeof (complex)
+            v->v_compdata = (ngcomplex_t *) tmalloc(sizeof(ngcomplex_t)
                     * np);
         }
     }

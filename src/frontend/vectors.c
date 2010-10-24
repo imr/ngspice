@@ -650,10 +650,10 @@ vec_copy(struct dvec *v)
         nv->v_compdata = NULL;
     } else {
         nv->v_realdata = NULL;
-        nv->v_compdata = (complex *) tmalloc(sizeof (complex) *
+        nv->v_compdata = (ngcomplex_t *) tmalloc(sizeof(ngcomplex_t) *
                 v->v_length);
         bcopy(v->v_compdata, nv->v_compdata, 
-                sizeof (complex) * v->v_length);
+                sizeof(ngcomplex_t) * v->v_length);
     }
 
     nv->v_minsignal = v->v_minsignal;
@@ -952,7 +952,7 @@ vec_transpose(struct dvec *v)
     int dim0, dim1, nummatrices;
     int i, j, k, joffset, koffset, blocksize;
     double *newreal, *oldreal;
-    complex *newcomp, *oldcomp;
+    ngcomplex_t *newcomp, *oldcomp;
 
     if (v->v_numdims < 2 || v->v_length <= 1)
         return;
@@ -996,7 +996,7 @@ vec_transpose(struct dvec *v)
 	tfree(oldreal);
 	v->v_realdata = newreal;
     } else {
-	newcomp = (complex *) tmalloc(sizeof (complex) * v->v_length);
+	newcomp = (ngcomplex_t *) tmalloc(sizeof(ngcomplex_t) * v->v_length);
 	oldcomp = v->v_compdata;
 	koffset = 0;
 	for ( k=0; k < nummatrices; k++ ) {
@@ -1067,8 +1067,8 @@ vec_mkfamily(struct dvec *v)
             d->v_realdata = (double *) tmalloc(size * sizeof(double));
             bcopy(v->v_realdata + size*j, d->v_realdata, size*sizeof(double));
         } else {
-            d->v_compdata = (complex *) tmalloc(size * sizeof(complex));
-            bcopy(v->v_compdata + size*j, d->v_compdata, size*sizeof(complex));
+            d->v_compdata = (ngcomplex_t *) tmalloc(size * sizeof(ngcomplex_t));
+            bcopy(v->v_compdata + size*j, d->v_compdata, size*sizeof(ngcomplex_t));
         }
 	/* Add one to the counter. */
 	(void) incindex(count, v->v_numdims - 1, v->v_dims, v->v_numdims);

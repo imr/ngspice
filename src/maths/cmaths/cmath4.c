@@ -38,9 +38,9 @@ cx_and(void *data1, void *data2, short int datatype1, short int datatype2, int l
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t c1, c2;
     int i;
 
     d = alloc_d(length);
@@ -76,9 +76,9 @@ cx_or(void *data1, void *data2, short int datatype1, short int datatype2, int le
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
     double *d;
-    complex *cc1 = (complex *) data1;
-    complex *cc2 = (complex *) data2;
-    complex c1, c2;
+    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+    ngcomplex_t c1, c2;
     int i;
 
     d = alloc_d(length);
@@ -113,7 +113,7 @@ cx_not(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     double *d;
     double *dd = (double *) data;
-    complex *cc = (complex *) data;
+    ngcomplex_t *cc = (ngcomplex_t *) data;
     int i;
 
     d = alloc_d(length);
@@ -253,13 +253,13 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
     *newtype = type;
 
     if (type == VF_COMPLEX) {
-	complex *c_outdata, *c_indata;
+	ngcomplex_t *c_outdata, *c_indata;
 	double *r_coefs, *i_coefs;
 	double *scale;
 
 	r_coefs = alloc_d(n);
 	i_coefs = alloc_d(n);
-	c_indata = (complex *) data;
+	c_indata = (ngcomplex_t *) data;
 	c_outdata = alloc_c(length);
 	scale = alloc_d(length);	/* XXX */
 	if (pl->pl_scale->v_type == VF_COMPLEX)
@@ -423,7 +423,7 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
 void *
 cx_group_delay(void *data, short int type, int length, int *newlength, short int *newtype, struct plot *pl, struct plot *newpl, int grouping)
 {
-    complex *cc = (complex *) data;
+    ngcomplex_t *cc = (ngcomplex_t *) data;
     double *v_phase = alloc_d(length);
     double *datos,adjust_final;
     double *group_delay = alloc_d(length);
