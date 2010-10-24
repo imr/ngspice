@@ -503,13 +503,13 @@ static int vectoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
       Tcl_AppendResult(interp, (char *)var, TCL_STATIC);
     }
     else{
-      realData = (double *)tmalloc((unsigned) sizeof(double)*(var_dvec->v_length));
+      realData = (double *)tmalloc(sizeof(double)*(var_dvec->v_length));
       for (compIndex=0; compIndex<var_dvec->v_length; compIndex++){
          realData[compIndex] = ((var_dvec->v_compdata+compIndex)->cx_real);
       }
       Blt_ResetVector(real_BltVector, realData, var_dvec->v_length, var_dvec->v_length, TCL_VOLATILE);
       if (imag_BltVector != NULL) {
-        compData = (double *)tmalloc((unsigned) sizeof(double)*(var_dvec->v_length));
+        compData = (double *)tmalloc(sizeof(double)*(var_dvec->v_length));
         for (compIndex=0; compIndex<var_dvec->v_length; compIndex++){
           compData[compIndex] = ((var_dvec->v_compdata+compIndex)->cx_imag);
         }
@@ -520,7 +520,7 @@ static int vectoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   {
     Blt_ResetVector(real_BltVector, var_dvec->v_realdata, var_dvec->v_length, var_dvec->v_length, TCL_VOLATILE);
     if (imag_BltVector != NULL) {
-        compData = (double *)tmalloc((unsigned) sizeof(double)*(var_dvec->v_length));
+        compData = (double *)tmalloc(sizeof(double)*(var_dvec->v_length));
         for (compIndex=0; compIndex<var_dvec->v_length; compIndex++){
           compData[compIndex] = 0;
         }

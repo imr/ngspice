@@ -57,7 +57,7 @@ main (int argc, char **argv)
 
       switch (ch) {
       case 'o':
-	name = (char *) tmalloc((unsigned) (strlen(optarg)*sizeof(char)));
+	name = (char *) tmalloc(strlen(optarg)*sizeof(char));
 	(void) strcpy(name,optarg);
 	gotname=1;
 	use_opt = 1;
@@ -158,13 +158,13 @@ main (int argc, char **argv)
 
   comments(r,l,g,c,ctot,cm,lm,k,name,num,len);
 
-  matrix = (double **) tmalloc((unsigned) (sizeof(double*)*(num+1)));
-  inverse = (double **) tmalloc((unsigned) (sizeof(double*)*(num+1)));
-  tpeigenvalues = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
+  matrix = (double **) tmalloc(sizeof(double*)*(num+1));
+  inverse = (double **) tmalloc(sizeof(double*)*(num+1));
+  tpeigenvalues = (double *) tmalloc(sizeof(double)*(num+1));
 
   for (i=1;i<=num;i++) {
-    matrix[i] = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
-    inverse[i] = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
+    matrix[i] = (double *) tmalloc(sizeof(double)*(num+1));
+    inverse[i] = (double *) tmalloc(sizeof(double)*(num+1));
   }
 
   for (i=1;i<=num;i++) {
@@ -176,7 +176,7 @@ main (int argc, char **argv)
       matrix[i][j] = phi(i-1,tpeigenvalues[j]);
     }
   }
-  gammaj = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
+  gammaj = (double *) tmalloc(sizeof(double)*(num+1));
 
   for (j=1;j<=num;j++) {
     gammaj[j] = 0.0;
@@ -203,10 +203,10 @@ main (int argc, char **argv)
     int errflg, err, singular_row, singular_col;
     double *elptr;
 
-    rhs = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
-    irhs = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
-    solution = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
-    isolution = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
+    rhs = (double *) tmalloc(sizeof(double)*(num+1));
+    irhs = (double *) tmalloc(sizeof(double)*(num+1));
+    solution = (double *) tmalloc(sizeof(double)*(num+1));
+    isolution = (double *) tmalloc(sizeof(double)*(num+1));
 
     othermatrix = spCreate(num,0,&errflg);
 
@@ -264,7 +264,7 @@ main (int argc, char **argv)
   fprintf(stdout,"\n");
   fprintf(stdout,"* Lossy line models\n");
 
-  options = (char *) tmalloc((unsigned) 256);
+  options = (char *) tmalloc(256);
   (void) strcpy(options,"rel=1.2 nocontrol");
   for (i=1;i<=num;i++) {
     fprintf(stdout,".model mod%d_%s ltra %s r=%0.12g l=%0.12g g=%0.12g c=%0.12g len=%0.12g\n",
