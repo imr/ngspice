@@ -1360,8 +1360,8 @@ LTRAlteCalculate(CKTcircuit *ckt, GENmodel *genmodel, GENinstance *geninstance, 
  * 
  * { double *dtime, *diffs, returnval; int i,j;
  * 
- * diffs = (double *) MALLOC(sizeof(double) * (timeindex+2)); dtime = (double *)
- * MALLOC(sizeof(double) * (timeindex+2));
+ * diffs = (double *) MALLOC(sizeof(double) * (timeindex+2));
+ * dtime = (double *) MALLOC(sizeof(double) * (timeindex+2));
  */
 
 /* now divided differences */
@@ -1405,9 +1405,8 @@ LTRAlteCalculate(CKTcircuit *ckt, GENmodel *genmodel, GENinstance *geninstance, 
  * 
  * h1dashTcoeffs = (double *) MALLOC(sizeof(double) * model->LTRAmodelListSize);
  * h2Tcoeffs = (double *) MALLOC(sizeof(double) * model->LTRAmodelListSize);
- * h3dashTcoeffs = (double *) MALLOC(sizeof(double) *
- * model->LTRAmodelListSize); SecondDerivs = (double *) MALLOC(sizeof(double) *
- * model->LTRAmodelListSize);
+ * h3dashTcoeffs = (double *) MALLOC(sizeof(double) * model->LTRAmodelListSize);
+ * SecondDerivs = (double *) MALLOC(sizeof(double) * model->LTRAmodelListSize);
  * 
  */
 

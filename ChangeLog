@@ -1,4 +1,8 @@
 2010-10-24  Robert Larice
+ * src/spicelib/devices/ltra/ltramisc.c :
+  MALLOC usage unification, (in comments)
+
+2010-10-24  Robert Larice
  * src/frontend/com_compose.c ,
  * src/frontend/plotting/plotcurv.c ,
  * src/maths/poly/interpolate.c :
