@@ -7,19 +7,15 @@
 
 
 /* Complex numbers. */
-struct _complex1 {   /* IBM portability... renamed due to double definition in MINGW32*/
+struct ngcomplex {
     double cx_real;
     double cx_imag;
 } ;
 
-#ifdef _MSC_VER
-typedef struct _complex1 _complex;
-#endif
+typedef struct ngcomplex ngcomplex_t;
 
-typedef struct _complex1 ngcomplex_t;
-
-#define realpart(cval)  ((struct _complex1 *) (cval))->cx_real
-#define imagpart(cval)  ((struct _complex1 *) (cval))->cx_imag
+#define realpart(cval)  ((struct ngcomplex *) (cval))->cx_real
+#define imagpart(cval)  ((struct ngcomplex *) (cval))->cx_imag
 
 #ifdef CIDER
 /* From Cider numcomplex.h 
