@@ -786,7 +786,9 @@ bxx_extend(struct bxx_buffer *t, int howmuch)
     howmuch +=  (bxx_chunksize - 1);
     howmuch &= ~(bxx_chunksize - 1);
 
-    t->buffer = (char*) trealloc(t->buffer, len += howmuch);
+    len += howmuch;
+
+    t->buffer = (char*) trealloc(t->buffer, len*sizeof(char));
 
     t->dst   = t->buffer + pos;
     t->limit = t->buffer + len;

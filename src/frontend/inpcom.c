@@ -139,7 +139,7 @@ readline(FILE *fd)
       strlen++;
       if( strlen >= memlen ) {
          memlen += STRGROW;
-         if( !(strptr = (char*) trealloc(strptr, memlen + 1))) {
+         if( !(strptr = (char*) trealloc(strptr, (memlen + 1)*sizeof(char)))) {
             return (NULL);
          }
       }
@@ -153,7 +153,7 @@ readline(FILE *fd)
    }
 //   strptr[strlen] = '\0'; 
    /* Trim the string */
-   strptr = (char*) trealloc(strptr, strlen + 1);
+   strptr = (char*) trealloc(strptr, (strlen + 1)*sizeof(char));
    strptr[strlen] = '\0'; 
    return (strptr);
 }

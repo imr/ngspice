@@ -1,4 +1,9 @@
 2010-10-24  Robert Larice
+ * src/frontend/inpcom.c ,
+ * src/frontend/subckt.c :
+  trealloc usage unification
+
+2010-10-24  Robert Larice
  * src/spicelib/devices/ltra/ltramisc.c :
   MALLOC usage unification, (in comments)
 
