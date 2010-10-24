@@ -72,7 +72,7 @@ if((here->ptr = SMPmakeElt(matrix, here->first, (second)->number))\
                 }
 
             	here->ASRCposptr = (double **)
-            	  REALLOC(here->ASRCposptr, (sizeof(double *)*(j+5)));
+            	  REALLOC(here->ASRCposptr, sizeof(double *)*(j+5));
             	TSTALLOC(ASRCposptr[j++],ASRCposNode,ASRCbranch);
             	TSTALLOC(ASRCposptr[j++],ASRCnegNode,ASRCbranch);
             	TSTALLOC(ASRCposptr[j++],ASRCbranch,ASRCnegNode);
@@ -99,13 +99,13 @@ if((here->ptr = SMPmakeElt(matrix, here->first, (second)->number))\
                             v_first = 0;
                         } else{
                             here->ASRCposptr = (double **)
-                            REALLOC(here->ASRCposptr, (sizeof(double *)*(j+1)));
+                            REALLOC(here->ASRCposptr, sizeof(double *)*(j+1));
                             TSTALLOC(ASRCposptr[j++],ASRCbranch,ASRCcont_br);
                         }
                     } else if(here->ASRCtype == ASRC_CURRENT){
                         /* CCCS */
             here->ASRCposptr = (double **)
-            REALLOC(here->ASRCposptr, (sizeof(double *) * (j+2)));
+            REALLOC(here->ASRCposptr, sizeof(double *) * (j+2));
             TSTALLOC(ASRCposptr[j++],ASRCposNode,ASRCcont_br);
             TSTALLOC(ASRCposptr[j++],ASRCnegNode,ASRCcont_br);
                     } else{
@@ -120,13 +120,13 @@ if((here->ptr = SMPmakeElt(matrix, here->first, (second)->number))\
                             v_first = 0;
                         } else{
                             here->ASRCposptr = (double **)
-                        REALLOC(here->ASRCposptr, (sizeof(double *) * (j+1)));
+                        REALLOC(here->ASRCposptr, sizeof(double *) * (j+1));
         MY_TSTALLOC(ASRCposptr[j++],ASRCbranch,here->ASRCtree->vars[i].nValue);
                         }
                     } else if(here->ASRCtype == ASRC_CURRENT){
                         /* VCCS */
                         here->ASRCposptr = (double **)
-                    REALLOC(here->ASRCposptr, (sizeof(double *) * (j+2)));
+                    REALLOC(here->ASRCposptr, sizeof(double *) * (j+2));
         MY_TSTALLOC(ASRCposptr[j++],ASRCposNode,here->ASRCtree->vars[i].nValue);
         MY_TSTALLOC(ASRCposptr[j++],ASRCnegNode,here->ASRCtree->vars[i].nValue);
                     } else{

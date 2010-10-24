@@ -1,4 +1,9 @@
 2010-10-24  Robert Larice
+ * src/spicelib/devices/asrc/asrcset.c ,
+ * src/xspice/mif/mif_inp2.c :
+  RALLOC usage unification, drop braces around the second argument
+
+2010-10-24  Robert Larice
  * src/spicelib/devices/ndev/ndevset.c :
   use char* instead of void*
 

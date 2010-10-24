@@ -775,7 +775,7 @@ MIFget_port(
     else {
         fast->conn[conn_num]->port = (Mif_Port_Data_t **) REALLOC(
                fast->conn[conn_num]->port,
-               ((port_num + 1) * sizeof(Mif_Port_Data_t *)) );
+               (port_num + 1) * sizeof(Mif_Port_Data_t *) );
         fast->conn[conn_num]->port[port_num] = (Mif_Port_Data_t *) tmalloc(sizeof(Mif_Port_Data_t));
     }
 
