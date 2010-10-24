@@ -144,7 +144,7 @@ wl_mkvec(wordlist *wl)
     char **v;
 
     len = wl_length(wl);
-    v = (char **) tmalloc((len + 1) * sizeof (char **));
+    v = (char **) tmalloc((len + 1) * sizeof (char *));
     for (i = 0; i < len; i++) {
         v[i] = copy(wl->wl_word);
         wl = wl->wl_next;

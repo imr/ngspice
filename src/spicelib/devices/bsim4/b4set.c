@@ -2408,7 +2408,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
             InstCount++;
         }
     }
-    InstArray = (BSIM4instance**)tmalloc(InstCount*sizeof(BSIM4instance**));
+    InstArray = (BSIM4instance**)tmalloc(InstCount*sizeof(BSIM4instance*));
     model = (BSIM4model*)inModel;
     idx = 0;
     for( ; model != NULL; model = model->BSIM4nextModel )

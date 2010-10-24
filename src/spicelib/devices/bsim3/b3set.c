@@ -1033,7 +1033,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
             InstCount++;
         }
     }
-    InstArray = (BSIM3instance**)tmalloc(InstCount*sizeof(BSIM3instance**));
+    InstArray = (BSIM3instance**)tmalloc(InstCount*sizeof(BSIM3instance*));
     model = (BSIM3model*)inModel;
     idx = 0;
     for( ; model != NULL; model = model->BSIM3nextModel )

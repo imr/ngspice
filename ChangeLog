@@ -1,4 +1,11 @@
 2010-10-24  Robert Larice
+ * src/misc/wlist.c ,
+ * src/spicelib/devices/bsim3/b3set.c ,
+ * src/spicelib/devices/bsim3soi/b4soiset.c ,
+ * src/spicelib/devices/bsim4/b4set.c :
+  fix incorrect usage of tmalloc/sizeof, incorrect indirection level
+
+2010-10-24  Robert Larice
  * src/frontend/com_ahelp.c ,
  * src/frontend/com_display.c ,
  * src/frontend/com_help.c ,
