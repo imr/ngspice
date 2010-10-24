@@ -198,7 +198,7 @@ sortvecs(struct dvec *d)
     for (t = d, i = 0; t; t = t->v_link2)
         array[i++] = t;
     
-    qsort((char *) array, i, sizeof (struct dvec *), veccmp);
+    qsort(array, i, sizeof (struct dvec *), veccmp);
 
     /* Now string everything back together... */
     for (j = 0; j < i - 1; j++)

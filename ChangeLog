@@ -1,4 +1,14 @@
 2010-10-24  Robert Larice
+ * src/frontend/com_ahelp.c ,
+ * src/frontend/com_display.c ,
+ * src/frontend/com_help.c ,
+ * src/frontend/help/readhelp.c ,
+ * src/frontend/variable.c ,
+ * src/frontend/vectors.c ,
+ * src/misc/wlist.c :
+  qsort() usage, drop cast of the first argument (which is a void *)
+
+2010-10-24  Robert Larice
  * src/maths/sparse/spalloc.c ,
  * src/maths/sparse/spbuild.c ,
  * src/maths/sparse/spdefs.h ,

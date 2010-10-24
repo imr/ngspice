@@ -51,7 +51,7 @@ sortlist(toplink **tlp)
     vec = (toplink **) tmalloc(sizeof (toplink *) * num);
     for (tl = *tlp, i = 0; tl; tl = tl->next, i++)
         vec[i] = tl;
-    (void) qsort((char *) vec, num, sizeof (toplink *), sortcmp);
+    (void) qsort(vec, num, sizeof (toplink *), sortcmp);
     *tlp = vec[0];
     for (i = 0; i < num - 1; i++)
         vec[i]->next = vec[i + 1];

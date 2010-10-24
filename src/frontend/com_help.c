@@ -42,7 +42,7 @@ com_help(wordlist *wl)
         /* Sort the commands */
         for (numcoms = 0; cp_coms[numcoms].co_func != NULL; numcoms++)
             ccc[numcoms] = &cp_coms[numcoms];
-        qsort((char *) ccc, numcoms, sizeof (struct comm *), hcomp);
+        qsort(ccc, numcoms, sizeof (struct comm *), hcomp);
 
         for (i = 0; i < numcoms; i++) {
             if ((ccc[i]->co_spiceonly && ft_nutmeg) || 

@@ -248,7 +248,7 @@ wl_sort(wordlist *wl)
     stuff = (char **) tmalloc(i * sizeof (char *));
     for (i = 0, ww = wl; ww; i++, ww = ww->wl_next)
         stuff[i] = ww->wl_word;
-    qsort((char *) stuff, i, sizeof (char *), wlcomp);
+    qsort(stuff, i, sizeof (char *), wlcomp);
     for (i = 0, ww = wl; ww; i++, ww = ww->wl_next)
         ww->wl_word = stuff[i];
     tfree(stuff);
