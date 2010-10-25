@@ -269,95 +269,107 @@ create_new_card( char *card_str, int *line_number ) {
 
 static void
 inp_chk_for_multi_in_vcvs( struct line *deck, int *line_number ) {
-  struct line *c, *a_card, *model_card, *next_card;
-  char *line, *bool_ptr, *str_ptr1, *str_ptr2, keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
-  char *node_str, *ctrl_node_str, *xy_str1, *model_name, *fcn_name;
-  char big_buf[1000];
-  int  xy_count1 = 0, xy_count2 = 0;
+    struct line *c, *a_card, *model_card, *next_card;
+    char *line, *bool_ptr, *str_ptr1, *str_ptr2, keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
+    char *node_str, *ctrl_node_str, *xy_str1, *model_name, *fcn_name;
+    char big_buf[1000];
+    int  xy_count1 = 0, xy_count2 = 0;
 
-  for ( c = deck; c != NULL; c = c->li_next ) {
-    str_ptr1 = line = c->li_line;
-    if ( *line == 'e' ) {
-      if ( (bool_ptr = strstr( line, "nand(" )) ||
-	   (bool_ptr = strstr( line, "and("  )) ||
-	   (bool_ptr = strstr( line, "nor("  )) ||
-	   (bool_ptr = strstr( line, "or("   )) ) {
-	while ( !isspace(*str_ptr1) ) str_ptr1++;
-	keep       = *str_ptr1;	*str_ptr1  = '\0';
-	model_name = strdup(line); *str_ptr1  = keep;
+    for ( c = deck; c != NULL; c = c->li_next ) {
+        str_ptr1 = line = c->li_line;
+        if ( *line == 'e' ) {
+            if ( (bool_ptr = strstr( line, "nand(" )) ||
+              (bool_ptr = strstr( line, "and("  )) ||
+              (bool_ptr = strstr( line, "nor("  )) ||
+              (bool_ptr = strstr( line, "or("   )) ) {
+                while ( !isspace(*str_ptr1) ) str_ptr1++;
+                keep = *str_ptr1;	
+				*str_ptr1  = '\0';
+                model_name = strdup(line); 
+				*str_ptr1  = keep;
 
-	str_ptr2 = bool_ptr - 1;
-	while ( isspace(*str_ptr1) ) str_ptr1++;
-	while ( isspace(*str_ptr2) ) str_ptr2--;
-	str_ptr2++;
-	keep      = *str_ptr2; *str_ptr2 = '\0';
-	node_str  = strdup(str_ptr1); *str_ptr2 = keep;
+                str_ptr2 = bool_ptr - 1;
+                while ( isspace(*str_ptr1) ) str_ptr1++;
+                while ( isspace(*str_ptr2) ) str_ptr2--;
+                str_ptr2++;
+                keep = *str_ptr2; 
+				*str_ptr2 = '\0';
+                node_str  = strdup(str_ptr1); 
+				*str_ptr2 = keep;
 
-	str_ptr1 = bool_ptr + 1;
-	while ( *str_ptr1 != '(' ) str_ptr1++;
-	*str_ptr1 = '\0'; fcn_name = strdup(bool_ptr);
-	*str_ptr1 = '(';
+                str_ptr1 = bool_ptr + 1;
+                while ( *str_ptr1 != '(' ) str_ptr1++;
+                *str_ptr1 = '\0'; 
+				fcn_name = strdup(bool_ptr);
+                *str_ptr1 = '(';
+                str_ptr1  = strstr( str_ptr1, ")" );
+                comma_ptr = str_ptr2 = strstr( line, "," );
+                if ((str_ptr1 == NULL)|| (str_ptr1 == NULL)){
+                    fprintf(stderr,"ERROR: mal formed line: %s\n", line);
+                    controlled_exit(EXIT_FAILURE);
+                }
+                str_ptr1++;	
+                str_ptr2--;
+                while( isspace(*str_ptr2) ) str_ptr2--;
 
-	str_ptr1  = strstr( str_ptr1, ")" );
-	str_ptr1++;
-	comma_ptr = str_ptr2 = strstr( line, "," );
-	str_ptr2--;
-	while( isspace(*str_ptr2) ) str_ptr2--;
+                while ( isspace(*str_ptr1) ) str_ptr1++;
+                if ( *str_ptr2 == '}' ) {
+                    while ( *str_ptr2 != '{' ) str_ptr2--;
+                    xy_str1 = str_ptr2; 
+					str_ptr2--;
+                    while ( isspace(*str_ptr2) ) str_ptr2--;
+                    str_ptr2++;
+                } else {
+                    while ( !isspace(*str_ptr2) ) str_ptr2--;
+                    xy_str1 = str_ptr2 + 1;
+                    while ( isspace(*str_ptr2) ) str_ptr2--;
+                    str_ptr2++;
+                }
+                keep = *str_ptr2; *str_ptr2 = '\0';
+                ctrl_node_str = strdup(str_ptr1); *str_ptr2 = keep;
 
-	while ( isspace(*str_ptr1) ) str_ptr1++;
-	if ( *str_ptr2 == '}' ) {
-	  while ( *str_ptr2 != '{' ) str_ptr2--;
-	  xy_str1 = str_ptr2; str_ptr2--;
-	  while ( isspace(*str_ptr2) ) str_ptr2--;
-	  str_ptr2++;
-	} else {
-	  while ( !isspace(*str_ptr2) ) str_ptr2--;
-	  xy_str1 = str_ptr2 + 1;
-	  while ( isspace(*str_ptr2) ) str_ptr2--;
-	  str_ptr2++;
-	}
-	keep = *str_ptr2; *str_ptr2 = '\0';
-	ctrl_node_str = strdup(str_ptr1); *str_ptr2 = keep;
+                str_ptr1 = comma_ptr + 1;
+                while ( isspace(*str_ptr1) ) str_ptr1++;
+                if ( *str_ptr1 == '{' ) {
+                    while ( *str_ptr1 != '}' ) str_ptr1++;
+                    str_ptr1++;
+                } else {
+                    while ( !isspace(*str_ptr1) ) str_ptr1++;
+                }
+                keep = *str_ptr1; 
+				*str_ptr1 = '\0';
+                xy_count1 = get_comma_separated_values( xy_values1, xy_str1 );
+                *str_ptr1 = keep;
 
-	str_ptr1 = comma_ptr + 1;
-	while ( isspace(*str_ptr1) ) str_ptr1++;
-	if ( *str_ptr1 == '{' ) {
-	  while ( *str_ptr1 != '}' ) str_ptr1++;
-	  str_ptr1++;
-	} else {
-	  while ( !isspace(*str_ptr1) ) str_ptr1++;
-	}
-	keep = *str_ptr1; *str_ptr1 = '\0';
-	xy_count1 = get_comma_separated_values( xy_values1, xy_str1 );
-	*str_ptr1 = keep;
+                while ( isspace(*str_ptr1) ) str_ptr1++;
+                xy_count2 = get_comma_separated_values( xy_values2, str_ptr1 );
 
-	while ( isspace(*str_ptr1) ) str_ptr1++;
-	xy_count2 = get_comma_separated_values( xy_values2, str_ptr1 );
+                // place restrictions on only having 2 point values; this can change later
+                if ( xy_count1 != 2 && xy_count2 != 2 ) {
+                fprintf(stderr,"ERROR: only expecting 2 pair values for multi-input vcvs!\n");
+                }
 
-	// place restrictions on only having 2 point values; this can change later
-	if ( xy_count1 != 2 && xy_count2 != 2 ) {
-	  fprintf(stderr,"ERROR: only expecting 2 pair values for multi-input vcvs!\n");
-	}
+                sprintf( big_buf, "%s %%vd[ %s ] %%vd( %s ) %s", 
+				  model_name, ctrl_node_str, node_str, model_name );
+                a_card = create_new_card( big_buf, line_number );
+                *a_card->li_line = 'a';
 
-	sprintf( big_buf, "%s %%vd[ %s ] %%vd( %s ) %s", model_name, ctrl_node_str, node_str, model_name );
-	a_card = create_new_card( big_buf, line_number );
-	*a_card->li_line = 'a';
+                sprintf( big_buf, ".model %s multi_input_pwl ( x = [%s %s] y = [%s %s] model = \"%s\" )"
+				  , model_name, xy_values1[0], xy_values2[0],
+		          xy_values1[1], xy_values2[1], fcn_name );
+                model_card = create_new_card( big_buf, line_number );
 
-	sprintf( big_buf, ".model %s multi_input_pwl ( x = [%s %s] y = [%s %s] model = \"%s\" )", model_name, xy_values1[0], xy_values2[0],
-		 xy_values1[1], xy_values2[1], fcn_name );
-	model_card = create_new_card( big_buf, line_number );
+                tfree(model_name); tfree(node_str); tfree(fcn_name); tfree(ctrl_node_str);
+                tfree(xy_values1[0]); tfree(xy_values1[1]); tfree(xy_values2[0]); tfree(xy_values2[1]);
 
-	tfree(model_name); tfree(node_str); tfree(fcn_name); tfree(ctrl_node_str);
-	tfree(xy_values1[0]); tfree(xy_values1[1]); tfree(xy_values2[0]); tfree(xy_values2[1]);
-
-	*c->li_line = '*';
-	next_card   = c->li_next;
-	c->li_next  = a_card;
-	a_card->li_next     = model_card;
-	model_card->li_next = next_card;
-      }
+                *c->li_line = '*';
+                next_card   = c->li_next;
+                c->li_next  = a_card;
+                a_card->li_next     = model_card;
+                model_card->li_next = next_card;
+            }
+        }
     }
-  }
 }
 
 static void
@@ -875,6 +887,10 @@ inp_fix_ternary_operator_str( char *line )
     str_ptr = line;
     if ( ciprefix( ".param", line ) || ciprefix( ".meas", line ) ) str_ptr = strstr( line, "=" );
     else                                                           str_ptr = strstr( line, ")" );
+    if (str_ptr == NULL) {
+        fprintf(stderr,"ERROR: mal formed .param, .func or .meas line: %s\n", line);
+        controlled_exit(EXIT_FAILURE);
+    }
 
     str_ptr++;
     while( isspace(*str_ptr) ) str_ptr++;
@@ -887,7 +903,7 @@ inp_fix_ternary_operator_str( char *line )
       paren_ptr = NULL;
     }
   }
-  else  return line; // hvogt
+  else  return line;
 
   // get conditional
   str_ptr2 = question = strstr( str_ptr, "?" );
@@ -3650,6 +3666,10 @@ static void inp_compat(struct line *deck)
                 node2 =  gettok(&cut_line);
                 /* Find equation, starts with '{', till end of line */
                 str_ptr = strstr(cut_line, "{");
+                if (str_ptr == NULL) {
+                    fprintf(stderr,"ERROR: mal formed E line: %s\n",curr_line);
+                    controlled_exit(EXIT_FAILURE);
+                }
 
                 // Exxx  n1 n2 int1 0 1
                 xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
@@ -3717,7 +3737,10 @@ static void inp_compat(struct line *deck)
                 node2 =  gettok(&cut_line);
                 /* Find equation, starts with '{', till end of line */
                 str_ptr = strstr(cut_line, "{");
-
+                if (str_ptr == NULL) {
+                    fprintf(stderr,"ERROR: mal formed G line: %s\n",curr_line);
+                    controlled_exit(EXIT_FAILURE);
+                }
                 // Gxxx  n1 n2 int1 0 1
                 xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
                     + 20 - 4*2 + 1;
@@ -3776,6 +3799,10 @@ static void inp_compat(struct line *deck)
             node2 =  gettok(&cut_line);
             /* Find equation, starts with '{', till end of line */
             str_ptr = strstr(cut_line, "{");
+            if (str_ptr == NULL) {
+                fprintf(stderr,"ERROR: mal formed R line: %s\n", curr_line);
+                controlled_exit(EXIT_FAILURE);
+            }			
             xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
                    strlen(node1) + strlen(node2) + strlen(str_ptr)  +
                    28 - 6*2 + 1;
@@ -3813,7 +3840,10 @@ static void inp_compat(struct line *deck)
             node2 =  gettok(&cut_line);
             /* Find equation, starts with '{', till end of line */
             str_ptr = strstr(cut_line, "{");
-
+            if (str_ptr == NULL) {
+                fprintf(stderr,"ERROR: mal formed C line: %s\n",curr_line);
+                controlled_exit(EXIT_FAILURE);
+            }
             // Exxx  n-aux 0  n1 n2  1
             xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
                 + 21 - 4*2 + 1;
@@ -3879,7 +3909,10 @@ static void inp_compat(struct line *deck)
             node2 =  gettok(&cut_line);
             /* Find equation, starts with '{', till end of line */
             str_ptr = strstr(cut_line, "{");
-
+            if (str_ptr == NULL) {
+                fprintf(stderr,"ERROR: mal formed L line: %s\n", curr_line);
+                controlled_exit(EXIT_FAILURE);
+            }
             // Fxxx  n-aux 0  Bxxx  1
             xlen = 3*strlen(title_tok)
                 + 20 - 3*2 + 1;
@@ -4262,6 +4295,11 @@ static void inp_bsource_compat(struct line *deck)
             curr_line = card->li_line;
             /* store starting point for later parsing, beginning of {expression} */
             equal_ptr = strstr(curr_line, "=");
+			/* check for errors */
+			if (equal_ptr == NULL) {
+                fprintf(stderr,"ERROR: mal formed B line: %s\n", curr_line);
+			    controlled_exit(EXIT_FAILURE);
+			}
             /* find the m={m} token and remove it */
             if((str_ptr = strstr(curr_line, "m={m}")) != NULL)
                 memcpy( str_ptr, "     ", 5 ); 
@@ -4465,6 +4503,10 @@ static void inp_bsource_compat(struct line *deck)
 
 	        tmp_char = copy(curr_line);
             equal_ptr = strstr(tmp_char, "=");
+            if (str_ptr == NULL) {
+                fprintf(stderr,"ERROR: mal formed B line: %s\n", curr_line);
+                controlled_exit(EXIT_FAILURE);
+            }			
             /* cut the tmp_char after the equal sign */
             *(equal_ptr + 1) = '\0';  
             xlen = strlen(tmp_char) + strlen(new_str) + 2;

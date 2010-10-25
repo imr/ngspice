@@ -1,3 +1,6 @@
+2010-10-25  Holger Vogt
+ * src/frontend/inpcom.c: add guards if strstr returns NULL
+ 
 2010-10-24  Robert Larice
  * src/frontend/inpcom.c ,
  * src/frontend/subckt.c :
