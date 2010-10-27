@@ -131,10 +131,10 @@ void cm_event_alloc(
 
     /* Create or enlarge the block and set the time */
     if(num_tags == 1)
-        state->block = MALLOC(state_data->total_size[inst_index]);
+        state->block = tmalloc((size_t) state_data->total_size[inst_index]);
     else
-        state->block = REALLOC(state->block,
-                             state_data->total_size[inst_index]);
+        state->block = trealloc(state->block,
+                             (size_t) state_data->total_size[inst_index]);
 
     state->step = g_mif_info.circuit.evt_step;
 }

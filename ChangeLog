@@ -1,4 +1,11 @@
 2010-10-27  Robert Larice
+ * src/spicelib/analysis/cktmcrt.c ,
+ * src/spicelib/analysis/cktnewan.c ,
+ * src/xspice/cm/cmevt.c ,
+ * src/xspice/evt/evtload.c :
+    use tmalloc and trealloc instead of MALLOC and REALLOC
+
+2010-10-27  Robert Larice
  * src/spicelib/analysis/distoan.c :
     bug fix ?, this fix is a mere guesswork, FIXME
 

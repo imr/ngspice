@@ -25,7 +25,7 @@ CKTnewAnal(CKTcircuit *ckt, int type, IFuid name, JOB **analPtr, TSKtask *taskPt
         (*analPtr)->JOBtype = type;
         return(OK); /* doesn't need to be created */
     }
-    *analPtr = (JOB *)MALLOC(analInfo[type]->size);
+    *analPtr = (JOB *) tmalloc((size_t) analInfo[type]->size);
     if(*analPtr==NULL) return(E_NOMEM);
     (*analPtr)->JOBname = name;
     (*analPtr)->JOBtype = type;
