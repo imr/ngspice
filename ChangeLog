@@ -1,4 +1,8 @@
 2010-10-27  Robert Larice
+ * src/spicelib/analysis/distoan.c :
+    bug fix ?, this fix is a mere guesswork, FIXME
+
+2010-10-27  Robert Larice
  * src/spicelib/devices/ltra/ltraask.c ,
  * src/spicelib/devices/tra/traask.c :
     bug fix, malloced space too small

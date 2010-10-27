@@ -22,7 +22,7 @@ c = *a;
 static void
 DmemAlloc(double **a, int size)
 {
-*a = (double *) MALLOC( sizeof(double) * size + 1);
+*a = (double *) MALLOC( sizeof(double) * (size + 1));
 }
 
 
