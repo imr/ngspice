@@ -120,7 +120,7 @@ MIFgetValue (
             return(NULL);
         }
         val.v.numValue = 0;
-        val.v.vec.iVec = (int *) MALLOC(1);   /* just so that realloc doesn't bomb */
+        val.v.vec.iVec = NULL;
     }
 
 

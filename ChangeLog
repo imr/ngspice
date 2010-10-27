@@ -1,4 +1,9 @@
 2010-10-27  Robert Larice
+ * src/spicelib/devices/asrc/asrcset.c ,
+ * src/xspice/mif/mifgetvalue.c :
+    realloc does work, even with NULL argument
+
+2010-10-27  Robert Larice
  * src/spicelib/devices/bsim3soi/b4soitemp.c :
     use tmalloc instead of malloc
 
