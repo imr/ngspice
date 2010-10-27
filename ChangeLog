@@ -1,6 +1,11 @@
+2010-10-27  Robert Larice
+ * src/spicelib/devices/ltra/ltraask.c ,
+ * src/spicelib/devices/tra/traask.c :
+    bug fix, malloced space too small
+
 2010-10-25  Holger Vogt
  * src/frontend/inpcom.c: add guards if strstr returns NULL
- 
+
 2010-10-24  Robert Larice
  * src/frontend/inpcom.c ,
  * src/frontend/subckt.c :

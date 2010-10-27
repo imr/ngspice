@@ -73,7 +73,7 @@ LTRAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
     return (OK);
   case LTRA_DELAY:
     /*
-     * value->v.vec.rVec = (double *) MALLOC(here->LTRAsizeDelay);
+     * value->v.vec.rVec = (double *) MALLOC(here->LTRAsizeDelay * sizeof(double));
      * value->v.numValue = temp = here->LTRAsizeDelay; while (temp--) {
      * value->v.vec.rVec++ = *here->LTRAdelays++;
      */
