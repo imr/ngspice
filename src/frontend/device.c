@@ -1069,8 +1069,7 @@ com_alter_common(wordlist *wl, int do_model)
        xsbuf = wl_flatten(words);
        /* fprintf(cp_err, "Chain    converted  %s \n",xsbuf); */
        dv=(struct dvec *)MALLOC(sizeof(struct dvec));
-       dv->v_name = (char *)MALLOC(sizeof("real vector"));
-       dv->v_name = "real vector";
+       dv->v_name = copy("real vector");
        type &= IF_VARTYPES;
        if (type == IF_REALVEC) {
            list = (double *)MALLOC(sizeof(double));

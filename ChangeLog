@@ -1,4 +1,8 @@
 2010-10-27  Robert Larice
+ * src/frontend/device.c :
+    bug fix, const data space was used, instead of malloced area
+
+2010-10-27  Robert Larice
  * src/spicelib/devices/asrc/asrcset.c ,
  * src/xspice/mif/mifgetvalue.c :
     realloc does work, even with NULL argument
