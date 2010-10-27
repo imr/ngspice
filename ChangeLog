@@ -1,4 +1,8 @@
 2010-10-27  Robert Larice
+ * src/spicelib/devices/bsim3soi/b4soitemp.c :
+    use tmalloc instead of malloc
+
+2010-10-27  Robert Larice
  * src/spicelib/analysis/cktmcrt.c ,
  * src/spicelib/analysis/cktnewan.c ,
  * src/xspice/cm/cmevt.c ,
