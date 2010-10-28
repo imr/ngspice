@@ -209,11 +209,13 @@ docommand(wordlist *wlist)
 		    s, cp_program);
             goto out;
 
+            /* If it hasn't been implemented */
+        } else if (!cp_coms[i].co_func) {
+            fprintf(cp_err,"%s: command is not implemented\n", s);
+            goto out;
 	    /* If it's there but spiceonly, and this is nutmeg, error. */
-        } else if (!cp_coms[i].co_func && ft_nutmeg && 
-		   (cp_coms[i].co_spiceonly)) {
-            fprintf(cp_err,"%s: command available only in spice\n",
-                    s);
+        } else if (ft_nutmeg && cp_coms[i].co_spiceonly) {
+            fprintf(cp_err,"%s: command available only in spice\n", s);
             goto out;
         }
 

@@ -911,7 +911,7 @@ struct comm nutcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 3, 3,
       NULL,
       "varname s1 s2 : Set $varname to strcmp(s1, s2)." } ,
-    { "linearize", NULL, FALSE, FALSE,
+    { "linearize", com_linearize, TRUE, FALSE,
       { 040000, 040000, 040000, 040000 }, E_DEFHMASK, 0, LOTS,
       NULL,
       " [ vec ... ] : Convert plot into one with linear scale." } ,
