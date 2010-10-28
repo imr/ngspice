@@ -112,8 +112,7 @@ ft_getSaves(struct save_info **savesp)
     if (!count)
         return (0);
     
-    *savesp = array = (struct save_info *)
-	    tmalloc(sizeof (struct save_info) * count);
+    *savesp = array = TMALLOC(struct save_info, count);
 
     for (d = dbs; d; d = d->db_next)
         if (d->db_type == DB_SAVE) {

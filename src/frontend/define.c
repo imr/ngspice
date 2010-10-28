@@ -164,14 +164,12 @@ savetree(struct pnode *pn)
             pn->pn_value->v_flags = d->v_flags;
             pn->pn_value->v_plot = d->v_plot;
             if (isreal(d)) {
-                pn->pn_value->v_realdata = (double *) 
-                    tmalloc(sizeof (double) * d->v_length);
+                pn->pn_value->v_realdata = TMALLOC(double, d->v_length);
                 bcopy(d->v_realdata,
                     pn->pn_value->v_realdata,
                     sizeof (double) * d->v_length);
             } else {
-                pn->pn_value->v_compdata = (ngcomplex_t *)
-                    tmalloc(sizeof(ngcomplex_t) * d->v_length);
+                pn->pn_value->v_compdata = TMALLOC(ngcomplex_t, d->v_length);
                 bcopy(d->v_compdata,
                     pn->pn_value->v_compdata,
                     sizeof(ngcomplex_t) * d->v_length);

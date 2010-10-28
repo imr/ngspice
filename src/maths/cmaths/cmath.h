@@ -1,7 +1,7 @@
 #ifndef _CMATH_H
 #define _CMATH_H
 
-#define alloc_c(len)    ((ngcomplex_t *) tmalloc((len) * sizeof(ngcomplex_t)))
-#define alloc_d(len)    ((double *) tmalloc((len) * sizeof (double)))
+#define alloc_c(len)    (TMALLOC(ngcomplex_t, len))
+#define alloc_d(len)    (TMALLOC(double, len))
 
 #endif

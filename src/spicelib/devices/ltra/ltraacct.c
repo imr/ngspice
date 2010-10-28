@@ -28,7 +28,7 @@ LTRAaccept(CKTcircuit *ckt, GENmodel *inModel)
 
 #define LTRAmemMANAGE(a,b) \
 	if ( a != NULL) FREE(a);\
-	a = (double *) MALLOC( b * sizeof(double));
+	a = TMALLOC(double, b);
 
       model->LTRAmodelListSize = 10;
 
@@ -41,15 +41,9 @@ LTRAaccept(CKTcircuit *ckt, GENmodel *inModel)
       model->LTRAmodelListSize += ckt->CKTsizeIncr;
 
 
-      model->LTRAh1dashCoeffs = (double *)
-	  REALLOC((char *) model->LTRAh1dashCoeffs,
-	  sizeof(double) * model->LTRAmodelListSize);
-      model->LTRAh2Coeffs = (double *)
-	  REALLOC((char *) model->LTRAh2Coeffs,
-	  sizeof(double) * model->LTRAmodelListSize);
-      model->LTRAh3dashCoeffs = (double *)
-	  REALLOC((char *) model->LTRAh3dashCoeffs,
-	  sizeof(double) * model->LTRAmodelListSize);
+      model->LTRAh1dashCoeffs = TREALLOC(double, model->LTRAh1dashCoeffs, model->LTRAmodelListSize);
+      model->LTRAh2Coeffs = TREALLOC(double, model->LTRAh2Coeffs, model->LTRAmodelListSize);
+      model->LTRAh3dashCoeffs = TREALLOC(double, model->LTRAh3dashCoeffs, model->LTRAmodelListSize);
     }
     /* loop through all the instances of the model */
     for (here = model->LTRAinstances; here != NULL;
@@ -74,14 +68,10 @@ LTRAaccept(CKTcircuit *ckt, GENmodel *inModel)
       if (ckt->CKTtimeIndex >= here->LTRAinstListSize) {	/* need more space */
 	here->LTRAinstListSize += ckt->CKTsizeIncr;
 
-	here->LTRAv1 = (double *) REALLOC((char *)
-	    here->LTRAv1, sizeof(double) * (here->LTRAinstListSize));
-	here->LTRAi1 = (double *) REALLOC((char *)
-	    here->LTRAi1, sizeof(double) * (here->LTRAinstListSize));
-	here->LTRAi2 = (double *) REALLOC((char *)
-	    here->LTRAi2, sizeof(double) * (here->LTRAinstListSize));
-	here->LTRAv2 = (double *) REALLOC((char *)
-	    here->LTRAv2, sizeof(double) * (here->LTRAinstListSize));
+	here->LTRAv1 = TREALLOC(double, here->LTRAv1, here->LTRAinstListSize);
+	here->LTRAi1 = TREALLOC(double, here->LTRAi1, here->LTRAinstListSize);
+	here->LTRAi2 = TREALLOC(double, here->LTRAi2, here->LTRAinstListSize);
+	here->LTRAv2 = TREALLOC(double, here->LTRAv2, here->LTRAinstListSize);
       }
       *(here->LTRAv1 + ckt->CKTtimeIndex) = *(ckt->CKTrhsOld +
 	  here->LTRAposNode1) - *(ckt->CKTrhsOld +

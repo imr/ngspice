@@ -46,8 +46,7 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
 	case ISRC_AM:
         case ISRC_FCN_COEFFS:
             temp = value->v.numValue = here->ISRCfunctionOrder;
-            value->v.vec.rVec = (double *) 
-                    MALLOC(here->ISRCfunctionOrder * sizeof(double));
+            value->v.vec.rVec = TMALLOC(double, here->ISRCfunctionOrder);
 	    v = value->v.vec.rVec;
 	    w = here->ISRCcoeffs;
             while (temp--)
@@ -76,7 +75,7 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return(OK);
         case ISRC_POWER:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "ISRCask";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

@@ -12,8 +12,8 @@ REVISIONS:  Aug 21, 2009 - adapted for ngspice
 #include <bool.h>
 
 #define _NGMALLOC(size_xz)            tmalloc((size_xz))
-#define NGMALLOC(n, els)              (els *) tmalloc((n)*sizeof(els))
-#define NGREALLOC(ar,n,els)           (els *) trealloc(ar,(n)*sizeof(els))
+#define NGMALLOC(n, els)              TMALLOC(els, n)
+#define NGREALLOC(ar,n,els)           TREALLOC(els, ar, n)
 #define NGFREE(els)                   txfree(els)
 
 

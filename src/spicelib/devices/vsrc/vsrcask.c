@@ -46,8 +46,7 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
 	    case VSRC_AM:
         case VSRC_FCN_COEFFS:
             temp = value->v.numValue = here->VSRCfunctionOrder;
-            v = value->v.vec.rVec = (double *) 
-                    MALLOC (here->VSRCfunctionOrder * sizeof(double));
+            v = value->v.vec.rVec = TMALLOC(double, here->VSRCfunctionOrder);
 	    w = here->VSRCcoeffs;
             while (temp--) {
                 *v++ = *w++;
@@ -55,8 +54,7 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return (OK);
         case VSRC_AC:
             value->v.numValue = 2;
-            value->v.vec.rVec = (double *) 
-                    MALLOC (value->v.numValue * sizeof (double));
+            value->v.vec.rVec = TMALLOC(double, value->v.numValue);
             value->v.vec.rVec[0] = here->VSRCacMag;
             value->v.vec.rVec[1] = here->VSRCacPhase;
             return (OK);
@@ -86,7 +84,7 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return (OK);
         case VSRC_CURRENT:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "VSRCask";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -96,7 +94,7 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return(OK);
         case VSRC_POWER:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "VSRCask";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

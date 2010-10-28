@@ -51,7 +51,7 @@ NOISEan (CKTcircuit *ckt, int restart)
         error = CKTfndDev(ckt, &code, &inst,
                 job->input, (GENmodel *)NULL, (IFuid)NULL);
 	if (!error && !((VSRCinstance *)inst)->VSRCacGiven) {
-	    errMsg = (char*) MALLOC(strlen(noacinput)+1);
+	    errMsg = TMALLOC(char, strlen(noacinput) + 1);
 	    strcpy(errMsg,noacinput);
 	    return (E_NOACINPUT);
 	}
@@ -69,7 +69,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 		return (E_NOTFOUND);
 	    }
 	if (!((ISRCinstance *)inst)->ISRCacGiven) {
-	    errMsg = (char*) MALLOC(strlen(noacinput)+1);
+	    errMsg = TMALLOC(char, strlen(noacinput) + 1);
 	    strcpy(errMsg,noacinput);
 	    return (E_NOACINPUT);
 	}
@@ -111,7 +111,7 @@ NOISEan (CKTcircuit *ckt, int restart)
      error = CKTload(ckt);
      if(error) return(error);
      
-     data = (Ndata*)MALLOC(sizeof(Ndata));
+     data = TMALLOC(Ndata, 1);
 	step = 0;
 	data->freq = job->NstartFreq;
 	data->outNoiz = 0.0;

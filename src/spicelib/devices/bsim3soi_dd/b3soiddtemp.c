@@ -98,8 +98,7 @@ int Size_Not_Found;
               }
 
 	      if (Size_Not_Found)
-	      {   pParam = (struct b3soiddSizeDependParam *)tmalloc(
-	                    sizeof(struct b3soiddSizeDependParam));
+	      {   pParam = TMALLOC(struct b3soiddSizeDependParam, 1);
                   if (pLastKnot == NULL)
 		      model->pSizeDependParamKnot = pParam;
                   else

@@ -45,13 +45,12 @@ mkvar(char **p, char *path_prefix, char *var_dir, char *env_var)
 	asprintf(p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir);
 #else /* ~ HAVE_ASPRINTF */
     if (buffer){
-        *p = (char *) tmalloc(strlen(buffer)+1);
+        *p = TMALLOC(char, strlen(buffer) + 1);
         sprintf(*p,"%s",buffer);
         /* asprintf(p, "%s", buffer); */
     }
     else{
-        *p = (char *) tmalloc(strlen(path_prefix) + 
-            strlen(DIR_PATHSEP) + strlen(var_dir) + 1);
+        *p = TMALLOC(char, strlen(path_prefix) + strlen(DIR_PATHSEP) + strlen(var_dir) + 1);
         sprintf(*p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir); 
         /* asprintf(p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir); */
     }

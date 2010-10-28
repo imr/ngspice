@@ -386,7 +386,7 @@ MOS6ask(CKTcircuit *ckt, GENinstance *inst, int which,
             return(OK);
         case MOS6_CB :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "MOS6ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -398,7 +398,7 @@ MOS6ask(CKTcircuit *ckt, GENinstance *inst, int which,
             return(OK);
         case MOS6_CG :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "MOS6ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -416,7 +416,7 @@ MOS6ask(CKTcircuit *ckt, GENinstance *inst, int which,
             return(OK);
         case MOS6_CS :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "MOS6ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -435,7 +435,7 @@ MOS6ask(CKTcircuit *ckt, GENinstance *inst, int which,
             return(OK);
         case MOS6_POWER :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "MOS6ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

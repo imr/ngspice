@@ -159,7 +159,7 @@ int MIFmAsk(
         case  IF_FLAGVEC:
             if(size <= 0)
                 break;
-            value->v.vec.iVec = (int *) MALLOC(size * sizeof(int));
+            value->v.vec.iVec = TMALLOC(int, size);
             for(i = 0; i < size; i++)
                 value->v.vec.iVec[i] = model->param[param_index]->element[i].bvalue;
             break;
@@ -167,7 +167,7 @@ int MIFmAsk(
         case  IF_INTVEC:
             if(size <= 0)
                 break;
-            value->v.vec.iVec = (int *) MALLOC(size * sizeof(int));
+            value->v.vec.iVec = TMALLOC(int, size);
             for(i = 0; i < size; i++)
                 value->v.vec.iVec[i] = model->param[param_index]->element[i].ivalue;
             break;
@@ -175,7 +175,7 @@ int MIFmAsk(
         case  IF_REALVEC:
             if(size <= 0)
                 break;
-            value->v.vec.rVec = (double *) MALLOC(size * sizeof(double));
+            value->v.vec.rVec = TMALLOC(double, size);
             for(i = 0; i < size; i++)
                 value->v.vec.rVec[i] = model->param[param_index]->element[i].rvalue;
             break;
@@ -183,7 +183,7 @@ int MIFmAsk(
         case  IF_STRINGVEC:
             if(size <= 0)
                 break;
-            value->v.vec.sVec = (char **) MALLOC(size * sizeof(char *));
+            value->v.vec.sVec = TMALLOC(char *, size);
             for(i = 0; i < size; i++)
                 /* Make copy of string.  We don't trust caller to not free it */
                 /* These copies could get expensive! */
@@ -195,7 +195,7 @@ int MIFmAsk(
                 break;
             /* we don't trust the caller to have a parallel complex structure */
             /* so copy the real and imaginary parts explicitly                */
-            value->v.vec.cVec = (IFcomplex *) MALLOC(size * sizeof(IFcomplex));
+            value->v.vec.cVec = TMALLOC(IFcomplex, size);
             for(i = 0; i < size; i++) {
                 value->v.vec.cVec[i].real = model->param[param_index]->element[i].cvalue.real;
                 value->v.vec.cVec[i].imag = model->param[param_index]->element[i].cvalue.imag;

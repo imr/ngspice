@@ -68,8 +68,7 @@ B2temp(GENmodel *inModel, CKTcircuit *ckt)
             }
 
 	    if (Size_Not_Found)
-	    {   here->pParam = (struct bsim2SizeDependParam *)tmalloc(
-	                        sizeof(struct bsim2SizeDependParam));
+	    {   here->pParam = TMALLOC(struct bsim2SizeDependParam, 1);
                 if (pLastKnot == NULL)
 		    model->pSizeDependParamKnot = here->pParam;
                 else

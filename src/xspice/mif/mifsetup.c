@@ -150,7 +150,7 @@ MIFsetup(
                 /* determine the size and allocate the parameter element(s) */
                 if(! param_info->is_array) {
                     model->param[i]->size = 1;
-                    model->param[i]->element = (Mif_Value_t *) MALLOC(sizeof(Mif_Value_t));
+                    model->param[i]->element = TMALLOC(Mif_Value_t, 1);
                 }
                 else {  /* parameter is an array */
                     /* MIF_INP2A() parser assures that there is an associated array connection */
@@ -163,7 +163,7 @@ MIFsetup(
                             max_size = size;
                     }
                     model->param[i]->size = max_size;
-                    model->param[i]->element = (Mif_Value_t *) MALLOC(max_size * sizeof(Mif_Value_t));
+                    model->param[i]->element = TMALLOC(Mif_Value_t, max_size);
                 }  /* end if parameter is an array */
 
                 /* set the parameter element(s) to default value */
@@ -232,21 +232,21 @@ MIFsetup(
 	    num_port = here->conn[i]->size;
 	    for(j = 0; j < num_port; j++) {
 	      here->conn[i]->port[j]->partial =
-		(Mif_Partial_t *) MALLOC(num_conn * sizeof(Mif_Partial_t));
+		TMALLOC(Mif_Partial_t, num_conn);
 	      here->conn[i]->port[j]->ac_gain =
-		(Mif_AC_Gain_t *) MALLOC(num_conn * sizeof(Mif_AC_Gain_t));
+		TMALLOC(Mif_AC_Gain_t, num_conn);
 	      here->conn[i]->port[j]->smp_data.input =
-		(Mif_Conn_Ptr_t *) MALLOC(num_conn * sizeof(Mif_Conn_Ptr_t));
+		TMALLOC(Mif_Conn_Ptr_t, num_conn);
 	      for(k = 0; k < num_conn; k++) {
 		if((here->conn[k]->is_null) || (! here->conn[k]->is_input) )
 		  continue;
 		num_port_k = here->conn[k]->size;
 		here->conn[i]->port[j]->partial[k].port =
-		  (double *) MALLOC(num_port_k * sizeof(double));
+		  TMALLOC(double, num_port_k);
 		here->conn[i]->port[j]->ac_gain[k].port =
-		  (Mif_Complex_t *) MALLOC(num_port_k * sizeof(Mif_Complex_t));
+		  TMALLOC(Mif_Complex_t, num_port_k);
                         here->conn[i]->port[j]->smp_data.input[k].port =
-			  (Mif_Port_Ptr_t *) MALLOC(num_port_k * sizeof(Mif_Port_Ptr_t));
+			  TMALLOC(Mif_Port_Ptr_t, num_port_k);
 	      }
 	    }
 	  }
@@ -307,7 +307,7 @@ MIFsetup(
                                      (type == MIF_RESISTANCE || type == MIF_DIFF_RESISTANCE) ) {
 
                         /* first, make the current equation */
-                        suffix = (char *) MALLOC(strlen((char *) here->MIFname) + 100);
+                        suffix = TMALLOC(char, strlen((char *) here->MIFname) + 100);
                         sprintf(suffix, "branch_%d_%d", i, j);
                         error = CKTmkCur(ckt, &tmp, here->MIFname, suffix);
                         FREE(suffix);
@@ -330,7 +330,7 @@ MIFsetup(
                     if(is_input && (type == MIF_CURRENT || type == MIF_DIFF_CURRENT)) {
 
                         /* first, make the current equation */
-                        suffix = (char *) MALLOC(strlen((char *) here->MIFname) + 100);
+                        suffix = TMALLOC(char, strlen((char *) here->MIFname) + 100);
                         sprintf(suffix, "ibranch_%d_%d", i, j);
                         error = CKTmkCur(ckt, &tmp, here->MIFname, suffix);
                         FREE(suffix);

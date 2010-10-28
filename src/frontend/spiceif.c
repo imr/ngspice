@@ -1367,7 +1367,7 @@ void com_loadsnap(wordlist *wl) {
     return;
   }
     
-  my_ckt = (CKTcircuit *)tmalloc(sizeof(CKTcircuit));
+  my_ckt = TMALLOC(CKTcircuit, 1);
 
   fread(my_ckt,sizeof(CKTcircuit),1,file);
 

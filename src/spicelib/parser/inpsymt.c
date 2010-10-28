@@ -27,13 +27,10 @@ INPtables *INPtabInit(int numlines)
 {
     INPtables *tab;
 
-    tab = (INPtables *) tmalloc(sizeof(INPtables));
-    tab->INPsymtab = (struct INPtab **) tmalloc((numlines / 4 + 1) *
-						sizeof(struct INPtab *));
+    tab = TMALLOC(INPtables, 1);
+    tab->INPsymtab = TMALLOC(struct INPtab *, numlines / 4 + 1);
     ZERO(tab->INPsymtab, (numlines / 4 + 1) * sizeof(struct INPtab *));
-    tab->INPtermsymtab = (struct INPnTab **) tmalloc(numlines *
-						     sizeof(struct INPnTab
-							    *));
+    tab->INPtermsymtab = TMALLOC(struct INPnTab *, numlines);
     ZERO(tab->INPtermsymtab, numlines * sizeof(struct INPnTab *));
     tab->INPsize = numlines / 4 + 1;
     tab->INPtermsize = numlines;
@@ -59,7 +56,7 @@ int INPtermInsert(CKTcircuit *ckt, char **token, INPtables * tab, CKTnode **node
 	    return (E_EXISTS);
 	}
     }
-    t = (struct INPnTab *) tmalloc(sizeof(struct INPnTab));
+    t = TMALLOC(struct INPnTab, 1);
     if (t == (struct INPnTab *) NULL)
 	return (E_NOMEM);
     ZERO(t, struct INPnTab);
@@ -94,7 +91,7 @@ int INPmkTerm(CKTcircuit *ckt, char **token, INPtables * tab, CKTnode **node)
 	    return (E_EXISTS);
 	}
     }
-    t = (struct INPnTab *) tmalloc(sizeof(struct INPnTab));
+    t = TMALLOC(struct INPnTab, 1);
     if (t == (struct INPnTab *) NULL)
 	return (E_NOMEM);
     ZERO(t, struct INPnTab);
@@ -123,7 +120,7 @@ int INPgndInsert(CKTcircuit *ckt, char **token, INPtables * tab, CKTnode **node)
 	    return (E_EXISTS);
 	}
     }
-    t = (struct INPnTab *) tmalloc(sizeof(struct INPnTab));
+    t = TMALLOC(struct INPnTab, 1);
     if (t == (struct INPnTab *) NULL)
 	return (E_NOMEM);
     ZERO(t, struct INPnTab);
@@ -169,7 +166,7 @@ int INPinsert(char **token, INPtables * tab)
 	    *token = t->t_ent;
 	    return (E_EXISTS);
 	}
-    t = (struct INPtab *) tmalloc(sizeof(struct INPtab));
+    t = TMALLOC(struct INPtab, 1);
     if (t == (struct INPtab *) NULL)
 	return (E_NOMEM);
     ZERO(t, struct INPtab);
@@ -196,7 +193,7 @@ int INPinsertNofree(char **token, INPtables * tab)
 	    *token = t->t_ent;
 	    return (E_EXISTS);
 	}
-    t = (struct INPtab *) tmalloc(sizeof(struct INPtab));
+    t = TMALLOC(struct INPtab, 1);
     if (t == (struct INPtab *) NULL)
 	return (E_NOMEM);
     ZERO(t, struct INPtab);

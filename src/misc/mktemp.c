@@ -35,7 +35,7 @@ smktemp(char *id)
 	id = "sp";
 
     sprintf(rbuf, TEMPFORMAT, id, num);
-    nbuf = (char *) tmalloc(strlen(rbuf) + 1);
+    nbuf = TMALLOC(char, strlen(rbuf) + 1);
     strcpy(nbuf, rbuf);
 
     return nbuf;

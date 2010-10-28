@@ -42,7 +42,7 @@ BJTsSetup(SENstruct *info, GENmodel *inModel)
                 here->BJTsenParmNo = ++(info->SENparms);
                 here->BJTsenPertFlag = OFF;
             }
-            if((here->BJTsens = (double *)MALLOC(55*sizeof(double))) ==
+            if((here->BJTsens = TMALLOC(double, 55)) ==
                 NULL) return(E_NOMEM);
         }
     }

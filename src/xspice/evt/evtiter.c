@@ -278,7 +278,7 @@ int EVTiter(
 
     /* Too many passes through loop, report problems and exit with error */
 
-    err_msg = (char *) MALLOC(10000);
+    err_msg = TMALLOC(char, 10000);
     for(i = 0; i < output_queue->num_changed; i++) {
         output_index = output_queue->changed_index[i];
         port_index = output_table[output_index]->port_index;

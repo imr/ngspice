@@ -68,9 +68,7 @@ BJT2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 				inst->BJT2name,BJT2nNames[i]);
 
 
-			data->namelist = (IFuid *)
-				trealloc((char *)data->namelist,
-				(data->numPlots + 1)*sizeof(IFuid));
+			data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 			if (!data->namelist) return(E_NOMEM);
 			(*(SPfrontEnd->IFnewUid))(ckt,
 			    &(data->namelist[data->numPlots++]),
@@ -84,9 +82,7 @@ BJT2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 			    (void)sprintf(name,"onoise_total_%s%s",
 				inst->BJT2name,BJT2nNames[i]);
 
-			data->namelist = (IFuid *)
-				trealloc((char *)data->namelist,
-				(data->numPlots + 1)*sizeof(IFuid));
+			data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 			if (!data->namelist) return(E_NOMEM);
 			(*(SPfrontEnd->IFnewUid))(ckt,
 			    &(data->namelist[data->numPlots++]),
@@ -96,7 +92,7 @@ BJT2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 			    (void)sprintf(name,"inoise_total_%s%s",
 				inst->BJT2name,BJT2nNames[i]);
 
-data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
+data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		(*(SPfrontEnd->IFnewUid))(ckt,
 			&(data->namelist[data->numPlots++]),

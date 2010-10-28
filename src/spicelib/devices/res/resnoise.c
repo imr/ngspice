@@ -76,9 +76,7 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 			(void)sprintf(name,"onoise_%s%s",
 			              inst->RESname, RESnNames[i]);
 
-			data->namelist = (IFuid *)
-			        trealloc((char *)data->namelist,
-			        (data->numPlots + 1)*sizeof(IFuid));
+			data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 			if (!data->namelist) return(E_NOMEM);
 		        (*(SPfrontEnd->IFnewUid))(ckt,
 			    &(data->namelist[data->numPlots++]),
@@ -93,9 +91,7 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 			                  inst->RESname, RESnNames[i]);
 
 
-			    data->namelist = (IFuid *)
-			             trealloc((char *)data->namelist,
-				     (data->numPlots + 1)*sizeof(IFuid));
+			    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
                             if (!data->namelist) return(E_NOMEM);
 		            (*(SPfrontEnd->IFnewUid))(ckt,
 			        &(data->namelist[data->numPlots++]),
@@ -107,9 +103,7 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 			        inst->RESname,RESnNames[i]);
 
 
-			    data->namelist = (IFuid *)
-			            trealloc((char *)data->namelist,
-			            (data->numPlots + 1)*sizeof(IFuid));
+			    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
                             if (!data->namelist) return(E_NOMEM);
 		            (*(SPfrontEnd->IFnewUid))(ckt,
 			        &(data->namelist[data->numPlots++]),

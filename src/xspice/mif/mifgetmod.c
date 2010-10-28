@@ -151,7 +151,7 @@ char *MIFgetMod(
 		/* fixed by SDB -- magic number is 39, not 35.  
 		 * Also needed parens to correctly compute # of bytes to malloc
 		 */
-                err = (char *)tmalloc( (39+strlen(name)) * sizeof(char) ); 
+                err = TMALLOC(char, 39 + strlen(name)); 
 
                 sprintf(err, "MIF: Unknown device type for model %s \n",name);
                 return(err);
@@ -169,9 +169,9 @@ char *MIFgetMod(
                 /* gtri modification: allocate and initialize MIF specific model struct items */
                 mdfast = (MIFmodel*) modtmp->INPmodfast;
                 mdfast->num_param = DEVices[modtmp->INPmodType]->DEVpublic.num_param;
-                mdfast->param = (Mif_Param_Data_t **) tmalloc(mdfast->num_param * sizeof(Mif_Param_Data_t *));
+                mdfast->param = TMALLOC(Mif_Param_Data_t *, mdfast->num_param);
                 for(i = 0; i < mdfast->num_param; i++) {
-                    mdfast->param[i] = (Mif_Param_Data_t *) tmalloc(sizeof(Mif_Param_Data_t));
+                    mdfast->param[i] = TMALLOC(Mif_Param_Data_t, 1);
                     mdfast->param[i]->is_null = MIF_TRUE;
                     mdfast->param[i]->size = 0;
                     mdfast->param[i]->element = NULL;
@@ -199,7 +199,7 @@ char *MIFgetMod(
                                     INPmodType ]).modelParms[j].
                                     dataType),tab,&err1);
                             if(err1) {
-                                err2 = (char *) tmalloc(25 + strlen(name) + strlen(err1));
+                                err2 = TMALLOC(char, 25 + strlen(name) + strlen(err1));
                                 sprintf(err2, "MIF-ERROR - model: %s - %s\n", name, err1);
                                 return(err2);
                             }
@@ -218,13 +218,13 @@ char *MIFgetMod(
 						//err has not been allocated, but free() in INPerrCat()
 
 						// This did not allocate enough memory you wanker, K.A. replaced 5 March 2000
-		// temp = (char *)tmalloc((40+strlen(parm)) * sizeof(char));
-						temp = (char *)tmalloc((42+strlen(parm)) * sizeof(char));// K.A. replaced 5 March 2000
+		// temp = TMALLOC(char, 40 + strlen(parm));
+						temp = TMALLOC(char, 42 + strlen(parm));// K.A. replaced 5 March 2000
 
 						sprintf(temp, "MIF: unrecognized parameter (%s) - ignored\n", parm);
 
 						fprintf(stdout,temp);
-						err = (char *)tmalloc( (2*strlen(temp) +2)*sizeof(char));// K.A. added 5 March 2000
+						err = TMALLOC(char, 2 * strlen(temp) + 2);// K.A. added 5 March 2000
                   
 						*err = '\0';// K.A. added 5 March 2000
 
@@ -249,7 +249,7 @@ char *MIFgetMod(
 
     /* didn't find model - ERROR  - return NULL model */
     *model = (INPmodel *)NULL;
-    err = (char *)tmalloc((60+strlen(name)) * sizeof(char));
+    err = TMALLOC(char, 60 + strlen(name));
     sprintf(err, " MIF-ERROR - unable to find definition of model %s\n",name);
 
     return(err);

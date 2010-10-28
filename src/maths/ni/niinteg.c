@@ -35,7 +35,7 @@ NIintegrate(CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap)
                     ( *(ckt->CKTstate0+qcap) - *(ckt->CKTstate1+qcap) );
             break;
         default:
-            errMsg = (char*) MALLOC(strlen(ordmsg)+1);
+            errMsg = TMALLOC(char, strlen(ordmsg) + 1);
             strcpy(errMsg,ordmsg);
             return(E_ORDER);
         }
@@ -71,7 +71,7 @@ NIintegrate(CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap)
         break;
 
     default:
-        errMsg = (char*) MALLOC(strlen(methodmsg)+1);
+        errMsg = TMALLOC(char, strlen(methodmsg) + 1);
         strcpy(errMsg,methodmsg);
         return(E_METHOD);
     }

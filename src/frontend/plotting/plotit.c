@@ -45,8 +45,7 @@ getlims(wordlist *wl, char *name, int number)
             }
             wk = beg;
             if (number) {
-                d = (double *) tmalloc(sizeof (double) *
-                        number);
+                d = TMALLOC(double, number);
                 for (n = 0; n < number; n++) {
                     wk = wk->wl_next;
                     if (!wk) {
@@ -101,7 +100,7 @@ xtend(struct dvec *v, int length)
     }
     if (isreal(v)) {
         od = v->v_realdata;
-        v->v_realdata = (double *) tmalloc(length * sizeof (double));
+        v->v_realdata = TMALLOC(double, length);
         for (i = 0; i < v->v_length; i++)
             v->v_realdata[i] = od[i];
         d = od[--i];
@@ -110,7 +109,7 @@ xtend(struct dvec *v, int length)
         tfree(od);
     } else {
         oc = v->v_compdata;
-        v->v_compdata = (ngcomplex_t *) tmalloc(length * sizeof(ngcomplex_t));
+        v->v_compdata = TMALLOC(ngcomplex_t, length);
         for (i = 0; i < v->v_length; i++) {
             realpart(&v->v_compdata[i]) = realpart(&oc[i]);
             imagpart(&v->v_compdata[i]) = imagpart(&oc[i]);
@@ -940,7 +939,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
           newlen = (tstop - tstart) / tstep + 1.5;
 
-          newscale = (double *) tmalloc(newlen * sizeof(double));
+          newscale = TMALLOC(double, newlen);
 
           newv_scale = alloc(struct dvec);
           newv_scale->v_flags = vecs->v_scale->v_flags;
@@ -954,7 +953,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             newscale[i] = ttime;
 
           for (v = vecs; v; v= v->v_link2) {
-            newdata = (double *) tmalloc(newlen * sizeof (double));
+            newdata = TMALLOC(double, newlen);
 
             if (!ft_interpolate(v->v_realdata, newdata,
                 v->v_scale->v_realdata, v->v_scale->v_length,

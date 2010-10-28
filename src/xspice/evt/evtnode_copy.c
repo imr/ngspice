@@ -114,12 +114,12 @@ void EVTnode_copy(
         }
         else 
 		{
-            here = (Evt_Node_t *) MALLOC(sizeof(Evt_Node_t));
+            here = TMALLOC(Evt_Node_t, 1);
             *to = here;
             /* Allocate/initialize the data in the new node struct */
             if(num_outputs > 1) 
 			{
-                here->output_value = (void **) MALLOC(num_outputs * sizeof(void *));
+                here->output_value = TMALLOC(void *, num_outputs);
                 
 				for(i = 0; i < num_outputs; i++) 
 				{

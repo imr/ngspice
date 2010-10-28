@@ -31,7 +31,7 @@ CKTground(CKTcircuit *inCkt, CKTnode **node, IFuid name)
         ckt->CKTnodes->type = SP_VOLTAGE;
         ckt->CKTnodes->number = 0;
     } else {
-        ckt->CKTnodes = (CKTnode *)MALLOC(sizeof(CKTnode));
+        ckt->CKTnodes = TMALLOC(CKTnode, 1);
         if(ckt->CKTnodes == NULL) return(E_NOMEM);
         ckt->CKTnodes->name = name;
         ckt->CKTnodes->type = SP_VOLTAGE;

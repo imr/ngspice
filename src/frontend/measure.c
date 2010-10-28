@@ -418,7 +418,7 @@ static wordlist *measure_parse_line( char *line )
  	break ;
        }
        len += strlen( extra_item ) + 2 ;
-       long_str = (char*) MALLOC(len) ;
+       long_str = TMALLOC(char, len) ;
        sprintf( long_str, "%s%s", item, extra_item ) ;
        txfree( item ) ;
        txfree( extra_item ) ;

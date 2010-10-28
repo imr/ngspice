@@ -41,7 +41,7 @@ SWask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *se
             return (OK);
         case SW_CURRENT:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "SWask";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -53,7 +53,7 @@ SWask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *se
             return(OK);
         case SW_POWER:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "SWask";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

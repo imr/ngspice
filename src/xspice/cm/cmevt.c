@@ -115,7 +115,7 @@ void cm_event_alloc(
 
     /* Create a new state description structure at end of list */
     /* and fill in the data and update the total size */
-    *desc_ptr = (Evt_State_Desc_t *) MALLOC(sizeof(Evt_State_Desc_t));
+    *desc_ptr = TMALLOC(Evt_State_Desc_t, 1);
     desc = *desc_ptr;
     desc->tag = tag;
     desc->size = bytes;
@@ -125,7 +125,7 @@ void cm_event_alloc(
     /* Create a new state structure if list starting at head is null */
     state = state_data->head[inst_index];
     if(state == NULL) {
-        state = (Evt_State_t *) MALLOC(sizeof(Evt_State_t));
+        state = TMALLOC(Evt_State_t, 1);
         state_data->head[inst_index] = state;
     }
 

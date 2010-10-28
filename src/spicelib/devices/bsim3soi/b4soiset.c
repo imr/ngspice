@@ -2693,7 +2693,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
             InstCount++;
         }
     }
-    InstArray = (B4SOIinstance**)tmalloc(InstCount*sizeof(B4SOIinstance*));
+    InstArray = TMALLOC(B4SOIinstance*, InstCount);
     model = (B4SOImodel*)inModel;
     idx = 0;
     for( ; model != NULL; model = model->B4SOInextModel )

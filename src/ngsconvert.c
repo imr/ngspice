@@ -176,11 +176,9 @@ oldread(char *name)
     for (v = pl->pl_dvecs; v; v = v->v_next) {
         v->v_length = np;
         if (isreal(v)) {
-            v->v_realdata = (double *) tmalloc(sizeof (double)
-                    * np);
+            v->v_realdata = TMALLOC(double, np);
         } else {
-            v->v_compdata = (ngcomplex_t *) tmalloc(sizeof(ngcomplex_t)
-                    * np);
+            v->v_compdata = TMALLOC(ngcomplex_t, np);
         }
     }
     for (i = 0; i < np; i++) {

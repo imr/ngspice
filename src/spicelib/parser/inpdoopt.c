@@ -55,7 +55,7 @@ INPdoOpts(
         for(i=0;i<prm->numParms;i++) {
             if(strcmp(token,prm->analysisParms[i].keyword) == 0) {
                 if(!(prm->analysisParms[i].dataType & IF_UNIMP_MASK)) {
-                    errmsg = (char *)MALLOC((45+strlen(token)) * sizeof(char));
+                    errmsg = TMALLOC(char, 45 + strlen(token));
                     (void) sprintf(errmsg,
                         " Warning: %s not yet implemented - ignored \n",token);
                     optCard->error = INPerrCat(optCard->error,errmsg);
@@ -69,7 +69,7 @@ INPdoOpts(
                     error = (*(ft_sim->setAnalysisParm))(ckt,anal,
                             prm->analysisParms[i].id,val,(IFvalue*)NULL);
                     if(error) {
-                        errmsg =(char *)MALLOC((35+strlen(token))*sizeof(char));
+                        errmsg = TMALLOC(char, 35 + strlen(token));
                         (void) sprintf(errmsg,
                                 "Warning:  can't set option %s\n", token);
                         optCard->error = INPerrCat(optCard->error, errmsg);
@@ -79,7 +79,7 @@ INPdoOpts(
             }
         }
         if(i == prm->numParms) {
-            errmsg = (char *)MALLOC(100 * sizeof(char));
+            errmsg = TMALLOC(char, 100);
             (void) strcpy(errmsg," Error: unknown option - ignored\n");
             optCard->error = INPerrCat(optCard->error,errmsg);
             fprintf(stderr, "%s\n", optCard->error);

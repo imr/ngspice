@@ -20,8 +20,7 @@ char *INPerrCat(char *a, char *b)
 	} else {		/* both valid  - hard work... */
 	    register char *errtmp;
 	    errtmp =
-		(char *) MALLOC((strlen(a) + strlen(b) + 2) *
-				sizeof(char));
+		TMALLOC(char, strlen(a) + strlen(b) + 2);
 	    (void) strcpy(errtmp, a);
 	    (void) strcat(errtmp, "\n");
 	    (void) strcat(errtmp, b);

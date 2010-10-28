@@ -656,7 +656,7 @@ read_initialisation_file(char * dir, char * name)
       asprintf(&path, "%s" DIR_PATHSEP "%s", dir,name);
       if(path==NULL) return FALSE;    /* memory allocation error */
 #else /* ~ HAVE_ASPRINTF */
-      path=(char*)tmalloc(2 + strlen(dir)+strlen(name));
+      path = TMALLOC(char, 2 + strlen(dir) + strlen(name));
       if(path==NULL) return FALSE;    /* memory allocation error */
       sprintf(path,"%s" DIR_PATHSEP "%s",dir,name);
 #endif /* HAVE_ASPRINTF */

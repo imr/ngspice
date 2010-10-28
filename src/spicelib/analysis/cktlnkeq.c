@@ -19,7 +19,7 @@ int
 CKTlinkEq(CKTcircuit *ckt, CKTnode *node)
 {
     if(!(ckt->CKTnodes)) { /*  starting the list - allocate both ground and 1 */
-        ckt->CKTnodes = (CKTnode *) MALLOC(sizeof(CKTnode));
+        ckt->CKTnodes = TMALLOC(CKTnode, 1);
         if(ckt->CKTnodes == (CKTnode *)NULL) return(E_NOMEM);
         ckt->CKTnodes->name = (char *)NULL;
         ckt->CKTnodes->type = SP_VOLTAGE;

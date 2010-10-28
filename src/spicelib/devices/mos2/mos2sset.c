@@ -39,7 +39,7 @@ MOS2sSetup(SENstruct *info, GENmodel *inModel)
                 }
             }
             here->MOS2senPertFlag = OFF;
-            if((here->MOS2sens = (double *)MALLOC(70*sizeof(double))) == NULL) {
+            if((here->MOS2sens = TMALLOC(double, 70)) == NULL) {
                 return(E_NOMEM);
             }
 

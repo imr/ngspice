@@ -34,7 +34,7 @@ typedef struct listgraph {
     GRAPH graph;
     struct listgraph *next;
 } LISTGRAPH;
-#define NEWLISTGRAPH (LISTGRAPH *) tmalloc(sizeof(LISTGRAPH))
+#define NEWLISTGRAPH TMALLOC(LISTGRAPH, 1)
 
 #define NUMGBUCKETS 16
 
@@ -122,7 +122,7 @@ GRAPH *CopyGraph(GRAPH *graph)
     /* copy dvecs */
     ret->plotdata = NULL;
     for (link = graph->plotdata; link; link = link->next) {
-      newlink = (struct dveclist *) tmalloc(sizeof(struct dveclist));
+      newlink = TMALLOC(struct dveclist, 1);
       newlink->next = ret->plotdata;
       newlink->vector = vec_copy(link->vector);
       /* vec_copy doesn't set v_color or v_linestyle */
@@ -246,7 +246,7 @@ typedef struct gcstack {
     struct gcstack *next;
 } GCSTACK;
 GCSTACK *gcstacktop;
-#define NEWGCSTACK (GCSTACK *) tmalloc(sizeof(GCSTACK))
+#define NEWGCSTACK TMALLOC(GCSTACK, 1)
 
 /* note: This Push and Pop has tricky semantics.
     Push(graph) will push the currentgraph onto the stack

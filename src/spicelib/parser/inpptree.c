@@ -140,7 +140,7 @@ INPgetTree(char **line, INPparseTree ** pt, CKTcircuit *ckt, INPtables * tab)
 	return;
     }
 
-    (*pt) = (INPparseTree *) MALLOC(sizeof(INPparseTree));
+    (*pt) = TMALLOC(INPparseTree, 1);
 
     (*pt)->p.numVars = numvalues;
     (*pt)->p.varTypes = types;
@@ -148,8 +148,7 @@ INPgetTree(char **line, INPparseTree ** pt, CKTcircuit *ckt, INPtables * tab)
     (*pt)->p.IFeval = IFeval;
     (*pt)->tree = p;
 
-    (*pt)->derivs = (INPparseNode **)
-	MALLOC(numvalues * sizeof(INPparseNode *));
+    (*pt)->derivs = TMALLOC(INPparseNode *, numvalues);
 
     for (i = 0; i < numvalues; i++)
 	(*pt)->derivs[i] = PTdifferentiate(p, i);
@@ -541,7 +540,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 
 static INPparseNode *mkcon(double value)
 {
-    INPparseNode *p = (INPparseNode *) MALLOC(sizeof(INPparseNode));
+    INPparseNode *p = TMALLOC(INPparseNode, 1);
 
     p->type = PT_CONSTANT;
     p->constant = value;
@@ -552,7 +551,7 @@ static INPparseNode *mkcon(double value)
 static INPparseNode *mkb(int type, INPparseNode * left,
 			 INPparseNode * right)
 {
-    INPparseNode *p = (INPparseNode *) MALLOC(sizeof(INPparseNode));
+    INPparseNode *p = TMALLOC(INPparseNode, 1);
     int i;
 
     if ((right->type == PT_CONSTANT) && (left->type == PT_CONSTANT)) {
@@ -652,7 +651,7 @@ static INPparseNode *mkb(int type, INPparseNode * left,
 
 static INPparseNode *mkf(int type, INPparseNode * arg)
 {
-    INPparseNode *p = (INPparseNode *) MALLOC(sizeof(INPparseNode));
+    INPparseNode *p = TMALLOC(INPparseNode, 1);
     int i;
     double constval;
 
@@ -731,7 +730,7 @@ static INPparseNode *mkbnode(const char *opstr, INPparseNode * arg1,
 	fprintf(stderr, "Internal Error: no such op num %s\n", opstr);
 	return (NULL);
     }
-    p = (INPparseNode *) MALLOC(sizeof(INPparseNode));
+    p = TMALLOC(INPparseNode, 1);
 
     p->type = ops[i].number;
     p->funcname = ops[i].name;
@@ -786,8 +785,8 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
         return (NULL);
     }
 
-    data = (struct pwldata *) MALLOC(sizeof(struct pwldata));
-    data->vals = (double*) MALLOC(i*sizeof(double));
+    data = TMALLOC(struct pwldata, 1);
+    data->vals = TMALLOC(double, i);
 
     data->n = i;
 
@@ -841,10 +840,10 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 	if (isupper(*s))
 	    *s = tolower(*s);
 
-    p = (INPparseNode *) MALLOC(sizeof(INPparseNode));
+    p = TMALLOC(INPparseNode, 1);
 
     if (!strcmp(buf, "v")) {
-	name = (char*) MALLOC(128);
+	name = TMALLOC(char, 128);
 	if (arg->type == PT_PLACEHOLDER) {
 	    strcpy(name, arg->funcname);
 	} else if (arg->type == PT_CONSTANT) {
@@ -865,15 +864,11 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 		     break;
 	    if (i == numvalues) {
 		if (numvalues) {
-		    values = (IFvalue *)
-			REALLOC((char *) values,
-				(numvalues + 1) * sizeof(IFvalue));
-		    types = (int *)
-			REALLOC((char *) types,
-				(numvalues + 1) * sizeof(int));
+		    values = TREALLOC(IFvalue, values, numvalues + 1);
+		    types = TREALLOC(int, types, numvalues + 1);
 		} else {
-		    values = (IFvalue *) MALLOC(sizeof(IFvalue));
-		    types = (int *) MALLOC(sizeof(int));
+		    values = TMALLOC(IFvalue, 1);
+		    types = TMALLOC(int, 1);
 		}
 		values[i].nValue = temp;
 		types[i] = IF_NODE;
@@ -883,7 +878,7 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 	    p->type = PT_VAR;
 	}
     } else if (!strcmp(buf, "i")) {
-	name = (char*) MALLOC(128);
+	name = TMALLOC(char, 128);
 	if (arg->type == PT_PLACEHOLDER)
 	    strcpy(name, arg->funcname);
 	else if (arg->type == PT_CONSTANT)
@@ -898,14 +893,11 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 		break;
 	if (i == numvalues) {
 	    if (numvalues) {
-		values = (IFvalue *)
-		    REALLOC((char *) values,
-			    (numvalues + 1) * sizeof(IFvalue));
-		types = (int *)
-		    REALLOC((char *) types, (numvalues + 1) * sizeof(int));
+		values = TREALLOC(IFvalue, values, numvalues + 1);
+		types = TREALLOC(int, types, numvalues + 1);
 	    } else {
-		values = (IFvalue *) MALLOC(sizeof(IFvalue));
-		types = (int *) MALLOC(sizeof(int));
+		values = TMALLOC(IFvalue, 1);
+		types = TMALLOC(int, 1);
 	    }
 	    values[i].uValue = (IFuid) name;
 	    types[i] = IF_INSTANCE;
@@ -966,7 +958,7 @@ static INPparseNode *mknnode(double number)
 {
     struct INPparseNode *p;
 
-    p = (INPparseNode *) MALLOC(sizeof(INPparseNode));
+    p = TMALLOC(INPparseNode, 1);
 
     p->type = PT_CONSTANT;
     p->constant = number;
@@ -988,7 +980,7 @@ static INPparseNode *mksnode(const char *string, void *ckt)
 	if (isupper(*s))
 	    *s = tolower(*s);
 
-    p = (INPparseNode *) MALLOC(sizeof(INPparseNode));
+    p = TMALLOC(INPparseNode, 1);
 
     if(!strcmp("time", buf)) {
         p->type = PT_TIME;
@@ -1018,16 +1010,13 @@ static INPparseNode *mksnode(const char *string, void *ckt)
 		break;
 	if (j == numvalues) {
 	    if (numvalues) {
-		values = (IFvalue *)
-		    REALLOC((char *) values,
-			    (numvalues + 1) * sizeof(IFvalue));
-		types = (int *)
-		    REALLOC((char *) types, (numvalues + 1) * sizeof(int));
+		values = TREALLOC(IFvalue, values, numvalues + 1);
+		types = TREALLOC(int, types, numvalues + 1);
 	    } else {
-		values = (IFvalue *) MALLOC(sizeof(IFvalue));
-		types = (int *) MALLOC(sizeof(int));
+		values = TMALLOC(IFvalue, 1);
+		types = TMALLOC(int, 1);
 	    }
-	    values[i].sValue = (char*) MALLOC(strlen(buf) + 1);
+	    values[i].sValue = TMALLOC(char, strlen(buf) + 1);
 	    strcpy(values[i].sValue, buf);
 	    types[i] = IF_STRING;
 	    numvalues++;
@@ -1176,7 +1165,7 @@ int PTlex (YYSTYPE *lvalp, char **line)
 	    for (s = sbuf; *s; s++)
 		if (index(specials, *s))
 		    break;
-	    tmp = (char*) MALLOC(s - sbuf + 1);
+	    tmp = TMALLOC(char, s - sbuf + 1);
 	    strncpy(tmp, sbuf, s - sbuf);
 	    tmp[s - sbuf] = '\0';
 	    lvalp->str = tmp;

@@ -46,6 +46,7 @@ NON-STANDARD FEATURES
 
 void *tmalloc(size_t);
 
+#define TMALLOC(t,n)      (t*) /**/ tmalloc(sizeof(t) * (size_t)(n))
 
 
 /* ************************************************************************ */
@@ -53,7 +54,7 @@ void *tmalloc(size_t);
 static void udn_int_create(CREATE_ARGS)
 {
     /* Malloc space for an int */
-    MALLOCED_PTR = (int*) tmalloc(sizeof(int));
+    MALLOCED_PTR = TMALLOC(int, 1);
 }
 
 
@@ -152,7 +153,7 @@ static void udn_int_print_val(PRINT_VAL_ARGS)
     int   *int_struct = (int *) STRUCT_PTR;
 
     /* Allocate space for the printed value */
-    PRINT_VAL = (char *) tmalloc(30);
+    PRINT_VAL = TMALLOC(char, 30);
 
     /* Print the value into the string */
     sprintf(PRINT_VAL, "%8d", *int_struct);

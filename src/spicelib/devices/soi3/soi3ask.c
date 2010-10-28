@@ -496,7 +496,7 @@ SOI3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
 /*
         case SOI3_IS :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "SOI3ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -514,7 +514,7 @@ SOI3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case SOI3_IB :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "SOI3ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -525,7 +525,7 @@ SOI3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case SOI3_IGF :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "SOI3ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -542,7 +542,7 @@ SOI3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case SOI3_IGB :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "SOI3ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -559,7 +559,7 @@ SOI3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case SOI3_POWER :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "SOI3ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

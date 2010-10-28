@@ -44,13 +44,13 @@
 #define ABORT() fflush(stderr);fflush(stdout);abort();
 
 #define MERROR(CODE,MESSAGE)	{			      \
-	errMsg = (char *) tmalloc(strlen(MESSAGE) + 1);     \
+	errMsg = TMALLOC(char, strlen(MESSAGE) + 1);     \
 	strcpy(errMsg, (MESSAGE));			      \
 	return (CODE);					      \
 	}
 
-#define	NEW(TYPE)	((TYPE *) tmalloc(sizeof(TYPE)))
-#define	NEWN(TYPE,COUNT) ((TYPE *) tmalloc(sizeof(TYPE) * (COUNT)))
+#define	NEW(TYPE)	(TMALLOC(TYPE, 1))
+#define	NEWN(TYPE,COUNT) (TMALLOC(TYPE, COUNT))
 
 
 #define	R_NORM(A,B) {					      \

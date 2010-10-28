@@ -40,20 +40,14 @@ SENsetParm(ckt,anal,which,value)
     case SEN_DEV:
         ((SENstruct *)anal)->SENnumVal += 1;
         if( ! ((SENstruct *)anal)->SENdevices ) {
-            ((SENstruct *)anal)->SENdevices = (char **) 
-                    MALLOC( ((SENstruct *)anal)->SENnumVal * sizeof(char *));
+            ((SENstruct *)anal)->SENdevices = TMALLOC(char *, ((SENstruct *)anal)->SENnumVal);
             if( ((SENstruct *)anal)->SENdevices == NULL) return(E_NOMEM);
-            ((SENstruct *)anal)->SENparmNames = (char **)
-                    MALLOC( ((SENstruct *)anal)->SENnumVal * sizeof(char *));
+            ((SENstruct *)anal)->SENparmNames = TMALLOC(char *, ((SENstruct *)anal)->SENnumVal);
             if( ((SENstruct *)anal)->SENparmNames == NULL) return(E_NOMEM);
         } else {
-            ((SENstruct *)anal)->SENdevices = (char **)
-                    REALLOC( ((SENstruct *)anal)->SENdevices ,
-                    ((SENstruct *)anal)->SENnumVal * sizeof(char *));
+            ((SENstruct *)anal)->SENdevices = TREALLOC(char *, ((SENstruct *)anal)->SENdevices, ((SENstruct *)anal)->SENnumVal);
             if( ((SENstruct *)anal)->SENdevices == NULL) return(E_NOMEM);
-            ((SENstruct *)anal)->SENparmNames = (char **) REALLOC(
-                    ((SENstruct *)anal)->SENparmNames,
-                    ((SENstruct *)anal)->SENnumVal * sizeof(char *)) ;
+            ((SENstruct *)anal)->SENparmNames = TREALLOC(char *, ((SENstruct *)anal)->SENparmNames, ((SENstruct *)anal)->SENnumVal) ;
             if( ((SENstruct *)anal)->SENparmNames == NULL) return(E_NOMEM);
         }
         *(((SENstruct *)anal)->SENdevices+((SENstruct *)anal)->SENnumVal-1)=

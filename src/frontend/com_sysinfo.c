@@ -90,7 +90,7 @@ void com_sysinfo(wordlist *wl)
    int errorcode;
    TesSystemInfo* info;
 
-   info = (TesSystemInfo*)tmalloc(sizeof(TesSystemInfo));
+   info = TMALLOC(TesSystemInfo, 1);
 
    errorcode = tesCreateSystemInfo(info);   
    if (errorcode)
@@ -457,7 +457,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
     }
 
     RegQueryValueExA(hkBaseCPU,"ProcessorNameString",0,0,NULL,&dwLen);
-    freeStr = procStr = (char*) tmalloc(dwLen+1);
+    freeStr = procStr = TMALLOC(char, dwLen + 1);
     RegQueryValueExA(hkBaseCPU,"ProcessorNameString",0,0,(LPBYTE)procStr,&dwLen);
     procStr[dwLen] = '\0';
     while (*procStr == ' ') procStr++;

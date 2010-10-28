@@ -107,12 +107,11 @@ void cm_analog_alloc(
     /* Allocate space in instance struct for this state descriptor */
     if(here->num_state == 0) {
         here->num_state = 1;
-        here->state = (Mif_State_t *) MALLOC(sizeof(Mif_State_t));
+        here->state = TMALLOC(Mif_State_t, 1);
     }
     else {
         here->num_state++;
-        here->state = (Mif_State_t *) REALLOC(here->state,
-                                       here->num_state * sizeof(Mif_State_t));
+        here->state = TREALLOC(Mif_State_t, here->state, here->num_state);
     }
 
     /* Fill in the members of the state descriptor struct */
@@ -127,10 +126,9 @@ void cm_analog_alloc(
     ckt->CKTnumStates += doubles_needed;
     for(i=0;i<=ckt->CKTmaxOrder+1;i++) {
         if(ckt->CKTnumStates == doubles_needed)
-            ckt->CKTstates[i] = (double *) MALLOC(ckt->CKTnumStates * sizeof(double));
+            ckt->CKTstates[i] = TMALLOC(double, ckt->CKTnumStates);
         else
-            ckt->CKTstates[i] = (double *) REALLOC(ckt->CKTstates[i],
-                                            ckt->CKTnumStates * sizeof(double));
+            ckt->CKTstates[i] = TREALLOC(double, ckt->CKTstates[i], ckt->CKTnumStates);
     }
 }
 
@@ -279,12 +277,11 @@ int  cm_analog_integrate(
     if(! got_index) {
         if(here->num_intgr == 0) {
             here->num_intgr = 1;
-            here->intgr = (Mif_Intgr_t *) MALLOC(sizeof(Mif_Intgr_t));
+            here->intgr = TMALLOC(Mif_Intgr_t, 1);
         }
         else {
             here->num_intgr++;
-            here->intgr = (Mif_Intgr_t *) REALLOC(here->intgr,
-                                           here->num_intgr * sizeof(Mif_Intgr_t));
+            here->intgr = TREALLOC(Mif_Intgr_t, here->intgr, here->num_intgr);
         }
         intgr = &(here->intgr[here->num_intgr - 1]);
         intgr->byte_index = byte_index;
@@ -361,12 +358,11 @@ int  cm_analog_converge(
     /* Allocate space in instance struct for this conv descriptor */
     if(here->num_conv == 0) {
         here->num_conv = 1;
-        here->conv = (Mif_Conv_t *) MALLOC(sizeof(Mif_Conv_t));
+        here->conv = TMALLOC(Mif_Conv_t, 1);
     }
     else {
         here->num_conv++;
-        here->conv = (Mif_Conv_t *) REALLOC(here->conv,
-                                       here->num_conv * sizeof(Mif_Conv_t));
+        here->conv = TREALLOC(Mif_Conv_t, here->conv, here->num_conv);
     }
 
     /* Fill in the conv descriptor data */

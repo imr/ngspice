@@ -354,7 +354,7 @@ void SaveText(GRAPH *graph, char *text, int x, int y)
 
     struct _keyed *keyed;
 
-    keyed = (struct _keyed *) tmalloc(sizeof(struct _keyed));
+    keyed = TMALLOC(struct _keyed, 1);
 
     if (!graph->keyed) {
       graph->keyed = keyed;
@@ -363,7 +363,7 @@ void SaveText(GRAPH *graph, char *text, int x, int y)
       graph->keyed = keyed;
     }
 
-    keyed->text = (char*) tmalloc(strlen(text) + 1);
+    keyed->text = TMALLOC(char, strlen(text) + 1);
     strcpy(keyed->text, text);
 
     keyed->x = x;

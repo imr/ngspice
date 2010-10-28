@@ -95,11 +95,11 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
         v->v_linestyle = (PCHARS[i] ? PCHARS[i++] : '#');
     }
     /* Now allocate the field and stuff. */
-    field = (char*) tmalloc((maxy + 1) * (maxx + 1));
-    line1 = (char*) tmalloc(maxy + margin + FUDGE + 1);
-    line2 = (char*) tmalloc(maxy + margin + FUDGE + 1);
+    field = TMALLOC(char, (maxy + 1) * (maxx + 1));
+    line1 = TMALLOC(char, maxy + margin + FUDGE + 1);
+    line2 = TMALLOC(char, maxy + margin + FUDGE + 1);
     if (!novalue)
-        values = (double *) tmalloc(maxx * sizeof (double));
+        values = TMALLOC(double, maxx);
     
     /* Clear the field, put the lines in the right places, and create
      * the headers.

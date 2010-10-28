@@ -48,7 +48,7 @@ sortlist(toplink **tlp)
         num++;
     if (!num)
         return;
-    vec = (toplink **) tmalloc(sizeof (toplink *) * num);
+    vec = TMALLOC(toplink *, num);
     for (tl = *tlp, i = 0; tl; tl = tl->next, i++)
         vec[i] = tl;
     (void) qsort(vec, num, sizeof (toplink *), sortcmp);
@@ -188,7 +188,7 @@ static toplink *getsubtoplink(char **ss)
     if ((tmp =strchr(s, ':'))) {
       tl->place = alloc(fplace);
       tl->place->filename = strncpy(
-            (char*) tmalloc(sizeof (char) * (tmp - s + 1)),
+            TMALLOC(char, tmp - s + 1),
             s, (tmp - s));
       tl->place->filename[tmp - s] = '\0';
       strtolower(tl->place->filename);
@@ -354,7 +354,7 @@ copy_fplace(fplace *place)
 {
     fplace *newplace;
 
-    newplace = (fplace *) tmalloc(sizeof(fplace));
+    newplace = TMALLOC(fplace, 1);
     newplace->filename = copy(place->filename);
     newplace->fpos = place->fpos;
     newplace->fp = place->fp;

@@ -81,7 +81,7 @@ com_spec(wordlist *wl)
            1/(time[tlen-1] - time[0]));
         return;
     }
-    win = (double *) tmalloc(tlen * sizeof (double));
+    win = TMALLOC(double, tlen);
     {
        char   window[BSIZE_SP];
        double maxt = time[tlen-1];
@@ -203,7 +203,7 @@ com_spec(wordlist *wl)
     plot_cur->pl_name = copy("Spectrum");
     plot_cur->pl_date = copy(datestring( ));
 
-    freq = (double *) tmalloc(fpts * sizeof(double));
+    freq = TMALLOC(double, fpts);
     f = alloc(struct dvec);
     ZERO(f, struct dvec);
     f->v_name = copy("frequency");
@@ -213,11 +213,11 @@ com_spec(wordlist *wl)
     f->v_realdata = freq;
     vec_new(f);
 
-    tdvec = (double  **) tmalloc(ngood * sizeof(double  *));
-    fdvec = (ngcomplex_t **) tmalloc(ngood * sizeof(ngcomplex_t *));
+    tdvec = TMALLOC(double  *, ngood);
+    fdvec = TMALLOC(ngcomplex_t *, ngood);
     for (i = 0, vec = vlist; i<ngood; i++) {
        tdvec[i] = vec->v_realdata;
-       fdvec[i] = (ngcomplex_t *) tmalloc(fpts * sizeof(ngcomplex_t));
+       fdvec[i] = TMALLOC(ngcomplex_t, fpts);
        f = alloc(struct dvec);
        ZERO(f, struct dvec);
        f->v_name = vec_basename(vec);
@@ -229,7 +229,7 @@ com_spec(wordlist *wl)
        vec = vec->v_link2;
     }
 
-    dc = (double  *) tmalloc(ngood * sizeof(double));
+    dc = TMALLOC(double, ngood);
     for (i = 0; i<ngood; i++) {
        dc[i] = 0;
     }

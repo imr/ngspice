@@ -35,7 +35,7 @@ lincopy(struct dvec *ov, double *newscale, int newlen, struct dvec *oldscale)
     v->v_flags |= VF_PERMANENT;
     v->v_length = newlen;
 
-    nd = (double *) tmalloc(newlen * sizeof (double));
+    nd = TMALLOC(double, newlen);
     if (!ft_interpolate(ov->v_realdata, nd, oldscale->v_realdata,
             oldscale->v_length, newscale, newlen, 1)) {
         fprintf(cp_err, "Error: can't interpolate %s\n", ov->v_name);

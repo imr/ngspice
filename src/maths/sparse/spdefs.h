@@ -371,7 +371,7 @@ extern void * trealloc(void *, size_t);
 
 #define SP_MALLOC(type,number)  ((type *)tmalloc((size_t)(sizeof(type)*(number))))
 #define SP_REALLOC(ptr,type,number)  \
-           ptr = (type *)trealloc((char *)ptr,(unsigned)(sizeof(type)*(number)))
+           ptr = (type *)trealloc(ptr,(unsigned)(sizeof(type)*(number)))
 #define SP_FREE(ptr) { if ((ptr) != NULL) txfree((char *)(ptr)); (ptr) = NULL; }
 
 
@@ -383,7 +383,7 @@ extern void * trealloc(void *, size_t);
 }
 #else /* HAVE_LIBCG */
 #define SP_CALLOC(ptr,type,number)                         	\
-{ ptr = (type *) tmalloc(((size_t)number) * sizeof(type));	\
+{ ptr = TMALLOC(type, (size_t)number);	\
 }
 #endif
 

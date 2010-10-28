@@ -48,7 +48,7 @@ int INPgetStr(char **line, char **token, int gobble)
     }
 
     /* Create token */
-    *token = (char *) MALLOC(1 + point - *line);
+    *token = TMALLOC(char, 1 + point - *line);
     if (!*token)
 	return (E_NOMEM);
     (void) strncpy(*token, *line, point - *line);

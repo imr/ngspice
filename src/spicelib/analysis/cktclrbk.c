@@ -22,7 +22,7 @@ CKTclrBreak(CKTcircuit *ckt)
     int j;
 
     if(ckt->CKTbreakSize >2) {
-        tmp = (double *)MALLOC((ckt->CKTbreakSize-1)*sizeof(double));
+        tmp = TMALLOC(double, ckt->CKTbreakSize - 1);
         if(tmp == (double *)NULL) return(E_NOMEM);
         for(j=1;j<ckt->CKTbreakSize;j++) {
             *(tmp+j-1) = *(ckt->CKTbreaks+j);

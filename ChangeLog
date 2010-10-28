@@ -1,4 +1,9 @@
 2010-10-28  Robert Larice
+ * src/**/* :
+    wrap tmalloc MALLOC etc, into two macros TMALLOC and TREALLOC
+      add casts to those macros to silence type conversion warnings
+
+2010-10-28  Robert Larice
  * src/frontend/commands.c ,
  * src/frontend/control.c :
     bug fix, incorrect handling of `co_spiceonly' commands

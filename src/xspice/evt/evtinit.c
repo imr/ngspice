@@ -63,7 +63,7 @@ static int EVTinit_limits(CKTcircuit *ckt);
 /* Adapted from SPICE 3C1 code in CKTsetup.c */
 #define CKALLOC(var,size,type) \
     if(size) { \
-        if(!(var = (type *) MALLOC((size) * sizeof(type)))) \
+        if(!(var = TMALLOC(type, size))) \
             return(E_NOMEM); \
     }
 
@@ -106,7 +106,7 @@ int EVTinit(
     /* Will probably remove this restriction later... */
 /*
     if(ckt->evt->counts.num_hybrids == 0) {
-        errMsg = (char*) MALLOC(strlen(err_no_hybrids) + 1);
+        errMsg = TMALLOC(char, strlen(err_no_hybrids) + 1);
         strcpy(errMsg, err_no_hybrids);
         return(E_PRIVATE);
     }
@@ -219,8 +219,7 @@ static int EVTcheck_nodes(
         analog_node = ckt->CKTnodes;
         while(analog_node) {
             if(strcmp(event_node->name, analog_node->name) == 0) {
-                errMsg = (char *) MALLOC(strlen(err_prefix) + strlen(event_node->name) +
-                                strlen(err_collide) + 1);
+                errMsg = TMALLOC(char, strlen(err_prefix) + strlen(event_node->name) + strlen(err_collide) + 1);
                 sprintf(errMsg, "%s%s%s", err_prefix,
                                           event_node->name,
                                           err_collide);

@@ -170,7 +170,7 @@ void EVTdump(
     if(firstcall) {
 
         /* Allocate local data structure used to process nodes */
-        node_dict = (evtdump_dict_t *) MALLOC(num_nodes * sizeof(evtdump_dict_t));
+        node_dict = TMALLOC(evtdump_dict_t, num_nodes);
 
         /* Loop through all nodes to determine which nodes should be sent. */
         /* Only nodes not within subcircuits qualify. */

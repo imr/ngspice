@@ -127,7 +127,7 @@ char * absolute_pathname(char *string, char *dot_path)
       result = copy(string);
   else {
       if (dot_path && dot_path[0]) {
-         result = (char*) tmalloc(2 + strlen(dot_path) + strlen(string));
+         result = TMALLOC(char, 2 + strlen(dot_path) + strlen(string));
          strcpy(result, dot_path);
          result_len = strlen(result);
          if (result[result_len - 1] != '/') {
@@ -135,7 +135,7 @@ char * absolute_pathname(char *string, char *dot_path)
              result[result_len] = '\0';
          }
       } else {
-         result = (char*) tmalloc(3 + strlen (string));
+         result = TMALLOC(char, 3 + strlen (string));
          result[0] = '.'; result[1] = '/'; result[2] = '\0';
          result_len = 2;
       }
@@ -171,7 +171,7 @@ basename(const char *name)
     len = strlen(name);
     if (name[len - 1] == '/') {
         // ditch the trailing '/'
-        p = tmp = (char*) tmalloc(len);
+        p = tmp = TMALLOC(char, len);
         strncpy(p, name, len - 1); 
     } else {
         p = (char *) name;
@@ -221,7 +221,7 @@ dirname(const char *name)
 
     size = p - name;
     if (size) {
-        ret = (char*) tmalloc(size + 1);
+        ret = TMALLOC(char, size + 1);
         memcpy(ret, name, size);
         ret[size] = '\0';
     } else if (*p == '/')
@@ -266,7 +266,7 @@ dirname(const char *name)
 
     size = p - name;
     if (size) {
-        ret = (char*) tmalloc(size + 1);
+        ret = TMALLOC(char, size + 1);
         memcpy(ret, name, size);
         ret[size] = '\0';
     } else if (*p == '/')

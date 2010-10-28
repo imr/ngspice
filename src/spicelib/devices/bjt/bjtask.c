@@ -228,7 +228,7 @@ BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue
         return(OK);
         case BJT_QUEST_CS :  
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "BJTask";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -243,7 +243,7 @@ BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue
             return(OK);
         case BJT_QUEST_CE :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "BJTask";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -258,7 +258,7 @@ BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue
             return(OK);
         case BJT_QUEST_POWER :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "BJTask";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

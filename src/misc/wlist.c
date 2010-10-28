@@ -144,7 +144,7 @@ wl_mkvec(wordlist *wl)
     char **v;
 
     len = wl_length(wl);
-    v = (char **) tmalloc((len + 1) * sizeof (char *));
+    v = TMALLOC(char *, len + 1);
     for (i = 0; i < len; i++) {
         v[i] = copy(wl->wl_word);
         wl = wl->wl_next;
@@ -198,7 +198,7 @@ wl_flatten(wordlist *wl)
 
     for (tw = wl; tw; tw = tw->wl_next)
         i += strlen(tw->wl_word) + 1;
-    buf = (char*) tmalloc(i + 1);
+    buf = TMALLOC(char, i + 1);
     *buf = 0;
 
     while (wl != NULL) {
@@ -245,7 +245,7 @@ wl_sort(wordlist *wl)
         ww = ww->wl_next;
     if (i < 2)
         return;
-    stuff = (char **) tmalloc(i * sizeof (char *));
+    stuff = TMALLOC(char *, i);
     for (i = 0, ww = wl; ww; i++, ww = ww->wl_next)
         stuff[i] = ww->wl_word;
     qsort(stuff, i, sizeof (char *), wlcomp);

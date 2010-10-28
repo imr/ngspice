@@ -158,21 +158,19 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
 
     if (gridsize) {
         /* This is done quite differently from what we do below... */
-        gridbuf = (double *) tmalloc(gridsize * sizeof (double));
-        result = (double *) tmalloc(gridsize * sizeof (double));
+        gridbuf = TMALLOC(double, gridsize);
+        result = TMALLOC(double, gridsize);
         if (isreal(v))
             ydata = v->v_realdata;
         else {
-            ydata = (double *) tmalloc(v->v_length * 
-                    sizeof (double));
+            ydata = TMALLOC(double, v->v_length);
             for (i = 0; i < v->v_length; i++)
                 ydata[i] = realpart(&v->v_compdata[i]);
         }
         if (isreal(xs))
             xdata = xs->v_realdata;
         else {
-            xdata = (double *) tmalloc(xs->v_length * 
-                    sizeof (double));
+            xdata = TMALLOC(double, xs->v_length);
             for (i = 0; i < xs->v_length; i++)
                 xdata[i] = realpart(&xs->v_compdata[i]);
         }
@@ -211,11 +209,10 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     /* We need to do curve fitting now. First get some scratch 
      * space
      */
-    scratch = (double *) tmalloc(((degree + 1) * (degree + 2)) * 
-            sizeof (double));
-    result = (double *) tmalloc((degree + 1) * sizeof (double));
-    xdata = (double *) tmalloc((degree + 1) * sizeof (double));
-    ydata = (double *) tmalloc((degree + 1) * sizeof (double));
+    scratch = TMALLOC(double, (degree + 1) * (degree + 2));
+    result = TMALLOC(double, degree + 1);
+    xdata = TMALLOC(double, degree + 1);
+    ydata = TMALLOC(double, degree + 1);
 
 
     /* Plot the first degree segments... */

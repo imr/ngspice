@@ -55,11 +55,10 @@ ft_interpolate(double *data, double *ndata, double *oscale, int olen,
     else
         sign = 1;
 
-    scratch = (double *) tmalloc(((degree + 1) * (degree + 2)) * 
-            sizeof (double));
-    result = (double *) tmalloc((degree + 1) * sizeof (double));
-    xdata = (double *) tmalloc((degree + 1) * sizeof (double));
-    ydata = (double *) tmalloc((degree + 1) * sizeof (double));
+    scratch = TMALLOC(double, (degree + 1) * (degree + 2));
+    result = TMALLOC(double, degree + 1);
+    xdata = TMALLOC(double, degree + 1);
+    ydata = TMALLOC(double, degree + 1);
 
     /* Deal with the first degree pieces. */
     bcopy(data, ydata, (degree + 1) * sizeof (double));

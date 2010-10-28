@@ -194,7 +194,7 @@ sortvecs(struct dvec *d)
         i++;
     if (i < 2)
         return (d);
-    array = (struct dvec **) tmalloc(i * sizeof (struct dvec *));
+    array = TMALLOC(struct dvec *, i);
     for (t = d, i = 0; t; t = t->v_link2)
         array[i++] = t;
     
@@ -468,7 +468,7 @@ vec_get(const char *vec_name)
         d->v_name = copy(whole); /* MW. The same as word before */
         d->v_type = SV_NOTYPE;
         d->v_flags |= VF_REAL;  /* No complex values yet... */
-        d->v_realdata = (double *) tmalloc(sizeof (double));
+        d->v_realdata = TMALLOC(double, 1);
         d->v_length = 1;
     
     /* In case the represented variable is a REAL vector this takes
@@ -517,13 +517,13 @@ vec_get(const char *vec_name)
       */
      struct variable *nv;
      double *list;
-     list = (double *)MALLOC(sizeof(double));
+     list = TMALLOC(double, 1);
      nv = alloc(struct variable);
 
      nv = vv->va_vlist;
      for(i=1; ;i++)
       {
-       list=(double *)REALLOC((char *)list,i*sizeof(double));
+       list=TREALLOC(double, list, i);
        *(list+i-1) = nv->va_real;
        nv = nv->va_next;
        if (nv==NULL) break;
@@ -643,15 +643,13 @@ vec_copy(struct dvec *v)
     nv->v_flags = v->v_flags & ~VF_PERMANENT;
 
     if (isreal(v)) {
-        nv->v_realdata = (double *) tmalloc(sizeof (double) *
-                v->v_length);
+        nv->v_realdata = TMALLOC(double, v->v_length);
         bcopy(v->v_realdata, nv->v_realdata, 
                 sizeof (double) * v->v_length);
         nv->v_compdata = NULL;
     } else {
         nv->v_realdata = NULL;
-        nv->v_compdata = (ngcomplex_t *) tmalloc(sizeof(ngcomplex_t) *
-                v->v_length);
+        nv->v_compdata = TMALLOC(ngcomplex_t, v->v_length);
         bcopy(v->v_compdata, nv->v_compdata, 
                 sizeof(ngcomplex_t) * v->v_length);
     }
@@ -979,7 +977,7 @@ vec_transpose(struct dvec *v)
      */
 
     if (isreal(v)) {
-	newreal = (double *) tmalloc(sizeof (double) * v->v_length);
+	newreal = TMALLOC(double, v->v_length);
 	oldreal = v->v_realdata;
 	koffset = 0;
 	for ( k=0; k < nummatrices; k++ ) {
@@ -996,7 +994,7 @@ vec_transpose(struct dvec *v)
 	tfree(oldreal);
 	v->v_realdata = newreal;
     } else {
-	newcomp = (ngcomplex_t *) tmalloc(sizeof(ngcomplex_t) * v->v_length);
+	newcomp = TMALLOC(ngcomplex_t, v->v_length);
 	oldcomp = v->v_compdata;
 	koffset = 0;
 	for ( k=0; k < nummatrices; k++ ) {
@@ -1064,10 +1062,10 @@ vec_mkfamily(struct dvec *v)
         d->v_length = size;
 
         if (isreal(v)) {
-            d->v_realdata = (double *) tmalloc(size * sizeof(double));
+            d->v_realdata = TMALLOC(double, size);
             bcopy(v->v_realdata + size*j, d->v_realdata, size*sizeof(double));
         } else {
-            d->v_compdata = (ngcomplex_t *) tmalloc(size * sizeof(ngcomplex_t));
+            d->v_compdata = TMALLOC(ngcomplex_t, size);
             bcopy(v->v_compdata + size*j, d->v_compdata, size*sizeof(ngcomplex_t));
         }
 	/* Add one to the counter. */

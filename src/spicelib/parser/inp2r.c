@@ -125,7 +125,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
         
         /* first alocate memory for the new longer line */
         i = strlen(current->line);  /* length of existing line */	
-        line = (char*) tmalloc(i + 4 + 1);  /* alocate enough for "tc2=" & terminating NULL */
+        line = TMALLOC(char, i + 4 + 1);  /* alocate enough for "tc2=" & terminating NULL */
         if(line == NULL) {
             /* failed to allocate memory so we recover rather crudely
                by rejecting the translation */

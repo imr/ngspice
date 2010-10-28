@@ -169,9 +169,9 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
   for (n = ckt->CKTnodes; n; n = n->next)
 	  NumNodes++;
   
-  OldRhsOld = (double *) MALLOC ((NumNodes + 1) * sizeof (double));
+  OldRhsOld = TMALLOC(double, NumNodes + 1);
   OldCKTstate0 =
-    (double *) MALLOC ((ckt->CKTnumStates + 1) * sizeof (double));
+    TMALLOC(double, ckt->CKTnumStates + 1);
 
   for (n = ckt->CKTnodes; n; n = n->next)
 	  *(ckt->CKTrhsOld + n->number) = 0;
@@ -406,9 +406,9 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
       NumNodes++;
   }
 
-  OldRhsOld = (double *) MALLOC ((NumNodes + 1) * sizeof (double));
+  OldRhsOld = TMALLOC(double, NumNodes + 1);
   OldCKTstate0 =
-    (double *) MALLOC ((ckt->CKTnumStates + 1) * sizeof (double));
+    TMALLOC(double, ckt->CKTnumStates + 1);
 
   for (n = ckt->CKTnodes; n; n = n->next)
       *(ckt->CKTrhsOld + n->number) = 0;

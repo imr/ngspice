@@ -37,7 +37,7 @@ DIOsSetup(SENstruct *info, GENmodel *inModel)
                 here->DIOsenParmNo = ++(info->SENparms);
                 here->DIOsenPertFlag = OFF;
             }
-            if((here->DIOsens = (double *)MALLOC(7*sizeof(double)))
+            if((here->DIOsens = TMALLOC(double, 7))
                     == NULL) return(E_NOMEM);
 
         }

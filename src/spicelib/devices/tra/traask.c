@@ -83,7 +83,7 @@ TRAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
             value->rValue = here->TRAbrEq2;
             return (OK);
         case TRA_DELAY:
-            value->v.vec.rVec = (double *) MALLOC(here->TRAsizeDelay * sizeof(double));
+            value->v.vec.rVec = TMALLOC(double, here->TRAsizeDelay);
             value->v.numValue = temp = here->TRAsizeDelay;
 	    v = value->v.vec.rVec;
 	    w = here->TRAdelays;

@@ -53,7 +53,7 @@ CKTsetBreak(CKTcircuit *ckt, double time)
                 return(OK);
             }
             /* fits in middle - new array & insert */
-            tmp = (double *)MALLOC((ckt->CKTbreakSize+1)*sizeof(double));
+            tmp = TMALLOC(double, ckt->CKTbreakSize + 1);
             if(tmp == (double *)NULL) return(E_NOMEM);
             for(j=0;j<i;j++) {
                 *(tmp+j) = *(ckt->CKTbreaks+j);
@@ -83,8 +83,7 @@ CKTsetBreak(CKTcircuit *ckt, double time)
         return(OK);
     }
     /* fits at end - grow array & add on */
-    ckt->CKTbreaks = (double *)REALLOC(ckt->CKTbreaks,
-            (ckt->CKTbreakSize+1)*sizeof(double));
+    ckt->CKTbreaks = TREALLOC(double, ckt->CKTbreaks, ckt->CKTbreakSize + 1);
     ckt->CKTbreakSize++;
     ckt->CKTbreaks[ckt->CKTbreakSize-1]=time;
 #ifdef TRACE_BREAKPOINT

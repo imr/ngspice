@@ -786,9 +786,9 @@ static void measure_rms_integral(
    }
 
    /* Allocate buffers for calculation. */
-   x     = (double *) tmalloc(xScale->v_length * sizeof(double));
-   y     = (double *) tmalloc(xScale->v_length * sizeof(double));
-   width = (double *) tmalloc((xScale->v_length + 1) * sizeof(double));
+   x     = TMALLOC(double, xScale->v_length);
+   y     = TMALLOC(double, xScale->v_length);
+   width = TMALLOC(double, xScale->v_length + 1);
 
    xy_size = 0 ;
    toVal = -1 ;
@@ -1394,8 +1394,8 @@ get_measure2(
       {
          // trig parameters
          MEASUREPTR measTrig, measTarg;
-         measTrig = (struct measure*)tmalloc(sizeof(struct measure));
-         measTarg = (struct measure*)tmalloc(sizeof(struct measure));
+         measTrig = TMALLOC(struct measure, 1);
+         measTarg = TMALLOC(struct measure, 1);
 
          measTrig->m_analysis = measTarg->m_analysis = mAnalysis;
 
@@ -1463,8 +1463,8 @@ get_measure2(
       case AT_FIND:
       {
          MEASUREPTR meas, measFind;
-         meas = (struct measure*)tmalloc(sizeof(struct measure));
-         measFind = (struct measure*)tmalloc(sizeof(struct measure));
+         meas = TMALLOC(struct measure, 1);
+         measFind = TMALLOC(struct measure, 1);
 
          meas->m_analysis = measFind->m_analysis = mAnalysis;
 
@@ -1519,7 +1519,7 @@ get_measure2(
       case AT_WHEN:
       {
          MEASUREPTR meas;
-         meas = (struct measure*)tmalloc(sizeof(struct measure));
+         meas = TMALLOC(struct measure, 1);
          meas->m_analysis = mAnalysis;
          if (measure_parse_when(meas, words, errbuf) ==0) {
             measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
@@ -1549,7 +1549,7 @@ get_measure2(
       {
          // trig parameters
          MEASUREPTR meas;
-         meas = (struct measure*)tmalloc(sizeof(struct measure));
+         meas = TMALLOC(struct measure, 1);
          meas->m_analysis = mAnalysis;
          if (measure_parse_trigtarg(meas, words , NULL, "trig", errbuf)==0) {
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
@@ -1582,7 +1582,7 @@ get_measure2(
       {
         // trig parameters
          MEASUREPTR meas;
-         meas = (struct measure*)tmalloc(sizeof(struct measure));
+         meas = TMALLOC(struct measure, 1);
 
          meas->m_analysis = mAnalysis;
 
@@ -1619,7 +1619,7 @@ get_measure2(
       {
          // trig parameters
          MEASUREPTR measTrig;
-         measTrig = (struct measure*)tmalloc(sizeof(struct measure));
+         measTrig = TMALLOC(struct measure, 1);
          measTrig->m_analysis = mAnalysis;
          if (measure_parse_trigtarg(measTrig, words , NULL, "trig", errbuf)==0) {
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
@@ -1661,7 +1661,7 @@ get_measure2(
       {
          double minValue, maxValue;
          MEASUREPTR measTrig;
-         measTrig = (struct measure*)tmalloc(sizeof(struct measure));
+         measTrig = TMALLOC(struct measure, 1);
          measTrig->m_analysis = mAnalysis;
          if (measure_parse_trigtarg(measTrig, words , NULL, "trig", errbuf)==0) {
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);

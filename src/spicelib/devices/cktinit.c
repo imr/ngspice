@@ -24,14 +24,14 @@ int
 CKTinit(CKTcircuit **ckt)		/* new circuit to create */
 {
     int i;
-    CKTcircuit *sckt = (CKTcircuit *) tmalloc(sizeof(CKTcircuit));
+    CKTcircuit *sckt = TMALLOC(CKTcircuit, 1);
     *ckt = sckt;
     if (sckt == NULL)
 	return(E_NOMEM);
 /* gtri - begin - dynamically allocate the array of model lists */
 /* CKThead used to be statically sized in CKTdefs.h, but has been changed */
 /* to a ** pointer */
-    (sckt)->CKThead = (GENmodel **)tmalloc(DEVmaxnum * sizeof(GENmodel *));
+    (sckt)->CKThead = TMALLOC(GENmodel *, DEVmaxnum);
     if((sckt)->CKThead == NULL) return(E_NOMEM);
 /* gtri - end   - dynamically allocate the array of model lists */
 
@@ -74,7 +74,7 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
     sckt->CKTdefaultMosAS = 0;
     sckt->CKTsrcFact=1;
     sckt->CKTdiagGmin=0;
-    sckt->CKTstat = (STATistics *) tmalloc(sizeof(STATistics));
+    sckt->CKTstat = TMALLOC(STATistics, 1);
     sckt->CKTtroubleNode = 0;
     sckt->CKTtroubleElt = NULL;
     sckt->CKTtimePoints = NULL;
@@ -89,7 +89,7 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
 /* gtri - begin - wbk - allocate/initialize substructs */
 
     /* Allocate evt data structure */
-    (sckt)->evt = (Evt_Ckt_Data_t *) MALLOC(sizeof(Evt_Ckt_Data_t));
+    (sckt)->evt = TMALLOC(Evt_Ckt_Data_t, 1);
     if(! (sckt)->evt)
         return(E_NOMEM);
 
@@ -97,7 +97,7 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
     (sckt)->evt->options.op_alternate = MIF_TRUE;
 
     /* Allocate enh data structure */
-    (sckt)->enh = (Enh_Ckt_Data_t *) MALLOC(sizeof(Enh_Ckt_Data_t));
+    (sckt)->enh = TMALLOC(Enh_Ckt_Data_t, 1);
     if(! (sckt)->enh)
         return(E_NOMEM);
 

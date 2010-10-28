@@ -915,10 +915,10 @@ com_alter_common(wordlist *wl, int do_model)
             if(argument[i]!='\0'){
                     /* We found '=' */
                     eqfound = TRUE;
-                    arglist = (char**)tmalloc(4*sizeof(char*));
+                    arglist = TMALLOC(char*, 4);
                     arglist[3] = NULL;
-                    arglist[0] = (char*)tmalloc(i + 1);
-                    arglist[2] = (char*)tmalloc(strlen(&argument[i+1]) + 1);
+                    arglist[0] = TMALLOC(char, i + 1);
+                    arglist[2] = TMALLOC(char, strlen(&argument[i + 1]) + 1);
                     /* copy argument */
                     strncpy(arglist[0],argument,i);
                     arglist[0][i] = '\0';
@@ -981,7 +981,7 @@ com_alter_common(wordlist *wl, int do_model)
         }
         /* add the '=' */
         /* create wordlist with '=' */
-        wleq = (wordlist*)tmalloc(sizeof(wordlist));
+        wleq = TMALLOC(wordlist, 1);
         wleq->wl_word = copy("=");
         /* add the last element (the value of the param - value pair) */
         wleq->wl_next = wlin;
@@ -1068,17 +1068,17 @@ com_alter_common(wordlist *wl, int do_model)
        if(eq(words->wl_word, "[")) words = words->wl_next;
        xsbuf = wl_flatten(words);
        /* fprintf(cp_err, "Chain    converted  %s \n",xsbuf); */
-       dv=(struct dvec *)MALLOC(sizeof(struct dvec));
+       dv = TMALLOC(struct dvec, 1);
        dv->v_name = copy("real vector");
        type &= IF_VARTYPES;
        if (type == IF_REALVEC) {
-           list = (double *)MALLOC(sizeof(double));
+           list = TMALLOC(double, 1);
            tmp = INPevaluate(&xsbuf,&error,1);
            while (error == 0)
            {
                /*printf(" returning vector value %g\n",tmp); */
                i++;
-               list=(double *)REALLOC((char *)list,i*sizeof(double));
+               list=TREALLOC(double, list, i);
                *(list+i-1) = tmp;
                tmp = INPevaluate(&xsbuf,&error,1);
            }

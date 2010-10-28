@@ -63,7 +63,7 @@ DIOnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 			for (i=0; i < DIONSRCS; i++) {
 			    (void)sprintf(name,"onoise_%s%s",inst->DIOname,DIOnNames[i]);
 
-                            data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
+                            data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
                             if (!data->namelist) return(E_NOMEM);
 		            (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
 			                              (IFuid)NULL, name, UID_OTHER, NULL);
@@ -76,7 +76,7 @@ DIOnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 			for (i=0; i < DIONSRCS; i++) {
 			    (void)sprintf(name,"onoise_total_%s%s",inst->DIOname,DIOnNames[i]);
 
-                            data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
+                            data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
                             if (!data->namelist) return(E_NOMEM);
 		            (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
 			                              (IFuid)NULL, name, UID_OTHER, NULL);
@@ -84,7 +84,7 @@ DIOnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
 			    (void)sprintf(name,"inoise_total_%s%s",inst->DIOname,DIOnNames[i]);
 
-                            data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
+                            data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
                             if (!data->namelist) return(E_NOMEM);
 		            (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
 			                              (IFuid)NULL, name, UID_OTHER, NULL);

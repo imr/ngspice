@@ -196,7 +196,7 @@ static VI_list_txl
 		pool_vi_txl = pool_vi_txl->pool;
 		return(q);
 	} else
-		return((VI_list_txl *) tmalloc (sizeof (VI_list_txl)));
+		return(TMALLOC(VI_list_txl, 1));
 }
 ***/
 
@@ -215,11 +215,11 @@ ReadTxL(TXLinstance *tx, CKTcircuit *ckt)
    p = tx->in_node_name;
    n = tx->out_node_name;
 
-   line = (RLINE *) tmalloc(sizeof (RLINE));
-   er = (ERLINE *) tmalloc(sizeof (ERLINE));
-   et = (ETXLine *) tmalloc(sizeof (ETXLine));
-   t = (TXLine *) tmalloc(sizeof (TXLine));
-   t2 = (TXLine *) tmalloc(sizeof (TXLine));
+   line = TMALLOC(RLINE, 1);
+   er = TMALLOC(ERLINE, 1);
+   et = TMALLOC(ETXLine, 1);
+   t = TMALLOC(TXLine, 1);
+   t2 = TMALLOC(TXLine, 1);
    tx->txline = t;
    tx->txline2 = t2;
    t->newtp = 0;
@@ -235,14 +235,14 @@ ReadTxL(TXLinstance *tx, CKTcircuit *ckt)
    nd->rlptr = er;
    er->rl = line;
    line->in_node = nd;
-   et = (ETXLine *) tmalloc(sizeof (ETXLine));
+   et = TMALLOC(ETXLine, 1);
    nd = insert_node(n);
    et->link = nd->tptr;
    nd->tptr = et;
    et->line = t;
    t->out_node = nd;
    t2->out_node = nd;
-   er = (ERLINE *) tmalloc(sizeof (ERLINE));
+   er = TMALLOC(ERLINE, 1);
    er->link = nd->rlptr;
    nd->rlptr = er;
    er->rl = line;
@@ -1027,7 +1027,7 @@ insert_ND(char *name, NDnamePt *ndn)
    NDnamePt  p;
 
    if (*ndn == NULL) {
-      p = *ndn = (NDname*) tmalloc(sizeof (NDname));
+      p = *ndn = TMALLOC(NDname, 1);
       p->nd = NULL;
       p->right = p->left = NULL;
       strcpy(p->id, name);
@@ -1068,7 +1068,7 @@ static NODE
 {
    NODE *n;
 
-   n = (NODE *) tmalloc (sizeof (NODE));
+   n = TMALLOC(NODE, 1);
    n->mptr = NULL;
    n->gptr = NULL;
    n->cptr = NULL;

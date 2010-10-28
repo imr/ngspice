@@ -142,7 +142,7 @@ struct _keyed {
 };
 
 
-#define NEWGRAPH (GRAPH *) tmalloc(sizeof(GRAPH))
+#define NEWGRAPH TMALLOC(GRAPH, 1)
 
 #define rnd(x)  (int) ((x)+0.5)
 

@@ -31,28 +31,26 @@ IFvalue *INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables * tab)
 	/*printf(" returning real value %e\n",temp.rValue); */
     } else if (type == IF_REALVEC) {
 	temp.v.numValue = 0;
-	list = (double *) MALLOC(sizeof(double));
+	list = TMALLOC(double, 1);
 	tmp = INPevaluate(line, &error, 1);
 	while (error == 0) {
 	    /*printf(" returning vector value %g\n",tmp); */
 	    temp.v.numValue++;
 	    list =
-		(double *) REALLOC((char *) list,
-				   temp.v.numValue * sizeof(double));
+		TREALLOC(double, list, temp.v.numValue);
 	    *(list + temp.v.numValue - 1) = tmp;
 	    tmp = INPevaluate(line, &error, 1);
 	}
 	temp.v.vec.rVec = list;
     } else if (type == IF_INTVEC) {
 	temp.v.numValue = 0;
-	ilist = (int *) MALLOC(sizeof(int));
+	ilist = TMALLOC(int, 1);
 	tmp = INPevaluate(line, &error, 1);
 	while (error == 0) {
 	    /*printf(" returning vector value %g\n",tmp); */
 	    temp.v.numValue++;
 	    ilist =
-		(int *) REALLOC((char *) ilist,
-				temp.v.numValue * sizeof(int));
+		TREALLOC(int, ilist, temp.v.numValue);
 	    *(ilist + temp.v.numValue - 1) = (int) floor(0.5 + tmp);
 	    tmp = INPevaluate(line, &error, 1);
 	}

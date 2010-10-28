@@ -149,10 +149,7 @@ int i;
 				  {    (void) sprintf(name, "onoise.%s%s",
 					              here->B3SOIPDname,
 						      B3SOIPDnNames[i]);
-                                       data->namelist = (IFuid *) trealloc(
-					     (char *) data->namelist,
-					     (data->numPlots + 1)
-					     * sizeof(IFuid));
+                                       data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
                                        if (!data->namelist)
 					   return(E_NOMEM);
 		                       (*(SPfrontEnd->IFnewUid)) (ckt,
@@ -167,10 +164,7 @@ int i;
 				  {    (void) sprintf(name, "onoise_total.%s%s",
 						      here->B3SOIPDname,
 						      B3SOIPDnNames[i]);
-                                       data->namelist = (IFuid *) trealloc(
-					     (char *) data->namelist,
-					     (data->numPlots + 1)
-					     * sizeof(IFuid));
+                                       data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
                                        if (!data->namelist)
 					   return(E_NOMEM);
 		                       (*(SPfrontEnd->IFnewUid)) (ckt,
@@ -182,10 +176,7 @@ int i;
 			               (void) sprintf(name, "inoise_total.%s%s",
 						      here->B3SOIPDname,
 						      B3SOIPDnNames[i]);
-                                       data->namelist = (IFuid *) trealloc(
-					     (char *) data->namelist,
-					     (data->numPlots + 1)
-					     * sizeof(IFuid));
+                                       data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
                                        if (!data->namelist)
 					   return(E_NOMEM);
 		                       (*(SPfrontEnd->IFnewUid)) (ckt,

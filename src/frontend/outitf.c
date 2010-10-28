@@ -169,7 +169,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
      */
     numsaves = ft_getSaves(&saves);
     if (numsaves) {
-        savesused = (bool *) tmalloc(sizeof (bool) * numsaves);
+        savesused = TMALLOC(bool, numsaves);
         saveall = FALSE;
         for (i = 0; i < numsaves; i++) {
             if (saves[i].analysis && !cieq((char *)saves[i].analysis, an_name)) {
@@ -382,10 +382,9 @@ addDataDesc(runDesc *run, char *name, int type, int ind)
     dataDesc *data;
 
     if (!run->numData)
-        run->data = (dataDesc *) tmalloc(sizeof (dataDesc));
+        run->data = TMALLOC(dataDesc, 1);
     else
-        run->data = (dataDesc *) trealloc((char *) run->data,
-                sizeof (dataDesc) * (run->numData + 1));
+        run->data = TREALLOC(dataDesc, run->data, run->numData + 1);
     data = &run->data[run->numData];
     /* so freeRun will get nice NULL pointers for the fields we don't set */
     bzero(data, sizeof(dataDesc));
@@ -413,10 +412,9 @@ addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind)
     char *unique;       /* unique char * from back-end */
 
     if (!run->numData)
-        run->data = (dataDesc *) tmalloc(sizeof (dataDesc));
+        run->data = TMALLOC(dataDesc, 1);
     else
-        run->data = (dataDesc *) trealloc((char *) run->data,
-                sizeof (dataDesc) * (run->numData + 1));
+        run->data = TREALLOC(dataDesc, run->data, run->numData + 1);
     data = &run->data[run->numData];
     /* so freeRun will get nice NULL pointers for the fields we don't set */
     bzero(data, sizeof(dataDesc));
@@ -979,12 +977,12 @@ plotAddRealValue(dataDesc *desc, double value)
     struct dvec *v = desc->vec;
 
     if (isreal(v)) {
-      v->v_realdata = (double *) newrealloc((char *) v->v_realdata,
+      v->v_realdata = (double *) newrealloc(v->v_realdata,
             sizeof (double) * (v->v_length + 1));
       v->v_realdata[v->v_length] = value;
     } else {
       /* a real parading as a VF_COMPLEX */
-      v->v_compdata = (ngcomplex_t *) newrealloc((char *) v->v_compdata,
+      v->v_compdata = (ngcomplex_t *) newrealloc(v->v_compdata,
             sizeof(ngcomplex_t) * (v->v_length + 1));
       v->v_compdata[v->v_length].cx_real = value;
       v->v_compdata[v->v_length].cx_imag = (double) 0;
@@ -1000,7 +998,7 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 {
     struct dvec *v = desc->vec;
 
-    v->v_compdata = (ngcomplex_t *) newrealloc((char *) v->v_compdata,
+    v->v_compdata = (ngcomplex_t *) newrealloc(v->v_compdata,
             sizeof(ngcomplex_t) * (v->v_length + 1));
     v->v_compdata[v->v_length].cx_real = value.real;
     v->v_compdata[v->v_length].cx_imag = value.imag;

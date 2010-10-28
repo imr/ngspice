@@ -127,7 +127,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
             lowl = CKTnum2nod(ckt,here->URCposNode);
             hir = CKTnum2nod(ckt,here->URCnegNode);
             for(i=1;i<=here->URClumps;i++) {
-                namehi = (char *)MALLOC(10*sizeof(char));
+                namehi = TMALLOC(char, 10);
                 (void)sprintf(namehi,"hi%d",i);
                 error = CKTmkVolt(ckt,(CKTnode**)&nodehi,here->URCname,namehi);
                 if(error) return(error);
@@ -135,7 +135,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 if(i==here->URClumps) {
                     lowr = hil;
                 } else {
-                    namelo = (char *)MALLOC(10*sizeof(char));
+                    namelo = TMALLOC(char, 10);
                     (void)sprintf(namelo,"lo%d",i);
                     error = CKTmkVolt(ckt,(CKTnode**)&nodelo,here->URCname,
                             namelo);
@@ -145,7 +145,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 r = prop*r1;
                 c = prop*c1;
 
-                nameelt = (char *)MALLOC(10*sizeof(char));
+                nameelt = TMALLOC(char, 10);
                 (void)sprintf(nameelt,"rlo%d",i);
                 error = (*(SPfrontEnd->IFnewUid))(ckt,&eltUid,here->URCname,
                         nameelt, UID_INSTANCE, NULL);
@@ -162,7 +162,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 if(error) return(error);
 		fast->GENowner = here->URCowner;
 
-                nameelt = (char *)MALLOC(10*sizeof(char));
+                nameelt = TMALLOC(char, 10);
                 (void)sprintf(nameelt,"rhi%d",i);
                 error = (*(SPfrontEnd->IFnewUid))(ckt,&eltUid,here->URCname,
                         nameelt, UID_INSTANCE, NULL);
@@ -181,7 +181,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 
                 if(model->URCisPerLGiven) {
                     /* use diode */
-                    nameelt = (char *)MALLOC(10*sizeof(char));
+                    nameelt = TMALLOC(char, 10);
                     (void)sprintf(nameelt,"dlo%d",i);
                     error = (*(SPfrontEnd->IFnewUid))(ckt,&eltUid,
                             here->URCname,nameelt,UID_INSTANCE, 
@@ -201,7 +201,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 		    fast->GENowner = here->URCowner;
                 } else {
                     /* use simple capacitor */
-                    nameelt = (char *)MALLOC(10*sizeof(char));
+                    nameelt = TMALLOC(char, 10);
                     (void)sprintf(nameelt,"clo%d",i);
                     error = (*(SPfrontEnd->IFnewUid))(ckt,&eltUid,here->URCname
                             ,nameelt, UID_INSTANCE, NULL);
@@ -224,7 +224,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 if(i!=here->URClumps){
                     if(model->URCisPerLGiven) {
                         /* use diode */
-                        nameelt = (char *)MALLOC(10*sizeof(char));
+                        nameelt = TMALLOC(char, 10);
                         (void)sprintf(nameelt,"dhi%d",i);
                         error = (*(SPfrontEnd->IFnewUid))(ckt,&eltUid,
                                 here->URCname,nameelt,UID_INSTANCE,
@@ -244,7 +244,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 			fast->GENowner = here->URCowner;
                     } else {
                         /* use simple capacitor */
-                        nameelt = (char *)MALLOC(10*sizeof(char));
+                        nameelt = TMALLOC(char, 10);
                         (void)sprintf(nameelt,"chi%d",i);
                         error = (*(SPfrontEnd->IFnewUid))(ckt,&eltUid,
                                 here->URCname,nameelt,UID_INSTANCE,

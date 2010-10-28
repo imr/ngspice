@@ -70,7 +70,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
         }
     }
     
-/*    OldCKTstate0=(double *)MALLOC((ckt->CKTnumStates+1)*sizeof(double)); */
+/*    OldCKTstate0=TMALLOC(double, ckt->CKTnumStates + 1); */
     
     for(;;){
         ckt->CKTnoncon=0;
@@ -122,7 +122,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
                      * wrong - so we ask for the troublesome entry 
                      */
                     SMPgetError(ckt->CKTmatrix,&i,&j);
-                    message = (char *)MALLOC(1000); /* should be enough */
+                    message = TMALLOC(char, 1000); /* should be enough */
                     (void)sprintf(message,
                             "singular matrix:  check nodes %s and %s\n",
                             NODENAME(ckt,i),NODENAME(ckt,j));
@@ -162,7 +162,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
 	    /*moved it to here as if xspice is included then CKTload changes
 	      CKTnumStates the first time it is run */
 	    if(!OldCKTstate0)
-	      OldCKTstate0=(double *)MALLOC((ckt->CKTnumStates+1)*sizeof(double));    
+	      OldCKTstate0=TMALLOC(double, ckt->CKTnumStates + 1);    
 		  for(i=0;i<ckt->CKTnumStates;i++) {
                 *(OldCKTstate0+i) = *(ckt->CKTstate0+i);
             }
@@ -189,7 +189,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
  	      /*fprintf(stderr,"too many iterations without convergence: %d iter's (max iter == %d)\n",
 		iterno,maxIter);*/
                 ckt->CKTstat->STATnumIter += iterno;
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 strcpy(errMsg,msg);
 #ifdef STEPDEBUG
                     printf("iterlim exceeded \n");

@@ -366,7 +366,7 @@ X11_NewViewport(GRAPH *graph)
     };
     int	trys;
 
-    graph->devdep = (X11devdep*) tmalloc(sizeof(X11devdep));
+    graph->devdep = TMALLOC(X11devdep, 1);
 
     /* set up new shell */
     DEVDEP(graph).shell = XtCreateApplicationShell("shell",

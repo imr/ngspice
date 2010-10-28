@@ -18,7 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 
 #define CKALLOC(var,size,type) \
-    if(size && (!(var =(type *)MALLOC((size)*sizeof(type))))){\
+    if(size && (!(var = TMALLOC(type, size)))){\
             return(E_NOMEM);\
 }
 
@@ -97,7 +97,7 @@ CKTsetup(CKTcircuit *ckt)
         /* Allocate space for the matrix diagonal data */
         if(num_nodes > 0) {
             ckt->enh->rshunt_data.diag =
-                 (double **) MALLOC(num_nodes * sizeof(double *));
+                 TMALLOC(double *, num_nodes);
         }
 
         /* Set the number of nodes in the rshunt data */

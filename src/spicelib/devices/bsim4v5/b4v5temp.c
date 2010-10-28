@@ -361,8 +361,7 @@ int Size_Not_Found, i;
               Wdrn = here->BSIM4v5w / here->BSIM4v5nf;
 
               if (Size_Not_Found)
-              {   pParam = (struct bsim4v5SizeDependParam *)tmalloc(
-                            sizeof(struct bsim4v5SizeDependParam));
+              {   pParam = TMALLOC(struct bsim4v5SizeDependParam, 1);
                   if (pLastKnot == NULL)
 		      model->pSizeDependParamKnot = pParam;
                   else

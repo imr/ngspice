@@ -88,7 +88,7 @@ int CLUsetup(CKTcircuit *ckt){
   
   /* allocate the input connections */
   for(i=0;i<connections;i++) {
-    curr = (struct input_pipe *)tmalloc(sizeof(struct input_pipe));
+    curr = TMALLOC(struct input_pipe, 1);
     if(input_pipes)
       curr->next = input_pipes;
     else
@@ -132,7 +132,7 @@ static int setup_output(CKTcircuit *ckt){
 	int sock,nodeNum,i;
 
 	/*Create the struct*/
-	curr = (struct output_pipe *)tmalloc(sizeof(struct output_pipe));
+	curr = TMALLOC(struct output_pipe, 1);
 	if(output_pipes)
 	  curr->next = output_pipes;
 	else

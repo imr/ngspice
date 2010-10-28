@@ -345,7 +345,7 @@ static void EVTcreate_state(
     else 
 	{
 		
-        new_state = (Evt_State_t *) MALLOC(sizeof(Evt_State_t));
+        new_state = TMALLOC(Evt_State_t, 1);
         new_state->block = tmalloc((size_t) total_size);
 
     }
@@ -395,7 +395,7 @@ static void EVTcreate_output_event(
     }
     else {
         /* Create a new event */
-        event = (Evt_Output_Event_t *) MALLOC(sizeof(Evt_Output_Event_t));
+        event = TMALLOC(Evt_Output_Event_t, 1);
         event->next = NULL;
 
         /* Initialize the value */
@@ -447,7 +447,7 @@ static void EVTadd_msg(
         msg_data->free[port_index] = msg_data->free[port_index]->next;
     }
     else {
-        *msg_ptr = (Evt_Msg_t *) MALLOC(sizeof(Evt_Msg_t));
+        *msg_ptr = TMALLOC(Evt_Msg_t, 1);
     }
 
     /* Fill in the values */

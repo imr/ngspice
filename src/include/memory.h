@@ -3,6 +3,9 @@
 
 #include <stddef.h>
 
+#define TMALLOC(t,n)      (t*) /**/ tmalloc(sizeof(t) * (size_t)(n))
+#define TREALLOC(t,p,n)   (t*) /**/ trealloc(p, sizeof(t) * (size_t)(n))
+
 #ifndef HAVE_LIBGC
 extern void *tmalloc(size_t num);
 extern void *trealloc(void *str, size_t num);
@@ -21,10 +24,10 @@ extern void txfree(void *ptr);
 
 #include "../misc/stringutil.h" /* va: spice3 internally bzero */
 
-#define alloc(TYPE) ((TYPE *) tmalloc(sizeof(TYPE)))
+#define alloc(TYPE) (TMALLOC(TYPE, 1))
 #define MALLOC(x) tmalloc((unsigned)(x))
 #define FREE(x) {if (x) {txfree((char *)(x));(x) = 0;}}
-#define REALLOC(x,y) trealloc((char *)(x),(unsigned)(y))
+#define REALLOC(x,y) trealloc((x),(unsigned)(y))
 #define ZERO(PTR,TYPE)	(bzero((PTR),sizeof(TYPE)))
 
 #if defined(_MSC_VER) || defined(__MINGW32__)

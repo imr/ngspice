@@ -162,8 +162,8 @@ struct dvec *EVTfindvec(
     num_events++;
 
   /* Allocate arrays to hold the analysis point and node value vectors */
-  anal_point_vec = (double *) MALLOC(2 * (num_events + 2) * sizeof(double));
-  value_vec = (double *) MALLOC(2 * (num_events + 2) * sizeof(double));
+  anal_point_vec = TMALLOC(double, 2 * (num_events + 2));
+  value_vec = TMALLOC(double, 2 * (num_events + 2));
 
   /* Iterate through the events and fill the arrays. */
   /* Note that we create vertical segments every time an event occurs. */
@@ -194,7 +194,7 @@ struct dvec *EVTfindvec(
   /* Allocate dvec structures and assign the vectors into them. */
   /* See FTE/OUTinterface.c:plotInit() for initialization example. */
 
-  scale = (struct dvec *) MALLOC(sizeof(struct dvec));
+  scale = TMALLOC(struct dvec, 1);
 
   scale->v_name = MIFcopy("step");
   scale->v_type = SV_TIME;
@@ -203,7 +203,7 @@ struct dvec *EVTfindvec(
   scale->v_realdata = anal_point_vec;
   scale->v_scale = NULL;
 
-  d = (struct dvec *) MALLOC(sizeof(struct dvec));
+  d = TMALLOC(struct dvec, 1);
 
   d->v_name = name;
   d->v_type = SV_VOLTAGE;

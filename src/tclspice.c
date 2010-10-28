@@ -305,7 +305,7 @@ void blt_init(void *run) {
     
   /* initilise */
   cur_run = (runDesc *)run;
-  vectors = (vector *)MALLOC(cur_run->numData*sizeof(vector));
+  vectors = TMALLOC(vector, cur_run->numData);
   for(i = 0;i < cur_run->numData;i++){
     vectors[i].name = copy((cur_run->data[i]).name);
 #ifdef HAVE_LIBPTHREAD
@@ -329,7 +329,7 @@ void blt_add(int index,double value){
 #endif
   if(!(v->length < v->size)){
     v->size += 100;
-    v->data = (double *)REALLOC(v->data,sizeof(double)*v->size);
+    v->data = TREALLOC(double, v->data, v->size);
   }
   v->data[v->length] = value;
   v->length ++;
@@ -386,7 +386,7 @@ static int lastVector TCL_CMDPROCARGS(clientData,interp,argc,argv) {
     Tcl_AppendResult(interp, (char *)blt, TCL_STATIC);
     return TCL_ERROR;
   }
-  if(!(V = (double *)MALLOC(sizeof(double)*blt_vnum))) {
+  if(!(V = TMALLOC(double, blt_vnum))) {
     Tcl_SetResult(interp, "Out of Memory",TCL_STATIC);
     return TCL_ERROR;
   }
@@ -503,13 +503,13 @@ static int vectoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
       Tcl_AppendResult(interp, (char *)var, TCL_STATIC);
     }
     else{
-      realData = (double *)tmalloc(sizeof(double)*(var_dvec->v_length));
+      realData = TMALLOC(double, var_dvec->v_length);
       for (compIndex=0; compIndex<var_dvec->v_length; compIndex++){
          realData[compIndex] = ((var_dvec->v_compdata+compIndex)->cx_real);
       }
       Blt_ResetVector(real_BltVector, realData, var_dvec->v_length, var_dvec->v_length, TCL_VOLATILE);
       if (imag_BltVector != NULL) {
-        compData = (double *)tmalloc(sizeof(double)*(var_dvec->v_length));
+        compData = TMALLOC(double, var_dvec->v_length);
         for (compIndex=0; compIndex<var_dvec->v_length; compIndex++){
           compData[compIndex] = ((var_dvec->v_compdata+compIndex)->cx_imag);
         }
@@ -520,7 +520,7 @@ static int vectoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   {
     Blt_ResetVector(real_BltVector, var_dvec->v_realdata, var_dvec->v_length, var_dvec->v_length, TCL_VOLATILE);
     if (imag_BltVector != NULL) {
-        compData = (double *)tmalloc(sizeof(double)*(var_dvec->v_length));
+        compData = TMALLOC(double, var_dvec->v_length);
         for (compIndex=0; compIndex<var_dvec->v_length; compIndex++){
           compData[compIndex] = 0;
         }
@@ -1482,7 +1482,7 @@ static void dvecToBlt(Blt_Vector *Data, struct dvec *x) {
     double *data;
     int i;
 
-    data = (double*) tmalloc(x->v_length * sizeof(double));
+    data = TMALLOC(double, x->v_length);
 
     for(i=0;i<x->v_length;i++) {
       data[i] = realpart(&x->v_compdata[i]);
@@ -1706,7 +1706,7 @@ int Tcl_ExecutePerLoop() {
 
     if((current->type > 0 && current->state && v->data[v->length-1] > current->Vmax) ||
        (current->type < 0 && current->state && v->data[v->length-1] < current->Vmin) ) { 
-      struct triggerEvent *tmp = (struct triggerEvent *)MALLOC(sizeof(struct triggerEvent));
+      struct triggerEvent *tmp = TMALLOC(struct triggerEvent, 1);
       
       tmp->next = NULL;
       
@@ -1954,7 +1954,7 @@ static int registerTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
   
   if(tmp == NULL) {
 	
-    tmp = (struct watch *)MALLOC(sizeof(struct watch));
+    tmp = TMALLOC(struct watch, 1);
     tmp->next = watches;
     watches = tmp;
 
@@ -2223,7 +2223,7 @@ int Spice_Init(Tcl_Interp *interp) {
 #ifdef HAVE_ASPRINTF
     asprintf(&s, "%s%s", pw->pw_dir,INITSTR);
 #else /* ~ HAVE_ASPRINTF */
-    s=(char *) tmalloc(1 + strlen(pw->pw_dir)+strlen(INITSTR));
+    s = TMALLOC(char, 1 + strlen(pw->pw_dir) + strlen(INITSTR));
     sprintf(s,"%s%s",pw->pw_dir,INITSTR);
 #endif /* HAVE_ASPRINTF */
     if (access(s, 0) == 0)

@@ -224,7 +224,7 @@ doop(char what,
         free1 = TRUE;
         if (isreal(v1)) {
             ld = 0.0;
-            d1 = (double *) tmalloc(length * sizeof (double));
+            d1 = TMALLOC(double, length);
             for (i = 0; i < v1->v_length; i++)
                 d1[i] = v1->v_realdata[i];
             if (i > 0)
@@ -234,7 +234,7 @@ doop(char what,
         } else {
             realpart(&lc) = 0.0;
             imagpart(&lc) = 0.0;
-            c1 = (ngcomplex_t *) tmalloc(length * sizeof(ngcomplex_t));
+            c1 = TMALLOC(ngcomplex_t, length);
             for (i = 0; i < v1->v_length; i++)
                 c1[i] = v1->v_compdata[i];
             if (i > 0)
@@ -251,7 +251,7 @@ doop(char what,
         free2 = TRUE;
         if (isreal(v2)) {
             ld = 0.0;
-            d2 = (double *) tmalloc(length * sizeof (double));
+            d2 = TMALLOC(double, length);
             for (i = 0; i < v2->v_length; i++)
                 d2[i] = v2->v_realdata[i];
             if (i > 0)
@@ -261,7 +261,7 @@ doop(char what,
         } else {
             realpart(&lc) = 0.0;
             imagpart(&lc) = 0.0;
-            c2 = (ngcomplex_t *) tmalloc(length * sizeof(ngcomplex_t));
+            c2 = TMALLOC(ngcomplex_t, length);
             for (i = 0; i < v2->v_length; i++)
                 c2[i] = v2->v_compdata[i];
             if (i > 0)
@@ -601,9 +601,9 @@ op_range(struct pnode *arg1, struct pnode *arg2)
     res->v_dims[0] = len;
 
     if (isreal(res))
-        res->v_realdata = (double *) tmalloc(sizeof (double) * len);
+        res->v_realdata = TMALLOC(double, len);
     else
-        res->v_compdata = (ngcomplex_t *) tmalloc(sizeof(ngcomplex_t) * len);
+        res->v_compdata = TMALLOC(ngcomplex_t, len);
 
     /* Toss in the data */
 
@@ -752,9 +752,9 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
     }
 
     if (isreal(res))
-        res->v_realdata = (double *) tmalloc(sizeof (double) * length);
+        res->v_realdata = TMALLOC(double, length);
     else
-        res->v_compdata = (ngcomplex_t *) tmalloc(sizeof(ngcomplex_t) * length);
+        res->v_compdata = TMALLOC(ngcomplex_t, length);
 
     /* And toss in the new data */
     for (j = 0; j < up - down + 1; j++) {

@@ -297,7 +297,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 	      type = INPtypelook("BSIM3");
 	    }
 	    if (type < 0) {
-	       err = (char *) tmalloc(sizeof(char) * (60 + strlen(ver)));
+	       err = TMALLOC(char, 60 + strlen(ver));
 	       sprintf(err,"Device type BSIM3 version %s not available in this binary\n",ver);
 	    }
 	    break;
@@ -327,7 +327,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 	      type = INPtypelook("BSIM4");
 	    }
 	    if (type < 0) {
-	       err = (char *) tmalloc(sizeof(char) * (60 + strlen(ver)));
+	       err = TMALLOC(char, 60 + strlen(ver));
 	       sprintf(err,"Device type BSIM4 version %s not available in this binary\n",ver);
 	    }
 	    break;
@@ -626,7 +626,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     else {
 #ifndef XSPICE    
 	type = -1;
-	err = (char *) MALLOC(35 + strlen(typename));
+	err = TMALLOC(char, 35 + strlen(typename));
 	(void) sprintf(err, "unknown model type %s - ignored\n", typename);
 #else	
       /* gtri - modify - wbk - 10/23/90 - modify to look for code models */
@@ -638,7 +638,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
       /* look for this model type and put it in the table of models */
       type = INPtypelook(typename);
       if(type < 0) {
-	err = (char *) MALLOC(35 + strlen(typename));
+	err = TMALLOC(char, 35 + strlen(typename));
 	sprintf(err,"Unknown model type %s - ignored\n",typename);
 
 #ifdef TRACE

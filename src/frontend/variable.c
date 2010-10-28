@@ -897,7 +897,7 @@ cp_vprint(void)
     for (v = variables; v; v = v->va_next)
         i++;
     
-    vars = (struct xxx *) tmalloc(sizeof (struct xxx) * i);
+    vars = TMALLOC(struct xxx, i);
 
     out_init();
     for (v = variables, i = 0; v; v = v->va_next, i++) {

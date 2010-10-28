@@ -62,10 +62,10 @@ int num, i;
     line = current->line;
     INPgetTok(&line,&name,1);
 
-    nname1 = (char **) tmalloc(num * sizeof(char *));
-    nname2 = (char **) tmalloc(num * sizeof(char *));
-    node1 = (CKTnode **) tmalloc(num * sizeof(CKTnode *));
-    node2 = (CKTnode **) tmalloc(num * sizeof(CKTnode *));
+    nname1 = TMALLOC(char *, num);
+    nname2 = TMALLOC(char *, num);
+    node1 = TMALLOC(CKTnode *, num);
+    node2 = TMALLOC(CKTnode *, num);
 
     for (i = 0; i < num; i++) {
             INPgetNetTok(&line,&(nname1[i]),1);

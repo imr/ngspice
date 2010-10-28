@@ -38,7 +38,7 @@ MOS1sSetup(SENstruct *info, GENmodel *inModel)
                     here->MOS1senParmNo = ++(info->SENparms);
                 }
             }
-            if((here->MOS1sens = (double *)MALLOC(70*sizeof(double))) == NULL) {
+            if((here->MOS1sens = TMALLOC(double, 70)) == NULL) {
                 return(E_NOMEM);
             }
             here->MOS1senPertFlag = OFF;

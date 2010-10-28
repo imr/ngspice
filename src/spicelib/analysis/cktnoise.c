@@ -51,14 +51,12 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 
 	case N_DENS:
 
-	    data->namelist = (IFuid *)trealloc((char *)data->namelist,
-		    (data->numPlots + 1)*sizeof(IFuid));
+	    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 
 	    (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
 		    (IFuid)NULL, "onoise_spectrum", UID_OTHER, NULL);
 
-	    data->namelist = (IFuid *)trealloc((char *)data->namelist,
-		    (data->numPlots + 1)*sizeof(IFuid));
+	    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 
 	    (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
 		    (IFuid)NULL, "inoise_spectrum", UID_OTHER, NULL);
@@ -66,24 +64,22 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 	    /* we've added two more plots */
 
 	    data->outpVector =
-		(double *)MALLOC(data->numPlots * sizeof(double));
+		TMALLOC(double, data->numPlots);
             break;
 
 	case INT_NOIZ:
 
-	    data->namelist = (IFuid *)trealloc((char *)data->namelist,
-		    (data->numPlots + 1)*sizeof(IFuid));
+	    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	    (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
 		(IFuid)NULL, "onoise_total", UID_OTHER, NULL);
 
-	    data->namelist = (IFuid *)trealloc((char *)data->namelist,
-		    (data->numPlots + 1)*sizeof(IFuid));
+	    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	    (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
 		(IFuid)NULL, "inoise_total", UID_OTHER, NULL);
 	    /* we've added two more plots */
 
 	    data->outpVector =
-		(double *) MALLOC(data->numPlots * sizeof(double));
+		TMALLOC(double, data->numPlots);
 	    break;
 
         default:

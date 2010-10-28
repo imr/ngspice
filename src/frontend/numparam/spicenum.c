@@ -455,8 +455,8 @@ nupa_init (char *srcfile)
   dicoS = (tdico *)new(sizeof(tdico));
   initdico (dicoS);
 
-  dicoS->dynrefptr = (char**)tmalloc((dynmaxline + 1)*sizeof(char*));
-  dicoS->dyncategory = (char*)tmalloc((dynmaxline + 1)*sizeof(char));
+  dicoS->dynrefptr = TMALLOC(char*, dynmaxline + 1);
+  dicoS->dyncategory = TMALLOC(char, dynmaxline + 1);
 
   for (i = 0; i <= dynmaxline; i++)
     {

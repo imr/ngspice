@@ -30,7 +30,7 @@ CKTacDump(CKTcircuit *ckt, double freq, void *plot)
     irhsold = ckt->CKTirhsOld;
     freqData.rValue = freq;
     valueData.v.numValue = ckt->CKTmaxEqNum-1;
-    data = (IFcomplex *) MALLOC((ckt->CKTmaxEqNum-1)*sizeof(IFcomplex));
+    data = TMALLOC(IFcomplex, ckt->CKTmaxEqNum - 1);
     valueData.v.vec.cVec = data;
     for (i=0;i<ckt->CKTmaxEqNum-1;i++) {
         data[i].real = rhsold[i+1];

@@ -166,9 +166,9 @@ com_let(wordlist *wl)
 	}
 
 	if (isreal(t))
-	    n->v_realdata = (double *) tmalloc(n->v_length * sizeof(double));
+	    n->v_realdata = TMALLOC(double, n->v_length);
 	else
-	    n->v_compdata = (ngcomplex_t *) tmalloc(n->v_length * sizeof(ngcomplex_t));
+	    n->v_compdata = TMALLOC(ngcomplex_t, n->v_length);
 	newvec = 1;
 	vec_new(n);
     }

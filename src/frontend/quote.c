@@ -79,7 +79,7 @@ cp_unquote(char *string)
     int l;
     if (string) {
 	l = strlen(string);
-	s = (char*) MALLOC(l+1);
+	s = TMALLOC(char, l + 1);
 	
 	if (l>=2 && *string == '"' && string[l-1] == '"') {
 	    strncpy(s,string+1,l-2);

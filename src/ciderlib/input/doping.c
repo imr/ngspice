@@ -107,7 +107,7 @@ DOPparam(int param, IFvalue *value, void *inCard)
 	case DOP_DOMAIN:
 	    if ( !card->DOPdomainsGiven ) {
 	      card->DOPnumDomains = value->v.numValue;
-	      card->DOPdomains = (int *)tmalloc(value->v.numValue * sizeof(int));
+	      card->DOPdomains = TMALLOC(int, value->v.numValue);
 	      for ( i=0; i < card->DOPnumDomains; i++ ) {
 		  card->DOPdomains[i] = value->v.vec.iVec[i];
 	      }

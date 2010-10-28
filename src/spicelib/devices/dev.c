@@ -173,15 +173,15 @@ spice_init_devices(void)
 {
 #ifdef XSPICE
     /*Initilise the structs and add digital node type */
-    g_evt_udn_info = (Evt_Udn_Info_t  **)MALLOC(sizeof(Evt_Udn_Info_t  *));
+    g_evt_udn_info = TMALLOC(Evt_Udn_Info_t  *, 1);
     g_evt_num_udn_types = 1;
     g_evt_udn_info[0] =  &idn_digital_info;
     
-    DEVicesfl = (int *)tmalloc(DEVNUM*sizeof(int));
+    DEVicesfl = TMALLOC(int, DEVNUM);
     /* tmalloc should automatically zero the array! */
 #endif
 
-    DEVices = (SPICEdev **)tmalloc(DEVNUM*sizeof(SPICEdev *));
+    DEVices = TMALLOC(SPICEdev *, DEVNUM);
     /* URC device MUST precede both resistors and capacitors */
     DEVices[ 0] = get_urc_info();
     DEVices[ 1] = get_asrc_info();
@@ -371,8 +371,8 @@ static void relink(void) {
 
 int add_device(int n, SPICEdev **devs, int flag){
   int i;
-  DEVices = (SPICEdev **)trealloc(DEVices,(DEVNUM+n)*sizeof(SPICEdev *));
-  DEVicesfl = (int *)trealloc(DEVicesfl,(DEVNUM+n)*sizeof(int));
+  DEVices = TREALLOC(SPICEdev *, DEVices, DEVNUM + n);
+  DEVicesfl = TREALLOC(int, DEVicesfl, DEVNUM + n);
   for(i = 0; i < n;i++){
 #ifdef TRACE
       printf("Added device: %s\n",devs[i]->DEVpublic.name);
@@ -391,7 +391,7 @@ int add_device(int n, SPICEdev **devs, int flag){
 
 int add_udn(int n,Evt_Udn_Info_t **udns){
   int i;
-  g_evt_udn_info = (Evt_Udn_Info_t  **)trealloc(g_evt_udn_info,(g_evt_num_udn_types+n)*sizeof(Evt_Udn_Info_t  *));
+  g_evt_udn_info = TREALLOC(Evt_Udn_Info_t  *, g_evt_udn_info, g_evt_num_udn_types + n);
   for(i = 0; i < n;i++){
 #ifdef TRACE
       printf("Added udn: %s\n",udns[i]->name);

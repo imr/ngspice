@@ -83,11 +83,11 @@ fourier(wordlist *wl, struct plot *current_plot)
     }
     fundfreq = *ff;
 
-    freq = (double *) tmalloc(nfreqs * sizeof (double));
-    mag = (double *) tmalloc(nfreqs * sizeof (double));
-    phase = (double *) tmalloc(nfreqs * sizeof (double));
-    nmag = (double *) tmalloc(nfreqs * sizeof (double));
-    nphase = (double *) tmalloc(nfreqs * sizeof (double));
+    freq = TMALLOC(double, nfreqs);
+    mag = TMALLOC(double, nfreqs);
+    phase = TMALLOC(double, nfreqs);
+    nmag = TMALLOC(double, nfreqs);
+    nphase = TMALLOC(double, nfreqs);
 
     wl = wl->wl_next;
     names = ft_getpnames(wl, TRUE);
@@ -110,10 +110,8 @@ fourier(wordlist *wl, struct plot *current_plot)
 
             if (polydegree) {
                 /* Build the grid... */
-                grid = (double *) tmalloc(fourgridsize *
-                        sizeof (double));
-                stuff = (double *) tmalloc(fourgridsize *
-                        sizeof (double));
+                grid = TMALLOC(double, fourgridsize);
+                stuff = TMALLOC(double, fourgridsize);
                 dp = ft_minmax(time, TRUE);
 
                 /* Now get the last fund freq... */

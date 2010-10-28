@@ -103,8 +103,7 @@ TFanal(CKTcircuit *ckt, int restart)
         (*(SPfrontEnd->IFnewUid))(ckt,&outuid,((TFan*)ckt->CKTcurJob)->TFoutSrc
                 ,"Output_impedance", UID_OTHER, NULL);
     } else {
-        name = (char *)
-    MALLOC(sizeof(char)*(strlen(((TFan*)ckt->CKTcurJob)->TFoutName)+22));
+        name = TMALLOC(char, strlen(((TFan*)ckt->CKTcurJob)->TFoutName) + 22);
         (void)sprintf(name,"output_impedance_at_%s",
                 ((TFan*)ckt->CKTcurJob)->TFoutName);
         (*(SPfrontEnd->IFnewUid))(ckt,&outuid,(IFuid)NULL,

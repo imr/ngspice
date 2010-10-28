@@ -160,7 +160,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
             char *err;
             IFnewUid(ckt, &uid, (IFuid) NULL, "Q", UID_MODEL, NULL);
             IFC(newModel, (ckt, type, &(tab->defQmod), uid));
-            err = (char *) MALLOC((70 + strlen(model)) * sizeof(char));
+            err = TMALLOC(char, 70 + strlen(model));
             (void) sprintf(err, "Unable to find definition of model %s - default BJT assumed \n", model);
             LITERR(err);
             tfree(err);

@@ -212,7 +212,7 @@ static void EVTinst_insert(
     /* If not found, create a new entry in list and increment the */
     /* instance count in the event structure */
     if(! found) {
-        *inst_ptr = (Evt_Inst_Info_t *) MALLOC(sizeof(Evt_Inst_Info_t));
+        *inst_ptr = TMALLOC(Evt_Inst_Info_t, 1);
         inst = *inst_ptr;
         inst->next = NULL;
         inst->inst_ptr = fast;
@@ -325,7 +325,7 @@ static void EVTnode_insert(
     /* If not found, create a new entry in list and increment the */
     /* node count in the event structure */
     if(! found) {
-        *node_ptr = (Evt_Node_Info_t *) MALLOC(sizeof(Evt_Node_Info_t));
+        *node_ptr = TMALLOC(Evt_Node_Info_t, 1);
         node = *node_ptr;
         node->next = NULL;
         node->name = MIFcopy(node_name);
@@ -370,7 +370,7 @@ static void EVTnode_insert(
 
         if(! found) {
             (node->num_insts)++;
-            *inst_ptr = (Evt_Inst_Index_t *) MALLOC(sizeof(Evt_Inst_Index_t));
+            *inst_ptr = TMALLOC(Evt_Inst_Index_t, 1);
             inst = *inst_ptr;
             inst->next = NULL;
             inst->index = inst_index;
@@ -431,7 +431,7 @@ static void EVTport_insert(
 
     (ckt->evt->counts.num_ports)++;
 
-    *port_ptr = (Evt_Port_Info_t *) MALLOC(sizeof(Evt_Port_Info_t));
+    *port_ptr = TMALLOC(Evt_Port_Info_t, 1);
     port = *port_ptr;
 
     /* Fill in the elements */
@@ -493,7 +493,7 @@ static void EVToutput_insert(
 
     (ckt->evt->counts.num_outputs)++;
 
-    *output_ptr = (Evt_Output_Info_t *) MALLOC(sizeof(Evt_Output_Info_t));
+    *output_ptr = TMALLOC(Evt_Output_Info_t, 1);
     output = *output_ptr;
 
     /* Fill in the elements */

@@ -340,7 +340,7 @@ mknnode(double number)
     v->v_name = copy(buf);
     v->v_type = SV_NOTYPE;
     v->v_flags = VF_REAL;
-    v->v_realdata = (double *) tmalloc(sizeof (double));
+    v->v_realdata = TMALLOC(double, 1);
     *v->v_realdata = number;
     v->v_length = 1;
     v->v_plot = NULL;

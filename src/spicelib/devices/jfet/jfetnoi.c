@@ -63,7 +63,7 @@ JFETnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
 			    (void)sprintf(name,"onoise_%s%s",inst->JFETname,JFETnNames[i]);
 
 
-data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
+data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		(*(SPfrontEnd->IFnewUid))(ckt,
 			&(data->namelist[data->numPlots++]),
@@ -79,7 +79,7 @@ if (!data->namelist) return(E_NOMEM);
 			    (void)sprintf(name,"onoise_total_%s%s",inst->JFETname,JFETnNames[i]);
 
 
-data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
+data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		(*(SPfrontEnd->IFnewUid))(ckt,
 			&(data->namelist[data->numPlots++]),
@@ -90,7 +90,7 @@ if (!data->namelist) return(E_NOMEM);
 			    (void)sprintf(name,"inoise_total_%s%s",inst->JFETname,JFETnNames[i]);
 
 
-data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
+data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		(*(SPfrontEnd->IFnewUid))(ckt,
 			&(data->namelist[data->numPlots++]),

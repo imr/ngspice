@@ -24,14 +24,14 @@ CKTnewNode(CKTcircuit *inCkt, CKTnode **node, IFuid name)
 {
     CKTcircuit *ckt = /* fixme, drop that */ inCkt;
     if(!(ckt->CKTnodes)) { /*  starting the list - allocate both ground and 1 */
-        ckt->CKTnodes = (CKTnode *) MALLOC(sizeof(CKTnode));
+        ckt->CKTnodes = TMALLOC(CKTnode, 1);
         if(ckt->CKTnodes == (CKTnode *)NULL) return(E_NOMEM);
         ckt->CKTnodes->name = (char *)NULL;
         ckt->CKTnodes->type = SP_VOLTAGE;
         ckt->CKTnodes->number = 0;
         ckt->CKTlastNode = ckt->CKTnodes;
     }
-    ckt->CKTlastNode->next = (CKTnode *)MALLOC(sizeof(CKTnode));
+    ckt->CKTlastNode->next = TMALLOC(CKTnode, 1);
     if(ckt->CKTlastNode->next == (CKTnode *)NULL) return(E_NOMEM);
     ckt->CKTlastNode = ckt->CKTlastNode->next;
     ckt->CKTlastNode->name = name;

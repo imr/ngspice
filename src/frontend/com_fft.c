@@ -59,7 +59,7 @@ com_fft(wordlist *wl)
     fpts = size/2;
 
     /* window functions - should have an average of one */
-    win = (double *) tmalloc(tlen * sizeof (double));
+    win = TMALLOC(double, tlen);
     {
        char   window[BSIZE_SP];
        double maxt = time[tlen-1];
@@ -188,7 +188,7 @@ com_fft(wordlist *wl)
     plot_cur->pl_name = copy("Spectrum");
     plot_cur->pl_date = copy(datestring( ));
 
-    freq = (double *) tmalloc(fpts * sizeof(double));
+    freq = TMALLOC(double, fpts);
     f = alloc(struct dvec);
     ZERO(f, struct dvec);
     f->v_name = copy("frequency");
@@ -201,11 +201,11 @@ com_fft(wordlist *wl)
     for (i = 0; i<fpts; i++) freq[i] = i*1.0/span*tlen/size;
 
 
-    tdvec = (double  **) tmalloc(ngood * sizeof(double  *));
-    fdvec = (ngcomplex_t **) tmalloc(ngood * sizeof(ngcomplex_t *));
+    tdvec = TMALLOC(double  *, ngood);
+    fdvec = TMALLOC(ngcomplex_t *, ngood);
     for (i = 0, vec = vlist; i<ngood; i++) {
        tdvec[i] = vec->v_realdata; /* real input data */
-       fdvec[i] = (ngcomplex_t *) tmalloc(fpts * sizeof(ngcomplex_t)); /* complex output data */
+       fdvec[i] = TMALLOC(ngcomplex_t, fpts); /* complex output data */
        f = alloc(struct dvec);
        ZERO(f, struct dvec);
        f->v_name = vec_basename(vec);
@@ -222,8 +222,8 @@ com_fft(wordlist *wl)
     printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, size, size-tlen);
     printf("FFT: Freq. resolution: %g Hz, output length: %d\n", 1.0/span*tlen/size, fpts);
 
-    reald = (double*)tmalloc(size*sizeof(double));
-    imagd = (double*)tmalloc(size*sizeof(double));
+    reald = TMALLOC(double, size);
+    imagd = TMALLOC(double, size);
     for (i = 0; i<ngood; i++) {
         for (j = 0; j < tlen; j++){
             reald[j] = tdvec[i][j]*win[j];

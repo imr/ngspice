@@ -214,13 +214,13 @@ inp_getoptsc(char *in_line, struct line *com_options)
     struct line *next = NULL;
     char* line;
 
-    line = (char*)tmalloc(strlen(in_line) + 3);
+    line = TMALLOC(char, strlen(in_line) + 3);
     /* option -> .options */
     /* skip option */
     gettok(&in_line);
     sprintf(line, ".options %s", in_line);
     
-    next = (struct line*)tmalloc(sizeof(struct line));
+    next = TMALLOC(struct line, 1);
     next->li_line    = line;
     next->li_linenum = 0;
     next->li_error   = NULL;

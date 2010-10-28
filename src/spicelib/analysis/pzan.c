@@ -130,10 +130,8 @@ PZpost(CKTcircuit *ckt)
     char	name[50];
     int		i, j;
 
-    namelist = (IFuid *) MALLOC((pzan->PZnPoles
-	+ pzan->PZnZeros)*sizeof(IFuid));
-    out_list = (IFcomplex *)MALLOC((pzan->PZnPoles
-	+ pzan->PZnZeros)*sizeof(IFcomplex));
+    namelist = TMALLOC(IFuid, pzan->PZnPoles + pzan->PZnZeros);
+    out_list = TMALLOC(IFcomplex, pzan->PZnPoles + pzan->PZnZeros);
 
     j = 0;
     for (i = 0; i < pzan->PZnPoles; i++) {

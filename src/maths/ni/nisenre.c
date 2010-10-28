@@ -19,7 +19,7 @@ Author: 1985 Thomas L. Quarles
 
 
 #define CKALLOC(ptr,size,type) if(( ckt->ptr =\
-(type *) MALLOC((size)*sizeof(type))) == NULL) return(E_NOMEM);
+TMALLOC(type, size)) == NULL) return(E_NOMEM);
 
 int
 NIsenReinit(CKTcircuit *ckt)

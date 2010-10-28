@@ -63,7 +63,7 @@ MESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *d
 			    (void)sprintf(name,"onoise_%s%s",inst->MESname,MESnNames[i]);
 
 
-data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
+data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		(*(SPfrontEnd->IFnewUid))(ckt,
 			&(data->namelist[data->numPlots++]),
@@ -79,7 +79,7 @@ if (!data->namelist) return(E_NOMEM);
 			    (void)sprintf(name,"onoise_total_%s%s",inst->MESname,MESnNames[i]);
 
 
-data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
+data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		(*(SPfrontEnd->IFnewUid))(ckt,
 			&(data->namelist[data->numPlots++]),
@@ -94,7 +94,7 @@ if (!data->namelist) return(E_NOMEM);
 			    data->numPlots += 2; 
 			    */
 
-data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
+data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		(*(SPfrontEnd->IFnewUid))(ckt,
 			&(data->namelist[data->numPlots++]),

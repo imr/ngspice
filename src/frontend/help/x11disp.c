@@ -123,7 +123,7 @@ hlp_xdisplay(topic *top)
             top->titlewidget, buttonargs, XtNumber(buttonargs));
     XtAddCallback(buttonwidget, XtNcallback, (XtCallbackProc) delete, top);
 
-    buf = (char*) tmalloc(80 * top->numlines + 100);
+    buf = TMALLOC(char, 80 * top->numlines + 100);
     buf[0] = '\0';
     for (wl = top->text; wl; wl = wl->wl_next) {
       sputline(buf, wl->wl_word);
@@ -164,7 +164,7 @@ hlp_xdisplay(topic *top)
 		commandWidgetClass, top->subboxwidget, buttonargs,
 		XtNumber(buttonargs));
                                 /* core leak XXX */
-        hand = (handle *) tmalloc(sizeof (handle));
+        hand = TMALLOC(handle, 1);
         hand->result = tl;
         hand->parent = top;
         XtAddCallback(buttonwidget, XtNcallback, (XtCallbackProc) newtopic, hand);
@@ -196,7 +196,7 @@ hlp_xdisplay(topic *top)
         XtSetArg(buttonargs[0], XtNlabel, tl->button.text);
         buttonwidget = XtCreateManagedWidget(tl->button.text,
 		commandWidgetClass, top->seeboxwidget, buttonargs, 1);
-		hand = (handle *) tmalloc(sizeof (handle));
+		hand = TMALLOC(handle, 1);
                                 /* core leak XXX */
         hand->result = tl;
         hand->parent = top;

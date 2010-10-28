@@ -136,7 +136,7 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
 	pname = "(unknown)";
     if (!plotname)
 	plotname = "(unknown)";
-    comb_title = (char*) tmalloc(strlen(plotname) + strlen(pname) + 3);
+    comb_title = TMALLOC(char, strlen(plotname) + strlen(pname) + 3);
     sprintf(comb_title, "%s: %s", pname, plotname);
     graph->plotname = comb_title;
 #endif
@@ -191,7 +191,7 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
 	pname = "(unknown)";
     if (!plotname)
 	plotname = "(unknown)";
-    comb_title = (char*) tmalloc(strlen(plotname) + strlen(pname) + 3);
+    comb_title = TMALLOC(char, strlen(plotname) + strlen(pname) + 3);
     sprintf(comb_title, "%s: %s", pname, plotname);
     graph->plotname = comb_title;
 #endif
@@ -359,7 +359,7 @@ gr_start_internal(struct dvec *dv, bool copyvec)
     dv->v_color = curcolor;
 
     /* save the data so we can refresh */
-    link = (struct dveclist *) tmalloc(sizeof(struct dveclist));
+    link = TMALLOC(struct dveclist, 1);
     link->next = currentgraph->plotdata;
 
     if (copyvec) {
@@ -1043,7 +1043,7 @@ readtics(char *string)
         char *words, *worde;
         double *tics, *ticsk;
 
-        tics = (double *) tmalloc(MAXTICS * sizeof(double));
+        tics = TMALLOC(double, MAXTICS);
         ticsk = tics;
         words = string;
 

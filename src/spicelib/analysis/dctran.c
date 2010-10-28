@@ -107,7 +107,7 @@ DCtran(CKTcircuit *ckt,
 	/* end LTRA code addition */
 
         if(ckt->CKTbreaks) FREE(ckt->CKTbreaks);
-        ckt->CKTbreaks=(double *)MALLOC(2*sizeof(double));
+        ckt->CKTbreaks = TMALLOC(double, 2);
         if(ckt->CKTbreaks == (double *)NULL) return(E_NOMEM);
         *(ckt->CKTbreaks)=0;
         *(ckt->CKTbreaks+1)=ckt->CKTfinalTime;
@@ -358,8 +358,7 @@ nextTime:
 	    if (need < ckt->CKTsizeIncr)
 		need = ckt->CKTsizeIncr;
 	    ckt->CKTtimeListSize += need;
-	    ckt->CKTtimePoints = (double *) REALLOC( (char *)
-		 ckt->CKTtimePoints, sizeof(double) * ckt->CKTtimeListSize);
+	    ckt->CKTtimePoints = TREALLOC(double, ckt->CKTtimePoints, ckt->CKTtimeListSize);
 	    ckt->CKTsizeIncr *= 1.4;
 	}
 	*(ckt->CKTtimePoints + ckt->CKTtimeIndex) = ckt->CKTtime;

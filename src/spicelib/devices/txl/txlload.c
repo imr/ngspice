@@ -349,7 +349,7 @@ static VI_list_txl
       pool_vi_txl = pool_vi_txl->pool;
       return(q);
    } else 
-      return((VI_list_txl *) tmalloc (sizeof (VI_list_txl)));
+      return(TMALLOC(VI_list_txl, 1));
 }
 
 static void 

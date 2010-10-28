@@ -57,7 +57,7 @@ TRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
             }
 
             /* allocate the delay table */
-            here->TRAdelays = (double *)MALLOC(15*sizeof(double));
+            here->TRAdelays = TMALLOC(double, 15);
             here->TRAallocDelay = 4;
 
 /* macro to make elements with built in test for out of memory */

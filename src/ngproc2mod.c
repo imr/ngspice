@@ -56,9 +56,9 @@ main(void) {
     char *filename;
 
 
-    filename = (char *)tmalloc(1024);
-    typeline = (char *)tmalloc(1024);
-    dataline = (char *)tmalloc(1024);
+    filename = TMALLOC(char, 1024);
+    typeline = TMALLOC(char, 1024);
+    dataline = TMALLOC(char, 1024);
 
     while(p == NULL) {
         printf("name of process file (input): ");
@@ -102,7 +102,7 @@ main(void) {
         }
         if(*typeline == 0) break;
         if(strncmp("nm",typeline,2) == 0) {
-            ncur = (nmod *)tmalloc(sizeof(nmod));
+            ncur = TMALLOC(nmod, 1);
             ncur->nnext = NULL;
             ncur->nname = typeline;
             *(typeline+3) = '\0';
@@ -111,7 +111,7 @@ main(void) {
             ncur->nnext = nlist;
             nlist = ncur;
         } else if(strncmp("pm",typeline,2) == 0) {
-            pcur = (pmod *)tmalloc(sizeof(pmod));
+            pcur = TMALLOC(pmod, 1);
             pcur->pnext = NULL;
             pcur->pname = typeline;
             *(typeline+3) = '\0';
@@ -120,7 +120,7 @@ main(void) {
             pcur->pnext = plist;
             plist = pcur;
         } else if(strncmp("py",typeline,2) == 0) {
-            ycur = (ymod *)tmalloc(sizeof(ymod));
+            ycur = TMALLOC(ymod, 1);
             ycur->ynext = NULL;
             ycur->yname = typeline;
             *(typeline+3) = '\0';
@@ -129,7 +129,7 @@ main(void) {
             ycur->ynext = ylist;
             ylist = ycur;
         } else if(strncmp("du",typeline,2) == 0) {
-            dcur = (dmod *)tmalloc(sizeof(dmod));
+            dcur = TMALLOC(dmod, 1);
             dcur->dnext = NULL;
             dcur->dname = typeline;
             *(typeline+3) = '\0';
@@ -138,7 +138,7 @@ main(void) {
             dcur->dnext = dlist;
             dlist = dcur;
         } else if(strncmp("ml",typeline,2) == 0) {
-            mcur = (mmod *)tmalloc(sizeof(mmod));
+            mcur = TMALLOC(mmod, 1);
             mcur->mnext = NULL;
             mcur->mname = typeline;
             *(typeline+3) = '\0';

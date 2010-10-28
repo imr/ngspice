@@ -143,7 +143,7 @@ com_hardcopy(wordlist *wl)
             outmenuprompt("which variable ? ");
             if ((buf2 = prompt(cp_in)) == (char *) -1)	/* XXXX Sick */
                 return;
-            wl = (struct wordlist *) tmalloc(sizeof(struct wordlist));
+            wl = TMALLOC(struct wordlist, 1);
             wl->wl_word = buf2;
             wl->wl_next = NULL;
             wl = process(wl);

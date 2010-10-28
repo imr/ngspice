@@ -116,7 +116,7 @@ VCVSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return(OK);
         case VCVS_CURRENT :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "VCVSask";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -130,7 +130,7 @@ VCVSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return(OK);
         case VCVS_POWER :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = (char*) MALLOC(strlen(msg)+1);
+                errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "VCVSask";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

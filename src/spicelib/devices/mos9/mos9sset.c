@@ -42,7 +42,7 @@ MOS9sSetup(SENstruct *info, GENmodel *inModel)
                 }
             }
             here->MOS9senPertFlag = OFF;
-            if((here->MOS9sens = (double *)MALLOC(72*sizeof(double))) == NULL) {
+            if((here->MOS9sens = TMALLOC(double, 72)) == NULL) {
                 return(E_NOMEM);
             }
 

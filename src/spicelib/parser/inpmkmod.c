@@ -39,7 +39,7 @@ int INPmakeMod(char *token, int type, card * line)
    printf("In INPmakeMod, about to insert new model name = %s . . .\n", token);
 #endif
 
-   *i = (INPmodel *) MALLOC(sizeof(INPmodel));
+   *i = TMALLOC(INPmodel, 1);
    if (*i == NULL)
       return (E_NOMEM); 
 

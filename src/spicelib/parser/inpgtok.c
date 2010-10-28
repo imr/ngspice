@@ -98,7 +98,7 @@ int INPgetTok(char **line, char **token, int gobble)
     diffpoints = point - *line;
     if ((diffpoints < 1) && *point)
         diffpoints = 1;	/* Weird items, 1 char */
-    *token = (char *) tmalloc((1 + diffpoints)*sizeof(char));
+    *token = TMALLOC(char, 1 + diffpoints);
     if (!*token)
         return (E_NOMEM);
     (void) strncpy(*token, *line, diffpoints);
@@ -107,7 +107,7 @@ int INPgetTok(char **line, char **token, int gobble)
 /*
     if (point == *line && *point)
 	point++;
-    *token = (char *) MALLOC(1 + point - *line);
+    *token = TMALLOC(char, 1 + point - *line);
     if (!*token)
 	return (E_NOMEM);
     (void) strncpy(*token, *line, point - *line);
@@ -196,7 +196,7 @@ int INPgetNetTok(char **line, char **token, int gobble)
     diffpoints = point - *line;
     if ((diffpoints < 1) && *point)
         diffpoints = 1;	/* Weird items, 1 char */
-    *token = (char *) tmalloc((1 + diffpoints)*sizeof(char));
+    *token = TMALLOC(char, 1 + diffpoints);
     if (!*token)
         return (E_NOMEM);
     (void) strncpy(*token, *line, diffpoints);
@@ -206,7 +206,7 @@ int INPgetNetTok(char **line, char **token, int gobble)
 /*
     if (point == *line && *point)
 	point++;
-    *token = (char *) MALLOC(1 + point - *line);
+    *token = TMALLOC(char, 1 + point - *line);
     if (!*token)
 	return (E_NOMEM);
     (void) strncpy(*token, *line, point - *line);
@@ -328,7 +328,7 @@ int INPgetUTok(char **line, char **token, int gobble)
 	point--;
     if (point == *line && *point)	/* Weird items, 1 char */
 	point++;
-    *token = (char *) MALLOC(1 + point - *line);
+    *token = TMALLOC(char, 1 + point - *line);
     if (!*token)
 	return (E_NOMEM);
     (void) strncpy(*token, *line, point - *line);
@@ -455,7 +455,7 @@ int INPgetU2Tok(char **line, char **token, int gobble)
 	point--;
     if (point == *line && *point)	/* Weird items, 1 char */
 	point++;
-    *token = (char *) MALLOC(1 + point - *line);
+    *token = TMALLOC(char, 1 + point - *line);
     if (!*token)
 	return (E_NOMEM);
     (void) strncpy(*token, *line, point - *line);

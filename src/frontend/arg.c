@@ -31,7 +31,7 @@ char *prompt(FILE *fp)
 	return 0;
     n = strlen(buf) - 1;
     buf[n] = '\0';	/* fgets leaves the \n */
-    p = (char *) tmalloc(n + 1);
+    p = TMALLOC(char, n + 1);
     strcpy(p, buf);
     return p;
 }

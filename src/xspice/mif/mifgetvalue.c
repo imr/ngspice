@@ -171,40 +171,35 @@ MIFgetValue (
 
         case  IF_FLAGVEC:
             btemp = MIFget_boolean(token, err);
-            val.v.vec.iVec = (int *) REALLOC(val.v.vec.iVec,
-                                     (val.v.numValue + 1) * sizeof(int));
+            val.v.vec.iVec = TREALLOC(int, val.v.vec.iVec, val.v.numValue + 1);
             val.v.vec.iVec[val.v.numValue] = btemp;
             val.v.numValue++;
             break;
 
         case  IF_INTVEC:
             itemp = MIFget_integer(token, err);
-            val.v.vec.iVec = (int *) REALLOC(val.v.vec.iVec,
-                                     (val.v.numValue + 1) * sizeof(int));
+            val.v.vec.iVec = TREALLOC(int, val.v.vec.iVec, val.v.numValue + 1);
             val.v.vec.iVec[val.v.numValue] = itemp;
             val.v.numValue++;
             break;
 
         case  IF_REALVEC:
             rtemp = MIFget_real(token, err);
-            val.v.vec.rVec = (double *) REALLOC(val.v.vec.rVec,
-                                     (val.v.numValue + 1) * sizeof(double));
+            val.v.vec.rVec = TREALLOC(double, val.v.vec.rVec, val.v.numValue + 1);
             val.v.vec.rVec[val.v.numValue] = rtemp;
             val.v.numValue++;
             break;
 
         case  IF_STRINGVEC:
             stemp = MIFget_string(token, err);
-            val.v.vec.sVec = (char **) REALLOC(val.v.vec.sVec,
-                                     (val.v.numValue + 1) * sizeof(char *));
+            val.v.vec.sVec = TREALLOC(char *, val.v.vec.sVec, val.v.numValue + 1);
             val.v.vec.sVec[val.v.numValue] = stemp;
             val.v.numValue++;
             break;
 
         case  IF_CPLXVEC:
             ctemp = MIFget_complex(token, token_type, line, err);
-            val.v.vec.cVec = (IFcomplex *) REALLOC(val.v.vec.cVec,
-                                     (val.v.numValue + 1) * sizeof(IFcomplex));
+            val.v.vec.cVec = TREALLOC(IFcomplex, val.v.vec.cVec, val.v.numValue + 1);
             val.v.vec.cVec[val.v.numValue] = ctemp;
             val.v.numValue++;
             break;

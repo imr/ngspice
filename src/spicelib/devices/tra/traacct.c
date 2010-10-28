@@ -52,8 +52,7 @@ TRAaccept(CKTcircuit *ckt, GENmodel *inModel)
                 if(here->TRAallocDelay <= here->TRAsizeDelay) {
                     /* need to grab some more space */
                     here->TRAallocDelay += 5;
-                    here->TRAdelays = (double *)REALLOC((char *)here->TRAdelays,
-                        (here->TRAallocDelay+1)*3*sizeof(double));
+                    here->TRAdelays = TREALLOC(double, here->TRAdelays, (here->TRAallocDelay + 1) * 3);
                 }
                 here->TRAsizeDelay ++;
                 to = (here->TRAdelays  +3*here->TRAsizeDelay);

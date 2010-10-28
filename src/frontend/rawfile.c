@@ -568,11 +568,9 @@ raw_read(char *name)
 		 * be dangerous if the file is invalid.
 		 */
                 if (isreal(v))
-                    v->v_realdata = (double *) tmalloc(
-                        npoints * sizeof (double));
+                    v->v_realdata = TMALLOC(double, npoints);
                 else
-                    v->v_compdata = (ngcomplex_t *) tmalloc(
-                        npoints * sizeof(ngcomplex_t));
+                    v->v_compdata = TMALLOC(ngcomplex_t, npoints);
             }
         } else if (ciprefix("values:", buf) || 
                 ciprefix("binary:", buf)) {

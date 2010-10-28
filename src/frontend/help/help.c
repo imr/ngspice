@@ -75,7 +75,7 @@ findglobalsubject(char *subject)
     for (dict = hlp_filelist; *dict && **dict; dict++) {
 	fpos = findsubject(*dict, subject);
 	if (fpos != -1) {
-	    place = (fplace *) tmalloc(sizeof(fplace));
+	    place = TMALLOC(fplace, 1);
 	    place->fpos = fpos;
 	    place->filename = copy(*dict);
 	    place->fp = hlp_fopen(*dict);

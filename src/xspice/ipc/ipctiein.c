@@ -159,8 +159,8 @@ void ipc_handle_vtrans(
 
     if(g_ipc.vtrans.size == 0) {
         g_ipc.vtrans.size = 1;
-        g_ipc.vtrans.vsrc_name = (char **) MALLOC(sizeof(char *));
-        g_ipc.vtrans.device_name = (char **) MALLOC(sizeof(char *));
+        g_ipc.vtrans.vsrc_name = TMALLOC(char *, 1);
+        g_ipc.vtrans.device_name = TMALLOC(char *, 1);
         g_ipc.vtrans.vsrc_name[0] = MIFcopy(vsrc);
         g_ipc.vtrans.device_name[0] = MIFcopy(dev);
     }
@@ -170,10 +170,8 @@ void ipc_handle_vtrans(
         size = g_ipc.vtrans.size;
         i = g_ipc.vtrans.size - 1;
 
-        g_ipc.vtrans.vsrc_name = (char **) REALLOC(g_ipc.vtrans.vsrc_name,
-                                                  size * sizeof(char *));
-        g_ipc.vtrans.device_name = (char **) REALLOC(g_ipc.vtrans.device_name,
-                                                    size * sizeof(char *));
+        g_ipc.vtrans.vsrc_name = TREALLOC(char *, g_ipc.vtrans.vsrc_name, size);
+        g_ipc.vtrans.device_name = TREALLOC(char *, g_ipc.vtrans.device_name, size);
         g_ipc.vtrans.vsrc_name[i] = MIFcopy(vsrc);
         g_ipc.vtrans.device_name[i] = MIFcopy(dev);
     }
@@ -423,17 +421,16 @@ int ipc_get_devices(
             /* Otherwise, add the name to the list */
             num_instances++;
             if(num_instances == 1)
-                *names = (char **) MALLOC(sizeof(char *));
+                *names = TMALLOC(char *, 1);
             else
-                *names = (char **) REALLOC(*names, num_instances * sizeof(char *));
+                *names = TREALLOC(char *, *names, num_instances);
             (*names)[num_instances-1] = MIFcopy(inst_name);
 
             /* Then get the type if it is a Q J or M */
             if(num_instances == 1)
-                *modtypes = (double *) MALLOC(sizeof(double));
+                *modtypes = TMALLOC(double, 1);
             else
-                *modtypes = (double *) REALLOC((char *) *modtypes,
-                                        num_instances * sizeof(double));
+                *modtypes = TREALLOC(double, *modtypes, num_instances);
 
             if(strcmp(device,"BJT") == 0) {
                 BJTmod = (BJTmodel *) model;
