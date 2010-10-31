@@ -1,3 +1,10 @@
+2010-10-31  Robert Larice
+ * src/include/memory.h ,
+ * src/maths/sparse/spdefs.h ,
+ * src/xspice/icm/xtraevt/int/udnfunc.c ,
+ * src/xspice/icm/xtraevt/real/udnfunc.c :
+    cleanup TMALLOC etc macros
+
 2010-10-31  Holger Vogt
  * compile_min.sh: exit upon autogen or configure error
  

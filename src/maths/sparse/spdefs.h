@@ -369,21 +369,21 @@ extern void * tmalloc(size_t);
 extern void   txfree(void *);
 extern void * trealloc(void *, size_t);
 
-#define SP_MALLOC(type,number)  ((type *)tmalloc((size_t)(sizeof(type)*(number))))
-#define SP_REALLOC(ptr,type,number)  \
-           ptr = (type *)trealloc(ptr,(unsigned)(sizeof(type)*(number)))
-#define SP_FREE(ptr) { if ((ptr) != NULL) txfree((char *)(ptr)); (ptr) = NULL; }
+#define SP_MALLOC(type,number)  (type *) tmalloc((size_t)(number) * sizeof(type))
+#define SP_REALLOC(ptr,type,number) \
+           ptr = (type *) trealloc(ptr, (size_t)(number) * sizeof(type))
+#define SP_FREE(ptr) { if ((ptr) != NULL) txfree(ptr); (ptr) = NULL; }
 
 
 
 /* A new calloc */
 #ifndef HAVE_LIBGC
-#define SP_CALLOC(ptr,type,number)                    	     \
-{ ptr = (type *) calloc(number, sizeof(type)); 		             \
+#define SP_CALLOC(ptr,type,number)                           \
+{ ptr = (type *) calloc((size_t)(number), sizeof(type));     \
 }
 #else /* HAVE_LIBCG */
-#define SP_CALLOC(ptr,type,number)                         	\
-{ ptr = TMALLOC(type, (size_t)number);	\
+#define SP_CALLOC(ptr,type,number)                           \
+{ ptr = (type *) tmalloc((size_t)(number) * sizeof(type));   \
 }
 #endif
 

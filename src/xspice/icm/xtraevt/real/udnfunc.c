@@ -46,7 +46,7 @@ NON-STANDARD FEATURES
 
 void *tmalloc(size_t);
 
-#define TMALLOC(t,n)      (t*) /**/ tmalloc(sizeof(t) * (size_t)(n))
+#define TMALLOC(t,n)      (t*) tmalloc(sizeof(t) * (size_t)(n))
 
 
 /* ************************************************************************ */
