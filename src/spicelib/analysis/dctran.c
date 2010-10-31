@@ -4,7 +4,7 @@ Author: 1985 Thomas L. Quarles
 Modified: 2000  AlansFixes
 **********/
 
-/* subroutine to do DC TRANSIENT analysis    
+/* subroutine to do DC TRANSIENT analysis
         --- ONLY, unlike spice2 routine with the same name! */
 
 #include "ngspice.h"
@@ -18,7 +18,7 @@ Modified: 2000  AlansFixes
 
 #ifdef XSPICE
 /* gtri - add - wbk - Add headers */
-#include "miftypes.h" 
+#include "miftypes.h"
 
 #include "evt.h"
 #include "mif.h"
@@ -32,12 +32,12 @@ Modified: 2000  AlansFixes
 #endif
 
 #ifdef HAS_WINDOWS    /* hvogt 10.03.99, nach W. Mues */
-void SetAnalyse( char * Analyse, int Percent);
+void SetAnalyse(char * Analyse, int Percent);
 #endif
 
 int
 DCtran(CKTcircuit *ckt,
-       int restart)		/* forced restart flag */
+       int restart)   /* forced restart flag */
 {
     int i;
     double olddelta;
@@ -85,26 +85,25 @@ DCtran(CKTcircuit *ckt,
 #endif
     if(restart || ckt->CKTtime == 0) {
         delta=MIN(ckt->CKTfinalTime/200,ckt->CKTstep)/10;
-
 #ifdef STEPDEBUG
-	printf("delta = %g    finalTime/200: %g    CKTstep: %g\n",delta,ckt->CKTfinalTime/200,ckt->CKTstep);
+        printf("delta = %g    finalTime/200: %g    CKTstep: %g\n",delta,ckt->CKTfinalTime/200,ckt->CKTstep);
 #endif
-	/* begin LTRA code addition */
-	if (ckt->CKTtimePoints != NULL)
-	    FREE(ckt->CKTtimePoints);
+        /* begin LTRA code addition */
+        if (ckt->CKTtimePoints != NULL)
+            FREE(ckt->CKTtimePoints);
 
-	if (ckt->CKTstep >= ckt->CKTmaxStep)
-	    maxstepsize = ckt->CKTstep;
-	else
-	    maxstepsize = ckt->CKTmaxStep;
+        if (ckt->CKTstep >= ckt->CKTmaxStep)
+            maxstepsize = ckt->CKTstep;
+        else
+            maxstepsize = ckt->CKTmaxStep;
 
-	ckt->CKTsizeIncr = 10;
-	ckt->CKTtimeIndex = -1; /* before the DC soln has been stored */
-	ckt->CKTtimeListSize = ckt->CKTfinalTime / maxstepsize + 0.5;
-	ltra_num = CKTtypelook("LTRA");
-	if (ltra_num >= 0 && ckt->CKThead[ltra_num] != NULL)
-	    ckt->CKTtimePoints = NEWN(double, ckt->CKTtimeListSize);
-	/* end LTRA code addition */
+        ckt->CKTsizeIncr = 10;
+        ckt->CKTtimeIndex = -1; /* before the DC soln has been stored */
+        ckt->CKTtimeListSize = ckt->CKTfinalTime / maxstepsize + 0.5;
+        ltra_num = CKTtypelook("LTRA");
+        if (ltra_num >= 0 && ckt->CKThead[ltra_num] != NULL)
+            ckt->CKTtimePoints = NEWN(double, ckt->CKTtimeListSize);
+        /* end LTRA code addition */
 
         if(ckt->CKTbreaks) FREE(ckt->CKTbreaks);
         ckt->CKTbreaks = TMALLOC(double, 2);
@@ -125,7 +124,6 @@ DCtran(CKTcircuit *ckt,
 
 #ifdef XSPICE
 /* gtri - add - wbk - 12/19/90 - Add IPC stuff and set anal_init and anal_type */
-
         /* Tell the beginPlot routine what mode we're in */
         g_ipc.anal_type = IPC_ANAL_TRAN;
 
@@ -133,7 +131,6 @@ DCtran(CKTcircuit *ckt,
         g_mif_info.circuit.anal_type = MIF_DC;
 
         g_mif_info.circuit.anal_init = MIF_TRUE;
-
 /* gtri - end - wbk */
 #endif
         error = CKTnames(ckt,&numNames,&nameList);
@@ -141,17 +138,17 @@ DCtran(CKTcircuit *ckt,
         (*(SPfrontEnd->IFnewUid))(ckt,&timeUid,(IFuid)NULL,
                 "time", UID_OTHER, NULL);
         error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
-		ckt->CKTcurJob,
-                ckt->CKTcurJob->JOBname,timeUid,IF_REAL,numNames,nameList,
-                IF_REAL,&(((TRANan*)ckt->CKTcurJob)->TRANplot));
-	tfree(nameList);
+        ckt->CKTcurJob,
+        ckt->CKTcurJob->JOBname,timeUid,IF_REAL,numNames,nameList,
+        IF_REAL,&(((TRANan*)ckt->CKTcurJob)->TRANplot));
+        tfree(nameList);
         if(error) return(error);
 
         ckt->CKTtime = 0;
         ckt->CKTdelta = 0;
         ckt->CKTbreak=1;
         firsttime = 1;
-        save_mode = (ckt->CKTmode&MODEUIC)|MODETRANOP | MODEINITJCT;
+        save_mode = (ckt->CKTmode&MODEUIC) | MODETRANOP | MODEINITJCT;
         save_order = ckt->CKTorder;
 #ifdef XSPICE
 /* gtri - begin - wbk - set a breakpoint at end of supply ramping time */
@@ -161,72 +158,72 @@ DCtran(CKTcircuit *ckt,
 /* gtri - end - wbk - set a breakpoint at end of supply ramping time */
 
 /* gtri - begin - wbk - Call EVTop if event-driven instances exist */
-	if(ckt->evt->counts.num_insts != 0){
-	  /* use new DCOP algorithm */
-	  converged = EVTop(ckt,
-			    (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITJCT,
-			    (ckt->CKTmode & MODEUIC)|MODETRANOP| MODEINITFLOAT,
-			    ckt->CKTdcMaxIter,
-			    MIF_TRUE);
-	  EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
-	  
-	  EVTop_save(ckt, MIF_FALSE, 0.0);
-	  
-	  /* gtri - end - wbk - Call EVTop if event-driven instances exist */
-	} else
-#endif		
+        if(ckt->evt->counts.num_insts != 0) {
+            /* use new DCOP algorithm */
+            converged = EVTop(ckt,
+                        (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITJCT,
+                        (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITFLOAT,
+                        ckt->CKTdcMaxIter,
+                        MIF_TRUE);
+            EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
+
+            EVTop_save(ckt, MIF_FALSE, 0.0);
+
+/* gtri - end - wbk - Call EVTop if event-driven instances exist */
+        } else
+#endif
         converged = CKTop(ckt,
-                (ckt->CKTmode & MODEUIC)|MODETRANOP| MODEINITJCT,
-                (ckt->CKTmode & MODEUIC)|MODETRANOP| MODEINITFLOAT,
-                ckt->CKTdcMaxIter);
-                
-         if(converged != 0) {
+                    (ckt->CKTmode & MODEUIC)|MODETRANOP| MODEINITJCT,
+                    (ckt->CKTmode & MODEUIC)|MODETRANOP| MODEINITFLOAT,
+                    ckt->CKTdcMaxIter);
+
+        if(converged != 0) {
             fprintf(stdout,"\nTransient solution failed -\n");
             CKTncDump(ckt);
-     /*      CKTnode *node;
-           double new, old, tol;
-           int i=1;
+/*          CKTnode *node;
+            double new, old, tol;
+            int i=1;
 
-           fprintf(stdout,"\nTransient solution failed -\n\n");
-           fprintf(stdout,"Last Node Voltages\n");
-           fprintf(stdout,"------------------\n\n");
-           fprintf(stdout,"%-30s %20s %20s\n", "Node", "Last Voltage",
-                                                              "Previous Iter");
-           fprintf(stdout,"%-30s %20s %20s\n", "----", "------------",
-                                                              "-------------");
-           for(node=ckt->CKTnodes->next;node;node=node->next) {
-             if (strstr(node->name, "#branch") || !strstr(node->name, "#")) {
-               new =  *((ckt->CKTrhsOld) + i ) ;
-               old =  *((ckt->CKTrhs) + i ) ;
-               fprintf(stdout,"%-30s %20g %20g", node->name, new, old);
-               if(node->type == 3) {
-                   tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
-                           ckt->CKTvoltTol;
-               } else {
-                   tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
-                           ckt->CKTabstol;
-               }
-               if (fabs(new-old) >tol ) {
-                    fprintf(stdout," *");
-               }
-               fprintf(stdout,"\n");
-             };
-             i++;
-           } */
-           fprintf(stdout,"\n");
-           fflush(stdout);   
+            fprintf(stdout,"\nTransient solution failed -\n\n");
+            fprintf(stdout,"Last Node Voltages\n");
+            fprintf(stdout,"------------------\n\n");
+            fprintf(stdout,"%-30s %20s %20s\n", "Node", "Last Voltage",
+                                                               "Previous Iter");
+            fprintf(stdout,"%-30s %20s %20s\n", "----", "------------",
+                                                               "-------------");
+            for(node=ckt->CKTnodes->next;node;node=node->next) {
+                if (strstr(node->name, "#branch") || !strstr(node->name, "#")) {
+                    new =  *((ckt->CKTrhsOld) + i ) ;
+                    old =  *((ckt->CKTrhs) + i ) ;
+                    fprintf(stdout,"%-30s %20g %20g", node->name, new, old);
+                    if(node->type == 3) {
+                        tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
+                                ckt->CKTvoltTol;
+                    } else {
+                        tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
+                                ckt->CKTabstol;
+                    }
+                    if (fabs(new-old) >tol ) {
+                        fprintf(stdout," *");
+                    }
+                    fprintf(stdout,"\n");
+                };
+                i++;
+            } */
+            fprintf(stdout,"\n");
+            fflush(stdout);
         } else if (!ft_noacctprint && !ft_noinitprint) {
-           fprintf(stdout,"\nInitial Transient Solution\n");
-           fprintf(stdout,"--------------------------\n\n");
-           fprintf(stdout,"%-30s %15s\n", "Node", "Voltage");
-           fprintf(stdout,"%-30s %15s\n", "----", "-------");
-           for(node=ckt->CKTnodes->next;node;node=node->next) {
-               if (strstr(node->name, "#branch") || !strstr(node->name, "#"))
-                 fprintf(stdout,"%-30s %15g\n", node->name,
-                                             *(ckt->CKTrhsOld+node->number));
-           };
-           fprintf(stdout,"\n");
-           fflush(stdout);        
+            fprintf(stdout,"\nInitial Transient Solution\n");
+            fprintf(stdout,"--------------------------\n\n");
+            fprintf(stdout,"%-30s %15s\n", "Node", "Voltage");
+            fprintf(stdout,"%-30s %15s\n", "----", "-------");
+            for(node=ckt->CKTnodes->next;node;node=node->next) {
+                if (strstr(node->name, "#branch") || !strstr(node->name, "#"))
+                    fprintf(stdout,"%-30s %15g\n", node->name,
+                                              *(ckt->CKTrhsOld+node->number));
+            };
+            fprintf(stdout,"\n");
+            fflush(stdout);
         };
 
         if(converged != 0) return(converged);
@@ -241,7 +238,6 @@ DCtran(CKTcircuit *ckt,
         }
 
 /* gtri - end - wbk */
-
 
 /* gtri - add - wbk - 12/19/90 - set anal_init and anal_type */
 
@@ -259,7 +255,7 @@ DCtran(CKTcircuit *ckt,
         g_mif_info.breakpoint.last    = 1.0e30;
 
 /* gtri - end - wbk - Add Breakpoint stuff */
-#endif	
+#endif
         ckt->CKTstat->STATtimePts ++;
         ckt->CKTorder=1;
         for(i=0;i<7;i++) {
@@ -290,10 +286,10 @@ DCtran(CKTcircuit *ckt,
 #endif
 
         ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITTRAN;
-		/* modeinittran set here */
+     /* modeinittran set here */
         ckt->CKTag[0]=ckt->CKTag[1]=0;
         bcopy(ckt->CKTstate0, ckt->CKTstate1,
-                ckt->CKTnumStates*sizeof(double));
+          ckt->CKTnumStates*sizeof(double));
 
 #ifdef WANT_SENSE2
         if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN)){
@@ -311,12 +307,12 @@ DCtran(CKTcircuit *ckt,
         startcTime = ckt->CKTstat->STATcombineTime;
         startkTime = ckt->CKTstat->STATsyncTime;
 #ifdef CLUSTER
-	CLUsetup(ckt);
-#endif	
+        CLUsetup(ckt);
+#endif
     } else {
-	/*saj As traninit resets CKTmode */
-    	ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITPRED;
-	/* saj */    
+        /* saj As traninit resets CKTmode */
+        ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITPRED;
+        /* saj */
         startTime=(*(SPfrontEnd->IFseconds))();
         startIters = ckt->CKTstat->STATnumIter;
         startdTime = ckt->CKTstat->STATdecompTime;
@@ -326,42 +322,42 @@ DCtran(CKTcircuit *ckt,
         startkTime = ckt->CKTstat->STATsyncTime;
         if(ckt->CKTminBreak==0) ckt->CKTminBreak=ckt->CKTmaxStep*5e-5;
         firsttime=0;
-	/* To get rawfile working saj*/
+        /* To get rawfile working saj*/
         /* get namelist again */
-		error = CKTnames(ckt,&numNames,&nameList);
+        error = CKTnames(ckt,&numNames,&nameList);
         if(error) return(error);
-		/* get timeUiD again */
+        /* get timeUiD again */
         (*(SPfrontEnd->IFnewUid))(ckt,&timeUid,(IFuid)NULL,
                 "time", UID_OTHER, NULL);
-	error = (*(SPfrontEnd->OUTpBeginPlot))(ckt, ckt->CKTcurJob,
-					       ckt->CKTcurJob->JOBname,timeUid,IF_REAL,666,nameList,
-					       666,&(((TRANan*)ckt->CKTcurJob)->TRANplot));/*magic 666 nums as flags */
-	tfree(nameList);
-	if(error) {
-	  fprintf(stderr, "Couldn't relink rawfile\n");
-	  return error;
-	}
-	/*end saj*/	
+        error = (*(SPfrontEnd->OUTpBeginPlot))(ckt, ckt->CKTcurJob,
+                 ckt->CKTcurJob->JOBname,timeUid,IF_REAL,666,nameList,
+                 666,&(((TRANan*)ckt->CKTcurJob)->TRANplot));/* magic 666 nums as flags */
+        tfree(nameList);
+        if(error) {
+            fprintf(stderr, "Couldn't relink rawfile\n");
+            return error;
+        }
+        /* end saj*/
         goto resume;
     }
 
 /* 650 */
-nextTime:
+    nextTime:
 
     /* begin LTRA code addition */
     if (ckt->CKTtimePoints) {
-	ckt->CKTtimeIndex++;
-	if (ckt->CKTtimeIndex >= ckt->CKTtimeListSize) {
-	    /* need more space */
-	    int need;
-	    need = 0.5 + (ckt->CKTfinalTime - ckt->CKTtime) / maxstepsize;
-	    if (need < ckt->CKTsizeIncr)
-		need = ckt->CKTsizeIncr;
-	    ckt->CKTtimeListSize += need;
+    ckt->CKTtimeIndex++;
+        if (ckt->CKTtimeIndex >= ckt->CKTtimeListSize) {
+            /* need more space */
+            int need;
+            need = 0.5 + (ckt->CKTfinalTime - ckt->CKTtime) / maxstepsize;
+            if (need < ckt->CKTsizeIncr)
+                need = ckt->CKTsizeIncr;
+            ckt->CKTtimeListSize += need;
 	    ckt->CKTtimePoints = TREALLOC(double, ckt->CKTtimePoints, ckt->CKTtimeListSize);
-	    ckt->CKTsizeIncr *= 1.4;
-	}
-	*(ckt->CKTtimePoints + ckt->CKTtimeIndex) = ckt->CKTtime;
+            ckt->CKTsizeIncr *= 1.4;
+        }
+    *(ckt->CKTtimePoints + ckt->CKTtimeIndex) = ckt->CKTtime;
     }
     /* end LTRA code addition */
 
@@ -382,8 +378,8 @@ nextTime:
  */
 
 #ifdef STEPDEBUG
-   printf("Delta %g accepted at time %g (finaltime: %g)\n",ckt->CKTdelta,ckt->CKTtime,ckt->CKTfinalTime);
-   fflush(stdout);
+    printf("Delta %g accepted at time %g (finaltime: %g)\n",ckt->CKTdelta,ckt->CKTtime,ckt->CKTfinalTime);
+    fflush(stdout);
 #endif /* STEPDEBUG */
     ckt->CKTstat->STATaccepted ++;
     ckt->CKTbreak=0;
@@ -448,13 +444,13 @@ nextTime:
             g_ipc.last_time = ckt->CKTtime;
         }
     }
-    else  
+    else
 /* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
 #endif
 #ifdef CLUSTER
-      CLUoutput(ckt);
-#endif    
-    if(ckt->CKTtime >= ckt->CKTinitTime) CKTdump(ckt,ckt->CKTtime,
+        CLUoutput(ckt);
+#endif
+        if(ckt->CKTtime >= ckt->CKTinitTime) CKTdump(ckt,ckt->CKTtime,
             (((TRANan*)ckt->CKTcurJob)->TRANplot));
 #ifdef XSPICE
 /* gtri - begin - wbk - Update event queues/data for accepted timepoint */
@@ -464,11 +460,11 @@ nextTime:
     if(ckt->evt->counts.num_insts > 0)
         EVTaccept(ckt, ckt->CKTtime);
 /* gtri - end - wbk - Update event queues/data for accepted timepoint */
-#endif	    
+#endif
     ckt->CKTstat->STAToldIter = ckt->CKTstat->STATnumIter;
     if(check_autostop("tran") ||
-       fabs(ckt->CKTtime - ckt->CKTfinalTime) < ckt->CKTminBreak ||
-       AlmostEqualUlps( ckt->CKTtime, ckt->CKTfinalTime, 100 ) ) {
+      fabs(ckt->CKTtime - ckt->CKTfinalTime) < ckt->CKTminBreak ||
+      AlmostEqualUlps( ckt->CKTtime, ckt->CKTfinalTime, 100 ) ) {
 #ifdef STEPDEBUG
         printf(" done:  time is %g, final time is %g, and tol is %g\n",
         ckt->CKTtime,ckt->CKTfinalTime,ckt->CKTminBreak);
@@ -516,9 +512,9 @@ nextTime:
     }
 resume:
 #ifdef STEPDEBUG
-    if( (ckt->CKTdelta <= ckt->CKTfinalTime/50) && 
-            (ckt->CKTdelta <= ckt->CKTmaxStep)) {
-            ;
+    if( (ckt->CKTdelta <= ckt->CKTfinalTime/50) &&
+        (ckt->CKTdelta <= ckt->CKTmaxStep)) {
+        ;
     } else {
         if(ckt->CKTfinalTime/50<ckt->CKTmaxStep) {
             (void)printf("limited by Tstop/50\n");
@@ -528,56 +524,55 @@ resume:
     }
 #endif
 #ifdef HAS_WINDOWS
-	 if (ckt->CKTtime == 0.)
+    if (ckt->CKTtime == 0.)
         SetAnalyse( "tran init", 0);
     else
         SetAnalyse( "tran", (int)((ckt->CKTtime * 1000.) / ckt->CKTfinalTime));
 #endif
-    ckt->CKTdelta = 
+    ckt->CKTdelta =
             MIN(ckt->CKTdelta,ckt->CKTmaxStep);
 #ifdef XSPICE
 /* gtri - begin - wbk - Cut integration order if first timepoint after breakpoint */
-    //if(ckt->CKTtime == g_mif_info.breakpoint.last)
+    /* if(ckt->CKTtime == g_mif_info.breakpoint.last) */
     if ( AlmostEqualUlps( ckt->CKTtime, g_mif_info.breakpoint.last, 100 ) )
         ckt->CKTorder = 1;
 /* gtri - end   - wbk - Cut integration order if first timepoint after breakpoint */
 
 #endif
 
-
-	/* are we at a breakpoint, or indistinguishably close? */
-    //if ((ckt->CKTtime == *(ckt->CKTbreaks)) || (*(ckt->CKTbreaks) -
+  /* are we at a breakpoint, or indistinguishably close? */
+    /* if ((ckt->CKTtime == *(ckt->CKTbreaks)) || (*(ckt->CKTbreaks) - */
     if ( AlmostEqualUlps( ckt->CKTtime, *(ckt->CKTbreaks), 100 ) || (*(ckt->CKTbreaks) -
-    				(ckt->CKTtime) <= ckt->CKTdelmin)) {
+            (ckt->CKTtime) <= ckt->CKTdelmin)) {
         /* first timepoint after a breakpoint - cut integration order */
         /* and limit timestep to .1 times minimum of time to next breakpoint,
-         *  and previous timestep
+         * and previous timestep
          */
         ckt->CKTorder = 1;
 #ifdef STEPDEBUG
         if( (ckt->CKTdelta >.1* ckt->CKTsaveDelta) ||
-                (ckt->CKTdelta > .1*(*(ckt->CKTbreaks+1)-*(ckt->CKTbreaks))) ) {
+            (ckt->CKTdelta > .1*(*(ckt->CKTbreaks+1)-*(ckt->CKTbreaks))) ) {
             if(ckt->CKTsaveDelta < (*(ckt->CKTbreaks+1)-*(ckt->CKTbreaks)))  {
                 (void)printf("limited by pre-breakpoint delta (saveDelta: %g, nxt_breakpt: %g, curr_breakpt: %g\n",
-			     ckt->CKTsaveDelta, *(ckt->CKTbreaks+1), *(ckt->CKTbreaks));
+                  ckt->CKTsaveDelta, *(ckt->CKTbreaks+1), *(ckt->CKTbreaks));
             } else {
                 (void)printf("limited by next breakpoint\n");
             }
         }
 #endif
 
-            ckt->CKTdelta = MIN(ckt->CKTdelta, .1 * MIN(ckt->CKTsaveDelta,
-                    *(ckt->CKTbreaks+1)-*(ckt->CKTbreaks)));
+        ckt->CKTdelta = MIN(ckt->CKTdelta, .1 * MIN(ckt->CKTsaveDelta,
+            *(ckt->CKTbreaks+1)-*(ckt->CKTbreaks)));
 
         if(firsttime) {
             ckt->CKTdelta /= 10;
 #ifdef STEPDEBUG
             (void)printf("delta cut for initial timepoint\n");
 #endif
-        } 
+        }
 
 #ifdef XSPICE
-   }
+    }
 
 /* gtri - begin - wbk - Add Breakpoint stuff */
 
@@ -588,7 +583,7 @@ resume:
         ckt->CKTdelta = g_mif_info.breakpoint.current - ckt->CKTtime;
         g_mif_info.breakpoint.last = ckt->CKTtime + ckt->CKTdelta;
     }
-    else {
+      else {
         /* Else, mark that timestep was not set by temporary breakpoint */
         g_mif_info.breakpoint.last = 1.0e30;
     }
@@ -599,12 +594,12 @@ resume:
     /* Throw out any permanent breakpoint times <= current time */
     for (;;) {
 #ifdef STEPDEBUG
-      printf("    brk_pt: %g    ckt_time: %g    ckt_min_break: %g\n",*(ckt->CKTbreaks), ckt->CKTtime, ckt->CKTminBreak);
+        printf("    brk_pt: %g    ckt_time: %g    ckt_min_break: %g\n",*(ckt->CKTbreaks), ckt->CKTtime, ckt->CKTminBreak);
 #endif
-      if(AlmostEqualUlps(*(ckt->CKTbreaks),ckt->CKTtime, 100) || *(ckt->CKTbreaks) <= (ckt->CKTtime + ckt->CKTminBreak)) {
+        if(AlmostEqualUlps(*(ckt->CKTbreaks),ckt->CKTtime, 100) || *(ckt->CKTbreaks) <= (ckt->CKTtime + ckt->CKTminBreak)) {
 #ifdef STEPDEBUG
-	printf("throwing out permanent breakpoint times <= current time (brk pt: %g)\n",*(ckt->CKTbreaks));
-	printf("    ckt_time: %g    ckt_min_break: %g\n",ckt->CKTtime, ckt->CKTminBreak);
+            printf("throwing out permanent breakpoint times <= current time (brk pt: %g)\n",*(ckt->CKTbreaks));
+            printf("    ckt_time: %g    ckt_min_break: %g\n",ckt->CKTtime, ckt->CKTminBreak);
 #endif
             CKTclrBreak(ckt);
       }
@@ -621,8 +616,8 @@ resume:
 /* gtri - end - wbk - Modify Breakpoint stuff */
 #else /* !XSPICE */
 
-	/* don't want to get below delmin for no reason */
-	ckt->CKTdelta = MAX(ckt->CKTdelta, ckt->CKTdelmin*2.0);
+  /* don't want to get below delmin for no reason */
+  ckt->CKTdelta = MAX(ckt->CKTdelta, ckt->CKTdelmin*2.0);
     }
     else if(ckt->CKTtime + ckt->CKTdelta >= *(ckt->CKTbreaks)) {
         ckt->CKTsaveDelta = ckt->CKTdelta;
@@ -703,7 +698,7 @@ resume:
 /* 600 */
     for (;;) {
 #ifdef CLUSTER
-      redostep = 1;
+        redostep = 1;
 #endif
 #ifdef XSPICE
 /* gtri - add - wbk - 4/17/91 - Fix Berkeley bug */
@@ -719,8 +714,8 @@ resume:
         /* time abort? */
         ckt->CKTtime += ckt->CKTdelta;
 #ifdef CLUSTER
-	CLUinput(ckt);
-#endif	
+        CLUinput(ckt);
+#endif
         ckt->CKTdeltaOld[0]=ckt->CKTdelta;
         NIcomCof(ckt);
 #ifdef PREDICTOR
@@ -740,11 +735,10 @@ resume:
 /* gtri - begin - wbk - add convergence problem reporting flags */
         /* delta is forced to equal delmin on last attempt near line 650 */
         if(ckt->CKTdelta <= ckt->CKTdelmin)
-	  ckt->enh->conv_debug.last_NIiter_call = MIF_TRUE;
+            ckt->enh->conv_debug.last_NIiter_call = MIF_TRUE;
         else
-	  ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
+            ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
 /* gtri - begin - wbk - add convergence problem reporting flags */
-	
 
 
 /* gtri - begin - wbk - Call all hybrids */
@@ -752,22 +746,22 @@ resume:
 /* gtri - begin - wbk - Set evt_step */
 
         if(ckt->evt->counts.num_insts > 0) {
-	  g_mif_info.circuit.evt_step = ckt->CKTtime;
+            g_mif_info.circuit.evt_step = ckt->CKTtime;
         }
 /* gtri - end - wbk - Set evt_step */
 #endif
-	
+
         converged = NIiter(ckt,ckt->CKTtranMaxIter);
-	
+
 #ifdef XSPICE
-        if(ckt->evt->counts.num_insts > 0) 
-		{
+        if(ckt->evt->counts.num_insts > 0)
+        {
             g_mif_info.circuit.evt_step = ckt->CKTtime;
             EVTcall_hybrids(ckt);
-        }		
+        }
 /* gtri - end - wbk - Call all hybrids */
 
-#endif	
+#endif
         ckt->CKTstat->STATtimePts ++;
         ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITPRED;
         if(firsttime) {
@@ -776,23 +770,23 @@ resume:
                 *(ckt->CKTstate3+i) = *(ckt->CKTstate1+i);
             }
         }
-		/* txl, cpl addition */
-		if (converged == 1111) {
-            return(converged);
-		}
+        /* txl, cpl addition */
+        if (converged == 1111) {
+                return(converged);
+        }
 
         if(converged != 0) {
-#ifndef CLUSTER	
+#ifndef CLUSTER
             ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;
             ckt->CKTstat->STATrejected ++;
-#endif	    
+#endif
             ckt->CKTdelta = ckt->CKTdelta/8;
 #ifdef STEPDEBUG
-           (void)printf("delta cut to %g for non-convergance\n",ckt->CKTdelta);
+            (void)printf("delta cut to %g for non-convergance\n",ckt->CKTdelta);
             fflush(stdout);
 #endif
             if(firsttime) {
-                ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITTRAN;
+                ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITTRAN;
             }
             ckt->CKTorder = 1;
 
@@ -828,33 +822,33 @@ resume:
                 }
 #endif
                 firsttime =0;
-#ifndef CLUSTER		
+#ifndef CLUSTER
                 goto nextTime;  /* no check on
                                  * first time point
                                  */
 #else
-		redostep = 0;
-		goto chkStep;
-#endif				 
+                redostep = 0;
+                goto chkStep;
+#endif
             }
             new = ckt->CKTdelta;
             error = CKTtrunc(ckt,&new);
             if(error) {
                 ckt->CKTcurrentAnalysis = DOING_TRAN;
-                ckt->CKTstat->STATtranTime += 
-                        (*(SPfrontEnd->IFseconds))()-startTime;
-                ckt->CKTstat->STATtranIter += 
+                ckt->CKTstat->STATtranTime +=
+                        (*(SPfrontEnd->IFseconds))() - startTime;
+                ckt->CKTstat->STATtranIter +=
                         ckt->CKTstat->STATnumIter - startIters;
                 ckt->CKTstat->STATtranDecompTime += ckt->CKTstat->STATdecompTime
                         - startdTime;
                 ckt->CKTstat->STATtranSolveTime += ckt->CKTstat->STATsolveTime
                         - startsTime;
-		ckt->CKTstat->STATtranLoadTime += ckt->CKTstat->STATloadTime
-			- startlTime;
-		ckt->CKTstat->STATtranCombTime += ckt->CKTstat->STATcombineTime
-			- startcTime;
-		ckt->CKTstat->STATtranSyncTime += ckt->CKTstat->STATsyncTime
-			- startkTime;
+                ckt->CKTstat->STATtranLoadTime += ckt->CKTstat->STATloadTime
+                        - startlTime;
+                ckt->CKTstat->STATtranCombTime += ckt->CKTstat->STATcombineTime
+                        - startcTime;
+                ckt->CKTstat->STATtranSyncTime += ckt->CKTstat->STATsyncTime
+                        - startkTime;
                 return(error);
             }
             if(new>.9 * ckt->CKTdelta) {
@@ -864,41 +858,41 @@ resume:
                     error = CKTtrunc(ckt,&new);
                     if(error) {
                         ckt->CKTcurrentAnalysis = DOING_TRAN;
-                        ckt->CKTstat->STATtranTime += 
-                                (*(SPfrontEnd->IFseconds))()-startTime;
-                        ckt->CKTstat->STATtranIter += 
+                        ckt->CKTstat->STATtranTime +=
+                                (*(SPfrontEnd->IFseconds))() - startTime;
+                        ckt->CKTstat->STATtranIter +=
                                 ckt->CKTstat->STATnumIter - startIters;
-                        ckt->CKTstat->STATtranDecompTime += 
+                        ckt->CKTstat->STATtranDecompTime +=
                                 ckt->CKTstat->STATdecompTime - startdTime;
-                        ckt->CKTstat->STATtranSolveTime += 
+                        ckt->CKTstat->STATtranSolveTime +=
                                 ckt->CKTstat->STATsolveTime - startsTime;
-			ckt->CKTstat->STATtranLoadTime +=
-				ckt->CKTstat->STATloadTime - startlTime;
-			ckt->CKTstat->STATtranCombTime +=
-				ckt->CKTstat->STATcombineTime - startcTime;
-			ckt->CKTstat->STATtranSyncTime +=
-				ckt->CKTstat->STATsyncTime - startkTime;
+                        ckt->CKTstat->STATtranLoadTime +=
+                                ckt->CKTstat->STATloadTime - startlTime;
+                        ckt->CKTstat->STATtranCombTime +=
+                                ckt->CKTstat->STATcombineTime - startcTime;
+                        ckt->CKTstat->STATtranSyncTime +=
+                                ckt->CKTstat->STATsyncTime - startkTime;
                         return(error);
                     }
                     if(new <= 1.05 * ckt->CKTdelta) {
                         ckt->CKTorder = 1;
                     }
                 }
-                /* time point OK  - 630*/
+                /* time point OK  - 630 */
                 ckt->CKTdelta = new;
-#ifdef	NDEV	
-		/* show a time process indicator, by Gong Ding, gdiso@ustc.edu */
-		if(ckt->CKTtime/ckt->CKTfinalTime*100<10.0)
-		  printf("%%%3.2lf\b\b\b\b\b",ckt->CKTtime/ckt->CKTfinalTime*100);
-		else   if(ckt->CKTtime/ckt->CKTfinalTime*100<100.0)
-		  printf("%%%4.2lf\b\b\b\b\b\b",ckt->CKTtime/ckt->CKTfinalTime*100);
-		else
-		  printf("%%%5.2lf\b\b\b\b\b\b\b",ckt->CKTtime/ckt->CKTfinalTime*100);  
-		fflush(stdout);  
+#ifdef  NDEV
+                /* show a time process indicator, by Gong Ding, gdiso@ustc.edu */
+                if(ckt->CKTtime/ckt->CKTfinalTime*100<10.0)
+                    printf("%%%3.2lf\b\b\b\b\b",ckt->CKTtime/ckt->CKTfinalTime*100);
+                else  if(ckt->CKTtime/ckt->CKTfinalTime*100<100.0)
+                    printf("%%%4.2lf\b\b\b\b\b\b",ckt->CKTtime/ckt->CKTfinalTime*100);
+                else
+                    printf("%%%5.2lf\b\b\b\b\b\b\b",ckt->CKTtime/ckt->CKTfinalTime*100);
+                fflush(stdout);
 #endif
-		
+
 #ifdef STEPDEBUG
-               (void)printf(
+                (void)printf(
                   "delta set to truncation error result: %g. Point accepted at CKTtime: %g\n",
                   ckt->CKTdelta,ckt->CKTtime);
                 fflush(stdout);
@@ -915,17 +909,17 @@ resume:
                 }
 #endif
 #ifndef CLUSTER
-                /* go to 650 - trapezoidal */		
+                /* go to 650 - trapezoidal */
                 goto nextTime;
 #else
-		redostep = 0;
-		goto chkStep;
-#endif		
+                redostep = 0;
+                goto chkStep;
+#endif
             } else {
-#ifndef CLUSTER	    
+#ifndef CLUSTER
                 ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;
                 ckt->CKTstat->STATrejected ++;
-#endif		
+#endif
                 ckt->CKTdelta = new;
 #ifdef STEPDEBUG
                 (void)printf(
@@ -934,7 +928,7 @@ resume:
             }
         }
 #ifdef PARALLEL_ARCH
-	DGOP_( &type, &(ckt->CKTdelta), &length, "min" );
+        DGOP_( &type, &(ckt->CKTdelta), &length, "min" );
 #endif /* PARALLEL_ARCH */
 
         if (ckt->CKTdelta <= ckt->CKTdelmin) {
@@ -945,21 +939,21 @@ resume:
 #endif
             } else {
                 ckt->CKTcurrentAnalysis = DOING_TRAN;
-                ckt->CKTstat->STATtranTime += 
+                ckt->CKTstat->STATtranTime +=
                         (*(SPfrontEnd->IFseconds))()-startTime;
-                ckt->CKTstat->STATtranIter += 
+                ckt->CKTstat->STATtranIter +=
                         ckt->CKTstat->STATnumIter - startIters;
-                ckt->CKTstat->STATtranDecompTime += 
+                ckt->CKTstat->STATtranDecompTime +=
                         ckt->CKTstat->STATdecompTime - startdTime;
-                ckt->CKTstat->STATtranSolveTime += 
+                ckt->CKTstat->STATtranSolveTime +=
                         ckt->CKTstat->STATsolveTime - startsTime;
-		ckt->CKTstat->STATtranLoadTime +=
-			ckt->CKTstat->STATloadTime - startlTime;
-		ckt->CKTstat->STATtranCombTime +=
-			ckt->CKTstat->STATcombineTime - startcTime;
-		ckt->CKTstat->STATtranSyncTime +=
-			ckt->CKTstat->STATsyncTime - startkTime;
-		errMsg = CKTtrouble(ckt, "Timestep too small");
+                ckt->CKTstat->STATtranLoadTime +=
+                        ckt->CKTstat->STATloadTime - startlTime;
+                ckt->CKTstat->STATtranCombTime +=
+                        ckt->CKTstat->STATcombineTime - startcTime;
+                ckt->CKTstat->STATtranSyncTime +=
+                        ckt->CKTstat->STATsyncTime - startkTime;
+                errMsg = CKTtrouble(ckt, "Timestep too small");
                 return(E_TIMESTEP);
             }
         }
@@ -970,16 +964,16 @@ resume:
             EVTbackup(ckt, ckt->CKTtime + ckt->CKTdelta);
 
 /* gtri - end - wbk - Do event backup */
-#endif	
+#endif
 #ifdef CLUSTER
-    chkStep:
-	if(CLUsync(ckt->CKTtime,&ckt->CKTdelta,redostep)){
-	  goto nextTime;
-	} else {
-	  ckt->CKTtime -= olddelta;
-	  ckt->CKTstat->STATrejected ++;
-	}
-#endif	
+        chkStep:
+        if(CLUsync(ckt->CKTtime,&ckt->CKTdelta,redostep)){
+            goto nextTime;
+        } else {
+            ckt->CKTtime -= olddelta;
+            ckt->CKTstat->STATrejected ++;
+        }
+#endif
     }
     /* NOTREACHED */
 }
