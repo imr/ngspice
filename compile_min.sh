@@ -18,6 +18,8 @@
 # --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
 
 ./autogen.sh --adms
+if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
+
 echo
 if test "$1" = "64"; then
 echo "configuring for 64 bit"
@@ -28,6 +30,7 @@ echo "configuring for 32 bit"
 echo
 ./configure --with-windows --enable-xspice --enable-cider --enable-openmp --enable-adms --disable-debug CFLAGS="-m32" LDFLAGS="-m32"
 fi
+if [ $? -ne 0 ]; then  echo "./configure failed"; exit 1 ; fi
 
 echo
 # make clean is required for properly making the code models

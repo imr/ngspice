@@ -1,3 +1,6 @@
+2010-10-31  Holger Vogt
+ * compile_min.sh: exit upon autogen or configure error
+ 
 2010-10-31  Dietmar Warning
  * src/spicelib/analysis/cktsetup.c, cktsopt.c: Allow maxord=1 w/o crash for 
    experimenting with backward Euler, works so far - but other timestep control
