@@ -6,7 +6,7 @@ Modified: 2000 AlansFixes
 
     /*
      *  CKTsetOpt(ckt,opt,value)
-     *  set the specified 'opt' to have value 'value' in the 
+     *  set the specified 'opt' to have value 'value' in the
      *  given circuit 'ckt'.
      */
 
@@ -33,7 +33,7 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     TSKtask *task = (TSKtask *)anal;
 
     switch(opt) {
-        
+
     case OPT_NOOPITER:
         task->TSKnoOpIter = val->iValue;
         break;
@@ -42,7 +42,7 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
         break;
      case OPT_GSHUNT:
         task->TSKgshunt = val->rValue;
-        break;    
+        break;
     case OPT_RELTOL:
         task->TSKreltol = val->rValue;
         break;
@@ -113,14 +113,14 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_MAXORD:
         task->TSKmaxOrder = val->iValue;
         /* Check options method and maxorder for consistency */
-        if (task->TSKmaxOrder < 2) {
-            task->TSKmaxOrder = 2;
-            fprintf(stderr,"\nWarning -- Option maxord < 2 not allowed in ngspice\nSet to 2\n\n");
-        }   
+        if (task->TSKmaxOrder < 1) {
+            task->TSKmaxOrder = 1;
+            fprintf(stderr,"\nWarning -- Option maxord < 1 not allowed in ngspice\nSet to 1\n\n");
+        }
         else if (task->TSKmaxOrder > 6) {
             task->TSKmaxOrder = 6;
             fprintf(stderr,"\nWarning -- Option maxord > 6 not allowed in ngspice\nSet to 6\n\n");
-        } 
+        }
         break;
     case OPT_OLDLIMIT:
         task->TSKfixLimit = val->iValue;
@@ -130,32 +130,32 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
         break;
     case OPT_METHOD:
         if(strncmp(val->sValue,"trap", 4)==0)
-		task->TSKintegrateMethod=TRAPEZOIDAL;
+            task->TSKintegrateMethod=TRAPEZOIDAL;
         else if (strcmp(val->sValue,"gear")==0)
-		task->TSKintegrateMethod=GEAR;
+            task->TSKintegrateMethod=GEAR;
         else return(E_METHOD);
         break;
     case OPT_TRYTOCOMPACT:
-	task->TSKtryToCompact = val->iValue;
-	break;
+        task->TSKtryToCompact = val->iValue;
+        break;
     case OPT_BADMOS3:
-	task->TSKbadMos3 = val->iValue;
-	break;
+        task->TSKbadMos3 = val->iValue;
+        break;
     case OPT_KEEPOPINFO:
-	task->TSKkeepOpInfo = val->iValue;
-	break;
+        task->TSKkeepOpInfo = val->iValue;
+        break;
     case OPT_COPYNODESETS:
- 	task->TSKcopyNodesets = val->iValue;
-	break;	
+        task->TSKcopyNodesets = val->iValue;
+        break;
     case OPT_NODEDAMPING:
-	task->TSKnodeDamping = val->iValue;
-	break;
+        task->TSKnodeDamping = val->iValue;
+        break;
     case OPT_ABSDV:
-	task->TSKabsDv = val->rValue;
-	break;
+        task->TSKabsDv = val->rValue;
+        break;
     case OPT_RELDV:
-	task->TSKrelDv = val->rValue;
-	break;	
+        task->TSKrelDv = val->rValue;
+        break;
 /* gtri - begin - wbk - add new options */
 #ifdef XSPICE
     case OPT_EVT_MAX_OP_ALTER:
@@ -242,7 +242,7 @@ static IFparm OPTtbl[] = {
  { "itl6", OPT_SRCSTEPS, IF_SET|IF_INTEGER,"number of source steps"},
  { "srcsteps", OPT_SRCSTEPS, IF_SET|IF_INTEGER,"number of source steps"},
  { "gminsteps", OPT_GMINSTEPS, IF_SET|IF_INTEGER,"number of Gmin steps"},
-  { "gminfactor", OPT_GMINFACT, IF_SET|IF_REAL,"factor per Gmin step"},
+ { "gminfactor", OPT_GMINFACT, IF_SET|IF_REAL,"factor per Gmin step"},
  { "acct", 0, IF_FLAG ,"Print accounting"},
  { "list", 0, IF_FLAG, "Print a listing" },
  { "nomod", 0, IF_FLAG, "Don't print a model summary" },
@@ -297,19 +297,19 @@ static IFparm OPTtbl[] = {
  { "acfactortime", OPT_ACDECOMP,IF_ASK|IF_REAL,"AC factor time" },
  { "acsolvetime", OPT_ACSOLVE, IF_ASK|IF_REAL,"AC solve time" },
  { "trytocompact", OPT_TRYTOCOMPACT, IF_SET|IF_FLAG,
-	"Try compaction for LTRA lines" },
+        "Try compaction for LTRA lines" },
  { "badmos3", OPT_BADMOS3, IF_SET|IF_FLAG,
-	 "use old mos3 model (discontinuous with respect to kappa)" },
+        "use old mos3 model (discontinuous with respect to kappa)" },
  { "keepopinfo", OPT_KEEPOPINFO, IF_SET|IF_FLAG,
-	 "Record operating point for each small-signal analysis" },
+        "Record operating point for each small-signal analysis" },
  { "copynodesets", OPT_COPYNODESETS, IF_SET|IF_FLAG,
-      "Copy nodesets from device terminals to internal nodes" },
+        "Copy nodesets from device terminals to internal nodes" },
  { "nodedamping", OPT_NODEDAMPING, IF_SET|IF_FLAG,
-	 "Limit iteration to iteration node voltage change" },
+        "Limit iteration to iteration node voltage change" },
  { "absdv", OPT_ABSDV, IF_SET|IF_REAL,
-	 "Maximum absolute iter-iter node voltage change" },
+        "Maximum absolute iter-iter node voltage change" },
  { "reldv", OPT_RELDV, IF_SET|IF_REAL,
-	 "Maximum relative iter-iter node voltage change" }
+        "Maximum relative iter-iter node voltage change" }
 };
 
 int OPTcount = sizeof(OPTtbl)/sizeof(IFparm);

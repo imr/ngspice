@@ -6,7 +6,7 @@ Author: 1985 Thomas L. Quarles
     /* CKTsetup(ckt)
      * this is a driver program to iterate through all the various
      * setup functions provided for the circuit elements in the
-     * given circuit 
+     * given circuit
      */
 
 #include "ngspice.h"
@@ -22,7 +22,7 @@ Author: 1985 Thomas L. Quarles
             return(E_NOMEM);\
 }
 
-#ifdef HAS_WINDOWS    
+#ifdef HAS_WINDOWS
 extern void SetAnalyse( char * Analyse, int Percent);
 #endif
 
@@ -48,7 +48,7 @@ CKTsetup(CKTcircuit *ckt)
 #endif
 
     if (ckt->CKTisSetup)
-	return E_NOCHANGE;
+        return E_NOCHANGE;
 
     CKTpartition(ckt);
 
@@ -68,15 +68,15 @@ CKTsetup(CKTcircuit *ckt)
             if(error) return(error);
         }
     }
-    for(i=0;i<=ckt->CKTmaxOrder+1;i++) {
+    for(i=0;i<=MAX(2,ckt->CKTmaxOrder)+1;i++) { /* dctran needs 3 states as minimum */
         CKALLOC(ckt->CKTstates[i],ckt->CKTnumStates,double);
     }
 #ifdef WANT_SENSE2
     if(ckt->CKTsenInfo){
-        /* to allocate memory to sensitivity structures if 
+        /* to allocate memory to sensitivity structures if
          * it is not done before */
 
-        error = NIsenReinit(ckt); 
+        error = NIsenReinit(ckt);
         if(error) return(error);
     }
 #endif
@@ -93,7 +93,7 @@ CKTsetup(CKTcircuit *ckt)
         for(num_nodes = 0, node = ckt->CKTnodes; node; node = node->next)
             if((node->type == NODE_VOLTAGE) && (node->number != 0))
                 num_nodes++;
-    
+
         /* Allocate space for the matrix diagonal data */
         if(num_nodes > 0) {
             ckt->enh->rshunt_data.diag =
@@ -106,14 +106,14 @@ CKTsetup(CKTcircuit *ckt)
         /* Get/create matrix diagonal entry following what RESsetup does */
         for(i = 0, node = ckt->CKTnodes; node; node = node->next) {
             if((node->type == NODE_VOLTAGE) && (node->number != 0)) {
-                ckt->enh->rshunt_data.diag[i] = 
+                ckt->enh->rshunt_data.diag[i] =
                       SMPmakeElt(matrix,node->number,node->number);
                 i++;
             }
         }
 
     }
-   
+
     /* gtri - end - Setup for adding rshunt option resistors */
 #endif
     return(OK);
@@ -127,7 +127,7 @@ CKTunsetup(CKTcircuit *ckt)
 
     error = OK;
     if (!ckt->CKTisSetup)
-	return OK;
+        return OK;
 
     for(i=0;i<=ckt->CKTmaxOrder+1;i++) {
         tfree(ckt->CKTstates[i]);
@@ -143,8 +143,8 @@ CKTunsetup(CKTcircuit *ckt)
     for (i=0;i<DEVmaxnum;i++) {
         if ( DEVices[i] && ((*DEVices[i]).DEVunsetup != NULL) && (ckt->CKThead[i] != NULL) ){
             e2 = (*((*DEVices[i]).DEVunsetup))(ckt->CKThead[i],ckt);
-	    if (!error && e2)
-		error = e2;
+            if (!error && e2)
+                error = e2;
         }
     }
     ckt->CKTisSetup = 0;
