@@ -1,3 +1,9 @@
+2010-10-31  Dietmar Warning
+ * src/spicelib/analysis/cktsetup.c, cktsopt.c: Allow maxord=1 w/o crash for 
+   experimenting with backward Euler, works so far - but other timestep control
+   then LTE is needed in dctran.c
+ * src/spicelib/analysis/dctran.c: only indentation for better readability
+ 
 2010-10-28  Robert Larice
  * src/**/* :
     wrap tmalloc MALLOC etc, into two macros TMALLOC and TREALLOC
