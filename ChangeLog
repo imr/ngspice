@@ -1,3 +1,6 @@
+2010-11-01  Holger Vogt
+ * compile_min.sh: exit upon make errors
+
 2010-10-31  Robert Larice
  * src/include/memory.h ,
  * src/maths/sparse/spdefs.h ,

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # ngspice build script for MINGW-w64
 # compile_min.sh
 
@@ -24,7 +24,7 @@ echo
 if test "$1" = "64"; then
 echo "configuring for 64 bit"
 echo
-./configure --with-windows --enable-xspice --enable-cider --enable-openmp --enable-adms --disable-debug prefix="C:/Spice64" CFLAGS="-m64" LDFLAGS="-m64"
+./configure --with-windows --enable-xspice --enable-cider --enable-openmp --enable-adms --disable-debug  prefix="C:/Spice64" CFLAGS="-m64" LDFLAGS="-m64"
 else
 echo "configuring for 32 bit"
 echo
@@ -35,19 +35,19 @@ if [ $? -ne 0 ]; then  echo "./configure failed"; exit 1 ; fi
 echo
 # make clean is required for properly making the code models
 echo "cleaning (see make_clean.log)"
-# make clean > make_clean.log 2>&1
 make clean 2>&1 | tee make_clean.log 
-if [ $? -ne 0 ]; then  echo "make clean failed"; exit 1 ; fi
+exitcode=${PIPESTATUS[0]}
+if [ $exitcode -ne 0 ]; then  echo "make clean failed"; exit 1 ; fi
 echo "compiling (see make.log)"
-# make > make.log 2>&1
-make 2>&1 | tee make.log 
-if [ $? -ne 0 ]; then  echo "make failed"; exit 1 ; fi
+make 2>&1 | tee make.log
+exitcode=${PIPESTATUS[0]}
+if [ $exitcode -ne 0 ]; then  echo "make failed"; exit 1 ; fi
 # 32 bit: Install to C:\Spice
 # 64 bit: Install to C:\Spice64
 echo "installing (see make_install.log)"
-# make install > make_install.log 2>&1
 make install 2>&1 | tee make_install.log 
-if [ $? -ne 0 ]; then  echo "make install failed"; exit 1 ; fi
+exitcode=${PIPESTATUS[0]}
+if [ $exitcode -ne 0 ]; then  echo "make install failed"; exit 1 ; fi
 
 echo "success"
 exit 0
