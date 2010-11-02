@@ -1,4 +1,25 @@
 2010-11-02  Robert Larice
+ * src/ciderlib/input/cards.c ,
+ * src/frontend/cpitf.c ,
+ * src/frontend/dotcards.c ,
+ * src/frontend/plotting/grid.c ,
+ * src/ngspice.c ,
+ * src/spicelib/analysis/acsetp.c ,
+ * src/spicelib/analysis/analysis.c ,
+ * src/spicelib/analysis/cktsopt.c ,
+ * src/spicelib/analysis/dctsetp.c ,
+ * src/spicelib/analysis/dsetparm.c ,
+ * src/spicelib/analysis/nsetparm.c ,
+ * src/spicelib/analysis/pzsetp.c ,
+ * src/spicelib/analysis/senssetp.c ,
+ * src/spicelib/analysis/tfsetp.c ,
+ * src/spicelib/analysis/transetp.c ,
+ * src/spicelib/devices/dev.c ,
+ * src/spicelib/parser/inpptree.c ,
+ * src/unsupported/sen2setp.c :
+    use `NUMELEMS' and add some `(int)' casts
+
+2010-11-02  Robert Larice
  * src/xspice/icm/dlmain.c :
     local prototypes in `dlmain.c'
 

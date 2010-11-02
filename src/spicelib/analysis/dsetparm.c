@@ -80,7 +80,7 @@ SPICEanalysis DISTOinfo  = {
         "DISTO",
         "Small signal distortion analysis",
 
-        sizeof(Dparms)/sizeof(IFparm),
+        NUMELEMS(Dparms),
         Dparms
     },
     sizeof(DISTOAN),

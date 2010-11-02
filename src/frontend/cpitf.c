@@ -200,14 +200,14 @@ ft_cpinit(void)
     wl3.wl_prev = &wl2;
     wl3.wl_next = NULL;
     wl2.wl_word = "=";
-    for (i = 0; i < sizeof (predefs) / sizeof (char *); i += 2) {
+    for (i = 0; (size_t) i < NUMELEMS(predefs); i += 2) {
         wl1.wl_word = predefs[i];
         wl3.wl_word = predefs[i + 1];
         com_let(&wl1);
     }
 
     wl2.wl_next = NULL;
-    for (i = 0; i < sizeof (udfs) / sizeof (char *); i += 2) {
+    for (i = 0; (size_t) i < NUMELEMS(udfs); i += 2) {
         wl1.wl_word = udfs[i];
         wl2.wl_word = udfs[i + 1];
         com_define(&wl1);

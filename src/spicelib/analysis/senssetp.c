@@ -105,7 +105,7 @@ SPICEanalysis SENSinfo  = {
     { 
         "SENS",
         "Sensitivity analysis",
-        sizeof(SENSparms)/sizeof(IFparm),
+        NUMELEMS(SENSparms),
         SENSparms
     },
     sizeof(SENS_AN),

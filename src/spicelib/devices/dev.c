@@ -338,7 +338,7 @@ int load_dev(char *name) {
 
 void load_alldevs(void){
   char *devs[] = DEVICES_USED;
-  int num = sizeof(devs)/sizeof(char *);
+  int num = NUMELEMS(devs);
   int i;
   for(i=0; i< num;i++)
     load_dev(devs[i]);

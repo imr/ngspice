@@ -53,7 +53,7 @@ static struct op {
     PT_POWER,  "^", (void(*)(void)) PTpower}
 };
 
-#define NUM_OPS (int)(sizeof (ops) / sizeof (struct op))
+#define NUM_OPS (int)NUMELEMS(ops)
 
 static struct func {
     char *name;
@@ -96,7 +96,7 @@ static struct func {
     { "max",    PTF_MAX,    (void(*)(void)) PTmax},
 } ;
 
-#define NUM_FUNCS (int)(sizeof (funcs) / sizeof (struct func))
+#define NUM_FUNCS (int)NUMELEMS(funcs)
 
 /* These are all the constants any sane person needs. */
 
@@ -109,7 +109,7 @@ static struct constant {
     "pi", M_PI}
 };
 
-#define NUM_CONSTANTS (int)(sizeof (constants) / sizeof (struct constant))
+#define NUM_CONSTANTS (int)NUMELEMS(constants)
 
 /* Parse the expression in *line as far as possible, and return the parse
  * tree obtained.  If there is an error, *pt will be set to NULL and an error

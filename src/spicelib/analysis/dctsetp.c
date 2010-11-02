@@ -103,7 +103,7 @@ SPICEanalysis DCTinfo  = {
         "DC",
         "D.C. Transfer curve analysis",
 
-        sizeof(DCTparms)/sizeof(IFparm),
+        NUMELEMS(DCTparms),
         DCTparms
     },
     sizeof(TRCV),

@@ -120,7 +120,7 @@ ft_savedotargs(void)
                prev_wl = &w;
                for (wl = w; wl; wl = w_next) {
                   w_next = wl->wl_next;
-                  for (i = 0; i < NUMELEMS(plot_opts); i++) {
+                  for (i = 0; (size_t) i < NUMELEMS(plot_opts); i++) {
                      if (!strcmp(wl->wl_word, plot_opts[i])) {
                         /* skip it */
                         *prev_wl = w_next;

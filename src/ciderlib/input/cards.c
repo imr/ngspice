@@ -43,4 +43,4 @@ IFcardInfo *INPcardTab[] = {
     &OUTPinfo
 };
 
-int INPnumCards = sizeof(INPcardTab)/sizeof(IFcardInfo*);
+int INPnumCards = NUMELEMS(INPcardTab);

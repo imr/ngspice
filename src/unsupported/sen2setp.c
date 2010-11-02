@@ -79,7 +79,7 @@ SPICEanalysis SEN2info  = {
         "SENS2",
         "Sensitivity analysis",
 
-        sizeof(SENparms)/sizeof(IFparm),
+        NUMELEMS(SENparms),
         SENparms
     },
     sizeof(SENstruct),

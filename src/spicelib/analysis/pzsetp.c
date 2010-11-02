@@ -88,7 +88,7 @@ SPICEanalysis PZinfo  = {
         "PZ",
         "pole-zero analysis",
 
-        sizeof(PZparms)/sizeof(IFparm),
+        NUMELEMS(PZparms),
         PZparms
     },
     sizeof(PZAN),

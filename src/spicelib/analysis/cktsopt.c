@@ -312,13 +312,13 @@ static IFparm OPTtbl[] = {
         "Maximum relative iter-iter node voltage change" }
 };
 
-int OPTcount = sizeof(OPTtbl)/sizeof(IFparm);
+int OPTcount = NUMELEMS(OPTtbl);
 
 SPICEanalysis OPTinfo = {
     {
         "options",
         "Task option selection",
-        sizeof(OPTtbl)/sizeof(IFparm),
+        NUMELEMS(OPTtbl),
         OPTtbl
     },
     0, /* no size associated with options */

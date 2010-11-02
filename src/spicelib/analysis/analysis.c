@@ -45,7 +45,7 @@ char *spice_analysis_get_description(int index)
 
 int spice_num_analysis(void)
 {
-    return sizeof(analInfo)/sizeof(SPICEanalysis*);
+    return NUMELEMS(analInfo);
 }
 
 

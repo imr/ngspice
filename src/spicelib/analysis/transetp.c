@@ -70,7 +70,7 @@ SPICEanalysis TRANinfo  = {
         "TRAN",
         "Transient analysis",
 
-        sizeof(TRANparms)/sizeof(IFparm),
+        NUMELEMS(TRANparms),
         TRANparms
     },
     sizeof(TRANan),

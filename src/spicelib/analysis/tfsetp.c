@@ -59,7 +59,7 @@ SPICEanalysis TFinfo  = {
         "TF",
         "transfer function analysis",
 
-        sizeof(TFparms)/sizeof(IFparm),
+        NUMELEMS(TFparms),
         TFparms
     },
     sizeof(TFan),

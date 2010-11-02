@@ -93,7 +93,7 @@ SPICEanalysis NOISEinfo  = {
         "NOISE",
         "Noise analysis",
 
-        sizeof(Nparms)/sizeof(IFparm),
+        NUMELEMS(Nparms),
         Nparms
     },
     sizeof(NOISEAN),

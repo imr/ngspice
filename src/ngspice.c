@@ -73,9 +73,9 @@ IFsimulator SIMinfo = {
     0,				/* Initialized in SIMinit() */
     NULL,			/* Initialized in SIMinit() */
 
-    sizeof(nodeParms)/sizeof(IFparm),
+    NUMELEMS(nodeParms),
     nodeParms,
 
-    sizeof(specSigList)/sizeof(char *),
+    NUMELEMS(specSigList),
     specSigList,
 };

@@ -92,7 +92,7 @@ SPICEanalysis ACinfo  = {
         "AC",
         "A.C. Small signal analysis",
 
-        sizeof(ACparms)/sizeof(IFparm),
+        NUMELEMS(ACparms),
         ACparms
     },
     sizeof(ACAN),

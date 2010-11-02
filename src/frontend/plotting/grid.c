@@ -372,7 +372,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
 		{ 0.0, 0.01 }
 	};
 
-	for (i = 0; i < NUMELEMS(div_list); i++) {
+	for (i = 0; (size_t) i < NUMELEMS(div_list); i++) {
 		if (dst > div_list[i].div_lim) {
 			break;
 		}
@@ -383,7 +383,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
 		nsp = (dst + step - 0.0001) / step;
 		spacing = (max - margin) / nsp;
 		i += 1;
-	} while (i < NUMELEMS(div_list) && spacing > 50);
+	} while ((size_t) i < NUMELEMS(div_list)  &&  spacing > 50);
 
 	if (axis == x_axis) {
 		slim = digits + 5 + mag - mag3;
@@ -590,7 +590,7 @@ loggrid(GRAPH *graph, double lo, double hi, int type, Axis axis)
 
 	k = 5.0 / decsp;
 
-	for (i = 0; i < NUMELEMS(divs) - 1; i++) {
+	for (i = 0; (size_t) i < NUMELEMS(divs) - 1; i++) {
 		j = divs[i];
 		if (-log10(((double) j - 1.0) / j) > k)
 			break;
