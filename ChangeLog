@@ -1,4 +1,9 @@
 2010-11-02  Robert Larice
+ * src/frontend/outitf.c ,
+ * src/spicelib/parser/inp2r.c :
+    minor beautification
+
+2010-11-02  Robert Larice
  * src/ciderlib/input/cards.c ,
  * src/frontend/cpitf.c ,
  * src/frontend/dotcards.c ,

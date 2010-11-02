@@ -985,7 +985,7 @@ plotAddRealValue(dataDesc *desc, double value)
       v->v_compdata = (ngcomplex_t *) newrealloc(v->v_compdata,
             sizeof(ngcomplex_t) * (size_t) (v->v_length + 1));
       v->v_compdata[v->v_length].cx_real = value;
-      v->v_compdata[v->v_length].cx_imag = (double) 0;
+      v->v_compdata[v->v_length].cx_imag = 0.0;
     }
     v->v_length++;
     v->v_dims[0]=v->v_length; /* va, must be updated */
