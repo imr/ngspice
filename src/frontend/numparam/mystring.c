@@ -161,7 +161,7 @@ length (char *s)
 /* -----------------------------------------------------------------
  * Function: add string t to dynamic string dstr_p.
  * ----------------------------------------------------------------- */
-unsigned char
+bool
 sadd ( SPICE_DSTRINGPTR dstr_p, char *t)
 {
   spice_dstring_append( dstr_p, t, -1 ) ;
@@ -171,7 +171,7 @@ sadd ( SPICE_DSTRINGPTR dstr_p, char *t)
 /* -----------------------------------------------------------------
  * Function: add character c to dynamic string dstr_p.
  * ----------------------------------------------------------------- */
-unsigned char
+bool
 cadd ( SPICE_DSTRINGPTR dstr_p, char c)
 {
   char tmp_str[2] ;
@@ -184,7 +184,7 @@ cadd ( SPICE_DSTRINGPTR dstr_p, char c)
 /* -----------------------------------------------------------------
  * Function: insert character c at front of dynamic string dstr_p
  * ----------------------------------------------------------------- */
-unsigned char
+bool
 cins ( SPICE_DSTRINGPTR dstr_p, char c)
 {
   int i ;
@@ -203,7 +203,7 @@ cins ( SPICE_DSTRINGPTR dstr_p, char c)
 /* -----------------------------------------------------------------
  * Function: insert string t at front of dynamic string dstr_p
  * ----------------------------------------------------------------- */
-unsigned char
+bool
 sins ( SPICE_DSTRINGPTR dstr_p, char *t)
 {
   int i ;
@@ -254,7 +254,7 @@ upcase (char c)
  * Create copy of the dynamic string.  Dynamic strings are always NULL
  * terminated.
  * ----------------------------------------------------------------- */
-unsigned char
+bool
 scopyd(SPICE_DSTRINGPTR s, SPICE_DSTRINGPTR t)	/* returns success flag */
 {
   spice_dstring_reinit( s ) ;
@@ -266,7 +266,7 @@ scopyd(SPICE_DSTRINGPTR s, SPICE_DSTRINGPTR t)	/* returns success flag */
  * Create copy of the string in the dynamic string.  Dynamic strings 
  * are always NULLterminated.
  * ----------------------------------------------------------------- */
-unsigned char
+bool
 scopys(SPICE_DSTRINGPTR s, char *t)	/* returns success flag */
 {
   spice_dstring_reinit( s ) ;
@@ -278,7 +278,7 @@ scopys(SPICE_DSTRINGPTR s, char *t)	/* returns success flag */
  * Create an upper case copy of a string and store it in a dynamic string.
  * Dynamic strings are always NULL * terminated.
  * ----------------------------------------------------------------- */
-unsigned char
+bool
 scopy_up (SPICE_DSTRINGPTR dstr_p, char *str)	/* returns success flag */
 {
   char up[2] ;			/* short string */
@@ -297,7 +297,7 @@ scopy_up (SPICE_DSTRINGPTR dstr_p, char *str)	/* returns success flag */
  * Create a lower case copy of a string and store it in a dynamic string.
  * Dynamic strings are always NULL * terminated.
  * ----------------------------------------------------------------- */
-unsigned char
+bool
 scopy_lower (SPICE_DSTRINGPTR dstr_p, char *str)	/* returns success flag */
 {
   char low[2] ;			/* short string */
@@ -312,7 +312,7 @@ scopy_lower (SPICE_DSTRINGPTR dstr_p, char *str)	/* returns success flag */
   return 1 ; /* Dstrings expand to any length */
 }
 
-unsigned char
+bool
 ccopy ( SPICE_DSTRINGPTR dstr_p, char c)	/* returns success flag */
 {
   char *s_p ;			/* current string */
@@ -396,7 +396,7 @@ succ (int i)
   return (++i);
 }
 
-unsigned char
+bool
 nadd ( SPICE_DSTRINGPTR dstr_p, long n)
 /* append a decimal integer to a string */
 {
@@ -439,7 +439,7 @@ nadd ( SPICE_DSTRINGPTR dstr_p, long n)
   return 1 ;
 }
 
-unsigned char
+bool
 naddll (SPICE_DSTRINGPTR dstr_p, long long n)
 /* append a decimal integer (but a long long) to a string */
 {
@@ -520,7 +520,7 @@ scompare (char *a, char *b)
   return k;
 }
 
-unsigned char
+bool
 steq (char *a, char *b)		/* string a==b test */
 {
   unsigned short j = 0;
@@ -530,7 +530,7 @@ steq (char *a, char *b)		/* string a==b test */
   return ((a[j] == 0) && (b[j] == 0)) /* string equality test */ ;
 }
 
-unsigned char
+bool
 stne (char *s, char *t)
 {
   return scompare (s, t) != 0;
@@ -557,20 +557,20 @@ lowcase (char c)
     return c;
 }
 
-unsigned char
+bool
 alfa (char c)
 {
   return ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || c == '_'
     || c == '[' || c == ']';
 }
 
-unsigned char
+bool
 num (char c)
 {
   return (c >= '0') && (c <= '9');
 }
 
-unsigned char
+bool
 alfanum (char c)
 {
   return alfa (c) || ((c >= '0') && (c <= '9'));
@@ -616,7 +616,7 @@ freadi (FILE * f)
 /* reads next integer, but returns 0 if none found. */
 {
   long z = 0;
-  unsigned char minus = 0;
+  bool minus = 0;
   char c;
 
   do
@@ -774,7 +774,7 @@ strif (long i, int f, SPICE_DSTRINGPTR dstr_p)
   }
 }
 
-unsigned char
+bool
 odd (long x)
 {
   return (x & 1);
@@ -787,7 +787,7 @@ vali (char *s, long *i)
 {
   int k = 0, digit = 0, ls;
   long z = 0;
-  unsigned char minus = 0, ok = 1;
+  bool minus = 0, ok = 1;
   char c;
   ls = length (s);
 
@@ -825,13 +825,13 @@ vali (char *s, long *i)
     return k;			/* one beyond error position */
 }
 
-static unsigned char
-match (char *s, char *t, int n, int tstart, unsigned char testcase)
+static bool
+match (char *s, char *t, int n, int tstart, bool testcase)
 {
 /* returns 0 if ( tstart is out of range. But n may be 0 ? */
 /* 1 if s matches t[tstart...tstart+n]  */
   int i, j, lt;
-  unsigned char ok;
+  bool ok;
   char a, b;
   i = 0;
   j = tstart;
@@ -862,7 +862,7 @@ posi (char *sub, char *s, int opt)
   /* opt=1: like Turbo Pascal Pos, but case insensitive */
   /* opt=2: position in space separated wordlist for scanners */
   int a, b, k, j;
-  unsigned char ok, tstcase;
+  bool ok, tstcase;
   SPICE_DSTRING tstr ;
 
   ok = 0;
@@ -992,7 +992,7 @@ ival (char *s, int *err)
 {
   int k = 0, digit = 0, ls;
   long z = 0;
-  unsigned char minus = 0, ok = 1;
+  bool minus = 0, ok = 1;
   char c;
   ls = length (s);
 

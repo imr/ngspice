@@ -830,7 +830,7 @@ nupa_eval (char *s, int linenum, int orig_linenum)
   char c, keep, *ptr;
   unsigned int i;
   SPICE_DSTRING subname ;	/* dynamic string for subcircuit name */
-  unsigned char err = 1;
+  bool err = 1;
 
   spice_dstring_init(&subname) ;
   dicoS->srcline = linenum;

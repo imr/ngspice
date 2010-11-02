@@ -134,7 +134,7 @@ mathfunction (int f, double z, double x)
   return y;
 }
 
-static unsigned char 
+static bool
 message (tdico * dic, char *s)
 /* record 'dic' should know about source file and line */
 {
@@ -344,9 +344,9 @@ getidtype (tdico * d, char *s)
 }
 
 static double
-fetchnumentry (tdico * dico, char *t, unsigned char *perr)
+fetchnumentry (tdico * dico, char *t, bool *perr)
 {
-   unsigned char err = *perr;
+   bool err = *perr;
    double u;
    entry *entry_p ;			/* hash table entry */
    SPICE_DSTRING s ;			/* dynamic string */
@@ -409,7 +409,7 @@ attrib (tdico *dico_p, NGHASHPTR htable_p, char *t, char op)
    return entry_p ;
 }
 
-static unsigned char
+static bool
 define (tdico * dico, 
         char *t,        /* identifier to define */
         char op,        /* option */
@@ -428,7 +428,7 @@ define (tdico * dico,
       we mark each id with its subckt level, and warn if write at higher one.
 */
    char c;
-   unsigned char err, warn;
+   bool err, warn;
    entry *entry_p ;			/* spice table entry */
    SPICE_DSTRING vartemp ;		/* vairable temp */
    NGHASHPTR htable_p ;			/* hash table */
@@ -495,14 +495,14 @@ define (tdico * dico,
    return err;
 }
 
-unsigned char
+bool
 defsubckt (tdico * dico, char *s, int w, char categ)
 /* called on 1st pass of spice source code,
    to enter subcircuit (categ=U) and model (categ=O) names
 */
 {
    SPICE_DSTRING ustr ;			/* temp user string */
-   unsigned char err;
+   bool err;
    int i, j, ls;
    ls = length (s);
    i = 0;
@@ -577,10 +577,10 @@ findsubckt (tdico * dico, char *s, SPICE_DSTRINGPTR subname)
 static int
 deffuma (                        /* define function or macro entry. */
           tdico * dico, char *t, char tpe, unsigned short bufstart,
-          unsigned char *pjumped, unsigned char *perr)
+          unsigned char *pjumped, bool *perr)
 {
   unsigned char jumped = *pjumped;
-  unsigned char err = *perr;
+  bool err = *perr;
 /* if not jumped, define new function or macro, returns index to buffferstart
    if jumped, return index to existing function
 */
@@ -631,7 +631,7 @@ keyword ( SPICE_DSTRINGPTR keys_p, SPICE_DSTRINGPTR tstr_p)
 /* return 0 if t not found in list keys, else the ordinal number */
    unsigned char i, j, k;
    int lt, lk;
-   unsigned char ok;
+   bool ok;
    char *t ;
    char *keys ;
    lt = spice_dstring_length(tstr_p) ;
@@ -672,7 +672,7 @@ parseunit (double x, char *s)
 {
   double u = 0;
   SPICE_DSTRING t ;
-  unsigned char isunit;
+  bool isunit;
   isunit = 1;
   spice_dstring_init(&t) ;
 
@@ -710,7 +710,7 @@ fetchid (char *s, SPICE_DSTRINGPTR t, int ls, int i)
 /* copy next identifier from s into t, advance and return scan index i */
 {
   char c;
-  unsigned char ok;
+  bool ok;
   c = s[i - 1];
 
   while ((!alfa (c)) && (i < ls))
@@ -740,15 +740,15 @@ fetchid (char *s, SPICE_DSTRINGPTR t, int ls, int i)
 }
 
 static double
-exists (tdico * d, char *s, int *pi, unsigned char *perror)
+exists (tdico * d, char *s, int *pi, bool *perror)
 /* check if s in simboltable 'defined': expect (ident) and return 0 or 1 */
 {
-  unsigned char error = *perror;
+  bool error = *perror;
   int i = *pi;
   double x;
   int ls;
   char c;
-  unsigned char ok;
+  bool ok;
   SPICE_DSTRING t ;
 
   ls = length (s);
@@ -795,10 +795,10 @@ exists (tdico * d, char *s, int *pi, unsigned char *perror)
 }
 
 static double
-fetchnumber (tdico * dico, char *s, int ls, int *pi, unsigned char *perror)
+fetchnumber (tdico * dico, char *s, int ls, int *pi, bool *perror)
 /* parse a Spice number in string s */
 {
-  unsigned char error = *perror;
+  bool error = *perror;
   int i = *pi;
   int k, err;
   char d;
@@ -883,7 +883,7 @@ fetchoperator (tdico * dico,
                char *s, int ls,
                int *pi,
                unsigned char *pstate, unsigned char *plevel,
-               unsigned char *perror)
+               bool *perror)
 /* grab an operator from string s and advance scan index pi.
    each operator has: one-char alias, precedence level, new interpreter state.
 */
@@ -891,7 +891,7 @@ fetchoperator (tdico * dico,
   int i = *pi;
   unsigned char state = *pstate;
   unsigned char level = *plevel;
-  unsigned char error = *perror;
+  bool error = *perror;
   char c, d;
   SPICE_DSTRING vstr ;
   c = s[i - 1];
@@ -996,12 +996,12 @@ static char
 opfunctkey (tdico * dico,
             unsigned char kw, char c,
             unsigned char *pstate, unsigned char *plevel,
-            unsigned char *perror)
+            bool *perror)
 /* handle operator and built-in keywords */
 {
   unsigned char state = *pstate;
   unsigned char level = *plevel;
-  unsigned char error = *perror;
+  bool error = *perror;
 /*if kw operator keyword, c=token*/
   switch (kw)
     {                                /* & | ~ DIV MOD  Defined */
@@ -1143,7 +1143,7 @@ operate (char op, double x, double y)
 }
 
 static double
-formula (tdico * dico, char *s, unsigned char *perror)
+formula (tdico * dico, char *s, bool *perror)
 {
 /* Expression parser.
   s is a formula with parentheses and math ops +-* / ...
@@ -1155,8 +1155,8 @@ formula (tdico * dico, char *s, unsigned char *perror)
   Allowed transitions:  1->2->(3,1) and 3->(3,1).
 */
   typedef enum {nprece=9} _nnprece;                /* maximal nb of precedence levels */
-  unsigned char error = *perror;
-  unsigned char negate = 0;
+  bool error = *perror;
+  bool negate = 0;
   unsigned char state, oldstate, topop, ustack, level, kw, fu;
   double u = 0.0, v, w = 0.0;
   double accu[nprece + 1];
@@ -1164,7 +1164,7 @@ formula (tdico * dico, char *s, unsigned char *perror)
   char uop[nprece + 1];
   int i, k, ls, natom, arg2, arg3;
   char c, d;
-  unsigned char ok;
+  bool ok;
   SPICE_DSTRING tstr ;
 
   spice_dstring_init(&tstr) ;
@@ -1378,7 +1378,7 @@ fmttype (double x)
 /* find out the "natural" type of format for number x */
   double ax, dx;
   int rx;
-  unsigned char isint, astronomic;
+  bool isint, astronomic;
   ax = absf (x);
   isint = 0;
   astronomic = 0;
@@ -1403,7 +1403,7 @@ fmttype (double x)
       return 'P';
 }
 
-static unsigned char
+static bool
 evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 {
 /* transform t to result q. mode 0: expression, mode 1: simple variable */
@@ -1411,8 +1411,8 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
   int j, lq;
   char dt, fmt;
   entry *entry_p ;
-  unsigned char numeric, done, nolookup;
-  unsigned char err;
+  bool numeric, done, nolookup;
+  bool err;
   SPICE_DSTRING vstr ;
 
   spice_dstring_init(&vstr) ;
@@ -1493,12 +1493,12 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 }
 
 #if 0
-static unsigned char
-scanline (tdico * dico, char *s, char *r, unsigned char err)
+static bool
+scanline (tdico * dico, char *s, char *r, bool err)
 /* scan host code line s for macro substitution.  r=result line */
 {
   int i, k, ls, level, nd, nnest;
-  unsigned char spice3;
+  bool spice3;
   char c, d;
   Strbig (Llen, q);
   Strbig (Llen, t);
@@ -1754,7 +1754,7 @@ insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
   SPICE_DSTRING vstr ;			/* dynamic string */
   SPICE_DSTRING mstr ;			/* dynamic string */
   char *v_p ;				/* value of vstr dyna string */
-  unsigned char found;
+  bool found;
   int ls, k;
   long long accu;
   ls = length (s);
@@ -1820,8 +1820,9 @@ insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
     }
   return i;
 }
-unsigned char
-nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
+
+bool
+nupa_substitute (tdico * dico, char *s, char *r, bool err)
 /* s: pointer to original source line.
    r: pointer to result line, already heavily modified wrt s
    anywhere we find a 10-char numstring in r, substitute it.
@@ -1988,7 +1989,7 @@ getexpress (char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
   int i = *pi;
   int ia, ls, level;
   char c, d, tpe;
-  unsigned char comment = 0;
+  bool comment = 0;
   ls = length (s);
   ia = i + 1;
 
@@ -2062,7 +2063,7 @@ getexpress (char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
   return tpe;
 }
 
-unsigned char
+bool
 nupa_assignment (tdico * dico, char *s, char mode)
 /* is called for all 'Param' lines of the input file.
    is also called for the params: section of a subckt .
@@ -2073,7 +2074,7 @@ nupa_assignment (tdico * dico, char *s, char mode)
 /* s has the format: ident = expression; ident= expression ...  */
   int i, j, ls;
   unsigned char key;
-  unsigned char error, err;
+  bool error, err;
   char dtype;
   int wval = 0;
   double rval = 0.0;
@@ -2148,8 +2149,8 @@ nupa_assignment (tdico * dico, char *s, char mode)
   return error;
 }
 
-unsigned char
-nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
+bool
+nupa_subcktcall (tdico * dico, char *s, char *x, bool err)
 /* s= a subckt define line, with formal params.
    x= a matching subckt call line, with actual params
 */
@@ -2164,7 +2165,7 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
   char *buf, *token;
   char *t_p ;
   char *u_p ;
-  unsigned char found;
+  bool found;
   spice_dstring_init(&subname) ;
   spice_dstring_init(&tstr) ;
   spice_dstring_init(&ustr) ;

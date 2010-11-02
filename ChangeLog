@@ -1,4 +1,14 @@
 2010-11-02  Robert Larice
+ * src/frontend/numparam/general.h ,
+ * src/frontend/numparam/mystring.c ,
+ * src/frontend/numparam/numparam.h ,
+ * src/frontend/numparam/spicenum.c ,
+ * src/frontend/numparam/xpressn.c :
+    use the type `bool' instead of `unsigned char' in the numparam world
+      bool currently is `unsigned char', plan to change to `int' for better
+      type comaptibility with `C' boolean expressions
+
+2010-11-02  Robert Larice
  * src/frontend/inpcom.c ,
  * src/frontend/parser/lexical.c ,
  * src/frontend/quote.c ,

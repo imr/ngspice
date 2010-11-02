@@ -6,6 +6,7 @@
    the function code is in 'mystring.c' .
 */
 #include "dstring.h"
+#include "bool.h"
 
 #define Use(x)  x=0;x=x
 #define Uses(s) s=s 
@@ -23,23 +24,23 @@ typedef char string[258];
 void sfix( SPICE_DSTRINGPTR dstr_p, int len) ;
 char * pscopy( SPICE_DSTRINGPTR s, char * a, int i,int j);
 char * pscopy_up( SPICE_DSTRINGPTR s, char * a, int i,int j);
-unsigned char scopyd( SPICE_DSTRINGPTR a, SPICE_DSTRINGPTR b);
-unsigned char scopys( SPICE_DSTRINGPTR a, char *b);
-unsigned char scopy_up( SPICE_DSTRINGPTR a, char *str) ;
-unsigned char scopy_lower( SPICE_DSTRINGPTR a, char *str) ;
-unsigned char ccopy( SPICE_DSTRINGPTR a, char c);
-unsigned char sadd( SPICE_DSTRINGPTR s, char * t);
-unsigned char nadd( SPICE_DSTRINGPTR s, long n);
-unsigned char cadd( SPICE_DSTRINGPTR s, char c);
-unsigned char naddll( SPICE_DSTRINGPTR s, long long n);
-unsigned char cins( SPICE_DSTRINGPTR s, char c);
-unsigned char sins( SPICE_DSTRINGPTR s, char * t);
+bool scopyd( SPICE_DSTRINGPTR a, SPICE_DSTRINGPTR b);
+bool scopys( SPICE_DSTRINGPTR a, char *b);
+bool scopy_up( SPICE_DSTRINGPTR a, char *str) ;
+bool scopy_lower( SPICE_DSTRINGPTR a, char *str) ;
+bool ccopy( SPICE_DSTRINGPTR a, char c);
+bool sadd( SPICE_DSTRINGPTR s, char * t);
+bool nadd( SPICE_DSTRINGPTR s, long n);
+bool cadd( SPICE_DSTRINGPTR s, char c);
+bool naddll( SPICE_DSTRINGPTR s, long long n);
+bool cins( SPICE_DSTRINGPTR s, char c);
+bool sins( SPICE_DSTRINGPTR s, char * t);
 int cpos( char c, char *s);
 int spos_( char * sub, char * s);
 int ci_prefix( register char *p, register char *s );
 int length(char * s);
-unsigned char steq(char * s, char * t);
-unsigned char stne(char * s, char * t);
+bool steq(char * s, char * t);
+bool stne(char * s, char * t);
 int scompare(char * a, char * b);
 int ord(char c);
 int pred(int i);
@@ -54,10 +55,10 @@ char upcase(char c);
 char lowcase(char c);
 int hi(long w);
 int lo(long w);
-unsigned char odd(long x);
-unsigned char alfa(char c);
-unsigned char num(char c);
-unsigned char alfanum(char c);
+bool odd(long x);
+bool alfa(char c);
+bool num(char c);
+bool alfanum(char c);
 char * stupcase( char * s);
 
 /***** primitive input-output ***/

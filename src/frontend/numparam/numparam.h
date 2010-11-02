@@ -64,11 +64,11 @@ typedef struct _ttdico {
 void initdico(tdico * dico);
 int donedico(tdico * dico);
 void dico_free_entry( entry *entry_p ) ;
-unsigned char defsubckt( tdico *dico, char * s, int w, char categ);
+bool defsubckt( tdico *dico, char * s, int w, char categ);
 int findsubckt( tdico *dico, char * s, SPICE_DSTRINGPTR subname);  
-unsigned char nupa_substitute( tdico *dico, char * s, char * r, unsigned char err);
-unsigned char nupa_assignment( tdico *dico, char *  s, char mode);
-unsigned char nupa_subcktcall( tdico *dico, char * s, char * x, unsigned char err);
+bool nupa_substitute( tdico *dico, char * s, char * r, bool err);
+bool nupa_assignment( tdico *dico, char *  s, char mode);
+bool nupa_subcktcall( tdico *dico, char * s, char * x, bool err);
 void nupa_subcktexit( tdico *dico);
 tdico * nupa_fetchinstance(void);
 char getidtype( tdico *d, char * s);
