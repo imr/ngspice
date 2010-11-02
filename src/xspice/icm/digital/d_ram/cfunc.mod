@@ -953,13 +953,13 @@ void cm_d_ram(ARGS)
     if(INIT) {  /* initial pass */ 
 
         /* allocate storage */
-        cm_event_alloc(0,address_size * sizeof(Digital_State_t));
-        cm_event_alloc(1,sizeof(Digital_State_t));
-        cm_event_alloc(2,select_size * sizeof(Digital_State_t));
+        cm_event_alloc(0, address_size * (int) sizeof(Digital_State_t));
+        cm_event_alloc(1, (int) sizeof(Digital_State_t));
+        cm_event_alloc(2, select_size * (int) sizeof(Digital_State_t));
 
 
         /* allocate storage for ram memory */
-        cm_event_alloc(3,num_of_ram_ints * sizeof(short));
+        cm_event_alloc(3, num_of_ram_ints * (int) sizeof(short));
 
         /* declare load values */
         for (i=0; i<word_width; i++) {

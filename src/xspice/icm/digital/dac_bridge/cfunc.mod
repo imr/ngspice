@@ -206,7 +206,7 @@ void cm_dac_bridge(ARGS)
 
 
         /* Allocate storage for inputs */
-        cm_event_alloc(0, size * sizeof(Digital_State_t));
+        cm_event_alloc(0, size * (int) sizeof(Digital_State_t));
 
                       
         /* Allocate storage for outputs */
@@ -215,7 +215,7 @@ void cm_dac_bridge(ARGS)
         /* allocate storage for analog output values.       */
                                     
         /* allocate output space and obtain adresses */
-        cm_analog_alloc(0, size * sizeof(double));
+        cm_analog_alloc(0, size * (int) sizeof(double));
         cm_analog_alloc(1, sizeof(double));
         
         /* assign discrete addresses */

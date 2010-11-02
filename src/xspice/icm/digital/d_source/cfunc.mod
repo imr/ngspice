@@ -1094,9 +1094,9 @@ void cm_d_source(ARGS)
         modf( (PORT_SIZE(out) * i / 4), &double_dummy );
         dummy = double_dummy + 1;
 
-        cm_event_alloc(1,(dummy * sizeof(short)));
+        cm_event_alloc(1, dummy * (int) sizeof(short));
                          
-                     cm_event_alloc(2,i * sizeof(double));
+        cm_event_alloc(2, i * (int) sizeof(double));
                                        
 
         /**** Get all pointers again (to avoid realloc problems) ****/
