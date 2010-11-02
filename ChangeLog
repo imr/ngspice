@@ -1,4 +1,9 @@
 2010-11-02  Robert Larice
+ * src/frontend/display.c ,
+ * src/frontend/numparam/mystring.c :
+    add some more `int' versus `size_t' casts
+
+2010-11-02  Robert Larice
  * src/frontend/outitf.c ,
  * src/spicelib/parser/inp2r.c :
     minor beautification

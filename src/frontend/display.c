@@ -123,7 +123,7 @@ DISPDEVICE *FindDev(char *name)
 {
     int i;
 
-    for (i=0; i < XtNumber(device); i++) {
+    for (i=0; (size_t) i < XtNumber(device); i++) {
       if (!strcmp(name, device[i].name)) {
         return(&device[i]);
       }
