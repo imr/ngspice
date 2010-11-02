@@ -25,7 +25,7 @@ char *prompt(FILE *fp)
 {
     char    buf[100];
     char    *p;
-    int     n;
+    size_t  n;
 
     if (!fgets(buf, sizeof(buf), fp))
 	return 0;

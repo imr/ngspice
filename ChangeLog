@@ -1,4 +1,10 @@
 2010-11-02  Robert Larice
+ * src/frontend/arg.c ,
+ * src/misc/misc_time.c ,
+ * src/spicelib/parser/inpmktmp.c :
+    convert some variables, from `int' to `size_t'
+
+2010-11-02  Robert Larice
  * src/frontend/com_history.c ,
  * src/frontend/com_measure2.c ,
  * src/frontend/fourier.c ,

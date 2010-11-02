@@ -45,7 +45,7 @@ datestring(void)
     static char tbuf[45];
     struct tm *tp;
     char *ap;
-    int i;
+    size_t i;
 
     time_t tloc;
     time(&tloc);

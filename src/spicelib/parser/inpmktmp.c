@@ -13,7 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 char *INPmkTemp(char *string)
 {
-    int len;
+    size_t len;
     char *temp;
 
     len = strlen(string);
