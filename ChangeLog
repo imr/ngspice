@@ -1,4 +1,18 @@
 2010-11-02  Robert Larice
+ * src/frontend/inpcom.c ,
+ * src/frontend/parser/lexical.c ,
+ * src/frontend/quote.c ,
+ * src/frontend/subckt.c ,
+ * src/main.c ,
+ * src/spicelib/parser/inpcfix.c ,
+ * src/xspice/cmpp/pp_lst.c ,
+ * src/xspice/cmpp/util.c ,
+ * src/xspice/icm/digital/d_source/cfunc.mod ,
+ * src/xspice/icm/digital/d_state/cfunc.mod ,
+ * src/xspice/ipc/ipctiein.c :
+    casts, to make int <-> char conversions explicit
+
+2010-11-02  Robert Larice
  * src/frontend/display.c ,
  * src/frontend/numparam/mystring.c :
     add some more `int' versus `size_t' casts

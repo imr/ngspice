@@ -2095,7 +2095,7 @@ static int
 inp_numnodes(char c)
 {
     if (isupper(c))
-        c = tolower(c);
+        c = (char) tolower(c);
     switch (c) {
         case ' ':
         case '\t':

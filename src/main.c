@@ -472,7 +472,7 @@ prompt(void)
           if (*(s + 1))
               p += sprintf(p, "%c", strip(*++s));
           default:
-          *p = strip(*s); ++p;
+              *p = (char) strip(*s); ++p;
           break;
       }
       s++;

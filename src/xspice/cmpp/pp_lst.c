@@ -1061,7 +1061,7 @@ static Status_t read_udn_type_name(
                             name[i] = '\0';
                         }
                         else if(c != EOF)
-                            name[i++] = c;
+                            name[i++] = (char) c;
                     } while((c != EOF) && (! found));
                 }
             } while((c != EOF) && (! found));

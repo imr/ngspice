@@ -381,7 +381,7 @@ float   *p_value )   /* OUT - The numerical value     */
     else {
 
         if(isupper(c))
-            c = tolower(c);
+            c = (char) tolower(c);
 
         switch(c) {
 
@@ -425,7 +425,7 @@ float   *p_value )   /* OUT - The numerical value     */
                 break;
             }
             if(islower(c1))
-                c1 = toupper(c1);
+                c1 = (char) toupper(c1);
             if(c1 == 'E')
                 scale_factor = 1.0e6;
             else if(c1 == 'I')

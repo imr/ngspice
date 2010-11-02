@@ -138,7 +138,7 @@ nloop:  i = 0;
 
 gotchar:
 	if ((c != EOF) && (c != ESCAPE))
-	    linebuf[j++] = c;
+	    linebuf[j++] = (char) c;
         if (c != EOF)
             numeofs = 0;
         if (i == NEW_BSIZE_SP - 1) {
@@ -156,7 +156,7 @@ gotchar:
             c = strip(c);   /* Don't need to do this really. */
         if ((c == '\\' && DIR_TERM != '\\') || (c == '\026') /* ^V */ ) {
             c = quote(string ? *string++ : input(cp_inp_cur));
-            linebuf[j++] = strip(c);
+            linebuf[j++] = (char) strip(c);
         }
         if ((c == '\n') && cp_bqflag)
             c = ' ';
@@ -202,8 +202,8 @@ gotchar:
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
                 else {
-                    buf[i++] = quote(c);
-                    linebuf[j++] = c;
+                    buf[i++] = (char) quote(c);
+                    linebuf[j++] = (char) c;
                 }
             }
             linebuf[j++] = '\'';
@@ -218,14 +218,14 @@ gotchar:
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
                 else if (c == '\\') {
-                    linebuf[j++] = c;
+                    linebuf[j++] = (char) c;
                     c = (string ? *string++ :
                             input(cp_inp_cur));
-                    buf[i++] = quote(c);
-                    linebuf[j++] = c;
+                    buf[i++] = (char) quote(c);
+                    linebuf[j++] = (char) c;
                 } else {
-                    buf[i++] = c;
-                    linebuf[j++] = c;
+                    buf[i++] = (char) c;
+                    linebuf[j++] = (char) c;
                 }
             }
             buf[i++] = d;
@@ -289,19 +289,19 @@ gotchar:
 	    } goto ldefault; 
 	case ';':  /*CDHW semicolon inside parentheses is part of expression CDHW*/
 	    if (paren > 0) {
-	        buf[i++]=c;
+	        buf[i++] = (char) c;
 		break;
 	    } goto ldefault; 
 	case '&':  /* va: $&name is one word */
 	    if (i==1 && buf[i-1]=='$' && c=='&') {
-	        buf[i++]=c;
+	        buf[i++] = (char) c;
 	        break;
 	    } goto ldefault; /* else continue with default ... */
 	case '<':
 	case '>':  /* va: <=, >= are unbreakable words */
        if(string)
 	    if (i==0 && (*string=='=')) {
-	        buf[i++]=c;
+	        buf[i++] = (char) c;
 	        break;
 	    } goto ldefault; /* else continue with default ... */
 	default:
@@ -313,7 +313,7 @@ ldefault:   if ((cp_chars[c] & CPC_BRL) && (i > 0)) {
                     newword;
                 }
             }
-            buf[i++] = c;
+            buf[i++] = (char) c;
             if (cp_chars[c] & CPC_BRR) {
                 if ((c != '<') || (i < 2) ||
                         (buf[i - 2] != '$')) {

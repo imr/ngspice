@@ -206,7 +206,7 @@ void ipc_send_stdout(void)
     len = 0;
     while( (c=fgetc(stdout)) != EOF) {
         if(c != '\n') {
-            buf[len] = c;
+            buf[len] = (char) c;
             len++;
         }
         if((c == '\n') || (len == IPC_MAX_LINE_LEN)) {
@@ -252,7 +252,7 @@ void ipc_send_stderr(void)
     len = 0;
     while( (c=fgetc(stderr)) != EOF) {
         if(c != '\n') {
-            buf[len] = c;
+            buf[len] = (char) c;
             len++;
         }
         if((c == '\n') || (len == IPC_MAX_LINE_LEN)) {
@@ -336,7 +336,7 @@ Ipc_Boolean_t ipc_screen_name(char *name, char *mapped_name)
         }
         else {
             if(islower(name[i]))
-                mapped_name[i] = toupper(name[i]);
+                mapped_name[i] = (char) toupper(name[i]);
             else
                 mapped_name[i] = name[i];
         }

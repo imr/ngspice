@@ -24,7 +24,7 @@ cp_wstrip(char *str)
 
     if (str)
       while ((c = *str)) {   /* assign and test */
-	    d = strip(c);
+	    d = (char) strip(c);
 	    if (c != d)
 		    *str = d;
 	    str++;
@@ -39,7 +39,7 @@ cp_quoteword(char *str)
 {
     if (str)
 	while (*str) {
-	    *str = quote(*str);
+	    *str = (char) quote(*str);
 	    str++;
 	}
     return;

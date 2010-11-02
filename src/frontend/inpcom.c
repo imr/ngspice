@@ -135,7 +135,7 @@ readline(FILE *fd)
    while((c = getc(fd)) != EOF) {
       if (strlen == 0 && (c == '\t' || c == ' ')) /* Leading spaces away */
          continue;
-      strptr[strlen] = c;
+      strptr[strlen] = (char) c;
       strlen++;
       if( strlen >= memlen ) {
          memlen += STRGROW;
@@ -1217,7 +1217,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
            /* lower case the file name for later string compares */
 /*           s_ptr = strdup(s); */
             s_lower = strdup(s);
-            for(s_ptr = s_lower; *s_ptr && (*s_ptr != '\n'); s_ptr++) *s_ptr = tolower(*s_ptr);
+            for(s_ptr = s_lower; *s_ptr && (*s_ptr != '\n'); s_ptr++)
+                *s_ptr = (char) tolower(*s_ptr);
 
             found_library = FALSE;
             for ( i = 0; i < num_libraries; i++ ) {
@@ -1356,7 +1357,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 	   premature end.  If premature end is reached, spew
 	   error and zap the line. */
       if ( !ciprefix( "write", buffer ) ) {    // exclude 'write' command so filename case preserved
-         for (s = buffer; *s && (*s != '\n') && (*s != '\0'); s++) *s = tolower(*s);
+         for (s = buffer; *s && (*s != '\n') && (*s != '\0'); s++)
+             *s = (char) tolower(*s);
          if (!*s) {
          //fprintf(cp_err, "Warning: premature EOF\n");
          }
@@ -1701,7 +1703,7 @@ inp_casefix(char *string)
       while (*string) {
 #ifdef HAS_ASCII
          /* ((*string) & 0177): mask off all but the first seven bits, 0177: octal */
-         *string = strip(*string);
+         *string = (char) strip(*string);
 #endif
          if (*string == '"') {
             *string++ = ' ';
@@ -1714,7 +1716,7 @@ inp_casefix(char *string)
          if (!isspace(*string) && !isprint(*string))
             *string = '_';
          if (isupper(*string))
-            *string = tolower(*string);
+            *string = (char) tolower(*string);
          string++;
       }
    return;

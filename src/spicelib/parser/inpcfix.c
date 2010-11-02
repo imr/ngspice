@@ -17,7 +17,7 @@ void INPcaseFix(register char *string)
 
     while (*string) {
 	if (isupper(*string)) {
-	    *string = tolower(*string);
+	    *string = (char) tolower(*string);
 	}
 	string++;
     }
