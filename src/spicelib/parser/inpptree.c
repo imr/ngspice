@@ -1166,7 +1166,7 @@ int PTlex (YYSTYPE *lvalp, char **line)
 		if (index(specials, *s))
 		    break;
 	    tmp = TMALLOC(char, s - sbuf + 1);
-	    strncpy(tmp, sbuf, s - sbuf);
+	    strncpy(tmp, sbuf, (size_t) (s - sbuf));
 	    tmp[s - sbuf] = '\0';
 	    lvalp->str = tmp;
 	    sbuf = s;

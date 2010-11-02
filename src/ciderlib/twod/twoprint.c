@@ -308,14 +308,14 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
 	if (output->OUTPmup) {
 	  data[numVars++] = mup;
 	}
-	fwrite((char *) data, sizeof(double), numVars, file);
+	fwrite(data, sizeof(double), (size_t) numVars, file);
       } else {
 	for (index = 0; index < output->OUTPnumVars; index++) {
 	  data[index] = 0.0;
 	}
 	data[0] = yScale[yIndex] * 1e-2;
 	data[1] = xScale[xIndex] * 1e-2;
-	fwrite((char *) data, sizeof(double), numVars, file);
+	fwrite(data, sizeof(double), (size_t) numVars, file);
       }
     }
   }

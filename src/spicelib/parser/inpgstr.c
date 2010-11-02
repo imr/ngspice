@@ -51,7 +51,7 @@ int INPgetStr(char **line, char **token, int gobble)
     *token = TMALLOC(char, 1 + point - *line);
     if (!*token)
 	return (E_NOMEM);
-    (void) strncpy(*token, *line, point - *line);
+    (void) strncpy(*token, *line, (size_t) (point - *line));
     *(*token + (point - *line)) = '\0';
     *line = point;
 

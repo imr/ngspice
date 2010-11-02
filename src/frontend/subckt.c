@@ -253,7 +253,7 @@ inp_subcktexpand(struct line *deck)
                 i=0;
                 t=s;
                 for (/*s*/; *s && !isspace(*s); s++) i++;
-                strncpy(node[numgnode],t,i);
+                strncpy(node[numgnode], t, (size_t) i);
                 if(i>0 && t[i-1] != '\0')
                 node[numgnode][i] = '\0';
                 while (isspace(*s)) s++;
@@ -803,7 +803,7 @@ bxx_printf(struct bxx_buffer *t, const char *fmt, ...)
         int ret;
         int size = t->limit - t->dst;
 		va_start(ap, fmt);
-        ret  = vsnprintf(t->dst, size, fmt, ap);
+        ret  = vsnprintf(t->dst, (size_t) size, fmt, ap);
         va_end(ap);
 		if(ret == -1) {
             bxx_extend(t, bxx_chunksize);
@@ -1950,7 +1950,7 @@ devmodtranslate(struct line *deck, char *subname)
                     dot_char++; j++;
                   }
                }
-               if ( strncmp( name, wlsub->wl_word, i - j ) == 0 ) {
+               if ( strncmp( name, wlsub->wl_word, (size_t) (i - j) ) == 0 ) {
                   (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
                   subname, name);
                   found = TRUE;

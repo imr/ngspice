@@ -129,7 +129,7 @@ int NDEVmodelConnect(NDEVmodel *inModel)
   various reasons.
   Just memcpy it into the sockaddr_in structure. */
   memcpy(&sa.sin_addr, hostlist->h_addr_list[0],
-         hostlist->h_length);
+         (size_t) hostlist->h_length);
   /* This is an Internet socket. */
   sa.sin_family = AF_INET;
   /* Connect! */

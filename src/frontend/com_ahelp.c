@@ -66,7 +66,7 @@ com_ahelp(wordlist *wl)
     for (n = 0; cp_coms[n].co_func != NULL; n++) {
 	cc[n] = &cp_coms[n];
     }
-    qsort(cc, n, sizeof(struct comm *), hcomp);
+    qsort(cc, (size_t) n, sizeof(struct comm *), hcomp);
 
     /* filter the commands */
     for (i=0; i< n; i++) {

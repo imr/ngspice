@@ -281,16 +281,16 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 /*  We have to allocate memory and use cm_analog_alloc, because the ITP variables
 	are not functional */
 
-        integrator     = (double **) calloc(den_size, sizeof(double *));
-        old_integrator = (double **) calloc(den_size, sizeof(double *));
+        integrator     = (double **) calloc((size_t) den_size, sizeof(double *));
+        old_integrator = (double **) calloc((size_t) den_size, sizeof(double *));
 
         /* Allocate storage for coefficient values */
 
-        den_coefficient     = (double **) calloc(den_size,sizeof(double *));
-        old_den_coefficient = (double **) calloc(den_size,sizeof(double *));
+        den_coefficient     = (double **) calloc((size_t) den_size, sizeof(double *));
+        old_den_coefficient = (double **) calloc((size_t) den_size, sizeof(double *));
 
-        num_coefficient     = (double **) calloc(num_size,sizeof(double *));
-        old_num_coefficient = (double **) calloc(num_size,sizeof(double *));
+        num_coefficient     = (double **) calloc((size_t) num_size, sizeof(double *));
+        old_num_coefficient = (double **) calloc((size_t) num_size, sizeof(double *));
 
         for (i=0; i < (2*den_size + num_size + 3); i++)
               cm_analog_alloc(i,sizeof(double));
@@ -327,8 +327,8 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
     
         /* Set pointers to storage locations for in, out, and integrators...*/
  
-        integrator = (double **) calloc(den_size,sizeof(double *));
-        old_integrator = (double **) calloc(den_size,sizeof(double *));
+        integrator = (double **) calloc((size_t) den_size, sizeof(double *));
+        old_integrator = (double **) calloc((size_t) den_size, sizeof(double *));
 
         for (i=0; i<den_size; i++) {
             integrator[i] = (double *) cm_analog_get_ptr(i,0);
@@ -342,8 +342,8 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         /* Set den_coefficient & gain pointers to ITP values */
         /* for denominator coefficients & gain...      */
 
-        old_den_coefficient = (double **) calloc(den_size,sizeof(double));  
-        den_coefficient = (double **) calloc(den_size,sizeof(double));  
+        old_den_coefficient = (double **) calloc((size_t) den_size, sizeof(double));  
+        den_coefficient = (double **) calloc((size_t) den_size, sizeof(double));  
 
 		for(i=den_size;i<2*den_size;i++){
             old_den_coefficient[i-den_size] = (double *) cm_analog_get_ptr(i,1);
@@ -351,8 +351,8 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
             *(den_coefficient[i-den_size]) = *(old_den_coefficient[i-den_size]);
 		} 
 
-        num_coefficient = (double **) calloc(num_size,sizeof(double));  
-		old_num_coefficient = (double **) calloc(num_size,sizeof(double));  
+        num_coefficient = (double **) calloc((size_t) num_size, sizeof(double));  
+		old_num_coefficient = (double **) calloc((size_t) num_size, sizeof(double));  
 
 		for(i=2*den_size;i<2*den_size+num_size;i++){
 		    old_num_coefficient[i-2*den_size] = (double *) cm_analog_get_ptr(i,1);

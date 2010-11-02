@@ -1947,10 +1947,10 @@ void cm_d_state(ARGS)
         
 
         /* assign storage for arrays to pointers in states table    */
-        states->state = (int *) calloc(states->depth + 1,sizeof(int));
-        states->bits = (short *) calloc((states->num_outputs * states->depth / 4 + 1),sizeof(short));
-        states->inputs = (short *) calloc((states->num_inputs * states->depth / 8 + 1),sizeof(short));
-        states->next_state = (int *) calloc(states->depth + 1,sizeof(int));
+        states->state = (int *) calloc((size_t) (states->depth + 1), sizeof(int));
+        states->bits = (short *) calloc((size_t) (states->num_outputs * states->depth / 4 + 1), sizeof(short));
+        states->inputs = (short *) calloc((size_t) (states->num_inputs * states->depth / 8 + 1), sizeof(short));
+        states->next_state = (int *) calloc((size_t) (states->depth + 1), sizeof(int));
         
 
         /* Initialize *state, *bits, *inputs & *next_state to zero  */

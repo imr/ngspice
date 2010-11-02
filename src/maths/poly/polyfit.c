@@ -17,9 +17,9 @@ ft_polyfit(double *xdata, double *ydata, double *result,
     double *mat2 = scratch + n * n; /* XXX These guys are hacks! */
     double d;
 
-    memset((char *) result, 0, n * sizeof(double));
-    memset((char *) mat1, 0, n * n * sizeof (double));
-    memcpy((char *) mat2, (char *) ydata, n * sizeof (double));
+    memset(result, 0,   (size_t) (n)     * sizeof(double));
+    memset(mat1, 0,     (size_t) (n * n) * sizeof(double));
+    memcpy(mat2, ydata, (size_t) (n)     * sizeof(double));
 
     /* Fill in the matrix with x^k for 0 <= k <= degree for each point */
     l = 0;

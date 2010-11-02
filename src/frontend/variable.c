@@ -913,7 +913,7 @@ cp_vprint(void)
         vars[i].x_char = '+';
     }
 
-    qsort(vars, i, sizeof (struct xxx), vcmp);
+    qsort(vars, (size_t) i, sizeof (struct xxx), vcmp);
 
     for (j = 0; j < i; j++) {
         if (j && eq(vars[j].x_v->va_name, vars[j - 1].x_v->va_name))

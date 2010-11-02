@@ -213,10 +213,10 @@ com_let(wordlist *wl)
 	goto quit;
     } else if (isreal(t)) {
 	bcopy(t->v_realdata, n->v_realdata + offset,
-		length * sizeof (double));
+		(size_t) length * sizeof (double));
     } else {
 	bcopy(t->v_compdata, n->v_compdata + offset,
-		length * sizeof(ngcomplex_t));
+		(size_t) length * sizeof(ngcomplex_t));
     }
 
     n->v_minsignal = 0.0; /* How do these get reset ??? */

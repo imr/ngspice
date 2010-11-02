@@ -198,7 +198,7 @@ sortvecs(struct dvec *d)
     for (t = d, i = 0; t; t = t->v_link2)
         array[i++] = t;
     
-    qsort(array, i, sizeof (struct dvec *), veccmp);
+    qsort(array, (size_t) i, sizeof (struct dvec *), veccmp);
 
     /* Now string everything back together... */
     for (j = 0; j < i - 1; j++)
@@ -645,13 +645,13 @@ vec_copy(struct dvec *v)
     if (isreal(v)) {
         nv->v_realdata = TMALLOC(double, v->v_length);
         bcopy(v->v_realdata, nv->v_realdata, 
-                sizeof (double) * v->v_length);
+                sizeof (double) * (size_t) v->v_length);
         nv->v_compdata = NULL;
     } else {
         nv->v_realdata = NULL;
         nv->v_compdata = TMALLOC(ngcomplex_t, v->v_length);
         bcopy(v->v_compdata, nv->v_compdata, 
-                sizeof(ngcomplex_t) * v->v_length);
+                sizeof(ngcomplex_t) * (size_t) v->v_length);
     }
 
     nv->v_minsignal = v->v_minsignal;
@@ -1063,10 +1063,10 @@ vec_mkfamily(struct dvec *v)
 
         if (isreal(v)) {
             d->v_realdata = TMALLOC(double, size);
-            bcopy(v->v_realdata + size*j, d->v_realdata, size*sizeof(double));
+            bcopy(v->v_realdata + size*j, d->v_realdata, (size_t) size * sizeof(double));
         } else {
             d->v_compdata = TMALLOC(ngcomplex_t, size);
-            bcopy(v->v_compdata + size*j, d->v_compdata, size*sizeof(ngcomplex_t));
+            bcopy(v->v_compdata + size*j, d->v_compdata, (size_t) size * sizeof(ngcomplex_t));
         }
 	/* Add one to the counter. */
 	(void) incindex(count, v->v_numdims - 1, v->v_dims, v->v_numdims);

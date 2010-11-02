@@ -278,9 +278,9 @@ assign_ctype_list (Conn_Info_t  *conn, Ctype_List_t *ctype_list )
    for (p = ctype_list; p; p = p->next) {
       conn->num_allowed_types++;
    }
-   conn->allowed_type = (char**) calloc (conn->num_allowed_types,
+   conn->allowed_type = (char**) calloc ((size_t) conn->num_allowed_types,
 					 sizeof (char*));
-   conn->allowed_port_type = (Port_Type_t*) calloc (conn->num_allowed_types,
+   conn->allowed_port_type = (Port_Type_t*) calloc ((size_t) conn->num_allowed_types,
 						    sizeof (Port_Type_t));
    if (! (conn->allowed_type && conn->allowed_port_type)) {
       fatal ("Could not allocate memory");

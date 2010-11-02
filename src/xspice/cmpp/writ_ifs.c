@@ -1215,7 +1215,7 @@ static char  *value_to_str(Data_Type_t type, Value_t value)
             /* be careful, the string could conceivably be very long... */
             str_len = strlen(value.svalue);
             if((str_len + BASE_STR_LEN) > max_len) {
-                str = (char *) realloc(str, (max_len + str_len +1));
+                str = (char *) realloc(str, (size_t) (max_len + str_len + 1));
                 max_len += str_len;
             }
             sprintf(str, "{MIF_FALSE, 0, 0.0, {0.0, 0.0}, \"%s\"}", value.svalue);

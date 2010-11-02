@@ -178,12 +178,12 @@ void cm_sine(ARGS)  /* structure holding parms,
 	phase1 = (double *) cm_analog_get_ptr(INT1,1);
 
     /* Allocate storage for breakpoint domain & freq. range values */
-    x = (double *) calloc(cntl_size, sizeof(double));
+    x = (double *) calloc((size_t) cntl_size, sizeof(double));
     if (!x) {
         cm_message_send(allocation_error); 
         return;
     }
-    y = (double *) calloc(freq_size, sizeof(double));
+    y = (double *) calloc((size_t) freq_size, sizeof(double));
     if (!y) {
         cm_message_send(allocation_error);  
         return;

@@ -303,7 +303,7 @@ ONEprnSolution(FILE *file, ONEdevice *pDevice, OUTPcard *output)
     if (output->OUTPmup) {
       data[numVars++] = mup;
     }
-    fwrite((char *) data, sizeof(double), numVars, file);
+    fwrite(data, sizeof(double), (size_t) numVars, file);
   }
   FREE(nodeArray);
 }

@@ -473,7 +473,7 @@ ipc_send_line_binary (
    /*
     * finally, concatenate the str to the end of the buffer and add the newline:
     */
-   memcpy (&out_buffer[fill_count], str, len);
+   memcpy (&out_buffer[fill_count], str, (size_t) len);
    fill_count += len;
 
    out_buffer[fill_count] = '\n';

@@ -479,7 +479,7 @@ resume:
         if(firstTime) {
             firstTime=0;
             bcopy(ckt->CKTstate0, ckt->CKTstate1,
-                    ckt->CKTnumStates*sizeof(double));
+                    (size_t) ckt->CKTnumStates * sizeof(double));
         }
 
 nextstep:;

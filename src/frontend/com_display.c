@@ -65,7 +65,7 @@ com_display(wordlist *wl)
     for (d = plot_cur->pl_dvecs, i = 0; d; d = d->v_next, i++)
         dvs[i] = d;
     if (!cp_getvar("nosort", CP_BOOL, NULL))
-        qsort(dvs, len, sizeof (struct dvec *), dcomp);
+        qsort(dvs, (size_t) len, sizeof (struct dvec *), dcomp);
 
     out_printf("Title: %s\n",  plot_cur->pl_title);
     out_printf("Name: %s (%s)\nDate: %s\n\n", 

@@ -101,7 +101,7 @@ int INPgetTok(char **line, char **token, int gobble)
     *token = TMALLOC(char, 1 + diffpoints);
     if (!*token)
         return (E_NOMEM);
-    (void) strncpy(*token, *line, diffpoints);
+    (void) strncpy(*token, *line, (size_t) diffpoints);
     *(*token + diffpoints) = '\0';
     *line = point;
 /*
@@ -199,7 +199,7 @@ int INPgetNetTok(char **line, char **token, int gobble)
     *token = TMALLOC(char, 1 + diffpoints);
     if (!*token)
         return (E_NOMEM);
-    (void) strncpy(*token, *line, diffpoints);
+    (void) strncpy(*token, *line, (size_t) diffpoints);
     *(*token + diffpoints) = '\0';
     *line = point;
 
@@ -331,7 +331,7 @@ int INPgetUTok(char **line, char **token, int gobble)
     *token = TMALLOC(char, 1 + point - *line);
     if (!*token)
 	return (E_NOMEM);
-    (void) strncpy(*token, *line, point - *line);
+    (void) strncpy(*token, *line, (size_t) (point - *line));
     *(*token + (point - *line)) = '\0';
     /* gobble garbage to next token */
     for (; *point != '\0'; point++) {
@@ -458,7 +458,7 @@ int INPgetU2Tok(char **line, char **token, int gobble)
     *token = TMALLOC(char, 1 + point - *line);
     if (!*token)
 	return (E_NOMEM);
-    (void) strncpy(*token, *line, point - *line);
+    (void) strncpy(*token, *line, (size_t) (point - *line));
     *(*token + (point - *line)) = '\0';
     /* gobble garbage to next token */
     for (; *point != '\0'; point++) {

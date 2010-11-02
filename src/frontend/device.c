@@ -920,7 +920,7 @@ com_alter_common(wordlist *wl, int do_model)
                     arglist[0] = TMALLOC(char, i + 1);
                     arglist[2] = TMALLOC(char, strlen(&argument[i + 1]) + 1);
                     /* copy argument */
-                    strncpy(arglist[0],argument,i);
+                    strncpy(arglist[0], argument, (size_t) i);
                     arglist[0][i] = '\0';
                     /* copy equal sign */
                     arglist[1] = copy("=");

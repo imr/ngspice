@@ -270,13 +270,13 @@ void cm_pwl(ARGS)  /* structure holding parms,
         last_x_value = (double *) STATIC_VAR(last_x_value);
 
         /* Allocate storage for breakpoint domain & range values */
-        STATIC_VAR(x) = (double *) calloc(size, sizeof(double));
+        STATIC_VAR(x) = (double *) calloc((size_t) size, sizeof(double));
         x = (double *) STATIC_VAR(x);
         if (!x) {
             cm_message_send(allocation_error); 
         }
 
-        STATIC_VAR(y) = (double *) calloc(size, sizeof(double));
+        STATIC_VAR(y) = (double *) calloc((size_t) size, sizeof(double));
         y = (double *) STATIC_VAR(y);
         if (!y) {
             cm_message_send(allocation_error);  

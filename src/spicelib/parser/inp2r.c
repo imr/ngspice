@@ -135,7 +135,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
         
         /* copy first part of line */
         i -= strlen(t);
-        strncpy(line,current->line,i);
+        strncpy(line, current->line, (size_t) i);
         line[i]=0;  /* terminate */
         
         /* add "tc2=" */

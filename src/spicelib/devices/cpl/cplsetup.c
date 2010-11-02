@@ -536,19 +536,19 @@ new_memory(int dim, int deg, int deg_o)
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-         SiSv_1[i][j] = (double *) calloc(deg_o+1, sizeof(double));
+         SiSv_1[i][j] = (double *) calloc((size_t) (deg_o+1), sizeof(double));
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-         Sip[i][j] = (double *) calloc(deg_o+1, sizeof(double));
+         Sip[i][j] = (double *) calloc((size_t) (deg_o+1), sizeof(double));
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-         Si_1p[i][j] = (double *) calloc(deg_o+1, sizeof(double));
+         Si_1p[i][j] = (double *) calloc((size_t) (deg_o+1), sizeof(double));
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-         Sv_1p[i][j] = (double *) calloc(deg_o+1, sizeof(double));
+         Sv_1p[i][j] = (double *) calloc((size_t) (deg_o+1), sizeof(double));
 
    for (i = 0; i < dim; i++) 
       W[i] = (double *) calloc(MAX_DEG, sizeof(double));
@@ -1475,14 +1475,14 @@ matrix_p_mult(
 
    for (i  = 0; i < dim; i++) 
       for (j = 0; j < dim; j++) {
-         p = T[i][j] = (double *) calloc(deg_o+1, sizeof(double));
+         p = T[i][j] = (double *) calloc((size_t) (deg_o+1), sizeof(double));
          mult_p(B[i][j], D[i], p, deg, deg_o, deg_o);
       }
    for (i  = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
          for (k = 0; k < dim; k++) {
             p = X[i][j].Poly[k] = 
-                            (double *) calloc(deg_o+1, sizeof(double));
+                            (double *) calloc((size_t) (deg_o+1), sizeof(double));
             mult_p(A[i][k], T[k][j], p, deg, deg_o, deg_o);
             t1 = X[i][j].C_0[k] = p[0];
             if (t1 != 0.0) {
