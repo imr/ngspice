@@ -47,8 +47,19 @@ struct coreInfo_t *coreitf;
 
 #ifdef CM_LINUX
 #undef CM_EXPORT
-#define CM_EXPORT extern
+#define CM_EXPORT
 #endif
+
+extern CM_EXPORT void *CMdevs(void);
+extern CM_EXPORT void *CMdevNum(void);
+extern CM_EXPORT void *CMudns(void);
+extern CM_EXPORT void *CMudnNum(void);
+extern CM_EXPORT void *CMgetCoreItfPtr(void);
+
+extern void *tmalloc(size_t num);
+extern void *trealloc(void *str, size_t num);
+extern void txfree(void *ptr);
+
 
 // This one returns the device table
 CM_EXPORT void *CMdevs(void) {

@@ -1,4 +1,8 @@
 2010-11-02  Robert Larice
+ * src/xspice/icm/dlmain.c :
+    local prototypes in `dlmain.c'
+
+2010-11-02  Robert Larice
  * src/frontend/arg.c ,
  * src/misc/misc_time.c ,
  * src/spicelib/parser/inpmktmp.c :
