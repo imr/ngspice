@@ -505,7 +505,7 @@ ipc_send_line (char *str )     /* The text to send */
    Ipc_Status_t  status= IPC_STATUS_OK;
 
 
-   len = strlen(str);
+   len = (int) strlen(str);
 
    /* if short string, send it immediately */
    if(len < 80)
@@ -946,7 +946,7 @@ ipc_send_event (
    assert(sizeof(int) == 4);
 
    /* Put the analysis step bytes in */
-   buff_len = strlen(buff);
+   buff_len = (int) strlen(buff);
    buff_ptr = buff + buff_len;
    fvalue = step;
    temp_ptr = (char *) &fvalue;

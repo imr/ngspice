@@ -333,7 +333,7 @@ int measure_extract_variables( char *line )
             variable2 = NULL;
             if (*line == '=') variable2 = gettok_iv(&line) ;
             if( variable ){
-               len = strlen(item) ;
+               len = (int) strlen(item);
                if( item[len-1] == '=' ){
                } else {
                    /* We may have something like V(n1)=1 

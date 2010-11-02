@@ -183,7 +183,7 @@ void EVTdump(
 
             /* If name is in a subcircuit, mark that node should not be sent */
             /* and continue to next node. */
-            name_len = strlen(name);
+            name_len = (int) strlen(name);
             for(j = 0; j < name_len; j++) {
                 if(name[j] == ':')
                     break;

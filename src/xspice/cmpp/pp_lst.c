@@ -252,7 +252,7 @@ static Status_t read_modpath(
     while( fgets(path, sizeof(path), fp) ) {
 
         line_num++;
-        len = strlen(path);
+        len = (int) strlen(path);
 
         /* If line was too long for buffer, exit with error */
         if(len > MAX_PATH_LEN) {
@@ -373,7 +373,7 @@ static Status_t read_udnpath(
     while( fgets(path, sizeof(path), fp) ) {
 
         line_num++;
-        len = strlen(path);
+        len = (int) strlen(path);
 
         /* If line was too long for buffer, exit with error */
         if(len > MAX_PATH_LEN) {

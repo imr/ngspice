@@ -409,7 +409,7 @@ int ipc_get_devices(
 
             /* Get the name of the instance */
             inst_name = here->GENname;
-            inst_name_len = strlen(inst_name);
+            inst_name_len = (int) strlen(inst_name);
 
             /* Skip if it is a inside a subcircuit */
             for(i = 0; i < inst_name_len; i++)

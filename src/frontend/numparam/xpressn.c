@@ -2258,14 +2258,14 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
 
       found = 0;
       token = strtok(buf, " ");       /* a bit more exact - but not sufficient everytime */
-      j = j + strlen(token) + 1;
+      j = j + (int) strlen(token) + 1;
       if (strcmp(token, spice_dstring_value(&subname))) {
         while ((token = strtok(NULL, " "))) {
           if (!strcmp(token, spice_dstring_value(&subname))) {
             found = 1;
             break;
           }
-          j = j + strlen(token) + 1;
+          j = j + (int) strlen(token) + 1;
         }
       }
       spice_dstring_free(&parsebuf) ;

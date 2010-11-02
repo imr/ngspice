@@ -474,7 +474,7 @@ dohs(char *pat, char *str)
     p =strchr(s, schar);
     if (p)
         *p = '\0';
-    plen = strlen(pat) - 1;
+    plen = (int) strlen(pat) - 1;
     for (i = 0; *str; str++) {
         if ((*str == *pat) && prefix(pat, str) && (ok == FALSE)) {
             for (p = s; *p; p++)

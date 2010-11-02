@@ -1213,7 +1213,7 @@ static char  *value_to_str(Data_Type_t type, Value_t value)
 
         case STRING:
             /* be careful, the string could conceivably be very long... */
-            str_len = strlen(value.svalue);
+            str_len = (int) strlen(value.svalue);
             if((str_len + BASE_STR_LEN) > max_len) {
                 str = (char *) realloc(str, (size_t) (max_len + str_len + 1));
                 max_len += str_len;

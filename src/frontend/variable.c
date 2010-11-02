@@ -703,7 +703,7 @@ cp_variablesubst(wordlist *wlist)
             for (wlist = wl; wlist->wl_prev; wlist = wlist->wl_prev)
                 ;
             (void) strcpy(buf, wl->wl_word);
-            i = strlen(buf);
+            i = (int) strlen(buf);
             (void) strcat(buf, tbuf); /* MW. tbuf is used here only */
              
             tfree(wl->wl_word);

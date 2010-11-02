@@ -105,7 +105,7 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
         if (cc && (cc->cc_kwords[arg] & 1)) {
             pmatches = ccfilec(buf);
             s =strrchr(buf, '/');
-            i = strlen(s ? s + 1 : buf);
+            i = (int) strlen(s ? s + 1 : buf);
             if ((*buf == '~') && !index(buf, '/'))
                 i--;
         }
@@ -115,7 +115,7 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
             if (cc && (cc->cc_kwords[arg] & (1 << j))) {
                 /* Find all the matching keywords. */
                 a = ccmatch(buf, &keywords[j]);
-                i = strlen(buf);
+                i = (int) strlen(buf);
                 if (pmatches)
                     pmatches = wl_append(pmatches, a);
                 else
@@ -125,7 +125,7 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
         wl_sort(pmatches);
     } else {
         pmatches = ccmatch(buf, &commands);
-        i = strlen(buf);
+        i = (int) strlen(buf);
     }
     
      tfree(buf); /*CDHW*/
@@ -307,7 +307,7 @@ printem(wordlist *wl)
     }
     num = wl_length(wl);
     for (ww = wl; ww; ww = ww->wl_next) {
-        j = strlen(ww->wl_word);
+        j = (int) strlen(ww->wl_word);
         if (j > maxl)
             maxl = j;
     }

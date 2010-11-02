@@ -56,7 +56,7 @@ fourier(wordlist *wl, struct plot *current_plot)
 	return 1;
 
     sprintf(xbuf, "%1.1e", 0.0);
-    shift = strlen(xbuf) - 7;
+    shift = (int) strlen(xbuf) - 7;
     if (!current_plot || !current_plot->pl_scale) {
         fprintf(cp_err, "Error: no vectors loaded.\n");
         return 1;

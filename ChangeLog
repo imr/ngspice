@@ -1,4 +1,31 @@
 2010-11-02  Robert Larice
+ * src/frontend/com_history.c ,
+ * src/frontend/com_measure2.c ,
+ * src/frontend/fourier.c ,
+ * src/frontend/numparam/xpressn.c ,
+ * src/frontend/parser/backq.c ,
+ * src/frontend/parser/complete.c ,
+ * src/frontend/plotting/x11.c ,
+ * src/frontend/subckt.c ,
+ * src/frontend/variable.c ,
+ * src/xspice/cmpp/mod_yacc.y ,
+ * src/xspice/cmpp/pp_lst.c ,
+ * src/xspice/cmpp/pp_mod.c ,
+ * src/xspice/cmpp/writ_ifs.c ,
+ * src/xspice/evt/evtdump.c ,
+ * src/xspice/evt/evtplot.c ,
+ * src/xspice/ipc/ipc.c ,
+ * src/xspice/ipc/ipctiein.c :
+    (int) casts for some `strlen()' expressions
+
+2010-11-02  Robert Larice
+ * src/xspice/icm/digital/adc_bridge/cfunc.mod ,
+ * src/xspice/icm/digital/d_ram/cfunc.mod ,
+ * src/xspice/icm/digital/d_source/cfunc.mod ,
+ * src/xspice/icm/digital/dac_bridge/cfunc.mod :
+    (int) casts for cm_event_alloc and cm_analog_alloc
+
+2010-11-02  Robert Larice
  * src/ciderlib/oned/oneprint.c ,
  * src/ciderlib/support/database.c ,
  * src/ciderlib/twod/twoprint.c ,

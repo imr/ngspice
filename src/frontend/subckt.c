@@ -1939,7 +1939,7 @@ devmodtranslate(struct line *deck, char *subname)
        
            /* Now, is this a subcircuit model? */
            for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
-               i = strlen(wlsub->wl_word);
+               i = (int) strlen(wlsub->wl_word);
                j = 0; /* Now, have we a binned model? */
                if ( (dot_char = strstr( wlsub->wl_word, "." )) ) {
                   dot_char++; j++;

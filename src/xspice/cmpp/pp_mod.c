@@ -78,7 +78,7 @@ extern char *prog_name;
 /*---------------------------------------------------------------------------*/
 static void change_extension (char *filename, char *ext, char *new_filename)
 {
-   int i = strlen (filename);
+   int i = (int) strlen (filename);
    
    strcpy (new_filename, filename);
 

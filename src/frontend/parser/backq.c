@@ -66,7 +66,7 @@ loop:   	s =strchr(t, cp_back);
 		/* MW. We must move to the begging of new wordlist. */
 		
         (void) strcpy(buf, wl->wl_word);
-	i = strlen(buf);
+	i = (int) strlen(buf);
         (void) strcat(buf, tbuf);
         tfree(wl->wl_word);
 	wl->wl_word = copy(buf);

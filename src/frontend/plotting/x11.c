@@ -540,7 +540,7 @@ X11_Text(char *text, int x, int y)
 		DEVDEP(currentgraph).gc, x,
 		currentgraph->absolute.height
 		    - (y + DEVDEP(currentgraph).font->max_bounds.descent),
-		text, strlen(text));
+		text, (int) strlen(text));
 
     /* note: unlike before, we do not save any text here */
     return 0;

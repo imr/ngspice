@@ -118,7 +118,7 @@ struct dvec *EVTfindvec(
   name = MIFcopy(node);
 
   /* Convert to all lower case */
-  len = strlen(name);
+  len = (int) strlen(name);
   for(i = 0; i < len; i++)
     if(isupper(name[i]))
       name[i] = tolower(name[i]);

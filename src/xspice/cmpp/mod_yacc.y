@@ -316,7 +316,7 @@ static void init_buffer (void)
 /*---------------------------------------------------------------------------*/
 static void append (char *str)
 {
-   int len = strlen (str);
+   int len = (int) strlen (str);
    if (len + buf_len > BUFFER_SIZE) {
       yyerror ("Buffer overflow - try reducing the complexity of CM-macro array subscripts");
       exit (1);
