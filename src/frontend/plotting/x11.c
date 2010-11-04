@@ -736,51 +736,51 @@ zoomin(GRAPH *graph)
     Window rootwindow, childwindow;
     int rootx, rooty;
     unsigned int state;
-    int x, y, upperx, uppery, lowerx, lowery;
+    int x, y, upperx, uppery;
+    unsigned width, height;
 
     /* open box and get area to zoom in on */
 
     XQueryPointer(display, DEVDEP(graph).window, &rootwindow,
 	    &childwindow, &rootx, &rooty, &x0, &y0, &state);
 
-    x = lowerx = x1 = x0 + BOXSIZE;
-    y = lowery = y1 = y0 + BOXSIZE;
+    x = x1 = x0 + BOXSIZE;
+    y = y1 = y0 + BOXSIZE;
+
     upperx = x0;
     uppery = y0;
 
-    XDrawRectangle(display, DEVDEP(graph).window, xorgc,
-	    upperx, uppery, lowerx - upperx, lowery - uppery);
+    width  = BOXSIZE;
+    height = BOXSIZE;
 
-/* note: what are src_x, src_y, src_width, and src_height for? XXX */
+    XDrawRectangle(display, DEVDEP(graph).window, xorgc,
+	    upperx, uppery, width, height);
+
     XWarpPointer(display, None, DEVDEP(graph).window, 0, 0, 0, 0, x1, y1);
 
     while (state & Button3Mask) {
       if (x != x1 || y != y1) {
-	XDrawRectangle(display, DEVDEP(graph).window, xorgc,
-	    upperx, uppery, lowerx - upperx, lowery - uppery);
+
 	x1 = x;
 	y1 = y;
-	/* figure out upper left corner */
-	/* remember X11's (and X10's) demented coordinate system */
-	if (y0 < y1) {
-	  uppery = y0;
-	  upperx = x0;
-	  lowery = y1;
-	  lowerx = x1;
-	} else {
-	  uppery = y1;
-	  upperx = x1;
-	  lowery = y0;
-	  lowerx = x0;
-	}
+
 	XDrawRectangle(display, DEVDEP(graph).window, xorgc,
-	    upperx, uppery, lowerx - upperx, lowery - uppery);
+	    upperx, uppery, width, height);
+
+        upperx = MIN(x1, x0);
+        uppery = MIN(y1, y0);
+
+        width  = (unsigned) ABS(x1 - x0);
+        height = (unsigned) ABS(y1 - y0);
+
+	XDrawRectangle(display, DEVDEP(graph).window, xorgc,
+	    upperx, uppery, width, height);
       }
       XQueryPointer(display, DEVDEP(graph).window, &rootwindow,
 	       &childwindow, &rootx, &rooty, &x, &y, &state);
     }
     XDrawRectangle(display, DEVDEP(graph).window, xorgc,
-	    upperx, uppery, lowerx - upperx, lowery - uppery);
+	    upperx, uppery, width, height);
 
     X_ScreentoData(graph, x0, y0, &fx0, &fy0);
     X_ScreentoData(graph, x1, y1, &fx1, &fy1);
