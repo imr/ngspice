@@ -323,7 +323,7 @@ main(int ac, char **av)
     char buf[BSIZE_SP];
     char t, f;
     struct plot *pl;
-    int i;
+    size_t n;
     char *infile = NULL;
     char *outfile = NULL;
     FILE *fp;
@@ -352,8 +352,8 @@ main(int ac, char **av)
                 perror(infile);
                 exit(EXIT_BAD);
             }
-            while ((i = fread(buf, 1, sizeof(buf), stdin)))
-                (void) fwrite(buf, 1, i, fp);
+            while ((n = fread(buf, 1, sizeof(buf), stdin)))
+                (void) fwrite(buf, 1, n, fp);
             (void) fclose(fp);
             break;
 
@@ -424,8 +424,8 @@ main(int ac, char **av)
             perror(outfile);
             exit(EXIT_BAD);
         }
-        while ((i = fread(buf, 1, sizeof(buf), fp)))
-            (void) fwrite(buf, 1, i, stdout);
+        while ((n = fread(buf, 1, sizeof(buf), fp)))
+            (void) fwrite(buf, 1, n, stdout);
         (void) fclose(fp);
         (void) unlink(infile);
         (void) unlink(outfile);

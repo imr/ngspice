@@ -1043,7 +1043,7 @@ com_source(wordlist *wl)
    char *tempfile = NULL;
    
    wordlist *owl = wl;
-   int i;
+   size_t n;
 
    inter = cp_interactive;
    cp_interactive = FALSE;
@@ -1063,8 +1063,8 @@ com_source(wordlist *wl)
             unlink(tempfile);
             return;
          }
-         while ((i = fread(buf, 1, BSIZE_SP, tp)) > 0)
-            fwrite(buf, 1, i, fp);
+         while ((n = fread(buf, 1, BSIZE_SP, tp)) > 0)
+            fwrite(buf, 1, n, fp);
             fclose(tp);
             wl = wl->wl_next;
       }

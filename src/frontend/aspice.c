@@ -263,7 +263,7 @@ com_rspice(wordlist *wl)
     char *outfile;
     FILE *inp, *serv, *out, *srv_input, *err_outp;
     struct plot *pl;
-    int i;
+    size_t n;
     int to_serv[2], from_serv[2], err_serv[2];
     int pid;
     long	pos;
@@ -342,9 +342,9 @@ com_rspice(wordlist *wl)
                 wl = wl->wl_next;
                 continue;   /* Should be careful */
             }
-            while ((i = fread(buf, 1, BSIZE_SP, inp)) > 0)
+            while ((n = fread(buf, 1, BSIZE_SP, inp)) > 0)
 		(void) fwrite(buf, 1, strlen(buf), srv_input);
-                /* (void) write(s, buf, i); */
+                /* (void) write(s, buf, n); */
             wl = wl->wl_next;
 	    fclose(inp);
         }
@@ -376,8 +376,8 @@ com_rspice(wordlist *wl)
     }
     if (p)
 	fputs(buf, out);
-    while ((i = fread(buf, 1, BSIZE_SP, serv))) {
-        (void) fwrite(buf, 1, i, out);
+    while ((n = fread(buf, 1, BSIZE_SP, serv))) {
+        (void) fwrite(buf, 1, n, out);
     }
     /* We hope that positioning info + error messages < pipe size */
     while (fgets(buf, BSIZE_SP, err_outp)) {

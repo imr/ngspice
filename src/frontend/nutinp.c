@@ -205,7 +205,7 @@ nutcom_source(wordlist *wl)
     bool inter;
     char *tempfile = NULL;
     wordlist *owl = wl;
-    int i;
+    size_t n;
 
     inter = cp_interactive;
     cp_interactive = FALSE;
@@ -225,8 +225,8 @@ nutcom_source(wordlist *wl)
                 (void) unlink(tempfile);
                 return;
             }
-            while ((i = fread(buf, 1, BSIZE_SP, tp)) > 0)
-                (void) fwrite(buf, 1, i, fp);
+            while ((n = fread(buf, 1, BSIZE_SP, tp)) > 0)
+                (void) fwrite(buf, 1, n, fp);
             (void) fclose(tp);
             wl = wl->wl_next;
         }

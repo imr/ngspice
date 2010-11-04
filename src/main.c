@@ -622,10 +622,10 @@ static void
 append_to_stream(FILE *dest, FILE *source)
 {
     char buf[BSIZE_SP];
-    int i;
+    size_t n;
 
-    while ((i = fread(buf, 1, BSIZE_SP, source)) > 0)
-      fwrite(buf, i, 1, dest);
+    while ((n = fread(buf, 1, BSIZE_SP, source)) > 0)
+      fwrite(buf, n, 1, dest);
 }
 #endif /* SIMULATOR */
 
