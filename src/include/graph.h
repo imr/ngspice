@@ -57,9 +57,6 @@ struct graph {
         double width, height;
     } datawindow;
 
-    /* note: this int is device dependent */
-    int colors[NUMCOLORS];
-
     /* cache (datawindow size) / (viewport size) */
     double aspectratiox, aspectratioy;
 

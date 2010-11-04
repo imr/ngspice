@@ -1,4 +1,9 @@
 2010-11-04  Robert Larice
+ * src/frontend/plotting/x11.c ,
+ * src/include/graph.h :
+    move device dependent colors[] array from `graph' to the x11 specific struct
+
+2010-11-04  Robert Larice
  * src/frontend/com_compose.c ,
  * src/frontend/postcoms.c ,
  * src/misc/util.c :

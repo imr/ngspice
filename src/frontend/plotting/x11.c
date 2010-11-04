@@ -64,6 +64,7 @@ typedef struct x11info {
     GC gc;
     int lastx, lasty;   /* used in X_DrawLine */
     int lastlinestyle;  /* used in X_DrawLine */
+    Pixel colors[NUMCOLORS];
 } X11devdep;
 
 #define DEVDEP(g) (*((X11devdep *) (g)->devdep))
@@ -211,11 +212,11 @@ initcolors(GRAPH *graph)
     if (numdispplanes == 1) {
 	/* black and white */
 	xmaxcolors = 2;
-	graph->colors[0] = DEVDEP(graph).view->core.background_pixel;
-	if (graph->colors[0] == WhitePixel(display, DefaultScreen(display)))
-	    graph->colors[1] = BlackPixel(display, DefaultScreen(display));
+	DEVDEP(graph).colors[0] = DEVDEP(graph).view->core.background_pixel;
+	if (DEVDEP(graph).colors[0] == WhitePixel(display, DefaultScreen(display)))
+	    DEVDEP(graph).colors[1] = BlackPixel(display, DefaultScreen(display));
 	else
-	    graph->colors[1] = WhitePixel(display, DefaultScreen(display));
+	    DEVDEP(graph).colors[1] = WhitePixel(display, DefaultScreen(display));
 
     } else {
 	if (numdispplanes < NXPLANES)
@@ -231,31 +232,31 @@ initcolors(GRAPH *graph)
 		(void) sprintf(ErrorMessage,
 		    "can't get color %s\n", colorstring);
 		externalerror(ErrorMessage);
-		graph->colors[i] = i ? BlackPixel(display,
+		DEVDEP(graph).colors[i] = i ? BlackPixel(display,
 		    DefaultScreen(display))
 		    : WhitePixel(display, DefaultScreen(display));
 		continue;
 	    }
-	    graph->colors[i] = visualcolor.pixel;
+	    DEVDEP(graph).colors[i] = visualcolor.pixel;
 	    
 	    
 	/* MW. I don't need this, everyone must know what he is doing
 	    if (i > 0 &&
-		graph->colors[i] == DEVDEP(graph).view->core.background_pixel) {
-		graph->colors[i] = graph->colors[0];
+		DEVDEP(graph).colors[i] == DEVDEP(graph).view->core.background_pixel) {
+		DEVDEP(graph).colors[i] = DEVDEP(graph).colors[0];
 	    } */
 	    
 	}
 	/* MW. Set Beackgroound here */
-	XSetWindowBackground(display, DEVDEP(graph).window, graph->colors[0]);
+	XSetWindowBackground(display, DEVDEP(graph).window, DEVDEP(graph).colors[0]);
 		
-/*	if (graph->colors[0] != DEVDEP(graph).view->core.background_pixel) {
-	    graph->colors[0] = DEVDEP(graph).view->core.background_pixel;
+/*	if (DEVDEP(graph).colors[0] != DEVDEP(graph).view->core.background_pixel) {
+	    DEVDEP(graph).colors[0] = DEVDEP(graph).view->core.background_pixel;
 	 } */
     }
 
     for (i = xmaxcolors; i < NUMCOLORS; i++) {
-	graph->colors[i] = graph->colors[i + 1 - xmaxcolors];
+	DEVDEP(graph).colors[i] = DEVDEP(graph).colors[i + 1 - xmaxcolors];
     }
 }
 
@@ -591,7 +592,7 @@ X11_SetColor(int colorid)
 
     currentgraph->currentcolor = colorid;
     XSetForeground(display, DEVDEP(currentgraph).gc,
-	    currentgraph->colors[colorid]);
+	    DEVDEP(currentgraph).colors[colorid]);
     return 0;
 }
 
