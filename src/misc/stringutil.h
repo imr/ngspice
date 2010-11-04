@@ -18,6 +18,7 @@ int scannum(char *str);
 int cieq(register char *p, register char *s);
 int ciprefix(register char *p, register char *s);
 void strtolower(char *str);
+void strtoupper(char *str);
 char * stripWhiteSpacesInsideParens(char *str);
 char * gettok(char **s);
 char * gettok_instance(char **);

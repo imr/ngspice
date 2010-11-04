@@ -132,10 +132,22 @@ void
 strtolower(char *str)
 {
     if (str)
-	while (*str) {
-	    *str = tolower(*str);
-	    str++;
-	}
+        while (*str) {
+            if(isupper(*str))
+                *str = (char) tolower(*str);
+            str++;
+        }
+}
+
+void
+strtoupper(char *str)
+{
+    if (str)
+        while (*str) {
+            if(islower(*str))
+                *str = (char) toupper(*str);
+            str++;
+        }
 }
 
 #ifdef CIDER
