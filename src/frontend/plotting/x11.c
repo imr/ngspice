@@ -311,7 +311,7 @@ static void handle_wm_messages(Widget w, XtPointer client_data, XEvent *event, B
 
     if (event->type == ClientMessage
             && event->xclient.message_type == atom_wm_protocols
-            && event->xclient.data.l[0] == atom_wm_delete_window) {
+            && (Atom) event->xclient.data.l[0] == atom_wm_delete_window) {
 
     /* Iplots are done asynchronously */
     DEVDEP(graph).isopen = 0;
@@ -523,7 +523,7 @@ X11_Arc(int x0, int y0, int radius, double theta, double delta_theta)
 	XDrawArc(display, DEVDEP(currentgraph).window, DEVDEP(currentgraph).gc,
 		x0 - radius,
 		currentgraph->absolute.height - radius - y0,
-		2 * radius, 2 * radius, t1, t2);		
+		(Dimension) (2 * radius), (Dimension) (2 * radius), t1, t2);
     }
     return 0;
 }
@@ -892,20 +892,20 @@ redraw(Widget w, caddr_t client_data, caddr_t call_data)
     DEVDEP(graph).isopen = 1;
 
 
-    rects[0].x = pev->x;
-    rects[0].y = pev->y;
-    rects[0].width = pev->width;
-    rects[0].height = pev->height;
+    rects[0].x = (Position) pev->x;
+    rects[0].y = (Position) pev->y;
+    rects[0].width  = (Dimension) pev->width;
+    rects[0].height = (Dimension) pev->height;
 
     /* XXX */
     /* pull out all other expose regions that need to be redrawn */
     while (n < 30 && XCheckWindowEvent(display, DEVDEP(graph).window,
-	    (long) ExposureMask, &ev)) {
+	    ExposureMask, &ev)) {
       pev = (XExposeEvent *) &ev;
-      rects[n].x = pev->x;
-      rects[n].y = pev->y;
-      rects[n].width = pev->width;
-      rects[n].height = pev->height;
+      rects[n].x = (Position) pev->x;
+      rects[n].y = (Position) pev->y;
+      rects[n].width  = (Dimension) pev->width;
+      rects[n].height = (Dimension) pev->height;
       n++;
     }
     XSetClipRectangles(display, DEVDEP(graph).gc, 0, 0,
@@ -930,7 +930,7 @@ resize(Widget w, caddr_t client_data, caddr_t call_data)
        Also, get rid of other StructureNotify events on this window. */
 
     while (XCheckWindowEvent(display, DEVDEP(graph).window,
-	    (long) /* ExposureMask | */ StructureNotifyMask, &ev))
+	    /* ExposureMask | */ StructureNotifyMask, &ev))
 	    ;
 
     XClearWindow(display, DEVDEP(graph).window);

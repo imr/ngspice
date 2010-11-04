@@ -1,4 +1,9 @@
 2010-11-04  Robert Larice
+ * src/frontend/help/x11disp.c ,
+ * src/frontend/plotting/x11.c :
+    add casts for x11 operations, to silence type conversion warnings
+
+2010-11-04  Robert Larice
  * src/frontend/plotting/x11.c ,
  * src/include/graph.h :
     move device dependent colors[] array from `graph' to the x11 specific struct

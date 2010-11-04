@@ -36,7 +36,7 @@ static void handle_wm_messages(Widget w, XtPointer client_data, XEvent *event, B
 
     if (event->type == ClientMessage
             && event->xclient.message_type == atom_wm_protocols
-            && event->xclient.data.l[0] == atom_wm_delete_window) 
+            && (Atom) event->xclient.data.l[0] == atom_wm_delete_window) 
     {
         hlp_killfamily(top);
         hlp_fixchildren(top);
