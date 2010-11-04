@@ -742,13 +742,15 @@ com_cross(wordlist *wl)
     v->v_name = copy(newvec);
     v->v_type = vecs ? vecs->v_type : SV_NOTYPE;
     v->v_length = i;
-    v->v_flags |= VF_PERMANENT;
-    v->v_flags = comp ? VF_COMPLEX : VF_REAL;
-    if (comp)
+
+    if (comp) {
+        v->v_flags = VF_COMPLEX;
         v->v_compdata = TMALLOC(ngcomplex_t, i);
-    else
+    } else {
+        v->v_flags = VF_REAL;
         v->v_realdata = TMALLOC(double, i);
-    
+    }
+
     /* Now copy the ind'ths elements into this one. */
     for (n = vecs, i = 0; n; n = n->v_link2, i++)
         if (n->v_length > ind) {

@@ -1,4 +1,11 @@
 2010-11-04  Robert Larice
+ * src/frontend/com_compose.c ,
+ * src/frontend/postcoms.c ,
+ * src/misc/util.c :
+    minor rewrites
+      in postcoms.c, drop an overwritten |= VF_PERMANENT assignment
+
+2010-11-04  Robert Larice
  * src/main.c ,
  * src/ngsconvert.c ,
  * src/frontend/aspice.c ,

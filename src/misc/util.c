@@ -33,7 +33,9 @@ canonicalize_pathname(char *path)
     /* The result cannot be larger than the input PATH. */
     result = copy(path);
 
-    stub_char = (*path == '/') ? '/' : '.';
+    stub_char = '.';
+    if(*path == '/')
+        stub_char = '/';
 
     /* Walk along RESULT looking for things to compact. */
     i = 0;
