@@ -61,7 +61,7 @@ dnl --enable-nosqrt: define NOSQRT for the code
 AC_ARG_ENABLE(nosqrt,
     AS_HELP_STRING([--enable-nosqrt],[Use always log/exp for nonlinear capacitances]))
 
-dnl --enable-bypass: define BYPASS for the code
+dnl --enable-nobypass: define NOBYPASS for the code
 AC_ARG_ENABLE(nobypass,
     AS_HELP_STRING([--enable-nobypass],[Don't bypass recalculations of slowly changing variables]))
 
@@ -81,7 +81,7 @@ dnl --enable-predictor: define PREDICTOR for the code
 AC_ARG_ENABLE(predictor,
     AS_HELP_STRING([--enable-predictor],[Enable a predictor method for convergence]))
 
-dnl --enable-newpred: define PREDICTOR for the code
+dnl --enable-newpred: define NEWPRED for the code
 AC_ARG_ENABLE(newpred,
     AS_HELP_STRING([--enable-newpred],[Enable NEWPRED whatever it is(?)]))
 
