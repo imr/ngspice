@@ -1,4 +1,8 @@
 2010-11-06  Robert Larice
+ * src/frontend/inpcom.c :
+    drop a redundant check
+
+2010-11-06  Robert Larice
  * src/spicelib/parser/inp2dot.c ,
  * src/spicelib/parser/inppas3.c :
     tiny rewrite, don't invoke strlen() to check for strlen() == 1

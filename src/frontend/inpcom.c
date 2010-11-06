@@ -1357,7 +1357,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 	   premature end.  If premature end is reached, spew
 	   error and zap the line. */
       if ( !ciprefix( "write", buffer ) ) {    // exclude 'write' command so filename case preserved
-         for (s = buffer; *s && (*s != '\n') && (*s != '\0'); s++)
+         for (s = buffer; *s && (*s != '\n'); s++)
              *s = (char) tolower(*s);
          if (!*s) {
          //fprintf(cp_err, "Warning: premature EOF\n");
