@@ -574,7 +574,7 @@ if (here->B1owner != ARCHme) continue;
 	/*Arg  =  1 + Ugs * VgsVth;*/
 	Phi  =  MAX( 0.1, Phi);/*const*/
 
-	if( model->B1channelChargePartitionFlag >= 1 ) {
+	if( model->B1channelChargePartitionFlag ) {
 
 	  /*0/100 partitioning for drain/source chArges at the saturation region*/
 	  Vth0 = Vfb + Phi + K1 * SqrtVpb;

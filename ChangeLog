@@ -1,4 +1,13 @@
 2010-11-06  Robert Larice
+ * src/spicelib/devices/bsim1/b1.c ,
+ * src/spicelib/devices/bsim1/b1dset.c ,
+ * src/spicelib/devices/bsim1/b1eval.c ,
+ * src/spicelib/devices/bsim1/b1mpar.c ,
+ * src/spicelib/devices/bsim1/bsim1def.h :
+    change the bsim1 `xpart' model parameter from IF_REAL to IF_FLAG
+      which has been used internaly as boolean anyway.
+
+2010-11-06  Robert Larice
  * src/spicelib/devices/nbjt/nbjt.c ,
  * src/spicelib/devices/nbjt/nbjtparm.c ,
  * src/spicelib/devices/nbjt2/nbt2.c ,
@@ -13,6 +22,7 @@
  * src/spicelib/devices/urc/urcparam.c :
     change some model parameters from IF_REAL to IF_INTEGER
       which have been internaly integers anyway.
+    (model parameters `save' `print' and urc `n'==`number of lumps')
 
 2010-11-06  Dietmar Warning
  * configure.ac, visualc/include/config.h, frontend/miscoms.c, mos1-9/*.c

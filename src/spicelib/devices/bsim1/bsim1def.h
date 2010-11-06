@@ -391,7 +391,7 @@ typedef struct sBSIM1model {       /* model structure for a resistor */
     double B1gateSourceOverlapCap;
     double B1gateDrainOverlapCap;
     double B1gateBulkOverlapCap;
-    double B1channelChargePartitionFlag;
+    unsigned B1channelChargePartitionFlag :1;
 
     double B1sheetResistance;
     double B1jctSatCurDensity;

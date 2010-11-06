@@ -282,7 +282,7 @@ B1mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B1gateBulkOverlapCapGiven = TRUE;
             break;
         case  BSIM1_MOD_XPART :
-            mod->B1channelChargePartitionFlag = value->rValue;
+            mod->B1channelChargePartitionFlag = value->iValue ? 1 : 0;
             mod->B1channelChargePartitionFlagGiven = TRUE;
             break;
         case  BSIM1_MOD_RSH :

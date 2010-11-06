@@ -360,7 +360,7 @@ ChargeComputation:
     dAdVbs  =  0.25 * K1 / SqrtVpb *(2*dGdVbs + G/Vpb);
     Phi  =  MAX( 0.1, Phi);
 
-    if( model->B1channelChargePartitionFlag >= 1 ) {
+    if( model->B1channelChargePartitionFlag ) {
 
 /*0/100 partitioning for drain/source chArges at the saturation region*/
         Vth0 = Vfb + Phi + K1 * SqrtVpb;

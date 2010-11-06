@@ -102,7 +102,7 @@ IFparm B1mPTable[] = { /* model parameters */
           "Gate drain overlap capacitance per unit channel width(m)"),
  IOPA( "cgbo",  BSIM1_MOD_CGBO,      IF_REAL,
           "Gate bulk overlap capacitance per unit channel length(m)"),
- IOP( "xpart", BSIM1_MOD_XPART,     IF_REAL,
+ IOP( "xpart", BSIM1_MOD_XPART,     IF_FLAG,
       "Flag for channel charge partitioning"),
  IOP( "rsh",   BSIM1_MOD_RSH,       IF_REAL,
       "Source drain diffusion sheet resistance in ohm per square"),
