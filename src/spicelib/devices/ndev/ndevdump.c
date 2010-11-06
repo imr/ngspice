@@ -15,10 +15,11 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 
-/* State Counter */
-static int state_numOP = 0;
-static int state_numDC = 0;
-static int state_numTR = 0;
+/* State Counter
+ * static int state_numOP = 0;
+ * static int state_numDC = 0;
+ * static int state_numTR = 0;
+ */
 
 void
 NDEV_dump(
