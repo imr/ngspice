@@ -35,7 +35,7 @@ NBJT2param(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
     inst->NBJT2icFileGiven = TRUE;
     break;
   case NBJT2_PRINT:
-    inst->NBJT2print = value->rValue;
+    inst->NBJT2print = value->iValue;
     inst->NBJT2printGiven = TRUE;
     break;
   case NBJT2_TEMP:

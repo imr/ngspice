@@ -10,7 +10,7 @@ Author: 1987 Thomas L. Quarles
 
 IFparm URCpTable[] = { /* parameters */ 
  IOPU( "l",      URC_LEN,   IF_REAL, "Length of transmission line"),
- IOPU( "n",      URC_LUMPS, IF_REAL, "Number of lumps"),
+ IOPU( "n",      URC_LUMPS, IF_INTEGER, "Number of lumps"),
  OPU( "pos_node",URC_POS_NODE,IF_INTEGER,"Positive node of URC"),
  OPU( "neg_node",URC_NEG_NODE,IF_INTEGER,"Negative node of URC"),
  OPU( "gnd",     URC_GND_NODE,IF_INTEGER,"Ground node of URC")

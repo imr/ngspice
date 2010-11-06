@@ -1,3 +1,19 @@
+2010-11-06  Robert Larice
+ * src/spicelib/devices/nbjt/nbjt.c ,
+ * src/spicelib/devices/nbjt/nbjtparm.c ,
+ * src/spicelib/devices/nbjt2/nbt2.c ,
+ * src/spicelib/devices/nbjt2/nbt2parm.c ,
+ * src/spicelib/devices/numd/numd.c ,
+ * src/spicelib/devices/numd/numdparm.c ,
+ * src/spicelib/devices/numd2/nud2.c ,
+ * src/spicelib/devices/numd2/nud2parm.c ,
+ * src/spicelib/devices/numos/numm.c ,
+ * src/spicelib/devices/numos/nummparm.c ,
+ * src/spicelib/devices/urc/urc.c ,
+ * src/spicelib/devices/urc/urcparam.c :
+    change some model parameters from IF_REAL to IF_INTEGER
+      which have been internaly integers anyway.
+
 2010-11-06  Dietmar Warning
  * configure.ac, visualc/include/config.h, frontend/miscoms.c, mos1-9/*.c
  * remove two really ancient configuration options:

@@ -31,7 +31,7 @@ NUMD2param(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
     inst->NUMD2icFileGiven = TRUE;
     break;
   case NUMD2_PRINT:
-    inst->NUMD2print = value->rValue;
+    inst->NUMD2print = value->iValue;
     inst->NUMD2printGiven = TRUE;
     break;
   case NUMD2_TEMP:

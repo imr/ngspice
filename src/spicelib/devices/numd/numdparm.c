@@ -27,7 +27,7 @@ NUMDparam(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
     inst->NUMDicFileGiven = TRUE;
     break;
   case NUMD_PRINT:
-    inst->NUMDprint = value->rValue;
+    inst->NUMDprint = value->iValue;
     inst->NUMDprintGiven = TRUE;
     break;
   case NUMD_TEMP:

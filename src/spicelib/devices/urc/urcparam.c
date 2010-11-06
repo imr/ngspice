@@ -23,7 +23,7 @@ URCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->URClenGiven = TRUE;
             break;
         case URC_LUMPS:
-            here->URClumps = value->rValue;
+            here->URClumps = value->iValue;
             here->URClumpsGiven = TRUE;
             break;
         default:

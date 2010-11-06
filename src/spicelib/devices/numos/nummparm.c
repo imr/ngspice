@@ -39,7 +39,7 @@ NUMOSparam(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
     inst->NUMOSicFileGiven = TRUE;
     break;
   case NUMOS_PRINT:
-    inst->NUMOSprint = value->rValue;
+    inst->NUMOSprint = value->iValue;
     inst->NUMOSprintGiven = TRUE;
     break;
   case NUMOS_TEMP:
