@@ -117,7 +117,8 @@ hlp_read(fplace *place)
         wl->wl_prev = end;
         end = wl;
         top->numlines++;
-        if ((i = strlen(&buf[6]) - fchanges) > top->maxcols)
+        i = (int) strlen(&buf[6]) - fchanges;
+        if (top->maxcols < i)
             top->maxcols = i;
         mof = fgets(buf, BSIZE_SP, place->fp) == NULL ? FALSE : TRUE;
     }

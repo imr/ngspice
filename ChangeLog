@@ -1,4 +1,8 @@
 2010-11-06  Robert Larice
+ * src/frontend/help/readhelp.c :
+    tiny rewrite, to avoid type conversion warnings
+
+2010-11-06  Robert Larice
  * src/frontend/parser/lexical.c :
     minor rewrite, a local variable type change
 
