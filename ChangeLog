@@ -1,4 +1,14 @@
 2010-11-06  Robert Larice
+ * src/frontend/postcoms.c ,
+ * src/frontend/plotting/agraf.c ,
+ * src/frontend/plotting/graf.c ,
+ * src/frontend/plotting/grid.c ,
+ * src/misc/dstring.c ,
+ * src/spicelib/parser/inp2r.c ,
+ * src/spicelib/parser/inpgmod.c :
+    add `int' casts to some strlen() expressions, and center labels on a xlog scale
+
+2010-11-06  Robert Larice
  * src/frontend/outitf.c ,
  * src/frontend/plotting/grid.c ,
  * src/misc/string.c ,

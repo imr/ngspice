@@ -4,7 +4,10 @@ DESCRIPTION:This file contains the routines for manipulating dynamic strings.
 CONTENTS:   
 DATE:	    Wed Mar 24 18:38:28 CDT 2010
 REVISIONS:  $Log$
-REVISIONS:  Revision 1.5  2010-11-06 16:54:11  rlar
+REVISIONS:  Revision 1.6  2010-11-06 20:17:20  rlar
+REVISIONS:  add `int' casts to some strlen() expressions, and center labels on a xlog scale
+REVISIONS:
+REVISIONS:  Revision 1.5  2010/11/06 16:54:11  rlar
 REVISIONS:  (int) cast the return value of some strlen() invocations
 REVISIONS:
 REVISIONS:  Revision 1.4  2010/10/28 19:32:34  rlar
@@ -169,7 +172,7 @@ static int spice_format_length( va_list args, char *fmt )
 	      case 's':
 		s = va_arg(args, char *) ;
 		if( s ){
-		  len += strlen(s) ;
+		  len += (int) strlen(s) ;
 		}
 		found_special = TRUE ;
 		break ;

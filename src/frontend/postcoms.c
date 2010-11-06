@@ -190,7 +190,7 @@ com_print(wordlist *wl)
                     	printnum(numbuf, v->v_realdata[i]);
                         (void) strcpy(buf, numbuf);
                         out_send(buf);
-                        ll += strlen(buf);
+                        ll += (int) strlen(buf);
                         ll = (ll + 7) / 8;
                         ll = ll * 8 + 1;
                         if (ll > 60) {
@@ -206,7 +206,7 @@ com_print(wordlist *wl)
                             numbuf,
                             numbuf2);
                         out_send(buf);
-                        ll += strlen(buf);
+                        ll += (int) strlen(buf);
                         ll = (ll + 7) / 8;
                         ll = ll * 8 + 1;
                         if (ll > 60) {
@@ -270,7 +270,7 @@ nextpage:
         out_send("\n");
         out_send(buf2);
         (void) sprintf(buf, "%s  %s", p->pl_name, p->pl_date);
-        j = (width - strlen(buf)) / 2;
+        j = (width - (int) strlen(buf)) / 2;
         out_send(buf);
         out_send("\n");
         for (i = 0; i < width; i++)

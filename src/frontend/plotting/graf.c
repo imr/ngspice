@@ -463,7 +463,7 @@ gr_pmsg(char *text)
 	/* MW. grid.xlabel may be NULL */
 	if (currentgraph->grid.xlabel)
 	    DevDrawText(text, currentgraph->viewport.width
-		 - (strlen(currentgraph->grid.xlabel) + 3)
+		 - (int) (strlen(currentgraph->grid.xlabel) + 3)
 		 * currentgraph->fontwidth,
 		 currentgraph->absolute.height - currentgraph->fontheight);
 	else

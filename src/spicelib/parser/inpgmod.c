@@ -504,7 +504,7 @@ INPfindParm( char *name, IFparm *table, int numParms )
     bestMatch = 0;
     for ( test = 0; test < numParms; test++ ) {
         match = cimatch( name, table[test].keyword );
-	if ( (match == length) && (match == strlen(table[test].keyword)) ) {
+	if ( (match == length) && (match == (int) strlen(table[test].keyword)) ) {
 	    /* exact match */
 	    best = test;
 	    /* all done */

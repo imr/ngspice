@@ -247,7 +247,7 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     for (i = 0; i < omaxy + margin; i++)
         out_send("-");
     out_send("\n");
-    i = (omaxy + margin - strlen(plot->pl_title)) / 2;
+    i = (omaxy + margin - (int) strlen(plot->pl_title)) / 2;
     while (i-- > 0)
         out_send(" ");
     (void) strcpy(buf, plot->pl_title);
@@ -256,7 +256,7 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     out_send("\n");
     (void) sprintf(buf, "%s %s", plot->pl_name, plot->pl_date);
     buf[maxy + margin] = '\0';
-    i = (omaxy + margin - strlen(buf)) / 2;
+    i = (omaxy + margin - (int) strlen(buf)) / 2;
     while (i-- > 0)
         out_send(" ");
     out_send(buf);

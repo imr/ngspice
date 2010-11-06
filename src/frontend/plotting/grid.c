@@ -512,11 +512,11 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
 
 	if (axis == x_axis)
 	    DevDrawText(buf, graph->viewportxoff + i -
-		    strlen(buf) / 2 * graph->fontwidth,
+		    ((int) strlen(buf) * graph->fontwidth) / 2 ,
 		    (int) (graph->fontheight * 2.5));
 	else
 	    DevDrawText(buf, graph->viewportxoff -
-		    graph->fontwidth * (strlen(buf)),
+		    graph->fontwidth * (int) strlen(buf),
 		    graph->viewportyoff + i -
 		    graph->fontheight / 2);
 
@@ -679,11 +679,12 @@ drawloggrid(GRAPH *graph, char *units, int hmt, int lmt, int decsp, int subs, in
 	else
 	    (void) sprintf(buf, "10^%d", j);
 	if (axis == x_axis)
-	    DevDrawText(buf, graph->viewportxoff + i - strlen(buf) / 2,
+	    DevDrawText(buf, graph->viewportxoff + i -
+		    ((int) strlen(buf) * graph->fontwidth) / 2,
 		    (int) (graph->fontheight * 2.5));
 	else
 	    DevDrawText(buf, graph->viewportxoff - graph->fontwidth *
-		    (strlen(buf) + 1),
+		    (int) (strlen(buf) + 1),
 		    graph->viewportyoff + i -
 		    graph->fontheight / 2);
 
@@ -969,7 +970,7 @@ adddeglabel(GRAPH *graph, int deg, int x, int y, int cx, int cy, int lx, int ly)
     if (sqrt((double) (x - cx) * (x - cx) + (y - cy) * (y - cy)) < MINDIST)
         return;
     (void) sprintf(buf, "%d", deg);
-    w = graph->fontwidth * (strlen(buf) + 1);
+    w = graph->fontwidth * (int) (strlen(buf) + 1);
     h = graph->fontheight * 1.5;
     angle = atan2((double) (y - ly), (double) (x - lx));
     d = fabs(cos(angle)) * w / 2 + fabs(sin(angle)) * h / 2 + LOFF;
@@ -978,7 +979,7 @@ adddeglabel(GRAPH *graph, int deg, int x, int y, int cx, int cy, int lx, int ly)
     y = y + d * sin(angle) - h / 2;
 
     DevDrawText(buf, x, y);
-    DevDrawText("o", x + strlen(buf) * graph->fontwidth,
+    DevDrawText("o", x + (int) strlen(buf) * graph->fontwidth,
             y + graph->fontheight / 2);
     return;
 }
@@ -996,10 +997,11 @@ addradlabel(GRAPH *graph, int lab, double theta, int x, int y)
 
     (void) sprintf(buf, "%d", lab);
     if (theta == M_PI) {
-        y = y - graph->fontheight - 2;
-        x = x - graph->fontwidth * strlen(buf) - 3;
-    } else
-	x = x - graph->fontwidth * strlen(buf) - 3;
+        y -= graph->fontheight + 2;
+        x -= graph->fontwidth * (int) strlen(buf) + 3;
+    } else {
+        x -= graph->fontwidth * (int) strlen(buf) + 3;
+    }
     DevDrawText(buf, x, y);
     return;
 }
@@ -1369,7 +1371,7 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
     SetColor(1);
 
     x = centx + xoffset + (int)radoff - 2 * (int)rad -
-	gi_fntwidth * strlen(plab) - 2;
+	gi_fntwidth * (int) strlen(plab) - 2;
     if ((x > pxmin) && (x < pxmax)) {
 	if ((yoffset > - gr_radius) && (yoffset < gr_radius))
 	    DevDrawText(plab, x, centy + yoffset - gi_fntheight - 1);
