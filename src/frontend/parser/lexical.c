@@ -106,10 +106,10 @@ pwlist_echo(   /*CDHW used to perform function of set echo */
 wordlist *
 cp_lexer(char *string)
 {
-    int c;
+    int c, d;
     int i, j;
     wordlist *wlist = NULL, *cw = NULL;
-    char buf[NEW_BSIZE_SP], linebuf[NEW_BSIZE_SP], d;
+    char buf[NEW_BSIZE_SP], linebuf[NEW_BSIZE_SP];
     int paren;
 
    if (cp_inp_cur == NULL)
@@ -212,7 +212,7 @@ gotchar:
 	case '"':
 	case '`':
             d = c;
-            buf[i++] = d;
+            buf[i++] = (char) d;
             while (((c = (string ? *string++ : input(cp_inp_cur)))
                     != d) && (i < NEW_BSIZE_SP - 2)) {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
@@ -228,8 +228,8 @@ gotchar:
                     linebuf[j++] = (char) c;
                 }
             }
-            buf[i++] = d;
-            linebuf[j++] = d;
+            buf[i++] = (char) d;
+            linebuf[j++] = (char) d;
             break;
 
 	case '\004':
