@@ -147,6 +147,36 @@ ft_ternary(struct pnode *node)
  * fields filled in. Add it to the current plot and get rid of the two args.
  */
 
+static void *
+doop_funcall(
+    void* (*func) (void *data1, void *data2,
+                   short int datatype1, short int datatype2,
+                   int length),
+    void *data1, void *data2,
+    short int datatype1, short int datatype2,
+    int length)
+{
+    void *data;
+
+    /* Some of the math routines generate SIGILL if the argument is
+     * out of range.  Catch this here.
+     */
+
+    if (SETJMP(matherrbuf, 1)) {
+        return (NULL);
+    }
+
+    (void) signal(SIGILL, (SIGNAL_FUNCTION) sig_matherr);
+
+    data = (*func) (data1, data2, datatype1, datatype2, length);
+
+    /* Back to normal */
+    (void) signal(SIGILL, SIG_DFL);
+
+    return data;
+}
+
+
 static struct dvec *
 doop(char what,
      void*(*func) (void *data1, void *data2,
@@ -275,22 +305,14 @@ doop(char what,
         else
             c2 = v2->v_compdata;
 
-    /* Some of the math routines generate SIGILL if the argument is
-     * out of range.  Catch this here.
-     */
-    if (SETJMP(matherrbuf, 1)) {
-        return (NULL);
-    }
-    (void) signal(SIGILL, (SIGNAL_FUNCTION) sig_matherr);
-
     /* Now pass the vectors to the appropriate function. */
-    data = ((*func) ((isreal(v1) ? (void *) d1 : (void *) c1),
-		     (isreal(v2) ? (void *) d2 : (void *) c2),
-		     (isreal(v1) ? VF_REAL : VF_COMPLEX),
-		     (isreal(v2) ? VF_REAL : VF_COMPLEX),
-		     length));
-    /* Back to normal */
-    (void) signal(SIGILL, SIG_DFL);
+    data = doop_funcall
+        ( func,
+          isreal(v1) ? (void *) d1 : (void *) c1,
+          isreal(v2) ? (void *) d2 : (void *) c2,
+          isreal(v1) ? VF_REAL : VF_COMPLEX,
+          isreal(v2) ? VF_REAL : VF_COMPLEX,
+          length);
 
     if (!data)
         return (NULL);
@@ -798,6 +820,49 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
  *  and returns a char * that is cast to complex or double.
  */
 
+static void *
+apply_func_funcall(struct func *func, struct dvec *v, int *newlength, short int *newtype)
+{
+    void *data;
+
+    /* Some of the math routines generate SIGILL if the argument is
+     * out of range.  Catch this here.
+     */
+
+    if (SETJMP(matherrbuf, 1)) {
+        (void) signal(SIGILL, SIG_DFL);
+        return (NULL);
+    }
+
+    (void) signal(SIGILL, (SIGNAL_FUNCTION) sig_matherr);
+
+    /* Modified for passing necessary parameters to the derive function - A.Roldan */
+
+    if (eq(func->fu_name, "interpolate") || eq(func->fu_name, "deriv") || eq(func->fu_name, "group_delay"))       /* Ack */
+    {
+        void *(*f)(void *data, short int type, int length,
+                   int *newlength, short int *newtype, struct plot *, struct plot *, int) = (void *(*)(void *, short int, int, int *, short int *, struct plot *, struct plot *, int)) func->fu_func;
+        data = (*f) (
+            isreal(v) ? (void *) v->v_realdata : (void *) v->v_compdata,
+            (short) (isreal(v) ? VF_REAL : VF_COMPLEX),
+            v->v_length,
+            newlength, newtype,
+            v->v_plot, plot_cur, v->v_dims[0]);
+    } else {
+        data = (*func->fu_func) (
+            isreal(v) ? (void *) v->v_realdata : (void *) v->v_compdata,
+            (short) (isreal(v) ? VF_REAL : VF_COMPLEX),
+            v->v_length,
+            newlength, newtype);
+    }
+
+    /* Back to normal */
+    (void) signal(SIGILL, SIG_DFL);
+
+    return data;
+}
+
+
 static struct dvec *
 apply_func(struct func *func, struct pnode *arg)
 {
@@ -833,34 +898,7 @@ apply_func(struct func *func, struct pnode *arg)
 
     for (; v; v = v->v_link2) {
 
-        /* Some of the math routines generate SIGILL if the argument is
-         * out of range.  Catch this here.
-         */
-        if (SETJMP(matherrbuf, 1)) {
-            (void) signal(SIGILL, SIG_DFL);
-            return (NULL);
-        }
-        (void) signal(SIGILL, (SIGNAL_FUNCTION) sig_matherr);
-
-        /* Modified for passing necessary parameters to the derive function - A.Roldan */
-	if (eq(func->fu_name, "interpolate") || eq(func->fu_name, "deriv") || eq(func->fu_name, "group_delay"))       /* Ack */
-	{
-	    void *(*f)(void *data, short int type, int length,
-                       int *newlength, short int *newtype, struct plot *, struct plot *, int) = (void *(*)(void *, short int, int, int *, short int *, struct plot *, struct plot *, int)) func->fu_func;
-            data = ((*f) ((isreal(v) ? (void *) v->v_realdata : (void *) v->v_compdata),
-		          (short) (isreal(v) ? VF_REAL : VF_COMPLEX),
-		          v->v_length, &len, &type,
-		          v->v_plot, plot_cur, v->v_dims[0]));
-        } else {
-            data = ((*func->fu_func) ((isreal(v) ? (void *)
-				       v->v_realdata :
-				       (void *) v->v_compdata),
-				      (short) (isreal(v) ? VF_REAL :
-					       VF_COMPLEX),
-				      v->v_length, &len, &type));
-	}
-        /* Back to normal */
-        (void) signal(SIGILL, SIG_DFL);
+        data = apply_func_funcall(func, v, &len, &type);
 
         if (!data)
             return (NULL);
