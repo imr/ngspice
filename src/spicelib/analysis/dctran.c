@@ -99,7 +99,7 @@ DCtran(CKTcircuit *ckt,
 
         ckt->CKTsizeIncr = 10;
         ckt->CKTtimeIndex = -1; /* before the DC soln has been stored */
-        ckt->CKTtimeListSize = ckt->CKTfinalTime / maxstepsize + 0.5;
+        ckt->CKTtimeListSize = (int) ceil( ckt->CKTfinalTime / maxstepsize );
         ltra_num = CKTtypelook("LTRA");
         if (ltra_num >= 0 && ckt->CKThead[ltra_num] != NULL)
             ckt->CKTtimePoints = NEWN(double, ckt->CKTtimeListSize);
@@ -349,12 +349,12 @@ DCtran(CKTcircuit *ckt,
         if (ckt->CKTtimeIndex >= ckt->CKTtimeListSize) {
             /* need more space */
             int need;
-            need = 0.5 + (ckt->CKTfinalTime - ckt->CKTtime) / maxstepsize;
+            need = (int) ceil( (ckt->CKTfinalTime - ckt->CKTtime) / maxstepsize );
             if (need < ckt->CKTsizeIncr)
                 need = ckt->CKTsizeIncr;
             ckt->CKTtimeListSize += need;
-	    ckt->CKTtimePoints = TREALLOC(double, ckt->CKTtimePoints, ckt->CKTtimeListSize);
-            ckt->CKTsizeIncr *= 1.4;
+            ckt->CKTtimePoints = TREALLOC(double, ckt->CKTtimePoints, ckt->CKTtimeListSize);
+            ckt->CKTsizeIncr = (int) ceil(1.4 * ckt->CKTsizeIncr);
         }
         *(ckt->CKTtimePoints + ckt->CKTtimeIndex) = ckt->CKTtime;
     }
@@ -549,7 +549,7 @@ resume:
          */
         ckt->CKTorder = 1;
 #ifdef STEPDEBUG
-        if( (ckt->CKTdelta >.1* ckt->CKTsaveDelta) ||
+        if( (ckt->CKTdelta > .1*ckt->CKTsaveDelta) ||
             (ckt->CKTdelta > .1*(*(ckt->CKTbreaks+1)-*(ckt->CKTbreaks))) ) {
             if(ckt->CKTsaveDelta < (*(ckt->CKTbreaks+1)-*(ckt->CKTbreaks)))  {
                 (void)printf("limited by pre-breakpoint delta (saveDelta: %g, nxt_breakpt: %g, curr_breakpt: %g\n",

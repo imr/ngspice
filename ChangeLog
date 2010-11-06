@@ -1,3 +1,6 @@
+2010-11-06  Dietmar Warning
+ * analysis/dctran.c: use ceil function for correct round up
+
 2010-11-06  Robert Larice
  * src/spicelib/devices/ndev/ndevdump.c :
     drop some unused static variables
