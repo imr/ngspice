@@ -36,7 +36,7 @@ NBJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
   OPTNcard *options;
   OUTPcard *outputs;
   char *icFileName = NULL;
-  int nameLen;
+  size_t nameLen;
   int error;
   int xMeshSize;
   ONEdevice *pDevice;

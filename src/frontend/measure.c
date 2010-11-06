@@ -396,7 +396,7 @@ check_autostop( char* what ) {
 /* parses the .meas line into a wordlist (without leading .meas) */
 static wordlist *measure_parse_line( char *line )
  {
-   int len ;				/* length of string */
+   size_t len ;				/* length of string */
    wordlist *wl ;			/* build a word list - head of list */
    wordlist *new_item ;			/* single item of a list */
    char *item ;				/* parsed item */

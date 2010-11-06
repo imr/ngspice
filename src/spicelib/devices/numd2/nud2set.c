@@ -38,7 +38,7 @@ NUMD2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
   OPTNcard *options;
   OUTPcard *outputs;
   char *icFileName = NULL;
-  int nameLen;
+  size_t nameLen;
   int error, xIndex;
   int xMeshSize, yMeshSize;
   TWOdevice *pDevice;

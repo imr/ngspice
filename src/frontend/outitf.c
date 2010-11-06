@@ -80,7 +80,7 @@ static void freeRun(runDesc *run);
 
 static clock_t lastclock, currclock;
 static double *rowbuf;
-static int column, rowbuflen;
+static size_t column, rowbuflen;
 
 static bool shouldstop = FALSE; /* Tell simulator to stop next time it asks. */
 
@@ -727,6 +727,7 @@ fileInit(runDesc *run)
 {
     char buf[513];
     int i;
+    size_t n;
     
     lastclock = clock();
 
@@ -736,29 +737,29 @@ fileInit(runDesc *run)
         if (run->data[i].type == IF_COMPLEX)
             run->isComplex = TRUE;
 
-    i = 0;
+    n = 0;
     sprintf(buf, "Title: %s\n", run->name);
-    i += strlen(buf);
+    n += strlen(buf);
     fputs(buf, run->fp);
     sprintf(buf, "Date: %s\n", datestring());
-    i += strlen(buf);
+    n += strlen(buf);
     fputs(buf, run->fp);
     sprintf(buf, "Plotname: %s\n", run->type);
-    i += strlen(buf);
+    n += strlen(buf);
     fputs(buf, run->fp);
     sprintf(buf, "Flags: %s\n", run->isComplex ? "complex" : "real");
-    i += strlen(buf);
+    n += strlen(buf);
     fputs(buf, run->fp);
     sprintf(buf, "No. Variables: %d\n", run->numData);
-    i += strlen(buf);
+    n += strlen(buf);
     fputs(buf, run->fp);
     sprintf(buf, "No. Points: ");
-    i += strlen(buf);
+    n += strlen(buf);
     fputs(buf, run->fp);                                                        
 
     fflush(run->fp);        /* Gotta do this for LATTICE. */
     if (run->fp == stdout || (run->pointPos = ftell(run->fp)) <= 0)
-        run->pointPos = i;
+        run->pointPos = (long) n;
     fprintf(run->fp, "0       \n"); /* Save 8 spaces here. */
  
     /*fprintf(run->fp, "Command: version %s\n", ft_sim->version);*/

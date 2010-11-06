@@ -283,8 +283,8 @@ static char *two2three_translate(
 
    int   num_conns;
    int   num_coefs;
-   int   inst_card_len;
-   int   mod_card_len;
+   size_t inst_card_len;
+   size_t mod_card_len;
 
    int   i;
 

@@ -76,7 +76,7 @@ char *
 cp_unquote(char *string)
 {
     char *s;
-    int l;
+    size_t l;
     if (string) {
 	l = strlen(string);
 	s = TMALLOC(char, l + 1);

@@ -194,7 +194,7 @@ wl_flatten(wordlist *wl)
 {
     char *buf;
     wordlist *tw;
-    int i = 0;
+    size_t i = 0;
 
     for (tw = wl; tw; tw = tw->wl_next)
         i += strlen(tw->wl_word) + 1;
@@ -237,7 +237,7 @@ wlcomp(const void *a, const void *b)
 void
 wl_sort(wordlist *wl)
 {
-    int i = 0;
+    size_t i = 0;
     wordlist *ww = wl;
     char **stuff;
 

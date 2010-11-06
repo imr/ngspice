@@ -1,4 +1,23 @@
 2010-11-06  Robert Larice
+ * src/frontend/measure.c ,
+ * src/frontend/outitf.c ,
+ * src/frontend/quote.c ,
+ * src/frontend/help/readhelp.c ,
+ * src/misc/util.c ,
+ * src/misc/wlist.c ,
+ * src/spicelib/devices/nbjt/nbjtset.c ,
+ * src/spicelib/devices/nbjt2/nbt2set.c ,
+ * src/spicelib/devices/numd/numdset.c ,
+ * src/spicelib/devices/numd2/nud2set.c ,
+ * src/spicelib/devices/numos/nummset.c ,
+ * src/xspice/cmpp/ifs_yacc.y ,
+ * src/xspice/enh/enhtrans.c ,
+ * src/xspice/evt/evtload.c ,
+ * src/xspice/icm/digital/d_source/cfunc.mod ,
+ * src/xspice/icm/digital/d_state/cfunc.mod :
+    change the type of a bunch of variables from `int' to `size_t'
+
+2010-11-06  Robert Larice
  * src/frontend/plotting/plotit.c :
     tiny rewrite, avoid type conversion warnings
 

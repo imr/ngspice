@@ -319,7 +319,7 @@ static void EVTcreate_state(
     CKTcircuit  *ckt,         /* The circuit structure */
     int         inst_index)   /* The instance to create state for */
 {
-    int                 total_size;
+    size_t              total_size;
 
     Evt_State_Data_t    *state_data;
 
@@ -334,7 +334,7 @@ static void EVTcreate_state(
         return;
 
     /* Get size of state block to be allocated */
-    total_size = state_data->total_size[inst_index];
+    total_size = (size_t) state_data->total_size[inst_index];
 
     /* Allocate a new state for the instance */
     if(state_data->free[inst_index]) 
@@ -346,7 +346,7 @@ static void EVTcreate_state(
 	{
 		
         new_state = TMALLOC(Evt_State_t, 1);
-        new_state->block = tmalloc((size_t) total_size);
+        new_state->block = tmalloc(total_size);
 
     }
 

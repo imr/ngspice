@@ -399,8 +399,8 @@ float   *p_value )   /* OUT - The numerical value     */
 
 
     /* the following were "int4" devices - jpm */
-    int    len;
-    int    i;
+    size_t len;
+    size_t i;
     int    n_matched;
 
     line_t  val_str;

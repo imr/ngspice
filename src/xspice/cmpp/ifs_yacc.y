@@ -113,7 +113,7 @@ static Boolean_t num_items_fixed;
 Ifs_Table_t *parser_ifs_table;
 #define TBL parser_ifs_table
 
-static int alloced_size [4];
+static size_t alloced_size [4];
 
 /*
  * !!!!! Make sure these are large enough so that they never get realloced
@@ -358,7 +358,7 @@ check_item_num (void)
    if (item-item_offset >= ITEM_BUFFER_SIZE) {
       fatal ("Too many items in table - split into sub-tables");
    }
-   if (item > alloced_size [context.table] ) {
+   if (item > (int) alloced_size [context.table] ) {
       switch (context.table) {
       case TBL_NAME:
 	 break;

@@ -42,7 +42,7 @@ static void
 sortlist(toplink **tlp)
 {
     toplink **vec, *tl;
-    int num = 0, i;
+    size_t num = 0, i;
 
     for (tl = *tlp; tl; tl = tl->next)
         num++;

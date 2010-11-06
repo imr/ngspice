@@ -123,7 +123,7 @@ canonicalize_pathname(char *path)
 char * absolute_pathname(char *string, char *dot_path)
 {
   char *result;
-  int result_len;
+  size_t result_len;
 
   if (!dot_path || *string == '/')
       result = copy(string);
