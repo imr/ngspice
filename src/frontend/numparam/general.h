@@ -80,8 +80,6 @@ double absf(double x); /* abs */
 long absi( long i);
 double frac(double x);
 
-unsigned char reset(FILE * f);
-unsigned char rewrite(FILE * f);
 void rawcopy(void * a, void * b, int la, int lb);
 void * new(long sz);
 void dispose(void * p);

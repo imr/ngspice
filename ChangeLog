@@ -1,4 +1,9 @@
 2010-11-06  Robert Larice
+ * src/frontend/numparam/general.h ,
+ * src/frontend/numparam/mystring.c :
+    remove some unused functions from the numparam world
+
+2010-11-06  Robert Larice
  * src/frontend/postcoms.c ,
  * src/frontend/plotting/agraf.c ,
  * src/frontend/plotting/graf.c ,

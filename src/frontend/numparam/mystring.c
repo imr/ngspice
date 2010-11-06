@@ -780,51 +780,6 @@ odd (long x)
   return (x & 1);
 }
 
-int
-vali (char *s, long *i)
-/* convert s to integer i. returns error code 0 if Ok */
-/* BUG: almost identical to ival() with arg/return value swapped ... */
-{
-  int k = 0, digit = 0, ls;
-  long z = 0;
-  bool minus = 0, ok = 1;
-  char c;
-  ls = length (s);
-
-  do
-    {
-      c = s[k];
-      k++;
-    }
-  while (!((k >= ls) || !((c > 0) && (c <= ' '))));	/* skip space */
-
-  if (c == '-')
-    {
-      minus = 1;
-      c = s[k];
-      k++;
-    }
-
-  while (num (c))
-    {
-      z = 10 * z + c - '0';
-      c = s[k];
-      k++;
-      digit++;
-    }
-
-  if (minus)
-    z = -z;
-
-  *i = z;
-  ok = (digit > 0) && (c == 0);	/* successful end of string */
-
-  if (ok)
-    return 0;
-  else
-    return k;			/* one beyond error position */
-}
-
 static bool
 match (char *s, char *t, int n, int tstart, bool testcase)
 {
@@ -915,19 +870,6 @@ spos_(char *sub, char *s)
   else
     return -1 ;
 
-}
-
-/**** float formatting with printf/scanf ******/
-
-int
-valr (char *s, double *r)
-/* returns 0 if ok, else length of partial string ? */
-{
-  int n = sscanf (s, "%lG", r);
-  if (n == 1)
-    return (0);
-  else
-    return (1);
 }
 
 void
@@ -1073,16 +1015,6 @@ frac (double x)
   return x - np_trunc (x);
 }
 
-double
-intp (double x)
-{
-  double u = 2e9;
-  if ((x > u) || (x < -u))
-    return x;
-  else
-    return np_trunc (x);
-}
-
 #else /* use floor() and ceil() */
 
 long
@@ -1107,15 +1039,6 @@ frac (double x)
     return (x - floor (x));
   else
     return (x - ceil (x));
-}
-
-double
-intp (double x)			/* integral part */
-{
-  if (x >= 0.0)
-    return floor (x);
-  else
-    return ceil (x);
 }
 
 #endif
