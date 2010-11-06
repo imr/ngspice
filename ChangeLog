@@ -1,4 +1,8 @@
 2010-11-06  Robert Larice
+ * src/frontend/diff.c :
+    tiny rewrite, make use of cieq()
+
+2010-11-06  Robert Larice
  * src/frontend/parse.c ,
  * src/frontend/typesdef.c ,
  * src/frontend/vectors.c ,

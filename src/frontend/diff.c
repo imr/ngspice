@@ -25,8 +25,6 @@ nameeq(char *n1, char *n2)
     char buf1[BSIZE_SP], buf2[BSIZE_SP];
     char *tmp;
     
-    int i;
-
     if (eq(n1, n2))
         return (TRUE);
 
@@ -63,13 +61,7 @@ nameeq(char *n1, char *n2)
                   else
                      (void) strcpy(buf2, n2);
 
-    for (i = 0; buf1[i]; i++)
-        if (isupper(buf1[i]))
-            buf1[i] = tolower(buf1[i]);
-    for (i = 0; buf2[i]; i++)
-        if (isupper(buf2[i]))
-            buf2[i] = tolower(buf2[i]);
-    return (eq(buf1, buf2) ? TRUE : FALSE);
+    return (cieq(buf1, buf2) ? TRUE : FALSE);
 }
 
 void
