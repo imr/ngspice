@@ -150,15 +150,15 @@ static void idn_digital_resolve(int num_struct,
     dig_struct->strength = dig_struct_array[0]->strength;
 
     /* Convert struct to index into map */
-    index1 = dig_struct->state + ((int)dig_struct->strength) * 3;
+    index1 = (int) (dig_struct->state + dig_struct->strength * 3);
 
 
     /* For the remaining members, perform the resolution algorithm */
     for(i = 1; i < num_struct; i++) {
 
         /* Convert struct to index into map */
-        index2 = dig_struct_array[i]->state + 
-                 ((int)dig_struct_array[i]->strength) * 3;
+        index2 = (int)(dig_struct_array[i]->state +
+                       dig_struct_array[i]->strength * 3);
 
         /* Compute the result */
         index1 = map[index1][index2];
@@ -305,7 +305,7 @@ static void idn_digital_print_val(void *evt_struct, char *member, char **val)
         }
     }
     else {
-        index = dig_struct->state + ((int)dig_struct->strength) * 3;
+        index = (int)(dig_struct->state + dig_struct->strength * 3);
         if((index < 0) || (index > 11))
             *val = "??";
         else

@@ -1,4 +1,8 @@
 2010-11-06  Robert Larice
+ * src/xspice/idn/idndig.c :
+    change a (int) cast application, to avoid type conversion warnings
+
+2010-11-06  Robert Larice
  * src/frontend/help/readhelp.c :
     tiny rewrite, to avoid type conversion warnings
 
