@@ -42,7 +42,7 @@ DCtran(CKTcircuit *ckt,
     int i;
     double olddelta;
     double delta;
-    double new;
+    double newdelta;
     double *temp;
     double startdTime;
     double startsTime;
@@ -64,7 +64,7 @@ DCtran(CKTcircuit *ckt,
     IFuid timeUid;
     IFuid *nameList;
     int numNames;
-    double maxstepsize=0.0;
+    double maxstepsize = 0.0;
 
     int ltra_num;
     CKTnode *node;
@@ -84,9 +84,9 @@ DCtran(CKTcircuit *ckt,
     int redostep;
 #endif
     if(restart || ckt->CKTtime == 0) {
-        delta=MIN(ckt->CKTfinalTime/200,ckt->CKTstep)/10;
+        delta=MIN(ckt->CKTfinalTime/100,ckt->CKTstep)/10;
 #ifdef STEPDEBUG
-        printf("delta = %g    finalTime/200: %g    CKTstep: %g\n",delta,ckt->CKTfinalTime/200,ckt->CKTstep);
+        printf("delta = %g    finalTime/100: %g    CKTstep: %g\n",delta,ckt->CKTfinalTime/100,ckt->CKTstep);
 #endif
         /* begin LTRA code addition */
         if (ckt->CKTtimePoints != NULL)
@@ -108,13 +108,12 @@ DCtran(CKTcircuit *ckt,
         if(ckt->CKTbreaks) FREE(ckt->CKTbreaks);
         ckt->CKTbreaks = TMALLOC(double, 2);
         if(ckt->CKTbreaks == (double *)NULL) return(E_NOMEM);
-        *(ckt->CKTbreaks)=0;
-        *(ckt->CKTbreaks+1)=ckt->CKTfinalTime;
-        ckt->CKTbreakSize=2;
+        *(ckt->CKTbreaks) = 0;
+        *(ckt->CKTbreaks+1) = ckt->CKTfinalTime;
+        ckt->CKTbreakSize = 2;
 
 #ifdef XSPICE
 /* gtri - begin - wbk - 12/19/90 - Modify setting of CKTminBreak */
-/*      if(ckt->CKTminBreak==0) ckt->CKTminBreak=ckt->CKTmaxStep*5e-5; */
         /* Set to 10 times delmin for ATESSE 1 compatibity */
         if(ckt->CKTminBreak==0) ckt->CKTminBreak = 10.0 * ckt->CKTdelmin;
 /* gtri - end - wbk - 12/19/90 - Modify setting of CKTminBreak */
@@ -146,7 +145,7 @@ DCtran(CKTcircuit *ckt,
 
         ckt->CKTtime = 0;
         ckt->CKTdelta = 0;
-        ckt->CKTbreak=1;
+        ckt->CKTbreak = 1;
         firsttime = 1;
         save_mode = (ckt->CKTmode&MODEUIC) | MODETRANOP | MODEINITJCT;
         save_order = ckt->CKTorder;
@@ -173,8 +172,8 @@ DCtran(CKTcircuit *ckt,
         } else
 #endif
         converged = CKTop(ckt,
-                    (ckt->CKTmode & MODEUIC)|MODETRANOP| MODEINITJCT,
-                    (ckt->CKTmode & MODEUIC)|MODETRANOP| MODEINITFLOAT,
+                    (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITJCT,
+                    (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITFLOAT,
                     ckt->CKTdcMaxIter);
 
         if(converged != 0) {
@@ -257,7 +256,7 @@ DCtran(CKTcircuit *ckt,
 /* gtri - end - wbk - Add Breakpoint stuff */
 #endif
         ckt->CKTstat->STATtimePts ++;
-        ckt->CKTorder=1;
+        ckt->CKTorder = 1;
         for(i=0;i<7;i++) {
             ckt->CKTdeltaOld[i]=ckt->CKTmaxStep;
         }
@@ -285,8 +284,8 @@ DCtran(CKTcircuit *ckt,
         }
 #endif
 
-        ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITTRAN;
-     /* modeinittran set here */
+        ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITTRAN;
+        /* modeinittran set here */
         ckt->CKTag[0]=ckt->CKTag[1]=0;
         bcopy(ckt->CKTstate0, ckt->CKTstate1,
               (size_t) ckt->CKTnumStates * sizeof(double));
@@ -357,7 +356,7 @@ DCtran(CKTcircuit *ckt,
 	    ckt->CKTtimePoints = TREALLOC(double, ckt->CKTtimePoints, ckt->CKTtimeListSize);
             ckt->CKTsizeIncr *= 1.4;
         }
-    *(ckt->CKTtimePoints + ckt->CKTtimeIndex) = ckt->CKTtime;
+        *(ckt->CKTtimePoints + ckt->CKTtimeIndex) = ckt->CKTtime;
     }
     /* end LTRA code addition */
 
@@ -382,7 +381,7 @@ DCtran(CKTcircuit *ckt,
     fflush(stdout);
 #endif /* STEPDEBUG */
     ckt->CKTstat->STATaccepted ++;
-    ckt->CKTbreak=0;
+    ckt->CKTbreak = 0;
     /* XXX Error will cause single process to bail. */
     if(error)  {
         ckt->CKTcurrentAnalysis = DOING_TRAN;
@@ -616,8 +615,8 @@ resume:
 /* gtri - end - wbk - Modify Breakpoint stuff */
 #else /* !XSPICE */
 
-  /* don't want to get below delmin for no reason */
-  ckt->CKTdelta = MAX(ckt->CKTdelta, ckt->CKTdelmin*2.0);
+        /* don't want to get below delmin for no reason */
+        ckt->CKTdelta = MAX(ckt->CKTdelta, ckt->CKTdelmin*2.0);
     }
     else if(ckt->CKTtime + ckt->CKTdelta >= *(ckt->CKTbreaks)) {
         ckt->CKTsaveDelta = ckt->CKTdelta;
@@ -821,7 +820,7 @@ resume:
                     ckt->CKTorder = save2;
                 }
 #endif
-                firsttime =0;
+                firsttime = 0;
 #ifndef CLUSTER
                 goto nextTime;  /* no check on
                                  * first time point
@@ -831,8 +830,8 @@ resume:
                 goto chkStep;
 #endif
             }
-            new = ckt->CKTdelta;
-            error = CKTtrunc(ckt,&new);
+            newdelta = ckt->CKTdelta;
+            error = CKTtrunc(ckt,&newdelta);
             if(error) {
                 ckt->CKTcurrentAnalysis = DOING_TRAN;
                 ckt->CKTstat->STATtranTime +=
@@ -851,11 +850,11 @@ resume:
                         - startkTime;
                 return(error);
             }
-            if(new>.9 * ckt->CKTdelta) {
-                if(ckt->CKTorder == 1) {
-                    new = ckt->CKTdelta;
+            if(newdelta > .9 * ckt->CKTdelta) {
+                if((ckt->CKTorder == 1) && (ckt->CKTmaxOrder > 1)) { /* don't rise the order for backward Euler */
+                    newdelta = ckt->CKTdelta;
                     ckt->CKTorder = 2;
-                    error = CKTtrunc(ckt,&new);
+                    error = CKTtrunc(ckt,&newdelta);
                     if(error) {
                         ckt->CKTcurrentAnalysis = DOING_TRAN;
                         ckt->CKTstat->STATtranTime +=
@@ -874,13 +873,13 @@ resume:
                                 ckt->CKTstat->STATsyncTime - startkTime;
                         return(error);
                     }
-                    if(new <= 1.05 * ckt->CKTdelta) {
+                    if(newdelta <= 1.05 * ckt->CKTdelta) {
                         ckt->CKTorder = 1;
                     }
                 }
                 /* time point OK  - 630 */
-                ckt->CKTdelta = new;
-#ifdef  NDEV
+                ckt->CKTdelta = newdelta;
+#ifdef NDEV
                 /* show a time process indicator, by Gong Ding, gdiso@ustc.edu */
                 if(ckt->CKTtime/ckt->CKTfinalTime*100<10.0)
                     printf("%%%3.2lf\b\b\b\b\b",ckt->CKTtime/ckt->CKTfinalTime*100);
@@ -890,7 +889,6 @@ resume:
                     printf("%%%5.2lf\b\b\b\b\b\b\b",ckt->CKTtime/ckt->CKTfinalTime*100);
                 fflush(stdout);
 #endif
-
 #ifdef STEPDEBUG
                 (void)printf(
                   "delta set to truncation error result: %g. Point accepted at CKTtime: %g\n",
@@ -920,7 +918,7 @@ resume:
                 ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;
                 ckt->CKTstat->STATrejected ++;
 #endif
-                ckt->CKTdelta = new;
+                ckt->CKTdelta = newdelta;
 #ifdef STEPDEBUG
                 (void)printf(
                     "delta set to truncation error result:point rejected\n");

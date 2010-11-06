@@ -3,6 +3,7 @@
  * remove two really ancient configuration options:
  * NOSQRT: Nobody want use log/exp instead of sqrt
  * CAPZEROBYPASS: Nobody want calculate 0.0 * x
+ * analysis/dctran.c: limit the order to 1 if backward Euler is enabled
 
 2010-11-04  Robert Larice
  * src/misc/string.c ,
