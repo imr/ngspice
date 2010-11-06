@@ -48,7 +48,6 @@ dnl --enable-gprof: add -pg option to the compiler (GCC)
 AC_ARG_ENABLE(gprof,
    AS_HELP_STRING([--enable-gprof],[Produce gprof profiling data in 'gmon.out' (GCC only).]))
 
-
 dnl --enable-checker: add --with-checker-debug  option to the compiler
 AC_ARG_ENABLE(checker,
     AS_HELP_STRING([--enable-checkergcc],[Option for compilation with checkergcc]))
@@ -56,10 +55,6 @@ AC_ARG_ENABLE(checker,
 dnl --enable-gc: Enable Boehm-Weiser Conservative Garbage Collector
 AC_ARG_ENABLE(checker,
     AS_HELP_STRING([--enable-gc],[Use Boehm-Weiser Conservative Garbage Collector. Disabled by default.]))
-
-dnl --enable-nosqrt: define NOSQRT for the code
-AC_ARG_ENABLE(nosqrt,
-    AS_HELP_STRING([--enable-nosqrt],[Use always log/exp for nonlinear capacitances]))
 
 dnl --enable-nobypass: define NOBYPASS for the code
 AC_ARG_ENABLE(nobypass,
@@ -69,17 +64,13 @@ dnl --enable-capbypass: define CAPBYPASS for the code
 AC_ARG_ENABLE(capbypass,
     AS_HELP_STRING([--enable-capbypass],[Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd voltages are unchanged]))
 
-AC_ARG_ENABLE(capzerobypass,
-    AS_HELP_STRING([--enable-capzerobypass],[Bypass all the cbd/cbs calculations if Czero is zero. (default=enabled)]),
-            [],[enable_capzerobypass=yes])
-
 dnl --enable-nodelimiting: define NODELIMITING for the code
 AC_ARG_ENABLE(nodelimiting,
-    AS_HELP_STRING([--enable-nodelimiting],[Experimental damping scheme]))
+    AS_HELP_STRING([--enable-nodelimiting],[Experimental damping scheme.]))
 
 dnl --enable-predictor: define PREDICTOR for the code
 AC_ARG_ENABLE(predictor,
-    AS_HELP_STRING([--enable-predictor],[Enable a predictor method for convergence]))
+    AS_HELP_STRING([--enable-predictor],[Enable a predictor method for convergence.]))
 
 dnl --enable-newpred: define NEWPRED for the code
 AC_ARG_ENABLE(newpred,
@@ -87,11 +78,11 @@ AC_ARG_ENABLE(newpred,
 
 dnl --enable-newtrunc: define NEWTRUNC for the code
 AC_ARG_ENABLE(newtrunc,
-    AS_HELP_STRING([--enable-newtrunc],[Enable the newtrunc option]))
+    AS_HELP_STRING([--enable-newtrunc],[Enable, how we want extrapolate capacitances.]))
 
 dnl --enable-sense2: define WANT_SENSE2 for the code
 AC_ARG_ENABLE(sense2,
-    AS_HELP_STRING([--enable-sense2],[Use spice2 sensitivity analysis]))
+    AS_HELP_STRING([--enable-sense2],[Use spice2 sensitivity analysis.]))
 
 dnl --enable-ftedebug: enable frontend debug macros
 AC_ARG_ENABLE(ftedebug,
@@ -745,17 +736,9 @@ if test "$enable_nobypass" = "yes"; then
     AC_DEFINE(NOBYPASS,[],[Define if we want NOBYPASS])
     AC_MSG_RESULT(NOBYPASS option enabled)
 fi
-if test "$enable_nosqrt" = "yes"; then
-    AC_DEFINE(NOSQRT,[],[Define to use always exp/log for bulk diode calculations in mosfets])
-    AC_MSG_RESULT(NOSQRT option enabled)
-fi
 if test "$enable_capbypass" = "yes"; then
     AC_DEFINE(CAPBYPASS,[],[Define if we want to bypass cbd/cbs calculation for non varying vbs/vbd])
     AC_MSG_RESULT(CAPBYPASS option enabled)
-fi
-if test "$enable_capzerobypass" = "yes"; then
-    AC_DEFINE(CAPZEROBYPASS,[],[Define if we want to bypass cbd/cbs calculation if Czero is zero])
-    AC_MSG_RESULT(CAPZEROBYPASS option enabled)
 fi
 if test "$enable_nodelimiting" = "yes"; then
     AC_DEFINE(NODELIMITING,[],[Experimental code never implemented to damp Newton iterations])

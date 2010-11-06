@@ -1,3 +1,9 @@
+2010-11-06  Dietmar Warning
+ * configure.ac, visualc/include/config.h, frontend/miscoms.c, mos1-9/*.c
+ * remove two really ancient configuration options:
+ * NOSQRT: Nobody want use log/exp instead of sqrt
+ * CAPZEROBYPASS: Nobody want calculate 0.0 * x
+
 2010-11-04  Robert Larice
  * src/misc/string.c ,
  * src/misc/stringutil.h :

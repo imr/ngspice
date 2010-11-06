@@ -11,9 +11,6 @@
 /* Define if we want to bypass cbd/cbs calculation for non varying vbs/vbd */
 /* #undef CAPBYPASS */
 
-/* Define if we want to bypass cbd/cbs calculation if Czero is zero */
-#define CAPZEROBYPASS
-
 /* The CIDER enhancements */
 #define CIDER 1
 
@@ -464,9 +461,6 @@
 
 /* Experimental code never implemented to damp Newton iterations */
 /* #undef NODELIMITING */
-
-/* Define to use always exp/log for bulk diode calculations in mosfets */
-/* #undef NOSQRT */
 
 /* Name of package */
 #define PACKAGE "ngspice"

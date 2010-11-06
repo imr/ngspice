@@ -317,7 +317,6 @@ MOS1dSetup(GENmodel *inModel, CKTcircuit *ckt)
                          * exp(log()) we use this special case code to buy time.
                          * (as much as 10% of total job time!)
                          */
-#ifndef NOSQRT
                         if(model->MOS1bulkJctBotGradingCoeff ==
                                 model->MOS1bulkJctSideGradingCoeff) {
                             if(model->MOS1bulkJctBotGradingCoeff == .5) {
@@ -331,21 +330,16 @@ MOS1dSetup(GENmodel *inModel, CKTcircuit *ckt)
                             if(model->MOS1bulkJctBotGradingCoeff == .5) {
                                 sarg = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sarg = exp(-model->MOS1bulkJctBotGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                             if(model->MOS1bulkJctSideGradingCoeff == .5) {
                                 sargsw = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sargsw =exp(-model->MOS1bulkJctSideGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                         }
-#endif /*NOSQRT*/
 		    /*
 		    lcapbs=here->MOS1Cbs*sarg+
                                 here->MOS1Cbssw*sargsw;

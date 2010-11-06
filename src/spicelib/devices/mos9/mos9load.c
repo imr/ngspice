@@ -914,9 +914,7 @@ innerline1000:;
 #endif /*CAPBYPASS*/
                 {
                     /* can't bypass the diode capacitance calculations */
-#ifdef CAPZEROBYPASS
                     if(here->MOS9Cbs != 0 || here->MOS9Cbssw != 0 ) {
-#endif /*CAPZEROBYPASS*/
                     if (vbs < here->MOS9tDepCap){
                         arg=1-vbs/here->MOS9tBulkPot;
                         /*
@@ -926,7 +924,6 @@ innerline1000:;
                          * exp(log()) we use this special case code to buy time.
                          * (as much as 10% of total job time!)
                          */
-#ifndef NOSQRT
                         if(model->MOS9bulkJctBotGradingCoeff ==
                                 model->MOS9bulkJctSideGradingCoeff) {
                             if(model->MOS9bulkJctBotGradingCoeff == .5) {
@@ -940,21 +937,16 @@ innerline1000:;
                             if(model->MOS9bulkJctBotGradingCoeff == .5) {
                                 sarg = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sarg = exp(-model->MOS9bulkJctBotGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                             if(model->MOS9bulkJctSideGradingCoeff == .5) {
                                 sargsw = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sargsw =exp(-model->MOS9bulkJctSideGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                         }
-#endif /*NOSQRT*/
                         *(ckt->CKTstate0 + here->MOS9qbs) =
                             here->MOS9tBulkPot*(here->MOS9Cbs*
                             (1-arg*sarg)/(1-model->MOS9bulkJctBotGradingCoeff)
@@ -968,12 +960,10 @@ innerline1000:;
                                 vbs*(here->MOS9f2s+vbs*(here->MOS9f3s/2));
                         here->MOS9capbs=here->MOS9f2s+here->MOS9f3s*vbs;
                     }
-#ifdef CAPZEROBYPASS
                     } else {
                         *(ckt->CKTstate0 + here->MOS9qbs) = 0;
                         here->MOS9capbs=0;
                     }
-#endif /*CAPZEROBYPASS*/
                 }
 #ifdef CAPBYPASS
                 if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
@@ -983,9 +973,7 @@ innerline1000:;
 #endif /*CAPBYPASS*/
                     /* can't bypass the diode capacitance calculations */
                 {
-#ifdef CAPZEROBYPASS
                     if(here->MOS9Cbd != 0 || here->MOS9Cbdsw != 0 ) {
-#endif /*CAPZEROBYPASS*/
                     if (vbd < here->MOS9tDepCap) {
                         arg=1-vbd/here->MOS9tBulkPot;
                         /*
@@ -995,7 +983,6 @@ innerline1000:;
                          * exp(log()) we use this special case code to buy time.
                          * (as much as 10% of total job time!)
                          */
-#ifndef NOSQRT
                         if(model->MOS9bulkJctBotGradingCoeff == .5 &&
                                 model->MOS9bulkJctSideGradingCoeff == .5) {
                             sarg = sargsw = 1/sqrt(arg);
@@ -1003,21 +990,16 @@ innerline1000:;
                             if(model->MOS9bulkJctBotGradingCoeff == .5) {
                                 sarg = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sarg = exp(-model->MOS9bulkJctBotGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                             if(model->MOS9bulkJctSideGradingCoeff == .5) {
                                 sargsw = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sargsw =exp(-model->MOS9bulkJctSideGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                         }
-#endif /*NOSQRT*/
                         *(ckt->CKTstate0 + here->MOS9qbd) =
                             here->MOS9tBulkPot*(here->MOS9Cbd*
                             (1-arg*sarg)
@@ -1032,12 +1014,10 @@ innerline1000:;
                                 vbd * (here->MOS9f2d + vbd * here->MOS9f3d/2);
                         here->MOS9capbd=here->MOS9f2d + vbd * here->MOS9f3d;
                     }
-#ifdef CAPZEROBYPASS
                 } else {
                     *(ckt->CKTstate0 + here->MOS9qbd) = 0;
                     here->MOS9capbd = 0;
                 }
-#endif /*CAPZEROBYPASS*/
                 }
 
                 if(SenCond && (ckt->CKTsenInfo->SENmode==TRANSEN)) goto next2;

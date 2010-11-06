@@ -1040,9 +1040,7 @@ doneval:
 		 
                 {
                     /* can't bypass the diode capacitance calculations */
-#ifdef CAPZEROBYPASS		    
                     if(here->MOS2Cbs != 0 || here->MOS2Cbssw != 0) {
-#endif /*CAPZEROBYPASS*/		    
                     if (vbs < here->MOS2tDepCap){		    
                         arg=1-vbs/here->MOS2tBulkPot;
                         /*
@@ -1052,7 +1050,6 @@ doneval:
                          * exp(log()) we use this special case code to buy time.
                          * (as much as 10% of total job time!)
                          */
-#ifndef NOSQRT
                         if(model->MOS2bulkJctBotGradingCoeff ==
                                 model->MOS2bulkJctSideGradingCoeff) {
                             if(model->MOS2bulkJctBotGradingCoeff == .5) {
@@ -1066,21 +1063,16 @@ doneval:
                             if(model->MOS2bulkJctBotGradingCoeff == .5) {
                                 sarg = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sarg = exp(-model->MOS2bulkJctBotGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                             if(model->MOS2bulkJctSideGradingCoeff == .5) {
                                 sargsw = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sargsw =exp(-model->MOS2bulkJctSideGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                         }
-#endif /*NOSQRT*/
                         *(ckt->CKTstate0 + here->MOS2qbs) =
                             here->MOS2tBulkPot*(here->MOS2Cbs*
                             (1-arg*sarg)/(1-model->MOS2bulkJctBotGradingCoeff)
@@ -1094,12 +1086,10 @@ doneval:
                                 vbs*(here->MOS2f2s+vbs*(here->MOS2f3s/2));
                         here->MOS2capbs=here->MOS2f2s+here->MOS2f3s*vbs;
                     }
-#ifdef CAPZEROBYPASS		    
                     } else {
                         *(ckt->CKTstate0 + here->MOS2qbs) = 0;
                         here->MOS2capbs=0;
                     }
-#endif /*CAPZEROBYPASS*/		    
                 }
 #ifdef CAPBYPASS
                 if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
@@ -1110,9 +1100,7 @@ doneval:
 				
                     /* can't bypass the diode capacitance calculations */
                 {
-#ifdef CAPZEROBYPASS				
                     if(here->MOS2Cbd != 0 || here->MOS2Cbdsw != 0 ) {
-#endif /*CAPZEROBYPASS*/		    		    
                     if (vbd < here->MOS2tDepCap) {
                         arg=1-vbd/here->MOS2tBulkPot;
                         /*
@@ -1122,7 +1110,6 @@ doneval:
                          * exp(log()) we use this special case code to buy time.
                          * (as much as 10% of total job time!)
                          */
-#ifndef NOSQRT
                         if(model->MOS2bulkJctBotGradingCoeff == .5 &&
                                 model->MOS2bulkJctSideGradingCoeff == .5) {
                             sarg = sargsw = 1/sqrt(arg);
@@ -1130,21 +1117,16 @@ doneval:
                             if(model->MOS2bulkJctBotGradingCoeff == .5) {
                                 sarg = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sarg = exp(-model->MOS2bulkJctBotGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                             if(model->MOS2bulkJctSideGradingCoeff == .5) {
                                 sargsw = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sargsw =exp(-model->MOS2bulkJctSideGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                         }
-#endif /*NOSQRT*/
                         *(ckt->CKTstate0 + here->MOS2qbd) =
                             here->MOS2tBulkPot*(here->MOS2Cbd*
                             (1-arg*sarg)
@@ -1159,12 +1141,10 @@ doneval:
                                 vbd * (here->MOS2f2d + vbd * here->MOS2f3d/2);
                         here->MOS2capbd=here->MOS2f2d + vbd * here->MOS2f3d;
                     }
-#ifdef CAPZEROBYPASS		    
                 } else {
                     *(ckt->CKTstate0 + here->MOS2qbd) = 0;
                     here->MOS2capbd = 0;
                 }
-#endif /*CAPZEROBYPASS*/		
                 }
                 if(SenCond && (ckt->CKTsenInfo->SENmode==TRANSEN)) goto next2;
 

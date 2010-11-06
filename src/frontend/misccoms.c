@@ -200,18 +200,12 @@ com_version(wordlist *wl)
             fprintf(cp_out,"** XSPICE extensions included\n");
 #endif
             fprintf(cp_out,"** Relevant compilation options (refer to user's manual):\n");
-#ifdef NOSQRT
-            fprintf(cp_out,"** --enable-nosqrt\n");
-#endif
 #ifdef NOBYPASS
             fprintf(cp_out,"** --enable-nobypass\n");
 #endif   
 #ifdef CAPBYPASS
             fprintf(cp_out,"** --enable-capbypass\n");
 #endif	    
-#ifdef CAPZEROBYPASS
-            fprintf(cp_out,"** --enable-capzerobypass\n");
-#endif
 #ifdef NODELIMITING
             fprintf(cp_out,"** --enable-nodelimiting\n");
 #endif

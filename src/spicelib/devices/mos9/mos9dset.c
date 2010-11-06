@@ -700,7 +700,6 @@ innerline1000:;
                          * exp(log()) we use this special case code to buy time.
                          * (as much as 10% of total job time!)
                          */
-#ifndef NOSQRT
                         if(model->MOS9bulkJctBotGradingCoeff ==
                                 model->MOS9bulkJctSideGradingCoeff) {
                             if(model->MOS9bulkJctBotGradingCoeff == .5) {
@@ -714,21 +713,16 @@ innerline1000:;
                             if(model->MOS9bulkJctBotGradingCoeff == .5) {
                                 sarg = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sarg = exp(-model->MOS9bulkJctBotGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                             if(model->MOS9bulkJctSideGradingCoeff == .5) {
                                 sargsw = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sargsw =exp(-model->MOS9bulkJctSideGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                         }
-#endif /*NOSQRT*/
 		    lcapbs=here->MOS9Cbs*sarg+
                                 here->MOS9Cbssw*sargsw;
 		    lcapbs2 = model->MOS9type*0.5/here->MOS9tBulkPot*(
@@ -759,7 +753,6 @@ innerline1000:;
                          * exp(log()) we use this special case code to buy time.
                          * (as much as 10% of total job time!)
                          */
-#ifndef NOSQRT
                         if(model->MOS9bulkJctBotGradingCoeff == .5 &&
                                 model->MOS9bulkJctSideGradingCoeff == .5) {
                             sarg = sargsw = 1/sqrt(arg);
@@ -767,21 +760,16 @@ innerline1000:;
                             if(model->MOS9bulkJctBotGradingCoeff == .5) {
                                 sarg = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sarg = exp(-model->MOS9bulkJctBotGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                             if(model->MOS9bulkJctSideGradingCoeff == .5) {
                                 sargsw = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sargsw =exp(-model->MOS9bulkJctSideGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                         }
-#endif /*NOSQRT*/
 		    lcapbd=here->MOS9Cbd*sarg+
                                 here->MOS9Cbdsw*sargsw;
 		    lcapbd2 = model->MOS9type*0.5/here->MOS9tBulkPot*(

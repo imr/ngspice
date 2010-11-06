@@ -565,9 +565,7 @@ next1:      if(vbs <= -3*vt) {
 		 
                 {
                     /* can't bypass the diode capacitance calculations */
-#ifdef CAPZEROBYPASS		    
                     if(here->MOS1Cbs != 0 || here->MOS1Cbssw != 0 ) {
-#endif /*CAPZEROBYPASS*/		    
 			if (vbs < here->MOS1tDepCap){
 			    arg=1-vbs/here->MOS1tBulkPot;
 			    /*
@@ -577,7 +575,6 @@ next1:      if(vbs <= -3*vt) {
 			     * exp(log()) we use this special case code to buy time.
 			     * (as much as 10% of total job time!)
 			     */
-#ifndef NOSQRT
 			    if(model->MOS1bulkJctBotGradingCoeff ==
 			       model->MOS1bulkJctSideGradingCoeff) {
 				if(model->MOS1bulkJctBotGradingCoeff == .5) {
@@ -591,21 +588,16 @@ next1:      if(vbs <= -3*vt) {
 				if(model->MOS1bulkJctBotGradingCoeff == .5) {
 				    sarg = 1/sqrt(arg);
 				} else {
-#endif /*NOSQRT*/
 				    sarg = exp(-model->MOS1bulkJctBotGradingCoeff*
 					       log(arg));
-#ifndef NOSQRT
 				}
 				if(model->MOS1bulkJctSideGradingCoeff == .5) {
 				    sargsw = 1/sqrt(arg);
 				} else {
-#endif /*NOSQRT*/
 				    sargsw =exp(-model->MOS1bulkJctSideGradingCoeff*
 						log(arg));
-#ifndef NOSQRT
 				}
 			    }
-#endif /*NOSQRT*/
 			    *(ckt->CKTstate0 + here->MOS1qbs) =
 				here->MOS1tBulkPot*(here->MOS1Cbs*
 						    (1-arg*sarg)/(1-model->MOS1bulkJctBotGradingCoeff)
@@ -619,12 +611,10 @@ next1:      if(vbs <= -3*vt) {
                                 vbs*(here->MOS1f2s+vbs*(here->MOS1f3s/2));
 			    here->MOS1capbs=here->MOS1f2s+here->MOS1f3s*vbs;
 			}
-#ifdef CAPZEROBYPASS						
                     } else {
 			*(ckt->CKTstate0 + here->MOS1qbs) = 0;
                         here->MOS1capbs=0;
                     }
-#endif /*CAPZEROBYPASS*/		    
                 }
 #ifdef CAPBYPASS
                     if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
@@ -635,9 +625,7 @@ next1:      if(vbs <= -3*vt) {
 	
                     /* can't bypass the diode capacitance calculations */
                 {
-#ifdef CAPZEROBYPASS					
                     if(here->MOS1Cbd != 0 || here->MOS1Cbdsw != 0 ) {
-#endif /*CAPZEROBYPASS*/		    		    
 			if (vbd < here->MOS1tDepCap) {
 			    arg=1-vbd/here->MOS1tBulkPot;
 			    /*
@@ -647,7 +635,6 @@ next1:      if(vbs <= -3*vt) {
 			     * exp(log()) we use this special case code to buy time.
 			     * (as much as 10% of total job time!)
 			     */
-#ifndef NOSQRT
 			    if(model->MOS1bulkJctBotGradingCoeff == .5 &&
 			       model->MOS1bulkJctSideGradingCoeff == .5) {
 				sarg = sargsw = 1/sqrt(arg);
@@ -655,21 +642,16 @@ next1:      if(vbs <= -3*vt) {
 				if(model->MOS1bulkJctBotGradingCoeff == .5) {
 				    sarg = 1/sqrt(arg);
 				} else {
-#endif /*NOSQRT*/
 				    sarg = exp(-model->MOS1bulkJctBotGradingCoeff*
 					       log(arg));
-#ifndef NOSQRT
 				}
 				if(model->MOS1bulkJctSideGradingCoeff == .5) {
 				    sargsw = 1/sqrt(arg);
 				} else {
-#endif /*NOSQRT*/
 				    sargsw =exp(-model->MOS1bulkJctSideGradingCoeff*
 						log(arg));
-#ifndef NOSQRT
 				}
 			    }
-#endif /*NOSQRT*/
 			    *(ckt->CKTstate0 + here->MOS1qbd) =
 				here->MOS1tBulkPot*(here->MOS1Cbd*
 						    (1-arg*sarg)
@@ -684,12 +666,10 @@ next1:      if(vbs <= -3*vt) {
                                 vbd * (here->MOS1f2d + vbd * here->MOS1f3d/2);
 			    here->MOS1capbd=here->MOS1f2d + vbd * here->MOS1f3d;
 			}
-#ifdef CAPZEROBYPASS						
 		    } else {
 			*(ckt->CKTstate0 + here->MOS1qbd) = 0;
 			here->MOS1capbd = 0;
 		    }
-#endif /*CAPZEROBYPASS*/		    		    
                 }
 /*
   

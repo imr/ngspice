@@ -1144,10 +1144,11 @@ doneval:
                         arg=1-vbs/here->MOS2tBulkPot;
                         /*
                          * the following block looks somewhat long and messy,
-                         * but since most users use the default grading                         * coefficients of .5, and sqrt is MUCH faster than an                         * exp(log()) we use this special case code to buy time.
+                         * but since most users use the default grading                         
+                         * coefficients of .5, and sqrt is MUCH faster than an                         
+                         * exp(log()) we use this special case code to buy time.
                          * (as much as 10% of total job time!)
                          */
-#ifndef NOSQRT
                         if(model->MOS2bulkJctBotGradingCoeff ==
                                 model->MOS2bulkJctSideGradingCoeff) {
                             if(model->MOS2bulkJctBotGradingCoeff == .5) {
@@ -1161,21 +1162,16 @@ doneval:
                             if(model->MOS2bulkJctBotGradingCoeff == .5) {
                                 sarg = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sarg = exp(-model->MOS2bulkJctBotGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                             if(model->MOS2bulkJctSideGradingCoeff == .5) {
                                 sargsw = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sargsw =exp(-model->MOS2bulkJctSideGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                         }
-#endif /*NOSQRT*/
 		    lcapbs=here->MOS2Cbs*sarg+
                                 here->MOS2Cbssw*sargsw;
 		    lcapbs2 = model->MOS2type*0.5/here->MOS2tBulkPot*(
@@ -1201,10 +1197,11 @@ doneval:
                         arg=1-vbd/here->MOS2tBulkPot;
                         /*
                          * the following block looks somewhat long and messy,
-                         * but since most users use the default grading                         * coefficients of .5, and sqrt is MUCH faster than an                         * exp(log()) we use this special case code to buy time.
+                         * but since most users use the default grading                         
+                         * coefficients of .5, and sqrt is MUCH faster than an                         
+                         * exp(log()) we use this special case code to buy time.
                          * (as much as 10% of total job time!)
                          */
-#ifndef NOSQRT
                         if(model->MOS2bulkJctBotGradingCoeff == .5 &&
                                 model->MOS2bulkJctSideGradingCoeff == .5) {
                             sarg = sargsw = 1/sqrt(arg);
@@ -1212,21 +1209,16 @@ doneval:
                             if(model->MOS2bulkJctBotGradingCoeff == .5) {
                                 sarg = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sarg = exp(-model->MOS2bulkJctBotGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                             if(model->MOS2bulkJctSideGradingCoeff == .5) {
                                 sargsw = 1/sqrt(arg);
                             } else {
-#endif /*NOSQRT*/
                                 sargsw =exp(-model->MOS2bulkJctSideGradingCoeff*
                                         log(arg));
-#ifndef NOSQRT
                             }
                         }
-#endif /*NOSQRT*/
 		    lcapbd=here->MOS2Cbd*sarg+
                                 here->MOS2Cbdsw*sargsw;
 		    lcapbd2 = model->MOS2type*0.5/here->MOS2tBulkPot*(
