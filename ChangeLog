@@ -1,4 +1,13 @@
 2010-11-06  Robert Larice
+ * src/frontend/plotting/agraf.c ,
+ * src/frontend/plotting/graf.c ,
+ * src/frontend/plotting/grid.c ,
+ * src/misc/dstring.c ,
+ * src/spicelib/parser/inp2r.c ,
+ * src/spicelib/parser/inpgmod.c :
+    (int) cast the return value of some strlen() invocations
+
+2010-11-06  Robert Larice
  * src/frontend/subckt.c ,
  * src/spicelib/parser/inppas2.c :
     minor rewrite, avoid type conversion warnings

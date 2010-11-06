@@ -50,7 +50,7 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
      * We assumed it was 2.  If it's more, shift starting position over.
      */
     sprintf(buf, "%1.1e", 0.0);		/* expect 0.0e+00 */
-    shift = strlen(buf) - 7;
+    shift = (int) strlen(buf) - 7;
     margin += shift;
 
     /* Make sure the margin is correct */

@@ -124,7 +124,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
            so now we splice in a "tc2=" at the location remembered above. */
         
         /* first alocate memory for the new longer line */
-        i = strlen(current->line);  /* length of existing line */	
+        i = (int) strlen(current->line);  /* length of existing line */
         line = TMALLOC(char, i + 4 + 1);  /* alocate enough for "tc2=" & terminating NULL */
         if(line == NULL) {
             /* failed to allocate memory so we recover rather crudely

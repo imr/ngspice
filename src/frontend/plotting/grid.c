@@ -1166,7 +1166,7 @@ drawsmithgrid(GRAPH *graph)
 	ir[k] = pixperunit * (1 + cos(dphi[k])) / sin(dphi[k]);
 	rr[k] = pixperunit * 0.5 * (((1 - rnorm[k]) / (1 + rnorm[k])) + 1);
         (void) sprintf(plab, "%g", rnorm[k]);
-	plen = strlen(plab);
+	plen = (int) strlen(plab);
 
 	/* See if the label will fit on the upper xaxis */
 	/* wait for some k, so we don't get fooled */

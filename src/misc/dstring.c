@@ -4,7 +4,10 @@ DESCRIPTION:This file contains the routines for manipulating dynamic strings.
 CONTENTS:   
 DATE:	    Wed Mar 24 18:38:28 CDT 2010
 REVISIONS:  $Log$
-REVISIONS:  Revision 1.4  2010-10-28 19:32:34  rlar
+REVISIONS:  Revision 1.5  2010-11-06 16:54:11  rlar
+REVISIONS:  (int) cast the return value of some strlen() invocations
+REVISIONS:
+REVISIONS:  Revision 1.4  2010/10/28 19:32:34  rlar
 REVISIONS:  wrap tmalloc MALLOC etc, into two macros TMALLOC and TREALLOC
 REVISIONS:
 REVISIONS:  Revision 1.3  2010/10/09 11:42:10  rlar
@@ -82,7 +85,7 @@ char *spice_dstring_append(SPICE_DSTRINGPTR dsPtr,char *string,int length)
     char *end ;				/* end of string */
 
     if( length < 0){
-	length = strlen(string) ;
+	length = (int) strlen(string) ;
     }
     newSize = length + dsPtr->length ;
 
@@ -242,7 +245,7 @@ char *spice_dstring_print( SPICE_DSTRINGPTR dsPtr,char *format, ... )
     va_start( args, format ) ;
     if( format ){
       vsprintf( buffer + orig_length, format, args ) ;
-      dsPtr->length = strlen( buffer ) ;
+      dsPtr->length = (int) strlen(buffer) ;
     } else {
       buffer = NULL ;
     }

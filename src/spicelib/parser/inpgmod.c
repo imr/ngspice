@@ -468,7 +468,7 @@ INPfindCard( char *name, IFcardInfo *table[], int numCards )
     int best;
     int length;
 
-    length = strlen(name);
+    length = (int) strlen(name);
 
     /* compare all the names in the card table to this name */
     best = E_MISSING;
@@ -496,7 +496,7 @@ INPfindParm( char *name, IFparm *table, int numParms )
     int id, bestId;
     int length;
 
-    length = strlen(name);
+    length = (int) strlen(name);
 
     /* compare all the names in the parameter table to this name */
     best = E_MISSING;

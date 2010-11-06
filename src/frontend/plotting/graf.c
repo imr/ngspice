@@ -868,7 +868,7 @@ getitright(char *buf, double num)
     if (p) {
 	return p - 4;
     } else {
-	k = strlen(buf);
+	k = (int) strlen(buf);
 	if (k > 8)
 	    return buf + 4;
 	else /* k >= 4 */
