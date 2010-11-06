@@ -52,10 +52,8 @@ dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
        is, extract 'xxxx'.  If not, report an error. */
 
     if (name != NULL) {
-	int length;
 
-	length = strlen(name);
-	if (((*name == 'V') || (*name == 'v')) && (length == 1)) {
+	if ((*name == 'V' || *name == 'v') && !name[1]) {
 
 	    INPgetNetTok(&line, &nname1, 0);
 	    INPtermInsert(ckt, &nname1, tab, &node1);

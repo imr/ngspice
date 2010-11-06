@@ -1,4 +1,9 @@
 2010-11-06  Robert Larice
+ * src/spicelib/parser/inp2dot.c ,
+ * src/spicelib/parser/inppas3.c :
+    tiny rewrite, don't invoke strlen() to check for strlen() == 1
+
+2010-11-06  Robert Larice
  * src/xspice/idn/idndig.c :
     change a (int) cast application, to avoid type conversion warnings
 

@@ -36,7 +36,6 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
     IFvalue ptemp;		/* a value structure to package
                                    resistance into */
     int which;			/* which analysis we are performing */
-    int length;			/* length of a name */
     CKTnode *node1;		/* the first node's node pointer */
 
 #ifdef TRACE
@@ -70,8 +69,7 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
 
 		/* check to see if in the form V(xxx) and grab the xxx */
 		if( *name == 0) break; /* end of line */
-		length = strlen(name);
-		if( (*name == 'V' || *(name) == 'v') && (length == 1)){
+		if( (*name == 'V' || *name == 'v') && !name[1] ) {
 		    /* looks like V - must be V(xx) - get xx now*/
 		    INPgetTok(&line,&name,1);
 		    if (INPtermInsert(ckt,&name,tab,&node1)!=E_EXISTS)
@@ -104,8 +102,7 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
 		INPgetTok(&line,&name,1);
 		/* check to see if in the form V(xxx) and grab the xxx */
 		if( *name == 0) break; /* end of line */
-		length = strlen(name);
-		if( (*name == 'V' || *(name) == 'v') && (length == 1)){
+		if( (*name == 'V' || *name == 'v') && !name[1] ) {
 		    /* looks like V - must be V(xx) - get xx now*/
 		    INPgetTok(&line,&name,1);
 		    if (INPtermInsert(ckt,&name,tab,&node1)!=E_EXISTS)
