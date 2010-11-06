@@ -820,9 +820,10 @@ fileInit_pass2(runDesc *run)
     /*  Allocate Row buffer  */
 
     if (run->binary) {
-      rowbuflen=(run->numData)*sizeof(double);
-      if (run->isComplex) rowbuflen *=2;
-      rowbuf=(double *)tmalloc(rowbuflen);
+        rowbuflen = (size_t) (run->numData) * sizeof(double);
+        if (run->isComplex)
+            rowbuflen *= 2;
+        rowbuf = (double *) tmalloc(rowbuflen);
     } else rowbuf=NULL;
 
     return;

@@ -1,4 +1,11 @@
 2010-11-06  Robert Larice
+ * src/frontend/outitf.c ,
+ * src/frontend/plotting/grid.c ,
+ * src/misc/string.c ,
+ * src/spicelib/devices/cktcrte.c :
+    add some `int' and `size_t' casts
+
+2010-11-06  Robert Larice
  * src/frontend/measure.c ,
  * src/frontend/outitf.c ,
  * src/frontend/quote.c ,

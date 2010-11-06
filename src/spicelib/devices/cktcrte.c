@@ -46,7 +46,7 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *inModPtr, GENinstance **inInstPtr, IFuid na
     printf("In CKTcrtElt, about to tmalloc new model, type = %d. . . \n", type);
 #endif
 
-    instPtr = (GENinstance *) tmalloc(*DEVices[type]->DEVinstSize);
+    instPtr = (GENinstance *) tmalloc((size_t) *DEVices[type]->DEVinstSize);
     if (instPtr == (GENinstance *)NULL)
 	return E_NOMEM;
 

@@ -324,7 +324,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
 
 	if (i < 0)
 		i = 6; /* No scale units */
-	else if (i >= sizeof(scaleletters) - 1) {
+	else if (i >= (int) sizeof(scaleletters) - 1) {
 		/* sizeof includes '\0' at end, which is useless */
 		/* i = sizeof(scaleletters) - 2; */
 		i = 6; /* No scale units */

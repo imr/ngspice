@@ -36,7 +36,7 @@ copy(const char *str)
 char *
 copy_substring(const char *str, const char *end)
 {
-    int n = end - str;
+    size_t n = (size_t) (end - str);
     char *p;
 
     if ((p = TMALLOC(char, n + 1))) {
