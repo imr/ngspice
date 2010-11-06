@@ -1,5 +1,11 @@
 2010-11-06  Robert Larice
  * src/frontend/numparam/general.h ,
+ * src/frontend/numparam/mystring.c ,
+ * src/frontend/numparam/numparam.h :
+    ci_prefix() returns a `bool', and change struct element `ivl' type to `int'
+
+2010-11-06  Robert Larice
+ * src/frontend/numparam/general.h ,
  * src/frontend/numparam/mystring.c :
     remove some unused functions from the numparam world
 

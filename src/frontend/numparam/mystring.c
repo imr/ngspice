@@ -24,7 +24,7 @@
 
 /***** primitive input-output ***/
 
-int
+bool
 ci_prefix (register char *p, register char *s)
 {
   while (*p)

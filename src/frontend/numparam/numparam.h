@@ -30,7 +30,7 @@ typedef struct _tentry {
   char *symbol ;
   int  level; /* subckt nesting level */
   double vl;    /* float value if defined */
-  unsigned  ivl;   /*int value or string buffer index*/
+  int  ivl;   /*int value or string buffer index*/
   char *  sbbase; /* string buffer base address if any */
   struct _tentry *pointer ;	/* pointer chain */
 } entry;

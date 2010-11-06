@@ -37,7 +37,7 @@ bool cins( SPICE_DSTRINGPTR s, char c);
 bool sins( SPICE_DSTRINGPTR s, char * t);
 int cpos( char c, char *s);
 int spos_( char * sub, char * s);
-int ci_prefix( register char *p, register char *s );
+bool ci_prefix( register char *p, register char *s );
 int length(char * s);
 bool steq(char * s, char * t);
 bool stne(char * s, char * t);
