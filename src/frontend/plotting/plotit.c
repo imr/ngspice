@@ -135,24 +135,21 @@ static void
 compress(struct dvec *d, double *xcomp, double *xind)
 {
     int cfac, ihi, ilo, newlen, i;
-    int sz = isreal(d) ? sizeof(double) : sizeof(ngcomplex_t);
-    double *dd;
-    ngcomplex_t *cc;
 
     if (xind) {
         ilo = (int) xind[0];
         ihi = (int) xind[1];
-        if ((ilo <= ihi) && (ilo > 0) && (ilo < d->v_length) &&
+        if ((ihi >= ilo) && (ilo > 0) && (ilo < d->v_length) &&
                 (ihi > 1) && (ihi <= d->v_length)) {
             newlen = ihi - ilo;
-            dd = (double *) tmalloc(newlen * sz);
-            cc = (ngcomplex_t *) dd;
             if (isreal(d)) {
-                bcopy(d->v_realdata + ilo, dd, newlen * sz);
+                double *dd = TMALLOC(double, newlen);
+                bcopy(d->v_realdata + ilo, dd, (size_t) newlen * sizeof(double));
                 tfree(d->v_realdata);
                 d->v_realdata = dd;
             } else {
-                bcopy(d->v_compdata + ilo, cc, newlen * sz);
+                ngcomplex_t *cc = TMALLOC(ngcomplex_t, newlen);
+                bcopy(d->v_compdata + ilo, cc, (size_t) newlen * sizeof(ngcomplex_t));
                 tfree(d->v_compdata);
                 d->v_compdata = cc;
             }

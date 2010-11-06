@@ -1,3 +1,7 @@
+2010-11-06  Robert Larice
+ * src/frontend/plotting/plotit.c :
+    tiny rewrite, avoid type conversion warnings
+
 2010-11-06  Dietmar Warning
  * analysis/dctran.c: use ceil function for correct round up
 
