@@ -2764,7 +2764,6 @@ inp_fix_param_values( struct line *deck )
   char *line, *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
   char *vec_str, *natok, *buffer, *newvec, *whereisgt;
   bool control_section = FALSE, has_paren = FALSE;
-  int n = 0;
   wordlist *wl, *nwl;
   
   while ( c != NULL ) {
@@ -2828,14 +2827,10 @@ inp_fix_param_values( struct line *deck )
       	/* A vector following the '=' token: code to put curly brackets around all params 
       	inside a pair of square brackets */
       	end_of_str = beg_of_str;
-      	n = 0;
-      	while (*end_of_str != ']') {
+      	while (*end_of_str != ']')
       	  end_of_str++;
-          n++;
-        }     
-      	vec_str = TMALLOC(char, n); /* string xx yyy from vector [xx yyy] */
-      	*vec_str = '\0';
-      	strncat(vec_str, beg_of_str + 1, n - 1);
+      	/* string xx yyy from vector [xx yyy] */
+        vec_str = copy_substring(beg_of_str + 1, end_of_str);
 
       	/* work on vector elements inside [] */
         nwl = NULL;
@@ -2900,14 +2895,10 @@ inp_fix_param_values( struct line *deck )
       	/* A complex value following the '=' token: code to put curly brackets around all params 
       	inside a pair < > */
       	end_of_str = beg_of_str;
-      	n = 0;
-      	while (*end_of_str != '>') {
+      	while (*end_of_str != '>')
       	  end_of_str++;
-          n++;
-        }     
-      	vec_str = TMALLOC(char, n); /* string xx yyy from vector [xx yyy] */
-      	*vec_str = '\0';
-      	strncat(vec_str, beg_of_str + 1, n - 1);
+      	/* string xx yyy from vector [xx yyy] */
+        vec_str = copy_substring(beg_of_str + 1, end_of_str);
 
       	/* work on tokens inside <> */
         nwl = NULL;
