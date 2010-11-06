@@ -831,14 +831,12 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 {
     int i;
     INPparseNode *p;
-    char buf[128], *name, *s;
+    char buf[128], *name;
     CKTnode *temp;
 
     /* Make sure the case is ok. */
     (void) strcpy(buf, fname);
-    for (s = buf; *s; s++)
-	if (isupper(*s))
-	    *s = tolower(*s);
+    strtolower(buf);
 
     p = TMALLOC(INPparseNode, 1);
 
@@ -971,14 +969,12 @@ static INPparseNode *mknnode(double number)
 static INPparseNode *mksnode(const char *string, void *ckt)
 {
     int i, j;
-    char buf[128], *s;
+    char buf[128];
     INPparseNode *p;
 
     /* Make sure the case is ok. */
     (void) strcpy(buf, string);
-    for (s = buf; *s; s++)
-	if (isupper(*s))
-	    *s = tolower(*s);
+    strtolower(buf);
 
     p = TMALLOC(INPparseNode, 1);
 

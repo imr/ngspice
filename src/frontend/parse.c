@@ -256,12 +256,10 @@ mkfnode(const char *func, struct pnode *arg)
     struct func *f;
     struct pnode *p, *q;
     struct dvec *d;
-    char buf[BSIZE_SP], *s;
+    char buf[BSIZE_SP];
 
     (void) strcpy(buf, func);
-    for (s = buf; *s; s++)      /* Make sure the case is ok. */
-        if (isupper(*s))
-            *s = tolower(*s);
+    strtolower(buf);  /* Make sure the case is ok. */
     for (f = &ft_funcs[0]; f->fu_name; f++)
         if (eq(f->fu_name, buf))
             break;

@@ -1,4 +1,14 @@
 2010-11-06  Robert Larice
+ * src/frontend/parse.c ,
+ * src/frontend/typesdef.c ,
+ * src/frontend/vectors.c ,
+ * src/frontend/numparam/spicenum.c ,
+ * src/spicelib/parser/inpptree.c ,
+ * src/xspice/evt/evtplot.c ,
+ * src/xspice/ipc/ipc.c :
+    tiny rewrite, make use of strtolower() and strtoupper()
+
+2010-11-06  Robert Larice
  * src/frontend/parser/input.c :
     tiny rewrite, type fixes
 

@@ -87,7 +87,6 @@ struct dvec *EVTfindvec(
   char *ptr;
 
   int  i;
-  int  len;
   int  num_nodes;
   int  udn_index;
   int  num_events;
@@ -118,10 +117,7 @@ struct dvec *EVTfindvec(
   name = MIFcopy(node);
 
   /* Convert to all lower case */
-  len = (int) strlen(name);
-  for(i = 0; i < len; i++)
-    if(isupper(name[i]))
-      name[i] = tolower(name[i]);
+  strtolower(name);
 
   /* Divide into the node name and member name */
   for(ptr = name; *ptr != '\0'; ptr++)

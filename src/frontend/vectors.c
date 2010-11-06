@@ -313,16 +313,12 @@ vec_fromplot(char *word, struct plot *plot)
     d = findvec(word, plot);
     if (!d) {
         (void) strcpy(buf, word);
-        for (s = buf; *s; s++)
-            if (isupper(*s))
-                *s = tolower(*s);
+        strtolower(buf);
         d = findvec(buf, plot);
     }
     if (!d) {
         (void) strcpy(buf, word);
-        for (s = buf; *s; s++)
-            if (islower(*s))
-                *s = *s - 'a' + 'A';
+        strtoupper(buf);
         d = findvec(buf, plot);
     }
 
@@ -869,9 +865,7 @@ vec_basename(struct dvec *v)
     } else
         (void) strcpy(buf, v->v_name);
     
-    for (t = buf; *t; t++)
-        if (isupper(*t))
-            *t = tolower(*t);
+    strtolower(buf);
     for (t = buf; isspace(*t); t++)
         ;
     s = t;

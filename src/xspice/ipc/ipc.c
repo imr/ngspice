@@ -836,9 +836,7 @@ ipc_send_double (
      char               *tag,    /* The node or instance */
      double             value )  /* The data value to send */
 {
-   int i;
    int len = 0;
-   int fmt_buffer_len;
            
    switch (protocol) {
    case IPC_PROTOCOL_V1:
@@ -847,11 +845,7 @@ ipc_send_double (
       strcat (fmt_buffer, " ");
 
       /* If talking to Mentor tools, must force upper case for Mspice 7.0 */
-      fmt_buffer_len = strlen(fmt_buffer);
-      for(i = 0; i < fmt_buffer_len; i++) {
-          if(islower(fmt_buffer[i]))
-              fmt_buffer[i] = toupper(fmt_buffer[i]);
-      }
+      strtoupper(fmt_buffer);
 
       len = stuff_binary_v1 (value, 0.0, 1, fmt_buffer, strlen(fmt_buffer));
       break;
@@ -877,9 +871,7 @@ ipc_send_complex (
      char               *tag,    /* The node or instance */
      Ipc_Complex_t      value )  /* The data value to send */
 {
-   int i;
    int len=0;
-   int fmt_buffer_len;
            
    switch (protocol) {
    case IPC_PROTOCOL_V1:
@@ -888,11 +880,7 @@ ipc_send_complex (
       strcat (fmt_buffer, " ");
 
       /* If talking to Mentor tools, must force upper case for Mspice 7.0 */
-      fmt_buffer_len = strlen(fmt_buffer);
-      for(i = 0; i < fmt_buffer_len; i++) {
-          if(islower(fmt_buffer[i]))
-              fmt_buffer[i] = toupper(fmt_buffer[i]);
-      }
+      strtoupper(fmt_buffer);
 
       len = stuff_binary_v1 (value.real, value.imag, 2, fmt_buffer,
                              strlen(fmt_buffer));

@@ -828,7 +828,6 @@ nupa_eval (char *s, int linenum, int orig_linenum)
 {
   int idef;			/* subckt definition line */
   char c, keep, *ptr;
-  unsigned int i;
   SPICE_DSTRING subname ;	/* dynamic string for subcircuit name */
   bool err = 1;
 
@@ -858,8 +857,7 @@ nupa_eval (char *s, int linenum, int orig_linenum)
       *nupa_inst_name = 'x';
       *ptr = keep;
 
-      for (i = 0; i < strlen (nupa_inst_name); i++)
-	nupa_inst_name[i] = toupper (nupa_inst_name[i]);
+      strtoupper(nupa_inst_name);
 
       idef = findsubckt (dicoS, s, &subname);
       if (idef > 0)

@@ -200,9 +200,10 @@ ft_plotabbrev(char *string)
 
     if (!string)
         return (NULL);
-    for (i = 0; string[i]; i++)
-        buf[i] = isupper(string[i]) ? tolower(string[i]) : string[i];
-    buf[i] = '\0';
+
+    strncpy(buf, string, sizeof(buf));
+    buf[sizeof(buf) - 1] = '\0';
+    strtolower(buf);
 
     for (i = 0; plotabs[i].p_name; i++)
         if (substring(plotabs[i].p_pattern, buf))
