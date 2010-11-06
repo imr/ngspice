@@ -1491,7 +1491,9 @@ numnodes(char *name)
     while (*name && isspace(*name))
 	name++;
 
-    c = (isupper(*name) ? tolower(*name) : *name);
+    c = *name;
+    if(isupper(c))
+        c = (char) tolower(c);
 
     (void) strncpy(buf, name, sizeof(buf));
     s = buf;
@@ -1721,7 +1723,9 @@ devmodtranslate(struct line *deck, char *subname)
 
     while (*t && isspace(*t))
       t++;
-    c = isupper(*t) ? tolower(*t) : *t;  /* set c to first char in line. . . . */
+    c = *t;                           /* set c to first char in line. . . . */
+    if(isupper(c))
+        c = (char) tolower(c);
     found = FALSE;
     buffer = TMALLOC(char, strlen(t) + strlen(subname) + 4);
 

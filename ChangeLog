@@ -1,4 +1,9 @@
 2010-11-06  Robert Larice
+ * src/frontend/subckt.c ,
+ * src/spicelib/parser/inppas2.c :
+    minor rewrite, avoid type conversion warnings
+
+2010-11-06  Robert Larice
  * src/spicelib/devices/bsim1/b1.c ,
  * src/spicelib/devices/bsim1/b1dset.c ,
  * src/spicelib/devices/bsim1/b1eval.c ,
