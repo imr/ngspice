@@ -3049,10 +3049,10 @@ get_number_terminals( char *c )
 
   switch (*c) {
   case 'r': case 'c': case 'l': case 'k': case 'f': case 'h': case 'b':
-  case 'v': case 'i': case 'w': case 'd':
+  case 'v': case 'i': case 'd':
     return 2;
     break;
-  case 'u': case 'j': case 'z':
+  case 'u': case 'j': case 'w': case 'z':
     return 3;
     break;
   case 't': case 'o': case 'g': case 'e': case 's': case 'y':
