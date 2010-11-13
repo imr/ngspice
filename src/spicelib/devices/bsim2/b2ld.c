@@ -88,7 +88,9 @@ B2load(GENmodel *inModel, CKTcircuit *ckt)
     double vgdo;
     double vgs;
     double von;
+#ifndef PREDICTOR
     double xfact;
+#endif
     double xnrm;
     double xrev;
     int Check;
@@ -530,8 +532,9 @@ B2load(GENmodel *inModel, CKTcircuit *ckt)
                     ((!(ckt->CKTmode & MODETRANOP)) ||
                     (!(ckt->CKTmode & MODEUIC)))  && (!(ckt->CKTmode 
                     &  MODEINITSMSIG))) goto line850; 
-         
+#ifndef NOBYPASS         
 line755:
+#endif
             if( here->B2mode > 0 ) {
 
 		args[0] = GateDrainOverlapCap;

@@ -1,3 +1,7 @@
+﻿2010-11-13  Dietmar Warning
+ * analysis/dctran.c, devices/*/*load.c: hide obsolete labels and local variables
+   for configuring --enable-nobypass and --enable-predictor
+
 2010-11-06  Robert Larice
  * src/frontend/inpcom.c :
     Thank you Éric Larouche, for the report and fix of a bug concerning

@@ -81,7 +81,10 @@ double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb, gcgdb, gcggb, gcgsb, gcsdb;
 double tol;
 #endif
 double gcsgb, gcssb, MJ, MJSW, MJSWG;
-double vbd, vbs, vds, vgb, vgd, vgs, vgdo, xfact;
+double vbd, vbs, vds, vgb, vgd, vgs, vgdo;
+#ifndef PREDICTOR
+double xfact;
+#endif
 double qgate=0.0, qbulk=0.0, qdrn=0.0, qsrc, qinoi, cqgate, cqbulk, cqdrn;
 double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;
 double Vgs_eff, Vfb;
@@ -126,7 +129,10 @@ double TempRatio, tmp1, tmp2, tmp3, tmp4;
 double DIBL_Sft, dDIBL_Sft_dVd, Lambda, dLambda_dVg;
 
 double Idtot, Ibtot;
-double tempv, a1, ScalingFactor;
+#ifndef NOBYPASS
+double tempv;
+#endif
+double a1, ScalingFactor;
 
 double Vgsteff, dVgsteff_dVg, dVgsteff_dVd, dVgsteff_dVb; 
 double Vdseff, dVdseff_dVg, dVdseff_dVd, dVdseff_dVb; 
@@ -2408,8 +2414,9 @@ finished:
 
           if (!ChargeComputationNeeded)
               goto line850; 
-         
+#ifndef NOBYPASS
 line755:
+#endif
           /* NQS begins */
           if ((here->BSIM3nqsMod) || (here->BSIM3acnqsMod))
           {   qcheq = -(qbulk + qgate);

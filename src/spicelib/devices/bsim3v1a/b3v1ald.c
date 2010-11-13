@@ -40,7 +40,10 @@ double delvbd, delvbs, delvds, delvgd, delvgs;
 double Vfbeff, dVfbeff_dVg, dVfbeff_dVd, dVfbeff_dVb, V3, V4;
 double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb, gcgdb, gcggb, gcgsb, gcsdb;
 double gcsgb, gcssb, PhiB, PhiBSW, MJ, MJSW;
-double vbd, vbs, vds, vgb, vgd, vgs, vgdo, xfact;
+double vbd, vbs, vds, vgb, vgd, vgs, vgdo;
+#ifndef PREDICTOR
+double xfact;
+#endif
 double qgate = 0.0, qbulk = 0.0, qdrn = 0.0, qsrc, cqgate, cqbulk, cqdrn;
 double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;
 double Vgs_eff, Vfb, dVfb_dVb, dVfb_dVd;
@@ -73,7 +76,10 @@ double Xdep, dXdep_dVb, lt1, dlt1_dVb, ltw, dltw_dVb, Delt_vth, dDelt_vth_dVb;
 double Theta0, dTheta0_dVb;
 double TempRatio, tmp1, tmp2, tmp3, tmp4;
 double DIBL_Sft, dDIBL_Sft_dVd, Pmos_factor;
-double tempv, a1;
+#ifndef NOBYPASS
+double tempv;
+#endif
+double a1;
 
 double Vgsteff, dVgsteff_dVg, dVgsteff_dVd, dVgsteff_dVb; 
 double Vdseff, dVdseff_dVg, dVdseff_dVd, dVdseff_dVb; 

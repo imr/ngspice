@@ -74,7 +74,9 @@ MESload(GENmodel *inModel, CKTcircuit *ckt)
     double vgs1;
     double vgst;
     double vto;
+#ifndef PREDICTOR
     double xfact;
+#endif
     double arg;
     int icheck;
     int ichk1;

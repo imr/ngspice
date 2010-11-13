@@ -65,7 +65,9 @@ MOS3load(GENmodel *inModel, CKTcircuit *ckt)
     double vgs1;
     double vgs;
     double von;
+#ifndef PREDICTOR
     double xfact = 0.0;
+#endif
     int xnrm;
     int xrev;
     double capgs = 0.0;   /* total gate-source capacitance */
@@ -1153,7 +1155,9 @@ innerline1000:;
 		    }
 #endif /*PREDICTOR*/
 		}
+#ifndef NOBYPASS
 	    bypass:
+#endif
 		if(SenCond) continue;
 		    
 		if ( (ckt->CKTmode & (MODEINITTRAN)) || 

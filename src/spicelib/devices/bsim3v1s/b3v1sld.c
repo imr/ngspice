@@ -40,7 +40,10 @@ double delvbd, delvbs, delvds, delvgd, delvgs;
 double Vfbeff, dVfbeff_dVg, dVfbeff_dVd, dVfbeff_dVb, V3, V4;
 double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb, gcgdb, gcggb, gcgsb, gcsdb;
 double gcsgb, gcssb, PhiB, PhiBSW, MJ, MJSW, PhiBSWG, MJSWG;
-double vbd, vbs, vds, vgb, vgd, vgs, vgdo, xfact;
+double vbd, vbs, vds, vgb, vgd, vgs, vgdo;
+#ifndef PREDICTOR
+double xfact;
+#endif
 double qgate=0.0, qbulk=0.0, qdrn=0.0, qsrc=0.0, cqgate=0.0, cqbulk=0.0, cqdrn=0.0;
 double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;
 double Vgs_eff, Vfb, dVfb_dVb, dVfb_dVd;

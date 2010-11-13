@@ -50,7 +50,9 @@ JFET2load(GENmodel *inModel, CKTcircuit *ckt)
     double vds;
     double vgd;
     double vgs;
+#ifndef PREDICTOR
     double xfact;
+#endif
     int icheck;
     int ichk1;
     int error;

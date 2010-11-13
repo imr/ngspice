@@ -109,7 +109,9 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
     double vgbs;
     double von;
     double vt;
+#ifndef PREDICTOR
     double xfact;
+#endif
     int xnrm;
     int xrev;
 
@@ -2137,8 +2139,9 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
                     ((!(ckt->CKTmode & MODETRANOP)) ||
                     (!(ckt->CKTmode & MODEUIC)))  && (!(ckt->CKTmode 
                     &  MODEINITSMSIG))) goto bypass2;
+#ifndef NOBYPASS
 bypass1:
-            
+#endif            
             if (here->SOI3mode>0) {
               Frontcapargs[0] = FrontGateDrainOverlapCap;
               Frontcapargs[1] = FrontGateSourceOverlapCap;

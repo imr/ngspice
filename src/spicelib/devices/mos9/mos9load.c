@@ -66,7 +66,9 @@ MOS9load(GENmodel *inModel, CKTcircuit *ckt)
     double vgs1;
     double vgs;
     double von;
+#ifndef PREDICTOR
     double xfact = 0.0;
+#endif
     int xnrm;
     int xrev;
     double capgs = 0.0;   /* total gate-source capacitance */
@@ -1168,7 +1170,9 @@ next2:      *(ckt->CKTstate0 + here->MOS9vbs) = vbs;
                 }
 #endif /*PREDICTOR*/
             }
+#ifndef NOBYPASS
 bypass:
+#endif
             if(SenCond) continue;
 
 

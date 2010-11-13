@@ -150,7 +150,10 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
   double delvbd, delvbs, delvds, delvgd, delvgs;
   double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb;
   double gcgdb, gcggb, gcgsb, gcsdb, gcsgb, gcssb;
-  double geq, xfact;
+  double geq;
+#ifndef PREDICTOR
+  double xfact;
+#endif
   double vbd, vbs, vcrit, vds, vgb, vgd, vgdo, vgs, von;
   double qgd, qgs, qgb;
   double gbbdp, gbbsp, gbspg, gbspdp, gbspb, gbspsp;
@@ -981,8 +984,9 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
     /* bulk and channel charge plus overlaps */
     
     if (!ChargeComputationNeeded) goto line850; 
-    
+#ifndef NOBYPASS  
  line755:
+#endif
     cgdo = here->HSM1_cgdo;
     cgso = here->HSM1_cgso;
     cgbo = here->HSM1_cgbo;

@@ -146,7 +146,10 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     double gcbdb, gcbgb, gcbsb, gcbeb, gcbT;
     double gcedb, gcegb, gcesb, gceeb, gceT;
     double gcTt, gTtg, gTtb, gTtdp, gTtt, gTtsp;
-    double vbd=0.0, vbs, vds, vgb, vgd, vgs, vgdo, xfact;
+    double vbd=0.0, vbs, vds, vgb, vgd, vgs, vgdo;
+#ifndef PREDICTOR
+    double xfact;
+#endif
     double vg, vd, vs, vp, ve, vb;
     double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;
 
@@ -8409,8 +8412,9 @@ finished: /* returning Values to Calling Routine */
 
             if (!ChargeComputationNeeded)
                 goto line850;
-
+#ifndef NOBYPASS
 line755:
+#endif
             ag0 = ckt->CKTag[0];
 
             T0 = vgd + DELTA_1;

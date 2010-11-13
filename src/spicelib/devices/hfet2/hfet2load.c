@@ -54,7 +54,9 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
   double vgs1;
   double vt;
   double vto;
+#ifndef PREDICTOR
   double xfact;
+#endif
   int    icheck;
   int    ichk1;
   int    error;

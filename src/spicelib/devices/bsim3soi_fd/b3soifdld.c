@@ -114,7 +114,10 @@ double gcddb, gcdgb, gcdsb, gcdeb, gcdT;
 double gcbdb, gcbgb, gcbsb, gcbeb, gcbT;
 double gcedb, gcegb, gcesb, gceeb, gceT;
 double gcTt, gTtg, gTtb, gTte, gTtdp, gTtt, gTtsp;
-double vbd, vbs, vds, vgb, vgd, vgs, vgdo, xfact;
+double vbd, vbs, vds, vgb, vgd, vgs, vgdo;
+#ifndef PREDICTOR
+double xfact;
+#endif
 double vg, vd, vs, vp, ve, vb;
 double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;
 double Vgs_eff, Vfb, dVfb_dVb, dVfb_dVd, dVfb_dT;
@@ -2768,8 +2771,9 @@ if (here->B3SOIFDdebugMod > 2)
 
 		  if (!ChargeComputationNeeded)
 		      goto line850; 
-		 
+#ifndef NOBYPASS
 	line755:
+#endif
 		  ag0 = ckt->CKTag[0];
 
 		  T0 = vgd + DELTA_1;

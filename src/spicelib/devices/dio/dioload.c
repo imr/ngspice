@@ -47,7 +47,9 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double geq;
     double gspr;    /* area-scaled conductance */
     double sarg;
+#ifndef NOBYPASS
     double tol;     /* temporary for tolerence calculations */
+#endif
     double vd;      /* current diode voltage */
     double vdtemp;
     double vt;      /* K t / Q */
@@ -324,9 +326,9 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
 
             if(SenCond)  continue;
 
-
+#ifndef NOBYPASS
             load:
-
+#endif
             /*
              *   load current vector
              */

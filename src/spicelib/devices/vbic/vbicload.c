@@ -52,7 +52,10 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     ,Qbco,Qbco_Vbc,Ibcp,Ibcp_Vbcp,Iccp,Iccp_Vbep,Iccp_Vbci
     ,Iccp_Vbcp,Irs,Irs_Vrs,Qbcp,Qbcp_Vbcp,SCALE;
     int iret;
-    double vce, xfact;
+    double vce;
+#ifndef PREDICTOR
+    double xfact;
+#endif
     double vt;
     double delvbei;
     double delvbex;

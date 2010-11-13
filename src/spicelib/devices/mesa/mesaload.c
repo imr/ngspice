@@ -78,7 +78,9 @@ MESAload(GENmodel *inModel, CKTcircuit *ckt)
     double vgdpp = 0.0;    
     double vgs1 = 0.0;
     double vgd1 = 0.0;
+#ifndef PREDICTOR
     double xfact;
+#endif
     double temp;
     double vted;
     double vtes;

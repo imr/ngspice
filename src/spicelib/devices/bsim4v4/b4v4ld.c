@@ -77,7 +77,10 @@ double delvges, delvgms, vgmb;
 double gcgmgmb=0.0, gcgmdb=0.0, gcgmsb=0.0, gcdgmb, gcsgmb;
 double gcgmbb=0.0, gcbgmb, qgmb, qgmid=0.0, ceqqgmid;
 
-double vbd, vbs, vds, vgb, vgd, vgs, vgdo, xfact;
+double vbd, vbs, vds, vgb, vgd, vgs, vgdo;
+#ifndef PREDICTOR
+double xfact;
+#endif
 double vdbs, vdbd, vsbs, vsbdo, vsbd;
 double delvdbs, delvdbd, delvsbs;
 double delvbd_jct, delvbs_jct, vbs_jct, vbd_jct;
@@ -3686,8 +3689,9 @@ finished:
           here->BSIM4v4cgso = cgso;
           here->BSIM4v4qgso = qgso;
 
-
+#ifndef NOBYPASS
 line755:
+#endif
           ag0 = ckt->CKTag[0];
           if (here->BSIM4v4mode > 0)
           {   if (here->BSIM4v4trnqsMod == 0)

@@ -63,7 +63,9 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
     double vgdt;
     double vgs;
     double vgst;
+#ifndef PREDICTOR
     double xfact;
+#endif
     /* Modification for Sydney University JFET model */
     double vto;
     double apart,cpart;

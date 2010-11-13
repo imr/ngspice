@@ -119,7 +119,9 @@ BJT2load(GENmodel *inModel, CKTcircuit *ckt)
     double vtc;
     double vte;
     double vtn;
+#ifndef PREDICTOR
     double xfact;
+#endif
     double xjrb;
     double xjtf;
     double xmc;
@@ -753,7 +755,9 @@ next2:
                perturbation is being carried out */
 
             if(SenCond)continue;
+#ifndef NOBYPASS
 load:
+#endif
             m = here->BJT2m;
             /*
              *  load current excitation vector

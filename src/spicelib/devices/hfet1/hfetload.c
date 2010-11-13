@@ -66,7 +66,9 @@ int HFETAload(GENmodel *inModel, CKTcircuit *ckt)
     double vgs1;
     double vgd1;
     double vds1;
+#ifndef PREDICTOR
     double xfact;
+#endif
     double temp;
     double vt;
     double vgspp=0;

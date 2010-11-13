@@ -74,7 +74,9 @@ MOS2load(GENmodel *inModel, CKTcircuit *ckt)
     double vgs;
     double von;
     double vt;      /* K * T / Q */
+#ifndef PREDICTOR
     double xfact = 0.0;
+#endif
     double capgs = 0.0;   /* total gate-source capacitance */
     double capgd = 0.0;   /* total gate-drain capacitance */
     double capgb = 0.0;   /* total gate-bulk capacitance */
