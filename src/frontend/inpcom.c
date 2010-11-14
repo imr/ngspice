@@ -466,71 +466,70 @@ chk_for_line_continuation( char *line ) {
 //
 // change .macro --> .subckt
 //        .eom   --> .ends
-//        .subckt (1 2 3) --> .subckt 1 2 3
-//        v(1,11)         --> 0
+//        .subckt name (1 2 3) --> .subckt name 1 2 3
 //        x1 (1 2 3)      --> x1 1 2 3
 //        .param func1(x,y) = {x*y} --> .func func1(x,y) {x*y}
 //
 static void
 inp_fix_macro_param_func_paren_io( struct line *begin_card ) {
-  struct line *card;
-  char        *str_ptr, *new_str;
-  bool        is_func = FALSE;
+    struct line *card;
+    char        *str_ptr, *new_str;
+    bool        is_func = FALSE;
 
-  for ( card = begin_card; card != NULL; card = card->li_next ) {
+    for ( card = begin_card; card != NULL; card = card->li_next ) {
 
-    if ( *card->li_line == '*' ) continue;
+        if ( *card->li_line == '*' ) continue;
 
-    if ( ciprefix( ".macro", card->li_line ) || ciprefix( ".eom", card->li_line ) ) {
-      str_ptr = card->li_line;
-      while( !isspace(*str_ptr) ) str_ptr++;
+        if ( ciprefix( ".macro", card->li_line ) || ciprefix( ".eom", card->li_line ) ) {
+            str_ptr = card->li_line;
+            while( !isspace(*str_ptr) ) str_ptr++;
 
-      if ( ciprefix( ".macro", card->li_line ) ) {
-	new_str = TMALLOC(char, strlen(".subckt") + strlen(str_ptr) + 1);
-	sprintf( new_str, ".subckt%s", str_ptr );
-      } else {
-	new_str = TMALLOC(char, strlen(".ends") + strlen(str_ptr) + 1);
-	sprintf( new_str, ".ends%s", str_ptr );
-      }
+            if ( ciprefix( ".macro", card->li_line ) ) {
+                new_str = TMALLOC(char, strlen(".subckt") + strlen(str_ptr) + 1);
+                sprintf( new_str, ".subckt%s", str_ptr );
+            } else {
+                new_str = TMALLOC(char, strlen(".ends") + strlen(str_ptr) + 1);
+                sprintf( new_str, ".ends%s", str_ptr );
+            }
 
-      tfree( card->li_line );
-      card->li_line = new_str;
+            tfree( card->li_line );
+            card->li_line = new_str;
+        }
+        if ( ciprefix( ".subckt", card->li_line ) || ciprefix( "x", card->li_line ) ) {
+            str_ptr = card->li_line;
+            while( !isspace(*str_ptr) ) str_ptr++;  // skip over .subckt, instance name
+            while( isspace(*str_ptr)  ) str_ptr++;
+            if ( ciprefix( ".subckt", card->li_line ) ) {
+                while( !isspace(*str_ptr) ) str_ptr++;  // skip over subckt name
+                while( isspace(*str_ptr)  ) str_ptr++;
+            }
+            if ( *str_ptr == '(' ) {
+                *str_ptr = ' ';
+                while ( *str_ptr && *str_ptr != '\0' ) {
+                    if ( *str_ptr == ')' ) { *str_ptr = ' '; break; }
+                    str_ptr++;
+                }
+                card->li_line = inp_remove_ws(card->li_line); /* remove the extra white spaces just introduced */
+            }
+        }
+        is_func = FALSE;
+        if ( ciprefix( ".param", card->li_line ) ) {
+            str_ptr = card->li_line;
+            while ( !isspace( *str_ptr ) ) str_ptr++;  // skip over .param
+            while ( isspace( *str_ptr )  ) str_ptr++;
+            while ( !isspace( *str_ptr ) && *str_ptr != '=' ) {
+                if ( *str_ptr == '(' ) is_func = TRUE;
+                str_ptr++;
+            }
+
+            if ( is_func ) {
+                if ( ( str_ptr = strstr( card->li_line, "=" ) ) ) *str_ptr = ' ';
+                str_ptr = card->li_line + 1;
+                *str_ptr = 'f'; *(str_ptr+1) = 'u'; *(str_ptr+2) = 'n';
+                *(str_ptr+3) = 'c'; *(str_ptr+4) = ' ';
+            }
+        }
     }
-    if ( ciprefix( ".subckt", card->li_line ) || ciprefix( "x", card->li_line ) ) {
-      str_ptr = card->li_line;
-      while( !isspace(*str_ptr) ) str_ptr++;  // skip over .subckt, instance name
-      while( isspace(*str_ptr)  ) str_ptr++;
-      if ( ciprefix( ".subckt", card->li_line ) ) {
-	while( !isspace(*str_ptr) ) str_ptr++;  // skip over subckt name
-	while( isspace(*str_ptr)  ) str_ptr++;
-      }
-      if ( *str_ptr == '(' ) {
-	*str_ptr = ' ';
-	while ( *str_ptr && *str_ptr != '\0' ) {
-	  if ( *str_ptr == ')' ) { *str_ptr = ' '; break; }
-	  str_ptr++;
-	}
-      }
-    }
-    is_func = FALSE;
-    if ( ciprefix( ".param", card->li_line ) ) {
-      str_ptr = card->li_line;
-      while ( !isspace( *str_ptr ) ) str_ptr++;  // skip over .param
-      while ( isspace( *str_ptr )  ) str_ptr++;
-      while ( !isspace( *str_ptr ) && *str_ptr != '=' ) {
-	if ( *str_ptr == '(' ) is_func = TRUE;
-	str_ptr++;
-      }
-
-      if ( is_func ) {
-	if ( ( str_ptr = strstr( card->li_line, "=" ) ) ) *str_ptr = ' ';
-
-	str_ptr = card->li_line + 1;
-	*str_ptr = 'f'; *(str_ptr+1) = 'u'; *(str_ptr+2) = 'n';
-	*(str_ptr+3) = 'c'; *(str_ptr+4) = ' ';
-      }
-    }
-  }
 }
 
 static char *
