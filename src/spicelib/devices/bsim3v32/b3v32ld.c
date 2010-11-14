@@ -2684,7 +2684,9 @@ finished:
           if (!ChargeComputationNeeded)
               goto line850; 
          
+#ifndef NOBYPASS
 line755:
+#endif
           /* NQS begins */
           if (here->BSIM3v32nqsMod)
           {   qcheq = -(qbulk + qgate);
