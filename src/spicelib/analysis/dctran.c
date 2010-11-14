@@ -32,7 +32,7 @@ Modified: 2000  AlansFixes
 #endif
 
 #ifdef PREDICTOR
-#include "nipred.h"
+#include "../maths/ni/nipred.h"
 #endif /* PREDICTOR */
 
 #ifdef HAS_WINDOWS    /* hvogt 10.03.99, nach W. Mues */
