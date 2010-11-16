@@ -80,6 +80,7 @@ int MIFmAsk(
 
     Mif_Boolean_t  is_array;
 
+    IGNORE(ckt);
 
     /* Arrange for access to MIF specific data in the model */
     model = (MIFmodel *) inModel;

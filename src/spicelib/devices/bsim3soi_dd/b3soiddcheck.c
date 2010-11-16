@@ -26,6 +26,8 @@ struct b3soiddSizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
     
+    IGNORE(ckt);
+
     if ((fplog = fopen("b3soiddv2check.log", "w")) != NULL)
     {   pParam = here->pParam;
 	fprintf(fplog, "B3SOI(DD)V2.1 Parameter Check\n");

@@ -25,6 +25,10 @@ CKTfndAnal(CKTcircuit *ckt, int *analIndex, JOB **anal, IFuid name, TSKtask *inT
     TSKtask *task = /* fixme, drop that */ inTask;
     JOB *here;
 
+    IGNORE(ckt);
+    IGNORE(analIndex);
+    IGNORE(taskName);
+
     for (here = task->jobs; here; here = here->JOBnextJob) {
         if(strcmp(here->JOBname,name)==0) {
             if(anal) *anal = here;

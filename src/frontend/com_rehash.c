@@ -17,6 +17,8 @@ com_rehash(wordlist *wl)
 {
     char *s;
 
+    IGNORE(wl);
+
     if (!cp_dounixcom) {
         fprintf(cp_err, "Error: unixcom not set.\n");
         return;

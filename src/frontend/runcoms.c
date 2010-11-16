@@ -383,6 +383,10 @@ ft_dorun(char *file)
 bool
 ft_getOutReq(FILE **fpp, struct plot **plotp, bool *binp, char *name, char *title)
 {
+   IGNORE(title);
+   IGNORE(name);
+   IGNORE(plotp);
+
    if (rawfileFp) {
        *fpp = rawfileFp;
        *binp = rawfileBinary;

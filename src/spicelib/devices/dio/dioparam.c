@@ -19,6 +19,9 @@ int
 DIOparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     DIOinstance *here = (DIOinstance*)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case DIO_AREA:
             here->DIOarea = value->rValue;

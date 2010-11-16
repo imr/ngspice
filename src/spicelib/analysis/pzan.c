@@ -23,6 +23,8 @@ PZan(CKTcircuit *ckt, int reset)
     IFuid *nameList;
     void *plot = NULL;
 
+    IGNORE(reset);
+
     error = PZinit(ckt);
     if (error != OK) return error;
 

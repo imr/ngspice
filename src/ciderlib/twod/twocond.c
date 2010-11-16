@@ -274,6 +274,8 @@ double
   double gTotal = 0.0;
   int nInc, pInc;
   
+  IGNORE(pDevice);
+
   /* for one carrier the rest of this code relies on appropriate 
      current derivative term to be zero */
   if ( !OneCarrier ) {
@@ -433,6 +435,8 @@ double
   double dPsiDv;
   double gTotal = 0.0;
   
+  IGNORE(pDevice);
+
   if ( !tranAnalysis ) {
     return( gTotal );
   }

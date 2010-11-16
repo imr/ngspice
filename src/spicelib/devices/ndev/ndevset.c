@@ -33,6 +33,9 @@ int NDEVsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states
   int i,j;
   CKTnode *node;        
   
+  IGNORE(ckt);
+  IGNORE(states);
+
     /*  loop through all the ndev models */
     for( ; model != NULL; model = model->NDEVnextModel ) {
 

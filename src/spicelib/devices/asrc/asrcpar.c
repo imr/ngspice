@@ -18,6 +18,9 @@ int
 ASRCparam(int param, IFvalue *value, GENinstance *fast, IFvalue *select)
 {
     ASRCinstance *here = (ASRCinstance*)fast;
+
+    IGNORE(select);
+
     switch(param) {
         case ASRC_VOLTAGE:
             here->ASRCtype = ASRC_VOLTAGE;

@@ -19,6 +19,9 @@ int
 B2mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     B2model *model = (B2model *)inst;
+
+    IGNORE(ckt);
+
         switch(which) {
         case BSIM2_MOD_VFB0: 
             value->rValue = model->B2vfb0; 

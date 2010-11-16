@@ -22,6 +22,8 @@ struct bsim3v1sSizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
     
+    IGNORE(ckt);
+
     if ((fplog = fopen("BSIM3V3_1S_check.log", "w")) != NULL)
     {   pParam = here->pParam;
 	fprintf(fplog, "BSIM3V3.1 (Serban) Parameter Check\n");

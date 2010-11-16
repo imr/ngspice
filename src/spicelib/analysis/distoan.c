@@ -56,6 +56,8 @@ DISTOan(CKTcircuit *ckt, int restart)
     double time,time1;
 #endif
 
+        IGNORE(restart);
+
 
 		/* start at beginning */
 

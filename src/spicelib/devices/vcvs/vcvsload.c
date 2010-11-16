@@ -22,6 +22,8 @@ VCVSload(GENmodel *inModel, CKTcircuit *ckt)
     VCVSmodel *model = (VCVSmodel *)inModel;
     VCVSinstance *here;
 
+    IGNORE(ckt);
+
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->VCVSnextModel ) {
 

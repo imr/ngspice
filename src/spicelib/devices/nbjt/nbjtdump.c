@@ -154,6 +154,8 @@ NBJTacct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
   register NBJTinstance *inst;
   OUTPcard *output;
 
+  IGNORE(ckt);
+
   for (; model != NULL; model = model->NBJTnextModel) {
     output = model->NBJToutputs;
     for (inst = model->NBJTinstances; inst != NULL;

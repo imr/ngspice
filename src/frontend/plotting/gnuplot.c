@@ -236,6 +236,14 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
 
     char filename_data[128];
 
+    IGNORE(xlims);
+    IGNORE(ylims);
+    IGNORE(title);
+    IGNORE(xlabel);
+    IGNORE(ylabel);
+    IGNORE(gridtype);
+    IGNORE(plottype);
+
     sprintf(filename_data, "%s.data", filename);
 
     /* Sanity checking. */

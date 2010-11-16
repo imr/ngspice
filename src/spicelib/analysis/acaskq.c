@@ -16,6 +16,8 @@ Author: 1985 Thomas L. Quarles
 int 
 ACaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    IGNORE(ckt);
+
     switch(which) {
 
     case AC_START:

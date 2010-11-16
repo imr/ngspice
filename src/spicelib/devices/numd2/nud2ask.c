@@ -22,6 +22,9 @@ int
 NUMD2ask(CKTcircuit *ckt, GENinstance *inInst, int which, IFvalue *value, IFvalue *select)
 {
   NUMD2instance *inst = (NUMD2instance *) inInst;
+
+  IGNORE(select);
+
   switch (which) {
   case NUMD2_WIDTH:
     value->rValue = inst->NUMD2width;

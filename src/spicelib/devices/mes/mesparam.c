@@ -17,6 +17,9 @@ int
 MESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MESinstance *here = (MESinstance*)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case MES_AREA:
             here->MESarea = value->rValue;

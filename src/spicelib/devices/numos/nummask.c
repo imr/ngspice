@@ -20,6 +20,9 @@ int
 NUMOSask(CKTcircuit *ckt, GENinstance *inInst, int which, IFvalue *value, IFvalue *select)
 {
   NUMOSinstance *inst = (NUMOSinstance *) inInst;
+
+  IGNORE(select);
+
   switch (which) {
   case NUMOS_AREA:
     value->rValue = inst->NUMOSarea;

@@ -22,6 +22,8 @@ NBJT2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
   SPcomplex yIeVce, yIeVbe;
   SPcomplex yIcVce, yIcVbe;
   double startTime;
+
+  IGNORE(ckt);
  
   for (; model != NULL; model = model->NBJT2nextModel) {
     FieldDepMobility = model->NBJT2models->MODLfieldDepMobility;

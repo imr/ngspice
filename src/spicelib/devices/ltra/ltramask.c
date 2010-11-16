@@ -19,6 +19,8 @@ LTRAmAsk(CKTcircuit *ckt, GENmodel *inModel, int param, IFvalue *value)
 {
   LTRAmodel *mods = (LTRAmodel *) inModel;
 
+  IGNORE(ckt);
+
   switch (param) {
   case LTRA_MOD_LTRA:
     value->iValue = 1;

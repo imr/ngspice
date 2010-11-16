@@ -28,6 +28,8 @@ IFvalue *select)
 
     BSIM4v3instance *here = (BSIM4v3instance*)inst;
 
+    IGNORE(select);
+
     if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
 
     switch(param) 

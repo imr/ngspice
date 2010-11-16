@@ -18,6 +18,9 @@ int
 MOS6param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MOS6instance *here = (MOS6instance *)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case MOS6_TEMP:
             here->MOS6temp = value->rValue+CONSTCtoK;

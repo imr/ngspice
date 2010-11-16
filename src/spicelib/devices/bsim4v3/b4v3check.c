@@ -32,6 +32,8 @@ struct bsim4v3SizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
     
+    IGNORE(ckt);
+
     if ((fplog = fopen("bsim4v3.out", "w")) != NULL)
     {   pParam = here->pParam;
         fprintf(fplog, "BSIM4v3: Berkeley Short Channel IGFET Model-4\n");

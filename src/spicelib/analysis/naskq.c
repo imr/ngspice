@@ -13,6 +13,8 @@ Author: 1987 Gary W. Ng
 int 
 NaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    IGNORE(ckt);
+
     switch(which) {
 
     case N_OUTPUT:

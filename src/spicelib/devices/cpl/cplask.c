@@ -20,6 +20,9 @@ CPLask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
 {
     CPLinstance *here = (CPLinstance *)inst;
 
+    IGNORE(ckt);
+    IGNORE(select);
+
     switch(which) {
         case CPL_POS_NODE:
             value->v.vec.sVec = here->in_node_names;

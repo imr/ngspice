@@ -20,6 +20,8 @@ LTRAtemp(GENmodel *inModel, CKTcircuit *ckt)
   LTRAmodel *model = (LTRAmodel *) inModel;
   LTRAinstance *here;
 
+  IGNORE(ckt);
+
   /* loop through all the transmission line models */
   for (; model != NULL; model = model->LTRAnextModel) {
     /*

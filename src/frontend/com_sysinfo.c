@@ -90,6 +90,8 @@ void com_sysinfo(wordlist *wl)
    int errorcode;
    TesSystemInfo* info;
 
+   IGNORE(wl);
+
    info = TMALLOC(TesSystemInfo, 1);
 
    errorcode = tesCreateSystemInfo(info);   

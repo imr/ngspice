@@ -17,6 +17,9 @@ int
 CCVSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     CCVSinstance *here = (CCVSinstance*)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case CCVS_TRANS:
             here->CCVScoeff = value->rValue;

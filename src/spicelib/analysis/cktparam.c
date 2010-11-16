@@ -20,6 +20,9 @@ CKTparam(CKTcircuit *ckt, GENinstance *fast, int param, IFvalue *val, IFvalue *s
 {
     int type;
     GENinstance *myfast = /*fixme*/ fast;
+
+    IGNORE(ckt);
+
     type = myfast->GENmodPtr->GENmodType;
     if(((*DEVices[type]).DEVparam)) {
         return(((*((*DEVices[type]).DEVparam)) (param,val,myfast,selector)));

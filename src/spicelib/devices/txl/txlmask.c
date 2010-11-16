@@ -21,6 +21,9 @@ int
 TXLmodAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
     TXLmodel *model = (TXLmodel *)inModel;
+
+    IGNORE(ckt);
+
     switch(which) {
         case TXL_R:
             value->rValue = model->R;

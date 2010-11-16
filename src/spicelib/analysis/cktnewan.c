@@ -18,6 +18,8 @@ extern SPICEanalysis *analInfo[];
 int
 CKTnewAnal(CKTcircuit *ckt, int type, IFuid name, JOB **analPtr, TSKtask *taskPtr)
 {
+    IGNORE(ckt);
+
     if(type==0) {
         /* special case for analysis type 0 == option card */
         *analPtr = &(taskPtr->taskOptions); /* pointer to the task itself */

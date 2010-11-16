@@ -22,6 +22,9 @@ int
 NBJT2ask(CKTcircuit *ckt, GENinstance *inInst, int which, IFvalue *value, IFvalue *select)
 {
   NBJT2instance *inst = (NBJT2instance *) inInst;
+
+  IGNORE(select);
+
   switch (which) {
   case NBJT2_WIDTH:
     value->rValue = inst->NBJT2width;

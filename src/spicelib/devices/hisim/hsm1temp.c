@@ -19,6 +19,9 @@
 int 
 HSM1temp(GENmodel *inModel, CKTcircuit *ckt)
 {
+  IGNORE(inModel);
+  IGNORE(ckt);
+
   /* "ckt->CKTtemp" dependence of HiSIM parameters is treated all in
    * HSM1evaluate102/112/120(). So there is no task in HSM1temp().
    */

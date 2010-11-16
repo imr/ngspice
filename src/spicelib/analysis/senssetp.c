@@ -16,6 +16,8 @@ SENSsetParam(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     SENS_AN	*sinfo = (SENS_AN *) anal;
 
+    IGNORE(ckt);
+
     switch(which) {
 
     case SENS_POS:

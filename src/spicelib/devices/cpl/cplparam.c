@@ -19,6 +19,9 @@ CPLparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
 
     CPLinstance *here = (CPLinstance *)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case CPL_POS_NODE:
             here->in_node_names = value->v.vec.sVec;

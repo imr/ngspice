@@ -15,6 +15,9 @@ int
 LTRAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
   LTRAinstance *here = (LTRAinstance *) inst;
+
+  IGNORE(select);
+
   switch (param) {
   case LTRA_V1:
     here->LTRAinitVolt1 = value->rValue;

@@ -27,6 +27,8 @@ B2temp(GENmodel *inModel, CKTcircuit *ckt)
     double CoxWoverL, Inv_L, Inv_W, tmp;
     int Size_Not_Found;
 
+    IGNORE(ckt);
+
     /*  loop through all the B2 device models */
     for( ; model != NULL; model = model->B2nextModel ) {
     

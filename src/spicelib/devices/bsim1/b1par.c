@@ -18,6 +18,9 @@ B1param(int param, IFvalue *value, GENinstance *inst,
         IFvalue *select)
 {
     B1instance *here = (B1instance*)inst;
+    
+    IGNORE(select);
+
     switch(param) {
         case BSIM1_W:
             here->B1w = value->rValue;

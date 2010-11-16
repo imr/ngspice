@@ -20,6 +20,9 @@ int
 CAPmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     CAPmodel *here = (CAPmodel*)inst;
+
+    IGNORE(ckt);
+
     switch(which) {
         case CAP_MOD_TNOM:
 	    value->rValue = here->CAPtnom-CONSTCtoK;

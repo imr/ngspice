@@ -20,6 +20,9 @@ int
 B3SOIDDparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     B3SOIDDinstance *here = (B3SOIDDinstance*)inst;
+
+    IGNORE(select);
+
     switch(param) 
     {   case B3SOIDD_W:
             here->B3SOIDDw = value->rValue;

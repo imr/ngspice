@@ -393,6 +393,8 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
   double *OldRhsOld, *OldCKTstate0;
   CKTnode *n;
 
+  IGNORE(iterlim);
+
   ckt->CKTmode = firstmode;
   (*(SPfrontEnd->IFerror)) (ERR_INFO,
 			    "Starting source stepping", (IFuid *) NULL);
@@ -598,6 +600,8 @@ spice3_src (CKTcircuit * ckt, long int firstmode,
 {
 
   int converged, i;
+
+  IGNORE(iterlim);
 
   ckt->CKTmode = firstmode;
   (*(SPfrontEnd->IFerror)) (ERR_INFO,

@@ -410,6 +410,8 @@ right_consts(CPLinstance *here,	CPLine *cp, int	t, int time, double h, double h1
    int ext;
    int noL;
 
+    IGNORE(here);
+
    noL = cp->noL;
 
    for (j = 0; j < noL;	j++) {

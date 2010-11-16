@@ -23,6 +23,8 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     double value;
     int i, j;
 
+    IGNORE(s);
+
     /*  loop through all the Arbitrary source models */
     for( ; model != NULL; model = model->ASRCnextModel ) {
 

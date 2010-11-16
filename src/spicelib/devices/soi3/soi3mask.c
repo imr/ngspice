@@ -35,6 +35,9 @@ int
 SOI3mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     SOI3model *model = (SOI3model *)inst;
+
+    IGNORE(ckt);
+
     switch(which) {
         case SOI3_MOD_VTO:
             value->rValue = model->SOI3vt0;

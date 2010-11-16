@@ -19,6 +19,9 @@ int
 MESAmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     MESAmodel *here = (MESAmodel*)inst;
+
+    IGNORE(ckt);
+
     switch(which) {
         case MESA_MOD_VTO:
             value->rValue = here->MESAthreshold;

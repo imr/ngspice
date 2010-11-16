@@ -18,6 +18,8 @@ BSIM3v0ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
 {
 BSIM3v0instance *here = (BSIM3v0instance*)inst;
 
+    IGNORE(select);
+
     switch(which) 
     {   case BSIM3v0_L:
             value->rValue = here->BSIM3v0l;

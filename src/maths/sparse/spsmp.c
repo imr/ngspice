@@ -148,6 +148,8 @@ SMPclear(SMPmatrix *Matrix)
     spClear( Matrix );
 }
 
+#define IGNORE(x)  (void)x
+
 /*
  * SMPcLUfac()
  */
@@ -155,6 +157,8 @@ SMPclear(SMPmatrix *Matrix)
 int
 SMPcLUfac(SMPmatrix *Matrix, double PivTol)
 {
+    IGNORE(PivTol);
+
     spSetComplex( Matrix );
     return spFactor( Matrix );
 }
@@ -166,6 +170,7 @@ SMPcLUfac(SMPmatrix *Matrix, double PivTol)
 int
 SMPluFac(SMPmatrix *Matrix, double PivTol, double Gmin)
 {
+    IGNORE(PivTol);
     spSetReal( Matrix );
     LoadGmin( Matrix, Gmin );
     return spFactor( Matrix );
@@ -203,6 +208,9 @@ void
 SMPcaSolve(SMPmatrix *Matrix, double RHS[], double iRHS[],
 	   double Spare[], double iSpare[])
 {
+    IGNORE(iSpare);
+    IGNORE(Spare);
+
     spSolveTransposed( Matrix, RHS, RHS, iRHS, iRHS );
 }
 
@@ -213,6 +221,9 @@ void
 SMPcSolve(SMPmatrix *Matrix, double RHS[], double iRHS[],
 	  double Spare[], double iSpare[])
 {
+    IGNORE(iSpare);
+    IGNORE(Spare);
+
     spSolve( Matrix, RHS, RHS, iRHS, iRHS );
 }
 
@@ -222,6 +233,8 @@ SMPcSolve(SMPmatrix *Matrix, double RHS[], double iRHS[],
 void
 SMPsolve(SMPmatrix *Matrix, double RHS[], double Spare[])
 {
+    IGNORE(Spare);
+
     spSolve( Matrix, RHS, RHS, (spREAL*)NULL, (spREAL*)NULL );
 }
 
@@ -271,6 +284,8 @@ SMPpreOrder(SMPmatrix *Matrix)
 void
 SMPprint(SMPmatrix *Matrix, FILE *File)
 {
+    IGNORE(File);
+
     spPrint( Matrix, 0, 1, 1 );
 }
 

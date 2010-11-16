@@ -28,6 +28,8 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
     int temp;
     double *v, *w;
 
+    IGNORE(select);
+
     switch(which) {
         case ISRC_DC:
             value->rValue = here->ISRCdcValue;

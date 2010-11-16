@@ -239,7 +239,10 @@ cp_hstat(void)
 
 void
 cp_rehash(char *pathlist, bool docc)
-{ }
+{
+    IGNORE(docc);
+    IGNORE(pathlist);
+}
 
 bool
 cp_unixcom(wordlist *wl)

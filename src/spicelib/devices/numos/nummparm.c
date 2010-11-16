@@ -18,6 +18,9 @@ int
 NUMOSparam(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
 {
   register NUMOSinstance *inst = (NUMOSinstance *) inInst;
+
+  IGNORE(select);
+
   switch (param) {
   case NUMOS_AREA:
     inst->NUMOSarea = value->rValue;

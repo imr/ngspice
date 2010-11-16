@@ -116,6 +116,8 @@ com_bug(wordlist *wl)
 {
     char buf[BSIZE_SP];
 
+    IGNORE(wl);
+
     if (!Bug_Addr || !*Bug_Addr) {
         fprintf(cp_err, "Error: No address to send bug reports to.\n");
 	return;

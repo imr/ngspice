@@ -25,6 +25,10 @@ int
 URCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
     URCinstance *here = (URCinstance *)inst;
+
+    IGNORE(select);
+    IGNORE(ckt);
+
     switch(which) {
         case URC_POS_NODE:
             value->iValue = here->URCposNode;

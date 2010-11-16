@@ -14,6 +14,9 @@ Author: 1985 Thomas L. Quarles
 int 
 DCTaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    IGNORE(ckt);
+    IGNORE(anal);
+    IGNORE(value);
     switch(which) {
 
     default:

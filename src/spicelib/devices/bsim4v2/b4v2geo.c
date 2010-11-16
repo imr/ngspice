@@ -283,6 +283,8 @@ double nuEnd,
 int rgeo, int Type,
 double *Rend)
 {	
+	IGNORE(DMDG);
+
 	if (Type == 1)
 	{   switch(rgeo)
             {	case 1:
@@ -342,6 +344,9 @@ double nuEnd,
 int rgeo, int Type,
 double *Rend)
 {
+        IGNORE(DMCI);
+        IGNORE(DMDG);
+
         if (Type == 1)
         {   switch(rgeo)
             {   case 1:

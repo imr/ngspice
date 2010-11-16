@@ -18,6 +18,8 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
     ISRCinstance *here;
     double radians;
 
+    IGNORE(ckt);
+
     for( ; model != NULL; model = model->ISRCnextModel ) {
 
         /* loop through all the instances of the model */

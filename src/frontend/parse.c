@@ -526,6 +526,7 @@ char *
 db_print_pnode_tree(struct pnode *p, char *print)
 {
 #if 1
+    IGNORE(print);
     db_print_pnode(stdout, p);
     return NULL;
 #else

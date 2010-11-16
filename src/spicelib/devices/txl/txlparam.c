@@ -17,6 +17,9 @@ int
 TXLparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     TXLinstance *here = (TXLinstance *)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case TXL_IN_NODE:
             here->TXLposNode = value->iValue;

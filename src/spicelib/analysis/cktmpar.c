@@ -20,6 +20,9 @@ CKTmodParam(CKTcircuit *ckt, GENmodel *modfast, int param, IFvalue *val, IFvalue
 {
     int type = modfast->GENmodType;
 
+    IGNORE(ckt);
+    IGNORE(selector);
+
     if (((*DEVices[type]).DEVmodParam)) {
         return(((*((*DEVices[type]).DEVmodParam)) (param,val,
                 modfast)));

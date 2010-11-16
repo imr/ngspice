@@ -25,6 +25,9 @@ int
 JFET2mAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
     JFET2model *model = (JFET2model*)inModel;
+
+    IGNORE(ckt);
+
     switch(which) {
         case JFET2_MOD_TNOM:
             value->rValue = model->JFET2tnom-CONSTCtoK;

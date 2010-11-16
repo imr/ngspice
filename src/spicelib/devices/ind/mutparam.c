@@ -18,6 +18,9 @@ int
 MUTparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MUTinstance *here = (MUTinstance*)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case MUT_COEFF:
             here->MUTcoupling = value->rValue;

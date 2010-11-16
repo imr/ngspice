@@ -17,6 +17,9 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 int
 NBJTmParam(int param, IFvalue *value, GENmodel *inModel)
 {
+  IGNORE(value);
+  IGNORE(inModel);
+
   switch (param) {
   case NBJT_MOD_NBJT:
     /* no action - already know it is a numerical bjt, but this */

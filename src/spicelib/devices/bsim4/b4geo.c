@@ -267,6 +267,8 @@ return 0;
 int
 BSIM4RdsEndIso(double Weffcj, double Rsh, double DMCG, double DMCI, double DMDG, double nuEnd, int rgeo, int Type, double *Rend)
 {	
+	IGNORE(DMDG);
+
 	if (Type == 1)
 	{   switch(rgeo)
             {	case 1:
@@ -322,6 +324,9 @@ return 0;
 int
 BSIM4RdsEndSha(double Weffcj, double Rsh, double DMCG, double DMCI, double DMDG, double nuEnd, int rgeo, int Type, double *Rend)
 {
+        IGNORE(DMCI);
+        IGNORE(DMDG);
+
         if (Type == 1)
         {   switch(rgeo)
             {   case 1:

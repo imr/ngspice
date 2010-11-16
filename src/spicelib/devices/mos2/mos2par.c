@@ -20,6 +20,9 @@ MOS2param(int param, IFvalue *value, GENinstance *inst,
           IFvalue *select)
 {
     MOS2instance *here = (MOS2instance *)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case MOS2_TEMP:
             here->MOS2temp = value->rValue+CONSTCtoK;

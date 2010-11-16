@@ -24,6 +24,8 @@ NUMDask(CKTcircuit *ckt, GENinstance *inInst, int which, IFvalue *value, IFvalue
 {
   NUMDinstance *inst = (NUMDinstance *) inInst;
 
+  IGNORE(select);
+
   switch (which) {
   case NUMD_AREA:
     value->rValue = inst->NUMDarea;

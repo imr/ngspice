@@ -23,6 +23,8 @@ NUMDpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
   SPcomplex y;
   double startTime;
 
+  IGNORE(ckt);
+
   /* loop through all the diode models */
   for (; model != NULL; model = model->NUMDnextModel) {
     FieldDepMobility = model->NUMDmodels->MODLfieldDepMobility;

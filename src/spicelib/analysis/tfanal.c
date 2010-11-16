@@ -38,6 +38,7 @@ TFanal(CKTcircuit *ckt, int restart)
 #define inuid (uids[1]) /* unique id for the transfer function input imp. */
 #define outuid (uids[2]) /* unique id for the transfer function out. imp. */
 
+    IGNORE(restart);
 
     /* first, find the operating point */
     converged = CKTop(ckt,

@@ -20,5 +20,9 @@ Author: 1985 Thomas L. Quarles
 int
 CKTfndTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName)
 {
+    IGNORE(ckt);
+    IGNORE(taskPtr);
+    IGNORE(taskName);
+
     return(E_UNSUPP);
 }

@@ -29,6 +29,8 @@ B4SOIask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue 
 {
 B4SOIinstance *here = (B4SOIinstance*)inst;
 
+    IGNORE(select);
+
     switch(which) 
     {   case B4SOI_L:
             value->rValue = here->B4SOIl;

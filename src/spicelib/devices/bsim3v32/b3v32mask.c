@@ -21,6 +21,9 @@ int
 BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     BSIM3v32model *model = (BSIM3v32model *)inst;
+
+    IGNORE(ckt);
+
     switch(which) 
     {   case BSIM3v32_MOD_MOBMOD:
             value->iValue = model->BSIM3v32mobMod; 

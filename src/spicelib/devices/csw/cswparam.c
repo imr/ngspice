@@ -17,6 +17,9 @@ int
 CSWparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     CSWinstance *here = (CSWinstance*)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case  CSW_CONTROL:
             here->CSWcontName = value->uValue;

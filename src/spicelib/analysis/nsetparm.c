@@ -14,6 +14,8 @@ Author: 1987 Gary W. Ng
 int 
 NsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    IGNORE(ckt);
+
     switch(which) {
 
     case N_OUTPUT:

@@ -21,6 +21,9 @@ int
 NBJTask(CKTcircuit *ckt, GENinstance *inInst, int which, IFvalue *value, IFvalue *select)
 {
   NBJTinstance *inst = (NBJTinstance *) inInst;
+
+  IGNORE(select);
+
   switch (which) {
   case NBJT_AREA:
     value->rValue = inst->NBJTarea;

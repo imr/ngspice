@@ -17,6 +17,9 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 int
 NUMDmParam(int param, IFvalue *value, GENmodel *inModel)
 {
+  IGNORE(value);
+  IGNORE(inModel);
+
   switch (param) {
   case NUMD_MOD_NUMD:
     /* no action - already know it is a 1d-numerical diode, but this */

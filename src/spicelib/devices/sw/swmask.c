@@ -24,6 +24,9 @@ int
 SWmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
     SWmodel *model = (SWmodel *)inModel;
+
+    IGNORE(ckt);
+
     switch(which) {
         case SW_MOD_RON:
             value->rValue = model->SWonResistance;

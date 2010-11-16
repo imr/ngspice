@@ -145,6 +145,7 @@ CPLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     char **branchname;
     int noL;
 
+    IGNORE(state);
 
     /*  loop through all the models */
     for( ; model != NULL; model = model->CPLnextModel ) {
@@ -534,6 +535,8 @@ new_memory(int dim, int deg, int deg_o)
 {
    int i, j;
 
+   IGNORE(deg);
+
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
          SiSv_1[i][j] = (double *) calloc((size_t) (deg_o+1), sizeof(double));
@@ -579,6 +582,8 @@ static double
 static void 
 free_vector(double *v, int nl, int nh)
 {
+   IGNORE(nh);
+
    free((void*) (v +nl));
 }
 
@@ -1727,6 +1732,8 @@ root3(double a1, double a2, double a3, double x)
 static int 
 div3(double a1, double a2, double a3, double x, double *p1, double *p2)
 {
+        IGNORE(a2);
+
         *p1 = a1 + x;
 
         /* *p2 = a2 + (a1 + x) * x; */

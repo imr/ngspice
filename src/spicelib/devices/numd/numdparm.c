@@ -14,6 +14,9 @@ int
 NUMDparam(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
 {
   NUMDinstance *inst = (NUMDinstance *) inInst;
+
+  IGNORE(select);
+
   switch (param) {
   case NUMD_AREA:
     inst->NUMDarea = value->rValue;

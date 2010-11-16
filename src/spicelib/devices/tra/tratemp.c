@@ -23,6 +23,8 @@ TRAtemp(GENmodel *inModel, CKTcircuit *ckt)
     TRAmodel *model = (TRAmodel *)inModel;
     TRAinstance *here;
 
+    IGNORE(ckt);
+
     /*  loop through all the transmission line models */
     for( ; model != NULL; model = model->TRAnextModel ) {
 

@@ -33,6 +33,9 @@ int
 SOI3param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     SOI3instance *here = (SOI3instance *)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case SOI3_L:
             here->SOI3l = value->rValue;

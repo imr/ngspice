@@ -16,6 +16,9 @@ int
 DCTsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     TRCV* cv= (TRCV*)anal;
+
+    IGNORE(ckt);
+
     switch(which) {
 
     case DCT_START1:

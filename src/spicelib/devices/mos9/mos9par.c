@@ -20,6 +20,9 @@ MOS9param(int param, IFvalue *value, GENinstance *inst,
           IFvalue *select)
 {
     MOS9instance *here = (MOS9instance *)inst;
+
+    IGNORE(select);
+
     switch(param) {
 
         case MOS9_M:

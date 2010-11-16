@@ -24,6 +24,9 @@ VCCSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     VCCSmodel *model = (VCCSmodel *)inModel;
     VCCSinstance *here;
 
+    IGNORE(s);
+    IGNORE(ckt);
+
     /*  loop through all the source models */
     for( ; model != NULL; model = model->VCCSnextModel ) {
 

@@ -270,6 +270,8 @@ handlekeypressed(Widget w, caddr_t clientdata, caddr_t calldata)
     char text[4];
     int nbytes;
 
+    IGNORE(w);
+
     nbytes = XLookupString(keyev, text, 4, NULL, NULL);
     if (!nbytes) return;
     /* write it */
@@ -294,6 +296,8 @@ handlebuttonev(Widget w, caddr_t clientdata, caddr_t calldata)
 
     XButtonEvent *buttonev = (XButtonEvent *) calldata;
 
+    IGNORE(w);
+
     switch (buttonev->button) {
       case Button1:
 	slopelocation((GRAPH *) clientdata, buttonev->x, buttonev->y);
@@ -308,6 +312,9 @@ handlebuttonev(Widget w, caddr_t clientdata, caddr_t calldata)
 /* callback function for catching window deletion by WM x-button */
 static void handle_wm_messages(Widget w, XtPointer client_data, XEvent *event, Boolean *cont) {
     GRAPH *graph = (GRAPH *) client_data;
+
+    IGNORE(cont);
+    IGNORE(w);
 
     if (event->type == ClientMessage
             && event->xclient.message_type == atom_wm_protocols
@@ -551,6 +558,11 @@ X11_Text(char *text, int x, int y)
 int
 X11_DefineColor(int colorid, double red, double green, double blue)
 {
+    IGNORE(blue);
+    IGNORE(green);
+    IGNORE(red);
+    IGNORE(colorid);
+
     internalerror("X11_DefineColor not implemented.");
     return 0;
 }
@@ -559,6 +571,9 @@ X11_DefineColor(int colorid, double red, double green, double blue)
 int
 X11_DefineLinestyle(int linestyleid, int mask)
 {
+    IGNORE(mask);
+    IGNORE(linestyleid);
+
     internalerror("X11_DefineLinestyle not implemented.");
     return 0;
 }
@@ -830,6 +845,9 @@ zoomin(GRAPH *graph)
 void
 hardcopy(Widget w, caddr_t client_data, caddr_t call_data)
 {
+	IGNORE(call_data);
+	IGNORE(w);
+
 	/* com_hardcopy() -> gr_resize() -> setcolor() dirung postscript
 	printing will act on currentgraph with a DEVDEP inherited from PSdevdep.
 	But currentgraph had not changed its devdep, which was derived from
@@ -855,6 +873,9 @@ killwin(Widget w, caddr_t client_data, caddr_t call_data)
 {
 
     GRAPH *graph = (GRAPH *) client_data;
+
+    IGNORE(call_data);
+    IGNORE(w);
 
     /* Iplots are done asynchronously */
     DEVDEP(graph).isopen = 0;
@@ -888,6 +909,8 @@ redraw(Widget w, caddr_t client_data, caddr_t call_data)
     XEvent ev;
     XRectangle rects[30];
     int n = 1;
+
+    IGNORE(w);
 
     DEVDEP(graph).isopen = 1;
 
@@ -925,6 +948,8 @@ resize(Widget w, caddr_t client_data, caddr_t call_data)
 
     GRAPH *graph = (GRAPH *) client_data;
     XEvent ev;
+
+    IGNORE(call_data);
 
     /* pull out all other exposure events
        Also, get rid of other StructureNotify events on this window. */

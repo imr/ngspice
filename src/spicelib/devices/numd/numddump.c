@@ -141,6 +141,8 @@ NUMDacct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
   register NUMDinstance *inst;
   OUTPcard *output;
 
+  IGNORE(ckt);
+
   for (; model != NULL; model = model->NUMDnextModel) {
     output = model->NUMDoutputs;
     for (inst = model->NUMDinstances; inst != NULL;

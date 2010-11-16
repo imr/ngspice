@@ -20,5 +20,8 @@ Author: 1985 Thomas L. Quarles
 int
 CKTdltInst(CKTcircuit *ckt, void *instance)
 {
+    IGNORE(ckt);
+    IGNORE(instance);
+
     return(E_UNSUPP);
 }

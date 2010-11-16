@@ -17,6 +17,9 @@ int
 INDparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     INDinstance *here = (INDinstance*)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case IND_IND:
             here->INDinduct = value->rValue;

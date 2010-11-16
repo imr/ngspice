@@ -27,6 +27,9 @@ GENinstance *inst,
 IFvalue *select)
 {
     B4SOIinstance *here = (B4SOIinstance*)inst;
+
+    IGNORE(select);
+
     switch(param) 
     {   case B4SOI_W:
             here->B4SOIw = value->rValue;

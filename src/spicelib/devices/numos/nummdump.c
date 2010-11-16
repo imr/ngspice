@@ -156,6 +156,8 @@ NUMOSacct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
   register NUMOSinstance *inst;
   OUTPcard *output;
 
+  IGNORE(ckt);
+
   for (; model != NULL; model = model->NUMOSnextModel) {
     output = model->NUMOSoutputs;
     for (inst = model->NUMOSinstances; inst != NULL;

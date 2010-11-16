@@ -24,6 +24,8 @@ double FwdSum, RevSum, Gm, Gmbs;
 
 double m;
 
+    IGNORE(ckt);
+
     for (; model != NULL; model = model->BSIM3v0nextModel) 
     {    for (here = model->BSIM3v0instances; here!= NULL;
               here = here->BSIM3v0nextInstance) 

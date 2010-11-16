@@ -719,6 +719,8 @@ sens_getp(sgen *sg, CKTcircuit *ckt, IFvalue *val)
 {
 	int	pid;
 
+	IGNORE(ckt);
+
 	error = 0;
 
 	if (sg->is_instparam) {
@@ -762,6 +764,8 @@ int
 sens_setp(sgen *sg, CKTcircuit *ckt, IFvalue *val)
 {
 	int	pid;
+
+	IGNORE(ckt);
 
 	error = 0;
 

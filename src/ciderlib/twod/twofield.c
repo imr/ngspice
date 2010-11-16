@@ -21,6 +21,8 @@ nodeFields(TWOelem *pElem, TWOnode *pNode, double *ex, double *ey)
   double dxL = 0.0, dxR = 0.0, dyT = 0.0, dyB = 0.0;
   double ef1, ef2, coeff1, coeff2;
 
+  IGNORE(pElem);
+
   /* Find all four neighboring elements */
   pElemTL = pNode->pTLElem;
   pElemTR = pNode->pTRElem;

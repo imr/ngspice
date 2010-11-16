@@ -271,5 +271,12 @@ nutinp_source(char *file)
 void
 nutinp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, struct line *options, char *filename)
 {
+    IGNORE(filename);
+    IGNORE(options);
+    IGNORE(reuse);
+    IGNORE(end);
+    IGNORE(tt);
+    IGNORE(deck);
+
     /* This was "ifdef notdef"-ed out, so I tossed it */
 }

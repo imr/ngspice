@@ -262,6 +262,9 @@ CKTfour(int ndata,		/* number of entries in the Time and
     int i;
     int j;
     double tmp;
+
+    IGNORE(Time);
+
     /* clear output/computation arrays */
 
     for(i=0;i<numFreq;i++) {

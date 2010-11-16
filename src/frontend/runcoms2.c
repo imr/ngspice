@@ -52,6 +52,8 @@ com_resume(wordlist *wl)
    bool ascii = AsciiRawFile;
    /*end saj*/
 
+   IGNORE(wl);
+
    /*saj fix segment*/
    if (!ft_curckt) {
       fprintf(cp_err, "Error: there aren't any circuits loaded.\n");
@@ -171,6 +173,8 @@ void
 com_rset(wordlist *wl)
 {
     struct variable *v, *next;
+
+    IGNORE(wl);
 
     if (ft_curckt == NULL) {
         fprintf(cp_err, "Error: there is no circuit loaded.\n");

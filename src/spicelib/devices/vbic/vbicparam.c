@@ -24,6 +24,8 @@ VBICparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
 {
     VBICinstance *here = (VBICinstance*)instPtr;
 
+    IGNORE(select);
+
     switch(param) {
         case VBIC_AREA:
             here->VBICarea = value->rValue;

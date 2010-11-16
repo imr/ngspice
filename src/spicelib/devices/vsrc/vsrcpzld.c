@@ -17,6 +17,9 @@ VSRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     VSRCmodel *model = (VSRCmodel *)inModel;
     VSRCinstance *here;
 
+    IGNORE(s);
+    IGNORE(ckt);
+
     for( ; model != NULL; model = model->VSRCnextModel ) {
 
         /* loop through all the instances of the model */

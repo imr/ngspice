@@ -26,6 +26,8 @@ DCop(CKTcircuit *ckt, int notused)
     IFuid *nameList; /* va: tmalloc'ed list */
     int numNames;
     void *plot = NULL;
+
+    IGNORE(notused);
   
 #ifdef XSPICE
 /* gtri - add - wbk - 12/19/90 - Add IPC stuff and initialize anal_init and anal_type */

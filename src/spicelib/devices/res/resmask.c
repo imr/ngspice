@@ -21,6 +21,8 @@ RESmodAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 
     RESmodel *model = (RESmodel *)inModel;
 
+    IGNORE(ckt);
+
     switch(which) {
         case RES_MOD_TNOM:
             value->rValue = model->REStnom-CONSTCtoK;

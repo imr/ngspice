@@ -83,6 +83,7 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     wordlist *wl;
     char *comb_title;
 
+    IGNORE(nplots);
 
     if (!(graph = NewGraph())) {
       return(FALSE);
@@ -442,6 +443,7 @@ drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
 void
 gr_end(struct dvec *dv)
 {
+    IGNORE(dv);
     DevUpdate();
 }
 

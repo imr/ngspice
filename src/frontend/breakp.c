@@ -205,6 +205,8 @@ com_sttus(wordlist *wl)
 {
     struct dbcomm *d, *dc;
 
+    IGNORE(wl);
+
     for (d = dbs; d; d = d->db_next) {
         if (d->db_type == DB_TRACENODE) {
             if (isatty(fileno(cp_out)))

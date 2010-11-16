@@ -128,6 +128,8 @@ hlp_thandle(topic **parent)
 void
 hlp_tkillwin(topic *top)
 {
+    IGNORE(top);
+
     if (curtop)
         curtop = curtop->parent;
     if (curtop && !quitflag)

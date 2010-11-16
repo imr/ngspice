@@ -22,6 +22,8 @@ HSM1ask(CKTcircuit *ckt, GENinstance *inst, int which,
 {
   HSM1instance *here = (HSM1instance*)inst;
 
+  IGNORE(select);
+
   switch (which) {
   case HSM1_L:
     value->rValue = here->HSM1_l;

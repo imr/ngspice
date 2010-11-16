@@ -19,6 +19,9 @@ int
 CKTsetAnalPm(CKTcircuit *ckt, JOB *analPtr, int parm, IFvalue *value, IFvalue *selector)
 {
     int type = analPtr->JOBtype;
+
+    IGNORE(selector);
+
     if((analInfo[type]->setParm)==NULL) return(E_BADPARM);
     return( (*(analInfo[type]->setParm))(ckt,analPtr,parm,value) );
 }

@@ -15,6 +15,9 @@ int
 RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     RESinstance *here = (RESinstance *)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case RES_TEMP:
             here->REStemp = value->rValue + CONSTCtoK;

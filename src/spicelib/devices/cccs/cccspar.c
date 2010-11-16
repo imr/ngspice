@@ -17,6 +17,9 @@ int
 CCCSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     CCCSinstance *here = (CCCSinstance*)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case CCCS_GAIN:
             here->CCCScoeff = value->rValue;

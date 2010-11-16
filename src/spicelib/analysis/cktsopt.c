@@ -32,6 +32,8 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
 {
     TSKtask *task = (TSKtask *)anal;
 
+    IGNORE(ckt);
+
     switch(opt) {
 
     case OPT_NOOPITER:

@@ -34,6 +34,9 @@ static Display *display;
 static void handle_wm_messages(Widget w, XtPointer client_data, XEvent *event, Boolean *cont) {
     topic *top = (topic *) client_data;
 
+    IGNORE(cont);
+    IGNORE(w);
+
     if (event->type == ClientMessage
             && event->xclient.message_type == atom_wm_protocols
             && (Atom) event->xclient.data.l[0] == atom_wm_delete_window) 
@@ -228,6 +231,9 @@ newtopic(Widget w, caddr_t client_data, caddr_t call_data)
     toplink *result = ((handle *) client_data)->result;
     topic *newtop;
 
+    IGNORE(call_data);
+    IGNORE(w);
+
     if (!(newtop = hlp_read(result->place))) {
       fprintf(stderr, "Internal error: bad link\n");
     }
@@ -249,6 +255,9 @@ delete(Widget w, caddr_t client_data, caddr_t call_data)
 
     topic *top = (topic *) client_data;
 
+    IGNORE(call_data);
+    IGNORE(w);
+
     hlp_killfamily(top);
     hlp_fixchildren(top);
 }
@@ -258,6 +267,9 @@ quit(Widget w, caddr_t client_data, caddr_t call_data)
 {
 
     topic *top = (topic *) client_data, *parent = top->parent;
+
+    IGNORE(call_data);
+    IGNORE(w);
 
     while (parent && parent->parent) parent = parent->parent;
     hlp_killfamily(parent ? parent : top);

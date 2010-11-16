@@ -18,6 +18,9 @@ int
 NBJTparam(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
 {
   register NBJTinstance *inst = (NBJTinstance *) inInst;
+
+  IGNORE(select);
+
   switch (param) {
   case NBJT_AREA:
     inst->NBJTarea = value->rValue;

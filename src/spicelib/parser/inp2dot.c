@@ -128,6 +128,10 @@ dot_op(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
     int i;			/* generic loop variable */
     int error;			/* error code temporary */
 
+    IGNORE(line);
+    IGNORE(tab);
+    IGNORE(gnode);
+
     /* .op */
     which = -1;
     for (i = 0; i < ft_sim->numAnalyses; i++) {
@@ -155,6 +159,8 @@ dot_disto(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
     IFvalue ptemp;		/* a value structure to package resistance into */
     IFvalue *parm;		/* a pointer to a value struct for function returns */
     char *steptype;		/* ac analysis, type of stepping function */
+
+    IGNORE(gnode);
 
     /* .disto {DEC OCT LIN} NP FSTART FSTOP <F2OVERF1> */
     which = -1;
@@ -197,6 +203,8 @@ dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
     int i;			/* generic loop variable */
     char *steptype;		/* ac analysis, type of stepping function */
 
+    IGNORE(gnode);
+
     /* .ac {DEC OCT LIN} NP FSTART FSTOP */
     which = -1;
     for (i = 0; i < ft_sim->numAnalyses; i++) {
@@ -233,6 +241,8 @@ dot_pz(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
     int which;			/* which analysis we are performing */
     int i;			/* generic loop variable */
     char *steptype;		/* ac analysis, type of stepping function */
+
+    IGNORE(gnode);
 
     /* .pz nodeI nodeG nodeJ nodeK {V I} {POL ZER PZ} */
     which = -1;
@@ -275,6 +285,8 @@ dot_dc(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
     IFvalue *parm;		/* a pointer to a value struct for function returns */
     int which;			/* which analysis we are performing */
     int i;			/* generic loop variable */
+
+    IGNORE(gnode);
 
     /* .dc SRC1NAME Vstart1 Vstop1 Vinc1 [SRC2NAME Vstart2 */
     /*        Vstop2 Vinc2 */
@@ -399,6 +411,8 @@ dot_tran(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
     int i;			/* generic loop variable */
     double dtemp;		/* random double precision temporary */
     char *word;			/* something to stick a word of input into */
+
+    IGNORE(gnode);
 
     /* .tran Tstep Tstop <Tstart <Tmax> > <UIC> */
     which = -1;
@@ -618,6 +632,10 @@ static int
 dot_options(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	  TSKtask *task, CKTnode *gnode, JOB *foo)
 {
+	IGNORE(line);
+	IGNORE(gnode);
+	IGNORE(foo);
+
 	/* .option - specify program options - rather complicated */
 	/* use a subroutine to handle all of them to keep this    */
 	/* subroutine managable.                                  */

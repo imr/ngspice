@@ -18,6 +18,9 @@ int
 JFETparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     JFETinstance *here = (JFETinstance *)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case JFET_TEMP:
             here->JFETtemp = value->rValue+CONSTCtoK;

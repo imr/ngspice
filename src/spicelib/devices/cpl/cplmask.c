@@ -19,6 +19,9 @@ int
 CPLmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
     CPLmodel *model = (CPLmodel *)inModel;
+
+    IGNORE(ckt);
+
     switch(which) {
         case CPL_R:
             value->v.vec.rVec = model->Rm;

@@ -18,6 +18,8 @@ com_where(wordlist *wl)
 {
 	char	*msg;
 
+   IGNORE(wl);
+
    /*CDHW typing where with no current circuit caused crashes CDHW*/
    if (!ft_curckt) {
       fprintf(cp_err, "There is no current circuit\n");

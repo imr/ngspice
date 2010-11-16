@@ -765,6 +765,8 @@ contactAdmittance(TWOdevice *pDevice, TWOcontact *pContact, BOOLEAN delVContact,
   SPcomplex prod1, prod2, sum;
   double temp;
 
+  IGNORE(pDevice);
+
   CMPLX_ASSIGN_VALUE(yTotal, 0.0, 0.0);
 
   numContactNodes = pContact->numNodes;
@@ -963,6 +965,8 @@ oxideAdmittance(TWOdevice *pDevice, TWOcontact *pContact, BOOLEAN delVContact,
   TWOelem *pElem;
   SPcomplex psiAc;
   SPcomplex prod1, prod2;
+
+  IGNORE(pDevice);
 
   CMPLX_ASSIGN_VALUE(yTotal, 0.0, 0.0);
 

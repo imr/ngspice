@@ -26,6 +26,8 @@ BSIM3v1checkModel(BSIM3v1model *model, BSIM3v1instance *here, CKTcircuit *ckt)
 struct bsim3v1SizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
+
+    IGNORE(ckt);
     
     if ((fplog = fopen("b3v3_1check.log", "w")) != NULL)
     {   pParam = here->pParam;

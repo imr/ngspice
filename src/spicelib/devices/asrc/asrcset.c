@@ -27,6 +27,8 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     int v_first;
     CKTnode *tmp;
 
+    IGNORE(states);
+
     /*  loop through all the user models*/
     for( ; model != NULL; model = model->ASRCnextModel ) {
 

@@ -17,6 +17,9 @@ int
 URCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     URCinstance *here = (URCinstance *)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case URC_LEN:
             here->URClength = value->rValue;

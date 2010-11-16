@@ -403,6 +403,9 @@ all_show_old(wordlist *wl, int mode)
 int
 printstr_n(dgen *dg, IFparm *p, int i)
 {
+    IGNORE(p);
+    IGNORE(i);
+
     if (dg->instance)
         fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, dg->instance->GENname);
     else
@@ -413,6 +416,9 @@ printstr_n(dgen *dg, IFparm *p, int i)
 int
 printstr_m(dgen *dg, IFparm *p, int i)
 {
+    IGNORE(p);
+    IGNORE(i);
+
     if (dg->model)
         fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, dg->model->GENmodName);
     else
@@ -567,12 +573,20 @@ listparam(wordlist *p, dgen *dg)
 
 int bogus1(dgen *dg, IFparm *p, int i)
 {
+    IGNORE(dg);
+    IGNORE(p);
+    IGNORE(i);
+
     fprintf(cp_out," %*s", DEV_WIDTH, "---------");
     return 0;
 }
 
 int bogus2(dgen *dg, IFparm *p, int i)
 {
+    IGNORE(dg);
+    IGNORE(p);
+    IGNORE(i);
+
     fprintf(cp_out," %*s", DEV_WIDTH, "?????????");
     return 0;
 }

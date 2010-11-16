@@ -28,6 +28,8 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     char *val;
     double rval=0, lval=0;
 
+    IGNORE(ckt);
+
     line = image->line;
     
 #ifdef TRACE

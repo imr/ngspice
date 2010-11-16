@@ -19,6 +19,9 @@ int
 MOS1param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MOS1instance *here = (MOS1instance *)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case MOS1_TEMP:
             here->MOS1temp = value->rValue+CONSTCtoK;

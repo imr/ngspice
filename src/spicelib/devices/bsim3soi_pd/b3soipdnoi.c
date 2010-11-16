@@ -55,6 +55,8 @@ struct b3soipdSizeDependParam *pParam;
 double cd, esat, DelClm, EffFreq, N0, Nl;
 double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
 
+    IGNORE(vgs);
+
     pParam = here->pParam;
     cd = fabs(here->B3SOIPDcd) * here->B3SOIPDm;
 

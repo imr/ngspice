@@ -29,6 +29,8 @@ CKTcircuit *ckt)
 struct bsim4SizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
+
+    IGNORE(ckt);
     
     if ((fplog = fopen("bsim4.out", "w")) != NULL)
     {   pParam = here->pParam;

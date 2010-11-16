@@ -22,6 +22,9 @@ JFETask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
 {
     JFETinstance *here = (JFETinstance*)inst;
     static char *msg = "Current and power not available for ac analysis";
+
+    IGNORE(select);
+
     switch(which) {
         case JFET_TEMP:
             value->rValue = here->JFETtemp-CONSTCtoK;

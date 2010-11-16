@@ -24,6 +24,8 @@ CAPpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     double m;
     CAPinstance *here;
 
+    IGNORE(ckt);
+
     for( ; model != NULL; model = model->CAPnextModel) {
         for( here = model->CAPinstances;here != NULL; 
                 here = here->CAPnextInstance) {

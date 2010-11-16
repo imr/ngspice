@@ -14,6 +14,9 @@ int
 NUMD2param(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
 {
   NUMD2instance *inst = (NUMD2instance *) inInst;
+
+  IGNORE(select);
+
   switch (param) {
   case NUMD2_WIDTH:
     inst->NUMD2width = value->rValue;

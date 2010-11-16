@@ -57,6 +57,9 @@ static double
 B3SOIDDSmartVbs(double New, double Old, B3SOIDDinstance *here, 
                 CKTcircuit *ckt, int *check)
 {
+    IGNORE(Old);
+    IGNORE(check);
+
    /* only do it for floating body and DC */
    if (here->B3SOIDDfloat && (ckt->CKTmode & (MODEDC | MODEDCOP)))
    {

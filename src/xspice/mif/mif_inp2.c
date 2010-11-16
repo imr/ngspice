@@ -667,6 +667,9 @@ MIFget_port_type(
 
     int              i;
 
+    IGNORE(ckt);
+    IGNORE(tab);
+
     if(**line == '\0') {
         LITERR("Missing connections on A device");
         *status = MIF_ERROR;

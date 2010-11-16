@@ -18,6 +18,8 @@ B2ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
 {
     B2instance *here = (B2instance*)inst;
 
+    IGNORE(select);
+
     switch(which) {
         case BSIM2_L:
             value->rValue = here->B2l;

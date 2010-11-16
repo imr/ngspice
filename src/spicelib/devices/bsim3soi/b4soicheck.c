@@ -30,6 +30,8 @@ struct b4soiSizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
 
+    IGNORE(ckt);
+
     if ((fplog = fopen("b4soiv1check.log", "w")) != NULL)
     {   pParam = here->pParam;
 	fprintf(fplog, "B4SOIV3 Parameter Check\n");

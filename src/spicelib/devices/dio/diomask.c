@@ -20,6 +20,9 @@ int
 DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
     DIOmodel *model = (DIOmodel*)inModel;
+
+    IGNORE(ckt);
+
     switch (which) {
         case DIO_MOD_IS:
             value->rValue = model->DIOsatCur;

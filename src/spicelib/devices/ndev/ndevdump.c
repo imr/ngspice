@@ -26,6 +26,8 @@ NDEV_dump(
   GENmodel *inModel,
   CKTcircuit *ckt )
 {
+    IGNORE(inModel);
+    IGNORE(ckt);
   
 }
 
@@ -37,5 +39,8 @@ NDEV_acct(
   CKTcircuit *ckt,
   FILE *file )
 {
+    IGNORE(inModel);
+    IGNORE(ckt);
+    IGNORE(file);
   
 }

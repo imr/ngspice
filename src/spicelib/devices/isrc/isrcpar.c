@@ -20,6 +20,9 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 	
 int i;	
     ISRCinstance *here = (ISRCinstance*)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case ISRC_DC:
             here->ISRCdcValue = value->rValue;

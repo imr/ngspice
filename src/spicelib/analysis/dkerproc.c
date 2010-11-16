@@ -14,6 +14,8 @@ DkerProc(int type, double *rPtr, double *iPtr, int size, DISTOAN *job)
 {
 int i;
 
+IGNORE(job);
+
 switch(type) {
 
   case D_F1:

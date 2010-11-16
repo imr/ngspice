@@ -25,6 +25,9 @@ VCCSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     VCCSmodel *model = (VCCSmodel *)inModel;
     VCCSinstance *here;
 
+    IGNORE(states);
+    IGNORE(ckt);
+
     /*  loop through all the current source models */
     for( ; model != NULL; model = model->VCCSnextModel ) {
 

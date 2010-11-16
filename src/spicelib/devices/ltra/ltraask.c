@@ -22,6 +22,9 @@ LTRAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
   LTRAinstance *here = (LTRAinstance *) inst;
   int temp;
 
+  IGNORE(select);
+  IGNORE(ckt);
+
   switch (which) {
   case LTRA_POS_NODE1:
     value->iValue = here->LTRAposNode1;

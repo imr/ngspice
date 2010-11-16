@@ -188,6 +188,8 @@ static void EVTinst_insert(
     Evt_Inst_Info_t *inst;
     Evt_Inst_Info_t **inst_ptr;
 
+    IGNORE(err_msg);
+
 
     /* Scan list of instances in event structure to see if already there */
     /* and get the index */
@@ -415,6 +417,8 @@ static void EVTport_insert(
 
     int                 index;
 
+    IGNORE(err_msg);
+
     /* Find the end of the port info list */
     port = ckt->evt->info.port_list;
     port_ptr = &(ckt->evt->info.port_list);
@@ -476,6 +480,8 @@ static void EVToutput_insert(
     Evt_Output_Info_t     **output_ptr;
 
     int                   index;
+
+    IGNORE(err_msg);
 
     /* Find the end of the port info list */
     output = ckt->evt->info.output_list;

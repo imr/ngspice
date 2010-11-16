@@ -18,6 +18,8 @@ BSIM3v0param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     BSIM3v0instance *here = (BSIM3v0instance*)inst;
 
+    IGNORE(select);
+
     if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
 
     switch(param) 

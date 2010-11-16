@@ -78,6 +78,9 @@ int NDEVgetic(GENmodel *inModel, CKTcircuit *ckt)
 {
     NDEVmodel *model = (NDEVmodel*)inModel;
     NDEVinstance *here;
+
+    IGNORE(ckt);
+
     /*
      * grab initial conditions out of rhs array.   User specified, so use
      * external nodes to get values

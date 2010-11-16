@@ -155,6 +155,8 @@ NBJT2acct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
   register NBJT2instance *inst;
   OUTPcard *output;
 
+  IGNORE(ckt);
+
   for (; model != NULL; model = model->NBJT2nextModel) {
     output = model->NBJT2outputs;
     for (inst = model->NBJT2instances; inst != NULL;

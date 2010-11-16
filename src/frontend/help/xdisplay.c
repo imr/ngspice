@@ -28,7 +28,12 @@ int hlp_buttonstyle = BS_LEFT;
 /* ARGSUSED */ void hlp_xkillwin(topic *top)  { }
 #endif
 
-/* ARGSUSED */ void hlp_xwait(topic *top, bool on) { }
+/* ARGSUSED */ void hlp_xwait(topic *top, bool on)
+{
+    IGNORE(on);
+    IGNORE(top);
+}
+
 void hlp_xclosedisplay(void) {}
 toplink * hlp_xhandle(topic **pp) { *pp = NULL; return (NULL); }
 

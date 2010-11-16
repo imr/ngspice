@@ -24,6 +24,8 @@ CCCSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CCCSmodel *model = (CCCSmodel*)inModel;
     CCCSinstance *here;
 
+    IGNORE(states);
+
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->CCCSnextModel ) {
 

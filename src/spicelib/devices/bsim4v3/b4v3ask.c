@@ -30,6 +30,8 @@ IFvalue *select)
 {
 BSIM4v3instance *here = (BSIM4v3instance*)inst;
 
+    IGNORE(select);
+
     switch(which) 
     {   case BSIM4v3_L:
             value->rValue = here->BSIM4v3l;

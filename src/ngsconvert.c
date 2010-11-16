@@ -437,18 +437,23 @@ void cp_pushcontrol(void) { }
 void cp_popcontrol(void) { }
 void out_init(void) { }
 void cp_doquit(void) { exit(0); }
-void cp_usrvars(struct variable **v1, struct variable **v2) { return; }
-int cp_evloop(char *s) { return (0); }
-void cp_ccon(bool o) { }
-char *if_errstring(int c) { return ("error"); }
+void cp_usrvars(struct variable **v1, struct variable **v2) { IGNORE(v2); IGNORE(v1); return; }
+int cp_evloop(char *s) { IGNORE(s); return (0); }
+void cp_ccon(bool o) { IGNORE(o); }
+char*if_errstring(int c) { IGNORE(c); return ("error"); }
 #ifndef out_printf
-void out_printf(char *fmt, ...) { }
+void out_printf(char *fmt, ...) { IGNORE(fmt); }
 #endif
-void out_send(char *string) {}
-struct variable * cp_enqvar(char *word) { return (NULL); }
-struct dvec *vec_get(const char *word) { return (NULL); }
-void cp_ccom(wordlist *w, char *b, bool e) { return; }
-int cp_usrset(struct variable *v, bool i) { return(US_OK); }
+void out_send(char *string) { IGNORE(string); }
+struct variable * cp_enqvar(char *word) { IGNORE(word); return (NULL); }
+struct dvec *vec_get(const char *word) { IGNORE(word); return (NULL); }
+void cp_ccom(wordlist *w, char *b, bool e) {
+  IGNORE(e);
+  IGNORE(b);
+  IGNORE(w); return; }
+int cp_usrset(struct variable *v, bool i) {
+    IGNORE(i);
+    IGNORE(v); return(US_OK); }
 
 int disptype;
 

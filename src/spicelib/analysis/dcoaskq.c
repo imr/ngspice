@@ -14,6 +14,10 @@ Author: 1985 Thomas L. Quarles
 int 
 DCOaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    IGNORE(ckt);
+    IGNORE(anal);
+    IGNORE(which);
+    IGNORE(value);
     return(E_BADPARM);
 }
 

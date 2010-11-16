@@ -31,6 +31,8 @@ com_removecirc(wordlist *wl)
     char* namecircuit;
     char buf[80];
 
+    IGNORE(wl);
+
     /* Allocation of a temp wordlist */
     wlist = (struct wordlist *)malloc(sizeof(struct wordlist));
 

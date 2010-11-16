@@ -22,6 +22,8 @@ NDEVtemp(
  * perform the temperature update to the diode
  */
 {
+  IGNORE(inModel);
+  IGNORE(ckt);
 
   return (OK);
 }

@@ -179,16 +179,19 @@ sgen_next(sgen **xsg)
 
 int set_inst(sgen *sg)
 {
+	IGNORE(sg);
 	return 1;
 }
 
 int set_model(sgen *sg)
 {
+	IGNORE(sg);
 	return 1;
 }
 
 int set_dev(sgen *sg)
 {
+	IGNORE(sg);
 	return 1;
 }
 

@@ -163,6 +163,9 @@ exp:
 static void
 PPerror (YYLTYPE *locp, char **line, struct pnode **retval, char const *s)
 {
-  U(line); U(retval);
+  IGNORE(locp);
+  IGNORE(line);
+  IGNORE(retval);
+
   fprintf (stderr, "%s: %s\n", __func__, s);
 }

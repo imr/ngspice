@@ -17,6 +17,9 @@ int
 BSIM3v1AmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     BSIM3v1Amodel *model = (BSIM3v1Amodel *)inst;
+
+    IGNORE(ckt);
+
     switch(which) 
     {   case BSIM3v1A_MOD_MOBMOD:
             value->iValue = model->BSIM3v1AmobMod; 

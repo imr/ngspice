@@ -25,6 +25,8 @@ B3SOIFDcheckModel(B3SOIFDmodel *model, B3SOIFDinstance *here, CKTcircuit *ckt)
 struct b3soifdSizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
+
+    IGNORE(ckt);
     
     if ((fplog = fopen("b3soifdv2check.log", "w")) != NULL)
     {   pParam = here->pParam;

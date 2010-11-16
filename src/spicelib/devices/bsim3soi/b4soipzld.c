@@ -35,6 +35,9 @@ double GSoverlapCap, GDoverlapCap, GBoverlapCap=0.0;
 double FwdSum, RevSum, Gm, Gmbs;
 
 double m;
+
+    IGNORE(ckt);
+
     for (; model != NULL; model = model->B4SOInextModel) 
     {    for (here = model->B4SOIinstances; here!= NULL;
               here = here->B4SOInextInstance) 

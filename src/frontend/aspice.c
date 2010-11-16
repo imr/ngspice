@@ -156,6 +156,8 @@ com_jobs(wordlist *wl)
 {
     struct proc *p;
 
+    IGNORE(wl);
+
     for (p = running; p; p = p->pr_next)
         fprintf(cp_out, "%d\t%.70s\n", p->pr_pid, p->pr_name);
     return;
@@ -414,6 +416,7 @@ void
 com_aspice(
     wordlist *wl)
 {
+	IGNORE(wl);
 	fprintf(cp_err, "Asynchronous spice jobs are not available.\n");
 	return;
 }
@@ -422,6 +425,7 @@ void
 com_jobs(
     wordlist *wl)
 {
+	IGNORE(wl);
 	fprintf(cp_err, "Asynchronous spice jobs are not available.\n");
 	return;
 }
@@ -436,6 +440,7 @@ void
 com_rspice(
     wordlist *wl)
 {
+	IGNORE(wl);
 	fprintf(cp_err, "Remote spice jobs are not available.\n");
 	return;
 }

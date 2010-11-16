@@ -17,6 +17,9 @@ int
 SWparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     SWinstance *here = (SWinstance *)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case SW_IC_ON:
             if(value->iValue) {

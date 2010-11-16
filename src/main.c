@@ -237,6 +237,11 @@ IFfrontEnd nutmeginfo;
 int
 if_run(CKTcircuit *t, char *w, wordlist *s, INPtables *b)
 {
+    IGNORE(b);
+    IGNORE(s);
+    IGNORE(w);
+    IGNORE(t);
+
     return (0);
 }
 
@@ -244,18 +249,29 @@ if_run(CKTcircuit *t, char *w, wordlist *s, INPtables *b)
 int
 if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
 {
+    IGNORE(tab);
+    IGNORE(args);
+    IGNORE(t);
+
     return (0);
 }
 
 /* -------------------------------------------------------------------------- */
 void
 if_dump(CKTcircuit *ckt, FILE *fp)
-{}
+{
+    IGNORE(fp);
+    IGNORE(ckt);
+
+    return;
+}
 
 /* -------------------------------------------------------------------------- */
 CKTcircuit *
 if_inpdeck(struct line *deck, INPtables **tab)
 {
+    IGNORE(tab);
+    IGNORE(deck);
     return NULL;
 }
 
@@ -263,37 +279,69 @@ if_inpdeck(struct line *deck, INPtables **tab)
 int
 if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
 {
+    IGNORE(value);
+    IGNORE(type);
+    IGNORE(name);
+    IGNORE(ckt);
+
     return 0;
 }
 
 /* -------------------------------------------------------------------------- */
 void if_cktfree(CKTcircuit *ckt, INPtables *tab)
-{}
+{
+    IGNORE(tab);
+    IGNORE(ckt);
+
+    return;
+}
 
 /* -------------------------------------------------------------------------- */
 void if_setndnames(char *line)
-{}
+{
+    IGNORE(line);
+}
 
 /* -------------------------------------------------------------------------- */
 char *
 if_errstring(int code)
 {
+    IGNORE(code);
     return ("spice error");
 }
 
 /* -------------------------------------------------------------------------- */
 void
 if_setparam_model(CKTcircuit *ckt, char **name, char *val)
-{}
+{
+    IGNORE(val);
+    IGNORE(name);
+    IGNORE(ckt);
+
+    return;
+}
 
 void
 if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_model)
-{}
+{
+    IGNORE(do_model);
+    IGNORE(val);
+    IGNORE(param);
+    IGNORE(name);
+    IGNORE(ckt);
+
+    return;
+}
 
 /* -------------------------------------------------------------------------- */
 bool
 if_tranparams(struct circ *ckt, double *start, double *stop, double *step)
 {
+    IGNORE(step);
+    IGNORE(stop);
+    IGNORE(start);
+    IGNORE(ckt);
+
     return (FALSE);
 }
 
@@ -301,6 +349,9 @@ if_tranparams(struct circ *ckt, double *start, double *stop, double *step)
 struct variable *
 if_getstat(CKTcircuit *ckt, char *name)
 {
+    IGNORE(name);
+    IGNORE(ckt);
+
     return (NULL);
 }
 
@@ -322,21 +373,30 @@ Ipc_Status_t ipc_send_errchk(void ) {
 }
 Ipc_Status_t ipc_get_line(char *str , int *len , Ipc_Wait_t wait ){
   Ipc_Status_t x = IPC_STATUS_OK;
+  IGNORE(str);
+  IGNORE(len);
+  IGNORE(wait);
+
   return(x);
 }
 struct line *ENHtranslate_poly(struct line *deck){
+  IGNORE(deck);
   return(NULL);
 }
 int load_opus(char *name){
+  IGNORE(name);
   return(1);
 }
 char  *MIFgettok(char **s){
+  IGNORE(s);
   return(NULL);
 }
 void EVTprint(wordlist *wl){
+  IGNORE(wl);
   return;
 }
 struct dvec *EVTfindvec(char *node){
+  IGNORE(node);
   return NULL;
 }
 #endif /* XSPICE */

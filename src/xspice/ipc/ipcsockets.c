@@ -171,6 +171,9 @@ ipc_transport_initialize_server (
   unsigned int  server_length;          /* Size of server structure        */
   unsigned int  port_num;        /* Port number converted from server_name */
 
+  IGNORE(mode);
+  IGNORE(protocol);
+
   /* assert (protocol == IPC_PROTOCOL_V2); */ /* allow v1 protocol - wbk */
   assert (sock_state == IPC_SOCK_UNINITIALIZED);
 

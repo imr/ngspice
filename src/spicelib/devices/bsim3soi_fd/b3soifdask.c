@@ -24,6 +24,8 @@ B3SOIFDask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
 {
 B3SOIFDinstance *here = (B3SOIFDinstance*)inst;
 
+    IGNORE(select);
+
     switch(which) 
     {   case B3SOIFD_L:
             value->rValue = here->B3SOIFDl;

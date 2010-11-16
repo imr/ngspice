@@ -27,6 +27,9 @@ TRAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
     int temp;
     double *v, *w;
 
+    IGNORE(select);
+    IGNORE(ckt);
+
     switch(which) {
         case TRA_POS_NODE1:
             value->iValue = here->TRAposNode1;

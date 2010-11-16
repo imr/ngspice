@@ -23,6 +23,12 @@ NDEVask(
   IFvalue *value,
   IFvalue *select )
 {
+  IGNORE(ckt);
+  IGNORE(inInst);
+  IGNORE(which);
+  IGNORE(value);
+  IGNORE(select);
+
   return (OK);
   /* NOTREACHED */
 }

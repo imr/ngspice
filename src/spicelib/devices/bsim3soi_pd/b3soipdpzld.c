@@ -31,6 +31,8 @@ double FwdSum, RevSum, Gm, Gmbs;
 
 double m;
 
+    IGNORE(ckt);
+
     for (; model != NULL; model = model->B3SOIPDnextModel) 
     {    for (here = model->B3SOIPDinstances; here!= NULL;
               here = here->B3SOIPDnextInstance) 

@@ -22,6 +22,8 @@ NUMOSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
   struct mosAdmittances yAc;
   double startTime;
 
+  IGNORE(ckt);
+
   for (; model != NULL; model = model->NUMOSnextModel) {
     FieldDepMobility = model->NUMOSmodels->MODLfieldDepMobility;
     TransDepMobility = model->NUMOSmodels->MODLtransDepMobility;

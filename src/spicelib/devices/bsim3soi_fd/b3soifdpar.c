@@ -21,6 +21,9 @@ B3SOIFDparam(int param, IFvalue *value, GENinstance *inst,
              IFvalue *select)
 {
     B3SOIFDinstance *here = (B3SOIFDinstance*)inst;
+
+    IGNORE(select);
+
     switch(param) 
     {   case B3SOIFD_W:
             here->B3SOIFDw = value->rValue;

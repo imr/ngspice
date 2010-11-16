@@ -15,6 +15,8 @@ Author: 1985 Thomas L. Quarles
 int 
 TRANsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    IGNORE(ckt);
+
     switch(which) {
 
     case TRAN_TSTOP:

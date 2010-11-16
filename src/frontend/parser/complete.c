@@ -335,6 +335,9 @@ printem(wordlist *wl)
 void
 cp_ccom(wordlist *wlist, char *buf, bool esc)
 {
+    IGNORE(wlist);
+    IGNORE(buf);
+    IGNORE(esc);
     return;
 }
 #endif
@@ -569,6 +572,8 @@ cp_kwswitch(int class, char *tree)
 void
 cp_ccrestart(bool kwords)
 {
+    IGNORE(kwords);
+
     /* Ack. */
     return;
 }

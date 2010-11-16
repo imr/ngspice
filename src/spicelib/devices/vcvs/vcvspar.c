@@ -17,6 +17,9 @@ int
 VCVSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     VCVSinstance *here = (VCVSinstance *)inst;
+
+    IGNORE(select);
+
     switch(param) {
         case VCVS_GAIN:
             here->VCVScoeff = value->rValue;

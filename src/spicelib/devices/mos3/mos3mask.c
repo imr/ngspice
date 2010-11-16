@@ -21,6 +21,9 @@ int
 MOS3mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     MOS3model *here = (MOS3model *)inst;
+
+    IGNORE(ckt);
+
     switch(which) {
         case MOS3_MOD_TNOM:
             value->rValue = here->MOS3tnom-CONSTCtoK;

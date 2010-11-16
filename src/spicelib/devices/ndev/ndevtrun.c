@@ -18,6 +18,9 @@ NDEVtrunc(
   double *timeStep )
 
 {
+  IGNORE(inModel);
+  IGNORE(ckt);
+  IGNORE(timeStep);
 
   return (OK);
 }

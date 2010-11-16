@@ -1,4 +1,8 @@
 2010-11-16  Robert Larice
+ * src/**/* :
+    pour `IGNORE()' all over the source
+
+2010-11-16  Robert Larice
  * src/include/ngspice.h :
     introduce macro `IGNORE(x)', which shall used to mark unused parameters
       for better visibility in the source code

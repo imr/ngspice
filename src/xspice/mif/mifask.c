@@ -85,6 +85,8 @@ int MIFask(
 
     Mif_Boolean_t  is_array;
 
+    IGNORE(ckt);
+    IGNORE(select);
 
     /* Arrange for access to MIF specific data in the instance */
     inst = (MIFinstance *) inInst;

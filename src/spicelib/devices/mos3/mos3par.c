@@ -19,6 +19,9 @@ int
 MOS3param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MOS3instance *here = (MOS3instance *)inst;
+
+    IGNORE(select);
+
     switch(param) {
     	
         case MOS3_M:

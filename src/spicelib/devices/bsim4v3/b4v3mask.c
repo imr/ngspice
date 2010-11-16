@@ -29,6 +29,9 @@ int which,
 IFvalue *value)
 {
     BSIM4v3model *model = (BSIM4v3model *)inst;
+
+    IGNORE(ckt);
+
     switch(which) 
     {   case BSIM4v3_MOD_MOBMOD :
             value->iValue = model->BSIM4v3mobMod; 

@@ -19,6 +19,10 @@ int
 TXLask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
     TXLinstance *fast = (TXLinstance *)inst;
+
+    IGNORE(select);
+    IGNORE(ckt);
+
     switch(which) {
         case TXL_OUT_NODE:
             value->iValue = fast->TXLnegNode;

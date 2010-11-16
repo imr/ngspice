@@ -72,6 +72,10 @@ double ccgf,ccd,ccs,ccdeltaT,ccgb;
 double vg,vgacc,Egacc,tmpacc,Qacc;
 double csf;
 
+IGNORE(gammaB);
+IGNORE(Phiplusvsb);
+IGNORE(vgB);
+
 /****** Part 2 - extract variables passed from soi3load(), which  ******/
 /****** have been passed to soi3cap() in *arg arrays.             ******/
 

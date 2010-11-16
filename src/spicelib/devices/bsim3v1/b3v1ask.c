@@ -24,6 +24,8 @@ BSIM3v1ask (CKTcircuit * ckt, GENinstance * inst, int which, IFvalue * value,
 {
   BSIM3v1instance *here = (BSIM3v1instance *) inst;
 
+  IGNORE(select);
+
   switch (which)
     {
     case BSIM3v1_L:

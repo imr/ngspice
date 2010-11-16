@@ -24,6 +24,9 @@ int
 B3SOIFDmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     B3SOIFDmodel *model = (B3SOIFDmodel *)inst;
+
+    IGNORE(ckt);
+
     switch(which) 
     {   case B3SOIFD_MOD_MOBMOD:
             value->iValue = model->B3SOIFDmobMod; 

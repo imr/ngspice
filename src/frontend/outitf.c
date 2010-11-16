@@ -624,12 +624,21 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 int
 OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr)
 {
+    IGNORE(refPtr);
+    IGNORE(valuePtr);
+    IGNORE(plotPtr);
+
     return (OK);
 }
 /* ARGSUSED */ /* until some code gets written */
 int
 OUTwData(void *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
 {
+    IGNORE(refPtr);
+    IGNORE(valuePtr);
+    IGNORE(dataIndex);
+    IGNORE(plotPtr);
+
     return (OK);
 }
 
@@ -637,6 +646,7 @@ OUTwData(void *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
 int
 OUTwEnd(void *plotPtr)
 {
+    IGNORE(plotPtr);
     return (OK);
 }
 
@@ -669,6 +679,11 @@ OUTendPlot(void *plotPtr)
 int
 OUTbeginDomain(void *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue)
 {
+    IGNORE(outerRefValue);
+    IGNORE(refType);
+    IGNORE(refName);
+    IGNORE(plotPtr);
+
     return (OK);
 }
 
@@ -676,6 +691,7 @@ OUTbeginDomain(void *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue
 int
 OUTendDomain(void *plotPtr)
 {
+    IGNORE(plotPtr);
     return (OK);
 }
 
@@ -689,6 +705,8 @@ OUTattributes(void *plotPtr, IFuid varName, int param, IFvalue *value)
     struct dvec *d;
     GRIDTYPE type;
     int i;
+
+    IGNORE(value);
 
     if (param == OUT_SCALE_LIN)
 	type = GRID_LIN;

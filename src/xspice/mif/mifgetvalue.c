@@ -104,6 +104,8 @@ MIFgetValue (
     int     value_type;
     int     is_array;
 
+    IGNORE(ckt);
+    IGNORE(tab);
 
     /* Mask off non-type bits */
     value_type = type & IF_VARTYPES;

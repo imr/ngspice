@@ -83,6 +83,8 @@ int IFdelUid(CKTcircuit *ckt, IFuid uid, int type)
 {
     int error;
 
+    IGNORE(ckt);
+
     switch (type) {
     case UID_ANALYSIS:
     case UID_TASK:

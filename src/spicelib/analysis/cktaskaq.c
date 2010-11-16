@@ -20,6 +20,8 @@ CKTaskAnalQ(CKTcircuit *ckt, JOB *analPtr, int parm, IFvalue *value, IFvalue *se
 {
     int type = analPtr->JOBtype;
 
+    IGNORE(selector);
+
     if((analInfo[type]->askQuest) == NULL) return(E_BADPARM);
     return( (*(analInfo[type]->askQuest))(ckt,analPtr,parm,value));
 }

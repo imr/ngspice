@@ -123,6 +123,7 @@ ONEcopyBCinfo(ONEdevice *pDevice, ONEelem *pElem, BDRYcard *bdry, int index)
   int eIndex;
   double length;
 
+  IGNORE(pDevice);
 
   /* First add fixed charge. */
   pNode = pElem->pNodes[index];
