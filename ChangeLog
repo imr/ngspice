@@ -1,3 +1,9 @@
+2010-11-16  Robert Larice
+ * src/include/ngspice.h :
+    introduce macro `IGNORE(x)', which shall used to mark unused parameters
+      for better visibility in the source code
+      and to swallow compiler warnings
+
 2010-11-14  Holger Vogt
  * inpcom.c: bug no. 3072940
 
