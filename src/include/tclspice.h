@@ -9,7 +9,7 @@ extern void blt_relink(int index, void* v);
 extern void blt_lockvec(int index);
 
 /* For things to do per loop */
-int Tcl_ExecutePerLoop();
+int Tcl_ExecutePerLoop(void);
 
 #include <graph.h>
 #include <ftedev.h>

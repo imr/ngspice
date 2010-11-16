@@ -141,7 +141,7 @@ typedef void (*sighandler)(int);
 #ifdef HAVE_ASPRINTF
 #ifdef HAVE_LIBIBERTY_H /* asprintf */
 #include <libiberty.h>
-#else /* we have asprintf, but not libiberty.h */
+#elif defined(__MINGW32__) || defined(__SUNPRO_C) /* we have asprintf, but not libiberty.h */
 #include <stdarg.h>
 extern int asprintf(char **out, const char *fmt, ...);
 extern int vasprintf(char **out, const char *fmt, va_list ap);
@@ -151,7 +151,7 @@ extern int vasprintf(char **out, const char *fmt, va_list ap);
 extern IFfrontEnd nutmeginfo;
 
 extern struct comm spcp_coms[ ];
-extern void DevInit(); 
+extern void DevInit(void); 
 extern int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 extern wordlist * cp_varwl(struct variable *var);
 
@@ -185,6 +185,37 @@ do {\
 #if defined(_MSC_VER) || defined(__MINGW32__)
 HANDLE outheap;
 #endif
+
+
+void tcl_stdflush(FILE *f);
+int  tcl_vfprintf(FILE *f, const char *fmt, ...);
+int  Spice_Init(Tcl_Interp *interp);
+int  Tcl_ExecutePerLoop(void);
+void triggerEventCheck(ClientData clientData,int flags);
+void triggerEventSetup(ClientData clientData,int flags);
+int  triggerEventHandler(Tcl_Event *evPtr, int flags);
+void stepEventCheck(ClientData clientData,int flags);
+int  stepEventHandler(Tcl_Event *evPtr, int flags);
+void stepEventSetup(ClientData clientData,int flags);
+int  sp_Tk_Update(void);
+int  sp_Tk_SetColor(int colorid);
+int  sp_Tk_SetLinestyle(int linestyleid);
+int  sp_Tk_DefineLinestyle(int linestyleid, int mask);
+int  sp_Tk_DefineColor(int colorid, double red, double green, double blue);
+int  sp_Tk_Text(char *text, int x, int y);
+int  sp_Tk_Arc(int x0, int y0, int radius, double theta, double delta_theta);
+int  sp_Tk_DrawLine(int x1, int y1, int x2, int y2);
+int  sp_Tk_Clear(void);
+int  sp_Tk_Close(void);
+int  sp_Tk_NewViewport(GRAPH *graph);
+int  sp_Tk_Init(void);
+int  get_mod_param TCL_CMDPROCARGS(clientData,interp,argc,argv);
+void sighandler_tclspice(int num);
+void blt_relink(int index,void *tmp);
+void blt_lockvec(int index);
+void blt_add(int index,double value);
+void blt_init(void *run);
+int  blt_plot(struct dvec *y,struct dvec *x,int new);
 
 
 /****************************************************************************/
@@ -285,7 +316,7 @@ static int spice_data TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   }
 }
 
-static int resetTriggers();
+static int resetTriggers(void);
 
 /*Creates and registers the blt vectors, used by spice*/
 void blt_init(void *run) {
@@ -636,7 +667,7 @@ static void * _thread_run(void *string){
 #if defined(__MINGW32__) || defined(_MSC_VER)
 static int WINAPI _thread_stop(){
 #else
-static int _thread_stop(){
+static int _thread_stop(void){
 #endif
   int timeout = 0;
   if(fl_running) {
@@ -1732,7 +1763,7 @@ void triggerEventCheck(ClientData clientData,int flags) {
 }
 
 
-int Tcl_ExecutePerLoop() {
+int Tcl_ExecutePerLoop(void) {
 
   struct watch *current;
   
@@ -1821,7 +1852,7 @@ int Tcl_ExecutePerLoop() {
   return 0;
 }
 
-static int resetTriggers() {
+static int resetTriggers(void) {
 #ifdef THREADS
   mutex_lock(&triggerMutex);
 #endif

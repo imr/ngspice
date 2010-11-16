@@ -1,4 +1,9 @@
 2010-11-16  Robert Larice
+ * src/tclspice.c ,
+ * src/include/tclspice.h :
+    local prototypes for "tclspice.c"
+
+2010-11-16  Robert Larice
  * src/frontend/parse-bison.c ,
  * src/spicelib/parser/inpptree-parser.c :
     regenerate bison output files
