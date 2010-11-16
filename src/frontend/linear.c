@@ -83,6 +83,7 @@ com_linearize(wordlist *wl)
             if (!v) {
                 fprintf(cp_err, "Error: no such vector %s\n",
                         wl->wl_word);
+                wl = wl->wl_next;
                 continue;
             }
             lincopy(v, newtime->v_realdata, len, oldtime);
