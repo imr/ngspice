@@ -1,4 +1,10 @@
 2010-11-16  Robert Larice
+ * src/Makefile.am :
+    fix another missing dependencies problem
+      handcraftet compilation rules caused this problem with main.c/spice.o
+    a `make distclean' might be appropriate after this CVS checkout
+
+2010-11-16  Robert Larice
  * configure.ac ,
  * src/Makefile.am ,
  * src/spicelib/devices/Makefile.am :

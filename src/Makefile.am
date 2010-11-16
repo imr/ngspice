@@ -27,7 +27,7 @@ endif !TCL_MODULE
 
 EXTRA_DIST = ngspice.txt setplot spectrum \
 	     devload devaxis ciderinit winmain.c unsupported \
-	     tclspice.c tclspice.map pkgIndex.tcl.in tclspinit.in
+	     tclspice.c tclspice.map pkgIndex.tcl.in tclspinit.in main.c
 
 
 initdatadir = $(pkgdatadir)/scripts
@@ -95,16 +95,18 @@ DYNAMIC_DEVICELIBS =					\
 ## Build ngspice first:
 
 ngspice_SOURCES = \
+	main.c \
 	conf.c \
 	conf.h \
 	ngspice.c
+
+ngspice_CPPFLAGS = $(AM_CPPFLAGS) -DSIMULATOR
 
 if WINDOWS
 ngspice_SOURCES += winmain.c
 endif
 
 ngspice_LDADD = \
-	spice.lo \
 	frontend/libfte.la
 
 if WINDOWS
@@ -179,12 +181,6 @@ ngspice_LDADD += frontend/help/libhlp.la
 endif
 endif
 
-winmain.o: winmain.c ../config.h
-	$(COMPILE) -DSIMULATOR -o winmain.o  -c $(srcdir)/winmain.c
-
-spice.lo: main.c ../config.h
-	$(LTCOMPILE) -DSIMULATOR -c -o spice.o $<
-
 
 ## nutmeg:
 
@@ -193,6 +189,8 @@ ngnutmeg_SOURCES = \
 	conf.c \
 	conf.h \
 	ngnutmeg.c
+
+ngnutmeg_CPPFLAGS = $(AM_CPPFLAGS)
 
 if WINDOWS
 ngnutmeg_SOURCES += winmain.c
@@ -311,10 +309,17 @@ if TCLWIN
 LIBS += -lpsapi  -ltcl84 -lBLT24
 endif
 
-libspice_la_SOURCES =
+libspice_la_SOURCES = \
+	main.c \
+	conf.c \
+	conf.h \
+	ngspice.c \
+	tclspice.c
 
-libspice_la_LIBADD = ngspice.lo conf.lo \
-	spice.lo \
+libspice_la_CPPFLAGS = $(AM_CPPFLAGS)  -DSIMULATOR \
+	-DTCLSPICE_version="\"$(TCLSPICE_VERSION)\""
+
+libspice_la_LIBADD = \
 	@X_LIBS@ \
 	frontend/libfte.la
 
@@ -337,7 +342,7 @@ libspice_la_LIBADD += \
 
 if NDEV_WANTED
 libspice_la_LIBADD += \
-	 spicelib/devices/ndev/libndev.la
+	spicelib/devices/ndev/libndev.la
 endif
 
 if NUMDEV_WANTED
@@ -383,7 +388,7 @@ libspice_la_LIBADD += \
 	maths/ni/libni.la \
 	maths/sparse/libsparse.la \
 	misc/libmisc.la \
-	tclspice.lo $(LIBS)
+	$(LIBS)
 
 libspice_la_CFLAGS = $(AM_CFLAGS)
 libspice_la_LDFLAGS =  -shared -Wl,--version-script=tclspice.map
@@ -421,10 +426,6 @@ install-tcl-recursive:
 install-tclspice:
 	$(mkinstalldirs) $(DESTDIR)$(libdir)/spice
 	$(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(libdir)/spice
-
-tclspice.lo: tclspice.c
-	$(LTCOMPILE) -DTCLSPICE_version="\"$(TCLSPICE_VERSION)\"" -MT tclspice.lo -MD -MP -MF $(DEPDIR)/tclspice.Tpo -c -o tclspice.o $<
-	mv -f $(DEPDIR)/tclspice.Tpo $(DEPDIR)/tclspice.Plo
 
 endif TCL_MODULE
 
