@@ -42,7 +42,6 @@ SUBDIRS = \
 	mos3	\
 	mos6	\
 	mos9	\
-	@NDEV_DIR@ \
 	res	\
 	soi3	\
 	sw	\
@@ -53,8 +52,15 @@ SUBDIRS = \
 	vccs	\
 	vcvs	\
 	vsrc	\
-	@VLADEVDIR@ \
-	@NUMDEVDIR@
+	@VLADEVDIR@
+
+if NDEV_WANTED
+SUBDIRS += ndev
+endif
+
+if NUMDEV_WANTED
+SUBDIRS += nbjt nbjt2 numd  numd2 numos
+endif
 
 DIST_SUBDIRS = \
 	@VLADEVDIR@ \

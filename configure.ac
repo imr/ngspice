@@ -715,15 +715,8 @@ AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE,"`date`",[Define the build date])
 
 if test "$with_windows" = "yes"; then
     AC_MSG_RESULT(WINDOWS code enabled)
-    WINMAIN="winmain.o"
-    WINDISPLIB="frontend/wdisp/libwindisp.la"
     AC_CHECK_FUNCS([memmove])
-else
-    WINMAIN=""
-    WINDISPLIB=""
 fi
-AC_SUBST(WINMAIN)
-AC_SUBST(WINDISPLIB)
 
 # Recapitulate settings:
 AC_MSG_RESULT(Settings which were chosen:)
@@ -821,33 +814,24 @@ dnl Define variables for LEX
 	if test -z $LEX ; then
 	  AC_MSG_ERROR(Flex is required for building XSPICE)
 	fi
-    XSPICEDIR="xspice"
     case $host_os in
      *mingw* )
        AC_DEFINE([IPC_DEBUG_VIA_STDIO], [1], [Client-Server only via stdio.])
-       DLLIBS="";;
+       XSPICEDLLIBS="";;
      *cygwin* )
         AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-        DLLIBS="" ;;
+        XSPICEDLLIBS="" ;;
      *freebsd* )
         AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-        DLLIBS="";;
+        XSPICEDLLIBS="";;
      *openbsd* )
         AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-        DLLIBS="";;
+        XSPICEDLLIBS="";;
      * )
         AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-        DLLIBS="-ldl";;
+        XSPICEDLLIBS="-ldl";;
     esac
-    XSPICELIB1="$XSPICEDIR/cm/libcmxsp.la \
-    		$XSPICEDIR/mif/libmifxsp.la"
-    XSPICELIB2="$XSPICEDIR/evt/libevtxsp.la \
-                $XSPICEDIR/enh/libenhxsp.la \
-	        $XSPICEDIR/ipc/libipcxsp.la \
-		$XSPICEDIR/idn/libidnxsp.la \
-		$DLLIBS"
     XSPICEINIT=""
-    XSPICETESTS=""
     AC_CHECK_FUNCS([modf])
     AC_CHECK_HEADERS([libintl.h malloc.h])
 dnl Find the library directory (lib or lib64) for XSPICE libs
@@ -859,60 +843,28 @@ dnl Find the library directory (lib or lib64) for XSPICE libs
         echo XSPICE libraries in directory $libname
     fi
 else
-    XSPCIEDIR=""
-    XSPICELIB1=""
-    XSPICELIB2=""
-    XSPICETESTS=""
     XSPICEINIT="*"
 
     if test -z "${YACC}" ; then
         AC_MSG_WARN([No bison, byacc, yacc found: Uses prebuilt default parsers])
     fi
 fi
-AC_SUBST(XSPICEDIR)
-AC_SUBST(XSPICELIB1)
-AC_SUBST(XSPICELIB2)
-AC_SUBST(XSPICETESTS)
 AC_SUBST(XSPICEINIT)
+AC_SUBST(XSPICEDLLIBS)
 AC_SUBST(libname)
+
+AM_CONDITIONAL([XSPICE_WANTED], [test "$enable_xspice" = "yes"])
+
 
 dnl Add CIDER enhancements to ngspice.
 if test "$enable_cider" = "yes"; then
      AC_MSG_RESULT(CIDER features enabled)
      AC_DEFINE(CIDER,[1],[The CIDER enhancements])
-
-     CIDERDIR="ciderlib"
-
-     CIDERSIM="	$CIDERDIR/twod/libcidertwod.la     \
-		$CIDERDIR/oned/libcideroned.la     \
-		$CIDERDIR/input/libciderinput.la   \
-		$CIDERDIR/support/libcidersuprt.la"
-
-     NUMDEV="	spicelib/devices/nbjt/libnbjt.la   \
-		spicelib/devices/nbjt2/libnbjt2.la \
-		spicelib/devices/numd/libnumd.la   \
-		spicelib/devices/numd2/libnumd2.la \
-		spicelib/devices/numos/libnumos.la"
-     NUMDEVDIR="  nbjt \
-   		nbjt2 \
-		numd  \
-		numd2 \
-		numos"
-
-CIDERSCRIPTS="devload devaxis ciderinit"
-
-else
-    CIDERLIB=""
-    CIDERSIM=""
-    NUMDEV=""
-    NUMDEVDIR=""
-    CIDERSCRIPTS=""
 fi
-AC_SUBST(CIDERDIR)
-AC_SUBST(CIDERSIM)
-AC_SUBST(NUMDEV)
-AC_SUBST(NUMDEVDIR)
-AC_SUBST(CIDERSCRIPTS)
+
+AM_CONDITIONAL([CIDER_WANTED],  [test "$enable_cider" = "yes"])
+AM_CONDITIONAL([NUMDEV_WANTED], [test "$enable_cider" = "yes"])
+
 
 
 dnl adms option
@@ -964,17 +916,8 @@ dnl NDEV option
 if test "$enable_ndev" = "yes"; then
     AC_MSG_RESULT(NDEV features enabled)
     AC_DEFINE(NDEV,[],[The NDEV interface])
-    NDEV=""
-    NDEV_DIR=" ndev "
-    NDEV_LIB=" spicelib/devices/ndev/libndev.la "
-
-else
-    NDEV=""
-    NDEV_DIR=""
-    NDEV_LIB=""
 fi
-AC_SUBST(NDEV_DIR)
-AC_SUBST(NDEV_LIB)
+AM_CONDITIONAL([NDEV_WANTED], [test "$enable_ndev" = "yes"])
 
 
 dnl Cluster option

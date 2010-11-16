@@ -1,4 +1,11 @@
 2010-11-16  Robert Larice
+ * configure.ac ,
+ * src/Makefile.am ,
+ * src/spicelib/devices/Makefile.am :
+    fix a missing dependencies problem
+      use AM_CONDITIONAL to configure program_LDADD variables
+
+2010-11-16  Robert Larice
  * src/tclspice.c ,
  * src/include/tclspice.h :
     local prototypes for "tclspice.c"
@@ -27,6 +34,7 @@
 
 2010-11-14  Holger Vogt
  * inpcom.c: bug no. 3072940
+   http://sourceforge.net/tracker/?func=detail&aid=3072940&group_id=38962&atid=423915
 
 2010-11-13  Dietmar Warning
  * analysis/dctran.c, devices/*/*load.c: hide obsolete labels and local variables

@@ -1,8 +1,16 @@
 ## Process this file with automake to produce Makefile.in
 # $Id$
 
-SUBDIRS = misc maths frontend spicelib include @XSPICEDIR@ @CIDERDIR@
+SUBDIRS = misc maths frontend spicelib include
 DIST_SUBDIRS = misc maths frontend spicelib include xspice ciderlib
+
+if XSPICE_WANTED
+SUBDIRS += xspice
+endif
+
+if CIDER_WANTED
+SUBDIRS += ciderlib
+endif
 
 if !TCL_MODULE
 bin_PROGRAMS =  ngspice ngnutmeg
@@ -24,8 +32,10 @@ EXTRA_DIST = ngspice.txt setplot spectrum \
 
 initdatadir = $(pkgdatadir)/scripts
 
-initdata_DATA = spinit setplot spectrum @CIDERSCRIPTS@
-
+initdata_DATA = spinit setplot spectrum
+if CIDER_WANTED
+initdata_DATA += devload devaxis ciderinit
+endif
 
 DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/asrc/libasrc.la		\
@@ -79,9 +89,7 @@ DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/vccs/libvccs.la		\
 	spicelib/devices/vcvs/libvcvs.la		\
 	spicelib/devices/vsrc/libvsrc.la		\
-	@NDEV_LIB@					\
-	@VLADEV@					\
-	@NUMDEV@
+	@VLADEV@
 
 
 ## Build ngspice first:
@@ -97,19 +105,66 @@ endif
 
 ngspice_LDADD = \
 	spice.lo \
-	frontend/libfte.la \
-	@WINDISPLIB@ \
-	frontend/plotting/libplotting.la \
-	@XSPICELIB1@ \
+	frontend/libfte.la
+
+if WINDOWS
+ngspice_LDADD += \
+	frontend/wdisp/libwindisp.la
+endif
+
+ngspice_LDADD += \
+	frontend/plotting/libplotting.la
+
+if XSPICE_WANTED
+ngspice_LDADD += \
+	xspice/cm/libcmxsp.la \
+	xspice/mif/libmifxsp.la
+endif
+
+ngspice_LDADD += \
 	spicelib/devices/dev.lo \
-	$(DYNAMIC_DEVICELIBS)  \
+	$(DYNAMIC_DEVICELIBS)
+
+if NDEV_WANTED
+ngspice_LDADD += spicelib/devices/ndev/libndev.la
+endif
+
+if NUMDEV_WANTED
+ngspice_LDADD += \
+	spicelib/devices/nbjt/libnbjt.la   \
+	spicelib/devices/nbjt2/libnbjt2.la \
+	spicelib/devices/numd/libnumd.la   \
+	spicelib/devices/numd2/libnumd2.la \
+	spicelib/devices/numos/libnumos.la
+endif
+
+ngspice_LDADD += \
 	spicelib/analysis/libckt.la \
-	spicelib/devices/libdev.la \
-	@XSPICELIB2@ \
+	spicelib/devices/libdev.la
+
+if XSPICE_WANTED
+ngspice_LDADD += \
+	xspice/evt/libevtxsp.la \
+	xspice/enh/libenhxsp.la \
+	xspice/ipc/libipcxsp.la \
+	xspice/idn/libidnxsp.la \
+	@XSPICEDLLIBS@
+endif
+
+ngspice_LDADD += \
 	frontend/parser/libparser.la \
 	frontend/numparam/libnumparam.la \
-	spicelib/parser/libinp.la \
-	@CIDERSIM@ \
+	spicelib/parser/libinp.la
+
+if CIDER_WANTED
+ngspice_LDADD += \
+	ciderlib/twod/libcidertwod.la     \
+	ciderlib/oned/libcideroned.la     \
+	ciderlib/input/libciderinput.la   \
+	ciderlib/support/libcidersuprt.la
+endif
+
+ngspice_LDADD += \
 	maths/deriv/libderiv.la \
 	maths/cmaths/libcmaths.la \
 	maths/misc/libmathmisc.la \
@@ -144,8 +199,14 @@ ngnutmeg_SOURCES += winmain.c
 endif
 
 ngnutmeg_LDADD = \
-	frontend/libfte.la \
-	@WINDISPLIB@ \
+	frontend/libfte.la
+
+if WINDOWS
+ngnutmeg_LDADD += \
+	frontend/wdisp/libwindisp.la
+endif
+
+ngnutmeg_LDADD += \
 	frontend/plotting/libplotting.la \
 	frontend/parser/libparser.la \
 	frontend/numparam/libnumparam.la \
@@ -251,21 +312,70 @@ LIBS += -lpsapi  -ltcl84 -lBLT24
 endif
 
 libspice_la_SOURCES =
+
 libspice_la_LIBADD = ngspice.lo conf.lo \
 	spice.lo \
 	@X_LIBS@ \
-	frontend/libfte.la \
-	@WINDISPLIB@ \
-	frontend/plotting/libplotting.la \
-	@XSPICELIB1@ \
-	$(DYNAMIC_DEVICELIBS)  \
+	frontend/libfte.la
+
+if WINDOWS
+libspice_la_LIBADD += \
+	frontend/wdisp/libwindisp.la
+endif
+
+libspice_la_LIBADD += \
+	frontend/plotting/libplotting.la
+
+if XSPICE_WANTED
+libspice_la_LIBADD += \
+	xspice/cm/libcmxsp.la \
+	xspice/mif/libmifxsp.la
+endif
+
+libspice_la_LIBADD += \
+	$(DYNAMIC_DEVICELIBS)
+
+if NDEV_WANTED
+libspice_la_LIBADD += \
+	 spicelib/devices/ndev/libndev.la
+endif
+
+if NUMDEV_WANTED
+libspice_la_LIBADD += \
+	spicelib/devices/nbjt/libnbjt.la   \
+	spicelib/devices/nbjt2/libnbjt2.la \
+	spicelib/devices/numd/libnumd.la   \
+	spicelib/devices/numd2/libnumd2.la \
+	spicelib/devices/numos/libnumos.la
+endif
+
+libspice_la_LIBADD += \
 	spicelib/analysis/libckt.la \
-	spicelib/devices/libdev.la \
-	@XSPICELIB2@ \
+	spicelib/devices/libdev.la
+
+if XSPICE_WANTED
+libspice_la_LIBADD += \
+	xspice/evt/libevtxsp.la \
+	xspice/enh/libenhxsp.la \
+	xspice/ipc/libipcxsp.la \
+	xspice/idn/libidnxsp.la \
+	@XSPICEDLLIBS@
+endif
+
+libspice_la_LIBADD += \
 	frontend/parser/libparser.la \
 	frontend/numparam/libnumparam.la \
-	spicelib/parser/libinp.la \
-	@CIDERSIM@ \
+	spicelib/parser/libinp.la
+
+if CIDER_WANTED
+libspice_la_LIBADD += \
+	ciderlib/twod/libcidertwod.la     \
+	ciderlib/oned/libcideroned.la     \
+	ciderlib/input/libciderinput.la   \
+	ciderlib/support/libcidersuprt.la
+endif
+
+libspice_la_LIBADD += \
 	maths/deriv/libderiv.la \
 	maths/cmaths/libcmaths.la \
 	maths/misc/libmathmisc.la \
@@ -274,6 +384,7 @@ libspice_la_LIBADD = ngspice.lo conf.lo \
 	maths/sparse/libsparse.la \
 	misc/libmisc.la \
 	tclspice.lo $(LIBS)
+
 libspice_la_CFLAGS = $(AM_CFLAGS)
 libspice_la_LDFLAGS =  -shared -Wl,--version-script=tclspice.map
 if TCLWIN
