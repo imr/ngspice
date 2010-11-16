@@ -30,7 +30,7 @@
   # define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
   #endif
 
-  #define U(x)  (void)x
+
 %}
 
 %name-prefix="PP"

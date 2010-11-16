@@ -1,4 +1,11 @@
 2010-11-16  Robert Larice
+ * src/frontend/parse-bison.y ,
+ * src/spicelib/parser/inpptree-parser.y ,
+ * src/xspice/xspice.c ,
+ * src/xspice/cm/cmexport.c :
+    convert macro `U()' to `IGNORE()'
+
+2010-11-16  Robert Larice
  * src/**/* :
     pour `IGNORE()' all over the source
 

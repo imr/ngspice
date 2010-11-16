@@ -3,8 +3,6 @@
 #include <cm.h>
 #include <dllitf.h>
 
-#define U(x)  (void)x
-
 /*how annoying!, needed for structure below*/
 static void *tcalloc(size_t a, size_t b) {
   return tmalloc(a*b);          /* FIXME, tcalloc must zero !?!? */
@@ -12,7 +10,7 @@ static void *tcalloc(size_t a, size_t b) {
 
 #ifdef HAVE_LIBGC
 static void no_free(void *p) {
-  U(p);
+  IGNORE(p);
 }
 #endif
 
