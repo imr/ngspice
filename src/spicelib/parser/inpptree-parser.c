@@ -119,7 +119,7 @@
   # define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
   #endif
 
-  #define U(x)  (void)x
+
 
 
 /* Enabling traces.  */
@@ -1761,7 +1761,10 @@ yyreturn:
 static void
 PTerror (char **line, struct INPparseNode **retval, void *ckt, char const *s)
 {
-  U(line); U(retval); U(ckt);
+  IGNORE(line);
+  IGNORE(retval);
+  IGNORE(ckt);
+
   fprintf (stderr, "%s: %s\n", __func__, s);
 }
 

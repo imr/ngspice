@@ -131,7 +131,7 @@
   # define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
   #endif
 
-  #define U(x)  (void)x
+
 
 
 /* Enabling traces.  */
@@ -1867,7 +1867,10 @@ yyreturn:
 static void
 PPerror (YYLTYPE *locp, char **line, struct pnode **retval, char const *s)
 {
-  U(line); U(retval);
+  IGNORE(locp);
+  IGNORE(line);
+  IGNORE(retval);
+
   fprintf (stderr, "%s: %s\n", __func__, s);
 }
 

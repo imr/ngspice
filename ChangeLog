@@ -1,4 +1,9 @@
 2010-11-16  Robert Larice
+ * src/frontend/parse-bison.c ,
+ * src/spicelib/parser/inpptree-parser.c :
+    regenerate bison output files
+
+2010-11-16  Robert Larice
  * src/frontend/parse-bison.y ,
  * src/spicelib/parser/inpptree-parser.y ,
  * src/xspice/xspice.c ,
