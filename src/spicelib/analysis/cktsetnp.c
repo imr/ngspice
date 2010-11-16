@@ -20,8 +20,8 @@ Author: 1985 Thomas L. Quarles
 int
 CKTsetNodPm(CKTcircuit *ckt, CKTnode *node, int parm, IFvalue *value, IFvalue *selector)
 {
-    IGNORE(ckt);
-    IGNORE(selector);
+    NG_IGNORE(ckt);
+    NG_IGNORE(selector);
 
     if(!node) return(E_BADPARM);
     switch(parm) {

@@ -22,7 +22,7 @@ NBJTask(CKTcircuit *ckt, GENinstance *inInst, int which, IFvalue *value, IFvalue
 {
   NBJTinstance *inst = (NBJTinstance *) inInst;
 
-  IGNORE(select);
+  NG_IGNORE(select);
 
   switch (which) {
   case NBJT_AREA:

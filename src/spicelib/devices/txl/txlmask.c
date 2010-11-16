@@ -22,7 +22,7 @@ TXLmodAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
     TXLmodel *model = (TXLmodel *)inModel;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case TXL_R:

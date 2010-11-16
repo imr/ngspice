@@ -18,9 +18,9 @@ NDEVtrunc(
   double *timeStep )
 
 {
-  IGNORE(inModel);
-  IGNORE(ckt);
-  IGNORE(timeStep);
+  NG_IGNORE(inModel);
+  NG_IGNORE(ckt);
+  NG_IGNORE(timeStep);
 
   return (OK);
 }

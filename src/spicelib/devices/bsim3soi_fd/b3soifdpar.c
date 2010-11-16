@@ -22,7 +22,7 @@ B3SOIFDparam(int param, IFvalue *value, GENinstance *inst,
 {
     B3SOIFDinstance *here = (B3SOIFDinstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) 
     {   case B3SOIFD_W:

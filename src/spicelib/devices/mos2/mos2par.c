@@ -21,7 +21,7 @@ MOS2param(int param, IFvalue *value, GENinstance *inst,
 {
     MOS2instance *here = (MOS2instance *)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case MOS2_TEMP:

@@ -26,7 +26,7 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     int ktype;
     int error;
 
-    IGNORE(states);
+    NG_IGNORE(states);
 
     /*  loop through all the inductor models */
     for( ; model != NULL; model = model->MUTnextModel ) {

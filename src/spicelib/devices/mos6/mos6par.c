@@ -19,7 +19,7 @@ MOS6param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MOS6instance *here = (MOS6instance *)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case MOS6_TEMP:

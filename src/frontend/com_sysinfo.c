@@ -90,7 +90,7 @@ void com_sysinfo(wordlist *wl)
    int errorcode;
    TesSystemInfo* info;
 
-   IGNORE(wl);
+   NG_IGNORE(wl);
 
    info = TMALLOC(TesSystemInfo, 1);
 

@@ -20,8 +20,8 @@ CPLask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
 {
     CPLinstance *here = (CPLinstance *)inst;
 
-    IGNORE(ckt);
-    IGNORE(select);
+    NG_IGNORE(ckt);
+    NG_IGNORE(select);
 
     switch(which) {
         case CPL_POS_NODE:

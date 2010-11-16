@@ -18,7 +18,7 @@ CCCSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     CCCSinstance *here = (CCCSinstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case CCCS_GAIN:

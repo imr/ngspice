@@ -18,7 +18,7 @@ TXLparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     TXLinstance *here = (TXLinstance *)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case TXL_IN_NODE:

@@ -24,7 +24,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
 {
     TSKtask *tsk, *def=NULL;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     *taskPtr = TMALLOC(TSKtask, 1);
     if(*taskPtr==NULL) return(E_NOMEM);

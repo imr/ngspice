@@ -26,7 +26,7 @@ struct b3soifdSizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
     
     if ((fplog = fopen("b3soifdv2check.log", "w")) != NULL)
     {   pParam = here->pParam;

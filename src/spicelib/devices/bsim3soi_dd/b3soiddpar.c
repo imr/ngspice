@@ -21,7 +21,7 @@ B3SOIDDparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     B3SOIDDinstance *here = (B3SOIDDinstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) 
     {   case B3SOIDD_W:

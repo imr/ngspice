@@ -263,7 +263,7 @@ DEVqmeyer(double vgs,		/* initial voltage gate-source */
     double vddif2;
     double vgst;
 
-    IGNORE(vgb);
+    NG_IGNORE(vgb);
 
 #define MAGIC_VDS 0.025
 

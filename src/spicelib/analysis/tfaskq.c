@@ -14,9 +14,9 @@ Author: 1985 Thomas L. Quarles
 int 
 TFaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    IGNORE(value);
-    IGNORE(anal);
-    IGNORE(ckt);
+    NG_IGNORE(value);
+    NG_IGNORE(anal);
+    NG_IGNORE(ckt);
 
     switch(which) {
 

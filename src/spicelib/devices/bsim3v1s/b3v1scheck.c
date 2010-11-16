@@ -22,7 +22,7 @@ struct bsim3v1sSizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
     
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     if ((fplog = fopen("BSIM3V3_1S_check.log", "w")) != NULL)
     {   pParam = here->pParam;

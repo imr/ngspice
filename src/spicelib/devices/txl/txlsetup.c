@@ -82,7 +82,7 @@ TXLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
   CKTnode *tmp;
   int error;
 
-  IGNORE(state);
+  NG_IGNORE(state);
 
     /*  loop through all the models */
     for( ; model != NULL; model = model->TXLnextModel ) {
@@ -214,7 +214,7 @@ ReadTxL(TXLinstance *tx, CKTcircuit *ckt)
    ERLINE *er;
    double LL = 1e-12;
 	
-   IGNORE(ckt);
+   NG_IGNORE(ckt);
 
    p = tx->in_node_name;
    n = tx->out_node_name;
@@ -587,7 +587,7 @@ root3(double a1, double a2, double a3, double x)
 static int 
 div3(double a1, double a2, double a3, double x, double *p1, double *p2)
 {
-   IGNORE(a2);
+   NG_IGNORE(a2);
 
    *p1 = a1 + x;
    *p2 = - a3 / x;

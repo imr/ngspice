@@ -624,9 +624,9 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 int
 OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr)
 {
-    IGNORE(refPtr);
-    IGNORE(valuePtr);
-    IGNORE(plotPtr);
+    NG_IGNORE(refPtr);
+    NG_IGNORE(valuePtr);
+    NG_IGNORE(plotPtr);
 
     return (OK);
 }
@@ -634,10 +634,10 @@ OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr)
 int
 OUTwData(void *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
 {
-    IGNORE(refPtr);
-    IGNORE(valuePtr);
-    IGNORE(dataIndex);
-    IGNORE(plotPtr);
+    NG_IGNORE(refPtr);
+    NG_IGNORE(valuePtr);
+    NG_IGNORE(dataIndex);
+    NG_IGNORE(plotPtr);
 
     return (OK);
 }
@@ -646,7 +646,7 @@ OUTwData(void *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
 int
 OUTwEnd(void *plotPtr)
 {
-    IGNORE(plotPtr);
+    NG_IGNORE(plotPtr);
     return (OK);
 }
 
@@ -679,10 +679,10 @@ OUTendPlot(void *plotPtr)
 int
 OUTbeginDomain(void *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue)
 {
-    IGNORE(outerRefValue);
-    IGNORE(refType);
-    IGNORE(refName);
-    IGNORE(plotPtr);
+    NG_IGNORE(outerRefValue);
+    NG_IGNORE(refType);
+    NG_IGNORE(refName);
+    NG_IGNORE(plotPtr);
 
     return (OK);
 }
@@ -691,7 +691,7 @@ OUTbeginDomain(void *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue
 int
 OUTendDomain(void *plotPtr)
 {
-    IGNORE(plotPtr);
+    NG_IGNORE(plotPtr);
     return (OK);
 }
 
@@ -706,7 +706,7 @@ OUTattributes(void *plotPtr, IFuid varName, int param, IFvalue *value)
     GRIDTYPE type;
     int i;
 
-    IGNORE(value);
+    NG_IGNORE(value);
 
     if (param == OUT_SCALE_LIN)
 	type = GRID_LIN;

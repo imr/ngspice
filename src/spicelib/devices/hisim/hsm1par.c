@@ -19,7 +19,7 @@ HSM1param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
   HSM1instance *here = (HSM1instance*)inst;
 
-  IGNORE(select);
+  NG_IGNORE(select);
 
   switch (param) {
   case HSM1_W:

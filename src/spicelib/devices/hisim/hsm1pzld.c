@@ -35,7 +35,7 @@ HSM1pzLoad(GENmodel *inModel, register CKTcircuit *ckt,
   
   double m; /* Multiplier */
   
-  IGNORE(ckt);
+  NG_IGNORE(ckt);
 
   for ( ;model != NULL ;model = model->HSM1nextModel ) {
     for ( here = model->HSM1instances ;here!= NULL ;

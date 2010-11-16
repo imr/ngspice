@@ -20,7 +20,7 @@ CKTmodAsk(CKTcircuit *ckt, GENmodel *modfast, int which, IFvalue *value, IFvalue
 {
     int type = modfast->GENmodType;
 
-    IGNORE(selector);
+    NG_IGNORE(selector);
 
     if((*DEVices[type]).DEVmodAsk) {
         return( (*((*DEVices[type]).DEVmodAsk)) (ckt,

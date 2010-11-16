@@ -22,7 +22,7 @@ LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
   int error;
   CKTnode *tmp;
 
-  IGNORE(state);
+  NG_IGNORE(state);
 
   /* loop through all the transmission line models */
   for (; model != NULL; model = model->LTRAnextModel) {

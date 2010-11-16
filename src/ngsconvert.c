@@ -437,23 +437,23 @@ void cp_pushcontrol(void) { }
 void cp_popcontrol(void) { }
 void out_init(void) { }
 void cp_doquit(void) { exit(0); }
-void cp_usrvars(struct variable **v1, struct variable **v2) { IGNORE(v2); IGNORE(v1); return; }
-int cp_evloop(char *s) { IGNORE(s); return (0); }
-void cp_ccon(bool o) { IGNORE(o); }
-char*if_errstring(int c) { IGNORE(c); return ("error"); }
+void cp_usrvars(struct variable **v1, struct variable **v2) { NG_IGNORE(v2); NG_IGNORE(v1); return; }
+int cp_evloop(char *s) { NG_IGNORE(s); return (0); }
+void cp_ccon(bool o) { NG_IGNORE(o); }
+char*if_errstring(int c) { NG_IGNORE(c); return ("error"); }
 #ifndef out_printf
-void out_printf(char *fmt, ...) { IGNORE(fmt); }
+void out_printf(char *fmt, ...) { NG_IGNORE(fmt); }
 #endif
-void out_send(char *string) { IGNORE(string); }
-struct variable * cp_enqvar(char *word) { IGNORE(word); return (NULL); }
-struct dvec *vec_get(const char *word) { IGNORE(word); return (NULL); }
+void out_send(char *string) { NG_IGNORE(string); }
+struct variable * cp_enqvar(char *word) { NG_IGNORE(word); return (NULL); }
+struct dvec *vec_get(const char *word) { NG_IGNORE(word); return (NULL); }
 void cp_ccom(wordlist *w, char *b, bool e) {
-  IGNORE(e);
-  IGNORE(b);
-  IGNORE(w); return; }
+  NG_IGNORE(e);
+  NG_IGNORE(b);
+  NG_IGNORE(w); return; }
 int cp_usrset(struct variable *v, bool i) {
-    IGNORE(i);
-    IGNORE(v); return(US_OK); }
+    NG_IGNORE(i);
+    NG_IGNORE(v); return(US_OK); }
 
 int disptype;
 

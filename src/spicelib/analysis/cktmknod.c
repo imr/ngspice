@@ -21,7 +21,7 @@ CKTmkNode(CKTcircuit *ckt, CKTnode **node)
 {
     CKTnode *mynode;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     mynode = TMALLOC(CKTnode, 1);
     if(mynode == (CKTnode *)NULL) return(E_NOMEM);

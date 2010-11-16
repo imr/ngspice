@@ -18,7 +18,7 @@ B2param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     B2instance *here = (B2instance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case BSIM2_W:

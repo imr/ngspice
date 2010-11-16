@@ -22,7 +22,7 @@ MOS9mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     MOS9model *here = (MOS9model *)inst;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case MOS9_MOD_TNOM:

@@ -19,7 +19,7 @@ NBJTparam(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
 {
   register NBJTinstance *inst = (NBJTinstance *) inInst;
 
-  IGNORE(select);
+  NG_IGNORE(select);
 
   switch (param) {
   case NBJT_AREA:

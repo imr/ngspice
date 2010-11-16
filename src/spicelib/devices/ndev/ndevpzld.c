@@ -17,9 +17,9 @@ NDEVpzLoad(
   register CKTcircuit *ckt,
   SPcomplex *s )
 {
-  IGNORE(inModel);
-  IGNORE(ckt);
-  IGNORE(s);
+  NG_IGNORE(inModel);
+  NG_IGNORE(ckt);
+  NG_IGNORE(s);
  
   return (OK);
 }

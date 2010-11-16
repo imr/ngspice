@@ -24,7 +24,7 @@ Author: 1985 Thomas L. Quarles
 int
 CKTacct(CKTcircuit *ckt, JOB *anal, int which, IFvalue *val)
 {
-    IGNORE(anal);
+    NG_IGNORE(anal);
 
     switch(which) {
         

@@ -15,7 +15,7 @@ int HFET2param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
   
   HFET2instance *here = (HFET2instance*)inst;
 
-  IGNORE(select);
+  NG_IGNORE(select);
   
   switch(param) {
     case HFET2_LENGTH:

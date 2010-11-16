@@ -349,7 +349,7 @@ double *xGds
                 
     double cdsqr = fac * ids * del * wtd/wtddet;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     *Gm   = dr*gm  - di*xgm;
     *xGm  = di*gm  + dr*xgm;

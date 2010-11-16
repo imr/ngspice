@@ -104,8 +104,8 @@ MIFgetValue (
     int     value_type;
     int     is_array;
 
-    IGNORE(ckt);
-    IGNORE(tab);
+    NG_IGNORE(ckt);
+    NG_IGNORE(tab);
 
     /* Mask off non-type bits */
     value_type = type & IF_VARTYPES;

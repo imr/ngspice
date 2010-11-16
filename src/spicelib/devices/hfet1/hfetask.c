@@ -22,7 +22,7 @@ HFETAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue 
     HFETAinstance *here = (HFETAinstance*)inst;
     static char *msg = "Current and power not available in ac analysis";
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(which) {
         case HFETA_LENGTH:

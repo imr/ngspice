@@ -23,7 +23,7 @@ VCCSload(GENmodel *inModel, CKTcircuit *ckt)
     VCCSmodel *model = (VCCSmodel *)inModel;
     VCCSinstance *here;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     /*  loop through all the source models */
     for( ; model != NULL; model = model->VCCSnextModel ) {

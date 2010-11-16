@@ -18,7 +18,7 @@ MESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MESinstance *here = (MESinstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case MES_AREA:

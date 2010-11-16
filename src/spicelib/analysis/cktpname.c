@@ -33,7 +33,7 @@ CKTpName(char *parm, IFvalue *val, CKTcircuit *ckt, int dev, char *name, GENinst
     int error;  /* int to store evaluate error return codes in */
     int i;
 
-    IGNORE(name);
+    NG_IGNORE(name);
 
     for(i=0;i<(*(*DEVices[dev]).DEVpublic.numInstanceParms);i++) {
         if(strcmp(parm,

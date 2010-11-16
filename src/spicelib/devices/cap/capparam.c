@@ -19,7 +19,7 @@ CAPparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     CAPinstance *here = (CAPinstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case CAP_CAP:

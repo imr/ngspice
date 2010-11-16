@@ -97,7 +97,7 @@ void EVTqueue_output(
 
     Mif_Boolean_t       splice;
 
-    IGNORE(udn_index);
+    NG_IGNORE(udn_index);
 
     /* Get pointers for fast access */
     output_queue = &(ckt->evt->queue.output);

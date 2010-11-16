@@ -15,7 +15,7 @@ SENSask(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     SENS_AN	*sinfo = (SENS_AN *) anal;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch (which) {
 

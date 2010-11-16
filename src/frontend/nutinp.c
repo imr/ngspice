@@ -271,12 +271,12 @@ nutinp_source(char *file)
 void
 nutinp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, struct line *options, char *filename)
 {
-    IGNORE(filename);
-    IGNORE(options);
-    IGNORE(reuse);
-    IGNORE(end);
-    IGNORE(tt);
-    IGNORE(deck);
+    NG_IGNORE(filename);
+    NG_IGNORE(options);
+    NG_IGNORE(reuse);
+    NG_IGNORE(end);
+    NG_IGNORE(tt);
+    NG_IGNORE(deck);
 
     /* This was "ifdef notdef"-ed out, so I tossed it */
 }

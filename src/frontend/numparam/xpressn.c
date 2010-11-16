@@ -433,7 +433,7 @@ define (tdico * dico,
    SPICE_DSTRING vartemp ;		/* vairable temp */
    NGHASHPTR htable_p ;			/* hash table */
 
-   IGNORE(pval);
+   NG_IGNORE(pval);
 
    spice_dstring_init(&vartemp) ;
 

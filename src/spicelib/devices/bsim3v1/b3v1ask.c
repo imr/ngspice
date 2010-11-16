@@ -24,7 +24,7 @@ BSIM3v1ask (CKTcircuit * ckt, GENinstance * inst, int which, IFvalue * value,
 {
   BSIM3v1instance *here = (BSIM3v1instance *) inst;
 
-  IGNORE(select);
+  NG_IGNORE(select);
 
   switch (which)
     {

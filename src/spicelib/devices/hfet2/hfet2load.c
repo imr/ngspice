@@ -384,7 +384,7 @@ static void hfeta2(HFET2model *model, HFET2instance *here, CKTcircuit *ckt,
   double delvgtvgs;
   double delvsatevgt;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
   vt     = CONSTKoverQ*TEMP;
   etavth = ETA*vt;

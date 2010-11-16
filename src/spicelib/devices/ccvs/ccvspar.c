@@ -18,7 +18,7 @@ CCVSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     CCVSinstance *here = (CCVSinstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case CCVS_TRANS:

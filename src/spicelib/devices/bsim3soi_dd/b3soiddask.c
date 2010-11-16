@@ -25,7 +25,7 @@ B3SOIDDask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
 {
 B3SOIDDinstance *here = (B3SOIDDinstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(which) 
     {   case B3SOIDD_L:

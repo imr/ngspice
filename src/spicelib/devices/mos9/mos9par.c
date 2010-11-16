@@ -21,7 +21,7 @@ MOS9param(int param, IFvalue *value, GENinstance *inst,
 {
     MOS9instance *here = (MOS9instance *)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
 

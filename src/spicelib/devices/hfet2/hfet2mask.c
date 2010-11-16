@@ -21,7 +21,7 @@ HFET2mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     HFET2model *here = (HFET2model*)inst;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case HFET2_MOD_VTO:

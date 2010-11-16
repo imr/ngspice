@@ -24,8 +24,8 @@ static void
 ShowPhysVals(HSM1instance *here, HSM1model *model,int isFirst, double vds, 
              double vgs, double vbs, double vgd, double vbd, double vgb)
 {
-  IGNORE(vgd);
-  IGNORE(vbd);
+  NG_IGNORE(vgd);
+  NG_IGNORE(vbd);
 
   /* regard the epsilon-quantity as 0.0 */
   vds = (fabs(vds) < SHOW_EPS_QUANT) ? 0.0 : vds;

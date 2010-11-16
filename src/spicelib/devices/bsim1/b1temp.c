@@ -27,7 +27,7 @@ B1temp(GENmodel *inModel, CKTcircuit *ckt)
     double Leff;    /* effective channel length im micron */
     double Weff;    /* effective channel width in micron */
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     /*  loop through all the B1 device models */
     for( ; model != NULL; model = model->B1nextModel ) {

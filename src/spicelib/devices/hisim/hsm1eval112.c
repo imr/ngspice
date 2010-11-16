@@ -474,7 +474,7 @@ double  T7_dVbs , T7_dVds , T7_dVgs ;
 double  T8_dVbs , T8_dVds , T8_dVgs ;
 double  T10 , T20 , T21 , T30 , T31 ;
 
-    IGNORE(pMS);
+    NG_IGNORE(pMS);
 
 /*================ Start of executable code.=================*/
 

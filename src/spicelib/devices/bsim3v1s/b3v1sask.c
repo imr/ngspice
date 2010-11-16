@@ -19,7 +19,7 @@ BSIM3v1Sask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
 {
 BSIM3v1Sinstance *here = (BSIM3v1Sinstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(which) 
     {   case BSIM3v1S_L:

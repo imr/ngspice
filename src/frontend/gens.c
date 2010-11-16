@@ -30,7 +30,7 @@ dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model)
 	dgen	*dg, *dg_save;
 	wordlist **prevp;
 
-	IGNORE(nomix);
+	NG_IGNORE(nomix);
 
 	dg = NEW(dgen);
 	dg->ckt = ckt;

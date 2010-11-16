@@ -21,7 +21,7 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 int i;	
     ISRCinstance *here = (ISRCinstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case ISRC_DC:

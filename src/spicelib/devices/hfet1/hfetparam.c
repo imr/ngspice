@@ -16,7 +16,7 @@ HFETAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     HFETAinstance *here = (HFETAinstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case HFETA_LENGTH:

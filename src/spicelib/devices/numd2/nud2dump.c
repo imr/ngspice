@@ -142,7 +142,7 @@ NUMD2acct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
   register NUMD2instance *inst;
   OUTPcard *output;
 
-  IGNORE(ckt);
+  NG_IGNORE(ckt);
 
   for (; model != NULL; model = model->NUMD2nextModel) {
     output = model->NUMD2outputs;

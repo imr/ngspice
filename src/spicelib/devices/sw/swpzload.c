@@ -26,7 +26,7 @@ SWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     double g_now;
     int current_state;
 
-    IGNORE(s);
+    NG_IGNORE(s);
 
     /*  loop through all the switch models */
     for( ; model != NULL; model = model->SWnextModel ) {

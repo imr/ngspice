@@ -18,7 +18,7 @@ URCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     URCinstance *here = (URCinstance *)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case URC_LEN:

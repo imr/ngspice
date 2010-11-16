@@ -16,7 +16,7 @@ LTRAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
   LTRAinstance *here = (LTRAinstance *) inst;
 
-  IGNORE(select);
+  NG_IGNORE(select);
 
   switch (param) {
   case LTRA_V1:

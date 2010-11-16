@@ -15,11 +15,11 @@
 
 struct variable * nutif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
 {
-    IGNORE(do_model);
-    IGNORE(ind);
-    IGNORE(param);
-    IGNORE(name);
-    IGNORE(ckt);
+    NG_IGNORE(do_model);
+    NG_IGNORE(ind);
+    NG_IGNORE(param);
+    NG_IGNORE(name);
+    NG_IGNORE(ckt);
 
     return ((struct variable *) NULL);
 }

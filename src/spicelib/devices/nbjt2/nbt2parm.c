@@ -19,7 +19,7 @@ NBJT2param(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
 {
   register NBJT2instance *inst = (NBJT2instance *) inInst;
 
-  IGNORE(select);
+  NG_IGNORE(select);
 
   switch (param) {
   case NBJT2_WIDTH:

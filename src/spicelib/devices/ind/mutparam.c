@@ -19,7 +19,7 @@ MUTparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MUTinstance *here = (MUTinstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case MUT_COEFF:

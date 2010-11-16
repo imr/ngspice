@@ -236,13 +236,13 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
 
     char filename_data[128];
 
-    IGNORE(xlims);
-    IGNORE(ylims);
-    IGNORE(title);
-    IGNORE(xlabel);
-    IGNORE(ylabel);
-    IGNORE(gridtype);
-    IGNORE(plottype);
+    NG_IGNORE(xlims);
+    NG_IGNORE(ylims);
+    NG_IGNORE(title);
+    NG_IGNORE(xlabel);
+    NG_IGNORE(ylabel);
+    NG_IGNORE(gridtype);
+    NG_IGNORE(plottype);
 
     sprintf(filename_data, "%s.data", filename);
 

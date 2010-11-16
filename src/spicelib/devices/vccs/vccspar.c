@@ -19,7 +19,7 @@ VCCSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     VCCSinstance *here = (VCCSinstance *)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case VCCS_TRANS:

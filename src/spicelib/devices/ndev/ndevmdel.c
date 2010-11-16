@@ -14,9 +14,9 @@ NDEVmDelete(
   IFuid modname,
   GENmodel *kill )
 {
-  IGNORE(inModel);
-  IGNORE(modname);
-  IGNORE(kill);
+  NG_IGNORE(inModel);
+  NG_IGNORE(modname);
+  NG_IGNORE(kill);
 
 
   return (OK);

@@ -19,7 +19,7 @@ BSIM3v1Aparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     BSIM3v1Ainstance *here = (BSIM3v1Ainstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
 

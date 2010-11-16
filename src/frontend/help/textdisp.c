@@ -128,7 +128,7 @@ hlp_thandle(topic **parent)
 void
 hlp_tkillwin(topic *top)
 {
-    IGNORE(top);
+    NG_IGNORE(top);
 
     if (curtop)
         curtop = curtop->parent;

@@ -16,7 +16,7 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     RESinstance *here = (RESinstance *)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case RES_TEMP:

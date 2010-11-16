@@ -26,7 +26,7 @@ ASRCask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
 {
     ASRCinstance *here = (ASRCinstance*)instPtr;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(which) {
         case ASRC_CURRENT:

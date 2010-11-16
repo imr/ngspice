@@ -23,7 +23,7 @@ VCVSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     int error;
     CKTnode *tmp;
 
-    IGNORE(states);
+    NG_IGNORE(states);
 
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->VCVSnextModel ) {

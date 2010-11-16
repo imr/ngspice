@@ -18,7 +18,7 @@ VCVSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     VCVSinstance *here = (VCVSinstance *)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case VCVS_GAIN:

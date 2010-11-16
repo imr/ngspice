@@ -18,7 +18,7 @@ MOS1mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     MOS1model *model = (MOS1model *)inst;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case MOS1_MOD_TNOM:

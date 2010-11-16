@@ -18,7 +18,7 @@ CKTdelTask(CKTcircuit *ckt, TSKtask *task)
     JOB *job;
     JOB *old=NULL;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     for(job = task->jobs; job; job=job->JOBnextJob){
         if(old) FREE(old);

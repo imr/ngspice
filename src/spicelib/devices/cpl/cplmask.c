@@ -20,7 +20,7 @@ CPLmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
     CPLmodel *model = (CPLmodel *)inModel;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case CPL_R:

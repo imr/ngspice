@@ -23,7 +23,7 @@ HFET2ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
     HFET2instance *here = (HFET2instance*)inst;
     static char *msg = "Current and power not available in ac analysis";
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(which) {
         case HFET2_LENGTH:

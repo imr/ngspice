@@ -28,7 +28,7 @@ IFvalue *select)
 {
     B4SOIinstance *here = (B4SOIinstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) 
     {   case B4SOI_W:

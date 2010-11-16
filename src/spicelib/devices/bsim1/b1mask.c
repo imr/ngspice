@@ -20,7 +20,7 @@ B1mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     B1model *model = (B1model *)inst;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
         switch(which) {
         case BSIM1_MOD_VFB0: 

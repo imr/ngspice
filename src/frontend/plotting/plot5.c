@@ -203,7 +203,7 @@ Plt5_SetLinestyle(int linestyleid)
 int
 Plt5_SetColor(int colorid)
 {
-    IGNORE(colorid);
+    NG_IGNORE(colorid);
 
     /* do nothing */
     return 0;

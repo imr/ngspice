@@ -19,8 +19,8 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 int
 NDEVacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
-  IGNORE(inModel);
-  IGNORE(ckt);
+  NG_IGNORE(inModel);
+  NG_IGNORE(ckt);
  
   return (OK);
 }

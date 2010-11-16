@@ -14,7 +14,7 @@ Author: 1988 Jaijeet S Roychowdhury
 int 
 DaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
 

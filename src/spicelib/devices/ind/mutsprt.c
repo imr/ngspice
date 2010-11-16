@@ -25,7 +25,7 @@ MUTsPrint(GENmodel *inModel, CKTcircuit* ckt)
     MUTmodel *model = (MUTmodel*)inModel;
     MUTinstance *here;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     printf("MUTUAL INDUCTORS-----------------\n");
     /*  loop through all the inductor models */

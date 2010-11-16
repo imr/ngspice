@@ -26,7 +26,7 @@ IFvalue *select)
 {
 BSIM3instance *here = (BSIM3instance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(which) 
     {   case BSIM3_L:

@@ -393,7 +393,7 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
   double *OldRhsOld, *OldCKTstate0;
   CKTnode *n;
 
-  IGNORE(iterlim);
+  NG_IGNORE(iterlim);
 
   ckt->CKTmode = firstmode;
   (*(SPfrontEnd->IFerror)) (ERR_INFO,
@@ -601,7 +601,7 @@ spice3_src (CKTcircuit * ckt, long int firstmode,
 
   int converged, i;
 
-  IGNORE(iterlim);
+  NG_IGNORE(iterlim);
 
   ckt->CKTmode = firstmode;
   (*(SPfrontEnd->IFerror)) (ERR_INFO,

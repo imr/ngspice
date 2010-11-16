@@ -22,7 +22,7 @@ HSM1ask(CKTcircuit *ckt, GENinstance *inst, int which,
 {
   HSM1instance *here = (HSM1instance*)inst;
 
-  IGNORE(select);
+  NG_IGNORE(select);
 
   switch (which) {
   case HSM1_L:

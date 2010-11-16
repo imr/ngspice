@@ -17,9 +17,9 @@ NDEVparam(
   GENinstance *inInst,
   IFvalue *select )
 {
-  IGNORE(value);
-  IGNORE(inInst);
-  IGNORE(select);
+  NG_IGNORE(value);
+  NG_IGNORE(inInst);
+  NG_IGNORE(select);
 
   switch (param) {
   case NDEV_MOD_NDEV:

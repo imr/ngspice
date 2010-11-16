@@ -68,7 +68,7 @@ IFsimulator SIMinfo = {
 void
 NDEVacct(CKTcircuit *ckt, FILE *file)
 {
-IGNORE(ckt);
+NG_IGNORE(ckt);
 fprintf(file, "Ouch, you have called NDEV from ngnutmeg\n");
 }
 #endif

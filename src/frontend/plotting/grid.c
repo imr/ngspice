@@ -483,8 +483,8 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
     double m, step;
     char buf[LABEL_CHARS];
 
-    IGNORE(onedec);
-    IGNORE(mult);
+    NG_IGNORE(onedec);
+    NG_IGNORE(mult);
 
     /* i counts how many pixels we have drawn, and j counts which unit
      * we are at.
@@ -1318,7 +1318,7 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
     double iangle = atan2((double) prevrad, (double) irad);
     int x, xlab, ylab;
 
-    IGNORE(nlab);
+    NG_IGNORE(nlab);
 
     /* Let's be lazy and just draw everything -- we won't get called too
      * much and the circles get clipped anyway...

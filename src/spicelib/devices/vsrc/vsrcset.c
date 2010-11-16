@@ -22,7 +22,7 @@ VSRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     CKTnode *tmp;
     int error;
 
-    IGNORE(state);
+    NG_IGNORE(state);
 
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->VSRCnextModel ) {

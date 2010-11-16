@@ -37,7 +37,7 @@ SOI3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
 {
     SOI3instance *here = (SOI3instance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     /* The line below belong to the parts of the case statement that are also
      * commented out */

@@ -23,7 +23,7 @@ BSIM3v32ask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
 {
 BSIM3v32instance *here = (BSIM3v32instance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(which) 
     {   case BSIM3v32_L:

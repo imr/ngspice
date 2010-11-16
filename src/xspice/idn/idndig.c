@@ -59,7 +59,7 @@ static void idn_digital_create(void **evt_struct)
 
 static void idn_digital_dismantle(void *evt_struct)
 {
-    IGNORE(evt_struct);
+    NG_IGNORE(evt_struct);
 
     /* Do nothing.  There are no internally malloc'ed things to dismantle */
 }

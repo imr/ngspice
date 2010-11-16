@@ -26,7 +26,7 @@ JFET2ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
     JFET2instance *here = (JFET2instance*)inst;
     static char *msg = "Current and power not available for ac analysis";
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(which) {
         case JFET2_TEMP:

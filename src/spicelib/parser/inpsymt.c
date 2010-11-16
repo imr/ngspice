@@ -81,7 +81,7 @@ int INPmkTerm(CKTcircuit *ckt, char **token, INPtables * tab, CKTnode **node)
     int key;
     struct INPnTab *t;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     key = hash(*token, tab->INPtermsize);
     for (t = tab->INPtermsymtab[key]; t; t = t->t_next) {

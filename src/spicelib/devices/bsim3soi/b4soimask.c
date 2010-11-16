@@ -30,7 +30,7 @@ IFvalue *value)
 {
     B4SOImodel *model = (B4SOImodel *)inst;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) 
     {   case B4SOI_MOD_MOBMOD:

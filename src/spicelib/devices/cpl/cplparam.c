@@ -20,7 +20,7 @@ CPLparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     CPLinstance *here = (CPLinstance *)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case CPL_POS_NODE:

@@ -25,7 +25,7 @@ SWmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
     SWmodel *model = (SWmodel *)inModel;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case SW_MOD_RON:

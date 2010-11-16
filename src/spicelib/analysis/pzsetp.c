@@ -16,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 int 
 PZsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
 

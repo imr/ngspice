@@ -26,8 +26,8 @@ URCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
 {
     URCinstance *here = (URCinstance *)inst;
 
-    IGNORE(select);
-    IGNORE(ckt);
+    NG_IGNORE(select);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case URC_POS_NODE:

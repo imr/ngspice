@@ -87,7 +87,7 @@ ft_sigintr(void)
 RETSIGTYPE
 sigfloat(int sig, int code)
 {
-    IGNORE(sig);
+    NG_IGNORE(sig);
 
     gr_clean();
     fperror("Error", code);

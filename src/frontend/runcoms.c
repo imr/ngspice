@@ -383,9 +383,9 @@ ft_dorun(char *file)
 bool
 ft_getOutReq(FILE **fpp, struct plot **plotp, bool *binp, char *name, char *title)
 {
-   IGNORE(title);
-   IGNORE(name);
-   IGNORE(plotp);
+   NG_IGNORE(title);
+   NG_IGNORE(name);
+   NG_IGNORE(plotp);
 
    if (rawfileFp) {
        *fpp = rawfileFp;

@@ -1,5 +1,10 @@
+2010-11-16  Robert Larice
+ * src/**/* :
+    rename `IGNORE()' --> `NG_IGNORE()'
+      due to name collision on windows.
+
 2010-11-16 Holger Vogt
-* linear.c: prevent loop in case of vector not found 
+ * linear.c: prevent loop in case of vector not found
 
 2010-11-16  Robert Larice
  * src/Makefile.am :

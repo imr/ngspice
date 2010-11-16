@@ -28,7 +28,7 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
     static char *msg =  "Current and power not available in ac analysis";
     double *v, *w;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(which) {
         case VSRC_DC:

@@ -25,7 +25,7 @@ nodeCurrents(TWOelem *pElem, TWOnode *pNode, double *mun, double *mup,
   double epsL = 0.0, epsR = 0.0, epsT = 0.0, epsB = 0.0;
   double coeff1, coeff2;
 
-  IGNORE(pElem);
+  NG_IGNORE(pElem);
 
   /* Find all four neighboring elements */
   pElemTL = pNode->pTLElem;

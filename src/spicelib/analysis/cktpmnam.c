@@ -31,7 +31,7 @@ CKTpModName(char *parm, IFvalue *val, CKTcircuit *ckt, int type, IFuid name, GEN
     int error;  /* int to store evaluate error return codes in */
     int i;
 
-    IGNORE(name);
+    NG_IGNORE(name);
 
     for(i=0;i<(*(*DEVices[type]).DEVpublic.numModelParms);i++) {
         if(strcmp(parm,((*DEVices[type]).DEVpublic.modelParms[i].keyword))==0){

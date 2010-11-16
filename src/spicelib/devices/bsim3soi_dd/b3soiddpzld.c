@@ -32,7 +32,7 @@ double FwdSum, RevSum, Gm, Gmbs;
 
 double m;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     for (; model != NULL; model = model->B3SOIDDnextModel) 
     {    for (here = model->B3SOIDDinstances; here!= NULL;

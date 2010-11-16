@@ -22,8 +22,8 @@ NDEVtemp(
  * perform the temperature update to the diode
  */
 {
-  IGNORE(inModel);
-  IGNORE(ckt);
+  NG_IGNORE(inModel);
+  NG_IGNORE(ckt);
 
   return (OK);
 }

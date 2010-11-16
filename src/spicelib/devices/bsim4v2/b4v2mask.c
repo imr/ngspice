@@ -27,7 +27,7 @@ IFvalue *value)
 {
     BSIM4v2model *model = (BSIM4v2model *)inst;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) 
     {   case BSIM4v2_MOD_MOBMOD :

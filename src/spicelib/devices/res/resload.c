@@ -64,7 +64,7 @@ RESacload(GENmodel *inModel, CKTcircuit *ckt)
     double difference;
     double factor;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     /*  loop through all the resistor models */
     for( ; model != NULL; model = model->RESnextModel ) {

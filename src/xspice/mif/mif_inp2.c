@@ -667,8 +667,8 @@ MIFget_port_type(
 
     int              i;
 
-    IGNORE(ckt);
-    IGNORE(tab);
+    NG_IGNORE(ckt);
+    NG_IGNORE(tab);
 
     if(**line == '\0') {
         LITERR("Missing connections on A device");

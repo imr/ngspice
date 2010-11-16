@@ -21,7 +21,7 @@ VBICmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
 {
     VBICmodel *here = (VBICmodel*)instPtr;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case VBIC_MOD_TNOM:

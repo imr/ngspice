@@ -24,7 +24,7 @@ NUMDask(CKTcircuit *ckt, GENinstance *inInst, int which, IFvalue *value, IFvalue
 {
   NUMDinstance *inst = (NUMDinstance *) inInst;
 
-  IGNORE(select);
+  NG_IGNORE(select);
 
   switch (which) {
   case NUMD_AREA:

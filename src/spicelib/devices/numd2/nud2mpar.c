@@ -17,8 +17,8 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 int
 NUMD2mParam(int param, IFvalue *value, GENmodel *inModel)
 {
-  IGNORE(value);
-  IGNORE(inModel);
+  NG_IGNORE(value);
+  NG_IGNORE(inModel);
 
   switch (param) {
   case NUMD2_MOD_NUMD:

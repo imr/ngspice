@@ -30,7 +30,7 @@ double FwdSum, RevSum, Gm, Gmbs;
 
 double m;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     for (; model != NULL; model = model->BSIM3v1nextModel) 
     {    for (here = model->BSIM3v1instances; here!= NULL;

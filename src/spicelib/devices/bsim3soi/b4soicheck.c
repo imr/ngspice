@@ -30,7 +30,7 @@ struct b4soiSizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     if ((fplog = fopen("b4soiv1check.log", "w")) != NULL)
     {   pParam = here->pParam;

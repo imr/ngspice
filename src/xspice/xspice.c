@@ -9,7 +9,7 @@ static void *tcalloc(size_t a, size_t b) {
 }
 
 static void no_free(void *p) {
-  IGNORE(p);
+  NG_IGNORE(p);
 }
 
 static FILE * no_file(void) {

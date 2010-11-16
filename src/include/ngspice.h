@@ -246,7 +246,7 @@ extern int tcl_fprintf(FILE *f, const char *format, ...);
 #endif
 
 /* macro to ignore unused variables and parameters */
-#define IGNORE(x)  (void)x
+#define NG_IGNORE(x)  (void)x
 
 
 #endif /* NGSPICE_H_INCLUDED */

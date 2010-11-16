@@ -448,7 +448,7 @@ double  T10 , T20 , T21 , T30 , T31 ;
 /* intrinsic fringing capacitance */
 double	Cgdf, Cgdfring ;
 
-    IGNORE(pMS);
+    NG_IGNORE(pMS);
 
 /*================ Start of executable code.=================*/
 

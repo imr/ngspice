@@ -18,7 +18,7 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
     ISRCinstance *here;
     double radians;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     for( ; model != NULL; model = model->ISRCnextModel ) {
 

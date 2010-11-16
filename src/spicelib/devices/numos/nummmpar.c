@@ -17,8 +17,8 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 int
 NUMOSmParam(int param, IFvalue *value, GENmodel *inModel)
 {
-  IGNORE(value);
-  IGNORE(inModel);
+  NG_IGNORE(value);
+  NG_IGNORE(inModel);
 
   switch (param) {
   case NUMOS_MOD_NUMOS:

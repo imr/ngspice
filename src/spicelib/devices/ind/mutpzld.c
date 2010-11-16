@@ -22,7 +22,7 @@ MUTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     double val;
     MUTinstance *here;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     for( ; model != NULL; model = model->MUTnextModel) {
         for( here = model->MUTinstances;here != NULL; 

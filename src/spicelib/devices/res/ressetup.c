@@ -19,8 +19,8 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
     RESmodel *model = (RESmodel *)inModel;
     RESinstance *here;
 
-    IGNORE(state);
-    IGNORE(ckt);
+    NG_IGNORE(state);
+    NG_IGNORE(ckt);
 
     /*  loop through all the resistor models */
     for( ; model != NULL; model = model->RESnextModel ) {

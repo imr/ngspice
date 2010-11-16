@@ -245,8 +245,8 @@ static int blt_vnum;
 static int spice_header TCL_CMDPROCARGS(clientData,interp,argc,argv){
   char buf[256];
   char *date, *name, *title;
-  IGNORE(clientData);
-  IGNORE(argv);
+  NG_IGNORE(clientData);
+  NG_IGNORE(argv);
   if (argc != 1) {
     Tcl_SetResult(interp, "Wrong # args. spice::spice_header",TCL_STATIC);
     return TCL_ERROR;
@@ -266,7 +266,7 @@ static int spice_data TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   char buf[256];
   int i, type;
   char *name;
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc > 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::spice_data ?plot?",
         TCL_STATIC);
@@ -408,7 +408,7 @@ static int lastVector TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   char *blt;
   int i;
   double *V;
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc != 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::lastVector vecName",TCL_STATIC);
     return TCL_ERROR;
@@ -450,7 +450,7 @@ static int get_value TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 	char *var;
 	int i, vindex, j;
 	double val=0;
-	IGNORE(clientData);
+	NG_IGNORE(clientData);
 	if(argc != 3) {
 	    Tcl_SetResult(interp,
 				"Wrong # args. spice::get_value spice_variable index",
@@ -502,7 +502,7 @@ static int vectoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct dvec *var_dvec;
   double *realData, *compData;
   int compIndex; //index to loop inside the vectors' data
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
 
   if (argc < 3 || argc > 4){
     Tcl_SetResult(interp, "Wrong # args. spice::vectoblt spice_variable real_bltVector [imag_bltVector]",TCL_STATIC);
@@ -581,7 +581,7 @@ static int spicetoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   char *blt, *var;
   int start=0,end=-1,len;
 
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc < 3 || argc > 5) {
     Tcl_SetResult(interp, "Wrong # args. spice::spicetoblt spice_variable vecName ?start? ?end?",TCL_STATIC);
     return TCL_ERROR;
@@ -697,7 +697,7 @@ static int _thread_stop(void){
 }
 
 void sighandler_tclspice(int num) {
-	IGNORE(num);
+	NG_IGNORE(num);
 	if(fl_running) _thread_stop();
 	return;
 }
@@ -785,7 +785,7 @@ static int _run(int argc,char **argv){
    
 static int _tcl_dispatch TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   int i;
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   save_interp();
   /* Looks backwards through the first command and strips the :: part */ 
   for(i = strlen(argv[0])-1;i > 0;i--)
@@ -797,7 +797,7 @@ static int _tcl_dispatch TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 
 /* Runs the spice command given in spice <cmd>*/
 static int _spice_dispatch TCL_CMDPROCARGS(clientData,interp,argc,argv) {
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   save_interp();
   if(argc == 1) return TCL_OK;
   return _run(argc-1,(char **)&argv[1]);
@@ -806,9 +806,9 @@ static int _spice_dispatch TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 #ifdef THREADS
 /*Checks if spice is runnuing in the background */
 static int running TCL_CMDPROCARGS(clientData,interp,argc,argv) {
-  IGNORE(clientData);
-  IGNORE(argc);
-  IGNORE(argv);
+  NG_IGNORE(clientData);
+  NG_IGNORE(argc);
+  NG_IGNORE(argv);
   Tcl_SetObjResult(interp,Tcl_NewIntObj((long) (fl_running && !fl_exited)));
   return TCL_OK;
 }
@@ -824,7 +824,7 @@ static int plot_variables TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct plot *pl;
   int plot;
   struct dvec *v;
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   
   if (argc != 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::plot_variables plot",TCL_STATIC);
@@ -852,7 +852,7 @@ static int plot_variablesInfo TCL_CMDPROCARGS(clientData,interp,argc,argv){
   char buf[256];
   char *name; 
   int length;
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
 
   if (argc != 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::plot_variablesInfo plot",TCL_STATIC);
@@ -884,7 +884,7 @@ static int plot_get_value TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct dvec *v;
   char *name;
   int plot,index;
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
     
   if (argc != 4) {
     Tcl_SetResult(interp, "Wrong # args. spice::plot_get_value name plot index",TCL_STATIC);
@@ -919,7 +919,7 @@ static int plot_datapoints TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct plot *pl;
   struct dvec *v;
   int plot;
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
 
   if (argc != 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::plot_datapoints plot",TCL_STATIC);
@@ -944,7 +944,7 @@ static int plot_datapoints TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 static int plot_title TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct plot *pl;
   int plot;
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc != 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::plot_title plot",TCL_STATIC);
     return TCL_ERROR;
@@ -964,7 +964,7 @@ static int plot_date TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct plot *pl;
 
   int plot;
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc != 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::plot_date plot",TCL_STATIC);
     return TCL_ERROR;
@@ -983,7 +983,7 @@ static int plot_date TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 static int plot_name TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct plot *pl;
   int plot;
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc != 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::plot_name plot",TCL_STATIC);
     return TCL_ERROR;
@@ -1002,7 +1002,7 @@ static int plot_name TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 static int plot_typename TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct plot *pl;
   int plot;
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc != 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::plot_typename plot",TCL_STATIC);
     return TCL_ERROR;
@@ -1026,7 +1026,7 @@ static int plot_nvars TCL_CMDPROCARGS(clientData,interp,argc,argv){
   int plot;
   int i=0;
   
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc != 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::plot_nvars plot",TCL_STATIC);
     return TCL_ERROR;
@@ -1048,7 +1048,7 @@ static int plot_defaultscale TCL_CMDPROCARGS(clientData,interp,argc,argv){
   struct plot *pl;
   int plot;
   
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc != 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::plot_defaultscale plot",
         TCL_STATIC);
@@ -1081,7 +1081,7 @@ static int plot_getvector TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct dvec *v;
   struct plot *pl;
 
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc < 4 || argc > 6) {
     Tcl_SetResult(interp,
         "Wrong # args. spice::plot_getvector plot spice_variable vecName ?start? ?end?",
@@ -1142,9 +1142,9 @@ static int plot_getvector TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 }
 
 static int plot_getplot TCL_CMDPROCARGS(clientData,interp,argc,argv) {
-  IGNORE(clientData);
-  IGNORE(argc);
-  IGNORE(argv);
+  NG_IGNORE(clientData);
+  NG_IGNORE(argc);
+  NG_IGNORE(argv);
   if(plot_cur) {
   	Tcl_SetObjResult(interp,Tcl_NewStringObj(plot_cur->pl_typename,-1));
   }
@@ -1161,7 +1161,7 @@ static int get_output TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   int tmp_1,tmp_2=0;
   char buf[1024];
   int outfd,outfd2=0;
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   save_interp();
   if ((argc < 2) || (argc > 3)) {
     Tcl_SetResult(interp, "Wrong # args. spice::get_output script ?var_for_stderr?",TCL_STATIC);
@@ -1222,7 +1222,7 @@ static int get_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   char *device, *param;
   struct variable *v;
   char buf[128];
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc != 3) {
     Tcl_SetResult(interp, "Wrong # args. spice::get_param device param",TCL_STATIC);
     return TCL_ERROR;
@@ -1272,7 +1272,7 @@ int get_mod_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   char buf[128];
   bool found;
 
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc < 2 || argc >3) {
     Tcl_SetResult(interp, 
       "Wrong # args. spice::get_mod_param device|model [all|param]", TCL_STATIC);
@@ -1341,7 +1341,7 @@ int get_mod_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
  * Spice will still adjust it to keep accuracy wuithin reltol and abstol
  */
 static int delta TCL_CMDPROCARGS(clientData,interp,argc,argv) {
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc < 1 ||argc > 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::delta ?value?",TCL_STATIC);
     return TCL_ERROR;
@@ -1365,7 +1365,7 @@ static int delta TCL_CMDPROCARGS(clientData,interp,argc,argv) {
  */
 static int maxstep TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   TRANan *job;
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc < 1 ||argc > 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::maxstep ?value?",TCL_STATIC);
     return TCL_ERROR;
@@ -1663,8 +1663,8 @@ int stepCallbackPending;
 
 void stepEventSetup(ClientData clientData,int flags) {
 	Tcl_Time t;
-	IGNORE(clientData);
-	IGNORE(flags);
+	NG_IGNORE(clientData);
+	NG_IGNORE(flags);
 	if(stepCallbackPending) {
 		t.sec  = 0;
 		t.usec = 0;
@@ -1676,8 +1676,8 @@ void stepEventSetup(ClientData clientData,int flags) {
 }
 
 int stepEventHandler(Tcl_Event *evPtr, int flags) {
-	IGNORE(evPtr);
-	IGNORE(flags);
+	NG_IGNORE(evPtr);
+	NG_IGNORE(flags);
 	if(stepCallbackPending) {
 		stepCallbackPending = 0;
 		Tcl_Preserve((ClientData)spice_interp);
@@ -1689,8 +1689,8 @@ int stepEventHandler(Tcl_Event *evPtr, int flags) {
 }
 
 void stepEventCheck(ClientData clientData,int flags) {
-	IGNORE(clientData);
-	IGNORE(flags);
+	NG_IGNORE(clientData);
+	NG_IGNORE(flags);
 	if(stepCallbackPending) {
 		Tcl_Event *tclEvent;
 		tclEvent = (Tcl_Event *) ckalloc(sizeof(Tcl_Event));
@@ -1702,8 +1702,8 @@ void stepEventCheck(ClientData clientData,int flags) {
 int triggerEventHandler(Tcl_Event *evPtr, int flags) {
 	static char buf[512];
 	int rtn=TCL_OK;
-	IGNORE(evPtr);
-	IGNORE(flags);
+	NG_IGNORE(evPtr);
+	NG_IGNORE(flags);
 	Tcl_Preserve((ClientData)spice_interp);
 #ifdef THREADS
 	mutex_lock(&triggerMutex);
@@ -1733,8 +1733,8 @@ quit:
 
 void triggerEventSetup(ClientData clientData,int flags) {
 	Tcl_Time t;
-	IGNORE(clientData);
-	IGNORE(flags);
+	NG_IGNORE(clientData);
+	NG_IGNORE(flags);
 	if(eventQueue) {
 		t.sec  = 0;
 		t.usec = 0;
@@ -1746,8 +1746,8 @@ void triggerEventSetup(ClientData clientData,int flags) {
 }
 
 void triggerEventCheck(ClientData clientData,int flags) {
-	IGNORE(clientData);
-	IGNORE(flags);
+	NG_IGNORE(clientData);
+	NG_IGNORE(flags);
 #ifdef THREADS
 	mutex_lock(&triggerMutex);
 #endif
@@ -1884,7 +1884,7 @@ static int resetTriggers(void) {
  */
 static int registerTriggerCallback TCL_CMDPROCARGS(clientData,interp,argc,argv){
 
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc > 3) {
     Tcl_SetResult(interp,
 			"Wrong # args. spice::registerTriggerCallback ?proc? ?ms?",
@@ -1921,7 +1921,7 @@ static int registerTriggerCallback TCL_CMDPROCARGS(clientData,interp,argc,argv){
  */
 static int registerStepCallback TCL_CMDPROCARGS(clientData,interp,argc,argv){
 
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc > 4) {
     Tcl_SetResult(interp,
 			"Wrong # args. spice::registerStepCallback ?proc? ?steps? ?ms?",
@@ -1971,7 +1971,7 @@ static int registerTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
   int type;
   double Vavg, Vmin, Vmax;
   
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc < 4 && argc > 6) {
     Tcl_SetResult(interp, "Wrong # args. spice::registerTrigger vecName Vmin Vmax ?type? ?string?",TCL_STATIC);
     return TCL_ERROR;
@@ -2063,7 +2063,7 @@ static int unregisterTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
   struct watch *tmp;
   struct watch **cut;
 
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc != 2 && argc != 3) {
     Tcl_SetResult(interp, "Wrong # args. spice::unregisterTrigger vecName ?type?",TCL_STATIC);
     return TCL_ERROR;
@@ -2119,8 +2119,8 @@ static int unregisterTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
 */
 static int popTriggerEvent TCL_CMDPROCARGS(clientData,interp,argc,argv){
   
-  IGNORE(clientData);
-  IGNORE(argv);
+  NG_IGNORE(clientData);
+  NG_IGNORE(argv);
   if (argc != 1) {
     Tcl_SetResult(interp, "Wrong # args. spice::popTriggerEvent",TCL_STATIC);
     return TCL_ERROR;
@@ -2170,8 +2170,8 @@ static int listTriggers TCL_CMDPROCARGS(clientData,interp,argc,argv){
   struct watch *tmp;
   Tcl_Obj *list;
   
-  IGNORE(clientData);
-  IGNORE(argv);
+  NG_IGNORE(clientData);
+  NG_IGNORE(argv);
   if (argc != 1) {
     Tcl_SetResult(interp, "Wrong # args. spice::listTriggers",TCL_STATIC);
     return TCL_ERROR;
@@ -2200,7 +2200,7 @@ static int tmeasure TCL_CMDPROCARGS(clientData,interp,argc,argv){
   wordlist *wl= NULL;
   double mvalue;
 
-  IGNORE(clientData);
+  NG_IGNORE(clientData);
   if (argc <= 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::listTriggers",TCL_STATIC);
     return TCL_ERROR;

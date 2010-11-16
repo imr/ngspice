@@ -23,8 +23,8 @@ RESpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     RESinstance *here;
     double m;
 
-    IGNORE(s);
-    IGNORE(ckt);
+    NG_IGNORE(s);
+    NG_IGNORE(ckt);
 
     /*  loop through all the resistor models */
     for( ; model != NULL; model = model->RESnextModel ) {

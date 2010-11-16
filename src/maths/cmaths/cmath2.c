@@ -249,7 +249,7 @@ cx_rnd(void *data, short int type, int length, int *newlength, short int *newtyp
 void *
 cx_sunif(void *data, short int type, int length, int *newlength, short int *newtype)
 {
-    IGNORE(data);
+    NG_IGNORE(data);
 
     *newlength = length;
     checkseed();
@@ -280,7 +280,7 @@ cx_sunif(void *data, short int type, int length, int *newlength, short int *newt
 void *
 cx_sgauss(void *data, short int type, int length, int *newlength, short int *newtype)
 {
-    IGNORE(data);
+    NG_IGNORE(data);
 
     *newlength = length;
     checkseed();
@@ -394,8 +394,8 @@ cx_length(void *data, short int type, int length, int *newlength, short int *new
 {
     double *d;
 
-    IGNORE(data);
-    IGNORE(type);
+    NG_IGNORE(data);
+    NG_IGNORE(type);
 
     *newlength = 1;
     *newtype = VF_REAL;
@@ -417,7 +417,7 @@ cx_vector(void *data, short int type, int length, int *newlength, short int *new
     int i, len;
     double *d;
 
-    IGNORE(length);
+    NG_IGNORE(length);
 
     if (type == VF_REAL)
         len = (int)FTEcabs(*dd);
@@ -444,7 +444,7 @@ cx_unitvec(void *data, short int type, int length, int *newlength, short int *ne
     int i, len;
     double *d;
 
-    IGNORE(length);
+    NG_IGNORE(length);
 
     if (type == VF_REAL)
         len = (int)FTEcabs(*dd);

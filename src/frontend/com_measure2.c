@@ -952,7 +952,7 @@ static void measure_ERR3(void) {
 
 void com_dotmeasure(wordlist *wl) {
 
-   IGNORE(wl);
+   NG_IGNORE(wl);
 
 /* simulation info */
 //      printf("*%s\n", plot_cur->pl_title);

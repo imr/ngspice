@@ -18,7 +18,7 @@ TRAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     TRAinstance *here = (TRAinstance *)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case TRA_RELTOL:

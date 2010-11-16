@@ -24,7 +24,7 @@ BJTparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
 {
     BJTinstance *here = (BJTinstance*)instPtr;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case BJT_AREA:

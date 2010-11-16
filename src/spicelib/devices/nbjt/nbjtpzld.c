@@ -29,7 +29,7 @@ NBJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
   SPcomplex yIcVce, yIcVbe;
   double startTime;
 
-  IGNORE(ckt);
+  NG_IGNORE(ckt);
 
   for (; model != NULL; model = model->NBJTnextModel) {
     FieldDepMobility = model->NBJTmodels->MODLfieldDepMobility;

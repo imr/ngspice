@@ -38,7 +38,7 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
     int which;			/* which analysis we are performing */
     CKTnode *node1;		/* the first node's node pointer */
 
-    IGNORE(task);
+    NG_IGNORE(task);
 
 #ifdef TRACE
     /* SDB debug statement */

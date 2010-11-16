@@ -487,7 +487,6 @@ int load_opus(char *name){
 
 void *dlopen(const char *name,int type)
 {
-	IGNORE(type);
 	return LoadLibrary(name);
 }
 

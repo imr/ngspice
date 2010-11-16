@@ -20,7 +20,7 @@ INDmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     INDmodel *here = (INDmodel*)inst;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case IND_MOD_IND:

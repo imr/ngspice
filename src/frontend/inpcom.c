@@ -3144,7 +3144,7 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
   struct line **ptr_array;
   struct line **ptr_array_ordered;
 
-  IGNORE(end_card);
+  NG_IGNORE(end_card);
 
   if ( start_card == NULL ) return;    
 

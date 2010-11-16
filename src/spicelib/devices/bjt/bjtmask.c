@@ -21,7 +21,7 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
 {
     BJTmodel *here = (BJTmodel*)instPtr;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case BJT_MOD_TNOM:

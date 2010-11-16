@@ -21,7 +21,7 @@ MEStemp(GENmodel *inModel, CKTcircuit *ckt)
     MESmodel *model = (MESmodel*)inModel;
     double xfc, temp;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = model->MESnextModel ) {

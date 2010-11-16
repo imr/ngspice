@@ -15,7 +15,7 @@ NUMDparam(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
 {
   NUMDinstance *inst = (NUMDinstance *) inInst;
 
-  IGNORE(select);
+  NG_IGNORE(select);
 
   switch (param) {
   case NUMD_AREA:

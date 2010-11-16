@@ -30,8 +30,8 @@ int hlp_buttonstyle = BS_LEFT;
 
 /* ARGSUSED */ void hlp_xwait(topic *top, bool on)
 {
-    IGNORE(on);
-    IGNORE(top);
+    NG_IGNORE(on);
+    NG_IGNORE(top);
 }
 
 void hlp_xclosedisplay(void) {}

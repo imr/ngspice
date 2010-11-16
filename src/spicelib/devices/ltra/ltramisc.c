@@ -272,7 +272,7 @@ LTRArlcH1dashFunc(double time, double T, double alpha, double beta)
 {
   double besselarg, exparg, returnval;
   /* T is not used in this function */
-  IGNORE(T);
+  NG_IGNORE(T);
 
   /*
    * result = alpha * e^{- beta*time} * {I_1(alpha*time) - I_0(alpha*time)}
@@ -451,7 +451,7 @@ LTRArcCoeffsSetup(double *h1dashfirstcoeff, double *h2firstcoeff, double *h3dash
   int doh1 = 1, doh2 = 1, doh3 = 1;
   int i, auxindex;
 
-  IGNORE(listsize);
+  NG_IGNORE(listsize);
 
   /* coefflists should already have been allocated to the necessary size */
 
@@ -593,7 +593,7 @@ LTRArlcCoeffsSetup(double *h1dashfirstcoeff, double *h2firstcoeff, double *h3das
 
   int i, auxindex;
 
-  IGNORE(listsize);
+  NG_IGNORE(listsize);
 
   /* coefflists should already have been allocated to the necessary size */
 

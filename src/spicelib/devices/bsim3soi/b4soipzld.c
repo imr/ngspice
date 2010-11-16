@@ -36,7 +36,7 @@ double FwdSum, RevSum, Gm, Gmbs;
 
 double m;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     for (; model != NULL; model = model->B4SOInextModel) 
     {    for (here = model->B4SOIinstances; here!= NULL;

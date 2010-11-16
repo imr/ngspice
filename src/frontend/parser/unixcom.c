@@ -240,8 +240,8 @@ cp_hstat(void)
 void
 cp_rehash(char *pathlist, bool docc)
 {
-    IGNORE(docc);
-    IGNORE(pathlist);
+    NG_IGNORE(docc);
+    NG_IGNORE(pathlist);
 }
 
 bool

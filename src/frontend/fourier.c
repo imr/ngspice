@@ -263,7 +263,7 @@ CKTfour(int ndata,		/* number of entries in the Time and
     int j;
     double tmp;
 
-    IGNORE(Time);
+    NG_IGNORE(Time);
 
     /* clear output/computation arrays */
 

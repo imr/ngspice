@@ -24,8 +24,8 @@ CCVSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     CCVSmodel *model = (CCVSmodel*)inModel;
     CCVSinstance *here;
 
-    IGNORE(ckt);
-    IGNORE(s);
+    NG_IGNORE(ckt);
+    NG_IGNORE(s);
 
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->CCVSnextModel ) {

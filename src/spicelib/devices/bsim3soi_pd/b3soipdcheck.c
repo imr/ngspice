@@ -30,7 +30,7 @@ struct b3soipdSizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
     
     if ((fplog = fopen("b3soipdv223check.log", "w")) != NULL)
     {   pParam = here->pParam;

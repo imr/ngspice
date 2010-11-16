@@ -20,7 +20,7 @@ MESmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     MESmodel *here = (MESmodel*)inst;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case MES_MOD_VTO:

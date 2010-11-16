@@ -25,7 +25,7 @@ CSWmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     CSWmodel *here = (CSWmodel*)inst;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case CSW_RON:

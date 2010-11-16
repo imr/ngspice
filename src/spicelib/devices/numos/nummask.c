@@ -21,7 +21,7 @@ NUMOSask(CKTcircuit *ckt, GENinstance *inInst, int which, IFvalue *value, IFvalu
 {
   NUMOSinstance *inst = (NUMOSinstance *) inInst;
 
-  IGNORE(select);
+  NG_IGNORE(select);
 
   switch (which) {
   case NUMOS_AREA:

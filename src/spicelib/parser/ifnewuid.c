@@ -83,7 +83,7 @@ int IFdelUid(CKTcircuit *ckt, IFuid uid, int type)
 {
     int error;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch (type) {
     case UID_ANALYSIS:

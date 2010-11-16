@@ -30,7 +30,7 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double *derivs;
     double rhs;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     /*  loop through all the Arbitrary source models */
     for( ; model != NULL; model = model->ASRCnextModel ) {

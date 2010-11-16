@@ -23,8 +23,8 @@ VCVSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     VCVSmodel *model = (VCVSmodel *)inModel;
     VCVSinstance *here;
 
-    IGNORE(s);
-    IGNORE(ckt);
+    NG_IGNORE(s);
+    NG_IGNORE(ckt);
 
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->VCVSnextModel ) {

@@ -13,7 +13,7 @@
 void
 com_dump(wordlist *wl)
 {
-    IGNORE(wl);
+    NG_IGNORE(wl);
 
     if (!ft_curckt || !ft_curckt->ci_ckt) {
         fprintf(cp_err, "Error: no circuit loaded.\n");

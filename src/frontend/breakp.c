@@ -205,7 +205,7 @@ com_sttus(wordlist *wl)
 {
     struct dbcomm *d, *dc;
 
-    IGNORE(wl);
+    NG_IGNORE(wl);
 
     for (d = dbs; d; d = d->db_next) {
         if (d->db_type == DB_TRACENODE) {

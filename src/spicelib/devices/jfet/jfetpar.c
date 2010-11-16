@@ -19,7 +19,7 @@ JFETparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     JFETinstance *here = (JFETinstance *)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case JFET_TEMP:

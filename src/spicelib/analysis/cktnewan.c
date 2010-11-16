@@ -18,7 +18,7 @@ extern SPICEanalysis *analInfo[];
 int
 CKTnewAnal(CKTcircuit *ckt, int type, IFuid name, JOB **analPtr, TSKtask *taskPtr)
 {
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     if(type==0) {
         /* special case for analysis type 0 == option card */

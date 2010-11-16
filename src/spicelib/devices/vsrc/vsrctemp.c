@@ -20,7 +20,7 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
     VSRCinstance *here;
     double radians;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->VSRCnextModel ) {

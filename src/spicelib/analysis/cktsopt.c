@@ -32,7 +32,7 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
 {
     TSKtask *task = (TSKtask *)anal;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(opt) {
 

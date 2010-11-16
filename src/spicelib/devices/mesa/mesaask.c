@@ -22,7 +22,7 @@ MESAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
     MESAinstance *here = (MESAinstance*)inst;
     static char *msg = "Current and power not available in ac analysis";
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(which) {
         case MESA_LENGTH:

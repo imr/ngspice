@@ -23,7 +23,7 @@ CCCSload(GENmodel *inModel, CKTcircuit *ckt)
     CCCSmodel *model = (CCCSmodel*)inModel;
     CCCSinstance *here;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->CCCSnextModel ) {

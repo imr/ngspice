@@ -16,7 +16,7 @@ MOS6mAsk(CKTcircuit *ckt, GENmodel *inModel, int param,
 {
     MOS6model *model = (MOS6model *)inModel;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(param) {
         case MOS6_MOD_TNOM:

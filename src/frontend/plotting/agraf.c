@@ -45,9 +45,9 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     int i, j, k;
     int shift;
 
-    IGNORE(xdel);
-    IGNORE(ydel);
-    IGNORE(ylog);
+    NG_IGNORE(xdel);
+    NG_IGNORE(ydel);
+    NG_IGNORE(ylog);
 
     /* ANSI C does not specify how many digits are in an exponent for %c
      * We assumed it was 2.  If it's more, shift starting position over.

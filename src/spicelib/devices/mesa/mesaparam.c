@@ -17,7 +17,7 @@ MESAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MESAinstance *here = (MESAinstance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
         case MESA_LENGTH:

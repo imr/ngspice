@@ -16,7 +16,7 @@ MOS2mAsk(CKTcircuit *ckt, GENmodel *inModel, int param,
 {
     MOS2model *model = (MOS2model *)inModel;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(param) {
         case MOS2_MOD_TNOM:

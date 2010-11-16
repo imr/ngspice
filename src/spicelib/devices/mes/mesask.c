@@ -21,7 +21,7 @@ MESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
     MESinstance *here = (MESinstance*)inst;
     static char *msg = "Current and power not available in ac analysis";
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(which) {
         case MES_AREA:

@@ -23,7 +23,7 @@ double cggb, cgdb, cgsb, cbgb, cbdb, cbsb, cddb, cdgb, cdsb;
 double GSoverlapCap, GDoverlapCap, GBoverlapCap;
 double FwdSum, RevSum, Gm, Gmbs;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     for (; model != NULL; model = model->BSIM3v1SnextModel) 
     {    for (here = model->BSIM3v1Sinstances; here!= NULL;

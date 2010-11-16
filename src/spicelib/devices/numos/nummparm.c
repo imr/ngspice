@@ -19,7 +19,7 @@ NUMOSparam(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
 {
   register NUMOSinstance *inst = (NUMOSinstance *) inInst;
 
-  IGNORE(select);
+  NG_IGNORE(select);
 
   switch (param) {
   case NUMOS_AREA:

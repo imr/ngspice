@@ -54,8 +54,8 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     IFuid capUid;
     IFuid eltUid;
 
-    IGNORE(state);
-    IGNORE(matrix);
+    NG_IGNORE(state);
+    NG_IGNORE(matrix);
 
     rtype = CKTtypelook("Resistor");
     ctype = CKTtypelook("Capacitor");

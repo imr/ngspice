@@ -14,7 +14,7 @@
 void
 com_state(wordlist *wl)
 {
-    IGNORE(wl);
+    NG_IGNORE(wl);
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded.\n");

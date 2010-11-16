@@ -85,8 +85,8 @@ int MIFask(
 
     Mif_Boolean_t  is_array;
 
-    IGNORE(ckt);
-    IGNORE(select);
+    NG_IGNORE(ckt);
+    NG_IGNORE(select);
 
     /* Arrange for access to MIF specific data in the instance */
     inst = (MIFinstance *) inInst;

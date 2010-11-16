@@ -21,7 +21,7 @@ B3SOIDDmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     B3SOIDDmodel *model = (B3SOIDDmodel *)inst;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) 
     {   case B3SOIDD_MOD_MOBMOD:

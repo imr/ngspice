@@ -24,7 +24,7 @@ JFETmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
     JFETmodel *model = (JFETmodel*)inModel;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case JFET_MOD_TNOM:

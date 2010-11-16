@@ -21,7 +21,7 @@ HFETAmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     HFETAmodel *here = (HFETAmodel*)inst;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case HFETA_MOD_VTO:

@@ -20,7 +20,7 @@ MOS3param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MOS3instance *here = (MOS3instance *)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(param) {
     	

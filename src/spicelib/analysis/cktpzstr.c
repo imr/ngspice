@@ -781,7 +781,7 @@ CKTpzVerify(PZtrial **set, PZtrial *new_trial)
 
     PZtrial *t, *prev;
 
-    IGNORE(set);
+    NG_IGNORE(set);
 
     NZeros += 1;
     if (new_trial->s.imag != 0.0)

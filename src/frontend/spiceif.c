@@ -536,7 +536,7 @@ fputs("\t(Note that you must use an = to separate option name and value.)\n",
 void
 if_dump(CKTcircuit *ckt, FILE *file)
 {
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     /*void *cc = (void *) ckt;*/
 
@@ -620,7 +620,7 @@ spif_getparam_special(CKTcircuit *ckt,char **name,char *param,int ind,int do_mod
     GENmodel *mod=(GENmodel *)NULL;
     IFdevice *device;
 
-    IGNORE(do_model);
+    NG_IGNORE(do_model);
 
     /* fprintf(cp_err, "Calling if_getparam(%s, %s)\n", *name, param); */
 
@@ -1011,7 +1011,7 @@ parmlookup(IFdevice *dev, GENinstance **inptr, char *param, int do_model, int in
 {
     int i;
 
-    IGNORE(inptr);
+    NG_IGNORE(inptr);
 
     /* First try the device questions... */
     if (!do_model && dev->numInstanceParms) {
@@ -1058,7 +1058,7 @@ doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
     static IFvalue pv;
     int err;
 
-    IGNORE(typecode);
+    NG_IGNORE(typecode);
 
     pv.iValue = ind;    /* Sometimes this will be junk and ignored... */
 
@@ -1093,7 +1093,7 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
     double *dptr;
     int i;
 
-    IGNORE(typecode);
+    NG_IGNORE(typecode);
 
     /* Count items */
     if (opt->dataType & IF_VECTOR) {

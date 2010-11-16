@@ -26,7 +26,7 @@ SWask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *se
     SWinstance *here = (SWinstance *)inst;
     static char *msg = "Current and power not available in ac analysis";
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(which) {
         case SW_POS_NODE:

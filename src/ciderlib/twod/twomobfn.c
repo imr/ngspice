@@ -47,9 +47,9 @@ MOBsurfElec(TWOmaterial *info, TWOelem *pElem, double ex, double ey,
   double dElDWx;                   /* Lateral Derivative x Component */
   double dElDWy;                   /* Lateral Derivative y Component */
   
-  IGNORE(wx);
-  IGNORE(wy);
-  IGNORE(totalConc);
+  NG_IGNORE(wx);
+  NG_IGNORE(wy);
+  NG_IGNORE(totalConc);
 
   if ( pElem->surface ) { /* replace one field component with surface field */
     if ( pElem->direction == 0 ) {
@@ -251,9 +251,9 @@ MOBsurfHole(TWOmaterial *info, TWOelem *pElem, double ex, double ey,
   double dElDWx;                   /* Lateral Derivative x Component */
   double dElDWy;                   /* Lateral Derivative y Component */
   
-  IGNORE(wx);
-  IGNORE(wy);
-  IGNORE(totalConc);
+  NG_IGNORE(wx);
+  NG_IGNORE(wy);
+  NG_IGNORE(totalConc);
 
   if ( pElem->surface ) { /* replace one field component with surface field */
     if ( pElem->direction == 0 ) {

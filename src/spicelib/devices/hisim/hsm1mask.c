@@ -21,7 +21,7 @@ HSM1mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
   HSM1model *model = (HSM1model *)inst;
 
-  IGNORE(ckt);
+  NG_IGNORE(ckt);
 
   switch (which) {
   case HSM1_MOD_NMOS:

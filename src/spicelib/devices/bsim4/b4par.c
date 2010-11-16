@@ -32,7 +32,7 @@ IFvalue *select)
 
     BSIM4instance *here = (BSIM4instance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
 

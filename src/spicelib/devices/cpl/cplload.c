@@ -410,7 +410,7 @@ right_consts(CPLinstance *here,	CPLine *cp, int	t, int time, double h, double h1
    int ext;
    int noL;
 
-    IGNORE(here);
+    NG_IGNORE(here);
 
    noL = cp->noL;
 

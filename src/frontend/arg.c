@@ -96,8 +96,8 @@ void arg_set(wordlist *wl, struct comm *command)
 
 void arg_display(wordlist *wl, struct comm *command)
 {
-    IGNORE(wl);
-    IGNORE(command);
+    NG_IGNORE(wl);
+    NG_IGNORE(command);
 
     /* just return; display does the right thing */
 

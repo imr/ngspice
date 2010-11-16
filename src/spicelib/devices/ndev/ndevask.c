@@ -23,11 +23,11 @@ NDEVask(
   IFvalue *value,
   IFvalue *select )
 {
-  IGNORE(ckt);
-  IGNORE(inInst);
-  IGNORE(which);
-  IGNORE(value);
-  IGNORE(select);
+  NG_IGNORE(ckt);
+  NG_IGNORE(inInst);
+  NG_IGNORE(which);
+  NG_IGNORE(value);
+  NG_IGNORE(select);
 
   return (OK);
   /* NOTREACHED */

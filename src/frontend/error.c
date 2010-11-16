@@ -39,7 +39,7 @@ controlled_exit(int status)
 void
 fperror(char *mess, int code)
 {
-    IGNORE(code);
+    NG_IGNORE(code);
     fprintf(cp_err, "%s: floating point exception.\n", mess);
     return;
 }

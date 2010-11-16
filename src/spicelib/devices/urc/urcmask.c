@@ -25,7 +25,7 @@ URCmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     URCmodel *here = (URCmodel *)inst;
 
-    IGNORE(ckt);
+    NG_IGNORE(ckt);
 
     switch(which) {
         case URC_MOD_K:

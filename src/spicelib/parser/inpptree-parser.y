@@ -110,9 +110,9 @@ nonempty_arglist:
 static void
 PTerror (char **line, struct INPparseNode **retval, void *ckt, char const *s)
 {
-  IGNORE(line);
-  IGNORE(retval);
-  IGNORE(ckt);
+  NG_IGNORE(line);
+  NG_IGNORE(retval);
+  NG_IGNORE(ckt);
 
   fprintf (stderr, "%s: %s\n", __func__, s);
 }

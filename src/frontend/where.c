@@ -18,7 +18,7 @@ com_where(wordlist *wl)
 {
 	char	*msg;
 
-   IGNORE(wl);
+   NG_IGNORE(wl);
 
    /*CDHW typing where with no current circuit caused crashes CDHW*/
    if (!ft_curckt) {

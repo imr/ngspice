@@ -26,8 +26,8 @@ NDEV_dump(
   GENmodel *inModel,
   CKTcircuit *ckt )
 {
-    IGNORE(inModel);
-    IGNORE(ckt);
+    NG_IGNORE(inModel);
+    NG_IGNORE(ckt);
   
 }
 
@@ -39,8 +39,8 @@ NDEV_acct(
   CKTcircuit *ckt,
   FILE *file )
 {
-    IGNORE(inModel);
-    IGNORE(ckt);
-    IGNORE(file);
+    NG_IGNORE(inModel);
+    NG_IGNORE(ckt);
+    NG_IGNORE(file);
   
 }

@@ -56,7 +56,7 @@ DISTOan(CKTcircuit *ckt, int restart)
     double time,time1;
 #endif
 
-        IGNORE(restart);
+        NG_IGNORE(restart);
 
 
 		/* start at beginning */

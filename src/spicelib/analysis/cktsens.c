@@ -719,7 +719,7 @@ sens_getp(sgen *sg, CKTcircuit *ckt, IFvalue *val)
 {
 	int	pid;
 
-	IGNORE(ckt);
+	NG_IGNORE(ckt);
 
 	error = 0;
 
@@ -765,7 +765,7 @@ sens_setp(sgen *sg, CKTcircuit *ckt, IFvalue *val)
 {
 	int	pid;
 
-	IGNORE(ckt);
+	NG_IGNORE(ckt);
 
 	error = 0;
 

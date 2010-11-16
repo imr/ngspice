@@ -925,7 +925,7 @@ nupa_fetchinstance (void)
 
 void dump_symbols( tdico *dico_p )
 {
-   IGNORE(dico_p);
+   NG_IGNORE(dico_p);
 
    fprintf (stderr, "Symbol table\n");
    nupa_list_params ( stderr ) ;

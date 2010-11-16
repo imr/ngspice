@@ -18,7 +18,7 @@ B1ask(CKTcircuit *ckt, GENinstance *inst, int which,
 {
     B1instance *here = (B1instance*)inst;
 
-    IGNORE(select);
+    NG_IGNORE(select);
 
     switch(which) {
         case BSIM1_L:

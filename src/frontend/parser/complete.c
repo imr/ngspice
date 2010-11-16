@@ -335,9 +335,9 @@ printem(wordlist *wl)
 void
 cp_ccom(wordlist *wlist, char *buf, bool esc)
 {
-    IGNORE(wlist);
-    IGNORE(buf);
-    IGNORE(esc);
+    NG_IGNORE(wlist);
+    NG_IGNORE(buf);
+    NG_IGNORE(esc);
     return;
 }
 #endif
@@ -572,7 +572,7 @@ cp_kwswitch(int class, char *tree)
 void
 cp_ccrestart(bool kwords)
 {
-    IGNORE(kwords);
+    NG_IGNORE(kwords);
 
     /* Ack. */
     return;
