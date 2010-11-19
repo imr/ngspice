@@ -56,7 +56,7 @@ clip_line(int *pX1, int *pY1, int *pX2, int *pY2, int l, int b, int r, int t)
     while (c1 || c2) {
         if (c1 & c2)
             return (TRUE); /* Line is invisible. */
-        if (!(c = c1))
+        if ((c = c1) == 0)
             c = c2;
         if (c & CODEMINX) {
             y = y1+(y2-y1)*(l-x1)/(x2-x1);

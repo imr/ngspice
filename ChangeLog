@@ -1,3 +1,7 @@
+2010-11-19  Robert Larice
+ * src/frontend/plotting/clip.c :
+    Nr 1/5 (x = ...) == 0 , swallow warnings
+
 2010-11-16  Robert Larice
  * src/**/* :
     rename `IGNORE()' --> `NG_IGNORE()'
