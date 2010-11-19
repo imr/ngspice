@@ -175,7 +175,7 @@ docommand(wordlist *wlist)
             if (eq(wlist->wl_word, noredirect[i]))
                 break;
         if (!noredirect[i]) {
-            if (!(wlist = cp_redirect(wlist))) {
+            if ((wlist = cp_redirect(wlist)) == NULL) {
                 cp_ioreset();
                 return;
             }

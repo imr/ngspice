@@ -85,7 +85,7 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
 
     NG_IGNORE(nplots);
 
-    if (!(graph = NewGraph())) {
+    if ((graph = NewGraph()) == NULL) {
       return(FALSE);
     }
 

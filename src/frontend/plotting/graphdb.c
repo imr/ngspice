@@ -61,7 +61,7 @@ GRAPH *NewGraph(void)
     LISTGRAPH *list;
     int BucketId = RunningId % NUMGBUCKETS;
 
-    if (!(list = NEWLISTGRAPH)) {
+    if ((list = NEWLISTGRAPH) == NULL) {
       internalerror("can't allocate a listgraph");
       return((GRAPH *) NULL);
     }

@@ -118,7 +118,7 @@ GRAPH *graph)
 
     hcopygraphid = graph->graphid;
 
-    if (!(plotfile = fopen((char*) graph->devdep, "w"))) {
+    if ((plotfile = fopen((char*) graph->devdep, "w")) == NULL) {
         perror((char*) graph->devdep);
       graph->devdep = NULL;
       return(1);

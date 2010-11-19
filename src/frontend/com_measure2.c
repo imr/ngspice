@@ -1021,7 +1021,7 @@ static int measure_parse_stdParams (
       if( strcasecmp(pValue,"LAST")==0) {
          engVal1 = MEASURE_LAST_TRANSITION;
       } else {
-         if (!(engVal = ft_numparse(&pValue, FALSE))) {
+         if ((engVal = ft_numparse(&pValue, FALSE)) == NULL) {
             sprintf(errbuf,"bad syntax of ??\n");
             return 0;
          }
@@ -1127,7 +1127,7 @@ static int measure_parse_find (
          }
 
          if (strcasecmp(pName,"AT")==0) {
-            if (!(engVal = ft_numparse(&pVal, FALSE))) {
+            if ((engVal = ft_numparse(&pVal, FALSE)) == NULL) {
                sprintf(errbuf,"bad syntax of WHEN\n");
                return 0;
             }

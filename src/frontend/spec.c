@@ -43,21 +43,21 @@ com_spec(wordlist *wl)
     }
     s = wl->wl_word;
     tlen = (plot_cur->pl_scale)->v_length;
-    if (!(freq = ft_numparse(&s, FALSE)) || (*freq < 0.0)) {
+    if ((freq = ft_numparse(&s, FALSE)) == NULL || (*freq < 0.0)) {
         fprintf(cp_err, "Error: bad start freq %s\n", wl->wl_word);
         return;
     }
     startf = *freq;
     wl = wl->wl_next;
     s = wl->wl_word;
-    if (!(freq = ft_numparse(&s, FALSE)) || (*freq <= startf)) {
+    if ((freq = ft_numparse(&s, FALSE)) == NULL || (*freq <= startf)) {
         fprintf(cp_err, "Error: bad stop freq %s\n", wl->wl_word);
         return;
     }
     stopf = *freq;
     wl = wl->wl_next;
     s = wl->wl_word;
-    if (!(freq = ft_numparse(&s, FALSE)) || !(*freq <= (stopf-startf))) {
+    if ((freq = ft_numparse(&s, FALSE)) == NULL || !(*freq <= (stopf-startf))) {
         fprintf(cp_err, "Error: bad step freq %s\n", wl->wl_word);
         return;
     }

@@ -523,7 +523,7 @@ doit(struct line *deck)
 
     /* Otherwise, expand sub-subcircuits recursively. */
     for (ks = sss = subs; sss; sss = sss->su_next)  /* iterate through the list of subcircuits */
-        if (!(sss->su_def = doit(sss->su_def)))
+        if ((sss->su_def = doit(sss->su_def)) == NULL)
             return (NULL);
     subs = ks;  /* ks has held pointer to start of subcircuits list. */
     
@@ -904,7 +904,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
                 paren_ptr++;
                 name = paren_ptr;
 	  
-                if ( !( paren_ptr = strstr( paren_ptr, ")" ) ) ) {
+                if ( ( paren_ptr = strstr( paren_ptr, ")" ) ) == NULL) {
                     *(name-1) = '(';
                     fprintf(cp_err, "Error: missing closing ')' for .ic|.nodeset statement %s\n", c->li_line);
                     goto quit;

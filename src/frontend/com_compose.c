@@ -127,11 +127,11 @@ com_compose(wordlist *wl)
     if (eq(wl->wl_word, "values")) {
         /* Build up the vector from the rest of the line... */
         wl = wl->wl_next;
-        if (!(pn = ft_getpnames(wl, TRUE)))
+        if ((pn = ft_getpnames(wl, TRUE)) == NULL)
             return;
 	first_pn = pn;
         while (pn) {
-            if (!(v = ft_evaluate(pn)))
+            if ((v = ft_evaluate(pn)) == NULL)
                 return;
             if (!vecs)
                 vecs = lv = v;
@@ -260,7 +260,7 @@ com_compose(wordlist *wl)
             }
             if (cieq(var, "start")) {
                 startgiven = TRUE;
-                if (!(td = ft_numparse(&val, FALSE))) {
+                if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                         "Error: bad parm %s = %s\n",
                         var, val);
@@ -269,7 +269,7 @@ com_compose(wordlist *wl)
                 start = *td;
             } else if (cieq(var, "stop")) {
                 stopgiven = TRUE;
-                if (!(td = ft_numparse(&val, FALSE))) {
+                if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                         "Error: bad parm %s = %s\n",
                         var, val);
@@ -278,7 +278,7 @@ com_compose(wordlist *wl)
                 stop = *td;
             } else if (cieq(var, "step")) {
                 stepgiven = TRUE;
-                if (!(td = ft_numparse(&val, FALSE))) {
+                if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                         "Error: bad parm %s = %s\n",
                         var, val);
@@ -287,7 +287,7 @@ com_compose(wordlist *wl)
                 step = *td;
             } else if (cieq(var, "center")) {
                 centergiven = TRUE;
-                if (!(td = ft_numparse(&val, FALSE))) {
+                if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                         "Error: bad parm %s = %s\n",
                         var, val);
@@ -296,7 +296,7 @@ com_compose(wordlist *wl)
                 center = *td;
             } else if (cieq(var, "span")) {
                 spangiven = TRUE;
-                if (!(td = ft_numparse(&val, FALSE))) {
+                if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                         "Error: bad parm %s = %s\n",
                         var, val);
@@ -305,7 +305,7 @@ com_compose(wordlist *wl)
                 span = *td;
             } else if (cieq(var, "mean")) {
                 meangiven = TRUE;
-                if (!(td = ft_numparse(&val, FALSE))) {
+                if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                         "Error: bad parm %s = %s\n",
                         var, val);
@@ -314,7 +314,7 @@ com_compose(wordlist *wl)
                 mean = *td;
             } else if (cieq(var, "sd")) {
                 sdgiven = TRUE;
-                if (!(td = ft_numparse(&val, FALSE))) {
+                if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                         "Error: bad parm %s = %s\n",
                         var, val);
@@ -323,7 +323,7 @@ com_compose(wordlist *wl)
                 sd = *td;
             } else if (cieq(var, "lin")) {
                 lingiven = TRUE;
-                if (!(td = ft_numparse(&val, FALSE))) {
+                if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                         "Error: bad parm %s = %s\n",
                         var, val);
@@ -332,7 +332,7 @@ com_compose(wordlist *wl)
                 lin = *td;
             } else if (cieq(var, "log")) {
                 loggiven = TRUE;
-                if (!(td = ft_numparse(&val, FALSE))) {
+                if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                         "Error: bad parm %s = %s\n",
                         var, val);
@@ -341,7 +341,7 @@ com_compose(wordlist *wl)
                 log = *td;
             } else if (cieq(var, "dec")) {
                 decgiven = TRUE;
-                if (!(td = ft_numparse(&val, FALSE))) {
+                if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                         "Error: bad parm %s = %s\n",
                         var, val);
@@ -350,7 +350,7 @@ com_compose(wordlist *wl)
                 dec = *td;
             } else if (cieq(var, "gauss")) {
                 gaussgiven = TRUE;
-                if (!(td = ft_numparse(&val, FALSE))) {
+                if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                         "Error: bad parm %s = %s\n",
                         var, val);
@@ -359,7 +359,7 @@ com_compose(wordlist *wl)
                 gauss = *td;
             } else if (cieq(var, "random")) {
                 randmgiven = TRUE;
-                if (!(td = ft_numparse(&val, FALSE))) {
+                if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                         "Error: bad parm %s = %s\n",
                         var, val);

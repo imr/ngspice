@@ -45,7 +45,7 @@ SUPbinRead(char *inFile, float *x, float *conc, int *impId, int *numNod)
   }
 
   /* Open Input File */
-  if (!(fpSuprem = fopen( inFile, "r" ))) {
+  if ((fpSuprem = fopen( inFile, "r" )) == NULL) {
     perror(inFile);
     return;
   }
@@ -240,7 +240,7 @@ SUPascRead(char *inFile, float *x, float *conc, int *impId, int *numNod)
   }
 
   /* Open Input File */
-  if (!(fpSuprem = fopen( inFile, "r" ))) {
+  if ((fpSuprem = fopen( inFile, "r" )) == NULL) {
     perror(inFile);
     return;
   }

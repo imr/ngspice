@@ -695,7 +695,7 @@ cp_variablesubst(wordlist *wlist)
             }
 	    
             (void) strcpy(tbuf, t); /* MW. Save t*/
-	    if (!(wl = wl_splice(wl, nwl))) {/*CDHW this frees wl CDHW*/
+	    if ((wl = wl_splice(wl, nwl)) == NULL) {/*CDHW this frees wl CDHW*/
                 wl_free(nwl);
                 return (NULL);
             }

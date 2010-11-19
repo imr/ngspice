@@ -249,7 +249,7 @@ findsubject(char *filename, char *subject)
     /* open up index for filename */
     sprintf(buf, "%s%s%s.idx", hlp_directory, DIR_PATHSEP, filename);
     hlp_pathfix(buf);
-    if (!(fp = fopen(buf, "rb"))) {
+    if ((fp = fopen(buf, "rb")) == NULL) {
       perror(buf);
       return(-1);
     }
@@ -264,7 +264,7 @@ findsubject(char *filename, char *subject)
 
     fclose(fp);
 
-    if (!(fp = fopen(buf, "rb"))) {
+    if ((fp = fopen(buf, "rb")) == NULL) {
       perror(buf);
       return(-1);
     }
@@ -279,7 +279,7 @@ findsubject(char *filename, char *subject)
 
     fclose(fp);
 
-    if (!(fp = fopen(buf, "rb"))) {
+    if ((fp = fopen(buf, "rb")) == NULL) {
       perror(buf);
       return(-1);
     }

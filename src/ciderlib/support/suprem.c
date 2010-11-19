@@ -23,7 +23,7 @@ readAsciiData( char *fileName, int impType, DOPtable **ppTable )
     double sign;
 
     /* Open Input File */
-    if (!(fpAscii = fopen( fileName, "r" ))) {
+    if ((fpAscii = fopen( fileName, "r" )) == NULL) {
       perror( fileName );
       exit(-1);
     }

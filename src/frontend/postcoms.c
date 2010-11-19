@@ -94,7 +94,7 @@ com_print(wordlist *wl)
 
     ngood = 0;
     for (nn = ft_getpnames(wl, TRUE); nn; nn = nn->pn_next) {
-        if (!(v = ft_evaluate(nn)))
+        if ((v = ft_evaluate(nn)) == NULL)
 	    continue;
 	if (!vecs)
 	    vecs = lv = v;
@@ -710,7 +710,7 @@ com_cross(wordlist *wl)
     newvec = wl->wl_word;
     wl = wl->wl_next;
     s = wl->wl_word;
-    if (!(d = ft_numparse(&s, FALSE))) {
+    if ((d = ft_numparse(&s, FALSE)) == NULL) {
         fprintf(cp_err, "Error: bad number %s\n", wl->wl_word);
         return;
     }
@@ -721,7 +721,7 @@ com_cross(wordlist *wl)
     wl = wl->wl_next;
     pn = ft_getpnames(wl, TRUE);
     while (pn) {
-        if (!(n = ft_evaluate(pn)))
+        if ((n = ft_evaluate(pn)) == NULL)
             return;
         if (!vecs)
             vecs = lv = n;
@@ -912,7 +912,7 @@ com_splot(wordlist *wl)
         return;
     }
     t = buf;
-    if (!(s = gettok(&t)))
+    if ((s = gettok(&t)) == NULL)
         return;
 
     plot_setcur(s);

@@ -371,7 +371,7 @@ com_rspice(wordlist *wl)
         fputs(buf, cp_out);
     }
     outfile = smktemp("rsp");
-    if (!(out = fopen(outfile, "w+"))) {
+    if ((out = fopen(outfile, "w+")) == NULL) {
         perror(outfile);
         (void) fclose(serv);
         return;

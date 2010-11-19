@@ -113,7 +113,7 @@ ft_savedotargs(void)
          (void) gettok(&s);
          name = gettok(&s);
 
-         if (!(w = gettoks(s))) {
+         if ((w = gettoks(s)) == NULL) {
             fprintf(cp_err, "Warning: no nodes given: %s\n", iline->wl_word);
          } else {
             if (isaplot) {
@@ -138,7 +138,7 @@ ft_savedotargs(void)
       } else if (ciprefix(".four", s)) {
          (void) gettok(&s);
          (void) gettok(&s);
-         if (!(w = gettoks(s)))
+         if ((w = gettoks(s)) == NULL)
             fprintf(cp_err, "Warning: no nodes given: %s\n", iline->wl_word);
          else {
             some = 1;

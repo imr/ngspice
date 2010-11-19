@@ -15,7 +15,7 @@ University of Science and Technology of China
 
 #define NIL(type)   ((type *)0)
 #define TSCALLOC(var, size, type)\
-if (size && (!(var =(type *)calloc(1, (unsigned)(size)*sizeof(type))))) {\
+if (size && (var =(type *)calloc(1, (unsigned)(size)*sizeof(type))) == NULL) {\
    return(E_NOMEM);\
 }
 

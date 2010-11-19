@@ -63,7 +63,7 @@ static int EVTinit_limits(CKTcircuit *ckt);
 /* Adapted from SPICE 3C1 code in CKTsetup.c */
 #define CKALLOC(var,size,type) \
     if(size) { \
-        if(!(var = TMALLOC(type, size))) \
+        if((var = TMALLOC(type, size)) == NULL) \
             return(E_NOMEM); \
     }
 

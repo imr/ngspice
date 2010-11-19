@@ -30,13 +30,13 @@ hlp_main(char *path, wordlist *wl)
 
     if (wl) {
         while (wl) {
-            if (!(place = findglobalsubject(wl->wl_word))) {
+            if ((place = findglobalsubject(wl->wl_word)) == NULL) {
                 fprintf(stderr, "Error: No such topic: %s\n",
                     wl->wl_word);
                 wl = wl->wl_next;
                 continue;
             }
-            if (!(top = hlp_read(place))) {
+            if ((top = hlp_read(place)) == NULL) {
                 fprintf(stderr, "Error: can't read topic\n");
                 wl = wl->wl_next;
                 continue;
@@ -45,11 +45,11 @@ hlp_main(char *path, wordlist *wl)
             wl = wl->wl_next;
         }
     } else {
-        if (!(place = findglobalsubject("main"))) {
+        if ((place = findglobalsubject("main")) == NULL) {
           fprintf(stderr, "Error: no main topic\n");
           return;
         }
-        if (!(top = hlp_read(place))) {
+        if ((top = hlp_read(place)) == NULL) {
             fprintf(stderr, "Error: can't read topic\n");
             return;
         }
@@ -120,7 +120,7 @@ FILE *hlp_fopen(char *filename)
     strcat(buf, filename);
     strcat(buf, ".txt");
     hlp_pathfix(buf);
-    if (!(hlp_ftable[hlp_ftablesize].fp = fopen(buf, "r"))) {
+    if ((hlp_ftable[hlp_ftablesize].fp = fopen(buf, "r")) == NULL) {
       perror(buf);
       return (NULL);
     }

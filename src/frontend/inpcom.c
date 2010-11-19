@@ -139,7 +139,7 @@ readline(FILE *fd)
       strlen++;
       if( strlen >= memlen ) {
          memlen += STRGROW;
-         if( !(strptr = TREALLOC(char, strptr, memlen + 1))) {
+         if((strptr = TREALLOC(char, strptr, memlen + 1)) == NULL) {
             return (NULL);
          }
       }
@@ -1232,9 +1232,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                if ( dir_name != NULL ) sprintf( big_buff2, "%s/%s", dir_name, s );
                else                    sprintf( big_buff2, "./%s", s );
                dir_name_flag = FALSE;
-               if ( !( newfp = inp_pathopen( s, "r" ) ) ) {
+               if ((newfp = inp_pathopen( s, "r" )) == NULL) {
                   dir_name_flag = TRUE;
-                  if ( !( newfp = inp_pathopen( big_buff2, "r" ) ) ) { 
+                  if ((newfp = inp_pathopen( big_buff2, "r" )) == NULL ) { 
                      perror(s);
                      if(copys) tfree(copys);   /* allocated by the cp_tildexpand() above */
                      tfree(buffer);	    /* allocated by readline() above */
@@ -1290,9 +1290,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
          if ( dir_name != NULL ) sprintf( big_buff2, "%s/%s", dir_name, s );
          else                    sprintf( big_buff2, "./%s", s );
          dir_name_flag = FALSE;
-         if (!(newfp = inp_pathopen(s, "r"))) { 
+         if ((newfp = inp_pathopen(s, "r")) == NULL) { 
             dir_name_flag = TRUE;
-            if ( !( newfp = inp_pathopen( big_buff2, "r" ) ) ) { 
+            if ((newfp = inp_pathopen( big_buff2, "r" )) == NULL ) { 
                perror(s);
                if(copys) {
                   tfree(copys);	/* allocated by the cp_tildexpand() above */

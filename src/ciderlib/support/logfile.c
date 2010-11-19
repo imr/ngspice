@@ -25,9 +25,9 @@ LOGmakeEntry(char *name, char *description)
  * without stepping on each other.
  */
 #ifdef ultrix
-  if (!(fpLog = fopen(LogFileName, "A"))) {
+  if ((fpLog = fopen(LogFileName, "A")) == NULL) {
 #else
-  if (!(fpLog = fopen(LogFileName, "a"))) {
+  if ((fpLog = fopen(LogFileName, "a")) == NULL) {
 #endif
     if (!LogError)
       perror(LogFileName);

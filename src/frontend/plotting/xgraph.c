@@ -80,7 +80,7 @@ ft_xgraph(double *xlims, double *ylims, char *filename, char *title, char *xlabe
     }
 
     /* Open the output file. */
-    if (!(file = fopen(filename, "w"))) {
+    if ((file = fopen(filename, "w")) == NULL) {
 	perror(filename);
 	return;
     }

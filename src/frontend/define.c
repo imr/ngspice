@@ -99,7 +99,7 @@ com_define(wordlist *wlist)
     /* Parse the rest of it. We can't know if there are the right
      * number of undefined variables in the expression.
      */
-    if (!(pn = ft_getpnames(wl, FALSE)))
+    if ((pn = ft_getpnames(wl, FALSE)) == NULL)
         return;
 
     /* This is a pain -- when things are garbage-collected, any

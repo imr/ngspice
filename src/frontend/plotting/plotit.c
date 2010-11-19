@@ -573,7 +573,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 fprintf(cp_err, "Error: misplaced vs arg\n");
                 goto quit;
             } else {
-                if (!(n = n->pn_next)) {
+                if ((n = n->pn_next) == NULL) {
                     fprintf(cp_err,
                         "Error: missing vs arg\n");
                     goto quit;

@@ -48,7 +48,7 @@ loop:   	s =strchr(t, cp_back);
         /* What the heck, let "echo `foo" work... */
         *s = '\0';
         t++;    /* Get past the second ` */
-	if (!(nwl = backeval(buf))) {
+	if ((nwl = backeval(buf)) == NULL) {
             wlist->wl_word = NULL;
             return (wlist);
         }

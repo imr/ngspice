@@ -72,16 +72,16 @@ static int EVTsetup_load_ptrs(CKTcircuit *ckt);
 
 #define CKALLOC(var,size,type) \
     if(size) { \
-        if(!(var = TMALLOC(type, size))) \
+        if((var = TMALLOC(type, size)) == NULL) \
             return(E_NOMEM); \
     }
 
 #define CKREALLOC(var,size,type) \
     if((size) == 1) { \
-        if(!(var = TMALLOC(type, size))) \
+        if((var = TMALLOC(type, size)) == NULL) \
             return(E_NOMEM); \
     } else if((size) > 1) { \
-        if(!(var = TREALLOC(type, (var), size))) \
+        if((var = TREALLOC(type, (var), size)) == NULL) \
             return(E_NOMEM); \
     }
 

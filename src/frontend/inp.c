@@ -945,7 +945,7 @@ com_edit(wordlist *wl)
             cp_interactive = inter;
             return;
         }
-        if (!(fp = inp_pathopen(wl->wl_word, "r"))) {
+        if ((fp = inp_pathopen(wl->wl_word, "r")) == NULL) {
             perror(wl->wl_word);
             cp_interactive = inter;
             return;
@@ -961,7 +961,7 @@ com_edit(wordlist *wl)
             permfile = FALSE;
         }
         if (ft_curckt && !ft_curckt->ci_filename) {
-            if (!(fp = fopen(filename, "w"))) {
+            if ((fp = fopen(filename, "w")) == NULL) {
                 perror(filename);
                 cp_interactive = inter;
                 return;
@@ -973,7 +973,7 @@ com_edit(wordlist *wl)
 		    "circuit not saved\n");
             fclose(fp);
         } else if (!ft_curckt) {
-            if (!(fp = fopen(filename, "w"))) {
+            if ((fp = fopen(filename, "w")) == NULL) {
                 perror(filename);
                 cp_interactive = inter;
                 return;
@@ -986,7 +986,7 @@ com_edit(wordlist *wl)
             return;
         }
 
-        if (!(fp = fopen(filename, "r"))) {
+        if ((fp = fopen(filename, "r")) == NULL) {
             perror(filename);
             cp_interactive = inter;
             return;
@@ -1023,7 +1023,7 @@ doedit(char *filename)
    if (cp_getvar("editor", CP_STRING, buf2)) {
       editor = buf2;
    } else {
-      if (!(editor = getenv("EDITOR"))) {
+      if ((editor = getenv("EDITOR")) == NULL) {
          if (Def_Editor && *Def_Editor)
             editor = Def_Editor;
          else
@@ -1050,13 +1050,13 @@ com_source(wordlist *wl)
    if (wl->wl_next) {
       /* There are several files -- put them into a temp file  */
       tempfile = smktemp("sp");
-      if (!(fp = inp_pathopen(tempfile, "w+"))) {
+      if ((fp = inp_pathopen(tempfile, "w+")) == NULL) {
          perror(tempfile);
          cp_interactive = TRUE;
          return;
       }
       while (wl) {
-         if (!(tp = inp_pathopen(wl->wl_word, "r"))) {
+         if ((tp = inp_pathopen(wl->wl_word, "r")) == NULL) {
             perror(wl->wl_word);
             fclose(fp);
             cp_interactive = TRUE;

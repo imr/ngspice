@@ -30,7 +30,7 @@ com_ghelp(wordlist *wl)
         com_help(wl);
         return;
     }
-    if (!(npath = cp_tildexpand(path))) {
+    if ((npath = cp_tildexpand(path)) == NULL) {
         fprintf(cp_err, "Note: can't find help dir %s\n", path);
         fprintf(cp_err, "Defaulting to old help.\n\n");
         com_help(wl);

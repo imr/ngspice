@@ -77,7 +77,7 @@ fourier(wordlist *wl, struct plot *current_plot)
         return 1;
     }
     s = wl->wl_word;
-    if (!(ff = ft_numparse(&s, FALSE)) || (*ff <= 0.0)) {
+    if ((ff = ft_numparse(&s, FALSE)) == NULL || (*ff <= 0.0)) {
         fprintf(cp_err, "Error: bad fund freq %s\n", wl->wl_word);
         return 1;
     }

@@ -259,7 +259,7 @@ plot_add(struct plot *pl)
         cp_addkword(CT_VECTOR, v->v_name);
     cp_addkword(CT_VECTOR, "all");
 
-    if (!(s = ft_plotabbrev(pl->pl_name)))
+    if ((s = ft_plotabbrev(pl->pl_name)) == NULL)
         s = "unknown";
     do {
         (void) sprintf(buf, "%s%d", s, plot_num);
@@ -694,7 +694,7 @@ plot_alloc(char *name)
     char buf[BSIZE_SP];
 
     ZERO(pl, struct plot);
-    if (!(s = ft_plotabbrev(name)))
+    if ((s = ft_plotabbrev(name)) == NULL)
         s = "unknown";
     do {
         (void) sprintf(buf, "%s%d", s, plot_num);

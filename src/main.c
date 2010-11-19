@@ -899,7 +899,7 @@ main(int argc, char **argv)
 
             case 'c':       /* Circuit file */
               if (optarg) {
-                  if (!(circuit_file = fopen(optarg, "r"))) {
+                  if ((circuit_file = fopen(optarg, "r")) == NULL) {
                      perror(optarg);
                      sp_shutdown(EXIT_BAD);
                   }
@@ -972,7 +972,7 @@ main(int argc, char **argv)
         /* Open the log file */
 #ifdef HAS_WINDOWS
         /* flogp used by winmain's putc which writes to file 'buf' */
-        if (!(flogp = fopen(buf, "w"))) {
+        if ((flogp = fopen(buf, "w")) == NULL) {
 #else
         /* Connect stdout to file buf and log stdout */
         if (!(freopen (buf, "w", stdout))) {

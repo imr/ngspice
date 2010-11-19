@@ -1091,14 +1091,14 @@ name_eq(char *n1, char *n2)
 
     if ((s =strchr(n1, '(')) != NULL) {
         strcpy(buf1, s);
-        if (!(s =strchr(buf1, ')')))
+        if ((s =strchr(buf1, ')')) == NULL)
             return FALSE;
         *s = '\0';
         n1 = buf1;
     }
     if ((s =strchr(n2, '(')) != NULL) {
         strcpy(buf2, s);
-        if (!(s =strchr(buf2, ')')))
+        if ((s =strchr(buf2, ')')) == NULL)
             return FALSE;
         *s = '\0';
         n2 = buf2;

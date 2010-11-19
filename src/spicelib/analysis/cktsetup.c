@@ -18,7 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 
 #define CKALLOC(var,size,type) \
-    if(size && (!(var = TMALLOC(type, size)))){\
+    if(size && ((var = TMALLOC(type, size)) == NULL)){\
             return(E_NOMEM);\
 }
 

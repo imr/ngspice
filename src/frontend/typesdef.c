@@ -223,7 +223,7 @@ com_stype(wordlist *wl)
     char *s;
 
     for (tt = 0; ; tt++) {
-        if (!(s = ft_typenames(tt)) || eq(type, s))
+        if ((s = ft_typenames(tt)) == NULL || eq(type, s))
             break;
     }
     if (!s) {

@@ -168,7 +168,7 @@ PS_NewViewport(GRAPH *graph)
     int x1,x2,y1,y2;
     hcopygraphid = graph->graphid;
     /* devdep initially contains name of output file */
-    if (!(plotfile = fopen((char*)graph->devdep, "w"))) {
+    if ((plotfile = fopen((char*)graph->devdep, "w")) == NULL) {
         perror((char*)graph->devdep);
       graph->devdep = NULL;
       return(1);

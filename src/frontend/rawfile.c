@@ -64,14 +64,14 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
 #if defined(__MINGW32__) || defined(_MSC_VER)
 /* - Binary file binary write -  hvogt 15.03.2000 ---------------------*/
     if (binary) {
-        if (!(fp = fopen(name, app ? "ab" : "wb"))) {
+        if ((fp = fopen(name, app ? "ab" : "wb")) == NULL) {
             perror(name);
             return;
         }
         fprintf(cp_out,"binary raw file\n");
     }
     else  {
-        if (!(fp = fopen(name, app ? "a" : "w"))) {
+        if ((fp = fopen(name, app ? "a" : "w")) == NULL) {
             perror(name);
             return;
         }
@@ -297,7 +297,7 @@ raw_read(char *name)
     bool binary = TRUE;
 #endif
 
-    if (!(fp = fopen(name, "r"))) {
+    if ((fp = fopen(name, "r")) == NULL) {
         perror(name);
         return (NULL);
     }
@@ -315,7 +315,7 @@ raw_read(char *name)
 
     if (binary) {
         (void) fclose(fp);
-        if (!(fp = fopen(name, "rb"))) {
+        if ((fp = fopen(name, "rb")) == NULL) {
             perror(name);
             return (NULL);
             }
@@ -794,7 +794,7 @@ spar_write(char *name, struct plot *pl, double Rbaseval)
         }*/
     }
 
-    if (!(fp = fopen(name, "w"))) {
+    if ((fp = fopen(name, "w")) == NULL) {
         perror(name);
         return;
     }

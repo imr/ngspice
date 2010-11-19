@@ -40,7 +40,7 @@ int
 Plt5_NewViewport(GRAPH *graph)
 {
 
-    if (!(plotfile = fopen((char*) graph->devdep, "w"))) {
+    if ((plotfile = fopen((char*) graph->devdep, "w")) == NULL) {
       graph->devdep = NULL;
       perror((char*) graph->devdep);
       return(1);

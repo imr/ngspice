@@ -40,18 +40,18 @@ void * hrealloc(void *ptr, size_t num);
 #ifdef CIDER
 
 #define RALLOC(ptr,type,number) \
-if ((number) && !(ptr = (type *)calloc((size_t)(number), sizeof(type)))) { \
+if ((number) && (ptr = (type *)calloc((size_t)(number), sizeof(type))) == NULL) { \
   return(E_NOMEM); \
 }
 
 #define XALLOC(ptr,type,number) \
-if ((number) && !(ptr = (type *)calloc((size_t)(number), sizeof(type)))) { \
+if ((number) && (ptr = (type *)calloc((size_t)(number), sizeof(type))) == NULL) { \
   SPfrontEnd->IFerror( E_PANIC, "Out of Memory", NIL(IFuid) ); \
   exit( 1 ); \
 }
 
 #define XCALLOC(ptr,type,number) \
-if ((number) && !(ptr = (type *)calloc((size_t)(number), sizeof(type)))) { \
+if ((number) && (ptr = (type *)calloc((size_t)(number), sizeof(type))) == NULL) { \
   fprintf( stderr, "Out of Memory\n" ); \
   exit( 1 ); \
 }

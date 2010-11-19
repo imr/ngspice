@@ -67,7 +67,7 @@ hlp_provide(topic *top)
             /* Create a new window... */
             if (hlp_usex)
                 hlp_xwait(parent, TRUE);
-            if (!(newtop = hlp_read(res->place))) {
+            if ((newtop = hlp_read(res->place)) == NULL) {
                 fprintf(stderr, "Internal error: bad link\n");
                 hlp_xwait(parent, FALSE);
                 continue;

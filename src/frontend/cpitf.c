@@ -144,7 +144,7 @@ ft_cpinit(void)
         for (x = ft_setkwords; *x; x++)
             cp_addkword(CT_VARIABLES, *x);
         for (i = 0; ; i++) {
-            if (!(s = ft_typenames(i)))
+            if ((s = ft_typenames(i)) == NULL)
                 break;
             cp_addkword(CT_TYPENAMES, s);
         }

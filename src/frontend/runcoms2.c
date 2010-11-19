@@ -102,7 +102,7 @@ com_resume(wordlist *wl)
 #if defined(__MINGW32__) || defined(_MSC_VER)
 /* ask if binary or ASCII, open file with w or wb   hvogt 15.3.2000 */
         else if (ascii) { 
-            if(!(rawfileFp = fopen(last_used_rawfile, "a"))) {
+            if((rawfileFp = fopen(last_used_rawfile, "a")) == NULL) {
                setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
                perror(last_used_rawfile);
                ft_setflag = FALSE;
@@ -110,7 +110,7 @@ com_resume(wordlist *wl)
             }
         }    
         else if (!ascii) { 
-            if(!(rawfileFp = fopen(last_used_rawfile, "ab"))) {
+            if((rawfileFp = fopen(last_used_rawfile, "ab")) == NULL) {
                setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
                perror(last_used_rawfile);
                ft_setflag = FALSE;

@@ -251,7 +251,7 @@ dosim(
 #if defined(__MINGW32__) || defined(_MSC_VER)
 /* ask if binary or ASCII, open file with wb or w */
       else if (ascii) { 
-         if(!(rawfileFp = fopen(wl->wl_word, "w"))) {
+         if((rawfileFp = fopen(wl->wl_word, "w")) == NULL) {
             perror(wl->wl_word);
             ft_setflag = FALSE;
             return 1;
@@ -259,7 +259,7 @@ dosim(
          fprintf(cp_out,"ASCII raw file\n");
       }    
       else if (!ascii) { 
-         if(!(rawfileFp = fopen(wl->wl_word, "wb"))) {
+         if((rawfileFp = fopen(wl->wl_word, "wb")) == NULL) {
             perror(wl->wl_word);
             ft_setflag = FALSE;
             return 1;

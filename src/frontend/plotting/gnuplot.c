@@ -89,7 +89,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     }
 
     /* Open the output gnuplot file. */
-    if (!(file = fopen(filename_plt, "w"))) {
+    if ((file = fopen(filename_plt, "w")) == NULL) {
 	perror(filename);
 	return;
     }
@@ -161,7 +161,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 	}
 
     /* Open the output gnuplot data file. */
-    if (!(file_data = fopen(filename_data, "w"))) {
+    if ((file_data = fopen(filename_data, "w")) == NULL) {
 	perror(filename);
 	return;
     }
@@ -255,7 +255,7 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
     }
 
     /* Open the output data file. */
-    if (!(file_data = fopen(filename_data, "w"))) {
+    if ((file_data = fopen(filename_data, "w")) == NULL) {
 	perror(filename);
 	return;
     }

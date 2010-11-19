@@ -212,13 +212,13 @@ nutcom_source(wordlist *wl)
     if (wl->wl_next) {
         /* There are several files -- put them into a temp file...  */
         tempfile = smktemp("sp");
-        if (!(fp = inp_pathopen(tempfile, "w+"))) {
+        if ((fp = inp_pathopen(tempfile, "w+")) == NULL) {
             perror(tempfile);
             cp_interactive = TRUE;
             return;
         }
         while (wl) {
-            if (!(tp = inp_pathopen(wl->wl_word, "r"))) {
+            if ((tp = inp_pathopen(wl->wl_word, "r")) == NULL) {
                 perror(wl->wl_word);
                 (void) fclose(fp);
                 cp_interactive = TRUE;
