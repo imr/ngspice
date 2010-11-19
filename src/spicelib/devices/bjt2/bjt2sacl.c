@@ -155,7 +155,7 @@ BJT2sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
 
                 /* store the  unperturbed values of small signal parameters */
 
-                if ((error = BJT2load((GENmodel*)model,ckt))) return(error);
+                if ((error = BJT2load((GENmodel*)model,ckt)) != 0) return(error);
 
                 *(here->BJT2senGpi)= *(ckt->CKTstate0 + here->BJT2gpi);
                 *(here->BJT2senGmu)= *(ckt->CKTstate0 + here->BJT2gmu);
@@ -271,7 +271,7 @@ BJT2sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
                 /* store the  small signal parameters 
                  * corresponding to perturbed area 
                  */
-                if ((error = BJT2load((GENmodel*)model,ckt))) return(error);
+                if ((error = BJT2load((GENmodel*)model,ckt)) != 0) return(error);
 
                 *(here->BJT2senGpi + 1)= *(ckt->CKTstate0 + here->BJT2gpi);
                 *(here->BJT2senGmu + 1)= *(ckt->CKTstate0 + here->BJT2gmu);
@@ -310,7 +310,7 @@ pertvbx:    /* Perturbation of vbx */
                 /* store the  small signal parameters 
                  * corresponding to perturbed vbx 
                  */
-                if((error = BJT2load((GENmodel*)model,ckt))) return(error);
+                if ((error = BJT2load((GENmodel*)model,ckt)) != 0) return(error);
 
                 *(here->BJT2senGpi + 2)= *(ckt->CKTstate0 + here->BJT2gpi);
                 *(here->BJT2senGmu + 2)= *(ckt->CKTstate0 + here->BJT2gmu);
@@ -349,7 +349,7 @@ pertvbe:    /* Perturbation of vbe */
                 /* store the  small signal parameters 
                  * corresponding to perturbed vbe 
                  */
-                if((error = BJT2load((GENmodel*)model,ckt))) return(error);
+                if ((error = BJT2load((GENmodel*)model,ckt)) != 0) return(error);
 
                 *(here->BJT2senGpi + 3)= *(ckt->CKTstate0 + here->BJT2gpi);
                 *(here->BJT2senGmu + 3)= *(ckt->CKTstate0 + here->BJT2gmu);
@@ -391,7 +391,7 @@ pertvbc:    /* Perturbation of vbc */
                 /* store the  small signal parameters 
                  * corresponding to perturbed vbc 
                  */
-                if((error = BJT2load((GENmodel*)model,ckt))) return(error);
+                if ((error = BJT2load((GENmodel*)model,ckt)) != 0) return(error);
                 *(here->BJT2senGpi + 4)= *(ckt->CKTstate0 + here->BJT2gpi);
                 *(here->BJT2senGmu + 4)= *(ckt->CKTstate0 + here->BJT2gmu);
                 *(here->BJT2senGm + 4)= *(ckt->CKTstate0 + here->BJT2gm);
@@ -430,7 +430,7 @@ pertvcs:    /* Perturbation of vcs */
                 /* store the  small signal parameters 
                  * corresponding to perturbed vcs 
                  */
-                if((error = BJT2load((GENmodel*)model,ckt))) return(error);
+                if ((error = BJT2load((GENmodel*)model,ckt)) != 0) return(error);
                 *(here->BJT2senCsub + 5)= *(ckt->CKTstate0 + here->BJT2cqsub);
 
             }

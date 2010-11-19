@@ -118,31 +118,31 @@ NBJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     }
 
     /* Set up the rest of the card lists */
-    if ((error = MODLsetup(model->NBJTmodels)))
+    if ((error = MODLsetup(model->NBJTmodels)) != 0)
       return (error);
     BandGapNarrowing = models->MODLbandGapNarrowing;
     ConcDepLifetime = models->MODLconcDepLifetime;
     TempDepMobility = models->MODLtempDepMobility;
     ConcDepMobility = models->MODLconcDepMobility;
 
-    if ((error = OUTPsetup(model->NBJToutputs)))
+    if ((error = OUTPsetup(model->NBJToutputs)) != 0)
       return (error);
-    if ((error = MATLsetup(model->NBJTmaterials, &materialList)))
+    if ((error = MATLsetup(model->NBJTmaterials, &materialList)) != 0)
       return (error);
-    if ((error = MOBsetup(model->NBJTmobility, materialList)))
+    if ((error = MOBsetup(model->NBJTmobility, materialList)) != 0)
       return (error);
-    if ((error = MESHsetup('x', model->NBJTxMeshes, &xCoordList, &xMeshSize)))
+    if ((error = MESHsetup('x', model->NBJTxMeshes, &xCoordList, &xMeshSize)) != 0)
       return (error);
     if ((error = DOMNsetup(model->NBJTdomains, &domainList,
-	    xCoordList, NIL(ONEcoord), materialList)))
+	    xCoordList, NIL(ONEcoord), materialList)) != 0)
       return (error);
     if ((error = BDRYsetup(model->NBJTboundaries,
-	    xCoordList, NIL(ONEcoord), domainList)))
+	    xCoordList, NIL(ONEcoord), domainList)) != 0)
       return (error);
-    if ((error = CONTsetup(model->NBJTcontacts, NULL)))
+    if ((error = CONTsetup(model->NBJTcontacts, NULL)) != 0)
       return (error);
     if ((error = DOPsetup(model->NBJTdopings, &profileList,
-	    &dopTableList, xCoordList, NIL(ONEcoord))))
+	    &dopTableList, xCoordList, NIL(ONEcoord))) != 0)
       return (error);
     model->NBJTmatlInfo = materialList;
     model->NBJTprofiles = profileList;

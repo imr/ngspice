@@ -143,7 +143,7 @@ BDRYsetup(BDRYcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList,DOMNdom
   char ebuf[512];		/* error message buffer */
 
 /* Check the card list */
-  if ((error = BDRYcheck( cardList, domnList ))) return( error );
+  if ((error = BDRYcheck( cardList, domnList )) != 0) return( error );
 
 /* Find the limits on the indices */
   MESHiBounds( xMeshList, &ixMin, &ixMax );

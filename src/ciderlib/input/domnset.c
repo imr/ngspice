@@ -130,7 +130,7 @@ DOMNsetup(DOMNcard *cardList, DOMNdomain **domainList, MESHcoord *xMeshList,
   *domainList = NIL(DOMNdomain);
 
 /* Check the card list */
-  if ((error = DOMNcheck( cardList, materialList ))) return( error );
+  if ((error = DOMNcheck( cardList, materialList )) != 0) return( error );
 
 /* Find the limits on the indices */
   MESHiBounds( xMeshList, &ixMin, &ixMax );

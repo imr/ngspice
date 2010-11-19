@@ -378,7 +378,7 @@ com_rspice(wordlist *wl)
     }
     if (p)
 	fputs(buf, out);
-    while ((n = fread(buf, 1, BSIZE_SP, serv))) {
+    while ((n = fread(buf, 1, BSIZE_SP, serv)) != 0) {
         (void) fwrite(buf, 1, n, out);
     }
     /* We hope that positioning info + error messages < pipe size */

@@ -1083,9 +1083,9 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
       *(ckt->CKTstate1 + here->HSM1qd) = *(ckt->CKTstate0 + here->HSM1qd);
     }
     
-    if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM1qb))) return(error);
-    if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM1qg))) return(error);
-    if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM1qd))) return(error);
+    if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM1qb)) != 0) return(error);
+    if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM1qg)) != 0) return(error);
+    if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM1qd)) != 0) return(error);
 
     goto line860;
     

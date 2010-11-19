@@ -232,7 +232,7 @@ MOS2sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
             here->MOS2senPertFlag = ON ;
             if(info->SENacpertflag == 1){
                 /* store the  unperturbed values of small signal parameters */
-                if((error = MOS2load((GENmodel*)model,ckt)))
+                if((error = MOS2load((GENmodel*)model,ckt)) != 0)
 		  return(error);
                 *(here->MOS2senCgs) = here->MOS2cgs;
                 *(here->MOS2senCgd) = here->MOS2cgd;
@@ -323,7 +323,7 @@ MOS2sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
                 *(ckt->CKTstate0 + here->MOS2vbs) = Apert;
                 *(ckt->CKTstate0 + here->MOS2vbd) = vbdOp;
 
-                if((error = MOS2load((GENmodel*)model,ckt)))
+                if((error = MOS2load((GENmodel*)model,ckt)) != 0)
 		  return(error);
 
                 *(here->MOS2senCgs + 1) = here->MOS2cgs;
@@ -362,7 +362,7 @@ pertvbd:  /* Perturbation of vbd */
                 *(ckt->CKTstate0 + here->MOS2vbs) = vbsOp;
                 *(ckt->CKTstate0 + here->MOS2vbd) = Apert;
 
-                if((error = MOS2load((GENmodel*)model,ckt)))
+                if((error = MOS2load((GENmodel*)model,ckt)) != 0)
 		  return(error);
 
                 *(here->MOS2senCgs + 2) = here->MOS2cgs;
@@ -402,7 +402,7 @@ pertvgb:  /* Perturbation of vgb */
                 *(ckt->CKTstate0 + here->MOS2vbd) = vbdOp;
                 *(ckt->CKTrhsOp + here->MOS2bNode) -= DELA; 
 
-                if((error = MOS2load((GENmodel*)model,ckt)))
+                if((error = MOS2load((GENmodel*)model,ckt)) != 0)
 		  return(error);
 
                 *(here->MOS2senCgs + 3) = here->MOS2cgs;
@@ -443,7 +443,7 @@ pertl:    /* Perturbation of length */
                 *(ckt->CKTstate0 + here->MOS2vbs) = vbsOp;
                 *(ckt->CKTstate0 + here->MOS2vbd) = vbdOp;
 
-                if((error = MOS2load((GENmodel*)model,ckt))) return(error);
+                if((error = MOS2load((GENmodel*)model,ckt)) != 0) return(error);
 
                 *(here->MOS2senCgs + 4) = here->MOS2cgs;
                 *(here->MOS2senCgd + 4) = here->MOS2cgd;
@@ -542,7 +542,7 @@ pertw:    /* Perturbation of width */
                 *(ckt->CKTstate0 + here->MOS2vbs) = vbsOp;
                 *(ckt->CKTstate0 + here->MOS2vbd) = vbdOp;
 
-                if((error = MOS2load((GENmodel*)model,ckt))) return(error);
+                if((error = MOS2load((GENmodel*)model,ckt)) != 0) return(error);
 
                 *(here->MOS2senCgs + 5) = here->MOS2cgs;
                 *(here->MOS2senCgd + 5) = here->MOS2cgd;

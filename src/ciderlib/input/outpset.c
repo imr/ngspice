@@ -141,7 +141,7 @@ int
   int error;
 
   /* Check the card list */
-  if ((error = OUTPcheck( cardList ))) return( error );
+  if ((error = OUTPcheck( cardList )) != 0) return( error );
 
   return( OK );
 }

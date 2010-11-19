@@ -869,7 +869,7 @@ vcmp(const void *a, const void *b)
     int i;
     struct xxx *v1 = (struct xxx *) a;
     struct xxx *v2 = (struct xxx *) b;
-    if ((i = strcmp(v1->x_v->va_name, v2->x_v->va_name)))
+    if ((i = strcmp(v1->x_v->va_name, v2->x_v->va_name)) != 0)
         return (i);
     else
         return (v1->x_char - v2->x_char);

@@ -125,7 +125,7 @@ NUMD2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     OneCarrier = methods->METHoneCarrier;
 
     /* Set up the rest of the card lists */
-    if ((error = MODLsetup(model->NUMD2models)))
+    if ((error = MODLsetup(model->NUMD2models)) != 0)
       return (error);
     BandGapNarrowing = models->MODLbandGapNarrowing;
     ConcDepLifetime = models->MODLconcDepLifetime;
@@ -133,32 +133,32 @@ NUMD2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     ConcDepMobility = models->MODLconcDepMobility;
     SurfaceMobility = models->MODLsurfaceMobility;
 
-    if ((error = OUTPsetup(model->NUMD2outputs)))
+    if ((error = OUTPsetup(model->NUMD2outputs)) != 0)
       return (error);
-    if ((error = MATLsetup(model->NUMD2materials, &materialList)))
+    if ((error = MATLsetup(model->NUMD2materials, &materialList)) != 0)
       return (error);
-    if ((error = MOBsetup(model->NUMD2mobility, materialList)))
+    if ((error = MOBsetup(model->NUMD2mobility, materialList)) != 0)
       return (error);
-    if ((error = MESHsetup('x', model->NUMD2xMeshes, &xCoordList, &xMeshSize)))
+    if ((error = MESHsetup('x', model->NUMD2xMeshes, &xCoordList, &xMeshSize)) != 0)
       return (error);
-    if ((error = MESHsetup('y', model->NUMD2yMeshes, &yCoordList, &yMeshSize)))
+    if ((error = MESHsetup('y', model->NUMD2yMeshes, &yCoordList, &yMeshSize)) != 0)
       return (error);
     if ((error = DOMNsetup(model->NUMD2domains, &domainList,
-	    xCoordList, yCoordList, materialList)))
+	    xCoordList, yCoordList, materialList)) != 0)
       return (error);
     if ((error = BDRYsetup(model->NUMD2boundaries,
-	    xCoordList, yCoordList, domainList)))
+	    xCoordList, yCoordList, domainList)) != 0)
       return (error);
     if ((error = ELCTsetup(model->NUMD2electrodes, &electrodeList,
-	    xCoordList, yCoordList)))
+	    xCoordList, yCoordList)) != 0)
       return (error);
     /* Make sure electrodes are OK. */
     checkElectrodes(electrodeList, 2);	/* NUMD2 has 4 electrodes */
 
-    if ((error = CONTsetup(model->NUMD2contacts, electrodeList)))
+    if ((error = CONTsetup(model->NUMD2contacts, electrodeList)) != 0)
       return (error);
     if ((error = DOPsetup(model->NUMD2dopings, &profileList,
-	    &dopTableList, xCoordList, yCoordList)))
+	    &dopTableList, xCoordList, yCoordList)) != 0)
       return (error);
     model->NUMD2matlInfo = materialList;
     model->NUMD2profiles = profileList;

@@ -67,7 +67,7 @@ CONTsetup(CONTcard *cardList, ELCTelectrode *electrodeList)
   int error;
 
 /* Check the card list */
-  if ((error = CONTcheck( cardList ))) return( error );
+  if ((error = CONTcheck( cardList )) != 0) return( error );
 
   for ( card = cardList; card != NIL(CONTcard); card = card->CONTnextCard ) {
 

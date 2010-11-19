@@ -232,7 +232,7 @@ MOS3sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
             here->MOS3senPertFlag = ON ;
             if(info->SENacpertflag == 1){
                 /* store the  unperturbed values of small signal parameters */
-                if((error = MOS3load((GENmodel*)model,ckt)))
+                if((error = MOS3load((GENmodel*)model,ckt)) != 0)
 		  return(error);
                 *(here->MOS3senCgs) = here->MOS3cgs;
                 *(here->MOS3senCgd) = here->MOS3cgd;
@@ -322,7 +322,7 @@ MOS3sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
                 *(ckt->CKTstate0 + here->MOS3vbs) = Apert;
                 *(ckt->CKTstate0 + here->MOS3vbd) = vbdOp;
 
-                if((error = MOS3load((GENmodel*)model,ckt)))
+                if((error = MOS3load((GENmodel*)model,ckt)) != 0)
 		  return(error);
 
                 *(here->MOS3senCgs + 1) = here->MOS3cgs;
@@ -361,7 +361,7 @@ pertvbd:  /* Perturbation of vbd */
                 *(ckt->CKTstate0 + here->MOS3vbs) = vbsOp;
                 *(ckt->CKTstate0 + here->MOS3vbd) = Apert;
 
-                if((error = MOS3load((GENmodel*)model,ckt)))
+                if((error = MOS3load((GENmodel*)model,ckt)) != 0)
 		  return(error);
 
                 *(here->MOS3senCgs + 2) = here->MOS3cgs;
@@ -401,7 +401,7 @@ pertvgb:  /* Perturbation of vgb */
                 *(ckt->CKTstate0 + here->MOS3vbd) = vbdOp;
                 *(ckt->CKTrhsOp + here->MOS3bNode) -= DELA; 
 
-                if((error = MOS3load((GENmodel*)model,ckt)))
+                if((error = MOS3load((GENmodel*)model,ckt)) != 0)
 		  return(error);
 
                 *(here->MOS3senCgs + 3) = here->MOS3cgs;
@@ -442,7 +442,7 @@ pertl:    /* Perturbation of length */
                 *(ckt->CKTstate0 + here->MOS3vbs) = vbsOp;
                 *(ckt->CKTstate0 + here->MOS3vbd) = vbdOp;
 
-                if((error = MOS3load((GENmodel*)model,ckt)))
+                if((error = MOS3load((GENmodel*)model,ckt)) != 0)
 		  return(error);
 
                 *(here->MOS3senCgs + 4) = here->MOS3cgs;
@@ -545,7 +545,7 @@ pertw:    /* Perturbation of width */
                 *(ckt->CKTstate0 + here->MOS3vbs) = vbsOp;
                 *(ckt->CKTstate0 + here->MOS3vbd) = vbdOp;
 
-                if((error = MOS3load((GENmodel*)model,ckt)))
+                if((error = MOS3load((GENmodel*)model,ckt)) != 0)
 		  return(error);
 
                 *(here->MOS3senCgs + 5) = here->MOS3cgs;

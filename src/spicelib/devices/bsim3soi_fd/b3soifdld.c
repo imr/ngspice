@@ -3329,25 +3329,25 @@ if (here->B3SOIFDdebugMod > 2)
 /*  Here NaN will be detected in any conductance or equivalent current.  Note
     that nandetect is initialized within the "if" statements  */
 
-                   if ((nandetect = isnan (*(here->B3SOIFDGgPtr))))
+                   if ((nandetect = isnan (*(here->B3SOIFDGgPtr))) != 0)
                    { strcpy (nanmessage, "GgPtr"); }
-                   else if ((nandetect = isnan (*(here->B3SOIFDGdpPtr))))
+                   else if ((nandetect = isnan (*(here->B3SOIFDGdpPtr))) != 0)
                    { strcpy (nanmessage, "GdpPtr"); }
-                   else if ((nandetect = isnan (*(here->B3SOIFDGspPtr))))
+                   else if ((nandetect = isnan (*(here->B3SOIFDGspPtr))) != 0)
                    { strcpy (nanmessage, "GspPtr"); }
-                   else if ((nandetect = isnan (*(here->B3SOIFDDPgPtr))))
+                   else if ((nandetect = isnan (*(here->B3SOIFDDPgPtr))) != 0)
                    { strcpy (nanmessage, "DPgPtr"); }
-                   else if ((nandetect = isnan (*(here->B3SOIFDDPdpPtr))))
+                   else if ((nandetect = isnan (*(here->B3SOIFDDPdpPtr))) != 0)
                    { strcpy (nanmessage, "DPdpPtr"); }
-                   else if ((nandetect = isnan (*(here->B3SOIFDDPspPtr))))
+                   else if ((nandetect = isnan (*(here->B3SOIFDDPspPtr))) != 0)
                    { strcpy (nanmessage, "DPspPtr"); }
-                   else if ((nandetect = isnan (*(here->B3SOIFDSPgPtr))))
+                   else if ((nandetect = isnan (*(here->B3SOIFDSPgPtr))) != 0)
                    { strcpy (nanmessage, "SPgPtr"); }
-                   else if ((nandetect = isnan (*(here->B3SOIFDSPdpPtr))))
+                   else if ((nandetect = isnan (*(here->B3SOIFDSPdpPtr))) != 0)
                    { strcpy (nanmessage, "SPdpPtr"); }
-                   else if ((nandetect = isnan (*(here->B3SOIFDSPspPtr))))
+                   else if ((nandetect = isnan (*(here->B3SOIFDSPspPtr))) != 0)
                    { strcpy (nanmessage, "SPspPtr"); }
-                   else if ((nandetect = isnan (*(here->B3SOIFDEePtr))))
+                   else if ((nandetect = isnan (*(here->B3SOIFDEePtr))) != 0)
                    { strcpy (nanmessage, "EePtr"); }
  
                    /*  At this point, nandetect = 0 if none of the
@@ -3355,17 +3355,17 @@ if (here->B3SOIFDdebugMod > 2)
  
                    if (nandetect == 0)
                    {
-                     if ((nandetect = isnan (*(here->B3SOIFDEgPtr))))
+                     if ((nandetect = isnan (*(here->B3SOIFDEgPtr))) != 0)
                       { strcpy (nanmessage, "EgPtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDEdpPtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDEdpPtr))) != 0)
                       { strcpy (nanmessage, "EdpPtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDEspPtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDEspPtr))) != 0)
                       { strcpy (nanmessage, "EspPtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDGePtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDGePtr))) != 0)
                       { strcpy (nanmessage, "GePtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDDPePtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDDPePtr))) != 0)
                       { strcpy (nanmessage, "DPePtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDSPePtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDSPePtr))) != 0)
                       { strcpy (nanmessage, "SPePtr"); } }
  
                    /*  Now check if self-heating caused NaN if nothing else
@@ -3373,29 +3373,29 @@ if (here->B3SOIFDdebugMod > 2)
  
                    if (selfheat && nandetect == 0)
                    {
-                     if ((nandetect = isnan (*(here->B3SOIFDTemptempPtr))))
+                     if ((nandetect = isnan (*(here->B3SOIFDTemptempPtr))) != 0)
                       { strcpy (nanmessage, "TemptempPtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDTempgPtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDTempgPtr))) != 0)
                       { strcpy (nanmessage, "TempgPtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDTempbPtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDTempbPtr))) != 0)
                       { strcpy (nanmessage, "TempbPtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDTempePtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDTempePtr))) != 0)
                       { strcpy (nanmessage, "TempePtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDTempdpPtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDTempdpPtr))) != 0)
                       { strcpy (nanmessage, "TempdpPtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDTempspPtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDTempspPtr))) != 0)
                       { strcpy (nanmessage, "TempspPtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDGtempPtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDGtempPtr))) != 0)
                       { strcpy (nanmessage, "GtempPtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDDPtempPtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDDPtempPtr))) != 0)
                       { strcpy (nanmessage, "DPtempPtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDSPtempPtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDSPtempPtr))) != 0)
                       { strcpy (nanmessage, "SPtempPtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDEtempPtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDEtempPtr))) != 0)
                       { strcpy (nanmessage, "EtempPtr"); }
-                     else if ((nandetect = isnan (*(here->B3SOIFDBtempPtr))))
+                     else if ((nandetect = isnan (*(here->B3SOIFDBtempPtr))) != 0)
                       { strcpy (nanmessage, "BtempPtr"); }
-                     else if ((nandetect = isnan (*(ckt->CKTrhs + here->B3SOIFDtempNode))))
+                     else if ((nandetect = isnan (*(ckt->CKTrhs + here->B3SOIFDtempNode))) != 0)
                       { strcpy (nanmessage, "tempNode"); }
                    }
  
@@ -3405,19 +3405,19 @@ if (here->B3SOIFDdebugMod > 2)
                    if (nandetect == 0)
                    {
                       if ((nandetect = isnan (*(ckt->CKTrhs
-                                                + here->B3SOIFDgNode))))
+                                                + here->B3SOIFDgNode))) != 0)
                       { strcpy (nanmessage, "gNode"); }
                       else if ((nandetect = isnan (*(ckt->CKTrhs
-                                                     + here->B3SOIFDbNode))))
+                                                     + here->B3SOIFDbNode))) != 0)
                       { strcpy (nanmessage, "bNode"); }
                       else if ((nandetect = isnan (*(ckt->CKTrhs
-                                                     + here->B3SOIFDdNodePrime))))
+                                                     + here->B3SOIFDdNodePrime))) != 0)
                       { strcpy (nanmessage, "dpNode"); }
                       else if ((nandetect = isnan (*(ckt->CKTrhs
-                                                  + here->B3SOIFDsNodePrime))))
+                                                  + here->B3SOIFDsNodePrime))) != 0)
                       { strcpy (nanmessage, "spNode"); }
                       else if ((nandetect = isnan (*(ckt->CKTrhs
-                                                     + here->B3SOIFDeNode))))
+                                                     + here->B3SOIFDeNode))) != 0)
                       { strcpy (nanmessage, "eNode"); } 
                    }
 

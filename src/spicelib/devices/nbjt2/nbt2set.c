@@ -126,7 +126,7 @@ NBJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     OneCarrier = methods->METHoneCarrier;
 
     /* Set up the rest of the card lists */
-    if ((error = MODLsetup(model->NBJT2models)))
+    if ((error = MODLsetup(model->NBJT2models)) != 0)
       return (error);
     BandGapNarrowing = models->MODLbandGapNarrowing;
     ConcDepLifetime = models->MODLconcDepLifetime;
@@ -134,32 +134,32 @@ NBJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     ConcDepMobility = models->MODLconcDepMobility;
     SurfaceMobility = models->MODLsurfaceMobility;
 
-    if ((error = OUTPsetup(model->NBJT2outputs)))
+    if ((error = OUTPsetup(model->NBJT2outputs)) != 0)
       return (error);
-    if ((error = MATLsetup(model->NBJT2materials, &materialList)))
+    if ((error = MATLsetup(model->NBJT2materials, &materialList)) != 0)
       return (error);
-    if ((error = MOBsetup(model->NBJT2mobility, materialList)))
+    if ((error = MOBsetup(model->NBJT2mobility, materialList)) != 0)
       return (error);
-    if ((error = MESHsetup('x', model->NBJT2xMeshes, &xCoordList, &xMeshSize)))
+    if ((error = MESHsetup('x', model->NBJT2xMeshes, &xCoordList, &xMeshSize)) != 0)
       return (error);
-    if ((error = MESHsetup('y', model->NBJT2yMeshes, &yCoordList, &yMeshSize)))
+    if ((error = MESHsetup('y', model->NBJT2yMeshes, &yCoordList, &yMeshSize)) != 0)
       return (error);
     if ((error = DOMNsetup(model->NBJT2domains, &domainList,
-	    xCoordList, yCoordList, materialList)))
+	    xCoordList, yCoordList, materialList)) != 0)
       return (error);
     if ((error = BDRYsetup(model->NBJT2boundaries,
-	    xCoordList, yCoordList, domainList)))
+	    xCoordList, yCoordList, domainList)) != 0)
       return (error);
     if ((error = ELCTsetup(model->NBJT2electrodes, &electrodeList,
-	    xCoordList, yCoordList)))
+	    xCoordList, yCoordList)) != 0)
       return (error);
     /* Make sure electrodes are OK. */
     checkElectrodes(electrodeList, 3);	/* NBJT2 has 3 electrodes */
 
-    if ((error = CONTsetup(model->NBJT2contacts, electrodeList)))
+    if ((error = CONTsetup(model->NBJT2contacts, electrodeList)) != 0)
       return (error);
     if ((error = DOPsetup(model->NBJT2dopings, &profileList,
-	    &dopTableList, xCoordList, yCoordList)))
+	    &dopTableList, xCoordList, yCoordList)) != 0)
       return (error);
     model->NBJT2matlInfo = materialList;
     model->NBJT2profiles = profileList;

@@ -84,7 +84,7 @@ int
   int error;
 
   /* Check the card list */
-  if ((error = MODLcheck( cardList ))) return( error );
+  if ((error = MODLcheck( cardList )) != 0) return( error );
 
   /* Nothing else to do. */
   return( OK );

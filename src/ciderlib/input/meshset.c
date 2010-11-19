@@ -433,7 +433,7 @@ MESHsetup(char dim, MESHcard *cardList, MESHcoord **coordList, int *numCoords)
   *numCoords = totCoords = 0;
 
 /* Check the card list. */
-  if ((error = MESHcheck( dim, cardList ))) return( error );
+  if ((error = MESHcheck( dim, cardList )) != 0) return( error );
 
 /* Print info header. */ 
 #ifdef NOTDEF

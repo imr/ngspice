@@ -92,7 +92,7 @@ MOBsetup(MOBcard *cardList, MaterialInfo *materialList)
   int error;
 
 /* Check the card list */
-  if ((error = MOBcheck( cardList, materialList ))) return( error );
+  if ((error = MOBcheck( cardList, materialList )) != 0) return( error );
 
   for ( card = cardList; card != NIL(MOBcard); card = card->MOBnextCard ) {
 

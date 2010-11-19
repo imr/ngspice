@@ -101,7 +101,7 @@ ELCTsetup(ELCTcard *cardList, ELCTelectrode **electrodeList,
   *electrodeList = NIL(ELCTelectrode);
 
 /* Check the card list */
-  if ((error = ELCTcheck( cardList ))) return( error );
+  if ((error = ELCTcheck( cardList )) != 0) return( error );
 
 /* Find the limits on the indices */
   MESHiBounds( xMeshList, &ixMin, &ixMax );

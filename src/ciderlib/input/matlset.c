@@ -91,7 +91,7 @@ int
   *materialList = NIL(MATLmaterial);
   
   /* Check the card list */
-  if ((error = MATLcheck( cardList ))) return( error );
+  if ((error = MATLcheck( cardList )) != 0) return( error );
   
   for ( card = cardList; card != NIL(MATLcard); card = card->MATLnextCard ) {
 

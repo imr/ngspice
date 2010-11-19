@@ -124,7 +124,7 @@ NUMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     OneCarrier = methods->METHoneCarrier;
 
     /* Set up the rest of the card lists */
-    if ((error = MODLsetup(model->NUMOSmodels)))
+    if ((error = MODLsetup(model->NUMOSmodels)) != 0)
       return (error);
     BandGapNarrowing = models->MODLbandGapNarrowing;
     ConcDepLifetime = models->MODLconcDepLifetime;
@@ -132,32 +132,32 @@ NUMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     ConcDepMobility = models->MODLconcDepMobility;
     SurfaceMobility = models->MODLsurfaceMobility;
 
-    if ((error = OUTPsetup(model->NUMOSoutputs)))
+    if ((error = OUTPsetup(model->NUMOSoutputs)) != 0)
       return (error);
-    if ((error = MATLsetup(model->NUMOSmaterials, &materialList)))
+    if ((error = MATLsetup(model->NUMOSmaterials, &materialList)) != 0)
       return (error);
-    if ((error = MOBsetup(model->NUMOSmobility, materialList)))
+    if ((error = MOBsetup(model->NUMOSmobility, materialList)) != 0)
       return (error);
-    if ((error = MESHsetup('x', model->NUMOSxMeshes, &xCoordList, &xMeshSize)))
+    if ((error = MESHsetup('x', model->NUMOSxMeshes, &xCoordList, &xMeshSize)) != 0)
       return (error);
-    if ((error = MESHsetup('y', model->NUMOSyMeshes, &yCoordList, &yMeshSize)))
+    if ((error = MESHsetup('y', model->NUMOSyMeshes, &yCoordList, &yMeshSize)) != 0)
       return (error);
     if ((error = DOMNsetup(model->NUMOSdomains, &domainList,
-	    xCoordList, yCoordList, materialList)))
+	    xCoordList, yCoordList, materialList)) != 0)
       return (error);
     if ((error = BDRYsetup(model->NUMOSboundaries,
-	    xCoordList, yCoordList, domainList)))
+	    xCoordList, yCoordList, domainList)) != 0)
       return (error);
     if ((error = ELCTsetup(model->NUMOSelectrodes, &electrodeList,
-	    xCoordList, yCoordList)))
+	    xCoordList, yCoordList)) != 0)
       return (error);
     /* Make sure electrodes are OK. */
     checkElectrodes(electrodeList, 4);	/* NUMOS has 4 electrodes */
 
-    if ((error = CONTsetup(model->NUMOScontacts, electrodeList)))
+    if ((error = CONTsetup(model->NUMOScontacts, electrodeList)) != 0)
       return (error);
     if ((error = DOPsetup(model->NUMOSdopings, &profileList,
-	    &dopTableList, xCoordList, yCoordList)))
+	    &dopTableList, xCoordList, yCoordList)) != 0)
       return (error);
     model->NUMOSmatlInfo = materialList;
     model->NUMOSprofiles = profileList;

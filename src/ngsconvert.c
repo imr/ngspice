@@ -352,7 +352,7 @@ main(int ac, char **av)
                 perror(infile);
                 exit(EXIT_BAD);
             }
-            while ((n = fread(buf, 1, sizeof(buf), stdin)))
+            while ((n = fread(buf, 1, sizeof(buf), stdin)) != 0)
                 (void) fwrite(buf, 1, n, fp);
             (void) fclose(fp);
             break;
@@ -424,7 +424,7 @@ main(int ac, char **av)
             perror(outfile);
             exit(EXIT_BAD);
         }
-        while ((n = fread(buf, 1, sizeof(buf), fp)))
+        while ((n = fread(buf, 1, sizeof(buf), fp)) != 0)
             (void) fwrite(buf, 1, n, stdout);
         (void) fclose(fp);
         (void) unlink(infile);

@@ -207,7 +207,7 @@ DOPsetup(DOPcard *cardList, DOPprofile **profileList, DOPtable **tableList,
   *profileList = endProfile = NIL(DOPprofile);
 
 /* Check the card list */
-  if ((error = DOPcheck( cardList, xMeshList, yMeshList ))) return( error );
+  if ((error = DOPcheck( cardList, xMeshList, yMeshList )) != 0) return( error );
 
 /* Find the limits on locations */
   MESHlBounds( xMeshList, &xMin, &xMax );

@@ -102,7 +102,7 @@ DIOsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             here->DIOsenPertFlag = ON;
             if(info->SENacpertflag == 1){
-                if ((error = DIOload((GENmodel*)model,ckt)))
+                if ((error = DIOload((GENmodel*)model,ckt)) != 0)
 		  return(error);
 
                 *(here->DIOsenGeq) =  *(ckt->CKTstate0 + here->DIOconduct);
@@ -139,7 +139,7 @@ DIOsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
             if(info->SENacpertflag == 1){
                 here->DIOarea = Apert;
                 *(ckt->CKTstate0 + here->DIOvoltage) = vdOp;
-                if ((error = DIOload((GENmodel*)model,ckt)))
+                if ((error = DIOload((GENmodel*)model,ckt)) != 0)
 		  return(error);
 
                 *(here->DIOsenGeq + 1) =  *(ckt->CKTstate0 + here->DIOconduct);
@@ -166,7 +166,7 @@ pertvd:     /* Perturbation of Diode Voltage */
 
             if(info->SENacpertflag == 1){
                 *(ckt->CKTstate0 + here->DIOvoltage) = Apert;
-                if ((error = DIOload((GENmodel*)model,ckt)))
+                if ((error = DIOload((GENmodel*)model,ckt)) != 0)
 		  return(error);
 
                 *(here->DIOsenGeq + 2) =  *(ckt->CKTstate0 + here->DIOconduct);

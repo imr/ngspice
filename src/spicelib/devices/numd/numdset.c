@@ -113,31 +113,31 @@ NUMDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     }
 
     /* Set up the rest of the card lists */
-    if ((error = MODLsetup(model->NUMDmodels)))
+    if ((error = MODLsetup(model->NUMDmodels)) != 0)
       return (error);
     BandGapNarrowing = models->MODLbandGapNarrowing;
     ConcDepLifetime = models->MODLconcDepLifetime;
     TempDepMobility = models->MODLtempDepMobility;
     ConcDepMobility = models->MODLconcDepMobility;
 
-    if ((error = OUTPsetup(model->NUMDoutputs)))
+    if ((error = OUTPsetup(model->NUMDoutputs)) != 0)
       return (error);
-    if ((error = MATLsetup(model->NUMDmaterials, &materialList)))
+    if ((error = MATLsetup(model->NUMDmaterials, &materialList)) != 0)
       return (error);
-    if ((error = MOBsetup(model->NUMDmobility, materialList)))
+    if ((error = MOBsetup(model->NUMDmobility, materialList)) != 0)
       return (error);
-    if ((error = MESHsetup('x', model->NUMDxMeshes, &xCoordList, &xMeshSize)))
+    if ((error = MESHsetup('x', model->NUMDxMeshes, &xCoordList, &xMeshSize)) != 0)
       return (error);
     if ((error = DOMNsetup(model->NUMDdomains, &domainList,
-	    xCoordList, NIL(ONEcoord), materialList)))
+	    xCoordList, NIL(ONEcoord), materialList)) != 0)
       return (error);
     if ((error = BDRYsetup(model->NUMDboundaries,
-	    xCoordList, NIL(ONEcoord), domainList)))
+	    xCoordList, NIL(ONEcoord), domainList)) != 0)
       return (error);
-    if ((error = CONTsetup(model->NUMDcontacts, NULL)))
+    if ((error = CONTsetup(model->NUMDcontacts, NULL)) != 0)
       return (error);
     if ((error = DOPsetup(model->NUMDdopings, &profileList,
-	    &dopTableList, xCoordList, NIL(ONEcoord))))
+	    &dopTableList, xCoordList, NIL(ONEcoord))) != 0)
       return (error);
     model->NUMDmatlInfo = materialList;
     model->NUMDprofiles = profileList;
