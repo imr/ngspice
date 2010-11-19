@@ -65,7 +65,7 @@ measure_get_precision(void)
    char *env_ptr;
    int  precision = 5;
 
-   if ( ( env_ptr = getenv("NGSPICE_MEAS_PRECISION") ) ) {
+   if (( env_ptr = getenv("NGSPICE_MEAS_PRECISION")) != NULL) {
       precision = atoi(env_ptr);
    }
 

@@ -1,5 +1,9 @@
 2010-11-19  Robert Larice
  * */** :
+    Nr 4/5 (x = ...) != NULL , swallow warnings
+
+2010-11-19  Robert Larice
+ * */** :
     Nr 3/5 (x = ...) != 0 , swallow warnings
 
 2010-11-19  Robert Larice

@@ -124,7 +124,7 @@ dohsubst(char *string)
 
             case '?':
             (void) strcpy(buf, string + 1);
-            if ((s =strchr(buf, '?')))
+            if ((s = strchr(buf, '?')) != NULL)
                 *s = '\0';
             wl = hpattern(buf);
             if (!wl)

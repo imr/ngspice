@@ -247,7 +247,7 @@ ft_cpinit(void)
             /* add "spinit" to buf after actual position */
             (void) strcat(r, "spinit");
 #endif
-            if ((fp = fopen(buf, "r"))) {
+            if ((fp = fopen(buf, "r")) != NULL) {
                 cp_interactive = FALSE;
                 inp_spsource(fp, TRUE, buf);
                 cp_interactive = TRUE;
@@ -255,7 +255,7 @@ ft_cpinit(void)
                 break;
 #if defined (HAS_WINDOWS) || defined (__MINGW32__) || defined (_MSC_VER)
             /* search in local directory where ngspice.exe resides */
-            } else if ((fp = fopen("./spinit", "r"))) {
+            } else if ((fp = fopen("./spinit", "r")) != NULL) {
                 cp_interactive = FALSE;
                 inp_spsource(fp, TRUE, buf);
                 cp_interactive = TRUE;
@@ -348,7 +348,7 @@ cp_oddcomm(char *s, wordlist *wl)
     char buf[BSIZE_SP];
     wordlist ww;
 
-    if ((fp = inp_pathopen(s, "r"))) {
+    if ((fp = inp_pathopen(s, "r")) != NULL) {
         (void) fclose(fp);
         (void) sprintf(buf, "argc = %d argv = ( ", wl_length(wl));
         while (wl) {

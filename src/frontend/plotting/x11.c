@@ -812,7 +812,7 @@ zoomin(GRAPH *graph)
     }
 
     strncpy(buf2, graph->plotname, sizeof(buf2));
-    if ((t =strchr(buf2, ':')))
+    if ((t = strchr(buf2, ':')) != NULL)
 	    *t = 0;
 
     if (!eq(plot_cur->pl_typename, buf2)) {

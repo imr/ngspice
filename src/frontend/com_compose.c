@@ -212,7 +212,7 @@ com_compose(wordlist *wl)
     } else {
         /* Parse the line... */
         while (wl) {
-            if ((s =strchr(wl->wl_word, '=')) && s[1]) {
+            if ((s = strchr(wl->wl_word, '=')) != NULL && s[1]) {
                 /* This is var=val. */
                 *s = '\0';
                 var = wl->wl_word;

@@ -350,7 +350,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
 	(void) sprintf(buf, "x10^%d ", mag);
     }
 
-    if ((s = ft_typabbrev(type))) {
+    if ((s = ft_typabbrev(type)) != NULL) {
 	(void) strcat(buf, s);
     } else {
 	(void) strcat(buf, "Units");
@@ -612,7 +612,7 @@ loggrid(GRAPH *graph, double lo, double hi, int type, Axis axis)
     dd[0] = pow(10.0, (double) lmt);
     dd[1] = pow(10.0, (double) hmt);
 
-    if ((s = ft_typabbrev(type))) {
+    if ((s = ft_typabbrev(type)) != NULL) {
 	(void) strcpy(buf, s);
     } else {
 	(void) strcpy(buf, "Units");

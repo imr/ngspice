@@ -540,7 +540,7 @@ static NGTABLEPTR _nghash_find_item(NGHASHPTR htable,void * user_key,void * data
     }
 
     /* insert into table only if distinct number */
-    if( (temptr = table[hsum]) ){
+    if( (temptr = table[hsum]) != NULL ){
       /* list started at this hash */
       for(curPtr=temptr ; curPtr ; curPtr=curPtr->next ) {
 	if( htable->compare_func == (void *) NGHASH_DEF_CMP_STR ) {
@@ -574,14 +574,14 @@ void * nghash_enumeratek(NGHASHPTR htable, void * *key_return, BOOL start_flag)
     NGTABLEPTR current_spot ;	/* current place in threaded list */
 
     if( start_flag ){
-	if( (htable->enumeratePtr = htable->thread) ){
+	if( (htable->enumeratePtr = htable->thread) != NULL ) {
 	    current_spot = htable->enumeratePtr ;
 	    *key_return = current_spot->key ;
 	    return( current_spot->data ) ;
 	}
     } else {
 	if( htable->enumeratePtr && 
-	    (htable->enumeratePtr = htable->enumeratePtr->thread_next) ){
+	    (htable->enumeratePtr = htable->enumeratePtr->thread_next) != NULL ){
 	    current_spot = htable->enumeratePtr ;
 	    *key_return = current_spot->key ;
 	    return( current_spot->data ) ;
@@ -597,13 +597,13 @@ void * nghash_enumerate(NGHASHPTR htable,BOOL start_flag)
     NGTABLEPTR current_spot ;	/* current place in threaded list */
 
     if( start_flag ){
-	if( (htable->enumeratePtr = htable->thread) ){
+	if( (htable->enumeratePtr = htable->thread) != NULL ){
 	    current_spot = htable->enumeratePtr ;
 	    return( current_spot->data ) ;
 	}
     } else {
 	if( htable->enumeratePtr && 
-	    (htable->enumeratePtr = htable->enumeratePtr->thread_next) ){
+	    (htable->enumeratePtr = htable->enumeratePtr->thread_next) != NULL ){
 	    current_spot = htable->enumeratePtr ;
 	    return( current_spot->data ) ;
 	}
@@ -625,14 +625,14 @@ void * nghash_enumeratekRE(NGHASHPTR htable, void * *key_return, NGHASHITERPTR i
       return(NULL) ;
     }
     if(!(iter_p->position)){
-      if( (iter_p->position = htable->thread) ){
+      if( (iter_p->position = htable->thread) != NULL ){
 	current_spot = iter_p->position ;
 	*key_return = current_spot->key ;
 	return( current_spot->data ) ;
       }
     } else {
       if( iter_p->position && 
-	(iter_p->position = iter_p->position->thread_next) ){
+	(iter_p->position = iter_p->position->thread_next) != NULL ){
 	current_spot = iter_p->position ;
 	*key_return = current_spot->key ;
 	return( current_spot->data ) ;
@@ -656,13 +656,13 @@ void * nghash_enumerateRE(NGHASHPTR htable, NGHASHITERPTR iter_p)
       return(NULL) ;
     }
     if(!(iter_p->position)){
-      if( (iter_p->position = htable->thread) ){
+      if( (iter_p->position = htable->thread) != NULL ){
 	current_spot = iter_p->position ;
 	return( current_spot->data ) ;
       }
     } else {
       if( iter_p->position && 
-	(iter_p->position = iter_p->position->thread_next) ){
+	(iter_p->position = iter_p->position->thread_next) != NULL ){
 	current_spot = iter_p->position ;
 	return( current_spot->data ) ;
       }
@@ -716,7 +716,7 @@ void nghash_dump(NGHASHPTR htable, void (*print_key) (void *))
     fprintf( stderr, "Table is %4.2f%% full\n", 
 	100.0 * (double) htable->num_entries / (double) htable->size ) ;
     for( i = 0 ; i < htable->size ; i++ ) {
-	if( (hptr = table[i]) ){
+	if( (hptr = table[i]) != NULL ){
 	    fprintf( stderr, " [%5d]:", i ) ;
 	    count = 0 ;
 	    for( ; hptr ; hptr=hptr->next ){

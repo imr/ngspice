@@ -189,7 +189,7 @@ inp_pathopen(char *name, char *mode)
        /* add file name */
        strcat(buf2, name);
        /* try to open file */
-       if ((fp = fopen(buf2, mode)))
+       if ((fp = fopen(buf2, mode)) != NULL)
           return (fp);
     }
 #endif
@@ -219,7 +219,7 @@ inp_pathopen(char *name, char *mode)
                 controlled_exit(EXIT_FAILURE);
             }
         }
-        if ((fp = fopen(buf, mode)))
+        if ((fp = fopen(buf, mode)) != NULL)
             return (fp);
         v = v->va_next;
     }
@@ -238,7 +238,7 @@ inp_fix_gnd_name( struct line *deck ) {
     // if there is a comment or no gnd, go to next line
     if (( *gnd == '*' ) || (strstr( gnd, "gnd" ) == NULL)) { c = c->li_next; continue; }
     // replace "§gnd§" by "§ 0 §", § being a ' '  ','  '('  ')'.
-	while ( (gnd = strstr( gnd, "gnd" ) ) ) {
+	while ((gnd = strstr( gnd, "gnd" )) != NULL) {
       if (( isspace(*(gnd-1)) || *(gnd-1) == '(' || *(gnd-1) == ','  ) &&
          ( isspace(*(gnd+3)) || *(gnd+3) == ')' || *(gnd+3) == ','  ))
       {
@@ -278,10 +278,10 @@ inp_chk_for_multi_in_vcvs( struct line *deck, int *line_number ) {
     for ( c = deck; c != NULL; c = c->li_next ) {
         str_ptr1 = line = c->li_line;
         if ( *line == 'e' ) {
-            if ( (bool_ptr = strstr( line, "nand(" )) ||
-              (bool_ptr = strstr( line, "and("  )) ||
-              (bool_ptr = strstr( line, "nor("  )) ||
-              (bool_ptr = strstr( line, "or("   )) ) {
+            if ( (bool_ptr = strstr( line, "nand(" )) != NULL ||
+              (bool_ptr = strstr( line, "and("  )) != NULL ||
+              (bool_ptr = strstr( line, "nor("  )) != NULL ||
+              (bool_ptr = strstr( line, "or("   )) != NULL ) {
                 while ( !isspace(*str_ptr1) ) str_ptr1++;
                 keep = *str_ptr1;	
 				*str_ptr1  = '\0';
@@ -539,7 +539,7 @@ get_instance_subckt( char *line )
   char keep = ' ';
 
   // see if instance has parameters
-  if ( ( equal_ptr = strstr( line, "=" ) ) ) {
+  if ((equal_ptr = strstr(line, "=")) != NULL) {
     end_ptr = equal_ptr - 1;
     while ( isspace(*end_ptr)  ) end_ptr--;
     while ( !isspace(*end_ptr) ) end_ptr--;
@@ -718,7 +718,7 @@ model_bin_match( char* token, char* model_name )
   bool  flag = FALSE;
 
   if ( strncmp( model_name, token, strlen(token) ) == 0 ) {
-    if ( (dot_char = strstr( model_name, "." )) ) {
+    if ((dot_char = strstr( model_name, "." )) != NULL) {
       flag = TRUE;
       dot_char++;
       while( *dot_char != '\0' ) {
@@ -951,7 +951,7 @@ inp_fix_ternary_operator_str( char *line )
     str_ptr2 = colon - 1;
     while ( isspace(*str_ptr2) ) str_ptr2--;	
   }
-  else if ( ( colon = strstr( str_ptr, ":" ) ) ) {
+  else if ((colon = strstr( str_ptr, ":" )) != NULL) {
     str_ptr2 = colon - 1;
     while ( isspace(*str_ptr2) ) str_ptr2--;
   }
@@ -992,7 +992,7 @@ inp_fix_ternary_operator_str( char *line )
     *str_ptr2 = keep;
   }
   else {
-    if ( ( str_ptr2 = strstr( str_ptr, "}" ) ) ) {
+    if ((str_ptr2 = strstr(str_ptr, "}")) != NULL) {
       *str_ptr2 = '\0';
       else_str = inp_fix_ternary_operator_str(strdup(str_ptr));
       *str_ptr2 = '}';
@@ -1147,7 +1147,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
 /* gtri - end - 12/12/90 */
 #else
-   while ((buffer = readline(fp))) {
+   while ((buffer = readline(fp)) != NULL) {
 #endif
 
 #ifdef TRACE
@@ -1402,7 +1402,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
       end->li_linenum = line_number++;
       end->li_linenum_orig = line_number_orig++;
       tfree(buffer);
-   }  /* end while ((buffer = readline(fp))) */
+   }  /* end while ((buffer = readline(fp)) != NULL) */
 
    if (!end) { /* No stuff here */
       *data = NULL;
@@ -1849,7 +1849,7 @@ inp_fix_subckt( char *s )
 
     head = alloc(struct line);
     /* create list of parameters that need to get sorted */
-    while ( *beg && (ptr1 = strstr( beg, "=" ) ) ) {
+    while ( *beg && (ptr1 = strstr( beg, "=" )) != NULL ) {
       ptr2 = ptr1+1;
       ptr1--;
       while ( isspace(*ptr1)  ) ptr1--;
@@ -2131,7 +2131,7 @@ inp_get_params( char *line, char *param_names[], char *param_values[] )
   char keep;
   bool is_expression = FALSE;
 
-  while ( ( equal_ptr = strstr( line, "=" ) ) ) {
+  while ( (equal_ptr = strstr( line, "=" )) != NULL ) {
 
     // check for equality '=='
     if ( *(equal_ptr+1) == '=' ) { line = equal_ptr+2; continue; }
@@ -2534,7 +2534,7 @@ inp_do_macro_param_replace( int fcn_number, char *params[] )
       search_ptr = curr_ptr = curr_str;
       curr_str = NULL;
     }
-    while ( ( param_ptr = strstr( search_ptr, func_params[fcn_number][i] ) ) ) {
+    while ((param_ptr = strstr( search_ptr, func_params[fcn_number][i] ) ) != NULL ) {
 
       /* make sure actually have the parameter name */
       if (param_ptr == search_ptr) /* no valid 'before' */
@@ -2600,7 +2600,7 @@ inp_expand_macro_in_str( char *str )
    char *orig_ptr = str, *search_ptr = str, *orig_str = strdup(str);
    char keep;
 
-   while ( ( open_paren_ptr = strstr( search_ptr, "(" ) ) ) {
+   while ( (open_paren_ptr = strstr( search_ptr, "(" )) != NULL ) {
       fcn_name = open_paren_ptr;
       if ( open_paren_ptr != search_ptr) {
          while ( --fcn_name != search_ptr && (isalnum(*fcn_name) || *fcn_name == '_') )
@@ -2793,7 +2793,7 @@ inp_fix_param_values( struct line *deck )
     /* exclude CIDER devices with ic.file parameter */
     if ( strstr(line, "ic.file")) { c = c->li_next; continue; }
 
-    while ( ( equal_ptr = strstr( line, "=" ) ) ) {
+    while ((equal_ptr = strstr( line, "=" )) != NULL ) {
 
       // special case: .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN out_variable2=out_variable3
       // no braces around out_variable3. out_variable3 may be v(...) or i(...) 
@@ -2974,7 +2974,7 @@ get_param_name( char *line )
   char *name = NULL, *equal_ptr, *beg;
   char keep;
 
-  if ( ( equal_ptr = strstr( line, "=" ) ) )
+  if (( equal_ptr = strstr( line, "=" ) ) != NULL )
     {
       equal_ptr--;
       while ( isspace(*equal_ptr)  ) equal_ptr--;
@@ -3001,7 +3001,7 @@ get_param_str( char *line )
 {
   char *equal_ptr;
 
-  if ( ( equal_ptr = strstr( line, "=" ) ) ) {
+  if (( equal_ptr = strstr( line, "=" ) ) != NULL ) {
     equal_ptr++;
     while ( isspace(*equal_ptr) ) equal_ptr++;
     return equal_ptr;
@@ -3089,7 +3089,7 @@ get_number_terminals( char *c )
       name[i] = gettok_instance(&c);
       if (strstr(name[i], "off") || strstr(name[i], "=")) j++;
       /* If we have IC=VBE, VCE instead of IC=VBE,VCE we need to inc j */
-      if ((comma = strstr(name[i], ",")) && ( *(++comma) == '\0')) j++;
+      if ((comma = strstr(name[i], ",")) != NULL && ( *(++comma) == '\0')) j++;
       /* If we have IC=VBE , VCE ("," is a token) we need to inc j */
       if (eq(name[i], ",")) j++;
       i++;
@@ -3218,7 +3218,7 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
 
           param_str = param_strs[j];
 
-          while ( ( param_ptr = strstr( param_str, param_name ) ) )
+          while ((param_ptr = strstr( param_str, param_name ) ) != NULL )
           {  
             ioff = (strstr(param_ptr, "}") != NULL ? 1 : 0);  /* want prevent wrong memory access below */
             /* looking for curly braces or other string limiter */
@@ -3274,7 +3274,7 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
 	      while ( isspace(*str_ptr)  && *str_ptr != '\0' ) str_ptr++;
 	    }
 
-	  while ( ( str_ptr = strstr( str_ptr, param_names[i] ) ) )
+	  while ((str_ptr = strstr( str_ptr, param_names[i] ) ) != NULL )
 	    {
 	      /* make sure actually have the parameter name */
 	      char before = *(str_ptr-1);
@@ -3475,7 +3475,7 @@ inp_split_multi_param_lines( struct line *deck, int line_num )
       if ( ciprefix( ".param", curr_line ) )
 	{
 	  counter = 0;
-	  while ( ( equal_ptr = strstr( curr_line, "=" ) ) ) {
+	  while (( equal_ptr = strstr( curr_line, "=" ) ) != NULL ) {
 	    // check for equality '=='
 	    if ( *(equal_ptr+1) == '=' ) { curr_line = equal_ptr+2; continue; }
 	    // check for '!=', '<=', '>='
@@ -3487,7 +3487,7 @@ inp_split_multi_param_lines( struct line *deck, int line_num )
 	  // need to split multi param line
 	  curr_line = card->li_line;
 	  counter   = 0;
-	  while ( curr_line < card->li_line+strlen(card->li_line) && ( equal_ptr = strstr( curr_line, "=" ) ) )
+	  while ( curr_line < card->li_line+strlen(card->li_line) && ( equal_ptr = strstr( curr_line, "=" ) ) != NULL )
 	    {
 	      // check for equality '=='
 	      if ( *(equal_ptr+1) == '=' ) { curr_line = equal_ptr+2; continue; }

@@ -424,7 +424,7 @@ LoadGmin(SMPmatrix *eMatrix, double Gmin)
     if (Gmin != 0.0) {
 	Diag = Matrix->Diag;
 	for (I = Matrix->Size; I > 0; I--) {
-	    if ((diag = Diag[I]))
+	    if ((diag = Diag[I]) != NULL)
 		diag->Real += Gmin;
 	}
     }

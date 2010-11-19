@@ -815,7 +815,7 @@ fileInit_pass2(runDesc *run)
  
         if ( type == SV_CURRENT ) {
           branch = NULL;
-          if ( (branch = strstr( name, "#branch" )) ) {
+          if ( (branch = strstr( name, "#branch" )) != NULL ) {
             *branch = '\0';
           }
           fprintf(run->fp, "\t%d\ti(%s)\t%s", i, name, ft_typenames(type));
@@ -1089,14 +1089,14 @@ name_eq(char *n1, char *n2)
 {
     char buf1[BSIZE_SP], buf2[BSIZE_SP], *s;
 
-    if ((s =strchr(n1, '('))) {
+    if ((s =strchr(n1, '(')) != NULL) {
         strcpy(buf1, s);
         if (!(s =strchr(buf1, ')')))
             return FALSE;
         *s = '\0';
         n1 = buf1;
     }
-    if ((s =strchr(n2, '('))) {
+    if ((s =strchr(n2, '(')) != NULL) {
         strcpy(buf2, s);
         if (!(s =strchr(buf2, ')')))
             return FALSE;
@@ -1119,7 +1119,7 @@ getSpecial(dataDesc *desc, runDesc *run, IFvalue *val)
             &selector) == OK) {
       desc->type &= (IF_REAL | IF_COMPLEX);   /* mask out other bits */
       return TRUE;
-    } else if ((vv = if_getstat(run->circuit, &desc->name[1]))) {
+    } else if ((vv = if_getstat(run->circuit, &desc->name[1])) != NULL) {
 						/* skip @ sign */
       desc->type = IF_REAL;
       if (vv->va_type == CP_REAL)

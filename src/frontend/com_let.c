@@ -37,14 +37,14 @@ com_let(wordlist *wl)
 
     /* extract indices */
     numdims = 0;
-    if ((rhs =strchr(p, '='))) {
+    if ((rhs = strchr(p, '=')) != NULL) {
 	*rhs++ = 0;
     } else {
 	fprintf(cp_err, "Error: bad let syntax\n");
 	tfree(p);
 	return;
     }
-    if ((s =strchr(p, '['))) {
+    if ((s = strchr(p, '[')) != NULL) {
 	need_open = 0;
 	*s++ = 0;
 	while (!need_open || *s == '[') {

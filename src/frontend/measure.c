@@ -83,7 +83,7 @@ com_meas(wordlist *wl) {
          } 
       } 
 	   /* may be inside the same wl_word */
-      else if ( (equal_ptr = strstr( token, "=" )) ) {
+      else if ( (equal_ptr = strstr( token, "=" )) != NULL ) {
          vec_found = equal_ptr + 1;
          if (!cieq(vec_found, "LAST")) {
             INPevaluate( &vec_found, &err, 1 );
@@ -162,7 +162,7 @@ get_double_value(
 
       *value = INPevaluate( &junk, &err, 1 );
     } else {
-      if ( (equal_ptr = strstr( token, "=" )) ) {
+      if ( (equal_ptr = strstr( token, "=" )) != NULL ) {
 	equal_ptr += 1;
 	*value = INPevaluate( &equal_ptr, &err, 1 );
       } else {

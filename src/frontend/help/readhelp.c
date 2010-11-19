@@ -129,7 +129,7 @@ endtext:
         s = &buf[10];
         /* process tokens within line, updating pointer */
 	while (*s) {
-          if ((topiclink = getsubtoplink(&s))) {
+          if ((topiclink = getsubtoplink(&s)) != NULL) {
             if (tend)
               tend->next = topiclink;
             else
@@ -146,7 +146,7 @@ endtext:
         s = &buf[9];
         /* process tokens within line, updating pointer */
 	while (*s) {
-          if ((topiclink = getsubtoplink(&s))) {
+          if ((topiclink = getsubtoplink(&s)) != NULL) {
             if (tend)
               tend->next = topiclink;
             else
@@ -186,7 +186,7 @@ static toplink *getsubtoplink(char **ss)
     s = *ss;
 
     tl = alloc(toplink);
-    if ((tmp =strchr(s, ':'))) {
+    if ((tmp =strchr(s, ':')) != NULL) {
       tl->place = alloc(fplace);
       tl->place->filename = strncpy(
             TMALLOC(char, tmp - s + 1),

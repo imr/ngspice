@@ -155,23 +155,23 @@ cp_usrvars(struct variable **v1, struct variable **v2)
         v =  plot_cur->pl_env;
     else
         v = NULL;
-    if ((tv = cp_enqvar("plots"))) {
+    if ((tv = cp_enqvar("plots")) != NULL) {
         tv->va_next = v;
         v = tv;
     }
-    if ((tv = cp_enqvar("curplot"))) {
+    if ((tv = cp_enqvar("curplot")) != NULL) {
         tv->va_next = v;
         v = tv;
     }
-    if ((tv = cp_enqvar("curplottitle"))) {
+    if ((tv = cp_enqvar("curplottitle")) != NULL) {
         tv->va_next = v;
         v = tv;
     }
-    if ((tv = cp_enqvar("curplotname"))) {
+    if ((tv = cp_enqvar("curplotname")) != NULL) {
         tv->va_next = v;
         v = tv;
     }
-    if ((tv = cp_enqvar("curplotdate"))) {
+    if ((tv = cp_enqvar("curplotdate")) != NULL) {
         tv->va_next = v;
         v = tv;
     }

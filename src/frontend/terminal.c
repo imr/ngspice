@@ -301,7 +301,7 @@ tcap_init(void)
 
     charbuf = buf2;
 
-    if ((s = getenv("TERM"))) {
+    if ((s = getenv("TERM")) != NULL) {
 	if (tgetent(tbuf, s) != -1) {
 	    xsize = tgetnum("co");
 	    ysize = tgetnum("li");
@@ -316,14 +316,14 @@ tcap_init(void)
 #endif
 
     if (!xsize) {
-        if ((s = getenv("COLS")))
+        if ((s = getenv("COLS")) != NULL)
             xsize = atoi(s);
         if (xsize <= 0)
             xsize = 0;
     }
 
     if (!ysize) {
-        if ((s = getenv("LINES")))
+        if ((s = getenv("LINES")) != NULL)
             ysize = atoi(s);
         if (ysize <= 0)
             ysize = 0;

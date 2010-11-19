@@ -215,7 +215,7 @@ ccfilec(char *buf)
         lcomp = buf;
         if (*buf == cp_til) {   /* User name completion... */
             buf++;
-            while ((pw = getpwent())) {
+            while ((pw = getpwent()) != NULL) {
                 if (prefix(buf, pw->pw_name)) {
                     if (wl == NULL) {
                         wl = alloc(struct wordlist);
@@ -246,7 +246,7 @@ ccfilec(char *buf)
     }
     if (!(wdir = opendir(dir)))
         return (NULL);
-    while ((de = readdir(wdir)))
+    while ((de = readdir(wdir)) != NULL)
         if ((prefix(lcomp, de->d_name)) && (*lcomp ||
                 (*de->d_name != '.'))) {
             if (wl == NULL) {

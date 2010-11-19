@@ -865,7 +865,7 @@ spos_(char *sub, char *s)
 {
   char *ptr;
 
-  if ((ptr = strstr (s, sub)))
+  if ((ptr = strstr (s, sub)) != NULL)
     return (int) (strlen (s) - strlen (ptr));
   else
     return -1 ;

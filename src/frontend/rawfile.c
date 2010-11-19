@@ -157,7 +157,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
     for (i = 0, v = pl->pl_dvecs; v; v = v->v_next) {
       if ( strcmp( ft_typenames(v->v_type), "current" ) == 0 ) {
 	branch = NULL;
-	if ( (branch = strstr( v->v_name, "#branch" )) ) {
+	if ((branch = strstr( v->v_name, "#branch" )) != NULL) {
 	  *branch = '\0';
 	}
         fprintf(fp, "\t%d\ti(%s)\t%s", i++, v->v_name, ft_typenames(v->v_type));
@@ -372,7 +372,7 @@ raw_read(char *name)
         } else if (ciprefix("flags:", buf)) {
             s = buf;
             skip(s);
-            while ((t = gettok(&s))) {
+            while ((t = gettok(&s)) != NULL) {
                 if (cieq(t, "real"))
                     flags |= VF_REAL;
                 else if (cieq(t, "complex"))
@@ -497,7 +497,7 @@ raw_read(char *name)
                     s = buf;
                 }
                 (void) gettok(&s);  /* The strchr field. */
-                if ((t = gettok(&s)))
+                if ((t = gettok(&s)) != NULL)
                     v->v_name = t;
                 else {
                     fprintf(cp_err, 
@@ -516,13 +516,13 @@ raw_read(char *name)
                 
                 /* Fix the name... */
                 if (isdigit(*v->v_name) && (r = ft_typabbrev(v
-                        ->v_type))) {
+                        ->v_type)) != NULL) {
                     (void) sprintf(buf2, "%s(%s)", r,
                             v->v_name);
                     v->v_name = copy(buf2);
                 }
                 /* Now come the strange options... */
-                while ((t = gettok(&s))) {
+                while ((t = gettok(&s)) != NULL) {
                     if (ciprefix("min=", t)) {
                         if (sscanf(t + 4, "%lf",
                             &v->v_minsignal) != 1)

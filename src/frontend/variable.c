@@ -298,7 +298,7 @@ cp_setparse(wordlist *wl)
         } else if (wl && (*wl->wl_word == '=')) {
             val = wl->wl_word + 1;
             wl = wl->wl_next;
-        } else if ((s =strchr(name, '='))) {
+        } else if ((s =strchr(name, '=')) != NULL) {
             val = s + 1;
             *s = '\0';
             if (*val == '\0') {
@@ -667,7 +667,7 @@ cp_variablesubst(wordlist *wlist)
     for (wl = wlist; wl; wl = wl->wl_next) {
         t = wl->wl_word;
         i = 0;
-        while ((s =strchr(t, cp_dol))) {
+        while ((s =strchr(t, cp_dol)) != NULL) {
             while (t < s)
                 wbuf[i++] = *t++;
             wbuf[i] = '\0';
@@ -732,7 +732,7 @@ vareval(char *string)
     int i, up, low;
 
     cp_wstrip(string);
-    if ((s =strchr(string, '['))) {
+    if ((s =strchr(string, '[')) != NULL) {
         *s = '\0';
         range = s + 1;
     }
@@ -830,7 +830,7 @@ vareval(char *string)
         string = oldstring;
         v = cp_enqvar(string);
     }
-    if (!v && (s = getenv(string))) {
+    if (!v && (s = getenv(string)) != NULL) {
         wl = alloc(struct wordlist);
         wl->wl_next = wl->wl_prev = NULL;
         wl->wl_word = copy(s);

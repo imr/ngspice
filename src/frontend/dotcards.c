@@ -540,7 +540,7 @@ gettoks(char *s)
     prevp = &list;
 
     if (strstr( s, "(" )) s = stripWhiteSpacesInsideParens(s);
-    while ((t = gettok(&s))) {
+    while ((t = gettok(&s)) != NULL) {
 	if (*t == '(')
 	    continue;
 	l =strrchr(t, '('/*)*/);

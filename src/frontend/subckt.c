@@ -899,7 +899,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 
         if ( ciprefix( ".ic", c->li_line ) || ciprefix( ".nodeset", c->li_line ) ) {
             paren_ptr = s = c->li_line;
-            while ( ( paren_ptr = strstr( paren_ptr, "(" ) ) ) {
+            while ( ( paren_ptr = strstr( paren_ptr, "(" ) )  != NULL) {
                 *paren_ptr = '\0';
                 paren_ptr++;
                 name = paren_ptr;
@@ -1457,7 +1457,7 @@ model_bin_match( char* token, char* model_name )
    /* continue evaluation if toeken is part of model_name */ 
    if ( strncmp( model_name, token, strlen(token) ) == 0 ) {
       /* find last dot in model_name */
-      if ( (dot_char = strrchr( model_name, '.' )) ) {
+      if ( (dot_char = strrchr( model_name, '.' )) != NULL ) {
          flag = TRUE;
          dot_char++;
          while( *dot_char != '\0' ) {
@@ -1945,7 +1945,7 @@ devmodtranslate(struct line *deck, char *subname)
            for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                i = (int) strlen(wlsub->wl_word);
                j = 0; /* Now, have we a binned model? */
-               if ( (dot_char = strstr( wlsub->wl_word, "." )) ) {
+               if ( (dot_char = strstr( wlsub->wl_word, "." )) != NULL) {
                   dot_char++; j++;
                   while( *dot_char != '\0' ) {
                     if ( !isdigit( *dot_char ) ) {

@@ -292,7 +292,7 @@ void EVTdump(
             if(node_dict[index].send) {
                 /* Scan through new events and send the data for each event */
                 here = *(node_data->last_step[index]);
-                while((here = here->next)) {
+                while((here = here->next) != NULL) {
                     EVTsend_line(node_dict[index].ipc_index,
                                  here->step,
                                  here->node_value,

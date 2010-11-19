@@ -26,7 +26,7 @@ static void
 env_overr(char **v, char *e)
 {
     char *p;
-    if (v && e && (p = getenv(e)))
+    if (v && e && (p = getenv(e)) != NULL)
         *v = p;
 }
 

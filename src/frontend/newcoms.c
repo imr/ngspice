@@ -45,7 +45,7 @@ com_reshape(wordlist *wl)
 
 	p = NULL;
 	for (w = wl; w; w = w->wl_next) {
-	  if ((p =strchr(w->wl_word, '[')))
+	  if ((p = strchr(w->wl_word, '[')) != NULL)
 		    break;
 	}
 
@@ -210,5 +210,5 @@ com_reshape(wordlist *wl)
 	    if (vname)
 	        tfree(vname);
 	}
-    } while ((wl = wlast));
+    } while ((wl = wlast) != NULL);
 }

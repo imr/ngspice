@@ -28,7 +28,7 @@ copy(const char *str)
 {
     char *p;
     
-    if ((p = TMALLOC(char, strlen(str) + 1)))
+    if ((p = TMALLOC(char, strlen(str) + 1)) != NULL)
 	    (void) strcpy(p, str);
     return(p);
 }
@@ -39,7 +39,7 @@ copy_substring(const char *str, const char *end)
     size_t n = (size_t) (end - str);
     char *p;
 
-    if ((p = TMALLOC(char, n + 1))) {
+    if ((p = TMALLOC(char, n + 1)) != NULL) {
         (void) strncpy(p, str, n);
         p[n] = '\0';
     }
@@ -544,7 +544,7 @@ get_comma_separated_values( char *values[], char *str ) {
   int count = 0;
   char *ptr, *comma_ptr, keep;
   
-  while ( ( comma_ptr = strstr( str, "," ) ) ) {
+  while ( ( comma_ptr = strstr( str, "," ) ) != NULL ) {
     ptr = comma_ptr - 1;
     while ( isspace(*ptr) ) ptr--;
     ptr++; keep = *ptr; *ptr = '\0';
