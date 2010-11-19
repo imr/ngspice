@@ -46,7 +46,7 @@ main (int argc, char **argv)
   while (argc > 0) {
     s = *argv++;
     argc--;
-    while ((ch = *s++)) {
+    while ((ch = *s++) != '\0') {
       if (*s)
 	optarg = s;
       else if (argc)

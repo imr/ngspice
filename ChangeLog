@@ -1,4 +1,11 @@
 2010-11-19  Robert Larice
+ * src/ngmultidec.c ,
+ * src/frontend/inpcom.c ,
+ * src/frontend/quote.c ,
+ * src/misc/string.c :
+    Nr 2/5 (x = ...) != '\0' , swallow warnings
+
+2010-11-19  Robert Larice
  * src/frontend/plotting/clip.c :
     Nr 1/5 (x = ...) == 0 , swallow warnings
 

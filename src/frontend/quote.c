@@ -23,7 +23,7 @@ cp_wstrip(char *str)
     char c, d;
 
     if (str)
-      while ((c = *str)) {   /* assign and test */
+      while ((c = *str) != '\0') {   /* assign and test */
 	    d = (char) strip(c);
 	    if (c != d)
 		    *str = d;

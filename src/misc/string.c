@@ -232,7 +232,7 @@ gettok(char **s)
     if (!**s)
         return (NULL);
     spice_dstring_init(&buf) ;
-    while ((c = **s) && !isspace(c)) {
+    while ((c = **s) != '\0' && !isspace(c)) {
 	if (c == '('/*)*/)
 	    paren += 1;
 	else if (c == /*(*/')')
@@ -311,7 +311,7 @@ gettok_noparens(char **s)
         return (NULL);  /* return NULL if we come to end of line */
 
     spice_dstring_init(&buf) ;
-    while ((c = **s) && 
+    while ((c = **s) != '\0' && 
 	   !isspace(c) && 
 	   ( **s != '(' ) &&
 	   ( **s != ')' ) &&
@@ -343,7 +343,7 @@ gettok_instance(char **s)
         return (NULL);  /* return NULL if we come to end of line */
 
     spice_dstring_init(&buf) ;
-    while ((c = **s) && 
+    while ((c = **s) != '\0' && 
          !isspace(c) && 
          ( **s != '(' ) &&
          ( **s != ')' )
@@ -384,7 +384,7 @@ gettok_node(char **s)
         return (NULL);  /* return NULL if we come to end of line */
 
     spice_dstring_init(&buf) ;
-    while ((c = **s) && 
+    while ((c = **s) != '\0' && 
 	   !isspace(c) && 
 	   ( **s != '(' ) &&
 	   ( **s != ')' ) &&

@@ -1539,7 +1539,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
    inp_stripcomments_deck(working);	
 
    while (working) {
-      for (s = working->li_line; (c = *s) && c <= ' '; s++)
+      for (s = working->li_line; (c = *s) != '\0' && c <= ' '; s++)
          ;
 
 #ifdef TRACE
