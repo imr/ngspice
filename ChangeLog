@@ -1,3 +1,7 @@
+2010-11-20
+ * vsracct.c: allow time < 0.0 if no XSPICE A device
+   FIXME has to be investigated further!
+ 
 2010-11-19  Robert Larice
  * */** :
     Nr 5/5 (x = ...) == NULL , swallow warnings

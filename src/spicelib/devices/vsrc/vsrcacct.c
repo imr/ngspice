@@ -74,8 +74,11 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     /* offset time by delay  and limit to zero */
                     time = ckt->CKTtime - TD;
 #ifdef XSPICE
-                    if(time < 0.0)
-                        time = 0.0;
+                  /* FIXME Why is this here? 
+                     For now: Add it only if A devices are present. 
+                     h_vogt */
+                    if ((ckt->CKTadevFlag == 1) && (time < 0.0))
+                      time = 0.0;
 #endif
 
 #ifdef XSPICE					
