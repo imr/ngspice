@@ -49,6 +49,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 		    double phase;
                     double deltat;
                     double basephase;
+                    double tshift;
 #endif		    		    
                     double time = 0.; //hvogt
                     double basetime = 0;
@@ -83,7 +84,8 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     /* compute equivalent delta time and add to time */
                     deltat = (phase / (2 * M_PI)) * PER;
                     time += deltat;
-                    TD -= deltat; 
+                    tshift = TD - deltat; 
+                    while (tshift < 0) tshift += PER;
 #endif		    
 /* gtri - end - wbk - add PHASE parameter */			
 		   		   
@@ -96,49 +98,49 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     if( time <= 0 || time >= TR + PW + TF) {
                         if(ckt->CKTbreak &&  SAMETIME(time,0)) {
                             /* set next breakpoint */
-                            error = CKTsetBreak(ckt,basetime + TR +TD);
+                            error = CKTsetBreak(ckt,basetime + TR + tshift);
                             if(error) return(error);
                         } else if(ckt->CKTbreak && SAMETIME(TR+PW+TF,time) ) {
                             /* set next breakpoint */
-                            error = CKTsetBreak(ckt,basetime + PER + TD);
+                            error = CKTsetBreak(ckt,basetime + PER + tshift);
                             if(error) return(error);
-                        } else if (ckt->CKTbreak && (time == -TD) ) {
+                        } else if (ckt->CKTbreak && (time == -tshift) ) {
                             /* set next breakpoint */
-                            error = CKTsetBreak(ckt,basetime + TD);
+                            error = CKTsetBreak(ckt,basetime + tshift);
                             if(error) return(error);
                         } else if (ckt->CKTbreak && SAMETIME(PER,time) ) {
                             /* set next breakpoint */
-                            error = CKTsetBreak(ckt,basetime + TD + TR + PER);
+                            error = CKTsetBreak(ckt,basetime + tshift + TR + PER);
                             if(error) return(error);
                         }
                     } else  if ( time >= TR && time <= TR + PW) {
                         if(ckt->CKTbreak &&  SAMETIME(time,TR) ) {
                             /* set next breakpoint */
-                            error = CKTsetBreak(ckt,basetime + TD+TR + PW);
+                            error = CKTsetBreak(ckt,basetime + tshift + TR + PW);
                             if(error) return(error);
                         } else if(ckt->CKTbreak &&  SAMETIME(TR+PW,time) ) {
                             /* set next breakpoint */
-                            error = CKTsetBreak(ckt,basetime + TD+TR + PW + TF);
+                            error = CKTsetBreak(ckt,basetime + tshift + TR + PW + TF);
                             if(error) return(error);
                         }
                     } else if (time > 0 && time < TR) {
                         if(ckt->CKTbreak && SAMETIME(time,0) ) {
                             /* set next breakpoint */
-                            error = CKTsetBreak(ckt,basetime + TD+TR);
+                            error = CKTsetBreak(ckt,basetime + tshift + TR);
                             if(error) return(error);
                         } else if(ckt->CKTbreak && SAMETIME(time,TR)) {
                             /* set next breakpoint */
-                            error = CKTsetBreak(ckt,basetime + TD+TR + PW);
+                            error = CKTsetBreak(ckt,basetime + tshift + TR + PW);
                             if(error) return(error);
                         }
                     } else { /* time > TR + PW && < TR + PW + TF */
                         if(ckt->CKTbreak && SAMETIME(time,TR+PW) ) {
                             /* set next breakpoint */
-                            error = CKTsetBreak(ckt,basetime + TD+TR + PW +TF);
+                            error = CKTsetBreak(ckt,basetime + tshift+TR + PW +TF);
                             if(error) return(error);
                         } else if(ckt->CKTbreak && SAMETIME(time,TR+PW+TF) ) {
                             /* set next breakpoint */
-                            error = CKTsetBreak(ckt,basetime + TD+PER);
+                            error = CKTsetBreak(ckt,basetime + tshift + PER);
                             if(error) return(error);
                         }
                     }
