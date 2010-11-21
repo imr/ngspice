@@ -69,7 +69,6 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                     double PHASE;
                     double phase;
                     double deltat;
-                    double basephase;
 #endif
 		    V1 = here->VSRCcoeffs[0];
 		    V2 = here->VSRCcoeffs[1];
@@ -87,15 +86,16 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 		    PER = here->VSRCfunctionOrder > 6
 			&& here->VSRCcoeffs[6] != 0.0
 			? here->VSRCcoeffs[6] : ckt->CKTfinalTime;
+
+                    /* shift time by delay time TD */                   
+                    time -=  TD;
+
 #ifdef XSPICE
                     /* gtri - begin - wbk - add PHASE parameter */
                     PHASE = here->VSRCfunctionOrder > 7
                        ? here->VSRCcoeffs[7] : 0.0;
 
-                    /* shift time by delay time TD */                   
-                    time = ckt->CKTtime - TD;
-
-		     /* normalize phase to cycles */
+		            /* normalize phase to cycles */
                     phase = PHASE / 360.0;
                     if (phase >=0) 
                         phase -= floor(phase);

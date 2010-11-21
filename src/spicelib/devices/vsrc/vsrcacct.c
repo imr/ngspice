@@ -42,41 +42,41 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                 
                 case PULSE: {
 		
-		    double	TD, TR, TF, PW, PER;
-/* gtri - begin - wbk - add PHASE parameter */
-#ifdef XSPICE		    
-		    double      PHASE;
-		    double phase;
-                    double deltat;
+                    double TD, TR, TF, PW, PER;
                     double tshift;
-#endif		    		    
-                    double time = 0.; //hvogt
+                    double time = 0.;
                     double basetime = 0;
 
-		    TD = here->VSRCfunctionOrder > 2
-			? here->VSRCcoeffs[2] : 0.0;
-		    TR = here->VSRCfunctionOrder > 3
-			&& here->VSRCcoeffs[3] != 0.0
-			? here->VSRCcoeffs[3] : ckt->CKTstep;
-		    TF = here->VSRCfunctionOrder > 4
-			&& here->VSRCcoeffs[4] != 0.0
-			? here->VSRCcoeffs[4] : ckt->CKTstep;
-		    PW = here->VSRCfunctionOrder > 5
-			&& here->VSRCcoeffs[5] != 0.0
-			? here->VSRCcoeffs[5] : ckt->CKTfinalTime;
-		    PER = here->VSRCfunctionOrder > 6
-			&& here->VSRCcoeffs[6] != 0.0
-			? here->VSRCcoeffs[6] : ckt->CKTfinalTime;
+/* gtri - begin - wbk - add PHASE parameter */
+#ifdef XSPICE		    
+                    double PHASE;
+                    double phase;
+                    double deltat;
+#endif		    		    
+                    TD = here->VSRCfunctionOrder > 2
+                         ? here->VSRCcoeffs[2] : 0.0;
+                    TR = here->VSRCfunctionOrder > 3
+                        && here->VSRCcoeffs[3] != 0.0
+                        ? here->VSRCcoeffs[3] : ckt->CKTstep;
+                    TF = here->VSRCfunctionOrder > 4
+                        && here->VSRCcoeffs[4] != 0.0
+                        ? here->VSRCcoeffs[4] : ckt->CKTstep;
+                    PW = here->VSRCfunctionOrder > 5
+                        && here->VSRCcoeffs[5] != 0.0
+                        ? here->VSRCcoeffs[5] : ckt->CKTfinalTime;
+                    PER = here->VSRCfunctionOrder > 6
+                        && here->VSRCcoeffs[6] != 0.0
+                        ? here->VSRCcoeffs[6] : ckt->CKTfinalTime;
 #ifdef XSPICE
-            PHASE = here->VSRCfunctionOrder > 7 
-			? here->VSRCcoeffs[7] : 0.0;
+                    PHASE = here->VSRCfunctionOrder > 7 
+                        ? here->VSRCcoeffs[7] : 0.0;
 #endif
                     /* offset time by delay */
                     time = ckt->CKTtime - TD;
                     tshift = TD;
 #ifdef XSPICE					
-		     /* normalize phase to 0 - 360° */ 
-		     /* normalize phase to cycles */
+		         /* normalize phase to 0 - 360° */ 
+		         /* normalize phase to cycles */
                     phase = PHASE / 360.0;
                     if (phase >=0) 
                         phase -= floor(phase);
