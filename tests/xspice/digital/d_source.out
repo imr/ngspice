@@ -1,0 +1,56 @@
+
+Circuit: code model test: d_source
+
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+
+No. of Data Rows : 308
+
+**** Results Data ****
+
+Time or Step
+a1
+a2
+a3
+a4
+a5
+a6
+a7
+a8
+a9
+aa
+ab
+
+
+0.000000000e+00     0s    0s    Uu    Uu    Uu    Uu    Uu    Uu    Uu    Uu    Uu
+1.000000000e-09     1s    0s    Uu    Uu    0u    Uu    Uu    Uu    Uu    Uu    Uu
+2.000000000e-09     Us    0s    Uu    Uu    0u    0u    Uu    Uu    Uu    Uu    Uu
+3.000000000e-09     Us    0r    Uu    Uu    0u    0u    0u    Uu    Uu    Uu    Uu
+4.000000000e-09     Us    1r    Uu    Uu    0u    0u    0u    0u    Uu    Uu    Uu
+5.000000000e-09     Us    Ur    Uu    Uu    0u    0u    0u    0u    0u    Uu    Uu
+6.000000000e-09     Us    Ur    0z    Uu    0u    0u    0u    0u    0u    0u    Uu
+7.000000000e-09     Us    Ur    1z    Uu    0u    0u    0u    0u    0u    0u    0u
+8.000000000e-09     Us    Ur    Uz    Uu    0u    0u    0u    0u    0u    0u    0u
+9.000000000e-09     Us    Ur    Uz    0u    0u    0u    0u    0u    0u    0u    0u
+1.000000000e-08     Us    Ur    Uz    1u    0u    0u    0u    0u    0u    0u    0u
+1.100000000e-08     Us    Ur    Uz    Uu    0u    0u    0u    0u    0u    0u    0u
+
+
+
+**** Messages ****
+
+
+**** Statistics ****
+
+Operating point analog/event alternations:  1
+Operating point load calls:                 1
+Operating point event passes:               2
+Transient analysis load calls:              11
+Transient analysis timestep backups:        0
+
+
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+

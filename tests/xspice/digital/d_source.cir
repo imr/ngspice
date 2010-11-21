@@ -1,0 +1,19 @@
+Code Model Test: d_source
+
+* (compile (concat "SPICE_SCRIPTS=. ../../../src/ngspice " buffer-file-name) t)
+
+
+vdummy dummy 0 DC=0
+
+a_source [a1 a2 a3 a4 a5 a6 a7 a8 a9 aa ab]  d_source1
+
+.model d_source1 d_source (input_file="d_source-stimulus.txt")
+
+.control
+set noaskquit
+set noacct
+tran 100ps 30ns
+eprint a1 a2 a3 a4 a5 a6 a7 a8 a9 aa ab
+.endc
+
+.end

@@ -1,0 +1,35 @@
+Code Model Test: d_source + d_state
+
+* (compile (concat "SPICE_SCRIPTS=. ../../../src/ngspice " buffer-file-name) t)
+
+
+vdummy  dummy 0  DC=0
+
+a_source  [enable reset up]  d_source1
+
+a_osc  [enable clk] clk  d_xor1
+
+a_counter  [up] clk reset [o1 o2]  d_state1
+
+
+.model d_source1 d_source (input_file="d_state-stimulus.txt")
+
+.model d_xor1 d_xor (rise_delay=1ns fall_delay=1ns)
+
+.model d_state1 d_state (clk_delay=0.1ns reset_delay=0.1ns
++                        state_file="d_state-updn.txt" reset_state=0)
+
+.control
+set noaskquit
+set noacct
+tran 100ps 20ns
+eprint clk up reset o1 o2
+.endc
+
+.end
+
+
+
+
+
+

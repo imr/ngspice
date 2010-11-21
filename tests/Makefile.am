@@ -47,6 +47,11 @@ DIST_SUBDIRS =	bsim1	\
 	transmission	\
 	vbic
 
+if XSPICE_WANTED
+SUBDIRS += xspice
+DIST_SUBDIRS += xspice
+endif
+
 TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \

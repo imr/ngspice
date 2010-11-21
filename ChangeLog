@@ -1,3 +1,23 @@
+2010-11-21  Robert Larice
+ * configure.ac ,
+ * tests/Makefile.am ,
+ * tests/xspice/.cvsignore ,
+ * tests/xspice/Makefile.am ,
+ * tests/xspice/digital/.cvsignore ,
+ * tests/xspice/digital/Makefile.am ,
+ * tests/xspice/digital/d_ram-stimulus.txt ,
+ * tests/xspice/digital/d_ram.cir ,
+ * tests/xspice/digital/d_ram.out ,
+ * tests/xspice/digital/d_source-stimulus.txt ,
+ * tests/xspice/digital/d_source.cir ,
+ * tests/xspice/digital/d_source.out ,
+ * tests/xspice/digital/d_state-stimulus.txt ,
+ * tests/xspice/digital/d_state-updn.txt ,
+ * tests/xspice/digital/d_state.cir ,
+ * tests/xspice/digital/d_state.out ,
+ * tests/xspice/digital/spinit.in :
+    d_source d_state d_ram, test cases for those xspice codemodels
+
 2010-11-21 Holger Vogt
  * vsracct.c, vsrcload.c: PULSE: next trial of
    correct timing in case of phase != 0

@@ -1,0 +1,68 @@
+
+Circuit: code model test: d_source + d_state
+
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+
+No. of Data Rows : 208
+
+**** Results Data ****
+
+Time or Step
+clk
+up
+reset
+o1
+o2
+
+
+0.000000000e+00     0s    1s    1s    0s    0s
+1.000000000e-09     0s    1s    0s    0s    0s
+2.000000000e-09     1s    1s    0s    0s    0s
+2.100000000e-09     1s    1s    0s    0s    1z
+3.000000000e-09     0s    1s    0s    0s    1z
+4.000000000e-09     1s    1s    0s    0s    1z
+4.100000000e-09     1s    1s    0s    1z    0s
+5.000000000e-09     0s    1s    0s    1z    0s
+6.000000000e-09     1s    1s    0s    1z    0s
+6.100000000e-09     1s    1s    0s    1z    1z
+7.000000000e-09     0s    1s    0s    1z    1z
+8.000000000e-09     1s    1s    0s    1z    1z
+8.100000000e-09     1s    1s    0s    0s    0s
+9.000000000e-09     0s    0s    0s    0s    0s
+1.000000000e-08     1s    0s    0s    0s    0s
+1.010000000e-08     1s    0s    0s    1z    1z
+1.100000000e-08     0s    0s    0s    1z    1z
+1.200000000e-08     1s    0s    0s    1z    1z
+1.210000000e-08     1s    0s    0s    1z    0s
+1.300000000e-08     0s    0s    0s    1z    0s
+1.400000000e-08     1s    0s    0s    1z    0s
+1.410000000e-08     1s    0s    0s    0s    1z
+1.500000000e-08     0s    0s    0s    0s    1z
+1.600000000e-08     1s    0s    0s    0s    1z
+1.610000000e-08     1s    0s    0s    0s    0s
+1.700000000e-08     0s    0s    0s    0s    0s
+1.800000000e-08     1s    0s    0s    0s    0s
+1.810000000e-08     1s    0s    0s    1z    1z
+1.900000000e-08     0s    0s    0s    1z    1z
+2.000000000e-08     1s    0s    0s    1z    1z
+
+
+
+**** Messages ****
+
+
+**** Statistics ****
+
+Operating point analog/event alternations:  1
+Operating point load calls:                 5
+Operating point event passes:               2
+Transient analysis load calls:              42
+Transient analysis timestep backups:        0
+
+
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+

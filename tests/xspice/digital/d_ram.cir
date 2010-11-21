@@ -1,0 +1,24 @@
+Code Model Test: d_source + d_ram
+
+* (compile (concat "SPICE_SCRIPTS=. ../../../src/ngspice " buffer-file-name) t)
+
+
+vdummy  dummy 0  DC=0
+
+a_source [a0 a1 a2  d0 d1 d2 d3 d4  we cs]  d_source1
+aram [d0 d1 d2 d3 d4] [o0 o1 o2 o3 o4] [a0 a1 a2] we [cs] d_ram1
+
+
+.model d_source1 d_source input_file="d_ram-stimulus.txt"
+
+.model d_ram1 d_ram (select_value=1 ic=2 read_delay=1ns)
+
+
+.control
+set noaskquit
+set noacct
+tran 100ps 350ns
+eprint a0 a1 a2  d0 d1 d2 d3 d4  o0 o1 o2 o3 o4  we cs
+.endc
+
+.end

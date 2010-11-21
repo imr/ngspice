@@ -1,0 +1,4 @@
+* time, enable, reset, up
+0      0s 1s 1s
+1n     1s 0s 1s
+9n     1s 0s 0s
