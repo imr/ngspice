@@ -74,7 +74,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 #endif
                     /* offset time by delay  and limit to zero */
                     time = ckt->CKTtime - TD;
-
+                    tshift = TD;
 #ifdef XSPICE					
 		     /* normalize phase to 0 - 2PI */ 
                     phase = PHASE * M_PI / 180.0;
