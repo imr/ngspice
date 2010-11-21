@@ -68,18 +68,11 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 			&& here->VSRCcoeffs[6] != 0.0
 			? here->VSRCcoeffs[6] : ckt->CKTfinalTime;
 #ifdef XSPICE
-                    PHASE = here->VSRCfunctionOrder > 8 
+            PHASE = here->VSRCfunctionOrder > 7 
 			? here->VSRCcoeffs[7] : 0.0;
 #endif
                     /* offset time by delay  and limit to zero */
                     time = ckt->CKTtime - TD;
-#ifdef XSPICE
-                  /* FIXME Why is this here? 
-                     For now: Add it only if A devices are present. 
-                     h_vogt */
-                    if ((ckt->CKTadevFlag == 1) && (time < 0.0))
-                      time = 0.0;
-#endif
 
 #ifdef XSPICE					
 		     /* normalize phase to 0 - 2PI */ 
@@ -89,11 +82,10 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 
                     /* compute equivalent delta time and add to time */
                     deltat = (phase / (2 * M_PI)) * PER;
-                    time += deltat;	
+                    time += deltat;
+                    TD -= deltat; 
 #endif		    
 /* gtri - end - wbk - add PHASE parameter */			
-
-                 
 		   		   
                     if(time >= PER) {
                         /* repeating signal - figure out where we are */
