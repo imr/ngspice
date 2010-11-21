@@ -394,7 +394,7 @@ deck and returns a floating point equivalent value.
 
 static int cnv_get_spice_value(
 char    *str,        /* IN - The value text e.g. 1.2K */
-float   *p_value )   /* OUT - The numerical value     */
+double  *p_value )   /* OUT - The numerical value     */
 {
 
 
@@ -409,8 +409,8 @@ float   *p_value )   /* OUT - The numerical value     */
     char    c = ' ';
     char    c1;
 
-    float   scale_factor;
-    float   value;
+    double  scale_factor;
+    double  value;
 
 
     /* Scan the input string looking for an alpha character that is not  */
@@ -501,7 +501,7 @@ float   *p_value )   /* OUT - The numerical value     */
     /* Convert the numeric portion to a float and multiply by the */
     /* scale factor.                                              */
 
-    n_matched = sscanf(val_str,"%e",&value);
+    n_matched = sscanf(val_str,"%le",&value);
 
     if(n_matched < 1) {
         *p_value = 0.0;
@@ -1522,7 +1522,7 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                           *token;   /* a particular token from the string   */
    
 
-    float                 number;   /* holding variable for timepoint values */                                             
+    double                number;   /* holding variable for timepoint values */                                             
                                                  
     short              bit_value=0;   /* holding variable for value read from
                                        state.in file which needs to be stored */
