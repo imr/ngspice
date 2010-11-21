@@ -565,61 +565,20 @@ NON-STANDARD FEATURES
 *   Created 7/23/91               J.P.Murray      *
 **************************************************/
 
-static void cm_inputs_mask_and_retrieve(short base,int bit_offset,Digital_t *out)
+static Digital_State_t cm_inputs_mask_and_retrieve(short base, int bit_offset)
 {
                                                               
 
-    short value;  /* the hexadecimal value of the masked bit  */
+    int value;    /* the hexadecimal value of the masked bit  */
 
 
-
-    switch (bit_offset) {                            
-    case 0:    
-        break;
-
-    case 1:
-        base = base >> 2;
-        break;
-
-    case 2:
-        base = base >> 4;
-        break;
-
-    case 3:
-        base = base >> 6;
-        break;
-
-    case 4:    
-        base = base >> 8;
-        break;
-
-    case 5:
-        base = base >> 10;
-        break;
-
-    case 6:
-        base = base >> 12;
-        break;
-
-    case 7:
-        base = base >> 14;
-        break;
-    }
-
-
-    value = 0x0003 & base;
+    value = 0x0003 & (base >> (bit_offset * 2));
 
 
     switch (value) {
-
-    case 0: out->state = ZERO;
-            break;
-
-    case 1: out->state = ONE;
-            break;
-
-    case 2: out->state = UNKNOWN;
-            break;
+    case 0:  return ZERO;
+    case 1:  return ONE;
+    default: return UNKNOWN;
     }
 
 }
@@ -789,7 +748,7 @@ static int cm_compare_to_inputs(State_Table_t *states,int index,int bit_number, 
     short    base;      /* variable to hold current base integer for
                            comparison purposes. */
                                         
-    Digital_t    out;      /* output variable for state retrieved   */
+    Digital_State_t     out;      /* output variable for state retrieved   */
 
 
     /* obtain offset value from index, word_width & bit_number */
@@ -803,13 +762,13 @@ static int cm_compare_to_inputs(State_Table_t *states,int index,int bit_number, 
                          
     /* for each offset, mask off the bits and determine values */
 
-    cm_inputs_mask_and_retrieve(base,bit_offset,&out);
+    out = cm_inputs_mask_and_retrieve(base, bit_offset);
 
-    if ( out.state == in ) {  /* bit matches */
+    if ( out == in ) {  /* bit matches */
         return 0;    
     }
     else 
-    if ( 2==out.state ) {     /* bit compared to is a "don't care" */
+    if ( out == UNKNOWN ) {     /* bit compared to is a "don't care" */
         return 0;    
     }
     else {                    /* no match */
@@ -875,51 +834,10 @@ NON-STANDARD FEATURES
 *   Last Modified 7/22/91         J.P.Murray    *
 ************************************************/
 
-static int cm_inputs_mask_and_store(short *base,int bit_offset,int bit_value)
+static void cm_inputs_mask_and_store(short *base,int bit_offset,int bit_value)
 {
-    switch (bit_offset) {                            
-    case 0:    
-        *base = *base & 0xfffc;
-        break;
-
-    case 1:
-        *base = *base & 0xfff3;
-        bit_value = bit_value << 2;
-        break;
-
-    case 2:
-        *base = *base & 0xffcf;
-        bit_value = bit_value << 4;
-        break;
-
-    case 3:
-        *base = *base & 0xff3f;
-        bit_value = bit_value << 6;
-        break;
-
-    case 4:    
-        *base = *base & 0xfcff;
-        bit_value = bit_value << 8;
-        break;
-
-    case 5:
-        *base = *base & 0xf3ff;
-        bit_value = bit_value << 10;
-        break;
-
-    case 6:
-        *base = *base & 0xcfff;
-        bit_value = bit_value << 12;
-        break;
-
-    case 7:
-        *base = *base & 0x3fff;
-        bit_value = bit_value << 14;
-        break;
-    }
-     
-    *base = *base | bit_value;
-return 0;
+    *base &= (short)  ~ (0x0003 << (bit_offset * 2));     
+    *base |= (short) (bit_value << (bit_offset * 2));
 }
 
 
@@ -1072,31 +990,10 @@ NON-STANDARD FEATURES
 *   Last Modified 7/22/91         J.P.Murray    *
 ************************************************/
 
-static int cm_bits_mask_and_store(short *base,int bit_offset,int bit_value)
+static void cm_bits_mask_and_store(short *base,int bit_offset,int bit_value)
 {
-    switch (bit_offset) {                            
-    case 0:    
-        *base = *base & 0xfff0;
-        break;
-
-    case 1:
-        *base = *base & 0xff0f;
-        bit_value = bit_value << 4;
-        break;
-
-    case 2:
-        *base = *base & 0xf0ff;
-        bit_value = bit_value << 8;
-        break;
-
-    case 3:
-        *base = *base & 0x0fff;
-        bit_value = bit_value << 12;
-        break;
-    }
-     
-    *base = *base | bit_value;
-return 0;
+    *base &= (short)  ~ (0x000f << (bit_offset * 4));
+    *base |= (short) (bit_value << (bit_offset * 4));
 }
 
 
@@ -1162,29 +1059,9 @@ static void cm_bits_mask_and_retrieve(short base,int bit_offset,Digital_t *out)
 {
                                                               
 
-    short value;  /* the hexadecimal value of the masked bit  */
+    int value;    /* the hexadecimal value of the masked bit  */
 
-
-
-    switch (bit_offset) {                            
-    case 0:    
-        break;
-
-    case 1:
-        base = base >> 4;
-        break;
-
-    case 2:
-        base = base >> 8;
-        break;
-
-    case 3:
-        base = base >> 12;
-        break;
-    }
-
-
-    value = 0x000f & base;
+    value = 0x000f & (base >> (bit_offset * 4));
 
 
     switch (value) {

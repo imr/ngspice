@@ -58,14 +58,6 @@ NON-STANDARD FEATURES
 
 /*=== CONSTANTS ========================*/
 
-#define MASK0 0x0003
-#define MASK1 0x000c
-#define MASK2 0x0030
-#define MASK3 0x00c0
-#define MASK4 0x0300
-#define MASK5 0x0c00
-#define MASK6 0x3000
-#define MASK7 0xc000
 
 
 
@@ -217,133 +209,19 @@ NON-STANDARD FEATURES
 *   Created 7/8/91                J.P.Murray    *
 ************************************************/
 
-static int cm_mask_and_store(short *base,int ram_offset,Digital_State_t out)
+static void cm_mask_and_store(short *base,int ram_offset,Digital_State_t out)
 {
-    switch (ram_offset) {                            
-    case 0:    
-        if ( ZERO == out ) {
-            *base = *base & ~(MASK0);
-        }
-        else {
-            if (ONE == out) {
-                *base = *base & 0xfffd;
-                *base = *base | 0x0001;
-            }
-            else {
-                *base = *base & 0xfffe;
-                *base = *base | 0x0002;
-            }
-        }
-        break;
-    case 1:
-        if ( ZERO == out ) {
-            *base = *base & ~(MASK1);
-        }
-        else {
-            if (ONE == out) {
-                *base = *base & 0xfff7;
-                *base = *base | 0x0004;
-            }
-            else {
-                *base = *base & 0xfffb;
-                *base = *base | 0x0008;
-            }
-        }
-        break;
-    case 2:
-        if ( ZERO == out ) {
-            *base = *base & ~(MASK2);
-        }
-        else {
-            if (ONE == out) {
-                *base = *base & 0xffdf;
-                *base = *base | 0x0010;
-            }
-            else {
-                *base = *base & 0xffef;
-                *base = *base | 0x0020;
-            }
-        }
-        break;
-    case 3:
-        if ( ZERO == out ) {
-            *base = *base & ~(MASK3);
-        }
-        else {
-            if (ONE == out) {
-                *base = *base & 0xff7f;
-                *base = *base | 0x0040;
-            }
-            else {
-                *base = *base & 0xffbf;
-                *base = *base | 0x0080;
-            }
-        }
-        break;
-    case 4:
-        if ( ZERO == out ) {
-            *base = *base & ~(MASK4);
-        }
-        else {
-            if (ONE == out) {
-                *base = *base & 0xfdff;
-                *base = *base | 0x0100;
-            }
-            else {
-                *base = *base & 0xfeff;
-                *base = *base | 0x0200;
-            }
-        }
-        break;
-    case 5:
-        if ( ZERO == out ) {
-            *base = *base & ~(MASK5);
-        }
-        else {
-            if (ONE == out) {
-                *base = *base & 0xf7ff;
-                *base = *base | 0x0400;
-            }
-            else {
-                *base = *base & 0xfbff;
-                *base = *base | 0x0800;
-            }
-        }
-        break;
-    case 6:
-        if ( ZERO == out ) {
-            *base = *base & ~(MASK6);
-        }
-        else {
-            if (ONE == out) {
-                *base = *base & 0xdfff;
-                *base = *base | 0x1000;
-            }
-            else {
-                *base = *base & 0xefff;
-                *base = *base | 0x2000;
-            }
-        }
-        break;
-    case 7:
-        if ( ZERO == out ) {
-            *base = *base & ~(MASK7);
-        }
-        else {
-            if (ONE == out) {
-                *base = *base & 0x7fff;
-                *base = *base | 0x4000;
-            }
-            else {
-                *base = *base & 0xbfff;
-                *base = *base | 0x8000;
-            }
-        }
-        break;
+    int val;
 
-    }
+    if ( ZERO == out )
+        val = 0;
+    else if (ONE == out)
+        val = 1;
+    else
+        val = 2;
 
-return 0;
+    *base &= (short) ~ (3 << (ram_offset * 2));
+    *base |= (short) (val << (ram_offset * 2));
 }
 
 
@@ -403,123 +281,15 @@ NON-STANDARD FEATURES
 *   Created 7/8/91                 J.P.Murray     *
 **************************************************/
 
-static int cm_mask_and_retrieve(short base,int ram_offset,Digital_State_t *out)
+static Digital_State_t cm_mask_and_retrieve(short base, int ram_offset)
 {
+    int value = 0x0003 & (base >> (ram_offset * 2));
 
-    switch (ram_offset) {                            
-    case 0:    
-        if ( (MASK0 & base) == 0x0000 ) {
-            *out = ZERO;   
-        }
-        else {
-            if ( (MASK0 & base) == 0x0001 ) {
-                *out = ONE; 
-            }
-            else {
-                *out = UNKNOWN;
-            }
-        }
-        break;
-
-    case 1:
-        if ( (MASK1 & base) == 0x0000 ) {
-            *out = ZERO;   
-        }
-        else {
-            if ( (MASK1 & base) == 0x0004 ) {
-                *out = ONE; 
-            }
-            else {
-                *out = UNKNOWN;
-            }
-        }
-        break;
-   
-    case 2:
-        if ( (MASK2 & base) == 0x0000 ) {
-            *out = ZERO;   
-        }
-        else {
-            if ( (MASK2 & base) == 0x0010 ) {
-                *out = ONE; 
-            }
-            else {
-                *out = UNKNOWN;
-            }
-        }
-        break;
-         
-    case 3:
-        if ( (MASK3 & base) == 0x0000 ) {
-            *out = ZERO;   
-        }
-        else {
-            if ( (MASK3 & base) == 0x0040 ) {
-                *out = ONE; 
-            }
-            else {
-                *out = UNKNOWN;
-            }
-        }
-        break;
-   
-    case 4:
-        if ( (MASK4 & base) == 0x0000 ) {
-            *out = ZERO;   
-        }
-        else {
-            if ( (MASK4 & base) == 0x0100 ) {
-                *out = ONE; 
-            }
-            else {
-                *out = UNKNOWN;
-            }
-        }
-        break;
-   
-    case 5:
-        if ( (MASK5 & base) == 0x0000 ) {
-            *out = ZERO;   
-        }
-        else {
-            if ( (MASK5 & base) == 0x0400 ) {
-                *out = ONE; 
-            }
-            else {
-                *out = UNKNOWN;
-            }
-        }
-        break;
-   
-    case 6:
-        if ( (MASK6 & base) == 0x0000 ) {
-            *out = ZERO;   
-        }
-        else {
-            if ( (MASK6 & base) == 0x1000 ) {
-                *out = ONE; 
-            }
-            else {
-                *out = UNKNOWN;
-            }
-        }
-        break;
-   
-    case 7:
-        if ( (MASK7 & base) == 0x0000 ) {
-            *out = ZERO;   
-        }
-        else {
-            if ( (MASK7 & base) == 0x4000 ) {
-                *out = ONE; 
-            }
-            else {
-                *out = UNKNOWN;
-            }
-        }
-        break;
+    switch (value) {
+    case 0:  return ZERO;
+    case 1:  return ONE;
+    default: return UNKNOWN;
     }
-return 0;
 }
 
 
@@ -764,8 +534,8 @@ NON-STANDARD FEATURES
 *   Created 6/27/91               J.P.Murray    *
 ************************************************/
 
-static void cm_get_ram_value(int word_width,int bit_number,Digital_State_t *address,
-                 int address_size,short *ram,Digital_State_t *out)
+static Digital_State_t cm_get_ram_value(int word_width,int bit_number,Digital_State_t *address,
+                 int address_size,short *ram)
 
 {
     int       err,      /* error index value    */
@@ -798,11 +568,11 @@ static void cm_get_ram_value(int word_width,int bit_number,Digital_State_t *addr
                              
         /* for each offset, mask off the bits and determine values */
 
-        cm_mask_and_retrieve(base,ram_offset,out);
+        return cm_mask_and_retrieve(base,ram_offset);
 
     }
     else { /** incorrect data returned...return UNKNOWN values  **/
-        *out = UNKNOWN;
+        return UNKNOWN;
     }
 }
 
@@ -921,7 +691,7 @@ void cm_d_ram(ARGS)
     word_width = PORT_SIZE(data_in);
                                                         
 
-    num_of_ram_ints = ram_size * word_width / 8 + 1;        
+    num_of_ram_ints = (ram_size * word_width + 7) / 8;
 
 
 
@@ -1059,7 +829,7 @@ void cm_d_ram(ARGS)
                     for (i=0; i<word_width; i++) { 
                         /* for each output bit in the word, */
                         /* retrieve the state value.        */
-                        cm_get_ram_value(word_width,i,address,address_size,ram,&out);
+                        out = cm_get_ram_value(word_width,i,address,address_size,ram);
                         OUTPUT_STATE(data_out[i]) = out;                              
                         OUTPUT_STRENGTH(data_out[i]) = STRONG;                              
                         OUTPUT_DELAY(data_out[i]) = PARAM(read_delay);
@@ -1150,8 +920,8 @@ void cm_d_ram(ARGS)
                         else {
                             /* for each output bit in the word, */
                             /* retrieve the state value.        */
-                            cm_get_ram_value(word_width,i,address,
-                                             address_size,ram,&out);
+                            out = cm_get_ram_value(word_width,i,address,
+                                             address_size,ram);
                             OUTPUT_STATE(data_out[i]) = out;
                         }
                         OUTPUT_STRENGTH(data_out[i]) = STRONG;

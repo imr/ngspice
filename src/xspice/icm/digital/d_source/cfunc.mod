@@ -514,29 +514,9 @@ static void cm_source_mask_and_retrieve(short base,int bit_offset,Digital_t *out
 {
                                                               
 
-    short value;  /* the hexadecimal value of the masked bit  */
+    int value;    /* the hexadecimal value of the masked bit  */
 
-
-
-    switch (bit_offset) {                            
-    case 0:    
-        break;
-
-    case 1:
-        base = base >> 4;
-        break;
-
-    case 2:
-        base = base >> 8;
-        break;
-
-    case 3:
-        base = base >> 12;
-        break;
-    }
-
-
-    value = 0x000f & base;
+    value = 0x000f & (base >> (bit_offset * 4));
 
 
     switch (value) {
@@ -645,31 +625,10 @@ NON-STANDARD FEATURES
 *   Created 7/15/91               J.P.Murray    *
 ************************************************/
 
-static int cm_source_mask_and_store(short *base,int bit_offset,int bit_value)
+static void cm_source_mask_and_store(short *base,int bit_offset,int bit_value)
 {
-    switch (bit_offset) {                            
-    case 0:    
-        *base = *base & 0xfff0;
-        break;
-
-    case 1:
-        *base = *base & 0xff0f;
-        bit_value = bit_value << 4;
-        break;
-
-    case 2:
-        *base = *base & 0xf0ff;
-        bit_value = bit_value << 8;
-        break;
-
-    case 3:
-        *base = *base & 0x0fff;
-        bit_value = bit_value << 12;
-        break;
-    }
-     
-    *base = *base | bit_value;
-return 0;
+    *base &= (short)  ~ (0x000f << (bit_offset * 4));
+    *base |= (short) (bit_value << (bit_offset * 4));
 }
 
 
