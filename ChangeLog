@@ -1,4 +1,10 @@
 2010-11-21  Robert Larice
+ * src/xspice/icm/digital/d_ram/cfunc.mod ,
+ * src/xspice/icm/digital/d_source/cfunc.mod ,
+ * src/xspice/icm/digital/d_state/cfunc.mod :
+    d_source d_state d_ram, rewrite index operations
+
+2010-11-21  Robert Larice
  * src/xspice/icm/digital/d_source/cfunc.mod ,
  * src/xspice/icm/digital/d_state/cfunc.mod :
     d_source d_state, change float --> double

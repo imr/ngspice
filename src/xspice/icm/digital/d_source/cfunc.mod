@@ -739,17 +739,13 @@ static void cm_get_source_value(int word_width,int bit_number,int index,
     short    base;      /* variable to hold current base integer for
                            comparison purposes. */
                                         
-    double   double1,
-             double2;      /* holding variables for modf routine */
-
 
 
     /* obtain offset value from index, word_width & bit_number */
     int1 = index * word_width + bit_number;
-    double1 = int1 / 4.0;
-    modf(double1, &double2);
-    bit_index = double2;
-    bit_offset = int1 - (double2 * 4.0);
+
+    bit_index = int1 >> 2;
+    bit_offset = int1 & 3;
 
     /* retrieve entire base_address bits integer... */
     base = bits[bit_index];
@@ -838,9 +834,6 @@ static int cm_read_source(FILE *source,short *bits,double *timepoints,
 
     double                number;   /* holding variable for timepoint values */                                             
                                                  
-    double               double1,   /* temporary holding variable   */
-                         double2;   /* temporary holding variable   */
-
     short              bit_value,   /* holding variable for value read from
                                        source file which needs to be stored */
                             base;   /* holding variable for existing 
@@ -931,10 +924,8 @@ static int cm_read_source(FILE *source,short *bits,double *timepoints,
                             /* obtain offset value from word_number, word_width & 
                                bit_number */
                             int1 = i * info->width + (j-1);
-                            double1 = int1 / 4.0;
-                            modf(double1, &double2);
-                            bit_index = double2;
-                            bit_offset = int1 - (double2 * 4.0);
+                            bit_index = int1 >> 2;
+                            bit_offset = int1 & 3;
                         
                             /* retrieve entire base_address bits integer... */
                             base = bits[bit_index];
@@ -1033,8 +1024,7 @@ void cm_d_source(ARGS)
                                    timepoints...this will have size equal 
                                    to "depth"   */
              *timepoints_old,   /* the storage array for the old timepoints */
-                 test_double,   /* test variable for doubles    */
-                double_dummy;   /* fake holding double  */   
+                 test_double;   /* test variable for doubles    */
 
 
 
@@ -1091,8 +1081,7 @@ void cm_d_source(ARGS)
         
 
                                                            
-        modf( (PORT_SIZE(out) * i / 4), &double_dummy );
-        dummy = double_dummy + 1;
+        dummy = (PORT_SIZE(out) * i + 3) >> 2;
 
         cm_event_alloc(1, dummy * (int) sizeof(short));
                          
@@ -1176,8 +1165,7 @@ void cm_d_source(ARGS)
         bits_old = (short *) cm_event_get_ptr(1,1);
 
         /* Set old values to new... */
-        modf( (info->width * info->depth / 4), &double_dummy );
-        dummy = double_dummy + 1;
+        dummy = (info->width * info->depth + 3) >> 2;
 
 
         for (i=0; i<dummy; i++) bits[i] = bits_old[i];

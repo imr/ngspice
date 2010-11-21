@@ -589,21 +589,13 @@ static void cm_initialize_ram(Digital_State_t out,int word_width,int bit_number,
     short    base;      /* variable to hold current base integer for
                            comparison purposes. */
 
-    double    double1,      /* holding variable for doubles  */
-              double2;      /* holding variable for doubles  */
-
-
 
     /* obtain offset value from word_number, word_width & 
        bit_number */
     int1 = word_number * word_width + bit_number;
-    double1 = int1 / 8.0;
-    modf(double1, &double2);
-    ram_offset = int1 - (double2 * 8.0);
 
-    /* obtain ram_index value */
-    modf( int1/8.0, &double1);
-    ram_index = double1;
+    ram_index = int1 >> 3;
+    ram_offset = int1 & 7;
             
     /* retrieve entire base_address ram integer... */
     base = ram[ram_index];
@@ -690,10 +682,6 @@ static void cm_store_ram_value(Digital_State_t out,int word_width,int bit_number
     short    base;      /* variable to hold current base integer for
                            comparison purposes. */
 
-    double   double1,
-             double2;      /* holding variables for modf routine    */
-
-
     /** first obtain word_number from *address values **/
     err = cm_address_to_decimal(address,address_size,&word_number);
                                                 
@@ -702,13 +690,9 @@ static void cm_store_ram_value(Digital_State_t out,int word_width,int bit_number
         /* obtain offset value from word_number, word_width & 
            bit_number */
         int1 = word_number * word_width + bit_number;
-        double1 = int1 / 8.0;
-        modf(double1, &double2);
-        ram_offset = int1 - (double2 * 8.0);
 
-        /* obtain ram_index value */
-        modf( int1/8.0, &double1);
-        ram_index = double1;
+        ram_index = int1 >> 3;
+        ram_offset = int1 & 7;
             
         /* retrieve entire base_address ram integer... */
         base = ram[ram_index];
@@ -796,9 +780,6 @@ static void cm_get_ram_value(int word_width,int bit_number,Digital_State_t *addr
     short    base;      /* variable to hold current base integer for
                            comparison purposes. */
                                         
-    double   double1,
-             double2;      /* holding variables for modf routine */
-
 
     /** first obtain word_number from *address values **/
     err = cm_address_to_decimal(address,address_size,&word_number);
@@ -808,13 +789,9 @@ static void cm_get_ram_value(int word_width,int bit_number,Digital_State_t *addr
         /* obtain offset value from word_number, word_width & 
            bit_number */
         int1 = word_number * word_width + bit_number;
-        double1 = int1 / 8.0;
-        modf(double1, &double2);
-        ram_offset = int1 - (double2 * 8.0);
 
-        /* obtain ram_index value */
-        modf( int1/8.0, &double1);
-        ram_index = double1;
+        ram_index = int1 >> 3;
+        ram_offset = int1 & 7;
                 
         /* retrieve entire base_address ram integer... */
         base = ram[ram_index];

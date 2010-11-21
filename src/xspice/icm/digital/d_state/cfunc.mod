@@ -789,18 +789,14 @@ static int cm_compare_to_inputs(State_Table_t *states,int index,int bit_number, 
     short    base;      /* variable to hold current base integer for
                            comparison purposes. */
                                         
-    double   double1,
-             double2;      /* holding variables for modf routine */
-                                  
     Digital_t    out;      /* output variable for state retrieved   */
 
 
     /* obtain offset value from index, word_width & bit_number */
     int1 = index * states->num_inputs + bit_number;
-    double1 = int1 / 8.0;
-    modf(double1, &double2);
-    bit_index = double2;
-    bit_offset = int1 - (double2 * 8.0);
+
+    bit_index = int1 >> 3;
+    bit_offset = int1 & 7;
 
     /* retrieve entire base_address bits integer... */
     base = states->inputs[bit_index];
@@ -998,18 +994,14 @@ static void cm_store_inputs_value(State_Table_t *states,int index, int bit_numbe
     short    base;      /* variable to hold current base integer for
                            comparison purposes. */
                                         
-    double   double1,
-             double2;      /* holding variables for modf routine */
-
 
 
     /* obtain offset value from word_number, word_width & 
        bit_number */
     int1 = index * states->num_inputs + bit_number;
-    double1 = int1 / 8.0;
-    modf(double1, &double2);
-    bit_index = double2;
-    bit_offset = int1 - (double2 * 8.0);
+
+    bit_index = int1 >> 3;
+    bit_offset = int1 & 7;
 
     /* retrieve entire base_address bits integer... */
     base = states->inputs[bit_index];
@@ -1319,17 +1311,13 @@ static void cm_get_bits_value(State_Table_t *states,int index, int bit_number,
     short    base;      /* variable to hold current base integer for
                            comparison purposes. */
                                         
-    double   double1,
-             double2;      /* holding variables for modf routine */
-
 
 
     /* obtain offset value from index, word_width & bit_number */
     int1 = index * states->num_outputs + bit_number;
-    double1 = int1 / 4.0;
-    modf(double1, &double2);
-    bit_index = double2;
-    bit_offset = int1 - (double2 * 4.0);
+
+    bit_index = int1 >> 2;
+    bit_offset = int1 & 3;
 
     /* retrieve entire base_address bits integer... */
     base = states->bits[bit_index];
@@ -1412,18 +1400,14 @@ static void cm_store_bits_value(State_Table_t *states,int index, int bit_number,
     short    base;      /* variable to hold current base integer for
                            comparison purposes. */
                                         
-    double   double1,
-             double2;      /* holding variables for modf routine */
-
 
 
     /* obtain offset value from word_number, word_width & 
        bit_number */
     int1 = index * states->num_outputs + bit_number;
-    double1 = int1 / 4.0;
-    modf(double1, &double2);
-    bit_index = double2;
-    bit_offset = int1 - (double2 * 4.0);
+
+    bit_index = int1 >> 2;
+    bit_offset = int1 & 3;
 
     /* retrieve entire base_address bits integer... */
     base = states->bits[bit_index];
