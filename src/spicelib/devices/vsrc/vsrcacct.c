@@ -78,17 +78,12 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 		         /* normalize phase to 0 - 360° */ 
 		         /* normalize phase to cycles */
                     phase = PHASE / 360.0;
-                    if (phase >=0) 
-                        phase -= floor(phase);
-                    else  
-                        phase -= ceil(phase);
+                    phase = fmod(phase, 1.0);
                     deltat =  phase * PER;
                     while (deltat > 0) 
                         deltat -= PER;
                     time += deltat;
                     tshift = TD - deltat; 
-                    while (tshift < 0) 
-                        tshift += PER;
 #endif		    
 /* gtri - end - wbk - add PHASE parameter */			
 		   		   
