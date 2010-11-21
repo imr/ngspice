@@ -48,7 +48,6 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 		    double      PHASE;
 		    double phase;
                     double deltat;
-                    double basephase;
                     double tshift;
 #endif		    		    
                     double time = 0.; //hvogt
@@ -72,20 +71,24 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
             PHASE = here->VSRCfunctionOrder > 7 
 			? here->VSRCcoeffs[7] : 0.0;
 #endif
-                    /* offset time by delay  and limit to zero */
+                    /* offset time by delay */
                     time = ckt->CKTtime - TD;
                     tshift = TD;
 #ifdef XSPICE					
-		     /* normalize phase to 0 - 2PI */ 
-                    phase = PHASE * M_PI / 180.0;
-                    basephase = 2 * M_PI * floor(phase / (2 * M_PI));
-                    phase -= basephase;
-
-                    /* compute equivalent delta time and add to time */
-                    deltat = (phase / (2 * M_PI)) * PER;
+		     /* normalize phase to 0 - 360° */ 
+		     /* normalize phase to cycles */
+                    phase = PHASE / 360.0;
+                    if (phase >=0) 
+                        phase -= floor(phase);
+                    else  
+                        phase -= ceil(phase);
+                    deltat =  phase * PER;
+                    while (deltat > 0) 
+                        deltat -= PER;
                     time += deltat;
                     tshift = TD - deltat; 
-                    while (tshift < 0) tshift += PER;
+                    while (tshift < 0) 
+                        tshift += PER;
 #endif		    
 /* gtri - end - wbk - add PHASE parameter */			
 		   		   

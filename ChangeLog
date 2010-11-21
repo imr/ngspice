@@ -1,3 +1,7 @@
+2010-11-21 Holger Vogt
+ * vsracct.c, vsrcload.c: PULSE: next trial of
+   correct timing in case of phase != 0
+
 2010-11-20 Holger Vogt
  * vsracct.c: correct timing in case of phase != 0
  

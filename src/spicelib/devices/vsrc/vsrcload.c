@@ -88,21 +88,26 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 			&& here->VSRCcoeffs[6] != 0.0
 			? here->VSRCcoeffs[6] : ckt->CKTfinalTime;
 #ifdef XSPICE
-		    /* gtri - begin - wbk - add PHASE parameter */
-		    PHASE = here->VSRCfunctionOrder > 7
-		         ? here->VSRCcoeffs[7] : 0.0;
-			 
-		    /* normalize phase to 0 - 2PI */ 
-                    phase = PHASE * M_PI / 180.0;
-                    basephase = 2 * M_PI * floor(phase / (2 * M_PI));
-                    phase -= basephase;
+                    /* gtri - begin - wbk - add PHASE parameter */
+                    PHASE = here->VSRCfunctionOrder > 7
+                       ? here->VSRCcoeffs[7] : 0.0;
 
-                    /* compute equivalent delta time and add to time */
-                    deltat = (phase / (2 * M_PI)) * PER;
+                    /* shift time by delay time TD */                   
+                    time = ckt->CKTtime - TD;
+
+		     /* normalize phase to cycles */
+                    phase = PHASE / 360.0;
+                    if (phase >=0) 
+                        phase -= floor(phase);
+                    else  
+                        phase -= ceil(phase);
+                    deltat =  phase * PER;
+                    while (deltat > 0) 
+                        deltat -= PER;
+                    /* shift time by pase (neg. for pos. phase value) */
                     time += deltat;
-		    /* gtri - end - wbk - add PHASE parameter */
+                    /* gtri - end - wbk - add PHASE parameter */
 #endif		    
-                    time -= TD;
                     if(time > PER) {
                         /* repeating signal - figure out where we are */
                         /* in period */
