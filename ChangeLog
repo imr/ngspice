@@ -1,3 +1,28 @@
+2010-11-22  Robert Larice
+ * src/xspice/icm/digital/d_source/cfunc.mod :
+    d_source, bug fix
+
+    The recently added d_source test-case
+      did reveal a bug in the implementation of d_source.
+    The test-case fails in the non-debug version of ngspice.
+    In src/xspice/icm/digital/d_source/cfunc.mod the following
+    floating point identity comparison won't match.
+    >>  if ( TIME == test_double ) { /* Breakpoint reached */
+    This is, because test_double, though declared as double,
+      will be calculated in extended precision (80bit)
+    This phenomenon is well known, see for example
+      http://gcc.gnu.org/bugzilla/show_bug.cgi?id=323
+    This `bug workaround' fixes the problem
+      by declaring the `test_double' to be a `void' double,
+      which enforces truncation of the 80bit value,
+      when it is used in the comparison.
+    This fix will cause the test-case to pass.
+    Yet unfortunately DCtran() doesn't seem to process
+      time-Breakpoints with full 64bit precision
+	 (search for AlmostEqualUlps())
+      which makes this whole business a very doubtful thing,
+      doomed to randomly fail        <<<<----- !!!!!!!
+
 2010-11-21  Robert Larice
  * src/xspice/icm/digital/d_ram/cfunc.mod ,
  * src/xspice/icm/digital/d_source/cfunc.mod ,

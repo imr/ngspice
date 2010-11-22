@@ -982,7 +982,8 @@ void cm_d_source(ARGS)
     double       *timepoints,   /* the storage array for the 
                                    timepoints...this will have size equal 
                                    to "depth"   */
-             *timepoints_old,   /* the storage array for the old timepoints */
+             *timepoints_old;   /* the storage array for the old timepoints */
+    volatile double             /* enforce 64 bit precision, (equality comparison) */
                  test_double;   /* test variable for doubles    */
 
 
