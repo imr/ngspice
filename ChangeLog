@@ -1,4 +1,10 @@
 2010-11-22  Robert Larice
+ * src/frontend/parse-bison.c ,
+ * src/spicelib/parser/inpptree-parser.c :
+    touch (timestamp) bison output files
+       to make sure bison won't be needed on a fresh CVS checkout
+
+2010-11-22  Robert Larice
  * src/xspice/icm/digital/d_source/cfunc.mod :
     d_source, bug fix
 
