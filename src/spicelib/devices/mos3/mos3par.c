@@ -61,7 +61,7 @@ MOS3param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->MOS3drainSquaresGiven = TRUE;
             break;
         case MOS3_OFF:
-            here->MOS3off = value->iValue;
+            here->MOS3off = (value->iValue != 0);
             break;
         case MOS3_IC_VBS:
             here->MOS3icVBS = value->rValue;

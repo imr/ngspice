@@ -69,7 +69,7 @@ MOS2param(int param, IFvalue *value, GENinstance *inst,
             here->MOS2drainSquaresGiven = TRUE;
             break;
         case MOS2_OFF:
-            here->MOS2off = value->iValue;
+            here->MOS2off = (value->iValue != 0);
             break;
         case MOS2_IC_VBS:
             here->MOS2icVBS = value->rValue;

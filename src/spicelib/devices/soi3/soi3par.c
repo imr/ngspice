@@ -70,7 +70,7 @@ SOI3param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->SOI3sourceSquaresGiven = TRUE;
             break;
         case SOI3_OFF:
-            here->SOI3off = value->iValue;
+            here->SOI3off = (value->iValue != 0);
             break;
         case SOI3_IC_VDS:
             here->SOI3icVDS = value->rValue;

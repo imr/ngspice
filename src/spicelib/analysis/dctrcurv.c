@@ -527,11 +527,11 @@ nextstep:;
         if(cv->TRCVvType[i] == vcode) {   /* voltage source */
             ((VSRCinstance*)(cv->TRCVvElt[i]))->VSRCdcValue = 
                     cv->TRCVvSave[i];
-            ((VSRCinstance*)(cv->TRCVvElt[i]))->VSRCdcGiven = cv->TRCVgSave[i];
+            ((VSRCinstance*)(cv->TRCVvElt[i]))->VSRCdcGiven = (cv->TRCVgSave[i] != 0);
         } else  if(cv->TRCVvType[i] == icode) /*current source */ {
             ((ISRCinstance*)(cv->TRCVvElt[i]))->ISRCdcValue = 
                     cv->TRCVvSave[i];
-            ((ISRCinstance*)(cv->TRCVvElt[i]))->ISRCdcGiven = cv->TRCVgSave[i];
+            ((ISRCinstance*)(cv->TRCVvElt[i]))->ISRCdcGiven = (cv->TRCVgSave[i] != 0);
         } else  if(cv->TRCVvType[i] == rcode) /* Resistance */ {
             ((RESinstance*)(cv->TRCVvElt[i]))->RESresist = 
                     cv->TRCVvSave[i];
@@ -539,7 +539,7 @@ nextstep:;
             ((RESinstance*)(cv->TRCVvElt[i]))->RESconduct =
                 1/(((RESinstance*)(cv->TRCVvElt[i]))->RESresist);
        
-            ((RESinstance*)(cv->TRCVvElt[i]))->RESresGiven = cv->TRCVgSave[i];
+            ((RESinstance*)(cv->TRCVvElt[i]))->RESresGiven = (cv->TRCVgSave[i] != 0);
             DEVices[rcode]->DEVload(cv->TRCVvElt[i]->GENmodPtr, ckt);
        
        /*

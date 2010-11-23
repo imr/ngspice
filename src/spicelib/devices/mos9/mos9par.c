@@ -62,7 +62,7 @@ MOS9param(int param, IFvalue *value, GENinstance *inst,
             here->MOS9drainSquaresGiven = TRUE;
             break;
         case MOS9_OFF:
-            here->MOS9off = value->iValue;
+            here->MOS9off = (value->iValue != 0);
             break;
         case MOS9_IC_VBS:
             here->MOS9icVBS = value->rValue;

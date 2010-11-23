@@ -52,7 +52,7 @@ BJTparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
             here->BJTdtempGiven = TRUE;
             break;	    
         case BJT_OFF:
-            here->BJToff = value->iValue;
+            here->BJToff = (value->iValue != 0);
             break;
         case BJT_IC_VBE:
             here->BJTicVBE = value->rValue;

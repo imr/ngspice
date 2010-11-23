@@ -37,7 +37,7 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     switch(opt) {
 
     case OPT_NOOPITER:
-        task->TSKnoOpIter = val->iValue;
+        task->TSKnoOpIter = (val->iValue != 0);
         break;
     case OPT_GMIN:
         task->TSKgmin = val->rValue;
@@ -125,7 +125,7 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
         }
         break;
     case OPT_OLDLIMIT:
-        task->TSKfixLimit = val->iValue;
+        task->TSKfixLimit = (val->iValue != 0);
         break;
     case OPT_MINBREAK:
         task->TSKminBreak = val->rValue;
@@ -138,19 +138,19 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
         else return(E_METHOD);
         break;
     case OPT_TRYTOCOMPACT:
-        task->TSKtryToCompact = val->iValue;
+        task->TSKtryToCompact = (val->iValue != 0);
         break;
     case OPT_BADMOS3:
-        task->TSKbadMos3 = val->iValue;
+        task->TSKbadMos3 = (val->iValue != 0);
         break;
     case OPT_KEEPOPINFO:
-        task->TSKkeepOpInfo = val->iValue;
+        task->TSKkeepOpInfo = (val->iValue != 0);
         break;
     case OPT_COPYNODESETS:
-        task->TSKcopyNodesets = val->iValue;
+        task->TSKcopyNodesets = (val->iValue != 0);
         break;
     case OPT_NODEDAMPING:
-        task->TSKnodeDamping = val->iValue;
+        task->TSKnodeDamping = (val->iValue != 0);
         break;
     case OPT_ABSDV:
         task->TSKabsDv = val->rValue;

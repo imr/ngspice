@@ -1,3 +1,25 @@
+2010-11-23  Robert Larice
+ * src/spicelib/analysis/cktsopt.c ,
+ * src/spicelib/analysis/dctrcurv.c ,
+ * src/spicelib/devices/bjt/bjtparam.c ,
+ * src/spicelib/devices/bjt2/bjt2param.c ,
+ * src/spicelib/devices/bsim2/b2mpar.c ,
+ * src/spicelib/devices/dio/dioparam.c ,
+ * src/spicelib/devices/jfet/jfetpar.c ,
+ * src/spicelib/devices/jfet2/jfet2par.c ,
+ * src/spicelib/devices/mos1/mos1par.c ,
+ * src/spicelib/devices/mos2/mos2par.c ,
+ * src/spicelib/devices/mos3/mos3par.c ,
+ * src/spicelib/devices/mos6/mos6par.c ,
+ * src/spicelib/devices/mos9/mos9par.c ,
+ * src/spicelib/devices/soi3/soi3par.c ,
+ * src/spicelib/devices/vbic/vbicparam.c :
+    swallow type conversion warnings (assignment of int to unsigned:1 flags)
+    actually this fix changes the semantic from
+      true if and only if given number is odd
+    to
+      true if and only if given number != 0
+
 2010-11-22  Robert Larice
  * src/frontend/parse-bison.c ,
  * src/spicelib/parser/inpptree-parser.c :
@@ -19,7 +41,7 @@
     This phenomenon is well known, see for example
       http://gcc.gnu.org/bugzilla/show_bug.cgi?id=323
     This `bug workaround' fixes the problem
-      by declaring the `test_double' to be a `void' double,
+      by declaring the `test_double' to be a `volatile' double,
       which enforces truncation of the 80bit value,
       when it is used in the comparison.
     This fix will cause the test-case to pass.

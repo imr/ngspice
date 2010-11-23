@@ -45,7 +45,7 @@ DIOparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->DIOdtempGiven = TRUE;
             break;    
         case DIO_OFF:
-            here->DIOoff = value->iValue;
+            here->DIOoff = (value->iValue != 0);
             break;
         case DIO_IC:
             here->DIOinitCond = value->rValue;

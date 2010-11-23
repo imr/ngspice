@@ -47,7 +47,7 @@ JFETparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->JFETicVGSGiven = TRUE;
             break;
         case JFET_OFF:
-            here->JFEToff = value->iValue;
+            here->JFEToff = (value->iValue != 0);
             break;
         case JFET_IC:
             switch(value->v.numValue) {

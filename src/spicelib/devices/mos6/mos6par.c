@@ -67,7 +67,7 @@ MOS6param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->MOS6drainSquaresGiven = TRUE;
             break;
         case MOS6_OFF:
-            here->MOS6off = value->iValue;
+            here->MOS6off = (value->iValue != 0);
             break;
         case MOS6_IC_VBS:
             here->MOS6icVBS = value->rValue;

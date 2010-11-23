@@ -32,7 +32,7 @@ VBICparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
             here->VBICareaGiven = TRUE;
             break;
         case VBIC_OFF:
-            here->VBICoff = value->iValue;
+            here->VBICoff = (value->iValue != 0);
             break;
         case VBIC_IC_VBE:
             here->VBICicVBE = value->rValue;
