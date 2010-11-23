@@ -132,8 +132,8 @@ void GLOBgetGlobals(GLOBvalues *values)
 
 void GLOBprnGlobals(FILE *file, GLOBvalues *values)
 {
-  static char *tabformat = "%12s: % .4e %-12s\t";
-  static char *newformat = "%12s: % .4e %-12s\n";
+  static const char tabformat[] = "%12s: % .4e %-12s\t";
+  static const char newformat[] = "%12s: % .4e %-12s\n";
 
   if ( values == NIL( GLOBvalues ) ) {
     fprintf( stderr, "Error: tried to print NIL GLOBvalues\n");

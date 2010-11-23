@@ -326,8 +326,8 @@ struct MatrixElement {
 void
 ONEmemStats(FILE *file, ONEdevice *pDevice)
 {
-  static char *memFormat = "%-20s%10d%10d\n";
-/*  static char *sumFormat = "%20s          %-10d\n";*/
+  static const char memFormat[] = "%-20s%10d%10d\n";
+/*  static const char sumFormat[] = "%20s          %-10d\n";*/
   unsigned int size;
   unsigned int memory;
   ONEmaterial *pMaterial;
@@ -405,7 +405,7 @@ ONEmemStats(FILE *file, ONEdevice *pDevice)
 void
 ONEcpuStats(FILE *file, ONEdevice *pDevice)
 {
-  static char *cpuFormat = "%-20s%10g%10g%10g%10g%10g\n";
+  static const char cpuFormat[] = "%-20s%10g%10g%10g%10g%10g\n";
   ONEstats *pStats = pDevice->pStats;
   double total;
   int iTotal;

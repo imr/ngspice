@@ -344,8 +344,8 @@ struct  MatrixElement
 void
 TWOmemStats(FILE *file, TWOdevice *pDevice)
 {
-  static char *memFormat = "%-20s%10d%10d\n";
-/*  static char *sumFormat = "%20s          %-10d\n"; */
+  static const char memFormat[] = "%-20s%10d%10d\n";
+/*  static const char sumFormat[] = "%20s          %-10d\n"; */
   unsigned int size;
   unsigned int memory;
   TWOmaterial *pMaterial;
@@ -432,7 +432,7 @@ TWOmemStats(FILE *file, TWOdevice *pDevice)
 void
 TWOcpuStats(FILE *file, TWOdevice *pDevice)
 {
-  static char *cpuFormat = "%-20s%10g%10g%10g%10g%10g\n";
+  static const char cpuFormat[] = "%-20s%10g%10g%10g%10g%10g\n";
   TWOstats *pStats = pDevice->pStats;
   double total;
   int iTotal;

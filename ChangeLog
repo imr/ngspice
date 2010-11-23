@@ -1,4 +1,11 @@
 2010-11-23  Robert Larice
+ * src/ciderlib/oned/oneprint.c ,
+ * src/ciderlib/support/globals.c ,
+ * src/ciderlib/support/mater.c ,
+ * src/ciderlib/twod/twoprint.c :
+    attract gcc's attention to some printf format strings (for type checking)
+
+2010-11-23  Robert Larice
  * src/frontend/inpcom.c ,
  * src/frontend/plotting/grid.c :
     swallow type conversion warnings
