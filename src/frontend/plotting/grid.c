@@ -360,7 +360,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
 	int	i;
 	double	step;
 
-	static struct { float div_lim, step; } div_list[ ] = {
+	static struct { double div_lim, step; } div_list[ ] = {
 		{ 100.0, 10.0 },
 		{ 50.0, 5.0 },
 		{ 20.0, 2.0 },

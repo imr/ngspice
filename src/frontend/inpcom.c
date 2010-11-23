@@ -1082,7 +1082,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
    char keep_char;
    int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
    int line_number_orig = 1, line_number_lib = 1, line_number_inc = 1;
-   int no_braces = 0; /* number of '{' */
+   unsigned int no_braces = 0; /* number of '{' */
    FILE *newfp;
    FILE *fdo;
    struct line *tmp_ptr1 = NULL;    
@@ -1658,7 +1658,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
    dynLlen = 0;
    for(tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next) {
       char *s;
-      int braces_per_line = 0;
+      unsigned int braces_per_line = 0;
       /* count number of lines */
       dynmaxline++;
       /* renumber the lines of the processed input deck */

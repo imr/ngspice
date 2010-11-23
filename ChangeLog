@@ -1,4 +1,9 @@
 2010-11-23  Robert Larice
+ * src/frontend/inpcom.c ,
+ * src/frontend/plotting/grid.c :
+    swallow type conversion warnings
+
+2010-11-23  Robert Larice
  * src/xspice/ipc/ipcaegis.c :
     fix an ancient bug (typo `!=' versus `=!')
 
