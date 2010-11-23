@@ -254,8 +254,8 @@ Ipc_Status_t ipc_transport_terminate_server ()
 
    do {
       status = ipc_transport_get_line (buffer, &len, IPC_WAIT);
-   } while ((status =! IPC_STATUS_ERROR) &&
-	    (status =! IPC_STATUS_EOF));
+   } while ((status != IPC_STATUS_ERROR) &&
+	    (status != IPC_STATUS_EOF));
    return status;
 }
 

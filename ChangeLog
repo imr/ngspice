@@ -1,4 +1,8 @@
 2010-11-23  Robert Larice
+ * src/xspice/ipc/ipcaegis.c :
+    fix an ancient bug (typo `!=' versus `=!')
+
+2010-11-23  Robert Larice
  * src/spicelib/analysis/cktsopt.c ,
  * src/spicelib/analysis/dctrcurv.c ,
  * src/spicelib/devices/bjt/bjtparam.c ,
