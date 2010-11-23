@@ -48,6 +48,8 @@ void *tmalloc(size_t);
 
 #define TMALLOC(t,n)      (t*) tmalloc(sizeof(t) * (size_t)(n))
 
+/* macro to ignore unused variables and parameters */
+#define NG_IGNORE(x)  (void)x
 
 /* ************************************************************************ */
 
@@ -62,6 +64,8 @@ static void udn_real_create(CREATE_ARGS)
 
 static void udn_real_dismantle(DISMANTLE_ARGS)
 {
+    NG_IGNORE(STRUCT_PTR);
+
     /* Do nothing.  There are no internally malloc'ed things to dismantle */
 }
 
@@ -142,6 +146,7 @@ static void udn_real_plot_val(PLOT_VAL_ARGS)
 {
     double   *real_struct = (double *) STRUCT_PTR;
 
+    NG_IGNORE(STRUCT_MEMBER_ID);
 
     /* Output a value for the real struct */
     PLOT_VAL = *real_struct;
@@ -154,6 +159,7 @@ static void udn_real_print_val(PRINT_VAL_ARGS)
 {
     double   *real_struct = (double *) STRUCT_PTR;
 
+    NG_IGNORE(STRUCT_MEMBER_ID);
 
     /* Allocate space for the printed value */
     PRINT_VAL = TMALLOC(char, 30);

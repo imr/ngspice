@@ -1,4 +1,9 @@
 2010-11-23  Robert Larice
+ * src/xspice/icm/xtraevt/int/udnfunc.c ,
+ * src/xspice/icm/xtraevt/real/udnfunc.c :
+    use NG_IGNORE() ...
+
+2010-11-23  Robert Larice
  * src/ciderlib/oned/oneprint.c ,
  * src/ciderlib/support/globals.c ,
  * src/ciderlib/support/mater.c ,

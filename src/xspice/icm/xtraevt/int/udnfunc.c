@@ -48,6 +48,8 @@ void *tmalloc(size_t);
 
 #define TMALLOC(t,n)      (t*) tmalloc(sizeof(t) * (size_t)(n))
 
+/* macro to ignore unused variables and parameters */
+#define NG_IGNORE(x)  (void)x
 
 /* ************************************************************************ */
 
@@ -62,6 +64,8 @@ static void udn_int_create(CREATE_ARGS)
 
 static void udn_int_dismantle(DISMANTLE_ARGS)
 {
+    NG_IGNORE(STRUCT_PTR);
+
     /* Do nothing.  There are no internally malloc'ed things to dismantle */
 }
 
@@ -141,6 +145,8 @@ static void udn_int_plot_val(PLOT_VAL_ARGS)
 {
     int   *int_struct = (int *) STRUCT_PTR;
 
+    NG_IGNORE(STRUCT_MEMBER_ID);
+
     /* Output a value for the int struct */
     PLOT_VAL = *int_struct;
 }
@@ -151,6 +157,8 @@ static void udn_int_plot_val(PLOT_VAL_ARGS)
 static void udn_int_print_val(PRINT_VAL_ARGS)
 {
     int   *int_struct = (int *) STRUCT_PTR;
+
+    NG_IGNORE(STRUCT_MEMBER_ID);
 
     /* Allocate space for the printed value */
     PRINT_VAL = TMALLOC(char, 30);
