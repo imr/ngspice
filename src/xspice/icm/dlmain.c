@@ -40,13 +40,10 @@ struct coreInfo_t *coreitf;
 //////////////////////////////////////////////////////////////////////////////
 // Functions that return pointers to structures.
 //////////////////////////////////////////////////////////////////////////////
-#ifdef CM_WINDOWS
-#undef CM_EXPORT
-#define CM_EXPORT __declspec(dllexport)
-#endif
 
-#ifdef CM_LINUX
-#undef CM_EXPORT
+#if defined (__MINGW32__) || defined (__CYGWIN__) || defined (_MSC_VER)
+#define CM_EXPORT __declspec(dllexport)
+#else
 #define CM_EXPORT
 #endif
 

@@ -17,20 +17,20 @@ CC = @CC@
 INCLUDES = -I$(TOPDIR)$(top_srcdir)/src/include -I$(TOPDIR)$(top_builddir)
 
 # CFLAGS to use here
-CFLAGS = @CFLAGS@ -fPIC -DCM_LINUX
+CFLAGS = @CFLAGS@ -fPIC
 DEPFLAGS = -MD -MF
 ISMINGW = $(shell uname | grep -c "MINGW32")
 ifeq ($(ISMINGW), 1)
-  CFLAGS = @CFLAGS@ -DCM_WINDOWS
+  CFLAGS = @CFLAGS@
 endif
 ISCYGWIN = $(shell uname | grep -c "CYGWIN")
 ifeq ($(ISCYGWIN), 1)
-  CFLAGS = @CFLAGS@ -DCM_WINDOWS
+  CFLAGS = @CFLAGS@
 endif
 ISSUNOS = $(shell uname | grep -c "SunOS")
 ifeq ($(ISSUNOS), 1)
   ifneq "$(CC)" "gcc"
-    CFLAGS = @CFLAGS@ -KPIC -DCM_LINUX
+    CFLAGS = @CFLAGS@ -KPIC
     DEPFLAGS = -xMD -xMF
   endif
 endif
