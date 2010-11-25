@@ -2800,7 +2800,7 @@ inp_fix_param_values( struct line *deck )
       if ( ciprefix( ".meas", line ))
          if ((( *(equal_ptr+1) == 'v' ) || ( *(equal_ptr+1) == 'i' )) && ( *(equal_ptr+2) == '(' )) {
             // find closing ')' and skip token v(...) or i(...)
-            while (( equal_ptr) && *equal_ptr != ')') equal_ptr++;
+            while (*equal_ptr != ')' && *(equal_ptr+1) != '\0') equal_ptr++;
             line = equal_ptr + 1;
             continue;
          }

@@ -1,4 +1,8 @@
 2010-11-25  Robert Larice
+ * src/frontend/inpcom.c :
+    tiny fix, a boundary check
+
+2010-11-25  Robert Larice
  * src/xspice/icm/dlmain.c ,
  * src/xspice/icm/makedefs.in :
     drop -D CM_WINDOWS and -D CM_LINUX
