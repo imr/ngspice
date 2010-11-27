@@ -174,15 +174,10 @@
 #define inline _inline
 #endif
 
-/*
-#ifndef HAVE_RANDOM
-#define srandom(a) srand(a)
-#define random rand
-#define RR_MAX RAND_MAX
-#else
-#define RR_MAX LONG_MAX
-#endif
-*/
+
+/* Fast random number generator */
+//#define FastRand
+#define WaGauss
 #define RR_MAX RAND_MAX
 
 #ifdef HAVE_INDEX

@@ -48,7 +48,16 @@ typedef struct sVSRCinstance {
     double VSRCdF2mag; /* distortion f2 magnitude */
     double VSRCdF1phase; /* distortion f1 phase */
     double VSRCdF2phase; /* distortion f2 phase */
-
+    
+    /*transient noise*/
+    double VSRCprevTime; /*last time a new random value was issued*/
+    double VSRCprevVal;  /*last value issued at prevTime*/
+    double VSRCnewVal;   /*new value issued at prevTime*/    
+    double VSRCsecRand;  /*second random value not yet used*/
+    float *VSRConeof;    /*pointer to array of 1 over f noise values */
+    long int VSRCncount; /* counter to retrieve noise values */
+    /*end of noise*/
+	
     double VSRCr;           /* pwl repeat */
     double VSRCrdelay;     /* pwl delay period */
     double *VSRCposIbrptr;  /* pointer to sparse matrix element at 
@@ -93,6 +102,7 @@ typedef struct sVSRCmodel {
 #define SFFM 4
 #define PWL 5
 #define AM 6
+#define TRNOISE 7
 #endif /*PULSE*/
 
 /* device parameters */
@@ -121,6 +131,7 @@ typedef struct sVSRCmodel {
 #define VSRC_AM 22
 #define VSRC_R 23
 #define VSRC_TD 24
+#define VSRC_TRNOISE 25
 
 /* model parameters */
 

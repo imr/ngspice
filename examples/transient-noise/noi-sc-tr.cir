@@ -1,0 +1,53 @@
+* simple sample & hold, transient noise
+
+* switch control
+* PULSE(V1 V2 TD TR TF PW PER)
+vgate1 ga1 0 dc 0 pulse (0 1 0 10n 10n 90n 200n)
+
+Switch1 1 2 ga1 0 smodel1
+
+* noisy input
+* rms value white,  time step, exponent < 2, rms value 1/f
+vin 1 0 dc 0 trnoise 0.1m 0.2n 1 0.1m
+*vin 1 0 dc 0 trnoise 0.1m 0.2n 0 0.1m
+
+* output
+c2 2 0 10p
+
+* second S&H
+vgate2 ga2 0 dc 0 pulse (0 1 140n 10n 10n 30n 200n)
+*Buffer EXXXXXXX N+ N- NC+ NC- VALUE
+e1 4 0 2 0 1
+Switch2 4 3 ga2 0 smodel2
+c3 3 0 10p
+
+.option itl1=500 gmin=1e-15 itl4=10  acct
+
+.model smodel1 sw vt=0.5 ron=100
+.model smodel2 sw vt=0.5 ron=100
+
+.tran 0.4n 100u
+
+
+.control
+unset ngdebug
+set filetype=ascii
+rusage
+run
+rusage all
+write noi_test.out v(1)
+plot  v(2) v(3) xlimit 4u 5u
+plot  v(ga1) v(ga2) xlimit 4u 5u
+linearize
+*rms v(1)
+fft v(3)
+plot mag(v(3)) loglog xlimit 1e4 1e8 ylimit 1e-10 1e-4
+setplot tran1
+linearize
+psd 101 v(3)
+plot mag(v(3)) xlimit 0 3e7 ylimit 0 10u
+
+.endc
+
+
+.end

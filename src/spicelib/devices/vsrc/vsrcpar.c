@@ -169,6 +169,13 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 		    return(E_BADPARM);
 	    }
 	    break;
+        case VSRC_TRNOISE:
+            here->VSRCfunctionType = TRNOISE;
+            here->VSRCfuncTGiven = TRUE;
+            here->VSRCcoeffs = value->v.vec.rVec;
+            here->VSRCfunctionOrder = value->v.numValue;
+            here->VSRCcoeffsGiven = TRUE;
+            break;		
         default:
             return(E_BADPARM);
     }

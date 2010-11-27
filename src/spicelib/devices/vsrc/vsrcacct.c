@@ -11,6 +11,10 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 #include "missing_math.h"
 
+extern int fftInit(long M);
+extern void fftFree(void);
+extern void rffts(float *data, long M, long Rows);
+
 #define SAMETIME(a,b)    (fabs((a)-(b))<= TIMETOL * PW)
 #define TIMETOL    1e-7
 		
@@ -74,6 +78,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     /* offset time by delay */
                     time = ckt->CKTtime - TD;
                     tshift = TD;
+
 #ifdef XSPICE					
 		         /* normalize phase to 0 - 360° */ 
 		         /* normalize phase to cycles */
@@ -180,6 +185,52 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     }
                     break;
                 }
+
+/**** tansient noise routines: 
+VNoi2 2 0  DC 0 TRNOISE(10n 0.5n 0 0n) : generate gaussian distributed noise
+                        rms value, time step, 0 0
+VNoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
+                        0,  time step, exponent < 2, rms value
+*/
+                case TRNOISE: {
+                  double NA, NT, TS, time, basetime = 0.;
+
+#define NSAMETIME(a,b) (fabs((a)-(b))<= NTIMETOL * TS)
+#define NTIMETOL 1e-7
+
+                  NA = here->VSRCcoeffs[0]; // input is rms value
+                  NT = here->VSRCcoeffs[1]; // time step
+                  if (NT == 0.) // no further breakpoint if value not given
+                      break;
+//                  TS = NT > ckt->CKTstep ? NT : ckt->CKTstep;
+                  TS = NT;
+                  time = ckt->CKTtime;
+
+                  if(time >= TS) {
+                        /* repeating signal - figure out where we are
+                           in period */
+                     basetime = TS * floor(time*1.000000000001/TS);
+//                     basetime = TS * floor(time/TS);
+//                     basetime = TS * here->VSRCncount;
+                     time -= basetime;
+                  }
+                  if(ckt->CKTbreak &&  NSAMETIME(time,0)) {
+                     /* set next breakpoint */
+//                     error = CKTsetBreak(ckt, TS * ((double)here->VSRCncount + 1.));
+                     error = CKTsetBreak(ckt, basetime + TS);
+                     if(error) return(error);
+                  } 
+ /*                 else if (ckt->CKTbreak &&  NSAMETIME(time,TS)) {
+                     // set next breakpoint
+                     error = CKTsetBreak(ckt, basetime + TS + TS);
+                     if(error) return(error);
+                  } */
+                  if (ckt->CKTtime == 0.) {
+//                   printf("VSRC: free fft tables\n");
+                     fftFree();
+                  }
+               }
+               break;    				
                 }
             }
 bkptset: ;

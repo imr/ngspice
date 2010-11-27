@@ -216,3 +216,27 @@ double gauss(void)
     return glgset;
   }
 }
+
+/* Polar form of the Box-Muller generator for Gaussian distributed
+   random variates.
+   Generator will be fed with two uniformly distributed random variates.
+   Delivers two values per call
+*/
+
+void rgauss(double* py1, double* py2)
+{
+	double x1, x2, w;
+
+         do {
+                 x1 = 2.0 * CombLCGTaus() - 1.0;
+                 x2 = 2.0 * CombLCGTaus() - 1.0;
+                 w = x1 * x1 + x2 * x2;
+         } while ( w >= 1.0 );
+
+         w = sqrt( (-2.0 * log( w ) ) / w );
+
+	*py1 = x1 * w;
+	*py2 = x2 * w;
+}	
+
+

@@ -7,5 +7,6 @@
 #define FFT_H_INCLUDED
 
 void com_fft(wordlist *wl);
+void com_psd(wordlist *wl);
 
 #endif

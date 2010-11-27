@@ -1,0 +1,27 @@
+* Shot noise test with B source, diode
+* voltage on device (diode, forward)
+Vdev out 0 DC 0 PULSE(0.4 0.45 10u)
+* diode, forward direction, to be modeled with noise
+D1 mess 0 DMOD
+.model DMOD D IS=1e-14 N=1 
+X1 0 mess out ishot
+* device between 1 and 2
+* new output terminals of device including noise: 1 and 3
+.subckt ishot 1 2 3
+* white noise source with rms 1V
+VNG 0 11 DC 0 TRNOISE(1 1n 0 0)
+*measure the current i(v1)
+V1 2 3 DC 0
+* calculate the shot noise
+* sqrt(2*current*q*bandwidth)
+BI 1 3 I=sqrt(2*abs(i(v1))*1.6e-19*1e7)*v(11)
+.ends ishot
+* 20000 sample points
+.tran 1n 20u
+.control
+run
+plot (-1)*i(vdev)
+meas tran vdev_rms avg i(vdev) from=0u to=9.9u
+meas tran vdev_rms avg i(vdev) from=10.1u to=20u
+.endc
+.end

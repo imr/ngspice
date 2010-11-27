@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 ## $Id$
 
-SUBDIRS = plotting help parser wdisp numparam
-DIST_SUBDIRS = plotting help parser wdisp numparam
+SUBDIRS = plotting help parser wdisp numparam trannoise
+DIST_SUBDIRS = plotting help parser wdisp numparam trannoise
 EXTRA_DIST = testcommands.c parse-bison.y
 ## For Windows with Visual Studio
 EXTRA_DIST += parse-bison.c parse-bison.h

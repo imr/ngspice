@@ -208,6 +208,8 @@ extern int OUTbeginDomain(void *,IFuid,int,IFvalue *);
 extern int OUTendDomain(void *), OUTstopnow(void), OUTerror(int,char *,IFuid *); 
 extern int OUTattributes(void *,IFuid,int,IFvalue *);
 
+extern void initw(void);
+
 IFfrontEnd nutmeginfo = {
     IFnewUid,
     IFdelUid,
@@ -757,8 +759,9 @@ xmain(int argc, char **argv)
 main(int argc, char **argv)
 #endif /* HAS_WINDOWS */
 {
-    int c;
-    int   err;
+    int c, err;
+    unsigned int rseed;
+    time_t acttime;
     bool  gotone = FALSE;
     char* copystring;
     bool  addctrlsect = TRUE; /* PN: for autorun */
@@ -1106,6 +1109,24 @@ bot:
     err = 0;
 
 #ifdef SIMULATOR
+#ifdef FastRand
+// initialization and seed for FastNorm Gaussian random generator
+    initnorm (0, 0);
+    rseed = 66;
+    if (!cp_getvar("rndseed", CP_NUM, (char *) &rseed)) {
+        acttime = time(NULL);
+        rseed = (int)acttime;
+    }
+    initnorm (rseed, 2);
+    fprintf (cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
+#elif defined (WaGauss)
+    if (!cp_getvar("rndseed", CP_NUM, (char *) &rseed)) {
+        acttime = time(NULL);
+        rseed = (int)acttime;
+    }
+    srand(rseed);
+    initw();
+#endif
     if (!ft_servermode && !ft_nutmeg) {
     /* Concatenate all non-option arguments into a temporary file
        and load that file into the spice core.

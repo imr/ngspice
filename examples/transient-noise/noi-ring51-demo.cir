@@ -1,0 +1,59 @@
+* 51 stage Ring-Osc. BSIM3, transient noise
+* will need 45 min on a i7 860 with 4 threads
+
+* closes the loop between inverters xinv1 and xinv5
+vin in out dc 0.5 pulse 0.5 0 0.1n 5n 1 1 1
+
+vdd dd 0 dc 0 pulse 0 2.2 0 1n 1 1 1
+
+vss ss 0 dc 0
+ve  sub  0 dc 0
+
+vpe well 0 2.2
+
+* noisy inverters
+xiinv2 dd ss sub well out25 out50 inv253
+xiinv1 dd ss sub well in out25 inv253
+
+*very noisy inverter
+xiinv5 dd ss sub well out50 out inv1_2
+*output amplifier
+xiinv11 dd ss sub well out25 bufout inv1
+cout  bufout ss 0.2pF
+
+.option itl1=500 gmin=1e-15 itl4=10  noacct
+
+* .dc vdd 0 2 0.01
+.tran 0.01n 500n
+
+.save in bufout v(t1)
+
+.include D:\Spice_Win\Exam_BSIM3\Modelcards\modelcard.nmos
+.include D:\Spice_Win\Exam_BSIM3\Modelcards\modelcard.pmos
+
+.include noilib-demo.h
+
+.control
+unset ngdebug
+* first run
+save bufout  $ needed for restricting memory usage
+rusage
+tran 8p 10000n
+rusage
+plot bufout xlimit 90n 95n
+linearize
+fft bufout
+* next run
+reset
+save bufout
+alter @v.xiinv5.vn1[trnoise] = [ 0 0 0 0 ] $ no noise
+tran 8p 10000n
+rusage
+plot bufout xlimit 90n 95n
+linearize
+fft bufout
+plot mag(bufout) mag(sp2.bufout) xlimit 0 2G ylimit 1e-11 0.1 ylog
+.endc
+
+
+.end

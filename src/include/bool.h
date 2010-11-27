@@ -1,7 +1,9 @@
 #ifndef _BOOL_H
 #define _BOOL_H
 
-typedef unsigned char bool;
+//typedef unsigned char bool;
+typedef int bool;
+
 typedef int BOOL ;
 
 #define BOOLEAN int

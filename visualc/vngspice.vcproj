@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
@@ -959,6 +959,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\src\include\1-f-code.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\maths\misc\accuracy.h"
 				>
 			</File>
@@ -1479,15 +1483,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\frontend\com_commands.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\frontend\com_compose.h"
 				>
 			</File>
 			<File
 				RelativePath="..\src\frontend\com_display.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_commands.h"
 				>
 			</File>
 			<File
@@ -1787,6 +1791,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\include\FastNorm3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\fft\fftext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\fft\fftlib.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\frontend\fourier.h"
 				>
 			</File>
@@ -1875,11 +1891,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\grid.h"
+				RelativePath="..\src\frontend\plotting\grid.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\plotting\grid.h"
+				RelativePath="..\src\include\grid.h"
 				>
 			</File>
 			<File
@@ -2148,6 +2164,10 @@
 			</File>
 			<File
 				RelativePath="..\src\include\matldefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\fft\matlib.h"
 				>
 			</File>
 			<File
@@ -2979,6 +2999,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\include\wallace.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\frontend\where.h"
 				>
 			</File>
@@ -3018,6 +3042,10 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath="..\src\frontend\trannoise\1-f-code.c"
+				>
+			</File>
 			<File
 				RelativePath="..\src\spicelib\analysis\acan.c"
 				>
@@ -5755,6 +5783,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\frontend\trannoise\FastNorm3.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\fft\fftext.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\fft\fftlib.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\frontend\fourier.c"
 				>
 			</File>
@@ -6664,6 +6704,10 @@
 			</File>
 			<File
 				RelativePath="..\src\ciderlib\input\material.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\fft\matlib.c"
 				>
 			</File>
 			<File
@@ -8868,6 +8912,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\vsrc\vsrctemp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\trannoise\wallace.c"
 				>
 			</File>
 			<File
