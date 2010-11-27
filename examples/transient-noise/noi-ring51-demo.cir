@@ -28,8 +28,8 @@ cout  bufout ss 0.2pF
 
 .save in bufout v(t1)
 
-.include D:\Spice_Win\Exam_BSIM3\Modelcards\modelcard.nmos
-.include D:\Spice_Win\Exam_BSIM3\Modelcards\modelcard.pmos
+.include modelcard.nmos
+.include modelcard.pmos
 
 .include noilib-demo.h
 
