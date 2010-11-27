@@ -1,3 +1,46 @@
+2010-11-27 Holger Vogt
+ * transient noise simulation added to vsrc:
+M configure.ac
+A examples/transient-noise/noi-ring51-demo.cir
+A examples/transient-noise/noi-sc-tr.cir
+A examples/transient-noise/noilib-demo.h
+A examples/transient-noise/shot_ng.cir
+M src/Makefile.am
+M src/main.c
+M src/frontend/Makefile.am
+M src/frontend/com_fft.c
+M src/frontend/com_fft.h
+M src/frontend/commands.c
+A src/frontend/trannoise/1-f-code.c
+A src/frontend/trannoise/1-f-code_d.c
+A src/frontend/trannoise/FastNorm3.c
+A src/frontend/trannoise/Makefile.am
+A src/frontend/trannoise/wallace.c
+A src/include/1-f-code.h
+A src/include/FastNorm3.h
+M src/include/bool.h
+A src/include/fftext.h
+M src/include/ngspice.h
+A src/include/wallace.h
+M src/maths/Makefile.am
+A src/maths/fft/Makefile.am
+A src/maths/fft/NOTE
+A src/maths/fft/Read Me
+A src/maths/fft/fftext.c
+A src/maths/fft/fftext.h
+A src/maths/fft/fftlib.c
+A src/maths/fft/fftlib.h
+A src/maths/fft/matlib.c
+A src/maths/fft/matlib.h
+M src/maths/misc/randnumb.c
+M src/spicelib/devices/vsrc/vsrc.c
+M src/spicelib/devices/vsrc/vsrcacct.c
+M src/spicelib/devices/vsrc/vsrcask.c
+M src/spicelib/devices/vsrc/vsrcdefs.h
+M src/spicelib/devices/vsrc/vsrcload.c
+M src/spicelib/devices/vsrc/vsrcpar.c
+M visualc/vngspice.vcproj   
+
 2010-11-25  Robert Larice
  * src/frontend/inpcom.c :
     tiny fix, a boundary check
