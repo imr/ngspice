@@ -19,6 +19,9 @@ run
 plot v(1) v(2) v(3) v(4) v(5) v(6)
 plot v(1) v(2) v(3) v(4) v(5) v(6) xlimit 102.0u 102.01u ylimit -3n 3n
 linearize
+meas tran vavg5 AVG v(5) from=0 to=250u
+meas tran vpp5 PP v(5) from=0 to=250u
+meas tran vrms5 RMS v(5) from=0 to=250u
 fft v(1) v(2) v(3) v(4) v(5) v(6)
 plot mag(v(1)) mag(v(2)) mag(v(3)) mag(v(4)) mag(v(5)) loglog xlimit 1e3 1e9
 plot mag(v(6)) loglog xlimit 1e3 1e9
