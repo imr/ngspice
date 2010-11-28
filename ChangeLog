@@ -1,3 +1,6 @@
+2010-11-28 Holger Vogt
+ * transient noise example added
+
 2010-11-27 Holger Vogt
  * transient noise simulation added to vsrc:
 M configure.ac
