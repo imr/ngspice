@@ -1,3 +1,9 @@
+2010-12-04  Robert Larice
+ * src/xspice/mif/mifdelete.c :
+    bug fix, segmentation fault caused by `reset' when xspice used
+      happened when MIFsetup hasn't been executed yet.
+    http://sourceforge.net/tracker/?func=detail&aid=3126116&group_id=38962&atid=423915
+
 2010-11-28 Holger Vogt
  * transient noise example added
 

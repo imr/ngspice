@@ -136,9 +136,12 @@ MIFdelete(
                 for(k = 0; k < num_conn; k++) {
                     if((here->conn[k]->is_null) || (! here->conn[k]->is_input) )
                         continue;
-                    FREE(here->conn[i]->port[j]->partial[k].port);
-                    FREE(here->conn[i]->port[j]->ac_gain[k].port);
-                    FREE(here->conn[i]->port[j]->smp_data.input[k].port);
+                    if(here->conn[i]->port[j]->partial)
+                        FREE(here->conn[i]->port[j]->partial[k].port);
+                    if(here->conn[i]->port[j]->ac_gain)
+                        FREE(here->conn[i]->port[j]->ac_gain[k].port);
+                    if(here->conn[i]->port[j]->smp_data.input)
+                        FREE(here->conn[i]->port[j]->smp_data.input[k].port);
                 }
                 FREE(here->conn[i]->port[j]->partial);
                 FREE(here->conn[i]->port[j]->ac_gain);
