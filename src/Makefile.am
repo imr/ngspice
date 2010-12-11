@@ -156,7 +156,7 @@ endif
 ngspice_LDADD += \
 	frontend/parser/libparser.la \
 	frontend/numparam/libnumparam.la \
-	frontend/trannoise/libtrannoise.la \	
+	frontend/trannoise/libtrannoise.la \
 	spicelib/parser/libinp.la
 
 if CIDER_WANTED
@@ -171,7 +171,7 @@ ngspice_LDADD += \
 	maths/deriv/libderiv.la \
 	maths/cmaths/libcmaths.la \
 	maths/misc/libmathmisc.la \
-	maths/fft/libmathfft.la \	
+	maths/fft/libmathfft.la \
 	maths/poly/libpoly.la \
 	maths/ni/libni.la \
 	maths/sparse/libsparse.la \
@@ -210,10 +210,10 @@ ngnutmeg_LDADD += \
 	frontend/plotting/libplotting.la \
 	frontend/parser/libparser.la \
 	frontend/numparam/libnumparam.la \
-	frontend/trannoise/libtrannoise.la \	
+	frontend/trannoise/libtrannoise.la \
 	maths/cmaths/libcmaths.la \
 	maths/misc/libmathmisc.la \
-	maths/fft/libmathfft.la \		
+	maths/fft/libmathfft.la \
 	maths/poly/libpoly.la \
 	misc/libmisc.la \
 	spicelib/parser/libinp.la
@@ -388,7 +388,7 @@ libspice_la_LIBADD += \
 	maths/deriv/libderiv.la \
 	maths/cmaths/libcmaths.la \
 	maths/misc/libmathmisc.la \
-	maths/fft/libmathfft.la \	
+	maths/fft/libmathfft.la \
 	maths/poly/libpoly.la \
 	maths/ni/libni.la \
 	maths/sparse/libsparse.la \

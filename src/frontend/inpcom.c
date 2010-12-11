@@ -4352,6 +4352,18 @@ static void inp_bsource_compat(struct line *deck)
                     str_ptr++;
                     ustate = 1; /* we have an operator */
                 }
+                else if ((actchar == '|') || (actchar == '&'))
+                {                    
+                    buf[0] = actchar;
+					buf[1] = actchar;
+                    buf[2] = '\0';
+                    cwl->wl_word = copy(buf);
+                    str_ptr++;					
+                    ustate = 1; /* we have an operator */
+					/* just skip the second & or | */
+					if ((*str_ptr == '|') || (*str_ptr == '&'))
+                        str_ptr++;					
+                }				
                 else if ((actchar == '-') && (ustate == 0)) {
                     buf[0] = actchar;
                     buf[1] = '\0';
@@ -4512,8 +4524,10 @@ static void inp_bsource_compat(struct line *deck)
 	        new_line->li_error   = NULL;
 	        new_line->li_actual  = NULL;
 	        new_line->li_line    = final_str;
-	        new_line->li_linenum = 0;
-	        // comment out current old B line
+			/* Copy old line numbers into new B source line */
+	        new_line->li_linenum = card->li_linenum;
+			new_line->li_linenum_orig = card->li_linenum_orig;
+	        // comment out current line (old B source line)
 	        *(card->li_line)   = '*';
 	        // insert new B source line immediately after current line
 	        tmp_ptr           = card->li_next;

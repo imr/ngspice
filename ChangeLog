@@ -1,3 +1,7 @@
+2010-12-11 Holger Vogt
+ * inpcom.c: && and || in B source, bug no. 3127808
+ * src/makefile.am: trailing white spaces removed
+
 2010-12-04  Robert Larice
  * src/xspice/mif/mifdelete.c :
     bug fix, segmentation fault caused by `reset' when xspice used
