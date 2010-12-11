@@ -1,5 +1,9 @@
 2010-12-11  Robert Larice
  * src/frontend/inpcom.c :
+    support another non-equality '<>' token
+
+2010-12-11  Robert Larice
+ * src/frontend/inpcom.c :
     don't transform operators ('&|' -> '&&'  '&' -> '&&' etc) pass them *literally*
 
 2010-12-11 Holger Vogt

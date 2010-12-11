@@ -4337,19 +4337,11 @@ static void inp_bsource_compat(struct line *deck)
                 else if ((actchar == '>') || (actchar == '<')
                     || (actchar == '!') || (actchar == '=') )
                 {                    
-                    /* >=, <=, !=, == */
-                    if ((*(str_ptr+1) == '=')) {
-                        buf[0] = actchar;
-                        buf[1] = '=';
-                        buf[2] = '\0';
+                    /* >=, <=, !=, ==, <>, ... */
+                    char *beg = str_ptr++;
+                    if ((*str_ptr == '=') || (*str_ptr == '<') || (*str_ptr == '>'))
                         str_ptr++;
-                    }
-                    else {
-                        buf[0] = actchar;
-                        buf[1] = '\0';
-                    }
-                    cwl->wl_word = copy(buf);
-                    str_ptr++;
+                    cwl->wl_word = copy_substring(beg, str_ptr);
                     ustate = 1; /* we have an operator */
                 }
                 else if ((actchar == '|') || (actchar == '&'))
