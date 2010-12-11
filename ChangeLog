@@ -1,4 +1,10 @@
 2010-12-11  Robert Larice
+ * src/include/bool.h :
+    Change bool from `unsigned char' to `int'
+      thats what it is supposed to be in `C' (less warnings, cleaner, etc ...)
+    The actual change was accidently injected in a commit from 2010-11-27
+
+2010-12-11  Robert Larice
  * src/frontend/inpcom.c :
     support another non-equality '<>' token
 
