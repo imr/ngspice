@@ -4354,15 +4354,11 @@ static void inp_bsource_compat(struct line *deck)
                 }
                 else if ((actchar == '|') || (actchar == '&'))
                 {                    
-                    buf[0] = actchar;
-					buf[1] = actchar;
-                    buf[2] = '\0';
-                    cwl->wl_word = copy(buf);
-                    str_ptr++;					
+                    char *beg = str_ptr++;
+                    if ((*str_ptr == '|') || (*str_ptr == '&'))
+                        str_ptr++;
+                    cwl->wl_word = copy_substring(beg, str_ptr);
                     ustate = 1; /* we have an operator */
-					/* just skip the second & or | */
-					if ((*str_ptr == '|') || (*str_ptr == '&'))
-                        str_ptr++;					
                 }				
                 else if ((actchar == '-') && (ustate == 0)) {
                     buf[0] = actchar;
