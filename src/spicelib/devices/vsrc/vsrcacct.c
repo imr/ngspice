@@ -10,6 +10,7 @@ Author: 1985 Thomas L. Quarles
 #include "sperror.h"
 #include "suffix.h"
 #include "missing_math.h"
+#include "1-f-code.h"
 
 extern int fftInit(long M);
 extern void fftFree(void);
@@ -193,21 +194,18 @@ VNoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
                         0,  time step, exponent < 2, rms value
 */
                 case TRNOISE: {
-                    double NA, NT, NALPHA, NAMP, TS;
 
-                    NA = here->VSRCcoeffs[0]; // input is rms value
-                    NT = here->VSRCcoeffs[1]; // time step
+                    struct trnoise_state *state = here -> VSRCtrnoise_state;
+                    double TS = state -> TS;
 
-                    NALPHA = here->VSRCfunctionOrder > 2
-                       ? here->VSRCcoeffs[2] : 0.0;
-                    NAMP = here->VSRCfunctionOrder > 3
-                       && here->VSRCcoeffs[3] != 0.0
-                       && here->VSRCcoeffs[2] != 0.0       
-                       ? here->VSRCcoeffs[3] : 0.0;
-
-                    if ((NT == 0.) || ((NA == 0.) && (NAMP == 0.))) // no further breakpoint if value not given
+                    if (TS == 0.0) // no further breakpoint if value not given
                         break;
-                    TS = NT;
+
+                    /* FIXME, dont' want this here, over to aof_get or somesuch */
+                    if (ckt->CKTtime == 0.0) {
+                        printf("VSRC: free fft tables\n");
+                        fftFree();
+                    }
 
                     if(ckt->CKTbreak) {
 

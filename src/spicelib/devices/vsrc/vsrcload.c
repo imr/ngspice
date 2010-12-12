@@ -11,14 +11,6 @@ $Id$
 #include "trandefs.h"
 #include "sperror.h"
 #include "suffix.h"
-#undef WaGauss
-#ifdef FastRand
-#include "FastNorm3.h"
-#elif defined (WaGauss)
-#include "wallace.h"
-#else
-extern void rgauss(double* py1, double* py2);
-#endif
 #include "1-f-code.h"
 
 #ifdef XSPICE_EXP
@@ -343,204 +335,24 @@ VNoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
                         0,  time step, exponent < 2, rms value
 */
                 case TRNOISE: {
-                /* Generate voltage point every TS with amplitude NA * ra,
-                   where ra is drawn from a random number generator with
-                   gaussian distribution with mean 0 and standard deviation 1 
-				*/
 
-//#define PRVAL
-//                    typedef int bool;
-   
-                    double newval=0.0, lastval=0.0, lasttime=0.0;
-                    double NA, NT, TS;                    
-                    double V1, V2, basetime = 0.;
-                    double scalef, ra1, ra2;
-                    float NALPHA, NAMP;
-   
-                    long int nosteps, newsteps = 1, newexp = 0;
-             
-                    bool aof = FALSE;   
-                       
-                    NA = here->VSRCcoeffs[0]; // input is rms value
-                    NT = here->VSRCcoeffs[1]; // time step
+                    struct trnoise_state *state = here -> VSRCtrnoise_state;
 
-                    scalef = NA;
-//                    scalef = NA*1.32;
+                    double TS = state -> TS;
 
-                    NALPHA = here->VSRCfunctionOrder > 2
-                       ? (float)here->VSRCcoeffs[2] : 0.0f;
-                    NAMP = here->VSRCfunctionOrder > 3
-                       && here->VSRCcoeffs[3] != 0.0
-                       && here->VSRCcoeffs[2] != 0.0       
-                       ? (float)here->VSRCcoeffs[3] : 0.0f;
+                    if(TS == 0.0) {
+                        value = 0.0;
+                    } else {
+                        size_t n1 = (size_t) floor(time / TS);
 
-                    if ((NT == 0.) || ((NA == 0.) && (NAMP == 0.))) {
-                        value =  here->VSRCdcValue;
-                        goto noiDone;
-                    }
-                    else
-                        TS = NT; /* time step for noise */
-        
-                    if ((NALPHA > 0.0) && (NAMP > 0.0)) aof = TRUE;
-   
-                    lasttime = here->VSRCprevTime;
-                    lastval = here->VSRCprevVal;
-                    newval = here->VSRCnewVal;
-                    /* set all data: DC, white, 1of */
-                    if (time <= 0 /*ckt->CKTstep*/) {
-                        /* data are already set */
-                        if ((here->VSRCprevVal != 0) || (here->VSRCnewVal != 0)) {
-                            value = here->VSRCprevVal;
-                            goto noiDone;
-                        }
-                        lasttime = 0.0;
-                        here->VSRCsecRand = 2.; /* > 1, invalid number out of the random number range */
-                        /* get two random samples */
-#ifdef FastRand
-                        // use FastNorm3
-                        here->VSRCprevVal = scalef * GaussWa;
-                        here->VSRCnewVal = scalef * GaussWa; 
-#elif defined (WaGauss)
-                        // use WallaceHV
-                        here->VSRCprevVal = scalef * GaussWa;
-                        here->VSRCnewVal = scalef * GaussWa;
-#else
-                        // make use of two random variables per call to rgauss()
-                        rgauss(&ra1, &ra2);
-                        here->VSRCprevVal = scalef * ra1;
-                        // choose to set start value to 0
-                        here->VSRCprevVal = 0;
-                        here->VSRCnewVal = scalef * ra2;
-#endif
-                        /* generate 1 over f noise at time 0 */
-                        if (aof) {
-                            if (here->VSRCncount==0) {
-                                // add 10 steps for start up sequence
-                                nosteps = (long)((ckt->CKTfinalTime)/TS) + 10;
-                                // generate number of steps as power of 2
-                                while(newsteps < nosteps) {
-                                    newsteps <<= 1;
-                                    newexp++;
-                                }
-                                here->VSRConeof = TMALLOC(float, newsteps); //(float *)tmalloc(sizeof(float) * newsteps);
-#ifdef PRVAL
-                                printf("ALPHA: %f, GAIN: %e\n", NALPHA, NAMP);
-#endif
-                                f_alpha(newsteps, newexp, here->VSRConeof, NAMP, NALPHA);
-#ifdef PRVAL
-                                printf("Noi1: %e, Noi2: %e\n", here->VSRConeof[10], here->VSRConeof[100]);                            
-#endif
-                                here->VSRCprevVal += here->VSRConeof[here->VSRCncount];                         
-                                here->VSRCncount++;
-                                here->VSRCnewVal += here->VSRConeof[here->VSRCncount];
-                                here->VSRCncount++;
-                                value = newval;
-                                // add DC
-                                here->VSRCprevVal += here->VSRCdcValue;
-                                here->VSRCnewVal += here->VSRCdcValue;
-                                value = here->VSRCprevVal;
-#ifdef PRVAL
-                                printf("start1, time: %e, outp: %e, rnd: %e\n", time, newval, testval);
-#endif
-                            } else { // here->VSRCncount > 0
-                                // add DC
-                                here->VSRCprevVal += here->VSRCdcValue;
-                                here->VSRCnewVal += here->VSRCdcValue;
-                                value = here->VSRCprevVal;
-#ifdef PRVAL
-						        printf("start2, time: %e, outp: %e, rnd: %e\n", time, here->VSRCprevVal, testval);
-#endif                        
-                            }         
-#ifdef PRVAL
-                            printf("time 0 value: %e for %s\n", here->VSRCprevVal, here->VSRCname);
-#endif   
-                            goto loadDone;                         
-                        }  //aof
-                        // add DC
-                        here->VSRCprevVal += here->VSRCdcValue;
-                        here->VSRCnewVal += here->VSRCdcValue;
-                        value = here->VSRCprevVal;
-                        here->VSRCprevTime = 0.;
-                        goto loadDone;
-                    }  // time < 0                   
+                        double V1 = trnoise_state_get(state, ckt, n1);
+                        double V2 = trnoise_state_get(state, ckt, n1+1);
 
-                    V1 = here->VSRCprevVal;
-                    V2 = here->VSRCnewVal;
-                    if (here->VSRCprevTime == ckt->CKTtime) {
-                        value = here->VSRCprevVal;
-                        goto noiDone;
+                        value = V1 + (V2 - V1) * (time / TS - n1);
                     }
 
-                    if (time > 0 && time < TS) {
-                        value = V1 + (V2 - V1) * (time) / TS;
-                    }
-                    else if (time >= TS) {
-                     /* repeating signal - figure out where we are in period */
-                     /* numerical correction to avoid basetime less than 
-                     next step, e.g. 4.99999999999999995 delivers a floor
-                     of 4 instead of 5 */
-                        basetime = TS * floor(time*1.000000000001/TS);
-                        time -= basetime;
-
-#define NSAMETIME(a,b) (fabs((a)-(b))<= NTIMETOL * TS)
-#define NTIMETOL 1e-7
-
-                        if NSAMETIME(time,0.) {
-
-                        /* get new random number */
-#ifdef FastRand
-                            // use FastNorm3
-                            newval = scalef * FastNorm;
-#elif defined (WaGauss)
-                            // use WallaceHV
-                            newval = scalef * GaussWa;
-#else
-                            // make use of two random variables per call to rgauss()
-                            if (here->VSRCsecRand == 2.0) {  
-                                rgauss(&ra1, &ra2);
-                                newval = scalef * ra1;
-                                here->VSRCsecRand = scalef * ra2;
-                            }
-                            else {
-                                newval = here->VSRCsecRand;
-                                here->VSRCsecRand = 2.0;
-                            }
-#endif
-                            V1 = here->VSRCprevVal = here->VSRCnewVal;
-                            V2 = newval; // scale factor t.b.d.
-                            if(here->VSRCdcGiven) V2 += here->VSRCdcValue;
-                            if (aof) {                        
-                                V2 += here->VSRConeof[here->VSRCncount];
-#ifdef PRVAL
-                                printf("aof: %d\n", here->VSRCncount);
-#endif
-                            }
-                            here->VSRCncount++;
-                            value = V1;
-                            here->VSRCnewVal = V2;
-                        } else if (time > 0 && time < TS) {
-                            value = V1 + (V2 - V1) * (time) / TS;
-#ifdef PRVAL
-                            printf("if1, time: %e, outp: %e, rnd: %e\n", ckt->CKTtime, 
-						        V1 + (V2 - V1) * (time) / TS, V2);
-#endif
-                        } else { /* time > TS should be never reached */
-                            value = V1 + (V2 - V1) * (time-TS) / TS;
-#ifdef PRVAL
-                            printf("if2, time: %e, outp: %e, rnd: %e\n", ckt->CKTtime, 
-						        V1 + (V2 - V1) * (time-TS) / TS, V2);
-#endif                  
-                        }
-                        here->VSRCprevTime = ckt->CKTtime;
-                    }
-noiDone:                   
-                    if (time >=ckt->CKTfinalTime) {
-                        /* free the 1of memory */
-                        if (here->VSRConeof) tfree(here->VSRConeof);
-                        /* reset the 1of counter */
-                        here->VSRCncount = 0;
-                    }
-                    goto loadDone;     
+                    if(here -> VSRCdcGiven)
+                        value += here->VSRCdcValue;
                 } // case
                 break; 				
                 } // switch

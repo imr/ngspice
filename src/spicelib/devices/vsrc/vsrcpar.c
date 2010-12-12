@@ -11,6 +11,7 @@ Modified: 2000 AlansFixes
 #include "ifsim.h"
 #include "sperror.h"
 #include "suffix.h"
+#include "1-f-code.h"
 
 
 /* ARGSUSED */
@@ -169,12 +170,29 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 		    return(E_BADPARM);
 	    }
 	    break;
-        case VSRC_TRNOISE:
+        case VSRC_TRNOISE: {
+            double NA, TS;
+            double NALPHA = 0.0;
+            double NAMP   = 0.0;
+
             here->VSRCfunctionType = TRNOISE;
             here->VSRCfuncTGiven = TRUE;
             here->VSRCcoeffs = value->v.vec.rVec;
             here->VSRCfunctionOrder = value->v.numValue;
             here->VSRCcoeffsGiven = TRUE;
+
+            NA = here->VSRCcoeffs[0]; // input is rms value
+            TS = here->VSRCcoeffs[1]; // time step
+
+            if (here->VSRCfunctionOrder > 2)
+                NALPHA = here->VSRCcoeffs[2];
+
+            if (here->VSRCfunctionOrder > 3 && NALPHA != 0.0)
+                NAMP = here->VSRCcoeffs[3];
+
+            here->VSRCtrnoise_state =
+                trnoise_state_init(NA, TS, NALPHA, NAMP);
+        }
             break;		
         default:
             return(E_BADPARM);

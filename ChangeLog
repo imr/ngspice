@@ -1,7 +1,19 @@
+2010-12-12  Robert Larice
+ * src/frontend/miscvars.c ,
+ * src/frontend/trannoise/1-f-code.c ,
+ * src/include/1-f-code.h ,
+ * src/include/fftext.h ,
+ * src/spicelib/devices/vsrc/vsrcacct.c ,
+ * src/spicelib/devices/vsrc/vsrcdefs.h ,
+ * src/spicelib/devices/vsrc/vsrcload.c ,
+ * src/spicelib/devices/vsrc/vsrcpar.c :
+    rewrite TRNOISE, with the intention to separate the noise sequenze computation
+      from its use in the VSRC device.
+
 2010-12-12 Holger Vogt
  * vsrcacct.c: Patch von R. Larice für sichere Breakpoints
    bei TRNOISE
-   
+
 2010-12-11  Robert Larice
  * src/include/bool.h :
     Change bool from `unsigned char' to `int'

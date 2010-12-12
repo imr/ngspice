@@ -11,6 +11,8 @@ Author: 1985 Thomas L. Quarles
 #include "gendefs.h"
 #include "complex.h"
 
+struct trnoise_state;
+
         /*
          * structures to describe independent voltage sources
          */
@@ -49,14 +51,7 @@ typedef struct sVSRCinstance {
     double VSRCdF1phase; /* distortion f1 phase */
     double VSRCdF2phase; /* distortion f2 phase */
     
-    /*transient noise*/
-    double VSRCprevTime; /*last time a new random value was issued*/
-    double VSRCprevVal;  /*last value issued at prevTime*/
-    double VSRCnewVal;   /*new value issued at prevTime*/    
-    double VSRCsecRand;  /*second random value not yet used*/
-    float *VSRConeof;    /*pointer to array of 1 over f noise values */
-    long int VSRCncount; /* counter to retrieve noise values */
-    /*end of noise*/
+    struct trnoise_state *VSRCtrnoise_state; /* transient noise */
 	
     double VSRCr;           /* pwl repeat */
     double VSRCrdelay;     /* pwl delay period */

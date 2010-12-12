@@ -12,8 +12,10 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdarg.h>			// var. argumente
-#include "1-f-code.h"
 #include "ngspice.h"
+#include "cpextern.h"
+#include "cktdefs.h"
+#include "1-f-code.h"
 
 #include "fftext.h"
 #include "wallace.h"
@@ -60,3 +62,104 @@ float alpha)
    fprintf(stdout,"%d (2e%d) one over f values created\n", n_pts, n_exp);
 }
 
+
+
+/*-----------------------------------------------------------------------------*/
+
+void
+trnoise_state_gen(struct trnoise_state *this, CKTcircuit *ckt)
+{
+    if(this->top == 0) {
+
+        if(cp_getvar("notrnoise", CP_BOOL, NULL))
+            this -> NA = this -> TS = this -> NALPHA = this -> NAMP = 0.0;
+
+        if((this->NALPHA > 0.0) && (this->NAMP > 0.0)) {
+
+            // add 10 steps for start up sequence
+            size_t nosteps = (size_t) (ckt->CKTfinalTime / this->TS) + 10;
+
+            size_t newsteps = 1;
+            long int newexp = 0;
+            // generate number of steps as power of 2
+            while(newsteps < nosteps) {
+                newsteps <<= 1;
+                newexp++;
+            }
+
+            this->oneof = TMALLOC(float, newsteps);
+            this->oneof_length = newsteps;
+
+            f_alpha((int) newsteps, newexp,
+                    this -> oneof,
+                    (float) this -> NAMP,
+                    (float) this -> NALPHA);
+        }
+
+        trnoise_state_push(this, 0.0); /* first is deterministic */
+        return;
+    }
+
+
+    // make use of two random variables per call to rgauss()
+    {
+        double ra1, ra2;
+        double NA = this -> NA;
+
+        if(NA != 0.0) {
+
+#ifdef FastRand
+            // use FastNorm3
+            ra1 = NA * FastNorm;
+            ra2 = NA * FastNorm;
+#elif defined (WaGauss)
+            // use WallaceHV
+            ra1 = NA * GaussWa;
+            ra2 = NA * GaussWa;
+#else
+            rgauss(&ra1, &ra2);
+            ra1 *= NA;
+            ra2 *= NA;
+#endif
+
+        } else {
+
+            ra1 = 0.0;
+            ra2 = 0.0;
+
+        }
+
+        if(this -> oneof) {
+
+            if(this->top + 1 >= this->oneof_length) {
+                fprintf(stderr,"ouch, noise data exhausted\n");
+                exit(1);
+            }
+
+            ra1 += this->oneof[this->top]      -  this->oneof[0];
+            ra2 += this->oneof[this->top + 1]  -  this->oneof[0];
+        }
+
+        trnoise_state_push(this, ra1);
+        trnoise_state_push(this, ra2);
+    }
+
+}
+
+
+struct trnoise_state *
+trnoise_state_init(double NA, double TS, double NALPHA, double NAMP)
+{
+    struct trnoise_state *this = TMALLOC(struct trnoise_state, 1);
+
+    this->NA = NA;
+    this->TS = TS;
+    this->NALPHA = NALPHA;
+    this->NAMP = NAMP;
+
+    this -> top = 0;
+
+    this -> oneof = NULL;
+
+    return this;
+}

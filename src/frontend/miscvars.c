@@ -94,6 +94,7 @@ char *ft_setkwords[] = {
     "noprintscale",
     "nosort",
     "nosubckt",
+    "notrnoise",
     "numdgt",
     "opts",
     "pivrel",
