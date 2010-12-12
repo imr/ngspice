@@ -1,3 +1,7 @@
+2010-12-12 Holger Vogt
+ * vsrcacct.c: Patch von R. Larice für sichere Breakpoints
+   bei TRNOISE
+   
 2010-12-11  Robert Larice
  * src/include/bool.h :
     Change bool from `unsigned char' to `int'
