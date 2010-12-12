@@ -1,3 +1,5 @@
 Makefile.in
 Makefile
 .deps
+*.la
+*.lo

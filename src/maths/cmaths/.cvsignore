@@ -5,3 +5,5 @@ Makefile
 test_cx_mag
 test_cx_j
 test_cx_ph
+*.la
+*.lo
