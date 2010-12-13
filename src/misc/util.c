@@ -154,7 +154,7 @@ char * absolute_pathname(char *string, char *dot_path)
 char *
 basename(const char *name)
 {
-    const char *base;
+    char *base;
     char *p;
     static char *tmp = NULL;
     int len; 
@@ -205,10 +205,10 @@ dirname(const char *name)
         return(".");
 
     if (!strcmp(name, "/"))
-        return(name);
+        return (char*) name;
 
     if (!strcmp(name, "\\"))
-        return(name);
+        return (char*) name;
         
     // find the last slash in the string
 
@@ -233,7 +233,7 @@ dirname(const char *name)
     else
         return "";
     
-    return (const char *) ret;
+    return ret;
 }
 
 #else

@@ -1,3 +1,6 @@
+2010-12-13 Holger Vogt
+ * util.c: char* identifiers to remove warnings in MS Visual Studio
+
 2010-12-12  Robert Larice
  * src/frontend/miscvars.c ,
  * src/frontend/trannoise/1-f-code.c ,
@@ -11,8 +14,8 @@
       from its use in the VSRC device.
 
 2010-12-12 Holger Vogt
- * vsrcacct.c: Patch von R. Larice für sichere Breakpoints
-   bei TRNOISE
+ * vsrcacct.c: Patch von R. Larice for safe breakpoints
+   with TRNOISE
 
 2010-12-11  Robert Larice
  * src/include/bool.h :
