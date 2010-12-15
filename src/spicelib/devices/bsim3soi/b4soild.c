@@ -3710,14 +3710,6 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 GmT = dIds_dT;
             else GmT = 0.0;
 
-            if (here->B4SOIm != 1.0) { /* h_vogt FIXME ? */
-                Gm *= here->B4SOIm;
-                Gmb *= here->B4SOIm;
-                Gds *= here->B4SOIm;
-                Gme *= here->B4SOIm;
-            }
-
-
 
             /* v3.1 */
             if (here->B4SOIsoiMod != 2) /* v3.2 */
