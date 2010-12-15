@@ -1,3 +1,7 @@
+2010-12-15 Dietmar Warning
+ * devices/bsim3soi/b4soild.c: fixed a double consideration of the multiplier m
+   for conductances gm, gds, gmbs
+
 2010-12-13 Holger Vogt
  * util.c: char* identifiers to remove warnings in MS Visual Studio
 
