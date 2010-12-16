@@ -42,6 +42,8 @@ typedef struct sISRCinstance {
     double ISRCdF1phase; /* distortion f1 phase */
     double ISRCdF2phase; /* distortion f2 phase */
 
+    struct trnoise_state *ISRCtrnoise_state; /* transient noise */
+
     /* gtri - begin - add member to hold current source value */
 #ifdef XSPICE
     /* needed for outputting results */
@@ -82,6 +84,7 @@ typedef struct sISRCmodel {       /* model structure for a resistor */
 #define SFFM 4
 #define PWL 5
 #define AM 6
+#define TRNOISE 7
 #endif /*PULSE*/
 
 /* device parameters */
@@ -113,7 +116,7 @@ typedef struct sISRCmodel {       /* model structure for a resistor */
 #define ISRC_CURRENT 22
 #endif
 /* gtri - end - add define for current source value */
-
+#define ISRC_TRNOISE 25
 /* model parameters */
 
 /* device questions */

@@ -11,14 +11,14 @@ Modified: 2000 AlansFixes
 #include "isrcdefs.h"
 #include "sperror.h"
 #include "suffix.h"
+#include "1-f-code.h"
 
 
 /* ARGSUSED */
 int
 ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
-	
-int i;	
+    int i;	
     ISRCinstance *here = (ISRCinstance*)inst;
 
     NG_IGNORE(select);
@@ -150,6 +150,32 @@ int i;
 		    return(E_BADPARM);
 	    }
 	    break;
+
+        case ISRC_TRNOISE: {
+            double NA, TS;
+            double NALPHA = 0.0;
+            double NAMP   = 0.0;
+
+            here->ISRCfunctionType = TRNOISE;
+            here->ISRCfuncTGiven = TRUE;
+            here->ISRCcoeffs = value->v.vec.rVec;
+            here->ISRCfunctionOrder = value->v.numValue;
+            here->ISRCcoeffsGiven = TRUE;
+
+            NA = here->ISRCcoeffs[0]; // input is rms value
+            TS = here->ISRCcoeffs[1]; // time step
+
+            if (here->ISRCfunctionOrder > 2)
+                NALPHA = here->ISRCcoeffs[2];
+
+            if (here->ISRCfunctionOrder > 3 && NALPHA != 0.0)
+                NAMP = here->ISRCcoeffs[3];
+
+            here->ISRCtrnoise_state =
+                trnoise_state_init(NA, TS, NALPHA, NAMP);
+        }
+            break;	
+
         default:
             return(E_BADPARM);
     }

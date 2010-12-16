@@ -21,6 +21,7 @@ IFparm ISRCpTable[] = { /* parameters */
  IOP ( "pwl",     ISRC_PWL,       IF_REALVEC,"Piecewise linear description"),
  IOP ( "sffm",    ISRC_SFFM,      IF_REALVEC,"Single freq. FM description"),
  IOP ( "am",      ISRC_AM,        IF_REALVEC,"Amplitude modulation description"),
+ IOP ( "trnoise", ISRC_TRNOISE,   IF_REALVEC,"Transient noise descripton"), 
  OPU ( "neg_node",ISRC_NEG_NODE,  IF_INTEGER,"Negative node of source"),
  OPU ( "pos_node",ISRC_POS_NODE,  IF_INTEGER,"Positive node of source"),
  OPU ( "acreal",  ISRC_AC_REAL,   IF_REAL   ,"AC real part"),

@@ -11,6 +11,7 @@ $Id$
 #include "trandefs.h"
 #include "sperror.h"
 #include "suffix.h"
+#include "1-f-code.h"
 
 #ifdef XSPICE_EXP
 #include "cmproto.h"
@@ -33,7 +34,7 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->ISRCinstances; here != NULL ;
                 here=here->ISRCnextInstance) {
-	    if (here->ISRCowner != ARCHme) continue;
+            if (here->ISRCowner != ARCHme) continue;
             
             if( (ckt->CKTmode & (MODEDCOP | MODEDCTRANCURVE)) &&
                     here->ISRCdcGiven ) {
@@ -53,269 +54,303 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                 /* use transient function */
                 switch(here->ISRCfunctionType) {
 
-                case PULSE: {
-		    double	V1, V2, TD, TR, TF, PW, PER;		    
-                    double	basetime = 0;
+                    case PULSE: {
+                        double V1, V2, TD, TR, TF, PW, PER;		    
+                        double basetime = 0;
 #ifdef XSPICE
-                    double PHASE;
-                    double phase;
-                    double deltat;
-                    double basephase;
+                        double PHASE;
+                        double phase;
+                        double deltat;
+                        double basephase;
 #endif
-		    V1 = here->ISRCcoeffs[0];
-		    V2 = here->ISRCcoeffs[1];
-		    TD = here->ISRCfunctionOrder > 2
-			? here->ISRCcoeffs[2] : 0.0;
-		    TR = here->ISRCfunctionOrder > 3
-			&& here->ISRCcoeffs[3] != 0.0
-			? here->ISRCcoeffs[3] : ckt->CKTstep;
-		    TF = here->ISRCfunctionOrder > 4
-			&& here->ISRCcoeffs[4] != 0.0
-			? here->ISRCcoeffs[4] : ckt->CKTstep;
-		    PW = here->ISRCfunctionOrder > 5
-			&& here->ISRCcoeffs[5] != 0.0
-			? here->ISRCcoeffs[5] : ckt->CKTfinalTime;
-		    PER = here->ISRCfunctionOrder > 6
-			&& here->ISRCcoeffs[6] != 0.0
-			? here->ISRCcoeffs[6] : ckt->CKTfinalTime;
+                        V1 = here->ISRCcoeffs[0];
+                        V2 = here->ISRCcoeffs[1];
+                        TD = here->ISRCfunctionOrder > 2
+                           ? here->ISRCcoeffs[2] : 0.0;
+                        TR = here->ISRCfunctionOrder > 3
+                           && here->ISRCcoeffs[3] != 0.0
+                           ? here->ISRCcoeffs[3] : ckt->CKTstep;
+                        TF = here->ISRCfunctionOrder > 4
+                           && here->ISRCcoeffs[4] != 0.0
+                           ? here->ISRCcoeffs[4] : ckt->CKTstep;
+                        PW = here->ISRCfunctionOrder > 5
+                           && here->ISRCcoeffs[5] != 0.0
+                           ? here->ISRCcoeffs[5] : ckt->CKTfinalTime;
+                        PER = here->ISRCfunctionOrder > 6
+                           && here->ISRCcoeffs[6] != 0.0
+                           ? here->ISRCcoeffs[6] : ckt->CKTfinalTime;
 #ifdef XSPICE
 		    /* gtri - begin - wbk - add PHASE parameter */
-		    PHASE = here->ISRCfunctionOrder > 7
-			? here->ISRCcoeffs[7] : 0.0;
+                        PHASE = here->ISRCfunctionOrder > 7
+                           ? here->ISRCcoeffs[7] : 0.0;
 		    
 		    /* normalize phase to 0 - 2PI */ 
-                    phase = PHASE * M_PI / 180.0;
-                    basephase = 2 * M_PI * floor(phase / (2 * M_PI));
-                    phase -= basephase;
+                        phase = PHASE * M_PI / 180.0;
+                        basephase = 2 * M_PI * floor(phase / (2 * M_PI));
+                        phase -= basephase;
 		    
-                    /* compute equivalent delta time and add to time */
-                    deltat = (phase / (2 * M_PI)) * PER;
-                    time += deltat;
+                        /* compute equivalent delta time and add to time */
+                        deltat = (phase / (2 * M_PI)) * PER;
+                        time += deltat;
 		   /* gtri - end - wbk - add PHASE parameter */ 
 #endif
-                    time -= TD;
-
-                    if(time > PER) {
-                        /* repeating signal - figure out where we are */
-                        /* in period */
-                        basetime = PER * floor(time/PER);
-                        time -= basetime;
+                        time -= TD;
+ 
+                        if(time > PER) {
+                            /* repeating signal - figure out where we are */
+                            /* in period */
+                            basetime = PER * floor(time/PER);
+                            time -= basetime;
+                        }
+                        if( time <= 0 || time >= TR + PW + TF) {
+                            value = V1;
+                        } else  if ( time >= TR && time <= TR + PW) {
+                            value = V2;
+                        } else if (time > 0 && time < TR) {
+                            value = V1 + (V2 - V1) * (time) / TR;
+                        } else { /* time > TR + PW && < TR + PW + TF */
+                            value = V2 + (V1 - V2) * (time - (TR + PW)) / TF;
+                        }
                     }
-                    if( time <= 0 || time >= TR + PW + TF) {
-                        value = V1;
-                    } else  if ( time >= TR && time <= TR + PW) {
-                        value = V2;
-                    } else if (time > 0 && time < TR) {
-                        value = V1 + (V2 - V1) * (time) / TR;
-                    } else { /* time > TR + PW && < TR + PW + TF */
-                        value = V2 + (V1 - V2) * (time - (TR + PW)) / TF;
-                    }
-                }
-                break;
+                    break;
 
-                case SINE: {
+                    case SINE: {
 		
-		    double VO, VA, FREQ, TD, THETA;
+                        double VO, VA, FREQ, TD, THETA;
 /* gtri - begin - wbk - add PHASE parameter */
 #ifdef XSPICE
-                    double PHASE;
-		    double phase;
+                        double PHASE;
+                        double phase;
 
-                    PHASE = here->ISRCfunctionOrder > 5
-		           ? here->ISRCcoeffs[5] : 0.0;
+                        PHASE = here->ISRCfunctionOrder > 5
+                           ? here->ISRCcoeffs[5] : 0.0;
 		       		
-	     	    /* compute phase in radians */ 
-                    phase = PHASE * M_PI / 180.0;
+                        /* compute phase in radians */ 
+                        phase = PHASE * M_PI / 180.0;
 #endif
-	            VO = here->ISRCcoeffs[0];
-	            VA = here->ISRCcoeffs[1];
-                    FREQ =  here->ISRCfunctionOrder > 2 
-	                 && here->ISRCcoeffs[2] != 0.0
-		          ? here->ISRCcoeffs[2] : (1/ckt->CKTfinalTime);
-	            TD = here->ISRCfunctionOrder > 3
-	                ? here->ISRCcoeffs[3] : 0.0;
-                    THETA = here->ISRCfunctionOrder > 4
-	                   ? here->ISRCcoeffs[4] : 0.0;
+                        VO = here->ISRCcoeffs[0];
+                        VA = here->ISRCcoeffs[1];
+                        FREQ =  here->ISRCfunctionOrder > 2 
+                           && here->ISRCcoeffs[2] != 0.0
+                           ? here->ISRCcoeffs[2] : (1/ckt->CKTfinalTime);
+                        TD = here->ISRCfunctionOrder > 3
+                           ? here->ISRCcoeffs[3] : 0.0;
+                        THETA = here->ISRCfunctionOrder > 4
+                           ? here->ISRCcoeffs[4] : 0.0;
 
-                    time -= TD;
-                    if (time <= 0) {
+                        time -= TD;
+                        if (time <= 0) {
 #ifdef XSPICE
-                        value = VO + VA * sin(phase);
-                    } else {
-                       value = VO + VA * sin(FREQ*time * 2.0 * M_PI + phase) * 
-                                exp(-time*THETA);
+                            value = VO + VA * sin(phase);
+                        } else {
+                            value = VO + VA * sin(FREQ*time * 2.0 * M_PI + phase) * 
+                               exp(-time*THETA);
 #else
-                        value = VO;
-                    } else {
-                        value = VO + VA * sin(FREQ*time * 2.0 * M_PI) * 
-                                exp(-time*THETA);
+                            value = VO;
+                        } else {
+                            value = VO + VA * sin(FREQ*time * 2.0 * M_PI) * 
+                               exp(-time*THETA);
 #endif
 /* gtri - end - wbk - add PHASE parameter */			
+                        }
                     }
-                }
-                break;
-                case EXP: {
-		    double V1, V2, TD1, TD2, TAU1, TAU2;
+                    break;
+
+                    case EXP: {
+                        double V1, V2, TD1, TD2, TAU1, TAU2;
 		    
-		    V1  = here->ISRCcoeffs[0];
-		    V2  = here->ISRCcoeffs[1];
-		    TD1 = here->ISRCfunctionOrder > 2 
-		        && here->ISRCcoeffs[2] != 0.0
-			 ? here->ISRCcoeffs[2] : ckt->CKTstep;
-		    TAU1 = here->ISRCfunctionOrder > 3 
-		         && here->ISRCcoeffs[3] != 0.0
-			  ? here->ISRCcoeffs[3] : ckt->CKTstep;
-                    TD2  = here->ISRCfunctionOrder > 4 
-		         && here->ISRCcoeffs[4] != 0.0
-			  ? here->ISRCcoeffs[4] : TD1 + ckt->CKTstep;
-                    TAU2 = here->ISRCfunctionOrder > 5 
-		         && here->ISRCcoeffs[5]
-			  ? here->ISRCcoeffs[5] : ckt->CKTstep;
+                        V1  = here->ISRCcoeffs[0];
+                        V2  = here->ISRCcoeffs[1];
+                        TD1 = here->ISRCfunctionOrder > 2 
+                           && here->ISRCcoeffs[2] != 0.0
+                           ? here->ISRCcoeffs[2] : ckt->CKTstep;
+                        TAU1 = here->ISRCfunctionOrder > 3 
+                           && here->ISRCcoeffs[3] != 0.0
+                           ? here->ISRCcoeffs[3] : ckt->CKTstep;
+                        TD2  = here->ISRCfunctionOrder > 4 
+                           && here->ISRCcoeffs[4] != 0.0
+                           ? here->ISRCcoeffs[4] : TD1 + ckt->CKTstep;
+                        TAU2 = here->ISRCfunctionOrder > 5 
+                           && here->ISRCcoeffs[5]
+                           ? here->ISRCcoeffs[5] : ckt->CKTstep;
 			  
-                    if(time <= TD1)  {
-                        value = V1;
-                    } else if (time <= TD2) {
-                        value = V1 + (V2-V1)*(1-exp(-(time-TD1)/TAU1));
-                    } else {
-                        value = V1 + (V2-V1)*(1-exp(-(time-TD1)/TAU1)) +
-                                     (V1-V2)*(1-exp(-(time-TD2)/TAU2)) ;
+                        if(time <= TD1)  {
+                            value = V1;
+                        } else if (time <= TD2) {
+                            value = V1 + (V2-V1)*(1-exp(-(time-TD1)/TAU1));
+                        } else {
+                            value = V1 + (V2-V1)*(1-exp(-(time-TD1)/TAU1)) +
+                               (V1-V2)*(1-exp(-(time-TD2)/TAU2)) ;
+                        }
                     }
-                }
-                break;
-                case SFFM:{
+                    break;
+
+                    case SFFM:{
 		
-		    double VO, VA, FC, MDI, FS;
+                        double VO, VA, FC, MDI, FS;
 /* gtri - begin - wbk - add PHASE parameters */
 #ifdef XSPICE
 
-                    double PHASEC, PHASES;
-                    double phasec;
-                    double phases;
+                        double PHASEC, PHASES;
+                        double phasec;
+                        double phases;
 		    
-                    PHASEC = here->ISRCfunctionOrder > 5
-		            ? here->ISRCcoeffs[5] : 0.0;
-                    PHASES = here->ISRCfunctionOrder > 6
-		            ? here->ISRCcoeffs[6] : 0.0;
+                        PHASEC = here->ISRCfunctionOrder > 5
+                           ? here->ISRCcoeffs[5] : 0.0;
+                        PHASES = here->ISRCfunctionOrder > 6
+                           ? here->ISRCcoeffs[6] : 0.0;
 			
-                    /* compute phases in radians */
-                    phasec = PHASEC * M_PI / 180.0;
-                    phases = PHASES * M_PI / 180.0;    
+                        /* compute phases in radians */
+                        phasec = PHASEC * M_PI / 180.0;
+                        phases = PHASES * M_PI / 180.0;    
 
 #endif		    
-                   VO = here->ISRCcoeffs[0];
-                   VA = here->ISRCcoeffs[1];
-                   FC = here->ISRCfunctionOrder > 2 
-		      && here->ISRCcoeffs[2]
-		       ? here->ISRCcoeffs[2] : (1/ckt->CKTfinalTime);
-                   MDI = here->ISRCfunctionOrder > 3
-		        ? here->ISRCcoeffs[3] : 0.0;
-                   FS  = here->ISRCfunctionOrder > 4 
-		       && here->ISRCcoeffs[4]
-		        ? here->ISRCcoeffs[4] : (1/ckt->CKTfinalTime);
+                        VO = here->ISRCcoeffs[0];
+                        VA = here->ISRCcoeffs[1];
+                        FC = here->ISRCfunctionOrder > 2 
+                           && here->ISRCcoeffs[2]
+                           ? here->ISRCcoeffs[2] : (1/ckt->CKTfinalTime);
+                        MDI = here->ISRCfunctionOrder > 3
+                           ? here->ISRCcoeffs[3] : 0.0;
+                        FS  = here->ISRCfunctionOrder > 4 
+                           && here->ISRCcoeffs[4]
+                           ? here->ISRCcoeffs[4] : (1/ckt->CKTfinalTime);
 
 #ifdef XSPICE
                     /* compute waveform value */
-                    value = VO + VA * 
-                        sin((2.0 * M_PI * FC * time + phasec) +
-                        MDI * sin(2.0 * M_PI * FS * time + phases));
+                        value = VO + VA * 
+                           sin((2.0 * M_PI * FC * time + phasec) +
+                           MDI * sin(2.0 * M_PI * FS * time + phases));
 #else /* XSPICE */
-                    value = VO + VA * 
-                        sin((2.0 * M_PI * FC * time) +
-                        MDI * sin(2.0 * M_PI * FS * time));
+                        value = VO + VA * 
+                           sin((2.0 * M_PI * FC * time) +
+                           MDI * sin(2.0 * M_PI * FS * time));
 #endif /* XSPICE */
 /* gtri - end - wbk - add PHASE parameters */
 
-                }
-                break;
-		case AM:{
+                    }
+                    break;
+
+                    case AM:{
 		
-		double VA, FC, MF, VO, TD;
+                        double VA, FC, MF, VO, TD;
 /* gtri - begin - wbk - add PHASE parameters */
 #ifdef XSPICE
 
-                    double PHASEC, PHASES;
-                    double phasec;
-                    double phases;
+                        double PHASEC, PHASES;
+                        double phasec;
+                        double phases;
 		    
-                    PHASEC = here->ISRCfunctionOrder > 5
-		            ? here->ISRCcoeffs[5] : 0.0;
-                    PHASES = here->ISRCfunctionOrder > 6
-		            ? here->ISRCcoeffs[6] : 0.0;
+                        PHASEC = here->ISRCfunctionOrder > 5
+                           ? here->ISRCcoeffs[5] : 0.0;
+                        PHASES = here->ISRCfunctionOrder > 6
+                           ? here->ISRCcoeffs[6] : 0.0;
 			
-                    /* compute phases in radians */
-                    phasec = PHASEC * M_PI / 180.0;
-                    phases = PHASES * M_PI / 180.0;    
+                        /* compute phases in radians */
+                        phasec = PHASEC * M_PI / 180.0;
+                        phases = PHASES * M_PI / 180.0;    
 
 #endif			
 		
-		   VA = here->ISRCcoeffs[0];
-                   VO = here->ISRCcoeffs[1];
-                   MF = here->ISRCfunctionOrder > 2 
-		      && here->ISRCcoeffs[2]
-		       ? here->ISRCcoeffs[2] : (1/ckt->CKTfinalTime);
-                   FC = here->ISRCfunctionOrder > 3
-		        ? here->ISRCcoeffs[3] : 0.0;
-                   TD  = here->ISRCfunctionOrder > 4 
-		       && here->ISRCcoeffs[4]
-		        ? here->ISRCcoeffs[4] : 0.0;
+                        VA = here->ISRCcoeffs[0];
+                        VO = here->ISRCcoeffs[1];
+                        MF = here->ISRCfunctionOrder > 2 
+                           && here->ISRCcoeffs[2]
+                           ? here->ISRCcoeffs[2] : (1/ckt->CKTfinalTime);
+                        FC = here->ISRCfunctionOrder > 3
+                           ? here->ISRCcoeffs[3] : 0.0;
+                        TD  = here->ISRCfunctionOrder > 4 
+                           && here->ISRCcoeffs[4]
+                           ? here->ISRCcoeffs[4] : 0.0;
 
-                    time -= TD;
-                    if (time <= 0) {
-                        value = 0;
-                    } else {
+                        time -= TD;
+                        if (time <= 0) {
+                            value = 0;
+                        } else {
 #ifdef XSPICE
                     /* compute waveform value */
-		    value = VA * (VO + sin(2.0 * M_PI * MF * time + phases )) *
-		        sin(2 * M_PI * FC * time + phases);
+                           value = VA * (VO + sin(2.0 * M_PI * MF * time + phases )) *
+                              sin(2 * M_PI * FC * time + phases);
                     
 #else /* XSPICE */		    
-		        value = VA * (VO + sin(2.0 * M_PI * MF * time)) *
-		        sin(2 * M_PI * FC * time);
+                           value = VA * (VO + sin(2.0 * M_PI * MF * time)) *
+                              sin(2 * M_PI * FC * time);
 #endif			
-		    }
+                        }
 		    
 /* gtri - end - wbk - add PHASE parameters */
-		}
-		break;
-                default:
-#ifdef XSPICE_EXP
-                    value = here->ISRCdcValue;
-#else
-                    value = here->ISRCdcValue * ckt->CKTsrcFact;
-#endif
+                    }
                     break;
-                case PWL: {
-                    int i;
-                    if(time< *(here->ISRCcoeffs)) {
-                        value = *(here->ISRCcoeffs + 1) ;
+
+                    default:
+#ifdef XSPICE_EXP
+                        value = here->ISRCdcValue;
+#else
+                        value = here->ISRCdcValue * ckt->CKTsrcFact;
+#endif
+                        break;
+
+                    case PWL: {
+                        int i;
+                        if(time< *(here->ISRCcoeffs)) {
+                            value = *(here->ISRCcoeffs + 1) ;
+                            break;
+                        }
+                        for(i=0;i<=(here->ISRCfunctionOrder/2)-1;i++) {
+                            if((*(here->ISRCcoeffs+2*i)==time)) {
+                                value = *(here->ISRCcoeffs+2*i+1);
+                                goto loadDone;
+                            }
+                            if((*(here->ISRCcoeffs+2*i)<time) &&
+                               (*(here->ISRCcoeffs+2*(i+1)) >time)) {
+                                value = *(here->ISRCcoeffs+2*i+1) +
+                                   (((time-*(here->ISRCcoeffs+2*i))/
+                                   (*(here->ISRCcoeffs+2*(i+1)) - 
+                                    *(here->ISRCcoeffs+2*i))) *
+                                   (*(here->ISRCcoeffs+2*i+3) - 
+                                    *(here->ISRCcoeffs+2*i+1)));
+                                goto loadDone;
+                            }
+                        }
+                        value = *(here->ISRCcoeffs+ here->ISRCfunctionOrder-1) ;
                         break;
                     }
-                    for(i=0;i<=(here->ISRCfunctionOrder/2)-1;i++) {
-                        if((*(here->ISRCcoeffs+2*i)==time)) {
-                            value = *(here->ISRCcoeffs+2*i+1);
-                            goto loadDone;
+
+/**** tansient noise routines: 
+INoi2 2 0  DC 0 TRNOISE(10n 0.5n 0 0n) : generate gaussian distributed noise
+                        rms value, time step, 0 0
+INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
+                        0,  time step, exponent < 2, rms value
+*/
+                    case TRNOISE: {
+
+                        struct trnoise_state *state = here -> ISRCtrnoise_state;
+
+                        double TS = state -> TS;
+
+                        if(TS == 0.0) {
+                            value = 0.0;
+                        } else {
+                            size_t n1 = (size_t) floor(time / TS);
+
+                            double V1 = trnoise_state_get(state, ckt, n1);
+                            double V2 = trnoise_state_get(state, ckt, n1+1);
+
+                            value = V1 + (V2 - V1) * (time / TS - n1);
                         }
-                        if((*(here->ISRCcoeffs+2*i)<time) &&
-                                (*(here->ISRCcoeffs+2*(i+1)) >time)) {
-                            value = *(here->ISRCcoeffs+2*i+1) +
-                                (((time-*(here->ISRCcoeffs+2*i))/
-                                (*(here->ISRCcoeffs+2*(i+1)) - 
-                                 *(here->ISRCcoeffs+2*i))) *
-                                (*(here->ISRCcoeffs+2*i+3) - 
-                                 *(here->ISRCcoeffs+2*i+1)));
-                            goto loadDone;
-                        }
-                    }
-                    value = *(here->ISRCcoeffs+ here->ISRCfunctionOrder-1) ;
-                    break;
-                }
-                }
-            }
+
+                        if(here -> ISRCdcGiven)
+                            value += here->ISRCdcValue;
+                    } // case
+                    break; 		
+
+                } // switch 
+            } // else (line 48)
 loadDone:
 
 /* gtri - begin - wbk - modify for supply ramping option */
 #ifdef XSPICE_EXP
-            value *= ckt->CKTsrcFact;
+           value *= ckt->CKTsrcFact;
             value *= cm_analog_ramp_factor();
 
 #else
@@ -333,7 +368,6 @@ loadDone:
             here->ISRCcurrent = value;
 /* gtri - end   - wbk - record value so it can be output if requested */
 #endif
-
         }
     }
     return(OK);

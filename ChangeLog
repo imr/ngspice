@@ -1,3 +1,7 @@
+2010-12-17 Holger Vogt
+ * isrc.c, isrcacct.c, isrcload.c, isrcpar.c, isrcdefs.h:
+ transient noise in independent current source
+
 2010-12-15 Dietmar Warning
  * devices/bsim3soi/b4soild.c: fixed a double consideration of the multiplier m
    for conductances gm, gds, gmbs
