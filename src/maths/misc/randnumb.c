@@ -84,6 +84,7 @@ void checkseed(void)
    if (cp_getvar("rndseed", CP_NUM, &newseed)) {
       if ((newseed > 0) && (oldseed != newseed)) {
          srand(newseed); //srandom(newseed);
+         zigset(newseed);
          TausSeed();
          oldseed = newseed;
          printf("Seed value for random number generator is set to %d\n", newseed);

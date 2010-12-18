@@ -20,6 +20,7 @@
 #include "fftext.h"
 #include "wallace.h"
 
+extern double exprand(double);
 
 void f_alpha(int n_pts, int n_exp, float X[], float Q_d,
 float alpha)
@@ -72,7 +73,8 @@ trnoise_state_gen(struct trnoise_state *this, CKTcircuit *ckt)
     if(this->top == 0) {
 
         if(cp_getvar("notrnoise", CP_BOOL, NULL))
-            this -> NA = this -> TS = this -> NALPHA = this -> NAMP = 0.0;
+            this -> NA = this -> TS = this -> NALPHA = this -> NAMP =
+               this -> RTSAM = this -> RTSCAPT = this -> RTSEMT = 0.0;
 
         if((this->NALPHA > 0.0) && (this->NAMP > 0.0)) {
 
@@ -148,7 +150,7 @@ trnoise_state_gen(struct trnoise_state *this, CKTcircuit *ckt)
 
 
 struct trnoise_state *
-trnoise_state_init(double NA, double TS, double NALPHA, double NAMP)
+trnoise_state_init(double NA, double TS, double NALPHA, double NAMP, double RTSAM, double RTSCAPT, double RTSEMT)
 {
     struct trnoise_state *this = TMALLOC(struct trnoise_state, 1);
 
@@ -156,7 +158,13 @@ trnoise_state_init(double NA, double TS, double NALPHA, double NAMP)
     this->TS = TS;
     this->NALPHA = NALPHA;
     this->NAMP = NAMP;
-
+    this->RTSAM = RTSAM;
+    this->RTSCAPT = RTSCAPT;
+    this->RTSEMT = RTSEMT;
+    if (RTSAM > 0) {
+        this->RTScapTime = exprand(RTSCAPT);
+        this->RTSemTime = this->RTScapTime + exprand(RTSEMT);
+    }
     this -> top = 0;
 
     this -> oneof = NULL;

@@ -1891,11 +1891,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\plotting\grid.h"
+				RelativePath="..\src\include\grid.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\grid.h"
+				RelativePath="..\src\frontend\plotting\grid.h"
 				>
 			</File>
 			<File
@@ -2003,11 +2003,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\inp.h"
+				RelativePath="..\src\spicelib\parser\inp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp.h"
+				RelativePath="..\src\frontend\inp.h"
 				>
 			</File>
 			<File
@@ -8128,6 +8128,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\res\restemp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\misc\rnorrexp.c"
 				>
 			</File>
 			<File

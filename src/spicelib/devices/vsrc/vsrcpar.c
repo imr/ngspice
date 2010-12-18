@@ -174,6 +174,9 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             double NA, TS;
             double NALPHA = 0.0;
             double NAMP   = 0.0;
+            double RTSAM   = 0.0;
+            double RTSCAPT   = 0.0;
+            double RTSEMT   = 0.0;
 
             here->VSRCfunctionType = TRNOISE;
             here->VSRCfuncTGiven = TRUE;
@@ -185,13 +188,22 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             TS = here->VSRCcoeffs[1]; // time step
 
             if (here->VSRCfunctionOrder > 2)
-                NALPHA = here->VSRCcoeffs[2];
+                NALPHA = here->VSRCcoeffs[2]; // 1/f exponent
 
             if (here->VSRCfunctionOrder > 3 && NALPHA != 0.0)
-                NAMP = here->VSRCcoeffs[3];
+                NAMP = here->VSRCcoeffs[3]; // 1/f amplitude
+
+            if (here->VSRCfunctionOrder > 4)
+                RTSAM = here->VSRCcoeffs[4]; // RTS amplitude
+
+            if (here->VSRCfunctionOrder > 5 && RTSAM != 0.0)
+                RTSCAPT = here->VSRCcoeffs[5]; // RTS trap capture time
+
+            if (here->VSRCfunctionOrder > 6 && RTSAM != 0.0)
+                RTSEMT = here->VSRCcoeffs[6]; // RTS trap emission time
 
             here->VSRCtrnoise_state =
-                trnoise_state_init(NA, TS, NALPHA, NAMP);
+                trnoise_state_init(NA, TS, NALPHA, NAMP, RTSAM, RTSCAPT, RTSEMT);
         }
             break;		
         default:

@@ -1,3 +1,12 @@
+2010-12-18 Holger Vogt
+ * rnorrexp.c, randnumb.c, 1-f-code.c, main.c,
+   fteext.h, 1-f-code.h,
+   isrcacct.c, isrcload.c, isrcpar.c,
+   vsrcacct.c, vsrcload.c, vsrcpar.c,
+   maths/misc/makefile.am,
+   visualc/vngspice.vcproj, vngspice.sln:
+   Random telegraph noise added to independent voltage and current sources
+ 
 2010-12-17 Holger Vogt
  * isrc.c, isrcacct.c, isrcload.c, isrcpar.c, isrcdefs.h:
  transient noise in independent current source

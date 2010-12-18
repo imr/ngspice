@@ -155,6 +155,9 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             double NA, TS;
             double NALPHA = 0.0;
             double NAMP   = 0.0;
+            double RTSAM   = 0.0;
+            double RTSCAPT   = 0.0;
+            double RTSEMT   = 0.0;
 
             here->ISRCfunctionType = TRNOISE;
             here->ISRCfuncTGiven = TRUE;
@@ -171,8 +174,18 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             if (here->ISRCfunctionOrder > 3 && NALPHA != 0.0)
                 NAMP = here->ISRCcoeffs[3];
 
+            if (here->ISRCfunctionOrder > 4)
+                RTSAM = here->ISRCcoeffs[4]; // RTS amplitude
+
+            if (here->ISRCfunctionOrder > 5 && RTSAM != 0.0)
+                RTSCAPT = here->ISRCcoeffs[5]; // RTS trap capture time
+
+            if (here->ISRCfunctionOrder > 6 && RTSAM != 0.0)
+                RTSEMT = here->ISRCcoeffs[6]; // RTS trap emission time
+
             here->ISRCtrnoise_state =
-                trnoise_state_init(NA, TS, NALPHA, NAMP);
+                trnoise_state_init(NA, TS, NALPHA, NAMP, RTSAM, RTSCAPT, RTSEMT);
+
         }
             break;	
 

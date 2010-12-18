@@ -327,10 +327,13 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
                         struct trnoise_state *state = here -> ISRCtrnoise_state;
 
                         double TS = state -> TS;
+                        double RTSAM = state->RTSAM;
 
+                        /* no noise */
                         if(TS == 0.0) {
                             value = 0.0;
                         } else {
+                            /* 1/f and white noise */
                             size_t n1 = (size_t) floor(time / TS);
 
                             double V1 = trnoise_state_get(state, ckt, n1);
@@ -339,6 +342,14 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
                             value = V1 + (V2 - V1) * (time / TS - n1);
                         }
 
+                        /* RTS noise */
+                        if (RTSAM > 0) {
+                            double RTScapTime = state->RTScapTime;
+                            if (time >= RTScapTime)
+                                value += RTSAM;
+                        }
+
+                        /* DC value */
                         if(here -> ISRCdcGiven)
                             value += here->ISRCdcValue;
                     } // case

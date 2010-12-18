@@ -13,14 +13,17 @@ struct trnoise_state
     double points[TRNOISE_STATE_MEM_LEN];
     size_t top;
 
-    double NA, TS, NAMP, NALPHA;
+    double NA, TS, NAMP, NALPHA, RTSAM, RTSCAPT, RTSEMT;
 
     float *oneof;
     size_t oneof_length;
+
+    double RTScapTime, RTSemTime;
+    bool RTS;
 };
 
 
-struct trnoise_state *trnoise_state_init(double NA, double TS, double NALPHA, double NAMP);
+struct trnoise_state *trnoise_state_init(double NA, double TS, double NALPHA, double NAMP, double RTSAM, double RTSCAPT, double RTSEMT);
 
 void trnoise_state_gen(struct trnoise_state *this, CKTcircuit *ckt);
 void trnoise_state_free(struct trnoise_state *this);

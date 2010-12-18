@@ -15,6 +15,7 @@ Author: 1985 Thomas L. Quarles
 extern int fftInit(long M);
 extern void fftFree(void);
 extern void rffts(float *data, long M, long Rows);
+extern double exprand(double);
 
 int
 ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
@@ -202,8 +203,9 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
 
                         struct trnoise_state *state = here -> ISRCtrnoise_state;
                         double TS = state -> TS;
+                        double RTSAM = state ->RTSAM;
 
-                        if (TS == 0.0) // no further breakpoint if value not given
+                        if ((TS == 0.0) &&  (RTSAM == 0.0)) // no further breakpoint if value not given
                             break;
 
                         /* FIXME, dont' want this here, over to aof_get or somesuch */
@@ -228,6 +230,46 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
                                     return(error);
                             }
                         }
+
+
+                    if (RTSAM > 0) {
+                        double RTScapTime = state->RTScapTime;
+                        double RTSemTime = state->RTSemTime;
+                        double RTSCAPT = state->RTSCAPT;
+                        double RTSEMT = state->RTSEMT;
+
+                        if (ckt->CKTtime == 0) {
+                            if (ckt->CKTbreak) {
+                                error = CKTsetBreak(ckt, RTScapTime);
+                                if(error)
+                                    return(error);
+                            }
+                        }
+
+                        if(AlmostEqualUlps(RTScapTime, ckt->CKTtime, 3)) {
+                            if (ckt->CKTbreak) {
+                                error = CKTsetBreak(ckt, RTSemTime);
+                                if(error)
+                                    return(error);
+                            }
+                        }
+                        
+                        if(AlmostEqualUlps(RTSemTime, ckt->CKTtime, 3)) {
+                            /* new values */ 
+                            RTScapTime = here -> ISRCtrnoise_state ->RTScapTime = ckt->CKTtime + exprand(RTSCAPT);
+                            here -> ISRCtrnoise_state ->RTSemTime = RTScapTime + exprand(RTSEMT);
+
+                            if (ckt->CKTbreak) {
+                                error = CKTsetBreak(ckt, RTScapTime);
+                                if(error)
+                                    return(error);
+                            }
+
+
+                        }
+
+                    }
+
                     }
                     break;
 
