@@ -1,3 +1,7 @@
+2010-12-18 Dietmar Warning
+ * devices/bsim*/*ask.c: correct multiplier m for certain currents, conductances, charges 
+   and capacitances if they are requested by plotting and printing, e.g. @m1[gds]
+
 2010-12-18 Holger Vogt
  * rnorrexp.c, randnumb.c, 1-f-code.c, main.c,
    fteext.h, 1-f-code.h,

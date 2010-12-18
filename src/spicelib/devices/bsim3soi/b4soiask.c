@@ -251,9 +251,11 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
 
         case B4SOI_SOURCECONDUCT:
             value->rValue = here->B4SOIsourceConductance;
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_DRAINCONDUCT:
             value->rValue = here->B4SOIdrainConductance;
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_VBD:
             value->rValue = *(ckt->CKTstate0 + here->B4SOIvbd);
@@ -272,54 +274,68 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
             return(OK);
         case B4SOI_CD:
             value->rValue = here->B4SOIcdrain; 
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_IBS:
             value->rValue = here->B4SOIibs;
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_IBD:
             value->rValue = here->B4SOIibd;
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_ISUB:
             value->rValue = here->B4SOIiii;
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_IGIDL:
             value->rValue = here->B4SOIigidl;
             return(OK);
-		case B4SOI_IGISL:
+        case B4SOI_IGISL:
             value->rValue = here->B4SOIigisl;
             return(OK);
         case B4SOI_IGS:
             value->rValue = here->B4SOIIgs;
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_IGD:
             value->rValue = here->B4SOIIgd;
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_IGB:
             value->rValue = here->B4SOIIgb;
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_IGCS:
             value->rValue = here->B4SOIIgcs;
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_IGCD:
             value->rValue = here->B4SOIIgcd;
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_GM:
             value->rValue = here->B4SOIgm; 
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_GMID:
             value->rValue = here->B4SOIgm/here->B4SOIcd; 
             return(OK);
         case B4SOI_GDS:
             value->rValue = here->B4SOIgds; 
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_GMBS:
             value->rValue = here->B4SOIgmbs; 
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_GBD:
             value->rValue = here->B4SOIgjdb; 
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_GBS:
             value->rValue = here->B4SOIgjsb; 
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_CQB:
             value->rValue = *(ckt->CKTstate0 + here->B4SOIcqb); 
@@ -332,15 +348,19 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
             return(OK);
         case B4SOI_CBDB:
             value->rValue = here->B4SOIcbdb;
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_CBSB:
             value->rValue = here->B4SOIcbsb;
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_VON:
             value->rValue = here->B4SOIvon; 
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_VDSAT:
             value->rValue = here->B4SOIvdsat; 
+            value->rValue *= here->B4SOIm;
             return(OK);
         case B4SOI_QBS:
             value->rValue = *(ckt->CKTstate0 + here->B4SOIqbs); 

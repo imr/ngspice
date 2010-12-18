@@ -146,9 +146,11 @@ BSIM4v2instance *here = (BSIM4v2instance*)inst;
             return(OK);
         case BSIM4v2_SOURCECONDUCT:
             value->rValue = here->BSIM4v2sourceConductance;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_DRAINCONDUCT:
             value->rValue = here->BSIM4v2drainConductance;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_VBD:
             value->rValue = *(ckt->CKTstate0 + here->BSIM4v2vbd);
@@ -164,54 +166,71 @@ BSIM4v2instance *here = (BSIM4v2instance*)inst;
             return(OK);
         case BSIM4v2_CD:
             value->rValue = here->BSIM4v2cd; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CBS:
             value->rValue = here->BSIM4v2cbs; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CBD:
             value->rValue = here->BSIM4v2cbd; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CSUB:
             value->rValue = here->BSIM4v2csub; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_QINV:
             value->rValue = here-> BSIM4v2qinv; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_IGIDL:
             value->rValue = here->BSIM4v2Igidl; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_IGISL:
             value->rValue = here->BSIM4v2Igisl; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_IGS:
             value->rValue = here->BSIM4v2Igs; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_IGD:
             value->rValue = here->BSIM4v2Igd; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_IGB:
             value->rValue = here->BSIM4v2Igb; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_IGCS:
             value->rValue = here->BSIM4v2Igcs; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_IGCD:
             value->rValue = here->BSIM4v2Igcd; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_GM:
             value->rValue = here->BSIM4v2gm; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_GDS:
             value->rValue = here->BSIM4v2gds; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_GMBS:
             value->rValue = here->BSIM4v2gmbs; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_GBD:
             value->rValue = here->BSIM4v2gbd; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_GBS:
             value->rValue = here->BSIM4v2gbs; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_QB:
             value->rValue = *(ckt->CKTstate0 + here->BSIM4v2qb); 
@@ -236,57 +255,75 @@ BSIM4v2instance *here = (BSIM4v2instance*)inst;
             return(OK); 
         case BSIM4v2_CGGB:
             value->rValue = here->BSIM4v2cggb; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CGDB:
             value->rValue = here->BSIM4v2cgdb;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CGSB:
             value->rValue = here->BSIM4v2cgsb;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CDGB:
             value->rValue = here->BSIM4v2cdgb; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CDDB:
             value->rValue = here->BSIM4v2cddb; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CDSB:
             value->rValue = here->BSIM4v2cdsb; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CBGB:
             value->rValue = here->BSIM4v2cbgb;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CBDB:
             value->rValue = here->BSIM4v2cbdb;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CBSB:
             value->rValue = here->BSIM4v2cbsb;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CSGB:
             value->rValue = here->BSIM4v2csgb;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CSDB:
             value->rValue = here->BSIM4v2csdb;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CSSB:
             value->rValue = here->BSIM4v2cssb;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CGBB:
             value->rValue = here->BSIM4v2cgbb;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CDBB:
             value->rValue = here->BSIM4v2cdbb;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CSBB:
             value->rValue = here->BSIM4v2csbb;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CBBB:
             value->rValue = here->BSIM4v2cbbb;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CAPBD:
             value->rValue = here->BSIM4v2capbd; 
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_CAPBS:
             value->rValue = here->BSIM4v2capbs;
+            value->rValue *= here->BSIM4v2m;
             return(OK);
         case BSIM4v2_VON:
             value->rValue = here->BSIM4v2von; 
