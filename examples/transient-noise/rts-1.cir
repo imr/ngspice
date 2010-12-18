@@ -1,0 +1,29 @@
+* white noise, 1/f noise, RTS noise
+
+* voltage source
+VRTS2 13 12 DC 0 trnoise(0 0 0 0 5m 18u 30u)
+VRTS3 11 0 DC 0 trnoise(0 0 0 0 10m 20u 40u) 
+VALL 12 11 DC 0 trnoise(1m 1u 1.0 0.1m 15m 22u 50u)
+
+VW1of 21 0 DC  trnoise(1m 1u 1.0 0.1m)
+
+* current source
+IRTS2 10 0 DC 0 trnoise(0 0 0 0 5m 18u 30u)
+IRTS3 10 0 DC 0 trnoise(0 0 0 0 10m 20u 40u) 
+IALL 10 0 DC 0 trnoise(1m 1u 1.0 0.1m 15m 22u 50u)
+R10 10 0 1
+
+IW1of 9 0 DC  trnoise(1m 1u 1.0 0.1m)
+Rall 9 0 1
+
+* 500000 sample points
+.tran 1u 500u
+
+.control
+run
+plot v(13) v(21)
+plot v(10) v(9)
+.endc
+
+.end
+ 

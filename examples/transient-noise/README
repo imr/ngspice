@@ -10,3 +10,6 @@ just a few 1/f and white noise sources
 
 * shot_ng
 emulation of shot noise in a diode
+
+* rts-1.cir
+random telegraph signals noise

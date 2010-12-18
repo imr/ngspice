@@ -4,7 +4,8 @@
    isrcacct.c, isrcload.c, isrcpar.c,
    vsrcacct.c, vsrcload.c, vsrcpar.c,
    maths/misc/makefile.am,
-   visualc/vngspice.vcproj, vngspice.sln:
+   visualc/vngspice.vcproj, vngspice.sln,
+   examples/transient-noise/rts-1.cir, README:
    Random telegraph noise added to independent voltage and current sources
  
 2010-12-17 Holger Vogt
