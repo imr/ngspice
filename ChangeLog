@@ -1,3 +1,8 @@
+2010-12-19 Holger Vogt
+ * simplify exp variate generation for RTS noise:
+   rnorrexp.c removed, 
+   update to randnumb.c, main.c, /maths/misc/makefile.am, visualc/vngspice.vcproj
+
 2010-12-18 Dietmar Warning
  * devices/bsim*/*ask.c: correct multiplier m for certain currents, conductances, charges 
    and capacitances if they are requested by plotting and printing, e.g. @m1[gds]

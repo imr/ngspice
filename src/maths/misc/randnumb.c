@@ -65,6 +65,7 @@ double CombLCGTaus(void);
 float  CombLCGTaus2(void);
 unsigned int CombLCGTausInt(void);
 unsigned int CombLCGTausInt2(void);
+double exprand(double);
 
 void checkseed(void);
 double drand(void);
@@ -84,7 +85,6 @@ void checkseed(void)
    if (cp_getvar("rndseed", CP_NUM, &newseed)) {
       if ((newseed > 0) && (oldseed != newseed)) {
          srand(newseed); //srandom(newseed);
-         zigset(newseed);
          TausSeed();
          oldseed = newseed;
          printf("Seed value for random number generator is set to %d\n", newseed);
@@ -241,3 +241,11 @@ void rgauss(double* py1, double* py2)
 }	
 
 
+/* return an exponentially distributed random number */
+double exprand(double mean)
+{
+    double expval;
+    checkseed();
+    expval = -log(CombLCGTaus()) * mean;
+    return expval;
+}

@@ -15,8 +15,7 @@ libmathmisc_la_SOURCES = \
 	scalb.c		\
 	norm.h		\
 	norm.c		\
-	randnumb.c  \
-	rnorrexp.c
+	randnumb.c
 
 
 EXTRA_DIST = test_accuracy.c test_erfc.c
