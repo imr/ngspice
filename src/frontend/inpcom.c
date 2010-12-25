@@ -273,10 +273,22 @@ inp_chk_for_multi_in_vcvs( struct line *deck, int *line_number ) {
     char *line, *bool_ptr, *str_ptr1, *str_ptr2, keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
     char *node_str, *ctrl_node_str, *xy_str1, *model_name, *fcn_name;
     char big_buf[1000];
-    int  xy_count1 = 0, xy_count2 = 0;
+    int  xy_count1 = 0, xy_count2 = 0, skip_control = 0;
 
     for ( c = deck; c != NULL; c = c->li_next ) {
         str_ptr1 = line = c->li_line;
+
+        /* there is no e source inside .control ... .endc */
+        if ( ciprefix(".control", line) ) {
+            skip_control ++;
+            continue;
+        } else if( ciprefix(".endc", line) ) {
+            skip_control --;
+            continue;
+        } else if(skip_control > 0) {
+            continue;
+        }
+
         if ( *line == 'e' ) {
             if ( (bool_ptr = strstr( line, "nand(" )) != NULL ||
               (bool_ptr = strstr( line, "and("  )) != NULL ||
@@ -3287,8 +3299,8 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
 	      beg = str_ptr - 1;
 	      end = str_ptr + strlen(param_names[i]);
 	      if ( ( isspace(*beg) || *beg == '=' ) &&
-		   ( isspace(*end) || *end == '\0' ) )
-		{
+		   ( isspace(*end) || *end == '\0'  || *end == ')') ) /* ')' added, any risks? h_vogt */
+          {
 		  *str_ptr = '\0';
 		  if ( *end != '\0' )
 		    {

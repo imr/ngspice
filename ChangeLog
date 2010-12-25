@@ -1,3 +1,7 @@
+2010-12-25 Holger Vogt
+ * inpcom.c: exclude control section from fcn inp_chk_for_multi_in_vcvs,
+   add ')' as a delimiter in param replacement, fcn inp_sort_params
+
 2010-12-19 Holger Vogt
  * simplify exp variate generation for RTS noise:
    rnorrexp.c removed, 
