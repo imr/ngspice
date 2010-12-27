@@ -46,6 +46,7 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
         case ISRC_PWL:
         case ISRC_SFFM:
 	case ISRC_AM:
+        case ISRC_TRNOISE:
         case ISRC_FCN_COEFFS:
             temp = value->v.numValue = here->ISRCfunctionOrder;
             value->v.vec.rVec = TMALLOC(double, here->ISRCfunctionOrder);

@@ -1,14 +1,19 @@
+2010-12-27  Robert Larice
+ * src/spicelib/devices/isrc/isrcask.c :
+    bug fix, missing isrc trnoise ask function
+      breaks tests/vbic/diffamp.cir (infinite recursion of error messages)
+
 2010-12-25 Holger Vogt
  * inpcom.c: exclude control section from fcn inp_chk_for_multi_in_vcvs,
    add ')' as a delimiter in param replacement, fcn inp_sort_params
 
 2010-12-19 Holger Vogt
  * simplify exp variate generation for RTS noise:
-   rnorrexp.c removed, 
+   rnorrexp.c removed,
    update to randnumb.c, main.c, /maths/misc/makefile.am, visualc/vngspice.vcproj
 
 2010-12-18 Dietmar Warning
- * devices/bsim*/*ask.c: correct multiplier m for certain currents, conductances, charges 
+ * devices/bsim*/*ask.c: correct multiplier m for certain currents, conductances, charges
    and capacitances if they are requested by plotting and printing, e.g. @m1[gds]
 
 2010-12-18 Holger Vogt
@@ -20,7 +25,7 @@
    visualc/vngspice.vcproj, vngspice.sln,
    examples/transient-noise/rts-1.cir, README:
    Random telegraph noise added to independent voltage and current sources
- 
+
 2010-12-17 Holger Vogt
  * isrc.c, isrcacct.c, isrcload.c, isrcpar.c, isrcdefs.h:
  transient noise in independent current source
