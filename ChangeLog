@@ -1,4 +1,20 @@
 2010-12-27  Robert Larice
+ * tests/bsim3soi/inv_dc.cir ,
+ * tests/bsim3soi/inv_tr.cir ,
+ * tests/bsim3soi/test1.cir ,
+ * tests/bsim3soi/test2.cir ,
+ * tests/bsim3soi/test3.cir ,
+ * tests/bsim3soi/test4.cir ,
+ * tests/bsim3soi/test5.cir ,
+ * tests/bsim3soi/test6.cir ,
+ * tests/bsim3soi/test7.cir ,
+ * tests/bsim3soi/test8.cir :
+    include ./thing   --->    include thing
+      ngspice currently has a broken include path semantic.
+      every pathname with a '/' in it is considered to be `absolute'
+	and the include path will not be applied
+
+2010-12-27  Robert Larice
  * src/spicelib/devices/isrc/isrcask.c :
     bug fix, missing isrc trnoise ask function
       breaks tests/vbic/diffamp.cir (infinite recursion of error messages)

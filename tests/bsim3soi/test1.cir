@@ -16,7 +16,7 @@ vp p 0 		0.0
 vb b 0 		0.0
 
 .dc vd 0 1.2 0.01 vg 0.2 1.2 0.1 
-.include ./nmos4p3.mod
+.include nmos4p3.mod
 .print dc i(vd) i(vs)
 .end
 
