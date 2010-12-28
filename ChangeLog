@@ -1,3 +1,12 @@
+2010-12-28 Holger Vogt
+ * xpressn.c, cmath2.c, cmath2.h, randnumb.c, parse.c,
+   examples/Monte_Carlo/MonteCarlo.sp:
+    add poisson and exponential distribution to nutmeg parser,
+    add gauss, aunif, unif, limit to numparam parser
+ * spiceif.c: remove bug in experimental_code	
+ * control.c: no i/o redirection in define command 
+   (so > or < may be used safely)
+
 2010-12-27  Robert Larice
  * tests/bsim3soi/inv_dc.cir ,
  * tests/bsim3soi/inv_tr.cir ,

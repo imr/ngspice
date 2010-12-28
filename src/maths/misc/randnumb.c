@@ -69,7 +69,8 @@ double exprand(double);
 
 void checkseed(void);
 double drand(void);
-double gauss(void);
+double gauss0(void);
+int poisson(double);
 
 
 /* Check if a seed has been set by the command 'set rndseed=value'
@@ -197,7 +198,7 @@ unsigned int CombLCGTausInt2(void)
 
 /***  gauss  ***/
 
-double gauss(void)
+double gauss0(void)
 {
   static bool gliset = TRUE;
   static double glgset = 0.0;
@@ -239,6 +240,26 @@ void rgauss(double* py1, double* py2)
 	*py1 = x1 * w;
 	*py2 = x2 * w;
 }	
+
+
+
+/** Code by: Inexpensive
+    http://everything2.com/title/Generating+random+numbers+with+a+Poisson+distribution **/
+int poisson(double lambda)
+{
+  int k=0;                          //Counter
+  const int max_k = 1000;           //k upper limit
+  double p = CombLCGTaus();         //uniform random number
+  double P = exp(-lambda);        //probability
+  double sum=P;                     //cumulant
+  if (sum>=p) return 0;             //done allready
+  for (k=1; k<max_k; ++k) {         //Loop over all k:s
+    P*=lambda/(double)k;           //Calc next prob
+    sum+=P;                         //Increase cumulant
+    if (sum>=p) break;              //Leave loop
+  }
+  return k;                         //return random number
+}
 
 
 /* return an exponentially distributed random number */

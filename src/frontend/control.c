@@ -56,7 +56,8 @@ int stackp = 0;
  * destroyed safely
  */
 
-static char *noredirect[] = { "stop", NULL } ;  /* Only one?? */
+/* no redirection after the following commands (we may need more to add here!) */
+static char *noredirect[] = { "stop", "define", NULL } ;
 
 
 static struct control *

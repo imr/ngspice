@@ -1513,8 +1513,10 @@ do {\
     	_foo(lname,TRANan,1);
     }
     ft_curckt->ci_curTask->jobs->JOBname = NULL;
-    ckt->CKTcurJob = (&(ft_curckt->ci_curTask->taskOptions)) -> jobs;
-    
+//    ckt->CKTcurJob = (&(ft_curckt->ci_curTask->taskOptions)) -> jobs;
+    ckt->CKTcurJob=ft_curckt->ci_curTask->jobs;
+
+
     _foo(ft_curckt->ci_curTask->jobs->JOBname, char, -1);
 
     ft_curckt->ci_curTask->jobs->JOBnextJob = NULL;

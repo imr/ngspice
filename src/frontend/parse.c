@@ -164,6 +164,8 @@ struct func ft_funcs[] = {
         { "norm",   cx_norm } ,
         { "rnd",    cx_rnd } ,
         { "sunif",  cx_sunif } ,
+        { "poisson",cx_poisson } ,
+        { "exponential", cx_exponential } ,
         { "sgauss", cx_sgauss } ,
         { "pos",    cx_pos } ,
         { "mean",   cx_mean } ,

@@ -32,7 +32,9 @@ extern void srandom (unsigned int seed);
 */
 extern void checkseed(void); /* seed random or set by 'set rndseed=value'*/
 extern double drand(void);  /* from randnumb.c */
-extern double gauss(void);  /* from randnumb.c */
+extern double gauss0(void);  /* from randnumb.c */
+extern int poisson(double);  /* from randnumb.c */
+extern double exprand(double);  /* from randnumb.c */
 
 static double *
 d_tan(double *dd, int length)
@@ -209,43 +211,52 @@ cx_uminus(void *data, short int type, int length, int *newlength, short int *new
     }
 }
 
+
+/* random integers drawn from a uniform distribution 
+   *data in: integer numbers, their absolut values are used, 
+       maximum is RAND_MAX (32767) 
+   *data out: random integers in interval [0, data[i][ 
+       standard library function rand() is used
+*/
 void *
 cx_rnd(void *data, short int type, int length, int *newlength, short int *newtype)
 {
     *newlength = length;
     checkseed();
     if (type == VF_COMPLEX) {
-      ngcomplex_t *c;
-      ngcomplex_t *cc = (ngcomplex_t *) data;
-      int i;
+        ngcomplex_t *c;
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
 
-      c = alloc_c(length);
-      *newtype = VF_COMPLEX;
-      for (i = 0; i < length; i++) {
-        int j, k;
-        j = (int)floor(realpart(&cc[i]));
-        k = (int)floor(imagpart(&cc[i]));
-        realpart(&c[i]) = j ? rand() % j : 0; //random() % j : 0;
-        imagpart(&c[i]) = k ? rand() % k : 0; //random() % k : 0;
-      }
-      return ((void *) c);
+        c = alloc_c(length);
+        *newtype = VF_COMPLEX;
+        for (i = 0; i < length; i++) {
+            int j, k;
+            j = (int)floor(realpart(&cc[i]));
+            k = (int)floor(imagpart(&cc[i]));
+            realpart(&c[i]) = j ? rand() % j : 0;
+            imagpart(&c[i]) = k ? rand() % k : 0;
+        }
+        return ((void *) c);
     } else {
-      double *d;
-      double *dd = (double *) data;
-      int i;
+        double *d;
+        double *dd = (double *) data;
+        int i;
 
-      d = alloc_d(length);
-      *newtype = VF_REAL;
-      for (i = 0; i < length; i++) {
-      int j;
-
-      j = (int)floor(dd[i]);
-      d[i] = j ? rand() % j : 0; //random() % j : 0;
+        d = alloc_d(length);
+        *newtype = VF_REAL;
+        for (i = 0; i < length; i++) {
+            int j;
+            j = (int)floor(dd[i]);
+            d[i] = j ? rand() % j : 0;
+        }
+        return ((void *) d);
     }
-    return ((void *) d);
-  }
 }
 
+/* random numbers drawn from a uniform distribution 
+   *data out: random numbers in interval [-1, 1[ 
+*/
 void *
 cx_sunif(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -254,29 +265,108 @@ cx_sunif(void *data, short int type, int length, int *newlength, short int *newt
     *newlength = length;
     checkseed();
     if (type == VF_COMPLEX) {
-      ngcomplex_t *c;
-      int i;
+        ngcomplex_t *c;
+        int i;
 
-      c = alloc_c(length);
-      *newtype = VF_COMPLEX;
-      for (i = 0; i < length; i++) {
-        realpart(&c[i]) = drand();
-        imagpart(&c[i]) = drand();
-      }
-      return ((void *) c);
+        c = alloc_c(length);
+        *newtype = VF_COMPLEX;
+        for (i = 0; i < length; i++) {
+            realpart(&c[i]) = drand();
+            imagpart(&c[i]) = drand();
+        }
+        return ((void *) c);
     } else {
-      double *d;
-      int i;
+        double *d;
+        int i;
 
-      d = alloc_d(length);
-      *newtype = VF_REAL;
-      for (i = 0; i < length; i++) {
-        d[i] = drand();
+        d = alloc_d(length);
+        *newtype = VF_REAL;
+        for (i = 0; i < length; i++) {
+            d[i] = drand();
+        }
+        return ((void *) d);
     }
-    return ((void *) d);
-  }
 }
 
+/* random numbers drawn from a poisson distribution 
+   *data in:  lambda
+   *data out: random integers according to poisson distribution, 
+       with lambda given by each vector element 
+*/
+void *
+cx_poisson(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    NG_IGNORE(data);
+
+    *newlength = length;
+    checkseed();
+    if (type == VF_COMPLEX) {
+        ngcomplex_t *c;
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
+
+        c = alloc_c(length);
+        *newtype = VF_COMPLEX;
+        for (i = 0; i < length; i++) {
+            realpart(&c[i]) = poisson (realpart(&cc[i]));
+            imagpart(&c[i]) = poisson (imagpart(&cc[i]));
+        }
+        return ((void *) c);
+    } else {
+        double *d;
+        double *dd = (double *) data;
+        int i;
+
+        d = alloc_d(length);
+        *newtype = VF_REAL;
+        for (i = 0; i < length; i++) {
+            d[i] = poisson(dd[i]);
+        }
+        return ((void *) d);
+    }
+}
+
+/* random numbers drawn from an exponential distribution 
+   *data in:  Mean values
+   *data out: exponentially distributed random numbers, 
+       with mean given by each vector element 
+*/
+void *
+cx_exponential(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    NG_IGNORE(data);
+
+    *newlength = length;
+    checkseed();
+    if (type == VF_COMPLEX) {
+        ngcomplex_t *c;
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
+
+        c = alloc_c(length);
+        *newtype = VF_COMPLEX;
+        for (i = 0; i < length; i++) {
+            realpart(&c[i]) = exprand(realpart(&cc[i]));
+            imagpart(&c[i]) = exprand(imagpart(&cc[i]));
+        }
+        return ((void *) c);
+    } else {
+        double *d;
+        double *dd = (double *) data;
+        int i;
+
+        d = alloc_d(length);
+        *newtype = VF_REAL;
+        for (i = 0; i < length; i++) {
+            d[i] = exprand(dd[i]);
+        }
+        return ((void *) d);
+    }
+}
+
+/* random numbers drawn from a Gaussian distribution 
+   mean 0, std dev 1
+*/
 void *
 cx_sgauss(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -285,28 +375,31 @@ cx_sgauss(void *data, short int type, int length, int *newlength, short int *new
     *newlength = length;
     checkseed();
     if (type == VF_COMPLEX) {
-      ngcomplex_t *c;
-      int i;
+        ngcomplex_t *c;
+        int i;
 
-      c = alloc_c(length);
-      *newtype = VF_COMPLEX;
-      for (i = 0; i < length; i++) {
-        realpart(&c[i]) = gauss();
-        imagpart(&c[i]) = gauss();
-      }
-      return ((void *) c);
+        c = alloc_c(length);
+        *newtype = VF_COMPLEX;
+        for (i = 0; i < length; i++) {
+            realpart(&c[i]) = gauss0();
+            imagpart(&c[i]) = gauss0();
+        }
+        return ((void *) c);
     } else {
-      double *d;
-      int i;
+        double *d;
+        int i;
 
-      d = alloc_d(length);
-      *newtype = VF_REAL;
-      for (i = 0; i < length; i++) {
-        d[i] = gauss();
+        d = alloc_d(length);
+        *newtype = VF_REAL;
+        for (i = 0; i < length; i++) {
+            d[i] = gauss0();
+        }
+        return ((void *) d);
     }
-    return ((void *) d);
-  }
 }
+
+
+
 
 /* Compute the avg of a vector.
    Created by A.M.Roldan 2005-05-21  */

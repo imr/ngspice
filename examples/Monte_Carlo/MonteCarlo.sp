@@ -17,6 +17,20 @@ R2 0 OUT 141
   set scratch=$curplot     $ store its name to 'scratch'
   setplot $scratch         $ make 'scratch' the active plot 
   let bwh=unitvec(mc_runs) $ create a vector in plot 'scratch' to store bandwidth data
+  
+* define distributions for random numbers:
+* unif: uniform distribution, deviation relativ to nominal value
+* aunif: uniform distribution, deviation absolut
+* gauss: Gaussian distribution, deviation relativ to nominal value
+* agauss: Gaussian distribution, deviation absolut
+* limit: if unif. distributed value >=0 then add +avar to nom, else -avar
+  define unif(nom, rvar) (nom + (nom*rvar) * sunif(0))
+  define aunif(nom, avar) (nom + avar * sunif(0))
+  define gauss(nom, rvar, sig) (nom + (nom*rvar)/sig * sgauss(0))
+  define agauss(nom, avar, sig) (nom + avar/sig * sgauss(0))
+*  define limit(nom, avar) (nom + ((sgauss(0) ge 0) ? avar : -avar))
+  define limit(nom, avar) (nom + ((sgauss(0) >= 0) ? avar : -avar))
+*
 *
   dowhile run < mc_runs    $ loop starts here
 *
@@ -25,22 +39,12 @@ R2 0 OUT 141
 *    alter c1 = gauss(1e-09, 0.1, 3)
 *    alter c1 = agauss(1e-09, 100e-12, 3)
 *
-* define distributions for random numbers:
-* unif: uniform distribution, deviation relativ to nominal value
-* aunif: uniform distribution, deviation absolut
-* gauss: Gaussian distribution, deviation relativ to nominal value
-* agauss: Gaussian distribution, deviation absolut
-  define unif(nom, var) (nom + (nom*var) * sunif(0))
-  define aunif(nom, avar) (nom + avar * sunif(0))
-  define gauss(nom, var, sig) (nom + (nom*var)/sig * sgauss(0))
-  define agauss(nom, avar, sig) (nom + avar/sig * sgauss(0))
-*
     alter c1 = unif(1e-09, 0.1)
     alter l1 = unif(10e-06, 0.1)
     alter c2 = unif(1e-09, 0.1)
     alter l2 = unif(10e-06, 0.1)
     alter l3 = unif(40e-06, 0.1)
-    alter c3 = unif(250e-12, 0.1)
+    alter c3 = limit(250e-12, 25e-12)
 *
     ac oct 100 250K 10Meg
 *	

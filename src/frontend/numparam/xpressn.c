@@ -17,7 +17,8 @@
 #include "compatmode.h"
 
 /* random numbers in /maths/misc/randnumb.c */
-extern double gauss(void);
+extern double gauss0(void);
+extern double drand(void);
 
 void debugwarn(tdico *d, char *s);
 
@@ -46,11 +47,37 @@ ternary_fcn (int conditional, double if_value, double else_value)
 
 
 static double
-agauss (double nominal_val, double variation, double sigma)
+agauss (double nominal_val, double abs_variation, double sigma)
 {
   double stdvar;
-  stdvar=variation/sigma;
-  return (nominal_val+stdvar*gauss());
+  stdvar=abs_variation/sigma;
+  return (nominal_val+stdvar*gauss0());
+}
+
+static double
+gauss (double nominal_val, double rel_variation, double sigma)
+{
+  double stdvar;
+  stdvar=nominal_val * rel_variation / sigma;
+  return (nominal_val + stdvar * gauss0());
+}
+
+static double
+unif (double nominal_val, double rel_variation)
+{
+  return (nominal_val + nominal_val * rel_variation * drand());
+}
+
+static double
+aunif (double nominal_val, double abs_variation)
+{
+  return (nominal_val + abs_variation * drand());
+}
+
+static double
+limit (double nominal_val, double abs_variation)
+{
+    return (nominal_val + (drand() > 0 ? abs_variation : -1. * abs_variation));
 }
 
 static void
@@ -62,7 +89,8 @@ initkeys (void)
             "and or not div mod if else end while macro funct defined"
             " include for to downto is var");
   scopy_up (&fmathS,
-            "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log sinh cosh tanh ternary_fcn v agauss sgn");
+            "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log sinh cosh"
+            " tanh ternary_fcn v agauss sgn gauss unif aunif limit");
 }
 
 static double
@@ -1253,9 +1281,16 @@ formula (tdico * dico, char *s, bool *perror)
                       u = ternary_fcn ((int) v, w, u);
                   else if ((fu == 20))
                       u = agauss (v, w, u);
+                  else if ((fu == 22))
+                      u = gauss (v, w, u);
+                  else if ((fu == 23))
+                      u = unif (v, u);
+                  else if ((fu == 24))
+                      u = aunif (v, u);
+                  else if ((fu == 25))
+                      u = limit (v, u);
                   else
                       u = mathfunction (fu, v, u);
-
                 }
             }
           i = k;
