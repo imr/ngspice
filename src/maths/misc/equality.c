@@ -8,7 +8,7 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #ifdef _MSC_VER
 typedef __int64 long64;
 #else
-extern long long llabs(long long);
+//extern long long llabs(long long);
 typedef long long long64;
 #endif
 

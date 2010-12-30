@@ -605,7 +605,7 @@ inc_freq(double freq, int type, double step_size)
 
 	return freq;
 }
-
+/*
 static double
 next_freq(int type, double freq, double stepsize)
 {
@@ -627,7 +627,7 @@ next_freq(int type, double freq, double stepsize)
 	}
 	return s;
 }
-
+*/
 int
 count_steps(int type, double low, double high, int steps, double *stepsize)
 {

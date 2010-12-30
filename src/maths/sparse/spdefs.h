@@ -798,5 +798,7 @@ extern void spcLinkRows( MatrixPtr );
 extern void spcColExchange( MatrixPtr, int, int );
 extern void spcRowExchange( MatrixPtr, int, int );
 
+void spErrorMessage(MatrixPtr, FILE *, char *);
+
 #endif
 

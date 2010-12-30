@@ -1,3 +1,7 @@
+2010-12-30 Holger Vogt
+ * aspice.c, inpcom.c, numparam/general.h, 1-f-code.h, equality.c
+   randnumb.c, spdefs.h, cktsens.c: remove compiler warnings
+   
 2010-12-28 Holger Vogt
  * xpressn.c, cmath2.c, cmath2.h, randnumb.c, parse.c,
    examples/Monte_Carlo/MonteCarlo.sp:

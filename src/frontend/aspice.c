@@ -431,7 +431,7 @@ com_jobs(
 }
 
 void
-ft_checkkids( )
+ft_checkkids(void)
 {
 	return;
 }

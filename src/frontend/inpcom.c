@@ -4040,7 +4040,7 @@ static void inp_compat(struct line *deck)
                          cut_line = str_ptr;
                          // generate node
                          out_ptr = TMALLOC(char, 6);
-                         sprintf(out_ptr, "pa_%02d", pai);
+                         sprintf(out_ptr, "pa_%02d", (int)pai);
                          // Bout_ptr  out_ptr 0  V = v(expr_ptr)
                          xlen = 2*strlen(out_ptr) + strlen(exp_ptr )+ 15 - 2*3 + 1;
                          ckt_array[pai] = TMALLOC(char, xlen);
@@ -4071,7 +4071,7 @@ static void inp_compat(struct line *deck)
                          exp_ptr = copy_substring(beg_ptr, end_ptr-3);
                          // generate node
                          out_ptr = TMALLOC(char, 6);
-                         sprintf(out_ptr, "pa_%02d", pai);
+                         sprintf(out_ptr, "pa_%02d", (int)pai);
                          // Bout_ptr  out_ptr 0  V = v(expr_ptr)
                          xlen = 2*strlen(out_ptr) + strlen(exp_ptr )+ 15 - 2*3 + 1;
                          ckt_array[pai] = TMALLOC(char, xlen);
@@ -4157,7 +4157,7 @@ static void inp_compat(struct line *deck)
                          cut_line = str_ptr;
                          // generate node
                          out_ptr = TMALLOC(char, 6);
-                         sprintf(out_ptr, "pa_%02d", pai);
+                         sprintf(out_ptr, "pa_%02d", (int)pai);
                          // Bout_ptr  out_ptr 0  V = v(expr_ptr)
                          xlen = 2*strlen(out_ptr) + strlen(exp_ptr )+ 15 - 2*3 + 1;
                          ckt_array[pai] = TMALLOC(char, xlen);

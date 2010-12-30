@@ -50,6 +50,7 @@ void strif(long n, int f, SPICE_DSTRINGPTR dstr_p);
 void strf(double x, int a, int b, SPICE_DSTRINGPTR dstr_p); /* float -> string */
 long   ival(char * s, int *err);
 double rval(char * s, int *err);
+int posi (char *sub, char *s, int opt);
 
 char upcase(char c);
 char lowcase(char c);

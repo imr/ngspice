@@ -70,6 +70,7 @@ double exprand(double);
 void checkseed(void);
 double drand(void);
 double gauss0(void);
+void rgauss(double* py1, double* py2);
 int poisson(double);
 
 
