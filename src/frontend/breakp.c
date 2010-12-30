@@ -69,47 +69,68 @@ com_stop(wordlist *wl)
 	    }
             d->db_iteration = i;
             wl = wl->wl_next->wl_next;
-        } else if (eq(wl->wl_word, "when") && wl->wl_next &&
-                    wl->wl_next->wl_next && /* ick */
-                    wl->wl_next->wl_next->wl_next) {
-            wl = wl->wl_next;
-            d->db_number = debugnumber;
-            d->db_type = DB_STOPWHEN;
-            s = wl->wl_word;
-            val = ft_numparse(&s, FALSE);
-            if (val)
-                d->db_value1 = *val;
-            else
-                d->db_nodename1 = copy(wl->wl_word);
-            wl = wl->wl_next;
+        } else if (eq(wl->wl_word, "when") && wl->wl_next) {
+            /* cp_lexer(string) will not discriminate '=', so we have 
+               to do it here */
+            if (strstr(wl->wl_next->wl_word,"=") && !(wl->wl_next->wl_next)) {
+                /* we have vec=val in a single word */
+                wordlist * wln;
+                char** charr = TMALLOC(char*, 4) ;
+                char *tok = copy(wl->wl_next->wl_word);
+                char *tokeq = strstr(tok,"=");
+                char *tokafter = copy(tokeq+1);
+                *tokeq = '\0';
+                charr[0] = tok;
+                charr[1] = copy("eq");
+                charr[2] = tokafter;
+                charr[3] = NULL;
+                wln = wl_build(charr);
+                wl_free(wl->wl_next);
+                wl->wl_next = NULL;
+                wl = wl_append(wl, wln);
+            }
 
-            /* Now get the condition */
-            if (eq(wl->wl_word, "eq") || eq(wl->wl_word, "="))
-                d->db_op = DBC_EQU;
-            else if (eq(wl->wl_word, "ne") || eq(wl->wl_word, "<>"))
-                d->db_op = DBC_NEQ;
-            else if (eq(wl->wl_word, "gt") || eq(wl->wl_word, ">"))
-                d->db_op = DBC_GT;
-            else if (eq(wl->wl_word, "lt") || eq(wl->wl_word, "<"))
-                d->db_op = DBC_LT;
-            else if (eq(wl->wl_word, "ge") || eq(wl->wl_word, ">="))
-                d->db_op = DBC_GTE;
-            else if (eq(wl->wl_word, "le") || eq(wl->wl_word, "<="))
-                d->db_op = DBC_LTE;
-            else
+            if (wl->wl_next->wl_next && 
+                wl->wl_next->wl_next->wl_next) {
+                wl = wl->wl_next;
+                d->db_number = debugnumber;
+                d->db_type = DB_STOPWHEN;
+                s = wl->wl_word;
+                val = ft_numparse(&s, FALSE);
+                if (val)
+                    d->db_value1 = *val;
+                else
+                    d->db_nodename1 = copy(wl->wl_word);
+                wl = wl->wl_next;
+
+                /* Now get the condition */
+                if (eq(wl->wl_word, "eq") || eq(wl->wl_word, "="))
+                    d->db_op = DBC_EQU;
+                else if (eq(wl->wl_word, "ne") || eq(wl->wl_word, "<>"))
+                    d->db_op = DBC_NEQ;
+                else if (eq(wl->wl_word, "gt") || eq(wl->wl_word, ">"))
+                    d->db_op = DBC_GT;
+                else if (eq(wl->wl_word, "lt") || eq(wl->wl_word, "<"))
+                    d->db_op = DBC_LT;
+                else if (eq(wl->wl_word, "ge") || eq(wl->wl_word, ">="))
+                    d->db_op = DBC_GTE;
+                else if (eq(wl->wl_word, "le") || eq(wl->wl_word, "<="))
+                    d->db_op = DBC_LTE;
+                else
+                    goto bad;
+                wl = wl->wl_next;
+
+                /* Now see about the second one. */
+                s = wl->wl_word;
+                val = ft_numparse(&s, FALSE);
+                if (val)
+                    d->db_value2 = *val;
+                else
+                    d->db_nodename2 = copy(wl->wl_word);
+                wl = wl->wl_next;
+            } else
                 goto bad;
-            wl = wl->wl_next;
-
-            /* Now see about the second one. */
-            s = wl->wl_word;
-            val = ft_numparse(&s, FALSE);
-            if (val)
-                d->db_value2 = *val;
-            else
-                d->db_nodename2 = copy(wl->wl_word);
-            wl = wl->wl_next;
-        } else
-            goto bad;
+        }
     }
     if (thisone) {
         if (dbs) {
@@ -431,7 +452,8 @@ satisfied(struct dbcomm *d, struct plot *plot)
 
     switch (d->db_op) {
         case DBC_EQU:
-            return ((d1 == d2) ? TRUE : FALSE);
+            return (AlmostEqualUlps(d1, d2, 3) ? TRUE : FALSE);
+//            return ((d1 == d2) ? TRUE : FALSE);
         case DBC_NEQ:
             return ((d1 != d2) ? TRUE : FALSE);
         case DBC_GTE:
