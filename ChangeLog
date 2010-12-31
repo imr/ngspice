@@ -1,4 +1,7 @@
-2010-12-30 Holger Vogt
+10-12-31 Holger Vogt   
+ * breakp.c: allow multiple conditionals with '=' in stop command
+
+10-12-30 Holger Vogt
  * aspice.c, inpcom.c, numparam/general.h, 1-f-code.h, equality.c
    randnumb.c, spdefs.h, cktsens.c: remove compiler warnings
    breakp.c: allow 'time = nnn' in stop command

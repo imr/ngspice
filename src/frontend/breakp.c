@@ -72,7 +72,9 @@ com_stop(wordlist *wl)
         } else if (eq(wl->wl_word, "when") && wl->wl_next) {
             /* cp_lexer(string) will not discriminate '=', so we have 
                to do it here */
-            if (strstr(wl->wl_next->wl_word,"=") && !(wl->wl_next->wl_next)) {
+            if (strstr(wl->wl_next->wl_word,"=") && (!(wl->wl_next->wl_next) ||
+               strstr(wl->wl_next->wl_next->wl_word,"when") || 
+               strstr(wl->wl_next->wl_next->wl_word,"after"))) {
                 /* we have vec=val in a single word */
                 wordlist * wln;
                 char** charr = TMALLOC(char*, 4) ;
@@ -85,9 +87,10 @@ com_stop(wordlist *wl)
                 charr[2] = tokafter;
                 charr[3] = NULL;
                 wln = wl_build(charr);
-                wl_free(wl->wl_next);
-                wl->wl_next = NULL;
-                wl = wl_append(wl, wln);
+                wl_splice(wl->wl_next, wln);
+//                wl_free(wl->wl_next);
+//                wl->wl_next = NULL;
+//                wl = wl_append(wl, wln);
             }
 
             if (wl->wl_next->wl_next && 
