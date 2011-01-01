@@ -1,3 +1,9 @@
+11-01-01 Holger Vogt   
+ * breakp.c: update to multiple conditionals with '=' in stop command
+   dctran.c: set breakpoint upon startup from database dbs ('stop when time = xxx' command)
+   spiceif.c: additional call to CKTtemp(ckt) after 'altermod' command to set
+   device instance pParam for immediate use
+
 10-12-31 Holger Vogt   
  * breakp.c: allow multiple conditionals with '=' in stop command
 

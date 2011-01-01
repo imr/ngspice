@@ -16,6 +16,10 @@ Modified: 2000  AlansFixes
 #include "fteext.h"
 #include "missing_math.h"
 
+/* for setting breakpoints required by dbs data base */
+extern struct dbcomm *dbs;
+#include "ftedebug.h"
+
 #ifdef XSPICE
 /* gtri - add - wbk - Add headers */
 #include "miftypes.h"
@@ -153,6 +157,22 @@ DCtran(CKTcircuit *ckt,
         firsttime = 1;
         save_mode = (ckt->CKTmode&MODEUIC) | MODETRANOP | MODEINITJCT;
         save_order = ckt->CKTorder;
+
+/* Add breakpoints here which have been requested by the user setting the
+   stop command as 'stop when time = xx'.
+   Get data from the global dbs data base.
+*/
+        if (dbs) {
+            struct dbcomm *d;
+            for (d = dbs; d; d = d->db_next)
+                if ((d->db_type == DB_STOPWHEN) && cieq(d->db_nodename1,"time")
+                    && (d->db_value2 > 0)) {
+                    CKTsetBreak(ckt, d->db_value2);
+                    if (ft_ngdebug)
+                        printf("breakpoint set to time = %g\n", d->db_value2);
+                }
+        }
+
 #ifdef XSPICE
 /* gtri - begin - wbk - set a breakpoint at end of supply ramping time */
         /* must do this after CKTtime set to 0 above */
@@ -175,10 +195,10 @@ DCtran(CKTcircuit *ckt,
 /* gtri - end - wbk - Call EVTop if event-driven instances exist */
         } else
 #endif
-        converged = CKTop(ckt,
-                    (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITJCT,
-                    (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITFLOAT,
-                    ckt->CKTdcMaxIter);
+            converged = CKTop(ckt,
+                (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITJCT,
+                (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITFLOAT,
+                ckt->CKTdcMaxIter);
 
         if(converged != 0) {
             fprintf(stdout,"\nTransient solution failed -\n");

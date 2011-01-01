@@ -88,11 +88,8 @@ com_stop(wordlist *wl)
                 charr[3] = NULL;
                 wln = wl_build(charr);
                 wl_splice(wl->wl_next, wln);
-//                wl_free(wl->wl_next);
-//                wl->wl_next = NULL;
-//                wl = wl_append(wl, wln);
             }
-
+            /* continue with parsing the enhanced wordlist */
             if (wl->wl_next->wl_next && 
                 wl->wl_next->wl_next->wl_next) {
                 wl = wl->wl_next;
