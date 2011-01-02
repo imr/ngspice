@@ -1,5 +1,6 @@
 11-01-02 Holger Vogt   
  * spiceif.c: recall yesterday's change due to errors, if reset was given before
+   install again, but only for CKTtime > 0
 
 11-01-01 Holger Vogt   
  * breakp.c: update to multiple conditionals with '=' in stop command

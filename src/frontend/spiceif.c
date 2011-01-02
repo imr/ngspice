@@ -931,12 +931,12 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
 
     /* Call to CKTtemp(ckt) will be invoked here only by 'altermod' commands,
        to set internal model parameters pParam of each instance for immediate use, 
-       otherwise e.g. model->BSIM3vth0 will be set, 
-       but not pParam of any BSIM3 instance.  
+       otherwise e.g. model->BSIM3vth0 will be set, but not pParam of any BSIM3 instance. 
+       Call only if CKTtime > 0 to avoid conflict with previous 'reset' command.
        May contain side effects because call is abundant.  h_vogt 110101
     */
-//    if (do_model)
-//        CKTtemp(ckt);
+    if ((do_model) && (ckt->CKTtime > 0))
+        CKTtemp(ckt);
 }
 
 static struct variable *
