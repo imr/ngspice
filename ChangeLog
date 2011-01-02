@@ -1,3 +1,7 @@
+11-01-02 Dietmar Warning
+ * math/fft/fftlib.c: inline functions to static
+ * ngspice.h: __inline for _MSC_VER
+
 11-01-02 Holger Vogt   
  * spiceif.c: recall yesterday's change due to errors, if reset was given before
    install again, but only for CKTtime > 0
