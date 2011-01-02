@@ -171,7 +171,7 @@
 #define open _open
 #define write _write
 #define strcasecmp _stricmp
-#define inline _inline
+#define inline __inline
 #endif
 
 
