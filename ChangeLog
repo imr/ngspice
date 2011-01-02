@@ -1,3 +1,6 @@
+11-01-02 Holger Vogt   
+ * spiceif.c: recall yesterday's change due to errors, if reset was given before
+
 11-01-01 Holger Vogt   
  * breakp.c: update to multiple conditionals with '=' in stop command
    dctran.c: set breakpoint upon startup from database dbs ('stop when time = xxx' command)

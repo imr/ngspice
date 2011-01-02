@@ -935,8 +935,8 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
        but not pParam of any BSIM3 instance.  
        May contain side effects because call is abundant.  h_vogt 110101
     */
-    if (do_model)
-        CKTtemp(ckt);
+//    if (do_model)
+//        CKTtemp(ckt);
 }
 
 static struct variable *
