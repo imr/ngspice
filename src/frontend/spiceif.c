@@ -60,6 +60,8 @@ CDHW*/
 #include "spiceif.h"
 #include "variable.h"
 
+#include "error.h"
+
 #ifdef XSPICE
 /* gtri - add - wbk - 11/9/90 - include MIF function prototypes */
 #include "mifproto.h"
@@ -935,8 +937,12 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
        Call only if CKTtime > 0 to avoid conflict with previous 'reset' command.
        May contain side effects because call is abundant.  h_vogt 110101
     */
-    if ((do_model) && (ckt->CKTtime > 0))
-        CKTtemp(ckt);
+    if ((do_model) && (ckt->CKTtime > 0)) {
+        int error = 0;
+        error = CKTtemp(ckt);
+        if (error) fprintf(stderr,"Error during changing a device model parameter!\n"); 
+        if (error) controlled_exit(1);
+    }
 }
 
 static struct variable *

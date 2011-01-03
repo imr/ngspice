@@ -1,3 +1,6 @@
+11-01-03 Holger Vogt
+ * spiceif.c: add error checking for 'altermod'
+
 11-01-02 Dietmar Warning
  * math/fft/fftlib.c: inline functions to static
  * ngspice.h: __inline for _MSC_VER
