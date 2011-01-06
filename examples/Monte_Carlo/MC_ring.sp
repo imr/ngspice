@@ -30,7 +30,8 @@ cout  buf ss 0.2pF
 *
 .options noacct
 .control
-  let mc_runs = 10               $ number of runs for monte carlo
+  save buf                        $ we just need buf, save memory by more than 10x
+  let mc_runs = 10             $ number of runs for monte carlo
   let run = 0                     $ number of actual run
   set curplot = new               $ create a new plot
   set curplottitle = "Transient outputs"
@@ -42,7 +43,8 @@ cout  buf ss 0.2pF
   set curplottitle = "Oscillation frequency"
   set max_fft = $curplot          $ store its name to 'max_fft'
   let mc_runsp = mc_runs + 1
-  let maxffts = unitvec(mc_runsp) $ vector for storing measure results
+  let maxffts = unitvec(mc_runsp) $ vector for storing max measure results
+  let halfffts = unitvec(mc_runsp)$ vector for storing measure results at -40dB rising
 *
 * define distributions for random numbers:
 * unif: uniform distribution, deviation relativ to nominal value
@@ -82,7 +84,7 @@ cout  buf ss 0.2pF
       altermod @n1[u0]=gauss($n1u0, 0.05, 3)
       altermod @n1[tox]=gauss($n1tox, 0.1, 3)
       altermod @n1[lint]=gauss($n1lint, 0.1, 3)
-      altermod @n1[wint]=gauss($n1wint, 0.1, 3)
+      altermod @n1[wint]=gauss($n1wint, 0.1, 3)	  
       altermod @p1[vth0]=gauss($p1vth0, 0.1, 3)
       altermod @p1[u0]=gauss($p1u0, 0.1, 3)
       altermod @p1[tox]=gauss($p1tox, 0.1, 3)
@@ -103,7 +105,7 @@ cout  buf ss 0.2pF
     set mc_runs ="$&mc_runs"      $ create a variable from the vector
     echo simulation run no. $run of $mc_runs
     * save the linearized data for having equal time scales for all runs
-    linearize
+    linearize buf                 $ linearize only buf, no other vectors needed
     set dt = $curplot             $ store the current plot to dt (tran i+1)
     setplot $plot_out             $ make 'plt_out' the active plot
     * firstly save the time scale once to become the default scale
@@ -116,9 +118,11 @@ cout  buf ss 0.2pF
     let buf2=db(mag(buf))
     * find the frequency where buf has its maximum of the fft signal
     meas sp fft_max MAX_AT buf2 from=0.1G to=0.7G
+    * find the frequency where buf is -40dB at rising fft signal
+    meas sp fft_40 WHEN buf2=-40 RISE=1 from=0.1G to=0.7G	
     * store the fft vector
     set dt = $curplot             $ store the current plot to dt (spec i)
-    setplot $plot_fft             $ make 'plt_fft' the active plot
+    setplot $plot_fft             $ make 'plot_fft' the active plot
     if run=0
        let frequency={$dt}.frequency
     end
@@ -126,6 +130,7 @@ cout  buf ss 0.2pF
     * store the measured value
     setplot $max_fft              $ make 'max_fft' the active plot
     let maxffts[{$run}]={$dt}.fft_max
+	let halfffts[{$run}]={$dt}.fft_40
 *   setplot $plot_out
 * The following command does not work here. Why not? Probably not a real copy.
 *    destroy $dt                   $ save memory, we don't need this plot (spec) any more
@@ -169,6 +174,10 @@ cout  buf ss 0.2pF
   * plot the histogram
   set plotstyle=combplot
   plot yvec-1 vs xvec             $ subtract 1 because with started with unitvec containing ones
+* calculate jitter
+  let diff40 = (vecmax(halfffts) - vecmin(halfffts))*1e-6
+  echo
+  echo Max. jitter is "$&diff40" MHz
   rusage
 .endc
 ********************************************************************************
@@ -207,6 +216,7 @@ cout  buf ss 0.2pF
 +noimod=2
 +af=1.075e+00              kf=9.670e-28               ef=1.056e+00
 +noia=1.130e+20            noib=7.530e+04             noic=-8.950e-13
+**** PMOS ***
 .model p1 pmos
 +level=8
 +version=3.3.0

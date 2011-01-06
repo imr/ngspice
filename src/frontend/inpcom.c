@@ -645,79 +645,89 @@ get_subckts_for_subckt( struct line *start_card, char *subckt_name,
 			char *used_model_names[], int *num_used_model_names,
 			bool has_models )
 {
-  struct line *card;
-  char *line = NULL, *curr_subckt_name, *inst_subckt_name, *model_name, *new_names[100];
-  bool found_subckt = FALSE, have_subckt = FALSE, found_model = FALSE;
-  int  i, num_terminals = 0, tmp_cnt = 0;
+    struct line *card;
+    char *line = NULL, *curr_subckt_name, *inst_subckt_name, *model_name, *new_names[100];
+    bool found_subckt = FALSE, have_subckt = FALSE, found_model = FALSE;
+    int  i, num_terminals = 0, tmp_cnt = 0;
 
-  for ( card = start_card; card != NULL; card = card->li_next ) {
-    line = card->li_line;
+    for ( card = start_card; card != NULL; card = card->li_next ) {
+        line = card->li_line;
 
-    if ( *line == '*' ) continue;
+        if ( *line == '*' ) continue;
 
-    if ( ( ciprefix( ".ends",   line ) || ciprefix( ".eom",   line ) ) && found_subckt )
-      break;
+        if ( ( ciprefix( ".ends",   line ) || ciprefix( ".eom",   line ) ) && found_subckt )
+            break;
 
-    if ( ciprefix( ".subckt", line ) || ciprefix( ".macro", line ) ) {
-      curr_subckt_name = get_subckt_model_name( line );
+        if ( ciprefix( ".subckt", line ) || ciprefix( ".macro", line ) ) {
+            curr_subckt_name = get_subckt_model_name( line );
 
-      if ( strcmp( curr_subckt_name, subckt_name ) == 0 ) {
-	found_subckt = TRUE;
-      }
+            if ( strcmp( curr_subckt_name, subckt_name ) == 0 ) {
+                found_subckt = TRUE;
+            }
 
-      tfree(curr_subckt_name);
+            tfree(curr_subckt_name);
+        }
+        if ( found_subckt ) {
+            if ( *line == 'x' ) {
+                inst_subckt_name = get_instance_subckt( line );
+                have_subckt = FALSE;
+                for ( i = 0; i < *num_used_subckt_names; i++ )
+                    if ( strcmp( used_subckt_names[i], inst_subckt_name ) == 0 )
+                        have_subckt = TRUE;
+                if ( !have_subckt ) {
+                    new_names[tmp_cnt++] = used_subckt_names[*num_used_subckt_names] = inst_subckt_name;
+                    *num_used_subckt_names = *num_used_subckt_names + 1;
+                }
+                else  tfree( inst_subckt_name );
+            }
+            else if ( *line == 'a' ) {
+                model_name = get_adevice_model_name( line );
+                found_model = FALSE;
+                for ( i = 0; i < *num_used_model_names; i++ )
+                    if ( strcmp( used_model_names[i], model_name ) == 0 ) found_model = TRUE;
+                    if ( !found_model ) {
+                        used_model_names[*num_used_model_names] = model_name;
+                        *num_used_model_names = *num_used_model_names + 1;
+                    }
+                    else  tfree( model_name );
+            }
+            else if ( has_models ) {
+                num_terminals = get_number_terminals( line );
+
+                if ( num_terminals != 0 ) {
+                    char *tmp_name, *tmp_name1;
+                    tmp_name1 = tmp_name = model_name = get_model_name( line, num_terminals );
+
+                    if ( isalpha( *model_name ) ||
+                    /* first character is digit, second is alpha, third is digit,
+                    e.g. 1N4002 */	  
+                        ((strlen(model_name) > 2) && isdigit(*tmp_name) && 
+                        isalpha(*(++tmp_name)) && isdigit(*(++tmp_name))) ||
+                    /* first character is is digit, second is alpha, third is alpha, fourth is digit
+                    e.g. 2SK456 */
+                        ((strlen(model_name) > 3) && isdigit(*tmp_name1) && isalpha(*(++tmp_name1)) &&
+                        isalpha(*(++tmp_name1)) && isdigit(*(++tmp_name1))))
+                    {
+                        found_model = FALSE;
+                        for ( i = 0; i < *num_used_model_names; i++ )
+                            if ( strcmp( used_model_names[i], model_name ) == 0 ) found_model = TRUE;
+                            if ( !found_model ) {
+                                used_model_names[*num_used_model_names] = model_name;
+                                 *num_used_model_names = *num_used_model_names + 1;
+                            }
+                            else  tfree( model_name );
+                    }
+                    else {
+                        tfree( model_name );
+                    }
+                }
+            }
+        }
     }
-    if ( found_subckt ) {
-      if ( *line == 'x' ) {
-	inst_subckt_name = get_instance_subckt( line );
-	have_subckt = FALSE;
-	for ( i = 0; i < *num_used_subckt_names; i++ )
-	  if ( strcmp( used_subckt_names[i], inst_subckt_name ) == 0 )
-	    have_subckt = TRUE;
-	if ( !have_subckt ) {
-	  new_names[tmp_cnt++] = used_subckt_names[*num_used_subckt_names] = inst_subckt_name;
-	  *num_used_subckt_names = *num_used_subckt_names + 1;
-	}
-	else  tfree( inst_subckt_name );
-      }
-      else if ( *line == 'a' ) {
-	model_name = get_adevice_model_name( line );
-	found_model = FALSE;
-	for ( i = 0; i < *num_used_model_names; i++ )
-	  if ( strcmp( used_model_names[i], model_name ) == 0 ) found_model = TRUE;
-	if ( !found_model ) {
-	  used_model_names[*num_used_model_names] = model_name;
-	  *num_used_model_names = *num_used_model_names + 1;
-	}
-	else  tfree( model_name );
-      }
-      else if ( has_models ) {
-	num_terminals = get_number_terminals( line );
-
-	if ( num_terminals != 0 ) {
-	  model_name = get_model_name( line, num_terminals );
-	  
-	  if ( isalpha( *model_name ) ) {
-	    found_model = FALSE;
-	    for ( i = 0; i < *num_used_model_names; i++ )
-	      if ( strcmp( used_model_names[i], model_name ) == 0 ) found_model = TRUE;
-	    if ( !found_model ) {
-	      used_model_names[*num_used_model_names] = model_name;
-	      *num_used_model_names = *num_used_model_names + 1;
-	    }
-	    else  tfree( model_name );
-	  }
-	  else {
-	    tfree( model_name );
-	  }
-	}
-      }
-    }
-  }
-  // now make recursive call on instances just found above
-  for ( i = 0; i < tmp_cnt; i++ )
-    get_subckts_for_subckt( start_card, new_names[i], used_subckt_names, num_used_subckt_names,
-			    used_model_names, num_used_model_names, has_models );
+    // now make recursive call on instances just found above
+    for ( i = 0; i < tmp_cnt; i++ )
+        get_subckts_for_subckt( start_card, new_names[i], used_subckt_names, num_used_subckt_names,
+            used_model_names, num_used_model_names, has_models );
 }
 
 /*
