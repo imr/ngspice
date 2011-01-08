@@ -1,3 +1,6 @@
+/* Command cdump: dump the control structure to the console output */
+
+#include "ngspice.h"
 #include <stdio.h>
 
 #include <wordlist.h>
