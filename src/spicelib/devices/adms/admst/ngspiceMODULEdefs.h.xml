@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.15  2009-01-01 20:48:48  dwarning
+  Revision 1.16  2011-01-12 20:06:59  dwarning
+  allow gmin stepping by using ckt->CKTdiagGmin
+
+  Revision 1.15  2009/01/01 20:48:48  dwarning
   some cc needs double for isinf macro
 
   Revision 1.14  2007/07/23 17:24:14  dwarning
@@ -165,7 +168,7 @@ if(isinf((double) var)) \\
 */
 
 #define _circuit_gdev                ckt-&gt;CKTgmin
-#define _circuit_gmin                ckt-&gt;CKTgmin
+#define _circuit_gmin                ((ckt-&gt;CKTgmin)&gt;(ckt-&gt;CKTdiagGmin))?(ckt-&gt;CKTgmin):(ckt-&gt;CKTdiagGmin)
 #define _circuit_imax                1.0
 #define _circuit_imelt               1.0
 #define _circuit_iteration           1.0
