@@ -75,12 +75,15 @@ com_print(wordlist *wl)
     struct plot *p;
     bool col = TRUE, nobreak = FALSE, noprintscale, plotnames = FALSE;
     bool optgiven = FALSE;
-    char *s, buf[BSIZE_SP], buf2[BSIZE_SP];
+    char *s, *buf, *buf2; /*, buf[BSIZE_SP], buf2[BSIZE_SP];*/    
     char numbuf[BSIZE_SP], numbuf2[BSIZE_SP]; /* Printnum buffers */
     int ngood;
 
     if (wl == NULL)
         return;
+
+    buf = TMALLOC(char, BSIZE_SP);
+    buf2 = TMALLOC(char, BSIZE_SP);    
         
     if (eq(wl->wl_word, "col")) {
         col = TRUE;
@@ -95,18 +98,18 @@ com_print(wordlist *wl)
     ngood = 0;
     for (nn = ft_getpnames(wl, TRUE); nn; nn = nn->pn_next) {
         if ((v = ft_evaluate(nn)) == NULL)
-	    continue;
-	if (!vecs)
-	    vecs = lv = v;
-	else
-	    lv->v_link2 = v;
-	for (lv = v; lv->v_link2; lv = lv->v_link2)
-	    ;
-	ngood += 1;
+            continue;
+        if (!vecs)
+            vecs = lv = v;
+        else
+            lv->v_link2 = v;
+        for (lv = v; lv->v_link2; lv = lv->v_link2)
+            ;
+        ngood += 1;
     }
 
     if (!ngood)
-	return;
+        goto done;
 
     /* See whether we really have to print plot names. */
     for (v = vecs; v; v = v->v_link2)
@@ -122,9 +125,9 @@ com_print(wordlist *wl)
             if (v->v_length > 1) {
                 col = TRUE;
                 /* Improvement made to print cases @[sin] = (0 12 13 100K) */
-		if ( (v->v_plot->pl_scale && v->v_length != v->v_plot->pl_scale->v_length) && ( (*(v->v_name))=='@') )
+                if ( (v->v_plot->pl_scale && v->v_length != v->v_plot->pl_scale->v_length) && ( (*(v->v_name))=='@') )
                 {
-                 col = FALSE;
+                    col = FALSE;
                 }
                 break;
             }
@@ -159,71 +162,67 @@ com_print(wordlist *wl)
 	    *  @M1 = 0,00e+00
 	    * In any other case rlength not used for anything and only applies in the copy of the vectors.
         */
-	   if (v->v_rlength == 0)
-	   {	   
-            if (v->v_length == 1) 
-	     {
-                if (isreal(v))
-		{
-                	printnum(numbuf, *v->v_realdata);
-                    out_printf("%s = %s\n", buf, numbuf);
-                } else {
-                 /*DG: memory leak here copy of the string returned by printnum will never be freed 
-                    out_printf("%s = %s,%s\n", buf,
-                        copy(printnum(realpart(v->v_compdata))),
-                        copy(printnum(imagpart(v->v_compdata)))); */
-                        
-                    printnum(numbuf,  realpart(v->v_compdata));
-                    printnum(numbuf2, imagpart(v->v_compdata));
-                    
-                    out_printf("%s = %s,%s\n", buf,
-                        numbuf,
-                        numbuf2);
-                   
-
-                }
-            } else {
-                out_printf("%s = (  ", buf);
-                for (i = 0; i < v->v_length; i++)
-                    if (isreal(v)) {
-                    	
-                    	printnum(numbuf, v->v_realdata[i]);
-                        (void) strcpy(buf, numbuf);
-                        out_send(buf);
-                        ll += (int) strlen(buf);
-                        ll = (ll + 7) / 8;
-                        ll = ll * 8 + 1;
-                        if (ll > 60) {
-                            out_send("\n\t");
-                            ll = 9;
-                        } else
-                            out_send("\t");
+            if (v->v_rlength == 0)
+            {	   
+                if (v->v_length == 1) 
+                {
+                    if (isreal(v))
+                    {
+                        printnum(numbuf, *v->v_realdata);
+                        out_printf("%s = %s\n", buf, numbuf);
                     } else {
-                        /*DG*/
-                        printnum(numbuf,  realpart(&v->v_compdata[i]));
-                        printnum(numbuf2, imagpart(&v->v_compdata[i]));
-                        (void) sprintf(buf, "%s,%s",
+                        printnum(numbuf,  realpart(v->v_compdata));
+                        printnum(numbuf2, imagpart(v->v_compdata));
+                        out_printf("%s = %s,%s\n", buf,
                             numbuf,
                             numbuf2);
-                        out_send(buf);
-                        ll += (int) strlen(buf);
-                        ll = (ll + 7) / 8;
-                        ll = ll * 8 + 1;
-                        if (ll > 60) {
-                            out_send("\n\t");
-                            ll = 9;
-                        } else
-                            out_send("\t");
                     }
-                out_send(")\n");
-	      } //end if (v->v_length == 1)
-	   }  //end  if (v->v_rlength == 1)
+                } else {
+                    out_printf("%s = (  ", buf);
+                    for (i = 0; i < v->v_length; i++)
+                        if (isreal(v)) {
+                    	
+                            printnum(numbuf, v->v_realdata[i]);
+                            (void) strcpy(buf, numbuf);
+                            out_send(buf);
+                            ll += (int) strlen(buf);
+                            ll = (ll + 7) / 8;
+                            ll = ll * 8 + 1;
+                            if (ll > 60) {
+                                out_send("\n\t");
+                                ll = 9;
+                            } else
+                                out_send("\t");
+                        } else {
+                        /*DG*/
+                            printnum(numbuf,  realpart(&v->v_compdata[i]));
+                            printnum(numbuf2, imagpart(&v->v_compdata[i]));
+                            (void) sprintf(buf, "%s,%s",
+                                numbuf,
+                                numbuf2);
+                            out_send(buf);
+                            ll += (int) strlen(buf);
+                            ll = (ll + 7) / 8;
+                            ll = ll * 8 + 1;
+                            if (ll > 60) {
+                                out_send("\n\t");
+                                ll = 9;
+                            } else
+                                out_send("\t");
+                        }
+                        out_send(")\n");
+                } //end if (v->v_length == 1)
+            }  //end  if (v->v_rlength == 1)
         }
     } else {    /* Print in columns. */
         if (cp_getvar("width", CP_NUM, (char *) &i))
             width = i;
         if (width < 40)
             width = 40;
+        if (width > BSIZE_SP - 2)  {
+            buf = TREALLOC(char, buf, width + 1);
+            buf2 = TREALLOC(char, buf2, width + 1); 
+        }            
         if (cp_getvar("height", CP_NUM, (char *) &i))
             height = i;
         if (height < 20)
@@ -231,8 +230,8 @@ com_print(wordlist *wl)
         nobreak = cp_getvar("nobreak", CP_BOOL, NULL);
         if (!nobreak && !ft_nopage)
             nobreak = FALSE;
-	else
-	    nobreak = TRUE;
+        else
+            nobreak = TRUE;
         noprintscale = cp_getvar("noprintscale", CP_BOOL, NULL);
         bv = vecs;
 nextpage:
@@ -260,8 +259,8 @@ nextpage:
         /* Print the header on the first page only. */
         p = bv->v_plot;
         j = (width - (int) strlen(p->pl_title)) / 2;	/* Yes, keep "(int)" */
-	if (j < 0)
-		j = 0;
+        if (j < 0)
+            j = 0;
         for (i = 0; i < j; i++)
             buf2[i] = ' ';
         buf2[j] = '\0';
@@ -283,22 +282,22 @@ nextpage:
             if (isreal(v))
                 (void) sprintf(buf2, "%-16.15s", v->v_name);
             else
-		{
-         /* The frequency vector is complex but often with imaginary part = 0, 
-          * this prevents to print two columns.
-          */
-		 if(eq(v->v_name, "frequency"))
-		 {
-		  if(imagpart(&v->v_compdata[0])==0.0)
-		  {
-                   (void) sprintf(buf2, "%-16.15s", v->v_name);
-		  }
-		  else
-                   (void) sprintf(buf2, "%-32.31s", v->v_name);
-		 }
-		 else
-                  (void) sprintf(buf2, "%-32.31s", v->v_name);
-		}
+            {
+            /* The frequency vector is complex but often with imaginary part = 0, 
+            * this prevents to print two columns.
+            */
+                if(eq(v->v_name, "frequency"))
+                {
+                    if(imagpart(&v->v_compdata[0])==0.0)
+                    {
+                        (void) sprintf(buf2, "%-16.15s", v->v_name);
+                    }
+                    else
+                        (void) sprintf(buf2, "%-32.31s", v->v_name);
+                }
+                else
+                    (void) sprintf(buf2, "%-32.31s", v->v_name);
+            }
             (void) strcat(buf, buf2);   
         }
         lineno = 3;
@@ -318,9 +317,8 @@ pbreak:     /* New page. */
         lineno += 2;
 loop:
         while ((j < npoints) && (lineno < height)) {
-/*            out_printf("%d\t", j); */
-	    sprintf(out_pbuf, "%d\t", j);
-	    out_send(out_pbuf);
+            sprintf(out_pbuf, "%d\t", j);
+            out_send(out_pbuf);
             for (v = bv; (v && (v != lv)); v = v->v_link2) {
                 if (v->v_length <= j) {
                     if (isreal(v))
@@ -329,35 +327,30 @@ loop:
                         out_send("\t\t\t\t");
                 } else {
                     if (isreal(v)) 
-		    {
+                    {
                         printnum(numbuf,  v->v_realdata[j]);
-                        //sprintf(out_pbuf, "%e\t",v->v_realdata[j]);
                         (void) sprintf(out_pbuf, "%s\t",numbuf);
-			out_send(out_pbuf);
+                        out_send(out_pbuf);
                     }
-		    else
-		    {
-            /* In case of a single frequency and have a real part avoids print imaginary part equals 0. */
-			if(eq(v->v_name, "frequency"))
-			{
-			 if(imagpart(&v->v_compdata[j])==0.0)
-			 {
-                          printnum(numbuf,  realpart(&v->v_compdata[j]));
-                          (void) sprintf(out_pbuf, "%s\t",numbuf);
-			 }
-			}
-			else
-			{
-                          printnum(numbuf,  realpart(&v->v_compdata[j]));
-                          printnum(numbuf2, imagpart(&v->v_compdata[j]));
-                          (void) sprintf(out_pbuf, "%s,\t%s\t",numbuf,numbuf2);
-/*                       sprintf(out_pbuf, "%e,\t%e\t",
- *                        	realpart(&v->v_compdata[j]),
- *                        	imagpart(&v->v_compdata[j]));
- */
-			}
-			out_send(out_pbuf);
-		    }
+                    else
+                    {
+                    /* In case of a single frequency and have a real part avoids print imaginary part equals 0. */
+                        if(eq(v->v_name, "frequency"))
+                        {
+                            if(imagpart(&v->v_compdata[j])==0.0)
+                            {
+                                printnum(numbuf,  realpart(&v->v_compdata[j]));
+                                (void) sprintf(out_pbuf, "%s\t",numbuf);
+                            }
+                        }
+                        else
+                        {
+                            printnum(numbuf,  realpart(&v->v_compdata[j]));
+                            printnum(numbuf2, imagpart(&v->v_compdata[j]));
+                            (void) sprintf(out_pbuf, "%s,\t%s\t",numbuf,numbuf2);
+                        }
+                        out_send(out_pbuf);
+                    }
                 }
             }
             out_send("\n");
@@ -382,6 +375,8 @@ loop:
     }
 done:
     /* Get rid of the vectors. */
+    tfree(buf);
+    tfree(buf2);
     return;
 }
 
@@ -714,7 +709,7 @@ com_cross(wordlist *wl)
         fprintf(cp_err, "Error: bad number %s\n", wl->wl_word);
         return;
     }
-    if ((ind = *d) < 0) {
+    if ((ind = (int)*d) < 0) {
         fprintf(cp_err, "Error: badstrchr %d\n", ind);
         return;
     }
