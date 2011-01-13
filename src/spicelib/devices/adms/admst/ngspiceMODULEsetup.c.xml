@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.5  2006-03-06 12:50:15  r29173
+  Revision 1.6  2011-01-13 17:05:46  dwarning
+  set version parameter to 2.3.0
+
+  Revision 1.5  2006/03/06 12:50:15  r29173
   added support to 'analog functions'
 
   Revision 1.4  2006/03/05 09:38:41  pnenzi
@@ -44,7 +47,7 @@
 -->
 
 <!DOCTYPE admst SYSTEM "admst.dtd">
-<admst version="2.2.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
+<admst version="2.3.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
 
 <admst:template match="dectype">
   <admst:choose>

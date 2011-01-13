@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.1  2007-07-05 09:45:33  r29173
+  Revision 1.2  2011-01-13 17:05:46  dwarning
+  set version parameter to 2.3.0
+
+  Revision 1.1  2007/07/05 09:45:33  r29173
   started noise implementation (added just a template!)
 
   Revision 1.2  2006/03/05 09:38:41  pnenzi
@@ -37,7 +40,7 @@
 -->
 
 <!DOCTYPE admst SYSTEM "admst.dtd">
-<admst version="2.2.7" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
+<admst version="2.3.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
 
 <admst:template match="code">
 <admst:variable name="module" select="%(attribute[name='ngspicename']/value)"/>

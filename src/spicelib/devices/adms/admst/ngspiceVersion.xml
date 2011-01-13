@@ -5,7 +5,10 @@
 -->
 <!--
   $Log$
-  Revision 1.20  2007-07-05 10:20:48  r29173
+  Revision 1.21  2011-01-13 17:05:46  dwarning
+  set version parameter to 2.3.0
+
+  Revision 1.20  2007/07/05 10:20:48  r29173
   added declaration of noise variables
 
   Revision 1.19  2007/05/13 09:55:14  pnenzi
@@ -71,7 +74,7 @@
 
 -->
 <!DOCTYPE admst SYSTEM "admst.dtd">
-<admst version="2.2.6" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
+<admst version="2.3.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
 
 <admst:template match=":new:jacobian">
   <admst:value-of select="module"/>

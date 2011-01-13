@@ -1,3 +1,6 @@
+11-01-13 Dietmar Warning
+ * devices/adms/admst/*.xml: set version parameter to 2.3.0 to come in line with admsXml
+
 11-01-12 Dietmar Warning
  * devices/adms/admst/ngspiceMODULEdefs.h.xml: allow gmin stepping by using ckt->CKTdiagGmin
 

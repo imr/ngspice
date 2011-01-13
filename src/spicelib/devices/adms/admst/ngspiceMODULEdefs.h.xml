@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.16  2011-01-12 20:06:59  dwarning
+  Revision 1.17  2011-01-13 17:05:46  dwarning
+  set version parameter to 2.3.0
+
+  Revision 1.16  2011/01/12 20:06:59  dwarning
   allow gmin stepping by using ckt->CKTdiagGmin
 
   Revision 1.15  2009/01/01 20:48:48  dwarning
@@ -70,7 +73,7 @@
 -->
 
 <!DOCTYPE admst SYSTEM "admst.dtd">
-<admst version="2.2.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
+<admst version="2.3.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
 
 <admst:template match="dectype">
   <admst:choose>

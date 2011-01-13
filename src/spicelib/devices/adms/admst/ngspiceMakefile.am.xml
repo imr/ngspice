@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.14  2008-12-22 08:16:59  dwarning
+  Revision 1.15  2011-01-13 17:05:46  dwarning
+  set version parameter to 2.3.0
+
+  Revision 1.14  2008/12/22 08:16:59  dwarning
   switch to libtool
 
   Revision 1.13  2008/08/24 17:12:59  pnenzi
@@ -77,7 +80,7 @@
 -->
 
 <!DOCTYPE admst SYSTEM "admst.dtd">
-<admst version="2.2.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
+<admst version="2.3.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
 
 
 <admst:template match="code">
