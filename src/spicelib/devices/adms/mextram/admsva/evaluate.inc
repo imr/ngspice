@@ -86,7 +86,7 @@ Vsc3 = Vsc4 - Vc3c4 ;
    pW = 2.0 *  eVb2c1VDC / (1.0 + Kw);   
    if (pW < `TEN_M40) pW = 0; 
    Ec = Vt * (K0 - Kw - ln((K0 + 1.0) / (Kw + 1.0)) );    
-   Ic1c2 =  (Ec + Vc1c2) / RCV_TM;     
+   Ic1c2 =  (Ec + Vc1c2) / RCV_TM + _circuit_gmin * Vc1c2;     
   
    if (Ic1c2 > 0.0) begin   
       
@@ -275,7 +275,7 @@ Vsc3 = Vsc4 - Vc3c4 ;
    qBQ = q1Q * (1.0 + 0.5 * (n0 + nB));    
   
    Rb2 = 3.0 * RBV_TM / qBQ;   
-   Ib1b2 =  (2.0 * Vt * (eVb1b2 - 1.0) + Vb1b2) / Rb2;   
+   Ib1b2 =  (2.0 * Vt * (eVb1b2 - 1.0) + Vb1b2) / Rb2 + _circuit_gmin * Vb1b2;   
    
    // Weak-avalanche current   
       
