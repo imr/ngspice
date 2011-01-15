@@ -49,8 +49,9 @@ DIST_SUBDIRS =	bsim1	\
 
 if XSPICE_WANTED
 SUBDIRS += xspice
-DIST_SUBDIRS += xspice
 endif
+
+DIST_SUBDIRS += xspice
 
 TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 

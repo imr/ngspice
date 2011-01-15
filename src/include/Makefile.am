@@ -111,6 +111,10 @@ noinst_HEADERS =	\
 	twomesh.h	\
 	typedefs.h	\
 	wordlist.h	\
+	1-f-code.h	\
+	FastNorm3.h	\
+	fftext.h	\
+	wallace.h	\
 	wstdio.h
 
 MAINTAINERCLEANFILES = Makefile.in

@@ -1,3 +1,13 @@
+2011-01-15  Robert Larice
+ * src/frontend/trannoise/Makefile.am ,
+ * src/include/Makefile.am ,
+ * src/maths/fft/Makefile.am ,
+ * tests/Makefile.am ,
+ * src/maths/fft/Read\ Me ,
+ * src/maths/fft/Read-Me :
+    updates for the make infrastructure (trannoise and tests/xspice)
+    renamed "Read Me" to avoid whitespace in the filename
+
 11-01-13 Dietmar Warning
  * devices/adms/admst/*.xml: set version parameter to 2.3.0 to come in line with admsXml
 
