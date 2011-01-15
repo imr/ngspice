@@ -6,16 +6,16 @@ VS S 0 0.0
 Q1 C B 0 S DT BJTRF1
 
 .control
-dc vc 0.0 5.0 0.05 ib 1u 8u 1u
+dc vc 0.0 6.0 0.05 ib 1u 8u 1u
 plot abs(i(vc)) xlabel Vce title Output-Characteristic
-plot v(dt) xlabel Vce ylabel grdC
+plot v(dt) xlabel Vce ylabel grdC title Selfheating
 .endc
 
 .model BJTRF1 NPN LEVEL=6
 +MULT=1.000E+00
 +TREF=25.000E+00
 +DTA=0.000E+00
-+EXMOD=0.000E+00
++EXMOD=1.000E+00
 +EXPHI=0.000E+00
 +EXAVL=1.000E+00
 +IS=23.571E-18
@@ -36,8 +36,8 @@ plot v(dt) xlabel Vce ylabel grdC
 +RE=949.668E-03
 +RBC=27.769E+00
 +RBV=32.004E+00
-+RCBLX=1.0
-+RCBLI=1.0
++RCBLX=10.0
++RCBLI=10.0
 +RCC=18.026E+00
 +RCV=237.417E+00
 +SCRCV=882.839E+00
@@ -82,7 +82,7 @@ plot v(dt) xlabel Vce ylabel grdC
 +PS=314.095E-03
 +VGS=1.221E+00
 +AS=1.580E+00
-+RTH=1000
++RTH=300
 +CTH=3E-09
 
 .end
