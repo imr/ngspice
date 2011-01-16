@@ -20,7 +20,6 @@
 #include "fftext.h"
 #include "wallace.h"
 
-extern double exprand(double);
 
 void f_alpha(int n_pts, int n_exp, float X[], float Q_d,
 float alpha)
@@ -168,6 +167,22 @@ trnoise_state_init(double NA, double TS, double NALPHA, double NAMP, double RTSA
     this -> top = 0;
 
     this -> oneof = NULL;
+
+    return this;
+}
+
+
+struct trrandom_state *
+trrandom_state_init(int rndtype, double TS, double TD, double PARAM1, double PARAM2)
+{
+    struct trrandom_state *this = TMALLOC(struct trrandom_state, 1);
+
+    this->rndtype = rndtype;
+    this->TS = TS;
+    this->TD = TD;
+    this->PARAM1 = PARAM1;
+    this->PARAM2 = PARAM2;
+    this->value = 0.0;
 
     return this;
 }

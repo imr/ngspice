@@ -1,3 +1,10 @@
+11-01-16 Holger Vogt
+ * com_cdump.c: remove compiler warnings
+ * 1-f-code.c, 1-f-code.h, vsrc.c, vsrcacct.c, vsrcdefs.h,
+   vsrcload.c, vsrcpar.c, examples/opwien.sp:
+   Add new random voltage generator option trrandom to vsrc
+   voltage source
+
 2011-01-15  Robert Larice
  * src/frontend/trannoise/Makefile.am ,
  * src/include/Makefile.am ,

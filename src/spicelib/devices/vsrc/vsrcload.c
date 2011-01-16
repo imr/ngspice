@@ -64,7 +64,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                     }
                     
                     case PULSE: {
-		                double V1, V2, TD, TR, TF, PW, PER;
+                        double V1, V2, TD, TR, TF, PW, PER;
                         double basetime = 0;
 #ifdef XSPICE
                         double PHASE;
@@ -96,7 +96,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                         PHASE = here->VSRCfunctionOrder > 7
                            ? here->VSRCcoeffs[7] : 0.0;
 
-		                /* normalize phase to cycles */
+                        /* normalize phase to cycles */
                         phase = PHASE / 360.0;
                         phase = fmod(phase, 1.0);
                         deltat =  phase * PER;
@@ -105,7 +105,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                         /* shift time by pase (neg. for pos. phase value) */
                         time += deltat;
                         /* gtri - end - wbk - add PHASE parameter */
-#endif		    
+#endif            
                         if(time > PER) {
                             /* repeating signal - figure out where we are */
                             /* in period */
@@ -126,7 +126,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                     break;
 
                     case SINE: {
-    		
+            
                         double VO, VA, FREQ, TD, THETA;
                         /* gtri - begin - wbk - add PHASE parameter */
 #ifdef XSPICE
@@ -135,20 +135,20 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 
                         PHASE = here->VSRCfunctionOrder > 5
                            ? here->VSRCcoeffs[5] : 0.0;
-    		       		
-	     	            /* compute phase in radians */ 
+                           
+                         /* compute phase in radians */ 
                         phase = PHASE * M_PI / 180.0;
 #endif
                         VO = here->VSRCcoeffs[0];
                         VA = here->VSRCcoeffs[1];
                         FREQ =  here->VSRCfunctionOrder > 2 
-	                       && here->VSRCcoeffs[2] != 0.0
-		                   ? here->VSRCcoeffs[2] : (1/ckt->CKTfinalTime);
-	                    TD = here->VSRCfunctionOrder > 3
-	                       ? here->VSRCcoeffs[3] : 0.0;
+                           && here->VSRCcoeffs[2] != 0.0
+                           ? here->VSRCcoeffs[2] : (1/ckt->CKTfinalTime);
+                        TD = here->VSRCfunctionOrder > 3
+                           ? here->VSRCcoeffs[3] : 0.0;
                         THETA = here->VSRCfunctionOrder > 4
-	                       ? here->VSRCcoeffs[4] : 0.0;
-    			   
+                           ? here->VSRCcoeffs[4] : 0.0;
+                   
                         time -= TD;
                         if (time <= 0) {
 #ifdef XSPICE
@@ -157,13 +157,13 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 
                             value = VO + VA * sin(FREQ*time * 2.0 * M_PI + phase) * 
                                exp(-time*THETA);
-#else						    
+#else                            
                             value = VO;
                         } else {                        
                            value = VO + VA * sin(FREQ * time * 2.0 * M_PI) * 
                                exp(-(time*THETA));
 #endif
-/* gtri - end - wbk - add PHASE parameter */				
+/* gtri - end - wbk - add PHASE parameter */                
                         }
                     }
                     break;
@@ -185,7 +185,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                         TAU2 = here->VSRCfunctionOrder > 5 
                            && here->VSRCcoeffs[5]
                            ? here->VSRCcoeffs[5] : ckt->CKTstep;
-     		    
+                 
                         if(time <= TD1)  {
                             value = V1;
                         } else if (time <= TD2) {
@@ -198,7 +198,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                     break;
 
                     case SFFM:{
-    		
+            
                         double VO, VA, FC, MDI, FS;
 /* gtri - begin - wbk - add PHASE parameters */
 #ifdef XSPICE
@@ -206,16 +206,16 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                         double PHASEC, PHASES;
                         double phasec;
                         double phases;
-    		    
+                
                         PHASEC = here->VSRCfunctionOrder > 5
-		                   ? here->VSRCcoeffs[5] : 0.0;
+                           ? here->VSRCcoeffs[5] : 0.0;
                         PHASES = here->VSRCfunctionOrder > 6
-		                   ? here->VSRCcoeffs[6] : 0.0;
-    			
+                           ? here->VSRCcoeffs[6] : 0.0;
+                
                         /* compute phases in radians */
                         phasec = PHASEC * M_PI / 180.0;
                         phases = PHASES * M_PI / 180.0;    
-#endif				    
+#endif                    
                         VO = here->VSRCcoeffs[0];
                         VA = here->VSRCcoeffs[1];
                         FC = here->VSRCfunctionOrder > 2 
@@ -231,7 +231,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                         value = VO + VA * 
                             sin((2 * M_PI * FC * time + phasec) +
                             MDI * sin(2.0 * M_PI * FS * time + phases));
-#else /* XSPICE */			
+#else /* XSPICE */            
                         value = VO + VA * 
                                 sin((2.0 * M_PI * FC * time) +
                                 MDI * sin(2 * M_PI * FS * time));
@@ -240,24 +240,24 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                     }
                     break;
                     case AM:{
-    		
+            
                         double VA, FC, MF, VO, TD;
     /* gtri - begin - wbk - add PHASE parameters */
 #ifdef XSPICE
                         double PHASEC, PHASES;
                         double phasec;
                         double phases;
-    		    
+                
                         PHASEC = here->VSRCfunctionOrder > 5
-		                ? here->VSRCcoeffs[5] : 0.0;
+                        ? here->VSRCcoeffs[5] : 0.0;
                         PHASES = here->VSRCfunctionOrder > 6
-		                ? here->VSRCcoeffs[6] : 0.0;
-    			
+                        ? here->VSRCcoeffs[6] : 0.0;
+                
                         /* compute phases in radians */
                         phasec = PHASEC * M_PI / 180.0;
                         phases = PHASES * M_PI / 180.0;    
 
-#endif			
+#endif            
                         VA = here->VSRCcoeffs[0];
                         VO = here->VSRCcoeffs[1];
                         MF = here->VSRCfunctionOrder > 2 
@@ -278,12 +278,12 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                             value = VA * (VO + sin(2.0 * M_PI * MF * time + phases )) *
                                sin(2 * M_PI * FC * time + phases);
                         
-#else /* XSPICE */		    
+#else /* XSPICE */            
                             value = VA * (VO + sin(2.0 * M_PI * MF * time)) *
                                sin(2 * M_PI * FC * time);
-#endif			
+#endif            
                         }
-    		    
+                
     /* gtri - end - wbk - add PHASE parameters */
                     }
                     break;
@@ -307,10 +307,10 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                                     value = foo;
                                     goto loadDone;
                                 } else if ( (*(here->VSRCcoeffs+2*i)+repeat_time < time) 
-							       && (*(here->VSRCcoeffs+2*(i+1))+repeat_time > time) ) {
+                                   && (*(here->VSRCcoeffs+2*(i+1))+repeat_time > time) ) {
                                     foo   = *(here->VSRCcoeffs+2*i+1) + (((time-(*(here->VSRCcoeffs+2*i)+repeat_time))/
-								       (*(here->VSRCcoeffs+2*(i+1)) - *(here->VSRCcoeffs+2*i))) *
-							           (*(here->VSRCcoeffs+2*i+3)    - *(here->VSRCcoeffs+2*i+1)));
+                                       (*(here->VSRCcoeffs+2*(i+1)) - *(here->VSRCcoeffs+2*i))) *
+                                       (*(here->VSRCcoeffs+2*i+3)    - *(here->VSRCcoeffs+2*i+1)));
                                     value = foo;
                                     goto loadDone;
                                 }
@@ -319,7 +319,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                             value = foo;
 
                             if ( !here->VSRCrGiven ) goto loadDone;
-    		      
+                  
                             end_time = *(here->VSRCcoeffs + here->VSRCfunctionOrder-2);
                             breakpt_time = *(here->VSRCcoeffs + here->VSRCrBreakpt);
                             repeat_time  = end_time + (end_time - breakpt_time)*num_repeat++ - breakpt_time;
@@ -368,7 +368,17 @@ VNoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
                         if(here -> VSRCdcGiven)
                             value += here->VSRCdcValue;
                     } // case
-                    break; 				
+                    break; 
+
+                    case TRRANDOM: {
+                        struct trrandom_state *state = here -> VSRCtrrandom_state;
+                        value = state -> value;
+                            /* DC value */
+                        if(here -> VSRCdcGiven)
+                            value += here->VSRCdcValue;
+                    }
+                    break;
+
                 } // switch
             }
 loadDone:
@@ -379,7 +389,7 @@ loadDone:
 #else
             if (ckt->CKTmode & MODETRANOP) value *= ckt->CKTsrcFact;
             /* load the new voltage value into the matrix */
-			*(ckt->CKTrhs + (here->VSRCbranch)) += value;
+            *(ckt->CKTrhs + (here->VSRCbranch)) += value;
 #endif
 /* gtri - end - wbk - modify to process srcFact, etc. for all sources */
         } // for loop instances
