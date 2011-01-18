@@ -1,3 +1,7 @@
+11-01-18 Holger Vogt
+ * plotcurv.c: line 139 test for existance of v_plot before comparing 
+  pl_scale
+  
 11-01-16 Holger Vogt
  * com_cdump.c: remove compiler warnings
  * 1-f-code.c, 1-f-code.h, vsrc.c, vsrcacct.c, vsrcdefs.h,
