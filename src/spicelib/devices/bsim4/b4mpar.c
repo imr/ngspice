@@ -1043,9 +1043,10 @@ GENmodel *inMod)
             mod->BSIM4jtsswgd = value->rValue;
             mod->BSIM4jtsswgdGiven = TRUE;
             break;
-		case BSIM4_MOD_JTWEFF :
-		    mod->BSIM4jtweff = value->rValue;
-			mod->BSIM4jtweffGiven = TRUE;
+	case BSIM4_MOD_JTWEFF :
+	    mod->BSIM4jtweff = value->rValue;
+	    mod->BSIM4jtweffGiven = TRUE;
+            break;
         case  BSIM4_MOD_NJTS :
             mod->BSIM4njts = value->rValue;
             mod->BSIM4njtsGiven = TRUE;
