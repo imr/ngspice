@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.15  2011-01-13 17:05:46  dwarning
+  Revision 1.16  2011-01-25 17:33:37  rlar
+  small fixes to make some `Makefiles' ready for build in a separate directory
+
+  Revision 1.15  2011/01/13 17:05:46  dwarning
   set version parameter to 2.3.0
 
   Revision 1.14  2008/12/22 08:16:59  dwarning
@@ -88,9 +91,9 @@
 <admst:variable name="module" select="%s"/>
 ## Process this file with automake to produce Makefile.in
 
-ADMSXMLINTERFACE=../admst
+ADMSXMLINTERFACE=\$(srcdir)/../admst
 $(module).c: admsva/$(module).va
-	admsXml -Iadmsva admsva/$(module).va \\
+	admsXml -I\$(srcdir) -I\$(srcdir)/admsva \$(srcdir)/admsva/$(module).va \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEinit.c.xml \\

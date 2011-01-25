@@ -197,5 +197,6 @@ AM_CPPFLAGS = -I$(top_srcdir)/src/include @X_CFLAGS@
 MAINTAINERCLEANFILES = Makefile.in
 
 parse-bison.c parse-bison.h : parse-bison.y
-	bison $<
-parse.c : parse-bison.c
+	bison $(srcdir)/parse-bison.y
+
+$(srcdir)/parse.c : parse-bison.c
