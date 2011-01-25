@@ -1,4 +1,21 @@
 2011-01-25  Robert Larice
+ * Modified src/include/cmproto.h ,
+ * Modified src/xspice/icm/dlmain.c ,
+ * Modified src/xspice/icm/digital/d_source/cfunc.mod ,
+ * Modified src/xspice/icm/digital/d_state/cfunc.mod ,
+ * Modified tests/bin/check.sh ,
+ * Added    tests/bin/spinit ,
+ * Modified tests/bsim3/dc_sim/Makefile.am ,
+ * Modified tests/bsim3soi/Makefile.am ,
+ * Modified tests/bsim3soidd/Makefile.am ,
+ * Modified tests/bsim3soifd/Makefile.am ,
+ * Modified tests/bsim3soipd/Makefile.am ,
+ * Modified tests/bsim4/Makefile.am ,
+ * Modified tests/xspice/digital/Makefile.am ,
+ * Modified tests/xspice/digital/spinit.in :
+    fix `make check' for build in a separate directory
+
+2011-01-25  Robert Larice
  * Modified configure.ac ,
  * Modified src/xspice/Makefile.am ,
  * Added    src/xspice/icm/GNUmakefile.in ,

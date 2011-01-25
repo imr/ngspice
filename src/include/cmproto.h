@@ -102,4 +102,6 @@ void *calloc_pj(size_t s1, size_t s2);
 void *realloc_pj(void *ptr, size_t s);
 void  free_pj(void *ptr);
 
+FILE *fopen_with_path(const char *path, const char *mode);
+
 #endif /* CMPROTO_DEFINED */

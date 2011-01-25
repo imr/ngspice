@@ -1779,7 +1779,7 @@ void cm_d_state(ARGS)
 
 
         /*** open file and count the number of vectors in it ***/
-        state_file = fopen( PARAM(state_file), "r");
+        state_file = fopen_with_path( PARAM(state_file), "r");
 
         /* increment counter if not a comment until EOF reached... */
         i = 0;                                                

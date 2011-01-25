@@ -12,7 +12,7 @@ TESTS = \
         inv_dc.cir   \
         inv_tr.cir
 
-TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
+TESTS_ENVIRONMENT = ngspice_vpath=$(srcdir) $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
 	nmos4p3.mod		\

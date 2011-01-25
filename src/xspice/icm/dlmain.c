@@ -388,3 +388,29 @@ void * trealloc(void *ptr, size_t s) {
 void txfree(void *ptr) {
 	(coreitf->dllitf_txfree)(ptr);
 }
+
+#include  <stdlib.h>
+#include  <string.h>
+
+#define MAX_PATH_LEN 1024
+
+FILE *fopen_with_path(const char *path, const char *mode)
+{
+    char buf[MAX_PATH_LEN+1];
+
+    if(path[0] != '/') {
+        const char *x = getenv("ngspice_vpath");
+        if(x) {
+            char *a;
+            strcpy(buf, x);
+            a = strrchr(buf, '/');
+            if(a && a[1] == '\0')
+                a[0] = '\0';
+            strcat(buf, "/");
+            strcat(buf, path);
+            path = buf;
+        }
+    }
+
+    return fopen(path, mode);
+}

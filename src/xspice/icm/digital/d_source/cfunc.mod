@@ -1019,7 +1019,7 @@ void cm_d_source(ARGS)
 
 
         /*** open file and count the number of vectors in it ***/
-        source = fopen( PARAM(input_file), "r");
+        source = fopen_with_path( PARAM(input_file), "r");
 
         /* increment counter if not a comment until EOF reached... */
         i = 0;

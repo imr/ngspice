@@ -5,7 +5,7 @@ TESTS = \
 	d_source.cir       \
 	d_state.cir
 
-TESTS_ENVIRONMENT = SPICE_SCRIPTS=$(srcdir) $(SHELL) $(top_srcdir)/tests/bin/check.sh "$(top_builddir)/src/ngspice -r foobaz"
+TESTS_ENVIRONMENT = ngspice_vpath=$(srcdir) SPICE_SCRIPTS=. $(SHELL) $(top_srcdir)/tests/bin/check.sh "$(top_builddir)/src/ngspice -r foobaz"
 
 EXTRA_DIST = \
 	d_ram-stimulus.txt \

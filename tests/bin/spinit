@@ -1,0 +1,4 @@
+* due to a broken implementation of the ngspice frontend
+*  this environment variable must be lower-case
+
+set sourcepath = ( $ngspice_vpath . )

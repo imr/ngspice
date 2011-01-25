@@ -1,5 +1,19 @@
 #!/bin/sh
 
+# set -x
+
+if [ -z "$SPICE_SCRIPTS" ] ; then
+    SPICE_SCRIPTS=`dirname $0`
+    export SPICE_SCRIPTS
+    if [ -z "$ngspice_vpath" ] ; then
+        ngspice_vpath=.
+        export ngspice_vpath
+    fi
+fi
+
+# ls -ld $(realpath $SPICE_SCRIPTS) $SPICE_SCRIPTS/spinit
+# echo "---ngspice_vpath = $ngspice_vpath"
+
 SPICE=$1
 TEST=$2
 
