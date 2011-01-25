@@ -120,7 +120,7 @@ Status_t write_ifs_c_file(
 
     /* Open the ifspec.c file for write access */
 
-    fp = fopen(filename, "w");
+    fp = fopen_with_path(filename, "w");
 
     if(fp == NULL) {
         sprintf(msg, "ERROR - Can't create file: %s", filename);

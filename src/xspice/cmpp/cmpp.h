@@ -285,3 +285,4 @@ Status_t read_ifs_file(char *filename, int mode, Ifs_Table_t *ifs_table);
 Status_t write_ifs_c_file(char *filename, Ifs_Table_t *ifs_table);
 
 
+FILE *fopen_with_path(const char *path, const char *mode);

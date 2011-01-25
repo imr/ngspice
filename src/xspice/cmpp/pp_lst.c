@@ -238,7 +238,7 @@ static Status_t read_modpath(
     *num_models = 0;
 
     /* Open the model pathname file */
-    fp = fopen(filename, "r");
+    fp = fopen_with_path(filename, "r");
 
     if(fp == NULL) {
         sprintf(msg, "ERROR - File not found: %s", filename);
@@ -358,7 +358,7 @@ static Status_t read_udnpath(
     *num_nodes = 0;
 
     /* Open the node pathname file */
-    fp = fopen(filename, "r");
+    fp = fopen_with_path(filename, "r");
 
     /* For backward compatibility, return with WARNING only if file not found */
     if(fp == NULL) {
@@ -787,7 +787,7 @@ static Status_t write_CMextrn(
 
 
     /* Open the file to be written */
-    fp = fopen("cmextrn.h", "w");
+    fp = fopen_with_path("cmextrn.h", "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening CMextrn.h for write");
         return(ERROR);
@@ -827,7 +827,7 @@ static Status_t write_CMinfo(
 
 
     /* Open the file to be written */
-    fp = fopen("cminfo.h", "w");
+    fp = fopen_with_path("cminfo.h", "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening CMinfo.h for write");
         return(ERROR);
@@ -871,7 +871,7 @@ static Status_t write_UDNextrn(
 
 
     /* Open the file to be written */
-    fp = fopen("udnextrn.h", "w");
+    fp = fopen_with_path("udnextrn.h", "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening UDNextrn.h for write");
         return(ERROR);
@@ -913,7 +913,7 @@ static Status_t write_UDNinfo(
 
 
     /* Open the file to be written */
-    fp = fopen("udninfo.h", "w");
+    fp = fopen_with_path("udninfo.h", "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening UDNinfo.h for write");
         return(ERROR);
@@ -952,7 +952,7 @@ static Status_t write_objects_inc(
 
 
     /* Open the file to be written */
-    fp = fopen("objects.inc", "w");
+    fp = fopen_with_path("objects.inc", "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening objects.inc file for write");
         return(ERROR);
@@ -1005,7 +1005,7 @@ static Status_t read_udn_type_name(
     static char *struct_type = "Evt_Udn_Info_t";
 
     /* Open the file from which the node type name will be read */
-    fp = fopen(path, "r");
+    fp = fopen_with_path(path, "r");
     if(fp == NULL)
         return(ERROR);
 

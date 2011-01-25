@@ -41,6 +41,7 @@ NON-STANDARD FEATURES
 #include  "cmpp.h"
 #include  <stdio.h>
 #include  <ctype.h>
+#include  <stdlib.h>
 #include  <string.h>
 
 
@@ -83,3 +84,23 @@ void str_to_lower(char *s)
 }
 
 
+FILE *fopen_with_path(const char *path, const char *mode)
+{
+    char buf[MAX_PATH_LEN+1];
+
+    if(path[0] != '/') {
+        const char *e = getenv((*mode == 'w') ? "CMPP_ODIR" : "CMPP_IDIR");
+        if(e) {
+            if(strlen(e) + 1 + strlen(path) < sizeof(buf)) {
+                strcpy(buf, e);
+                strcat(buf, "/");
+                strcat(buf, path);
+                path = buf;
+            } else {
+                path = NULL;
+            }
+        }
+    }
+
+    return fopen(path, mode);
+}

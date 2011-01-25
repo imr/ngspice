@@ -128,7 +128,7 @@ void preprocess_mod_file (
       exit(1);
    }
    
-   mod_yyin = fopen (filename, "r");
+   mod_yyin = fopen_with_path (filename, "r");
    if (mod_yyin == NULL) {
       sprintf(error_str, "ERROR - Could not open input .mod file: %s",
 	      filename);
@@ -139,7 +139,7 @@ void preprocess_mod_file (
    current_filename = filename;
 
    change_extension (filename, "c", output_filename);
-   mod_yyout = fopen (output_filename, "w");
+   mod_yyout = fopen_with_path (output_filename, "w");
 
    if (mod_yyout == NULL) {
       sprintf(error_str, "ERROR - Could not open output .c: %s",

@@ -102,7 +102,7 @@ Status_t  read_ifs_file(
    
    /* Open the ifs file for read access */
    
-   fp = fopen(filename, "r");
+   fp = fopen_with_path(filename, "r");
    
    if(fp == NULL) {
       perror (prog_name);
