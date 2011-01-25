@@ -1,4 +1,15 @@
 2011-01-25  Robert Larice
+ * Modified configure.ac ,
+ * Modified src/xspice/Makefile.am ,
+ * Added    src/xspice/icm/GNUmakefile.in ,
+ * Removed  src/xspice/icm/Makefile ,
+ * Modified src/xspice/icm/makedefs.in ,
+ * Removed  src/xspice/icm/modpath.lst ,
+ * Removed  src/xspice/icm/objects.inc :
+    rework the xspice/icm Makefile for build in a separate directory
+    the new makefile requires GNU make
+
+2011-01-25  Robert Larice
  * src/xspice/cmpp/cmpp.h ,
  * src/xspice/cmpp/pp_lst.c ,
  * src/xspice/cmpp/pp_mod.c ,

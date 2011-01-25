@@ -1089,6 +1089,7 @@ AC_CONFIG_FILES([Makefile
                  src/xspice/cm/Makefile
                  src/xspice/cmpp/Makefile
                  src/xspice/icm/makedefs
+                 src/xspice/icm/GNUmakefile
                  src/xspice/mif/Makefile
                  src/xspice/evt/Makefile
                  src/xspice/enh/Makefile

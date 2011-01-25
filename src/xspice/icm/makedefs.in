@@ -1,4 +1,6 @@
-# Edit this file to set global include paths, 
+# -*- makefile -*-
+
+# Edit this file to set global include paths,
 # compiler info and subdirs
 
 # Directory sturcture
@@ -7,14 +9,14 @@ srcdir = @srcdir@
 top_builddir = ../../..
 top_srcdir = @top_srcdir@
 subdir = src/xspice/icm
-mkdir_p = @mkdir_p@
+MKDIR_P = @MKDIR_P@
 uname = $(shell uname)
-                                                                                
+
 # C compiler to use
 CC = @CC@
 
 # Spice header include path
-INCLUDES = -I$(TOPDIR)$(top_srcdir)/src/include -I$(TOPDIR)$(top_builddir)
+INCLUDES = -I$(top_srcdir)/src/include -I$(top_builddir)
 
 # CFLAGS to use here
 CFLAGS = @CFLAGS@ -fPIC
@@ -36,7 +38,7 @@ ifeq ($(ISSUNOS), 1)
 endif
 
 # Path to the cmpp utility
-CMPP = $(TOPDIR)$(top_builddir)/src/xspice/cmpp/cmpp
+CMPP = $(top_builddir)/src/xspice/cmpp/cmpp
 
 # Flags to use when linking shared library
 LDFLAGS = -shared
@@ -52,17 +54,10 @@ ifeq "$(strip $(uname))" "SunOS"
   endif
 endif
 
-# The codemodels to make
-CMDIRS = spice2poly digital analog xtradev xtraevt
-
 # Install instructions
 
-# or use mkdir -p
-#mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-mkinstalldirs = $(mkdir_p)
-
 INSTALL = @INSTALL@
-INSTALL_DATA = @INSTALL_DATA@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
 
 prefix = @prefix@
 exec_prefix = @exec_prefix@
