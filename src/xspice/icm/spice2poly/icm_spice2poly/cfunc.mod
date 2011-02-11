@@ -88,7 +88,6 @@ void spice2poly (ARGS)
     double      sum;          /* Temporary for accumulating sum of terms */
     double      product;      /* Temporary for accumulating product */
 
-    double      *acgains;     /* Static variable holding AC gains for AC analysis */
 
 
     /* Get number of input values */
@@ -99,21 +98,19 @@ void spice2poly (ARGS)
     /* array */
 
     if(INIT) {
-        acgains = (double *) malloc((size_t) num_inputs * sizeof(double));
+        Mif_Inst_Var_Data_t *p = STATIC_VAR_INST(acgains);
+        p -> size    = num_inputs;
+        p -> element = malloc((size_t) num_inputs * sizeof(Mif_Value_t));
         for(i = 0; i < num_inputs; i++)
-            acgains[i] = 0.0;
-        STATIC_VAR(acgains) = acgains;
+            STATIC_VAR(acgains[i]) = 0.0;
     }
-    else
-        acgains = (double *) STATIC_VAR(acgains);
 
     /* If analysis type is AC, use the previously computed DC partials */
     /* for the AC gains */
 
     if(ANALYSIS == MIF_AC) {
         for(i = 0; i < num_inputs; i++) {
-            acgains = (double *) STATIC_VAR(acgains);
-            AC_GAIN(out,in[i]).real = acgains[i];
+            AC_GAIN(out,in[i]).real = STATIC_VAR(acgains[i]);
             AC_GAIN(out,in[i]).imag = 0.0;
         }
         return;
@@ -195,7 +192,7 @@ void spice2poly (ARGS)
         /* value in an AC analysis */
 
         if(ANALYSIS == MIF_DC)
-            acgains[i] = sum;
+            STATIC_VAR(acgains[i]) = sum;
     }
 
     /* Free the allocated items and return */

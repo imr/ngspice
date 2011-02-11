@@ -71,5 +71,6 @@ Null_Allowed:          no
 STATIC_VAR_TABLE:
 
 Static_Var_Name:       acgains
-Data_Type:             pointer
+Data_Type:             real
 Description:           "Partial derivatives from DC analysis used for AC gains"
+Vector:                yes

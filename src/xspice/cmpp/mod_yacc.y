@@ -353,6 +353,7 @@ static void append (char *str)
 %token TOK_OUTPUT_DELAY 
 %token TOK_STATIC_VAR 
 %token TOK_STATIC_VAR_SIZE
+%token TOK_STATIC_VAR_INST
 %token TOK_INPUT
 %token TOK_INPUT_STRENGTH
 %token TOK_INPUT_STATE
@@ -491,6 +492,10 @@ macro			: TOK_INIT
 			| TOK_STATIC_VAR_SIZE TOK_LPAREN id TOK_RPAREN
 			   {int i = valid_subid ($3, STATIC_VAR);
 			    fprintf (mod_yyout, "private->inst_var[%d]->size",
+				    i);}
+			| TOK_STATIC_VAR_INST TOK_LPAREN id TOK_RPAREN
+			   {int i = valid_subid ($3, STATIC_VAR);
+			    fprintf (mod_yyout, "private->inst_var[%d]",
 				    i);}
 			| TOK_OUTPUT_DELAY TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
