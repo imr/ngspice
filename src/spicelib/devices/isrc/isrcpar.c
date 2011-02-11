@@ -14,6 +14,19 @@ Modified: 2000 AlansFixes
 #include "1-f-code.h"
 
 
+static void copy_coeffs(ISRCinstance *here, IFvalue *value)
+{
+    if(here->ISRCcoeffs)
+        tfree(here->ISRCcoeffs);
+
+    here->ISRCcoeffs = TMALLOC(double, value->v.numValue);
+    here->ISRCfunctionOrder = value->v.numValue;
+    here->ISRCcoeffsGiven = TRUE;
+
+    memcpy(here->ISRCcoeffs, value->v.vec.rVec, value->v.numValue * sizeof(double));
+}
+
+
 /* ARGSUSED */
 int
 ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
@@ -57,33 +70,25 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             if(value->v.numValue <2) return(E_BADPARM);
             here->ISRCfunctionType = PULSE;
             here->ISRCfuncTGiven = TRUE;
-            here->ISRCcoeffs = value->v.vec.rVec;
-            here->ISRCfunctionOrder = value->v.numValue;
-            here->ISRCcoeffsGiven = TRUE;
+            copy_coeffs(here, value);
             break;
         case ISRC_SINE:
             if(value->v.numValue <2) return(E_BADPARM);
             here->ISRCfunctionType = SINE;
             here->ISRCfuncTGiven = TRUE;
-            here->ISRCcoeffs = value->v.vec.rVec;
-            here->ISRCfunctionOrder = value->v.numValue;
-            here->ISRCcoeffsGiven = TRUE;
+            copy_coeffs(here, value);
             break;
         case ISRC_EXP:
             if(value->v.numValue <2) return(E_BADPARM);
             here->ISRCfunctionType = EXP;
             here->ISRCfuncTGiven = TRUE;
-            here->ISRCcoeffs = value->v.vec.rVec;
-            here->ISRCfunctionOrder = value->v.numValue;
-            here->ISRCcoeffsGiven = TRUE;
+            copy_coeffs(here, value);
             break;
         case ISRC_PWL:
             if(value->v.numValue <2) return(E_BADPARM);
             here->ISRCfunctionType = PWL;
             here->ISRCfuncTGiven = TRUE;
-            here->ISRCcoeffs = value->v.vec.rVec;
-            here->ISRCfunctionOrder = value->v.numValue;
-            here->ISRCcoeffsGiven = TRUE;
+            copy_coeffs(here, value);
             
             for (i=0;i<((here->ISRCfunctionOrder/2)-1);i++) {
                   if (*(here->ISRCcoeffs+2*(i+1))<=*(here->ISRCcoeffs+2*i)) {
@@ -98,17 +103,13 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             if(value->v.numValue <2) return(E_BADPARM);
             here->ISRCfunctionType = SFFM;
             here->ISRCfuncTGiven = TRUE;
-            here->ISRCcoeffs = value->v.vec.rVec;
-            here->ISRCfunctionOrder = value->v.numValue;
-            here->ISRCcoeffsGiven = TRUE;
+            copy_coeffs(here, value);
             break;
 	case ISRC_AM:
 	    if(value->v.numValue <2) return(E_BADPARM);
             here->ISRCfunctionType = AM;
             here->ISRCfuncTGiven = TRUE;
-            here->ISRCcoeffs = value->v.vec.rVec;
-            here->ISRCfunctionOrder = value->v.numValue;
-            here->ISRCcoeffsGiven = TRUE;
+            copy_coeffs(here, value);
 	    break;
 	case ISRC_D_F1:
 	    here->ISRCdF1given = TRUE;
@@ -161,9 +162,7 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
             here->ISRCfunctionType = TRNOISE;
             here->ISRCfuncTGiven = TRUE;
-            here->ISRCcoeffs = value->v.vec.rVec;
-            here->ISRCfunctionOrder = value->v.numValue;
-            here->ISRCcoeffsGiven = TRUE;
+            copy_coeffs(here, value);
 
             NA = here->ISRCcoeffs[0]; // input is rms value
             TS = here->ISRCcoeffs[1]; // time step

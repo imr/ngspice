@@ -1,3 +1,9 @@
+2011-02-11  Robert Larice
+ * src/spicelib/devices/cpl/cplmpar.c ,
+ * src/spicelib/devices/isrc/isrcpar.c ,
+ * src/spicelib/devices/vsrc/vsrcpar.c :
+    fix a bug when `alter' a vector parameter (VSRC PWL for example)
+
 2011-01-25  Robert Larice
  * Modified src/include/cmproto.h ,
  * Modified src/xspice/icm/dlmain.c ,

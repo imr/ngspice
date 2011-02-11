@@ -14,6 +14,19 @@ Modified: 2000 AlansFixes
 #include "1-f-code.h"
 
 
+static void copy_coeffs(VSRCinstance *here, IFvalue *value)
+{
+    if(here->VSRCcoeffs)
+        tfree(here->VSRCcoeffs);
+
+    here->VSRCcoeffs = TMALLOC(double, value->v.numValue);
+    here->VSRCfunctionOrder = value->v.numValue;
+    here->VSRCcoeffsGiven = TRUE;
+
+    memcpy(here->VSRCcoeffs, value->v.vec.rVec, value->v.numValue * sizeof(double));
+}
+
+
 /* ARGSUSED */
 int
 VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
@@ -56,30 +69,22 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         case VSRC_PULSE:
             here->VSRCfunctionType = PULSE;
             here->VSRCfuncTGiven = TRUE;
-            here->VSRCcoeffs = value->v.vec.rVec;
-            here->VSRCfunctionOrder = value->v.numValue;
-            here->VSRCcoeffsGiven = TRUE;
+            copy_coeffs(here, value);
             break;
         case VSRC_SINE:
             here->VSRCfunctionType = SINE;
             here->VSRCfuncTGiven = TRUE;
-            here->VSRCcoeffs = value->v.vec.rVec;
-            here->VSRCfunctionOrder = value->v.numValue;
-            here->VSRCcoeffsGiven = TRUE;
+            copy_coeffs(here, value);
             break;
         case VSRC_EXP:
             here->VSRCfunctionType = EXP;
             here->VSRCfuncTGiven = TRUE;
-            here->VSRCcoeffs = value->v.vec.rVec;
-            here->VSRCfunctionOrder = value->v.numValue;
-            here->VSRCcoeffsGiven = TRUE;
+            copy_coeffs(here, value);
             break;
         case VSRC_PWL:
             here->VSRCfunctionType = PWL;
             here->VSRCfuncTGiven = TRUE;
-            here->VSRCcoeffs = value->v.vec.rVec;
-            here->VSRCfunctionOrder = value->v.numValue;
-            here->VSRCcoeffsGiven = TRUE;
+            copy_coeffs(here, value);
             
             for(i=0;i<(here->VSRCfunctionOrder/2)-1;i++) {
                   if(*(here->VSRCcoeffs+2*(i+1))<=*(here->VSRCcoeffs+2*i)) {
@@ -118,17 +123,13 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         case VSRC_SFFM:
             here->VSRCfunctionType = SFFM;
             here->VSRCfuncTGiven = TRUE;
-            here->VSRCcoeffs = value->v.vec.rVec;
-            here->VSRCfunctionOrder = value->v.numValue;
-            here->VSRCcoeffsGiven = TRUE;
+            copy_coeffs(here, value);
             break;
         case VSRC_AM:
             if(value->v.numValue <2) return(E_BADPARM);
             here->VSRCfunctionType = AM;
             here->VSRCfuncTGiven = TRUE;
-            here->VSRCcoeffs = value->v.vec.rVec;
-            here->VSRCfunctionOrder = value->v.numValue;
-            here->VSRCcoeffsGiven = TRUE;    
+            copy_coeffs(here, value);
             break;    
         case VSRC_D_F1:
             here->VSRCdF1given = TRUE;
@@ -180,9 +181,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
                 here->VSRCfunctionType = TRNOISE;
                 here->VSRCfuncTGiven = TRUE;
-                here->VSRCcoeffs = value->v.vec.rVec;
-                here->VSRCfunctionOrder = value->v.numValue;
-                here->VSRCcoeffsGiven = TRUE;
+                copy_coeffs(here, value);
 
                 NA = here->VSRCcoeffs[0]; // input is rms value
                 TS = here->VSRCcoeffs[1]; // time step
@@ -215,9 +214,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
             here->VSRCfunctionType = TRRANDOM;
             here->VSRCfuncTGiven = TRUE;
-            here->VSRCcoeffs = value->v.vec.rVec;
-            here->VSRCfunctionOrder = value->v.numValue;
-            here->VSRCcoeffsGiven = TRUE;
+            copy_coeffs(here, value);
 
             rndtype = (int)here->VSRCcoeffs[0]; // type of random function
             TS = here->VSRCcoeffs[1]; // time step
