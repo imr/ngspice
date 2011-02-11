@@ -98,6 +98,11 @@
 %left   '[' ']'
 %left   TOK_LRANGE TOK_RRANGE
 
+%initial-action      /* initialize yylval */
+{
+    $$.num = 0.0;
+};
+
 %%
 
 /*

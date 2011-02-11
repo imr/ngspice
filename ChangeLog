@@ -1,4 +1,10 @@
 2011-02-11  Robert Larice
+ * src/frontend/parse-bison.y :
+    silence a `bcheck' warning `read from uninitialized memory'
+      yylval in the bison generated parser is copied,
+      even when the value is actually unused
+
+2011-02-11  Robert Larice
  * src/spicelib/devices/vsrc/vsrcask.c :
     add a missing `ask' function for VSRC_TRRANDOM
 
