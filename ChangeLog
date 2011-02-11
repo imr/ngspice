@@ -1,4 +1,12 @@
 2011-02-11  Robert Larice
+ * src/frontend/plotting/x11.c :
+    bug fix a segfault when closing a second x11-window, then resizing the first
+    copied a workaround from
+	2009-01-10 Holger Vogt
+	in windisp.c
+    FIXME, x11 structures and currentgraph ...
+
+2011-02-11  Robert Larice
  * src/frontend/parse-bison.c :
     and update the parser output
 

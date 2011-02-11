@@ -881,6 +881,8 @@ killwin(Widget w, caddr_t client_data, caddr_t call_data)
     DEVDEP(graph).isopen = 0;
     /* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */	
     XtDestroyWidget(DEVDEP(graph).shell);
+    if (graph == currentgraph)
+        currentgraph = FindGraph(graph->graphid - 1);
     DestroyGraph(graph->graphid);
 
 }
