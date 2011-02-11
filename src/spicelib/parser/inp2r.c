@@ -43,8 +43,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
     double leadval;		/* actual value of unlabeled number */
     IFuid uid;			/* uid for default model */
 
-    char *s,*t;/* Temporary buffer and pointer for translation */
-    int i;
+    char *s;   /* Temporary buffer and pointer for translation */
 
 #ifdef TRACE
     printf("In INP2R, Current line: %s\n", current->line);
@@ -68,9 +67,6 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
      * -> MUST be a model name (or null)
      */
 
-    saveline = line;		/* save then old pointer */
-
-    if (strstr( line, "tc=" )) { /* looking for tc= there are no spaces between */
 #ifdef TRACE
     printf("Begining tc=xxx yyyy search and translation in '%s'\n", line);
 #endif /* TRACE */    
@@ -79,83 +75,75 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
        In my version we simply look for the first occurence of 'tc' followed
        by '=' followed by two numbers. If we find it then we splice in "tc2=".
        sjb - 2005-05-09 */
-      for(s=line; *s; s++) { /* scan the remainder of the line */
-        
-        /* reject anything other than "tc" */
-        if(*s!='t') continue;
-        s++;
-        if(*s!='c') continue;
-        s++;
-        
+
+    for(s = line; NULL != (s = strstr(s, "tc")); ) {
+
+        char *p;
+        int left_length;
+
+        s += 2;
+
         /* skip any white space */
-        while(isspace(*s)) s++;
-              
+        while(isspace(*s))
+            s++;
+
         /* reject if not '=' */
-        if(*s!='=') continue;
+        if(*s != '=')
+            continue;
+
         s++;
-        
+
         /* skip any white space */
-        while(isspace(*s)) s++;
-        
+        while(isspace(*s))
+            s++;
+
         /* if we now have +, - or a decimal digit then assume we have a number,
            otherwise reject */
-        if((*s!='+') && (*s!='-') && !isdigit(*s)) continue;
-        s++;
-        
+        if((*s != '+') && (*s != '-') && !isdigit(*s))
+            continue;
+
         /* look for next white space or null */
-        while(!isspace(*s) && *s) s++;
-        
-        /* reject whole line if null (i.e not white space) */
-        if(*s==0) break;
-        s++;
-        
-        /* remember this location in the line.
-           Note that just before this location is a white space character. */
-        t = s;
-        
+        while(*s && !isspace(*s))
+            s++;
+
+        left_length = s - current->line;
+
         /* skip any additional white space */
-        while(isspace(*s)) s++;
-        
-        /* if we now have +, - or a decimal digit then assume we have the 
+        while(isspace(*s))
+            s++;
+
+        /* if we now have +, - or a decimal digit then assume we have the
             second number, otherwise reject */
-        if((*s!='+') && (*s!='-') && !isdigit(*s)) continue;
-        
+        if((*s != '+') && (*s != '-') && !isdigit(*s))
+            continue;
+
         /* if we get this far we have met all are criterea,
            so now we splice in a "tc2=" at the location remembered above. */
-        
-        /* first alocate memory for the new longer line */
-        i = (int) strlen(current->line);  /* length of existing line */
-        line = TMALLOC(char, i + 4 + 1);  /* alocate enough for "tc2=" & terminating NULL */
-        if(line == NULL) {
-            /* failed to allocate memory so we recover rather crudely
-               by rejecting the translation */
-            line = saveline;
+
+        p = TMALLOC(char, left_length + 5 + strlen(s) + 1);
+
+        /* failed to allocate memory so we recover rather crudely
+             by rejecting the translation */
+        if(!p)
             break;
-        }
-        
-        /* copy first part of line */
-        i -= (int) strlen(t);
-        strncpy(line, current->line, (size_t) i);
-        line[i] = '\0';  /* terminate */
-        
-        /* add "tc2=" */
-        strcat(line, "tc2=");
-        
-        /* add rest of line */
-        strcat(line, t);
-        
-        /* calculate our saveline position in the new line */
-        saveline = line + (saveline - current->line);
-        
+
+        strncpy(p, current->line, left_length);
+        strcpy(p + left_length, " tc2=");
+        strcpy(p + left_length + 5, s);
+
+        line = p + (line - current->line);
+        s    = p + (s    - current->line);
+
         /* replace old line with new */
         tfree(current->line);
-        current->line = line;
-        line = saveline;
-      }
+        current->line = p;
+    }
+
 #ifdef TRACE
     printf("(Translated) Resistor line: %s\n", current->line);
 #endif
-    }
+
+    saveline = line;		/* save then old pointer */
 
     INPgetTok(&line, &model, 1);
 

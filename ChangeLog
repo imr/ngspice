@@ -1,4 +1,8 @@
 2011-02-11  Robert Larice
+ * src/spicelib/parser/inp2r.c :
+    bug fix, when rewriting a resistors tc = number number  ==>  tc=number tc2=number
+
+2011-02-11  Robert Larice
  * src/xspice/cmpp/mod_lex.l ,
  * src/xspice/cmpp/mod_yacc.y ,
  * src/xspice/icm/spice2poly/icm_spice2poly/cfunc.mod ,
