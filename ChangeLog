@@ -1,4 +1,8 @@
 2011-02-11  Robert Larice
+ * src/frontend/parse-bison.c :
+    and update the parser output
+
+2011-02-11  Robert Larice
  * src/frontend/parse-bison.y :
     silence a `bcheck' warning `read from uninitialized memory'
       yylval in the bison generated parser is copied,
