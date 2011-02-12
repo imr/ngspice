@@ -372,31 +372,30 @@ static void com_measure_when(
    int section = -1;
    int measurement_pending;
    int init_measured_value;
-   bool ac_check ;
-   bool sp_check ;
+   bool ac_check = FALSE, sp_check = FALSE, dc_check = FALSE, tran_check = FALSE ;
    double value, prevValue;
-   double timeValue, prevTimeValue;
+   double scaleValue, prevScaleValue;
 
    enum ValSide { S_ABOVE_VAL, S_BELOW_VAL };
    enum ValEdge { E_RISING, E_FALLING };
 
-   struct dvec *d, *dTime;
+   struct dvec *d, *dScale;
 
    d = vec_get(meas->m_vec);
-   dTime = plot_cur->pl_scale;
+   dScale = plot_cur->pl_scale;
 
    if (d == NULL) {
       fprintf(cp_err, "Error: no such vector as %s.\n", meas->m_vec);
       return;
    }
 
-   if (dTime == NULL) {
-       fprintf(cp_err, "Error: no such vector as time.\n");
+   if (dScale == NULL) {
+       fprintf(cp_err, "Error: no scale vector.\n");
        return;
    }
 
    prevValue =0;
-   prevTimeValue =0;
+   prevScaleValue =0;
    first =0;
    measurement_pending=0;
    init_measured_value=1;
@@ -405,43 +404,52 @@ static void com_measure_when(
     /* -----------------------------------------------------------------
      * Take the string tests outside of the loop for speed.
      * ----------------------------------------------------------------- */
-    if (cieq (meas->m_analysis,"ac")) {
+    if (cieq (meas->m_analysis,"ac"))
       ac_check = TRUE ;
-    } else {
-      ac_check = FALSE ;
-    }
-    if (cieq (meas->m_analysis,"sp")) {
+    else if (cieq (meas->m_analysis,"sp"))
       sp_check = TRUE ;
-    } else {
-      sp_check = FALSE ;
-    }
+    else if (cieq (meas->m_analysis,"dc"))
+      dc_check = TRUE ;
+    else
+      tran_check = TRUE;
  
    for (i=0; i < d->v_length; i++) {
 
 //      value = d->v_realdata[i];
-//      timeValue = dTime->v_realdata[i];
+//      scaleValue = dTime->v_realdata[i];
 
       if (ac_check) {
          if (d->v_compdata)
              value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          else
             value = d->v_realdata[i];
-         timeValue = dTime->v_compdata[i].cx_real;
+         scaleValue = dScale->v_compdata[i].cx_real;
       }
       else if (sp_check) {
          if (d->v_compdata)
             value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          else
             value = d->v_realdata[i];
-         timeValue = dTime->v_realdata[i];
+         scaleValue = dScale->v_realdata[i];
       }
       else {
          value = d->v_realdata[i];
-         timeValue = dTime->v_realdata[i];
+         scaleValue = dScale->v_realdata[i];
       }
-
-      if (timeValue < meas->m_td)
+      /* 'dc' is special: it may start at an arbitrary scale value.
+         Use m_td to store this value, a delay TD does not make sense */
+      if ((dc_check) && (i==0))
+          meas->m_td = scaleValue;
+      /* if analysis tran, suppress values below TD */
+      if ((tran_check) && (scaleValue < meas->m_td))
          continue;
+      /* if analysis ac, sp, suppress values below 0 */
+      else if (((ac_check)||(sp_check)) && (scaleValue < 0))
+         continue;
+
+      /* if 'dc': reset first if scale jumps back to origin */
+      if ((first > 1) && (dc_check && (meas->m_td == scaleValue)))
+        first = 1;
 
       if (first == 1) {
          // initialise
@@ -488,16 +496,16 @@ static void com_measure_when(
          if  ((crossCnt == meas->m_cross) || (riseCnt == meas->m_rise) || (fallCnt == meas->m_fall)) {
              /* user requested an exact match of cross, rise, or fall
               * exit when we meet condition */
-            meas->m_measured = prevTimeValue + (meas->m_val - prevValue) * (timeValue - prevTimeValue) / (value - prevValue);
+            meas->m_measured = prevScaleValue + (meas->m_val - prevValue) * (scaleValue - prevScaleValue) / (value - prevValue);
             return;
          }
          if  ( measurement_pending ){
             if( (meas->m_cross == MEASURE_DEFAULT) && (meas->m_rise == MEASURE_DEFAULT) && (meas->m_fall == MEASURE_DEFAULT) ){
                /* user didn't request any option, return the first possible case */
-               meas->m_measured = prevTimeValue + (meas->m_val - prevValue) * (timeValue - prevTimeValue) / (value - prevValue);
+               meas->m_measured = prevScaleValue + (meas->m_val - prevValue) * (scaleValue - prevScaleValue) / (value - prevValue);
                return;
             } else if( (meas->m_cross == MEASURE_LAST_TRANSITION) || (meas->m_rise == MEASURE_LAST_TRANSITION) || (meas->m_fall == MEASURE_LAST_TRANSITION) ){
-               meas->m_measured = prevTimeValue + (meas->m_val - prevValue) * (timeValue - prevTimeValue) / (value - prevValue);
+               meas->m_measured = prevScaleValue + (meas->m_val - prevValue) * (scaleValue - prevScaleValue) / (value - prevValue);
                /* no return - look for last */
                init_measured_value=0;
             }
@@ -507,7 +515,7 @@ static void com_measure_when(
       first ++;
 
       prevValue = value;
-      prevTimeValue = timeValue;
+      prevScaleValue = scaleValue;
    }
 
    if ( init_measured_value ){
@@ -528,8 +536,7 @@ static void measure_at(
 
    int i;
    double value, pvalue, svalue, psvalue;
-   bool ac_check ;
-   bool sp_check ;
+   bool ac_check = FALSE, sp_check = FALSE, dc_check = FALSE, tran_check = FALSE ;
    struct dvec *d, *dScale;
 
    psvalue = pvalue = 0;
@@ -549,16 +556,14 @@ static void measure_at(
     /* -----------------------------------------------------------------
      * Take the string tests outside of the loop for speed.
      * ----------------------------------------------------------------- */
-   if (cieq (meas->m_analysis,"ac")) {
-     ac_check = TRUE ;
-   } else {
-     ac_check = FALSE ;
-   }
-   if (cieq (meas->m_analysis,"sp")) {
-     sp_check = TRUE ;
-   } else {
-     sp_check = FALSE ;
-   }
+    if (cieq (meas->m_analysis,"ac"))
+      ac_check = TRUE ;
+    else if (cieq (meas->m_analysis,"sp"))
+      sp_check = TRUE ;
+    else if (cieq (meas->m_analysis,"dc"))
+      dc_check = TRUE ;
+    else
+      tran_check = TRUE;
  
    for (i=0; i < d->v_length; i++) {
       if (ac_check) {
@@ -579,7 +584,10 @@ static void measure_at(
 
       if ( (i > 0) && (psvalue <= at) && (svalue >= at) ) {
          meas->m_measured = pvalue + (at - psvalue) * (value - pvalue) / (svalue - psvalue);
-        //  meas->m_measured = value;
+         return;
+      }
+      else if  (dc_check && (i > 0) && (psvalue >= at) && (svalue <= at) ) {
+         meas->m_measured = pvalue + (at - psvalue) * (value - pvalue) / (svalue - psvalue);
          return;
       }
 
@@ -607,8 +615,7 @@ static void measure_minMaxAvg(
    struct dvec *d, *dScale;
    double value, svalue, mValue, mValueAt;
    int first;
-   bool ac_check ;
-   bool sp_check ;
+   bool ac_check = FALSE, sp_check = FALSE, dc_check = FALSE, tran_check = FALSE ;
 
    mValue =0;
    mValueAt = svalue =0;
@@ -623,33 +630,32 @@ static void measure_minMaxAvg(
       return;
    }
 
-   if (cieq (meas->m_analysis,"ac") || cieq (meas->m_analysis,"sp"))
+  
+    /* -----------------------------------------------------------------
+     * Take the string tests outside of the loop for speed.
+     * ----------------------------------------------------------------- */
+    if (cieq (meas->m_analysis,"ac"))
+      ac_check = TRUE ;
+    else if (cieq (meas->m_analysis,"sp"))
+      sp_check = TRUE ;
+    else if (cieq (meas->m_analysis,"dc"))
+      dc_check = TRUE ;
+    else
+      tran_check = TRUE;
+
+   if (ac_check || sp_check)
       dScale = vec_get("frequency");
-   else if (cieq (meas->m_analysis,"tran"))
+   else if (tran_check)
       dScale = vec_get("time");
-   else if (cieq (meas->m_analysis,"dc"))
+   else if (dc_check)
       dScale = vec_get("v-sweep");
    else {/* error */
       fprintf(cp_err, "Error: no such analysis type as %s.\n", meas->m_analysis);
       return;
    }
    if (dScale == NULL) {
-      fprintf(cp_err, "Error: no such vector as time, frquency or dc.\n");
+      fprintf(cp_err, "Error: no such vector as time, frquency or v-sweep.\n");
       return;
-   }
-  
-    /* -----------------------------------------------------------------
-     * Take the string tests outside of the loop for speed.
-     * ----------------------------------------------------------------- */
-   if (cieq (meas->m_analysis,"ac")) {
-     ac_check = TRUE ;
-   } else {
-     ac_check = FALSE ;
-   }
-   if (cieq (meas->m_analysis,"sp")) {
-     sp_check = TRUE ;
-   } else {
-     sp_check = FALSE ;
    }
  
    for (i=0; i < d->v_length; i++) {
@@ -674,11 +680,19 @@ static void measure_minMaxAvg(
          svalue = dScale->v_realdata[i];
       }
 
-      if (svalue < meas->m_from)
-         continue;
+      /* dc: start from pos or neg scale value */
+      if (dc_check) {
+         if ((svalue < meas->m_from) || (svalue > meas->m_to))
+            continue;
+      }
+      /* all others: start from neg scale value */
+      else {
+         if (svalue < meas->m_from)
+            continue;
 
-      if ((meas->m_to != 0.0e0) && (svalue > meas->m_to) )
-         break;
+         if ((meas->m_to != 0.0e0) && (svalue > meas->m_to) )
+            break;
+      }
 
       if (first ==0) {
          mValue = value;
@@ -757,11 +771,21 @@ static void measure_rms_integral(
    double sum2 ;           /* second sum */
    double sum3 ;           /* third sum */
    int first;
+   bool ac_check = FALSE, sp_check = FALSE, dc_check = FALSE, tran_check = FALSE ;
 
    xvalue =0;
    meas->m_measured = 0.0e0;
    meas->m_measured_at = 0.0e0;
    first =0;
+
+    if (cieq (meas->m_analysis,"ac"))
+      ac_check = TRUE ;
+    else if (cieq (meas->m_analysis,"sp"))
+      sp_check = TRUE ;
+    else if (cieq (meas->m_analysis,"dc"))
+      dc_check = TRUE ;
+    else
+      tran_check = TRUE;
 
    d = vec_get(meas->m_vec);
    if (d == NULL) {
@@ -769,11 +793,11 @@ static void measure_rms_integral(
       return;
    }
 
-   if (cieq (meas->m_analysis,"ac") || cieq (meas->m_analysis,"sp"))
+   if (ac_check || sp_check)
       xScale = vec_get("frequency");
-   else if (cieq (meas->m_analysis,"tran"))
+   else if (tran_check)
       xScale = vec_get("time");
-   else if (cieq (meas->m_analysis,"dc"))
+   else if (dc_check)
       xScale = vec_get("v-sweep");
    else {/* error */
       fprintf(cp_err, "Error: no such analysis type as %s.\n", meas->m_analysis);
@@ -794,7 +818,7 @@ static void measure_rms_integral(
    toVal = -1 ;
    /* create new set of values over interval [from, to] -- interpolate if necessary */
    for (i=0; i < d->v_length; i++) {
-      if (cieq (meas->m_analysis,"ac")) {
+      if (ac_check) {
          if (d->v_compdata)
             value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          else {
@@ -873,7 +897,7 @@ static void measure_rms_integral(
 
    /* Now set the measurement values if not set */
    if( toVal < 0.0 ){
-      if (cieq (meas->m_analysis,"ac")) {
+      if (ac_check) {
          if (d->v_compdata)
             value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          else {
@@ -1077,6 +1101,13 @@ static int measure_parse_stdParams (
          return 0;
       }
    }
+   /* dc: make m_from always less than m_to */
+   if (cieq("dc", meas->m_analysis))
+      if (meas->m_to < meas->m_from) {
+         double tmp_val = meas->m_to;
+         meas->m_to = meas->m_from;
+         meas->m_from = tmp_val;
+      }
 
    return 1;
 }
@@ -1099,14 +1130,14 @@ static int measure_parse_find (
 
    meas->m_vec = NULL;
    meas->m_vec2 = NULL;
-   meas->m_val = -1;
+   meas->m_val = 1e99;
    meas->m_cross = -1;
    meas->m_fall = -1;
    meas->m_rise = -1;
    meas->m_td = 0;
    meas->m_from = 0.0e0;
    meas->m_to = 0.0e0;
-   meas->m_at = -1;
+   meas->m_at = 1e99;
 
    pCnt =0;
    while(wl != wlBreak) {
@@ -1166,14 +1197,14 @@ static int measure_parse_when (
    char *p, *pVar1, *pVar2;
    meas->m_vec = NULL;
    meas->m_vec2 = NULL;
-   meas->m_val = -1;
+   meas->m_val = 1e99;
    meas->m_cross = -1;
    meas->m_fall = -1;
    meas->m_rise = -1;
    meas->m_td = 0;
    meas->m_from = 0.0e0;
    meas->m_to = 0.0e0;
-   meas->m_at = -1;
+   meas->m_at = 1e99;
 
    pCnt =0;
    while (wl) {
@@ -1237,7 +1268,7 @@ static int measure_parse_trigtarg (
    meas->m_td = 0;
    meas->m_from = 0.0e0;
    meas->m_to = 0.0e0;
-   meas->m_at = -1;
+   meas->m_at = 1e99;
 
    pcnt =0;
       while (words != wlTarg) {
@@ -1408,7 +1439,7 @@ get_measure2(
          }
 
          if ((measTrig->m_rise == -1) && (measTrig->m_fall == -1) && 
-               (measTrig->m_cross == -1) && (measTrig->m_at == -1)) {
+               (measTrig->m_cross == -1) && (measTrig->m_at == 1e99)) {
             sprintf(errbuf,"at, rise, fall or cross must be given\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
             return MEASUREMENT_FAILURE;
@@ -1426,14 +1457,14 @@ get_measure2(
          }
 
          if ((measTarg->m_rise == -1) && (measTarg->m_fall == -1) && 
-               (measTarg->m_cross == -1)&& (measTarg->m_at == -1)) {
+               (measTarg->m_cross == -1)&& (measTarg->m_at == 1e99)) {
             sprintf(errbuf,"at, rise, fall or cross must be given\n");
             measure_errMessage(mName, mFunction, "TARG", errbuf, autocheck);
             return MEASUREMENT_FAILURE;
          }
 
          // measure trig
-         if (measTrig->m_at == -1)
+         if (measTrig->m_at == 1e99)
             com_measure_when(measTrig);
          else
             measTrig->m_measured = measTrig->m_at;
@@ -1476,7 +1507,7 @@ get_measure2(
             return MEASUREMENT_FAILURE;
          }
 
-         if (meas->m_at == -1 ) {
+         if (meas->m_at == 1e99 ) {
             // find .. when statment
             while (words != wlWhen)
                words = words->wl_next; // hack
@@ -1568,7 +1599,7 @@ get_measure2(
             return MEASUREMENT_FAILURE;
          }
 
-         if (meas->m_at == -1)
+         if (meas->m_at == 1e99)
              meas->m_at = 0.0e0;
 
          // print results
@@ -1602,7 +1633,7 @@ get_measure2(
             return MEASUREMENT_FAILURE;
          }
 
-         if (meas->m_at == -1)
+         if (meas->m_at == 1e99)
             meas->m_at = meas->m_from;
 
          // print results
