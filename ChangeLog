@@ -1,3 +1,6 @@
+2011-02-12  Holger Vogt
+ * src/makefile.am: enable tclspice again
+
 2011-02-11  Robert Larice
  * src/spicelib/parser/inp2r.c :
     bug fix, when rewriting a resistors tc = number number  ==>  tc=number tc2=number
