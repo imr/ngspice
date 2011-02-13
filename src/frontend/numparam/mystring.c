@@ -896,7 +896,7 @@ strf (double x, int f1, int f2, SPICE_DSTRINGPTR dstr_p)
 /* e-format if f2<0, else f2 digits after the point, total width=f1 */
 /* if f1=0, also e-format with f2 digits */
 {
-    /* default f1=17, f2=-1 */
+    /* ngspice default f1=17, f2=10 */
     int dlen ;			/* length of digits */
     char *dbuf_p ;		/* beginning of sprintf buffer */
     SPICE_DSTRING fmt ;		/* format string */
@@ -914,7 +914,7 @@ strf (double x, int f1, int f2, SPICE_DSTRINGPTR dstr_p)
         {
             cadd (&fmt, '.');
             nadd (&fmt, f2);
-            sadd (&fmt, "lg");
+            sadd (&fmt, "g");
         }
     }
     else

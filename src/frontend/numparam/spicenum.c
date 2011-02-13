@@ -60,12 +60,12 @@ extern int dynmaxline; /* inpcom.c:1529 */
   overwrite any line pointers, or we start a new set after each sig=0 ?
   Anyway, we neutralize all & and .param lines  (category[] array!)
   and we substitute all {} &() and &id placeholders by dummy numbers.
-  The placeholders are long long integers 100000000000000+n (15 digits, n small).
+  The placeholders are long long integers 100000000000000+n (17 digits, n small).
 
 */
 /**********  string handling ***********/
 
-#define PlaceHold 100000000000000LL
+#define PlaceHold 10000000000000000LL
 static long placeholder = 0;
 
 
@@ -135,7 +135,7 @@ stripbraces (SPICE_DSTRINGPTR dstr_p)
                 cadd (&tstr, ' ');
 
             cadd ( &tstr, ' ');
-            naddll( &tstr, PlaceHold + placeholder); /* placeholder has 15 digits */
+            naddll( &tstr, PlaceHold + placeholder); /* placeholder has 17 digits */
             cadd ( &tstr, ' ');
 
             if (s[j] >= ' ')

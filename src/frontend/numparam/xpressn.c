@@ -33,8 +33,8 @@ extern long dynsubst;        /* see inpcom.c */
 extern unsigned int dynLlen;
 
 #define MAX_STRING_INSERT 17 /* max. string length to be inserted and replaced */
-#define ACT_CHARACTS 15      /* actual string length to be inserted and replaced */
-                             /* was 10, needs to be less or equal to MAX_STRING_INSERT - 2 */
+#define ACT_CHARACTS 17      /* actual string length to be inserted and replaced */
+#define EXP_LENGTH 5
 
 static double
 ternary_fcn (int conditional, double if_value, double else_value)
@@ -1130,7 +1130,7 @@ operate (char op, double x, double y)
         x = x * y;
         break;
     case '/':
-        if (absf (y) > epsi)
+//      if (absf (y) > epsi)
         x = x / y;
         break;
     case '^':                        /* power */
@@ -1481,7 +1481,7 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
     /* transform t to result q. mode 0: expression, mode 1: simple variable */
     double u = 0.0;
     int j, lq;
-    char dt, fmt;
+    char dt/*, fmt*/;
     entry *entry_p ;
     bool numeric, done, nolookup;
     bool err;
@@ -1555,16 +1555,9 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
         u = formula (dico, t, &err);
         numeric = 1;
     }
-    if (numeric)
-    {
-        fmt = fmttype (u);
-        if (fmt == 'I')
-            stri (np_round (u), qstr_p);
-        else
-        {
-            strf (u, 17, 10, qstr_p);
-        }
-    }
+    /*  set string to total length 17, mantissa after . is of length 9 
+    use sprintf with format string %17.10g */
+    strf (u, 17, 10, qstr_p);
     spice_dstring_free(&vstr) ;
     return err;
 }
@@ -1756,10 +1749,11 @@ compactfloatnb (SPICE_DSTRINGPTR vstr_p)
 /* try to squeeze a floating pt format to ACT_CHARACTS characters */
 /* erase superfluous 000 digit streams before E */
 /* bug: truncating, no rounding */
+/* Not used anymore !!*/
 {
     int n, k, m, lex, lem;
-    char *expov ;
-    char *expnv ;
+//    char *expov ;
+//    char *expnv ;
     char *v_p ;
     SPICE_DSTRING expo_str ;
     SPICE_DSTRING expn_str ;
@@ -1774,36 +1768,18 @@ compactfloatnb (SPICE_DSTRINGPTR vstr_p)
         pscopy (&expo_str, spice_dstring_value(vstr_p), n,
                 spice_dstring_length(vstr_p));
         lex = spice_dstring_length (&expo_str) ;
-        if (lex > 4)             /* exponent only 2 digits */
-        {
-            pscopy (&expn_str, spice_dstring_value(&expo_str), 1, 4);
-            expnv = spice_dstring_value(&expn_str) ;
-            if (atoi(expnv) < -99)
-            {
-                spice_dstring_reinit(&expo_str) ;
-                sadd(&expo_str, "e-099"); /* brutal */
-            }
-            if (atoi(expnv) > +99)
-            {
-                spice_dstring_reinit(&expo_str) ;
-                sadd(&expo_str, "e+099");
-            }
-            expov = spice_dstring_value(&expo_str) ;
-            expov[2] = expov[3];
-            expov[3] = expov[4];
-            expov[4] = '\0';
-            spice_dstring_setlength(&expo_str,4) ;
-            lex = 4;
-        }
-        k = n ;                /* mantissa is 0...k */
 
-        m = MAX_STRING_INSERT;
+        k = n ;                /* mantissa is [0..k[ */
+
         v_p = spice_dstring_value(vstr_p) ;
-        while (v_p[m] != ' ')
-            m--;
-        m++;
+
+        for(m=k; m>0; --m)
+            if(v_p[m-1] == ' ')
+                break;
+
+        /* FIXME, v_p[k] === 'e' thus this is never executed 
         while ((v_p[k] == '0') && (v_p[k - 1] == '0'))
-            k--;
+            k--;*/
 
         lem = k - m;
 
@@ -1813,7 +1789,7 @@ compactfloatnb (SPICE_DSTRINGPTR vstr_p)
         pscopy (vstr_p, spice_dstring_value(vstr_p), m, lem);
         if (cpos('.', spice_dstring_value(vstr_p)) >= 0)
         {
-            while (lem < ACT_CHARACTS - 4)
+            while (lem < ACT_CHARACTS - EXP_LENGTH)
             {
                 cadd(vstr_p, '0');
                 lem++;
@@ -1823,7 +1799,7 @@ compactfloatnb (SPICE_DSTRINGPTR vstr_p)
         {
             cadd(vstr_p, '.');
             lem++;
-            while (lem < ACT_CHARACTS - 4)
+            while (lem < ACT_CHARACTS - EXP_LENGTH)
             {
                 cadd(vstr_p, '0');
                 lem++;
@@ -1859,7 +1835,7 @@ insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
     spice_dstring_init(&vstr) ;
     spice_dstring_init(&mstr) ;
     scopyd (&vstr, ustr_p) ;
-    compactfloatnb (&vstr) ;
+//    compactfloatnb (&vstr) ;
 
     while ( spice_dstring_length (&vstr) < MAX_STRING_INSERT)
         cadd (&vstr, ' ');
@@ -1879,8 +1855,9 @@ insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
         k = 0;
         accu = 0;
 
-        while (found && (k < 15))
+        while (found && (k < 17))
         {
+            /* parse a 15-digit number */
             found = num (s[i + k]);
 
             if (found)
@@ -1891,7 +1868,7 @@ insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
 
         if (found)
         {
-            accu = accu - 100000000000000LL;	/* plausibility test */
+            accu = accu - 10000000000000000LL;	/* plausibility test */
 
             found = (accu > 0) && (accu < dynsubst + 1); /* dynsubst numbers have been allocated */
         }
