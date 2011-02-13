@@ -1,5 +1,6 @@
 2011-02-13  Holger Vogt
  * spicelib/analysis/acan.c: explicit type cast
+ * spicenum.c, mystring.c, xpressn.c: start cleanup, fix bug no. 3175568
  
 2011-02-12  Holger Vogt
  * src/makefile.am: enable tclspice again
