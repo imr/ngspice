@@ -346,7 +346,7 @@ ACan(CKTcircuit *ckt, int restart)
                 startfreq = log(startfreq);
 
                 if (freq > 0.0)
-                    SetAnalyse( "ac", (log(freq)-startfreq) * 1000.0 / (endfreq-startfreq));
+                    SetAnalyse( "ac", (int)((log(freq)-startfreq) * 1000.0 / (endfreq-startfreq)));
             }
 #endif
 
@@ -359,7 +359,7 @@ ACan(CKTcircuit *ckt, int restart)
 			 {
 				 double endfreq   = ((ACAN*)ckt->CKTcurJob)->ACstopFreq;
 				 double startfreq = ((ACAN*)ckt->CKTcurJob)->ACstartFreq;
-				 SetAnalyse( "ac", (freq - startfreq)* 1000.0 / (endfreq-startfreq));
+				 SetAnalyse( "ac", (int)((freq - startfreq)* 1000.0 / (endfreq-startfreq)));
 			 }
 #endif
 
