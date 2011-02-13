@@ -1555,9 +1555,14 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
         u = formula (dico, t, &err);
         numeric = 1;
     }
-    /*  set string to total length 17, mantissa after . is of length 9 
-    use sprintf with format string %17.10g */
-    strf (u, 17, 10, qstr_p);
+
+    if (numeric)
+    {
+        /*  set string to total length 17, mantissa after . is of length 9 
+            use sprintf with format string %17.10g */
+        strf (u, 17, 10, qstr_p);
+    }
+
     spice_dstring_free(&vstr) ;
     return err;
 }
@@ -1857,7 +1862,7 @@ insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
 
         while (found && (k < 17))
         {
-            /* parse a 15-digit number */
+            /* parse a 17-digit number */
             found = num (s[i + k]);
 
             if (found)
