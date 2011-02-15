@@ -1,3 +1,7 @@
+2011-02-15  Holger Vogt
+ * spicelib/parser/inpfindl.c:41 with MINGW level=4.00000e000
+   returned 3 instead of 4 at INPevaluate() line 210
+
 2011-02-13  Robert Larice
  * src/frontend/numparam/spicenum.c ,
  * src/frontend/numparam/xpressn.c :

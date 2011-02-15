@@ -7,7 +7,7 @@ Modified: 1999 Paolo Nenzi - Now we can use a two digits level code -
     /* INPfindLev(line,level)
      *      find the 'level' parameter on the given line and return its
      *      value (1,2,..,99 for now, 1 default)
-     * 
+     *
      */
 
 #include "ngspice.h"
@@ -30,15 +30,15 @@ char *INPfindLev(char *line, int *level)
         where += 5;		/* skip the level keyword */
         while ((*where == ' ') || (*where == '\t') || (*where == '=') ||
            (*where == ',') || (*where == '(') || (*where == ')') ||
-           (*where == '+')) 
+           (*where == '+'))
         {  /* legal white space - ignore */
             where++;
         }
-        /* now the magic number, 
+        /* now the magic number,
            allow scientific notation of level, e.g. 4.900e1,
-           offers only limited error checking.   
+           offers only limited error checking.
          */
-        *level = (int)INPevaluate(&where, &error1, 0);
+        *level = (int)(INPevaluate(&where, &error1, 0) + 0.5);
 
         if (*level < 0) {
             *level = 1;
