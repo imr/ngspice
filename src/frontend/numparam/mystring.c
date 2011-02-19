@@ -166,7 +166,7 @@ cadd ( SPICE_DSTRINGPTR dstr_p, char c)
 {
     char tmp_str[2] ;
     tmp_str[0] = c ;
-    tmp_str[1] = 0 ;
+    tmp_str[1] = '\0' ;
     spice_dstring_append( dstr_p, tmp_str, -1 ) ;
     return 1 ;
 }
@@ -222,7 +222,7 @@ cpos (char c, char *s)
  */
 {
     int i = 0;
-    while ((s[i] != c) && (s[i] != 0))
+    while ((s[i] != c) && (s[i] != '\0'))
         i++;
 
     if (s[i] == c)
@@ -275,7 +275,7 @@ scopy_up (SPICE_DSTRINGPTR dstr_p, char *str)	/* returns success flag */
     char *ptr ;			/* position in string */
 
     spice_dstring_reinit( dstr_p ) ;
-    up[1] = 0 ;
+    up[1] = '\0' ;
     for( ptr = str ; ptr && *ptr ; ptr++ )
     {
         up[0] = upcase ( *ptr );
@@ -295,7 +295,7 @@ scopy_lower (SPICE_DSTRINGPTR dstr_p, char *str)	/* returns success flag */
     char *ptr ;			/* position in string */
 
     spice_dstring_reinit( dstr_p ) ;
-    low[1] = 0 ;
+    low[1] = '\0' ;
     for( ptr = str ; ptr && *ptr ; ptr++ )
     {
         low[0] = lowcase ( *ptr );
@@ -425,7 +425,7 @@ nadd ( SPICE_DSTRINGPTR dstr_p, long n)
         cadd (dstr_p, '0');
     else
     {
-        load_str[1] = 0 ;
+        load_str[1] = '\0' ;
         if (sg == '-')
         {
             load_str[0] = sg ;
@@ -470,7 +470,7 @@ naddll (SPICE_DSTRINGPTR dstr_p, long long n)
         cadd (dstr_p, '0');
     else
     {
-        load_str[1] = 0 ;
+        load_str[1] = '\0' ;
         if (sg == '-')
         {
             load_str[0] = sg ;
@@ -587,8 +587,8 @@ freadstr (FILE * f, SPICE_DSTRINGPTR dstr_p)
     char str_load[2] ;
     int len = 0 ;
 
-    str_load[0] = 0 ;
-    str_load[1] = 0 ;
+    str_load[0] = '\0' ;
+    str_load[1] = '\0' ;
     spice_dstring_reinit(dstr_p) ;
     do
     {
@@ -650,7 +650,7 @@ stupcase (char *s)
 {
     int i = 0;
 
-    while (s[i] != 0)
+    while (s[i] != '\0')
     {
         s[i] = upcase (s[i]);
         i++;

@@ -742,7 +742,7 @@ fetchid (char *s, SPICE_DSTRINGPTR t, int ls, int i)
         if (i <= ls)
             c = s[i - 1];
         else
-            c = Nul;
+            c = '\0';
 
         c = upcase (c);
         ok = alfanum (c) || c == '.';
@@ -775,13 +775,13 @@ exists (tdico * d, char *s, int *pi, bool *perror)
     {
         i++;
         if (i > ls)
-            c = Nul;
+            c = '\0';
         else
             c = s[i - 1];
 
         ok = (c == '(');
     }
-    while (!(ok || (c == Nul)));
+    while (!(ok || (c == '\0')));
 
     if (ok)
     {
@@ -795,13 +795,13 @@ exists (tdico * d, char *s, int *pi, bool *perror)
             i++;
 
             if (i > ls)
-                c = Nul;
+                c = '\0';
             else
                 c = s[i - 1];
 
             ok = (c == ')');
         }
-        while (!(ok || (c == Nul)));
+        while (!(ok || (c == '\0')));
     }
     if (!ok)
         error = message (d, " Defined() syntax");
@@ -865,7 +865,7 @@ fetchoperator (tdico * dico,
     if (i < ls)
         d = s[i];
     else
-        d = Nul;
+        d = '\0';
 
     if ((c == '!') && (d == '='))
     {
@@ -1166,7 +1166,7 @@ formula (tdico * dico, char *s, bool *perror)
             {
                 k++;
                 if (k > ls)
-                    d = (char)(0);
+                    d = '\0';
                 else
                     d = s[k - 1];
 
@@ -1506,8 +1506,8 @@ scanline (tdico * dico, char *s, char *r, bool err)
                     nnest--;
                 }
             }
-            while (!((nnest == 0) || (d == 0)));
-            if (d == 0)
+            while (!((nnest == 0) || (d == '\0')));
+            if (d == '\0')
             {
                 err = message (dico, "Closing \"}\" not found.");
             }
@@ -1548,7 +1548,7 @@ scanline (tdico * dico, char *s, char *r, bool err)
                     k++;
                     if (k > ls)
                     {
-                        d = chr (0);
+                        d = '\0';
                     }
                     else
                     {
@@ -1583,7 +1583,7 @@ scanline (tdico * dico, char *s, char *r, bool err)
                     k++;
                     if (k > ls)
                     {
-                        d = chr (0);
+                        d = '\0';
                     }
                     else
                     {
@@ -1791,9 +1791,9 @@ nupa_substitute (tdico * dico, char *s, char *r, bool err)
                 else if (d == '}')
                     nnest--;
             }
-            while (!((nnest == 0) || (d == 0)));
+            while (!((nnest == 0) || (d == '\0')));
 
-            if (d == 0)
+            if (d == '\0')
                 err = message (dico, "Closing \"}\" not found.");
             else
             {
@@ -1838,7 +1838,7 @@ nupa_substitute (tdico * dico, char *s, char *r, bool err)
                 {
                     k++;
                     if (k > ls)
-                        d = (char)(0);
+                        d = '\0';
                     else
                         d = s[k - 1];
 
@@ -1865,7 +1865,7 @@ nupa_substitute (tdico * dico, char *s, char *r, bool err)
                 {
                     k++;
                     if (k > ls)
-                        d = (char)(0);
+                        d = '\0';
                     else
                         d = s[k - 1];
                 }
@@ -1983,7 +1983,7 @@ getexpress (char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
                     i++;
 
                     if (i > ls)
-                        d = Nul;
+                        d = '\0';
                     else
                         d = s[i - 1];
 
@@ -2062,7 +2062,7 @@ nupa_assignment (tdico * dico, char *s, char mode)
     {
         key = getword (s, &tstr, i, &i);
         t_p = spice_dstring_value(&tstr) ;
-        if ((t_p[0] == 0) || (key > 0))
+        if ((t_p[0] == '\0') || (key > 0))
             error = message (dico, " Identifier expected");
 
         if (!error)

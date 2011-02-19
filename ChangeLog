@@ -1,5 +1,10 @@
 2011-02-19  Robert Larice
  * src/frontend/numparam/mystring.c ,
+ * src/frontend/numparam/xpressn.c :
+    numparm, un-pascal-ify, use '\0'
+
+2011-02-19  Robert Larice
+ * src/frontend/numparam/mystring.c ,
  * src/frontend/numparam/nupatest.c :
     numparm, un-pascal-ify, use '\r' '\n' '\t'
 
