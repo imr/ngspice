@@ -1,5 +1,9 @@
 2011-02-19  Robert Larice
  * src/frontend/numparam/xpressn.c :
+    numparm, upgrade message() to accept format strings
+
+2011-02-19  Robert Larice
+ * src/frontend/numparam/xpressn.c :
     numparm, shrink scope for dstrings, mostly message() related
 
 2011-02-19  Robert Larice

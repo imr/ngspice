@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>                /* for function message() only. */
+#include <stdarg.h>
 
 #include "general.h"
 #include "numparam.h"
@@ -20,7 +21,7 @@
 extern double gauss0(void);
 extern double drand(void);
 
-void debugwarn(tdico *d, char *s);
+static void debugwarn(tdico *d, char *s);
 
 /************ keywords ************/
 
@@ -163,41 +164,47 @@ mathfunction (int f, double z, double x)
     return y;
 }
 
-static bool
-message (tdico * dic, char *s)
-/* record 'dic' should know about source file and line */
-{
-    char *srcfile ;			/* src file name */
-    SPICE_DSTRING t ;			/* temp dstring */
 
-    spice_dstring_init(&t) ;
-    dic->errcount++;
-    srcfile = spice_dstring_value( &(dic->srcfile) ) ;
-    if ((srcfile != NULL) && srcfile[0])
-    {
-        scopyd(&t, &(dic->srcfile)) ;
-        cadd (&t, ':');
-    }
+#ifdef __GNUC__
+static bool message(tdico * dic, const char *fmt, ...)
+    __attribute__ ((format (__printf__, 2, 3)));
+#endif
+
+
+static bool
+message(tdico * dic, const char *fmt, ...)
+{
+    va_list ap;
+
+    char *srcfile = spice_dstring_value( &(dic->srcfile) ) ;
+
+    if (srcfile && *srcfile)
+        fprintf(stderr, "%s:", srcfile);
+
     if (dic->srcline >= 0)
-    {
-        sadd (&t, "Original line no.: ");
-        nadd (&t, dic->oldline);
-        sadd (&t, ", new internal line no.: ");
-        nadd (&t, dic->srcline);
-        sadd (&t, ":\n");
-    }
-    sadd (&t, s);
-    cadd (&t, '\n');
-    fputs ( spice_dstring_value(&t), stderr);
-    spice_dstring_free(&t) ;
+        fprintf
+            ( stderr,
+              "Original line no.: %d, new internal line no.: %d:\n",
+              dic->oldline,
+              dic->srcline
+            );
+
+    va_start(ap, fmt);
+    vfprintf(stderr, fmt, ap);
+    va_end(ap);
+
+    fprintf(stderr,"\n");
+
+    dic->errcount++;
 
     return 1 /* error! */ ;
 }
 
-void
+
+static void
 debugwarn (tdico * d, char *s)
 {
-    message (d, s);
+    message (d, "%s", s);
     d->errcount--;
 }
 
@@ -401,13 +408,7 @@ fetchnumentry (tdico * dico, char *t, bool *perr)
         u = entry_p->vl ;
     else
     {
-        SPICE_DSTRING s ;
-        spice_dstring_init(&s) ;
-        scopys(&s, "Undefined number [") ;
-        sadd (&s, t);
-        cadd (&s, ']');
-        err = message (dico, spice_dstring_value(&s) ) ;
-        spice_dstring_free(&s) ;
+        err = message (dico, "Undefined number [%s]", t);
         u = 0.0;
     }
 
@@ -465,12 +466,9 @@ define (tdico * dico,
     char c;
     bool err, warn;
     entry *entry_p ;			/* spice table entry */
-    SPICE_DSTRING vartemp ;		/* vairable temp */
     NGHASHPTR htable_p ;			/* hash table */
 
     NG_IGNORE(pval);
-
-    spice_dstring_init(&vartemp) ;
 
     if( dico->stack_depth > 0 )
     {
@@ -513,26 +511,20 @@ define (tdico * dico,
             if ( entry_p->level < dico->stack_depth)
             {
                 /* warn about re-write to a global scope! */
-                scopys(&vartemp, t) ;
-                cadd (&vartemp, ':');
-                nadd (&vartemp, entry_p->level);
-                sadd (&vartemp, " overwritten.");
-                warn = message (dico, spice_dstring_value(&vartemp));
+                warn = message (dico, "%s:%d overwritten.", t, entry_p->level);
             }
         }
         else
         {
-            scopys( &vartemp, t) ;
-            sadd ( &vartemp, ": cannot redefine");
             /* suppress error message, resulting from multiple definition of
             symbols (devices) in .model lines with same name, but in different subcircuits.
             Subcircuit expansion is o.k., we have to deal with this numparam
             behaviour later. (H. Vogt 090426)
             */
-            /*err = message (dico, v);*/
+            if(0)
+                message (dico, "%s: cannot redefine", t);
         }
     }
-    spice_dstring_free(&vartemp) ;
     return err;
 }
 
@@ -644,9 +636,7 @@ deffuma (                        /* define function or macro entry. */
             }
             else
             {
-                scopy (v, t);
-                sadd (v, " already defined");
-                err = message (dico, v);
+                err = message (dico, "%s already defined", t);
             }
         }
         else
@@ -835,12 +825,7 @@ fetchnumber (tdico * dico, char *s, int *pi, bool *perror)
 
     if(1 != sscanf(s, "%lG%n", &u, &n)) {
 
-        SPICE_DSTRING vstr ;
-        spice_dstring_init(&vstr) ;
-        scopys(&vstr, "Number format error: ") ;
-        sadd (&vstr, s);
-        *perror = message (dico, spice_dstring_value(&vstr));
-        spice_dstring_free(&vstr) ;
+        *perror = message (dico, "Number format error: \"%s\"", s) ;
 
         return 0.0;             /* FIXME return NaN */
 
@@ -957,15 +942,7 @@ fetchoperator (tdico * dico,
     {
         state = 0;
         if (c > ' ')
-        {
-            SPICE_DSTRING vstr ;
-            spice_dstring_init(&vstr) ;
-            spice_dstring_append(&vstr, "Syntax error: letter [", -1 );
-            cadd (&vstr, c);
-            cadd (&vstr, ']');
-            error = message (dico, spice_dstring_value(&vstr) );
-            spice_dstring_free(&vstr) ;
-        }
+            error = message (dico, "Syntax error: letter [%c]", c);
     }
     *pi = i;
     *pstate = state;
@@ -1341,13 +1318,9 @@ formula (tdico * dico, char *s, bool *perror)
             oldstate = state;
         }
     } /* while */ ;
+
     if ((natom == 0) || (oldstate != 4))
-    {
-        spice_dstring_reinit(&tstr) ;
-        sadd( &tstr, " Expression err: ");
-        sadd (&tstr, s);
-        error = message (dico, spice_dstring_value(&tstr));
-    }
+        error = message (dico, " Expression err: %s", s);
 
     if (negate == 1)
     {
@@ -1459,20 +1432,9 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
             while (!(done));
         }
 
-        if (!(entry_p))
-        {
-            SPICE_DSTRING vstr ;
-            spice_dstring_init(&vstr) ;
-            cadd (&vstr, '\"');
-            sadd (&vstr, t);
-            sadd (&vstr, "\" not evaluated. ");
-
-            if (nolookup)
-                sadd (&vstr, "Lookup failure.");
-
-            err = message (dico, spice_dstring_value(&vstr));
-            spice_dstring_free(&vstr) ;
-        }
+        if (!entry_p)
+            err = message (dico,
+               "\"%s\" not evaluated.%s", t, nolookup ? " Lookup failure." : "");
     }
     else
     {
@@ -1559,7 +1521,7 @@ scanline (tdico * dico, char *s, char *r, bool err)
             }
             else
             {
-                err = message (dico, s);
+                err = message (dico, "%s", s);
             }
         }
         else if (c == Intro)
@@ -1631,7 +1593,7 @@ scanline (tdico * dico, char *s, char *r, bool err)
             }
             else
             {
-                message (dico, s);
+                message (dico, "%s", s);
             }
         }
         else if (c == Nodekey)
@@ -1767,14 +1729,7 @@ insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
         cadd (&vstr, ' ');
 
     if ( spice_dstring_length (&vstr) > MAX_STRING_INSERT)
-    {
-        SPICE_DSTRING mstr ;
-        spice_dstring_init(&mstr) ;
-        spice_dstring_append( &mstr, " insertnumber fails: ", -1);
-        sadd (&mstr, spice_dstring_value(ustr_p));
-        message (dico, spice_dstring_value(&mstr)) ;
-        spice_dstring_free(&mstr) ;
-    }
+        message (dico, " insertnumber fails: %s", spice_dstring_value(ustr_p));
 
     found = 0;
 
@@ -2396,13 +2351,10 @@ nupa_subcktcall (tdico * dico, char *s, char *x, bool err)
     dicostack (dico, Push);        /* create local symbol scope */
     if (narg != n)
     {
-        scopys(&tstr, " Mismatch: ");
-        nadd (&tstr, n);
-        sadd (&tstr, "  formal but ");
-        nadd (&tstr, narg);
-        sadd (&tstr, " actual params.");
-        err = message (dico, spice_dstring_value(&tstr));
-        message (dico, spice_dstring_value(&idlist));
+        err = message ( dico,
+                        " Mismatch: %d  formal but %d actual params.\n"
+                        "%s",
+                        n, narg, spice_dstring_value(&idlist) );
         /* ;} else { debugwarn(dico, idlist) */ ;
     }
     err = nupa_assignment (dico, spice_dstring_value(&idlist), 'N');
