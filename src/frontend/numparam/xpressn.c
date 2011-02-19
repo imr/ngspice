@@ -384,9 +384,7 @@ fetchnumentry (tdico * dico, char *t, bool *perr)
     bool err = *perr;
     double u;
     entry *entry_p ;			/* hash table entry */
-    SPICE_DSTRING s ;			/* dynamic string */
 
-    spice_dstring_init(&s) ;
     entry_p = entrynb (dico, t);        /* no keyword */
     /*dbg -- if ( k<=0 ) { ws("Dico num lookup fails. ") ;} */
 
@@ -403,16 +401,17 @@ fetchnumentry (tdico * dico, char *t, bool *perr)
         u = entry_p->vl ;
     else
     {
-        u = 0.0;
+        SPICE_DSTRING s ;
+        spice_dstring_init(&s) ;
         scopys(&s, "Undefined number [") ;
         sadd (&s, t);
         cadd (&s, ']');
         err = message (dico, spice_dstring_value(&s) ) ;
+        spice_dstring_free(&s) ;
+        u = 0.0;
     }
 
     *perr = err;
-
-    spice_dstring_free(&s) ;
 
     return u;
 }
@@ -543,7 +542,6 @@ defsubckt (tdico * dico, char *s, int w, char categ)
    to enter subcircuit (categ=U) and model (categ=O) names
 */
 {
-    SPICE_DSTRING ustr ;			/* temp user string */
     bool err;
     int i, j, ls;
     ls = length (s);
@@ -565,6 +563,7 @@ defsubckt (tdico * dico, char *s, int w, char categ)
 
     if ((j > i))
     {
+        SPICE_DSTRING ustr ;			/* temp user string */
         spice_dstring_init(&ustr) ;
         pscopy_up ( &ustr, s, i, j - i) ;
         err = define (dico, spice_dstring_value(&ustr), ' ', categ, 0.0, w, NULL, NULL);
@@ -876,9 +875,7 @@ fetchoperator (tdico * dico,
     unsigned char level = *plevel;
     bool error = *perror;
     char c, d;
-    SPICE_DSTRING vstr ;
     c = s[i - 1];
-    spice_dstring_init(&vstr) ;
 
     if (i < ls)
         d = s[i];
@@ -961,17 +958,19 @@ fetchoperator (tdico * dico,
         state = 0;
         if (c > ' ')
         {
+            SPICE_DSTRING vstr ;
+            spice_dstring_init(&vstr) ;
             spice_dstring_append(&vstr, "Syntax error: letter [", -1 );
             cadd (&vstr, c);
             cadd (&vstr, ']');
             error = message (dico, spice_dstring_value(&vstr) );
+            spice_dstring_free(&vstr) ;
         }
     }
     *pi = i;
     *pstate = state;
     *plevel = level;
     *perror = error;
-    spice_dstring_free(&vstr) ;
     return c;
 }
 
@@ -1410,9 +1409,7 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
     entry *entry_p ;
     bool numeric, done, nolookup;
     bool err;
-    SPICE_DSTRING vstr ;
 
-    spice_dstring_init(&vstr) ;
     spice_dstring_reinit(qstr_p) ;
     numeric = 0;
     err = 0;
@@ -1464,7 +1461,8 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 
         if (!(entry_p))
         {
-            spice_dstring_reinit(&vstr) ;
+            SPICE_DSTRING vstr ;
+            spice_dstring_init(&vstr) ;
             cadd (&vstr, '\"');
             sadd (&vstr, t);
             sadd (&vstr, "\" not evaluated. ");
@@ -1473,6 +1471,7 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
                 sadd (&vstr, "Lookup failure.");
 
             err = message (dico, spice_dstring_value(&vstr));
+            spice_dstring_free(&vstr) ;
         }
     }
     else
@@ -1488,7 +1487,6 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
         strf (u, 17, 10, qstr_p);
     }
 
-    spice_dstring_free(&vstr) ;
     return err;
 }
 
@@ -1755,7 +1753,6 @@ insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
 /* insert u in string s in place of the next placeholder number */
 {
     SPICE_DSTRING vstr ;			/* dynamic string */
-    SPICE_DSTRING mstr ;			/* dynamic string */
     char *v_p ;				/* value of vstr dyna string */
     bool found;
     int ls, k;
@@ -1763,7 +1760,6 @@ insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
     ls = length (s);
 
     spice_dstring_init(&vstr) ;
-    spice_dstring_init(&mstr) ;
     scopyd (&vstr, ustr_p) ;
 //    compactfloatnb (&vstr) ;
 
@@ -1772,9 +1768,12 @@ insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
 
     if ( spice_dstring_length (&vstr) > MAX_STRING_INSERT)
     {
+        SPICE_DSTRING mstr ;
+        spice_dstring_init(&mstr) ;
         spice_dstring_append( &mstr, " insertnumber fails: ", -1);
         sadd (&mstr, spice_dstring_value(ustr_p));
         message (dico, spice_dstring_value(&mstr)) ;
+        spice_dstring_free(&mstr) ;
     }
 
     found = 0;
