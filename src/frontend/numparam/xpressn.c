@@ -547,7 +547,7 @@ defsubckt (tdico * dico, char *s, int w, char categ)
     while ((j < ls) && (s[j] > ' '))
         j++;
 
-    if ((j > i))
+    if (j > i)
     {
         SPICE_DSTRING ustr ;			/* temp user string */
         spice_dstring_init(&ustr) ;
@@ -585,7 +585,7 @@ findsubckt (tdico * dico, char *s, SPICE_DSTRINGPTR subname)
     pscopy_up ( &ustr, s, k + 1, j - k) ;
     entry_p = entrynb (dico, spice_dstring_value(&ustr) ) ;
 
-    if ((entry_p) && ( entry_p->tp == 'U'))
+    if (entry_p && (entry_p->tp == 'U'))
     {
         line = entry_p->ivl;
         scopyd ( subname, &ustr ) ;
@@ -1303,7 +1303,7 @@ formula (tdico * dico, char *s, bool *perror)
             if (level > topop)
                 topop = level;
         }
-        if ((state > 0))
+        if (state > 0)
             oldstate = state;
     } /* while */ ;
 
@@ -1381,7 +1381,7 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
         stupcase (t);
         entry_p = entrynb (dico, t);
         nolookup = !entry_p;
-        while ((entry_p) && (entry_p->tp == 'P'))
+        while (entry_p && (entry_p->tp == 'P'))
             entry_p = entry_p->pointer ;		/* follow pointer chain */
 
         /* pointer chain */
@@ -2211,7 +2211,7 @@ nupa_subcktcall (tdico * dico, char *s, char *x, bool err)
                 /* try to fetch valid arguments */
                 k = j;
                 spice_dstring_reinit(&ustr) ;
-                if ((t_p[k] == Intro))
+                if (t_p[k] == Intro)
                 {
                     /* handle historical syntax... */
                     if (alfa (t_p[k + 1]))
