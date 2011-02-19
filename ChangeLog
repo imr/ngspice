@@ -1,3 +1,7 @@
+2011-02-19  Holger Vogt
+ * ngspice.h: _snprintf for MS Visual Studio
+ * measure.c, com_measure.c: update FIND .. WHEN measurements
+
 2011-02-19  Robert Larice
  * configure.ac ,
  * examples/transient-noise/shot_ng.cir ,

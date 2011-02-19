@@ -373,15 +373,20 @@ static void com_measure_when(
    int measurement_pending;
    int init_measured_value;
    bool ac_check = FALSE, sp_check = FALSE, dc_check = FALSE, tran_check = FALSE ;
-   double value, prevValue;
+   bool has_d2 = FALSE;
+   double value, prevValue, value2, prevValue2;
    double scaleValue, prevScaleValue;
 
    enum ValSide { S_ABOVE_VAL, S_BELOW_VAL };
    enum ValEdge { E_RISING, E_FALLING };
 
-   struct dvec *d, *dScale;
+   struct dvec *d, *d2, *dScale;
 
    d = vec_get(meas->m_vec);
+   if (meas->m_vec2) {
+      d2 = vec_get(meas->m_vec2);
+      has_d2 = TRUE;
+   }
    dScale = plot_cur->pl_scale;
 
    if (d == NULL) {
@@ -389,13 +394,18 @@ static void com_measure_when(
       return;
    }
 
+   if ((has_d2) && (d == NULL)) {
+      fprintf(cp_err, "Error: no such vector as %s.\n", meas->m_vec2);
+      return;
+   }
    if (dScale == NULL) {
        fprintf(cp_err, "Error: no scale vector.\n");
        return;
    }
 
-   prevValue =0;
-   prevScaleValue =0;
+   prevValue =0.;
+   prevValue2 =0.;
+   prevScaleValue =0.;
    first =0;
    measurement_pending=0;
    init_measured_value=1;
@@ -415,9 +425,6 @@ static void com_measure_when(
  
    for (i=0; i < d->v_length; i++) {
 
-//      value = d->v_realdata[i];
-//      scaleValue = dTime->v_realdata[i];
-
       if (ac_check) {
          if (d->v_compdata)
              value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
@@ -436,6 +443,24 @@ static void com_measure_when(
          value = d->v_realdata[i];
          scaleValue = dScale->v_realdata[i];
       }
+
+      if (has_d2) {
+          if (ac_check) {
+             if (d2->v_compdata)
+                 value2 = get_value(meas, d2, i); //d->v_compdata[i].cx_real;
+             else
+                value2 = d2->v_realdata[i];
+          }
+          else if (sp_check) {
+             if (d2->v_compdata)
+                value2 = get_value(meas, d2, i); //d->v_compdata[i].cx_real;
+             else
+                value2 = d2->v_realdata[i];
+          }
+          else {
+             value2 = d2->v_realdata[i];
+          }
+      }
       /* 'dc' is special: it may start at an arbitrary scale value.
          Use m_td to store this value, a delay TD does not make sense */
       if ((dc_check) && (i==0))
@@ -451,70 +476,136 @@ static void com_measure_when(
       if ((first > 1) && (dc_check && (meas->m_td == scaleValue)))
         first = 1;
 
-      if (first == 1) {
-         // initialise
-         crossCnt =0;
-         if (value < meas->m_val) {
-            section = S_BELOW_VAL;
-            if ( (prevValue <= meas->m_val) && (value >= meas->m_val) ) {
-               fallCnt =1;
-               crossCnt =1;
-            }
+      if (first == 1) 
+          if (has_d2) {
+             // initialise
+             crossCnt =0;
+             if (value < value2) {
+                section = S_BELOW_VAL;
+                if ( (prevValue <= value2) && (value >= value2) ) {
+                   fallCnt =1;
+                   crossCnt =1;
+                }
 
-         } else {
-            section = S_ABOVE_VAL;
-            if ( (prevValue <= meas->m_val) && (value >= meas->m_val) ) {
-               riseCnt =1;
-               crossCnt =1;
-            }
-         }
-         fflush( stdout ) ;
-      }
+             } else {
+                section = S_ABOVE_VAL;
+                if ( (prevValue <= value2) && (value >= value2) ) {
+                   riseCnt =1;
+                   crossCnt =1;
+                }
+             }
+             fflush( stdout ) ;
+          }
+          else {
+             // initialise
+             crossCnt =0;
+             if (value < meas->m_val) {
+                section = S_BELOW_VAL;
+                if ( (prevValue <= meas->m_val) && (value >= meas->m_val) ) {
+                   fallCnt =1;
+                   crossCnt =1;
+                }
+
+             } else {
+                section = S_ABOVE_VAL;
+                if ( (prevValue <= meas->m_val) && (value >= meas->m_val) ) {
+                   riseCnt =1;
+                   crossCnt =1;
+                }
+             }
+             fflush( stdout ) ;
+          }
 
       if (first > 1) {
-         if ( (section == S_BELOW_VAL) && (value >= meas->m_val) ) {
-            section = S_ABOVE_VAL;
-            crossCnt++;
-            riseCnt++;
-            if( meas->m_fall != MEASURE_LAST_TRANSITION ){
-               /* we can measure rise/cross transition if the user
-                * has not requested a last fall transition */
-               measurement_pending=1;
-            }
+         if (has_d2) {
+             if ( (section == S_BELOW_VAL) && (value >= value2) ) {
+                section = S_ABOVE_VAL;
+                crossCnt++;
+                riseCnt++;
+                if( meas->m_fall != MEASURE_LAST_TRANSITION ){
+                   /* we can measure rise/cross transition if the user
+                    * has not requested a last fall transition */
+                   measurement_pending=1;
+                }
 
-         } else if ( (section == S_ABOVE_VAL) && (value <= meas->m_val) ) {
-            section = S_BELOW_VAL;
-            crossCnt++;
-            fallCnt++;
-            if( meas->m_rise != MEASURE_LAST_TRANSITION ){
-               /* we can measure fall/cross transition if the user
-                * has not requested a last rise transition */
-               measurement_pending=1;
-            }
-         }
+             } else if ( (section == S_ABOVE_VAL) && (value <= value2) ) {
+                section = S_BELOW_VAL;
+                crossCnt++;
+                fallCnt++;
+                if( meas->m_rise != MEASURE_LAST_TRANSITION ){
+                   /* we can measure fall/cross transition if the user
+                    * has not requested a last rise transition */
+                   measurement_pending=1;
+                }
+             }
 
-         if  ((crossCnt == meas->m_cross) || (riseCnt == meas->m_rise) || (fallCnt == meas->m_fall)) {
-             /* user requested an exact match of cross, rise, or fall
-              * exit when we meet condition */
-            meas->m_measured = prevScaleValue + (meas->m_val - prevValue) * (scaleValue - prevScaleValue) / (value - prevValue);
-            return;
+             if  ((crossCnt == meas->m_cross) || (riseCnt == meas->m_rise) || (fallCnt == meas->m_fall)) {
+                 /* user requested an exact match of cross, rise, or fall
+                  * exit when we meet condition */
+//                meas->m_measured = prevScaleValue + (value2 - prevValue) * (scaleValue - prevScaleValue) / (value - prevValue);
+                 meas->m_measured = prevScaleValue + (prevValue2 - prevValue) * (scaleValue - prevScaleValue) / (value - prevValue - value2 + prevValue2);
+                 return;
+             }
+             if  ( measurement_pending ){
+                if( (meas->m_cross == MEASURE_DEFAULT) && (meas->m_rise == MEASURE_DEFAULT) && (meas->m_fall == MEASURE_DEFAULT) ){
+                   /* user didn't request any option, return the first possible case */
+                   meas->m_measured = prevScaleValue + (prevValue2 - prevValue) * (scaleValue - prevScaleValue) / (value - prevValue - value2 + prevValue2);
+                   return;
+                } else if( (meas->m_cross == MEASURE_LAST_TRANSITION) || (meas->m_rise == MEASURE_LAST_TRANSITION) || (meas->m_fall == MEASURE_LAST_TRANSITION) ){
+                   meas->m_measured = prevScaleValue + (prevValue2 - prevValue) * (scaleValue - prevScaleValue) / (value - prevValue - value2 + prevValue2);
+                   /* no return - look for last */
+                   init_measured_value=0;
+                }
+                measurement_pending=0;
+             }
          }
-         if  ( measurement_pending ){
-            if( (meas->m_cross == MEASURE_DEFAULT) && (meas->m_rise == MEASURE_DEFAULT) && (meas->m_fall == MEASURE_DEFAULT) ){
-               /* user didn't request any option, return the first possible case */
-               meas->m_measured = prevScaleValue + (meas->m_val - prevValue) * (scaleValue - prevScaleValue) / (value - prevValue);
-               return;
-            } else if( (meas->m_cross == MEASURE_LAST_TRANSITION) || (meas->m_rise == MEASURE_LAST_TRANSITION) || (meas->m_fall == MEASURE_LAST_TRANSITION) ){
-               meas->m_measured = prevScaleValue + (meas->m_val - prevValue) * (scaleValue - prevScaleValue) / (value - prevValue);
-               /* no return - look for last */
-               init_measured_value=0;
-            }
-            measurement_pending=0;
+         else {
+             if ( (section == S_BELOW_VAL) && (value >= meas->m_val) ) {
+                section = S_ABOVE_VAL;
+                crossCnt++;
+                riseCnt++;
+                if( meas->m_fall != MEASURE_LAST_TRANSITION ){
+                   /* we can measure rise/cross transition if the user
+                    * has not requested a last fall transition */
+                   measurement_pending=1;
+                }
+
+             } else if ( (section == S_ABOVE_VAL) && (value <= meas->m_val) ) {
+                section = S_BELOW_VAL;
+                crossCnt++;
+                fallCnt++;
+                if( meas->m_rise != MEASURE_LAST_TRANSITION ){
+                   /* we can measure fall/cross transition if the user
+                    * has not requested a last rise transition */
+                   measurement_pending=1;
+                }
+             }
+
+             if  ((crossCnt == meas->m_cross) || (riseCnt == meas->m_rise) || (fallCnt == meas->m_fall)) {
+                 /* user requested an exact match of cross, rise, or fall
+                  * exit when we meet condition */
+                meas->m_measured = prevScaleValue + (meas->m_val - prevValue) * (scaleValue - prevScaleValue) / (value - prevValue);
+                return;
+             }
+             if  ( measurement_pending ){
+                if( (meas->m_cross == MEASURE_DEFAULT) && (meas->m_rise == MEASURE_DEFAULT) && (meas->m_fall == MEASURE_DEFAULT) ){
+                   /* user didn't request any option, return the first possible case */
+                   meas->m_measured = prevScaleValue + (meas->m_val - prevValue) * (scaleValue - prevScaleValue) / (value - prevValue);
+                   return;
+                } else if( (meas->m_cross == MEASURE_LAST_TRANSITION) || (meas->m_rise == MEASURE_LAST_TRANSITION) || (meas->m_fall == MEASURE_LAST_TRANSITION) ){
+                   meas->m_measured = prevScaleValue + (meas->m_val - prevValue) * (scaleValue - prevScaleValue) / (value - prevValue);
+                   /* no return - look for last */
+                   init_measured_value=0;
+                }
+                measurement_pending=0;
+             }
          }
       }
       first ++;
 
       prevValue = value;
+      if (has_d2)
+          prevValue2 = value2;
       prevScaleValue = scaleValue;
    }
 
@@ -1346,7 +1437,7 @@ get_measure2(
 
    if (!ciprefix("tran", plot_cur->pl_typename) && !ciprefix("ac", plot_cur->pl_typename) &&
          !ciprefix("dc", plot_cur->pl_typename) && !ciprefix("sp", plot_cur->pl_typename)) {
-      fprintf(cp_err, "Error: measure limited to tran, dc or ac analysis\n");
+      fprintf(cp_err, "Error: measure limited to tran, dc, sp, or ac analysis\n");
       return MEASUREMENT_FAILURE;
    }
 
@@ -1529,7 +1620,7 @@ get_measure2(
             }
 
             measure_at(meas, measFind->m_measured);
-            meas->m_measured = measFind->m_measured;
+            meas->m_at = measFind->m_measured;
 
          } else {
             measure_at(meas, meas->m_at);

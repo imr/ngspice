@@ -44,21 +44,27 @@ extern bool rflag;
 void
 com_meas(wordlist *wl) {
    /* wl: in, input line of meas command */
-   char *line_in, *outvar, newvec[1000], *vec_found, *token, *equal_ptr, newval[256];
-   wordlist * wl_count, *wl_let, *wl_index;
-   int fail, err=0;
-   double result = 0;
+   char *line_in, *outvar, newvec[1000];
+   wordlist * wl_count, *wl_let;
+#ifdef not
+   char *vec_found, *token, *equal_ptr, newval[256];
+   wordlist *wl_index;
    struct dvec *d;
+   int err=0;
+#endif
+   int fail;
+   double result = 0;
 
    if (!wl) {
       com_display(NULL);
       return;
    }
    wl_count = wl;
-   
+#ifdef not   
    /* check each wl entry, if it contain '=' and if the following token is
       a vector. If yes, replace this vector by its value */
    wl_index = wl;
+
    while ( wl_index) {
 	   token = wl_index->wl_word;
       /* find the vector vec_found, next token after each '=' sign. 
@@ -103,7 +109,7 @@ com_meas(wordlist *wl) {
       }
       wl_index = wl_index->wl_next;      
    }	  
-   
+#endif   
    line_in = wl_flatten(wl);
 
    /* get output var name */
