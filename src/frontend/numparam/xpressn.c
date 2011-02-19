@@ -247,9 +247,8 @@ initdico (tdico * dico)
 void dico_free_entry( entry *entry_p )
 {
     if( entry_p->symbol )
-    {
         txfree(entry_p->symbol ) ;
-    }
+
     txfree(entry_p) ;
 } /* end dico_free_entry() */
 
@@ -360,9 +359,7 @@ entrynb ( tdico *d, char *s)
         {
             entry_p = (entry *) nghash_find( htable_p, s ) ;
             if( entry_p )
-            {
                 return( entry_p ) ;
-            }
         }
     }
     /* No local symbols - try the global table */
@@ -396,9 +393,7 @@ fetchnumentry (tdico * dico, char *t, bool *perr)
     /*dbg -- if ( k<=0 ) { ws("Dico num lookup fails. ") ;} */
 
     while ( entry_p && (entry_p->tp == 'P') )
-    {
         entry_p = entry_p->pointer ;
-    }
 
     if ( entry_p )
         if (entry_p->tp != 'R')
@@ -474,9 +469,8 @@ define (tdico * dico,
     {
         /* can't be lazy anymore */
         if(!(dico->local_symbols[dico->stack_depth]))
-        {
             dico->local_symbols[dico->stack_depth] = nghash_init( NGHASH_MIN_SIZE ) ;
-        }
+
         htable_p = dico->local_symbols[dico->stack_depth] ;
     }
     else
@@ -631,13 +625,9 @@ deffuma (                        /* define function or macro entry. */
         {
             /* old item! */
             if (jumped)
-            {
                 j = dico->dat[i].ivl;
-            }
             else
-            {
                 err = message (dico, "%s already defined", t);
-            }
         }
         else
         {
@@ -1314,9 +1304,7 @@ formula (tdico * dico, char *s, bool *perror)
                 topop = level;
         }
         if ((state > 0))
-        {
             oldstate = state;
-        }
     } /* while */ ;
 
     if ((natom == 0) || (oldstate != 4))
@@ -1394,9 +1382,7 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
         entry_p = entrynb (dico, t);
         nolookup = !entry_p;
         while ((entry_p) && (entry_p->tp == 'P'))
-        {
             entry_p = entry_p->pointer ;		/* follow pointer chain */
-        }
 
         /* pointer chain */
         if (entry_p)
@@ -1498,13 +1484,9 @@ scanline (tdico * dico, char *s, char *r, bool err)
                 k++;
                 d = s[k - 1];
                 if (d == '{')
-                {
                     nnest++;
-                }
                 else if (d == '}')
-                {
                     nnest--;
-                }
             }
             while ((nnest != 0) && (d != '\0'));
             if (d == '\0')
@@ -1547,21 +1529,14 @@ scanline (tdico * dico, char *s, char *r, bool err)
                 {
                     k++;
                     if (k > ls)
-                    {
                         d = '\0';
-                    }
                     else
-                    {
                         d = s[k - 1];
-                    }
+
                     if (d == '(')
-                    {
                         level++;
-                    }
                     else if (d == ')')
-                    {
                         level--;
-                    }
                 }
                 while ((k <= ls) && !((d == ')') && (level <= 0)));
                 if (k > ls)
@@ -1582,13 +1557,9 @@ scanline (tdico * dico, char *s, char *r, bool err)
                 {
                     k++;
                     if (k > ls)
-                    {
                         d = '\0';
-                    }
                     else
-                    {
                         d = s[k - 1];
-                    }
                 }
                 while ((k <= ls) && (d > ' '));
                 pscopy (t, s, i, k - i);
@@ -1631,9 +1602,8 @@ scanline (tdico * dico, char *s, char *r, bool err)
         else
         {
             if (!spice3)
-            {
                 c = upcase (c);
-            }
+
             cadd (r, c); /* c<>Intro */ ;
         }
     }                                /* while */
@@ -1900,9 +1870,7 @@ getword (char *s, SPICE_DSTRINGPTR tstr_p, int after, int *pi)
     ls = length (s);
 
     do
-    {
         i++;
-    }
     while ((i < ls) && !alfa (s[i - 1]));
 
     spice_dstring_reinit(tstr_p) ;
@@ -1952,9 +1920,7 @@ getexpress (char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
         tpe = 'S';
 
         do
-        {
             i++;
-        }
         while ((i <= ls) && (s[i - 1] <= ' '));
     }
     else
