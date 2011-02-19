@@ -78,8 +78,7 @@ rs ( SPICE_DSTRINGPTR dstr_p)
         c = fgetc (stdin);
         cadd (dstr_p, c);
     }
-    while (!((c == Cr) || (c == '\n')));
-    /* return i */ ;
+    while (!((c == '\r') || (c == '\n')));
 }
 
 char
@@ -594,7 +593,7 @@ freadstr (FILE * f, SPICE_DSTRINGPTR dstr_p)
     do
     {
         c = fgetc (f);		/*  tab is the only control char accepted */
-        if (((c >= ' ') || (c < 0) || (c == Tab)))
+        if (((c >= ' ') || (c < 0) || (c == '\t')))
         {
             str_load[0] = c;
             spice_dstring_append( dstr_p, str_load, 1 ) ;

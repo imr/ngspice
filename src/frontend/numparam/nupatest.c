@@ -157,7 +157,7 @@ void rs(char * s) /*  78 coumn limit */
     if ( (c>=' ')&&(c<='~') && (i<max) ) { 
       cadd(s,c); Inc(i); 
     }
-    done= (c==Lf) || (c==Cr);
+    done= (c=='\n') || (c=='\r');
   }
 }
 #endif
