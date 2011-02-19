@@ -714,42 +714,20 @@ keyword ( SPICE_DSTRINGPTR keys_p, SPICE_DSTRINGPTR tstr_p)
 }
 
 static double
-parseunit (double x, char *s)
+parseunit (char *s)
 /* the Spice suffixes */
 {
-    double u = 0;
-    SPICE_DSTRING t ;
-    bool isunit;
-    isunit = 1;
-    spice_dstring_init(&t) ;
-
-    pscopy (&t, s, 0, 3);
-
-    if (steq ( spice_dstring_value(&t), "MEG"))
-        u = 1e6;
-    else if (s[0] == 'G')
-        u = 1e9;
-    else if (s[0] == 'K')
-        u = 1e3;
-    else if (s[0] == 'M')
-        u = 0.001;
-    else if (s[0] == 'U')
-        u = 1e-6;
-    else if (s[0] == 'N')
-        u = 1e-9;
-    else if (s[0] == 'P')
-        u = 1e-12;
-    else if (s[0] == 'F')
-        u = 1e-15;
-    else
-        isunit = 0;
-
-    if (isunit)
-        x = x * u;
-
-    spice_dstring_free(&t) ;
-
-    return x;
+    switch(toupper(s[0]))
+    {
+        case 'G':  return 1e9;
+        case 'K':  return 1e3;
+        case 'M':  return ci_prefix("MEG", s) ? 1e6 : 1e-3;
+        case 'U':  return 1e-6;
+        case 'N':  return 1e-9;
+        case 'P':  return 1e-12;
+        case 'F':  return 1e-15;
+        default :  return 1;
+    }
 }
 
 static int
@@ -848,91 +826,38 @@ exists (tdico * d, char *s, int *pi, bool *perror)
 }
 
 static double
-fetchnumber (tdico * dico, char *s, int ls, int *pi, bool *perror)
+fetchnumber (tdico * dico, char *s, int *pi, bool *perror)
 /* parse a Spice number in string s */
 {
-    bool error = *perror;
-    int i = *pi;
-    int k, err;
-    char d;
-    char *t ;
-    SPICE_DSTRING tstr ;
-    SPICE_DSTRING vstr ;
     double u;
-    spice_dstring_init(&tstr) ;
-    spice_dstring_init(&vstr) ;
-    k = i;
+    int n = 0;
 
-    do
-    {
-        k++;
-        if (k > ls)
-            d = (char)(0);
-        else
-            d = s[k - 1];
-    }
-    while (!(!((d == '.') || ((d >= '0') && (d <= '9')))));
+    s += *pi - 1;               /* broken semantic !! */
 
-    if ((d == 'e') || (d == 'E'))
-    {
-        /* exponent follows */
-        k++;
-        d = s[k - 1];
+    if(1 != sscanf(s, "%lG%n", &u, &n)) {
 
-        if ((d == '+') || (d == '-'))
-            k++;
-
-        do
-        {
-            k++;
-            if (k > ls)
-                d = (char)(0);
-            else
-                d = s[k - 1];
-        }
-        while (!(!((d >= '0') && (d <= '9'))));
-    }
-
-    pscopy (&tstr, s, i-1, k - i) ;
-
-    t = spice_dstring_value(&tstr) ;
-    if (t[0] == '.')
-        cins ( &tstr, '0');
-    else if (t[length (t) - 1] == '.')
-        cadd (&tstr, '0');
-
-    t = spice_dstring_value(&tstr) ;
-    u = rval (t, &err);  /* extract real value from string here */
-
-    if (err != 0)
-    {
+        SPICE_DSTRING vstr ;
+        spice_dstring_init(&vstr) ;
         scopys(&vstr, "Number format error: ") ;
-        sadd (&vstr, t);
-        error = message (dico, spice_dstring_value(&vstr)) ;
-    }
-    else
-    {
-        spice_dstring_reinit(&tstr);
-        while (alfa (d))
-        {
-            cadd (&tstr, upcase (d));
-            k++;
+        sadd (&vstr, s);
+        *perror = message (dico, spice_dstring_value(&vstr));
+        spice_dstring_free(&vstr) ;
 
-            if (k > ls)
-                d = Nul;
-            else
-                d = s[k - 1];
-        }
+        return 0.0;             /* FIXME return NaN */
 
-        t = spice_dstring_value(&tstr) ;
-        u = parseunit (u, t);
     }
 
-    i = k - 1;
-    *perror = error;
-    *pi = i;
-    spice_dstring_free(&tstr) ;
-    spice_dstring_free(&vstr) ;
+    u *= parseunit (s + n);
+
+    /* swallow unit
+     *   FIXME `100MegBaz42' should emit an error message
+     *   FIXME should we allow whitespace ?   `100 MEG' ?
+     */
+
+    while (s[n] && alfa(s[n]))
+        n++;
+
+    *pi += n-1;                 /* very broken semantic !!! */
     return u;
 }
 
@@ -1349,7 +1274,7 @@ formula (tdico * dico, char *s, bool *perror)
         }
         else if (((c == '.') || ((c >= '0') && (c <= '9'))))
         {
-            u = fetchnumber (dico, s, ls, &i, &error);
+            u = fetchnumber (dico, s, &i, &error);
             if (negate)
             {
                 u = -1 * u;
