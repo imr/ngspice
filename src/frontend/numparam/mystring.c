@@ -47,19 +47,13 @@ wc (char c)
 void
 wln (void)
 {
-    wc ('\n');
+    fputc ('\n', stdout);
 }
 
 void
 ws (char *s)
 {
-    int k = 0;
-
-    while (s[k] != 0)
-    {
-        wc (s[k]);
-        k++;
-    }
+    fputs(s, stdout);
 }
 
 void
@@ -152,12 +146,7 @@ sfix ( SPICE_DSTRINGPTR dstr_p, int len)
 int
 length (char *s)
 {
-    int lg = 0;
-
-    while (s[lg])
-        lg++;
-
-    return lg;
+    return (int) strlen(s);
 }
 
 /* -----------------------------------------------------------------
@@ -539,17 +528,13 @@ scompare (char *a, char *b)
 bool
 steq (char *a, char *b)		/* string a==b test */
 {
-    unsigned short j = 0;
-    while ((a[j] == b[j]) && (a[j] != 0) && (b[j] != 0))
-        j++;
-
-    return ((a[j] == 0) && (b[j] == 0)) /* string equality test */ ;
+    return strcmp (a, b) == 0;
 }
 
 bool
 stne (char *s, char *t)
 {
-    return scompare (s, t) != 0;
+    return strcmp (s, t) != 0;
 }
 
 int
@@ -685,22 +670,15 @@ dispose (void *p)
 }
 
 void *
-new (long sz)
+new (size_t sz)
 {
-    void *p;
-    if (sz <= 0)
-        return NULL;
-    else
-    {
-        p = tmalloc (sz);
-        if (p == NULL)
-        {
-            /* fatal error */
-            ws (" new() failure. Program halted.\n");
-            controlled_exit(EXIT_FAILURE);
-        }
-        return p;
+    void *p = tmalloc (sz);
+    if (p == NULL)
+    {			/* fatal error */
+        ws (" new() failure. Program halted.\n");
+        controlled_exit(EXIT_FAILURE);
     }
+    return p;
 }
 
 /***** elementary math *******/

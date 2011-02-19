@@ -82,5 +82,5 @@ long absi( long i);
 double frac(double x);
 
 void rawcopy(void * a, void * b, int la, int lb);
-void * new(long sz);
+void * new(size_t sz);
 void dispose(void * p);

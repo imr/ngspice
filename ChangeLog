@@ -1,4 +1,9 @@
 2011-02-19  Robert Larice
+ * src/frontend/numparam/general.h ,
+ * src/frontend/numparam/mystring.c :
+    numparm, cleanup some small functions
+
+2011-02-19  Robert Larice
  * src/frontend/numparam/spicenum.c ,
  * src/frontend/numparam/xpressn.c :
     numparm, 17 digit placeholders --> numparm__XXXXXXXX dummy symbols
