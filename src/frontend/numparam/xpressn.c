@@ -1444,9 +1444,18 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 
     if (numeric)
     {
-        /*  set string to total length 17, mantissa after . is of length 9 
-            use sprintf with format string %17.10g */
-        strf (u, 17, 10, qstr_p);
+        /* we want *exactly* 17 chars, we have
+         *   sign, leading digit, '.', 'e', sign, upto 3 digits exponent
+         * ==> 8 chars, thus we have 9 left for precision
+         * don't print a leading '+', something choked
+         */
+
+        char buf[17+1];
+        if(snprintf(buf, sizeof(buf), "% 17.9le", u) != 17) {
+            fprintf(stderr, "internal ERROR in %s(%d)\n", __FUNCTION__, __LINE__);
+            exit(1);
+        }
+        scopys(qstr_p, buf);
     }
 
     return err;
@@ -1714,70 +1723,33 @@ static int
 insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
 /* insert u in string s in place of the next placeholder number */
 {
-    SPICE_DSTRING vstr ;			/* dynamic string */
-    char *v_p ;				/* value of vstr dyna string */
-    bool found;
-    int ls, k;
-    long long accu;
-    ls = length (s);
+    const char *u = spice_dstring_value(ustr_p);
 
-    spice_dstring_init(&vstr) ;
-    scopyd (&vstr, ustr_p) ;
-//    compactfloatnb (&vstr) ;
+    char buf[ACT_CHARACTS+1];
 
-    while ( spice_dstring_length (&vstr) < MAX_STRING_INSERT)
-        cadd (&vstr, ' ');
+    long id = 0;
+    int  n  = 0;
 
-    if ( spice_dstring_length (&vstr) > MAX_STRING_INSERT)
-        message (dico, " insertnumber fails: %s", spice_dstring_value(ustr_p));
+    char *p = strstr(s+i, "numparm__");
 
-    found = 0;
-
-    while ((!found) && (i < ls))
+    if( p &&
+        (1 == sscanf(p, "numparm__%8lx%n", &id, &n)) &&
+        (n == ACT_CHARACTS) &&
+        (id > 0) && (id < dynsubst + 1) &&
+        (snprintf(buf, sizeof(buf), "%-17s", u) == ACT_CHARACTS))
     {
-        found = (s[i] == '1');
-        k = 0;
-        accu = 0;
-
-        while (found && (k < 17))
-        {
-            /* parse a 17-digit number */
-            found = num (s[i + k]);
-
-            if (found)
-                accu = 10 * accu + s[i + k] - '0';
-
-            k++;
-        }
-
-        if (found)
-        {
-            accu = accu - 10000000000000000LL;	/* plausibility test */
-
-            found = (accu > 0) && (accu < dynsubst + 1); /* dynsubst numbers have been allocated */
-        }
-        i++;
+        memcpy(p, buf, ACT_CHARACTS);
+        return p - s + ACT_CHARACTS;
     }
 
-    if (found)
-    {
-        /* substitute at i-1 ongoing */
-        i--;
-        v_p = spice_dstring_value(&vstr) ;
-        for (k = 0; k < ACT_CHARACTS; k++)
-            s[i + k] = v_p[k];
+    message
+        ( dico,
+          "insertnumber: fails.\n"
+          "  s+i = \"%s\" u=\"%s\" id=%ld",
+          s+i, u, id );
 
-        i = i + MAX_STRING_INSERT;
-
-    }
-    else
-    {
-        i = ls;
-        fprintf (stderr, "xpressn.c--insertnumber:  i=%d  s=%s  u=%s\n", i, s,
-                 spice_dstring_value(ustr_p)) ;
-        message (dico, "insertnumber: missing slot ");
-    }
-    return i;
+    /* swallow everything on failure */
+    return i + strlen(s+i);
 }
 
 bool

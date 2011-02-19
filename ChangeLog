@@ -1,4 +1,9 @@
 2011-02-19  Robert Larice
+ * src/frontend/numparam/spicenum.c ,
+ * src/frontend/numparam/xpressn.c :
+    numparm, 17 digit placeholders --> numparm__XXXXXXXX dummy symbols
+
+2011-02-19  Robert Larice
  * src/frontend/numparam/xpressn.c :
     numparm, upgrade message() to accept format strings
 

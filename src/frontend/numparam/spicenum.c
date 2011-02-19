@@ -59,13 +59,12 @@ extern int dynmaxline; /* inpcom.c:1529 */
   In Clean state, a lot of deckcopy operations come in and we
   overwrite any line pointers, or we start a new set after each sig=0 ?
   Anyway, we neutralize all & and .param lines  (category[] array!)
-  and we substitute all {} &() and &id placeholders by dummy numbers.
-  The placeholders are long long integers 10000000000000000+n (17 digits, n small).
+  and we substitute all {} &() and &id placeholders by dummy identifiers.
+  those look like numparm__XXXXXXXX (8 hexadecimal digits)
 
 */
 /**********  string handling ***********/
 
-#define PlaceHold 10000000000000000LL
 static long placeholder = 0;
 
 
@@ -135,7 +134,11 @@ stripbraces (SPICE_DSTRINGPTR dstr_p)
                 cadd (&tstr, ' ');
 
             cadd ( &tstr, ' ');
-            naddll( &tstr, PlaceHold + placeholder); /* placeholder has 17 digits */
+            {
+                char buf[17+1];
+                sprintf(buf, "numparm__%08lx", placeholder);
+                sadd( &tstr, buf );
+            }
             cadd ( &tstr, ' ');
 
             if (s[j] >= ' ')
