@@ -434,7 +434,7 @@ attrib (tdico *dico_p, NGHASHPTR htable_p, char *t, char op)
         entry_p = NULL ;
     }
 
-    if (!(entry_p))
+    if (!entry_p)
     {
         entry_p = TMALLOC(entry, 1) ;
         entry_p->symbol = strdup( t ) ;
@@ -486,7 +486,7 @@ define (tdico * dico,
     }
     entry_p = attrib (dico, htable_p, t, op);
     err = 0;
-    if (!(entry_p))
+    if (!entry_p)
         err = message (dico, " Symbol table overflow");
     else
     {
@@ -685,7 +685,7 @@ keyword ( SPICE_DSTRINGPTR keys_p, SPICE_DSTRINGPTR tstr_p)
             k++;
             ok = (k <= lk) && (t[i - 1] == keys[k - 1]);
         }
-        while (!((!ok) || (i >= lt)));
+        while (ok && (i < lt));
 
         if (ok)
             ok = (k == lk) || (keys[k] <= ' ');
@@ -694,7 +694,7 @@ keyword ( SPICE_DSTRINGPTR keys_p, SPICE_DSTRINGPTR tstr_p)
             while ((k <= lk) && (keys[k - 1] > ' '))
                 k++;
     }
-    while (!(ok || (k >= lk)));
+    while (!ok && (k < lk));
 
     if (ok)
         return j;
@@ -727,7 +727,7 @@ fetchid (char *s, SPICE_DSTRINGPTR t, int ls, int i)
     bool ok;
     c = s[i - 1];
 
-    while ((!alfa (c)) && (i < ls))
+    while (!alfa (c) && (i < ls))
     {
         i++;
         c = s[i - 1];
@@ -781,7 +781,7 @@ exists (tdico * d, char *s, int *pi, bool *perror)
 
         ok = (c == '(');
     }
-    while (!(ok || (c == '\0')));
+    while (!ok && (c != '\0'));
 
     if (ok)
     {
@@ -801,7 +801,7 @@ exists (tdico * d, char *s, int *pi, bool *perror)
 
             ok = (c == ')');
         }
-        while (!(ok || (c == '\0')));
+        while (!ok && (c != '\0'));
     }
     if (!ok)
         error = message (d, " Defined() syntax");
@@ -1148,7 +1148,7 @@ formula (tdico * dico, char *s, bool *perror)
     error = 0;
     level = 0;
 
-    while ((i < ls) && (!error))
+    while ((i < ls) && !error)
     {
         i++;
         c = s[i - 1];
@@ -1183,7 +1183,7 @@ formula (tdico * dico, char *s, bool *perror)
                         arg3 = k;        /* kludge for more than 2 args (ternary expression) */
                 } /* comma list? */ ;
             }
-            while (!((k > ls) || ((d == ')') && (level <= 0))));
+            while ((k <= ls) && !((d == ')') && (level <= 0)));
 
             if (k > ls)
             {
@@ -1392,7 +1392,7 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
         /* string? */
         stupcase (t);
         entry_p = entrynb (dico, t);
-        nolookup = (!(entry_p));
+        nolookup = !entry_p;
         while ((entry_p) && (entry_p->tp == 'P'))
         {
             entry_p = entry_p->pointer ;		/* follow pointer chain */
@@ -1429,7 +1429,7 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
                 if (!done)
                     cadd (qstr_p, dt);
             }
-            while (!(done));
+            while (!done);
         }
 
         if (!entry_p)
@@ -1484,7 +1484,7 @@ scanline (tdico * dico, char *s, char *r, bool err)
         pscopy (r, s, 1, 7);
         i = 7;
     }
-    while ((i < ls) && (!err))
+    while ((i < ls) && !err)
     {
         i++;
         c = s[i - 1];
@@ -1506,7 +1506,7 @@ scanline (tdico * dico, char *s, char *r, bool err)
                     nnest--;
                 }
             }
-            while (!((nnest == 0) || (d == '\0')));
+            while ((nnest != 0) && (d != '\0'));
             if (d == '\0')
             {
                 err = message (dico, "Closing \"}\" not found.");
@@ -1563,7 +1563,7 @@ scanline (tdico * dico, char *s, char *r, bool err)
                         level--;
                     }
                 }
-                while (!((k > ls) || ((d == ')') && (level <= 0))));
+                while ((k <= ls) && !((d == ')') && (level <= 0)));
                 if (k > ls)
                 {
                     err = message (dico, "Closing \")\" not found.");
@@ -1590,7 +1590,7 @@ scanline (tdico * dico, char *s, char *r, bool err)
                         d = s[k - 1];
                     }
                 }
-                while (!((k > ls) || (d <= ' ')));
+                while ((k <= ls) && (d > ' '));
                 pscopy (t, s, i, k - i);
                 err = evaluate (dico, q, t, 1);
                 i = k - 1;
@@ -1612,13 +1612,13 @@ scanline (tdico * dico, char *s, char *r, bool err)
             {
                 i++;
             }
-            while (!(s[i - 1] > ' '));
+            while (s[i - 1] <= ' ');
             k = i;
             do
             {
                 k++;
             }
-            while (!((k > ls) || !alfanum (s[k - 1])));
+            while ((k <= ls) && alfanum (s[k - 1]));
             pscopy (q, s, i, k - i);
             nd = parsenode (Addr (dico->nodetab), q);
             if (!spice3)
@@ -1772,7 +1772,7 @@ nupa_substitute (tdico * dico, char *s, char *r, bool err)
     err = 0;
     ir = 0;
 
-    while ((i < ls) && (!err))
+    while ((i < ls) && !err)
     {
         i++;
         c = s[i - 1];
@@ -1791,7 +1791,7 @@ nupa_substitute (tdico * dico, char *s, char *r, bool err)
                 else if (d == '}')
                     nnest--;
             }
-            while (!((nnest == 0) || (d == '\0')));
+            while ((nnest != 0) && (d != '\0'));
 
             if (d == '\0')
                 err = message (dico, "Closing \"}\" not found.");
@@ -1847,7 +1847,7 @@ nupa_substitute (tdico * dico, char *s, char *r, bool err)
                     else if (d == ')')
                         level--;
                 }
-                while (!((k > ls) || ((d == ')') && (level <= 0))));
+                while ((k <= ls) && !((d == ')') && (level <= 0)));
 
                 if (k > ls)
                     err = message (dico, "Closing \")\" not found.");
@@ -1869,7 +1869,7 @@ nupa_substitute (tdico * dico, char *s, char *r, bool err)
                     else
                         d = s[k - 1];
                 }
-                while (!((k > ls) || (d <= ' ')));
+                while ((k <= ls) && (d > ' '));
 
                 pscopy (&tstr, s, i-1, k - i);
                 err = evaluate (dico, &qstr, spice_dstring_value(&tstr), 1);
@@ -1903,7 +1903,7 @@ getword (char *s, SPICE_DSTRINGPTR tstr_p, int after, int *pi)
     {
         i++;
     }
-    while (!((i >= ls) || alfa (s[i - 1])));
+    while ((i < ls) && !alfa (s[i - 1]));
 
     spice_dstring_reinit(tstr_p) ;
 
@@ -1955,7 +1955,7 @@ getexpress (char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
         {
             i++;
         }
-        while (!((i > ls) || (s[i - 1] > ' ')));
+        while ((i <= ls) && (s[i - 1] <= ' '));
     }
     else
     {
@@ -1992,7 +1992,7 @@ getexpress (char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
                     else if (d == ')')
                         level--;
                 }
-                while (!((i > ls) || ((d == ')') && (level <= 0))));
+                while ((i <= ls) && !((d == ')') && (level <= 0)));
             }
             /* buggy? */ if ((c == '/') || (c == '-'))
                 comment = (s[i] == c);
@@ -2058,7 +2058,7 @@ nupa_assignment (tdico * dico, char *s, char mode)
             i++;
     }
 
-    while ((i < ls) && (!error))
+    while ((i < ls) && !error)
     {
         key = getword (s, &tstr, i, &i);
         t_p = spice_dstring_value(&tstr) ;

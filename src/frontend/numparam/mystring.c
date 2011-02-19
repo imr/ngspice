@@ -599,7 +599,7 @@ freadstr (FILE * f, SPICE_DSTRINGPTR dstr_p)
             spice_dstring_append( dstr_p, str_load, 1 ) ;
         }
     }
-    while (!(feof (f) || (c == '\n')));
+    while (!feof (f) && (c != '\n'));
 
 
     return len ;
