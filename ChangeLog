@@ -1,4 +1,11 @@
 2011-02-19  Robert Larice
+ * configure.ac ,
+ * examples/transient-noise/shot_ng.cir ,
+ * src/Makefile.am ,
+ * src/frontend/trannoise/FastNorm3.c :
+    cleanup some whitespace errors and prototypes
+
+2011-02-19  Robert Larice
  * src/frontend/numparam/Makefile.am ,
  * src/frontend/numparam/general.h ,
  * src/frontend/numparam/mystring.c ,

@@ -575,7 +575,7 @@ Sf wk1 [WL], wk2 [WL];   /*  Pools of variates.  */
 /*	------------------  regen  ----------------------    */
 /*	Takes variates from wk1[], transforms to wk[2], then back to wk1[].
 	*/
-void regen ()
+static void regen (void)
 {
 	Sw i, j, k, m;
 	Sf p, q, r, s, t;
@@ -693,7 +693,7 @@ Sf renormalize (void)
 
 /*	------------------------  BoxMuller  ----------------------   */
 /*	Fills block gvec of length ll with proper normals  */
-void boxmuller (Sf *gvec, Sw ll)
+static void boxmuller (Sf *gvec, Sw ll)
 {
 	Sw i;
 	Sf tx, ty, tr, tz;
@@ -804,7 +804,7 @@ docheck:
 		fastnorm() returns the value GScale*gausssave[0].
 		*/
 
-Sf fastnorm ()
+Sf fastnorm (void)
 {
 	Sf sos;
 	Sw n1;

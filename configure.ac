@@ -1073,12 +1073,12 @@ AC_CONFIG_FILES([Makefile
                  src/frontend/help/Makefile
                  src/frontend/parser/Makefile
                  src/frontend/plotting/Makefile
-				 src/frontend/trannoise/Makefile
+                 src/frontend/trannoise/Makefile
                  src/frontend/wdisp/Makefile
                  src/include/Makefile
                  src/maths/Makefile
                  src/maths/cmaths/Makefile
-                 src/maths/fft/Makefile				 
+                 src/maths/fft/Makefile
                  src/maths/misc/Makefile
                  src/maths/ni/Makefile
                  src/maths/deriv/Makefile

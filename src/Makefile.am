@@ -374,7 +374,7 @@ endif
 libspice_la_LIBADD += \
 	frontend/parser/libparser.la \
 	frontend/numparam/libnumparam.la \
-	frontend/trannoise/libtrannoise.la \	
+	frontend/trannoise/libtrannoise.la \
 	spicelib/parser/libinp.la
 
 if CIDER_WANTED
