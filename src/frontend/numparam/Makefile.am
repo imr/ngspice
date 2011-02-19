@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = downgrad.txt ngconfig.sh readme.txt nupatest.c washprog.c
+EXTRA_DIST = ngconfig.sh readme.txt nupatest.c
 
 noinst_LTLIBRARIES = libnumparam.la
 

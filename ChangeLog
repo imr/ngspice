@@ -1,4 +1,14 @@
 2011-02-19  Robert Larice
+ * src/frontend/numparam/Makefile.am ,
+ * src/frontend/numparam/general.h ,
+ * src/frontend/numparam/mystring.c ,
+ * src/frontend/numparam/numparam.h ,
+ * src/frontend/numparam/xpressn.c ,
+ * Removed src/frontend/numparam/downgrad.txt ,
+ * Removed src/frontend/numparam/washprog.c :
+    numparm, remove unused artifacts
+
+2011-02-19  Robert Larice
  * src/frontend/numparam/mystring.c ,
  * src/frontend/numparam/nupatest.c ,
  * src/frontend/numparam/spicenum.c ,

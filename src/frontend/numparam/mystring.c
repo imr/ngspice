@@ -39,34 +39,6 @@ ci_prefix (register char *p, register char *s)
 }
 
 void
-wc (char c)
-{
-    fputc (c, stdout);
-}
-
-void
-wln (void)
-{
-    fputc ('\n', stdout);
-}
-
-void
-ws (char *s)
-{
-    fputs(s, stdout);
-}
-
-void
-wi (long i)
-{
-    SPICE_DSTRING s ;
-    spice_dstring_init(&s) ;
-    nadd (&s, i);
-    ws ( spice_dstring_value(&s)) ;
-    spice_dstring_free(&s) ;
-}
-
-void
 rs ( SPICE_DSTRINGPTR dstr_p)
 {
     /* basic line input, limit= 80 chars */
@@ -81,29 +53,6 @@ rs ( SPICE_DSTRINGPTR dstr_p)
     while (!((c == '\r') || (c == '\n')));
 }
 
-char
-rc (void)
-{
-    int ls;
-    char val ;
-    char *s_p ;
-    SPICE_DSTRING dstr ;
-
-    spice_dstring_init(&dstr) ;
-    rs (&dstr);
-    ls = spice_dstring_length (&dstr);
-    if (ls > 0)
-    {
-        s_p = spice_dstring_value(&dstr) ;
-        val = s_p[ls - 1] ;
-    }
-    else
-    {
-        val = 0 ;
-    }
-    spice_dstring_free(&dstr) ;
-    return val ;
-}
 
 /*******  Strings ************
  *  are 0-terminated char arrays with a 2-byte trailer: max length.
@@ -378,24 +327,6 @@ pscopy_up (SPICE_DSTRINGPTR dstr_p, char *t, int start, int leng)
     return s_p ;
 }
 
-int
-ord (char c)
-{
-    return (c & 0xff);
-}				/* strip high byte */
-
-int
-pred (int i)
-{
-    return (--i);
-}
-
-int
-succ (int i)
-{
-    return (++i);
-}
-
 bool
 nadd ( SPICE_DSTRINGPTR dstr_p, long n)
 /* append a decimal integer to a string */
@@ -494,36 +425,6 @@ stri (long n, SPICE_DSTRINGPTR dstr_p)
     nadd (dstr_p, n) ;
 }
 
-void
-rawcopy (void *a, void *b, int la, int lb)
-/* dirty binary copy */
-{
-    int j, n;
-    if (lb < la)
-        n = lb;
-    else
-        n = la;
-
-    for (j = 0; j < n; j++)
-        ((char *) a)[j] = ((char *) b)[j];
-}
-
-int
-scompare (char *a, char *b)
-{
-    unsigned short j = 0;
-    int k = 0;
-    while ((a[j] == b[j]) && (a[j] != 0) && (b[j] != 0))
-        j++;
-
-    if (a[j] < b[j])
-        k = -1;
-    else if (a[j] > b[j])
-        k = 1;
-
-    return k;
-}
-
 bool
 steq (char *a, char *b)		/* string a==b test */
 {
@@ -534,18 +435,6 @@ bool
 stne (char *s, char *t)
 {
     return strcmp (s, t) != 0;
-}
-
-int
-hi (long w)
-{
-    return (w & 0xff00) >> 8;
-}
-
-int
-lo (long w)
-{
-    return (w & 0xff);
 }
 
 char
@@ -605,46 +494,6 @@ freadstr (FILE * f, SPICE_DSTRINGPTR dstr_p)
     return len ;
 }
 
-char
-freadc (FILE * f)
-{
-    return fgetc (f);
-}
-
-long
-freadi (FILE * f)
-/* reads next integer, but returns 0 if none found. */
-{
-    long z = 0;
-    bool minus = 0;
-    char c;
-
-    do
-    {
-        c = fgetc (f);
-    }
-    while (!(feof (f) || !((c > 0) && (c <= ' '))));	/* skip space */
-
-    if (c == '-')
-    {
-        minus = 1;
-        c = fgetc (f);
-    }
-
-    while (num (c))
-    {
-        z = 10 * z + c - '0';
-        c = fgetc (f);
-    }
-
-    ungetc (c, f);		/* re-push character lookahead */
-
-    if (minus)
-        z = -z;
-
-    return z;
-}
-
 char *
 stupcase (char *s)
 {
@@ -683,12 +532,6 @@ new (size_t sz)
 /***** elementary math *******/
 
 double
-sqr (double x)
-{
-    return x * x;
-}
-
-double
 absf (double x)
 {
     if (x < 0.0)
@@ -706,153 +549,6 @@ absi (long i)
         return (-i);
 }
 
-void
-strif (long i, int f, SPICE_DSTRINGPTR dstr_p)
-/* formatting like str(i:f,s) in Turbo Pascal */
-{
-    int j, k ;
-    char cs;
-    char t[32];
-    char load_str[2] ;			/* load dstring */
-    k = 0;
-
-    if (i < 0)
-    {
-        i = -i;
-        cs = '-';
-    }
-    else
-    {
-        cs = ' ';
-    }
-
-    while (i > 0)
-    {
-        j = (int) (i % 10);
-        i = (long) (i / 10);
-        t[k] = (char)('0' + j);
-        k++;
-    }
-
-    if (k == 0)
-    {
-        t[k] = '0';
-        k++;
-    }
-
-    if (cs == '-')
-        t[k] = cs;
-    else
-        k--;
-
-    /* now the string  is in 0...k in reverse order */
-    for (j = 1; j <= k; j++)
-        t[k + j] = t[k - j];	/* mirror image */
-
-    t[2 * k + 1] = 0;		/* null termination */
-    load_str[1] = 0 ;		/* not really needed */
-    spice_dstring_reinit(dstr_p) ;
-
-    if ((f > k) && (f < 40))
-    {
-        /* reasonable format */
-        for (j = k + 2; j <= f; j++)
-        {
-            load_str[0] = ' ';
-            spice_dstring_append( dstr_p, load_str, 1 ) ;
-        }
-    }
-
-    for (j = 0; j <= k + 1; j++)
-    {
-        load_str[0] = t[k + j];	/* shift t down */
-        spice_dstring_append( dstr_p, load_str, 1 ) ;
-    }
-}
-
-bool
-odd (long x)
-{
-    return (x & 1);
-}
-
-static bool
-match (char *s, char *t, int n, int tstart, bool testcase)
-{
-    /* returns 0 if ( tstart is out of range. But n may be 0 ? */
-    /* 1 if s matches t[tstart...tstart+n]  */
-    int i, j, lt;
-    bool ok;
-    char a, b;
-    i = 0;
-    j = tstart;
-    lt = length (t);
-    ok = (tstart < lt);
-
-    while (ok && (i < n))
-    {
-        a = s[i];
-        b = t[j];
-        if (!testcase)
-        {
-            a = upcase (a);
-            b = upcase (b);
-        }
-        ok = (j < lt) && (a == b);
-        i++;
-        j++;
-    }
-    return ok;
-}
-
-int
-posi (char *sub, char *s, int opt)
-/* find position of substring in s */
-{
-    /* opt=0: like Turbo Pascal */
-    /* opt=1: like Turbo Pascal Pos, but case insensitive */
-    /* opt=2: position in space separated wordlist for scanners */
-    int a, b, k, j;
-    bool ok, tstcase;
-    SPICE_DSTRING tstr ;
-
-    ok = 0;
-    spice_dstring_init(&tstr) ;
-    tstcase = (opt == 0);
-
-    if (opt <= 1)
-        scopys (&tstr, sub);
-    else
-    {
-        cadd (&tstr, ' ');
-        sadd (&tstr, sub);
-        cadd (&tstr, ' ');
-    }
-
-    a = spice_dstring_length(&tstr) ;
-    b = (int) (length (s) - a);
-    k = 0;
-    j = 1;
-
-    if (a > 0)			/* ;} else { return 0 */
-        while ((k <= b) && (!ok))
-        {
-            ok = match ( spice_dstring_value(&tstr), s, a, k, tstcase);	/* we must start at k=0 ! */
-            k++;
-            if (s[k] == ' ')
-                j++; /* word counter */ ;
-        }
-
-    if (opt == 2)
-        k = j;
-
-    if (ok)
-        return k;
-    else
-        return 0;
-
-}
-
 int
 spos_(char *sub, char *s)
 /* equivalent to Turbo Pascal pos().
@@ -868,107 +564,6 @@ spos_(char *sub, char *s)
 
 }
 
-void
-strf (double x, int f1, int f2, SPICE_DSTRINGPTR dstr_p)
-/* e-format if f2<0, else f2 digits after the point, total width=f1 */
-/* if f1=0, also e-format with f2 digits */
-{
-    /* ngspice default f1=17, f2=10 */
-    int dlen ;			/* length of digits */
-    char *dbuf_p ;		/* beginning of sprintf buffer */
-    SPICE_DSTRING fmt ;		/* format string */
-    SPICE_DSTRING dformat ;	/* format float */
-
-    spice_dstring_init(&fmt) ;
-    spice_dstring_init(&dformat) ;
-    cadd (&fmt, '%');
-    if (f1 > 0)
-    {
-        nadd (&fmt, f1);		/* f1 is the total width */
-        if (f2 < 0)
-            sadd (&fmt, "lE");	/* exponent format */
-        else
-        {
-            cadd (&fmt, '.');
-            nadd (&fmt, f2);
-            sadd (&fmt, "g");
-        }
-    }
-    else
-    {
-        cadd (&fmt, '.');
-        nadd (&fmt, absi (f2 - 6));	/* note the 6 surplus positions */
-        cadd (&fmt, 'e');
-    }
-
-    dlen = 2 * (f1 + f2) + 1 ;   /* be conservative */
-    dbuf_p = spice_dstring_setlength(&dformat, dlen)  ;
-    sprintf (dbuf_p, spice_dstring_value(&fmt), x);
-    scopys( dstr_p, dbuf_p ) ;
-
-    spice_dstring_free(&fmt) ;
-    spice_dstring_free(&dformat) ;
-}
-
-double
-rval (char *s, int *err)
-/* returns err=0 if ok, else length of partial string ? */
-{
-    double r = 0.0;
-    int n = sscanf (s, "%lG", &r);
-
-    if (n == 1)
-        (*err) = 0;
-    else
-        (*err) = 1;
-
-    return r;
-}
-
-long
-ival (char *s, int *err)
-/* value of s as integer string.  error code err= 0 if Ok */
-{
-    int k = 0, digit = 0, ls;
-    long z = 0;
-    bool minus = 0, ok = 1;
-    char c;
-    ls = length (s);
-
-    do
-    {
-        c = s[k];
-        k++;
-    }
-    while (!((k >= ls) || !((c > 0) && (c <= ' '))));	/* skip space */
-
-    if (c == '-')
-    {
-        minus = 1;
-        c = s[k];
-        k++;
-    }
-
-    while (num (c))
-    {
-        z = 10 * z + c - '0';
-        c = s[k];
-        k++;
-        digit++;
-    }
-
-    if (minus)
-        z = -z;
-
-    ok = (digit > 0) && (c == 0);	/* successful end of string */
-
-    if (ok)
-        (*err) = 0;
-    else
-        (*err) = k;			/* one beyond error position */
-
-    return z;
-}
 
 #ifndef HAVE_LIBM
 
@@ -1006,12 +601,6 @@ np_trunc (double x)
     return n;
 }
 
-double
-frac (double x)
-{
-    return x - np_trunc (x);
-}
-
 #else /* use floor() and ceil() */
 
 long
@@ -1027,15 +616,6 @@ np_trunc (double r)
         return (long) floor (r);
     else
         return (long) ceil (r);
-}
-
-double
-frac (double x)
-{
-    if (x >= 0.0)
-        return (x - floor (x));
-    else
-        return (x - ceil (x));
 }
 
 #endif

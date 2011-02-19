@@ -21,8 +21,6 @@
 extern double gauss0(void);
 extern double drand(void);
 
-static void debugwarn(tdico *d, char *s);
-
 /************ keywords ************/
 
 /* SJB - 150 chars is ample for this - see initkeys() */
@@ -198,14 +196,6 @@ message(tdico * dic, const char *fmt, ...)
     dic->errcount++;
 
     return 1 /* error! */ ;
-}
-
-
-static void
-debugwarn (tdico * d, char *s)
-{
-    message (d, "%s", s);
-    d->errcount--;
 }
 
 
@@ -1327,39 +1317,6 @@ formula (tdico * dico, char *s, bool *perror)
         return accu[topop];
 }                                /* formula */
 
-static char
-fmttype (double x)
-{
-    /* I=integer, P=fixedpoint, F=floatpoint */
-    /* find out the "natural" type of format for number x */
-    double ax, dx;
-    int rx;
-    bool isint, astronomic;
-    ax = absf (x);
-    isint = 0;
-    astronomic = 0;
-
-    if (ax < 1e-39)                    /* smaller then 1e-39 is 0 */
-        isint = 1;                     /* and seen as an integer */
-    else if (ax < 64000)
-    {
-        /* detect integers */
-        rx = np_round (x);
-        dx = (x - rx) / ax;
-        isint = (absf (dx) < 1e-06);
-    }
-
-    if (!isint)
-        astronomic = (ax >= 1e+06) || (ax < 0.01); /* astronomic for 10 digits */
-
-    if (isint)
-        return 'I';
-    else if (astronomic)
-        return 'F';
-    else
-        return 'P';
-}
-
 static bool
 evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 {
@@ -1613,81 +1570,6 @@ scanline (tdico * dico, char *s, char *r, bool err)
 
 /********* interface functions for spice3f5 extension ***********/
 
-static void
-compactfloatnb (SPICE_DSTRINGPTR vstr_p)
-/* try to squeeze a floating pt format to ACT_CHARACTS characters */
-/* erase superfluous 000 digit streams before E */
-/* bug: truncating, no rounding */
-/* Not used anymore !!*/
-{
-    int n, k, m, lex, lem;
-//    char *expov ;
-//    char *expnv ;
-    char *v_p ;
-    SPICE_DSTRING expo_str ;
-    SPICE_DSTRING expn_str ;
-
-    spice_dstring_init(&expo_str) ;
-    spice_dstring_init(&expn_str) ;
-    n = cpos ('E', spice_dstring_value(vstr_p)) ; /* if too long, try to delete digits */
-    if (n<0) n = cpos ('e', spice_dstring_value(vstr_p));
-
-    if (n >= 0)
-    {
-        pscopy (&expo_str, spice_dstring_value(vstr_p), n,
-                spice_dstring_length(vstr_p));
-        lex = spice_dstring_length (&expo_str) ;
-
-        k = n ;                /* mantissa is [0..k[ */
-
-        v_p = spice_dstring_value(vstr_p) ;
-
-        for(m=k; m>0; --m)
-            if(v_p[m-1] == ' ')
-                break;
-
-        /* FIXME, v_p[k] === 'e' thus this is never executed 
-        while ((v_p[k] == '0') && (v_p[k - 1] == '0'))
-            k--;*/
-
-        lem = k - m;
-
-        if ((lem + lex) > ACT_CHARACTS)
-            lem = ACT_CHARACTS - lex;
-
-        pscopy (vstr_p, spice_dstring_value(vstr_p), m, lem);
-        if (cpos('.', spice_dstring_value(vstr_p)) >= 0)
-        {
-            while (lem < ACT_CHARACTS - EXP_LENGTH)
-            {
-                cadd(vstr_p, '0');
-                lem++;
-            }
-        }
-        else
-        {
-            cadd(vstr_p, '.');
-            lem++;
-            while (lem < ACT_CHARACTS - EXP_LENGTH)
-            {
-                cadd(vstr_p, '0');
-                lem++;
-            }
-        }
-        sadd (vstr_p, spice_dstring_value(&expo_str) );
-    }
-    else
-    {
-        m = 0;
-        v_p = spice_dstring_value(vstr_p) ;
-        while (v_p[m] == ' ')
-            m++;
-
-        lem = spice_dstring_length(vstr_p) - m;
-        if (lem > ACT_CHARACTS) lem = ACT_CHARACTS;
-        pscopy (vstr_p, spice_dstring_value(vstr_p), m, lem);
-    }
-}
 
 static int
 insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)

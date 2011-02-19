@@ -13,7 +13,6 @@
 #define ln(x) log(x)
 #define trunc(x) floor(x)
 
-typedef enum {Nul=0} _nNul;
 typedef enum {Nodekey='#'} _nNodekey;   /* Introduces node symbol */
 typedef enum {Intro='&'} _nIntro;       /* Introduces preprocessor tokens */
 typedef enum {Comment='*'} _nComment;   /* Spice Comment lines*/
