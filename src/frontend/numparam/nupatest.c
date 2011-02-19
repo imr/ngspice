@@ -100,7 +100,7 @@ and substitute node/device name arguments.
         dn= runscript(dico, subpfx, idef+1, istop, maxnest-1);
         nline= nline+dn; 
       } else { /* FIXME: error message here! */
-        ws("cannot find subckt "); ws(buf2[i]); wln(); 
+        printf("cannot find subckt %s\n", buf2[i]);
       }
     } else if ( (c != '?') && NotZ(buf2[i][0]) ) {         
       /*  keep any other valid non-empty line, and its prefix pointer */
@@ -342,7 +342,7 @@ void getnodelist(char * form, char * act, char * s, tdico *dic, int k)
   if ( idef>0 ) { 
     scopy(t, buf2[idef]); 
   } else {
-    ws("Subckt call error: "); ws(s); wln();
+    printf("Subckt call error: %s\n", s);
   }
   j=0; ls= length(t);
   j= getnextword(t,u,j); 
@@ -383,7 +383,7 @@ void nupa_test(char * fname, char mode)
     }
     fclose(tf);
   } else {
-    ws("Cannot find "); ws(fname); wln();
+    printf("Cannot find %s\n", fname);
   }
   /* continuation lines are glued at this stage, so they can be ignored
      in all the subsequent manipulations.
@@ -417,8 +417,8 @@ void nupa_test(char * fname, char mode)
       if ( dic->category[k] == 'X' ) { 
         if ( parstack< (10-1) ) { Inc(parstack) ;}
         getnodelist(formals[parstack], actuals[parstack], s, dic,k);
-        /*dbg: ws("Form: "); ws(formals[parstack] ); wln(); */
-        /*dbg: ws("Actu: "); ws(actuals[parstack]); wln(); */;
+        /*dbg: printf("Form: %s\n", formals[parstack]); */
+        /*dbg: printf("Actu: %s\n", actuals[parstack]); */;
       } else if ( dic->category[k]=='U' ) { /* return from subckt */
         if ( parstack>0 ) { Dec(parstack) ;}
       }

@@ -390,7 +390,7 @@ fetchnumentry (tdico * dico, char *t, bool *perr)
     entry *entry_p ;			/* hash table entry */
 
     entry_p = entrynb (dico, t);        /* no keyword */
-    /*dbg -- if ( k<=0 ) { ws("Dico num lookup fails. ") ;} */
+    /*dbg -- if ( k<=0 ) { printf("Dico num lookup fails.") ;} */
 
     while ( entry_p && (entry_p->tp == 'P') )
         entry_p = entry_p->pointer ;

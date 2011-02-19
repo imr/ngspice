@@ -674,7 +674,7 @@ new (size_t sz)
     void *p = tmalloc (sz);
     if (p == NULL)
     {			/* fatal error */
-        ws (" new() failure. Program halted.\n");
+        printf (" new() failure. Program halted.\n");
         controlled_exit(EXIT_FAILURE);
     }
     return p;

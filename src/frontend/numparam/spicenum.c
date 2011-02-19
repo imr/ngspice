@@ -526,8 +526,8 @@ nupa_done (void)
         sadd (&rep, " Errors=");
         nadd (&rep, nerrors);
         cadd (&rep, '\n');
-        ws ( spice_dstring_value(&rep) ) ;
-        ws ("Numparam expansion errors: Run Spice anyway? y/n ? \n");
+        printf ( "%s", spice_dstring_value(&rep) ) ;
+        printf ("Numparam expansion errors: Run Spice anyway? y/n ?\n");
         spice_dstring_reinit(&rep) ;
         rs (&rep);
         reply = spice_dstring_value(&rep) ;
@@ -903,12 +903,8 @@ nupa_eval (char *s, int linenum, int orig_linenum)
     evalcountS++;
 #ifdef TRACE_NUMPARAMS
     fprintf (stderr, "** SJB - leaving nupa_eval(): %s   %d\n", s, err);
-    ws ("** SJB -                  --> ");
-    ws (s);
-    wln ();
-    ws ("** SJB - leaving nupa_eval()");
-    wln ();
-    wln ();
+    printf ("** SJB -                  --> %s\n", s);
+    printf ("** SJB - leaving nupa_eval()\n\n");
 #endif /* TRACE_NUMPARAMS */
     if (err)
         return 0;
