@@ -1,3 +1,6 @@
+2011-02-21 Dietmar Warning
+ * inpcom.c: exclude appending m= to .model cards
+
 2011-02-19  Holger Vogt
  * ngspice.h: _snprintf for MS Visual Studio
  * measure.c, com_measure.c: update FIND .. WHEN measurements
