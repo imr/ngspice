@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.16  2011-01-25 17:33:37  rlar
+  Revision 1.17  2011-02-21 19:40:23  dwarning
+  better maintainer-clean
+
+  Revision 1.16  2011/01/25 17:33:37  rlar
   small fixes to make some `Makefiles' ready for build in a separate directory
 
   Revision 1.15  2011/01/13 17:05:46  dwarning
@@ -190,8 +193,12 @@ CLEANFILES = 		\\
 	$(module)setup.c	\\
 	$(module)temp.c	\\
 	$(module)noise.c	\\
-	$(module)trunc.c
-
+	$(module)trunc.c \\
+	.$(module).va.adms \\
+	.adms.implicit.xml \\
+	.interface.xml \\
+	*.h \\
+	*.xml
 
 #TODO (not implemented) \\
 	$(module)conv.c	\\
