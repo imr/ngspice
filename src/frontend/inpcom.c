@@ -2299,6 +2299,9 @@ inp_fix_subckt_multiplier( struct line *subckt_card,
     /* no 'm' for B line or comment line */
     if ((*(card->li_line) == '*') || (*(card->li_line) == 'b')) 
         continue;
+    /* no 'm' for model cards */
+    if (ciprefix(".model", card->li_line))
+        continue;    	
     new_str = TMALLOC(char, strlen( card->li_line ) + 7);
     sprintf( new_str, "%s m={m}", card->li_line );
     
