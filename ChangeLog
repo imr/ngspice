@@ -1,5 +1,7 @@
 2011-02-21 Dietmar Warning
  * inpcom.c: exclude appending m= to .model cards
+ * adms/admst/ngspiceMakefile.am.xml: rm some obsolete files 
+   on maintainer-clean action
 
 2011-02-19  Holger Vogt
  * ngspice.h: _snprintf for MS Visual Studio
