@@ -180,12 +180,17 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOforwardKneeCurrentGiven : 1;
     unsigned DIOreverseKneeCurrentGiven : 1;
 
+    unsigned DIOtlevGiven : 1;
+    unsigned DIOtlevcGiven : 1;
     unsigned DIOactivationEnergyGiven : 1;
     unsigned DIOsaturationCurrentExpGiven : 1;
+    unsigned DIOctaGiven : 1;
+    unsigned DIOctpGiven : 1;
     unsigned DIOdepletionCapCoeffGiven : 1;
     unsigned DIOdepletionSWcapCoeffGiven :1;
     unsigned DIObreakdownVoltageGiven : 1;
     unsigned DIObreakdownCurrentGiven : 1;
+    unsigned DIOtcvGiven : 1;
     unsigned DIOnomTempGiven : 1;
     unsigned DIOfNcoefGiven : 1;
     unsigned DIOfNexpGiven : 1;
@@ -212,17 +217,21 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOforwardKneeCurrent; /* Forward Knee current */
     double DIOreverseKneeCurrent; /* Reverse Knee current */
 
+    unsigned DIOtlev; /* Diode temperature equation selector */ 
+    unsigned DIOtlevc; /* Diode temperature equation selector */ 
     double DIOactivationEnergy; /* activation energy (EG) */
     double DIOsaturationCurrentExp; /* Saturation current exponential (XTI) */
+    double DIOcta; /* Area junction temperature coefficient */
+    double DIOctp; /* Perimeter junction temperature coefficient */
     double DIOdepletionCapCoeff;    /* Depletion Cap fraction coefficient (FC)*/
     double DIOdepletionSWcapCoeff;    /* Depletion sw-Cap fraction coefficient (FCS)*/
     double DIObreakdownVoltage; /* Voltage at reverse breakdown */
     double DIObreakdownCurrent; /* Current at above voltage */
+    double DIOtcv; /* Reverse breakdown voltage temperature coefficient */
 
     double DIOnomTemp;  /* nominal temperature (temp at which parms measured */
     double DIOfNcoef;
     double DIOfNexp;
-
 
 } DIOmodel;
 
@@ -280,6 +289,11 @@ typedef struct sDIOmodel {       /* model structure for a diode */
 #define DIO_MOD_TM2 128
 #define DIO_MOD_TRS 129
 #define DIO_MOD_TRS2 130
+#define DIO_MOD_TLEV 131
+#define DIO_MOD_TLEVC 132
+#define DIO_MOD_CTA 133
+#define DIO_MOD_CTP 134
+#define DIO_MOD_TCV 135
 
 #include "dioext.h"
 #endif /*DIO*/

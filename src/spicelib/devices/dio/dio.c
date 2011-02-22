@@ -42,6 +42,7 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "jsw", DIO_MOD_JSW,  IF_REAL, "Sidewall Saturation current"),
 
  IOPU( "tnom",DIO_MOD_TNOM,IF_REAL, "Parameter measurement temperature"),
+ IOPR( "tref",DIO_MOD_TNOM,IF_REAL, "Parameter measurement temperature"),
  IOP( "rs",  DIO_MOD_RS,  IF_REAL, "Ohmic resistance"),
  IOP( "trs", DIO_MOD_TRS, IF_REAL, "Ohmic resistance 1st order temp. coeff."),
  IOPR( "trs1", DIO_MOD_TRS, IF_REAL, "Ohmic resistance 1st order temp. coeff."),
@@ -52,28 +53,35 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOPA( "ttt2", DIO_MOD_TTT2, IF_REAL, "Transit Time 2nd order temp. coeff."),
  IOPA( "cjo", DIO_MOD_CJO, IF_REAL, "Junction capacitance"),
  IOPR( "cj0", DIO_MOD_CJO, IF_REAL, "Junction capacitance"),
+ IOPR( "cj", DIO_MOD_CJO, IF_REAL, "Junction capacitance"),
  IOP( "vj",  DIO_MOD_VJ,  IF_REAL, "Junction potential"),
  IOPR( "pb",  DIO_MOD_VJ,  IF_REAL, "Junction potential"),
  IOP( "m",   DIO_MOD_M,   IF_REAL, "Grading coefficient"),
- IOPR("mj",  DIO_MOD_M,   IF_REAL, "Grading coefficient"),
- IOP("tm1", DIO_MOD_TM1,  IF_REAL, " Grading coefficient 1st temp. coeff."),
- IOP("tm2", DIO_MOD_TM2,  IF_REAL, " Grading coefficient 2nd temp. coeff."),
+ IOPR( "mj",  DIO_MOD_M,   IF_REAL, "Grading coefficient"),
+ IOP( "tm1", DIO_MOD_TM1,  IF_REAL, "Grading coefficient 1st temp. coeff."),
+ IOP( "tm2", DIO_MOD_TM2,  IF_REAL, "Grading coefficient 2nd temp. coeff."),
  IOP( "cjp", DIO_MOD_CJSW, IF_REAL, "Sidewall junction capacitance"),
  IOPR( "cjsw", DIO_MOD_CJSW, IF_REAL, "Sidewall junction capacitance"),
  IOP( "php",  DIO_MOD_VJSW,  IF_REAL, "Sidewall junction potential"),
  IOP( "mjsw",   DIO_MOD_MJSW,   IF_REAL, "Sidewall Grading coefficient"),
  IOP( "ikf",   DIO_MOD_IKF,   IF_REAL, "Forward Knee current"),
  IOPR( "ik",   DIO_MOD_IKF,   IF_REAL, "Forward Knee current"),
- IOP("ikr",    DIO_MOD_IKR,   IF_REAL, "Reverse Knee current"),
+ IOP( "ikr",    DIO_MOD_IKR,   IF_REAL, "Reverse Knee current"),
 
+ IOP( "tlev", DIO_MOD_TLEV, IF_REAL, "Diode temperature equation selector"),
+ IOP( "tlevc", DIO_MOD_TLEVC, IF_REAL, "Diode temperature equation selector"),
  IOP( "eg",  DIO_MOD_EG,  IF_REAL, "Activation energy"),
  IOP( "xti", DIO_MOD_XTI, IF_REAL, "Saturation current temperature exp."),
+ IOP( "cta", DIO_MOD_CTA, IF_REAL, "Area junction temperature coefficient"),
+ IOPR( "ctc", DIO_MOD_CTA, IF_REAL, "Area junction capacitance temperature coefficient"),
+ IOP( "ctp", DIO_MOD_CTP, IF_REAL, "Perimeter junction capacitance temperature coefficient"),
  IOP( "kf",   DIO_MOD_KF,  IF_REAL, "flicker noise coefficient"),
  IOP( "af",   DIO_MOD_AF,  IF_REAL, "flicker noise exponent"),
  IOP( "fc",  DIO_MOD_FC,  IF_REAL, "Forward bias junction fit parameter"),
  IOP( "fcs",  DIO_MOD_FCS,  IF_REAL, "Forward bias sidewall junction fit parameter"),
  IOP( "bv",  DIO_MOD_BV,  IF_REAL, "Reverse breakdown voltage"),
  IOP( "ibv", DIO_MOD_IBV, IF_REAL, "Current at reverse breakdown voltage"),
+ IOP( "tcv", DIO_MOD_TCV, IF_REAL, "Reverse breakdown voltage temperature coefficient"),
  OPU( "cond", DIO_MOD_COND,IF_REAL, "Ohmic conductance"),
  IP( "d",    DIO_MOD_D,   IF_FLAG, "Diode model")
 };
@@ -83,8 +91,8 @@ char *DIOnames[] = {
     "D-"
 };
 
-int	DIOnSize = NUMELEMS(DIOnames);
-int	DIOpTSize = NUMELEMS(DIOpTable);
-int	DIOmPTSize = NUMELEMS(DIOmPTable);
-int	DIOiSize = sizeof(DIOinstance);
-int	DIOmSize = sizeof(DIOmodel);
+int DIOnSize = NUMELEMS(DIOnames);
+int DIOpTSize = NUMELEMS(DIOpTable);
+int DIOmPTSize = NUMELEMS(DIOmPTable);
+int DIOiSize = sizeof(DIOinstance);
+int DIOmSize = sizeof(DIOmodel);

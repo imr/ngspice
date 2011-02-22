@@ -20,8 +20,8 @@ Modified: 2000 AlansFixes
 
 int
 BJTload(GENmodel *inModel, CKTcircuit *ckt)
-        /* actually load the current resistance value into the 
-      * sparse matrix previously provided 
+        /* actually load the current resistance value into the
+      * sparse matrix previously provided
       */
 {
     BJTmodel *model = (BJTmodel*)inModel;
@@ -131,19 +131,19 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
     int error;
     int SenCond=0;
     double m;
-    
+
     /*  loop through all the models */
     for( ; model != NULL; model = model->BJTnextModel ) {
 
         /* loop through all the instances of the model */
         for (here = model->BJTinstances; here != NULL ;
                 here=here->BJTnextInstance) {
-	    if (here->BJTowner != ARCHme) continue;
+            if (here->BJTowner != ARCHme) continue;
 
             vt = here->BJTtemp * CONSTKoverQ;
-	    
-	    m = here->BJTm;
-	    
+
+            m = here->BJTm;
+
             if(ckt->CKTsenInfo){
 #ifdef SENSDEBUG
                 printf("BJTload \n");
@@ -164,18 +164,18 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
              *   dc model paramters
              */
             csat=here->BJTtSatCur*here->BJTarea;
-            rbpr=model->BJTminBaseResist/here->BJTarea;
-            rbpi=model->BJTbaseResist/here->BJTarea-rbpr;
-            gcpr=model->BJTcollectorConduct*here->BJTarea;
-            gepr=model->BJTemitterConduct*here->BJTarea;
-            oik=model->BJTinvRollOffF/here->BJTarea;
+            rbpr=here->BJTtminBaseResist/here->BJTarea;
+            rbpi=here->BJTtbaseResist/here->BJTarea-rbpr;
+            gcpr=here->BJTtcollectorConduct*here->BJTarea;
+            gepr=here->BJTtemitterConduct*here->BJTarea;
+            oik=here->BJTtinvRollOffF/here->BJTarea;
             c2=here->BJTtBEleakCur*here->BJTarea;
-            vte=model->BJTleakBEemissionCoeff*vt;
-            oikr=model->BJTinvRollOffR/here->BJTarea;
+            vte=here->BJTtleakBEemissionCoeff*vt;
+            oikr=here->BJTtinvRollOffR/here->BJTarea;
             c4=here->BJTtBCleakCur*here->BJTareab;
-            vtc=model->BJTleakBCemissionCoeff*vt;
+            vtc=here->BJTtleakBCemissionCoeff*vt;
             td=model->BJTexcessPhaseFactor;
-            xjrb=model->BJTbaseCurrentHalfResist*here->BJTarea;
+            xjrb=here->BJTtbaseCurrentHalfResist*here->BJTarea;
 
             if(SenCond){
 #ifdef SENSDEBUG
@@ -243,7 +243,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                     vbx=model->BJTtype*(here->BJTicVBE-here->BJTicVCE);
                     vcs=0;
                 }
-            } else if((ckt->CKTmode & MODEINITJCT) && 
+            } else if((ckt->CKTmode & MODEINITJCT) &&
                     (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)){
                 vbe=model->BJTtype*here->BJTicVBE;
                 vce=model->BJTtype*here->BJTicVCE;
@@ -265,27 +265,27 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
 #ifndef PREDICTOR
                 if(ckt->CKTmode & MODEINITPRED) {
                     xfact = ckt->CKTdelta/ckt->CKTdeltaOld[1];
-                    *(ckt->CKTstate0 + here->BJTvbe) = 
+                    *(ckt->CKTstate0 + here->BJTvbe) =
                             *(ckt->CKTstate1 + here->BJTvbe);
                     vbe = (1+xfact)**(ckt->CKTstate1 + here->BJTvbe)-
                             xfact* *(ckt->CKTstate2 + here->BJTvbe);
-                    *(ckt->CKTstate0 + here->BJTvbc) = 
+                    *(ckt->CKTstate0 + here->BJTvbc) =
                             *(ckt->CKTstate1 + here->BJTvbc);
                     vbc = (1+xfact)**(ckt->CKTstate1 + here->BJTvbc)-
                             xfact* *(ckt->CKTstate2 + here->BJTvbc);
-                    *(ckt->CKTstate0 + here->BJTcc) = 
+                    *(ckt->CKTstate0 + here->BJTcc) =
                             *(ckt->CKTstate1 + here->BJTcc);
-                    *(ckt->CKTstate0 + here->BJTcb) = 
+                    *(ckt->CKTstate0 + here->BJTcb) =
                             *(ckt->CKTstate1 + here->BJTcb);
-                    *(ckt->CKTstate0 + here->BJTgpi) = 
+                    *(ckt->CKTstate0 + here->BJTgpi) =
                             *(ckt->CKTstate1 + here->BJTgpi);
-                    *(ckt->CKTstate0 + here->BJTgmu) = 
+                    *(ckt->CKTstate0 + here->BJTgmu) =
                             *(ckt->CKTstate1 + here->BJTgmu);
-                    *(ckt->CKTstate0 + here->BJTgm) = 
+                    *(ckt->CKTstate0 + here->BJTgm) =
                             *(ckt->CKTstate1 + here->BJTgm);
-                    *(ckt->CKTstate0 + here->BJTgo) = 
+                    *(ckt->CKTstate0 + here->BJTgo) =
                             *(ckt->CKTstate1 + here->BJTgo);
-                    *(ckt->CKTstate0 + here->BJTgx) = 
+                    *(ckt->CKTstate0 + here->BJTgx) =
                             *(ckt->CKTstate1 + here->BJTgx);
                 } else {
 #endif /* PREDICTOR */
@@ -309,11 +309,11 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                 vcs=model->BJTtype*(
                     *(ckt->CKTrhsOld+here->BJTsubstNode)-
                     *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
-                cchat= *(ckt->CKTstate0 + here->BJTcc)+(*(ckt->CKTstate0 + 
+                cchat= *(ckt->CKTstate0 + here->BJTcc)+(*(ckt->CKTstate0 +
                         here->BJTgm)+ *(ckt->CKTstate0 + here->BJTgo))*delvbe-
                         (*(ckt->CKTstate0 + here->BJTgo)+*(ckt->CKTstate0 +
                         here->BJTgmu))*delvbc;
-                cbhat= *(ckt->CKTstate0 + here->BJTcb)+ *(ckt->CKTstate0 + 
+                cbhat= *(ckt->CKTstate0 + here->BJTcb)+ *(ckt->CKTstate0 +
                         here->BJTgpi)*delvbe+ *(ckt->CKTstate0 + here->BJTgmu)*
                         delvbc;
 #ifndef NOBYPASS
@@ -332,11 +332,11 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                     if( (fabs(delvbc) < ckt->CKTreltol*MAX(fabs(vbc),
                             fabs(*(ckt->CKTstate0 + here->BJTvbc)))+
                             ckt->CKTvoltTol) )
-                    if( (fabs(cchat-*(ckt->CKTstate0 + here->BJTcc)) < 
+                    if( (fabs(cchat-*(ckt->CKTstate0 + here->BJTcc)) <
                             ckt->CKTreltol* MAX(fabs(cchat),
                             fabs(*(ckt->CKTstate0 + here->BJTcc)))+
                             ckt->CKTabstol) )
-                    if( (fabs(cbhat-*(ckt->CKTstate0 + here->BJTcb)) < 
+                    if( (fabs(cbhat-*(ckt->CKTstate0 + here->BJTcb)) <
                             ckt->CKTreltol* MAX(fabs(cbhat),
                             fabs(*(ckt->CKTstate0 + here->BJTcb)))+
                             ckt->CKTabstol) ) {
@@ -400,9 +400,9 @@ next1:      vtn=vt*model->BJTemissionCoeffF;
             }
             gben+=ckt->CKTgmin;
             cben+=ckt->CKTgmin*vbe;
-            
+
             vtn=vt*model->BJTemissionCoeffR;
-            
+
               if(vbc >= -3*vtn) {
                 evbc=exp(vbc/vtn);
                 cbc=csat*(evbc-1);
@@ -430,23 +430,23 @@ next1:      vtn=vt*model->BJTemissionCoeffF;
             }
             gbcn+=ckt->CKTgmin;
             cbcn+=ckt->CKTgmin*vbc;
-            
+
             /*
              *   determine base charge terms
              */
-            q1=1/(1-model->BJTinvEarlyVoltF*vbc-model->BJTinvEarlyVoltR*vbe);
+            q1=1/(1-here->BJTtinvEarlyVoltF*vbc-here->BJTtinvEarlyVoltR*vbe);
             if(oik == 0 && oikr == 0) {
                 qb=q1;
-                dqbdve=q1*qb*model->BJTinvEarlyVoltR;
-                dqbdvc=q1*qb*model->BJTinvEarlyVoltF;
+                dqbdve=q1*qb*here->BJTtinvEarlyVoltR;
+                dqbdvc=q1*qb*here->BJTtinvEarlyVoltF;
             } else {
                 q2=oik*cbe+oikr*cbc;
                 arg=MAX(0,1+4*q2);
                 sqarg=1;
                 if(arg != 0) sqarg=sqrt(arg);
                 qb=q1*(1+sqarg)/2;
-                dqbdve=q1*(qb*model->BJTinvEarlyVoltR+oik*gbe/sqarg);
-                dqbdvc=q1*(qb*model->BJTinvEarlyVoltF+oikr*gbc/sqarg);
+                dqbdve=q1*(qb*here->BJTtinvEarlyVoltR+oik*gbe/sqarg);
+                dqbdvc=q1*(qb*here->BJTtinvEarlyVoltF+oikr*gbc/sqarg);
             }
             /*
              *   weil's approx. for excess phase applied with backward-
@@ -497,24 +497,24 @@ next1:      vtn=vt*model->BJTemissionCoeffF;
                 /*
                  *   charge storage elements
                  */
-                tf=model->BJTtransitTimeF;
-                tr=model->BJTtransitTimeR;
+                tf=here->BJTttransitTimeF;
+                tr=here->BJTttransitTimeR;
                 czbe=here->BJTtBEcap*here->BJTarea;
                 pe=here->BJTtBEpot;
-                xme=model->BJTjunctionExpBE;
+                xme=here->BJTtjunctionExpBE;
                 cdis=model->BJTbaseFractionBCcap;
                 ctot=here->BJTtBCcap*here->BJTarea;
                 czbc=ctot*cdis;
                 czbx=ctot-czbc;
                 pc=here->BJTtBCpot;
-                xmc=model->BJTjunctionExpBC;
+                xmc=here->BJTtjunctionExpBC;
                 fcpe=here->BJTtDepCap;
                 czcs=model->BJTcapCS*here->BJTareac;
                 ps=model->BJTpotentialSubstrate;
                 xms=model->BJTexponentialSubstrate;
                 xtf=model->BJTtransitTimeBiasCoeffF;
                 ovtf=model->BJTtransitTimeVBCFactor;
-                xjtf=model->BJTtransitTimeHighCurrentF*here->BJTarea;
+                xjtf=here->BJTttransitTimeHighCurrentF*here->BJTarea;
                 if(tf != 0 && vbe >0) {
                     argtf=0;
                     arg2=0;
@@ -570,7 +570,7 @@ next1:      vtn=vt*model->BJTemissionCoeffF;
                 if(vbx < fcpc) {
                     arg=1-vbx/pc;
                     sarg=exp(-xmc*log(arg));
-                    *(ckt->CKTstate0 + here->BJTqbx)= 
+                    *(ckt->CKTstate0 + here->BJTqbx)=
                         pc*czbx* (1-arg*sarg)/(1-xmc);
                     capbx=czbx*sarg;
                 } else {
@@ -719,18 +719,18 @@ load:
             /*
          *  load current excitation vector
          */
-            ceqcs=model->BJTtype * (*(ckt->CKTstate0 + here->BJTcqcs) - 
+            ceqcs=model->BJTtype * (*(ckt->CKTstate0 + here->BJTcqcs) -
                     vcs * gccs);
             ceqbx=model->BJTtype * (*(ckt->CKTstate0 + here->BJTcqbx) -
                     vbx * geqbx);
-            ceqbe=model->BJTtype * (cc + cb - vbe * (gm + go + gpi) + vbc * 
+            ceqbe=model->BJTtype * (cc + cb - vbe * (gm + go + gpi) + vbc *
                     (go - geqcb));
             ceqbc=model->BJTtype * (-cc + vbe * (gm + go) - vbc * (gmu + go));
 
             *(ckt->CKTrhs + here->BJTbaseNode) +=  m * (-ceqbx);
-            *(ckt->CKTrhs + here->BJTcolPrimeNode) += 
+            *(ckt->CKTrhs + here->BJTcolPrimeNode) +=
                     m * (ceqcs+ceqbx+ceqbc);
-            *(ckt->CKTrhs + here->BJTbasePrimeNode) += 
+            *(ckt->CKTrhs + here->BJTbasePrimeNode) +=
                     m * (-ceqbe-ceqbc);
             *(ckt->CKTrhs + here->BJTemitPrimeNode) += m * (ceqbe);
             *(ckt->CKTrhs + here->BJTsubstNode) += m * (-ceqcs);

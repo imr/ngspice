@@ -171,23 +171,137 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case BJT_MOD_EXCESSPHASEFACTOR:
             value->rValue = here->BJTexcessPhaseFactor;
             return(OK);
-	case BJT_MOD_KF:
-	    if (here->BJTfNcoefGiven)
-	        value->rValue = here->BJTfNcoef;
-	    else
-	        value->rValue = 0.0;
+        case BJT_MOD_TLEV:
+            value->iValue = here->BJTtlev;
             return(OK);
-	case BJT_MOD_AF:
-	    if (here->BJTfNexpGiven)
-	        value->rValue = here->BJTfNexp;
-	    else
-	        value->rValue = 0.0;
+        case BJT_MOD_TLEVC:
+            value->iValue = here->BJTtlevc;
             return(OK);
-	case BJT_MOD_TYPE:
-	    if (here->BJTtype == NPN)
-	        value->sValue = "npn";
-	    else
-	        value->sValue = "pnp";
+        case BJT_MOD_TBF1:
+            value->rValue = here->BJTtbf1;
+            return(OK);
+        case BJT_MOD_TBF2:
+            value->rValue = here->BJTtbf2;
+            return(OK);
+        case BJT_MOD_TBR1:
+            value->rValue = here->BJTtbr1;
+            return(OK);
+        case BJT_MOD_TBR2:
+            value->rValue = here->BJTtbr2;
+            return(OK);
+        case BJT_MOD_TIKF1:
+            value->rValue = here->BJTtikf1;
+            return(OK);
+        case BJT_MOD_TIKF2:
+            value->rValue = here->BJTtikf2;
+            return(OK);
+        case BJT_MOD_TIKR1:
+            value->rValue = here->BJTtikr1;
+            return(OK);
+        case BJT_MOD_TIKR2:
+            value->rValue = here->BJTtikr2;
+            return(OK);
+        case BJT_MOD_TIRB1:
+            value->rValue = here->BJTtirb1;
+            return(OK);
+        case BJT_MOD_TIRB2:
+            value->rValue = here->BJTtirb2;
+            return(OK);
+        case BJT_MOD_TNC1:
+            value->rValue = here->BJTtnc1;
+            return(OK);
+        case BJT_MOD_TNC2:
+            value->rValue = here->BJTtnc2;
+            return(OK);
+        case BJT_MOD_TNE1:
+            value->rValue = here->BJTtne1;
+            return(OK);
+        case BJT_MOD_TNE2:
+            value->rValue = here->BJTtne2;
+            return(OK);
+        case BJT_MOD_TNF1:
+            value->rValue = here->BJTtnf1;
+            return(OK);
+        case BJT_MOD_TNF2:
+            value->rValue = here->BJTtnf2;
+            return(OK);
+        case BJT_MOD_TNR1:
+            value->rValue = here->BJTtnr1;
+            return(OK);
+        case BJT_MOD_TNR2:
+            value->rValue = here->BJTtnr2;
+            return(OK);
+        case BJT_MOD_TRB1:
+            value->rValue = here->BJTtrb1;
+            return(OK);
+        case BJT_MOD_TRB2:
+            value->rValue = here->BJTtrb2;
+            return(OK);
+        case BJT_MOD_TRC1:
+            value->rValue = here->BJTtrc1;
+            return(OK);
+        case BJT_MOD_TRC2:
+            value->rValue = here->BJTtrc2;
+            return(OK);
+        case BJT_MOD_TRE1:
+            value->rValue = here->BJTtre1;
+            return(OK);
+        case BJT_MOD_TRE2:
+            value->rValue = here->BJTtre2;
+            return(OK);
+        case BJT_MOD_TRM1:
+            value->rValue = here->BJTtrm1;
+            return(OK);
+        case BJT_MOD_TRM2:
+            value->rValue = here->BJTtrm2;
+            return(OK);
+        case BJT_MOD_TVAF1:
+            value->rValue = here->BJTtvaf1;
+            return(OK);
+        case BJT_MOD_TVAF2:
+            value->rValue = here->BJTtvaf2;
+            return(OK);
+        case BJT_MOD_TVAR1:
+            value->rValue = here->BJTtvar1;
+            return(OK);
+        case BJT_MOD_TVAR2:
+            value->rValue = here->BJTtvar2;
+            return(OK);
+        case BJT_MOD_CTC:
+            value->rValue = here->BJTctc;
+            return(OK);
+        case BJT_MOD_CTE:
+            value->rValue = here->BJTcte;
+            return(OK);
+        case BJT_MOD_CTS:
+            value->rValue = here->BJTcts;
+            return(OK);
+        case BJT_MOD_TVJE:
+            value->rValue = here->BJTtvje;
+            return(OK);
+        case BJT_MOD_TVJC:
+            value->rValue = here->BJTtvjc;
+            return(OK);
+        case BJT_MOD_TVJS:
+            value->rValue = here->BJTtvjs;
+            return(OK);
+        case BJT_MOD_KF:
+            if (here->BJTfNcoefGiven)
+                value->rValue = here->BJTfNcoef;
+            else
+                value->rValue = 0.0;
+            return(OK);
+        case BJT_MOD_AF:
+            if (here->BJTfNexpGiven)
+                value->rValue = here->BJTfNexp;
+            else
+                value->rValue = 0.0;
+            return(OK);
+        case BJT_MOD_TYPE:
+            if (here->BJTtype == NPN)
+                value->sValue = "npn";
+            else
+                value->sValue = "pnp";
             return(OK);
         default:
             return(E_BADPARM);

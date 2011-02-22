@@ -154,15 +154,15 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
              *   dc model paramters
              */
             csat=here->BJTtSatCur*here->BJTarea * here->BJTm;
-            rbpr=model->BJTminBaseResist/(here->BJTarea * here->BJTm);
-            rbpi=model->BJTbaseResist/(here->BJTarea * here->BJTm)-rbpr;
-            oik=model->BJTinvRollOffF/(here->BJTarea * here->BJTm);
+            rbpr=here->BJTtminBaseResist/(here->BJTarea * here->BJTm);
+            rbpi=here->BJTtbaseResist/(here->BJTarea * here->BJTm)-rbpr;
+            oik=here->BJTtinvRollOffF/(here->BJTarea * here->BJTm);
             c2=here->BJTtBEleakCur*here->BJTarea * here->BJTm;
-            vte=model->BJTleakBEemissionCoeff*vt;
-            oikr=model->BJTinvRollOffR/(here->BJTarea * here->BJTm);
+            vte=here->BJTtleakBEemissionCoeff*vt;
+            oikr=here->BJTtinvRollOffR/(here->BJTarea * here->BJTm);
             c4=here->BJTtBCleakCur*here->BJTareab * here->BJTm;
-            vtc=model->BJTleakBCemissionCoeff*vt;
-            xjrb=model->BJTbaseCurrentHalfResist*here->BJTarea * here->BJTm;
+            vtc=here->BJTtleakBCemissionCoeff*vt;
+            xjrb=here->BJTtbaseCurrentHalfResist*here->BJTarea * here->BJTm;
 
 
             /*
@@ -221,7 +221,7 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   determine dc current and derivitives
              */
-	    vtn=vt*model->BJTemissionCoeffF;
+	    vtn=vt*here->BJTtemissionCoeffF;
             if(vbe > -5*vtn){
                 evbe=exp(vbe/vtn);
                 cbe=csat*(evbe-1)+ckt->CKTgmin*vbe;
@@ -249,7 +249,7 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
                 gben = -c2/vbe;
                 cben=gben*vbe;
             }
-            vtn=vt*model->BJTemissionCoeffR;
+            vtn=vt*here->BJTtemissionCoeffR;
             if(vbc > -5*vtn) {
                 evbc=exp(vbc/vtn);
                 cbc=csat*(evbc-1)+ckt->CKTgmin*vbc;
@@ -281,13 +281,13 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
 	    /* q1 is a function of 2 variables p=vbe and q=vbc. r=
 	     * anything
 	     */
-            q1=1/(1-model->BJTinvEarlyVoltF*vbc-model->BJTinvEarlyVoltR*vbe);
-	    dummy = (1-model->BJTinvEarlyVoltF*vbc-
-		     model->BJTinvEarlyVoltR*vbe);
+            q1=1/(1-here->BJTtinvEarlyVoltF*vbc-here->BJTtinvEarlyVoltR*vbe);
+	    dummy = (1-here->BJTtinvEarlyVoltF*vbc-
+		     here->BJTtinvEarlyVoltR*vbe);
 	    EqualDeriv(&d_dummy, &d_p);
 	    d_dummy.value = dummy;
-	    d_dummy.d1_p = - model->BJTinvEarlyVoltR;
-	    d_dummy.d1_q = -  model->BJTinvEarlyVoltF;
+	    d_dummy.d1_p = - here->BJTtinvEarlyVoltR;
+	    d_dummy.d1_q = -  here->BJTtinvEarlyVoltF;
 
 	    /* q1 = 1/dummy */
 	    InvDeriv(&d_q1, &d_dummy);
@@ -477,24 +477,24 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
 	    /*
 	     *   charge storage elements
 	     */
-	    tf=model->BJTtransitTimeF;
-	    tr=model->BJTtransitTimeR;
+	    tf=here->BJTttransitTimeF;
+	    tr=here->BJTttransitTimeR;
 	    czbe=here->BJTtBEcap*here->BJTarea * here->BJTm;
 	    pe=here->BJTtBEpot;
-	    xme=model->BJTjunctionExpBE;
+	    xme=here->BJTtjunctionExpBE;
 	    cdis=model->BJTbaseFractionBCcap;
 	    ctot=here->BJTtBCcap*here->BJTareab * here->BJTm;
 	    czbc=ctot*cdis;
 	    czbx=ctot-czbc;
 	    pc=here->BJTtBCpot;
-	    xmc=model->BJTjunctionExpBC;
+	    xmc=here->BJTtjunctionExpBC;
 	    fcpe=here->BJTtDepCap;
 	    czcs=model->BJTcapCS*here->BJTareac * here->BJTm;
 	    ps=model->BJTpotentialSubstrate;
 	    xms=model->BJTexponentialSubstrate;
 	    xtf=model->BJTtransitTimeBiasCoeffF;
 	    ovtf=model->BJTtransitTimeVBCFactor;
-	    xjtf=model->BJTtransitTimeHighCurrentF*here->BJTarea * here->BJTm;
+	    xjtf=here->BJTttransitTimeHighCurrentF*here->BJTarea * here->BJTm;
 	    if(tf != 0 && vbe >0) {
 		EqualDeriv(&d_cbe, &d_p);
 		d_cbe.value = cbe;

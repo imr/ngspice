@@ -43,7 +43,7 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
         case DIO_MOD_TRS2:
             model->DIOresistTemp2 = value->rValue;
             model->DIOresistTemp2Given = TRUE;
-            break;	    	    	    
+            break;
         case DIO_MOD_N:
             model->DIOemissionCoeff = value->rValue;
             model->DIOemissionCoeffGiven = TRUE;
@@ -55,11 +55,11 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
         case DIO_MOD_TTT1:
             model->DIOtranTimeTemp1 = value->rValue;
             model->DIOtranTimeTemp1Given = TRUE;
-            break;	
+            break;
         case DIO_MOD_TTT2:
             model->DIOtranTimeTemp2 = value->rValue;
             model->DIOtranTimeTemp2Given = TRUE;
-            break;	    	        
+            break;
         case DIO_MOD_CJO:
             model->DIOjunctionCap = value->rValue;
             model->DIOjunctionCapGiven = TRUE;
@@ -79,7 +79,7 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
         case DIO_MOD_TM2:
             model->DIOgradCoeffTemp2 = value->rValue;
             model->DIOgradCoeffTemp2Given = TRUE;
-            break;	    	    
+            break;
         case DIO_MOD_CJSW:
             model->DIOjunctionSWCap = value->rValue;
             model->DIOjunctionSWCapGiven = TRUE;
@@ -100,7 +100,15 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIOreverseKneeCurrent = value->rValue;
             model->DIOreverseKneeCurrentGiven = TRUE;
             break;
-	    
+
+        case DIO_MOD_TLEV:
+            model->DIOtlev = value->iValue;
+            model->DIOtlevGiven = TRUE;
+            break;
+        case DIO_MOD_TLEVC:
+            model->DIOtlevc = value->iValue;
+            model->DIOtlevcGiven = TRUE;
+            break;
         case DIO_MOD_EG:
             model->DIOactivationEnergy = value->rValue;
             model->DIOactivationEnergyGiven = TRUE;
@@ -108,6 +116,14 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
         case DIO_MOD_XTI:
             model->DIOsaturationCurrentExp = value->rValue;
             model->DIOsaturationCurrentExpGiven = TRUE;
+            break;
+        case DIO_MOD_CTA:
+            model->DIOcta = value->rValue;
+            model->DIOctaGiven = TRUE;
+            break;
+        case DIO_MOD_CTP:
+            model->DIOctp = value->rValue;
+            model->DIOctpGiven = TRUE;
             break;
         case DIO_MOD_FC:
             model->DIOdepletionCapCoeff = value->rValue;
@@ -117,7 +133,7 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIOdepletionSWcapCoeff = value->rValue;
             model->DIOdepletionSWcapCoeffGiven = TRUE;
             break;
-	case DIO_MOD_BV:
+        case DIO_MOD_BV:
             model->DIObreakdownVoltage = value->rValue;
             model->DIObreakdownVoltageGiven = TRUE;
             break;
@@ -125,18 +141,22 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIObreakdownCurrent = value->rValue;
             model->DIObreakdownCurrentGiven = TRUE;
             break;
+        case DIO_MOD_TCV:
+            model->DIOtcv = value->rValue;
+            model->DIOtcvGiven = TRUE;
+            break;
         case DIO_MOD_D:
             /* no action - we already know we are a diode, but this */
             /* makes life easier for spice-2 like parsers */
             break;
-	case DIO_MOD_KF:
-	    model->DIOfNcoef = value->rValue;
-	    model->DIOfNcoefGiven = TRUE;
-	    break;
-	case DIO_MOD_AF:
-	    model->DIOfNexp = value->rValue;
-	    model->DIOfNexpGiven = TRUE;
-	    break;
+        case DIO_MOD_KF:
+            model->DIOfNcoef = value->rValue;
+            model->DIOfNcoefGiven = TRUE;
+            break;
+        case DIO_MOD_AF:
+            model->DIOfNexp = value->rValue;
+            model->DIOfNexpGiven = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }

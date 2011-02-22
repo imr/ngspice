@@ -4,7 +4,7 @@ Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
 **********/
 
-/* 
+/*
  * This routine should only be called when circuit topology
  * changes, since its computations do not depend on most
  * device or model parameters, only on topology (as
@@ -22,8 +22,8 @@ Modified: 2000 AlansFixes
 
 int
 BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
-  /* load the BJT structure with those pointers needed later 
-  * for fast matrix loading 
+  /* load the BJT structure with those pointers needed later
+  * for fast matrix loading
   */
 {
     BJTmodel *model = (BJTmodel*)inModel;
@@ -121,12 +121,128 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTtempExpISGiven) {
             model->BJTtempExpIS = 3;
         }
-	if(!model->BJTfNcoefGiven) {
-	    model->BJTfNcoef = 0;
-	}
-	if(!model->BJTfNexpGiven) {
-	    model->BJTfNexp = 1;
-	}
+
+        if(!model->BJTtlevGiven) {
+            model->BJTtlev = 0;
+        }
+        if(!model->BJTtlevcGiven) {
+            model->BJTtlevc = 0;
+        }
+        if(!model->BJTtbf1Given) {
+            model->BJTtbf1 = 0.0;
+        }
+        if(!model->BJTtbf2Given) {
+            model->BJTtbf2 = 0.0;
+        }
+        if(!model->BJTtbr1Given) {
+            model->BJTtbr1 = 0.0;
+        }
+        if(!model->BJTtbr2Given) {
+            model->BJTtbr2 = 0.0;
+        }
+        if(!model->BJTtikf1Given) {
+            model->BJTtikf1 = 0.0;
+        }
+        if(!model->BJTtikf2Given) {
+            model->BJTtikf2 = 0.0;
+        }
+        if(!model->BJTtikr1Given) {
+            model->BJTtikr1 = 0.0;
+        }
+        if(!model->BJTtikr2Given) {
+            model->BJTtikr2 = 0.0;
+        }
+        if(!model->BJTtirb1Given) {
+            model->BJTtirb1 = 0.0;
+        }
+        if(!model->BJTtirb2Given) {
+            model->BJTtirb2 = 0.0;
+        }
+        if(!model->BJTtnc1Given) {
+            model->BJTtnc1 = 0.0;
+        }
+        if(!model->BJTtnc2Given) {
+            model->BJTtnc2 = 0.0;
+        }
+        if(!model->BJTtne1Given) {
+            model->BJTtne1 = 0.0;
+        }
+        if(!model->BJTtne2Given) {
+            model->BJTtne2 = 0.0;
+        }
+        if(!model->BJTtnf1Given) {
+            model->BJTtnf1 = 0.0;
+        }
+        if(!model->BJTtnf2Given) {
+            model->BJTtnf2 = 0.0;
+        }
+        if(!model->BJTtnr1Given) {
+            model->BJTtnr1 = 0.0;
+        }
+        if(!model->BJTtnr2Given) {
+            model->BJTtnr2 = 0.0;
+        }
+        if(!model->BJTtrb1Given) {
+            model->BJTtrb1 = 0.0;
+        }
+        if(!model->BJTtrb2Given) {
+            model->BJTtrb2 = 0.0;
+        }
+        if(!model->BJTtrc1Given) {
+            model->BJTtrc1 = 0.0;
+        }
+        if(!model->BJTtrc2Given) {
+            model->BJTtrc2 = 0.0;
+        }
+        if(!model->BJTtre1Given) {
+            model->BJTtre1 = 0.0;
+        }
+        if(!model->BJTtre2Given) {
+            model->BJTtre2 = 0.0;
+        }
+        if(!model->BJTtrm1Given) {
+            model->BJTtrm1 = 0.0;
+        }
+        if(!model->BJTtrm2Given) {
+            model->BJTtrm2 = 0.0;
+        }
+        if(!model->BJTtvaf1Given) {
+            model->BJTtvaf1 = 0.0;
+        }
+        if(!model->BJTtvaf2Given) {
+            model->BJTtvaf2 = 0.0;
+        }
+        if(!model->BJTtvar1Given) {
+            model->BJTtvar1 = 0.0;
+        }
+        if(!model->BJTtvar2Given) {
+            model->BJTtvar2 = 0.0;
+        }
+        if(!model->BJTctcGiven) {
+            model->BJTctc = 0.0;
+        }
+        if(!model->BJTcteGiven) {
+            model->BJTcte = 0.0;
+        }
+        if(!model->BJTctsGiven) {
+            model->BJTcts = 0.0;
+        }
+        if(!model->BJTtvjeGiven) {
+            model->BJTtvje = 0.0;
+        }
+        if(!model->BJTtvjcGiven) {
+            model->BJTtvjc = 0.0;
+        }
+        if(!model->BJTtvjsGiven) {
+            model->BJTtvjs = 0.0;
+        }
+
+        if(!model->BJTfNcoefGiven) {
+            model->BJTfNcoef = 0;
+        }
+        if(!model->BJTfNexpGiven) {
+            model->BJTfNexp = 1;
+        }
 
 /*
  * COMPATABILITY WARNING!
@@ -134,34 +250,34 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
  * implemented a special case which checked if B-E leakage saturation
  * current was >1, then it was instead a the B-E leakage saturation current
  * divided by IS, and multiplied it by IS at this point.  This was not
- * handled correctly in the 2G code, and there is some question on its 
+ * handled correctly in the 2G code, and there is some question on its
  * reasonability, since it is also undocumented, so it has been left out
  * here.  It could easily be added with 1 line.  (The same applies to the B-C
  * leakage saturation current).   TQ  6/29/84
  */
-            
+
         /* loop through all the instances of the model */
         for (here = model->BJTinstances; here != NULL ;
                 here=here->BJTnextInstance) {
-	    CKTnode *tmpNode;
-	    IFuid tmpName;
-            
-	    if (here->BJTowner != ARCHme)
-		goto matrixpointers;
-	    
+            CKTnode *tmpNode;
+            IFuid tmpName;
+
+            if (here->BJTowner != ARCHme)
+                goto matrixpointers;
+
             if(!here->BJTareaGiven) {
                 here->BJTarea = 1.0;
             }
-	    if(!here->BJTareabGiven) {
+            if(!here->BJTareabGiven) {
                 here->BJTareab = here->BJTarea;
             }
-	    if(!here->BJTareacGiven) {
+            if(!here->BJTareacGiven) {
                 here->BJTareac = here->BJTarea;
             }
-	    if(!here->BJTmGiven) {
+            if(!here->BJTmGiven) {
                 here->BJTm = 1.0;
             }
-	    
+
             here->BJTstate = *states;
             *states += BJTnumStates;
             if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
@@ -178,8 +294,8 @@ matrixpointers:
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
 /*                     fprintf(stderr, "Nodeset copied from %s\n", tmpName);
                        fprintf(stderr, "                 to %s\n", tmp->name);
                        fprintf(stderr, "              value %g\n",
@@ -197,8 +313,8 @@ matrixpointers:
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
 /*                     fprintf(stderr, "Nodeset copied from %s\n", tmpName);
                        fprintf(stderr, "                 to %s\n", tmp->name);
                        fprintf(stderr, "              value %g\n",
@@ -216,8 +332,8 @@ matrixpointers:
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
 /*                     fprintf(stderr, "Nodeset copied from %s\n", tmpName);
                        fprintf(stderr, "                 to %s\n", tmp->name);
                        fprintf(stderr, "              value %g\n",
@@ -225,7 +341,6 @@ matrixpointers:
                      }
                   }
                 }
-                
             }
 
 /* macro to make elements with built in test for out of memory */
@@ -270,30 +385,30 @@ BJTunsetup(
     BJTinstance *here;
 
     for (model = (BJTmodel *)inModel; model != NULL;
-	    model = model->BJTnextModel)
+        model = model->BJTnextModel)
     {
         for (here = model->BJTinstances; here != NULL;
                 here=here->BJTnextInstance)
-	{
-	    if (here->BJTcolPrimeNode
-		    && here->BJTcolPrimeNode != here->BJTcolNode)
-	    {
-		CKTdltNNum(ckt, here->BJTcolPrimeNode);
-		here->BJTcolPrimeNode = 0;
-	    }
-	    if (here->BJTbasePrimeNode
-		    && here->BJTbasePrimeNode != here->BJTbaseNode)
-	    {
-		CKTdltNNum(ckt, here->BJTbasePrimeNode);
-		here->BJTbasePrimeNode = 0;
-	    }
-	    if (here->BJTemitPrimeNode
-		    && here->BJTemitPrimeNode != here->BJTemitNode)
-	    {
-		CKTdltNNum(ckt, here->BJTemitPrimeNode);
-		here->BJTemitPrimeNode = 0;
-	    }
-	}
+        {
+           if (here->BJTcolPrimeNode
+               && here->BJTcolPrimeNode != here->BJTcolNode)
+           {
+                CKTdltNNum(ckt, here->BJTcolPrimeNode);
+                here->BJTcolPrimeNode = 0;
+           }
+           if (here->BJTbasePrimeNode
+               && here->BJTbasePrimeNode != here->BJTbaseNode)
+           {
+                CKTdltNNum(ckt, here->BJTbasePrimeNode);
+                here->BJTbasePrimeNode = 0;
+           }
+           if (here->BJTemitPrimeNode
+               && here->BJTemitPrimeNode != here->BJTemitNode)
+           {
+                CKTdltNNum(ckt, here->BJTemitPrimeNode);
+                here->BJTemitPrimeNode = 0;
+            }
+        }
     }
     return OK;
 }

@@ -49,7 +49,7 @@ BJTnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 	""                  /* total transistor noise */
     };
 
-    for (model=firstModel; model != NULL; model=model->BJTnextModel) {
+for (model=firstModel; model != NULL; model=model->BJTnextModel) {
 	for (inst=model->BJTinstances; inst != NULL;
 		inst=inst->BJTnextInstance) {
 	    if (inst->BJTowner != ARCHme) continue;
@@ -112,7 +112,7 @@ if (!data->namelist) return(E_NOMEM);
 		case N_DENS:
 		    NevalSrc(&noizDens[BJTRCNOIZ],&lnNdens[BJTRCNOIZ],
 				 ckt,THERMNOISE,inst->BJTcolPrimeNode,inst->BJTcolNode,
-				 model->BJTcollectorConduct * inst->BJTarea * inst->BJTm);
+				 inst->BJTtcollectorConduct * inst->BJTarea * inst->BJTm);
 
 		    NevalSrc(&noizDens[BJTRBNOIZ],&lnNdens[BJTRBNOIZ],
 				 ckt,THERMNOISE,inst->BJTbasePrimeNode,inst->BJTbaseNode,
@@ -120,7 +120,7 @@ if (!data->namelist) return(E_NOMEM);
 
 		    NevalSrc(&noizDens[BJT_RE_NOISE],&lnNdens[BJT_RE_NOISE],
 				 ckt,THERMNOISE,inst->BJTemitPrimeNode,inst->BJTemitNode,
-				 model->BJTemitterConduct * inst->BJTarea * inst-> BJTm);
+				 inst->BJTtemitterConduct * inst->BJTarea * inst-> BJTm);
 
 		    NevalSrc(&noizDens[BJTICNOIZ],&lnNdens[BJTICNOIZ],
 			         ckt,SHOTNOISE,inst->BJTcolPrimeNode, inst->BJTemitPrimeNode,
@@ -215,7 +215,7 @@ if (!data->namelist) return(E_NOMEM);
 		break;               /* the plots */
 	    }    /* switch (operation) */
 	}    /* for inst */
-    }    /* for model */
+}    /* for model */
 
 return(OK);
 }

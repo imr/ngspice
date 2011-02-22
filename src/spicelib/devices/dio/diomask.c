@@ -39,10 +39,10 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
             return(OK);
         case DIO_MOD_TRS:
             value->rValue = model->DIOresistTemp1;
-            return(OK);	    
+            return(OK);
         case DIO_MOD_TRS2:
             value->rValue = model->DIOresistTemp2;
-            return(OK);	    	    
+            return(OK);
         case DIO_MOD_N:
             value->rValue = model->DIOemissionCoeff;
             return(OK);
@@ -51,10 +51,10 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
             return(OK);
         case DIO_MOD_TTT1:
             value->rValue = model->DIOtranTimeTemp1;
-            return(OK);	    
+            return(OK);
         case DIO_MOD_TTT2:
             value->rValue = model->DIOtranTimeTemp2;
-            return(OK);	    	    
+            return(OK);
         case DIO_MOD_CJO:
             value->rValue = model->DIOjunctionCap;
             return(OK);
@@ -66,10 +66,10 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
             return(OK);
         case DIO_MOD_TM1:
             value->rValue = model->DIOgradCoeffTemp1;
-            return(OK);	 
+            return(OK);
         case DIO_MOD_TM2:
             value->rValue = model->DIOgradCoeffTemp2;
-            return(OK);	    	       
+            return(OK);
         case DIO_MOD_CJSW:
             value->rValue = model->DIOjunctionSWCap;
             return(OK);
@@ -85,18 +85,30 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case DIO_MOD_IKR:
             value->rValue = model->DIOreverseKneeCurrent;
             return(OK);
-	    
+
+        case DIO_MOD_TLEV:
+            value->iValue = model->DIOtlev;
+            return (OK);
+        case DIO_MOD_TLEVC:
+            value->iValue = model->DIOtlevc;
+            return (OK);
         case DIO_MOD_EG:
             value->rValue = model->DIOactivationEnergy;
             return (OK);
         case DIO_MOD_XTI:
             value->rValue = model->DIOsaturationCurrentExp;
             return(OK);
+        case DIO_MOD_CTA:
+            value->rValue = model->DIOcta;
+            return(OK);
+        case DIO_MOD_CTP:
+            value->rValue = model->DIOctp;
+            return(OK);
         case DIO_MOD_FC:
             value->rValue = model->DIOdepletionCapCoeff;
             return(OK);
-	case DIO_MOD_FCS:
-	    value->rValue = model->DIOdepletionSWcapCoeff;
+        case DIO_MOD_FCS:
+            value->rValue = model->DIOdepletionSWcapCoeff;
             return(OK);
         case DIO_MOD_KF:
             value->rValue = model->DIOfNcoef;
@@ -109,6 +121,9 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
             return(OK);
         case DIO_MOD_IBV:
             value->rValue = model->DIObreakdownCurrent;
+            return(OK);
+        case DIO_MOD_TCV:
+            value->rValue = model->DIOtcv;
             return(OK);
         case DIO_MOD_COND:
             value->rValue = model->DIOconductance;
