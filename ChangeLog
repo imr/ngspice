@@ -1,3 +1,8 @@
+2011-02-22 Dietmar Warning
+ * diode & bjt temperature model update, now it is possible to select the
+   temperature equations with tlev and tlevc in similar manner as in other well
+   known simulators
+
 2011-02-21 Dietmar Warning
  * inpcom.c: exclude appending m= to .model cards
  * adms/admst/ngspiceMakefile.am.xml: rm some obsolete files 
