@@ -149,8 +149,8 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 break;
             default:
                 return(E_BADPARM);
-                break;
             }
+            break;
         case VSRC_D_F2:
             here->VSRCdF2given = TRUE;
             here->VSRCdGiven = TRUE;

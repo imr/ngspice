@@ -1,3 +1,9 @@
+2011-02-27  Robert Larice
+ * src/spicelib/devices/isrc/isrcask.c ,
+ * src/spicelib/devices/vsrc/vsrcload.c ,
+ * src/spicelib/devices/vsrc/vsrcpar.c :
+    bug fix, three of them (vsrc, isrc)
+
 2011-02-22 Dietmar Warning
  * diode & bjt temperature model update, now it is possible to select the
    temperature equations with tlev and tlevc in similar manner as in other well
@@ -5,7 +11,7 @@
 
 2011-02-21 Dietmar Warning
  * inpcom.c: exclude appending m= to .model cards
- * adms/admst/ngspiceMakefile.am.xml: rm some obsolete files 
+ * adms/admst/ngspiceMakefile.am.xml: rm some obsolete files
    on maintainer-clean action
 
 2011-02-19  Holger Vogt

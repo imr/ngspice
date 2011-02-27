@@ -63,6 +63,7 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return (OK);
         case ISRC_FCN_TYPE:
             value->iValue = here->ISRCfunctionType;
+            return (OK);
         case ISRC_AC_REAL:
             value->rValue = here->ISRCacReal;
             return (OK);

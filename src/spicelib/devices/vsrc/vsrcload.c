@@ -388,10 +388,12 @@ loadDone:
             value *= cm_analog_ramp_factor();
 #else
             if (ckt->CKTmode & MODETRANOP) value *= ckt->CKTsrcFact;
-            /* load the new voltage value into the matrix */
-            *(ckt->CKTrhs + (here->VSRCbranch)) += value;
 #endif
 /* gtri - end - wbk - modify to process srcFact, etc. for all sources */
+
+            /* load the new voltage value into the matrix */
+            *(ckt->CKTrhs + (here->VSRCbranch)) += value;
+
         } // for loop instances
     } // for loop models
     return(OK);
