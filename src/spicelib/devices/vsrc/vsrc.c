@@ -9,20 +9,20 @@ Author: 1987 Thomas L. Quarles
 #include "vsrcdefs.h"
 #include "suffix.h"
 
-IFparm VSRCpTable[] = { /* parameters */ 
- IOPP("dc",      VSRC_DC,        IF_REAL   ,"D.C. source value"),
- IOPPA("acmag",   VSRC_AC_MAG,    IF_REAL   ,"A.C. Magnitude"),
- IOPAAU("acphase", VSRC_AC_PHASE,  IF_REAL   ,"A.C. Phase"),
- /* Modified to allow print @vin[sin] A.Roldan */ 
+IFparm VSRCpTable[] = { /* parameters */
+ IOPP("dc",      VSRC_DC,        IF_REAL   ,"DC value of source"),
+ IOPPA("acmag",   VSRC_AC_MAG,    IF_REAL   ,"AC Magnitude"),
+ IOPAAU("acphase", VSRC_AC_PHASE,  IF_REAL   ,"AC Phase"),
+ /* Modified to allow print @vin[sin] A.Roldan */
  IOP ("pulse",   VSRC_PULSE,     IF_REALVEC,"Pulse description"),
  IOP ("sine",    VSRC_SINE,      IF_REALVEC,"Sinusoidal source description"),
  IOP ("sin",     VSRC_SINE,      IF_REALVEC,"Sinusoidal source description"),
  IOP ("exp",     VSRC_EXP,       IF_REALVEC,"Exponential source description"),
  IOP ("pwl",     VSRC_PWL,       IF_REALVEC,"Piecewise linear description"),
- IOP ("sffm",    VSRC_SFFM,      IF_REALVEC,"Single freq. FM descripton"),
- IOP ("am",      VSRC_AM,        IF_REALVEC,"Amplitude modulation descripton"),
- IOP ("trnoise", VSRC_TRNOISE,   IF_REALVEC,"Transient noise descripton"), 
- IOP ("trrandom", VSRC_TRRANDOM, IF_REALVEC,"random voltage descripton"), 
+ IOP ("sffm",    VSRC_SFFM,      IF_REALVEC,"Single freq. FM description"),
+ IOP ("am",      VSRC_AM,        IF_REALVEC,"Amplitude modulation description"),
+ IOP ("trnoise", VSRC_TRNOISE,   IF_REALVEC,"Transient noise description"),
+ IOP ("trrandom", VSRC_TRRANDOM, IF_REALVEC,"random voltage description"),
 
  OPU ("pos_node",VSRC_POS_NODE,  IF_INTEGER,"Positive node of source"),
  OPU ("neg_node",VSRC_NEG_NODE,  IF_INTEGER,"Negative node of source"),
@@ -31,13 +31,13 @@ IFparm VSRCpTable[] = { /* parameters */
  OPU ("coeffs",  VSRC_FCN_COEFFS,IF_REALVEC,"Coefficients for the function"),
  OPU ("acreal",  VSRC_AC_REAL,   IF_REAL,   "AC real part"),
  OPU ("acimag",  VSRC_AC_IMAG,   IF_REAL,   "AC imaginary part"),
- IP ("ac",      VSRC_AC,        IF_REALVEC,"AC magnitude, phase vector"),
- OP ("i",       VSRC_CURRENT,   IF_REAL,   "Voltage source current"),
- OP ("p",       VSRC_POWER,     IF_REAL,   "Instantaneous power"),
- IP ("distof1", VSRC_D_F1,      IF_REALVEC,"f1 input for distortion"),
- IP ("distof2", VSRC_D_F2,      IF_REALVEC,"f2 input for distortion"),
- IP ("r",       VSRC_R,         IF_REAL,   "pwl repeat value"),
- IP ("td",       VSRC_TD,        IF_REAL,   "pwl delay value")
+ IP  ("ac",      VSRC_AC,        IF_REALVEC,"AC magnitude, phase vector"),
+ OP  ("i",       VSRC_CURRENT,   IF_REAL,   "Voltage source current"),
+ OP  ("p",       VSRC_POWER,     IF_REAL,   "Instantaneous power"),
+ IP  ("r",       VSRC_R,         IF_REAL,   "pwl repeat value"),
+ IP  ("td",      VSRC_TD,        IF_REAL,   "pwl delay value"),
+ IP  ("distof1", VSRC_D_F1,      IF_REALVEC,"f1 input for distortion"),
+ IP  ("distof2", VSRC_D_F2,      IF_REALVEC,"f2 input for distortion")
 };
 
 char *VSRCnames[] = {
@@ -45,8 +45,8 @@ char *VSRCnames[] = {
     "V-"
 };
 
-int	VSRCnSize = NUMELEMS(VSRCnames);
-int	VSRCpTSize = NUMELEMS(VSRCpTable);
-int	VSRCmPTSize = 0;
-int	VSRCiSize = sizeof(VSRCinstance);
-int	VSRCmSize = sizeof(VSRCmodel);
+int     VSRCnSize = NUMELEMS(VSRCnames);
+int     VSRCpTSize = NUMELEMS(VSRCpTable);
+int     VSRCmPTSize = 0;
+int     VSRCiSize = sizeof(VSRCinstance);
+int     VSRCmSize = sizeof(VSRCmodel);
