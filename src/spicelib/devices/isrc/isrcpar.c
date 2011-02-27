@@ -67,25 +67,29 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             }
             break;
         case ISRC_PULSE:
-            if(value->v.numValue <2) return(E_BADPARM);
+            if(value->v.numValue < 2)
+                return(E_BADPARM);
             here->ISRCfunctionType = PULSE;
             here->ISRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             break;
         case ISRC_SINE:
-            if(value->v.numValue <2) return(E_BADPARM);
+            if(value->v.numValue < 2)
+                return(E_BADPARM);
             here->ISRCfunctionType = SINE;
             here->ISRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             break;
         case ISRC_EXP:
-            if(value->v.numValue <2) return(E_BADPARM);
+            if(value->v.numValue < 2)
+                return(E_BADPARM);
             here->ISRCfunctionType = EXP;
             here->ISRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             break;
         case ISRC_PWL:
-            if(value->v.numValue <2) return(E_BADPARM);
+            if(value->v.numValue < 2)
+                return(E_BADPARM);
             here->ISRCfunctionType = PWL;
             here->ISRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
@@ -100,13 +104,16 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             
             break;
         case ISRC_SFFM:
-            if(value->v.numValue <2) return(E_BADPARM);
+            if(value->v.numValue < 2)
+                return(E_BADPARM);
             here->ISRCfunctionType = SFFM;
             here->ISRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             break;
-	case ISRC_AM:
-	    if(value->v.numValue <2) return(E_BADPARM);
+
+        case ISRC_AM:
+            if(value->v.numValue < 2)
+                return(E_BADPARM);
             here->ISRCfunctionType = AM;
             here->ISRCfuncTGiven = TRUE;
             copy_coeffs(here, value);

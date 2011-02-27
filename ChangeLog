@@ -1,4 +1,9 @@
 2011-02-27  Robert Larice
+ * src/spicelib/devices/isrc/isrcpar.c ,
+ * src/spicelib/devices/vsrc/vsrcpar.c :
+    vsrc, isrc, merge checks for length of vector parameters
+
+2011-02-27  Robert Larice
  * src/spicelib/devices/isrc/isrcask.c ,
  * src/spicelib/devices/vsrc/vsrcload.c ,
  * src/spicelib/devices/vsrc/vsrcpar.c :

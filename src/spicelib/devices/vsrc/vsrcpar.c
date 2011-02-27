@@ -67,21 +67,29 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             }
             break;
         case VSRC_PULSE:
+            if(value->v.numValue < 2)
+                return(E_BADPARM);
             here->VSRCfunctionType = PULSE;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             break;
         case VSRC_SINE:
+            if(value->v.numValue < 2)
+                return(E_BADPARM);
             here->VSRCfunctionType = SINE;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             break;
         case VSRC_EXP:
+            if(value->v.numValue < 2)
+                return(E_BADPARM);
             here->VSRCfunctionType = EXP;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             break;
         case VSRC_PWL:
+            if(value->v.numValue < 2)
+                return(E_BADPARM);
             here->VSRCfunctionType = PWL;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
@@ -121,12 +129,15 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
         break; }
         case VSRC_SFFM:
+            if(value->v.numValue < 2)
+                return(E_BADPARM);
             here->VSRCfunctionType = SFFM;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             break;
         case VSRC_AM:
-            if(value->v.numValue <2) return(E_BADPARM);
+            if(value->v.numValue < 2)
+                return(E_BADPARM);
             here->VSRCfunctionType = AM;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
