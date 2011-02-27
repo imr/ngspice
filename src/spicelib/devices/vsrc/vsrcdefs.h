@@ -28,8 +28,8 @@ typedef struct sVSRCinstance {
     int VSRCowner;  /* number of owner process */
     int VSRCstate;	/* not used */
 
-    int VSRCposNode;    /* number of positive node of resistor */
-    int VSRCnegNode;    /* number of negative node of resistor */
+    int VSRCposNode;    /* number of positive node of source */
+    int VSRCnegNode;    /* number of negative node of source */
 
     int VSRCbranch; /* equation number of branch equation added for source */
 
@@ -72,9 +72,9 @@ typedef struct sVSRCinstance {
     unsigned VSRCacPGiven    :1 ;   /* flag to indicate ac phase given */
     unsigned VSRCfuncTGiven  :1 ;   /* flag to indicate function type given */
     unsigned VSRCcoeffsGiven :1 ;   /* flag to indicate function coeffs given */
-    unsigned VSRCdGiven      :1 ; /* flag to indicate source is a disto input */
-    unsigned VSRCdF1given    :1; /* flag to indicate source is an f1 dist input */
-    unsigned VSRCdF2given    :1; /* flag to indicate source is an f2 dist input */
+    unsigned VSRCdGiven      :1 ;  /* flag to indicate source is a distortion input */
+    unsigned VSRCdF1given    :1 ;  /* flag to indicate source is an f1 distortion input */
+    unsigned VSRCdF2given    :1 ;  /* flag to indicate source is an f2 distortion input */
     unsigned VSRCrGiven      :1; /* flag to indicate repeating pwl */
 } VSRCinstance ;
 

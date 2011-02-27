@@ -94,7 +94,7 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->ISRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             
-            for (i=0;i<((here->ISRCfunctionOrder/2)-1);i++) {
+            for (i=0; i<(here->ISRCfunctionOrder/2)-1; i++) {
                   if (*(here->ISRCcoeffs+2*(i+1))<=*(here->ISRCcoeffs+2*i)) {
                      fprintf(stderr, "Warning : current source %s",
                                                                here->ISRCname);
@@ -175,10 +175,10 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             TS = here->ISRCcoeffs[1]; // time step
 
             if (here->ISRCfunctionOrder > 2)
-                NALPHA = here->ISRCcoeffs[2];
+                NALPHA = here->ISRCcoeffs[2]; // 1/f exponent
 
             if (here->ISRCfunctionOrder > 3 && NALPHA != 0.0)
-                NAMP = here->ISRCcoeffs[3];
+                NAMP = here->ISRCcoeffs[3]; // 1/f amplitude
 
             if (here->ISRCfunctionOrder > 4)
                 RTSAM = here->ISRCcoeffs[4]; // RTS amplitude

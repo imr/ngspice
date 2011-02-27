@@ -14,13 +14,15 @@ $Id$
 #include "1-f-code.h"
 
 #ifdef XSPICE_EXP
+/* gtri - begin - wbk - modify for supply ramping option */
 #include "cmproto.h"
+/* gtri - end   - wbk - modify for supply ramping option */
 #endif
 
 int
 ISRCload(GENmodel *inModel, CKTcircuit *ckt)
-        /* actually load the current current value into the 
-         * sparse matrix previously provided 
+        /* actually load the current value into the
+         * sparse matrix previously provided
          */
 {
     ISRCmodel *model = (ISRCmodel*)inModel;
@@ -28,7 +30,7 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
     double value;
     double time;
 
-    /*  loop through all the current source models */
+    /*  loop through all the source models */
     for( ; model != NULL; model = model->ISRCnextModel ) {
 
         /* loop through all the instances of the model */
@@ -51,9 +53,16 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                 } else {
                     time = ckt->CKTtime;
                 }
-                /* use transient function */
+                /* use the transient functions */
                 switch(here->ISRCfunctionType) {
 
+                    default:
+#ifdef XSPICE_EXP
+                        value = here->ISRCdcValue;
+#else
+                        value = here->ISRCdcValue * ckt->CKTsrcFact;
+#endif
+                        break;
                     case PULSE: {
                         double V1, V2, TD, TR, TF, PW, PER;		    
                         double basetime = 0;
@@ -221,11 +230,11 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                         value = VO + VA * 
                            sin((2.0 * M_PI * FC * time + phasec) +
                            MDI * sin(2.0 * M_PI * FS * time + phases));
-#else /* XSPICE */
+#else
                         value = VO + VA * 
                            sin((2.0 * M_PI * FC * time) +
                            MDI * sin(2.0 * M_PI * FS * time));
-#endif /* XSPICE */
+#endif
 /* gtri - end - wbk - add PHASE parameters */
 
                     }
@@ -270,25 +279,17 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
 #ifdef XSPICE
                     /* compute waveform value */
                            value = VA * (VO + sin(2.0 * M_PI * MF * time + phases )) *
-                              sin(2 * M_PI * FC * time + phases);
+                               sin(2.0 * M_PI * FC * time + phases);
                     
-#else /* XSPICE */		    
+#else
                            value = VA * (VO + sin(2.0 * M_PI * MF * time)) *
-                              sin(2 * M_PI * FC * time);
+                               sin(2.0 * M_PI * FC * time);
 #endif			
                         }
 		    
 /* gtri - end - wbk - add PHASE parameters */
                     }
                     break;
-
-                    default:
-#ifdef XSPICE_EXP
-                        value = here->ISRCdcValue;
-#else
-                        value = here->ISRCdcValue * ckt->CKTsrcFact;
-#endif
-                        break;
 
                     case PWL: {
                         int i;
@@ -352,7 +353,7 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
                         /* DC value */
                         if(here -> ISRCdcGiven)
                             value += here->ISRCdcValue;
-                    } // case
+                    }
                     break; 		
 
                 } // switch 
@@ -365,7 +366,8 @@ loadDone:
             value *= cm_analog_ramp_factor();
 
 #else
-            if (ckt->CKTmode & MODETRANOP) value *= ckt->CKTsrcFact;
+            if (ckt->CKTmode & MODETRANOP)
+                value *= ckt->CKTsrcFact;
 #endif
 /* gtri - end - wbk - modify for supply ramping option */
 
@@ -379,7 +381,7 @@ loadDone:
             here->ISRCcurrent = value;
 /* gtri - end   - wbk - record value so it can be output if requested */
 #endif
-        }
-    }
+        } // for loop instances
+    } // for loop models
     return(OK);
 }

@@ -7,14 +7,16 @@ Author: 1985 Thomas L. Quarles
 #define ISRC
 
 #include "ifsim.h"
-#include "complex.h"
 #include "cktdefs.h"
 #include "gendefs.h"
+#include "complex.h"
 
-    /* structures used to describe current sources */
+/*
+ * structures to describe independent current sources
+ */
 
 
-/* information needed per source instance */
+/* information needed for each instance */
 
 typedef struct sISRCinstance {
     struct sISRCmodel *ISRCmodPtr;  /* backpointer to model */
@@ -24,8 +26,8 @@ typedef struct sISRCinstance {
     int ISRCowner;  /* number of owner process */
     int ISRCstate; /* not used */
 
-    int ISRCnegNode;    /* number of negative node of source */
     int ISRCposNode;    /* number of positive node of source */
+    int ISRCnegNode;    /* number of negative node of source */
 
     int ISRCfunctionType;   /* code number of function type for source */
     int ISRCfunctionOrder;  /* order of the function for the source */
@@ -34,8 +36,8 @@ typedef struct sISRCinstance {
     double ISRCdcValue; /* DC and TRANSIENT value of source */
     double ISRCacPhase; /* AC phase angle */
     double ISRCacMag; /* AC magnitude */
-    double ISRCacReal; /* AC real part */
-    double ISRCacImag; /* AC imaginary */
+    double ISRCacReal; /* AC real component */
+    double ISRCacImag; /* AC imaginary component */
 
     double ISRCdF1mag; /* distortion f1 magnitude */
     double ISRCdF2mag; /* distortion f2 magnitude */
@@ -65,7 +67,7 @@ typedef struct sISRCinstance {
 
 /* per model data */
 
-typedef struct sISRCmodel {       /* model structure for a resistor */
+typedef struct sISRCmodel {
     int ISRCmodType;    /* type index of this device type */
     struct sISRCmodel *ISRCnextModel;    /* pointer to next possible model 
                                           *in linked list */

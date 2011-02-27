@@ -17,12 +17,12 @@ $Id$
 /* gtri - begin - wbk - modify for supply ramping option */
 #include "cmproto.h"
 /* gtri - end   - wbk - modify for supply ramping option */
-#endif /* XSPICE_EXP */
+#endif
 
 int
 VSRCload(GENmodel *inModel, CKTcircuit *ckt)
-        /* actually load the current voltage value into the 
-         * sparse matrix previously provided 
+        /* actually load the current value into the
+         * sparse matrix previously provided
          */
 {
     VSRCmodel *model = (VSRCmodel *)inModel;
@@ -30,7 +30,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
     double time;
     double value = 0.0;
 
-    /*  loop through all the voltage source models */
+    /*  loop through all the source models */
     for( ; model != NULL; model = model->VSRCnextModel ) {
 
         /* loop through all the instances of the model */
@@ -44,11 +44,12 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VSRCibrNegptr) -= 1.0 ;
             if( (ckt->CKTmode & (MODEDCOP | MODEDCTRANCURVE)) &&
                     here->VSRCdcGiven ) {
-                /* grab dc value */
+                /* load using DC value */
 #ifdef XSPICE_EXP
+/* gtri - begin - wbk - modify to process srcFact, etc. for all sources */
                 value = here->VSRCdcValue;
 #else
-                value = ckt->CKTsrcFact * here->VSRCdcValue;
+                value = here->VSRCdcValue * ckt->CKTsrcFact;
 #endif
             } else {
                 if(ckt->CKTmode & (MODEDC)) {
@@ -58,10 +59,9 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                 }
                 /* use the transient functions */
                 switch(here->VSRCfunctionType) {
-                    default: { /* no function specified:   use the DC value */
+                    default:
                         value = here->VSRCdcValue;
                         break;
-                    }
                     
                     case PULSE: {
                         double V1, V2, TD, TR, TF, PW, PER;
@@ -161,7 +161,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                             value = VO;
                         } else {                        
                            value = VO + VA * sin(FREQ * time * 2.0 * M_PI) * 
-                               exp(-(time*THETA));
+                               exp(-time*THETA);
 #endif
 /* gtri - end - wbk - add PHASE parameter */                
                         }
@@ -229,13 +229,13 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 #ifdef XSPICE
                         /* compute waveform value */
                         value = VO + VA * 
-                            sin((2 * M_PI * FC * time + phasec) +
+                            sin((2.0 * M_PI * FC * time + phasec) +
                             MDI * sin(2.0 * M_PI * FS * time + phases));
-#else /* XSPICE */            
+#else
                         value = VO + VA * 
                                 sin((2.0 * M_PI * FC * time) +
-                                MDI * sin(2 * M_PI * FS * time));
-#endif /* XSPICE */
+                                MDI * sin(2.0 * M_PI * FS * time));
+#endif
     /* gtri - end - wbk - add PHASE parameters */
                     }
                     break;
@@ -276,11 +276,11 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 #ifdef XSPICE
                             /* compute waveform value */
                             value = VA * (VO + sin(2.0 * M_PI * MF * time + phases )) *
-                               sin(2 * M_PI * FC * time + phases);
+                                sin(2.0 * M_PI * FC * time + phases);
                         
-#else /* XSPICE */            
+#else
                             value = VA * (VO + sin(2.0 * M_PI * MF * time)) *
-                               sin(2 * M_PI * FC * time);
+                                sin(2.0 * M_PI * FC * time);
 #endif            
                         }
                 
@@ -367,7 +367,7 @@ VNoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
                             /* DC value */
                         if(here -> VSRCdcGiven)
                             value += here->VSRCdcValue;
-                    } // case
+                    }
                     break; 
 
                     case TRRANDOM: {
@@ -380,14 +380,15 @@ VNoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
                     break;
 
                 } // switch
-            }
+            } // else (line 48)
 loadDone:
 /* gtri - begin - wbk - modify for supply ramping option */
 #ifdef XSPICE_EXP
             value *= ckt->CKTsrcFact;
             value *= cm_analog_ramp_factor();
 #else
-            if (ckt->CKTmode & MODETRANOP) value *= ckt->CKTsrcFact;
+            if (ckt->CKTmode & MODETRANOP)
+                value *= ckt->CKTsrcFact;
 #endif
 /* gtri - end - wbk - modify to process srcFact, etc. for all sources */
 

@@ -22,8 +22,7 @@ extern double exprand(double);
         
 int
 VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
-        /* set up the breakpoint table.
-         */
+        /* set up the breakpoint table.  */
 {
     VSRCmodel *model = (VSRCmodel *)inModel;
     VSRCinstance *here;
@@ -101,8 +100,8 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                             time -= basetime;
                         }
 
-                        if( time <= 0 || time >= TR + PW + TF) {
-                            if(ckt->CKTbreak &&  SAMETIME(time,0)) {
+                        if( time <= 0.0 || time >= TR + PW + TF) {
+                            if(ckt->CKTbreak &&  SAMETIME(time,0.0)) {
                                 error = CKTsetBreak(ckt,basetime + TR + tshift);
                                 if(error) return(error);
                             } else if(ckt->CKTbreak && SAMETIME(TR+PW+TF,time) ) {

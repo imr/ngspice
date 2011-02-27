@@ -13,6 +13,8 @@ Author: 1985 Thomas L. Quarles
 /*ARGSUSED*/
 int
 ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
+        /* Pre-process voltage source parameters
+         */
 {
     ISRCmodel *model = (ISRCmodel*)inModel;
     ISRCinstance *here;
@@ -20,6 +22,7 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
 
     NG_IGNORE(ckt);
 
+    /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->ISRCnextModel ) {
 
         /* loop through all the instances of the model */
@@ -37,11 +40,11 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
                 /* no DC value - either have a transient value, or none */
                 if(here->ISRCfuncTGiven) {
                     (*(SPfrontEnd->IFerror))(ERR_WARNING,
-            "Source %s has no DC value, transient time 0 value used",
+                            "%s: no DC value, transient time 0 value used",
                             &(here->ISRCname));
                 } else {
                     (*(SPfrontEnd->IFerror))(ERR_WARNING,
-                            "Source %s has no value, DC 0 assumed\n",
+                            "%s: has no value, DC 0 assumed",
                             &(here->ISRCname));
                 }
             }

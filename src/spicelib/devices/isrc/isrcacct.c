@@ -17,6 +17,9 @@ extern void fftFree(void);
 extern void rffts(float *data, long M, long Rows);
 extern double exprand(double);
 
+#define SAMETIME(a,b)    (fabs((a)-(b))<= TIMETOL * PW)
+#define TIMETOL    1e-7
+
 int
 ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
         /* set up the breakpoint table.  */
@@ -43,9 +46,6 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     }
                 
                     case PULSE: {
-
-#define SAMETIME(a,b) (fabs((a)-(b))<= TIMETOL * PW)
-#define TIMETOL 1e-7
 
                         double TD, TR, TF, PW, PER;
 
@@ -106,49 +106,39 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 
                         if( time <= 0.0 || time >= TR + PW + TF) {
                             if(ckt->CKTbreak &&  SAMETIME(time,0.0)) {
-                                /* set next breakpoint */
                                 error = CKTsetBreak(ckt,basetime + TR + TD);
                                 if(error) return(error);
                             } else if(ckt->CKTbreak && SAMETIME(TR+PW+TF,time) ) {
-                                /* set next breakpoint */
                                 error = CKTsetBreak(ckt,basetime + PER + TD);
                                 if(error) return(error);
                             } else if (ckt->CKTbreak && (time == -TD) ) {
-                                /* set next breakpoint */
                                 error = CKTsetBreak(ckt,basetime + TD);
                                 if(error) return(error);
                             } else if (ckt->CKTbreak && SAMETIME(PER,time) ) {
-                                /* set next breakpoint */
                                 error = CKTsetBreak(ckt,basetime + TD + TR + PER);
                                 if(error) return(error);
                             }
                         } else  if ( time >= TR && time <= TR + PW) {
                             if(ckt->CKTbreak &&  SAMETIME(time,TR) ) {
-                                /* set next breakpoint */
                                 error = CKTsetBreak(ckt,basetime + TD+TR + PW);
                                 if(error) return(error);
                             } else if(ckt->CKTbreak &&  SAMETIME(TR+PW,time) ) {
-                                /* set next breakpoint */
                                 error = CKTsetBreak(ckt,basetime + TD+TR + PW + TF);
                                 if(error) return(error);
                             }
                         } else if (time > 0 && time < TR) {
                             if(ckt->CKTbreak && SAMETIME(time,0) ) {
-                                /* set next breakpoint */
                                 error = CKTsetBreak(ckt,basetime + TD+TR);
                                 if(error) return(error);
                             } else if(ckt->CKTbreak && SAMETIME(time,TR)) {
-                                /* set next breakpoint */
                                 error = CKTsetBreak(ckt,basetime + TD+TR + PW);
                                 if(error) return(error);
                             }
                         } else { /* time > TR + PW && < TR + PW + TF */
                             if(ckt->CKTbreak && SAMETIME(time,TR+PW) ) {
-                                /* set next breakpoint */
                                 error = CKTsetBreak(ckt,basetime + TD+TR + PW +TF);
                                 if(error) return(error);
                             } else if(ckt->CKTbreak && SAMETIME(time,TR+PW+TF) ) {
-                                /* set next breakpoint */
                                 error = CKTsetBreak(ckt,basetime + TD+PER);
                                 if(error) return(error);
                             }
@@ -273,10 +263,10 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
                     }
                     break;
 
-                }
-            }
+                } // switch
+            } // if ... else
 bkptset: ;
-        }
-    }
+        } // for
+    } // for
     return(OK);
 }

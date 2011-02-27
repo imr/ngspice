@@ -24,8 +24,8 @@ int
 VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
     VSRCinstance *here = (VSRCinstance*)inst;
-    int temp;
     static char *msg =  "Current and power not available in ac analysis";
+    int temp;
     double *v, *w;
 
     NG_IGNORE(select);
@@ -52,9 +52,8 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             temp = value->v.numValue = here->VSRCfunctionOrder;
             v = value->v.vec.rVec = TMALLOC(double, here->VSRCfunctionOrder);
 	    w = here->VSRCcoeffs;
-            while (temp--) {
+            while (temp--)
                 *v++ = *w++;
-            }
             return (OK);
         case VSRC_AC:
             value->v.numValue = 2;

@@ -7,8 +7,8 @@ Modified: 2000 AlansFixes
  */
 
 #include "ngspice.h"
-#include "vsrcdefs.h"
 #include "ifsim.h"
+#include "vsrcdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 #include "1-f-code.h"
@@ -127,7 +127,8 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
               return ( E_PARMVAL );
             }
 
-        break; }
+            break;
+        }
         case VSRC_SFFM:
             if(value->v.numValue < 2)
                 return(E_BADPARM);
