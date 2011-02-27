@@ -1,6 +1,11 @@
 2011-02-27  Robert Larice
  * src/spicelib/devices/isrc/* ,
  * src/spicelib/devices/vsrc/* :
+    vsrc, isrc, whitespace cleanup
+
+2011-02-27  Robert Larice
+ * src/spicelib/devices/isrc/* ,
+ * src/spicelib/devices/vsrc/* :
     vsrc, isrc, cleanup aiming for more similarity
 
 2011-02-27  Robert Larice

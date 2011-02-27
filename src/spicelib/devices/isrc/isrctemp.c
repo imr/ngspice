@@ -16,7 +16,7 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* Pre-process voltage source parameters
          */
 {
-    ISRCmodel *model = (ISRCmodel*)inModel;
+    ISRCmodel *model = (ISRCmodel *) inModel;
     ISRCinstance *here;
     double radians;
 
@@ -28,13 +28,13 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->ISRCinstances; here != NULL ;
                 here=here->ISRCnextInstance) {
-	    if (here->ISRCowner != ARCHme) continue;
+            if (here->ISRCowner != ARCHme) continue;
 
             if(here->ISRCacGiven && !here->ISRCacMGiven) {
-                here->ISRCacMag=1;
+                here->ISRCacMag = 1;
             }
             if(here->ISRCacGiven && !here->ISRCacPGiven) {
-                here->ISRCacPhase=0;
+                here->ISRCacPhase = 0;
             }
             if(!here->ISRCdcGiven) {
                 /* no DC value - either have a transient value, or none */
@@ -53,6 +53,6 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
             here->ISRCacImag = here->ISRCacMag * sin(radians);
         }
     }
-    return(OK);
 
+    return(OK);
 }

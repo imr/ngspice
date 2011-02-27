@@ -10,13 +10,13 @@ Author: 1985 Thomas L. Quarles
 #include "sperror.h"
 #include "suffix.h"
 
-/* ARGSUSED */
+/*ARGSUSED*/
 int
 VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
-        /* Pre-process voltage source parameters 
+        /* Pre-process voltage source parameters
          */
 {
-    VSRCmodel *model = (VSRCmodel *)inModel;
+    VSRCmodel *model = (VSRCmodel *) inModel;
     VSRCinstance *here;
     double radians;
 
@@ -28,8 +28,8 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->VSRCinstances; here != NULL ;
                 here=here->VSRCnextInstance) {
-	    if (here->VSRCowner != ARCHme) continue;
-            
+            if (here->VSRCowner != ARCHme) continue;
+
             if(here->VSRCacGiven && !here->VSRCacMGiven) {
                 here->VSRCacMag = 1;
             }
@@ -51,8 +51,8 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
             radians = here->VSRCacPhase * M_PI / 180.0;
             here->VSRCacReal = here->VSRCacMag * cos(radians);
             here->VSRCacImag = here->VSRCacMag * sin(radians);
-
         }
     }
+
     return(OK);
 }

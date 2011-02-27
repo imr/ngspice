@@ -14,8 +14,8 @@ Author: 1985 Thomas L. Quarles
 int
 ISRCdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
-    ISRCmodel *model = (ISRCmodel*)inModel;
-    ISRCinstance **fast = (ISRCinstance**)inst;
+    ISRCmodel *model = (ISRCmodel *) inModel;
+    ISRCinstance **fast = (ISRCinstance **) inst;
     ISRCinstance **prev = NULL;
     ISRCinstance *here;
 

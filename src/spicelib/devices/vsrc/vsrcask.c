@@ -24,7 +24,7 @@ int
 VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
     VSRCinstance *here = (VSRCinstance*)inst;
-    static char *msg =  "Current and power not available in ac analysis";
+    static char *msg = "Current and power not available in ac analysis";
     int temp;
     double *v, *w;
 
@@ -45,13 +45,13 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
         case VSRC_EXP:
         case VSRC_PWL:
         case VSRC_SFFM:
-	    case VSRC_AM:
-	    case VSRC_TRNOISE:		
-	    case VSRC_TRRANDOM:
+        case VSRC_AM:
+        case VSRC_TRNOISE:
+        case VSRC_TRRANDOM:
         case VSRC_FCN_COEFFS:
             temp = value->v.numValue = here->VSRCfunctionOrder;
             v = value->v.vec.rVec = TMALLOC(double, here->VSRCfunctionOrder);
-	    w = here->VSRCcoeffs;
+            w = here->VSRCcoeffs;
             while (temp--)
                 *v++ = *w++;
             return (OK);
@@ -103,7 +103,7 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
                 return(E_ASKPOWER);
             } else {
                 value->rValue = (*(ckt->CKTrhsOld+here->VSRCposNode)
-                        - *(ckt->CKTrhsOld + here->VSRCnegNode)) * 
+                        - *(ckt->CKTrhsOld + here->VSRCnegNode)) *
                         -*(ckt->CKTrhsOld + here->VSRCbranch);
             }
             return(OK);

@@ -9,10 +9,11 @@ Author: 1985 Thomas L. Quarles
 #include "sperror.h"
 #include "suffix.h"
 
+
 int
 ISRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
-    ISRCmodel *model = (ISRCmodel*)inModel;
+    ISRCmodel *model = (ISRCmodel *) inModel;
     ISRCinstance *here;
 
     for( ; model != NULL; model = model->ISRCnextModel ) {
@@ -20,18 +21,18 @@ ISRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->ISRCinstances; here != NULL ;
                 here=here->ISRCnextInstance) {
-	    if (here->ISRCowner != ARCHme) continue;
+            if (here->ISRCowner != ARCHme) continue;
 
-            *(ckt->CKTrhs + (here->ISRCposNode)) += 
+            *(ckt->CKTrhs + (here->ISRCposNode)) +=
                 here->ISRCacReal;
-            *(ckt->CKTrhs + (here->ISRCnegNode)) -= 
+            *(ckt->CKTrhs + (here->ISRCnegNode)) -=
                 here->ISRCacReal;
-            *(ckt->CKTirhs + (here->ISRCposNode)) += 
+            *(ckt->CKTirhs + (here->ISRCposNode)) +=
                 here->ISRCacImag;
-            *(ckt->CKTirhs + (here->ISRCnegNode)) -= 
+            *(ckt->CKTirhs + (here->ISRCnegNode)) -=
                 here->ISRCacImag;
         }
     }
-    return(OK);
 
+    return(OK);
 }

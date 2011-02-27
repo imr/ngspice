@@ -14,8 +14,8 @@ Author: 1985 Thomas L. Quarles
 int
 VSRCdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
-    VSRCmodel *model = (VSRCmodel *)inModel;
-    VSRCinstance **fast = (VSRCinstance**)inst;
+    VSRCmodel *model = (VSRCmodel *) inModel;
+    VSRCinstance **fast = (VSRCinstance **) inst;
     VSRCinstance **prev = NULL;
     VSRCinstance *here;
 

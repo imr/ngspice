@@ -19,12 +19,12 @@ extern double exprand(double);
 
 #define SAMETIME(a,b)    (fabs((a)-(b))<= TIMETOL * PW)
 #define TIMETOL    1e-7
-        
+
 int
 VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
         /* set up the breakpoint table.  */
 {
-    VSRCmodel *model = (VSRCmodel *)inModel;
+    VSRCmodel *model = (VSRCmodel *) inModel;
     VSRCinstance *here;
     int error;
 
@@ -34,32 +34,33 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
         /* loop through all the instances of the model */
         for (here = model->VSRCinstances; here != NULL ;
                 here=here->VSRCnextInstance) {
-            
+
             if(!(ckt->CKTmode & (MODETRAN | MODETRANOP))) {
                 /* not transient, so shouldn't be here */
                 return(OK);
             } else {
                 /* use the transient functions */
                 switch(here->VSRCfunctionType) {
+
                     default: { /* no function specified:DC   no breakpoints */
                         break;
                     }
-                    
+
                     case PULSE: {
-            
+
                         double TD, TR, TF, PW, PER;
                         double tshift;
                         double time = 0.;
                         double basetime = 0;
 
-    /* gtri - begin - wbk - add PHASE parameter */
-    #ifdef XSPICE            
+/* gtri - begin - wbk - add PHASE parameter */
+#ifdef XSPICE
                         double PHASE;
                         double phase;
                         double deltat;
-    #endif                        
+#endif
                         TD = here->VSRCfunctionOrder > 2
-                             ? here->VSRCcoeffs[2] : 0.0;
+                            ? here->VSRCcoeffs[2] : 0.0;
                         TR = here->VSRCfunctionOrder > 3
                             && here->VSRCcoeffs[3] != 0.0
                             ? here->VSRCcoeffs[3] : ckt->CKTstep;
@@ -72,27 +73,27 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         PER = here->VSRCfunctionOrder > 6
                             && here->VSRCcoeffs[6] != 0.0
                             ? here->VSRCcoeffs[6] : ckt->CKTfinalTime;
-    #ifdef XSPICE
-                        PHASE = here->VSRCfunctionOrder > 7 
+#ifdef XSPICE
+                        PHASE = here->VSRCfunctionOrder > 7
                             ? here->VSRCcoeffs[7] : 0.0;
-    #endif
+#endif
                         /* offset time by delay */
                         time = ckt->CKTtime - TD;
                         tshift = TD;
 
-    #ifdef XSPICE                    
-                     /* normalize phase to 0 - 360° */ 
+#ifdef XSPICE
+                     /* normalize phase to 0 - 360° */
                      /* normalize phase to cycles */
                         phase = PHASE / 360.0;
                         phase = fmod(phase, 1.0);
                         deltat =  phase * PER;
-                        while (deltat > 0) 
+                        while (deltat > 0)
                             deltat -= PER;
                         time += deltat;
-                        tshift = TD - deltat; 
-    #endif            
-    /* gtri - end - wbk - add PHASE parameter */            
-                       
+                        tshift = TD - deltat;
+#endif
+/* gtri - end - wbk - add PHASE parameter */
+
                         if(time >= PER) {
                             /* repeating signal - figure out where we are */
                             /* in period */
@@ -105,45 +106,36 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                                 error = CKTsetBreak(ckt,basetime + TR + tshift);
                                 if(error) return(error);
                             } else if(ckt->CKTbreak && SAMETIME(TR+PW+TF,time) ) {
-
                                 error = CKTsetBreak(ckt,basetime + PER + tshift);
                                 if(error) return(error);
                             } else if (ckt->CKTbreak && (time == -tshift) ) {
-
                                 error = CKTsetBreak(ckt,basetime + tshift);
                                 if(error) return(error);
                             } else if (ckt->CKTbreak && SAMETIME(PER,time) ) {
-
                                 error = CKTsetBreak(ckt,basetime + tshift + TR + PER);
                                 if(error) return(error);
                             }
                         } else  if ( time >= TR && time <= TR + PW) {
                             if(ckt->CKTbreak &&  SAMETIME(time,TR) ) {
-
                                 error = CKTsetBreak(ckt,basetime + tshift + TR + PW);
                                 if(error) return(error);
                             } else if(ckt->CKTbreak &&  SAMETIME(TR+PW,time) ) {
-
                                 error = CKTsetBreak(ckt,basetime + tshift + TR + PW + TF);
                                 if(error) return(error);
                             }
                         } else if (time > 0 && time < TR) {
                             if(ckt->CKTbreak && SAMETIME(time,0) ) {
-
                                 error = CKTsetBreak(ckt,basetime + tshift + TR);
                                 if(error) return(error);
                             } else if(ckt->CKTbreak && SAMETIME(time,TR)) {
-
                                 error = CKTsetBreak(ckt,basetime + tshift + TR + PW);
                                 if(error) return(error);
                             }
                         } else { /* time > TR + PW && < TR + PW + TF */
                             if(ckt->CKTbreak && SAMETIME(time,TR+PW) ) {
-
                                 error = CKTsetBreak(ckt,basetime + tshift+TR + PW +TF);
                                 if(error) return(error);
                             } else if(ckt->CKTbreak && SAMETIME(time,TR+PW+TF) ) {
-
                                 error = CKTsetBreak(ckt,basetime + tshift + PER);
                                 if(error) return(error);
                             }
@@ -155,18 +147,22 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         /* no  breakpoints (yet) */
                     }
                     break;
+
                     case EXP: {
                         /* no  breakpoints (yet) */
                     }
                     break;
+
                     case SFFM:{
                         /* no  breakpoints (yet) */
                     }
                     break;
+
                     case AM:{
                         /* no  breakpoints (yet) */
                     }
                     break;
+
                     case PWL: {
                         int i;
                         if(ckt->CKTtime < *(here->VSRCcoeffs)) {
@@ -180,18 +176,19 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                                 error = CKTsetBreak(ckt, *(here->VSRCcoeffs+2*i+2));
                                 if(error) return(error);
                                 goto bkptset;
-                            } 
+                            }
                         }
                         break;
                     }
 
-    /**** tansient noise routines: 
+    /**** tansient noise routines:
     VNoi2 2 0  DC 0 TRNOISE(10n 0.5n 0 0n) : generate gaussian distributed noise
                             rms value, time step, 0 0
     VNoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
                             0,  time step, exponent < 2, rms value
     */
                     case TRNOISE: {
+
                         struct trnoise_state *state = here -> VSRCtrnoise_state;
                         double TS = state -> TS;
                         double RTSAM = state ->RTSAM;
@@ -206,6 +203,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         }
 
                         if(ckt->CKTbreak) {
+
                             int n = (int) floor(ckt->CKTtime / TS + 0.5);
                             volatile double nearest = n * TS;
 
@@ -242,9 +240,9 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                                         return(error);
                                 }
                             }
-                            
+
                             if(AlmostEqualUlps(RTSemTime, ckt->CKTtime, 3)) {
-                                /* new values */ 
+                                /* new values */
                                 RTScapTime = here -> VSRCtrnoise_state ->RTScapTime = ckt->CKTtime + exprand(RTSCAPT);
                                 here -> VSRCtrnoise_state ->RTSemTime = RTScapTime + exprand(RTSEMT);
 
@@ -257,6 +255,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         }
                     }
                     break;
+
                     case TRRANDOM: {
                         struct trrandom_state *state = here -> VSRCtrrandom_state;
                         double TS = state -> TS;
@@ -285,10 +284,12 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         }
                     }
                     break;
-                }  //switch
+
+                } // switch
             } // if ... else
 bkptset: ;
         } // for
     } // for
+
     return(OK);
 }

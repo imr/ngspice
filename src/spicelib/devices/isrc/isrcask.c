@@ -45,12 +45,12 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
         case ISRC_EXP:
         case ISRC_PWL:
         case ISRC_SFFM:
-	case ISRC_AM:
+        case ISRC_AM:
         case ISRC_TRNOISE:
         case ISRC_FCN_COEFFS:
             temp = value->v.numValue = here->ISRCfunctionOrder;
             v = value->v.vec.rVec = TMALLOC(double, here->ISRCfunctionOrder);
-	    w = here->ISRCcoeffs;
+            w = here->ISRCcoeffs;
             while (temp--)
                 *v++ = *w++;
             return (OK);
@@ -73,8 +73,8 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             value->rValue = here->ISRCfunctionOrder;
             return (OK);
         case ISRC_VOLTS:
-	    value->rValue = (*(ckt->CKTrhsOld + here->ISRCposNode) -
-		*(ckt->CKTrhsOld + here->ISRCnegNode));
+            value->rValue = (*(ckt->CKTrhsOld + here->ISRCposNode) -
+                *(ckt->CKTrhsOld + here->ISRCnegNode));
             return(OK);
         case ISRC_POWER:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
@@ -83,7 +83,7 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);
             } else {
-                value->rValue = -here->ISRCdcValue * 
+                value->rValue = -here->ISRCdcValue *
                         (*(ckt->CKTrhsOld + here->ISRCposNode) -
                         *(ckt->CKTrhsOld + here->ISRCnegNode));
             }
@@ -93,7 +93,7 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
         case ISRC_CURRENT:
             value->rValue = here->ISRCcurrent;
             return (OK);
-#endif	    
+#endif
 /* gtri - end - add current value information */
         default:
             return (E_BADPARM);

@@ -14,14 +14,14 @@ Author: 1985 Thomas L. Quarles
 int
 VSRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *fast)
 {
-    VSRCmodel **model = (VSRCmodel **)inModel;
-    VSRCmodel *modfast = (VSRCmodel *)fast;
+    VSRCmodel **model = (VSRCmodel **) inModel;
+    VSRCmodel *modfast = (VSRCmodel *) fast;
     VSRCinstance *here;
     VSRCinstance *prev = NULL;
     VSRCmodel **oldmod;
     oldmod = model;
     for( ; *model ; model = &((*model)->VSRCnextModel)) {
-        if( (*model)->VSRCmodName == modname || 
+        if( (*model)->VSRCmodName == modname ||
                 (modfast && *model == modfast) ) goto delgot;
         oldmod = model;
     }

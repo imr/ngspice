@@ -14,14 +14,14 @@ Author: 1985 Thomas L. Quarles
 int
 ISRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *fast)
 {
-    ISRCmodel **model = (ISRCmodel**)inModel;
+    ISRCmodel **model = (ISRCmodel **) inModel;
     ISRCmodel *modfast = (ISRCmodel *) fast;
     ISRCinstance *here;
     ISRCinstance *prev = NULL;
     ISRCmodel **oldmod;
     oldmod = model;
     for( ; *model ; model = &((*model)->ISRCnextModel)) {
-        if( (*model)->ISRCmodName == modname || 
+        if( (*model)->ISRCmodName == modname ||
                 (modfast && *model == modfast) ) goto delgot;
         oldmod = model;
     }

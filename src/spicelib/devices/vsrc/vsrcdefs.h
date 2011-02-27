@@ -13,20 +13,20 @@ Author: 1985 Thomas L. Quarles
 
 struct trnoise_state;
 
-        /*
-         * structures to describe independent voltage sources
-         */
+/*
+ * structures to describe independent voltage sources
+ */
 
 
 /* information needed for each instance */
 
 typedef struct sVSRCinstance {
     struct sVSRCmodel *VSRCmodPtr;  /* backpointer to model */
-    struct sVSRCinstance *VSRCnextInstance;  /* pointer to next instance of 
+    struct sVSRCinstance *VSRCnextInstance;  /* pointer to next instance of
                                               *current model */
     IFuid VSRCname; /* pointer to character string naming this instance */
     int VSRCowner;  /* number of owner process */
-    int VSRCstate;	/* not used */
+    int VSRCstate;  /* not used */
 
     int VSRCposNode;    /* number of positive node of source */
     int VSRCnegNode;    /* number of negative node of source */
@@ -50,32 +50,32 @@ typedef struct sVSRCinstance {
     double VSRCdF2mag; /* distortion f2 magnitude */
     double VSRCdF1phase; /* distortion f1 phase */
     double VSRCdF2phase; /* distortion f2 phase */
-    
+
     struct trnoise_state *VSRCtrnoise_state; /* transient noise */
     struct trrandom_state *VSRCtrrandom_state; /* transient random source */
 
     double VSRCr;           /* pwl repeat */
     double VSRCrdelay;     /* pwl delay period */
-    double *VSRCposIbrptr;  /* pointer to sparse matrix element at 
+    double *VSRCposIbrptr;  /* pointer to sparse matrix element at
                              * (positive node, branch equation) */
-    double *VSRCnegIbrptr;  /* pointer to sparse matrix element at 
+    double *VSRCnegIbrptr;  /* pointer to sparse matrix element at
                              * (negative node, branch equation) */
-    double *VSRCibrPosptr;  /* pointer to sparse matrix element at 
+    double *VSRCibrPosptr;  /* pointer to sparse matrix element at
                              * (branch equation, positive node) */
-    double *VSRCibrNegptr;  /* pointer to sparse matrix element at 
+    double *VSRCibrNegptr;  /* pointer to sparse matrix element at
                              * (branch equation, negative node) */
-    double *VSRCibrIbrptr;  /* pointer to sparse matrix element at 
+    double *VSRCibrIbrptr;  /* pointer to sparse matrix element at
                              * (branch equation, branch equation) */
-    unsigned VSRCdcGiven     :1 ;   /* flag to indicate dc value given */
-    unsigned VSRCacGiven     :1 ;   /* flag to indicate ac keyword given */
-    unsigned VSRCacMGiven    :1 ;   /* flag to indicate ac magnitude given */
-    unsigned VSRCacPGiven    :1 ;   /* flag to indicate ac phase given */
-    unsigned VSRCfuncTGiven  :1 ;   /* flag to indicate function type given */
-    unsigned VSRCcoeffsGiven :1 ;   /* flag to indicate function coeffs given */
+    unsigned VSRCdcGiven     :1 ;  /* flag to indicate dc value given */
+    unsigned VSRCacGiven     :1 ;  /* flag to indicate ac keyword given */
+    unsigned VSRCacMGiven    :1 ;  /* flag to indicate ac magnitude given */
+    unsigned VSRCacPGiven    :1 ;  /* flag to indicate ac phase given */
+    unsigned VSRCfuncTGiven  :1 ;  /* flag to indicate function type given */
+    unsigned VSRCcoeffsGiven :1 ;  /* flag to indicate function coeffs given */
     unsigned VSRCdGiven      :1 ;  /* flag to indicate source is a distortion input */
     unsigned VSRCdF1given    :1 ;  /* flag to indicate source is an f1 distortion input */
     unsigned VSRCdF2given    :1 ;  /* flag to indicate source is an f2 distortion input */
-    unsigned VSRCrGiven      :1; /* flag to indicate repeating pwl */
+    unsigned VSRCrGiven      :1 ;  /* flag to indicate repeating pwl */
 } VSRCinstance ;
 
 
@@ -83,9 +83,9 @@ typedef struct sVSRCinstance {
 
 typedef struct sVSRCmodel {
     int VSRCmodType;    /* type index of this device type */
-    struct sVSRCmodel *VSRCnextModel;    /* pointer to next possible model 
+    struct sVSRCmodel *VSRCnextModel;    /* pointer to next possible model
                                           *in linked list */
-    VSRCinstance * VSRCinstances;    /* pointer to list of instances 
+    VSRCinstance * VSRCinstances;    /* pointer to list of instances
                                       * that have this model */
     IFuid VSRCmodName;       /* pointer to character string naming this model */
 } VSRCmodel;

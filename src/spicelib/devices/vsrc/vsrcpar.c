@@ -32,25 +32,29 @@ int
 VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     int i;
-    VSRCinstance *here = (VSRCinstance *)inst;
+    VSRCinstance *here = (VSRCinstance *) inst;
 
     NG_IGNORE(select);
 
     switch(param) {
+
         case VSRC_DC:
             here->VSRCdcValue = value->rValue;
             here->VSRCdcGiven = TRUE;
             break;
+
         case VSRC_AC_MAG:
             here->VSRCacMag = value->rValue;
             here->VSRCacMGiven = TRUE;
             here->VSRCacGiven = TRUE;
             break;
+
         case VSRC_AC_PHASE:
             here->VSRCacPhase = value->rValue;
             here->VSRCacPGiven = TRUE;
             here->VSRCacGiven = TRUE;
             break;
+
         case VSRC_AC:
             switch(value->v.numValue) {
                 case 2:
@@ -66,6 +70,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                     return(E_BADPARM);
             }
             break;
+
         case VSRC_PULSE:
             if(value->v.numValue < 2)
                 return(E_BADPARM);
@@ -73,6 +78,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             break;
+
         case VSRC_SINE:
             if(value->v.numValue < 2)
                 return(E_BADPARM);
@@ -80,6 +86,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             break;
+
         case VSRC_EXP:
             if(value->v.numValue < 2)
                 return(E_BADPARM);
@@ -87,35 +94,38 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             break;
+
         case VSRC_PWL:
             if(value->v.numValue < 2)
                 return(E_BADPARM);
             here->VSRCfunctionType = PWL;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
-            
-            for(i=0;i<(here->VSRCfunctionOrder/2)-1;i++) {
-                  if(*(here->VSRCcoeffs+2*(i+1))<=*(here->VSRCcoeffs+2*i)) {
+
+            for (i=0; i<(here->VSRCfunctionOrder/2)-1; i++) {
+                  if (*(here->VSRCcoeffs+2*(i+1))<=*(here->VSRCcoeffs+2*i)) {
                      fprintf(stderr, "Warning : voltage source %s",
                                                                here->VSRCname);
                      fprintf(stderr, " has non-increasing PWL time points.\n");
                   }
             }
-            
+
             break;
+
         case VSRC_TD:
             here->VSRCrdelay = value->rValue;
             break;
+
         case VSRC_R: {
             double end_time;
             here->VSRCr = value->rValue;
             here->VSRCrGiven = TRUE;
-        
+
             for ( i = 0; i < here->VSRCfunctionOrder; i += 2 ) {
               here->VSRCrBreakpt = i;
                   if ( here->VSRCr == *(here->VSRCcoeffs+i) ) break;
             }
-            
+
             end_time     = *(here->VSRCcoeffs + here->VSRCfunctionOrder-2);
             if ( here->VSRCr > end_time ) {
               fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source must be smaller than final time point given!\n", here->VSRCr );
@@ -129,6 +139,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
             break;
         }
+
         case VSRC_SFFM:
             if(value->v.numValue < 2)
                 return(E_BADPARM);
@@ -136,13 +147,15 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             break;
+
         case VSRC_AM:
             if(value->v.numValue < 2)
                 return(E_BADPARM);
             here->VSRCfunctionType = AM;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
-            break;    
+            break;
+
         case VSRC_D_F1:
             here->VSRCdF1given = TRUE;
             here->VSRCdGiven = TRUE;
@@ -163,6 +176,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 return(E_BADPARM);
             }
             break;
+
         case VSRC_D_F2:
             here->VSRCdF2given = TRUE;
             here->VSRCdGiven = TRUE;
@@ -183,39 +197,40 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 return(E_BADPARM);
             }
             break;
-            case VSRC_TRNOISE: {
-                double NA, TS;
-                double NALPHA = 0.0;
-                double NAMP   = 0.0;
-                double RTSAM   = 0.0;
-                double RTSCAPT   = 0.0;
-                double RTSEMT   = 0.0;
 
-                here->VSRCfunctionType = TRNOISE;
-                here->VSRCfuncTGiven = TRUE;
-                copy_coeffs(here, value);
+        case VSRC_TRNOISE: {
+            double NA, TS;
+            double NALPHA = 0.0;
+            double NAMP   = 0.0;
+            double RTSAM   = 0.0;
+            double RTSCAPT   = 0.0;
+            double RTSEMT   = 0.0;
 
-                NA = here->VSRCcoeffs[0]; // input is rms value
-                TS = here->VSRCcoeffs[1]; // time step
+            here->VSRCfunctionType = TRNOISE;
+            here->VSRCfuncTGiven = TRUE;
+            copy_coeffs(here, value);
 
-                if (here->VSRCfunctionOrder > 2)
-                    NALPHA = here->VSRCcoeffs[2]; // 1/f exponent
+            NA = here->VSRCcoeffs[0]; // input is rms value
+            TS = here->VSRCcoeffs[1]; // time step
 
-                if (here->VSRCfunctionOrder > 3 && NALPHA != 0.0)
-                    NAMP = here->VSRCcoeffs[3]; // 1/f amplitude
+            if (here->VSRCfunctionOrder > 2)
+                NALPHA = here->VSRCcoeffs[2]; // 1/f exponent
 
-                if (here->VSRCfunctionOrder > 4)
-                    RTSAM = here->VSRCcoeffs[4]; // RTS amplitude
+            if (here->VSRCfunctionOrder > 3 && NALPHA != 0.0)
+                NAMP = here->VSRCcoeffs[3]; // 1/f amplitude
 
-                if (here->VSRCfunctionOrder > 5 && RTSAM != 0.0)
-                    RTSCAPT = here->VSRCcoeffs[5]; // RTS trap capture time
+            if (here->VSRCfunctionOrder > 4)
+                RTSAM = here->VSRCcoeffs[4]; // RTS amplitude
 
-                if (here->VSRCfunctionOrder > 6 && RTSAM != 0.0)
-                    RTSEMT = here->VSRCcoeffs[6]; // RTS trap emission time
+            if (here->VSRCfunctionOrder > 5 && RTSAM != 0.0)
+                RTSCAPT = here->VSRCcoeffs[5]; // RTS trap capture time
 
-                here->VSRCtrnoise_state =
-                    trnoise_state_init(NA, TS, NALPHA, NAMP, RTSAM, RTSCAPT, RTSEMT);
-            }
+            if (here->VSRCfunctionOrder > 6 && RTSAM != 0.0)
+                RTSEMT = here->VSRCcoeffs[6]; // RTS trap emission time
+
+            here->VSRCtrnoise_state =
+                trnoise_state_init(NA, TS, NALPHA, NAMP, RTSAM, RTSCAPT, RTSEMT);
+        }
         break;
 
         case VSRC_TRRANDOM: {
@@ -232,7 +247,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             TS = here->VSRCcoeffs[1]; // time step
             if (here->VSRCfunctionOrder > 2)
                 TD = here->VSRCcoeffs[2]; // delay
-            
+
             if (here->VSRCfunctionOrder > 3)
                 PARAM1 = here->VSRCcoeffs[3]; // first parameter
 
@@ -242,9 +257,11 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCtrrandom_state =
                 trrandom_state_init(rndtype, TS, TD, PARAM1, PARAM2);
         }
-        break;        
+        break;
+
         default:
             return(E_BADPARM);
     }
+
     return(OK);
 }

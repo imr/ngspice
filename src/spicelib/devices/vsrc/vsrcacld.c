@@ -13,7 +13,7 @@ Author: 1985 Thomas L. Quarles
 int
 VSRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
-    VSRCmodel *model = (VSRCmodel *)inModel;
+    VSRCmodel *model = (VSRCmodel *) inModel;
     VSRCinstance *here;
 
     for( ; model != NULL; model = model->VSRCnextModel ) {
@@ -21,7 +21,7 @@ VSRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->VSRCinstances; here != NULL ;
                 here=here->VSRCnextInstance) {
-	    if (here->VSRCowner != ARCHme) continue;
+            if (here->VSRCowner != ARCHme) continue;
 
             *(here->VSRCposIbrptr) += 1.0 ;
             *(here->VSRCnegIbrptr) -= 1.0 ;
@@ -31,5 +31,6 @@ VSRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(ckt->CKTirhs + (here->VSRCbranch)) += here->VSRCacImag;
         }
     }
+
     return(OK);
 }

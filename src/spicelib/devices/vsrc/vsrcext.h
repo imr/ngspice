@@ -3,7 +3,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-extern int VSRCaccept(CKTcircuit*,GENmodel *);
+extern int VSRCaccept(CKTcircuit*,GENmodel*);
 extern int VSRCacLoad(GENmodel*,CKTcircuit*);
 extern int VSRCask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int VSRCdelete(GENmodel*,IFuid,GENinstance**);

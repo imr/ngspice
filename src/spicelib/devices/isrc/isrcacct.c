@@ -24,7 +24,7 @@ int
 ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
         /* set up the breakpoint table.  */
 {
-    ISRCmodel *model = (ISRCmodel*)inModel;
+    ISRCmodel *model = (ISRCmodel *) inModel;
     ISRCinstance *here;
     int error;
 
@@ -34,48 +34,49 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
         /* loop through all the instances of the model */
         for (here = model->ISRCinstances; here != NULL ;
                 here=here->ISRCnextInstance) {
-            
+
             if(!(ckt->CKTmode & (MODETRAN | MODETRANOP))) {
                 /* not transient, so shouldn't be here */
                 return(OK);
             } else {
                 /* use the transient functions */
                 switch(here->ISRCfunctionType) {
+
                     default: { /* no function specified:DC   no breakpoints */
                         break;
                     }
-                
+
                     case PULSE: {
 
                         double TD, TR, TF, PW, PER;
 
 /* gtri - begin - wbk - add PHASE parameter */
-#ifdef XSPICE		    
-                        double  PHASE;
+#ifdef XSPICE
+                        double PHASE;
                         double phase;
                         double deltat;
                         double basephase;
-#endif		    
+#endif
                         double time;
                         double basetime = 0;
 
                         TD = here->ISRCfunctionOrder > 2
-                           ? here->ISRCcoeffs[2] : 0.0;
+                            ? here->ISRCcoeffs[2] : 0.0;
                         TR = here->ISRCfunctionOrder > 3
-                           && here->ISRCcoeffs[3] != 0.0
-                           ? here->ISRCcoeffs[3] : ckt->CKTstep;
+                            && here->ISRCcoeffs[3] != 0.0
+                            ? here->ISRCcoeffs[3] : ckt->CKTstep;
                         TF = here->ISRCfunctionOrder > 4
-                           && here->ISRCcoeffs[4] != 0.0
-                           ? here->ISRCcoeffs[4] : ckt->CKTstep;
+                            && here->ISRCcoeffs[4] != 0.0
+                            ? here->ISRCcoeffs[4] : ckt->CKTstep;
                         PW = here->ISRCfunctionOrder > 5
-                           && here->ISRCcoeffs[5] != 0.0
-                           ? here->ISRCcoeffs[5] : ckt->CKTfinalTime;
+                            && here->ISRCcoeffs[5] != 0.0
+                            ? here->ISRCcoeffs[5] : ckt->CKTfinalTime;
                         PER = here->ISRCfunctionOrder > 6
-                           && here->ISRCcoeffs[6] != 0.0
-                           ? here->ISRCcoeffs[6] : ckt->CKTfinalTime;
+                            && here->ISRCcoeffs[6] != 0.0
+                            ? here->ISRCcoeffs[6] : ckt->CKTfinalTime;
 #ifdef XSPICE
-                        PHASE = here->ISRCfunctionOrder > 8 
-                           ? here->ISRCcoeffs[7] : 0.0;
+                        PHASE = here->ISRCfunctionOrder > 8
+                            ? here->ISRCcoeffs[7] : 0.0;
 #endif
                         /* offset time by delay  and limit to zero */
                         time = ckt->CKTtime - TD;
@@ -85,18 +86,18 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                            time = 0.0;
 #endif
 
-#ifdef XSPICE			
-                        /* normalize phase to 0 - 2PI */ 
+#ifdef XSPICE
+                        /* normalize phase to 0 - 2PI */
                         phase = PHASE * M_PI / 180.0;
                         basephase = 2 * M_PI * floor(phase / (2 * M_PI));
                         phase -= basephase;
 
                         /* compute equivalent delta time and add to time */
                         deltat = (phase / (2 * M_PI)) * PER;
-                        time += deltat;	
-#endif		    
+                        time += deltat;
+#endif
 /* gtri - end - wbk - add PHASE parameter */
-                
+
                         if(time >= PER) {
                             /* repeating signal - figure out where we are */
                             /* in period */
@@ -147,21 +148,25 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     break;
 
                     case SINE: {
-                    /* no  breakpoints (yet) */
+                        /* no  breakpoints (yet) */
                     }
                     break;
+
                     case EXP: {
-                    /* no  breakpoints (yet) */
+                        /* no  breakpoints (yet) */
                     }
                     break;
+
                     case SFFM:{
-                    /* no  breakpoints (yet) */
+                        /* no  breakpoints (yet) */
                     }
                     break;
+
                     case AM:{
-                    /* no  breakpoints (yet) */
+                        /* no  breakpoints (yet) */
                     }
                     break;
+
                     case PWL: {
                         int i;
                         if(ckt->CKTtime < *(here->ISRCcoeffs)) {
@@ -178,17 +183,17 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                                     if(error) return(error);
                                 }
                                 goto bkptset;
-                            } 
+                            }
                         }
                         break;
                     }
 
-/**** tansient noise routines: 
-INoi2 2 0  DC 0 TRNOISE(10n 0.5n 0 0n) : generate gaussian distributed noise
-                        rms value, time step, 0 0
-INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
-                        0,  time step, exponent < 2, rms value
-*/
+    /**** tansient noise routines:
+    INoi2 2 0  DC 0 TRNOISE(10n 0.5n 0 0n) : generate gaussian distributed noise
+                            rms value, time step, 0 0
+    INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
+                            0,  time step, exponent < 2, rms value
+    */
                     case TRNOISE: {
 
                         struct trnoise_state *state = here -> ISRCtrnoise_state;
@@ -221,45 +226,40 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
                             }
                         }
 
+                        if (RTSAM > 0) {
+                            double RTScapTime = state->RTScapTime;
+                            double RTSemTime = state->RTSemTime;
+                            double RTSCAPT = state->RTSCAPT;
+                            double RTSEMT = state->RTSEMT;
 
-                    if (RTSAM > 0) {
-                        double RTScapTime = state->RTScapTime;
-                        double RTSemTime = state->RTSemTime;
-                        double RTSCAPT = state->RTSCAPT;
-                        double RTSEMT = state->RTSEMT;
-
-                        if (ckt->CKTtime == 0) {
-                            if (ckt->CKTbreak) {
-                                error = CKTsetBreak(ckt, RTScapTime);
-                                if(error)
-                                    return(error);
-                            }
-                        }
-
-                        if(AlmostEqualUlps(RTScapTime, ckt->CKTtime, 3)) {
-                            if (ckt->CKTbreak) {
-                                error = CKTsetBreak(ckt, RTSemTime);
-                                if(error)
-                                    return(error);
-                            }
-                        }
-                        
-                        if(AlmostEqualUlps(RTSemTime, ckt->CKTtime, 3)) {
-                            /* new values */ 
-                            RTScapTime = here -> ISRCtrnoise_state ->RTScapTime = ckt->CKTtime + exprand(RTSCAPT);
-                            here -> ISRCtrnoise_state ->RTSemTime = RTScapTime + exprand(RTSEMT);
-
-                            if (ckt->CKTbreak) {
-                                error = CKTsetBreak(ckt, RTScapTime);
-                                if(error)
-                                    return(error);
+                            if (ckt->CKTtime == 0) {
+                                if (ckt->CKTbreak) {
+                                    error = CKTsetBreak(ckt, RTScapTime);
+                                    if(error)
+                                        return(error);
+                                }
                             }
 
+                            if(AlmostEqualUlps(RTScapTime, ckt->CKTtime, 3)) {
+                                if (ckt->CKTbreak) {
+                                    error = CKTsetBreak(ckt, RTSemTime);
+                                    if(error)
+                                        return(error);
+                                }
+                            }
 
+                            if(AlmostEqualUlps(RTSemTime, ckt->CKTtime, 3)) {
+                                /* new values */
+                                RTScapTime = here -> ISRCtrnoise_state ->RTScapTime = ckt->CKTtime + exprand(RTSCAPT);
+                                here -> ISRCtrnoise_state ->RTSemTime = RTScapTime + exprand(RTSEMT);
+
+                                if (ckt->CKTbreak) {
+                                    error = CKTsetBreak(ckt, RTScapTime);
+                                    if(error)
+                                        return(error);
+                                }
+                            }
                         }
-
-                    }
-
                     }
                     break;
 
@@ -268,5 +268,6 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
 bkptset: ;
         } // for
     } // for
+
     return(OK);
 }

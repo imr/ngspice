@@ -20,11 +20,11 @@ Author: 1985 Thomas L. Quarles
 
 typedef struct sISRCinstance {
     struct sISRCmodel *ISRCmodPtr;  /* backpointer to model */
-    struct sISRCinstance *ISRCnextInstance;  /* pointer to next instance of 
-                                              *current model*/
+    struct sISRCinstance *ISRCnextInstance;  /* pointer to next instance of
+                                              *current model */
     IFuid ISRCname; /* pointer to character string naming this instance */
     int ISRCowner;  /* number of owner process */
-    int ISRCstate; /* not used */
+    int ISRCstate;  /* not used */
 
     int ISRCposNode;    /* number of positive node of source */
     int ISRCnegNode;    /* number of negative node of source */
@@ -34,8 +34,10 @@ typedef struct sISRCinstance {
     double *ISRCcoeffs; /* pointer to array of coefficients */
 
     double ISRCdcValue; /* DC and TRANSIENT value of source */
+
     double ISRCacPhase; /* AC phase angle */
     double ISRCacMag; /* AC magnitude */
+
     double ISRCacReal; /* AC real component */
     double ISRCacImag; /* AC imaginary component */
 
@@ -46,22 +48,22 @@ typedef struct sISRCinstance {
 
     struct trnoise_state *ISRCtrnoise_state; /* transient noise */
 
-    /* gtri - begin - add member to hold current source value */
+/* gtri - begin - add member to hold current source value */
 #ifdef XSPICE
     /* needed for outputting results */
     double ISRCcurrent; /* current value */
 #endif
-    /* gtri - end - add member to hold current source value */
+/* gtri - end - add member to hold current source value */
 
-    unsigned ISRCdcGiven     :1 ;   /* flag to indicate dc value given */
-    unsigned ISRCacGiven     :1 ;   /* flag to indicate ac keyword given */
-    unsigned ISRCacMGiven    :1 ;   /* flag to indicate ac magnitude given */
-    unsigned ISRCacPGiven    :1 ;   /* flag to indicate ac phase given */
-    unsigned ISRCfuncTGiven  :1 ;   /* flag to indicate function type given */
-    unsigned ISRCcoeffsGiven :1 ;   /* flag to indicate function coeffs given */
-    unsigned ISRCdGiven  :1 ; /* flag to indicate source is a distortion input */
-    unsigned ISRCdF1given :1; /* flag to indicate source is an f1 distortion input */
-    unsigned ISRCdF2given :1; /* flag to indicate source is an f2 distortion input */
+    unsigned ISRCdcGiven     :1 ;  /* flag to indicate dc value given */
+    unsigned ISRCacGiven     :1 ;  /* flag to indicate ac keyword given */
+    unsigned ISRCacMGiven    :1 ;  /* flag to indicate ac magnitude given */
+    unsigned ISRCacPGiven    :1 ;  /* flag to indicate ac phase given */
+    unsigned ISRCfuncTGiven  :1 ;  /* flag to indicate function type given */
+    unsigned ISRCcoeffsGiven :1 ;  /* flag to indicate function coeffs given */
+    unsigned ISRCdGiven      :1 ;  /* flag to indicate source is a distortion input */
+    unsigned ISRCdF1given    :1 ;  /* flag to indicate source is an f1 distortion input */
+    unsigned ISRCdF2given    :1 ;  /* flag to indicate source is an f2 distortion input */
 } ISRCinstance ;
 
 
@@ -69,10 +71,10 @@ typedef struct sISRCinstance {
 
 typedef struct sISRCmodel {
     int ISRCmodType;    /* type index of this device type */
-    struct sISRCmodel *ISRCnextModel;    /* pointer to next possible model 
+    struct sISRCmodel *ISRCnextModel;    /* pointer to next possible model
                                           *in linked list */
-    ISRCinstance * ISRCinstances;    /* pointer to list of instances 
-                                             * that have this model */
+    ISRCinstance * ISRCinstances;    /* pointer to list of instances
+                                      * that have this model */
     IFuid ISRCmodName;       /* pointer to character string naming this model */
 } ISRCmodel;
 
