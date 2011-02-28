@@ -47,6 +47,7 @@ typedef struct sISRCinstance {
     double ISRCdF2phase; /* distortion f2 phase */
 
     struct trnoise_state *ISRCtrnoise_state; /* transient noise */
+    struct trrandom_state *ISRCtrrandom_state; /* transient random source */
 
 /* gtri - begin - add member to hold current source value */
 #ifdef XSPICE
@@ -89,6 +90,7 @@ typedef struct sISRCmodel {
 #define PWL 5
 #define AM 6
 #define TRNOISE 7
+#define TRRANDOM 8
 #endif /*PULSE*/
 
 /* device parameters */
@@ -121,6 +123,8 @@ typedef struct sISRCmodel {
 #endif
 /* gtri - end - add define for current source value */
 #define ISRC_TRNOISE 25
+#define ISRC_TRRANDOM 26
+
 /* model parameters */
 
 /* device questions */

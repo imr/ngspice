@@ -1,3 +1,15 @@
+2011-02-28  Robert Larice
+ * src/spicelib/devices/isrc/isrc.c ,
+ * src/spicelib/devices/isrc/isrcacct.c ,
+ * src/spicelib/devices/isrc/isrcask.c ,
+ * src/spicelib/devices/isrc/isrcdefs.h ,
+ * src/spicelib/devices/isrc/isrcload.c ,
+ * src/spicelib/devices/isrc/isrcpar.c ,
+ * src/spicelib/devices/vsrc/vsrc.c ,
+ * src/spicelib/devices/vsrc/vsrcload.c :
+    merge TRRANDOM vsrc -> isrc
+      see commit from 11-01-16
+
 2011-02-27  Robert Larice
  * src/spicelib/devices/isrc/* ,
  * src/spicelib/devices/vsrc/* :

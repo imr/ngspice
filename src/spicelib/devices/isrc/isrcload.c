@@ -354,6 +354,15 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
                     }
                     break;
 
+                    case TRRANDOM: {
+                        struct trrandom_state *state = here -> ISRCtrrandom_state;
+                        value = state -> value;
+                        /* DC value */
+                        if(here -> ISRCdcGiven)
+                            value += here->ISRCdcValue;
+                    }
+                    break;
+
                 } // switch
             } // else (line 48)
 loadDone:

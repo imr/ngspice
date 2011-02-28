@@ -202,7 +202,32 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
             here->ISRCtrnoise_state =
                 trnoise_state_init(NA, TS, NALPHA, NAMP, RTSAM, RTSCAPT, RTSEMT);
+        }
+        break;
 
+        case ISRC_TRRANDOM: {
+            double TD = 0.0, TS;
+            int rndtype = 1;
+            double PARAM1 = 1.0;
+            double PARAM2 = 0.0;
+
+            here->ISRCfunctionType = TRRANDOM;
+            here->ISRCfuncTGiven = TRUE;
+            copy_coeffs(here, value);
+
+            rndtype = (int)here->ISRCcoeffs[0]; // type of random function
+            TS = here->ISRCcoeffs[1]; // time step
+            if (here->ISRCfunctionOrder > 2)
+                TD = here->ISRCcoeffs[2]; // delay
+
+            if (here->ISRCfunctionOrder > 3)
+                PARAM1 = here->ISRCcoeffs[3]; // first parameter
+
+            if (here->ISRCfunctionOrder > 4)
+                PARAM2 = here->ISRCcoeffs[4]; // second parameter
+
+            here->ISRCtrrandom_state =
+                trrandom_state_init(rndtype, TS, TD, PARAM1, PARAM2);
         }
         break;
 

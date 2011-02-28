@@ -263,6 +263,35 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     }
                     break;
 
+                    case TRRANDOM: {
+                        struct trrandom_state *state = here -> ISRCtrrandom_state;
+                        double TS = state -> TS;
+                        double TD = state -> TD;
+
+                        double time = ckt->CKTtime - TD;
+
+                        if (time < 0) break;
+
+                        if(ckt->CKTbreak) {
+
+                            int n = (int) floor(time / TS + 0.5);
+                            volatile double nearest = n * TS;
+
+                            if(AlmostEqualUlps(nearest, time, 3)) {
+                            /* carefully calculate `next'
+                            *  make sure it is really identical
+                            *  with the next calculated `nearest' value
+                            */
+                                volatile double next = (n+1) * TS + TD;
+                                error = CKTsetBreak(ckt, next);
+                                if(error)
+                                    return(error);
+                                state->value = trrandom_state_get(state);
+                            }
+                        }
+                    }
+                    break;
+
                 } // switch
             } // if ... else
 bkptset: ;

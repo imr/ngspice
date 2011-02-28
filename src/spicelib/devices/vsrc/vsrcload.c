@@ -367,7 +367,7 @@ VNoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
                                 value += RTSAM;
                         }
 
-                            /* DC value */
+                        /* DC value */
                         if(here -> VSRCdcGiven)
                             value += here->VSRCdcValue;
                     }
