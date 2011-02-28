@@ -49,17 +49,16 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     case PULSE: {
 
                         double TD, TR, TF, PW, PER;
+                        double tshift;
+                        double time = 0.;
+                        double basetime = 0;
 
 /* gtri - begin - wbk - add PHASE parameter */
 #ifdef XSPICE
                         double PHASE;
                         double phase;
                         double deltat;
-                        double basephase;
 #endif
-                        double time;
-                        double basetime = 0;
-
                         TD = here->ISRCfunctionOrder > 2
                             ? here->ISRCcoeffs[2] : 0.0;
                         TR = here->ISRCfunctionOrder > 3
@@ -75,26 +74,23 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                             && here->ISRCcoeffs[6] != 0.0
                             ? here->ISRCcoeffs[6] : ckt->CKTfinalTime;
 #ifdef XSPICE
-                        PHASE = here->ISRCfunctionOrder > 8
+                        PHASE = here->ISRCfunctionOrder > 7
                             ? here->ISRCcoeffs[7] : 0.0;
 #endif
-                        /* offset time by delay  and limit to zero */
+                        /* offset time by delay */
                         time = ckt->CKTtime - TD;
+                        tshift = TD;
 
 #ifdef XSPICE
-                        if(time < 0.0)
-                           time = 0.0;
-#endif
-
-#ifdef XSPICE
-                        /* normalize phase to 0 - 2PI */
-                        phase = PHASE * M_PI / 180.0;
-                        basephase = 2 * M_PI * floor(phase / (2 * M_PI));
-                        phase -= basephase;
-
-                        /* compute equivalent delta time and add to time */
-                        deltat = (phase / (2 * M_PI)) * PER;
+                     /* normalize phase to 0 - 360° */
+                     /* normalize phase to cycles */
+                        phase = PHASE / 360.0;
+                        phase = fmod(phase, 1.0);
+                        deltat =  phase * PER;
+                        while (deltat > 0)
+                            deltat -= PER;
                         time += deltat;
+                        tshift = TD - deltat;
 #endif
 /* gtri - end - wbk - add PHASE parameter */
 
@@ -107,40 +103,40 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 
                         if( time <= 0.0 || time >= TR + PW + TF) {
                             if(ckt->CKTbreak &&  SAMETIME(time,0.0)) {
-                                error = CKTsetBreak(ckt,basetime + TR + TD);
+                                error = CKTsetBreak(ckt,basetime + TR + tshift);
                                 if(error) return(error);
                             } else if(ckt->CKTbreak && SAMETIME(TR+PW+TF,time) ) {
-                                error = CKTsetBreak(ckt,basetime + PER + TD);
+                                error = CKTsetBreak(ckt,basetime + PER + tshift);
                                 if(error) return(error);
-                            } else if (ckt->CKTbreak && (time == -TD) ) {
-                                error = CKTsetBreak(ckt,basetime + TD);
+                            } else if (ckt->CKTbreak && (time == -tshift) ) {
+                                error = CKTsetBreak(ckt,basetime + tshift);
                                 if(error) return(error);
                             } else if (ckt->CKTbreak && SAMETIME(PER,time) ) {
-                                error = CKTsetBreak(ckt,basetime + TD + TR + PER);
+                                error = CKTsetBreak(ckt,basetime + tshift + TR + PER);
                                 if(error) return(error);
                             }
                         } else  if ( time >= TR && time <= TR + PW) {
                             if(ckt->CKTbreak &&  SAMETIME(time,TR) ) {
-                                error = CKTsetBreak(ckt,basetime + TD+TR + PW);
+                                error = CKTsetBreak(ckt,basetime + tshift + TR + PW);
                                 if(error) return(error);
                             } else if(ckt->CKTbreak &&  SAMETIME(TR+PW,time) ) {
-                                error = CKTsetBreak(ckt,basetime + TD+TR + PW + TF);
+                                error = CKTsetBreak(ckt,basetime + tshift + TR + PW + TF);
                                 if(error) return(error);
                             }
                         } else if (time > 0 && time < TR) {
                             if(ckt->CKTbreak && SAMETIME(time,0) ) {
-                                error = CKTsetBreak(ckt,basetime + TD+TR);
+                                error = CKTsetBreak(ckt,basetime + tshift + TR);
                                 if(error) return(error);
                             } else if(ckt->CKTbreak && SAMETIME(time,TR)) {
-                                error = CKTsetBreak(ckt,basetime + TD+TR + PW);
+                                error = CKTsetBreak(ckt,basetime + tshift + TR + PW);
                                 if(error) return(error);
                             }
                         } else { /* time > TR + PW && < TR + PW + TF */
                             if(ckt->CKTbreak && SAMETIME(time,TR+PW) ) {
-                                error = CKTsetBreak(ckt,basetime + TD+TR + PW +TF);
+                                error = CKTsetBreak(ckt,basetime + tshift+TR + PW +TF);
                                 if(error) return(error);
                             } else if(ckt->CKTbreak && SAMETIME(time,TR+PW+TF) ) {
-                                error = CKTsetBreak(ckt,basetime + TD+PER);
+                                error = CKTsetBreak(ckt,basetime + tshift + PER);
                                 if(error) return(error);
                             }
                         }
@@ -176,12 +172,9 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                             }
                         }
                         for(i=0;i<(here->ISRCfunctionOrder/2)-1;i++) {
-                            if((*(here->ISRCcoeffs+2*i)==ckt->CKTtime)) {
-                                if(ckt->CKTbreak) {
-                                    error = CKTsetBreak(ckt,
-                                            *(here->ISRCcoeffs+2*i+2));
-                                    if(error) return(error);
-                                }
+                            if ( ckt->CKTbreak && AlmostEqualUlps(*(here->ISRCcoeffs+2*i), ckt->CKTtime, 3 ) ) {
+                                error = CKTsetBreak(ckt, *(here->ISRCcoeffs+2*i+2));
+                                if(error) return(error);
                                 goto bkptset;
                             }
                         }

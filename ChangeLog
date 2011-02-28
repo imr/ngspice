@@ -1,4 +1,10 @@
 2011-02-28  Robert Larice
+ * src/spicelib/devices/isrc/isrcacct.c ,
+ * src/spicelib/devices/isrc/isrcload.c :
+    merge vsrc PULSE -> isrc
+      to fix PHASE != 0,  see commit from  2010-11-21
+
+2011-02-28  Robert Larice
  * src/spicelib/devices/isrc/isrc.c ,
  * src/spicelib/devices/isrc/isrcacct.c ,
  * src/spicelib/devices/isrc/isrcask.c ,
