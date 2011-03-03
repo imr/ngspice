@@ -141,8 +141,8 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 here->BJTtemitterConduct = 0;
             }
 
-            here->BJTtminBaseResist = model->BJTminBaseResist*(1+model->BJTtrm1*dt+model->BJTtrm2*dt*dt);
             here->BJTtbaseResist = model->BJTbaseResist * (1+model->BJTtrb1*dt+model->BJTtrb2*dt*dt);
+            here->BJTtminBaseResist = model->BJTminBaseResist*(1+model->BJTtrm1*dt+model->BJTtrm2*dt*dt);
             here->BJTtbaseCurrentHalfResist = model->BJTbaseCurrentHalfResist * (1+model->BJTtirb1*dt+model->BJTtirb2*dt*dt);
             here->BJTtemissionCoeffF = model->BJTemissionCoeffF * (1+model->BJTtnf1*dt+model->BJTtnf2*dt*dt);
             here->BJTtemissionCoeffR = model->BJTemissionCoeffR * (1+model->BJTtnr1*dt+model->BJTtnr2*dt*dt);
@@ -153,6 +153,8 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
             here->BJTttransitTimeR = model->BJTtransitTimeR * (1+model->BJTttr1*dt+model->BJTttr2*dt*dt);
             here->BJTtjunctionExpBE = model->BJTjunctionExpBE * (1+model->BJTtmje1*dt+model->BJTtmje2*dt*dt);
             here->BJTtjunctionExpBC = model->BJTjunctionExpBC * (1+model->BJTtmjc1*dt+model->BJTtmjc2*dt*dt);
+            here->BJTtjunctionExpSub = model->BJTexponentialSubstrate * (1+model->BJTtmjs1*dt+model->BJTtmjs2*dt*dt);
+            here->BJTtemissionCoeffS = model->BJTemissionCoeffS * (1+model->BJTtns1*dt+model->BJTtns2*dt*dt);
 
             vt = here->BJTtemp * CONSTKoverQ;
             fact2 = here->BJTtemp/REFTEMP;
@@ -168,6 +170,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                     model->BJTtempExpIS*ratlog;
             factor = exp(factlog);
             here->BJTtSatCur = model->BJTsatCur * factor;
+            here->BJTtSubSatCur = model->BJTsubSatCur * factor;
 
             if (model->BJTtlev == 0) {
                 bfactor = exp(ratlog*model->BJTbetaExp);
@@ -192,42 +195,57 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 pbo = (model->BJTpotentialBE-pbfact)/fact1;
                 gmaold = (model->BJTpotentialBE-pbo)/pbo;
                 here->BJTtBEcap = model->BJTdepletionCapBE/
-                    (1+model->BJTjunctionExpBE*
+                    (1+here->BJTtjunctionExpBE*
                     (4e-4*(model->BJTtnom-REFTEMP)-gmaold));
                 here->BJTtBEpot = fact2 * pbo+pbfact;
                 gmanew = (here->BJTtBEpot-pbo)/pbo;
-                here->BJTtBEcap *= 1+model->BJTjunctionExpBE*
+                here->BJTtBEcap *= 1+here->BJTtjunctionExpBE*
                     (4e-4*(here->BJTtemp-REFTEMP)-gmanew);
             } else if (model->BJTtlevc == 1) {
                 here->BJTtBEcap = model->BJTdepletionCapBE*
                     (1+model->BJTcte*dt);			
             }
-
             if (model->BJTtlevc == 0) {
                 pbo = (model->BJTpotentialBC-pbfact)/fact1;
                 gmaold = (model->BJTpotentialBC-pbo)/pbo;
                 here->BJTtBCcap = model->BJTdepletionCapBC/
-                    (1+model->BJTjunctionExpBC*
+                    (1+here->BJTtjunctionExpBC*
                     (4e-4*(model->BJTtnom-REFTEMP)-gmaold));
                 here->BJTtBCpot = fact2 * pbo+pbfact;
                 gmanew = (here->BJTtBCpot-pbo)/pbo;
-                here->BJTtBCcap *= 1+model->BJTjunctionExpBC*
+                here->BJTtBCcap *= 1+here->BJTtjunctionExpBC*
                     (4e-4*(here->BJTtemp-REFTEMP)-gmanew);
             } else if (model->BJTtlevc == 1) {
                 here->BJTtBCcap = model->BJTdepletionCapBC*
                     (1+model->BJTctc*dt);			
             }
+            if (model->BJTtlevc == 0) {
+                pbo = (model->BJTpotentialSubstrate-pbfact)/fact1;
+                gmaold = (model->BJTpotentialSubstrate-pbo)/pbo;
+                here->BJTtSubcap = model->BJTcapSub/
+                        (1+here->BJTtjunctionExpSub*
+                        (4e-4*(model->BJTtnom-REFTEMP)-gmaold));
+                here->BJTtSubpot = fact2 * pbo+pbfact;
+                gmanew = (here->BJTtSubpot-pbo)/pbo;
+                here->BJTtSubcap *= 1+here->BJTtjunctionExpSub*
+                    (4e-4*(here->BJTtemp-REFTEMP)-gmanew);
+            } else if (model->BJTtlevc == 1) {
+                here->BJTtSubcap = model->BJTcapSub*
+                    (1+model->BJTcts*dt);			
+            }
 
             here->BJTtDepCap = model->BJTdepletionCapCoeff * here->BJTtBEpot;
             here->BJTtf1 = here->BJTtBEpot * (1 - exp((1 -
-                    model->BJTjunctionExpBE) * xfc)) /
-                    (1 - model->BJTjunctionExpBE);
+                    here->BJTtjunctionExpBE) * xfc)) /
+                    (1 - here->BJTtjunctionExpBE);
             here->BJTtf4 = model->BJTdepletionCapCoeff * here->BJTtBCpot;
             here->BJTtf5 = here->BJTtBCpot * (1 - exp((1 -
-                    model->BJTjunctionExpBC) * xfc)) /
-                    (1 - model->BJTjunctionExpBC);
+                    here->BJTtjunctionExpBC) * xfc)) /
+                    (1 - here->BJTtjunctionExpBC);
             here->BJTtVcrit = vt *
                      log(vt / (CONSTroot2*here->BJTtSatCur*here->BJTarea));
+            here->BJTtSubVcrit = vt *
+                     log(vt / (CONSTroot2*here->BJTtSubSatCur*here->BJTarea));
 
         }
     }

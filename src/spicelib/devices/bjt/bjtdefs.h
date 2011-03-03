@@ -31,6 +31,10 @@ typedef struct sBJTinstance {
     int BJTcolPrimeNode;    /* number of internal collector node of bjt */
     int BJTbasePrimeNode;   /* number of internal base node of bjt */
     int BJTemitPrimeNode;   /* number of internal emitter node of bjt */
+    int BJTsubstConNode;   /* number of node which substrate is connected to */
+                           /* Substrate connection is either base prime      *
+                            * or collector prime depending on whether        *
+                            * the device is VERTICAL or LATERAL              */
     double BJTarea;      /* (emitter) area factor for the bjt */
     double BJTareab;     /* base area factor for the bjt */
     double BJTareac;     /* collector area factor for the bjt */
@@ -48,11 +52,15 @@ typedef struct sBJTinstance {
     double BJTtBEpot;   /* temperature adjusted B-E potential */
     double BJTtBCcap;   /* temperature adjusted B-C capacitance */
     double BJTtBCpot;   /* temperature adjusted B-C potential */
+    double BJTtSubcap;   /* temperature adjusted Substrate capacitance */
+    double BJTtSubpot;   /* temperature adjusted Substrate potential */
     double BJTtDepCap;  /* temperature adjusted join point in diode curve */
     double BJTtf1;      /* temperature adjusted polynomial coefficient */
     double BJTtf4;      /* temperature adjusted polynomial coefficient */
     double BJTtf5;      /* temperature adjusted polynomial coefficient */
     double BJTtVcrit;   /* temperature adjusted critical voltage */
+    double BJTtSubVcrit; /* temperature adjusted substrate critical voltage */
+    double BJTtSubSatCur; /* temperature adjusted subst. saturation current */
     double BJTtcollectorConduct;   /* temperature adjusted */
     double BJTtemitterConduct;   /* temperature adjusted */
     double BJTtbaseResist;   /* temperature adjusted */
@@ -62,15 +70,17 @@ typedef struct sBJTinstance {
     double BJTtinvEarlyVoltR;   /* temperature adjusted */
     double BJTtinvRollOffF;   /* temperature adjusted */
     double BJTtinvRollOffR;   /* temperature adjusted */
-    double BJTtemissionCoeffF;   /* temperature adjusted */
-    double BJTtemissionCoeffR;   /* temperature adjusted */
-    double BJTtleakBEemissionCoeff;   /* temperature adjusted */
-    double BJTtleakBCemissionCoeff;   /* temperature adjusted */
+    double BJTtemissionCoeffF;   /* temperature adjusted NF */
+    double BJTtemissionCoeffR;   /* temperature adjusted NR */
+    double BJTtleakBEemissionCoeff;   /* temperature adjusted NE */
+    double BJTtleakBCemissionCoeff;   /* temperature adjusted NC */
     double BJTttransitTimeHighCurrentF;   /* temperature adjusted */
     double BJTttransitTimeF;   /* temperature adjusted */
     double BJTttransitTimeR;   /* temperature adjusted */
-    double BJTtjunctionExpBE;   /* temperature adjusted */
-    double BJTtjunctionExpBC;   /* temperature adjusted */
+    double BJTtjunctionExpBE;   /* temperature adjusted MJE */
+    double BJTtjunctionExpBC;   /* temperature adjusted MJC */
+    double BJTtjunctionExpSub;   /* temperature adjusted MJS */
+    double BJTtemissionCoeffS;   /* temperature adjusted NS */
 
     double *BJTcolColPrimePtr;  /* pointer to sparse matrix at
                              * (collector,collector prime) */
@@ -110,10 +120,15 @@ typedef struct sBJTinstance {
                              * (emitter prime,emitter prime) */
     double *BJTsubstSubstPtr;   /* pointer to sparse matrix at
                              * (substrate,substrate) */
-    double *BJTcolPrimeSubstPtr;    /* pointer to sparse matrix at
-                             * (collector prime,substrate) */
-    double *BJTsubstColPrimePtr;    /* pointer to sparse matrix at
-                             * (substrate,collector prime) */
+    double *BJTsubstConSubstPtr;    /* pointer to sparse matrix at
+                             * (Substrate connection, substrate) */
+    double *BJTsubstSubstConPtr;    /* pointer to sparse matrix at
+                             * (substrate, Substrate connection) */
+    double *BJTsubstConSubstConPtr; /* pointer to sparse matrix at
+                             * (Substrate connection, Substrate connection) */
+                            /* Substrate connection is either base prime *
+                             * or collector prime depending on whether   *
+                             * the device is VERTICAL or LATERAL         */
     double *BJTbaseColPrimePtr; /* pointer to sparse matrix at
                              * (base,collector prime) */
     double *BJTcolPrimeBasePtr; /* pointer to sparse matrix at
@@ -135,7 +150,7 @@ typedef struct sBJTinstance {
             set equal to  0 if not a design parameter*/
     double BJTcapbe;
     double BJTcapbc;
-    double BJTcapcs;
+    double BJTcapsub;
     double BJTcapbx;
     double *BJTsens;
 
@@ -148,10 +163,10 @@ typedef struct sBJTinstance {
 #define BJTsenCmu BJTsens+30 /* stores the perturbed values of cmu */
 #define BJTsenCbx BJTsens+35 /* stores the perturbed values of cbx */
 #define BJTsenCmcb BJTsens+40 /* stores the perturbed values of cmcb */
-#define BJTsenCcs BJTsens+45 /* stores the perturbed values of ccs */
+#define BJTsenCsub BJTsens+45 /* stores the perturbed values of csub */
 #define BJTdphibedp BJTsens+51
 #define BJTdphibcdp BJTsens+52
-#define BJTdphicsdp BJTsens+53
+#define BJTdphisubdp BJTsens+53
 #define BJTdphibxdp BJTsens+54
 
 /*
@@ -254,11 +269,11 @@ typedef struct sBJTinstance {
 
 #define BJTRCNOIZ       0
 #define BJTRBNOIZ       1
-#define BJT_RE_NOISE       2
+#define BJT_RE_NOISE    2
 #define BJTICNOIZ       3
 #define BJTIBNOIZ       4
-#define BJTFLNOIZ 5
-#define BJTTOTNOIZ    6
+#define BJTFLNOIZ       5
+#define BJTTOTNOIZ      6
 
 #define BJTNSRCS     7     /* the number of BJT noise sources */
 
@@ -284,23 +299,26 @@ typedef struct sBJTinstance {
 #define BJTcqbe BJTstate+9
 #define BJTqbc BJTstate+10
 #define BJTcqbc BJTstate+11
-#define BJTqcs BJTstate+12
-#define BJTcqcs BJTstate+13
+#define BJTqsub BJTstate+12
+#define BJTcqsub BJTstate+13
 #define BJTqbx BJTstate+14
 #define BJTcqbx BJTstate+15
 #define BJTgx BJTstate+16
 #define BJTcexbc BJTstate+17
 #define BJTgeqcb BJTstate+18
-#define BJTgccs BJTstate+19
+#define BJTgcsub BJTstate+19
 #define BJTgeqbx BJTstate+20
-#define BJTnumStates 21
+#define BJTvsub BJTstate+21
+#define BJTcdsub BJTstate+22
+#define BJTgdsub BJTstate+23
+#define BJTnumStates 24
 
-#define BJTsensxpbe BJTstate+21 /* charge sensitivities and their
-                   derivatives. +22 for the derivatives -
+#define BJTsensxpbe BJTstate+24 /* charge sensitivities and their
+                   derivatives. +25 for the derivatives -
                    pointer to the beginning of the array */
-#define BJTsensxpbc BJTstate+23
-#define BJTsensxpcs BJTstate+25
-#define BJTsensxpbx BJTstate+27
+#define BJTsensxpbc BJTstate+26
+#define BJTsensxpsub BJTstate+28
+#define BJTsensxpbx BJTstate+30
 
 #define BJTnumSenStates 8
 
@@ -313,6 +331,7 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
                                  * that have this model */
     IFuid BJTmodName; /* pointer to character string naming this model */
     int BJTtype;
+    int BJTsubs;
 
     double BJTtnom; /* nominal temperature */
     double BJTsatCur;   /* input - don't use */
@@ -348,7 +367,7 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTjunctionExpBC;
     double BJTbaseFractionBCcap;
     double BJTtransitTimeR;
-    double BJTcapCS;
+    double BJTcapSub;
     double BJTpotentialSubstrate;
     double BJTexponentialSubstrate;
     double BJTbetaExp;
@@ -357,6 +376,8 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTdepletionCapCoeff;
     double BJTfNcoef;
     double BJTfNexp;
+    double BJTsubSatCur;   /* input - don't use */
+    double BJTemissionCoeffS;
     unsigned BJTtlev;
     unsigned BJTtlevc;
     double BJTtbf1;
@@ -405,7 +426,10 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTtmje2;
     double BJTtmjc1;
     double BJTtmjc2;
-
+    double BJTtmjs1;
+    double BJTtmjs2;
+    double BJTtns1;
+    double BJTtns2;
     double BJTinvEarlyVoltF;    /* inverse of BJTearlyVoltF */
     double BJTinvEarlyVoltR;    /* inverse of BJTearlyVoltR */
     double BJTinvRollOffF;  /* inverse of BJTrollOffF */
@@ -419,6 +443,7 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTf6;
     double BJTf7;
 
+    unsigned BJTsubsGiven : 1;
     unsigned BJTtnomGiven : 1;
     unsigned BJTsatCurGiven : 1;
     unsigned BJTbetaFGiven : 1;
@@ -453,7 +478,7 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTjunctionExpBCGiven : 1;
     unsigned BJTbaseFractionBCcapGiven : 1;
     unsigned BJTtransitTimeRGiven : 1;
-    unsigned BJTcapCSGiven : 1;
+    unsigned BJTcapSubGiven : 1;
     unsigned BJTpotentialSubstrateGiven : 1;
     unsigned BJTexponentialSubstrateGiven : 1;
     unsigned BJTbetaExpGiven : 1;
@@ -462,6 +487,8 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTdepletionCapCoeffGiven : 1;
     unsigned BJTfNcoefGiven : 1;
     unsigned BJTfNexpGiven :1;
+    unsigned BJTsubSatCurGiven : 1;
+    unsigned BJTemissionCoeffSGiven : 1;
     unsigned BJTtlevGiven : 1;
     unsigned BJTtlevcGiven : 1;
     unsigned BJTtbf1Given : 1;
@@ -510,12 +537,25 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTtmje2Given : 1;
     unsigned BJTtmjc1Given : 1;
     unsigned BJTtmjc2Given : 1;
+    unsigned BJTtmjs1Given : 1;
+    unsigned BJTtmjs2Given : 1;
+    unsigned BJTtns1Given : 1;
+    unsigned BJTtns2Given : 1;
 } BJTmodel;
 
 #ifndef NPN
 #define NPN 1
 #define PNP -1
 #endif /*NPN*/
+
+/* 
+ *  BJT defaults to vertical for both NPN and
+ *  PNP devices. 
+ */
+#ifndef VERTICAL
+#define VERTICAL 1
+#define LATERAL -1
+#endif /* VERTICAL */
 
 /* device parameters */
 #define BJT_AREA 1
@@ -573,57 +613,64 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
 #define BJT_MOD_EG 140
 #define BJT_MOD_XTI 141
 #define BJT_MOD_FC 142
-#define BJT_MOD_TNOM 143
-#define BJT_MOD_TLEV 144
-#define BJT_MOD_TLEVC 145
-#define BJT_MOD_TBF1 146
-#define BJT_MOD_TBF2 147
-#define BJT_MOD_TBR1 148
-#define BJT_MOD_TBR2 149
-#define BJT_MOD_TIKF1 150
-#define BJT_MOD_TIKF2 151
-#define BJT_MOD_TIKR1 152
-#define BJT_MOD_TIKR2 153
-#define BJT_MOD_TIRB1 154
-#define BJT_MOD_TIRB2 155
-#define BJT_MOD_TNC1 156
-#define BJT_MOD_TNC2 157
-#define BJT_MOD_TNE1 158
-#define BJT_MOD_TNE2 159
-#define BJT_MOD_TNF1 160
-#define BJT_MOD_TNF2 161
-#define BJT_MOD_TNR1 162
-#define BJT_MOD_TNR2 163
-#define BJT_MOD_TRB1 164
-#define BJT_MOD_TRB2 165
-#define BJT_MOD_TRC1 166
-#define BJT_MOD_TRC2 167
-#define BJT_MOD_TRE1 168
-#define BJT_MOD_TRE2 169
-#define BJT_MOD_TRM1 170
-#define BJT_MOD_TRM2 171
-#define BJT_MOD_TVAF1 172
-#define BJT_MOD_TVAF2 173
-#define BJT_MOD_TVAR1 174
-#define BJT_MOD_TVAR2 175
-#define BJT_MOD_CTC 176
-#define BJT_MOD_CTE 177
-#define BJT_MOD_CTS 178
-#define BJT_MOD_TVJC 179
-#define BJT_MOD_TVJE 180
-#define BJT_MOD_TVJS 181
-#define BJT_MOD_AF 182
-#define BJT_MOD_KF 183
-#define BJT_MOD_TITF1 184
-#define BJT_MOD_TITF2 185
-#define BJT_MOD_TTF1 186
-#define BJT_MOD_TTF2 187
-#define BJT_MOD_TTR1 188
-#define BJT_MOD_TTR2 189
-#define BJT_MOD_TMJE1 190
-#define BJT_MOD_TMJE2 191
-#define BJT_MOD_TMJC1 192
-#define BJT_MOD_TMJC2 192
+#define BJT_MOD_AF 143
+#define BJT_MOD_KF 144
+#define BJT_MOD_ISS 145
+#define BJT_MOD_NS 146
+#define BJT_MOD_TNOM 147
+#define BJT_MOD_TLEV 148
+#define BJT_MOD_TLEVC 149
+#define BJT_MOD_TBF1 150
+#define BJT_MOD_TBF2 151
+#define BJT_MOD_TBR1 152
+#define BJT_MOD_TBR2 153
+#define BJT_MOD_TIKF1 154
+#define BJT_MOD_TIKF2 155
+#define BJT_MOD_TIKR1 156
+#define BJT_MOD_TIKR2 157
+#define BJT_MOD_TIRB1 158
+#define BJT_MOD_TIRB2 159
+#define BJT_MOD_TNC1 160
+#define BJT_MOD_TNC2 161
+#define BJT_MOD_TNE1 162
+#define BJT_MOD_TNE2 163
+#define BJT_MOD_TNF1 164
+#define BJT_MOD_TNF2 165
+#define BJT_MOD_TNR1 166
+#define BJT_MOD_TNR2 167
+#define BJT_MOD_TRB1 168
+#define BJT_MOD_TRB2 169
+#define BJT_MOD_TRC1 170
+#define BJT_MOD_TRC2 171
+#define BJT_MOD_TRE1 172
+#define BJT_MOD_TRE2 173
+#define BJT_MOD_TRM1 174
+#define BJT_MOD_TRM2 175
+#define BJT_MOD_TVAF1 176
+#define BJT_MOD_TVAF2 177
+#define BJT_MOD_TVAR1 178
+#define BJT_MOD_TVAR2 179
+#define BJT_MOD_CTC 180
+#define BJT_MOD_CTE 181
+#define BJT_MOD_CTS 182
+#define BJT_MOD_TVJC 183
+#define BJT_MOD_TVJE 184
+#define BJT_MOD_TVJS 185
+#define BJT_MOD_TITF1 186
+#define BJT_MOD_TITF2 187
+#define BJT_MOD_TTF1 188
+#define BJT_MOD_TTF2 189
+#define BJT_MOD_TTR1 190
+#define BJT_MOD_TTR2 191
+#define BJT_MOD_TMJE1 192
+#define BJT_MOD_TMJE2 193
+#define BJT_MOD_TMJC1 194
+#define BJT_MOD_TMJC2 195
+#define BJT_MOD_TMJS1 196
+#define BJT_MOD_TMJS2 197
+#define BJT_MOD_TNS1 198
+#define BJT_MOD_TNS2 199
+#define BJT_MOD_SUBS 200
 
 /* device questions */
 #define BJT_QUEST_FT             201
@@ -646,14 +693,14 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
 #define BJT_QUEST_CQBE           218
 #define BJT_QUEST_QBC            219
 #define BJT_QUEST_CQBC           220
-#define BJT_QUEST_QCS            221
-#define BJT_QUEST_CQCS           222
+#define BJT_QUEST_QSUB           221
+#define BJT_QUEST_CQSUB          222
 #define BJT_QUEST_QBX            223
 #define BJT_QUEST_CQBX           224
 #define BJT_QUEST_GX             225
 #define BJT_QUEST_CEXBC          226
 #define BJT_QUEST_GEQCB          227
-#define BJT_QUEST_GCCS           228
+#define BJT_QUEST_GCSUB          228
 #define BJT_QUEST_GEQBX          229
 #define BJT_QUEST_SENS_REAL      230
 #define BJT_QUEST_SENS_IMAG      231
@@ -664,11 +711,11 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
 #define BJT_QUEST_CE             236
 #define BJT_QUEST_CS             237
 #define BJT_QUEST_POWER          238
-
 #define BJT_QUEST_CPI            239
 #define BJT_QUEST_CMU            240
 #define BJT_QUEST_CBX            241
-#define BJT_QUEST_CCS            242
+#define BJT_QUEST_CSUB           242
+#define BJT_QUEST_GDSUB          243
 
 /* model questions */
 #define BJT_MOD_INVEARLYF             301
@@ -679,8 +726,8 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
 #define BJT_MOD_EMITTERCONDUCT        306
 #define BJT_MOD_TRANSVBCFACT          307
 #define BJT_MOD_EXCESSPHASEFACTOR     308
-#define BJT_MOD_TYPE		      309
-
+#define BJT_MOD_TYPE                  309
+#define BJT_MOD_QUEST_SUBS            310
 
 #include "bjtext.h"
 #endif /*BJT*/

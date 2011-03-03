@@ -37,6 +37,13 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(model->BJTtype != NPN && model->BJTtype != PNP) {
             model->BJTtype = NPN;
         }
+        if(!model->BJTsubsGiven ||
+           (model->BJTsubs != VERTICAL && model->BJTsubs != LATERAL)) {
+            if (model->BJTtype == NPN) 
+                model->BJTsubs = VERTICAL;  /* Vertical for NPN */
+            else
+                model->BJTsubs = LATERAL;   /* Lateral for PNP */
+        }
         if(!model->BJTsatCurGiven) {
             model->BJTsatCur = 1e-16;
         }
@@ -103,8 +110,8 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTtransitTimeRGiven) {
             model->BJTtransitTimeR = 0;
         }
-        if(!model->BJTcapCSGiven) {
-            model->BJTcapCS = 0;
+        if(!model->BJTcapSubGiven) {
+            model->BJTcapSub = 0;
         }
         if(!model->BJTpotentialSubstrateGiven) {
             model->BJTpotentialSubstrate = .75;
@@ -121,7 +128,18 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTtempExpISGiven) {
             model->BJTtempExpIS = 3;
         }
-
+        if(!model->BJTfNcoefGiven) {
+            model->BJTfNcoef = 0;
+        }
+        if(!model->BJTfNexpGiven) {
+            model->BJTfNexp = 1;
+        }
+        if(!model->BJTsubSatCurGiven) {
+            model->BJTsubSatCur = 0.0;
+        }
+        if(!model->BJTemissionCoeffSGiven) {
+            model->BJTemissionCoeffS = 1.0;
+        }
         if(!model->BJTtlevGiven) {
             model->BJTtlev = 0;
         }
@@ -236,12 +254,47 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTtvjsGiven) {
             model->BJTtvjs = 0.0;
         }
-
-        if(!model->BJTfNcoefGiven) {
-            model->BJTfNcoef = 0;
+        if(!model->BJTtitf1Given) {
+            model->BJTtitf1 = 0.0;
         }
-        if(!model->BJTfNexpGiven) {
-            model->BJTfNexp = 1;
+        if(!model->BJTtitf2Given) {
+            model->BJTtitf2 = 0.0;
+        }
+        if(!model->BJTttf1Given) {
+            model->BJTttf1 = 0.0;
+        }
+        if(!model->BJTttf2Given) {
+            model->BJTttf2 = 0.0;
+        }
+        if(!model->BJTttr1Given) {
+            model->BJTttr1 = 0.0;
+        }
+        if(!model->BJTttr2Given) {
+            model->BJTttr2 = 0.0;
+        }
+        if(!model->BJTtmje1Given) {
+            model->BJTtmje1 = 0.0;
+        }
+        if(!model->BJTtmje2Given) {
+            model->BJTtmje2 = 0.0;
+        }
+        if(!model->BJTtmjc1Given) {
+            model->BJTtmjc1 = 0.0;
+        }
+        if(!model->BJTtmjc2Given) {
+            model->BJTtmjc2 = 0.0;
+        }
+        if(!model->BJTtmjs1Given) {
+            model->BJTtmjs1 = 0.0;
+        }
+        if(!model->BJTtmjs2Given) {
+            model->BJTtmjs2 = 0.0;
+        }
+        if(!model->BJTtns1Given) {
+            model->BJTtns1 = 0.0;
+        }
+        if(!model->BJTtns2Given) {
+            model->BJTtns2 = 0.0;
         }
 
 /*
@@ -367,8 +420,15 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
             TSTALLOC(BJTbasePrimeBasePrimePtr,BJTbasePrimeNode,BJTbasePrimeNode)
             TSTALLOC(BJTemitPrimeEmitPrimePtr,BJTemitPrimeNode,BJTemitPrimeNode)
             TSTALLOC(BJTsubstSubstPtr,BJTsubstNode,BJTsubstNode)
-            TSTALLOC(BJTcolPrimeSubstPtr,BJTcolPrimeNode,BJTsubstNode)
-            TSTALLOC(BJTsubstColPrimePtr,BJTsubstNode,BJTcolPrimeNode)
+            if (model -> BJTsubs == LATERAL) {
+              here -> BJTsubstConNode = here -> BJTbasePrimeNode;
+              here -> BJTsubstConSubstConPtr = here -> BJTbasePrimeBasePrimePtr;
+            } else {
+              here -> BJTsubstConNode = here -> BJTcolPrimeNode;
+              here -> BJTsubstConSubstConPtr = here -> BJTcolPrimeColPrimePtr;
+            }
+            TSTALLOC(BJTsubstConSubstPtr,BJTsubstConNode,BJTsubstNode)
+            TSTALLOC(BJTsubstSubstConPtr,BJTsubstNode,BJTsubstConNode)
             TSTALLOC(BJTbaseColPrimePtr,BJTbaseNode,BJTcolPrimeNode)
             TSTALLOC(BJTcolPrimeBasePtr,BJTcolPrimeNode,BJTbaseNode)
         }

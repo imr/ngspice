@@ -24,6 +24,18 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
     NG_IGNORE(ckt);
 
     switch(which) {
+        case BJT_MOD_TYPE:
+            if (here->BJTtype == NPN)
+                value->sValue = "npn";
+            else
+                value->sValue = "pnp";
+            return(OK);
+        case BJT_MOD_SUBS:
+            if (here->BJTsubs == LATERAL)
+                value->sValue = "Lateral";
+            else
+                value->sValue = "Vertical";
+            return(OK);
         case BJT_MOD_TNOM:
             value->rValue = here->BJTtnom-CONSTCtoK;
             return(OK);
@@ -127,7 +139,7 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
             value->rValue = here->BJTtransitTimeR;
             return(OK);
         case BJT_MOD_CJS:
-            value->rValue = here->BJTcapCS;
+            value->rValue = here->BJTcapSub;
             return(OK);
         case BJT_MOD_VJS:
             value->rValue = here->BJTpotentialSubstrate;
@@ -146,6 +158,18 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
             return(OK);
         case BJT_MOD_FC:
             value->rValue = here->BJTdepletionCapCoeff;
+            return(OK);
+        case BJT_MOD_KF:
+            if (here->BJTfNcoefGiven)
+                value->rValue = here->BJTfNcoef;
+            else
+                value->rValue = 0.0;
+            return(OK);
+        case BJT_MOD_AF:
+            if (here->BJTfNexpGiven)
+                value->rValue = here->BJTfNexp;
+            else
+                value->rValue = 0.0;
             return(OK);
         case BJT_MOD_INVEARLYF:
             value->rValue = here->BJTinvEarlyVoltF;
@@ -170,6 +194,12 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
             return(OK);
         case BJT_MOD_EXCESSPHASEFACTOR:
             value->rValue = here->BJTexcessPhaseFactor;
+            return(OK);
+        case BJT_MOD_ISS:
+            value->rValue = here->BJTsubSatCur;
+            return(OK);
+        case BJT_MOD_NS:
+            value->rValue = here->BJTemissionCoeffS;
             return(OK);
         case BJT_MOD_TLEV:
             value->iValue = here->BJTtlev;
@@ -285,23 +315,47 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case BJT_MOD_TVJS:
             value->rValue = here->BJTtvjs;
             return(OK);
-        case BJT_MOD_KF:
-            if (here->BJTfNcoefGiven)
-                value->rValue = here->BJTfNcoef;
-            else
-                value->rValue = 0.0;
+        case BJT_MOD_TITF1:
+            value->rValue = here->BJTtitf1;
             return(OK);
-        case BJT_MOD_AF:
-            if (here->BJTfNexpGiven)
-                value->rValue = here->BJTfNexp;
-            else
-                value->rValue = 0.0;
+        case BJT_MOD_TITF2:
+            value->rValue = here->BJTtitf2;
             return(OK);
-        case BJT_MOD_TYPE:
-            if (here->BJTtype == NPN)
-                value->sValue = "npn";
-            else
-                value->sValue = "pnp";
+        case BJT_MOD_TTF1:
+            value->rValue = here->BJTttf1;
+            return(OK);
+        case BJT_MOD_TTF2:
+            value->rValue = here->BJTttf2;
+            return(OK);
+        case BJT_MOD_TTR1:
+            value->rValue = here->BJTttr1;
+            return(OK);
+        case BJT_MOD_TTR2:
+            value->rValue = here->BJTttr2;
+            return(OK);
+        case BJT_MOD_TMJE1:
+            value->rValue = here->BJTtmje1;
+            return(OK);
+        case BJT_MOD_TMJE2:
+            value->rValue = here->BJTtmje2;
+            return(OK);
+        case BJT_MOD_TMJC1:
+            value->rValue = here->BJTtmjc1;
+            return(OK);
+        case BJT_MOD_TMJC2:
+            value->rValue = here->BJTtmjc2;
+            return(OK);
+        case BJT_MOD_TMJS1:
+            value->rValue = here->BJTtmjs1;
+            return(OK);
+        case BJT_MOD_TMJS2:
+            value->rValue = here->BJTtmjs2;
+            return(OK);
+        case BJT_MOD_TNS1:
+            value->rValue = here->BJTtns1;
+            return(OK);
+        case BJT_MOD_TNS2:
+            value->rValue = here->BJTtns2;
             return(OK);
         default:
             return(E_BADPARM);

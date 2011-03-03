@@ -68,8 +68,8 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOPR( "ik",   DIO_MOD_IKF,   IF_REAL, "Forward Knee current"),
  IOP( "ikr",    DIO_MOD_IKR,   IF_REAL, "Reverse Knee current"),
 
- IOP( "tlev", DIO_MOD_TLEV, IF_REAL, "Diode temperature equation selector"),
- IOP( "tlevc", DIO_MOD_TLEVC, IF_REAL, "Diode temperature equation selector"),
+ IOP( "tlev", DIO_MOD_TLEV, IF_INTEGER, "Diode temperature equation selector"),
+ IOP( "tlevc", DIO_MOD_TLEVC, IF_INTEGER, "Diode temperature equation selector"),
  IOP( "eg",  DIO_MOD_EG,  IF_REAL, "Activation energy"),
  IOP( "xti", DIO_MOD_XTI, IF_REAL, "Saturation current temperature exp."),
  IOP( "cta", DIO_MOD_CTA, IF_REAL, "Area junction temperature coefficient"),

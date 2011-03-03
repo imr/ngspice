@@ -34,6 +34,10 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
                 mods->BJTtype = PNP;
             }
             break;
+        case BJT_MOD_SUBS:
+            mods->BJTsubs = value->iValue;
+            mods->BJTsubsGiven = TRUE;
+            break;
         case BJT_MOD_TNOM:
             mods->BJTtnom = value->rValue+CONSTCtoK;
             mods->BJTtnomGiven = TRUE;
@@ -171,8 +175,8 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->BJTtransitTimeRGiven = TRUE;
             break;
         case BJT_MOD_CJS:
-            mods->BJTcapCS = value->rValue;
-            mods->BJTcapCSGiven = TRUE;
+            mods->BJTcapSub = value->rValue;
+            mods->BJTcapSubGiven = TRUE;
             break;
         case BJT_MOD_VJS:
             mods->BJTpotentialSubstrate = value->rValue;
@@ -197,6 +201,22 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
         case BJT_MOD_FC:
             mods->BJTdepletionCapCoeff = value->rValue;
             mods->BJTdepletionCapCoeffGiven = TRUE;
+            break;
+        case BJT_MOD_KF:
+            mods->BJTfNcoef = value->rValue;
+            mods->BJTfNcoefGiven = TRUE;
+            break;
+        case BJT_MOD_AF:
+            mods->BJTfNexp = value->rValue;
+            mods->BJTfNexpGiven = TRUE;
+            break;
+        case BJT_MOD_ISS:
+            mods->BJTsubSatCur = value->rValue;
+            mods->BJTsubSatCurGiven = TRUE;
+            break;
+        case BJT_MOD_NS:
+            mods->BJTemissionCoeffS = value->rValue;
+            mods->BJTemissionCoeffSGiven = TRUE;
             break;
         case BJT_MOD_TLEV:
             mods->BJTtlev = value->iValue;
@@ -350,13 +370,61 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->BJTtvjs = value->rValue;
             mods->BJTtvjsGiven = TRUE;
             break;
-        case BJT_MOD_KF:
-            mods->BJTfNcoef = value->rValue;
-            mods->BJTfNcoefGiven = TRUE;
+        case BJT_MOD_TITF1:
+            mods->BJTtitf1 = value->rValue;
+            mods->BJTtitf1Given = TRUE;
             break;
-        case BJT_MOD_AF:
-            mods->BJTfNexp = value->rValue;
-            mods->BJTfNexpGiven = TRUE;
+        case BJT_MOD_TITF2:
+            mods->BJTtitf2 = value->rValue;
+            mods->BJTtitf2Given = TRUE;
+            break;
+        case BJT_MOD_TTF1:
+            mods->BJTttf1 = value->rValue;
+            mods->BJTttf1Given = TRUE;
+            break;
+        case BJT_MOD_TTF2:
+            mods->BJTttf2 = value->rValue;
+            mods->BJTttf2Given = TRUE;
+            break;
+        case BJT_MOD_TTR1:
+            mods->BJTttr1 = value->rValue;
+            mods->BJTttr1Given = TRUE;
+            break;
+        case BJT_MOD_TTR2:
+            mods->BJTttr2 = value->rValue;
+            mods->BJTttr2Given = TRUE;
+            break;
+        case BJT_MOD_TMJE1:
+            mods->BJTtmje1 = value->rValue;
+            mods->BJTtmje1Given = TRUE;
+            break;
+        case BJT_MOD_TMJE2:
+            mods->BJTtmje2 = value->rValue;
+            mods->BJTtmje2Given = TRUE;
+            break;
+        case BJT_MOD_TMJC1:
+            mods->BJTtmjc1 = value->rValue;
+            mods->BJTtmjc1Given = TRUE;
+            break;
+        case BJT_MOD_TMJC2:
+            mods->BJTtmjc2 = value->rValue;
+            mods->BJTtmjc2Given = TRUE;
+            break;
+        case BJT_MOD_TMJS1:
+            mods->BJTtmjs1 = value->rValue;
+            mods->BJTtmjs1Given = TRUE;
+            break;
+        case BJT_MOD_TMJS2:
+            mods->BJTtmjs2 = value->rValue;
+            mods->BJTtmjs2Given = TRUE;
+            break;
+        case BJT_MOD_TNS1:
+            mods->BJTtns1 = value->rValue;
+            mods->BJTtns1Given = TRUE;
+            break;
+        case BJT_MOD_TNS2:
+            mods->BJTtns2 = value->rValue;
+            mods->BJTtns2Given = TRUE;
             break;
         default:
             return(E_BADPARM);
