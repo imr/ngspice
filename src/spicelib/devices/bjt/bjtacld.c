@@ -33,17 +33,17 @@ BJTacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double xcpi;
     double xcmu;
     double xcbx;
-    double xccs;
+    double xcsub;
     double xcmcb;
     double m;
 
     for( ; model != NULL; model = model->BJTnextModel) {
-        for( here = model->BJTinstances; here!= NULL; 
+        for( here = model->BJTinstances; here!= NULL;
                 here = here->BJTnextInstance) {
-	    if (here->BJTowner != ARCHme) continue;
+            if (here->BJTowner != ARCHme) continue;
 
             m = here->BJTm;
-	    
+
             gcpr=here->BJTtcollectorConduct * here->BJTarea;
             gepr=here->BJTtemitterConduct * here->BJTarea;
             gpi= *(ckt->CKTstate0 + here->BJTgpi);
@@ -62,14 +62,15 @@ BJTacLoad(GENmodel *inModel, CKTcircuit *ckt)
             xcpi= *(ckt->CKTstate0 + here->BJTcqbe) * ckt->CKTomega;
             xcmu= *(ckt->CKTstate0 + here->BJTcqbc) * ckt->CKTomega;
             xcbx= *(ckt->CKTstate0 + here->BJTcqbx) * ckt->CKTomega;
-            xccs= *(ckt->CKTstate0 + here->BJTcqcs) * ckt->CKTomega;
+            xcsub= *(ckt->CKTstate0 + here->BJTcqsub) * ckt->CKTomega;
             xcmcb= *(ckt->CKTstate0 + here->BJTcexbc) * ckt->CKTomega;
             *(here->BJTcolColPtr) +=                   m * (gcpr);
             *(here->BJTbaseBasePtr) +=                 m * (gx);
             *(here->BJTbaseBasePtr + 1) +=             m * (xcbx);
             *(here->BJTemitEmitPtr) +=                 m * (gepr);
             *(here->BJTcolPrimeColPrimePtr) +=         m * (gmu+go+gcpr);
-            *(here->BJTcolPrimeColPrimePtr + 1) +=     m * (xcmu+xccs+xcbx);
+            *(here->BJTcolPrimeColPrimePtr + 1) +=     m * (xcmu+xcbx);
+            *(here->BJTsubstConSubstConPtr + 1) +=     m * (xcsub);
             *(here->BJTbasePrimeBasePrimePtr) +=       m * (gx+gpi+gmu);
             *(here->BJTbasePrimeBasePrimePtr + 1) +=   m * (xcpi+xcmu+xcmcb);
             *(here->BJTemitPrimeEmitPrimePtr) +=       m * (gpi+gepr+gm+go);
@@ -89,12 +90,12 @@ BJTacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->BJTbasePrimeEmitPrimePtr + 1) +=   m * (-xcpi);
             *(here->BJTemitPrimeEmitPtr) +=            m * (-gepr);
             *(here->BJTemitPrimeColPrimePtr) +=        m * (-go);
-            *(here->BJTemitPrimeColPrimePtr + 1) +=    m *  (xcmcb);
+            *(here->BJTemitPrimeColPrimePtr + 1) +=    m * (xcmcb);
             *(here->BJTemitPrimeBasePrimePtr) +=       m * (-gpi-gm);
             *(here->BJTemitPrimeBasePrimePtr + 1) +=   m * (-xcpi-xgm-xcmcb);
-            *(here->BJTsubstSubstPtr + 1) +=           m * (xccs);
-            *(here->BJTcolPrimeSubstPtr + 1) +=        m * (-xccs);
-            *(here->BJTsubstColPrimePtr + 1) +=        m * (-xccs);
+            *(here->BJTsubstSubstPtr + 1) +=           m * (xcsub);
+            *(here->BJTsubstConSubstPtr + 1) +=        m * (-xcsub);
+            *(here->BJTsubstSubstConPtr + 1) +=        m * (-xcsub);
             *(here->BJTbaseColPrimePtr + 1) +=         m * (-xcbx);
             *(here->BJTcolPrimeBasePtr + 1) +=         m * (-xcbx);
         }
