@@ -1,3 +1,10 @@
+2011-03-04  Robert Larice
+ * src/spicelib/devices/isrc/isrcdefs.h :
+    bug fix, isrc polarity inversion
+      my commit `vsrc, isrc, cleanup aiming for more similarity' from 2011-02-27
+        changed the polarity of the `isrc' current.
+      the structure definition somewhere has an `overlay', how *evil* !
+
 2011-03-03 Dietmar Warning
  * diode & bjt temperature model update tlev, tlevc
  * cktsgen.c: segfault fix

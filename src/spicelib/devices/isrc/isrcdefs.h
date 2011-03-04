@@ -26,8 +26,8 @@ typedef struct sISRCinstance {
     int ISRCowner;  /* number of owner process */
     int ISRCstate;  /* not used */
 
-    int ISRCposNode;    /* number of positive node of source */
     int ISRCnegNode;    /* number of negative node of source */
+    int ISRCposNode;    /* number of positive node of source */
 
     int ISRCfunctionType;   /* code number of function type for source */
     int ISRCfunctionOrder;  /* order of the function for the source */
