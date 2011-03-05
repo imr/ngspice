@@ -386,6 +386,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                         here->BJTtVcrit,&icheck);
                 vbc = DEVpnjlim(vbc,*(ckt->CKTstate0 + here->BJTvbc),vt,
                         here->BJTtVcrit,&ichk1);
+                if (ichk1 == 1) icheck=1;
                 vsub = DEVpnjlim(vsub,*(ckt->CKTstate0 + here->BJTvsub),vt,
                         here->BJTtSubVcrit,&ichk1);
                 if (ichk1 == 1) icheck=1;
@@ -764,7 +765,7 @@ load:
              */
             geqsub = gcsub + gdsub;
             ceqsub=model->BJTtype * model->BJTsubs *
-                    (*(ckt->CKTstate0 + here->BJTcqsub) + cdsub - vsub * geqsub);
+                    (*(ckt->CKTstate0 + here->BJTcqsub) + cdsub - vsub*geqsub);
             ceqbx=model->BJTtype * (*(ckt->CKTstate0 + here->BJTcqbx) -
                     vbx * geqbx);
             ceqbe=model->BJTtype * (cc + cb - vbe * (gm + go + gpi) + vbc *
@@ -779,6 +780,7 @@ load:
                     m * (-ceqbe-ceqbc);
             *(ckt->CKTrhs + here->BJTemitPrimeNode) += m * (ceqbe);
             *(ckt->CKTrhs + here->BJTsubstNode) += m * (-ceqsub);
+
             /*
              *  load y matrix
              */
@@ -786,7 +788,7 @@ load:
             *(here->BJTbaseBasePtr) +=  m * (gx+geqbx);
             *(here->BJTemitEmitPtr) += m * (gepr);
             *(here->BJTcolPrimeColPrimePtr) += m * (gmu+go+gcpr+geqbx);
-            *(here->BJTsubstConSubstConPtr) +=     m * (geqsub);
+            *(here->BJTsubstConSubstConPtr) += m * (geqsub);
             *(here->BJTbasePrimeBasePrimePtr) += m * (gx +gpi+gmu+geqcb);
             *(here->BJTemitPrimeEmitPrimePtr) += m * (gpi+gepr+gm+go);
             *(here->BJTcolColPrimePtr) += m * (-gcpr);

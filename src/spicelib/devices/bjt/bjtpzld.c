@@ -58,8 +58,12 @@ BJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->BJTbaseBasePtr) +=               m * ((gx) + (xcbx) * (s->real));
             *(here->BJTbaseBasePtr + 1) +=           m * ((xcbx) * (s->imag));
             *(here->BJTemitEmitPtr) +=               m * (gepr);
-            *(here->BJTcolPrimeColPrimePtr) +=       m * ((gmu+go+gcpr) + (xcmu+xcsub+xcbx) * (s->real));
-            *(here->BJTcolPrimeColPrimePtr + 1) +=   m * ((xcmu+xcsub+xcbx) * (s->imag));
+            *(here->BJTcolPrimeColPrimePtr) +=       m * ((gmu+go+gcpr) + (xcmu+xcbx) * (s->real));
+            *(here->BJTcolPrimeColPrimePtr + 1) +=   m * ((xcmu+xcbx) * (s->imag));
+
+            *(here->BJTsubstConSubstConPtr) +=       m * (xcsub)* (s->real);
+            *(here->BJTsubstConSubstConPtr + 1) +=   m * (xcsub)* (s->imag);
+
             *(here->BJTbasePrimeBasePrimePtr) +=     m * ((gx+gpi+gmu) + (xcpi+xcmu+xcmcb) * (s->real));
             *(here->BJTbasePrimeBasePrimePtr + 1) += m * ((xcpi+xcmu+xcmcb) * (s->imag));
             *(here->BJTemitPrimeEmitPrimePtr) +=     m * ((gpi+gepr+gm+go) + (xcpi+xgm) * (s->real));
@@ -84,6 +88,10 @@ BJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->BJTemitPrimeBasePrimePtr + 1) += m * ((-xcpi-xgm-xcmcb) * (s->imag));
             *(here->BJTsubstSubstPtr) +=             m * ((xcsub) * (s->real));
             *(here->BJTsubstSubstPtr + 1) +=         m * ((xcsub) * (s->imag));
+            *(here->BJTsubstConSubstPtr) +=          m * ((-xcsub) * (s->real));
+            *(here->BJTsubstConSubstPtr + 1) +=      m * ((-xcsub) * (s->imag));
+            *(here->BJTsubstSubstConPtr) +=          m * ((-xcsub) * (s->real));
+            *(here->BJTsubstSubstConPtr + 1) +=      m * ((-xcsub) * (s->imag));
             *(here->BJTbaseColPrimePtr) +=           m * ((-xcbx) * (s->real));
             *(here->BJTbaseColPrimePtr + 1) +=       m * ((-xcbx) * (s->imag));
             *(here->BJTcolPrimeBasePtr) +=           m * ((-xcbx) * (s->real));
