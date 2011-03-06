@@ -1,3 +1,6 @@
+2011-03-07  Holger Vogt
+ * inpcom.c: bug no. 3201331 fixed
+
 2011-03-04  Robert Larice
  * src/spicelib/devices/isrc/isrcdefs.h :
     bug fix, isrc polarity inversion

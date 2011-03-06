@@ -110,6 +110,7 @@ static char* inp_remove_ws( char *s );
 static void inp_compat(struct line *deck);
 static void inp_bsource_compat(struct line *deck);
 
+
 /*-------------------------------------------------------------------------*
  *  This routine reads a line (of arbitrary length), up to a '\n' or 'EOF' *
  *  and returns a pointer to the resulting null terminated string.         *
@@ -1204,6 +1205,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
          /* only the last title line remains valid */
           if (new_title != NULL) tfree(new_title);
           new_title = copy(s);
+          if (s=strstr(new_title, "\n")) 
+              *s = ' '; 
           *buffer = '*';             /* change .TITLE line to comment line */
       }
 
@@ -1654,6 +1657,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
       inp_fix_inst_calls_for_numparam(working);
       inp_fix_gnd_name(working);
       inp_chk_for_multi_in_vcvs(working, &line_number);
+
 
       if (cp_getvar("addcontrol", CP_BOOL, NULL))
          inp_add_control_section(working, &line_number);
@@ -3579,6 +3583,47 @@ inp_split_multi_param_lines( struct line *deck, int line_num )
     }
   return line_num;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* pspice compatibility:
    ECOMP 3 0 TABLE {V(1,2)} = (-1MV 0V) (1MV, 10V)
