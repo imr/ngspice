@@ -204,7 +204,8 @@ IFparm BJTmPTable[] = { /* model parameters */
  IOP("tmjs1",BJT_MOD_TMJS1, IF_REAL, "MJS 1. temperature coefficient"),
  IOP("tmjs2",BJT_MOD_TMJS2, IF_REAL, "MJS 2. temperature coefficient"),
  IOP("tns1", BJT_MOD_TNS1, IF_REAL, "NS 1. temperature coefficient"),
- IOP("tns2", BJT_MOD_TNS2, IF_REAL, "NS 2. temperature coefficient")
+ IOP("tns2", BJT_MOD_TNS2, IF_REAL, "NS 2. temperature coefficient"),
+ IOP("nkf", BJT_MOD_NKF, IF_REAL, "NKF High current beta rolloff exponent")
 };
 
 char *BJTnames[] = {

@@ -426,6 +426,10 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->BJTtns2 = value->rValue;
             mods->BJTtns2Given = TRUE;
             break;
+        case BJT_MOD_NKF:
+            mods->BJTnkf = value->rValue;
+            mods->BJTnkfGiven = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }

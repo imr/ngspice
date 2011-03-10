@@ -357,6 +357,9 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case BJT_MOD_TNS2:
             value->rValue = here->BJTtns2;
             return(OK);
+        case BJT_MOD_NKF:
+            value->rValue = here->BJTnkf;
+            return(OK);
         default:
             return(E_BADPARM);
     }

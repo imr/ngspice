@@ -430,6 +430,7 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTtmjs2;
     double BJTtns1;
     double BJTtns2;
+    double BJTnkf;
     double BJTinvEarlyVoltF;    /* inverse of BJTearlyVoltF */
     double BJTinvEarlyVoltR;    /* inverse of BJTearlyVoltR */
     double BJTinvRollOffF;  /* inverse of BJTrollOffF */
@@ -541,6 +542,7 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTtmjs2Given : 1;
     unsigned BJTtns1Given : 1;
     unsigned BJTtns2Given : 1;
+    unsigned BJTnkfGiven : 1;
 } BJTmodel;
 
 #ifndef NPN
@@ -671,6 +673,7 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
 #define BJT_MOD_TNS1 198
 #define BJT_MOD_TNS2 199
 #define BJT_MOD_SUBS 200
+#define BJT_MOD_NKF 100
 
 /* device questions */
 #define BJT_QUEST_FT             201

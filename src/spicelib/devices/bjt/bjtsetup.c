@@ -296,6 +296,14 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTtns2Given) {
             model->BJTtns2 = 0.0;
         }
+        if(!model->BJTnkfGiven) {
+            model->BJTnkf = 0.5;
+        } else {
+          if (model->BJTnkf > 1.0) {
+            printf("Warning: NKF has been set to its maximum value: 1.0\n");
+            model->BJTnkf = 1.0;
+          } 
+        }
 
 /*
  * COMPATABILITY WARNING!
