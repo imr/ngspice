@@ -29,7 +29,7 @@ vector create a1
 vector create b1
 vector create stime
 proc bltupdate {} {
-    puts [spice::spice_data]
+    #puts [spice::spice_data]
     spice::spicetoblt a0 a0 
     spice::spicetoblt b0 b0
     spice::spicetoblt a1 a1
