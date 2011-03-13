@@ -1,3 +1,7 @@
+2011-03-13 Dietmar Warning
+ * analysis.h, typedefs.h, misc. bXtemp.c: skip printout in bsimtemp for sens analysis
+ * bsim2/bsim2def.h: int for XPARTS flag in ancient debug usage
+
 2011-03-10 Dietmar Warning
  * src/spicelib/devices/bjt: nkf additional beta rolloff exponent parameter
 
