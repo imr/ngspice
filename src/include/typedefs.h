@@ -44,4 +44,6 @@ typedef struct SENstruct SENstruct;
 typedef struct TSKtask TSKtask;
 typedef struct JOB JOB;
 
+typedef struct SPICEanalysis SPICEanalysis;
+
 #endif

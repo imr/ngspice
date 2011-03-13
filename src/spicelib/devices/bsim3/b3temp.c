@@ -28,6 +28,8 @@
 #define EXP_THRESHOLD 34.0
 #define Charge_q 1.60219e-19
 
+extern SPICEanalysis *analInfo[];
+extern SPICEanalysis SENSinfo;
 
 /* ARGSUSED */
 int
@@ -43,7 +45,7 @@ double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 double Nvtm, SourceSatCurrent, DrainSatCurrent;
 int Size_Not_Found;
 
-    /*  loop through all the BSIM3 device models */
+/*  loop through all the BSIM3 device models */
     for (; model != NULL; model = model->BSIM3nextModel)
     {    Temp = ckt->CKTtemp;
          if (model->BSIM3bulkJctPotential < 0.1)  
@@ -654,24 +656,30 @@ int Size_Not_Found;
 
 
                   if (model->BSIM3k1Given || model->BSIM3k2Given)
-	          {   if (!model->BSIM3k1Given)
-	              {   fprintf(stdout, "Warning: k1 should be specified with k2.\n");
+                  {   if (!model->BSIM3k1Given)
+                      {
+                          if((!ckt->CKTcurJob) || (analInfo[ckt->CKTcurJob->JOBtype] != &SENSinfo))
+                              fprintf(stdout, "Warning: k1 should be specified with k2.\n");
                           pParam->BSIM3k1 = 0.53;
                       }
                       if (!model->BSIM3k2Given)
-	              {   fprintf(stdout, "Warning: k2 should be specified with k1.\n");
+                      {   
+                          if((!ckt->CKTcurJob) || (analInfo[ckt->CKTcurJob->JOBtype] != &SENSinfo))
+                              fprintf(stdout, "Warning: k2 should be specified with k1.\n");
                           pParam->BSIM3k2 = -0.0186;
                       }
-                      if (model->BSIM3nsubGiven)
-                          fprintf(stdout, "Warning: nsub is ignored because k1 or k2 is given.\n");
-                      if (model->BSIM3xtGiven)
-                          fprintf(stdout, "Warning: xt is ignored because k1 or k2 is given.\n");
-                      if (model->BSIM3vbxGiven)
-                          fprintf(stdout, "Warning: vbx is ignored because k1 or k2 is given.\n");
-                      if (model->BSIM3gamma1Given)
-                          fprintf(stdout, "Warning: gamma1 is ignored because k1 or k2 is given.\n");
-                      if (model->BSIM3gamma2Given)
-                          fprintf(stdout, "Warning: gamma2 is ignored because k1 or k2 is given.\n");
+                      if((!ckt->CKTcurJob) || (analInfo[ckt->CKTcurJob->JOBtype] != &SENSinfo)) {
+                          if (model->BSIM3nsubGiven)
+                              fprintf(stdout, "Warning: nsub is ignored because k1 or k2 is given.\n");
+                          if (model->BSIM3xtGiven)
+                              fprintf(stdout, "Warning: xt is ignored because k1 or k2 is given.\n");
+                          if (model->BSIM3vbxGiven)
+                              fprintf(stdout, "Warning: vbx is ignored because k1 or k2 is given.\n");
+                          if (model->BSIM3gamma1Given)
+                              fprintf(stdout, "Warning: gamma1 is ignored because k1 or k2 is given.\n");
+                          if (model->BSIM3gamma2Given)
+                              fprintf(stdout, "Warning: gamma2 is ignored because k1 or k2 is given.\n");
+                      }
                   }
                   else
 	          {   if (!model->BSIM3vbxGiven)

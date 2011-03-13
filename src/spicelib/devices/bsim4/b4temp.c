@@ -29,6 +29,9 @@
 #include "sperror.h"
 #include "suffix.h"
 
+extern SPICEanalysis *analInfo[];
+extern SPICEanalysis SENSinfo;
+
 #define Kb 1.3806226e-23
 #define KboQ 8.617087e-5 
 #define EPS0 8.85418e-12
@@ -1281,24 +1284,30 @@ int Size_Not_Found, i;
 
 
                   if (model->BSIM4k1Given || model->BSIM4k2Given)
-	          {   if (!model->BSIM4k1Given)
-	              {   fprintf(stdout, "Warning: k1 should be specified with k2.\n");
+                  {   if (!model->BSIM4k1Given)
+                      {
+                          if((!ckt->CKTcurJob) || (analInfo[ckt->CKTcurJob->JOBtype] != &SENSinfo))
+                              fprintf(stdout, "Warning: k1 should be specified with k2.\n");
                           pParam->BSIM4k1 = 0.53;
                       }
                       if (!model->BSIM4k2Given)
-	              {   fprintf(stdout, "Warning: k2 should be specified with k1.\n");
+                      {
+                          if((!ckt->CKTcurJob) || (analInfo[ckt->CKTcurJob->JOBtype] != &SENSinfo))
+                              fprintf(stdout, "Warning: k2 should be specified with k1.\n");
                           pParam->BSIM4k2 = -0.0186;
                       }
-                      if (model->BSIM4nsubGiven)
-                          fprintf(stdout, "Warning: nsub is ignored because k1 or k2 is given.\n");
-                      if (model->BSIM4xtGiven)
-                          fprintf(stdout, "Warning: xt is ignored because k1 or k2 is given.\n");
-                      if (model->BSIM4vbxGiven)
-                          fprintf(stdout, "Warning: vbx is ignored because k1 or k2 is given.\n");
-                      if (model->BSIM4gamma1Given)
-                          fprintf(stdout, "Warning: gamma1 is ignored because k1 or k2 is given.\n");
-                      if (model->BSIM4gamma2Given)
-                          fprintf(stdout, "Warning: gamma2 is ignored because k1 or k2 is given.\n");
+                      if((!ckt->CKTcurJob) || (analInfo[ckt->CKTcurJob->JOBtype] != &SENSinfo)) {
+                          if (model->BSIM4nsubGiven)
+                              fprintf(stdout, "Warning: nsub is ignored because k1 or k2 is given.\n");
+                          if (model->BSIM4xtGiven)
+                              fprintf(stdout, "Warning: xt is ignored because k1 or k2 is given.\n");
+                          if (model->BSIM4vbxGiven)
+                              fprintf(stdout, "Warning: vbx is ignored because k1 or k2 is given.\n");
+                          if (model->BSIM4gamma1Given)
+                              fprintf(stdout, "Warning: gamma1 is ignored because k1 or k2 is given.\n");
+                          if (model->BSIM4gamma2Given)
+                              fprintf(stdout, "Warning: gamma2 is ignored because k1 or k2 is given.\n");
+                      }
                   }
                   else
 	          {   if (!model->BSIM4vbxGiven)
