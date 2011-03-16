@@ -28,9 +28,6 @@
 #define EXP_THRESHOLD 34.0
 #define Charge_q 1.60219e-19
 
-extern SPICEanalysis *analInfo[];
-extern SPICEanalysis SENSinfo;
-
 /* ARGSUSED */
 int
 BSIM3temp(
@@ -658,17 +655,17 @@ int Size_Not_Found;
                   if (model->BSIM3k1Given || model->BSIM3k2Given)
                   {   if (!model->BSIM3k1Given)
                       {
-                          if((!ckt->CKTcurJob) || (analInfo[ckt->CKTcurJob->JOBtype] != &SENSinfo))
+                          if ((!ckt->CKTcurJob) || (ckt->CKTcurJob->JOBtype < 9)) /* don't print in sensitivity */
                               fprintf(stdout, "Warning: k1 should be specified with k2.\n");
                           pParam->BSIM3k1 = 0.53;
                       }
                       if (!model->BSIM3k2Given)
-                      {   
-                          if((!ckt->CKTcurJob) || (analInfo[ckt->CKTcurJob->JOBtype] != &SENSinfo))
+                      {
+                          if ((!ckt->CKTcurJob) || (ckt->CKTcurJob->JOBtype < 9)) /* don't print in sensitivity */
                               fprintf(stdout, "Warning: k2 should be specified with k1.\n");
                           pParam->BSIM3k2 = -0.0186;
                       }
-                      if((!ckt->CKTcurJob) || (analInfo[ckt->CKTcurJob->JOBtype] != &SENSinfo)) {
+                      if ((!ckt->CKTcurJob) || (ckt->CKTcurJob->JOBtype < 9)) { /* don't print in sensitivity */
                           if (model->BSIM3nsubGiven)
                               fprintf(stdout, "Warning: nsub is ignored because k1 or k2 is given.\n");
                           if (model->BSIM3xtGiven)

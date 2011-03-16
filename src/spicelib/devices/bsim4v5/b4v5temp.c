@@ -22,9 +22,6 @@
 #include "sperror.h"
 #include "suffix.h"
 
-extern SPICEanalysis *analInfo[];
-extern SPICEanalysis SENSinfo;
-
 #define Kb 1.3806226e-23
 #define KboQ 8.617087e-5 
 #define EPS0 8.85418e-12
@@ -1163,17 +1160,17 @@ int Size_Not_Found, i;
                   if (model->BSIM4v5k1Given || model->BSIM4v5k2Given)
                   {   if (!model->BSIM4v5k1Given)
                       {
-                          if((!ckt->CKTcurJob) || (analInfo[ckt->CKTcurJob->JOBtype] != &SENSinfo))
+                          if ((!ckt->CKTcurJob) || (ckt->CKTcurJob->JOBtype < 9)) /* don't print in sensitivity */
                               fprintf(stdout, "Warning: k1 should be specified with k2.\n");
                           pParam->BSIM4v5k1 = 0.53;
                       }
                       if (!model->BSIM4v5k2Given)
                       {
-                          if((!ckt->CKTcurJob) || (analInfo[ckt->CKTcurJob->JOBtype] != &SENSinfo))
+                          if ((!ckt->CKTcurJob) || (ckt->CKTcurJob->JOBtype < 9)) /* don't print in sensitivity */
                               fprintf(stdout, "Warning: k2 should be specified with k1.\n");
                           pParam->BSIM4v5k2 = -0.0186;
                       }
-                      if((!ckt->CKTcurJob) || (analInfo[ckt->CKTcurJob->JOBtype] != &SENSinfo)) {
+                      if ((!ckt->CKTcurJob) || (ckt->CKTcurJob->JOBtype < 9)) { /* don't print in sensitivity */
                           if (model->BSIM4v5nsubGiven)
                               fprintf(stdout, "Warning: nsub is ignored because k1 or k2 is given.\n");
                           if (model->BSIM4v5xtGiven)
