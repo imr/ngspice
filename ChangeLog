@@ -1,5 +1,10 @@
+2011-03-16 Dietmar Warning
+ * plotit.c: fix the wrong x-axis label for temp-sweep and res-sweep by 
+   using macros SV_XXX for vector types
+
 2011-03-13 Dietmar Warning
- * analysis.h, typedefs.h, misc. bXtemp.c: skip printout in bsimtemp for sens analysis
+ * analysis.h, typedefs.h, misc. bXtemp.c: skip printout in bsimtemp for 
+   sens analysis
  * bsim2/bsim2def.h: int for XPARTS flag in ancient debug usage
 
 2011-03-10 Dietmar Warning

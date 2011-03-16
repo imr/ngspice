@@ -644,8 +644,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
 	/* The following line displays the unit at the time of 
 	 temp-sweep and res-sweep. This may not be a so good solution. by H.T */
-	if(!strcmp(vecs->v_scale->v_name,"temp-sweep")) vecs->v_scale->v_type=14;
-	if(!strcmp(vecs->v_scale->v_name,"res-sweep")) vecs->v_scale->v_type=15;
+	if(!strcmp(vecs->v_scale->v_name,"temp-sweep")) vecs->v_scale->v_type=SV_TEMP; /* simulation_types in sim.h */
+	if(!strcmp(vecs->v_scale->v_name,"res-sweep")) vecs->v_scale->v_type=SV_RES;
 
     /* See if the log flag is set anywhere... */
     if (!gfound) {
