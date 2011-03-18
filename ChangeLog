@@ -1,3 +1,6 @@
+2011-03-18  Dietmar Warning
+ * frontend/typedefs.c, outitf.c: bug no. 3214252 fixed
+
 2011-03-16 Dietmar Warning
  * plotit.c: fix the wrong x-axis label for temp-sweep and res-sweep by 
    using macros SV_XXX for vector types

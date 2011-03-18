@@ -966,6 +966,14 @@ plotInit(runDesc *run)
             v->v_type = SV_TIME;
         else if (cieq(v->v_name, "frequency"))
             v->v_type = SV_FREQUENCY;
+        else if (cieq(v->v_name, "onoise_spectrum"))
+            v->v_type = SV_OUTPUT_N_DENS;
+        else if (cieq(v->v_name, "onoise_integrated"))
+            v->v_type = SV_OUTPUT_NOISE;
+        else if (cieq(v->v_name, "inoise_spectrum"))
+            v->v_type = SV_INPUT_N_DENS;
+        else if (cieq(v->v_name, "inoise_integrated"))
+            v->v_type = SV_INPUT_NOISE;
         else if (cieq(v->v_name, "temp-sweep"))
             v->v_type = SV_TEMP;
         else if (cieq(v->v_name, "res-sweep"))

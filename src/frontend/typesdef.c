@@ -29,7 +29,7 @@ struct plotab {
     char *p_pattern;
 };
 
-/* note:  This should correspond to SV_ defined in FTEconstant.h */
+/* note:  This should correspond to SV_ defined in sim.h */
 struct type types[NUMTYPES] = {
     { "notype", NULL } ,
     { "time", "s" } ,
@@ -40,19 +40,16 @@ struct type types[NUMTYPES] = {
     { "onoise-integrated", "V or A" } ,
     { "inoise-spectrum", "(V or A)^2/Hz" } ,
     { "inoise-integrated", "V or A" } ,
-    /* { "output-noise", NULL } , */
-    /* { "input-noise", NULL } , */
     { "pole", NULL } ,
     { "zero", NULL } ,
     { "s-param", NULL } ,
     { "temp-sweep", "Celsius" } ,/* Added by HT */
-
-    { "res-sweep", "Ohms" } ,/* Added by HT */
-    { "impedance", "Ohms" } ,/* Added by A.Roldan */
-    { "admittance", "Mhos" } ,/* Added by A.Roldan */
-    { "power", "W" } ,          /* Added by A.Roldan */
-    { "phase", "Degree" } ,     /* Added by A.Roldan */
-    { "decibel", "dB" } ,     /* Added by A.Roldan */
+    { "res-sweep", "Ohms" } ,    /* Added by HT */
+    { "impedance", "Ohms" } ,    /* Added by A.Roldan */
+    { "admittance", "Mhos" } ,   /* Added by A.Roldan */
+    { "power", "W" } ,           /* Added by A.Roldan */
+    { "phase", "Degree" } ,      /* Added by A.Roldan */
+    { "decibel", "dB" } ,        /* Added by A.Roldan */
 
 } ;
 
