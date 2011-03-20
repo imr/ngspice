@@ -387,12 +387,12 @@ typedef struct sBSIM2model {       	/* model structure for a resistor */
     double B2deltaLength; 
     double B2fNcoef;
     double B2fNexp;
+    int B2channelChargePartitionFlag;
 
 
     struct bsim2SizeDependParam  *pSizeDependParamKnot;
 
 
-    int B2channelChargePartitionFlag :1;
     unsigned  B2vfb0Given   :1;
     unsigned  B2vfbLGiven   :1;
     unsigned  B2vfbWGiven   :1;
