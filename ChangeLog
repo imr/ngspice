@@ -1,3 +1,6 @@
+2011-03-24  Dietmar Warning
+ * xspice/icm/GNUmakefile.in: sun cc needs modified dependency flags (-xMD)
+
 2011-03-18  Dietmar Warning
  * frontend/typedefs.c, outitf.c: bug no. 3214252 fixed
 

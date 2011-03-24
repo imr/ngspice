@@ -112,7 +112,7 @@ $(cm-dirs) $(cm-dep-dirs) :
 	CMPP_IDIR=$(srcdir)/$(@D) CMPP_ODIR=$(@D) $(CMPP) -mod
 
 
-gen_pp = -MD -MF $(@D)/.deps/$(basename $(<F)).pp
+gen_pp = $(DEPFLAGS) $(@D)/.deps/$(basename $(<F)).pp
 
 define do-deps
 	@x=$(@D)/.deps/$(basename $(<F)) ; \
@@ -130,15 +130,15 @@ $(cm)/dlmain.o : $(srcdir)/dlmain.c $(cm-descr)
 	$(do-deps)
 
 $(cm)/%/cfunc.o : $(cm)/%/cfunc.c
-	$(COMPILE) $(gen_pp) -I$(srcdir)/$(<D)  -o $@ -c $<
+	$(COMPILE) $(gen_pp) -I$(srcdir)/$(<D) -o $@ -c $<
 	$(do-deps)
 
 $(cm)/%/ifspec.o : $(cm)/%/ifspec.c
-	$(COMPILE) $(gen_pp) -I$(srcdir)/$(<D)  -o $@ -c $<
+	$(COMPILE) $(gen_pp) -I$(srcdir)/$(<D) -o $@ -c $<
 	$(do-deps)
 
 $(cm)/%/udnfunc.o : $(srcdir)/$(cm)/%/udnfunc.c
-	$(COMPILE) $(gen_pp) -I$(srcdir)/$(<D)  -o $@ -c $<
+	$(COMPILE) $(gen_pp) -I$(srcdir)/$(<D) -o $@ -c $<
 	$(do-deps)
 
 endif
