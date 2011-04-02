@@ -320,11 +320,7 @@ static void handle_wm_messages(Widget w, XtPointer client_data, XEvent *event, B
             && event->xclient.message_type == atom_wm_protocols
             && (Atom) event->xclient.data.l[0] == atom_wm_delete_window) {
 
-    /* Iplots are done asynchronously */
-    DEVDEP(graph).isopen = 0;
-    /* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */	
-    XtDestroyWidget(DEVDEP(graph).shell);
-    DestroyGraph(graph->graphid);
+        RemoveWindow(graph);
     }
 }
 
@@ -877,14 +873,7 @@ killwin(Widget w, caddr_t client_data, caddr_t call_data)
     NG_IGNORE(call_data);
     NG_IGNORE(w);
 
-    /* Iplots are done asynchronously */
-    DEVDEP(graph).isopen = 0;
-    /* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */	
-    XtDestroyWidget(DEVDEP(graph).shell);
-    if (graph == currentgraph)
-        currentgraph = FindGraph(graph->graphid - 1);
-    DestroyGraph(graph->graphid);
-
+    RemoveWindow(graph);
 }
 
 /* called from postcoms.c 
@@ -897,6 +886,8 @@ RemoveWindow(GRAPH *graph)
     DEVDEP(graph).isopen = 0;
     /* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */	
     XtDestroyWidget(DEVDEP(graph).shell);
+    if (graph == currentgraph)
+        currentgraph = FindGraph(graph->graphid - 1);
     DestroyGraph(graph->graphid);
 }
 
