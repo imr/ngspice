@@ -854,13 +854,18 @@ hardcopy(Widget w, caddr_t client_data, caddr_t call_data)
 
     lasthardcopy = (GRAPH *) client_data;
 
-    if (currentgraph->devdep) {
-        X11devdep tempdevdep = DEVDEP(currentgraph);
+    /* FIXME #1: this should print currentgraph with
+    *            currentgraph dynamically bound to client_data
+    *  FIXME #2: the !currentgraphs case,
+    *            don't bother do call com_hardcopy
+    */
+
+    if (currentgraph) {
+        void *devdep = currentgraph->devdep;
         com_hardcopy(NULL);
-        DEVDEP(currentgraph) = tempdevdep;
+        currentgraph->devdep = devdep;
     } else {
         com_hardcopy(NULL);
-        currentgraph->devdep = NULL;
     }
 }
 
@@ -887,7 +892,7 @@ RemoveWindow(GRAPH *graph)
     /* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */	
     XtDestroyWidget(DEVDEP(graph).shell);
     if (graph == currentgraph)
-        currentgraph = FindGraph(graph->graphid - 1);
+        currentgraph = NULL;
     DestroyGraph(graph->graphid);
 }
 
@@ -928,7 +933,12 @@ redraw(Widget w, caddr_t client_data, caddr_t call_data)
 	    rects, n, Unsorted);
 
     noclear = True;
-    gr_redraw(graph);
+    {
+        GRAPH *tmp = currentgraph;
+        currentgraph = graph;
+        gr_redraw(graph);
+        currentgraph = tmp;
+    }
     noclear = False;
 
     XSetClipMask(display, DEVDEP(graph).gc, None);
@@ -954,7 +964,12 @@ resize(Widget w, caddr_t client_data, caddr_t call_data)
     XClearWindow(display, DEVDEP(graph).window);
     graph->absolute.width = w->core.width;
     graph->absolute.height = w->core.height;
-    gr_resize(graph);
+    {
+        GRAPH *tmp = currentgraph;
+        currentgraph = graph;
+        gr_resize(graph);
+        currentgraph = tmp;
+    }
 
 }
 

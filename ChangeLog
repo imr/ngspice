@@ -1,4 +1,13 @@
 2011-04-09  Robert Larice
+ * src/frontend/plotting/x11.c :
+    bugfix, segfault when closing a plot window
+      fix the fix from 2011-02-11
+      currentgraph is a dynamical scoped variable
+   in response to
+     http://sourceforge.net/tracker/?func=detail&atid=423915&aid=3263437&group_id=38962
+   FIXME, need to be fixed for ms-windows as well
+
+2011-04-09  Robert Larice
  * src/spicelib/analysis/cktsens.c :
     bugfix, fix sensitvity calculation (for the dc-2+.cir testcase)
 
