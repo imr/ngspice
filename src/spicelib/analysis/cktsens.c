@@ -496,6 +496,14 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			/* Solve; Y already factored */
 			spSolve(Y, delta_I, delta_I, delta_iI, delta_iI);
 
+                        /* the special `0' node
+                        *    the matrix indizes are [1..n]
+                        *    yet the vector indizes are [0..n]
+                        *    with [0] being implicit === 0
+                        */
+                        delta_I[0]  = 0.0;
+                        delta_iI[0] = 0.0;
+
 #ifdef ASDEBUG
 			DEBUG(2) {
 				for (j = 1; j < size; j++) {

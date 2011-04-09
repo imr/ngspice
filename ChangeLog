@@ -1,3 +1,7 @@
+2011-04-09  Robert Larice
+ * src/spicelib/analysis/cktsens.c :
+    bugfix, fix sensitvity calculation (for the dc-2+.cir testcase)
+
 2011-04-02  Robert Larice
  * src/frontend/plotting/x11.c :
    extend the fix from 2011-02-11
@@ -12,11 +16,11 @@
  * frontend/typedefs.c, outitf.c: bug no. 3214252 fixed
 
 2011-03-16 Dietmar Warning
- * plotit.c: fix the wrong x-axis label for temp-sweep and res-sweep by 
+ * plotit.c: fix the wrong x-axis label for temp-sweep and res-sweep by
    using macros SV_XXX for vector types
 
 2011-03-13 Dietmar Warning
- * analysis.h, typedefs.h, misc. bXtemp.c: skip printout in bsimtemp for 
+ * analysis.h, typedefs.h, misc. bXtemp.c: skip printout in bsimtemp for
    sens analysis
  * bsim2/bsim2def.h: int for XPARTS flag in ancient debug usage
 
