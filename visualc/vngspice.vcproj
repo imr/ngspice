@@ -1199,22 +1199,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\bsim3v1adef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\bsim3v1aext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\bsim3v1ainit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\bsim3v1aitf.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\bsim3v1\bsim3v1def.h"
 				>
 			</File>
@@ -1228,22 +1212,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\bsim3v1\bsim3v1itf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\bsim3v1sdef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\bsim3v1sext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\bsim3v1sinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\bsim3v1sitf.h"
 				>
 			</File>
 			<File
@@ -3671,79 +3639,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1a.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1aacld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1aask.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\bsim3v1\b3v1acld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1acvtest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1adel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1adest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1agetic.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1ald.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1amask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1amdel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1ampar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1anoi.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1apar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1apzld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1aset.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\bsim3v1\b3v1ask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1atemp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\b3v1atrunc.c"
 				>
 			</File>
 			<File
@@ -3795,79 +3695,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1s.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1sacld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1sask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1scheck.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1scvtest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1sdel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1sdest.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\bsim3v1\b3v1set.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1sgetic.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1sld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1smask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1smdel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1smpar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1snoi.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1spar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1spzld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1sset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1stemp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\b3v1strunc.c"
 				>
 			</File>
 			<File
@@ -4647,15 +4475,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1a\bsim3v1ainit.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\bsim3v1\bsim3v1init.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1s\bsim3v1sinit.c"
 				>
 			</File>
 			<File
