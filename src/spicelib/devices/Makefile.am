@@ -15,8 +15,6 @@ SUBDIRS = \
 	bsim4v5		\
 	bsim3v0		\
 	bsim3v1		\
-	bsim3v1a	\
-	bsim3v1s	\
 	bsim3v32	\
 	bsim3soi_pd	\
 	bsim3soi_fd	\
@@ -78,8 +76,6 @@ DIST_SUBDIRS = \
 	bsim4v5		\
 	bsim3v0		\
 	bsim3v1		\
-	bsim3v1a	\
-	bsim3v1s	\
 	bsim3v32	\
 	bsim3soi_pd	\
 	bsim3soi_fd	\
