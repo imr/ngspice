@@ -1,13 +1,13 @@
 /**********
  * Copyright 1990 Regents of the University of California. All rights reserved.
- * File: b3v1mpar.c
+ * File: b3mpar.c
  * Author: 1995 Min-Chie Jeng and Mansun Chan. 
  * Modified by Paolo Nenzi 2002
  **********/
  
 /* 
  * Release Notes: 
- * BSIM3v3.1,   Released by yuhua  96/12/08
+ * BSIM3v1v3.1,   Released by yuhua  96/12/08
  */
 
 #include "ngspice.h"
@@ -118,14 +118,14 @@ BSIM3v1mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v1_MOD_NPEAK:
             mod->BSIM3v1npeak = value->rValue;
             mod->BSIM3v1npeakGiven = TRUE;
-	    if (mod->BSIM3v1npeak > 1.0e20)
-		mod->BSIM3v1npeak *= 1.0e-6;
+            if (mod->BSIM3v1npeak > 1.0e20)
+              mod->BSIM3v1npeak *= 1.0e-6;
             break;
         case BSIM3v1_MOD_NGATE:
             mod->BSIM3v1ngate = value->rValue;
             mod->BSIM3v1ngateGiven = TRUE;
-	    if (mod->BSIM3v1ngate > 1.0e23)
-		mod->BSIM3v1ngate *= 1.0e-6;
+            if (mod->BSIM3v1ngate > 1.0e23)
+              mod->BSIM3v1ngate *= 1.0e-6;
             break;
         case BSIM3v1_MOD_GAMMA1:
             mod->BSIM3v1gamma1 = value->rValue;
@@ -445,14 +445,14 @@ BSIM3v1mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v1_MOD_LNPEAK:
             mod->BSIM3v1lnpeak = value->rValue;
             mod->BSIM3v1lnpeakGiven = TRUE;
-	    if (mod->BSIM3v1lnpeak > 1.0e20)
-		mod->BSIM3v1lnpeak *= 1.0e-6;
+            if (mod->BSIM3v1lnpeak > 1.0e20)
+              mod->BSIM3v1lnpeak *= 1.0e-6;
             break;
         case BSIM3v1_MOD_LNGATE:
             mod->BSIM3v1lngate = value->rValue;
             mod->BSIM3v1lngateGiven = TRUE;
-	    if (mod->BSIM3v1lngate > 1.0e23)
-		mod->BSIM3v1lngate *= 1.0e-6;
+            if (mod->BSIM3v1lngate > 1.0e23)
+              mod->BSIM3v1lngate *= 1.0e-6;
             break;
         case BSIM3v1_MOD_LGAMMA1:
             mod->BSIM3v1lgamma1 = value->rValue;
@@ -764,14 +764,14 @@ BSIM3v1mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v1_MOD_WNPEAK:
             mod->BSIM3v1wnpeak = value->rValue;
             mod->BSIM3v1wnpeakGiven = TRUE;
-	    if (mod->BSIM3v1wnpeak > 1.0e20)
-		mod->BSIM3v1wnpeak *= 1.0e-6;
+            if (mod->BSIM3v1wnpeak > 1.0e20)
+              mod->BSIM3v1wnpeak *= 1.0e-6;
             break;
         case BSIM3v1_MOD_WNGATE:
             mod->BSIM3v1wngate = value->rValue;
             mod->BSIM3v1wngateGiven = TRUE;
-	    if (mod->BSIM3v1wngate > 1.0e23)
-		mod->BSIM3v1wngate *= 1.0e-6;
+            if (mod->BSIM3v1wngate > 1.0e23)
+              mod->BSIM3v1wngate *= 1.0e-6;
             break;
         case BSIM3v1_MOD_WGAMMA1:
             mod->BSIM3v1wgamma1 = value->rValue;
@@ -1083,14 +1083,14 @@ BSIM3v1mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v1_MOD_PNPEAK:
             mod->BSIM3v1pnpeak = value->rValue;
             mod->BSIM3v1pnpeakGiven = TRUE;
-	    if (mod->BSIM3v1pnpeak > 1.0e20)
-		mod->BSIM3v1pnpeak *= 1.0e-6;
+            if (mod->BSIM3v1pnpeak > 1.0e20)
+              mod->BSIM3v1pnpeak *= 1.0e-6;
             break;
         case BSIM3v1_MOD_PNGATE:
             mod->BSIM3v1pngate = value->rValue;
             mod->BSIM3v1pngateGiven = TRUE;
-	    if (mod->BSIM3v1pngate > 1.0e23)
-		mod->BSIM3v1pngate *= 1.0e-6;
+            if (mod->BSIM3v1pngate > 1.0e23)
+              mod->BSIM3v1pngate *= 1.0e-6;
             break;
         case BSIM3v1_MOD_PGAMMA1:
             mod->BSIM3v1pgamma1 = value->rValue;
@@ -1518,6 +1518,11 @@ BSIM3v1mParam(int param, IFvalue *value, GENmodel *inMod)
                 mod->BSIM3v1type = - 1;
                 mod->BSIM3v1typeGiven = TRUE;
             }
+            break;
+/* serban */
+        case  BSIM3v1_MOD_HDIF  :
+            mod->BSIM3v1hdif = value->rValue;
+            mod->BSIM3v1hdifGiven = TRUE;
             break;
         default:
             return(E_BADPARM);

@@ -1,13 +1,13 @@
 /**********
  * Copyright 1990 Regents of the University of California. All rights reserved.
- * File: b3v1.c
+ * File: b3.c
  * Author: 1995 Min-Chie Jeng and Mansun Chan. 
  * Modified by Paolo Nenzi 2002
  **********/
  
 /* 
  * Release Notes: 
- * BSIM3v3.1,   Released by yuhua  96/12/08
+ * BSIM3v1v3.1,   Released by yuhua  96/12/08
  */
 
 
@@ -427,6 +427,8 @@ IOP( "kf", BSIM3v1_MOD_KF, IF_REAL, "Flicker noise coefficient"),
 
 IP( "nmos", BSIM3v1_MOD_NMOS,  IF_FLAG, "Flag to indicate NMOS"),
 IP( "pmos", BSIM3v1_MOD_PMOS,  IF_FLAG, "Flag to indicate PMOS"),
+/* serban */
+IOP( "hdif", BSIM3v1_MOD_HDIF,  IF_REAL, "S/D junction extension (HSPICE style)"),
 };
 
 char *BSIM3v1names[] = {

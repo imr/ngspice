@@ -1,6 +1,6 @@
 /**********
  * Copyright 1990 Regents of the University of California. All rights reserved.
- * File: b3v1ld.c
+ * File: b3ld.c
  * Author: 1995 Min-Chie Jeng and Mansun Chan. 
  * Modified by Mansun Chan  (1995)
  * Modified by Paolo Nenzi 2002
@@ -8,7 +8,7 @@
  
 /* 
  * Release Notes: 
- * BSIM3v3.1,   Released by yuhua  96/12/08
+ * BSIM3v1v3.1,   Released by yuhua  96/12/08
  */
 
 #include "ngspice.h"
@@ -120,7 +120,7 @@ double Csg, Csd, Csb, Cbg, Cbd, Cbb;
 double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Qac0, Qsub0;
 double dQac0_dVg, dQac0_dVd, dQac0_dVb, dQsub0_dVg, dQsub0_dVd, dQsub0_dVb;
 
-double m = 0.0;
+double m = 1.0;
    
 struct bsim3v1SizeDependParam *pParam;
 int ByPass, Check, ChargeComputationNeeded = 0, error;
@@ -133,7 +133,6 @@ for (; model != NULL; model = model->BSIM3v1nextModel)
          if (here->BSIM3v1owner != ARCHme)
 	         continue;
 
-          
 	  Check = 1;
           ByPass = 0;
 	  pParam = here->pParam;
@@ -2018,8 +2017,25 @@ finished: /* returning Values to Calling Routine */
            */
           if ((here->BSIM3v1off == 0) || (!(ckt->CKTmode & MODEINITFIX)))
 	  {   if (Check == 1)
-	      {   
-	         ckt->CKTnoncon++;
+	      {   ckt->CKTnoncon++;
+#ifndef NEWCONV
+              } 
+	      else
+	      {   tol = ckt->CKTreltol * MAX(FABS(cdhat), FABS(here->BSIM3v1cd))
+		      + ckt->CKTabstol;
+                  if (FABS(cdhat - here->BSIM3v1cd) >= tol)
+		  {   ckt->CKTnoncon++;
+                  }
+		  else
+		  {   tol = ckt->CKTreltol * MAX(FABS(cbhat), 
+			    FABS(here->BSIM3v1cbs + here->BSIM3v1cbd)) 
+			    + ckt->CKTabstol;
+                      if (FABS(cbhat - (here->BSIM3v1cbs + here->BSIM3v1cbd)) 
+			  > tol)
+		      {   ckt->CKTnoncon++;
+                      }
+                  }
+#endif /* NEWCONV */
               }
           }
           *(ckt->CKTstate0 + here->BSIM3v1vbs) = vbs;
@@ -2354,7 +2370,7 @@ line900:
 
 	   if (model->BSIM3v1type > 0)
 	   {   ceqbs += (here->BSIM3v1cbs - (here->BSIM3v1gbs  - ckt->CKTgmin) * vbs);
-               ceqbd += (here->BSIM3v1cbd - (here->BSIM3v1gbd  - ckt->CKTgmin ) * vbd);
+               ceqbd += (here->BSIM3v1cbd - (here->BSIM3v1gbd  - ckt->CKTgmin) * vbd);
                ceqqg = ceqqg;
                ceqqb = ceqqb;
                ceqqd = ceqqd;
@@ -2390,15 +2406,12 @@ line900:
                                - gcbgb - gcbdb - gcbsb) - here->BSIM3v1gbbs));
            (*(here->BSIM3v1DPdpPtr) += m * ((here->BSIM3v1drainConductance
                                  + here->BSIM3v1gds + here->BSIM3v1gbd
-                                 + RevSum + gcddb) + dxpart * here->BSIM3v1gtd +
-				 gbdpdp));
+                                 + RevSum + gcddb) + dxpart * here->BSIM3v1gtd + gbdpdp));
            (*(here->BSIM3v1SPspPtr) += m * ((here->BSIM3v1sourceConductance
                                  + here->BSIM3v1gds + here->BSIM3v1gbs
-                                 + FwdSum + gcssb) + sxpart * here->BSIM3v1gts +
-				 gbspsp));
+                                 + FwdSum + gcssb) + sxpart * here->BSIM3v1gts + gbspsp));
            (*(here->BSIM3v1DdpPtr) -= m * here->BSIM3v1drainConductance);
-           (*(here->BSIM3v1GbPtr) -= m * (gcggb + gcgdb + gcgsb +
-	                                  here->BSIM3v1gtb));
+           (*(here->BSIM3v1GbPtr) -= m * (gcggb + gcgdb + gcgsb + here->BSIM3v1gtb));
            (*(here->BSIM3v1GdpPtr) += m * (gcgdb - here->BSIM3v1gtd));
            (*(here->BSIM3v1GspPtr) += m * (gcgsb - here->BSIM3v1gts));
            (*(here->BSIM3v1SspPtr) -= m * here->BSIM3v1sourceConductance);
@@ -2418,8 +2431,7 @@ line900:
            (*(here->BSIM3v1SPbPtr) -= m * ((here->BSIM3v1gbs + Gmbs + gcsgb + gcsdb
                                             + gcssb - sxpart * here->BSIM3v1gtb) - gbspb));
            (*(here->BSIM3v1SPdpPtr) -= m * ((here->BSIM3v1gds + RevSum - gcsdb
-                                             - sxpart * here->BSIM3v1gtd - here->BSIM3v1gbd)
-				             - gbspdp));
+                                             - sxpart * here->BSIM3v1gtd - here->BSIM3v1gbd) - gbspdp));
  
            *(here->BSIM3v1QqPtr) += m * ((gqdef + here->BSIM3v1gtau));
  

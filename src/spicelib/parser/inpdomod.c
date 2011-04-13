@@ -285,12 +285,6 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 	    if ( strcmp(ver, "3.1") == 0 ) {
 	      type = INPtypelook("BSIM3v1");
 	    }
-	    if ( strcmp(ver, "3.1s") == 0 ) {
-	      type = INPtypelook("BSIM3v1S");
-	    }
-	    if ( strcmp(ver, "3.1a") == 0 ) {
-	      type = INPtypelook("BSIM3v1A");
-	    }
 	    if ( prefix("3.2", ver)) { /* version string ver has to start with 3.2 */
 	      type = INPtypelook("BSIM3v32");
 	    }

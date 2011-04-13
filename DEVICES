@@ -47,13 +47,12 @@ Table of contents
  11.5 MOS9 - Level 9 MOS model
  11.6 BSIM1 - BSIM model level 1
  11.7 BSIM2 - BSIM model level 2
- 11.8 BSIM3v0 - BSIM model level 3
- 11.9 BSIM3v1 - BSIM model level 3
- 11.10 BSIM3v1 - BSIM model level 3
- 11.11 BSIM3v1 - BSIM model level 3
- 11.12 BSIM3 - BSIM model level 3
- 11.13 BSIM4 - BSIM model level 4
- 11.14 HiSIM - Hiroshima-university STARC IGFET Model
+ 11.8 BSIM3 - BSIM model level 3 vers. 0
+ 11.9 BSIM3 - BSIM model level 3 vers. 1
+ 11.10 BSIM3 - BSIM model level 3 vers. 2
+ 11.11 BSIM3 - BSIM model level 3 vers. 3
+ 11.12 BSIM4 - BSIM model level 4
+ 11.13 HiSIM - Hiroshima-University STARC IGFET Model
 12. SOI devices
  12.1 BSIM3SOI_FD - SOI model (fully depleted devices)
  12.2 BSIM3SOI_DD - SOI Model (dynamic depletion model)
@@ -609,40 +608,21 @@ will be updated every time the device specific code is altered or changed to ref
       Dir:    devices/bsim3v0
       Status: TO BE TESTED AND IMPROVED
 
+
  11.9 BSIM3v1 - BSIM model level 3
 
       Ver:    3.1
       Class:  M
       Level:  8 & 49, version = 3.1
       Dir:    devices/bsim3v1
-      Status: TO BE TESTED
-
-
- 11.10 BSIM3v1 - BSIM model level 3
-
-      Ver:    3.1
-      Class:  M
-      Level:  8 & 49, version = 3.1a
-      Dir:    devices/bsim3v1a
       Status: TO BE TESTED AND IMPROVED
-
-      This is the BSIM3v3.1 model modified by Alan Gillespie.
-
-
- 11.11 BSIM3v1 - BSIM model level 3
-       
-       Ver:    3.1
-       Class:  M
-       Level:  8 & 49, version = 3.1s
-       Dir:    devices/bsim3v1s
-       Status: TO BE TESTED AND IMPROVED
 
        This is the BSIM3v3.1 model modified by Serban Popescu.
        This is level 49 model. It is an implementation that supports
        "HDIF" and "M" parameters.
 
 
- 11.12 BSIM3 - BSIM model level 3
+ 11.10 BSIM3 - BSIM model level 3
 
        Ver:    3.2.4
        Class:  M
@@ -663,7 +643,7 @@ will be updated every time the device specific code is altered or changed to ref
         - NodesetFix
 
 		
- 11.12 BSIM3 - BSIM model level 3
+ 11.11 BSIM3 - BSIM model level 3
 
        Ver:    3.3.0
        Class:  M
@@ -685,7 +665,7 @@ will be updated every time the device specific code is altered or changed to ref
         - Support for Multi-core processors using OpenMP
 
 
- 11.13 BSIM4 - BSIM model level 4
+ 11.12 BSIM4 - BSIM model level 4
  
        Ver:    4.2.0 - 4.6.5
        Class:  M
@@ -704,7 +684,7 @@ will be updated every time the device specific code is altered or changed to ref
         - Support for Multi-core processors using OpenMP
 		
 
- 11.14 HiSIM - Hiroshima-university STARC IGFET Model
+ 11.13 HiSIM - Hiroshima-university STARC IGFET Model
       
        Ver:    1.2.0
        Class:  M

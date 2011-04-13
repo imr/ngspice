@@ -81,8 +81,6 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "bsim3/bsim3itf.h"
 #include "bsim3v0/bsim3v0itf.h"
 #include "bsim3v1/bsim3v1itf.h"
-#include "bsim3v1a/bsim3v1aitf.h"
-#include "bsim3v1s/bsim3v1sitf.h"
 #include "bsim3v32/bsim3v32itf.h"
 #include "bsim4/bsim4itf.h"
 #include "bsim4v2/bsim4v2itf.h"
@@ -192,8 +190,6 @@ spice_init_devices(void)
     DEVices[ 6] = get_bsim3_info();
     DEVices[ 7] = get_bsim3v0_info();
     DEVices[ 8] = get_bsim3v1_info();
-    DEVices[ 9] = get_bsim3v1a_info();
-    DEVices[10] = get_bsim3v1s_info();
     DEVices[11] = get_bsim3v32_info();
     DEVices[12] = get_b4soi_info();
     DEVices[13] = get_bsim4_info();

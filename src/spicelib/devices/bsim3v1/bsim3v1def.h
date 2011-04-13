@@ -404,6 +404,8 @@ typedef struct sBSIM3v1model
     double BSIM3v1b1;
     double BSIM3v1alpha0;
     double BSIM3v1beta0;
+/* serban */
+    double BSIM3v1hdif;
 
     /* CV model */
     double BSIM3v1elm;
@@ -805,6 +807,7 @@ typedef struct sBSIM3v1model
     unsigned  BSIM3v1b1Given   :1;
     unsigned  BSIM3v1alpha0Given   :1;
     unsigned  BSIM3v1beta0Given   :1;
+    unsigned  BSIM3v1hdifGiven   :1;
 
     /* CV model */
     unsigned  BSIM3v1elmGiven  :1;     
@@ -1235,6 +1238,8 @@ typedef struct sBSIM3v1model
 #define BSIM3v1_MOD_PARAMCHK        192
 #define BSIM3v1_MOD_VERSION         193
 #define BSIM3v1_MOD_VFBCV           194
+
+#define BSIM3v1_MOD_HDIF            198
 
 /* Length dependence */
 #define BSIM3v1_MOD_LCDSC            201

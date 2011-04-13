@@ -1,13 +1,13 @@
 /**********
  * Copyright 1990 Regents of the University of California. All rights reserved.
- * File: b3v1par.c
+ * File: b3par.c
  * Author: 1995 Min-Chie Jeng and Mansun Chan. 
  * Modified by Paolo Nenzi 2002
  **********/
  
 /* 
  * Release Notes: 
- * BSIM3v3.1,   Released by yuhua  96/12/08
+ * BSIM3v1v3.1,   Released by yuhua  96/12/08
  */
 
 #include "ngspice.h"
@@ -37,7 +37,7 @@ BSIM3v1param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->BSIM3v1l = value->rValue*scale;
             here->BSIM3v1lGiven = TRUE;
             break;
-	    case BSIM3v1_M:
+        case BSIM3v1_M:
             here->BSIM3v1m = value->rValue;
             here->BSIM3v1mGiven = TRUE;
             break;

@@ -1,7 +1,7 @@
 /***********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
-File: b3v0temp.c
+File: b3temp.c
 **********/
 /* Lmin, Lmax, Wmin, Wmax */
 
@@ -28,8 +28,8 @@ File: b3v0temp.c
 int
 BSIM3v0temp(GENmodel *inModel, CKTcircuit *ckt)
 {
-register BSIM3v0model *model = (BSIM3v0model*) inModel;
-register BSIM3v0instance *here;
+BSIM3v0model *model = (BSIM3v0model*) inModel;
+BSIM3v0instance *here;
 struct bsim3v0SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam = NULL;
 double tmp1, tmp2, Eg, ni, T0, T1, T2, T3, Ldrn, Wdrn;
 double Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;

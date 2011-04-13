@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
-File: b3v0.c
+File: b3.c
 **********/
 
 #include "ngspice.h"
@@ -31,6 +31,10 @@ OP( "id",           BSIM3v0_CD,         IF_REAL,    "Ids"),
 OP( "vbs",          BSIM3v0_VBS,        IF_REAL,    "Vbs"),
 OP( "vgs",          BSIM3v0_VGS,        IF_REAL,    "Vgs"),
 OP( "vds",          BSIM3v0_VDS,        IF_REAL,    "Vds"),
+OP( "gbd",          BSIM3v0_GBD,        IF_REAL,    "Gbd"),
+OP( "gbs",          BSIM3v0_GBS,        IF_REAL,    "Gbs"),
+OP( "ibd",          BSIM3v0_CBD,        IF_REAL,    "Ibd"),
+OP( "ibs",          BSIM3v0_CBS,        IF_REAL,    "Ibs"),
 };
 
 IFparm BSIM3v0mPTable[] = { /* model parameters */
