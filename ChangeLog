@@ -1,7 +1,12 @@
+2011-04-15  Robert Larice
+ * src/spicelib/analysis/cktsens.c :
+   fix allocation and ownership of auxiliary CKTmatrix CKTrhs etc objects
+   FIXME: invoke release_context() when returning due to errors
+
 2011-04-12  Dietmar Warning
  * devices: merged bsim3v1a code with bsim3v0
  * devices: merged bsim3v1s code with bsim3v1
- * update this situation to DEVICES, configure.ac, src/Makefile.am, 
+ * update this situation to DEVICES, configure.ac, src/Makefile.am,
    spicelib/parser/inpdomod.c, inp2m.c, devices/dev.c
 
 2011-04-09  Robert Larice

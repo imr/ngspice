@@ -33,6 +33,16 @@ static int sens_temp(sgen *sg, CKTcircuit *ckt);
 static int count_steps(int type, double low, double high, int steps, double *stepsize);
 static double inc_freq(double freq, int type, double step_size);
 
+#define save_context(thing, place) {	    \
+    place = thing;			    \
+}
+
+#define release_context(thing, place)	    \
+    if(place) {				    \
+	thing = place;			    \
+	place = NULL;			    \
+    }
+
 
 /*
  *	Procedure:
@@ -75,6 +85,9 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	IFuid		*output_names, freq_name;
 	int		bypass;
 	int		type;
+	double		*saved_rhs = 0,
+			*saved_irhs = 0;
+	SMPmatrix	*saved_matrix = 0;
 
 #ifndef notdef
 #ifdef notdef
@@ -216,22 +229,13 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	bypass = ckt->CKTbypass;
 	ckt->CKTbypass = 0;
 
-	/* The unknown vector of node voltages overwrites rhs */
+	/* CKTop solves into CKTrhs and CKTmatrix,
+	 *	 CKTirhs is hopefully zero (fresh allocated ?) */
+
 	E = ckt->CKTrhs;
 	iE = ckt->CKTirhs;
- 	
-	/* The following two lines assigned a pointer to another shadowing
-	 * the previous definition and creating trouble when xfree() in 
-	 * NIdestroy tried to deallocate a non malloc'ed pointer 	 
-	 *
- 	 * Original code:
-	 * ckt->CKTrhsOld = E;
-	 * ckt->CKTirhsOld = iE;
-         */
-
-        *ckt->CKTrhsOld = *E;
-	*ckt->CKTirhsOld = *iE;
 	Y = ckt->CKTmatrix;
+
 #ifdef ASDEBUG
 	DEBUG(1) {
 		printf("Operating point:\n");
@@ -263,9 +267,6 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		}
 
 		if (freq != 0.0) {
-			ckt->CKTrhs = E;
-			ckt->CKTirhs = iE;
-			ckt->CKTmatrix = Y;
 
 			/* This generates Y in LU form */
 			ckt->CKTomega = 2.0 * M_PI * freq;
@@ -282,9 +283,6 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			if (error)
 				return error;
 
-			E = ckt->CKTrhs;
-			iE = ckt->CKTirhs;
-			Y = ckt->CKTmatrix;
 #ifdef notdef
 			for (j = 0; j <= ckt->CKTmaxOrder + 1; j++) {
 				/* XXX Free new states */
@@ -308,9 +306,18 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			}
 #endif
 
+			/* NIacIter solves into CKTrhsOld, CKTirhsOld and CKTmatrix */
+			E = ckt->CKTrhsOld;
+			iE = ckt->CKTirhsOld;
+			Y = ckt->CKTmatrix;
 		}
 
 		/* Use a different vector & matrix */
+
+		save_context(ckt->CKTrhs, saved_rhs);
+		save_context(ckt->CKTirhs, saved_irhs);
+		save_context(ckt->CKTmatrix, saved_matrix);
+
 		ckt->CKTrhs = delta_I;
 		ckt->CKTirhs = delta_iI;
 		ckt->CKTmatrix = delta_Y;
@@ -561,6 +568,10 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 		}
 
+		release_context(ckt->CKTrhs, saved_rhs);
+		release_context(ckt->CKTirhs, saved_irhs);
+		release_context(ckt->CKTmatrix, saved_matrix);
+
 		if (is_dc)
 			nvalue.v.vec.rVec = output_values;
 		else
@@ -582,13 +593,17 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		FREE(output_cvalues);	/* XXX free various vectors */
 	}
 
+	release_context(ckt->CKTrhs, saved_rhs);
+	release_context(ckt->CKTirhs, saved_irhs);
+	release_context(ckt->CKTmatrix, saved_matrix);
+
 	spDestroy(delta_Y);
 	FREE(delta_I);
 	FREE(delta_iI);
 
-	ckt->CKTrhs = E;
-	ckt->CKTirhs = iE;
-	ckt->CKTmatrix = Y;
+	FREE(delta_I_delta_Y);
+	FREE(delta_iI_delta_Y);
+
 	ckt->CKTbypass = bypass;
 
 #ifdef notdef
