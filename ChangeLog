@@ -1,4 +1,7 @@
-2011-04-15  Robert Larice
+2011-04-17 Dietmar Warning
+ * /bsim3v2/b3v2set.c, /bsim3/b3set.c: allow multiple call to setup w/ correct node collapsing
+ 
+ 2011-04-15  Robert Larice
  * src/spicelib/analysis/cktsens.c :
    fix allocation and ownership of auxiliary CKTmatrix CKTrhs etc objects
    FIXME: invoke release_context() when returning due to errors
