@@ -956,7 +956,7 @@ IFuid tmpName;
                  if(error) return(error);
                  here->BSIM3v32dNodePrime = tmp->number;
                  if (ckt->CKTcopyNodesets) {
-                   if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                   if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
                       if (tmpNode->nsGiven) {
                         tmp->nodeset=tmpNode->nodeset;
                         tmp->nsGiven=tmpNode->nsGiven;
