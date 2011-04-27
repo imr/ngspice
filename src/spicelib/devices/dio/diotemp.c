@@ -42,28 +42,28 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
         vtnom = CONSTKoverQ * model->DIOnomTemp;
         /* limit grading coeff to max of .9 */
         if(model->DIOgradingCoeff>.9) {
-            (*(SPfrontEnd->IFerror))(ERR_WARNING,
+            SPfrontEnd->IFerror (ERR_WARNING,
                     "%s: grading coefficient too large, limited to 0.9",
                     &(model->DIOmodName));
             model->DIOgradingCoeff=.9;
         }
         /* limit activation energy to min of .1 */
         if(model->DIOactivationEnergy<.1) {
-            (*(SPfrontEnd->IFerror))(ERR_WARNING,
+            SPfrontEnd->IFerror (ERR_WARNING,
                     "%s: activation energy too small, limited to 0.1",
                     &(model->DIOmodName));
             model->DIOactivationEnergy=.1;
         }
         /* limit depletion cap coeff to max of .95 */
         if(model->DIOdepletionCapCoeff>.95) {
-            (*(SPfrontEnd->IFerror))(ERR_WARNING,
+            SPfrontEnd->IFerror (ERR_WARNING,
                     "%s: coefficient Fc too large, limited to 0.95",
                     &(model->DIOmodName));
             model->DIOdepletionCapCoeff=.95;
         }
         /* limit sidewall depletion cap coeff to max of .95 */
         if(model->DIOdepletionSWcapCoeff>.95) {
-            (*(SPfrontEnd->IFerror))(ERR_WARNING,
+            SPfrontEnd->IFerror (ERR_WARNING,
                     "%s: coefficient Fcs too large, limited to 0.95",
                     &(model->DIOmodName));
             model->DIOdepletionSWcapCoeff=.95;
@@ -99,7 +99,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
              * to max of .9
              */
             if(here->DIOtGradingCoeff>.9) {
-              (*(SPfrontEnd->IFerror))(ERR_WARNING,
+              SPfrontEnd->IFerror (ERR_WARNING,
                     "%s: temperature adjusted grading coefficient too large, limited to 0.9",
                     &(here->DIOname));
               here->DIOtGradingCoeff=.9;
@@ -190,9 +190,9 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                     (void)sprintf(emsg,
                     "%%s: breakdown current increased to %g to resolve",
                             cbv);
-                    (*(SPfrontEnd->IFerror))(ERR_WARNING,emsg,&(here->DIOname));
+                    SPfrontEnd->IFerror (ERR_WARNING, emsg, &(here->DIOname));
                     FREE(emsg);
-                    (*(SPfrontEnd->IFerror))(ERR_WARNING,
+                    SPfrontEnd->IFerror (ERR_WARNING,
                     "incompatibility with specified saturation current",(IFuid*)NULL);
 #endif
                     xbv=model->DIObreakdownVoltage;
@@ -214,7 +214,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                     (void)sprintf(emsg,
                     "%%s: unable to match forward and reverse diode regions: bv = %g, ibv = %g",
                             xbv,xcbv);
-                    (*(SPfrontEnd->IFerror))(ERR_WARNING,emsg,&here->DIOname);
+                    SPfrontEnd->IFerror (ERR_WARNING, emsg, &here->DIOname);
                     FREE(emsg);
 #endif
                 }

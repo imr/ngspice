@@ -26,7 +26,7 @@ CKTbindNode(CKTcircuit *ckt, GENinstance *fast, int term, CKTnode *node)
     devs = devices();
     mappednode = node->number;
 
-    if (*((*devs[type]).DEVpublic.terms) >= term && term >0 ) {
+    if (*(devs[type]->DEVpublic.terms) >= term && term > 0) {
         switch(term) {
             default:
 		return E_NOTERM;

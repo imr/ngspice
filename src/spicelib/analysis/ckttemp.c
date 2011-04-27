@@ -26,9 +26,8 @@ CKTtemp(CKTcircuit *ckt)
     ckt->CKTvt = CONSTKoverQ * ckt->CKTtemp;
 
     for (i=0;i<DEVmaxnum;i++) {
-        if ( DEVices[i] && ((*DEVices[i]).DEVtemperature != NULL) &&
-                (ckt->CKThead[i] != NULL) ){
-            error = (*((*DEVices[i]).DEVtemperature))(ckt->CKThead[i],ckt);
+        if ( DEVices[i] && DEVices[i]->DEVtemperature && ckt->CKThead[i] ) {
+            error = DEVices[i]->DEVtemperature (ckt->CKThead[i], ckt);
             if(error) return(error);
         }
     }

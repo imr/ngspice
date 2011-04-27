@@ -43,9 +43,8 @@ register CKTcircuit *ckt;
             }
         }
         for (i=0;i<DEVmaxnum;i++) {
-            if ( ((*DEVices[i]).DEVsenLoad != NULL) &&
-                    (ckt->CKThead[i] != NULL) ){
-                error = (*((*DEVices[i]).DEVsenLoad))(ckt->CKThead[i],ckt);
+            if ( DEVices[i]->DEVsenLoad && ckt->CKThead[i] ) {
+                error = DEVices[i]->DEVsenLoad (ckt->CKThead[i], ckt);
                 if(error) return(error);
             }
         }
@@ -57,9 +56,8 @@ register CKTcircuit *ckt;
             }
         }
         for (i=0;i<DEVmaxnum;i++) {
-            if ( ((*DEVices[i]).DEVsenAcLoad != NULL)
-                    && (ckt->CKThead[i] != NULL) ){
-                error = (*((*DEVices[i]).DEVsenAcLoad))(ckt->CKThead[i],ckt);
+            if ( DEVices[i]->DEVsenAcLoad && ckt->CKThead[i] ) {
+                error = DEVices[i]->DEVsenAcLoad (ckt->CKThead[i], ckt);
                 if(error) return(error);
             }
         }

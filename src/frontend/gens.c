@@ -19,7 +19,7 @@ void
 wl_forall(wordlist *wl, void (*fn)(wordlist*, dgen*), dgen *data)
 {
 	while (wl) {
-		(*fn)(wl, data);
+		fn (wl, data);
 		wl = wl->wl_next;
 	}
 }
@@ -74,7 +74,7 @@ dgen_for_n(dgen *dg, int n, int (*fn) (dgen*, IFparm*, int), IFparm *data, int s
 	k = 0;
 	for (i = 0; dgxp && dgxp->dev_type_no == dnum && i < n; i++) {
 		/*printf("Loop at %d\n", i);*/
-		j = (*fn)(dgxp, data, subindex);
+		j = fn (dgxp, data, subindex);
 		if (j > k)
 			k = j;
 		dgen_next(&dgxp);

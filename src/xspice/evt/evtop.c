@@ -174,7 +174,7 @@ int EVTop(
         if(ckt->evt->data.statistics->op_alternations >=
                 ckt->evt->limits.max_op_alternations) {
 
-            (*(SPfrontEnd->IFerror)) (ERR_WARNING,
+            SPfrontEnd->IFerror (ERR_WARNING,
                 "Too many analog/event-driven solution alternations",
                 (IFuid *) NULL);
 
@@ -314,7 +314,7 @@ static void EVTnode_compare(
 
 
     /* Do compare based on changes in resolved node value only */
-    (*(g_evt_udn_info[udn_index]->compare)) (
+    g_evt_udn_info[udn_index]->compare (
             node1->node_value,
             node2->node_value,
             equal);

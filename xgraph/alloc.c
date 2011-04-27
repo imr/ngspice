@@ -13,7 +13,10 @@
  *	void		MemChain();
  *
  * $Log$
- * Revision 1.1  2004-01-25 09:00:49  pnenzi
+ * Revision 1.2  2011-04-27 18:30:17  rlar
+ * code cleanup
+ *
+ * Revision 1.1  2004/01/25 09:00:49  pnenzi
  *
  * Added xgraph plotting program.
  *
@@ -131,8 +134,8 @@ Ptr     tptr;
 	abort();
     }
 
-    ptr = (tptr == (Ptr) 0) ? (char *) (*routine) (n + OVERHEAD) :
-	(char *) (*routine) (tptr, n + OVERHEAD);
+    ptr = (tptr == (Ptr) 0) ? (char *) routine (n + OVERHEAD) :
+	(char *) routine (tptr, n + OVERHEAD);
 
     if (ptr == NIL(char)) {
 	if (tptr != (Ptr) 0)

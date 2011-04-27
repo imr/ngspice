@@ -28,7 +28,7 @@ com_where(wordlist *wl)
        fprintf(cp_err, "No unconverged node found.\n");
 	   return;
 	}
-	msg = (*ft_sim->nonconvErr)(ft_curckt->ci_ckt, 0);
+	msg = ft_sim->nonconvErr (ft_curckt->ci_ckt, 0);
 
 	printf("%s", msg);
 
@@ -37,7 +37,7 @@ com_where(wordlist *wl)
 
 /*
 	if (ft_curckt) {
-	    msg = (*ft_sim->nonconvErr)((void *) (ft_curckt->ci_ckt), 0);
+	    msg = ft_sim->nonconvErr (ft_curckt->ci_ckt, 0);
 	    fprintf(cp_out, "%s", msg);
 	} else {
 	    fprintf(cp_err, "Error: no circuit loaded.\n");

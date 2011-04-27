@@ -98,7 +98,7 @@ MOS3temp(GENmodel *inModel, CKTcircuit *ckt)
                 model->MOS3coeffDepLayWidth = sqrt(model->MOS3alpha);
             } else {
                 model->MOS3substrateDoping = 0;
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                SPfrontEnd->IFerror (ERR_FATAL,
                         "%s: Nsub < Ni ",&(model->MOS3modName));
                 return(E_BADPARM);
             }
@@ -193,7 +193,7 @@ MOS3temp(GENmodel *inModel, CKTcircuit *ckt)
 
             if(here->MOS3l - 2 * model->MOS3latDiff +
                                  model->MOS3lengthAdjust <= 0) {
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                SPfrontEnd->IFerror (ERR_FATAL,
                         "%s: effective channel length less than zero",
                         &(here->MOS3name));
                 return(E_PARMVAL);
@@ -201,7 +201,7 @@ MOS3temp(GENmodel *inModel, CKTcircuit *ckt)
 
             if(here->MOS3w - 2 * model->MOS3widthNarrow +
                                  model->MOS3widthAdjust <= 0) {
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                SPfrontEnd->IFerror (ERR_FATAL,
                         "%s: effective channel width less than zero",
                         &(here->MOS3name));
                 return(E_PARMVAL);

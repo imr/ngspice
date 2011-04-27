@@ -65,7 +65,7 @@ char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 		    rtn = (INPerror(E_PARMVAL));
 		    goto quit;
 		}
-		error = (*(ft_sim->setInstanceParm)) (ckt, fast,
+		error = ft_sim->setInstanceParm (ckt, fast,
 						      (*(ft_sim->devices)
 						       [dev]).
 						      instanceParms[i].id,

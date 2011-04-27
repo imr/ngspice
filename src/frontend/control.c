@@ -228,14 +228,14 @@ docommand(wordlist *wlist)
         {
             if (nargs < command->co_minargs) {
 		if (command->co_argfn) {
-		    (*command->co_argfn) (wlist->wl_next, command);
+		    command->co_argfn (wlist->wl_next, command);
 		} else {
 		    fprintf(cp_err, "%s: too few args.\n", s);
 		}
             } else if (nargs > command->co_maxargs) {
                 fprintf(cp_err, "%s: too many args.\n", s);
             } else {
-                (*command->co_func) (wlist->wl_next);
+                command->co_func (wlist->wl_next);
             }
         }
 

@@ -27,7 +27,7 @@ CKTask(CKTcircuit *ckt, GENinstance *fast, int which, IFvalue *value, IFvalue *s
     SPICEdev **DEVices;
 
     DEVices = devices();
-    if((*DEVices[type]).DEVask) {
+    if(DEVices[type]->DEVask) {
         error = DEVices[type]->DEVask(ckt,
                 fast, which, value, selector);
     } else {

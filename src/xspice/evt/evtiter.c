@@ -187,16 +187,16 @@ int EVTiter(
             /* Resolve the node value if multiple outputs on it */
             /* and test if new node value is different than old value */
             if(num_outputs > 1) {
-                (*(g_evt_udn_info[udn_index]->resolve))
+                g_evt_udn_info[udn_index]->resolve
                         (num_outputs,
                         rhs[node_index].output_value,
                         rhs[node_index].node_value);
-                (*(g_evt_udn_info[udn_index]->compare))
+                g_evt_udn_info[udn_index]->compare
                         (rhs[node_index].node_value,
                         rhsold[node_index].node_value,
                         &equal);
                 if(! equal) {
-                    (*(g_evt_udn_info[udn_index]->copy))
+                    g_evt_udn_info[udn_index]->copy
                             (rhs[node_index].node_value,
                             rhsold[node_index].node_value);
                 }
@@ -211,10 +211,10 @@ int EVTiter(
             /* to the node in the to_call list of inst queue */
             if(! equal) {
                 if(node_table[node_index]->invert) {
-                    (*(g_evt_udn_info[udn_index]->copy))
+                    g_evt_udn_info[udn_index]->copy
                             (rhsold[node_index].node_value,
                             rhsold[node_index].inverted_value);
-                    (*(g_evt_udn_info[udn_index]->invert))
+                    g_evt_udn_info[udn_index]->invert
                             (rhsold[node_index].inverted_value);
                 }
                 inst_list = node_table[node_index]->inst_list;
@@ -292,7 +292,7 @@ int EVTiter(
     }
     FREE(err_msg);
 
-    (*(SPfrontEnd->IFerror)) (ERR_WARNING,
+    SPfrontEnd->IFerror (ERR_WARNING,
         "Too many iteration passes in event-driven circuits",
         (IFuid *) NULL);
     return(E_ITERLIM);

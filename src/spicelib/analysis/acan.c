@@ -129,7 +129,7 @@ ACan(CKTcircuit *ckt, int restart)
          * Moreover the begin plot has not even been done yet at this 
          * point... 
          */
-        (*(SPfrontEnd->OUTpBeginPlot))(ckt, ckt->CKTcurJob,
+        SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
             ckt->CKTcurJob->JOBname,(IFuid)NULL,IF_REAL,numNames,nameList,
             IF_REAL,&acPlot);
         tfree(nameList);
@@ -138,7 +138,7 @@ ACan(CKTcircuit *ckt, int restart)
         CKTdump(ckt,(double)0,acPlot);
         ipc_send_dcop_suffix();
 
-        (*(SPfrontEnd->OUTendPlot))(acPlot);
+        SPfrontEnd->OUTendPlot (acPlot);
     }
 /* gtri - end - wbk */
 #endif
@@ -152,18 +152,18 @@ ACan(CKTcircuit *ckt, int restart)
 
 	if (ckt->CKTkeepOpInfo) {
 	    /* Dump operating point. */
-	    error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
+	    error = SPfrontEnd->OUTpBeginPlot (ckt,
 		ckt->CKTcurJob, "AC Operating Point",
 		(IFuid)NULL,IF_REAL,numNames,nameList, IF_REAL,&plot);
 	    if(error) return(error);
 	    CKTdump(ckt,(double)0,plot);
-	    (*(SPfrontEnd->OUTendPlot))(plot);
+	    SPfrontEnd->OUTendPlot (plot);
 	    plot = NULL;
 	}
 
-        (*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
+        SPfrontEnd->IFnewUid (ckt, &freqUid, (IFuid)NULL,
                 "frequency", UID_OTHER, NULL);
-        error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
+        error = SPfrontEnd->OUTpBeginPlot (ckt,
 		ckt->CKTcurJob,
                 ckt->CKTcurJob->JOBname,freqUid,IF_REAL,numNames,nameList,
                 IF_COMPLEX,&acPlot);
@@ -171,7 +171,7 @@ ACan(CKTcircuit *ckt, int restart)
 	if(error) return(error);
 
         if (((ACAN*)ckt->CKTcurJob)->ACstepType != LINEAR) {
-	    (*(SPfrontEnd->OUTattributes))((void *)acPlot,NULL,
+	    SPfrontEnd->OUTattributes (acPlot, NULL,
 		    OUT_SCALE_LOG, NULL);
 	}
         freq = ((ACAN*)ckt->CKTcurJob)->ACstartFreq;
@@ -180,7 +180,7 @@ ACan(CKTcircuit *ckt, int restart)
         freq = ((ACAN*)ckt->CKTcurJob)->ACsaveFreq;
         ((ACAN*)ckt->CKTcurJob)->ACsaveFreq = 0; /* clear the 'old' frequency */
 	/* fix resume? saj*/
-	error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
+	error = SPfrontEnd->OUTpBeginPlot (ckt,
 		ckt->CKTcurJob,
                 ckt->CKTcurJob->JOBname,freqUid,IF_REAL,numNames,nameList,
                 IF_COMPLEX,&acPlot);
@@ -222,7 +222,7 @@ ACan(CKTcircuit *ckt, int restart)
 
     /* main loop through all scheduled frequencies */
     while(freq <= ((ACAN*)ckt->CKTcurJob)->ACstopFreq+freqTol) {
-        if( (*(SPfrontEnd->IFpauseTest))() ) { 
+        if(SPfrontEnd->IFpauseTest()) {
             /* user asked us to pause via an interrupt */
             ((ACAN*)ckt->CKTcurJob)->ACsaveFreq = freq;
             return(E_PAUSE);
@@ -373,7 +373,7 @@ ACan(CKTcircuit *ckt, int restart)
 
     }
 endsweep:
-    (*(SPfrontEnd->OUTendPlot))(acPlot);
+    SPfrontEnd->OUTendPlot (acPlot);
     acPlot = NULL;
     ckt->CKTcurrentAnalysis = 0;
     ckt->CKTstat->STATacTime += SPfrontEnd->IFseconds() - startTime;
@@ -418,8 +418,8 @@ CKTacLoad(CKTcircuit *ckt)
     SMPcClear(ckt->CKTmatrix);
 
     for (i=0;i<DEVmaxnum;i++) {
-        if ( DEVices[i] && ((*DEVices[i]).DEVacLoad != NULL) && (ckt->CKThead[i] != NULL) ){
-            error = (*((*DEVices[i]).DEVacLoad))(ckt->CKThead[i],ckt);
+        if ( DEVices[i] && DEVices[i]->DEVacLoad && ckt->CKThead[i] ) {
+            error = DEVices[i]->DEVacLoad (ckt->CKThead[i], ckt);
 #ifdef PARALLEL_ARCH
 	    if (error) goto combine;
 #else

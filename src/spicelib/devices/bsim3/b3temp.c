@@ -198,7 +198,7 @@ int Size_Not_Found;
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM3modName;
                       namarray[1] = here->BSIM3name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                      SPfrontEnd->IFerror (ERR_FATAL,
                       "BSIM3: mosfet %s, model %s: Effective channel length <= 0",
                        namarray);
                       return(E_BADPARM);
@@ -209,7 +209,7 @@ int Size_Not_Found;
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM3modName;
                       namarray[1] = here->BSIM3name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                      SPfrontEnd->IFerror (ERR_FATAL,
                       "BSIM3: mosfet %s, model %s: Effective channel width <= 0",
                        namarray);
                       return(E_BADPARM);
@@ -220,7 +220,7 @@ int Size_Not_Found;
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM3modName;
                       namarray[1] = here->BSIM3name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                      SPfrontEnd->IFerror (ERR_FATAL,
                       "BSIM3: mosfet %s, model %s: Effective channel length for C-V <= 0",
                        namarray);
                       return(E_BADPARM);
@@ -231,7 +231,7 @@ int Size_Not_Found;
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM3modName;
                       namarray[1] = here->BSIM3name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                      SPfrontEnd->IFerror (ERR_FATAL,
                       "BSIM3: mosfet %s, model %s: Effective channel width for C-V <= 0",
                        namarray);
                       return(E_BADPARM);
@@ -610,7 +610,7 @@ int Size_Not_Found;
 		  {   IFuid namarray[2];
                       namarray[0] = model->BSIM3modName;
                       namarray[1] = here->BSIM3name;
-                      (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during BSIM3V3.2 parameter checking for %s in model %s", namarray);
+                      SPfrontEnd->IFerror (ERR_FATAL, "Fatal error(s) detected during BSIM3V3.2 parameter checking for %s in model %s", namarray);
                       return(E_BADPARM);   
 		  }
 

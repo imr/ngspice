@@ -354,7 +354,7 @@ MIFsetup(
                             IFuid names[2];
                             names[0] = here->MIFname;
                             names[1] = (IFuid) here->conn[i]->port[j]->vsource_str;
-                            (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                            SPfrontEnd->IFerror (ERR_FATAL,
                                     "%s: unknown controlling source %s",names);
                             return(E_BADPARM);
                         }

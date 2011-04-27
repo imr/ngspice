@@ -355,21 +355,21 @@ static int EVTsetup_data(
             CKALLOC(rhs->output_value, num_outputs, void *)
             CKALLOC(rhsold->output_value, num_outputs, void *)
             for(j = 0; j < num_outputs; j++) {
-                (*(g_evt_udn_info[udn_index]->create)) (&(rhs->output_value[j]));
-                (*(g_evt_udn_info[udn_index]->initialize)) (rhs->output_value[j]);
-                (*(g_evt_udn_info[udn_index]->create)) (&(rhsold->output_value[j]));
-                (*(g_evt_udn_info[udn_index]->initialize)) (rhsold->output_value[j]);
+                g_evt_udn_info[udn_index]->create (&(rhs->output_value[j]));
+                g_evt_udn_info[udn_index]->initialize (rhs->output_value[j]);
+                g_evt_udn_info[udn_index]->create (&(rhsold->output_value[j]));
+                g_evt_udn_info[udn_index]->initialize (rhsold->output_value[j]);
             }
         }
-        (*(g_evt_udn_info[udn_index]->create)) (&(rhs->node_value));
-        (*(g_evt_udn_info[udn_index]->initialize)) (rhs->node_value);
-        (*(g_evt_udn_info[udn_index]->create)) (&(rhsold->node_value));
-        (*(g_evt_udn_info[udn_index]->initialize)) (rhsold->node_value);
+        g_evt_udn_info[udn_index]->create (&(rhs->node_value));
+        g_evt_udn_info[udn_index]->initialize (rhs->node_value);
+        g_evt_udn_info[udn_index]->create (&(rhsold->node_value));
+        g_evt_udn_info[udn_index]->initialize (rhsold->node_value);
         if(invert) {
-            (*(g_evt_udn_info[udn_index]->create)) (&(rhs->inverted_value));
-            (*(g_evt_udn_info[udn_index]->initialize)) (rhs->inverted_value);
-            (*(g_evt_udn_info[udn_index]->create)) (&(rhsold->inverted_value));
-            (*(g_evt_udn_info[udn_index]->initialize)) (rhsold->inverted_value);
+            g_evt_udn_info[udn_index]->create (&(rhs->inverted_value));
+            g_evt_udn_info[udn_index]->initialize (rhs->inverted_value);
+            g_evt_udn_info[udn_index]->create (&(rhsold->inverted_value));
+            g_evt_udn_info[udn_index]->initialize (rhsold->inverted_value);
         }
 
         /* Initialize the total load value to zero */

@@ -378,7 +378,7 @@ int Size_Not_Found;
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM4v2modName;
                       namarray[1] = here->BSIM4v2name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                      SPfrontEnd->IFerror (ERR_FATAL,
                       "BSIM4v2: mosfet %s, model %s: Effective channel length <= 0",
                        namarray);
                       return(E_BADPARM);
@@ -389,7 +389,7 @@ int Size_Not_Found;
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM4v2modName;
                       namarray[1] = here->BSIM4v2name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                      SPfrontEnd->IFerror (ERR_FATAL,
                       "BSIM4v2: mosfet %s, model %s: Effective channel width <= 0",
                        namarray);
                       return(E_BADPARM);
@@ -400,7 +400,7 @@ int Size_Not_Found;
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM4v2modName;
                       namarray[1] = here->BSIM4v2name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                      SPfrontEnd->IFerror (ERR_FATAL,
                       "BSIM4v2: mosfet %s, model %s: Effective channel length for C-V <= 0",
                        namarray);
                       return(E_BADPARM);
@@ -411,7 +411,7 @@ int Size_Not_Found;
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM4v2modName;
                       namarray[1] = here->BSIM4v2name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                      SPfrontEnd->IFerror (ERR_FATAL,
                       "BSIM4v2: mosfet %s, model %s: Effective channel width for C-V <= 0",
                        namarray);
                       return(E_BADPARM);
@@ -422,7 +422,7 @@ int Size_Not_Found;
                   {   IFuid namarray[2];
                       namarray[0] = model->BSIM4v2modName;
                       namarray[1] = here->BSIM4v2name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                      SPfrontEnd->IFerror (ERR_FATAL,
                       "BSIM4v2: mosfet %s, model %s: Effective channel width for S/D junctions <= 0",
                        namarray);
                       return(E_BADPARM);
@@ -1488,7 +1488,7 @@ int Size_Not_Found;
               {   IFuid namarray[2];
                   namarray[0] = model->BSIM4v2modName;
                   namarray[1] = here->BSIM4v2name;
-                  (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during BSIM4v2.2.1 parameter checking for %s in model %s", namarray);
+                  SPfrontEnd->IFerror (ERR_FATAL, "Fatal error(s) detected during BSIM4v2.2.1 parameter checking for %s in model %s", namarray);
                   return(E_BADPARM);
               }
          } /* End instance */

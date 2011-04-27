@@ -442,7 +442,7 @@ MIFload(
             /* ******************* */
             /* Call the code model */
             /* ******************* */
-            (*(DEVices[mod_type]->DEVpublic.cm_func)) (&cm_data);
+            DEVices[mod_type]->DEVpublic.cm_func (&cm_data);
 
             /* Automatically compute partials if requested by .options auto_partial */
             /* or by model through call to cm_analog_auto_partial() in DC or TRAN analysis */
@@ -829,7 +829,7 @@ static void MIFauto_partial(
 
 
             /* call model to compute new outputs */
-            (*cm_func)(cm_data);
+            cm_func (cm_data);
 
 
             /* ******************************************************* */
@@ -888,7 +888,7 @@ static void MIFauto_partial(
     /* the model may compute other state values that cannot be restored */
     /* to the nominal condition from here */
 
-    (*cm_func)(cm_data);
+    cm_func (cm_data);
 
 }
 

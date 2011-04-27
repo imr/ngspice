@@ -54,7 +54,7 @@ B1temp(GENmodel *inModel, CKTcircuit *ckt)
                 IFuid namarray[2];
                 namarray[0] = model->B1modName;
                 namarray[1] = here->B1name;
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                SPfrontEnd->IFerror (ERR_FATAL,
                     "B1: mosfet %s, model %s: Effective channel length <=0",
                     namarray);
                 return(E_BADPARM);
@@ -63,7 +63,7 @@ B1temp(GENmodel *inModel, CKTcircuit *ckt)
                 IFuid namarray[2];
                 namarray[0] = model->B1modName;
                 namarray[1] = here->B1name;
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                SPfrontEnd->IFerror (ERR_FATAL,
                     "B1: mosfet %s, model %s: Effective channel width <=0",
                     namarray);
                 return(E_BADPARM);

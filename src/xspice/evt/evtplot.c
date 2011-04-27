@@ -176,7 +176,7 @@ struct dvec *EVTfindvec(
 
     /* Get the next value by calling the appropriate UDN plot_val function */
     value = 0.0;
-    (*(g_evt_udn_info[udn_index]->plot_val)) (event->node_value,
+    g_evt_udn_info[udn_index]->plot_val (event->node_value,
                                               member,
                                               &value);
 

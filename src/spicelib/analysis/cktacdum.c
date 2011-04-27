@@ -36,7 +36,7 @@ CKTacDump(CKTcircuit *ckt, double freq, void *plot)
         data[i].real = rhsold[i+1];
         data[i].imag = irhsold[i+1];
     }
-    (*(SPfrontEnd->OUTpData))(plot,&freqData,&valueData);
+    SPfrontEnd->OUTpData (plot, &freqData, &valueData);
     FREE(data);
     return(OK);
 }

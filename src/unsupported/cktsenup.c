@@ -30,9 +30,8 @@ register CKTcircuit *ckt;
 
 
     for (i=0;i<DEVmaxnum;i++) {
-        if ( ((*DEVices[i]).DEVsenUpdate != NULL) 
-            && (ckt->CKThead[i] != NULL) ){
-            error = (*((*DEVices[i]).DEVsenUpdate))(ckt->CKThead[i],ckt);
+        if ( DEVices[i]->DEVsenUpdate && ckt->CKThead[i] ) {
+            error = DEVices[i]->DEVsenUpdate (ckt->CKThead[i], ckt);
             if(error) return(error);
         }
     }

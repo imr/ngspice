@@ -52,7 +52,7 @@ CKTload(CKTcircuit *ckt)
     /* gtri - begin - Put resistors to ground at all nodes */
 #endif
 
-    startTime = (*(SPfrontEnd->IFseconds))();
+    startTime = SPfrontEnd->IFseconds();
     size = SMPmatSize(ckt->CKTmatrix);
     for (i=0;i<=size;i++) {
         *(ckt->CKTrhs+i)=0;
@@ -63,14 +63,14 @@ CKTload(CKTcircuit *ckt)
 #endif /* STEPDEBUG */
 
     for (i=0;i<DEVmaxnum;i++) {
-        if ( DEVices[i] && ((*DEVices[i]).DEVload != NULL) && (ckt->CKThead[i] != NULL) ){
-            error = (*((*DEVices[i]).DEVload))(ckt->CKThead[i],ckt);
+        if ( DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i] ) {
+            error = DEVices[i]->DEVload (ckt->CKThead[i], ckt);
 	    if (ckt->CKTnoncon)
 		ckt->CKTtroubleNode = 0;
 #ifdef STEPDEBUG
             if(noncon != ckt->CKTnoncon) {
                 printf("device type %s nonconvergence\n",
-                        (*DEVices[i]).DEVpublic.name);
+                        DEVices[i]->DEVpublic.name);
                 noncon = ckt->CKTnoncon;
             }
 #endif /* STEPDEBUG */

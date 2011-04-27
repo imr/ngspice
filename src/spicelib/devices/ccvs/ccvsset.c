@@ -32,7 +32,7 @@ CCVSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here=here->CCVSnextInstance) {
             
             if(here->CCVSposNode == here->CCVSnegNode) {
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                SPfrontEnd->IFerror (ERR_FATAL,
                         "instance %s is a shorted CCVS", &here->CCVSname);
                 return(E_UNSUPP);
             }
@@ -47,7 +47,7 @@ CCVSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 IFuid namarray[2];
                 namarray[0] = here->CCVSname;
                 namarray[1] = here->CCVScontName;
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                SPfrontEnd->IFerror (ERR_FATAL,
                         "%s: unknown controlling source %s",namarray);
                 return(E_BADPARM);
             }

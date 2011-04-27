@@ -30,7 +30,7 @@
 #define do_hash(key, table)\
     ((table->hash == st_ptrhash) ? ST_PTRHASH((key),(table)->num_bins) :\
      (table->hash == st_numhash) ? ST_NUMHASH((key), (table)->num_bins) :\
-     (*table->hash)((key), (table)->num_bins))
+     table->hash ((key), (table)->num_bins))
 
 char    st_pkg_name[] = "st";
 
@@ -416,7 +416,7 @@ char   *arg;
 	last = &table->bins[i];
 	ptr = *last;
 	while (ptr != nil(st_table_entry)) {
-	    retval = (*func) (ptr->key, ptr->record, arg);
+	    retval = func (ptr->key, ptr->record, arg);
 	    switch (retval) {
 	    case ST_CONTINUE:
 		last = &ptr->next;

@@ -35,17 +35,16 @@ CKTpName(char *parm, IFvalue *val, CKTcircuit *ckt, int dev, char *name, GENinst
 
     NG_IGNORE(name);
 
-    for(i=0;i<(*(*DEVices[dev]).DEVpublic.numInstanceParms);i++) {
-        if(strcmp(parm,
-                ((*DEVices[dev]).DEVpublic.instanceParms[i].keyword))==0) {
+    for(i = 0 ; i < *(DEVices[dev]->DEVpublic.numInstanceParms) ; i++) {
+        if(!strcmp(parm, DEVices[dev]->DEVpublic.instanceParms[i].keyword)) {
             error = CKTparam(ckt, *fast,
-                    (*DEVices[dev]).DEVpublic.instanceParms[i].id,val,
+                    DEVices[dev]->DEVpublic.instanceParms[i].id, val,
                     (IFvalue *)NULL);
             if(error) return(error);
             break;
         }
     }
-    if(i==(*(*DEVices[dev]).DEVpublic.numInstanceParms)) {
+    if(i == *(DEVices[dev]->DEVpublic.numInstanceParms)) {
         return(E_BADPARM);
     }
     return(OK);

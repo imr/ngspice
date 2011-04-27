@@ -40,7 +40,7 @@ INPaName(char *parm, IFvalue * val, CKTcircuit *ckt, int *dev, char *devnam,
      * (name, type, direct pointer) - the type and direct pointer
      * WILL be set on return unless error is not OK
      */
-    error = (*(sim->findInstance)) (ckt, dev, fast, devnam, (GENmodel *) NULL,
+    error = sim->findInstance (ckt, dev, fast, devnam, (GENmodel *) NULL,
 				    (char *) NULL);
     if (error)
 	return (error);
@@ -58,7 +58,7 @@ INPaName(char *parm, IFvalue * val, CKTcircuit *ckt, int *dev, char *devnam,
 	     * above and put the results in the IFvalue structure our caller
 	     * gave us originally
 	     */
-	    error = (*(sim->askInstanceQuest)) (ckt, *fast,
+	    error = sim->askInstanceQuest (ckt, *fast,
 						(*(sim->devices)[*dev]).
 						instanceParms[i].id, val,
 						selector);

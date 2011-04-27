@@ -445,8 +445,8 @@ vec_get(const char *vec_name)
               * if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
               */
 
-            /* vv = (*if_getparam)(ft_curckt->ci_ckt, &name, param, 0, 0); */
-	    vv = (*if_getparam)(ft_curckt->ci_ckt, &name, param, 0, 0);	
+            /* vv = if_getparam (ft_curckt->ci_ckt, &name, param, 0, 0); */
+	    vv = if_getparam (ft_curckt->ci_ckt, &name, param, 0, 0);
 	    if (!vv) {
 	        tfree(whole);
 		tfree(wd);

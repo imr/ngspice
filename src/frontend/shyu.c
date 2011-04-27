@@ -61,14 +61,14 @@ if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
     INPgetTok(&line,&token,1);
 
     if(ft_curckt->ci_specTask) {
-        err=(*(ft_sim->deleteTask))(ft_curckt->ci_ckt,
+        err = ft_sim->deleteTask (ft_curckt->ci_ckt,
         ft_curckt->ci_specTask);
         if(err) {
             ft_sperror(err,"deleteTask");
             return(0); /* temporary */
         }
     }
-    err = (*(ft_sim->newTask))(ft_curckt->ci_ckt,
+    err = ft_sim->newTask (ft_curckt->ci_ckt,
 	    &(ft_curckt->ci_specTask), "special",
 	    &(ft_curckt->ci_defTask));
     if(err) {
@@ -82,7 +82,7 @@ if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
         }
     } 
     if(which != -1) {
-        err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,"options",
+        err = ft_sim->newAnalysis (ft_curckt->ci_ckt, which, "options",
 		&(ft_curckt->ci_specOpt), ft_curckt->ci_specTask);
         if(err) {
             ft_sperror(err,"createOptions");
@@ -103,7 +103,7 @@ if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
         }
     } 
     if(which != -1) {
-        err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,"sense",
+        err = ft_sim->newAnalysis (ft_curckt->ci_ckt, which, "sense",
         &(senseJob),ft_curckt->ci_specTask);
         if(err) {
             ft_sperror(err,"createSense");
@@ -126,7 +126,7 @@ if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
             }
         } 
         if(which != -1) {
-            err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,"acan",
+            err = ft_sim->newAnalysis (ft_curckt->ci_ckt, which, "acan",
             &(acJob),ft_curckt->ci_specTask);
             if(err) {
                 ft_sperror(err,"createAC"); /* or similar error message */
@@ -170,7 +170,7 @@ if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
             "DC operating point analysis unsupported\n"));
         }
         else {
-            err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,"dcop", 
+            err = ft_sim->newAnalysis (ft_curckt->ci_ckt, which, "dcop",
                     &(opJob),ft_curckt->ci_specTask);
             if(err) {
                 ft_sperror(err,"createOP"); /* or similar error message */
@@ -192,7 +192,7 @@ if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
             current->error = INPerrCat(current->error,INPmkTemp(
             "DC transfer curve analysis unsupported\n"));
         }
-        err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,"DCtransfer", 
+        err = ft_sim->newAnalysis (ft_curckt->ci_ckt, which, "DCtransfer",
                 &(dcJob),ft_curckt->ci_specTask);
         if(err) {
             ft_sperror(err,"createOP"); /* or similar error message */
@@ -239,7 +239,7 @@ if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
             }
         } 
         if(which != -1) {
-            err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,"tranan",
+            err = ft_sim->newAnalysis (ft_curckt->ci_ckt, which, "tranan",
             &(tranJob),ft_curckt->ci_specTask);
             if(err) {
                 ft_sperror(err,"createTRAN"); 
@@ -304,7 +304,7 @@ next:
                     dataType & IF_FLAG) {
                     /* one of the keywords! */
                     ptemp.iValue = 1;
-                    error = (*(ft_sim->setAnalysisParm))(ckt,
+                    error = ft_sim->setAnalysisParm (ckt,
                         senseJob, ft_sim->analyses[save]->
                         analysisParms[i].id,&ptemp,(IFvalue*)NULL);
                     if(error) current->error = INPerrCat(
@@ -314,7 +314,7 @@ next:
                     parm = INPgetValue(ckt,&line,ft_sim->
                         analyses[save]->analysisParms[i].
                         dataType,tab);
-                    error = (*(ft_sim->setAnalysisParm))(ckt,
+                    error = ft_sim->setAnalysisParm (ckt,
                         senseJob, ft_sim->analyses[save]->
                         analysisParms[i].id,parm,(IFvalue*)NULL);
                     if(error) current->error = INPerrCat(
@@ -333,7 +333,7 @@ next:
 
 
 
-    if((err = (*(ft_sim->doAnalyses))(ckt, 1, ft_curckt->ci_curTask))!=OK){
+    if((err = ft_sim->doAnalyses (ckt, 1, ft_curckt->ci_curTask)) != OK) {
         ft_sperror(err, "doAnalyses");
         return(0);/* temporary */
     }

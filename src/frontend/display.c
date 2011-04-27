@@ -172,7 +172,7 @@ DevInit(void)
 	externalerror(
 	 "no graphics interface;\n please check if X-server is running, \n or ngspice is compiled properly (see INSTALL)");
 	dispdev = FindDev("error");
-    } else if ((*(dispdev->Init))()) {
+    } else if (dispdev->Init()) {
       fprintf(cp_err,
         "Warning: can't initialize display device for graphics.\n");
       dispdev = FindDev("error");
@@ -185,69 +185,69 @@ int
 NewViewport(GRAPH *pgraph)
 {
 
-    return (*(dispdev->NewViewport))(pgraph);
+    return dispdev->NewViewport (pgraph);
 
 }
 
 void DevClose(void)
 {
 
-    (*(dispdev->Close))();
+    dispdev->Close();
 
 }
 
 void DevClear(void)
 {
 
-    (*(dispdev->Clear))();
+    dispdev->Clear();
 
 }
 
 void DevDrawLine(int x1, int y1, int x2, int y2)
 {
-    (*(dispdev->DrawLine))(x1, y1, x2, y2);
+    dispdev->DrawLine (x1, y1, x2, y2);
 
 }
 
 void DevDrawArc(int x0, int y0, int radius, double theta, double delta_theta)
 {
 
-    (*(dispdev->DrawArc))(x0, y0, radius, theta, delta_theta);
+    dispdev->DrawArc (x0, y0, radius, theta, delta_theta);
 
 }
 
 void DevDrawText(char *text, int x, int y)
 {
 
-    (*(dispdev->DrawText))(text, x, y);
+    dispdev->DrawText (text, x, y);
 
 }
 
 void DefineColor(int colorid, double red, double green, double blue)
 {
 
-    (*(dispdev->DefineColor))(colorid, red, green, blue);
+    dispdev->DefineColor (colorid, red, green, blue);
 
 }
 
 void DefineLinestyle(int linestyleid, int mask)
 {
 
-    (*(dispdev->DefineLinestyle))(linestyleid, mask);
+    dispdev->DefineLinestyle (linestyleid, mask);
 
 }
 
 void SetLinestyle(int linestyleid)
 {
 
-    (*(dispdev->SetLinestyle))(linestyleid);
+    dispdev->SetLinestyle (linestyleid);
 
 }
 
 void SetColor(int colorid)
 {
 
-    (*(dispdev->SetColor))(colorid);
+    dispdev->SetColor (colorid);
 
 }
 
@@ -255,7 +255,7 @@ void DevUpdate(void)
 {
 
     if (dispdev)
-	    (*(dispdev->Update))();
+	    dispdev->Update();
 
 }
 
@@ -303,14 +303,14 @@ gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny)
 void DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny)
 {
 
-    (*(dispdev->DatatoScreen))(graph, x, y, screenx, screeny);
+    dispdev->DatatoScreen (graph, x, y, screenx, screeny);
 
 }
 
 void Input(REQUEST *request, RESPONSE *response)
 {
 
-    (*(dispdev->Input))(request, response);
+    dispdev->Input (request, response);
 
 }
 
@@ -393,9 +393,9 @@ int DevSwitch(char *devname)
         lastdev = NULL;
         return (1);
       }
-      (*(dispdev->Init))();
+      dispdev->Init();
     } else {
-      (*(dispdev->Close))();
+      dispdev->Close();
       dispdev = lastdev;
       lastdev = NULL;
     }

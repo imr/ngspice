@@ -47,7 +47,7 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
                 }
             }
 
-            if( (*(here->ASRCtree->IFeval))(here->ASRCtree, ckt->CKTgmin, &rhs,
+            if( here->ASRCtree->IFeval (here->ASRCtree, ckt->CKTgmin, &rhs,
                     asrc_vals,asrc_derivs) == OK){
 
                 prev = here->ASRCprev_value;

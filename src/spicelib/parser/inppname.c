@@ -32,7 +32,7 @@ int INPpName(char *parm, IFvalue * val, CKTcircuit *ckt, int dev, GENinstance *f
 		   ((*(ft_sim->devices)[dev]).instanceParms[i].keyword)) ==
 	    0) {
 	    error =
-		(*(ft_sim->setInstanceParm)) (ckt, fast,
+		ft_sim->setInstanceParm (ckt, fast,
 					      (*(ft_sim->devices)[dev]).
 					      instanceParms[i].id, val,
 					      (IFvalue *) NULL);

@@ -179,7 +179,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 					sg->ptable[sg->param].keyword);
 			}
 
-			(*SPfrontEnd->IFnewUid)(ckt,
+			SPfrontEnd->IFnewUid (ckt,
 				output_names + k, NULL,
 				namebuf, UID_OTHER, NULL);
 			k += 1;
@@ -190,12 +190,12 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			freq_name = NULL;
 		} else {
 			type = IF_COMPLEX;
-			(*SPfrontEnd->IFnewUid)(ckt,
+			SPfrontEnd->IFnewUid (ckt,
 				&freq_name, NULL,
 				"frequency", UID_OTHER, NULL);
 		}
 
-		error = (*SPfrontEnd->OUTpBeginPlot)(ckt,
+		error = SPfrontEnd->OUTpBeginPlot (ckt,
 			ckt->CKTcurJob,
 			ckt->CKTcurJob->JOBname, freq_name, IF_REAL, num_vars,
 			output_names, type, (void **) &sen_data);
@@ -210,7 +210,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			output_values = NULL;
 			output_cvalues = NEWN(IFcomplex, num_vars);
 			if (sen_info->step_type != SENS_LINEAR)
-			    (*(SPfrontEnd->OUTattributes))((void *)sen_data,
+			    SPfrontEnd->OUTattributes (sen_data,
 				    NULL, OUT_SCALE_LOG, NULL);
 
 		}
@@ -256,7 +256,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 		n = 0;
 
-		if ((*SPfrontEnd->IFpauseTest)( )) {
+		if (SPfrontEnd->IFpauseTest()) {
 			/* XXX Save State */
 			return E_PAUSE;
 		}
@@ -363,7 +363,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 			fn = DEVices[sg->dev]->DEVsetup;
 			if (fn)
-				(*fn)(delta_Y, sg->model, ckt,
+				fn (delta_Y, sg->model, ckt,
 					/* XXXX insert old state base here ?? */
 					&ckt->CKTnumStates);
 
@@ -578,14 +578,14 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			nvalue.v.vec.cVec = output_cvalues;
 
 		value.rValue = freq;
-		
-		(*(SPfrontEnd->OUTpData))(sen_data, &value, &nvalue);
+
+		SPfrontEnd->OUTpData (sen_data, &value, &nvalue);
 
 		freq = inc_freq(freq, sen_info->step_type, step_size);
 
 	}
 
-	(*SPfrontEnd->OUTendPlot)((void *) sen_data);
+	SPfrontEnd->OUTendPlot (sen_data);
 
 	if (is_dc) {
 		FREE(output_values);	/* XXX free various vectors */
@@ -711,7 +711,7 @@ sens_load(sgen *sg, CKTcircuit *ckt, int is_dc)
 		fn = DEVices[sg->dev]->DEVload;
 
 	if (fn)
-		error = (*fn)(sg->model, ckt);
+		error = fn (sg->model, ckt);
 	else
 		return 1;
 
@@ -729,7 +729,7 @@ sens_temp(sgen *sg, CKTcircuit *ckt)
 	fn = DEVices[sg->dev]->DEVtemperature;
 
 	if (fn)
-		error = (*fn)(sg->model, ckt);
+		error = fn (sg->model, ckt);
 	else
 		return 1;
 
@@ -751,7 +751,7 @@ sens_getp(sgen *sg, CKTcircuit *ckt, IFvalue *val)
 		fn = DEVices[sg->dev]->DEVask;
 		pid = DEVices[sg->dev]->DEVpublic.instanceParms[sg->param].id;
 		if (fn)
-			error = (*fn)(ckt, sg->instance, pid, val, NULL);
+			error = fn (ckt, sg->instance, pid, val, NULL);
 		else
 			return 1;
 	} else {
@@ -759,7 +759,7 @@ sens_getp(sgen *sg, CKTcircuit *ckt, IFvalue *val)
 		fn = DEVices[sg->dev]->DEVmodAsk;
 		pid = DEVices[sg->dev]->DEVpublic.modelParms[sg->param].id;
 		if (fn)
-			error = (*fn)(ckt, sg->model, pid, val);
+			error = fn (ckt, sg->model, pid, val);
 		else
 			return 1;
 	}
@@ -797,7 +797,7 @@ sens_setp(sgen *sg, CKTcircuit *ckt, IFvalue *val)
 		fn = DEVices[sg->dev]->DEVparam;
 		pid = DEVices[sg->dev]->DEVpublic.instanceParms[sg->param].id;
 		if (fn)
-			error = (*fn)(pid, val, sg->instance, NULL);
+			error = fn (pid, val, sg->instance, NULL);
 		else
 			return 1;
 	} else {
@@ -805,7 +805,7 @@ sens_setp(sgen *sg, CKTcircuit *ckt, IFvalue *val)
 		fn = DEVices[sg->dev]->DEVmodParam;
 		pid = DEVices[sg->dev]->DEVpublic.modelParms[sg->param].id;
 		if (fn)
-			error = (*fn)(pid, val, sg->model);
+			error = fn (pid, val, sg->model);
 		else
 			return 1;
 	}

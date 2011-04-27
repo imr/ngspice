@@ -23,9 +23,8 @@ CKTmodParam(CKTcircuit *ckt, GENmodel *modfast, int param, IFvalue *val, IFvalue
     NG_IGNORE(ckt);
     NG_IGNORE(selector);
 
-    if (((*DEVices[type]).DEVmodParam)) {
-        return(((*((*DEVices[type]).DEVmodParam)) (param,val,
-                modfast)));
+    if (DEVices[type]->DEVmodParam) {
+        return(DEVices[type]->DEVmodParam (param, val, modfast));
     } else {
         return(E_BADPARM);
     }

@@ -598,10 +598,10 @@ printvals(dgen *dg, IFparm *p, int i)
     int         n;
 
     if (dg->flags & DGEN_INSTANCE)
-        (*ft_sim->askInstanceQuest)(ft_curckt->ci_ckt, dg->instance,
+        ft_sim->askInstanceQuest (ft_curckt->ci_ckt, dg->instance,
             p->id, &val, &val);
     else
-        (*ft_sim->askModelQuest)(ft_curckt->ci_ckt, dg->model,
+        ft_sim->askModelQuest (ft_curckt->ci_ckt, dg->model,
             p->id, &val, &val);
 
     if (p->dataType & IF_VECTOR)
@@ -685,10 +685,10 @@ printvals_old(dgen *dg, IFparm *p, int i)
     int         n, error;
 
     if (dg->flags & DGEN_INSTANCE)
-        error = (*ft_sim->askInstanceQuest)(ft_curckt->ci_ckt, dg->instance,
+        error = ft_sim->askInstanceQuest (ft_curckt->ci_ckt, dg->instance,
             p->id, &val, &val);
     else
-        error = (*ft_sim->askModelQuest)(ft_curckt->ci_ckt, dg->model,
+        error = ft_sim->askModelQuest (ft_curckt->ci_ckt, dg->model,
             p->id, &val, &val);
 
     if (p->dataType & IF_VECTOR)
@@ -822,10 +822,10 @@ old_show(wordlist *wl)
         if (parms) {
             for (tw = parms; tw; tw = tw->wl_next) {
                 nn = copy(devs->wl_word);
-                v = (*if_getparam)(ft_curckt->ci_ckt,
+                v = if_getparam (ft_curckt->ci_ckt,
                         &nn, tw->wl_word, 0, 0);
                 if (!v)
-                    v = (*if_getparam)(ft_curckt->ci_ckt,
+                    v = if_getparam (ft_curckt->ci_ckt,
                             &nn, tw->wl_word, 0, 1);
                 if (v) {
                     out_printf("\t%s =", tw->wl_word);
@@ -837,9 +837,9 @@ old_show(wordlist *wl)
             }
         } else {
             nn = copy(devs->wl_word);
-            v = (*if_getparam)(ft_curckt->ci_ckt, &nn, "all", 0, 0);
+            v = if_getparam (ft_curckt->ci_ckt, &nn, "all", 0, 0);
             if (!v)
-                v = (*if_getparam)(ft_curckt->ci_ckt, &nn, "all", 0, 1);
+                v = if_getparam (ft_curckt->ci_ckt, &nn, "all", 0, 1);
             while (v) {
                 out_printf("\t%s =", v->va_name);
                 for (ww = cp_varwl(v); ww; ww = ww->wl_next)

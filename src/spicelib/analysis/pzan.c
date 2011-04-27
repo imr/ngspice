@@ -45,12 +45,12 @@ PZan(CKTcircuit *ckt, int reset)
 	/* Dump operating point. */
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
+	error = SPfrontEnd->OUTpBeginPlot (ckt,
 	    ckt->CKTcurJob, "Distortion Operating Point",
 	    (IFuid)NULL,IF_REAL,numNames,nameList, IF_REAL,&plot);
 	if(error) return(error);
 	CKTdump(ckt,(double)0,plot);
-	(*(SPfrontEnd->OUTendPlot))(plot);
+	SPfrontEnd->OUTendPlot (plot);
     }
 
     if (pzan->PZwhich & PZ_DO_POLES) {
@@ -138,16 +138,16 @@ PZpost(CKTcircuit *ckt)
     j = 0;
     for (i = 0; i < pzan->PZnPoles; i++) {
 	sprintf(name, "pole(%-u)", i+1);
-	(*(SPfrontEnd->IFnewUid))(ckt,&(namelist[j++]),(IFuid)NULL,
+	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), (IFuid)NULL,
 		name, UID_OTHER, NULL);
     }
     for (i = 0; i < pzan->PZnZeros; i++) {
 	sprintf(name, "zero(%-u)", i+1);
-	(*(SPfrontEnd->IFnewUid))(ckt,&(namelist[j++]),(IFuid)NULL,
+	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), (IFuid)NULL,
 		name, UID_OTHER, NULL);
     }
 
-    (*SPfrontEnd->OUTpBeginPlot)(ckt, (JOB *)pzan, pzan->JOBname,
+    SPfrontEnd->OUTpBeginPlot (ckt, (JOB *)pzan, pzan->JOBname,
 	    (IFuid)NULL, (int)0, pzan->PZnPoles + pzan->PZnZeros, namelist,
 	    IF_COMPLEX, &pzPlotPtr);
 
@@ -189,8 +189,8 @@ PZpost(CKTcircuit *ckt)
     outData.v.numValue = pzan->PZnPoles + pzan->PZnZeros;
     outData.v.vec.cVec = out_list;
 
-    (*SPfrontEnd->OUTpData)(pzPlotPtr, (IFvalue *) 0, &outData); 
-    (*(SPfrontEnd->OUTendPlot))(pzPlotPtr);
+    SPfrontEnd->OUTpData (pzPlotPtr, (IFvalue *) NULL, &outData);
+    SPfrontEnd->OUTendPlot (pzPlotPtr);
 
     return(OK);
 }

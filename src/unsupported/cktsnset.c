@@ -38,9 +38,8 @@ register CKTcircuit *ckt;
     info->SENparms = 0; 
 
     for (i=0;i<DEVmaxnum;i++) {
-        if ( ((*DEVices[i]).DEVsenSetup != NULL)
-            && (ckt->CKThead[i] != NULL) ){
-            error = (*((*DEVices[i]).DEVsenSetup))(info,ckt->CKThead[i]);
+        if ( DEVices[i]->DEVsenSetup && ckt->CKThead[i] ) {
+            error = DEVices[i]->DEVsenSetup (info, ckt->CKThead[i]);
             if(error) return(error);
         }
     }

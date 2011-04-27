@@ -78,7 +78,7 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
 			data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 			if (!data->namelist) return(E_NOMEM);
-		        (*(SPfrontEnd->IFnewUid))(ckt,
+		        SPfrontEnd->IFnewUid (ckt,
 			    &(data->namelist[data->numPlots++]),
 			    (IFuid)NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
@@ -93,7 +93,7 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
 			    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
                             if (!data->namelist) return(E_NOMEM);
-		            (*(SPfrontEnd->IFnewUid))(ckt,
+		            SPfrontEnd->IFnewUid (ckt,
 			        &(data->namelist[data->numPlots++]),
 			        (IFuid)NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
@@ -105,7 +105,7 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
 			    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
                             if (!data->namelist) return(E_NOMEM);
-		            (*(SPfrontEnd->IFnewUid))(ckt,
+		            SPfrontEnd->IFnewUid (ckt,
 			        &(data->namelist[data->numPlots++]),
 			        (IFuid)NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */

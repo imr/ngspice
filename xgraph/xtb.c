@@ -236,7 +236,7 @@ XEvent *evt;
 
     if (!XFindContext(t_disp, evt->xany.window, h_context, (caddr_t *) & info)) {
 	if (info->func)
-	    return (*info->func) (evt, info->info);
+	    return info->func (evt, info->info);
 	else
 	    return XTB_NOTDEF;
     }
@@ -373,7 +373,7 @@ xtb_data info;
 	break;
     case ButtonRelease:
 	if (!ri->na)
-	    rtn = (*ri->func) (win, ri->flag, ri->val);
+	    rtn = ri->func (win, ri->flag, ri->val);
 	break;
     default:
 	rtn = XTB_NOTDEF;
@@ -546,7 +546,7 @@ xtb_data info;
     (void) xtb_bt_set(win, 1, (xtb_data) 0, 0);
     /* Callback */
     if (real_info->func) {
-	return (*real_info->func) (real_info->main_win,
+	return real_info->func (real_info->main_win,
 				   prev, real_info->which_one,
 				   real_info->val);
     }
@@ -939,7 +939,7 @@ xtb_data info;
 			       (KeySym *) 0, (XComposeStatus *) 0);
 	for (i = 0; i < nbytes; i++) {
 	    (void) strcpy(textcopy, ri->text);
-	    if ((rtn = (*ri->func) (win, (int) keys[i],
+	    if ((rtn = ri->func (win, (int) keys[i],
 				    textcopy, ri->val)) == XTB_STOP)
 		break;
 	}

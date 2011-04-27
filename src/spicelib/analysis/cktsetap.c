@@ -23,5 +23,5 @@ CKTsetAnalPm(CKTcircuit *ckt, JOB *analPtr, int parm, IFvalue *value, IFvalue *s
     NG_IGNORE(selector);
 
     if((analInfo[type]->setParm)==NULL) return(E_BADPARM);
-    return( (*(analInfo[type]->setParm))(ckt,analPtr,parm,value) );
+    return( analInfo[type]->setParm (ckt, analPtr, parm, value) );
 }

@@ -45,7 +45,7 @@ DCop(CKTcircuit *ckt, int notused)
 
     error = CKTnames(ckt,&numNames,&nameList);
     if(error) return(error);
-    error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
+    error = SPfrontEnd->OUTpBeginPlot (ckt,
 	ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
 	(IFuid)NULL,IF_REAL,numNames,nameList, IF_REAL,&plot);
     tfree(nameList); /* va: nameList not used any longer, it was a memory leak */
@@ -108,7 +108,7 @@ DCop(CKTcircuit *ckt, int notused)
              i++;
            }
            fprintf(stdout,"\n");
-	   (*(SPfrontEnd->OUTendPlot))(plot); */
+	   SPfrontEnd->OUTendPlot (plot); */
 	   
 	   return(converged);
 	 }
@@ -157,6 +157,6 @@ DCop(CKTcircuit *ckt, int notused)
            fprintf(stderr,"error: circuit reload failed.\n");
          }
 #endif
-    (*(SPfrontEnd->OUTendPlot))(plot);
+    SPfrontEnd->OUTendPlot (plot);
     return(converged);
 }

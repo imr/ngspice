@@ -329,17 +329,17 @@ static void EVTsend_line(
 
     /* Get the data to send */
     if(g_evt_udn_info[udn_index]->plot_val)
-        (*(g_evt_udn_info[udn_index]->plot_val)) (node_value, "", &dvalue);
+        g_evt_udn_info[udn_index]->plot_val (node_value, "", &dvalue);
     else
         dvalue = 0.0;
 
     if(g_evt_udn_info[udn_index]->print_val)
-        (*(g_evt_udn_info[udn_index]->print_val)) (node_value, "", &svalue);
+        g_evt_udn_info[udn_index]->print_val (node_value, "", &svalue);
     else
         svalue = "";
 
     if(g_evt_udn_info[udn_index]->ipc_val)
-        (*(g_evt_udn_info[udn_index]->ipc_val)) (node_value, &pvalue, &len);
+        g_evt_udn_info[udn_index]->ipc_val (node_value, &pvalue, &len);
     else {
         pvalue = NULL;
         len = 0;

@@ -35,7 +35,7 @@ CKTmapNode(CKTcircuit *ckt, CKTnode **node, IFuid name)
     /* not found, so must be a new one */
     error = CKTmkNode(ckt,&mynode); /*allocate the node*/
     if(error) return(error);
-    error = (*(SPfrontEnd->IFnewUid))(ckt,
+    error = SPfrontEnd->IFnewUid (ckt,
 				      &uid,
 				      (IFuid) NULL,
 				      name,

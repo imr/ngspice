@@ -64,7 +64,7 @@ ft_evaluate(struct pnode *node)
             if(node->pn_op->op_num == PT_OP_TERNARY)
                 d = ft_ternary(node);
             else
-                d = (*node->pn_op->op_func.binary) (node->pn_left, node->pn_right);
+                d = node->pn_op->op_func.binary (node->pn_left, node->pn_right);
         }
     } else {
         fprintf(cp_err, "ft_evaluate: Internal Error: bad node\n");
@@ -168,7 +168,7 @@ doop_funcall(
 
     (void) signal(SIGILL, (SIGNAL_FUNCTION) sig_matherr);
 
-    data = (*func) (data1, data2, datatype1, datatype2, length);
+    data = func (data1, data2, datatype1, datatype2, length);
 
     /* Back to normal */
     (void) signal(SIGILL, SIG_DFL);
@@ -842,14 +842,14 @@ apply_func_funcall(struct func *func, struct dvec *v, int *newlength, short int 
     {
         void *(*f)(void *data, short int type, int length,
                    int *newlength, short int *newtype, struct plot *, struct plot *, int) = (void *(*)(void *, short int, int, int *, short int *, struct plot *, struct plot *, int)) func->fu_func;
-        data = (*f) (
+        data = f (
             isreal(v) ? (void *) v->v_realdata : (void *) v->v_compdata,
             (short) (isreal(v) ? VF_REAL : VF_COMPLEX),
             v->v_length,
             newlength, newtype,
             v->v_plot, plot_cur, v->v_dims[0]);
     } else {
-        data = (*func->fu_func) (
+        data = func->fu_func (
             isreal(v) ? (void *) v->v_realdata : (void *) v->v_compdata,
             (short) (isreal(v) ? VF_REAL : VF_COMPLEX),
             v->v_length,

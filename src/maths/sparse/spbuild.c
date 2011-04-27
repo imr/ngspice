@@ -1183,7 +1183,7 @@ spInitialize(MatrixPtr eMatrix, int (*pInit)(RealNumber*, void *InitInfo, int , 
             }
             else
             {
-		Error = (*pInit)((RealNumber *)pElement, pElement->pInitInfo,
+		Error = pInit ((RealNumber *)pElement, pElement->pInitInfo,
                                  Matrix->IntToExtRowMap[pElement->Row], Col);
                 if (Error)
                 {

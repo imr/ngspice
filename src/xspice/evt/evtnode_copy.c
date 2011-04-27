@@ -123,17 +123,17 @@ void EVTnode_copy(
                 
 				for(i = 0; i < num_outputs; i++) 
 				{
-                    (*(g_evt_udn_info[udn_index]->create))
+                    g_evt_udn_info[udn_index]->create
                             ( &(here->output_value[i]) );
                 }
             }
  
 			here->node_value = NULL;
 
-            (*(g_evt_udn_info[udn_index]->create)) ( &(here->node_value) );
+            g_evt_udn_info[udn_index]->create ( &(here->node_value) );
 
             if(invert)
-                (*(g_evt_udn_info[udn_index]->create)) ( &(here->inverted_value) );
+                g_evt_udn_info[udn_index]->create ( &(here->inverted_value) );
 
 			
         }
@@ -146,14 +146,14 @@ void EVTnode_copy(
 	{
         for(i = 0; i < num_outputs; i++) 
 		{
-            (*(g_evt_udn_info[udn_index]->copy)) (from->output_value[i],
+            g_evt_udn_info[udn_index]->copy (from->output_value[i],
                                                   here->output_value[i]);
         }
     }
-    (*(g_evt_udn_info[udn_index]->copy)) (from->node_value, here->node_value);
+    g_evt_udn_info[udn_index]->copy (from->node_value, here->node_value);
     if(invert) 
 	{
-        (*(g_evt_udn_info[udn_index]->copy)) (from->inverted_value,
+        g_evt_udn_info[udn_index]->copy (from->inverted_value,
                                               here->inverted_value);
     }
 }

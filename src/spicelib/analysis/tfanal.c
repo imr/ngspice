@@ -66,7 +66,7 @@ TFanal(CKTcircuit *ckt, int restart)
         ((TFan*)ckt->CKTcurJob)->TFinIsV = 1;
         ((TFan*)ckt->CKTcurJob)->TFinIsI = 0;
         if(error !=0) {
-            (*(SPfrontEnd->IFerror))(ERR_WARNING,
+            SPfrontEnd->IFerror (ERR_WARNING,
                     "Transfer function source %s not in circuit",
                     &(((TFan*)ckt->CKTcurJob)->TFinSrc));
             ((TFan*)ckt->CKTcurJob)->TFinIsV = 0;
@@ -92,26 +92,26 @@ TFanal(CKTcircuit *ckt, int restart)
     ckt->CKTrhs[0]=0;
 
     /* make a UID for the transfer function output */
-    (*(SPfrontEnd->IFnewUid))(ckt,&tfuid,(IFuid)NULL,"Transfer_function",
+    SPfrontEnd->IFnewUid (ckt, &tfuid, (IFuid)NULL, "Transfer_function",
             UID_OTHER, NULL);
 
     /* make a UID for the input impedance */
-    (*(SPfrontEnd->IFnewUid))(ckt,&inuid,((TFan*)ckt->CKTcurJob)->TFinSrc,
+    SPfrontEnd->IFnewUid (ckt, &inuid, ((TFan*)ckt->CKTcurJob)->TFinSrc,
             "Input_impedance", UID_OTHER, NULL);
 
     /* make a UID for the output impedance */
     if(((TFan*)ckt->CKTcurJob)->TFoutIsI) {
-        (*(SPfrontEnd->IFnewUid))(ckt,&outuid,((TFan*)ckt->CKTcurJob)->TFoutSrc
+        SPfrontEnd->IFnewUid (ckt, &outuid, ((TFan*)ckt->CKTcurJob)->TFoutSrc
                 ,"Output_impedance", UID_OTHER, NULL);
     } else {
         name = TMALLOC(char, strlen(((TFan*)ckt->CKTcurJob)->TFoutName) + 22);
         (void)sprintf(name,"output_impedance_at_%s",
                 ((TFan*)ckt->CKTcurJob)->TFoutName);
-        (*(SPfrontEnd->IFnewUid))(ckt,&outuid,(IFuid)NULL,
+        SPfrontEnd->IFnewUid (ckt, &outuid, (IFuid)NULL,
                 name, UID_OTHER, NULL);
     }
 
-    error = (*(SPfrontEnd->OUTpBeginPlot))(ckt, ckt->CKTcurJob,
+    error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
             ((TFan*)(ckt->CKTcurJob))->JOBname,(IFuid)NULL,(int)0,3,
             uids,IF_REAL,&plotptr);
     if(error) return(error);
@@ -167,8 +167,8 @@ done:
     outdata.v.numValue=3;
     outdata.v.vec.rVec=outputs;
     refval.rValue = 0;
-    (*(SPfrontEnd->OUTpData))(plotptr,&refval,&outdata);
-    (*(SPfrontEnd->OUTendPlot))(plotptr);
+    SPfrontEnd->OUTpData (plotptr, &refval, &outdata);
+    SPfrontEnd->OUTendPlot (plotptr);
     return(OK);
 }
 

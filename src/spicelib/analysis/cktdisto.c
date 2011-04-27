@@ -31,8 +31,8 @@ CKTdisto (CKTcircuit *ckt, int mode)
     case D_SETUP:
 
 	    for (i=0;i<DEVmaxnum;i++) {
-		if ( DEVices[i] && ((*DEVices[i]).DEVdisto != NULL) && (ckt->CKThead[i] != NULL) ){
-		    error = (*((*DEVices[i]).DEVdisto))(mode,ckt->CKThead[i],ckt);
+		if ( DEVices[i] && DEVices[i]->DEVdisto && ckt->CKThead[i] ) {
+		    error = DEVices[i]->DEVdisto (mode, ckt->CKThead[i], ckt);
 		    if(error) return(error);
 		}
 	    }
@@ -52,8 +52,8 @@ CKTdisto (CKTcircuit *ckt, int mode)
 	    }
 
 	    for (i=0;i<DEVmaxnum;i++) {
-		if ( DEVices[i] && ((*DEVices[i]).DEVdisto != NULL) && (ckt->CKThead[i] != NULL) ){
-		    error = (*((*DEVices[i]).DEVdisto))(mode,ckt->CKThead[i],ckt);
+		if ( DEVices[i] && DEVices[i]->DEVdisto && ckt->CKThead[i] ) {
+		    error = DEVices[i]->DEVdisto (mode, ckt->CKThead[i], ckt);
 		    if(error) return(error);
 		}
 	    }

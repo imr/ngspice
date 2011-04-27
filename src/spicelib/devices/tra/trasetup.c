@@ -104,7 +104,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
                 here->TRAabstol = 1;
             }
             if(!here->TRAimpedGiven) {
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                SPfrontEnd->IFerror (ERR_FATAL,
                         "%s: transmission line z0 must be given",
                         &(here->TRAname));
                 return(E_BADPARM);

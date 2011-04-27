@@ -49,7 +49,7 @@ CKTdltNNum(CKTcircuit *cktp, int num)
     if (node == ckt->CKTlastNode)
 	ckt->CKTlastNode = sprev;
 
-    error = (*(SPfrontEnd->IFdelUid))(ckt,node->name, UID_SIGNAL);
+    error = SPfrontEnd->IFdelUid (ckt, node->name, UID_SIGNAL);
     tfree(node);
 
     return error;

@@ -34,8 +34,8 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
     /* let each device decide how many and what type of noise sources it has */
 
     for (i=0; i < DEVmaxnum; i++) {
-	if ( DEVices[i] && ((*DEVices[i]).DEVnoise != NULL) && (ckt->CKThead[i] != NULL) ) {
-	    error = (*((*DEVices[i]).DEVnoise))(mode,operation,ckt->CKThead[i],
+	if ( DEVices[i] && DEVices[i]->DEVnoise && ckt->CKThead[i] ) {
+	    error = DEVices[i]->DEVnoise (mode, operation, ckt->CKThead[i],
 		ckt,data, &outNdens);
             if (error) return (error);
         }
@@ -53,12 +53,12 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 
 	    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 
-	    (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
+	    SPfrontEnd->IFnewUid (ckt, &(data->namelist[data->numPlots++]),
 		    (IFuid)NULL, "onoise_spectrum", UID_OTHER, NULL);
 
 	    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 
-	    (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
+	    SPfrontEnd->IFnewUid (ckt, &(data->namelist[data->numPlots++]),
 		    (IFuid)NULL, "inoise_spectrum", UID_OTHER, NULL);
 
 	    /* we've added two more plots */
@@ -70,11 +70,11 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 	case INT_NOIZ:
 
 	    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
-	    (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
+	    SPfrontEnd->IFnewUid (ckt, &(data->namelist[data->numPlots++]),
 		(IFuid)NULL, "onoise_total", UID_OTHER, NULL);
 
 	    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
-	    (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
+	    SPfrontEnd->IFnewUid (ckt, &(data->namelist[data->numPlots++]),
 		(IFuid)NULL, "inoise_total", UID_OTHER, NULL);
 	    /* we've added two more plots */
 
@@ -103,7 +103,7 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 		refVal.rValue = data->freq; /* the reference is the freq */
 		outData.v.numValue = data->outNumber; /* vector number */
 		outData.v.vec.rVec = data->outpVector; /* vector of outputs */
-		(*(SPfrontEnd->OUTpData))(data->NplotPtr,&refVal,&outData);
+		SPfrontEnd->OUTpData (data->NplotPtr, &refVal, &outData);
             }
             break;
 
@@ -112,7 +112,7 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 	    data->outpVector[data->outNumber++] =  data->inNoise;
 	    outData.v.vec.rVec = data->outpVector; /* vector of outputs */
 	    outData.v.numValue = data->outNumber; /* vector number */
-	    (*(SPfrontEnd->OUTpData))(data->NplotPtr,&refVal,&outData);
+	    SPfrontEnd->OUTpData (data->NplotPtr, &refVal, &outData);
 	    break;
 
 	default:
@@ -121,7 +121,7 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
         break;
 
     case N_CLOSE:
-	(*(SPfrontEnd->OUTendPlot))(data->NplotPtr);
+	SPfrontEnd->OUTendPlot (data->NplotPtr);
 	FREE(data->namelist);
 	FREE(data->outpVector);
         break;

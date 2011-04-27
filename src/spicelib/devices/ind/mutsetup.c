@@ -37,7 +37,7 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             
             ktype = CKTtypelook("Inductor");
             if(ktype <= 0) {
-                (*(SPfrontEnd->IFerror))(ERR_PANIC,
+                SPfrontEnd->IFerror (ERR_PANIC,
                         "mutual inductor, but inductors not available!",
                         (IFuid *)NULL);
                 return(E_INTERN);
@@ -50,7 +50,7 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 IFuid namarray[2];
                 namarray[0]=here->MUTname;
                 namarray[1]=here->MUTindName1;
-                (*(SPfrontEnd->IFerror))(ERR_WARNING,
+                SPfrontEnd->IFerror (ERR_WARNING,
                     "%s: coupling to non-existant inductor %s.",
                     namarray);
             }
@@ -61,7 +61,7 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 IFuid namarray[2];
                 namarray[0]=here->MUTname;
                 namarray[1]=here->MUTindName2;
-                (*(SPfrontEnd->IFerror))(ERR_WARNING,
+                SPfrontEnd->IFerror (ERR_WARNING,
                     "%s: coupling to non-existant inductor %s.",
                     namarray);
             }

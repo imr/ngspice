@@ -161,7 +161,7 @@ char *MIFgetMod(
             if(! ((modtmp)->INPmodUsed )) {
 
                 /* not already processed, so create data struct */
-                error = (*(ft_sim->newModel))( ckt,(modtmp)->INPmodType,
+                error = ft_sim->newModel ( ckt, modtmp->INPmodType,
                         &((modtmp)->INPmodfast), (modtmp)->INPmodName);
                 if(error)
                     return(INPerror(error));
@@ -203,7 +203,7 @@ char *MIFgetMod(
                                 sprintf(err2, "MIF-ERROR - model: %s - %s\n", name, err1);
                                 return(err2);
                             }
-                            error = (*(ft_sim->setModelParm))(ckt,
+                            error = ft_sim->setModelParm (ckt,
                                     ((modtmp)->INPmodfast),
                                     (*(ft_sim->devices)[(modtmp)->INPmodType ]).
                                     modelParms[j].id,val,(IFvalue*)NULL);

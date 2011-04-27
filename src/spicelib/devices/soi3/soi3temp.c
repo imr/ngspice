@@ -95,7 +95,7 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
             model->SOI3bodyThickness == 0)
         {
 
-        		(*(SPfrontEnd->IFerror))(ERR_FATAL,
+        		SPfrontEnd->IFerror (ERR_FATAL,
             	"%s: SOI3 device film thickness must be supplied",
             	&model->SOI3modName);
             return(E_BADPARM);              
@@ -142,7 +142,7 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
 
                     if(model->SOI3bodyThickness < xd_max)
                     {
-						  		(*(SPfrontEnd->IFerror))(ERR_WARNING,
+						  		SPfrontEnd->IFerror (ERR_WARNING,
                     			"%s: Body Film thickness may be too small \nfor this model to be valid",
                				&model->SOI3modName);
                     		/* return(E_PAUSE); don't want to stop,
@@ -232,7 +232,7 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
                 else /* Substrate doping less than intrinsic silicon, so set to zero. */
                 {
                     model->SOI3substrateDoping = 0;
-                    (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                    SPfrontEnd->IFerror (ERR_FATAL,
                             "%s: Nsub < Ni",&model->SOI3modName);
                     return(E_BADPARM);
                 }
@@ -243,7 +243,7 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
                		(model->SOI3gamma*model->SOI3frontOxideCapFactor);
                if(model->SOI3bodyThickness < xd_max)
                {
-					   (*(SPfrontEnd->IFerror))(ERR_WARNING,
+					   SPfrontEnd->IFerror (ERR_WARNING,
                   "%s :Body Film thickness may be too small \nfor this model to be valid",
                   &model->SOI3modName);
                   /* return(E_PAUSE); */
@@ -353,7 +353,7 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
 
             if(here->SOI3l - 2 * model->SOI3latDiff <=0)
             {
-					(*(SPfrontEnd->IFerror))(ERR_WARNING,
+					SPfrontEnd->IFerror (ERR_WARNING,
                	"%s: Effective channel length less than zero \nIncreasing \
                   this instance length by 2*LD to remove effect of LD",
                   &(here->SOI3name));

@@ -82,7 +82,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
         if(model->BJTdepletionCapCoeffGiven) {
             if(model->BJTdepletionCapCoeff>.9999)  {
                 model->BJTdepletionCapCoeff=.9999;
-                (*(SPfrontEnd->IFerror))(ERR_WARNING,
+                SPfrontEnd->IFerror (ERR_WARNING,
                         "BJT model %s, parameter fc limited to 0.9999",
                         &(model->BJTmodName));
             }

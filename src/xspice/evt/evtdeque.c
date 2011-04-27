@@ -330,26 +330,26 @@ static void EVTprocess_output(
     /* we have setup the structures (rhs and rhsold must match)... */
     if(num_outputs > 1) {
         output_subindex = output_table[output_index]->output_subindex;
-        (*(g_evt_udn_info[udn_index]->compare))
+        g_evt_udn_info[udn_index]->compare
                 (value,
                 rhsold[node_index].output_value[output_subindex],
                 &equal);
         if(! equal) {
-            (*(g_evt_udn_info[udn_index]->copy))
+            g_evt_udn_info[udn_index]->copy
                     (value, rhs[node_index].output_value[output_subindex]);
-            (*(g_evt_udn_info[udn_index]->copy))
+            g_evt_udn_info[udn_index]->copy
                     (value, rhsold[node_index].output_value[output_subindex]);
         }
     }
     else {
-        (*(g_evt_udn_info[udn_index]->compare))
+        g_evt_udn_info[udn_index]->compare
                 (value,
                 rhsold[node_index].node_value,
                 &equal);
         if(! equal) {
-            (*(g_evt_udn_info[udn_index]->copy))
+            g_evt_udn_info[udn_index]->copy
                     (value, rhs[node_index].node_value);
-            (*(g_evt_udn_info[udn_index]->copy))
+            g_evt_udn_info[udn_index]->copy
                     (value, rhsold[node_index].node_value);
         }
     }

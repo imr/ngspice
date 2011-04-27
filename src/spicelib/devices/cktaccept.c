@@ -30,8 +30,8 @@ CKTaccept(CKTcircuit *ckt)
 
     devs = devices();
     for (i = 0; i < DEVmaxnum; i++) {
-        if ( devs[i] && ((*devs[i]).DEVaccept != NULL) && (ckt->CKThead[i] != NULL) ){
-            error = (*((*devs[i]).DEVaccept))(ckt,ckt->CKThead[i]);
+        if ( devs[i] && devs[i]->DEVaccept && ckt->CKThead[i] ) {
+            error = devs[i]->DEVaccept (ckt, ckt->CKThead[i]);
             if (error)
 		return(error);
         }

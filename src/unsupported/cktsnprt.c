@@ -28,8 +28,8 @@ register CKTcircuit *ckt;
     register int i;
 
     for (i=0;i<DEVmaxnum;i++) {
-        if ( ((*DEVices[i]).DEVsenPrint != NULL) && (ckt->CKThead[i] != NULL) ){
-            (*((*DEVices[i]).DEVsenPrint))(ckt->CKThead[i],ckt);
+        if ( DEVices[i]->DEVsenPrint && ckt->CKThead[i] ) {
+            DEVices[i]->DEVsenPrint (ckt->CKThead[i], ckt);
         }
     }
 }

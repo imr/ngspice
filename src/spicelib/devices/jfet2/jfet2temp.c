@@ -67,7 +67,7 @@ JFET2temp(GENmodel *inModel, CKTcircuit *ckt)
             model->JFET2sourceConduct = 0;
         }
         if(model->JFET2fc >.95) {
-            (*(SPfrontEnd->IFerror))(ERR_WARNING,
+            SPfrontEnd->IFerror (ERR_WARNING,
                     "%s: Depletion cap. coefficient too large, limited to .95",
                     &(model->JFET2modName));
             model->JFET2fc = .95;

@@ -1235,10 +1235,10 @@ static int get_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   device = (char *)argv[1];
   param  = (char *)argv[2];
   /* copied from old_show(wordlist *) */ 
-  v = (*if_getparam)(ft_curckt->ci_ckt,
+  v = if_getparam (ft_curckt->ci_ckt,
 		     &device, param, 0, 0);
   if (!v)
-    v = (*if_getparam)(ft_curckt->ci_ckt,
+    v = if_getparam (ft_curckt->ci_ckt,
 		       &device, param, 0, 1);
   if (v) {
     wl = cp_varwl(v);
@@ -1296,11 +1296,11 @@ int get_mod_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   
   /* get the unique IFuid for name (device/model) */
   INPretrieve(&name, ft_curckt->ci_symtab);
-  err = (*(ft_sim->findInstance))(ft_curckt->ci_ckt,&typecode,&devptr,name,NULL,NULL);
+  err = ft_sim->findInstance (ft_curckt->ci_ckt, &typecode, &devptr, name, NULL, NULL);
   if (err != OK) {
     typecode = -1;
     devptr   = NULL;
-    err = (*(ft_sim->findModel))(ft_curckt->ci_ckt,&typecode,&modptr,name);
+    err = ft_sim->findModel (ft_curckt->ci_ckt, &typecode, &modptr, name);
   }
   if (err != OK) {
     sprintf(buf,"No such device or model name %s",name);
@@ -1317,10 +1317,10 @@ int get_mod_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
       found=TRUE;
     } else if (strcmp(paramname,opt->keyword)==0) {
       if (devptr)
-        err = (*(ft_sim->askInstanceQuest))(ft_curckt->ci_ckt, devptr,
+        err = ft_sim->askInstanceQuest (ft_curckt->ci_ckt, devptr,
                 opt->id, &pv, (IFvalue *)NULL);
       else
-        err = (*(ft_sim->askModelQuest))(ft_curckt->ci_ckt, modptr,
+        err = ft_sim->askModelQuest (ft_curckt->ci_ckt, modptr,
                 opt->id, &pv, (IFvalue *)NULL);
       if (err==OK) {
       	sprintf(buf,"%g",pv.rValue); /* dataType is here always real */

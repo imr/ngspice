@@ -35,11 +35,11 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
 
     timetemp = HUGE;
     for (i=0;i<DEVmaxnum;i++) {
-        if (DEVices[i] && (*DEVices[i]).DEVtrunc != NULL && ckt->CKThead[i] != NULL) {
+        if (DEVices[i] && DEVices[i]->DEVtrunc && ckt->CKThead[i]) {
 #ifdef STEPDEBUG
             debugtemp = timetemp;
 #endif /* STEPDEBUG */
-	    error = (*((*DEVices[i]).DEVtrunc))(ckt->CKThead[i],ckt,&timetemp);
+	    error = DEVices[i]->DEVtrunc (ckt->CKThead[i], ckt, &timetemp);
 	    if(error) {
                 ckt->CKTstat->STATtranTruncTime += SPfrontEnd->IFseconds()
                     - startTime;
@@ -48,7 +48,7 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
 #ifdef STEPDEBUG
             if(debugtemp != timetemp) {
                 printf("timestep cut by device type %s from %g to %g\n",
-                        (*DEVices[i]).DEVpublic.name, debugtemp,timetemp);
+                        DEVices[i]->DEVpublic.name, debugtemp, timetemp);
             }
 #endif /* STEPDEBUG */
         }
@@ -71,7 +71,7 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
     double startTime;
     int size;
 
-    startTime = (*(SPfrontEnd->IFseconds))();
+    startTime = SPfrontEnd->IFseconds();
 
     timetemp = HUGE;
     size = SMPmatSize(ckt->CKTmatrix);

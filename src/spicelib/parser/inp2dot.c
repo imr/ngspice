@@ -592,7 +592,7 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 		    /* one of the keywords! */
 		    ptemp.iValue = 1;
 		    error =
-			(*(ft_sim->setAnalysisParm)) (ckt, foo,
+			ft_sim->setAnalysisParm (ckt, foo,
 						      ft_sim->analyses[which]->analysisParms[i].id,
 						      &ptemp,
 						      (IFvalue *) NULL);
@@ -604,7 +604,7 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 			INPgetValue(ckt, &line,
 				    ft_sim->analyses[which]->analysisParms[i].dataType, tab);
 		    error =
-			(*(ft_sim->setAnalysisParm)) (ckt, foo,
+			ft_sim->setAnalysisParm (ckt, foo,
 						      ft_sim->
 						      analyses
 						      [which]->analysisParms

@@ -76,7 +76,7 @@ void arg_plot(wordlist *wl, struct comm *command)
 void arg_load(wordlist *wl, struct comm *command)
 {
       /* just call com_load */
-      (*command->co_func) (wl);
+      command->co_func (wl);
 
 }
 
@@ -122,7 +122,7 @@ common(char *string, struct wordlist *wl, struct comm *command)
 
       w = process(w);
       /* O.K. now call fn */
-      (*command->co_func) (w);
+      command->co_func (w);
     }
 
 }

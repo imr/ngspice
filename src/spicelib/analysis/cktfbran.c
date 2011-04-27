@@ -24,8 +24,8 @@ CKTfndBranch(CKTcircuit *ckt, IFuid name)
     int j;
 
     for (i=0;i<DEVmaxnum;i++) {
-        if ( DEVices[i] && (*DEVices[i]).DEVfindBranch != NULL && ckt->CKThead[i] != NULL ) {
-            j = (*((*DEVices[i]).DEVfindBranch))(ckt,ckt->CKThead[i],name);
+        if ( DEVices[i] && DEVices[i]->DEVfindBranch && ckt->CKThead[i] ) {
+            j = DEVices[i]->DEVfindBranch (ckt, ckt->CKThead[i], name);
             if(j != 0) return(j);
         }
     }

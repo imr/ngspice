@@ -67,7 +67,7 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
 		    asrc_vals[i] = *(ckt->CKTrhsOld + node_num);
 		}
 
-	    if ((*(here->ASRCtree->IFeval))(here->ASRCtree,ckt->CKTgmin, &rhs, asrc_vals,asrc_derivs) != OK)
+	    if (here->ASRCtree->IFeval (here->ASRCtree, ckt->CKTgmin, &rhs, asrc_vals, asrc_derivs) != OK)
 		return(E_BADPARM);
 
 	    /* The convergence test */

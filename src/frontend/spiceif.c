@@ -103,7 +103,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
     *tab = INPtabInit(i);
     ft_curckt->ci_symtab = *tab;
 
-    err = (*(ft_sim->newCircuit))(&ckt);
+    err = ft_sim->newCircuit (&ckt);
     if (err != OK) {
         ft_sperror(err, "CKTinit");
         return (NULL);
@@ -117,12 +117,9 @@ if_inpdeck(struct line *deck, INPtables **tab)
         return(NULL);
     }
 #if (0)
-       err = 
-     (*(ft_sim->newTask))(ckt, &(ft_curckt->ci_defTask), taskUid);
+       err = ft_sim->newTask (ckt, &(ft_curckt->ci_defTask), taskUid);
 #else /*CDHW*/
-       err = 
-       (*(ft_sim->newTask))(ckt, &(ft_curckt->ci_defTask), taskUid,
-       NULL);
+       err = ft_sim->newTask (ckt, &(ft_curckt->ci_defTask), taskUid, NULL);
 #endif
     if(err) {
         ft_sperror(err,"newTask");
@@ -146,7 +143,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
             return(NULL);
         }
 
-        err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,optUid,
+        err = ft_sim->newAnalysis (ft_curckt->ci_ckt, which, optUid,
                 &(ft_curckt->ci_defOpt),
                 ft_curckt->ci_defTask);
 		
@@ -236,7 +233,7 @@ if_run(CKTcircuit *t, char *what, wordlist *args, INPtables *tab)
 	   if (ft_curckt->ci_specTask == ft_curckt->ci_defTask) { /*CDHW*/
               printf("Oh dear...something bad has happened to the options.\n");
             }
-            err=(*(ft_sim->deleteTask))(ft_curckt->ci_ckt,
+            err = ft_sim->deleteTask (ft_curckt->ci_ckt,
                     ft_curckt->ci_specTask);
             if(err) {
                 ft_sperror(err,"deleteTask");
@@ -255,10 +252,10 @@ ci_specTask will point to it CDHW*/
             return(2);
         }
 #if (0)
-        err = (*(ft_sim->newTask))(ft_curckt->ci_ckt, 
+        err = ft_sim->newTask (ft_curckt->ci_ckt,
                 &(ft_curckt->ci_specTask), specUid);
 #else /*CDHW*/
-        err = (*(ft_sim->newTask))(ft_curckt->ci_ckt, 
+        err = ft_sim->newTask (ft_curckt->ci_ckt,
                  &(ft_curckt->ci_specTask),
                  specUid, &(ft_curckt->ci_defTask));
 #endif        
@@ -282,7 +279,7 @@ ci_specTask will point to it CDHW*/
                 ft_sperror(err,"newUid");
                 return(2);
             }
-            err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,optUid,
+            err = ft_sim->newAnalysis (ft_curckt->ci_ckt, which, optUid,
                     &(ft_curckt->ci_specOpt),
                     ft_curckt->ci_specTask);
 		    
@@ -339,7 +336,7 @@ ci_specTask will point to it CDHW*/
 /*CDHW Run the analysis pointed to by ci_curTask CDHW*/
 
         ft_curckt->ci_curOpt = ft_curckt->ci_defOpt;	
-        if ((err = (*(ft_sim->doAnalyses))(ckt, 1, ft_curckt->ci_curTask))!=OK){
+        if ((err = ft_sim->doAnalyses (ckt, 1, ft_curckt->ci_curTask)) != OK){
             ft_sperror(err, "doAnalyses");
             /* wrd_end(); */
 	    if (err == E_PAUSE)
@@ -348,7 +345,7 @@ ci_specTask will point to it CDHW*/
 		return (2);
         }
     } else if (eq(what, "resume")) {
-        if ((err = (*(ft_sim->doAnalyses))(ckt, 0, ft_curckt->ci_curTask))!=OK){
+        if ((err = ft_sim->doAnalyses (ckt, 0, ft_curckt->ci_curTask)) != OK){
             ft_sperror(err, "doAnalyses");
             /* wrd_end(); */
 	    if (err == E_PAUSE)
@@ -497,12 +494,12 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
     }
 
 #if (0)
-     if ((err = (*(ft_sim->setAnalysisParm))(cc, ft_curckt->ci_curOpt,
+     if ((err = ft_sim->setAnalysisParm (cc, ft_curckt->ci_curOpt,
              ft_sim->analyses[which]->analysisParms[i].id, &pval,
              (IFvalue *)NULL)) != OK)
          ft_sperror(err, "setAnalysisParm(options) ci_curOpt");
 #else /*CDHW*/
-     if ((err = (*(ft_sim->setAnalysisParm))(cc, ft_curckt->ci_defOpt,
+     if ((err = ft_sim->setAnalysisParm (cc, ft_curckt->ci_defOpt,
              ft_sim->analyses[which]->analysisParms[i].id, &pval,
              (IFvalue *)NULL)) != OK)
          ft_sperror(err, "setAnalysisParm(options) ci_curOpt");
@@ -551,7 +548,7 @@ if_cktfree(CKTcircuit *ckt, INPtables *tab)
 {
     CKTcircuit *cc = /* fixme, drop that */ ckt;
 
-    (*(ft_sim->deleteCircuit))(cc);
+    ft_sim->deleteCircuit (cc);
     INPtabEnd(tab);
     return;
 }
@@ -587,7 +584,7 @@ finddev_special(
     int err;
     int type = -1;
 
-    err = (*(ft_sim->findInstance))(ck,&type,devptr,name,NULL,NULL);
+    err = ft_sim->findInstance (ck, &type, devptr, name, NULL, NULL);
     if(err == OK)
     {
      *device_or_model=0;
@@ -595,7 +592,7 @@ finddev_special(
     }
     type = -1;
     *devptr = (GENinstance *)NULL;
-    err = (*(ft_sim->findModel))(ck,&type,modptr,name);
+    err = ft_sim->findModel (ck, &type, modptr, name);
     if(err == OK)
     {
      *device_or_model=1;
@@ -1080,10 +1077,10 @@ doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
     /* fprintf(cp_err, "Calling doask(%d, %x, %x, %x)\n", 
             typecode, dev, mod, opt); */
     if (dev)
-        err = (*(ft_sim->askInstanceQuest))(ckt, dev, 
+        err = ft_sim->askInstanceQuest (ckt, dev,
                 opt->id, &pv, (IFvalue *)NULL);
     else
-        err = (*(ft_sim->askModelQuest))(ckt, mod, 
+        err = ft_sim->askModelQuest (ckt, mod,
                 opt->id, &pv, (IFvalue *)NULL);
     if (err != OK) {
         ft_sperror(err, "if_getparam");
@@ -1165,10 +1162,10 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
             typecode, dev, mod, opt); */
 
     if (dev)
-        err = (*(ft_sim->setInstanceParm))(ckt, dev, 
+        err = ft_sim->setInstanceParm (ckt, dev,
                 opt->id, &nval, (IFvalue *)NULL);
     else
-        err = (*(ft_sim->setModelParm))(ckt, mod, 
+        err = ft_sim->setModelParm (ckt, mod,
                 opt->id, &nval, (IFvalue *)NULL);
 
     return err;
@@ -1186,11 +1183,11 @@ finddev(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr)
     int err;
     int type = -1;
 
-    err = (*(ft_sim->findInstance))(ck,&type,devptr,name,NULL,NULL);
+    err = ft_sim->findInstance (ck, &type, devptr, name, NULL, NULL);
     if(err == OK) return(type);
     type = -1;
     *devptr = (GENinstance *)NULL;
-    err = (*(ft_sim->findModel))(ck,&type,modptr,name);
+    err = ft_sim->findModel (ck, &type, modptr, name);
     if(err == OK) return(type);
     *modptr = (GENmodel *)NULL;
     return(-1);
@@ -1204,7 +1201,7 @@ if_analQbyName(CKTcircuit *ckt, int which, JOB *anal, char *name, IFvalue *parm)
     int i;
     for(i=0;i<ft_sim->analyses[which]->numParms;i++) {
         if(strcmp(ft_sim->analyses[which]->analysisParms[i].keyword,name)==0) {
-            return( (*(ft_sim->askAnalysisQuest))(ckt,anal,
+            return( ft_sim->askAnalysisQuest (ckt, anal,
                     ft_sim->analyses[which]->analysisParms[i].id,parm,
                     (IFvalue *)NULL) );
         }
@@ -1238,7 +1235,7 @@ if_tranparams(struct circ *ci, double *start, double *stop, double *step)
     err = IFnewUid(ci->ci_ckt,&tranUid,(IFuid)NULL,"Transient Analysis",
 	UID_ANALYSIS, NULL);
     if(err != OK) return(FALSE);
-    err =(*(ft_sim->findAnalysis))(ci->ci_ckt,&which, &anal,tranUid,
+    err = ft_sim->findAnalysis (ci->ci_ckt, &which, &anal, tranUid,
             ci->ci_curTask,(IFuid )NULL);
     if(err != OK) return(FALSE);
     err = if_analQbyName(ci->ci_ckt,which,anal,"tstart",&tmp);
@@ -1282,7 +1279,7 @@ if_getstat(CKTcircuit *ckt, char *name)
                 break;
         if (i == ft_sim->analyses[which]->numParms)
             return (NULL);
-        if ((*(ft_sim->askAnalysisQuest))(ckt, &(ft_curckt->ci_curTask->taskOptions),
+        if (ft_sim->askAnalysisQuest (ckt, &(ft_curckt->ci_curTask->taskOptions),
                 ft_sim->analyses[which]->analysisParms[i].id, &parm, 
                 (IFvalue *)NULL) == -1) {
             fprintf(cp_err, 
@@ -1296,7 +1293,7 @@ if_getstat(CKTcircuit *ckt, char *name)
             if(!(ft_sim->analyses[which]->analysisParms[i].dataType&IF_ASK)) {
                 continue;
             }
-            if ((*(ft_sim->askAnalysisQuest))(ckt, &(ft_curckt->ci_curTask->taskOptions), 
+            if (ft_sim->askAnalysisQuest (ckt, &(ft_curckt->ci_curTask->taskOptions),
                     ft_sim->analyses[which]->analysisParms[i].id, 
                     &parm, (IFvalue *)NULL) == -1) {
                 fprintf(cp_err, 
@@ -1556,9 +1553,9 @@ do {\
 	fprintf(cp_err,"error in CKTnames\n");
 	return;
       }
-      (*(SPfrontEnd->IFnewUid))(ckt,&timeUid,(IFuid)NULL,
+      SPfrontEnd->IFnewUid (ckt, &timeUid, (IFuid)NULL,
 				"time", UID_OTHER, NULL);
-      error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
+      error = SPfrontEnd->OUTpBeginPlot (ckt,
 	     ckt->CKTcurJob,
 	     ckt->CKTcurJob->JOBname,timeUid,IF_REAL,numNames,nameList,
 	     IF_REAL,&(((TRANan*)ckt->CKTcurJob)->TRANplot));

@@ -234,7 +234,7 @@ int EVTload(
     /* ******************* */
 
     mod_type = inst->MIFmodPtr->MIFmodType;
-    (*(DEVices[mod_type]->DEVpublic.cm_func)) (&cm_data);
+    DEVices[mod_type]->DEVpublic.cm_func (&cm_data);
 
 
     /* ****************************** */
@@ -401,7 +401,7 @@ static void EVTcreate_output_event(
         /* Initialize the value */
         node_table = ckt->evt->info.node_table;
         udn_index = node_table[node_index]->udn_index;
-        (*(g_evt_udn_info[udn_index]->create)) (&(event->value));
+        g_evt_udn_info[udn_index]->create (&(event->value));
 
         /* Put the event onto the free list and return the value pointer */
         output_queue->free[output_index] = event;
@@ -528,7 +528,7 @@ static void EVTprocess_output(
         output_queue->free[output_index] = output_event->next;
         /* Invert the output value if necessary */
         if(invert)
-            (*(g_evt_udn_info[udn_index]->invert))
+            g_evt_udn_info[udn_index]->invert
                 (output_event->value);
         /* Add it to the queue */
         EVTqueue_output(ckt, output_index, udn_index, output_event,
@@ -557,28 +557,28 @@ static void EVTprocess_output(
         if(num_outputs > 1) {
             output_subindex = output_table[output_index]->output_subindex;
             if(invert)
-                (*(g_evt_udn_info[udn_index]->invert))
+                g_evt_udn_info[udn_index]->invert
                     (rhs[node_index].output_value[output_subindex]);
-            (*(g_evt_udn_info[udn_index]->compare))
+            g_evt_udn_info[udn_index]->compare
                     (rhs[node_index].output_value[output_subindex],
                     rhsold[node_index].output_value[output_subindex],
                     &equal);
             if(! equal) {
-                (*(g_evt_udn_info[udn_index]->copy))
+                g_evt_udn_info[udn_index]->copy
                     (rhs[node_index].output_value[output_subindex],
                     rhsold[node_index].output_value[output_subindex]);
             }
         }
         else {
             if(invert)
-                (*(g_evt_udn_info[udn_index]->invert))
+                g_evt_udn_info[udn_index]->invert
                     (rhs[node_index].node_value);
-            (*(g_evt_udn_info[udn_index]->compare))
+            g_evt_udn_info[udn_index]->compare
                     (rhs[node_index].node_value,
                     rhsold[node_index].node_value,
                     &equal);
             if(! equal) {
-                (*(g_evt_udn_info[udn_index]->copy))
+                g_evt_udn_info[udn_index]->copy
                     (rhs[node_index].node_value,
                     rhsold[node_index].node_value);
             }

@@ -66,7 +66,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         /* continuing */
         i = cv->TRCVnestState;
         /* resume to work? saj*/
-        error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
+        error = SPfrontEnd->OUTpBeginPlot (ckt,
            ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
            varUid,IF_REAL,666,nameList, 666,&plot);	
         goto resume;
@@ -156,8 +156,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             CKTtemp(ckt);
             goto found;
         }
-   
-        (*(SPfrontEnd->IFerror))(ERR_FATAL, 
+
+        SPfrontEnd->IFerror (ERR_FATAL,
                 "DCtrCurv: source / resistor %s not in circuit", &(cv->TRCVvName[i]));
         return(E_NODEV);
 
@@ -190,32 +190,32 @@ found:;
     
     
     if (cv->TRCVvType[i]==vcode)
-         (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
+         SPfrontEnd->IFnewUid (ckt, &varUid, (IFuid )NULL,
             "v-sweep", UID_OTHER, NULL);
         
     else {
         if (cv->TRCVvType[i]==icode)
-            (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
+            SPfrontEnd->IFnewUid (ckt, &varUid, (IFuid )NULL,
                  "i-sweep", UID_OTHER, NULL);
                      
         else {
             if (cv->TRCVvType[i]==TEMP_CODE)
-                (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
+                SPfrontEnd->IFnewUid (ckt, &varUid, (IFuid )NULL,
                    "temp-sweep", UID_OTHER, NULL);
        
             else {
                 if (cv->TRCVvType[i]==rcode)
-                    (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
+                    SPfrontEnd->IFnewUid (ckt, &varUid, (IFuid )NULL,
                         "res-sweep", UID_OTHER, NULL);
                                 
                 else
-                    (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
+                    SPfrontEnd->IFnewUid (ckt, &varUid, (IFuid )NULL,
                         "?-sweep", UID_OTHER, NULL);
             } /* icode */
         } /* TEMP_CODE */
     } /* rcode*/
     
-    error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
+    error = SPfrontEnd->OUTpBeginPlot (ckt,
         ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
         varUid,IF_REAL,numNames,nameList, IF_REAL,&plot);
     
@@ -508,7 +508,7 @@ nextstep:;
             CKTtemp(ckt);	    
         } /* else not possible */
         
-        if( (*(SPfrontEnd->IFpauseTest))() ) {
+        if(SPfrontEnd->IFpauseTest()) {
             /* user asked us to pause, so save state */
             cv->TRCVnestState = i;
             return(E_PAUSE);
@@ -551,7 +551,7 @@ nextstep:;
             CKTtemp(ckt);
         } /* else not possible */
     }
-    (*(SPfrontEnd->OUTendPlot))(plot);
+    SPfrontEnd->OUTendPlot (plot);
 
     return(OK);
 }

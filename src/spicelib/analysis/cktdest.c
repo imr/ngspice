@@ -37,8 +37,8 @@ CKTdestroy(CKTcircuit *inCkt)
 #endif
 
     for (i=0;i<DEVmaxnum;i++) {
-        if ( DEVices[i] && ((*DEVices[i]).DEVdestroy != NULL) && (ckt->CKThead[i] != NULL) ){
-            (*((*DEVices[i]).DEVdestroy))(&(ckt->CKThead[i]));
+        if ( DEVices[i] && DEVices[i]->DEVdestroy && ckt->CKThead[i] ) {
+            DEVices[i]->DEVdestroy (&(ckt->CKThead[i]));
         }
     }
     for(i=0;i<=ckt->CKTmaxOrder+1;i++){

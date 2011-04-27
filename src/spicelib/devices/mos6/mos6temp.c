@@ -101,7 +101,7 @@ MOS6temp(GENmodel *inModel, CKTcircuit *ckt)
                     }
                 } else {
                     model->MOS6substrateDoping = 0;
-                    (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                    SPfrontEnd->IFerror (ERR_FATAL,
                             "%s: Nsub < Ni",&model->MOS6modName);
                     return(E_BADPARM);
                 }
@@ -153,7 +153,7 @@ MOS6temp(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             if(here->MOS6l - 2 * model->MOS6latDiff <=0) {
-                (*(SPfrontEnd->IFerror))(ERR_WARNING,
+                SPfrontEnd->IFerror (ERR_WARNING,
                         "%s: effective channel length less than zero",
                         &(model->MOS6modName));
             }

@@ -34,11 +34,11 @@ CKTdltMod(CKTcircuit *cktp, GENmodel *modPtr)
 
     for (h = m->GENinstances; h; h = next_i) {
 	    next_i = h->GENnextInstance;
-	    error = (*(SPfrontEnd->IFdelUid))(ckt,h->GENname,
+	    error = SPfrontEnd->IFdelUid (ckt, h->GENname,
 		    UID_INSTANCE);
 	    tfree(h);
     }
-    error = (*(SPfrontEnd->IFdelUid))(ckt,m->GENmodName, UID_MODEL);
+    error = SPfrontEnd->IFdelUid (ckt, m->GENmodName, UID_MODEL);
     tfree(m);
     return(OK);
 }

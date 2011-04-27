@@ -55,7 +55,7 @@ matrixpointers:
                 IFuid namarray[2];
                 namarray[0] = here->CSWname;
                 namarray[1] = here->CSWcontName;
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                SPfrontEnd->IFerror (ERR_FATAL,
                         "%s: unknown controlling source %s",namarray);
                 return(E_BADPARM);
             }

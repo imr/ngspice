@@ -28,7 +28,7 @@ CKTinst2Node(CKTcircuit *ckt, void *instPtr, int terminal, CKTnode **node, IFuid
 
     type = ((GENinstance *)instPtr)->GENmodPtr->GENmodType;
 
-    if(*((*DEVices[type]).DEVpublic.terms) >= terminal && terminal >0 ) {
+    if(*(DEVices[type]->DEVpublic.terms) >= terminal && terminal > 0) {
         switch(terminal) {
             default: return(E_NOTERM);
             case 1:

@@ -48,7 +48,7 @@ CKTdoJob(CKTcircuit *inCkt, int reset, TSKtask *inTask)
 
     ANALmaxnum = spice_num_analysis();
 
-    startTime = (*(SPfrontEnd->IFseconds))( );
+    startTime = SPfrontEnd->IFseconds();
 
     ckt->CKTtemp  = task->TSKtemp;
     ckt->CKTnomTemp  = task->TSKnomTemp;
@@ -119,7 +119,7 @@ CKTdoJob(CKTcircuit *inCkt, int reset, TSKtask *inTask)
 		    senflag = 1;
 		    ckt->CKTcurJob = job;
 		    ckt->CKTsenInfo = (SENstruct *) job;
-		    error = (*(analInfo[sens_num]->an_func))(ckt, reset);
+		    error = analInfo[sens_num]->an_func (ckt, reset);
 		}
 	    }
 
@@ -193,7 +193,7 @@ CKTdoJob(CKTcircuit *inCkt, int reset, TSKtask *inTask)
                 ckt->CKTcurJob=job;
 		error = OK;
 		if (analInfo[i]->an_init)
-		    error = (*(analInfo[i]->an_init))(ckt, job);
+		    error = analInfo[i]->an_init (ckt, job);
 		if (!error && analInfo[i]->do_ic)
 		    error = CKTic(ckt);
 		if (!error){
@@ -202,12 +202,12 @@ CKTdoJob(CKTcircuit *inCkt, int reset, TSKtask *inTask)
                   error = EVTsetup(ckt);
                   if(error) {
                     ckt->CKTstat->STATtotAnalTime +=
-                      (*(SPfrontEnd->IFseconds))()-startTime;
+                      SPfrontEnd->IFseconds() - startTime;
                     return(error);
                   }
                   /* gtri - end - 6/10/91 - wbk - Setup event-driven data */
 #endif
-		    error = (*(analInfo[i]->an_func))(ckt, reset);
+		    error = analInfo[i]->an_func (ckt, reset);
 			/* txl, cpl addition */
 			if (error == 1111) break;
 		}
@@ -217,7 +217,7 @@ CKTdoJob(CKTcircuit *inCkt, int reset, TSKtask *inTask)
 	}
     }
 
-    ckt->CKTstat->STATtotAnalTime += (*(SPfrontEnd->IFseconds))( ) - startTime;
+    ckt->CKTstat->STATtotAnalTime += SPfrontEnd->IFseconds() - startTime;
 
 #ifdef WANT_SENSE2
     if (ckt->CKTsenInfo)

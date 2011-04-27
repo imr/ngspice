@@ -60,7 +60,7 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
                 }
             }
 
-            if((*(here->ASRCtree->IFeval))(here->ASRCtree, ckt->CKTgmin, &value, asrc_vals, asrc_derivs) != OK)
+            if(here->ASRCtree->IFeval (here->ASRCtree, ckt->CKTgmin, &value, asrc_vals, asrc_derivs) != OK)
                 return(E_BADPARM);
 
             if( here->ASRCtype == ASRC_VOLTAGE) {

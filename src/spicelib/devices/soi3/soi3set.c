@@ -265,7 +265,7 @@ SOI3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if((model->SOI3lx != 0) && (model->SOI3lambda != 0))
         {
 
-            (*(SPfrontEnd->IFerror))(ERR_WARNING,
+            SPfrontEnd->IFerror (ERR_WARNING,
              "%s: Non-zero values for BOTH LAMBDA and LX. \nDefaulting to simple LAMBDA model",
                         &model->SOI3modName);
 

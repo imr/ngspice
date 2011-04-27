@@ -62,8 +62,8 @@ CKTsetup(CKTcircuit *ckt)
 #ifdef HAS_WINDOWS
         SetAnalyse( "Device Setup", 0 );
 #endif
-        if ( DEVices[i] && ((*DEVices[i]).DEVsetup != NULL) && (ckt->CKThead[i] != NULL) ){
-            error = (*((*DEVices[i]).DEVsetup))(matrix,ckt->CKThead[i],ckt,
+        if ( DEVices[i] && DEVices[i]->DEVsetup && ckt->CKThead[i] ) {
+            error = DEVices[i]->DEVsetup (matrix, ckt->CKThead[i], ckt,
                     &ckt->CKTnumStates);
             if(error) return(error);
         }
@@ -141,8 +141,8 @@ CKTunsetup(CKTcircuit *ckt)
     }
 
     for (i=0;i<DEVmaxnum;i++) {
-        if ( DEVices[i] && ((*DEVices[i]).DEVunsetup != NULL) && (ckt->CKThead[i] != NULL) ){
-            e2 = (*((*DEVices[i]).DEVunsetup))(ckt->CKThead[i],ckt);
+        if ( DEVices[i] && DEVices[i]->DEVunsetup && ckt->CKThead[i] ) {
+            e2 = DEVices[i]->DEVunsetup (ckt->CKThead[i], ckt);
             if (!error && e2)
                 error = e2;
         }

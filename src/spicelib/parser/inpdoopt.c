@@ -66,7 +66,7 @@ INPdoOpts(
                 if(prm->analysisParms[i].dataType & IF_SET) {
                     val = INPgetValue(ckt,&line,
                             prm->analysisParms[i].dataType&IF_VARTYPES, tab);
-                    error = (*(ft_sim->setAnalysisParm))(ckt,anal,
+                    error = ft_sim->setAnalysisParm (ckt, anal,
                             prm->analysisParms[i].id,val,(IFvalue*)NULL);
                     if(error) {
                         errmsg = TMALLOC(char, 35 + strlen(token));

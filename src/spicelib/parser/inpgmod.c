@@ -50,7 +50,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
   char *endptr; double dval;
 
   /* not already defined, so create & give parameters */
-  error = (*(ft_sim->newModel))(ckt, (modtmp)->INPmodType, &((modtmp)->INPmodfast), (modtmp)->INPmodName);
+  error = ft_sim->newModel (ckt, modtmp->INPmodType, &(modtmp->INPmodfast), modtmp->INPmodName);
 
   if (error) return error;
 
@@ -98,7 +98,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
 	  
 	  val = INPgetValue(ckt, &line, ((* (ft_sim->devices)[(modtmp)->INPmodType]).modelParms[j].dataType), tab);
 	  
-	  error = (*(ft_sim->setModelParm)) (ckt, ((modtmp)->INPmodfast),
+	  error = ft_sim->setModelParm (ckt, modtmp->INPmodfast,
 					     (* (ft_sim->devices)[(modtmp)->INPmodType]).modelParms[j].id,
 					     val, (IFvalue *) NULL);
 	  if (error)
@@ -377,7 +377,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
 		    if (cardType >= 0) {
 		        /* Add card structure to model */
 			info = INPcardTab[cardType];
-			error = (*(info->newCard))( (void **)&tmpCard,
+			error = info->newCard ((void **) &tmpCard,
 			        model->INPmodfast );
 			if (error) return(error);
 		    /* Handle parameter-less cards */
@@ -441,7 +441,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                             err = INPerrCat(err, tmp);
 			  }
 			}
-                        error = (*(info->setCardParm))(
+                        error = info->setCardParm (
 			    ((info->cardParms)[idx]).id, value, tmpCard );
 			if (error) return(error);
 		    }

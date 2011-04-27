@@ -20,7 +20,7 @@ int INPgetTitle(CKTcircuit **ckt, card ** data)
 {
     int error;
 
-    error = (*(ft_sim->newCircuit)) (ckt);
+    error = ft_sim->newCircuit (ckt);
     if (error)
 	return (error);
     *data = (*data)->nextcard;

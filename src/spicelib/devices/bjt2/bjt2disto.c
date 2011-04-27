@@ -193,7 +193,7 @@ for( ; model != NULL; model = model->BJT2nextModel ) {
       /* ic term */
 
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
       temp = DFn2F1( here->ic_x2,
       here->ic_y2,
@@ -221,7 +221,7 @@ time = (*(SPfrontEnd->IFseconds))();
       r1h1z,
       i1h1z);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time for DFn2F1: %g seconds \n", time);
 #endif
 
@@ -354,7 +354,7 @@ printf("Time for DFn2F1: %g seconds \n", time);
       r1h1z = r1h1z + r1h1y;
       i1h1z = i1h1z + i1h1y;
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
       temp = - ckt->CKTomega *
           D1i2F1(here->capbx2,
@@ -365,7 +365,7 @@ time = (*(SPfrontEnd->IFseconds))();
       r1h1z,
       i1h1z);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time for D1n2F1: %g seconds \n", time);
 #endif
 
@@ -431,7 +431,7 @@ printf("Time for D1n2F1: %g seconds \n", time);
       /* ic term */
 
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
       temp = DFn3F1( here->ic_x2,
       here->ic_y2,
@@ -491,7 +491,7 @@ time = (*(SPfrontEnd->IFseconds))();
       r2h11z,
       i2h11z);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time for DFn3F1: %g seconds \n", time);
 #endif
 
@@ -727,7 +727,7 @@ printf("Time for DFn3F1: %g seconds \n", time);
       r2h11z = r2h11z + r2h11y;
       i2h11z = i2h11z + i2h11y;
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
       temp = - ckt->CKTomega *
           D1i3F1(here->capbx2,
@@ -744,7 +744,7 @@ time = (*(SPfrontEnd->IFseconds))();
       r2h11z,
       i2h11z);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time for D1n3F1: %g seconds \n", time);
 #endif
 
@@ -874,7 +874,7 @@ printf("Time for D1n3F1: %g seconds \n", time);
       /* loading ib term */
       /* x and y still the same */
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
       temp = DFnF12( here->ib_x2,
       here->ib_y2,
@@ -914,7 +914,7 @@ time = (*(SPfrontEnd->IFseconds))();
       0.0,
       0.0);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time for DFnF12: %g seconds \n", time);
 #endif
 
@@ -1044,7 +1044,7 @@ printf("Time for DFnF12: %g seconds \n", time);
       r1h2z = r1h2z + r1h2y;
       i1h2z = i1h2z + i1h2y;
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
       temp = - ckt->CKTomega *
           D1iF12(here->capbx2,
@@ -1059,7 +1059,7 @@ time = (*(SPfrontEnd->IFseconds))();
       r1h2z,
       i1h2z);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time for D1nF12: %g seconds \n", time);
 #endif
 
@@ -1471,14 +1471,14 @@ printf("Time for D1nF12: %g seconds \n", time);
         pass.h2f1f2z =  r2h1m2z;
         pass.ih2f1f2z =   i2h1m2z;
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
         temp = DFn2F12(&pass);
 
 
         itemp = DFi2F12(&pass);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time for DFn2F12: %g seconds \n", time);
 #endif
       }
@@ -1693,7 +1693,7 @@ printf("Time for DFn2F12: %g seconds \n", time);
       r2h1m2z = r2h1m2z + r2h1m2y;
       i2h1m2z = i2h1m2z + i2h1m2y;
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
       temp = - ckt->CKTomega *
           D1i2F12(here->capbx2,
@@ -1718,7 +1718,7 @@ time = (*(SPfrontEnd->IFseconds))();
       r2h1m2z,
       i2h1m2z);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time for D1n2F12: %g seconds \n", time);
 #endif
 

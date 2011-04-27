@@ -60,7 +60,7 @@ int INPtermInsert(CKTcircuit *ckt, char **token, INPtables * tab, CKTnode **node
     if (t == (struct INPnTab *) NULL)
 	return (E_NOMEM);
     ZERO(t, struct INPnTab);
-    error = (*(ft_sim->newNode)) (ckt, &t->t_node, *token);
+    error = ft_sim->newNode (ckt, &(t->t_node), *token);
     if (error)
 	return (error);
     if (node)
@@ -126,7 +126,7 @@ int INPgndInsert(CKTcircuit *ckt, char **token, INPtables * tab, CKTnode **node)
     if (t == (struct INPnTab *) NULL)
 	return (E_NOMEM);
     ZERO(t, struct INPnTab);
-    error = (*(ft_sim->groundNode)) (ckt, &t->t_node, *token);
+    error = ft_sim->groundNode (ckt, &(t->t_node), *token);
     if (error)
 	return (error);
     if (node)

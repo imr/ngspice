@@ -131,7 +131,7 @@ int Size_Not_Found;
 	          {   IFuid namarray[2];
                       namarray[0] = model->B3SOIFDmodName;
                       namarray[1] = here->B3SOIFDname;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                      SPfrontEnd->IFerror (ERR_FATAL,
                       "B3SOIFD: mosfet %s, model %s: Effective channel length <= 0",
                        namarray);
                       return(E_BADPARM);
@@ -142,7 +142,7 @@ int Size_Not_Found;
 	          {   IFuid namarray[2];
                       namarray[0] = model->B3SOIFDmodName;
                       namarray[1] = here->B3SOIFDname;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                      SPfrontEnd->IFerror (ERR_FATAL,
                       "B3SOIFD: mosfet %s, model %s: Effective channel width <= 0",
                        namarray);
                       return(E_BADPARM);
@@ -153,7 +153,7 @@ int Size_Not_Found;
 	          {   IFuid namarray[2];
                       namarray[0] = model->B3SOIFDmodName;
                       namarray[1] = here->B3SOIFDname;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                      SPfrontEnd->IFerror (ERR_FATAL,
                       "B3SOIFD: mosfet %s, model %s: Effective channel length for C-V <= 0",
                        namarray);
                       return(E_BADPARM);
@@ -164,7 +164,7 @@ int Size_Not_Found;
 	          {   IFuid namarray[2];
                       namarray[0] = model->B3SOIFDmodName;
                       namarray[1] = here->B3SOIFDname;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                      SPfrontEnd->IFerror (ERR_FATAL,
                       "B3SOIFD: mosfet %s, model %s: Effective channel width for C-V <= 0",
                        namarray);
                       return(E_BADPARM);
@@ -559,7 +559,7 @@ int Size_Not_Found;
 		  {   IFuid namarray[2];
                       namarray[0] = model->B3SOIFDmodName;
                       namarray[1] = here->B3SOIFDname;
-                      (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during B3SOIFDV3 parameter checking for %s in model %s", namarray);
+                      SPfrontEnd->IFerror (ERR_FATAL, "Fatal error(s) detected during B3SOIFDV3 parameter checking for %s in model %s", namarray);
                       return(E_BADPARM);   
 		  }
 

@@ -62,7 +62,7 @@ DISTOan(CKTcircuit *ckt, int restart)
 		/* start at beginning */
 
 #ifdef D_DBG_BLOCKTIMES
-time1 = (*(SPfrontEnd->IFseconds))();
+time1 = SPfrontEnd->IFseconds();
 #endif
         switch(job->DstepType) {
 
@@ -107,26 +107,26 @@ time1 = (*(SPfrontEnd->IFseconds))();
 
 	if (ckt->CKTkeepOpInfo) {
 	    /* Dump operating point. */
-	    error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
+	    error = SPfrontEnd->OUTpBeginPlot (ckt,
 		ckt->CKTcurJob, "Distortion Operating Point",
 		(IFuid)NULL,IF_REAL,numNames,nameList, IF_REAL,&acPlot);
 	    if(error) return(error);
 	    CKTdump(ckt,(double)0,acPlot);
-	    (*(SPfrontEnd->OUTendPlot))(acPlot);
+	    SPfrontEnd->OUTendPlot (acPlot);
 	    acPlot = NULL;
 	}
 
 #ifdef D_DBG_BLOCKTIMES
-time1 = (*(SPfrontEnd->IFseconds))() - time1;
+time1 = SPfrontEnd->IFseconds() - time1;
 printf("Time for initial work (including op. pt.): %g seconds \n", time1);
 #endif
 
 #ifdef D_DBG_BLOCKTIMES
-time1 = (*(SPfrontEnd->IFseconds))();
+time1 = SPfrontEnd->IFseconds();
 #endif
 	error = CKTdisto(ckt,D_SETUP);
 #ifdef D_DBG_BLOCKTIMES
-time1 = (*(SPfrontEnd->IFseconds))() - time1;
+time1 = SPfrontEnd->IFseconds() - time1;
 printf("Time outside D_SETUP: %g seconds \n", time1);
 #endif
 	if (error) return(error);
@@ -134,7 +134,7 @@ printf("Time outside D_SETUP: %g seconds \n", time1);
 	displacement = 0;
 
 #ifdef D_DBG_BLOCKTIMES
-time1 = (*(SPfrontEnd->IFseconds))();
+time1 = SPfrontEnd->IFseconds();
 #endif
         freq = job->DstartF1;
 	if (job->Df2wanted) {
@@ -244,19 +244,19 @@ time1 = (*(SPfrontEnd->IFseconds))();
 }
 		
 #ifdef D_DBG_BLOCKTIMES
-time1 = (*(SPfrontEnd->IFseconds))() - time1;
+time1 = SPfrontEnd->IFseconds() - time1;
 printf("Time for other setup (storage allocation etc.): %g seconds \n", time1);
 #endif
 
 
 
 #ifdef D_DBG_BLOCKTIMES
-time1 = (*(SPfrontEnd->IFseconds))();
+time1 = SPfrontEnd->IFseconds();
 #endif
     while(freq <= job->DstopF1+freqTol) {
 
 /*
-        if( (*(SPfrontEnd->IFpauseTest))() ) { 
+        if(SPfrontEnd->IFpauseTest()) {
             job->DsaveF1 = freq;
             return(E_PAUSE);
         }
@@ -265,30 +265,30 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	job->Domega1 = ckt->CKTomega;
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODEAC;
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
 	error = CKTacLoad(ckt);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time for CKTacLoad: %g seconds \n", time);
 #endif
 	if (error) return(error);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
 	error = CKTdisto(ckt,D_RHSF1); /* sets up the RHS vector
 			for all inputs corresponding to F1 */
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time outside DISTO_RHSFIX: %g seconds \n", time);
 #endif
 	if (error) return(error);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
 	error = NIdIter(ckt);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time for NIdIter: %g seconds \n", time);
 #endif
 	if (error) return(error);
@@ -299,11 +299,11 @@ printf("Time for NIdIter: %g seconds \n", time);
 	error = CKTacLoad(ckt);
 	if (error) return(error);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
 	error = CKTdisto(ckt,D_TWOF1);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time outside D_TWOF1: %g seconds \n", time);
 #endif
 	if (error) return(error);
@@ -320,11 +320,11 @@ printf("Time outside D_TWOF1: %g seconds \n", time);
 		error = CKTacLoad(ckt);
 		if (error) return(error);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
 		error = CKTdisto(ckt,D_THRF1);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time outside D_THRF1: %g seconds \n", time);
 #endif
 		if (error) return(error);
@@ -347,11 +347,11 @@ printf("Time outside D_THRF1: %g seconds \n", time);
 		error = CKTacLoad(ckt);
 		if (error) return(error);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
 		error = CKTdisto(ckt,D_RHSF2);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time outside DISTO_RHSFIX: %g seconds \n", time);
 #endif
 		if (error) return(error);
@@ -366,11 +366,11 @@ printf("Time outside DISTO_RHSFIX: %g seconds \n", time);
 		error = CKTacLoad(ckt);
 		if (error) return(error);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
 		error = CKTdisto(ckt,D_F1PF2);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time outside D_F1PF2: %g seconds \n", time);
 #endif
 		if (error) return(error);
@@ -386,11 +386,11 @@ printf("Time outside D_F1PF2: %g seconds \n", time);
 		error = CKTacLoad(ckt);
 		if (error) return(error);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
 		error = CKTdisto(ckt,D_F1MF2);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time outside D_F1MF2: %g seconds \n", time);
 #endif
 		if (error) return(error);
@@ -405,11 +405,11 @@ printf("Time outside D_F1MF2: %g seconds \n", time);
 		error = CKTacLoad(ckt);
 		if (error) return(error);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))();
+time = SPfrontEnd->IFseconds();
 #endif
 		error = CKTdisto(ckt,D_2F1MF2);
 #ifdef D_DBG_SMALLTIMES
-time = (*(SPfrontEnd->IFseconds))() - time;
+time = SPfrontEnd->IFseconds() - time;
 printf("Time outside D_2F1MF2: %g seconds \n", time);
 #endif
 		if (error) return(error);
@@ -496,7 +496,7 @@ printf("Time outside D_2F1MF2: %g seconds \n", time);
         }
 	}
 #ifdef D_DBG_BLOCKTIMES
-time1 = (*(SPfrontEnd->IFseconds))() - time1;
+time1 = SPfrontEnd->IFseconds() - time1;
 printf("Time inside frequency loop: %g seconds \n", time1);
 #endif
     
@@ -506,7 +506,7 @@ endsweep:
     /* output routines to process the H's and output actual ckt variable
        values */
 #ifdef D_DBG_BLOCKTIMES
-time1 = (*(SPfrontEnd->IFseconds))();
+time1 = SPfrontEnd->IFseconds();
 #endif
 
        
@@ -514,13 +514,13 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	if (! job->Df2wanted) {
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
+	SPfrontEnd->IFnewUid (ckt, &freqUid, (IFuid)NULL,
 		"frequency", UID_OTHER, NULL);
-	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
+	SPfrontEnd->OUTpBeginPlot (ckt,
 	    ckt->CKTcurJob, "DISTORTION - 2nd harmonic",
 	    freqUid,IF_REAL, numNames,nameList,IF_COMPLEX,&acPlot);
         if (job->DstepType != LINEAR) {
-	    (*(SPfrontEnd->OUTattributes))((void *)acPlot,NULL,
+	    SPfrontEnd->OUTattributes (acPlot, NULL,
 		OUT_SCALE_LOG, NULL);
 	}
        for (i=0; i< displacement ; i++)
@@ -533,14 +533,14 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	error = CKTacDump(ckt,ckt->CKTrhsOld[0],acPlot);
         if(error) return(error);
 	}
-	(*(SPfrontEnd->OUTendPlot))(acPlot);
+	SPfrontEnd->OUTendPlot (acPlot);
 	acPlot = NULL;
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
+	SPfrontEnd->IFnewUid (ckt, &freqUid, (IFuid)NULL,
 		"frequency", UID_OTHER, NULL);
-	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
+	SPfrontEnd->OUTpBeginPlot (ckt,
 	ckt->CKTcurJob, "DISTORTION - 3rd harmonic", freqUid, IF_REAL,
 	numNames,nameList,IF_COMPLEX,&acPlot);
        for (i=0; i< displacement ; i++)
@@ -552,7 +552,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	ckt->CKTirhsOld = *((job->i3H11stor) + i);
 	error = CKTacDump(ckt,ckt->CKTrhsOld[0],acPlot);
 	}
-	(*(SPfrontEnd->OUTendPlot))(acPlot);
+	SPfrontEnd->OUTendPlot (acPlot);
 	acPlot = NULL;
       
 	} else {
@@ -560,9 +560,9 @@ time1 = (*(SPfrontEnd->IFseconds))();
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
+	SPfrontEnd->IFnewUid (ckt, &freqUid, (IFuid)NULL,
 		"frequency", UID_OTHER, NULL);
-	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
+	SPfrontEnd->OUTpBeginPlot (ckt,
 	ckt->CKTcurJob, "DISTORTION - IM: f1+f2", freqUid, IF_REAL,
 	numNames,nameList,IF_COMPLEX,&acPlot);
 	   for (i=0; i< displacement ; i++)
@@ -575,14 +575,14 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	error = CKTacDump(ckt,ckt->CKTrhsOld[0],acPlot);
 	    if(error) return(error);
 	    }
-	(*(SPfrontEnd->OUTendPlot))(acPlot);
+	SPfrontEnd->OUTendPlot (acPlot);
 	acPlot = NULL;
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
+	SPfrontEnd->IFnewUid (ckt, &freqUid, (IFuid)NULL,
 		"frequency", UID_OTHER, NULL);
-	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
+	SPfrontEnd->OUTpBeginPlot (ckt,
 	ckt->CKTcurJob, "DISTORTION - IM: f1-f2", freqUid, IF_REAL,
 	numNames,nameList,IF_COMPLEX,&acPlot);
 	   for (i=0; i< displacement ; i++)
@@ -596,14 +596,14 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	error = CKTacDump(ckt,ckt->CKTrhsOld[0],acPlot);
 	    if(error) return(error);
 	    }
-	(*(SPfrontEnd->OUTendPlot))(acPlot);
+	SPfrontEnd->OUTendPlot (acPlot);
 	acPlot = NULL;
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
+	SPfrontEnd->IFnewUid (ckt, &freqUid, (IFuid)NULL,
 		"frequency", UID_OTHER, NULL);
-	(*(SPfrontEnd->OUTpBeginPlot))(ckt,
+	SPfrontEnd->OUTpBeginPlot (ckt,
 	ckt->CKTcurJob, "DISTORTION - IM: 2f1-f2", freqUid, IF_REAL,
 	numNames,nameList,IF_COMPLEX,&acPlot);
 	   for (i=0; i< displacement ; i++)
@@ -617,7 +617,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	error = CKTacDump(ckt,ckt->CKTrhsOld[0],acPlot);
 	    if(error) return(error);
 	    }
-	(*(SPfrontEnd->OUTendPlot))(acPlot);
+	SPfrontEnd->OUTendPlot (acPlot);
 	acPlot = NULL;
 
     }
@@ -660,7 +660,7 @@ FREE(job->i2H1m2stor);
 FREE(job->i3H1m2stor);
     }
 #ifdef D_DBG_BLOCKTIMES
-time1 = (*(SPfrontEnd->IFseconds))() - time1;
+time1 = SPfrontEnd->IFseconds() - time1;
 printf("Time for output and deallocation: %g seconds \n", time1);
 #endif
     return(OK);

@@ -94,8 +94,7 @@ HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 		TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
-	      (*(SPfrontEnd->IFnewUid)) 
-		(ckt, &(data->namelist[data->numPlots++]),
+	      SPfrontEnd->IFnewUid (ckt, &(data->namelist[data->numPlots++]),
 		 (IFuid) NULL, name, UID_OTHER, NULL);
 	    }
 	    break;
@@ -107,8 +106,7 @@ HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 		TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
-	      (*(SPfrontEnd->IFnewUid)) 
-		(ckt, &(data->namelist[data->numPlots++]),
+	      SPfrontEnd->IFnewUid (ckt, &(data->namelist[data->numPlots++]),
 		 (IFuid) NULL, name, UID_OTHER, NULL);
 	      
 	      (void) sprintf(name, "inoise_total.%s%s", 
@@ -117,8 +115,7 @@ HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 		TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
-	      (*(SPfrontEnd->IFnewUid)) 
-		(ckt, &(data->namelist[data->numPlots++]),
+	      SPfrontEnd->IFnewUid (ckt, &(data->namelist[data->numPlots++]),
 		 (IFuid) NULL, name, UID_OTHER, NULL);
 	    }
 	    break;

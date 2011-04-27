@@ -42,8 +42,8 @@ CKTic(CKTcircuit *ckt)
 
     if(ckt->CKTmode & MODEUIC) {
         for (i=0;i<DEVmaxnum;i++) {
-            if( DEVices[i] && ((*DEVices[i]).DEVsetic != NULL) && (ckt->CKThead[i] != NULL) ){
-                error = (*((*DEVices[i]).DEVsetic))(ckt->CKThead[i],ckt);
+            if( DEVices[i] && DEVices[i]->DEVsetic && ckt->CKThead[i] ) {
+                error = DEVices[i]->DEVsetic (ckt->CKThead[i], ckt);
                 if(error) return(error);
             }
         }
