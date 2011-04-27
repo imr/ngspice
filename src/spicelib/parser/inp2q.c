@@ -122,7 +122,6 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
 
     if (thismodel != NULL) {
         if ((thismodel->INPmodType != INPtypelook("BJT"))
-         && (thismodel->INPmodType != INPtypelook("BJT2"))
 #ifdef CIDER
          && (thismodel->INPmodType != INPtypelook("NBJT"))
          && (thismodel->INPmodType != INPtypelook("NBJT2"))

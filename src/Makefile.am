@@ -40,7 +40,6 @@ endif
 DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/asrc/libasrc.la		\
 	spicelib/devices/bjt/libbjt.la			\
-	spicelib/devices/bjt2/libbjt2.la		\
 	spicelib/devices/bsim1/libbsim1.la		\
 	spicelib/devices/bsim2/libbsim2.la		\
 	spicelib/devices/bsim3/libbsim3.la		\

@@ -1007,7 +1007,6 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/Makefile
                  src/spicelib/devices/asrc/Makefile
                  src/spicelib/devices/bjt/Makefile
-                 src/spicelib/devices/bjt2/Makefile
                  src/spicelib/devices/bsim1/Makefile
                  src/spicelib/devices/bsim2/Makefile
                  src/spicelib/devices/bsim3/Makefile

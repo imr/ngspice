@@ -48,19 +48,13 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 	switch(lev) {
 		case 0:
 		case 1:
+		case 2:
 			type = INPtypelook("BJT");
 			if (type < 0) {
 	  		  err = INPmkTemp(
 	  		          "Device type BJT not available in this binary\n");
 			}
 		break;
-		case 2:
-			 type = INPtypelook("BJT2");
-                if(type < 0) {
-                    err = INPmkTemp(
-                            "Device type BJT2 not available in this binary\n");
-                }
-                break;
 		case 4:
 			 type = INPtypelook("VBIC");
                 if(type < 0) {
@@ -393,7 +387,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 	    }
 	    break;  	    
 	
-	case 62:
+	case 61:
 	    type = INPtypelook("SOI3");
 	    if (type < 0) {
 		err =
@@ -413,9 +407,9 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 	    err =
 		INPmkTemp
 #ifdef ADMS
-		("Only MOS device levels 1-6,8-10,14,44,45,49,54-58,62,64 are supported in this binary\n");
+		("Only MOS device levels 1-6,8-10,14,44,45,49,54-58,61,64 are supported in this binary\n");
 #else
-		("Only MOS device levels 1-6,8-10,14,49,54-58,62,64 are supported in this binary\n");
+		("Only MOS device levels 1-6,8-10,14,49,54-58,61,64 are supported in this binary\n");
 #endif		
 	    break;
 	}

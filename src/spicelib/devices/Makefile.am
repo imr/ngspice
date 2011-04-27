@@ -3,7 +3,6 @@
 SUBDIRS = \
 	asrc	\
 	bjt	\
-	bjt2	\
 	bsim1	\
 	bsim2	\
 	bsim3	\
@@ -64,7 +63,6 @@ DIST_SUBDIRS = \
 	@VLADEVDIR@ \
 	asrc	\
 	bjt	\
-	bjt2	\
 	bsim1	\
 	bsim2	\
 	bsim3	\
