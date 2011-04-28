@@ -1,4 +1,16 @@
 2011-04-27  Robert Larice
+ * src/main.c ,
+ * src/frontend/com_measure2.c ,
+ * src/frontend/inpcom.c ,
+ * src/spicelib/analysis/noisean.c ,
+ * src/spicelib/analysis/pzan.c ,
+ * src/spicelib/analysis/tfanal.c ,
+ * src/spicelib/devices/cpl/cplsetup.c ,
+ * src/spicelib/devices/isrc/isrcacct.c ,
+ * src/spicelib/devices/vsrc/vsrcacct.c :
+    code cleanup, some warnings, some casts, ...
+
+2011-04-27  Robert Larice
  * */** :
     code cleanup, drop NULL pointer casts
 

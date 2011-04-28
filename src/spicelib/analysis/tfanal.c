@@ -112,7 +112,7 @@ TFanal(CKTcircuit *ckt, int restart)
     }
 
     error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
-            ((TFan*)(ckt->CKTcurJob))->JOBname, NULL, (int)0, 3,
+            ((TFan*)(ckt->CKTcurJob))->JOBname, NULL, 0, 3,
             uids,IF_REAL,&plotptr);
     if(error) return(error);
 

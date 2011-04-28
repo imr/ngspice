@@ -1205,7 +1205,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
          /* only the last title line remains valid */
           if (new_title != NULL) tfree(new_title);
           new_title = copy(s);
-          if (s=strstr(new_title, "\n")) 
+          if ((s = strstr(new_title, "\n")) != NULL)
               *s = ' '; 
           *buffer = '*';             /* change .TITLE line to comment line */
       }

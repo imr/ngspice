@@ -476,7 +476,7 @@ static void com_measure_when(
       if ((first > 1) && (dc_check && (meas->m_td == scaleValue)))
         first = 1;
 
-      if (first == 1) 
+      if (first == 1) {
           if (has_d2) {
              // initialise
              crossCnt =0;
@@ -515,6 +515,7 @@ static void com_measure_when(
              }
              fflush( stdout ) ;
           }
+      }
 
       if (first > 1) {
          if (has_d2) {

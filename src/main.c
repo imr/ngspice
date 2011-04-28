@@ -760,8 +760,6 @@ main(int argc, char **argv)
 #endif /* HAS_WINDOWS */
 {
     int c, err;
-    unsigned int rseed;
-    time_t acttime;
     bool  gotone = FALSE;
     char* copystring;
     bool  addctrlsect = TRUE; /* PN: for autorun */
@@ -1111,21 +1109,26 @@ bot:
 #ifdef SIMULATOR
 #ifdef FastRand
 // initialization and seed for FastNorm Gaussian random generator
-    initnorm (0, 0);
-    rseed = 66;
-    if (!cp_getvar("rndseed", CP_NUM, (char *) &rseed)) {
-        acttime = time(NULL);
-        rseed = (int)acttime;
+    {
+        unsigned int rseed = 66;
+        initnorm (0, 0);
+        if (!cp_getvar("rndseed", CP_NUM, &rseed)) {
+            time_t acttime = time(NULL);
+            rseed = (int) acttime;
+        }
+        initnorm (rseed, 2);
+        fprintf (cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
     }
-    initnorm (rseed, 2);
-    fprintf (cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
 #elif defined (WaGauss)
-    if (!cp_getvar("rndseed", CP_NUM, (char *) &rseed)) {
-        acttime = time(NULL);
-        rseed = (int)acttime;
+    {
+        unsigned int rseed = 66;
+        if (!cp_getvar("rndseed", CP_NUM, &rseed)) {
+            time_t acttime = time(NULL);
+            rseed = (int) acttime;
+        }
+        srand(rseed);
+        initw();
     }
-    srand(rseed);
-    initw();
 #endif
     if (!ft_servermode && !ft_nutmeg) {
     /* Concatenate all non-option arguments into a temporary file

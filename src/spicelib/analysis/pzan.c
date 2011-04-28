@@ -148,7 +148,7 @@ PZpost(CKTcircuit *ckt)
     }
 
     SPfrontEnd->OUTpBeginPlot (ckt, (JOB *)pzan, pzan->JOBname,
-	    NULL, (int)0, pzan->PZnPoles + pzan->PZnZeros, namelist,
+	    NULL, 0, pzan->PZnPoles + pzan->PZnZeros, namelist,
 	    IF_COMPLEX, &pzPlotPtr);
 
     j = 0;

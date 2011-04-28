@@ -279,7 +279,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 
 	SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
 	       "Integrated Noise - V^2 or A^2",
-	       NULL, (int)0, data->numPlots, data->namelist, IF_REAL,
+	       NULL, 0, data->numPlots, data->namelist, IF_REAL,
 	       &(data->NplotPtr));
 
 	error = CKTnoise(ckt,INT_NOIZ,N_CALC,data);

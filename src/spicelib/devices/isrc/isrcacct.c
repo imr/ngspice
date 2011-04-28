@@ -15,7 +15,6 @@ Author: 1985 Thomas L. Quarles
 extern int fftInit(long M);
 extern void fftFree(void);
 extern void rffts(float *data, long M, long Rows);
-extern double exprand(double);
 
 #define SAMETIME(a,b)    (fabs((a)-(b))<= TIMETOL * PW)
 #define TIMETOL    1e-7

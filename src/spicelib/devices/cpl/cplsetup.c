@@ -1291,8 +1291,8 @@ coupled(int dim)
    loop_ZY(dim, 0.0);
    eval_frequency(dim, deg_o);
    eval_Si_Si_1(dim, 0.0);
-   store_SiSv_1(dim, (int) 0);
-   store(dim, (int) 0);
+   store_SiSv_1(dim, 0);
+   store(dim, 0);
 
    /***     Step  1     ***/
    /***     Step  2     ***/
