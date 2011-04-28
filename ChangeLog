@@ -1,4 +1,20 @@
-2011-04-27  Robert Larice
+2011-04-28  Robert Larice
+ * src/frontend/inpcom.c ,
+    bug fix, (#329233)
+      http://sourceforge.net/tracker/?func=detail&atid=423915&aid=3292330&group_id=38962
+    this fix is for
+      E1 OUT 0 vol='V(IN)>1 && V(IN)>0 ? 1 : 0'
+
+    FIXME,
+      INPevaluate() should skip a trailing `unit' string
+
+    FIXME,
+      E1 OUT 0 vol='(V(IN)>1) and (V(IN)>0) ? 1 : 0'
+    this is simply incorrect syntax, but shoudn't segfault.
+      inp_chk_for_multi_in_vcvs()
+    is much to simple minded.
+
+2011-04-28  Robert Larice
  * src/main.c ,
  * src/frontend/com_measure2.c ,
  * src/frontend/inpcom.c ,
@@ -10,7 +26,7 @@
  * src/spicelib/devices/vsrc/vsrcacct.c :
     code cleanup, some warnings, some casts, ...
 
-2011-04-27  Robert Larice
+2011-04-28  Robert Larice
  * */** :
     code cleanup, drop NULL pointer casts
 

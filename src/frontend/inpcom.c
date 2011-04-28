@@ -4334,8 +4334,6 @@ static void inp_bsource_compat(struct line *deck)
     char buf[512];
     size_t i, xlen, ustate = 0;
     int skip_control = 0;
-    char *cvalue;
-    double dvalue;
     int error1;
 
     for (card = deck; card; card = card->li_next) {
@@ -4538,15 +4536,17 @@ static void inp_bsource_compat(struct line *deck)
                 else if (isdigit(actchar))
                 {
                     /* allow 100p, 5MEG etc. */
-                    dvalue = INPevaluate(&str_ptr, &error1, 2);
-                    cvalue = TMALLOC(char, 19);
-                    sprintf(cvalue,"%18.10e", dvalue);
+                    double dvalue = INPevaluate(&str_ptr, &error1, 0);
+                    char   cvalue[19];
                     /* unary -, change sign */
-                    if (ustate == 2) {
-                        cvalue[0] = '-';
-                    }
+                    if (ustate == 2)
+                        dvalue *= -1;
+                    sprintf(cvalue,"%18.10e", dvalue);
                     cwl->wl_word = copy(cvalue);
                     ustate = 0; /* we have a number */
+                    /* skip the `unit', FIXME INPevaluate() should do this */
+                    while(isalpha(*str_ptr))
+                        str_ptr++;
                 }
                 else  /* strange char */
                 {
