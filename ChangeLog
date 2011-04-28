@@ -1,3 +1,8 @@
+2011-04-28  Robert Larice
+ * src/frontend/plotting/x11.c ,
+ * src/frontend/plotting/x11.h :
+    cleanup x11 code
+
 2011-04-27 Dietmar Warning
  * /devices/bjt2: removed - all GP extensions of this model are now in the bjt model, see
     Changelog 2011-03-03 and 2011-03-10

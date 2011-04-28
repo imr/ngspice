@@ -36,6 +36,7 @@ $Id$
 #  include <X11/Xaw/Command.h>
 #  include <X11/Xaw/Form.h>
 #  include <X11/Shell.h>
+#  include <X11/Intrinsic.h>
 
 #  ifdef DEBUG
 #     include <X11/Xlib.h> /* for _Xdebug */
@@ -96,6 +97,19 @@ static void initlinestyles (void);
 static void initcolors (GRAPH *graph);
 static void X_ScreentoData (GRAPH *graph, int x, int y, double *fx, double *fy);
 static void linear_arc(int x0, int y0, int radius, double theta, double delta_theta);
+static void slopelocation(GRAPH *graph, int x0, int y0);
+static void zoomin(GRAPH *graph);
+
+//XtEventHandler
+static void handlekeypressed(Widget w, XtPointer clientdata, XEvent *ev, Boolean *continue_dispatch);
+static void handlebuttonev(Widget w, XtPointer graph, XEvent *ev, Boolean *continue_dispatch);
+static void redraw(Widget w, XtPointer client_data, XEvent *ev, Boolean *continue_dispatch);
+static void resize(Widget w, XtPointer client_data, XEvent *ev, Boolean *continue_dispatch);
+
+//XtCallbackProc
+static void hardcopy(Widget w, XtPointer client_data, XtPointer call_data);
+static void killwin(Widget w, XtPointer client_data, XtPointer call_data);
+
 
 static int
 errorhandler(Display *display, XErrorEvent *errorev)
@@ -261,16 +275,17 @@ initcolors(GRAPH *graph)
 }
 
 
-void
-handlekeypressed(Widget w, caddr_t clientdata, caddr_t calldata)
+static void
+handlekeypressed(Widget w, XtPointer client_data, XEvent *ev, Boolean *continue_dispatch)
 {
 
-    XKeyEvent *keyev = (XKeyPressedEvent *) calldata;
-    GRAPH *graph = (GRAPH *) clientdata;
+    XKeyEvent *keyev = & ev->xkey;
+    GRAPH *graph = (GRAPH *) client_data;
     char text[4];
     int nbytes;
 
     NG_IGNORE(w);
+    NG_IGNORE(continue_dispatch);
 
     nbytes = XLookupString(keyev, text, 4, NULL, NULL);
     if (!nbytes) return;
@@ -290,35 +305,38 @@ handlekeypressed(Widget w, caddr_t clientdata, caddr_t calldata)
 }
 
 
-void
-handlebuttonev(Widget w, caddr_t clientdata, caddr_t calldata)
-{
 
-    XButtonEvent *buttonev = (XButtonEvent *) calldata;
+static void
+handlebuttonev(Widget w, XtPointer client_data, XEvent *ev, Boolean *continue_dispatch)
+{
+    GRAPH *graph = (GRAPH *) client_data;
 
     NG_IGNORE(w);
+    NG_IGNORE(continue_dispatch);
 
-    switch (buttonev->button) {
+    switch (ev->xbutton.button) {
       case Button1:
-	slopelocation((GRAPH *) clientdata, buttonev->x, buttonev->y);
+	slopelocation(graph, ev->xbutton.x, ev->xbutton.y);
 	break;
       case Button3:
-	zoomin((GRAPH *) clientdata);
+	zoomin(graph);
 	break;
     }
 
 }
 
 /* callback function for catching window deletion by WM x-button */
-static void handle_wm_messages(Widget w, XtPointer client_data, XEvent *event, Boolean *cont) {
+static void
+handle_wm_messages(Widget w, XtPointer client_data, XEvent *ev, Boolean *cont)
+{
     GRAPH *graph = (GRAPH *) client_data;
 
-    NG_IGNORE(cont);
     NG_IGNORE(w);
+    NG_IGNORE(cont);
 
-    if (event->type == ClientMessage
-            && event->xclient.message_type == atom_wm_protocols
-            && (Atom) event->xclient.data.l[0] == atom_wm_delete_window) {
+    if (ev->type == ClientMessage
+            && ev->xclient.message_type == atom_wm_protocols
+            && (Atom) ev->xclient.data.l[0] == atom_wm_delete_window) {
 
         RemoveWindow(graph);
     }
@@ -386,13 +404,13 @@ X11_NewViewport(GRAPH *graph)
 					       viewargs,
 					       XtNumber(viewargs));
     XtAddEventHandler(DEVDEP(graph).view, ButtonPressMask, FALSE,
-		      (XtEventHandler) handlebuttonev, graph);
+		      handlebuttonev, graph);
     XtAddEventHandler(DEVDEP(graph).view, KeyPressMask, FALSE,
-		     (XtEventHandler) handlekeypressed, graph);
+		      handlekeypressed, graph);
     XtAddEventHandler(DEVDEP(graph).view, StructureNotifyMask, FALSE,
-		     (XtEventHandler) resize, graph);
+		      resize, graph);
     XtAddEventHandler(DEVDEP(graph).view, ExposureMask, FALSE,
-	    (XtEventHandler) redraw, graph);
+                      redraw, graph);
 
     /* set up button box */
     XtSetArg(bboxargs[1], XtNfromHoriz, DEVDEP(graph).view);
@@ -405,14 +423,14 @@ X11_NewViewport(GRAPH *graph)
     DEVDEP(graph).buttons[0] = XtCreateManagedWidget("quit",
 	commandWidgetClass, DEVDEP(graph).buttonbox,
 	buttonargs, 1);
-    XtAddCallback(DEVDEP(graph).buttons[0], XtNcallback, (XtCallbackProc) killwin, graph);
+    XtAddCallback(DEVDEP(graph).buttons[0], XtNcallback, killwin, graph);
 
     XtSetArg(buttonargs[0], XtNlabel, "hardcopy");
     XtSetArg(bboxargs[1], XtNfromVert, DEVDEP(graph).buttons[0]);
     DEVDEP(graph).buttons[1] = XtCreateManagedWidget("hardcopy",
 	commandWidgetClass, DEVDEP(graph).buttonbox,
 	buttonargs, 1);
-    XtAddCallback(DEVDEP(graph).buttons[1], XtNcallback, (XtCallbackProc) hardcopy, graph);
+    XtAddCallback(DEVDEP(graph).buttons[1], XtNcallback, hardcopy, graph);
 
     /* set up fonts */
     if (!cp_getvar("font", CP_STRING, fontname)) {
@@ -660,7 +678,7 @@ X_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy)
 
 
 
-void
+static void
 slopelocation(GRAPH *graph, int x0, int y0)
              
                     /* initial position of mouse */
@@ -733,7 +751,7 @@ slopelocation(GRAPH *graph, int x0, int y0)
 }
 
 /* should be able to do this by sleight of hand on graph parameters */
-void
+static void
 zoomin(GRAPH *graph)
 {
 /* note: need to add circular boxes XXX */
@@ -838,8 +856,8 @@ zoomin(GRAPH *graph)
 
 }
 
-void
-hardcopy(Widget w, caddr_t client_data, caddr_t call_data)
+static void
+hardcopy(Widget w, XtPointer client_data, XtPointer call_data)
 {
 	NG_IGNORE(call_data);
 	NG_IGNORE(w);
@@ -869,8 +887,8 @@ hardcopy(Widget w, caddr_t client_data, caddr_t call_data)
     }
 }
 
-void
-killwin(Widget w, caddr_t client_data, caddr_t call_data)
+static void
+killwin(Widget w, XtPointer client_data, XtPointer call_data)
 {
 
     GRAPH *graph = (GRAPH *) client_data;
@@ -898,17 +916,18 @@ RemoveWindow(GRAPH *graph)
 
 
 /* call higher gr_redraw routine */
-void
-redraw(Widget w, caddr_t client_data, caddr_t call_data)
+static void
+redraw(Widget w, XtPointer client_data, XEvent *event, Boolean *continue_dispatch)
 {
 
     GRAPH *graph = (GRAPH *) client_data;
-    XExposeEvent *pev = (XExposeEvent *) call_data;
+    XExposeEvent *pev = & event->xexpose;
     XEvent ev;
     XRectangle rects[30];
     int n = 1;
 
     NG_IGNORE(w);
+    NG_IGNORE(continue_dispatch);
 
     DEVDEP(graph).isopen = 1;
 
@@ -945,14 +964,15 @@ redraw(Widget w, caddr_t client_data, caddr_t call_data)
 
 }
 
-void
-resize(Widget w, caddr_t client_data, caddr_t call_data)
+static void
+resize(Widget w, XtPointer client_data, XEvent *call_data, Boolean *continue_dispatch)
 {
 
     GRAPH *graph = (GRAPH *) client_data;
     XEvent ev;
 
     NG_IGNORE(call_data);
+    NG_IGNORE(continue_dispatch);
 
     /* pull out all other exposure events
        Also, get rid of other StructureNotify events on this window. */
