@@ -186,14 +186,14 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                         model->DIObreakdownVoltage/vt;
 #ifdef TRACE
                     emsg = TMALLOC(char, 100);
-                    if(emsg == (char *)NULL) return(E_NOMEM);
+                    if(emsg == NULL) return(E_NOMEM);
                     (void)sprintf(emsg,
                     "%%s: breakdown current increased to %g to resolve",
                             cbv);
                     SPfrontEnd->IFerror (ERR_WARNING, emsg, &(here->DIOname));
                     FREE(emsg);
                     SPfrontEnd->IFerror (ERR_WARNING,
-                    "incompatibility with specified saturation current",(IFuid*)NULL);
+                    "incompatibility with specified saturation current", NULL);
 #endif
                     xbv=model->DIObreakdownVoltage;
                 } else {
@@ -210,7 +210,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                     }
 #ifdef TRACE
                     emsg = TMALLOC(char, 100);
-                    if(emsg == (char *)NULL) return(E_NOMEM);
+                    if(emsg == NULL) return(E_NOMEM);
                     (void)sprintf(emsg,
                     "%%s: unable to match forward and reverse diode regions: bv = %g, ibv = %g",
                             xbv,xcbv);

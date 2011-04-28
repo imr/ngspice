@@ -23,7 +23,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     int lev, error1=0;
     char ver[100];
     char *typename;
-    char *err = (char *) NULL;
+    char *err = NULL;
     char *line;
     char *val;
     double rval=0, lval=0;

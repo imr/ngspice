@@ -361,7 +361,7 @@ matrixpointers:
             }
 
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
+if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 }
 

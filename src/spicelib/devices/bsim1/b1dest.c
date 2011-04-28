@@ -23,7 +23,7 @@ B1destroy(GENmodel **inModel)
     for( ; mod ; mod = mod->B1nextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (B1instance *)NULL;
+        prev = NULL;
         for(here = mod->B1instances ; here ; here = here->B1nextInstance) {
             if(prev) FREE(prev);
             prev = here;

@@ -23,7 +23,7 @@ URCdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->URCnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (URCinstance *)NULL;
+        prev = NULL;
         for(here = mod->URCinstances ; here ; here = here->URCnextInstance) {
             if(prev) FREE(prev);
             prev = here;

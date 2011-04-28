@@ -27,7 +27,7 @@ INPapName(CKTcircuit *ckt, int type, JOB *analPtr, char *parmname,
 						     analyses[type]->
 						     analysisParms[i].id,
 						     value,
-						     (IFvalue *) NULL);
+						     NULL);
 	    }
     }
     return (E_BADPARM);

@@ -98,7 +98,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 error = SPfrontEnd->IFnewUid (ckt, &dioUid, here->URCname,
                         "diodemod", UID_MODEL, NULL);
                 if(error) return(error);
-                modfast = (GENmodel *)NULL;
+                modfast = NULL;
                 error = CKTmodCrt(ckt,dtype,&modfast,
                         dioUid);
                 if(error) return(error);
@@ -115,7 +115,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 error = SPfrontEnd->IFnewUid (ckt, &capUid,
                         here->URCname, "capmod", UID_MODEL, NULL);
                 if(error) return(error);
-                modfast = (GENmodel *)NULL;
+                modfast = NULL;
                 error = CKTmodCrt(ckt,ctype,&modfast,
                         capUid);
                 if(error) return(error);
@@ -124,7 +124,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
             error = SPfrontEnd->IFnewUid (ckt, &resUid, here->URCname,
                     "resmod", UID_MODEL, NULL);
             if(error) return(error);
-            rmodfast = (GENmodel *)NULL;
+            rmodfast = NULL;
             error = CKTmodCrt(ckt,rtype,&rmodfast,resUid);
             if(error) return(error);
             lowl = CKTnum2nod(ckt,here->URCposNode);

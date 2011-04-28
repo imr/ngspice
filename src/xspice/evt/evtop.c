@@ -176,7 +176,7 @@ int EVTop(
 
             SPfrontEnd->IFerror (ERR_WARNING,
                 "Too many analog/event-driven solution alternations",
-                (IFuid *) NULL);
+                NULL);
 
             err_msg = TMALLOC(char, 10000);
             output_queue = &(ckt->evt->queue.output);

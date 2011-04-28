@@ -51,8 +51,8 @@ CKTdestroy(CKTcircuit *inCkt)
         FREE(node);
         node = nnode;
     }
-    ckt->CKTnodes = (CKTnode *)NULL;
-    ckt->CKTlastNode = (CKTnode *)NULL;
+    ckt->CKTnodes = NULL;
+    ckt->CKTlastNode = NULL;
     FREE(ckt);
     return(OK);
 }

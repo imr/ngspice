@@ -63,10 +63,10 @@ MODLnewCard(void **inCard, void *inModel)
     if (!tmpCard) { /* First in list */
         newCard = NEW( MODLcard );
         if (!newCard) {
-            *inCard = (void *)NULL;
+            *inCard = NULL;
             return(E_NOMEM);
         }
-        newCard->MODLnextCard = (MODLcard *)NULL;
+        newCard->MODLnextCard = NULL;
         *inCard = (void *)newCard;
         model->GENmodels = newCard;
     } else { /* Only one card of this type allowed */

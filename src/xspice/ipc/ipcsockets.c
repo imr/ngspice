@@ -301,7 +301,7 @@ bytes_to_integer (
     index++;
   }
 /*  u = ntohl (*((u_long *) buff)); */
-  u = strtoul(buff, (char **) NULL, 10);
+  u = strtoul(buff, NULL, 10);
 
   return u;
 }   /* end bytes_to_integer */

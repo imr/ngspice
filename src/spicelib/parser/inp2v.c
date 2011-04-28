@@ -45,7 +45,7 @@ void INP2V(CKTcircuit *ckt, INPtables * tab, card * current)
     INPtermInsert(ckt, &nname2, tab, &node2);
     if (!tab->defVmod) {
 	/* create default V model */
-	IFnewUid(ckt, &uid, (IFuid) NULL, "V", UID_MODEL, NULL);
+	IFnewUid(ckt, &uid, NULL, "V", UID_MODEL, NULL);
 	IFC(newModel, (ckt, type, &(tab->defVmod), uid));
     }
     IFC(newInstance, (ckt, tab->defVmod, &fast, name));

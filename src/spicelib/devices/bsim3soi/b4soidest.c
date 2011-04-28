@@ -31,7 +31,7 @@ B4SOImodel *oldmod = NULL;
     for (; mod ; mod = mod->B4SOInextModel)
     {    if(oldmod) FREE(oldmod);
          oldmod = mod;
-         prev = (B4SOIinstance *)NULL;
+         prev = NULL;
          for (here = mod->B4SOIinstances; here; here = here->B4SOInextInstance)
 	 {    if(prev) FREE(prev);
               prev = here;

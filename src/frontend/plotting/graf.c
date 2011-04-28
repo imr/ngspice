@@ -577,7 +577,7 @@ gr_redraw(GRAPH *graph)
             else pass vec's plot's scale
       */
       ft_graf(link->vector,
-          graph->onevalue ? (struct dvec *) NULL :
+          graph->onevalue ? NULL :
                     (link->vector->v_scale ?
                     link->vector->v_scale :
                     link->vector->v_plot->pl_scale),
@@ -685,7 +685,7 @@ iplot(struct plot *pl, int id)
         sprintf(commandline, "plot %s", yl);
 
         (void) gr_init(xlims, ylims, xs->v_name,
-            pl->pl_title, (char *) NULL, j, 0.0, 0.0,
+            pl->pl_title, NULL, j, 0.0, 0.0,
             GRID_LIN, PLOT_LIN, xs->v_name, yl, xs->v_type, yt,
             plot_cur->pl_typename, commandline);
         for (v = pl->pl_dvecs; v; v = v->v_next)

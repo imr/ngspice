@@ -23,7 +23,7 @@ VCCSdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->VCCSnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (VCCSinstance *)NULL;
+        prev = NULL;
         for(here = mod->VCCSinstances ; here ; here = here->VCCSnextInstance) {
             if(prev) FREE(prev);
             prev = here;

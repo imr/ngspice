@@ -57,7 +57,7 @@ int INPtermInsert(CKTcircuit *ckt, char **token, INPtables * tab, CKTnode **node
 	}
     }
     t = TMALLOC(struct INPnTab, 1);
-    if (t == (struct INPnTab *) NULL)
+    if (t == NULL)
 	return (E_NOMEM);
     ZERO(t, struct INPnTab);
     error = ft_sim->newNode (ckt, &(t->t_node), *token);
@@ -94,7 +94,7 @@ int INPmkTerm(CKTcircuit *ckt, char **token, INPtables * tab, CKTnode **node)
 	}
     }
     t = TMALLOC(struct INPnTab, 1);
-    if (t == (struct INPnTab *) NULL)
+    if (t == NULL)
 	return (E_NOMEM);
     ZERO(t, struct INPnTab);
     t->t_node = *node;
@@ -123,7 +123,7 @@ int INPgndInsert(CKTcircuit *ckt, char **token, INPtables * tab, CKTnode **node)
 	}
     }
     t = TMALLOC(struct INPnTab, 1);
-    if (t == (struct INPnTab *) NULL)
+    if (t == NULL)
 	return (E_NOMEM);
     ZERO(t, struct INPnTab);
     error = ft_sim->groundNode (ckt, &(t->t_node), *token);
@@ -169,7 +169,7 @@ int INPinsert(char **token, INPtables * tab)
 	    return (E_EXISTS);
 	}
     t = TMALLOC(struct INPtab, 1);
-    if (t == (struct INPtab *) NULL)
+    if (t == NULL)
 	return (E_NOMEM);
     ZERO(t, struct INPtab);
     t->t_ent = *token;
@@ -196,7 +196,7 @@ int INPinsertNofree(char **token, INPtables * tab)
 	    return (E_EXISTS);
 	}
     t = TMALLOC(struct INPtab, 1);
-    if (t == (struct INPtab *) NULL)
+    if (t == NULL)
 	return (E_NOMEM);
     ZERO(t, struct INPtab);
     t->t_ent = *token;

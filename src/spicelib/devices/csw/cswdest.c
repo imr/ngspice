@@ -22,7 +22,7 @@ CSWdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->CSWnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (CSWinstance *)NULL;
+        prev = NULL;
         for(here = mod->CSWinstances ; here ; here = here->CSWnextInstance) {
             if(prev) FREE(prev);
             prev = here;

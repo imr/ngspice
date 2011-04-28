@@ -22,7 +22,7 @@ NDEVdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->NDEVnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (NDEVinstance *)NULL;
+        prev = NULL;
         for(here = mod->NDEVinstances ; here ; here = here->NDEVnextInstance) {
             if(prev) FREE(prev);
             prev = here;

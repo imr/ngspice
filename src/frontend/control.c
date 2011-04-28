@@ -867,7 +867,7 @@ void cp_resetcontrol(void)
     cp_free_control(); /* va: free it */
     control[0] = cend[0] = NULL;
     stackp = 0;
-    cp_kwswitch(CT_LABEL, (char *) NULL);
+    cp_kwswitch(CT_LABEL, NULL);
     return;
 }
 

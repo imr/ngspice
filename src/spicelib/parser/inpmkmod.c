@@ -25,7 +25,7 @@ int INPmakeMod(char *token, int type, card * line)
 
    /* First cycle through model table and see if model name 
       already exists in there.  If it does, just return. */
-   for (i = &modtab; *i != (INPmodel *) NULL; i = &((*i)->INPnextModel)) {
+   for (i = &modtab; *i != NULL; i = &((*i)->INPnextModel)) {
       if (strcmp((*i)->INPmodName, token) == 0) {
          return (OK);
       }
@@ -45,7 +45,7 @@ int INPmakeMod(char *token, int type, card * line)
 
    (*i)->INPmodName = token;                 /* model name */
    (*i)->INPmodType = type;                  /* model type */
-   (*i)->INPnextModel = (INPmodel *) NULL;   /* pointer to next model (end of list) */
+   (*i)->INPnextModel = NULL;   /* pointer to next model (end of list) */
    (*i)->INPmodUsed = 0;                     /* model is unused */
    (*i)->INPmodLine = line;                  /* model line */
    (*i)->INPmodfast = NULL;

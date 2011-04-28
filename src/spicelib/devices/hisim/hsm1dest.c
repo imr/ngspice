@@ -24,7 +24,7 @@ HSM1destroy(GENmodel **inModel)
   for ( ;mod ;mod = mod->HSM1nextModel ) {
     if (oldmod) FREE(oldmod);
     oldmod = mod;
-    prev = (HSM1instance *)NULL;
+    prev = NULL;
     for ( here = mod->HSM1instances ;here ;here = here->HSM1nextInstance ) {
       if (prev) FREE(prev);
       prev = here;

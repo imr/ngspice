@@ -22,7 +22,7 @@ INDdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->INDnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (INDinstance *)NULL;
+        prev = NULL;
         for(here = mod->INDinstances ; here ; here = here->INDnextInstance) {
             if(prev) FREE(prev);
             prev = here;

@@ -185,7 +185,7 @@ SMPcReorder(SMPmatrix *Matrix, double PivTol, double PivRel,
 {
     *NumSwaps = 1;
     spSetComplex( Matrix );
-    return spOrderAndFactor( Matrix, (spREAL*)NULL,
+    return spOrderAndFactor( Matrix, NULL,
                              (spREAL)PivRel, (spREAL)PivTol, YES );
 }
 
@@ -197,7 +197,7 @@ SMPreorder(SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
 {
     spSetReal( Matrix );
     LoadGmin( Matrix, Gmin );
-    return spOrderAndFactor( Matrix, (spREAL*)NULL,
+    return spOrderAndFactor( Matrix, NULL,
                              (spREAL)PivRel, (spREAL)PivTol, YES );
 }
 
@@ -235,7 +235,7 @@ SMPsolve(SMPmatrix *Matrix, double RHS[], double Spare[])
 {
     NG_IGNORE(Spare);
 
-    spSolve( Matrix, RHS, RHS, (spREAL*)NULL, (spREAL*)NULL );
+    spSolve( Matrix, RHS, RHS, NULL, NULL );
 }
 
 /*
@@ -556,7 +556,7 @@ void
 SMPcombine(SMPmatrix *Matrix, double RHS[], double Spare[])
 {
     spSetReal( Matrix );
-    spCombine( Matrix, RHS, Spare, (spREAL*)NULL, (spREAL*)NULL );
+    spCombine( Matrix, RHS, Spare, NULL, NULL );
 }
 
 /*

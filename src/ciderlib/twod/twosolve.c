@@ -485,7 +485,7 @@ TWOequilSolve(TWOdevice *pDevice)
   setupTime += SPfrontEnd->IFseconds() - startTime;
 
   /* SOLVE */
-  TWOdcSolve(pDevice, MaxIterations, newSolver, FALSE, (TWOtranInfo *) NULL);
+  TWOdcSolve(pDevice, MaxIterations, newSolver, FALSE, NULL);
 
   /* MISCELLANEOUS */
   startTime = SPfrontEnd->IFseconds();

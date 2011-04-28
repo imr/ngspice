@@ -70,11 +70,11 @@ IFvalue *INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables * tab)
     } else if (type == IF_PARSETREE) {
 	INPgetTree(line, &pt, ckt, tab);
 	if (!pt)
-	    return ((IFvalue *) NULL);
+	    return (NULL);
 	temp.tValue = (IFparseTree *) pt;
 	/*INPptPrint("Parse tree is: ", temp.tValue); */
     } else {			/* don't know what type of parameter caller is talking about! */
-	return ((IFvalue *) NULL);
+	return (NULL);
     }
     return (&temp);
 }

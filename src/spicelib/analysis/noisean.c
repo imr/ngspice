@@ -49,7 +49,7 @@ NOISEan (CKTcircuit *ckt, int restart)
     code = CKTtypelook("Vsource");
     if (code != -1) {
         error = CKTfndDev(ckt, &code, &inst,
-                job->input, (GENmodel *)NULL, (IFuid)NULL);
+                job->input, NULL, NULL);
 	if (!error && !((VSRCinstance *)inst)->VSRCacGiven) {
 	    errMsg = TMALLOC(char, strlen(noacinput) + 1);
 	    strcpy(errMsg,noacinput);
@@ -60,7 +60,7 @@ NOISEan (CKTcircuit *ckt, int restart)
     code = CKTtypelook("Isource");
     if (code != -1 && inst==NULL) {
         error = CKTfndDev(ckt, &code, &inst,
-                job->input, (GENmodel *)NULL, (IFuid)NULL);
+                job->input, NULL, NULL);
         if (error) {
 	    /* XXX ??? */
             SPfrontEnd->IFerror (ERR_WARNING,
@@ -120,7 +120,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 	/* the current front-end needs the namelist to be fully
 		declared before an OUTpBeginplot */
 
-	SPfrontEnd->IFnewUid (ckt, &freqUid, (IFuid)NULL,
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
 		"frequency", UID_OTHER, NULL);
 
 	data->numPlots = 0;                /* we don't have any plots  yet */
@@ -279,7 +279,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 
 	SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
 	       "Integrated Noise - V^2 or A^2",
-	       (IFuid)NULL,(int)0,data->numPlots,data->namelist,IF_REAL,
+	       NULL, (int)0, data->numPlots, data->namelist, IF_REAL,
 	       &(data->NplotPtr));
 
 	error = CKTnoise(ckt,INT_NOIZ,N_CALC,data);

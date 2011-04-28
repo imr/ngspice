@@ -83,7 +83,7 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
                         if (!data->namelist) return(E_NOMEM);
                         SPfrontEnd->IFnewUid (ckt,
                             &(data->namelist[data->numPlots++]),
-                            (IFuid)NULL, name, UID_OTHER, NULL);
+                            NULL, name, UID_OTHER, NULL);
                                 /* we've added one more plot */
                         }
                         break;
@@ -97,7 +97,7 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
                         if (!data->namelist) return(E_NOMEM);
                         SPfrontEnd->IFnewUid (ckt,
                             &(data->namelist[data->numPlots++]),
-                            (IFuid)NULL, name, UID_OTHER, NULL);
+                            NULL, name, UID_OTHER, NULL);
                                 /* we've added one more plot */
 
                             (void)sprintf(name,"inoise_total_%s%s",
@@ -107,7 +107,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
                 SPfrontEnd->IFnewUid (ckt,
                         &(data->namelist[data->numPlots++]),
-                        (IFuid)NULL, name, UID_OTHER, NULL);
+                        NULL, name, UID_OTHER, NULL);
                                 /* we've added one more plot */
                         }
                         break;
@@ -165,7 +165,7 @@ if (!data->namelist) return(E_NOMEM);
                                  *(ckt->CKTstate0 + inst->VBICiccp));
 
 
-                    NevalSrc(&noizDens[VBICFLBENOIZ],(double*)NULL,ckt,
+                    NevalSrc(&noizDens[VBICFLBENOIZ], NULL, ckt,
                                  N_GAIN,inst->VBICbaseBINode, inst->VBICemitEINode,
                                  (double)0.0);
                     noizDens[VBICFLBENOIZ] *= inst->VBICm * model->VBICfNcoef * 
@@ -175,7 +175,7 @@ if (!data->namelist) return(E_NOMEM);
                     lnNdens[VBICFLBENOIZ] = 
                                  log(MAX(noizDens[VBICFLBENOIZ],N_MINLOG));
 
-                    NevalSrc(&noizDens[VBICFLBEPNOIZ],(double*)NULL,ckt,
+                    NevalSrc(&noizDens[VBICFLBEPNOIZ], NULL, ckt,
                                  N_GAIN,inst->VBICbaseBXNode, inst->VBICbaseBPNode,
                                  (double)0.0);
                     noizDens[VBICFLBEPNOIZ] *= inst->VBICm * model->VBICfNcoef * 

@@ -719,9 +719,9 @@ inp_dodeck(
     } else {
         if (ft_curckt) {
             ft_curckt->ci_devices = cp_kwswitch(CT_DEVNAMES, 
-                    (char *) NULL);
+                    NULL);
             ft_curckt->ci_nodes = cp_kwswitch(CT_NODENAMES, 
-                    (char *) NULL);
+                    NULL);
         }
         ft_curckt = ct = alloc(struct circ);
     }
@@ -849,9 +849,9 @@ inp_dodeck(
     if (!reuse) {
         /* Be sure that ci_devices and ci_nodes are valid */
         ft_curckt->ci_devices = cp_kwswitch(CT_DEVNAMES, 
-                (char *) NULL);
+                NULL);
         cp_kwswitch(CT_DEVNAMES, ft_curckt->ci_devices);
-        ft_curckt->ci_nodes = cp_kwswitch(CT_NODENAMES, (char *) NULL);
+        ft_curckt->ci_nodes = cp_kwswitch(CT_NODENAMES, NULL);
         cp_kwswitch(CT_NODENAMES, ft_curckt->ci_nodes);
         ft_newcirc(ct);
 	/* Assign current circuit */
@@ -991,7 +991,7 @@ com_edit(wordlist *wl)
             cp_interactive = inter;
             return;
         }
-        inp_spsource(fp, FALSE, permfile ? filename : (char *) NULL);
+        inp_spsource(fp, FALSE, permfile ? filename : NULL);
         
         /* fclose(fp);  */
         /*	MW. inp_spsource already closed fp */
@@ -1079,10 +1079,10 @@ com_source(wordlist *wl)
 
     /* Don't print the title if this is a spice initialisation file. */
    if (ft_nutmeg || substring(INITSTR, owl->wl_word) || substring(ALT_INITSTR, owl->wl_word)) {
-      inp_spsource(fp, TRUE, tempfile ? (char *) NULL : wl->wl_word);
+      inp_spsource(fp, TRUE, tempfile ? NULL : wl->wl_word);
    }
    else {
-      inp_spsource(fp, FALSE, tempfile ? (char *) NULL : wl->wl_word);
+      inp_spsource(fp, FALSE, tempfile ? NULL : wl->wl_word);
    }
    cp_interactive = inter;
    if (tempfile)

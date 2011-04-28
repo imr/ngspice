@@ -27,5 +27,5 @@ CKTnum2nod(CKTcircuit *ckt, int node)
             return(here);
         }
     }
-    return((CKTnode *)NULL);
+    return(NULL);
 }

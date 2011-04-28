@@ -39,12 +39,12 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if(ktype <= 0) {
                 SPfrontEnd->IFerror (ERR_PANIC,
                         "mutual inductor, but inductors not available!",
-                        (IFuid *)NULL);
+                        NULL);
                 return(E_INTERN);
             }
 
             error = CKTfndDev(ckt,&ktype,(GENinstance **)&(here->MUTind1),
-                              here->MUTindName1, (GENmodel *)NULL, (char *)NULL);
+                              here->MUTindName1, NULL, NULL);
             if(error && error!= E_NODEV && error != E_NOMOD) return(error);
             if(error) {
                 IFuid namarray[2];
@@ -55,7 +55,7 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     namarray);
             }
             error = CKTfndDev(ckt,&ktype,(GENinstance **)&(here->MUTind2),
-                    here->MUTindName2, (GENmodel *)NULL, (char *)NULL);
+                    here->MUTindName2, NULL, NULL);
             if(error && error!= E_NODEV && error != E_NOMOD) return(error);
             if(error) {
                 IFuid namarray[2];
@@ -69,7 +69,7 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
+if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 }
 

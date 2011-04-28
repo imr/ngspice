@@ -104,10 +104,10 @@ MATLnewCard(void **inCard, void *inModel)
 
     newCard = NEW( MATLcard );
     if (!newCard) {
-        *inCard = (void *)NULL;
+        *inCard = NULL;
         return(E_NOMEM);
     }
-    newCard->MATLnextCard = (MATLcard *)NULL;
+    newCard->MATLnextCard = NULL;
     *inCard = (void *)newCard;
 
     tmpCard = model->GENmaterials;

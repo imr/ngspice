@@ -403,7 +403,7 @@ doit(struct line *deck)
 {
     struct line *c, *last, *lc, *lcc;
     struct line *savenext;
-    struct subs *sssfree = (struct subs *) NULL, *sss = (struct subs *) NULL, *ks;   /*  *sss and *ks temporarily hold decks to substitute  */
+    struct subs *sssfree = NULL, *sss = NULL, *ks;   /*  *sss and *ks temporarily hold decks to substitute  */
     char *s, *t, *scname, *subname;
     int nest, numpasses = MAXNEST, i;
     bool gotone;

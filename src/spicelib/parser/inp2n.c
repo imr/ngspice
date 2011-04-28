@@ -82,7 +82,7 @@ void INP2N(CKTcircuit *ckt, INPtables * tab, card * current)
 	if (INPlookMod(model)) {
 	    /* If this is a valid model connect it */
 	    INPinsert(&model, tab);
-	    thismodel = (INPmodel *) NULL;
+	    thismodel = NULL;
 	    current->error = INPgetMod(ckt, model, &thismodel, tab);
 	    if (thismodel != NULL) {
 		if (mytype != thismodel->INPmodType) {

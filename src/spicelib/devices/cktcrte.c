@@ -33,7 +33,7 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *inModPtr, GENinstance **inInstPtr, IFuid na
     type = modPtr->GENmodType;
 
     error = CKTfndDev(ckt, &type, &instPtr, name, inModPtr,
-		      (char *)NULL );
+		      NULL );
     if (error == OK) { 
         if (inInstPtr)
 	    *inInstPtr = instPtr;
@@ -47,7 +47,7 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *inModPtr, GENinstance **inInstPtr, IFuid na
 #endif
 
     instPtr = (GENinstance *) tmalloc((size_t) *DEVices[type]->DEVinstSize);
-    if (instPtr == (GENinstance *)NULL)
+    if (instPtr == NULL)
 	return E_NOMEM;
 
     instPtr->GENname = name;

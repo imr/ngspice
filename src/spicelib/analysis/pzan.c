@@ -47,7 +47,7 @@ PZan(CKTcircuit *ckt, int reset)
 	if(error) return(error);
 	error = SPfrontEnd->OUTpBeginPlot (ckt,
 	    ckt->CKTcurJob, "Distortion Operating Point",
-	    (IFuid)NULL,IF_REAL,numNames,nameList, IF_REAL,&plot);
+	    NULL, IF_REAL, numNames, nameList, IF_REAL, &plot);
 	if(error) return(error);
 	CKTdump(ckt,(double)0,plot);
 	SPfrontEnd->OUTendPlot (plot);
@@ -93,8 +93,8 @@ PZinit(CKTcircuit *ckt)
     if (i != -1 && ckt->CKThead[i] != NULL)
 	MERROR(E_XMISSIONLINE, "Transmission lines not supported")
 
-    pzan->PZpoleList = (PZtrial *) NULL;
-    pzan->PZzeroList = (PZtrial *) NULL;
+    pzan->PZpoleList = NULL;
+    pzan->PZzeroList = NULL;
     pzan->PZnPoles = 0;
     pzan->PZnZeros = 0;
 
@@ -138,17 +138,17 @@ PZpost(CKTcircuit *ckt)
     j = 0;
     for (i = 0; i < pzan->PZnPoles; i++) {
 	sprintf(name, "pole(%-u)", i+1);
-	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), (IFuid)NULL,
+	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), NULL,
 		name, UID_OTHER, NULL);
     }
     for (i = 0; i < pzan->PZnZeros; i++) {
 	sprintf(name, "zero(%-u)", i+1);
-	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), (IFuid)NULL,
+	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), NULL,
 		name, UID_OTHER, NULL);
     }
 
     SPfrontEnd->OUTpBeginPlot (ckt, (JOB *)pzan, pzan->JOBname,
-	    (IFuid)NULL, (int)0, pzan->PZnPoles + pzan->PZnZeros, namelist,
+	    NULL, (int)0, pzan->PZnPoles + pzan->PZnZeros, namelist,
 	    IF_COMPLEX, &pzPlotPtr);
 
     j = 0;
@@ -189,7 +189,7 @@ PZpost(CKTcircuit *ckt)
     outData.v.numValue = pzan->PZnPoles + pzan->PZnZeros;
     outData.v.vec.cVec = out_list;
 
-    SPfrontEnd->OUTpData (pzPlotPtr, (IFvalue *) NULL, &outData);
+    SPfrontEnd->OUTpData (pzPlotPtr, NULL, &outData);
     SPfrontEnd->OUTendPlot (pzPlotPtr);
 
     return(OK);

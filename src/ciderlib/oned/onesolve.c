@@ -586,7 +586,7 @@ ONEequilSolve(ONEdevice *pDevice)
   setupTime += SPfrontEnd->IFseconds() - startTime;
 
   /* SOLVE */
-  ONEdcSolve(pDevice, MaxIterations, newSolver, FALSE, (ONEtranInfo *) NULL);
+  ONEdcSolve(pDevice, MaxIterations, newSolver, FALSE, NULL);
 
   /* MISCELLANEOUS */
   startTime = SPfrontEnd->IFseconds();

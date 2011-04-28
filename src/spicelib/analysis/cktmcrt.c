@@ -26,7 +26,7 @@ CKTmodCrt(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid name)
     error = CKTfndMod(ckt, &type, &mymodfast, name);
     if(error == E_NOMOD) {
         mymodfast = (GENmodel *) tmalloc((size_t) *(DEVices[type]->DEVmodSize));
-        if(mymodfast == (GENmodel *)NULL) return(E_NOMEM);
+        if(mymodfast == NULL) return(E_NOMEM);
         mymodfast->GENmodType = type;
         mymodfast->GENmodName = name;
         mymodfast->GENnextModel = ckt->CKThead[type];

@@ -70,7 +70,7 @@ char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 						       [dev]).
 						      instanceParms[i].id,
 						      val,
-						      (IFvalue *) NULL);
+						      NULL);
 		if (error) {
 		    rtn = (INPerror(error));
 		    goto quit;

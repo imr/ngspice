@@ -57,10 +57,10 @@ MOBnewCard(void **inCard, void *inModel)
 
     newCard = NEW( MOBcard );
     if (!newCard) {
-        *inCard = (void *)NULL;
+        *inCard = NULL;
         return(E_NOMEM);
     }
-    newCard->MOBnextCard = (MOBcard *)NULL;
+    newCard->MOBnextCard = NULL;
     *inCard = (void *)newCard;
 
     tmpCard = model->GENmobility;

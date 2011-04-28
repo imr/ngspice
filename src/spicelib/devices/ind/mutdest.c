@@ -23,7 +23,7 @@ MUTdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->MUTnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (MUTinstance *)NULL;
+        prev = NULL;
         for(here = mod->MUTinstances ; here ; here = here->MUTnextInstance) {
             if(prev) FREE(prev);
             prev = here;

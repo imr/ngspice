@@ -111,7 +111,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
 
 /*CDHW Create a task DDD with a new UID. ci_defTask will point to it CDHW*/
 
-    err = IFnewUid(ckt, &taskUid, (IFuid)NULL, "default", UID_TASK, NULL);
+    err = IFnewUid(ckt, &taskUid, NULL, "default", UID_TASK, NULL);
     if(err) {
         ft_sperror(err,"newUid");
         return(NULL);
@@ -136,7 +136,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
     } 
 
     if(which != -1) {
-        err = IFnewUid(ckt,&optUid,(IFuid)NULL,"options",UID_ANALYSIS,
+        err = IFnewUid(ckt, &optUid, NULL, "options", UID_ANALYSIS,
                 NULL);
         if(err) {
             ft_sperror(err,"newUid");
@@ -245,7 +245,7 @@ if_run(CKTcircuit *t, char *what, wordlist *args, INPtables *tab)
        /*CDHW Create an interactive task AAA with a new UID.  
 ci_specTask will point to it CDHW*/
 	
-        err = IFnewUid(ft_curckt->ci_ckt,&specUid,(IFuid)NULL,"special",
+        err = IFnewUid(ft_curckt->ci_ckt, &specUid, NULL, "special",
                 UID_TASK,NULL);
         if(err) {
             ft_sperror(err,"newUid");
@@ -273,7 +273,7 @@ ci_specTask will point to it CDHW*/
             }
         } 
         if(which != -1) { /*CDHW options are available CDHW*/
-            err = IFnewUid(ft_curckt->ci_ckt,&optUid,(IFuid)NULL,"options",
+            err = IFnewUid(ft_curckt->ci_ckt, &optUid, NULL, "options",
                     UID_ANALYSIS,NULL);
             if(err) {
                 ft_sperror(err,"newUid");
@@ -496,12 +496,12 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
 #if (0)
      if ((err = ft_sim->setAnalysisParm (cc, ft_curckt->ci_curOpt,
              ft_sim->analyses[which]->analysisParms[i].id, &pval,
-             (IFvalue *)NULL)) != OK)
+             NULL)) != OK)
          ft_sperror(err, "setAnalysisParm(options) ci_curOpt");
 #else /*CDHW*/
      if ((err = ft_sim->setAnalysisParm (cc, ft_curckt->ci_defOpt,
              ft_sim->analyses[which]->analysisParms[i].id, &pval,
-             (IFvalue *)NULL)) != OK)
+             NULL)) != OK)
          ft_sperror(err, "setAnalysisParm(options) ci_curOpt");
      return 1;
 #endif
@@ -591,14 +591,14 @@ finddev_special(
      return(type);
     }
     type = -1;
-    *devptr = (GENinstance *)NULL;
+    *devptr = NULL;
     err = ft_sim->findModel (ck, &type, modptr, name);
     if(err == OK)
     {
      *device_or_model=1;
      return(type);
     }
-    *modptr = (GENmodel *)NULL;
+    *modptr = NULL;
     *device_or_model=2;
     return(-1);
 
@@ -615,8 +615,8 @@ spif_getparam_special(CKTcircuit *ckt,char **name,char *param,int ind,int do_mod
     IFvalue *pv;
     IFparm *opt;
     int typecode, i, modelo_dispositivo;
-    GENinstance *dev=(GENinstance *)NULL;
-    GENmodel *mod=(GENmodel *)NULL;
+    GENinstance *dev = NULL;
+    GENmodel *mod = NULL;
     IFdevice *device;
 
     NG_IGNORE(do_model);
@@ -753,8 +753,8 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
     IFvalue *pv;
     IFparm *opt;
     int typecode, i;
-    GENinstance *dev=(GENinstance *)NULL;
-    GENmodel *mod=(GENmodel *)NULL;
+    GENinstance *dev = NULL;
+    GENmodel *mod = NULL;
     IFdevice *device;
 
     /* fprintf(cp_err, "Calling if_getparam(%s, %s)\n", *name, param); */
@@ -820,11 +820,11 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
 void
 if_setparam_model(CKTcircuit *ckt, char **name, char *val )
 {
-  GENinstance *dev     = (GENinstance *)NULL;
-  GENinstance *prevDev = (GENinstance *)NULL;
-  GENmodel    *curMod  = (GENmodel *)   NULL;
-  GENmodel    *newMod  = (GENmodel *)   NULL;
-  INPmodel    *inpmod  = (INPmodel *)   NULL;
+  GENinstance *dev     = NULL;
+  GENinstance *prevDev = NULL;
+  GENmodel    *curMod  = NULL;
+  GENmodel    *newMod  = NULL;
+  INPmodel    *inpmod  = NULL;
   GENinstance *iter;
   GENmodel    *mods, *prevMod;
   int         typecode;
@@ -902,8 +902,8 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
 {
     IFparm *opt;
     IFdevice *device;
-    GENmodel *mod=(GENmodel *)NULL;
-    GENinstance *dev=(GENinstance *)NULL;
+    GENmodel *mod = NULL;
+    GENinstance *dev = NULL;
     int typecode;
 
 	/* PN  */
@@ -924,7 +924,7 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
     }
     if (do_model && !mod) {
 	mod = dev->GENmodPtr;
-	dev = (GENinstance *)NULL;
+	dev = NULL;
     }
     doset(ckt, typecode, dev, mod, opt, val);
 
@@ -1078,10 +1078,10 @@ doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
             typecode, dev, mod, opt); */
     if (dev)
         err = ft_sim->askInstanceQuest (ckt, dev,
-                opt->id, &pv, (IFvalue *)NULL);
+                opt->id, &pv, NULL);
     else
         err = ft_sim->askModelQuest (ckt, mod,
-                opt->id, &pv, (IFvalue *)NULL);
+                opt->id, &pv, NULL);
     if (err != OK) {
         ft_sperror(err, "if_getparam");
         return (NULL);
@@ -1163,10 +1163,10 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
 
     if (dev)
         err = ft_sim->setInstanceParm (ckt, dev,
-                opt->id, &nval, (IFvalue *)NULL);
+                opt->id, &nval, NULL);
     else
         err = ft_sim->setModelParm (ckt, mod,
-                opt->id, &nval, (IFvalue *)NULL);
+                opt->id, &nval, NULL);
 
     return err;
 }
@@ -1186,10 +1186,10 @@ finddev(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr)
     err = ft_sim->findInstance (ck, &type, devptr, name, NULL, NULL);
     if(err == OK) return(type);
     type = -1;
-    *devptr = (GENinstance *)NULL;
+    *devptr = NULL;
     err = ft_sim->findModel (ck, &type, modptr, name);
     if(err == OK) return(type);
-    *modptr = (GENmodel *)NULL;
+    *modptr = NULL;
     return(-1);
 }
 
@@ -1203,7 +1203,7 @@ if_analQbyName(CKTcircuit *ckt, int which, JOB *anal, char *name, IFvalue *parm)
         if(strcmp(ft_sim->analyses[which]->analysisParms[i].keyword,name)==0) {
             return( ft_sim->askAnalysisQuest (ckt, anal,
                     ft_sim->analyses[which]->analysisParms[i].id,parm,
-                    (IFvalue *)NULL) );
+                    NULL) );
         }
     }
     return(E_BADPARM);
@@ -1232,11 +1232,11 @@ if_tranparams(struct circ *ci, double *start, double *stop, double *step)
     }
     if(which == -1) return(FALSE);
 
-    err = IFnewUid(ci->ci_ckt,&tranUid,(IFuid)NULL,"Transient Analysis",
+    err = IFnewUid(ci->ci_ckt, &tranUid, NULL, "Transient Analysis",
 	UID_ANALYSIS, NULL);
     if(err != OK) return(FALSE);
     err = ft_sim->findAnalysis (ci->ci_ckt, &which, &anal, tranUid,
-            ci->ci_curTask,(IFuid )NULL);
+            ci->ci_curTask, NULL);
     if(err != OK) return(FALSE);
     err = if_analQbyName(ci->ci_ckt,which,anal,"tstart",&tmp);
     if(err != OK) return(FALSE);
@@ -1281,7 +1281,7 @@ if_getstat(CKTcircuit *ckt, char *name)
             return (NULL);
         if (ft_sim->askAnalysisQuest (ckt, &(ft_curckt->ci_curTask->taskOptions),
                 ft_sim->analyses[which]->analysisParms[i].id, &parm, 
-                (IFvalue *)NULL) == -1) {
+                NULL) == -1) {
             fprintf(cp_err, 
                 "if_getstat: Internal Error: can't get %s\n",
                 name);
@@ -1295,7 +1295,7 @@ if_getstat(CKTcircuit *ckt, char *name)
             }
             if (ft_sim->askAnalysisQuest (ckt, &(ft_curckt->ci_curTask->taskOptions),
                     ft_sim->analyses[which]->analysisParms[i].id, 
-                    &parm, (IFvalue *)NULL) == -1) {
+                    &parm, NULL) == -1) {
                 fprintf(cp_err, 
                 "if_getstat: Internal Error: can't get %s\n",
                     name);
@@ -1553,7 +1553,7 @@ do {\
 	fprintf(cp_err,"error in CKTnames\n");
 	return;
       }
-      SPfrontEnd->IFnewUid (ckt, &timeUid, (IFuid)NULL,
+      SPfrontEnd->IFnewUid (ckt, &timeUid, NULL,
 				"time", UID_OTHER, NULL);
       error = SPfrontEnd->OUTpBeginPlot (ckt,
 	     ckt->CKTcurJob,

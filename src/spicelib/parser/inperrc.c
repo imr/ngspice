@@ -14,8 +14,8 @@ Author: 1985 Thomas L. Quarles
 char *INPerrCat(char *a, char *b)
 {
 
-    if (a != (char *) NULL) {
-	if (b == (char *) NULL) {	/* a valid, b null, return a */
+    if (a != NULL) {
+	if (b == NULL) {	/* a valid, b null, return a */
 	    return (a);
 	} else {		/* both valid  - hard work... */
 	    register char *errtmp;

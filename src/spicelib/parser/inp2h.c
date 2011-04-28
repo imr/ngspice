@@ -45,7 +45,7 @@ void INP2H(CKTcircuit *ckt, INPtables * tab, card * current)
     INPtermInsert(ckt, &nname2, tab, &node2);
     if (!tab->defHmod) {
 	/* create default H model */
-	IFnewUid(ckt, &uid, (IFuid) NULL, "H", UID_MODEL, NULL);
+	IFnewUid(ckt, &uid, NULL, "H", UID_MODEL, NULL);
 	IFC(newModel, (ckt, type, &(tab->defHmod), uid));
     }
     IFC(newInstance, (ckt, tab->defHmod, &fast, name));

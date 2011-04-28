@@ -78,16 +78,16 @@ LTRAtemp(GENmodel *inModel, CKTcircuit *ckt)
       }
 
       /*
-       * model->LTRAh1dashValues = (double *) NULL; model->LTRAh2Values =
-       * (double *) NULL; model->LTRAh3dashValues = (double *) NULL;
+       * model->LTRAh1dashValues = NULL; model->LTRAh2Values =
+       * NULL; model->LTRAh3dashValues = NULL;
        * 
-       * model->LTRAh1dashOthVals = (double *) NULL; model->LTRAh2OthVals =
-       * (double *) NULL; model->LTRAh3dashOthVals = (double *) NULL;
+       * model->LTRAh1dashOthVals = NULL; model->LTRAh2OthVals =
+       * NULL; model->LTRAh3dashOthVals = NULL;
        */
 
-      model->LTRAh1dashCoeffs = (double *) NULL;
-      model->LTRAh2Coeffs = (double *) NULL;
-      model->LTRAh3dashCoeffs = (double *) NULL;
+      model->LTRAh1dashCoeffs = NULL;
+      model->LTRAh2Coeffs = NULL;
+      model->LTRAh3dashCoeffs = NULL;
 
       if (!model->LTRAtruncDontCut) {
 
@@ -133,9 +133,9 @@ LTRAtemp(GENmodel *inModel, CKTcircuit *ckt)
       model->LTRAintH2 = 1.0;
       model->LTRAintH3dash = 0.0;
 
-      model->LTRAh1dashCoeffs = (double *) NULL;
-      model->LTRAh2Coeffs = (double *) NULL;
-      model->LTRAh3dashCoeffs = (double *) NULL;
+      model->LTRAh1dashCoeffs = NULL;
+      model->LTRAh2Coeffs = NULL;
+      model->LTRAh3dashCoeffs = NULL;
 
       break;
 
@@ -151,10 +151,10 @@ LTRAtemp(GENmodel *inModel, CKTcircuit *ckt)
 	here = here->LTRAnextInstance) {
       if (here->LTRAowner != ARCHme) continue;
 
-      here->LTRAv1 = (double *) NULL;
-      here->LTRAi1 = (double *) NULL;
-      here->LTRAv2 = (double *) NULL;
-      here->LTRAi2 = (double *) NULL;
+      here->LTRAv1 = NULL;
+      here->LTRAi1 = NULL;
+      here->LTRAv2 = NULL;
+      here->LTRAi2 = NULL;
     }
   }
   return (OK);

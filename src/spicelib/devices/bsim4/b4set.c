@@ -2291,7 +2291,7 @@ int nthreads;
 /* set Sparse Matrix Pointers 
  * macro to make elements with built-in out-of-memory test */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
+if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 }
 

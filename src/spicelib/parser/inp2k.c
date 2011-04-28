@@ -37,7 +37,7 @@ void INP2K(CKTcircuit *ckt, INPtables * tab, card * current)
     INPinsert(&name, tab);
     if (!tab->defKmod) {
 	/* create deafult K model */
-	IFnewUid(ckt, &uid, (IFuid) NULL, "K", UID_MODEL, NULL);
+	IFnewUid(ckt, &uid, NULL, "K", UID_MODEL, NULL);
 	IFC(newModel, (ckt, type, &(tab->defKmod), uid));
     }
     IFC(newInstance, (ckt, tab->defKmod, &fast, name));

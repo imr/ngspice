@@ -39,7 +39,7 @@ CKTpName(char *parm, IFvalue *val, CKTcircuit *ckt, int dev, char *name, GENinst
         if(!strcmp(parm, DEVices[dev]->DEVpublic.instanceParms[i].keyword)) {
             error = CKTparam(ckt, *fast,
                     DEVices[dev]->DEVpublic.instanceParms[i].id, val,
-                    (IFvalue *)NULL);
+                    NULL);
             if(error) return(error);
             break;
         }

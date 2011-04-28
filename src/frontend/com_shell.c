@@ -44,7 +44,7 @@ com_shell(wordlist *wl)
 	    svtstp = signal(SIGTSTP, SIG_DFL);
 	    /* XXX Sig on proc group */
             do {
-                r = wait((union wait *) NULL);
+                r = wait(NULL);
             } while ((r != pid) && pid != -1);
 	    signal(SIGINT, (SIGNAL_FUNCTION) svint);
 	    signal(SIGQUIT, (SIGNAL_FUNCTION) svquit);

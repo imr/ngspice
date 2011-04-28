@@ -52,7 +52,7 @@ void INP2E(CKTcircuit *ckt, INPtables * tab, card * current)
     INPtermInsert(ckt, &nname4, tab, &node4);
     if (!tab->defEmod) {
 	/* create default E model */
-	IFnewUid(ckt, &uid, (IFuid) NULL, "E", UID_MODEL, NULL);
+	IFnewUid(ckt, &uid, NULL, "E", UID_MODEL, NULL);
 	IFC(newModel, (ckt, type, &(tab->defEmod), uid));
     }
     IFC(newInstance, (ckt, tab->defEmod, &fast, name));

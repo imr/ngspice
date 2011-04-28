@@ -317,9 +317,9 @@ NBJTload(GENmodel *inModel, CKTcircuit *ckt)
 	devConverged = pDevice->converged;
 	if (devConverged && finite(pDevice->rhsNorm)) {
 	  /* compute the currents */
-	  NBJTcurrent(pDevice, FALSE, (double *) NULL,
+	  NBJTcurrent(pDevice, FALSE, NULL,
 	      &ie, &ic);
-	  NBJTconductance(pDevice, FALSE, (double *) NULL,
+	  NBJTconductance(pDevice, FALSE, NULL,
 	      &dIeDVce, &dIcDVce, &dIeDVbe, &dIcDVbe);
 	  /*
 	   * Add Gmin terms to everything in case we are operating at

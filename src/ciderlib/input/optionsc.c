@@ -70,10 +70,10 @@ OPTNnewCard(void **inCard, void *inModel)
     if (!tmpCard) { /* First in list */
         newCard = NEW( OPTNcard );
         if (!newCard) {
-            *inCard = (void *)NULL;
+            *inCard = NULL;
             return(E_NOMEM);
         }
-        newCard->OPTNnextCard = (OPTNcard *)NULL;
+        newCard->OPTNnextCard = NULL;
         *inCard = (void *)newCard;
         model->GENoptions = newCard;
     } else { /* Only one card of this type allowed */

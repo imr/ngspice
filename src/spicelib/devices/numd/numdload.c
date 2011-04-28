@@ -254,8 +254,8 @@ NUMDload(GENmodel *inModel, CKTcircuit *ckt)
 	devConverged = pDevice->converged;
 	if (devConverged && finite(pDevice->rhsNorm)) {
 	  /* Get the current and conductance information. */
-	  NUMDcurrent(pDevice, FALSE, (double *) NULL, &id);
-	  NUMDconductance(pDevice, FALSE, (double *) NULL, &gd);
+	  NUMDcurrent(pDevice, FALSE, NULL, &id);
+	  NUMDconductance(pDevice, FALSE, NULL, &gd);
 	} else {
 	  /* reduce the voltage step until converged */
 	  /* restore the boundary potential to previous value */

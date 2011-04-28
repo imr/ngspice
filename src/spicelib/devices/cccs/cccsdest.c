@@ -23,7 +23,7 @@ CCCSdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->CCCSnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (CCCSinstance *)NULL;
+        prev = NULL;
         for(here = mod->CCCSinstances ; here ; here = here->CCCSnextInstance) {
             if(prev) FREE(prev);
             prev = here;

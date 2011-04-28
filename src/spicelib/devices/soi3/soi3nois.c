@@ -93,7 +93,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		SPfrontEnd->IFnewUid (ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL, name, UID_OTHER, NULL);
+			NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 
@@ -109,7 +109,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		SPfrontEnd->IFnewUid (ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL, name, UID_OTHER, NULL);
+			NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
              (void)sprintf(name,"inoise_total_%s%s",inst->SOI3name,SOI3nNames[i]);
@@ -119,7 +119,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		SPfrontEnd->IFnewUid (ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL, name, UID_OTHER, NULL);
+			NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 
@@ -140,7 +140,7 @@ if (!data->namelist) return(E_NOMEM);
  * is valid in ALL regions and not just saturation.
  */
                     EffectiveLength=inst->SOI3l - 2*model->SOI3latDiff;
-		    NevalSrc(&noizDens[SOI3RDNOIZ],(double*)NULL,
+		    NevalSrc(&noizDens[SOI3RDNOIZ], NULL,
 				 ckt,N_GAIN,inst->SOI3dNodePrime,inst->SOI3dNode,
 				 (double)0.0);
 		    noizDens[SOI3RDNOIZ] *= 4 * CONSTboltz *
@@ -148,7 +148,7 @@ if (!data->namelist) return(E_NOMEM);
 					    inst->SOI3drainConductance * inst->SOI3m;
 		    lnNdens[SOI3RDNOIZ] = log(MAX(noizDens[SOI3RDNOIZ],N_MINLOG));
 
-		    NevalSrc(&noizDens[SOI3RSNOIZ],(double*)NULL,
+		    NevalSrc(&noizDens[SOI3RSNOIZ], NULL,
 				 ckt,N_GAIN,inst->SOI3sNodePrime,inst->SOI3sNode,
 				 (double)0.0);
 		    noizDens[SOI3RSNOIZ] *= 4 * CONSTboltz *
@@ -156,7 +156,7 @@ if (!data->namelist) return(E_NOMEM);
 					    inst->SOI3sourceConductance * inst->SOI3m;
 		    lnNdens[SOI3RSNOIZ] = log(MAX(noizDens[SOI3RSNOIZ],N_MINLOG));
 
-		    NevalSrc(&gain,(double*)NULL,ckt,
+		    NevalSrc(&gain, NULL, ckt,
 				 N_GAIN,inst->SOI3dNodePrime, inst->SOI3sNodePrime,
 				 (double)0.0);
 

@@ -65,7 +65,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     INPtermInsert(ckt, &nname3, tab, &node3);
     INPgetTok(&line, &model, 1);
 
-    thismodel = (INPmodel *) NULL;
+    thismodel = NULL;
     /*  See if 4th token after device specification is a model name  */
     if (INPlookMod(model)) {
         /* 3-terminal device - substrate to ground */
@@ -157,7 +157,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         if (!tab->defQmod) {
             /* create default Q model */
             char *err;
-            IFnewUid(ckt, &uid, (IFuid) NULL, "Q", UID_MODEL, NULL);
+            IFnewUid(ckt, &uid, NULL, "Q", UID_MODEL, NULL);
             IFC(newModel, (ckt, type, &(tab->defQmod), uid));
             err = TMALLOC(char, 70 + strlen(model));
             (void) sprintf(err, "Unable to find definition of model %s - default BJT assumed \n", model);

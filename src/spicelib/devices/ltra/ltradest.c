@@ -20,7 +20,7 @@ LTRAdestroy(GENmodel **inModel)
     if (oldmod)
       FREE(oldmod);
     oldmod = mod;
-    prev = (LTRAinstance *) NULL;
+    prev = NULL;
     for (here = mod->LTRAinstances; here; here = here->LTRAnextInstance) {
       if (prev)
 	FREE(prev);

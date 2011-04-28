@@ -242,9 +242,9 @@ nutcom_source(wordlist *wl)
     /* Don't print the title if this is a .spiceinit file. */
     if (ft_nutmeg || substring(INITSTR, owl->wl_word)
             || substring(ALT_INITSTR, owl->wl_word))
-        inp_nutsource(fp, TRUE, tempfile ? (char *) NULL : wl->wl_word);
+        inp_nutsource(fp, TRUE, tempfile ? NULL : wl->wl_word);
     else
-        inp_nutsource(fp, FALSE, tempfile ? (char *) NULL : wl->wl_word);
+        inp_nutsource(fp, FALSE, tempfile ? NULL : wl->wl_word);
     cp_interactive = inter;
     if (tempfile)
         (void) unlink(tempfile);

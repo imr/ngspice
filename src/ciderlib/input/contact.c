@@ -44,10 +44,10 @@ CONTnewCard(void **inCard, void *inModel)
 
     newCard = NEW( CONTcard );
     if (!newCard) {
-        *inCard = (void *)NULL;
+        *inCard = NULL;
         return(E_NOMEM);
     }
-    newCard->CONTnextCard = (CONTcard *)NULL;
+    newCard->CONTnextCard = NULL;
     *inCard = (void *)newCard;
 
     tmpCard = model->GENcontacts;

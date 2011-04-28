@@ -67,7 +67,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		SPfrontEnd->IFnewUid (ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL, name, UID_OTHER, NULL);
+			NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 
@@ -83,7 +83,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		SPfrontEnd->IFnewUid (ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL, name, UID_OTHER, NULL);
+			NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 
@@ -94,7 +94,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		SPfrontEnd->IFnewUid (ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL, name, UID_OTHER, NULL);
+			NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 
@@ -121,7 +121,7 @@ if (!data->namelist) return(E_NOMEM);
 				 ckt,THERMNOISE,inst->B2dNodePrime,inst->B2sNodePrime,
                                  (2.0/3.0 * fabs(inst->B2gm * inst->B2m)));
 
-		    NevalSrc(&noizDens[B2FLNOIZ],(double*)NULL,ckt,
+		    NevalSrc(&noizDens[B2FLNOIZ], NULL, ckt,
 				 N_GAIN,inst->B2dNodePrime, inst->B2sNodePrime,
 				 (double)0.0);
 		    noizDens[B2FLNOIZ] *= model->B2fNcoef * inst->B2m *

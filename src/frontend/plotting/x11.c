@@ -345,7 +345,7 @@ handle_wm_messages(Widget w, XtPointer client_data, XEvent *ev, Boolean *cont)
 
 /* Recover from bad NewViewPort call. */
 #define RECOVERNEWVIEWPORT()    tfree(graph);\
-	            graph = (GRAPH *) NULL; 
+	            graph = NULL; 
 	    /* need to do this or else DestroyGraph will free it again */
 
 /* NewViewport is responsible for filling in graph->viewport */
@@ -1025,8 +1025,8 @@ X11_Input(REQUEST *request, RESPONSE *response)
 		      FD_SET(ConnectionNumber(display), &rfds);
 		      select (nfds + 1,
 			      &rfds,
-			      (fd_set *)NULL,
-			      (fd_set *)NULL,
+			      NULL,
+			      NULL,
 			      NULL);
 		      
 		      /* handle X events first */

@@ -22,7 +22,7 @@ RESdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->RESnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (RESinstance *)NULL;
+        prev = NULL;
         for(here = mod->RESinstances ; here ; here = here->RESnextInstance) {
             if(prev) FREE(prev);
             prev = here;

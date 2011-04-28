@@ -155,7 +155,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
           printf("In INP2R, Valid R Model: %s\n", model);
 #endif
           INPinsert(&model, tab);
-          thismodel = (INPmodel *) NULL;
+          thismodel = NULL;
           current->error = INPgetMod(ckt, model, &thismodel, tab);
           if (thismodel != NULL) {
             if (mytype != thismodel->INPmodType) {
@@ -171,7 +171,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
           line = saveline;	/* go back */
           type = mytype;
           if (!tab->defRmod) {	/* create default R model */
-            IFnewUid(ckt, &uid, (IFuid) NULL, "R", UID_MODEL,
+            IFnewUid(ckt, &uid, NULL, "R", UID_MODEL,
                 NULL);
             IFC(newModel, (ckt, type, &(tab->defRmod), uid));
           }
@@ -184,7 +184,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
       type = mytype;
       if (!tab->defRmod) {
           /* create default R model */
-          IFnewUid(ckt, &uid, (IFuid) NULL, "R", UID_MODEL,
+          IFnewUid(ckt, &uid, NULL, "R", UID_MODEL,
               NULL);
           IFC(newModel, (ckt, type, &(tab->defRmod), uid));
       }

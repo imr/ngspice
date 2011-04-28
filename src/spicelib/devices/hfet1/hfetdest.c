@@ -20,7 +20,7 @@ HFETAdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->HFETAnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (HFETAinstance *)NULL;
+        prev = NULL;
         for(here = mod->HFETAinstances ; here ; here = here->HFETAnextInstance) {
             if(prev) FREE(prev);
             prev = here;

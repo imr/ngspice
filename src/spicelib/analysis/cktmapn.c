@@ -37,7 +37,7 @@ CKTmapNode(CKTcircuit *ckt, CKTnode **node, IFuid name)
     if(error) return(error);
     error = SPfrontEnd->IFnewUid (ckt,
 				      &uid,
-				      (IFuid) NULL,
+				      NULL,
 				      name,
 				      UID_SIGNAL,
 				      &mynode);  /* get a uid for it */

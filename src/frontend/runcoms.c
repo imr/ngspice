@@ -376,7 +376,7 @@ ft_dorun(char *file)
     if (file)
       return dosim("run", &wl);
     else
-      return dosim("run", (wordlist *) NULL);
+      return dosim("run", NULL);
 }
 
 /* ARGSUSED */ /* until the else clause gets put back */

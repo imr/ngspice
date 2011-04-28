@@ -22,7 +22,7 @@ MESdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->MESnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (MESinstance *)NULL;
+        prev = NULL;
         for(here = mod->MESinstances ; here ; here = here->MESnextInstance) {
             if(prev) FREE(prev);
             prev = here;

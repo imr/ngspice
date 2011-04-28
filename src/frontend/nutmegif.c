@@ -21,7 +21,7 @@ struct variable * nutif_getparam(CKTcircuit *ckt, char **name, char *param, int 
     NG_IGNORE(name);
     NG_IGNORE(ckt);
 
-    return ((struct variable *) NULL);
+    return (NULL);
 }
 
 

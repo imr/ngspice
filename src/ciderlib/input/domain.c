@@ -61,10 +61,10 @@ DOMNnewCard(void **inCard, void *inModel)
 
     newCard = NEW( DOMNcard );
     if (!newCard) {
-        *inCard = (void *)NULL;
+        *inCard = NULL;
         return(E_NOMEM);
     }
-    newCard->DOMNnextCard = (DOMNcard *)NULL;
+    newCard->DOMNnextCard = NULL;
     *inCard = (void *)newCard;
 
     tmpCard = model->GENdomains;

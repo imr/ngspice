@@ -22,7 +22,7 @@ SWdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->SWnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (SWinstance *)NULL;
+        prev = NULL;
         for(here = mod->SWinstances ; here ; here = here->SWnextInstance) {
             if(prev) FREE(prev);
             prev = here;

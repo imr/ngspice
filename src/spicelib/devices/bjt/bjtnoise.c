@@ -74,7 +74,7 @@ for (model=firstModel; model != NULL; model=model->BJTnextModel) {
 			if (!data->namelist) return(E_NOMEM);
 			SPfrontEnd->IFnewUid (ckt,
 			    &(data->namelist[data->numPlots++]),
-			    (IFuid)NULL, name, UID_OTHER, NULL);
+			    NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 			}
 			break;
@@ -88,7 +88,7 @@ for (model=firstModel; model != NULL; model=model->BJTnextModel) {
 			if (!data->namelist) return(E_NOMEM);
 			SPfrontEnd->IFnewUid (ckt,
 			    &(data->namelist[data->numPlots++]),
-			    (IFuid)NULL, name, UID_OTHER, NULL);
+			    NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 			    (void)sprintf(name,"inoise_total_%s%s",
@@ -98,7 +98,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		SPfrontEnd->IFnewUid (ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL, name, UID_OTHER, NULL);
+			NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 			}
 			break;
@@ -130,7 +130,7 @@ if (!data->namelist) return(E_NOMEM);
 				 ckt,SHOTNOISE,inst->BJTbasePrimeNode, inst->BJTemitPrimeNode,
 				 *(ckt->CKTstate0 + inst->BJTcb) * inst->BJTm);
 
-		    NevalSrc(&noizDens[BJTFLNOIZ],(double*)NULL,ckt,
+		    NevalSrc(&noizDens[BJTFLNOIZ], NULL, ckt,
 				 N_GAIN,inst->BJTbasePrimeNode, inst->BJTemitPrimeNode,
 				 (double)0.0);
 		    noizDens[BJTFLNOIZ] *= inst->BJTm * model->BJTfNcoef * 

@@ -48,7 +48,7 @@ com_define(wordlist *wlist)
 
     /* If there's nothing then print all the definitions. */
     if (wlist == NULL) {
-        prdefs((char *) NULL);
+        prdefs(NULL);
         return;
     }
 

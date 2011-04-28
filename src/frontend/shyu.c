@@ -306,7 +306,7 @@ next:
                     ptemp.iValue = 1;
                     error = ft_sim->setAnalysisParm (ckt,
                         senseJob, ft_sim->analyses[save]->
-                        analysisParms[i].id,&ptemp,(IFvalue*)NULL);
+                        analysisParms[i].id, &ptemp, NULL);
                     if(error) current->error = INPerrCat(
                     current->error, INPerror(error));
                 } 
@@ -316,7 +316,7 @@ next:
                         dataType,tab);
                     error = ft_sim->setAnalysisParm (ckt,
                         senseJob, ft_sim->analyses[save]->
-                        analysisParms[i].id,parm,(IFvalue*)NULL);
+                        analysisParms[i].id, parm, NULL);
                     if(error) current->error = INPerrCat(
                     current->error, INPerror(error));
 

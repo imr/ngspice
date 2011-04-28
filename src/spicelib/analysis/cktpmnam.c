@@ -37,7 +37,7 @@ CKTpModName(char *parm, IFvalue *val, CKTcircuit *ckt, int type, IFuid name, GEN
         if(!strcmp(parm, DEVices[type]->DEVpublic.modelParms[i].keyword)) {
             error = CKTmodParam(ckt, *modfast,
                     DEVices[type]->DEVpublic.modelParms[i].id, val,
-                    (IFvalue*)NULL);
+                    NULL);
             if(error) return(error);
             break;
         }

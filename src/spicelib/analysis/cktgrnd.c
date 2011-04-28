@@ -36,7 +36,7 @@ CKTground(CKTcircuit *inCkt, CKTnode **node, IFuid name)
         ckt->CKTnodes->name = name;
         ckt->CKTnodes->type = SP_VOLTAGE;
         ckt->CKTnodes->number = 0;
-        ckt->CKTnodes->next = (CKTnode *)NULL;
+        ckt->CKTnodes->next = NULL;
         ckt->CKTlastNode = ckt->CKTnodes;
     }
     if(node) *node = ckt->CKTnodes;

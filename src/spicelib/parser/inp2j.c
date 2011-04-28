@@ -46,7 +46,7 @@ void INP2J(CKTcircuit *ckt, INPtables * tab, card * current)
     INPtermInsert(ckt, &nname3, tab, &node3);
     INPgetTok(&line, &model, 1);
     INPinsert(&model, tab);
-    thismodel = (INPmodel *) NULL;
+    thismodel = NULL;
     current->error = INPgetMod(ckt, model, &thismodel, tab);
     if (thismodel != NULL) {
 	if (thismodel->INPmodType != INPtypelook("JFET")
@@ -65,7 +65,7 @@ void INP2J(CKTcircuit *ckt, INPtables * tab, card * current)
 	}
 	if (!tab->defJmod) {
 	    /* create default J model */
-	    IFnewUid(ckt, &uid, (IFuid) NULL, "J", UID_MODEL,
+	    IFnewUid(ckt, &uid, NULL, "J", UID_MODEL,
 		     NULL);
 	    IFC(newModel, (ckt, type, &(tab->defJmod), uid));
 	}

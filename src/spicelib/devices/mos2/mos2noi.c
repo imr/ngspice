@@ -68,7 +68,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		SPfrontEnd->IFnewUid (ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL, name, UID_OTHER, NULL);
+			NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 
@@ -84,7 +84,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		SPfrontEnd->IFnewUid (ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL, name, UID_OTHER, NULL);
+			NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 
@@ -95,7 +95,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		SPfrontEnd->IFnewUid (ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL, name, UID_OTHER, NULL);
+			NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 
@@ -121,7 +121,7 @@ if (!data->namelist) return(E_NOMEM);
 				 ckt,THERMNOISE,inst->MOS2dNodePrime,inst->MOS2sNodePrime,
                                  (2.0/3.0 * fabs(inst->MOS2gm)));
 
-		    NevalSrc(&noizDens[MOS2FLNOIZ],(double*)NULL,ckt,
+		    NevalSrc(&noizDens[MOS2FLNOIZ], NULL, ckt,
 				 N_GAIN,inst->MOS2dNodePrime, inst->MOS2sNodePrime,
 				 (double)0.0);
 		    noizDens[MOS2FLNOIZ] *= model->MOS2fNcoef * 

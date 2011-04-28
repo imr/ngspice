@@ -121,7 +121,7 @@ main(ac, av)
         (void) dup2(0, 2);
         i = open("/dev/tty", O_RDWR);
         if (i > 0) {
-            (void) ioctl(i, TIOCNOTTY, (char *) NULL);
+            (void) ioctl(i, TIOCNOTTY, NULL);
             (void) close(i);
         }
 
@@ -266,7 +266,7 @@ sigchild()
     int pid;
     FILE *fp;
 
-    pid = wait((union wait *) NULL);
+    pid = wait(NULL);
     if (pid == -1) {
         fp = fopen(Spiced_Log, "a");
         fprintf(fp, "\n>>>spiced: wait: %s\n\n", sys_errlist[errno]);

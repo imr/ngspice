@@ -409,8 +409,8 @@ NUMOSload(GENmodel *inModel, CKTcircuit *ckt)
 	devConverged = pDevice->converged;
 	if (devConverged && finite(pDevice->rhsNorm)) {
 	  /* compute the currents */
-	  NUMOScurrent(pDevice, FALSE, (double *) NULL, &id, &is, &ig);
-	  NUMOSconductance(pDevice, FALSE, (double *) NULL, &g);
+	  NUMOScurrent(pDevice, FALSE, NULL, &id, &is, &ig);
+	  NUMOSconductance(pDevice, FALSE, NULL, &g);
 	  /*
 	   * Add gmin to the gate conductance terms since they will be zero.
 	   * XXX This messes up the gXY output values, but we choose not to

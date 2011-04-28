@@ -22,7 +22,7 @@ MOS1destroy(GENmodel **inModel)
     for( ; mod ; mod = mod->MOS1nextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (MOS1instance *)NULL;
+        prev = NULL;
         for(here = mod->MOS1instances ; here ; here = here->MOS1nextInstance) {
             if(prev){
                 if(prev->MOS1sens) FREE(prev->MOS1sens); 

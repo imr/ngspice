@@ -23,7 +23,7 @@ B2destroy(GENmodel **inModel)
     for( ; mod ; mod = mod->B2nextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (B2instance *)NULL;
+        prev = NULL;
         for(here = mod->B2instances ; here ; here = here->B2nextInstance) {
             if(prev) FREE(prev);
             prev = here;

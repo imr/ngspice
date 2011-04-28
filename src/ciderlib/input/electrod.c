@@ -49,10 +49,10 @@ ELCTnewCard(void **inCard, void *inModel)
 
     newCard = NEW( ELCTcard );
     if (!newCard) {
-        *inCard = (void *)NULL;
+        *inCard = NULL;
         return(E_NOMEM);
     }
-    newCard->ELCTnextCard = (ELCTcard *)NULL;
+    newCard->ELCTnextCard = NULL;
     *inCard = (void *)newCard;
 
     tmpCard = model->GENelectrodes;

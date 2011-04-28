@@ -20,7 +20,7 @@ void HFET2destroy(GENmodel **inModel)
   for( ; mod ; mod = mod->HFET2nextModel) {
     if(oldmod) FREE(oldmod);
     oldmod = mod;
-    prev = (HFET2instance *)NULL;
+    prev = NULL;
     for(here = mod->HFET2instances ; here ; here = here->HFET2nextInstance) {
       if(prev) FREE(prev);
       prev = here;

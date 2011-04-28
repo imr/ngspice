@@ -22,7 +22,7 @@ CCVSdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->CCVSnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (CCVSinstance *)NULL;
+        prev = NULL;
         for(here = mod->CCVSinstances ; here ; here = here->CCVSnextInstance) {
             if(prev) FREE(prev);
             prev = here;

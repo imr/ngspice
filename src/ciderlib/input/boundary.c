@@ -69,10 +69,10 @@ BDRYnewCard(void **inCard, void *inModel)
 
     newCard = NEW( BDRYcard );
     if (!newCard) {
-        *inCard = (void *)NULL;
+        *inCard = NULL;
         return(E_NOMEM);
     }
-    newCard->BDRYnextCard = (BDRYcard *)NULL;
+    newCard->BDRYnextCard = NULL;
     *inCard = (void *)newCard;
 
     tmpCard = model->GENboundaries;

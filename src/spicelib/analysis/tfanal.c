@@ -50,7 +50,7 @@ TFanal(CKTcircuit *ckt, int restart)
     Vtype = CKTtypelook("Vsource");
     if(Itype != -1) {
         error = CKTfndDev(ckt,&Itype,&ptr,
-                ((TFan*)ckt->CKTcurJob)->TFinSrc, (GENmodel *)NULL, (IFuid)NULL);
+                ((TFan*)ckt->CKTcurJob)->TFinSrc, NULL, NULL);
         if(error ==0) {
             ((TFan*)ckt->CKTcurJob)->TFinIsI = 1;
             ((TFan*)ckt->CKTcurJob)->TFinIsV = 0;
@@ -61,8 +61,8 @@ TFanal(CKTcircuit *ckt, int restart)
 
     if( (Vtype != -1) && (ptr==NULL) ) {
         error = CKTfndDev(ckt,&Vtype,&ptr,
-                ((TFan*)ckt->CKTcurJob)->TFinSrc, (GENmodel *)NULL,
-                (IFuid)NULL);
+                ((TFan*)ckt->CKTcurJob)->TFinSrc, NULL,
+                NULL);
         ((TFan*)ckt->CKTcurJob)->TFinIsV = 1;
         ((TFan*)ckt->CKTcurJob)->TFinIsI = 0;
         if(error !=0) {
@@ -92,7 +92,7 @@ TFanal(CKTcircuit *ckt, int restart)
     ckt->CKTrhs[0]=0;
 
     /* make a UID for the transfer function output */
-    SPfrontEnd->IFnewUid (ckt, &tfuid, (IFuid)NULL, "Transfer_function",
+    SPfrontEnd->IFnewUid (ckt, &tfuid, NULL, "Transfer_function",
             UID_OTHER, NULL);
 
     /* make a UID for the input impedance */
@@ -107,12 +107,12 @@ TFanal(CKTcircuit *ckt, int restart)
         name = TMALLOC(char, strlen(((TFan*)ckt->CKTcurJob)->TFoutName) + 22);
         (void)sprintf(name,"output_impedance_at_%s",
                 ((TFan*)ckt->CKTcurJob)->TFoutName);
-        SPfrontEnd->IFnewUid (ckt, &outuid, (IFuid)NULL,
+        SPfrontEnd->IFnewUid (ckt, &outuid, NULL,
                 name, UID_OTHER, NULL);
     }
 
     error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
-            ((TFan*)(ckt->CKTcurJob))->JOBname,(IFuid)NULL,(int)0,3,
+            ((TFan*)(ckt->CKTcurJob))->JOBname, NULL, (int)0, 3,
             uids,IF_REAL,&plotptr);
     if(error) return(error);
 

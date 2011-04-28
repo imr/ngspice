@@ -22,7 +22,7 @@ MOS6destroy(GENmodel **inModel)
     for( ; mod ; mod = mod->MOS6nextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (MOS6instance *)NULL;
+        prev = NULL;
         for(here = mod->MOS6instances ; here ; here = here->MOS6nextInstance) {
             if(prev){
                 if(prev->MOS6sens) FREE(prev->MOS6sens); 

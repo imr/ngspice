@@ -54,7 +54,7 @@ void INP2Z(CKTcircuit *ckt, INPtables * tab, card * current)
     INPtermInsert(ckt, &nname3, tab, &node3);
     INPgetTok(&line, &model, 1);
     INPinsert(&model, tab);
-    thismodel = (INPmodel *) NULL;
+    thismodel = NULL;
     current->error = INPgetMod(ckt, model, &thismodel, tab);
     if (thismodel != NULL) {
 		if (   thismodel->INPmodType != INPtypelook("MES") 
@@ -79,7 +79,7 @@ void INP2Z(CKTcircuit *ckt, INPtables * tab, card * current)
 		
 	if (!tab->defZmod) {
 	    /* create default Z model */
-	    IFnewUid(ckt, &uid, (IFuid) NULL, "Z", UID_MODEL,
+	    IFnewUid(ckt, &uid, NULL, "Z", UID_MODEL,
 		     NULL);
 	    IFC(newModel, (ckt, type, &(tab->defZmod), uid));
 	}

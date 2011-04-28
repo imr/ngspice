@@ -73,8 +73,7 @@ com_ahelp(wordlist *wl)
 	com = cc[i];
 	if ((com->co_env < (level << 13)) && (!(com->co_env & 4095) ||
 					      (env & com->co_env))) {
-	    if ((com->co_spiceonly && ft_nutmeg) ||
-		(com->co_help == (char *) NULL)) {
+	    if ((com->co_spiceonly && ft_nutmeg) || (com->co_help == NULL)) {
 		continue;
 	    }
 	    out_printf("%s ", com->co_comname);

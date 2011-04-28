@@ -1025,7 +1025,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     if (devname && eq(devname, "blt")) {
     /* Just send the pairs to Tcl/Tk */
       for (d = vecs; d; d = d->v_link2) {
-        blt_plot(d, oneval ? (struct dvec *) NULL : d->v_scale,(d==vecs?1:0));
+        blt_plot(d, oneval ? NULL : d->v_scale, (d == vecs) ? 1 : 0);
       }
       rtn = TRUE;
       goto quit;
@@ -1041,7 +1041,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
     pname = plot_cur->pl_typename;
 
-    if (!gr_init(xlims, ylims, (oneval ? (char *) NULL : xn),
+    if (!gr_init(xlims, ylims, (oneval ? NULL : xn),
             title ? title : vecs->v_plot->pl_title, hcopy, i,
             xdelta ? *xdelta : 0.0, ydelta ? *ydelta : 0.0, gtype,
             ptype, xlabel, ylabel, xt, j, pname, cline))
@@ -1049,7 +1049,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
     /* Now plot all the graphs. */
     for (d = vecs; d; d = d->v_link2)
-        ft_graf(d, oneval ? (struct dvec *) NULL : d->v_scale, FALSE);
+        ft_graf(d, oneval ? NULL : d->v_scale, FALSE);
 
     gr_clean();
 

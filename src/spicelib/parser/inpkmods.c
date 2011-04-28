@@ -18,13 +18,12 @@ void INPkillMods(void)
     INPmodel *modtmp;
     INPmodel *prev = NULL;
 
-    for (modtmp = modtab; modtmp != (INPmodel *) NULL; modtmp =
-	 modtmp->INPnextModel) {
+    for (modtmp = modtab; modtmp != NULL; modtmp = modtmp->INPnextModel) {
 	if (prev)
 	    FREE(prev);
 	prev = modtmp;
     }
     if (prev)
 	FREE(prev);
-    modtab = (INPmodel *) NULL;
+    modtab = NULL;
 }

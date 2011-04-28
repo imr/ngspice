@@ -20,7 +20,7 @@ CPLdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->CPLnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (CPLinstance *)NULL;
+        prev = NULL;
         for(here = mod->CPLinstances ; here ; here = here->CPLnextInstance) {
             if(prev) FREE(prev);
             prev = here;

@@ -29,7 +29,7 @@ CKTsetBreak(CKTcircuit *ckt, double time)
 
     if(ckt->CKTtime > time) {
         SPfrontEnd->IFerror (ERR_PANIC, "breakpoint in the past - HELP!",
-                (IFuid *)NULL);
+                NULL);
         return(E_INTERN);
     }
     for(i=0;i<ckt->CKTbreakSize;i++) {
@@ -54,7 +54,7 @@ CKTsetBreak(CKTcircuit *ckt, double time)
             }
             /* fits in middle - new array & insert */
             tmp = TMALLOC(double, ckt->CKTbreakSize + 1);
-            if(tmp == (double *)NULL) return(E_NOMEM);
+            if(tmp == NULL) return(E_NOMEM);
             for(j=0;j<i;j++) {
                 *(tmp+j) = *(ckt->CKTbreaks+j);
             }

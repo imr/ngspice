@@ -37,7 +37,7 @@ SOI3destroy(GENmodel **inModel)
     for( ; mod ; mod = mod->SOI3nextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (SOI3instance *)NULL;
+        prev = NULL;
         for(here = mod->SOI3instances ; here ; here = here->SOI3nextInstance) {
             if(prev){
               /*  if(prev->SOI3sens) FREE(prev->SOI3sens);  */

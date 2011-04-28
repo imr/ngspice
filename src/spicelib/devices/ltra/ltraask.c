@@ -80,7 +80,7 @@ LTRAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
      * value->v.numValue = temp = here->LTRAsizeDelay; while (temp--) {
      * value->v.vec.rVec++ = *here->LTRAdelays++;
      */
-    value->v.vec.rVec = (double *) NULL;
+    value->v.vec.rVec = NULL;
     value->v.numValue = temp = 0;
     return (OK);
   default:

@@ -67,7 +67,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		SPfrontEnd->IFnewUid (ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL, name, UID_OTHER, NULL);
+			NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 
@@ -83,7 +83,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		SPfrontEnd->IFnewUid (ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL, name, UID_OTHER, NULL);
+			NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 
@@ -98,7 +98,7 @@ data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 if (!data->namelist) return(E_NOMEM);
 		SPfrontEnd->IFnewUid (ckt,
 			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL, name, UID_OTHER, NULL);
+			NULL, name, UID_OTHER, NULL);
 				/* we've added one more plot */
 
 
@@ -125,7 +125,7 @@ if (!data->namelist) return(E_NOMEM);
 				 inst->MESsourcePrimeNode,
                                  (2.0/3.0 * inst->MESm * fabs(*(ckt->CKTstate0 + inst->MESgm))));
 
-		    NevalSrc(&noizDens[MESFLNOIZ],(double*)NULL,ckt,
+		    NevalSrc(&noizDens[MESFLNOIZ], NULL, ckt,
 				 N_GAIN,inst->MESdrainPrimeNode, inst->MESsourcePrimeNode,
 				 (double)0.0);
 		    noizDens[MESFLNOIZ] *= inst->MESm * model->MESfNcoef * 

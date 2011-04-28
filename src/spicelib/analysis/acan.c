@@ -130,7 +130,7 @@ ACan(CKTcircuit *ckt, int restart)
          * point... 
          */
         SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
-            ckt->CKTcurJob->JOBname,(IFuid)NULL,IF_REAL,numNames,nameList,
+            ckt->CKTcurJob->JOBname, NULL, IF_REAL, numNames, nameList,
             IF_REAL,&acPlot);
         tfree(nameList);
 
@@ -154,14 +154,14 @@ ACan(CKTcircuit *ckt, int restart)
 	    /* Dump operating point. */
 	    error = SPfrontEnd->OUTpBeginPlot (ckt,
 		ckt->CKTcurJob, "AC Operating Point",
-		(IFuid)NULL,IF_REAL,numNames,nameList, IF_REAL,&plot);
+		NULL, IF_REAL, numNames, nameList, IF_REAL, &plot);
 	    if(error) return(error);
 	    CKTdump(ckt,(double)0,plot);
 	    SPfrontEnd->OUTendPlot (plot);
 	    plot = NULL;
 	}
 
-        SPfrontEnd->IFnewUid (ckt, &freqUid, (IFuid)NULL,
+        SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
                 "frequency", UID_OTHER, NULL);
         error = SPfrontEnd->OUTpBeginPlot (ckt,
 		ckt->CKTcurJob,

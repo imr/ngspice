@@ -35,7 +35,7 @@ int INPpName(char *parm, IFvalue * val, CKTcircuit *ckt, int dev, GENinstance *f
 		ft_sim->setInstanceParm (ckt, fast,
 					      (*(ft_sim->devices)[dev]).
 					      instanceParms[i].id, val,
-					      (IFvalue *) NULL);
+					      NULL);
 	    if (error)
 		return (error);
 	    break;

@@ -115,7 +115,7 @@ DCtran(CKTcircuit *ckt,
 
         if(ckt->CKTbreaks) FREE(ckt->CKTbreaks);
         ckt->CKTbreaks = TMALLOC(double, 2);
-        if(ckt->CKTbreaks == (double *)NULL) return(E_NOMEM);
+        if(ckt->CKTbreaks == NULL) return(E_NOMEM);
         *(ckt->CKTbreaks) = 0;
         *(ckt->CKTbreaks+1) = ckt->CKTfinalTime;
         ckt->CKTbreakSize = 2;
@@ -142,7 +142,7 @@ DCtran(CKTcircuit *ckt,
 #endif
         error = CKTnames(ckt,&numNames,&nameList);
         if(error) return(error);
-        SPfrontEnd->IFnewUid (ckt, &timeUid, (IFuid)NULL,
+        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL,
                 "time", UID_OTHER, NULL);
         error = SPfrontEnd->OUTpBeginPlot (ckt,
         ckt->CKTcurJob,
@@ -350,7 +350,7 @@ DCtran(CKTcircuit *ckt,
         error = CKTnames(ckt,&numNames,&nameList);
         if(error) return(error);
         /* get timeUiD again */
-        SPfrontEnd->IFnewUid (ckt, &timeUid, (IFuid)NULL,
+        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL,
                 "time", UID_OTHER, NULL);
         error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
                  ckt->CKTcurJob->JOBname,timeUid,IF_REAL,666,nameList,

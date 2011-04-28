@@ -636,7 +636,7 @@ app_rl_readlines(void)
     /* History gets written in ../fte/misccoms.c com_quit */
 
 #else
-    while (cp_evloop((char *) NULL) == 1) ;
+    while (cp_evloop(NULL) == 1) ;
 #endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
 }
 
@@ -1216,7 +1216,7 @@ bot:
     }   /* ---  if (!ft_servermode && !ft_nutmeg) --- */
 
     if (!gotone && ft_batchmode && !ft_nutmeg)
-        inp_spsource(circuit_file, FALSE, (char *) NULL);
+        inp_spsource(circuit_file, FALSE, NULL);
 
 evl:
     if (ft_batchmode) {

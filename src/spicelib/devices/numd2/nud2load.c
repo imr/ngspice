@@ -263,8 +263,8 @@ NUMD2load(GENmodel *inModel, CKTcircuit *ckt)
 
 	if (devConverged && finite(pDevice->rhsNorm)) {
 	  /* extract the current and conductance information */
-	  NUMD2current(pDevice, FALSE, (double *) NULL, &id);
-	  NUMD2conductance(pDevice, FALSE, (double *) NULL, &gd);
+	  NUMD2current(pDevice, FALSE, NULL, &id);
+	  NUMD2conductance(pDevice, FALSE, NULL, &gd);
 	} else {
 	  /* do voltage step backtracking */
 	  /* restore the boundary nodes to the previous value */

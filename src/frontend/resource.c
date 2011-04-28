@@ -120,7 +120,7 @@ char* copyword;
     /* Fill in the SPICE accounting structure... */
 
     if (wl && (eq(wl->wl_word, "everything") || eq(wl->wl_word, "all"))) {
-        printres((char *) NULL);
+        printres(NULL);
     } else if (wl) {
         for (; wl; wl = wl->wl_next) {
          /*   printres(cp_unquote(wl->wl_word)); DG: bad, memory leak*/

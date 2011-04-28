@@ -27,7 +27,7 @@ BSIM4model *oldmod = NULL;
     for (; mod ; mod = mod->BSIM4nextModel)
     {    if(oldmod) FREE(oldmod);
          oldmod = mod;
-         prev = (BSIM4instance *)NULL;
+         prev = NULL;
          for (here = mod->BSIM4instances; here; here = here->BSIM4nextInstance)
 	 {    if(prev) FREE(prev);
               prev = here;

@@ -22,7 +22,7 @@ TRAdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->TRAnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (TRAinstance *)NULL;
+        prev = NULL;
         for(here = mod->TRAinstances ; here ; here = here->TRAnextInstance) {
             if(prev) FREE(prev);
             prev = here;

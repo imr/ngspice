@@ -18,7 +18,7 @@ char *INPmkTemp(char *string)
 
     len = strlen(string);
     temp = TMALLOC(char, len + 1);
-    if (temp != (char *) NULL)
+    if (temp != NULL)
 	(void) strcpy(temp, string);
     return (temp);
 

@@ -22,7 +22,7 @@ VCVSdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->VCVSnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (VCVSinstance *)NULL;
+        prev = NULL;
         for(here = mod->VCVSinstances ; here ; here = here->VCVSnextInstance) {
             if(prev) FREE(prev);
             prev = here;

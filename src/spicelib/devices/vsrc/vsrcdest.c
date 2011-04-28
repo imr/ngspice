@@ -22,7 +22,7 @@ VSRCdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->VSRCnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (VSRCinstance *)NULL;
+        prev = NULL;
         for(here = mod->VSRCinstances ; here ; here = here->VSRCnextInstance) {
             if(prev) FREE(prev);
             prev = here;

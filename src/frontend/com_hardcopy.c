@@ -151,7 +151,7 @@ com_hardcopy(wordlist *wl)
 
         if (DevSwitch(devtype)) return;
 
-        if (!wl || !plotit(wl, fname, (char *) NULL)) {
+        if (!wl || !plotit(wl, fname, NULL)) {
             printf("com_hardcopy: graph not defined\n");
             DevSwitch(NULL);    /* remember to switch back */
             return;

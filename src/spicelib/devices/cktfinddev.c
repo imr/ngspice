@@ -51,7 +51,7 @@ CKTfndDev(CKTcircuit *Ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
 	     mods = mods->GENnextModel) 
       {
          /* and all instances */
-         if (modname == (char *)NULL || mods->GENmodName == modname) {
+         if (modname == NULL || mods->GENmodName == modname) {
             for (here = mods->GENinstances;
                here != NULL; 
                here = here->GENnextInstance) 
@@ -77,7 +77,7 @@ CKTfndDev(CKTcircuit *Ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
             mods = mods->GENnextModel) 
          {
             /* and all instances */
-            if(modname == (char *)NULL || mods->GENmodName == modname) {
+            if(modname == NULL || mods->GENmodName == modname) {
                for (here = mods->GENinstances;
                   here != NULL; 
                   here = here->GENnextInstance) 

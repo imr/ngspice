@@ -294,7 +294,7 @@ int EVTiter(
 
     SPfrontEnd->IFerror (ERR_WARNING,
         "Too many iteration passes in event-driven circuits",
-        (IFuid *) NULL);
+        NULL);
     return(E_ITERLIM);
 
 }

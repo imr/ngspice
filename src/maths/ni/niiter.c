@@ -126,7 +126,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
                     (void)sprintf(message,
                             "singular matrix:  check nodes %s and %s\n",
                             NODENAME(ckt,i),NODENAME(ckt,j));
-                    SPfrontEnd->IFerror (ERR_WARNING, message, (IFuid *)NULL);
+                    SPfrontEnd->IFerror (ERR_WARNING, message, NULL);
                     FREE(message);
                     ckt->CKTstat->STATnumIter += iterno;
 #ifdef STEPDEBUG

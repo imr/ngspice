@@ -51,10 +51,10 @@ METHnewCard(void **inCard, void *inModel)
     if (!tmpCard) { /* First in list */
         newCard = NEW( METHcard );
         if (!newCard) {
-            *inCard = (void *)NULL;
+            *inCard = NULL;
             return(E_NOMEM);
         }
-        newCard->METHnextCard = (METHcard *)NULL;
+        newCard->METHnextCard = NULL;
         *inCard = (void *)newCard;
         model->GENmethods = newCard;
     } else { /* Only one card of this type allowed */

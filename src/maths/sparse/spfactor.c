@@ -342,7 +342,7 @@ spFactor(MatrixPtr eMatrix)
 
     if (Matrix->NeedsOrdering)
     {
-	return spOrderAndFactor( eMatrix, (RealVector)NULL,
+	return spOrderAndFactor( eMatrix, NULL,
                                  0.0, 0.0, DIAG_PIVOTING_AS_DEFAULT );
     }
     if (!Matrix->Partitioned) spPartition( eMatrix, spDEFAULT_PARTITION );

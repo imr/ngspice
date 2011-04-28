@@ -74,7 +74,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
   INPgetNetTok (&line, &nname5, 1);	/*  get 5th token  */
    save = line; /*saj - save the posn for later if 
   	the default mosfet model is used */
-  thismodel = (INPmodel *) NULL;
+  thismodel = NULL;
 #ifdef TRACE
   printf("INP2M: checking for 4 node device\n");
 #endif
@@ -89,7 +89,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
     {				/*  5th token is not a model in the table  */
       nodeflag = 1;		/*  now specify a 5 node device  */
       INPgetNetTok (&line, &nname6, 1);	/*  get next token  */
-      thismodel = (INPmodel *) NULL;
+      thismodel = NULL;
 #ifdef TRACE
       printf("INP2M: checking for 5 node device\n");
 #endif
@@ -98,7 +98,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 	{			/*  6th token is not a model in the table  */
 	  nodeflag = 2;		/*  now specify a 6 node device  */
 	  INPgetNetTok (&line, &nname7, 1);	/*  get next token  */
-	  thismodel = (INPmodel *) NULL;
+	  thismodel = NULL;
 #ifdef TRACE
 	  printf("INP2M: checking for 6 node device\n");
 #endif
@@ -187,7 +187,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 
 
   INPinsert (&model, tab);
-  thismodel = (INPmodel *) NULL;
+  thismodel = NULL;
 #ifdef TRACE
   printf("INP2M: Looking up model\n");
 #endif
@@ -250,7 +250,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
       if (!tab->defMmod)
 	{
 	  /* create default M model */
-	  IFnewUid (ckt, &uid, (IFuid) NULL, "M", UID_MODEL, NULL);
+	  IFnewUid (ckt, &uid, NULL, "M", UID_MODEL, NULL);
 	  IFC (newModel, (ckt, type, &(tab->defMmod), uid));
 	}
       mdfast = tab->defMmod;

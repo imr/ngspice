@@ -332,8 +332,8 @@ NBJT2load(GENmodel *inModel, CKTcircuit *ckt)
 	devConverged = pDevice->converged;
 	if (devConverged && finite(pDevice->rhsNorm)) {
 	  /* compute the currents */
-	  NBJT2current(pDevice, FALSE, (double *) NULL, &ie, &ic);
-	  NBJT2conductance(pDevice, FALSE, (double *) NULL,
+	  NBJT2current(pDevice, FALSE, NULL, &ie, &ic);
+	  NBJT2conductance(pDevice, FALSE, NULL,
 	      &dIeDVce, &dIcDVce, &dIeDVbe, &dIcDVbe);
 
 	} else {

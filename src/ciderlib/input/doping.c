@@ -78,10 +78,10 @@ DOPnewCard(void **inCard, void *inModel)
 
     newCard = NEW( DOPcard );
     if (!newCard) {
-        *inCard = (void *)NULL;
+        *inCard = NULL;
         return(E_NOMEM);
     }
-    newCard->DOPnextCard = (DOPcard *)NULL;
+    newCard->DOPnextCard = NULL;
     *inCard = (void *)newCard;
 
     tmpCard = model->GENdopings;

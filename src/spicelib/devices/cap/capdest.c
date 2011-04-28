@@ -25,7 +25,7 @@ CAPdestroy(GENmodel **inModel)
     for( ; mod ; mod = mod->CAPnextModel) {
         if(oldmod) FREE(oldmod);
         oldmod = mod;
-        prev = (CAPinstance *)NULL;
+        prev = NULL;
         for(here = mod->CAPinstances ; here ; here = here->CAPnextInstance) {
             if(prev) FREE(prev);
             prev = here;

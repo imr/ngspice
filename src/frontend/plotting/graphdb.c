@@ -63,7 +63,7 @@ GRAPH *NewGraph(void)
 
     if ((list = NEWLISTGRAPH) == NULL) {
       internalerror("can't allocate a listgraph");
-      return((GRAPH *) NULL);
+      return(NULL);
     }
 
     pgraph = &list->graph;

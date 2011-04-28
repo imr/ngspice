@@ -101,7 +101,7 @@ backeval(char *string)
     intv = cp_interactive;
     cp_interactive = FALSE;
     cp_bqflag = TRUE;
-    wl = cp_lexer((char *) NULL);
+    wl = cp_lexer(NULL);
     cp_bqflag = FALSE;
     cp_inp_cur = old;
     cp_interactive = intv;

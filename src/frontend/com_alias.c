@@ -210,7 +210,7 @@ void
 com_alias(wordlist *wl)
 {
     if (wl == NULL)
-        cp_paliases((char *) NULL);
+        cp_paliases(NULL);
     else if (wl->wl_next == NULL)
         cp_paliases(wl->wl_word);
     else

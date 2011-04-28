@@ -68,7 +68,7 @@ settrace(wordlist *wl, int what, char *name)
                     d->db_type = DB_SAVE;
                     break;
             }
-/*          wrd_chtrace((char *) NULL, TRUE, what); */
+/*          wrd_chtrace(NULL, TRUE, what); */
         } else {
             switch (what) {
                 case VF_PRINT:

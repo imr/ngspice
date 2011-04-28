@@ -595,7 +595,7 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 			ft_sim->setAnalysisParm (ckt, foo,
 						      ft_sim->analyses[which]->analysisParms[i].id,
 						      &ptemp,
-						      (IFvalue *) NULL);
+						      NULL);
 		    if (error)
 			current->error =
 			    INPerrCat(current->error, INPerror(error));
@@ -609,7 +609,6 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 						      analyses
 						      [which]->analysisParms
 						      [i].id, parm,
-						      (IFvalue *)
 						      NULL);
 		    if (error)
 			current->error =

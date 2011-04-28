@@ -244,7 +244,7 @@ NUMD2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
       /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if ((inst->ptr = SMPmakeElt(matrix,inst->first,inst->second))==(double *)NULL){\
+if ((inst->ptr = SMPmakeElt(matrix, inst->first, inst->second)) == NULL){\
   return(E_NOMEM);\
 }
 matrixpointers:

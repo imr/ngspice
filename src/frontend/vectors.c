@@ -273,7 +273,7 @@ plot_add(struct plot *pl)
     pl->pl_typename = copy(buf);
     plot_new(pl);
     cp_addkword(CT_PLOT, buf);
-    pl->pl_ccom = cp_kwswitch(CT_VECTOR, (char *) NULL);
+    pl->pl_ccom = cp_kwswitch(CT_VECTOR, NULL);
     plot_setcur(pl->pl_typename);
 
     return;
@@ -707,7 +707,7 @@ plot_alloc(char *name)
     pl->pl_typename = copy(buf);
     cp_addkword(CT_PLOT, buf);
     /* va: create a new, empty keyword tree for class CT_VECTOR, s=old tree */
-    s = cp_kwswitch(CT_VECTOR, (char *) NULL);
+    s = cp_kwswitch(CT_VECTOR, NULL);
     cp_addkword(CT_VECTOR, "all");
     pl->pl_ccom = cp_kwswitch(CT_VECTOR, s);
     /* va: keyword tree is old tree again, new tree is linked to pl->pl_ccom */

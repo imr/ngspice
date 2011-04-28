@@ -138,7 +138,7 @@ com_resume(wordlist *wl)
 
     /*end saj*/
 
-   err = if_run(ft_curckt->ci_ckt, "resume", (wordlist *) NULL,
+   err = if_run(ft_curckt->ci_ckt, "resume", NULL,
             ft_curckt->ci_symtab); 
 
    /*close rawfile saj*/
@@ -189,7 +189,7 @@ com_rset(wordlist *wl)
     }
     ft_curckt->ci_vars = NULL;
 
-    inp_dodeck(ft_curckt->ci_deck, ft_curckt->ci_name, (wordlist *) NULL,
+    inp_dodeck(ft_curckt->ci_deck, ft_curckt->ci_name, NULL,
             TRUE, ft_curckt->ci_options, ft_curckt->ci_filename);
     return;
 }

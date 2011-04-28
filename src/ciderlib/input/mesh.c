@@ -62,10 +62,10 @@ XMSHnewCard(void **inCard, void *inModel)
 
     newCard = NEW( MESHcard );
     if (!newCard) {
-        *inCard = (void *)NULL;
+        *inCard = NULL;
         return(E_NOMEM);
     }
-    newCard->MESHnextCard = (MESHcard *)NULL;
+    newCard->MESHnextCard = NULL;
     *inCard = (void *)newCard;
 
     tmpCard = model->GENxMeshes;
@@ -88,10 +88,10 @@ YMSHnewCard(void **inCard, void *inModel)
 
     newCard = NEW( MESHcard );
     if (!newCard) {
-        *inCard = (void *)NULL;
+        *inCard = NULL;
         return(E_NOMEM);
     }
-    newCard->MESHnextCard = (MESHcard *)NULL;
+    newCard->MESHnextCard = NULL;
     *inCard = (void *)newCard;
 
     tmpCard = model->GENyMeshes;

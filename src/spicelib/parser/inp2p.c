@@ -83,7 +83,7 @@ int num, i;
     INPgetTok(&line,&model,1);
     if(*model) { /* token isn't null */
             INPinsert(&model,tab);
-            thismodel = (INPmodel *)NULL;
+            thismodel = NULL;
             current->error = INPgetMod(ckt,model,&thismodel,tab);
             if(thismodel != NULL) {
                     if(mytype != thismodel->INPmodType) {
@@ -96,7 +96,7 @@ int num, i;
                     type = mytype;
                     if(!tab->defPmod) {
                             /* create default P model */
-                            IFnewUid(ckt, &uid, (IFuid)NULL, "P", UID_MODEL, NULL);
+                            IFnewUid(ckt, &uid, NULL, "P", UID_MODEL, NULL);
                             IFC(newModel, (ckt,type,&(tab->defPmod),uid))
                     }
                     mdfast = tab->defPmod;

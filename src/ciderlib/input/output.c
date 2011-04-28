@@ -93,10 +93,10 @@ OUTPnewCard(void **inCard, void *inModel)
     if (!tmpCard) { /* First in list */
         newCard = NEW( OUTPcard );
         if (!newCard) {
-            *inCard = (void *)NULL;
+            *inCard = NULL;
             return(E_NOMEM);
         }
-        newCard->OUTPnextCard = (OUTPcard *)NULL;
+        newCard->OUTPnextCard = NULL;
         *inCard = (void *)newCard;
         model->GENoutputs = newCard;
     } else { /* Only one card of this type allowed */

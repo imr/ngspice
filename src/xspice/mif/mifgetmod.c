@@ -118,7 +118,7 @@ char *MIFgetMod(
      */
 
     /*------------------------------------
-   for (i = &modtab; *i != (INPmodel *) NULL; i = &((*i)->INPnextModel)) {
+   for (i = &modtab; *i != NULL; i = &((*i)->INPnextModel)) {
         if (strcmp((*i)->INPmodName, token) == 0) {
             return (OK);
         }
@@ -206,7 +206,7 @@ char *MIFgetMod(
                             error = ft_sim->setModelParm (ckt,
                                     ((modtmp)->INPmodfast),
                                     (*(ft_sim->devices)[(modtmp)->INPmodType ]).
-                                    modelParms[j].id,val,(IFvalue*)NULL);
+                                    modelParms[j].id, val, NULL);
                             if(error)
                                 return(INPerror(error));
                             break;
@@ -240,7 +240,7 @@ char *MIFgetMod(
             }  /* end if model parameters not processed yet */
 
             *model = modtmp;
-            return((char *)NULL);
+            return(NULL);
 
         } /* end if name matches */
 
@@ -248,7 +248,7 @@ char *MIFgetMod(
 
 
     /* didn't find model - ERROR  - return NULL model */
-    *model = (INPmodel *)NULL;
+    *model = NULL;
     err = TMALLOC(char, 60 + strlen(name));
     sprintf(err, " MIF-ERROR - unable to find definition of model %s\n",name);
 

@@ -100,7 +100,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
 	  
 	  error = ft_sim->setModelParm (ckt, modtmp->INPmodfast,
 					     (* (ft_sim->devices)[(modtmp)->INPmodType]).modelParms[j].id,
-					     val, (IFvalue *) NULL);
+					     val, NULL);
 	  if (error)
 	    return error;
 	  break;
@@ -214,7 +214,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
   l = parse_values[0]*scale;
   w = parse_values[1]*scale;
 
-  for ( modtmp = modtab; modtmp != (INPmodel*)NULL; modtmp = modtmp->INPnextModel ) {
+  for ( modtmp = modtab; modtmp != NULL; modtmp = modtmp->INPnextModel ) {
     if ( modtmp->INPmodType != INPtypelook( "BSIM3" ) && modtmp->INPmodType != INPtypelook( "BSIM3v32" ) &&
 	 modtmp->INPmodType != INPtypelook( "BSIM4" ) && modtmp->INPmodType != INPtypelook( "BSIM4v2" ) &&
 	 modtmp->INPmodType != INPtypelook( "BSIM4v3" ) && modtmp->INPmodType != INPtypelook( "BSIM4v4" ) && 
@@ -251,7 +251,7 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
   printf("In INPgetMod, examining model %s . . . \n", name);
 #endif
 
-  for (modtmp = modtab; modtmp != (INPmodel *) NULL; modtmp = ((modtmp)->INPnextModel)) {
+  for (modtmp = modtab; modtmp != NULL; modtmp = modtmp->INPnextModel) {
 
 #ifdef TRACE
     /* SDB debug statement */
@@ -264,7 +264,7 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
 
       if (modtmp->INPmodType < 0) {    /* First check for illegal model type */
         /* illegal device type, so can't handle */
-        *model = (INPmodel *) NULL;
+        *model = NULL;
         err = TMALLOC(char, 35 + strlen(name));
         (void) sprintf(err,"Unknown device type for model %s \n", name);
 
@@ -281,11 +281,11 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
         if ( error ) return INPerror(error);
       }
       *model = modtmp;
-      return ((char *) NULL);
+      return (NULL);
     }
   }
   /* didn't find model - ERROR  - return model */
-  *model = (INPmodel *) NULL;
+  *model = NULL;
   err = TMALLOC(char, 60 + strlen(name));
   (void) sprintf(err, "Unable to find definition of model %s - default assumed \n", name);
 

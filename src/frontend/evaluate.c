@@ -924,7 +924,7 @@ apply_func(struct func *func, struct pnode *arg)
 	else if (eq(func->fu_name, "not"))
 	    t->v_name = mkcname('c', func->fu_name, v->v_name);
 	else
-	    t->v_name = mkcname('b', v->v_name, (char *) NULL);
+	    t->v_name = mkcname('b', v->v_name, NULL);
 	t->v_type = v->v_type; /* This is strange too. */
 	t->v_length = len;
 	t->v_scale = v->v_scale;

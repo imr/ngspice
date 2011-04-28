@@ -26,7 +26,7 @@ B3SOIPDmodel *oldmod = NULL;
     for (; mod ; mod = mod->B3SOIPDnextModel)
     {    if(oldmod) FREE(oldmod);
          oldmod = mod;
-         prev = (B3SOIPDinstance *)NULL;
+         prev = NULL;
          for (here = mod->B3SOIPDinstances; here; here = here->B3SOIPDnextInstance)
 	 {    if(prev) FREE(prev);
               prev = here;

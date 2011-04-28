@@ -38,11 +38,11 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
 
 	
     for (i = 0; i < DEVmaxnum; i++)
-        sckt->CKThead[i] = (GENmodel *) NULL;
+        sckt->CKThead[i] = NULL;
 
     sckt->CKTmaxEqNum = 1;
-    sckt->CKTnodes = (CKTnode *) NULL;
-    sckt->CKTlastNode = (CKTnode *) NULL;
+    sckt->CKTnodes = NULL;
+    sckt->CKTlastNode = NULL;
     sckt->CKTmatrix = NULL;
 
     sckt->CKTgmin = 1e-12;
@@ -78,7 +78,7 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
     sckt->CKTtroubleNode = 0;
     sckt->CKTtroubleElt = NULL;
     sckt->CKTtimePoints = NULL;
-    if (sckt->CKTstat == (STATistics *)NULL)
+    if (sckt->CKTstat == NULL)
 	return E_NOMEM;
     sckt->CKTnodeDamping = 0;
     sckt->CKTabsDv = 0.5;

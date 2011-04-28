@@ -22,7 +22,7 @@ int INPlookMod(char *name)
 {
     register INPmodel **i;
 
-    for (i = &modtab; *i != (INPmodel *) NULL; i = &((*i)->INPnextModel)) {
+    for (i = &modtab; *i != NULL; i = &((*i)->INPnextModel)) {
 	if (strcmp((*i)->INPmodName, name) == 0) {
 	    /* found the model in question - return TRUE */
 	    return (1);

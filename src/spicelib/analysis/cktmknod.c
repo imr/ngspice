@@ -24,8 +24,8 @@ CKTmkNode(CKTcircuit *ckt, CKTnode **node)
     NG_IGNORE(ckt);
 
     mynode = TMALLOC(CKTnode, 1);
-    if(mynode == (CKTnode *)NULL) return(E_NOMEM);
-    mynode->next = (CKTnode *)NULL;
+    if(mynode == NULL) return(E_NOMEM);
+    mynode->next = NULL;
     mynode->name = (IFuid) 0;
 
     if(node) *node = mynode;
