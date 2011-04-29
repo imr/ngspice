@@ -873,8 +873,8 @@ int HSMHVsetup(
 	here->HSMHVsNodePrime = here->HSMHVsNode;
       }
       here->HSMHVsourceConductance = 0.0 ; /* initialized for hsmhvnoi.c */
-      printf("HSMHV_set: corsrd=%d dNode=%d dNodePrime=%d sNode=%d sNodePrime=%d\n",model->HSMHV_corsrd,
-                         here->HSMHVdNode,here->HSMHVdNodePrime,here->HSMHVsNode,here->HSMHVsNodePrime);
+/*      printf("HSMHV_set: corsrd=%d dNode=%d dNodePrime=%d sNode=%d sNodePrime=%d\n",model->HSMHV_corsrd,
+                         here->HSMHVdNode,here->HSMHVdNodePrime,here->HSMHVsNode,here->HSMHVsNodePrime);*/
 
       /* process gate resistance */
       if ((here->HSMHV_corg == 1 && model->HSMHV_rshg > 0.0) && here->HSMHVgNodePrime == 0) {
