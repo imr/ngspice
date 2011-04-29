@@ -1,3 +1,12 @@
+2011-04-29  Robert Larice
+ * src/spicelib/devices/hisimhv/hsmhvdef.h :
+    hisimhv implementation, ngspice has one more slot (GENowner) in GENinstance
+
+2011-04-29  Dietmar Warning
+ * src/spicelib/devices/hisimhv/** :
+ * **/*	:
+     add the HiSIM_HV model vers. 1.2.1
+
 2011-04-28  Robert Larice
  * src/frontend/inpcom.c ,
     bug fix, (#329233)
