@@ -1,4 +1,9 @@
 2011-04-29  Robert Larice
+ * src/spicelib/devices/hisimhv/hsmhvnoi.c ,
+ * src/spicelib/devices/hisimhv/hsmhvset.c :
+    minor bug fix (broken diagnostic printout) and swallow some warnings
+
+2011-04-29  Robert Larice
  * src/spicelib/devices/hisimhv/hsmhvdef.h :
     hisimhv implementation, ngspice has one more slot (GENowner) in GENinstance
 
