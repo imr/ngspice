@@ -1083,26 +1083,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2defs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2dset.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2ext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2itf.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\bjt\bjtdefs.h"
 				>
 			</File>
@@ -1911,6 +1891,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hisimhv.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\include\hlpdefs.h"
 				>
 			</File>
@@ -1936,6 +1920,38 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\hisim\hsm1itf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvdef.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhveval_qover.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvevalenv.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvinit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvitf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvld_info_eval.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvtemp_eval.h"
 				>
 			</File>
 			<File
@@ -1971,11 +1987,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\inp.h"
+				RelativePath="..\src\spicelib\parser\inp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp.h"
+				RelativePath="..\src\frontend\inp.h"
 				>
 			</File>
 			<File
@@ -4251,106 +4267,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2acld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2ask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2conv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2del.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2dest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2disto.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2dset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2getic.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2init.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2load.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2mask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2mdel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2mpar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2noise.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2param.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2pzld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2sacl.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2setup.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2sload.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2sprt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2sset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2supd.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2temp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt2\bjt2trun.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\bjt\bjtacld.c"
 				>
 			</File>
@@ -5880,6 +5796,82 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\hisim\hsm1trunc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvacld.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvcvtest.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvdel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvdest.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhveval.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvgetic.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvinit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvld.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvmask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvmdel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvmpar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvnoi.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvpar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvpzld.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvtemp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv\hsmhvtrunc.c"
 				>
 			</File>
 			<File

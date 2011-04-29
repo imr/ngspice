@@ -395,6 +395,14 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 		    ("Device type SOI3 not available in this binary (STAG release)\n");
 	    }
 	    break;
+	case 62:
+	    type = INPtypelook("HiSIMHV");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Placeholder: Device type HiSIMHV not available in this binary\n");
+	    }
+	    break;
 	case 64:
 	    type = INPtypelook("HiSIM1");
 	    if (type < 0) {
@@ -407,9 +415,9 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 	    err =
 		INPmkTemp
 #ifdef ADMS
-		("Only MOS device levels 1-6,8-10,14,44,45,49,54-58,61,64 are supported in this binary\n");
+		("Only MOS device levels 1-6,8-10,14,44,45,49,54-58,61,62,64 are supported in this binary\n");
 #else
-		("Only MOS device levels 1-6,8-10,14,49,54-58,61,64 are supported in this binary\n");
+		("Only MOS device levels 1-6,8-10,14,49,54-58,61,62,64 are supported in this binary\n");
 #endif		
 	    break;
 	}
