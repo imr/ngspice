@@ -1,4 +1,8 @@
 2011-04-30  Robert Larice
+ * configure.ac :
+    re-enable unused-parameter Warnings
+
+2011-04-30  Robert Larice
  * **/*	:
     various cleanups
     - usage of cp_getvar(), receives a void* in the third arg, thus remove casts
