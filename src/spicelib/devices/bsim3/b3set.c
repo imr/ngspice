@@ -1014,7 +1014,7 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
         }
     }
 #ifdef USE_OMP3
-    if (!cp_getvar("num_threads", CP_NUM, (char *) &nthreads))
+    if (!cp_getvar("num_threads", CP_NUM, &nthreads))
         nthreads = 2;
 
     omp_set_num_threads(nthreads);

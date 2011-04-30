@@ -107,7 +107,7 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     if (!cp_getvar("pointchars", CP_STRING, pointchars))
           (void) strcpy(pointchars, DEFPOINTCHARS);
 
-    if (!cp_getvar("ticmarks", CP_NUM, (char *) &graph->ticmarks)) {
+    if (!cp_getvar("ticmarks", CP_NUM, &graph->ticmarks)) {
       if (cp_getvar("ticmarks", CP_BOOL, NULL))
         graph->ticmarks = 10;
       else
@@ -313,7 +313,7 @@ gr_point(struct dvec *dv,
         break;
       case PLOT_POINT:
         /* Here, gi_linestyle is the character used for the point.  */
-        pointc[0] = dv->v_linestyle;
+        pointc[0] = (char) dv->v_linestyle;
         pointc[1] = '\0';
         DevDrawText(pointc, (int) (tox - currentgraph->fontwidth / 2),
             (int) (toy - currentgraph->fontheight / 2));

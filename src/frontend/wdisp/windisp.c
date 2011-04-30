@@ -821,7 +821,7 @@ int WIN_Text( char * text, int x, int y)
    if (!cp_getvar("wfont", CP_STRING, lf.lfFaceName)) {
       (void) lstrcpy(lf.lfFaceName, DEF_FONTW);
    }
-   if (!cp_getvar("wfont_size", CP_NUM, (char *) &(lf.lfHeight))) {
+   if (!cp_getvar("wfont_size", CP_NUM, &(lf.lfHeight))) {
       lf.lfHeight  = (int) (1.1 * currentgraph->fontheight) ;
    }
      

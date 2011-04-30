@@ -2386,7 +2386,7 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     } /*  end of loop through all the BSIM4 device models */
 
 #ifdef USE_OMP4
-    if (!cp_getvar("num_threads", CP_NUM, (char *) &nthreads))   
+    if (!cp_getvar("num_threads", CP_NUM, &nthreads))
         nthreads = 2;
 
     omp_set_num_threads(nthreads);

@@ -199,7 +199,7 @@ inp_pathopen(char *name, char *mode)
      * do an fopen.
      */
     if (index(name, DIR_TERM)
-	    || !cp_getvar("sourcepath", CP_LIST, (char *) &v))
+	    || !cp_getvar("sourcepath", CP_LIST, &v))
         return (fopen(name, mode));
 
     while (v) {

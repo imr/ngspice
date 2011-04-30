@@ -29,6 +29,7 @@
  * HAVE NO OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
  * ENHANCEMENTS, OR MODIFICATIONS. */
 
+#include "ngspice.h"
 #include "config.h"
 #include "assert.h"
 
@@ -483,6 +484,7 @@ int load_opus(char *name){
 
 void *dlopen(const char *name,int type)
 {
+	NG_IGNORE(type);
 	return LoadLibrary(name);
 }
 

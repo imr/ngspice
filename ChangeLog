@@ -1,3 +1,11 @@
+2011-04-30  Robert Larice
+ * **/*	:
+    various cleanups
+    - usage of cp_getvar(), receives a void* in the third arg, thus remove casts
+      FIXME, this function signature is error prone
+    - use NG_IGNORE()
+    - casts and prototypes
+
 2011-04-29  Robert Larice
  * src/spicelib/devices/hisimhv/hsmhvnoi.c ,
  * src/spicelib/devices/hisimhv/hsmhvset.c :

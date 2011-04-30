@@ -114,9 +114,9 @@ out_init(void)
 #endif
 
     if (!xsize)
-        (void) cp_getvar("width", CP_NUM, (char *) &xsize);
+        (void) cp_getvar("width", CP_NUM, &xsize);
     if (!ysize)
-        (void) cp_getvar("height", CP_NUM, (char *) &ysize);
+        (void) cp_getvar("height", CP_NUM, &ysize);
 
     if (!xsize)
         xsize = DEF_SCRWIDTH;

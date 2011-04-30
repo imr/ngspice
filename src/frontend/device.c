@@ -79,7 +79,7 @@ all_show(wordlist *wl, int mode)
         return;
     }
 
-    if (!cp_getvar("width", CP_NUM, (char *) &screen_width))
+    if (!cp_getvar("width", CP_NUM, &screen_width))
             screen_width = DEF_WIDTH;
     count = (screen_width - LEFT_WIDTH) / (DEV_WIDTH + 1);
     count = 1;
@@ -243,7 +243,7 @@ all_show_old(wordlist *wl, int mode)
         return;
     }
 
-    if (!cp_getvar("width", CP_NUM, (char *) &screen_width))
+    if (!cp_getvar("width", CP_NUM, &screen_width))
             screen_width = DEF_WIDTH;
     count = (screen_width - LEFT_WIDTH) / (DEV_WIDTH + 1);
 

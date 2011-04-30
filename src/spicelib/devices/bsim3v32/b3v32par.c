@@ -25,7 +25,8 @@ BSIM3v32param (int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
-    if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
+    if (!cp_getvar("scale", CP_REAL, &scale))
+        scale = 1;
 
     switch(param) 
     {   case BSIM3v32_W:

@@ -513,7 +513,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
          cp_vset("pretemp", CP_REAL, &temperature_value );
       }
       if (ft_ngdebug) {
-         cp_getvar( "pretemp", CP_REAL, (double *) &testemp );
+         cp_getvar("pretemp", CP_REAL, &testemp);
          printf("test temperature %f\n", testemp);
       }
       /* We are done handling the control stuff.  Now process remainder of deck.

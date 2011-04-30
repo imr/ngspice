@@ -33,7 +33,6 @@ int length(char * s);
 bool steq(char * s, char * t);
 bool stne(char * s, char * t);
 void stri(long n, SPICE_DSTRINGPTR s);
-int posi (char *sub, char *s, int opt);
 
 char upcase(char c);
 char lowcase(char c);

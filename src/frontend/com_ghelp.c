@@ -48,9 +48,9 @@ com_ghelp(wordlist *wl)
         hlp_titlefontname = copy(buf);
     if (cp_getvar("helpbuttonfont", CP_STRING, buf))
         hlp_buttonfontname = copy(buf);
-    if (cp_getvar("helpinitxpos", CP_NUM, (char *) &i))
+    if (cp_getvar("helpinitxpos", CP_NUM, &i))
         hlp_initxpos = i;
-    if (cp_getvar("helpinitypos", CP_NUM, (char *) &i))
+    if (cp_getvar("helpinitypos", CP_NUM, &i))
         hlp_initypos = i;
     if (cp_getvar("helpbuttonstyle", CP_STRING, buf)) {
         if (cieq(buf, "left"))
@@ -63,7 +63,7 @@ com_ghelp(wordlist *wl)
             fprintf(cp_err, "Warning: no such button style %s\n",
                     buf);
     }
-    if (cp_getvar("width", CP_NUM, (char *) &i))
+    if (cp_getvar("width", CP_NUM, &i))
         hlp_width = i;
     if (cp_getvar("display", CP_STRING, buf))
         hlp_displayname = copy(buf);

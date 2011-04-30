@@ -215,7 +215,7 @@ com_print(wordlist *wl)
             }  //end  if (v->v_rlength == 1)
         }
     } else {    /* Print in columns. */
-        if (cp_getvar("width", CP_NUM, (char *) &i))
+        if (cp_getvar("width", CP_NUM, &i))
             width = i;
         if (width < 40)
             width = 40;
@@ -223,7 +223,7 @@ com_print(wordlist *wl)
             buf = TREALLOC(char, buf, width + 1);
             buf2 = TREALLOC(char, buf2, width + 1); 
         }            
-        if (cp_getvar("height", CP_NUM, (char *) &i))
+        if (cp_getvar("height", CP_NUM, &i))
             height = i;
         if (height < 20)
             height = 20;

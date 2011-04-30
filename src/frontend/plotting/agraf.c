@@ -67,10 +67,10 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     if ((xscale->v_gridtype == GRID_YLOG) ||
             (xscale->v_gridtype == GRID_LOGLOG))
         ylogscale = TRUE;
-    if (!cp_getvar("width", CP_NUM, (char *) &maxy)) {
+    if (!cp_getvar("width", CP_NUM, &maxy)) {
       maxy = DEF_WIDTH;
     }
-    if (!cp_getvar("height", CP_NUM, (char *) &height))
+    if (!cp_getvar("height", CP_NUM, &height))
         height = DEF_HEIGHT;
     if (ft_nopage)
 	nobreakp = TRUE;

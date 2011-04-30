@@ -8,6 +8,7 @@ Author: 1985 Thomas L. Quarles
  * bind a node of the specified device of the given type to its place
  * in the specified circuit.  */
 
+#include "ngspice.h"
 #include <config.h>
 #include <stdio.h>
 #include <devdefs.h>
@@ -18,6 +19,8 @@ Author: 1985 Thomas L. Quarles
 int
 CKTbindNode(CKTcircuit *ckt, GENinstance *fast, int term, CKTnode *node)
 {
+    NG_IGNORE(ckt);
+
     int mappednode;
     SPICEdev **devs;
     GENinstance *instance = /*fixme*/ fast;

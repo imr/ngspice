@@ -207,7 +207,7 @@ cx_interpolate(void *data, short int type, int length, int *newlength, short int
     *newlength = ns->v_length;
     d = alloc_d(ns->v_length);
 
-    if (!cp_getvar("polydegree", CP_NUM, (void *) &degree))
+    if (!cp_getvar("polydegree", CP_NUM, &degree))
         degree = 1;
 
     for (base = 0; base < length; base += grouping) {
@@ -241,7 +241,7 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
         return (NULL);
     }
 
-    if (!cp_getvar("dpolydegree", CP_NUM, (void *) &degree))
+    if (!cp_getvar("dpolydegree", CP_NUM, &degree))
 	degree = 2; /* default quadratic */
 
     n = degree +  1;
