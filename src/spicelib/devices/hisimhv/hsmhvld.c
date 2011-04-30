@@ -41,6 +41,9 @@ static void ShowPhysVals
  )
 {
 
+  NG_IGNORE(vgd);
+  NG_IGNORE(vbd);
+
   /*                                                            */
   /*                                                            */
   /* Note: This function is not yet adapted to the flat version */

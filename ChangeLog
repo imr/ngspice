@@ -1,4 +1,12 @@
 2011-04-30  Robert Larice
+ * src/spicelib/devices/hisimhv/hsmhvask.c ,
+ * src/spicelib/devices/hisimhv/hsmhvld.c ,
+ * src/spicelib/devices/hisimhv/hsmhvmask.c ,
+ * src/spicelib/devices/hisimhv/hsmhvpar.c ,
+ * src/spicelib/devices/hisimhv/hsmhvpzld.c :
+    warnings, use NG_IGNORE()
+
+2011-04-30  Robert Larice
  * configure.ac :
     re-enable unused-parameter Warnings
 

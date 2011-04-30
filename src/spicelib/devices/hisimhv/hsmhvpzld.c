@@ -28,8 +28,11 @@ int HSMHVpzLoad(
      register CKTcircuit *ckt,
      register SPcomplex *s)
 {
+  NG_IGNORE(ckt);
+
   register HSMHVmodel *model = (HSMHVmodel*)inModel;
   register HSMHVinstance *here;
+
   int flg_nqs =0 ;
 
 #define dNode        0

@@ -43,6 +43,7 @@ int HSMHVask(
   double         dQd_nqs_dVds, dQd_nqs_dVgs, dQd_nqs_dVbs, dQd_nqs_dQi_nqs ;
   double                                                   dQg_nqs_dQi_nqs, dQg_nqs_dQb_nqs ;
 
+  NG_IGNORE(select);
 
   here->HSMHV_csdo = - (here->HSMHV_cddo + here->HSMHV_cgdo + here->HSMHV_cbdo) ;
   here->HSMHV_csgo = - (here->HSMHV_cdgo + here->HSMHV_cggo + here->HSMHV_cbgo) ;

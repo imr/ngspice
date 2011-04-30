@@ -29,6 +29,9 @@ int HSMHVparam(
      IFvalue *select)
 {
   HSMHVinstance *here = (HSMHVinstance*)inst;
+
+  NG_IGNORE(select);
+
   switch (param) {
   case HSMHV_COSELFHEAT:
     here->HSMHV_coselfheat = value->iValue;
