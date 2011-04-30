@@ -30,9 +30,9 @@ int HSMHVmAsk(
      int which,
      IFvalue *value)
 {
-  NG_IGNORE(ckt);
-
   HSMHVmodel *model = (HSMHVmodel *)inst;
+
+  NG_IGNORE(ckt);
 
   switch (which) {
   case HSMHV_MOD_NMOS:

@@ -19,12 +19,12 @@ Author: 1985 Thomas L. Quarles
 int
 CKTbindNode(CKTcircuit *ckt, GENinstance *fast, int term, CKTnode *node)
 {
-    NG_IGNORE(ckt);
-
     int mappednode;
     SPICEdev **devs;
     GENinstance *instance = /*fixme*/ fast;
     int type = instance->GENmodPtr->GENmodType;
+
+    NG_IGNORE(ckt);
 
     devs = devices();
     mappednode = node->number;

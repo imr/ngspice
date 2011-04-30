@@ -1,4 +1,10 @@
 2011-04-30  Robert Larice
+ * src/spicelib/devices/cktbindnode.c ,
+ * src/spicelib/devices/hisimhv/hsmhvmask.c ,
+ * src/spicelib/devices/hisimhv/hsmhvpzld.c :
+    c89 compatibility, move NG_IGNORE() after declarations
+
+2011-04-30  Robert Larice
  * src/spicelib/devices/hisimhv/hsmhvask.c ,
  * src/spicelib/devices/hisimhv/hsmhvld.c ,
  * src/spicelib/devices/hisimhv/hsmhvmask.c ,
