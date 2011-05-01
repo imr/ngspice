@@ -1,5 +1,9 @@
 2011-05-01  Robert Larice
  * src/spicelib/parser/inpdomod.c :
+    mop up, in the shadow of the last commits
+
+2011-05-01  Robert Larice
+ * src/spicelib/parser/inpdomod.c :
     rename variable typename  -->  type_name
 
 2011-05-01  Robert Larice

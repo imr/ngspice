@@ -43,7 +43,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     INPgetTok(&line, &type_name, 1);     /* get model type */
     
     /*  -----  Check if model is a BJT --------- */
-    if ((strcmp(type_name, "npn") == 0) || (strcmp(type_name, "pnp") == 0)) {
+    if (strcmp(type_name, "npn") == 0 || strcmp(type_name, "pnp") == 0) {
 	err = INPfindLev(line,&lev);
 	switch(lev) {
 		case 0:
@@ -106,8 +106,8 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     } /*   else if (strcmp(typename, "d") == 0) {  */
     
     /*  --------  Check if model is a jfet --------- */
-    else if ((strcmp(type_name, "njf") == 0)
-	       || (strcmp(type_name, "pjf") == 0)) {
+    else if (strcmp(type_name, "njf") == 0  ||
+	     strcmp(type_name, "pjf") == 0) {
 	err = INPfindLev(line, &lev);
 	switch (lev) {
 	case 0:
@@ -137,10 +137,10 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     }  /*   end  else if ((strcmp(typename, "njf") == 0) */
     
     /*  --------  Check if model is a MES or an HFET --------- */
-    else if ((strcmp(type_name, "nmf")   == 0)
-	       || (strcmp(type_name, "pmf")   == 0)
-	       || (strcmp(type_name, "nhfet") == 0)
-	       || (strcmp(type_name, "phfet") == 0)) {
+    else if (strcmp(type_name, "nmf")   == 0  ||
+	     strcmp(type_name, "pmf")   == 0  ||
+	     strcmp(type_name, "nhfet") == 0  ||
+	     strcmp(type_name, "phfet") == 0) {
 	  err = INPfindLev( line, &lev );
 	  switch ( lev ) 
 	  {	
@@ -608,8 +608,8 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     /*  type poly added by SDB  . . . */
 #ifdef XSPICE
     /*  --------  Check if model is a poly (specific to xspice) --------- */
-    else if ( (strcmp(type_name, "poly") == 0) ||
-	      (strcmp(type_name, "POLY") == 0) ) {
+    else if ( strcmp(type_name, "poly") == 0 ||
+	      strcmp(type_name, "POLY") == 0 ) {
 	type = INPtypelook("POLY");
 	if (type < 0) {
 	    err =
