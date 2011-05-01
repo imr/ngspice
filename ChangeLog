@@ -1,4 +1,9 @@
 2011-05-01  Robert Larice
+ * src/spicelib/parser/inpgmod.c ,
+ * src/xspice/mif/mifgetmod.c :
+    cleanup, (modtmp) --> modtmp
+
+2011-05-01  Robert Larice
  * src/spicelib/parser/inpaname.c ,
  * src/spicelib/parser/inpdpar.c ,
  * src/spicelib/parser/inpgmod.c ,

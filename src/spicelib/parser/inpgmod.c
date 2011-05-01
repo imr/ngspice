@@ -59,18 +59,18 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
 #ifdef CIDER
   /* begin cider integration */
   /* Handle Numerical Models Differently */
-  if ( ((modtmp)->INPmodType == INPtypelook("NUMD")) ||
-       ((modtmp)->INPmodType == INPtypelook("NBJT")) ||
-       ((modtmp)->INPmodType == INPtypelook("NUMD2")) ||
-       ((modtmp)->INPmodType == INPtypelook("NBJT2")) ||
-       ((modtmp)->INPmodType == INPtypelook("NUMOS")) ) {
+  if ( modtmp->INPmodType == INPtypelook("NUMD") ||
+       modtmp->INPmodType == INPtypelook("NBJT") ||
+       modtmp->INPmodType == INPtypelook("NUMD2") ||
+       modtmp->INPmodType == INPtypelook("NBJT2") ||
+       modtmp->INPmodType == INPtypelook("NUMOS") ) {
     error = INPparseNumMod( ckt, modtmp, tab, &err );
     if (error) return error;
   } else {     
     /* It's an analytical model */
 #endif /* CIDER */
 
-    line = ((modtmp)->INPmodLine)->line;
+    line = modtmp->INPmodLine->line;
 
 #ifdef TRACE
     /* SDB debug statement */
@@ -86,20 +86,20 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
       if (!*parm)
 	continue;
       
-      for (j = 0; j < *(ft_sim->devices[(modtmp)->INPmodType]->numModelParms); j++) {
+      for (j = 0; j < *(ft_sim->devices[modtmp->INPmodType]->numModelParms); j++) {
 	
 	if (strcmp(parm, "txl") == 0) {
-	  if (strcmp("cpl", ft_sim->devices[(modtmp)->INPmodType]->modelParms[j].keyword) == 0) {
+	  if (strcmp("cpl", ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0) {
 	    strcpy(parm, "cpl");
 	  }
 	}
 	
-	if (strcmp(parm, ft_sim->devices[(modtmp)->INPmodType]->modelParms[j].keyword) == 0) {
+	if (strcmp(parm, ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0) {
 	  
-	  val = INPgetValue(ckt, &line, ft_sim->devices[(modtmp)->INPmodType]->modelParms[j].dataType, tab);
+	  val = INPgetValue(ckt, &line, ft_sim->devices[modtmp->INPmodType]->modelParms[j].dataType, tab);
 	  
 	  error = ft_sim->setModelParm (ckt, modtmp->INPmodfast,
-					     ft_sim->devices[(modtmp)->INPmodType]->modelParms[j].id,
+					     ft_sim->devices[modtmp->INPmodType]->modelParms[j].id,
 					     val, NULL);
 	  if (error)
 	    return error;
@@ -111,7 +111,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
 	/* just grab the level number and throw away */
 	/* since we already have that info from pass1 */
 	val = INPgetValue(ckt, &line, IF_REAL, tab);
-      } else if (j >= *(ft_sim->devices[(modtmp)->INPmodType]->numModelParms)) {
+      } else if (j >= *(ft_sim->devices[modtmp->INPmodType]->numModelParms)) {
 
 	/* want only the parameter names in output - not the values */
         errno = 0;    /* To distinguish success/failure after call */
@@ -133,8 +133,8 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
 #ifdef CIDER
   } /* analytical vs. numerical model parsing */
 #endif
-  (modtmp)->INPmodUsed = 1;
-  (modtmp)->INPmodLine->error = err;
+  modtmp->INPmodUsed = 1;
+  modtmp->INPmodLine->error = err;
 
   return 0;
 }
@@ -253,10 +253,10 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
 
 #ifdef TRACE
     /* SDB debug statement */
-    printf("In INPgetMod, comparing %s against stored model %s . . . \n", name, (modtmp)->INPmodName);
+    printf("In INPgetMod, comparing %s against stored model %s . . . \n", name, modtmp->INPmodName);
 #endif
 
-    if (strcmp((modtmp)->INPmodName, name) == 0) {
+    if (strcmp(modtmp->INPmodName, name) == 0) {
       /* found the model in question - now instantiate if necessary */
       /* and return an appropriate pointer to it */
 
@@ -274,7 +274,7 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
         return (err);
       }  /* end of checking for illegal model */
 
-      if (!((modtmp)->INPmodUsed)) {   /* Check if model is already defined */
+      if (! modtmp->INPmodUsed) {   /* Check if model is already defined */
         error = create_model( ckt, modtmp, tab );
         if ( error ) return INPerror(error);
       }
