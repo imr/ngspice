@@ -40,7 +40,7 @@ CKTdoJob(CKTcircuit *inCkt, int reset, TSKtask *inTask)
     /* Sensitivity is special */
     if (sens_num < 0) {
 	for (i = 0; i <  ANALmaxnum; i++)
-	    if (!strcmp("SENS2", analInfo[i]->public.name))
+	    if (!strcmp("SENS2", analInfo[i]->if_analysis.name))
 		break;
 	sens_num = i;
     }

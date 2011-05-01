@@ -33,9 +33,9 @@ CKTtrouble(CKTcircuit *cktp, char *optmsg)
     an = analInfo[ckt->CKTcurJob->JOBtype];
 
     if (optmsg && *optmsg) {
-       sprintf(msg_buf, "%s:  %s; ", an->public.name, optmsg);
+       sprintf(msg_buf, "%s:  %s; ", an->if_analysis.name, optmsg);
     } else {
-       sprintf(msg_buf, "%s:  ", an->public.name);
+       sprintf(msg_buf, "%s:  ", an->if_analysis.name);
     }
 
     msg_p = msg_buf + strlen(msg_buf);

@@ -2,7 +2,7 @@
 #define _ANALYSIS_H
 
 struct SPICEanalysis {
-    IFanalysis public;
+    IFanalysis if_analysis;
     int size;
     int domain;
     int do_ic;

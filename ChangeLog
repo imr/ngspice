@@ -1,4 +1,11 @@
 2011-05-01  Robert Larice
+ * src/spicelib/analysis/analysis.c ,
+ * src/spicelib/analysis/analysis.h ,
+ * src/spicelib/analysis/cktdojob.c ,
+ * src/spicelib/analysis/ckttroub.c :
+    rename struct member public  -->  if_analysis
+
+2011-05-01  Robert Larice
  * src/frontend/help/x11disp.c :
     rename function delete  -->  delete_w
 
