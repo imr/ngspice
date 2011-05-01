@@ -272,7 +272,7 @@ assign_ctype_list (Conn_Info_t  *conn, Ctype_List_t *ctype_list )
 {
    int i;
    Ctype_List_t *p;
-   Ctype_Class_t class = C_UNDEF;
+   Ctype_Class_t ctype_class = C_UNDEF;
    
    conn->num_allowed_types = 0;
    for (p = ctype_list; p; p = p->next) {
@@ -286,10 +286,10 @@ assign_ctype_list (Conn_Info_t  *conn, Ctype_List_t *ctype_list )
       fatal ("Could not allocate memory");
    }
    for (i = conn->num_allowed_types-1, p = ctype_list; p; i--, p = p->next) {
-      if (class == C_UNDEF) {
-	 class = get_ctype_class (p->ctype.kind);
+      if (ctype_class == C_UNDEF) {
+	 ctype_class = get_ctype_class (p->ctype.kind);
       }
-      if (class != get_ctype_class (p->ctype.kind)) {
+      if (ctype_class != get_ctype_class (p->ctype.kind)) {
 	 yyerror ("Incompatible port types in `allowed_types' clause");
       }
       check_port_type_direction (conn->direction, p->ctype.kind);

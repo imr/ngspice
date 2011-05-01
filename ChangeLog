@@ -1,4 +1,8 @@
 2011-05-01  Robert Larice
+ * src/xspice/cmpp/ifs_yacc.y :
+    rename variable class  -->  ctype_class
+
+2011-05-01  Robert Larice
  * src/frontend/parser/complete.c ,
  * src/include/cpextern.h :
     rename variable class  -->  kw_class
