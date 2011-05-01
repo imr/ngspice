@@ -513,17 +513,17 @@ cp_remcomm(char *word)
 /* Add a keyword to the database. */
 
 void
-cp_addkword(int class, char *word)
+cp_addkword(int kw_class, char *word)
 {
     struct ccom *cc;
 
-    if ((class < 1) || (class >= NCLASSES)) {
+    if ((kw_class < 1) || (kw_class >= NCLASSES)) {
         fprintf(cp_err, "cp_addkword: Internal Error: bad class %d\n",
-                class);
+                kw_class);
         return;
     }
 /*    word = copy(word); va: not necessary, clookup copies itself (memory leak) */
-    cc = clookup(word, &keywords[class], FALSE, TRUE);
+    cc = clookup(word, &keywords[kw_class], FALSE, TRUE);
     cc->cc_invalid = 0;
     return;
 }
@@ -531,18 +531,18 @@ cp_addkword(int class, char *word)
 /* Remove a keyword from the database. */
 
 void
-cp_remkword(int class, char *word)
+cp_remkword(int kw_class, char *word)
 {
     struct ccom *cc;
     
-    if ((class < 1) || (class >= NCLASSES)) {
+    if ((kw_class < 1) || (kw_class >= NCLASSES)) {
         fprintf(cp_err, "cp_remkword: Internal Error: bad class %d\n",
-                class);
+                kw_class);
         return;
     }
-    cc = clookup(word, &keywords[class], FALSE, FALSE);
+    cc = clookup(word, &keywords[kw_class], FALSE, FALSE);
     if (cc)
-        cdelete(cc, &keywords[class]);
+        cdelete(cc, &keywords[kw_class]);
     return;
 }
 
@@ -552,17 +552,17 @@ cp_remkword(int class, char *word)
  */
 
 char *
-cp_kwswitch(int class, char *tree)
+cp_kwswitch(int kw_class, char *tree)
 {
     char *old;
 
-    if ((class < 1) || (class >= NCLASSES)) {
+    if ((kw_class < 1) || (kw_class >= NCLASSES)) {
         fprintf(cp_err, "cp_addkword: Internal Error: bad class %d\n",
-                class);
+                kw_class);
         return (NULL);
     }
-    old = (char *) keywords[class];
-    keywords[class] = (struct ccom *) tree;
+    old = (char *) keywords[kw_class];
+    keywords[kw_class] = (struct ccom *) tree;
     return (old);
 }
 
