@@ -1,4 +1,7 @@
 2011-05-01  Robert Larice
+ * src/spicelib/parser/inpaname.c ,
+ * src/spicelib/parser/inpdpar.c ,
+ * src/spicelib/parser/inppname.c ,
  * src/xspice/mif/mifgetmod.c :
     mop up, in the shadow of the last two commits
 

@@ -43,35 +43,31 @@ char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 	*waslead = 1;
     } else
 	*leading = 0.0;
-    while (**line != (char) 0) {
+    while (**line != '\0') {
 	error = INPgetTok(line, &parm, 1);
 	if (!*parm) {
 	    FREE(parm);
 	    continue;
 	}
 	if (error) {
-	    rtn  = (INPerror(error));
+	    rtn  = INPerror(error);
 	    goto quit;
 	}
 	for (i = 0; i < *(ft_sim->devices[dev]->numInstanceParms); i++) {
-	    if (strcmp(parm,
-		       ft_sim->devices[dev]->instanceParms[i].keyword) == 0) {
+	    if (strcmp(parm, ft_sim->devices[dev]->instanceParms[i].keyword) == 0) {
 		val =
 		    INPgetValue(ckt, line,
-				ft_sim->devices[dev]->
-				 instanceParms[i].dataType, tab);
+				ft_sim->devices[dev]->instanceParms[i].dataType,
+				tab);
 		if (!val) {
-		    rtn = (INPerror(E_PARMVAL));
+		    rtn = INPerror(E_PARMVAL);
 		    goto quit;
 		}
 		error = ft_sim->setInstanceParm (ckt, fast,
-						      ft_sim->devices
-						       [dev]->
-						      instanceParms[i].id,
-						      val,
-						      NULL);
+						 ft_sim->devices[dev]->instanceParms[i].id,
+						 val, NULL);
 		if (error) {
-		    rtn = (INPerror(error));
+		    rtn = INPerror(error);
 		    goto quit;
 		}
 		break;
@@ -80,7 +76,7 @@ char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 	if (i == *(ft_sim->devices[dev]->numInstanceParms)) {
 	    errbuf = TMALLOC(char, strlen(parm) + 25);
 	    (void) sprintf(errbuf, " unknown parameter (%s) \n", parm);
-	    rtn = (errbuf);
+	    rtn = errbuf;
 	    goto quit;
 	}
 	FREE(parm);
