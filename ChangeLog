@@ -1,4 +1,10 @@
 2011-05-01  Robert Larice
+ * src/frontend/outitf.c ,
+ * src/spicelib/analysis/cktpzstr.c ,
+ * src/spicelib/devices/hisim/hsm1eval1_1.c :
+    spelling fixes from debian, thank you !
+
+2011-05-01  Robert Larice
  * src/spicelib/parser/inpdomod.c :
     mop up, in the shadow of the last commits
 

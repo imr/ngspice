@@ -292,7 +292,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                   };
                   if (parseSpecial(tmpname, namebuf, parambuf, depbuf)) {
                     if (*depbuf) { fprintf( stderr,
-                    "Warning : unexpected dependant variable on %s\n", tmpname);
+                    "Warning : unexpected dependent variable on %s\n", tmpname);
                     } else {
                       addSpecialDesc(run, tmpname, namebuf, parambuf, depind);
                     }

@@ -396,7 +396,7 @@ PZeval(int strat, PZtrial **set, PZtrial **new_trial_p)
 	break;
 
     default:
-	MERROR(E_PANIC, "Step type unkown");
+	MERROR(E_PANIC, "Step type unknown");
 	break;
     }
 
