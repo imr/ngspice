@@ -1,3 +1,12 @@
+2011-05-01  Robert Larice
+ * src/spicelib/parser/inpaname.c ,
+ * src/spicelib/parser/inpdpar.c ,
+ * src/spicelib/parser/inpgmod.c ,
+ * src/spicelib/parser/inppname.c ,
+ * src/spicelib/parser/inptyplk.c ,
+ * src/xspice/mif/mifgetmod.c :
+    cleanup, some more (*p).foo  -->  p->foo
+
 2011-04-30  Robert Larice
  * src/spicelib/devices/cktbindnode.c ,
  * src/spicelib/devices/hisimhv/hsmhvmask.c ,

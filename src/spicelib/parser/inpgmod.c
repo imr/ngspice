@@ -86,20 +86,20 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
       if (!*parm)
 	continue;
       
-      for (j = 0; j < (* (*(ft_sim->devices)[(modtmp)->INPmodType]).numModelParms); j++) {
+      for (j = 0; j < *(ft_sim->devices[(modtmp)->INPmodType]->numModelParms); j++) {
 	
 	if (strcmp(parm, "txl") == 0) {
-	  if (strcmp("cpl", ((*(ft_sim->devices) [ (modtmp)->INPmodType ]).modelParms[j].keyword)) == 0) {
+	  if (strcmp("cpl", ft_sim->devices[(modtmp)->INPmodType]->modelParms[j].keyword) == 0) {
 	    strcpy(parm, "cpl");
 	  }
 	}
 	
-	if (strcmp(parm,((*(ft_sim->devices)[(modtmp)->INPmodType]).modelParms[j].keyword)) == 0) {
+	if (strcmp(parm, ft_sim->devices[(modtmp)->INPmodType]->modelParms[j].keyword) == 0) {
 	  
-	  val = INPgetValue(ckt, &line, ((* (ft_sim->devices)[(modtmp)->INPmodType]).modelParms[j].dataType), tab);
+	  val = INPgetValue(ckt, &line, ft_sim->devices[(modtmp)->INPmodType]->modelParms[j].dataType, tab);
 	  
 	  error = ft_sim->setModelParm (ckt, modtmp->INPmodfast,
-					     (* (ft_sim->devices)[(modtmp)->INPmodType]).modelParms[j].id,
+					     ft_sim->devices[(modtmp)->INPmodType]->modelParms[j].id,
 					     val, NULL);
 	  if (error)
 	    return error;
@@ -111,10 +111,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
 	/* just grab the level number and throw away */
 	/* since we already have that info from pass1 */
 	val = INPgetValue(ckt, &line, IF_REAL, tab);
-      } else if (j >=
-		 (*
-		  (*(ft_sim->devices)
-		   [(modtmp)->INPmodType]).numModelParms)) {
+      } else if (j >= *(ft_sim->devices[(modtmp)->INPmodType]->numModelParms)) {
 
 	/* want only the parameter names in output - not the values */
         errno = 0;    /* To distinguish success/failure after call */

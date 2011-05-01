@@ -27,13 +27,13 @@ int INPpName(char *parm, IFvalue * val, CKTcircuit *ckt, int dev, GENinstance *f
     int error;			/* int to store evaluate error return codes in */
     int i;
 
-    for (i = 0; i < (*(*(ft_sim->devices)[dev]).numInstanceParms); i++) {
+    for (i = 0; i < *(ft_sim->devices[dev]->numInstanceParms); i++) {
 	if (strcmp(parm,
-		   ((*(ft_sim->devices)[dev]).instanceParms[i].keyword)) ==
+		   ft_sim->devices[dev]->instanceParms[i].keyword) ==
 	    0) {
 	    error =
 		ft_sim->setInstanceParm (ckt, fast,
-					      (*(ft_sim->devices)[dev]).
+					      ft_sim->devices[dev]->
 					      instanceParms[i].id, val,
 					      NULL);
 	    if (error)
@@ -41,7 +41,7 @@ int INPpName(char *parm, IFvalue * val, CKTcircuit *ckt, int dev, GENinstance *f
 	    break;
 	}
     }
-    if (i == (*(*(ft_sim->devices)[dev]).numInstanceParms)) {
+    if (i == *(ft_sim->devices[dev]->numInstanceParms)) {
 	return (E_BADPARM);
     }
     return (OK);

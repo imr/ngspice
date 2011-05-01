@@ -189,23 +189,21 @@ char *MIFgetMod(
 
                 while(*line != 0) {
                     INPgetTok(&line,&parm,1);
-                    for(j=0;j<*((*(ft_sim->devices)[(modtmp)->INPmodType]).numModelParms); j++) {
-                        if (strcmp(parm,((*(ft_sim->devices) [ (modtmp)->
-                                         INPmodType ]).modelParms[j].keyword)) == 0) {
+                    for(j=0 ; j < *(ft_sim->devices[(modtmp)->INPmodType]->numModelParms); j++) {
+                        if (strcmp(parm, ft_sim->devices[(modtmp)->INPmodType]->modelParms[j].keyword) == 0) {
                            /* gtri modification: call MIFgetValue instead of INPgetValue */
                             err1 = NULL;
                             val = MIFgetValue(ckt,&line,
-                                    ((*(ft_sim->devices)[(modtmp)->
-                                    INPmodType ]).modelParms[j].
-                                    dataType),tab,&err1);
+                                    ft_sim->devices[(modtmp)->INPmodType]->modelParms[j].dataType,
+                                    tab, &err1);
                             if(err1) {
                                 err2 = TMALLOC(char, 25 + strlen(name) + strlen(err1));
                                 sprintf(err2, "MIF-ERROR - model: %s - %s\n", name, err1);
                                 return(err2);
                             }
                             error = ft_sim->setModelParm (ckt,
-                                    ((modtmp)->INPmodfast),
-                                    (*(ft_sim->devices)[(modtmp)->INPmodType ]).
+                                    (modtmp)->INPmodfast,
+                                    ft_sim->devices[(modtmp)->INPmodType]->
                                     modelParms[j].id, val, NULL);
                             if(error)
                                 return(INPerror(error));
@@ -213,7 +211,7 @@ char *MIFgetMod(
                         }
                     }
                     /* gtri modification: processing of special parameter "level" removed */
-                    if(j >= *((*(ft_sim->devices)[(modtmp)->INPmodType]).numModelParms))
+                    if(j >= *(ft_sim->devices[(modtmp)->INPmodType]->numModelParms))
 					{
 						//err has not been allocated, but free() in INPerrCat()
 

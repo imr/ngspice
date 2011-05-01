@@ -49,22 +49,21 @@ INPaName(char *parm, IFvalue * val, CKTcircuit *ckt, int *dev, char *devnam,
      * this device type and look for a name match of an 'ask'able
      * parameter.
      */
-    for (i = 0; i < (*(*(sim->devices)[*dev]).numInstanceParms); i++) {
+    for (i = 0; i < *(sim->devices[*dev]->numInstanceParms); i++) {
 	if (strcmp(parm,
-		   ((*(sim->devices)[*dev]).instanceParms[i].keyword)) == 0
-	    && (((*(sim->devices)[*dev]).instanceParms[i].dataType) &
+		   sim->devices[*dev]->instanceParms[i].keyword) == 0
+	    && (sim->devices[*dev]->instanceParms[i].dataType &
 		IF_ASK)) {
 	    /* found it, so we ask the question using the device info we got
 	     * above and put the results in the IFvalue structure our caller
 	     * gave us originally
 	     */
 	    error = sim->askInstanceQuest (ckt, *fast,
-						(*(sim->devices)[*dev]).
-						instanceParms[i].id, val,
+                 sim->devices[*dev]->instanceParms[i].id, val,
 						selector);
 	    if (dataType)
 		*dataType =
-		    (*(sim->devices)[*dev]).instanceParms[i].dataType;
+		    sim->devices[*dev]->instanceParms[i].dataType;
 	    return (error);
 	}
     }

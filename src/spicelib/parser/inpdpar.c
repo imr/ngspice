@@ -53,21 +53,20 @@ char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 	    rtn  = (INPerror(error));
 	    goto quit;
 	}
-	for (i = 0; i < (*(*(ft_sim->devices)[dev]).numInstanceParms); i++) {
+	for (i = 0; i < *(ft_sim->devices[dev]->numInstanceParms); i++) {
 	    if (strcmp(parm,
-		       ((*(ft_sim->devices)[dev]).instanceParms[i].
-			keyword)) == 0) {
+		       ft_sim->devices[dev]->instanceParms[i].keyword) == 0) {
 		val =
 		    INPgetValue(ckt, line,
-				((*(ft_sim->devices)[dev]).
-				 instanceParms[i].dataType), tab);
+				ft_sim->devices[dev]->
+				 instanceParms[i].dataType, tab);
 		if (!val) {
 		    rtn = (INPerror(E_PARMVAL));
 		    goto quit;
 		}
 		error = ft_sim->setInstanceParm (ckt, fast,
-						      (*(ft_sim->devices)
-						       [dev]).
+						      ft_sim->devices
+						       [dev]->
 						      instanceParms[i].id,
 						      val,
 						      NULL);
@@ -78,7 +77,7 @@ char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 		break;
 	    }
 	}
-	if (i == (*(*(ft_sim->devices)[dev]).numInstanceParms)) {
+	if (i == *(ft_sim->devices[dev]->numInstanceParms)) {
 	    errbuf = TMALLOC(char, strlen(parm) + 25);
 	    (void) sprintf(errbuf, " unknown parameter (%s) \n", parm);
 	    rtn = (errbuf);
