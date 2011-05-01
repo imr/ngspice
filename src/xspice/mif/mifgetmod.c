@@ -203,8 +203,8 @@ char *MIFgetMod(
                             }
                             error = ft_sim->setModelParm (ckt,
                                     modtmp->INPmodfast,
-                                    ft_sim->devices[modtmp->INPmodType]->
-                                    modelParms[j].id, val, NULL);
+                                    ft_sim->devices[modtmp->INPmodType]->modelParms[j].id,
+                                    val, NULL);
                             if(error)
                                 return(INPerror(error));
                             break;

@@ -1,4 +1,8 @@
 2011-05-01  Robert Larice
+ * src/xspice/mif/mifgetmod.c :
+    mop up, in the shadow of the last two commits
+
+2011-05-01  Robert Larice
  * src/spicelib/parser/inpgmod.c ,
  * src/xspice/mif/mifgetmod.c :
     cleanup, (modtmp) --> modtmp
