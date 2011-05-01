@@ -22,7 +22,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     int type = -1;
     int lev, error1=0;
     char ver[100];
-    char *typename;
+    char *type_name;
     char *err = NULL;
     char *line;
     char *val;
@@ -40,10 +40,10 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     tfree(modname);
     INPgetTok(&line, &modname, 1);      /* get model name */
     INPinsert(&modname, tab);           /* stick model name into table */
-    INPgetTok(&line, &typename, 1);     /* get model type */
+    INPgetTok(&line, &type_name, 1);     /* get model type */
     
     /*  -----  Check if model is a BJT --------- */
-    if ((strcmp(typename, "npn") == 0) || (strcmp(typename, "pnp") == 0)) {
+    if ((strcmp(type_name, "npn") == 0) || (strcmp(type_name, "pnp") == 0)) {
 	err = INPfindLev(line,&lev);
 	switch(lev) {
 		case 0:
@@ -95,7 +95,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     } /* end if ((strcmp(typename, "npn") == 0) || (strcmp(typename, "pnp") == 0)) */
 
     /*  --------  Check if model is a diode --------- */    
-    else if (strcmp(typename, "d") == 0) {
+    else if (strcmp(type_name, "d") == 0) {
 	type = INPtypelook("Diode");
 	if (type < 0) {
 	    err =
@@ -106,8 +106,8 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     } /*   else if (strcmp(typename, "d") == 0) {  */
     
     /*  --------  Check if model is a jfet --------- */
-    else if ((strcmp(typename, "njf") == 0)
-	       || (strcmp(typename, "pjf") == 0)) {
+    else if ((strcmp(type_name, "njf") == 0)
+	       || (strcmp(type_name, "pjf") == 0)) {
 	err = INPfindLev(line, &lev);
 	switch (lev) {
 	case 0:
@@ -137,10 +137,10 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     }  /*   end  else if ((strcmp(typename, "njf") == 0) */
     
     /*  --------  Check if model is a MES or an HFET --------- */
-    else if ((strcmp(typename, "nmf")   == 0)
-	       || (strcmp(typename, "pmf")   == 0)
-	       || (strcmp(typename, "nhfet") == 0)
-	       || (strcmp(typename, "phfet") == 0)) {
+    else if ((strcmp(type_name, "nmf")   == 0)
+	       || (strcmp(type_name, "pmf")   == 0)
+	       || (strcmp(type_name, "nhfet") == 0)
+	       || (strcmp(type_name, "phfet") == 0)) {
 	  err = INPfindLev( line, &lev );
 	  switch ( lev ) 
 	  {	
@@ -196,7 +196,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     } 
     
     /*  --------  Check if model is a Uniform Distrib. RC line --------- */
-    else if (strcmp(typename, "urc") == 0) {
+    else if (strcmp(type_name, "urc") == 0) {
 	type = INPtypelook("URC");
 	if (type < 0) {
 	    err =
@@ -207,10 +207,10 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     } 
     
     /*  --------  Check if model is a MOSFET --------- */
-    else if ((strcmp(typename, "nmos") == 0)
-	       || (strcmp(typename, "pmos") == 0)
-	       || (strcmp(typename, "nsoi") == 0)
-	       || (strcmp(typename, "psoi") == 0)) {
+    else if ((strcmp(type_name, "nmos") == 0)
+	       || (strcmp(type_name, "pmos") == 0)
+	       || (strcmp(type_name, "nsoi") == 0)
+	       || (strcmp(type_name, "psoi") == 0)) {
 	err = INPfindLev(line, &lev);
 	switch (lev) {
 	case 0:
@@ -425,7 +425,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     } 
 #ifdef  NDEV    
     /*  --------  Check if model is a numerical device --------- */
-    else if (strcmp(typename, "ndev") == 0) {
+    else if (strcmp(type_name, "ndev") == 0) {
 	type = INPtypelook("NDEV");
 	if (type < 0) {
 	    err =
@@ -436,7 +436,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     } 
 #endif    
     /*  --------  Check if model is a resistor --------- */
-    else if (strcmp(typename, "r") == 0) {
+    else if (strcmp(type_name, "r") == 0) {
 	type = INPtypelook("Resistor");
 	if (type < 0) {
 	    err =
@@ -447,7 +447,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     } 
     
     /*  --------  Check if model is a transmission line of some sort --------- */
-    else if(strcmp(typename,"txl") == 0) {
+    else if(strcmp(type_name,"txl") == 0) {
       INPgetTok(&line,&val,1);
       while (*line != '\0') {
 	if (*val == 'R' || *val == 'r') {
@@ -482,7 +482,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     } 
 
     /*  --------  Check if model is a coupled transmission line --------- */
-    else if(strcmp(typename,"cpl") == 0) {
+    else if(strcmp(type_name,"cpl") == 0) {
       type = INPtypelook("CplLines");
       if(type < 0) {
 	err = INPmkTemp(
@@ -494,7 +494,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     
     
     /*  --------  Check if model is a cap --------- */
-    else if (strcmp(typename, "c") == 0) {
+    else if (strcmp(type_name, "c") == 0) {
 	type = INPtypelook("Capacitor");
 	if (type < 0) {
 	    err =
@@ -505,7 +505,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     } 
 
     /*  --------  Check if model is an ind --------- */
-    else if (strcmp(typename, "l") == 0) {
+    else if (strcmp(type_name, "l") == 0) {
 	type = INPtypelook("Inductor");
 	if (type < 0) {
 	    err =
@@ -517,7 +517,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     
     
     /*  --------  Check if model is a switch --------- */
-    else if (strcmp(typename, "sw") == 0) {
+    else if (strcmp(type_name, "sw") == 0) {
 	type = INPtypelook("Switch");
 	if (type < 0) {
 	    err =
@@ -528,7 +528,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     } 
     
     /*  --------  Check if model is a Current Controlled Switch --------- */
-    else if (strcmp(typename, "csw") == 0) {
+    else if (strcmp(type_name, "csw") == 0) {
 	type = INPtypelook("CSwitch");
 	if (type < 0) {
 	    err =
@@ -539,7 +539,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     } 
     
     /*  --------  Check if model is a Lossy TransLine --------- */
-    else if (strcmp(typename, "ltra") == 0) {
+    else if (strcmp(type_name, "ltra") == 0) {
 	type = INPtypelook("LTRA");
 	if (type < 0) {
 	    err =
@@ -550,7 +550,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     } 
 
 #ifdef CIDER     
-    else if(strcmp(typename,"numd") == 0) {
+    else if(strcmp(type_name,"numd") == 0) {
          err = INPfindLev(line,&lev);
     switch( lev ) {
     case 1:
@@ -572,7 +572,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
         break;
 	}
     INPmakeMod(modname,type,image);
-    } else if(strcmp(typename,"nbjt") == 0) {
+    } else if(strcmp(type_name,"nbjt") == 0) {
         err = INPfindLev(line,&lev);
     switch( lev ) {
     case 1:
@@ -594,7 +594,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
         break;
      }
      INPmakeMod(modname,type,image);
-    } else if(strcmp(typename,"numos") == 0) {
+    } else if(strcmp(type_name,"numos") == 0) {
         type = INPtypelook("NUMOS");
         if(type < 0) {
             err = 
@@ -608,8 +608,8 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     /*  type poly added by SDB  . . . */
 #ifdef XSPICE
     /*  --------  Check if model is a poly (specific to xspice) --------- */
-    else if ( (strcmp(typename, "poly") == 0) ||
-	      (strcmp(typename, "POLY") == 0) ) {
+    else if ( (strcmp(type_name, "poly") == 0) ||
+	      (strcmp(type_name, "POLY") == 0) ) {
 	type = INPtypelook("POLY");
 	if (type < 0) {
 	    err =
@@ -624,30 +624,30 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     else {
 #ifndef XSPICE    
 	type = -1;
-	err = TMALLOC(char, 35 + strlen(typename));
-	(void) sprintf(err, "unknown model type %s - ignored\n", typename);
+	err = TMALLOC(char, 35 + strlen(type_name));
+	(void) sprintf(err, "unknown model type %s - ignored\n", type_name);
 #else	
       /* gtri - modify - wbk - 10/23/90 - modify to look for code models */
 
 #ifdef TRACE
-      printf("In INPdomodel, found unknown model type, typename = %s . . .\n", typename); 
+      printf("In INPdomodel, found unknown model type, typename = %s . . .\n", type_name);
 #endif
 
       /* look for this model type and put it in the table of models */
-      type = INPtypelook(typename);
+      type = INPtypelook(type_name);
       if(type < 0) {
-	err = TMALLOC(char, 35 + strlen(typename));
-	sprintf(err,"Unknown model type %s - ignored\n",typename);
+	err = TMALLOC(char, 35 + strlen(type_name));
+	sprintf(err,"Unknown model type %s - ignored\n",type_name);
 
 #ifdef TRACE
-	printf("In INPdomodel, ignoring unknown model typ typename = %s . . .\n", typename); 
+	printf("In INPdomodel, ignoring unknown model typ typename = %s . . .\n", type_name);
 #endif
 
       }
       else {
 
 #ifdef TRACE
-	printf("In INPdomodel, adding unknown model typename = %s to model list. . .\n", typename); 
+	printf("In INPdomodel, adding unknown model typename = %s to model list. . .\n", type_name);
 #endif
 
 	INPmakeMod(modname,type,image);
@@ -657,6 +657,6 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 #endif
       
     }
-    tfree(typename);
+    tfree(type_name);
     return (err);
 }

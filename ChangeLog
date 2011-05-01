@@ -1,4 +1,8 @@
 2011-05-01  Robert Larice
+ * src/spicelib/parser/inpdomod.c :
+    rename variable typename  -->  type_name
+
+2011-05-01  Robert Larice
  * src/xspice/cmpp/ifs_yacc.y :
     rename variable class  -->  ctype_class
 
