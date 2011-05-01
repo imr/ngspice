@@ -1,4 +1,8 @@
 2011-05-01  Robert Larice
+ * src/frontend/help/x11disp.c :
+    rename function delete  -->  delete_w
+
+2011-05-01  Robert Larice
  * src/spicelib/parser/inpaname.c ,
  * src/spicelib/parser/inpdpar.c ,
  * src/spicelib/parser/inppname.c ,

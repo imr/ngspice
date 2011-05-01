@@ -23,7 +23,7 @@ $Id$
 
 static bool started = FALSE;
 static topic *topics = NULL;
-void newtopic(Widget w, caddr_t client_data, caddr_t call_data), delete(Widget w, caddr_t client_data, caddr_t call_data), quit(Widget w, caddr_t client_data, caddr_t call_data); 
+void newtopic(Widget w, caddr_t client_data, caddr_t call_data), delete_w(Widget w, caddr_t client_data, caddr_t call_data), quit(Widget w, caddr_t client_data, caddr_t call_data);
 static void sputline(char *buf, char *s);
 /* atoms for catching window delet by WM x-button */
 static Atom atom_wm_delete_window;
@@ -124,7 +124,7 @@ hlp_xdisplay(topic *top)
     XtSetArg(buttonargs[0], XtNlabel, "delete window");
     buttonwidget = XtCreateManagedWidget("delete", commandWidgetClass,
             top->titlewidget, buttonargs, XtNumber(buttonargs));
-    XtAddCallback(buttonwidget, XtNcallback, (XtCallbackProc) delete, top);
+    XtAddCallback(buttonwidget, XtNcallback, (XtCallbackProc) delete_w, top);
 
     buf = TMALLOC(char, 80 * top->numlines + 100);
     buf[0] = '\0';
@@ -250,7 +250,7 @@ newtopic(Widget w, caddr_t client_data, caddr_t call_data)
 }
 
 void
-delete(Widget w, caddr_t client_data, caddr_t call_data)
+delete_w(Widget w, caddr_t client_data, caddr_t call_data)
 {
 
     topic *top = (topic *) client_data;
