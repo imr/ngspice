@@ -57,6 +57,8 @@ $Id$
 #define NXPLANES 5      /* note: What is this used for? */
 #define BOXSIZE 30      /* initial size of bounding box for zoomin */
 
+#define NUMCOLORS 20
+
 typedef struct x11info {
     Window window;
     int	isopen;

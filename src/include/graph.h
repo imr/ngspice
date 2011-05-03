@@ -20,8 +20,6 @@ struct _keyed;
 
 /* Device-independent data structure for plots. */
 
-#define NUMCOLORS 20
-
 struct graph {
     int graphid;
     struct dveclist *plotdata;  /* normalized data */
