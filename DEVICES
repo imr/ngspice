@@ -53,6 +53,7 @@ Table of contents
  11.11 BSIM3 - BSIM model level 3 vers. 3
  11.12 BSIM4 - BSIM model level 4
  11.13 HiSIM - Hiroshima-University STARC IGFET Model
+ 11.14 HiSIM_HV - Hiroshima-University STARC IGFET High Voltage Model
 12. SOI devices
  12.1 BSIM3SOI_FD - SOI model (fully depleted devices)
  12.2 BSIM3SOI_DD - SOI Model (dynamic depletion model)
@@ -638,6 +639,7 @@ will be updated every time the device specific code is altered or changed to ref
 
        Enhancements over the original model:
         - Parallel Multiplier
+        - delvto, mulu0 instance parameter
         - ACM Area Calculation Method
         - Multirevision code (supports all 3v3.2 minor revisions)
         - NodesetFix
@@ -700,6 +702,19 @@ will be updated every time the device specific code is altered or changed to ref
        Enhancements over the original model:
        - Parallel Multiplier
        - NodesetFix
+
+ 11.14 HiSIM_HV - Hiroshima-University STARC IGFET High Voltage Model
+      
+       Ver:    1.2.1
+       Class:  M
+       Level:  62
+       Dir:    devices/hisimhv
+       Status: TO BE TESTED.
+
+       This is the HiSIM_HV model available from Hiroshima University
+       (Ultra-Small Device Engineering Laboratory)
+
+       Web site: http://home.hiroshima-u.ac.jp/usdl/HiSIM.html
 
 
 12. SOI devices
@@ -774,7 +789,7 @@ will be updated every time the device specific code is altered or changed to ref
           
       Ver:    2.6
       Class:  M
-      Level:  62
+      Level:  61
       Dir:    devices/soi3
       Status: OBSOLETE
 

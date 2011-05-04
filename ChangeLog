@@ -1,3 +1,6 @@
+2011-05-04  Dietmar Warning
+ * DEVICES: update and include HiSIM HV model.
+ 
 2011-05-03  Holger Vogt
  * x11.c, graph.h: move #define NUMCOLORS to x11.c to avoid redefinition 
    under MS Visual Studion
