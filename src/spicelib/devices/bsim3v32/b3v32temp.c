@@ -3,7 +3,7 @@
 /**********
  * Copyright 2001 Regents of the University of California. All rights reserved.
  * File: b3temp.c of BSIM3v3.2.4
- * Author: 1995 Min-Chie Jeng and Mansun Chan. 
+ * Author: 1995 Min-Chie Jeng and Mansun Chan.
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001  Xuemei Xi
  * Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
@@ -42,7 +42,7 @@ int Size_Not_Found;
     /*  loop through all the BSIM3v32 device models */
     for (; model != NULL; model = model->BSIM3v32nextModel)
     {    Temp = ckt->CKTtemp;
-         if (model->BSIM3v32bulkJctPotential < 0.1)  
+         if (model->BSIM3v32bulkJctPotential < 0.1)
 	 {   model->BSIM3v32bulkJctPotential = 0.1;
 	     fprintf(stderr, "Given pb is less than 0.1. Pb is set to 0.1.\n");
 	 }
@@ -65,7 +65,7 @@ int Size_Not_Found;
 
          Vtm0 = KboQ * Tnom;
          Eg0 = 1.16 - 7.02e-4 * Tnom * Tnom / (Tnom + 1108.0);
-         ni = 1.45e10 * (Tnom / 300.15) * sqrt(Tnom / 300.15) 
+         ni = 1.45e10 * (Tnom / 300.15) * sqrt(Tnom / 300.15)
             * exp(21.5565981 - Eg0 / (2.0 * Vtm0));
 
          model->BSIM3v32vtm = KboQ * Temp;
@@ -94,7 +94,7 @@ int Size_Not_Found;
 	 delTemp = ckt->CKTtemp - model->BSIM3v32tnom;
 	 T0 = model->BSIM3v32tcj * delTemp;
 	 if (T0 >= -1.0)
-	 {   
+	 {
 		/* Added revision dependent code */
 		switch (model->BSIM3v32intVersion) {
 		case BSIM3v32V324:
@@ -109,7 +109,7 @@ int Size_Not_Found;
 		}
 	 }
 	 else if (model->BSIM3v32unitAreaJctCap > 0.0)
-	 {   
+	 {
 		/* Added revision dependent code */
 		switch (model->BSIM3v32intVersion) {
 		case BSIM3v32V324:
@@ -125,7 +125,7 @@ int Size_Not_Found;
 	 }
          T0 = model->BSIM3v32tcjsw * delTemp;
 	 if (T0 >= -1.0)
-	 {   
+	 {
 		/* Added revision dependent code */
 		switch (model->BSIM3v32intVersion) {
 		case BSIM3v32V324:
@@ -140,7 +140,7 @@ int Size_Not_Found;
 		}
 	 }
 	 else if (model->BSIM3v32unitLengthSidewallJctCap > 0.0)
-	 {   
+	 {
 		/* Added revision dependent code */
 		switch (model->BSIM3v32intVersion) {
 		case BSIM3v32V324:
@@ -156,7 +156,7 @@ int Size_Not_Found;
 	 }
          T0 = model->BSIM3v32tcjswg * delTemp;
 	 if (T0 >= -1.0)
-	 {   
+	 {
 		/* Added revision dependent code */
 		switch (model->BSIM3v32intVersion) {
 		case BSIM3v32V324:
@@ -171,7 +171,7 @@ int Size_Not_Found;
 		}
 	 }
 	 else if (model->BSIM3v32unitLengthGateSidewallJctCap > 0.0)
-	 {   
+	 {
 		/* Added revision dependent code */
 		switch (model->BSIM3v32intVersion) {
 		case BSIM3v32V324:
@@ -206,11 +206,11 @@ int Size_Not_Found;
 	 }
          /* End of junction capacitance */
 
-         /* loop through all the instances of the model */
+   /* loop through all the instances of the model */
 	 /* MCJ: Length and Width not initialized */
-         for (here = model->BSIM3v32instances; here != NULL;
-              here = here->BSIM3v32nextInstance) 
-	 {    
+   for (here = model->BSIM3v32instances; here != NULL;
+              here = here->BSIM3v32nextInstance)
+	 {
 	      if (here->BSIM3v32owner != ARCHme) continue;
 	      pSizeDependParamKnot = model->pSizeDependParamKnot;
 	      Size_Not_Found = 1;
@@ -243,7 +243,7 @@ int Size_Not_Found;
 		  Wdrn = here->BSIM3v32w;
                   pParam->Length = Ldrn;
                   pParam->Width = Wdrn;
-		  
+
                   T0 = pow(Ldrn, model->BSIM3v32Lln);
                   T1 = pow(Wdrn, model->BSIM3v32Lwn);
                   tmp1 = model->BSIM3v32Ll / T0 + model->BSIM3v32Lw / T1
@@ -326,13 +326,13 @@ int Size_Not_Found;
 		  pParam->BSIM3v32cdscb = model->BSIM3v32cdscb
 				     + model->BSIM3v32lcdscb * Inv_L
 				     + model->BSIM3v32wcdscb * Inv_W
-				     + model->BSIM3v32pcdscb * Inv_LW; 
-				     
+				     + model->BSIM3v32pcdscb * Inv_LW;
+
     		  pParam->BSIM3v32cdscd = model->BSIM3v32cdscd
 				     + model->BSIM3v32lcdscd * Inv_L
 				     + model->BSIM3v32wcdscd * Inv_W
-				     + model->BSIM3v32pcdscd * Inv_LW; 
-				     
+				     + model->BSIM3v32pcdscd * Inv_LW;
+
 		  pParam->BSIM3v32cit = model->BSIM3v32cit
 				   + model->BSIM3v32lcit * Inv_L
 				   + model->BSIM3v32wcit * Inv_W
@@ -356,13 +356,13 @@ int Size_Not_Found;
 		  pParam->BSIM3v32a0 = model->BSIM3v32a0
 				  + model->BSIM3v32la0 * Inv_L
 				  + model->BSIM3v32wa0 * Inv_W
-				  + model->BSIM3v32pa0 * Inv_LW; 
-				  
+				  + model->BSIM3v32pa0 * Inv_LW;
+
 		  pParam->BSIM3v32ags = model->BSIM3v32ags
 				  + model->BSIM3v32lags * Inv_L
 				  + model->BSIM3v32wags * Inv_W
 				  + model->BSIM3v32pags * Inv_LW;
-				  
+
 		  pParam->BSIM3v32a1 = model->BSIM3v32a1
 				  + model->BSIM3v32la1 * Inv_L
 				  + model->BSIM3v32wa1 * Inv_W
@@ -407,10 +407,10 @@ int Size_Not_Found;
 				   + model->BSIM3v32lxt * Inv_L
 				   + model->BSIM3v32wxt * Inv_W
 				   + model->BSIM3v32pxt * Inv_LW;
-                  pParam->BSIM3v32vfb = model->BSIM3v32vfb
-                                   + model->BSIM3v32lvfb * Inv_L
-                                   + model->BSIM3v32wvfb * Inv_W
-                                   + model->BSIM3v32pvfb * Inv_LW;
+			pParam->BSIM3v32vfb = model->BSIM3v32vfb
+			     + model->BSIM3v32lvfb * Inv_L
+			     + model->BSIM3v32wvfb * Inv_W
+			     + model->BSIM3v32pvfb * Inv_LW;
 		  pParam->BSIM3v32k1 = model->BSIM3v32k1
 				  + model->BSIM3v32lk1 * Inv_L
 				  + model->BSIM3v32wk1 * Inv_W
@@ -599,10 +599,10 @@ int Size_Not_Found;
 				      + model->BSIM3v32lalpha0 * Inv_L
 				      + model->BSIM3v32walpha0 * Inv_W
 				      + model->BSIM3v32palpha0 * Inv_LW;
-                  pParam->BSIM3v32alpha1 = model->BSIM3v32alpha1
-                                      + model->BSIM3v32lalpha1 * Inv_L
-                                      + model->BSIM3v32walpha1 * Inv_W
-                                      + model->BSIM3v32palpha1 * Inv_LW;
+			pParam->BSIM3v32alpha1 = model->BSIM3v32alpha1
+			        + model->BSIM3v32lalpha1 * Inv_L
+			        + model->BSIM3v32walpha1 * Inv_W
+			        + model->BSIM3v32palpha1 * Inv_LW;
 		  pParam->BSIM3v32beta0 = model->BSIM3v32beta0
 				     + model->BSIM3v32lbeta0 * Inv_L
 				     + model->BSIM3v32wbeta0 * Inv_W
@@ -640,150 +640,152 @@ int Size_Not_Found;
 				     + model->BSIM3v32lvfbcv * Inv_L
 				     + model->BSIM3v32wvfbcv * Inv_W
 				     + model->BSIM3v32pvfbcv * Inv_LW;
-                  pParam->BSIM3v32acde = model->BSIM3v32acde
-                                    + model->BSIM3v32lacde * Inv_L
-                                    + model->BSIM3v32wacde * Inv_W
-                                    + model->BSIM3v32pacde * Inv_LW;
-                  pParam->BSIM3v32moin = model->BSIM3v32moin
-                                    + model->BSIM3v32lmoin * Inv_L
-                                    + model->BSIM3v32wmoin * Inv_W
-                                    + model->BSIM3v32pmoin * Inv_LW;
-                  pParam->BSIM3v32noff = model->BSIM3v32noff
-                                    + model->BSIM3v32lnoff * Inv_L
-                                    + model->BSIM3v32wnoff * Inv_W
-                                    + model->BSIM3v32pnoff * Inv_LW;
-                  pParam->BSIM3v32voffcv = model->BSIM3v32voffcv
-                                      + model->BSIM3v32lvoffcv * Inv_L
-                                      + model->BSIM3v32wvoffcv * Inv_W
-                                      + model->BSIM3v32pvoffcv * Inv_LW;
+			pParam->BSIM3v32acde = model->BSIM3v32acde
+			       + model->BSIM3v32lacde * Inv_L
+			       + model->BSIM3v32wacde * Inv_W
+			       + model->BSIM3v32pacde * Inv_LW;
+			pParam->BSIM3v32moin = model->BSIM3v32moin
+			       + model->BSIM3v32lmoin * Inv_L
+			       + model->BSIM3v32wmoin * Inv_W
+			       + model->BSIM3v32pmoin * Inv_LW;
+			pParam->BSIM3v32noff = model->BSIM3v32noff
+			       + model->BSIM3v32lnoff * Inv_L
+			       + model->BSIM3v32wnoff * Inv_W
+			       + model->BSIM3v32pnoff * Inv_LW;
+			pParam->BSIM3v32voffcv = model->BSIM3v32voffcv
+			       + model->BSIM3v32lvoffcv * Inv_L
+			       + model->BSIM3v32wvoffcv * Inv_W
+			       + model->BSIM3v32pvoffcv * Inv_LW;
 
-                  pParam->BSIM3v32abulkCVfactor = 1.0 + pow((pParam->BSIM3v32clc
-					     / pParam->BSIM3v32leffCV),
-					     pParam->BSIM3v32cle);
+			pParam->BSIM3v32abulkCVfactor = 1.0 + pow((pParam->BSIM3v32clc
+				     / pParam->BSIM3v32leffCV),
+				     pParam->BSIM3v32cle);
 
-	          T0 = (TRatio - 1.0);
-	          pParam->BSIM3v32ua = pParam->BSIM3v32ua + pParam->BSIM3v32ua1 * T0;
-	          pParam->BSIM3v32ub = pParam->BSIM3v32ub + pParam->BSIM3v32ub1 * T0;
-	          pParam->BSIM3v32uc = pParam->BSIM3v32uc + pParam->BSIM3v32uc1 * T0;
-                  if (pParam->BSIM3v32u0 > 1.0) 
-                      pParam->BSIM3v32u0 = pParam->BSIM3v32u0 / 1.0e4;
+			T0 = (TRatio - 1.0);
+			pParam->BSIM3v32ua = pParam->BSIM3v32ua + pParam->BSIM3v32ua1 * T0;
+			pParam->BSIM3v32ub = pParam->BSIM3v32ub + pParam->BSIM3v32ub1 * T0;
+			pParam->BSIM3v32uc = pParam->BSIM3v32uc + pParam->BSIM3v32uc1 * T0;
+			if (pParam->BSIM3v32u0 > 1.0)
+		      pParam->BSIM3v32u0 = pParam->BSIM3v32u0 / 1.0e4;
+		  pParam->BSIM3v32u0 *= here->BSIM3v32mulu0; /* Low field mobility multiplier */
 
-                  pParam->BSIM3v32u0temp = pParam->BSIM3v32u0
-				      * pow(TRatio, pParam->BSIM3v32ute); 
-                  pParam->BSIM3v32vsattemp = pParam->BSIM3v32vsat - pParam->BSIM3v32at 
-			                * T0;
-	          pParam->BSIM3v32rds0 = (pParam->BSIM3v32rdsw + pParam->BSIM3v32prt * T0)
-                                    / pow(pParam->BSIM3v32weff * 1E6, pParam->BSIM3v32wr);
+		  pParam->BSIM3v32u0temp = pParam->BSIM3v32u0
+				      * pow(TRatio, pParam->BSIM3v32ute);
+		  here->BSIM3v32u0temp = pParam->BSIM3v32u0temp;
+		  pParam->BSIM3v32vsattemp = pParam->BSIM3v32vsat - pParam->BSIM3v32at
+					* T0;
+		  pParam->BSIM3v32rds0 = (pParam->BSIM3v32rdsw + pParam->BSIM3v32prt * T0)
+				    / pow(pParam->BSIM3v32weff * 1E6, pParam->BSIM3v32wr);
 
 		  if (BSIM3v32checkModel(model, here, ckt))
 		  {   IFuid namarray[2];
-                      namarray[0] = model->BSIM3v32modName;
-                      namarray[1] = here->BSIM3v32name;
-                      SPfrontEnd->IFerror (ERR_FATAL, "Fatal error(s) detected during BSIM3v32V3.2 parameter checking for %s in model %s", namarray);
-                      return(E_BADPARM);   
+		      namarray[0] = model->BSIM3v32modName;
+		      namarray[1] = here->BSIM3v32name;
+		      SPfrontEnd->IFerror (ERR_FATAL, "Fatal error(s) detected during BSIM3v32V3.2 parameter checking for %s in model %s", namarray);
+		      return(E_BADPARM);
 		  }
 
-                  pParam->BSIM3v32cgdo = (model->BSIM3v32cgdo + pParam->BSIM3v32cf)
+		  pParam->BSIM3v32cgdo = (model->BSIM3v32cgdo + pParam->BSIM3v32cf)
 				    * pParam->BSIM3v32weffCV;
-                  pParam->BSIM3v32cgso = (model->BSIM3v32cgso + pParam->BSIM3v32cf)
+		  pParam->BSIM3v32cgso = (model->BSIM3v32cgso + pParam->BSIM3v32cf)
 				    * pParam->BSIM3v32weffCV;
-                  pParam->BSIM3v32cgbo = model->BSIM3v32cgbo * pParam->BSIM3v32leffCV;
+		  pParam->BSIM3v32cgbo = model->BSIM3v32cgbo * pParam->BSIM3v32leffCV;
 
-                  T0 = pParam->BSIM3v32leffCV * pParam->BSIM3v32leffCV;
-                  pParam->BSIM3v32tconst = pParam->BSIM3v32u0temp * pParam->BSIM3v32elm / (model->BSIM3v32cox
-                                      * pParam->BSIM3v32weffCV * pParam->BSIM3v32leffCV * T0);
+		  T0 = pParam->BSIM3v32leffCV * pParam->BSIM3v32leffCV;
+		  here->BSIM3v32tconst = here->BSIM3v32u0temp * pParam->BSIM3v32elm / (model->BSIM3v32cox
+				      * pParam->BSIM3v32weffCV * pParam->BSIM3v32leffCV * T0);
 
-                  if (!model->BSIM3v32npeakGiven && model->BSIM3v32gamma1Given)
-                  {   T0 = pParam->BSIM3v32gamma1 * model->BSIM3v32cox;
-                      pParam->BSIM3v32npeak = 3.021E22 * T0 * T0;
-                  }
+		  if (!model->BSIM3v32npeakGiven && model->BSIM3v32gamma1Given)
+		  {   T0 = pParam->BSIM3v32gamma1 * model->BSIM3v32cox;
+		      pParam->BSIM3v32npeak = 3.021E22 * T0 * T0;
+		  }
 
-		  pParam->BSIM3v32phi = 2.0 * Vtm0 
-			           * log(pParam->BSIM3v32npeak / ni);
+		  pParam->BSIM3v32phi = 2.0 * Vtm0
+				   * log(pParam->BSIM3v32npeak / ni);
 
-	          pParam->BSIM3v32sqrtPhi = sqrt(pParam->BSIM3v32phi);
-	          pParam->BSIM3v32phis3 = pParam->BSIM3v32sqrtPhi * pParam->BSIM3v32phi;
+		  pParam->BSIM3v32sqrtPhi = sqrt(pParam->BSIM3v32phi);
+		  pParam->BSIM3v32phis3 = pParam->BSIM3v32sqrtPhi * pParam->BSIM3v32phi;
 
-                  pParam->BSIM3v32Xdep0 = sqrt(2.0 * EPSSI / (Charge_q
+		  pParam->BSIM3v32Xdep0 = sqrt(2.0 * EPSSI / (Charge_q
 				     * pParam->BSIM3v32npeak * 1.0e6))
-                                     * pParam->BSIM3v32sqrtPhi; 
-                  pParam->BSIM3v32sqrtXdep0 = sqrt(pParam->BSIM3v32Xdep0);
-                  pParam->BSIM3v32litl = sqrt(3.0 * pParam->BSIM3v32xj
+				     * pParam->BSIM3v32sqrtPhi;
+		  pParam->BSIM3v32sqrtXdep0 = sqrt(pParam->BSIM3v32Xdep0);
+		  pParam->BSIM3v32litl = sqrt(3.0 * pParam->BSIM3v32xj
 				    * model->BSIM3v32tox);
-                  pParam->BSIM3v32vbi = Vtm0 * log(1.0e20
-			           * pParam->BSIM3v32npeak / (ni * ni));
-                  pParam->BSIM3v32cdep0 = sqrt(Charge_q * EPSSI
+		  pParam->BSIM3v32vbi = Vtm0 * log(1.0e20
+				   * pParam->BSIM3v32npeak / (ni * ni));
+		  pParam->BSIM3v32cdep0 = sqrt(Charge_q * EPSSI
 				     * pParam->BSIM3v32npeak * 1.0e6 / 2.0
 				     / pParam->BSIM3v32phi);
 
-                  pParam->BSIM3v32ldeb = sqrt(EPSSI * Vtm0 / (Charge_q
-                                    * pParam->BSIM3v32npeak * 1.0e6)) / 3.0;
-                  pParam->BSIM3v32acde *= pow((pParam->BSIM3v32npeak / 2.0e16), -0.25);
+		  pParam->BSIM3v32ldeb = sqrt(EPSSI * Vtm0 / (Charge_q
+				    * pParam->BSIM3v32npeak * 1.0e6)) / 3.0;
+		  pParam->BSIM3v32acde *= pow((pParam->BSIM3v32npeak / 2.0e16), -0.25);
 
 
-                  if (model->BSIM3v32k1Given || model->BSIM3v32k2Given)
-                  {   if (!model->BSIM3v32k1Given)
-                      {
-                          if ((!ckt->CKTcurJob) || (ckt->CKTcurJob->JOBtype < 9)) /* don't print in sensitivity */
-                              fprintf(stdout, "Warning: k1 should be specified with k2.\n");
-                          pParam->BSIM3v32k1 = 0.53;
-                      }
-                      if (!model->BSIM3v32k2Given)
-                      {
-                          if ((!ckt->CKTcurJob) || (ckt->CKTcurJob->JOBtype < 9)) /* don't print in sensitivity */
-                              fprintf(stdout, "Warning: k2 should be specified with k1.\n");
-                          pParam->BSIM3v32k2 = -0.0186;
-                      }
-                      if ((!ckt->CKTcurJob) || (ckt->CKTcurJob->JOBtype < 9)) { /* don't print in sensitivity */
-                          if (model->BSIM3v32nsubGiven)
-                              fprintf(stdout, "Warning: nsub is ignored because k1 or k2 is given.\n");
-                          if (model->BSIM3v32xtGiven)
-                              fprintf(stdout, "Warning: xt is ignored because k1 or k2 is given.\n");
-                          if (model->BSIM3v32vbxGiven)
-                              fprintf(stdout, "Warning: vbx is ignored because k1 or k2 is given.\n");
-                          if (model->BSIM3v32gamma1Given)
-                              fprintf(stdout, "Warning: gamma1 is ignored because k1 or k2 is given.\n");
-                          if (model->BSIM3v32gamma2Given)
-                              fprintf(stdout, "Warning: gamma2 is ignored because k1 or k2 is given.\n");
-                      }
-                  }
-                  else
-                  {   if (!model->BSIM3v32vbxGiven)
-                          pParam->BSIM3v32vbx = pParam->BSIM3v32phi - 7.7348e-4 
-                                           * pParam->BSIM3v32npeak
+		  if (model->BSIM3v32k1Given || model->BSIM3v32k2Given)
+		  {   if (!model->BSIM3v32k1Given)
+		      {
+			  if ((!ckt->CKTcurJob) || (ckt->CKTcurJob->JOBtype < 9)) /* don't print in sensitivity */
+			      fprintf(stdout, "Warning: k1 should be specified with k2.\n");
+			  pParam->BSIM3v32k1 = 0.53;
+		      }
+		      if (!model->BSIM3v32k2Given)
+		      {
+			  if ((!ckt->CKTcurJob) || (ckt->CKTcurJob->JOBtype < 9)) /* don't print in sensitivity */
+			      fprintf(stdout, "Warning: k2 should be specified with k1.\n");
+			  pParam->BSIM3v32k2 = -0.0186;
+		      }
+		      if ((!ckt->CKTcurJob) || (ckt->CKTcurJob->JOBtype < 9)) { /* don't print in sensitivity */
+			  if (model->BSIM3v32nsubGiven)
+			      fprintf(stdout, "Warning: nsub is ignored because k1 or k2 is given.\n");
+			  if (model->BSIM3v32xtGiven)
+			      fprintf(stdout, "Warning: xt is ignored because k1 or k2 is given.\n");
+			  if (model->BSIM3v32vbxGiven)
+			      fprintf(stdout, "Warning: vbx is ignored because k1 or k2 is given.\n");
+			  if (model->BSIM3v32gamma1Given)
+			      fprintf(stdout, "Warning: gamma1 is ignored because k1 or k2 is given.\n");
+			  if (model->BSIM3v32gamma2Given)
+			      fprintf(stdout, "Warning: gamma2 is ignored because k1 or k2 is given.\n");
+		      }
+		  }
+		  else
+		  {   if (!model->BSIM3v32vbxGiven)
+			  pParam->BSIM3v32vbx = pParam->BSIM3v32phi - 7.7348e-4
+					   * pParam->BSIM3v32npeak
 					   * pParam->BSIM3v32xt * pParam->BSIM3v32xt;
-	              if (pParam->BSIM3v32vbx > 0.0)
-		          pParam->BSIM3v32vbx = -pParam->BSIM3v32vbx;
-	              if (pParam->BSIM3v32vbm > 0.0)
-                          pParam->BSIM3v32vbm = -pParam->BSIM3v32vbm;
-           
-                      if (!model->BSIM3v32gamma1Given)
-                          pParam->BSIM3v32gamma1 = 5.753e-12
-					      * sqrt(pParam->BSIM3v32npeak)
-                                              / model->BSIM3v32cox;
-                      if (!model->BSIM3v32gamma2Given)
-                          pParam->BSIM3v32gamma2 = 5.753e-12
-					      * sqrt(pParam->BSIM3v32nsub)
-                                              / model->BSIM3v32cox;
+		      if (pParam->BSIM3v32vbx > 0.0)
+			  pParam->BSIM3v32vbx = -pParam->BSIM3v32vbx;
+		      if (pParam->BSIM3v32vbm > 0.0)
+			  pParam->BSIM3v32vbm = -pParam->BSIM3v32vbm;
 
-                      T0 = pParam->BSIM3v32gamma1 - pParam->BSIM3v32gamma2;
-                      T1 = sqrt(pParam->BSIM3v32phi - pParam->BSIM3v32vbx)
+		      if (!model->BSIM3v32gamma1Given)
+			  pParam->BSIM3v32gamma1 = 5.753e-12
+					      * sqrt(pParam->BSIM3v32npeak)
+					      / model->BSIM3v32cox;
+		      if (!model->BSIM3v32gamma2Given)
+			  pParam->BSIM3v32gamma2 = 5.753e-12
+					      * sqrt(pParam->BSIM3v32nsub)
+					      / model->BSIM3v32cox;
+
+		      T0 = pParam->BSIM3v32gamma1 - pParam->BSIM3v32gamma2;
+		      T1 = sqrt(pParam->BSIM3v32phi - pParam->BSIM3v32vbx)
 			 - pParam->BSIM3v32sqrtPhi;
-                      T2 = sqrt(pParam->BSIM3v32phi * (pParam->BSIM3v32phi
+		      T2 = sqrt(pParam->BSIM3v32phi * (pParam->BSIM3v32phi
 			 - pParam->BSIM3v32vbm)) - pParam->BSIM3v32phi;
-                      pParam->BSIM3v32k2 = T0 * T1 / (2.0 * T2 + pParam->BSIM3v32vbm);
-                      pParam->BSIM3v32k1 = pParam->BSIM3v32gamma2 - 2.0
+		      pParam->BSIM3v32k2 = T0 * T1 / (2.0 * T2 + pParam->BSIM3v32vbm);
+		      pParam->BSIM3v32k1 = pParam->BSIM3v32gamma2 - 2.0
 				      * pParam->BSIM3v32k2 * sqrt(pParam->BSIM3v32phi
 				      - pParam->BSIM3v32vbm);
-                  }
- 
+		  }
+
 		  if (pParam->BSIM3v32k2 < 0.0)
 		  {   T0 = 0.5 * pParam->BSIM3v32k1 / pParam->BSIM3v32k2;
-                      pParam->BSIM3v32vbsc = 0.9 * (pParam->BSIM3v32phi - T0 * T0);
+		      pParam->BSIM3v32vbsc = 0.9 * (pParam->BSIM3v32phi - T0 * T0);
 		      if (pParam->BSIM3v32vbsc > -3.0)
-		          pParam->BSIM3v32vbsc = -3.0;
+			  pParam->BSIM3v32vbsc = -3.0;
 		      else if (pParam->BSIM3v32vbsc < -30.0)
-		          pParam->BSIM3v32vbsc = -30.0;
+			  pParam->BSIM3v32vbsc = -30.0;
 		  }
 		  else
 		  {   pParam->BSIM3v32vbsc = -30.0;
@@ -791,249 +793,254 @@ int Size_Not_Found;
 		  if (pParam->BSIM3v32vbsc > pParam->BSIM3v32vbm)
 		      pParam->BSIM3v32vbsc = pParam->BSIM3v32vbm;
 
-                  if (!model->BSIM3v32vfbGiven)
-                  {   if (model->BSIM3v32vth0Given)
-                      {   pParam->BSIM3v32vfb = model->BSIM3v32type * pParam->BSIM3v32vth0
-                                           - pParam->BSIM3v32phi - pParam->BSIM3v32k1
-                                           * pParam->BSIM3v32sqrtPhi;
-                      }
-                      else
-                      {   pParam->BSIM3v32vfb = -1.0;
-                      }
-                  }
-                  if (!model->BSIM3v32vth0Given)
-                  {   pParam->BSIM3v32vth0 = model->BSIM3v32type * (pParam->BSIM3v32vfb
-                                        + pParam->BSIM3v32phi + pParam->BSIM3v32k1
-                                        * pParam->BSIM3v32sqrtPhi);
-                  }
+		  if (!model->BSIM3v32vfbGiven)
+		  {   if (model->BSIM3v32vth0Given)
+		      {   pParam->BSIM3v32vfb = model->BSIM3v32type * pParam->BSIM3v32vth0
+					   - pParam->BSIM3v32phi - pParam->BSIM3v32k1
+					   * pParam->BSIM3v32sqrtPhi;
+		      }
+		      else
+		      {   pParam->BSIM3v32vfb = -1.0;
+		      }
+		  }
+		  if (!model->BSIM3v32vth0Given)
+		  {   pParam->BSIM3v32vth0 = model->BSIM3v32type * (pParam->BSIM3v32vfb
+					+ pParam->BSIM3v32phi + pParam->BSIM3v32k1
+					* pParam->BSIM3v32sqrtPhi);
+		  }
 
-                  pParam->BSIM3v32k1ox = pParam->BSIM3v32k1 * model->BSIM3v32tox
-                                    / model->BSIM3v32toxm;
-                  pParam->BSIM3v32k2ox = pParam->BSIM3v32k2 * model->BSIM3v32tox
-                                    / model->BSIM3v32toxm;
+		  pParam->BSIM3v32k1ox = pParam->BSIM3v32k1 * model->BSIM3v32tox
+				    / model->BSIM3v32toxm;
+		  pParam->BSIM3v32k2ox = pParam->BSIM3v32k2 * model->BSIM3v32tox
+				    / model->BSIM3v32toxm;
 
-                  T1 = sqrt(EPSSI / EPSOX * model->BSIM3v32tox
+		  T1 = sqrt(EPSSI / EPSOX * model->BSIM3v32tox
 		     * pParam->BSIM3v32Xdep0);
-                  T0 = exp(-0.5 * pParam->BSIM3v32dsub * pParam->BSIM3v32leff / T1);
-                  pParam->BSIM3v32theta0vb0 = (T0 + 2.0 * T0 * T0);
+		  T0 = exp(-0.5 * pParam->BSIM3v32dsub * pParam->BSIM3v32leff / T1);
+		  pParam->BSIM3v32theta0vb0 = (T0 + 2.0 * T0 * T0);
 
-                  T0 = exp(-0.5 * pParam->BSIM3v32drout * pParam->BSIM3v32leff / T1);
-                  T2 = (T0 + 2.0 * T0 * T0);
-                  pParam->BSIM3v32thetaRout = pParam->BSIM3v32pdibl1 * T2
-				         + pParam->BSIM3v32pdibl2;
+		  T0 = exp(-0.5 * pParam->BSIM3v32drout * pParam->BSIM3v32leff / T1);
+		  T2 = (T0 + 2.0 * T0 * T0);
+		  pParam->BSIM3v32thetaRout = pParam->BSIM3v32pdibl1 * T2
+					 + pParam->BSIM3v32pdibl2;
 
-                  tmp = sqrt(pParam->BSIM3v32Xdep0);
-                  tmp1 = pParam->BSIM3v32vbi - pParam->BSIM3v32phi;
-                  tmp2 = model->BSIM3v32factor1 * tmp;
+		  tmp = sqrt(pParam->BSIM3v32Xdep0);
+		  tmp1 = pParam->BSIM3v32vbi - pParam->BSIM3v32phi;
+		  tmp2 = model->BSIM3v32factor1 * tmp;
 
-                  T0 = -0.5 * pParam->BSIM3v32dvt1w * pParam->BSIM3v32weff
-                     * pParam->BSIM3v32leff / tmp2;
-                  if (T0 > -EXP_THRESHOLD)
-                  {   T1 = exp(T0);
-                      T2 = T1 * (1.0 + 2.0 * T1);
-                  }
-                  else
-                  {   T1 = MIN_EXP;
-                      T2 = T1 * (1.0 + 2.0 * T1);
-                  }
-                  T0 = pParam->BSIM3v32dvt0w * T2;
-                  T2 = T0 * tmp1;
+		  T0 = -0.5 * pParam->BSIM3v32dvt1w * pParam->BSIM3v32weff
+		     * pParam->BSIM3v32leff / tmp2;
+		  if (T0 > -EXP_THRESHOLD)
+		  {   T1 = exp(T0);
+		      T2 = T1 * (1.0 + 2.0 * T1);
+		  }
+		  else
+		  {   T1 = MIN_EXP;
+		      T2 = T1 * (1.0 + 2.0 * T1);
+		  }
+		  T0 = pParam->BSIM3v32dvt0w * T2;
+		  T2 = T0 * tmp1;
 
-                  T0 = -0.5 * pParam->BSIM3v32dvt1 * pParam->BSIM3v32leff / tmp2;
-                  if (T0 > -EXP_THRESHOLD)
-                  {   T1 = exp(T0);
-                      T3 = T1 * (1.0 + 2.0 * T1);
-                  }
-                  else
-                  {   T1 = MIN_EXP;
-                      T3 = T1 * (1.0 + 2.0 * T1);
-                  }
-                  T3 = pParam->BSIM3v32dvt0 * T3 * tmp1;
+		  T0 = -0.5 * pParam->BSIM3v32dvt1 * pParam->BSIM3v32leff / tmp2;
+		  if (T0 > -EXP_THRESHOLD)
+		  {   T1 = exp(T0);
+		      T3 = T1 * (1.0 + 2.0 * T1);
+		  }
+		  else
+		  {   T1 = MIN_EXP;
+		      T3 = T1 * (1.0 + 2.0 * T1);
+		  }
+		  T3 = pParam->BSIM3v32dvt0 * T3 * tmp1;
 
-                  T4 = model->BSIM3v32tox * pParam->BSIM3v32phi
-                     / (pParam->BSIM3v32weff + pParam->BSIM3v32w0);
+		  T4 = model->BSIM3v32tox * pParam->BSIM3v32phi
+		     / (pParam->BSIM3v32weff + pParam->BSIM3v32w0);
 
-                  T0 = sqrt(1.0 + pParam->BSIM3v32nlx / pParam->BSIM3v32leff);
-                  T5 = pParam->BSIM3v32k1ox * (T0 - 1.0) * pParam->BSIM3v32sqrtPhi
-                     + (pParam->BSIM3v32kt1 + pParam->BSIM3v32kt1l / pParam->BSIM3v32leff)
-                     * (TRatio - 1.0);
+		  T0 = sqrt(1.0 + pParam->BSIM3v32nlx / pParam->BSIM3v32leff);
+		  T5 = pParam->BSIM3v32k1ox * (T0 - 1.0) * pParam->BSIM3v32sqrtPhi
+		     + (pParam->BSIM3v32kt1 + pParam->BSIM3v32kt1l / pParam->BSIM3v32leff)
+		     * (TRatio - 1.0);
 
-                  tmp3 = model->BSIM3v32type * pParam->BSIM3v32vth0
-                       - T2 - T3 + pParam->BSIM3v32k3 * T4 + T5;
-                  pParam->BSIM3v32vfbzb = tmp3 - pParam->BSIM3v32phi - pParam->BSIM3v32k1
-                                     * pParam->BSIM3v32sqrtPhi;
-                  /* End of vfbzb */
-              }
+		  tmp3 = model->BSIM3v32type * pParam->BSIM3v32vth0
+		       - T2 - T3 + pParam->BSIM3v32k3 * T4 + T5;
+		  pParam->BSIM3v32vfbzb = tmp3 - pParam->BSIM3v32phi - pParam->BSIM3v32k1
+				     * pParam->BSIM3v32sqrtPhi;
+		  /* End of vfbzb */
+	      }
 
-              /* process source/drain series resistance */
-              /* acm model */
-              if (model->BSIM3v32acmMod == 0)
-              {
-	        here->BSIM3v32drainConductance = model->BSIM3v32sheetResistance 
-			                              * here->BSIM3v32drainSquares;
-	        here->BSIM3v32sourceConductance = model->BSIM3v32sheetResistance 
-			                           * here->BSIM3v32sourceSquares;
-              } 
-              else 
-              {
-                if (here->BSIM3v32drainSquaresGiven)
-                {
-                  here->BSIM3v32drainConductance = (model->BSIM3v32ld + model->BSIM3v32ldif)/(here->BSIM3v32w + model->BSIM3v32xw)*model->BSIM3v32rd
-                                               + model->BSIM3v32sheetResistance * here->BSIM3v32drainSquares + model->BSIM3v32rdc;
-                }
-                else
-                {
-                  here->BSIM3v32drainConductance = ((model->BSIM3v32ld + model->BSIM3v32ldif)*model->BSIM3v32rd 
-                                               + model->BSIM3v32hdif*model->BSIM3v32sheetResistance)/(here->BSIM3v32w + model->BSIM3v32xw) + model->BSIM3v32rdc;
-                }
-                if (here->BSIM3v32sourceSquaresGiven)
-                {
-                  here->BSIM3v32sourceConductance = (model->BSIM3v32ld + model->BSIM3v32ldif)/(here->BSIM3v32w + model->BSIM3v32xw)*model->BSIM3v32rs
-                                               + model->BSIM3v32sheetResistance * here->BSIM3v32sourceSquares + model->BSIM3v32rsc;
-                }
-                else
-                {
-                  here->BSIM3v32sourceConductance = ((model->BSIM3v32ld + model->BSIM3v32ldif)*model->BSIM3v32rs 
-                                               + model->BSIM3v32hdif*model->BSIM3v32sheetResistance)/(here->BSIM3v32w + model->BSIM3v32xw) + model->BSIM3v32rsc;
-                }
-              }
-              if (here->BSIM3v32drainConductance > 0.0)
-                  here->BSIM3v32drainConductance = 1.0
-		  			      / here->BSIM3v32drainConductance;
+	      /* adding delvto  */
+	      here->BSIM3v32vth0 = pParam->BSIM3v32vth0 + here->BSIM3v32delvto;
+	      here->BSIM3v32vfb = pParam->BSIM3v32vfb + model->BSIM3v32type * here->BSIM3v32delvto;
+	      here->BSIM3v32vfbzb = pParam->BSIM3v32vfbzb + model->BSIM3v32type * here->BSIM3v32delvto;
+
+	      /* process source/drain series resistance */
+	      /* acm model */
+	      if (model->BSIM3v32acmMod == 0)
+	      {
+		 here->BSIM3v32drainConductance = model->BSIM3v32sheetResistance
+						 * here->BSIM3v32drainSquares;
+		 here->BSIM3v32sourceConductance = model->BSIM3v32sheetResistance
+						  * here->BSIM3v32sourceSquares;
+	      }
 	      else
-                  here->BSIM3v32drainConductance = 0.0;
+	      {
+		if (here->BSIM3v32drainSquaresGiven)
+		{
+		  here->BSIM3v32drainConductance = (model->BSIM3v32ld + model->BSIM3v32ldif)/(here->BSIM3v32w + model->BSIM3v32xw)*model->BSIM3v32rd
+					       + model->BSIM3v32sheetResistance * here->BSIM3v32drainSquares + model->BSIM3v32rdc;
+		}
+		else
+		{
+		  here->BSIM3v32drainConductance = ((model->BSIM3v32ld + model->BSIM3v32ldif)*model->BSIM3v32rd
+					       + model->BSIM3v32hdif*model->BSIM3v32sheetResistance)/(here->BSIM3v32w + model->BSIM3v32xw) + model->BSIM3v32rdc;
+		}
+		if (here->BSIM3v32sourceSquaresGiven)
+		{
+		  here->BSIM3v32sourceConductance = (model->BSIM3v32ld + model->BSIM3v32ldif)/(here->BSIM3v32w + model->BSIM3v32xw)*model->BSIM3v32rs
+					       + model->BSIM3v32sheetResistance * here->BSIM3v32sourceSquares + model->BSIM3v32rsc;
+		}
+		else
+		{
+		  here->BSIM3v32sourceConductance = ((model->BSIM3v32ld + model->BSIM3v32ldif)*model->BSIM3v32rs
+					       + model->BSIM3v32hdif*model->BSIM3v32sheetResistance)/(here->BSIM3v32w + model->BSIM3v32xw) + model->BSIM3v32rsc;
+		}
+	      }
+	      if (here->BSIM3v32drainConductance > 0.0)
+		  here->BSIM3v32drainConductance = 1.0
+						/ here->BSIM3v32drainConductance;
+	      else
+		  here->BSIM3v32drainConductance = 0.0;
 
-              if (here->BSIM3v32sourceConductance > 0.0) 
-                  here->BSIM3v32sourceConductance = 1.0
+	      if (here->BSIM3v32sourceConductance > 0.0)
+		  here->BSIM3v32sourceConductance = 1.0
 					       / here->BSIM3v32sourceConductance;
 	      else
-                  here->BSIM3v32sourceConductance = 0.0;
+		  here->BSIM3v32sourceConductance = 0.0;
 
 	      here->BSIM3v32cgso = pParam->BSIM3v32cgso;
 	      here->BSIM3v32cgdo = pParam->BSIM3v32cgdo;
 
-              Nvtm = model->BSIM3v32vtm * model->BSIM3v32jctEmissionCoeff;
-              if (model->BSIM3v32acmMod == 0)
-              {
-                if ((here->BSIM3v32sourceArea <= 0.0) &&
-                    (here->BSIM3v32sourcePerimeter <= 0.0))
-                {   SourceSatCurrent = 1.0e-14;
-                }
-                else
-                {   SourceSatCurrent = here->BSIM3v32sourceArea
-                                     * model->BSIM3v32jctTempSatCurDensity
-                                     + here->BSIM3v32sourcePerimeter
-                                     * model->BSIM3v32jctSidewallTempSatCurDensity;
-                }
-                if ((SourceSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
-                {   here->BSIM3v32vjsm = Nvtm * log(model->BSIM3v32ijth
-                                    / SourceSatCurrent + 1.0);
-  			/* Added revision dependent code */
-  			switch (model->BSIM3v32intVersion) {
-  			case BSIM3v32V324:
-  			case BSIM3v32V323:
-  			case BSIM3v32V322:
-  				here->BSIM3v32IsEvjsm =
-  					SourceSatCurrent * exp(here->BSIM3v32vjsm / Nvtm);
-  				break;
-  			case BSIM3v32V32:
-  			default:
-  				/* Do nothing */
-  				break;
-  			}
-                }
-  
-                if ((here->BSIM3v32drainArea <= 0.0) &&
-                    (here->BSIM3v32drainPerimeter <= 0.0))
-                {   DrainSatCurrent = 1.0e-14;
-                }
-                else
-                {   DrainSatCurrent = here->BSIM3v32drainArea
-                                    * model->BSIM3v32jctTempSatCurDensity
-                                    + here->BSIM3v32drainPerimeter
-                                    * model->BSIM3v32jctSidewallTempSatCurDensity;
-                }
-                if ((DrainSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
-                {   here->BSIM3v32vjdm = Nvtm * log(model->BSIM3v32ijth
-                                    / DrainSatCurrent + 1.0);
-  			/* Added revision dependent code */
-  			switch (model->BSIM3v32intVersion) {
-  			case BSIM3v32V324:
-  			case BSIM3v32V323:
-  			case BSIM3v32V322:
-  				here->BSIM3v32IsEvjdm = 
-  					DrainSatCurrent * exp(here->BSIM3v32vjdm / Nvtm);
-  				break;
-  			case BSIM3v32V32:
-  			default:
-  				/* Do nothing */
-  				break;
-  			}
-                }
-              }
-              else
-              {
-                SourceSatCurrent = 0.0;
-                if (!here->BSIM3v32sourceAreaGiven)
-                {   
-                  here->BSIM3v32sourceArea = 2.0 * model->BSIM3v32hdif * pParam->BSIM3v32weff;
-                }
-                SourceSatCurrent = here->BSIM3v32sourceArea * model->BSIM3v32jctTempSatCurDensity;
-                if (!here->BSIM3v32sourcePerimeterGiven)
-                {   
-                  here->BSIM3v32sourcePerimeter = 4.0 * model->BSIM3v32hdif + 2.0 * pParam->BSIM3v32weff;
-                }
-                SourceSatCurrent = SourceSatCurrent + here->BSIM3v32sourcePerimeter * model->BSIM3v32jctSidewallTempSatCurDensity;
-                if (SourceSatCurrent <= 0.0) SourceSatCurrent = 1.0e-14;
-                if ((SourceSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
-                {   here->BSIM3v32vjsm = Nvtm * log(model->BSIM3v32ijth
-                                    / SourceSatCurrent + 1.0);
-  		    /* Added revision dependent code */
-  		    switch (model->BSIM3v32intVersion) {
-  		    case BSIM3v32V324:
-  		    case BSIM3v32V323:
-  		    case BSIM3v32V322:
-  		    	here->BSIM3v32IsEvjsm =
-  		    		SourceSatCurrent * exp(here->BSIM3v32vjsm / Nvtm);
-  		    	break;
-  		    case BSIM3v32V32:
-  		    default:
-  		    	/* Do nothing */
-  			break;
-  		    }
-                }
+	      Nvtm = model->BSIM3v32vtm * model->BSIM3v32jctEmissionCoeff;
+	      if (model->BSIM3v32acmMod == 0)
+	      {
+		if ((here->BSIM3v32sourceArea <= 0.0) &&
+		    (here->BSIM3v32sourcePerimeter <= 0.0))
+		{   SourceSatCurrent = 1.0e-14;
+		}
+		else
+		{   SourceSatCurrent = here->BSIM3v32sourceArea
+				     * model->BSIM3v32jctTempSatCurDensity
+				     + here->BSIM3v32sourcePerimeter
+				     * model->BSIM3v32jctSidewallTempSatCurDensity;
+		}
+		if ((SourceSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
+		{   here->BSIM3v32vjsm = Nvtm * log(model->BSIM3v32ijth
+				    / SourceSatCurrent + 1.0);
+			/* Added revision dependent code */
+			switch (model->BSIM3v32intVersion) {
+			case BSIM3v32V324:
+			case BSIM3v32V323:
+			case BSIM3v32V322:
+				here->BSIM3v32IsEvjsm =
+					SourceSatCurrent * exp(here->BSIM3v32vjsm / Nvtm);
+				break;
+			case BSIM3v32V32:
+			default:
+				/* Do nothing */
+				break;
+			}
+		}
 
-                DrainSatCurrent = 0.0;
-                if (!here->BSIM3v32drainAreaGiven)
-                {   
-                  here->BSIM3v32drainArea = 2.0 * model->BSIM3v32hdif * pParam->BSIM3v32weff;
-                }
-                DrainSatCurrent = here->BSIM3v32drainArea * model->BSIM3v32jctTempSatCurDensity;
-                if (!here->BSIM3v32drainPerimeterGiven)
-                {   
-                  here->BSIM3v32drainPerimeter = 4.0 * model->BSIM3v32hdif + 2.0 * pParam->BSIM3v32weff;
-                }
-                DrainSatCurrent = DrainSatCurrent + here->BSIM3v32drainPerimeter * model->BSIM3v32jctSidewallTempSatCurDensity;
-                if (DrainSatCurrent <= 0.0) DrainSatCurrent = 1.0e-14;
-                if ((DrainSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
-                {   here->BSIM3v32vjdm = Nvtm * log(model->BSIM3v32ijth
-                                    / DrainSatCurrent + 1.0);
-  		    /* Added revision dependent code */
-  		    switch (model->BSIM3v32intVersion) {
-  		    case BSIM3v32V324:
-  		    case BSIM3v32V323:
-  		    case BSIM3v32V322:
-  		    	here->BSIM3v32IsEvjdm = 
-  		    		DrainSatCurrent * exp(here->BSIM3v32vjdm / Nvtm);
-  		    	break;
-  		    case BSIM3v32V32:
-  		    default:
-  		    	/* Do nothing */
-  			break;
-  		    }
-                }
-              }
-         }
+		if ((here->BSIM3v32drainArea <= 0.0) &&
+		    (here->BSIM3v32drainPerimeter <= 0.0))
+		{   DrainSatCurrent = 1.0e-14;
+		}
+		else
+		{   DrainSatCurrent = here->BSIM3v32drainArea
+				    * model->BSIM3v32jctTempSatCurDensity
+				    + here->BSIM3v32drainPerimeter
+				    * model->BSIM3v32jctSidewallTempSatCurDensity;
+		}
+		if ((DrainSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
+		{   here->BSIM3v32vjdm = Nvtm * log(model->BSIM3v32ijth
+				    / DrainSatCurrent + 1.0);
+			/* Added revision dependent code */
+			switch (model->BSIM3v32intVersion) {
+			case BSIM3v32V324:
+			case BSIM3v32V323:
+			case BSIM3v32V322:
+				here->BSIM3v32IsEvjdm =
+					DrainSatCurrent * exp(here->BSIM3v32vjdm / Nvtm);
+				break;
+			case BSIM3v32V32:
+			default:
+				/* Do nothing */
+				break;
+			}
+		}
+	      }
+	      else
+	      {
+		SourceSatCurrent = 0.0;
+		if (!here->BSIM3v32sourceAreaGiven)
+		{
+		  here->BSIM3v32sourceArea = 2.0 * model->BSIM3v32hdif * pParam->BSIM3v32weff;
+		}
+		SourceSatCurrent = here->BSIM3v32sourceArea * model->BSIM3v32jctTempSatCurDensity;
+		if (!here->BSIM3v32sourcePerimeterGiven)
+		{
+		  here->BSIM3v32sourcePerimeter = 4.0 * model->BSIM3v32hdif + 2.0 * pParam->BSIM3v32weff;
+		}
+		SourceSatCurrent = SourceSatCurrent + here->BSIM3v32sourcePerimeter * model->BSIM3v32jctSidewallTempSatCurDensity;
+		if (SourceSatCurrent <= 0.0) SourceSatCurrent = 1.0e-14;
+		if ((SourceSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
+		{   here->BSIM3v32vjsm = Nvtm * log(model->BSIM3v32ijth
+				    / SourceSatCurrent + 1.0);
+		    /* Added revision dependent code */
+		    switch (model->BSIM3v32intVersion) {
+		    case BSIM3v32V324:
+		    case BSIM3v32V323:
+		    case BSIM3v32V322:
+		    	here->BSIM3v32IsEvjsm =
+		    		SourceSatCurrent * exp(here->BSIM3v32vjsm / Nvtm);
+		    	break;
+		    case BSIM3v32V32:
+		    default:
+		    	/* Do nothing */
+			break;
+		    }
+		}
+
+		DrainSatCurrent = 0.0;
+		if (!here->BSIM3v32drainAreaGiven)
+		{
+		  here->BSIM3v32drainArea = 2.0 * model->BSIM3v32hdif * pParam->BSIM3v32weff;
+		}
+		DrainSatCurrent = here->BSIM3v32drainArea * model->BSIM3v32jctTempSatCurDensity;
+		if (!here->BSIM3v32drainPerimeterGiven)
+		{
+		  here->BSIM3v32drainPerimeter = 4.0 * model->BSIM3v32hdif + 2.0 * pParam->BSIM3v32weff;
+		}
+		DrainSatCurrent = DrainSatCurrent + here->BSIM3v32drainPerimeter * model->BSIM3v32jctSidewallTempSatCurDensity;
+		if (DrainSatCurrent <= 0.0) DrainSatCurrent = 1.0e-14;
+		if ((DrainSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
+		{   here->BSIM3v32vjdm = Nvtm * log(model->BSIM3v32ijth
+				    / DrainSatCurrent + 1.0);
+		    /* Added revision dependent code */
+		    switch (model->BSIM3v32intVersion) {
+		    case BSIM3v32V324:
+		    case BSIM3v32V323:
+		    case BSIM3v32V322:
+		    	here->BSIM3v32IsEvjdm =
+		    		DrainSatCurrent * exp(here->BSIM3v32vjdm / Nvtm);
+		    	break;
+		    case BSIM3v32V32:
+		    default:
+		    	/* Do nothing */
+			break;
+		    }
+		}
+	      }
+	 }
     }
     return(OK);
 }

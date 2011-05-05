@@ -54,6 +54,13 @@ typedef struct sBSIM3v32instance
     double BSIM3v32sourcePerimeter;
     double BSIM3v32sourceConductance;
     double BSIM3v32drainConductance;
+    double BSIM3v32delvto;
+    double BSIM3v32mulu0;
+    double BSIM3v32vth0;
+    double BSIM3v32vfb;
+    double BSIM3v32vfbzb;
+    double BSIM3v32u0temp;
+    double BSIM3v32tconst;
 
     double BSIM3v32icVBS;
     double BSIM3v32icVDS;
@@ -121,6 +128,8 @@ typedef struct sBSIM3v32instance
     unsigned BSIM3v32sourceSquaresGiven :1;
     unsigned BSIM3v32drainPerimeterGiven    :1;
     unsigned BSIM3v32sourcePerimeterGiven   :1;
+    unsigned BSIM3v32delvtoGiven   :1;
+    unsigned BSIM3v32mulu0Given   :1;
     unsigned BSIM3v32dNodePrimeSet  :1;
     unsigned BSIM3v32sNodePrimeSet  :1;
     unsigned BSIM3v32icVBSGiven :1;
@@ -1259,7 +1268,6 @@ typedef struct sBSIM3v32model
 /* device parameters */
 #define BSIM3v32_W 1
 #define BSIM3v32_L 2
-#define BSIM3v32_M 15
 #define BSIM3v32_AS 3
 #define BSIM3v32_AD 4
 #define BSIM3v32_PS 5
@@ -1272,6 +1280,9 @@ typedef struct sBSIM3v32model
 #define BSIM3v32_IC_VGS 12
 #define BSIM3v32_IC 13
 #define BSIM3v32_NQSMOD 14
+#define BSIM3v32_M 15
+#define BSIM3v32_DELVTO 16
+#define BSIM3v32_MULU0 17
 
 /* model parameters */
 #define BSIM3v32_MOD_CAPMOD          101

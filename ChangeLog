@@ -1,3 +1,7 @@
+2011-05-05  Dietmar Warning
+ * spicelib/devices/bsim3v32/*.c, *.h: allow delvto and mulu0 as instance 
+   parameter, usefull for stress amn mismatch simulations
+
 2011-05-04  Dietmar Warning
  * spicelib/parser/inpdomod.c: vbic now accept level 4 and 9
  * DEVICES: update and include HiSIM HV model.

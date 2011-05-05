@@ -37,10 +37,10 @@ BSIM3v32param (int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->BSIM3v32l = value->rValue*scale;
             here->BSIM3v32lGiven = TRUE;
             break;
-	case BSIM3v32_M:
-	    here->BSIM3v32m = value->rValue;
-	    here->BSIM3v32mGiven = TRUE;
-	    break;
+        case BSIM3v32_M:
+            here->BSIM3v32m = value->rValue;
+            here->BSIM3v32mGiven = TRUE;
+            break;
         case BSIM3v32_AS:
             here->BSIM3v32sourceArea = value->rValue*scale*scale;
             here->BSIM3v32sourceAreaGiven = TRUE;
@@ -84,6 +84,14 @@ BSIM3v32param (int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->BSIM3v32nqsMod = value->iValue;
             here->BSIM3v32nqsModGiven = TRUE;
             break;
+        case BSIM3v32_DELVTO:
+            here->BSIM3v32delvto = value->rValue;
+            here->BSIM3v32delvtoGiven = TRUE;
+            break;
+        case BSIM3v32_MULU0:
+            here->BSIM3v32mulu0 = value->rValue;
+            here->BSIM3v32mulu0Given = TRUE;
+            break;
         case BSIM3v32_IC:
             switch(value->v.numValue){
                 case 3:
@@ -105,6 +113,4 @@ BSIM3v32param (int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     }
     return(OK);
 }
-
-
 

@@ -172,7 +172,7 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
                   ((ckt->CKTmode & (MODETRAN | MODEAC|MODEDCOP |
                    MODEDCTRANCURVE)) || (!(ckt->CKTmode & MODEUIC))))
 	      {   vbs = 0.0;
-                  vgs = model->BSIM3v32type * pParam->BSIM3v32vth0 + 0.1;
+                  vgs = model->BSIM3v32type * here->BSIM3v32vth0 + 0.1;
                   vds = 0.1;
               }
           }
@@ -606,7 +606,7 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
 	  dDIBL_Sft_dVd = T3 * pParam->BSIM3v32theta0vb0;
           DIBL_Sft = dDIBL_Sft_dVd * Vds;
 
-          Vth = model->BSIM3v32type * pParam->BSIM3v32vth0 - pParam->BSIM3v32k1
+          Vth = model->BSIM3v32type * here->BSIM3v32vth0 - pParam->BSIM3v32k1
               * pParam->BSIM3v32sqrtPhi + pParam->BSIM3v32k1ox * sqrtPhis
               - pParam->BSIM3v32k2ox * Vbseff - Delt_vth - T2 + (pParam->BSIM3v32k3
               + pParam->BSIM3v32k3b * Vbseff) * tmp2 + T1 - DIBL_Sft;
@@ -641,7 +641,7 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
 	  }
 
 /* Poly Gate Si Depletion Effect */
-	  T0 = pParam->BSIM3v32vfb + pParam->BSIM3v32phi;
+	  T0 = here->BSIM3v32vfb + pParam->BSIM3v32phi;
           if ((pParam->BSIM3v32ngate > 1.e18) && (pParam->BSIM3v32ngate < 1.e25) 
                && (Vgs > T0))
 	  /* added to avoid the problem caused by ngate */
@@ -857,7 +857,7 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
               dDenomi_dVb *= T9;
 	  }
 
-          here->BSIM3v32ueff = ueff = pParam->BSIM3v32u0temp / Denomi;
+          here->BSIM3v32ueff = ueff = here->BSIM3v32u0temp / Denomi;
 	  T9 = -ueff / Denomi;
           dueff_dVg = T9 * dDenomi_dVg;
           dueff_dVd = T9 * dDenomi_dVd;
@@ -1664,10 +1664,10 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
 		    case BSIM3v32V324:
 		    case BSIM3v32V323:
 		    case BSIM3v32V322:
-		      Vfb = pParam->BSIM3v32vfbzb;
+		      Vfb = here->BSIM3v32vfbzb;
 		      break;
 		    case BSIM3v32V32:
-		      Vfb = pParam->BSIM3v32vfbzb;
+		      Vfb = here->BSIM3v32vfbzb;
 		      dVfb_dVb = dVfb_dVd = 0.0;
 		      break;
 		    default:
@@ -1865,10 +1865,10 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
 		    case BSIM3v32V324:
 		    case BSIM3v32V323:
 		    case BSIM3v32V322:
-		      Vfb = pParam->BSIM3v32vfbzb;
+		      Vfb = here->BSIM3v32vfbzb;
 		      break;
 		    case BSIM3v32V32:
-		      Vfb = pParam->BSIM3v32vfbzb;
+		      Vfb = here->BSIM3v32vfbzb;
 		      dVfb_dVb = dVfb_dVd = 0.0;
 		      break;
 		    default:	/*  old code prior to v3.2 */
@@ -2124,24 +2124,24 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
 
               /* New Charge-Thickness capMod (CTM) begins */
 	      else if (model->BSIM3v32capMod == 3)
-	      {   V3 = pParam->BSIM3v32vfbzb - Vgs_eff + VbseffCV - DELTA_3;
-		  if (pParam->BSIM3v32vfbzb <= 0.0)
-		  {   T0 = sqrt(V3 * V3 - 4.0 * DELTA_3 * pParam->BSIM3v32vfbzb);
+	      {   V3 = here->BSIM3v32vfbzb - Vgs_eff + VbseffCV - DELTA_3;
+		  if (here->BSIM3v32vfbzb <= 0.0)
+		  {   T0 = sqrt(V3 * V3 - 4.0 * DELTA_3 * here->BSIM3v32vfbzb);
 		      T2 = -DELTA_3 / T0;
 		  }
 		  else
-		  {   T0 = sqrt(V3 * V3 + 4.0 * DELTA_3 * pParam->BSIM3v32vfbzb);
+		  {   T0 = sqrt(V3 * V3 + 4.0 * DELTA_3 * here->BSIM3v32vfbzb);
 		      T2 = DELTA_3 / T0;
 		  }
 
 		  T1 = 0.5 * (1.0 + V3 / T0);
-		  Vfbeff = pParam->BSIM3v32vfbzb - 0.5 * (V3 + T0);
+		  Vfbeff = here->BSIM3v32vfbzb - 0.5 * (V3 + T0);
 		  dVfbeff_dVg = T1 * dVgs_eff_dVg;
 		  dVfbeff_dVb = -T1 * dVbseffCV_dVb;
 
                   Cox = model->BSIM3v32cox;
                   Tox = 1.0e8 * model->BSIM3v32tox;
-                  T0 = (Vgs_eff - VbseffCV - pParam->BSIM3v32vfbzb) / Tox;
+                  T0 = (Vgs_eff - VbseffCV - here->BSIM3v32vfbzb) / Tox;
                   dT0_dVg = dVgs_eff_dVg / Tox;
                   dT0_dVb = -dVbseffCV_dVb / Tox;
 
@@ -2178,7 +2178,7 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
                   dCoxeff_dVg *= dTcen_dVg;
                   CoxWLcen = CoxWL * Coxeff / Cox;
 
-                  Qac0 = CoxWLcen * (Vfbeff - pParam->BSIM3v32vfbzb);
+                  Qac0 = CoxWLcen * (Vfbeff - here->BSIM3v32vfbzb);
                   QovCox = Qac0 / Coxeff;
                   dQac0_dVg = CoxWLcen * dVfbeff_dVg
                             + QovCox * dCoxeff_dVg;
@@ -2226,7 +2226,7 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
 		  dDeltaPhi_dVb = dDeltaPhi_dVg * dVgsteff_dVb;
 		  /* End of delta Phis */
 
-                  T3 = 4.0 * (Vth - pParam->BSIM3v32vfbzb - pParam->BSIM3v32phi);
+                  T3 = 4.0 * (Vth - here->BSIM3v32vfbzb - pParam->BSIM3v32phi);
                   Tox += Tox;
                   if (T3 >= 0.0)
                   {  
@@ -2697,9 +2697,9 @@ line755:
               here->BSIM3v32cqbb = -(here->BSIM3v32cqgb + here->BSIM3v32cqdb
                               + here->BSIM3v32cqsb);
 
-              gtau_drift = fabs(pParam->BSIM3v32tconst * qcheq) * ScalingFactor;
+              gtau_drift = fabs(here->BSIM3v32tconst * qcheq) * ScalingFactor;
               T0 = pParam->BSIM3v32leffCV * pParam->BSIM3v32leffCV;
-              gtau_diff = 16.0 * pParam->BSIM3v32u0temp * model->BSIM3v32vtm / T0
+              gtau_diff = 16.0 * here->BSIM3v32u0temp * model->BSIM3v32vtm / T0
 			* ScalingFactor;
               here->BSIM3v32gtau =  gtau_drift + gtau_diff;
           }
@@ -2836,9 +2836,9 @@ line755:
               }
               else
               {   if (qcheq > 0.0)
-                      T0 = pParam->BSIM3v32tconst * qdef * ScalingFactor;
+                      T0 = here->BSIM3v32tconst * qdef * ScalingFactor;
                   else
-                      T0 = -pParam->BSIM3v32tconst * qdef * ScalingFactor;
+                      T0 = -here->BSIM3v32tconst * qdef * ScalingFactor;
                   ggtg = here->BSIM3v32gtg = T0 * here->BSIM3v32cqgb;
                   ggtd = here->BSIM3v32gtd = T0 * here->BSIM3v32cqdb;
                   ggts = here->BSIM3v32gts = T0 * here->BSIM3v32cqsb;
@@ -2952,9 +2952,9 @@ line755:
               }
               else
               {   if (qcheq > 0.0)
-                      T0 = pParam->BSIM3v32tconst * qdef * ScalingFactor;
+                      T0 = here->BSIM3v32tconst * qdef * ScalingFactor;
                   else
-                      T0 = -pParam->BSIM3v32tconst * qdef * ScalingFactor;
+                      T0 = -here->BSIM3v32tconst * qdef * ScalingFactor;
                   ggtg = here->BSIM3v32gtg = T0 * here->BSIM3v32cqgb;
                   ggts = here->BSIM3v32gtd = T0 * here->BSIM3v32cqdb;
                   ggtd = here->BSIM3v32gts = T0 * here->BSIM3v32cqsb;
@@ -3105,7 +3105,7 @@ line850:
 	  dsxpart_dVd = dsxpart_dVg = dsxpart_dVb = dsxpart_dVs = 0.0;
 
           if (here->BSIM3v32nqsMod)
-              here->BSIM3v32gtau = 16.0 * pParam->BSIM3v32u0temp * model->BSIM3v32vtm 
+              here->BSIM3v32gtau = 16.0 * here->BSIM3v32u0temp * model->BSIM3v32vtm 
                               / pParam->BSIM3v32leffCV / pParam->BSIM3v32leffCV
 			      * ScalingFactor;
 	  else
