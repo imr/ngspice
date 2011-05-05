@@ -56,6 +56,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 			}
 		break;
 		case 4:
+		case 9:
 			 type = INPtypelook("VBIC");
                 if(type < 0) {
                     err = INPmkTemp(
@@ -87,7 +88,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 #endif
 		default: /* placeholder; use level 4 for the next model */
 		err = INPmkTemp(
-		  "Only BJT levels 1-2, 4,6,7,8 are supported in this binary\n");
+		  "Only BJT levels 1-2, 4,6-9 are supported in this binary\n");
                 break;
 
 	}	

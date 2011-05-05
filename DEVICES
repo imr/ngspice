@@ -368,12 +368,12 @@ will be updated every time the device specific code is altered or changed to ref
         
      Ver:    N/A
      Class:  Q
-     Level:  4
+     Level:  4 & 9
      Dir:    devices/vbic
      Status:
 
-     This is the Vertical Bipolar InterCompany model. The author of VBIC is
-     Colin McAndrew mcandrew@ieee.org
+     This is the Vertical Bipolar InterCompany model in version 1.2. The author 
+     of VBIC is Colin McAndrew mcandrew@ieee.org.
      Spice3 Implementation: Dietmar Warning DAnalyse GmbH
      Web Site: http://www.designers-guide.com/VBIC/index.html
 

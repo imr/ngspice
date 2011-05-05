@@ -1,4 +1,5 @@
 2011-05-04  Dietmar Warning
+ * spicelib/parser/inpdomod.c: vbic now accept level 4 and 9
  * DEVICES: update and include HiSIM HV model.
  
 2011-05-03  Holger Vogt
