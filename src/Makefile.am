@@ -115,12 +115,6 @@ endif
 ngspice_LDADD += \
 	frontend/plotting/libplotting.la
 
-if XSPICE_WANTED
-ngspice_LDADD += \
-	xspice/cm/libcmxsp.la \
-	xspice/mif/libmifxsp.la
-endif
-
 ngspice_LDADD += \
 	spicelib/devices/dev.lo \
 	$(DYNAMIC_DEVICELIBS)
@@ -144,6 +138,8 @@ ngspice_LDADD += \
 
 if XSPICE_WANTED
 ngspice_LDADD += \
+	xspice/cm/libcmxsp.la \
+	xspice/mif/libmifxsp.la \
 	xspice/evt/libevtxsp.la \
 	xspice/enh/libenhxsp.la \
 	xspice/ipc/libipcxsp.la \

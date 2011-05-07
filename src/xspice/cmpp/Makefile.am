@@ -17,11 +17,11 @@ cmpp_SOURCES = cmpp.h main.c pp_ifs.c pp_lst.c pp_mod.c read_ifs.c util.c \
 
 mod_lex.o : mod_yacc.h
 mod_lex.c : mod_lex.l
-	$(LEX)  -o $@  $<
+	$(LEX)  -o$@  $<
 
 ifs_lex.o : ifs_yacc.h
 ifs_lex.c : ifs_lex.l
-	$(LEX)  -o $@  $<
+	$(LEX)  -o$@  $<
 
 ifs_yacc.c ifs_yacc.h : ifs_yacc.y
 	$(BISON) $(BISONFLAGS) -d -o ifs_yacc.c $<

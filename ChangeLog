@@ -1,3 +1,9 @@
+2011-05-07  Dietmar Warning
+ * src/Makefile.am: change lib order for linking with gcc4 to prevent 
+   unresolved symbols
+ * xspice/cmpp/Makefile.am: there are flex'es, which not accept "-o outfile"
+   but accept "-ooutfile"
+
 2011-05-05  Dietmar Warning
  * spicelib/devices/bsim3v32/*.c, *.h: allow delvto and mulu0 as instance 
    parameter, usefull for stress amn mismatch simulations
