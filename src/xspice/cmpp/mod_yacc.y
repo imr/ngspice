@@ -425,48 +425,48 @@ c_char			: TOK_IDENTIFIER {fputs (mod_yytext, mod_yyout);}
 			;
 
 macro			: TOK_INIT
-			   {fprintf (mod_yyout, "private->circuit.init");}
+			   {fprintf (mod_yyout, "mif_private->circuit.init");}
 			| TOK_ARGS
-			   {fprintf (mod_yyout, "Mif_Private_t *private");}
+			   {fprintf (mod_yyout, "Mif_Private_t *mif_private");}
 			| TOK_ANALYSIS
-			   {fprintf (mod_yyout, "private->circuit.anal_type");}
+			   {fprintf (mod_yyout, "mif_private->circuit.anal_type");}
 			| TOK_NEW_TIMEPOINT
-			   {fprintf (mod_yyout, "private->circuit.anal_init");}
+			   {fprintf (mod_yyout, "mif_private->circuit.anal_init");}
 			| TOK_CALL_TYPE
-			   {fprintf (mod_yyout, "private->circuit.call_type");}
+			   {fprintf (mod_yyout, "mif_private->circuit.call_type");}
 			| TOK_TIME
-			   {fprintf (mod_yyout, "private->circuit.time");}
+			   {fprintf (mod_yyout, "mif_private->circuit.time");}
 			| TOK_RAD_FREQ
-			   {fprintf (mod_yyout, "private->circuit.frequency");}
+			   {fprintf (mod_yyout, "mif_private->circuit.frequency");}
 			| TOK_TEMPERATURE
-			   {fprintf (mod_yyout, "private->circuit.temperature");}
+			   {fprintf (mod_yyout, "mif_private->circuit.temperature");}
 			| TOK_T TOK_LPAREN buffered_c_code TOK_RPAREN
-			   {fprintf (mod_yyout, "private->circuit.t[%s]", $3);}
+			   {fprintf (mod_yyout, "mif_private->circuit.t[%s]", $3);}
 			| TOK_PARAM TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, PARAM);
-			    fprintf (mod_yyout, "private->param[%d]->element[%s]",
+			    fprintf (mod_yyout, "mif_private->param[%d]->element[%s]",
 				     i, subscript ($3));
 			    put_type (mod_yyout, mod_ifs_table->param[i].type);
 			   }    
 			| TOK_PARAM_SIZE TOK_LPAREN id TOK_RPAREN
 			   {int i = valid_id ($3, PARAM);
-			    fprintf (mod_yyout, "private->param[%d]->size", i);}
+			    fprintf (mod_yyout, "mif_private->param[%d]->size", i);}
 			| TOK_PARAM_NULL TOK_LPAREN id TOK_RPAREN
 			   {int i = valid_id ($3, PARAM);
-			    fprintf (mod_yyout, "private->param[%d]->is_null", i);}
+			    fprintf (mod_yyout, "mif_private->param[%d]->is_null", i);}
 			| TOK_PORT_SIZE TOK_LPAREN id TOK_RPAREN
 			   {int i = valid_id ($3, CONN);
-			    fprintf (mod_yyout, "private->conn[%d]->size", i);}
+			    fprintf (mod_yyout, "mif_private->conn[%d]->size", i);}
 			| TOK_PORT_NULL TOK_LPAREN id TOK_RPAREN
 			   {int i = valid_id ($3, CONN);
-			    fprintf (mod_yyout, "private->conn[%d]->is_null", i);}
+			    fprintf (mod_yyout, "mif_private->conn[%d]->is_null", i);}
 			| TOK_PARTIAL TOK_LPAREN subscriptable_id TOK_COMMA
 			  subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
 			    int j = valid_subid ($5, CONN);
 			    check_dir (i, OUT, "PARTIAL");
 			    check_dir (j, IN, "PARTIAL");
-			    fprintf (mod_yyout, "private->conn[%d]->port[%s]->partial[%d].port[%s]",
+			    fprintf (mod_yyout, "mif_private->conn[%d]->port[%s]->partial[%d].port[%s]",
 				     i, subscript($3), j, subscript($5));}
 			| TOK_AC_GAIN TOK_LPAREN subscriptable_id TOK_COMMA
 			  subscriptable_id TOK_RPAREN
@@ -475,12 +475,12 @@ macro			: TOK_INIT
 			    check_dir (i, OUT, "AC_GAIN");
 			    check_dir (j, IN, "AC_GAIN");
 			    fprintf (mod_yyout, 
-				     "private->conn[%d]->port[%s]->ac_gain[%d].port[%s]",
+				     "mif_private->conn[%d]->port[%s]->ac_gain[%d].port[%s]",
 				     i, subscript($3), j, subscript($5));}
 			| TOK_STATIC_VAR TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, STATIC_VAR);
 			    fprintf (mod_yyout, 
-				    "private->inst_var[%d]->element[%s]",
+				    "mif_private->inst_var[%d]->element[%s]",
 				     i, subscript($3));
 			    if (mod_ifs_table->inst_var[i].is_array
 				&& !($3.has_subscript)) {
@@ -491,29 +491,29 @@ macro			: TOK_INIT
 			    } }
 			| TOK_STATIC_VAR_SIZE TOK_LPAREN id TOK_RPAREN
 			   {int i = valid_subid ($3, STATIC_VAR);
-			    fprintf (mod_yyout, "private->inst_var[%d]->size",
+			    fprintf (mod_yyout, "mif_private->inst_var[%d]->size",
 				    i);}
 			| TOK_STATIC_VAR_INST TOK_LPAREN id TOK_RPAREN
 			   {int i = valid_subid ($3, STATIC_VAR);
-			    fprintf (mod_yyout, "private->inst_var[%d]",
+			    fprintf (mod_yyout, "mif_private->inst_var[%d]",
 				    i);}
 			| TOK_OUTPUT_DELAY TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
 			    check_dir (i, OUT, "OUTPUT_DELAY");
 			    fprintf (mod_yyout, 
-				     "private->conn[%d]->port[%s]->delay", i,
+				     "mif_private->conn[%d]->port[%s]->delay", i,
 				     subscript($3));}
 			| TOK_CHANGED TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
 			    check_dir (i, OUT, "CHANGED");
 			    fprintf (mod_yyout, 
-				     "private->conn[%d]->port[%s]->changed", i,
+				     "mif_private->conn[%d]->port[%s]->changed", i,
 				     subscript($3));}
 			| TOK_INPUT TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
  			    check_dir (i, IN, "INPUT");
 			    fprintf (mod_yyout, 
-				     "private->conn[%d]->port[%s]->input",
+				     "mif_private->conn[%d]->port[%s]->input",
 				     i, subscript($3));
 			    put_conn_type (mod_yyout, 
 			       mod_ifs_table->conn[i].allowed_port_type[0]);}
@@ -521,19 +521,19 @@ macro			: TOK_INIT
 			   {int i = valid_subid ($3, CONN);
  			    check_dir (i, IN, "INPUT_TYPE");
 			    fprintf (mod_yyout, 
-				     "private->conn[%d]->port[%s]->type_str",
+				     "mif_private->conn[%d]->port[%s]->type_str",
 				     i, subscript($3)); }
 			| TOK_OUTPUT_TYPE TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
  			    check_dir (i, OUT, "OUTPUT_TYPE");
 			    fprintf (mod_yyout, 
-				     "private->conn[%d]->port[%s]->type_str",
+				     "mif_private->conn[%d]->port[%s]->type_str",
 				     i, subscript($3)); }
 			| TOK_INPUT_STRENGTH TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
  			    check_dir (i, IN, "INPUT_STRENGTH");
 			    fprintf (mod_yyout, 
-				     "((Digital_t*)(private->conn[%d]->port[%s]->input",
+				     "((Digital_t*)(mif_private->conn[%d]->port[%s]->input",
 				     i, subscript($3));
 			    put_conn_type (mod_yyout, 
 			       mod_ifs_table->conn[i].allowed_port_type[0]);
@@ -542,7 +542,7 @@ macro			: TOK_INIT
 			   {int i = valid_subid ($3, CONN);
  			    check_dir (i, IN, "INPUT_STATE");
 			    fprintf (mod_yyout, 
-				     "((Digital_t*)(private->conn[%d]->port[%s]->input", 
+				     "((Digital_t*)(mif_private->conn[%d]->port[%s]->input",
 				     i, subscript($3));
 			    put_conn_type (mod_yyout, 
 			       mod_ifs_table->conn[i].allowed_port_type[0]);
@@ -551,7 +551,7 @@ macro			: TOK_INIT
 			   {int i = valid_subid ($3, CONN);
  			    check_dir (i, OUT, "OUTPUT");
 			    fprintf (mod_yyout, 
-				     "private->conn[%d]->port[%s]->output", 
+				     "mif_private->conn[%d]->port[%s]->output",
 				     i, subscript($3));
 			    put_conn_type (mod_yyout, 
 			       mod_ifs_table->conn[i].allowed_port_type[0]);}
@@ -559,7 +559,7 @@ macro			: TOK_INIT
 			   {int i = valid_subid ($3, CONN);
  			    check_dir (i, OUT, "OUTPUT_STRENGTH");
 			    fprintf (mod_yyout, 
-				     "((Digital_t*)(private->conn[%d]->port[%s]->output",
+				     "((Digital_t*)(mif_private->conn[%d]->port[%s]->output",
 				     i, subscript($3));
 			    put_conn_type (mod_yyout, 
 			       mod_ifs_table->conn[i].allowed_port_type[0]);
@@ -568,7 +568,7 @@ macro			: TOK_INIT
 			   {int i = valid_subid ($3, CONN);
  			    check_dir (i, OUT, "OUTPUT_STATE");
 			    fprintf (mod_yyout, 
-				     "((Digital_t*)(private->conn[%d]->port[%s]->output",
+				     "((Digital_t*)(mif_private->conn[%d]->port[%s]->output",
 				     i, subscript($3));
 			    put_conn_type (mod_yyout, 
 			       mod_ifs_table->conn[i].allowed_port_type[0]);
@@ -576,22 +576,22 @@ macro			: TOK_INIT
 			| TOK_OUTPUT_CHANGED TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
 			    fprintf (mod_yyout, 
-				     "private->conn[%d]->port[%s]->changed", i,
+				     "mif_private->conn[%d]->port[%s]->changed", i,
 				     subscript($3));}
 			| TOK_LOAD TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
 			    fprintf (mod_yyout, 
-				     "private->conn[%d]->port[%s]->load", i,
+				     "mif_private->conn[%d]->port[%s]->load", i,
 				     subscript($3));}
 			| TOK_TOTAL_LOAD TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
 			    fprintf (mod_yyout, 
-				     "private->conn[%d]->port[%s]->total_load", i,
+				     "mif_private->conn[%d]->port[%s]->total_load", i,
 				     subscript($3));}
 			| TOK_MESSAGE TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
 			    fprintf (mod_yyout, 
-				     "private->conn[%d]->port[%s]->msg", i,
+				     "mif_private->conn[%d]->port[%s]->msg", i,
 				     subscript($3));}
 			;
 

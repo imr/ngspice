@@ -163,8 +163,8 @@ get_output( ARGS, double x )
   for ( i = 1; i < size; i++ )
     if ( x > PARAM(x[i-1]) && x <= PARAM(x[i]) )
       {
-	slope  = get_slope( private, i );
-	result = slope*x + y_intercept( private, i, slope );
+	slope  = get_slope( mif_private, i );
+	result = slope*x + y_intercept( mif_private, i, slope );
 	break;
       }
   return result;
@@ -194,8 +194,8 @@ cm_multi_input_pwl(ARGS)
 	  and/nand: controlling input is chosen on the basis of the smallest value
 	  or/nor:   controlling input is chosen on the basis of the largest value
       */
-      if ( strstr( model, "and" ) ) output = get_output( private, get_smallest_input( private ) );
-      else                          output = get_output( private, get_largest_input( private )  );
+      if (strstr(model, "and")) output = get_output(mif_private, get_smallest_input(mif_private));
+      else                      output = get_output(mif_private, get_largest_input(mif_private));
 
       OUTPUT(out) = output;
     }

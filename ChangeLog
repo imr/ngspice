@@ -1,19 +1,24 @@
+2011-05-08  Robert Larice
+ * src/xspice/cmpp/mod_yacc.y ,
+ * src/xspice/icm/analog/multi_input_pwl/cfunc.mod :
+    rename variable private  -->  mif_private
+
 2011-05-07  Dietmar Warning
- * src/Makefile.am: change lib order for linking with gcc4 to prevent 
+ * src/Makefile.am: change lib order for linking with gcc4 to prevent
    unresolved symbols
  * xspice/cmpp/Makefile.am: there are flex'es, which not accept "-o outfile"
    but accept "-ooutfile"
 
 2011-05-05  Dietmar Warning
- * spicelib/devices/bsim3v32/*.c, *.h: allow delvto and mulu0 as instance 
+ * spicelib/devices/bsim3v32/*.c, *.h: allow delvto and mulu0 as instance
    parameter, usefull for stress amn mismatch simulations
 
 2011-05-04  Dietmar Warning
  * spicelib/parser/inpdomod.c: vbic now accept level 4 and 9
  * DEVICES: update and include HiSIM HV model.
- 
+
 2011-05-03  Holger Vogt
- * x11.c, graph.h: move #define NUMCOLORS to x11.c to avoid redefinition 
+ * x11.c, graph.h: move #define NUMCOLORS to x11.c to avoid redefinition
    under MS Visual Studion
 
 2011-05-01  Robert Larice
