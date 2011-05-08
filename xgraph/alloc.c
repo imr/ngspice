@@ -13,7 +13,10 @@
  *	void		MemChain();
  *
  * $Log$
- * Revision 1.2  2011-04-27 18:30:17  rlar
+ * Revision 1.3  2011-05-08 08:54:21  rlar
+ * rename macros public and private  -->  PUBLIC and PRIVATE
+ *
+ * Revision 1.2  2011/04/27 18:30:17  rlar
  * code cleanup
  *
  * Revision 1.1  2004/01/25 09:00:49  pnenzi
@@ -85,21 +88,21 @@ extern char *memset();
 #define MAX(a, b) 		((a) < (b) ? (b) : (a))
 #endif				/* MAX */
 
-#ifndef private
-#define private static
-#endif				/* private */
+#ifndef PRIVATE
+#define PRIVATE static
+#endif
 
-#ifndef public
-#define public
-#endif				/* public */
+#ifndef PUBLIC
+#define PUBLIC
+#endif
 
 
 #define SIG_GOOD	0x01020304
 #define SIG_FREE	0x04030201
 #define OVERHEAD	(sizeof(long) + sizeof(unsigned))
 
-private unsigned memused = 0;
-private unsigned memalloc = 0;
+PRIVATE unsigned memused = 0;
+PRIVATE unsigned memalloc = 0;
 
 #ifdef __STDC__
 typedef void *Ptr;
@@ -112,7 +115,7 @@ typedef char *Ptr;
 /* _chaina():
  *	Check things for validity and allocate space
  */
-private Ptr
+PRIVATE Ptr
 _chaina(n, routine, action, tptr)
 unsigned n;
 
@@ -157,7 +160,7 @@ Ptr     tptr;
 /* _chainc():
  *	Check the pointer given
  */
-private unsigned
+PRIVATE unsigned
 _chainc(ptr, action)
 char  **ptr;
 char   *action;
@@ -186,7 +189,7 @@ char   *action;
 /* Malloc():
  *	real alloc
  */
-public  Ptr
+PUBLIC  Ptr
 Malloc(n)
 unsigned n;
 {
@@ -199,7 +202,7 @@ unsigned n;
 /* Calloc():
  *	real alloc
  */
-public  Ptr
+PUBLIC  Ptr
 Calloc(n, sz)
 unsigned n,
         sz;
@@ -217,7 +220,7 @@ unsigned n,
 /* Realloc():
  *	real alloc
  */
-public  Ptr
+PUBLIC  Ptr
 Realloc(ptr, n)
 Ptr     ptr;
 unsigned n;
@@ -234,7 +237,7 @@ unsigned n;
 /* Free():
  *	free memory counting the number of bytes freed
  */
-public void
+PUBLIC void
 Free(ptr)
 Ptr     ptr;
 {
@@ -250,7 +253,7 @@ Ptr     ptr;
 /* MemChain():
  *	Dump the chain
  */
-public void
+PUBLIC void
 MemChain()
 {
     if (memused == 0 && memalloc == 0)
@@ -267,7 +270,7 @@ MemChain()
 /* MemStat():
  *	return the amount of memory in use
  */
-public unsigned
+PUBLIC unsigned
 MemStat()
 {
     return (memused);
@@ -277,7 +280,7 @@ MemStat()
 /* MemPtr():
  *	return the amount of memory used by the pointer
  */
-public unsigned
+PUBLIC unsigned
 MemPtr(ptr)
 Ptr     ptr;
 {

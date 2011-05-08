@@ -1,4 +1,8 @@
 2011-05-08  Robert Larice
+ * xgraph/alloc.c :
+    rename macros public and private  -->  PUBLIC and PRIVATE
+
+2011-05-08  Robert Larice
  * src/xspice/cmpp/mod_yacc.y ,
  * src/xspice/icm/analog/multi_input_pwl/cfunc.mod :
     rename variable private  -->  mif_private
