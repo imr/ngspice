@@ -20,9 +20,8 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTfndAnal(CKTcircuit *ckt, int *analIndex, JOB **anal, IFuid name, TSKtask *inTask, IFuid taskName)
+CKTfndAnal(CKTcircuit *ckt, int *analIndex, JOB **anal, IFuid name, TSKtask *task, IFuid taskName)
 {
-    TSKtask *task = /* fixme, drop that */ inTask;
     JOB *here;
 
     NG_IGNORE(ckt);

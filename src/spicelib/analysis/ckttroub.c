@@ -16,9 +16,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 extern SPICEanalysis *analInfo[];
 
 char *
-CKTtrouble(CKTcircuit *cktp, char *optmsg)
+CKTtrouble(CKTcircuit *ckt, char *optmsg)
 {
-    CKTcircuit	*ckt = /* fixme, drop that */ cktp;
     char	msg_buf[513];
     char	*emsg;
     TRCV	*cv;

@@ -20,9 +20,8 @@ Author: 1985 Thomas L. Quarles
 
 /* should just call CKTnewEQ and set node type afterwards */
 int
-CKTnewNode(CKTcircuit *inCkt, CKTnode **node, IFuid name)
+CKTnewNode(CKTcircuit *ckt, CKTnode **node, IFuid name)
 {
-    CKTcircuit *ckt = /* fixme, drop that */ inCkt;
     if(!(ckt->CKTnodes)) { /*  starting the list - allocate both ground and 1 */
         ckt->CKTnodes = TMALLOC(CKTnode, 1);
         if(ckt->CKTnodes == NULL) return(E_NOMEM);

@@ -16,10 +16,9 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTdltMod(CKTcircuit *cktp, GENmodel *modPtr)
+CKTdltMod(CKTcircuit *ckt, GENmodel *m)
 {
-    CKTcircuit *ckt = /* fixme, drop that */ cktp;
-    GENmodel *m = /* fixme, drop that */ modPtr, *mod, **prevp;
+    GENmodel *mod, **prevp;
     GENinstance *h, *next_i;
     int	error;
 

@@ -1,4 +1,24 @@
 2011-05-08  Robert Larice
+ * src/frontend/shyu.c ,
+ * src/frontend/spiceif.c ,
+ * src/spicelib/analysis/cktdest.c ,
+ * src/spicelib/analysis/cktdltm.c ,
+ * src/spicelib/analysis/cktdltn.c ,
+ * src/spicelib/analysis/cktdojob.c ,
+ * src/spicelib/analysis/cktfnda.c ,
+ * src/spicelib/analysis/cktgrnd.c ,
+ * src/spicelib/analysis/cktneweq.c ,
+ * src/spicelib/analysis/cktnewn.c ,
+ * src/spicelib/analysis/cktparam.c ,
+ * src/spicelib/analysis/ckttroub.c ,
+ * src/spicelib/devices/cktask.c ,
+ * src/spicelib/devices/cktbindnode.c ,
+ * src/spicelib/devices/cktcrte.c ,
+ * src/spicelib/devices/cktfinddev.c ,
+ * src/xspice/ipc/ipctiein.c :
+    mop up some fixme comments
+
+2011-05-08  Robert Larice
  * src/frontend/help/x11disp.c :
     cleanup Xt usage
 

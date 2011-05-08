@@ -18,9 +18,8 @@ CKTdltNod(CKTcircuit *ckt, CKTnode *node)
 }
 
 int
-CKTdltNNum(CKTcircuit *cktp, int num)
+CKTdltNNum(CKTcircuit *ckt, int num)
 {
-    CKTcircuit *ckt = /* fixme, drop that */  cktp;
     CKTnode *n, *prev, *node, *sprev;
     int	error;
 

@@ -25,9 +25,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 
 int
-if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
+if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
 {
-    CKTcircuit *ckt = /* fixme, drop that */ t;
     JOB *senseJob;
     JOB *acJob;
     JOB *opJob;

@@ -161,8 +161,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
     ft_curckt->ci_curTask = ft_curckt->ci_defTask;
     
     INPpas1( ckt, (card *) deck->li_next, *tab);
-    INPpas2( ckt, (card *) deck->li_next,
-            (INPtables *) *tab,ft_curckt->ci_defTask);
+    INPpas2( ckt, (card *) deck->li_next, *tab, ft_curckt->ci_defTask);
     INPkillMods();
 
     /* INPpas2 has been modified to ignore .NODESET and .IC
@@ -170,7 +169,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
      * nodeset/ic of non-existant nodes.  */
 
     INPpas3(ckt, (card *) deck->li_next,
-            (INPtables *) *tab,ft_curckt->ci_defTask, ft_sim->nodeParms,
+            *tab, ft_curckt->ci_defTask, ft_sim->nodeParms,
 	    ft_sim->numNodeParms);
 
 #ifdef XSPICE
@@ -194,9 +193,8 @@ if_inpdeck(struct line *deck, INPtables **tab)
  * typed at the keyboard, error in the simulation, etc). args should
  * be the entire command line, e.g. "tran 1 10 20 uic" */
 int
-if_run(CKTcircuit *t, char *what, wordlist *args, INPtables *tab)
+if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
 {
-    CKTcircuit *ckt = /* fixme, drop that */ t;
     int err;
     struct line deck;
     char buf[BSIZE_SP];
@@ -386,7 +384,6 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
 {
     IFvalue pval;
     int err, i;
-    CKTcircuit *cc = /* fixme, drop that */ ckt;
     char **vv;
     int which = -1;
 
@@ -494,12 +491,12 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
     }
 
 #if (0)
-     if ((err = ft_sim->setAnalysisParm (cc, ft_curckt->ci_curOpt,
+     if ((err = ft_sim->setAnalysisParm (ckt, ft_curckt->ci_curOpt,
              ft_sim->analyses[which]->analysisParms[i].id, &pval,
              NULL)) != OK)
          ft_sperror(err, "setAnalysisParm(options) ci_curOpt");
 #else /*CDHW*/
-     if ((err = ft_sim->setAnalysisParm (cc, ft_curckt->ci_defOpt,
+     if ((err = ft_sim->setAnalysisParm (ckt, ft_curckt->ci_defOpt,
              ft_sim->analyses[which]->analysisParms[i].id, &pval,
              NULL)) != OK)
          ft_sperror(err, "setAnalysisParm(options) ci_curOpt");
@@ -537,20 +534,14 @@ if_dump(CKTcircuit *ckt, FILE *file)
 {
     NG_IGNORE(ckt);
 
-    /*void *cc = (void *) ckt;*/
-
     fprintf(file,"diagnostic output dump unavailable.");
-    return;
 }
 
 void
 if_cktfree(CKTcircuit *ckt, INPtables *tab)
 {
-    CKTcircuit *cc = /* fixme, drop that */ ckt;
-
-    ft_sim->deleteCircuit (cc);
+    ft_sim->deleteCircuit (ckt);
     INPtabEnd(tab);
-    return;
 }
 
 /* Return a string describing an error code. */
@@ -575,7 +566,7 @@ if_errstring(int code)
  */
 static int 
 finddev_special(
-    CKTcircuit *ck,
+    CKTcircuit *ckt,
     char *name,
     GENinstance **devptr,
     GENmodel **modptr,
@@ -584,7 +575,7 @@ finddev_special(
     int err;
     int type = -1;
 
-    err = ft_sim->findInstance (ck, &type, devptr, name, NULL, NULL);
+    err = ft_sim->findInstance (ckt, &type, devptr, name, NULL, NULL);
     if(err == OK)
     {
      *device_or_model=0;
@@ -592,7 +583,7 @@ finddev_special(
     }
     type = -1;
     *devptr = NULL;
-    err = ft_sim->findModel (ck, &type, modptr, name);
+    err = ft_sim->findModel (ckt, &type, modptr, name);
     if(err == OK)
     {
      *device_or_model=1;

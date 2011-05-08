@@ -19,10 +19,9 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTnewEq(CKTcircuit *inCkt, CKTnode **node, IFuid name)
+CKTnewEq(CKTcircuit *ckt, CKTnode **node, IFuid name)
 {
     CKTnode *mynode;
-    CKTcircuit *ckt = /* fixme, drop that */ inCkt;
     int error;
 
     error = CKTmkNode(ckt,&mynode);

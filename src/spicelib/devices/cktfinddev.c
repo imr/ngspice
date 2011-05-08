@@ -11,9 +11,8 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTfndDev(CKTcircuit *Ckt, int *type, GENinstance **fast, IFuid name, GENmodel *modfast, IFuid modname)
+CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *modfast, IFuid modname)
 {
-    CKTcircuit *ckt= /* fixme, drop that */ Ckt;
    GENinstance *here;
    GENmodel *mods;
 

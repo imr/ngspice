@@ -19,13 +19,12 @@ int
 CKTparam(CKTcircuit *ckt, GENinstance *fast, int param, IFvalue *val, IFvalue *selector)
 {
     int type;
-    GENinstance *myfast = /*fixme*/ fast;
 
     NG_IGNORE(ckt);
 
-    type = myfast->GENmodPtr->GENmodType;
+    type = fast->GENmodPtr->GENmodType;
     if(DEVices[type]->DEVparam) {
-        return(DEVices[type]->DEVparam (param, val, myfast, selector));
+        return(DEVices[type]->DEVparam (param, val, fast, selector));
     } else {
         return(E_BADPARM);
     }

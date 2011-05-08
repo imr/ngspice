@@ -17,10 +17,8 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTground(CKTcircuit *inCkt, CKTnode **node, IFuid name)
+CKTground(CKTcircuit *ckt, CKTnode **node, IFuid name)
 {
-    CKTcircuit *ckt = /* fixme, drop that */ inCkt;
-
     if(ckt->CKTnodes) {
         if(ckt->CKTnodes->name) {
             /*already exists - keep old name, but return it */

@@ -17,11 +17,10 @@ Author: 1985 Thomas L. Quarles
 #include "dev.h"
 
 int
-CKTbindNode(CKTcircuit *ckt, GENinstance *fast, int term, CKTnode *node)
+CKTbindNode(CKTcircuit *ckt, GENinstance *instance, int term, CKTnode *node)
 {
     int mappednode;
     SPICEdev **devs;
-    GENinstance *instance = /*fixme*/ fast;
     int type = instance->GENmodPtr->GENmodType;
 
     NG_IGNORE(ckt);
