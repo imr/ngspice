@@ -90,7 +90,9 @@ void INP2Z(CKTcircuit *ckt, INPtables * tab, card * current)
     IFC(bindNode, (ckt, fast, 2, node2));
     IFC(bindNode, (ckt, fast, 3, node3));
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
-    if ( (waslead) && ( thismodel->INPmodType != INPtypelook("MES") ) ) {
+  /* use type - not thismodel->INPmodType as it might not exist! */
+    /* FIXME: Why do we need checking for type here? */
+    if ( (waslead) && ( type /*thismodel->INPmodType*/ != INPtypelook("MES") ) ) {
 	ptemp.rValue = leadval;
 	GCA(INPpName, ("area", &ptemp, ckt, type, fast));
     }

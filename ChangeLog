@@ -1,3 +1,8 @@
+2011-05-15  Holger Vogt
+ * inp2z.c: remove checking for thismodel->INPmodType
+   because this might lead to segfault if the user supplies
+   a wrong ZXXXXX input
+
 2011-05-08  Robert Larice
  * src/frontend/shyu.c ,
  * src/frontend/spiceif.c ,
