@@ -1,5 +1,9 @@
 2011-05-19  Robert Larice
  * autogen.sh :
+    update --adms3
+
+2011-05-19  Robert Larice
+ * autogen.sh :
     add --adms3 to autogen.sh
 
 2011-05-19  Robert Larice
