@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.18  2011-05-19 10:11:06  r29173
+  Revision 1.19  2011-05-19 14:26:58  r29173
+  remove usage of ngspiceVersion.xml in autogen.sh
+
+  Revision 1.18  2011/05/19 10:11:06  r29173
   all xml files are concatenated into one single file ngspice.xml - except ngspiceMakefile.am.xml
 
   Revision 1.17  2011/02/21 19:40:23  dwarning
@@ -93,8 +96,40 @@
 
 
 <admst:template match="code">
-<admst:value-of select="attribute[name='ngspicename']/value"/>
-<admst:variable name="module" select="%s"/>
+<admst:choose>
+  <admst:when test="[name='hic0_full']">
+    <admst:new datatype="attribute" arguments="ngspicename">
+      <admst:push into="../attribute" select="." onduplicate="abort"/>
+      <admst:value-to select="value" value="hicum0"/>
+    </admst:new>
+  </admst:when>
+  <admst:when test="[name='hic2_full']">
+    <admst:new datatype="attribute" arguments="ngspicename">
+      <admst:push into="../attribute" select="." onduplicate="abort"/>
+      <admst:value-to select="value" value="hicum2"/>
+    </admst:new>
+  </admst:when>
+  <admst:when test="[name='bjt504_va']">
+    <admst:new datatype="attribute" arguments="ngspicename">
+      <admst:push into="../attribute" select="." onduplicate="abort"/>
+      <admst:value-to select="value" value="mextram"/>
+    </admst:new>
+  </admst:when>
+  <admst:when test="[name='psp102']">
+    <admst:new datatype="attribute" arguments="ngspicename">
+      <admst:push into="../attribute" select="." onduplicate="abort"/>
+      <admst:value-to select="value" value="psp102"/>
+    </admst:new>
+  </admst:when>
+  <admst:otherwise>
+    <admst:new datatype="attribute" arguments="ngspicename">
+      <admst:push into="../attribute" select="." onduplicate="abort"/>
+      <admst:value-of select="../name"/>
+      <admst:value-to select="value" value="%s"/>
+    </admst:new>
+  </admst:otherwise>
+</admst:choose>
+<admst:variable name="module" select="%(attribute[name='ngspicename']/value)"/>
 ## Process this file with automake to produce Makefile.in
 
 ADMSXMLINTERFACE=\$(srcdir)/../admst
@@ -193,11 +228,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 <admst:for-each select="/module">
   <admst:open file="Makefile.am">
-    <admst:value-of select="/simulator/package_string"/>
-    <admst:text format="##\n## Interface: %s\n"/>
-    <admst:value-of select="/simulator/currentdate"/>
-    <admst:value-of select="/simulator/fullname"/>
-    <admst:text format="## created by: %s - %s\n"/>
+    <admst:text format="## created automatically\n"/>
     <admst:apply-templates select="." match="code"/>
   </admst:open>
   <admst:message format="Makefile.am: file created\n"/>
