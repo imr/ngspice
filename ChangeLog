@@ -1,3 +1,16 @@
+2011-05-19  Robert Larice
+ * src/spicelib/parser/inpptree-parser.c,
+ * src/spicelib/parser/inpptree-parser.h,
+ * src/frontend/parse-bison.c,
+ * src/frontend/parse-bison.h:
+    undo the accidental commit of intemediate files
+
+2011-05-19  Laurent Lemaitre
+    remove usage of ngspiceVersion.xml in autogen.sh
+
+2011-05-19  Laurent Lemaitre
+    all xml files are concatenated into one single file ngspice.xml - except ngspiceMakefile.am.xml
+
 2011-05-15  Holger Vogt
  * inp2z.c: remove checking for thismodel->INPmodType
    because this might lead to segfault if the user supplies
