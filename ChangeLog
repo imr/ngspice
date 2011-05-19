@@ -1,4 +1,8 @@
 2011-05-19  Robert Larice
+ * autogen.sh :
+    add --adms3 to autogen.sh
+
+2011-05-19  Robert Larice
  * src/spicelib/parser/inpptree-parser.c,
  * src/spicelib/parser/inpptree-parser.h,
  * src/frontend/parse-bison.c,

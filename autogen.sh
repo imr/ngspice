@@ -30,6 +30,7 @@ help()
     echo "$PROJECT autogen.sh help"
     echo
     echo "--adms     -a: enables adms feature"
+    echo "--adms3      : enables adms3 feature"
     echo "--help     -h: print this file"
     echo "--version  -v: print version"
     echo
@@ -105,6 +106,11 @@ case "$1" in
         ADMS=1
         ;;
 
+    "--adms3" )
+        check_adms
+        ADMS=3
+        ;;
+
     "--help" | "-h")
         help
         exit 0
@@ -132,7 +138,7 @@ fi
 }
 
 # only for --adms:
-if [ "$ADMS" -eq 1 ]; then
+if [ "$ADMS" -gt 0 ]; then
 
     check_awk
 
@@ -172,7 +178,14 @@ $znew
                     echo "-->"$ADMSDIR/$adms_dir
                     (
                         cd $ADMSDIR/$adms_dir
-                        $ADMSXML `ls admsva/*.va` -Iadmsva -xv -e ../admst/ngspiceMakefile.am.xml
+                        if [ "$ADMS" -eq 3 ]; then
+                            $ADMSXML `ls admsva/*.va` -Iadmsva -xv \
+                                -e ../admst/ngspiceMakefile.am.xml
+                        else
+                            $ADMSXML `ls admsva/*.va` -Iadmsva -xv \
+                                -e ../admst/ngspiceVersion.xml \
+                                -e ../admst/ngspiceMakefile.am.xml
+                        fi
                     )
                     ;;
             esac
@@ -201,14 +214,14 @@ echo "Running automake -Wall --copy --add-missing"
 automake  -Wall --copy --add-missing \
     || error_and_exit "automake failed"
 
-if [ "$ADMS" -eq 1 ]; then
+if [ "$ADMS" -gt 0 ]; then
     echo "Running automake for adms"
     automake  -Wall --copy --add-missing $adms_Makefiles \
         || error_and_exit "automake failed"
 fi
 
 echo "Running autoconf"
-if [ "$ADMS" -eq 1 ]; then
+if [ "$ADMS" -gt 0 ]; then
     autoconf temp-adms.ac > configure \
         || error_and_exit "autoconf failed, with adms"
     rm -f temp-adms.ac
