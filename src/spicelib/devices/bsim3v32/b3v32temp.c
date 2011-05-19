@@ -233,14 +233,14 @@ int Size_Not_Found;
 	      if (Size_Not_Found)
 	      {   pParam = TMALLOC(struct bsim3SizeDependParam, 1);
                   if (pLastKnot == NULL)
-		      model->pSizeDependParamKnot = pParam;
+                    model->pSizeDependParamKnot = pParam;
                   else
-		      pLastKnot->pNext = pParam;
+                    pLastKnot->pNext = pParam;
                   pParam->pNext = NULL;
                   here->pParam = pParam;
 
-		  Ldrn = here->BSIM3v32l;
-		  Wdrn = here->BSIM3v32w;
+                  Ldrn = here->BSIM3v32l;
+                  Wdrn = here->BSIM3v32w;
                   pParam->Length = Ldrn;
                   pParam->Width = Wdrn;
 
@@ -667,11 +667,9 @@ int Size_Not_Found;
 			pParam->BSIM3v32uc = pParam->BSIM3v32uc + pParam->BSIM3v32uc1 * T0;
 			if (pParam->BSIM3v32u0 > 1.0)
 		      pParam->BSIM3v32u0 = pParam->BSIM3v32u0 / 1.0e4;
-		  pParam->BSIM3v32u0 *= here->BSIM3v32mulu0; /* Low field mobility multiplier */
 
 		  pParam->BSIM3v32u0temp = pParam->BSIM3v32u0
 				      * pow(TRatio, pParam->BSIM3v32ute);
-		  here->BSIM3v32u0temp = pParam->BSIM3v32u0temp;
 		  pParam->BSIM3v32vsattemp = pParam->BSIM3v32vsat - pParam->BSIM3v32at
 					* T0;
 		  pParam->BSIM3v32rds0 = (pParam->BSIM3v32rdsw + pParam->BSIM3v32prt * T0)
@@ -692,7 +690,7 @@ int Size_Not_Found;
 		  pParam->BSIM3v32cgbo = model->BSIM3v32cgbo * pParam->BSIM3v32leffCV;
 
 		  T0 = pParam->BSIM3v32leffCV * pParam->BSIM3v32leffCV;
-		  here->BSIM3v32tconst = here->BSIM3v32u0temp * pParam->BSIM3v32elm / (model->BSIM3v32cox
+		  pParam->BSIM3v32tconst = pParam->BSIM3v32u0temp * pParam->BSIM3v32elm / (model->BSIM3v32cox
 				      * pParam->BSIM3v32weffCV * pParam->BSIM3v32leffCV * T0);
 
 		  if (!model->BSIM3v32npeakGiven && model->BSIM3v32gamma1Given)
@@ -871,6 +869,12 @@ int Size_Not_Found;
 	      here->BSIM3v32vth0 = pParam->BSIM3v32vth0 + here->BSIM3v32delvto;
 	      here->BSIM3v32vfb = pParam->BSIM3v32vfb + model->BSIM3v32type * here->BSIM3v32delvto;
 	      here->BSIM3v32vfbzb = pParam->BSIM3v32vfbzb + model->BSIM3v32type * here->BSIM3v32delvto;
+
+	      /* low field mobility multiplier */
+	      here->BSIM3v32u0temp = pParam->BSIM3v32u0temp * here->BSIM3v32mulu0;
+
+	      here->BSIM3v32tconst = here->BSIM3v32u0temp * pParam->BSIM3v32elm / (model->BSIM3v32cox
+	                            * pParam->BSIM3v32weffCV * pParam->BSIM3v32leffCV * T0);
 
 	      /* process source/drain series resistance */
 	      /* acm model */

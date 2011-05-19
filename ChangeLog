@@ -1,3 +1,7 @@
+2011-05-19  Dietmar Warning
+ * spicelib/devices/bsim3v32/b3v32temp.c: move the mulu0 entry outside
+   the size dependent section, like delvto
+
 2011-05-19  Robert Larice
  * autogen.sh :
     update --adms3
