@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.17  2011-02-21 19:40:23  dwarning
+  Revision 1.18  2011-05-19 10:11:06  r29173
+  all xml files are concatenated into one single file ngspice.xml - except ngspiceMakefile.am.xml
+
+  Revision 1.17  2011/02/21 19:40:23  dwarning
   better maintainer-clean
 
   Revision 1.16  2011/01/25 17:33:37  rlar
@@ -96,30 +99,8 @@
 
 ADMSXMLINTERFACE=\$(srcdir)/../admst
 $(module).c: admsva/$(module).va
-	admsXml -I\$(srcdir) -I\$(srcdir)/admsva \$(srcdir)/admsva/$(module).va \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEinit.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEinit.h.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEext.h.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEdefs.h.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEask.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEmask.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEpar.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEmpar.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEload.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEacld.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEpzld.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEtemp.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEtrunc.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEsetup.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEdel.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEmdel.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEdest.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEnoise.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
+	admsXml -I\$(srcdir) -I\$(srcdir)/admsva -f \$(srcdir)/admsva/$(module).va \\
+	-e \$(ADMSXMLINTERFACE)/ngspice.xml
 	perl -p -i.bak -e 's/IOP\\("(\\w+)"/IOP("\\L\\1"/' $(module).c
 
 noinst_LTLIBRARIES = lib$(module).la
