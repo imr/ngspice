@@ -23,15 +23,15 @@
  */
 #undef BOOLEAN
 
-#ifdef _MSC_VER
-#pragma warn -dup
-#endif /* _MSC_VER */
 #include <windows.h>
 #include <windowsx.h>
+
 #include "suffix.h"
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif /* _MSC_VER */
+
+#include "winprint.h"	/* function prototypes */
 
 /* Typen */
 typedef struct {						/* Extra Printdaten */
@@ -96,7 +96,10 @@ void WPRINT_PrintInit(HWND hwnd)
 /* Abort-Procedur zum Drucken */
 BOOL CALLBACK WPRINT_Abort( HDC hdc, int iError)
 {
-	/* Multitasking */
+    NG_IGNORE(hdc);
+    NG_IGNORE(iError);
+
+    /* Multitasking */
 	WaitForIdle();
 
 	/* Warten */
@@ -116,7 +119,7 @@ WPRINT_Init() gibt 0 zurueck, falls kein Fehler auftrat.
 
 ******************************************************************************/
 
-int WPRINT_Init( )
+int WPRINT_Init(void)
 {
 	int    pWidth;
 	int	 pHeight;
@@ -290,7 +293,7 @@ int WPRINT_NewViewport( GRAPH * graph)
 	return(0);
 }
 
-int WPRINT_Close()
+int WPRINT_Close(void)
 {
 	if (PrinterDC) {
 		EndPage( PrinterDC);
@@ -307,7 +310,7 @@ int WPRINT_Close()
 }
 
 
-int WPRINT_Clear()
+int WPRINT_Clear(void)
 {
 	return 0;
 }
@@ -384,10 +387,10 @@ int WPRINT_Arc(int x0, int y0, int radius, double theta, double delta_theta)
 	r = radius;
 	dx0 = x0;
 	dy0 = y0;
-	xs = (dx0 + (r * cos(theta)));
-	ys = (dy0 + (r * sin(theta)));
-	xe = (dx0 + (r * cos(theta + delta_theta)));
-	ye = (dy0 + (r * sin(theta + delta_theta)));
+	xs = (int)(dx0 + (r * cos(theta)));
+	ys = (int)(dy0 + (r * sin(theta)));
+	xe = (int)(dx0 + (r * cos(theta + delta_theta)));
+	ye = (int)(dy0 + (r * sin(theta + delta_theta)));
 
 	/* Zeichnen */
 	NewPen = CreatePen( LineTable[pd->LineIndex], 0, ColorTable[ColIndex] );
@@ -403,6 +406,7 @@ int WPRINT_Text( char * text, int x, int y, int degrees)
 {
 	tpPrintData pd;
 	int		ColIndex;
+    NG_IGNORE(degrees);
 
 	if (!currentgraph) return 0;
 	pd = pPrintData(currentgraph);
@@ -422,12 +426,18 @@ int WPRINT_Text( char * text, int x, int y, int degrees)
 int WPRINT_DefineColor(int colorid, double red, double green, double blue)
 {
 	/* nix */
+    NG_IGNORE(colorid);
+    NG_IGNORE(red);
+    NG_IGNORE(green);
+    NG_IGNORE(blue);
 	return (0);
 }
 
 int WPRINT_DefineLinestyle(int num, int mask)
 {
 	/* nix */
+    NG_IGNORE(num);
+    NG_IGNORE(mask);
 	return (0);
 }
 
@@ -453,12 +463,12 @@ int WPRINT_SetColor( int color)
 	return (0);
 }
 
-int WPRINT_Update()
+int WPRINT_Update(void)
 {
 	return (0);
 }
 
-int WPRINT_DiagramReady()
+int WPRINT_DiagramReady(void)
 {
 	return 0;
 }

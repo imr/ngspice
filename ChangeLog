@@ -1,3 +1,7 @@
+2011-05-21  Holger Vogt
+ * windisp.c, winprint.c, windisp.h, winprint.h, display.c xdisplay.c,
+   winmain.c: reduce compiler warnings 
+
 2011-05-20  Robert Larice
  * src/spicelib/devices/adms/admst/ngspiceMakefile.am.xml:
     revert ngspiceMakfile.am.xml

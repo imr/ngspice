@@ -44,6 +44,9 @@
 #define AnalyseLength 100       // Platz fuer Analyse
 #define QuitButtonLength 80
 
+/* macro to ignore unused variables and parameters */
+#define NG_IGNORE(x)  (void)x
+
 /* Types */
 typedef char SBufLine[SBufSize+1];  // Eingabezeile
 
@@ -398,6 +401,9 @@ int w_putch( int c)
 void Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 {
     int h = cy - LineHeight - StatusHeight;
+
+    NG_IGNORE(hwnd);
+    NG_IGNORE(state);
 
     /* Expand text window */
     MoveWindow( twText, 0, 0, cx, h , TRUE);
@@ -775,6 +781,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     char **argv;
 
 	RECT wsize; /* size of usable window */
+
+    NG_IGNORE(hPrevInstance);
 
     /* fill global variables */
     hInst = hInstance;
@@ -1157,7 +1165,7 @@ size_t f_w_r_i_t_e(const void * __ptr, size_t __size, size_t __n, FILE * __strea
 
 //      p_r_i_n_t_f("test1 %s\n", __s);
 
-        if (!__s) return EOF;
+        if (!__s) return 0 /*EOF*/;
         for (i = 0; i< (__size * __n); i++) {
             if (*__s) {
                 c = *__s++;
@@ -1210,12 +1218,15 @@ int p_u_t_s(const char * __s)
 
 int s_c_a_n_f(const char * __format, ...)
 {
+    NG_IGNORE(__format);
     assert( FALSE);
     return FALSE;
 }
 
 int ung_e_t_c(int __c, FILE * __stream)
 {
+    NG_IGNORE(__c);
+    NG_IGNORE(__stream);
     assert( FALSE);
     return FALSE;
 }

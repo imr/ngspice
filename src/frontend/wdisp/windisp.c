@@ -237,6 +237,7 @@ static int LType( int ColorIndex)
 static LRESULT HcpyPlot( HWND hwnd)
 {
     int colorval = isblack? 0 : 1;
+    NG_IGNORE(hwnd);
     cp_vset("hcopypscolor", CP_NUM, &colorval);
     com_hardcopy(NULL); 
     return 0;
@@ -245,6 +246,7 @@ static LRESULT HcpyPlot( HWND hwnd)
 static LRESULT HcpyPlotBW( HWND hwnd)
 {
    int bgcolor;
+   NG_IGNORE(hwnd);
    if (cp_getvar("hcopypscolor", CP_NUM, &bgcolor))
        cp_remvar("hcopypscolor");
 	com_hardcopy(NULL); 
@@ -762,10 +764,10 @@ int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
    r = radius;
    dx0 = x0;
    dy0 = y0;
-   xs = (dx0 + (r * cos(theta)));
-   ys = (dy0 + (r * sin(theta)));
-   xe = (dx0 + (r * cos(theta + delta_theta)));
-   ye = (dy0 + (r * sin(theta + delta_theta)));
+   xs = (int)(dx0 + (r * cos(theta)));
+   ys = (int)(dy0 + (r * sin(theta)));
+   xe = (int)(dx0 + (r * cos(theta + delta_theta)));
+   ye = (int)(dy0 + (r * sin(theta + delta_theta)));
 
    /* plot */
    NewPen = CreatePen( LType(wd->ColorIndex), linewidth, ColorTable[wd->ColorIndex] );
@@ -842,19 +844,26 @@ int WIN_Text( char * text, int x, int y)
 int WIN_DefineColor(int colorid, double red, double green, double blue)
 {
    /* nothing */
-   return (0);
+    NG_IGNORE(colorid);
+    NG_IGNORE(red);
+    NG_IGNORE(green);
+    NG_IGNORE(blue);
+    return (0);
 }
 
 int WIN_DefineLinestyle(int num, int mask)
 {
    /* nothing */
-   return (0);
+    NG_IGNORE(num);
+    NG_IGNORE(mask);
+    return (0);
 }
 
 int WIN_SetLinestyle(int style)
 {
    /* nothing */
-   return (0);
+    NG_IGNORE(style);
+    return (0);
 }
 
 int WIN_SetColor( int color)

@@ -31,7 +31,7 @@ static int nodev(void);
 
 #ifdef HAS_WINDOWS	/* Graphic-IO under MS Windows */
 #include "wdisp/windisp.h"
-#include "wdisp/winprint.h"
+//#include "wdisp/winprint.h"
 #endif
 
 #include "plotting/plot5.h"
@@ -280,22 +280,22 @@ gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny)
             (graph->grid.gridtype == GRID_YLOG)) {
       low = mylog10(graph->datawindow.ymin);
       high = mylog10(graph->datawindow.ymax);
-      *screeny = (mylog10(y) - low) / (high - low) * graph->viewport.height
-	  + 0.5 + graph->viewportyoff;
+      *screeny = (int)((mylog10(y) - low) / (high - low) * graph->viewport.height
+	  + 0.5 + graph->viewportyoff);
     } else {
-      *screeny = ((y - graph->datawindow.ymin) / graph->aspectratioy)
-            + 0.5 + graph->viewportyoff;
+      *screeny = (int)(((y - graph->datawindow.ymin) / graph->aspectratioy)
+            + 0.5 + graph->viewportyoff);
     }
 
     if ((graph->grid.gridtype == GRID_LOGLOG) ||
             (graph->grid.gridtype == GRID_XLOG)) {
       low = mylog10(graph->datawindow.xmin);
       high = mylog10(graph->datawindow.xmax);
-      *screenx = (mylog10(x) - low) / (high - low) * graph->viewport.width
-            + 0.5 + graph ->viewportxoff;
+      *screenx = (int)((mylog10(x) - low) / (high - low) * graph->viewport.width
+            + 0.5 + graph ->viewportxoff);
     } else {
-      *screenx = (x - graph->datawindow.xmin) / graph->aspectratiox
-            + 0.5 + graph ->viewportxoff;
+      *screenx = (int)((x - graph->datawindow.xmin) / graph->aspectratiox
+            + 0.5 + graph ->viewportxoff);
     }
 
 }

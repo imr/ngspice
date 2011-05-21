@@ -6,19 +6,20 @@
 #ifndef WINPRINT_H
 #define WINPRINT_H
 
-disp_fn_Init_t             WPRINT_Init;
-disp_fn_NewViewport_t      WPRINT_NewViewport;
-disp_fn_Close_t            WPRINT_Close;
-disp_fn_Clear_t            WPRINT_Clear;
-disp_fn_DrawLine_t         WPRINT_DrawLine;
-disp_fn_Arc_t              WPRINT_Arc;
-disp_fn_Text_t             WPRINT_Text;
-disp_fn_DefineColor_t      WPRINT_DefineColor;
-disp_fn_DefineLinestyle_t  WPRINT_DefineLinestyle;
-disp_fn_SetLinestyle_t     WPRINT_SetLinestyle;
-disp_fn_SetColor_t         WPRINT_SetColor;
-disp_fn_Update_t           WPRINT_Update;
-
-extern int WPRINT_DiagramReady();
+void WPRINT_PrintInit(HWND hwnd);
+BOOL CALLBACK WPRINT_Abort( HDC hdc, int iError);
+int WPRINT_Init(void);
+int WPRINT_NewViewport( GRAPH * graph);
+int WPRINT_Close(void);
+int WPRINT_Clear(void);
+int WPRINT_DrawLine(int x1, int y1, int x2, int y2);
+int WPRINT_Arc(int x0, int y0, int radius, double theta, double delta_theta);
+int WPRINT_Text( char * text, int x, int y, int degrees);
+int WPRINT_DefineColor(int colorid, double red, double green, double blue);
+int WPRINT_DefineLinestyle(int num, int mask);
+int WPRINT_SetLinestyle(int style);
+int WPRINT_SetColor( int color);
+int WPRINT_Update(void);
+int WPRINT_DiagramReady(void);
 
 #endif /* WINPRINT_H */
