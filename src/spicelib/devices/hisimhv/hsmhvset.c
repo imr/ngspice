@@ -1447,6 +1447,30 @@ HSMHVunsetup(
                 CKTdltNNum(ckt, here->HSMHVsNodePrime);
                 here->HSMHVsNodePrime = 0;
             }
+            if (here->HSMHVgNodePrime
+                    && here->HSMHVgNodePrime != here->HSMHVgNode)
+            {
+                CKTdltNNum(ckt, here->HSMHVgNodePrime);
+                here->HSMHVgNodePrime = 0;
+            }
+            if (here->HSMHVbNodePrime
+                    && here->HSMHVbNodePrime != here->HSMHVbNode)
+            {
+                CKTdltNNum(ckt, here->HSMHVbNodePrime);
+                here->HSMHVbNodePrime = 0;
+            }
+            if (here->HSMHVdbNode
+                    && here->HSMHVdbNode != here->HSMHVbNode)
+            {
+                CKTdltNNum(ckt, here->HSMHVdbNode);
+                here->HSMHVdbNode = 0;
+            }
+            if (here->HSMHVsbNode
+                    && here->HSMHVsbNode != here->HSMHVbNode)
+            {
+                CKTdltNNum(ckt, here->HSMHVsbNode);
+                here->HSMHVsbNode = 0;
+            }
         }
     }
 #endif

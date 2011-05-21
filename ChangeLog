@@ -1,3 +1,8 @@
+2011-05-21  Robert Larice
+ * src/spicelib/devices/hisimhv/hsmhvset.c :
+   extend HSMHVunsetup() to process some more CKTmkVolt() generated nodes
+   FIXME, there are still some more to fix
+
 2011-05-21  Holger Vogt
  * windisp.c, winprint.c, windisp.h, winprint.h, display.c xdisplay.c,
    winmain.c: reduce compiler warnings 
