@@ -1,4 +1,8 @@
 2011-05-22  Robert Larice
+ * src/spicelib/devices/hisim2/hsm2eval.c :
+   hisim2, drop unused static functions (swallow warnings)
+
+2011-05-22  Robert Larice
  * src/spicelib/devices/hisim2/hsm2eval.c ,
  * src/spicelib/devices/hisim2/hsm2temp.c :
    hisim2, drop unused vars (swallow warnings)
