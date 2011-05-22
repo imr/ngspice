@@ -32,9 +32,6 @@
  *    all of the MOSFET's is summed with the variable "OnDens".
  */
 
-extern void   NevalSrc();
-extern double Nintegrate();
-
 int HSM2noise (
      int mode, int operation,
      GENmodel *inModel,
