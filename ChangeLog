@@ -1,4 +1,9 @@
 2011-05-22  Robert Larice
+ * configure.ac ,
+ * src/spicelib/devices/Makefile.am :
+   hisim2, add hisim2 to configure.ac etc
+
+2011-05-22  Robert Larice
  * src/spicelib/devices/hisim2/hsm2itf.h :
    hisim2, fix hsm2itf.h
 
