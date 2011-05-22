@@ -111,17 +111,17 @@ int HSM2convTest(
        *  check convergence
        */
       if ( here->HSM2_off == 0  || !(ckt->CKTmode & MODEINITFIX) ) {
-	tol0 = ckt->CKTreltol * MAX(FABS(cdhat), FABS(cd)) + ckt->CKTabstol;
-	tol1 = ckt->CKTreltol * MAX(FABS(cgshat), FABS(Igstot)) + ckt->CKTabstol;
-	tol2 = ckt->CKTreltol * MAX(FABS(cgdhat), FABS(Igdtot)) + ckt->CKTabstol;
-	tol3 = ckt->CKTreltol * MAX(FABS(cgbhat), FABS(Igbtot)) + ckt->CKTabstol;
-	tol4 = ckt->CKTreltol * MAX(FABS(cbhat), FABS(Ibtot)) + ckt->CKTabstol;
+	tol0 = ckt->CKTreltol * MAX(fabs(cdhat), fabs(cd)) + ckt->CKTabstol;
+	tol1 = ckt->CKTreltol * MAX(fabs(cgshat), fabs(Igstot)) + ckt->CKTabstol;
+	tol2 = ckt->CKTreltol * MAX(fabs(cgdhat), fabs(Igdtot)) + ckt->CKTabstol;
+	tol3 = ckt->CKTreltol * MAX(fabs(cgbhat), fabs(Igbtot)) + ckt->CKTabstol;
+	tol4 = ckt->CKTreltol * MAX(fabs(cbhat), fabs(Ibtot)) + ckt->CKTabstol;
 
-	if ( (FABS(cdhat - cd) >= tol0)
-	     || (FABS(cgshat - Igstot) >= tol1) 
-	     || (FABS(cgdhat - Igdtot) >= tol2)
-	     || (FABS(cgbhat - Igbtot) >= tol3) 
-	     || (FABS(cbhat - Ibtot) >= tol4) ) {
+	if ( (fabs(cdhat - cd) >= tol0)
+	     || (fabs(cgshat - Igstot) >= tol1) 
+	     || (fabs(cgdhat - Igdtot) >= tol2)
+	     || (fabs(cgbhat - Igbtot) >= tol3) 
+	     || (fabs(cbhat - Ibtot) >= tol4) ) {
 	  ckt->CKTnoncon++;
 	  return(OK);
 	}

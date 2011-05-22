@@ -447,55 +447,55 @@ tm0 = gtodsecld() ;
 	 */
 	if ( !(ckt->CKTmode & MODEINITPRED) && BYPASS_enable )
 	  if ((!here->HSM2_corbnet) || 
-	      (FABS(delvdbs) < 
+	      (fabs(delvdbs) < 
 	       (reltol
-		* MAX(FABS(vdbs), FABS(*(ckt->CKTstate0 + here->HSM2vdbs)))
+		* MAX(fabs(vdbs), fabs(*(ckt->CKTstate0 + here->HSM2vdbs)))
 		+ voltTol)))
 	    if ((!here->HSM2_corbnet) || 
-		(FABS(delvdbd) < 
+		(fabs(delvdbd) < 
 		 (reltol
-		  * MAX(FABS(vdbd), FABS(*(ckt->CKTstate0 + here->HSM2vdbd)))
+		  * MAX(fabs(vdbd), fabs(*(ckt->CKTstate0 + here->HSM2vdbd)))
 		  + voltTol)))
                if ((!here->HSM2_corbnet) || 
-		   (FABS(delvsbs) < 
+		   (fabs(delvsbs) < 
 		    (reltol
-		     * MAX(FABS(vsbs), FABS(*(ckt->CKTstate0 + here->HSM2vsbs)))
+		     * MAX(fabs(vsbs), fabs(*(ckt->CKTstate0 + here->HSM2vsbs)))
 		     + voltTol)))
 		 if ((here->HSM2_corg == 0) || (here->HSM2_corg == 1) || 
-		     (FABS(delvges) < 
+		     (fabs(delvges) < 
 		      (reltol 
-		       * MAX(FABS(vges), FABS(*(ckt->CKTstate0 + here->HSM2vges)))
+		       * MAX(fabs(vges), fabs(*(ckt->CKTstate0 + here->HSM2vges)))
 		       + voltTol)))
-	  if ( FABS(delvbs) < 
+	  if ( fabs(delvbs) < 
 	       ( reltol * 
-		 MAX(FABS(vbs), FABS(*(ckt->CKTstate0+here->HSM2vbs))) + 
+		 MAX(fabs(vbs), fabs(*(ckt->CKTstate0+here->HSM2vbs))) + 
 		 voltTol ) )
-	    if ( FABS(delvbd) < 
+	    if ( fabs(delvbd) < 
 		 ( reltol * 
-		   MAX(FABS(vbd), FABS(*(ckt->CKTstate0+here->HSM2vbd))) + 
+		   MAX(fabs(vbd), fabs(*(ckt->CKTstate0+here->HSM2vbd))) + 
 		   voltTol ) )
-	      if ( FABS(delvgs) < 
+	      if ( fabs(delvgs) < 
 		   ( reltol * 
-		     MAX(FABS(vgs), FABS(*(ckt->CKTstate0+here->HSM2vgs))) +
+		     MAX(fabs(vgs), fabs(*(ckt->CKTstate0+here->HSM2vgs))) +
 		     voltTol ) )
-		if ( FABS(delvds) < 
+		if ( fabs(delvds) < 
 		     ( reltol * 
-		       MAX(FABS(vds), FABS(*(ckt->CKTstate0+here->HSM2vds))) + 
+		       MAX(fabs(vds), fabs(*(ckt->CKTstate0+here->HSM2vds))) + 
 		       voltTol ) )
-		  if ( FABS(cdhat - Idtot) < 
+		  if ( fabs(cdhat - Idtot) < 
 		       ( reltol * 
-			 MAX(FABS(cdhat),FABS(Idtot)) + abstol ) ) 
+			 MAX(fabs(cdhat),fabs(Idtot)) + abstol ) ) 
 		    if (!model->HSM2_coiigs || 
-			(FABS(cgbhat - Igbtot) < reltol
-			 * MAX(FABS(cgbhat), FABS(Igbtot)) + abstol))
+			(fabs(cgbhat - Igbtot) < reltol
+			 * MAX(fabs(cgbhat), fabs(Igbtot)) + abstol))
 		      if (!model->HSM2_coiigs || 
-			  (FABS(cgshat - Igstot) < reltol
-			   * MAX(FABS(cgshat), FABS(Igstot)) + abstol))
+			  (fabs(cgshat - Igstot) < reltol
+			   * MAX(fabs(cgshat), fabs(Igstot)) + abstol))
 			if (!model->HSM2_coiigs || 
-			    (FABS(cgdhat - Igdtot) < reltol
-			     * MAX(FABS(cgdhat), FABS(Igdtot)) + abstol)){
-			  tempv = MAX(FABS(cbhat),FABS(Ibtot)) + abstol;
-			  if ((FABS(cbhat - Ibtot)) < reltol * tempv) {
+			    (fabs(cgdhat - Igdtot) < reltol
+			     * MAX(fabs(cgdhat), fabs(Igdtot)) + abstol)){
+			  tempv = MAX(fabs(cbhat),fabs(Ibtot)) + abstol;
+			  if ((fabs(cbhat - Ibtot)) < reltol * tempv) {
 			    /* bypass code */
 			    vbs = *(ckt->CKTstate0 + here->HSM2vbs);
 			    vbd = *(ckt->CKTstate0 + here->HSM2vbd);
@@ -763,25 +763,25 @@ tm0 = gtodsecld() ;
 	    Idtot = here->HSM2_ids + here->HSM2_isub - here->HSM2_ibd + here->HSM2_igidl;
 	  else
 	    Idtot = here->HSM2_ids + here->HSM2_ibd - here->HSM2_igidl;
-	  tol = ckt->CKTreltol * MAX(FABS(cdhat), FABS(Idtot)) + ckt->CKTabstol;
-	  tol2 = ckt->CKTreltol * MAX(FABS(cgbhat), FABS(Igbtot)) + ckt->CKTabstol;
-	  tol3 = ckt->CKTreltol * MAX(FABS(cgshat), FABS(Igstot)) + ckt->CKTabstol;
-	  tol4 = ckt->CKTreltol * MAX(FABS(cgdhat), FABS(Igdtot)) + ckt->CKTabstol;
-	  if (FABS(cdhat - Idtot) >= tol) {
+	  tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(Idtot)) + ckt->CKTabstol;
+	  tol2 = ckt->CKTreltol * MAX(fabs(cgbhat), fabs(Igbtot)) + ckt->CKTabstol;
+	  tol3 = ckt->CKTreltol * MAX(fabs(cgshat), fabs(Igstot)) + ckt->CKTabstol;
+	  tol4 = ckt->CKTreltol * MAX(fabs(cgdhat), fabs(Igdtot)) + ckt->CKTabstol;
+	  if (fabs(cdhat - Idtot) >= tol) {
 	    ckt->CKTnoncon++;
 	    isConv = 0;
 	  }
-	  else if (FABS(cgbhat - Igbtot) >= tol2 || 
-		   FABS(cgshat - Igstot) >= tol3 ||
-		   FABS(cgdhat - Igdtot) >= tol4) {
+	  else if (fabs(cgbhat - Igbtot) >= tol2 || 
+		   fabs(cgshat - Igstot) >= tol3 ||
+		   fabs(cgdhat - Igdtot) >= tol4) {
 	    ckt->CKTnoncon++;
 	    isConv = 0;
 	  }
 	  else {
 	    Ibtot = here->HSM2_ibs + here->HSM2_ibd 
 	      - here->HSM2_isub - here->HSM2_igidl - here->HSM2_igisl;
-	    tol = ckt->CKTreltol * MAX(FABS(cbhat), FABS(Ibtot)) + ckt->CKTabstol;
-	    if (FABS(cbhat - Ibtot) > tol) {
+	    tol = ckt->CKTreltol * MAX(fabs(cbhat), fabs(Ibtot)) + ckt->CKTabstol;
+	    if (fabs(cbhat - Ibtot) > tol) {
 	      ckt->CKTnoncon++;
 	      isConv = 0;
 	    }

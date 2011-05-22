@@ -1,4 +1,9 @@
 2011-05-22  Robert Larice
+ * src/spicelib/devices/hisim2/hsm2cvtest.c ,
+ * src/spicelib/devices/hisim2/hsm2ld.c :
+   hisim2, rename FABS() ->  fabs()
+
+2011-05-22  Robert Larice
  * src/spicelib/devices/hisim2/* :
    hisim2, convert K&R function definitions to ansi style
 
