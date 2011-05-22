@@ -24,11 +24,11 @@
 #include "suffix.h"
 
 
-int HSM2setup(matrix,inModel,ckt,states)
-     register SMPmatrix *matrix;
-     register GENmodel *inModel;
-     register CKTcircuit *ckt;
-     int *states;
+int HSM2setup(
+     register SMPmatrix *matrix,
+     register GENmodel *inModel,
+     register CKTcircuit *ckt,
+     int *states)
      /* load the HSM2 device structure with those pointers needed later 
       * for fast matrix loading 
       */

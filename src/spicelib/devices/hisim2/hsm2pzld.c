@@ -21,10 +21,10 @@
 #include "hsm2def.h"
 #include "suffix.h"
 
-int HSM2pzLoad(inModel,ckt,s)
-     GENmodel *inModel;
-     register CKTcircuit *ckt;
-     register SPcomplex *s;
+int HSM2pzLoad(
+     GENmodel *inModel,
+     register CKTcircuit *ckt,
+     register SPcomplex *s)
 {
   register HSM2model *model = (HSM2model*)inModel;
   register HSM2instance *here;

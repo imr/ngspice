@@ -18,8 +18,8 @@
 #include "hsm2def.h"
 #include "suffix.h"
 
-void HSM2destroy(inModel)
-     GENmodel **inModel;
+void HSM2destroy(
+     GENmodel **inModel)
 {
   HSM2model **model = (HSM2model**)inModel;
   HSM2instance *here;

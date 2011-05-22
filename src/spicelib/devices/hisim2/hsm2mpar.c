@@ -20,10 +20,10 @@
 #include "sperror.h"
 #include "suffix.h"
 
-int HSM2mParam(param,value,inMod)
-     int param;
-     IFvalue *value;
-     GENmodel *inMod;
+int HSM2mParam(
+     int param,
+     IFvalue *value,
+     GENmodel *inMod)
 {
   HSM2model *mod = (HSM2model*)inMod;
   switch (param) {

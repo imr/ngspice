@@ -23,9 +23,9 @@
 #include "sperror.h"
 #include "suffix.h"
 
-int HSM2convTest(inModel,ckt)
-     GENmodel *inModel;
-     register CKTcircuit *ckt;
+int HSM2convTest(
+     GENmodel *inModel,
+     register CKTcircuit *ckt)
 {
   register HSM2model *model = (HSM2model*)inModel;
   register HSM2instance *here;

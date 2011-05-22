@@ -19,10 +19,10 @@
 #include "sperror.h"
 #include "suffix.h"
 
-int HSM2mDelete(inModel,modname,kill)
-     GENmodel **inModel;
-     IFuid modname;
-     GENmodel *kill;
+int HSM2mDelete(
+     GENmodel **inModel,
+     IFuid modname,
+     GENmodel *kill)
 {
   HSM2model **model = (HSM2model**)inModel;
   HSM2model *modfast = (HSM2model*)kill;

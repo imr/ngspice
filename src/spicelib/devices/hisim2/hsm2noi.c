@@ -35,12 +35,12 @@
 extern void   NevalSrc();
 extern double Nintegrate();
 
-int HSM2noise (mode, operation, inModel, ckt, data, OnDens)
-     int mode, operation;
-     GENmodel *inModel;
-     CKTcircuit *ckt;
-     register Ndata *data;
-     double *OnDens;
+int HSM2noise (
+     int mode, int operation,
+     GENmodel *inModel,
+     CKTcircuit *ckt,
+     register Ndata *data,
+     double *OnDens)
 {
   register HSM2model *model = (HSM2model *)inModel;
   register HSM2instance *here;

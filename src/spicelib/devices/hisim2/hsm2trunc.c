@@ -20,10 +20,10 @@
 #include "sperror.h"
 #include "suffix.h"
 
-int HSM2trunc(inModel,ckt,timeStep)
-     GENmodel *inModel;
-     register CKTcircuit *ckt;
-     double *timeStep;
+int HSM2trunc(
+     GENmodel *inModel,
+     register CKTcircuit *ckt,
+     double *timeStep)
 
 {
   register HSM2model *model = (HSM2model*)inModel;

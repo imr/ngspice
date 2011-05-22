@@ -62,9 +62,9 @@
     y = ( xmin ) + 0.5 * ( T1 + T2 ) ; \
   }
 
-int HSM2temp(inModel,ckt)
-     GENmodel *inModel;
-     CKTcircuit *ckt;
+int HSM2temp(
+     GENmodel *inModel,
+     CKTcircuit *ckt)
 {
   register HSM2model *model = (HSM2model *)inModel ;
   register HSM2instance *here ;

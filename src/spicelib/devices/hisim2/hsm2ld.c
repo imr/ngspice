@@ -185,9 +185,9 @@ static void ShowPhysVals(here,model,isFirst,vds,vgs,vbs,vgd,vbd,vgb)
   }
 }
 
-int HSM2load(inModel,ckt)
-     GENmodel *inModel;
-     register CKTcircuit *ckt;
+int HSM2load(
+     GENmodel *inModel,
+     register CKTcircuit *ckt)
      /* actually load the current value into the 
       * sparse matrix previously provided 
       */

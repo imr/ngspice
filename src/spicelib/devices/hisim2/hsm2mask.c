@@ -22,11 +22,11 @@
 #include "sperror.h"
 #include "suffix.h"
 
-int HSM2mAsk(ckt,inst,which,value)
-     CKTcircuit *ckt;
-     GENmodel *inst;
-     int which;
-     IFvalue *value;
+int HSM2mAsk(
+     CKTcircuit *ckt,
+     GENmodel *inst,
+     int which,
+     IFvalue *value)
 {
   HSM2model *model = (HSM2model *)inst;
 

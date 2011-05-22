@@ -21,9 +21,9 @@
 #include "hsm2def.h"
 
 
-int HSM2acLoad(inModel,ckt)
-     GENmodel *inModel;
-     register CKTcircuit *ckt;
+int HSM2acLoad(
+     GENmodel *inModel,
+     register CKTcircuit *ckt)
 {
   register HSM2model *model = (HSM2model*)inModel;
   register HSM2instance *here;

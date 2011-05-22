@@ -1,4 +1,8 @@
 2011-05-22  Robert Larice
+ * src/spicelib/devices/hisim2/* :
+   hisim2, convert K&R function definitions to ansi style
+
+2011-05-22  Robert Larice
  * src/spicelib/devices/hisim2/hsm2noi.c :
    hisim2, remove #include "fteconst.h"
 

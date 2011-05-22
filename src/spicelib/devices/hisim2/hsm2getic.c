@@ -20,9 +20,9 @@
 #include "sperror.h"
 #include "suffix.h"
 
-int HSM2getic(inModel,ckt)
-     GENmodel *inModel;
-     CKTcircuit *ckt;
+int HSM2getic(
+     GENmodel *inModel,
+     CKTcircuit *ckt)
 {
   HSM2model *model = (HSM2model*)inModel;
   HSM2instance *here;

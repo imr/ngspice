@@ -20,11 +20,11 @@
 #include "sperror.h"
 #include "suffix.h"
 
-int HSM2param(param,value,inst,select)
-     int param;
-     IFvalue *value;
-     GENinstance *inst;
-     IFvalue *select;
+int HSM2param(
+     int param,
+     IFvalue *value,
+     GENinstance *inst,
+     IFvalue *select)
 {
   HSM2instance *here = (HSM2instance*)inst;
 
