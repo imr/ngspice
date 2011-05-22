@@ -14,7 +14,7 @@
 ***********************************************************************/
 
 #include <stdio.h>
-#include "spice.h"
+#include "ngspice.h"
 #include "cktdefs.h"
 #include "sperror.h"
 #include "suffix.h"

@@ -13,7 +13,7 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include "spice.h"
+#include "ngspice.h"
 #include <stdio.h>
 #include "ifsim.h"
 #include "hsm2def.h"

@@ -13,7 +13,7 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include "spice.h"
+#include "ngspice.h"
 #include <stdio.h>
 #include "util.h"
 #include "cktdefs.h"
