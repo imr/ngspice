@@ -1,5 +1,9 @@
 2011-05-22  Robert Larice
  * src/spicelib/devices/hisim2/* :
+   hisim2, remove #include "util.h"
+
+2011-05-22  Robert Larice
+ * src/spicelib/devices/hisim2/* :
    hisim2, #include "spice.h"  -->  "ngspice.h"
 
 2011-05-22  Robert Larice

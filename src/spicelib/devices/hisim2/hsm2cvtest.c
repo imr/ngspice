@@ -15,7 +15,6 @@
 
 #include "ngspice.h"
 #include <stdio.h>
-#include "util.h"
 #include "cktdefs.h"
 #include "hsm2def.h"
 #include "trandefs.h"

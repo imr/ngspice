@@ -15,7 +15,6 @@
 
 #include "ngspice.h"
 #include <stdio.h>
-#include "util.h"
 #include "hsm2def.h"
 #include "sperror.h"
 #include "suffix.h"

@@ -21,7 +21,6 @@
 #include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
-#include "util.h"
 #include "suffix.h"
 #include "const.h"  /* jwan */
 

@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include "ifsim.h"
 #include "hsm2def.h"
-#include "util.h"
 #include "sperror.h"
 #include "suffix.h"
 

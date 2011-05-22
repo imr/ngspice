@@ -20,7 +20,6 @@
 #include "devdefs.h"
 #include "hsm2def.h"
 #include "sperror.h"
-#include "util.h"
 #include "suffix.h"
 
 int HSM2ask(ckt,inst,which,value,select)

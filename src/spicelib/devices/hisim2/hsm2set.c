@@ -19,7 +19,6 @@
 #include "cktdefs.h"
 #include "hsm2def.h"
 #include "hsm2evalenv.h"
-#include "util.h"
 #include "const.h"
 #include "sperror.h"
 #include "suffix.h"
