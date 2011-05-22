@@ -1,0 +1,286 @@
+/***********************************************************************
+
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2011 Hiroshima University & STARC
+
+ VERSION : HiSIM_2.5.1 
+ FILE : hsm2ask.c
+
+ date : 2011.04.07
+
+ released by 
+                Hiroshima University &
+                Semiconductor Technology Academic Research Center (STARC)
+***********************************************************************/
+
+#include "spice.h"
+#include <stdio.h>
+#include "ifsim.h"
+#include "cktdefs.h"
+#include "devdefs.h"
+#include "hsm2def.h"
+#include "sperror.h"
+#include "util.h"
+#include "suffix.h"
+
+int HSM2ask(ckt,inst,which,value,select)
+     CKTcircuit *ckt;
+     GENinstance *inst;
+     int which;
+     IFvalue *value;
+     IFvalue *select;
+{
+  HSM2instance *here = (HSM2instance*)inst;
+
+  switch (which) {
+  case HSM2_L:
+    value->rValue = here->HSM2_l;
+    return(OK);
+  case HSM2_W:
+    value->rValue = here->HSM2_w;
+    return(OK);
+  case HSM2_AS:
+    value->rValue = here->HSM2_as;
+    return(OK);
+  case HSM2_AD:
+    value->rValue = here->HSM2_ad;
+    return(OK);
+  case HSM2_PS:
+    value->rValue = here->HSM2_ps;
+    return(OK);
+  case HSM2_PD:
+    value->rValue = here->HSM2_pd;
+    return(OK);
+  case HSM2_NRS:
+    value->rValue = here->HSM2_nrs;
+    return(OK);
+  case HSM2_NRD:
+    value->rValue = here->HSM2_nrd;
+    return(OK);
+  case HSM2_TEMP:
+    value->rValue = here->HSM2_temp;
+    return(OK);
+  case HSM2_DTEMP:
+    value->rValue = here->HSM2_dtemp;
+    return(OK);
+  case HSM2_OFF:
+    value->iValue = here->HSM2_off;
+    return(OK);
+  case HSM2_IC_VBS:
+    value->rValue = here->HSM2_icVBS;
+    return(OK);
+  case HSM2_IC_VDS:
+    value->rValue = here->HSM2_icVDS;
+    return(OK);
+  case HSM2_IC_VGS:
+    value->rValue = here->HSM2_icVGS;
+    return(OK);
+  case HSM2_DNODE:
+    value->iValue = here->HSM2dNode;
+    return(OK);
+  case HSM2_GNODE:
+    value->iValue = here->HSM2gNode;
+    return(OK);
+  case HSM2_SNODE:
+    value->iValue = here->HSM2sNode;
+    return(OK);
+  case HSM2_BNODE:
+    value->iValue = here->HSM2bNode;
+    return(OK);
+  case HSM2_DNODEPRIME:
+    value->iValue = here->HSM2dNodePrime;
+    return(OK);
+  case HSM2_SNODEPRIME:
+    value->iValue = here->HSM2sNodePrime;
+    return(OK);
+  case HSM2_SOURCECONDUCT:
+    value->rValue = here->HSM2sourceConductance;
+    return(OK);
+  case HSM2_DRAINCONDUCT:
+    value->rValue = here->HSM2drainConductance;
+    return(OK);
+  case HSM2_VBD:
+    value->rValue = *(ckt->CKTstate0 + here->HSM2vbd);
+    return(OK);
+  case HSM2_VBS:
+    value->rValue = *(ckt->CKTstate0 + here->HSM2vbs);
+    return(OK);
+  case HSM2_VGS:
+    value->rValue = *(ckt->CKTstate0 + here->HSM2vgs);
+    return(OK);
+  case HSM2_VDS:
+    value->rValue = *(ckt->CKTstate0 + here->HSM2vds);
+    return(OK);
+  case HSM2_CD:
+    value->rValue = here->HSM2_ids;
+    return(OK);
+  case HSM2_ISUB:
+    value->rValue = here->HSM2_isub;
+    return(OK);
+  case HSM2_IGIDL:
+    value->rValue = here->HSM2_igidl;
+    return(OK);
+  case HSM2_IGISL:
+    value->rValue = here->HSM2_igisl;
+    return(OK);
+  case HSM2_IGD:
+    value->rValue = here->HSM2_igd;
+    return(OK);
+  case HSM2_IGS:
+    value->rValue = here->HSM2_igs;
+    return(OK);
+  case HSM2_IGB:
+    value->rValue = here->HSM2_igb;
+    return(OK);
+  case HSM2_CBS:
+    value->rValue = here->HSM2_ibs;
+    return(OK);
+  case HSM2_CBD:
+    value->rValue = here->HSM2_ibd;
+    return(OK);
+  case HSM2_GM:
+    value->rValue = here->HSM2_gm;
+    return(OK);
+  case HSM2_GDS:
+    value->rValue = here->HSM2_gds;
+    return(OK);
+  case HSM2_GMBS:
+    value->rValue = here->HSM2_gmbs;
+    return(OK);
+  case HSM2_GBD:
+    value->rValue = here->HSM2_gbd;
+    return(OK);
+  case HSM2_GBS:
+    value->rValue = here->HSM2_gbs;
+    return(OK);
+  case HSM2_QB:
+    value->rValue = *(ckt->CKTstate0 + here->HSM2qb); 
+    return(OK);
+  case HSM2_CQB:
+    value->rValue = *(ckt->CKTstate0 + here->HSM2cqb); 
+    return(OK);
+  case HSM2_QG:
+    value->rValue = *(ckt->CKTstate0 + here->HSM2qg); 
+    return(OK);
+  case HSM2_CQG:
+    value->rValue = *(ckt->CKTstate0 + here->HSM2cqg); 
+    return(OK);
+  case HSM2_QD:
+    value->rValue = *(ckt->CKTstate0 + here->HSM2qd); 
+    return(OK);
+  case HSM2_CQD:
+    value->rValue = *(ckt->CKTstate0 + here->HSM2cqd); 
+    return(OK);
+  case HSM2_CGG:
+    value->rValue = here->HSM2_cggb; 
+    return(OK);
+  case HSM2_CGD:
+    value->rValue = here->HSM2_cgdb;
+    return(OK);
+  case HSM2_CGS:
+    value->rValue = here->HSM2_cgsb;
+    return(OK);
+  case HSM2_CDG:
+    value->rValue = here->HSM2_cdgb; 
+    return(OK);
+  case HSM2_CDD:
+    value->rValue = here->HSM2_cddb; 
+    return(OK);
+  case HSM2_CDS:
+    value->rValue = here->HSM2_cdsb; 
+    return(OK);
+  case HSM2_CBG:
+    value->rValue = here->HSM2_cbgb;
+    return(OK);
+  case HSM2_CBDB:
+    value->rValue = here->HSM2_cbdb;
+    return(OK);
+  case HSM2_CBSB:
+    value->rValue = here->HSM2_cbsb;
+    return(OK);
+  case HSM2_CGDO:
+    value->rValue = here->HSM2_cgdo;
+    return(OK);
+  case HSM2_CGSO:
+    value->rValue = here->HSM2_cgso;
+    return(OK);
+  case HSM2_CGBO:
+    value->rValue = here->HSM2_cgbo;
+    return(OK);
+  case HSM2_CAPBD:
+    value->rValue = here->HSM2_capbd; 
+    return(OK);
+  case HSM2_CAPBS:
+    value->rValue = here->HSM2_capbs;
+    return(OK);
+  case HSM2_VON:
+    value->rValue = here->HSM2_von; 
+    return(OK);
+  case HSM2_VDSAT:
+    value->rValue = here->HSM2_vdsat; 
+    return(OK);
+  case HSM2_QBS:
+    value->rValue = *(ckt->CKTstate0 + here->HSM2qbs); 
+    return(OK);
+  case HSM2_QBD:
+    value->rValue = *(ckt->CKTstate0 + here->HSM2qbd); 
+    return(OK);
+  case  HSM2_CORBNET: 
+    value->iValue = here->HSM2_corbnet;
+    return(OK);
+  case  HSM2_RBPB:
+    value->rValue = here->HSM2_rbpb;
+    return (OK);
+  case  HSM2_RBPD:
+    value->rValue = here->HSM2_rbpd;
+    return(OK);
+  case  HSM2_RBPS:
+    value->rValue = here->HSM2_rbps;
+    return(OK);
+  case  HSM2_RBDB:
+    value->rValue = here->HSM2_rbdb;
+    return(OK);
+  case  HSM2_RBSB:
+    value->rValue = here->HSM2_rbsb;
+    return(OK);
+  case  HSM2_CORG: 
+    value->iValue = here->HSM2_corg;
+    return(OK);
+/*   case  HSM2_RSHG: */
+/*     value->rValue = here->HSM2_rshg; */
+/*     return(OK); */
+  case  HSM2_NGCON:
+    value->rValue = here->HSM2_ngcon;
+    return(OK);
+  case  HSM2_XGW:
+    value->rValue = here->HSM2_xgw;
+    return(OK);
+  case  HSM2_XGL:
+    value->rValue = here->HSM2_xgl;
+    return(OK);
+  case  HSM2_NF:
+    value->rValue = here->HSM2_nf;
+    return(OK);
+  case  HSM2_SA:
+    value->rValue = here->HSM2_sa;
+    return(OK);
+  case  HSM2_SB:
+    value->rValue = here->HSM2_sb;
+    return(OK);
+  case  HSM2_SD:
+    value->rValue = here->HSM2_sd;
+    return(OK);
+  case  HSM2_NSUBCDFM:
+    value->rValue = here->HSM2_nsubcdfm;
+    return(OK);
+  case  HSM2_MPHDFM:
+    value->rValue = here->HSM2_mphdfm;
+    return(OK);
+  case  HSM2_M:
+    value->rValue = here->HSM2_m;
+    return(OK);
+  default:
+    return(E_BADPARM);
+  }
+  /* NOTREACHED */
+}
