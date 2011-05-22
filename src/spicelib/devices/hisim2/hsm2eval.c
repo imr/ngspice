@@ -412,10 +412,7 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   const double eef_dlt = 1.0e-2 ;
   const double sti2_dlt = 2.0e-3 ;
   const double pol_dlt = 5.0e-2 ; 
-  const double psia_dlt = 1.0e-3 ;
-  const double psia2_dlt = 5.0e-3 ;
   const double psisti_dlt = 5.0e-3 ;
-  const double jct_dlt = 1.0e-2 ;
 
   /*---------------------------------------------------*
    * Local variables. 
@@ -453,8 +450,6 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
 
   const double VgVt_small = 1.0e-12 ;
   const double Vbs_min = -10.5e0 ;
-  const double Vds_max = 10.5e0 ; 
-  const double Vgs_max = 10.5e0 ;
   const double epsm10 = 10.0e0 * C_EPS_M ;
   const double small = 1.0e-50 ;
 
@@ -471,7 +466,6 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   int flg_noqi ;     /* Flag for the cases regarding Qi=Qd=0 */
   int flg_vbsc = 0 ; /* Flag for Vbs confining */
   int flg_info = 0 ; 
-  int flg_clamp = 0 ; /* Flag for clamping biases */
   int flg_conv = 0 ; /* Flag for Poisson loop convergence */
   int flg_qme = 0 ; /* Flag for QME */
 
@@ -554,7 +548,6 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double dVth0_dVb , dVth0_dVd , dVth0_dVg ;
   double dVthSC ;
   double dVthSC_dVb , dVthSC_dVd , dVthSC_dVg ;
-  double delta0 = 5.0e-3 ;
   double Pb20b ;
   double Pb20b_dVg , Pb20b_dVb , Pb20b_dVd ;
   double dVthW ;
@@ -568,7 +561,6 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double VgVt_dVbs = 0.0, VgVt_dVds = 0.0, VgVt_dVgs = 0.0 ;
   double Pslsat = 0.0 ;
   double Vdsat = 0.0 ;
-  double VdsatE = 0.0 ;
   double VdsatS = 0.0 ;
   double VdsatS_dVbs = 0.0, VdsatS_dVds = 0.0, VdsatS_dVgs = 0.0 ;
   double Delta ;
@@ -656,8 +648,6 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double Vthq, Vthq_dVb , Vthq_dVd ;
   /* Igate , Igidl , Igisl */
   const double igate_dlt = 1.0e-2 ;
-  const double gidlvds_dlt = 1.0e-5 ;
-  const double gidla = 100.0 ;
   double Psdlz , Psdlz_dVbs , Psdlz_dVds , Psdlz_dVgs ;
   double Egp12 , Egp32 ;
   double E1 , E1_dVb , E1_dVd , E1_dVg ;
@@ -680,8 +670,6 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   /* connecting function */
   double FD2 , FD2_dVbs , FD2_dVds , FD2_dVgs ;
   double FMDVDS , FMDVDS_dVbs , FMDVDS_dVds , FMDVDS_dVgs ;
-  double FMDVGS , FMDVGS_dVgs ;
-  double FMDPG , FMDPG_dVbs , FMDPG_dVds , FMDPG_dVgs ;
 
   double cnst0 , cnst1 ;
   double cnstCoxi =0.0 , cnstCoxi_dVg =0.0 , cnstCoxi_dVd =0.0 , cnstCoxi_dVb =0.0 ;
@@ -711,8 +699,6 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double Qn0_dVbs , Qn0_dVds , Qn0_dVgs ;
   double Qb0 ;
   double Qb0_dVb , Qb0_dVd , Qb0_dVg ;
-  double Qn00 ;
-  double Qn00_dVbs , Qn00_dVds , Qn00_dVgs ;
   double Qbnm ;
   double Qbnm_dVbs , Qbnm_dVds , Qbnm_dVgs ;
   double DtPds ;
@@ -799,7 +785,6 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double Qys, Qys_dVbse , Qys_dVdse, Qys_dVgse;
   /* PART-4 (junction diode) */
   double Ibs , Ibd , Gbs , Gbd , Gbse , Gbde ;
-  double Nvtm ;
   /* junction capacitance */
   double Qbs , Qbd , Capbs , Capbd , Capbse , Capbde ;
   double czbd , czbdsw , czbdswg , czbs , czbssw , czbsswg ;
@@ -858,8 +843,6 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double T8_dVb , T8_dVd , T8_dVg ;
   double T9_dVb , T9_dVd , T9_dVg ;
   double T10_dVb , T10_dVd , T10_dVg ;
-  double T11_dVb , T11_dVd , T11_dVg ;
-  double T12_dVb , T12_dVd , T12_dVg ;
 
   int   flg_zone = 0 ;
   double Vfbsft = 0.0 , Vfbsft_dVbs , Vfbsft_dVds , Vfbsft_dVgs ;
@@ -904,10 +887,7 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double ModeNML , ModeRVS ;
 
   /* For Gate Leak Current Partitioning */
-  double A2, Alpha0, Alpha1, Alpha2, GLPART1 ; 
-  double Alpha0_dVgs, Alpha1_dVgs, Alpha2_dVgs ;
-  double Alpha0_dVds, Alpha1_dVds, Alpha2_dVds ;
-  double Alpha0_dVbs, Alpha1_dVbs, Alpha2_dVbs ;
+  double GLPART1 ; 
   double GLPART1_dVgs, GLPART1_dVds, GLPART1_dVbs ; 
   double GLPART1_dVgse, GLPART1_dVdse, GLPART1_dVbse ; 
 
@@ -937,11 +917,10 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
 
 
   /* modify Qy in accumulation region */
-  double eps_qy = 5.0e-3 ;
+  /* double eps_qy = 5.0e-3 ; */
   double Aclm_eff, Aclm_eff_dVds, Aclm_eff_dVgs, Aclm_eff_dVbs ;
 
   double Idd1 , Idd1_dVbs ,  Idd1_dVgs ,  Idd1_dVds ;
-  double Fdd1 , Fdd1_dVbs ,  Fdd1_dVgs ,  Fdd1_dVds ;
 
   double tcjbs=0.0, tcjbssw=0.0, tcjbsswg=0.0,
          tcjbd=0.0, tcjbdsw=0.0, tcjbdswg=0.0 ;

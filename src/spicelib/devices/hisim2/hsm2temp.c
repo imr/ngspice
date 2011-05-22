@@ -88,7 +88,7 @@ int HSM2temp(
   double Denom, dPpg, dVth, dVthLP, dVthLP_dVb, dVthSC, dVthW;
   double dVth0, dVth0_dVb, fac1, limVgp_dVbs, Pb20, Ps0, Ps0_dVbs;
   double Ps0_min, Qb0, sc3lim, sc3Vbs, sc3Vgs, term1, term2, term3, term4;
-  double Tox, T0, T1_dVb, T3_dVb, T4, T5, T6, T6_dVb, T8, T8_dVb;
+  double Tox, T0, T3_dVb, T4, T5, T6, T6_dVb, T8, T8_dVb;
   double T9, T9_dVb, Vgp, Vgs_min, Vfb, Vthp, Vth0;
 
 
