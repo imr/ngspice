@@ -1,4 +1,8 @@
 2011-05-22  Robert Larice
+ * src/spicelib/devices/hisim2/hsm2set.c :
+   hisim2, add HSM2unsetup()
+
+2011-05-22  Robert Larice
  * src/spicelib/devices/hisim2/hsm2def.h :
    hisim2, add ngspice specific GENinstance struct slot 'HSM2owner' aka `GENowner'
 

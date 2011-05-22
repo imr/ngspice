@@ -772,3 +772,61 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
   }
   return(OK);
 } 
+
+
+int
+HSM2unsetup(
+    GENmodel *inModel,
+    CKTcircuit *ckt)
+{
+#ifndef HAS_BATCHSIM
+    HSM2model *model;
+    HSM2instance *here;
+ 
+    for (model = (HSM2model *)inModel; model != NULL;
+            model = model->HSM2nextModel)
+    {
+        for (here = model->HSM2instances; here != NULL;
+                here=here->HSM2nextInstance)
+        {
+            if (here->HSM2dNodePrime
+                    && here->HSM2dNodePrime != here->HSM2dNode)
+            {
+                CKTdltNNum(ckt, here->HSM2dNodePrime);
+                here->HSM2dNodePrime = 0;
+            }
+            if (here->HSM2sNodePrime
+                    && here->HSM2sNodePrime != here->HSM2sNode)
+            {
+                CKTdltNNum(ckt, here->HSM2sNodePrime);
+                here->HSM2sNodePrime = 0;
+            }
+            if (here->HSM2gNodePrime
+                    && here->HSM2gNodePrime != here->HSM2gNode)
+            {
+                CKTdltNNum(ckt, here->HSM2gNodePrime);
+                here->HSM2gNodePrime = 0;
+            }
+            if (here->HSM2bNodePrime
+                    && here->HSM2bNodePrime != here->HSM2bNode)
+            {
+                CKTdltNNum(ckt, here->HSM2bNodePrime);
+                here->HSM2bNodePrime = 0;
+            }
+            if (here->HSM2dbNode
+                    && here->HSM2dbNode != here->HSM2bNode)
+            {
+                CKTdltNNum(ckt, here->HSM2dbNode);
+                here->HSM2dbNode = 0;
+            }
+            if (here->HSM2sbNode
+                    && here->HSM2sbNode != here->HSM2bNode)
+            {
+                CKTdltNNum(ckt, here->HSM2sbNode);
+                here->HSM2sbNode = 0;
+            }
+        }
+    }
+#endif
+    return OK;
+}
