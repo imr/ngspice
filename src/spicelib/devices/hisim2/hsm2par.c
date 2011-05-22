@@ -27,6 +27,9 @@ int HSM2param(param,value,inst,select)
      IFvalue *select;
 {
   HSM2instance *here = (HSM2instance*)inst;
+
+  NG_IGNORE(select);
+
   switch (param) {
   case HSM2_W:
     here->HSM2_w = value->rValue;

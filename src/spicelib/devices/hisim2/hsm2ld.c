@@ -73,6 +73,9 @@ static void ShowPhysVals(here,model,isFirst,vds,vgs,vbs,vgd,vbd,vgb)
  double vgb;
 #endif
 {
+  NG_IGNORE(vgd);
+  NG_IGNORE(vbd);
+
   /* regard the epsilon-quantity as 0.0 */
   vds = (fabs(vds) < SHOW_EPS_QUANT) ? 0.0 : vds;
   vgs = (fabs(vgs) < SHOW_EPS_QUANT) ? 0.0 : vgs;

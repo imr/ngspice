@@ -41,6 +41,8 @@ int HSM2pzLoad(inModel,ckt,s)
   double gIdtotg, gIdtotd, gIdtots, gIdtotb;
   double gIstotg, gIstotd, gIstots, gIstotb;
   
+  NG_IGNORE(ckt);
+
   for ( ;model != NULL ;model = model->HSM2nextModel ) {
     for ( here = model->HSM2instances ;here!= NULL ;
 	  here = here->HSM2nextInstance ) {

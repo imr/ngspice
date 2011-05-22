@@ -31,6 +31,8 @@ int HSM2ask(ckt,inst,which,value,select)
 {
   HSM2instance *here = (HSM2instance*)inst;
 
+  NG_IGNORE(select);
+
   switch (which) {
   case HSM2_L:
     value->rValue = here->HSM2_l;

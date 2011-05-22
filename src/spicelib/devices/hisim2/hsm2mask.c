@@ -29,6 +29,9 @@ int HSM2mAsk(ckt,inst,which,value)
      IFvalue *value;
 {
   HSM2model *model = (HSM2model *)inst;
+
+  NG_IGNORE(ckt);
+
   switch (which) {
   case HSM2_MOD_NMOS:
     value->iValue = model->HSM2_type;
