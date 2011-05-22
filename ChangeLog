@@ -1,4 +1,9 @@
 2011-05-22  Robert Larice
+ * src/spicelib/devices/hisim2/Makefile.am ,
+ * src/spicelib/devices/hisim2/.cvsignore :
+   hisim2, new files Makefile.am and .cvsignore
+
+2011-05-22  Robert Larice
  * src/spicelib/devices/hisim2/* :
    hisim2, populate this new directory
      with files from HiSIM_2.5.1_Release_20110407.zip
