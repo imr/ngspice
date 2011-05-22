@@ -1,4 +1,10 @@
 2011-05-22  Robert Larice
+ * src/spicelib/devices/hisim2/Makefile.am ,
+ * src/spicelib/devices/hisim2/hsm2init.c ,
+ * src/spicelib/devices/hisim2/hsm2init.h :
+   hisim2, add ngspice specific hsm2init.[ch]
+
+2011-05-22  Robert Larice
  * src/spicelib/devices/hisim2/hsm2set.c :
    hisim2, add HSM2unsetup()
 

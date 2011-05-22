@@ -16,6 +16,8 @@ libhisim2_la_SOURCES =	hisim2.h	\
 			hsm2evalenv.h	\
 			hsm2ext.h	\
 			hsm2getic.c	\
+			hsm2init.c	\
+			hsm2init.h	\
 			hsm2itf.h	\
 			hsm2ld.c	\
 			hsm2mask.c	\
