@@ -90,7 +90,7 @@ int HSM2noise (
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 
 		(ckt, &(data->namelist[data->numPlots++]),
-		 (IFuid) NULL, name, UID_OTHER, (GENERIC **) NULL);
+		 (IFuid) NULL, name, UID_OTHER, NULL);
 	    }
 	    break;
 	  case INT_NOIZ:
@@ -104,7 +104,7 @@ int HSM2noise (
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 
 		(ckt, &(data->namelist[data->numPlots++]),
-		 (IFuid) NULL, name, UID_OTHER, (GENERIC **) NULL);
+		 (IFuid) NULL, name, UID_OTHER, NULL);
 	      
 	      (void) sprintf(name, "inoise_total.%s%s", 
 			     (char *)here->HSM2name, HSM2nNames[i]);
@@ -115,7 +115,7 @@ int HSM2noise (
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 
 		(ckt, &(data->namelist[data->numPlots++]),
-		 (IFuid) NULL, name, UID_OTHER, (GENERIC **)NULL);
+		 (IFuid) NULL, name, UID_OTHER, NULL);
 	    }
 	    break;
 	  }
