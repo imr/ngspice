@@ -18,7 +18,6 @@
 #include <math.h>
 #include "hsm2def.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 #include "suffix.h"
