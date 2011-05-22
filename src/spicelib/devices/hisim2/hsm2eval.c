@@ -1011,7 +1011,7 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   /*-----------------------------------------------------------*
    * Start of the routine. (label)
    *-----------------*/
-start_of_routine:
+/*start_of_routine:*/
 
   TTEMP = ckt->CKTtemp ;
   if ( here->HSM2_dtemp_Given ) { TTEMP = TTEMP + here->HSM2_dtemp ; }
@@ -3358,7 +3358,7 @@ start_of_routine:
     /*-----------------------------------------------------------*
      * Start point of Psl (= Ps0 + Pds) calculation. (label)
      *-----------------*/
-  start_of_Psl:
+/*  start_of_Psl:*/
 
 
     /* Vdseff (begin) */
@@ -4345,7 +4345,7 @@ start_of_mobility:
     Mu_dVds = Muun_dVds * T5 - T7 * Em_dVds ;
     Mu_dVgs = Muun_dVgs * T5 - T7 * Em_dVgs ;
 
-  end_of_mobility : 
+/*  end_of_mobility : */
 
     /*-----------------------------------------------------------*
      * Ids: channel current.
@@ -4753,7 +4753,7 @@ start_of_mobility:
     /*-----------------------------------------------------------*
      * Bottom of bias loop. (label) 
      *-----------------*/
-  bottom_of_bias_loop :
+/*  bottom_of_bias_loop :*/
 
     /*-----------------------------------------------------------*
      * Make initial guess flag of potential ON.
@@ -5257,7 +5257,7 @@ start_of_mobility:
   /*-----------------------------------------------------------*
    * End of PART-2. (label) 
    *-----------------*/
- end_of_part_2: 
+/* end_of_part_2: */
 
   /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
    * PART-3: Overlap charge
@@ -6087,7 +6087,7 @@ start_of_mobility:
    * End of PART-3. (label) 
    *-----------------*/ 
 
- end_of_part_3:
+/* end_of_part_3:*/
 
   /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
    * PART-4: Substrate-source/drain junction diode.
@@ -6415,7 +6415,7 @@ start_of_mobility:
    * End of PART-4. (label) 
    *-----------------*/ 
 
- end_of_part_4:
+/* end_of_part_4:*/
 
   
 
@@ -6549,7 +6549,7 @@ start_of_mobility:
   /*-----------------------------------------------------------* 
    * End of PART-5. (label) 
    *-----------------*/ 
- end_of_part_5: 
+/* end_of_part_5: */
 
   /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
    * PART-6: Noise Calculation.
@@ -6640,7 +6640,7 @@ start_of_mobility:
   /*-----------------------------------------------------------* 
    * End of PART-6. (label) 
    *-----------------*/ 
- end_of_part_6: 
+/* end_of_part_6: */
 
   
   /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
@@ -7640,7 +7640,7 @@ start_of_mobility:
   /*-----------------------------------------------------------* 
    * End of PART-7. (label) 
    *-----------------*/ 
- end_of_part_7: 
+/* end_of_part_7: */
    
   /*-----------------------------------------------------------* 
    * Bottom of hsm2eval. 
