@@ -98,7 +98,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "dio/dioitf.h"
 #include "hfet1/hfetitf.h"
 #include "hfet2/hfet2itf.h"
-#include "hisim/hsm1itf.h"
+#include "hisim2/hsm2itf.h"
 #include "hisimhv/hsmhvitf.h"
 #include "ind/inditf.h"
 #include "isrc/isrcitf.h"
@@ -208,7 +208,7 @@ spice_init_devices(void)
     DEVices[23] = get_dio_info();
     DEVices[24] = get_hfeta_info();
     DEVices[25] = get_hfet2_info();
-    DEVices[26] = get_hsm1_info();  
+    DEVices[26] = get_hsm2_info();  
     DEVices[27] = get_hsmhv_info();  
     DEVices[28] = get_ind_info();
     DEVices[29] = get_mut_info();
@@ -291,12 +291,12 @@ SPICEdev ** devices(void)
 
 #ifdef ADMS
 #define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v2", "bsim4v3", "bsim4v4", "bsim4v5", \
-                      "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim", "hisimhv", \
+                      "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv", \
                       "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \
                       "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum0", "hicum2", "mextram", "ekv", "psp102"}
 #else
 #define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v4", "bsim4v2", "bsim4v3", "bsim4v4", "bsim4v5", \
-                      "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim", "hisimhv", \
+                      "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv", \
                       "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \
                       "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc"}
 #endif

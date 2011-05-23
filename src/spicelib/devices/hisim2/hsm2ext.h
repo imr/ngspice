@@ -13,7 +13,6 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#ifdef __STDC__
 extern int HSM2acLoad(GENmodel *,CKTcircuit*);
 extern int HSM2ask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int HSM2convTest(GENmodel *,CKTcircuit*);
@@ -36,24 +35,3 @@ extern int HSM2unsetup(GENmodel*,CKTcircuit*);
 extern int HSM2temp(GENmodel*,CKTcircuit*);
 extern int HSM2trunc(GENmodel*,CKTcircuit*,double*);
 extern int HSM2noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
-#else /* stdc */
-extern int HSM2acLoad();
-extern int HSM2delete();
-extern void HSM2destroy();
-extern int HSM2getic();
-extern int HSM2load();
-extern int HSM2mDelete();
-extern int HSM2ask();
-extern int HSM2mAsk();
-extern int HSM2convTest();
-extern int HSM2temp();
-extern int HSM2mParam();
-extern void HSM2mosCap();
-extern int HSM2param();
-extern int HSM2pzLoad();
-extern int HSM2setup();
-extern int HSM2unsetup();
-extern int HSM2trunc();
-extern int HSM2noise();
-
-#endif /* stdc */

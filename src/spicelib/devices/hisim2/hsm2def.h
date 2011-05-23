@@ -2155,14 +2155,10 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 #include "hsm2ext.h"
 
 /*
-#ifdef __STDC__
 extern void HSM2evaluate(double,double,double,HSM2instance*,HSM2model*,
         double*,double*,double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, CKTcircuit*);
-#else
-extern void HSM2evaluate();
-#endif
 */
 
 #endif /*HSM2*/

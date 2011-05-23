@@ -1887,7 +1887,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hisim.h"
+				RelativePath="..\src\spicelib\devices\hisim2\hisim.h"
 				>
 			</File>
 			<File
@@ -1903,23 +1903,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1def.h"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2def.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1evalenv.h"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2evalenv.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1ext.h"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2ext.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1init.h"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2init.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1itf.h"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2itf.h"
 				>
 			</File>
 			<File
@@ -5715,87 +5715,79 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1acld.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2acld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1ask.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2ask.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1cvtest.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2cvtest.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1del.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2del.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1dest.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2dest.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1eval102.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2eval.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1eval112.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2getic.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1eval120.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2init.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1getic.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2ld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1init.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2mask.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1ld.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2mdel.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1mask.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2mpar.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1mdel.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2noi.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1mpar.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2par.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1noi.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2pzld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1par.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2set.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1pzld.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2temp.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1set.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1temp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisim\hsm1trunc.c"
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2trunc.c"
 				>
 			</File>
 			<File

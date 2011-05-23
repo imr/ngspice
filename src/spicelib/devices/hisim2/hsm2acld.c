@@ -39,10 +39,10 @@ int HSM2acLoad(
   double gIgtotg, gIgtotd, gIgtots, gIgtotb;
   double gIdtotg, gIdtotd, gIdtots, gIdtotb;
   double gIstotg, gIstotd, gIstots, gIstotb;
-  double cggb_real, cgsb_real, cgdb_real, cggb_imag, cgsb_imag, cgdb_imag;
-  double cdgb_real, cdsb_real, cddb_real, cdgb_imag, cdsb_imag, cddb_imag;
-  double csgb_real, cssb_real, csdb_real, csgb_imag, cssb_imag, csdb_imag;
-  double cbgb_real, cbsb_real, cbdb_real, cbgb_imag, cbsb_imag, cbdb_imag;
+  double cggb_real = 0.0, cgsb_real = 0.0, cgdb_real = 0.0, cggb_imag = 0.0, cgsb_imag = 0.0, cgdb_imag = 0.0;
+  double cdgb_real = 0.0, cdsb_real = 0.0, cddb_real = 0.0, cdgb_imag = 0.0, cdsb_imag = 0.0, cddb_imag = 0.0;
+  double csgb_real = 0.0, cssb_real = 0.0, csdb_real = 0.0, csgb_imag = 0.0, cssb_imag = 0.0, csdb_imag = 0.0;
+  double cbgb_real = 0.0, cbsb_real = 0.0, cbdb_real = 0.0, cbgb_imag = 0.0, cbsb_imag = 0.0, cbdb_imag = 0.0;
   double pyggb_r = 0.0, pygdb_r = 0.0, pygsb_r = 0.0, pygbb_r = 0.0;
   double pybgb_r = 0.0, pybdb_r = 0.0, pybsb_r = 0.0, pybbb_r = 0.0;
   double pydgb_r = 0.0, pyddb_r = 0.0, pydsb_r = 0.0, pydbb_r = 0.0;
@@ -55,7 +55,7 @@ int HSM2acLoad(
   double ybgb_r, ybdb_r, ybsb_r, ybbb_r, ybgb_i, ybdb_i, ybsb_i, ybbb_i;
   double ydgb_r, yddb_r, ydsb_r, ydbb_r, ydgb_i, yddb_i, ydsb_i, ydbb_i;
   double ysgb_r, ysdb_r, yssb_r, ysbb_r, ysgb_i, ysdb_i, yssb_i, ysbb_i;
-  double grg, pxcbdb_i, pxcbsb_i;
+  double grg = 0.0, pxcbdb_i = 0.0, pxcbsb_i = 0.0;
 
   double Qi, Qi_dVgs, Qi_dVbs, Qi_dVds ;
   double Qb, Qb_dVgs, Qb_dVbs, Qb_dVds ;

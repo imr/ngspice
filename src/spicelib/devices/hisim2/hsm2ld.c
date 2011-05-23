@@ -47,7 +47,6 @@ static double vsum0 = 1.0e5 ;
 #endif
 
 
-#ifdef __STDC__
 static void ShowPhysVals
 (
  HSM2instance *here,
@@ -60,18 +59,6 @@ static void ShowPhysVals
  double vbd,
  double vgb
 )
-#else
-static void ShowPhysVals(here,model,isFirst,vds,vgs,vbs,vgd,vbd,vgb)
- HSM2instance *here;
- HSM2model *model;
- int isFirst;
- double vds;
- double vgs;
- double vbs;
- double vgd;
- double vbd;
- double vgb;
-#endif
 {
   NG_IGNORE(vgd);
   NG_IGNORE(vbd);
@@ -198,7 +185,7 @@ int HSM2load(
   double cbhat, cdrain, cdhat, cdreq, cgbhat, cgshat, cgdhat;
   double Ibtot, Idtot, Igbtot, Igstot, Igdtot;
   double ceq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg;
-  double ceqjs, ceqjd, ceqqjs, ceqqjd;
+  double ceqjs, ceqjd, ceqqjs = 0.0, ceqqjd = 0.0;
   double delvbd, delvbs, delvds, delvgd, delvgs;
   double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb;
   double gcgdb, gcggb, gcgsb, gcgbb, gcsdb, gcsgb, gcssb;
@@ -234,7 +221,7 @@ int HSM2load(
     ? 1 : 0;
   int showPhysVal;
   int isConv;
-  double vds_pre;
+  double vds_pre = 0.0;
   double reltol, abstol , voltTol ;
   
 #ifdef MOS_MODEL_TIME

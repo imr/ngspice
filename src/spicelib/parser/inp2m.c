@@ -231,7 +231,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
         && thismodel->INPmodType != INPtypelook ("ekv")
         && thismodel->INPmodType != INPtypelook ("psp102")
 #endif      
-        && thismodel->INPmodType != INPtypelook ("HiSIM1")
+        && thismodel->INPmodType != INPtypelook ("HiSIM2")
         && thismodel->INPmodType != INPtypelook ("HiSIMHV")
         )
       {

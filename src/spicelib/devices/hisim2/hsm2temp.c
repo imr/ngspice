@@ -14,7 +14,6 @@
 ***********************************************************************/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "hsm2def.h"
@@ -23,15 +22,9 @@
 #include "sperror.h"
 #include "suffix.h"
 
-#ifdef __STDC__
 #define BINNING(param) pParam->HSM2_##param = model->HSM2_##param \
   + model->HSM2_l##param / Lbin + model->HSM2_w##param / Wbin \
   + model->HSM2_p##param / LWbin ;
-#else
-#define BINNING(param) pParam->HSM2_/**/param = model->HSM2_/**/param \
-  + model->HSM2_l/**/param / Lbin + model->HSM2_w/**/param / Wbin \
-  + model->HSM2_p/**/param / LWbin ;
-#endif
 
 #define RANGECHECK(param, min, max, pname)                              \
   if ( (param) < (min) || (param) > (max) ) {             \

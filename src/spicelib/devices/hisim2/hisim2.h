@@ -51,7 +51,6 @@
 #define HiSIM_FALSE     0
 #define HiSIM_TRUE      1
 
-#ifdef __STDC__
 extern int HSM2evaluate
 (
  double ivds,
@@ -63,8 +62,5 @@ extern int HSM2evaluate
  HSM2model    *model,
  CKTcircuit   *ckt
  ) ;
-#else
-extern int HSM2evaluate() ;
-#endif
 
 #endif /* _HiSIM2_H */

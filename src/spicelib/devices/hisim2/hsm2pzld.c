@@ -30,7 +30,7 @@ int HSM2pzLoad(
   register HSM2instance *here;
   double xcggb, xcgdb, xcgsb, xcgbb, xcbgb, xcbdb, xcbsb, xcbbb;
   double xcdgb, xcddb, xcdsb, xcdbb, xcsgb, xcsdb, xcssb, xcsbb;
-  double xcdbdb, xcsbsb;
+  double xcdbdb = 0.0, xcsbsb = 0.0;
   double gdpr, gspr, gds, gbd, gbs, capbd, capbs, FwdSum, RevSum, gm, gmbs;
   double gjbd, gjbs, grg;
   double cggb, cgdb, cgsb, cbgb, cbdb, cbsb, cddb, cdgb, cdsb;

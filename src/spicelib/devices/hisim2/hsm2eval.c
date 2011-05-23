@@ -139,6 +139,8 @@ using the HiSIM2 standard.
 #endif
 #include "cktdefs.h"
 
+#include "ngspice.h"
+
 /*-----------------------------------*
 * HiSIM macros
 *-----------------*/
@@ -237,7 +239,6 @@ double TMF1 , TMF2 , TMF3 , TMF4 ;
 * smoothZero: flooring to zero.
 *      y = 0.5 ( x + sqrt( x^2 + 4 delta^2 ) )
 *-----------------*/
-#if 0
 static double smoothZero
 (
  double x,
@@ -249,7 +250,6 @@ static double smoothZero
   if (dx) *dx = 0.5 * ( 1.0 + x / sqr ) ;
   return 0.5 * ( x + sqr ) ;
 }
-#endif
 /*---------------------------------------------------*
 * CeilingPow: ceiling for positive x, flooring for negative x.
 *      y = x * xmax / ( x^{2m} + xmax^{2m} )^{1/(2m)}
@@ -258,7 +258,6 @@ static double smoothZero
 *   - -xmax < y < xmax.
 *   - dy/dx|_{x=0} = 1.
 *-----------------*/
-#if 0
 static double CeilingPow
 (
  double x,
@@ -301,7 +300,6 @@ static double CeilingPow
   (*dx) = xmax * xmp * dnm / arg ;
   return result ;
 }
-#endif
 
 /*---------------------------------------------------*
 * CeilingPow: ceiling for positive x, flooring for negative x.
@@ -381,7 +379,6 @@ static double CeilingPow
 /*===========================================================*
 * Function hsm2evaluate.
 *=================*/
-#ifdef __STDC__
 int HSM2evaluate
 (
  double        vds,
@@ -393,17 +390,6 @@ int HSM2evaluate
  HSM2model    *model,
  CKTcircuit   *ckt
  ) 
-#else
-int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt) 
-     double        vds ;
-     double        vgs ;
-     double        vbs ;
-     double        vbs_jct ;
-     double        vbd_jct ;
-     HSM2instance *here ; 
-     HSM2model    *model ; 
-     CKTcircuit   *ckt ;
-#endif
 {
   HSM2binningParam *pParam = &here->pParam ;
   /*-----------------------------------*
@@ -467,7 +453,7 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   int flg_rsrd = 0 ; /* Flag for bias loop accounting Rs and Rd */
   int flg_iprv = 0 ; /* Flag for initial guess of Ids */
   int flg_pprv = 0 ; /* Flag for initial guesses of Ps0 and Pds */
-  int flg_noqi ;     /* Flag for the cases regarding Qi=Qd=0 */
+  int flg_noqi = 0 ;     /* Flag for the cases regarding Qi=Qd=0 */
   int flg_vbsc = 0 ; /* Flag for Vbs confining */
   int flg_info = 0 ; 
   int flg_conv = 0 ; /* Flag for Poisson loop convergence */
@@ -487,77 +473,77 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double Vbs_dVbse = 1.0 , Vbs_dVdse = 0.0 , Vbs_dVgse = 0.0 ;
   double Vds_dVbse = 0.0 , Vds_dVdse = 1.0 , Vds_dVgse = 0.0 ;
   double Vgs_dVbse = 0.0 , Vgs_dVdse = 0.0 , Vgs_dVgse = 1.0 ;
-  double Vgp ;
-  double Vgp_dVbs , Vgp_dVds , Vgp_dVgs ;
+  double Vgp = 0.0 ;
+  double Vgp_dVbs = 0.0 , Vgp_dVds = 0.0 , Vgp_dVgs = 0.0 ;
   double Vgs_fb ;
   /* Ps0 : surface potential at the source side */
-  double Ps0 ;
-  double Ps0_dVbs , Ps0_dVds , Ps0_dVgs ;
-  double Ps0_ini , Ps0_iniA , Ps0_iniB ;
+  double Ps0 = 0.0 ;
+  double Ps0_dVbs = 0.0 , Ps0_dVds = 0.0 , Ps0_dVgs = 0.0 ;
+  double Ps0_ini = 0.0 , Ps0_iniA , Ps0_iniB ;
   /* Psl : surface potential at the drain side */
-  double Psl ;
-  double Psl_dVbs , Psl_dVds , Psl_dVgs ;
+  double Psl = 0.0 ;
+  double Psl_dVbs = 0.0 , Psl_dVds = 0.0 , Psl_dVgs = 0.0 ;
   double Psl_lim , dPlim ;
   /* Pds := Psl - Ps0 */
   double Pds = 0.0 ;
   double Pds_dVbs = 0.0, Pds_dVds = 0.0 , Pds_dVgs  = 0.0 ;
-  double Pds_ini ;
+  double Pds_ini = 0.0 ;
   double Pds_max ;
   /* iteration numbers of Ps0 and Psl equations. */
   int lp_s0 = 0 , lp_sl = 0 ;
   /* Xi0 := beta * ( Ps0 - Vbs ) - 1. */
-  double Xi0 ;
-  double Xi0_dVbs , Xi0_dVds , Xi0_dVgs ;
-  double Xi0p12 ;
-  double Xi0p12_dVbs , Xi0p12_dVds , Xi0p12_dVgs ;
-  double Xi0p32 ;
+  double Xi0 = 0.0 ;
+  double Xi0_dVbs = 0.0 , Xi0_dVds = 0.0 , Xi0_dVgs = 0.0 ;
+  double Xi0p12 = 0.0 ;
+  double Xi0p12_dVbs = 0.0 , Xi0p12_dVds = 0.0 , Xi0p12_dVgs = 0.0 ;
+  double Xi0p32 = 0.0 ;
   /* Xil := beta * ( Psl - Vbs ) - 1. */
-  double Xilp12 ;
-  double Xilp32 ;
-  double Xil ;
+  double Xilp12 = 0.0 ;
+  double Xilp32 = 0.0 ;
+  double Xil = 0.0 ;
   /* modified bias and potential for sym.*/
-  double Vbsz , Vdsz , Vgsz ;
-  double Vbsz_dVbs , Vbsz_dVds ;
-  double Vdsz_dVds ;
-  double Vgsz_dVgs , Vgsz_dVds ;
+  double Vbsz = 0.0 , Vdsz = 0.0 , Vgsz = 0.0 ;
+  double Vbsz_dVbs = 0.0 , Vbsz_dVds = 0.0 ;
+  double Vdsz_dVds = 0.0 ;
+  double Vgsz_dVgs = 0.0 , Vgsz_dVds = 0.0 ;
   double Vzadd , Vzadd_dVds ;
-  double Ps0z , Ps0z_dVbs , Ps0z_dVds , Ps0z_dVgs ;
+  double Ps0z = 0.0 , Ps0z_dVbs = 0.0 , Ps0z_dVds = 0.0 , Ps0z_dVgs = 0.0 ;
   double Pzadd , Pzadd_dVbs , Pzadd_dVds , Pzadd_dVgs ;
   double Vgpz , Vgpz_dVbs , Vgpz_dVds , Vgpz_dVgs ; /* (tmp) */
 
   /* IBPC */
   double dVbsIBPC , dVbsIBPC_dVbs , dVbsIBPC_dVds , dVbsIBPC_dVgs ;
-  double betaWL , betaWL_dVbs , betaWL_dVds , betaWL_dVgs ;
-  double Xi0p32_dVbs , Xi0p32_dVds , Xi0p32_dVgs ;
-  double Xil_dVbs , Xil_dVds , Xil_dVgs ;
-  double Xilp12_dVbs , Xilp12_dVds , Xilp12_dVgs ;
-  double Xilp32_dVbs , Xilp32_dVds , Xilp32_dVgs ;
+  double betaWL = 0.0 , betaWL_dVbs = 0.0 , betaWL_dVds = 0.0 , betaWL_dVgs = 0.0 ;
+  double Xi0p32_dVbs = 0.0 , Xi0p32_dVds = 0.0 , Xi0p32_dVgs = 0.0 ;
+  double Xil_dVbs = 0.0 , Xil_dVds = 0.0 , Xil_dVgs = 0.0 ;
+  double Xilp12_dVbs = 0.0 , Xilp12_dVds = 0.0 , Xilp12_dVgs = 0.0 ;
+  double Xilp32_dVbs = 0.0 , Xilp32_dVds = 0.0 , Xilp32_dVgs = 0.0 ;
   double dG3 , dG3_dVbs , dG3_dVds , dG3_dVgs ;
   double dG4 , dG4_dVbs , dG4_dVds , dG4_dVgs ;
   double dIdd , dIdd_dVbs , dIdd_dVds , dIdd_dVgs ;
 
   /* Chi := beta * ( Ps{0/l} - Vbs ) */
-  double Chi ;
+  double Chi = 0.0 ;
   double Chi_dVbs , Chi_dVds , Chi_dVgs ;
   /* Rho := beta * ( Psl - Vds ) */
   double Rho ;
   /* threshold voltage */
-  double Vth ;
-  double Vth0 ;
-  double Vth0_dVb , Vth0_dVd , Vth0_dVg ;
+  double Vth = 0.0 ;
+  double Vth0 = 0.0 ;
+  double Vth0_dVb = 0.0 , Vth0_dVd = 0.0 , Vth0_dVg = 0.0 ;
   /* variation of threshold voltage */
-  double dVth ;
-  double dVth_dVb , dVth_dVd , dVth_dVg ;
-  double dVth0 ;
-  double dVth0_dVb , dVth0_dVd , dVth0_dVg ;
-  double dVthSC ;
-  double dVthSC_dVb , dVthSC_dVd , dVthSC_dVg ;
+  double dVth = 0.0 ;
+  double dVth_dVb = 0.0 , dVth_dVd = 0.0 , dVth_dVg = 0.0 ;
+  double dVth0 = 0.0 ;
+  double dVth0_dVb = 0.0 , dVth0_dVd = 0.0 , dVth0_dVg = 0.0 ;
+  double dVthSC = 0.0 ;
+  double dVthSC_dVb = 0.0 , dVthSC_dVd = 0.0 , dVthSC_dVg = 0.0 ;
   double Pb20b ;
   double Pb20b_dVg , Pb20b_dVb , Pb20b_dVd ;
   double dVthW ;
   double dVthW_dVb , dVthW_dVd , dVthW_dVg ;
   /* Alpha and related parameters */
-  double Alpha ;
+  double Alpha = 0.0 ;
   double Alpha_dVbs , Alpha_dVds , Alpha_dVgs ;
   double Achi ;
   double Achi_dVbs , Achi_dVds , Achi_dVgs ;
@@ -569,11 +555,11 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double VdsatS_dVbs = 0.0, VdsatS_dVds = 0.0, VdsatS_dVgs = 0.0 ;
   double Delta ;
   /* Q_B and capacitances */
-  double Qb , Qb_dVbs , Qb_dVds , Qb_dVgs ;
+  double Qb = 0.0 , Qb_dVbs = 0.0 , Qb_dVds = 0.0 , Qb_dVgs = 0.0 ;
   double Qb_dVbse , Qb_dVdse , Qb_dVgse ;
   double Qbu = 0.0 , Qbu_dVbs = 0.0 , Qbu_dVds = 0.0 , Qbu_dVgs = 0.0 ;
   /* Q_I and capacitances */
-  double Qi , Qi_dVbs , Qi_dVds , Qi_dVgs ;
+  double Qi = 0.0 , Qi_dVbs = 0.0 , Qi_dVds = 0.0 , Qi_dVgs = 0.0 ;
   double Qi_dVbse , Qi_dVdse , Qi_dVgse ;
   double Qiu = 0.0 , Qiu_dVbs = 0.0 , Qiu_dVds = 0.0 , Qiu_dVgs = 0.0 ;
   /* Q_D and capacitances */
@@ -582,7 +568,7 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double qd_dVgse, qd_dVdse, qd_dVbse, qd_dVsse ;
   /* channel current */
   double Ids ;
-  double Ids_dVbs , Ids_dVds , Ids_dVgs ;
+  double Ids_dVbs = 0.0 , Ids_dVds = 0.0 , Ids_dVgs = 0.0 ;
   double Ids_dVbse , Ids_dVdse , Ids_dVgse ;
   double Ids0 ;
   double Ids0_dVbs , Ids0_dVds , Ids0_dVgs ;
@@ -626,14 +612,14 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double Psa ;
   double Psa_dVbs , Psa_dVds , Psa_dVgs ;
   /* CLM*/
-  double Psdl , Psdl_dVbs , Psdl_dVds , Psdl_dVgs ;
-  double Lred , Lred_dVbs , Lred_dVds , Lred_dVgs ;
-  double Lch , Lch_dVbs , Lch_dVds , Lch_dVgs ;
+  double Psdl = 0.0 , Psdl_dVbs = 0.0 , Psdl_dVds = 0.0 , Psdl_dVgs = 0.0 ;
+  double Lred = 0.0 , Lred_dVbs = 0.0 , Lred_dVds = 0.0 , Lred_dVgs = 0.0 ;
+  double Lch = 0.0 , Lch_dVbs = 0.0 , Lch_dVds = 0.0 , Lch_dVgs = 0.0 ;
   double Wd , Wd_dVbs , Wd_dVds , Wd_dVgs ;
   double Aclm ;
   /* Pocket Implant */
   double Vthp, Vthp_dVb, Vthp_dVd, Vthp_dVg ;
-  double dVthLP, dVthLP_dVb, dVthLP_dVd, dVthLP_dVg ;
+  double dVthLP = 0.0, dVthLP_dVb = 0.0, dVthLP_dVd = 0.0, dVthLP_dVg = 0.0 ;
   double bs12, bs12_dVb, bs12_dVd , bs12_dVg ;
   double Qbmm, Qbmm_dVb, Qbmm_dVd , Qbmm_dVg ;
   double dqb, dqb_dVb, dqb_dVg, dqb_dVd ;
@@ -642,12 +628,12 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double Pbsum_dVb, Pbsum_dVd, Pbsum_dVg ;
   /* Poly-Depletion Effect */
   const double pol_b = 1.0 ;
-  double dPpg , dPpg_dVb , dPpg_dVd , dPpg_dVg ; 
+  double dPpg = 0.0 , dPpg_dVb = 0.0 , dPpg_dVd = 0.0 , dPpg_dVg = 0.0 ; 
   /* Quantum Effect */
   double Tox , Tox_dVb , Tox_dVd , Tox_dVg ;
   double dTox , dTox_dVb , dTox_dVd , dTox_dVg ;
-  double Cox , Cox_dVb , Cox_dVd , Cox_dVg ;
-  double Cox_inv , Cox_inv_dVb , Cox_inv_dVd , Cox_inv_dVg ;
+  double Cox = 0.0 , Cox_dVb = 0.0 , Cox_dVd = 0.0 , Cox_dVg = 0.0 ;
+  double Cox_inv = 0.0 , Cox_inv_dVb , Cox_inv_dVd , Cox_inv_dVg ;
   double Tox0 , Cox0 , Cox0_inv ;
   double Vthq, Vthq_dVb , Vthq_dVd ;
   /* Igate , Igidl , Igisl */
@@ -672,35 +658,35 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double Igisl , Igisl_dVbs , Igisl_dVds , Igisl_dVgs ;
   double Igisl_dVbse , Igisl_dVdse , Igisl_dVgse ;
   /* connecting function */
-  double FD2 , FD2_dVbs , FD2_dVds , FD2_dVgs ;
-  double FMDVDS , FMDVDS_dVbs , FMDVDS_dVds , FMDVDS_dVgs ;
+  double FD2 = 0.0 , FD2_dVbs = 0.0 , FD2_dVds = 0.0 , FD2_dVgs = 0.0 ;
+  double FMDVDS = 0.0 , FMDVDS_dVbs = 0.0 , FMDVDS_dVds = 0.0 , FMDVDS_dVgs = 0.0 ;
 
   double cnst0 , cnst1 ;
   double cnstCoxi =0.0 , cnstCoxi_dVg =0.0 , cnstCoxi_dVd =0.0 , cnstCoxi_dVb =0.0 ;
-  double fac1 ;
+  double fac1 = 0.0 ;
   double fac1_dVbs , fac1_dVds , fac1_dVgs ;
   double fac1p2 ;
-  double fs01 ;
-  double fs01_dPs0 ;
+  double fs01 = 0.0 ;
+  double fs01_dPs0 = 0.0 ;
   double fs01_dVbs , fs01_dVds , fs01_dVgs ;
-  double fs02 ;
-  double fs02_dPs0 ;
+  double fs02 = 0.0 ;
+  double fs02_dPs0 = 0.0 ;
   double fs02_dVbs , fs02_dVds , fs02_dVgs ;
   double fsl1 ;
   double fsl1_dPsl ;
   double fsl1_dVbs , fsl1_dVds , fsl1_dVgs ; /* Vdseff */
-  double fsl2 ;
+  double fsl2 = 0.0 ;
   double fsl2_dPsl ;
   double fsl2_dVbs , fsl2_dVds , fsl2_dVgs ; /* Vdseff */
   double cfs1 ;
-  double fb , fb_dChi ;
-  double fi , fi_dChi ;
-  double exp_Chi , exp_Rho , exp_bVbs , exp_bVbsVds ;
+  double fb = 0.0 , fb_dChi = 0.0 ;
+  double fi = 0.0 , fi_dChi = 0.0 ;
+  double exp_Chi , exp_Rho = 0.0 , exp_bVbs , exp_bVbsVds ;
   double Fs0, Fsl ;
-  double Fs0_dPs0 , Fsl_dPsl ;
+  double Fs0_dPs0 = 0.0 , Fsl_dPsl = 0.0 ;
   double dPs0 , dPsl ;
   double Qn0 = 0.0e0 ;
-  double Qn0_dVbs , Qn0_dVds , Qn0_dVgs ;
+  double Qn0_dVbs = 0.0 , Qn0_dVds = 0.0 , Qn0_dVgs = 0.0 ;
   double Qb0 ;
   double Qb0_dVb , Qb0_dVd , Qb0_dVg ;
   double Qbnm ;
@@ -719,18 +705,18 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double Qdrat = 0.5;
   double Qdrat_dVbs = 0.0 , Qdrat_dVds = 0.0, Qdrat_dVgs = 0.0;
   double Qdrat_dVbse , Qdrat_dVdse , Qdrat_dVgse ;
-  double Idd ;
-  double Idd_dVbs , Idd_dVds , Idd_dVgs ;
+  double Idd = 0.0 ;
+  double Idd_dVbs = 0.0 , Idd_dVds = 0.0 , Idd_dVgs = 0.0 ;
   double Fdd ;
   double Fdd_dVbs , Fdd_dVds , Fdd_dVgs ;
   double Eeff ;
   double Eeff_dVbs , Eeff_dVds , Eeff_dVgs ;
   double Rns ;
   double Mu = 0.0 ;
-  double Mu_dVbs , Mu_dVds , Mu_dVgs ;
-  double Muun , Muun_dVbs , Muun_dVds , Muun_dVgs ;
+  double Mu_dVbs = 0.0 , Mu_dVds = 0.0 , Mu_dVgs = 0.0 ;
+  double Muun = 0.0 , Muun_dVbs , Muun_dVds , Muun_dVgs ;
   double Ey = 0e0 ;
-  double Ey_dVbs , Ey_dVds , Ey_dVgs ;
+  double Ey_dVbs = 0.0 , Ey_dVds = 0.0 , Ey_dVgs = 0.0 ;
   double Em ;
   double Em_dVbs , Em_dVds , Em_dVgs ;
   double Vmax ;
@@ -780,7 +766,7 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double Cf ;
   double Qfd , Qfs ;
   /* Cqy */
-  double Ec , Ec_dVbs , Ec_dVds , Ec_dVgs ;
+  double Ec = 0.0 , Ec_dVbs = 0.0 , Ec_dVds = 0.0 , Ec_dVgs = 0.0 ;
   double Pslk , Pslk_dVbs , Pslk_dVds , Pslk_dVgs ;
   double Qy ;
   double Cqyd, Cqyg, Cqys, Cqyb ;
@@ -794,27 +780,27 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double czbd , czbdsw , czbdswg , czbs , czbssw , czbsswg ;
   double arg , sarg ;
   /* PART-5 (NQS) */
-  double tau, Qi_prev ; 
-  double tau_dVgs, tau_dVds, tau_dVbs ;
-  double tau_dVgse, tau_dVdse, tau_dVbse ;
-  double Qi_nqs ;
-  double Qi_dVbs_nqs, Qi_dVds_nqs, Qi_dVgs_nqs ;
-  double Qi_dVbse_nqs, Qi_dVdse_nqs, Qi_dVgse_nqs ;
-  double taub, Qb_prev ; 
-  double taub_dVgs, taub_dVds, taub_dVbs ;
-  double taub_dVgse, taub_dVdse, taub_dVbse ;
-  double Qb_nqs ;
-  double Qb_dVbs_nqs, Qb_dVds_nqs, Qb_dVgs_nqs ;
-  double Qb_dVbse_nqs, Qb_dVdse_nqs, Qb_dVgse_nqs ;
+  double tau = 0.0, Qi_prev ; 
+  double tau_dVgs = 0.0, tau_dVds = 0.0, tau_dVbs = 0.0 ;
+  double tau_dVgse = 0.0, tau_dVdse = 0.0, tau_dVbse = 0.0 ;
+  double Qi_nqs = 0.0 ;
+  double Qi_dVbs_nqs = 0.0, Qi_dVds_nqs = 0.0, Qi_dVgs_nqs = 0.0 ;
+  double Qi_dVbse_nqs = 0.0, Qi_dVdse_nqs = 0.0, Qi_dVgse_nqs = 0.0 ;
+  double taub = 0.0, Qb_prev ; 
+  double taub_dVgs = 0.0, taub_dVds = 0.0, taub_dVbs = 0.0 ;
+  double taub_dVgse = 0.0, taub_dVdse = 0.0, taub_dVbse = 0.0 ;
+  double Qb_nqs = 0.0 ;
+  double Qb_dVbs_nqs = 0.0, Qb_dVds_nqs = 0.0, Qb_dVgs_nqs = 0.0 ;
+  double Qb_dVbse_nqs = 0.0, Qb_dVdse_nqs = 0.0, Qb_dVgse_nqs = 0.0 ;
   /* PART-6 (noise) */
   /* 1/f */
   double NFalp , NFtrp , Cit , Nflic ;
   /* thermal */
-  double Eyd, Mu_Ave, Nthrml, Mud_hoso ;
+  double Eyd, Mu_Ave, Nthrml, Mud_hoso = 0.0 ;
   /* induced gate noise ( Part 0/3 ) */
-  double kusai00 , kusaidd , kusaiL , kusai00L ;
+  double kusai00 = 0.0 , kusaidd , kusaiL = 0.0 , kusai00L = 0.0 ;
   int flg_ign = 0 ;
-  double sqrtkusaiL , kusai_ig , gds0_ign , gds0_h2 , GAMMA , crl_f ;
+  double sqrtkusaiL = 0.0 , kusai_ig = 0.0 , gds0_ign = 0.0 , gds0_h2 , GAMMA , crl_f = 0.0 ;
   const double c_sqrt_15 = 3.872983346207417e0 ; /* sqrt(15) */
   const double Cox_small = 1.0e-6 ;
   const double c_16o135 = 1.185185185185185e-1 ; /* 16/135 */
@@ -826,10 +812,10 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
   double vtol_iprv = 2.0e-1 ;
   double vtol_pprv = 1.01e-1 ;
   double Vbsc_dif , Vdsc_dif , Vgsc_dif , sum_vdif ;
-  double Vbsc_dif2 , Vdsc_dif2 , Vgsc_dif2 , sum_vdif2 ;
-  double Rs , Rd ;
+  double Vbsc_dif2 = 0.0 , Vdsc_dif2 = 0.0 , Vgsc_dif2 = 0.0 , sum_vdif2 ;
+  double Rs = 0.0 , Rd = 0.0 ;
   double Fbs , Fds , Fgs ;
-  double DJ , DJI ;
+  double DJ , DJI = 0.0 ;
   double JI11 , JI12 , JI13 , JI21 , JI22 , JI23 , JI31 , JI32 , JI33 ;
   double dVbs , dVds , dVgs ;
   double dV_sum ;
@@ -921,7 +907,6 @@ int HSM2evaluate( vds , vgs , vbs , vbs_jct, vbd_jct, here , model , ckt)
 
 
   /* modify Qy in accumulation region */
-  /* double eps_qy = 5.0e-3 ; */
   double Aclm_eff, Aclm_eff_dVds, Aclm_eff_dVgs, Aclm_eff_dVbs ;
 
   double Idd1 , Idd1_dVbs ,  Idd1_dVgs ,  Idd1_dVds ;
