@@ -1,3 +1,6 @@
+2011-05-23  Holger Vogt
+ * windisp.c: bug no. 3263437 (fix thanks to Robert)
+
 2011-05-22  Robert Larice
  * configure.ac ,
  * src/spicelib/devices/Makefile.am :

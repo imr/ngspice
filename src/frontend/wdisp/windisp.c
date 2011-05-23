@@ -505,10 +505,9 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
       GRAPH * g = pGraph( hwnd);
 
       if (g) {
-         /* if g equals currentgraph, set a new currentgraph. 
-            Otherwise gr_resize(g) might fail. */
+         /* if g equals currentgraph, reset currentgraph. */
          if (g == currentgraph)
-            currentgraph = FindGraph(g->graphid - 1);
+            currentgraph = NULL;
          DestroyGraph(g->graphid);
       }
    }
@@ -538,10 +537,15 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
                   /* switch DC */
                   saveDC = wd->hDC;
                   wd->hDC = newDC;
-//                currentgraph = g;
                   
                   /* plot anew */
-                  gr_resize(g);
+                  {
+                      GRAPH *tmp = currentgraph;
+                      currentgraph = g;
+                      gr_resize(g);
+                      currentgraph = tmp;
+                  }
+
                   /* switch DC */
                   wd->hDC = saveDC;
                   /* ready */
