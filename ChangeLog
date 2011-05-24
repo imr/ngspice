@@ -1,6 +1,11 @@
 2011-05-23  Holger Vogt
  * windisp.c: bug no. 3263437 (fix thanks to Robert)
 
+2011-05-23  Dietmar Warning
+ * src/spicelib/devices/hisim2/*.c, *.h: Some changes for MS visualc and suppr. warnings
+ * src/spicelib/parser/inpdomod.c: hisim is now level=61, compatible with STARC
+ * visualc/vngspice.vcproj: substitute hisim1 with hisim2
+
 2011-05-22  Robert Larice
  * configure.ac ,
  * src/spicelib/devices/Makefile.am :
