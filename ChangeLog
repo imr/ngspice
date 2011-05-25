@@ -1,4 +1,7 @@
 2011-05-23  Holger Vogt
+ * configure.ac: remove reference to devices/hisim/makefile (line 1035)
+
+2011-05-23  Holger Vogt
  * windisp.c: bug no. 3263437 (fix thanks to Robert)
 
 2011-05-23  Dietmar Warning
