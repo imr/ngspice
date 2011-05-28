@@ -1,3 +1,7 @@
+2011-05-28  Dietmar Warning
+ * tests/hisim, tests/hisimhv: include the CMC test suite (Author: Colin McAndrew) 
+   provided by the model developer - Hiroshima University
+ 
 2011-05-28  Holger Vogt
  * update to prepare release 23
 

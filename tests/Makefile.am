@@ -11,7 +11,6 @@ SUBDIRS = bsim1			\
 	filters			\
 	general			\
 	hfet			\
-	hisim			\
 	jfet			\
 	mes			\
 	mesa			\
@@ -35,7 +34,6 @@ DIST_SUBDIRS =	bsim1	\
 	filters		\
 	general		\
 	hfet		\
-	hisim		\
 	jfet		\
 	mes		\
 	mesa		\
