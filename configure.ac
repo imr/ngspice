@@ -1106,7 +1106,6 @@ AC_CONFIG_FILES([Makefile
                  tests/filters/Makefile
                  tests/general/Makefile
                  tests/hfet/Makefile
-                 tests/hisim/Makefile
                  tests/jfet/Makefile
                  tests/mes/Makefile
                  tests/mesa/Makefile
