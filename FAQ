@@ -236,26 +236,34 @@
 
   The latest version released is: 
   
-  * ngspice-rework-22 (released on 26/09/2010)
+  * ngspice-rework-23 (released on 05/06/2011)
   
 
  2.2.  What are the latest features in the current release?
 
-  New features:
-    + OpenMP multicore support for BSIM3, BSIM4, and BSIMSOI4
-    + reinstate {$var} expansion in interactive interpreter
-    + .TITLE line added
-    + update to 'spectrum' script
-    + par('expression') in .four, .plot, .print, .meas, .save commands
-    + command 'option' for use in spinit, .spiceinit, and in scripts
-    + adms procedure updated
-    + new random number generator, random functions sunif() and sgauss()
-    + ngspice manual updated 
+- New features:
+    + Reduction of trtol to 1 only if 'A' devices in the circuit and xspice is enabled
+    + command wrs2p to write a s-parameter file using Touchstone vers. 1 format
+	+ d_source d_state d_ram, test cases for those xspice codemodels
+	+ transient noise simulation added to independent voltage and current sources
+	+ Random telegraph noise added to independent voltage and current sources
+	+ 'time = nnn' in stop command added
+	+ random voltage generator option trrandom to independent voltage and current sources
+	+ ngspice build possible in a separate directory (e.g. in ng-spice-rework/release)
+	+ update FIND .. WHEN measurements
+	+ diode & bjt temperature model update with tlev and tlevc
+	+ merge bsim3v1a code with bsim3v0 and bsim3v1s code with bsim3v1
+	+ bjt2: removed - all GP extensions of this model are now in the bjt model
+	+ HiSIM_HV model vers. 1.2.1 added
+	+ bsim3v32: delvto and mulu0 as instance parameters
+	+ Replace HiSIM1 by HiSIM_2.5.1_Release_20110407
 
-  Bug fixes:
-    + Major code cleanup to reduce compiler/linker warnings: ansi function prototypes, 
-      void/char pointers to named pointers, explicit type casts and many more  
-    + Many small bugs
+- Bug fixes:
+    + More on prototypes, type casts, reordering of functions, compiler warnings
+	+ allow models like 2N2904 or 2SK136 also in subcircuits
+	+ fix sensitvity calculation (for the dc-2+.cir testcase)
+	+ allow multiple call to setup w/ correct node collapsing
+	+ Many small bugs
 
 
 

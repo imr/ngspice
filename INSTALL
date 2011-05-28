@@ -61,29 +61,29 @@ This file describes the procedures to install ngspice from sources.
  Now change directories in to the top-level source directory (where this
  INSTALL file can be found).
 
- The project uses the GNU build process. This is still very crude and needs
- work, but basically you should be able to do the following:
+ The project uses the GNU build process. The compile output should go into a separate 
+ directory, so to e.g. maitain and distinguish debug and release versions.
 
  $ ./autogen.sh
- $ ./configure --enable-maintainer-mode
+ $ mkdir debug
+ $ cd debug
+ $ ../configure --enable-maintainer-mode
  $ make
  $ sudo make install
-
- At present it is normal for there to be some warning generated during this
- process.
-	
+    
  See the section titled 'Advanced Install' for instructions about arguments 
  that can be passed to ./configure to customise the build and installation.
   
  Preferred arguments to ./configure to obtain a comfortably working ngspice may be
- --with-editline=yes (if not available, --with-readline=yes will work, but has
- a licensing issue) and --disable-debug (for smaller and speed optimized
+ --with-readline=yes and --disable-debug (for smaller and speed optimized
  executable). 
  
  A fully featured ngspice on LINUX may be obtained with the following commands:
  $ ./autogen.sh --adms
- $ ./configure --with-x --enable-xspice  --disable-debug --enable-cider --with-readline=yes --enable-openmp --enable-adms 
- $ make
+ $ mkdir release
+ $ cd release
+ $ ../configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-openmp --enable-adms 
+ $ make 2>&1 | tee make.log
  $ sudo make install
  
  If a problem is found with the build proccess, please submit a report to 
@@ -95,18 +95,19 @@ This file describes the procedures to install ngspice from sources.
 
 1.3 Basic Install
 
- This covers installation from a tarball (for example ngspice-rework-18.tgz).
+ This covers installation from a tarball (for example ngspice-23.tar.gz).
  After downloading the tar ball to a local directory unpack it using:
 
- $ tar -zxvf ngspice-rework-18.tgz
-	
+ $ tar -zxvf ngspice-23.tar.gz
+    
  Now change directories in to the top-level source directory (where this
  INSTALL file can be found).
 
  You should be able to do:
  
- $ ./autogen.sh
- $ ./configure
+ $ mkdir debug
+ $ cd debug
+ $ ../configure
  $ make
  $ sudo make install
   
@@ -116,9 +117,16 @@ This file describes the procedures to install ngspice from sources.
  that can be passed to ./configure to customise the build and installation.
  
  Preferred arguments to ./configure to obtain a comfortably working ngspice may be
- --with-editline=yes (if not available, --with-readline=yes will work, but has
- a licensing issue) and --disable-debug (for smaller and speed optimized
+ --with-readline=yes and --disable-debug (for smaller and speed optimized
  executable). 
+ 
+ A fully featured ngspice on LINUX may be obtained with the following commands:
+ $ ./autogen.sh --adms
+ $ mkdir release
+ $ cd release
+ $ ../configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-openmp --enable-adms 
+ $ make 2>&1 | tee make.log
+ $ sudo make install
 
 
 1.4 Advanced Install
@@ -127,35 +135,51 @@ This file describes the procedures to install ngspice from sources.
  options do:
 
  $ ./configure --help
-	
+    
  Some of these options are generic to the GNU build process that is used by
  Ngspice, other are specific to Ngspice.
 
  The following sections provide some guidance and descriptions for many,
  but not all, of these options.
-
-
-1.4.1 Options Specific to Using Ngspice
+ 
+ 1.4.1 Most useful options:
 
   --enable-adms
-                ADMS is an experimental model compiler that translates 
-                Verilog-A compact models into C code that can be compiled into 
-                ngspice. This is (as of rework.18 )still experimental and not
-                completely working. If you want to use it, please refer to the
-                ADMS section on ngspice web site.
-
- --enable-capbypass
-		Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd 
-		voltages are unchanged.
-		
- --enable-capzerobypass
- 		Bypass all the cbd/cbs calculations if Czero is zero. This is 
-                enabled by default since rework-18.
+        ADMS is an experimental model compiler that translates 
+        Verilog-A compact models into C code that can be compiled into 
+        ngspice. This is (as of rework.18 )still experimental and not
+        completely working. If you want to use it, please refer to the
+        ADMS section on ngspice web site. 
 
  --enable-cider
-                Cider is a mixed-level simulator that couples Spice3 and DSIM
-                to simulate devices from their technological parameters. This
-                part of the simulator is not compiled by default.
+        Cider is a mixed-level simulator that couples Spice3 and DSIM
+        to simulate devices from their technological parameters. This
+        part of the simulator is not compiled by default.
+                  
+ --enable-xspice
+        Enable XSpice enhancements, (experimental)
+        A mixed signal simulator built upon spice3 with codemodel 
+        dynamic loading support.  See src/xspice/README for details.
+        
+  --with-readline=yes
+        Enable GNU readline support for the command line interface.
+                
+ --enable-openmp 
+        Compile ngspice for multi-core processors. 
+        Parallelization is done by OpenMP             
+        
+
+1.4.2 Options Specific to Using Ngspice
+
+Most of the now following options are not well maintained, are not tested or even maybe obsolete. 
+
+ --enable-capbypass
+        Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd 
+        voltages are unchanged.
+        
+ --enable-capzerobypass
+         Bypass all the cbd/cbs calculations if Czero is zero. This is 
+                enabled by default since rework-18.
 
  --enable-cluster
                 Clustering code for distributed simulation. This is a
@@ -167,147 +191,101 @@ This file describes the procedures to install ngspice from sources.
                 to mask devices under development. Almost useless for users.
 
  --enable-experimental
-		This enables some experimental code. Specifically it enables:
-			* support for altering options in interactive mode 
-			  by adding the interactive keyword 'options'.
-			* The ability to save and load snapshots: adds 
-			  interactive keywords 'savesnap' and 'loadsnap'.
+        This enables some experimental code. Specifically it enables:
+            * support for altering options in interactive mode 
+              by adding the interactive keyword 'options'.
+            * The ability to save and load snapshots: adds 
+              interactive keywords 'savesnap' and 'loadsnap'.
 
  --enable-help           
                 Force building nghelp. This is deprecated.
 
  --enable-ndev
-		Enable NDEV interface, (experimental)
-		A TCP/IP interface to external device simulator such as GSS.
-		For more information, please visit the homepage of GSS at 
-		http://gss-tcad.sourceforge.net
+        Enable NDEV interface, (experimental)
+        A TCP/IP interface to external device simulator such as GSS.
+        For more information, please visit the homepage of GSS at 
+        http://gss-tcad.sourceforge.net
  
  --enable-newpred
                 Enable the NEWPRED symbol in the code.
 
  --enable-newtrunc
-		Enable the newtrunc option
+        Enable the newtrunc option
 
  --enable-nodelimiting
- 		Experimental damping scheme
+         Experimental damping scheme
 
  --enable-nobypass
-		Don't bypass recalculations of slowly changing variables
+        Don't bypass recalculations of slowly changing variables
 
  --enable-nosqrt
-		Use always log/exp for non-linear capacitances
- 		
+        Use always log/exp for non-linear capacitances
+         
  --enable-predictor
- 		Enable a predictor method for convergence
-		
+         Enable a predictor method for convergence
+        
  --enable-sense2
-		Use spice2 sensitivity analysis
+        Use spice2 sensitivity analysis
 
  --enable-xgraph
-		Compile the Xgraph plotting program.
-		Xgraph is a plotting package for X11 and was once very popular.
-				
- --enable-xspice
-		Enable XSpice enhancements, (experimental)
-		A mixed signal simulator built upon spice3 with codemodel 
-		dynamic loading support.  See src/xspice/README for details.
-		
- --with-editline=yes
-		Enables the use of the BSD editline library (libedit).
-		See http://www.thrysoee.dk/editline/
-		This is preferred over GNU readline due to licensing issues.
+        Compile the Xgraph plotting program.
+        Xgraph is a plotting package for X11 and was once very popular.
 
- --with-readline=yes
-		Enable GNU readline support for the command line interface.
-		This requires linking against the GNU readline library and 
-		is discouraged.
- 
+ --with-editline=yes
+        Enables the use of the BSD editline library (libedit).
+        See http://www.thrysoee.dk/editline/
+
  --with-tcl=tcldir
         When configured with this option the tcl module 
         "tclspice" is compiled and installed instead of
         plain ngspice.
-				
- --enable-openmp 
-        Compile ngspice for multi-core processors. 
-		Parallelization is done by OpenMP 				
 
-
-1.4.2 Options Useful for Debugging Ngspice
+        
+1.4.3 Options Useful for Debugging Ngspice
 
  --enable-ansi
                 Configure will try to find an option for your compiler so that
-		it expects ansi-C.
+        it expects ansi-C.
 
 --enable-asdebug
-		Debug sensitivity code *ASDEBUG*.
+        Debug sensitivity code *ASDEBUG*.
 
  --enable-blktmsdebug    
                 Debug distortion code *BLOCKTIMES*
 
  --enable-checkergcc
-		Option for compilation with checkergcc.
+        Option for compilation with checkergcc.
 
  --enable-cpdebug
-		Enable ngspice shell code debug.
+        Enable ngspice shell code debug.
 
  --disable-debug
-		This option will remove the '-g' option passed to the compiler.
-		This speeds up compilation a *lot*, and is recommended for 
-		normal use.
+        This option will remove the '-g' option passed to the compiler.
+        This speeds up compilation a *lot*, and is recommended for 
+        normal use.
 
  --enable-ftedebug
-		Enable ngspice frontend debug.
-		
+        Enable ngspice frontend debug.
+        
  --enable-gc
-		Enable the Boehm-Weiser Conservative Garbage Collector.
+        Enable the Boehm-Weiser Conservative Garbage Collector.
 
  --enable-pzdebug
-		Debug pole/zero code.
-		
+        Debug pole/zero code.
+        
  --enable-sensdebug
                 Debug sensitivity code *SENSDEBUG*.
 
  --enable-smltmsdebug
-		Debug distortion code *SMALLTIMES*
+        Debug distortion code *SMALLTIMES*
 
  --enable-smoketest
-		Enable smoketest compile.
-	
+        Enable smoketest compile.
+    
  --enable-stepdebug
-		Turns on debugging of convergence stepping??
-		
-		
-1.5 Compilation using an user defined directory tree for object files	
-
-	The procedures described above will store the *.o files (output  
- of the compilation step) into the directories where the sources (*.c) 
- are located. This may not be the best option if you want for example 
- to have a debug version and in parallel a release version of ngspice
- (./configure option --disable-debug). 
- 
- So if you intend to create a separate object file tree like 
- ng-spice-rework/ngbuild/release, you may do the following, starting 
- from the default directory ng-spice-rework:
- 
- mkdir -p ngbuild/release
- cd ngbuild/release
- ../../configure <some options>	
- make install
- 
- This will create an object file directory tree, similar to the source 
- file directory tree, the object files are now separated from the source 
- files. For the debug version, you may do the same as described above, 
- replacing 'release' by 'debug', and obtain another separated object 
- file directory tree. 
- 
- If you already have run ./configure in ng-spice-rework, you have to do a
- maintainer-clean, before the above procedure will work.
- 
- Unfortunately this procedure will not work with Xspice enabled, so your 
- options should not include --enable-xspice. This bug will be removed in a 
- future version of ngspice.
- 
-
+        Turns on debugging of convergence stepping??
+        
+        
 2 Compilers and Options
   =====================
 
@@ -514,7 +492,7 @@ This file describes the procedures to install ngspice from sources.
 
 9.2 make ngspice with MS Visual Studio 2008
 
- ngspice may now be compiled with MS Visual Studio 2008.
+ ngspice may be compiled with MS Visual Studio 2008.
 
  CIDER and XSPICE are included, but the code models for XSPICE
  (*.cm) are not (yet) made. You may however use the code models
@@ -556,44 +534,44 @@ This file describes the procedures to install ngspice from sources.
  vngspice is (maybe created manually):
  
  C:\Spice\
-	bin\
-		ngspice.exe
-		nghelp.exe
-		ngmakeidx.exe
-		ngnutmeg.exe
-		cmpp.exe
-	lib\
-		spice\
-			analog.cm
-			digital.cm
-			spice2poly.cm
-			extradev.cm
-			extravt.cm
-	share\
-		info\
-			dir
-			ngspice.info
-			ngspice.info-1
-			..
-			ngspice.info-10
-		man\
-			man1\
-				ngmultidec.1
-				ngnutmeg.1
-				ngsconvert.1
-				ngspice.1
-		ng-spice-rework\
-			helpdir\
-				ngspice.idx
-				ngspice.txt
-			scripts\
-				ciderinit
-				devaxis
-				devload
-				setplot
-				spectrum
-				spinit
-		
+    bin\
+        ngspice.exe
+        nghelp.exe
+        ngmakeidx.exe
+        ngnutmeg.exe
+        cmpp.exe
+    lib\
+        spice\
+            analog.cm
+            digital.cm
+            spice2poly.cm
+            extradev.cm
+            extravt.cm
+    share\
+        info\
+            dir
+            ngspice.info
+            ngspice.info-1
+            ..
+            ngspice.info-10
+        man\
+            man1\
+                ngmultidec.1
+                ngnutmeg.1
+                ngsconvert.1
+                ngspice.1
+        ng-spice-rework\
+            helpdir\
+                ngspice.idx
+                ngspice.txt
+            scripts\
+                ciderinit
+                devaxis
+                devload
+                setplot
+                spectrum
+                spinit
+        
  If you intend to install vngspice into another directory, e.g. D:\MySpice,
  you have to edit  /visualc/include/config.h and alter the entries:
  #define NGSPICEBINDIR "C:/Spice/bin"

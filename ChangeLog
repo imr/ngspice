@@ -1,3 +1,6 @@
+2011-05-28  Holger Vogt
+ * update to prepare release 23
+
 2011-05-28  Robert Larice
  * src/ngsconvert.c :
     bug fix, (#3188327), segfault in ngsconvert
@@ -188,7 +191,7 @@
 
 2011-05-03  Holger Vogt
  * x11.c, graph.h: move #define NUMCOLORS to x11.c to avoid redefinition
-   under MS Visual Studion
+   under MS Visual Studio
 
 2011-05-01  Robert Larice
  * src/frontend/outitf.c ,
