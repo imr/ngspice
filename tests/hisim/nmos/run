@@ -1,0 +1,3 @@
+#!/bin/csh -fv
+
+make ngspice | tee cmcqa_nmos.log
