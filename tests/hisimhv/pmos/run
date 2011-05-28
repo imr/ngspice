@@ -1,0 +1,5 @@
+#!/bin/csh -fv
+
+make clean 
+cp qaSpec.basic qaSpec
+make ngspice | tee cmcqa_basic.log
