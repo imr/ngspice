@@ -8,9 +8,9 @@ Table of contents
    1.2 Install from CVS
    1.3 Basic Install
    1.4 Advanced Install
-    1.4.1 Options Specific to Using Ngspice
-    1.4.2 Options Useful for Debugging Ngspice
-   1.5 Compilation using an user defined directory tree for object files
+    1.4.1 Most useful options
+    1.4.2 Options Specific to Using Ngspice
+    1.4.3 Options Useful for Debugging Ngspice
   2 Compilers and Options
   3 Compiling For Multiple Architectures
   4 Installation Names
@@ -49,7 +49,7 @@ This file describes the procedures to install ngspice from sources.
 
 1.2 Install from CVS
 
-     This section describes how to install from source code taken direct
+     This section describes how to install from source code taken directly
  from CVS.  It is intended more for developers than for users as the code 
  in CVS may be unstable. For user install instructions using source from 
  released distributions, please see the sections titled 'Basic Install' 
@@ -82,7 +82,7 @@ This file describes the procedures to install ngspice from sources.
  $ ./autogen.sh --adms
  $ mkdir release
  $ cd release
- $ ../configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-openmp --enable-adms 
+ $ ../configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-openmp --enable-adms
  $ make 2>&1 | tee make.log
  $ sudo make install
  
@@ -117,14 +117,12 @@ This file describes the procedures to install ngspice from sources.
  that can be passed to ./configure to customise the build and installation.
  
  Preferred arguments to ./configure to obtain a comfortably working ngspice may be
- --with-readline=yes and --disable-debug (for smaller and speed optimized
- executable). 
+ --with-readline=yes and --disable-debug. 
  
  A fully featured ngspice on LINUX may be obtained with the following commands:
- $ ./autogen.sh --adms
  $ mkdir release
  $ cd release
- $ ../configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-openmp --enable-adms 
+ $ ../configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-openmp 
  $ make 2>&1 | tee make.log
  $ sudo make install
 
@@ -144,42 +142,44 @@ This file describes the procedures to install ngspice from sources.
  
  1.4.1 Most useful options:
 
-  --enable-adms
+ --enable-adms
         ADMS is an experimental model compiler that translates 
         Verilog-A compact models into C code that can be compiled into 
-        ngspice. This is (as of rework.18 )still experimental and not
-        completely working. If you want to use it, please refer to the
-        ADMS section on ngspice web site. 
+        ngspice. This is (as of ngspice-23) still experimental, some
+        features (e.g. noise) are missing. If you want to use it, please
+        refer to the ADMS section on ngspice web site. 
 
  --enable-cider
         Cider is a mixed-level simulator that couples Spice3 and DSIM
-        to simulate devices from their technological parameters. This
-        part of the simulator is not compiled by default.
+        to simulate devices from their technological parameters.
                   
  --enable-xspice
-        Enable XSpice enhancements, (experimental)
+        Enable XSpice enhancements,
         A mixed signal simulator built upon spice3 with codemodel 
-        dynamic loading support.  See src/xspice/README for details.
+        dynamic loading support. See the ngspice manual for details.
         
-  --with-readline=yes
+ --with-readline=yes
         Enable GNU readline support for the command line interface.
                 
  --enable-openmp 
         Compile ngspice for multi-core processors. 
-        Parallelization is done by OpenMP             
+        Parallelization is done by OpenMP, for MOS models in BSIM3.3.0
+        BSIM4.6.0 and and BSOI4	only. See the ngspice manual for details.	
         
-
+ --disable-debug
+        This option will remove the '-g' option passed to the compiler
+		and add -O2 optimisation (instead of default O0).
+        This speeds up simulating significantly, and is recommended for 
+        normal use.
+		
+		
 1.4.2 Options Specific to Using Ngspice
 
-Most of the now following options are not well maintained, are not tested or even maybe obsolete. 
+Most of the options now following are not well maintained, are not tested or even maybe obsolete. 
 
  --enable-capbypass
         Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd 
         voltages are unchanged.
-        
- --enable-capzerobypass
-         Bypass all the cbd/cbs calculations if Czero is zero. This is 
-                enabled by default since rework-18.
 
  --enable-cluster
                 Clustering code for distributed simulation. This is a
@@ -192,8 +192,6 @@ Most of the now following options are not well maintained, are not tested or eve
 
  --enable-experimental
         This enables some experimental code. Specifically it enables:
-            * support for altering options in interactive mode 
-              by adding the interactive keyword 'options'.
             * The ability to save and load snapshots: adds 
               interactive keywords 'savesnap' and 'loadsnap'.
 
@@ -201,7 +199,7 @@ Most of the now following options are not well maintained, are not tested or eve
                 Force building nghelp. This is deprecated.
 
  --enable-ndev
-        Enable NDEV interface, (experimental)
+        Enable NDEV interface, (experimental, needs updating)
         A TCP/IP interface to external device simulator such as GSS.
         For more information, please visit the homepage of GSS at 
         http://gss-tcad.sourceforge.net
@@ -217,9 +215,6 @@ Most of the now following options are not well maintained, are not tested or eve
 
  --enable-nobypass
         Don't bypass recalculations of slowly changing variables
-
- --enable-nosqrt
-        Use always log/exp for non-linear capacitances
          
  --enable-predictor
          Enable a predictor method for convergence

@@ -162,8 +162,6 @@ AC_ARG_ENABLE(x,
     AS_HELP_STRING([--enable-x],[Enable X11 gui]))
 
 dnl --with-readline:  Includes GNU readline support into CLI.  Default is "no".
-dnl Including readline into ngspice is a violation of GPL license. It's use
-dnl is discouraged.
 AC_ARG_WITH(readline,
     AS_HELP_STRING([--with-readline[=yes/no]],[Enable GNU readline support for CLI. Default=no.]))
 
