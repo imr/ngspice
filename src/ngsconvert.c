@@ -437,7 +437,7 @@ void cp_pushcontrol(void) { }
 void cp_popcontrol(void) { }
 void out_init(void) { }
 void cp_doquit(void) { exit(0); }
-void cp_usrvars(struct variable **v1, struct variable **v2) { NG_IGNORE(v2); NG_IGNORE(v1); return; }
+void cp_usrvars(struct variable **v1, struct variable **v2) { *v1 = NULL; *v2 = NULL;  return; }
 int cp_evloop(char *s) { NG_IGNORE(s); return (0); }
 void cp_ccon(bool o) { NG_IGNORE(o); }
 char*if_errstring(int c) { NG_IGNORE(c); return ("error"); }

@@ -1,3 +1,9 @@
+2011-05-28  Robert Larice
+ * src/ngsconvert.c :
+    bug fix, (#3188327), segfault in ngsconvert
+    thanks to Ed Spittles
+    http://sourceforge.net/tracker/?func=detail&aid=3188327&group_id=38962&atid=423915
+
 2011-05-23  Holger Vogt
  * configure.ac: remove reference to devices/hisim/makefile (line 1035)
 
@@ -348,7 +354,7 @@
       currentgraph is a dynamical scoped variable
    in response to
      http://sourceforge.net/tracker/?func=detail&atid=423915&aid=3263437&group_id=38962
-   FIXME, need to be fixed for ms-windows as well
+   FIXME/DONE, need to be fixed for ms-windows as well
 
 2011-04-09  Robert Larice
  * src/spicelib/analysis/cktsens.c :
