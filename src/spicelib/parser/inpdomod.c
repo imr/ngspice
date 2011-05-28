@@ -416,9 +416,9 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 	    err =
 		INPmkTemp
 #ifdef ADMS
-		("Only MOS device levels 1-6,8-10,14,44,45,49,54-58,61,62,64 are supported in this binary\n");
+		("Only MOS device levels 1-6,8-10,14,44,45,49,54-58,60-62 are supported in this binary\n");
 #else
-		("Only MOS device levels 1-6,8-10,14,49,54-58,61,62,64 are supported in this binary\n");
+		("Only MOS device levels 1-6,8-10,14,49,54-58,60-62 are supported in this binary\n");
 #endif		
 	    break;
 	}

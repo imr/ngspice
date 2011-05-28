@@ -52,7 +52,7 @@ Table of contents
  11.10 BSIM3 - BSIM model level 3 vers. 2
  11.11 BSIM3 - BSIM model level 3 vers. 3
  11.12 BSIM4 - BSIM model level 4
- 11.13 HiSIM - Hiroshima-University STARC IGFET Model
+ 11.13 HiSIM2 - Hiroshima-University STARC IGFET Model
  11.14 HiSIM_HV - Hiroshima-University STARC IGFET High Voltage Model
 12. SOI devices
  12.1 BSIM3SOI_FD - SOI model (fully depleted devices)
@@ -686,21 +686,20 @@ will be updated every time the device specific code is altered or changed to ref
         - Support for Multi-core processors using OpenMP
 		
 
- 11.13 HiSIM - Hiroshima-university STARC IGFET Model
+ 11.13 HiSIM2 - Hiroshima-university STARC IGFET Model
       
-       Ver:    1.2.0
+       Ver:    2.5.1
        Class:  M
-       Level:  64
-       Dir:    devices/hisim
+       Level:  61
+       Dir:    devices/hisim2
        Status: TO BE TESTED.
 
-       This is the HiSIM model available from Hiroshima University
+       This is the HiSIM2 model available from Hiroshima University
        (Ultra-Small Device Engineering Laboratory)
 
        Web site: http://home.hiroshima-u.ac.jp/usdl/HiSIM.html
 
        Enhancements over the original model:
-       - Parallel Multiplier
        - NodesetFix
 
  11.14 HiSIM_HV - Hiroshima-University STARC IGFET High Voltage Model
