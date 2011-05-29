@@ -17,8 +17,8 @@ Author: 1985 Wayne A. Christopher
 /*
  * SJB 21 April 2005
  * Added support for end-of-line comments that begin with any of the following:
- *   ';'  (for PSpice compatability)
- *   '$ ' (for HSpice compatability)
+ *   ';'
+ *   '$ '
  *   '//' (like in c++ and as per the numparam code)
  *   '--' (as per the numparam code)
  * Any following text to the end of the line is ignored.
@@ -3625,7 +3625,7 @@ inp_split_multi_param_lines( struct line *deck, int line_num )
 
 
 
-/* pspice compatibility:
+/* ps compatibility:
    ECOMP 3 0 TABLE {V(1,2)} = (-1MV 0V) (1MV, 10V)
    -->
    ECOMP 3 0 int3 int0 1
@@ -3637,7 +3637,7 @@ inp_split_multi_param_lines( struct line *deck, int line_num )
    BGD16 int_16 int_1 V = pwl (v(16,1) , -100V , -1pV , 0 , 0 , 1m , 1u , 2m , 1m )
 */
 
-/* hspice compatibility:
+/* hs compatibility:
    Exxx n1 n2 VCVS n3 n4 gain --> Exxx n1 n2 n3 n4 gain
    Gxxx n1 n2 VCCS n3 n4 tr --> Exxx n1 n2 n3 n4 tr
 

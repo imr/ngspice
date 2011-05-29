@@ -228,10 +228,10 @@ initdico (tdico * dico)
 
     compat_mode = ngspice_compat_mode() ;
 
-    if( compat_mode == COMPATMODE_HSPICE )
-        dico->hspice_compatibility = 1 ;
+    if( compat_mode == COMPATMODE_HS )
+        dico->hs_compatibility = 1 ;
     else
-        dico->hspice_compatibility = 0 ;
+        dico->hs_compatibility = 0 ;
 }
 
 void dico_free_entry( entry *entry_p )
@@ -1431,9 +1431,9 @@ scanline (tdico * dico, char *s, char *r, bool err)
     {
         i++;
         c = s[i - 1];
-        if (c == Pspice)
+        if (c == Psp)
         {
-            /* try pspice expression syntax */
+            /* try ps expression syntax */
             k = i;
             nnest = 1;
             do
@@ -1453,7 +1453,7 @@ scanline (tdico * dico, char *s, char *r, bool err)
             else
             {
                 pscopy (t, s, i + 1, k - i - 1);
-                if( dico->hspice_compatibility && (strcasecmp(t,"LAST")==0) )
+                if( dico->hs_compatibility && (strcasecmp(t,"LAST")==0) )
                 {
                     strcpy(q,"last") ;
                     err=0;
@@ -1629,9 +1629,9 @@ nupa_substitute (tdico * dico, char *s, char *r, bool err)
         i++;
         c = s[i - 1];
 
-        if (c == Pspice)
+        if (c == Psp)
         {
-            /* try pspice expression syntax */
+            /* try ps expression syntax */
             k = i;
             nnest = 1;
             do

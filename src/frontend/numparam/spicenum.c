@@ -329,7 +329,7 @@ transform (tdico * dico, SPICE_DSTRINGPTR dstr_p, unsigned char nostripping,
     s = spice_dstring_value(dstr_p) ;
     if (s[0] == '.')
     {
-        /* check Pspice parameter format */
+        /* check PS parameter format */
         scopy_up (&tstr, spice_dstring_value(dstr_p) ) ;
         k = 1;
 

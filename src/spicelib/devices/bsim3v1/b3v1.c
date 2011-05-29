@@ -428,7 +428,7 @@ IOP( "kf", BSIM3v1_MOD_KF, IF_REAL, "Flicker noise coefficient"),
 IP( "nmos", BSIM3v1_MOD_NMOS,  IF_FLAG, "Flag to indicate NMOS"),
 IP( "pmos", BSIM3v1_MOD_PMOS,  IF_FLAG, "Flag to indicate PMOS"),
 /* serban */
-IOP( "hdif", BSIM3v1_MOD_HDIF,  IF_REAL, "S/D junction extension (HSPICE style)"),
+IOP( "hdif", BSIM3v1_MOD_HDIF,  IF_REAL, "S/D junction extension"),
 };
 
 char *BSIM3v1names[] = {

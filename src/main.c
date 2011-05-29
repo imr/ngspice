@@ -420,9 +420,10 @@ int DEVmaxnum = 0;
 /* -------------------------------------------------------------------------- */
 /* Set a compatibility flag.
    Currently available are flags for:
-   ngspice (standard)
-   HSPICE
-   Spice3
+   - ngspice (standard)
+   - a commercial simulator
+   - Spice3
+   - all compatibility staff
 */
 COMPATMODE_T ngspice_compat_mode(void)
 {
@@ -431,8 +432,8 @@ COMPATMODE_T ngspice_compat_mode(void)
    if( cp_getvar("ngbehavior", CP_STRING, behaviour)){
       if (strcasecmp(behaviour,"all")==0)
          return( COMPATMODE_ALL ) ;
-      if (strcasecmp(behaviour,"hspice")==0)
-         return( COMPATMODE_HSPICE ) ;
+      if (strcasecmp(behaviour,"hs")==0)
+         return( COMPATMODE_HS ) ;
       if (strcasecmp(behaviour,"spice3")==0)
          return( COMPATMODE_SPICE3 ) ;         
    }
