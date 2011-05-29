@@ -2,7 +2,7 @@
 eval 'exec perl -S -x -w $0 ${1+"$@"}'
 #!perl
 
-#
+# 
 # compareSimulationResults.pl: program to do a toleranced comparison of compact model simulation results
 #
 #  Rel  Date            Who             Comments

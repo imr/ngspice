@@ -2,7 +2,7 @@
 eval 'exec perl -S -x -w $0 ${1+"$@"}'
 #!perl
 
-#
+# 
 # runQaTests.pl: program to run automated QA tests on compact models
 #
 #  Rel  Date            Who             Comments
