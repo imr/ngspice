@@ -4894,7 +4894,7 @@ New include File:
    manager of Visual Studio
 
 2009-11-15 Holger Vogt
- * main.c, src/include/compatmode.h: compatibility mode flag for HSPICE and SPICE3
+ * main.c, src/include/compatmode.h: compatibility mode flag for other simulators
    xpressn.c: compatmode removed
 
 ============================ Rework-20 ==================================
@@ -6830,7 +6830,7 @@ The modifications should not affect ngspice's function.
 
 2005-05-09  Steven Borley <steven.borley@virgin.net>
 
-  *  Added new syntax to the the resistor card to support HSpice style
+  *  Added new syntax to the the resistor card to support different style
      temperature dependence (from Hitoshi Tanaka <HDA01055@nifty.com>).
      Syntax forms now include:
        Rxxx <n1> n2> <val> TC=<val1>
@@ -6930,8 +6930,7 @@ The modifications should not affect ngspice's function.
         that is followed by a continuation line.  This functionality
         has been moved from the numparams library and in to the front
         end code. All the following can be used to start a comment:
-               ;       for compatibility with PSpice
-               $       for compatibility with HSpice
+               ; and $ for compatibility with other simulators
                //      like C++, and as per numparams
                --      as per numparams
               This was a full re-write of this code, not a conversion of the
