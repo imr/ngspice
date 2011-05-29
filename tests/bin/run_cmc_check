@@ -1,0 +1,141 @@
+#!/bin/sh
+
+#
+#	Example Script to run tests and check results.
+#
+#	This is an example script for running QA tests on a
+#	model and then checking the simulated results against
+#	reference results. A separate target is defined for each
+#	variant of the model. The program runQaTests.pl runs the
+#	tests, and that program expects a perl module SIMULATOR.pm
+#	to be provided for each simulator that is tested.
+#	Examples of these are provided.
+#
+
+qaSpecFile="qaSpec"
+qaResultsDirectory="results"
+testProgramName="../../bin/runQaTests.pl"
+testProgramFlags="-nwV"
+
+#testProgramFlags="-d"
+
+
+help() {
+    cat <<-EOF
+	Valid targets are:
+
+	all                run tests and compare results for all simulators
+
+	spice              run tests and compare results spice
+	ngspice            run tests and compare results ngspice
+
+	clean              remove all previously generated simulation results
+
+	NOTE: if test results exist they are not resimulated
+	NOTE: to force resimulation run "make clean" first
+EOF
+}
+
+
+run_test() {
+
+    simname="$1"
+
+    localPlatform=`${testProgramName} -platform`
+    localVersion=`${testProgramName} -sv -s ${simname} ${qaSpecFile}`
+
+    echo ""
+    echo "******"
+    echo "****** ${qaSpecFile} tests for ${simname}"
+    echo "****** (for version ${localVersion} on platform ${localPlatform})"
+    echo "******"
+
+    for test in `${testProgramName} -lt -s ${simname} ${qaSpecFile}` ; do
+
+	echo ""
+	echo "****** Checking test (${simname}): ${test}"
+
+	for variant in `${testProgramName} -lv -s ${simname} ${qaSpecFile}` ; do
+	    ${testProgramName} \
+                ${testProgramFlags} \
+                -s ${simname} \
+                -r -t ${test} \
+                -var ${variant} \
+                ${qaSpecFile}
+	done
+    done
+
+    for version in `ls -C1 ${qaResultsDirectory}/${simname}` ; do
+	for platform in `ls -C1 ${qaResultsDirectory}/${simname}/${version}` ; do
+
+	    if [ ${version} = ${localVersion}  -a  ${platform} = ${localPlatform} ]
+            then
+		break
+	    fi
+
+	    echo ""
+	    echo "******"
+	    echo "****** Comparing previously run ${qaSpecFile} tests for ${simname}"
+	    echo "****** (for version ${version} on platform ${platform})"
+	    echo "******"
+
+	    for test in `${testProgramName} -lt -s ${simname} ${qaSpecFile}` ; do
+
+		echo ""
+		echo "****** Checking test (${simname}): ${test}"
+
+		for variant in `${testProgramName} -lv -s ${simname} ${qaSpecFile}` ; do
+		    ${testProgramName} \
+                        -c ${version} ${platform} \
+                        -s ${simname} \
+                        -t ${test} \
+                        -var ${variant} \
+                        ${qaSpecFile}
+		done
+	    done
+	done
+    done
+}
+
+
+#####
+##### spice tests
+#####
+
+spice() {
+    run_test spice
+}
+
+
+#####
+##### ngspice tests
+#####
+
+ngspice() {
+    run_test ngspice
+}
+
+
+
+clean() {
+    rm -rf ${qaResultsDirectory}/spice b3v3check.log
+    rm -rf ${qaResultsDirectory}/ngspice ngspiceCkt*
+}
+
+
+all() {
+    spice
+    ngspice
+}
+
+
+for arg in $@ ; do
+    case "$arg" in
+        all | clean | spice | ngspice)
+            "$arg"
+            ;;
+        *)
+            help
+            ;;
+    esac
+done

@@ -1,11 +1,25 @@
+2011-05-29  Robert Larice
+ * Removed   tests/hisimhv/nmos/Makefile ,
+ * Removed   tests/hisimhv/pmos/Makefile ,
+ * Removed   tests/hisim/nmos/Makefile ,
+ * Removed   tests/hisim/pmos/Makefile ,
+ * Added     tests/bin/run_cmc_check ,
+ * Modified  tests/hisimhv/nmos/run ,
+ * Modified  tests/hisimhv/pmos/run ,
+ * Modified  tests/hisim/nmos/run ,
+ * Modified  tests/hisim/pmos/run :
+   CMC test suite, cleanup
+     use /bin/sh instead of /bin/csh
+     replace the makefiles with a single script
+
 2011-05-29  Holger Vogt
  * main.c, inpcom.c, numparam.h, spicenum.c, xpressn.c, compatmode.h, b3v1.c:
    compatibility issues
 
 2011-05-28  Dietmar Warning
- * tests/hisim, tests/hisimhv: include the CMC test suite (Author: Colin McAndrew) 
+ * tests/hisim, tests/hisimhv: include the CMC test suite (Author: Colin McAndrew)
    provided by the model developer - Hiroshima University
- 
+
 2011-05-28  Holger Vogt
  * configure.ac, visualc/config.h, CPOYING, FAQ, INSTALL, NEWS:
    update to prepare release 23

@@ -1,5 +1,5 @@
-#!/bin/csh -fv
+#!/bin/sh
 
-make clean 
+../../bin/run_cmc_check clean
 cp qaSpec.basic qaSpec
-make ngspice | tee cmcqa_basic.log
+../../bin/run_cmc_check ngspice | tee cmcqa_basic.log
