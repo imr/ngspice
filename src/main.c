@@ -423,7 +423,7 @@ int DEVmaxnum = 0;
    - ngspice (standard)
    - a commercial simulator
    - Spice3
-   - all compatibility staff
+   - all compatibility stuff
 */
 COMPATMODE_T ngspice_compat_mode(void)
 {

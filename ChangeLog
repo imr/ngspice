@@ -1,3 +1,6 @@
+2011-05-29  Holger Vogt
+ * winmain.c, winmain.h: prototypes and forwards
+
 2011-05-29  Robert Larice
  * Removed   tests/hisimhv/nmos/Makefile ,
  * Removed   tests/hisimhv/pmos/Makefile ,

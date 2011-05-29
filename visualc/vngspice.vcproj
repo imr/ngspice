@@ -1839,11 +1839,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\plotting\grid.h"
+				RelativePath="..\src\include\grid.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\grid.h"
+				RelativePath="..\src\frontend\plotting\grid.h"
 				>
 			</File>
 			<File
@@ -2992,6 +2992,10 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\wdisp\windisp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\winmain.h"
 				>
 			</File>
 			<File

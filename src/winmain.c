@@ -1,4 +1,4 @@
-/* Hauptprogramm fuer Spice 3F5 unter Windows95
+/* Main program for ngspice under Windows OS
     Autor: Wolfgang Muees
     Stand: 28.10.97
     Autor: Holger Vogt
@@ -94,14 +94,15 @@ extern bool ft_ngdebug; /* some additional debug info printed */
 extern bool ft_batchmode;
 extern FILE *flogp;     /* definition see xmain.c */
 
+#include "winmain.h"
 /* Forward definition of main() */
-int xmain( int argc, char * argv[]);
+//int xmain( int argc, char * argv[]);
 /* forward of Update function */
-void DisplayText( void);
+/*void DisplayText( void);
 char* rlead(char*);
 void winmessage(char*);
 int p_r_i_n_t_f(const char * __format, ...);
-int f_f_l_u_s_h( FILE * __stream);
+int f_f_l_u_s_h( FILE * __stream); */
 
 /* private heap for storing plot data */
 HANDLE outheap;
@@ -109,7 +110,7 @@ HANDLE outheap;
 /* --------------------------<history management>------------------------------ */
 
 /* Clear history buffer, set pointer to the beginning */
-void HistoryInit(void)
+static void HistoryInit(void)
 {
     int i;
     HistIndex = 0;
@@ -119,7 +120,7 @@ void HistoryInit(void)
 }
 
 /* Delete first line of buffer, all other lines move one down */
-void HistoryScroll(void)
+static void HistoryScroll(void)
 {
     memmove( &(HistBuffer[0]), &(HistBuffer[1]), sizeof(SBufLine) * (HistSize-1));
     HistBuffer[HistSize-1][0] = SE;
@@ -128,7 +129,7 @@ void HistoryScroll(void)
 }
 
 /* Enter new input line into history buffer */
-void HistoryEnter( char * newLine)
+static void HistoryEnter( char * newLine)
 {
     if (!newLine || !*newLine) return;
     if (HistPtr == HistSize) HistoryScroll();
@@ -138,14 +139,14 @@ void HistoryEnter( char * newLine)
 }
 
 // Mit dem Index eine Zeile zurueckgehen und den dort stehenden Eintrag zurueckgeben
-char * HistoryGetPrev(void)
+static char * HistoryGetPrev(void)
 {
     if (HistIndex) HistIndex--;
     return &(HistBuffer[HistIndex][0]);
 }
 
 // Mit dem Index eine Zeile vorgehen und den dort stehenden Eintrag zurueckgeben
-char * HistoryGetNext(void)
+static char * HistoryGetNext(void)
 {
     if (HistIndex < HistPtr) HistIndex++;
     if (HistIndex == HistPtr) return ""; //HistIndex--;
@@ -169,7 +170,7 @@ void WaitForIdle(void)
 
 // Warte, bis keine Messages mehr zu bearbeiten sind,
 // dann warte auf neue Message (Input handling ohne Dauerloop)
-void WaitForMessage(void)
+static void WaitForMessage(void)
 {
     MSG m;
     // arbeite alle Nachrichten ab
@@ -183,7 +184,7 @@ void WaitForMessage(void)
 // -----------------------------<Stringfenster>--------------------------------
 
 // Loeschen des Stringfensters
-void ClearInput(void)
+static void ClearInput(void)
 {
     // Darstellen
     Edit_SetText( swString, "");
@@ -270,7 +271,7 @@ void SetAnalyse(
 
 // Anpassen des Scrollers im Textfenster
 // Stellt gleichzeitig den Text neu dar
-void AdjustScroller(void)
+static void AdjustScroller(void)
 {
     int LineCount;
     int FirstLine;
@@ -285,7 +286,7 @@ void AdjustScroller(void)
 }
 
 // Loeschen einer Zeile im Textbuffer
-void _DeleteFirstLine(void)
+static void _DeleteFirstLine(void)
 {
     char * cp = strchr( TBuffer, LF);
     if (!cp) {
@@ -301,7 +302,7 @@ void _DeleteFirstLine(void)
 }
 
 // Anfuegen eines chars an den TextBuffer
-void AppendChar( char c)
+static void AppendChar( char c)
 {
     // Textbuffer nicht zu grosz werden lassen
     while ((TBufEnd+4) >= TBufSize)
@@ -316,7 +317,7 @@ void AppendChar( char c)
 }
 
 // Anfuegen eines Strings an den TextBuffer
-void AppendString( const char * Line)
+static void AppendString( const char * Line)
 {
     size_t i;
     if (!Line) return;
@@ -333,7 +334,7 @@ void AppendString( const char * Line)
 }
 
 // Text neu darstellen
-void DisplayText( void)
+static void DisplayText( void)
 {
     // Darstellen
     Edit_SetText( twText, TBuffer);
@@ -356,7 +357,7 @@ void AppendLine( const char * Line)
 // -----------------------------------<User-IO>--------------------------------
 
 // Lese ein Zeichen ein
-int w_getch(void)
+static int w_getch(void)
 {
     int c;
 
@@ -388,7 +389,7 @@ int w_getch(void)
 }
 
 // Gebe ein Zeichen aus
-int w_putch( int c)
+static int w_putch( int c)
 {
     if (c)
         AppendChar( (char)c );
@@ -398,7 +399,7 @@ int w_putch( int c)
 /* -------------------------------<Window procedures>-------------------------- */
 
 /* Main window changes size */
-void Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
+static void Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 {
     int h = cy - LineHeight - StatusHeight;
 
@@ -423,14 +424,14 @@ void Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 }
 
 /* Write a command into the command buffer */
-void PostSpiceCommand( const char * const cmd)
+static void PostSpiceCommand( const char * const cmd)
 {
     strcpy( SBuffer, cmd);
     strcat( SBuffer, CRLF);
 }
 
 /* Main Window procedure */
-LRESULT CALLBACK MainWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK MainWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg) {
 
@@ -488,7 +489,7 @@ DEFAULT_AFTER:
 }
 
 /* Procedure for string window */
-LRESULT CALLBACK StringWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK StringWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     char c;
     UINT i;
@@ -530,7 +531,7 @@ DEFAULT:
 }
 
 /* Procedure for text window */
-LRESULT CALLBACK TextWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK TextWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     unsigned char c;
     UINT i;
@@ -560,7 +561,7 @@ DEFAULT_TEXT:
 }
 
 
-void Element_OnPaint(HWND hwnd)
+static void Element_OnPaint(HWND hwnd)
 {
     PAINTSTRUCT ps;
     RECT r;
@@ -612,7 +613,7 @@ void Element_OnPaint(HWND hwnd)
 
 
 /* Procedure for element window */
-LRESULT CALLBACK ElementWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK ElementWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg) {
 
@@ -644,7 +645,7 @@ LRESULT CALLBACK ElementWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
         0  on success
         -1 on failure
 */
-int MakeArgcArgv(char *cmdline,int *argc,char ***argv)
+static int MakeArgcArgv(char *cmdline,int *argc,char ***argv)
 {
     char  *pC1;         /*  a temporary character pointer */
     char  *pWorkString=NULL;        /*  a working copy of cmdline */
@@ -1405,7 +1406,7 @@ int system( const char * command)
 #endif
 */
 /* Strip leading spaces, return a copy of s */
-char* rlead(char *s)
+/*static char* rlead(char *s)
 {
    int i,j=0;
    static char temp[512];
@@ -1414,7 +1415,7 @@ char* rlead(char *s)
    {
       if(isspace(s[i]) && has_space)
       {
-         ; /*Do nothing*/
+         ; //Do nothing
       }
       else
       {
@@ -1426,6 +1427,7 @@ char* rlead(char *s)
    temp[j] = '\0';
    return copy(temp);
 } 
+*/
 
 void winmessage(char* new_msg)
 {
