@@ -334,12 +334,13 @@ sub processTestSpec {
         }
         if (s/^modelParameters\s+//i) {
             foreach $arg (split(/\s+/,$_)) {
-                if ($arg !~ /.=./ && ! -r $arg) {
+                $arg_file = $main::srcdir . $arg;
+                if ($arg !~ /.=./ && ! -r $arg_file) {
                     die("ERROR: model parameters must be name=value pairs or a file name, stopped");
                 }
-                if (-r $arg) {
-                    if (!open(IF,"$arg")) {
-                        die("ERROR: cannot open file $arg, stopped");
+                if (-r $arg_file) {
+                    if (!open(IF,"$arg_file")) {
+                        die("ERROR: cannot open file $arg_file, stopped");
                     }
                     while (<IF>) {
                         chomp;s/\s*=\s*/=/g;

@@ -84,6 +84,7 @@ $printWarnings=1;
 @prog=split("/",$0);
 $programDirectory=join("/",@prog[0..$#prog-1]);
 $prog=$prog[$#prog];
+$srcdir="";
 
 #
 #   These variables are only defined once in this file,
@@ -160,10 +161,14 @@ for (;;) {
         $forceSimulation=0;
     } elsif ($ARGV[0]  =~ /^-sv/i) {
         $onlyDoSimulatorVersion=1;
+    } elsif ($ARGV[0]  =~ /^--executable=(.*)/i) {
+        $simulatorCommand=$1;
     } elsif ($ARGV[0]  =~ /^-s/) {
         shift(@ARGV);
         if ($#ARGV<0) {die("ERROR: no simulator specified for -s option, stopped")}
         $simulatorName=$ARGV[0];
+    } elsif ($ARGV[0]  =~ /^--srcdir=(.*)/i) {
+        $srcdir=$1;
     } elsif ($ARGV[0]  =~ /^-t/) {
         shift(@ARGV);
         if ($#ARGV<0) {die("ERROR: no test(s) specified for -t option, stopped")}
@@ -192,6 +197,9 @@ if ($#ARGV<0 && !$onlyDoPlatformVersion && !($onlyDoSimulatorVersion && defined(
 }
 if (!$onlyDoPlatformVersion && !defined($simulatorName)) {
     &usage();exit(0);
+}
+if(!defined($simulatorCommand)) {
+   $simulatorCommand=$simulatorName;
 }
 
 #
@@ -226,7 +234,7 @@ if (!$onlyDoComparison) {
 }
 $qaSpecFile=$ARGV[0];
 $resultsDirectory="results";
-$refrnceDirectory="reference";
+$refrnceDirectory=$main::srcdir . "reference";
 
 undef(%Defined);
 $Defined{$simulatorName}=1; # any `ifdef's in the QA spec file for $simulatorName are automatically inlcuded

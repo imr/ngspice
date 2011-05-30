@@ -14,7 +14,7 @@
 
 qaSpecFile="qaSpec"
 qaResultsDirectory="results"
-testProgramName="../../bin/runQaTests.pl"
+testProgramName="$(dirname $0)/runQaTests.pl"
 testProgramFlags="-nwV"
 
 #testProgramFlags="-d"
@@ -128,6 +128,22 @@ all() {
     ngspice
 }
 
+
+while test $# -gt 0; do
+  case "$1" in
+      --srcdir=* | --executable=*)
+          testProgramFlags="$testProgramFlags $1"
+          shift
+          ;;
+      -qa)
+          qaSpecFile="$2"
+          shift ; shift
+          ;;
+      *)
+          break
+          ;;
+  esac
+done
 
 for arg in $@ ; do
     case "$arg" in

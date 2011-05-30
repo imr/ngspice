@@ -10,7 +10,6 @@
 #
 
 package simulate;
-$simulatorCommand="ngspice";
 $netlistFile="ngspiceCkt";
 use strict;
 
@@ -75,8 +74,8 @@ sub runNoiseTest {
 #   Run simulations and get the results
 #
 
-                if (!open(SIMULATE,"$simulate::simulatorCommand < $simulate::netlistFile 2>/dev/null|")) {
-                    die("ERROR: cannot run $main::simulatorName, stopped");
+                if (!open(SIMULATE,"$main::simulatorCommand < $simulate::netlistFile 2>/dev/null|")) {
+                    die("ERROR: cannot run $main::simulatorCommand, stopped");
                 }
                 $inData=0;
                 while (<SIMULATE>) {
@@ -202,8 +201,8 @@ sub runAcTest {
 #   Run simulations and get the results
 #
 
-                if (!open(SIMULATE,"$simulate::simulatorCommand < $simulate::netlistFile 2>/dev/null|")) {
-                    die("ERROR: cannot run $main::simulatorName, stopped");
+                if (!open(SIMULATE,"$main::simulatorCommand < $simulate::netlistFile 2>/dev/null|")) {
+                    die("ERROR: cannot run $main::simulatorCommand, stopped");
                 }
                 $inData=0;
                 while (<SIMULATE>) {
@@ -340,8 +339,8 @@ sub runDcTest {
 #   Run simulations and get the results
 #
 
-            if (!open(SIMULATE,"$simulate::simulatorCommand < $simulate::netlistFile 2>/dev/null|")) {
-                die("ERROR: cannot run $main::simulatorName, stopped");
+            if (!open(SIMULATE,"$main::simulatorCommand < $simulate::netlistFile 2>/dev/null|")) {
+                die("ERROR: cannot run $main::simulatorCommand, stopped");
             }
             $inResults=0;
             while (<SIMULATE>) {
