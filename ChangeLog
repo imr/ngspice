@@ -1,4 +1,8 @@
 2011-05-30  Robert Larice
+ * tests/bin/check_cmc.sh :
+   incorporate CMC test suite into make target 'check'
+
+2011-05-30  Robert Larice
  * configure.ac ,
  * tests/bin/modelQaTestRoutines.pm ,
  * tests/bin/ngspice.pm ,
