@@ -14,4 +14,4 @@ EXTRA_DIST = \
 MAINTAINERCLEANFILES = Makefile.in
 
 clean-local:
-	rm -rf results ngspiceCkt
+	rm -rf nmos/results pmos/results ngspiceCkt

@@ -85,6 +85,7 @@ $printWarnings=1;
 $programDirectory=join("/",@prog[0..$#prog-1]);
 $prog=$prog[$#prog];
 $srcdir="";
+$resultsDirectory="results";
 
 #
 #   These variables are only defined once in this file,
@@ -161,6 +162,8 @@ for (;;) {
         $forceSimulation=0;
     } elsif ($ARGV[0]  =~ /^-sv/i) {
         $onlyDoSimulatorVersion=1;
+    } elsif ($ARGV[0]  =~ /^--results=(.*)/i) {
+        $resultsDirectory=$1;
     } elsif ($ARGV[0]  =~ /^--executable=(.*)/i) {
         $simulatorCommand=$1;
     } elsif ($ARGV[0]  =~ /^-s/) {
@@ -233,7 +236,6 @@ if (!$onlyDoComparison) {
     }
 }
 $qaSpecFile=$ARGV[0];
-$resultsDirectory="results";
 $refrnceDirectory=$main::srcdir . "reference";
 
 undef(%Defined);

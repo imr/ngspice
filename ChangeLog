@@ -1,4 +1,12 @@
 2011-05-31  Robert Larice
+ * tests/bin/check_cmc.sh ,
+ * tests/bin/runQaTests.pl ,
+ * tests/bin/run_cmc_check ,
+ * tests/hisim/Makefile.am ,
+ * tests/hisimhv/Makefile.am :
+   CMC test suite, fix choice of results subdirectory
+
+2011-05-31  Robert Larice
  * tests/bsim3soifd/RampVg2.out ,
  * tests/bsim3soifd/inv2.out ,
  * tests/bsim3soifd/t3.out ,

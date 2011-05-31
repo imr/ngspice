@@ -61,6 +61,7 @@ run_test() {
                 -s ${simname} \
                 -r -t ${test} \
                 -var ${variant} \
+                --results=${qaResultsDirectory} \
                 ${qaSpecFile}
 	done
     done
@@ -90,6 +91,7 @@ run_test() {
                         -s ${simname} \
                         -t ${test} \
                         -var ${variant} \
+                        --results=${qaResultsDirectory} \
                         ${qaSpecFile}
 		done
 	    done
@@ -134,6 +136,10 @@ while test $# -gt 0; do
       --srcdir=* | --executable=*)
           testProgramFlags="$testProgramFlags $1"
           shift
+          ;;
+      --results)
+          qaResultsDirectory="$2"
+          shift ; shift
           ;;
       -qa)
           qaSpecFile="$2"
