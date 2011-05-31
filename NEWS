@@ -205,9 +205,6 @@ description of improvements follows (extracted form Alan's mail):
 
 Output File Format Changes -
 
-  Rawfile format changed to PSPICE Probe format (Usable with
-  Demo version of Microsim's Probe).
-  
   (NOTE: Do not rely on this, we may revert to the old format 
    in the next release). 
 
@@ -287,16 +284,16 @@ Transient Convergence Enhancements -
   zero. This leads to a discontinuity of drain current with respect
   to gate voltage. The code is now modified to use Vbin for the jump
   decision. It looks like the code should actually use Vth as the
-  threshold voltage, but since PSPICE and HSPICE both follow the
+  threshold voltage, but since other SPICE simulators follow the
   original Berkeley code, this was left alone.
 
 
 New Model Parameters -
 
-  A PSPICE/HSPICE-like "M" device parameter (i.e. M devices in
+  A device multiplier instance parameter "M" (i.e. M devices in
   parallel) was added to the MOS1,2,3 and BSIM3 mosfet models.
 
-  
+ 
 Input Read-in and Checking -
 
   Numbers beginning with a + sign got the input routine confused.

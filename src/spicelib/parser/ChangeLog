@@ -75,7 +75,7 @@
 	
 2000-01-16 Paolo Nenzi  <p.nenzi@ieee.org>
 
-	* inp2r.c: Modified resistor code. Added ac value (ala HSPICE),
+	* inp2r.c: Modified resistor code. Added instance parameter ac ,
 	from Serban Popescu contributed sources.
 
 2000-01-15  Paolo Nenzi <p.nenzi@ieee.org>
