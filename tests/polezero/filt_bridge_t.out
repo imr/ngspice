@@ -49,6 +49,8 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
      device                    c2                    c1
       model                     C                     C
 capacitance                 1e-06                 1e-06
+        cap                 1e-06                 1e-06
+          c                 1e-06                 1e-06
       dtemp                     0                     0
           i                     0                     0
           p                     0                     0

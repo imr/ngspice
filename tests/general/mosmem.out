@@ -28,7 +28,7 @@ mosmem - mos memory cell
 .tran 20ns 2us
 vdd 9 0 dc 5
 vs 7 0 pulse(2 0 520ns 20ns 20ns 500ns 2000ns)
-vw 1 0 pulse(0 2 20ns 20ns 500ns 200ns)
+vw 1 0 pulse(0 2 20ns 20ns 500ns 200ns 2000ns)
 vwb 2 0 pulse(2 0 20ns 20ns 20ns 2000ns 2000ns)
 m1 3 1 0 0 mod w=250u l=5u
 m2 4 2 0 0 mod w=250u l=5u

@@ -57,6 +57,8 @@ c1 2 0 1n
      device                    c1
       model                     C
 capacitance                 1e-09
+        cap                 1e-09
+          c                 1e-09
       dtemp                     0
           i                     0
           p                     0

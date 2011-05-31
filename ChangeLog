@@ -1,4 +1,16 @@
 2011-05-31  Robert Larice
+ * tests/bsim3soifd/RampVg2.out ,
+ * tests/bsim3soifd/inv2.out ,
+ * tests/bsim3soifd/t3.out ,
+ * tests/bsim3soifd/t4.out ,
+ * tests/bsim3soifd/t5.out ,
+ * tests/filters/lowpass.out ,
+ * tests/general/mosmem.out ,
+ * tests/mesa/mesa11.out ,
+ * tests/polezero/filt_bridge_t.out :
+   massage some tests/* reference files
+
+2011-05-31  Robert Larice
  * src/Makefile.am ,
  * tests/Makefile.am ,
  * tests/hisim/Makefile.am ,
