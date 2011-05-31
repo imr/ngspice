@@ -2,8 +2,10 @@
 Circuit: *model = BSIMSOI (DD)
 
 Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
+
 Warning: Pd = 0 is less than W.
 Warning: Ps = 0 is less than W.
+
                              *model = BSIMSOI (DD)
                              DC transfer characteristic  Sat Aug 27 15:56:51  2005
 --------------------------------------------------------------------------------

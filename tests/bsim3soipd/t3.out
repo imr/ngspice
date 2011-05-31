@@ -6,6 +6,7 @@ Circuit: *model = BSIMSOI (PD)
 Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
 Warning: Pd = 0 is less than W.
 Warning: Ps = 0 is less than W.
+
                              *model = BSIMSOI (PD)
 --------------------------------------------------------------------------------
 Index   v-sweep         v(g)            vs#branch       
