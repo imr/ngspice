@@ -26,7 +26,7 @@ endif !WINDOWS
 endif !TCL_MODULE
 
 EXTRA_DIST = ngspice.txt setplot spectrum \
-	     devload devaxis ciderinit winmain.c unsupported \
+	     devload devaxis ciderinit winmain.c winmain.h unsupported \
 	     tclspice.c tclspice.map pkgIndex.tcl.in tclspinit.in main.c
 
 

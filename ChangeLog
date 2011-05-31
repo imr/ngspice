@@ -1,3 +1,10 @@
+2011-05-31  Robert Larice
+ * src/Makefile.am ,
+ * tests/Makefile.am ,
+ * tests/hisim/Makefile.am ,
+ * tests/hisimhv/Makefile.am :
+   updates for `make dist'
+
 2011-05-30  Robert Larice
  * tests/bin/check_cmc.sh :
    incorporate CMC test suite into make target 'check'
