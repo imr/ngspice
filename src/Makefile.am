@@ -391,7 +391,7 @@ libspice_la_LIBADD += \
 	$(LIBS)
 
 libspice_la_CFLAGS = $(AM_CFLAGS)
-libspice_la_LDFLAGS =  -shared -Wl,--version-script=tclspice.map
+libspice_la_LDFLAGS =  -shared -Wl,--version-script=$(srcdir)/tclspice.map
 if TCLWIN
 libspice_la_LDFLAGS +=  -no-undefined
 libspice_la_LDFLAGS += --def spice.def @TCL_LIB_SPEC@

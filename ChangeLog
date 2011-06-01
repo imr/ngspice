@@ -1,3 +1,7 @@
+2011-06-01  Robert Larice
+ * src/Makefile.am :
+   update tclspice to support build in a sparate directory
+
 2011-05-31  Robert Larice
  * tests/bin/check_cmc.sh ,
  * tests/bin/runQaTests.pl ,
