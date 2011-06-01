@@ -133,6 +133,7 @@ IFparm BJTmPTable[] = { /* model parameters */
  IOPA("tr",  BJT_MOD_TR,   IF_REAL, "Ideal reverse transit time"),
  IOPA("cjs", BJT_MOD_CJS,  IF_REAL, "Zero bias Substrate capacitance"),
  IOPR("csub", BJT_MOD_CJS,  IF_REAL, "Zero bias Substrate capacitance"),
+ IOPR("ccs", BJT_MOD_CJS,  IF_REAL, "Zero bias Substrate capacitance"),
  IOPA("vjs", BJT_MOD_VJS,  IF_REAL, "Substrate junction built in potential"),
  IOPR("ps",  BJT_MOD_VJS,  IF_REAL, "Substrate junction built in potential"),
  IOPA("mjs", BJT_MOD_MJS,  IF_REAL, "Substrate junction grading coefficient"),
