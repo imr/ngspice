@@ -1,4 +1,9 @@
 2011-06-02  Robert Larice
+ * src/frontend/com_let.c :
+   bug fix, avoid segfault when indexing a vector with a nonexistant variable
+     let foo = thing[nonsuchthing]
+
+2011-06-02  Robert Larice
  * src/frontend/postcoms.c :
    bug fix, avoid $curplot (plot_names) being assembled from negative numbers
      The variable `plot_num' is exclusively used to build plotnames,

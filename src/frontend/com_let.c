@@ -79,8 +79,18 @@ com_let(wordlist *wl)
 	    /* va, indexing */
 	    fake_wl.wl_word = s;
 	    nn = ft_getpnames(&fake_wl, TRUE);
+	    if (!nn) {
+		/* XXX error message */
+		tfree(p);
+		return;
+	    }
 	    t = ft_evaluate(nn);
-
+	    if (!t) {
+		fprintf(cp_err, "Error: Can't evaluate %s\n", s);
+		free_pnode(nn);
+		tfree(p);
+		return;
+	    }
 	    if (!isreal(t) || t->v_link2 || t->v_length != 1 || !t->v_realdata)
 	    {
 		fprintf(cp_err, "Error: index is not a scalar.\n");
