@@ -907,12 +907,16 @@ killwin(Widget w, XtPointer client_data, XtPointer call_data)
 void 
 RemoveWindow(GRAPH *graph)
 {
-    /* Iplots are done asynchronously */
-    DEVDEP(graph).isopen = 0;
-    /* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */	
-    XtDestroyWidget(DEVDEP(graph).shell);
+    if(graph->devdep) {
+        /* Iplots are done asynchronously */
+        DEVDEP(graph).isopen = 0;
+        /* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */
+        XtDestroyWidget(DEVDEP(graph).shell);
+    }
+
     if (graph == currentgraph)
         currentgraph = NULL;
+
     DestroyGraph(graph->graphid);
 }
 

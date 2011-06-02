@@ -1,4 +1,9 @@
 2011-06-02  Robert Larice
+ * src/frontend/plotting/graf.c ,
+ * src/frontend/plotting/x11.c :
+   fix a segfault, when invoking `destroy' while running in batch mode on unix
+
+2011-06-02  Robert Larice
  * src/frontend/evaluate.c :
    fix a segfault, incorrect invocation of free()
      seen with expressions like  v(node)[0]
