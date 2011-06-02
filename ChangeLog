@@ -1,4 +1,14 @@
 2011-06-02  Robert Larice
+ * src/frontend/postcoms.c :
+   bug fix, avoid $curplot (plot_names) being assembled from negative numbers
+     The variable `plot_num' is exclusively used to build plotnames,
+       via sprintf(plot_name, "dc%d", plot_num) expressions
+     Thus plot_num may never be decremented.
+     Otherwise expressions of sort
+	dc-2.var
+     can't be parsed
+
+2011-06-02  Robert Larice
  * src/frontend/plotting/graf.c ,
  * src/frontend/plotting/x11.c :
    fix a segfault, when invoking `destroy' while running in batch mode on unix

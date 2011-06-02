@@ -800,7 +800,6 @@ com_destroy(wordlist *wl)
             {
                 DelPlotWindows(pl);
                 killplot(pl);
-                plot_num--;
             }
             else
                 fprintf(cp_err, "Error: no such plot %s\n", wl->wl_word);
