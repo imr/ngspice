@@ -426,7 +426,10 @@ Most of the options now following are not well maintained, are not tested or eve
  if you have MSYS/MINGW installed properly. Unfortunately this is rather 
  tedious because you will need several enhancements to the standard install,
  especially if you want to include XSpice. Some links are given below which 
- describe the procedures.
+ describe the procedures. 
+ 
+     Installing from the tarball, e.g. ngspice-23.tar.gz, is now simple: After 
+ expanding, you may just run ./compile_min.sh from the ngspice-23 directory.
   
      The default installation location of ngspice is the Windows path
  C:\spice. The install path can be altered by passing --prefix=NEWPATH
@@ -440,8 +443,9 @@ Most of the options now following are not well maintained, are not tested or eve
  The procedure of compiling a distribution (for example, a tarball from
  the ngspice website), is as follows:
 
- $ cd ng-spice-rework
- $ ./configure --with-windows ...and other options
+ $ cd ngspice-23
+
+ $ ../configure --with-windows ...and other options
  $ make
  $ make install
 
@@ -452,7 +456,9 @@ Most of the options now following are not well maintained, are not tested or eve
   
  A fully featured ngspice on Windows may be obtained with the following commands:
  $ ./autogen.sh --adms
- $ ./configure --with-windows --enable-cider --disable-debug --enable-openmp --enable-xspice --enable-adms
+ $ mkdir release
+ $ cd release
+ $ ../configure --with-windows --enable-cider --disable-debug --enable-openmp --enable-xspice --enable-adms
  $ make install
  
  However, to compile code extracted from the CVS repository the procedure is
@@ -460,7 +466,9 @@ Most of the options now following are not well maintained, are not tested or eve
 
  $ cd ng-spice-rework
  $ ./autogen.sh
- $ ./configure --enable-maintainer-mode --with-windows ...and other options
+ $ mkdir release
+ $ cd release
+ $ ../configure --enable-maintainer-mode --with-windows ...and other options
  $ make
  $ make install
 
@@ -492,7 +500,7 @@ Most of the options now following are not well maintained, are not tested or eve
  CIDER and XSPICE are included, but the code models for XSPICE
  (*.cm) are not (yet) made. You may however use the code models
  created with MINGW (which in fact are dlls), as e.g. found in
- the ngspice binary distribution.
+ the ngspice binary distribution our made as described in 9.1.
   
  There is currently no installation procedure provided, you may
  however install the executable manually as described in the
