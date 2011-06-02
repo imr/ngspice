@@ -658,7 +658,7 @@ op_range(struct pnode *arg1, struct pnode *arg2)
 
     /* va: garbage collection */
     if (arg1->pn_value==NULL && v!=NULL) vec_free(v);
-    if (arg1->pn_value==NULL && ind!=NULL) vec_free(ind);
+    if (arg2->pn_value==NULL && ind!=NULL) vec_free(ind);
     return (res);
 }
 
@@ -811,7 +811,7 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
 
     /* va: garbage collection */
     if (arg1->pn_value==NULL && v!=NULL) vec_free(v);
-    if (arg1->pn_value==NULL && ind!=NULL) vec_free(ind);
+    if (arg2->pn_value==NULL && ind!=NULL) vec_free(ind);
     return (res);
 }
 

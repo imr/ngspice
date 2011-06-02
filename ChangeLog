@@ -1,9 +1,14 @@
+2011-06-02  Robert Larice
+ * src/frontend/evaluate.c :
+   fix a segfault, incorrect invocation of free()
+     seen with expressions like  v(node)[0]
+
 2011-06-02  Holger Vogt
  * tests/hisim/makefile.am: no more test1.cir in EXTRA_DIST
  * INSTALL, compile_min.sh: new instructions for mingw compilation
- 
+
 2011-06-01  Dietmar Warning
- * devices/bjt/bjt.c: introduce ccc as an alias for the 
+ * devices/bjt/bjt.c: introduce ccs as an alias for the
    zero bias substrate junction capacitance cjs
 
 2011-06-01  Robert Larice
