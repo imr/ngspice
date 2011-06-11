@@ -809,9 +809,9 @@ stuff_binary_v1 (
    assert (sizeof(char)  == 1);
    assert ((n >= 1) && (n <= 2));
 
-   trick.float_val[0] = d1;
+   trick.float_val[0] = (float)d1;
    if (n > 1) {
-      trick.float_val[1] = d2;
+      trick.float_val[1] = (float)d2;
    }
    for (i = 0, j = pos; i < n*sizeof(float); j++, i++)
       buf[j] = trick.ch[i];
@@ -936,7 +936,7 @@ ipc_send_event (
    /* Put the analysis step bytes in */
    buff_len = (int) strlen(buff);
    buff_ptr = buff + buff_len;
-   fvalue = step;
+   fvalue = (float)step;
    temp_ptr = (char *) &fvalue;
    for(i = 0; i < 4; i++) {
       *buff_ptr = temp_ptr[i];
@@ -945,7 +945,7 @@ ipc_send_event (
    }
 
    /* Put the plot value in */
-   fvalue = plot_val;
+   fvalue = (float)plot_val;
    temp_ptr = (char *) &fvalue;
    for(i = 0; i < 4; i++) {
       *buff_ptr = temp_ptr[i];

@@ -969,7 +969,7 @@ EnlargeMatrix(MatrixPtr Matrix, int  NewSize)
         return;
 
     /* Expand the matrix frame. */
-    NewSize = MAX( NewSize, EXPANSION_FACTOR * OldAllocatedSize );
+    NewSize = (int)MAX( NewSize, EXPANSION_FACTOR * OldAllocatedSize );
     Matrix->AllocatedSize = NewSize;
 
     if (( SP_REALLOC(Matrix->IntToExtColMap, int, NewSize+1)) == NULL)
@@ -1059,7 +1059,7 @@ ExpandTranslationArrays(MatrixPtr Matrix, int  NewSize)
         return;
 
     /* Expand the translation arrays ExtToIntRowMap and ExtToIntColMap. */
-    NewSize = MAX( NewSize, EXPANSION_FACTOR * OldAllocatedSize );
+    NewSize = (int)MAX( NewSize, EXPANSION_FACTOR * OldAllocatedSize );
     Matrix->AllocatedExtSize = NewSize;
 
     if (( SP_REALLOC(Matrix->ExtToIntRowMap, int, NewSize+1)) == NULL)

@@ -83,7 +83,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
             i0 = here->URClength * model->URCisPerL;
             if(!here->URClumpsGiven) {
                 wnorm = model->URCfmax * r0 * c0 * 2.0 * M_PI;
-                here->URClumps=MAX(3.0,log(wnorm*(((p-1)/p)*((p-1)/p)))/log(p));
+                here->URClumps=(int)MAX(3.0,log(wnorm*(((p-1)/p)*((p-1)/p)))/log(p));
                 if(wnorm <35) here->URClumps=3;
                 /* may want to limit lumps to <= 100 or something like that */
             }

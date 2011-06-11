@@ -159,7 +159,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
     else if (eq(copyvarname, "history") && (type == CP_NUM))
         cp_maxhistlength = v->va_num;
     else if (eq(copyvarname, "history") && (type == CP_REAL))
-        cp_maxhistlength = v->va_real;
+        cp_maxhistlength = (int)(v->va_real);
     else if (eq(copyvarname, "noclobber"))
         cp_noclobber = TRUE;
     else if (eq(varname, "echo"))   /*CDHW*/

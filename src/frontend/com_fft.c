@@ -260,7 +260,7 @@ com_psd(wordlist *wl)
     int     ngood, mm;
     unsigned long fpts, i, j, tlen, jj, smooth, hsmooth;
     char    *s;
-    struct dvec  *f, *vlist, *lv, *vec;
+    struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *names, *first_name;
 
     float *reald, *imagd;
@@ -480,7 +480,7 @@ com_psd(wordlist *wl)
 
     for (i = 0; i<ngood; i++) {
         for (j = 0; j < tlen; j++){
-    	   reald[j] = tdvec[i][j]*win[j];
+    	   reald[j] = (float)(tdvec[i][j]*win[j]);
            imagd[j] = 0.;
         }            
         for (j = tlen; j < size; j++){
@@ -517,21 +517,21 @@ com_psd(wordlist *wl)
            for (jj = 0; jj < hsmooth + j; jj++)
               sum += fdvec[i][jj].cx_real;
            sum /= (double)(hsmooth + j);        
-           reald[j] = sqrt(sum)/scaling;
+           reald[j] = (float)(sqrt(sum)/scaling);
         }
         for (j=hsmooth; j<fpts-hsmooth; j++){
            sum = 0.;
            for (jj = 0; jj < smooth; jj++)
               sum += fdvec[i][j-hsmooth+jj].cx_real;
            sum /= (double)smooth;        
-           reald[j] = sqrt(sum)/scaling;
+           reald[j] = (float)(sqrt(sum)/scaling);
         }
         for (j=fpts-hsmooth; j<fpts; j++){
            sum = 0.;
            for (jj = 0; jj < smooth; jj++)
               sum += fdvec[i][j-hsmooth+jj].cx_real;
            sum /= (double)(fpts - j + hsmooth - 1);        
-           reald[j] = sqrt(sum)/scaling;
+           reald[j] = (float)(sqrt(sum)/scaling);
         }        
         for (j=0; j<fpts; j++)
            fdvec[i][j].cx_real = reald[j];

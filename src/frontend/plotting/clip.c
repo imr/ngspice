@@ -186,8 +186,8 @@ clip_to_circle(int *x1, int *y1, int *x2, int *y2, int cx, int cy, int rad)
         if (gamma < M_PI / 2)
             gamma = M_PI - gamma;
         beta = M_PI - alpha - gamma;
-        *x1 = cx + rad * cos(theta1 + beta);
-        *y1 = cy + rad * sin(theta1 + beta);
+        *x1 = (int)(cx + rad * cos(theta1 + beta));
+        *y1 = (int)(cy + rad * sin(theta1 + beta));
     }
     if (b > rad) {
         tt = (c * c + b * b - a * a) / (2 * b * c);
@@ -200,8 +200,8 @@ clip_to_circle(int *x1, int *y1, int *x2, int *y2, int cx, int cy, int rad)
         if (gamma < M_PI / 2)
             gamma = M_PI - gamma;
         beta = M_PI - alpha - gamma;
-        *x2 = cx + rad * cos(theta2 - beta);
-        *y2 = cy + rad * sin(theta2 - beta);
+        *x2 = (int)(cx + rad * cos(theta2 - beta));
+        *y2 = (int)(cy + rad * sin(theta2 - beta));
     }
     if (flip) {
         i = *x1;

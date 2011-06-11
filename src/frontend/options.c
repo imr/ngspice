@@ -296,7 +296,7 @@ cp_usrset(struct variable *var, bool isset)
         if ((var->va_type == CP_BOOL) && (isset == FALSE))
             raw_prec = -1;
         else if (var->va_type == CP_REAL)
-            raw_prec = var->va_real;
+            raw_prec = (int)(var->va_real);
         else if (var->va_type == CP_NUM)
             raw_prec = var->va_num;
         else
@@ -305,7 +305,7 @@ cp_usrset(struct variable *var, bool isset)
         if ((var->va_type == CP_BOOL) && (isset == FALSE))
             cp_numdgt = -1;
         else if (var->va_type == CP_REAL)
-            cp_numdgt = var->va_real;
+            cp_numdgt = (int)(var->va_real);
         else if (var->va_type == CP_NUM)
             cp_numdgt = var->va_num;
         else

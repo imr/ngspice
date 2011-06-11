@@ -60,10 +60,10 @@ ft_findpoint(double pt, double *lims, int maxp, int minp, bool islog)
     if (islog) {
         tl = mylog10(lims[0]);
         th = mylog10(lims[1]);
-        return (((mylog10(pt) - tl) / (th - tl)) *
+        return (int)(((mylog10(pt) - tl) / (th - tl)) *
                 (maxp - minp) + minp);
     } else {
-        return (((pt - lims[0]) / (lims[1] - lims[0])) *
+        return (int)(((pt - lims[0]) / (lims[1] - lims[0])) *
                 (maxp - minp) + minp);
     }
 }

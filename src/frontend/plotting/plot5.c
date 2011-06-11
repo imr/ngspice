@@ -141,10 +141,10 @@ Plt5_Arc(int xc, int yc, int radius, double theta, double delta_theta)
         if(delta_phi > delta_theta)
             delta_phi = delta_theta;
 
-        x0 = xc + (radius * cos(theta));
-        y0 = yc + (radius * sin(theta));
-        x1 = xc + (radius * cos(theta + delta_phi));
-        y1 = yc + (radius * sin(theta + delta_phi));
+        x0 = xc + (int)(radius * cos(theta));
+        y0 = yc + (int)(radius * sin(theta));
+        x1 = xc + (int)(radius * cos(theta + delta_phi));
+        y1 = yc + (int)(radius * sin(theta + delta_phi));
 
         putc('a', plotfile);
         putsi(xc);

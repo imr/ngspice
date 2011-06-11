@@ -27,6 +27,10 @@ Ipc_Status_t ipc_transport_initialize_server (
      Ipc_Protocol_t     p,
      char               *batch_filename )
 {
+   NG_IGNORE(server_name);
+   NG_IGNORE(p);  
+   NG_IGNORE(batch_filename);
+
    assert (m == IPC_MODE_INTERACTIVE);
    printf ("INITIALIZE_SERVER\n");
    return IPC_STATUS_OK;
@@ -38,6 +42,8 @@ Ipc_Status_t ipc_transport_get_line (
      int                *len,
      Ipc_Wait_t         wait )
 {
+   NG_IGNORE(wait);
+
    printf ("GET_LINE\n");
    gets (str);
    *len = strlen (str);

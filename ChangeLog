@@ -1,3 +1,11 @@
+2011-06-11  Holger Vogt
+ * onemesh.c misc.c com_compose.c com_fft.c evaluate.c
+   hpgl.c linear.c misccoms.c options.c points.c rawfile.c
+   spec.c spiceif.c variable.c complete.c clip.c graf.c
+   plot5.c plotit.c spbuild.c dctrcurv.c distoan.c
+   noisean.c nbjttemp.c urcsetup.c ipc.c ipcstdio.c mifgetvalue.c:
+ remove compiler warnings by explicit casting double -> int etc.
+
 ============================ ngspice-23 ==================================
 2011-06-04  Holger Vogt
  * tests/bin/ngspice.pm: version 23

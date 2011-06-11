@@ -934,7 +934,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             !isreal(plot_cur->pl_scale) ||
             !ciprefix("tran", plot_cur->pl_typename))) {
 
-          newlen = (tstop - tstart) / tstep + 1.5;
+          newlen = (int)((tstop - tstart) / tstep + 1.5);
 
           newscale = TMALLOC(double, newlen);
 

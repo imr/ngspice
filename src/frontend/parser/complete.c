@@ -462,6 +462,8 @@ cp_ccon(bool on)
 #  endif
 #endif
 
+#else
+    NG_IGNORE(on);
 #endif
 
     return;

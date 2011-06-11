@@ -516,7 +516,7 @@ nextstep:;
 #ifdef HAS_WINDOWS
         if (i == cv->TRCVnestLevel) {
             actval += cv->TRCVvStep[cv->TRCVnestLevel];
-            SetAnalyse( "dc", (int)abs(((actval * 1000.) / actdiff)));
+            SetAnalyse( "dc", abs((int)(actval * 1000. / actdiff)));
         } 
 #endif
     }

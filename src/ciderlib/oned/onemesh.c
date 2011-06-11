@@ -240,7 +240,7 @@ adjustBaseContact(ONEdevice *pDevice, int indexEB, int indexBC)
   /* Initialize the base contact to be the center of the two junctions */
   /* This should take care of uniform dopings. */
 
-  midPoint = 0.5 * (indexEB + indexBC);
+  midPoint = (int)(0.5 * (indexEB + indexBC));
   newBaseIndex = midPoint;
 
   if (pBaseNode->baseType == P_TYPE) {

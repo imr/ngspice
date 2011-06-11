@@ -268,9 +268,9 @@ static int MIFget_integer(char *token, char **err)
             l = 0;
         }
         else if(dtemp > 0.0)
-            l = dtemp + 0.5;
+            l = (long)(dtemp + 0.5);
         else
-            l = dtemp - 0.5;
+            l = (long)(dtemp - 0.5);
     }
 
     return((int) l);

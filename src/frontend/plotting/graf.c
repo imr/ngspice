@@ -493,8 +493,8 @@ gr_resize(GRAPH *graph)
     scalex = oldxratio / graph->aspectratiox;
     scaley = oldyratio / graph->aspectratioy;
     for (k = graph->keyed; k; k = k->next) {
-      k->x = (k->x - graph->viewportxoff) * scalex + graph->viewportxoff;
-      k->y = (k->y - graph->viewportyoff) * scaley + graph->viewportyoff;
+      k->x = (int)((k->x - graph->viewportxoff) * scalex + graph->viewportxoff);
+      k->y = (int)((k->y - graph->viewportyoff) * scaley + graph->viewportyoff);
     }
 
     /* X also generates an expose after a resize.
@@ -519,8 +519,8 @@ gr_resize_internal(GRAPH *graph)
 {
 
     if (!graph->grid.xsized)
-	    graph->viewport.width = graph->absolute.width -
-		    1.4 * graph->viewportxoff;
+	    graph->viewport.width = (int)(graph->absolute.width -
+		    1.4 * graph->viewportxoff);
     if (!graph->grid.ysized)
 	    graph->viewport.height = graph->absolute.height -
 		    2 * graph->viewportyoff;

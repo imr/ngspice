@@ -484,7 +484,7 @@ raw_read(char *name)
                 curpl->pl_dvecs = v;
                 if (!curpl->pl_scale)
                     curpl->pl_scale = v;
-                v->v_flags = flags;
+                v->v_flags = (short)flags;
                 v->v_plot = curpl;
                 v->v_length = npoints;
 		v->v_numdims = 0;

@@ -144,7 +144,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 	}
 
     } else {   /* we must have paused before.  pick up where we left off */
-	step = job->NsavFstp;
+	step = (int)(job->NsavFstp);
 	switch (job->NstpType) {
 
 	case DECADE:

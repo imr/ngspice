@@ -117,7 +117,7 @@ NBJTtemp(GENmodel *inModel, CKTcircuit *ckt)
 	  printf("Warning: base contact not on node -- adjusting contact\n");
 	}
 	NBJTjunctions(pDevice, &indexBE, &indexBC);
-	pDevice->baseIndex = 0.5 * (indexBE + indexBC);
+	pDevice->baseIndex = (int)(0.5 * (indexBE + indexBC));
       }
       if (inst->NBJTtype == PNP) {
 	pDevice->elemArray[pDevice->baseIndex]->pNodes[0]->baseType = N_TYPE;

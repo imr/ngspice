@@ -98,13 +98,13 @@ int GL_Init(void)
     dispdev->numlinestyles = NUMELEMS(linestyle);
     dispdev->numcolors = 6;
 
-    dispdev->width = DELXMAX * scale;
-    dispdev->height = DELYMAX * scale;
+    dispdev->width = (int)(DELXMAX * scale);
+    dispdev->height = (int)(DELYMAX * scale);
 
 
     screenflag = 0;
-    dispdev->minx = XOFF * 1.0;
-    dispdev->miny = YOFF * 1.0;
+    dispdev->minx = (int)(XOFF * 1.0);
+    dispdev->miny = (int)(YOFF * 1.0);
 
     return(0);
 
@@ -134,8 +134,8 @@ GRAPH *graph)
     }
 
     /* reasonable values, used in gr_ for placement */
-    graph->fontwidth = fontwidth * scale; /* was 12, p.w.h. */
-    graph->fontheight = fontheight * scale; /* was 24, p.w.h. */
+    graph->fontwidth = (int)(fontwidth * scale); /* was 12, p.w.h. */
+    graph->fontheight = (int)(fontheight * scale); /* was 24, p.w.h. */
 
     graph->absolute.width = dispdev->width;
     graph->absolute.height = dispdev->height;
@@ -229,10 +229,10 @@ double theta, double delta_theta)
 {
     int  x1, y1, angle;
 
-    x1 = x0 + r * cos(theta);
-    y1 = y0 + r * sin(theta);
+    x1 = x0 + (int)(r * cos(theta));
+    y1 = y0 + (int)(r * sin(theta));
 
-    angle = RAD_TO_DEG * delta_theta;
+    angle = (int)(RAD_TO_DEG * delta_theta);
 
     fprintf(plotfile, "PU;PA %d , %d;", jgmult*(x1+xoff+XTADJ), jgmult*(y1+yoff+YTADJ));
     fprintf(plotfile, "PD;AA %d , %d, %d;", jgmult*(x0+xoff+XTADJ), jgmult*(y0+yoff+YTADJ), angle);

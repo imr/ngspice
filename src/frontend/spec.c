@@ -74,7 +74,7 @@ com_spec(wordlist *wl)
     span = ((int)(span*stepf*1.000000000001))/stepf;
     if (span > 0) {
         startf = (int)(startf/stepf*1.000000000001) * stepf;
-        fpts = (stopf - startf)/stepf + 1;
+        fpts = (int)((stopf - startf)/stepf + 1.);
         if (stopf > startf + (fpts-1)*stepf) fpts++;
     } else {
         fprintf(cp_err,"Error: time span limits step freq to %1.1e Hz\n",

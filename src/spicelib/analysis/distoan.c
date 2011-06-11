@@ -71,14 +71,14 @@ time1 = SPfrontEnd->IFseconds();
 					exp(log(10.0)/job->DnumSteps);
 		freqTol = job->DfreqDelta * 
 				job->DstopF1 * ckt->CKTreltol;
-	    NoOfPoints = 1 + floor ((job->DnumSteps) / log(10.0) * log((job->DstopF1+freqTol)/(job->DstartF1)));
+	    NoOfPoints = 1 + (int)floor ((job->DnumSteps) / log(10.0) * log((job->DstopF1+freqTol)/(job->DstartF1)));
             break;
         case OCTAVE:
             job->DfreqDelta =
 					exp(log(2.0)/job->DnumSteps);
 		freqTol = job->DfreqDelta * 
 				job->DstopF1 * ckt->CKTreltol;
-	    NoOfPoints = 1 + floor ((job->DnumSteps) / log(2.0) * log((job->DstopF1+freqTol)/(job->DstartF1)));
+	    NoOfPoints = 1 + (int)floor ((job->DnumSteps) / log(2.0) * log((job->DstopF1+freqTol)/(job->DstartF1)));
             break;
         case LINEAR:
             job->DfreqDelta =
@@ -86,7 +86,7 @@ time1 = SPfrontEnd->IFseconds();
 					job->DstartF1)/
 					(job->DnumSteps+1);
 		freqTol = job->DfreqDelta * ckt->CKTreltol;
-					NoOfPoints = job->DnumSteps+1+ floor(freqTol/(job->DfreqDelta));
+					NoOfPoints = job->DnumSteps+1+ (int)floor(freqTol/(job->DfreqDelta));
             break;
         default:
             return(E_BADPARM);

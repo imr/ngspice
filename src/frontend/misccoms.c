@@ -142,6 +142,8 @@ com_bug(wordlist *wl)
 void
 com_bug(wordlist *wl)
 {
+    NG_IGNORE(wl);
+
     fprintf(cp_out, "Send mail to the address ngspice-devel@lists.sourceforge.net\n");
     return;
 }
