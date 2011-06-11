@@ -253,7 +253,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
         delta = -delta;
     }
 
-    mag2 = floor(log10(fabs(hi - lo)));
+    mag2 = (int)floor(log10(fabs(hi - lo)));
     tenpowmag2 = pow(10.0, (double) mag2);
 
     /* Round lo down, and hi up */
@@ -269,9 +269,9 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
     hi = hmt * tenpowmag2;
 
     if (fabs(hi) > fabs(lo))
-    	mag = floor(log10(fabs(hi)));
+    	mag = (int)floor(log10(fabs(hi)));
     else
-    	mag = floor(log10(fabs(lo)));
+    	mag = (int)floor(log10(fabs(lo)));
 
     if (mag >= 0)
 	mag3 = ((int) (mag / 3)) * 3;
@@ -380,7 +380,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
 
 	do {
 		step = div_list[i].step;
-		nsp = (dst + step - 0.0001) / step;
+		nsp = (int)((dst + step - 0.0001) / step);
 		spacing = (max - margin) / nsp;
 		i += 1;
 	} while ((size_t) i < NUMELEMS(div_list)  &&  spacing > 50);
@@ -394,7 +394,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
 	while (i > 0 && spacing < slim + 3) {
 		i -= 1;
 		step = div_list[i].step;
-		nsp = (dst + step - 0.0001) / step;
+		nsp = (int)((dst + step - 0.0001) / step);
 		spacing = (max - margin) / nsp;
 	}
 
@@ -413,14 +413,14 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
 	lo = lmt * tenpowmag2;
 	hi = hmt * tenpowmag2;
 
-	nsp = (dst + step - 0.0001) / step;
+	nsp = (int)((dst + step - 0.0001) / step);
 
     } else {
 	/* The user told us where to put the grid lines.  They will
 	 * not be equally spaced in this case (i.e, the right edge
 	 * won't be a line).
 	 */
-	nsp = (hi - lo) / delta;
+	nsp = (int)((hi - lo) / delta);
 	if (nsp > 100)
 		nsp = 100;
 	step = (max - margin) * delta / (hi - lo);
@@ -433,9 +433,9 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
     /* Reset the max coordinate to deal with round-off error. */
     if (nsp && (delta == 0.0)) {
 	if (axis == x_axis)
-	    graph->viewport.width = spacing * nsp;
+	    graph->viewport.width = (int)(spacing * nsp);
 	else
-	    graph->viewport.height = spacing * nsp;
+	    graph->viewport.height = (int)(spacing * nsp);
     } else if (!nsp) {
 	nsp = 1;
     }
@@ -454,7 +454,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
       graph->grid.xaxis.lin.distance = dst;
       graph->grid.xaxis.lin.lowlimit = lmt;
       graph->grid.xaxis.lin.highlimit = hmt;
-      graph->grid.xaxis.lin.spacing = spacing;
+      graph->grid.xaxis.lin.spacing = (int)spacing;
       graph->grid.xaxis.lin.numspace = nsp;
     } else {
       graph->grid.ysized = 1;
@@ -467,7 +467,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
       graph->grid.yaxis.lin.distance = dst;
       graph->grid.yaxis.lin.lowlimit = lmt;
       graph->grid.yaxis.lin.highlimit = hmt;
-      graph->grid.yaxis.lin.spacing = spacing;
+      graph->grid.yaxis.lin.spacing = (int)spacing;
       graph->grid.yaxis.lin.numspace = nsp;
     }
 
@@ -494,7 +494,7 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
     for (i = 0, m = lmt * 100.0; m - 0.001 <= hmt * 100.0;
       i += spacing, m += step)
     {
-	j = m;
+	j = (int)m;
         if (j == 0)
             SetLinestyle(0);
         if (graph->grid.gridtype != GRID_NONE) {
@@ -576,16 +576,16 @@ loggrid(GRAPH *graph, double lo, double hi, int type, Axis axis)
      * and lo are positive.
      */
 
-    lmt = floor(mylog10(lo));
-    hmt = ceil(mylog10(hi));
+    lmt = (int)floor(mylog10(lo));
+    hmt = (int)ceil(mylog10(hi));
 
     decs = hmt - lmt;
 
     pp = 1;
-    decsp = (max - margin) / decs;
+    decsp = (int)((max - margin) / decs);
 
     if (decsp < 20) {
-	pp = ceil(20.0 / decsp);
+	pp = (int)ceil(20.0 / decsp);
 	decsp *= pp;
 	subs = 1;
     } else if (decsp > 50) {
@@ -605,9 +605,9 @@ loggrid(GRAPH *graph, double lo, double hi, int type, Axis axis)
 	subs = 1;
 
     /* Start at a line */
-    lmt = floor((double) lmt / pp) * pp;
+    lmt = (int)(floor((double) lmt / pp) * pp);
     decs = hmt - lmt;
-    decsp = (max - margin) / decs;
+    decsp = (int)((max - margin) / decs);
 
     dd[0] = pow(10.0, (double) lmt);
     dd[1] = pow(10.0, (double) hmt);
@@ -620,7 +620,7 @@ loggrid(GRAPH *graph, double lo, double hi, int type, Axis axis)
 
     if (axis == x_axis) {
       (void) strcpy(graph->grid.xaxis.log.units, buf);
-      graph->viewport.width = decs * decsp;
+      graph->viewport.width = (int)(decs * decsp);
       graph->grid.xaxis.log.hmt = hmt;
       graph->grid.xaxis.log.lmt = lmt;
       graph->grid.xaxis.log.decsp = decsp;
@@ -629,7 +629,7 @@ loggrid(GRAPH *graph, double lo, double hi, int type, Axis axis)
       graph->grid.xsized = 1;
     } else {
       (void) strcpy(graph->grid.yaxis.log.units, buf);
-      graph->viewport.height = decs * decsp;
+      graph->viewport.height = (int)(decs * decsp);
       graph->grid.yaxis.log.hmt = hmt;
       graph->grid.yaxis.log.lmt = lmt;
       graph->grid.yaxis.log.decsp = decsp;
@@ -698,8 +698,8 @@ drawloggrid(GRAPH *graph, char *units, int hmt, int lmt, int decsp, int subs, in
 	if (subs > 1) {
             SetLinestyle(1);
 	    t = 10.0 / subs;
-	    for (k = ceil(subs / 10.0) + 1; k < subs; k++) {
-		m = i + decsp * log10((double) t * k);
+	    for (k = (int)ceil(subs / 10.0) + 1; k < subs; k++) {
+		m = (int)(i + decsp * log10((double) t * k));
 		if (graph->grid.gridtype != GRID_NONE) {
 		    if (axis == x_axis)
 			DevDrawLine(graph->viewportxoff + m,
@@ -775,10 +775,10 @@ polargrid(GRAPH *graph)
             && (graph->data.xmin == graph->data.ymin))
         centered = TRUE;
 
-    mag = floor(mylog10(maxrad));
+    mag = (int)floor(mylog10(maxrad));
     tenpowmag = pow(10.0, (double) mag);
-    hmt = maxrad / tenpowmag;
-    lmt = minrad / tenpowmag;
+    hmt = (int)(maxrad / tenpowmag);
+    lmt = (int)(minrad / tenpowmag);
     if (hmt * tenpowmag < maxrad)
         hmt++;
     if (lmt * tenpowmag > minrad)
@@ -838,15 +838,15 @@ drawpolargrid(GRAPH *graph)
     pixperunit = graph->grid.xaxis.circular.radius * 2 /
 	(graph->datawindow.xmax - graph->datawindow.xmin);
 
-    relcx = - (graph->datawindow.xmin + graph->datawindow.xmax) / 2
-            * pixperunit;
-    relcy = - (graph->datawindow.ymin + graph->datawindow.ymax) / 2
-            * pixperunit;
+    relcx = - (int)((graph->datawindow.xmin + graph->datawindow.xmax) / 2
+            * pixperunit);
+    relcy = - (int)((graph->datawindow.ymin + graph->datawindow.ymax) / 2
+            * pixperunit);
 
     /* The distance from the center of the plotting area to the center of
      * the logical area.
      */
-    dist = sqrt((double) (relcx * relcx + relcy * relcy));
+    dist = (int)sqrt((double) (relcx * relcx + relcy * relcy));
 
     SetLinestyle(0);
     DevDrawArc(graph->grid.xaxis.circular.center,
@@ -857,7 +857,7 @@ drawpolargrid(GRAPH *graph)
 
     /* Now draw the circles. */
     for (i = lmt;
-	(relrad = i * tenpowmag * pixperunit)
+	(relrad = (int)(i * tenpowmag * pixperunit))
 	<= dist + graph->grid.xaxis.circular.radius;
 	i += step)
     {
@@ -891,10 +891,10 @@ drawpolargrid(GRAPH *graph)
         for (i = 0; i < 12; i++) {
             x1 = graph->grid.xaxis.circular.center + relcx;
             y1 = graph->grid.yaxis.circular.center + relcy;
-            x2 = x1 + graph->grid.xaxis.circular.radius * 2
-                    * cos(i * M_PI / 6);
-            y2 = y1 + graph->grid.xaxis.circular.radius * 2
-                    * sin(i * M_PI / 6);
+            x2 = (int)(x1 + graph->grid.xaxis.circular.radius * 2
+                    * cos(i * M_PI / 6));
+            y2 = (int)(y1 + graph->grid.xaxis.circular.radius * 2
+                    * sin(i * M_PI / 6));
             if (!clip_to_circle(&x1, &y1, &x2, &y2,
                     graph->grid.xaxis.circular.center,
                     graph->grid.yaxis.circular.center,
@@ -930,8 +930,8 @@ drawpolargrid(GRAPH *graph)
         for (i = 0; i < 360; i+= degs) {
             x1 = graph->grid.xaxis.circular.center + relcx;
             y1 = graph->grid.yaxis.circular.center + relcy;
-            x2 = x1 + dist * 2 * cos(i * M_PI / 180);
-            y2 = y1 + dist * 2 * sin(i * M_PI / 180);
+            x2 = (int)(x1 + dist * 2 * cos(i * M_PI / 180));
+            y2 = (int)(y1 + dist * 2 * sin(i * M_PI / 180));
             if (!clip_to_circle(&x1, &y1, &x2, &y2,
                     graph->grid.xaxis.circular.center,
                     graph->grid.yaxis.circular.center,
@@ -974,12 +974,12 @@ adddeglabel(GRAPH *graph, int deg, int x, int y, int cx, int cy, int lx, int ly)
         return;
     (void) sprintf(buf, "%d", deg);
     w = graph->fontwidth * (int) (strlen(buf) + 1);
-    h = graph->fontheight * 1.5;
+    h = (int)(graph->fontheight * 1.5);
     angle = atan2((double) (y - ly), (double) (x - lx));
-    d = fabs(cos(angle)) * w / 2 + fabs(sin(angle)) * h / 2 + LOFF;
+    d = (int)(fabs(cos(angle)) * w / 2 + fabs(sin(angle)) * h / 2 + LOFF);
 
-    x = x + d * cos(angle) - w / 2;
-    y = y + d * sin(angle) - h / 2;
+    x = (int)(x + d * cos(angle) - w / 2);
+    y = (int)(y + d * sin(angle) - h / 2);
 
     DevDrawText(buf, x, y);
     DevDrawText("o", x + (int) strlen(buf) * graph->fontwidth,
@@ -1120,20 +1120,20 @@ drawsmithgrid(GRAPH *graph)
     maxrad = d + (graph->datawindow.xmax - graph->datawindow.xmin) / 2;
     minrad = d - (graph->datawindow.xmax - graph->datawindow.xmin) / 2;
 
-    mag = floor(mylog10(maxrad));
+    mag = (int)floor(mylog10(maxrad));
     tenpowmag = pow(10.0, (double) mag);
 
     pixperunit = graph->viewport.width / (graph->datawindow.xmax - 
             graph->datawindow.xmin);
 
-    xoff = - pixperunit * (graph->datawindow.xmin + graph->datawindow.xmax) / 2;
-    yoff = - pixperunit * (graph->datawindow.ymin + graph->datawindow.ymax) / 2;
+    xoff = - (int)(pixperunit * (graph->datawindow.xmin + graph->datawindow.xmax) / 2);
+    yoff = - (int)(pixperunit * (graph->datawindow.ymin + graph->datawindow.ymax) / 2);
 
     /* Sweep the range from 10e-20 to 10e20.  If any arcs fall into the
      * picture, plot the arc set.
      */
     for (mag = -20; mag < 20; mag++) {
-        i = gr_radius * pow(10.0, (double) mag) / maxrad;
+        i = (int)(gr_radius * pow(10.0, (double) mag) / maxrad);
         if (i > 10) {
             j = 1;
             break;
@@ -1163,7 +1163,7 @@ drawsmithgrid(GRAPH *graph)
     mag -= 2;
     j *= 10;
     while (mag < 20) {
-        i = j * pow(10.0, (double) mag) * pixperunit / 2;
+        i = (int)(j * pow(10.0, (double) mag) * pixperunit / 2);
         if (i / 5 > gr_radius + ((xoff > 0) ? xoff : - xoff))
             break;
 	rnorm[k] = j * pow(10.0, (double) (mag - basemag));
@@ -1246,7 +1246,7 @@ drawsmithgrid(GRAPH *graph)
 	kr[i] = ks[j];
 
     if ((yoff > - gr_radius) && (yoff < gr_radius)) {
-        zheight = gr_radius * cos(asin((double) yoff / gr_radius));
+        zheight = (int)(gr_radius * cos(asin((double) yoff / gr_radius)));
 	zheight = (zheight > 0) ? zheight : - zheight;
     } else {
 	zheight = gr_radius;
@@ -1280,7 +1280,7 @@ drawsmithgrid(GRAPH *graph)
     }
  */
     if ((yoff > - gr_radius) && (yoff < gr_radius)) {
-        zheight = gr_radius * cos(asin((double) yoff / gr_radius));
+        zheight = (int)(gr_radius * cos(asin((double) yoff / gr_radius)));
         if (zheight < 0)
             zheight = - zheight;
         DevDrawLine(gr_xcenter - zheight, gr_ycenter + yoff,
@@ -1344,8 +1344,8 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
 	    (double) (M_PI * 1.5 + 2 * iangle),
             (double) (M_PI * 1.5 - 2 * iangle), centx, centy, maxrad, 1);
     if ((aclip > M_PI / 180) && (pdeg > 1)) {
-	xlab = centx + xoffset + radoff + irad * cos(aclip);
-	ylab = centy + yoffset + irad * (1 + sin(aclip));
+	xlab = (int)(centx + xoffset + radoff + irad * cos(aclip));
+	ylab = (int)(centy + yoffset + irad * (1 + sin(aclip)));
 	if ((ylab - gr_ycenter) > graph->fontheight) {
 	SetColor(1);
 	adddeglabel(graph, pdeg, xlab, ylab,
@@ -1364,8 +1364,8 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
             (double) (M_PI / 2 - 2 * iangle), centx, centy, maxrad,
 	    (iangle == 0)?2:0);
     if ((aclip >= 0 && aclip < 2*M_PI - M_PI/180) && (pdeg < 359)) {
-	xlab = centx + xoffset + radoff + irad * cos(aclip);
-	ylab = centy + yoffset + irad * (sin(aclip) - 1);
+	xlab = (int)(centx + xoffset + radoff + irad * cos(aclip));
+	ylab = (int)(centy + yoffset + irad * (sin(aclip) - 1));
 	SetColor(1);
 	adddeglabel(graph, ndeg, xlab, ylab,
 	    gr_xcenter, gr_ycenter, gr_xcenter, gr_ycenter);

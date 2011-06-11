@@ -677,7 +677,7 @@ count_steps(int type, double low, double high, int steps, double *stepsize)
 			low = 1e-3;
 		if (high <= low)
 			high = 10.0 * low;
-		n = steps * log10(high/low) + 1.01;
+		n = (int)(steps * log10(high/low) + 1.01);
 		s = pow(10.0, 1.0 / steps);
 		break;
 
@@ -686,7 +686,7 @@ count_steps(int type, double low, double high, int steps, double *stepsize)
 			low = 1e-3;
 		if (high <= low)
 			high = 2.0 * low;
-		n = steps * log(high/low) / M_LOG2E + 1.01;
+		n = (int)(steps * log(high/low) / M_LOG2E + 1.01);
 		s = pow(2.0, 1.0 / steps);
 		break;
 	}

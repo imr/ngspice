@@ -500,7 +500,7 @@ void * nghash_insert(NGHASHPTR hashtable, void * user_key, void * data)
 
     if( hashtable->num_entries >= hashtable->need_resize ){
       int newsize ;		/* new size of table */
-      newsize = hashtable->size * hashtable->growth_factor ;
+      newsize = (int)(hashtable->size * hashtable->growth_factor);
       nghash_resize(hashtable, newsize ) ;
     }
 

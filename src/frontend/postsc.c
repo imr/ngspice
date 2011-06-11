@@ -107,7 +107,7 @@ PS_Init(void)
 
     /* plot size */
     if (!cp_getvar("hcopywidth", CP_STRING, pswidth)) {
-        dispdev->width = 7.75 * 72.0 * scale;       /* (8 1/2 - 3/4) * 72 */
+        dispdev->width = (int)(7.75 * 72.0 * scale);       /* (8 1/2 - 3/4) * 72 */
     } else {
         sscanf(pswidth, "%d", &(dispdev->width));
         if (dispdev->width <= 100)
@@ -141,21 +141,21 @@ PS_Init(void)
         fontsize = 10;
         fontwidth = 6;
         fontheight = 14;
-        xtadj = XTADJ * scale;
-        ytadj = YTADJ * scale;
+        xtadj = (int)(XTADJ * scale);
+        ytadj = (int)(YTADJ * scale);
     } else {
         sscanf(psfontsize, "%d", &fontsize);
         if ((fontsize < 10) || (fontsize > 14))
             fontsize = 10;
-        fontwidth = 0.5 + 0.6 * fontsize;
-        fontheight = 2.5 + 1.2 * fontsize;
-        xtadj = XTADJ * scale * fontsize / 10;
-        ytadj = YTADJ * scale * fontsize / 10;
+        fontwidth = (int)(0.5 + 0.6 * fontsize);
+        fontheight = (int)(2.5 + 1.2 * fontsize);
+        xtadj = (int)(XTADJ * scale * fontsize / 10);
+        ytadj = (int)(YTADJ * scale * fontsize / 10);
     }
 
     screenflag = 0;
-    dispdev->minx = XOFF / scale;
-    dispdev->miny = YOFF / scale;
+    dispdev->minx = (int)(XOFF / scale);
+    dispdev->miny = (int)(YOFF / scale);
 
     return(0);
 
@@ -181,8 +181,8 @@ PS_NewViewport(GRAPH *graph)
     }
 
     /* reasonable values, used in gr_ for placement */
-    graph->fontwidth = fontwidth * scale; /* was 12, p.w.h. */
-    graph->fontheight = fontheight * scale; /* was 24, p.w.h. */
+    graph->fontwidth = (int)(fontwidth * scale); /* was 12, p.w.h. */
+    graph->fontheight = (int)(fontheight * scale); /* was 24, p.w.h. */
 
     graph->absolute.width = dispdev->width;
     graph->absolute.height = dispdev->height;
@@ -190,13 +190,13 @@ PS_NewViewport(GRAPH *graph)
     graph->viewportxoff = 8 * fontwidth;
     graph->viewportyoff = 4 * fontheight;
 
-    xoff = scale * XOFF;
-    yoff = scale * YOFF;
+    xoff = (int)(scale * XOFF);
+    yoff = (int)(scale * YOFF);
 
-    x1 = 0.75 * 72;
+    x1 = (int)(0.75 * 72);
     y1 = x1;
-    x2 = graph->absolute.width + .75 * 72;
-    y2 = graph->absolute.height + .75 * 72;
+    x2 = (int)(graph->absolute.width + .75 * 72);
+    y2 = (int)(graph->absolute.height + .75 * 72);
     /* start file off with a % */
     fprintf(plotfile, "%%!PS-Adobe-3.0 EPSF-3.0\n");
     fprintf(plotfile, "%%%%Creator: nutmeg\n");

@@ -3,7 +3,8 @@
    hpgl.c linear.c misccoms.c options.c points.c rawfile.c
    spec.c spiceif.c variable.c complete.c clip.c graf.c
    plot5.c plotit.c spbuild.c dctrcurv.c distoan.c
-   noisean.c nbjttemp.c urcsetup.c ipc.c ipcstdio.c mifgetvalue.c:
+   noisean.c nbjttemp.c urcsetup.c ipc.c ipcstdio.c mifgetvalue.c
+   postsc.c grid.c hash.c cktsens.c:
  remove compiler warnings by explicit casting double -> int etc.
 
 ============================ ngspice-23 ==================================
