@@ -627,7 +627,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
          prev_card = dd;
       }  //end of for-loop
 
-      /* set temperature if defined */
+      /* set temperature, if defined, to new value.
+         cp_vset will set the variable "temp" and also set CKTtemp,
+         so we can do it only here because the circuit has to be already there */
       if ( temperature != NULL ) {
          temperature_value = atof(temperature);
          cp_vset("temp", CP_REAL, &temperature_value );

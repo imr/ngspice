@@ -77,6 +77,8 @@
 #if defined(__MINGW32__) || defined(_MSC_VER)
 #define DIR_PATHSEP	"\\"
 #define DIR_TERM	'\\'
+#define DIR_PATHSEP_LINUX	"/"
+#define DIR_TERM_LINUX	'/'
 #define DIR_CWD		"."
 
 #define TEMPFORMAT	"%s%d.tmp"

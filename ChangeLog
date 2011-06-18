@@ -1,3 +1,9 @@
+2011-06-18  Holger Vogt
+ * measure.c: revert a change from Feb. 19th, 2011 to reinstate from=dfall
+   inpcom.c, defines.h: allow / and \ in file paths under MS Windows
+   inp.c: some comment added
+   /examples/measure/simple-meas-tran.sp: another .measure example
+   
 2011-06-11  Holger Vogt
  * onemesh.c misc.c com_compose.c com_fft.c evaluate.c
    hpgl.c linear.c misccoms.c options.c points.c rawfile.c
