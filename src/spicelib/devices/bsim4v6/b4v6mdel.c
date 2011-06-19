@@ -1,8 +1,8 @@
-/**** BSIM4.7.0 Released by Darsen Lu 04/08/2011 ****/
+/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4mdel.c of BSIM4.7.0.
+ * File: b4mdel.c of BSIM4.6.2.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
@@ -11,25 +11,25 @@
  **********/
 
 #include "ngspice.h"
-#include "bsim4def.h"
+#include "bsim4v6def.h"
 #include "sperror.h"
 #include "suffix.h"
 
 int
-BSIM4mDelete(
+BSIM4v6mDelete(
 GENmodel **inModel,
-IFuid modname,
+IFuid modname, 
 GENmodel *kill)
 {
-BSIM4model **model = (BSIM4model**)inModel;
-BSIM4model *modfast = (BSIM4model*)kill;
-BSIM4instance *here;
-BSIM4instance *prev = NULL;
-BSIM4model **oldmod;
+BSIM4v6model **model = (BSIM4v6model**)inModel;
+BSIM4v6model *modfast = (BSIM4v6model*)kill;
+BSIM4v6instance *here;
+BSIM4v6instance *prev = NULL;
+BSIM4v6model **oldmod;
 
     oldmod = model;
-    for (; *model ; model = &((*model)->BSIM4nextModel)) 
-    {    if ((*model)->BSIM4modName == modname || 
+    for (; *model ; model = &((*model)->BSIM4v6nextModel)) 
+    {    if ((*model)->BSIM4v6modName == modname || 
              (modfast && *model == modfast))
 	     goto delgot;
          oldmod = model;
@@ -37,8 +37,8 @@ BSIM4model **oldmod;
     return(E_NOMOD);
 
 delgot:
-    *oldmod = (*model)->BSIM4nextModel; /* cut deleted device out of list */
-    for (here = (*model)->BSIM4instances; here; here = here->BSIM4nextInstance)
+    *oldmod = (*model)->BSIM4v6nextModel; /* cut deleted device out of list */
+    for (here = (*model)->BSIM4v6instances; here; here = here->BSIM4v6nextInstance)
     {    if(prev) FREE(prev);
          prev = here;
     }

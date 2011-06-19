@@ -1,9 +1,8 @@
-/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
-/**** BSIM4.6.4 Update ngspice 08/22/2009 ****/
-/**** OpenMP support ngspice 06/28/2010 ****/
+/**** BSIM4.7.0 Released by Darsen Lu 04/08/2011 ****/
+
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4set.c of BSIM4.6.2.
+ * File: b4set.c of BSIM4.7.0.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
@@ -19,6 +18,7 @@
  * Modified by Mohan Dunga, 12/13/2006
  * Modified by Mohan Dunga, Wenwei Yang, 05/18/2007.
  * Modified by Wenwei Yang, 07/31/2008.
+ * Modified by Tanvir Morshed, Darsen Lu 03/27/2011
 **********/
 
 #include "ngspice.h"
@@ -59,7 +59,6 @@ int    noiseAnalGiven = 0, createNode;  /* Criteria for new node creation */
 double Rtot, DMCGeff, DMCIeff, DMDGeff;
 JOB   *job;
 
-
 #ifdef USE_OMP4
 unsigned int idx, InstCount;
 BSIM4instance **InstArray;
@@ -67,7 +66,7 @@ int nthreads;
 #endif
 
     /* Search for a noise analysis request */
-    for (job = ft_curckt->ci_curTask->jobs; job; job = job->JOBnextJob) {
+    for (job = ((TSKtask *)ft_curckt->ci_curTask)->jobs;job;job = job->JOBnextJob) {
         if(strcmp(job->JOBname,"Noise Analysis")==0) {
             noiseAnalGiven = 1;
             break;
@@ -82,11 +81,11 @@ int nthreads;
 
         if (!model->BSIM4mobModGiven) 
             model->BSIM4mobMod = 0;
-	else if ((model->BSIM4mobMod != 0) && (model->BSIM4mobMod != 1)
-	         && (model->BSIM4mobMod != 2) && (model->BSIM4mobMod != 3))
-	{   model->BSIM4mobMod = 0;
+        else if ((model->BSIM4mobMod != 0) && (model->BSIM4mobMod != 1)
+                 && (model->BSIM4mobMod != 2)&& (model->BSIM4mobMod != 3))
+        {   model->BSIM4mobMod = 0;
             printf("Warning: mobMod has been set to its default value: 0.\n");
-	}
+        }
 
         if (!model->BSIM4binUnitGiven) 
             model->BSIM4binUnit = 1;
@@ -113,10 +112,10 @@ int nthreads;
 
         if (!model->BSIM4rdsModGiven)
             model->BSIM4rdsMod = 0;
-	else if ((model->BSIM4rdsMod != 0) && (model->BSIM4rdsMod != 1))
+        else if ((model->BSIM4rdsMod != 0) && (model->BSIM4rdsMod != 1))
         {   model->BSIM4rdsMod = 0;
-	    printf("Warning: rdsMod has been set to its default value: 0.\n");
-	}
+            printf("Warning: rdsMod has been set to its default value: 0.\n");
+        }
         if (!model->BSIM4rbodyModGiven)
             model->BSIM4rbodyMod = 0;
         else if ((model->BSIM4rbodyMod != 0) && (model->BSIM4rbodyMod != 1) && (model->BSIM4rbodyMod != 2))
@@ -150,7 +149,7 @@ int nthreads;
         }
         if (!model->BSIM4tnoiModGiven)
             model->BSIM4tnoiMod = 0; /* WDLiu: tnoiMod=1 needs to set internal S/D nodes */
-        else if ((model->BSIM4tnoiMod != 0) && (model->BSIM4tnoiMod != 1))
+        else if ((model->BSIM4tnoiMod != 0) && (model->BSIM4tnoiMod != 1) && (model->BSIM4tnoiMod != 2))  /* v4.7 */
         {   model->BSIM4tnoiMod = 0;
             printf("Warning: tnoiMod has been set to its default value: 0.\n");
         }
@@ -168,13 +167,25 @@ int nthreads;
             printf("Warning: acnqsMod has been set to its default value: 0.\n");
         }
 
-        if (!model->BSIM4mtrlModGiven)
+        if (!model->BSIM4mtrlModGiven)   
             model->BSIM4mtrlMod = 0;
+        else if((model->BSIM4mtrlMod != 0) && (model->BSIM4mtrlMod != 1))
+        {
+            model->BSIM4mtrlMod = 0;
+            printf("Warning: mtrlMod has been set to its default value: 0.\n");
+        }
+        if (!model->BSIM4mtrlCompatModGiven)   
+            model->BSIM4mtrlCompatMod = 0;
+        else if((model->BSIM4mtrlCompatMod != 0) && (model->BSIM4mtrlCompatMod != 1))
+        {
+            model->BSIM4mtrlCompatMod = 0;
+            printf("Warning: mtrlCompatMod has been set to its default value: 0.\n");
+        }
 
         if (!model->BSIM4igcModGiven)
             model->BSIM4igcMod = 0;
         else if ((model->BSIM4igcMod != 0) && (model->BSIM4igcMod != 1)
-		  && (model->BSIM4igcMod != 2))
+                  && (model->BSIM4igcMod != 2))
         {   model->BSIM4igcMod = 0;
             printf("Warning: igcMod has been set to its default value: 0.\n");
         }
@@ -187,13 +198,13 @@ int nthreads;
         if (!model->BSIM4tempModGiven)
             model->BSIM4tempMod = 0;
         else if ((model->BSIM4tempMod != 0) && (model->BSIM4tempMod != 1) 
-		  && (model->BSIM4tempMod != 2) && (model->BSIM4tempMod != 3))
+                  && (model->BSIM4tempMod != 2) && (model->BSIM4tempMod != 3))
         {   model->BSIM4tempMod = 0;
             printf("Warning: tempMod has been set to its default value: 0.\n");
         }
 
         if (!model->BSIM4versionGiven) 
-            model->BSIM4version = "4.6.4";
+            model->BSIM4version = "4.7.0";
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
         if (!model->BSIM4eotGiven)
@@ -205,7 +216,7 @@ int nthreads;
         if (!model->BSIM4leffeotGiven)
             model->BSIM4leffeot = 1;
         if (!model->BSIM4weffeotGiven)
-            model->BSIM4weffeot = 10;	
+            model->BSIM4weffeot = 10;        
         if (!model->BSIM4adosGiven)
             model->BSIM4ados = 1.0;
         if (!model->BSIM4bdosGiven)
@@ -222,15 +233,15 @@ int nthreads;
             model->BSIM4epsrox = 3.9;
 
         if (!model->BSIM4cdscGiven)
-	    model->BSIM4cdsc = 2.4e-4;   /* unit Q/V/m^2  */
+            model->BSIM4cdsc = 2.4e-4;   /* unit Q/V/m^2  */
         if (!model->BSIM4cdscbGiven)
-	    model->BSIM4cdscb = 0.0;   /* unit Q/V/m^2  */    
-	    if (!model->BSIM4cdscdGiven)
-	    model->BSIM4cdscd = 0.0;   /* unit Q/V/m^2  */
+            model->BSIM4cdscb = 0.0;   /* unit Q/V/m^2  */    
+            if (!model->BSIM4cdscdGiven)
+            model->BSIM4cdscd = 0.0;   /* unit Q/V/m^2  */
         if (!model->BSIM4citGiven)
-	    model->BSIM4cit = 0.0;   /* unit Q/V/m^2  */
+            model->BSIM4cit = 0.0;   /* unit Q/V/m^2  */
         if (!model->BSIM4nfactorGiven)
-	    model->BSIM4nfactor = 1.0;
+            model->BSIM4nfactor = 1.0;
         if (!model->BSIM4xjGiven)
             model->BSIM4xj = .15e-6;
         if (!model->BSIM4vsatGiven)
@@ -250,21 +261,21 @@ int nthreads;
         if (!model->BSIM4nsubGiven)
             model->BSIM4nsub = 6.0e16;   /* unit 1/cm3 */
         if (!model->BSIM4phigGiven)
-	    model->BSIM4phig = 4.05;  
+            model->BSIM4phig = 4.05;  
         if (!model->BSIM4epsrgateGiven)
-	    model->BSIM4epsrgate = 11.7;  
+            model->BSIM4epsrgate = 11.7;  
         if (!model->BSIM4easubGiven)
             model->BSIM4easub = 4.05;  
         if (!model->BSIM4epsrsubGiven)
-  	    model->BSIM4epsrsub = 11.7; 
+            model->BSIM4epsrsub = 11.7; 
         if (!model->BSIM4ni0subGiven)
             model->BSIM4ni0sub = 1.45e10;   /* unit 1/cm3 */
         if (!model->BSIM4bg0subGiven)
             model->BSIM4bg0sub =  1.16;     /* unit eV */
         if (!model->BSIM4tbgasubGiven)
-  	    model->BSIM4tbgasub = 7.02e-4;  
+            model->BSIM4tbgasub = 7.02e-4;  
         if (!model->BSIM4tbgbsubGiven)
-	    model->BSIM4tbgbsub = 1108.0;  
+            model->BSIM4tbgbsub = 1108.0;  
         if (!model->BSIM4ndepGiven)
             model->BSIM4ndep = 1.7e17;   /* unit 1/cm3 */
         if (!model->BSIM4nsdGiven)
@@ -274,9 +285,9 @@ int nthreads;
         if (!model->BSIM4ngateGiven)
             model->BSIM4ngate = 0;   /* unit 1/cm3 */
         if (!model->BSIM4vbmGiven)
-	    model->BSIM4vbm = -3.0;
+            model->BSIM4vbm = -3.0;
         if (!model->BSIM4xtGiven)
-	    model->BSIM4xt = 1.55e-7;
+            model->BSIM4xt = 1.55e-7;
         if (!model->BSIM4kt1Given)
             model->BSIM4kt1 = -0.11;      /* unit V */
         if (!model->BSIM4kt1lGiven)
@@ -297,6 +308,14 @@ int nthreads;
             model->BSIM4dvtp0 = 0.0;
         if (!model->BSIM4dvtp1Given)
             model->BSIM4dvtp1 = 0.0;
+        if (!model->BSIM4dvtp2Given)        /* New DIBL/Rout */
+            model->BSIM4dvtp2 = 0.0;
+        if (!model->BSIM4dvtp3Given)
+            model->BSIM4dvtp3 = 0.0;
+        if (!model->BSIM4dvtp4Given)
+            model->BSIM4dvtp4 = 0.0;
+        if (!model->BSIM4dvtp5Given)
+            model->BSIM4dvtp5 = 0.0;
         if (!model->BSIM4dvt0Given)
             model->BSIM4dvt0 = 2.2;    
         if (!model->BSIM4dvt1Given)
@@ -317,11 +336,11 @@ int nthreads;
             model->BSIM4dsub = model->BSIM4drout;     
         if (!model->BSIM4vth0Given)
             model->BSIM4vth0 = (model->BSIM4type == NMOS) ? 0.7 : -0.7;
-	if (!model->BSIM4vfbGiven)
-	    model->BSIM4vfb = -1.0;
+        if (!model->BSIM4vfbGiven)
+            model->BSIM4vfb = -1.0;
         if (!model->BSIM4euGiven)
             model->BSIM4eu = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
-		if (!model->BSIM4ucsGiven)
+        if (!model->BSIM4ucsGiven)
             model->BSIM4ucs = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
         if (!model->BSIM4uaGiven)
             model->BSIM4ua = ((model->BSIM4mobMod == 2)) ? 1.0e-15 : 1.0e-9; /* unit m/V */
@@ -346,11 +365,11 @@ int nthreads;
         if (!model->BSIM4u0Given)
             model->BSIM4u0 = (model->BSIM4type == NMOS) ? 0.067 : 0.025;
         if (!model->BSIM4uteGiven)
-	        model->BSIM4ute = -1.5; 
+            model->BSIM4ute = -1.5; 
         if (!model->BSIM4ucsteGiven)
-		    model->BSIM4ucste = -4.775e-3;
+            model->BSIM4ucste = -4.775e-3;
         if (!model->BSIM4voffGiven)
-	    model->BSIM4voff = -0.08;
+            model->BSIM4voff = -0.08;
         if (!model->BSIM4vofflGiven)
             model->BSIM4voffl = 0.0;
         if (!model->BSIM4voffcvlGiven)
@@ -376,7 +395,7 @@ int nthreads;
         if (!model->BSIM4rswminGiven)
             model->BSIM4rswmin = 0.0;
         if (!model->BSIM4rdswGiven)
-	    model->BSIM4rdsw = 200.0; /* in ohm*um */     
+            model->BSIM4rdsw = 200.0; /* in ohm*um */     
         if (!model->BSIM4rdwGiven)
             model->BSIM4rdw = 100.0;
         if (!model->BSIM4rswGiven)
@@ -422,6 +441,8 @@ int nthreads;
             model->BSIM4alpha1 = 0.0;
         if (!model->BSIM4beta0Given)  
             model->BSIM4beta0 = 0.0;
+        if (!model->BSIM4gidlModGiven)
+            model->BSIM4gidlMod = 0;         /* v4.7 New GIDL/GISL */
         if (!model->BSIM4agidlGiven)
             model->BSIM4agidl = 0.0;
         if (!model->BSIM4bgidlGiven)
@@ -430,6 +451,12 @@ int nthreads;
             model->BSIM4cgidl = 0.5; /* V^3 */
         if (!model->BSIM4egidlGiven)
             model->BSIM4egidl = 0.8; /* V */
+        if (!model->BSIM4rgidlGiven)          /* v4.7 New GIDL/GISL */
+            model->BSIM4rgidl = 1.0;
+        if (!model->BSIM4kgidlGiven)          /* v4.7 New GIDL/GISL */
+            model->BSIM4kgidl = 0.0;
+        if (!model->BSIM4fgidlGiven)          /* v4.7 New GIDL/GISL */
+            model->BSIM4fgidl = 0.0;
         if (!model->BSIM4agislGiven)
         {
             if (model->BSIM4agidlGiven)
@@ -458,6 +485,12 @@ int nthreads;
             else
                 model->BSIM4egisl = 0.8; /* V */
         }
+        if (!model->BSIM4rgislGiven)          /* v4.7 New GIDL/GISL */
+            model->BSIM4rgisl = model->BSIM4rgidl;
+        if (!model->BSIM4kgislGiven)          /* v4.7 New GIDL/GISL */
+            model->BSIM4kgisl = model->BSIM4kgidl;
+        if (!model->BSIM4fgislGiven)          /* v4.7 New GIDL/GISL */
+            model->BSIM4fgisl = model->BSIM4fgidl;
         if (!model->BSIM4aigcGiven)
             model->BSIM4aigc = (model->BSIM4type == NMOS) ? 1.36e-2 : 9.80e-3;
         if (!model->BSIM4bigcGiven)
@@ -542,10 +575,14 @@ int nthreads;
             model->BSIM4tnoia = 1.5;
         if (!model->BSIM4tnoibGiven)
             model->BSIM4tnoib = 3.5;
+        if (!model->BSIM4tnoicGiven)
+            model->BSIM4tnoic = 0.0;
         if (!model->BSIM4rnoiaGiven)
             model->BSIM4rnoia = 0.577;
         if (!model->BSIM4rnoibGiven)
             model->BSIM4rnoib = 0.5164;
+        if (!model->BSIM4rnoicGiven)
+            model->BSIM4rnoic = 0.395;
         if (!model->BSIM4ntnoiGiven)
             model->BSIM4ntnoi = 1.0;
         if (!model->BSIM4lambdaGiven)
@@ -562,6 +599,12 @@ int nthreads;
             model->BSIM4tvfbsdoff = 0.0;  
         if (!model->BSIM4tvoffGiven)
             model->BSIM4tvoff = 0.0;  
+        if (!model->BSIM4tnfactorGiven)         /* v4.7 temp dep of leakage current  */
+            model->BSIM4tnfactor = 0.0;  
+        if (!model->BSIM4teta0Given)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4teta0 = 0.0;  
+        if (!model->BSIM4tvoffcvGiven)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4tvoffcv = 0.0;  
  
         if (!model->BSIM4lintnoiGiven)
             model->BSIM4lintnoi = 0.0;  /* unit m */  
@@ -698,17 +741,17 @@ int nthreads;
         if (!model->BSIM4tpbswgGiven)
             model->BSIM4tpbswg = 0.0;
 
-	/* Length dependence */
+        /* Length dependence */
         if (!model->BSIM4lcdscGiven)
-	    model->BSIM4lcdsc = 0.0;
+            model->BSIM4lcdsc = 0.0;
         if (!model->BSIM4lcdscbGiven)
-	    model->BSIM4lcdscb = 0.0;
-	    if (!model->BSIM4lcdscdGiven) 
-	    model->BSIM4lcdscd = 0.0;
+            model->BSIM4lcdscb = 0.0;
+            if (!model->BSIM4lcdscdGiven) 
+            model->BSIM4lcdscd = 0.0;
         if (!model->BSIM4lcitGiven)
-	    model->BSIM4lcit = 0.0;
+            model->BSIM4lcit = 0.0;
         if (!model->BSIM4lnfactorGiven)
-	    model->BSIM4lnfactor = 0.0;
+            model->BSIM4lnfactor = 0.0;
         if (!model->BSIM4lxjGiven)
             model->BSIM4lxj = 0.0;
         if (!model->BSIM4lvsatGiven)
@@ -736,9 +779,9 @@ int nthreads;
         if (!model->BSIM4lngateGiven)
             model->BSIM4lngate = 0.0;
         if (!model->BSIM4lvbmGiven)
-	    model->BSIM4lvbm = 0.0;
+            model->BSIM4lvbm = 0.0;
         if (!model->BSIM4lxtGiven)
-	    model->BSIM4lxt = 0.0;
+            model->BSIM4lxt = 0.0;
         if (!model->BSIM4lkt1Given)
             model->BSIM4lkt1 = 0.0; 
         if (!model->BSIM4lkt1lGiven)
@@ -759,6 +802,14 @@ int nthreads;
             model->BSIM4ldvtp0 = 0.0;
         if (!model->BSIM4ldvtp1Given)
             model->BSIM4ldvtp1 = 0.0;
+        if (!model->BSIM4ldvtp2Given)        /* New DIBL/Rout */
+            model->BSIM4ldvtp2 = 0.0;
+        if (!model->BSIM4ldvtp3Given)
+            model->BSIM4ldvtp3 = 0.0;
+        if (!model->BSIM4ldvtp4Given)
+            model->BSIM4ldvtp4 = 0.0;
+        if (!model->BSIM4ldvtp5Given)
+            model->BSIM4ldvtp5 = 0.0;
         if (!model->BSIM4ldvt0Given)
             model->BSIM4ldvt0 = 0.0;    
         if (!model->BSIM4ldvt1Given)
@@ -800,11 +851,11 @@ int nthreads;
         if (!model->BSIM4lu0Given)
             model->BSIM4lu0 = 0.0;
         if (!model->BSIM4luteGiven)
-	    model->BSIM4lute = 0.0;  
+            model->BSIM4lute = 0.0;  
           if (!model->BSIM4lucsteGiven)
-	    model->BSIM4lucste = 0.0; 		
+            model->BSIM4lucste = 0.0;                 
         if (!model->BSIM4lvoffGiven)
-	    model->BSIM4lvoff = 0.0;
+            model->BSIM4lvoff = 0.0;
         if (!model->BSIM4lminvGiven)
             model->BSIM4lminv = 0.0;
         if (!model->BSIM4lminvcvGiven)
@@ -871,6 +922,13 @@ int nthreads;
             model->BSIM4lcgidl = 0.0;
         if (!model->BSIM4legidlGiven)
             model->BSIM4legidl = 0.0;
+        if (!model->BSIM4lrgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4lrgidl = 0.0;
+        if (!model->BSIM4lkgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4lkgidl = 0.0;
+        if (!model->BSIM4lfgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4lfgidl = 0.0;
+
         if (!model->BSIM4lagislGiven)
         {
             if (model->BSIM4lagidlGiven)
@@ -899,13 +957,28 @@ int nthreads;
             else
                 model->BSIM4legisl = 0.0; 
         }
+        if (!model->BSIM4lrgislGiven)         /* v4.7 New GIDL/GISL */
+        {
+            if (model->BSIM4lrgidlGiven)
+                model->BSIM4lrgisl = model->BSIM4lrgidl;
+        }
+        if (!model->BSIM4lkgislGiven)        /* v4.7 New GIDL/GISL */
+        {
+            if (model->BSIM4lkgidlGiven)
+                model->BSIM4lkgisl = model->BSIM4lkgidl;
+        }
+        if (!model->BSIM4lfgislGiven)        /* v4.7 New GIDL/GISL */
+        {
+            if (model->BSIM4lfgidlGiven)
+                model->BSIM4lfgisl = model->BSIM4lfgidl;
+        }
         if (!model->BSIM4laigcGiven)
             model->BSIM4laigc = 0.0;
         if (!model->BSIM4lbigcGiven)
             model->BSIM4lbigc = 0.0;
         if (!model->BSIM4lcigcGiven)
             model->BSIM4lcigc = 0.0;
-	if (!model->BSIM4aigsdGiven && (model->BSIM4aigsGiven || model->BSIM4aigdGiven))
+        if (!model->BSIM4aigsdGiven && (model->BSIM4aigsGiven || model->BSIM4aigdGiven))
         {
             if (!model->BSIM4laigsGiven)
                 model->BSIM4laigs = 0.0;
@@ -913,12 +986,12 @@ int nthreads;
                 model->BSIM4laigd = 0.0;
         }
         else
-	{
-	   if (!model->BSIM4laigsdGiven)
-	       model->BSIM4laigsd = 0.0;
-	   model->BSIM4laigs = model->BSIM4laigd = model->BSIM4laigsd;
+        {
+           if (!model->BSIM4laigsdGiven)
+               model->BSIM4laigsd = 0.0;
+           model->BSIM4laigs = model->BSIM4laigd = model->BSIM4laigsd;
         }
-	if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
+        if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
         {
             if (!model->BSIM4lbigsGiven)
                 model->BSIM4lbigs = 0.0;
@@ -926,12 +999,12 @@ int nthreads;
                 model->BSIM4lbigd = 0.0;
         }
         else
-	{
-	   if (!model->BSIM4lbigsdGiven)
-	       model->BSIM4lbigsd = 0.0;
-	   model->BSIM4lbigs = model->BSIM4lbigd = model->BSIM4lbigsd;
+        {
+           if (!model->BSIM4lbigsdGiven)
+               model->BSIM4lbigsd = 0.0;
+           model->BSIM4lbigs = model->BSIM4lbigd = model->BSIM4lbigsd;
         }
-	if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
+        if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
         {
             if (!model->BSIM4lcigsGiven)
                 model->BSIM4lcigs = 0.0;
@@ -939,10 +1012,10 @@ int nthreads;
                 model->BSIM4lcigd = 0.0;
         }
         else
-	{
-	   if (!model->BSIM4lcigsdGiven)
-	       model->BSIM4lcigsd = 0.0;
-	   model->BSIM4lcigs = model->BSIM4lcigd = model->BSIM4lcigsd;
+        {
+           if (!model->BSIM4lcigsdGiven)
+               model->BSIM4lcigsd = 0.0;
+           model->BSIM4lcigs = model->BSIM4lcigd = model->BSIM4lcigsd;
         }
         if (!model->BSIM4laigbaccGiven)
             model->BSIM4laigbacc = 0.0;
@@ -976,7 +1049,7 @@ int nthreads;
             model->BSIM4lxrcrg2 = 0.0;
         if (!model->BSIM4leuGiven)
             model->BSIM4leu = 0.0;
-		if (!model->BSIM4lucsGiven)
+                if (!model->BSIM4lucsGiven)
             model->BSIM4lucs = 0.0;
         if (!model->BSIM4lvfbGiven)
             model->BSIM4lvfb = 0.0;
@@ -992,6 +1065,12 @@ int nthreads;
             model->BSIM4ltvfbsdoff = 0.0;  
         if (!model->BSIM4ltvoffGiven)
             model->BSIM4ltvoff = 0.0;  
+        if (!model->BSIM4ltnfactorGiven)         /* v4.7 temp dep of leakage current  */
+            model->BSIM4ltnfactor = 0.0;  
+        if (!model->BSIM4lteta0Given)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4lteta0 = 0.0;  
+        if (!model->BSIM4ltvoffcvGiven)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4ltvoffcv = 0.0;  
 
 
         if (!model->BSIM4lcgslGiven)  
@@ -1019,17 +1098,17 @@ int nthreads;
         if (!model->BSIM4lvoffcvGiven)
             model->BSIM4lvoffcv = 0.0;
 
-	/* Width dependence */
+        /* Width dependence */
         if (!model->BSIM4wcdscGiven)
-	    model->BSIM4wcdsc = 0.0;
+            model->BSIM4wcdsc = 0.0;
         if (!model->BSIM4wcdscbGiven)
-	    model->BSIM4wcdscb = 0.0;  
-	    if (!model->BSIM4wcdscdGiven)
-	    model->BSIM4wcdscd = 0.0;
+            model->BSIM4wcdscb = 0.0;  
+            if (!model->BSIM4wcdscdGiven)
+            model->BSIM4wcdscd = 0.0;
         if (!model->BSIM4wcitGiven)
-	    model->BSIM4wcit = 0.0;
+            model->BSIM4wcit = 0.0;
         if (!model->BSIM4wnfactorGiven)
-	    model->BSIM4wnfactor = 0.0;
+            model->BSIM4wnfactor = 0.0;
         if (!model->BSIM4wxjGiven)
             model->BSIM4wxj = 0.0;
         if (!model->BSIM4wvsatGiven)
@@ -1057,9 +1136,9 @@ int nthreads;
         if (!model->BSIM4wngateGiven)
             model->BSIM4wngate = 0.0;
         if (!model->BSIM4wvbmGiven)
-	    model->BSIM4wvbm = 0.0;
+            model->BSIM4wvbm = 0.0;
         if (!model->BSIM4wxtGiven)
-	    model->BSIM4wxt = 0.0;
+            model->BSIM4wxt = 0.0;
         if (!model->BSIM4wkt1Given)
             model->BSIM4wkt1 = 0.0; 
         if (!model->BSIM4wkt1lGiven)
@@ -1080,6 +1159,14 @@ int nthreads;
             model->BSIM4wdvtp0 = 0.0;
         if (!model->BSIM4wdvtp1Given)
             model->BSIM4wdvtp1 = 0.0;
+        if (!model->BSIM4wdvtp2Given)        /* New DIBL/Rout */
+            model->BSIM4wdvtp2 = 0.0;
+        if (!model->BSIM4wdvtp3Given)
+            model->BSIM4wdvtp3 = 0.0;
+        if (!model->BSIM4wdvtp4Given)
+            model->BSIM4wdvtp4 = 0.0;
+        if (!model->BSIM4wdvtp5Given)
+            model->BSIM4wdvtp5 = 0.0;
         if (!model->BSIM4wdvt0Given)
             model->BSIM4wdvt0 = 0.0;    
         if (!model->BSIM4wdvt1Given)
@@ -1121,11 +1208,11 @@ int nthreads;
         if (!model->BSIM4wu0Given)
             model->BSIM4wu0 = 0.0;
         if (!model->BSIM4wuteGiven)
-	        model->BSIM4wute = 0.0; 
+                model->BSIM4wute = 0.0; 
         if (!model->BSIM4wucsteGiven)
-	        model->BSIM4wucste = 0.0; 		
+                model->BSIM4wucste = 0.0;                 
         if (!model->BSIM4wvoffGiven)
-	        model->BSIM4wvoff = 0.0;
+                model->BSIM4wvoff = 0.0;
         if (!model->BSIM4wminvGiven)
             model->BSIM4wminv = 0.0;
         if (!model->BSIM4wminvcvGiven)
@@ -1192,6 +1279,13 @@ int nthreads;
             model->BSIM4wcgidl = 0.0;
         if (!model->BSIM4wegidlGiven)
             model->BSIM4wegidl = 0.0;
+        if (!model->BSIM4wrgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4wrgidl = 0.0;
+        if (!model->BSIM4wkgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4wkgidl = 0.0;
+        if (!model->BSIM4wfgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4wfgidl = 0.0;
+
         if (!model->BSIM4wagislGiven)
         {
             if (model->BSIM4wagidlGiven)
@@ -1220,13 +1314,28 @@ int nthreads;
             else
                 model->BSIM4wegisl = 0.0; 
         }
+        if (!model->BSIM4wrgislGiven)         /* v4.7 New GIDL/GISL */
+        {
+            if (model->BSIM4wrgidlGiven)
+                model->BSIM4wrgisl = model->BSIM4wrgidl;
+        }
+        if (!model->BSIM4wkgislGiven)        /* v4.7 New GIDL/GISL */
+        {
+            if (model->BSIM4wkgidlGiven)
+                model->BSIM4wkgisl = model->BSIM4wkgidl;
+        }
+        if (!model->BSIM4wfgislGiven)        /* v4.7 New GIDL/GISL */
+        {
+            if (model->BSIM4wfgidlGiven)
+                model->BSIM4wfgisl = model->BSIM4wfgidl;
+        }
         if (!model->BSIM4waigcGiven)
             model->BSIM4waigc = 0.0;
         if (!model->BSIM4wbigcGiven)
             model->BSIM4wbigc = 0.0;
         if (!model->BSIM4wcigcGiven)
             model->BSIM4wcigc = 0.0;
-	if (!model->BSIM4aigsdGiven && (model->BSIM4aigsGiven || model->BSIM4aigdGiven))
+        if (!model->BSIM4aigsdGiven && (model->BSIM4aigsGiven || model->BSIM4aigdGiven))
         {
             if (!model->BSIM4waigsGiven)
                 model->BSIM4waigs = 0.0;
@@ -1234,12 +1343,12 @@ int nthreads;
                 model->BSIM4waigd = 0.0;
         }
         else
-	{
-	   if (!model->BSIM4waigsdGiven)
-	       model->BSIM4waigsd = 0.0;
-	   model->BSIM4waigs = model->BSIM4waigd = model->BSIM4waigsd;
+        {
+           if (!model->BSIM4waigsdGiven)
+               model->BSIM4waigsd = 0.0;
+           model->BSIM4waigs = model->BSIM4waigd = model->BSIM4waigsd;
         }
-	if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
+        if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
         {
             if (!model->BSIM4wbigsGiven)
                 model->BSIM4wbigs = 0.0;
@@ -1247,12 +1356,12 @@ int nthreads;
                 model->BSIM4wbigd = 0.0;
         }
         else
-	{
-	   if (!model->BSIM4wbigsdGiven)
-	       model->BSIM4wbigsd = 0.0;
-	   model->BSIM4wbigs = model->BSIM4wbigd = model->BSIM4wbigsd;
+        {
+           if (!model->BSIM4wbigsdGiven)
+               model->BSIM4wbigsd = 0.0;
+           model->BSIM4wbigs = model->BSIM4wbigd = model->BSIM4wbigsd;
         }
-	if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
+        if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
         {
             if (!model->BSIM4wcigsGiven)
                 model->BSIM4wcigs = 0.0;
@@ -1260,10 +1369,10 @@ int nthreads;
                 model->BSIM4wcigd = 0.0;
         }
         else
-	{
-	   if (!model->BSIM4wcigsdGiven)
-	       model->BSIM4wcigsd = 0.0;
-	   model->BSIM4wcigs = model->BSIM4wcigd = model->BSIM4wcigsd;
+        {
+           if (!model->BSIM4wcigsdGiven)
+               model->BSIM4wcigsd = 0.0;
+           model->BSIM4wcigs = model->BSIM4wcigd = model->BSIM4wcigsd;
         }
         if (!model->BSIM4waigbaccGiven)
             model->BSIM4waigbacc = 0.0;
@@ -1297,7 +1406,7 @@ int nthreads;
             model->BSIM4wxrcrg2 = 0.0;
         if (!model->BSIM4weuGiven)
             model->BSIM4weu = 0.0;
-	    if (!model->BSIM4wucsGiven)
+            if (!model->BSIM4wucsGiven)
             model->BSIM4wucs = 0.0;
         if (!model->BSIM4wvfbGiven)
             model->BSIM4wvfb = 0.0;
@@ -1313,6 +1422,12 @@ int nthreads;
             model->BSIM4wtvfbsdoff = 0.0;  
         if (!model->BSIM4wtvoffGiven)
             model->BSIM4wtvoff = 0.0;  
+        if (!model->BSIM4wtnfactorGiven)         /* v4.7 temp dep of leakage current  */
+            model->BSIM4wtnfactor = 0.0;  
+        if (!model->BSIM4wteta0Given)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4wteta0 = 0.0;  
+        if (!model->BSIM4wtvoffcvGiven)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4wtvoffcv = 0.0;  
 
         if (!model->BSIM4wcgslGiven)  
             model->BSIM4wcgsl = 0.0;
@@ -1339,17 +1454,17 @@ int nthreads;
         if (!model->BSIM4wvoffcvGiven)
             model->BSIM4wvoffcv = 0.0;
 
-	/* Cross-term dependence */
+        /* Cross-term dependence */
         if (!model->BSIM4pcdscGiven)
-	    model->BSIM4pcdsc = 0.0;
+            model->BSIM4pcdsc = 0.0;
         if (!model->BSIM4pcdscbGiven)
-	    model->BSIM4pcdscb = 0.0;   
-	    if (!model->BSIM4pcdscdGiven)
-	    model->BSIM4pcdscd = 0.0;
+            model->BSIM4pcdscb = 0.0;   
+            if (!model->BSIM4pcdscdGiven)
+            model->BSIM4pcdscd = 0.0;
         if (!model->BSIM4pcitGiven)
-	    model->BSIM4pcit = 0.0;
+            model->BSIM4pcit = 0.0;
         if (!model->BSIM4pnfactorGiven)
-	    model->BSIM4pnfactor = 0.0;
+            model->BSIM4pnfactor = 0.0;
         if (!model->BSIM4pxjGiven)
             model->BSIM4pxj = 0.0;
         if (!model->BSIM4pvsatGiven)
@@ -1378,9 +1493,9 @@ int nthreads;
         if (!model->BSIM4pngateGiven)
             model->BSIM4pngate = 0.0;
         if (!model->BSIM4pvbmGiven)
-	    model->BSIM4pvbm = 0.0;
+            model->BSIM4pvbm = 0.0;
         if (!model->BSIM4pxtGiven)
-	    model->BSIM4pxt = 0.0;
+            model->BSIM4pxt = 0.0;
         if (!model->BSIM4pkt1Given)
             model->BSIM4pkt1 = 0.0; 
         if (!model->BSIM4pkt1lGiven)
@@ -1401,6 +1516,14 @@ int nthreads;
             model->BSIM4pdvtp0 = 0.0;
         if (!model->BSIM4pdvtp1Given)
             model->BSIM4pdvtp1 = 0.0;
+        if (!model->BSIM4pdvtp2Given)        /* New DIBL/Rout */
+            model->BSIM4pdvtp2 = 0.0;
+        if (!model->BSIM4pdvtp3Given)
+            model->BSIM4pdvtp3 = 0.0;
+        if (!model->BSIM4pdvtp4Given)
+            model->BSIM4pdvtp4 = 0.0;
+        if (!model->BSIM4pdvtp5Given)
+            model->BSIM4pdvtp5 = 0.0;
         if (!model->BSIM4pdvt0Given)
             model->BSIM4pdvt0 = 0.0;    
         if (!model->BSIM4pdvt1Given)
@@ -1442,11 +1565,11 @@ int nthreads;
         if (!model->BSIM4pu0Given)
             model->BSIM4pu0 = 0.0;
         if (!model->BSIM4puteGiven)
-	    model->BSIM4pute = 0.0;  
+            model->BSIM4pute = 0.0;  
      if (!model->BSIM4pucsteGiven)
-	    model->BSIM4pucste = 0.0; 		
+            model->BSIM4pucste = 0.0;                 
         if (!model->BSIM4pvoffGiven)
-	    model->BSIM4pvoff = 0.0;
+            model->BSIM4pvoff = 0.0;
         if (!model->BSIM4pminvGiven)
             model->BSIM4pminv = 0.0;
         if (!model->BSIM4pminvcvGiven)
@@ -1513,6 +1636,13 @@ int nthreads;
             model->BSIM4pcgidl = 0.0;
         if (!model->BSIM4pegidlGiven)
             model->BSIM4pegidl = 0.0;
+        if (!model->BSIM4prgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4prgidl = 0.0;
+        if (!model->BSIM4pkgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4pkgidl = 0.0;
+        if (!model->BSIM4pfgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4pfgidl = 0.0;
+
         if (!model->BSIM4pagislGiven)
         {
             if (model->BSIM4pagidlGiven)
@@ -1541,13 +1671,28 @@ int nthreads;
             else
                 model->BSIM4pegisl = 0.0; 
         }
+        if (!model->BSIM4prgislGiven)         /* v4.7 New GIDL/GISL */
+        {
+            if (model->BSIM4prgidlGiven)
+                model->BSIM4prgisl = model->BSIM4prgidl;
+        }
+        if (!model->BSIM4pkgislGiven)        /* v4.7 New GIDL/GISL */
+        {
+            if (model->BSIM4pkgidlGiven)
+                model->BSIM4pkgisl = model->BSIM4pkgidl;
+        }
+        if (!model->BSIM4pfgislGiven)        /* v4.7 New GIDL/GISL */
+        {
+            if (model->BSIM4pfgidlGiven)
+                model->BSIM4pfgisl = model->BSIM4pfgidl;
+        }
         if (!model->BSIM4paigcGiven)
             model->BSIM4paigc = 0.0;
         if (!model->BSIM4pbigcGiven)
             model->BSIM4pbigc = 0.0;
         if (!model->BSIM4pcigcGiven)
             model->BSIM4pcigc = 0.0;
-	if (!model->BSIM4aigsdGiven && (model->BSIM4aigsGiven || model->BSIM4aigdGiven))
+        if (!model->BSIM4aigsdGiven && (model->BSIM4aigsGiven || model->BSIM4aigdGiven))
         {
             if (!model->BSIM4paigsGiven)
                 model->BSIM4paigs = 0.0;
@@ -1555,12 +1700,12 @@ int nthreads;
                 model->BSIM4paigd = 0.0;
         }
         else
-	{
-	   if (!model->BSIM4paigsdGiven)
-	       model->BSIM4paigsd = 0.0;
-	   model->BSIM4paigs = model->BSIM4paigd = model->BSIM4paigsd;
+        {
+           if (!model->BSIM4paigsdGiven)
+               model->BSIM4paigsd = 0.0;
+           model->BSIM4paigs = model->BSIM4paigd = model->BSIM4paigsd;
         }
-	if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
+        if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
         {
             if (!model->BSIM4pbigsGiven)
                 model->BSIM4pbigs = 0.0;
@@ -1568,12 +1713,12 @@ int nthreads;
                 model->BSIM4pbigd = 0.0;
         }
         else
-	{
-	   if (!model->BSIM4pbigsdGiven)
-	       model->BSIM4pbigsd = 0.0;
-	   model->BSIM4pbigs = model->BSIM4pbigd = model->BSIM4pbigsd;
+        {
+           if (!model->BSIM4pbigsdGiven)
+               model->BSIM4pbigsd = 0.0;
+           model->BSIM4pbigs = model->BSIM4pbigd = model->BSIM4pbigsd;
         }
-	if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
+        if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
         {
             if (!model->BSIM4pcigsGiven)
                 model->BSIM4pcigs = 0.0;
@@ -1581,10 +1726,10 @@ int nthreads;
                 model->BSIM4pcigd = 0.0;
         }
         else
-	{
-	   if (!model->BSIM4pcigsdGiven)
-	       model->BSIM4pcigsd = 0.0;
-	   model->BSIM4pcigs = model->BSIM4pcigd = model->BSIM4pcigsd;
+        {
+           if (!model->BSIM4pcigsdGiven)
+               model->BSIM4pcigsd = 0.0;
+           model->BSIM4pcigs = model->BSIM4pcigd = model->BSIM4pcigsd;
         }
         if (!model->BSIM4paigbaccGiven)
             model->BSIM4paigbacc = 0.0;
@@ -1618,7 +1763,7 @@ int nthreads;
             model->BSIM4pxrcrg2 = 0.0;
         if (!model->BSIM4peuGiven)
             model->BSIM4peu = 0.0;
-		if (!model->BSIM4pucsGiven)
+                if (!model->BSIM4pucsGiven)
             model->BSIM4pucs = 0.0;
         if (!model->BSIM4pvfbGiven)
             model->BSIM4pvfb = 0.0;
@@ -1634,6 +1779,12 @@ int nthreads;
             model->BSIM4ptvfbsdoff = 0.0;  
         if (!model->BSIM4ptvoffGiven)
             model->BSIM4ptvoff = 0.0;  
+        if (!model->BSIM4ptnfactorGiven)         /* v4.7 temp dep of leakage current  */
+            model->BSIM4ptnfactor = 0.0;  
+        if (!model->BSIM4pteta0Given)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4pteta0 = 0.0;  
+        if (!model->BSIM4ptvoffcvGiven)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4ptvoffcv = 0.0;  
 
         if (!model->BSIM4pcgslGiven)  
             model->BSIM4pcgsl = 0.0;
@@ -1687,7 +1838,7 @@ int nthreads;
 
         /* unit degree celcius */
         if (!model->BSIM4tnomGiven)  
-	    model->BSIM4tnom = ckt->CKTnomTemp; 
+            model->BSIM4tnom = ckt->CKTnomTemp; 
         if (!model->BSIM4LintGiven)  
            model->BSIM4Lint = 0.0;
         if (!model->BSIM4LlGiven)  
@@ -1746,14 +1897,14 @@ int nthreads;
         {
            if (model->BSIM4dlcigGiven) 
                model->BSIM4dlcigd = model->BSIM4dlcig;
-	   else	     
+           else             
                model->BSIM4dlcigd = model->BSIM4Lint;
         }
         if (!model->BSIM4dwjGiven)
            model->BSIM4dwj = model->BSIM4dwc;
-	if (!model->BSIM4cfGiven)
+        if (!model->BSIM4cfGiven)
            model->BSIM4cf = 2.0 * model->BSIM4epsrox * EPS0 / PI
-		          * log(1.0 + 0.4e-6 / model->BSIM4toxe);
+                          * log(1.0 + 0.4e-6 / model->BSIM4toxe);
 
         if (!model->BSIM4xpartGiven)
             model->BSIM4xpart = 0.0;
@@ -1829,34 +1980,34 @@ int nthreads;
             model->BSIM4jtsswgs = 0.0;
         if (!model->BSIM4jtsswgdGiven)
             model->BSIM4jtsswgd = model->BSIM4jtsswgs;
-		if (!model->BSIM4jtweffGiven)
-		    model->BSIM4jtweff = 0.0;
+                if (!model->BSIM4jtweffGiven)
+                    model->BSIM4jtweff = 0.0;
         if (!model->BSIM4njtsGiven)
             model->BSIM4njts = 20.0;
         if (!model->BSIM4njtsswGiven)
             model->BSIM4njtssw = 20.0;
         if (!model->BSIM4njtsswgGiven)
             model->BSIM4njtsswg = 20.0;
-	if (!model->BSIM4njtsdGiven)
+        if (!model->BSIM4njtsdGiven)
         {
             if (model->BSIM4njtsGiven)
                 model->BSIM4njtsd =  model->BSIM4njts;
-	    else
-	      model->BSIM4njtsd = 20.0;
+            else
+              model->BSIM4njtsd = 20.0;
         }
-	if (!model->BSIM4njtsswdGiven)
+        if (!model->BSIM4njtsswdGiven)
         {
             if (model->BSIM4njtsswGiven)
                 model->BSIM4njtsswd =  model->BSIM4njtssw;
-	    else
-	      model->BSIM4njtsswd = 20.0;
+            else
+              model->BSIM4njtsswd = 20.0;
         }
-	if (!model->BSIM4njtsswgdGiven)
+        if (!model->BSIM4njtsswgdGiven)
         {
             if (model->BSIM4njtsswgGiven)
                 model->BSIM4njtsswgd =  model->BSIM4njtsswg;
-	    else
-	      model->BSIM4njtsswgd = 20.0;
+            else
+              model->BSIM4njtsswgd = 20.0;
         }
         if (!model->BSIM4xtssGiven)
             model->BSIM4xtss = 0.02;
@@ -1876,26 +2027,26 @@ int nthreads;
             model->BSIM4tnjtssw = 0.0;
         if (!model->BSIM4tnjtsswgGiven)
             model->BSIM4tnjtsswg = 0.0;
-	if (!model->BSIM4tnjtsdGiven)
+        if (!model->BSIM4tnjtsdGiven)
         {
             if (model->BSIM4tnjtsGiven)
                 model->BSIM4tnjtsd =  model->BSIM4tnjts;
-	    else
-	      model->BSIM4tnjtsd = 0.0;
+            else
+              model->BSIM4tnjtsd = 0.0;
         }
-	if (!model->BSIM4tnjtsswdGiven)
+        if (!model->BSIM4tnjtsswdGiven)
         {
             if (model->BSIM4tnjtsswGiven)
                 model->BSIM4tnjtsswd =  model->BSIM4tnjtssw;
-	    else
-	      model->BSIM4tnjtsswd = 0.0;
+            else
+              model->BSIM4tnjtsswd = 0.0;
         }
-	if (!model->BSIM4tnjtsswgdGiven)
+        if (!model->BSIM4tnjtsswgdGiven)
         {
             if (model->BSIM4tnjtsswgGiven)
                 model->BSIM4tnjtsswgd =  model->BSIM4tnjtsswg;
-	    else
-	      model->BSIM4tnjtsswgd = 0.0;
+            else
+              model->BSIM4tnjtsswgd = 0.0;
         }
         if (!model->BSIM4vtssGiven)
             model->BSIM4vtss = 10.0;
@@ -1911,17 +2062,17 @@ int nthreads;
             model->BSIM4vtsswgd = model->BSIM4vtsswgs;
 
         if (!model->BSIM4oxideTrapDensityAGiven)
-	{   if (model->BSIM4type == NMOS)
+        {   if (model->BSIM4type == NMOS)
                 model->BSIM4oxideTrapDensityA = 6.25e41;
             else
                 model->BSIM4oxideTrapDensityA= 6.188e40;
-	}
+        }
         if (!model->BSIM4oxideTrapDensityBGiven)
-	{   if (model->BSIM4type == NMOS)
+        {   if (model->BSIM4type == NMOS)
                 model->BSIM4oxideTrapDensityB = 3.125e26;
             else
                 model->BSIM4oxideTrapDensityB = 1.5e25;
-	}
+        }
         if (!model->BSIM4oxideTrapDensityCGiven)
             model->BSIM4oxideTrapDensityC = 8.75e9;
         if (!model->BSIM4emGiven)
@@ -1977,7 +2128,7 @@ int nthreads;
         if (!model->BSIM4lodeta0Given)
             model->BSIM4lodeta0 = 1.0;
 
-	/* Well Proximity Effect  */
+        /* Well Proximity Effect  */
         if (!model->BSIM4webGiven)
             model->BSIM4web = 0.0; 
         if (!model->BSIM4wecGiven)
@@ -2019,14 +2170,14 @@ int nthreads;
         DMCIeff = model->BSIM4dmci;
         DMDGeff = model->BSIM4dmdg - model->BSIM4dmcgt;
 
-	/*
+        /*
          * End processing models and begin to loop
          * through all the instances of the model
          */
 
         for (here = model->BSIM4instances; here != NULL ;
              here=here->BSIM4nextInstance) 
-        {   
+        {
             if (here->BSIM4owner == ARCHme) {
               /* allocate a chunk of the state vector */
               here->BSIM4states = *states;
@@ -2082,19 +2233,19 @@ int nthreads;
                     
             /* Process instance model selectors, some
              * may override their global counterparts
-	     */
+             */
             if (!here->BSIM4rbodyModGiven)
                 here->BSIM4rbodyMod = model->BSIM4rbodyMod;
             else if ((here->BSIM4rbodyMod != 0) && (here->BSIM4rbodyMod != 1) && (here->BSIM4rbodyMod != 2))
             {   here->BSIM4rbodyMod = model->BSIM4rbodyMod;
                 printf("Warning: rbodyMod has been set to its global value %d.\n",
-	        model->BSIM4rbodyMod);
+                model->BSIM4rbodyMod);
             }
 
             if (!here->BSIM4rgateModGiven)
                 here->BSIM4rgateMod = model->BSIM4rgateMod;
             else if ((here->BSIM4rgateMod != 0) && (here->BSIM4rgateMod != 1)
-	        && (here->BSIM4rgateMod != 2) && (here->BSIM4rgateMod != 3))
+                && (here->BSIM4rgateMod != 2) && (here->BSIM4rgateMod != 3))
             {   here->BSIM4rgateMod = model->BSIM4rgateMod;
                 printf("Warning: rgateMod has been set to its global value %d.\n",
                 model->BSIM4rgateMod);
@@ -2127,20 +2278,20 @@ int nthreads;
                 here->BSIM4sb = 0.0;
             if (!here->BSIM4sdGiven)
                 here->BSIM4sd = 2 * model->BSIM4dmcg;
-	    /* Well Proximity Effect  */
-	    if (!here->BSIM4scaGiven)
+            /* Well Proximity Effect  */
+            if (!here->BSIM4scaGiven)
                 here->BSIM4sca = 0.0;
-	    if (!here->BSIM4scbGiven)
+            if (!here->BSIM4scbGiven)
                 here->BSIM4scb = 0.0;
-	    if (!here->BSIM4sccGiven)
+            if (!here->BSIM4sccGiven)
                 here->BSIM4scc = 0.0;
-	    if (!here->BSIM4scGiven)
+            if (!here->BSIM4scGiven)
                 here->BSIM4sc = 0.0; /* m */
 
             /* process drain series resistance */
             createNode = 0;
             if ( (model->BSIM4rdsMod != 0)
-                            || (model->BSIM4tnoiMod != 0 && noiseAnalGiven))
+                            || (model->BSIM4tnoiMod == 1 && noiseAnalGiven))
             {
                createNode = 1;
             } else if (model->BSIM4sheetResistance > 0)
@@ -2182,7 +2333,7 @@ int nthreads;
             /* process source series resistance */
             createNode = 0;
             if ( (model->BSIM4rdsMod != 0)
-                            || (model->BSIM4tnoiMod != 0 && noiseAnalGiven))
+                            || (model->BSIM4tnoiMod == 1 && noiseAnalGiven))
             {
                createNode = 1;
             } else if (model->BSIM4sheetResistance > 0)
@@ -2250,11 +2401,11 @@ int nthreads;
             /* internal body nodes for body resistance model */
             if ((here->BSIM4rbodyMod ==1) || (here->BSIM4rbodyMod ==2))
             {   if (here->BSIM4dbNode == 0)
-		{   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"dbody");
+                {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"dbody");
                     if(error) return(error);
                     here->BSIM4dbNode = tmp->number;
-		}
-		if (here->BSIM4bNodePrime == 0)
+                }
+                if (here->BSIM4bNodePrime == 0)
                 {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"body");
                     if(error) return(error);
                     here->BSIM4bNodePrime = tmp->number;
@@ -2269,29 +2420,30 @@ int nthreads;
                       }
                     }
                 }
-		if (here->BSIM4sbNode == 0)
+                if (here->BSIM4sbNode == 0)
                 {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"sbody");
                     if(error) return(error);
                     here->BSIM4sbNode = tmp->number;
                 }
             }
-	    else
-	        here->BSIM4dbNode = here->BSIM4bNodePrime = here->BSIM4sbNode
-				  = here->BSIM4bNode;
+            else
+                here->BSIM4dbNode = here->BSIM4bNodePrime = here->BSIM4sbNode
+                                  = here->BSIM4bNode;
 
             /* NQS node */
             if ((here->BSIM4trnqsMod) && (here->BSIM4qNode == 0)) 
-	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"charge");
+            {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"charge");
                 if(error) return(error);
                 here->BSIM4qNode = tmp->number;
             }
-	    else 
-	        here->BSIM4qNode = 0;
+            else 
+                here->BSIM4qNode = 0;
+      
 
 /* set Sparse Matrix Pointers 
  * macro to make elements with built-in out-of-memory test */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
 }
 
@@ -2348,7 +2500,7 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(BSIM4GEgmPtr, BSIM4gNodeExt, BSIM4gNodeMid)
                 TSTALLOC(BSIM4SPgmPtr, BSIM4sNodePrime, BSIM4gNodeMid)
                 TSTALLOC(BSIM4BPgmPtr, BSIM4bNodePrime, BSIM4gNodeMid)
-            }	
+            }        
 
             if ((here->BSIM4rbodyMod ==1) || (here->BSIM4rbodyMod ==2))
             {   TSTALLOC(BSIM4DPdbPtr, BSIM4dNodePrime, BSIM4dbNode)
@@ -2383,7 +2535,7 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(BSIM4SbpPtr, BSIM4sNode, BSIM4bNodePrime)
             }
         }
-    } /*  end of loop through all the BSIM4 device models */
+    }
 
 #ifdef USE_OMP4
     if (!cp_getvar("num_threads", CP_NUM, &nthreads))
@@ -2430,7 +2582,9 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 }  
 
 int
-BSIM4unsetup(GENmodel *inModel, CKTcircuit *ckt)
+BSIM4unsetup(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 #ifndef HAS_BATCHSIM
     BSIM4model *model;

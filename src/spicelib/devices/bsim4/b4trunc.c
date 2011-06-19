@@ -1,8 +1,8 @@
-/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
+/**** BSIM4.7.0 Released by Darsen Lu 04/08/2011 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4trunc.c of BSIM4.6.2.
+ * File: b4trunc.c of BSIM4.7.0.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
@@ -33,8 +33,8 @@ BSIM4instance *here;
     for (; model != NULL; model = model->BSIM4nextModel)
     {    for (here = model->BSIM4instances; here != NULL;
 	      here = here->BSIM4nextInstance)
-	 {
-	 if (here->BSIM4owner != ARCHme) continue;
+	      {
+	          if (here->BSIM4owner != ARCHme) continue;
 #ifdef STEPDEBUG
             debugtemp = *timeStep;
 #endif /* STEPDEBUG */
@@ -46,12 +46,12 @@ BSIM4instance *here;
             if (here->BSIM4rbodyMod)
             {   CKTterr(here->BSIM4qbs,ckt,timeStep);
                 CKTterr(here->BSIM4qbd,ckt,timeStep);
-	    }
-	    if (here->BSIM4rgateMod == 3)
-		CKTterr(here->BSIM4qgmid,ckt,timeStep);
+	          }
+	          if (here->BSIM4rgateMod == 3)
+		        CKTterr(here->BSIM4qgmid,ckt,timeStep);
 #ifdef STEPDEBUG
             if(debugtemp != *timeStep)
-	    {  printf("device %s reduces step from %g to %g\n",
+	          {  printf("device %s reduces step from %g to %g\n",
                        here->BSIM4name,debugtemp,*timeStep);
             }
 #endif /* STEPDEBUG */

@@ -1,8 +1,8 @@
-/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
+/**** BSIM4.7.0 Released by Darsen Lu 04/08/2011 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4ask.c of BSIM4.6.2.
+ * File: b4ask.c of BSIM4.7.0.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
@@ -80,16 +80,16 @@ BSIM4instance *here = (BSIM4instance*)inst;
         case BSIM4_SD:
             value->rValue = here->BSIM4sd ;
             return(OK);
-	case BSIM4_SCA:
+        case BSIM4_SCA:
             value->rValue = here->BSIM4sca ;
             return(OK);
-	case BSIM4_SCB:
+        case BSIM4_SCB:
             value->rValue = here->BSIM4scb ;
             return(OK);
-	case BSIM4_SCC:
+        case BSIM4_SCC:
             value->rValue = here->BSIM4scc ;
             return(OK);
-	case BSIM4_SC:
+        case BSIM4_SC:
             value->rValue = here->BSIM4sc ;
             return(OK);
 
@@ -213,10 +213,6 @@ BSIM4instance *here = (BSIM4instance*)inst;
             value->rValue = here->BSIM4csub; 
             value->rValue *= here->BSIM4m;
             return(OK);
-        case BSIM4_QINV:
-            value->rValue = here-> BSIM4qinv; 
-            value->rValue *= here->BSIM4m;
-            return(OK);
         case BSIM4_IGIDL:
             value->rValue = here->BSIM4Igidl; 
             value->rValue *= here->BSIM4m;
@@ -311,6 +307,7 @@ BSIM4instance *here = (BSIM4instance*)inst;
             return(OK);
         case BSIM4_GTAU:
             value->rValue = here->BSIM4gtau;
+            value->rValue *= here->BSIM4m;
             return(OK);
         case BSIM4_CGGB:
             value->rValue = here->BSIM4cggb; 

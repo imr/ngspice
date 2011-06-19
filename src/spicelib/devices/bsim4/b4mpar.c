@@ -1,8 +1,8 @@
-/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
+/**** BSIM4.7.0 Released by Darsen Lu 04/08/2011 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4mpar.c of BSIM4.6.1.
+ * File: b4mpar.c of BSIM4.7.0.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
@@ -18,6 +18,7 @@
  * Modified by Mohan Dunga, 12/13/2006
  * Modified by Mohan Dunga, Wenwei Yang, 05/18/2007.
  * Modified by Wenwei Yang, 07/31/2008.
+ * Modified by Tanvir Morshed, Darsen Lu 03/27/2011
  **********/
 
 #include "ngspice.h"
@@ -99,6 +100,14 @@ GENmodel *inMod)
             mod->BSIM4mtrlMod = value->iValue;
             mod->BSIM4mtrlModGiven = TRUE;
             break;
+        case  BSIM4_MOD_MTRLCOMPATMOD :
+            mod->BSIM4mtrlCompatMod = value->iValue;
+            mod->BSIM4mtrlCompatModGiven = TRUE;
+            break;
+        case  BSIM4_MOD_GIDLMOD :        /* v4.7 New GIDL/GISL */
+            mod->BSIM4gidlMod = value->iValue;
+            mod->BSIM4gidlModGiven = TRUE;
+            break;
         case  BSIM4_MOD_IGCMOD :
             mod->BSIM4igcMod = value->iValue;
             mod->BSIM4igcModGiven = TRUE;
@@ -128,15 +137,15 @@ GENmodel *inMod)
             mod->BSIM4vddeot = value->rValue;
             mod->BSIM4vddeotGiven = TRUE;
             break;
-		  case  BSIM4_MOD_TEMPEOT :
+        case  BSIM4_MOD_TEMPEOT :
             mod->BSIM4tempeot = value->rValue;
             mod->BSIM4tempeotGiven = TRUE;
             break;
-		  case  BSIM4_MOD_LEFFEOT :
+        case  BSIM4_MOD_LEFFEOT :
             mod->BSIM4leffeot = value->rValue;
             mod->BSIM4leffeotGiven = TRUE;
             break;
-		  case  BSIM4_MOD_WEFFEOT :
+         case  BSIM4_MOD_WEFFEOT :
             mod->BSIM4weffeot = value->rValue;
             mod->BSIM4weffeotGiven = TRUE;
             break;
@@ -230,13 +239,13 @@ GENmodel *inMod)
             mod->BSIM4nsubGiven = TRUE;
             break;
         case BSIM4_MOD_PHIG:
-	    mod->BSIM4phig = value->rValue;
-	    mod->BSIM4phigGiven = TRUE;
-	    break;
+            mod->BSIM4phig = value->rValue;
+            mod->BSIM4phigGiven = TRUE;
+            break;
         case BSIM4_MOD_EPSRGATE:
-	    mod->BSIM4epsrgate = value->rValue;
-	    mod->BSIM4epsrgateGiven = TRUE;
-	    break;
+            mod->BSIM4epsrgate = value->rValue;
+            mod->BSIM4epsrgateGiven = TRUE;
+            break;
         case BSIM4_MOD_EASUB:
             mod->BSIM4easub = value->rValue;
             mod->BSIM4easubGiven = TRUE;
@@ -264,8 +273,8 @@ GENmodel *inMod)
         case BSIM4_MOD_NDEP:
             mod->BSIM4ndep = value->rValue;
             mod->BSIM4ndepGiven = TRUE;
-	    if (mod->BSIM4ndep > 1.0e20)
-		mod->BSIM4ndep *= 1.0e-6;
+            if (mod->BSIM4ndep > 1.0e20)
+                mod->BSIM4ndep *= 1.0e-6;
             break;
         case BSIM4_MOD_NSD:
             mod->BSIM4nsd = value->rValue;
@@ -276,8 +285,8 @@ GENmodel *inMod)
         case BSIM4_MOD_NGATE:
             mod->BSIM4ngate = value->rValue;
             mod->BSIM4ngateGiven = TRUE;
-	    if (mod->BSIM4ngate > 1.0e23)
-		mod->BSIM4ngate *= 1.0e-6;
+            if (mod->BSIM4ngate > 1.0e23)
+                mod->BSIM4ngate *= 1.0e-6;
             break;
         case BSIM4_MOD_GAMMA1:
             mod->BSIM4gamma1 = value->rValue;
@@ -343,6 +352,22 @@ GENmodel *inMod)
             mod->BSIM4dvtp1 = value->rValue;
             mod->BSIM4dvtp1Given = TRUE;
             break;
+        case  BSIM4_MOD_DVTP2:     /* New DIBL/Rout */
+            mod->BSIM4dvtp2 = value->rValue;
+            mod->BSIM4dvtp2Given = TRUE;
+            break;
+        case  BSIM4_MOD_DVTP3:
+            mod->BSIM4dvtp3 = value->rValue;
+            mod->BSIM4dvtp3Given = TRUE;
+            break;
+        case  BSIM4_MOD_DVTP4:
+            mod->BSIM4dvtp4 = value->rValue;
+            mod->BSIM4dvtp4Given = TRUE;
+            break;
+        case  BSIM4_MOD_DVTP5:
+            mod->BSIM4dvtp5 = value->rValue;
+            mod->BSIM4dvtp5Given = TRUE;
+            break;        
         case  BSIM4_MOD_W0:
             mod->BSIM4w0 = value->rValue;
             mod->BSIM4w0Given = TRUE;
@@ -387,7 +412,7 @@ GENmodel *inMod)
             mod->BSIM4eu = value->rValue;
             mod->BSIM4euGiven = TRUE;
             break;
-		case BSIM4_MOD_UCS:
+                case BSIM4_MOD_UCS:
             mod->BSIM4ucs = value->rValue;
             mod->BSIM4ucsGiven = TRUE;
             break;
@@ -500,6 +525,18 @@ GENmodel *inMod)
         case BSIM4_MOD_TVOFF:
             mod->BSIM4tvoff = value->rValue;
             mod->BSIM4tvoffGiven = TRUE;
+            break;
+        case BSIM4_MOD_TNFACTOR:           /* v4.7 temp dep of leakage current  */
+            mod->BSIM4tnfactor = value->rValue;
+            mod->BSIM4tnfactorGiven = TRUE;
+            break;
+        case BSIM4_MOD_TETA0:                /* v4.7 temp dep of leakage current  */
+            mod->BSIM4teta0 = value->rValue;
+            mod->BSIM4teta0Given = TRUE;
+            break;
+        case BSIM4_MOD_TVOFFCV:                /* v4.7 temp dep of leakage current  */
+            mod->BSIM4tvoffcv = value->rValue;
+            mod->BSIM4tvoffcvGiven = TRUE;
             break;
         case BSIM4_MOD_VOFFL:
             mod->BSIM4voffl = value->rValue;
@@ -657,6 +694,18 @@ GENmodel *inMod)
             mod->BSIM4egidl = value->rValue;
             mod->BSIM4egidlGiven = TRUE;
             break;
+          case  BSIM4_MOD_FGIDL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4fgidl = value->rValue;
+            mod->BSIM4fgidlGiven = TRUE;
+            break;
+        case  BSIM4_MOD_KGIDL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4kgidl = value->rValue;
+            mod->BSIM4kgidlGiven = TRUE;
+            break;
+        case  BSIM4_MOD_RGIDL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4rgidl = value->rValue;
+            mod->BSIM4rgidlGiven = TRUE;
+            break;
         case  BSIM4_MOD_AGISL :
             mod->BSIM4agisl = value->rValue;
             mod->BSIM4agislGiven = TRUE;
@@ -672,6 +721,18 @@ GENmodel *inMod)
         case  BSIM4_MOD_EGISL :
             mod->BSIM4egisl = value->rValue;
             mod->BSIM4egislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_FGISL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4fgisl = value->rValue;
+            mod->BSIM4fgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_KGISL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4kgisl = value->rValue;
+            mod->BSIM4kgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_RGISL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4rgisl = value->rValue;
+            mod->BSIM4rgislGiven = TRUE;
             break;
         case  BSIM4_MOD_AIGC :
             mod->BSIM4aigc = value->rValue;
@@ -805,6 +866,10 @@ GENmodel *inMod)
             mod->BSIM4tnoib = value->rValue;
             mod->BSIM4tnoibGiven = TRUE;
             break;
+        case  BSIM4_MOD_TNOIC :
+            mod->BSIM4tnoic = value->rValue;
+            mod->BSIM4tnoicGiven = TRUE;
+            break;
         case  BSIM4_MOD_RNOIA :
             mod->BSIM4rnoia = value->rValue;
             mod->BSIM4rnoiaGiven = TRUE;
@@ -812,6 +877,10 @@ GENmodel *inMod)
         case  BSIM4_MOD_RNOIB :
             mod->BSIM4rnoib = value->rValue;
             mod->BSIM4rnoibGiven = TRUE;
+            break;
+        case  BSIM4_MOD_RNOIC :
+            mod->BSIM4rnoic = value->rValue;
+            mod->BSIM4rnoicGiven = TRUE;
             break;
         case  BSIM4_MOD_NTNOI :
             mod->BSIM4ntnoi = value->rValue;
@@ -920,7 +989,7 @@ GENmodel *inMod)
             mod->BSIM4web = value->rValue;
             mod->BSIM4webGiven = TRUE;
             break;
-	case BSIM4_MOD_WEC :
+        case BSIM4_MOD_WEC :
             mod->BSIM4wec = value->rValue;
             mod->BSIM4wecGiven = TRUE;
             break;
@@ -1043,9 +1112,9 @@ GENmodel *inMod)
             mod->BSIM4jtsswgd = value->rValue;
             mod->BSIM4jtsswgdGiven = TRUE;
             break;
-	case BSIM4_MOD_JTWEFF :
-	    mod->BSIM4jtweff = value->rValue;
-	    mod->BSIM4jtweffGiven = TRUE;
+        case BSIM4_MOD_JTWEFF :
+            mod->BSIM4jtweff = value->rValue;
+            mod->BSIM4jtweffGiven = TRUE;
             break;
         case  BSIM4_MOD_NJTS :
             mod->BSIM4njts = value->rValue;
@@ -1416,7 +1485,7 @@ GENmodel *inMod)
             mod->BSIM4tpbswgGiven = TRUE;
             break;
 
-	/* Length dependence */
+        /* Length dependence */
         case  BSIM4_MOD_LCDSC :
             mod->BSIM4lcdsc = value->rValue;
             mod->BSIM4lcdscGiven = TRUE;
@@ -1480,8 +1549,8 @@ GENmodel *inMod)
         case BSIM4_MOD_LNDEP:
             mod->BSIM4lndep = value->rValue;
             mod->BSIM4lndepGiven = TRUE;
-	    if (mod->BSIM4lndep > 1.0e20)
-		mod->BSIM4lndep *= 1.0e-6;
+            if (mod->BSIM4lndep > 1.0e20)
+                mod->BSIM4lndep *= 1.0e-6;
             break;
         case BSIM4_MOD_LNSD:
             mod->BSIM4lnsd = value->rValue;
@@ -1492,8 +1561,8 @@ GENmodel *inMod)
         case BSIM4_MOD_LNGATE:
             mod->BSIM4lngate = value->rValue;
             mod->BSIM4lngateGiven = TRUE;
-	    if (mod->BSIM4lngate > 1.0e23)
-		mod->BSIM4lngate *= 1.0e-6;
+            if (mod->BSIM4lngate > 1.0e23)
+                mod->BSIM4lngate *= 1.0e-6;
             break;
         case BSIM4_MOD_LGAMMA1:
             mod->BSIM4lgamma1 = value->rValue;
@@ -1558,6 +1627,22 @@ GENmodel *inMod)
         case  BSIM4_MOD_LDVTP1:
             mod->BSIM4ldvtp1 = value->rValue;
             mod->BSIM4ldvtp1Given = TRUE;
+            break;
+        case  BSIM4_MOD_LDVTP2:     /* New DIBL/Rout */
+            mod->BSIM4ldvtp2 = value->rValue;
+            mod->BSIM4ldvtp2Given = TRUE;
+            break;
+        case  BSIM4_MOD_LDVTP3:
+            mod->BSIM4ldvtp3 = value->rValue;
+            mod->BSIM4ldvtp3Given = TRUE;
+            break;
+        case  BSIM4_MOD_LDVTP4:
+            mod->BSIM4ldvtp4 = value->rValue;
+            mod->BSIM4ldvtp4Given = TRUE;
+            break;
+        case  BSIM4_MOD_LDVTP5:
+            mod->BSIM4ldvtp5 = value->rValue;
+            mod->BSIM4ldvtp5Given = TRUE;
             break;
         case  BSIM4_MOD_LW0:
             mod->BSIM4lw0 = value->rValue;
@@ -1631,7 +1716,7 @@ GENmodel *inMod)
             mod->BSIM4lute = value->rValue;
             mod->BSIM4luteGiven = TRUE;
             break;
-		case  BSIM4_MOD_LUCSTE :
+                case  BSIM4_MOD_LUCSTE :
             mod->BSIM4lucste = value->rValue;
             mod->BSIM4lucsteGiven = TRUE;
             break;
@@ -1642,6 +1727,18 @@ GENmodel *inMod)
         case BSIM4_MOD_LTVOFF:
             mod->BSIM4ltvoff = value->rValue;
             mod->BSIM4ltvoffGiven = TRUE;
+            break;
+        case BSIM4_MOD_LTNFACTOR:           /* v4.7 temp dep of leakage current  */
+            mod->BSIM4ltnfactor = value->rValue;
+            mod->BSIM4ltnfactorGiven = TRUE;
+            break;
+        case BSIM4_MOD_LTETA0:                /* v4.7 temp dep of leakage current  */
+            mod->BSIM4lteta0 = value->rValue;
+            mod->BSIM4lteta0Given = TRUE;
+            break;
+        case BSIM4_MOD_LTVOFFCV:        /* v4.7 temp dep of leakage current  */
+            mod->BSIM4ltvoffcv = value->rValue;
+            mod->BSIM4ltvoffcvGiven = TRUE;
             break;
         case BSIM4_MOD_LMINV:
             mod->BSIM4lminv = value->rValue;
@@ -1779,6 +1876,18 @@ GENmodel *inMod)
             mod->BSIM4legidl = value->rValue;
             mod->BSIM4legidlGiven = TRUE;
             break;
+        case  BSIM4_MOD_LFGIDL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4lfgidl = value->rValue;
+            mod->BSIM4lfgidlGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LKGIDL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4lkgidl = value->rValue;
+            mod->BSIM4lkgidlGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LRGIDL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4lrgidl = value->rValue;
+            mod->BSIM4lrgidlGiven = TRUE;
+            break;
         case  BSIM4_MOD_LAGISL :
             mod->BSIM4lagisl = value->rValue;
             mod->BSIM4lagislGiven = TRUE;
@@ -1794,6 +1903,18 @@ GENmodel *inMod)
         case  BSIM4_MOD_LEGISL :
             mod->BSIM4legisl = value->rValue;
             mod->BSIM4legislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LFGISL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4lfgisl = value->rValue;
+            mod->BSIM4lfgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LKGISL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4lkgisl = value->rValue;
+            mod->BSIM4lkgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LRGISL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4lrgisl = value->rValue;
+            mod->BSIM4lrgislGiven = TRUE;
             break;
         case  BSIM4_MOD_LAIGC :
             mod->BSIM4laigc = value->rValue;
@@ -1927,7 +2048,7 @@ GENmodel *inMod)
             mod->BSIM4leu = value->rValue;
             mod->BSIM4leuGiven = TRUE;
             break;
-		case  BSIM4_MOD_LUCS :
+                case  BSIM4_MOD_LUCS :
             mod->BSIM4lucs = value->rValue;
             mod->BSIM4lucsGiven = TRUE;
             break;
@@ -1984,7 +2105,7 @@ GENmodel *inMod)
             mod->BSIM4lvoffcvGiven = TRUE;
             break;
 
-	/* Width dependence */
+        /* Width dependence */
         case  BSIM4_MOD_WCDSC :
             mod->BSIM4wcdsc = value->rValue;
             mod->BSIM4wcdscGiven = TRUE;
@@ -2048,8 +2169,8 @@ GENmodel *inMod)
         case BSIM4_MOD_WNDEP:
             mod->BSIM4wndep = value->rValue;
             mod->BSIM4wndepGiven = TRUE;
-	    if (mod->BSIM4wndep > 1.0e20)
-		mod->BSIM4wndep *= 1.0e-6;
+            if (mod->BSIM4wndep > 1.0e20)
+                mod->BSIM4wndep *= 1.0e-6;
             break;
         case BSIM4_MOD_WNSD:
             mod->BSIM4wnsd = value->rValue;
@@ -2060,8 +2181,8 @@ GENmodel *inMod)
         case BSIM4_MOD_WNGATE:
             mod->BSIM4wngate = value->rValue;
             mod->BSIM4wngateGiven = TRUE;
-	    if (mod->BSIM4wngate > 1.0e23)
-		mod->BSIM4wngate *= 1.0e-6;
+            if (mod->BSIM4wngate > 1.0e23)
+                mod->BSIM4wngate *= 1.0e-6;
             break;
         case BSIM4_MOD_WGAMMA1:
             mod->BSIM4wgamma1 = value->rValue;
@@ -2127,6 +2248,22 @@ GENmodel *inMod)
             mod->BSIM4wdvtp1 = value->rValue;
             mod->BSIM4wdvtp1Given = TRUE;
             break;
+        case  BSIM4_MOD_WDVTP2:     /* New DIBL/Rout */
+            mod->BSIM4wdvtp2 = value->rValue;
+            mod->BSIM4wdvtp2Given = TRUE;
+            break;
+        case  BSIM4_MOD_WDVTP3:
+            mod->BSIM4wdvtp3 = value->rValue;
+            mod->BSIM4wdvtp3Given = TRUE;
+            break;
+        case  BSIM4_MOD_WDVTP4:
+            mod->BSIM4wdvtp4 = value->rValue;
+            mod->BSIM4wdvtp4Given = TRUE;
+            break;
+        case  BSIM4_MOD_WDVTP5:
+            mod->BSIM4wdvtp5 = value->rValue;
+            mod->BSIM4wdvtp5Given = TRUE;
+            break;        
         case  BSIM4_MOD_WW0:
             mod->BSIM4ww0 = value->rValue;
             mod->BSIM4ww0Given = TRUE;
@@ -2199,7 +2336,7 @@ GENmodel *inMod)
             mod->BSIM4wute = value->rValue;
             mod->BSIM4wuteGiven = TRUE;
             break;
-		case  BSIM4_MOD_WUCSTE :
+        case  BSIM4_MOD_WUCSTE :
             mod->BSIM4wucste = value->rValue;
             mod->BSIM4wucsteGiven = TRUE;
             break;
@@ -2210,6 +2347,18 @@ GENmodel *inMod)
         case BSIM4_MOD_WTVOFF:
             mod->BSIM4wtvoff = value->rValue;
             mod->BSIM4wtvoffGiven = TRUE;
+            break;
+        case BSIM4_MOD_WTNFACTOR:           /* v4.7 temp dep of leakage current  */
+            mod->BSIM4wtnfactor = value->rValue;
+            mod->BSIM4wtnfactorGiven = TRUE;
+            break;
+        case BSIM4_MOD_WTETA0:                /* v4.7 temp dep of leakage current  */
+            mod->BSIM4wteta0 = value->rValue;
+            mod->BSIM4wteta0Given = TRUE;
+            break;
+        case BSIM4_MOD_WTVOFFCV:        /* v4.7 temp dep of leakage current  */
+            mod->BSIM4wtvoffcv = value->rValue;
+            mod->BSIM4wtvoffcvGiven = TRUE;
             break;
         case BSIM4_MOD_WMINV:
             mod->BSIM4wminv = value->rValue;
@@ -2347,6 +2496,18 @@ GENmodel *inMod)
             mod->BSIM4wegidl = value->rValue;
             mod->BSIM4wegidlGiven = TRUE;
             break;
+        case  BSIM4_MOD_WFGIDL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4wfgidl = value->rValue;
+            mod->BSIM4wfgidlGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WKGIDL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4wkgidl = value->rValue;
+            mod->BSIM4wkgidlGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WRGIDL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4wrgidl = value->rValue;
+            mod->BSIM4wrgidlGiven = TRUE;
+            break;
         case  BSIM4_MOD_WAGISL :
             mod->BSIM4wagisl = value->rValue;
             mod->BSIM4wagislGiven = TRUE;
@@ -2362,6 +2523,18 @@ GENmodel *inMod)
         case  BSIM4_MOD_WEGISL :
             mod->BSIM4wegisl = value->rValue;
             mod->BSIM4wegislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WFGISL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4wfgisl = value->rValue;
+            mod->BSIM4wfgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WKGISL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4wkgisl = value->rValue;
+            mod->BSIM4wkgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WRGISL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4wrgisl = value->rValue;
+            mod->BSIM4wrgislGiven = TRUE;
             break;
         case  BSIM4_MOD_WAIGC :
             mod->BSIM4waigc = value->rValue;
@@ -2495,7 +2668,7 @@ GENmodel *inMod)
             mod->BSIM4weu = value->rValue;
             mod->BSIM4weuGiven = TRUE;
             break;
-		 case  BSIM4_MOD_WUCS :
+                 case  BSIM4_MOD_WUCS :
             mod->BSIM4wucs = value->rValue;
             mod->BSIM4wucsGiven = TRUE;
             break;
@@ -2552,7 +2725,7 @@ GENmodel *inMod)
             mod->BSIM4wvoffcvGiven = TRUE;
             break;
 
-	/* Cross-term dependence */
+        /* Cross-term dependence */
         case  BSIM4_MOD_PCDSC :
             mod->BSIM4pcdsc = value->rValue;
             mod->BSIM4pcdscGiven = TRUE;
@@ -2616,8 +2789,8 @@ GENmodel *inMod)
         case BSIM4_MOD_PNDEP:
             mod->BSIM4pndep = value->rValue;
             mod->BSIM4pndepGiven = TRUE;
-	    if (mod->BSIM4pndep > 1.0e20)
-		mod->BSIM4pndep *= 1.0e-6;
+            if (mod->BSIM4pndep > 1.0e20)
+                mod->BSIM4pndep *= 1.0e-6;
             break;
         case BSIM4_MOD_PNSD:
             mod->BSIM4pnsd = value->rValue;
@@ -2628,8 +2801,8 @@ GENmodel *inMod)
         case BSIM4_MOD_PNGATE:
             mod->BSIM4pngate = value->rValue;
             mod->BSIM4pngateGiven = TRUE;
-	    if (mod->BSIM4pngate > 1.0e23)
-		mod->BSIM4pngate *= 1.0e-6;
+            if (mod->BSIM4pngate > 1.0e23)
+                mod->BSIM4pngate *= 1.0e-6;
             break;
         case BSIM4_MOD_PGAMMA1:
             mod->BSIM4pgamma1 = value->rValue;
@@ -2694,6 +2867,22 @@ GENmodel *inMod)
         case  BSIM4_MOD_PDVTP1:
             mod->BSIM4pdvtp1 = value->rValue;
             mod->BSIM4pdvtp1Given = TRUE;
+            break;
+        case  BSIM4_MOD_PDVTP2:     /* New DIBL/Rout */
+            mod->BSIM4pdvtp2 = value->rValue;
+            mod->BSIM4pdvtp2Given = TRUE;
+            break;
+        case  BSIM4_MOD_PDVTP3:
+            mod->BSIM4pdvtp3 = value->rValue;
+            mod->BSIM4pdvtp3Given = TRUE;
+            break;
+        case  BSIM4_MOD_PDVTP4:
+            mod->BSIM4pdvtp4 = value->rValue;
+            mod->BSIM4pdvtp4Given = TRUE;
+            break;
+        case  BSIM4_MOD_PDVTP5:
+            mod->BSIM4pdvtp5 = value->rValue;
+            mod->BSIM4pdvtp5Given = TRUE;
             break;
         case  BSIM4_MOD_PW0:
             mod->BSIM4pw0 = value->rValue;
@@ -2767,7 +2956,7 @@ GENmodel *inMod)
             mod->BSIM4pute = value->rValue;
             mod->BSIM4puteGiven = TRUE;
             break;
-		 case  BSIM4_MOD_PUCSTE :
+                 case  BSIM4_MOD_PUCSTE :
             mod->BSIM4pucste = value->rValue;
             mod->BSIM4pucsteGiven = TRUE;
             break;
@@ -2778,6 +2967,18 @@ GENmodel *inMod)
         case BSIM4_MOD_PTVOFF:
             mod->BSIM4ptvoff = value->rValue;
             mod->BSIM4ptvoffGiven = TRUE;
+            break;
+        case BSIM4_MOD_PTNFACTOR:           /* v4.7 temp dep of leakage current  */
+            mod->BSIM4ptnfactor = value->rValue;
+            mod->BSIM4ptnfactorGiven = TRUE;
+            break;
+        case BSIM4_MOD_PTETA0:                /* v4.7 temp dep of leakage current  */
+            mod->BSIM4pteta0 = value->rValue;
+            mod->BSIM4pteta0Given = TRUE;
+            break;
+        case BSIM4_MOD_PTVOFFCV:        /* v4.7 temp dep of leakage current  */
+            mod->BSIM4ptvoffcv = value->rValue;
+            mod->BSIM4ptvoffcvGiven = TRUE;
             break;
         case BSIM4_MOD_PMINV:
             mod->BSIM4pminv = value->rValue;
@@ -2915,6 +3116,18 @@ GENmodel *inMod)
             mod->BSIM4pegidl = value->rValue;
             mod->BSIM4pegidlGiven = TRUE;
             break;
+        case  BSIM4_MOD_PFGIDL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4pfgidl = value->rValue;
+            mod->BSIM4pfgidlGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PKGIDL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4pkgidl = value->rValue;
+            mod->BSIM4pkgidlGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PRGIDL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4prgidl = value->rValue;
+            mod->BSIM4prgidlGiven = TRUE;
+            break;
         case  BSIM4_MOD_PAGISL :
             mod->BSIM4pagisl = value->rValue;
             mod->BSIM4pagislGiven = TRUE;
@@ -2930,6 +3143,18 @@ GENmodel *inMod)
         case  BSIM4_MOD_PEGISL :
             mod->BSIM4pegisl = value->rValue;
             mod->BSIM4pegislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PFGISL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4pfgisl = value->rValue;
+            mod->BSIM4pfgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PKGISL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4pkgisl = value->rValue;
+            mod->BSIM4pkgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PRGISL :                        /* v4.7 New GIDL/GISL */
+            mod->BSIM4prgisl = value->rValue;
+            mod->BSIM4prgislGiven = TRUE;
             break;
         case  BSIM4_MOD_PAIGC :
             mod->BSIM4paigc = value->rValue;
@@ -3063,7 +3288,7 @@ GENmodel *inMod)
             mod->BSIM4peu = value->rValue;
             mod->BSIM4peuGiven = TRUE;
             break;
-		case  BSIM4_MOD_PUCS :
+                case  BSIM4_MOD_PUCS :
             mod->BSIM4pucs = value->rValue;
             mod->BSIM4pucsGiven = TRUE;
             break;

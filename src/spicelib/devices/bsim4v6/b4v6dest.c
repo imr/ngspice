@@ -1,8 +1,8 @@
-/**** BSIM4.7.0 Released by Darsen Lu 04/08/2011 ****/
+/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4dest.c of BSIM4.7.0.
+ * File: b4dest.c of BSIM4.6.2.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
@@ -11,24 +11,24 @@
  **********/
 
 #include "ngspice.h"
-#include "bsim4def.h"
+#include "bsim4v6def.h"
 #include "suffix.h"
 
 void
-BSIM4destroy(
+BSIM4v6destroy(
 GENmodel **inModel)
 {
-BSIM4model **model = (BSIM4model**)inModel;
-BSIM4instance *here;
-BSIM4instance *prev = NULL;
-BSIM4model *mod = *model;
-BSIM4model *oldmod = NULL;
+BSIM4v6model **model = (BSIM4v6model**)inModel;
+BSIM4v6instance *here;
+BSIM4v6instance *prev = NULL;
+BSIM4v6model *mod = *model;
+BSIM4v6model *oldmod = NULL;
 
-    for (; mod ; mod = mod->BSIM4nextModel)
+    for (; mod ; mod = mod->BSIM4v6nextModel)
     {    if(oldmod) FREE(oldmod);
          oldmod = mod;
-         prev = (BSIM4instance *)NULL;
-         for (here = mod->BSIM4instances; here; here = here->BSIM4nextInstance)
+         prev = NULL;
+         for (here = mod->BSIM4v6instances; here; here = here->BSIM4v6nextInstance)
 	 {    if(prev) FREE(prev);
               prev = here;
          }
