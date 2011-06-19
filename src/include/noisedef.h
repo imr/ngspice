@@ -122,7 +122,8 @@ typedef struct {
 
 
 void NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param);
-void NevalSrc2 (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param, double param2);
+void NevalSrc2 (double *, double *, CKTcircuit *, int, int, int, double, int, int, double, double);
+void NevalSrcInstanceTemp (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param, double param2);
 double Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data);
 
 #endif /*NOISEDEFS*/

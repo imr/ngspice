@@ -1,4 +1,4 @@
-** One-Bit Comparator (Tran): Benchmarking Implementation of BSIM4.6.1 by Mohan V. Dunga 12/13/2006.
+** One-Bit Comparator (Tran): Benchmarking Implementation of BSIM4.7.0 by Mohan V. Dunga 12/13/2006.
 
 M1 Anot A Vdd Vdd  P1 W=3.6u L=0.2u rgeomod=1
 M2 Anot A 0 0 N1 W=1.8u L=0.2u rgeomod=1

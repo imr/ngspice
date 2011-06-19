@@ -1,24 +1,23 @@
-        ******** BSIM4.6.1 Model Card for NMOS ********
+        ******** BSIM4.7.0 Model Card for NMOS ********
 
 ** The BSIM4 model card below was not extracted/obtained from/based on
 ** any real technologies. It should not be used for any other purposes
-** except for benchmarking the implementation of BSIM4.6.1 against BSIM 
+** except for benchmarking the implementation of BSIM4.7.0 against BSIM 
 ** Team's standard results using SPICE3f5.
-**** Mohan Dunga, Wenwei Yang, Ali Niknejad, and Chenming Hu 05/18/2007.
+**** Tanvir Morshed, Darsen Lu, Mohan Dunga, Wenwei Yang, Ali Niknejad, and Chenming Hu 04/08/2011.
 
 
-** Model: BSIM4.6.1
+** Model: BSIM4.7.0
 ** Berkeley SPICE3f5 Compatible
 ** Lmin=0.02 Lmax=10 Wmin=0.6 Wmax=20
-** By Mohan Dunga, Wenwei Yang 05/18/2007
 
 .MODEL  N1  NMOS  LEVEL = 14
 
-+VERSION = 4.6.1        BINUNIT = 1            PARAMCHK= 1            MOBMOD  = 0          
++VERSION = 4.7.0        BINUNIT = 1            PARAMCHK= 1            MOBMOD  = 0          
 +CAPMOD  = 1            IGCMOD  = 1            IGBMOD  = 1            GEOMOD  = 1          
 +DIOMOD  = 1            RDSMOD  = 0            RBODYMOD= 0            RGATEMOD= 1          
 +PERMOD  = 1            ACNQSMOD= 0            TRNQSMOD= 0            TEMPMOD = 0
-+MTRLMOD = 1		CVCHARGEMOD = 0
++MTRLMOD = 1		CVCHARGEMOD = 0        MTRLCOMPATMOD = 1
 
 +EOT = 1.8E-009		VDDEOT = 1.5	       ADOS    = 1.1	      BDOS    = 1.0
 +TNOM    = 27           TOXE    = 1.8E-009     TOXP    = 10E-010      TOXM    = 1.8E-009   

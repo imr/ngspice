@@ -1,5 +1,5 @@
 *****************==== 17-Stage CMOS RO ====*******************
-***********Benchmarking Implementation of BSIM4.6.1 by Mohan V. Dunga 12/13/2006.
+***********Benchmarking Implementation of BSIM4.7.0 by Mohan V. Dunga 12/13/2006.
 .include modelcard.nmos
 .include modelcard.pmos
 
