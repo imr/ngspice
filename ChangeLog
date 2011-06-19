@@ -1,3 +1,11 @@
+2011-06-19  Dietmar Warning
+ * Code merged into bsim4v4: Code diff's from formerly version 4v2 and 4v3 merged into
+   4v4, selectable by "version=4.x.0" model parameter (x=2,3 ... 4)
+ * Update to version 4.7.0: new code into bsim4 folder, Version 6 is now in 
+   new folder bsim4v6, OpenMP implemented, Update of tests/bsim4 to new version
+ * res/resnoise.c, analysis/nevalsrc.c: Name changed NevalSrc2 to NevalSrcInstanceTemp and 
+   include new bsim4 function NevalSrc2
+
 2011-06-18  Holger Vogt
  * measure.c: revert a change from Feb. 19th, 2011 to reinstate from=dfall
    inpcom.c, defines.h: allow / and \ in file paths under MS Windows
