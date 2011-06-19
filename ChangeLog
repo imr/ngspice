@@ -3350,7 +3350,7 @@ New include File:
  * src/spicelib/devices/bsim3soi/b4soiset.c ,
  * src/spicelib/devices/bsim3soi/b4soitemp.c ,
  * src/spicelib/devices/bsim3soi/b4soitrunc.c :
-    remove static char rcsid[] = "$Id$" to muffle `unused variable' warnings
+    remove static char rcsid to muffle `unused variable' warnings
 
 2010-07-24  Robert Larice
  * src/include/inpdefs.h ,
