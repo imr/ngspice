@@ -154,9 +154,11 @@ BSIM4v4instance *here = (BSIM4v4instance*)inst;
             return(OK);
         case BSIM4v4_SOURCECONDUCT:
             value->rValue = here->BSIM4v4sourceConductance;
+            value->rValue *= here->BSIM4v4m;
             return(OK);
         case BSIM4v4_DRAINCONDUCT:
             value->rValue = here->BSIM4v4drainConductance;
+            value->rValue *= here->BSIM4v4m;
             return(OK);
         case BSIM4v4_VBD:
             value->rValue = *(ckt->CKTstate0 + here->BSIM4v4vbd);
@@ -305,6 +307,7 @@ BSIM4v4instance *here = (BSIM4v4instance*)inst;
             return(OK);
         case BSIM4v4_CBDB:
             value->rValue = here->BSIM4v4cbdb;
+            value->rValue *= here->BSIM4v4m;
             return(OK);
         case BSIM4v4_CBSB:
             value->rValue = here->BSIM4v4cbsb;
