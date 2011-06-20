@@ -213,6 +213,10 @@ BSIM4instance *here = (BSIM4instance*)inst;
             value->rValue = here->BSIM4csub; 
             value->rValue *= here->BSIM4m;
             return(OK);
+        case BSIM4_QINV:
+            value->rValue = here-> BSIM4qinv; 
+            value->rValue *= here->BSIM4m;
+            return(OK);
         case BSIM4_IGIDL:
             value->rValue = here->BSIM4Igidl; 
             value->rValue *= here->BSIM4m;

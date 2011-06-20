@@ -427,17 +427,17 @@ double m;
                               }
                               switch(model->BSIM4tnoiMod)
                               {  case 0:
-                                      T0 = m * here->BSIM4ueff * fabs(here->BSIM4qinv);
+                                      T0 = here->BSIM4ueff * fabs(here->BSIM4qinv);
                                       T1 = T0 * tmp + pParam->BSIM4leff
                                          * pParam->BSIM4leff;
                                       NevalSrc(&noizDens[BSIM4IDNOIZ],
                                                &lnNdens[BSIM4IDNOIZ], ckt,
                                                THERMNOISE, here->BSIM4dNodePrime,
                                                here->BSIM4sNodePrime,
-                                               (T0 / T1) * model->BSIM4ntnoi);
+                                               (T0 / T1) * model->BSIM4ntnoi * m);
                                       break;
                                  case 1:
-                                      T0 = m * (here->BSIM4gm + here->BSIM4gmbs + here->BSIM4gds);
+                                      T0 = here->BSIM4gm + here->BSIM4gmbs + here->BSIM4gds;
                                       T0 *= T0;
                                       igsquare = npart_theta * npart_theta * T0 / here->BSIM4IdovVds;
                                       T1 = npart_beta * (here->BSIM4gm
@@ -446,7 +446,7 @@ double m;
                                       NevalSrc(&noizDens[BSIM4IDNOIZ],
                                                &lnNdens[BSIM4IDNOIZ], ckt,
                                                THERMNOISE, here->BSIM4dNodePrime,
-                                               here->BSIM4sNodePrime, (T2 - igsquare));
+                                               here->BSIM4sNodePrime, (T2 - igsquare) * m);
                                       break;
                                   case 2:
                                       T2 = GammaGd0;
@@ -455,7 +455,7 @@ double m;
                                       NevalSrc(&noizDens[BSIM4IDNOIZ],
                                                &lnNdens[BSIM4IDNOIZ], ckt,
                                                THERMNOISE, here->BSIM4dNodePrime,
-                                               here->BSIM4sNodePrime, T2 * T4);
+                                               here->BSIM4sNodePrime, T2 * T4 * m);
 
                                      /* Evaluate output noise due to two correlated noise sources */
                                      omega = 2.0 * M_PI * data->freq;
@@ -467,20 +467,20 @@ double m;
                                          NevalSrc2(&noizDens[BSIM4CORLNOIZ],
                                                &lnNdens[BSIM4CORLNOIZ], ckt,
                                                THERMNOISE, here->BSIM4dNodePrime,
-                                               here->BSIM4sNodePrime, T2 * T3,
+                                               here->BSIM4sNodePrime, T2 * T3 * m,
                                                here->BSIM4gNodePrime,
                                                here->BSIM4sNodePrime,
-                                               T2 * T7, 0.5 * M_PI);
+                                               T2 * T7 * m, 0.5 * M_PI);
                                      }
                                      else
                                      {
                                          NevalSrc2(&noizDens[BSIM4CORLNOIZ],
                                                &lnNdens[BSIM4CORLNOIZ], ckt,
                                                THERMNOISE, here->BSIM4sNodePrime,
-                                               here->BSIM4dNodePrime, T2 * T3,
+                                               here->BSIM4dNodePrime, T2 * T3 * m,
                                                here->BSIM4gNodePrime,
                                                here->BSIM4dNodePrime,
-                                               T2 * T7, 0.5 * M_PI);
+                                               T2 * T7 * m, 0.5 * M_PI);
                                      }
                                      break;
                               }
