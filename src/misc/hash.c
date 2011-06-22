@@ -188,7 +188,7 @@ void nghash_empty(NGHASHPTR hashtable, void (*delete_data) (void *),
 	}
 	NGFREE( zapptr ) ;
       }
-      memset( (char *)table, 0, (size_t) hashtable->size*sizeof(NGTABLEPTR)) ;
+      memset(table, 0, (size_t) hashtable->size*sizeof(NGTABLEPTR)) ;
     }
     /* free decks associated with tree if they exist */
     hashtable->thread = NULL ; /* initialize list */

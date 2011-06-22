@@ -892,7 +892,7 @@ fileEndPoint(FILE *fp, bool bin)
 {
   if (bin) {
     /*  write row buffer to file  */
-    fwrite((char *)rowbuf, rowbuflen, 1, fp);
+    fwrite(rowbuf, rowbuflen, 1, fp);
   }; /* otherwise the data has already been written */
   return;
 }

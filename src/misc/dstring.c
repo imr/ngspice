@@ -4,7 +4,10 @@ DESCRIPTION:This file contains the routines for manipulating dynamic strings.
 CONTENTS:   
 DATE:	    Wed Mar 24 18:38:28 CDT 2010
 REVISIONS:  $Log$
-REVISIONS:  Revision 1.6  2010-11-06 20:17:20  rlar
+REVISIONS:  Revision 1.7  2011-06-22 17:17:41  rlar
+REVISIONS:  remove some useless casts
+REVISIONS:
+REVISIONS:  Revision 1.6  2010/11/06 20:17:20  rlar
 REVISIONS:  add `int' casts to some strlen() expressions, and center labels on a xlog scale
 REVISIONS:
 REVISIONS:  Revision 1.5  2010/11/06 16:54:11  rlar
@@ -100,7 +103,7 @@ char *spice_dstring_append(SPICE_DSTRINGPTR dsPtr,char *string,int length)
     if (newSize >= dsPtr->spaceAvl) {
 	dsPtr->spaceAvl = 2 * newSize ;
 	newString = TMALLOC(char, dsPtr->spaceAvl) ;
-	memcpy((void *) newString, (void *) dsPtr->string, (size_t) dsPtr->length) ;
+	memcpy(newString, dsPtr->string, (size_t) dsPtr->length) ;
 	if (dsPtr->string != dsPtr->staticSpace) {
 	    txfree(dsPtr->string) ;
 	}
@@ -294,7 +297,7 @@ char *_spice_dstring_setlength(SPICE_DSTRINGPTR dsPtr,int length)
 	 * to a larger buffer, since there may be embedded NULLs in the
 	 * string in some cases.
 	----------------------------------------------------------------- */
-	memcpy((void *) newString, (void *) dsPtr->string, (size_t) dsPtr->length) ;
+	memcpy(newString, dsPtr->string, (size_t) dsPtr->length) ;
 	if( dsPtr->string != dsPtr->staticSpace ) {
 	    txfree(dsPtr->string) ;
 	}

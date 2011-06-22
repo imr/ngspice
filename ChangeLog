@@ -1,4 +1,13 @@
 2011-06-22  Robert Larice
+ * src/ngsconvert.c ,
+ * src/frontend/outitf.c ,
+ * src/frontend/rawfile.c ,
+ * src/frontend/help/readhelp.c ,
+ * src/misc/dstring.c ,
+ * src/misc/hash.c :
+   remove some useless casts
+
+2011-06-22  Robert Larice
  * src/spicelib/devices/bsim4/b4geo.c ,
  * src/spicelib/devices/bsim4/b4noi.c ,
  * src/spicelib/devices/bsim4/b4temp.c :

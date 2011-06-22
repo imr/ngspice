@@ -203,32 +203,32 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
 		    if (realflag) {
 			dd = (isreal(v) ? v->v_realdata[i] :
 			    realpart(&v->v_compdata[i]));
-			(void) fwrite((char *) &dd, sizeof
+			(void) fwrite(&dd, sizeof
 				(double), 1, fp);
 		    } else if (isreal(v)) {
 			dd = v->v_realdata[i];
-			(void) fwrite((char *) &dd, sizeof
+			(void) fwrite(&dd, sizeof
 				(double), 1, fp);
 			dd = 0.0;
-			(void) fwrite((char *) &dd, sizeof
+			(void) fwrite(&dd, sizeof
 				(double), 1, fp);
 		    } else {
 			dd = realpart(&v->v_compdata[i]);
-			(void) fwrite((char *) &dd, sizeof
+			(void) fwrite(&dd, sizeof
 				(double), 1, fp);
 			dd = imagpart(&v->v_compdata[i]);
-			(void) fwrite((char *) &dd, sizeof
+			(void) fwrite(&dd, sizeof
 				(double), 1, fp);
 		    }
                 } else if (raw_padding) {
 		    dd = 0.0;
 		    if (realflag) {
-			(void) fwrite((char *) &dd, sizeof
+			(void) fwrite(&dd, sizeof
 				(double), 1, fp);
 		    } else {
-			(void) fwrite((char *) &dd, sizeof
+			(void) fwrite(&dd, sizeof
 				(double), 1, fp);
-			(void) fwrite((char *) &dd, sizeof
+			(void) fwrite(&dd, sizeof
 				(double), 1, fp);
 		    }
 		}
@@ -644,32 +644,32 @@ raw_read(char *name)
                     for (v = curpl->pl_dvecs; v; v = v->v_next) {
 			if (i < v->v_length) {
 			    if (flags & VF_REAL) {
-				if (fread((char *) &v->v_realdata[i],
+				if (fread(&v->v_realdata[i],
 					sizeof (double), 1, fp) != 1)
 				    fprintf(cp_err,
 					    "Error: bad rawfile\n");
 			    } else {
-				if (fread((char *) &v->v_compdata[i].cx_real,
+				if (fread(&v->v_compdata[i].cx_real,
 					sizeof (double), 1, fp) != 1)
 				    fprintf(cp_err,
 					"Error: bad rawfile\n");
-				if (fread((char *) &v->v_compdata[i].cx_imag,
+				if (fread(&v->v_compdata[i].cx_imag,
 					sizeof (double), 1, fp) != 1)
 				    fprintf(cp_err,
 					    "Error: bad rawfile\n");
 			    }
 			} else if (raw_padded) {
 			    if (flags & VF_REAL) {
-				if (fread((char *) &junk,
+				if (fread(&junk,
 					sizeof (double), 1, fp) != 1)
 				    fprintf(cp_err,
 					    "Error: bad rawfile\n");
 			    } else {
-				if (fread((char *) &junk,
+				if (fread(&junk,
 					sizeof (double), 1, fp) != 1)
 				    fprintf(cp_err,
 					    "Error: bad rawfile\n");
-				if (fread((char *) &junk,
+				if (fread(&junk,
 					sizeof (double), 1, fp) != 1)
 				    fprintf(cp_err,
 					    "Error: bad rawfile\n");

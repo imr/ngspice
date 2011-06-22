@@ -37,12 +37,12 @@ char *cp_program = "sconvert";
 char out_pbuf[BSIZE_SP];
 
 
-#define tfread(ptr, siz, nit, fp)   if (fread((char *) (ptr), (siz), \
+#define tfread(ptr, siz, nit, fp)   if (fread((ptr), (siz), \
                         (nit), (fp)) != (nit)) { \
                 fprintf(cp_err, "Error: unexpected EOF\n"); \
                     return (NULL); }
 
-#define tfwrite(ptr, siz, nit, fp)  if (fwrite((char *) (ptr), (siz), \
+#define tfwrite(ptr, siz, nit, fp)  if (fwrite((ptr), (siz), \
                         (nit), (fp)) != (nit)) { \
                     fprintf(cp_err, "Write error\n"); \
                     return; }
