@@ -21,7 +21,7 @@
  * for multi-fingers and varous GEO and RGEO options.
  */
 
-int
+static int
 BSIM4NumFingerDiff(
 double nf,
 int minSD,

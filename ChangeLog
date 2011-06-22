@@ -1,4 +1,10 @@
 2011-06-22  Robert Larice
+ * src/spicelib/devices/bsim4/b4geo.c ,
+ * src/spicelib/devices/bsim4/b4noi.c ,
+ * src/spicelib/devices/bsim4/b4temp.c :
+   cleanup bsim4 prototypes
+
+2011-06-22  Robert Larice
  * src/frontend/commands.c ,
  * src/frontend/misccoms.h ,
  * src/frontend/rawfile.c ,

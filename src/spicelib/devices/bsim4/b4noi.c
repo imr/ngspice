@@ -28,17 +28,13 @@
 #include "const.h"
 
 
-extern void   NevalSrc();
-extern void   NevalSrc2();   /* for tnoiMod=2 (v4.7) */
-extern double Nintegrate();
-
 /*
  * WDL: 1/f noise model has been smoothed out and enhanced with
  * bulk charge effect as well as physical N* equ. and necessary
  * conversion into the SI unit system.
  */
 
-double
+static double
 Eval1ovFNoise(
 double Vds,
 BSIM4model *model,
