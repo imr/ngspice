@@ -11,6 +11,7 @@ $Id$
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
+#include "dimens.h"
 #include "dvec.h"
 
 #include "rawfile.h"

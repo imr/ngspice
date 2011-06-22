@@ -4,6 +4,7 @@
 #include <fteext.h>
 
 #include "pvec.h"
+#include "dimens.h"
 
 void
 pvec(struct dvec *d)

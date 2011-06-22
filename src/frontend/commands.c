@@ -39,6 +39,7 @@
 #include "commands.h"
 
 #include "com_ahelp.h"
+#include "com_ghelp.h"
 #include "com_asciiplot.h"
 #include "com_compose.h"
 #include "com_display.h"

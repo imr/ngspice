@@ -302,10 +302,4 @@ extern void vec_transpose(struct dvec *v);
 extern bool ft_intrpt;
 extern bool ft_setflag;
 
-/* dimens.c */
-extern void dimstring(int *data, int length, char *retstring);
-extern int atodims(char *p, int *data, int *outlength);
-extern void indexstring(int *data, int length, char *retstring);
-extern int incindex(int *counts, int numcounts, int *dims, int numdims);
-
 #endif /* FTEext_h */

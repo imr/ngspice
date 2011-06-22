@@ -1,4 +1,13 @@
 2011-06-22  Robert Larice
+ * src/frontend/commands.c ,
+ * src/frontend/misccoms.h ,
+ * src/frontend/rawfile.c ,
+ * src/frontend/vectors.c ,
+ * src/frontend/plotting/pvec.c ,
+ * src/include/fteext.h :
+   cleanup some reoccuring function prototypes
+
+2011-06-22  Robert Larice
  * src/spicelib/analysis/Makefile.am ,
  * src/spicelib/analysis/ckt.h ,
  * src/spicelib/analysis/cktdelt.c ,

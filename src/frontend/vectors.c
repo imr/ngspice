@@ -17,6 +17,7 @@ $Id$
 #include "circuits.h"
 #include "completion.h"
 #include "variable.h"
+#include "dimens.h"
 #include "../misc/misc_time.h"
 #include "vectors.h"
 #include "plotting/plotting.h"
