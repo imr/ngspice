@@ -96,8 +96,7 @@ libckt_la_SOURCES = \
 		tranaskq.c	\
 		traninit.c	\
 		transetp.c	\
-		cluster.c	\
-		ckt.h
+		cluster.c
 
 
 AM_CPPFLAGS =  -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices

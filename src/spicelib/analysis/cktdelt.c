@@ -8,7 +8,7 @@ Author: 1985 Thomas L. Quarles
 #include "jobdefs.h"
 #include "ifsim.h"
 #include "iferrmsg.h"
-#include "ckt.h"
+#include "cktdefs.h"
 
 
 /* ARGSUSED */
