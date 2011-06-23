@@ -100,7 +100,7 @@ void spice2poly (ARGS)
     if(INIT) {
         Mif_Inst_Var_Data_t *p = STATIC_VAR_INST(acgains);
         p -> size    = num_inputs;
-        p -> element = malloc((size_t) num_inputs * sizeof(Mif_Value_t));
+        p -> element = (Mif_Value_t *) malloc((size_t) num_inputs * sizeof(Mif_Value_t));
         for(i = 0; i < num_inputs; i++)
             STATIC_VAR(acgains[i]) = 0.0;
     }

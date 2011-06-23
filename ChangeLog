@@ -1,4 +1,8 @@
 2011-06-23  Robert Larice
+ * src/xspice/icm/spice2poly/icm_spice2poly/cfunc.mod :
+   malloc return value cast
+
+2011-06-23  Robert Larice
  * src/ciderlib/oned/onemesh.c ,
  * src/spicelib/devices/nbjt/nbjttemp.c :
    tiny rewrite, (integer + integer)/2
