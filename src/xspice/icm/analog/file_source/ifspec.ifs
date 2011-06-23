@@ -1,0 +1,83 @@
+/* $Id$ */
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 2011
+Thomas Sailer
+
+AUTHORS
+
+     19 May 2011     Thomas Sailer
+
+
+SUMMARY
+
+    This file contains the interface specification file for the
+    filesource code model.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+C_Function_Name:       cm_filesource
+Spice_Model_Name:      filesource
+Description:           "File Source"
+
+
+PORT_TABLE:
+
+Port_Name:             out
+Description:           "output"
+Direction:             out
+Default_Type:          v
+Allowed_Types:         [v,vd,i,id]
+Vector:                yes
+Vector_Bounds:         [1 -]
+Null_Allowed:          no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     timeoffset       timescale
+Description:        "time offset"    "timescale"
+Data_Type:          real             real
+Default_Value:      0.0              1.0
+Limits:             -                -
+Vector:             no               no
+Vector_Bounds:      -                -
+Null_Allowed:       yes              yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     timerelative     amplstep
+Description:        "relative time"  "step amplitude"
+Data_Type:          boolean          boolean
+Default_Value:      FALSE            FALSE
+Limits:             -                -
+Vector:             no               no
+Vector_Bounds:      -                -
+Null_Allowed:       yes              yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     amploffset       amplscale
+Description:        "ampl offset"    "amplscale"
+Data_Type:          real             real
+Default_Value:      -                -
+Limits:             -                -
+Vector:             yes              yes
+Vector_Bounds:      [1 -]            [1 -]
+Null_Allowed:       yes              yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     file
+Description:        "file name"
+Data_Type:          string
+Default_Value:      "filesource.txt"
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes

@@ -1,3 +1,9 @@
+2011-06-23 Holger Vogt
+ * /xspice/icm/analog/modpath.lst, 
+   /xspice/icm/analog/file_source/cfunc.mod, 
+   /xspice/icm/analog/file_source/ifspec.ifs:
+   code model with input from file added (T. Sailer)
+   
 2011-06-23  Robert Larice
  * src/frontend/options.c ,
  * src/frontend/spiceif.c ,
