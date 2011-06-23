@@ -214,17 +214,14 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 	/* get kernel version string */
 	file = fopen("/proc/version", "rb");
 	if(file != NULL) {	
-		tInt size = 0;
-		char buf;
+		size_t size;
 		
 		/* read bytes and find end of file */
-		buf = fgetc(file);	
-		while(buf != EOF) {
-			size++;
-			buf = fgetc(file);
-		}
+		for(size=0; ; size++)
+		    if(EOF == fgetc(file))
+			break;
 
-		info->osName = (char*) malloc((size) * sizeof(char));
+		info->osName = (char*) malloc(size * sizeof(char));
 		rewind(file);
 		fread(info->osName, sizeof(char), size, file);
 		fclose(file);
@@ -238,15 +235,14 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 	/* get cpu information */
    file = fopen("/proc/cpuinfo", "rb");
 	if(file != NULL) {	
-		tInt size = 0;
-		char buf, *inStr;
+		size_t size;
+		char *inStr;
 		
 		/* read bytes and find end of file */
-		buf = fgetc(file);	
-		while(buf != EOF) {
-			size++;
-			buf = fgetc(file);
-		}
+		for(size=0; ; size++)
+		    if(EOF == fgetc(file))
+			break;
+
 		/* get complete string */
 		inStr = (char*) malloc((size+1) * sizeof(char));
 		rewind(file);
