@@ -1,4 +1,9 @@
 2011-06-23  Robert Larice
+ * src/ciderlib/oned/onemesh.c ,
+ * src/spicelib/devices/nbjt/nbjttemp.c :
+   tiny rewrite, (integer + integer)/2
+
+2011-06-23  Robert Larice
  * src/frontend/evaluate.c ,
  * src/misc/hash.c ,
  * src/spicelib/devices/ltra/ltraset.c ,
