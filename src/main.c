@@ -870,7 +870,7 @@ main(int argc, char **argv)
             {0, 0, 0, 0}
         };
 
-        c = getopt_long (argc, argv, "hvbac:ihno:pqr:st:",
+        c = getopt_long (argc, argv, "hvbac:ino:pqr:st:",
              long_options, &option_index);
         if (c == -1)
             break;

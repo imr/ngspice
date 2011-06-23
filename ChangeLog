@@ -1,4 +1,8 @@
 2011-06-23  Robert Larice
+ * src/main.c :
+   tiny fix, reoccuring option `h' in the getopt_long() option string
+
+2011-06-23  Robert Larice
  * src/frontend/com_sysinfo.c :
    tiny rewrite, typefix, don't compare EOF with a char
 
