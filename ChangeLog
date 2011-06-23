@@ -1,4 +1,10 @@
 2011-06-23  Robert Larice
+ * src/frontend/options.c ,
+ * src/frontend/spiceif.c ,
+ * src/frontend/variable.c :
+   round to nearest integer, `rawfileprec' `numdgt' `history' if_option() doset()
+
+2011-06-23  Robert Larice
  * src/frontend/evaluate.c :
    `[]' indexing operator, round index to nearest integer
 

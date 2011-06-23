@@ -458,7 +458,7 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
             if (type == CP_NUM)
                 pval.iValue = *((int *) value);
             else if (type == CP_REAL)
-                pval.iValue = (int)(*((double *) value));
+                pval.iValue = (int)floor((*(double *)value) + 0.5);
             else
                 goto badtype;
             break;
@@ -1111,7 +1111,7 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
 		iptr = nval.v.vec.iVec = NEWN(int, n);
 
 		for (i = 0; i < n; i++)
-		    *iptr++ = (int)(*dptr++);
+		    *iptr++ = (int)floor(*dptr++ + 0.5);
 		break;
 
 	    case IF_REAL:
@@ -1128,7 +1128,7 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
 	switch (opt->dataType & IF_VARTYPES) {
 	    case IF_FLAG:
 	    case IF_INTEGER:
-		nval.iValue = (int)(*val->v_realdata);
+		nval.iValue = (int)floor(*val->v_realdata + 0.5);
 		break;
 
 	    case IF_REAL:
