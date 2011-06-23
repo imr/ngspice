@@ -2496,14 +2496,11 @@ inp_get_func_from_line( char *line )
   while ( *end != '(' ) end++;
   while ( *end != ')' ) {
     end++;
+    while ( isspace( *end ) ) end++;
     ptr = end;
-    while ( isspace( *ptr ) ) ptr++;
-    end = ptr;
     while ( !isspace( *end ) && *end != ',' && *end != ')' ) end++;
-    keep = *end;
-    *end = '\0';
-    func_params[num_functions-1][num_params++] = strdup(ptr);
-    *end = keep;
+    if(end > ptr)
+        func_params[num_functions-1][num_params++] = strndup(ptr, end-ptr);
   }
   num_parameters[num_functions-1] = num_params;
   
@@ -2511,9 +2508,9 @@ inp_get_func_from_line( char *line )
   str_len = 0;
   while ( *end != '{' ) end++;
   end++;
-  while ( *end != '}' ) {
-    while ( isspace( *end ) ) end++;
-    if ( *end != '}' ) temp_buf[str_len++] = *end;
+  while ( *end  &&  *end != '}' ) {
+    if ( !isspace(*end) )
+        temp_buf[str_len++] = *end;
     end++;
   }
   temp_buf[str_len++] = '\0';
@@ -2564,6 +2561,9 @@ inp_do_macro_param_replace( int fcn_number, char *params[] )
   char keep, before, after;
   int  i;
 
+  if(num_parameters[fcn_number] == 0)
+      return strdup(func_macro[fcn_number]);
+
   for ( i = 0; i < num_parameters[fcn_number]; i++ ) {
     if ( curr_str == NULL )
       search_ptr = curr_ptr = func_macro[fcn_number];
@@ -2588,26 +2588,17 @@ inp_do_macro_param_replace( int fcn_number, char *params[] )
       keep       = *param_ptr;
       *param_ptr = '\0';
 
-      if ( curr_str != NULL ) {
-	if ( str_has_arith_char( params[i] ) ) {
-	  new_str = TMALLOC(char, strlen(curr_str) + strlen(curr_ptr) + strlen(params[i]) + 3);
-	  sprintf( new_str, "%s%s(%s)", curr_str, curr_ptr, params[i] );
-	} else {
-	  new_str = TMALLOC(char, strlen(curr_str) + strlen(curr_ptr) + strlen(params[i]) + 1);
-	  sprintf( new_str, "%s%s%s", curr_str, curr_ptr, params[i] );
-	}
-
-	tfree( curr_str );
-      } else {
-	if ( str_has_arith_char( params[i] ) ) {
-	  new_str = TMALLOC(char, strlen(curr_ptr) + strlen(params[i]) + 3);
-	  sprintf( new_str, "%s(%s)", curr_ptr, params[i] );
-	} else {
-	  new_str = TMALLOC(char, strlen(curr_ptr) + strlen(params[i]) + 1);
-	  sprintf( new_str, "%s%s", curr_ptr, params[i] );
-	}
+      {
+          int curr_str_len = curr_str ? strlen(curr_str) : 0;
+          int len = strlen(curr_ptr) + strlen(params[i]) + 1;
+          if ( str_has_arith_char( params[i] ) ) {
+              curr_str = TREALLOC(char, curr_str, curr_str_len + len + 2);
+              sprintf( curr_str + curr_str_len, "%s(%s)", curr_ptr, params[i] );
+          } else {
+              curr_str = TREALLOC(char, curr_str, curr_str_len + len);
+              sprintf( curr_str + curr_str_len, "%s%s", curr_ptr, params[i] );
+          }
       }
-      curr_str = new_str;
 
       *param_ptr = keep;
       search_ptr = curr_ptr = param_ptr + strlen(func_params[fcn_number][i]);
@@ -2631,102 +2622,100 @@ inp_expand_macro_in_str( char *str )
 {
    int  i;
    char *c;
-   char *open_paren_ptr, *close_paren_ptr, *fcn_name, *comma_ptr, *params[1000];
-   char *curr_ptr, *new_str, *macro_str, *curr_str = NULL;
+   char *open_paren_ptr, *close_paren_ptr, *fcn_name, *params[1000];
+   char *curr_ptr, *macro_str, *curr_str = NULL;
    int  num_parens, num_params;
    char *orig_ptr = str, *search_ptr = str, *orig_str = strdup(str);
    char keep;
 
-   while ( (open_paren_ptr = strstr( search_ptr, "(" )) != NULL ) {
+//   printf("%s: enter(\"%s\")\n", __FUNCTION__, str);
+   while ( (open_paren_ptr = strchr(search_ptr, '(')) != NULL ) {
+
       fcn_name = open_paren_ptr;
-      if ( open_paren_ptr != search_ptr) {
-         while ( --fcn_name != search_ptr && (isalnum(*fcn_name) || *fcn_name == '_') )
-             ;
-         if ( !isalnum(*fcn_name) && *fcn_name != '_' ) fcn_name++;
-      }
+      while ( --fcn_name >= search_ptr )
+          if(!isalnum(*fcn_name) && *fcn_name != '_')
+              break;
+      fcn_name++;
+
+      search_ptr = open_paren_ptr + 1;
+      if ( open_paren_ptr == fcn_name )
+          continue;
 
       *open_paren_ptr = '\0';
-      close_paren_ptr = NULL;
-      search_ptr = open_paren_ptr + 1;
-      if ( open_paren_ptr != fcn_name ) {
-         for ( i = 0; i < num_functions; i++ ) {
-            if ( strcmp( func_names[i], fcn_name ) == 0 ) {
 
-               /* find the closing paren */
-               close_paren_ptr = NULL;
-               num_parens = 0;
-               for ( c = open_paren_ptr + 1; *c && *c != '\0'; c++ ) {
-                  if ( *c == '(' ) num_parens++;
-                  if ( *c == ')' ) {
-                     if ( num_parens != 0 ) num_parens--;
-                     else {
-                        close_paren_ptr = c;
-                        break;
-                     }
-                  }
-               }
-               if ( close_paren_ptr == NULL ) {
-                  fprintf( stderr, "ERROR: did not find closing parenthesis for function call in str: %s\n", orig_str );
-                  controlled_exit(EXIT_FAILURE);
-               }
-               *close_paren_ptr = '\0';
-	  
-               /* get the parameters */
-               curr_ptr = open_paren_ptr+1;
-               while ( isspace(*curr_ptr) ) curr_ptr++;
-               num_params = 0;
-/*               if ( ciprefix( "v(", curr_ptr ) ) {
-                  // look for any commas and change to ' '
-                  char *str_ptr = curr_ptr;
-                  while ( *str_ptr != '\0' && *str_ptr != ')' ) { 
-                     if ( *str_ptr == ',' || *str_ptr == '(' ) *str_ptr = ' '; str_ptr++; }
-                     if ( *str_ptr == ')' ) *str_ptr = ' ';
-               }*/
-               num_parens = 0;
-               for (comma_ptr = curr_ptr; *comma_ptr && *comma_ptr != '\0'; comma_ptr++) {
-                  if (*comma_ptr == ',' && num_parens == 0) {
-                     while ( isspace(*curr_ptr) ) curr_ptr++;
-                     *comma_ptr = '\0';
-                     params[num_params++] = inp_expand_macro_in_str( strdup( curr_ptr ) );
-                     *comma_ptr = ',';
-                     curr_ptr = comma_ptr+1;
-                  } 
-                  if ( *comma_ptr == '(' ) num_parens++;
-                  if ( *comma_ptr == ')' ) num_parens--;
-               }
-               while ( isspace(*curr_ptr) ) curr_ptr++;
-               /* get the last parameter */
-               params[num_params++] = inp_expand_macro_in_str( strdup( curr_ptr ) );
+      for ( i = 0; i < num_functions; i++ )
+          if ( strcmp( func_names[i], fcn_name ) == 0 )
+              break;
 
-               if ( num_parameters[i] != num_params ) {
-                  fprintf( stderr, "ERROR: parameter mismatch for function call in str: %s\n", orig_ptr );
-                  controlled_exit(EXIT_FAILURE);
-               }
-
-               macro_str = inp_do_macro_param_replace( i, params );
-               keep  = *fcn_name;
-               *fcn_name = '\0';
-               if ( curr_str == NULL ) {
-                  new_str = TMALLOC(char, strlen(str) + strlen(macro_str) + strlen(close_paren_ptr + 1) + 3);
-                  sprintf( new_str, "%s(%s)", str, macro_str ); 
-                  curr_str = new_str;
-               } else {
-                  new_str = TMALLOC(char, strlen(curr_str) + strlen(str) + strlen(macro_str) + strlen(close_paren_ptr + 1) + 3);
-                  sprintf( new_str, "%s%s(%s)", curr_str, str, macro_str ); 
-                  tfree(curr_str);
-                  curr_str = new_str;
-               }
- 
-               *fcn_name        = keep;
-               *close_paren_ptr = ')';
-
-               search_ptr = str = close_paren_ptr+1;
-               break;
-            } /* if strcmp */
-         } /* for loop over function names */
-      } 
       *open_paren_ptr = '(';
 
+      if(i >= num_functions)
+          continue;
+
+
+      /* find the closing paren */
+      num_parens = 1;
+      for ( c = open_paren_ptr + 1; *c; c++ ) {
+          if ( *c == '(' )
+              num_parens++;
+          if ( *c == ')'  &&  --num_parens == 0)
+              break;
+      }
+
+      if ( num_parens ) {
+          fprintf( stderr, "ERROR: did not find closing parenthesis for function call in str: %s\n", orig_str );
+          controlled_exit(EXIT_FAILURE);
+      }
+
+      close_paren_ptr = c;
+
+/*               if ( ciprefix( "v(", curr_ptr ) ) {
+// look for any commas and change to ' '
+char *str_ptr = curr_ptr;
+while ( *str_ptr != '\0' && *str_ptr != ')' ) { 
+if ( *str_ptr == ',' || *str_ptr == '(' ) *str_ptr = ' '; str_ptr++; }
+if ( *str_ptr == ')' ) *str_ptr = ' ';
+}*/
+
+      /* get the parameters */
+      curr_ptr = open_paren_ptr + 1;
+
+      for (num_params=0; curr_ptr < close_paren_ptr; curr_ptr++) {
+          char *beg_parameter;
+          int num_parens;
+          if( isspace(*curr_ptr) )
+              continue;
+          beg_parameter = curr_ptr;
+          num_parens = 0;
+          for(;curr_ptr < close_paren_ptr; curr_ptr++) {
+              if(*curr_ptr == '(')
+                  num_parens++;
+              if(*curr_ptr == ')')
+                  num_parens--;
+              if(*curr_ptr == ',' && num_parens == 0)
+                  break;
+          }
+          params[num_params++] =
+              inp_expand_macro_in_str(strndup(beg_parameter, curr_ptr - beg_parameter));
+      }
+
+      if ( num_parameters[i] != num_params ) {
+          fprintf( stderr, "ERROR: parameter mismatch for function call in str: %s\n", orig_str );
+          controlled_exit(EXIT_FAILURE);
+      }
+
+      macro_str = inp_do_macro_param_replace( i, params );
+      keep  = *fcn_name;
+      *fcn_name = '\0';
+      {
+          int curr_str_len = curr_str ? strlen(curr_str) : 0;
+          int len = strlen(str) + strlen(macro_str) + 3;
+          curr_str = TREALLOC(char, curr_str, curr_str_len + len);
+          sprintf( curr_str + curr_str_len, "%s(%s)", str, macro_str );
+      }
+      *fcn_name = keep;
+
+      search_ptr = str = close_paren_ptr + 1;
    }
 
    if ( curr_str == NULL ) {
@@ -2734,15 +2723,16 @@ inp_expand_macro_in_str( char *str )
    }
    else {
       if ( str != NULL ) {
-         new_str = TMALLOC(char, strlen(curr_str) + strlen(str) + 1);
-         sprintf( new_str, "%s%s", curr_str, str );
-         tfree(curr_str);
-         curr_str = new_str;
+          int curr_str_len = strlen(curr_str);
+          int len = strlen(str) + 1;
+          curr_str = TREALLOC(char, curr_str, curr_str_len + len);
+          sprintf( curr_str + curr_str_len, "%s", str );
       }
       tfree(orig_ptr);
    }
 
    tfree(orig_str);
+//   printf("%s: --> \"%s\"\n", __FUNCTION__, curr_str);
 
    return curr_str;
 }
