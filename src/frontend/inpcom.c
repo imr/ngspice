@@ -2500,7 +2500,7 @@ inp_get_func_from_line( char *line )
     ptr = end;
     while ( !isspace( *end ) && *end != ',' && *end != ')' ) end++;
     if(end > ptr)
-        func_params[num_functions-1][num_params++] = strndup(ptr, end-ptr);
+        func_params[num_functions-1][num_params++] = copy_substring(ptr, end);
   }
   num_parameters[num_functions-1] = num_params;
   
@@ -2696,7 +2696,7 @@ if ( *str_ptr == ')' ) *str_ptr = ' ';
                   break;
           }
           params[num_params++] =
-              inp_expand_macro_in_str(strndup(beg_parameter, curr_ptr - beg_parameter));
+              inp_expand_macro_in_str(copy_substring(beg_parameter, curr_ptr));
       }
 
       if ( num_parameters[i] != num_params ) {

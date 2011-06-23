@@ -8,6 +8,7 @@
    /xspice/icm/analog/file_source/ifspec.ifs:
    code model with input from file added (T. Sailer)
    example/xspice/fstest.sp, sine.m: test of 'filesource'
+ * inpcom.c: bug no. 3317928, patched by Robert  
 
 2011-06-23  Robert Larice
  * src/frontend/options.c ,
