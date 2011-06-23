@@ -1,3 +1,6 @@
+2011-06-23 Holger Vogt
+ * measure.c: another try to obtain correct vector handling
+
 2011-06-22  Robert Larice
  * src/ngsconvert.c ,
  * src/frontend/outitf.c ,
