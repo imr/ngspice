@@ -716,11 +716,11 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
      */
     if (isreal(ind)) {
         newdim = v->v_numdims - 1;
-        down = up = (int)(ind->v_realdata[0]);
+        down = up = (int)floor(ind->v_realdata[0] + 0.5);
     } else {
         newdim = v->v_numdims;
-        down = (int)(realpart(&ind->v_compdata[0]));
-        up = (int)(imagpart(&ind->v_compdata[0]));
+        down = (int)floor(realpart(&ind->v_compdata[0]) + 0.5);
+        up = (int)floor(imagpart(&ind->v_compdata[0]) + 0.5);
     }
     if (up < down) {
         i = up;

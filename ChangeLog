@@ -1,4 +1,8 @@
 2011-06-23  Robert Larice
+ * src/frontend/evaluate.c :
+   `[]' indexing operator, round index to nearest integer
+
+2011-06-23  Robert Larice
  * src/xspice/icm/spice2poly/icm_spice2poly/cfunc.mod :
    malloc return value cast
 
