@@ -261,7 +261,7 @@ void EVTdump(
                         break;
                 }
                 /* Compare entry at end of list to rhsold */
-                (*(g_evt_udn_info[node_table[i]->udn_index]->compare)) (
+                g_evt_udn_info[node_table[i]->udn_index]->compare (
                           rhsold[i].node_value,
                           here->node_value,
                           &equal);

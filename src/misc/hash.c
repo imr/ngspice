@@ -253,7 +253,7 @@ void * _nghash_find(NGHASHPTR hashtable, void * user_key,BOOL *status)
 	NGHASH_NUM_TO_HASH( user_key, hsum, hashtable->size);
 	break ;
       default:
-	hsum = (*((nghash_func)hashtable->hash_func))(hashtable,user_key) ;
+	hsum = ((nghash_func)hashtable->hash_func) (hashtable,user_key) ;
     }
 
     curPtr = table[hsum] ;
@@ -371,7 +371,7 @@ void * nghash_delete(NGHASHPTR hashtable, void * user_key)
 	NGHASH_NUM_TO_HASH( user_key, hsum, hashtable->size);
 	break ;
       default:
-	hsum = (*((nghash_func)hashtable->hash_func))(hashtable,user_key) ;
+	hsum = ((nghash_func)hashtable->hash_func) (hashtable,user_key) ;
     }
 
     /* insert into table only if distinct number */
@@ -444,7 +444,7 @@ void * nghash_insert(NGHASHPTR hashtable, void * user_key, void * data)
 	NGHASH_NUM_TO_HASH( user_key, hsum, hashtable->size);
 	break ;
       default:
-	hsum = (*((nghash_func)hashtable->hash_func))(hashtable,user_key) ;
+	hsum = ((nghash_func)hashtable->hash_func) (hashtable,user_key) ;
     }
 
     /* insert into table only if distinct number */
@@ -536,7 +536,7 @@ static NGTABLEPTR _nghash_find_item(NGHASHPTR htable,void * user_key,void * data
 	NGHASH_NUM_TO_HASH( user_key, hsum, htable->size);
 	break ;
       default:
-	hsum = (*((nghash_func)htable->hash_func))(htable,user_key) ;
+	hsum = ((nghash_func)htable->hash_func) (htable,user_key) ;
     }
 
     /* insert into table only if distinct number */
@@ -773,7 +773,7 @@ BOOL nghash_deleteItem(NGHASHPTR hashtable, void * user_key, void * data)
 	NGHASH_NUM_TO_HASH( user_key, hsum, hashtable->size);
 	break ;
       default:
-	hsum = (*((nghash_func)hashtable->hash_func))(hashtable,user_key) ;
+	hsum = ((nghash_func)hashtable->hash_func) (hashtable,user_key) ;
     }
 
     /* insert into table only if distinct number */

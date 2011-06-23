@@ -1,4 +1,11 @@
 2011-06-23  Robert Larice
+ * src/frontend/evaluate.c ,
+ * src/misc/hash.c ,
+ * src/spicelib/devices/ltra/ltraset.c ,
+ * src/xspice/evt/evtdump.c :
+   function pointer invocation, (*p)(...)  --->  p(...)
+
+2011-06-23  Robert Larice
  * src/main.c :
    tiny fix, reoccuring option `h' in the getopt_long() option string
 

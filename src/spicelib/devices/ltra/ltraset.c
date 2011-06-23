@@ -57,7 +57,7 @@ LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 	(model->LTRAhowToInterp != LTRA_MOD_MIXEDINTERP)) {
 
       /*
-       * (*(SPfrontEnd->IFerror))(ERR_FATAL, "%s: have to specify one of
+       * SPfrontEnd->IFerror (ERR_FATAL, "%s: have to specify one of
        * lininterp, quadinterp or mixedinterp", &(model->LTRAmodName));
        * return(E_BADPARM);
        */
@@ -78,7 +78,7 @@ LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 
     if (!model->LTRAconductGiven) {
       /*
-       * (*(SPfrontEnd->IFerror))(ERR_WARNING, "%s: lossy line parallel
+       * SPfrontEnd->IFerror (ERR_WARNING, "%s: lossy line parallel
        * conductance not given, assumed zero", &(model->LTRAmodName));
        */
       model->LTRAconduct = 0.0;
