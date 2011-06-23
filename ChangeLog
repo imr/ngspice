@@ -3,6 +3,7 @@
    /xspice/icm/analog/file_source/cfunc.mod, 
    /xspice/icm/analog/file_source/ifspec.ifs:
    code model with input from file added (T. Sailer)
+   example/xspice/fstest.sp: test of 'filesource'
    
 2011-06-23  Robert Larice
  * src/frontend/options.c ,
