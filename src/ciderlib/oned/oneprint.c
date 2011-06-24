@@ -328,8 +328,8 @@ ONEmemStats(FILE *file, ONEdevice *pDevice)
 {
   static const char memFormat[] = "%-20s%10d%10d\n";
 /*  static const char sumFormat[] = "%20s          %-10d\n";*/
-  unsigned int size;
-  unsigned int memory;
+  int size;
+  size_t memory;
   ONEmaterial *pMaterial;
   ONEcontact *pContact;
   int numContactNodes;
@@ -341,64 +341,64 @@ ONEmemStats(FILE *file, ONEdevice *pDevice)
   fprintf(file, "----------------------------------------\n");
 
   size = 1;
-  memory = size * sizeof(ONEdevice);
+  memory = (size_t) size * sizeof(ONEdevice);
   fprintf(file, memFormat, "Device", size, memory);
   size = pDevice->numNodes - 1;
-  memory = size * sizeof(ONEelem);
+  memory = (size_t) size * sizeof(ONEelem);
   fprintf(file, memFormat, "Elements", size, memory);
   size = pDevice->numNodes;
-  memory = size * sizeof(ONEnode);
+  memory = (size_t) size * sizeof(ONEnode);
   fprintf(file, memFormat, "Nodes", size, memory);
   size = pDevice->numNodes - 1;
-  memory = size * sizeof(ONEedge);
+  memory = (size_t) size * sizeof(ONEedge);
   fprintf(file, memFormat, "Edges", size, memory);
 
   size = pDevice->numNodes;
-  memory = size * sizeof(ONEelem *);
+  memory = (size_t) size * sizeof(ONEelem *);
   size = 0;
   for (pMaterial = pDevice->pMaterials; pMaterial; pMaterial = pMaterial->next)
     size++;
-  memory += size * sizeof(ONEmaterial);
+  memory += (size_t) size * sizeof(ONEmaterial);
   size = numContactNodes = 0;
   for (pContact = pDevice->pFirstContact; pContact; pContact = pContact->next) {
     numContactNodes += pContact->numNodes;
     size++;
   }
-  memory += size * sizeof(ONEcontact);
+  memory += (size_t) size * sizeof(ONEcontact);
   size = numContactNodes;
-  memory += size * sizeof(ONEnode *);
+  memory += (size_t) size * sizeof(ONEnode *);
   size = 0;
   fprintf(file, "%-20s%10s%10d\n", "Misc Mesh", "n/a", memory);
 
   size = pDevice->numOrigEquil;
-  memory = size * sizeof(struct MatrixElement);
+  memory = (size_t) size * sizeof(struct MatrixElement);
   fprintf(file, memFormat, "Equil Orig NZ", size, memory);
   size = pDevice->numFillEquil;
-  memory = size * sizeof(struct MatrixElement);
+  memory = (size_t) size * sizeof(struct MatrixElement);
   fprintf(file, memFormat, "Equil Fill NZ", size, memory);
   size = pDevice->numOrigEquil + pDevice->numFillEquil;
-  memory = size * sizeof(struct MatrixElement);
+  memory = (size_t) size * sizeof(struct MatrixElement);
   fprintf(file, memFormat, "Equil Tot  NZ", size, memory);
   size = pDevice->dimEquil;
-  memory = size * 4 * sizeof(double);
+  memory = (size_t) size * 4 * sizeof(double);
   fprintf(file, memFormat, "Equil Vectors", size, memory);
 
   size = pDevice->numOrigBias;
-  memory = size * sizeof(struct MatrixElement);
+  memory = (size_t) size * sizeof(struct MatrixElement);
   fprintf(file, memFormat, "Bias Orig NZ", size, memory);
   size = pDevice->numFillBias;
-  memory = size * sizeof(struct MatrixElement);
+  memory = (size_t) size * sizeof(struct MatrixElement);
   fprintf(file, memFormat, "Bias Fill NZ", size, memory);
   size = pDevice->numOrigBias + pDevice->numFillBias;
-  memory = size * sizeof(struct MatrixElement);
+  memory = (size_t) size * sizeof(struct MatrixElement);
   fprintf(file, memFormat, "Bias Tot  NZ", size, memory);
   size = pDevice->dimBias;
-  memory = size * 5 * sizeof(double);
+  memory = (size_t) size * 5 * sizeof(double);
   fprintf(file, memFormat, "Bias Vectors", size, memory);
 
   size = (pDevice->numNodes - 1) * ONEnumEdgeStates +
       pDevice->numNodes * ONEnumNodeStates;
-  memory = size * sizeof(double);
+  memory = (size_t) size * sizeof(double);
   fprintf(file, memFormat, "State Vector", size, memory);
 }
 

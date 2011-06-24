@@ -346,8 +346,8 @@ TWOmemStats(FILE *file, TWOdevice *pDevice)
 {
   static const char memFormat[] = "%-20s%10d%10d\n";
 /*  static const char sumFormat[] = "%20s          %-10d\n"; */
-  unsigned int size;
-  unsigned int memory;
+  int size;
+  size_t memory;
   TWOmaterial *pMaterial;
   TWOcontact *pContact;
   TWOchannel *pChannel;
@@ -359,73 +359,73 @@ TWOmemStats(FILE *file, TWOdevice *pDevice)
   fprintf(file, "----------------------------------------\n");
 
   size = 1;
-  memory = size * sizeof(TWOdevice);
+  memory = (size_t) size * sizeof(TWOdevice);
   fprintf( file, memFormat, "Device", size, memory );
   size = pDevice->numElems;
-  memory = size * sizeof(TWOelem);
+  memory = (size_t) size * sizeof(TWOelem);
   fprintf( file, memFormat, "Elements", size, memory );
   size = pDevice->numNodes;
-  memory = size * sizeof(TWOnode);
+  memory = (size_t) size * sizeof(TWOnode);
   fprintf( file, memFormat, "Nodes", size, memory );
   size = pDevice->numEdges;
-  memory = size * sizeof(TWOedge);
+  memory = (size_t) size * sizeof(TWOedge);
   fprintf( file, memFormat, "Edges", size, memory );
 
   size = pDevice->numXNodes;
-  memory = size * sizeof(TWOelem **);
+  memory = (size_t) size * sizeof(TWOelem **);
   size = (pDevice->numXNodes-1) * pDevice->numYNodes;
-  memory += size * sizeof(TWOelem *);
+  memory += (size_t) size * sizeof(TWOelem *);
   size = pDevice->numElems + 1;
-  memory += size * sizeof(TWOelem *);
+  memory += (size_t) size * sizeof(TWOelem *);
   size = pDevice->numXNodes + pDevice->numYNodes;
-  memory += size * sizeof(double);
+  memory += (size_t) size * sizeof(double);
   size = 0;
   for (pMaterial = pDevice->pMaterials; pMaterial; pMaterial = pMaterial->next)
     size++;
-  memory += size * sizeof(TWOmaterial);
+  memory += (size_t) size * sizeof(TWOmaterial);
   size = numContactNodes = 0;
   for (pContact = pDevice->pFirstContact; pContact; pContact = pContact->next) {
     numContactNodes += pContact->numNodes;
     size++;
   }
-  memory += size * sizeof(TWOcontact);
+  memory += (size_t) size * sizeof(TWOcontact);
   size = numContactNodes;
-  memory += size * sizeof(TWOnode *);
+  memory += (size_t) size * sizeof(TWOnode *);
   size = 0;
   for (pChannel = pDevice->pChannel; pChannel; pChannel = pChannel->next)
     size++;
-  memory += size * sizeof(TWOchannel);
+  memory += (size_t) size * sizeof(TWOchannel);
   fprintf(file, "%-20s%10s%10d\n", "Misc Mesh", "n/a", memory);
 
   size = pDevice->numOrigEquil;
-  memory = size * sizeof(struct MatrixElement);
+  memory = (size_t) size * sizeof(struct MatrixElement);
   fprintf( file, memFormat, "Equil Orig NZ", size, memory );
   size = pDevice->numFillEquil;
-  memory = size * sizeof(struct MatrixElement);
+  memory = (size_t) size * sizeof(struct MatrixElement);
   fprintf( file, memFormat, "Equil Fill NZ", size, memory );
   size = pDevice->numOrigEquil + pDevice->numFillEquil;
-  memory = size * sizeof(struct MatrixElement);
+  memory = (size_t) size * sizeof(struct MatrixElement);
   fprintf( file, memFormat, "Equil Tot  NZ", size, memory );
   size = pDevice->dimEquil;
-  memory = size * 4 * sizeof(double);
+  memory = (size_t) size * 4 * sizeof(double);
   fprintf( file, memFormat, "Equil Vectors", size, memory );
 
   size = pDevice->numOrigBias;
-  memory = size * sizeof(struct MatrixElement);
+  memory = (size_t) size * sizeof(struct MatrixElement);
   fprintf( file, memFormat, "Bias Orig NZ", size, memory );
   size = pDevice->numFillBias;
-  memory = size * sizeof(struct MatrixElement);
+  memory = (size_t) size * sizeof(struct MatrixElement);
   fprintf( file, memFormat, "Bias Fill NZ", size, memory );
   size = pDevice->numOrigBias + pDevice->numFillBias;
-  memory = size * sizeof(struct MatrixElement);
+  memory = (size_t) size * sizeof(struct MatrixElement);
   fprintf( file, memFormat, "Bias Tot  NZ", size, memory );
   size = pDevice->dimBias;
-  memory = size * 5 * sizeof(double);
+  memory = (size_t) size * 5 * sizeof(double);
   fprintf( file, memFormat, "Bias Vectors", size, memory );
 
   size = pDevice->numEdges * TWOnumEdgeStates +
       pDevice->numNodes * TWOnumNodeStates;
-  memory = size * sizeof(double);
+  memory = (size_t) size * sizeof(double);
   fprintf( file, memFormat, "State Vector", size, memory );
 }
 

@@ -67,13 +67,13 @@ static size_t get_sysmem(struct sys_memory *memall);
 
 /* Print to stream the given memory size in a human friendly format */
 static void
-fprintmem(FILE* stream, unsigned long long memory) {
-    if (memory > 1048576)
-      fprintf(stream, "%8.6f MB", memory/1048576.);
-    else if (memory > 1024) 
-      fprintf(stream, "%5.3f kB", memory/1024.);
+fprintmem(FILE* stream, long long memory) {
+    if (memory > (1<<20))
+	fprintf(stream, "%8.6f MB", (double)memory / (1<<20));
+    else if (memory > (1<<10))
+	fprintf(stream, "%5.3f kB", (double)memory / (1<<10));
     else
-      fprintf(stream, "%lu bytes", (unsigned long)memory);
+	fprintf(stream, "%u bytes", (unsigned)memory);
 }
 
 
@@ -176,16 +176,13 @@ static size_t get_sysmem(struct sys_memory *memall) {
 
 
 /* Return length of first line in a string */
-static tInt getLineLength(const char *str) {
-	tInt length = strlen(str);
-	char c = str[0];
-	tInt index = 0;
-	
-	while((c != '\n') && (index < length)) {
-		index++;
-		c = str[index];
-	}
-	return index;
+static size_t getLineLength(const char *str) {
+	const char *p = str;
+
+	while(*p  &&  (*p != '\n'))
+	    p++;
+
+	return (size_t) (p - str);
 }
 
 /* Checks if number 'match' is found in a vector 'set' of size 'size'
@@ -258,7 +255,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 				const char *modelPtr = strchr(modelStr, ':');
 				if(modelPtr != NULL) {
                /*length of string from ':' till end of line */
-					tInt numToEOL = getLineLength(modelPtr);
+					size_t numToEOL = getLineLength(modelPtr);
 					if(numToEOL > 2) {
                   /* skip ": "*/
 						numToEOL-=2;
@@ -289,7 +286,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 				if (isblank(*strPtr)) numProcs++;
 			}
 			info->numLogicalProcessors = numProcs;
-			physIDs = (tInt*) malloc(numProcs * sizeof(tInt));
+			physIDs = (tInt*) malloc((size_t)numProcs * sizeof(tInt));
 						
 			/* get number of physical CPUs */
 			numProcs = 0;
