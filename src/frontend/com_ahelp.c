@@ -20,9 +20,9 @@ com_ahelp(wordlist *wl)
     int i, n;
     /* assert: number of commands must be less than 512 */
     struct comm *cc[512];
-    int env = 0;
+    unsigned int env = 0;
     struct comm *com;
-    int level;
+    unsigned int level;
     char slevel[256];
 
     if (wl) {

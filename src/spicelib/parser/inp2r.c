@@ -79,7 +79,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
     for(s = line; NULL != (s = strstr(s, "tc")); ) {
 
         char *p;
-        int left_length;
+        size_t left_length;
 
         s += 2;
 
@@ -106,7 +106,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
         while(*s && !isspace(*s))
             s++;
 
-        left_length = s - current->line;
+        left_length = (size_t) (s - current->line);
 
         /* skip any additional white space */
         while(isspace(*s))

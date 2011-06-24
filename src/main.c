@@ -847,7 +847,7 @@ main(int argc, char **argv)
     }
     cp_program = ft_sim->simulator;
 
-    srand(getpid());
+    srand((unsigned int) getpid());
     TausSeed();
 
     /* --- Process command line options --- */
@@ -1115,7 +1115,7 @@ bot:
         initnorm (0, 0);
         if (!cp_getvar("rndseed", CP_NUM, &rseed)) {
             time_t acttime = time(NULL);
-            rseed = (int) acttime;
+            rseed = (unsigned int) acttime;
         }
         initnorm (rseed, 2);
         fprintf (cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
@@ -1125,7 +1125,7 @@ bot:
         unsigned int rseed = 66;
         if (!cp_getvar("rndseed", CP_NUM, &rseed)) {
             time_t acttime = time(NULL);
-            rseed = (int) acttime;
+            rseed = (unsigned int) acttime;
         }
         srand(rseed);
         initw();

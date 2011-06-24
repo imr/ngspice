@@ -1,4 +1,15 @@
 2011-06-24  Robert Larice
+ * src/main.c ,
+ * src/frontend/com_ahelp.c ,
+ * src/frontend/inpcom.c ,
+ * src/frontend/numparam/mystring.c ,
+ * src/frontend/numparam/xpressn.c ,
+ * src/frontend/trannoise/wallace.c ,
+ * src/spicelib/parser/inp2r.c ,
+ * src/xspice/icm/analog/file_source/cfunc.mod :
+   swallow type conversion warnings
+
+2011-06-24  Robert Larice
  * src/ciderlib/oned/oneprint.c ,
  * src/ciderlib/twod/twoprint.c :
    tiny rewrite, swallow type conversion warnings
@@ -12,11 +23,13 @@
    tiny rewrite, round to nearest integer and reset errno for strtol()
 
 2011-06-23 Holger Vogt
- * /xspice/icm/analog/modpath.lst,
-   /xspice/icm/analog/file_source/cfunc.mod,
-   /xspice/icm/analog/file_source/ifspec.ifs:
+ * src/xspice/icm/analog/modpath.lst ,
+ * src/xspice/icm/analog/file_source/cfunc.mod ,
+ * src/xspice/icm/analog/file_source/ifspec.ifs :
    code model with input from file added (T. Sailer)
-   example/xspice/fstest.sp, sine.m: test of 'filesource'
+ * examples/xspice/fstest.sp ,
+ * examples/xspice/sine.m :
+   test of 'filesource'
  * inpcom.c: bug no. 3317928, patched by Robert
 
 2011-06-23  Robert Larice

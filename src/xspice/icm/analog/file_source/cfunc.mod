@@ -128,7 +128,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
 	if (INIT == 1) {
 		/* Allocate storage for internal state */
 		cm_analog_alloc(0, 2 * sizeof(double));
-		cm_analog_alloc(1, 2 * size * sizeof(double));
+		cm_analog_alloc(1, size * (int) (2 * sizeof(double)));
 		cm_analog_alloc(2, sizeof(struct filesource_state));
 	}
 	timeinterval = (double *)cm_analog_get_ptr(0, 0);

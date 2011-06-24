@@ -79,7 +79,7 @@ void initw(void)
    unsigned long int coa, cob, s;
    
    /* initialize the uniform generator */
-   srand(getpid());   
+   srand((unsigned int) getpid());
 //   srand(17);
    TausSeed();
    

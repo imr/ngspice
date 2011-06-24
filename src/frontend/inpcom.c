@@ -2589,8 +2589,8 @@ inp_do_macro_param_replace( int fcn_number, char *params[] )
       *param_ptr = '\0';
 
       {
-          int curr_str_len = curr_str ? strlen(curr_str) : 0;
-          int len = strlen(curr_ptr) + strlen(params[i]) + 1;
+          size_t curr_str_len = curr_str ? strlen(curr_str) : 0;
+          size_t len = strlen(curr_ptr) + strlen(params[i]) + 1;
           if ( str_has_arith_char( params[i] ) ) {
               curr_str = TREALLOC(char, curr_str, curr_str_len + len + 2);
               sprintf( curr_str + curr_str_len, "%s(%s)", curr_ptr, params[i] );
@@ -2708,8 +2708,8 @@ if ( *str_ptr == ')' ) *str_ptr = ' ';
       keep  = *fcn_name;
       *fcn_name = '\0';
       {
-          int curr_str_len = curr_str ? strlen(curr_str) : 0;
-          int len = strlen(str) + strlen(macro_str) + 3;
+          size_t curr_str_len = curr_str ? strlen(curr_str) : 0;
+          size_t len = strlen(str) + strlen(macro_str) + 3;
           curr_str = TREALLOC(char, curr_str, curr_str_len + len);
           sprintf( curr_str + curr_str_len, "%s(%s)", str, macro_str );
       }
@@ -2723,8 +2723,8 @@ if ( *str_ptr == ')' ) *str_ptr = ' ';
    }
    else {
       if ( str != NULL ) {
-          int curr_str_len = strlen(curr_str);
-          int len = strlen(str) + 1;
+          size_t curr_str_len = strlen(curr_str);
+          size_t len = strlen(str) + 1;
           curr_str = TREALLOC(char, curr_str, curr_str_len + len);
           sprintf( curr_str + curr_str_len, "%s", str );
       }

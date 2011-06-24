@@ -184,7 +184,7 @@ char
 upcase (char c)
 {
     if ((c >= 'a') && (c <= 'z'))
-        return c + 'A' - 'a';
+        return (char) (c + 'A' - 'a');
     else
         return c;
 }
@@ -364,7 +364,7 @@ nadd ( SPICE_DSTRINGPTR dstr_p, long n)
         }
         for (j = k - 1; j >= 0; j--)
         {
-            load_str[0] = d[j] + '0';
+            load_str[0] = (char) ('0' + d[j]);
             spice_dstring_append( dstr_p, load_str, 1 ) ;
         }
     }
@@ -392,7 +392,7 @@ naddll (SPICE_DSTRINGPTR dstr_p, long long n)
 
     while (n > 0)
     {
-        d[k] = n % 10;
+        d[k] = (int) (n % 10);
         k++;
         n = n / 10;
     }
@@ -409,7 +409,7 @@ naddll (SPICE_DSTRINGPTR dstr_p, long long n)
         }
         for (j = k - 1; j >= 0; j--)
         {
-            load_str[0] = d[j] + '0';
+            load_str[0] = (char) ('0' + d[j]);
             spice_dstring_append( dstr_p, load_str, 1 ) ;
         }
     }

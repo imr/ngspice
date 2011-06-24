@@ -1601,7 +1601,7 @@ insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
           s+i, u, id );
 
     /* swallow everything on failure */
-    return i + strlen(s+i);
+    return i + (int) strlen(s+i);
 }
 
 bool
