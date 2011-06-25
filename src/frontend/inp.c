@@ -11,11 +11,6 @@ $Id$
 
 #include "ngspice.h"
 
-#ifdef HAVE_LIBGEN_H /* dirname */
-#include <libgen.h>
-#define HAVE_DECL_BASENAME 1
-#endif
-
 #include "cpdefs.h"
 #include "inpdefs.h"
 #include "ftedefs.h"
@@ -29,7 +24,7 @@ $Id$
 #include "completion.h"
 #include "variable.h"
 #include "breakp2.h"
-#include "../misc/util.h" /* dirname() */
+#include "../misc/util.h" /* ngdirname() */
 #include "../misc/mktemp.h"
 #include "subckt.h"
 #include "spiceif.h"
@@ -330,7 +325,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
    /* read in the deck from a file */
    char *filename_dup = ( filename == NULL ) ? strdup(".") : strdup(filename);
-   inp_readall(fp, &deck, 0, dirname(filename_dup), comfile);
+   inp_readall(fp, &deck, 0, ngdirname(filename_dup), comfile);
    tfree(filename_dup);
 
    /* if nothing came back from inp_readall, just close fp and return to caller */

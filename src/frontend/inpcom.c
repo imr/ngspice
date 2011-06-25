@@ -32,11 +32,6 @@ Author: 1985 Wayne A. Christopher
 
 #include "ngspice.h"
 
-#ifdef HAVE_LIBGEN_H /* dirname */
-#include <libgen.h>
-#define HAVE_DECL_BASENAME 1
-#endif
-
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "fteext.h"
@@ -46,7 +41,7 @@ Author: 1985 Wayne A. Christopher
 
 #include "inpcom.h"
 #include "variable.h"
-#include "../misc/util.h" /* dirname() */
+#include "../misc/util.h" /* ngdirname() */
 #include "../misc/stringutil.h"
 #include <wordlist.h>
 
@@ -1280,7 +1275,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
                if ( dir_name_flag == FALSE ) {
                   char *s_dup = strdup(s);
-                  inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, dirname(s_dup), FALSE);
+                  inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, ngdirname(s_dup), FALSE);
                   tfree(s_dup);
                }
                else
@@ -1342,7 +1337,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
          if ( dir_name_flag == FALSE ) {
             char *s_dup = strdup(s);
-            inp_readall(newfp, &newcard, call_depth+1, dirname(s_dup), FALSE);  /* read stuff in include file into netlist */
+            inp_readall(newfp, &newcard, call_depth+1, ngdirname(s_dup), FALSE);  /* read stuff in include file into netlist */
             tfree(s_dup);
          }
          else

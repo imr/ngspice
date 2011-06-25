@@ -1,5 +1,7 @@
 2011-06-25 Holger Vogt
- * ivars.c: fix usage of dirname()
+ * ivars.c, ivars.h, inpcom.c, inp.c, util.c, util.h:
+   rename internal fcn dirname() to ngdirname() because it is different
+   from LINUX dirnam().
 
 2011-06-25  Robert Larice
  * src/ngsconvert.c :

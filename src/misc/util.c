@@ -149,7 +149,7 @@ char * absolute_pathname(char *string, char *dot_path)
 }
 
 
-#ifndef HAVE_DIRNAME
+/*
 
 char *
 basename(const char *name)
@@ -185,11 +185,12 @@ basename(const char *name)
     
     return base;
 }
+*/
 
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
 /* allow back slashes \\ */
 char *
-dirname(const char *name)
+ngdirname(const char *name)
 {
     static char *ret = NULL;
     int len;
@@ -239,7 +240,7 @@ dirname(const char *name)
 #else
 
 char *
-dirname(const char *name)
+ngdirname(const char *name)
 {
     static char *ret = NULL;
     int len;
@@ -280,4 +281,3 @@ dirname(const char *name)
 }
 #endif
 
-#endif

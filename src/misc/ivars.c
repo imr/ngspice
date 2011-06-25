@@ -4,7 +4,7 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 
 #include "ngspice.h"
 #include "ivars.h"
-#include "util.h"
+#include "../misc/util.h" /* ngdirname() */
 
 #ifdef HAVE_ASPRINTF
 #ifdef HAVE_LIBIBERTY_H /* asprintf */
@@ -62,7 +62,7 @@ mkvar(char **p, char *path_prefix, char *var_dir, char *env_var)
 void
 ivars(char *argv0)
 {
-    char *temp=NULL, *ngpath=NULL;
+    char *temp=NULL, *ngpath;
 	 /* $dprefix has been set to /usr/local or C:/Spice (Windows) in configure.ac,
     NGSPICEBINDIR has been set to $dprefix/bin in configure.ac, 
     Spice_Exec_Dir has been set to NGSPICEBINDIR in conf.c,
@@ -82,16 +82,10 @@ ivars(char *argv0)
     mkvar(&Spice_Path, Spice_Exec_Dir, "ngspice", "SPICE_PATH");
     /* may be used to store input files (*.lib, *.include, ...) */
     /* get directory where ngspice resides */
-#if defined(_MSC_VER) || defined(__MINGW32__)  /* FIXME dirname() different in util.c and LINUX */
-    ngpath = dirname(argv0);
-#else
-    ngpath = copy(argv0);
-    dirname(ngpath);
-#endif
+    ngpath = ngdirname(argv0);
     /* set path either to <ngspice-directory>/input or, if set, to
     environment variable NGSPICE_INPUT */
     mkvar(&Inp_Path, ngpath, "input", "NGSPICE_INPUT");
-    if (ngpath) tfree(ngpath);
 
     env_overr(&Spice_Host, "SPICE_HOST"); /* aspice */
     env_overr(&Bug_Addr, "SPICE_BUGADDR");

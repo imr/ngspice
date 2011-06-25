@@ -8,10 +8,6 @@
 
 char *canonicalize_pathname(char *path);
 char *absolute_pathname(char *string, char *dot_path);
-
-#ifndef HAVE_DIRNAME
-char *basename(const char *name);
-char *dirname(const char *name);
-#endif
+char *ngdirname(const char *name);
 
 #endif
