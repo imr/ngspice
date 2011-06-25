@@ -154,7 +154,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
                 sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, PARAM(file));
                 state->fp = fopen(p, "r");
                 free(p);
-            }
+            } 
 			if (!state->fp) {			
 				char msg[512];
 				snprintf(msg, sizeof(msg), "cannot open file %s", PARAM(file));
@@ -167,7 +167,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
 	amploffssize = PARAM_NULL(amploffset) ? 0 : PARAM_SIZE(amploffset);
 	while (TIME >= timeinterval[1] && !state->atend) {
 		char line[512];
-		char *cp;
+		char *cp, *cpdel;
 		char *cp2;
 		double t;
 		int i;
@@ -180,14 +180,18 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
 			break;
 		}
 		state->pos = ftell(state->fp);
-		cp = line;
+		cpdel = cp = strdup(line);
 		while (*cp && isspace(*cp))
 			++cp;
-		if (*cp == '#' || *cp == ';')
+		if (*cp == '#' || *cp == ';') {
+			free(cpdel);
 			continue;
+		}
 		t = strtod(cp, &cp2);
-		if (cp2 == cp)
+		if (cp2 == cp) {
+			free(cpdel);
 			continue;
+		}
 		cp = cp2;
 		if (!PARAM_NULL(timescale))
 			t *= PARAM(timescale);
@@ -212,6 +216,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
 				t += PARAM(amploffset[i]);
 			amplinterval[2 * i + 1] = t;
 		}
+		free(cpdel);
 	}
 	if (TIME < timeinterval[1] && timeinterval[0] < timeinterval[1] && 0.0 <= timeinterval[0]) {
 		if (!PARAM_NULL(amplstep) && PARAM(amplstep) == MIF_TRUE) {

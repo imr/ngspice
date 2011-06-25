@@ -2,6 +2,7 @@
  * ivars.c, ivars.h, inpcom.c, inp.c, util.c, util.h:
    rename internal fcn dirname() to ngdirname() because it is different
    from LINUX dirnam().
+ * analog/file_source/cfunc.mod: remove implicit char to char* conversion
 
 2011-06-25  Robert Larice
  * src/ngsconvert.c :
