@@ -1,38 +1,40 @@
 #!/bin/sh
 
 #
-#	Example Script to run tests and check results.
+#        Example Script to run tests and check results.
 #
-#	This is an example script for running QA tests on a
-#	model and then checking the simulated results against
-#	reference results. A separate target is defined for each
-#	variant of the model. The program runQaTests.pl runs the
-#	tests, and that program expects a perl module SIMULATOR.pm
-#	to be provided for each simulator that is tested.
-#	Examples of these are provided.
+#        This is an example script for running QA tests on a
+#        model and then checking the simulated results against
+#        reference results. A separate target is defined for each
+#        variant of the model. The program runQaTests.pl runs the
+#        tests, and that program expects a perl module SIMULATOR.pm
+#        to be provided for each simulator that is tested.
+#        Examples of these are provided.
 #
 
 qaSpecFile="qaSpec"
 qaResultsDirectory="results"
 testProgramName="$(dirname $0)/runQaTests.pl"
-testProgramFlags="-nwV"
+if [ -z "$testProgramFlags" ] ; then
+    testProgramFlags="-nwV"
+fi
 
 #testProgramFlags="-d"
 
 
 help() {
     cat <<-EOF
-	Valid targets are:
+        Valid targets are:
 
-	all                run tests and compare results for all simulators
+        all                run tests and compare results for all simulators
 
-	spice              run tests and compare results spice
-	ngspice            run tests and compare results ngspice
+        spice              run tests and compare results spice
+        ngspice            run tests and compare results ngspice
 
-	clean              remove all previously generated simulation results
+        clean              remove all previously generated simulation results
 
-	NOTE: if test results exist they are not resimulated
-	NOTE: to force resimulation run "make clean" first
+        NOTE: if test results exist they are not resimulated
+        NOTE: to force resimulation run "make clean" first
 EOF
 }
 
@@ -52,50 +54,50 @@ run_test() {
 
     for test in `${testProgramName} -lt -s ${simname} ${qaSpecFile}` ; do
 
-	echo ""
-	echo "****** Checking test (${simname}): ${test}"
+        echo ""
+        echo "****** Checking test (${simname}): ${test}"
 
-	for variant in `${testProgramName} -lv -s ${simname} ${qaSpecFile}` ; do
-	    ${testProgramName} \
+        for variant in `${testProgramName} -lv -s ${simname} ${qaSpecFile}` ; do
+            ${testProgramName} \
                 ${testProgramFlags} \
                 -s ${simname} \
                 -r -t ${test} \
                 -var ${variant} \
                 --results=${qaResultsDirectory} \
                 ${qaSpecFile}
-	done
+        done
     done
 
     for version in `ls -C1 ${qaResultsDirectory}/${simname}` ; do
-	for platform in `ls -C1 ${qaResultsDirectory}/${simname}/${version}` ; do
+        for platform in `ls -C1 ${qaResultsDirectory}/${simname}/${version}` ; do
 
-	    if [ ${version} = ${localVersion}  -a  ${platform} = ${localPlatform} ]
+            if [ ${version} = ${localVersion}  -a  ${platform} = ${localPlatform} ]
             then
-		break
-	    fi
+                break
+            fi
 
-	    echo ""
-	    echo "******"
-	    echo "****** Comparing previously run ${qaSpecFile} tests for ${simname}"
-	    echo "****** (for version ${version} on platform ${platform})"
-	    echo "******"
+            echo ""
+            echo "******"
+            echo "****** Comparing previously run ${qaSpecFile} tests for ${simname}"
+            echo "****** (for version ${version} on platform ${platform})"
+            echo "******"
 
-	    for test in `${testProgramName} -lt -s ${simname} ${qaSpecFile}` ; do
+            for test in `${testProgramName} -lt -s ${simname} ${qaSpecFile}` ; do
 
-		echo ""
-		echo "****** Checking test (${simname}): ${test}"
+                echo ""
+                echo "****** Checking test (${simname}): ${test}"
 
-		for variant in `${testProgramName} -lv -s ${simname} ${qaSpecFile}` ; do
-		    ${testProgramName} \
+                for variant in `${testProgramName} -lv -s ${simname} ${qaSpecFile}` ; do
+                    ${testProgramName} \
                         -c ${version} ${platform} \
                         -s ${simname} \
                         -t ${test} \
                         -var ${variant} \
                         --results=${qaResultsDirectory} \
                         ${qaSpecFile}
-		done
-	    done
-	done
+                done
+            done
+        done
     done
 }
 
