@@ -100,7 +100,7 @@ oldread(char *name)
     pl = alloc(struct plot);
     tfread(buf, 1, 80, fp);
     buf[80] = '\0';
-    for (i = strlen(buf) - 1; (i > 1) && (buf[i] == ' '); i--)
+    for (i = (int) strlen(buf) - 1; (i > 1) && (buf[i] == ' '); i--)
         ;
     buf[i + 1] = '\0';
     pl->pl_title = copy(buf);
@@ -285,25 +285,22 @@ oldwrite(char *name, bool app, struct plot *pl)
     tfwrite(&v->v_realdata[v->v_length - 1], sizeof (double), 1, fp);
                 }
             } else if ((tp == VF_REAL) && iscomplex(v)) {
-                if (i < v->v_length)
-                    f1 = realpart(&v->v_compdata[i]);
-                else
-                    f1 = realpart(&v->v_compdata[v-> v_length - 1]);
-                tfwrite(&f1, sizeof (double), 1, fp);
+                fprintf(cp_err, "internal error, everything real, yet complex ...\n");
+                exit(1);
             } else if ((tp == VF_COMPLEX) && isreal(v)) {
                 if (i < v->v_length)
-                    f1 = v->v_realdata[i];
+                    f1 = (float) v->v_realdata[i];
                 else
-                    f1 = v->v_realdata[v->v_length - 1];
+                    f1 = (float) v->v_realdata[v->v_length - 1];
                 tfwrite(&f1, sizeof (float), 1, fp);
                 tfwrite(&zero, sizeof (float), 1, fp);
             } else if ((tp == VF_COMPLEX) && iscomplex(v)) {
                 if (i < v->v_length) {
-                    f1 = realpart(&v->v_compdata[i]);
-                    f2 = imagpart(&v->v_compdata[i]);
+                    f1 = (float) realpart(&v->v_compdata[i]);
+                    f2 = (float) imagpart(&v->v_compdata[i]);
                 } else {
-                    f1 = realpart(&v->v_compdata[v-> v_length - 1]);
-                    f2 = imagpart(&v->v_compdata[v-> v_length - 1]);
+                    f1 = (float) realpart(&v->v_compdata[v-> v_length - 1]);
+                    f2 = (float) imagpart(&v->v_compdata[v-> v_length - 1]);
                 }
                 tfwrite(&f1, sizeof (float), 1, fp);
                 tfwrite(&f2, sizeof (float), 1, fp);

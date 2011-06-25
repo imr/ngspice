@@ -1,4 +1,11 @@
 2011-06-25  Robert Larice
+ * src/ngsconvert.c :
+   ngsconvert.c, swallow type conversion warnings
+   this case
+	 (tp == VF_REAL) && iscomplex(v)
+   was actually buggy, but couldn't ever happen
+
+2011-06-25  Robert Larice
  * src/xspice/ipc/ipc.c ,
  * src/xspice/ipc/ipcsockets.c :
    ipc.c and ipcsockets.c, swallow type conversion warnings
