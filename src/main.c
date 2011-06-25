@@ -486,9 +486,10 @@ sp_shutdown(int exitval)
 #ifdef HAS_WINDOWS
     if (exitval == EXIT_BAD)
         winmessage("Fatal error in SPICE");
-    else
-        winmessage("Information during setup, see text window!");
+    else if (exitval == EXIT_INFO)
+        winmessage("Information during setup, see main window!");
 #endif
+    if  (exitval == EXIT_INFO) exitval = EXIT_NORMAL;
     exit (exitval);
 }
 
@@ -655,7 +656,7 @@ show_help(void)
        "  -i, --interactive         run in interactive mode\n"
        "  -n, --no-spiceinit        don't load the local or user's config file\n"
        "  -o, --output=FILE         set the outputfile\n"
-       "  -p, --pipe		            run in I/O pipe mode\n"
+       "  -p, --pipe                run in I/O pipe mode\n"
        "  -q, --completion          activate command completion\n"
        "  -r, --rawfile=FILE        set the rawfile output\n"
        "  -s, --server              run spice as a server process\n"
@@ -675,7 +676,7 @@ show_version(void)
        "Currently maintained by the NGSpice Project\n\n"
        "Copyright (C) 1985-1996,"
        "  The Regents of the University of California\n"
-       "Copyright (C) 1999-2008,"
+       "Copyright (C) 1999-2011,"
        "  The NGSpice Project\n", cp_program, PACKAGE, VERSION);
 }
 
@@ -878,12 +879,12 @@ main(int argc, char **argv)
         switch (c) {
             case 'h':       /* Help */
               show_help();
-              sp_shutdown (EXIT_NORMAL);
+              sp_shutdown (EXIT_INFO);
               break;
 
             case 'v':       /* Version info */
               show_version();
-              sp_shutdown (EXIT_NORMAL);
+              sp_shutdown (EXIT_INFO);
               break;
 
             case 'b':       /* Batch mode */
