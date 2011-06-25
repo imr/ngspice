@@ -34,7 +34,7 @@ $Id$
 /* static declarations */
 static void gr_start_internal(struct dvec *dv, bool copyvec);
 static int iplot(struct plot *pl, int id);
-static void set(struct plot *plot, struct dbcomm *db, bool unset, int mode);
+static void set(struct plot *plot, struct dbcomm *db, bool unset, short mode);
 static char * getitright(char *buf, double num);
 
 /* for legends, set in gr_start, reset in gr_iplot and gr_init */
@@ -815,7 +815,7 @@ iplot(struct plot *pl, int id)
 }
 
 static void
-set(struct plot *plot, struct dbcomm *db, bool unset, int mode)
+set(struct plot *plot, struct dbcomm *db, bool unset, short mode)
 {
 
     struct dvec *v;
@@ -824,7 +824,7 @@ set(struct plot *plot, struct dbcomm *db, bool unset, int mode)
     if (db->db_type == DB_IPLOTALL || db->db_type == DB_TRACEALL) {
       for (v = plot->pl_dvecs; v; v = v->v_next) {
         if (unset)
-          v->v_flags &= ~mode;
+          v->v_flags &= (short) ~mode;
         else
           v->v_flags |= mode;
       }
@@ -841,7 +841,7 @@ set(struct plot *plot, struct dbcomm *db, bool unset, int mode)
           continue;
         }
         if (unset)
-          v->v_flags &= ~mode;
+          v->v_flags &= (short) ~mode;
         else
           v->v_flags |= mode;
     }
