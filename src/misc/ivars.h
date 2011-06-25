@@ -7,7 +7,7 @@
 #define IVARS_H_INCLUDED
 
 
-void ivars(void);
+void ivars(char*);
 void cleanvars(void);
 
 #endif

@@ -222,7 +222,10 @@ ft_cpinit(void)
        Lib_Path has been set to Spice_Lib_Dir adding /scripts in ivars() */
     if (Lib_Path && *Lib_Path) {
        /* set variable 'sourcepath' */ 
-       (void) sprintf(buf, "sourcepath = ( %s %s )", DIR_CWD, Lib_Path);
+        if (Inp_Path && *Inp_Path) 
+            (void) sprintf(buf, "sourcepath = ( %s %s %s )", DIR_CWD, Lib_Path, Inp_Path);
+        else
+            (void) sprintf(buf, "sourcepath = ( %s %s )", DIR_CWD, Lib_Path);
         wl = cp_doglob(cp_lexer(buf));
         cp_striplist(wl);
         com_set(wl);

@@ -103,6 +103,7 @@ extern void winmessage(char* new_msg); /* display a message box (defined in winm
 extern void SetSource( char * Name);   /* display the source file name in the source window */
 bool oflag = FALSE;         /* Output over redefined I/O functions */
 FILE *flogp = NULL;         /* log file ('-o logfile' command line option) */
+int xmain(int argc, char **argv); /* main function prototype */
 #endif /* HAS_WINDOWS */
 
 /* Frontend and circuit options */
@@ -824,7 +825,7 @@ main(int argc, char **argv)
     ARCHsize = 1;
 #endif /* PARALLEL_ARCH */
 
-    ivars( );
+    ivars(argv[0]);
 
     cp_in = stdin;
     cp_out = stdout;
@@ -1179,9 +1180,21 @@ bot:
             arg = argv[optind++];
             tp = fopen(arg, "r");
             if (!tp) {
-                perror(arg);
-                err = 1;
-                break;
+                char *lbuffer, *p;
+                lbuffer = getenv("NGSPICE_INPUT");
+//                fprintf(stdout, "Such-Dir %s\n", lbuffer);
+                if (lbuffer && *lbuffer) {
+                    p = TMALLOC(char, strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(arg) + 1);
+                    sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, arg);
+//                    fprintf(stdout, "Suchpfad %s\n", p);
+                    tp = fopen(p, "r");
+                    tfree(p);
+                }
+                if (!tp) {
+                    perror(arg);
+                    err = 1;
+                    break;
+                }
             }
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
             /* Copy the input file name which otherwise will be lost due to the

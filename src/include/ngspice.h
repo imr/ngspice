@@ -222,6 +222,7 @@ extern char *Default_MFB_Cap;
 extern char *Spice_Path;
 extern char *Help_Path;
 extern char *Lib_Path;
+extern char *Inp_Path;
 
 extern int ARCHme;	/* My logical process number */
 extern int ARCHsize;	/* Total number of processes */

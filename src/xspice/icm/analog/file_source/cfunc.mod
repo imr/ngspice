@@ -46,6 +46,7 @@ NON-STANDARD FEATURES
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 
 /*=== CONSTANTS ========================*/
 
@@ -54,8 +55,11 @@ NON-STANDARD FEATURES
 
 /*=== MACROS ===========================*/
 
-
-
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#define DIR_PATHSEP	"\\"
+#else
+#define DIR_PATHSEP	"/"
+#endif
   
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
 
@@ -143,10 +147,20 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
 		state->pos = 0;
 		state->atend = 0;
 		if (!state->fp) {
-			char msg[512];
-			snprintf(msg, sizeof(msg), "cannot open file %s", PARAM(file));
-			cm_message_send(msg);
-			state->atend = 1;
+			char *lbuffer, *p;
+            lbuffer = getenv("NGSPICE_INPUT");
+            if (lbuffer && *lbuffer) {
+                p = (char*) malloc(strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(PARAM(file)) + 1);
+                sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, PARAM(file));
+                state->fp = fopen(p, "r");
+                free(p);
+            }
+			if (!state->fp) {			
+				char msg[512];
+				snprintf(msg, sizeof(msg), "cannot open file %s", PARAM(file));
+				cm_message_send(msg);
+				state->atend = 1;
+			}
 		}
 	}
        	amplscalesize = PARAM_NULL(amplscale) ? 0 : PARAM_SIZE(amplscale);
