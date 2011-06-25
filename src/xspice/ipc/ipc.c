@@ -394,7 +394,7 @@ ipc_flush (void)
 
          /* write the records to the .log file */
          if ((end_of_record_index [i] - last) !=
-             write (batch_fd, &out_buffer[last], end_of_record_index [i] - last)) {
+             write (batch_fd, &out_buffer[last], (size_t) (end_of_record_index [i] - last))) {
 	/*		 fprintf (stderr,"ERROR: IPC: Error writing to batch output file\n"); */
             perror ("IPC");
             return IPC_STATUS_ERROR;
@@ -813,11 +813,10 @@ stuff_binary_v1 (
    if (n > 1) {
       trick.float_val[1] = (float)d2;
    }
-   for (i = 0, j = pos; i < n*sizeof(float); j++, i++)
+   for (i = 0, j = pos; i < n * (int) sizeof(float); j++, i++)
       buf[j] = trick.ch[i];
-   i = sizeof(float)*n + pos;
-   buf[0] = 'A' + i - 1; 
-   return i;
+   buf[0] = (char) ('A' + j - 1);
+   return j;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -847,7 +846,7 @@ ipc_send_double (
       /* If talking to Mentor tools, must force upper case for Mspice 7.0 */
       strtoupper(fmt_buffer);
 
-      len = stuff_binary_v1 (value, 0.0, 1, fmt_buffer, strlen(fmt_buffer));
+      len = stuff_binary_v1 (value, 0.0, 1, fmt_buffer, (int) strlen(fmt_buffer));
       break;
    case IPC_PROTOCOL_V2:
       break;
@@ -883,7 +882,7 @@ ipc_send_complex (
       strtoupper(fmt_buffer);
 
       len = stuff_binary_v1 (value.real, value.imag, 2, fmt_buffer,
-                             strlen(fmt_buffer));
+                             (int) strlen(fmt_buffer));
       break;
    case IPC_PROTOCOL_V2:
       break;
@@ -922,7 +921,7 @@ ipc_send_event (
    float        fvalue;
 
    /* Report error if size of data is too big for IPC channel block size */
-   if((len + strlen(print_val) + 100) >= OUT_BUFFER_SIZE) {
+   if((len + (int) strlen(print_val) + 100) >= OUT_BUFFER_SIZE) {
       printf("ERROR - Size of event-driven data too large for IPC channel\n");
       return IPC_STATUS_ERROR;
    }
@@ -970,8 +969,8 @@ ipc_send_event (
 
    /* Put the print value in */
    strcpy(buff_ptr, print_val);
-   buff_ptr += strlen(print_val);
-   buff_len += strlen(print_val);
+   buff_ptr +=       strlen(print_val);
+   buff_len += (int) strlen(print_val);
 
    /* Send the data to the IPC channel */
    return ipc_send_line_binary(buff, buff_len);
