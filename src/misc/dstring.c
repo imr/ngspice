@@ -4,7 +4,10 @@ DESCRIPTION:This file contains the routines for manipulating dynamic strings.
 CONTENTS:   
 DATE:	    Wed Mar 24 18:38:28 CDT 2010
 REVISIONS:  $Log$
-REVISIONS:  Revision 1.7  2011-06-22 17:17:41  rlar
+REVISIONS:  Revision 1.8  2011-06-26 20:00:03  rlar
+REVISIONS:  swallow type conversion warnings
+REVISIONS:
+REVISIONS:  Revision 1.7  2011/06/22 17:17:41  rlar
 REVISIONS:  remove some useless casts
 REVISIONS:
 REVISIONS:  Revision 1.6  2010/11/06 20:17:20  rlar
@@ -146,7 +149,7 @@ static int spice_format_length( va_list args, char *fmt )
     int size_format ;				/* width of field */
     int found_special ;				/* look for special characters */
     char *s ;					/* string */
-    char c ;					/* character */
+    double d ;
 
     /* -----------------------------------------------------------------
      * First find length of buffer.
@@ -190,7 +193,7 @@ static int spice_format_length( va_list args, char *fmt )
 		found_special = TRUE ;
 		break ;
 	      case 'c':
-		c = va_arg(args, int) ;
+		i = va_arg(args, int) ;
 		len++ ;
 		found_special = TRUE ;
 		break ;
@@ -199,7 +202,7 @@ static int spice_format_length( va_list args, char *fmt )
 	      case 'F':
 	      case 'g':
 	      case 'G':
-		c = va_arg(args, double) ;
+		d = va_arg(args, double) ;
 		len += 35 ;
 		found_special = TRUE ;
 		break ;

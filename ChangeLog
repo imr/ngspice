@@ -1,5 +1,13 @@
+2011-06-26  Robert Larice
+ * src/include/hash.h ,
+ * src/misc/dstring.c ,
+ * src/misc/hash.c :
+   swallow type conversion warnings
+   FIXME, get rid of this homegrown printf implementation (dstring.c)
+
 2011-06-26 Dietmar Warning
  * devices/bsim4/b4temp.c: zero init with TMALLOC instead of malloc
+     a missing pParam->BSIM4tvoffcv = 0; is the actual culprit.
  * devices/bsim4/b4noi.c: correct init the correlated noise slot in noiseDens and
    lnNdens vector, bug should be reported to bsim4 developer team.
 

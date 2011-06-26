@@ -150,9 +150,9 @@ we want to intentionally assign it.  The compiler is warning unnecessarily.
 	  if( c == 0) { \
 	    break ; \
 	  } \
-	  hsum += (hsum<<3) + c; \
+	  hsum += (hsum<<3) + (unsigned int) c;      \
 	}  \
-	hsum %= (size) ; \
+	hsum %= (unsigned int) (size) ;              \
     } while(0);
 
 #define NGHASH_NUM_TO_HASH( num, hsum, size ) \
@@ -181,8 +181,8 @@ we want to intentionally assign it.  The compiler is warning unnecessarily.
     do { 	\
       unsigned int temp ; \
       long value = (long) ptr ; \
-      temp = value ; \
-      hsum = temp & (size - 1) ; \
+      temp = (unsigned int) value ;              \
+      hsum = temp & (unsigned int) (size - 1) ;   \
     } while(0);
 
 
@@ -226,8 +226,8 @@ we want to intentionally assign it.  The compiler is warning unnecessarily.
     do { 	\
       unsigned int temp ; \
       long value = (long) ptr ; \
-      temp = value >> 4 ; \
-      hsum = temp & (size - 1) ; \
+      temp = (unsigned int) (value >> 4) ;       \
+      hsum = temp & (unsigned int) (size - 1) ;      \
     } while(0);
 
 #define NGHASH_PTR_COMPARE_FUNC( p1 , p2 ) ( (p1) != (p2) )

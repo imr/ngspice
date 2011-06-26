@@ -62,8 +62,8 @@ NGHASHPTR nghash_init_with_parms(void *comp_func, nghash_func hash_func, int num
     hashtable->max_density = max ;
     hashtable->need_resize = hashtable->size * hashtable->max_density ;
     hashtable->growth_factor = growth ;
-    hashtable->unique = unique ;
-    hashtable->power_of_two = power_of_two ;
+    hashtable->unique = (unique ? 1 : 0);
+    hashtable->power_of_two = (power_of_two ? 1 : 0);
     hashtable->thread = NULL ; /* initialize list */
     hashtable->last_entry = NULL ; /* end of list */
     hashtable->num_entries = 0 ;
