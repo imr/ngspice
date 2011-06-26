@@ -1,3 +1,8 @@
+2011-06-26 Dietmar Warning
+ * devices/bsim4/b4temp.c: zero init with TMALLOC instead of malloc
+ * devices/bsim4/b4noi.c: correct init the correlated noise slot in noiseDens and
+   lnNdens vector, bug should be reported to bsim4 developer team.
+
 2011-06-25 Holger Vogt
  * ivars.c, ivars.h, inpcom.c, inp.c, util.c, util.h:
    rename internal fcn dirname() to ngdirname() because it is different
