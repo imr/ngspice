@@ -1,3 +1,7 @@
+2011-06-30 Dietmar Warning
+ * src/spicelib/devices/hisim2/hsm2eval.c: use macros for CeilingPow 
+   and smoothZero instead of static functions
+
 2011-06-30  Robert Larice
  * src/ciderlib/oned/oneadmit.c ,
  * src/ciderlib/twod/twoadmit.c :

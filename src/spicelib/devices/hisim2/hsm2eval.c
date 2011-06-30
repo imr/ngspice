@@ -239,6 +239,7 @@ double TMF1 , TMF2 , TMF3 , TMF4 ;
 * smoothZero: flooring to zero.
 *      y = 0.5 ( x + sqrt( x^2 + 4 delta^2 ) )
 *-----------------*/
+/*
 static double smoothZero
 (
  double x,
@@ -250,6 +251,7 @@ static double smoothZero
   if (dx) *dx = 0.5 * ( 1.0 + x / sqr ) ;
   return 0.5 * ( x + sqr ) ;
 }
+*/
 /*---------------------------------------------------*
 * CeilingPow: ceiling for positive x, flooring for negative x.
 *      y = x * xmax / ( x^{2m} + xmax^{2m} )^{1/(2m)}
@@ -258,6 +260,7 @@ static double smoothZero
 *   - -xmax < y < xmax.
 *   - dy/dx|_{x=0} = 1.
 *-----------------*/
+/*
 static double CeilingPow
 (
  double x,
@@ -300,7 +303,7 @@ static double CeilingPow
   (*dx) = xmax * xmp * dnm / arg ;
   return result ;
 }
-
+*/
 /*---------------------------------------------------*
 * CeilingPow: ceiling for positive x, flooring for negative x.
 *      y = x * xmax / ( x^{2m} + xmax^{2m} )^{1/(2m)}
