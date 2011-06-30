@@ -102,7 +102,7 @@ void cm_analog_alloc(
     }
 
     /* Compute number of doubles needed and allocate space in ckt->CKTstates[i] */
-    doubles_needed = bytes / sizeof(double) + 1;
+    doubles_needed = bytes / (int) sizeof(double) + 1;
 
     /* Allocate space in instance struct for this state descriptor */
     if(here->num_state == 0) {
@@ -249,7 +249,7 @@ int  cm_analog_integrate(
 
     /* Check to be sure argument address is in range of state0 vector */
     if((byte_index < 0) ||
-        (byte_index > ((ckt->CKTnumStates - 1) * sizeof(double)) ) ) {
+       (byte_index > (ckt->CKTnumStates - 1) * (int) sizeof(double))) {
         g_mif_info.errmsg =
         "ERROR - cm_analog_integrate() - Argument must be in state vector 0\n";
         *partial  = 0.0;
@@ -342,7 +342,7 @@ int  cm_analog_converge(
 
     /* Check to be sure argument address is in range of state0 vector */
     if((byte_index < 0) ||
-        (byte_index > ((ckt->CKTnumStates - 1) * sizeof(double)) ) ) {
+       (byte_index > (ckt->CKTnumStates - 1) * (int) sizeof(double))) {
         g_mif_info.errmsg =
         "ERROR - cm_analog_converge() - Argument must be in state vector 0\n";
         return(MIF_ERROR);

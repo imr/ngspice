@@ -1,4 +1,8 @@
 2011-06-30  Robert Larice
+ * src/xspice/cm/cm.c :
+   cm.c, swallow type conversion warnings
+
+2011-06-30  Robert Larice
  * src/spicelib/devices/bjt/bjtdefs.h ,
  * src/spicelib/devices/dio/diodefs.h :
    BJTtlev, BJTtlevc, DIOtlev, DIOtlevc, swallow type conversion warnings
