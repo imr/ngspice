@@ -1,4 +1,10 @@
 2011-06-30  Robert Larice
+ * src/frontend/plotting/x11.c :
+   remove compiler warnings by explicit casting double -> int etc.
+     extend Holger's commit from 2011-06-11 to x11.c
+     FIXME, consider rounding towards nearest instead of towards zero
+
+2011-06-30  Robert Larice
  * src/spicelib/devices/hisim2/hsm2eval.c ,
  * src/spicelib/devices/hisimhv/hsmhveval.c :
    hsm2eval.c, hsmhveval.c, swallow type conversion warnings

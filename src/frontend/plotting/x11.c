@@ -539,8 +539,8 @@ X11_Arc(int x0, int y0, int radius, double theta, double delta_theta)
     }
 
     if (DEVDEP(currentgraph).isopen) {
-	t1 = 64 * (180.0 / M_PI) * theta;
-	t2 = 64 * (180.0 / M_PI) * delta_theta;
+	t1 = (int) (64 * (180.0 / M_PI) * theta);
+	t2 = (int) (64 * (180.0 / M_PI) * delta_theta);
 	if (t2 == 0)
 		return 0;
 	XDrawArc(display, DEVDEP(currentgraph).window, DEVDEP(currentgraph).gc,
