@@ -188,6 +188,8 @@ NBJTadmittance(ONEdevice *pDevice, double omega, SPcomplex *yIeVce,
   /* use a normalized radian frequency */
   omega *= TNorm;
   CMPLX_ASSIGN_VALUE(cOmega, 0.0, omega);
+  CMPLX_ASSIGN_VALUE(pIeVce, NAN, NAN);
+  CMPLX_ASSIGN_VALUE(pIcVce, NAN, NAN);
 
   if ((AcAnalysisMethod == SOR) || (AcAnalysisMethod == SOR_ONLY)) {
     /* LOAD */

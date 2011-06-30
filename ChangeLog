@@ -1,4 +1,9 @@
 2011-06-30  Robert Larice
+ * src/ciderlib/oned/oneadmit.c ,
+ * src/ciderlib/twod/twoadmit.c :
+   oneadmit.c twoadmit.c, uninitialized variable warning
+
+2011-06-30  Robert Larice
  * src/ciderlib/support/suprmitf.c :
    suprmitf.c, uninitialized variable warning
 
