@@ -217,8 +217,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOforwardKneeCurrent; /* Forward Knee current */
     double DIOreverseKneeCurrent; /* Reverse Knee current */
 
-    unsigned DIOtlev; /* Diode temperature equation selector */ 
-    unsigned DIOtlevc; /* Diode temperature equation selector */ 
+    int    DIOtlev; /* Diode temperature equation selector */
+    int    DIOtlevc; /* Diode temperature equation selector */
     double DIOactivationEnergy; /* activation energy (EG) */
     double DIOsaturationCurrentExp; /* Saturation current exponential (XTI) */
     double DIOcta; /* Area junction temperature coefficient */

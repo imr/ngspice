@@ -378,8 +378,8 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTfNexp;
     double BJTsubSatCur;   /* input - don't use */
     double BJTemissionCoeffS;
-    unsigned BJTtlev;
-    unsigned BJTtlevc;
+    int    BJTtlev;
+    int    BJTtlevc;
     double BJTtbf1;
     double BJTtbf2;
     double BJTtbr1;
