@@ -1029,6 +1029,7 @@ static void measure_rms_integral(
 /* -----------------------------------------------------------------
  * Function: Wrapper function to process a RMS measurement.
  * ----------------------------------------------------------------- */
+#if 0
 static void measure_rms(
     MEASUREPTR meas                 /* in : parsed measurement data request */
 ) {
@@ -1038,10 +1039,12 @@ static void measure_rms(
    measure_rms_integral(meas,AT_RMS) ;
    return;
 }
+#endif
 
 /* -----------------------------------------------------------------
  * Function: Wrapper function to process a integration measurement.
  * ----------------------------------------------------------------- */
+#if 0
 static void measure_integ(
    MEASUREPTR meas                 /* in : parsed measurement data request */
 )  {
@@ -1049,14 +1052,18 @@ static void measure_integ(
    measure_rms_integral(meas,AT_INTEG) ;
    return;
 }
+#endif
 
 /* still some more work to do.... */
+#if 0
 static void measure_deriv(void) {
     // DERIVATIVE DERIV
    return;
 }
+#endif
 
 // ERR Equations
+#if 0
 static void measure_ERR(void) {
    return;
 }
@@ -1072,6 +1079,7 @@ static void measure_ERR2(void) {
 static void measure_ERR3(void) {
    return;
 }
+#endif
 
 void com_dotmeasure(wordlist *wl) {
 

@@ -1,4 +1,8 @@
 2011-06-30  Robert Larice
+ * src/frontend/com_measure2.c :
+   surpress warnings, disable currently unused functions
+
+2011-06-30  Robert Larice
  * src/frontend/plotting/x11.c :
    remove compiler warnings by explicit casting double -> int etc.
      extend Holger's commit from 2011-06-11 to x11.c
