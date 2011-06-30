@@ -1,4 +1,10 @@
 2011-06-30  Robert Larice
+ * src/spicelib/devices/bsim4/b4noi.c ,
+ * src/spicelib/devices/hisim2/hsm2noi.c ,
+ * src/spicelib/devices/hisimhv/hsmhvnoi.c :
+   use TMALLOC, funcall, and NULL casts
+
+2011-06-30  Robert Larice
  * src/xspice/cm/cm.c :
    cm.c, swallow type conversion warnings
 

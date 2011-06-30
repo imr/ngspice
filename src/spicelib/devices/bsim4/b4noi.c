@@ -149,16 +149,14 @@ double m;
                                   {    (void) sprintf(name, "onoise.%s%s",
                                                       here->BSIM4name,
                                                       BSIM4nNames[i]);
-                                       data->namelist = (IFuid *) trealloc(
-                                             (char *) data->namelist,
-                                             (data->numPlots + 1)
-                                             * sizeof(IFuid));
+                                       data->namelist = TREALLOC(IFuid,
+                                             data->namelist,
+                                             data->numPlots + 1);
                                        if (!data->namelist)
                                            return(E_NOMEM);
-                                       (*(SPfrontEnd->IFnewUid)) (ckt,
+                                       SPfrontEnd->IFnewUid (ckt,
                                           &(data->namelist[data->numPlots++]),
-                                          (IFuid) NULL, name, UID_OTHER,
-                                           NULL);
+                                          NULL, name, UID_OTHER, NULL);
                                        /* we've added one more plot */
                                   }
                                   break;
@@ -167,31 +165,27 @@ double m;
                                   {    (void) sprintf(name, "onoise_total.%s%s",
                                                       here->BSIM4name,
                                                       BSIM4nNames[i]);
-                                       data->namelist = (IFuid *) trealloc(
-                                             (char *) data->namelist,
-                                             (data->numPlots + 1)
-                                             * sizeof(IFuid));
+                                       data->namelist = TREALLOC(IFuid,
+                                             data->namelist,
+                                             data->numPlots + 1);
                                        if (!data->namelist)
                                            return(E_NOMEM);
-                                       (*(SPfrontEnd->IFnewUid)) (ckt,
+                                       SPfrontEnd->IFnewUid (ckt,
                                           &(data->namelist[data->numPlots++]),
-                                          (IFuid) NULL, name, UID_OTHER,
-                                           NULL);
+                                          NULL, name, UID_OTHER, NULL);
                                        /* we've added one more plot */
 
                                        (void) sprintf(name, "inoise_total.%s%s",
                                                       here->BSIM4name,
                                                       BSIM4nNames[i]);
-                                       data->namelist = (IFuid *) trealloc(
-                                             (char *) data->namelist,
-                                             (data->numPlots + 1)
-                                             * sizeof(IFuid));
+                                       data->namelist = TREALLOC(IFuid,
+                                             data->namelist,
+                                             data->numPlots + 1);
                                        if (!data->namelist)
                                            return(E_NOMEM);
-                                       (*(SPfrontEnd->IFnewUid)) (ckt,
+                                       SPfrontEnd->IFnewUid (ckt,
                                           &(data->namelist[data->numPlots++]),
-                                          (IFuid) NULL, name, UID_OTHER,
-                                          NULL);
+                                          NULL, name, UID_OTHER, NULL);
                                        /* we've added one more plot */
                                   }
                                   break;
