@@ -1,4 +1,8 @@
 2011-06-30  Robert Larice
+ * src/ciderlib/support/suprmitf.c :
+   suprmitf.c, uninitialized variable warning
+
+2011-06-30  Robert Larice
  * src/frontend/com_measure2.c :
    com_measure2.c, uninitialized variable warning
 
