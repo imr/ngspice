@@ -16,14 +16,16 @@ Modified: 2000 AlansFixes
 
 static void copy_coeffs(ISRCinstance *here, IFvalue *value)
 {
+    int n = value->v.numValue;
+
     if(here->ISRCcoeffs)
         tfree(here->ISRCcoeffs);
 
-    here->ISRCcoeffs = TMALLOC(double, value->v.numValue);
-    here->ISRCfunctionOrder = value->v.numValue;
+    here->ISRCcoeffs = TMALLOC(double, n);
+    here->ISRCfunctionOrder = n;
     here->ISRCcoeffsGiven = TRUE;
 
-    memcpy(here->ISRCcoeffs, value->v.vec.rVec, value->v.numValue * sizeof(double));
+    memcpy(here->ISRCcoeffs, value->v.vec.rVec, (size_t) n * sizeof(double));
 }
 
 

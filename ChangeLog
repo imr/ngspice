@@ -1,3 +1,9 @@
+2011-06-30  Robert Larice
+ * src/spicelib/devices/cpl/cplmpar.c ,
+ * src/spicelib/devices/isrc/isrcpar.c ,
+ * src/spicelib/devices/vsrc/vsrcpar.c :
+  copy_coeffs(), swallow type conversion warnings
+
 2011-06-26  Robert Larice
  * src/include/hash.h ,
  * src/misc/dstring.c ,

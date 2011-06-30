@@ -16,14 +16,16 @@ Modified: 2000 AlansFixes
 
 static void copy_coeffs(VSRCinstance *here, IFvalue *value)
 {
+    int n = value->v.numValue;
+
     if(here->VSRCcoeffs)
         tfree(here->VSRCcoeffs);
 
-    here->VSRCcoeffs = TMALLOC(double, value->v.numValue);
-    here->VSRCfunctionOrder = value->v.numValue;
+    here->VSRCcoeffs = TMALLOC(double, n);
+    here->VSRCfunctionOrder = n;
     here->VSRCcoeffsGiven = TRUE;
 
-    memcpy(here->VSRCcoeffs, value->v.vec.rVec, value->v.numValue * sizeof(double));
+    memcpy(here->VSRCcoeffs, value->v.vec.rVec, (size_t) n * sizeof(double));
 }
 
 

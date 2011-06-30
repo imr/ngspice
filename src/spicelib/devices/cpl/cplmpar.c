@@ -15,12 +15,14 @@ Author: 1992 Charles Hough
 
 static void copy_coeffs(double **dst, IFvalue *value)
 {
+    int n = value->v.numValue;
+
     if(*dst)
         tfree(*dst);
 
-    *dst = TMALLOC(double, value->v.numValue);
+    *dst = TMALLOC(double, n);
 
-    memcpy(*dst, value->v.vec.rVec, value->v.numValue * sizeof(double));
+    memcpy(*dst, value->v.vec.rVec, (size_t) n * sizeof(double));
 }
 
 
