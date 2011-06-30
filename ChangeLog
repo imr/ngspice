@@ -1,6 +1,11 @@
+2011-06-30  Robert Larice
+ * src/spicelib/devices/hisim2/hsm2eval.c ,
+ * src/spicelib/devices/hisimhv/hsmhveval.c :
+   hsm2eval.c, hsmhveval.c, swallow type conversion warnings
+
 2011-06-30 Dietmar Warning
- * src/spicelib/devices/hisim2/hsm2eval.c: use macros for CeilingPow 
-   and smoothZero instead of static functions
+ * src/spicelib/devices/hisim2/hsm2eval.c:
+   use macros for CeilingPow() and smoothZero() instead of static functions
 
 2011-06-30  Robert Larice
  * src/ciderlib/oned/oneadmit.c ,

@@ -239,7 +239,7 @@ double TMF1 , TMF2 , TMF3 , TMF4 ;
 * smoothZero: flooring to zero.
 *      y = 0.5 ( x + sqrt( x^2 + 4 delta^2 ) )
 *-----------------*/
-/*
+#if 0
 static double smoothZero
 (
  double x,
@@ -251,7 +251,7 @@ static double smoothZero
   if (dx) *dx = 0.5 * ( 1.0 + x / sqr ) ;
   return 0.5 * ( x + sqr ) ;
 }
-*/
+#endif
 /*---------------------------------------------------*
 * CeilingPow: ceiling for positive x, flooring for negative x.
 *      y = x * xmax / ( x^{2m} + xmax^{2m} )^{1/(2m)}
@@ -260,7 +260,7 @@ static double smoothZero
 *   - -xmax < y < xmax.
 *   - dy/dx|_{x=0} = 1.
 *-----------------*/
-/*
+#if 0
 static double CeilingPow
 (
  double x,
@@ -303,7 +303,7 @@ static double CeilingPow
   (*dx) = xmax * xmp * dnm / arg ;
   return result ;
 }
-*/
+#endif
 /*---------------------------------------------------*
 * CeilingPow: ceiling for positive x, flooring for negative x.
 *      y = x * xmax / ( x^{2m} + xmax^{2m} )^{1/(2m)}
@@ -5331,8 +5331,8 @@ start_of_mobility:
       Vdbgmt = Vdsgmt - Vbsgmt ;
       Vgbgmt = Vgsgmt - Vbsgmt ;
       Vsbgmt = - Vbsgmt ;
-      flg_overs = flg_ovloops * ModeNML + flg_ovloopd * ModeRVS ; /* geometrical source */
-      flg_overd = flg_ovloops * ModeRVS + flg_ovloopd * ModeNML ; /* geometrical drain */
+      flg_overs = flg_ovloops * (int)ModeNML + flg_ovloopd * (int)ModeRVS ; /* geometrical source */
+      flg_overd = flg_ovloops * (int)ModeRVS + flg_ovloopd * (int)ModeNML ; /* geometrical drain */
       Vxbgmt = flg_overs * Vsbgmt + flg_overd * Vdbgmt ;
 
 	/*---------------------------------------------------*
@@ -5931,8 +5931,8 @@ start_of_mobility:
     /*-----------------------------------*
      * Additional constant capacitance model
      *-----------------*/
-    flg_overgiven = ( ModeRVS * model->HSM2_cgso_Given
-                    + ModeNML * model->HSM2_cgdo_Given  ) ;
+    flg_overgiven = ( (int)ModeRVS * model->HSM2_cgso_Given
+                    + (int)ModeNML * model->HSM2_cgdo_Given  ) ;
     if ( flg_overgiven ) {
       Cgdo  = ModeRVS * pParam->HSM2_cgso + ModeNML * pParam->HSM2_cgdo ;
       Cgdo *= - here->HSM2_weff_nf ;
@@ -5942,8 +5942,8 @@ start_of_mobility:
       Qgod_dVgs += -Cgdo ;
     }
 
-    flg_overgiven = ( ModeNML * model->HSM2_cgso_Given
-                    + ModeRVS * model->HSM2_cgdo_Given ) ;
+    flg_overgiven = ( (int)ModeNML * model->HSM2_cgso_Given
+                    + (int)ModeRVS * model->HSM2_cgdo_Given ) ;
     if(flg_overgiven) {
       Cgso  = ModeNML * pParam->HSM2_cgso + ModeRVS * pParam->HSM2_cgdo ;
       Cgso *= - here->HSM2_weff_nf ;

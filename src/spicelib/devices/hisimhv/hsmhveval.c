@@ -4942,8 +4942,8 @@ start_of_mobility:
   /*-----------------------------------------------------------*
    * Overlap charges
    *-----------------*/
-  Coovlps = ModeNML * model->HSMHV_coovlps + ModeRVS * model->HSMHV_coovlp ;
-  Coovlpd = ModeRVS * model->HSMHV_coovlps + ModeNML * model->HSMHV_coovlp ;
+  Coovlps = (int)ModeNML * model->HSMHV_coovlps + (int)ModeRVS * model->HSMHV_coovlp ;
+  Coovlpd = (int)ModeRVS * model->HSMHV_coovlps + (int)ModeNML * model->HSMHV_coovlp ;
   Lovers = ModeNML * here->HSMHV_lovers + ModeRVS * here->HSMHV_loverld ;
   Loverd = ModeRVS * here->HSMHV_lovers + ModeNML * here->HSMHV_loverld ;
   Novers = ModeNML * pParam->HSMHV_novers + ModeRVS * pParam->HSMHV_nover ;
@@ -4957,8 +4957,8 @@ start_of_mobility:
   * Constant capacitance model
   *-----------------*/
   if ( Coovlps == 0 ) {
-    flg_overgiven = ( ModeNML * model->HSMHV_cgso_Given 
-                    + ModeRVS * model->HSMHV_cgdo_Given  ) ;
+    flg_overgiven = ( (int)ModeNML * model->HSMHV_cgso_Given
+                    + (int)ModeRVS * model->HSMHV_cgdo_Given  ) ;
     if ( flg_overgiven ) {
       Cgso = ModeNML * pParam->HSMHV_cgso + ModeRVS * pParam->HSMHV_cgdo ;
       Cgso *= - here->HSMHV_weffcv_nf ;
@@ -5060,8 +5060,8 @@ start_of_mobility:
     /*-----------------------------------*
      * Additional constant capacitance model
      *-----------------*/
-    flg_overgiven = ( ModeNML * model->HSMHV_cgso_Given 
-	             + ModeRVS * model->HSMHV_cgdo_Given  ) ;
+    flg_overgiven = ( (int)ModeNML * model->HSMHV_cgso_Given
+	            + (int)ModeRVS * model->HSMHV_cgdo_Given  ) ;
     if ( flg_overgiven ) {
       Cgso  = ModeNML * pParam->HSMHV_cgso + ModeRVS * pParam->HSMHV_cgdo ;
       Cgso *= - here->HSMHV_weffcv_nf ;
@@ -5079,8 +5079,8 @@ start_of_mobility:
   * Constant capacitance model
   *-----------------*/
   if ( Coovlpd == 0 ) {
-    flg_overgiven = ( ModeRVS * model->HSMHV_cgso_Given 
-                    + ModeNML * model->HSMHV_cgdo_Given  ) ;
+    flg_overgiven = ( (int)ModeRVS * model->HSMHV_cgso_Given
+                    + (int)ModeNML * model->HSMHV_cgdo_Given  ) ;
     if ( flg_overgiven ) {
       Cgdo = ModeRVS * pParam->HSMHV_cgso + ModeNML * pParam->HSMHV_cgdo ;
       Cgdo *= - here->HSMHV_weffcv_nf ;
@@ -5180,8 +5180,8 @@ start_of_mobility:
     /*-----------------------------------*
      * Additional constant capacitance model
      *-----------------*/
-    flg_overgiven = ( ModeRVS * model->HSMHV_cgso_Given
-                    + ModeNML * model->HSMHV_cgdo_Given  ) ;
+    flg_overgiven = ( (int)ModeRVS * model->HSMHV_cgso_Given
+                    + (int)ModeNML * model->HSMHV_cgdo_Given  ) ;
     if ( flg_overgiven ) {
       Cgdo  = ModeRVS * pParam->HSMHV_cgso + ModeNML * pParam->HSMHV_cgdo ;
       Cgdo *= - here->HSMHV_weffcv_nf ;
