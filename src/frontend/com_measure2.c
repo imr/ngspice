@@ -383,10 +383,14 @@ static void com_measure_when(
    struct dvec *d, *d2, *dScale;
 
    d = vec_get(meas->m_vec);
+
    if (meas->m_vec2) {
       d2 = vec_get(meas->m_vec2);
       has_d2 = TRUE;
+   } else {
+      d2 = NULL;
    }
+
    dScale = plot_cur->pl_scale;
 
    if (d == NULL) {
@@ -394,7 +398,7 @@ static void com_measure_when(
       return;
    }
 
-   if ((has_d2) && (d == NULL)) {
+   if (has_d2 && (d2 == NULL)) {
       fprintf(cp_err, "Error: no such vector as %s.\n", meas->m_vec2);
       return;
    }
@@ -460,7 +464,10 @@ static void com_measure_when(
           else {
              value2 = d2->v_realdata[i];
           }
+      } else {
+          value2 = NAN;
       }
+
       /* 'dc' is special: it may start at an arbitrary scale value.
          Use m_td to store this value, a delay TD does not make sense */
       if ((dc_check) && (i==0))

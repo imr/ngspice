@@ -1,4 +1,8 @@
 2011-06-30  Robert Larice
+ * src/frontend/com_measure2.c :
+   com_measure2.c, uninitialized variable warning
+
+2011-06-30  Robert Larice
  * src/spicelib/devices/bsim4/b4noi.c ,
  * src/spicelib/devices/hisim2/hsm2noi.c ,
  * src/spicelib/devices/hisimhv/hsmhvnoi.c :
