@@ -52,7 +52,7 @@ Z	[0-9A-Za-z_]
    
 %%
 
-"/*"			{char ch, last_ch;
+"/*"			{int ch, last_ch;
 			 ECHO; /* a comment - repeat it */
 			 ch = '\0';
 			 do {
@@ -62,9 +62,14 @@ Z	[0-9A-Za-z_]
 #else
 			    ch = input();
 #endif
+                            if(ch == EOF) {
+                             mod_yyerror ("Unterminated comment");
+                             break;
+                            }
+
 			    fputc(ch,mod_yyout);
-			 } while (ch && !((last_ch == '*') && (ch == '/')));
-		         if (!ch) {mod_yyerror ("Unterminated comment");}}
+			 } while (!((last_ch == '*') && (ch == '/')));
+		        }
 
 ARGS			{return TOK_ARGS;}
 INIT			{return TOK_INIT;}

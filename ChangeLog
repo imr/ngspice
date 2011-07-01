@@ -1,4 +1,8 @@
 2011-07-01  Robert Larice
+ * src/xspice/cmpp/mod_lex.l :
+   minor bug fix, use EOF
+
+2011-07-01  Robert Larice
  * src/frontend/help/textdisp.c :
    textdisp.c, minor rewrite to swallow type conversion warnings
 
