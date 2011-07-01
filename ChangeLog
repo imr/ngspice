@@ -1,3 +1,7 @@
+2011-07-01  Robert Larice
+ * src/frontend/help/textdisp.c :
+   textdisp.c, minor rewrite to swallow type conversion warnings
+
 2011-06-30  Robert Larice
  * src/frontend/com_measure2.c :
    surpress warnings, disable currently unused functions

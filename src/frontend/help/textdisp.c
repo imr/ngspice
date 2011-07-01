@@ -164,41 +164,45 @@ putline(char *s)
 static int
 putstuff(toplink *tl, int base)
 {
-    unsigned int maxwidth = 0;
+    int maxwidth = 0;
     int ncols, nrows, nbuts = 0, i, j, k;
     toplink *tt;
 
     for (tt = tl; tt; tt = tt->next) {
-        if (strlen(tt->description) + 5 > maxwidth)
-            maxwidth = strlen(tt->description) + 5;
+        if (maxwidth < (int) strlen(tt->description))
+            maxwidth = (int) strlen(tt->description);
         nbuts++;
     }
-    ncols = hlp_width / maxwidth;
-    if (!ncols) {
+
+    ncols = hlp_width / (maxwidth + 5);
+
+    if (ncols < 1) {
         fprintf(stderr, "Help, button too big!!\n");
         return (0);
     }
+
     if (ncols > nbuts)
         ncols = nbuts;
+
     maxwidth = hlp_width / ncols;
-    nrows = nbuts / ncols;
-    if (nrows * ncols < nbuts)
-        nrows++;
+
+    /* round up */
+    nrows = (nbuts + ncols - 1) / ncols;
 
     for (i = 0; i < nrows; i++) {
         for (tt = tl, j = 0; j < i; j++, tt = tt->next)
             ;
         for (j = 0; j < ncols; j++) {
             if (tt)
-                out_printf("%2d) %-*s ", base + j * nrows + i +
-                    1, maxwidth - 5, tt->description);
+                out_printf("%2d) %-*s ", base + j * nrows + i + 1,
+                    maxwidth - 5, tt->description);
             for (k = 0; k < nrows; k++)
                 if (tt)
                     tt = tt->next;
-            
         }
         out_printf("\n");
     }
+
     return (nbuts);
 }
 
