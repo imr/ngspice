@@ -30,7 +30,6 @@ char *hlp_filelist[] = { "ngspice", 0 };
 extern void ivars();
 
 #ifdef HAS_WINDOWS
-bool oflag = FALSE;         /* Output over redefined I/O functions */
 FILE *flogp;  /* hvogt 15.12.2001 */
 #endif /* HAS_WINDOWS */
 

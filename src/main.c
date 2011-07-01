@@ -101,7 +101,6 @@ char *ft_rawfile = "rawspice.raw";
 #ifdef HAS_WINDOWS
 extern void winmessage(char* new_msg); /* display a message box (defined in winmain.c)*/
 extern void SetSource( char * Name);   /* display the source file name in the source window */
-bool oflag = FALSE;         /* Output over redefined I/O functions */
 FILE *flogp = NULL;         /* log file ('-o logfile' command line option) */
 int xmain(int argc, char **argv); /* main function prototype */
 #endif /* HAS_WINDOWS */
@@ -984,9 +983,6 @@ main(int argc, char **argv)
             perror (buf);
             sp_shutdown (EXIT_BAD);
         }
-#ifdef HAS_WINDOWS
-        oflag = TRUE; /* All further output to -o log file */
-#endif
     } /* orflag */
 #ifdef SIMULATOR
     if_getparam = spif_getparam_special;

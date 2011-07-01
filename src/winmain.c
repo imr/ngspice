@@ -89,10 +89,9 @@ static SBufLine HistBuffer[HistSize];  /* History buffer for string window */
 static int HistIndex = 0;              /* History management */
 static int HistPtr   = 0;              /* History management */
 
-extern bool oflag;      /* if TRUE, Output to stdout redirected into file */
 extern bool ft_ngdebug; /* some additional debug info printed */
 extern bool ft_batchmode;
-extern FILE *flogp;     /* definition see xmain.c */
+extern FILE *flogp;     /* definition see xmain.c, stdout redirected to file */
 
 #include "winmain.h"
 /* Forward definition of main() */
@@ -963,7 +962,7 @@ THE_END:
 
 int f_f_l_u_s_h( FILE * __stream)
 {
-    if (((__stream == stdout) && (oflag == FALSE)) || (__stream == stderr))
+    if (((__stream == stdout) && !flogp) || (__stream == stderr))
         return 0;
     else
         return fflush(__stream);
@@ -984,7 +983,7 @@ int fg_e_t_c( FILE * __stream)
 int f_g_e_t_p_o_s( FILE * __stream, fpos_t * __pos)
 {
     int result;
-    if ((__stream == stdin) || ((__stream == stdout) && (oflag == FALSE)) || (__stream == stderr)) {
+    if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
         assert(FALSE);
         return 0;
     } else
@@ -1014,12 +1013,12 @@ char * fg_e_t_s(char * __s, int __n, FILE * __stream)
 
 int fp_u_t_c(int __c, FILE * __stream)
 {
-    if ((oflag == FALSE) && ((__stream == stdout) || (__stream == stderr))) {
+    if (!flogp && ((__stream == stdout) || (__stream == stderr))) {
         if ( __c == LF)
             w_putch( CR);
         return w_putch(__c);
 //   Ausgabe in Datei *.log  14.6.2000
-    } else if ((oflag == TRUE) && ((__stream == stdout) || __stream == stderr)) {
+    } else if (flogp && ((__stream == stdout) || __stream == stderr)) {
         return fputc( __c, flogp);
     } else
         return fputc( __c, __stream);
@@ -1027,7 +1026,7 @@ int fp_u_t_c(int __c, FILE * __stream)
 
 int fp_u_t_s(const char * __s, FILE * __stream)
 {
-//  if (((__stream == stdout) && (oflag == FALSE)) || (__stream == stderr)) {    hvogt 14.6.2000
+//  if (((__stream == stdout) && !flogp) || (__stream == stderr)) {    hvogt 14.6.2000
     if ((__stream == stdout) || (__stream == stderr)) {
 
         int c = SE;
@@ -1050,7 +1049,7 @@ int fp_r_i_n_t_f(FILE * __stream, const char * __format, ...)
     va_list args;
     va_start(args, __format);
 
-//  if (((__stream == stdout) && (oflag == FALSE)) || (__stream == stderr)) {
+//  if (((__stream == stdout) && !flogp) || (__stream == stderr)) {
     if ((__stream == stdout) || (__stream == stderr)) {
 
         s[0] = SE;
@@ -1065,7 +1064,7 @@ int fp_r_i_n_t_f(FILE * __stream, const char * __format, ...)
 
 int f_c_l_o_s_e( FILE * __stream)
 {
-    if ((__stream == stdin) || ((__stream == stdout) && (oflag == FALSE)) || (__stream == stderr)) {
+    if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
         assert(FALSE);
         return 0;
     }
@@ -1074,8 +1073,8 @@ int f_c_l_o_s_e( FILE * __stream)
 
 size_t f_r_e_a_d(void * __ptr, size_t __size, size_t __n, FILE * __stream)
 {
-//  if ((__stream == stdin) || ((__stream == stdout) && (oflag == FALSE)) || (__stream == stderr)) {
-    if (((__stream == stdout) && (oflag == FALSE)) || (__stream == stderr)) {
+//  if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
+    if (((__stream == stdout) && !flogp) || (__stream == stderr)) {
         assert(FALSE);
         return 0;
     }
@@ -1102,7 +1101,7 @@ size_t f_r_e_a_d(void * __ptr, size_t __size, size_t __n, FILE * __stream)
 
 FILE * f_r_e_o_p_e_n(const char * __path, const char * __mode, FILE * __stream)
 {
-    if ((__stream == stdin)/* || ((__stream == stdout) && (oflag == FALSE)) || (__stream == stderr)*/) {
+    if ((__stream == stdin)/* || ((__stream == stdout) && !flogp) || (__stream == stderr)*/) {
         assert(FALSE);
         return 0;
     }
@@ -1114,7 +1113,7 @@ int fs_c_a_n_f(FILE * __stream, const char * __format, ...)
     int result;
     va_list args;
     va_start(args, __format);
-    if ((__stream == stdin) || ((__stream == stdout) && (oflag == FALSE)) || (__stream == stderr)) {
+    if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
         assert(FALSE);
         return 0;
     }
@@ -1125,7 +1124,7 @@ int fs_c_a_n_f(FILE * __stream, const char * __format, ...)
 
 int f_s_e_e_k(FILE * __stream, long __offset, int __whence)
 {
-    if ((__stream == stdin) || ((__stream == stdout) && (oflag == FALSE)) || (__stream == stderr)) {
+    if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
         assert(FALSE);
         return 0;
     }
@@ -1134,7 +1133,7 @@ int f_s_e_e_k(FILE * __stream, long __offset, int __whence)
 
 int f_s_e_t_p_o_s(FILE * __stream, const fpos_t *__pos)
 {
-    if ((__stream == stdin) || ((__stream == stdout) && (oflag == FALSE)) || (__stream == stderr)) {
+    if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
         assert(FALSE);
         return 0;
     }
@@ -1143,7 +1142,7 @@ int f_s_e_t_p_o_s(FILE * __stream, const fpos_t *__pos)
 
 long f_t_e_l_l(FILE * __stream)
 {
-    if ((__stream == stdin) || ((__stream == stdout) && (oflag == FALSE)) || (__stream == stderr)) {
+    if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
         assert(FALSE);
         return 0;
     }
@@ -1195,7 +1194,7 @@ void p_e_r_r_o_r(const char * __s)
     fp_r_i_n_t_f(stderr, "%s: %s\n", __s, cp);
     /* output to message box 
     sprintf(s, "%s: %s\n", __s, cp);
-    if (!oflag) winmessage(s);*/
+    if (!flogp) winmessage(s);*/
 }
 
 int p_r_i_n_t_f(const char * __format, ...)
@@ -1238,7 +1237,7 @@ int vfp_r_i_n_t_f(FILE * __stream, const char * __format, void * __arglist)
     char s [IOBufSize];
 
     s[0] = SE;
-//  if (((__stream == stdout) && (oflag == FALSE)) || (__stream == stderr)) {
+//  if (((__stream == stdout) && !flogp) || (__stream == stderr)) {
     if ((__stream == stdout) || (__stream == stderr)) {
 
         result = vsprintf( s, __format, __arglist);
@@ -1432,7 +1431,7 @@ int system( const char * command)
 void winmessage(char* new_msg)
 {
     /* open a message box only if message is not written into -o xxx.log */
-   if (oflag == FALSE)
+   if (!flogp)
       MessageBox(NULL, new_msg, "Ngspice Info", MB_OK|MB_ICONERROR);
 }
 

@@ -1,4 +1,10 @@
 2011-07-01  Robert Larice
+ * src/main.c ,
+ * src/nghelp.c ,
+ * src/winmain.c :
+   winmain.c, remove redundant global variable `oflag'
+
+2011-07-01  Robert Larice
  * src/xspice/cmpp/mod_lex.l :
    minor bug fix, use EOF
 
