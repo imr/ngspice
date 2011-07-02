@@ -1306,21 +1306,23 @@ evl:
 
 #else  /* ~ SIMULATOR */
 
-    if (SETJMP(jbuf, 1))
-        goto evl;
+    if (SETJMP(jbuf, 1)) {
 
-    cp_interactive = FALSE;
-    err = 0;
+        fprintf(cp_err, "Warning: error executing during ft_loadfile().\n");
 
-    if (ft_nutmeg && gdata) {
-        if (optind < argc)
-            while (optind < argc)
-                ft_loadfile(argv[optind++]);
-        else
-            ft_loadfile(ft_rawfile);
+    } else {
+
+        cp_interactive = FALSE;
+        err = 0;
+
+        if (ft_nutmeg && gdata) {
+            if (optind < argc)
+                while (optind < argc)
+                    ft_loadfile(argv[optind++]);
+            else
+                ft_loadfile(ft_rawfile);
+        }
     }
-
-evl:
 
 #endif /* ~ SIMULATOR */
 
