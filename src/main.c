@@ -1320,9 +1320,12 @@ evl:
 
 evl:
     /* Nutmeg "main" */
-    (void) SETJMP(jbuf, 1);
-    cp_interactive = TRUE;
-    app_rl_readlines();  /*  enter the command processing loop  */
+    for(;;)
+        if(!SETJMP(jbuf, 1)) {
+            /*  enter the command processing loop  */
+            cp_interactive = TRUE;
+            app_rl_readlines();
+        }
 
 #endif /* ~ SIMULATOR */
 
