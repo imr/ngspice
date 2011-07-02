@@ -99,8 +99,8 @@ bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt.
 char *ft_rawfile = "rawspice.raw";
 
 #ifdef HAS_WINDOWS
-extern void winmessage(char* new_msg); /* display a message box (defined in winmain.c)*/
-extern void SetSource( char * Name);   /* display the source file name in the source window */
+extern void winmessage(char *new_msg); /* display a message box (defined in winmain.c)*/
+extern void SetSource(char *Name);   /* display the source file name in the source window */
 FILE *flogp = NULL;         /* log file ('-o logfile' command line option) */
 int xmain(int argc, char **argv); /* main function prototype */
 #endif /* HAS_WINDOWS */
@@ -160,7 +160,7 @@ double EpsNorm, VNorm, NNorm, LNorm, TNorm, JNorm, GNorm, ENorm;
  /* end cider globals */
 #endif /* CIDER */
 
-struct variable *(*if_getparam)(CKTcircuit *ckt, char** name, char* param, int ind, int do_model);
+struct variable *(*if_getparam)(CKTcircuit *ckt, char **name, char *param, int ind, int do_model);
 
 /* static functions */
 int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
@@ -168,7 +168,7 @@ static int sp_shutdown(int exitval);
 static void app_rl_readlines(void);
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
-static char * prompt(void);
+static char *prompt(void);
 #endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
 
 #ifndef X_DISPLAY_MISSING
@@ -183,7 +183,8 @@ static void app_event_func(void) ;
 
 static void show_help(void);
 static void show_version(void);
-static bool read_initialisation_file(char * dir, char * name);
+static bool read_initialisation_file(char *dir, char *name);
+
 #ifdef SIMULATOR
 static void append_to_stream(FILE *dest, FILE *source);
 #endif /* SIMULATOR */
@@ -522,7 +523,7 @@ prompt(void)
               as it relies on undocumented structure */
             /* some years later, it fails indeed, (v2.11 on debian) */
             int where = 0;
-            HIST_ENTRY * he = current_history();
+            HIST_ENTRY *he = current_history();
             if(he!=NULL) where = *(int*)(he->data);
             p += sprintf(p, "%d", where + 1);
           }
@@ -698,12 +699,12 @@ append_to_stream(FILE *dest, FILE *source)
    Return true on success
    SJB 25th April 2005 */
 static bool
-read_initialisation_file(char * dir, char * name)
+read_initialisation_file(char *dir, char *name)
 {
 #ifndef HAVE_UNISTD_H
-    FILE * fp = NULL;
+    FILE *fp = NULL;
 #endif /* not HAVE_UNISTD_H */
-    char * path;
+    char *path;
     bool result = FALSE;
 
     /* check name */
