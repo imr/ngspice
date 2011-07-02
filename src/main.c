@@ -780,12 +780,12 @@ int
 main(int argc, char **argv)
 {
     char log_file[BSIZE_SP];
-    bool readinit = TRUE;
+    volatile bool readinit = TRUE;
     bool istty = TRUE;
     bool iflag = FALSE;
     bool qflag = FALSE;
 
-    FILE *circuit_file;
+    FILE * volatile circuit_file;
     bool orflag = FALSE;
 
 #ifdef TRACE
