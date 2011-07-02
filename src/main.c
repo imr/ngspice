@@ -781,7 +781,6 @@ main(int argc, char **argv)
 {
 
 #ifdef SIMULATOR
-    bool gotone = FALSE;
 #else
     bool gdata = TRUE;
 #endif
@@ -1126,6 +1125,8 @@ main(int argc, char **argv)
         fprintf(cp_err, "Warning: error executing during ngspice startup.\n");
 
     } else {
+
+        bool gotone = FALSE;
 
         cp_interactive = FALSE;
 
