@@ -1147,12 +1147,11 @@ bot:
        the temporary file but used the original file instead.  The
        current algorithm is uniform at the expense of a little
        startup time.  */
-        FILE *tempfile;
+        FILE *tempfile = tmpfile();
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
         char *tpf = NULL; /* temporary file */
         char *dname = NULL; /* input file*/
 #endif
-        tempfile = tmpfile();
 /*  tmpfile() returns NULL, if in MS Windows as non admin user
         then we add a tempfile in the local directory */
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
