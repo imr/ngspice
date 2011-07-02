@@ -1303,13 +1303,6 @@ evl:
     }  /* ---  if (ft_batchmode) ---  */
 
 
-    for(;;)
-        if(!SETJMP(jbuf, 1)) {
-            /*  enter the command processing loop  */
-            cp_interactive = TRUE;
-            app_rl_readlines();
-        }
-
 #else  /* ~ SIMULATOR */
 
     if (ft_nutmeg && gdata) {
@@ -1321,15 +1314,15 @@ evl:
     }
 
 evl:
-    /* Nutmeg "main" */
+
+#endif /* ~ SIMULATOR */
+
     for(;;)
         if(!SETJMP(jbuf, 1)) {
             /*  enter the command processing loop  */
             cp_interactive = TRUE;
             app_rl_readlines();
         }
-
-#endif /* ~ SIMULATOR */
 
     return sp_shutdown(EXIT_NORMAL);
 }
