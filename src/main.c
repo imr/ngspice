@@ -1151,10 +1151,8 @@ bot:
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
         char *tpf = NULL; /* temporary file */
         char *dname = NULL; /* input file*/
-#endif
 /*  tmpfile() returns NULL, if in MS Windows as non admin user
         then we add a tempfile in the local directory */
-#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
         if (tempfile == NULL) {
             tpf = smktemp("sp");
             tempfile = fopen(tpf, "w+b");
