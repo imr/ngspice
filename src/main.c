@@ -776,11 +776,11 @@ int
 main(int argc, char **argv)
 {
     int   err;
-    bool  gotone = FALSE;
     bool  addctrlsect = TRUE; /* PN: for autorun */
 
 
 #ifdef SIMULATOR
+    bool  gotone = FALSE;
     int error2;
 
 
@@ -1292,12 +1292,11 @@ evl:
 #else  /* ~ SIMULATOR */
 
     if (ft_nutmeg && gdata) {
-      while (optind < argc) {
-        ft_loadfile(argv[optind++]);
-        gotone = TRUE;
-      }
-      if (!gotone)
-          ft_loadfile(ft_rawfile);
+        if (optind < argc)
+            while (optind < argc)
+                ft_loadfile(argv[optind++]);
+        else
+            ft_loadfile(ft_rawfile);
     }
 
 evl:
