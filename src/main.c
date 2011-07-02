@@ -201,13 +201,13 @@ bool ft_nutmeg = FALSE;
 extern struct comm spcp_coms[ ];
 struct comm *cp_coms = spcp_coms;
 
-extern int OUTpBeginPlot(CKTcircuit *,JOB *,IFuid,IFuid,int,int,IFuid *,int,void **); 
-extern int OUTpData(void *,IFvalue *,IFvalue *); 
-extern int OUTwBeginPlot(CKTcircuit *,JOB *,IFuid,IFuid,int,int,IFuid *,int,void **); 
+extern int OUTpBeginPlot(CKTcircuit *,JOB *,IFuid,IFuid,int,int,IFuid *,int,void **);
+extern int OUTpData(void *,IFvalue *,IFvalue *);
+extern int OUTwBeginPlot(CKTcircuit *,JOB *,IFuid,IFuid,int,int,IFuid *,int,void **);
 extern int OUTwReference(void *,IFvalue *,void **);
-extern int OUTwData(void *,int,IFvalue *,void *), OUTwEnd(void *), OUTendPlot(void *); 
+extern int OUTwData(void *,int,IFvalue *,void *), OUTwEnd(void *), OUTendPlot(void *);
 extern int OUTbeginDomain(void *,IFuid,int,IFvalue *);
-extern int OUTendDomain(void *), OUTstopnow(void), OUTerror(int,char *,IFuid *); 
+extern int OUTendDomain(void *), OUTstopnow(void), OUTerror(int,char *,IFuid *);
 extern int OUTattributes(void *,IFuid,int,IFvalue *);
 
 extern void initw(void);
@@ -432,12 +432,12 @@ COMPATMODE_T ngspice_compat_mode(void)
    char behaviour[80] ;
 
    if( cp_getvar("ngbehavior", CP_STRING, behaviour)){
-      if (strcasecmp(behaviour,"all")==0)
+      if (strcasecmp(behaviour, "all")==0)
          return( COMPATMODE_ALL ) ;
-      if (strcasecmp(behaviour,"hs")==0)
+      if (strcasecmp(behaviour, "hs")==0)
          return( COMPATMODE_HS ) ;
-      if (strcasecmp(behaviour,"spice3")==0)
-         return( COMPATMODE_SPICE3 ) ;         
+      if (strcasecmp(behaviour, "spice3")==0)
+         return( COMPATMODE_SPICE3 ) ;
    }
    return(COMPATMODE_NATIVE) ;
 } /* end ngspice_compat_mode() */
@@ -719,12 +719,12 @@ read_initialisation_file(char *dir, char *name)
       path = name;
     } else {
 #ifdef HAVE_ASPRINTF
-      asprintf(&path, "%s" DIR_PATHSEP "%s", dir,name);
+      asprintf(&path, "%s" DIR_PATHSEP "%s", dir, name);
       if(path==NULL) return FALSE;    /* memory allocation error */
 #else /* ~ HAVE_ASPRINTF */
       path = TMALLOC(char, 2 + strlen(dir) + strlen(name));
       if(path==NULL) return FALSE;    /* memory allocation error */
-      sprintf(path,"%s" DIR_PATHSEP "%s",dir,name);
+      sprintf(path, "%s" DIR_PATHSEP "%s", dir, name);
 #endif /* HAVE_ASPRINTF */
     }
 
@@ -737,7 +737,7 @@ read_initialisation_file(char *dir, char *name)
 #endif /* HAVE_UNISTD_H */
         inp_source(path);
 #ifdef TRACE
-        printf("Init file: '%s'\n",path);
+        printf("Init file: '%s'\n", path);
 #endif /* TRACE */
         result = TRUE;  /* loaded okay */
     }
@@ -779,10 +779,10 @@ print_news(void)
 int
 main(int argc, char **argv)
 {
-    int   err;
+    int  err;
 
 #ifdef SIMULATOR
-    bool  gotone = FALSE;
+    bool gotone = FALSE;
 #else
     bool gdata = TRUE;
 #endif
@@ -799,13 +799,13 @@ main(int argc, char **argv)
 #ifdef TRACE
     /* this is used to detect memory leaks during debugging */
     /* added by SDB during debug . . . . */
-    /* mtrace();  */
+    /* mtrace(); */
 #endif
 
 #ifdef TRACE
     /* this is also used for memory leak plugging . . . */
     /* added by SDB during debug . . . . */
-    /*     mwDoFlush(1);  */
+    /* mwDoFlush(1); */
 #endif
 
     /* MFB tends to jump to 0 on errors.  This tends to catch it. */
@@ -840,7 +840,7 @@ main(int argc, char **argv)
 
     ivars(argv[0]);
 
-    cp_in = stdin;
+    cp_in  = stdin;
     cp_out = stdout;
     cp_err = stderr;
 
@@ -849,6 +849,7 @@ main(int argc, char **argv)
 #ifdef MALLOCTRACE
     mallocTraceInit("malloc.out");
 #endif
+
 #if defined(HAVE_ISATTY) && !defined(HAS_WINDOWS)
     istty = (bool) isatty(fileno(stdin));
 #endif
@@ -916,7 +917,7 @@ main(int argc, char **argv)
               }
               break;
 
-            case 'a':           /* Add control section for autorun */
+            case 'a':       /* Add control section for autorun */
               if (!ft_batchmode) {
                   bool x_true = TRUE;
                   cp_vset("addcontrol", CP_BOOL, &x_true);
@@ -946,11 +947,11 @@ main(int argc, char **argv)
                   /* turn off buffering for stdout */
                   setbuf(stdout, NULL);
 #ifdef PARALLEL_ARCH
-                sprintf (buf, "%s%03d", optarg, ARCHme);
+                  sprintf (buf, "%s%03d", optarg, ARCHme);
 #else
-                sprintf (buf, "%s", optarg);
+                  sprintf (buf, "%s", optarg);
 #endif
-                orflag = TRUE;
+                  orflag = TRUE;
               }
               break;
 
@@ -1128,6 +1129,7 @@ bot:
     err = 0;
 
 #ifdef SIMULATOR
+
 #ifdef FastRand
 // initialization and seed for FastNorm Gaussian random generator
     {
@@ -1151,7 +1153,9 @@ bot:
         initw();
     }
 #endif
+
     if (!ft_servermode && !ft_nutmeg) {
+
     /* Concatenate all non-option arguments into a temporary file
        and load that file into the spice core.
 
@@ -1160,12 +1164,16 @@ bot:
        the temporary file but used the original file instead.  The
        current algorithm is uniform at the expense of a little
        startup time.  */
+
         FILE *tempfile = tmpfile();
+
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-        char *tpf = NULL; /* temporary file */
-        char *dname = NULL; /* input file*/
-/*  tmpfile() returns NULL, if in MS Windows as non admin user
-        then we add a tempfile in the local directory */
+        char *tpf = NULL;     /* temporary file */
+        char *dname = NULL;   /* input file*/
+
+       /* tmpfile() returns NULL, if in MS Windows as non admin user
+          then we add a tempfile in the local directory */
+
         if (tempfile == NULL) {
             tpf = smktemp("sp");
             tempfile = fopen(tpf, "w+b");
@@ -1206,6 +1214,7 @@ bot:
                     break;
                 }
             }
+
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
             /* Copy the input file name which otherwise will be lost due to the
                temporary file */
@@ -1217,6 +1226,7 @@ bot:
             /* write source file name into a variable */
             cp_vset("sourcefile", CP_STRING, dname);
 #endif
+
             append_to_stream(tempfile, tp);
             fclose(tp);
         }
@@ -1233,17 +1243,21 @@ bot:
 #endif
             gotone = TRUE;
         }
+
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
         if (tempfile && tpf && remove(tpf))
             perror("Could not delete temp file");
 #endif
+
         if (ft_batchmode && err) {
             sp_shutdown(EXIT_BAD);
         }
+
     }   /* ---  if (!ft_servermode && !ft_nutmeg) --- */
 
     if (!gotone && ft_batchmode && !ft_nutmeg)
         inp_spsource(circuit_file, FALSE, NULL);
+
 
 evl:
     if (ft_batchmode) {
@@ -1257,7 +1271,9 @@ evl:
         if (st == TRUE) {
             sp_shutdown(EXIT_BAD);
         }
+
         st = TRUE;
+
         if (ft_servermode) {
             if (ft_curckt == NULL) {
                 fprintf(cp_err, "Error: no circuit loaded!\n");
