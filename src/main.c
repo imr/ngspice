@@ -775,7 +775,7 @@ print_news(void)
 int
 main(int argc, char **argv)
 {
-    int c, err;
+    int   err;
     bool  gotone = FALSE;
     bool  addctrlsect = TRUE; /* PN: for autorun */
 
@@ -867,7 +867,7 @@ main(int argc, char **argv)
 
     /* --- Process command line options --- */
     for(;;) {
-        int option_index = 0;
+
         static struct option long_options[] = {
             {"help", 0, 0, 'h'},
             {"version", 0, 0, 'v'},
@@ -885,8 +885,11 @@ main(int argc, char **argv)
             {0, 0, 0, 0}
         };
 
-        c = getopt_long (argc, argv, "hvbac:ino:pqr:st:",
-             long_options, &option_index);
+        int option_index = 0;
+
+        int c = getopt_long (argc, argv, "hvbac:ino:pqr:st:",
+                             long_options, &option_index);
+
         if (c == -1)
             break;
 
