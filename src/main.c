@@ -104,8 +104,8 @@ char *ft_rawfile = "rawspice.raw";
 #ifdef HAS_WINDOWS
  extern void winmessage(char *new_msg); /* display a message box (defined in winmain.c)*/
  extern void SetSource( char *Name);    /* display the source file name in the source window */
+ extern int  xmain(int argc, char **argv);
  FILE *flogp = NULL;         /* log file ('-o logfile' command line option) */
- int  xmain(int argc, char **argv);
 #endif /* HAS_WINDOWS */
 
 /* Frontend and circuit options */
