@@ -1182,20 +1182,17 @@ bot:
         }
 
         while (optind < argc) {
-            char *arg;
+            char *arg = argv[optind++];
             FILE *tp;
 
             /* Copy all the arguments into the temporary file */
-            arg = argv[optind++];
             tp = fopen(arg, "r");
             if (!tp) {
-                char *lbuffer, *p;
-                lbuffer = getenv("NGSPICE_INPUT");
-//                fprintf(stdout, "Such-Dir %s\n", lbuffer);
+                char *lbuffer = getenv("NGSPICE_INPUT");
                 if (lbuffer && *lbuffer) {
-                    p = TMALLOC(char, strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(arg) + 1);
+                    char *p =
+                        TMALLOC(char, strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(arg) + 1);
                     sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, arg);
-//                    fprintf(stdout, "Suchpfad %s\n", p);
                     tp = fopen(p, "r");
                     tfree(p);
                 }
