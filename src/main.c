@@ -162,8 +162,6 @@ double EpsNorm, VNorm, NNorm, LNorm, TNorm, JNorm, GNorm, ENorm;
 
 struct variable *(*if_getparam)(CKTcircuit *ckt, char** name, char* param, int ind, int do_model);
 
-static int started = FALSE;
-
 /* static functions */
 int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 static int sp_shutdown(int exitval);
@@ -812,11 +810,13 @@ main(int argc, char **argv)
 #endif
 
     /* MFB tends to jump to 0 on errors.  This tends to catch it. */
-    if (started) {
-        fprintf(cp_err, "main: Internal Error: jump to zero\n");
-        sp_shutdown(EXIT_BAD);
+    {
+        static int started = 0;
+        if (started++) {
+            fprintf(cp_err, "main: Internal Error: jump to zero\n");
+            sp_shutdown(EXIT_BAD);
+        }
     }
-    started = TRUE;
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
     if (!(application_name = strrchr(argv[0],'/')))
