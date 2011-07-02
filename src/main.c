@@ -1122,140 +1122,143 @@ main(int argc, char **argv)
      * build a circuit for this file. If this is in server mode, don't
      * process any of these args.  */
 
-    if (SETJMP(jbuf, 1))
-        goto evl;
+    if (SETJMP(jbuf, 1)) {
 
-    cp_interactive = FALSE;
-    err = 0;
+        fprintf(cp_err, "Warning: error executing during ngspice startup.\n");
+
+    } else {
+
+        cp_interactive = FALSE;
+        err = 0;
 
 #ifdef FastRand
 // initialization and seed for FastNorm Gaussian random generator
-    {
-        unsigned int rseed = 66;
-        initnorm (0, 0);
-        if (!cp_getvar("rndseed", CP_NUM, &rseed)) {
-            time_t acttime = time(NULL);
-            rseed = (unsigned int) acttime;
+        {
+            unsigned int rseed = 66;
+            initnorm (0, 0);
+            if (!cp_getvar("rndseed", CP_NUM, &rseed)) {
+                time_t acttime = time(NULL);
+                rseed = (unsigned int) acttime;
+            }
+            initnorm (rseed, 2);
+            fprintf (cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
         }
-        initnorm (rseed, 2);
-        fprintf (cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
-    }
 #elif defined (WaGauss)
-    {
-        unsigned int rseed = 66;
-        if (!cp_getvar("rndseed", CP_NUM, &rseed)) {
-            time_t acttime = time(NULL);
-            rseed = (unsigned int) acttime;
+        {
+            unsigned int rseed = 66;
+            if (!cp_getvar("rndseed", CP_NUM, &rseed)) {
+                time_t acttime = time(NULL);
+                rseed = (unsigned int) acttime;
+            }
+            srand(rseed);
+            initw();
         }
-        srand(rseed);
-        initw();
-    }
 #endif
 
-    if (!ft_servermode && !ft_nutmeg) {
+        if (!ft_servermode && !ft_nutmeg) {
 
-    /* Concatenate all non-option arguments into a temporary file
-       and load that file into the spice core.
+            /* Concatenate all non-option arguments into a temporary file
+               and load that file into the spice core.
 
-       The original routine took a special path if there was only
-       one non-option argument.  In that case, it didn't create
-       the temporary file but used the original file instead.  The
-       current algorithm is uniform at the expense of a little
-       startup time.  */
+               The original routine took a special path if there was only
+               one non-option argument.  In that case, it didn't create
+               the temporary file but used the original file instead.  The
+               current algorithm is uniform at the expense of a little
+               startup time.  */
 
-        FILE *tempfile = tmpfile();
+            FILE *tempfile = tmpfile();
 
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-        char *tpf = NULL;     /* temporary file */
-        char *dname = NULL;   /* input file*/
+            char *tpf = NULL;     /* temporary file */
+            char *dname = NULL;   /* input file*/
 
-       /* tmpfile() returns NULL, if in MS Windows as non admin user
-          then we add a tempfile in the local directory */
+            /* tmpfile() returns NULL, if in MS Windows as non admin user
+               then we add a tempfile in the local directory */
 
-        if (tempfile == NULL) {
-            tpf = smktemp("sp");
-            tempfile = fopen(tpf, "w+b");
             if (tempfile == NULL) {
-                fprintf(stderr, "Could not open a temporary file to save and use optional arguments.");
-                sp_shutdown(EXIT_BAD);
+                tpf = smktemp("sp");
+                tempfile = fopen(tpf, "w+b");
+                if (tempfile == NULL) {
+                    fprintf(stderr, "Could not open a temporary file to save and use optional arguments.");
+                    sp_shutdown(EXIT_BAD);
+                }
             }
-        }
 #endif
 
-        if(!tempfile) {
-            perror("tmpfile()");
-            exit(1);
-        }
-
-        if (optind == argc && !istty)
-            append_to_stream(tempfile, stdin);
-
-        while (optind < argc) {
-            char *arg = argv[optind++];
-            FILE *tp;
-
-            /* Copy all the arguments into the temporary file */
-            tp = fopen(arg, "r");
-            if (!tp) {
-                char *lbuffer = getenv("NGSPICE_INPUT");
-                if (lbuffer && *lbuffer) {
-                    char *p =
-                        TMALLOC(char, strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(arg) + 1);
-                    sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, arg);
-                    tp = fopen(p, "r");
-                    tfree(p);
-                }
-                if (!tp) {
-                    perror(arg);
-                    err = 1;
-                    break;
-                }
+            if(!tempfile) {
+                perror("tmpfile()");
+                exit(1);
             }
 
+            if (optind == argc && !istty)
+                append_to_stream(tempfile, stdin);
+
+            while (optind < argc) {
+                char *arg = argv[optind++];
+                FILE *tp;
+
+                /* Copy all the arguments into the temporary file */
+                tp = fopen(arg, "r");
+                if (!tp) {
+                    char *lbuffer = getenv("NGSPICE_INPUT");
+                    if (lbuffer && *lbuffer) {
+                        char *p =
+                            TMALLOC(char, strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(arg) + 1);
+                        sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, arg);
+                        tp = fopen(p, "r");
+                        tfree(p);
+                    }
+                    if (!tp) {
+                        perror(arg);
+                        err = 1;
+                        break;
+                    }
+                }
+
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-            /* Copy the input file name which otherwise will be lost due to the
-               temporary file */
-            dname = copy(arg);
+                /* Copy the input file name which otherwise will be lost due to the
+                   temporary file */
+                dname = copy(arg);
 #endif
 #if defined(HAS_WINDOWS)
-            /* write source file name into source window */
-            SetSource(dname);
-            /* write source file name into a variable */
-            cp_vset("sourcefile", CP_STRING, dname);
+                /* write source file name into source window */
+                SetSource(dname);
+                /* write source file name into a variable */
+                cp_vset("sourcefile", CP_STRING, dname);
 #endif
 
-            append_to_stream(tempfile, tp);
-            fclose(tp);
-        }
+                append_to_stream(tempfile, tp);
+                fclose(tp);
+            }
 
-        fseek(tempfile, 0L, SEEK_SET);
+            fseek(tempfile, 0L, SEEK_SET);
 
-        if (tempfile && (!err || !ft_batchmode)) {
+            if (tempfile && (!err || !ft_batchmode)) {
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-            /* Copy the input file name for adding another file search path */
-            inp_spsource(tempfile, FALSE, dname);
-            tfree(dname);
+                /* Copy the input file name for adding another file search path */
+                inp_spsource(tempfile, FALSE, dname);
+                tfree(dname);
 #else
-            inp_spsource(tempfile, FALSE, NULL);
+                inp_spsource(tempfile, FALSE, NULL);
 #endif
-            gotone = TRUE;
-        }
+                gotone = TRUE;
+            }
 
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-        if (tempfile && tpf && remove(tpf))
-            perror("Could not delete temp file");
+            if (tempfile && tpf && remove(tpf))
+                perror("Could not delete temp file");
 #endif
 
-        if (ft_batchmode && err)
-            sp_shutdown(EXIT_BAD);
+            if (ft_batchmode && err)
+                sp_shutdown(EXIT_BAD);
 
-    }   /* ---  if (!ft_servermode && !ft_nutmeg) --- */
+        }   /* ---  if (!ft_servermode && !ft_nutmeg) --- */
 
-    if (!gotone && ft_batchmode && !ft_nutmeg)
-        inp_spsource(circuit_file, FALSE, NULL);
+        if (!gotone && ft_batchmode && !ft_nutmeg)
+            inp_spsource(circuit_file, FALSE, NULL);
 
+    }
 
-evl:
     if (ft_batchmode) {
 
         /* If we get back here in batch mode then something is wrong,
