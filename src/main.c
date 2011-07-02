@@ -814,10 +814,11 @@ main(int argc, char **argv)
     }
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
-    if (!(application_name = strrchr(argv[0],'/')))
-        application_name = argv[0];
+    application_name = strrchr(argv[0], '/');
+    if (application_name)
+        application_name ++;
     else
-        ++application_name;
+        application_name = argv[0];
 #endif  /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)  */
 
 #ifdef PARALLEL_ARCH
