@@ -1054,39 +1054,41 @@ main(int argc, char **argv)
        fcn is in cpitf.c*/
     ft_cpinit();
 
+
+    /* Set up signal handling */
+    if (!ft_batchmode) {
+        /*  Set up interrupt handler  */
+        (void) signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
+
+        /* floating point exception  */
+        (void) signal(SIGFPE, (SIGNAL_FUNCTION) sigfloat);
+
+#ifdef SIGTSTP
+        signal(SIGTSTP, (SIGNAL_FUNCTION) sigstop);
+#endif
+    }
+
+    /* Set up signal handling for fatal errors. */
+    signal(SIGILL, (SIGNAL_FUNCTION) sigill);
+
+#ifdef SIGBUS
+    signal(SIGBUS, (SIGNAL_FUNCTION) sigbus);
+#endif
+#if defined(SIGSEGV) && !defined(NGDEBUG) && defined(HAS_WINDOWS)
+/* Allow a comment and graceful shutdown after seg fault */
+    signal(SIGSEGV, (SIGNAL_FUNCTION) sigsegv);
+#endif
+#ifdef SIGSYS
+    signal(SIGSYS, (SIGNAL_FUNCTION) sig_sys);
+#endif
+
+
     /* To catch interrupts during .spiceinit... */
     if (SETJMP(jbuf, 1)) {
 
         fprintf(cp_err, "Warning: error executing .spiceinit.\n");
 
     } else {
-
-        /* Set up signal handling */
-        if (!ft_batchmode) {
-            /*  Set up interrupt handler  */
-            (void) signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
-
-            /* floating point exception  */
-            (void) signal(SIGFPE, (SIGNAL_FUNCTION) sigfloat);
-
-#ifdef SIGTSTP
-            signal(SIGTSTP, (SIGNAL_FUNCTION) sigstop);
-#endif
-        }
-
-        /* Set up signal handling for fatal errors. */
-        signal(SIGILL, (SIGNAL_FUNCTION) sigill);
-
-#ifdef SIGBUS
-        signal(SIGBUS, (SIGNAL_FUNCTION) sigbus);
-#endif
-#if defined(SIGSEGV) && !defined(NGDEBUG) && defined(HAS_WINDOWS)
-/* Allow a comment and graceful shutdown after seg fault */
-        signal(SIGSEGV, (SIGNAL_FUNCTION) sigsegv);
-#endif
-#ifdef SIGSYS
-        signal(SIGSYS, (SIGNAL_FUNCTION) sig_sys);
-#endif
 
         if (readinit) {
             /* load user's initialisation file
