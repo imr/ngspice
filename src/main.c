@@ -781,9 +781,6 @@ main(int argc, char **argv)
 
 #ifdef SIMULATOR
     bool  gotone = FALSE;
-    int error2;
-
-
 #else  /* ~ SIMULATOR */
     bool gdata = TRUE;
 #endif /* ~ SIMULATOR */
@@ -1272,27 +1269,29 @@ evl:
 
 
         cp_interactive = FALSE;
+
         if (rflag) {
-        /* If -r is specified, then dot cards (.width, .plot, .print, .op, .meas, .tf)
-           are ignored, except .save, which has been handled by ft_dotsaves()
-           from within inp_spsource (), data are put into linked list dbs.
-         */
-            error2 = ft_dorun(ft_rawfile);
+            /* If -r is specified, then dot cards (.width, .plot, .print, .op, .meas, .tf)
+               are ignored, except .save, which has been handled by ft_dotsaves()
+               from within inp_spsource (), data are put into linked list dbs.
+            */
+            int error2 = ft_dorun(ft_rawfile);
             /* Execute the .whatever lines found in the deck, after we are done running. */
             if (ft_cktcoms(TRUE) || error2)
                 sp_shutdown(EXIT_BAD);
         } else if (ft_savedotargs()) {
-        /* all dot card data to be put into dbs */
-            error2 = ft_dorun(NULL);
+            /* all dot card data to be put into dbs */
+            int error2 = ft_dorun(NULL);
             /* Execute the .whatever lines found in the deck, after we are done running. */
             if (ft_cktcoms(FALSE) || error2)
                 sp_shutdown(EXIT_BAD);
         } else {
             fprintf(stderr,
-                "Note: No \".plot\", \".print\", or \".fourier\" lines; "
-                "no simulations run\n");
+                    "Note: No \".plot\", \".print\", or \".fourier\" lines; "
+                    "no simulations run\n");
             sp_shutdown(EXIT_BAD);
         }
+
     }  /* ---  if (ft_batchmode) ---  */
     else {
         cp_interactive = TRUE;
