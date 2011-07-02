@@ -1055,7 +1055,7 @@ main(int argc, char **argv)
     ft_cpinit();
 
     /* To catch interrupts during .spiceinit... */
-    if (SETJMP(jbuf, 1) == 1) {
+    if (SETJMP(jbuf, 1)) {
         fprintf(cp_err, "Warning: error executing .spiceinit.\n");
         if (!ft_batchmode)
             goto bot;
@@ -1118,7 +1118,7 @@ bot:
      * build a circuit for this file. If this is in server mode, don't
      * process any of these args.  */
 
-    if (SETJMP(jbuf, 1) == 1)
+    if (SETJMP(jbuf, 1))
         goto evl;
 
     cp_interactive = FALSE;
