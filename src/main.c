@@ -11,13 +11,13 @@
 #include "ngspice.h"
 
 #ifdef HAVE_ASPRINTF
-#ifdef HAVE_LIBIBERTY_H /* asprintf */
-#include <libiberty.h>
-#elif defined(__MINGW32__) || defined(__SUNPRO_C) /* we have asprintf, but not libiberty.h */
-#include <stdarg.h>
-extern int asprintf(char **out, const char *fmt, ...);
-extern int vasprintf(char **out, const char *fmt, va_list ap);
-#endif
+# ifdef HAVE_LIBIBERTY_H /* asprintf */
+#  include <libiberty.h>
+# elif defined(__MINGW32__) || defined(__SUNPRO_C) /* we have asprintf, but not libiberty.h */
+#  include <stdarg.h>
+   extern int asprintf(char **out, const char *fmt, ...);
+   extern int vasprintf(char **out, const char *fmt, va_list ap);
+# endif
 #endif
 
 #include <setjmp.h>
@@ -25,22 +25,22 @@ extern int vasprintf(char **out, const char *fmt, va_list ap);
 
 /* MINGW: random, srandom in libiberty.a, but not in libiberty.h */
 #if defined(__MINGW32__) && defined(HAVE_RANDOM)
-extern long int random (void);
-extern void srandom (unsigned int seed);
+ extern long int random (void);
+ extern void srandom (unsigned int seed);
 #endif
 
-#ifdef HAVE_GNUREADLINE
 /* Added GNU Readline Support 11/3/97 -- Andrew Veliath <veliaa@rpi.edu> */
 /* from spice3f4 patch to ng-spice. jmr */
-#include <readline/readline.h>
-#include <readline/history.h>
+#ifdef HAVE_GNUREADLINE
+# include <readline/readline.h>
+# include <readline/history.h>
 #endif  /* HAVE_GNUREADLINE */
 
-#ifdef HAVE_BSDEDITLINE
 /* SJB added editline support 2005-05-05 */
-#include <editline/readline.h>
-extern VFunction *rl_event_hook;    /* missing from editline/readline.h */
-extern int rl_catch_signals;        /* missing from editline/readline.h */
+#ifdef HAVE_BSDEDITLINE
+# include <editline/readline.h>
+ extern VFunction *rl_event_hook;    /* missing from editline/readline.h */
+ extern int rl_catch_signals;        /* missing from editline/readline.h */
 #endif /* HAVE_BSDEDITLINE */
 
 #include "iferrmsg.h"
@@ -50,14 +50,17 @@ extern int rl_catch_signals;        /* missing from editline/readline.h */
 #include "spicelib/analysis/analysis.h"
 #include "misc/ivars.h"
 #include "misc/misc_time.h"
+
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-#include "misc/mktemp.h"
+# include "misc/mktemp.h"
 #endif
+
 #if defined(HAVE_GETOPT_LONG) && defined(HAVE_GETOPT_H)
-#include <getopt.h>
+# include <getopt.h>
 #else
-#include "misc/getopt_bsd.h"
+# include "misc/getopt_bsd.h"
 #endif
+
 #include "frontend/spiceif.h"
 #include "frontend/resource.h"
 #include "frontend/variable.h"
@@ -68,21 +71,21 @@ extern int rl_catch_signals;        /* missing from editline/readline.h */
 
 /* saj xspice headers */
 #ifdef XSPICE
-#include "ipctiein.h"
-#include "mif.h"
-#include "enh.h"
-#include "mifproto.h"
-#include "evtproto.h"
+# include "ipctiein.h"
+# include "mif.h"
+# include "enh.h"
+# include "mifproto.h"
+# include "evtproto.h"
 #endif
 
 #ifdef CIDER
-#include "numenum.h"
-#include "maths/misc/accuracy.h"
+# include "numenum.h"
+# include "maths/misc/accuracy.h"
 #endif
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
-char history_file[512] = {'\0'};
-static char *application_name;
+ char history_file[512] = {'\0'};
+ static char *application_name;
 #endif  /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
 
 /* Undefine this next line for debug tracing */
@@ -99,10 +102,10 @@ bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt.
 char *ft_rawfile = "rawspice.raw";
 
 #ifdef HAS_WINDOWS
-extern void winmessage(char *new_msg); /* display a message box (defined in winmain.c)*/
-extern void SetSource(char *Name);   /* display the source file name in the source window */
-FILE *flogp = NULL;         /* log file ('-o logfile' command line option) */
-int xmain(int argc, char **argv); /* main function prototype */
+ extern void winmessage(char *new_msg); /* display a message box (defined in winmain.c)*/
+ extern void SetSource( char *Name);    /* display the source file name in the source window */
+ FILE *flogp = NULL;         /* log file ('-o logfile' command line option) */
+ int  xmain(int argc, char **argv);
 #endif /* HAS_WINDOWS */
 
 /* Frontend and circuit options */
@@ -168,17 +171,17 @@ static int sp_shutdown(int exitval);
 static void app_rl_readlines(void);
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
-static char *prompt(void);
+ static char *prompt(void);
 #endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
 
 #ifndef X_DISPLAY_MISSING
-#include "frontend/plotting/x11.h"
-#ifdef HAVE_GNUREADLINE
-static int app_event_func(void) ;
-#endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
-#ifdef HAVE_BSDEDITLINE
-static void app_event_func(void) ;
-#endif /* HAVE_BSDEDITLINE */
+# include "frontend/plotting/x11.h"
+# ifdef HAVE_GNUREADLINE
+   static int app_event_func(void);
+# endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
+# ifdef HAVE_BSDEDITLINE
+   static void app_event_func(void);
+# endif /* HAVE_BSDEDITLINE */
 #endif
 
 static void show_help(void);
