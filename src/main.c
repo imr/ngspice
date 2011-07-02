@@ -1076,28 +1076,20 @@ main(int argc, char **argv)
     signal(SIGSYS, (SIGNAL_FUNCTION) sig_sys);
 #endif
 
-    /* load user's initialisation file */
     if (readinit) {
-        bool good;
-
-        /* Try accessing the initialisation file in the current directory */
-        good = read_initialisation_file("",INITSTR);
-
-        /* if that fail try the alternate name */
-        if(good == FALSE)
-            good = read_initialisation_file("",ALT_INITSTR);
-
-        /* if that failed try in the user's home directory
-           if their HOME environment variable is set */
-        if(good == FALSE) {
-            char * homedir;
-            homedir = getenv("HOME");
-            if(homedir !=NULL) {
-                good = read_initialisation_file(homedir,INITSTR);
-                if(good == FALSE) {
-                    good = read_initialisation_file(homedir,ALT_INITSTR);
+        /* load user's initialisation file
+           try accessing the initialisation file in the current directory
+           if that fails try the alternate name */
+        if(FALSE == read_initialisation_file("", INITSTR)  &&
+           FALSE == read_initialisation_file("", ALT_INITSTR)) {
+            /* if that failed try in the user's home directory
+               if their HOME environment variable is set */
+            char *homedir = getenv("HOME");
+            if(homedir != NULL)
+                if(FALSE == read_initialisation_file(homedir, INITSTR)  &&
+                   FALSE == read_initialisation_file(homedir, ALT_INITSTR)) {
+                    ;
                 }
-            }
         }
     }
 
