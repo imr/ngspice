@@ -1147,7 +1147,6 @@ bot:
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
         char *tpf = NULL; /* temporary file */
         char *dname = NULL; /* input file*/
-        bool has_smk = FALSE;
 #endif
         tempfile = tmpfile();
 /*  tmpfile() returns NULL, if in MS Windows as non admin user
@@ -1160,7 +1159,6 @@ bot:
                 fprintf(stderr, "Could not open a temporary file to save and use optional arguments.");
                 sp_shutdown(EXIT_BAD);
             }
-            has_smk = TRUE;
         }
 #endif
 
@@ -1224,10 +1222,8 @@ bot:
             gotone = TRUE;
         }
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-        if (tempfile && has_smk) {
-            if (remove(tpf))
-               perror("Could not delete temp file");
-        }
+        if (tempfile && tpf && remove(tpf))
+            perror("Could not delete temp file");
 #endif
         if (ft_batchmode && err) {
             sp_shutdown(EXIT_BAD);

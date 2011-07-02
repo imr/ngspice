@@ -1,5 +1,9 @@
 2011-07-02  Robert Larice
  * src/main.c :
+   remove redundant variable `has_smk'
+
+2011-07-02  Robert Larice
+ * src/main.c :
    print_news()
 
 2011-07-01  Robert Larice
