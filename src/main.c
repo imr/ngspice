@@ -1004,15 +1004,21 @@ main(int argc, char **argv)
         /* Open the log file */
 #ifdef HAS_WINDOWS
         /* flogp used by winmain's putc which writes to file 'buf' */
-        if ((flogp = fopen(buf, "w")) == NULL) {
-#else
-        /* Connect stdout to file buf and log stdout */
-        if (!(freopen (buf, "w", stdout))) {
-#endif
+        flogp = fopen(buf, "w");
+        if (!flogp) {
             perror (buf);
             sp_shutdown (EXIT_BAD);
         }
+        oflag = TRUE; /* All further output to -o log file */
+#else
+        /* Connect stdout to file buf and log stdout */
+        if (!freopen (buf, "w", stdout)) {
+            perror (buf);
+            sp_shutdown (EXIT_BAD);
+        }
+#endif
     } /* orflag */
+
 #ifdef SIMULATOR
     if_getparam = spif_getparam_special;
 #else
