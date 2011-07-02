@@ -779,12 +779,6 @@ print_news(void)
 int
 main(int argc, char **argv)
 {
-
-#ifdef SIMULATOR
-#else
-    bool gdata = TRUE;
-#endif
-
     char buf[BSIZE_SP];
     bool readinit = TRUE;
     bool istty = TRUE;
@@ -1024,9 +1018,6 @@ main(int argc, char **argv)
     if_getparam = spif_getparam_special;
 #else
     if_getparam = nutif_getparam;
-
-    if (optind == argc)         /* No raw file */
-        gdata = FALSE;
 #endif
 
     if ((!iflag && !istty) || ft_servermode) /* (batch and file) or server operation */
@@ -1315,6 +1306,11 @@ main(int argc, char **argv)
         fprintf(cp_err, "Warning: error executing during ft_loadfile().\n");
 
     } else {
+
+        bool gdata = TRUE;
+
+        if (optind == argc)         /* No raw file */
+            gdata = FALSE;
 
         cp_interactive = FALSE;
 
