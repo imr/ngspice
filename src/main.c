@@ -1115,6 +1115,9 @@ main(int argc, char **argv)
 
     }
 
+
+#ifdef SIMULATOR
+
     /* Pass 2 -- get the filenames. If we are spice, then this means
      * build a circuit for this file. If this is in server mode, don't
      * process any of these args.  */
@@ -1124,8 +1127,6 @@ main(int argc, char **argv)
 
     cp_interactive = FALSE;
     err = 0;
-
-#ifdef SIMULATOR
 
 #ifdef FastRand
 // initialization and seed for FastNorm Gaussian random generator
@@ -1304,6 +1305,12 @@ evl:
 
 
 #else  /* ~ SIMULATOR */
+
+    if (SETJMP(jbuf, 1))
+        goto evl;
+
+    cp_interactive = FALSE;
+    err = 0;
 
     if (ft_nutmeg && gdata) {
         if (optind < argc)
