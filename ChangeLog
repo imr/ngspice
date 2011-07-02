@@ -1,5 +1,9 @@
+2011-07-02  Robert Larice
+ * src/main.c :
+   main.c, a series of cleanups
+
 2011-07-02 Dietmar Warning
- * /devices/bsim4v4, /devices/bsim4v5, /devices/bsim4v6: bsim4vXnoi.c correct 
+ * /devices/bsim4v4, /devices/bsim4v5, /devices/bsim4v6: bsim4vXnoi.c correct
    the multiplier entry for channel thermal noise
 
 2011-07-02  Robert Larice
