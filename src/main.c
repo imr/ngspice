@@ -779,7 +779,6 @@ print_news(void)
 int
 main(int argc, char **argv)
 {
-    int  err;
 
 #ifdef SIMULATOR
     bool gotone = FALSE;
@@ -1129,7 +1128,6 @@ main(int argc, char **argv)
     } else {
 
         cp_interactive = FALSE;
-        err = 0;
 
 #ifdef FastRand
 // initialization and seed for FastNorm Gaussian random generator
@@ -1156,6 +1154,8 @@ main(int argc, char **argv)
 #endif
 
         if (!ft_servermode) {
+
+            int err = 0;
 
             /* Concatenate all non-option arguments into a temporary file
                and load that file into the spice core.
@@ -1316,7 +1316,6 @@ main(int argc, char **argv)
     } else {
 
         cp_interactive = FALSE;
-        err = 0;
 
         if (gdata) {
             if (optind < argc)
