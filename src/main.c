@@ -965,9 +965,8 @@ main(int argc, char **argv)
               break;
 
             case 'r':       /* The raw file */
-              if (optarg) {
+              if (optarg)
                   cp_vset("rawfile", CP_STRING, optarg);
-              }
               rflag = TRUE;
               break;
 
@@ -976,9 +975,8 @@ main(int argc, char **argv)
               break;
 
             case 't':
-              if (optarg) {
+              if (optarg)
                   cp_vset("term", CP_STRING, optarg);
-              }
               break;
 
             case '?':
@@ -1029,10 +1027,8 @@ main(int argc, char **argv)
 #else
     if_getparam = nutif_getparam;
 
-    if (optind == argc) {
-      /* No raw file */
-      gdata = FALSE;
-    }
+    if (optind == argc)         /* No raw file */
+        gdata = FALSE;
 #endif
 
     if ((!iflag && !istty) || ft_servermode) /* (batch and file) or server operation */
@@ -1189,9 +1185,8 @@ bot:
             exit(1);
         }
 
-        if (optind == argc && !istty) {
+        if (optind == argc && !istty)
             append_to_stream(tempfile, stdin);
-        }
 
         while (optind < argc) {
             char *arg = argv[optind++];
@@ -1249,9 +1244,8 @@ bot:
             perror("Could not delete temp file");
 #endif
 
-        if (ft_batchmode && err) {
+        if (ft_batchmode && err)
             sp_shutdown(EXIT_BAD);
-        }
 
     }   /* ---  if (!ft_servermode && !ft_nutmeg) --- */
 
@@ -1268,9 +1262,8 @@ evl:
         /* If we get back here in batch mode then something is wrong,
          * so exit.  */
 
-        if (st == TRUE) {
+        if (st == TRUE)
             sp_shutdown(EXIT_BAD);
-        }
 
         st = TRUE;
 
