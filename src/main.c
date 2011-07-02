@@ -1212,7 +1212,8 @@ bot:
             append_to_stream(tempfile, tp);
             fclose(tp);
         }
-        fseek(tempfile, (long) 0, 0);
+
+        fseek(tempfile, 0L, SEEK_SET);
 
         if (tempfile && (!err || !ft_batchmode)) {
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
