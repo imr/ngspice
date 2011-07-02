@@ -1256,16 +1256,12 @@ bot:
 evl:
     if (ft_batchmode) {
 
-        bool st = FALSE;
-
-        (void) SETJMP(jbuf, 1);
         /* If we get back here in batch mode then something is wrong,
          * so exit.  */
 
-        if (st == TRUE)
+        if (SETJMP(jbuf, 1))
             sp_shutdown(EXIT_BAD);
 
-        st = TRUE;
 
         if (ft_servermode) {
             if (ft_curckt == NULL) {
