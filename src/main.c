@@ -851,11 +851,14 @@ main(int argc, char **argv)
 
     init_time( );
 
-    err = SIMinit(&nutmeginfo,&ft_sim);
-    if(err != OK) {
-        ft_sperror(err,"SIMinit");
-        sp_shutdown(EXIT_BAD);
+    {
+        int rv = SIMinit(&nutmeginfo, &ft_sim);
+        if(rv != OK) {
+            ft_sperror(rv, "SIMinit");
+            sp_shutdown(EXIT_BAD);
+        }
     }
+
     cp_program = ft_sim->simulator;
 
     srand((unsigned int) getpid());
