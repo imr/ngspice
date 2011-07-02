@@ -1056,62 +1056,62 @@ main(int argc, char **argv)
 
     /* To catch interrupts during .spiceinit... */
     if (SETJMP(jbuf, 1)) {
+
         fprintf(cp_err, "Warning: error executing .spiceinit.\n");
-        goto bot;
-    }
 
-    /* Set up signal handling */
-    if (!ft_batchmode) {
-        /*  Set up interrupt handler  */
-        (void) signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
+    } else {
 
-        /* floating point exception  */
-        (void) signal(SIGFPE, (SIGNAL_FUNCTION) sigfloat);
+        /* Set up signal handling */
+        if (!ft_batchmode) {
+            /*  Set up interrupt handler  */
+            (void) signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
+
+            /* floating point exception  */
+            (void) signal(SIGFPE, (SIGNAL_FUNCTION) sigfloat);
 
 #ifdef SIGTSTP
-        signal(SIGTSTP, (SIGNAL_FUNCTION) sigstop);
+            signal(SIGTSTP, (SIGNAL_FUNCTION) sigstop);
 #endif
-    }
+        }
 
-    /* Set up signal handling for fatal errors. */
-    signal(SIGILL, (SIGNAL_FUNCTION) sigill);
+        /* Set up signal handling for fatal errors. */
+        signal(SIGILL, (SIGNAL_FUNCTION) sigill);
 
 #ifdef SIGBUS
-    signal(SIGBUS, (SIGNAL_FUNCTION) sigbus);
+        signal(SIGBUS, (SIGNAL_FUNCTION) sigbus);
 #endif
 #if defined(SIGSEGV) && !defined(NGDEBUG) && defined(HAS_WINDOWS)
 /* Allow a comment and graceful shutdown after seg fault */
-    signal(SIGSEGV, (SIGNAL_FUNCTION) sigsegv);
+        signal(SIGSEGV, (SIGNAL_FUNCTION) sigsegv);
 #endif
 #ifdef SIGSYS
-    signal(SIGSYS, (SIGNAL_FUNCTION) sig_sys);
+        signal(SIGSYS, (SIGNAL_FUNCTION) sig_sys);
 #endif
 
-    if (readinit) {
-        /* load user's initialisation file
-           try accessing the initialisation file in the current directory
-           if that fails try the alternate name */
-        if(FALSE == read_initialisation_file("", INITSTR)  &&
-           FALSE == read_initialisation_file("", ALT_INITSTR)) {
-            /* if that failed try in the user's home directory
-               if their HOME environment variable is set */
-            char *homedir = getenv("HOME");
-            if(homedir != NULL)
-                if(FALSE == read_initialisation_file(homedir, INITSTR)  &&
-                   FALSE == read_initialisation_file(homedir, ALT_INITSTR)) {
-                    ;
-                }
+        if (readinit) {
+            /* load user's initialisation file
+               try accessing the initialisation file in the current directory
+               if that fails try the alternate name */
+            if(FALSE == read_initialisation_file("", INITSTR)  &&
+               FALSE == read_initialisation_file("", ALT_INITSTR)) {
+                /* if that failed try in the user's home directory
+                   if their HOME environment variable is set */
+                char *homedir = getenv("HOME");
+                if(homedir != NULL)
+                    if(FALSE == read_initialisation_file(homedir, INITSTR)  &&
+                       FALSE == read_initialisation_file(homedir, ALT_INITSTR)) {
+                        ;
+                    }
+            }
         }
+
+        if (!ft_batchmode) {
+            com_version(NULL);
+            DevInit( );
+            print_news();
+        }
+
     }
-
-    if (!ft_batchmode) {
-        com_version(NULL);
-        DevInit( );
-        print_news();
-    }
-
-
-bot:
 
     /* Pass 2 -- get the filenames. If we are spice, then this means
      * build a circuit for this file. If this is in server mode, don't
