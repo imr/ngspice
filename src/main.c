@@ -34,14 +34,14 @@
 #ifdef HAVE_GNUREADLINE
 # include <readline/readline.h>
 # include <readline/history.h>
-#endif  /* HAVE_GNUREADLINE */
+#endif
 
 /* SJB added editline support 2005-05-05 */
 #ifdef HAVE_BSDEDITLINE
 # include <editline/readline.h>
  extern VFunction *rl_event_hook;    /* missing from editline/readline.h */
  extern int rl_catch_signals;        /* missing from editline/readline.h */
-#endif /* HAVE_BSDEDITLINE */
+#endif
 
 #include "iferrmsg.h"
 #include "ftedefs.h"
@@ -86,7 +86,7 @@
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
  char history_file[512] = {'\0'};
  static char *application_name;
-#endif  /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
+#endif
 
 /* Undefine this next line for debug tracing */
 /* #define TRACE */
@@ -106,7 +106,7 @@ char *ft_rawfile = "rawspice.raw";
  extern void SetSource( char *Name);    /* display the source file name in the source window */
  extern int  xmain(int argc, char **argv);
  FILE *flogp = NULL;         /* log file ('-o logfile' command line option) */
-#endif /* HAS_WINDOWS */
+#endif
 
 /* Frontend and circuit options */
 IFsimulator *ft_sim = NULL;
@@ -172,16 +172,16 @@ static void app_rl_readlines(void);
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
  static char *prompt(void);
-#endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
+#endif
 
 #ifndef X_DISPLAY_MISSING
 # include "frontend/plotting/x11.h"
 # ifdef HAVE_GNUREADLINE
    static int app_event_func(void);
-# endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
+# endif
 # ifdef HAVE_BSDEDITLINE
    static void app_event_func(void);
-# endif /* HAVE_BSDEDITLINE */
+# endif
 #endif
 
 static void show_help(void);
@@ -190,7 +190,7 @@ static bool read_initialisation_file(char *dir, char *name);
 
 #ifdef SIMULATOR
 static void append_to_stream(FILE *dest, FILE *source);
-#endif /* SIMULATOR */
+#endif
 
 
 extern IFsimulator SIMinfo;
@@ -783,9 +783,9 @@ main(int argc, char **argv)
 
 #ifdef SIMULATOR
     bool  gotone = FALSE;
-#else  /* ~ SIMULATOR */
+#else
     bool gdata = TRUE;
-#endif /* ~ SIMULATOR */
+#endif
 
     char buf[BSIZE_SP];
     bool readinit = TRUE;
@@ -823,7 +823,7 @@ main(int argc, char **argv)
         application_name ++;
     else
         application_name = argv[0];
-#endif  /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)  */
+#endif
 
 #ifdef PARALLEL_ARCH
     PBEGIN_(argc, argv);
@@ -836,7 +836,7 @@ main(int argc, char **argv)
 #else
     ARCHme = 0;
     ARCHsize = 1;
-#endif /* PARALLEL_ARCH */
+#endif
 
     ivars(argv[0]);
 
