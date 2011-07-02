@@ -1057,8 +1057,7 @@ main(int argc, char **argv)
     /* To catch interrupts during .spiceinit... */
     if (SETJMP(jbuf, 1)) {
         fprintf(cp_err, "Warning: error executing .spiceinit.\n");
-        if (!ft_batchmode)
-            goto bot;
+        goto bot;
     }
 
     /* Set up signal handling */
