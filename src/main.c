@@ -197,7 +197,7 @@ extern IFsimulator SIMinfo;
 
 #ifdef SIMULATOR
 
-bool ft_nutmeg = FALSE;
+const bool ft_nutmeg = FALSE;
 extern struct comm spcp_coms[ ];
 struct comm *cp_coms = spcp_coms;
 
@@ -232,7 +232,7 @@ IFfrontEnd nutmeginfo = {
 
 #else /* SIMULATOR */
 
-bool ft_nutmeg = TRUE;
+const bool ft_nutmeg = TRUE;
 extern struct comm nutcp_coms[ ];
 struct comm *cp_coms = nutcp_coms;
 IFfrontEnd nutmeginfo;
@@ -1155,7 +1155,7 @@ main(int argc, char **argv)
         }
 #endif
 
-        if (!ft_servermode && !ft_nutmeg) {
+        if (!ft_servermode) {
 
             /* Concatenate all non-option arguments into a temporary file
                and load that file into the spice core.
@@ -1252,9 +1252,9 @@ main(int argc, char **argv)
             if (ft_batchmode && err)
                 sp_shutdown(EXIT_BAD);
 
-        }   /* ---  if (!ft_servermode && !ft_nutmeg) --- */
+        }   /* ---  if (!ft_servermode) --- */
 
-        if (!gotone && ft_batchmode && !ft_nutmeg)
+        if (!gotone && ft_batchmode)
             inp_spsource(circuit_file, FALSE, NULL);
 
     }
@@ -1318,7 +1318,7 @@ main(int argc, char **argv)
         cp_interactive = FALSE;
         err = 0;
 
-        if (ft_nutmeg && gdata) {
+        if (gdata) {
             if (optind < argc)
                 while (optind < argc)
                     ft_loadfile(argv[optind++]);
