@@ -776,8 +776,6 @@ int
 main(int argc, char **argv)
 {
     int   err;
-    bool  addctrlsect = TRUE; /* PN: for autorun */
-
 
 #ifdef SIMULATOR
     bool  gotone = FALSE;
@@ -902,15 +900,18 @@ main(int argc, char **argv)
               break;
 
             case 'b':       /* Batch mode */
-              ft_batchmode = TRUE;
-              addctrlsect = FALSE;
-              cp_vset("addcontrol",CP_BOOL,&addctrlsect);
+              {
+                  bool x_false = FALSE;
+                  cp_vset("addcontrol", CP_BOOL, &x_false);
+
+                  ft_batchmode = TRUE;
+              }
               break;
 
             case 'a':           /* Add control section for autorun */
               if (!ft_batchmode) {
-                  addctrlsect = TRUE;
-                  cp_vset("addcontrol",CP_BOOL, &addctrlsect);
+                  bool x_true = TRUE;
+                  cp_vset("addcontrol", CP_BOOL, &x_true);
               }
               break;
 
