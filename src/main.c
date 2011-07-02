@@ -982,13 +982,23 @@ main(int argc, char **argv)
         }
     }  /* --- End of command line option processing (While(1)-loop) --- */
 
+
     if (orflag) {   /* -o option has been set */
+
         com_version(NULL);
-        if (ft_batchmode && !ft_servermode) fprintf(stdout, "\nBatch mode\n\n");
-        else if (ft_servermode) fprintf(stdout, "\nServer mode\n\n");
-        else fprintf(stdout, "\nInteractive mode, better used without -o option\n\n");
-        if (rflag) fprintf(stdout, "Simulation output goes to rawfile: %s\n", ft_rawfile);
+
+        if (ft_servermode)
+            fprintf(stdout, "\nServer mode\n\n");
+        else if (ft_batchmode)
+            fprintf(stdout, "\nBatch mode\n\n");
+        else
+            fprintf(stdout, "\nInteractive mode, better used without -o option\n\n");
+
+        if (rflag)
+            fprintf(stdout, "Simulation output goes to rawfile: %s\n", ft_rawfile);
+
         fprintf(stdout, "Comments and warnings go to log-file: %s\n\n", buf);
+
         /* Open the log file */
 #ifdef HAS_WINDOWS
         /* flogp used by winmain's putc which writes to file 'buf' */
