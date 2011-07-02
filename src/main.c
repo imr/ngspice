@@ -770,12 +770,12 @@ print_news(void)
 }
 
 
-int
 #ifdef HAS_WINDOWS
-xmain(int argc, char **argv)
-#else
+#define main xmain
+#endif
+
+int
 main(int argc, char **argv)
-#endif /* HAS_WINDOWS */
 {
     int c, err;
     bool  gotone = FALSE;
