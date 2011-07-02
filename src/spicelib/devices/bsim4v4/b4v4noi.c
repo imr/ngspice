@@ -344,17 +344,17 @@ int i;
 
                               switch(model->BSIM4v4tnoiMod)
                               {  case 0:
-                                      T0 = m * here->BSIM4v4ueff * fabs(here->BSIM4v4qinv);
+                                      T0 = here->BSIM4v4ueff * fabs(here->BSIM4v4qinv);
                                       T1 = T0 * tmp + pParam->BSIM4v4leff
                                          * pParam->BSIM4v4leff;
                                       NevalSrc(&noizDens[BSIM4v4IDNOIZ],
                                                &lnNdens[BSIM4v4IDNOIZ], ckt,
                                                THERMNOISE, here->BSIM4v4dNodePrime,
                                                here->BSIM4v4sNodePrime,
-                                               (T0 / T1) * model->BSIM4v4ntnoi);
+                                               m * (T0 / T1) * model->BSIM4v4ntnoi);
                                       break;
                                  case 1:
-                                      T0 = m * (here->BSIM4v4gm + here->BSIM4v4gmbs + here->BSIM4v4gds);
+                                      T0 = here->BSIM4v4gm + here->BSIM4v4gmbs + here->BSIM4v4gds;
                                       T0 *= T0;
                                       igsquare = npart_theta * npart_theta * T0 / here->BSIM4v4IdovVds;
                                       T1 = npart_beta * (here->BSIM4v4gm
@@ -363,7 +363,7 @@ int i;
                                       NevalSrc(&noizDens[BSIM4v4IDNOIZ],
                                                &lnNdens[BSIM4v4IDNOIZ], ckt,
                                                THERMNOISE, here->BSIM4v4dNodePrime,
-                                               here->BSIM4v4sNodePrime, (T2 - igsquare));
+                                               here->BSIM4v4sNodePrime, m * (T2 - igsquare));
                                       break;
                               }
 
