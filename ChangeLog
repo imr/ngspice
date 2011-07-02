@@ -1,5 +1,14 @@
 2011-07-02  Robert Larice
  * src/main.c :
+   main.c, a series of cleanups concerning SETJMP processing
+    two issues surfaced in the original code:
+      - nutmeg called with no file, propably should default to rawspice.raw
+	still so, but now plain visable. shall we fix ?
+      - there was a possiblility of endless recursion when
+	  a failure happened during init processing
+
+2011-07-02  Robert Larice
+ * src/main.c :
    main.c, a series of cleanups
 
 2011-07-02 Dietmar Warning
