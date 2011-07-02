@@ -779,7 +779,7 @@ print_news(void)
 int
 main(int argc, char **argv)
 {
-    char buf[BSIZE_SP];
+    char log_file[BSIZE_SP];
     bool readinit = TRUE;
     bool istty = TRUE;
     bool iflag = FALSE;
@@ -939,9 +939,9 @@ main(int argc, char **argv)
                   /* turn off buffering for stdout */
                   setbuf(stdout, NULL);
 #ifdef PARALLEL_ARCH
-                  sprintf (buf, "%s%03d", optarg, ARCHme);
+                  sprintf (log_file, "%s%03d", optarg, ARCHme);
 #else
-                  sprintf (buf, "%s", optarg);
+                  sprintf (log_file, "%s", optarg);
 #endif
                   orflag = TRUE;
               }
@@ -994,21 +994,21 @@ main(int argc, char **argv)
         if (rflag)
             fprintf(stdout, "Simulation output goes to rawfile: %s\n", ft_rawfile);
 
-        fprintf(stdout, "Comments and warnings go to log-file: %s\n\n", buf);
+        fprintf(stdout, "Comments and warnings go to log-file: %s\n\n", log_file);
 
         /* Open the log file */
 #ifdef HAS_WINDOWS
-        /* flogp used by winmain's putc which writes to file 'buf' */
-        flogp = fopen(buf, "w");
+        /* flogp used by winmain's putc which writes to file 'log_file' */
+        flogp = fopen(log_file, "w");
         if (!flogp) {
-            perror (buf);
+            perror (log_file);
             sp_shutdown (EXIT_BAD);
         }
         oflag = TRUE; /* All further output to -o log file */
 #else
-        /* Connect stdout to file buf and log stdout */
-        if (!freopen (buf, "w", stdout)) {
-            perror (buf);
+        /* Connect stdout to file log_file and log stdout */
+        if (!freopen (log_file, "w", stdout)) {
+            perror (log_file);
             sp_shutdown (EXIT_BAD);
         }
 #endif
