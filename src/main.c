@@ -753,6 +753,22 @@ read_initialisation_file(char * dir, char * name)
 
 /* -------------------------------------------------------------------------- */
 
+static void
+print_news(void)
+{
+    if (News_File && *News_File) {
+        char* fname = cp_tildexpand(News_File); /*DG  Memory leak */
+        FILE *fp = fopen(fname, "r");
+        tfree(fname);
+        if (fp) {
+            char buf[BSIZE_SP];
+            while (fgets(buf, BSIZE_SP, fp))
+                fputs(buf, stdout);
+            (void) fclose(fp);
+        }
+    }
+}
+
 
 int
 #ifdef HAS_WINDOWS
@@ -763,7 +779,6 @@ main(int argc, char **argv)
 {
     int c, err;
     bool  gotone = FALSE;
-    char* copystring;
     bool  addctrlsect = TRUE; /* PN: for autorun */
 
 
@@ -781,7 +796,6 @@ main(int argc, char **argv)
     bool iflag = FALSE;
     bool qflag = FALSE;
 
-    FILE *fp;
     FILE *circuit_file;
     bool orflag = FALSE;
 
@@ -1080,16 +1094,7 @@ main(int argc, char **argv)
     if (!ft_batchmode) {
         com_version(NULL);
         DevInit( );
-        if (News_File && *News_File) {
-            copystring=cp_tildexpand(News_File);/*DG  Memory leak */
-            fp = fopen(copystring, "r");
-            tfree(copystring);
-            if (fp) {
-                while (fgets(buf, BSIZE_SP, fp))
-                    fputs(buf, stdout);
-                (void) fclose(fp);
-            }
-        }
+        print_news();
     }
 
 
