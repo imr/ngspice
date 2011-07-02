@@ -246,7 +246,7 @@ extern bool ft_getOutReq(FILE **, struct plot **, bool *, char *, char *);
 
 /* spice.c & nutmeg.c */
 
-extern bool ft_nutmeg;
+extern const bool ft_nutmeg;
 extern IFsimulator *ft_sim;
 extern char *ft_rawfile;
 extern int main(int argc, char **argv);
