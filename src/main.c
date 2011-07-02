@@ -1299,11 +1299,12 @@ evl:
             sp_shutdown(EXIT_BAD);
         }
 
+        return sp_shutdown(EXIT_NORMAL);
     }  /* ---  if (ft_batchmode) ---  */
-    else {
-        cp_interactive = TRUE;
-        app_rl_readlines();  /*  enter the command processing loop  */
-    }  /* --- else (if (ft_batchmode)) --- */
+
+
+    cp_interactive = TRUE;
+    app_rl_readlines();  /*  enter the command processing loop  */
 
 #else  /* ~ SIMULATOR */
 
