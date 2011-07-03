@@ -275,8 +275,8 @@ ngmakeidx_SOURCES = makeidx.c
 
 ## create index for online help:
 
-ngspice.idx: ngmakeidx$(EXEEXT)
-	./ngmakeidx$(EXEEXT) $(srcdir)/ngspice.txt
+ngspice.idx: ngmakeidx$(EXEEXT) $(srcdir)/ngspice.txt
+	./ngmakeidx$(EXEEXT) -o ngspice.idx $(srcdir)/ngspice.txt
 
 endif !WINDOWS
 

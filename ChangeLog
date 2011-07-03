@@ -1,3 +1,8 @@
+2011-07-03  Robert Larice
+ * src/Makefile.am ,
+ * src/makeidx.c :
+   upgrade ngmakeidx to support build in a sparate directory
+
 2011-07-02  Robert Larice
  * src/main.c :
    main.c, a series of cleanups concerning SETJMP processing
