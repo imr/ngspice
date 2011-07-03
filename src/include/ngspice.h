@@ -176,7 +176,7 @@
 /* NAN not available in MS VS 2008 */
 #ifndef NAN
     static const __int64 global_nan = 0x7ff8000000000000i64;
-    #define NAN (*(const double *) global_nan)
+    #define NAN (*(const double *) &global_nan)
 #endif
 #endif
 
