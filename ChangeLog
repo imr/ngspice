@@ -1,4 +1,10 @@
 2011-07-03  Robert Larice
+ * configure.ac :
+   enable -Wconversion
+     remove -Wimplicit-function-declaration since its implicit in -Wall
+     Note: -Wuninitialized is implicit in -Wall but may not be effective for -O0
+
+2011-07-03  Robert Larice
  * src/Makefile.am ,
  * src/makeidx.c :
    upgrade ngmakeidx to support build in a sparate directory
