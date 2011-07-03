@@ -1,4 +1,9 @@
 2011-07-03  Robert Larice
+ * man/man1/ngnutmeg.1 ,
+ * man/man1/ngspice.1 :
+   spelling fixes from debian `ngspice_23-1.debian.tar.gz', thank you !
+
+2011-07-03  Robert Larice
  * configure.ac :
    enable -Wconversion
      remove -Wimplicit-function-declaration since its implicit in -Wall
