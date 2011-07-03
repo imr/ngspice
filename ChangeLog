@@ -1,3 +1,7 @@
+2011-07-03  Holger Vogt
+ * main.c: remove reference to 'oflag'
+ * ngspice.h: NaN definition for MS VS
+
 2011-07-03  Robert Larice
  * man/man1/ngnutmeg.1 ,
  * man/man1/ngspice.1 :

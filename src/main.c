@@ -1004,7 +1004,7 @@ main(int argc, char **argv)
             perror (log_file);
             sp_shutdown (EXIT_BAD);
         }
-        oflag = TRUE; /* All further output to -o log file */
+//        oflag = TRUE; /* All further output to -o log file */
 #else
         /* Connect stdout to file log_file and log stdout */
         if (!freopen (log_file, "w", stdout)) {
