@@ -27,7 +27,7 @@ inchar(FILE *fp)
 
 #ifndef HAS_WINDOWS    
     char c;
-    ssize_t i;
+    size_t i;
 
     if (cp_interactive && !cp_nocc) {
       do {
