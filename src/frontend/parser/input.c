@@ -16,6 +16,11 @@ $Id$
 #include "input.h"
 #include "cpextern.h"
 #include "../display.h"
+#ifdef _MSC_VER
+#include "BaseTsd.h" // for ssize_t
+#define ssize_t SSIZE_T
+#define read _read
+#endif
 
 /* A special 'getc' so that we can deal with ^D properly. There is no way for
  * stdio to know if we have typed a ^D after some other characters, so
@@ -27,7 +32,7 @@ inchar(FILE *fp)
 
 #ifndef HAS_WINDOWS    
     char c;
-    size_t i;
+    ssize_t i;
 
     if (cp_interactive && !cp_nocc) {
       do {
