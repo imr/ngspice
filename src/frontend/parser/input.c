@@ -17,7 +17,7 @@ $Id$
 #include "cpextern.h"
 #include "../display.h"
 #ifdef _MSC_VER
-#include "BaseTsd.h" // for ssize_t
+#include "BaseTsd.h" /* for SSIZE_T */
 #define ssize_t SSIZE_T
 #define read _read
 #endif
