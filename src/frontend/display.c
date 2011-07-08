@@ -169,15 +169,19 @@ DevInit(void)
 #endif
 
     if (!dispdev) {
-	externalerror(
-	 "no graphics interface;\n please check if X-server is running, \n or ngspice is compiled properly (see INSTALL)");
-	dispdev = FindDev("error");
+/* console application under MS Windows */
+#if !defined(HAS_WINDOWS) && !defined(TCL_MODULE) && (defined(_MSC_VER) || defined(__MINGW32__))
+        fprintf(cp_err, "Warning: no graphics interface!\n You may use command 'gnuplot'\n if GnuPlot is installed.\n");
+#else
+        externalerror(
+	         "no graphics interface;\n please check if X-server is running,\n or ngspice is compiled properly (see INSTALL)");
+#endif
+        dispdev = FindDev("error");
     } else if (dispdev->Init()) {
-      fprintf(cp_err,
-        "Warning: can't initialize display device for graphics.\n");
-      dispdev = FindDev("error");
+        fprintf(cp_err,
+            "Warning: can't initialize display device for graphics.\n");
+        dispdev = FindDev("error");
     }
-
 }
 
 /* NewViewport is responsible for filling in graph->viewport */
