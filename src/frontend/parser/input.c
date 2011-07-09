@@ -19,7 +19,9 @@ $Id$
 #ifdef _MSC_VER
 #include "BaseTsd.h" /* for SSIZE_T */
 #define ssize_t SSIZE_T
-#define read _read
+#ifndef HAS_WINDOWS  
+#define read _read /* only for console */
+#endif
 #endif
 
 /* A special 'getc' so that we can deal with ^D properly. There is no way for
