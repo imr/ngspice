@@ -29,7 +29,6 @@ static SPICE_DSTRING fmathS ;     /* all math functions */
 
 extern char *nupa_inst_name; /* see spicenum.c */
 extern long dynsubst;        /* see inpcom.c */
-extern unsigned int dynLlen;
 
 #define MAX_STRING_INSERT 17 /* max. string length to be inserted and replaced */
 #define ACT_CHARACTS 17      /* actual string length to be inserted and replaced */

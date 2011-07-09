@@ -1,4 +1,10 @@
 2011-07-09  Robert Larice
+ * src/frontend/inpcom.c ,
+ * src/frontend/numparam/spicenum.c ,
+ * src/frontend/numparam/xpressn.c' :
+   remove unused global artifact `dynLlen'
+
+2011-07-09  Robert Larice
  * src/frontend/com_sysinfo.c ,
  * src/winmain.c :
    cleanup integer type conversions

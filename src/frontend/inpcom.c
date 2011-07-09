@@ -77,8 +77,6 @@ static COMPATMODE_T inp_compat_mode;
 /* Collect information for dynamic allocation of numparam arrays */
 /* number of lines in input deck */
 int dynmaxline;  /* inpcom.c 1529 */
-/* max. line length in input deck */
-unsigned int dynLlen; /* inpcom.c 1526 */
  /* number of lines in deck after expansion */
 int dynMaxckt = 0; /* subckt.c 307 */
 /* number of parameter substitutions */
@@ -1109,6 +1107,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
    int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
    int line_number_orig = 1, line_number_lib = 1, line_number_inc = 1;
    unsigned int no_braces = 0; /* number of '{' */
+
+   size_t max_line_length; /* max. line length in input deck */
+
    FILE *newfp;
    FILE *fdo;
    struct line *tmp_ptr1 = NULL;    
@@ -1684,7 +1685,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
       count the number of '{' per line as an upper estimate of the number
       of parameter substitutions in a line*/
    dynmaxline = 0;
-   dynLlen = 0;
+   max_line_length = 0;
    for(tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next) {
       char *s;
       unsigned int braces_per_line = 0;
@@ -1692,8 +1693,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
       dynmaxline++;
       /* renumber the lines of the processed input deck */
       tmp_ptr1->li_linenum = dynmaxline;
-      if (dynLlen < strlen(tmp_ptr1->li_line))
-         dynLlen = strlen(tmp_ptr1->li_line);
+      if (max_line_length < strlen(tmp_ptr1->li_line))
+         max_line_length = strlen(tmp_ptr1->li_line);
       /* count '{' */
       for (s = tmp_ptr1->li_line; *s; s++)
          if (*s == '{') braces_per_line++;
@@ -1708,15 +1709,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
       (void) fclose(fdo);  
       fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n", 
-         dynLlen, no_braces, dynmaxline);
+              (int) max_line_length, no_braces, dynmaxline);
    }
-   /* max line length increased by maximum number of parameter substitutions per line 
-      times parameter string length (25) */
-   dynLlen += no_braces * 25;
-   /* several times a string of length dynLlen is used for messages, thus give it a
-      minimum length */
-   if (dynLlen < 512) dynLlen = 512;
-   return;
 }
 
 /*-------------------------------------------------------------------------*
