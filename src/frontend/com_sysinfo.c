@@ -47,17 +47,17 @@
 /* system info */
 typedef struct TSI {
 	char* cpuModelName;
-	int numPhysicalProcessors;
-	int numLogicalProcessors;
+	unsigned numPhysicalProcessors;
+	unsigned numLogicalProcessors;
 	char* osName;
 } TesSystemInfo;
 
 /* memory info */
 struct sys_memory {
-   long long size_m;  /* Total memory size */
-   long long free_m;  /* Free memory */
-   long long swap_t;  /* Swap total */
-   long long swap_f;  /* Swap free */
+   size_t size_m;  /* Total memory size */
+   size_t free_m;  /* Free memory */
+   size_t swap_t;  /* Swap total */
+   size_t swap_f;  /* Swap free */
 };
 
 static struct sys_memory mem_t_act; 
@@ -67,7 +67,7 @@ static size_t get_sysmem(struct sys_memory *memall);
 
 /* Print to stream the given memory size in a human friendly format */
 static void
-fprintmem(FILE* stream, long long memory) {
+fprintmem(FILE* stream, size_t memory) {
     if (memory > (1<<20))
 	fprintf(stream, "%8.6f MB", (double)memory / (1<<20));
     else if (memory > (1<<10))
@@ -101,8 +101,8 @@ void com_sysinfo(wordlist *wl)
       fprintf(cp_out, "\nOS: %s\n", info->osName);
       fprintf(cp_out, "CPU: %s\n", info->cpuModelName);
       if (info->numPhysicalProcessors > 0) 
-         fprintf(cp_out, "Physical processors: %d, ", info->numPhysicalProcessors);
-      fprintf(cp_out, "Logical processors: %d\n", 
+         fprintf(cp_out, "Physical processors: %u, ", info->numPhysicalProcessors);
+      fprintf(cp_out, "Logical processors: %u\n",
          info->numLogicalProcessors);
    }
 #if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 	
@@ -187,8 +187,8 @@ static size_t getLineLength(const char *str) {
 
 /* Checks if number 'match' is found in a vector 'set' of size 'size'
    Returns 1 if yes, otherwise, 0 */
-static tInt searchInSet(const tInt *set, tInt size, tInt match) {
-	tInt index;
+static tInt searchInSet(const tInt *set, unsigned size, tInt match) {
+	unsigned index;
 	for(index = 0; index < size; index++) {
 		if(match == set[index]) {
 			return 1;
@@ -276,7 +276,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 			const char *matchStrProc = "processor";
 			const char *matchStrPhys = "physical id";
 			char *strPtr = inStr;
-			tInt numProcs = 0;
+			unsigned numProcs = 0;
 			tInt *physIDs;
 			
 			/* get number of logical processors */
@@ -286,7 +286,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 				if (isblank(*strPtr)) numProcs++;
 			}
 			info->numLogicalProcessors = numProcs;
-			physIDs = (tInt*) malloc((size_t)numProcs * sizeof(tInt));
+			physIDs = (tInt*) malloc(numProcs * sizeof(tInt));
 						
 			/* get number of physical CPUs */
 			numProcs = 0;
@@ -377,7 +377,7 @@ static size_t get_sysmem(struct sys_memory *memall) {
 TesError tesCreateSystemInfo(TesSystemInfo *info) {
 	OSVERSIONINFOA version;
 	char *versionStr = NULL, *procStr, *freeStr;
-	tInt major, minor;
+	DWORD major, minor;
 	DWORD dwLen;
    HKEY hkBaseCPU;
 	LONG lResult;
@@ -432,8 +432,8 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 	}
 
 	if(versionStr != NULL) {
-		tInt lengthCSD = strlen(version.szCSDVersion);
-		tInt lengthVer = strlen(versionStr);
+		size_t lengthCSD = strlen(version.szCSDVersion);
+		size_t lengthVer = strlen(versionStr);
 
 		info->osName = malloc(lengthVer + lengthCSD + 2);
 		memcpy(info->osName, versionStr, lengthVer);

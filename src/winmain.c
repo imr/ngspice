@@ -295,7 +295,7 @@ static void _DeleteFirstLine(void)
         return;
     }
     cp++;
-    TBufEnd -= cp - TBuffer;
+    TBufEnd -= (size_t)(cp - TBuffer);
     memmove( TBuffer, cp, TBufEnd);
     TBuffer[TBufEnd] = SE;
 }

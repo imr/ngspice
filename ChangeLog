@@ -1,4 +1,9 @@
 2011-07-09  Robert Larice
+ * src/frontend/com_sysinfo.c ,
+ * src/winmain.c :
+   cleanup integer type conversions
+
+2011-07-09  Robert Larice
  * src/ngsconvert.c ,
  * src/frontend/inp.c ,
  * src/frontend/nutinp.c ,
