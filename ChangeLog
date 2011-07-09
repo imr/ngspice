@@ -1,4 +1,9 @@
 2011-07-09  Robert Larice
+ * src/ngsconvert.c ,
+ * src/misc/misc_time.c :
+   some explicit `int' casts
+
+2011-07-09  Robert Larice
  * src/spicelib/devices/ltra/ltraacld.c ,
  * src/frontend/trannoise/1-f-code.c :
    some long versus int type fixes

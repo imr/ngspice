@@ -174,7 +174,7 @@ oldread(char *name)
     np = i / nv;
 
     for (v = pl->pl_dvecs; v; v = v->v_next) {
-        v->v_length = np;
+        v->v_length = (int) np;
         if (isreal(v)) {
             v->v_realdata = TMALLOC(double, np);
         } else {
