@@ -215,10 +215,10 @@ dgen_next(dgen **dgx)
 
 				if (p[-1] == ':') {
 					head_match = 1;
-					subckt_len = p - word - 1;
+					subckt_len = (int)(p - word) - 1;
 				} else {
 					head_match = 0;
-					subckt_len = p - word;
+					subckt_len = (int)(p - word);
 				}
 
 				if (subckt_len == 0) {

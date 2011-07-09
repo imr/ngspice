@@ -1590,7 +1590,7 @@ insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
         (snprintf(buf, sizeof(buf), "%-17s", u) == ACT_CHARACTS))
     {
         memcpy(p, buf, ACT_CHARACTS);
-        return p - s + ACT_CHARACTS;
+        return (int)(p - s) + ACT_CHARACTS;
     }
 
     message

@@ -779,8 +779,8 @@ bxx_rewind(struct bxx_buffer *t)
 static void
 bxx_extend(struct bxx_buffer *t, int howmuch)
 {
-    int pos = t->dst   - t->buffer;
-    int len = t->limit - t->buffer;
+    int pos = (int)(t->dst   - t->buffer);
+    int len = (int)(t->limit - t->buffer);
 
     /* round up */
     howmuch +=  (bxx_chunksize - 1);
@@ -801,11 +801,11 @@ bxx_printf(struct bxx_buffer *t, const char *fmt, ...)
 
     for (;;) {
         int ret;
-        int size = t->limit - t->dst;
-		va_start(ap, fmt);
+        int size = (int)(t->limit - t->dst);
+        va_start(ap, fmt);
         ret  = vsnprintf(t->dst, (size_t) size, fmt, ap);
         va_end(ap);
-		if(ret == -1) {
+        if(ret == -1) {
             bxx_extend(t, bxx_chunksize);
         } else if(ret >= size) {
             bxx_extend(t, ret - size + 1);

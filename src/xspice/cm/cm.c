@@ -245,7 +245,7 @@ int  cm_analog_integrate(
     /* Compute byte offset from start of state0 vector */
     char_state0 = (char *) ckt->CKTstate0;
     char_state  = (char *) integral;
-    byte_index  = char_state - char_state0;
+    byte_index  = (int) (char_state - char_state0);
 
     /* Check to be sure argument address is in range of state0 vector */
     if((byte_index < 0) ||
@@ -338,7 +338,7 @@ int  cm_analog_converge(
     /* Compute byte offset from start of state0 vector */
     char_state0 = (char *) ckt->CKTstate0;
     char_state  = (char *) state;
-    byte_index  = char_state - char_state0;
+    byte_index  = (int) (char_state - char_state0);
 
     /* Check to be sure argument address is in range of state0 vector */
     if((byte_index < 0) ||

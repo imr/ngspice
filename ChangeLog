@@ -1,4 +1,13 @@
 2011-07-09  Robert Larice
+ * src/frontend/gens.c ,
+ * src/frontend/subckt.c ,
+ * src/frontend/numparam/xpressn.c ,
+ * src/maths/sparse/spfactor.c ,
+ * src/spicelib/parser/inpgtok.c ,
+ * src/xspice/cm/cm.c :
+   explicit `int' casts for some ptrdiff_t expressions, where an `int' seems to be big enough
+
+2011-07-09  Robert Larice
  * src/ngsconvert.c ,
  * src/misc/misc_time.c :
    some explicit `int' casts
