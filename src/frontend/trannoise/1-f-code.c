@@ -81,7 +81,7 @@ trnoise_state_gen(struct trnoise_state *this, CKTcircuit *ckt)
             size_t nosteps = (size_t) (ckt->CKTfinalTime / this->TS) + 10;
 
             size_t newsteps = 1;
-            long int newexp = 0;
+            int newexp = 0;
             // generate number of steps as power of 2
             while(newsteps < nosteps) {
                 newsteps <<= 1;

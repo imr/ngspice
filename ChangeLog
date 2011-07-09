@@ -1,4 +1,9 @@
 2011-07-09  Robert Larice
+ * src/spicelib/devices/ltra/ltraacld.c ,
+ * src/frontend/trannoise/1-f-code.c :
+   some long versus int type fixes
+
+2011-07-09  Robert Larice
  * src/frontend/com_fft.c :
    possibly inexact long -> double cast
 

@@ -23,7 +23,8 @@ LTRAacLoad(GENmodel *inModel, CKTcircuit *ckt)
   double y0_r, y0_i, lambda_r, lambda_i, mag, theta;
   double exparg_r, exparg_i, explambda_r, explambda_i;
   double y0exp_r, y0exp_i;
-  int savemode, error;
+  long savemode;
+  int error;
 
   /*
    * LTRAacLoad - loads for LTRA lines for the s.s. ac case the equations are
