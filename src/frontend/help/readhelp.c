@@ -81,7 +81,7 @@ hlp_read(fplace *place)
     /* get the title */
     if (!place->fp) place->fp = hlp_fopen(place->filename);
     if (!place->fp) return(NULL);
-    fseek(place->fp, place->fpos, 0);
+    fseek(place->fp, place->fpos, SEEK_SET);
     (void) fgets(buf, BSIZE_SP, place->fp);    /* skip subject */
     (void) fgets(buf, BSIZE_SP, place->fp);
     for (s = buf; *s && (*s != '\n'); s++)
@@ -305,7 +305,7 @@ getsubject(fplace *place)
     if (!place->fp) place->fp = hlp_fopen(place->filename);
     if (!place->fp) return(NULL);
 
-    fseek(place->fp, place->fpos, 0);
+    fseek(place->fp, place->fpos, SEEK_SET);
     (void) fgets(buf, BSIZE_SP, place->fp);
     for (s = buf; *s && (*s != '\n'); s++)
         ;

@@ -906,10 +906,10 @@ fileEnd(runDesc *run)
 
     if (run->fp != stdout) {
 	place = ftell(run->fp);
-	fseek(run->fp, run->pointPos, 0);
+	fseek(run->fp, run->pointPos, SEEK_SET);
         fprintf(run->fp, "%d", run->pointCount);
 	fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
-	fseek(run->fp, place, 0);
+	fseek(run->fp, place, SEEK_SET);
     } else {
 	/* Yet another hack-around */
 	fprintf(stderr, "@@@ %ld %d\n", run->pointPos, run->pointCount);

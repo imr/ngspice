@@ -1,7 +1,15 @@
+2011-07-09  Robert Larice
+ * src/ngsconvert.c ,
+ * src/frontend/inp.c ,
+ * src/frontend/nutinp.c ,
+ * src/frontend/outitf.c ,
+ * src/frontend/help/readhelp.c :
+   cleanup fseek() usage
+
 2011-07-08  Holger Vogt
- * display.c: replace error message by appropriate warning, if compiled 
+ * display.c: replace error message by appropriate warning, if compiled
    as console application under MS Windows
- 
+
 2011-07-04  Holger Vogt
  * input.c: add ssize_t as SSIZE_T for MS Visual Studio
 

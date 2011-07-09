@@ -156,9 +156,9 @@ oldread(char *name)
      * the file. 
      */
     i = ftell(fp);
-    (void) fseek(fp, (long) 0, 2);
+    (void) fseek(fp, 0L, SEEK_END);
     j = ftell(fp);
-    (void) fseek(fp, i, 0);
+    (void) fseek(fp, i, SEEK_SET);
     i = j - i;
     if (i % 8) {    /* Data points are always 8 bytes... */
         fprintf(cp_err, "Error: alignment error in data\n");

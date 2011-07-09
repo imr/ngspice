@@ -230,7 +230,7 @@ nutcom_source(wordlist *wl)
             (void) fclose(tp);
             wl = wl->wl_next;
         }
-        (void) fseek(fp, (long) 0, 0);
+        (void) fseek(fp, 0L, SEEK_SET);
     } else
         fp = inp_pathopen(wl->wl_word, "r");
     if (fp == NULL) {

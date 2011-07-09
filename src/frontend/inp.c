@@ -1065,7 +1065,7 @@ com_source(wordlist *wl)
             fclose(tp);
             wl = wl->wl_next;
       }
-      fseek(fp, (long) 0, 0);
+      fseek(fp, 0L, SEEK_SET);
    } else
       fp = inp_pathopen(wl->wl_word, "r");
    if (fp == NULL) {
