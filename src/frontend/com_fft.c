@@ -625,9 +625,10 @@ static void fftext(double* x, double* y, long int n, long int nn, int dir)
 
    /* Scaling for forward transform */
    if (dir == 1) {
+      double scale = 1.0 / (double) nn;
       for (i=0;i<n;i++) {
-         x[i] /= nn; /* don't consider zero padded values */
-         y[i] /= nn;
+         x[i] *= scale; /* don't consider zero padded values */
+         y[i] *= scale;
       }
    }
 }
