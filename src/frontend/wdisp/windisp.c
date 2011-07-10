@@ -79,12 +79,12 @@ static COLORREF      ColorTable[NumWinColors];     /* color memory */
 static char *        WindowName = "Spice Plot";    /* window name */
 static WNDCLASS      TheWndClass;                  /* Plot-window class */
 static HFONT         PlotFont;                     /* which font */
-#define              ID_DRUCKEN  0xEFF0            /* System Menue: print */
+#define              ID_DRUCKEN      0xEFF0        /* System Menue: print */
 #define              ID_DRUCKEINR    0xEFE0        /* System Menue: printer setup */
 #define              ID_HARDCOPY     0xEFD0        /* System Menue: hardcopy color*/
-#define              ID_HARDCOPY_BW     0xEFB0     /* System Menue: hardcopy b&w*/
+#define              ID_HARDCOPY_BW  0xEFB0        /* System Menue: hardcopy b&w*/
+#define              ID_MASK         0xFFF0;       /* System-Menue: mask */
 
-static const int     ID_MASK        = 0xFFF0;      /* System-Menue: mask */
 static char *        STR_DRUCKEN   = "Printer..."; /* System menue strings */
 static char *        STR_DRUCKEINR = "Printer setup...";
 static char *        STR_HARDCOPY = "Postscript file, color";
@@ -220,7 +220,7 @@ int WIN_Init(void)
 /* (attach to window) */
 static GRAPH * pGraph( HWND hwnd)
 {
-   return (GRAPH *) GetWindowLong( hwnd, 0);
+   return (GRAPH *) GetWindowLongPtr( hwnd, 0);
 }
 
 /* return line style for plotting */
@@ -328,7 +328,7 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
    case WM_SYSCOMMAND:
    {
       /* test command */
-      int cmd = wParam & ID_MASK;
+      WPARAM cmd = wParam & ID_MASK;
       switch(cmd) {
          case ID_DRUCKEN:  return PrintPlot( hwnd);
          case ID_DRUCKEINR:      return PrintInit( hwnd);
@@ -604,13 +604,13 @@ int WIN_NewViewport( GRAPH * graph)
    /* change the background color of all windows (both new and already plotted) 
       by assessing the registered window class */
    if (isblack)
-      SetClassLong(window, GCLP_HBRBACKGROUND, (long)GetStockObject( BLACK_BRUSH));
+      SetClassLongPtr(window, GCLP_HBRBACKGROUND, (LONG_PTR)GetStockObject(BLACK_BRUSH));
    else
-      SetClassLong(window, GCLP_HBRBACKGROUND, (long)GetStockObject( WHITE_BRUSH));	   
+      SetClassLongPtr(window, GCLP_HBRBACKGROUND, (LONG_PTR)GetStockObject(WHITE_BRUSH));
    
    
    wd->wnd = window;
-   SetWindowLong( window, 0, (long)graph);
+   SetWindowLongPtr(window, 0, (LONG_PTR)graph);
 
    /* show window */
    ShowWindow( window, SW_SHOWNORMAL);
@@ -837,7 +837,7 @@ int WIN_Text( char * text, int x, int y)
    SelectObject(wd->hDC, hfont);
 
    SetTextColor( wd->hDC, ColorTable[wd->ColorIndex]);
-   TextOut( wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, strlen(text));
+   TextOut( wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, (int)strlen(text));
 
    DeleteObject(SelectObject(wd->hDC, GetStockObject(SYSTEM_FONT)));
 

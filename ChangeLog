@@ -1,6 +1,10 @@
+2011-07-10  Robert Larice
+ * src/frontend/wdisp/windisp.c :
+  SetWindowLongPtr() and SetClassLongPtr() for 64bit compatibility
+
 2011-07-09  Holger Vogt
  * input.c: definition of _read only for Windows console
- 
+
 2011-07-09  Robert Larice
  * src/frontend/gens.c ,
  * src/frontend/subckt.c ,
