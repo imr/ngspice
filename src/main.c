@@ -1192,7 +1192,7 @@ main(int argc, char **argv)
                 /* Copy all the arguments into the temporary file */
                 tp = fopen(arg, "r");
                 if (!tp) {
-                    char *lbuffer = getenv("NGSPICE_INPUT");
+                    char *lbuffer = getenv("NGSPICE_INPUT_DIR");
                     if (lbuffer && *lbuffer) {
                         char *p =
                             TMALLOC(char, strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(arg) + 1);

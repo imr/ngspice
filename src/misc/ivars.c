@@ -84,8 +84,8 @@ ivars(char *argv0)
     /* get directory where ngspice resides */
     ngpath = ngdirname(argv0);
     /* set path either to <ngspice-directory>/input or, if set, to
-    environment variable NGSPICE_INPUT */
-    mkvar(&Inp_Path, ngpath, "input", "NGSPICE_INPUT");
+    environment variable NGSPICE_INPUT_DIR */
+    mkvar(&Inp_Path, ngpath, "input", "NGSPICE_INPUT_DIR");
 
     env_overr(&Spice_Host, "SPICE_HOST"); /* aspice */
     env_overr(&Bug_Addr, "SPICE_BUGADDR");

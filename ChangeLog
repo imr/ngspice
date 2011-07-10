@@ -1,3 +1,7 @@
+2011-07-10  Holger Vogt
+ * main.c, ivars.c: environmental variable NGSPICE_INPUT_DIR
+   for additional search directory for input file
+   
 2011-07-10  Robert Larice
  * src/winmain.c ,
  * src/frontend/wdisp/winprint.c :
