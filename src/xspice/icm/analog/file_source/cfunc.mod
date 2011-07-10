@@ -148,7 +148,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
 		state->atend = 0;
 		if (!state->fp) {
 			char *lbuffer, *p;
-            lbuffer = getenv("NGSPICE_INPUT");
+            lbuffer = getenv("NGSPICE_INPUT_DIR");
             if (lbuffer && *lbuffer) {
                 p = (char*) malloc(strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(PARAM(file)) + 1);
                 sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, PARAM(file));
