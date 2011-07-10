@@ -285,7 +285,7 @@ int WPRINT_NewViewport( GRAPH * graph)
 		align = GetTextAlign( PrinterDC);
 		SetTextAlign( PrinterDC, TA_RIGHT | TA_TOP | TA_NOUPDATECP);
 		TextOut( PrinterDC, PrinterWidth-graph->fontwidth, 1, graph->plotname,
-			strlen(graph->plotname));
+			(int)strlen(graph->plotname));
 		SetTextAlign( PrinterDC, align);
 	}
 
@@ -418,7 +418,7 @@ int WPRINT_Text( char * text, int x, int y, int degrees)
 	}
 
 	SetTextColor( PrinterDC, ColorTable[ColIndex]);
-	TextOut( PrinterDC, x, PrinterHeight - y - currentgraph->fontheight, text, strlen(text));
+	TextOut( PrinterDC, x, PrinterHeight - y - currentgraph->fontheight, text, (int) strlen(text));
 	return (0);
 }
 

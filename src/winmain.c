@@ -604,7 +604,7 @@ static void Element_OnPaint(HWND hwnd)
     o = GetStockObject( LTGRAY_BRUSH);
     FillRect( hdc, &s, o);
     SetBkMode( hdc, TRANSPARENT);
-    ExtTextOut( hdc, s.left+1, s.top+1, ETO_CLIPPED, &s, buffer, i, NULL);
+    ExtTextOut( hdc, s.left+1, s.top+1, ETO_CLIPPED, &s, buffer, (unsigned)i, NULL);
 
     /* End */
     EndPaint( hwnd, &ps);
@@ -731,7 +731,7 @@ static int MakeArgcArgv(char *cmdline,int *argc,char ***argv)
         }
     }
     /* malloc an argv */
-    tmpargv = (char**)malloc(numargs * sizeof(char *));
+    tmpargv = (char**)malloc((unsigned)numargs * sizeof(char *));
     if (NULL == tmpargv)
     {
         status = -1;
