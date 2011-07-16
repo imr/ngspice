@@ -16,7 +16,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <dvec.h>
 
 #include "evaluate.h"
-#include "../maths/cmaths/cmath2.h"
 
 #include "sim.h"  /* To get SV_VOLTAGE definition */
 

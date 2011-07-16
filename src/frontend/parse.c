@@ -18,8 +18,6 @@ $Id$
 #include "evaluate.h"
 #include "parse.h"
 
-#include "../maths/cmaths/cmath2.h"
-
 /* static declarations */
 static bool checkvalid(struct pnode *pn);
 static struct pnode * mkbnode(int opnum, struct pnode *arg1, struct pnode *arg2);
@@ -160,6 +158,9 @@ struct func ft_funcs[] = {
         { "sin",    cx_sin } ,
         { "cos",    cx_cos } ,
         { "tan",    cx_tan } ,
+        { "sinh",   cx_sinh } ,
+        { "cosh",   cx_cosh } ,
+        { "tanh",   cx_tanh } ,
         { "atan",   cx_atan } ,
         { "norm",   cx_norm } ,
         { "rnd",    cx_rnd } ,

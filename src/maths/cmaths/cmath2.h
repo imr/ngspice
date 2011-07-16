@@ -7,8 +7,7 @@
 #define CMATH2_H_INCLUDED
 
 
-void * cx_tan(void *data, short int type, int length, int *newlength, short int *newtype);
-void * cx_atan(void *data, short int type, int length, int *newlength, short int *newtype);
+
 void * cx_norm(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_uminus(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_rnd(void *data, short int type, int length, int *newlength, short int *newtype);

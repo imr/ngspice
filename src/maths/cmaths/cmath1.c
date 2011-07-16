@@ -428,6 +428,40 @@ cx_sin(void *data, short int type, int length, int *newlength, short int *newtyp
 }
 
 void *
+cx_sinh(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    *newlength = length;
+    if (type == VF_COMPLEX) {
+        ngcomplex_t *c;
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
+        double u, v;
+        c = alloc_c(length);
+
+        *newtype = VF_COMPLEX;
+        for (i = 0; i < length; i++) {
+            /* sinh(x+iy) = sinh(x)*cos(y) + i * cosh(x)*sin(y) */
+            u = degtorad(realpart(&cc[i]));
+            v = degtorad(imagpart(&cc[i]));
+            realpart(&c[i]) = sinh(u)*cos(v);
+            imagpart(&c[i]) = cosh(u)*sin(v);     
+        }
+        return ((void *) c);
+    } else {
+        double *d;
+        double *dd = (double *) data;
+        int i;
+
+        d = alloc_d(length);
+        *newtype = VF_REAL;
+        for (i = 0; i < length; i++)
+            d[i] = sinh(degtorad(dd[i]));
+        return ((void *) d);
+    }
+}
+
+
+void *
 cx_cos(void *data, short int type, int length, int *newlength, short int *newtype)
 {
     *newlength = length;
@@ -458,3 +492,174 @@ cx_cos(void *data, short int type, int length, int *newlength, short int *newtyp
     }
 }
 
+
+void *
+cx_cosh(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    *newlength = length;
+    if (type == VF_COMPLEX) {
+        ngcomplex_t *c;
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
+        double u, v;
+
+        c = alloc_c(length);
+
+        *newtype = VF_COMPLEX;
+        for (i = 0; i < length; i++) {
+            /* cosh(x+iy) = cosh(x)*cos(y) + i * sinh(x)*sin(y) */
+            u = degtorad(realpart(&cc[i]));
+            v = degtorad(imagpart(&cc[i]));
+            realpart(&c[i]) = cosh(u)*cos(v);
+            imagpart(&c[i]) = sinh(u)*sin(v);            
+        }
+        return ((void *) c);
+    } else {
+	double *d;
+	double *dd = (double *) data;
+	int i;
+
+        d = alloc_d(length);
+        *newtype = VF_REAL;
+        for (i = 0; i < length; i++)
+            d[i] = cosh(degtorad(dd[i]));
+        return ((void *) d);
+    }
+}
+
+static double *
+d_tan(double *dd, int length)
+{
+    double *d;
+    int i;
+
+    d = alloc_d(length);
+    for (i = 0; i < length; i++) {
+	rcheck(cos(degtorad(dd[i])) != 0, "tan");
+	d[i] = sin(degtorad(dd[i])) / cos(degtorad(dd[i]));
+    }
+    return d;
+}
+
+static double *
+d_tanh(double *dd, int length)
+{
+    double *d;
+    int i;
+
+    d = alloc_d(length);
+    for (i = 0; i < length; i++) {
+        rcheck(cosh(degtorad(dd[i])) != 0, "tanh");
+        d[i] = sinh(degtorad(dd[i])) / cosh(degtorad(dd[i]));
+    }
+    return d;
+}
+
+static ngcomplex_t *
+c_tan(ngcomplex_t *cc, int length)
+{
+    ngcomplex_t *c;
+    int i;
+
+    c = alloc_c(length);
+    for (i = 0; i < length; i++) {
+        double u, v;
+
+        rcheck(cos(degtorad(realpart(&cc[i]))) *
+           cosh(degtorad(imagpart(&cc[i]))), "tan");
+        rcheck(sin(degtorad(realpart(&cc[i]))) *
+           sinh(degtorad(imagpart(&cc[i]))), "tan");
+        u = degtorad(realpart(&cc[i]));
+        v = degtorad(imagpart(&cc[i]));
+        /* The Lattice C compiler won't take multi-line macros, and
+         * CMS won't take >80 column lines....
+         */
+#define xx1 sin(u) * cosh(v)
+#define xx2 cos(u) * sinh(v)
+#define xx3 cos(u) * cosh(v)
+#define xx4 -sin(u) * sinh(v)
+        cdiv(xx1, xx2, xx3, xx4, realpart(&c[i]), imagpart(&c[i]));
+    }
+    return c;
+}
+
+/* complex tanh function, uses tanh(z) = -i * tan (i * z) */
+static ngcomplex_t *
+c_tanh(ngcomplex_t *cc, int length)
+{
+    ngcomplex_t *c, *s, *t;
+    int i;
+
+    c = alloc_c(length);
+    s = alloc_c(1);
+    t = alloc_c(1);
+
+    for (i = 0; i < length; i++) {
+        /* multiply by i */
+        t[0].cx_real = -1. * imagpart(&cc[i]);
+        t[0].cx_imag = realpart(&cc[i]);
+        /* get complex tangent */
+        s = c_tan(t, 1);
+        /* if check in c_tan fails */
+        if (s == NULL) {
+            tfree(t);
+            return (NULL);
+        }
+        /* multiply by -i */
+        realpart(&c[i]) = imagpart(&s[0]);
+        imagpart(&c[i]) = -1. * realpart(&s[0]);
+    }
+    tfree(s);
+    tfree(t);
+    return c;
+}
+
+void *
+cx_tan(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    *newlength = length;
+    if (type == VF_REAL) {
+        *newtype = VF_REAL;
+	return (void *) d_tan((double *) data, length);
+    } else {
+        *newtype = VF_COMPLEX;
+        return (void *) c_tan((ngcomplex_t *) data, length);
+    }
+}
+
+void *
+cx_tanh(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    *newlength = length;
+    if (type == VF_REAL) {
+        *newtype = VF_REAL;
+	return (void *) d_tanh((double *) data, length);
+    } else {
+        *newtype = VF_COMPLEX;
+        return (void *) c_tanh((ngcomplex_t *) data, length);
+    }
+}
+
+void *
+cx_atan(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    double *d;
+
+    d = alloc_d(length);
+    *newtype = VF_REAL;
+    *newlength = length;
+    if (type == VF_COMPLEX) {
+	ngcomplex_t *cc = (ngcomplex_t *) data;
+	int i;
+
+        for (i = 0; i < length; i++)
+            d[i] = radtodeg(atan(realpart(&cc[i])));
+    } else {
+	double *dd = (double *) data;
+	int i;
+
+        for (i = 0; i < length; i++)
+            d[i] = radtodeg(atan(dd[i]));
+    }
+    return ((void *) d);
+}

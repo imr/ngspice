@@ -19,8 +19,12 @@ void * cx_ln(void *data, short int type, int length, int *newlength, short int *
 void * cx_exp(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_sqrt(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_sin(void *data, short int type, int length, int *newlength, short int *newtype);
+void * cx_sinh(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_cos(void *data, short int type, int length, int *newlength, short int *newtype);
-
+void * cx_cosh(void *data, short int type, int length, int *newlength, short int *newtype);
+void * cx_tan(void *data, short int type, int length, int *newlength, short int *newtype);
+void * cx_tanh(void *data, short int type, int length, int *newlength, short int *newtype);
+void * cx_atan(void *data, short int type, int length, int *newlength, short int *newtype);
 
 
 #endif
