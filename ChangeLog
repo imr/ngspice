@@ -1,6 +1,7 @@
 2011-07-18  Holger Vogt
  * cmath1.c, cmath1.h, cmath2.c, cmath2.h, parse.c, fteext.h:
    new complex functions sinh, cosh, tanh
+ * evaluate.c: remove redundant call to cmath2.h
    
 2011-07-10  Holger Vogt
  * main.c, ivars.c, /xspice/icm/analog/file_source/cfunc.mod: 
