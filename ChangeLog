@@ -1,3 +1,7 @@
+2011-07-17  Robert Larice
+ * src/maths/cmaths/cmath2.c :
+   cleanup redeclarations for todays tanh commit
+
 2011-07-17  Holger Vogt
  * inp.c: allow comment lines inside of
    command files
