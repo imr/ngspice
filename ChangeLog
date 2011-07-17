@@ -1,4 +1,10 @@
 2011-07-17  Robert Larice
+ * visualc/include/inttypes.h ,
+ * visualc/include/stdint.h :
+   add inttypes.h and stdint.h for visualc
+     from http://code.google.com/p/msinttypes/
+
+2011-07-17  Robert Larice
  * src/maths/cmaths/cmath2.c :
    cleanup redeclarations for todays tanh commit
 

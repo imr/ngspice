@@ -1539,6 +1539,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\inttypes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\stdint.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\include\const.h"
 				>
 			</File>
