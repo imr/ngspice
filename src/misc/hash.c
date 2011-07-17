@@ -37,7 +37,7 @@ REVISIONS:
 static NGTABLEPTR _nghash_find_item(NGHASHPTR hhtable,void *user_key,void *data) ;
 
 
-NGHASHPTR nghash_init_with_parms(nghash_compare_func comp_func, nghash_func hash_func, int num, 
+NGHASHPTR nghash_init_with_parms(nghash_compare_func_t *comp_func, nghash_func_t *hash_func, int num, 
                                  int max, double growth, NGHASHFLAGS_T flags)
 {
     BOOL unique ;			/* entries are to be unique */

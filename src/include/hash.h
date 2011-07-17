@@ -33,8 +33,8 @@ typedef struct ngtable_rec {
 
 struct nghashbox;
 
-typedef unsigned int (*nghash_func)(struct nghashbox *, void *) ;
-typedef  int (*nghash_compare_func)(const void *, const void *) ;
+typedef unsigned int nghash_func_t(struct nghashbox *, void *) ;
+typedef int nghash_compare_func_t(const void *, const void *) ;
 
 struct nghashbox {
     NGTABLEPTR *hash_table ;
@@ -42,8 +42,8 @@ struct nghashbox {
     NGTABLEPTR last_entry ;	/* last entry into hash table */
     NGTABLEPTR enumeratePtr ;	/* used to enumerate hash table */
     NGTABLEPTR searchPtr ;	/* used for find again mechanism */
-    nghash_compare_func compare_func ;	/* the comparison function */
-    nghash_func hash_func ;	/* the hash function */
+    nghash_compare_func_t *compare_func ;	/* the comparison function */
+    nghash_func_t *hash_func ;	/* the hash function */
     double growth_factor ;	/* how much to grow table by */
     int size ;			/* the size of the table */
     int max_density ;		/* maximum number of entries before growth */
@@ -92,14 +92,14 @@ we want to intentionally assign it.  The compiler is warning unnecessarily.
 #define NGHASH_FIRST(x_yz)		( (x_yz)->position = NULL ) ;
 #define NGHASH_ITER_EQUAL(x_yz,y_yz)	( (x_yz)->position == (y_yz)->position )
 
-#define NGHASH_DEF_HASH_STR	((nghash_func) NGHASH_FUNC_STR)
-#define NGHASH_DEF_HASH_PTR	((nghash_func) NGHASH_FUNC_PTR)
-#define NGHASH_DEF_HASH_NUM	((nghash_func) NGHASH_FUNC_NUM)
+#define NGHASH_DEF_HASH_STR	((nghash_func_t *) NGHASH_FUNC_STR)
+#define NGHASH_DEF_HASH_PTR	((nghash_func_t *) NGHASH_FUNC_PTR)
+#define NGHASH_DEF_HASH_NUM	((nghash_func_t *) NGHASH_FUNC_NUM)
 
 /* the default comparison functions */
-#define NGHASH_DEF_CMP_STR	((nghash_compare_func) NGHASH_FUNC_STR)
-#define NGHASH_DEF_CMP_PTR	((nghash_compare_func) NGHASH_FUNC_PTR)
-#define NGHASH_DEF_CMP_NUM	((nghash_compare_func) NGHASH_FUNC_PTR)
+#define NGHASH_DEF_CMP_STR	((nghash_compare_func_t *) NGHASH_FUNC_STR)
+#define NGHASH_DEF_CMP_PTR	((nghash_compare_func_t *) NGHASH_FUNC_PTR)
+#define NGHASH_DEF_CMP_NUM	((nghash_compare_func_t *) NGHASH_FUNC_PTR)
 
 /* defines for unique flag */
 
@@ -267,8 +267,8 @@ Function:
     is pointer comparison.
 */
 
-extern NGHASHPTR nghash_init_with_parms( nghash_compare_func comp_func, 
-    nghash_func hash_func, int numentries, int max_density, 
+extern NGHASHPTR nghash_init_with_parms( nghash_compare_func_t *comp_func, 
+    nghash_func_t *hash_func, int numentries, int max_density, 
     double growth, NGHASHFLAGS_T flags ) ;
 /*
 Function:
