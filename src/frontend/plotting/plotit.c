@@ -35,6 +35,9 @@ getlims(wordlist *wl, char *name, int number)
     char *ss;
     int n;
 
+    if(number < 1)
+        return NULL;
+
     for (beg = wl; beg; beg = beg->wl_next) {
         if (eq(beg->wl_word, name)) {
             if (beg == wl) {
@@ -44,25 +47,21 @@ getlims(wordlist *wl, char *name, int number)
                 return (NULL);
             }
             wk = beg;
-            if (number) {
-                d = TMALLOC(double, number);
-                for (n = 0; n < number; n++) {
-                    wk = wk->wl_next;
-                    if (!wk) {
-                        fprintf(cp_err,
+            d = TMALLOC(double, number);
+            for (n = 0; n < number; n++) {
+                wk = wk->wl_next;
+                if (!wk) {
+                    fprintf(cp_err,
                             "Syntax error: not enough parameters for \"%s\".\n",
 			    name);
-                        return (NULL);
-                    }
-                    ss = wk->wl_word;
-                    td = ft_numparse(&ss, FALSE);
-                    if (td == NULL)
-                        goto bad;
-                    d[n] = *td;
+                    return (NULL);
                 }
-            } else
-                /* Minor hack... */
-                d = (double  *) 1;
+                ss = wk->wl_word;
+                td = ft_numparse(&ss, FALSE);
+                if (td == NULL)
+                    goto bad;
+                d[n] = *td;
+            }
 
             if (beg->wl_prev)
                 beg->wl_prev->wl_next = wk->wl_next;

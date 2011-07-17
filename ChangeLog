@@ -1,4 +1,9 @@
 2011-07-17  Robert Larice
+ * src/frontend/plotting/plotit.c :
+   cleanup, `getlims()' has to be used with number arg >= 1
+     and get rid of an ancient hack
+
+2011-07-17  Robert Larice
  * src/frontend/arg.c ,
  * src/frontend/com_hardcopy.c :
    cleanup usage of `prompt()'
