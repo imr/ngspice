@@ -1,4 +1,8 @@
 2011-07-17  Robert Larice
+ * src/misc/hash.c :
+   nghash cleanup, use `%p' to print a pointer value
+
+2011-07-17  Robert Larice
  * src/include/hash.h ,
  * src/misc/hash.c :
    nghash cleanup, use stdint.h for proper sized integers representing a pointer

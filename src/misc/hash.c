@@ -708,12 +708,12 @@ void nghash_dump(NGHASHPTR htable, void (*print_key) (void *))
 		if( htable->hash_func == NGHASH_DEF_HASH(NGHASH_FUNC_STR) ) {
 		    fprintf( stderr, " key:%s ", (char *) hptr->key ) ;
 		} else {
-		    fprintf( stderr, " key:%0lx ", (unsigned long) hptr->key ) ;
+		    fprintf( stderr, " key:%p ", hptr->key ) ;
 		}
 		if( print_key) {
 		    print_key (hptr->data);
 		} else {
-		    fprintf( stderr, " data:%0lx ", (unsigned long) hptr->data ) ;
+		    fprintf( stderr, " data:%p ", hptr->data ) ;
 		}
 	    }
 	    fprintf( stderr, "\n" ) ;
