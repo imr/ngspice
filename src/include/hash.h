@@ -31,14 +31,19 @@ typedef struct ngtable_rec {
     struct ngtable_rec *thread_prev ;    /* thread thru entire table */
 } NGTABLEBOX, *NGTABLEPTR ;
 
-typedef struct nghashbox {
+struct nghashbox;
+
+typedef unsigned int (*nghash_func)(struct nghashbox *, void *) ;
+typedef  int (*COMPARE_FUNC)(void *,void *) ;
+
+struct nghashbox {
     NGTABLEPTR *hash_table ;
     NGTABLEPTR thread ;		/* thread of hash table */
     NGTABLEPTR last_entry ;	/* last entry into hash table */
     NGTABLEPTR enumeratePtr ;	/* used to enumerate hash table */
     NGTABLEPTR searchPtr ;	/* used for find again mechanism */
     void *compare_func ;	/* the comparison function */
-    void *hash_func ;		/* the hash function */
+    nghash_func hash_func ;	/* the hash function */
     double growth_factor ;	/* how much to grow table by */
     int size ;			/* the size of the table */
     int max_density ;		/* maximum number of entries before growth */
@@ -49,7 +54,9 @@ typedef struct nghashbox {
     unsigned int  power_of_two : 8 ; /* build table as a power of two */
     unsigned int  call_from_free : 8 ;/* true if in a free calling sequence */
     unsigned int  unique : 16 ;	/* true if only one unique item in col. list */
-} NGHASHBOX, *NGHASHPTR ;
+};
+
+typedef struct nghashbox NGHASHBOX, *NGHASHPTR;
 
 /* -----------------------------------------------------------------
  * This enumerated type is used to control the base hash function types
@@ -68,8 +75,6 @@ typedef enum {
   NGHASH_POWER_OF_TWO 	=  (1L<<1),
   NGHASH_UNIQUE_TWO 	= NGHASH_UNIQUE | NGHASH_POWER_OF_TWO
 } NGHASHFLAGS_T ;
-
-typedef unsigned int (*nghash_func)(NGHASHPTR,void *) ;
 
 
 typedef struct nghash_iter_rec {

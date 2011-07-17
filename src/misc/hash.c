@@ -32,7 +32,6 @@ REVISIONS:
 /* ********************** TYPE DEFINITIONS ************************* */
 #define  PRIMECOUNT   200
 #define  MINPRIMESIZE 7
-typedef  int (*COMPARE_FUNC)(void *,void *) ;
 
 /* ********************** STATIC DEFINITIONS ************************* */
 static NGTABLEPTR _nghash_find_item(NGHASHPTR hhtable,void *user_key,void *data) ;
