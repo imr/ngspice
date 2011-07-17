@@ -286,7 +286,8 @@ com_psd(wordlist *wl)
     
     // get filter length from parameter input
     s = wl->wl_word;
-    if (!(ave = ft_numparse(&s, FALSE)) || (*ave < 1.0)) {
+    ave = ft_numparse(&s, FALSE);
+    if (!ave || (*ave < 1.0)) {
     	fprintf(cp_out, "Number of averaged data points:  %d\n", 1);
         smooth = 1;
     }

@@ -1,4 +1,9 @@
 2011-07-17  Robert Larice
+ * src/frontend/com_fft.c ,
+ * src/frontend/inpcom.c :
+   cleanup, reduce compiler warnings
+
+2011-07-17  Robert Larice
  * src/misc/hash.c :
    nghash cleanup, use `%p' to print a pointer value
 

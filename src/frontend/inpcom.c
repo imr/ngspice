@@ -537,7 +537,9 @@ inp_fix_macro_param_func_paren_io( struct line *begin_card ) {
             }
 
             if ( is_func ) {
-                if ( ( str_ptr = strstr( card->li_line, "=" ) ) ) *str_ptr = ' ';
+                str_ptr = strstr( card->li_line, "=" );
+                if ( str_ptr )
+                    *str_ptr = ' ';
                 str_ptr = card->li_line + 1;
                 *str_ptr = 'f'; *(str_ptr+1) = 'u'; *(str_ptr+2) = 'n';
                 *(str_ptr+3) = 'c'; *(str_ptr+4) = ' ';
