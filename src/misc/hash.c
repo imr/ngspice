@@ -37,7 +37,7 @@ REVISIONS:
 static NGTABLEPTR _nghash_find_item(NGHASHPTR hhtable,void *user_key,void *data) ;
 
 
-NGHASHPTR nghash_init_with_parms(void *comp_func, nghash_func hash_func, int num, 
+NGHASHPTR nghash_init_with_parms(nghash_compare_func comp_func, nghash_func hash_func, int num, 
                                  int max, double growth, NGHASHFLAGS_T flags)
 {
     BOOL unique ;			/* entries are to be unique */
@@ -54,7 +54,7 @@ NGHASHPTR nghash_init_with_parms(void *comp_func, nghash_func hash_func, int num
       /* prime size */
       hashtable->size = nghash_table_size( num ) ;
     }
-    hashtable->compare_func = (void *) comp_func ;
+    hashtable->compare_func = comp_func ;
     hashtable->hash_func = hash_func ;
 
     hashtable->hash_table = NGMALLOC( hashtable->size, NGTABLEPTR ) ;
@@ -229,7 +229,7 @@ void * _nghash_find(NGHASHPTR hashtable, void * user_key,BOOL *status)
     int  ret_code ;
     long hfunc ;
     unsigned int hsum ;
-    COMPARE_FUNC compare_func ;
+    nghash_compare_func compare_func ;
     NGTABLEPTR curPtr ;
     NGTABLEPTR *table ;
 
@@ -259,13 +259,13 @@ void * _nghash_find(NGHASHPTR hashtable, void * user_key,BOOL *status)
     if( curPtr ){
       /* list started at this hash */
       for( ; curPtr ; curPtr=curPtr->next ) {
-	if( hashtable->compare_func == (void *) NGHASH_DEF_CMP_STR ) {
+	if( hashtable->compare_func == NGHASH_DEF_CMP_STR ) {
 	  ret_code = strcmp((char *)curPtr->key, (char *) user_key ) ;
-	} else if ( hashtable->compare_func == (void *) NGHASH_DEF_CMP_PTR||
-	  hashtable->compare_func == (void *) NGHASH_DEF_CMP_NUM ){
+	} else if ( hashtable->compare_func == NGHASH_DEF_CMP_PTR ||
+		    hashtable->compare_func == NGHASH_DEF_CMP_NUM ) {
 	  ret_code = NGHASH_PTR_COMPARE_FUNC( curPtr->key, user_key );
 	} else {
-	  compare_func = (COMPARE_FUNC) hashtable->compare_func ;
+	  compare_func = hashtable->compare_func ;
 	  ret_code = compare_func (curPtr->key, user_key);
 	}
 	if( ret_code == STRINGEQ ){
@@ -304,20 +304,20 @@ void * _nghash_find_again(NGHASHPTR hashtable, void * user_key,BOOL *status)
 {
     int  ret_code ;		/* comparison return code */
     NGTABLEPTR curPtr ;		/* current hashtable entry */
-    COMPARE_FUNC compare_func ;	/* user defined comparison function */
+    nghash_compare_func compare_func ;	/* user defined comparison function */
 
     /* initialization */
     DS(hashtable->access++;) ;
 
     if( hashtable->searchPtr ){
       for(curPtr=hashtable->searchPtr->next; curPtr ; curPtr=curPtr->next ) {
-	if( hashtable->compare_func == (void *) NGHASH_DEF_CMP_STR ) {
+	if( hashtable->compare_func == NGHASH_DEF_CMP_STR ) {
 	  ret_code = strcmp((char *)curPtr->key, (char *) user_key ) ;
-	} else if ( hashtable->compare_func == (void *) NGHASH_DEF_CMP_PTR||
-		     hashtable->compare_func == (void *) NGHASH_DEF_CMP_NUM ){
+	} else if ( hashtable->compare_func == NGHASH_DEF_CMP_PTR ||
+		    hashtable->compare_func == NGHASH_DEF_CMP_NUM ) {
 	  ret_code = NGHASH_PTR_COMPARE_FUNC( curPtr->key, user_key );
 	} else {
-	  compare_func = (COMPARE_FUNC) hashtable->compare_func ;
+	  compare_func = hashtable->compare_func ;
 	  ret_code = compare_func (curPtr->key, user_key);
 	}
 	if( ret_code == STRINGEQ ){
@@ -347,7 +347,7 @@ void * nghash_delete(NGHASHPTR hashtable, void * user_key)
     long hfunc ;
     unsigned int hsum ;
     void * user_data_p ;
-    COMPARE_FUNC compare_func ;
+    nghash_compare_func compare_func ;
     NGTABLEPTR curPtr, *prevPtr ;
     NGTABLEPTR *table ;
 
@@ -379,13 +379,13 @@ void * nghash_delete(NGHASHPTR hashtable, void * user_key)
       /* list started at this hash */
       prevPtr = table + hsum ;
       for( ; curPtr ; prevPtr = &(curPtr->next), curPtr=curPtr->next ) {
-	if( hashtable->compare_func == (void *) NGHASH_DEF_CMP_STR ) {
+	if( hashtable->compare_func == NGHASH_DEF_CMP_STR ) {
 	  ret_code = strcmp((char *)curPtr->key, (char *) user_key ) ;
-	} else if ( hashtable->compare_func == (void *) NGHASH_DEF_CMP_PTR||
-		   hashtable->compare_func == (void *) NGHASH_DEF_CMP_NUM ){
+	} else if ( hashtable->compare_func == NGHASH_DEF_CMP_PTR ||
+		    hashtable->compare_func == NGHASH_DEF_CMP_NUM ) {
 	  ret_code = NGHASH_PTR_COMPARE_FUNC( curPtr->key, user_key );
 	} else {
-	  compare_func = (COMPARE_FUNC) hashtable->compare_func ;
+	  compare_func = hashtable->compare_func ;
 	  ret_code = compare_func (curPtr->key, user_key);
 	}
 	if( ret_code == STRINGEQ ){
@@ -420,7 +420,7 @@ void * nghash_insert(NGHASHPTR hashtable, void * user_key, void * data)
     int  ret_code ;
     long hfunc ;
     unsigned int hsum ;
-    COMPARE_FUNC compare_func ;
+    nghash_compare_func compare_func ;
     NGTABLEPTR curPtr, temptr, curTable ;
     NGTABLEPTR *table ;
 
@@ -452,13 +452,13 @@ void * nghash_insert(NGHASHPTR hashtable, void * user_key, void * data)
       /* list started at this hash */
       for( curPtr = temptr ; curPtr ; curPtr=curPtr->next ) {
 	DS(hashtable->collision++;) ;
-	if( hashtable->compare_func == (void *) NGHASH_DEF_CMP_STR ) {
+	if( hashtable->compare_func == NGHASH_DEF_CMP_STR ) {
 	  ret_code = strcmp((char *)curPtr->key, (char *) user_key ) ;
-	} else if ( hashtable->compare_func == (void *) NGHASH_DEF_CMP_PTR||
-		   hashtable->compare_func == (void *) NGHASH_DEF_CMP_NUM ){
+	} else if ( hashtable->compare_func == NGHASH_DEF_CMP_PTR ||
+		    hashtable->compare_func == NGHASH_DEF_CMP_NUM ) {
 	  ret_code = NGHASH_PTR_COMPARE_FUNC( curPtr->key, user_key);
 	} else {
-	    compare_func = (COMPARE_FUNC) hashtable->compare_func ;
+	    compare_func = hashtable->compare_func ;
 	    ret_code = compare_func (curPtr->key, user_key);
 	}
 	if( ret_code == STRINGEQ ){
@@ -513,7 +513,7 @@ static NGTABLEPTR _nghash_find_item(NGHASHPTR htable,void * user_key,void * data
     int  ret_code ;
     long hfunc ;
     unsigned int hsum ;
-    COMPARE_FUNC compare_func ;
+    nghash_compare_func compare_func ;
     NGTABLEPTR curPtr, temptr ;
     NGTABLEPTR *table ;
 
@@ -542,13 +542,13 @@ static NGTABLEPTR _nghash_find_item(NGHASHPTR htable,void * user_key,void * data
     if( (temptr = table[hsum]) != NULL ){
       /* list started at this hash */
       for(curPtr=temptr ; curPtr ; curPtr=curPtr->next ) {
-	if( htable->compare_func == (void *) NGHASH_DEF_CMP_STR ) {
+	if( htable->compare_func == NGHASH_DEF_CMP_STR ) {
 	  ret_code = strcmp((char *)curPtr->key, (char *) user_key ) ;
-	} else if ( htable->compare_func == (void *) NGHASH_DEF_CMP_PTR||
-		   htable->compare_func == (void *) NGHASH_DEF_CMP_NUM ){
+	} else if ( htable->compare_func == NGHASH_DEF_CMP_PTR ||
+		    htable->compare_func == NGHASH_DEF_CMP_NUM ) {
 	  ret_code = NGHASH_PTR_COMPARE_FUNC( curPtr->key, user_key);
 	} else {
-	    compare_func = (COMPARE_FUNC) htable->compare_func ;
+	    compare_func = htable->compare_func ;
 	    ret_code = compare_func (curPtr->key, user_key);
 	}
 	if( ret_code == STRINGEQ ){
@@ -750,7 +750,7 @@ BOOL nghash_deleteItem(NGHASHPTR hashtable, void * user_key, void * data)
     int  ret_code ;
     long hfunc ;
     unsigned long hsum ;
-    COMPARE_FUNC compare_func ;
+    nghash_compare_func compare_func ;
     NGTABLEPTR curPtr, temptr, *prevPtr ;
     NGTABLEPTR *table ;
 
@@ -784,13 +784,13 @@ BOOL nghash_deleteItem(NGHASHPTR hashtable, void * user_key, void * data)
 	/* ----------------------------------------------------------------- 
 	 * Look for match.
 	----------------------------------------------------------------- */
-	if( hashtable->compare_func == (void *) NGHASH_DEF_CMP_STR ) {
+	if( hashtable->compare_func == NGHASH_DEF_CMP_STR ) {
 	  ret_code = strcmp((char *)curPtr->key, (char *) user_key ) ;
-	} else if ( hashtable->compare_func == (void *) NGHASH_DEF_CMP_PTR||
-		    hashtable->compare_func == (void *) NGHASH_DEF_CMP_NUM ){
+	} else if ( hashtable->compare_func == NGHASH_DEF_CMP_PTR ||
+		    hashtable->compare_func == NGHASH_DEF_CMP_NUM ) {
 	  ret_code = NGHASH_PTR_COMPARE_FUNC( curPtr->key, user_key );
 	} else {
-	  compare_func = (COMPARE_FUNC) hashtable->compare_func ;
+	  compare_func = hashtable->compare_func ;
 	  ret_code = compare_func (curPtr->key, user_key);
 	}
 	if( ret_code == STRINGEQ ){

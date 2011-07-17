@@ -34,7 +34,7 @@ typedef struct ngtable_rec {
 struct nghashbox;
 
 typedef unsigned int (*nghash_func)(struct nghashbox *, void *) ;
-typedef  int (*COMPARE_FUNC)(void *,void *) ;
+typedef  int (*nghash_compare_func)(const void *, const void *) ;
 
 struct nghashbox {
     NGTABLEPTR *hash_table ;
@@ -42,7 +42,7 @@ struct nghashbox {
     NGTABLEPTR last_entry ;	/* last entry into hash table */
     NGTABLEPTR enumeratePtr ;	/* used to enumerate hash table */
     NGTABLEPTR searchPtr ;	/* used for find again mechanism */
-    void *compare_func ;	/* the comparison function */
+    nghash_compare_func compare_func ;	/* the comparison function */
     nghash_func hash_func ;	/* the hash function */
     double growth_factor ;	/* how much to grow table by */
     int size ;			/* the size of the table */
@@ -97,9 +97,9 @@ we want to intentionally assign it.  The compiler is warning unnecessarily.
 #define NGHASH_DEF_HASH_NUM	((nghash_func) NGHASH_FUNC_NUM)
 
 /* the default comparison functions */
-#define NGHASH_DEF_CMP_STR	NGHASH_FUNC_STR
-#define NGHASH_DEF_CMP_PTR	(void *) NGHASH_FUNC_PTR
-#define NGHASH_DEF_CMP_NUM	(void *) NGHASH_FUNC_PTR
+#define NGHASH_DEF_CMP_STR	((nghash_compare_func) NGHASH_FUNC_STR)
+#define NGHASH_DEF_CMP_PTR	((nghash_compare_func) NGHASH_FUNC_PTR)
+#define NGHASH_DEF_CMP_NUM	((nghash_compare_func) NGHASH_FUNC_PTR)
 
 /* defines for unique flag */
 
@@ -267,7 +267,7 @@ Function:
     is pointer comparison.
 */
 
-extern NGHASHPTR nghash_init_with_parms( void *comp_func, 
+extern NGHASHPTR nghash_init_with_parms( nghash_compare_func comp_func, 
     nghash_func hash_func, int numentries, int max_density, 
     double growth, NGHASHFLAGS_T flags ) ;
 /*
