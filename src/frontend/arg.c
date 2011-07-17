@@ -28,7 +28,7 @@ char *prompt(FILE *fp)
     size_t  n;
 
     if (!fgets(buf, sizeof(buf), fp))
-	return 0;
+	return NULL;
     n = strlen(buf) - 1;
     buf[n] = '\0';	/* fgets leaves the \n */
     p = TMALLOC(char, n + 1);

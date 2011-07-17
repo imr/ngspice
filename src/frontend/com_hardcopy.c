@@ -27,7 +27,6 @@
 void
 com_hardcopy(wordlist *wl)
 {
-    char *buf2;
     char *fname;
     char buf[BSIZE_SP], device[BSIZE_SP];
     bool tempf = FALSE;
@@ -140,8 +139,10 @@ com_hardcopy(wordlist *wl)
     if (!foundit) {
 
         if (!wl) {
+            char *buf2;
             outmenuprompt("which variable ? ");
-            if ((buf2 = prompt(cp_in)) == (char *) -1)	/* XXXX Sick */
+            buf2 = prompt(cp_in);
+            if (!buf2)
                 return;
             wl = TMALLOC(struct wordlist, 1);
             wl->wl_word = buf2;

@@ -1,4 +1,10 @@
 2011-07-17  Robert Larice
+ * src/frontend/arg.c ,
+ * src/frontend/com_hardcopy.c :
+   cleanup usage of `prompt()'
+     and get rid of an ancient hack
+
+2011-07-17  Robert Larice
  * src/frontend/com_fft.c ,
  * src/frontend/inpcom.c :
    cleanup, reduce compiler warnings
