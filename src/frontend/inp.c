@@ -401,12 +401,20 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
             }
             temperature = strdup(s);
          }
-         /* Ignore comment lines, but not lines begining with '*#' */
+         /* Ignore comment lines, but not lines begining with '*#',
+            but remove them, if they are in a .control ... .endc section */
          s = dd->li_line;
          while(isspace(*s)) s++;
          if ( (*s == '*') && ( (s != dd->li_line) || (s[1] != '#'))) {
-            ld = dd;
-            continue;
+             if (commands) {
+                /* Remove comment lines in control sections, so they  don't 
+                * get considered as circuits.  */
+               ld->li_next = dd->li_next;
+               line_free(dd,FALSE);
+               continue;
+             }
+             ld = dd;
+             continue;
          }
 	    
          /* Put the first token from line into s */

@@ -1,9 +1,13 @@
+2011-07-17  Holger Vogt
+ * inp.c: allow comment lines inside of
+   command files
+
 2011-07-17  Robert Larice
  * src/include/hash.h ,
  * src/misc/hash.c :
    nghash cleanup
 
-2011-07-18  Holger Vogt
+2011-07-17  Holger Vogt
  * cmath1.c, cmath1.h, cmath2.c, cmath2.h, parse.c, fteext.h:
    new complex functions sinh, cosh, tanh
  * evaluate.c: remove redundant call to cmath2.h
