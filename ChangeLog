@@ -1,4 +1,9 @@
 2011-07-17  Robert Larice
+ * src/include/hash.h ,
+ * src/misc/hash.c :
+   nghash cleanup, use stdint.h for proper sized integers representing a pointer
+
+2011-07-17  Robert Larice
  * visualc/include/inttypes.h ,
  * visualc/include/stdint.h :
    add inttypes.h and stdint.h for visualc

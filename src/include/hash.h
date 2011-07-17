@@ -10,6 +10,7 @@ REVISIONS:  Aug 21, 2009 - adapted for ngspice
 #define NGHASH_H
 
 #include <bool.h>
+#include <stdint.h>
 
 #define _NGMALLOC(size_xz)            tmalloc((size_xz))
 #define NGMALLOC(n, els)              TMALLOC(els, n)
@@ -68,13 +69,16 @@ typedef struct nghashbox NGHASHBOX, *NGHASHPTR;
  * on all architecture types include 64bits.
  * ----------------------------------------------------------------- */
 typedef enum {
-  NGHASH_FUNC_NUM	= -2L,
-  NGHASH_FUNC_PTR	= -1L,
-  NGHASH_FUNC_STR 	=  0L,
-  NGHASH_UNIQUE 	=  1L,
-  NGHASH_POWER_OF_TWO 	=  (1L<<1),
+  NGHASH_UNIQUE 	=  1 << 0,
+  NGHASH_POWER_OF_TWO 	=  1 << 1,
   NGHASH_UNIQUE_TWO 	= NGHASH_UNIQUE | NGHASH_POWER_OF_TWO
 } NGHASHFLAGS_T ;
+
+enum nghash_default_func_t {
+  NGHASH_FUNC_NUM	= -2,
+  NGHASH_FUNC_PTR	= -1,
+  NGHASH_FUNC_STR 	=  0
+};
 
 
 typedef struct nghash_iter_rec {
@@ -92,8 +96,8 @@ we want to intentionally assign it.  The compiler is warning unnecessarily.
 #define NGHASH_FIRST(x_yz)		( (x_yz)->position = NULL ) ;
 #define NGHASH_ITER_EQUAL(x_yz,y_yz)	( (x_yz)->position == (y_yz)->position )
 
-#define NGHASH_DEF_HASH(x)	((nghash_func_t *) (x))
-#define NGHASH_DEF_CMP(x)	((nghash_compare_func_t *) (x))
+#define NGHASH_DEF_HASH(x)	((nghash_func_t *) (intptr_t) (x))
+#define NGHASH_DEF_CMP(x)	((nghash_compare_func_t *) (intptr_t) (x))
 
 /* defines for unique flag */
 
@@ -179,7 +183,7 @@ we want to intentionally assign it.  The compiler is warning unnecessarily.
 #define NGHASH_NUM_TO_HASH( ptr, hsum, size ) \
     do { 	\
       unsigned int temp ; \
-      long value = (long) ptr ; \
+      intptr_t value = (intptr_t) ptr ; \
       temp = (unsigned int) value ;              \
       hsum = temp & (unsigned int) (size - 1) ;   \
     } while(0);
@@ -224,7 +228,7 @@ we want to intentionally assign it.  The compiler is warning unnecessarily.
 #define NGHASH_PTR_TO_HASH( ptr, hsum, size ) \
     do { 	\
       unsigned int temp ; \
-      long value = (long) ptr ; \
+      intptr_t value = (intptr_t) ptr ; \
       temp = (unsigned int) (value >> 4) ;       \
       hsum = temp & (unsigned int) (size - 1) ;      \
     } while(0);

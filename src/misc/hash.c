@@ -227,7 +227,6 @@ void nghash_free_string_hashtable(NGHASHPTR hashtable)
 void * _nghash_find(NGHASHPTR hashtable, void * user_key,BOOL *status)
 {
     int  ret_code ;
-    long hfunc ;
     unsigned int hsum ;
     NGTABLEPTR curPtr ;
     NGTABLEPTR *table ;
@@ -239,8 +238,7 @@ void * _nghash_find(NGHASHPTR hashtable, void * user_key,BOOL *status)
     /* -----------------------------------------------------------------
      * Process the hash function.
     ----------------------------------------------------------------- */
-    hfunc = (long) hashtable->hash_func ;
-    switch( hfunc ){
+    switch( (intptr_t) hashtable->hash_func ) {
       case NGHASH_FUNC_STR:
 	NGHASH_STR_TO_HASH( user_key, hsum, hashtable->size);
 	break ;
@@ -340,7 +338,6 @@ void * nghash_find_again(NGHASHPTR hashtable, void * user_key)
 void * nghash_delete(NGHASHPTR hashtable, void * user_key)
 {
     int  ret_code ;
-    long hfunc ;
     unsigned int hsum ;
     void * user_data_p ;
     NGTABLEPTR curPtr, *prevPtr ;
@@ -353,8 +350,7 @@ void * nghash_delete(NGHASHPTR hashtable, void * user_key)
     /* -----------------------------------------------------------------
      * Process the hash function.
     ----------------------------------------------------------------- */
-    hfunc = (long) hashtable->hash_func ;
-    switch( hfunc ){
+    switch( (intptr_t) hashtable->hash_func ) {
       case NGHASH_FUNC_STR:
 	NGHASH_STR_TO_HASH( user_key, hsum, hashtable->size);
 	break ;
@@ -412,7 +408,6 @@ void * nghash_delete(NGHASHPTR hashtable, void * user_key)
 void * nghash_insert(NGHASHPTR hashtable, void * user_key, void * data)
 {
     int  ret_code ;
-    long hfunc ;
     unsigned int hsum ;
     NGTABLEPTR curPtr, temptr, curTable ;
     NGTABLEPTR *table ;
@@ -424,8 +419,7 @@ void * nghash_insert(NGHASHPTR hashtable, void * user_key, void * data)
     /* -----------------------------------------------------------------
      * Process the hash function.
     ----------------------------------------------------------------- */
-    hfunc = (long) hashtable->hash_func ;
-    switch( hfunc ){
+    switch( (intptr_t) hashtable->hash_func ) {
       case NGHASH_FUNC_STR:
 	NGHASH_STR_TO_HASH( user_key, hsum, hashtable->size);
 	break ;
@@ -503,7 +497,6 @@ void * nghash_insert(NGHASHPTR hashtable, void * user_key, void * data)
 static NGTABLEPTR _nghash_find_item(NGHASHPTR htable,void * user_key,void * data)
 {
     int  ret_code ;
-    long hfunc ;
     unsigned int hsum ;
     NGTABLEPTR curPtr, temptr ;
     NGTABLEPTR *table ;
@@ -514,8 +507,7 @@ static NGTABLEPTR _nghash_find_item(NGHASHPTR htable,void * user_key,void * data
     /* -----------------------------------------------------------------
      * Process the hash function.
     ----------------------------------------------------------------- */
-    hfunc = (long) htable->hash_func ;
-    switch( hfunc ){
+    switch( (intptr_t) htable->hash_func ) {
       case NGHASH_FUNC_STR:
 	NGHASH_STR_TO_HASH( user_key, hsum, htable->size);
 	break ;
@@ -738,7 +730,6 @@ void nghash_dump(NGHASHPTR htable, void (*print_key) (void *))
 BOOL nghash_deleteItem(NGHASHPTR hashtable, void * user_key, void * data)
 {
     int  ret_code ;
-    long hfunc ;
     unsigned long hsum ;
     NGTABLEPTR curPtr, temptr, *prevPtr ;
     NGTABLEPTR *table ;
@@ -749,8 +740,7 @@ BOOL nghash_deleteItem(NGHASHPTR hashtable, void * user_key, void * data)
     /* -----------------------------------------------------------------
      * Process the hash function.
     ----------------------------------------------------------------- */
-    hfunc = (long) hashtable->hash_func ;
-    switch( hfunc ){
+    switch( (intptr_t) hashtable->hash_func ) {
       case NGHASH_FUNC_STR:
 	NGHASH_STR_TO_HASH( user_key, hsum, hashtable->size);
 	break ;
