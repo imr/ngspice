@@ -92,9 +92,9 @@ we want to intentionally assign it.  The compiler is warning unnecessarily.
 #define NGHASH_FIRST(x_yz)		( (x_yz)->position = NULL ) ;
 #define NGHASH_ITER_EQUAL(x_yz,y_yz)	( (x_yz)->position == (y_yz)->position )
 
-#define NGHASH_DEF_HASH_STR	NGHASH_FUNC_STR
-#define NGHASH_DEF_HASH_PTR	((nghash_func) ((void *) NGHASH_FUNC_PTR))
-#define NGHASH_DEF_HASH_NUM	((nghash_func) ((void *) NGHASH_FUNC_NUM))
+#define NGHASH_DEF_HASH_STR	((nghash_func) NGHASH_FUNC_STR)
+#define NGHASH_DEF_HASH_PTR	((nghash_func) NGHASH_FUNC_PTR)
+#define NGHASH_DEF_HASH_NUM	((nghash_func) NGHASH_FUNC_NUM)
 
 /* the default comparison functions */
 #define NGHASH_DEF_CMP_STR	NGHASH_FUNC_STR

@@ -55,7 +55,7 @@ NGHASHPTR nghash_init_with_parms(void *comp_func, nghash_func hash_func, int num
       hashtable->size = nghash_table_size( num ) ;
     }
     hashtable->compare_func = (void *) comp_func ;
-    hashtable->hash_func = (void *) hash_func ;
+    hashtable->hash_func = hash_func ;
 
     hashtable->hash_table = NGMALLOC( hashtable->size, NGTABLEPTR ) ;
     hashtable->max_density = max ;
@@ -107,7 +107,7 @@ void nghash_resize(NGHASHPTR hashtable, int num)
 	 hashtable->enumeratePtr = new_hptr ;
       }
       /* Now safe to free */
-      if( hashtable->hash_func == (void *) NGHASH_DEF_HASH_STR){
+      if( hashtable->hash_func == NGHASH_DEF_HASH_STR ) {
 	NGFREE( hptr->key);
       } 
       hptr = hptr->next ;
@@ -179,7 +179,7 @@ void nghash_empty(NGHASHPTR hashtable, void (*delete_data) (void *),
 	if( delete_data ){
 	    delete_data (zapptr->data);
 	}
-	if( hashtable->hash_func == (void *) NGHASH_DEF_HASH_STR ) {
+	if( hashtable->hash_func == NGHASH_DEF_HASH_STR ) {
 	  /* we allocated this ourselves we can delete it */
 	  NGFREE( zapptr->key ) ;
 	} else if( delete_key ){
@@ -252,7 +252,7 @@ void * _nghash_find(NGHASHPTR hashtable, void * user_key,BOOL *status)
 	NGHASH_NUM_TO_HASH( user_key, hsum, hashtable->size);
 	break ;
       default:
-	hsum = ((nghash_func)hashtable->hash_func) (hashtable,user_key) ;
+	hsum = hashtable->hash_func (hashtable, user_key);
     }
 
     curPtr = table[hsum] ;
@@ -370,7 +370,7 @@ void * nghash_delete(NGHASHPTR hashtable, void * user_key)
 	NGHASH_NUM_TO_HASH( user_key, hsum, hashtable->size);
 	break ;
       default:
-	hsum = ((nghash_func)hashtable->hash_func) (hashtable,user_key) ;
+	hsum = hashtable->hash_func (hashtable, user_key);
     }
 
     /* insert into table only if distinct number */
@@ -400,7 +400,7 @@ void * nghash_delete(NGHASHPTR hashtable, void * user_key)
 	    hashtable->last_entry = curPtr->thread_prev ;
 	  }
 	  *prevPtr = curPtr->next ;
-	  if( hashtable->hash_func == (void *) NGHASH_DEF_HASH_STR ) {
+	  if( hashtable->hash_func == NGHASH_DEF_HASH_STR ) {
 	    /* we allocated this ourselves we can delete it */
 	    NGFREE( curPtr->key ) ;
 	  }		  
@@ -443,7 +443,7 @@ void * nghash_insert(NGHASHPTR hashtable, void * user_key, void * data)
 	NGHASH_NUM_TO_HASH( user_key, hsum, hashtable->size);
 	break ;
       default:
-	hsum = ((nghash_func)hashtable->hash_func) (hashtable,user_key) ;
+	hsum = hashtable->hash_func (hashtable, user_key);
     }
 
     /* insert into table only if distinct number */
@@ -480,7 +480,7 @@ void * nghash_insert(NGHASHPTR hashtable, void * user_key, void * data)
     hashtable->num_entries++ ;
     table[hsum] = curTable = NGMALLOC(1,NGTABLEBOX);
     curTable->data = data ;
-    if( hashtable->hash_func == (void *) NGHASH_DEF_HASH_STR ){
+    if( hashtable->hash_func == NGHASH_DEF_HASH_STR ) {
       curTable->key = copy((char *) user_key);
     } else {
 	curTable->key = user_key ;
@@ -535,7 +535,7 @@ static NGTABLEPTR _nghash_find_item(NGHASHPTR htable,void * user_key,void * data
 	NGHASH_NUM_TO_HASH( user_key, hsum, htable->size);
 	break ;
       default:
-	hsum = ((nghash_func)htable->hash_func) (htable,user_key) ;
+	hsum = htable->hash_func (htable, user_key);
     }
 
     /* insert into table only if distinct number */
@@ -723,7 +723,7 @@ void nghash_dump(NGHASHPTR htable, void (*print_key) (void *))
 		    fprintf( stderr, "\n\t" ) ;
 		    count = 0 ;
 		}
-		if( htable->hash_func == (void *) NGHASH_DEF_HASH_STR ){
+		if( htable->hash_func == NGHASH_DEF_HASH_STR ) {
 		    fprintf( stderr, " key:%s ", (char *) hptr->key ) ;
 		} else {
 		    fprintf( stderr, " key:%0lx ", (unsigned long) hptr->key ) ;
@@ -772,7 +772,7 @@ BOOL nghash_deleteItem(NGHASHPTR hashtable, void * user_key, void * data)
 	NGHASH_NUM_TO_HASH( user_key, hsum, hashtable->size);
 	break ;
       default:
-	hsum = ((nghash_func)hashtable->hash_func) (hashtable,user_key) ;
+	hsum = hashtable->hash_func (hashtable, user_key);
     }
 
     /* insert into table only if distinct number */
@@ -806,7 +806,7 @@ BOOL nghash_deleteItem(NGHASHPTR hashtable, void * user_key, void * data)
 	      hashtable->last_entry = curPtr->thread_prev ;
 	    }
 	    *prevPtr = curPtr->next;
-	    if( hashtable->hash_func == (void *) NGHASH_DEF_HASH_STR ) {
+	    if( hashtable->hash_func == NGHASH_DEF_HASH_STR ) {
 	      /* we allocated this ourselves we can delete it */
 	      NGFREE( curPtr->key ) ;
 	    }		  
