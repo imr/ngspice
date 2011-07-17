@@ -92,14 +92,8 @@ we want to intentionally assign it.  The compiler is warning unnecessarily.
 #define NGHASH_FIRST(x_yz)		( (x_yz)->position = NULL ) ;
 #define NGHASH_ITER_EQUAL(x_yz,y_yz)	( (x_yz)->position == (y_yz)->position )
 
-#define NGHASH_DEF_HASH_STR	((nghash_func_t *) NGHASH_FUNC_STR)
-#define NGHASH_DEF_HASH_PTR	((nghash_func_t *) NGHASH_FUNC_PTR)
-#define NGHASH_DEF_HASH_NUM	((nghash_func_t *) NGHASH_FUNC_NUM)
-
-/* the default comparison functions */
-#define NGHASH_DEF_CMP_STR	((nghash_compare_func_t *) NGHASH_FUNC_STR)
-#define NGHASH_DEF_CMP_PTR	((nghash_compare_func_t *) NGHASH_FUNC_PTR)
-#define NGHASH_DEF_CMP_NUM	((nghash_compare_func_t *) NGHASH_FUNC_PTR)
+#define NGHASH_DEF_HASH(x)	((nghash_func_t *) (x))
+#define NGHASH_DEF_CMP(x)	((nghash_compare_func_t *) (x))
 
 /* defines for unique flag */
 
