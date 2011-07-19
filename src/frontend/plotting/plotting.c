@@ -1,11 +1,13 @@
 #include <ngspice.h>
 
 #include "plotting.h"
+#include "../../conf.h"
 
 /* Where 'constants' go when defined on initialization. */
 
 struct plot constantplot = {
-    "Constant values", "Sat Aug 16 10:55:15 PDT 1986", "constants",
+//    "Constant values", "Sat Aug 16 10:55:15 PDT 1986", "constants",
+    "Constant values", Spice_Build_Date, "constants",
     "const", NULL, NULL, NULL, NULL, NULL, NULL, TRUE, 0
 } ;
 

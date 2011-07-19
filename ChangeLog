@@ -1,3 +1,7 @@
+2011-07-20  Holger Vogt
+ * commands.c, runcoms2.c, runcoms2.h:
+   command 'remcirc': remove the current circuit
+
 2011-07-17  Robert Larice
  * src/frontend/plotting/plotit.c :
    cleanup, `getlims()' has to be used with number arg >= 1

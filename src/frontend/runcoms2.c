@@ -27,12 +27,12 @@ $Id$
 
 #define RAWBUF_SIZE 32768
 extern char rawfileBuf[RAWBUF_SIZE];
+extern void line_free_x(struct line * deck, bool recurse);
+#define line_free(line,flag)	{ line_free_x(line,flag); line = NULL; }
 
 /* Continue a simulation. If there is non in progress, this is the
  * equivalent of "run".
  */
-
-/* ARGSUSED */
 
 /* This is a hack to tell iplot routine to redraw the grid and initialize
 	the display device
@@ -168,7 +168,6 @@ com_resume(wordlist *wl)
  * should be obsolete.
  */
 
-/* ARGSUSED */
 void
 com_rset(wordlist *wl)
 {
@@ -193,3 +192,58 @@ com_rset(wordlist *wl)
             TRUE, ft_curckt->ci_options, ft_curckt->ci_filename);
     return;
 }
+
+void
+com_remcirc(wordlist *wl)
+{
+    struct variable *v, *next;
+    struct line *dd;     /*in: the spice deck */
+    struct circ *p, *prev = NULL;
+
+    NG_IGNORE(wl);
+
+    if (ft_curckt == NULL) {
+        fprintf(cp_err, "Error: there is no circuit loaded.\n");
+        return;
+    }
+    /* The next lines stem from com_rset */
+    INPkillMods(); 
+
+    if_cktfree(ft_curckt->ci_ckt, ft_curckt->ci_symtab);
+    for (v = ft_curckt->ci_vars; v; v = next) {
+	next = v->va_next;
+	tfree(v);
+    }
+    ft_curckt->ci_vars = NULL;
+    /* delete the deck in ft_curckt */
+    dd = ft_curckt->ci_deck;
+    line_free(dd,TRUE);
+    if (ft_curckt->ci_name)
+        tfree(ft_curckt->ci_name);
+    if (ft_curckt->ci_filename)
+        tfree(ft_curckt->ci_filename);
+
+    /* delete the actual circuit entry from ft_circuits */
+    for (p = ft_circuits; p; p = p->ci_next) {
+        if (ft_curckt == p) {
+            if (prev == NULL) {
+                ft_circuits = p->ci_next;
+                tfree(p);
+                p = NULL;
+                break;
+            }
+            else {
+                prev->ci_next = p->ci_next;
+                tfree(p);
+                p = NULL;
+                break;
+            }
+        }
+        prev = p;
+    }
+    /* make first entry in ft_circuits the actual circuit (or NULL) */
+    ft_curckt = ft_circuits;
+
+    return;
+}
+
