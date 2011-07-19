@@ -1,6 +1,7 @@
 2011-07-20  Holger Vogt
  * commands.c, runcoms2.c, runcoms2.h:
    command 'remcirc': remove the current circuit
+   plotting.c: replace the ancient date by the build date
 
 2011-07-17  Robert Larice
  * src/frontend/plotting/plotit.c :
