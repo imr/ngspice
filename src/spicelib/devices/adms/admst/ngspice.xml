@@ -3419,7 +3419,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
         <admst:when test="[name='r2_et_cmc' or name='r2_cmc']">
       </admst:when>
         <admst:when test="[name='mosvar']">
-          <admst:if test="[nilled(variable[name='c'])]">
+          <admst:if test="[nilled(modulevariablep[name='c'])]">
             <admst:new datatype="variablep" inputs="'c'">
               <admst:push select="../modulevariablep" path="." oncompare="."/>
               <admst:value-to select="sizetype" string="scalar"/>
@@ -3436,7 +3436,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
           </admst:if>
         </admst:when>
         <admst:when test="[name='juncap2']">
-          <admst:if test="[nilled(variable[name='d'])]">
+          <admst:if test="[nilled(modulevariablep[name='d'])]">
             <admst:new datatype="variablep" inputs="'d'">
               <admst:push select="../modulevariablep" path="." oncompare="."/>
               <admst:value-to select="sizetype" string="scalar"/>
@@ -3453,7 +3453,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
           </admst:if>
         </admst:when>
         <admst:when test="[name='vbic' or name='hic0_full' or name='hic2_full' or name='bjt504_va']">
-          <admst:if test="[nilled(variable[name='npn'])]">
+          <admst:if test="[nilled(modulevariablep[name='npn'])]">
             <admst:new datatype="variablep" inputs="'npn'">
               <admst:push select="../modulevariablep" path="." oncompare="."/>
               <admst:value-to select="sizetype" string="scalar"/>
@@ -3468,7 +3468,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
               </admst:new>
             </admst:new>
           </admst:if>
-          <admst:if test="[nilled(variable[name='pnp'])]">
+          <admst:if test="[nilled(modulevariablep[name='pnp'])]">
             <admst:new datatype="variablep" inputs="'pnp'">
               <admst:push select="../modulevariablep" path="." oncompare="."/>
               <admst:value-to select="sizetype" string="scalar"/>
@@ -3485,7 +3485,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
           </admst:if>
         </admst:when>
         <admst:when test="[name='psp102']">
-          <admst:if test="[nilled(variable[name='nmos'])]">
+          <admst:if test="[nilled(modulevariablep[name='nmos'])]">
             <admst:new datatype="variablep" inputs="'nmos'">
               <admst:push select="../modulevariablep" path="." oncompare="."/>
               <admst:value-to select="sizetype" string="scalar"/>
@@ -3500,7 +3500,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
               </admst:new>
             </admst:new>
           </admst:if>
-          <admst:if test="[nilled(variable[name='pmos'])]">
+          <admst:if test="[nilled(modulevariablep[name='pmos'])]">
             <admst:new datatype="variablep" inputs="'pmos'">
               <admst:push select="../modulevariablep" path="." oncompare="."/>
               <admst:value-to select="sizetype" string="scalar"/>
@@ -3517,7 +3517,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
           </admst:if>
         </admst:when>
         <admst:when test="[name='ekv']">
-          <admst:if test="[nilled(variable[name='nmos'])]">
+          <admst:if test="[nilled(modulevariablep[name='nmos'])]">
             <admst:new datatype="variablep" inputs="'nmos'">
               <admst:push select="../modulevariablep" path="." oncompare="."/>
               <admst:value-to select="sizetype" string="scalar"/>
@@ -3532,7 +3532,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
               </admst:new>
             </admst:new>
           </admst:if>
-          <admst:if test="[nilled(variable[name='pmos'])]">
+          <admst:if test="[nilled(modulevariablep[name='pmos'])]">
             <admst:new datatype="variablep" inputs="'pmos'">
               <admst:push select="../modulevariablep" path="." oncompare="."/>
               <admst:value-to select="sizetype" string="scalar"/>
@@ -3601,6 +3601,114 @@ int $(module)temp(GENmodel *inModel, CKTcircuit *ckt)
 }
 
 </admst:template>
+<admst:template match="code:create_makefile_am">
+<admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
+## Process this file with automake to produce Makefile.in
+
+ADMSXMLINTERFACE=\$(srcdir)/../admst
+$(module).c: admsva/$(module).va
+	admsXml -I\$(srcdir) -I\$(srcdir)/admsva -f \$(srcdir)/admsva/$(module).va -e \$(ADMSXMLINTERFACE)/ngspice.xml
+	perl -p -i.bak -e 's/IOP\\("(\\w+)"/IOP("\\L\\1"/' $(module).c
+
+noinst_LTLIBRARIES = lib$(module).la
+
+lib$(module)_la_SOURCES = 	\\
+	$(module).c		\\
+	$(module).hxx		\\
+	$(module)acld.c	\\
+	$(module)ask.c	\\
+	$(module)defs.h	\\
+	$(module)del.c	\\
+	$(module)dest.c	\\
+	$(module)ext.h	\\
+	$(module)guesstopology.c	\\
+	$(module)init.c	\\
+	$(module)init.h	\\
+	$(module)itf.h	\\
+	$(module)load.c	\\
+	$(module)mask.c	\\
+	$(module)mdel.c	\\
+	$(module)mpar.c	\\
+	$(module)par.c	\\
+	$(module)pzld.c	\\
+	$(module)setup.c	\\
+	$(module)temp.c	\\
+	$(module)trunc.c
+
+BUILT_SOURCES = 	\\
+	$(module).c		\\
+	$(module).hxx		\\
+	$(module)acld.c	\\
+	$(module)ask.c	\\
+	$(module)defs.h	\\
+	$(module)del.c	\\
+	$(module)dest.c	\\
+	$(module)ext.h	\\
+	$(module)guesstopology.c	\\
+	$(module)init.c	\\
+	$(module)init.h	\\
+	$(module)itf.h	\\
+	$(module)load.c	\\
+	$(module)mask.c	\\
+	$(module)mdel.c	\\
+	$(module)mpar.c	\\
+	$(module)par.c	\\
+	$(module)pzld.c	\\
+	$(module)setup.c	\\
+	$(module)temp.c \\
+	$(module)trunc.c
+
+CLEANFILES = 		\\
+	$(module).c		\\
+	$(module).hxx		\\
+	$(module).c.bak	\\
+	$(module)acld.c	\\
+	$(module)ask.c	\\
+	$(module)defs.h	\\
+	$(module)del.c	\\
+	$(module)dest.c	\\
+	$(module)ext.h	\\
+	$(module)guesstopology.c	\\
+	$(module)init.c	\\
+	$(module)init.h	\\
+	$(module)itf.h	\\
+	$(module)load.c	\\
+	$(module)mask.c	\\
+	$(module)mdel.c	\\
+	$(module)mpar.c	\\
+	$(module)par.c	\\
+	$(module)pzld.c	\\
+	$(module)setup.c	\\
+	$(module)temp.c	\\
+	$(module)noise.c	\\
+	$(module)trunc.c \\
+	.$(module).va.adms \\
+	.adms.implicit.xml \\
+	.interface.xml \\
+	*.h \\
+	*.xml
+
+#TODO (not implemented) \\
+	$(module)conv.c	\\
+	$(module)getic.c
+
+AM_CPPFLAGS = -I\$(top_srcdir)/src/include
+
+MAINTAINERCLEANFILES = Makefile.in
+
+</admst:template>
+    <admst:if test="[exists(/argv[.='--create_makefile_am'])]">
+      <admst:message format="flag &quot;--create_makefile_am&quot; found at the command line\n"/>
+      <admst:for-each select="/@module">
+        <admst:open file="Makefile.am">
+          <admst:text format="## created automatically\n"/>
+          <admst:text format="## by: %(/fullname) - %(/currentdate)\n"/>
+          <admst:apply-templates select="." match="code:create_makefile_am"/>
+        </admst:open>
+        <admst:message format="Makefile.am: file created\n"/>
+      </admst:for-each>
+      <admst:break/>
+    </admst:if>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)temp.c">
         <admst:text format="/***\n*** Interface: $package_string\n"/>
