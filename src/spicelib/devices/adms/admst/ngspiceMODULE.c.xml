@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.5  2011-01-13 17:05:46  dwarning
+  Revision 1.6  2011-07-23 07:57:07  dwarning
+  lower case substitution in xml module
+
+  Revision 1.5  2011/01/13 17:05:46  dwarning
   set version parameter to 2.3.0
 
   Revision 1.4  2006/03/05 09:38:41  pnenzi
@@ -62,13 +65,13 @@
     <admst:when test="[type='real']">
       <admst:value-of select="name"/>
       <admst:value-of select="name"/>
-      <admst:value-of select="name"/>
+      <admst:value-of select="lower-case(name)"/>
       <admst:text format=" IOP(&quot;%s&quot;,$(module)_instance_%s,IF_REAL,&quot;%s&quot;)"/>
     </admst:when>
     <admst:when test="[type='integer']">
       <admst:value-of select="name"/>
       <admst:value-of select="name"/>
-      <admst:value-of select="name"/>
+      <admst:value-of select="lower-case(name)"/>
       <admst:text format=" IOP(&quot;%s&quot;,$(module)_instance_%s,IF_INTEGER,&quot;%s&quot;)"/>
     </admst:when>
     <admst:otherwise>
@@ -83,13 +86,13 @@
     <admst:when test="[type='real']">
       <admst:value-of select="name"/>
       <admst:value-of select="name"/>
-      <admst:value-of select="name"/>
+      <admst:value-of select="lower-case(name)"/>
       <admst:text format=" IOP(&quot;%s&quot;,$(module)_model_%s,IF_REAL,&quot;%s&quot;)"/>
     </admst:when>
     <admst:when test="[type='integer']">
       <admst:value-of select="name"/>
       <admst:value-of select="name"/>
-      <admst:value-of select="name"/>
+      <admst:value-of select="lower-case(name)"/>
       <admst:text format=" IOP(&quot;%s&quot;,$(module)_model_%s,IF_INTEGER,&quot;%s&quot;)"/>
     </admst:when>
     <admst:otherwise>

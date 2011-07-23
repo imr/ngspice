@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.20  2011-05-20 16:15:04  rlar
+  Revision 1.21  2011-07-23 07:57:07  dwarning
+  lower case substitution in xml module
+
+  Revision 1.20  2011/05/20 16:15:04  rlar
   revert ngspiceMakfile.am.xml
 
   Revision 1.17  2011-02-21 19:40:23  dwarning
@@ -123,7 +126,6 @@ $(module).c: admsva/$(module).va
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
-	perl -p -i.bak -e 's/IOP\\("(\\w+)"/IOP("\\L\\1"/' $(module).c
 
 noinst_LTLIBRARIES = lib$(module).la
 

@@ -1,3 +1,14 @@
+2011-07-23  Dietmar Warning
+ * ngspiceMODULE.c.xml, ngspiceMakefile.am.xml: lower case substitution in xml module 
+   instead with perl in make process
+
+2011-07-22  Laurent Lemaitre
+ * ngspice.xml: add code to create Makefile.am using flag --create_makefile_am 
+   at admsXml command line
+
+2011-07-21  Laurent Lemaitre
+ * ngspice.xml: resync with adms api changes
+
 2011-07-20  Holger Vogt
  * commands.c, runcoms2.c, runcoms2.h:
    command 'remcirc': remove the current circuit
