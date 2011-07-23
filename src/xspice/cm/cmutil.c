@@ -385,6 +385,7 @@ double cm_smooth_pwl(double x_input, double *x, double *y, int size,
     if (x_input <= (*(x+1) + *x)/2.0) {/*** x_input below lowest midpoint ***/
         *dout_din = (*(y+1) - *y)/(*(x+1) - *x);
         out = *y + (x_input - *x) * *dout_din;
+        return out;
     }
     else {
         if (x_input >= (*(x+size-2) + *(x+size-1))/2.0) { 
@@ -392,6 +393,7 @@ double cm_smooth_pwl(double x_input, double *x, double *y, int size,
             *dout_din = (*(y+size-1) - *(y+size-2)) /
                           (*(x+size-1) - *(x+size-2));
             out = *(y+size-1) + (x_input - *(x+size-1)) * *dout_din;
+            return out;
         }
         else { /*** x_input within bounds of end midpoints...     ***/
                /*** must determine position progressively & then  ***/
@@ -428,6 +430,7 @@ double cm_smooth_pwl(double x_input, double *x, double *y, int size,
                     if (x_input < threshold_lower) { /* Lower linear region */
                         *dout_din = (*(y+i) - *(y+i-1))/lower_seg;
                         out = *(y+i) + (x_input - *(x+i)) * *dout_din;
+                        return out;
                     }
                     else {        
                         if (x_input < threshold_upper) { /* Parabolic region */
@@ -435,10 +438,12 @@ double cm_smooth_pwl(double x_input, double *x, double *y, int size,
                             upper_slope = (*(y+i+1) - *(y+i))/upper_seg;
                             cm_smooth_corner(x_input,*(x+i),*(y+i),input_domain,
                                         lower_slope,upper_slope,&out,dout_din);
+                            return out;
                         }
                         else {        /* Upper linear region */
                             *dout_din = (*(y+i+1) - *(y+i))/upper_seg;
                             out = *(y+i) + (x_input - *(x+i)) * *dout_din;
+                            return out;
                         }
                     }
                     break;  /* Break search loop...x_input has been found, */
@@ -447,7 +452,7 @@ double cm_smooth_pwl(double x_input, double *x, double *y, int size,
             }
         }
     }
-    return out;
+    return NAN;
 } 
 
 

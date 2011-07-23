@@ -1,4 +1,8 @@
 2011-07-23  Robert Larice
+ * src/xspice/cm/cmutil.c :
+   fix usage of an uninitialized variable
+
+2011-07-23  Robert Larice
  * src/spicelib/analysis/cktsens.c :
    fix usage of an uninitialized variable
 

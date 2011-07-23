@@ -217,6 +217,10 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 	} else {
 		/*XXX Restore saved state */
+		output_values = NULL;
+		output_cvalues = NULL;
+		fprintf(stderr, "ERROR: restore is not implemented for cktsens\n");
+		exit(1);
 	}
 
 #ifdef ASDEBUG
