@@ -1,9 +1,13 @@
+2011-07-23  Robert Larice
+ * autogen.sh :
+   update for --adms3
+
 2011-07-23  Dietmar Warning
- * ngspiceMODULE.c.xml, ngspiceMakefile.am.xml: lower case substitution in xml module 
+ * ngspiceMODULE.c.xml, ngspiceMakefile.am.xml: lower case substitution in xml module
    instead with perl in make process
 
 2011-07-22  Laurent Lemaitre
- * ngspice.xml: add code to create Makefile.am using flag --create_makefile_am 
+ * ngspice.xml: add code to create Makefile.am using flag --create_makefile_am
    at admsXml command line
 
 2011-07-21  Laurent Lemaitre

@@ -179,8 +179,11 @@ $znew
                     (
                         cd $ADMSDIR/$adms_dir
                         if [ "$ADMS" -eq 3 ]; then
-                            $ADMSXML `ls admsva/*.va` -Iadmsva -xv \
-                                --ngspice-makefile -e ../admst/ngspice.xml
+                            $ADMSXML \
+                                -I admsva \
+                                --create_makefile_am \
+                                -e ../admst/ngspice.xml \
+                                `ls admsva/*.va`
                         else
                             $ADMSXML `ls admsva/*.va` -Iadmsva -xv \
                                 -e ../admst/ngspiceVersion.xml \
