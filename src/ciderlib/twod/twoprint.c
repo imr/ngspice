@@ -17,6 +17,9 @@ $Id$
 #include "twoddefs.h"
 #include "twodext.h"
 
+#include <inttypes.h>
+
+
 void
 TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
 {
@@ -344,7 +347,7 @@ struct  MatrixElement
 void
 TWOmemStats(FILE *file, TWOdevice *pDevice)
 {
-  static const char memFormat[] = "%-20s%10d%10d\n";
+  const char memFormat[] = "%-20s" "%10d" "%10" PRIuPTR "\n";
 /*  static const char sumFormat[] = "%20s          %-10d\n"; */
   int size;
   size_t memory;
@@ -395,7 +398,7 @@ TWOmemStats(FILE *file, TWOdevice *pDevice)
   for (pChannel = pDevice->pChannel; pChannel; pChannel = pChannel->next)
     size++;
   memory += (size_t) size * sizeof(TWOchannel);
-  fprintf(file, "%-20s%10s%10d\n", "Misc Mesh", "n/a", memory);
+  fprintf(file, "%-20s%10s%10" PRIuPTR "\n", "Misc Mesh", "n/a", memory);
 
   size = pDevice->numOrigEquil;
   memory = (size_t) size * sizeof(struct MatrixElement);

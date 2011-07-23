@@ -16,6 +16,9 @@ $Id$
 #include "onedext.h"
 #include "oneddefs.h"
 
+#include <inttypes.h>
+
+
 void
 ONEprnSolution(FILE *file, ONEdevice *pDevice, OUTPcard *output)
 {
@@ -326,7 +329,7 @@ struct MatrixElement {
 void
 ONEmemStats(FILE *file, ONEdevice *pDevice)
 {
-  static const char memFormat[] = "%-20s%10d%10d\n";
+  const char memFormat[] = "%-20s" "%10d" "%10" PRIuPTR "\n";
 /*  static const char sumFormat[] = "%20s          %-10d\n";*/
   int size;
   size_t memory;
@@ -368,7 +371,7 @@ ONEmemStats(FILE *file, ONEdevice *pDevice)
   size = numContactNodes;
   memory += (size_t) size * sizeof(ONEnode *);
   size = 0;
-  fprintf(file, "%-20s%10s%10d\n", "Misc Mesh", "n/a", memory);
+  fprintf(file, "%-20s%10s%10" PRIuPTR "\n", "Misc Mesh", "n/a", memory);
 
   size = pDevice->numOrigEquil;
   memory = (size_t) size * sizeof(struct MatrixElement);
