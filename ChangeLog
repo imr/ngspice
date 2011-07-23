@@ -1,4 +1,9 @@
 2011-07-23  Robert Larice
+ * src/frontend/resource.c ,
+ * src/frontend/resource.h :
+   use #include <inttypes.h> and size_t for portability
+
+2011-07-23  Robert Larice
  * src/xspice/cm/cmutil.c :
    fix usage of an uninitialized variable
 

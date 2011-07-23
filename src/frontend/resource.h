@@ -22,10 +22,10 @@ struct proc_mem {
 };
 
 struct sys_mem {
-   unsigned long int size;    /* Total memory size */
-   unsigned long int free;    /* Free memory */
-   unsigned long int swap_t;  /* Swap total */
-   unsigned long int swap_f;  /* Swap free */
+   size_t size;    /* Total memory size */
+   size_t free;    /* Free memory */
+   size_t swap_t;  /* Swap total */
+   size_t swap_f;  /* Swap free */
 };
 
 #endif
