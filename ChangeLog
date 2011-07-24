@@ -1,4 +1,9 @@
 2011-07-24  Robert Larice
+ * src/spicelib/parser/inp2m.c :
+   avoid incorrect bindnodes when falling back to a 4 node device
+     thats a polish of saj's fix from 2003-07-23
+
+2011-07-24  Robert Larice
  * src/spicelib/devices/bsim3soi_dd/b3soiddld.c :
    bug fix, incomplete check for NAN
      did this `TURKEY' try to fool the poor old man's eyes, who is named `Alberto' ?

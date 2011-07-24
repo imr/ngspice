@@ -134,6 +134,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 #ifdef TRACE
             printf("INP2M: couldn't workout number of nodes, assuming 4\n");
 #endif
+            nodeflag = 0;                  /*  now reset to a 4 node device  */
             model = nname5;/* mosfet*/
             line = save;   /* reset the posn to what it sould be */
                         }
