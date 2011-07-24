@@ -1,4 +1,8 @@
 2011-07-24  Robert Larice
+ * src/misc/util.c :
+   use size_t
+
+2011-07-24  Robert Larice
  * src/spicelib/parser/inp2m.c :
    avoid incorrect bindnodes when falling back to a 4 node device
      thats a polish of saj's fix from 2003-07-23

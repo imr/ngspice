@@ -193,8 +193,8 @@ char *
 ngdirname(const char *name)
 {
     static char *ret = NULL;
-    int len;
-    int size = 0;
+    size_t len;
+    size_t size = 0;
     const char *p;
 
     if (ret) {
@@ -222,7 +222,7 @@ ngdirname(const char *name)
 
     while (p != name && *p != '/' && *p != '\\') p--;
 
-    size = p - name;
+    size = (size_t)(p - name);
     if (size) {
         ret = TMALLOC(char, size + 1);
         memcpy(ret, name, size);
@@ -243,8 +243,8 @@ char *
 ngdirname(const char *name)
 {
     static char *ret = NULL;
-    int len;
-    int size = 0;
+    size_t len;
+    size_t size = 0;
     const char *p;
 
     if (ret) {
@@ -267,7 +267,7 @@ ngdirname(const char *name)
 
     while (p != name && *p != '/') p--;
 
-    size = p - name;
+    size = (size_t)(p - name);
     if (size) {
         ret = TMALLOC(char, size + 1);
         memcpy(ret, name, size);
