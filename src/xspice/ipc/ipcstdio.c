@@ -46,7 +46,7 @@ Ipc_Status_t ipc_transport_get_line (
 
    printf ("GET_LINE\n");
    gets (str);
-   *len = strlen (str);
+   *len = (int) strlen (str);
    return IPC_STATUS_OK;
 }
 
