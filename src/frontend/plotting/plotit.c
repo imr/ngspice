@@ -30,54 +30,69 @@ static bool sameflag;
 static double *
 getlims(wordlist *wl, char *name, int number)
 {
-    double *d, *td;
+    double *d;
     wordlist *beg, *wk;
-    char *ss;
     int n;
 
     if(number < 1)
         return NULL;
 
-    for (beg = wl; beg; beg = beg->wl_next) {
-        if (eq(beg->wl_word, name)) {
-            if (beg == wl) {
-                fprintf(cp_err,
-			"Syntax error: looking for plot parameters \"%s\".\n",
-			name);
-                return (NULL);
-            }
-            wk = beg;
-            d = TMALLOC(double, number);
-            for (n = 0; n < number; n++) {
-                wk = wk->wl_next;
-                if (!wk) {
-                    fprintf(cp_err,
-                            "Syntax error: not enough parameters for \"%s\".\n",
-			    name);
-                    return (NULL);
-                }
-                ss = wk->wl_word;
-                td = ft_numparse(&ss, FALSE);
-                if (td == NULL)
-                    goto bad;
-                d[n] = *td;
-            }
+    for (beg = wl; beg; beg = beg->wl_next)
+        if (eq(beg->wl_word, name))
+            break;
 
-            if (beg->wl_prev)
-                beg->wl_prev->wl_next = wk->wl_next;
-            if (wk->wl_next) {
-                wk->wl_next->wl_prev = beg->wl_prev;
-                wk->wl_next = NULL;
-            }
-	    if (beg != wl_root)
-		wl_free(beg);
-            return (d);
-        }
+    if(!beg)
+        return NULL;
+
+    if (beg == wl) {
+        fprintf(cp_err,
+                "Syntax error: looking for plot parameters \"%s\".\n", name);
+        return NULL;
     }
-    return (NULL);
-bad:
-    fprintf(cp_err, "Syntax error: bad parameters for \"%s\".\n", name);
-    return (NULL);
+
+    wk = beg;
+
+    d = TMALLOC(double, number);
+
+    for (n = 0; n < number; n++) {
+
+        char *ss;
+        double *td;
+
+        wk = wk->wl_next;
+
+        if (!wk) {
+            fprintf(cp_err,
+                    "Syntax error: not enough parameters for \"%s\".\n", name);
+            txfree(d);
+            return NULL;
+        }
+
+        ss = wk->wl_word;
+        td = ft_numparse(&ss, FALSE);
+
+        if (!td) {
+            fprintf(cp_err,
+                    "Syntax error: bad parameters for \"%s\".\n", name);
+            txfree(d);
+            return NULL;
+        }
+
+        d[n] = *td;
+    }
+
+    if (beg->wl_prev)
+        beg->wl_prev->wl_next = wk->wl_next;
+
+    if (wk->wl_next) {
+        wk->wl_next->wl_prev = beg->wl_prev;
+        wk->wl_next = NULL;
+    }
+
+    if (beg != wl_root)
+        wl_free(beg);
+
+    return d;
 }
 
 

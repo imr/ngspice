@@ -1,4 +1,8 @@
 2011-07-24  Robert Larice
+ * src/frontend/plotting/plotit.c :
+   cleanup getlims() and plug a memory leak
+
+2011-07-24  Robert Larice
  * src/xspice/ipc/ipcstdio.c :
    (int) cast, where size can be expected to be small enough
 
