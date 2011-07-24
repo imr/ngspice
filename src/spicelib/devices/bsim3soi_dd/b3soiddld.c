@@ -4241,7 +4241,7 @@ if (here->B3SOIDDdebugMod > 2)
                    else if ((nandetect = isnan (*(here->B3SOIDDBspPtr))) != 0)
                       { strcpy (nanmessage, "BspPtr"); }
                    
-                   if ((nandetect = isnan (*(here->B3SOIDDGgPtr))) != 0)
+                   else if ((nandetect = isnan (*(here->B3SOIDDGgPtr))) != 0)
                    { strcpy (nanmessage, "GgPtr"); }
                    else if ((nandetect = isnan (*(here->B3SOIDDGdpPtr))) != 0)
                    { strcpy (nanmessage, "GdpPtr"); }
