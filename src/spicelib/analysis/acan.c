@@ -179,11 +179,9 @@ ACan(CKTcircuit *ckt, int restart)
     } else {    /* continue previous analysis */
         freq = ((ACAN*)ckt->CKTcurJob)->ACsaveFreq;
         ((ACAN*)ckt->CKTcurJob)->ACsaveFreq = 0; /* clear the 'old' frequency */
-	/* fix resume? saj*/
-	error = SPfrontEnd->OUTpBeginPlot (ckt,
-		ckt->CKTcurJob,
-                ckt->CKTcurJob->JOBname,freqUid,IF_REAL,numNames,nameList,
-                IF_COMPLEX,&acPlot);
+	/* fix resume? saj, indeed !*/
+	error = SPfrontEnd->OUTpBeginPlot
+	    (NULL, NULL, NULL, NULL, 0, 666, NULL, 666, &acPlot);
 	/* saj*/    
     }
         

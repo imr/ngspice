@@ -1,4 +1,14 @@
 2011-07-24  Robert Larice
+ * src/spicelib/analysis/acan.c ,
+ * src/spicelib/analysis/dctran.c ,
+ * src/spicelib/analysis/dctrcurv.c ,
+ * src/spicelib/analysis/noisean.c :
+   polish saj's resume fix, use it for `acan' as well
+     saj's fix was applied 2003-07-23 19:36
+     avoid (non)-usage of uninitialized variables
+   FIXME, get rid of the `evil' number `666', find a better solution
+
+2011-07-24  Robert Larice
  * src/spicelib/analysis/noisean.c :
    bug fix, stepsize in `noisean'
 

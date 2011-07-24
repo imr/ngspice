@@ -66,9 +66,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         /* continuing */
         i = cv->TRCVnestState;
         /* resume to work? saj*/
-        error = SPfrontEnd->OUTpBeginPlot (ckt,
-           ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
-           varUid,IF_REAL,666,nameList, 666,&plot);	
+        error = SPfrontEnd->OUTpBeginPlot
+            (NULL, NULL, NULL, NULL, 0, 666, NULL, 666, &plot);
         goto resume;
     }
     ckt->CKTtime = 0;

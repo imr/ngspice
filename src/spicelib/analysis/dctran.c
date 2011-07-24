@@ -346,16 +346,9 @@ DCtran(CKTcircuit *ckt,
         if(ckt->CKTminBreak==0) ckt->CKTminBreak=ckt->CKTmaxStep*5e-5;
         firsttime=0;
         /* To get rawfile working saj*/
-        /* get namelist again */
-        error = CKTnames(ckt,&numNames,&nameList);
-        if(error) return(error);
-        /* get timeUiD again */
-        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL,
-                "time", UID_OTHER, NULL);
-        error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
-                 ckt->CKTcurJob->JOBname,timeUid,IF_REAL,666,nameList,
-                 666,&(((TRANan*)ckt->CKTcurJob)->TRANplot));/* magic 666 nums as flags */
-        tfree(nameList);
+        error = SPfrontEnd->OUTpBeginPlot
+            (NULL, NULL, NULL, NULL, 0, 666, NULL, 666,
+             &(((TRANan*)ckt->CKTcurJob)->TRANplot));
         if(error) {
             fprintf(stderr, "Couldn't relink rawfile\n");
             return error;
