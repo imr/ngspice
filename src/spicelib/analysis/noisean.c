@@ -92,7 +92,7 @@ NOISEan (CKTcircuit *ckt, int restart)
         case LINEAR:
             job->NfreqDelta = (job->NstopFreq - 
                             job->NstartFreq)/
-			    (job->NnumSteps+1);
+			    (job->NnumSteps - 1);
             break;
 
         default:

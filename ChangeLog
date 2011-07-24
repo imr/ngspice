@@ -1,3 +1,7 @@
+2011-07-24  Robert Larice
+ * src/spicelib/analysis/noisean.c :
+   bug fix, stepsize in `noisean'
+
 2011-07-23  Robert Larice
  * src/frontend/resource.c ,
  * src/frontend/resource.h :
