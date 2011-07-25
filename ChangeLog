@@ -1,3 +1,8 @@
+2011-07-25  Robert Larice
+ * src/spicelib/devices/adms/admst/ngspice.xml :
+   convert K&R function definitions to ansi style
+     and declare are debug function `static'
+
 2011-07-24  Robert Larice
  * src/frontend/plotting/plotit.c :
    cleanup getlims() and plug a memory leak

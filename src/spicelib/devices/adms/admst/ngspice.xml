@@ -4479,9 +4479,7 @@ if(ChargeComputationNeeded)\\
 }\\
 (here-&gt;JDVAL_ ## Sp ## _ ## Pp)+=v;
 
-int $(module)load(inModel,ckt)
-     GENmodel *inModel;
-     register CKTcircuit *ckt;
+int $(module)load(GENmodel *inModel, CKTcircuit *ckt)
      /* actually load the current value into the 
       * sparse matrix previously provided 
       */
@@ -4514,7 +4512,7 @@ int $(module)load(inModel,ckt)
     <!-- modulecode/![initializeModel|initializeInstance|initial_model|initial_instance|initial_step|noise] -->
     <admst:template match="debug:strobe">
       <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
-      <admst:text format="void $(module)debug (CKTcircuit *ckt, $(module)model *model, $(module)instance *here)\n"/>
+      <admst:text format="static void $(module)debug (CKTcircuit *ckt, $(module)model *model, $(module)instance *here)\n"/>
       <admst:text format="{\n"/>
       <admst:text select="modulenode[location!='ground']" format="  fprintf(stdout,&quot;voltage: %(name)=%e\\n&quot;,NP(%(name)));\n"/>
       <admst:for-each select="modulevariablep[isparameter='yes']">
