@@ -2680,7 +2680,13 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
               </admst:otherwise>
             </admst:choose>
           </admst:if>
-          <admst:variable name="ztmp" string="__%(fgetname(.)/[name='fgetname']/value)_$index"/>
+          <admst:variable name="args" string=""/>
+          <admst:for-each select="arguments">
+            <admst:variable test="[$args!='']" name="args" string="$args,"/>
+            <admst:variable name="e" string="%(estringifynoprobe(.)/[name='ret']/value)"/>
+            <admst:variable name="args" string="$args$e"/>
+          </admst:for-each>
+          <admst:variable name="ztmp" string="%(fgetname(.)/[name='fgetname']/value)($args)"/>
         </admst:when>
         <admst:when test="[name='div']">
           <admst:variable name="index" string="%(index(#expression/@exfunction,.))"/>
@@ -2749,7 +2755,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
               <admst:apply-templates select="." match="function:analysis"/>
             </admst:when>
             <admst:otherwise>
-              <admst:variable name="function" string="%(name)"/>
+              <admst:variable name="function" string="%(funcname(.)/[name='fname']/value)"/>
               <admst:variable name="args" string=""/>
               <admst:for-each select="arguments">
                 <admst:variable name="index" string="%(position())"/>
