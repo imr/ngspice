@@ -5277,10 +5277,10 @@ int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *
 <admst:join select="modulevariablep[#parametertype='instance' and isparameter='yes']" separator=",\n">
 <admst:choose>
 <admst:when test="[type='real']">
-<admst:text format=" IOP(&quot;%(name)&quot;,$(module)_instance_%(name),IF_REAL,&quot;%(name)&quot;)"/>
+<admst:text format=" IOP(&quot;%(lower-case(name))&quot;,$(module)_instance_%(name),IF_REAL,&quot;%(name)&quot;)"/>
 </admst:when>
 <admst:when test="[type='integer']">
-<admst:text format=" IOP(&quot;%(name)&quot;,$(module)_instance_%(name),IF_INTEGER,&quot;%(name)&quot;)"/>
+<admst:text format=" IOP(&quot;%(lower-case(name))&quot;,$(module)_instance_%(name),IF_INTEGER,&quot;%(name)&quot;)"/>
 </admst:when>
 <admst:otherwise>
 <admst:fatal format="parameter of type 'string' not supported\n"/>
@@ -5292,10 +5292,10 @@ int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *
 <admst:join select="modulevariablep[#parametertype!='instance' and isparameter='yes']" separator=",\n">
 <admst:choose>
 <admst:when test="[type='real']">
-<admst:text format=" IOP(&quot;%(name)&quot;,$(module)_model_%(name),IF_REAL,&quot;%(name)&quot;)"/>
+<admst:text format=" IOP(&quot;%(lower-case(name))&quot;,$(module)_model_%(name),IF_REAL,&quot;%(name)&quot;)"/>
 </admst:when>
 <admst:when test="[type='integer']">
-<admst:text format=" IOP(&quot;%(name)&quot;,$(module)_model_%(name),IF_INTEGER,&quot;%(name)&quot;)"/>
+<admst:text format=" IOP(&quot;%(lower-case(name))&quot;,$(module)_model_%(name),IF_INTEGER,&quot;%(name)&quot;)"/>
 </admst:when>
 <admst:otherwise>
 <admst:fatal format="parameter of type 'string' not supported\n"/>

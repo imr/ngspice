@@ -1,4 +1,13 @@
 2011-07-26  Robert Larice
+ * src/spicelib/devices/adms/admst/ngspice.xml :
+   lower-case the first string in an IOP("HuGo",...) incantation
+
+2011-07-26  Laurent Lemaitre
+ * src/spicelib/devices/adms/admst/ngspice.xml :
+   remove perl command in generated Makefime.am
+     which lower-case'ed the first string in an IOP("HuGo",...) incantation
+
+2011-07-26  Robert Larice
  * src/include/ngspice.h ,
  * src/spicelib/devices/adms/admst/ngspice.xml :
    swallow unsed variable warnings in adms generated code, upagrade dependencies
