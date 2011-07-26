@@ -3621,7 +3621,6 @@ ADMSXMLINTERFACE=\$(srcdir)/../admst
 $(module).c: \$(ADMSXMLINTERFACE)/ngspice.xml
 $(module).c: admsva/$(module).va
 	admsXml -I\$(srcdir) -I\$(srcdir)/admsva -f \$(srcdir)/admsva/$(module).va -e \$(ADMSXMLINTERFACE)/ngspice.xml
-	perl -p -i.bak -e 's/IOP\\("(\\w+)"/IOP("\\L\\1"/' $(module).c
 
 noinst_LTLIBRARIES = lib$(module).la
 
