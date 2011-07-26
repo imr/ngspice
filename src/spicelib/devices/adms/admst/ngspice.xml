@@ -3585,6 +3585,11 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
 #include "ifsim.h"
 #include "suffix.h"
 
+//fixme!!! redundant
+#define max(x,y)        (((x)&gt;(y))?(x):(y))
+#define min(x,y)       (((x)&lt;(y))?(x):(y))
+#define logE(x)         log(x)
+
 #define _STATIC
 #define _DYNAMIC
 
@@ -4725,6 +4730,11 @@ int $(module)trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 #include "sperror.h"
 #include "ifsim.h"
 #include "suffix.h"
+
+//fixme!!! redundant
+#define max(x,y)        (((x)&gt;(y))?(x):(y))
+#define min(x,y)       (((x)&lt;(y))?(x):(y))
+#define logE(x)         log(x)
 
 int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
      /* load the $(module) device structure with those pointers needed later 
