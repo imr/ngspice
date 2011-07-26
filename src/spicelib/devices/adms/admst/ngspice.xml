@@ -3595,6 +3595,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
 
 int $(module)temp(GENmodel *inModel, CKTcircuit *ckt)
 {
+  NG_IGNOREABLE(ckt);
   register $(module)model *model = ($(module)model*)inModel;
   register $(module)instance *here;
   for ( ; model != NULL; model = model-&gt;$(module)nextModel )
@@ -3617,6 +3618,7 @@ int $(module)temp(GENmodel *inModel, CKTcircuit *ckt)
 ## Process this file with automake to produce Makefile.in
 
 ADMSXMLINTERFACE=\$(srcdir)/../admst
+$(module).c: \$(ADMSXMLINTERFACE)/ngspice.xml
 $(module).c: admsva/$(module).va
 	admsXml -I\$(srcdir) -I\$(srcdir)/admsva -f \$(srcdir)/admsva/$(module).va -e \$(ADMSXMLINTERFACE)/ngspice.xml
 	perl -p -i.bak -e 's/IOP\\("(\\w+)"/IOP("\\L\\1"/' $(module).c
@@ -4168,6 +4170,10 @@ typedef struct s$(module)model {         /* model structure */
 int $(module)ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
   $(module)instance *instance = ($(module)instance*)inst;
+  NG_IGNOREABLE(ckt);
+  NG_IGNOREABLE(value);
+  NG_IGNOREABLE(select);
+  NG_IGNOREABLE(instance);
   switch (which) {
 <admst:for-each select="modulevariablep[#parametertype='instance' and isparameter='yes']">
 <admst:text format="  case  $(module)_instance_%(name)  :\n"/>
@@ -4214,6 +4220,7 @@ int $(module)ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
 
 int $(module)mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
+  NG_IGNOREABLE(ckt);
   $(module)model *model = ($(module)model *)inst;
   switch (which) {
   <admst:for-each select="modulevariablep[#parametertype!='instance' and isparameter='yes']">
@@ -4260,6 +4267,9 @@ int $(module)mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 int $(module)par(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
   $(module)instance *myinstance = ($(module)instance*)inst;
+  NG_IGNOREABLE(value);
+  NG_IGNOREABLE(select);
+  NG_IGNOREABLE(myinstance);
   switch (param) {
   <admst:for-each select="modulevariablep[#parametertype='instance' and isparameter='yes']">
 <admst:text format="  case  $(module)_instance_%(name)  :\n"/>
@@ -4640,6 +4650,7 @@ int $(module)acLoad(GENmodel *inModel, CKTcircuit *ckt)
 
 int $(module)pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
+  NG_IGNOREABLE(ckt);
   register $(module)model *model = ($(module)model*)inModel;
   register $(module)instance *here;
   for ( ; model != NULL; model = model-&gt;$(module)nextModel )
@@ -5191,6 +5202,8 @@ void $(module)destroy(GENmodel **inModel)
 int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *model, $(module)instance *here)
      /* guess topology */
 {
+  NG_IGNOREABLE(matrix);
+  NG_IGNOREABLE(ckt);
 <admst:template match="evaluate.localvariables:ngg">
   <admst:choose>
   <admst:when test="[datatypename='assignment']">

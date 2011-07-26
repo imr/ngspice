@@ -1,3 +1,17 @@
+2011-07-26  Robert Larice
+ * src/include/ngspice.h ,
+ * src/spicelib/devices/adms/admst/ngspice.xml :
+   swallow unsed variable warnings in adms generated code, upagrade dependencies
+
+2011-07-26  Laurent Lemaitre
+ * src/spicelib/devices/adms/admst/ngspice.xml :
+   Fixed code generation for ekv by adding definition of min and max and logE.
+
+2011-07-25  Laurent Lemaitre
+ * src/spicelib/devices/adms/admst/ngspice.xml :
+   fixed handling of expressions used as default value in parameter definition:
+     parameter real p=ln(q)
+
 2011-07-25  Robert Larice
  * src/spicelib/devices/adms/admst/ngspice.xml :
    convert K&R function definitions to ansi style
