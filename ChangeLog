@@ -1,4 +1,4 @@
-2011-07-27  Robert Larice
+2011-07-27  Holger Vogt
  * inpcom.c: nested parens, line 2963 ff
  * cmutil.c: inlude ngspice.h for NaN
 
