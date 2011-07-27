@@ -1,3 +1,7 @@
+2011-07-27  Robert Larice
+ * inpcom.c: nested parens, line 2963 ff
+ * cmutil.c: inlude ngspice.h for NaN
+
 2011-07-26  Robert Larice
  * src/spicelib/devices/adms/admst/ngspice.xml :
    lower-case the first string in an IOP("HuGo",...) incantation

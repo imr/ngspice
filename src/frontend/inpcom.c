@@ -2780,8 +2780,9 @@ inp_fix_param_values( struct line *deck )
   struct line *c = deck;
   char *line, *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
   char *vec_str, *natok, *buffer, *newvec, *whereisgt;
-  bool control_section = FALSE, has_paren = FALSE;
+  bool control_section = FALSE;
   wordlist *wl, *nwl;
+  int parens;
   
   while ( c != NULL ) {
     line = c->li_line;
@@ -2957,9 +2958,10 @@ inp_fix_param_values( struct line *deck )
       } else {
       /* put {} around token to be accepted as numparam */	
 	end_of_str = beg_of_str;
-	while ( *end_of_str != '\0' && (!isspace(*end_of_str) || has_paren) ) {
-	  if ( *end_of_str == '(' ) has_paren = TRUE; 
-	  if ( *end_of_str == ')' ) has_paren = FALSE;
+    parens = 0;
+	while ( *end_of_str != '\0' && (!isspace(*end_of_str) || (parens > 0)) ) {
+	  if ( *end_of_str == '(' ) parens++; 
+	  if ( *end_of_str == ')' ) parens--;
 	  end_of_str++;
 	}
 
