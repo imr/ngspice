@@ -8,7 +8,9 @@
 `define C2K     273.15
 `define KB      1.3806226e-23
 `define QQ      1.6021918e-19
-`define KBdivQQ 8.61708691805812512584e-5
+`define KBdivQQ   8.61708691805812512584e-5
+`define one_third 0.33333333333333333333
+`define one_sixth 0.16666666666666666667
 `define VDLOW   0.05
 `define AJE     3.0
 `define AJC     2.0
@@ -80,4 +82,3 @@
       else\
           result = vlim + ln(1.0 + (x - vlim));\
       result=result
-

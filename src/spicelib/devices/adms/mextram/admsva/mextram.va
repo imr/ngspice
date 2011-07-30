@@ -36,17 +36,8 @@ module bjt504_va (c, b, e, s, dt);
 
 analog begin 
   
-//`ifdef insideADMS 
-//   @(initial_model) begin 
-//`else 
-//   @(initial_step or initial_step("static")) begin  
-//`endif   
-   
 `include "initialize.inc"     
 `include "tscaling.inc"
-
-//   end // initial_step   
-
 `include "evaluate.inc"
 `include "opinfo.inc"
   

@@ -14,7 +14,7 @@
 `endif
                                        
    // Temperature variables
-   Trk = TREF + `C2K;   
+
     
 `ifdef insideADMS 
    Tk   = Trk + DTA + Vdt;     
@@ -29,9 +29,17 @@
    Vtr = `KBdivQQ * Trk;   
    VtINV = 1.0 / Vt;   
    VtrINV = 1.0 / Vtr;     
-   VdtINV = VtINV - VtrINV;     
-   
-   // Depletion capacitances   
+   VdtINV = VtINV - VtrINV;
+
+   lntN = ln(tN) ;
+
+   // begin: RvdT, November 2008, "Zener tunneling model"
+//      VGZEB_T = VGZEBOK - AVGEB*Tk*Tk / (Tk + TVGEB) ;
+    `max_logexp(VGZEB_T, VGZEBOK - AVGEB*Tk*Tk / (Tk + TVGEB), 0.05, 0.1) ;
+
+   // end: RvdT, November 2008, "Zener tunneling model"
+
+  // Depletion capacitances   
    
    UdeT = -3.0 * Vt * ln(tN) + VDE * tN + (1.0 - tN) * VGB;   
    `max_logexp(VDE_T, `VDLOW, UdeT, Vt);  
@@ -43,8 +51,9 @@
    UdsT = -3.0 * Vt * ln(tN) + VDS * tN + (1.0 - tN) * VGS;   
    `max_logexp(VDS_T, `VDLOW, UdsT, Vt);  
 `endif
-        
-   CJE_T = CJE * pow(VDE / VDE_T, PE);   
+   inv_VDE_T = 1.0 / VDE_T ;
+   CJE_T_div_CJE = pow(VDE * inv_VDE_T, PE);
+   CJE_T = CJE * CJE_T_div_CJE ;   
 
 `ifdef SUBSTRATE
    CJS_T = CJS * pow(VDS / VDS_T, PS);   
@@ -57,45 +66,80 @@
    XP_T  = XP  * CJCscaleINV;   
       
    // Resistances   
-      
-   RE_T  = RE  * pow(tN, AE);   
-   RBV_T = RBV * pow(tN, AB - AQBO);   
-   RBC_T = RBC * pow(tN, AEX);   
+
+// RvdT, November 2008:
+// Instead of the following definition
+//   RE_T  = RE  * pow(tN, AE);
+// we use, here, and in all following powers of tN, 
+// the following computationally cheaper implementation: 
+   RE_T  = RE  * exp(lntN * AE);         
+// This is based on the observation that exp() is faster than pow().
+// Acknowledgement due to Geoffrey Coram.
+
+   RBV_T = RBV * exp(lntN * (AB - AQBO));   
+   RBC_T = RBC * exp(lntN * AEX);   
 
 // RvdT, 30-11-2007: new collector resistances RCCxx_T, RCCex_T, RCCin_T
-   RCCxx_T = RCC * pow(tN, AC);   
-   RCCex_T = RCBLX * pow(tN, ACBL);   
-   RCCin_T = RCBLI * pow(tN, ACBL);   
+   RCCxx_T = RCC * exp(lntN * AC);   
+   RCCex_T = RCBLX * exp(lntN * ACBL);   
+   RCCin_T = RCBLI * exp(lntN * ACBL);   
 
-   RCV_T = RCV * pow(tN, AEPI);    
+   RCV_T = RCV * exp(lntN * AEPI);    
    
    // Current gains   
       
-   BF_T  = BF  * pow(tN, AE - AB - AQBO) * exp(-DVGBF * VdtINV);    
+   BF_T  = BF  * exp(lntN * (AE - AB - AQBO)) * exp(-DVGBF * VdtINV);    
    BRI_T = BRI * exp(-DVGBR * VdtINV);    
    
    // Currents and voltages   
    
-   IS_T  = IS  * pow(tN, 4.0 - AB - AQBO + DAIS) * exp(-VGB * VdtINV);    
-   IK_T  = IK  * pow(tN, 1.0 - AB);   
-   IBF_T = IBF * pow(tN, 6.0 - 2.0 * MLF) * exp(-VGJ * VdtINV / MLF);   
+   IS_T  = IS  * exp(lntN * (4.0 - AB - AQBO + DAIS)) * exp(-VGB * VdtINV);    
+   IK_T  = IK  * exp(lntN * (1.0 - AB));   
+   IBF_T = IBF * exp(lntN * (6.0 - 2.0 * MLF)) * exp(-VGJ * VdtINV / MLF);   
    IBR_T = IBR * tN * tN * exp(-VGC * VdtINV / 2.0);   
-   VEF_T = VEF * pow(tN, AQBO) * CJCscaleINV;   
-   VER_T = VER * pow(tN, AQBO) * pow(VDE / VDE_T, -PE);   
+ 
+// begin  RvdT, November 2008, MXT504.8_alpha
+// T-scaling BE tunneling:
+//
+     x = pow(VGZEB_T * inv_VGZEB_Tr, -0.5) ;
+//   y = pow(VDE_T * inv_VDE, PE) ;
+// more efficient, because we need both y and 1.0 / y:
+   y = 1.0 / CJE_T_div_CJE ;
+// definition:
+// nZEB_T = NZEB* pow(VGZEB_T/VGZEB_Tr, 1.5) * pow(VDE_T / VDE, PE-1) ;
+// more efficient implementation:
+//   nZEB_T = NZEB* VGZEB_T * VGZEB_T  * x * y * VDE /(VDE_T*VGZEB_Tr*VGZEB_Tr) ;
+   nZEB_T = NZEB* VGZEB_T * VGZEB_T  * x * y * VDE * inv_VDE_T*inv_VGZEB_Tr*inv_VGZEB_Tr ;
+
+// definition:
+// IZEB_T = IZEB* pow(VGZEB_T/VGZEB_Tr, -0.5) * pow(VDE_T / VDE, 2-PE) * exp(NZEB-nZEB_T);
+// more efficient implementation:
+   IZEB_T = IZEB* x * VDE_T  * VDE_T * inv_VDE * inv_VDE * CJE_T_div_CJE * exp(NZEB-nZEB_T) ;
+//
+// end  RvdT, November 2008, MXT504.8_alpha
+
+   x = exp(lntN * AQBO) ;
+   VEF_T = VEF * x * CJCscaleINV;   
+//   VER_T = VER * x * pow(VDE / VDE_T, -PE);   
+   VER_T = VER * x * y;   
 
 `ifdef SUBSTRATE
-   ISS_T = ISS * pow(tN, 4.0 - AS) * exp(-VGS * VdtINV);    
+   ISS_T = ISS * exp(lntN * (4.0 - AS)) * exp(-VGS * VdtINV);    
+// New 504.9:
+   ICSS_T = ICSS * exp(lntN * (3.5 - 0.5 * ASUB)) * exp(-VGS * VdtINV);    
+// End New 504.9.
+
    if ((ISS_T > 0.0))    
-      IKS_T = IKS * pow(tN, 1.0 - AS) * (IS_T / IS) * (ISS / ISS_T);   
+      IKS_T = IKS * exp(lntN * (1.0 - AS)) * (IS_T / IS) * (ISS / ISS_T);   
    else    
-      IKS_T = IKS * pow(tN, 1.0 - AS);   
+      IKS_T = IKS * exp(lntN * (1.0 - AS));   
 `endif
        
    // Transit times   
    
-   TAUE_T = TAUE * pow(tN, AB - 2.0) * exp(-DVGTE * VdtINV);   
-   TAUB_T = TAUB * pow(tN, AQBO + AB - 1.0);   
-   TEPI_T = TEPI * pow(tN, AEPI - 1.0);    
+   TAUE_T = TAUE * exp(lntN * (AB - 2.0)) * exp(-DVGTE * VdtINV);   
+   TAUB_T = TAUB * exp(lntN * (AQBO + AB - 1.0));   
+   TEPI_T = TEPI * exp(lntN * (AEPI - 1.0));    
    TAUR_T = TAUR * (TAUB_T + TEPI_T) / (TAUB + TEPI);    
       
    // Avalanche constant      
@@ -113,7 +157,7 @@
   
    // Heterojunction features   
    
-   DEG_T = DEG * pow(tN, AQBO);      
+   DEG_T = DEG * exp(lntN * AQBO);      
    
 `ifdef SELFHEATING
   // Tempearature scaling of the thermal resistance   
@@ -127,13 +171,29 @@
    IK_TM  = IK_T  * MULT;   
    IBF_TM = IBF_T * MULT;    
    IBR_TM = IBR_T * MULT;    
-   IHC_M  = IHC   * MULT;    
+// RvdT: November 2008, Zener tunneling parameters
+   IZEB_TM = IZEB_T * MULT ;
+
+// end Zener tunneling parameters   
+ 
+
+
+
+  IHC_M  = IHC   * MULT;    
 `ifdef SUBSTRATE
-   ISS_TM = ISS_T * MULT;    
-   IKS_TM = IKS_T * MULT;    
+    ISS_TM = ISS_T * MULT;    
+// New: 504.9
+   ICSS_TM = ICSS_T * MULT;    
+    IKS_TM = IKS_T * MULT;    
 `endif
-   CJE_TM = CJE_T * MULT;    
-   CJC_TM = CJC_T * MULT;    
+    CJE_TM = CJE_T * MULT;    
+    CJC_TM = CJC_T * MULT;    
+
+// begin  RvdT, 28-10-2008, MXT504.8_alpha
+// Base-emitter tunneling current Mult scaling:
+//   BTJE_TM = BTJE_T * MULT;
+// end  RvdT, 28-10-2008, MXT504.8_alpha
+
 
 `ifdef SUBSTRATE
    CJS_TM = CJS_T * MULT;    

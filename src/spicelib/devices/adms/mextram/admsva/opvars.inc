@@ -7,6 +7,22 @@
 `OPP(OP_ib,        A, External DC base current)
 `OPP(OP_betadc,     , External DC current gain Ic/Ib)
 
+// begin added in MXT 504.9:
+`OPP(OP_ie,        A, External DC emitter current)
+
+// The external biases
+`OPP(OP_vbe,     V, External base-emitter bias)
+`OPP(OP_vce,     V, External collector-emitter bias)
+`OPP(OP_vbc,     V, External base-collector bias)
+
+`ifdef SUBSTRATE
+`OPP(OP_is,        A, External DC substrate current)
+`OPP(OP_vse,     V, External substrate-emitter bias)
+`OPP(OP_vbs,     V, External base-substrate bias)
+`OPP(OP_vsc,     V, External substrate-collector bias)
+`endif
+
+// end added in MXT 504.9
 // The internal biases
 `OPP(OP_vb2e1,     V, Internal base-emitter bias)
 `OPP(OP_vb2c2,     V, Internal base-collector bias)
@@ -22,15 +38,22 @@
 `OPP(OP_ib1b2,     A,   Pinched-base current)
 `OPP(OP_ib1,       A,   Ideal forward base current)
 `OPP(OP_sib1,      A,   Ideal side-wall base current)
+//
+// 504.8, RvdT, TU-Delft April. 2009, Zener tunneling current:
+//
+`OPP(OP_izteb,      A,   Zener tunneling current in the emitter base junction)
+//
 `OPP(OP_ib2,       A,   Non-ideal forward base current)
 `OPP(OP_ib3,       A,   Non-ideal reverse base current)
 `OPP(OP_iavl,      A,   Avalanche current)
 `OPP(OP_iex,       A,   Extrinsic reverse base current)
 
 `OPP(OP_xiex,      A,   Extrinsic reverse base current)
+`ifdef SUBSTRATE
 `OPP(OP_isub,      A,   Substrate current)
 `OPP(OP_xisub,     A,   Substrate current)
 `OPP(OP_isf,       A,   Substrate failure current)
+`endif
 `OPP(OP_ire,       A,   Current through emitter resistance)
 `OPP(OP_irbc,      A,   Current through constant base resistance)
 `OPP(OP_ircblx,    A,   Current through extrinsic buried layer resistance)
@@ -50,7 +73,9 @@
 `OPP(OP_xqtex,     C,   Extrinsic base-collector depletion charge)
 `OPP(OP_qex,       C,   Extrinsic base-collector diffusion charge)
 `OPP(OP_xqex,      C,   Extrinsic base-collector diffusion charge)
+`ifdef SUBSTRATE
 `OPP(OP_qts,       C,   Collector-substrate depletion charge)
+`endif
 
 //Small signal equivalent circuit conductances and resistances
 `OPP(OP_gx,        S,   Forward transconductance)
@@ -76,10 +101,11 @@
 `OPP(OP_rcc,       Ohm, Collector contact resistance)
 `OPP(OP_rcblx,       Ohm, Extrinsic buried layer resistance)
 `OPP(OP_rcbli,       Ohm, Intrinsic buried layer resistance)
+`ifdef SUBSTRATE
 `OPP(OP_gs,        S,   Conductance parasistic PNP transistor)
 `OPP(OP_xgs,       S,   Conductance parasistic PNP transistor)
 `OPP(OP_gsf,       S,   Conductance substrate failure current)
-
+`endif
 //Small signal equivalent circuit capacitances
 `OPP(OP_scbe,      F,   Capacitance sidewall b-e junction)
 `OPP(OP_cbex,      F,   Capacitance floor b-e junction)
@@ -94,8 +120,9 @@
 `OPP(OP_cb1b2x,    F,   Cross-capacitance AC current crowding)
 `OPP(OP_cb1b2y,    F,   Cross-capacitance AC current crowding)
 `OPP(OP_cb1b2z,    F,   Cross-capacitance AC current crowding)
+`ifdef SUBSTRATE
 `OPP(OP_cts,       F,   Capacitance s-c junction)
-
+`endif
 //Approximate small signal equivalent circuit
 `OPP(OP_gm,        S,transconductance)
 `OPP(OP_beta,       ,   Current amplification)
@@ -113,7 +140,9 @@
 `OPP(OP_vb2c2star, V, Physical value of internal base-collector bias)
 
 //self-heating
+`ifdef SELFHEATING
 `OPP(OP_pdiss,     W, Dissipation)
+`endif
 `OPP(OP_tk,        K, Actual temperature)
 
 //help variables

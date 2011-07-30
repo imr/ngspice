@@ -152,8 +152,11 @@ Vsc3 = Vsc4 - Vc3c4 ;
     
    Vfe = VDE_T * (1.0 - pow(`AJE , -1.0 / PE));   
    a_VDE = 0.1 * VDE_T;  
-   `min_logexp(Vje, Vb2e1, Vfe, a_VDE);  
-   Vte = VDE_T / (1.0 - PE) * (1.0 - pow(1.0 - Vje / VDE_T, 1.0 - PE)) +   
+   `min_logexp(Vje, Vb2e1, Vfe, a_VDE);
+
+// RvdT, November 2008, E0BE to be re-used in EB- Zener tunnel model:
+   E0BE = pow(1.0 - Vje * inv_VDE_T, 1.0 - PE) ;  
+   Vte = VDE_T / (1.0 - PE) * (1.0 - E0BE) +   
         `AJE * (Vb2e1 - Vje);   
       
    // Effective collector junction capacitance bias   
@@ -208,7 +211,32 @@ Vsc3 = Vsc4 - Vc3c4 ;
    Ib3 = IBR_TM * (eVb1c4 - 1.0) /   
          (tmpExp + exp(0.5 * VLR * VtINV)) +    
          _circuit_gmin  * Vb1c4;    
-      
+   
+// begin  RvdT, November 2008, MXT504.8_alpha
+
+// Base-emitter tunneling current
+// max E-field E0BE calculated in BE depletion charge model:
+
+   if (IZEB > 0.0 && NZEB > 0.0 && Vb2e1 < 0)
+     begin
+
+      `expLin(eZEB, nZEB_T * (1 - (pow2_2mPE/(2.0*E0BE))))
+// Force all derivatives at Vb2e1=0 to zero by using in DZEB a 
+// modified dE0BE expression for E0BE:
+          x = Vb2e1 * inv_VDE_T ;
+      dE0BE = pow(- x, -2.0-PE)*(PE*(1-PE*PE-3*x*(PE-1))-6*x*x*(PE-1+x)) * `one_sixth  ;
+      `expLin(edZEB, Vb2e1 * pow2_2mPE * nZEB_T / (VGZEB_T * dE0BE ))
+       DZEB = - Vb2e1 - VGZEB_T * dE0BE * (1 - edZEB) / (pow2_2mPE * nZEB_T) ;
+      Izteb = 2.0 * IZEB_TM * DZEB * E0BE * eZEB * inv_VDE_T * pow2_PEm2 ;
+     end
+   else
+     begin
+      DZEB  = 0 ;
+      Izteb = 0 ;
+     end
+
+// end  RvdT, November 2008, MXT504.8_alpha
+
    // Iex, Isub (XIex, XIsub)   
   
    g1 = If0 * eVb1c4;                   
@@ -220,7 +248,21 @@ Vsc3 = Vsc4 - Vc3c4 ;
 `ifdef SUBSTRATE
    Isub = 2.0 * ISS_TM * (eVb1c4 - 1.0) /   
           (1.0 + sqrt(1.0 + 4.0 * (IS_TM / IKS_TM) * eVb1c4));     
-   Isf =  ISS_TM * (eVsc1 - 1.0);   
+// until504.8:   Isf =  ISS_TM * (eVsc1 - 1.0);   
+// New 504.9:
+
+if (ICSS < 0.0)
+// this clause is to implement backwards compatibility
+   begin
+    Isf =  ISS_TM  * (eVsc1 - 1.0);   
+   end
+ else
+   begin
+    Isf =  ICSS_TM * (eVsc1 - 1.0);   
+   end
+
+// End: New 504.9.
+
 `endif
   
    XIex =0.0; 
@@ -341,8 +383,10 @@ Vsc3 = Vsc4 - Vc3c4 ;
             Vc3c4 * Vc3c4 * GCCex_TM +   
             Vc4c1 * Vc4c1 * GCCin_TM +   
             Vbb1  * Vbb1  / RBC_TM +   
-            Ib1b2 * Vb1b2 +   
-            (Ib1 + Ib2) * Vb2e1 +   
+            Ib1b2 * Vb1b2 +
+// 504.8: Nov. 2008, RvdT, TU_Delft: Zener current contribution added:
+// Izteb > 0 for Vb2e1 < 0, hence the minus sign:
+            (Ib1 + Ib2 - Izteb) * Vb2e1 +   
             Ib1_s * Vb1e1 +   
 `ifdef SUBSTRATE
             (Iex + Ib3) * Vb1c4 + XIex  * Vbc3 + 
@@ -361,7 +405,7 @@ Vsc3 = Vsc4 - Vc3c4 ;
    Qte = (1.0 - XCJE) * CJE_TM * Vte;    
    `min_logexp(Vje_s, Vb1e1, Vfe, a_VDE);  
    Qte_s = XCJE * CJE_TM * (VDE_T / (1.0 - PE) *    
-           (1.0 - pow(1.0 - Vje_s / VDE_T, 1.0 - PE)) +    
+           (1.0 - pow(1.0 - Vje_s * inv_VDE_T, 1.0 - PE)) +    
             `AJE * (Vb1e1 - Vje_s));    
        
    Qtc = XCJC * CJC_TM * Vtc;    
@@ -413,7 +457,7 @@ Vsc3 = Vsc4 - Vc3c4 ;
    Qb1b2 = 0.0;  
    if (EXPHI == 1) 
       begin  
-        dVteVje = pow(1.0 - Vje / VDE_T, -PE) - `AJE;  
+        dVteVje = pow(1.0 - Vje * inv_VDE_T, -PE) - `AJE;  
         Vb2e1Vfe = (Vb2e1 - Vfe) / a_VDE;  
         if (Vb2e1Vfe < 0.0)  
            dVjeVb2e1 = 1.0 / (1.0 + exp(Vb2e1Vfe));  
@@ -430,8 +474,8 @@ Vsc3 = Vsc4 - Vc3c4 ;
    
         Qb1b2 = 0.2 * Vb1b2 * (dQteVb2e1 + dQbeVb2e1 + dQeVb2e1);   
   
-        Qbc = Qbe_qs / 3.0 + Qbc_qs;  
-        Qbe = 2.0 * Qbe_qs / 3.0;  
+        Qbc = Qbe_qs  * `one_third + Qbc_qs;  
+        Qbe = 2.0 * Qbe_qs * `one_third ;  
       end  
     else
       begin
@@ -446,7 +490,10 @@ Vsc3 = Vsc4 - Vc3c4 ;
    I(c1, c2) <+ TYPE * Ic1c2;   
    I(c2, e1) <+ TYPE * In;   
    I(b1, e1) <+ TYPE * Ib1_s;    
-   I(b2, e1) <+ TYPE * (Ib1 + Ib2);   
+// begin  RvdT, 28-10-2008, MXT504.8_alpha
+// contribution tunnel current added
+   I(b2, e1) <+ TYPE * (Ib1 + Ib2 - Izteb);   
+
 `ifdef SUBSTRATE
    I(b1, s)  <+ TYPE * Isub;   
    I(b,  s)  <+ TYPE * XIsub;    
@@ -547,13 +594,14 @@ else
    powerRCCxx = common * GCCxx_TM; // Collector resistance 
    powerRCCex = common * GCCex_TM; // Collector resistance 
    powerRCCin = common * GCCin_TM; // Collector resistance 
-   powerRBV = common / Rb2 * (4.0 * eVb1b2 + 5.0) / 3.0; // Variable base resistance  
+   powerRBV = common / Rb2 * (4.0 * eVb1b2 + 5.0)  * `one_third ; // Variable base resistance  
  
    // Collector current shot noise 
    powerCCS = 2.0 * `QQ * (If + Ir) / qBI; 
  
    // Forward base current shot noise and 1/f noise 
-   powerFBCS = 2.0 * `QQ * (abs(Ib1) + abs(Ib2)); 
+// 504.8, Nov. 2008, RvdT, TU-Delft: added Zener current to shot noise
+   powerFBCS = 2.0 * `QQ * (abs(Ib1) + abs(Ib2) + abs(Izteb)); 
    powerFBC1fB1 = (1.0 - XIBI) * pow((abs(Ib1) / (1 - XIBI)), AF) * KF_M; 
    exponentFBC1fB2 = (2.0 * (MLF - 1.0)) + (AF * (2.0 - MLF)); 
    powerFBC1fB2 = KFN_M * pow(abs(Ib2), exponentFBC1fB2); 
@@ -606,12 +654,12 @@ else
    I(b2, e1)  <+ flicker_noise(powerFBC1fB2, 1);  // "bas_emi_forw" 
    I(e1, b1)  <+ white_noise(powerEBSCS);         // "emi_bas_side" 
    I(e1, b1)  <+ flicker_noise(powerEBSC1f, 1);   // "emi_bas_side" 
-   I(b1, c1)  <+ white_noise(powerRBCS);          // "bas_col_reve" 
-   I(b1, c1)  <+ flicker_noise(powerRBC1f, 1);    // "bas_col_reve" 
-   I(b1, c1)  <+ white_noise(powerExCS);          // "Ext_bas_col" 
-   I(b1, c1)  <+ flicker_noise(powerExC1f, 1);    // "Ext_bas_col" 
-   I(b, c1)   <+ white_noise(powerExCSMOD);       // "Ext_bas_col" 
-   I(b, c1)   <+ flicker_noise(powerExC1fMOD, 1); // "Ext_bas_col" 
+   I(b1, c4)  <+ white_noise(powerRBCS);          // "bas_col_reve" 
+   I(b1, c4)  <+ flicker_noise(powerRBC1f, 1);    // "bas_col_reve" 
+   I(b1, c4)  <+ white_noise(powerExCS);          // "Ext_bas_col" 
+   I(b1, c4)  <+ flicker_noise(powerExC1f, 1);    // "Ext_bas_col" 
+   I(b, c3)   <+ white_noise(powerExCSMOD);       // "Ext_bas_col" 
+   I(b, c3)   <+ flicker_noise(powerExC1fMOD, 1); // "Ext_bas_col" 
 `ifdef SUBSTRATE
    I(b1, s)   <+ white_noise(powerSubsCS_B1S);    // "bas_sub_current" 
    I(b, s)    <+ white_noise(powerSubsCS_BS);     // "bas_sub_current" 

@@ -1,3 +1,7 @@
+2011-07-30  Dietmar Warning
+ * adms/ekv/admsva/ekv.va: semicolon after macro expl was wrong
+ * adms/mextram/admsva: update va code from version 504.7 to 504.9.1
+
 2011-07-27  Holger Vogt
  * inpcom.c: nested parens, line 2963 ff
  * cmutil.c: inlude ngspice.h for NaN

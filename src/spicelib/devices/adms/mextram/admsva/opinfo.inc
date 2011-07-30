@@ -6,8 +6,22 @@ begin
 // The external currents and the current gain
 OP_ic     = I(<c>);        // External DC collector current
 OP_ib     = I(<b>);        // External DC base Current
+OP_betadc = OP_ic / OP_ib; // External DC Current gain
 
-OP_betadc = OP_ic / OP_ib;  // External DC Current gain
+// begin added in MXT 504.9:
+OP_ie     = I(<e>);        // External DC emitter current
+OP_vbe    = V(b, e);   // External base-emitter bias
+OP_vce    = V(c, e);   // External collector-emitter bias
+OP_vbc    = V(b, c);   // External base-collector bias
+
+`ifdef SUBSTRATE
+OP_is     = I(<s>);        // External DC emitter current
+OP_vse    = V(s, e);   // External substrate-emitter bias
+OP_vbs    = V(b, s);   // External base-substrate bias
+OP_vsc    = V(s, c);   // External substrate-collector bias
+`endif
+
+// end added in MXT 504.9:
 
 // The internal voltage differences
 OP_vb2e1 = Vb2e1;  // Internal base-emiter bias
@@ -27,6 +41,11 @@ OP_ic1c2 = Ic1c2;         // Epilayer current
 OP_ib1b2 = Ib1b2;         // Pinched-base current
 OP_ib1   = Ib1;           // Ideal forward base current
 OP_sib1  = Ib1_s;         // Ideal side-wall base current
+//
+// 504.8, RvdT, TU-Delft April. 2009: 
+//
+OP_izteb  = Izteb ;        // Zener tunneling current
+//
 OP_ib2   = Ib2;           // Non-ideal forward base current
 OP_ib3   = Ib3;           // Non-ideal reverse base current
 OP_iavl  = Iavl;          // Avalanche current
@@ -35,7 +54,7 @@ OP_xiex  = XIex;          // Extrinsic reverse base current
 `ifdef SUBSTRATE
 OP_isub  = Isub;          // Substrate current
 OP_xisub = XIsub;         // Substrate current
-OP_isf   = Isf;           // Substrate failure current
+OP_isf   = Isf;           // Substrate-collector current
 `endif
 OP_ire   = - Vee1 / RE_TM;  // Current through emiter resistance
 OP_irbc  = Vbb1 / RBC_TM; // Current through constant base resistance
@@ -108,7 +127,7 @@ OP_rcbli  = RCCin_TM; // Extrinsic buried layer resistance
 `ifdef SUBSTRATE
 OP_gs     = ddx(Isub, V(b)) + ddx(Isub, V(b1));  // Conductance parasitic PNP transitor
 OP_xgs    = ddx(XIsub, V(b)) ; // Conductance parasitic PNP transistor
-OP_gsf    = ddx(Isf, V(s)) ;   // Conductance substrate failure current
+OP_gsf    = ddx(Isf, V(s)) ;   // Conductance substrate-collector current
 `endif
 
 

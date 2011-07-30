@@ -29,6 +29,12 @@ parameter real    MLF   = 2.0      from [0.1:inf)
                  `ATTR(info="Non-ideality factor of the non-ideal forward base current");   
 parameter real    XIBI  = 0.0      from [0.0:1.0]      
                  `ATTR(info="Part of ideal base current that belongs to the sidewall");   
+// begin: RvdT, November 2008, BE tunneling current parameters:
+parameter real    IZEB   = 0.0     from [0.0:inf)      
+                 `ATTR(info="Pre-factor of emitter-base Zener tunneling current");
+parameter real    NZEB   = 22.0     from [0.0:inf)      
+                 `ATTR(info="Coefficient of emitter-base Zener tunneling current");
+// end: RvdT, November 2008, EB tunneling current parameters:
 parameter real    BRI   = 7.0      from [1.0e-4:inf)   
                  `ATTR(info="Ideal reverse current gain");   
 parameter real    IBR   = 1.0f     from [0.0:inf)      
@@ -88,10 +94,9 @@ parameter real    MC     = 0.5     from [0.0:1.0)
 parameter real    XCJC   = 32.0m   from [0.0:1.0]      
                  `ATTR(info="Fraction of CB depletion capacitance under the emitter");   
 // RvdT, 30-11-2007: introduced RCBLX and RCBLI:
-//dw clipped to 1m and default to 1 Ohm as long adms-ngspice has no working node-collapsing
-parameter real    RCBLX   = 1.0    from [1.0m:inf)      
+parameter real    RCBLX   = 0.0    from [0.0:inf)      
                  `ATTR(info="Resistance Collector Buried Layer eXtrinsic");   
-parameter real    RCBLI   = 1.0    from [1.0m:inf)      
+parameter real    RCBLI   = 0.0    from [0.0:inf)      
                  `ATTR(info="Resistance Collector Buried Layer Intrinsic");   
 parameter real    CBCO   = 0.0     from [0.0:inf)      
                  `ATTR(info="Collector-base overlap capacitance");    
@@ -137,6 +142,12 @@ parameter real    VGC     = 1.18   from [0.1:inf)
                  `ATTR(info="Band-gap voltage of the collector");   
 parameter real    VGJ     = 1.15   from [0.1:inf)      
                  `ATTR(info="Band-gap voltage recombination emitter-base junction");   
+parameter real    VGZEB     = 1.15   from [0.1:inf)      
+                 `ATTR(info="Band-gap voltage at Tref of Zener effect emitter-base junction");
+parameter real    AVGEB     = 4.73e-4   from (-inf:inf)      
+                 `ATTR(info="Temperature coefficient band-gap voltage for Zener effect emitter-base junction");
+parameter real    TVGEB     = 636.0   from [0.0:inf)      
+                 `ATTR(info="Temperature coefficient band-gap voltage for Zener effect emitter-base junction");
 parameter real    DVGTE   = 0.05                       
                  `ATTR(info="Band-gap voltage difference of emitter stored charge");   
 parameter real    DAIS    = 0.0                       
@@ -153,7 +164,9 @@ parameter integer KAVL    = 0      from [0:1]
 
 `ifdef SUBSTRATE   
 parameter real    ISS     = 48.0a  from [0.0:inf)      
-                 `ATTR(info="Base-substrate saturation current");   
+                 `ATTR(info="Base-substrate saturation current");
+parameter real    ICSS    = -1.0   from (-inf:inf)      
+                 `ATTR(info="Collector-substrate ideal saturation current");   
 parameter real    IKS     = 250.0u from [1.0p:inf)     
                  `ATTR(info="Base-substrate high injection knee current");   
 parameter real    CJS     = 315.0f from [0:inf)      
@@ -165,7 +178,9 @@ parameter real    PS      = 0.34   from (0.01:0.99)
 parameter real    VGS     = 1.20   from [0.1:inf)      
                  `ATTR(info="band-gap voltage of the substrate");   
 parameter real    AS      = 1.58                       
-                 `ATTR(info="Substrate temperature coefficient");   
+                 `ATTR(info="Substrate temperature coefficient");
+parameter real    ASUB    = 2.0                       
+                 `ATTR(info="Temperature coefficient for mobility of minorities in the substrate");   
 `endif
  
 `ifdef SELFHEATING
@@ -189,6 +204,6 @@ parameter integer TYPE    = 1      from [-1:1]
 `else 
 parameter integer TYPE    = 1      from [-1:1] exclude 0;   
 `endif 
-//parameter real    GMIN    = 1.0e-12  from (0:1e-10]  
-//                 `ATTR(info="Minimum conductance");  
-// 
+parameter real    GMIN    = 1.0e-13  from (0:1e-10]  
+                 `ATTR(info="Minimum conductance");  
+ 
