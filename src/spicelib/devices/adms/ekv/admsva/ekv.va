@@ -308,7 +308,7 @@ module ekv (d,g,s,b);
          qb0 = gamma_a*sqrt(phi);
 
          fact = (`EG(TNOM+273.15)/`VT(TNOM+273.15)-`EG(tempk)/vt) * pow(tempk/(TNOM+273.15),XTI);
-         `expl(fact,tmp);
+         `expl(fact,tmp)
          isat_s = np*ns*(JS*AS+JSW*PS)*tmp;
          isat_d = np*ns*(JS*AD+JSW*PD)*tmp;
 
@@ -392,17 +392,17 @@ module ekv (d,g,s,b);
 	   y = (1.0 + fv + ln(z1)) / (2.0 + z1);
          end
     	 else if (fv > -15) begin
-	   `expl(-fv,tmp);
+	   `expl(-fv,tmp)
            z0 = 1.55 + tmp;
     	   z1 = (2.0 + z0) / (1.0 + fv + ln(z0));
 	   y = (1.0 + fv + ln(z1)) / (2.0 + z1);
          end 
          else if (fv > -23.0) begin
-	   `expl(-fv,tmp);
+	   `expl(-fv,tmp)
 	   y = 1.0 / (2.0 + tmp);
          end
    	 else begin
- 	   `expl(fv,tmp);
+ 	   `expl(fv,tmp)
 	   y = tmp + 1.0e-64;
 	 end
 	 
@@ -438,17 +438,17 @@ module ekv (d,g,s,b);
 	   y = (1.0 + fv + ln(z1)) / (2.0 + z1);
          end
     	 else if (fv > -15) begin
-	   `expl(-fv,tmp);
+	   `expl(-fv,tmp)
            z0 = 1.55 + tmp;
     	   z1 = (2.0 + z0) / (1.0 + fv + ln(z0));
 	   y = (1.0 + fv + ln(z1)) / (2.0 + z1);
          end 
          else if (fv > -23.0) begin
-	   `expl(-fv,tmp);
+	   `expl(-fv,tmp)
 	   y = 1.0 / (2.0 + tmp);
          end
    	 else begin
- 	   `expl(fv,tmp);
+ 	   `expl(fv,tmp)
 	   y = tmp + 1.0e-64;
 	 end
 	 
@@ -465,17 +465,17 @@ module ekv (d,g,s,b);
 	   y = (1.0 + fv + ln(z1)) / (2.0 + z1);
          end
     	 else if (fv > -15) begin
-	   `expl(-fv,tmp);
+	   `expl(-fv,tmp)
            z0 = 1.55 + tmp;
     	   z1 = (2.0 + z0) / (1.0 + fv + ln(z0));
 	   y = (1.0 + fv + ln(z1)) / (2.0 + z1);
          end 
          else if (fv > -23.0) begin
-	   `expl(-fv,tmp);
+	   `expl(-fv,tmp)
 	   y = 1.0 / (2.0 + tmp);
          end
    	 else begin
- 	   `expl(fv,tmp);
+ 	   `expl(fv,tmp)
 	   y = tmp + 1.0e-64;
 	 end
 	 
@@ -538,7 +538,7 @@ module ekv (d,g,s,b);
                if (-vs>vexp_s)
                  ibsj = IMAX+gexp_s*(-vs-vexp_s);
                else begin
-                 `expl(-vs/(N*vt),tmp);
+                 `expl(-vs/(N*vt),tmp)
                  ibsj = isat_s*(tmp-1);
                end
             end else
@@ -548,7 +548,7 @@ module ekv (d,g,s,b);
                if (-vd>vexp_d)
                  ibdj = IMAX+gexp_d*(-vd-vexp_d);
                else begin
-                 `expl(-vd/(N*vt),tmp);
+                 `expl(-vd/(N*vt),tmp)
                  ibdj = isat_d*(tmp-1);
                end
             end else
@@ -559,7 +559,7 @@ module ekv (d,g,s,b);
                if (-vd>vexp_s)
                  ibsj = IMAX+gexp_s*(-vd-vexp_s);
                else begin
-                 `expl(-vd/(N*vt),tmp);
+                 `expl(-vd/(N*vt),tmp)
                  ibsj = isat_s*(tmp-1);
                end
             end else
@@ -569,7 +569,7 @@ module ekv (d,g,s,b);
                if (-vs>vexp_d)
                  ibdj = IMAX+gexp_d*(-vs-vexp_d);
                else begin
-                 `expl(-vs/(N*vt),tmp);
+                 `expl(-vs/(N*vt),tmp)
                  ibdj = isat_d*(tmp-1);
                end
             end else
