@@ -838,10 +838,6 @@ main(int argc, char **argv)
 
     circuit_file = stdin;
 
-#ifdef MALLOCTRACE
-    mallocTraceInit("malloc.out");
-#endif
-
 #if defined(HAVE_ISATTY) && !defined(HAS_WINDOWS)
     istty = (bool) isatty(fileno(stdin));
 #endif

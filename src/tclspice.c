@@ -2260,7 +2260,7 @@ int Spice_Init(Tcl_Interp *interp) {
     sighandler old_sigint;
     
     ft_rawfile = NULL;
-    ivars( );
+    ivars(NULL);
     
     cp_in = stdin;
     cp_out = stdout;

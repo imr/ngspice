@@ -72,7 +72,7 @@ main(ac, av)
 
     /* Process arguments. */
 
-    ivars( );
+    ivars(NULL);
 
     av++;
     while (*av) {

@@ -21,8 +21,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;C:\Program Files (x86)\Visual Leak Detector\include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -112,8 +112,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -202,8 +202,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -297,8 +297,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -336,7 +336,7 @@
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -420,7 +420,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONSOLE"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONSOLE;XSPICE"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -760,7 +760,198 @@
 		</Configuration>
 		<Configuration
 			Name="ReleaseOMP|Win32"
-			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
+			ConfigurationType="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+				Description="Custom defined Build: Recompile conf.c with actual date"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP"
+				MinimalRebuild="false"
+				ExceptionHandling="1"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="0"
+				RuntimeTypeInfo="true"
+				OpenMP="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="3"
+				CompileAs="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				UseUnicodeResponseFiles="false"
+				AdditionalDependencies="psapi.lib"
+				OutputFile="$(OutDir)\$(ProjectName)_omp.exe"
+				LinkIncremental="1"
+				GenerateDebugInformation="false"
+				SubSystem="2"
+				HeapReserveSize="0"
+				HeapCommitSize="0"
+				StackReserveSize="0"
+				StackCommitSize="0"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="1"
+				RandomizedBaseAddress="2"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="ReleaseOMP|x64"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
+			ConfigurationType="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+				Description="Custom defined Build: Recompile conf.c with actual date"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP;CONFIG64"
+				MinimalRebuild="false"
+				ExceptionHandling="1"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="0"
+				RuntimeTypeInfo="true"
+				OpenMP="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="3"
+				CompileAs="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				UseUnicodeResponseFiles="false"
+				AdditionalDependencies="psapi.lib"
+				OutputFile="$(OutDir)\$(ProjectName)64_omp.exe"
+				LinkIncremental="1"
+				GenerateDebugInformation="false"
+				SubSystem="2"
+				HeapReserveSize="0"
+				HeapCommitSize="0"
+				StackReserveSize="0"
+				StackCommitSize="0"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="1"
+				RandomizedBaseAddress="2"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="ReleaseOMP64|Win32"
+			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
@@ -854,9 +1045,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="ReleaseOMP|x64"
-			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			Name="ReleaseOMP64|x64"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -1539,14 +1730,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\inttypes.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\stdint.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\include\const.h"
 				>
 			</File>
@@ -1827,11 +2010,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\plotting\grid.h"
+				RelativePath="..\src\include\grid.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\grid.h"
+				RelativePath="..\src\frontend\plotting\grid.h"
 				>
 			</File>
 			<File
@@ -2024,6 +2207,10 @@
 			</File>
 			<File
 				RelativePath="..\src\maths\poly\interpolate.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\inttypes.h"
 				>
 			</File>
 			<File
@@ -2748,6 +2935,10 @@
 			</File>
 			<File
 				RelativePath="..\src\include\spmatrix.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\stdint.h"
 				>
 			</File>
 			<File

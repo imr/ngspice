@@ -27,7 +27,7 @@ bool cp_interactive = FALSE;
 
 char *hlp_filelist[] = { "ngspice", 0 };
 
-extern void ivars();
+extern void ivars(char*);
 
 #ifdef HAS_WINDOWS
 FILE *flogp;  /* hvogt 15.12.2001 */
@@ -50,7 +50,7 @@ main(int ac, char **av)
     char buf[512];
 #endif /* X_DISPLAY_MISSING */
 
-    ivars( );
+    ivars(NULL);
 
     cp_in = stdin;
     cp_out = stdout;
