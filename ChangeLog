@@ -1,5 +1,14 @@
-2011-08-04
+2011-08-04 Paolo Nenzi
+ * (new) tests/pss ,
+ * (new) tests/pss/colpitt_osc_pss.cir ,
+ * (new) tests/compl_cross_quad_osc_pss.cir ,
+ * (new) tests/hartley_osc_pss.cir , 
+ * (new) tests/ring_osc_pss.cir ,
+ * (new) tests/vackar_osc_pss.cir , 
+ * (new) tests/vdp_osc_pss.cir :
+   Added example files for pss from Stefano Perticaroli.
 
+2011-08-04 Robert Larice
  * src/frontend/commands.c ,
  * src/frontend/runcoms.c ,
  * src/frontend/runcoms.h ,
@@ -11,13 +20,14 @@
  * src/spicelib/analysis/analysis.c ,
  * src/spicelib/parser/inp2dot.c ,
  * (new) src/include/pssdefs.h ,
-
  * (new) src/spicelib/analysis/dcpss.c ,
  * (new) src/spicelib/analysis/pssaskq.c ,
  * (new) src/spicelib/analysis/pssinit.c ,
  * (new) src/spicelib/analysis/psssetp.c :
-
-   paolo, please fix this <-------------
+   Committed PSS (Periodic Steady State Analysis) code from Stefano Perticaroli.
+   The analysis is based on the transient analysis and is able to predict the 
+   fundamental frequency and amplitude (and also harmonics) for autonomous 
+   systems.  
 
 2011-08-04  Robert Larice
  * src/spicelib/analysis/cktsetbk.c :
