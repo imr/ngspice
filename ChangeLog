@@ -1,6 +1,7 @@
 2011-08-04 Holger Vogt
  * dcpss.c: tiny update to obtain compilation with MS VS 2008, 
    code beautyfied
+ * winmain.c, dcpss.c: Windows progress message improved 
 
 2011-08-04 Paolo Nenzi
  * (new) tests/pss ,
