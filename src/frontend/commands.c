@@ -277,6 +277,12 @@ struct comm spcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
       "[.tran line args] : Do a transient analysis." } ,
+/* SP: Steady State Analysis */
+    { "pss", com_pss, TRUE, TRUE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
+      NULL,
+      "[.pss line args] : Do a periodic state analysis." } ,
+/* SP */
     { "ac", com_ac, TRUE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
@@ -683,6 +689,12 @@ struct comm nutcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
       "[.tran line args] : Do a transient analysis." } ,
+/* SP: Steady State Analysis */
+    { "pss", NULL, TRUE, TRUE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
+      NULL,
+      "[.pss line args] : Do a periodic steady state analysis." } ,
+/* SP */
     { "ac", NULL, TRUE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,

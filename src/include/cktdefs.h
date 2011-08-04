@@ -265,6 +265,15 @@ struct CKTcircuit {
     Enh_Ckt_Data_t *enh;        /* data used by general enhancements */
 #endif
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
+/* SP: Steady State Analysis - 100609 */
+    double CKTstabTime;		/* PSS stab time */
+    double CKTguessedFreq;	/* PSS guessed frequency */
+    int CKTharms;		/* PSS harmonics */
+    long int CKTpsspoints;	/* PSS number of samples */
+    char *CKToscNode;       	/* PSS oscnode */
+    double CKTsteady_coeff;
+    int CKTsc_iter;
+/* SP: 100609 */
 
 };
 
@@ -379,6 +388,12 @@ extern int TFsetParm(CKTcircuit *, JOB *, int , IFvalue *);
 extern int TRANaskQuest(CKTcircuit *, JOB *, int , IFvalue *);
 extern int TRANsetParm(CKTcircuit *, JOB *, int , IFvalue *);
 extern int TRANinit(CKTcircuit *, JOB *);
+/* SP: Steady State Analysis */
+extern int PSSaskQuest( CKTcircuit *, JOB *, int , IFvalue *);
+extern int PSSsetParm( CKTcircuit *, JOB *, int , IFvalue *);
+extern int PSSinit(CKTcircuit *, JOB *);
+extern int DCpss( CKTcircuit *, int );
+/* SP */
 extern int NaskQuest(CKTcircuit *, JOB *, int, IFvalue *);
 extern int NsetParm(CKTcircuit *, JOB *, int, IFvalue *);
 extern int NIacIter(CKTcircuit *);

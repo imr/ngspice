@@ -72,6 +72,7 @@ libckt_la_SOURCES = \
 		dcoaskq.c	\
 		dcop.c		\
 		dcosetp.c	\
+		dcpss.c		\
 		dctaskq.c	\
 		dctran.c	\
 		dctrcurv.c	\
@@ -85,6 +86,9 @@ libckt_la_SOURCES = \
 		ninteg.c	\
 		noisean.c	\
 		nsetparm.c	\
+		pssaskq.c	\
+		pssinit.c	\
+		psssetp.c	\
 		pzan.c		\
 		pzaskq.c	\
 		pzsetp.c	\

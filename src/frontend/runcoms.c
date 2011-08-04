@@ -169,6 +169,15 @@ com_noise(wordlist *wl)
     return;
 }
 
+/* SP: Steady State Analysis */
+void 
+com_pss(wordlist *wl)
+{
+    dosim("pss", wl);
+    return;
+}
+/* SP */
+
 static int
 dosim(
    char *what, /* in: command (pz,op,dc,ac,tf,tran,sens,disto,noise,run) */

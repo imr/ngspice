@@ -627,6 +627,73 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 }
 #endif
 
+/*SP: Steady State Analyis */
+static int
+dot_pss(char *line, void *ckt, INPtables *tab, card *current,
+	 void *task, void *gnode, JOB *foo)
+{
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    char *nname;		/* the oscNode name */
+    CKTnode *nnode;		/* the oscNode node */
+    int which;			/* which analysis we are performing */
+    int i;			/* generic loop variable */
+    char *word;			/* something to stick a word of input into */
+
+    NG_IGNORE(gnode);
+
+    /* .pss Fguess StabTime OscNode <UIC>*/
+    which = -1;
+    for (i = 0; i < ft_sim->numAnalyses; i++) {
+	if (strcmp(ft_sim->analyses[i]->name, "PSS") == 0) {
+	    which = i;
+	    break;
+	}
+    }
+    if (which == -1) {
+	LITERR("Periodic steady state analysis unsupported.\n");
+	return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Periodic steady state Analysis", &foo, task));
+    
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* Fguess */
+    GCA(INPapName, (ckt, which, foo, "fguess", parm));
+    
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* StabTime */
+    GCA(INPapName, (ckt, which, foo, "stabtime", parm));
+    
+    INPgetNetTok(&line, &nname, 0);
+    INPtermInsert(ckt, &nname, tab, &nnode);
+    ptemp.nValue = nnode;
+    GCA(INPapName, (ckt, which, foo, "oscnode", &ptemp))	/* OscNode given as string */
+    
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS points */
+    GCA(INPapName, (ckt, which, foo, "points", parm));
+    
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS harmonics */
+    GCA(INPapName, (ckt, which, foo, "harmonics", parm));
+    
+    if (*line) {
+	INPgetTok(&line, &word, 1);	/* uic? */
+	if (strcmp(word, "uic") == 0) {
+	    ptemp.iValue = 1;
+	    GCA(INPapName, (ckt, which, foo, "uic", &ptemp));
+	} else {
+	    LITERR(" Error: unknown parameter on .pss - ignored\n");
+	}
+    }
+    
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* SC iterations */
+    GCA(INPapName, (ckt, which, foo, "sc_iter", parm));
+    
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* Steady coefficient */
+    GCA(INPapName, (ckt, which, foo, "steady_coeff", parm));
+    
+    return (0);
+}
+/* SP */
+
 static int
 dot_options(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	  TSKtask *task, CKTnode *gnode, JOB *foo)
@@ -706,6 +773,11 @@ INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, TSKtask *task, CKTnode *
     } else if ((strcmp(token, ".tran") == 0)) {
 	rtn = dot_tran(line, ckt, tab, current, task, gnode, foo);
 	goto quit;
+/* SP: Steady State Analysis */
+    } else if ((strcmp(token, ".pss") == 0)) {
+	rtn = dot_pss(line, ckt, tab, current, task, gnode, foo);
+	goto quit;
+/* SP */
     } else if ((strcmp(token, ".subckt") == 0) ||
 	       (strcmp(token, ".ends") == 0)) {
 	/* not yet implemented - warn & ignore */

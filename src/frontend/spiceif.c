@@ -215,7 +215,10 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
     || eq(what, "adjsen") 
     || eq(what, "sens") 
     || eq(what,"tf")
-    || eq(what, "noise")) 
+    || eq(what, "noise")
+/* SP: Steady State Analysis */
+    || eq(what, "pss"))
+/* SP */ 
     {
     	s = wl_flatten(args); /* va: tfree char's tmalloc'ed in wl_flatten */
         (void) sprintf(buf, ".%s", s);
@@ -329,6 +332,9 @@ ci_specTask will point to it CDHW*/
         ||(eq(what, "adjsen")) 
         ||(eq(what, "sens")) 
         ||(eq(what,"tf"))
+/* SP: Steady State Analysis */
+        ||(eq(what, "pss"))
+/* SP */ 
         ||(eq(what, "run"))  )  {
 	
 /*CDHW Run the analysis pointed to by ci_curTask CDHW*/

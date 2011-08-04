@@ -1,3 +1,24 @@
+2011-08-04
+
+ * src/frontend/commands.c ,
+ * src/frontend/runcoms.c ,
+ * src/frontend/runcoms.h ,
+ * src/frontend/shyu.c ,
+ * src/frontend/spiceif.c ,
+ * src/include/Makefile.am ,
+ * src/include/cktdefs.h ,
+ * src/spicelib/analysis/Makefile.am ,
+ * src/spicelib/analysis/analysis.c ,
+ * src/spicelib/parser/inp2dot.c ,
+ * (new) src/include/pssdefs.h ,
+
+ * (new) src/spicelib/analysis/dcpss.c ,
+ * (new) src/spicelib/analysis/pssaskq.c ,
+ * (new) src/spicelib/analysis/pssinit.c ,
+ * (new) src/spicelib/analysis/psssetp.c :
+
+   paolo, please fix this <-------------
+
 2011-08-04  Robert Larice
  * src/spicelib/analysis/cktsetbk.c :
    bug fix, broken insert at the front of CKTbreaks[]

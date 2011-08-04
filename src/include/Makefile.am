@@ -93,6 +93,7 @@ noinst_HEADERS =	\
 	plot.h		\
 	pnode.h		\
 	profile.h	\
+	pssdefs.h	\
 	pzdefs.h	\
 	sen2defs.h	\
 	sensdefs.h	\

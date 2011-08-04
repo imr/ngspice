@@ -17,7 +17,9 @@ extern SPICEanalysis TFinfo;
 extern SPICEanalysis DISTOinfo;
 extern SPICEanalysis NOISEinfo;
 extern SPICEanalysis SENSinfo;
-
+/* SP: Periodic Steady State*/
+extern SPICEanalysis PSSinfo;
+/* SP */
 
 SPICEanalysis *analInfo[] = {
     &OPTinfo,
@@ -30,6 +32,7 @@ SPICEanalysis *analInfo[] = {
     &DISTOinfo,
     &NOISEinfo,
     &SENSinfo,
+    &PSSinfo,
 };
 
 

@@ -32,6 +32,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     JOB *opJob;
     JOB *dcJob;
     JOB *tranJob;
+    JOB *pssJob;
     card *current;
     IFvalue ptemp;
     IFvalue *parm;
@@ -283,6 +284,51 @@ uic:
             }
 
         }
+    }
+
+    /* *********************** */
+    /* PSS - Spertica - 100910 */
+    /* *********************** */
+    if(strcmp(token ,"pss")==0){
+        which = -1;
+        for(j=0;j<ft_sim->numAnalyses;j++) {
+            if(strcmp(ft_sim->analyses[j]->name,"PSS")==0) {
+                which = j;
+                break;
+            }
+        } 
+        if(which != -1) {
+            err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,"pssan",
+            &(tranJob),ft_curckt->ci_specTask);
+            if(err) {
+                ft_sperror(err,"createPSS"); 
+                return(0);
+            }
+        } 
+        else{ 
+            current->error = INPerrCat(current->error,INPmkTemp(
+            "periodic steady state analysis unsupported\n"));
+        }
+
+        parm=INPgetValue(ckt,&line,IF_REAL,tab);/* Guessed Frequency */
+        error = INPapName(ckt,which,pssJob,"fguess",parm);
+        if(error) current->error = INPerrCat(current->error,
+        INPerror(error));
+	
+	parm = INPgetValue(ckt,&line,IF_REAL,tab); /* Stabilization time */
+        error = INPapName(ckt,which,pssJob,"stabtime",parm);
+        if(error) current->error = INPerrCat(current->error,
+	INPerror(error));
+	
+	parm = INPgetValue(ckt,&line,IF_INTEGER,tab); /* PSS points */
+        error = INPapName(ckt,which,pssJob,"points",parm);
+        if(error) current->error = INPerrCat(current->error,
+	INPerror(error));
+	
+	parm = INPgetValue(ckt,&line,IF_INTEGER,tab); /* PSS points */
+        error = INPapName(ckt,which,pssJob,"harmonics",parm);
+        if(error) current->error = INPerrCat(current->error,
+	INPerror(error));	
     }
 
 next:          
