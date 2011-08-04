@@ -44,7 +44,7 @@ CKTsetBreak(CKTcircuit *ckt, double time)
                 *(ckt->CKTbreaks+i) = time;
                 return(OK);
             }
-            if(time-*(ckt->CKTbreaks+i-1) <= ckt->CKTminBreak) {
+            if(i>0 && time-*(ckt->CKTbreaks+i-1) <= ckt->CKTminBreak) {
                 /* very close together, but after, so skip */
 #ifdef TRACE_BREAKPOINT
                 printf("[t:%e] \t %e skipped\n", ckt->CKTtime, time);
