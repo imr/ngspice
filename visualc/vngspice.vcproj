@@ -571,8 +571,8 @@
 		</Configuration>
 		<Configuration
 			Name="console_release|Win32"
-			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -665,8 +665,8 @@
 		</Configuration>
 		<Configuration
 			Name="console_release|x64"
-			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -2823,6 +2823,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\jfet2\psmodel.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\pssdefs.h"
 				>
 			</File>
 			<File
@@ -5319,6 +5323,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\analysis\dcosetp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\dcpss.c"
 				>
 			</File>
 			<File
@@ -7919,6 +7927,18 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\jfet2\psmodel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\pssaskq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\pssinit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\psssetp.c"
 				>
 			</File>
 			<File

@@ -1,3 +1,7 @@
+2011-08-04 Holger Vogt
+ * dcpss.c: tiny update to obtain compilation with MS VS 2008, 
+   code beautyfied
+
 2011-08-04 Paolo Nenzi
  * (new) tests/pss ,
  * (new) tests/pss/colpitt_osc_pss.cir ,
