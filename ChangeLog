@@ -1,4 +1,8 @@
 2011-08-05  Robert Larice
+ * src/spicelib/devices/dev.c :
+   type fix for Visual Studio
+
+2011-08-05  Robert Larice
  * src/include/ngspice.h :
    disable Visual Studio "warning: C4127: conditional expression is constant"
 

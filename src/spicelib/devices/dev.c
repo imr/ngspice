@@ -50,9 +50,12 @@
 #include <windows.h>
 #ifdef HAS_WINDOWS
 #include "wstdio.h"
+typedef FARPROC funptr_t;
+#else
+typedef void *  funptr_t;
 #endif
 void *dlopen (const char *, int);
-void *dlsym (void *, const char *);
+funptr_t dlsym (void *, const char *);
 int dlclose (void *);
 char *dlerror (void);
 #define RTLD_LAZY	1	/* lazy function call binding */
@@ -302,7 +305,7 @@ int load_dev(char *name) {
   char *msg;
   char libname[50];
   void *lib;
-  SPICEdev *(*fetch)(void)=NULL;
+  funptr_t fetch;
   SPICEdev *device;
 
   strcpy(libname, "lib");
@@ -326,7 +329,7 @@ int load_dev(char *name) {
     printf("%s\n", msg);
     return 1;
   }
-  device = fetch();
+  device = ((SPICEdev * (*)(void)) fetch) ();
   add_device(1,&device,0);
   return 0;
 }
@@ -406,7 +409,7 @@ int load_opus(char *name){
   struct coreInfo_t **core;
   SPICEdev **devs;
   Evt_Udn_Info_t  **udns;
-  void *fetch = NULL;
+  funptr_t fetch;
 
   lib = dlopen(name,RTLD_NOW);
   if(!lib){
@@ -421,7 +424,6 @@ int load_opus(char *name){
 #ifdef TRACE
     printf("Got %u devices.\n",*num);
 #endif
-    fetch = NULL;
   }else{
     msg = dlerror();
     printf("%s\n", msg);
@@ -431,7 +433,6 @@ int load_opus(char *name){
   fetch = dlsym(lib,"CMdevs");
   if(fetch){
     devs = ((SPICEdev ** (*)(void)) fetch) ();
-    fetch = NULL;
   }else{
     msg = dlerror();
     printf("%s\n", msg);
@@ -442,7 +443,6 @@ int load_opus(char *name){
   if(fetch){
     core = ((struct coreInfo_t ** (*)(void)) fetch) ();
     *core = &coreInfo;
-    fetch = NULL;
   }else{
     msg = dlerror();
     printf("%s\n", msg);
@@ -456,7 +456,6 @@ int load_opus(char *name){
 #ifdef TRACE
     printf("Got %u udns.\n",*num);
 #endif
-    fetch = NULL;
   }else{
     msg = dlerror();
     printf("%s\n", msg);
@@ -466,7 +465,6 @@ int load_opus(char *name){
   fetch = dlsym(lib,"CMudns");
   if(fetch){
     udns = ((Evt_Udn_Info_t  ** (*)(void)) fetch) ();
-    fetch = NULL;
   }else{
     msg = dlerror();
     printf("%s\n", msg);
@@ -486,7 +484,7 @@ void *dlopen(const char *name,int type)
 	return LoadLibrary(name);
 }
 
-void *dlsym(void *hDll, const char *funcname)
+funptr_t dlsym(void *hDll, const char *funcname)
 {
 	return GetProcAddress(hDll, funcname);
 }
