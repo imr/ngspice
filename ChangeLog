@@ -1,15 +1,19 @@
+2011-08-05  Robert Larice
+ * src/spicelib/parser/inp2m.c :
+   fix warning of potential (actuall impossible) usage of uninitialized node5..7
+
 2011-08-04 Holger Vogt
- * dcpss.c: tiny update to obtain compilation with MS VS 2008, 
+ * dcpss.c: tiny update to obtain compilation with MS VS 2008,
    code beautyfied
- * winmain.c, dcpss.c: Windows progress message improved 
+ * winmain.c, dcpss.c: Windows progress message improved
 
 2011-08-04 Paolo Nenzi
  * (new) tests/pss ,
  * (new) tests/pss/colpitt_osc_pss.cir ,
  * (new) tests/compl_cross_quad_osc_pss.cir ,
- * (new) tests/hartley_osc_pss.cir , 
+ * (new) tests/hartley_osc_pss.cir ,
  * (new) tests/ring_osc_pss.cir ,
- * (new) tests/vackar_osc_pss.cir , 
+ * (new) tests/vackar_osc_pss.cir ,
  * (new) tests/vdp_osc_pss.cir :
    Added example files for pss from Stefano Perticaroli.
 
@@ -30,9 +34,9 @@
  * (new) src/spicelib/analysis/pssinit.c ,
  * (new) src/spicelib/analysis/psssetp.c :
    Committed PSS (Periodic Steady State Analysis) code from Stefano Perticaroli.
-   The analysis is based on the transient analysis and is able to predict the 
-   fundamental frequency and amplitude (and also harmonics) for autonomous 
-   systems.  
+   The analysis is based on the transient analysis and is able to predict the
+   fundamental frequency and amplitude (and also harmonics) for autonomous
+   systems.
 
 2011-08-04  Robert Larice
  * src/spicelib/analysis/cktsetbk.c :

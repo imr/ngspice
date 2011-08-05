@@ -69,6 +69,10 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
   INPgetNetTok (&line, &nname4, 1);
   INPtermInsert (ckt, &nname4, tab, &node4);
 
+  node5 = NULL;
+  node6 = NULL;
+  node7 = NULL;
+
   /*  See if 5th token after device specification is a model name  */
 
   INPgetNetTok (&line, &nname5, 1);      /*  get 5th token  */
