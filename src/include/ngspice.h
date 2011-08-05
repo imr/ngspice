@@ -178,6 +178,8 @@
     static const __int64 global_nan = 0x7ff8000000000000i64;
     #define NAN (*(const double *) &global_nan)
 #endif
+// warning C4127: Bedingter Ausdruck ist konstant
+#pragma warning(disable: 4127)
 #endif
 
 
