@@ -325,41 +325,42 @@ cx_sgauss(void *data, short int type, int length, int *newlength, short int *new
 void 
 *cx_avg(void *data, short int type, int length, int *newlength, short int *newtype)
 {
-    ngcomplex_t *c;
-    double *d = NULL, sum_real = 0.0,sum_imag = 0.0;
-    ngcomplex_t *cc = (ngcomplex_t *) data;
-    double *dd = (double *) data;
+    double sum_real = 0.0, sum_imag = 0.0;
     int i;
 
     if (type == VF_REAL) {
-        d = alloc_d(length);
+
+        double *d = alloc_d(length);
+        double *dd = (double *) data;
+
         *newtype = VF_REAL;
+        *newlength = length;
+
+        for (i = 0; i < length; i++) {
+            sum_real += dd[i];
+            d[i] = sum_real / (double)(i+1);
+        }
+
+        return ((void *) d);
+
     } else {
-        c = alloc_c(length);
+
+        ngcomplex_t *c = alloc_c(length);
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+
         *newtype = VF_COMPLEX;
-    }
-    *newlength = length;
+        *newlength = length;
 
-    if (type == VF_COMPLEX)
-    {
-       for (i = 0; i < length; i++)
-       {
-        sum_real= sum_real + realpart(&cc[i]);
-        realpart(&c[i]) = sum_real / (double)(i+1);
+        for (i = 0; i < length; i++) {
+            sum_real += realpart(&cc[i]);
+            realpart(&c[i]) = sum_real / (double)(i+1);
 
-        sum_imag = sum_imag + imagpart(&cc[i]);
-        imagpart(&c[i]) = sum_imag / (double)(i+1);
-       }
-       return ((char *) c);
-    }
-    else
-    {      //VF_REAL
-       for (i = 0; i < length; i++)
-       {
-        sum_real= sum_real + dd[i];
-        d[i] = sum_real / (double)(i+1);
-       }
-       return ((char *) d);
+            sum_imag += imagpart(&cc[i]);
+            imagpart(&c[i]) = sum_imag / (double)(i+1);
+        }
+
+       return ((void *) c);
+
     }
 }
 

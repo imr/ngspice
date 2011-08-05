@@ -1,4 +1,8 @@
 2011-08-05  Robert Larice
+ * src/maths/cmaths/cmath2.c :
+   rewrite to fix potential (actuall impossible) usage of variable `c'
+
+2011-08-05  Robert Larice
  * src/spicelib/parser/inp2m.c :
    fix warning of potential (actuall impossible) usage of uninitialized node5..7
 
