@@ -28,7 +28,7 @@ test_cx_ph_LDADD = \
 		$(TCL_LIB_SPEC)
 
 test_cx_cph_SOURCES = \
-               test_cx_ph.c
+               test_cx_cph.c
 
 test_cx_cph_LDADD = \
                 libcmaths.la \

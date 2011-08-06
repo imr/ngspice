@@ -1,3 +1,9 @@
+2011-08-06  Robert Larice
+ * src/maths/cmaths/Makefile.am ,
+ * src/maths/cmaths/cmath1.c ,
+ * src/maths/cmaths/test_cx_cph.c :
+   cph(vec), rewrite, cleanup, and add missing test_cx_cph.c
+
 2011-08-06  Holger Vogt
  * fteext.h, cmaths/makefile.am, cmath1.c, cmath1.h, parse.c:
    function cph(vec) delivers phase from a vector without jumps at +-PI

@@ -76,23 +76,17 @@ cx_cph(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     double *d = alloc_d(length);
     ngcomplex_t *cc = (ngcomplex_t *) data;
-    int i, j, jmin;
-    int period = 0;
-    double ph[3], phd[3];
+    int i;
 
     *newlength = length;
     *newtype = VF_REAL;
     if (type == VF_COMPLEX) {
-        d[0] = radtodeg(cph(&cc[0]));
+        double last_ph = cph(&cc[0]);
+        d[0] = radtodeg(last_ph);
         for (i = 1; i < length; i++) {
-            jmin = 0;
-            for (j = 0; j < 3; j++) {
-                ph[j] = radtodeg((period+j-1) * 2*M_PI + cph(&cc[i]));
-                phd[j] = abs(ph[j] - d[i-1]);
-                jmin = (phd[j] < phd[jmin]) ? j : jmin;
-            }
-            d[i] = ph[jmin];
-            period += jmin-1;
+            double ph = cph(&cc[i]);
+            last_ph = ph - (2*M_PI) * floor((ph - last_ph)/(2*M_PI) + 0.5);
+            d[i] = radtodeg(last_ph);
         }
     }
     /* Otherwise it is 0, but tmalloc zeros the stuff already. */
