@@ -1,3 +1,7 @@
+2011-08-06  Dietmar Warning
+ * bsim4v4/b4v4set.c: fix missing model parameter defaults
+ * b4check.c, b4v4check.c, b4v5check.c: add "4.x" as a short form for version
+
 2011-08-06  Robert Larice
  * src/frontend/shyu.c :
    fix use of possibly uninitialized variables, return on error

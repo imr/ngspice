@@ -167,9 +167,9 @@ JOB   *job;
 
         if ((!strcmp(model->BSIM4v4version, "4.2.1"))||(!strcmp(model->BSIM4v4version, "4.21")))
             model->BSIM4v4intVersion = BSIM4v21;
-        else if ((!strcmp(model->BSIM4v4version, "4.3.0"))||(!strcmp(model->BSIM4v4version, "4.30")))
+        else if ((!strcmp(model->BSIM4v4version, "4.3.0"))||(!strcmp(model->BSIM4v4version, "4.30"))||(!strcmp(model->BSIM4v4version, "4.3")))
             model->BSIM4v4intVersion = BSIM4v30;
-        else if ((!strcmp(model->BSIM4v4version, "4.4.0"))||(!strcmp(model->BSIM4v4version, "4.40")))
+        else if ((!strcmp(model->BSIM4v4version, "4.4.0"))||(!strcmp(model->BSIM4v4version, "4.40"))||(!strcmp(model->BSIM4v4version, "4.4")))
             model->BSIM4v4intVersion = BSIM4v40;
         else
             model->BSIM4v4intVersion = BSIM4vOLD;
@@ -866,8 +866,17 @@ JOB   *job;
             model->BSIM4v4ww0 = 0.0;
         if (!model->BSIM4v4wlpe0Given)
             model->BSIM4v4wlpe0 = 0.0;
-        if (!model->BSIM4v4wlpebGiven)
-            model->BSIM4v4wlpeb = model->BSIM4v4wlpe0;
+        switch (model->BSIM4v4intVersion) {
+          case BSIM4vOLD: case BSIM4v21: case BSIM4v30:
+            if (!model->BSIM4v4wlpebGiven)
+                model->BSIM4v4wlpeb = model->BSIM4v4wlpe0;
+            break;
+          case BSIM4v40:
+            if (!model->BSIM4v4wlpebGiven)
+                model->BSIM4v4wlpeb = 0.0;
+            break;
+          default: break;
+        }
         if (!model->BSIM4v4wdvtp0Given)
             model->BSIM4v4wdvtp0 = 0.0;
         if (!model->BSIM4v4wdvtp1Given)
@@ -1029,6 +1038,8 @@ JOB   *job;
                 model->BSIM4v4wvtl = 0.0;
             if (!model->BSIM4v4wxnGiven)
                 model->BSIM4v4wxn = 0.0;
+            if (!model->BSIM4v4wvfbsdoffGiven)
+                model->BSIM4v4wvfbsdoff = 0.0;   
             break;
           default: break;
         }
@@ -1477,7 +1488,61 @@ JOB   *job;
             model->BSIM4v4SjctTempExponent = 3.0;
         if (!model->BSIM4v4DjctTempExponentGiven)
             model->BSIM4v4DjctTempExponent = model->BSIM4v4SjctTempExponent;
-
+        switch (model->BSIM4v4intVersion) {
+          case BSIM4vOLD: case BSIM4v21: case BSIM4v30:
+            break;
+          case BSIM4v40:
+            if (!model->BSIM4v4jtssGiven)
+                model->BSIM4v4jtss = 0.0;
+            if (!model->BSIM4v4jtsdGiven)
+                model->BSIM4v4jtsd = model->BSIM4v4jtss;
+            if (!model->BSIM4v4jtsswsGiven)
+                model->BSIM4v4jtssws = 0.0;
+            if (!model->BSIM4v4jtsswdGiven)
+                model->BSIM4v4jtsswd = model->BSIM4v4jtssws;
+            if (!model->BSIM4v4jtsswgsGiven)
+                model->BSIM4v4jtsswgs = 0.0;
+            if (!model->BSIM4v4jtsswgdGiven)
+                model->BSIM4v4jtsswgd = model->BSIM4v4jtsswgs;
+            if (!model->BSIM4v4njtsGiven)
+                model->BSIM4v4njts = 20.0;
+            if (!model->BSIM4v4njtsswGiven)
+                model->BSIM4v4njtssw = 20.0;
+            if (!model->BSIM4v4njtsswgGiven)
+                model->BSIM4v4njtsswg = 20.0;
+            if (!model->BSIM4v4xtssGiven)
+                model->BSIM4v4xtss = 0.02;
+            if (!model->BSIM4v4xtsdGiven)
+                model->BSIM4v4xtsd = model->BSIM4v4xtss;
+            if (!model->BSIM4v4xtsswsGiven)
+                model->BSIM4v4xtssws = 0.02;
+            if (!model->BSIM4v4jtsswdGiven)
+                model->BSIM4v4xtsswd = model->BSIM4v4xtssws;
+            if (!model->BSIM4v4xtsswgsGiven)
+                model->BSIM4v4xtsswgs = 0.02;
+            if (!model->BSIM4v4xtsswgdGiven)
+                model->BSIM4v4xtsswgd = model->BSIM4v4xtsswgs;
+            if (!model->BSIM4v4tnjtsGiven)
+                model->BSIM4v4tnjts = 0.0;
+            if (!model->BSIM4v4tnjtsswGiven)
+                model->BSIM4v4tnjtssw = 0.0;
+            if (!model->BSIM4v4tnjtsswgGiven)
+                model->BSIM4v4tnjtsswg = 0.0;
+            if (!model->BSIM4v4vtssGiven)
+                model->BSIM4v4vtss = 10.0;
+            if (!model->BSIM4v4vtsdGiven)
+                model->BSIM4v4vtsd = model->BSIM4v4vtss;
+            if (!model->BSIM4v4vtsswsGiven)
+                model->BSIM4v4vtssws = 10.0;
+            if (!model->BSIM4v4vtsswdGiven)
+                model->BSIM4v4vtsswd = model->BSIM4v4vtssws;
+            if (!model->BSIM4v4vtsswgsGiven)
+                model->BSIM4v4vtsswgs = 10.0;
+            if (!model->BSIM4v4vtsswgdGiven)
+                model->BSIM4v4vtsswgd = model->BSIM4v4vtsswgs;
+            break;
+          default: break;
+        }
         if (!model->BSIM4v4oxideTrapDensityAGiven)
         {   if (model->BSIM4v4type == NMOS)
                 model->BSIM4v4oxideTrapDensityA = 6.25e41;
