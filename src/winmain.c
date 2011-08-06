@@ -47,6 +47,8 @@
 /* macro to ignore unused variables and parameters */
 #define NG_IGNORE(x)  (void)x
 
+#define QUIT_BUTTON_ID 2
+
 /* Types */
 typedef char SBufLine[SBufSize+1];  // Eingabezeile
 
@@ -443,7 +445,7 @@ static LRESULT CALLBACK MainWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPA
         if (HIWORD(wParam) == BN_CLICKED)
            if (ft_batchmode && (MessageBox(NULL, "Do you want to quit ngspice?", "Quit", MB_OKCANCEL|MB_ICONERROR)
               == IDCANCEL)) goto DEFAULT_AFTER;
-           if (LOWORD(wParam) == 2) {
+           if (LOWORD(wParam) == QUIT_BUTTON_ID) {
               SendMessage(GetParent((HWND)lParam), WM_CLOSE, 0, 0);
            }
            /* write all achieved so far to log file */
@@ -908,7 +910,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     /* Create "Quit" button */
     hwQuitButton = CreateWindow("BUTTON", "Quit", WS_CHILD | 
        BS_PUSHBUTTON, 0, 0, QuitButtonLength, 
-       StatusElHeight, hwMain, (HMENU) 2, hInst, NULL);
+       StatusElHeight, hwMain, (HMENU)(UINT_PTR)QUIT_BUTTON_ID, hInst, NULL);
     
     if (!hwQuitButton) goto THE_END;
 
