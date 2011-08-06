@@ -1,4 +1,8 @@
 2011-08-06  Robert Larice
+ * src/frontend/shyu.c :
+   fix use of possibly uninitialized variables, return on error
+
+2011-08-06  Robert Larice
  * src/spicelib/devices/adms/admst/ngspice.xml :
    reposition NG_IGNOREABLE for non C99 compiler compatibility
 
