@@ -38,13 +38,13 @@ FILE *fplog;
         fprintf(fplog, "BSIM4v5: Berkeley Short Channel IGFET Model-4\n");
         fprintf(fplog, "Developed by Xuemei (Jane) Xi, Mohan Dunga, Prof. Ali Niknejad and Prof. Chenming Hu in 2003.\n");
         fprintf(fplog, "\n");
-	fprintf(fplog, "++++++++++ BSIM4v5 PARAMETER CHECKING BELOW ++++++++++\n");
+        fprintf(fplog, "++++++++++ BSIM4v5 PARAMETER CHECKING BELOW ++++++++++\n");
 
-        if (!strstr(model->BSIM4v5version, "4.5"))
+        if ((strcmp(model->BSIM4v5version, "4.5.0")) && (strcmp(model->BSIM4v5version, "4.50")) && (strcmp(model->BSIM4v5version, "4.5")))
         {  fprintf(fplog, "Warning: This model is BSIM4.5.0; you specified a wrong version number '%s'.\n", model->BSIM4v5version);
            printf("Warning: This model is BSIM4.5.0; you specified a wrong version number '%s'.\n", model->BSIM4v5version);
         }
-	fprintf(fplog, "Model = %s\n", model->BSIM4v5modName);
+        fprintf(fplog, "Model = %s\n", model->BSIM4v5modName);
 
 
         if ((here->BSIM4v5rgateMod == 2) || (here->BSIM4v5rgateMod == 3))
