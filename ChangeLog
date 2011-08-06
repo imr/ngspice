@@ -1,5 +1,5 @@
 2011-08-06  Holger Vogt
- * fteext.h, cmaths/makefile.am, cmath1.c, cmath1.h:
+ * fteext.h, cmaths/makefile.am, cmath1.c, cmath1.h, parse.c:
    function cph(vec) delivers phase from a vector without jumps at +-PI
 
 2011-08-06  Robert Larice

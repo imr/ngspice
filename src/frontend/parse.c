@@ -141,6 +141,8 @@ typedef void* cx_function_t(void*,short int,int,int*,short int*);
 struct func ft_funcs[] = {
         { "mag",    cx_mag } ,
         { "magnitude", cx_mag } ,
+        { "cph",     cx_cph } ,  /* SJdV */
+        { "cphase",  cx_cph } ,  /* SJdV Continious phase*/
         { "ph",     cx_ph } ,
         { "phase",  cx_ph } ,
         { "j",      cx_j } ,
