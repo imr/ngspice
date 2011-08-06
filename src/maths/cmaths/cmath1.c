@@ -70,6 +70,35 @@ cx_ph(void *data, short int type, int length, int *newlength, short int *newtype
     return ((void *) d);
 }
 
+/* SJdV Modified from above to find closest from +2pi,0, -2pi */
+void *
+cx_cph(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    double *d = alloc_d(length);
+    ngcomplex_t *cc = (ngcomplex_t *) data;
+    int i, j, jmin;
+    int period = 0;
+    double ph[3], phd[3];
+
+    *newlength = length;
+    *newtype = VF_REAL;
+    if (type == VF_COMPLEX) {
+        d[0] = radtodeg(cph(&cc[0]));
+        for (i = 1; i < length; i++) {
+            jmin = 0;
+            for (j = 0; j < 3; j++) {
+                ph[j] = radtodeg((period+j-1) * 2*M_PI + cph(&cc[i]));
+                phd[j] = abs(ph[j] - d[i-1]);
+                jmin = (phd[j] < phd[jmin]) ? j : jmin;
+            }
+            d[i] = ph[jmin];
+            period += jmin-1;
+        }
+    }
+    /* Otherwise it is 0, but tmalloc zeros the stuff already. */
+    return ((void *) d);
+}
+
 /* If this is pure imaginary we might get real, but never mind... */
 
 void *
@@ -169,22 +198,22 @@ cx_db(void *data, short int type, int length, int *newlength, short int *newtype
         for (i = 0; i < length; i++) {
             tt = cmag(&cc[i]);
             rcheck(tt > 0, "db");
-	    /*
-            if (tt == 0.0)
-                d[i] = 20.0 * - log(HUGE);
-            else
-	    */
-	    d[i] = 20.0 * log10(tt);
+            /*
+                if (tt == 0.0)
+                    d[i] = 20.0 * - log(HUGE);
+                else
+            */
+            d[i] = 20.0 * log10(tt);
         }
     else
         for (i = 0; i < length; i++) {
             rcheck(dd[i] > 0, "db");
-	    /*
-            if (dd[i] == 0.0)
-                d[i] = 20.0 * - log(HUGE);
-            else
-	    */
-	    d[i] = 20.0 * log10(dd[i]);
+            /*
+                if (dd[i] == 0.0)
+                    d[i] = 20.0 * - log(HUGE);
+                else
+            */
+            d[i] = 20.0 * log10(dd[i]);
         }
     return ((void *) d);
 }
@@ -194,14 +223,14 @@ cx_log(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
-	ngcomplex_t *c;
-	ngcomplex_t *cc = (ngcomplex_t *) data;
-	int i;
+        ngcomplex_t *c;
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
 
         c = alloc_c(length);
         *newtype = VF_COMPLEX;
         for (i = 0; i < length; i++) {
-	    double td;
+            double td;
 
             td = cmag(&cc[i]);
             /* Perhaps we should trap when td = 0.0, but Ken wants
@@ -214,14 +243,14 @@ cx_log(void *data, short int type, int length, int *newlength, short int *newtyp
             } else {
                 realpart(&c[i]) = log10(td);
                 imagpart(&c[i]) = atan2(imagpart(&cc[i]),
-                        realpart(&cc[i]));
+                                        realpart(&cc[i]));
             }
         }
         return ((void *) c);
     } else {
-	double *d;
-	double *dd = (double *) data;
-	int i;
+        double *d;
+        double *dd = (double *) data;
+        int i;
 
         d = alloc_d(length);
         *newtype = VF_REAL;
@@ -229,7 +258,7 @@ cx_log(void *data, short int type, int length, int *newlength, short int *newtyp
             rcheck(dd[i] >= 0, "log");
             if (dd[i] == 0.0)
                 d[i] = - log10(HUGE);
-            else 
+            else
                 d[i] = log10(dd[i]);
         }
         return ((void *) d);
@@ -241,14 +270,14 @@ cx_ln(void *data, short int type, int length, int *newlength, short int *newtype
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
-	ngcomplex_t *c;
-	ngcomplex_t *cc = (ngcomplex_t *) data;
-	int i;
+        ngcomplex_t *c;
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
 
         c = alloc_c(length);
         *newtype = VF_COMPLEX;
         for (i = 0; i < length; i++) {
-	    double td;
+            double td;
 
             td = cmag(&cc[i]);
             rcheck(td >= 0, "ln");
@@ -258,14 +287,14 @@ cx_ln(void *data, short int type, int length, int *newlength, short int *newtype
             } else {
                 realpart(&c[i]) = log(td);
                 imagpart(&c[i]) = atan2(imagpart(&cc[i]),
-                    realpart(&cc[i]));
+                                        realpart(&cc[i]));
             }
         }
         return ((void *) c);
     } else {
-	double *d;
-	double *dd = (double *) data;
-	int i;
+        double *d;
+        double *dd = (double *) data;
+        int i;
 
         d = alloc_d(length);
         *newtype = VF_REAL;
@@ -285,14 +314,14 @@ cx_exp(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
-	ngcomplex_t *c;
-	ngcomplex_t *cc = (ngcomplex_t *) data;
-	int i;
+        ngcomplex_t *c;
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
 
         c = alloc_c(length);
         *newtype = VF_COMPLEX;
         for (i = 0; i < length; i++) {
-	    double td;
+            double td;
 
             td = exp(realpart(&cc[i]));
             realpart(&c[i]) = td * cos(imagpart(&cc[i]));
@@ -300,9 +329,9 @@ cx_exp(void *data, short int type, int length, int *newlength, short int *newtyp
         }
         return ((void *) c);
     } else {
-	double *d;
-	double *dd = (double *) data;
-	int i;
+        double *d;
+        double *dd = (double *) data;
+        int i;
 
         d = alloc_d(length);
         *newtype = VF_REAL;
@@ -341,27 +370,27 @@ cx_sqrt(void *data, short int type, int length, int *newlength, short int *newty
                     imagpart(&c[i]) = 0.0;
                 } else if (imagpart(&cc[i]) > 0.0) {
                     realpart(&c[i]) = sqrt (0.5 *
-                            imagpart(&cc[i]));
+                                            imagpart(&cc[i]));
                     imagpart(&c[i]) = realpart(&c[i]);
-                } else { 
-                    imagpart(&c[i]) = sqrt( -0.5 * 
-                            imagpart(&cc[i]));
+                } else {
+                    imagpart(&c[i]) = sqrt( -0.5 *
+                                            imagpart(&cc[i]));
                     realpart(&c[i]) = - imagpart(&c[i]);
                 }
             } else if (realpart(&cc[i]) > 0.0) {
                 if (imagpart(&cc[i]) == 0.0) {
-                    realpart(&c[i]) = 
+                    realpart(&c[i]) =
                         sqrt(realpart(&cc[i]));
                     imagpart(&c[i]) = 0.0;
                 } else if (imagpart(&cc[i]) < 0.0) {
-                    realpart(&c[i]) = -sqrt(0.5 * 
-                        (cmag(&cc[i]) + realpart(&cc[i])));
+                    realpart(&c[i]) = -sqrt(0.5 *
+                                            (cmag(&cc[i]) + realpart(&cc[i])));
                 } else {
-                    realpart(&c[i]) = sqrt(0.5 * 
-                        (cmag(&cc[i]) + realpart(&cc[i])));
+                    realpart(&c[i]) = sqrt(0.5 *
+                                           (cmag(&cc[i]) + realpart(&cc[i])));
                 }
-                imagpart(&c[i]) = imagpart(&cc[i]) / (2.0 * 
-                        realpart(&c[i]));
+                imagpart(&c[i]) = imagpart(&cc[i]) / (2.0 *
+                                                      realpart(&c[i]));
             } else { /* realpart(&cc[i]) < 0.0) */
                 if (imagpart(&cc[i]) == 0.0) {
                     realpart(&c[i]) = 0.0;
@@ -370,14 +399,14 @@ cx_sqrt(void *data, short int type, int length, int *newlength, short int *newty
                 } else {
                     if (imagpart(&cc[i]) < 0.0)
                         imagpart(&c[i]) = - sqrt(0.5 *
-                            (cmag(&cc[i]) -
-                            realpart(&cc[i])));
+                                                 (cmag(&cc[i]) -
+                                                  realpart(&cc[i])));
                     else
                         imagpart(&c[i]) = sqrt(0.5 *
-                            (cmag(&cc[i]) -
-                            realpart(&cc[i])));
-                    realpart(&c[i]) = imagpart(&cc[i]) / 
-                        (2.0 * imagpart(&c[i]));
+                                               (cmag(&cc[i]) -
+                                                realpart(&cc[i])));
+                    realpart(&c[i]) = imagpart(&cc[i]) /
+                                      (2.0 * imagpart(&c[i]));
                 }
             }
         }
@@ -401,23 +430,23 @@ cx_sin(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
-	ngcomplex_t *c;
-	ngcomplex_t *cc = (ngcomplex_t *) data;
-	int i;
+        ngcomplex_t *c;
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
 
         c = alloc_c(length);
         *newtype = VF_COMPLEX;
         for (i = 0; i < length; i++) {
             realpart(&c[i]) = sin(degtorad(realpart(&cc[i]))) *
-                    cosh(degtorad(imagpart(&cc[i])));
+                              cosh(degtorad(imagpart(&cc[i])));
             imagpart(&c[i]) = cos(degtorad(realpart(&cc[i]))) *
-                    sinh(degtorad(imagpart(&cc[i])));
+                              sinh(degtorad(imagpart(&cc[i])));
         }
         return ((void *) c);
     } else {
-	double *d;
-	double *dd = (double *) data;
-	int i;
+        double *d;
+        double *dd = (double *) data;
+        int i;
 
         d = alloc_d(length);
         *newtype = VF_REAL;
@@ -444,7 +473,7 @@ cx_sinh(void *data, short int type, int length, int *newlength, short int *newty
             u = degtorad(realpart(&cc[i]));
             v = degtorad(imagpart(&cc[i]));
             realpart(&c[i]) = sinh(u)*cos(v);
-            imagpart(&c[i]) = cosh(u)*sin(v);     
+            imagpart(&c[i]) = cosh(u)*sin(v);
         }
         return ((void *) c);
     } else {
@@ -466,23 +495,23 @@ cx_cos(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
-	ngcomplex_t *c;
-	ngcomplex_t *cc = (ngcomplex_t *) data;
-	int i;
+        ngcomplex_t *c;
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
 
         c = alloc_c(length);
         *newtype = VF_COMPLEX;
         for (i = 0; i < length; i++) {
             realpart(&c[i]) = cos(degtorad(realpart(&cc[i]))) *
-                    cosh(degtorad(imagpart(&cc[i])));
+                              cosh(degtorad(imagpart(&cc[i])));
             imagpart(&c[i]) = - sin(degtorad(realpart(&cc[i]))) *
-                    sinh(degtorad(imagpart(&cc[i])));
+                              sinh(degtorad(imagpart(&cc[i])));
         }
         return ((void *) c);
     } else {
-	double *d;
-	double *dd = (double *) data;
-	int i;
+        double *d;
+        double *dd = (double *) data;
+        int i;
 
         d = alloc_d(length);
         *newtype = VF_REAL;
@@ -511,13 +540,13 @@ cx_cosh(void *data, short int type, int length, int *newlength, short int *newty
             u = degtorad(realpart(&cc[i]));
             v = degtorad(imagpart(&cc[i]));
             realpart(&c[i]) = cosh(u)*cos(v);
-            imagpart(&c[i]) = sinh(u)*sin(v);            
+            imagpart(&c[i]) = sinh(u)*sin(v);
         }
         return ((void *) c);
     } else {
-	double *d;
-	double *dd = (double *) data;
-	int i;
+        double *d;
+        double *dd = (double *) data;
+        int i;
 
         d = alloc_d(length);
         *newtype = VF_REAL;
@@ -535,8 +564,8 @@ d_tan(double *dd, int length)
 
     d = alloc_d(length);
     for (i = 0; i < length; i++) {
-	rcheck(cos(degtorad(dd[i])) != 0, "tan");
-	d[i] = sin(degtorad(dd[i])) / cos(degtorad(dd[i]));
+        rcheck(cos(degtorad(dd[i])) != 0, "tan");
+        d[i] = sin(degtorad(dd[i])) / cos(degtorad(dd[i]));
     }
     return d;
 }
@@ -566,9 +595,9 @@ c_tan(ngcomplex_t *cc, int length)
         double u, v;
 
         rcheck(cos(degtorad(realpart(&cc[i]))) *
-           cosh(degtorad(imagpart(&cc[i]))), "tan");
+               cosh(degtorad(imagpart(&cc[i]))), "tan");
         rcheck(sin(degtorad(realpart(&cc[i]))) *
-           sinh(degtorad(imagpart(&cc[i]))), "tan");
+               sinh(degtorad(imagpart(&cc[i]))), "tan");
         u = degtorad(realpart(&cc[i]));
         v = degtorad(imagpart(&cc[i]));
         /* The Lattice C compiler won't take multi-line macros, and
@@ -620,7 +649,7 @@ cx_tan(void *data, short int type, int length, int *newlength, short int *newtyp
     *newlength = length;
     if (type == VF_REAL) {
         *newtype = VF_REAL;
-	return (void *) d_tan((double *) data, length);
+        return (void *) d_tan((double *) data, length);
     } else {
         *newtype = VF_COMPLEX;
         return (void *) c_tan((ngcomplex_t *) data, length);
@@ -633,7 +662,7 @@ cx_tanh(void *data, short int type, int length, int *newlength, short int *newty
     *newlength = length;
     if (type == VF_REAL) {
         *newtype = VF_REAL;
-	return (void *) d_tanh((double *) data, length);
+        return (void *) d_tanh((double *) data, length);
     } else {
         *newtype = VF_COMPLEX;
         return (void *) c_tanh((ngcomplex_t *) data, length);
@@ -649,14 +678,14 @@ cx_atan(void *data, short int type, int length, int *newlength, short int *newty
     *newtype = VF_REAL;
     *newlength = length;
     if (type == VF_COMPLEX) {
-	ngcomplex_t *cc = (ngcomplex_t *) data;
-	int i;
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
 
         for (i = 0; i < length; i++)
             d[i] = radtodeg(atan(realpart(&cc[i])));
     } else {
-	double *dd = (double *) data;
-	int i;
+        double *dd = (double *) data;
+        int i;
 
         for (i = 0; i < length; i++)
             d[i] = radtodeg(atan(dd[i]));
