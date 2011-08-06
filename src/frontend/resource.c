@@ -74,8 +74,8 @@ static void printres(char *name);
 static void fprintmem(FILE* stream, unsigned long long memory);
 
 #if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 
-static size_t get_procm(struct proc_mem *memall);
-static size_t get_sysmem(struct sys_mem *memall);
+static int get_procm(struct proc_mem *memall);
+static int get_sysmem(struct sys_mem *memall);
 
 struct sys_mem mem_t, mem_t_act; 
 struct proc_mem mem_ng, mem_ng_act;
@@ -181,7 +181,7 @@ ft_ckspace(void)
     old_usage = usage;
 #endif /* not HAS_WINDOWS */
 
-    if (usage > limit * 0.9) {
+    if ((double)usage > (double)limit * 0.9) {
         fprintf(cp_err, "Warning - approaching max data size: ");
 	fprintf(cp_err, "current size = ");
 	fprintmem(cp_err, usage);
@@ -461,12 +461,12 @@ fprintmem(FILE* stream, unsigned long long memory) {
     else if (memory > 1024) 
       fprintf(stream, "%5.3f kB", (double)memory / 1024.);
     else
-      fprintf(stream, "%" PRIuPTR " bytes", memory);
+      fprintf(stream, "%" PRIu64 " bytes", memory);
 }
 
 #if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 
 
-static size_t get_procm(struct proc_mem *memall) {
+static int get_procm(struct proc_mem *memall) {
 #if defined (_MSC_VER) || defined(__MINGW32__)
 #if (_WIN32_WINNT >= 0x0500) && defined(HAS_WINDOWS)
 /* Use Windows API function to obtain size of memory - more accurate */
@@ -519,12 +519,12 @@ static size_t get_procm(struct proc_mem *memall) {
        return 0;
     buffer[bytes_read] = '\0';
     
-    sscanf (buffer, "%" SCNuPTR " %" SCNuPTR " %" SCNuPTR " %" SCNuPTR " %" SCNuPTR " %" SCNuPTR " %" SCNuPTR, &memall->size, &memall->resident, &memall->shared, &memall->trs, &memall->drs, &memall->lrs, &memall->dt);
+    sscanf (buffer, "%" SCNu64 " %" SCNu64 " %" SCNu64 " %" SCNu64 " %" SCNu64 " %" SCNu64 " %" SCNu64, &memall->size, &memall->resident, &memall->shared, &memall->trs, &memall->drs, &memall->lrs, &memall->dt);
 #endif
    return 1;
 }
 
-static size_t get_sysmem(struct sys_mem *memall) {
+static int get_sysmem(struct sys_mem *memall) {
 #ifdef HAVE_WIN32
 #if ( _WIN32_WINNT >= 0x0500)
    MEMORYSTATUSEX ms;
@@ -548,7 +548,7 @@ static size_t get_sysmem(struct sys_mem *memall) {
    char buffer[2048];
    size_t bytes_read;
    char *match;
-   size_t mem_got;
+   unsigned long long mem_got;
 
    if((fp = fopen("/proc/meminfo", "r")) == NULL) {
       perror("fopen(\"/proc/meminfo\")");
@@ -565,25 +565,25 @@ static size_t get_sysmem(struct sys_mem *memall) {
    match = strstr (buffer, "MemTotal");
    if (match == NULL) /* not found */
       return 0;
-   sscanf (match, "MemTotal: %" SCNuPTR, &mem_got);
+   sscanf (match, "MemTotal: %" SCNu64, &mem_got);
    memall->size = mem_got*1024; /* 1MB = 1024KB */
    /* Search for string "MemFree" */
    match = strstr (buffer, "MemFree");
    if (match == NULL) /* not found */
       return 0;
-   sscanf (match, "MemFree: %" SCNuPTR, &mem_got);
+   sscanf (match, "MemFree: %" SCNu64, &mem_got);
    memall->free = mem_got*1024; /* 1MB = 1024KB */  
    /* Search for string "SwapTotal" */
    match = strstr (buffer, "SwapTotal");
    if (match == NULL) /* not found */
       return 0;
-   sscanf (match, "SwapTotal: %" SCNuPTR, &mem_got);
+   sscanf (match, "SwapTotal: %" SCNu64, &mem_got);
    memall->swap_t = mem_got*1024; /* 1MB = 1024KB */
    /* Search for string "SwapFree" */
    match = strstr (buffer, "SwapFree");
    if (match == NULL) /* not found */
       return 0;
-   sscanf (match, "SwapFree: %" SCNuPTR, &mem_got);
+   sscanf (match, "SwapFree: %" SCNu64, &mem_got);
    memall->swap_f = mem_got*1024; /* 1MB = 1024KB */
 #endif   
    return 1;     

@@ -1,4 +1,9 @@
 2011-08-06  Robert Larice
+ * src/frontend/com_sysinfo.c ,
+ * src/frontend/resource.c :
+   complete `replace size_t by unsigned long long'
+
+2011-08-06  Robert Larice
  * src/frontend/shyu.c :
    bug fix, tranJob was used instead of pssJob
 

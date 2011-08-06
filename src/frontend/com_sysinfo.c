@@ -63,7 +63,7 @@ struct sys_memory {
 static struct sys_memory mem_t_act; 
 
 TesError tesCreateSystemInfo(TesSystemInfo *info);
-static size_t get_sysmem(struct sys_memory *memall);
+static int get_sysmem(struct sys_memory *memall);
 
 /* Print to stream the given memory size in a human friendly format */
 static void
@@ -128,7 +128,7 @@ void com_sysinfo(wordlist *wl)
 #ifdef HAVE__PROC_MEMINFO 
 
 /* Get memory information */
-static size_t get_sysmem(struct sys_memory *memall) {
+static int get_sysmem(struct sys_memory *memall) {
    FILE *fp;
    char buffer[2048];
    size_t bytes_read;
@@ -352,7 +352,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 #elif defined(HAVE_WIN32)
 
 /* get memory information */
-static size_t get_sysmem(struct sys_memory *memall) {
+static int get_sysmem(struct sys_memory *memall) {
 #if ( _WIN32_WINNT >= 0x0500)
    MEMORYSTATUSEX ms;
    ms.dwLength = sizeof(MEMORYSTATUSEX);
