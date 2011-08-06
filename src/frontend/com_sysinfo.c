@@ -54,10 +54,10 @@ typedef struct TSI {
 
 /* memory info */
 struct sys_memory {
-   size_t size_m;  /* Total memory size */
-   size_t free_m;  /* Free memory */
-   size_t swap_t;  /* Swap total */
-   size_t swap_f;  /* Swap free */
+   unsigned long long size_m;  /* Total memory size */
+   unsigned long long free_m;  /* Free memory */
+   unsigned long long swap_t;  /* Swap total */
+   unsigned long long swap_f;  /* Swap free */
 };
 
 static struct sys_memory mem_t_act; 
@@ -67,11 +67,11 @@ static size_t get_sysmem(struct sys_memory *memall);
 
 /* Print to stream the given memory size in a human friendly format */
 static void
-fprintmem(FILE* stream, size_t memory) {
-    if (memory > (1<<20))
-	fprintf(stream, "%8.6f MB", (double)memory / (1<<20));
-    else if (memory > (1<<10))
-	fprintf(stream, "%5.3f kB", (double)memory / (1<<10));
+fprintmem(FILE* stream, unsigned long long memory) {
+    if (memory > 1048576)
+	fprintf(stream, "%8.6f MB", (double)memory /1048576.);
+    else if (memory > 1024)
+	fprintf(stream, "%5.3f kB", (double)memory / 1024.);
     else
 	fprintf(stream, "%u bytes", (unsigned)memory);
 }

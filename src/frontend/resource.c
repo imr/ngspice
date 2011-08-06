@@ -71,7 +71,7 @@ $Id$
 
 /* static declarations */
 static void printres(char *name);
-static void fprintmem(FILE* stream, size_t memory);
+static void fprintmem(FILE* stream, unsigned long long memory);
 
 #if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 
 static size_t get_procm(struct proc_mem *memall);
@@ -148,7 +148,7 @@ char* copyword;
 void
 ft_ckspace(void)
 {
-    size_t usage, limit;
+    unsigned long long usage, limit;
 
 #if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 
     get_procm(&mem_ng_act);
@@ -455,7 +455,7 @@ printres(char *name)
 
 /* Print to stream the given memory size in a human friendly format */
 static void
-fprintmem(FILE* stream, size_t memory) {
+fprintmem(FILE* stream, unsigned long long memory) {
     if (memory > 1048576)
       fprintf(stream, "%8.6f MB", (double)memory / 1048576.);
     else if (memory > 1024) 

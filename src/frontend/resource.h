@@ -12,20 +12,20 @@ void com_rusage(wordlist *wl);
 
 
 struct proc_mem {
-   size_t size;    /* Total ngspice program size */
-   size_t resident;/* Resident set size */
-   size_t shared;  /* Shared ngspice pages */
-   size_t trs;     /* Text (code) pages */
-   size_t drs;     /* Stack */
-   size_t lrs;     /* Library pages */
-   size_t dt;      /* Dirty pages (not used in kernel 2.6) */
+   unsigned long long size;    /* Total ngspice program size */
+   unsigned long long resident;/* Resident set size */
+   unsigned long long shared;  /* Shared ngspice pages */
+   unsigned long long trs;     /* Text (code) pages */
+   unsigned long long drs;     /* Stack */
+   unsigned long long lrs;     /* Library pages */
+   unsigned long long dt;      /* Dirty pages (not used in kernel 2.6) */
 };
 
 struct sys_mem {
-   size_t size;    /* Total memory size */
-   size_t free;    /* Free memory */
-   size_t swap_t;  /* Swap total */
-   size_t swap_f;  /* Swap free */
+   unsigned long long size;    /* Total memory size */
+   unsigned long long free;    /* Free memory */
+   unsigned long long swap_t;  /* Swap total */
+   unsigned long long swap_f;  /* Swap free */
 };
 
 #endif
