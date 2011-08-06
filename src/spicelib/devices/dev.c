@@ -45,15 +45,14 @@
 #include <string.h> /* for strcpy, strcat*/
 #if (!defined HAS_WINDOWS) && (!defined __MINGW32__) && (!defined _MSC_VER)
 #include <dlfcn.h> /* to load libraries*/
+typedef void *  funptr_t;
 #else /* ifdef HAS_WINDOWS */
 #undef BOOLEAN
 #include <windows.h>
 #ifdef HAS_WINDOWS
 #include "wstdio.h"
-typedef FARPROC funptr_t;
-#else
-typedef void *  funptr_t;
 #endif
+typedef FARPROC funptr_t;
 void *dlopen (const char *, int);
 funptr_t dlsym (void *, const char *);
 int dlclose (void *);

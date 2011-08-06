@@ -1,3 +1,7 @@
+2011-08-05  Robert Larice
+ * src/spicelib/devices/dev.c :
+  fix broken commit `type fix for Visual Studio'
+
 2011-08-06  Holger Vogt
  * inpcom.c: code beautify, bug no. 3386184
  * resource.c, resource.h, com_sysinfo.c: replace size_t by unsigned long long
