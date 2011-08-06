@@ -1,8 +1,12 @@
-2011-08-05  Robert Larice
+2011-08-06  Robert Larice
+ * src/frontend/shyu.c :
+   bug fix, tranJob was used instead of pssJob
+
+2011-08-06  Robert Larice
  * src/winmain.c :
    another type fix for Visual Studio, QUIT_BUTTON_ID
 
-2011-08-05  Robert Larice
+2011-08-06  Robert Larice
  * src/spicelib/devices/dev.c :
   fix broken commit `type fix for Visual Studio'
 

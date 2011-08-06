@@ -28,11 +28,7 @@ int
 if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
 {
     JOB *senseJob;
-    JOB *acJob;
     JOB *opJob;
-    JOB *dcJob;
-    JOB *tranJob;
-    JOB *pssJob;
     card *current;
     IFvalue ptemp;
     IFvalue *parm;
@@ -118,6 +114,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     save = which;
     INPgetTok(&line,&token,1);
     if(strcmp(token ,"ac")==0){
+        JOB *acJob;
         which = -1;
         for(j=0;j<ft_sim->numAnalyses;j++) {
             if(strcmp(ft_sim->analyses[j]->name,"AC")==0) {
@@ -179,6 +176,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
         }
     }
     if(strcmp(token ,"dc")==0){
+        JOB *dcJob;
         /* .dc SRC1NAME Vstart1 Vstop1 Vinc1 [SRC2NAME Vstart2 */
         /*        Vstop2 Vinc2 */
         which = -1;
@@ -231,6 +229,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
         }
     }
     if(strcmp(token ,"tran")==0){
+        JOB *tranJob;
         which = -1;
         for(j=0;j<ft_sim->numAnalyses;j++) {
             if(strcmp(ft_sim->analyses[j]->name,"TRAN")==0) {
@@ -290,6 +289,7 @@ uic:
     /* PSS - Spertica - 100910 */
     /* *********************** */
     if(strcmp(token ,"pss")==0){
+        JOB *pssJob;
         which = -1;
         for(j=0;j<ft_sim->numAnalyses;j++) {
             if(strcmp(ft_sim->analyses[j]->name,"PSS")==0) {
@@ -299,7 +299,7 @@ uic:
         } 
         if(which != -1) {
             err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,"pssan",
-            &(tranJob),ft_curckt->ci_specTask);
+            &(pssJob),ft_curckt->ci_specTask);
             if(err) {
                 ft_sperror(err,"createPSS"); 
                 return(0);
