@@ -1,4 +1,8 @@
-2011-08-04 Paolo Nenzi
+2011-08-07  Robert Larice
+ * src/misc/util.c :
+   rewrite ngdirname()
+
+2011-08-07 Paolo Nenzi
  * (new) examples/pss ,
  * (new) examples/pss/colpitt_osc_pss.cir ,
  * (new) examples/compl_cross_quad_osc_pss.cir ,

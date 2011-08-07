@@ -187,53 +187,48 @@ basename(const char *name)
 }
 */
 
+
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-/* allow back slashes \\ */
+
 char *
 ngdirname(const char *name)
 {
     static char *ret = NULL;
-    size_t len;
-    size_t size = 0;
-    const char *p;
+    const char *end = NULL;
+    int start = 0;
 
     if (ret) {
         free(ret);
         ret = NULL;
     }
 
-    if (!name || !strcmp(name, "") || (!strstr(name, "/") && !strstr(name, "\\")))
-        return(".");
+    if(name && ((name[0] >= 'a' && name[0] <= 'z') ||
+                (name[0] >= 'A' && name[0] <= 'Z')) && name[1] == ':')
+        start = 2;
 
-    if (!strcmp(name, "/"))
-        return (char*) name;
+    if(name) {
+        const char *p = name + start;
+        for(; *p; p++)
+            if(*p == '/' || *p == '\\')
+                end = p;
+    }
 
-    if (!strcmp(name, "\\"))
-        return (char*) name;
-        
-    // find the last slash in the string
+    if(end && end == name + start)
+        end++;
 
-    len = strlen(name);
-    p = &name[len - 1];
+    if(end)
+        ret = copy_substring(name, end);
+    else {
+        char *p = TMALLOC(char, 4);
+        ret = p;
+        if(start) {
+            *p++ = name[0];
+            *p++ = name[1];
+        }
+        *p++ = '.';
+        *p++ = '\0';
+    }
 
-    if (*p == '/') p--;  /* skip the trailing / */
-
-    if (*p == '\\') p--; /* skip the trailing \ */
-
-    while (p != name && *p != '/' && *p != '\\') p--;
-
-    size = (size_t)(p - name);
-    if (size) {
-        ret = TMALLOC(char, size + 1);
-        memcpy(ret, name, size);
-        ret[size] = '\0';
-    } else if (*p == '/')
-        return "/";
-    else if (*p == '\\')
-        return "\\";        
-    else
-        return "";
-    
     return ret;
 }
 
@@ -243,41 +238,24 @@ char *
 ngdirname(const char *name)
 {
     static char *ret = NULL;
-    size_t len;
-    size_t size = 0;
-    const char *p;
+    const char *end;
 
     if (ret) {
         free(ret);
         ret = NULL;
     }
 
-    if (!name || !strcmp(name, "") || !strstr(name, "/"))
-        return(".");
+    end = name ? strrchr(name, '/') : NULL;
 
-    if (!strcmp(name, "/"))
-        return(name);
+    if(end && end == name)
+        end++;
 
-    // find the last slash in the string
-
-    len = strlen(name);
-    p = &name[len - 1];
-
-    if (*p == '/') p--;  /* skip the trailing / */
-
-    while (p != name && *p != '/') p--;
-
-    size = (size_t)(p - name);
-    if (size) {
-        ret = TMALLOC(char, size + 1);
-        memcpy(ret, name, size);
-        ret[size] = '\0';
-    } else if (*p == '/')
-        return "/";
+    if(end)
+        ret = copy_substring(name, end);
     else
-        return "";
-    
-    return (const char *) ret;
-}
-#endif
+        ret = copy(".");
 
+    return ret;
+}
+
+#endif
