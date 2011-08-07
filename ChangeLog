@@ -1,3 +1,11 @@
+2011-08-07  Robert Larice
+ * configure.ac :
+   use -O1 when debugging, otherwise gcc ignores -Wuninitialized
+   this is temporary, and certainly will confuse users of gdb
+   obviously somewhere around gcc version 4.4 the necessity to have
+     enable optimization for detecting uninitialized variables was dropped.
+     stable Debian's gcc is a 4.4 and still needs -O1 ...
+
 2011-08-06  Dietmar Warning
  * bsim4v4/b4v4set.c: fix missing model parameter defaults
  * b4check.c, b4v4check.c, b4v5check.c: add "4.x" as a short form for version
