@@ -38,7 +38,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     char *steptype;
     char *name;
     char *line;
-    struct line deck;
+    card deck;
     int i;
     int j;
     int error;
@@ -47,10 +47,13 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     int which = -1;
 
     (void) sprintf(buf, ".%s", wl_flatten(args));
-    deck.li_next = deck.li_actual = NULL;
-    deck.li_error = NULL;
-    deck.li_linenum = 0;
-    deck.li_line = buf;
+
+    deck.nextcard      = NULL;
+    deck.actualLine    = NULL;
+    deck.error         = NULL;
+    deck.linenum       = 0;
+    deck.linenum_orig  = 0;
+    deck.line          = buf;
 
     current = (card *) &deck;
     line = current->line;

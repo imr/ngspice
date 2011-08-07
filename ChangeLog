@@ -1,4 +1,11 @@
 2011-08-07  Robert Larice
+ * src/frontend/shyu.c :
+   fix a `strict-aliasing' warning
+     warning: dereferencing pointer 'current' does break strict-aliasing rules
+   FIXME, this code is, and was broken.
+     in if_sens_run() error messages are generated, and then ignored.
+
+2011-08-07  Robert Larice
  * configure.ac :
    use -O1 when debugging, otherwise gcc ignores -Wuninitialized
    this is temporary, and certainly will confuse users of gdb
