@@ -71,6 +71,23 @@ Z	[0-9A-Za-z_]
 			 } while (!((last_ch == '*') && (ch == '/')));
 		        }
 
+"//"			{int ch;
+			 ECHO; /* a comment - repeat it */
+			 do {
+#ifdef __cplusplus
+			    ch = yyinput();
+#else
+			    ch = input();
+#endif
+                            if(ch == EOF) {
+                             mod_yyerror ("Unterminated comment");
+                             break;
+                            }
+
+			    fputc(ch, mod_yyout);
+			 } while (ch != '\n');
+		        }
+
 ARGS			{return TOK_ARGS;}
 INIT			{return TOK_INIT;}
 ANALYSIS		{return TOK_ANALYSIS;}

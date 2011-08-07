@@ -1,4 +1,10 @@
 2011-08-07  Robert Larice
+ * src/xspice/cmpp/mod_lex.l :
+  allow '//' comments in xspice code models
+  Bugs item #3387331 `Be careful when using "//"  in codemodel sources'
+     https://sourceforge.net/tracker/?func=detail&atid=423915&aid=3387331&group_id=38962
+
+2011-08-07  Robert Larice
  * src/frontend/shyu.c :
    fix a `strict-aliasing' warning
      warning: dereferencing pointer 'current' does break strict-aliasing rules
