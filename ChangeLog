@@ -1,3 +1,13 @@
+2011-08-04 Paolo Nenzi
+ * (new) examples/pss ,
+ * (new) examples/pss/colpitt_osc_pss.cir ,
+ * (new) examples/compl_cross_quad_osc_pss.cir ,
+ * (new) examples/hartley_osc_pss.cir ,
+ * (new) examples/ring_osc_pss.cir ,
+ * (new) examples/vackar_osc_pss.cir ,
+ * (new) examples/vdp_osc_pss.cir :
+   Moved example files for pss from Stefano Perticaroli from tests/ to the examples directory.
+
 2011-08-07  Robert Larice
  * src/xspice/cmpp/mod_lex.l :
   allow '//' comments in xspice code models
