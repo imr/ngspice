@@ -154,8 +154,8 @@ DCpss(CKTcircuit *ckt, int restart)
         if(ckt->CKTbreaks) FREE(ckt->CKTbreaks);
         ckt->CKTbreaks = TMALLOC(double, 2);
         if(ckt->CKTbreaks == NULL) return(E_NOMEM);
-        *(ckt->CKTbreaks)=0;
-        *(ckt->CKTbreaks+1)=ckt->CKTfinalTime;
+        ckt->CKTbreaks[0] = 0;
+        ckt->CKTbreaks[1] = ckt->CKTfinalTime;
         ckt->CKTbreakSize=2;
 
 #ifdef XSPICE
@@ -238,7 +238,7 @@ DCpss(CKTcircuit *ckt, int restart)
             for(node=ckt->CKTnodes->next; node; node=node->next) {
                 if (strstr(node->name, "#branch") || !strstr(node->name, "#"))
                     fprintf(stdout,"%-30s %15g\n", node->name,
-                            *(ckt->CKTrhsOld+node->number));
+                            ckt->CKTrhsOld[node->number] );
             }
             fprintf(stdout,"\n");
             fflush(stdout);
@@ -314,7 +314,7 @@ DCpss(CKTcircuit *ckt, int restart)
         if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN)) {
             size = SMPmatSize(ckt->CKTmatrix);
             for(i = 1; i<=size ; i++)
-                *(ckt->CKTrhsOp + i) = *(ckt->CKTrhsOld + i);
+                ckt->CKTrhsOp[i] = ckt->CKTrhsOld[i];
         }
 #endif
 
@@ -378,12 +378,12 @@ nextTime:
             ckt->CKTtimePoints = TREALLOC(double, ckt->CKTtimePoints, ckt->CKTtimeListSize);
             ckt->CKTsizeIncr = (int) ceil(1.4 * ckt->CKTsizeIncr);
         }
-        *(ckt->CKTtimePoints + ckt->CKTtimeIndex) = ckt->CKTtime;
+        ckt->CKTtimePoints[ckt->CKTtimeIndex] = ckt->CKTtime;
     }
     /* end LTRA code addition */
     error = CKTaccept(ckt);
     /* check if current breakpoint is outdated; if so, clear */
-    if (ckt->CKTtime > *(ckt->CKTbreaks)) CKTclrBreak(ckt);
+    if (ckt->CKTtime > ckt->CKTbreaks[0]) CKTclrBreak(ckt);
 
     /*
      * Breakpoint handling scheme:
@@ -473,9 +473,9 @@ nextTime:
 #endif
     if ( in_pss && pss_cycle_counter==1 ) {
         if(ckt->CKTtime >= ckt->CKTinitTime) CKTdump( ckt, ckt->CKTtime, ( ((PSSan*)ckt->CKTcurJob)->PSSplot_td) );
-        *(psstimes+pss_points_cycle)=ckt->CKTtime;
+        psstimes[pss_points_cycle] = ckt->CKTtime;
         for(count_1=1; count_1<msize+1; count_1++) {
-            *(pssvalues+count_1-1+pss_points_cycle*msize)= *(ckt->CKTrhsOld+count_1);
+            pssvalues[count_1-1 + pss_points_cycle*msize] = ckt->CKTrhsOld[count_1];
         }
         pss_points_cycle++;
     }
@@ -532,8 +532,8 @@ nextTime:
             /* print RHS on exiting from stab */
             printf("RHS on exiting from stabilization: ");
             for(count_3 = 1; count_3 <= msize; count_3++) {
-                *(RHS_copy_se+count_3-1)= *(ckt->CKTrhsOld+count_3);
-                printf("%-15g ", *(RHS_copy_se+count_3-1));
+                RHS_copy_se[count_3-1] = ckt->CKTrhsOld[count_3];
+                printf("%-15g ", RHS_copy_se[count_3-1]);
             }
             printf("\n");
         }
@@ -544,13 +544,13 @@ nextTime:
         /* error norms of RHS solution on every accepted nextTime if out of stabilization */
         err=0;
         for(count_4 = 1; count_4 <= msize; count_4++) {
-            double diff = *(ckt->CKTrhsOld+count_4) - *(RHS_copy_se+count_4-1);
+            double diff = ckt->CKTrhsOld[count_4] - RHS_copy_se[count_4-1];
             err += diff * diff;
             /* save max and min per node or branch on every estimated period */
-            if (*(RHS_max+count_4-1) < *(ckt->CKTrhsOld+count_4))
-                *(RHS_max+count_4-1) = *(ckt->CKTrhsOld+count_4);
-            if (*(RHS_min+count_4-1) > *(ckt->CKTrhsOld+count_4))
-                *(RHS_min+count_4-1) = *(ckt->CKTrhsOld+count_4);
+            if (RHS_max[count_4-1] < ckt->CKTrhsOld[count_4])
+                RHS_max[count_4-1] = ckt->CKTrhsOld[count_4];
+            if (RHS_min[count_4-1] > ckt->CKTrhsOld[count_4])
+                RHS_min[count_4-1] = ckt->CKTrhsOld[count_4];
         }
         err=sqrt(err);
         /*** frequency projection ***/
@@ -605,53 +605,51 @@ nextTime:
 
 
 
-                    if (fabs(*(RHS_max+i-1))>fabs(*(RHS_min+i-1))) {
-                        tv_01=fabs(*(RHS_max+i-1));
+                    if (fabs(RHS_max[i-1]) > fabs(RHS_min[i-1])) {
+                        tv_01 = fabs(RHS_max[i-1]);
                     } else {
-                        tv_01=fabs(*(RHS_min+i-1));
+                        tv_01 = fabs(RHS_min[i-1]);
                     }
-                    err_conv_ref += ( ( (*(RHS_max+i-1)) - (*(RHS_min+i-1)) )*1e-3+1e-6)*7*ckt->CKTsteady_coeff;
-                    if ( fabs( (*(RHS_max+i-1)) - (*(RHS_min+i-1)) ) > 10*1e-6) {
-                        *(S_diff+i-1)= ( (*(RHS_max+i-1)) - (*(RHS_min+i-1)) )/tv_01 - *(S_old+i-1);
-                        *(S_old+i-1)= ( (*(RHS_max+i-1)) - (*(RHS_min+i-1)) )/tv_01;
-                        if(fabs(*(S_old+i-1))>0.1) printf("Node voltage   %15s: RHS diff. %-15g || Conv. ref. %-15g || RHS max. %-15g || RHS min. %-15g || Snode %-15g\n",node->name,
-                                                              (*(ckt->CKTrhsOld+i)-*(RHS_copy_se+i-1)),
-                                                              ( ( (*(RHS_max+i-1)) - (*(RHS_min+i-1)) )*1e-3+1e-6)*7*ckt->CKTsteady_coeff,
-                                                              *(RHS_max+i-1),
-                                                              *(RHS_min+i-1),
-                                                              *(S_diff+i-1)
-                                                              //( (*(RHS_max+i-1)) - (*(RHS_min+i-1)) ) / ( (*(RHS_max+i-1)) + (*(RHS_min+i-1)) ) / 0.5
+                    err_conv_ref += ((RHS_max[i-1] - RHS_min[i-1]) * 1e-3 + 1e-6) * 7 * ckt->CKTsteady_coeff;
+                    if ( fabs(RHS_max[i-1] - RHS_min[i-1]) > 10*1e-6) {
+                        S_diff[i-1] = (RHS_max[i-1] - RHS_min[i-1]) / tv_01 - S_old[i-1];
+                        S_old[i-1]  = (RHS_max[i-1] - RHS_min[i-1]) / tv_01;
+                        if(fabs(S_old[i-1]) > 0.1) printf("Node voltage   %15s: RHS diff. %-15g || Conv. ref. %-15g || RHS max. %-15g || RHS min. %-15g || Snode %-15g\n", node->name,
+                                                              ckt->CKTrhsOld[i] - RHS_copy_se[i-1],
+                                                              ((RHS_max[i-1] - RHS_min[i-1]) * 1e-3 + 1e-6) * 7 * ckt->CKTsteady_coeff,
+                                                              RHS_max[i-1],
+                                                              RHS_min[i-1],
+                                                              S_diff[i-1] // (RHS_max[i-1] - RHS_min[i-1]) / (RHS_max[i-1] + RHS_min[i-1]) / 0.5
                                                              );
                         dynamic_test++; /* test on voltage dynamic consistence */
                     } else {
-                        *(S_old+i-1)=0;
-                        *(S_diff+i-1)=0;
+                        S_old[i-1]  = 0;
+                        S_diff[i-1] = 0;
                     }
                 } else {
 
 
 
-                    if (fabs(*(RHS_max+i-1))>fabs(*(RHS_min+i-1))) {
-                        tv_01=fabs(*(RHS_max+i-1));
+                    if (fabs(RHS_max[i-1]) > fabs(RHS_min[i-1])) {
+                        tv_01 = fabs(RHS_max[i-1]);
                     } else {
-                        tv_01=fabs(*(RHS_min+i-1));
+                        tv_01 = fabs(RHS_min[i-1]);
                     }
-                    err_conv_ref += ( ( (*(RHS_max+i-1)) - (*(RHS_min+i-1)) )*1e-3+1e-9)*7*ckt->CKTsteady_coeff;
-                    if ( fabs( (*(RHS_max+i-1)) - (*(RHS_min+i-1)) ) > 10*1e-9) {
-                        *(S_diff+i-1)= ( (*(RHS_max+i-1)) - (*(RHS_min+i-1)) )/tv_01 - *(S_old+i-1);
-                        *(S_old+i-1)= ( (*(RHS_max+i-1)) - (*(RHS_min+i-1)) )/tv_01;
-                        if(fabs(*(S_old+i-1))>0.1) printf("Branch current %15s: RHS diff. %-15g || Conv. ref. %-15g || RHS max. %-15g || RHS min. %-15g || Sbranch %-15g \n",node->name,
-                                                              (*(ckt->CKTrhsOld+i)-*(RHS_copy_se+i-1)),
-                                                              ( ( (*(RHS_max+i-1)) - (*(RHS_min+i-1)) )*1e-3+1e-9)*7*ckt->CKTsteady_coeff,
-                                                              *(RHS_max+i-1),
-                                                              *(RHS_min+i-1),
-                                                              *(S_diff+i-1)
-                                                              //( (*(RHS_max+i-1)) - (*(RHS_min+i-1)) ) / ( (*(RHS_max+i-1)) + (*(RHS_min+i-1)) ) / 0.5
+                    err_conv_ref += ((RHS_max[i-1] - RHS_min[i-1]) * 1e-3 + 1e-9) * 7 * ckt->CKTsteady_coeff;
+                    if ( fabs(RHS_max[i-1] - RHS_min[i-1]) > 10*1e-9) {
+                        S_diff[i-1] = (RHS_max[i-1] - RHS_min[i-1]) / tv_01 - S_old[i-1];
+                        S_old[i-1]  = (RHS_max[i-1] - RHS_min[i-1]) / tv_01;
+                        if(fabs(S_old[i-1]) > 0.1) printf("Branch current %15s: RHS diff. %-15g || Conv. ref. %-15g || RHS max. %-15g || RHS min. %-15g || Sbranch %-15g \n", node->name,
+                                                              ckt->CKTrhsOld[i] - RHS_copy_se[i-1],
+                                                              ((RHS_max[i-1] - RHS_min[i-1]) * 1e-3 + 1e-9) * 7 * ckt->CKTsteady_coeff,
+                                                              RHS_max[i-1],
+                                                              RHS_min[i-1],
+                                                              S_diff[i-1] // (RHS_max[i-1] - RHS_min[i-1]) / (RHS_max[i-1] + RHS_min[i-1]) / 0.5
                                                              );
                         dynamic_test++; /* test on current dynamic consistence */
                     } else {
-                        *(S_old+i-1)=0;
-                        *(S_diff+i-1)=0;
+                        S_old[i-1]  = 0;
+                        S_diff[i-1] = 0;
                     }
                 }
             }
@@ -757,20 +755,20 @@ nextTime:
             rest=shooting_cycle_counter%2;
             /* Reset actual RHS reference for next shooting evaluation */
             for(count_6 = 1; count_6 <= msize; count_6++) {
-                *(RHS_copy_se+count_6-1)= *(ckt->CKTrhsOld+count_6);
+                RHS_copy_se[count_6-1] = ckt->CKTrhsOld[count_6];
             }
 #ifdef STEPDEBUG
             printf("RHS on new shooting cycle: ");
             for(count_3 = 1; count_3 <= msize; count_3++) {
-                printf("%-15g ", *(RHS_copy_se+count_3-1));
+                printf("%-15g ", RHS_copy_se[count_3-1]);
             }
             printf("\n");
 #endif
             if (in_pss!=1) {
                 for(count_7 = 1; count_7 <= msize; count_7++) {
                     /* reset max and min per node or branch on every shooting cycle */
-                    *(RHS_max+count_7-1)=-1.0e+30;
-                    *(RHS_min+count_7-1)=1.0e+30;
+                    RHS_max[count_7-1] = -1.0e+30;
+                    RHS_min[count_7-1] =  1.0e+30;
                 }
             }
             printf("----------------\n\n");
@@ -801,20 +799,20 @@ nextTime:
                 /* ************************* */
                 for(i4 = 1; i4 <= msize; i4++) {
                     for(k1=0; k1<ckt->CKTpsspoints; k1++) {
-                        *(pssValues+k1)=*(pssvalues+k1*msize+i4-1);
+                        pssValues[k1] = pssvalues[k1*msize + (i4-1)];
                     }
                     CKTfour(ckt->CKTpsspoints, ckt->CKTharms, &thd, psstimes, pssValues,
                             ckt->CKTguessedFreq, pssfreqs, pssmags, pssphases, pssnmags,
                             pssnphases);
                     for(k1 = 1; k1 <= ckt->CKTharms; k1++) {
-                        *(pssResults+k1-1+(i4-1)*msize)=*(pssmags+k1-1);
+                        pssResults[(k1-1) + (i4-1)*msize] = pssmags[k1-1];
                     }
                 }
                 for(k1 = 1; k1 <= ckt->CKTharms; k1++) {
                     for(i4 = 1; i4 <= msize; i4++) {
-                        *(ckt->CKTrhsOld+i4)=*(pssResults+(k1-1)+(i4-1)*msize);
+                        ckt->CKTrhsOld[i4] =pssResults[(k1-1)+(i4-1)*msize] ;
                     }
-                    CKTdump( ckt, *(pssfreqs+(k1-1)), ( ((PSSan*)ckt->CKTcurJob)->PSSplot_fd) );
+                    CKTdump(ckt, pssfreqs[k1-1], ((PSSan*)ckt->CKTcurJob)->PSSplot_fd);
                 }
                 /* End plot in freq domain */
                 SPfrontEnd->OUTendPlot (((PSSan*)ckt->CKTcurJob)->PSSplot_fd);
@@ -892,9 +890,9 @@ resume:
 
 
     /* are we at a breakpoint, or indistinguishably close? */
-    //if ((ckt->CKTtime == *(ckt->CKTbreaks)) || (*(ckt->CKTbreaks) -
-    if ( (*(ckt->CKTbreaks)-(ckt->CKTtime) <= ckt->CKTdelmin) ) {
-        /*if ( AlmostEqualUlps( ckt->CKTtime, *(ckt->CKTbreaks), 100 ) || (*(ckt->CKTbreaks) -
+    //if ((ckt->CKTtime == ckt->CKTbreaks[0]) || (ckt->CKTbreaks[0] -
+    if ( ckt->CKTbreaks[0] - ckt->CKTtime <= ckt->CKTdelmin ) {
+        /*if ( AlmostEqualUlps( ckt->CKTtime, ckt->CKTbreaks[0], 100 ) || (ckt->CKTbreaks[0] -
          *    (ckt->CKTtime) <= ckt->CKTdelmin)) {*/
         /* first timepoint after a breakpoint - cut integration order */
         /* and limit timestep to .1 times minimum of time to next breakpoint,
@@ -902,11 +900,11 @@ resume:
          */
         ckt->CKTorder = 1;
         if( (ckt->CKTdelta >.1* ckt->CKTsaveDelta) ||
-                (ckt->CKTdelta > .1*(*(ckt->CKTbreaks+1)-*(ckt->CKTbreaks))) ) {
-            if(ckt->CKTsaveDelta < (*(ckt->CKTbreaks+1)-*(ckt->CKTbreaks)))  {
+                (ckt->CKTdelta > .1 * (ckt->CKTbreaks[1] - ckt->CKTbreaks[0])) ) {
+            if(ckt->CKTsaveDelta < (ckt->CKTbreaks[1] - ckt->CKTbreaks[0]))  {
 #ifdef STEPDEBUG
                 (void)printf("limited by pre-breakpoint delta (saveDelta: %1.10g, nxt_breakpt: %1.10g, curr_breakpt: %1.10g and CKTtime: %1.10g\n",
-                             ckt->CKTsaveDelta, *(ckt->CKTbreaks+1), *(ckt->CKTbreaks), ckt->CKTtime);
+                             ckt->CKTsaveDelta, ckt->CKTbreaks[1], ckt->CKTbreaks[0], ckt->CKTtime);
 #endif
             } else {
 #ifdef STEPDEBUG
@@ -916,11 +914,11 @@ resume:
             }
         }
 
-        if ( (*(ckt->CKTbreaks+1)-*(ckt->CKTbreaks)) == 0 ) {
+        if ( ckt->CKTbreaks[1] - ckt->CKTbreaks[0] == 0 ) {
             ckt->CKTdelta = ckt->CKTdelmin;
         } else {
             ckt->CKTdelta = MIN(ckt->CKTdelta, .1 * MIN(ckt->CKTsaveDelta,
-                                *(ckt->CKTbreaks+1)-*(ckt->CKTbreaks)));
+                                ckt->CKTbreaks[1] - ckt->CKTbreaks[0]));
         }
 
         if(firsttime) {
@@ -952,20 +950,20 @@ resume:
     /* Throw out any permanent breakpoint times <= current time */
     while(1) {
 #ifdef STEPDEBUG
-        printf("    brk_pt: %g    ckt_time: %g    ckt_min_break: %g\n",*(ckt->CKTbreaks), ckt->CKTtime, ckt->CKTminBreak);
+        printf("    brk_pt: %g    ckt_time: %g    ckt_min_break: %g\n", ckt->CKTbreaks[0], ckt->CKTtime, ckt->CKTminBreak);
 #endif
-        if(AlmostEqualUlps(*(ckt->CKTbreaks),ckt->CKTtime, 100) || *(ckt->CKTbreaks) <= (ckt->CKTtime + ckt->CKTminBreak)) {
-            printf("throwing out permanent breakpoint times <= current time (brk pt: %g)\n",*(ckt->CKTbreaks));
-            printf("ckt_time: %g    ckt_min_break: %g\n",ckt->CKTtime, ckt->CKTminBreak);
+        if(AlmostEqualUlps(ckt->CKTbreaks[0],ckt->CKTtime, 100) || ckt->CKTbreaks[0] <= (ckt->CKTtime + ckt->CKTminBreak)) {
+            printf("throwing out permanent breakpoint times <= current time (brk pt: %g)\n", ckt->CKTbreaks[0]);
+            printf("ckt_time: %g    ckt_min_break: %g\n", ckt->CKTtime, ckt->CKTminBreak);
             CKTclrBreak(ckt);
         } else
             break;
     }
     /* Force the breakpoint if appropriate */
-    if((ckt->CKTtime + ckt->CKTdelta) > *(ckt->CKTbreaks)) {
+    if(ckt->CKTtime + ckt->CKTdelta > ckt->CKTbreaks[0]) {
         ckt->CKTbreak = 1;
         ckt->CKTsaveDelta = ckt->CKTdelta;
-        ckt->CKTdelta = *(ckt->CKTbreaks) - ckt->CKTtime;
+        ckt->CKTdelta = ckt->CKTbreaks[0] - ckt->CKTtime;
     }
 
     /* gtri - end - wbk - Modify Breakpoint stuff */
@@ -974,10 +972,10 @@ resume:
         /* don't want to get below delmin for no reason */
         ckt->CKTdelta = MAX(ckt->CKTdelta, ckt->CKTdelmin*2.0);
     }
-    else if(ckt->CKTtime + ckt->CKTdelta >= *(ckt->CKTbreaks))
+    else if(ckt->CKTtime + ckt->CKTdelta >= ckt->CKTbreaks[0])
     {
         ckt->CKTsaveDelta = ckt->CKTdelta;
-        ckt->CKTdelta = *(ckt->CKTbreaks) - ckt->CKTtime;
+        ckt->CKTdelta = ckt->CKTbreaks[0] - ckt->CKTtime;
         /*(void)printf("delta cut to %g to hit breakpoint\n",ckt->CKTdelta);*/
         fflush(stdout);
         ckt->CKTbreak = 1; /* why? the current pt. is not a bkpt. */
@@ -1021,9 +1019,9 @@ resume:
 
             /* If any instances have forced an earlier */
             /* next analog time, cut the delta */
-            if(*(ckt->CKTbreaks) < g_mif_info.breakpoint.current)
-                if(*(ckt->CKTbreaks) > (ckt->CKTtime + ckt->CKTminBreak))
-                    g_mif_info.breakpoint.current = *(ckt->CKTbreaks);
+            if(ckt->CKTbreaks[0] < g_mif_info.breakpoint.current)
+                if(ckt->CKTbreaks[0] > ckt->CKTtime + ckt->CKTminBreak)
+                    g_mif_info.breakpoint.current = ckt->CKTbreaks[0];
             if(g_mif_info.breakpoint.current < (ckt->CKTtime + ckt->CKTdelta)) {
                 /* Breakpoint must be > last accepted timepoint */
                 /* and >= current event time */
@@ -1160,8 +1158,8 @@ resume:
         ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITPRED;
         if(firsttime) {
             for(i=0; i<ckt->CKTnumStates; i++) {
-                *(ckt->CKTstate2+i) = *(ckt->CKTstate1+i);
-                *(ckt->CKTstate3+i) = *(ckt->CKTstate1+i);
+                ckt->CKTstate2[i] = ckt->CKTstate1[i];
+                ckt->CKTstate3[i] = ckt->CKTstate1[i];
             }
         }
         /* txl, cpl addition */
