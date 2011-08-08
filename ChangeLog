@@ -1,4 +1,9 @@
 2011-08-08  Robert Larice
+ * src/xspice/cm/cmutil.c :
+   ngspice.h always must be the first included file
+     because of "man feature_test_macros(7)"
+
+2011-08-08  Robert Larice
  * src/spicelib/analysis/dcpss.c :
    rewrite pointer dereferences to array subscripts
 
