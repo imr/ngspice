@@ -257,14 +257,14 @@ com_psd(wordlist *wl)
     double  **tdvec;
     double  *freq, *win, *time, *ave;
     double  delta_t, span, noipower;
-    int     ngood, mm;
-    unsigned long fpts, i, j, tlen, jj, smooth, hsmooth;
+    int     mm;
+    unsigned long size, ngood, fpts, i, j, tlen, jj, smooth, hsmooth;
     char    *s;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *names, *first_name;
 
-    float *reald, *imagd;
-    int size, sign, isreal;
+    double *reald, *imagd;
+    int sign, isreal;
     double scaling, sum;
     int order;
     double scale, sigma;
@@ -403,7 +403,7 @@ com_psd(wordlist *wl)
         vec = ft_evaluate(names);
         names = names->pn_next;
         while (vec) {
-            if (vec->v_length != tlen) {
+            if (vec->v_length != (int)tlen) {
                 fprintf(cp_err, "Error: lengths of %s vectors don't match: %d, %d\n",
                         vec->v_name, vec->v_length, tlen);
                 vec = vec->v_link2;
@@ -428,7 +428,7 @@ com_psd(wordlist *wl)
             ngood++;
         }
     }
-    free_pnode(first_name);
+    free_pnode_o(first_name);
     if (!ngood) {
        return;
     }
@@ -440,7 +440,7 @@ com_psd(wordlist *wl)
     plot_cur->pl_name = copy("PSD");
     plot_cur->pl_date = copy(datestring( ));
 
-    freq = (double *) tmalloc(fpts * sizeof(double));
+    freq = TMALLOC(double, fpts);
     f = alloc(struct dvec);
     ZERO(f, struct dvec);
     f->v_name = copy("frequency");
@@ -474,14 +474,14 @@ com_psd(wordlist *wl)
     sign = 1;
     isreal = 1;
     
-    reald = TMALLOC(float, size);
-    imagd = TMALLOC(float, size);
+    reald = TMALLOC(double, size);
+    imagd = TMALLOC(double, size);
         
 //        scale = 0.66;
 
     for (i = 0; i<ngood; i++) {
         for (j = 0; j < tlen; j++){
-    	   reald[j] = (float)(tdvec[i][j]*win[j]);
+    	   reald[j] = (tdvec[i][j]*win[j]);
            imagd[j] = 0.;
         }            
         for (j = tlen; j < size; j++){
@@ -496,12 +496,12 @@ com_psd(wordlist *wl)
         scaling = size*0.3;
 
 /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
-        noipower = fdvec[i][0].cx_real = (double)reald[0]*(double)reald[0];
-        fdvec[i][fpts-1].cx_real = (double)reald[1]*(double)reald[1];
+        noipower = fdvec[i][0].cx_real = reald[0]*reald[0];
+        fdvec[i][fpts-1].cx_real = reald[1]*reald[1];
         noipower += fdvec[i][fpts-1].cx_real;    
         for (j=1; j<(fpts - 1); j++){
            jj = j<<1;
-           fdvec[i][j].cx_real = ((double)reald[jj]*(double)reald[jj] + (double)reald[jj + 1]*(double)reald[jj + 1]);
+           fdvec[i][j].cx_real = reald[jj]*reald[jj] + reald[jj + 1]*reald[jj + 1];
            fdvec[i][j].cx_imag = 0;
            noipower += fdvec[i][j].cx_real;
         }
@@ -517,22 +517,22 @@ com_psd(wordlist *wl)
            sum = 0.;
            for (jj = 0; jj < hsmooth + j; jj++)
               sum += fdvec[i][jj].cx_real;
-           sum /= (double)(hsmooth + j);        
-           reald[j] = (float)(sqrt(sum)/scaling);
+           sum /= (hsmooth + j);        
+           reald[j] = (sqrt(sum)/scaling);
         }
         for (j=hsmooth; j<fpts-hsmooth; j++){
            sum = 0.;
            for (jj = 0; jj < smooth; jj++)
               sum += fdvec[i][j-hsmooth+jj].cx_real;
-           sum /= (double)smooth;        
-           reald[j] = (float)(sqrt(sum)/scaling);
+           sum /= smooth;        
+           reald[j] = (sqrt(sum)/scaling);
         }
         for (j=fpts-hsmooth; j<fpts; j++){
            sum = 0.;
            for (jj = 0; jj < smooth; jj++)
               sum += fdvec[i][j-hsmooth+jj].cx_real;
-           sum /= (double)(fpts - j + hsmooth - 1);        
-           reald[j] = (float)(sqrt(sum)/scaling);
+           sum /= (fpts - j + hsmooth - 1);        
+           reald[j] = (sqrt(sum)/scaling);
         }        
         for (j=0; j<fpts; j++)
            fdvec[i][j].cx_real = reald[j];
@@ -626,7 +626,7 @@ static void fftext(double* x, double* y, long int n, long int nn, int dir)
 
    /* Scaling for forward transform */
    if (dir == 1) {
-      double scale = 1.0 / (double) nn;
+      double scale = 1.0 / nn;
       for (i=0;i<n;i++) {
          x[i] *= scale; /* don't consider zero padded values */
          y[i] *= scale;

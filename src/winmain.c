@@ -29,7 +29,7 @@
 #include "misc/misc_time.h" /* timediff */
 
 /* Constants */
-#define TBufSize 8192       // size of text buffer
+#define TBufSize 65536       // size of text buffer
 #define CR VK_RETURN        // Carriage Return
 #define LF 10               // Line Feed
 #define SE 0                // String termination

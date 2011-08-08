@@ -1,3 +1,8 @@
+2011-08-08  Holger Vogt
+ * src/frontend/com_fft.c, src/maths/fft/fftext.c, fftext.h,
+   fftlib.c, fftlib.h, matlib.c, matlib.h: convert float to double
+ * winmain.c: increase text output buffer
+
 2011-08-08  Robert Larice
  * src/xspice/cm/cmutil.c :
    ngspice.h always must be the first included file
