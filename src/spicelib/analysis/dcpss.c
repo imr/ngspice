@@ -55,7 +55,6 @@ DCpss(CKTcircuit *ckt, int restart)
     double olddelta;
     double delta;
     double new;
-    double *temp;
     double startdTime;
     double startsTime;
     double startlTime;
@@ -1037,12 +1036,13 @@ resume:
     }
     ckt->CKTdeltaOld[0]=ckt->CKTdelta;
 
-    temp = ckt->CKTstates[ckt->CKTmaxOrder+1];
+  { double *temp = ckt->CKTstates[ckt->CKTmaxOrder+1];
     for(i5=ckt->CKTmaxOrder; i5>=0; i5--)
     {
         ckt->CKTstates[i5+1] = ckt->CKTstates[i5];
     }
     ckt->CKTstates[0] = temp;
+  }
 
     /* 600 */
     while (1)
