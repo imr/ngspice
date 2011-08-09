@@ -100,13 +100,13 @@ DCpss(CKTcircuit *ckt, int restart)
     double  time_temp, gf_history[1024], rr_history[1024];
     int msize, in_stabilization = 1, in_pss = 0, shooting_cycle_counter = 0, k;
     long int nextTime_count=0, ntc_start_sh=0;
-    double *RHS_copy_se, err, err_0=1.0e30, time_temp_0, delta_t;
+    double *RHS_copy_se, err_0 = 1e30, time_temp_0, delta_t;
     double time_err_min_1=0, time_err_min_0=0, err_min_0=1.0e30, err_min_1, delta_0, delta_1;
     double flag_tu_2, times_fft[8192], err_1=0, err_max, time_err_max;
     int flag_tu_1=0, pss_cycle_counter=1, pss_points_cycle=0, i4, i5, k1,rest;
     int count_1, count_2, count_3, count_4, count_5, count_6, count_7, dynamic_test=0;
     double ntc_mv, ntc_vec[4], ntc_old, gf_last_0=1e+30, gf_last_1=313;
-    double err_last=0, f_proj, thd;
+    double err_last = 0, thd;
     double *psstimes, *pssvalues, *pssValues, tv_03, tv_04,
            *pssfreqs, *pssmags, *pssphases, *pssnmags, *pssnphases, *pssResults,
            *RHS_max, *RHS_min, err_conv_ref, *S_old, *S_diff;
@@ -539,6 +539,8 @@ nextTime:
 
         /* ELSE not in stabilization but in shooting */
     } else if ( !in_pss ) {
+
+        double err, f_proj;
 
         /* error norms of RHS solution on every accepted nextTime if out of stabilization */
         err=0;
