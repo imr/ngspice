@@ -107,7 +107,7 @@ DCpss(CKTcircuit *ckt, int restart)
     int count_1, count_2, count_3, count_4, count_5, count_6, count_7, dynamic_test=0;
     double ntc_mv, ntc_vec[4], ntc_old, gf_last_0=1e+30, gf_last_1=313;
     double err_last=0, f_proj, thd;
-    double *psstimes, *pssvalues, *pssValues, tv_01, tv_03, tv_04,
+    double *psstimes, *pssvalues, *pssValues, tv_03, tv_04,
            *pssfreqs, *pssmags, *pssphases, *pssnmags, *pssnphases, *pssResults,
            *RHS_max, *RHS_min, err_conv_ref, *S_old, *S_diff;
 
@@ -603,12 +603,8 @@ nextTime:
                 if (!strstr(node->name, "#")) {
 
 
+	            double tv_01= MAX(fabs(RHS_max[i-1]), fabs(RHS_min[i-1]));
 
-                    if (fabs(RHS_max[i-1]) > fabs(RHS_min[i-1])) {
-                        tv_01 = fabs(RHS_max[i-1]);
-                    } else {
-                        tv_01 = fabs(RHS_min[i-1]);
-                    }
                     err_conv_ref += ((RHS_max[i-1] - RHS_min[i-1]) * 1e-3 + 1e-6) * 7 * ckt->CKTsteady_coeff;
                     if ( fabs(RHS_max[i-1] - RHS_min[i-1]) > 10*1e-6) {
                         S_diff[i-1] = (RHS_max[i-1] - RHS_min[i-1]) / tv_01 - S_old[i-1];
@@ -628,12 +624,8 @@ nextTime:
                 } else {
 
 
+	            double tv_01= MAX(fabs(RHS_max[i-1]), fabs(RHS_min[i-1]));
 
-                    if (fabs(RHS_max[i-1]) > fabs(RHS_min[i-1])) {
-                        tv_01 = fabs(RHS_max[i-1]);
-                    } else {
-                        tv_01 = fabs(RHS_min[i-1]);
-                    }
                     err_conv_ref += ((RHS_max[i-1] - RHS_min[i-1]) * 1e-3 + 1e-9) * 7 * ckt->CKTsteady_coeff;
                     if ( fabs(RHS_max[i-1] - RHS_min[i-1]) > 10*1e-9) {
                         S_diff[i-1] = (RHS_max[i-1] - RHS_min[i-1]) / tv_01 - S_old[i-1];
