@@ -1942,6 +1942,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\include\fteoptdefs.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\include\ftedev.h"
 				>
 			</File>
@@ -5686,6 +5690,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\frontend\ftesopt.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\frontend\hcomp.c"
 				>
 			</File>
@@ -6307,6 +6315,10 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\interp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\inventory.c"
 				>
 			</File>
 			<File

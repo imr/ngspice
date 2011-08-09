@@ -560,7 +560,16 @@ struct comm spcp_coms[] = {
       { 040000, 040000, 040000, 040000 }, E_DEFHMASK, 0, LOTS,
       NULL,
       " [ vec ... ] : Convert plot into one with linear scale." } ,
-    { 0, NULL, FALSE, FALSE, { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
+    { "devhelp", com_devhelp, FALSE, FALSE,
+      { 040000, 0400000, 040000, 040000 }, E_DEFHMASK, 0, 5 ,
+      NULL,
+      "devspecs : show device information." },
+    { "inventory", com_inventory, TRUE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 0, 0,
+      NULL,
+      ": Print circuit inventory" },
+    { 0, NULL, FALSE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
       NULL }
 };
@@ -940,9 +949,16 @@ struct comm nutcp_coms[] = {
       { 040000, 040000, 040000, 040000 }, E_DEFHMASK, 0, LOTS,
       NULL,
       " [ vec ... ] : Convert plot into one with linear scale." } ,
-
-    { 0, NULL, FALSE, FALSE, { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
+    { "devhelp",NULL, FALSE, FALSE,
+      { 040, 040, 040, 040 }, E_DEFHMASK, 0, 5 ,
+      NULL,
+      " devspecs : show device information." },
+    { "inventory", NULL, TRUE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 0, 0,
+      NULL,
+      ": Print circuit inventory" } ,
+    { 0, NULL, FALSE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
       NULL }
-
 } ;

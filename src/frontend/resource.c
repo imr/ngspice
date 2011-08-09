@@ -395,6 +395,36 @@ printres(char *name)
 #endif
     } 
 
+    /* PN Now get all the frontend resource stuff */
+    if (ft_curckt) {
+        if (name && eq(name, "task")) {
+            vfree = v = ft_getstat(ft_curckt, NULL);
+        } else {
+            vfree = v = ft_getstat(ft_curckt, name);
+        }
+
+        if (name && v) {
+            fprintf(cp_out, "%s= ", v->va_name);
+            wl_print(cp_varwl(v), cp_out);
+            (void)putc('\n', cp_out);
+            yy = TRUE;
+        } else if (v) {
+            (void) putc('\n', cp_out);
+            while (v) {
+                wordlist *wlpr = cp_varwl(v);
+                fprintf(cp_out, "%s = ", v->va_name);
+                wl_print(wlpr, cp_out);
+                wl_free(wlpr);
+                (void) putc('\n', cp_out);
+                v = v->va_next;
+            }
+            yy = TRUE;
+        }
+    }
+
+    if(vfree)
+        free_struct_variable(vfree);
+
     /* Now get all the spice resource stuff. */
     if (ft_curckt && ft_curckt->ci_ckt) {
 

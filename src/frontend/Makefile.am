@@ -76,6 +76,7 @@ libfte_la_SOURCES =	\
 	control.h	\
 	control.c	\
 	ftehelp.h	\
+	ftesopt.c	\
 	hcomp.c		\
 	hcomp.h		\
 	init.c		\
@@ -129,6 +130,7 @@ libfte_la_SOURCES =	\
 	inpcom.h	\
 	interp.c	\
 	interp.h	\
+	inventory.c     \
 	linear.c	\
 	linear.h	\
 	measure.c	\

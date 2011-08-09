@@ -49,6 +49,15 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name
     if (instPtr == NULL)
 	return E_NOMEM;
 
+    /* PN: adding instance number for statistical purpose */
+    ckt->CKTstat->STATdevNum[type].instNum ++;
+    ckt->CKTstat->STATtotalDev ++;
+
+#if 0
+    printf("device: %s number %d\n",
+           DEVices[type]->DEVpublic.name, ckt->CKTstat->STATdevNum[type].instNum);
+#endif
+
     instPtr->GENname = name;
 
     instPtr->GENmodPtr = modPtr; 

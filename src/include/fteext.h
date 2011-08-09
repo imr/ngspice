@@ -123,6 +123,10 @@ extern void *cx_group_delay(void *, short int , int , int *, short int *, struct
 extern struct pnode *ft_substdef(const char *name, struct pnode *args);
 extern void ft_pnode(struct pnode *pn);
 
+/* DEVHELP*/
+extern void com_devhelp(wordlist *wl);
+extern void com_inventory(wordlist *wl);
+
 /* dotcards.c */
 
 extern bool ft_acctprint;
@@ -150,6 +154,9 @@ extern void externalerror(char *);
 /* evaluate.c */
 
 extern struct dvec *ft_evaluate(struct pnode *node);
+
+/* ftesopt.c */
+extern struct variable *ft_getstat(struct circ *, char *);
 
 /* ginterface.c 
 

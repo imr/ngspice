@@ -21,6 +21,10 @@ int printvals(dgen *dg, IFparm *p, int i);
 int printvals_old(dgen *dg, IFparm *p, int i);
 void old_show(wordlist *wl);
 
+/* DEVHELP*/
+void devhelp(wordlist *wl);
+void printdesc(IFparm p, bool csv);
+
 
 
 

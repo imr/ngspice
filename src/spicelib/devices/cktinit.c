@@ -74,7 +74,13 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
     sckt->CKTdefaultMosAS = 0;
     sckt->CKTsrcFact=1;
     sckt->CKTdiagGmin=0;
+    /* PN: additions for circuit inventory */
     sckt->CKTstat = TMALLOC(STATistics, 1);
+    if(sckt->CKTstat == NULL)
+        return(E_NOMEM);
+    sckt->CKTstat->STATdevNum = TMALLOC(STATdevList, DEVmaxnum);
+    if(sckt->CKTstat->STATdevNum == NULL)
+        return(E_NOMEM);
     sckt->CKTtroubleNode = 0;
     sckt->CKTtroubleElt = NULL;
     sckt->CKTtimePoints = NULL;

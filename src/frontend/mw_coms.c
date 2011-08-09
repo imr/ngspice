@@ -49,6 +49,9 @@ com_removecirc(wordlist *wl)
 	tfree(v);
     }
     
+    /* PN FTESTATS*/
+    tfree(ct->FTEstats);
+
     ct->ci_vars = NULL;
     caux=ft_circuits;
     namecircuit = strdup(ft_curckt->ci_name);

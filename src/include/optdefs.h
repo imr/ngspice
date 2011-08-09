@@ -9,6 +9,12 @@ Modified: 2000 AlansFixes
 
     /* structure used to describe the statistics to be collected */
 
+typedef struct sSTATdevList {
+    struct sSTATdevList *STATnextDev;
+    int modNum;
+    int instNum;
+} STATdevList;
+
 typedef struct {
 
     int STATnumIter;    /* number of total iterations performed */
@@ -19,6 +25,8 @@ typedef struct {
     int STATtimePts;    /* total number of timepoints */
     int STATaccepted;   /* number of timepoints accepted */
     int STATrejected;   /* number of timepoints rejected */
+
+    int STATtotalDev;   /* PN: number of total devices in the netlist */
 
     double STATtotAnalTime;     /* total time for all analysis */
     double STATloadTime;        /* total time spent in device loading */
@@ -40,7 +48,7 @@ typedef struct {
     double STATacLoadTime;      /* time spent in AC device loading */
     double STATacCombTime;      /* time spent in AC combining */
     double STATacSyncTime;      /* time spent in transient sync'ing */
-
+    STATdevList *STATdevNum;    /* PN: Number of instances and models for each device */
 } STATistics;
 
 #define OPT_GMIN 1
@@ -129,5 +137,7 @@ typedef struct {
 #define OPT_ENH_RSHUNT              108
 /* gtri - end   - wbk - add new options */
 #endif
+
+#define OPT_TOTALDEV 200 /* Total devices in the netlist */
 
 #endif /*OPT*/

@@ -15,6 +15,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define IPOINTMIN   20  /* When we start plotting incremental plots. */
 #include "fteparse.h"
 #include "fteinp.h"
+#include "fteoptdefs.h"
 
 struct save_info {
     char	*name;
@@ -48,6 +49,8 @@ struct circ {
     JOB *ci_specOpt;   /* the special options anal. for command line jobs */
     JOB *ci_curOpt;    /* the most recent options anal. for the circuit */
     char *ci_last_an;   /* name of last analysis run */
+
+    FTESTATistics *FTEstats; /* Statistics for the front end */
 } ;
 
 

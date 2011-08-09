@@ -39,6 +39,7 @@ noinst_HEADERS =	\
 	ftedbgra.h	\
 	ftedebug.h	\
 	ftedefs.h	\
+	fteoptdefs.h	\
 	ftedev.h	\
 	fteext.h	\
 	fteinp.h	\

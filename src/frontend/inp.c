@@ -26,6 +26,7 @@ $Id$
 #include "breakp2.h"
 #include "../misc/util.h" /* ngdirname() */
 #include "../misc/mktemp.h"
+#include "../misc/misc_time.h"
 #include "subckt.h"
 #include "spiceif.h"
 #include "error.h" /* controlled_exit() */
@@ -323,9 +324,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
    FILE *lastin, *lastout, *lasterr;
    double temperature_value;
 
+   double startTime, endTime;
+
    /* read in the deck from a file */
    char *filename_dup = ( filename == NULL ) ? strdup(".") : strdup(filename);
+
+   startTime = seconds();
    inp_readall(fp, &deck, 0, ngdirname(filename_dup), comfile);
+   endTime = seconds();
    tfree(filename_dup);
 
    /* if nothing came back from inp_readall, just close fp and return to caller */
@@ -585,6 +591,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
       if (ft_curckt) {
          ft_curckt->ci_param = NULL;
          ft_curckt->ci_meas  = NULL;
+         /* PN add here stats*/
+         ft_curckt->FTEstats->FTESTATnetLoadTime = endTime - startTime;
       }
 
       for (dd = deck; dd; dd = dd->li_next) {
@@ -711,6 +719,8 @@ inp_dodeck(
     bool noparse, ii;
     int print_listing;
 
+    double startTime;
+
     /* First throw away any old error messages there might be and fix
        the case of the lines.  */
     for (dd = deck; dd; dd = dd->li_next) {
@@ -729,6 +739,9 @@ inp_dodeck(
                     NULL);
         }
         ft_curckt = ct = alloc(struct circ);
+
+        /*PN FTESTATS*/
+        ft_curckt->FTEstats = TMALLOC(FTESTATistics, 1);
     }
     noparse = cp_getvar("noparse", CP_BOOL, NULL);
 
@@ -785,18 +798,23 @@ inp_dodeck(
      * if_inpdeck which takes the deck and returns a
      * a pointer to the circuit ckt.
      *---------------------------------------------------*/
-    if (!noparse)
+    if (!noparse) {
+        startTime = seconds();
         ckt = if_inpdeck(deck, &tab);
-      else
+        ft_curckt->FTEstats->FTESTATnetParseTime = seconds() - startTime;
+    } else
         ckt = NULL;
 
     out_init();
     
+    ft_curckt->FTEstats->FTESTATdeckNumLines = 0;
     /*----------------------------------------------------
      * Now run through the deck and look to see if there are
      * errors on any line.
      *---------------------------------------------------*/
     for (dd = deck; dd; dd = dd->li_next) {
+
+        ft_curckt->FTEstats->FTESTATdeckNumLines += 1;
       
 #ifdef TRACE
       /* SDB debug statement */

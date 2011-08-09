@@ -27,6 +27,183 @@ static void all_show(wordlist *wl, int mode);
 static void all_show_old(wordlist *wl, int mode);
 
 /*
+ *      devhelp: lists available devices and information on parameters
+ *              devhelp                 : shows all available devices
+ *              devhelp devname         : shows all parameters of that model/instance
+ *              devhelp devname parname : shows parameter meaning
+ *              Options: -csv (comma separated value for generating docs)
+ *
+ */
+
+void com_devhelp(wordlist *wl)
+{
+    /* Just a simple driver now */
+    devhelp(wl);
+}
+
+void devhelp(wordlist *wl)
+{
+    int i, k = 0;
+    int devindex = -1, devInstParNo = 0 , devModParNo = 0;
+    bool found = FALSE;
+    bool csv = FALSE;
+    wordlist *wlist;
+    IFparm *plist;
+
+    /*First copy the base pointer */
+    wlist = wl;
+
+    /* If there are no arguments output the list of available devices */
+    if (!wlist) {
+        out_init();
+        out_printf("\nDevices available in the simulator\n\n");
+        for (k = 0; k < ft_sim->numDevices; k++) {
+            if (ft_sim->devices[k])
+                out_printf("%-*s:\t%s\n",
+                           DEV_WIDTH, ft_sim->devices[k]->name,
+                           ft_sim->devices[k]->description);
+        }
+        out_send("\n");
+        return;
+    }
+
+    /* The first argument must be the csv option or a device name */
+    if (wlist && wlist->wl_word && eq(wlist->wl_word, "-csv")) {
+        csv = TRUE;
+        if (wlist->wl_next)
+            wlist = wlist->wl_next;
+        else
+            return;
+    }
+
+    /* This argument, if exists, must be the device name */
+    if (wlist && wlist->wl_word) {
+        while (k < ft_sim->numDevices && !found) {
+            if (ft_sim->devices[k])
+                if (strcasecmp(ft_sim->devices[k]->name, wlist->wl_word) == 0) {
+                    devindex = k;
+                    if (ft_sim->devices[devindex]->numInstanceParms)
+                        devInstParNo = *(ft_sim->devices[devindex]->numInstanceParms);
+                    else
+                        devInstParNo = 0;
+
+                    if (ft_sim->devices[devindex]->numModelParms)
+                        devModParNo = *(ft_sim->devices[devindex]->numModelParms);
+                    else
+                        devModParNo = 0;
+
+                    wlist = wlist->wl_next;
+                    found = TRUE;
+                }
+            k++;
+        }
+
+        if (!found) {
+            fprintf(cp_out, "Error: Device %s not found\n", wlist->wl_word);
+            return;
+        }
+    }
+
+/* At this point, found is TRUE and we have found the device.
+ * Now we have to scan the model and instance parameters to print
+ * the string
+ */
+    found = FALSE;
+    if (wlist && wlist->wl_word) {
+        plist = ft_sim->devices[devindex]->modelParms;
+        for (i = 0; i < devModParNo; i++) { /* Scan model parameters first */
+            if (strcasecmp(plist[i].keyword, wlist->wl_word) == 0) {
+                found = TRUE;
+                out_init();
+                printdesc(plist[i], csv);
+                out_send("\n");
+            }
+        }
+
+        if (!found) {
+            plist = ft_sim->devices[devindex]->instanceParms;
+            for (i = 0; i < devInstParNo; i++) { /* Scan instance parameters then */
+                if (strcasecmp(plist[i].keyword, wlist->wl_word) == 0) {
+                    found = TRUE;
+                    out_init();
+                    printdesc(plist[i], csv);
+                    out_send("\n");
+                }
+            }
+        }
+
+        if (!found)
+            fprintf(cp_out, "Error: Parameter %s not found\n", wlist->wl_word);
+        return;
+
+    }
+
+/* No arguments - we want all the parameters*/
+    out_init();
+    out_printf("%s - %s\n\n", ft_sim->devices[devindex]->name, ft_sim->devices[devindex]->description);
+    out_printf("Model Parameters\n");
+    if (csv)
+        out_printf("id#, Name, Dir, Description\n");
+    else
+        out_printf("%5s\t %-10s\t Dir\t Description\n", "id#", "Name");
+
+    plist = ft_sim->devices[devindex]->modelParms;
+    for (i = 0; i < devModParNo; i++)
+        printdesc(plist[i], csv);
+    out_printf("\n");
+    out_printf("Instance Parameters\n");
+    if (csv)
+        out_printf("id#, Name, Dir, Description\n");
+    else
+        out_printf("%5s\t %-10s\t Dir\t Description\n", "id#", "Name");
+
+    plist = ft_sim->devices[devindex]->instanceParms;
+    for (i = 0; i < devInstParNo; i++)
+        printdesc(plist[i], csv);
+
+    out_send("\n");
+}
+
+
+
+/*
+ * Pretty print parameter descriptions
+ * This function prints description of device parameters
+ */
+void printdesc(IFparm p, bool csv)
+{
+    char sep;
+    int spacer1, spacer2;
+
+    /* First we indentify the separator */
+    if (csv) {
+        sep = ',';
+        spacer1 = 0;
+        spacer2 = 0;
+    } else {
+        sep = '\t';
+        spacer1 = 5;
+        spacer2 = 10;
+    }
+
+    out_printf("%*d%c %-*s%c ", spacer1, p.id, sep, spacer2, p.keyword, sep);
+
+    if (p.dataType & IF_SET)
+        if (p.dataType & IF_ASK)
+            out_printf("inout%c ", sep);
+        else
+            out_printf("in%c ", sep);
+    else
+        out_printf("out%c ", sep);
+
+    if (p.description)
+        out_printf("%s\n", p.description);
+    else
+        out_printf("n.a.\n");
+}
+
+
+/*
  *      show: list device operating point info
  *              show
  *              show devs : params
