@@ -1,3 +1,25 @@
+2011-08-09 Paolo Nenzi
+ * (new) src/include/fteoptdefs.h
+ * (new) src/frontend/ftesopt.c
+ * (new) src/frontend/inventory.c
+ * src/frontend/commands.c
+ * src/frontend/device.c
+ * src/frontend/device.h
+ * src/frontend/inp.c
+ * src/frontend/mw_coms.c
+ * src/frontend/resource.c
+ * src/frontend/ftedefs.h
+ * src/frontend/fteext.h
+ * src/frontend/optdefs.h
+ * src/spicelib/devices/cktcrte.c
+ * src/spicelib/devices/cktinit.c 
+   added "frontend statistics" to the acct command: 
+   netlist loading and parsing time and number of
+   lines. Added "devhelp" command to show available
+   devices and describe device parameters. Added
+   "inventory command" to print the number of
+   istances of each device.
+
 2011-08-09  Robert Larice
  * src/maths/misc/equality.c :
    swallow some warnings, and use <stdint.h>
