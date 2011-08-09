@@ -18,5 +18,5 @@ re 	3 6 	4.65k
 vee 	6 0 	dc -10 pwl 0 0 1e-9 -10 
 
 *.tran 30n 12u
-.pss 4e6 500e-6 3 1024 11 uic 50 5e-3
+.pss 4e6 500e-6 3 1024 11 50 5e-3 uic
 

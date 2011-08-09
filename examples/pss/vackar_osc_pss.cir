@@ -18,4 +18,4 @@ l1 	4 1 	6.2u
 
 *.tran 30n 12u
 *.plot tran v(4)
-.pss 4e6 10e-6 4 1024 10 uic 50 5e-3
+.pss 4e6 10e-6 4 1024 10 50 5e-3 uic
