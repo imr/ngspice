@@ -98,7 +98,7 @@ DCpss(CKTcircuit *ckt, int restart)
 #endif
     /* new variables - to be reorganized */
     double  time_temp, gf_history[1024], rr_history[1024];
-    int msize, cont_1=1, in_stabilization=1, in_pss=0,shooting_cycle_counter=0, k;
+    int msize, in_stabilization = 1, in_pss = 0, shooting_cycle_counter = 0, k;
     long int nextTime_count=0, ntc_start_sh=0;
     double *RHS_copy_se, err, err_0=1.0e30, time_temp_0, delta_t;
     double time_err_min_1=0, time_err_min_0=0, err_min_0=1.0e30, err_min_1, delta_0, delta_1;
@@ -513,7 +513,6 @@ nextTime:
                 ckt->CKTguessedFreq=1.0/delta_t/10; /*** FREQUENCY INITIAL  GUESS ***/
                 printf("Frequency initial guess changed to %g from stabilization transient analysis.\n",ckt->CKTguessedFreq);
             }
-            cont_1=1;
             time_temp=ckt->CKTtime;
             ckt->CKTfinalTime=time_temp+2/(ckt->CKTguessedFreq);
             /* set the first requested breakpoint */
