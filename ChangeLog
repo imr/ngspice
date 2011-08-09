@@ -1,3 +1,19 @@
+2011-08-09  Robert Larice
+ * src/main.c
+ * src/frontend/plotting/graf.c
+ * src/frontend/plotting/grid.c
+ * src/frontend/plotting/x11.c
+ * src/frontend/wdisp/windisp.c
+ * src/spicelib/analysis/acan.c
+ * src/spicelib/analysis/dcop.c
+ * src/spicelib/analysis/dctran.c
+ * src/spicelib/analysis/dctrcurv.c
+ * src/spicelib/analysis/distoan.c
+ * src/spicelib/analysis/pzan.c
+ * src/spicelib/parser/inpeval.c
+ * src/spicelib/parser/inpptree.c
+   rewrite (double)literal  -->  floating-point-literal
+
 2011-08-08  Holger Vogt
  * src/frontend/com_fft.c, src/maths/fft/fftext.c, fftext.h,
    fftlib.c, fftlib.h, matlib.c, matlib.h: convert float to double

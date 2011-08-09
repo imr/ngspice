@@ -297,7 +297,7 @@ gr_point(struct dvec *dv,
         break;
       case PLOT_COMB:
         DatatoScreen(currentgraph,
-                (double) 0, currentgraph->datawindow.ymin,
+                0.0, currentgraph->datawindow.ymin,
                 &dummy, &ymin);
         DevDrawLine(tox, ymin, tox, toy);
         break;

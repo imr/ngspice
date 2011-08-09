@@ -467,7 +467,7 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
     CONSTroot2 = sqrt(2.);
     CONSTvt0 = CONSTboltz * (27 /* deg c */ + CONSTCtoK ) / CHARGE;
     CONSTKoverQ = CONSTboltz / CHARGE;
-    CONSTe = exp((double)1.0);
+    CONSTe = exp(1.0);
     return(OK);
 }
 

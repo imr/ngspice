@@ -415,7 +415,7 @@ resume:
 
         if(g_ipc.enabled && firstTime) {
             ipc_send_dcop_prefix();
-            CKTdump(ckt,(double) 0,plot);
+            CKTdump(ckt, 0.0, plot);
             ipc_send_dcop_suffix();
         }
 

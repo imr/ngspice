@@ -256,7 +256,7 @@ DCtran(CKTcircuit *ckt,
         /* Send the operating point results for Mspice compatibility */
         if(g_ipc.enabled) {
             ipc_send_dcop_prefix();
-            CKTdump(ckt,(double)0,(((TRANan*)ckt->CKTcurJob)->TRANplot));
+            CKTdump(ckt, 0.0, ((TRANan*)ckt->CKTcurJob)->TRANplot);
             ipc_send_dcop_suffix();
         }
 

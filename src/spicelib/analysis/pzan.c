@@ -49,7 +49,7 @@ PZan(CKTcircuit *ckt, int reset)
 	    ckt->CKTcurJob, "Distortion Operating Point",
 	    NULL, IF_REAL, numNames, nameList, IF_REAL, &plot);
 	if(error) return(error);
-	CKTdump(ckt,(double)0,plot);
+	CKTdump(ckt, 0.0, plot);
 	SPfrontEnd->OUTendPlot (plot);
     }
 

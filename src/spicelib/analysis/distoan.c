@@ -111,7 +111,7 @@ time1 = SPfrontEnd->IFseconds();
 		ckt->CKTcurJob, "Distortion Operating Point",
 		NULL, IF_REAL, numNames, nameList, IF_REAL, &acPlot);
 	    if(error) return(error);
-	    CKTdump(ckt,(double)0,acPlot);
+	    CKTdump(ckt, 0.0, acPlot);
 	    SPfrontEnd->OUTendPlot (acPlot);
 	    acPlot = NULL;
 	}

@@ -852,7 +852,7 @@ drawpolargrid(GRAPH *graph)
     DevDrawArc(graph->grid.xaxis.circular.center,
             graph->grid.yaxis.circular.center,
             graph->grid.xaxis.circular.radius,
-            (double) 0.0, 2*M_PI);
+            0.0, 2*M_PI);
     SetLinestyle(1);
 
     /* Now draw the circles. */
@@ -1251,7 +1251,7 @@ drawsmithgrid(GRAPH *graph)
     } else {
 	zheight = gr_radius;
     }
-    for (ki[k] = kr[k] = (double) 0; k > 0; k--) {
+    for (ki[k] = kr[k] = 0.0; k > 0; k--) {
         (void) sprintf(plab, "%g", rnorm[k]);
         (void) sprintf(nlab, "-%g", rnorm[k]);
         arcset(graph, rr[k], kr[k], ir[k], ki[k], pixperunit,

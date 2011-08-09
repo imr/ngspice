@@ -174,15 +174,15 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
     case PT_TEMPERATURE:
     case PT_FREQUENCY:
     case PT_CONSTANT:
-	newp = mkcon((double) 0);
+	newp = mkcon(0.0);
 	break;
 
     case PT_VAR:
 	/* Is this the variable we're differentiating wrt? */
 	if (p->valueIndex == varnum)
-	    newp = mkcon((double) 1);
+	    newp = mkcon(1.0);
 	else
-	    newp = mkcon((double) 0);
+	    newp = mkcon(0.0);
 	break;
 
     case PT_PLUS:
@@ -210,7 +210,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 						p->right), mkb(PT_TIMES,
 							       p->left,
 							       arg2)),
-		   mkb(PT_POWER, p->right, mkcon((double) 2)));
+		   mkb(PT_POWER, p->right, mkcon(2.0)));
 	break;
 
     case PT_POWER:
@@ -279,76 +279,60 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 	    break;
 
 	case PTF_SGN:
-	    arg1 = mkcon((double) 0.0);
+	    arg1 = mkcon(0.0);
 	    break;
 
 	case PTF_ACOS:		/* - 1 / sqrt(1 - u^2) */
-	    arg1 = mkb(PT_DIVIDE, mkcon((double) -1), mkf(PTF_SQRT,
+	    arg1 = mkb(PT_DIVIDE, mkcon(-1.0), mkf(PTF_SQRT,
 							  mkb(PT_MINUS,
-							      mkcon(
-								    (double)
-								    1),
+							      mkcon(1.0),
 							      mkb(PT_POWER,
 								  p->left,
-								  mkcon(
-									(double)
-									2)))));
+								  mkcon(2.0)))));
 	    break;
 
 	case PTF_ACOSH:	/* 1 / sqrt(u^2 - 1) */
-	    arg1 = mkb(PT_DIVIDE, mkcon((double) 1), mkf(PTF_SQRT,
+	    arg1 = mkb(PT_DIVIDE, mkcon(1.0), mkf(PTF_SQRT,
 							 mkb(PT_MINUS,
 							     mkb(PT_POWER,
 								 p->left,
-								 mkcon(
-								       (double)
-								       2)),
-							     mkcon((double)
-								   1))));
+								 mkcon(2.0)),
+							     mkcon(1.0))));
 
 	    break;
 
 	case PTF_ASIN:		/* 1 / sqrt(1 - u^2) */
-	    arg1 = mkb(PT_DIVIDE, mkcon((double) 1), mkf(PTF_SQRT,
+	    arg1 = mkb(PT_DIVIDE, mkcon(1.0), mkf(PTF_SQRT,
 							 mkb(PT_MINUS,
-							     mkcon((double)
-								   1),
+							     mkcon(1.0),
 							     mkb(PT_POWER,
 								 p->left,
-								 mkcon(
-								       (double)
-								       2)))));
+								 mkcon(2.0)))));
 	    break;
 
 	case PTF_ASINH:	/* 1 / sqrt(u^2 + 1) */
-	    arg1 = mkb(PT_DIVIDE, mkcon((double) 1), mkf(PTF_SQRT,
+	    arg1 = mkb(PT_DIVIDE, mkcon(1.0), mkf(PTF_SQRT,
 							 mkb(PT_PLUS,
 							     mkb(PT_POWER,
 								 p->left,
-								 mkcon(
-								       (double)
-								       2)),
-							     mkcon((double)
-								   1))));
+								 mkcon(2.0)),
+							     mkcon(1.0))));
 	    break;
 
 	case PTF_ATAN:		/* 1 / (1 + u^2) */
-	    arg1 = mkb(PT_DIVIDE, mkcon((double) 1), mkb(PT_PLUS,
+	    arg1 = mkb(PT_DIVIDE, mkcon(1.0), mkb(PT_PLUS,
 							 mkb(PT_POWER,
 							     p->left,
-							     mkcon((double)
-								   2)),
-							 mkcon((double)
-							       1)));
+							     mkcon(2.0)),
+							 mkcon(1.0)));
 	    break;
 
 	case PTF_ATANH:	/* 1 / (1 - u^2) */
-	    arg1 = mkb(PT_DIVIDE, mkcon((double) 1), mkb(PT_MINUS,
-							 mkcon((double) 1),
+	    arg1 = mkb(PT_DIVIDE, mkcon(1.0), mkb(PT_MINUS,
+							 mkcon(1.0),
 							 mkb(PT_POWER,
 							     p->left,
-							     mkcon((double)
-								   2))));
+							     mkcon(2.0))));
 	    break;
 
 	case PTF_COS:		/* - sin(u) */
@@ -365,11 +349,11 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 	    break;
 
 	case PTF_LN:		/* 1 / u */
-	    arg1 = mkb(PT_DIVIDE, mkcon((double) 1), p->left);
+	    arg1 = mkb(PT_DIVIDE, mkcon(1.0), p->left);
 	    break;
 
 	case PTF_LOG:		/* log(e) / u */
-	    arg1 = mkb(PT_DIVIDE, mkcon((double) M_LOG10E), p->left);
+	    arg1 = mkb(PT_DIVIDE, mkcon(M_LOG10E), p->left);
 	    break;
 
 	case PTF_SIN:		/* cos(u) */
@@ -381,26 +365,24 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 	    break;
 
 	case PTF_SQRT:		/* 1 / (2 * sqrt(u)) */
-	    arg1 = mkb(PT_DIVIDE, mkcon((double) 1), mkb(PT_TIMES,
-							 mkcon((double) 2),
+	    arg1 = mkb(PT_DIVIDE, mkcon(1.0), mkb(PT_TIMES,
+							 mkcon(2.0),
 							 mkf(PTF_SQRT,
 							     p->left)));
 	    break;
 
 	case PTF_TAN:		/* 1 / (cos(u) ^ 2) */
-	    arg1 = mkb(PT_DIVIDE, mkcon((double) 1), mkb(PT_POWER,
+	    arg1 = mkb(PT_DIVIDE, mkcon(1.0), mkb(PT_POWER,
 							 mkf(PTF_COS,
 							     p->left),
-							 mkcon((double)
-							       2)));
+							 mkcon(2.0)));
 	    break;
 
 	case PTF_TANH:		/* 1 / (cosh(u) ^ 2) */
-	    arg1 = mkb(PT_DIVIDE, mkcon((double) 1), mkb(PT_POWER,
+	    arg1 = mkb(PT_DIVIDE, mkcon(1.0), mkb(PT_POWER,
 							 mkf(PTF_COSH,
 							     p->left),
-							 mkcon((double)
-							       2)));
+							 mkcon(2.0)));
 	    break;
 
 	case PTF_USTEP:
@@ -410,7 +392,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 	case PTF_LT0:
 	case PTF_GE0:
 	case PTF_LE0:
-	    arg1 = mkcon((double) 0.0);
+	    arg1 = mkcon(0.0);
 	    break;
 
 	case PTF_URAMP:
@@ -424,11 +406,11 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
                        mkf(PTF_USTEP,
                            mkb(PT_MINUS,
                                p->left,
-                               mkcon((double) 1.0))));
+                               mkcon(1.0))));
 	    break;
 	    
         case PTF_UMINUS:    /* - 1 ; like a constant (was 0 !) */
-            arg1 = mkcon((double) - 1.0);
+            arg1 = mkcon(-1.0);
             break;
 
         case PTF_PWL: /* PWL(var, x1, y1, x2, y2, ... a const list) */
@@ -437,7 +419,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
             break;
 
         case PTF_PWL_DERIVATIVE: /* d/dvar PWL(var, ...) */
-            arg1 = mkcon((double) 0.0);
+            arg1 = mkcon(0.0);
             break;
 
     case PTF_MIN:

@@ -28,11 +28,11 @@ double INPevaluate(char **line, int *error, int gobble)
 	 * errors in v(1,2) exp */
         *error = INPgetUTok(line, &token, 0);
         if (*error)
-        return ((double) 0.0);
+        return (0.0);
     } else if (gobble == 2) {
         *error = INPgetU2Tok(line, &token, 0);
         if (*error)
-            return ((double) 0.0);
+            return (0.0);
     } else {
         token = *line;
         *error = 0;
@@ -176,7 +176,7 @@ double INPevaluate(char **line, int *error, int gobble)
                             *line = here;
                         }
                         return (sign * mantis *
-                            pow((double) 10,
+                            pow(10.0,
                             (double) (expo1 + expsgn * expo2)));
                     }
                 } else if ((*(here + 1) == 'I') || (*(here + 1) == 'i')) {
@@ -189,7 +189,7 @@ double INPevaluate(char **line, int *error, int gobble)
                             *line = here;
                         }
                         return (sign * mantis *
-                            pow((double) 10,
+                            pow(10.0,
                             (double) (expo1 + expsgn * expo2)));
                     }
                 }
@@ -207,5 +207,5 @@ double INPevaluate(char **line, int *error, int gobble)
         *line = here;
     }
     return (sign * mantis *
-        pow((double) 10, (double) (expo1 + expsgn * expo2)));
+        pow(10.0, (double) (expo1 + expsgn * expo2)));
 }

@@ -144,7 +144,7 @@ DCop(CKTcircuit *ckt, int notused)
     if(g_ipc.enabled)
         ipc_send_dcop_prefix();
 
-    CKTdump(ckt,(double)0,plot);
+    CKTdump(ckt, 0.0, plot);
 
     if(g_ipc.enabled)
         ipc_send_dcop_suffix();
@@ -152,7 +152,7 @@ DCop(CKTcircuit *ckt, int notused)
 /* gtri - end - wbk */
 #else
     if(converged == 0) {
-	   CKTdump(ckt,(double)0,plot);
+	   CKTdump(ckt, 0.0, plot);
          } else {
            fprintf(stderr,"error: circuit reload failed.\n");
          }

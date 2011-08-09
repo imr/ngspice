@@ -135,7 +135,7 @@ ACan(CKTcircuit *ckt, int restart)
         tfree(nameList);
 
         ipc_send_dcop_prefix();
-        CKTdump(ckt,(double)0,acPlot);
+        CKTdump(ckt, 0.0, acPlot);
         ipc_send_dcop_suffix();
 
         SPfrontEnd->OUTendPlot (acPlot);
@@ -156,7 +156,7 @@ ACan(CKTcircuit *ckt, int restart)
 		ckt->CKTcurJob, "AC Operating Point",
 		NULL, IF_REAL, numNames, nameList, IF_REAL, &plot);
 	    if(error) return(error);
-	    CKTdump(ckt,(double)0,plot);
+	    CKTdump(ckt, 0.0, plot);
 	    SPfrontEnd->OUTendPlot (plot);
 	    plot = NULL;
 	}
