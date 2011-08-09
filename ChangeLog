@@ -1,4 +1,12 @@
 2011-08-09  Robert Larice
+ * src/spicelib/analysis/dcpss.c :
+   a series of four cleanup patches
+    remove unsed variable `cont_1'
+    reduce scope of variable `tv_01', and use `MAX'
+    reduce scope of variables `fproj' and `err'
+    reduce scope of variable `temp'
+
+2011-08-09  Robert Larice
  * src/main.c
  * src/frontend/plotting/graf.c
  * src/frontend/plotting/grid.c
