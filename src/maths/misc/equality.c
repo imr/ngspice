@@ -2,17 +2,15 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 **********/
 
-#include <assert.h>
 #include "ngspice.h"
+#include <assert.h>
+#include <stdint.h>
 
 #ifdef _MSC_VER
-typedef __int64 long64;
-#else
-//extern long long llabs(long long);
-typedef long long long64;
+#define llabs(x) ((x) < 0 ? -(x) : (x))
 #endif
 
-#define Abs(x) ((x) < 0 ? -(x) : (x))
+#define int64_min (((int64_t) -1) << 63)
 
 /* From Bruce Dawson, Comparing floating point numbers,
    http://www.cygnus-software.com/papers/comparingfloats/Comparing%20floating%20point%20numbers.htm
@@ -24,39 +22,32 @@ typedef long long long64;
 */
 bool AlmostEqualUlps(double A, double B, int maxUlps)
 {
-    long64 aInt, bInt, intDiff;
+    int64_t aInt, bInt, intDiff;
 
     if (A == B)
         return TRUE;
 
     /* If not - the entire method can not work */
-    assert(sizeof(double) == sizeof(long64)); 
+    assert(sizeof(double) == sizeof(int64_t));
 
     /* Make sure maxUlps is non-negative and small enough that the */
     /* default NAN won't compare as equal to anything. */
     assert(maxUlps > 0 && maxUlps < 4 * 1024 * 1024);
-    aInt = *(long64*)&A;
+
+    aInt = *(int64_t*)&A;
     /* Make aInt lexicographically ordered as a twos-complement int */
     if (aInt < 0)
-#ifdef _MSC_VER
-        aInt = 0x8000000000000000 - aInt;
-#else
-        aInt = 0x8000000000000000LL - aInt;
-#endif
-    bInt = *(long64*)&B;
+        aInt = int64_min - aInt;
+
+    bInt = *(int64_t*)&B;
     /* Make bInt lexicographically ordered as a twos-complement int */
     if (bInt < 0)
-#ifdef _MSC_VER
-        bInt = 0x8000000000000000 - bInt;
-#else
-        bInt = 0x8000000000000000LL - bInt;
-#endif
-#ifdef _MSC_VER
-    intDiff = Abs(aInt - bInt);
-#else
+        bInt = int64_min - bInt;
+
     intDiff = llabs(aInt - bInt);
-#endif
-/*    printf("A:%e B:%e aInt:%d bInt:%d  diff:%d\n", A, B, aInt, bInt, intDiff); */
+
+/* printf("A:%e B:%e aInt:%d bInt:%d  diff:%d\n", A, B, aInt, bInt, intDiff); */
+
     if (intDiff <= maxUlps)
         return TRUE;
     return FALSE;
