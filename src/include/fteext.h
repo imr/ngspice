@@ -147,7 +147,8 @@ extern void fperror(char *mess, int code);
 extern void ft_sperror(int code, char *mess);
 extern char ErrorMessage[];
 extern void internalerror(char *); 
-extern void externalerror(char *); 
+extern void externalerror(char *);
+extern bool ft_pipemode;
 
 
 

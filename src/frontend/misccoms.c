@@ -144,18 +144,23 @@ com_bug(wordlist *wl)
 {
     NG_IGNORE(wl);
 
-    fprintf(cp_out, "Send mail to the address ngspice-devel@lists.sourceforge.net\n");
+    fprintf(cp_out, "Please use the ngspice bug tracker at:\n");
+    fprintf(cp_out, "http://sourceforge.net/tracker/?group_id=38962&atid=423915\n");
     return;
 }
 
 #endif /* SYSTEM_MAIL */
 
+/* printout upon startup or 'version' command. options to version are -s (short)
+   or -f (full). 'version' with options may also be used in ngspice pipe mode. */ 
 void
 com_version(wordlist *wl)
 {
     char *s;
 
     if (!wl) {
+    /* no printout in pipe mode (-p) */
+    if (ft_pipemode) return;
 	fprintf(cp_out, "******\n");
 
 	fprintf(cp_out, "** %s-%s : %s\n", ft_sim->simulator,
@@ -204,6 +209,18 @@ com_version(wordlist *wl)
             fprintf(cp_out,"** XSPICE extensions included\n");
 #endif
             fprintf(cp_out,"** Relevant compilation options (refer to user's manual):\n");
+#ifdef NGDEBUG
+            fprintf(cp_out,"** Debugging option (-g) enabled\n");
+#endif
+#ifdef ADMS
+            fprintf(cp_out,"** Adms interface enabled\n");
+#endif
+#ifdef USE_OMP
+            fprintf(cp_out,"** OpenMP multithreading for BSIM3, BSIM4 enabled\n");
+#endif
+#if defined(X_DISPLAY_MISSING) && !defined(HAS_WINDOWS)
+            fprintf(cp_out,"** X11 interface not compiled into ngspice\n");
+#endif               
 #ifdef NOBYPASS
             fprintf(cp_out,"** --enable-nobypass\n");
 #endif   

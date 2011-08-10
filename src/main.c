@@ -94,6 +94,7 @@
 /* Main options */
 static bool ft_servermode = FALSE;
 bool ft_batchmode = FALSE;
+bool ft_pipemode = FALSE;
 bool rflag = FALSE; /* has rawfile */
 
 /* Frontend options */
@@ -946,6 +947,7 @@ main(int argc, char **argv)
             case 'p':       /* Run in pipe mode */
               iflag = TRUE;
               istty = TRUE;
+              ft_pipemode = TRUE;
               break;
 
             case 'q':       /* Command completion */

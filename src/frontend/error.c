@@ -26,11 +26,18 @@ void winmessage(char* new_msg);
 void 
 controlled_exit(int status)
 {
+  if (status != 0)
 #ifdef HAS_WINDOWS
-  winmessage("Fatal error in NGSPICE");
+    winmessage("Fatal error in NGSPICE");
 #else
-  fprintf(stderr, "Fatal error in NGSPICE - Return");
-  getc(stdin);
+  {
+    if (!ft_pipemode) {
+      fprintf(stderr, " Fatal error in NGSPICE - Press Return to exit\n");       
+      getc(stdin);
+    }
+    else
+    fprintf(stderr, " Fatal error in NGSPICE - Exit\n");      
+  }
 #endif
   exit(status);
 }
@@ -73,7 +80,7 @@ void
 internalerror(char *message)
 {
 
-    fprintf(stderr, "internal error:  %s\n", message);
+    fprintf(stderr, "ERROR: (internal)  %s\n", message);
 
 }
 
@@ -82,6 +89,6 @@ void
 externalerror(char *message)
 {
 
-    fprintf(stderr, "external error:  %s\n", message);
+    fprintf(stderr, "ERROR: (external)  %s\n", message);
 
 }

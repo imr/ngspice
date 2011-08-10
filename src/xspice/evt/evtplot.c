@@ -98,7 +98,7 @@ struct dvec *EVTfindvec(
 
   double *anal_point_vec;
   double *value_vec;
-  double value;
+  double value = 0;
 
   struct dvec *d;
   struct dvec *scale;

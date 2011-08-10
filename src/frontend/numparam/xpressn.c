@@ -16,6 +16,7 @@
 #include "dvec.h"
 #include "../frontend/variable.h"
 #include "compatmode.h"
+#include "error.h"
 
 /* random numbers in /maths/misc/randnumb.c */
 extern double gauss0(void);
@@ -1394,8 +1395,8 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 
         char buf[17+1];
         if(snprintf(buf, sizeof(buf), "% 17.9le", u) != 17) {
-            fprintf(stderr, "internal ERROR in %s(%d)\n", __FUNCTION__, __LINE__);
-            exit(1);
+            fprintf(stderr, "ERROR: xpressn.c, %s(%d)\n", __FUNCTION__, __LINE__);
+            controlled_exit(1);
         }
         scopys(qstr_p, buf);
     }

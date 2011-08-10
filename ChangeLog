@@ -1,3 +1,9 @@
+2011-08-10 Holger Vogt
+ * evtplot.c: initilize 'value' to 0
+ * xpressn.c: improved error message
+ * misccoms.c, main.c, error.c, fteext.h: flag ft_pipemode set
+   in main.c, used to optimize or suppress output messages
+   
 2011-08-09 Holger Vogt
  * inp2dot.c: align spaces and braces
  * inp2dot.c, examples/pss/*.cir: uic for pss to end of line
