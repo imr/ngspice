@@ -16,7 +16,7 @@
 #include "dvec.h"
 #include "../frontend/variable.h"
 #include "compatmode.h"
-#include "error.h"
+#include "../frontend/error.h"
 
 /* random numbers in /maths/misc/randnumb.c */
 extern double gauss0(void);

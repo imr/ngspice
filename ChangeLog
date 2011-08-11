@@ -1,3 +1,6 @@
+2011-08-11 Holger Vogt
+ * xpressn.c: correct #include path for error.h
+ 
 2011-08-10 Holger Vogt
  * evtplot.c: initilize 'value' to 0
  * xpressn.c: improved error message
