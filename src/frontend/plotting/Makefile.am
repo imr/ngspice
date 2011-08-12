@@ -14,7 +14,6 @@ libplotting_la_SOURCES = \
 	graphdb.c	\
 	graphdb.h	\
 	grid.c		\
-	grid.h		\
 	pvec.c		\
 	pvec.h		\
 	plot5.c		\

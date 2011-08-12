@@ -2018,10 +2018,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\plotting\grid.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\include\hash.h"
 				>
 			</File>

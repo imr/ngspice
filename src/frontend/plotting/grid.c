@@ -20,6 +20,8 @@ $Id$
 #define RAD_TO_DEG	(180.0 / M_PI)
 #define LABEL_CHARS	20
 
+typedef enum { x_axis, y_axis } Axis;
+
 
 /* static declarations */
 static double * lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis);
@@ -36,6 +38,10 @@ static void arcset(GRAPH *graph, double rad, double prevrad, double irad, double
 static double cliparc(double cx, double cy, double rad, double start, double end, int iclipx, 
 		      int iclipy, int icliprad, int flag);
 
+static void drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double lmt, 
+		 double hmt, bool onedec, int mult, double mag, int digits, Axis axis);
+static void drawloggrid(GRAPH *graph, char *units, int hmt, int lmt, int decsp, int subs, 
+		 int pp, Axis axis);
 
 /* note: scaleunits is static and never changed in this file
     ie, can get rid of it */
