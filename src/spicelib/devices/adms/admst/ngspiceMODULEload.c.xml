@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.9  2011-01-13 17:05:46  dwarning
+  Revision 1.10  2011-08-12 15:18:41  rlar
+  pull two -adms3 fixes into -adms
+
+  Revision 1.9  2011/01/13 17:05:46  dwarning
   set version parameter to 2.3.0
 
   Revision 1.8  2007/07/05 09:44:11  r29173
@@ -219,9 +222,7 @@ if(ChargeComputationNeeded)\\
 }\\
 (here->JDVAL_ ## Sp ## _ ## Pp)+=v;
 
-int $(module)load(inModel,ckt)
-     GENmodel *inModel;
-     register CKTcircuit *ckt;
+int $(module)load(GENmodel *inModel, CKTcircuit *ckt)
      /* actually load the current value into the 
       * sparse matrix previously provided 
       */
@@ -265,7 +266,7 @@ int $(module)load(inModel,ckt)
 <admst:value-of select="attribute[name='ngspicename']/value"/>
 <admst:variable name="module" select="%s"/>
 
-  <admst:text format="void $(module)debug (CKTcircuit *ckt, $(module)model *model, $(module)instance *here)\n"/>
+  <admst:text format="static void $(module)debug (CKTcircuit *ckt, $(module)model *model, $(module)instance *here)\n"/>
   <admst:text format="{\n"/>
   <admst:for-each select="node[grounded='no']">
     <admst:value-of select="name"/>

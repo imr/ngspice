@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.14  2011-01-13 17:05:46  dwarning
+  Revision 1.15  2011-08-12 15:18:41  rlar
+  pull two -adms3 fixes into -adms
+
+  Revision 1.14  2011/01/13 17:05:46  dwarning
   set version parameter to 2.3.0
 
   Revision 1.13  2007/05/11 07:19:58  r29173
@@ -283,6 +286,8 @@
 int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *model, $(module)instance *here)
      /* guess topology */
 {
+  NG_IGNOREABLE(matrix);
+  NG_IGNOREABLE(ckt);
 <admst:template match="evaluate.localvariables">
   <admst:choose>
     <admst:when test="[datatypename='assignment']">

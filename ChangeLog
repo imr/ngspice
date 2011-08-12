@@ -1,4 +1,21 @@
 2011-08-12  Robert Larice
+ * src/spicelib/devices/adms/admst/ngspiceMODULEask.c.xml ,
+ * src/spicelib/devices/adms/admst/ngspiceMODULEguesstopology.c.xml ,
+ * src/spicelib/devices/adms/admst/ngspiceMODULEload.c.xml ,
+ * src/spicelib/devices/adms/admst/ngspiceMODULEmask.c.xml ,
+ * src/spicelib/devices/adms/admst/ngspiceMODULEpar.c.xml ,
+ * src/spicelib/devices/adms/admst/ngspiceMODULEpzld.c.xml ,
+ * src/spicelib/devices/adms/admst/ngspiceMODULEtemp.c.xml ,
+ * src/spicelib/devices/adms/admst/ngspiceMakefile.am.xml :
+   pull two -adms3 fixes into -adms
+     2011-07-25
+       convert K&R function definitions to ansi style
+       and declare a debug function `static'
+     2011-07-26
+       swallow unsed variable warnings in adms generated code,
+       upgrade dependencies
+
+2011-08-12  Robert Larice
  * src/frontend/plotting/Makefile.am ,
  * src/frontend/plotting/grid.c ,
  * src/frontend/plotting/grid.h ,

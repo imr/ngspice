@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.6  2011-01-13 17:05:46  dwarning
+  Revision 1.7  2011-08-12 15:18:41  rlar
+  pull two -adms3 fixes into -adms
+
+  Revision 1.6  2011/01/13 17:05:46  dwarning
   set version parameter to 2.3.0
 
   Revision 1.5  2007/04/24 08:59:09  r29173
@@ -64,6 +67,9 @@
 int $(module)par(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
   $(module)instance *myinstance = ($(module)instance*)inst;
+  NG_IGNOREABLE(value);
+  NG_IGNOREABLE(select);
+  NG_IGNOREABLE(myinstance);
   switch (param) {
   <admst:for-each select="variable[parametertype='instance' and input='yes']">
     <admst:value-of select="name"/>

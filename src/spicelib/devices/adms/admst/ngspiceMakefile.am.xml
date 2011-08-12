@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.21  2011-07-23 07:57:07  dwarning
+  Revision 1.22  2011-08-12 15:18:41  rlar
+  pull two -adms3 fixes into -adms
+
+  Revision 1.21  2011/07/23 07:57:07  dwarning
   lower case substitution in xml module
 
   Revision 1.20  2011/05/20 16:15:04  rlar
@@ -101,6 +104,31 @@
 ## Process this file with automake to produce Makefile.in
 
 ADMSXMLINTERFACE=\$(srcdir)/../admst
+$(module).c: \\
+	\$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEinit.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEinit.h.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEext.h.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEdefs.h.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEask.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEmask.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEpar.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEmpar.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEload.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEacld.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEpzld.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEtemp.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEtrunc.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEsetup.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEdel.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEmdel.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEdest.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEnoise.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
+
 $(module).c: admsva/$(module).va
 	admsXml -I\$(srcdir) -I\$(srcdir)/admsva \$(srcdir)/admsva/$(module).va \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
