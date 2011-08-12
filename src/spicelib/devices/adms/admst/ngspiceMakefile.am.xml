@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.22  2011-08-12 15:18:41  rlar
+  Revision 1.23  2011-08-12 19:30:56  rlar
+  adms, fix parallel execution when using make -j
+
+  Revision 1.22  2011/08/12 15:18:41  rlar
   pull two -adms3 fixes into -adms
 
   Revision 1.21  2011/07/23 07:57:07  dwarning
@@ -104,7 +107,57 @@
 ## Process this file with automake to produce Makefile.in
 
 ADMSXMLINTERFACE=\$(srcdir)/../admst
-$(module).c: \\
+
+noinst_LTLIBRARIES = lib$(module).la
+
+BUILT_SOURCES = \\
+	$(module).c	\\
+	$(module).hxx	\\
+	$(module)acld.c	\\
+	$(module)ask.c	\\
+	$(module)defs.h	\\
+	$(module)del.c	\\
+	$(module)dest.c	\\
+	$(module)ext.h	\\
+	$(module)guesstopology.c	\\
+	$(module)init.c	\\
+	$(module)init.h	\\
+	$(module)itf.h	\\
+	$(module)load.c	\\
+	$(module)mask.c	\\
+	$(module)mdel.c	\\
+	$(module)mpar.c	\\
+	$(module)par.c	\\
+	$(module)pzld.c	\\
+	$(module)setup.c	\\
+	$(module)temp.c	\\
+	$(module)trunc.c
+
+lib$(module)_la_SOURCES = 	\\
+	\$(BUILT_SOURCES)
+
+CLEANFILES = \\
+	\$(BUILT_SOURCES)	\\
+	$(module)noise.c	\\
+	.$(module).va.adms \\
+	.adms.implicit.xml \\
+	.interface.xml \\
+	*.h \\
+	*.xml
+
+#TODO (not implemented) \\
+	$(module)conv.c	\\
+	$(module)getic.c
+
+AM_CPPFLAGS = -I\$(top_srcdir)/src/include
+
+MAINTAINERCLEANFILES = Makefile.in
+
+\%.c \%.hxx \\
+	\%acld.c \%ask.c \%defs.h \%del.c \%dest.c \%ext.h \%guesstopology.c \\
+	\%init.c \%init.h \%itf.h \%load.c \%mask.c \%mdel.c \%mpar.c \%par.c \\
+	\%pzld.c \%setup.c \%temp.c \%trunc.c \\
+ : \$(srcdir)/admsva/\\%.va \\
 	\$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULEinit.c.xml \\
@@ -128,9 +181,7 @@ $(module).c: \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
-
-$(module).c: admsva/$(module).va
-	admsXml -I\$(srcdir) -I\$(srcdir)/admsva \$(srcdir)/admsva/$(module).va \\
+	admsXml -I\$(srcdir) -I\$(srcdir)/admsva \$&lt; \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEinit.c.xml \\
@@ -154,92 +205,6 @@ $(module).c: admsva/$(module).va
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
-
-noinst_LTLIBRARIES = lib$(module).la
-
-lib$(module)_la_SOURCES = 	\\
-	$(module).c		\\
-	$(module).hxx		\\
-	$(module)acld.c	\\
-	$(module)ask.c	\\
-	$(module)defs.h	\\
-	$(module)del.c	\\
-	$(module)dest.c	\\
-	$(module)ext.h	\\
-	$(module)guesstopology.c	\\
-	$(module)init.c	\\
-	$(module)init.h	\\
-	$(module)itf.h	\\
-	$(module)load.c	\\
-	$(module)mask.c	\\
-	$(module)mdel.c	\\
-	$(module)mpar.c	\\
-	$(module)par.c	\\
-	$(module)pzld.c	\\
-	$(module)setup.c	\\
-	$(module)temp.c	\\
-	$(module)trunc.c
-
-BUILT_SOURCES = 	\\
-	$(module).c		\\
-	$(module).hxx		\\
-	$(module)acld.c	\\
-	$(module)ask.c	\\
-	$(module)defs.h	\\
-	$(module)del.c	\\
-	$(module)dest.c	\\
-	$(module)ext.h	\\
-	$(module)guesstopology.c	\\
-	$(module)init.c	\\
-	$(module)init.h	\\
-	$(module)itf.h	\\
-	$(module)load.c	\\
-	$(module)mask.c	\\
-	$(module)mdel.c	\\
-	$(module)mpar.c	\\
-	$(module)par.c	\\
-	$(module)pzld.c	\\
-	$(module)setup.c	\\
-	$(module)temp.c \\
-	$(module)trunc.c
-
-CLEANFILES = 		\\
-	$(module).c		\\
-	$(module).hxx		\\
-	$(module).c.bak	\\
-	$(module)acld.c	\\
-	$(module)ask.c	\\
-	$(module)defs.h	\\
-	$(module)del.c	\\
-	$(module)dest.c	\\
-	$(module)ext.h	\\
-	$(module)guesstopology.c	\\
-	$(module)init.c	\\
-	$(module)init.h	\\
-	$(module)itf.h	\\
-	$(module)load.c	\\
-	$(module)mask.c	\\
-	$(module)mdel.c	\\
-	$(module)mpar.c	\\
-	$(module)par.c	\\
-	$(module)pzld.c	\\
-	$(module)setup.c	\\
-	$(module)temp.c	\\
-	$(module)noise.c	\\
-	$(module)trunc.c \\
-	.$(module).va.adms \\
-	.adms.implicit.xml \\
-	.interface.xml \\
-	*.h \\
-	*.xml
-
-#TODO (not implemented) \\
-	$(module)conv.c	\\
-	$(module)getic.c
-
-AM_CPPFLAGS = -I\$(top_srcdir)/src/include
-
-MAINTAINERCLEANFILES = Makefile.in
 
 </admst:template>
 

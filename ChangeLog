@@ -1,4 +1,9 @@
 2011-08-12  Robert Larice
+ * src/spicelib/devices/adms/admst/ngspice.xml ,
+ * src/spicelib/devices/adms/admst/ngspiceMakefile.am.xml :
+   adms, fix parallel execution when using make -j
+
+2011-08-12  Robert Larice
  * src/spicelib/devices/adms/admst/ngspiceMODULEask.c.xml ,
  * src/spicelib/devices/adms/admst/ngspiceMODULEguesstopology.c.xml ,
  * src/spicelib/devices/adms/admst/ngspiceMODULEload.c.xml ,
