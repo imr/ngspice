@@ -1,3 +1,8 @@
+2011-08-13  Robert Larice
+ * src/frontend/parse-bison.y ,
+ * src/spicelib/parser/inpptree-parser.y :
+   bison files, swallow warnings
+
 2011-08-12  Robert Larice
  * src/spicelib/devices/adms/admst/ngspice.xml ,
  * src/spicelib/devices/adms/admst/ngspiceMakefile.am.xml :

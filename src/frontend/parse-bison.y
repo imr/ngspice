@@ -101,6 +101,7 @@
 %initial-action      /* initialize yylval */
 {
     $$.num = 0.0;
+    yylloc.start = yylloc.stop = NULL;
 };
 
 %%

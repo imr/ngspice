@@ -53,6 +53,11 @@
 %left   '^'      /* exponentiation */
 %left   NEG '!'  /* negation--unary minus, and boolean not */
 
+%initial-action      /* initialize yylval */
+{
+    $$.num = 0.0;
+};
+
 %%
 
 expression:
