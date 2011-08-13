@@ -1,4 +1,11 @@
 2011-08-13  Robert Larice
+ * src/frontend/parse-bison.c ,
+ * src/frontend/parse-bison.h ,
+ * src/spicelib/parser/inpptree-parser.c ,
+ * src/spicelib/parser/inpptree-parser.h :
+   update bison generated files
+
+2011-08-13  Robert Larice
  * src/frontend/parse-bison.y ,
  * src/spicelib/parser/inpptree-parser.y :
    bison files, swallow warnings
