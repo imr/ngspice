@@ -27,7 +27,6 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
   int numVars = 0;
   TWOnode ***nodeArray = NULL;
   TWOnode *pNode;
-  TWOelem *pElem;
   TWOmaterial *info;
   double data[50];
   double ex, ey, refPsi = 0.0, eGap, dGap;
@@ -36,7 +35,6 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
   double jcy, jdy, jny, jpy, jty;
   double *xScale = pDevice->xScale;
   double *yScale = pDevice->yScale;
-  BOOLEAN foundElem;
 
   if (output->OUTPnumVars == -1) {
     /* First pass. Need to count number of variables in output. */
@@ -109,12 +107,12 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
   /* store the nodes in this work array and print out later */
   for (xIndex = 1; xIndex < pDevice->numXNodes; xIndex++) {
     for (yIndex = 1; yIndex < pDevice->numYNodes; yIndex++) {
-      pElem = pDevice->elemArray[xIndex][yIndex];
+      TWOelem *pElem = pDevice->elemArray[xIndex][yIndex];
       if (pElem != NIL(TWOelem)) {
 	if (refPsi == 0.0 && pElem->matlInfo->type == SEMICON) {
 	  refPsi = pElem->matlInfo->refPsi;
 	}
-	for (index = 0; index <= 3; index++) {
+	for (index = 0; index < 4; index++) {
 	  if (pElem->evalNodes[index]) {
 	    pNode = pElem->pNodes[index];
 	    nodeArray[pNode->nodeI][pNode->nodeJ] = pNode;
@@ -214,13 +212,12 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
     for (yIndex = 1; yIndex <= pDevice->numYNodes; yIndex++) {
       pNode = nodeArray[xIndex][yIndex];
       if (pNode != NIL(TWOnode)) {
+	TWOelem *pElem = NULL;
 	/* Find the element to which this node belongs. */
-	foundElem = FALSE;
-	for (index = 0; (index <= 3) && (!foundElem); index++) {
+	for (index = 0; index < 4; index++) {
 	  pElem = pNode->pElems[index];
-	  if (pElem != NIL(TWOelem) && pElem->evalNodes[(index + 2) % 4]) {
-	    foundElem = TRUE;
-	  }
+	  if (pElem != NIL(TWOelem) && pElem->evalNodes[(index + 2) % 4])
+	      break;
 	}
 	nodeFields(pElem, pNode, &ex, &ey);
 	nodeCurrents(pElem, pNode, &mun, &mup,
