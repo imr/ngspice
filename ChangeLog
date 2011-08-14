@@ -1,3 +1,7 @@
+2011-08-14  Robert Larice
+ * src/frontend/postsc.c :
+   postsc.c, swallow warnings
+
 2011-08-14  Paolo Nenzi
  * src/frontend/devices.c :
    devhelp now prints header when user asks for a single

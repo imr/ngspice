@@ -384,7 +384,7 @@ PS_SelectColor(int colorid)           /* should be replaced by PS_DefineColor */
 {
   char colorN[30]="", colorstring[30]="";
   char rgb[30], s_red[30]="0x", s_green[30]="0x", s_blue[30]="0x";
-  long red=0, green=0, blue=0, scale=1;
+  int  red=0, green=0, blue=0, scale=1;
   int i;
   typedef struct { int red, green, blue;} COLOR;
   /* duplicated colors from src/frontend/plotting/x11.c in rgb-style */
@@ -423,12 +423,12 @@ PS_SelectColor(int colorid)           /* should be replaced by PS_DefineColor */
 
     if ((strlen(s_blue) == strlen(s_red) && strlen(s_green) == strlen(s_red))
 	       && (strlen(s_blue) > 2) && (strlen(s_blue) < 7)){
-      sscanf(s_red,"%lx",&red);
-      sscanf(s_green,"%lx",&green);
-      sscanf(s_blue,"%lx",&blue);
+      sscanf(s_red,"%x",&red);
+      sscanf(s_green,"%x",&green);
+      sscanf(s_blue,"%x",&blue);
       scale= (1 << (strlen(s_blue) - 2) * 4) - 1;
       sprintf(colorstring,"%1.3f %1.3f %1.3f",
-	     (float) red/scale, (float) green/scale, (float) blue/scale);
+	     (double) red/scale, (double) green/scale, (double) blue/scale);
       strcpy(pscolor, colorstring);
     }
   }
