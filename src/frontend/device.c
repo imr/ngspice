@@ -115,6 +115,11 @@ void devhelp(wordlist *wl)
             if (strcasecmp(plist[i].keyword, wlist->wl_word) == 0) {
                 found = TRUE;
                 out_init();
+                out_printf("Model Parameters\n");
+                if (csv)
+                    out_printf("id#, Name, Dir, Description\n");
+                    else
+                        out_printf("%5s\t %-10s\t Dir\t Description\n", "id#", "Name");
                 printdesc(plist[i], csv);
                 out_send("\n");
             }
@@ -126,6 +131,11 @@ void devhelp(wordlist *wl)
                 if (strcasecmp(plist[i].keyword, wlist->wl_word) == 0) {
                     found = TRUE;
                     out_init();
+                    out_printf("Instance Parameters\n");
+                    if (csv)
+                        out_printf("id#, Name, Dir, Description\n");
+                        else
+                           out_printf("%5s\t %-10s\t Dir\t Description\n", "id#", "Name");
                     printdesc(plist[i], csv);
                     out_send("\n");
                 }
