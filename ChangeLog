@@ -1,5 +1,5 @@
 2011-08-19  Holger Vogt
- * rawfile.c: code beautified
+ * rawfile.c: code beautified, 'strange line' error improved
 
 2011-08-14  Robert Larice
  * src/frontend/postsc.c :

@@ -310,6 +310,11 @@ raw_read(char *name) {
             fprintf(cp_err, "\nASCII raw file\n");
             break;
         }
+        else if (ciprefix("binary:", buf)) {
+            binary = TRUE;
+            rewind(fp);                /* rewind */
+            break;
+        }
     }
 
     if (binary) {
@@ -678,10 +683,10 @@ raw_read(char *name) {
             }
         } else {
             s = buf;
-            skip(s);
+//            skip(s);
             if (*s) {
                 fprintf(cp_err,
-                        "Error: strange line in rawfile;\n\t\"%s\"\nload aborted.\n", s);
+                    "Error: strange line in rawfile:\n\"%s\"\nload aborted.\n", s);
                 return (NULL);
             }
         }
