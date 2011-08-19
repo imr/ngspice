@@ -4,8 +4,8 @@ extern double exprand(double);
 extern int poisson(double);
 extern double gauss0(void);
 
-void f_alpha(int n_pts, int n_exp, float X[], float Q_d,
-float alpha);
+void f_alpha(int n_pts, int n_exp, double X[], double Q_d,
+double alpha);
 
 void rvfft(float X[], unsigned long int n);
 
@@ -18,7 +18,7 @@ struct trnoise_state
 
     double NA, TS, NAMP, NALPHA, RTSAM, RTSCAPT, RTSEMT;
 
-    float *oneof;
+    double *oneof;
     size_t oneof_length;
 
     double RTScapTime, RTSemTime;

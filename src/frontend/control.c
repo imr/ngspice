@@ -26,7 +26,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* Are we waiting for a command? This lets signal handling be
  * more clever. */
 
-bool cp_cwait = FALSE;      
+bool cp_cwait = FALSE;
 char *cp_csep = ";";
 
 bool cp_dounixcom = FALSE;
@@ -47,22 +47,21 @@ int stackp = 0;
  * blown away every time we return -- probably every time we type
  * source at the keyboard and every time a source returns to keyboard
  * input is ok though -- use ft_controlreset.  */
- 
- /* Notes by CDHW:
- * This routine leaked like a sieve because each getcommand() created a
- * wordlist that was never freed because it might have been added into
- * the control structure. I've tackled this by making sure that everything
- * put into the cend[stackp] is a copy. This means that wlist can be
- * destroyed safely
- */
+
+/* Notes by CDHW:
+* This routine leaked like a sieve because each getcommand() created a
+* wordlist that was never freed because it might have been added into
+* the control structure. I've tackled this by making sure that everything
+* put into the cend[stackp] is a copy. This means that wlist can be
+* destroyed safely
+*/
 
 /* no redirection after the following commands (we may need more to add here!) */
 static char *noredirect[] = { "stop", "define", NULL } ;
 
 
 static struct control *
-findlabel(char *s, struct control *ct)
-{
+findlabel(char *s, struct control *ct) {
     while (ct) {
         if ((ct->co_type == CO_LABEL) && eq(s, ct->co_text->wl_word))
             break;
@@ -106,15 +105,23 @@ pwlist_echo(wordlist *wlist, char *name)   /*CDHW used to perform function of se
 
 /*CDHW Remove control structure and free the memory its hogging CDHW*/
 
-static void ctl_free(struct control *ctrl) {
-   if (!ctrl) return;
-   wl_free(ctrl->co_cond); ctrl->co_cond = NULL;
-   tfree(ctrl->co_foreachvar); ctrl->co_foreachvar = NULL;
-   wl_free(ctrl->co_text); ctrl->co_text = NULL;
-   ctl_free(ctrl->co_children); ctrl->co_children = NULL;
-   ctl_free(ctrl->co_elseblock); ctrl->co_elseblock = NULL;
-   ctl_free(ctrl->co_next); ctrl->co_next = NULL;
-   tfree(ctrl); ctrl = NULL;
+static void ctl_free(struct control *ctrl)
+{
+    if (!ctrl) return;
+    wl_free(ctrl->co_cond);
+    ctrl->co_cond = NULL;
+    tfree(ctrl->co_foreachvar);
+    ctrl->co_foreachvar = NULL;
+    wl_free(ctrl->co_text);
+    ctrl->co_text = NULL;
+    ctl_free(ctrl->co_children);
+    ctrl->co_children = NULL;
+    ctl_free(ctrl->co_elseblock);
+    ctrl->co_elseblock = NULL;
+    ctl_free(ctrl->co_next);
+    ctrl->co_next = NULL;
+    tfree(ctrl);
+    ctrl = NULL;
 }
 
 
@@ -145,7 +152,7 @@ docommand(wordlist *wlist)
 
     wlist = cp_doglob(wlist);
     pwlist(wlist, "After globbing");
-    
+
     pwlist_echo(wlist, "Becomes >");
 
     if (!wlist || !wlist->wl_word) /*CDHW need to free wlist in second case? CDHW*/
@@ -191,13 +198,13 @@ docommand(wordlist *wlist)
         for (i = 0; cp_coms[i].co_comname; i++) {
             /* strcmp(cp_coms[i].co_comname, s) ... */
             for (t = cp_coms[i].co_comname, r = s; *t && *r;
-		 t++, r++)
+                    t++, r++)
                 if (*t != *r)
                     break;
             if (!*t && !*r)
-                break; 
+                break;
         }
-        
+
         /* Now give the user-supplied command routine a try... */
         if (!cp_coms[i].co_func && cp_oddcomm(s, wlist->wl_next))
             goto out;
@@ -207,14 +214,14 @@ docommand(wordlist *wlist)
             if (cp_dounixcom && cp_unixcom(wlist))
                 goto out;
             fprintf(cp_err,"%s: no such command available in %s\n",
-		    s, cp_program);
+                    s, cp_program);
             goto out;
 
             /* If it hasn't been implemented */
         } else if (!cp_coms[i].co_func) {
             fprintf(cp_err,"%s: command is not implemented\n", s);
             goto out;
-	    /* If it's there but spiceonly, and this is nutmeg, error. */
+            /* If it's there but spiceonly, and this is nutmeg, error. */
         } else if (ft_nutmeg && cp_coms[i].co_spiceonly) {
             fprintf(cp_err,"%s: command available only in spice\n", s);
             goto out;
@@ -227,11 +234,11 @@ docommand(wordlist *wlist)
             nargs++;
         {
             if (nargs < command->co_minargs) {
-		if (command->co_argfn) {
-		    command->co_argfn (wlist->wl_next, command);
-		} else {
-		    fprintf(cp_err, "%s: too few args.\n", s);
-		}
+                if (command->co_argfn) {
+                    command->co_argfn (wlist->wl_next, command);
+                } else {
+                    fprintf(cp_err, "%s: too few args.\n", s);
+                }
             } else if (nargs > command->co_maxargs) {
                 fprintf(cp_err, "%s: too many args.\n", s);
             } else {
@@ -240,7 +247,8 @@ docommand(wordlist *wlist)
         }
 
         /* Now fix the pointers and advance wlist. */
-    out:        wlist->wl_prev = ee;
+out:
+        wlist->wl_prev = ee;
         if (nextc) {
             for(wl=wlist; wl->wl_next; wl=wl->wl_next)
                 ;
@@ -282,14 +290,14 @@ doblock(struct control *bl, int *num)
     wordlist *wl;
     char *i;
     int nn;
- 
+
     nn = *num + 1 ; /*CDHW this is a guess... CDHW*/
-    
+
     switch (bl->co_type) {
     case CO_WHILE:
         if (!bl->co_children) {
-          fprintf(cp_err, "Warning: Executing empty 'while' block.\n");
-          fprintf(cp_err, "         (Use a label statement as a no-op to suppress this warning.)\n");
+            fprintf(cp_err, "Warning: Executing empty 'while' block.\n");
+            fprintf(cp_err, "         (Use a label statement as a no-op to suppress this warning.)\n");
         }
         while (bl->co_cond && cp_istrue(bl->co_cond)) {
             if (!bl->co_children) cp_periodic();  /*CDHW*/
@@ -298,10 +306,10 @@ doblock(struct control *bl, int *num)
                 i = doblock(ch, &nn);
                 switch (*i) {
 
-		case NORMAL:
+                case NORMAL:
                     break;
 
-		case BROKEN:    /* Break. */
+                case BROKEN:    /* Break. */
                     if (nn < 2)
                         return (NORMAL_STR);
                     else {
@@ -309,7 +317,7 @@ doblock(struct control *bl, int *num)
                         return (BROKEN_STR);
                     }
 
-		case CONTINUED: /* Continue. */
+                case CONTINUED: /* Continue. */
                     if (nn < 2) {
                         cn = NULL;
                         break;
@@ -318,7 +326,7 @@ doblock(struct control *bl, int *num)
                         return (CONTINUED_STR);
                     }
 
-		default:
+                default:
                     cn = findlabel(i, bl->co_children);
                     if (!cn)
                         return (i);
@@ -334,10 +342,10 @@ doblock(struct control *bl, int *num)
                 i = doblock(ch, &nn);
                 switch (*i) {
 
-		case NORMAL:
+                case NORMAL:
                     break;
 
-		case BROKEN:    /* Break. */
+                case BROKEN:    /* Break. */
                     if (nn < 2)
                         return (NORMAL_STR);
                     else {
@@ -345,7 +353,7 @@ doblock(struct control *bl, int *num)
                         return (BROKEN_STR);
                     }
 
-		case CONTINUED: /* Continue. */
+                case CONTINUED: /* Continue. */
                     if (nn < 2) {
                         cn = NULL;
                         break;
@@ -354,7 +362,7 @@ doblock(struct control *bl, int *num)
                         return (CONTINUED_STR);
                     }
 
-		default:
+                default:
                     cn = findlabel(i, bl->co_children);
                     if (!cn)
                         return (i);
@@ -365,15 +373,15 @@ doblock(struct control *bl, int *num)
 
     case CO_REPEAT:
         if (!bl->co_children) {
-          fprintf(cp_err, "Warning: Executing empty 'repeat' block.\n");
-          fprintf(cp_err, "         (Use a label statement as a no-op to suppress this warning.)\n");
+            fprintf(cp_err, "Warning: Executing empty 'repeat' block.\n");
+            fprintf(cp_err, "         (Use a label statement as a no-op to suppress this warning.)\n");
         }
-	if (!bl->co_timestodo) bl->co_timestodo = bl->co_numtimes;
-        /*bl->co_numtimes: total repeat count 
-          bl->co_numtimes = -1: repeat forever 
+        if (!bl->co_timestodo) bl->co_timestodo = bl->co_numtimes;
+        /*bl->co_numtimes: total repeat count
+          bl->co_numtimes = -1: repeat forever
           bl->co_timestodo: remaining repeats*/
         while ((bl->co_timestodo > 0) ||
-	       (bl->co_timestodo == -1)) {
+                (bl->co_timestodo == -1)) {
             if (!bl->co_children) cp_periodic();  /*CDHW*/
             if (bl->co_timestodo != -1) bl->co_timestodo--;
             /* loop through all stements inside rpeat ... end */
@@ -382,10 +390,10 @@ doblock(struct control *bl, int *num)
                 i = doblock(ch, &nn);
                 switch (*i) {
 
-		case NORMAL:
+                case NORMAL:
                     break;
 
-		case BROKEN:    /* Break. */
+                case BROKEN:    /* Break. */
                     /* before leaving repeat loop set remaining timestodo to 0 */
                     bl->co_timestodo = 0;
                     if (nn < 2)
@@ -395,7 +403,7 @@ doblock(struct control *bl, int *num)
                         return (BROKEN_STR);
                     }
 
-		case CONTINUED: /* Continue. */
+                case CONTINUED: /* Continue. */
                     if (nn < 2) {
                         cn = NULL;
                         break;
@@ -406,12 +414,12 @@ doblock(struct control *bl, int *num)
                         return (CONTINUED_STR);
                     }
 
-		default:
+                default:
                     cn = findlabel(i, bl->co_children);
 
                     if (!cn) {
-                    /* no label found inside repeat loop: 
-                       before leaving loop set remaining timestodo to 0 */
+                        /* no label found inside repeat loop:
+                           before leaving loop set remaining timestodo to 0 */
                         bl->co_timestodo = 0;
                         return (i);
                     }
@@ -427,7 +435,7 @@ doblock(struct control *bl, int *num)
                 i = doblock(ch, &nn);
                 if (*i > 2) {
                     cn = findlabel(i,
-				   bl->co_children);
+                                   bl->co_children);
                     if (!cn)
                         return (i);
                 } else if (*i != NORMAL) {
@@ -441,7 +449,7 @@ doblock(struct control *bl, int *num)
                 i = doblock(ch, &nn);
                 if (*i > 2) {
                     cn = findlabel(i,
-				   bl->co_elseblock);
+                                   bl->co_elseblock);
                     if (!cn)
                         return (i);
                 } else if (*i != NORMAL) {
@@ -454,18 +462,18 @@ doblock(struct control *bl, int *num)
 
     case CO_FOREACH:
         for (wl = cp_variablesubst(cp_bquote(cp_doglob(wl_copy(bl->co_text))));
-	     wl;
-	     wl = wl->wl_next) {
+                wl;
+                wl = wl->wl_next) {
             cp_vset(bl->co_foreachvar, CP_STRING, wl->wl_word);
             for (ch = bl->co_children; ch; ch = cn) {
                 cn = ch->co_next;
                 i = doblock(ch, &nn);
                 switch (*i) {
 
-		case NORMAL:
+                case NORMAL:
                     break;
 
-		case BROKEN:    /* Break. */
+                case BROKEN:    /* Break. */
                     if (nn < 2)
                         return (NORMAL_STR);
                     else {
@@ -473,7 +481,7 @@ doblock(struct control *bl, int *num)
                         return (BROKEN_STR);
                     }
 
-		case CONTINUED: /* Continue. */
+                case CONTINUED: /* Continue. */
                     if (nn < 2) {
                         cn = NULL;
                         break;
@@ -482,7 +490,7 @@ doblock(struct control *bl, int *num)
                         return (CONTINUED_STR);
                     }
 
-		default:
+                default:
                     cn = findlabel(i, bl->co_children);
                     if (!cn)
                         return (i);
@@ -513,13 +521,13 @@ doblock(struct control *bl, int *num)
 
     case CO_GOTO:
         wl = cp_variablesubst(cp_bquote(cp_doglob(
-	    wl_copy(bl->co_text)))); /*CDHW Leak ? CDHW*/
+                                            wl_copy(bl->co_text)))); /*CDHW Leak ? CDHW*/
         return (wl->wl_word);
 
     case CO_LABEL:
-	/* Do nothing. */
-	cp_periodic();  /*CDHW needed to avoid lock-ups when loop contains only a label CDHW*/
-	break;
+        /* Do nothing. */
+        cp_periodic();  /*CDHW needed to avoid lock-ups when loop contains only a label CDHW*/
+        break;
 
     case CO_STATEMENT:
         docommand(wl_copy(bl->co_text));
@@ -531,9 +539,9 @@ doblock(struct control *bl, int *num)
         break;
 
     default:
-        fprintf(cp_err, 
-		"doblock: Internal Error: bad block type %d\n",
-		bl->co_type);
+        fprintf(cp_err,
+                "doblock: Internal Error: bad block type %d\n",
+                bl->co_type);
         return (NORMAL_STR);
     }
     return (NORMAL_STR);
@@ -546,41 +554,41 @@ doblock(struct control *bl, int *num)
    Number of chevrons indicates stack depth.
    Returns NULL when there is no alternate prompt.
    SJB 28th April 2005 */
-char * 
+char *
 get_alt_prompt(void)
 {
     int i = 0, j;
     static char buf[MAX_CHEVRONS + 2];	/* includes terminating space & null */
     struct control *c;
-    
+
     /* if nothing on the command stack return NULL */
     if (cend[stackp] == 0)
-	return NULL;
-    
+        return NULL;
+
     /* measure stack depth */
     for (c = cend[stackp]->co_parent; c; c = c->co_parent)
-	i++;
-    
+        i++;
+
     if (i <= 0)
-	return NULL;
-    
+        return NULL;
+
     /* Avoid overflow of buffer and
        indicate when we've limited the chevrons by starting with a '+' */
     if(i > MAX_CHEVRONS) {
-	i = MAX_CHEVRONS;
-	buf[0]='+';
+        i = MAX_CHEVRONS;
+        buf[0]='+';
     } else {
-	buf[0]='>';
+        buf[0]='>';
     }
-    
-     /* return one chevron per command stack depth */
+
+    /* return one chevron per command stack depth */
     for (j = 1; j < i; j++)
-	buf[j] = '>';
-    
+        buf[j] = '>';
+
     /* Add space and terminate */
     buf[j] = ' ';
     buf[j + 1] = '\0';
-    
+
     return buf;
 }
 
@@ -599,7 +607,7 @@ getcommand(char *string)
     /* set cp_altprompt for use by the lexer - see parser/lexical.c */
     cp_altprompt = get_alt_prompt();
 #endif /* !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE) */
-    
+
     cp_cwait = TRUE;
     wlist = cp_parse(string);
     cp_cwait = FALSE;
@@ -627,232 +635,238 @@ cp_evloop(char *string)
             cend[stackp]->co_type = CO_UNFILLED;
 
     for (;;) {
-	wlist = getcommand(string);
-	if (wlist == NULL) {    /* End of file or end of user input. */
-	    if (cend[stackp]->co_parent && !string) {
-		cp_resetcontrol();
-		continue;
-	    } else
-		return (0);
-	}
-	if ((wlist->wl_word == NULL) || (*wlist->wl_word == '\0')) {
-	    /* User just typed return. */
-	    wl_free(wlist); /* va, avoid memory leak */
-	    if (string)
-		return (1);
-	    else {
-		cp_event--;
-		continue;
-	    }
-	}
+        wlist = getcommand(string);
+        if (wlist == NULL) {    /* End of file or end of user input. */
+            if (cend[stackp]->co_parent && !string) {
+                cp_resetcontrol();
+                continue;
+            } else
+                return (0);
+        }
+        if ((wlist->wl_word == NULL) || (*wlist->wl_word == '\0')) {
+            /* User just typed return. */
+            wl_free(wlist); /* va, avoid memory leak */
+            if (string)
+                return (1);
+            else {
+                cp_event--;
+                continue;
+            }
+        }
 
-	/* Just a check... */
-	for (ww = wlist; ww; ww = ww->wl_next)
-	    if (!ww->wl_word) {
-		fprintf(cp_err, 
-			"cp_evloop: Internal Error: NULL word pointer\n");
-		continue;
-	    }
+        /* Just a check... */
+        for (ww = wlist; ww; ww = ww->wl_next)
+            if (!ww->wl_word) {
+                fprintf(cp_err,
+                        "cp_evloop: Internal Error: NULL word pointer\n");
+                continue;
+            }
 
 
-	/* Add this to the control structure list. If cend->co_type is
-	 * CO_UNFILLED, the last line was the beginning of a block,
-	 * and this is the unfilled first statement.  
-	 */
-	/* va: TODO: free old structure and its content, before overwriting */ 
-	if (cend[stackp] && (cend[stackp]->co_type != CO_UNFILLED)) {
-	    cend[stackp]->co_next = alloc(struct control);
-	    ZERO(cend[stackp]->co_next, struct control);
-	    cend[stackp]->co_next->co_prev = cend[stackp];
-	    cend[stackp]->co_next->co_parent = cend[stackp]->co_parent;
-	    cend[stackp] = cend[stackp]->co_next;
-	} else if (!cend[stackp]) {
-	    control[stackp] = cend[stackp] = alloc(struct control);
-	    ZERO(cend[stackp], struct control);
-	}
+        /* Add this to the control structure list. If cend->co_type is
+         * CO_UNFILLED, the last line was the beginning of a block,
+         * and this is the unfilled first statement.
+         */
+        /* va: TODO: free old structure and its content, before overwriting */
+        if (cend[stackp] && (cend[stackp]->co_type != CO_UNFILLED)) {
+            cend[stackp]->co_next = alloc(struct control);
+            ZERO(cend[stackp]->co_next, struct control);
+            cend[stackp]->co_next->co_prev = cend[stackp];
+            cend[stackp]->co_next->co_parent = cend[stackp]->co_parent;
+            cend[stackp] = cend[stackp]->co_next;
+        } else if (!cend[stackp]) {
+            control[stackp] = cend[stackp] = alloc(struct control);
+            ZERO(cend[stackp], struct control);
+        }
 
-	if (eq(wlist->wl_word, "while")) {
-	    cend[stackp]->co_type = CO_WHILE;
-	    cend[stackp]->co_cond = wl_copy(wlist->wl_next); /* va, wl_copy */
-	    if (!cend[stackp]->co_cond) {
-		fprintf(stderr,
-			"Error: missing while condition, 'false' will be assumed.\n");
-	    }
-	    newblock;
-	} else if (eq(wlist->wl_word, "dowhile")) {
-	    cend[stackp]->co_type = CO_DOWHILE;
-	    cend[stackp]->co_cond = wl_copy(wlist->wl_next); /* va, wl_copy */
-	    if (!cend[stackp]->co_cond) {
-	    	/* va: prevent misinterpretation as trigraph sequence with \-sign */
-		fprintf(stderr,
-			"Error: missing dowhile condition, '?\?\?' will be assumed.\n");
-	    }
-	    newblock;
-	} else if (eq(wlist->wl_word, "repeat")) {
-	    cend[stackp]->co_type = CO_REPEAT;
-	    if (!wlist->wl_next) {
-		cend[stackp]->co_numtimes = -1;
-	    } else {
-		char *s;
-		double *dd;
-		
-		struct wordlist *t;  /*CDHW*/
-        	/*CDHW wlist = cp_variablesubst(cp_bquote(cp_doglob(wl_copy(wlist)))); Wrong order? Leak? CDHW*/
-        	t = cp_doglob(cp_bquote(cp_variablesubst(wl_copy(wlist)))); /*CDHW leak from cp_doglob? */
-        	s = t->wl_next->wl_word;
-		
-		dd = ft_numparse(&s, FALSE);
-		if (dd) {
-		    if (*dd < 0) {
-			fprintf(cp_err, 
-				"Error: can't repeat a negative number of times\n");
-			*dd = 0.0;
-		    }
-		    cend[stackp]->co_numtimes = (int) *dd;
-		} else
-		    fprintf(cp_err, 
-			    "Error: bad repeat argument %s\n",
-			    t->wl_next->wl_word); /* CDHW */
-		    wl_free(t); t = NULL;  /* CDHW */
-	    }
-	    newblock;
-	    
-	} else if (eq(wlist->wl_word, "if")) {
-	    cend[stackp]->co_type = CO_IF;
-	    cend[stackp]->co_cond = wl_copy(wlist->wl_next); /* va, wl_copy */
-	    if (!cend[stackp]->co_cond) {
-		fprintf(stderr, 
-			"Error: missing if condition.\n");
-	    }
-	    newblock;
-	    
-	} else if (eq(wlist->wl_word, "foreach")) {
-	    cend[stackp]->co_type = CO_FOREACH;
-	    if (wlist->wl_next) {
-		wlist = wlist->wl_next;
-		cend[stackp]->co_foreachvar = 
-		    copy(wlist->wl_word);
-		wlist = wlist->wl_next;
-	    } else
-		fprintf(stderr, 
-			"Error: missing foreach variable.\n");
-	    wlist = cp_doglob(wlist);  /*CDHW Possible leak around here? */
-	    cend[stackp]->co_text = wl_copy(wlist);
-	    newblock;
-	} else if (eq(wlist->wl_word, "label")) {
-	    cend[stackp]->co_type = CO_LABEL;
-	    if (wlist->wl_next) {
-		cend[stackp]->co_text = wl_copy(wlist->wl_next);
-		/* I think of everything, don't I? */
-		cp_addkword(CT_LABEL, wlist->wl_next->wl_word);
-		if (wlist->wl_next->wl_next)
-		    fprintf(cp_err, 
-			    "Warning: ignored extra junk after label.\n");
-	    } else
-		fprintf(stderr, "Error: missing label.\n");
-		
-	} else if (eq(wlist->wl_word, "goto")) {
-	    /* Incidentally, this won't work if the values 1 and 2 ever get
-	     * to be valid character pointers -- I think it's reasonably
-	     * safe to assume they aren't...  */
-	    cend[stackp]->co_type = CO_GOTO;
-	    if (wlist->wl_next) {
-		cend[stackp]->co_text = wl_copy(wlist->wl_next);
-		if (wlist->wl_next->wl_next)
-		    fprintf(cp_err, 
-			    "Warning: ignored extra junk after goto.\n");
-	    } else
-		fprintf(stderr, "Error: missing label.\n");
-	} else if (eq(wlist->wl_word, "continue")) {
-	    cend[stackp]->co_type = CO_CONTINUE;
-	    if (wlist->wl_next) {
-		cend[stackp]->co_numtimes = scannum(wlist->
-						    wl_next->wl_word);
-		if (wlist->wl_next->wl_next)
-		    fprintf(cp_err, 
-			    "Warning: ignored extra junk after continue %d.\n",
-			    cend[stackp]->co_numtimes);
-	    } else
-		cend[stackp]->co_numtimes = 1;
-	} else if (eq(wlist->wl_word, "break")) {
-	    cend[stackp]->co_type = CO_BREAK;
-	    if (wlist->wl_next) {
-		cend[stackp]->co_numtimes = scannum(wlist->
-						    wl_next->wl_word);
-		if (wlist->wl_next->wl_next)
-		    fprintf(cp_err, 
-			    "Warning: ignored extra junk after break %d.\n",
-			    cend[stackp]->co_numtimes);
-	    } else
-		cend[stackp]->co_numtimes = 1;
-	} else if (eq(wlist->wl_word, "end")) {
-	    /* Throw away this thing. */
-	    if (!cend[stackp]->co_parent) {
-		fprintf(stderr, "Error: no block to end.\n");
-		cend[stackp]->co_type = CO_UNFILLED;
-	    } else if (cend[stackp]->co_prev) {
-		cend[stackp]->co_prev->co_next = NULL;
-		x = cend[stackp];
-		cend[stackp] = cend[stackp]->co_parent;
-		tfree(x); x=NULL;
-	    } else {
-		x = cend[stackp];
-		cend[stackp] = cend[stackp]->co_parent;
-		cend[stackp]->co_children = NULL;
-		tfree(x); x=NULL;
-	    }
-	} else if (eq(wlist->wl_word, "else")) {
-	    if (!cend[stackp]->co_parent ||
-		(cend[stackp]->co_parent->co_type !=
-		 CO_IF)) {
-		fprintf(stderr, "Error: misplaced else.\n");
-		cend[stackp]->co_type = CO_UNFILLED;
-	    } else {
-		if (cend[stackp]->co_prev)
-		    cend[stackp]->co_prev->co_next = NULL;
-		else
-		    cend[stackp]->co_parent->co_children = NULL;
-		cend[stackp]->co_parent->co_elseblock = cend[stackp];
-		cend[stackp]->co_prev = NULL;
-	    }
-	} else {
-	    cend[stackp]->co_type = CO_STATEMENT;
-	    cend[stackp]->co_text = wl_copy(wlist);
-	}
+        if (eq(wlist->wl_word, "while")) {
+            cend[stackp]->co_type = CO_WHILE;
+            cend[stackp]->co_cond = wl_copy(wlist->wl_next); /* va, wl_copy */
+            if (!cend[stackp]->co_cond) {
+                fprintf(stderr,
+                        "Error: missing while condition, 'false' will be assumed.\n");
+            }
+            newblock;
+        } else if (eq(wlist->wl_word, "dowhile")) {
+            cend[stackp]->co_type = CO_DOWHILE;
+            cend[stackp]->co_cond = wl_copy(wlist->wl_next); /* va, wl_copy */
+            if (!cend[stackp]->co_cond) {
+                /* va: prevent misinterpretation as trigraph sequence with \-sign */
+                fprintf(stderr,
+                        "Error: missing dowhile condition, '?\?\?' will be assumed.\n");
+            }
+            newblock;
+        } else if (eq(wlist->wl_word, "repeat")) {
+            cend[stackp]->co_type = CO_REPEAT;
+            if (!wlist->wl_next) {
+                cend[stackp]->co_numtimes = -1;
+            } else {
+                char *s;
+                double *dd;
 
-	if (!cend[stackp]->co_parent) {
-	    x = cend[stackp];
-	    /* We have to toss this do-while loop in here so
-	     * that gotos at the top level will work.
-	     */
-	    do { nn = 0; /* CDHW */
-		i = doblock(x, &nn);
-		switch (*i) {
-		case NORMAL:
-		    break;
-		case BROKEN:
-		    fprintf(cp_err, 
-			    "Error: break not in loop or too many break levels given\n");
-		    break;
-		case CONTINUED:
-		    fprintf(cp_err, 
-			    "Error: continue not in loop or too many continue levels given\n");
-		    break;
-		default:
-		    x = findlabel(i, control[stackp]);
-		    if (!x)
-			fprintf(cp_err, "Error: label %s not found\n", i);
-		}
-		if (x)
-		    x = x->co_next;
-	    } while (x);
-	}
-	wl_free(wlist); wlist = NULL;
-	if (string) {
-	    return (1); /* The return value is irrelevant. */
-	}
+                struct wordlist *t;  /*CDHW*/
+                /*CDHW wlist = cp_variablesubst(cp_bquote(cp_doglob(wl_copy(wlist)))); Wrong order? Leak? CDHW*/
+                t = cp_doglob(cp_bquote(cp_variablesubst(wl_copy(wlist)))); /*CDHW leak from cp_doglob? */
+                s = t->wl_next->wl_word;
+
+                dd = ft_numparse(&s, FALSE);
+                if (dd) {
+                    if (*dd < 0) {
+                        fprintf(cp_err,
+                                "Error: can't repeat a negative number of times\n");
+                        *dd = 0.0;
+                    }
+                    cend[stackp]->co_numtimes = (int) *dd;
+                } else
+                    fprintf(cp_err,
+                            "Error: bad repeat argument %s\n",
+                            t->wl_next->wl_word); /* CDHW */
+                wl_free(t);
+                t = NULL;  /* CDHW */
+            }
+            newblock;
+
+        } else if (eq(wlist->wl_word, "if")) {
+            cend[stackp]->co_type = CO_IF;
+            cend[stackp]->co_cond = wl_copy(wlist->wl_next); /* va, wl_copy */
+            if (!cend[stackp]->co_cond) {
+                fprintf(stderr,
+                        "Error: missing if condition.\n");
+            }
+            newblock;
+
+        } else if (eq(wlist->wl_word, "foreach")) {
+            cend[stackp]->co_type = CO_FOREACH;
+            if (wlist->wl_next) {
+                wlist = wlist->wl_next;
+                cend[stackp]->co_foreachvar =
+                    copy(wlist->wl_word);
+                wlist = wlist->wl_next;
+            } else
+                fprintf(stderr,
+                        "Error: missing foreach variable.\n");
+            wlist = cp_doglob(wlist);  /*CDHW Possible leak around here? */
+            cend[stackp]->co_text = wl_copy(wlist);
+            newblock;
+        } else if (eq(wlist->wl_word, "label")) {
+            cend[stackp]->co_type = CO_LABEL;
+            if (wlist->wl_next) {
+                cend[stackp]->co_text = wl_copy(wlist->wl_next);
+                /* I think of everything, don't I? */
+                cp_addkword(CT_LABEL, wlist->wl_next->wl_word);
+                if (wlist->wl_next->wl_next)
+                    fprintf(cp_err,
+                            "Warning: ignored extra junk after label.\n");
+            } else
+                fprintf(stderr, "Error: missing label.\n");
+
+        } else if (eq(wlist->wl_word, "goto")) {
+            /* Incidentally, this won't work if the values 1 and 2 ever get
+             * to be valid character pointers -- I think it's reasonably
+             * safe to assume they aren't...  */
+            cend[stackp]->co_type = CO_GOTO;
+            if (wlist->wl_next) {
+                cend[stackp]->co_text = wl_copy(wlist->wl_next);
+                if (wlist->wl_next->wl_next)
+                    fprintf(cp_err,
+                            "Warning: ignored extra junk after goto.\n");
+            } else
+                fprintf(stderr, "Error: missing label.\n");
+        } else if (eq(wlist->wl_word, "continue")) {
+            cend[stackp]->co_type = CO_CONTINUE;
+            if (wlist->wl_next) {
+                cend[stackp]->co_numtimes = scannum(wlist->
+                                                    wl_next->wl_word);
+                if (wlist->wl_next->wl_next)
+                    fprintf(cp_err,
+                            "Warning: ignored extra junk after continue %d.\n",
+                            cend[stackp]->co_numtimes);
+            } else
+                cend[stackp]->co_numtimes = 1;
+        } else if (eq(wlist->wl_word, "break")) {
+            cend[stackp]->co_type = CO_BREAK;
+            if (wlist->wl_next) {
+                cend[stackp]->co_numtimes = scannum(wlist->
+                                                    wl_next->wl_word);
+                if (wlist->wl_next->wl_next)
+                    fprintf(cp_err,
+                            "Warning: ignored extra junk after break %d.\n",
+                            cend[stackp]->co_numtimes);
+            } else
+                cend[stackp]->co_numtimes = 1;
+        } else if (eq(wlist->wl_word, "end")) {
+            /* Throw away this thing. */
+            if (!cend[stackp]->co_parent) {
+                fprintf(stderr, "Error: no block to end.\n");
+                cend[stackp]->co_type = CO_UNFILLED;
+            } else if (cend[stackp]->co_prev) {
+                cend[stackp]->co_prev->co_next = NULL;
+                x = cend[stackp];
+                cend[stackp] = cend[stackp]->co_parent;
+                tfree(x);
+                x=NULL;
+            } else {
+                x = cend[stackp];
+                cend[stackp] = cend[stackp]->co_parent;
+                cend[stackp]->co_children = NULL;
+                tfree(x);
+                x=NULL;
+            }
+        } else if (eq(wlist->wl_word, "else")) {
+            if (!cend[stackp]->co_parent ||
+                    (cend[stackp]->co_parent->co_type !=
+                     CO_IF)) {
+                fprintf(stderr, "Error: misplaced else.\n");
+                cend[stackp]->co_type = CO_UNFILLED;
+            } else {
+                if (cend[stackp]->co_prev)
+                    cend[stackp]->co_prev->co_next = NULL;
+                else
+                    cend[stackp]->co_parent->co_children = NULL;
+                cend[stackp]->co_parent->co_elseblock = cend[stackp];
+                cend[stackp]->co_prev = NULL;
+            }
+        } else {
+            cend[stackp]->co_type = CO_STATEMENT;
+            cend[stackp]->co_text = wl_copy(wlist);
+        }
+
+        if (!cend[stackp]->co_parent) {
+            x = cend[stackp];
+            /* We have to toss this do-while loop in here so
+             * that gotos at the top level will work.
+             */
+            do {
+                nn = 0; /* CDHW */
+                i = doblock(x, &nn);
+                switch (*i) {
+                case NORMAL:
+                    break;
+                case BROKEN:
+                    fprintf(cp_err,
+                            "Error: break not in loop or too many break levels given\n");
+                    break;
+                case CONTINUED:
+                    fprintf(cp_err,
+                            "Error: continue not in loop or too many continue levels given\n");
+                    break;
+                default:
+                    x = findlabel(i, control[stackp]);
+                    if (!x)
+                        fprintf(cp_err, "Error: label %s not found\n", i);
+                }
+                if (x)
+                    x = x->co_next;
+            } while (x);
+        }
+        wl_free(wlist);
+        wlist = NULL;
+        if (string) {
+            return (1); /* The return value is irrelevant. */
+        }
     }
-    wl_free(wlist); wlist = NULL;
+    wl_free(wlist);
+    wlist = NULL;
     return (0); /* va: which value? */
 }
 
@@ -919,12 +933,12 @@ cp_toplevel(void)
 
 
 /* va: This totally frees the control structures */
-void cp_free_control(void) 
+void cp_free_control(void)
 {
     int i;
-    
+
     for (i=stackp; i>=0; i--) ctl_free(control[i]);
-    
+
     control[0] = cend[0] = NULL;
     stackp = 0;
 }

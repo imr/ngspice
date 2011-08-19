@@ -1,6 +1,10 @@
 2011-08-19  Holger Vogt
  * rawfile.c: code beautified, 'strange line' error improved
-
+ * maths/fft/fftext.h removed
+ * include/fftext.h, 1-f-code.c, 1-f-code.h, com_fft.c: 
+   type float --> double
+ * control.c: code beautified 
+   
 2011-08-14  Robert Larice
  * src/frontend/postsc.c :
    postsc.c, swallow warnings

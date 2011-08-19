@@ -21,25 +21,25 @@
 #include "wallace.h"
 
 
-void f_alpha(int n_pts, int n_exp, float X[], float Q_d,
-float alpha)
+void f_alpha(int n_pts, int n_exp, double X[], double Q_d,
+double alpha)
 {
    int i;
-   float *hfa, *wfa;
-   float ha;
+   double *hfa, *wfa;
+   double ha;
      
    ha = alpha/2.0f ;
 //   Q_d = sqrt(Q_d); /* find the deviation of the noise */
-   hfa = TMALLOC(float,n_pts);
-   wfa = TMALLOC(float,n_pts);
+   hfa = TMALLOC(double,n_pts);
+   wfa = TMALLOC(double,n_pts);
    hfa[0] = 1.0f;
-   wfa[0] = Q_d * (float)GaussWa;
+   wfa[0] = Q_d * GaussWa;
    /* generate the coefficients hk */
    for (i=1 ; i < n_pts; i++) {
       /* generate the coefficients hk */
-      hfa[i] = hfa[i-1] * (ha + (float)(i-1)) / ( (float)(i) );
+      hfa[i] = hfa[i-1] * (ha + (double)(i-1)) / ( (double)(i) );
       /* fill the sequence wk with white noise */
-      wfa[i] = Q_d * (float)GaussWa;
+      wfa[i] = Q_d * GaussWa;
    }
 
 //   for (i=0 ; i < n_pts; i++)
@@ -88,13 +88,13 @@ trnoise_state_gen(struct trnoise_state *this, CKTcircuit *ckt)
                 newexp++;
             }
 
-            this->oneof = TMALLOC(float, newsteps);
+            this->oneof = TMALLOC(double, newsteps);
             this->oneof_length = newsteps;
 
             f_alpha((int) newsteps, newexp,
                     this -> oneof,
-                    (float) this -> NAMP,
-                    (float) this -> NALPHA);
+                    this -> NAMP,
+                    this -> NALPHA);
         }
 
         trnoise_state_push(this, 0.0); /* first is deterministic */

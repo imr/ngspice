@@ -16,7 +16,7 @@ Author:   2008 Holger Vogt
 #include "variable.h"
 #include "parse.h"
 #include "../misc/misc_time.h"
-#include "../maths/fft/fftext.h"
+#include "fftext.h"
 
 static void fftext(double*, double*, long int, long int, int);
 

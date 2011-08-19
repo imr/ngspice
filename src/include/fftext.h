@@ -19,7 +19,7 @@ int fftInit(long M);
 void fftFree(void);
 // release storage for all private cosine and bit reversed tables
 
-void ffts(float *data, long M, long Rows);
+void ffts(double *data, long M, long Rows);
 /* Compute in-place complex fft on the rows of the input array	*/
 /* INPUTS */
 /* *ioptr = input data array	*/
@@ -28,7 +28,7 @@ void ffts(float *data, long M, long Rows);
 /* OUTPUTS */
 /* *ioptr = output data array	*/
 
-void iffts(float *data, long M, long Rows);
+void iffts(double *data, long M, long Rows);
 /* Compute in-place inverse complex fft on the rows of the input array	*/
 /* INPUTS */
 /* *ioptr = input data array	*/
@@ -37,7 +37,7 @@ void iffts(float *data, long M, long Rows);
 /* OUTPUTS */
 /* *ioptr = output data array	*/
 
-void rffts(float *data, long M, long Rows);
+void rffts(double *data, long M, long Rows);
 /* Compute in-place real fft on the rows of the input array	*/
 /* The result is the complex spectra of the positive frequencies */
 /* except the location for the first complex number contains the real */
@@ -51,7 +51,7 @@ void rffts(float *data, long M, long Rows);
 /* *ioptr = output data array	in the following order */
 /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
 
-void riffts(float *data, long M, long Rows);
+void riffts(double *data, long M, long Rows);
 /* Compute in-place real ifft on the rows of the input array	*/
 /* data order as from rffts */
 /* INPUTS */
@@ -62,7 +62,7 @@ void riffts(float *data, long M, long Rows);
 /* OUTPUTS */
 /* *ioptr = real output data array	*/
 
-void rspectprod(float *data1, float *data2, float *outdata, long N);
+void rspectprod(double *data1, double *data2, double *outdata, long N);
 // When multiplying a pair of spectra from rfft care must be taken to multiply the
 // two real values seperately from the complex ones. This routine does it correctly.
 // the result can be stored in-place over one of the inputs
@@ -74,35 +74,33 @@ void rspectprod(float *data1, float *data2, float *outdata, long N);
 /* *outdata = output data array spectra */
 
 
-/* The following is FYI
+// The following is FYI
 
 
-Note that most of the fft routines require full matrices, ie Rsiz==Ncols
-This is how I like to define a real matrix:
-struct matrix {		// real matrix
-	float *d; 		// pointer to data
-	long Nrows;		// number of rows in the matrix
-	long Ncols;		// number of columns in the matrix (can be less than Rsiz)
-	long Rsiz;		// number of floats from one row to the next
-};
-typedef struct matrix matrix;
+//Note that most of the fft routines require full matrices, ie Rsiz==Ncols
+//This is how I like to define a real matrix:
+//struct matrix {		// real matrix
+//	double *d; 		// pointer to data
+//	long Nrows;		// number of rows in the matrix
+//	long Ncols;		// number of columns in the matrix (can be less than Rsiz)
+//	long Rsiz;		// number of doubles from one row to the next
+//};
+//typedef struct matrix matrix;
 
 
 
- CACHEFILLMALLOC and CEILCACHELINE can be used instead of malloc to make
- arrays that start exactly on a cache line start.
- First we CACHEFILLMALLOC a void * (use this void * when free'ing),
- then we set our array pointer equal to the properly cast CEILCACHELINE of this void *
- example:
- aInit = CACHEFILLMALLOC( NUMFLOATS*sizeof(float) );
- a = (float *) CEILCACHELINE(ainit);
- ... main body of code ...
- free(aInit);
-
- To disable this alignment, set CACHELINESIZE to 1
-#define CACHELINESIZE 32				// Bytes per cache line
-#define CACHELINEFILL (CACHELINESIZE-1)
-#define CEILCACHELINE(p) ((((unsigned long)p+CACHELINEFILL)/CACHELINESIZE)*CACHELINESIZE)
-#define CACHEFILLMALLOC(n) malloc((n)+CACHELINEFILL)
-*/
-
+// CACHEFILLMALLOC and CEILCACHELINE can be used instead of malloc to make
+// arrays that start exactly on a cache line start.
+// First we CACHEFILLMALLOC a void * (use this void * when free'ing),
+// then we set our array pointer equal to the properly cast CEILCACHELINE of this void *
+// example:
+// aInit = CACHEFILLMALLOC( NUMFLOATS*sizeof(float) );
+// a = (float *) CEILCACHELINE(ainit);
+// ... main body of code ...
+// free(aInit);
+//
+// To disable this alignment, set CACHELINESIZE to 1
+//#define CACHELINESIZE 32				// Bytes per cache line
+//#define CACHELINEFILL (CACHELINESIZE-1)
+//#define CEILCACHELINE(p) ((((unsigned long)p+CACHELINEFILL)/CACHELINESIZE)*CACHELINESIZE)
+//#define CACHEFILLMALLOC(n) malloc((n)+CACHELINEFILL)
