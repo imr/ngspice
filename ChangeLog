@@ -1,3 +1,6 @@
+2011-08-19  Holger Vogt
+ * rawfile.c: code beautified
+
 2011-08-14  Robert Larice
  * src/frontend/postsc.c :
    postsc.c, swallow warnings
