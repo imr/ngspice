@@ -3576,14 +3576,14 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
     <admst:template match="code:ng1">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/smpdefs.h>
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/cktdefs.h&gt;
+#include &lt;ngspice/smpdefs.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/suffix.h>
+#include &lt;ngspice/const.h&gt;
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/ifsim.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 //fixme!!! redundant
 #define max(x,y)        (((x)&gt;(y))?(x):(y))
@@ -3715,7 +3715,7 @@ extern SPICEdev *get_$(module)_info(void);
     <admst:template match="code:ng3">
 #include "config.h"
 
-#include <ngspice/devdefs.h>
+#include &lt;ngspice/devdefs.h&gt;
 
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
@@ -3876,11 +3876,11 @@ extern void $(module)destroy(GENmodel**);
 #ifndef $(module)
 #define $(module)
 
-#include <ngspice/cktdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/noisedef.h>
+#include &lt;ngspice/cktdefs.h&gt;
+#include &lt;ngspice/ifsim.h&gt;
+#include &lt;ngspice/gendefs.h&gt;
+#include &lt;ngspice/complex.h&gt;
+#include &lt;ngspice/noisedef.h&gt;
 
 <admst:for-each select="modulevariablep">
 <admst:variable name="variable" string="%(name)"/>
@@ -4120,13 +4120,13 @@ typedef struct s$(module)model {         /* model structure */
     <admst:template match="code:ng7">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
-#include <ngspice/cktdefs.h>
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/const.h&gt;
+#include &lt;ngspice/cktdefs.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/ifsim.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include &lt;ngspice/ifsim.h&gt;
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 int $(module)ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
@@ -4170,14 +4170,14 @@ int $(module)ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
     <admst:template match="code:ng8">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/devdefs.h>
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/const.h&gt;
+#include &lt;ngspice/ifsim.h&gt;
+#include &lt;ngspice/cktdefs.h&gt;
+#include &lt;ngspice/devdefs.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 int $(module)mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
@@ -4218,12 +4218,12 @@ int $(module)mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
     <admst:template match="code:ng9">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
-#include <ngspice/ifsim.h>
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/const.h&gt;
+#include &lt;ngspice/ifsim.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 int $(module)par(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
@@ -4267,12 +4267,12 @@ int $(module)par(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     <admst:template match="code:ng10">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
-#include <ngspice/ifsim.h>
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/const.h&gt;
+#include &lt;ngspice/ifsim.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 int $(module)mParam(int param, IFvalue *value, GENmodel *inMod)
 {
@@ -4316,14 +4316,14 @@ int $(module)mParam(int param, IFvalue *value, GENmodel *inMod)
 
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/cktdefs.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/const.h>
-#include <ngspice/trandefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/suffix.h>
+#include &lt;ngspice/const.h&gt;
+#include &lt;ngspice/trandefs.h&gt;
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/devdefs.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 /*fixme: noise not implemented in ngspice*/
 #define ngspice_flickernoise(p,n,mag,freq,info)\\
@@ -4567,11 +4567,11 @@ int $(module)load(GENmodel *inModel, CKTcircuit *ckt)
     <admst:template match="code:ng12">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/cktdefs.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 int $(module)acLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
@@ -4602,12 +4602,12 @@ int $(module)acLoad(GENmodel *inModel, CKTcircuit *ckt)
     <admst:template match="code:ng13">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/complex.h>
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/cktdefs.h&gt;
+#include &lt;ngspice/complex.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 int $(module)pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
@@ -4640,11 +4640,11 @@ int $(module)pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     <admst:template match="code:ng14">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/cktdefs.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 int $(module)trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
@@ -4694,14 +4694,14 @@ int $(module)trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     <admst:template match="code:ng15">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/smpdefs.h>
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/cktdefs.h&gt;
+#include &lt;ngspice/smpdefs.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/suffix.h>
+#include &lt;ngspice/const.h&gt;
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/ifsim.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 //fixme!!! redundant
 #define max(x,y)        (((x)&gt;(y))?(x):(y))
@@ -4804,10 +4804,10 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
     <admst:template match="code:ng16">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
+#include &lt;ngspice/ngspice.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 int $(module)delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
 
@@ -4845,10 +4845,10 @@ int $(module)delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
     <admst:template match="code:ng17">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
+#include &lt;ngspice/ngspice.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 int $(module)mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
@@ -4892,9 +4892,9 @@ int $(module)mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     <admst:template match="code:ng18">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
+#include &lt;ngspice/ngspice.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/suffix.h>
+#include &lt;ngspice/suffix.h&gt;
 
 void $(module)destroy(GENmodel **inModel)
 
@@ -5132,14 +5132,14 @@ void $(module)destroy(GENmodel **inModel)
     </admst:template>
     <admst:template match="code:ng19:ngg">
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/smpdefs.h>
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/cktdefs.h&gt;
+#include &lt;ngspice/smpdefs.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/suffix.h>
+#include &lt;ngspice/const.h&gt;
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/ifsim.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 #define jacobian(a,b) here-&gt;PTR_J_##a##_##b##_required=1;
 #define static_jacobian4(p,q,r,s)  jacobian(p,r) jacobian(p,s) jacobian(q,r) jacobian(q,s)
@@ -5230,10 +5230,10 @@ int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *
 <admst:template match="code:ng20">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/devdefs.h&gt;
 #include "$(module)defs.h"
-#include <ngspice/suffix.h>
+#include &lt;ngspice/suffix.h&gt;
 
 <admst:text format="IFparm $(module)pTable[] = {\n"/>
 <admst:join select="modulevariablep[#parametertype='instance' and isparameter='yes']" separator=",\n">
