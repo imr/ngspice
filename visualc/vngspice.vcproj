@@ -1150,7 +1150,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\src\include\1-f-code.h"
+				RelativePath="..\src\include\ngspice\1-f-code.h"
 				>
 			</File>
 			<File
@@ -1158,7 +1158,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\acdefs.h"
+				RelativePath="..\src\include\ngspice\acdefs.h"
 				>
 			</File>
 			<File
@@ -1266,7 +1266,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\bdrydefs.h"
+				RelativePath="..\src\include\ngspice\bdrydefs.h"
 				>
 			</File>
 			<File
@@ -1294,7 +1294,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\bool.h"
+				RelativePath="..\src\include\ngspice\bool.h"
 				>
 			</File>
 			<File
@@ -1482,7 +1482,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\carddefs.h"
+				RelativePath="..\src\include\ngspice\carddefs.h"
 				>
 			</File>
 			<File
@@ -1518,11 +1518,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ciderinp.h"
+				RelativePath="..\src\include\ngspice\ciderinp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\cidersupt.h"
+				RelativePath="..\src\include\ngspice\cidersupt.h"
 				>
 			</File>
 			<File
@@ -1534,7 +1534,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\cktdefs.h"
+				RelativePath="..\src\include\ngspice\cktdefs.h"
 				>
 			</File>
 			<File
@@ -1542,11 +1542,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\cluster.h"
+				RelativePath="..\src\include\ngspice\cluster.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\cm.h"
+				RelativePath="..\src\include\ngspice\cm.h"
 				>
 			</File>
 			<File
@@ -1570,15 +1570,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\cmconstants.h"
+				RelativePath="..\src\include\ngspice\cmconstants.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\cmproto.h"
+				RelativePath="..\src\include\ngspice\cmproto.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\cmtypes.h"
+				RelativePath="..\src\include\ngspice\cmtypes.h"
 				>
 			</File>
 			<File
@@ -1706,7 +1706,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\compatmode.h"
+				RelativePath="..\src\include\ngspice\compatmode.h"
 				>
 			</File>
 			<File
@@ -1718,7 +1718,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\complex.h"
+				RelativePath="..\src\include\ngspice\complex.h"
 				>
 			</File>
 			<File
@@ -1730,11 +1730,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\const.h"
+				RelativePath="..\src\include\ngspice\const.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\contdefs.h"
+				RelativePath="..\src\include\ngspice\contdefs.h"
 				>
 			</File>
 			<File
@@ -1742,11 +1742,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\cpdefs.h"
+				RelativePath="..\src\include\ngspice\cpdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\cpextern.h"
+				RelativePath="..\src\include\ngspice\cpextern.h"
 				>
 			</File>
 			<File
@@ -1770,7 +1770,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\cpstd.h"
+				RelativePath="..\src\include\ngspice\cpstd.h"
 				>
 			</File>
 			<File
@@ -1798,7 +1798,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\defines.h"
+				RelativePath="..\src\include\ngspice\defines.h"
 				>
 			</File>
 			<File
@@ -1806,7 +1806,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\devdefs.h"
+				RelativePath="..\src\include\ngspice\devdefs.h"
 				>
 			</File>
 			<File
@@ -1814,7 +1814,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\dgen.h"
+				RelativePath="..\src\include\ngspice\dgen.h"
 				>
 			</File>
 			<File
@@ -1846,19 +1846,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\distodef.h"
+				RelativePath="..\src\include\ngspice\distodef.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\dllitf.h"
+				RelativePath="..\src\include\ngspice\dllitf.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\domndefs.h"
+				RelativePath="..\src\include\ngspice\domndefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\dopdefs.h"
+				RelativePath="..\src\include\ngspice\dopdefs.h"
 				>
 			</File>
 			<File
@@ -1866,7 +1866,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\dstring.h"
+				RelativePath="..\src\include\ngspice\dstring.h"
 				>
 			</File>
 			<File
@@ -1874,15 +1874,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\dvec.h"
+				RelativePath="..\src\include\ngspice\dvec.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\elctdefs.h"
+				RelativePath="..\src\include\ngspice\elctdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\enh.h"
+				RelativePath="..\src\include\ngspice\enh.h"
 				>
 			</File>
 			<File
@@ -1898,23 +1898,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\evt.h"
+				RelativePath="..\src\include\ngspice\evt.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\evtproto.h"
+				RelativePath="..\src\include\ngspice\evtproto.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\evtudn.h"
+				RelativePath="..\src\include\ngspice\evtudn.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\FastNorm3.h"
+				RelativePath="..\src\include\ngspice\FastNorm3.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\fftext.h"
+				RelativePath="..\src\include\ngspice\fftext.h"
 				>
 			</File>
 			<File
@@ -1930,27 +1930,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ftedbgra.h"
+				RelativePath="..\src\include\ngspice\ftedbgra.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ftedebug.h"
+				RelativePath="..\src\include\ngspice\ftedebug.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ftedefs.h"
+				RelativePath="..\src\include\ngspice\ftedefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\fteoptdefs.h"
+				RelativePath="..\src\include\ngspice\fteoptdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ftedev.h"
+				RelativePath="..\src\include\ngspice\ftedev.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\fteext.h"
+				RelativePath="..\src\include\ngspice\fteext.h"
 				>
 			</File>
 			<File
@@ -1962,23 +1962,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\fteinp.h"
+				RelativePath="..\src\include\ngspice\fteinp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\fteinput.h"
+				RelativePath="..\src\include\ngspice\fteinput.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\fteparse.h"
+				RelativePath="..\src\include\ngspice\fteparse.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\gendefs.h"
+				RelativePath="..\src\include\ngspice\gendefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\gendev.h"
+				RelativePath="..\src\include\ngspice\gendev.h"
 				>
 			</File>
 			<File
@@ -2006,7 +2006,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\graph.h"
+				RelativePath="..\src\include\ngspice\graph.h"
 				>
 			</File>
 			<File
@@ -2014,11 +2014,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\grid.h"
+				RelativePath="..\src\include\ngspice\grid.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\hash.h"
+				RelativePath="..\src\include\ngspice\hash.h"
 				>
 			</File>
 			<File
@@ -2066,7 +2066,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\hlpdefs.h"
+				RelativePath="..\src\include\ngspice\hlpdefs.h"
 				>
 			</File>
 			<File
@@ -2126,11 +2126,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\iferrmsg.h"
+				RelativePath="..\src\include\ngspice\iferrmsg.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ifsim.h"
+				RelativePath="..\src\include\ngspice\ifsim.h"
 				>
 			</File>
 			<File
@@ -2170,11 +2170,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\inpdefs.h"
+				RelativePath="..\src\include\ngspice\inpdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\inpmacs.h"
+				RelativePath="..\src\include\ngspice\inpmacs.h"
 				>
 			</File>
 			<File
@@ -2194,7 +2194,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\inpptree.h"
+				RelativePath="..\src\include\ngspice\inpptree.h"
 				>
 			</File>
 			<File
@@ -2214,15 +2214,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ipc.h"
+				RelativePath="..\src\include\ngspice\ipc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ipcproto.h"
+				RelativePath="..\src\include\ngspice\ipcproto.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ipctiein.h"
+				RelativePath="..\src\include\ngspice\ipctiein.h"
 				>
 			</File>
 			<File
@@ -2282,7 +2282,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\jobdefs.h"
+				RelativePath="..\src\include\ngspice\jobdefs.h"
 				>
 			</File>
 			<File
@@ -2294,7 +2294,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\lsort.h"
+				RelativePath="..\src\include\ngspice\lsort.h"
 				>
 			</File>
 			<File
@@ -2314,15 +2314,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\macros.h"
+				RelativePath="..\src\include\ngspice\macros.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\material.h"
+				RelativePath="..\src\include\ngspice\material.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\matldefs.h"
+				RelativePath="..\src\include\ngspice\matldefs.h"
 				>
 			</File>
 			<File
@@ -2330,7 +2330,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\memory.h"
+				RelativePath="..\src\include\ngspice\memory.h"
 				>
 			</File>
 			<File
@@ -2362,11 +2362,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\meshdefs.h"
+				RelativePath="..\src\include\ngspice\meshdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\meshext.h"
+				RelativePath="..\src\include\ngspice\meshext.h"
 				>
 			</File>
 			<File
@@ -2378,31 +2378,31 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\methdefs.h"
+				RelativePath="..\src\include\ngspice\methdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\mif.h"
+				RelativePath="..\src\include\ngspice\mif.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\mifcmdat.h"
+				RelativePath="..\src\include\ngspice\mifcmdat.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\mifdefs.h"
+				RelativePath="..\src\include\ngspice\mifdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\mifparse.h"
+				RelativePath="..\src\include\ngspice\mifparse.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\mifproto.h"
+				RelativePath="..\src\include\ngspice\mifproto.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\miftypes.h"
+				RelativePath="..\src\include\ngspice\miftypes.h"
 				>
 			</File>
 			<File
@@ -2418,7 +2418,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\missing_math.h"
+				RelativePath="..\src\include\ngspice\missing_math.h"
 				>
 			</File>
 			<File
@@ -2426,11 +2426,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\mobdefs.h"
+				RelativePath="..\src\include\ngspice\mobdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\modldefs.h"
+				RelativePath="..\src\include\ngspice\modldefs.h"
 				>
 			</File>
 			<File
@@ -2514,7 +2514,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\multi_line.h"
+				RelativePath="..\src\include\ngspice\multi_line.h"
 				>
 			</File>
 			<File
@@ -2558,7 +2558,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice.h"
+				RelativePath="..\src\include\ngspice\ngspice.h"
 				>
 			</File>
 			<File
@@ -2614,7 +2614,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\noisedef.h"
+				RelativePath="..\src\include\ngspice\noisedef.h"
 				>
 			</File>
 			<File
@@ -2622,11 +2622,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\numcards.h"
+				RelativePath="..\src\include\ngspice\numcards.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\numconst.h"
+				RelativePath="..\src\include\ngspice\numconst.h"
 				>
 			</File>
 			<File
@@ -2662,15 +2662,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\numenum.h"
+				RelativePath="..\src\include\ngspice\numenum.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\numgen.h"
+				RelativePath="..\src\include\ngspice\numgen.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\numglobs.h"
+				RelativePath="..\src\include\ngspice\numglobs.h"
 				>
 			</File>
 			<File
@@ -2718,7 +2718,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\onedev.h"
+				RelativePath="..\src\include\ngspice\onedev.h"
 				>
 			</File>
 			<File
@@ -2726,15 +2726,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\onemesh.h"
+				RelativePath="..\src\include\ngspice\onemesh.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\opdefs.h"
+				RelativePath="..\src\include\ngspice\opdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\optdefs.h"
+				RelativePath="..\src\include\ngspice\optdefs.h"
 				>
 			</File>
 			<File
@@ -2742,7 +2742,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\optndefs.h"
+				RelativePath="..\src\include\ngspice\optndefs.h"
 				>
 			</File>
 			<File
@@ -2750,7 +2750,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\outpdefs.h"
+				RelativePath="..\src\include\ngspice\outpdefs.h"
 				>
 			</File>
 			<File
@@ -2762,7 +2762,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\plot.h"
+				RelativePath="..\src\include\ngspice\plot.h"
 				>
 			</File>
 			<File
@@ -2782,7 +2782,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\pnode.h"
+				RelativePath="..\src\include\ngspice\pnode.h"
 				>
 			</File>
 			<File
@@ -2818,7 +2818,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\profile.h"
+				RelativePath="..\src\include\ngspice\profile.h"
 				>
 			</File>
 			<File
@@ -2826,7 +2826,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\pssdefs.h"
+				RelativePath="..\src\include\ngspice\pssdefs.h"
 				>
 			</File>
 			<File
@@ -2834,7 +2834,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\pzdefs.h"
+				RelativePath="..\src\include\ngspice\pzdefs.h"
 				>
 			</File>
 			<File
@@ -2874,15 +2874,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\sen2defs.h"
+				RelativePath="..\src\include\ngspice\sen2defs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\sensdefs.h"
+				RelativePath="..\src\include\ngspice\sensdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\sensgen.h"
+				RelativePath="..\src\include\ngspice\sensgen.h"
 				>
 			</File>
 			<File
@@ -2894,11 +2894,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\sim.h"
+				RelativePath="..\src\include\ngspice\sim.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\smpdefs.h"
+				RelativePath="..\src\include\ngspice\smpdefs.h"
 				>
 			</File>
 			<File
@@ -2930,7 +2930,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\sperror.h"
+				RelativePath="..\src\include\ngspice\sperror.h"
 				>
 			</File>
 			<File
@@ -2938,7 +2938,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\spmatrix.h"
+				RelativePath="..\src\include\ngspice\spmatrix.h"
 				>
 			</File>
 			<File
@@ -2958,7 +2958,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\suffix.h"
+				RelativePath="..\src\include\ngspice\suffix.h"
 				>
 			</File>
 			<File
@@ -2966,7 +2966,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\swec.h"
+				RelativePath="..\src\include\ngspice\swec.h"
 				>
 			</File>
 			<File
@@ -2986,7 +2986,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\tfdefs.h"
+				RelativePath="..\src\include\ngspice\tfdefs.h"
 				>
 			</File>
 			<File
@@ -3010,11 +3010,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\trandefs.h"
+				RelativePath="..\src\include\ngspice\trandefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\trcvdefs.h"
+				RelativePath="..\src\include\ngspice\trcvdefs.h"
 				>
 			</File>
 			<File
@@ -3022,7 +3022,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\tskdefs.h"
+				RelativePath="..\src\include\ngspice\tskdefs.h"
 				>
 			</File>
 			<File
@@ -3030,7 +3030,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\twodev.h"
+				RelativePath="..\src\include\ngspice\twodev.h"
 				>
 			</File>
 			<File
@@ -3038,7 +3038,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\twomesh.h"
+				RelativePath="..\src\include\ngspice\twomesh.h"
 				>
 			</File>
 			<File
@@ -3058,7 +3058,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\typedefs.h"
+				RelativePath="..\src\include\ngspice\typedefs.h"
 				>
 			</File>
 			<File
@@ -3166,7 +3166,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\wallace.h"
+				RelativePath="..\src\include\ngspice\wallace.h"
 				>
 			</File>
 			<File
@@ -3186,11 +3186,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\wordlist.h"
+				RelativePath="..\src\include\ngspice\wordlist.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\wstdio.h"
+				RelativePath="..\src\include\ngspice\wstdio.h"
 				>
 			</File>
 			<File
