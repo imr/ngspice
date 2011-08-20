@@ -1,4 +1,9 @@
 2011-08-20  Robert Larice
+ * src/include/* :
+   #2/7 use a subdirectory "ngspice" for includes to create a uniq namespace
+     move the include files down into the new directory
+
+2011-08-20  Robert Larice
  * **/* :
    #1/7 use a subdirectory "ngspice" for includes to create a uniq namespace
 
