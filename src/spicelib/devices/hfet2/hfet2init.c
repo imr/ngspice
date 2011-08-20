@@ -1,6 +1,6 @@
 #include "config.h"
 
-#include "devdefs.h"
+#include <ngspice/devdefs.h>
 
 #include "hfet2itf.h"
 #include "hfet2ext.h"

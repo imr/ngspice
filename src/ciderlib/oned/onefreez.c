@@ -3,10 +3,10 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
-#include "ngspice.h"
-#include "numglobs.h"
-#include "numconst.h"
-#include "onemesh.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numglobs.h>
+#include <ngspice/numconst.h>
+#include <ngspice/onemesh.h>
 #include "../../maths/misc/accuracy.h"
 #include "onedext.h"
 #include "oneddefs.h"

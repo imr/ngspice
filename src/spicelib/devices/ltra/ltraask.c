@@ -7,13 +7,13 @@ Author: 1990 Jaijeet S. Roychowdhury
  * This routine gives access to the internal device parameter of LTRA lines
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "devdefs.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/ifsim.h>
 #include "ltradefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 /* ARGSUSED */
 int

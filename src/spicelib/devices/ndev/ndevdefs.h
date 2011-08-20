@@ -9,10 +9,10 @@ University of Science and Technology of China
 
 
 /* circuit level includes */
-#include "ifsim.h"
-#include "inpmacs.h"
-#include "cktdefs.h"
-#include "gendefs.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/inpmacs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/gendefs.h>
 #include "ndevexch.h"
 
 /* network function */

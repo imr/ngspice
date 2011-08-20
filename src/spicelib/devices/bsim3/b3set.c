@@ -9,16 +9,16 @@
  * Author: 2001  Xuemei Xi
  **********/
 
-#include "ngspice.h"
-#include "smpdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
 #include "bsim3def.h"
-#include "const.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 #ifdef USE_OMP3
-#include "cpextern.h"
+#include <ngspice/cpextern.h>
 int nthreads;
 #endif
 

@@ -5,11 +5,11 @@ Author: 1985 Thomas L. Quarles
 /*
  */
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "iferrmsg.h"
-#include "acdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/acdefs.h>
+#include <ngspice/cktdefs.h>
 
 
 /* ARGSUSED */

@@ -5,12 +5,12 @@ Author: 1985 Thomas L. Quarles
 This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
-#include "ngspice.h"
-#include "smpdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
 #include "mos2defs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 MOS2sSetup(SENstruct *info, GENmodel *inModel)

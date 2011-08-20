@@ -3,10 +3,10 @@
 
     /* structure used to describe an PZ analysis to be performed */
 
-#include "jobdefs.h"
+#include <ngspice/jobdefs.h>
 #include <math.h>
-#include "complex.h"
-#include "typedefs.h"
+#include <ngspice/complex.h>
+#include <ngspice/typedefs.h>
 
 struct PZtrial {
     SPcomplex	s, f_raw, f_def;

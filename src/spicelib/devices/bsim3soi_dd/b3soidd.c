@@ -12,10 +12,10 @@ Modified by Paolo Nenzi 2001
  * BSIMDD2.1 release
  */
  
-#include "ngspice.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
 #include "b3soidddef.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 IFparm B3SOIDDpTable[] = { /* parameters */
 IOP( "l",   B3SOIDD_L,      IF_REAL   , "Length"),

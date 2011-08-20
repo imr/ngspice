@@ -4,7 +4,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Modified: 2001 Paolo Nenzi
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "accuracy.h"
 
 

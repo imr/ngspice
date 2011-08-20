@@ -9,11 +9,11 @@ Author: 1985 Thomas L. Quarles
  * array previously provided 
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "vcvsdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

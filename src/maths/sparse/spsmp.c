@@ -98,9 +98,9 @@
 #include <assert.h>
 #include <stdio.h>
 #include <math.h>
-#include <spmatrix.h>
+#include <ngspice/spmatrix.h>
 #include "spdefs.h"
-#include <smpdefs.h>
+#include <ngspice/smpdefs.h>
 
 #if defined (_MSC_VER)
 extern double scalbn(double, int);

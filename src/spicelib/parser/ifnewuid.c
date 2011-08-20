@@ -3,7 +3,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Thomas L. Quarles
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
 #ifdef HAVE_ASPRINTF
 #ifdef HAVE_LIBIBERTY_H /* asprintf */
@@ -15,15 +15,15 @@ extern int vasprintf(char **out, const char *fmt, va_list ap);
 #endif
 #endif
 
-#include <wordlist.h>
-#include <bool.h>
-#include <inpdefs.h>
+#include <ngspice/wordlist.h>
+#include <ngspice/bool.h>
+#include <ngspice/inpdefs.h>
 #include <circuits.h>
-#include <cpdefs.h>
+#include <ngspice/cpdefs.h>
 
-#include "ifsim.h"
-#include "iferrmsg.h"
-#include "fteext.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/fteext.h>
 #include "inp.h"
 
 

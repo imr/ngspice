@@ -17,11 +17,11 @@ File: b4soidef.h
 /* debug1, debug2, debug3, ... */
 /* #define B4SOI_DEBUG_OUT */
 
-#include "ifsim.h"
-#include "gendefs.h"
-#include "cktdefs.h"
-#include "complex.h"
-#include "noisedef.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/noisedef.h>
 
 
 #ifdef USE_OMP

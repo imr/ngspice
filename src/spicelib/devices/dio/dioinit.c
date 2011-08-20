@@ -1,7 +1,7 @@
 #include "config.h"
 
-#include "devdefs.h"
-#include "cktdefs.h"
+#include <ngspice/devdefs.h>
+#include <ngspice/cktdefs.h>
 
 #include "diodefs.h"
 #include "dioitf.h"

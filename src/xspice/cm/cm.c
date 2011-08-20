@@ -46,10 +46,10 @@ NON-STANDARD FEATURES
     None.
 
 =========================================================================== */
-#include "ngspice.h"
-#include "cm.h"
-#include "mif.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cm.h>
+#include <ngspice/mif.h>
+#include <ngspice/cktdefs.h>
 //#include "util.h"
 
 

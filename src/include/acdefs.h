@@ -6,7 +6,7 @@ Author: 1985 Thomas L. Quarles
 #ifndef ACDEFS
 #define ACDEFS
 
-#include "jobdefs.h"
+#include <ngspice/jobdefs.h>
 
     /* structure used to describe an AC analysis to be performed */
 

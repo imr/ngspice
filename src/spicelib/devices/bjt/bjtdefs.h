@@ -6,11 +6,11 @@ Author: 1985 Thomas L. Quarles
 #ifndef BJT
 #define BJT
 
-#include "cktdefs.h"
-#include "ifsim.h"
-#include "gendefs.h"
-#include "complex.h"
-#include "noisedef.h"
+#include <ngspice/cktdefs.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/noisedef.h>
 
 /* structures to describe Bipolar Junction Transistors */
 

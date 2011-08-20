@@ -4,14 +4,14 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 Modified: 2001 Paolo Nenzi
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "elctdefs.h"
-#include "meshext.h"
-#include "twomesh.h"
-#include "gendev.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/elctdefs.h>
+#include <ngspice/meshext.h>
+#include <ngspice/twomesh.h>
+#include <ngspice/gendev.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 extern int ELCTcheck( ELCTcard * );

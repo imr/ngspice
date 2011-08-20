@@ -10,12 +10,12 @@ This function is obsolete (was used by an old sensitivity analysis)
  * the MOS1 devices in the circuit.
  */
 
-#include "ngspice.h"
-#include "smpdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
 #include "mos1defs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 void
 MOS1sPrint(GENmodel *inModel, CKTcircuit *ckt)

@@ -9,11 +9,11 @@ Author: 1985 Thomas L. Quarles
  * the specified model in the named circuit.  */
 
 #include <config.h>
-#include <devdefs.h>
-#include <sperror.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/sperror.h>
 
 #include "dev.h"
-#include "memory.h"
+#include <ngspice/memory.h>
 
 int
 CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name)

@@ -8,10 +8,10 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * storage it was using.
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "nbjt2def.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 NBJT2delete(GENmodel *inModel, IFuid name, GENinstance **kill)

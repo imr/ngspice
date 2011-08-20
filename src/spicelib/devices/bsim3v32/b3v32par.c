@@ -9,12 +9,12 @@
  * Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
  **********/
 
-#include "ngspice.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
 #include "bsim3v32def.h"
-#include "sperror.h"
-#include "suffix.h"
-#include "fteext.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
+#include <ngspice/fteext.h>
 
 int
 BSIM3v32param (int param, IFvalue *value, GENinstance *inst, IFvalue *select)

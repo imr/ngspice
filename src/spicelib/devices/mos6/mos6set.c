@@ -8,12 +8,12 @@ Modified: 2000 AlansFixes
      * for fast matrix loading 
      */
 
-#include "ngspice.h"
-#include "smpdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
 #include "mos6defs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 MOS6setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,

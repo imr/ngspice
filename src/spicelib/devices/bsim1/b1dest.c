@@ -5,9 +5,9 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 /*
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "bsim1def.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 
 void

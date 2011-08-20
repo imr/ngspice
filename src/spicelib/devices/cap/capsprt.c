@@ -12,12 +12,12 @@ This function is obsolete (was used by an old sensitivity analysis)
  * the capacitors in the circuit.
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "capdefs.h"
-#include "trandefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/trandefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 void

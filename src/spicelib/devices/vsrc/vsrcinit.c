@@ -1,6 +1,6 @@
 #include "config.h"
 
-#include "devdefs.h"
+#include <ngspice/devdefs.h>
 
 #include "vsrcitf.h"
 #include "vsrcext.h"

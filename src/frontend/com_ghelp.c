@@ -1,13 +1,13 @@
 #ifndef X_DISPLAY_MISSING
-#include <ngspice.h>
-#include <wordlist.h>
-#include <bool.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/wordlist.h>
+#include <ngspice/bool.h>
 #include <variable.h>
 
 #include "variable.h"
-#include "cpextern.h"
-#include "cpextern.h"
-#include <hlpdefs.h>
+#include <ngspice/cpextern.h>
+#include <ngspice/cpextern.h>
+#include <ngspice/hlpdefs.h>
 #endif
 
 #include "com_ghelp.h"

@@ -6,9 +6,9 @@
 #ifndef _AGRAF_H
 #define _AGRAF_H
 
-#include <dvec.h>
-#include <bool.h>
-#include <plot.h>
+#include <ngspice/dvec.h>
+#include <ngspice/bool.h>
+#include <ngspice/plot.h>
 
 void ft_agraf(double *xlims, double *ylims, struct dvec *xscale,
 	      struct plot *plot, struct dvec *vecs,

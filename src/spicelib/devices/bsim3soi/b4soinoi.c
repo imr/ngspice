@@ -13,13 +13,13 @@
  * Modified by Tanvir Morshed 12/31/2009
  **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "b4soidef.h"
-#include "cktdefs.h"
-#include "iferrmsg.h"
-#include "noisedef.h"
-#include "suffix.h"
-#include "const.h"  /* jwan */
+#include <ngspice/cktdefs.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/noisedef.h>
+#include <ngspice/suffix.h>
+#include <ngspice/const.h>  /* jwan */
 
 /*
  * B4SOInoise (mode, operation, firstModel, ckt, data, OnDens)

@@ -1,13 +1,13 @@
 /* $Id$ */
-#include <ngspice.h>
+#include <ngspice/ngspice.h>
 #include <config.h>
-#include <bool.h>
-#include <wordlist.h>
-#include <graph.h>
-#include <cpdefs.h>
-#include <pnode.h>
-#include <sim.h>
-#include <fteext.h>
+#include <ngspice/bool.h>
+#include <ngspice/wordlist.h>
+#include <ngspice/graph.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/pnode.h>
+#include <ngspice/sim.h>
+#include <ngspice/fteext.h>
 
 #include <circuits.h>
 
@@ -21,7 +21,7 @@ static wordlist *wl_root;
 static bool sameflag;
 
 #ifdef TCL_MODULE
-#include <tclspice.h>
+#include <ngspice/tclspice.h>
 #endif
 
 /* This routine gets parameters from the command line, which are of

@@ -10,9 +10,9 @@ Author: 1982 Giles Billingsley
  *  sccsid "@(#)mfbclip.c   1.2  12/21/83"
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
 #include "clip.h"
 
 

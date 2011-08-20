@@ -10,10 +10,10 @@ Author: 1988 Jeffrey M. Hsu
 #ifndef _GRAPH_H
 #define _GRAPH_H
 
-#include "typedefs.h"
-#include "grid.h"
-#include "plot.h"
-#include "dvec.h"            /* for struct dvec */
+#include <ngspice/typedefs.h>
+#include <ngspice/grid.h>
+#include <ngspice/plot.h>
+#include <ngspice/dvec.h>            /* for struct dvec */
 
 struct _keyed;
 

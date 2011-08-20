@@ -11,10 +11,10 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
  *
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "hlpdefs.h"
-#include "suffix.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/hlpdefs.h>
+#include <ngspice/suffix.h>
 
 static topic *curtop;
 static bool quitflag;

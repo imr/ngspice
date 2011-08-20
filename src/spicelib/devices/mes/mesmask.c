@@ -5,13 +5,13 @@ Author: 1987 Thomas L. Quarles
 /*
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "devdefs.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/ifsim.h>
 #include "mesdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 /* ARGSUSED */

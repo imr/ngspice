@@ -4,12 +4,12 @@ reserved.
 Author: 1990 Jaijeet S. Roychowdhury
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "ltradefs.h"
-#include "trandefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/trandefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 LTRAacLoad(GENmodel *inModel, CKTcircuit *ckt)

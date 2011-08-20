@@ -6,13 +6,13 @@ $Id$
 
 /* Functions to compute terminal conductances & currents. */
 
-#include "ngspice.h"
-#include "numglobs.h"
-#include "numenum.h"
-#include "twomesh.h"
-#include "twodev.h"
-#include "bool.h"
-#include "spmatrix.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numglobs.h>
+#include <ngspice/numenum.h>
+#include <ngspice/twomesh.h>
+#include <ngspice/twodev.h>
+#include <ngspice/bool.h>
+#include <ngspice/spmatrix.h>
 #include "twoddefs.h"
 #include "twodext.h"
 

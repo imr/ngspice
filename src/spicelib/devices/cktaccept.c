@@ -9,10 +9,10 @@ Author: 1985 Thomas L. Quarles
  * functions provided for the circuit elements in the given circuit */
 
 #include <config.h>
-#include <devdefs.h>
-#include <sperror.h>
-#include <ifsim.h>
-#include <devdefs.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/devdefs.h>
 
 #include "dev.h"
 

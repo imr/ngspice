@@ -4,16 +4,16 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
-#include "ngspice.h"
-#include "numglobs.h"
-#include "numenum.h"
-#include "onemesh.h"
-#include "onedev.h"
-#include "profile.h"
-#include "macros.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numglobs.h>
+#include <ngspice/numenum.h>
+#include <ngspice/onemesh.h>
+#include <ngspice/onedev.h>
+#include <ngspice/profile.h>
+#include <ngspice/macros.h>
 #include "onedext.h"
 #include "oneddefs.h"
-#include "cidersupt.h"
+#include <ngspice/cidersupt.h>
 
 /* functions in this file are used to calculate the conc */
 

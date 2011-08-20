@@ -6,11 +6,11 @@ Modified: 2001 Jon Engelbert
 /*
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "swdefs.h"
-#include "ifsim.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

@@ -13,10 +13,10 @@ Authors: 1991 David Gates
 #ifndef NUMGEN_H
 #define NUMGEN_H
 
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "gendefs.h"
-#include "carddefs.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/carddefs.h>
 
 typedef struct sGENnumModel {	/* model structure for a numerical device */
     int GENmodType;		/* type index of this device type */

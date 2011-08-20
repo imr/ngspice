@@ -3,11 +3,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "tradefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 TRAacLoad(GENmodel *inModel, CKTcircuit *ckt)

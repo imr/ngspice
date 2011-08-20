@@ -9,11 +9,11 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 /*
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "jfet2defs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

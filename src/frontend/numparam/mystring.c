@@ -9,13 +9,13 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <memory.h>
+#include <ngspice/memory.h>
 #include <math.h>
 #include <stdarg.h>
 
 #include "config.h"
 #ifdef HAS_WINDOWS
-#include "wstdio.h"
+#include <ngspice/wstdio.h>
 #endif
 
 #include "general.h"

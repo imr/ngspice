@@ -3,7 +3,7 @@
  * 2002 R. Oktas, <roktas@omu.edu.tr>
  ************/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "util.h"
 
 /* **************************************************************** */

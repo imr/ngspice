@@ -3,14 +3,14 @@ Imported from MacSpice3f4 - Antony Wilson
 Modified: Paolo Nenzi
 **********/
 
-#include "ngspice.h"
-#include "devdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/cktdefs.h>
 #include "hfet2defs.h"
-#include "const.h"
-#include "trandefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/const.h>
+#include <ngspice/trandefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 void Pause(void);
 

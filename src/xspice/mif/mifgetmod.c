@@ -45,20 +45,20 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
 #include <stdio.h>
-#include "inpdefs.h"
-#include "devdefs.h"
-#include "ifsim.h"
-#include "cpstd.h"
-#include "fteext.h"
+#include <ngspice/inpdefs.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/cpstd.h>
+#include <ngspice/fteext.h>
 
-#include "mifproto.h"
-#include "mifdefs.h"
-#include "mifcmdat.h"
+#include <ngspice/mifproto.h>
+#include <ngspice/mifdefs.h>
+#include <ngspice/mifcmdat.h>
 
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 /*  This is the table of all models known to the program.  
     It is now defined in inpmkmod.c.      */

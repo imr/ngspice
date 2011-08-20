@@ -1,9 +1,9 @@
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "ftedefs.h"
-#include <bool.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/bool.h>
 #include "circuits.h"
-#include <wordlist.h>
+#include <ngspice/wordlist.h>
 #include "variable.h"
 #include "com_option.h"
 

@@ -9,16 +9,16 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 /* data structures used to describe 1D Numerical BJTs */
 
 /* circuit level includes */
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "gendefs.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/gendefs.h>
 
 /* device level includes */
-#include "onemesh.h"
-#include "onedev.h"
-#include "profile.h"
-#include "numglobs.h"
-#include "carddefs.h"
+#include <ngspice/onemesh.h>
+#include <ngspice/onedev.h>
+#include <ngspice/profile.h>
+#include <ngspice/numglobs.h>
+#include <ngspice/carddefs.h>
 
 /* information needed per instance */
 typedef struct sNBJTinstance {

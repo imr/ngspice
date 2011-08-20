@@ -9,8 +9,8 @@ Author: 1985 Thomas L. Quarles
      * delete the data structures allocated for numeric integration.
      */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "nidest.h"
 
 

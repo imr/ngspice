@@ -10,9 +10,9 @@ Author: 1985 Thomas L. Quarles
  * all storage they were using.
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "bjtdefs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 
 void

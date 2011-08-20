@@ -1,8 +1,8 @@
 #include <config.h>
-#include <ngspice.h>
+#include <ngspice/ngspice.h>
 
-#include <bool.h>
-#include <wordlist.h>
+#include <ngspice/bool.h>
+#include <ngspice/wordlist.h>
 
 #include "com_strcmp.h"
 #include "quote.h"

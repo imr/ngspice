@@ -5,12 +5,12 @@ Author: 2003 Paolo Nenzi
  */
 
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "complex.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
 #include "hfetdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

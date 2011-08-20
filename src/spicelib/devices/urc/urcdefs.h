@@ -7,10 +7,10 @@ Author: 1985 Thomas L. Quarles
 #define URC
 
 
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "gendefs.h"
-#include "complex.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/complex.h>
 
     /*
      *  structures used to describe uniform RC lines

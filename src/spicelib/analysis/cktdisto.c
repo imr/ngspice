@@ -8,14 +8,14 @@ Author: 1988 Jaijeet S Roychowdhury
  */
 
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
-#include "iferrmsg.h"
-#include "distodef.h"
-#include "sperror.h"
+#include <ngspice/iferrmsg.h>
+#include <ngspice/distodef.h>
+#include <ngspice/sperror.h>
 
 
 int

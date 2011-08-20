@@ -10,11 +10,11 @@ Modified by Paolo Nenzi 2002
  * BSIMPD2.2.3 release
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "b3soipddef.h"
-#include "sperror.h"
-#include "gendefs.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/suffix.h>
 
 
 int

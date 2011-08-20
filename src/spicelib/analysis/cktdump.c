@@ -17,14 +17,14 @@ TODO:
      * this is a simple program to dump the rhs vector to stdout
      */
 
-#include "ngspice.h"
-#include "smpdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
 
 #ifdef CIDER
 /* Begin cider integration */
-#include "gendefs.h"
-#include "devdefs.h"
+#include <ngspice/gendefs.h>
+#include <ngspice/devdefs.h>
  
 /* End cider integration */
 #endif

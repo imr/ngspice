@@ -16,10 +16,10 @@ Modified by Paolo Nenzi 2002
  * BSIMPD2.2.3 release
  */
 
-#include "ngspice.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
 #include "b3soipddef.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 IFparm B3SOIPDpTable[] = { /* parameters */
 IOP( "l",   B3SOIPD_L,      IF_REAL   , "Length"),

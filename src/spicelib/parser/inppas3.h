@@ -2,7 +2,7 @@
 #ifndef _INPPAS3_H
 #define _INPPAS3_H
 
-#include <inpdefs.h>
+#include <ngspice/inpdefs.h>
 
 
 

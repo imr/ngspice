@@ -5,11 +5,11 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 /*
  */
 
-#include "ngspice.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
 #include "bsim2def.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 /* ARGSUSED */

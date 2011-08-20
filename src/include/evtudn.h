@@ -60,7 +60,7 @@ NON-STANDARD FEATURES
 =========================================================================== */
 
 
-#include "miftypes.h"  /* for Mif_Boolean_t used in udn_..._compare */
+#include <ngspice/miftypes.h>  /* for Mif_Boolean_t used in udn_..._compare */
 
 #define MALLOCED_PTR                 (*evt_struct_ptr)
 #define STRUCT_PTR                   evt_struct_ptr

@@ -4,13 +4,13 @@ Author: 1985 Thomas L. Quarles
 Modified: Alan Gillespie
 **********/
 
-#include "ngspice.h"
-#include "smpdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
 #include "mos9defs.h"
-#include "const.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 /* assuming silicon - make definition for epsilon of silicon */
 #define EPSSIL (11.7 * 8.854214871e-12)

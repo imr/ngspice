@@ -8,9 +8,9 @@ $Id$
  * Stuff for asynchronous spice runs, and also rspice.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
 
 #include "aspice.h"
 #include "variable.h"
@@ -33,8 +33,8 @@ $Id$
 
 #include <signal.h>
 
-#include "fteinp.h"
-#include "dvec.h"
+#include <ngspice/fteinp.h>
+#include <ngspice/dvec.h>
 
 #include "../misc/mktemp.h"
 

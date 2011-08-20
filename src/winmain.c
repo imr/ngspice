@@ -25,7 +25,7 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/timeb.h>
-#include "bool.h"           /* bool defined as unsigned char */
+#include <ngspice/bool.h>           /* bool defined as unsigned char */
 #include "misc/misc_time.h" /* timediff */
 
 /* Constants */

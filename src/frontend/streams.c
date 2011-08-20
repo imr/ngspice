@@ -4,14 +4,14 @@
 ************/
 
 #include <config.h>
-#include <ngspice.h>
-#include <wordlist.h>
-#include <bool.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/wordlist.h>
+#include <ngspice/bool.h>
 
 #include "variable.h"
 #include "terminal.h"
 #include "quote.h"
-#include "cpextern.h"
+#include <ngspice/cpextern.h>
 #include "streams.h"
 
 bool cp_debug = FALSE;

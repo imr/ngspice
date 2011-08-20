@@ -3,12 +3,12 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
-#include "ngspice.h"
-#include "numglobs.h"
-#include "numenum.h"
-#include "twodev.h"
-#include "twomesh.h"
-#include "spmatrix.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numglobs.h>
+#include <ngspice/numenum.h>
+#include <ngspice/twodev.h>
+#include <ngspice/twomesh.h>
+#include <ngspice/spmatrix.h>
 #include "twoddefs.h"
 #include "twodext.h"
 

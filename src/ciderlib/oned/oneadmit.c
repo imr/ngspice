@@ -6,19 +6,19 @@ $Id$
 
 /* Functions to compute small-signal parameters of 1D devices */
 
-#include "ngspice.h"
-#include "numglobs.h"
-#include "numenum.h"
-#include "numconst.h"
-#include "onedev.h"
-#include "onemesh.h"
-#include "complex.h"
-#include "spmatrix.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numglobs.h>
+#include <ngspice/numenum.h>
+#include <ngspice/numconst.h>
+#include <ngspice/onedev.h>
+#include <ngspice/onemesh.h>
+#include <ngspice/complex.h>
+#include <ngspice/spmatrix.h>
+#include <ngspice/ifsim.h>
 
 #include "onedext.h"
 #include "oneddefs.h"
-#include "cidersupt.h"
+#include <ngspice/cidersupt.h>
 
 
 extern IFfrontEnd *SPfrontEnd;

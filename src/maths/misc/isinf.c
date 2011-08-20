@@ -1,4 +1,4 @@
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
 #if !HAVE_DECL_ISINF
 #ifndef HAVE_ISINF

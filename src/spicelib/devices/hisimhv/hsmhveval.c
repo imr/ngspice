@@ -162,7 +162,7 @@ June. 2008
 /* #include <ieeefp.h> */
 #endif
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
 /*-----------------------------------*
 * HiSIM macros

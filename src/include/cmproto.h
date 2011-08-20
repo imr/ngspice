@@ -46,7 +46,7 @@ NON-STANDARD FEATURES
 
 
 #include  <stdio.h>
-#include "cmtypes.h"
+#include <ngspice/cmtypes.h>
 
 
 void cm_climit_fcn(double in, double in_offset, double cntl_upper, 

@@ -5,10 +5,10 @@ Modified: AlansFixes
 **********/
 
 #include <config.h>
-#include <ngspice.h>
-#include <iferrmsg.h>
-#include <ifsim.h>
-#include <inpmacs.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/inpmacs.h>
 
 #include "inppas3.h"
 

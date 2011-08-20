@@ -4,39 +4,39 @@
 
 /* subroutine to do DC PSS analysis */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "pssdefs.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/pssdefs.h>
+#include <ngspice/sperror.h>
 
 /* for FFT */
-#include "ftedefs.h"
-#include "dvec.h"
-#include "sim.h"
-#include "fteparse.h"
-#include "const.h"
+#include <ngspice/ftedefs.h>
+#include <ngspice/dvec.h>
+#include <ngspice/sim.h>
+#include <ngspice/fteparse.h>
+#include <ngspice/const.h>
 #include "../../frontend/fourier.h"
 #include "../../frontend/variable.h"
 
 #include "config.h"
 #include "cktaccept.h"
-#include "trandefs.h"
-#include "fteext.h"
-#include "missing_math.h"
+#include <ngspice/trandefs.h>
+#include <ngspice/fteext.h>
+#include <ngspice/missing_math.h>
 
 #ifdef XSPICE
 /* gtri - add - wbk - Add headers */
-#include "miftypes.h"
+#include <ngspice/miftypes.h>
 
-#include "evt.h"
-#include "mif.h"
-#include "evtproto.h"
-#include "ipctiein.h"
+#include <ngspice/evt.h>
+#include <ngspice/mif.h>
+#include <ngspice/evtproto.h>
+#include <ngspice/ipctiein.h>
 /* gtri - end - wbk - Add headers */
 #endif
 
 #ifdef CLUSTER
-#include "cluster.h"
+#include <ngspice/cluster.h>
 #endif
 
 #ifdef HAS_WINDOWS    /* hvogt 10.03.99, nach W. Mues */

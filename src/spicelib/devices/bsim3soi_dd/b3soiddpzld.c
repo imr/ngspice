@@ -11,12 +11,12 @@ Modified by Paolo Nenzi 2002
  * BSIMDD2.1 release
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "complex.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/sperror.h>
 #include "b3soidddef.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 int
 B3SOIDDpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)

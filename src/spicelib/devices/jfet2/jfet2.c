@@ -9,11 +9,11 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
                  Extra state vectors added to JFET2pTable
 **********/
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/devdefs.h>
 #include "jfet2defs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 IFparm JFET2pTable[] = { /* device parameters */ 
  IOPU("off",         JFET2_OFF,            IF_FLAG,   "Device initially off"),

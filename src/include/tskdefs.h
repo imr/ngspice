@@ -9,8 +9,8 @@ Modified: 2000 AlansFixes
 #define TSK
 
 
-#include "typedefs.h"
-#include "jobdefs.h"
+#include <ngspice/typedefs.h>
+#include <ngspice/jobdefs.h>
 
 struct TSKtask {
     JOB taskOptions;    /* job structure at the front to hold options */

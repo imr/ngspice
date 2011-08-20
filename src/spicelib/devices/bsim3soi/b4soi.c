@@ -14,11 +14,11 @@
  * Modified by Tanvir Morshed 12/31/2009
  **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
-#include "devdefs.h"
+#include <ngspice/devdefs.h>
 #include "b4soidef.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 IFparm B4SOIpTable[] = { /* parameters */
 IOP( "l",   B4SOI_L,      IF_REAL   , "Length"),

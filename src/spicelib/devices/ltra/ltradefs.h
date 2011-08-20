@@ -8,10 +8,10 @@ Author: 1990 Jaijeet S. Roychowdhury
 #undef LTRALTEINFO
 #undef LTRADEBUG
 
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "gendefs.h"
-#include "complex.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/complex.h>
 
 /* structures used to describe lossy transmission liness */
 

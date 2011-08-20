@@ -7,14 +7,14 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Main routine for sconvert.
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
 
-#include <fteinput.h>
-#include <cpdefs.h>
-#include <ftedefs.h>
-#include <sim.h>
-#include "suffix.h"
+#include <ngspice/fteinput.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/sim.h>
+#include <ngspice/suffix.h>
 #include "frontend/display.h"
 #include "../misc/mktemp.h"
 

@@ -1,4 +1,4 @@
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
 #include "polyfit.h"
 #include "polyeval.h"

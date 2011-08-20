@@ -4,14 +4,14 @@ Author: 1985 Thomas L. Quarles
 Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
 **********/
 
-#include "ngspice.h"
-#include "const.h"
-#include "devdefs.h"
-#include "ifsim.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/const.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
 #include "diodefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 /* ARGSUSED */
 int

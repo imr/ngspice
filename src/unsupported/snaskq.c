@@ -5,11 +5,11 @@ Author: 1985 Thomas L. Quarles
 
 #include "spice.h"
 #include <stdio.h>
-#include "ifsim.h"
-#include "iferrmsg.h"
-#include "sen2defs.h"
-#include "cktdefs.h"
-#include "suffix.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/sen2defs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/suffix.h>
 
 /* ARGSUSED */
 int 

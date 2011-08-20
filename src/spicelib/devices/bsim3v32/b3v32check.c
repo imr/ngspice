@@ -10,14 +10,14 @@
  * Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
  **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "bsim3v32def.h"
-#include "trandefs.h"
-#include "const.h"
-#include "sperror.h"
-#include "devdefs.h"
-#include "suffix.h"
+#include <ngspice/trandefs.h>
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/suffix.h>
 
 int
 BSIM3v32checkModel (BSIM3v32model *model, BSIM3v32instance *here, CKTcircuit *ckt)

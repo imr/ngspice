@@ -15,16 +15,16 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
 #include <math.h>
 #include "hsmhvdef.h"
-#include "cktdefs.h"
+#include <ngspice/cktdefs.h>
 /* #include "fteconst.h" */
-#include "iferrmsg.h"
-#include "noisedef.h"
-#include "suffix.h"
-#include "const.h"  /* jwan */
+#include <ngspice/iferrmsg.h>
+#include <ngspice/noisedef.h>
+#include <ngspice/suffix.h>
+#include <ngspice/const.h>  /* jwan */
 #include "hsmhvevalenv.h"
 /* #include "hsmhvmacro.h" */
 

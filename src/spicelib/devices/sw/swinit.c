@@ -1,7 +1,7 @@
 /* Modified: Alansfixes */
 #include "config.h"
 
-#include "devdefs.h"
+#include <ngspice/devdefs.h>
 
 #include "switf.h"
 #include "swext.h"

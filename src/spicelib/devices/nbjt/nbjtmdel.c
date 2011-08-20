@@ -8,10 +8,10 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * it was using. returns an error if the model has instances
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "nbjtdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 NBJTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)

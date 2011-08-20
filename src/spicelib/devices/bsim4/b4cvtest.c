@@ -13,14 +13,14 @@
  * Modified by Xuemei Xi, 05/09/2003.
  **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "bsim4def.h"
-#include "trandefs.h"
-#include "const.h"
-#include "devdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/trandefs.h>
+#include <ngspice/const.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

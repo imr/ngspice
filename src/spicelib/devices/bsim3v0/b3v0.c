@@ -4,10 +4,10 @@ Author: 1995 Min-Chie Jeng and Mansun Chan.
 File: b3.c
 **********/
 
-#include "ngspice.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
 #include "bsim3v0def.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 IFparm BSIM3v0pTable[] = { /* parameters */
 IOP( "l",   BSIM3v0_L,      IF_REAL   , "Length"),

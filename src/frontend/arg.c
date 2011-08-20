@@ -8,10 +8,10 @@ Author: 1987 Jeffrey M. Hsu
       and prompt the user if necessary.
 */
 
-#include <ngspice.h>
-#include <fteinput.h>
-#include <cpdefs.h>
-#include <fteext.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/fteinput.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/fteext.h>
 
 #include "arg.h"
 #include "variable.h"

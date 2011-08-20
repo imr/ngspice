@@ -8,12 +8,12 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
    10 Feb 1994:  New call to PSacload() with matrix loading
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "jfet2defs.h"
-#include "sperror.h"
+#include <ngspice/sperror.h>
 #include "psmodel.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 int
 JFET2acLoad(GENmodel *inModel, CKTcircuit *ckt)

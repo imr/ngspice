@@ -3,9 +3,9 @@ Imported from MacSpice3f4 - Antony Wilson
 Modified: Paolo Nenzi
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "hfet2defs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 
 void HFET2destroy(GENmodel **inModel)

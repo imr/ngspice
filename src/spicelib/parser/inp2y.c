@@ -4,11 +4,11 @@ reserved.
 Author: 1992 Charles Hough
 **********/
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "inpdefs.h"
-#include "inpmacs.h"
-#include "fteext.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/inpdefs.h>
+#include <ngspice/inpmacs.h>
+#include <ngspice/fteext.h>
 #include "inp.h"
 
 void

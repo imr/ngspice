@@ -6,8 +6,8 @@ Author: 1985 Thomas L. Quarles
 #ifndef GEN
 #define GEN
 
-#include "typedefs.h"
-#include "ifsim.h"
+#include <ngspice/typedefs.h>
+#include <ngspice/ifsim.h>
 
 
 

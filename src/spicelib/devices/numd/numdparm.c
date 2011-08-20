@@ -3,12 +3,12 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "const.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/const.h>
 #include "numddefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 NUMDparam(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)

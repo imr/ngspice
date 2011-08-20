@@ -2,11 +2,11 @@
 Author: 2010-05 Stefano Perticaroli ``spertica''
 **********/
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "iferrmsg.h"
-#include "cktdefs.h"
-#include "pssdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/pssdefs.h>
 
 #include "analysis.h"
 

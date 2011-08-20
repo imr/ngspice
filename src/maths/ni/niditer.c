@@ -12,10 +12,10 @@ Author: 1988 Jaijeet S. Roychowdhury
      *
      */
 
-#include "ngspice.h"
-#include "trandefs.h"
-#include "cktdefs.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/trandefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/sperror.h>
 #include "niditer.h"
 
 

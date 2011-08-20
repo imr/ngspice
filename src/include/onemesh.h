@@ -14,7 +14,7 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 #ifndef ONEMESH_H
 #define ONEMESH_H
 
-#include "material.h"
+#include <ngspice/material.h>
 
 typedef struct sONEelem {
     struct sONEelem *pElems[2];     /* array to store neighbor elements */

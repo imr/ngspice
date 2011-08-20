@@ -12,9 +12,9 @@
 
 
 #ifdef PSMODEL_C  /* PSMODEL_C defined when included from "psmodel.c" */
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "jfet2defs.h"
-#include "const.h"
+#include <ngspice/const.h>
 #endif
 
 /* Glue definitions for cref modl and inst */

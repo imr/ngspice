@@ -3,14 +3,14 @@ Copyright 1993: T. Ytterdal, K. Lee, M. Shur and T. A. Fjeldly. All rights reser
 Author: Trond Ytterdal
 **********/
 
-#include "ngspice.h"
-#include "devdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/cktdefs.h>
 #include "mesadefs.h"
-#include "const.h"
-#include "trandefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/const.h>
+#include <ngspice/trandefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 /*
 #define true 1

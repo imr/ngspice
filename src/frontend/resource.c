@@ -14,15 +14,15 @@ $Id$
  */
 
 #include "config.h"
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
 
 #include "circuits.h"
 #include "quote.h"
 #include "resource.h"
 #include "variable.h"
-#include "cktdefs.h"
+#include <ngspice/cktdefs.h>
 
 #include <inttypes.h>
 
@@ -30,7 +30,7 @@ $Id$
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include ipc stuff */
-#include "ipctiein.h"
+#include <ngspice/ipctiein.h>
 /* gtri - end - 12/12/90 */
 #endif
 

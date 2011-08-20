@@ -6,11 +6,11 @@ Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
 #ifndef DIO
 #define DIO
 
-#include "ifsim.h"
-#include "gendefs.h"
-#include "cktdefs.h"
-#include "complex.h"
-#include "noisedef.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/noisedef.h>
 
             /* data structures used to describe diodes */
 

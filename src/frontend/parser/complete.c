@@ -14,8 +14,8 @@ Modified: 1999 Paolo Nenzi
  */
 
 #include <config.h>
-#include "ngspice.h"
-#include "cpdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
 #include "complete.h"
 
 

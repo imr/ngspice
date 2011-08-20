@@ -5,13 +5,13 @@ Author: 1988 Hong J. Park
 /*
  */
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
 #include "bsim1def.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 /*ARGSUSED*/

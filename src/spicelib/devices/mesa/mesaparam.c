@@ -3,12 +3,12 @@ Copyright 1993: T. Ytterdal, K. Lee, M. Shur and T. A. Fjeldly. All rights reser
 Author: Trond Ytterdal
 **********/
 
-#include "ngspice.h"
-#include "const.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/const.h>
+#include <ngspice/ifsim.h>
 #include "mesadefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 /* ARGSUSED */

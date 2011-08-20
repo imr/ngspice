@@ -3,9 +3,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1989 Jaijeet S. Roychowdhury
 **********/
 
-#include "ngspice.h"
-#include "distodef.h"
-#include "suffix.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/distodef.h>
+#include <ngspice/suffix.h>
 
 /*
  * PowDeriv computes the partial derivatives of the x^^m

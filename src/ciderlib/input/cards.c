@@ -4,8 +4,8 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 Modified: 2001 Paolo Nenzi
 **********/
 
-#include "ngspice.h"
-#include "numcards.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numcards.h>
 
 extern IFcardInfo CONTinfo;
 extern IFcardInfo DOPinfo;

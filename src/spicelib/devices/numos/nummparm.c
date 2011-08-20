@@ -7,12 +7,12 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * This routine sets instance parameters for NUMOSs in the circuit.
  */
 
-#include "ngspice.h"
-#include "const.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/const.h>
+#include <ngspice/ifsim.h>
 #include "numosdef.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 NUMOSparam(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)

@@ -5,13 +5,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 /* The front-end command loop.  */
 
-#include <ngspice.h>
-#include <cpdefs.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
 
 #include "control.h"
 #include "com_cdump.h"
 #include "variable.h"
-#include "fteext.h"
+#include <ngspice/fteext.h>
 
 
 /* Return values from doblock().  I am assuming that nobody will use

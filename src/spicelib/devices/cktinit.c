@@ -6,17 +6,17 @@ Modifed: 2000 AlansFixes
 
 #include "config.h"
 
-#include "memory.h"
-#include "cktdefs.h"
-#include "devdefs.h"
-#include "sperror.h"
-#include "fteext.h"
-#include "ifsim.h"
+#include <ngspice/memory.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/fteext.h>
+#include <ngspice/ifsim.h>
 #include "dev.h"
 
 #ifdef XSPICE
 /* gtri - add - wbk - 11/26/90 - add include for MIF global data */
-#include "mif.h"
+#include <ngspice/mif.h>
 /* gtri - end - wbk - 11/26/90 */
 #endif
 

@@ -14,14 +14,14 @@
 #include <unistd.h>
 #endif
 #include <math.h>
-#include "wallace.h"
-#include "FastNorm3.h"
+#include <ngspice/wallace.h>
+#include <ngspice/FastNorm3.h>
 
 #ifdef HasMain
 #include <sys/timeb.h>
 #else
 #ifndef NOSPICE
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #endif
 #endif
 
@@ -478,7 +478,7 @@ float NewWa_not(void)
 /*	---------------------  (test) main  -------------------------  */
 /* gcc -Wall -g  -DHasMain -I../../include  wallace.c CombTaus.o -o watest.exe */
 #ifdef HasMain
-#include "wallace.h"
+#include <ngspice/wallace.h>
 
 struct timeb timenow;	
 struct timeb timebegin;	

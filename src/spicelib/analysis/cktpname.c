@@ -11,12 +11,12 @@ Author: 1985 Thomas L. Quarles
      *  Take a parameter by Name and set it on the specified device 
      */
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "devdefs.h"
-#include "cktdefs.h"
-#include "gendefs.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/sperror.h>
 
 
 /* ARGSUSED */

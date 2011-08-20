@@ -4,20 +4,20 @@ Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "sperror.h"
-#include "trandefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/trandefs.h>
 
 #include "analysis.h"
 
 #ifdef XSPICE
 /* gtri - add - wbk - 11/26/90 - add include for MIF and EVT global data */
-#include "mif.h"
-#include "evtproto.h"
+#include <ngspice/mif.h>
+#include <ngspice/evtproto.h>
 /* gtri - end - wbk - 11/26/90 */
 /* gtri - add - 12/12/90 - wbk - include ipc stuff */
-#include "ipctiein.h"
+#include <ngspice/ipctiein.h>
 /* gtri - end - 12/12/90 */
 #endif
 

@@ -2,12 +2,12 @@
 /* $Id$ */
 /* New commands for unloading circuits */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "ftedev.h"
-#include "ftedebug.h"
-#include "dvec.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/ftedev.h>
+#include <ngspice/ftedebug.h>
+#include <ngspice/dvec.h>
 
 #include "circuits.h"
 #include "mw_coms.h"

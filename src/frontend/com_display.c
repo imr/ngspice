@@ -1,8 +1,8 @@
-#include <ngspice.h>
-#include <bool.h>
-#include <wordlist.h>
-#include <fteext.h>
-#include <cpextern.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/bool.h>
+#include <ngspice/wordlist.h>
+#include <ngspice/fteext.h>
+#include <ngspice/cpextern.h>
 
 #include "com_display.h"
 #include "quote.h"

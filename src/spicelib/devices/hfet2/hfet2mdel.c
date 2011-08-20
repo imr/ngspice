@@ -6,10 +6,10 @@ Author: 1985 S. Hwang
 Imported into hfet2 model: Paolo Nenzi 2001
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "hfet2defs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

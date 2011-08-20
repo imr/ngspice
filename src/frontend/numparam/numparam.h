@@ -6,7 +6,7 @@
 /*** interface to spice frontend  subckt.c ***/
 
 #include "numpaif.h"
-#include "hash.h"
+#include <ngspice/hash.h>
 
 /***** numparam internals ********/
 

@@ -6,13 +6,13 @@ Author: 1987 Thomas L. Quarles
 Imported into HFETA source: Paolo Nenzi 2001
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "devdefs.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/ifsim.h>
 #include "hfetdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 /* ARGSUSED */

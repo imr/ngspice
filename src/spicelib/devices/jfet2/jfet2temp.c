@@ -10,14 +10,14 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
                 sourceResist and drainResist, and fc for depletionCapCoef
 **********/
 
-#include "ngspice.h"
-#include "smpdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
 #include "jfet2defs.h"
-#include "const.h"
-#include "sperror.h"
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
 #include "psmodel.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 int
 JFET2temp(GENmodel *inModel, CKTcircuit *ckt)

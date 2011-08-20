@@ -13,13 +13,13 @@
  * Modified by Tanvir Morshed 12/31/2009
  **********/
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
 #include "b4soidef.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 B4SOImAsk(

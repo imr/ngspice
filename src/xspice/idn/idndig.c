@@ -39,11 +39,11 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
-#include "cm.h"
+#include <ngspice/cm.h>
 
-#include "evtudn.h"
+#include <ngspice/evtudn.h>
  
 /* ************************************************************************ */
 

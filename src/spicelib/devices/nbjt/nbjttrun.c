@@ -8,13 +8,13 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * circuit.
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "nbjtdefs.h"
-#include "sperror.h"
+#include <ngspice/sperror.h>
 #include "../../../ciderlib/oned/onedext.h"
-#include "cidersupt.h"
-#include "suffix.h"
+#include <ngspice/cidersupt.h>
+#include <ngspice/suffix.h>
 
 
 int

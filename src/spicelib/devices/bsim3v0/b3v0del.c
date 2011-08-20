@@ -6,11 +6,11 @@ File: b3v0del.c
 /*
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "bsim3v0def.h"
-#include "sperror.h"
-#include "gendefs.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/suffix.h>
 
 
 int

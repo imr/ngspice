@@ -10,7 +10,7 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
  * The first four are the elements of IFparseTree, defined in IFsim.h.
  */
 
-#include "ifsim.h"
+#include <ngspice/ifsim.h>
 
 #ifndef INP_PARSE
 #define INP_PARSE

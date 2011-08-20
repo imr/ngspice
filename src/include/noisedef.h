@@ -6,7 +6,7 @@ Author: 1987 Gary W. Ng
 #ifndef NOISEDEFS
 #define NOISEDEFS
 
-#include "jobdefs.h"
+#include <ngspice/jobdefs.h>
 
     /* structure used to describe an noise analysis */
 

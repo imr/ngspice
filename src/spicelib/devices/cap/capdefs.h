@@ -8,10 +8,10 @@ Modified: September 2003 Paolo Nenzi
 #define CAP
 
 
-#include "ifsim.h"
-#include "complex.h"
-#include "gendefs.h"
-#include "cktdefs.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/complex.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/cktdefs.h>
 
     /* structures used to describe capacitors */
 

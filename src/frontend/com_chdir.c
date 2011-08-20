@@ -3,9 +3,9 @@
 * $Id$
 ************/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
-#include "wordlist.h"
+#include <ngspice/wordlist.h>
 
 #ifdef HAVE_PWD_H
 #include <pwd.h>
@@ -13,7 +13,7 @@
 
 #include "com_chdir.h"
 #include "quote.h"
-#include "cpextern.h"
+#include <ngspice/cpextern.h>
 
 
 void

@@ -4,15 +4,15 @@ Author: 1988 Thomas L. Quarles
 Modified: 2000 AlansFixes
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
-#include "ifsim.h"
-#include "inpdefs.h"
-#include "inpmacs.h"
-#include "fteext.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/inpdefs.h>
+#include <ngspice/inpmacs.h>
+#include <ngspice/fteext.h>
 #include "inp.h"
-#include "cpdefs.h"
-#include "tskdefs.h"
+#include <ngspice/cpdefs.h>
+#include <ngspice/tskdefs.h>
 
 static int
 dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,

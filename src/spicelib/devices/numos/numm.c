@@ -4,10 +4,10 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
-#include "ngspice.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
 #include "numosdef.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 /*
  * This file defines the 2d Numerical MOSFET data structures that are

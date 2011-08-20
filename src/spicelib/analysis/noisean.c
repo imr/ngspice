@@ -9,12 +9,12 @@ Author: 1987 Gary W. Ng
 Modified: 2001 AlansFixes
 **********/
 
-#include "ngspice.h"
-#include "acdefs.h"
-#include "cktdefs.h"
-#include "iferrmsg.h"
-#include "noisedef.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/acdefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/noisedef.h>
+#include <ngspice/sperror.h>
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
 #include "../maths/ni/niniter.h" /* va, NInzIter */

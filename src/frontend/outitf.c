@@ -12,22 +12,22 @@ $Id$
  * of nutmeg doesn't deal with OUT at all.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "dvec.h"
-#include "plot.h"
-#include "sim.h"
-#include "inpdefs.h"        /* for INPtables */
-#include "ifsim.h"
-#include "jobdefs.h"
-#include "iferrmsg.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/dvec.h>
+#include <ngspice/plot.h>
+#include <ngspice/sim.h>
+#include <ngspice/inpdefs.h>        /* for INPtables */
+#include <ngspice/ifsim.h>
+#include <ngspice/jobdefs.h>
+#include <ngspice/iferrmsg.h>
 #include "circuits.h"
 #include "outitf.h"
 #include "variable.h"
 #include <fcntl.h>
-#include "cktdefs.h"
-#include "inpdefs.h"
+#include <ngspice/cktdefs.h>
+#include <ngspice/inpdefs.h>
 #include "breakp2.h"
 #include "runcoms.h"
 #include "plotting/graf.h"
@@ -61,7 +61,7 @@ static void freeRun(runDesc *run);
 
 /*Output data to spice module saj*/
 #ifdef TCL_MODULE
-#include "tclspice.h"
+#include <ngspice/tclspice.h>
 #endif
 /*saj*/
 

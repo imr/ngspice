@@ -61,9 +61,9 @@ Normal	(a very fast routine)
 /*	----------------- inclusions and some definitions ------------  */
 #include <math.h>
 #ifndef NOSPICE
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #endif
-#include "FastNorm3.h"
+#include <ngspice/FastNorm3.h>
 
 
 /*	--------------- (Uniform) c7rand, irandm, urandm ----------  */
@@ -828,7 +828,7 @@ Sf fastnorm (void)
 
 /*	---------------------  (test) main  -------------------------  */
 #ifdef Main
-#include "FastNorm3.h"
+#include <ngspice/FastNorm3.h>
 int main()
 {
 	Sf x;  Sw i;

@@ -9,9 +9,9 @@ Modified: 2000 AlansFixes
 
     /* structure declarations used by either/both input package */
 
-#include "ifsim.h"
-#include "gendefs.h"
-#include "inpptree.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/inpptree.h>
 
 typedef struct INPtables INPtables;
 typedef struct card card;

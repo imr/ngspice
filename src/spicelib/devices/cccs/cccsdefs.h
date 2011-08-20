@@ -6,10 +6,10 @@ Author: 1985 Thomas L. Quarles
 #ifndef CCCS
 #define CCCS
 
-#include "ifsim.h"
-#include "gendefs.h"
-#include "complex.h"
-#include "cktdefs.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/cktdefs.h>
 
     /* structures used to describe Current Controlled Current Sources */
 

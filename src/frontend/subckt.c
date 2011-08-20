@@ -56,16 +56,16 @@ $Id$
  * so we have to keep track of model names.
  *======================================================================*/
 /*#define TRACE*/
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "fteinp.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/fteinp.h>
 
 #include <stdarg.h>
 
 #ifdef XSPICE
 /* gtri - add - wbk - 11/9/90 - include MIF function prototypes */
-#include "mifproto.h"
+#include <ngspice/mifproto.h>
 /* gtri - end - wbk - 11/9/90 */
 #endif
 

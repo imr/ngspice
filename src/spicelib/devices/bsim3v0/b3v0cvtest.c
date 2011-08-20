@@ -4,14 +4,14 @@ Author: 1995 Min-Chie Jeng and Mansun Chan.
 File: b3v0cvtest.c
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "bsim3v0def.h"
-#include "trandefs.h"
-#include "const.h"
-#include "devdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/trandefs.h>
+#include <ngspice/const.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

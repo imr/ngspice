@@ -3,10 +3,10 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1990 Jaijeet S. Roychowdhury
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "ltradefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 LTRAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)

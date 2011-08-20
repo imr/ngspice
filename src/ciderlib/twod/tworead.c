@@ -8,15 +8,15 @@ $Id$
  * Functions needed to read solutions for 2D devices.
  */
 
-#include "ngspice.h"
-#include "plot.h"
-#include "numglobs.h"
-#include "numenum.h"
-#include "twodev.h"
-#include "twomesh.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/plot.h>
+#include <ngspice/numglobs.h>
+#include <ngspice/numenum.h>
+#include <ngspice/twodev.h>
+#include <ngspice/twomesh.h>
 #include "twoddefs.h"
 #include "twodext.h"
-#include "cidersupt.h"
+#include <ngspice/cidersupt.h>
 
 
 int

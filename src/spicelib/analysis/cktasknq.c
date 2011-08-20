@@ -9,11 +9,11 @@ Author: 1985 Thomas L. Quarles
      *   ask about a parameter on a node.
      */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
-#include "ifsim.h"
-#include "iferrmsg.h"
-#include "cktdefs.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/cktdefs.h>
 
 
 

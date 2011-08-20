@@ -11,14 +11,14 @@ Modified: 2000 AlansFixes
  * affected by emitter, collector, and base resistances)
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "smpdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/smpdefs.h>
 #include "bjtdefs.h"
-#include "const.h"
-#include "sperror.h"
-#include "ifsim.h"
-#include "suffix.h"
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/suffix.h>
 
 int
 BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)

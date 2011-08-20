@@ -6,12 +6,12 @@ Modified: September 2003 Paolo Nenzi
 /*
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "complex.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/sperror.h>
 #include "capdefs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 
 /* ARGSUSED */

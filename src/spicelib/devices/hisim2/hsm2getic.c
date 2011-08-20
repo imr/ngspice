@@ -13,12 +13,12 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
-#include "cktdefs.h"
+#include <ngspice/cktdefs.h>
 #include "hsm2def.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int HSM2getic(
      GENmodel *inModel,

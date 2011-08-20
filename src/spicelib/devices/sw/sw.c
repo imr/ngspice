@@ -3,11 +3,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987
 **********/
 
-#include "ngspice.h"
-#include "devdefs.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/ifsim.h>
 #include "swdefs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 IFparm SWpTable[] = { /* parameters */ 
  IP("on",           SW_IC_ON,  IF_FLAG,"Switch initially closed"),

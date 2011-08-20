@@ -5,7 +5,7 @@ Author: 1992 Charles Hough
 **********/
 #include "config.h"
 
-#include "devdefs.h"
+#include <ngspice/devdefs.h>
 
 #include "txlitf.h"
 #include "txlext.h"

@@ -5,9 +5,9 @@ Author: 1985 Gordon Jacobs
 /*
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "swdefs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 
 void

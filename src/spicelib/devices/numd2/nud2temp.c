@@ -4,16 +4,16 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "numd2def.h"
-#include "numenum.h"
-#include "carddefs.h"
-#include "sperror.h"
+#include <ngspice/numenum.h>
+#include <ngspice/carddefs.h>
+#include <ngspice/sperror.h>
 #include "../../../ciderlib/twod/twoddefs.h"
 #include "../../../ciderlib/twod/twodext.h"
-#include "cidersupt.h"
-#include "suffix.h"
+#include <ngspice/cidersupt.h>
+#include <ngspice/suffix.h>
 
 #define NIL(type)   ((type *)0)
 

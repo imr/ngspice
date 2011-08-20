@@ -90,7 +90,7 @@
 
 =============================================================================*/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
 #ifdef IPC_UNIX_SOCKETS
 
@@ -99,8 +99,8 @@
 #include <assert.h>
 #include <errno.h>
 
-#include "ipc.h"
-#include "ipctiein.h"
+#include <ngspice/ipc.h>
+#include <ngspice/ipctiein.h>
 
 
 /*=== TYPE DEFINITIONS ===*/  
@@ -121,7 +121,7 @@ static Ipc_Sock_State_t        sock_state = IPC_SOCK_UNINITIALIZED;
 
 /*=== INCLUDE FILES ===*/
 
-#include "ipcproto.h"
+#include <ngspice/ipcproto.h>
 
 /*=============================================================================
 

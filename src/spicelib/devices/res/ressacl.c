@@ -6,10 +6,10 @@ Modified: Apr 2000 - Paolo Nenzi
 This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "resdefs.h"
-#include "sperror.h"
+#include <ngspice/sperror.h>
 
 
 int

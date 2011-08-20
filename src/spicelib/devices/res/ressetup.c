@@ -4,10 +4,10 @@ Author: 1985 Thomas L. Quarles
 Modified: Apr 2000 Paolo Nenzi
 **********/
 
-#include "ngspice.h"
-#include "smpdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
 #include "resdefs.h"
-#include "sperror.h"
+#include <ngspice/sperror.h>
 
 
 int 

@@ -7,11 +7,11 @@ Remarks:  This code is based on a version written by Serban Popescu which
           to conform to INP standard. (PN)
 **********/
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "inpdefs.h"
-#include "inpmacs.h"
-#include "fteext.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/inpdefs.h>
+#include <ngspice/inpmacs.h>
+#include <ngspice/fteext.h>
 #include "inp.h"
 
 /* undefine to add tracing to this file */

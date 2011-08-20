@@ -9,9 +9,9 @@ Modified: 1999 Paolo Nenzi
 #define DCTR
 
 
-#include "jobdefs.h"
-#include "tskdefs.h"
-#include "gendefs.h"
+#include <ngspice/jobdefs.h>
+#include <ngspice/tskdefs.h>
+#include <ngspice/gendefs.h>
     /*
      * structures used to describe D.C. transfer curve analyses to
      * be performed.

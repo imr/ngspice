@@ -13,12 +13,12 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
 #include "hsm2def.h"
-#include "ifsim.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int HSM2mParam(
      int param,

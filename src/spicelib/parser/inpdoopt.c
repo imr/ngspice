@@ -9,12 +9,12 @@ Modified: 2000 AlansFixes
      *  the given circuit 
      */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
-#include "inpdefs.h"
-#include "ifsim.h"
-#include "cpdefs.h"
-#include "fteext.h"
+#include <ngspice/inpdefs.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/fteext.h>
 
 
 void

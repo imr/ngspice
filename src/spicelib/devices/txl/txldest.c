@@ -5,9 +5,9 @@ Author: 1992 Charles Hough
 **********/
 
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "txldefs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 
 void

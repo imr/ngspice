@@ -1,9 +1,9 @@
 #include <stddef.h>
 
-#include <dvec.h>
-#include <ngspice.h>
-#include <fteext.h>
-#include <cpextern.h>
+#include <ngspice/dvec.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/fteext.h>
+#include <ngspice/cpextern.h>
 
 #include "com_let.h"
 #include "com_display.h"

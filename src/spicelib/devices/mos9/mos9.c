@@ -4,11 +4,11 @@ Author: 1987 Thomas L. Quarles
 Modified: Alan Gillespie
 **********/
 
-#include "ngspice.h"
-#include "devdefs.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/ifsim.h>
 #include "mos9defs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 IFparm MOS9pTable[] = { /* parameters */ 
 

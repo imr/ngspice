@@ -5,14 +5,14 @@ Modified: 2000 alansFixes
 $Id$
 **********/
 
-#include "ngspice.h"
-#include "devdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/cktdefs.h>
 #include "mos2defs.h"
-#include "trandefs.h"
-#include "const.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/trandefs.h>
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 /* assuming silicon - make definition for epsilon of silicon */
 #define EPSSIL (11.7 * 8.854214871e-12)

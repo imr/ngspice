@@ -8,11 +8,11 @@ $Id$
  * Read and write the ascii and binary rawfile formats.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
 #include "dimens.h"
-#include "dvec.h"
+#include <ngspice/dvec.h>
 
 #include "rawfile.h"
 #include "variable.h"

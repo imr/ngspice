@@ -20,7 +20,7 @@ Author: 1988 Jeffrey M. Hsu
 
 
 #include <stdio.h>
-#include "graph.h"
+#include <ngspice/graph.h>
 
 typedef enum {
     error_option,       /* a reply option only */

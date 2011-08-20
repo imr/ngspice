@@ -11,12 +11,12 @@ Author: 1985 Thomas L. Quarles
      * **fast is a device, and will be set if possible.
      */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
-#include "cpdefs.h"
-#include "fteext.h"
-#include "ifsim.h"
-#include "iferrmsg.h"
+#include <ngspice/cpdefs.h>
+#include <ngspice/fteext.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/iferrmsg.h>
 #include "inp.h"
 
 int

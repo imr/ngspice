@@ -8,10 +8,10 @@ Modified: 2001 Paolo Nenzi (printnum)
  * Do a 'diff' of two plots.
  */
 
-#include <ngspice.h>
-#include <ftedefs.h>
-#include <dvec.h>
-#include <sim.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/dvec.h>
+#include <ngspice/sim.h>
 
 #include "diff.h"
 #include "variable.h"

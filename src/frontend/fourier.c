@@ -9,13 +9,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * is done.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "dvec.h"
-#include "fteparse.h"
-#include "sperror.h"
-#include "const.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/dvec.h>
+#include <ngspice/fteparse.h>
+#include <ngspice/sperror.h>
+#include <ngspice/const.h>
 
 #include "fourier.h"
 #include "variable.h"

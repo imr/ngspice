@@ -4,10 +4,10 @@
 ************/
 
 #include <config.h>
-#include <ngspice.h>
+#include <ngspice/ngspice.h>
 
-#include <macros.h>
-#include <bool.h>
+#include <ngspice/macros.h>
+#include <ngspice/bool.h>
 
 #include "com_unset.h"
 #include "variable.h"

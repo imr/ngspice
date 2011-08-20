@@ -5,14 +5,14 @@ File: b3ld.c          1/3/92
 Modified by Mansun Chan  (1995)
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "bsim3v0def.h"
-#include "trandefs.h"
-#include "const.h"
-#include "sperror.h"
-#include "devdefs.h"
-#include "suffix.h"
+#include <ngspice/trandefs.h>
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/suffix.h>
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15

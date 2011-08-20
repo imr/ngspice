@@ -5,9 +5,9 @@ Author: 1985 Thomas L. Quarles
 /*
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
-#include "inpdefs.h"
+#include <ngspice/inpdefs.h>
 #include "inp.h"
 
 

@@ -8,11 +8,11 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * they were using.  The current implementation has memory leaks.
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "numosdef.h"
 #include "../../../ciderlib/twod/twoddefs.h"
 #include "../../../ciderlib/twod/twodext.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 void
 NUMOSdestroy(GENmodel **inModel)

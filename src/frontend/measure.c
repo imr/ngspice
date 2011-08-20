@@ -8,15 +8,15 @@
    $Id$   
 */
    
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "dvec.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/dvec.h>
 
 #include "rawfile.h"
 #include "variable.h"
 #include "numparam/numpaif.h"
-#include "missing_math.h"
+#include <ngspice/missing_math.h>
 #include "com_measure2.h"
 #include "com_let.h"
 #include "com_commands.h"

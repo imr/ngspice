@@ -3,9 +3,9 @@ Copyright 1993: T. Ytterdal, K. Lee, M. Shur and T. A. Fjeldly. All rights reser
 Author: Trond Ytterdal
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "mesadefs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 
 void

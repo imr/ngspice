@@ -3,11 +3,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Kanwar Jit Singh
 **********/
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/devdefs.h>
 #include "asrcdefs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 /* Arbitrary source */
 IFparm ASRCpTable[] = { /* parameters */ 

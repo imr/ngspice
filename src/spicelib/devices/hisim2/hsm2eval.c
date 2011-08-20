@@ -137,9 +137,9 @@ using the HiSIM2 standard.
 #ifdef __STDC__
 /* #include <ieeefp.h> */
 #endif
-#include "cktdefs.h"
+#include <ngspice/cktdefs.h>
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
 /*-----------------------------------*
 * HiSIM macros

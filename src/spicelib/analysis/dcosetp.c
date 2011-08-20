@@ -3,11 +3,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "iferrmsg.h"
-#include "cktdefs.h"
-#include "opdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/opdefs.h>
 
 
 #include "analysis.h"

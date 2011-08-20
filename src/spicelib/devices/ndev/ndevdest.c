@@ -5,9 +5,9 @@ University of Science and Technology of China
 **********/
 
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "ndevdefs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 void
 NDEVdestroy(GENmodel **inModel)

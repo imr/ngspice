@@ -6,9 +6,9 @@ Modified: September 2003 Paolo Nenzi
 /*
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "capdefs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 
 void

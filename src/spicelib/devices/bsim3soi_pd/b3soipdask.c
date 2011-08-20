@@ -12,13 +12,13 @@ Modified by Paolo Nenzi 2002
  * BSIMPD2.2.3 release
  */
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
 #include "b3soipddef.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 B3SOIPDask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,

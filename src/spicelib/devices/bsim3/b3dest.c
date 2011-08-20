@@ -8,9 +8,9 @@
  * Author: 2001  Xuemei Xi
  **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "bsim3def.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 void
 BSIM3destroy(

@@ -17,11 +17,11 @@ Modified by Paolo Nenzi 2002
 #define SOICODE
 /*  #define BULKCODE  */
 
-#include "ifsim.h"
-#include "gendefs.h"
-#include "cktdefs.h"
-#include "complex.h"
-#include "noisedef.h"         
+#include <ngspice/ifsim.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/noisedef.h>         
 
 typedef struct sB3SOIPDinstance
 {

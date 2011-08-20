@@ -8,12 +8,12 @@
  * Author: 2001  Xuemei Xi
  **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "complex.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/sperror.h>
 #include "bsim3def.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 int
 BSIM3pzLoad(

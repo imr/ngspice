@@ -3,12 +3,12 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include "ngspice.h"
-#include "smpdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
 #include "vsrcdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 /* load the voltage source structure with those pointers needed later
  * for fast matrix loading */

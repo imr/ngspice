@@ -10,7 +10,7 @@
  * Project Director: Prof. Chenming Hu.
  **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "bsim4def.h"
 
 

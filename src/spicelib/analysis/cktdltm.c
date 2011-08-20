@@ -7,10 +7,10 @@ Author: 1985 Thomas L. Quarles
  *  delete the specified model - not yet supported in spice 
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "ifsim.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/sperror.h>
 
 
 

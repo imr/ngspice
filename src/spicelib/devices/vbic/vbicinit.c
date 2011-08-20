@@ -7,7 +7,7 @@
 
 #include "config.h"
 
-#include "devdefs.h"
+#include <ngspice/devdefs.h>
 
 #include "vbicitf.h"
 #include "vbicext.h"

@@ -10,10 +10,10 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
  * available to the next level(s) up the calling hierarchy
  */
 
-#include "ngspice.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
 #include "vbicdefs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 IFparm VBICpTable[] = { /* parameters */
  IOPU("area",    VBIC_AREA,           IF_REAL,    "Area factor"),

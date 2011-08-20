@@ -8,12 +8,12 @@ Modified: 2000 AlansFixes
  * Routines to query and alter devices.
  */
 
-#include "ngspice.h"
-#include "gendefs.h"
-#include "cktdefs.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "dgen.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/dgen.h>
 
 #include "circuits.h"
 #include "device.h"

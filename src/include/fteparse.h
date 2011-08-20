@@ -12,15 +12,15 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define FTEPARSE
 
 
-#include "cpstd.h"
-#include "dvec.h"
-#include "plot.h"
+#include <ngspice/cpstd.h>
+#include <ngspice/dvec.h>
+#include <ngspice/plot.h>
 
 /* FIXME: Split this file and adjust all callers. */
 #if 0
 #warning "Please use a more specific header than fteparse.h"
 #endif
-#include "pnode.h"
+#include <ngspice/pnode.h>
 
 /* Operations. These should really be considered functions. */
 

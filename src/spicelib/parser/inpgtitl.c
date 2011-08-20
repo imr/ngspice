@@ -8,12 +8,12 @@ Author: 1985 Thomas L. Quarles
      *      it through to SPICE-3.
      */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
-#include "inpdefs.h"
-#include "iferrmsg.h"
-#include "cpstd.h"
-#include "fteext.h"
+#include <ngspice/inpdefs.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/cpstd.h>
+#include <ngspice/fteext.h>
 #include "inp.h"
 
 int INPgetTitle(CKTcircuit **ckt, card ** data)

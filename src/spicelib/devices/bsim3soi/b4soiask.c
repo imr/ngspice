@@ -13,15 +13,15 @@
  * Modified by Tanvir Morshed 12/31/2009
  **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "devdefs.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
 #include "b4soidef.h"
-#include "sperror.h"
+#include <ngspice/sperror.h>
 
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 int
 B4SOIask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)

@@ -7,8 +7,8 @@
 #ifndef __DLLITF_H
 #define __DLLITF_H
 
-#include "mifproto.h"
-#include "cmproto.h"
+#include <ngspice/mifproto.h>
+#include <ngspice/cmproto.h>
 
 
 /* This structure contains pointers to core SPICE OPUS functions used in CMs and UDNs.

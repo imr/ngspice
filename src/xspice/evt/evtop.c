@@ -41,15 +41,15 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 #include <stdio.h>
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 //#include "util.h"
-#include "sperror.h"
+#include <ngspice/sperror.h>
 
-#include "mif.h"
-#include "evt.h"
-#include "evtproto.h"
-#include "evtudn.h"
+#include <ngspice/mif.h>
+#include <ngspice/evt.h>
+#include <ngspice/evtproto.h>
+#include <ngspice/evtudn.h>
 
 
 static void EVTnode_compare(

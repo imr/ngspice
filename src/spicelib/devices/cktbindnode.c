@@ -8,11 +8,11 @@ Author: 1985 Thomas L. Quarles
  * bind a node of the specified device of the given type to its place
  * in the specified circuit.  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <config.h>
 #include <stdio.h>
-#include <devdefs.h>
-#include <sperror.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/sperror.h>
 
 #include "dev.h"
 

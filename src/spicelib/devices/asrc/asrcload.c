@@ -6,11 +6,11 @@ Author: 1987 Kanwar Jit Singh
  * singh@ic.Berkeley.edu
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "asrcdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 double *asrc_vals, *asrc_derivs;
 int	asrc_nvals;

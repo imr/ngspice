@@ -4,12 +4,12 @@ Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "mos1defs.h"
-#include "const.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 MOS1temp(GENmodel *inModel, CKTcircuit *ckt)

@@ -1,14 +1,14 @@
 #include <config.h>
-#include <ngspice.h>
+#include <ngspice/ngspice.h>
 
-#include <macros.h>
-#include <wordlist.h>
-#include <cpdefs.h>
-#include <bool.h>
+#include <ngspice/macros.h>
+#include <ngspice/wordlist.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/bool.h>
 
 #include "hcomp.h"
 #include "com_help.h"
-#include "fteext.h"
+#include <ngspice/fteext.h>
 
 
 void

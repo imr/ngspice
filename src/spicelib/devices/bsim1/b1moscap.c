@@ -3,10 +3,10 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Hong J. Park, Thomas L. Quarles
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "bsim1def.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 /* routine to calculate equivalent conductance and total terminal 
  * charges

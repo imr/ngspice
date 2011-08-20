@@ -9,9 +9,9 @@
  * Modified by Paolo Nenzi 2002
  **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "bsim3v32def.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 void
 BSIM3v32destroy (GENmodel **inModel)

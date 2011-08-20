@@ -6,10 +6,10 @@ Modified: Alan Gillespie
 /*
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "mos9defs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

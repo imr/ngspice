@@ -6,20 +6,20 @@ $Id$
 
 /* Functions to compute the ac admittances of a device. */
 
-#include "ngspice.h"
-#include "numglobs.h"
-#include "numenum.h"
-#include "numconst.h"
-#include "twodev.h"
-#include "twomesh.h"
-#include "complex.h"
-#include "spmatrix.h"
-#include "bool.h"
-#include "macros.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numglobs.h>
+#include <ngspice/numenum.h>
+#include <ngspice/numconst.h>
+#include <ngspice/twodev.h>
+#include <ngspice/twomesh.h>
+#include <ngspice/complex.h>
+#include <ngspice/spmatrix.h>
+#include <ngspice/bool.h>
+#include <ngspice/macros.h>
+#include <ngspice/ifsim.h>
 #include "twoddefs.h"  
 #include "twodext.h"
-#include "cidersupt.h"
+#include <ngspice/cidersupt.h>
 
 extern IFfrontEnd *SPfrontEnd;
 

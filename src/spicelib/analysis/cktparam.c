@@ -7,11 +7,11 @@ Author: 1985 Thomas L. Quarles
      *  attach the given parameter to the specified device in the given circuit
      */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "ifsim.h"
-#include "devdefs.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/sperror.h>
 
 
 /* ARGSUSED */

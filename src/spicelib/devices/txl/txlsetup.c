@@ -5,11 +5,11 @@ Author: 1992 Charles Hough
 **********/
 
 
-#include "ngspice.h"
-#include "smpdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
 #include "txldefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 #include "../../../frontend/error.h" /* controlled_exit() */
 

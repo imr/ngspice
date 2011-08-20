@@ -11,11 +11,11 @@ Author: 1985 Thomas L. Quarles
      * given circuit 
      */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "devdefs.h"
-#include "ifsim.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/sperror.h>
 
 
 int

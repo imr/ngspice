@@ -4,14 +4,14 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group\
 Modified: 2001 Paolo Nenzi
 **********/
 
-#include "ngspice.h"
-#include "numcards.h"
-#include "numgen.h"
-#include "numenum.h"
-#include "domndefs.h"
-#include "devdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numcards.h>
+#include <ngspice/numgen.h>
+#include <ngspice/numenum.h>
+#include <ngspice/domndefs.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 #define UM_TO_CM 1.0e-4
 

@@ -42,11 +42,11 @@ NON-STANDARD FEATURES
 
 #include <config.h>
 #include <stdio.h>
-#include "cktdefs.h"
+#include <ngspice/cktdefs.h>
 
-#include "mif.h"
-#include "evt.h"
-#include "evtproto.h"
+#include <ngspice/mif.h>
+#include <ngspice/evt.h>
+#include <ngspice/evtproto.h>
 
 
 

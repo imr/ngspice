@@ -12,10 +12,10 @@ Modified 1999 Emmanuel Rouat
  */
 
 #include <config.h>
-#include "ngspice.h"
-#include "cpstd.h"
-#include "hlpdefs.h"
-#include "suffix.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpstd.h>
+#include <ngspice/hlpdefs.h>
+#include <ngspice/suffix.h>
 
 #if defined (_MSC_VER)
 #define strncasecmp _strnicmp

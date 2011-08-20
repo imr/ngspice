@@ -40,10 +40,10 @@ NON-STANDARD FEATURES
 
 =========================================================================== */
 
-#include "cktdefs.h"
-#include "cpstd.h"
-#include "mifdefs.h"
-#include "ipc.h"
+#include <ngspice/cktdefs.h>
+#include <ngspice/cpstd.h>
+#include <ngspice/mifdefs.h>
+#include <ngspice/ipc.h>
 
 
 /* ******************* */

@@ -7,11 +7,11 @@ File: bsim3v0def.h
 #ifndef BSIM3v0
 #define BSIM3v0
 
-#include "ifsim.h"
-#include "gendefs.h"
-#include "cktdefs.h"
-#include "complex.h"
-#include "noisedef.h"         
+#include <ngspice/ifsim.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/noisedef.h>         
 
 typedef struct sBSIM3v0instance
 {

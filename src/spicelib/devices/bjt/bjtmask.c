@@ -5,14 +5,14 @@ Author: 1987 Mathew Lew and Thomas L. Quarles
 /*
  */
 
-#include "ngspice.h"
-#include "const.h"
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/const.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
 #include "bjtdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 /*ARGSUSED*/

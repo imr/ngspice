@@ -5,20 +5,20 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 $Id$
 **********/
 
-#include "ngspice.h"
-#include "inpdefs.h"
-#include "ifsim.h"
-#include "cpstd.h"
-#include "fteext.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/inpdefs.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/cpstd.h>
+#include <ngspice/fteext.h>
 #include "inp.h"
 #include <errno.h>
 
 #ifdef CIDER
 /* begin Cider Integration */
-#include "numcards.h"
-#include "carddefs.h"
-#include "numgen.h"
-#include "suffix.h"
+#include <ngspice/numcards.h>
+#include <ngspice/carddefs.h>
+#include <ngspice/numgen.h>
+#include <ngspice/suffix.h>
 
 extern IFcardInfo *INPcardTab[];
 extern int INPnumCards;

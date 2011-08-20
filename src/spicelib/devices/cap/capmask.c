@@ -6,13 +6,13 @@ Modified: September 2003 Paolo Nenzi
 /*
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
 #include "capdefs.h"
-#include "sperror.h"
-#include "ifsim.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/suffix.h>
 
 
 /* ARGSUSED */

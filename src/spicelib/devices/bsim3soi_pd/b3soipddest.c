@@ -10,9 +10,9 @@ Modified by Paolo Nenzi 2002
  * BSIMPD2.2.3 release
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "b3soipddef.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 void
 B3SOIPDdestroy(GENmodel **inModel)

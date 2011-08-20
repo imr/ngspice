@@ -7,12 +7,12 @@ Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
 
     /* perform the temperature update to the diode */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "diodefs.h"
-#include "const.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 DIOtemp(GENmodel *inModel, CKTcircuit *ckt)

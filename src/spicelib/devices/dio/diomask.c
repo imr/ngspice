@@ -6,13 +6,13 @@ Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
 /*
  */
 
-#include "ngspice.h"
-#include "const.h"
-#include "cktdefs.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/const.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/ifsim.h>
 #include "diodefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 /* ARGSUSED */

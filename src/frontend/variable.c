@@ -7,20 +7,20 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <ngspice.h>
-#include <bool.h>
-#include <wordlist.h>
-#include <defines.h>
-#include <macros.h>
-#include <cpdefs.h>
-#include <memory.h>
-#include <inpdefs.h>
-#include <fteext.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/bool.h>
+#include <ngspice/wordlist.h>
+#include <ngspice/defines.h>
+#include <ngspice/macros.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/memory.h>
+#include <ngspice/inpdefs.h>
+#include <ngspice/fteext.h>
 
 #include "circuits.h"
 #include "com_history.h"
 #include "quote.h"
-#include "cpextern.h"
+#include <ngspice/cpextern.h>
 #include "variable.h"
 
 

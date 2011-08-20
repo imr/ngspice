@@ -3,13 +3,13 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Hong J. Park, Thomas L. Quarles
 **********/
 
-#include "ngspice.h"
-#include "smpdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
 #include "bsim2def.h"
-#include "const.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 /* ARGSUSED */
 int

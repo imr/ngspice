@@ -7,12 +7,12 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * This routine sets model parameters for NUMD2s in the circuit.
  */
 
-#include "ngspice.h"
-#include "const.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/const.h>
+#include <ngspice/ifsim.h>
 #include "numd2def.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 NUMD2mParam(int param, IFvalue *value, GENmodel *inModel)

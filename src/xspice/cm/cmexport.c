@@ -1,7 +1,7 @@
-#include <ngspice.h>
-#include <mif.h>
-#include <cm.h>
-#include <dllitf.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/mif.h>
+#include <ngspice/cm.h>
+#include <ngspice/dllitf.h>
 
 /*how annoying!, needed for structure below*/
 static void *tcalloc(size_t a, size_t b) {

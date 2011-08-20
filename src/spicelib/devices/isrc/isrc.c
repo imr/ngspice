@@ -3,11 +3,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Thomas L. Quarles
 **********/
 
-#include "ngspice.h"
-#include "devdefs.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/ifsim.h>
 #include "isrcdefs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 IFparm ISRCpTable[] = { /* parameters */
  IOPP("dc",      ISRC_DC,        IF_REAL   ,"DC value of source"),

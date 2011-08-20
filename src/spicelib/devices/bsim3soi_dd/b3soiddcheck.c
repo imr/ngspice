@@ -10,14 +10,14 @@ Modified by Paolo Nenzi 2002
  * BSIMDD2.1 release
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "b3soidddef.h"
-#include "trandefs.h"
-#include "const.h"
-#include "sperror.h"
-#include "devdefs.h"
-#include "suffix.h"
+#include <ngspice/trandefs.h>
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/suffix.h>
 
 int
 B3SOIDDcheckModel(B3SOIDDmodel *model, B3SOIDDinstance *here, CKTcircuit *ckt)

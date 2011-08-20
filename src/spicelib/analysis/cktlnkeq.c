@@ -8,11 +8,11 @@ Author: 1985 Thomas L. Quarles
      *  Link an already allocated node into the necessary structure
      */
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "iferrmsg.h"
-#include "smpdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
 
 
 int

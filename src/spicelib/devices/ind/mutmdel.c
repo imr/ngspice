@@ -5,10 +5,10 @@ Author: 1985 Thomas L. Quarles
 /*
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "inddefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 #ifdef MUTUAL

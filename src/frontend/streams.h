@@ -6,8 +6,8 @@
 #ifndef STREAMS_H
 #define STREAMS_H
 
-#include <bool.h>
-#include <wordlist.h>
+#include <ngspice/bool.h>
+#include <ngspice/wordlist.h>
 
 void fixdescriptors(void);
 

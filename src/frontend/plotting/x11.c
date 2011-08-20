@@ -8,7 +8,7 @@ $Id$
     X11 drivers.
 */
 
-#include <ngspice.h>
+#include <ngspice/ngspice.h>
 
 #ifndef X_DISPLAY_MISSING
 
@@ -16,12 +16,12 @@ $Id$
 #  include <sys/types.h>  /* PN */
 #  include <unistd.h>     /* PN */
 
-#  include <graph.h>
-#  include <ftedbgra.h>
-#  include <ftedev.h>
-#  include <fteinput.h>
-#  include <cpdefs.h>
-#  include <ftedefs.h>
+#  include <ngspice/graph.h>
+#  include <ngspice/ftedbgra.h>
+#  include <ngspice/ftedev.h>
+#  include <ngspice/fteinput.h>
+#  include <ngspice/cpdefs.h>
+#  include <ngspice/ftedefs.h>
 #  include <variable.h>
 #  include "../com_hardcopy.h"
 

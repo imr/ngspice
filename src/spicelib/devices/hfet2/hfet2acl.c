@@ -3,11 +3,11 @@ Imported from MacSpice3f4 - Antony Wilson
 Modified: Paolo Nenzi
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "hfet2defs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int HFET2acLoad(GENmodel *inModel, CKTcircuit *ckt)

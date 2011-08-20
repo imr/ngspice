@@ -8,11 +8,11 @@ $Id$
  * For dealing with nutmeg input decks and command scripts
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "dvec.h"
-#include "fteinp.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/dvec.h>
+#include <ngspice/fteinp.h>
 #include "nutinp.h"
 #include "variable.h"
 #include "../misc/mktemp.h"

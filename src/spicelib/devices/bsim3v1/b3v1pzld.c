@@ -10,12 +10,12 @@
  * BSIM3v3.1,   Released by yuhua  96/12/08
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "complex.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/sperror.h>
 #include "bsim3v1def.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 int
 BSIM3v1pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)

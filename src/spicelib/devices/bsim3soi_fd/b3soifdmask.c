@@ -12,13 +12,13 @@ Modified by Paolo Nenzi 2002
  * BSIMFD2.1 release
  */
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
 #include "b3soifddef.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 B3SOIFDmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)

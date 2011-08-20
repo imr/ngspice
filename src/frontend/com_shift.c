@@ -4,13 +4,13 @@
 ************/
 
 #include <config.h>
-#include <ngspice.h>
-#include <bool.h>
-#include <wordlist.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/bool.h>
+#include <ngspice/wordlist.h>
 
 #include "com_shift.h"
 #include "variable.h"
-#include "cpextern.h"
+#include <ngspice/cpextern.h>
 
 
 /* Shift a list variable, by default argv, one to the left (or more if

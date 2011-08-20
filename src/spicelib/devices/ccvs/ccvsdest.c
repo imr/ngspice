@@ -5,9 +5,9 @@ Author: 1985 Thomas L. Quarles
 /*
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "ccvsdefs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 
 void

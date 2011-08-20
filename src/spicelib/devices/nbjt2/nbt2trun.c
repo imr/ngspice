@@ -8,14 +8,14 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * circuit.
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "nbjt2def.h"
-#include "sperror.h"
+#include <ngspice/sperror.h>
 #include "../../../ciderlib/twod/twoddefs.h"
 #include "../../../ciderlib/twod/twodext.h"
-#include "cidersupt.h"
-#include "suffix.h"
+#include <ngspice/cidersupt.h>
+#include <ngspice/suffix.h>
 
 
 int

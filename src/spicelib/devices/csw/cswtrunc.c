@@ -6,10 +6,10 @@ Modified: 2000 AlansFixes
 /*
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 #include "cswdefs.h"
 

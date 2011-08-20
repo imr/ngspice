@@ -6,7 +6,7 @@ Modified: Apr 2000 - Paolo Nenzi
 /*
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "resdefs.h"
 
 

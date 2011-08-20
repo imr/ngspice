@@ -4,13 +4,13 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 Modified: 2001 Paolo Nenzi
 **********/
 
-#include "ngspice.h"
-#include "numcards.h"
-#include "numgen.h"
-#include "optndefs.h"
-#include "devdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numcards.h>
+#include <ngspice/numgen.h>
+#include <ngspice/optndefs.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 #define M_TO_CM 1.0e2
 #define M2_TO_CM2 (M_TO_CM * M_TO_CM)

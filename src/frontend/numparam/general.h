@@ -5,8 +5,8 @@
 #include <stdlib.h>  
    the function code is in 'mystring.c' .
 */
-#include "dstring.h"
-#include "bool.h"
+#include <ngspice/dstring.h>
+#include <ngspice/bool.h>
 
 
 typedef char string[258];

@@ -6,9 +6,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* Wordlist manipulation stuff.  */
 
 #include <config.h>
-#include <ngspice.h>
-#include <bool.h>
-#include <wordlist.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/bool.h>
+#include <ngspice/wordlist.h>
 
 
 /* Determine the length of a word list. */

@@ -4,12 +4,12 @@ Author: 1985 Thomas L. Quarles
 Modified: Alan Gillespie
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "mos9defs.h"
-#include "sperror.h"
+#include <ngspice/sperror.h>
 
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 int
 MOS9convTest(GENmodel *inModel, CKTcircuit *ckt)

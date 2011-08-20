@@ -9,10 +9,10 @@ Author: 1985 Thomas L. Quarles
      *  find the given node given its name and return the node pointer
      */
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "sperror.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/sperror.h>
+#include <ngspice/cktdefs.h>
 
 
 

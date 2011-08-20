@@ -9,13 +9,13 @@ This function is obsolete (was used by an old sensitivity analysis)
  * information into the  array previously provided 
  */
 
-#include "ngspice.h"
-#include "smpdefs.h"
-#include "cktdefs.h"
-#include "const.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/const.h>
 #include "mos2defs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 MOS2sAcLoad(GENmodel *inModel, CKTcircuit *ckt)

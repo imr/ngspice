@@ -10,13 +10,13 @@
  * BSIM3v1v3.1,   Released by yuhua  96/12/08
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "bsim3v1def.h"
-#include "cktdefs.h"
-#include "iferrmsg.h"
-#include "noisedef.h"
-#include "suffix.h"
-#include "const.h"  /* jwan */
+#include <ngspice/cktdefs.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/noisedef.h>
+#include <ngspice/suffix.h>
+#include <ngspice/const.h>  /* jwan */
 
 /*
  * BSIM3v1noise (mode, operation, firstModel, ckt, data, OnDens)

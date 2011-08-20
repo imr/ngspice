@@ -9,14 +9,14 @@ This function is obsolete (was used by an old sensitivity analysis)
  * information into the  array previously provided 
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "smpdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/smpdefs.h>
 #include "bjtdefs.h"
-#include "const.h"
-#include "sperror.h"
-#include "ifsim.h"
-#include "suffix.h"
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/suffix.h>
 
 
 int

@@ -10,10 +10,10 @@ Author: 1985 Thomas L. Quarles
      *  in the named circuit.
      */
 
-#include "ngspice.h"
-#include "devdefs.h"
-#include "cktdefs.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/sperror.h>
 
 
 

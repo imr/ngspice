@@ -7,10 +7,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Polynomial interpolation code.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "dvec.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/dvec.h>
 #include "interp.h"
 
 

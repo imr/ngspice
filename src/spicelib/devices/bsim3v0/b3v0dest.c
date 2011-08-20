@@ -4,9 +4,9 @@ Author: 1995 Min-Chie Jeng and Mansun Chan.
 File: b3v0dest.c
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "bsim3v0def.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 void
 BSIM3v0destroy(GENmodel **inModel)

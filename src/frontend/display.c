@@ -4,15 +4,15 @@ $Id$
 **********/
 
 
-#include <ngspice.h>
-#include <graph.h>
-#include <ftedev.h>
-#include <fteinput.h>
-#include <cpdefs.h>     /* for CP_STRING */
-#include <ftedefs.h>        /* for mylog() */
+#include <ngspice/ngspice.h>
+#include <ngspice/graph.h>
+#include <ngspice/ftedev.h>
+#include <ngspice/fteinput.h>
+#include <ngspice/cpdefs.h>     /* for CP_STRING */
+#include <ngspice/ftedefs.h>        /* for mylog() */
 
 #ifdef TCL_MODULE
-#include <tclspice.h>
+#include <ngspice/tclspice.h>
 #endif
 
 #include "display.h"

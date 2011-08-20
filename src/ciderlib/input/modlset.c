@@ -5,11 +5,11 @@ Modified: 2001 Paolo Nenzi
 $Id$
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "modldefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/modldefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 extern int MODLcheck( MODLcard * );
 extern int MODLsetup( MODLcard * );

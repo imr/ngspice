@@ -3,10 +3,10 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
-#include "inpdefs.h"
-#include "iferrmsg.h"
+#include <ngspice/inpdefs.h>
+#include <ngspice/iferrmsg.h>
 #include "inp.h"
 
 /*  global input model table.  */

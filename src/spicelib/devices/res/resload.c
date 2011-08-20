@@ -4,10 +4,10 @@ Author: 1985 Thomas L. Quarles
 Modified: Apr 2000 - Paolo Nenzi
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "resdefs.h"
-#include "sperror.h"
+#include <ngspice/sperror.h>
 
 
 /* actually load the current resistance value into the sparse matrix

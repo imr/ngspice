@@ -14,11 +14,11 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 #ifndef JFET2
 #define JFET2
 
-#include "ifsim.h"
-#include "gendefs.h"
-#include "cktdefs.h"
-#include "complex.h"
-#include "noisedef.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/noisedef.h>
 
     /* structures used to describe Junction Field Effect Transistors */
 

@@ -9,13 +9,13 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
  * states for .OP, .DC, & .TRAN simulations.
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "numd2def.h"
 #include "../../../ciderlib/twod/twoddefs.h"
 #include "../../../ciderlib/twod/twodext.h"
-#include "cidersupt.h"
-#include "suffix.h"
+#include <ngspice/cidersupt.h>
+#include <ngspice/suffix.h>
 
 
 /* Forward Declarations */

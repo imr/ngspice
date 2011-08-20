@@ -9,10 +9,10 @@ Author: 1985 Thomas L. Quarles
      *   add the given time to the breakpoint table for the given circuit
      */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "ifsim.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/sperror.h>
 
 /* define to enable breakpoint trace code */
 /* #define TRACE_BREAKPOINT */

@@ -6,10 +6,10 @@ Author: 1987 Kanwar Jit Singh
  * singh@ic.Berkeley.edu
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "asrcdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

@@ -6,13 +6,13 @@ Modified: 2004 Paolo Nenzi - (ng)spice integration
 **********/
 
 
-#include "ngspice.h"
-#include "smpdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
 #include "cpldefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
-#include "multi_line.h"
+#include <ngspice/multi_line.h>
 
 #include "../../../frontend/error.h" /* controlled_exit() */
 

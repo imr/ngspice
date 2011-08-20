@@ -4,12 +4,12 @@ Author: 1995 Min-Chie Jeng and Mansun Chan.
 File: b3v0par.c
 **********/
 
-#include "ngspice.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
 #include "bsim3v0def.h"
-#include "sperror.h"
-#include "suffix.h"
-#include "fteext.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
+#include <ngspice/fteext.h>
 
 int
 BSIM3v0param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)

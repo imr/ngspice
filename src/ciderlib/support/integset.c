@@ -4,9 +4,9 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 $Id$
 **********/
 
-#include "ngspice.h"
-#include "numenum.h"
-#include "cidersupt.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numenum.h>
+#include <ngspice/cidersupt.h>
 
 /* compute the coefficient for the integration and predictor methods */
 /* based on the Lagrange polynomial method in Liniger et. al. */

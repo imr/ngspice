@@ -8,13 +8,13 @@ Author: 1985 Mathew Lew and Thomas L. Quarles
  * parameters for BJTs
  */
 
-#include "ngspice.h"
-#include "const.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/const.h>
+#include <ngspice/cktdefs.h>
 #include "bjtdefs.h"
-#include "ifsim.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 /*ARGSUSED*/
 int

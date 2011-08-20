@@ -6,12 +6,12 @@ Author: 1985 Thomas L. Quarles
 #ifndef DEV
 #define DEV
 
-#include "optdefs.h"
-#include "gendefs.h"
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "noisedef.h"
-#include "complex.h"
+#include <ngspice/optdefs.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/noisedef.h>
+#include <ngspice/complex.h>
 
 double DEVlimvds(double,double);
 double DEVpnjlim(double,double,double,double,int*);

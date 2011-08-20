@@ -8,11 +8,11 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * were using.  The current implementation has memory leaks.
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "nbjtdefs.h"
 #include "../../../ciderlib/oned/onedext.h"
-#include "cidersupt.h"
-#include "suffix.h"
+#include <ngspice/cidersupt.h>
+#include <ngspice/suffix.h>
 
 void
 NBJTdestroy(GENmodel **inModel)

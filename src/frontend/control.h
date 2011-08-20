@@ -6,7 +6,7 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
-#include <bool.h>
+#include <ngspice/bool.h>
 
 /* Stuff to do control structures. We keep a history (seperate from
  * the cshpar history, for now at least) of commands and their event

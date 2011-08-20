@@ -4,11 +4,11 @@ Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFIxes
 **********/
 
-#include "ngspice.h"
-#include "devdefs.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/ifsim.h>
 #include "mos2defs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 IFparm MOS2pTable[] = { /* parameters */ 
  IOPU("m",       MOS2_M,     IF_REAL   , "Multiplier"),

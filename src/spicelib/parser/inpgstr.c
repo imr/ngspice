@@ -7,10 +7,10 @@ Author: 1985 Thomas L. Quarles
  * Get string input token from 'line', and return a pointer to it in 'token'
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
-#include "iferrmsg.h"
-#include "inpdefs.h"
+#include <ngspice/iferrmsg.h>
+#include <ngspice/inpdefs.h>
 #include "inp.h"
 
 int INPgetStr(char **line, char **token, int gobble)

@@ -9,9 +9,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #define SENSTRUCTS
 
 
-#include "smpdefs.h"
-#include "jobdefs.h"
-#include "typedefs.h"
+#include <ngspice/smpdefs.h>
+#include <ngspice/jobdefs.h>
+#include <ngspice/typedefs.h>
 
 struct SENstruct {
     int JOBtype;

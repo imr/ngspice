@@ -4,12 +4,12 @@ Author: 1988 Jaijeet S Roychowdhury
 Modified: AlansFixes
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "bsim1def.h"
-#include "sperror.h"
-#include "distodef.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/distodef.h>
+#include <ngspice/suffix.h>
 
 int
 B1disto(int mode, GENmodel *genmodel, CKTcircuit *ckt)

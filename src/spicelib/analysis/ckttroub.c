@@ -2,13 +2,13 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
-#include "ngspice.h"
-#include "trandefs.h"
-#include "cktdefs.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/trandefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
-#include "jobdefs.h"
+#include <ngspice/jobdefs.h>
 
 #include "analysis.h"
 

@@ -10,11 +10,11 @@ Modified: September 2003 Paolo Nenzi
      * for fast matrix loading 
      */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "capdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 /*ARGSUSED*/

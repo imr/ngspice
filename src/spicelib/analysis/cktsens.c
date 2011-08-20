@@ -3,16 +3,16 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 Modified: 2000 AlanFixes
 **********/
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "sperror.h"
-#include "spmatrix.h"
-#include "gendefs.h"
-#include "devdefs.h"
-#include "cktdefs.h"
-#include "smpdefs.h"
-#include "sensdefs.h"
-#include "sensgen.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/sperror.h>
+#include <ngspice/spmatrix.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/sensdefs.h>
+#include <ngspice/sensgen.h>
 
 /* #define ASDEBUG */
 #ifdef ASDEBUG

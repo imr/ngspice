@@ -6,10 +6,10 @@ Author: 1988 Min-Chie Jeng, Hong June Park, Thomas L. Quarles
 #ifndef BSIM2
 #define BSIM2
 
-#include "ifsim.h"
-#include "gendefs.h"
-#include "cktdefs.h"
-#include "complex.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
 
     /* declarations for B2 MOSFETs */
 

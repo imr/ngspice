@@ -10,12 +10,12 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
  * VBICs in the circuit.
  */
 
-#include "ngspice.h"
-#include "const.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/const.h>
+#include <ngspice/ifsim.h>
 #include "vbicdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 /* ARGSUSED */

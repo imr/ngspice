@@ -15,9 +15,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  *  and return a char * that is cast to complex or double.
  */
 
-#include <ngspice.h>
-#include <cpdefs.h>
-#include <dvec.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/dvec.h>
 
 #include "cmath.h"
 #include "cmath2.h"

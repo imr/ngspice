@@ -7,7 +7,7 @@
 #ifndef GRAF_H
 #define GRAF_H
 
-#include "graph.h"
+#include <ngspice/graph.h>
 
 int gr_init(double *xlims, double *ylims,
 	    char *xname, char *plotname,

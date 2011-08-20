@@ -5,12 +5,12 @@ Modified: 2001 Paolo Nenzi
 $Id$
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "numenum.h"
-#include "outpdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/numenum.h>
+#include <ngspice/outpdefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 extern int OUTPcheck( OUTPcard * );
 extern int OUTPsetup( OUTPcard * );

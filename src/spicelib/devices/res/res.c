@@ -5,10 +5,10 @@ Modified: Apr 2000 - Paolo Nenzi
 Modified: 2000 AlansFixes
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "resdefs.h"
-#include "devdefs.h"
-#include "ifsim.h"
+#include <ngspice/devdefs.h>
+#include <ngspice/ifsim.h>
 
 IFparm RESpTable[] = { /* parameters */ 
  IOPP(  "resistance", 	RES_RESIST, 	     IF_REAL,    "Resistance"),

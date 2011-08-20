@@ -5,10 +5,10 @@ Author: 1992 Charles Hough
 **********/
 
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "txldefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

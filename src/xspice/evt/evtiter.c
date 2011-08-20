@@ -41,17 +41,17 @@ NON-STANDARD FEATURES
 #include <stdio.h>
 #include <string.h>
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 //#include "misc.h"
-#include "cktdefs.h"
+#include <ngspice/cktdefs.h>
 //#include "util.h"
-#include "sperror.h"
+#include <ngspice/sperror.h>
 
-#include "mif.h"
-#include "evt.h"
-#include "evtudn.h"
+#include <ngspice/mif.h>
+#include <ngspice/evt.h>
+#include <ngspice/evtudn.h>
 
-#include "evtproto.h"
+#include <ngspice/evtproto.h>
 
 
 /*

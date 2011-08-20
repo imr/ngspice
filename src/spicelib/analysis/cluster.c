@@ -1,10 +1,10 @@
 /* Spice hooks */
-#include <ngspice.h>
+#include <ngspice/ngspice.h>
 #ifdef CLUSTER
-#include <inpdefs.h>
-#include "cluster.h"
-#include <cktdefs.h>
-#include <gendefs.h>
+#include <ngspice/inpdefs.h>
+#include <ngspice/cluster.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/gendefs.h>
 
 /* Misc stuff */
 #include <pthread.h>

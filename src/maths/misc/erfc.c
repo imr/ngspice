@@ -3,8 +3,8 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
-#include "ngspice.h"
-#include "numconst.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numconst.h>
 
 #ifndef HAVE_ERFC
 

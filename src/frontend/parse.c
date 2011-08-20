@@ -9,11 +9,11 @@ $Id$
  * This also handles relational and logical expressions.
  */
 
-#include <ngspice.h>
-#include <bool.h>
-#include <fteparse.h>
-#include <fteext.h>
-#include <sim.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/bool.h>
+#include <ngspice/fteparse.h>
+#include <ngspice/fteext.h>
+#include <ngspice/sim.h>
 
 #include "evaluate.h"
 #include "parse.h"

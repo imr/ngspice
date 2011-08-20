@@ -3,7 +3,7 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 Modified: 2002 R. Oktas, <roktas@omu.edu.tr>
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "tilde.h"
 
 #ifdef HAVE_PWD_H

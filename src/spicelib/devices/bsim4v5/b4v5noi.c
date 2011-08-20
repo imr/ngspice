@@ -14,13 +14,13 @@
  * Modified by Xuemei Xi, 07/29/2005.
  **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "bsim4v5def.h"
-#include "cktdefs.h"
-#include "iferrmsg.h"
-#include "noisedef.h"
-#include "suffix.h"
-#include "const.h"
+#include <ngspice/cktdefs.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/noisedef.h>
+#include <ngspice/suffix.h>
+#include <ngspice/const.h>
 
 
 /*

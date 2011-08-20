@@ -16,10 +16,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  *
  */
 
-#include <ngspice.h>
-#include <memory.h>
-#include <cpdefs.h>
-#include <dvec.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/memory.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/dvec.h>
 
 #include "cmath.h"
 #include "cmath1.h"

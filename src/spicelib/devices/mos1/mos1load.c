@@ -4,14 +4,14 @@ Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
 #include "mos1defs.h"
-#include "trandefs.h"
-#include "const.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/trandefs.h>
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 MOS1load(GENmodel *inModel, CKTcircuit *ckt)

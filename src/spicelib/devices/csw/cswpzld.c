@@ -5,12 +5,12 @@ Author: 1985 Gordon Jacobs
 /*
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "cswdefs.h"
-#include "sperror.h"
-#include "complex.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/complex.h>
+#include <ngspice/suffix.h>
 
 
 /* ARGSUSED */

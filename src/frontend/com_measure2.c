@@ -6,11 +6,11 @@
    $Id$
 */
 #include <config.h>
-#include <ngspice.h>
-#include <memory.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/memory.h>
 
-#include <fteext.h>
-#include <wordlist.h>
+#include <ngspice/fteext.h>
+#include <ngspice/wordlist.h>
 
 #include "vectors.h"
 #include <math.h>

@@ -13,9 +13,9 @@ Modified: 2000 AlansFixes
 	   (called from INPevaluate)
  */
 
-#include "ngspice.h"
-#include "iferrmsg.h"
-#include "inpdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/inpdefs.h>
 #include "inp.h"
 
 /*-------------------------------------------------------------------

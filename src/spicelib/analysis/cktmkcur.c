@@ -10,10 +10,10 @@ Author: 1985 Thomas L. Quarles
      * specified circuit
      */
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "sperror.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/sperror.h>
+#include <ngspice/cktdefs.h>
 
 
 

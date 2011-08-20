@@ -9,20 +9,20 @@ $Id$
  * Functions needed to calculate solutions for 1D devices.
  */
 
-#include "ngspice.h"
-#include "numglobs.h"
-#include "numenum.h"
-#include "onedev.h"
-#include "onemesh.h"
-#include "spmatrix.h"
-#include "bool.h"
-#include "macros.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numglobs.h>
+#include <ngspice/numenum.h>
+#include <ngspice/onedev.h>
+#include <ngspice/onemesh.h>
+#include <ngspice/spmatrix.h>
+#include <ngspice/bool.h>
+#include <ngspice/macros.h>
 #include "onedext.h"
 #include "oneddefs.h"
-#include "cidersupt.h"
+#include <ngspice/cidersupt.h>
 #include "../../maths/misc/norm.h"
 
-#include "ifsim.h"
+#include <ngspice/ifsim.h>
 extern IFfrontEnd *SPfrontEnd;
 
 

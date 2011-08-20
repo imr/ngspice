@@ -10,13 +10,13 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
  * parameters for VBICs
  */
 
-#include "ngspice.h"
-#include "const.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/const.h>
+#include <ngspice/cktdefs.h>
 #include "vbicdefs.h"
-#include "ifsim.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 /*ARGSUSED*/
 int

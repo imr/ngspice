@@ -9,7 +9,7 @@ REVISIONS:  Aug 21, 2009 - adapted for ngspice
 #ifndef NGHASH_H
 #define NGHASH_H
 
-#include <bool.h>
+#include <ngspice/bool.h>
 #include <stdint.h>
 
 #define _NGMALLOC(size_xz)            tmalloc((size_xz))

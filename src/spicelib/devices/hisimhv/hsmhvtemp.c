@@ -15,15 +15,15 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
-#include "smpdefs.h"
-#include "cktdefs.h"
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
 #include "hsmhvdef.h"
 #include "hsmhvevalenv.h"
-#include "const.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 #define RANGECHECK(param, min, max, pname)                              \

@@ -43,9 +43,9 @@ NON-STANDARD FEATURES
 =========================================================================== */
 
 
-#include "mifdefs.h"
-#include "mifcmdat.h"
-#include "miftypes.h"
+#include <ngspice/mifdefs.h>
+#include <ngspice/mifcmdat.h>
+#include <ngspice/miftypes.h>
 
 
 

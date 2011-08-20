@@ -4,13 +4,13 @@ Author: 1985 S. Hwang
 Modified: 2000 AlansFixes
 **********/
 
-#include "ngspice.h"
-#include "smpdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
 #include "mesdefs.h"
-#include "const.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 MESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)

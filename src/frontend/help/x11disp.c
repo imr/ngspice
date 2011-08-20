@@ -6,12 +6,12 @@ $Id$
 **********/
 
 #include <config.h>
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
 #ifndef X_DISPLAY_MISSING
 
-#include "cpstd.h"
-#include "hlpdefs.h"
+#include <ngspice/cpstd.h>
+#include <ngspice/hlpdefs.h>
 #include <X11/Xaw/AsciiText.h>
 #include <X11/StringDefs.h>
 #include <X11/Xaw/Paned.h>

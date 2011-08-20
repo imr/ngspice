@@ -4,15 +4,15 @@ Author:	2007 Gong Ding, gdiso@ustc.edu
 University of Science and Technology of China 
 **********/
 
-#include "ngspice.h"
-#include "devdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/cktdefs.h>
 #include "ndevdefs.h"
-#include "numenum.h"
-#include "trandefs.h"
-#include "complex.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/numenum.h>
+#include <ngspice/trandefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

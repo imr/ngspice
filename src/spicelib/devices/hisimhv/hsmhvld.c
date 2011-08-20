@@ -16,13 +16,13 @@
 ***********************************************************************/
 
 #include <stdio.h>
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "hisimhv.h"
-#include "trandefs.h"
-#include "const.h"
-#include "sperror.h"
-#include "devdefs.h"
-#include "suffix.h"
+#include <ngspice/trandefs.h>
+#include <ngspice/const.h>
+#include <ngspice/sperror.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/suffix.h>
 
 
 #define SHOW_EPS_QUANT 1.0e-15

@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include "fftlib.h"
 #include "matlib.h"
-#include "fftext.h"
+#include <ngspice/fftext.h>
 
 // pointers to storage of Utbl's and  BRLow's
 static double *UtblArray[8*sizeof(long)] =

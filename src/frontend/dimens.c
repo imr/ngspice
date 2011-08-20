@@ -7,8 +7,8 @@ Author: 1992 David A. Gates, U. C. Berkeley CAD Group
  * Read and write dimension/index arrays via strings.
  */
 
-#include "ngspice.h"
-#include "dvec.h"		/* For MAXDIMS */
+#include <ngspice/ngspice.h>
+#include <ngspice/dvec.h>		/* For MAXDIMS */
 #include "dimens.h"
 
 

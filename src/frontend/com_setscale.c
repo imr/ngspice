@@ -1,14 +1,14 @@
-#include <ngspice.h>
-#include <bool.h>
-#include <dvec.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/bool.h>
+#include <ngspice/dvec.h>
 
 #include "com_setscale.h"
 #include "quote.h"
-#include "cpextern.h"
+#include <ngspice/cpextern.h>
 #include "vectors.h"
 #include "plotting/plotting.h"
 #include "plotting/pvec.h"
-#include "fteext.h"
+#include <ngspice/fteext.h>
 
 
 /* Set the default scale to the named vector.  If no vector named,

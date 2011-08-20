@@ -4,15 +4,15 @@ Author: 1985 Thomas L. Quarles
 $Id$
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
-#include "ifsim.h"
-#include "inpmacs.h"
-#include "fteext.h"
-#include "iferrmsg.h"
-#include "inpptree.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/inpmacs.h>
+#include <ngspice/fteext.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/inpptree.h>
 #include "inp.h"
-#include "cktdefs.h"
+#include <ngspice/cktdefs.h>
 
 /* Uncomment to allow tracing */
 /*#define TRACE*/

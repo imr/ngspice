@@ -10,9 +10,9 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
  * all storage they were using.
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "vbicdefs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 
 void

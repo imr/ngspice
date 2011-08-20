@@ -5,11 +5,11 @@ Author: 1985 Gordon Jacobs
 /*
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "cswdefs.h"
-#include "ifsim.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 /* ARGSUSED */

@@ -8,9 +8,9 @@ Author: 1985 Thomas L. Quarles
  *  ckt structure, ccap follows qcap.
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/sperror.h>
 #include "niinteg.h"
 
 #define ccap qcap+1

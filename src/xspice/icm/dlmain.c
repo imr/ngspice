@@ -7,10 +7,10 @@
 // Author: Arpad Buermen
 ////////////////////////////////////////////////////////////////////////////// 
 
-#include <inpdefs.h>
-#include <devdefs.h>
-#include <evtudn.h>
-#include <dllitf.h>
+#include <ngspice/inpdefs.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/evtudn.h>
+#include <ngspice/dllitf.h>
 #include "cmextrn.h"
 #include "udnextrn.h"
 

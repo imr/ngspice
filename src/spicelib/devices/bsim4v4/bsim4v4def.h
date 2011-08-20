@@ -11,11 +11,11 @@ File: bsim4v4def.h
 #ifndef BSIM4V4
 #define BSIM4V4
 
-#include "ifsim.h"
-#include "gendefs.h"
-#include "cktdefs.h"
-#include "complex.h"
-#include "noisedef.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/noisedef.h>
 
 typedef struct sBSIM4v4instance
 {

@@ -8,8 +8,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  */
 
 #include <config.h>
-#include "ngspice.h"
-#include "cpdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
 #include "glob.h"
 
 #ifdef HAVE_SYS_DIR_H

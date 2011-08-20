@@ -5,9 +5,9 @@ Author: 1989 Takayasu Sakurai
 /*
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "mos6defs.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 
 void

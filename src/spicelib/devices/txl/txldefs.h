@@ -1,12 +1,12 @@
 #ifndef TXL
 #define TXL
 
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "gendefs.h"
-#include "complex.h"
-#include "noisedef.h"
-#include "swec.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/noisedef.h>
+#include <ngspice/swec.h>
 
 /* information used to describe a single instance */
 

@@ -4,12 +4,12 @@
 ************/
 
 #include <config.h>
-#include <ngspice.h>
-#include <wordlist.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/wordlist.h>
 
 #include "com_shell.h"
 #include "streams.h"
-#include "cpextern.h"
+#include <ngspice/cpextern.h>
 
 /* Fork a shell. */
 

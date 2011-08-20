@@ -13,10 +13,10 @@
  * Modified by Xuemei Xi, 03/04/2004.
  **********/
 
-#include "ngspice.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/devdefs.h>
 #include "bsim4v4def.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 IFparm BSIM4v4pTable[] = { /* parameters */
 IOP( "l",   BSIM4v4_L,      IF_REAL   , "Length"),

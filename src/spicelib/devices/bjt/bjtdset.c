@@ -3,14 +3,14 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jaijeet S Roychowdhury
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "bjtdefs.h"
-#include "const.h"
-#include "distodef.h"
-#include "sperror.h"
-#include "devdefs.h"
-#include "suffix.h"
+#include <ngspice/const.h>
+#include <ngspice/distodef.h>
+#include <ngspice/sperror.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/suffix.h>
 
 /*
  * This function initialises the Taylor coeffs for the

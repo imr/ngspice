@@ -9,13 +9,13 @@ $Id$
  * the listing routines.
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
-#include "cpdefs.h"
-#include "inpdefs.h"
-#include "ftedefs.h"
-#include "dvec.h"
-#include "fteinp.h"
+#include <ngspice/cpdefs.h>
+#include <ngspice/inpdefs.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/dvec.h>
+#include <ngspice/fteinp.h>
 #include "inp.h"
 
 #include "runcoms.h"
@@ -33,8 +33,8 @@ $Id$
 
 #ifdef XSPICE
 /* include new stuff */
-#include "ipctiein.h"
-#include "enh.h"
+#include <ngspice/ipctiein.h>
+#include <ngspice/enh.h>
 /* */
 #endif
 

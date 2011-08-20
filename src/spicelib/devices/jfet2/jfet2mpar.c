@@ -8,12 +8,12 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
    10 Feb 1994: Added call to jfetparm.h
 **********/
 
-#include "ngspice.h"
-#include "const.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/const.h>
+#include <ngspice/ifsim.h>
 #include "jfet2defs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

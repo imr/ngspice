@@ -10,12 +10,12 @@ File: b3soifdpzld.c          98/5/01
  * BSIMFD2.1 release
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "complex.h"
-#include "sperror.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/sperror.h>
 #include "b3soifddef.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 int
 B3SOIFDpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)

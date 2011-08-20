@@ -6,12 +6,12 @@ Modified: 2000 AlansFixes
 /*
  */
 
-#include "ngspice.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
 #include "isrcdefs.h"
-#include "sperror.h"
-#include "suffix.h"
-#include "1-f-code.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
+#include <ngspice/1-f-code.h>
 
 
 static void copy_coeffs(ISRCinstance *here, IFvalue *value)

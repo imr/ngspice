@@ -4,14 +4,14 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 $Id$
 **********/
 
-#include "ngspice.h"
-#include "numglobs.h"
-#include "numenum.h"
-#include "onemesh.h"
-#include "onedev.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numglobs.h>
+#include <ngspice/numenum.h>
+#include <ngspice/onemesh.h>
+#include <ngspice/onedev.h>
 #include "onedext.h"
 #include "oneddefs.h"
-#include "spmatrix.h"
+#include <ngspice/spmatrix.h>
 
 /* Functions to setup and solve the 1D poisson equation. */
 

@@ -7,8 +7,8 @@ Author: 1985 Thomas L. Quarles
 #define JOBdef
 
 
-#include "typedefs.h"
-#include "ifsim.h"
+#include <ngspice/typedefs.h>
+#include <ngspice/ifsim.h>
 
 struct JOB {
     int JOBtype;                /* type of job */

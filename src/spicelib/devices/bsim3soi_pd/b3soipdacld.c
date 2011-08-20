@@ -12,11 +12,11 @@ Modified by Paolo Nenzi 2002
  * BSIMPD2.2.3 release
  */
  
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "b3soipddef.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

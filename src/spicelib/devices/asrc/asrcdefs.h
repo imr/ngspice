@@ -7,9 +7,9 @@ Author: 1985 Thomas L. Quarles
 #define ASRC
 
 
-#include "cktdefs.h"
-#include "ifsim.h"
-#include "complex.h"
+#include <ngspice/cktdefs.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/complex.h>
 
         /*
          * structures to describe Arbitrary sources

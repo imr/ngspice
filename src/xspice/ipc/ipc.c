@@ -70,17 +70,17 @@ SUMMARY
 
 ============================================================================*/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
 #include <assert.h>
-#include <memory.h>     /* NOTE: I think this is a Sys5ism (there is not man
+#include <ngspice/memory.h>     /* NOTE: I think this is a Sys5ism (there is not man
                          * page for it under Bsd, but it's in /usr/include
                          * and it has a BSD copyright header. Go figure.
                          */
 
-#include "ipc.h"
-#include "ipctiein.h"
-#include "ipcproto.h"
+#include <ngspice/ipc.h>
+#include <ngspice/ipctiein.h>
+#include <ngspice/ipcproto.h>
 
  
 /*

@@ -16,11 +16,11 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
-#include "devdefs.h"
+#include <ngspice/devdefs.h>
 #include "hsmhvdef.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 IFparm HSMHVpTable[] = { /* parameters */
  IOP( "coselfheat", HSMHV_COSELFHEAT, IF_INTEGER, "Calculation of self heating model"),

@@ -7,16 +7,16 @@ Author:   2008 Holger Vogt
  * Code to do fast fourier transform on data.
  */
 
-#include "ngspice.h"
-#include "ftedefs.h"
-#include "dvec.h"
-#include "sim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/dvec.h>
+#include <ngspice/sim.h>
 
 #include "com_fft.h"
 #include "variable.h"
 #include "parse.h"
 #include "../misc/misc_time.h"
-#include "fftext.h"
+#include <ngspice/fftext.h>
 
 static void fftext(double*, double*, long int, long int, int);
 

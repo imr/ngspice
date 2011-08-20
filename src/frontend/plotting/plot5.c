@@ -3,13 +3,13 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 $Id$
 **********/
 
-#include <ngspice.h>
-#include <graph.h>
-#include <ftedev.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/graph.h>
+#include <ngspice/ftedev.h>
 
 #include "plot5.h"
 #include "graf.h"
-#include "fteext.h"
+#include <ngspice/fteext.h>
 
 static FILE *plotfile;
 

@@ -10,21 +10,21 @@ $Id$
  *
  */
 
-#include <ngspice.h>
-#include "cpdefs.h"		/* for CP_ */
-#include "cpextern.h"
-#include <plot.h>
-#include "ftedebug.h"		/* for iplot */
-#include <dvec.h>		/* for struct dvec */
-#include "ftedefs.h"		/* for FTEextern.h and IPOINT{MIN,MAX} */
-#include "fteinput.h"
-#include <graph.h>
-#include "ftedbgra.h"
-#include "ftedev.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>		/* for CP_ */
+#include <ngspice/cpextern.h>
+#include <ngspice/plot.h>
+#include <ngspice/ftedebug.h>		/* for iplot */
+#include <ngspice/dvec.h>		/* for struct dvec */
+#include <ngspice/ftedefs.h>		/* for FTEextern.h and IPOINT{MIN,MAX} */
+#include <ngspice/fteinput.h>
+#include <ngspice/graph.h>
+#include <ngspice/ftedbgra.h>
+#include <ngspice/ftedev.h>
 #include <terminal.h>
 #include "graf.h"
 #include "graphdb.h"
-#include "grid.h"
+#include <ngspice/grid.h>
 #include "../terminal.h"
 #include "../breakp2.h"
 #include "../error.h"

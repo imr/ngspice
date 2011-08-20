@@ -8,15 +8,15 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * parameters saved during a previous DC operating point analysis.
  */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "nbjtdefs.h"
-#include "sperror.h"
-#include "complex.h"
+#include <ngspice/sperror.h>
+#include <ngspice/complex.h>
 #include "../../../ciderlib/oned/onedext.h"
-#include "cidersupt.h"
-#include "numglobs.h"
-#include "suffix.h"
+#include <ngspice/cidersupt.h>
+#include <ngspice/numglobs.h>
+#include <ngspice/suffix.h>
 
 /* External Declarations */
 extern int ONEacDebug;

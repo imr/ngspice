@@ -15,13 +15,13 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>
-#include "cktdefs.h"
-#include "complex.h"
-#include "sperror.h"
+#include <ngspice/cktdefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/sperror.h>
 #include "hsmhvdef.h"
-#include "suffix.h"
+#include <ngspice/suffix.h>
 
 int HSMHVpzLoad(
      GENmodel *inModel,

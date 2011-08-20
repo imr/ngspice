@@ -41,8 +41,8 @@ NON-STANDARD FEATURES
 #define IPC_TIEIN_DEFINED
 
 
-#include "ipc.h"
-#include "ipcproto.h"
+#include <ngspice/ipc.h>
+#include <ngspice/ipcproto.h>
 
 
 #define  IPC_STDOUT_FILE_NAME  "/usr/tmp/atesse_xspice.out"

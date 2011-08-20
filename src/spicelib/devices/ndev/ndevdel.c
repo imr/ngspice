@@ -4,10 +4,10 @@ Author:	2007 Gong Ding, gdiso@ustc.edu
 University of Science and Technology of China 
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "ndevdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 NDEVdelete(

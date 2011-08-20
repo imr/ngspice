@@ -6,13 +6,13 @@ Modified: 2000 AlansFixes
 **********/
 
 
-#include "ngspice.h"
-#include "const.h"
-#include "cktdefs.h"
-#include "ifsim.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/const.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/ifsim.h>
 #include "resdefs.h"
-#include "sperror.h"
-#include "devdefs.h"
+#include <ngspice/sperror.h>
+#include <ngspice/devdefs.h>
 
 
 int 

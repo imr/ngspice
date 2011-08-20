@@ -1,6 +1,6 @@
 #ifndef _CLUSTER_H_
 #define _CLUSTER_H_
-#include <cktdefs.h>
+#include <ngspice/cktdefs.h>
 
 /* Cluster definitions */
 #define PORT 1234

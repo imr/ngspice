@@ -3,9 +3,9 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
-#include "ngspice.h"
-#include "numglobs.h"
-#include "cidersupt.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/numglobs.h>
+#include <ngspice/cidersupt.h>
 
 /*
  * function recomb calculates the recobination rates and the 

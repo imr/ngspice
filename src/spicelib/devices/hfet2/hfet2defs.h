@@ -2,11 +2,11 @@
 #ifndef HFET2
 #define HFET2
 
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "gendefs.h"
-#include "complex.h"
-#include "noisedef.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/noisedef.h>
 
 
 typedef struct sHFET2instance {

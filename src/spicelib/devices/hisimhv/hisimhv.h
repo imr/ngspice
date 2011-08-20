@@ -16,7 +16,7 @@
 ***********************************************************************/
 
 #include "hsmhvdef.h"
-#include "cktdefs.h"
+#include <ngspice/cktdefs.h>
 
 #ifndef _HiSIMHV_H
 #define _HiSIMHV_H

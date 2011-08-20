@@ -9,12 +9,12 @@ This function is obsolete (was used by an old sensitivity analysis)
  * the inductors in the circuit.
  */
 
-#include "ngspice.h"
-#include "smpdefs.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/smpdefs.h>
+#include <ngspice/cktdefs.h>
 #include "inddefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 void
 INDsPrint(GENmodel *inModel, CKTcircuit *ckt)

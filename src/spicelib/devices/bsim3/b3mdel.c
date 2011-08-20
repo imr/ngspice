@@ -8,10 +8,10 @@
  * Author: 2001  Xuemei Xi
  **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "bsim3def.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 int
 BSIM3mDelete(

@@ -8,9 +8,9 @@ Author: 1985 Thomas L. Quarles
 #define TRAN
 
 
-#include "cktdefs.h"
-#include "jobdefs.h"
-#include "tskdefs.h"
+#include <ngspice/cktdefs.h>
+#include <ngspice/jobdefs.h>
+#include <ngspice/tskdefs.h>
     /*
      * TRANdefs.h - defs for transient analyses 
      */

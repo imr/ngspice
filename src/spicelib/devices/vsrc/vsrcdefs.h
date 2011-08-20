@@ -6,10 +6,10 @@ Author: 1985 Thomas L. Quarles
 #ifndef VSRC
 #define VSRC
 
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "gendefs.h"
-#include "complex.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/complex.h>
 
 struct trnoise_state;
 

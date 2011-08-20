@@ -2,7 +2,7 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 
 #ifndef HAVE_LOGB
 

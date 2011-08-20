@@ -4,11 +4,11 @@ reserved.
 Author: 1992 Charles Hough
 **********/
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "cpldefs.h"
-#include "devdefs.h"
-#include "ifsim.h"
-#include "suffix.h"
+#include <ngspice/devdefs.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/suffix.h>
 
 IFparm CPLpTable[] = { 
 	IOPU("pos_nodes", CPL_POS_NODE, IF_VECTOR|IF_STRING, "in nodes"),

@@ -42,16 +42,16 @@ NON-STANDARD FEATURES
 #include <stdio.h>
 #include <string.h>
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 //#include "misc.h"
 
-#include "cpstd.h"
+#include <ngspice/cpstd.h>
 
-#include "mif.h"
-#include "evt.h"
-#include "evtudn.h"
+#include <ngspice/mif.h>
+#include <ngspice/evt.h>
+#include <ngspice/evtudn.h>
 
-#include "evtproto.h"
+#include <ngspice/evtproto.h>
 
 
 

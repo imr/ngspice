@@ -5,11 +5,11 @@ Author: 1985 Thomas L. Quarles
 /*
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "tradefs.h"
-#include "ifsim.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 /* ARGSUSED */

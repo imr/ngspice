@@ -8,11 +8,11 @@ $Id$
  * Code to deal with breakpoints and tracing.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "dvec.h"
-#include "ftedebug.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/dvec.h>
+#include <ngspice/ftedebug.h>
 #include "quote.h"
 #include "breakp2.h"
 

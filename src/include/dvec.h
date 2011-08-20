@@ -1,8 +1,8 @@
 #ifndef _DVEC_H
 #define _DVEC_H
 
-#include "complex.h"
-#include "grid.h"
+#include <ngspice/complex.h>
+#include <ngspice/grid.h>
 
 
 /* Dvec flags. */

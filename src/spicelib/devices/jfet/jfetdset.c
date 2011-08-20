@@ -3,15 +3,15 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jaijeet S Roychowdhury
 **********/
 
-#include "ngspice.h"
-#include "distodef.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/distodef.h>
+#include <ngspice/cktdefs.h>
 #include "jfetdefs.h"
-#include "const.h"
-#include "trandefs.h"
-#include "sperror.h"
-#include "devdefs.h"
-#include "suffix.h"
+#include <ngspice/const.h>
+#include <ngspice/trandefs.h>
+#include <ngspice/sperror.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/suffix.h>
 
 int
 JFETdSetup(GENmodel *inModel, CKTcircuit *ckt)

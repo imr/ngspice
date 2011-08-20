@@ -3,14 +3,14 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Thomas L. Quarles
 **********/
 
-#include "ngspice.h"
-#include "const.h"
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "devdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/const.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
 #include "numosdef.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 /* Externals Declarations */
 extern int NUMOSinitSmSig(NUMOSinstance *);

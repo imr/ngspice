@@ -7,11 +7,11 @@ Modified: Alan Gillespie
 #ifndef MOS9
 #define MOS9
 
-#include "ifsim.h"
-#include "cktdefs.h"
-#include "gendefs.h"
-#include "complex.h"
-#include "noisedef.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/complex.h>
+#include <ngspice/noisedef.h>
 
     /* declarations for level 9 MOSFETs */
 

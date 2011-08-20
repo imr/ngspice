@@ -39,14 +39,14 @@ NON-STANDARD FEATURES
 
 =========================================================================== */
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 
-#include "cm.h"
-#include "mif.h"
-#include "evt.h"
+#include <ngspice/cm.h>
+#include <ngspice/mif.h>
+#include <ngspice/evt.h>
 
-#include "evtproto.h"
+#include <ngspice/evtproto.h>
 
 
 /*

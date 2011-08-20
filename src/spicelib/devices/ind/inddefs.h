@@ -10,10 +10,10 @@ Author: 1985 Thomas L. Quarles
 /* turn on mutual inductor code */
 #define MUTUAL
 
-#include "ifsim.h"
-#include "complex.h"
-#include "gendefs.h"
-#include "cktdefs.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/complex.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/cktdefs.h>
 
         /* structures used to descrive inductors */
 

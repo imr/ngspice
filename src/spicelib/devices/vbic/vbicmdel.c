@@ -11,10 +11,10 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
  * returns an error if the model has instances
  */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include "vbicdefs.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 
 int

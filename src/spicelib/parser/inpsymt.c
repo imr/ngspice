@@ -9,13 +9,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  */
 /* MW. Special INPinsertNofree for routines from spiceif.c and outif.c */
 
-#include "ngspice.h"
+#include <ngspice/ngspice.h>
 #include <stdio.h>		/* Take this out soon. */
-#include "ifsim.h"
-#include "iferrmsg.h"
-#include "inpdefs.h"
-#include "cpstd.h"
-#include "fteext.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/iferrmsg.h>
+#include <ngspice/inpdefs.h>
+#include <ngspice/cpstd.h>
+#include <ngspice/fteext.h>
 #include "inp.h"
 
 

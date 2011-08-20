@@ -11,7 +11,7 @@ Authors :  1991 David Gates
 #define MATERIAL_H
 
 #ifndef NUM_CARRIERS
-#include "numenum.h"
+#include <ngspice/numenum.h>
 #endif
 
 /* Information needed by the various physical models */

@@ -21,12 +21,12 @@ Modified by Paolo Nenzi 2002
 ngspice integration
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
-#include "suffix.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/suffix.h>
 #include "soi3defs.h"
-#include "trandefs.h"
-#include "const.h"
+#include <ngspice/trandefs.h>
+#include <ngspice/const.h>
 
 
 void

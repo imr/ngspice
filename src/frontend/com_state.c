@@ -1,13 +1,13 @@
 #include <config.h>
-#include <ngspice.h>
-#include <bool.h>
-#include <wordlist.h>
-#include <ftedefs.h>
-#include <inpdefs.h>
+#include <ngspice/ngspice.h>
+#include <ngspice/bool.h>
+#include <ngspice/wordlist.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/inpdefs.h>
 
 #include "circuits.h"
 #include "com_state.h"
-#include "cpextern.h"
+#include <ngspice/cpextern.h>
 #include "plotting/plotting.h"
 
 

@@ -11,12 +11,12 @@ Author: 1985 Thomas L. Quarles
 
 #include "spice.h"
 #include <stdio.h>
-#include "cktdefs.h"
-#include "devdefs.h"
+#include <ngspice/cktdefs.h>
+#include <ngspice/devdefs.h>
 #include "util.h"
-#include "ifsim.h"
-#include "sperror.h"
-#include "suffix.h"
+#include <ngspice/ifsim.h>
+#include <ngspice/sperror.h>
+#include <ngspice/suffix.h>
 
 void
 SENdestroy(info)

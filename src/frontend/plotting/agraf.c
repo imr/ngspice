@@ -7,11 +7,11 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Line-printer (ASCII) plots.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "dvec.h"
-#include "fteparse.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cpdefs.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/dvec.h>
+#include <ngspice/fteparse.h>
 #include "agraf.h"
 
 

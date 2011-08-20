@@ -1,12 +1,12 @@
-#include "ngspice.h"
-#include "ifsim.h"
-#include "gendefs.h"
-#include "cktdefs.h"
-#include "cpstd.h"
-#include "ftedefs.h"
-#include "fteext.h"
-#include "devdefs.h"
-#include "dgen.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/ifsim.h>
+#include <ngspice/gendefs.h>
+#include <ngspice/cktdefs.h>
+#include <ngspice/cpstd.h>
+#include <ngspice/ftedefs.h>
+#include <ngspice/fteext.h>
+#include <ngspice/devdefs.h>
+#include <ngspice/dgen.h>
 #include "gens.h"
 
 

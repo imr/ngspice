@@ -3,8 +3,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Gary W. Ng
 **********/
 
-#include "ngspice.h"
-#include "cktdefs.h"
+#include <ngspice/ngspice.h>
+#include <ngspice/cktdefs.h>
 #include "niniter.h"
 
 /*
