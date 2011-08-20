@@ -1,4 +1,9 @@
 2011-08-20  Robert Larice
+ * src/frontend/parse-bison.c ,
+ * src/frontend/parse-bison.h ,
+   update bison generated files
+
+2011-08-20  Robert Larice
  * src/frontend/parse-bison.y :
    the i() and v() function application have special semantics
 

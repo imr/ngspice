@@ -49,16 +49,6 @@
      NEG = 265
    };
 #endif
-/* Tokens.  */
-#define TOK_NUM 258
-#define TOK_STR 259
-#define TOK_LE 260
-#define TOK_GE 261
-#define TOK_NE 262
-#define TOK_LRANGE 263
-#define TOK_RRANGE 264
-#define NEG 265
-
 
 
 
@@ -67,7 +57,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 50 "parse-bison.y"
+#line 53 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
 
   double num;
   const char  *str;
@@ -76,7 +66,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 80 "parse-bison.h"
+#line 70 "parse-bison.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
