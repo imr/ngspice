@@ -1914,7 +1914,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\maths\fft\fftext.h"
+				RelativePath="..\src\include\fftext.h"
 				>
 			</File>
 			<File

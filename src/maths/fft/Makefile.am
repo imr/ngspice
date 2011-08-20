@@ -4,7 +4,6 @@ noinst_LTLIBRARIES = libmathfft.la
 
 libmathfft_la_SOURCES =		\
 		fftext.c	\
-		fftext.h	\
 		fftlib.c	\
 		fftlib.h	\
 		matlib.c	\
