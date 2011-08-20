@@ -209,15 +209,15 @@ static void  write_includes(
     FILE *fp)                /* File to write to */
 {
     fprintf(fp, "\n");
-	fprintf(fp, "#include \"ngspice.h\"  \n");
-/*  fprintf(fp, "#include \"prefix.h\"  \n");*/
-    fprintf(fp, "#include <stdio.h>     \n");
-    fprintf(fp, "#include \"devdefs.h\" \n");
-    fprintf(fp, "#include \"ifsim.h\"   \n");
-    fprintf(fp, "#include \"mifdefs.h\" \n");
-    fprintf(fp, "#include \"mifproto.h\" \n");
-    fprintf(fp, "#include \"mifparse.h\" \n");
-/*  fprintf(fp, "#include \"suffix.h\"  \n");*/
+	fprintf(fp, "#include <ngspice/ngspice.h>\n");
+/*  fprintf(fp, "#include <ngspice/prefix.h>\n");*/
+    fprintf(fp, "#include <stdio.h>\n");
+    fprintf(fp, "#include <ngspice/devdefs.h>\n");
+    fprintf(fp, "#include <ngspice/ifsim.h>\n");
+    fprintf(fp, "#include <ngspice/mifdefs.h>\n");
+    fprintf(fp, "#include <ngspice/mifproto.h>\n");
+    fprintf(fp, "#include <ngspice/mifparse.h>\n");
+/*  fprintf(fp, "#include <ngspice/suffix.h>\n");*/
     fprintf(fp, "\n");
 }
 

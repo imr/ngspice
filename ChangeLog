@@ -1,4 +1,9 @@
 2011-08-20  Robert Larice
+ * src/xspice/cmpp/pp_mod.c ,
+ * src/xspice/cmpp/writ_ifs.c :
+   #5/7 use a subdirectory "ngspice" for includes to create a uniq namespace
+
+2011-08-20  Robert Larice
  * visualc/vngspice.vcproj :
    #4/7 use a subdirectory "ngspice" for includes to create a uniq namespace
 
