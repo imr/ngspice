@@ -4,7 +4,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.2  2011-01-13 17:05:46  dwarning
+  Revision 1.3  2011-08-20 17:49:37  rlar
+  #6/7 use a subdirectory "ngspice" for includes to create a uniq namespace
+
+  Revision 1.2  2011/01/13 17:05:46  dwarning
   set version parameter to 2.3.0
 
   Revision 1.1  2006/03/10 09:55:53  pnenzi
@@ -55,11 +58,11 @@
 <admst:value-of select="attribute[name='ngspicename']/value"/>
 <admst:variable name="module" select="%s"/>
 
-#include &quot;ngspice.h&quot;
-#include &quot;cktdefs.h&quot;
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/cktdefs.h&gt;
 #include &quot;$(module)defs.h&quot;
-#include &quot;sperror.h&quot;
-#include &quot;suffix.h&quot;
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 int $(module)trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {

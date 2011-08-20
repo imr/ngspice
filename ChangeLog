@@ -1,7 +1,13 @@
 2011-08-20  Robert Larice
+ * src/spicelib/devices/adms/admst/*.xml :
+   #6/7 use a subdirectory "ngspice" for includes to create a uniq namespace
+     adms-2
+
+2011-08-20  Robert Larice
  * src/xspice/cmpp/pp_mod.c ,
  * src/xspice/cmpp/writ_ifs.c :
    #5/7 use a subdirectory "ngspice" for includes to create a uniq namespace
+     xspice
 
 2011-08-20  Robert Larice
  * visualc/vngspice.vcproj :

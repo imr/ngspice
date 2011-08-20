@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.10  2011-08-12 15:18:41  rlar
+  Revision 1.11  2011-08-20 17:49:37  rlar
+  #6/7 use a subdirectory "ngspice" for includes to create a uniq namespace
+
+  Revision 1.10  2011/08/12 15:18:41  rlar
   pull two -adms3 fixes into -adms
 
   Revision 1.9  2011/01/13 17:05:46  dwarning
@@ -83,14 +86,14 @@
 <admst:value-of select="attribute[name='ngspicename']/value"/>
 <admst:variable name="module" select="%s"/>
 
-#include &quot;ngspice.h&quot;
-#include &quot;cktdefs.h&quot;
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/cktdefs.h&gt;
 #include &quot;$(module)defs.h&quot;
-#include &quot;const.h&quot;
-#include &quot;trandefs.h&quot;
-#include &quot;sperror.h&quot;
-#include &quot;devdefs.h&quot;
-#include &quot;suffix.h&quot;
+#include &lt;ngspice/const.h&gt;
+#include &lt;ngspice/trandefs.h&gt;
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/devdefs.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 /*fixme: noise not implemented in ngspice*/
 #define ngspice_flickernoise(p,n,mag,freq,info)\\

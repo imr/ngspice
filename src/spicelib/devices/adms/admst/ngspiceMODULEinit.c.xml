@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.8  2011-08-20 17:27:13  rlar
+  Revision 1.9  2011-08-20 17:49:37  rlar
+  #6/7 use a subdirectory "ngspice" for includes to create a uniq namespace
+
+  Revision 1.8  2011/08/20 17:27:13  rlar
   #1/7 use a subdirectory "ngspice" for includes to create a uniq namespace
 
   Revision 1.7  2011/01/13 17:05:46  dwarning
@@ -59,7 +62,7 @@
 <admst:template match="code">
 #include "config.h"
 
-#include <ngspice/devdefs.h>
+#include &lt;ngspice/devdefs.h&gt;
 
 <admst:value-of select="attribute[name='ngspicename']/value"/>
 <admst:variable name="module" select="%s"/>

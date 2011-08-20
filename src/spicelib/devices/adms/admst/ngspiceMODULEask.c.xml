@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.7  2011-08-12 15:18:41  rlar
+  Revision 1.8  2011-08-20 17:49:37  rlar
+  #6/7 use a subdirectory "ngspice" for includes to create a uniq namespace
+
+  Revision 1.7  2011/08/12 15:18:41  rlar
   pull two -adms3 fixes into -adms
 
   Revision 1.6  2011/01/13 17:05:46  dwarning
@@ -58,13 +61,13 @@
 <admst:value-of select="attribute[name='ngspicename']/value"/>
 <admst:variable name="module" select="%s"/>
 
-#include &quot;ngspice.h&quot;
-#include &quot;const.h&quot;
-#include &quot;cktdefs.h&quot;
+#include &lt;ngspice/ngspice.h&gt;
+#include &lt;ngspice/const.h&gt;
+#include &lt;ngspice/cktdefs.h&gt;
 #include &quot;$(module)defs.h&quot;
-#include &quot;ifsim.h&quot;
-#include &quot;sperror.h&quot;
-#include &quot;suffix.h&quot;
+#include &lt;ngspice/ifsim.h&gt;
+#include &lt;ngspice/sperror.h&gt;
+#include &lt;ngspice/suffix.h&gt;
 
 int $(module)ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
