@@ -1,4 +1,9 @@
 2011-08-20  Robert Larice
+ * configure.ac ,
+ * src/Makefile.am :
+   #3/7 use a subdirectory "ngspice" for includes to create a uniq namespace
+
+2011-08-20  Robert Larice
  * src/include/* :
    #2/7 use a subdirectory "ngspice" for includes to create a uniq namespace
      move the include files down into the new directory

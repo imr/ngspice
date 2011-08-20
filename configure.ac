@@ -1070,7 +1070,7 @@ AC_CONFIG_FILES([Makefile
                  src/frontend/plotting/Makefile
                  src/frontend/trannoise/Makefile
                  src/frontend/wdisp/Makefile
-                 src/include/Makefile
+                 src/include/ngspice/Makefile
                  src/maths/Makefile
                  src/maths/cmaths/Makefile
                  src/maths/fft/Makefile
