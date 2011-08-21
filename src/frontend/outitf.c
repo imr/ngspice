@@ -494,7 +494,7 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             /* we've already printed reference vec first */
             if (run->data[i].outIndex == -1) continue;
 #ifdef TCL_MODULE
-	    blt_add(i,refValue->rValue);
+	    blt_add(i, refValue ? refValue->rValue : NAN);
 #endif
 
             if (run->data[i].regular) {
@@ -564,10 +564,10 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
         if ((currclock-lastclock)>(0.25*CLOCKS_PER_SEC)) {
           if (run->isComplex) {
               fprintf(stderr, " Reference value : % 12.5e\r",
-                            refValue->cValue.real);
+                            refValue ? refValue->cValue.real : NAN);
           } else {
               fprintf(stderr, " Reference value : % 12.5e\r",
-                            refValue->rValue);
+                            refValue ? refValue->rValue : NAN);
           }
           lastclock = currclock;
         }

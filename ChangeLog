@@ -1,3 +1,7 @@
+2011-08-21  Robert Larice
+ * src/frontend/outitf.c :
+   avoid segfault when printing aout a nonexistant `ReferenceValue' (pzan)
+
 2011-08-21  Holger Vogt
  * fftext.h, fftext.c, fftlib.c, fftlib.h: type long to int
    (patch by Robert)
