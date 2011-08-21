@@ -37,7 +37,7 @@ void CKTpzReset(PZtrial **set);
 
 
 #ifdef PZDEBUG
-static void show_trial( );
+static void show_trial(PZtrial *new_trial, char x);
 #endif
 
 #define NITER_LIM	200
@@ -1017,17 +1017,19 @@ zaddeq(double *a, int *amag, double x, int xmag, double y, int ymag)
 
 #ifdef PZDEBUG
 static void
-show_trial(new_trial, x)
-    PZtrial *new_trial;
-    char	x;
+show_trial(PZtrial *new_trial, char x)
 {
-    DEBUG(1) fprintf(stderr, "%c (%3d/%3d) %.15g %.15g :: %.30g %.30g %d\n", x,
-	NIter, new_trial->seq_num, new_trial->s.real, new_trial->s.imag,
-	new_trial->f_def.real, new_trial->f_def.imag, new_trial->mag_def);
-    DEBUG(1)
-	if (new_trial->flags & ISANABERRATION) {
-	    fprintf(stderr, "*** numerical aberration ***\n");
-	}
+    DEBUG(1) {
+        if(new_trial) {
+            fprintf(stderr, "%c (%3d/%3d) %.15g %.15g :: %.30g %.30g %d\n", x,
+                    NIter, new_trial->seq_num, new_trial->s.real, new_trial->s.imag,
+                    new_trial->f_def.real, new_trial->f_def.imag, new_trial->mag_def);
+            if (new_trial->flags & ISANABERRATION)
+                fprintf(stderr, "*** numerical aberration ***\n");
+        } else {
+            fprintf(stderr, "%c (%3d/---) new_trial = nil\n", x, NIter);
+        }
+    }
 }
 #endif
 

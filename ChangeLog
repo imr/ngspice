@@ -1,4 +1,8 @@
 2011-08-21  Robert Larice
+ * src/spicelib/analysis/cktpzstr.c :
+   prototypes, and avoid a NULL dereference when PZDEBUG is active
+
+2011-08-21  Robert Larice
  * src/frontend/outitf.c :
    avoid segfault when printing aout a nonexistant `ReferenceValue' (pzan)
 
