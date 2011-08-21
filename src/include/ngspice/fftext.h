@@ -9,7 +9,7 @@
 	#define FFT(a,n) if(!fftInit(roundtol(LOG2(n)))) ffts(a,roundtol(LOG2(n)),1);else printf("fft error\n");
 *******************************************************************/
 
-int fftInit(long M);
+int fftInit(int M);
 // malloc and init cosine and bit reversed tables for a given size fft, ifft, rfft, rifft
 /* INPUTS */
 /* M = log2 of fft size	(ex M=10 for 1024 point fft) */
@@ -19,7 +19,7 @@ int fftInit(long M);
 void fftFree(void);
 // release storage for all private cosine and bit reversed tables
 
-void ffts(double *data, long M, long Rows);
+void ffts(double *data, int M, int Rows);
 /* Compute in-place complex fft on the rows of the input array	*/
 /* INPUTS */
 /* *ioptr = input data array	*/
@@ -28,7 +28,7 @@ void ffts(double *data, long M, long Rows);
 /* OUTPUTS */
 /* *ioptr = output data array	*/
 
-void iffts(double *data, long M, long Rows);
+void iffts(double *data, int M, int Rows);
 /* Compute in-place inverse complex fft on the rows of the input array	*/
 /* INPUTS */
 /* *ioptr = input data array	*/
@@ -37,7 +37,7 @@ void iffts(double *data, long M, long Rows);
 /* OUTPUTS */
 /* *ioptr = output data array	*/
 
-void rffts(double *data, long M, long Rows);
+void rffts(double *data, int M, int Rows);
 /* Compute in-place real fft on the rows of the input array	*/
 /* The result is the complex spectra of the positive frequencies */
 /* except the location for the first complex number contains the real */
@@ -51,7 +51,7 @@ void rffts(double *data, long M, long Rows);
 /* *ioptr = output data array	in the following order */
 /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
 
-void riffts(double *data, long M, long Rows);
+void riffts(double *data, int M, int Rows);
 /* Compute in-place real ifft on the rows of the input array	*/
 /* data order as from rffts */
 /* INPUTS */
@@ -62,7 +62,7 @@ void riffts(double *data, long M, long Rows);
 /* OUTPUTS */
 /* *ioptr = real output data array	*/
 
-void rspectprod(double *data1, double *data2, double *outdata, long N);
+void rspectprod(double *data1, double *data2, double *outdata, int N);
 // When multiplying a pair of spectra from rfft care must be taken to multiply the
 // two real values seperately from the complex ones. This routine does it correctly.
 // the result can be stored in-place over one of the inputs
@@ -81,9 +81,9 @@ void rspectprod(double *data1, double *data2, double *outdata, long N);
 //This is how I like to define a real matrix:
 //struct matrix {		// real matrix
 //	double *d; 		// pointer to data
-//	long Nrows;		// number of rows in the matrix
-//	long Ncols;		// number of columns in the matrix (can be less than Rsiz)
-//	long Rsiz;		// number of doubles from one row to the next
+//	int Nrows;		// number of rows in the matrix
+//	int Ncols;		// number of columns in the matrix (can be less than Rsiz)
+//	int Rsiz;		// number of doubles from one row to the next
 //};
 //typedef struct matrix matrix;
 

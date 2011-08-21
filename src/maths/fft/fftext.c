@@ -12,14 +12,15 @@
 #include "fftlib.h"
 #include "matlib.h"
 #include <ngspice/fftext.h>
+#include <ngspice/memory.h>
 
 // pointers to storage of Utbl's and  BRLow's
-static double *UtblArray[8*sizeof(long)] =
+static double *UtblArray[8*sizeof(int)] =
 {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};
 
-static short *BRLowArray[8*sizeof(long)/2]  = {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};
+static short *BRLowArray[8*sizeof(int)/2]  = {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};
 
-int fftInit(long M)
+int fftInit(int M)
 {
 // malloc and init cosine and bit reversed tables for a given size fft, ifft, rfft, rifft
     /* INPUTS */
@@ -29,11 +30,11 @@ int fftInit(long M)
 
     int theError = 1;
     /*** I did NOT test cases with M>27 ***/
-    if ((M >= 0) && (M < 8*sizeof(long))) {
+    if ((M >= 0) && ((size_t) M < 8*sizeof(int))) {
         theError = 0;
         if (UtblArray[M] == 0) {	// have we not inited this size fft yet?
             // init cos table
-            UtblArray[M] = (double *) malloc( (POW2(M)/4+1)*sizeof(double) );
+            UtblArray[M] = TMALLOC(double, POW2(M)/4+1);
             if (UtblArray[M] == 0)
                 theError = 2;
             else {
@@ -41,7 +42,7 @@ int fftInit(long M)
             }
             if (M > 1) {
                 if (BRLowArray[M/2] == 0) {	// init bit reversed table for cmplx fft
-                    BRLowArray[M/2] = (short *) malloc( POW2(M/2-1)*sizeof(short) );
+                    BRLowArray[M/2] = TMALLOC(short, POW2(M/2-1));
                     if (BRLowArray[M/2] == 0)
                         theError = 2;
                     else {
@@ -51,7 +52,7 @@ int fftInit(long M)
             }
             if (M > 2) {
                 if (BRLowArray[(M-1)/2] == 0) {	// init bit reversed table for real fft
-                    BRLowArray[(M-1)/2] = (short *) malloc( POW2((M-1)/2-1)*sizeof(short) );
+                    BRLowArray[(M-1)/2] = TMALLOC(short, POW2((M-1)/2-1));
                     if (BRLowArray[(M-1)/2] == 0)
                         theError = 2;
                     else {
@@ -67,14 +68,14 @@ int fftInit(long M)
 void fftFree(void)
 {
 // release storage for all private cosine and bit reversed tables
-    long i1;
-    for (i1=8*sizeof(long)/2-1; i1>=0; i1--) {
+    int i1;
+    for (i1=8*sizeof(int)/2-1; i1>=0; i1--) {
         if (BRLowArray[i1] != 0) {
             free(BRLowArray[i1]);
             BRLowArray[i1] = 0;
         };
     };
-    for (i1=8*sizeof(long)-1; i1>=0; i1--) {
+    for (i1=8*sizeof(int)-1; i1>=0; i1--) {
         if (UtblArray[i1] != 0) {
             free(UtblArray[i1]);
             UtblArray[i1] = 0;
@@ -87,7 +88,7 @@ void fftFree(void)
  Just make sure fftlib has been called for each M first.
 **************************************************/
 
-void ffts(double *data, long M, long Rows)
+void ffts(double *data, int M, int Rows)
 {
     /* Compute in-place complex fft on the rows of the input array	*/
     /* INPUTS */
@@ -99,7 +100,7 @@ void ffts(double *data, long M, long Rows)
     ffts1(data, M, Rows, UtblArray[M], BRLowArray[M/2]);
 }
 
-void iffts(double *data, long M, long Rows)
+void iffts(double *data, int M, int Rows)
 {
     /* Compute in-place inverse complex fft on the rows of the input array	*/
     /* INPUTS */
@@ -111,7 +112,7 @@ void iffts(double *data, long M, long Rows)
     iffts1(data, M, Rows, UtblArray[M], BRLowArray[M/2]);
 }
 
-void rffts(double *data, long M, long Rows)
+void rffts(double *data, int M, int Rows)
 {
     /* Compute in-place real fft on the rows of the input array	*/
     /* The result is the complex spectra of the positive frequencies */
@@ -128,7 +129,7 @@ void rffts(double *data, long M, long Rows)
     rffts1(data, M, Rows, UtblArray[M], BRLowArray[(M-1)/2]);
 }
 
-void riffts(double *data, long M, long Rows)
+void riffts(double *data, int M, int Rows)
 {
     /* Compute in-place real ifft on the rows of the input array	*/
     /* data order as from rffts */
@@ -142,7 +143,7 @@ void riffts(double *data, long M, long Rows)
     riffts1(data, M, Rows, UtblArray[M], BRLowArray[(M-1)/2]);
 }
 
-void rspectprod(double *data1, double *data2, double *outdata, long N)
+void rspectprod(double *data1, double *data2, double *outdata, int N)
 {
 // When multiplying a pair of spectra from rfft care must be taken to multiply the
 // two real values seperately from the complex ones. This routine does it correctly.

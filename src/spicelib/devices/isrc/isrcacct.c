@@ -16,6 +16,8 @@ extern int fftInit(long M);
 extern void fftFree(void);
 extern void rffts(float *data, long M, long Rows);
 
+extern bool ft_ngdebug; /* some additional debug info printed */
+
 #define SAMETIME(a,b)    (fabs((a)-(b))<= TIMETOL * PW)
 #define TIMETOL    1e-7
 
@@ -197,7 +199,8 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 
                         /* FIXME, dont' want this here, over to aof_get or somesuch */
                         if (ckt->CKTtime == 0.0) {
-                            printf("VSRC: free fft tables\n");
+                            if (ft_ngdebug)
+                                printf("VSRC: free fft tables\n");
                             fftFree();
                         }
 

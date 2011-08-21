@@ -3,7 +3,7 @@ lower level fft stuff including routines called in fftext.c and fft2d.c
 *******************************************************************/
 #include "fftlib.h"
 #include <math.h>
-#define	MCACHE	(11-(sizeof(double)/8))	// fft's with M bigger than this bust primary cache
+#define	MCACHE	(11-(int)(sizeof(double)/8))	// fft's with M bigger than this bust primary cache
 
 // some math constants to 40 decimal places
 #define MYPI		3.141592653589793238462643383279502884197	// pi
@@ -20,7 +20,7 @@ lower level fft stuff including routines called in fftext.c and fft2d.c
 routines to initialize tables used by fft routines
 **************************************************/
 
-void fftCosInit(long M, double *Utbl)
+void fftCosInit(int M, double *Utbl)
 {
     /* Compute Utbl, the cosine table for ffts	*/
     /* of size (pow(2,M)/4 +1)	*/
@@ -28,15 +28,15 @@ void fftCosInit(long M, double *Utbl)
     /* M = log2 of fft size	*/
     /* OUTPUTS */
     /* *Utbl = cosine table	*/
-    unsigned long fftN = POW2(M);
-    unsigned long i1;
+    int fftN = POW2(M);
+    int i1;
     Utbl[0] = 1.0;
     for (i1 = 1; i1 < fftN/4; i1++)
         Utbl[i1] = cos( (2.0 * MYPI * i1) / fftN );
     Utbl[fftN/4] = 0.0;
 }
 
-void fftBRInit(long M, short *BRLow)
+void fftBRInit(int M, short *BRLow)
 {
     /* Compute BRLow, the bit reversed table for ffts	*/
     /* of size pow(2,M/2 -1)	*/
@@ -44,19 +44,19 @@ void fftBRInit(long M, short *BRLow)
     /* M = log2 of fft size	*/
     /* OUTPUTS */
     /* *BRLow = bit reversed counter table	*/
-    long	Mroot_1 = M / 2 - 1;
-    long	Nroot_1 = POW2(Mroot_1);
-    long i1;
-    long bitsum;
-    long bitmask;
-    long bit;
+    int	Mroot_1 = M / 2 - 1;
+    int	Nroot_1 = POW2(Mroot_1);
+    int i1;
+    int bitsum;
+    int bitmask;
+    int bit;
     for (i1 = 0; i1 < Nroot_1; i1++) {
         bitsum = 0;
         bitmask = 1;
         for (bit=1; bit <= Mroot_1; bitmask<<=1, bit++)
             if (i1 & bitmask)
                 bitsum = bitsum + (Nroot_1 >> bit);
-        BRLow[i1] = bitsum;
+        BRLow[i1] = (short) bitsum;
     };
 }
 
@@ -64,8 +64,8 @@ void fftBRInit(long M, short *BRLow)
 parts of ffts1
 *************************************************/
 
-static inline void bitrevR2(double *ioptr, long M, short *BRLow);
-static inline void bitrevR2(double *ioptr, long M, short *BRLow)
+static inline void bitrevR2(double *ioptr, int M, short *BRLow);
+static inline void bitrevR2(double *ioptr, int M, short *BRLow)
 {
     /*** bit reverse and first radix 2 stage of forward or inverse fft ***/
     double	f0r;
@@ -92,17 +92,17 @@ static inline void bitrevR2(double *ioptr, long M, short *BRLow)
     double	*p1r;
     double	*IOP;
     double 	*iolimit;
-    long 	Colstart;
-    long 	iCol;
-    unsigned long 	posA;
-    unsigned long 	posAi;
-    unsigned long 	posB;
-    unsigned long 	posBi;
+    int 	Colstart;
+    int 	iCol;
+    int 	posA;
+    int 	posAi;
+    int 	posB;
+    int 	posBi;
 
-    const unsigned long Nrems2 = POW2((M+3)/2);
-    const unsigned long Nroot_1_ColInc = POW2(M)-Nrems2;
-    const unsigned long Nroot_1 = POW2(M/2-1)-1;
-    const unsigned long ColstartShift = (M+1)/2 +1;
+    const int Nrems2 = POW2((M+3)/2);
+    const int Nroot_1_ColInc = POW2(M)-Nrems2;
+    const int Nroot_1 = POW2(M/2-1)-1;
+    const int ColstartShift = (M+1)/2 +1;
     posA = POW2(M);		// 1/2 of POW2(M) complexes
     posAi = posA + 1;
     posB = posA + 2;
@@ -410,16 +410,16 @@ static inline void fft8pt(double *ioptr)
     ioptr[15] = f6i;
 }
 
-static inline void bfR2(double *ioptr, long M, long NDiffU);
-static inline void bfR2(double *ioptr, long M, long NDiffU)
+static inline void bfR2(double *ioptr, int M, int NDiffU);
+static inline void bfR2(double *ioptr, int M, int NDiffU)
 {
     /*** 2nd radix 2 stage ***/
-    unsigned long	pos;
-    unsigned long	posi;
-    unsigned long	pinc;
-    unsigned long	pnext;
-    unsigned long 	NSameU;
-    unsigned long 	SameUCnt;
+    int	pos;
+    int	posi;
+    int	pinc;
+    int	pnext;
+    int 	NSameU;
+    int 	SameUCnt;
 
     double	*pstrt;
     double 	*p0r, *p1r, *p2r, *p3r;
@@ -520,17 +520,17 @@ static inline void bfR2(double *ioptr, long M, long NDiffU)
     }
 }
 
-static inline void bfR4(double *ioptr, long M, long NDiffU);
-static inline void bfR4(double *ioptr, long M, long NDiffU)
+static inline void bfR4(double *ioptr, int M, int NDiffU);
+static inline void bfR4(double *ioptr, int M, int NDiffU)
 {
     /*** 1 radix 4 stage ***/
-    unsigned long	pos;
-    unsigned long	posi;
-    unsigned long	pinc;
-    unsigned long	pnext;
-    unsigned long	pnexti;
-    unsigned long 	NSameU;
-    unsigned long 	SameUCnt;
+    int	pos;
+    int	posi;
+    int	pinc;
+    int	pnext;
+    int	pnexti;
+    int 	NSameU;
+    int 	SameUCnt;
 
     double	*pstrt;
     double 	*p0r, *p1r, *p2r, *p3r;
@@ -730,21 +730,21 @@ static inline void bfR4(double *ioptr, long M, long NDiffU)
 
 }
 
-static inline void bfstages(double *ioptr, long M, double *Utbl, long Ustride, long NDiffU, long StageCnt);
-static inline void bfstages(double *ioptr, long M, double *Utbl, long Ustride, long NDiffU, long StageCnt)
+static inline void bfstages(double *ioptr, int M, double *Utbl, int Ustride, int NDiffU, int StageCnt);
+static inline void bfstages(double *ioptr, int M, double *Utbl, int Ustride, int NDiffU, int StageCnt)
 {
     /***   RADIX 8 Stages	***/
-    unsigned long	pos;
-    unsigned long	posi;
-    unsigned long	pinc;
-    unsigned long	pnext;
-    unsigned long 	NSameU;
-    unsigned long 	Uinc;
-    unsigned long 	Uinc2;
-    unsigned long 	Uinc4;
-    unsigned long 	DiffUCnt;
-    unsigned long 	SameUCnt;
-    unsigned long 	U2toU3;
+    int	pos;
+    int	posi;
+    int	pinc;
+    int	pnext;
+    int 	NSameU;
+    int 	Uinc;
+    int 	Uinc2;
+    int 	Uinc4;
+    int 	DiffUCnt;
+    int 	SameUCnt;
+    int 	U2toU3;
 
     double	*pstrt;
     double 	*p0r, *p1r, *p2r, *p3r;
@@ -1052,11 +1052,11 @@ static inline void bfstages(double *ioptr, long M, double *Utbl, long Ustride, l
     }
 }
 
-void fftrecurs(double *ioptr, long M, double *Utbl, long Ustride, long NDiffU, long StageCnt);
-void fftrecurs(double *ioptr, long M, double *Utbl, long Ustride, long NDiffU, long StageCnt)
+void fftrecurs(double *ioptr, int M, double *Utbl, int Ustride, int NDiffU, int StageCnt);
+void fftrecurs(double *ioptr, int M, double *Utbl, int Ustride, int NDiffU, int StageCnt)
 {
     /* recursive bfstages calls to maximize on chip cache efficiency */
-    long i1;
+    int i1;
     if (M <= MCACHE)  // fits on chip ?
         bfstages(ioptr, M, Utbl, Ustride, NDiffU, StageCnt);		/*  RADIX 8 Stages	*/
     else {
@@ -1067,7 +1067,7 @@ void fftrecurs(double *ioptr, long M, double *Utbl, long Ustride, long NDiffU, l
     }
 }
 
-void ffts1(double *ioptr, long M, long Rows, double *Utbl, short *BRLow)
+void ffts1(double *ioptr, int M, int Rows, double *Utbl, short *BRLow)
 {
     /* Compute in-place complex fft on the rows of the input array	*/
     /* INPUTS */
@@ -1079,8 +1079,8 @@ void ffts1(double *ioptr, long M, long Rows, double *Utbl, short *BRLow)
     /* OUTPUTS */
     /* *ioptr = output data array	*/
 
-    long 	StageCnt;
-    long 	NDiffU;
+    int 	StageCnt;
+    int 	NDiffU;
 
     switch (M) {
     case 0:
@@ -1137,8 +1137,8 @@ void ffts1(double *ioptr, long M, long Rows, double *Utbl, short *BRLow)
 parts of iffts1
 *************************************************/
 
-static inline void scbitrevR2(double *ioptr, long M, short *BRLow, double scale);
-static inline void scbitrevR2(double *ioptr, long M, short *BRLow, double scale)
+static inline void scbitrevR2(double *ioptr, int M, short *BRLow, double scale);
+static inline void scbitrevR2(double *ioptr, int M, short *BRLow, double scale)
 {
     /*** scaled bit reverse and first radix 2 stage forward or inverse fft ***/
     double	f0r;
@@ -1165,17 +1165,17 @@ static inline void scbitrevR2(double *ioptr, long M, short *BRLow, double scale)
     double	*p1r;
     double	*IOP;
     double 	*iolimit;
-    long 	Colstart;
-    long 	iCol;
-    unsigned long 	posA;
-    unsigned long 	posAi;
-    unsigned long 	posB;
-    unsigned long 	posBi;
+    int 	Colstart;
+    int 	iCol;
+    int 	posA;
+    int 	posAi;
+    int 	posB;
+    int 	posBi;
 
-    const unsigned long Nrems2 = POW2((M+3)/2);
-    const unsigned long Nroot_1_ColInc = POW2(M)-Nrems2;
-    const unsigned long Nroot_1 = POW2(M/2-1)-1;
-    const unsigned long ColstartShift = (M+1)/2 +1;
+    const int Nrems2 = POW2((M+3)/2);
+    const int Nroot_1_ColInc = POW2(M)-Nrems2;
+    const int Nroot_1 = POW2(M/2-1)-1;
+    const int ColstartShift = (M+1)/2 +1;
     posA = POW2(M);		// 1/2 of POW2(M) complexes
     posAi = posA + 1;
     posB = posA + 2;
@@ -1483,16 +1483,16 @@ static inline void ifft8pt(double *ioptr, double scale)
     ioptr[15] = scale*f6i;
 }
 
-static inline void ibfR2(double *ioptr, long M, long NDiffU);
-static inline void ibfR2(double *ioptr, long M, long NDiffU)
+static inline void ibfR2(double *ioptr, int M, int NDiffU);
+static inline void ibfR2(double *ioptr, int M, int NDiffU)
 {
     /*** 2nd radix 2 stage ***/
-    unsigned long	pos;
-    unsigned long	posi;
-    unsigned long	pinc;
-    unsigned long	pnext;
-    unsigned long 	NSameU;
-    unsigned long 	SameUCnt;
+    int	pos;
+    int	posi;
+    int	pinc;
+    int	pnext;
+    int 	NSameU;
+    int 	SameUCnt;
 
     double	*pstrt;
     double 	*p0r, *p1r, *p2r, *p3r;
@@ -1593,17 +1593,17 @@ static inline void ibfR2(double *ioptr, long M, long NDiffU)
     }
 }
 
-static inline void ibfR4(double *ioptr, long M, long NDiffU);
-static inline void ibfR4(double *ioptr, long M, long NDiffU)
+static inline void ibfR4(double *ioptr, int M, int NDiffU);
+static inline void ibfR4(double *ioptr, int M, int NDiffU)
 {
     /*** 1 radix 4 stage ***/
-    unsigned long	pos;
-    unsigned long	posi;
-    unsigned long	pinc;
-    unsigned long	pnext;
-    unsigned long	pnexti;
-    unsigned long 	NSameU;
-    unsigned long 	SameUCnt;
+    int	pos;
+    int	posi;
+    int	pinc;
+    int	pnext;
+    int	pnexti;
+    int 	NSameU;
+    int 	SameUCnt;
 
     double	*pstrt;
     double 	*p0r, *p1r, *p2r, *p3r;
@@ -1803,21 +1803,21 @@ static inline void ibfR4(double *ioptr, long M, long NDiffU)
 
 }
 
-static inline void ibfstages(double *ioptr, long M, double *Utbl, long Ustride, long NDiffU, long StageCnt);
-static inline void ibfstages(double *ioptr, long M, double *Utbl, long Ustride, long NDiffU, long StageCnt)
+static inline void ibfstages(double *ioptr, int M, double *Utbl, int Ustride, int NDiffU, int StageCnt);
+static inline void ibfstages(double *ioptr, int M, double *Utbl, int Ustride, int NDiffU, int StageCnt)
 {
     /***   RADIX 8 Stages	***/
-    unsigned long	pos;
-    unsigned long	posi;
-    unsigned long	pinc;
-    unsigned long	pnext;
-    unsigned long 	NSameU;
-    unsigned long 	Uinc;
-    unsigned long 	Uinc2;
-    unsigned long 	Uinc4;
-    unsigned long 	DiffUCnt;
-    unsigned long 	SameUCnt;
-    unsigned long 	U2toU3;
+    int	pos;
+    int	posi;
+    int	pinc;
+    int	pnext;
+    int 	NSameU;
+    int 	Uinc;
+    int 	Uinc2;
+    int 	Uinc4;
+    int 	DiffUCnt;
+    int 	SameUCnt;
+    int 	U2toU3;
 
     double	*pstrt;
     double 	*p0r, *p1r, *p2r, *p3r;
@@ -2128,11 +2128,11 @@ static inline void ibfstages(double *ioptr, long M, double *Utbl, long Ustride, 
     }
 }
 
-void ifftrecurs(double *ioptr, long M, double *Utbl, long Ustride, long NDiffU, long StageCnt);
-void ifftrecurs(double *ioptr, long M, double *Utbl, long Ustride, long NDiffU, long StageCnt)
+void ifftrecurs(double *ioptr, int M, double *Utbl, int Ustride, int NDiffU, int StageCnt);
+void ifftrecurs(double *ioptr, int M, double *Utbl, int Ustride, int NDiffU, int StageCnt)
 {
     /* recursive bfstages calls to maximize on chip cache efficiency */
-    long i1;
+    int i1;
     if (M <= MCACHE)
         ibfstages(ioptr, M, Utbl, Ustride, NDiffU, StageCnt);		/*  RADIX 8 Stages	*/
     else {
@@ -2143,7 +2143,7 @@ void ifftrecurs(double *ioptr, long M, double *Utbl, long Ustride, long NDiffU, 
     }
 }
 
-void iffts1(double *ioptr, long M, long Rows, double *Utbl, short *BRLow)
+void iffts1(double *ioptr, int M, int Rows, double *Utbl, short *BRLow)
 {
     /* Compute in-place inverse complex fft on the rows of the input array	*/
     /* INPUTS */
@@ -2155,8 +2155,8 @@ void iffts1(double *ioptr, long M, long Rows, double *Utbl, short *BRLow)
     /* OUTPUTS */
     /* *ioptr = output data array	*/
 
-    long 	StageCnt;
-    long 	NDiffU;
+    int 	StageCnt;
+    int 	NDiffU;
     const double scale = 1.0/POW2(M);
 
     switch (M) {
@@ -2502,14 +2502,14 @@ static inline void rfft8pt(double *ioptr)
     ioptr[15] = scale*f6i;
 }
 
-static inline void frstage(double *ioptr, long M, double *Utbl);
-static inline void frstage(double *ioptr, long M, double *Utbl)
+static inline void frstage(double *ioptr, int M, double *Utbl);
+static inline void frstage(double *ioptr, int M, double *Utbl)
 {
     /*	Finish RFFT		*/
 
-    unsigned long 	pos;
-    unsigned long 	posi;
-    unsigned long 	diffUcnt;
+    int 	pos;
+    int 	posi;
+    int 	diffUcnt;
 
     double 	*p0r, *p1r;
     double 	*u0r, *u0i;
@@ -2629,7 +2629,7 @@ static inline void frstage(double *ioptr, long M, double *Utbl)
     };
 }
 
-void rffts1(double *ioptr, long M, long Rows, double *Utbl, short *BRLow)
+void rffts1(double *ioptr, int M, int Rows, double *Utbl, short *BRLow)
 {
     /* Compute in-place real fft on the rows of the input array	*/
     /* The result is the complex spectra of the positive frequencies */
@@ -2646,8 +2646,8 @@ void rffts1(double *ioptr, long M, long Rows, double *Utbl, short *BRLow)
     /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
 
     double	scale;
-    long 	StageCnt;
-    long 	NDiffU;
+    int 	StageCnt;
+    int 	NDiffU;
 
     M=M-1;
     switch (M) {
@@ -2999,14 +2999,14 @@ static inline void rifft8pt(double *ioptr, double scale)
     ioptr[15] = scale*f6i;
 }
 
-static inline void ifrstage(double *ioptr, long M, double *Utbl);
-static inline void ifrstage(double *ioptr, long M, double *Utbl)
+static inline void ifrstage(double *ioptr, int M, double *Utbl);
+static inline void ifrstage(double *ioptr, int M, double *Utbl)
 {
     /*	Start RIFFT		*/
 
-    unsigned long 	pos;
-    unsigned long 	posi;
-    unsigned long 	diffUcnt;
+    int 	pos;
+    int 	posi;
+    int 	diffUcnt;
 
     double 	*p0r, *p1r;
     double 	*u0r, *u0i;
@@ -3126,7 +3126,7 @@ static inline void ifrstage(double *ioptr, long M, double *Utbl)
     };
 }
 
-void riffts1(double *ioptr, long M, long Rows, double *Utbl, short *BRLow)
+void riffts1(double *ioptr, int M, int Rows, double *Utbl, short *BRLow)
 {
     /* Compute in-place real ifft on the rows of the input array	*/
     /* data order as from rffts1 */
@@ -3141,8 +3141,8 @@ void riffts1(double *ioptr, long M, long Rows, double *Utbl, short *BRLow)
     /* *ioptr = real output data array	*/
 
     double	scale;
-    long 	StageCnt;
-    long 	NDiffU;
+    int 	StageCnt;
+    int 	NDiffU;
 
     scale = 1.0/POW2(M);
     M=M-1;
