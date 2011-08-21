@@ -343,7 +343,7 @@ dosim(
    if (rawfileFp){
       if (ftell(rawfileFp)==0) {
          (void) fclose(rawfileFp);
-         (void) remove(wl->wl_word);
+         (void) unlink(wl->wl_word);
       } else {
          (void) fclose(rawfileFp);
       }

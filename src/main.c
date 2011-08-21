@@ -1235,7 +1235,7 @@ main(int argc, char **argv)
             }
 
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-            if (tempfile && tpf && remove(tpf))
+            if (tempfile && tpf && unlink(tpf))
                 perror("Could not delete temp file");
 #endif
 
