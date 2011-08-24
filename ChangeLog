@@ -1,3 +1,9 @@
+2011-08-24  Robert Larice
+ * src/spicelib/devices/adms/admst/ngspiceMakefile.am.xml :
+   adms, fix an extra backslash,
+     which i've sneaked in
+       2011-08-12, adms, fix parallel execution when using make -j
+
 2011-08-21  Robert Larice
  * src/spicelib/analysis/cktpzstr.c :
    prototypes, and avoid a NULL dereference when PZDEBUG is active

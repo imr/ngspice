@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.23  2011-08-12 19:30:56  rlar
+  Revision 1.24  2011-08-24 16:12:03  rlar
+  adms, fix an extra backslash
+
+  Revision 1.23  2011/08/12 19:30:56  rlar
   adms, fix parallel execution when using make -j
 
   Revision 1.22  2011/08/12 15:18:41  rlar
@@ -157,7 +160,7 @@ MAINTAINERCLEANFILES = Makefile.in
 	\%acld.c \%ask.c \%defs.h \%del.c \%dest.c \%ext.h \%guesstopology.c \\
 	\%init.c \%init.h \%itf.h \%load.c \%mask.c \%mdel.c \%mpar.c \%par.c \\
 	\%pzld.c \%setup.c \%temp.c \%trunc.c \\
- : \$(srcdir)/admsva/\\%.va \\
+ : \$(srcdir)/admsva/\%.va \\
 	\$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULEinit.c.xml \\
