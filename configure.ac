@@ -896,7 +896,7 @@ dnl The makefiles for adms (to be added to AC_CONFIG_FILES by ./autogen.sh --adm
    VLADEV=" spicelib/devices/adms/ekv/libekv.la \
             spicelib/devices/adms/hicum0/libhicum0.la \
             spicelib/devices/adms/hicum2/libhicum2.la \
-            spicelib/devices/adms/mextram/libmextram.la \
+            spicelib/devices/adms/mextram/libbjt504t.la \
             spicelib/devices/adms/psp102/libpsp102.la "
 
 else

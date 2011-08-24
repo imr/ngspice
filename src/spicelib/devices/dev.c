@@ -127,7 +127,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #ifdef ADMS
 #include "adms/hicum0/hicum0itf.h"
 #include "adms/hicum2/hicum2itf.h"
-#include "adms/mextram/mextramitf.h"
+#include "adms/mextram/bjt504titf.h"
 #include "adms/ekv/ekvitf.h"
 #include "adms/psp102/psp102itf.h"
 #endif
@@ -249,7 +249,7 @@ spice_init_devices(void)
 #ifdef ADMS
     DEVices[54] = get_hicum0_info();
     DEVices[55] = get_hicum2_info();
-    DEVices[56] = get_mextram_info();
+    DEVices[56] = get_bjt504t_info();
     DEVices[57] = get_ekv_info();
     DEVices[58] = get_psp102_info();
 #else
@@ -293,7 +293,7 @@ SPICEdev ** devices(void)
 #define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v4", "bsim4v5", "bsim4v6", \
                       "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv", \
                       "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \
-                      "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum0", "hicum2", "mextram", "ekv", "psp102"}
+                      "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum0", "hicum2", "bjt504t", "ekv", "psp102"}
 #else
 #define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v4", "bsim4v5", "bsim4v6", \
                       "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv", \

@@ -3396,10 +3396,10 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
             <admst:value-to select="value" string="hicum2"/>
           </admst:new>
         </admst:when>
-        <admst:when test="[name='bjt504_va']">
+        <admst:when test="[name='bjt504tva']">
           <admst:new datatype="attribute" inputs="'ngspicename'">
             <admst:push select="../attribute" path="."/>
-            <admst:value-to select="value" string="mextram"/>
+            <admst:value-to select="value" string="bjt504t"/>
           </admst:new>
         </admst:when>
         <admst:when test="[name='pjfet_va']">
@@ -3458,7 +3458,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
             </admst:new>
           </admst:if>
         </admst:when>
-        <admst:when test="[name='vbic' or name='hic0_full' or name='hic2_full' or name='bjt504_va']">
+        <admst:when test="[name='vbic' or name='hic0_full' or name='hic2_full' or name='bjt504tva']">
           <admst:if test="[nilled(modulevariablep[name='npn'])]">
             <admst:new datatype="variablep" inputs="'npn'">
               <admst:push select="../modulevariablep" path="." oncompare="."/>

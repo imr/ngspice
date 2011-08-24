@@ -65,7 +65,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 				break;
 #ifdef ADMS
 				case 6:
-					 type = INPtypelook("mextram");
+					 type = INPtypelook("bjt504t");
 				if(type < 0) {
 				    err = INPmkTemp(
 					    "Device type MEXTRAM not available in this binary\n");

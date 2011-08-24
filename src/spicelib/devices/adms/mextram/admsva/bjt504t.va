@@ -2,7 +2,7 @@
 `define SELFHEATING 
 `define SUBSTRATE
  
-module bjt504_va (c, b, e, s, dt); 
+module bjt504tva (c, b, e, s, dt); 
 
 `ifdef insideADMS
   `define P(p) (*p*)

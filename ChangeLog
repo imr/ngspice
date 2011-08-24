@@ -1,3 +1,9 @@
+2011-08-24  Dietmar Warning
+ * configure.ac, inp2q.c, inpdomod.c, dev.c, ngspice.xml, bjt504t.va:
+   change the name of the mextram verilog module according to model developer 
+   used naming convention (mextram.va is substituted by bjt504t.va), means
+   including parasitic substrate transistor and selfheating is enabled
+
 2011-08-24  Robert Larice
  * src/spicelib/devices/adms/admst/ngspiceMakefile.am.xml :
    adms, fix an extra backslash,

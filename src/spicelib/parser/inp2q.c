@@ -94,7 +94,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
            }
            else if ((thismodel->INPmodType == INPtypelook("hicum0"))
             || (thismodel->INPmodType == INPtypelook("hicum2"))
-            || (thismodel->INPmodType == INPtypelook("mextram")))
+            || (thismodel->INPmodType == INPtypelook("bjt504t")))
            {
                node5 = gnode; /* 4-terminal adms device - thermal node to ground */
                nname5 = copy("0");
@@ -129,7 +129,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
 #ifdef ADMS
          && (thismodel->INPmodType != INPtypelook("hicum0"))
          && (thismodel->INPmodType != INPtypelook("hicum2"))
-         && (thismodel->INPmodType != INPtypelook("mextram"))
+         && (thismodel->INPmodType != INPtypelook("bjt504t"))
 #endif
          && (thismodel->INPmodType != INPtypelook("VBIC")))
         {
@@ -139,7 +139,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
 #ifdef ADMS
         if ((nodeflag && (thismodel->INPmodType != INPtypelook("hicum0")))
          && (nodeflag && (thismodel->INPmodType != INPtypelook("hicum2")))
-         && (nodeflag && (thismodel->INPmodType != INPtypelook("mextram"))))
+         && (nodeflag && (thismodel->INPmodType != INPtypelook("bjt504t"))))
         {
             LITERR("Too much nodes for this model type")
             return;
