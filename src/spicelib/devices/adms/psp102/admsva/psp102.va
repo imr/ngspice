@@ -33,7 +33,7 @@
 // `undef LocalModel
 // `define Binning
 
-module psp102(D, G, S, B)
+module PSP102VA(D, G, S, B)
 
 `P(
   info = "PSP MOSFET Model"

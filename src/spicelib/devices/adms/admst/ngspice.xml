@@ -3408,7 +3408,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
             <admst:value-to select="value" string="pjfet_va"/>
           </admst:new>
         </admst:when>
-        <admst:when test="[name='psp102']">
+        <admst:when test="[lower-case(name)='psp102va']">
           <admst:new datatype="attribute" inputs="'ngspicename'">
             <admst:push select="../attribute" path="."/>
             <admst:value-to select="value" string="psp102"/>
@@ -3490,7 +3490,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
             </admst:new>
           </admst:if>
         </admst:when>
-        <admst:when test="[name='psp102']">
+        <admst:when test="[lower-case(name)='psp102va']">
           <admst:if test="[nilled(modulevariablep[name='nmos'])]">
             <admst:new datatype="variablep" inputs="'nmos'">
               <admst:push select="../modulevariablep" path="." oncompare="."/>
