@@ -1,3 +1,7 @@
+2011-08-28  Dietmar Warning
+ * /admst/ngspice.xml, ngspiceVersion.xml, psp102.va: psp102 module name change 
+   according to model developer used naming convention (psp102 is now PSP102VA)
+
 2011-08-24  Dietmar Warning
  * configure.ac, inp2q.c, inpdomod.c, dev.c, ngspice.xml, bjt504t.va:
    change the name of the mextram verilog module according to model developer 
