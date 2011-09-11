@@ -1,3 +1,7 @@
+2011-09-11  Holger Vogt
+ * frontend/plotting/grid.c: Error message, if requested resolution
+   cannot be handled.
+
 2011-08-28  Dietmar Warning
  * /admst/ngspice.xml, ngspiceVersion.xml, psp102.va: psp102 module name change 
    according to model developer used naming convention (psp102 is now PSP102VA)

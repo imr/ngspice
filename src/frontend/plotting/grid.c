@@ -294,6 +294,14 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
     if (digits < 1)
 	digits = 0;
 
+    if (digits > 15) {
+        dd[0] = 1;
+        dd[1] = 1;
+        fprintf(cp_err, "Error: Plot resolution limit of 15 digits exceeded.\n");
+        fprintf(cp_err, "    Consider plotting with offset.\n");
+        return dd;
+    }
+
     if (axis == x_axis) {
       margin = graph->viewportxoff;
       /*max = graph->viewport.width + graph->viewportxoff;*/
