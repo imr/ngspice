@@ -763,7 +763,7 @@ static void measure_minMaxAvg(
             value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          else {
             value = d->v_realdata[i];    
-            fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
+//            fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
          }
          svalue = dScale->v_compdata[i].cx_real;
       }
@@ -922,7 +922,7 @@ static void measure_rms_integral(
             value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          else {
             value = d->v_realdata[i];    
-            fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
+//            fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
          }
          xvalue = xScale->v_compdata[i].cx_real;
       }
@@ -1001,7 +1001,7 @@ static void measure_rms_integral(
             value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          else {
             value = d->v_realdata[i];    
-            fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
+//            fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
          }
          xvalue = xScale->v_compdata[i].cx_real;
          toVal = xScale->v_compdata[d->v_length-1].cx_real;
