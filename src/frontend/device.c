@@ -19,12 +19,14 @@ Modified: 2000 AlansFixes
 #include "device.h"
 #include "variable.h"
 #include "com_commands.h"
+#include "../misc/util.h" /* ngdirname() */
 
 #include "gens.h" /* wl_forall */
 
 static wordlist *devexpand(char *name);
 static void all_show(wordlist *wl, int mode);
 static void all_show_old(wordlist *wl, int mode);
+static void com_alter_mod(wordlist *wl);
 
 /*
  *      devhelp: lists available devices and information on parameters
@@ -1065,7 +1067,19 @@ com_alter(wordlist *wl)
 void
 com_altermod(wordlist *wl)
 {
-    com_alter_common(wl, 1);
+    wordlist *fileword;
+    bool newfile = FALSE;
+    fileword = wl;
+    while (fileword){
+        if (ciprefix("file",fileword->wl_word)) {
+            newfile = TRUE;
+        }
+        fileword = fileword->wl_next;
+    }
+    if (newfile)
+        com_alter_mod(wl);
+    else
+        com_alter_common(wl, 1);
 }
 
 static void
@@ -1097,7 +1111,7 @@ com_alter_common(wordlist *wl, int do_model)
     3) 'expression' string.
 
     Spaces around the '=' sign have to be removed. This is provided 
-    by inp_remove_excess_ws().
+    by inp_remove_excess_ws(). But take care if command is entered manually!
     
     If the 'altermod' argument is 'altermod m1 vth0=0.7', 'm1' has to be kept as the 
     element in wl2 before splitting inserts the three new elements. 
@@ -1112,10 +1126,20 @@ com_alter_common(wordlist *wl, int do_model)
             while(argument[i]!='=' && argument[i]!='\0'){
                     i++;
             }
-            /* ...and if found split argument into three chars and make a new wordlist */
+            /* argument may be '=', then do nothing
+               or =token
+               or token=
+               or token1=token2
+               ...and if found split argument into three chars and make a new wordlist */
             if(argument[i]!='\0'){
-                    /* We found '=' */
-                    eqfound = TRUE;
+                /* We found '=' */
+                eqfound = TRUE;
+                if (strlen(argument) == 1) {
+                    wl = wl->wl_next;
+                    step = -1;
+                    wl2 = wlin;
+                }
+                else if (strlen(argument) > 1) {
                     arglist = TMALLOC(char*, 4);
                     arglist[3] = NULL;
                     arglist[0] = TMALLOC(char, i + 1);
@@ -1136,6 +1160,7 @@ com_alter_common(wordlist *wl, int do_model)
                     /* free arglist */
                     for (n=0; n < 3; n++) tfree(arglist[n]);
                     tfree(arglist);
+                }
             } else {
                     /* deal with 'altermod m1 vth0=0.7' by moving
                     forward beyond 'm1' */
@@ -1146,7 +1171,8 @@ com_alter_common(wordlist *wl, int do_model)
 
     if(eqfound) {
         /* step back in the wordlist, if we have moved forward, to catch 'm1' */
-        for(n=step;n>0;n--) wl2 = wl2->wl_prev;
+        for(n=step;n>0;n--) 
+            wl2 = wl2->wl_prev;
     } else {
         /* no equal sign found, probably a pre3f4 input format 
            'alter device value'
@@ -1192,7 +1218,7 @@ com_alter_common(wordlist *wl, int do_model)
         wlin->wl_next = wleq;
         /* step back until 'alter' or 'altermod' is found, 
         then move one step forward */
-        while (!ciprefix(wlin->wl_word,"alter"))
+        while (!ciprefix("alter",wlin->wl_word)) //while (!ciprefix(wlin->wl_word,"alter"))
             wlin = wlin->wl_prev;
         wlin = wlin->wl_next;
         wl2 = wlin;
@@ -1225,7 +1251,7 @@ com_alter_common(wordlist *wl, int do_model)
     while (words != eqword) {
         p = words->wl_word;
         if (param) {
-            fprintf(cp_err, "Error: excess parameter name \"%s\" ignored.\n",
+            fprintf(cp_err, "Warning: excess parameter name \"%s\" ignored.\n",
                 p);
         } else if (dev) {
             param = words->wl_word;
@@ -1252,8 +1278,9 @@ com_alter_common(wordlist *wl, int do_model)
 
     words = eqword->wl_next;
     /* skip next line if words is a vector */
-    if(!eq(words->wl_word, "["))
+    if(!eq(words->wl_word, "[")) {
         names = ft_getpnames(words, FALSE);
+    }
     else names = NULL;
     if (!names) {
        /* Put this to try to resolve the case of 
@@ -1347,3 +1374,87 @@ devexpand(char *name)
     wl_sort(wl);
     return (wl);
 }
+
+/* altermod nch file=modelparam.mod
+   load model file and overwrite model nch with
+   all new parameters */
+static void com_alter_mod(wordlist *wl)
+{
+    FILE *modfile;
+    wordlist *nword, *newcommand;
+    char *filename=NULL, *modelname, *eqword, *input, *modelline=NULL, *inptoken, *newtype;
+    struct line *modeldeck, *tmpdeck;
+    char *readmode = "r";
+    modelname = copy(wl->wl_word);
+    nword = wl->wl_next;
+    input = wl_flatten(nword);
+    eqword = strstr(input, "=");
+    if (eqword) {
+        eqword++;
+        while(*eqword == ' ')
+            eqword++;
+        if(eqword=='\0')
+            fprintf(cp_err, "Error: no filename given\n");
+        filename = copy(eqword);
+    }
+    else {
+        eqword = strstr(input, "file");
+        eqword += 4;
+        while(*eqword == ' ')
+            eqword++;
+        if(eqword=='\0')
+            fprintf(cp_err, "Error: no filename given\n");
+        filename = copy(eqword);
+    }
+    modfile = inp_pathopen(filename, readmode);
+    inp_readall(modfile, &modeldeck, 0, ngdirname(filename), 0);
+    tfree(input);
+    tfree(filename);
+    /* get the first line starting with *model */
+    for (tmpdeck = modeldeck; tmpdeck; tmpdeck = tmpdeck->li_next)
+        if (ciprefix("*model", tmpdeck->li_line)) {
+            modelline = tmpdeck->li_line;
+            break;
+        }
+    if (modelline) {
+        char **arglist;
+        char *newmodelname;
+        arglist = TMALLOC(char*, 4);
+        inptoken = gettok(&modelline); /* *model */
+        tfree(inptoken);
+        newmodelname = gettok(&modelline); /* modelname */
+        newtype = gettok(&modelline); /* model type */
+        /* test if level and type are o.k. */
+        /* FIXME: don't know how to do that! */
+        /* call each token and do altermod */
+        arglist[0] = copy("altermod");
+        arglist[1] = modelname;
+        arglist[3] = NULL;
+        while ((inptoken = gettok(&modelline)) != NULL) {
+            /* exclude level and version */
+            if (ciprefix("version", inptoken) || ciprefix("level", inptoken)) {
+                tfree(inptoken);
+                continue;
+            }
+            arglist[2] = inptoken;
+            /* create a new wordlist from array arglist */
+            newcommand = wl_build(arglist);
+            com_alter_common(newcommand->wl_next, 1);
+            wl_free(newcommand);
+            tfree(inptoken);
+        }
+        tfree(newmodelname);
+        tfree(newtype);
+    }
+}
+
+        /* Figure out if right hand side is a model 
+        if (names && (do_model == 1)) {
+            INPmodel    *inpmod  = NULL;
+            if_setparam_model(ft_curckt->ci_ckt, &dev, words->wl_word);
+            INPgetMod( ft_curckt->ci_ckt, words->wl_word, &inpmod, ft_curckt->ci_symtab );
+            if ( inpmod == NULL ) {
+                fprintf(cp_err, "Error: no such model %s.\n", words->wl_word);
+                return;
+            }
+        }*/
