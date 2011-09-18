@@ -1,3 +1,10 @@
+2011-09-18  Holger Vogt
+ * com_fft.c: fft now uses faster Green's method (may be deselected by unsetting
+   #define GREEN swirch
+ * spiceif.c: code beutify for better readability
+ * device.c updates to altermod command, allow reading from file 
+ * com_measure2.c: warning real ac removed
+   
 2011-09-11  Holger Vogt
  * frontend/plotting/grid.c: Error message, if requested resolution
    cannot be handled.
