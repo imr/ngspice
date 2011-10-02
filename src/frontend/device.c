@@ -20,6 +20,7 @@ Modified: 2000 AlansFixes
 #include "variable.h"
 #include "com_commands.h"
 #include "../misc/util.h" /* ngdirname() */
+#include "error.h" /* controlled_ext() */
 
 #include "gens.h" /* wl_forall */
 
@@ -1375,26 +1376,48 @@ devexpand(char *name)
     return (wl);
 }
 
-/* altermod nch file=modelparam.mod
-   load model file and overwrite model nch with
-   all new parameters */
+/* altermod mod_1 [mod_nn] file=modelparam.mod
+   load model file and overwrite models mod_1 till mod_nn with
+   all new parameters (limited to 16 models) */
 static void com_alter_mod(wordlist *wl)
 {
+#define MODLIM 16 /* max number of models */
     FILE *modfile;
-    wordlist *nword, *newcommand;
-    char *filename=NULL, *modelname, *eqword, *input, *modelline=NULL, *inptoken, *newtype;
+    char *modellist[MODLIM]={NULL}, *modellines[MODLIM]={NULL}, *newmodelname, *newmodelline;
+    char *filename=NULL, *eqword, *input, *modelline=NULL, *inptoken;
+    int modno = 0, molineno = 0, i, j;
+    wordlist *newcommand;
     struct line *modeldeck, *tmpdeck;
     char *readmode = "r";
-    modelname = copy(wl->wl_word);
-    nword = wl->wl_next;
-    input = wl_flatten(nword);
+    char **arglist;
+    bool modelfound = FALSE;
+    int ij[MODLIM];
+
+    /* initialize */
+    for (i = 0; i < MODLIM; i++)
+        ij[i] = -1;
+
+    /* read all model names */
+    while (!ciprefix("file", wl->wl_word)) {
+        if (modno == MODLIM) {
+            fprintf(cp_err, "Error: too many model names in altermod command\n");
+            controlled_exit(1);
+        }
+        modellist[modno] = copy(wl->wl_word);
+        modno++;
+        wl = wl->wl_next;
+    }
+    input = wl_flatten(wl);
+    /* get the file name */
     eqword = strstr(input, "=");
     if (eqword) {
         eqword++;
         while(*eqword == ' ')
             eqword++;
-        if(eqword=='\0')
+        if(eqword=='\0') {
             fprintf(cp_err, "Error: no filename given\n");
+            controlled_exit(1);
+        }
         filename = copy(eqword);
     }
     else {
@@ -1402,34 +1425,69 @@ static void com_alter_mod(wordlist *wl)
         eqword += 4;
         while(*eqword == ' ')
             eqword++;
-        if(eqword=='\0')
+        if(eqword=='\0') {
             fprintf(cp_err, "Error: no filename given\n");
+            controlled_exit(1);
+        }
         filename = copy(eqword);
     }
     modfile = inp_pathopen(filename, readmode);
     inp_readall(modfile, &modeldeck, 0, ngdirname(filename), 0);
     tfree(input);
     tfree(filename);
-    /* get the first line starting with *model */
+    /* get all lines starting with *model */
     for (tmpdeck = modeldeck; tmpdeck; tmpdeck = tmpdeck->li_next)
         if (ciprefix("*model", tmpdeck->li_line)) {
-            modelline = tmpdeck->li_line;
-            break;
+            if (molineno == MODLIM){
+                fprintf(cp_err, "Error: more than %d models in deck, rest ignored\n", molineno);
+                break;
+            }
+            modellines[molineno] = tmpdeck->li_line;
+            molineno++;
         }
-    if (modelline) {
-        char **arglist;
-        char *newmodelname;
-        arglist = TMALLOC(char*, 4);
-        inptoken = gettok(&modelline); /* *model */
+    /* Check if all models named in altermod command are to be found in input deck.
+       Exit if not successfull */
+    for (i = 0; i < modno; i++) {
+        for (j=0; j < molineno; j++) {
+            newmodelline = modellines[j];
+            /* get model name from model line */
+            inptoken = gettok(&newmodelline); /* *model */
+            tfree(inptoken);
+            newmodelname = gettok(&newmodelline); /* modelname */
+            if (cieq(newmodelname,modellist[i])) {
+                modelfound = TRUE; 
+                tfree(newmodelname);
+                break;
+            }
+            tfree(newmodelname);
+        }
+        if (modelfound) {
+            modelfound = FALSE;
+            ij[i] = j; /* model in altermod, found in model line */
+            continue;
+        }
+        else {
+            fprintf(cp_err, "Error: could not find model %s in input deck\n", modellist[i]);
+            controlled_exit(1);
+        }
+    }
+    /* read the model line, generate the altermod commands as a wordlist,
+       and call com_alter_common() */
+    arglist = TMALLOC(char*, 4);
+    arglist[0] = copy("altermod");
+    arglist[3] = NULL;
+    /* for each model name of altermod command */
+    for (i = 0; i < modno; i++) {
+        /* model name */
+        arglist[1] = copy(modellist[i]);
+        /* parse model line from deck */
+        modelline = modellines[ij[i]];
+        inptoken = gettok(&modelline); /* skip *model */
         tfree(inptoken);
-        newmodelname = gettok(&modelline); /* modelname */
-        newtype = gettok(&modelline); /* model type */
-        /* test if level and type are o.k. */
-        /* FIXME: don't know how to do that! */
-        /* call each token and do altermod */
-        arglist[0] = copy("altermod");
-        arglist[1] = modelname;
-        arglist[3] = NULL;
+        inptoken = gettok(&modelline); /* skip modelname */
+        tfree(inptoken);
+        inptoken = gettok(&modelline); /* skip model type */
+        tfree(inptoken);
         while ((inptoken = gettok(&modelline)) != NULL) {
             /* exclude level and version */
             if (ciprefix("version", inptoken) || ciprefix("level", inptoken)) {
@@ -1443,18 +1501,8 @@ static void com_alter_mod(wordlist *wl)
             wl_free(newcommand);
             tfree(inptoken);
         }
-        tfree(newmodelname);
-        tfree(newtype);
+        tfree(arglist[1]);
     }
+    tfree(arglist[0]);
+    tfree(arglist[3]);
 }
-
-        /* Figure out if right hand side is a model 
-        if (names && (do_model == 1)) {
-            INPmodel    *inpmod  = NULL;
-            if_setparam_model(ft_curckt->ci_ckt, &dev, words->wl_word);
-            INPgetMod( ft_curckt->ci_ckt, words->wl_word, &inpmod, ft_curckt->ci_symtab );
-            if ( inpmod == NULL ) {
-                fprintf(cp_err, "Error: no such model %s.\n", words->wl_word);
-                return;
-            }
-        }*/
