@@ -19,6 +19,9 @@ static int PTcheck(INPparseNode * p);
 static INPparseNode *mkbnode(const char *opstr, INPparseNode * arg1,
 			     INPparseNode * arg2);
 static INPparseNode *mkfnode(const char *fname, INPparseNode * arg);
+static INPparseNode *mkvnode(char *name);
+static INPparseNode *mkinode(char *name);
+
 static INPparseNode *mknnode(double number);
 static INPparseNode *mksnode(const char *string, void *ckt);
 static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum);
@@ -813,8 +816,7 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 {
     int i;
     INPparseNode *p;
-    char buf[128], *name;
-    CKTnode *temp;
+    char buf[128];
 
     /* Make sure the case is ok. */
     (void) strcpy(buf, fname);
@@ -822,71 +824,7 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 
     p = TMALLOC(INPparseNode, 1);
 
-    if (!strcmp(buf, "v")) {
-	name = TMALLOC(char, 128);
-	if (arg->type == PT_PLACEHOLDER) {
-	    strcpy(name, arg->funcname);
-	} else if (arg->type == PT_CONSTANT) {
-	    (void) sprintf(name, "%d", (int) arg->constant);
-	} else if (arg->type != PT_COMMA) {
-	    fprintf(stderr, "Error: badly formed node voltage\n");
-	    return (NULL);
-	}
-
-	if (arg->type == PT_COMMA) {
-	    /* Change v(a,b) into v(a) - v(b) */
-	    p = mkb(PT_MINUS, mkfnode(fname, arg->left),
-		    mkfnode(fname, arg->right));
-	} else {
-	    INPtermInsert(circuit, &name, tables, &temp);
-	    for (i = 0; i < numvalues; i++)
-	 	if ((types[i] == IF_NODE) && (values[i].nValue == temp))
-		     break;
-	    if (i == numvalues) {
-		if (numvalues) {
-		    values = TREALLOC(IFvalue, values, numvalues + 1);
-		    types = TREALLOC(int, types, numvalues + 1);
-		} else {
-		    values = TMALLOC(IFvalue, 1);
-		    types = TMALLOC(int, 1);
-		}
-		values[i].nValue = temp;
-		types[i] = IF_NODE;
-		numvalues++;
-	    }
-	    p->valueIndex = i;
-	    p->type = PT_VAR;
-	}
-    } else if (!strcmp(buf, "i")) {
-	name = TMALLOC(char, 128);
-	if (arg->type == PT_PLACEHOLDER)
-	    strcpy(name, arg->funcname);
-	else if (arg->type == PT_CONSTANT)
-	    (void) sprintf(name, "%d", (int) arg->constant);
-	else {
-	    fprintf(stderr, "Error: badly formed branch current\n");
-	    return (NULL);
-	}
-	INPinsert(&name, tables);
-	for (i = 0; i < numvalues; i++)
-	    if ((types[i] == IF_INSTANCE) && (values[i].uValue == name))
-		break;
-	if (i == numvalues) {
-	    if (numvalues) {
-		values = TREALLOC(IFvalue, values, numvalues + 1);
-		types = TREALLOC(int, types, numvalues + 1);
-	    } else {
-		values = TMALLOC(IFvalue, 1);
-		types = TMALLOC(int, 1);
-	    }
-	    values[i].uValue = (IFuid) name;
-	    types[i] = IF_INSTANCE;
-	    numvalues++;
-	}
-	p->valueIndex = i;
-	p->type = PT_VAR;
-
-    } else if(!strcmp("ternary_fcn", buf)) {
+    if(!strcmp("ternary_fcn", buf)) {
 
 //	extern void printTree(INPparseNode *);
 //
@@ -928,6 +866,63 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
         if(p->funcnum == PTF_PWL)
             p = prepare_PTF_PWL(p);
     }
+
+    return (p);
+}
+
+static INPparseNode *mkvnode(char *name)
+{
+    INPparseNode *p = TMALLOC(INPparseNode, 1);
+
+    int i;
+    CKTnode *temp;
+
+    INPtermInsert(circuit, &name, tables, &temp);
+    for (i = 0; i < numvalues; i++)
+        if ((types[i] == IF_NODE) && (values[i].nValue == temp))
+            break;
+    if (i == numvalues) {
+        if (numvalues) {
+            values = TREALLOC(IFvalue, values, numvalues + 1);
+            types = TREALLOC(int, types, numvalues + 1);
+        } else {
+            values = TMALLOC(IFvalue, 1);
+            types = TMALLOC(int, 1);
+        }
+        values[i].nValue = temp;
+        types[i] = IF_NODE;
+        numvalues++;
+    }
+    p->valueIndex = i;
+    p->type = PT_VAR;
+
+    return (p);
+}
+
+static INPparseNode *mkinode(char *name)
+{
+    INPparseNode *p = TMALLOC(INPparseNode, 1);
+
+    int i;
+
+    INPinsert(&name, tables);
+    for (i = 0; i < numvalues; i++)
+        if ((types[i] == IF_INSTANCE) && (values[i].uValue == name))
+            break;
+    if (i == numvalues) {
+        if (numvalues) {
+            values = TREALLOC(IFvalue, values, numvalues + 1);
+            types = TREALLOC(int, types, numvalues + 1);
+        } else {
+            values = TMALLOC(IFvalue, 1);
+            types = TMALLOC(int, 1);
+        }
+        values[i].uValue = (IFuid) name;
+        types[i] = IF_INSTANCE;
+        numvalues++;
+    }
+    p->valueIndex = i;
+    p->type = PT_VAR;
 
     return (p);
 }
@@ -1133,6 +1128,53 @@ int PTlex (YYSTYPE *lvalp, char **line)
       }
 
     default:
+        {
+            int n1 = -1;
+            int n2 = -1;
+            int n3 = -1;
+            int n4 = -1;
+            int n  = -1;
+
+            sscanf(sbuf, "%*1[vV] ( %n%*[^ \t,()]%n , %n%*[^ \t,()]%n )%n",
+                   &n1, &n2, &n3, &n4, &n);
+            if(n != -1) {
+                token = TOK_pnode;
+                lvalp->pnode = mkb(PT_MINUS,
+                                   mkvnode(copy_substring(sbuf+n1, sbuf+n2)),
+                                   mkvnode(copy_substring(sbuf+n3, sbuf+n4)));
+                sbuf += n;
+                break;
+            }
+        }
+
+        {
+            int n1 = -1;
+            int n2 = -1;
+            int n  = -1;
+
+            sscanf(sbuf, "%*1[vV] ( %n%*[^ \t,()]%n )%n", &n1, &n2, &n);
+            if(n != -1) {
+                token = TOK_pnode;
+                lvalp->pnode = mkvnode(copy_substring(sbuf+n1, sbuf+n2));
+                sbuf += n;
+                break;
+            }
+        }
+
+        {
+            int n1 = -1;
+            int n2 = -1;
+            int n  = -1;
+
+            sscanf(sbuf, "%*1[iI] ( %n%*[^ \t,()]%n )%n", &n1, &n2, &n);
+            if(n != -1) {
+                token = TOK_pnode;
+                lvalp->pnode = mkinode(copy_substring(sbuf+n1, sbuf+n2));
+                sbuf += n;
+                break;
+            }
+        }
+
 	td = INPevaluate(&sbuf, &err, 1);
 	if (err == OK) {
 	    token = TOK_NUM;

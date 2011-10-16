@@ -1,25 +1,34 @@
+2011-10-16  Robert Larice
+ * src/spicelib/parser/inpptree-parser.y ,
+ * src/spicelib/parser/inpptree.c :
+  bug fix, allow special nodenames "/Node" and "Node-4" in `B' expressions
+  related to
+    http://sourceforge.net/tracker/?func=detail&aid=3421234&group_id=38962&atid=423915
+  the lexer will now identify special function applications
+    v(node) v(node,node) and i(instance)
+
 2011-10-02  Holger Vogt
  * device.c updates to altermod command, allow reading from file with
    multiple .model sections
- 
+
 2011-09-18  Holger Vogt
  * com_fft.c: fft now uses faster Green's method (may be deselected by unsetting
    #define GREEN swirch
  * spiceif.c: code beutify for better readability
- * device.c updates to altermod command, allow reading from file 
+ * device.c updates to altermod command, allow reading from file
  * com_measure2.c: warning real ac removed
-   
+
 2011-09-11  Holger Vogt
  * frontend/plotting/grid.c: Error message, if requested resolution
    cannot be handled.
 
 2011-08-28  Dietmar Warning
- * /admst/ngspice.xml, ngspiceVersion.xml, psp102.va: psp102 module name change 
+ * /admst/ngspice.xml, ngspiceVersion.xml, psp102.va: psp102 module name change
    according to model developer used naming convention (psp102 is now PSP102VA)
 
 2011-08-24  Dietmar Warning
  * configure.ac, inp2q.c, inpdomod.c, dev.c, ngspice.xml, bjt504t.va:
-   change the name of the mextram verilog module according to model developer 
+   change the name of the mextram verilog module according to model developer
    used naming convention (mextram.va is substituted by bjt504t.va), means
    including parasitic substrate transistor and selfheating is enabled
 

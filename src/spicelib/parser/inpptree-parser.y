@@ -36,6 +36,7 @@
 
 %token <num>  TOK_NUM
 %token <str>  TOK_STR
+%token <pnode> TOK_pnode
 %token        TOK_LE TOK_LT TOK_GE TOK_GT TOK_EQ TOK_NE
 
 %type  <pnode>   exp nonempty_arglist
@@ -79,6 +80,8 @@ exp:
   | '-' exp  %prec NEG                { $$ = mkfnode("-",$2); }
 
   | TOK_STR '(' nonempty_arglist ')'  { $$ = mkfnode($1, $3); }
+
+  | TOK_pnode
 
   | exp '?' exp ':' exp               { $$ = mkfnode("ternary_fcn",
                                                mkbnode(",",
