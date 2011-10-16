@@ -76,7 +76,7 @@
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
-#line 1 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 1 "inpptree-parser.y"
 
 
   #include <stdio.h>
@@ -124,15 +124,16 @@
    enum yytokentype {
      TOK_NUM = 258,
      TOK_STR = 259,
-     TOK_LE = 260,
-     TOK_LT = 261,
-     TOK_GE = 262,
-     TOK_GT = 263,
-     TOK_EQ = 264,
-     TOK_NE = 265,
-     TOK_OR = 266,
-     TOK_AND = 267,
-     NEG = 268
+     TOK_pnode = 260,
+     TOK_LE = 261,
+     TOK_LT = 262,
+     TOK_GE = 263,
+     TOK_GT = 264,
+     TOK_EQ = 265,
+     TOK_NE = 266,
+     TOK_OR = 267,
+     TOK_AND = 268,
+     NEG = 269
    };
 #endif
 
@@ -143,7 +144,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 31 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 31 "inpptree-parser.y"
 
   double num;
   const char  *str;
@@ -152,7 +153,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 156 "inpptree-parser.c"
+#line 157 "inpptree-parser.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -164,7 +165,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 168 "inpptree-parser.c"
+#line 169 "inpptree-parser.c"
 
 #ifdef short
 # undef short
@@ -377,22 +378,22 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  12
+#define YYFINAL  13
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   134
+#define YYLAST   136
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  25
+#define YYNTOKENS  26
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  4
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  24
+#define YYNRULES  25
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  49
+#define YYNSTATES  50
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   268
+#define YYMAXUTOK   269
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -403,13 +404,13 @@ static const yytype_uint8 yytranslate[] =
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    21,     2,     2,     2,     2,     2,     2,
-      23,    24,    18,    17,    11,    16,     2,    19,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,    13,     2,
-       2,     2,     2,    12,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,    22,     2,     2,     2,     2,     2,     2,
+      24,    25,    19,    18,    12,    17,     2,    20,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    14,     2,
+       2,     2,     2,    13,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,    20,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,    21,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -426,7 +427,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10,    14,    15,    22
+       5,     6,     7,     8,     9,    10,    11,    15,    16,    23
 };
 
 #if YYDEBUG
@@ -435,30 +436,30 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     5,     7,     9,    13,    17,    21,    25,
-      29,    33,    36,    41,    47,    51,    55,    59,    63,    67,
-      71,    75,    79,    82,    84
+      29,    33,    36,    41,    43,    49,    53,    57,    61,    65,
+      69,    73,    77,    81,    84,    86
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      26,     0,    -1,    27,    -1,     3,    -1,     4,    -1,    27,
-      17,    27,    -1,    27,    16,    27,    -1,    27,    18,    27,
-      -1,    27,    19,    27,    -1,    27,    20,    27,    -1,    23,
-      27,    24,    -1,    16,    27,    -1,     4,    23,    28,    24,
-      -1,    27,    12,    27,    13,    27,    -1,    27,     9,    27,
-      -1,    27,    10,    27,    -1,    27,     8,    27,    -1,    27,
-       6,    27,    -1,    27,     7,    27,    -1,    27,     5,    27,
-      -1,    27,    14,    27,    -1,    27,    15,    27,    -1,    21,
-      27,    -1,    27,    -1,    28,    11,    27,    -1
+      27,     0,    -1,    28,    -1,     3,    -1,     4,    -1,    28,
+      18,    28,    -1,    28,    17,    28,    -1,    28,    19,    28,
+      -1,    28,    20,    28,    -1,    28,    21,    28,    -1,    24,
+      28,    25,    -1,    17,    28,    -1,     4,    24,    29,    25,
+      -1,     5,    -1,    28,    13,    28,    14,    28,    -1,    28,
+      10,    28,    -1,    28,    11,    28,    -1,    28,     9,    28,
+      -1,    28,     7,    28,    -1,    28,     8,    28,    -1,    28,
+       6,    28,    -1,    28,    15,    28,    -1,    28,    16,    28,
+      -1,    22,    28,    -1,    28,    -1,    29,    12,    28,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    64,    64,    68,    69,    71,    72,    73,    74,    75,
-      77,    79,    81,    83,    88,    89,    90,    91,    92,    93,
-      95,    99,   103,   108,   109
+       0,    65,    65,    69,    70,    72,    73,    74,    75,    76,
+      78,    80,    82,    84,    86,    91,    92,    93,    94,    95,
+      96,    98,   102,   106,   111,   112
 };
 #endif
 
@@ -467,10 +468,10 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "TOK_NUM", "TOK_STR", "TOK_LE", "TOK_LT",
-  "TOK_GE", "TOK_GT", "TOK_EQ", "TOK_NE", "','", "'?'", "':'", "TOK_OR",
-  "TOK_AND", "'-'", "'+'", "'*'", "'/'", "'^'", "'!'", "NEG", "'('", "')'",
-  "$accept", "expression", "exp", "nonempty_arglist", 0
+  "$end", "error", "$undefined", "TOK_NUM", "TOK_STR", "TOK_pnode",
+  "TOK_LE", "TOK_LT", "TOK_GE", "TOK_GT", "TOK_EQ", "TOK_NE", "','", "'?'",
+  "':'", "TOK_OR", "TOK_AND", "'-'", "'+'", "'*'", "'/'", "'^'", "'!'",
+  "NEG", "'('", "')'", "$accept", "expression", "exp", "nonempty_arglist", 0
 };
 #endif
 
@@ -480,25 +481,25 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,    44,    63,    58,   266,   267,    45,    43,    42,    47,
-      94,    33,   268,    40,    41
+     265,   266,    44,    63,    58,   267,   268,    45,    43,    42,
+      47,    94,    33,   269,    40,    41
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    25,    26,    27,    27,    27,    27,    27,    27,    27,
-      27,    27,    27,    27,    27,    27,    27,    27,    27,    27,
-      27,    27,    27,    28,    28
+       0,    26,    27,    28,    28,    28,    28,    28,    28,    28,
+      28,    28,    28,    28,    28,    28,    28,    28,    28,    28,
+      28,    28,    28,    28,    29,    29
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     1,     1,     1,     3,     3,     3,     3,     3,
-       3,     2,     4,     5,     3,     3,     3,     3,     3,     3,
-       3,     3,     2,     1,     3
+       3,     2,     4,     1,     5,     3,     3,     3,     3,     3,
+       3,     3,     3,     2,     1,     3
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -506,35 +507,35 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     3,     4,     0,     0,     0,     0,     2,     0,    11,
-      22,     0,     1,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,    23,     0,    10,
-      19,    17,    18,    16,    14,    15,     0,    20,    21,     6,
-       5,     7,     8,     9,     0,    12,     0,    24,    13
+       0,     3,     4,    13,     0,     0,     0,     0,     2,     0,
+      11,    23,     0,     1,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,    24,     0,
+      10,    20,    18,    19,    17,    15,    16,     0,    21,    22,
+       6,     5,     7,     8,     9,     0,    12,     0,    25,    14
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     6,     7,    28
+      -1,     7,     8,    29
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -21
+#define YYPACT_NINF -22
 static const yytype_int8 yypact[] =
 {
-      21,   -21,   -20,    21,    21,    21,     4,    76,    21,   -21,
-     -21,    40,   -21,    21,    21,    21,    21,    21,    21,    21,
-      21,    21,    21,    21,    21,    21,    21,    76,    15,   -21,
-      11,    11,    11,    11,   114,   114,    60,    92,   108,   -12,
-     -12,   -11,   -11,   -21,    21,   -21,    21,    76,    76
+      22,   -22,   -21,   -22,    22,    22,    22,     4,    77,    22,
+     -22,   -22,    41,   -22,    22,    22,    22,    22,    22,    22,
+      22,    22,    22,    22,    22,    22,    22,    22,    77,    12,
+     -22,    11,    11,    11,    11,   115,   115,    61,    93,   109,
+     -13,   -13,   -12,   -12,   -22,    22,   -22,    22,    77,    77
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -21,   -21,    -3,   -21
+     -22,   -22,    -4,   -22
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -544,49 +545,49 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-       9,    10,    11,     8,    12,    27,    24,    25,    26,    26,
-      30,    31,    32,    33,    34,    35,    36,    37,    38,    39,
-      40,    41,    42,    43,     1,     2,    44,    22,    23,    24,
-      25,    26,     0,     0,     0,     0,     0,     3,     0,    45,
-       0,    47,     4,    48,     5,    13,    14,    15,    16,    17,
-      18,     0,    19,     0,    20,    21,    22,    23,    24,    25,
-      26,     0,     0,     0,    29,    13,    14,    15,    16,    17,
-      18,     0,    19,    46,    20,    21,    22,    23,    24,    25,
-      26,    13,    14,    15,    16,    17,    18,     0,    19,     0,
-      20,    21,    22,    23,    24,    25,    26,    13,    14,    15,
-      16,    17,    18,     0,     0,     0,     0,    21,    22,    23,
-      24,    25,    26,    13,    14,    15,    16,    17,    18,    13,
-      14,    15,    16,     0,    22,    23,    24,    25,    26,     0,
-      22,    23,    24,    25,    26
+      10,    11,    12,     9,    13,    28,    25,    26,    27,    27,
+      31,    32,    33,    34,    35,    36,    37,    38,    39,    40,
+      41,    42,    43,    44,    45,     1,     2,     3,    23,    24,
+      25,    26,    27,     0,     0,     0,     0,    46,     0,     4,
+       0,    48,     0,    49,     5,     0,     6,    14,    15,    16,
+      17,    18,    19,     0,    20,     0,    21,    22,    23,    24,
+      25,    26,    27,     0,     0,     0,    30,    14,    15,    16,
+      17,    18,    19,     0,    20,    47,    21,    22,    23,    24,
+      25,    26,    27,    14,    15,    16,    17,    18,    19,     0,
+      20,     0,    21,    22,    23,    24,    25,    26,    27,    14,
+      15,    16,    17,    18,    19,     0,     0,     0,     0,    22,
+      23,    24,    25,    26,    27,    14,    15,    16,    17,    18,
+      19,    14,    15,    16,    17,     0,    23,    24,    25,    26,
+      27,     0,    23,    24,    25,    26,    27
 };
 
 static const yytype_int8 yycheck[] =
 {
-       3,     4,     5,    23,     0,     8,    18,    19,    20,    20,
-      13,    14,    15,    16,    17,    18,    19,    20,    21,    22,
-      23,    24,    25,    26,     3,     4,    11,    16,    17,    18,
-      19,    20,    -1,    -1,    -1,    -1,    -1,    16,    -1,    24,
-      -1,    44,    21,    46,    23,     5,     6,     7,     8,     9,
-      10,    -1,    12,    -1,    14,    15,    16,    17,    18,    19,
-      20,    -1,    -1,    -1,    24,     5,     6,     7,     8,     9,
-      10,    -1,    12,    13,    14,    15,    16,    17,    18,    19,
-      20,     5,     6,     7,     8,     9,    10,    -1,    12,    -1,
-      14,    15,    16,    17,    18,    19,    20,     5,     6,     7,
-       8,     9,    10,    -1,    -1,    -1,    -1,    15,    16,    17,
-      18,    19,    20,     5,     6,     7,     8,     9,    10,     5,
-       6,     7,     8,    -1,    16,    17,    18,    19,    20,    -1,
-      16,    17,    18,    19,    20
+       4,     5,     6,    24,     0,     9,    19,    20,    21,    21,
+      14,    15,    16,    17,    18,    19,    20,    21,    22,    23,
+      24,    25,    26,    27,    12,     3,     4,     5,    17,    18,
+      19,    20,    21,    -1,    -1,    -1,    -1,    25,    -1,    17,
+      -1,    45,    -1,    47,    22,    -1,    24,     6,     7,     8,
+       9,    10,    11,    -1,    13,    -1,    15,    16,    17,    18,
+      19,    20,    21,    -1,    -1,    -1,    25,     6,     7,     8,
+       9,    10,    11,    -1,    13,    14,    15,    16,    17,    18,
+      19,    20,    21,     6,     7,     8,     9,    10,    11,    -1,
+      13,    -1,    15,    16,    17,    18,    19,    20,    21,     6,
+       7,     8,     9,    10,    11,    -1,    -1,    -1,    -1,    16,
+      17,    18,    19,    20,    21,     6,     7,     8,     9,    10,
+      11,     6,     7,     8,     9,    -1,    17,    18,    19,    20,
+      21,    -1,    17,    18,    19,    20,    21
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     4,    16,    21,    23,    26,    27,    23,    27,
-      27,    27,     0,     5,     6,     7,     8,     9,    10,    12,
-      14,    15,    16,    17,    18,    19,    20,    27,    28,    24,
-      27,    27,    27,    27,    27,    27,    27,    27,    27,    27,
-      27,    27,    27,    27,    11,    24,    13,    27,    27
+       0,     3,     4,     5,    17,    22,    24,    27,    28,    24,
+      28,    28,    28,     0,     6,     7,     8,     9,    10,    11,
+      13,    15,    16,    17,    18,    19,    20,    21,    28,    29,
+      25,    28,    28,    28,    28,    28,    28,    28,    28,    28,
+      28,    28,    28,    28,    28,    12,    25,    14,    28,    28
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1243,13 +1244,13 @@ YYSTYPE yylval;
 /* User initialization code.  */
 
 /* Line 1242 of yacc.c  */
-#line 57 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 58 "inpptree-parser.y"
 {
     yylval.num = 0.0;
 }
 
 /* Line 1242 of yacc.c  */
-#line 1253 "inpptree-parser.c"
+#line 1254 "inpptree-parser.c"
   yyvsp[0] = yylval;
 
   goto yysetstate;
@@ -1431,170 +1432,170 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 64 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 65 "inpptree-parser.y"
     { *retval = (yyvsp[(1) - (1)].pnode); ;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 68 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 69 "inpptree-parser.y"
     { (yyval.pnode) = mknnode((yyvsp[(1) - (1)].num)); ;}
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 69 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 70 "inpptree-parser.y"
     { (yyval.pnode) = mksnode((yyvsp[(1) - (1)].str), ckt); ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 71 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 72 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("+", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 72 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 73 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("-", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 73 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 74 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("*", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 74 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 75 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("/", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 75 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 76 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("^", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 77 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 78 "inpptree-parser.y"
     { (yyval.pnode) = (yyvsp[(2) - (3)].pnode); ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 79 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 80 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("-",(yyvsp[(2) - (2)].pnode)); ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 81 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 82 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].pnode)); ;}
     break;
 
-  case 13:
+  case 14:
 
 /* Line 1455 of yacc.c  */
-#line 83 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 86 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ternary_fcn",
                                                mkbnode(",",
                                                  mkbnode(",", (yyvsp[(1) - (5)].pnode), (yyvsp[(3) - (5)].pnode)),
                                                  (yyvsp[(5) - (5)].pnode))); ;}
     break;
 
-  case 14:
-
-/* Line 1455 of yacc.c  */
-#line 88 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
-    { (yyval.pnode) = mkfnode("eq0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
-    break;
-
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 89 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
-    { (yyval.pnode) = mkfnode("ne0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
+#line 91 "inpptree-parser.y"
+    { (yyval.pnode) = mkfnode("eq0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 90 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
-    { (yyval.pnode) = mkfnode("gt0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
+#line 92 "inpptree-parser.y"
+    { (yyval.pnode) = mkfnode("ne0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 91 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
-    { (yyval.pnode) = mkfnode("lt0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
+#line 93 "inpptree-parser.y"
+    { (yyval.pnode) = mkfnode("gt0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 92 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
-    { (yyval.pnode) = mkfnode("ge0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
+#line 94 "inpptree-parser.y"
+    { (yyval.pnode) = mkfnode("lt0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 93 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
-    { (yyval.pnode) = mkfnode("le0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
+#line 95 "inpptree-parser.y"
+    { (yyval.pnode) = mkfnode("ge0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 95 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 96 "inpptree-parser.y"
+    { (yyval.pnode) = mkfnode("le0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
+    break;
+
+  case 21:
+
+/* Line 1455 of yacc.c  */
+#line 98 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ne0",
                                                mkbnode("+",
                                                  mkfnode("ne0", (yyvsp[(1) - (3)].pnode)),
                                                    mkfnode("ne0", (yyvsp[(3) - (3)].pnode)))); ;}
     break;
 
-  case 21:
+  case 22:
 
 /* Line 1455 of yacc.c  */
-#line 99 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 102 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0",
                                                mkbnode("+",
                                                  mkfnode("eq0", (yyvsp[(1) - (3)].pnode)),
                                                    mkfnode("eq0", (yyvsp[(3) - (3)].pnode)))); ;}
     break;
 
-  case 22:
+  case 23:
 
 /* Line 1455 of yacc.c  */
-#line 103 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 106 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0", (yyvsp[(2) - (2)].pnode)); ;}
     break;
 
-  case 24:
+  case 25:
 
 /* Line 1455 of yacc.c  */
-#line 109 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 112 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode(",", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1598 "inpptree-parser.c"
+#line 1599 "inpptree-parser.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1806,7 +1807,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 111 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 114 "inpptree-parser.y"
 
 
 

@@ -1,4 +1,9 @@
 2011-10-16  Robert Larice
+ * src/spicelib/parser/inpptree-parser.c ,
+ * src/spicelib/parser/inpptree-parser.h :
+   update bison generated files
+
+2011-10-16  Robert Larice
  * src/spicelib/parser/inpptree-parser.y ,
  * src/spicelib/parser/inpptree.c :
   bug fix, allow special nodenames "/Node" and "Node-4" in `B' expressions

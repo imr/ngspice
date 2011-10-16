@@ -41,15 +41,16 @@
    enum yytokentype {
      TOK_NUM = 258,
      TOK_STR = 259,
-     TOK_LE = 260,
-     TOK_LT = 261,
-     TOK_GE = 262,
-     TOK_GT = 263,
-     TOK_EQ = 264,
-     TOK_NE = 265,
-     TOK_OR = 266,
-     TOK_AND = 267,
-     NEG = 268
+     TOK_pnode = 260,
+     TOK_LE = 261,
+     TOK_LT = 262,
+     TOK_GE = 263,
+     TOK_GT = 264,
+     TOK_EQ = 265,
+     TOK_NE = 266,
+     TOK_OR = 267,
+     TOK_AND = 268,
+     NEG = 269
    };
 #endif
 
@@ -60,7 +61,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 31 "../../../../tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 31 "inpptree-parser.y"
 
   double num;
   const char  *str;
@@ -69,7 +70,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 73 "inpptree-parser.h"
+#line 74 "inpptree-parser.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
