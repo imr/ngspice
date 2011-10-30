@@ -704,7 +704,7 @@ will be updated every time the device specific code is altered or changed to ref
 
  11.14 HiSIM_HV - Hiroshima-University STARC IGFET High Voltage Model
       
-       Ver:    1.2.1
+       Ver:    1.2.2
        Class:  M
        Level:  62
        Dir:    devices/hisimhv
