@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2010 Hiroshima University & STARC
+ Copyright (C) 2011 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 1 )
- Model Parameter VERSION : 1.21
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 2 )
+ Model Parameter VERSION : 1.22
  FILE : hsmhveval.c
 
- DATE : 2010.11.02
+ DATE : 2011.6.29
 
  released by 
                 Hiroshima University &
@@ -69,18 +69,7 @@ by Hiroshima University and/or STARC."
 export obligations pertaining to the export of the HiSIM_HV intellectual 
 property.
 
-6. The License of patents is limited to the purpose of HiSIM_HV 
-standardization and implementation of the HiSIM_HV intellectual property 
-in connection with the standard.  
-This includes bug fixes, and Licensee modifications (including model 
-extensions) that are made in connection with the standard, including 
-all modifications already made by Licensee before the date of this 
-written document.  Licensee modifications of the HiSIM_HV code may be 
-considered outside the license of patents if they are made for purposes 
-not connected to implementation of the standard, although these 
-modifications would still be inside the license of copyrights.
-
-7.  By using HiSIM_HV intellectual property owned by Hiroshima University
+6.  By using HiSIM_HV intellectual property owned by Hiroshima University
 and/or STARC, Licensee agrees not to prosecute any patents or patent  
 held by Licensee that are required for implementation of HiSIM_HV against
 any party who is infringing those patents solely by implementing and/or
@@ -90,7 +79,7 @@ using the HiSIM_HV standard.
 Toshimasa Asahara, President, Hiroshima University
 Mitiko Miura-Mattausch, Professor, Hiroshima University
 Katsuhiro Shimohigashi, President&CEO, STARC
-June. 2008
+June. 2008  (revised in June 2011)
 *************************************************************************/
 
 /*********************************************************************
@@ -154,10 +143,6 @@ June. 2008
 /*---------------------------------------------------*
 * Header files.
 *-----------------*/
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <float.h>
 #ifdef __STDC__
 /* #include <ieeefp.h> */
 #endif
@@ -716,7 +701,7 @@ int HSMHVevaluate
   /* PART-4 (junction diode) */
   double Ibs =0.0, Gbs =0.0, Gbse =0.0, Ibs_dT =0.0 ;
   double Ibd =0.0, Gbd =0.0, Gbde =0.0, Ibd_dT =0.0 ;
-/*  double Nvtm =0.0 ;*/
+
   /* junction capacitance */
   double Qbs =0.0, Capbs =0.0, Capbse =0.0, Qbs_dT =0.0 ;
   double Qbd =0.0, Capbd =0.0, Capbde =0.0, Qbd_dT =0.0 ;
@@ -870,7 +855,7 @@ int HSMHVevaluate
   /* Qover */
   int flg_ovzone = 0 ;
   double VgpLD =0.0,     VgpLD_dVgb =0.0 ;
-  double VthLD =0.0, Vgb_fb_LD =0.0 ;
+  double Vgb_fb_LD =0.0 ;
   double Ac31_dVgb =0.0, Ac31_dVxb =0.0 ;
   double Ac1_dVgb =0.0, Ac1_dVxb =0.0 ;
   double Ac2_dVgb =0.0, Ac2_dVxb =0.0 ;
@@ -885,7 +870,7 @@ int HSMHVevaluate
   double TX_dVgb =0.0, TX_dVxb =0.0 ;
   double TY_dVgb =0.0, TY_dVxb =0.0 ;
   double Ps0LD =0.0,   Ps0LD_dVgb =0.0, Ps0LD_dVxb =0.0, Ps0LD_dT =0.0 ;
-  double Ps0LD_dVds =0.0;
+  double Ps0LD_dVbs =0.0, Ps0LD_dVds =0.0, Ps0LD_dVgs =0.0 ;
   double Pb2over =0.0,                                   Pb2over_dT =0.0 ;
 
   int flg_overgiven =0 ;
@@ -906,15 +891,15 @@ int HSMHVevaluate
   double Tp,                   Tp_dT ; 
   double Tq, Tq_dVxb, Tq_dVgb, Tq_dT ;
   double     T1_dVxb, T1_dVgb ;
-/*  double     T2_dVxb, T2_dVgb ;
-  double     T3_dVxb, T3_dVgb ;*/
   double     T5_dVxb, T5_dVgb ;
   double VgpLD_shift, VgpLD_shift_dT ;
   double VgpLD_shift_dVgb, VgpLD_shift_dVxb, exp_bVbs_dVxb ;
   double gamma, gamma_dVxb, gamma_dT ;
   double psi  , psi_dVgb  , psi_dVxb  , psi_dT ;
+  double psi_B, arg_B ;
+  double Chi_1, Chi_1_dVgb, Chi_1_dVxb ,Chi_1_dT ;
   double Chi_A, Chi_A_dVgb, Chi_A_dVxb, Chi_A_dT ;
-  double Chi_B, Chi_B_dVgb, Chi_B_dVxb, Chi_B_dT, Chi_B_dpsi , Chi_B_dgamma ;
+  double Chi_B, Chi_B_dVgb, Chi_B_dVxb, Chi_B_dT;
 
   /* X_dT for leakage currents & junction diodes */
   double isbd_dT =0.0,      isbs_dT =0.0 ;
@@ -941,8 +926,8 @@ int HSMHVevaluate
   T1 = Vdse + Vgse + Vbse + Vds + Vgs + Vbs + vbd_jct + vbs_jct ;
   if ( ! finite (T1) ) {
     fprintf (stderr ,
-       "*** warning(HiSIM): Unacceptable Bias(es).\n" ) ;
-    fprintf (stderr , "----- bias information (HiSIM)\n" ) ;
+       "*** warning(HiSIM_HV): Unacceptable Bias(es).\n" ) ;
+    fprintf (stderr , "----- bias information (HiSIM_HV)\n" ) ;
     fprintf (stderr , "name: %s\n" , here->HSMHVname ) ;
     fprintf (stderr , "states: %d\n" , here->HSMHVstates ) ;
     fprintf (stderr , "Vdse= %.3e Vgse=%.3e Vbse=%.3e\n"
@@ -968,8 +953,8 @@ int HSMHVevaluate
   /*-----------------------------------------------------------*
    * Start of the routine. (label)
    *-----------------*/
-/* start_of_routine:
-*/
+/*start_of_routine:*/
+
   /*-----------------------------------------------------------*
    * Temperature dependent constants. 
    *-----------------*/
@@ -2480,12 +2465,12 @@ int HSMHVevaluate
      *-----------------*/
     if ( flg_conv == 0 ) { 
       fprintf( stderr , 
-               "*** warning(HiSIM): Went Over Iteration Maximum (Ps0)\n" ) ;
+               "*** warning(HiSIM_HV): Went Over Iteration Maximum (Ps0)\n" ) ;
       fprintf( stderr , 
                " Vbse   = %7.3f Vdse = %7.3f Vgse = %7.3f\n" , 
                Vbse , Vdse , Vgse ) ;
       if ( flg_info >= 2 ) {
-        printf( "*** warning(HiSIM): Went Over Iteration Maximum (Ps0)\n" ) ;
+        printf( "*** warning(HiSIM_HV): Went Over Iteration Maximum (Ps0)\n" ) ;
       }
    } 
 
@@ -2778,8 +2763,8 @@ int HSMHVevaluate
     /*-----------------------------------------------------------*
      * Start point of Psl (= Ps0 + Pds) calculation. (label)
      *-----------------*/
-/*  start_of_Psl:
-*/
+/*  start_of_Psl:*/
+
 
     /* Vdseff (begin) */
     Vdsorg = Vds ;
@@ -3030,12 +3015,12 @@ start_of_loopl:
      *-----------------*/
     if ( flg_conv == 0 ) {
       fprintf( stderr ,
-               "*** warning(HiSIM): Went Over Iteration Maximum (Psl)\n" ) ;
+               "*** warning(HiSIM_HV): Went Over Iteration Maximum (Psl)\n" ) ;
       fprintf( stderr ,
                " Vbse   = %7.3f Vdse = %7.3f Vgse = %7.3f\n" ,
                Vbse , Vdse , Vgse ) ;
       if ( flg_info >= 2 ) {
-        printf("*** warning(HiSIM): Went Over Iteration Maximum (Psl)\n" ) ;
+        printf("*** warning(HiSIM_HV): Went Over Iteration Maximum (Psl)\n" ) ;
       }
     }
 
@@ -3640,7 +3625,7 @@ start_of_mobility:
 
     Lch = Leff - Lred ;
     if ( Lch < 1.0e-9 ) {
-      fprintf ( stderr , "*** warning(HiSIM): actual channel length is too small. (Lch=%e[m])\n" , Lch ) ;
+      fprintf ( stderr , "*** warning(HiSIM_HV): actual channel length is too small. (Lch=%e[m])\n" , Lch ) ;
       fprintf ( stderr , "                    CLM5 and/or CLM6 might be too large.\n" ) ;
       Lch = 1.0e-9 ; Lch_dVbs = Lch_dVds = Lch_dVgs = 0.0 ;
       Lch_dT = 0.0 ;
@@ -3811,8 +3796,8 @@ start_of_mobility:
     Mu_dVgs = Muun_dVgs * T5 - T7 * Em_dVgs ;
     Mu_dT = Muun_dT * T5 + Muun * T5_dT ;
 
-/*  end_of_mobility : 
-*/
+/*  end_of_mobility :*/ 
+
     /*-----------------------------------------------------------*
      * Ids: channel current.
      *-----------------*/
@@ -4887,8 +4872,8 @@ start_of_mobility:
   /*-----------------------------------------------------------*
    * End of PART-2. (label) 
    *-----------------*/
-/* end_of_part_2: 
-*/
+/* end_of_part_2: */
+
 
   /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
    * PART-3: Overlap charge
@@ -4957,7 +4942,7 @@ start_of_mobility:
   * Constant capacitance model
   *-----------------*/
   if ( Coovlps == 0 ) {
-    flg_overgiven = ( (int)ModeNML * model->HSMHV_cgso_Given
+    flg_overgiven = ( (int)ModeNML * model->HSMHV_cgso_Given 
                     + (int)ModeRVS * model->HSMHV_cgdo_Given  ) ;
     if ( flg_overgiven ) {
       Cgso = ModeNML * pParam->HSMHV_cgso + ModeRVS * pParam->HSMHV_cgdo ;
@@ -5060,8 +5045,8 @@ start_of_mobility:
     /*-----------------------------------*
      * Additional constant capacitance model
      *-----------------*/
-    flg_overgiven = ( (int)ModeNML * model->HSMHV_cgso_Given
-	            + (int)ModeRVS * model->HSMHV_cgdo_Given  ) ;
+    flg_overgiven = ( (int)ModeNML * model->HSMHV_cgso_Given 
+	             + (int)ModeRVS * model->HSMHV_cgdo_Given  ) ;
     if ( flg_overgiven ) {
       Cgso  = ModeNML * pParam->HSMHV_cgso + ModeRVS * pParam->HSMHV_cgdo ;
       Cgso *= - here->HSMHV_weffcv_nf ;
@@ -5079,7 +5064,7 @@ start_of_mobility:
   * Constant capacitance model
   *-----------------*/
   if ( Coovlpd == 0 ) {
-    flg_overgiven = ( (int)ModeRVS * model->HSMHV_cgso_Given
+    flg_overgiven = ( (int)ModeRVS * model->HSMHV_cgso_Given 
                     + (int)ModeNML * model->HSMHV_cgdo_Given  ) ;
     if ( flg_overgiven ) {
       Cgdo = ModeRVS * pParam->HSMHV_cgso + ModeNML * pParam->HSMHV_cgdo ;
@@ -5249,8 +5234,8 @@ start_of_mobility:
    * End of PART-3. (label) 
    *-----------------*/ 
 
-/* end_of_part_3:
-*/
+/* end_of_part_3:*/
+
   /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
    * PART-4: Substrate-source/drain junction diode.
    *++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/ 
@@ -5660,8 +5645,8 @@ start_of_mobility:
    * End of PART-4. (label) 
    *-----------------*/ 
 
-/* end_of_part_4:
-*/
+/* end_of_part_4:*/
+
   
 
   /*-----------------------------------------------------------* 
@@ -5773,8 +5758,8 @@ start_of_mobility:
   /*-----------------------------------------------------------* 
    * End of PART-5. (label) 
    *-----------------*/ 
-/* end_of_part_5: 
-*/
+/* end_of_part_5:*/ 
+
   /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
    * PART-6: Noise Calculation.
    *++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/ 
@@ -5864,8 +5849,8 @@ start_of_mobility:
   /*-----------------------------------------------------------* 
    * End of PART-6. (label) 
    *-----------------*/ 
-/* end_of_part_6: 
-*/
+/* end_of_part_6:*/ 
+
 
   /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
    * PART-7: Evaluation of outputs. 
@@ -5920,7 +5905,7 @@ start_of_mobility:
 
   if ( flg_info >= 1 && 
        (Ids_dVbs < 0.0 || T1 < 0.0 || Ids_dVgs < 0.0) ) {
-    printf( "*** warning(HiSIM): Negative Conductance\n" ) ;
+    printf( "*** warning(HiSIM_HV): Negative Conductance\n" ) ;
     printf( " type = %d  mode = %d\n" , model->HSMHV_type , here->HSMHV_mode ) ;
     printf( " Vbs = %12.5e Vds = %12.5e Vgse= %12.5e\n" , 
             Vbs , Vds , Vgs ) ;
@@ -6183,9 +6168,9 @@ start_of_mobility:
   if ( ! finite (T1) ) {
     flg_err = 1 ;
     fprintf (stderr ,
-             "*** warning(HiSIM): FP-exception (PART-1)\n" ) ;
+             "*** warning(HiSIM_HV): FP-exception (PART-1)\n" ) ;
     if ( flg_info >= 1 ) {
-      printf ( "*** warning(HiSIM): FP-exception\n") ;
+      printf ( "*** warning(HiSIM_HV): FP-exception\n") ;
       printf ( "Ids   = %e\n" , here->HSMHV_ids ) ;
       printf ( "Gmbs  = %e\n" , here->HSMHV_dIds_dVbsi ) ;
       printf ( "Gds   = %e\n" , here->HSMHV_dIds_dVdsi ) ;
@@ -6201,9 +6186,9 @@ start_of_mobility:
   if ( ! finite (T1) ) {
     flg_err = 1 ;
     fprintf (stderr ,
-             "*** warning(HiSIM): FP-exception (PART-2)\n") ;
+             "*** warning(HiSIM_HV): FP-exception (PART-2)\n") ;
     if ( flg_info >= 1 ) {
-      printf ("*** warning(HiSIM): FP-exception\n") ;
+      printf ("*** warning(HiSIM_HV): FP-exception\n") ;
     }
   }
   
@@ -6211,9 +6196,9 @@ start_of_mobility:
   if ( ! finite (T1) ) {
     flg_err = 1 ;
     fprintf(stderr ,
-            "*** warning(HiSIM): FP-exception (PART-3)\n") ;
+            "*** warning(HiSIM_HV): FP-exception (PART-3)\n") ;
     if ( flg_info >= 1 ) {
-      printf ("*** warning(HiSIM): FP-exception\n") ;
+      printf ("*** warning(HiSIM_HV): FP-exception\n") ;
     }
   }
   
@@ -6222,9 +6207,9 @@ start_of_mobility:
   if ( ! finite (T1) ) {
     flg_err = 1 ;
     fprintf(stderr ,
-            "*** warning(HiSIM): FP-exception (PART-4)\n") ;
+            "*** warning(HiSIM_HV): FP-exception (PART-4)\n") ;
     if ( flg_info >= 1 ) {
-      printf ("*** warning(HiSIM): FP-exception\n") ;
+      printf ("*** warning(HiSIM_HV): FP-exception\n") ;
     }
   }
 
@@ -6232,7 +6217,7 @@ start_of_mobility:
    * Exit for error case.
    *-----------------*/ 
   if ( flg_err != 0 ) {
-    fprintf (stderr , "----- bias information (HiSIM)\n" ) ;
+    fprintf (stderr , "----- bias information (HiSIM_HV)\n" ) ;
     fprintf (stderr , "name: %s\n" , here->HSMHVname ) ;
     fprintf (stderr , "states: %d\n" , here->HSMHVstates ) ;
     fprintf (stderr , "Vdse= %.3e Vgse=%.3e Vbse=%.3e\n"
@@ -6382,8 +6367,8 @@ start_of_mobility:
   /*-----------------------------------------------------------*
    * End of PART-7. (label) 
    *-----------------*/ 
-/* end_of_part_7: 
-*/
+/* end_of_part_7:*/ 
+
   /*-----------------------------------------------------------* 
    * Bottom of hsmhveval. 
    *-----------------*/ 

@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2010 Hiroshima University & STARC
+ Copyright (C) 2011 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 1 )
- Model Parameter VERSION : 1.21
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 2 )
+ Model Parameter VERSION : 1.22
  FILE : hsmhvset.c
 
- DATE : 2010.11.02
+ DATE : 2011.6.29
 
  released by 
                 Hiroshima University &
@@ -16,7 +16,6 @@
 ***********************************************************************/
 
 #include <ngspice/ngspice.h>
-#include <stdio.h>
 #include <ngspice/smpdefs.h>
 #include <ngspice/cktdefs.h>
 #include "hsmhvdef.h"
@@ -36,7 +35,7 @@
 #define RANGECHECK(param, min, max, pname)                              \
   if ( (param) < (min) || (param) > (max) ) {             \
     printf("warning(HiSIMHV): The model/instance parameter %s (= %e) must be in the range [%e , %e].\n", \
-           (pname), (param), (double) (min), (double) (max) );   \
+           (pname), (param), (min), (max) );                     \
   }
 #define MINCHECK(param, min, pname)                              \
   if ( (param) < (min) ) {             \
@@ -75,13 +74,13 @@ int HSMHVsetup(
     model->HSMHV_noise = 1;
 
     if ( !model->HSMHV_version_Given) {
-        model->HSMHV_version = "1.21" ;
-       printf("          1.21 is selected for VERSION. (default) \n");
+        model->HSMHV_version = "1.22" ;
+       printf("          1.22 is selected for VERSION. (default) \n");
     } else {
-      if (strcmp(model->HSMHV_version,"1.21") != 0 ) {
-       model->HSMHV_version = "1.21" ;
-       printf("          1.21 is only available for VERSION. \n");
-       printf("          1.21 is selected for VERSION. (default) \n");
+      if (strcmp(model->HSMHV_version,"1.22") != 0 ) {
+       model->HSMHV_version = "1.22" ;
+       printf("          1.22 is only available for VERSION. \n");
+       printf("          1.22 is selected for VERSION. (default) \n");
       } else {
        printf("           %s is selected for VERSION \n", model->HSMHV_version);
       }
@@ -129,7 +128,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_rdov11_Given  ) model->HSMHV_rdov11   = 0.0 ;
     if ( !model->HSMHV_rdov12_Given  ) model->HSMHV_rdov12   = 1.0 ;
     if ( !model->HSMHV_rdov13_Given  ) model->HSMHV_rdov13   = 1.0 ;
-    if ( !model->HSMHV_rdslp1_Given  ) model->HSMHV_rdslp1   = 0.0 ;
+    if ( !model->HSMHV_rdslp1_Given  ) model->HSMHV_rdslp1   = 1.0 ;
     if ( !model->HSMHV_rdict1_Given  ) model->HSMHV_rdict1   = 1.0 ;
     if ( !model->HSMHV_rdslp2_Given  ) model->HSMHV_rdslp2   = 1.0 ;
     if ( !model->HSMHV_rdict2_Given  ) model->HSMHV_rdict2   = 0.0 ;
@@ -841,6 +840,8 @@ int HSMHVsetup(
       }
 
 
+
+
       /* process drain series resistance */
       /* rough check if Rd != 0 *  ****  don't forget to change if Rd processing is changed *******/
       T2 = ( here->HSMHV_ldrift1 * model->HSMHV_rdslp1 * C_m2um  + model->HSMHV_rdict1 )
@@ -873,8 +874,8 @@ int HSMHVsetup(
 	here->HSMHVsNodePrime = here->HSMHVsNode;
       }
       here->HSMHVsourceConductance = 0.0 ; /* initialized for hsmhvnoi.c */
-/*      printf("HSMHV_set: corsrd=%d dNode=%d dNodePrime=%d sNode=%d sNodePrime=%d\n",model->HSMHV_corsrd,
-                         here->HSMHVdNode,here->HSMHVdNodePrime,here->HSMHVsNode,here->HSMHVsNodePrime);*/
+      /* printf("HSMHV_set: corsrd=%d dNode=%d dNodePrime=%d sNode=%d sNodePrime=%d\n",model->HSMHV_corsrd,
+                         here->HSMHVdNode,here->HSMHVdNodePrime,here->HSMHVsNode,here->HSMHVsNodePrime); */
 
       /* process gate resistance */
       if ((here->HSMHV_corg == 1 && model->HSMHV_rshg > 0.0) && here->HSMHVgNodePrime == 0) {
@@ -945,6 +946,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 
       TSTALLOC(HSMHVBPdPtr,  HSMHVbNodePrime, HSMHVdNode)
       TSTALLOC(HSMHVBPdpPtr, HSMHVbNodePrime, HSMHVdNodePrime)
+      TSTALLOC(HSMHVBPsPtr,  HSMHVbNodePrime, HSMHVsNode)
       TSTALLOC(HSMHVBPspPtr, HSMHVbNodePrime, HSMHVsNodePrime)
       TSTALLOC(HSMHVBPgpPtr, HSMHVbNodePrime, HSMHVgNodePrime)
       TSTALLOC(HSMHVBPbpPtr, HSMHVbNodePrime, HSMHVbNodePrime)
@@ -1280,7 +1282,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     RANGECHECK(model->HSMHV_xld,        0.0,  50.0e-9, "XLD") ;
     RANGECHECK(model->HSMHV_xwd,   -10.0e-9, 100.0e-9, "XWD") ;
     RANGECHECK(model->HSMHV_xwdc,  -10.0e-9, 100.0e-9, "XWDC") ;
-    RANGECHECK(model->HSMHV_rsh,        0.0,   1.0e-3, "RSH") ;
+    RANGECHECK(model->HSMHV_rsh,        0.0,      500, "RSH") ;
     RANGECHECK(model->HSMHV_rshg,       0.0,    100.0, "RSHG") ;
     if(model->HSMHV_xqy != 0.0) { MINCHECK  (model->HSMHV_xqy,    10.0e-9,           "XQY") ; }
     MINCHECK  (model->HSMHV_xqy1,       0.0,           "XQY1") ;

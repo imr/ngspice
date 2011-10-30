@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2010 Hiroshima University & STARC
+ Copyright (C) 2011 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 1 )
- Model Parameter VERSION : 1.21
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 2 )
+ Model Parameter VERSION : 1.22
  FILE : hsmhvdef
 
- DATE : 2010.11.02
+ DATE : 2011.6.29
 
  released by 
                 Hiroshima University &
@@ -733,6 +733,7 @@ typedef struct sHSMHVinstance {
   double *HSMHVBPbpPtr; /* pointer to sparse matrix element at (bulk prime node,bulk prime node) */
   double *HSMHVBPdPtr;  /* pointer to sparse matrix element at (bulk prime node,drain node) */
   double *HSMHVBPdpPtr; /* pointer to sparse matrix element at (bulk prime node,drain prime node) */
+  double *HSMHVBPsPtr;  /* pointer to sparse matrix element at (bulk prime node,source node) */
   double *HSMHVBPspPtr; /* pointer to sparse matrix element at (bulk prime node,source prime node) */
   double *HSMHVBPbPtr;  /* pointer to sparse matrix element at (bulk prime node,bulk node) */
   double *HSMHVBPdbPtr; /* pointer to sparse matrix element at (bulk prime node,source body node) */

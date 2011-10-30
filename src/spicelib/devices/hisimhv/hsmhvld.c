@@ -1,21 +1,20 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2010 Hiroshima University & STARC
+ Copyright (C) 2011 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 1 )
- Model Parameter VERSION : 1.21
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 2 )
+ Model Parameter VERSION : 1.22
  FILE : hsmhvld.c
 
- DATE : 2010.11.02
+ DATE : 2011.6.29
 
  released by 
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include <stdio.h>
 #include <ngspice/ngspice.h>
 #include "hisimhv.h"
 #include <ngspice/trandefs.h>
@@ -405,7 +404,7 @@ int HSMHVload(
           Qi_nqs = 0.0 ;
           Qb_nqs = 0.0 ;
         }
-/* printf("HSMHV_load: (from state0) vds.. = %e %e %e %e %e %e\n",
+      /* printf("HSMHV_load: (from state0) vds.. = %e %e %e %e %e %e\n",
                                               vds,vgs,vbs,vdse,vgse,vbse); */
       } 
       else if ( ckt->CKTmode & MODEINITTRAN ) {
@@ -588,7 +587,7 @@ int HSMHVload(
         }
 #endif /* PREDICTOR */
 
-/* printf("HSMHV_load: (from rhs   ) vds.. = %e %e %e %e %e %e\n",
+        /* printf("HSMHV_load: (from rhs   ) vds.. = %e %e %e %e %e %e\n",
                                                  vds,vgs,vbs,vdse,vgse,vbse); */
 
         vbd = vbs - vds;
@@ -1625,9 +1624,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       if (delvgs || delvds || delvbs ||deldeltemp) {
         Ids  += gm         *delvgs + gds        *delvds + gmbs       *delvbs + gmT      *deldeltemp ;
         Isub += dIsub_dVgs *delvgs + dIsub_dVds *delvds + dIsub_dVbs *delvbs + dIsub_dT *deldeltemp ;
-        Isub += dIsub_dVdse*delvdse ;
         Isubs+= dIsubs_dVgs*delvgs + dIsubs_dVds*delvds + dIsubs_dVbs*delvbs + dIsubs_dT*deldeltemp ;
-        Isubs+= dIsubs_dVdse*delvdse ;
         Igd  += dIgd_dVg   *delvgs + dIgd_dVd   *delvds + dIgd_dVb   *delvbs + dIgd_dT  *deldeltemp ;
         Igs  += dIgs_dVg   *delvgs + dIgs_dVd   *delvds + dIgs_dVb   *delvbs + dIgs_dT  *deldeltemp ;
         Igb  += dIgb_dVg   *delvgs + dIgb_dVd   *delvds + dIgb_dVb   *delvbs + dIgb_dT  *deldeltemp ;
@@ -1647,6 +1644,8 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
 
       if (delvgse || delvdse || delvbse ) {
         Ids  += gm_ext     *delvgse + gds_ext    *delvdse + gmbs_ext   *delvbse ;
+        Isub += dIsub_dVdse*delvdse ;
+        Isubs+= dIsubs_dVdse*delvdse ;
         P    += dP_dVgse   *delvgse + dP_dVdse   *delvdse + dP_dVbse   *delvbse ;
         Iddp += dIddp_dVgse*delvgse + dIddp_dVdse*delvdse + dIddp_dVbse*delvbse ;
         Issp += dIssp_dVgse*delvgse + dIssp_dVdse*delvdse + dIssp_dVbse*delvbse ;
@@ -1779,7 +1778,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       /* ydc_dP[gNode] = 0.0; */
       ydc_dP[gNodePrime] = -dIddp_dVgse + gm_ext
 	 + gm + dIsub_dVgs + dIgidl_dVgs - dIgd_dVg ;
-      ydc_dP[sNode] =  dIddp_dVdse + dIddp_dVgse + dIddp_dVbse + dIddp_dVsubs + (-gds_ext -gm_ext -gmbs_ext);
+      ydc_dP[sNode] =  dIddp_dVdse + dIddp_dVgse + dIddp_dVbse + dIddp_dVsubs + (-gds_ext -gm_ext -gmbs_ext) - dIsub_dVdse;
       ydc_dP[sNodePrime] = -( gds + dIsub_dVds + dIgidl_dVds ) 
 	 - ( gm + dIsub_dVgs + dIgidl_dVgs )
 	 - ( gmbs + dIsub_dVbs + dIgidl_dVbs ) - dIgd_dVs ;
@@ -1838,7 +1837,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       /* ydc_sP[gNode] = 0.0 ; */
       ydc_sP[gNodePrime] = -dIssp_dVgse -gm_ext
 	 - gm + dIsubs_dVgs + dIgisl_dVgs - dIgs_dVg ;
-      ydc_sP[sNode] = - dIssp_dVssp - ( - dIssp_dVdse - dIssp_dVgse - dIssp_dVbse ) + dIssp_dVsubs +(gds_ext + gm_ext + gmbs_ext);
+      ydc_sP[sNode] = - dIssp_dVssp - ( - dIssp_dVdse - dIssp_dVgse - dIssp_dVbse ) + dIssp_dVsubs +(gds_ext + gm_ext + gmbs_ext) - dIsubs_dVdse;
       ydc_sP[sNodePrime] = dIssp_dVssp - ( - gds + dIsubs_dVds + dIgisl_dVds )
 	 - ( - gm + dIsubs_dVgs + dIgisl_dVgs )
 	 - ( - gmbs + dIsubs_dVbs + dIgisl_dVbs ) - dIgs_dVs ;
@@ -1856,7 +1855,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       ydc_bP[dNodePrime] = - dIsub_dVds - dIsubs_dVds - dIgidl_dVds - dIgb_dVd - dIgisl_dVds ;
       /* ydc_bP[gNode] = 0.0 ; */
       ydc_bP[gNodePrime] = - dIsub_dVgs - dIsubs_dVgs - dIgidl_dVgs - dIgb_dVg - dIgisl_dVgs ;
-      /* ydc_bP[sNode] = 0.0 ; */
+      ydc_bP[sNode] = dIsub_dVdse + dIsubs_dVdse;
       ydc_bP[sNodePrime] = - ( - dIsub_dVds - dIsubs_dVds - dIgidl_dVds - dIgisl_dVds )
        - ( - dIsub_dVgs - dIsubs_dVgs - dIgidl_dVgs - dIgisl_dVgs )
        - ( - dIsub_dVbs - dIsubs_dVbs - dIgidl_dVbs - dIgisl_dVbs ) - dIgb_dVs ; 
@@ -2192,8 +2191,8 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
 
           /* store small signal parameters */
           if (ckt->CKTmode & MODEINITSMSIG) {
-/*          printf("HSMHV_load: (small signal) ByPass=%d\n",ByPass);
-            printf("HSMHV_load: ydc_dP=%e %e %e %e %e %e %e %e\n",
+            /* printf("HSMHV_load: (small signal) ByPass=%d\n",ByPass);
+          printf("HSMHV_load: ydc_dP=%e %e %e %e %e %e %e %e\n",
                     ydc_dP[0],ydc_dP[1],ydc_dP[2],ydc_dP[3],ydc_dP[4],ydc_dP[5],ydc_dP[6],ydc_dP[7]);
             printf("HSMHV_load: ych_dP=%e %e %e %e %e %e %e %e\n",
                     ydyn_dP[0],ydyn_dP[1],ydyn_dP[2],ydyn_dP[3],ydyn_dP[4],ydyn_dP[5],ydyn_dP[6],ydyn_dP[7]);
@@ -2500,6 +2499,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       *(here->HSMHVBPdPtr)  +=  ydc_bP[dNode]; /* ydc_bP[dNode] + ag0*ydyn_bP[dNodePrime] */
       *(here->HSMHVBPdpPtr) +=  ydc_bP[dNodePrime] + ag0*ydyn_bP[dNodePrime];
       *(here->HSMHVBPgpPtr) +=  ydc_bP[gNodePrime] + ag0*ydyn_bP[gNodePrime];
+      *(here->HSMHVBPsPtr)  +=  ydc_bP[sNode]      + ag0*ydyn_bP[sNode];
       *(here->HSMHVBPspPtr) +=  ydc_bP[sNodePrime] + ag0*ydyn_bP[sNodePrime];
       *(here->HSMHVBPbpPtr) +=  ydc_bP[bNodePrime] + ag0*ydyn_bP[bNodePrime];
       *(here->HSMHVBPbPtr)  +=  ydc_bP[bNode]      + ag0*ydyn_bP[bNode];
