@@ -124,7 +124,6 @@ sub runNoiseTest {
 
     if (! $main::debug) {
         unlink($simulate::netlistFile);
-        unlink("$simulate::netlistFile.st0");
         if (!opendir(DIRQA,".")) {
             die("ERROR: cannot open directory ., stopped");
         }
@@ -274,7 +273,6 @@ sub runAcTest {
 
     if (! $main::debug) {
         unlink($simulate::netlistFile);
-        unlink("$simulate::netlistFile.st0");
         if (!opendir(DIRQA,".")) {
             die("ERROR: cannot open directory ., stopped");
         }
@@ -388,7 +386,6 @@ sub runDcTest {
 
     if (! $main::debug) {
         unlink($simulate::netlistFile);
-        unlink("$simulate::netlistFile.st0");
         if (!opendir(DIRQA,".")) {
             die("ERROR: cannot open directory ., stopped");
         }
