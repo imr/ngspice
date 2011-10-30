@@ -1,3 +1,8 @@
+2011-10-30  Dietmar Warning
+ * devices/mos1/mos1ask.c: Fix the source/drain typo for overlap cap's
+ * devices/hisimhv/*.c, *.h, tests/hsimhv: Update to actual hisim_hv model version 1.2.2 
+ * tests/bin/ngspice.pm: remove .st0 files not needed for ngspice
+
 2011-10-16  Robert Larice
  * src/spicelib/parser/inpptree-parser.c ,
  * src/spicelib/parser/inpptree-parser.h :
