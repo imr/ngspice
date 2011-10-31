@@ -172,9 +172,6 @@ ft_ckspace(void)
     hi=sbrk(0);
     usage = (size_t) (hi - enddata);
 
-    if (limit < 0)
-	return;	/* what else do you do? */
-
     if (usage <= old_usage)
 	return;
 

@@ -1,4 +1,12 @@
 2011-10-31  Robert Larice
+ * src/main.c ,
+ * src/frontend/com_fft.c ,
+ * src/frontend/ftesopt.c ,
+ * src/frontend/resource.c ,
+ * src/frontend/numparam/xpressn.c :
+  swallow warnings
+
+2011-10-31  Robert Larice
  * src/spicelib/devices/hisim2/hisim2.h ,
  * src/spicelib/devices/hisim2/hsm2ld.c ,
  * src/spicelib/devices/hisimhv/hisimhv.h ,

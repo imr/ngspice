@@ -12,21 +12,21 @@ Author: 2010 Paolo Nenzi
 #include <ngspice/sperror.h>
 
 
-typedef struct sFTEparm {
+struct FTEparm {
     char *keyword;
     int id;
-    char dataType;
+    enum cp_types dataType;
     char *description;
-} FTEparm;
+};
 
 
-static FTEparm FTEOPTtbl[] = {
+static struct FTEparm FTEOPTtbl[] = {
     { "decklineno",   FTEOPT_NLDECK, CP_NUM,  "Number of lines in the deck" },
     { "netloadtime",  FTEOPT_NLT,    CP_REAL, "Netlist loading time"        },
     { "netparsetime", FTEOPT_NPT,    CP_REAL, "Netlist parsing time"        }
 };
 
-int FTEOPTcount = sizeof(FTEOPTtbl)/sizeof(FTEparm);
+static const int FTEOPTcount = sizeof(FTEOPTtbl)/sizeof(*FTEOPTtbl);
 
 static struct variable *getFTEstat(struct circ *, int);
 

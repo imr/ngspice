@@ -168,7 +168,7 @@ struct variable *(*if_getparam)(CKTcircuit *ckt, char **name, char *param, int i
 
 /* static functions */
 int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
-static int sp_shutdown(int exitval);
+static void sp_shutdown(int exitval);
 static void app_rl_readlines(void);
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
@@ -475,7 +475,7 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 
 /* -------------------------------------------------------------------------- */
 /* Shutdown gracefully. */
-static int
+static void
 sp_shutdown(int exitval)
 {
     cleanvars();
@@ -1293,7 +1293,8 @@ main(int argc, char **argv)
             sp_shutdown(EXIT_BAD);
         }
 
-        return sp_shutdown(EXIT_NORMAL);
+        sp_shutdown(EXIT_NORMAL);
+        return 0;
     }  /* ---  if (ft_batchmode) ---  */
 
 
@@ -1330,5 +1331,6 @@ main(int argc, char **argv)
             app_rl_readlines();
         }
 
-    return sp_shutdown(EXIT_NORMAL);
+    sp_shutdown(EXIT_NORMAL);
+    return 0;
 }

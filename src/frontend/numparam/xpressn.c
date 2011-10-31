@@ -2139,10 +2139,10 @@ nupa_subcktcall (tdico * dico, char *s, char *x, bool err)
                     j++;
                     if (t_p[k] > ' ')
                     {
-                        spice_dstring_append(&vstr, "Subckt call, symbol ",-1) ;
+                        spice_dstring_append(&vstr, "Subckt call, symbol ", -1);
                         cadd (&vstr, t_p[k]);
                         sadd (&vstr, " not understood");
-                        message (dico, spice_dstring_value(&vstr) ) ;
+                        message (dico, "%s", spice_dstring_value(&vstr));
                     }
                 }
 
