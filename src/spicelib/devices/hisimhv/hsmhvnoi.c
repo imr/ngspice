@@ -80,9 +80,7 @@ int HSMHVnoise (
 	    for ( i = 0; i < HSMHVNSRCS; i++ ) { 
 	      (void) sprintf(name, "onoise.%s%s", 
 			     (char *)here->HSMHVname, HSMHVnNames[i]);
-	      data->namelist = 
-		(IFuid *) trealloc((char *) data->namelist,
-				   (data->numPlots + 1) * sizeof(IFuid));
+	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 
@@ -94,9 +92,7 @@ int HSMHVnoise (
 	    for ( i = 0; i < HSMHVNSRCS; i++ ) {
 	      (void) sprintf(name, "onoise_total.%s%s", 
 			     (char *)here->HSMHVname, HSMHVnNames[i]);
-	      data->namelist = 
-		(IFuid *) trealloc((char *) data->namelist,
-				   (data->numPlots + 1) * sizeof(IFuid));
+	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 
@@ -105,9 +101,7 @@ int HSMHVnoise (
 	      
 	      (void) sprintf(name, "inoise_total.%s%s", 
 			     (char *)here->HSMHVname, HSMHVnNames[i]);
-	      data->namelist = 
-		(IFuid *) trealloc((char *) data->namelist,
-				   (data->numPlots + 1) * sizeof(IFuid));
+	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 

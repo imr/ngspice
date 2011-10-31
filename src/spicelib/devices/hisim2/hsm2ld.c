@@ -207,7 +207,7 @@ int HSM2load(
   double vges, vged, delvges, delvged, vgedo;
   double vsbdo, vsbd; 
   double vbs_jct, vbd_jct, delvbs_jct, delvbd_jct;
-  int ByPass, Check, Check1, Check2, error;
+  int ByPass, Check, Check1, Check2;
   int BYPASS_enable ;
 #ifndef NOBYPASS
   double tempv;
@@ -907,13 +907,13 @@ tm0 = gtodsecld() ;
 	*(ckt->CKTstate1 + here->HSM2qbd) = *(ckt->CKTstate0 + here->HSM2qbd);
       }
     }
-    
-    if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM2qb))) return(error);
-    if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM2qg))) return(error);
-    if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM2qd))) return(error);
+
+    return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM2qb));
+    return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM2qg));
+    return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM2qd));
     if ( here->HSM2_corbnet ) {
-      if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM2qbs))) return(error);
-      if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM2qbd))) return(error);
+      return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM2qbs));
+      return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM2qbd));
     }
 
     goto line860;

@@ -53,6 +53,10 @@
 #define HiSIM_FALSE     0
 #define HiSIM_TRUE      1
 
+#ifndef return_if_error
+#define return_if_error(s) { int error = s; if(error) return(error); }
+#endif
+
 extern int HSMHVevaluate
 (
  double ivds,

@@ -35,7 +35,7 @@
 #define RANGECHECK(param, min, max, pname)                              \
   if ( (param) < (min) || (param) > (max) ) {             \
     printf("warning(HiSIMHV): The model/instance parameter %s (= %e) must be in the range [%e , %e].\n", \
-           (pname), (param), (min), (max) );                     \
+           (pname), (param), (double) (min), (double) (max) );   \
   }
 #define MINCHECK(param, min, pname)                              \
   if ( (param) < (min) ) {             \

@@ -306,7 +306,7 @@ int HSMHVload(
   double ydyn_bP[XDIM], ydyn_b[XDIM],  ydyn_db[XDIM], ydyn_sb[XDIM], ydyn_t[XDIM], ydyn_qi[XDIM], ydyn_qb[XDIM] ;
 
   /* limiter, bypass, and convergence */
-  int ByPass=0, Check=0, Check1=0, Check2=0, Check3=0, error=0 ;
+  int ByPass=0, Check=0, Check1=0, Check2=0, Check3=0;
   double von=0.0, limval =0.0 ;
   double i_dP_hat=0.0, i_gP_hat=0.0, i_sP_hat=0.0, i_db_hat=0.0, i_sb_hat =0.0         ;
 
@@ -2257,21 +2257,21 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
               *(ckt->CKTstate1 + here->HSMHVqb_nqs) = *(ckt->CKTstate0 + here->HSMHVqb_nqs);
             }
           }
-     
-          if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqb))) return(error);
-          if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqg))) return(error);
-          if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqd))) return(error);
-          if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqbs))) return(error);
-          if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqbd))) return(error);
 
-          if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqth))) return(error);
+          return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqb));
+          return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqg));
+          return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqd));
+          return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqbs));
+          return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqbd));
 
-          if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqfd))) return(error);
-          if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqfs))) return(error);
+          return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqth));
+
+          return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqfd));
+          return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqfs));
 
           if (flg_nqs) {
-            if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqi_nqs))) return(error);
-            if ((error = NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqb_nqs))) return(error);
+            return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqi_nqs));
+            return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqb_nqs));
           }
 
           if (ckt->CKTmode & MODEINITTRAN) {
