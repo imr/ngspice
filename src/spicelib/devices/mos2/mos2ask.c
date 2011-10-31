@@ -195,7 +195,7 @@ MOS2ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case MOS2_CAPGD:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS2capgd);
 /* add overlap capacitance */
-            value->rValue += (here->MOS2modPtr->MOS2gateSourceOverlapCapFactor)
+            value->rValue += (here->MOS2modPtr->MOS2gateDrainOverlapCapFactor)
                              * here->MOS2m
                              * (here->MOS2w);
             return(OK);

@@ -1,9 +1,15 @@
+2011-10-31  Robert Larice
+ * devices/mos2/mos2ask.c:
+  Fix the source/drain typo for overlap cap's, for mos2 as well
+    see https://sourceforge.net/tracker/?func=detail&atid=423915&aid=3429175&group_id=38962
+    see commit from 2000-09-05
+
 2011-10-30  Holger Vogt
  * DEVICES: update to hisim_hv 1.2.2
 
 2011-10-30  Dietmar Warning
  * devices/mos1/mos1ask.c: Fix the source/drain typo for overlap cap's
- * devices/hisimhv/*.c, *.h, tests/hsimhv: Update to actual hisim_hv model version 1.2.2 
+ * devices/hisimhv/*.c, *.h, tests/hsimhv: Update to actual hisim_hv model version 1.2.2
  * tests/bin/ngspice.pm: remove .st0 files not needed for ngspice
 
 2011-10-16  Robert Larice
