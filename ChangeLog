@@ -1,3 +1,7 @@
+2011-11-03  Robert Larice
+ * src/xspice/icm/GNUmakefile.in :
+  xspice/icm/GNUmakefile.in, add missing `uninstall' target
+
 2011-10-31  Robert Larice
  * src/main.c ,
  * src/frontend/com_fft.c ,

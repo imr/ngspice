@@ -25,6 +25,12 @@ install: all
 	done
 
 
+uninstall:
+	for cm in $(CMDIRS) ; do \
+		rm -f "$(DESTDIR)$(libdir)/spice/$$cm.cm"; \
+	done
+
+
 clean:
 	for cm in $(CMDIRS) ; do \
 		$(MAKE) cm=$$cm cm-clean \
