@@ -5,8 +5,8 @@ Table of contents
 
   1 Ngspice installation
    1.1 Prerequisites
-   1.2 Install from CVS
-   1.3 Basic Install
+   1.2 Install from tarball (e.g. ngspice-23.tar.gz)
+   1.3 Install from CVS
    1.4 Advanced Install
     1.4.1 Most useful options
     1.4.2 Options Specific to Using Ngspice
@@ -35,34 +35,83 @@ This file describes the procedures to install ngspice from sources.
 1.1 Prerequisites
 
      Ngspice is written in C and thus a complete C compilation environment is 
- needed. Almost any UNIX comes with a complete C development environment.
+ needed. Almost any LINUX offers a complete C development environment.
  Ngspice is developed on GNU/Linux with gcc and GNU make.  
 
  The following software must be installed in your system to compile ngspice: 
- bison, flex and X11.
+ bison, flex, and X11 headers and libs.
 
  If you want to compile the CVS source you need additional software:
  autoconf, automake, libtool, texinfo. 
 
  The following software may be needed when enabling additional features:
- editline, tcl/tk
+ editline, tcl/tk, adms
+ 
+ Please have a look at the actual ngspice manual, downloadable at 
+ http://ngspice.sourceforge.net/docs.html, which gives you much more
+ information on ngspice and its usage.
 
-1.2 Install from CVS
+ 
+1.2 Install from tarball (e.g. ngspice-23.tar.gz)
+
+ This covers installation from a release distribution (for example 
+ ngspice-23.tar.gz, the so called tar ball).
+ 
+ After downloading the tar ball to a local directory unpack it using:
+
+ $ tar -zxvf ngspice-23.tar.gz
+    
+ Now change directories in to the top-level source directory (where this
+ INSTALL file can be found).
+
+ You should be able to do:
+ 
+ $ mkdir release
+ $ cd release
+ $ ../configure  --with-x --with-readline=yes --disable-debug
+ $ make
+ $ sudo make install
+  
+ The default install directory for executables is /usr/local/bin.
+ 
+ A simple ../configure might be sufficient for a basic ngspice, but the preferred 
+ arguments to ../configure are 
+  --with-x --with-readline=yes and --disable-debug
+ providing you with a comfortably working ngspice (see section 1.4 for details).
+
+ See the section titled 'Advanced Install' for instructions about additional arguments 
+ that can be passed to ../configure to customise the build and installation. 
+ 
+ Do not use the script ./autogen.sh, because it is not required for 
+ compiling and installing ngspice from the tarball.
+ 
+ A fully featured ngspice on LINUX may be obtained with the following commands:
+ $ mkdir release
+ $ cd release
+ $ ../configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-openmp 
+ $ make 2>&1 | tee make.log
+ $ sudo make install
+ 
+ To remove the executables and libraries from the install directory, you may call
+ $ sudo make uninstall
+
+ 
+1.3 Install from CVS
 
      This section describes how to install from source code taken directly
- from CVS.  It is intended more for developers than for users as the code 
- in CVS may be unstable. For user install instructions using source from 
- released distributions, please see the sections titled 'Basic Install' 
+ from CVS.  It is intended for those who want to use the most recent enahancements
+ of ngspice and for developers. For user install instructions using source from a
+ released distributions, please see the sections titled 'Install from tarball' 
  and 'Advanced Install'.
 
- Download source from CVS as described on the sourceforge project page
+ Download ngspice sources from CVS as described on the sourceforge project page
  (see http://sourceforge.net/projects/ngspice/ and click on the CVS link)
 
  Now change directories in to the top-level source directory (where this
  INSTALL file can be found).
 
  The project uses the GNU build process. The compile output should go into a separate 
- directory, so to e.g. maitain and distinguish debug and release versions.
+ directory, so to e.g. maintain separate debug and release versions.
 
  $ ./autogen.sh
  $ mkdir debug
@@ -92,40 +141,7 @@ This file describes the procedures to install ngspice from sources.
  messages.  Ideally you would have tried to fix the problem yourself first.
  If you have fixed the problem then the development team will love to hear 
  from you.
-
-1.3 Basic Install
-
- This covers installation from a tarball (for example ngspice-23.tar.gz).
- After downloading the tar ball to a local directory unpack it using:
-
- $ tar -zxvf ngspice-23.tar.gz
-    
- Now change directories in to the top-level source directory (where this
- INSTALL file can be found).
-
- You should be able to do:
  
- $ mkdir debug
- $ cd debug
- $ ../configure
- $ make
- $ sudo make install
-  
- The default install dir is /usr/local/bin
-
- See the section titled 'Advanced Install' for instructions about arguments 
- that can be passed to ./configure to customise the build and installation.
- 
- Preferred arguments to ./configure to obtain a comfortably working ngspice may be
- --with-readline=yes and --disable-debug. 
- 
- A fully featured ngspice on LINUX may be obtained with the following commands:
- $ mkdir release
- $ cd release
- $ ../configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-openmp 
- $ make 2>&1 | tee make.log
- $ sudo make install
-
 
 1.4 Advanced Install
 
@@ -444,7 +460,8 @@ Most of the options now following are not well maintained, are not tested or eve
  the ngspice website), is as follows:
 
  $ cd ngspice-23
-
+ $ mkdir release
+ $ cd release
  $ ../configure --with-windows ...and other options
  $ make
  $ make install
@@ -462,8 +479,32 @@ Most of the options now following are not well maintained, are not tested or eve
  $ make install
  
  However, to compile code extracted from the CVS repository the procedure is
- a little different, thus:
+ a little different. To obtain ngspice, you may do the following:
+  
+ Go to a directory of your choice, e.g. D:\Spice
+ $ cd /d/Spice
 
+ Issue the command for downloading ngspice:
+ $ cvs -z3 -d:pserver:anonymous@ngspice.cvs.sourceforge.net:/cvsroot/ngspice co
+ -P ngspice/ng-spice-rework
+ 
+ This will create directory /ngspice with subdirectory /ngspice/ng-spice-rework.
+
+ Go to directory ng-spice-rework
+ $ cd /d/Spice/ngspice/ng-spice-rework
+ Start compiling, e.g. by calling
+ $ ./autogen.sh --adms
+ $ ./compile_min.sh
+
+ Update the ngspice files:
+ Go to directory ng-spice-rework
+ $ cd /d/Spice/ngspice/ng-spice-rework
+ Issue command for update
+ $ cvs -z3 -q -d:pserver:anonymous@ngspice.cvs.sourceforge.net:/cvsroot/ngspice
+ -lf update -d -P
+
+ Instead of calling  ./compile_min.sh, you may choose to issue 
+ individual commands like:
  $ cd ng-spice-rework
  $ ./autogen.sh
  $ mkdir release
@@ -486,11 +527,17 @@ Most of the options now following are not well maintained, are not tested or eve
 
  The last three are from 
  http://sourceforge.net/project/showfiles.php?group_id=23617.
+ 
+ Installing from CVS needs more packages to MSYS in advance: 
+ cvs, automake, autoconf, libtool
 
  You may also look at 
  http://www.mingw.org/wiki/HOWTO_Install_the_MinGW_GCC_Compiler_Suite
  http://www.mingw.org/wiki/MSYS
  http://www.mingw.org/wiki/HOWTO_Create_an_MSYS_Build_Environment.
+ 
+ An alternative compiler setup is available at 
+ http://tdm-gcc.tdragon.net/
 
 
 9.2 make ngspice with MS Visual Studio 2008
