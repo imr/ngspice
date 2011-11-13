@@ -7,28 +7,11 @@ Author: 1985 Wayne A. Christopher
  * For dealing with spice input decks and command scripts
  */
 
-/* h_vogt 20 April 2008
- * For xspice and num_pram compatibility .cmodel added
- * .cmodel will be replaced by .model in inp_fix_param_values()
- * and then the entire line is skipped (will not be changed by this function).
- * Usage of numparam requires {} around the parameters in the .cmodel line.
+/* 
+   Central function inp_readall
  */
 
-/*
- * SJB 21 April 2005
- * Added support for end-of-line comments that begin with any of the following:
- *   ';'
- *   '$ '
- *   '//' (like in c++ and as per the numparam code)
- *   '--' (as per the numparam code)
- * Any following text to the end of the line is ignored.
- * Note requirement for $ to be followed by a space. This is to avoid conflict
- * with use in front of a variable.
- * Comments on a contunuation line (i.e. line begining with '+') are allowed
- * and are removed before lines are stitched.
- * Lines that contain only an end-of-line comment with or withou leading white
- * space are also allowed.
- */
+
 
 #include <ngspice/ngspice.h>
 
@@ -103,53 +86,645 @@ static char* inp_remove_ws( char *s );
 static void inp_compat(struct line *deck);
 static void inp_bsource_compat(struct line *deck);
 
+static bool chk_for_line_continuation( char *line );
+static void comment_out_unused_subckt_models( struct line *start_card , int no_of_lines);
+static void inp_fix_macro_param_func_paren_io( struct line *begin_card );
+static void inp_fix_ternary_operator( struct line *start_card );
+static void inp_fix_gnd_name( struct line *deck );
+static void inp_chk_for_multi_in_vcvs( struct line *deck, int *line_number );
+static void inp_add_control_section( struct line *deck, int *line_number );
 
-/*-------------------------------------------------------------------------*
- *  This routine reads a line (of arbitrary length), up to a '\n' or 'EOF' *
- *  and returns a pointer to the resulting null terminated string.         *
- *  The '\n' if found, is included in the returned string.                 *
- *  From: jason@ucbopal.BERKELEY.EDU (Jason Venner)                        *
- *  Newsgroups: net.sources                                                *
+/*-------------------------------------------------------------------------
+ * Read the entire input file and return  a pointer to the first line of
+ * the linked list of 'card' records in data.  The pointer is stored in
+ * *data.
  *-------------------------------------------------------------------------*/
-#define STRGROW 256
-
-static char *
-readline(FILE *fd)
+void
+inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool comfile)
+/* fp: in, pointer to file to be read,
+   data: out, linked list of cards
+   call_depth: in, nested call to fcn
+   dir_name: in, name of directory of file to be read
+   comfile: in, TRUE if command file (e.g. spinit, .spiceinit
+*/
 {
-    int c;
-    int memlen;
-    char *strptr;
-    int strlen;
+    struct line *end = NULL, *cc = NULL, *prev = NULL, *working, *newcard, *start_lib, *global_card, *tmp_ptr = NULL, *tmp_ptr2 = NULL;
+    char *buffer = NULL, *s, *t, *y, *z, c;
+    /* segfault fix */
+#ifdef XSPICE
+    char big_buff[5000];
+    int line_count = 0;
+    Ipc_Status_t    ipc_status;
+    char            ipc_buffer[1025];  /* Had better be big enough */
+    int             ipc_len;
+#endif
+    char *copys=NULL, big_buff2[5000];
+    char *new_title = NULL;
+    char keep_char;
+    int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
+    int line_number_orig = 1, line_number_lib = 1, line_number_inc = 1;
+    unsigned int no_braces = 0; /* number of '{' */
 
-    strptr = NULL;
-    strlen = 0;
-    memlen = STRGROW;
-    strptr = TMALLOC(char, memlen);
-    memlen -= 1;          /* Save constant -1's in while loop */
-    while((c = getc(fd)) != EOF) {
-        if (strlen == 0 && (c == '\t' || c == ' ')) /* Leading spaces away */
-            continue;
-        strptr[strlen] = (char) c;
-        strlen++;
-        if( strlen >= memlen ) {
-            memlen += STRGROW;
-            if((strptr = TREALLOC(char, strptr, memlen + 1)) == NULL) {
-                return (NULL);
+    size_t max_line_length; /* max. line length in input deck */
+
+    FILE *newfp;
+    FILE *fdo;
+    struct line *tmp_ptr1 = NULL;
+
+    int i, j;
+    bool found_library, found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
+    bool dir_name_flag = FALSE;
+
+    char *s_ptr, *s_lower;
+
+    /*   Must set this to NULL or non-tilde includes segfault. -- Tim Molteno   */
+    /* copys = NULL; */   /*  This caused a parse error with gcc 2.96.  Why???  */
+
+    if ( call_depth == 0 ) {
+        num_subckt_w_params = 0;
+        num_libraries       = 0;
+        num_functions       = 0;
+        global              = NULL;
+        found_end           = FALSE;
+    }
+
+    /*   gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled   */
+#ifdef XSPICE
+
+    /* First read in all lines & put them in the struct cc */
+    for (;;) {
+        /* If IPC is not enabled, do equivalent of what SPICE did before */
+        if(! g_ipc.enabled) {
+            if ( call_depth == 0 && line_count == 0 ) {
+                line_count++;
+                if ( fgets( big_buff, 5000, fp ) ) {
+                    /*               buffer = TMALLOC(char, strlen(big_buff) + 1);
+                                   strcpy(buffer, big_buff); */
+                    buffer = copy(big_buff);
+                }
+            } else {
+                buffer = readline(fp);
+                if(! buffer) {
+                    break;
+                }
+            }
+        } else {
+            /* else, get the line from the ipc channel. */
+            /* We assume that newlines are not sent by the client */
+            /* so we add them here */
+            ipc_status = ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
+            if(ipc_status == IPC_STATUS_END_OF_DECK) {
+                buffer = NULL;
+                break;
+            } else if(ipc_status == IPC_STATUS_OK) {
+                buffer = TMALLOC(char, strlen(ipc_buffer) + 3);
+                strcpy(buffer, ipc_buffer);
+                strcat(buffer, "\n");
+            } else { /* No good way to report this so just die */
+                controlled_exit(EXIT_FAILURE);
             }
         }
-        if (c == '\n') {
+
+        /* gtri - end - 12/12/90 */
+#else
+    while ((buffer = readline(fp)) != NULL) {
+#endif
+
+#ifdef TRACE
+        /* SDB debug statement */
+        printf ("in inp_readall, just read   %s", buffer);
+#endif
+
+        if ( !buffer ) {
+            continue;
+        }
+        /* OK -- now we have loaded the next line into 'buffer'.  Process it. */
+        /* If input line is blank, ignore it & continue looping.  */
+        if ( (strcmp(buffer,"\n") == 0) || (strcmp(buffer,"\r\n") == 0) ) {
+            if ( call_depth != 0 || (call_depth == 0 && cc != NULL) ) {
+                line_number_orig++;
+                tfree(buffer);      /* was allocated by readline() */
+                continue;
+            }
+        }
+
+        if (*buffer == '@') {
+            tfree(buffer);		/* was allocated by readline() */
+            break;
+        }
+
+        /* now handle .title statement */
+        if (ciprefix(".title", buffer)) {
+            for ( s = buffer; *s && !isspace(*s); s++ ) /* skip over .title */
+                ;
+            while ( isspace(*s) ) s++;             /* advance past space chars */
+
+            /* only the last title line remains valid */
+            if (new_title != NULL) tfree(new_title);
+            new_title = copy(s);
+            if ((s = strstr(new_title, "\n")) != NULL)
+                *s = ' ';
+            *buffer = '*';             /* change .TITLE line to comment line */
+        }
+
+        /* now handle .lib statements */
+        if (ciprefix(".lib", buffer)) {
+            for ( s = buffer; *s && !isspace(*s); s++ )            /* skip over .lib           */
+                ;
+            while ( isspace(*s) || isquote(*s) ) s++;              /* advance past space chars              */
+            if    ( !*s ) {                                        /* if at end of line, error              */
+                fprintf(cp_err, "Error: .lib filename missing\n");
+                tfree(buffer);		                           /* was allocated by readline()           */
+                continue;
+            }                                                      /* Now s points to first char after .lib */
+            for ( t = s; *t && !isspace(*t) && !isquote(*t); t++ )         /* skip to end of word      */
+                ;
+            y = t;
+            while ( isspace(*y) || isquote(*y) ) y++;              /* advance past space chars */
+            // check if rest of line commented out
+            if    ( *y && *y != '$' ) {                            /* .lib <file name> <lib name> */
+                for ( z = y; *z && !isspace(*z) && !isquote(*z); z++ )
+                    ;
+                c  = *t;
+                *t = '\0';
+                *z = '\0';
+
+                if ( *s == '~' ) {
+                    copys = cp_tildexpand(s); /* allocates memory, but can also return NULL */
+                    if( copys != NULL ) {
+                        s = copys;		  /* reuse s, but remember, buffer still points to allocated memory */
+                    }
+                }
+                /* lower case the file name for later string compares */
+                /*           s_ptr = strdup(s); */
+                s_lower = strdup(s);
+                for(s_ptr = s_lower; *s_ptr && (*s_ptr != '\n'); s_ptr++)
+                    *s_ptr = (char) tolower(*s_ptr);
+
+                found_library = FALSE;
+                for ( i = 0; i < num_libraries; i++ ) {
+                    if ( strcmp( library_file[i], s_lower ) == 0 ) {
+                        found_library = TRUE;
+                        break;
+                    }
+                }
+                if ( found_library ) {
+                    if(copys) tfree(copys);   /* allocated by the cp_tildexpand() above */
+                } else {
+                    if ( dir_name != NULL ) sprintf( big_buff2, "%s/%s", dir_name, s );
+                    else                    sprintf( big_buff2, "./%s", s );
+                    dir_name_flag = FALSE;
+                    if ((newfp = inp_pathopen( s, "r" )) == NULL) {
+                        dir_name_flag = TRUE;
+                        if ((newfp = inp_pathopen( big_buff2, "r" )) == NULL ) {
+                            perror(s);
+                            if(copys) tfree(copys);   /* allocated by the cp_tildexpand() above */
+                            tfree(buffer);	    /* allocated by readline() above */
+                            continue;
+                        }
+                    }
+                    if(copys) tfree(copys);     /* allocated by the cp_tildexpand() above */
+
+                    library_file[num_libraries++] = strdup(s_lower);
+
+                    if ( dir_name_flag == FALSE ) {
+                        char *s_dup = strdup(s);
+                        inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, ngdirname(s_dup), FALSE);
+                        tfree(s_dup);
+                    } else
+                        inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, dir_name, FALSE);
+
+                    fclose(newfp);
+                }
+                *t = c;
+                tfree(s_lower);
+
+                /* Make the .lib a comment */
+                *buffer = '*';
+            }
+        }   /*  end of .lib handling  */
+
+        /* now handle .include statements */
+        if (ciprefix(".include", buffer) || ciprefix(".inc", buffer)) {
+            for (s = buffer; *s && !isspace(*s); s++) /* advance past non-space chars */
+                ;
+            while (isspace(*s) || isquote(*s))        /* now advance past space chars */
+                s++;
+            if (!*s) {                                /* if at end of line, error */
+                fprintf(cp_err,  "Error: .include filename missing\n");
+                tfree(buffer);		/* was allocated by readline() */
+                controlled_exit(EXIT_FAILURE);
+            }
+            /* Now s points to first char after .include */
+            inp_stripcomments_line(s);
+            /* stop at trailing \n\r or quote */
+            for (t = s; *t && !(*t=='\n') && !(*t=='\r') && !isquote(*t); t++)
+                ;
+
+            *t = '\0';                         /* place \0 and end of file name in buffer */
+
+            if (*s == '~') {
+                copys = cp_tildexpand(s); /* allocates memory, but can also return NULL */
+                if(copys != NULL) {
+                    s = copys;		/* reuse s, but remember, buffer still points to allocated memory */
+                }
+            }
+
+            /* open file specified by  .include statement */
+            if ( dir_name != NULL ) sprintf( big_buff2, "%s/%s", dir_name, s );
+            else                    sprintf( big_buff2, "./%s", s );
+            dir_name_flag = FALSE;
+            if ((newfp = inp_pathopen(s, "r")) == NULL) {
+                dir_name_flag = TRUE;
+                if ((newfp = inp_pathopen( big_buff2, "r" )) == NULL ) {
+                    perror(s);
+                    if(copys) {
+                        tfree(copys);	/* allocated by the cp_tildexpand() above */
+                    }
+                    fprintf(cp_err,  "Error: .include statement failed.\n");
+                    tfree(buffer);		/* allocated by readline() above */
+                    controlled_exit(EXIT_FAILURE);
+                }
+            }
+
+            if(copys) {
+                tfree(copys);		/* allocated by the cp_tildexpand() above */
+            }
+
+            if ( dir_name_flag == FALSE ) {
+                char *s_dup = strdup(s);
+                inp_readall(newfp, &newcard, call_depth+1, ngdirname(s_dup), FALSE);  /* read stuff in include file into netlist */
+                tfree(s_dup);
+            } else
+                inp_readall(newfp, &newcard, call_depth+1, dir_name, FALSE);  /* read stuff in include file into netlist */
+
+            (void) fclose(newfp);
+
+            /* Make the .include a comment */
+            *buffer = '*';
+
+            /* now check if this is the first pass (i.e. end points to null) */
+            if (end) {                            /* end already exists */
+                end->li_next = alloc(struct line);  /* create next card */
+                end = end->li_next;                 /* make end point to next card */
+            } else {
+                end = cc = alloc(struct line);   /* create the deck & end.  cc will
+						point to beginning of deck, end to
+						the end */
+            }
+
+            /* now fill out rest of struct end. */
+            end->li_next = NULL;
+            end->li_error = NULL;
+            end->li_actual = NULL;
+            end->li_line = copy(buffer);
+            end->li_linenum = end->li_linenum_orig = line_number++;
+            if (newcard) {
+                end->li_next = newcard;
+                /* Renumber the lines */
+                line_number_inc = 1;
+                for (end = newcard; end && end->li_next; end = end->li_next) {
+                    end->li_linenum = line_number++;
+                    end->li_linenum_orig = line_number_inc++;
+                }
+                end->li_linenum = line_number++;	/* SJB - renumber the last line */
+                end->li_linenum_orig = line_number_inc++;	/* SJB - renumber the last line */
+            }
+
+            /* Fix the buffer up a bit. */
+            (void) strncpy(buffer + 1, "end of:", 7);
+        }   /*  end of .include handling  */
+
+        /* loop through 'buffer' until end is reached.  Then test for
+         premature end.  If premature end is reached, spew
+         error and zap the line. */
+        if ( !ciprefix( "write", buffer ) ) {    // exclude 'write' command so filename case preserved
+            for (s = buffer; *s && (*s != '\n'); s++)
+                *s = (char) tolower(*s);
+            if (!*s) {
+                //fprintf(cp_err, "Warning: premature EOF\n");
+            }
+            *s = '\0';      /* Zap the newline. */
+
+            if((s-1) >= buffer && *(s-1) == '\r') /* Zop the carriage return under windows */
+                *(s-1) = '\0';
+        }
+
+        /*      find the true .end command out of .endc, .ends, .endl, .end (comments may follow) */
+        if (ciprefix(".end", buffer)) {
+            if ((*(buffer+4) == '\0') || ( isspace(*(buffer+4))))  {
+                found_end = TRUE;
+                *buffer   = '*';
+            }
+        }
+
+        if ( shell_eol_continuation ) {
+            char *new_buffer = TMALLOC(char, strlen(buffer) + 2);
+            sprintf( new_buffer, "+%s", buffer );
+
+            tfree(buffer);
+            buffer = new_buffer;
+        }
+
+        shell_eol_continuation = chk_for_line_continuation( buffer );
+
+        /* now check if this is the first pass (i.e. end points to null) */
+        if (end) {                              /* end already exists */
+            end->li_next = alloc(struct line);    /* create next card */
+            end = end->li_next;                   /* point to next card */
+        } else {                              /* End doesn't exist.  Create it. */
+            end = cc = alloc(struct line);   /* note that cc points to beginning
+					      of deck, end to the end */
+        }
+
+        /* now put buffer into li */
+        end->li_next = NULL;
+        end->li_error = NULL;
+        end->li_actual = NULL;
+        end->li_line = copy(buffer);
+        end->li_linenum = line_number++;
+        end->li_linenum_orig = line_number_orig++;
+        tfree(buffer);
+    }  /* end while ((buffer = readline(fp)) != NULL) */
+
+    if (!end) { /* No stuff here */
+        *data = NULL;
+        return;
+    }
+
+    if ( call_depth == 0 && found_end == TRUE) {
+        if ( global == NULL ) {
+            global = TMALLOC(char, strlen(".global gnd") + 1);
+            sprintf( global, ".global gnd" );
+        }
+        global_card = alloc(struct line);
+        global_card->li_error   = NULL;
+        global_card->li_actual  = NULL;
+        global_card->li_line    = global;
+        global_card->li_linenum = 1;
+
+        prev                 = cc->li_next;
+        cc->li_next          = global_card;
+        global_card->li_next = prev;
+
+        inp_init_lib_data();
+        inp_determine_libraries(cc, NULL);
+    }
+
+    /*
+       add libraries
+    */
+    found_lib_name = FALSE;
+    if ( call_depth == 0 ) {
+        for( i = 0; i < num_libraries; i++ ) {
+            working = libraries[i];
+            while ( working ) {
+                buffer = working->li_line;
+
+                if ( found_lib_name && ciprefix(".endl", buffer) ) {
+                    /* Make the .endl a comment */
+                    *buffer = '*';
+                    found_lib_name = FALSE;
+
+                    /* set pointer and continue to avoid deleting below */
+                    tmp_ptr2         = working->li_next;
+                    working->li_next = tmp_ptr;
+                    working          = tmp_ptr2;
+
+                    /* end          = working;
+                    * working      = working->li_next;
+                    * end->li_next = NULL; */
+
+                    continue;
+                }   /* for ... */
+
+                if ( ciprefix(".lib", buffer) ) {
+                    if ( found_lib_name == TRUE ) {
+                        fprintf( stderr, "ERROR: .lib is missing .endl!\n" );
+                        controlled_exit(EXIT_FAILURE);
+                    }
+
+                    for   ( s = buffer; *s && !isspace(*s); s++ )             /* skip over .lib                        */
+                        ;
+                    while ( isspace(*s) || isquote(*s) ) s++;                 /* advance past space chars              */
+                    for ( t = s; *t && !isspace(*t) && !isquote(*t); t++ )    /* skip to end of word                   */
+                        ;
+                    keep_char = *t;
+                    *t = '\0';
+                    /* see if library we want to copy */
+                    found_lib_name = FALSE;
+                    for( j = 0; j < num_lib_names[i]; j++ ) {
+                        if ( strcmp( library_name[i][j], s ) == 0 ) {
+                            found_lib_name = TRUE;
+                            start_lib      = working;
+
+                            /* make the .lib a comment */
+                            *buffer = '*';
+
+                            tmp_ptr = library_ll_ptr[i][j]->li_next;
+                            library_ll_ptr[i][j]->li_next = working;
+
+                            /* renumber lines */
+                            line_number_lib = 1;
+                            for ( start_lib = working; !ciprefix(".endl", start_lib->li_line); start_lib = start_lib->li_next ) {
+                                start_lib->li_linenum = line_number++;
+                                start_lib->li_linenum_orig = line_number_lib++;
+                            }
+                            start_lib->li_linenum = line_number++;  // renumber endl line
+                            start_lib->li_linenum_orig = line_number_lib++;
+                            break;
+                        }
+                    }
+                    *t = keep_char;
+                }
+                prev = working;
+                working = working->li_next;
+
+                if ( found_lib_name == FALSE ) {
+                    tfree(prev->li_line);
+                    tfree(prev);
+                }
+            } /* end while */
+        } /* end for */
+
+        if ( found_end == TRUE ) {
+            end->li_next = alloc(struct line);    /* create next card */
+            end = end->li_next;                   /* point to next card */
+
+            buffer = TMALLOC(char, strlen( ".end" ) + 1);
+            sprintf( buffer, ".end" );
+
+            /* now put buffer into li */
+            end->li_next = NULL;
+            end->li_error = NULL;
+            end->li_actual = NULL;
+            end->li_line = buffer;
+            end->li_linenum = end->li_linenum_orig = line_number++;
+            end->li_linenum_orig = line_number_orig++;
+        }
+    }
+
+    /* Replace first line with the new title, if available */
+    if (new_title != NULL) {
+        if (cc->li_line) tfree(cc->li_line);
+        cc->li_line = new_title;
+    }
+
+    /* Now clean up li: remove comments & stitch together continuation lines. */
+    working = cc->li_next;      /* cc points to head of deck.  Start with the
+				   next card. */
+
+    /* sjb - strip or convert end-of-line comments.
+        This must be cone before stitching continuation lines.
+        If the line only contains an end-of-line comment then it is converted
+        into a normal comment with a '*' at the start.  This will then get
+        stripped in the following code. */
+    inp_stripcomments_deck(working);
+
+    while (working) {
+        for (s = working->li_line; (c = *s) != '\0' && c <= ' '; s++)
+            ;
+
+#ifdef TRACE
+        /* SDB debug statement */
+        printf("In inp_readall, processing linked list element line = %d, s = %s . . . \n", working->li_linenum,s);
+#endif
+
+        switch (c) {
+        case '#':
+        case '$':
+        case '*':
+        case '\0':
+            /* this used to be commented out.  Why? */
+            /*  prev = NULL; */
+            working = working->li_next;  /* for these chars, go to next card */
+            break;
+
+        case '+':   /* handle continuation */
+            if (!prev) {
+                working->li_error = copy(
+                                        "Illegal continuation line: ignored.");
+                working = working->li_next;
+                break;
+            }
+
+            /* create buffer and write last and current line into it. */
+            buffer = TMALLOC(char, strlen(prev->li_line) + strlen(s) + 2);
+            (void) sprintf(buffer, "%s %s", prev->li_line, s + 1);
+
+            s = prev->li_line;
+            prev->li_line = buffer;
+            prev->li_next = working->li_next;
+            working->li_next = NULL;
+            if (prev->li_actual) {
+                for (end = prev->li_actual; end->li_next; end = end->li_next)
+                    ;
+                end->li_next = working;
+                tfree(s);
+            } else {
+                newcard = alloc(struct line);
+                newcard->li_linenum = prev->li_linenum;
+                newcard->li_line = s;
+                newcard->li_next = working;
+                newcard->li_error = NULL;
+                newcard->li_actual = NULL;
+                prev->li_actual = newcard;
+            }
+            working = prev->li_next;
+            break;
+
+        default:  /* regular one-line card */
+            prev = working;
+            working = working->li_next;
             break;
         }
     }
-    if (!strlen) {
-        tfree(strptr);
-        return (NULL);
+
+    /* The following processing of an input file is not required for command files
+       like spinit or .spiceinit, so return command files here. */
+    if (comfile) {
+        /* save the return value (via **data) */
+        *data = cc;
+        return;
     }
-//   strptr[strlen] = '\0';
-    /* Trim the string */
-    strptr = TREALLOC(char, strptr, strlen + 1);
-    strptr[strlen] = '\0';
-    return (strptr);
+
+    working = cc->li_next;
+
+    inp_fix_for_numparam(working);
+    inp_remove_excess_ws(working);
+
+    if ( call_depth == 0 ) {
+        comment_out_unused_subckt_models(working, line_number);
+
+        line_number = inp_split_multi_param_lines(working, line_number);
+
+        inp_fix_macro_param_func_paren_io(working);
+        inp_fix_ternary_operator(working);
+        inp_grab_func(working);
+
+        inp_expand_macros_in_func();
+        inp_expand_macros_in_deck(working);
+        inp_fix_param_values(working);
+
+        /* get end card as last card in list; end card pntr does not appear to always
+           be correct at this point */
+        for(newcard = working; newcard != NULL; newcard = newcard->li_next)
+            end = newcard;
+
+        inp_reorder_params(working, cc, end);
+        inp_fix_inst_calls_for_numparam(working);
+        inp_fix_gnd_name(working);
+        inp_chk_for_multi_in_vcvs(working, &line_number);
+
+
+        if (cp_getvar("addcontrol", CP_BOOL, NULL))
+            inp_add_control_section(working, &line_number);
+        inp_compat_mode = ngspice_compat_mode() ;
+        if (inp_compat_mode == COMPATMODE_ALL) {
+            /* Do all the compatibility stuff here */
+            working = cc->li_next;
+            /* E, G, L, R, C compatibility transformations */
+            inp_compat(working);
+            working = cc->li_next;
+            /* B source numparam compatibility transformation */
+            inp_bsource_compat(working);
+        }
+    }
+
+    /* save the return value (via **data) */
+    *data = cc;
+
+    /* get max. line length and number of lines in input deck,
+       and renumber the lines,
+       count the number of '{' per line as an upper estimate of the number
+       of parameter substitutions in a line*/
+    dynmaxline = 0;
+    max_line_length = 0;
+    for(tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next) {
+        char *s;
+        unsigned int braces_per_line = 0;
+        /* count number of lines */
+        dynmaxline++;
+        /* renumber the lines of the processed input deck */
+        tmp_ptr1->li_linenum = dynmaxline;
+        if (max_line_length < strlen(tmp_ptr1->li_line))
+            max_line_length = strlen(tmp_ptr1->li_line);
+        /* count '{' */
+        for (s = tmp_ptr1->li_line; *s; s++)
+            if (*s == '{') braces_per_line++;
+        if (no_braces <  braces_per_line) no_braces = braces_per_line;
+    }
+
+    if (ft_ngdebug) {
+        /*debug: print into file*/
+        fdo = fopen("debug-out.txt", "w");
+        for(tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
+            fprintf(fdo, "%d  %d  %s\n", tmp_ptr1->li_linenum_orig, tmp_ptr1->li_linenum, tmp_ptr1->li_line);
+
+        (void) fclose(fdo);
+        fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
+                (int) max_line_length, no_braces, dynmaxline);
+    }
 }
 
 
@@ -226,6 +801,55 @@ inp_pathopen(char *name, char *mode)
     }
     return (NULL);
 }
+
+/*-------------------------------------------------------------------------*
+ *  This routine reads a line (of arbitrary length), up to a '\n' or 'EOF' *
+ *  and returns a pointer to the resulting null terminated string.         *
+ *  The '\n' if found, is included in the returned string.                 *
+ *  From: jason@ucbopal.BERKELEY.EDU (Jason Venner)                        *
+ *  Newsgroups: net.sources                                                *
+ *-------------------------------------------------------------------------*/
+#define STRGROW 256
+
+static char *
+readline(FILE *fd)
+{
+    int c;
+    int memlen;
+    char *strptr;
+    int strlen;
+
+    strptr = NULL;
+    strlen = 0;
+    memlen = STRGROW;
+    strptr = TMALLOC(char, memlen);
+    memlen -= 1;          /* Save constant -1's in while loop */
+    while((c = getc(fd)) != EOF) {
+        if (strlen == 0 && (c == '\t' || c == ' ')) /* Leading spaces away */
+            continue;
+        strptr[strlen] = (char) c;
+        strlen++;
+        if( strlen >= memlen ) {
+            memlen += STRGROW;
+            if((strptr = TREALLOC(char, strptr, memlen + 1)) == NULL) {
+                return (NULL);
+            }
+        }
+        if (c == '\n') {
+            break;
+        }
+    }
+    if (!strlen) {
+        tfree(strptr);
+        return (NULL);
+    }
+//   strptr[strlen] = '\0';
+    /* Trim the string */
+    strptr = TREALLOC(char, strptr, strlen + 1);
+    strptr[strlen] = '\0';
+    return (strptr);
+}
+
 
 /* replace "gnd" by " 0 "
    Delimiters of gnd may be ' ' or ',' or '(' or ')' */
@@ -1100,639 +1724,6 @@ inp_fix_ternary_operator( struct line *start_card )
     }
 }
 
-/*-------------------------------------------------------------------------
- * Read the entire input file and return  a pointer to the first line of
- * the linked list of 'card' records in data.  The pointer is stored in
- * *data.
- *-------------------------------------------------------------------------*/
-void
-inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool comfile)
-/* fp: in, pointer to file to be read,
-   data: out, linked list of cards
-   call_depth: in, nested call to fcn
-   dir_name: in, name of directory of file to be read
-   comfile: in, TRUE if coammnd file (e.g. spinit, .spiceinit
-*/
-{
-    struct line *end = NULL, *cc = NULL, *prev = NULL, *working, *newcard, *start_lib, *global_card, *tmp_ptr = NULL, *tmp_ptr2 = NULL;
-    char *buffer = NULL, *s, *t, *y, *z, c;
-    /* segfault fix */
-#ifdef XSPICE
-    char big_buff[5000];
-    int line_count = 0;
-    Ipc_Status_t    ipc_status;
-    char            ipc_buffer[1025];  /* Had better be big enough */
-    int             ipc_len;
-#endif
-    char *copys=NULL, big_buff2[5000];
-    char *new_title = NULL;
-    char keep_char;
-    int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
-    int line_number_orig = 1, line_number_lib = 1, line_number_inc = 1;
-    unsigned int no_braces = 0; /* number of '{' */
-
-    size_t max_line_length; /* max. line length in input deck */
-
-    FILE *newfp;
-    FILE *fdo;
-    struct line *tmp_ptr1 = NULL;
-
-    int i, j;
-    bool found_library, found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
-    bool dir_name_flag = FALSE;
-
-    char *s_ptr, *s_lower;
-
-    /*   Must set this to NULL or non-tilde includes segfault. -- Tim Molteno   */
-    /* copys = NULL; */   /*  This caused a parse error with gcc 2.96.  Why???  */
-
-    if ( call_depth == 0 ) {
-        num_subckt_w_params = 0;
-        num_libraries       = 0;
-        num_functions       = 0;
-        global              = NULL;
-        found_end           = FALSE;
-    }
-
-    /*   gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled   */
-#ifdef XSPICE
-
-    /* First read in all lines & put them in the struct cc */
-    for (;;) {
-        /* If IPC is not enabled, do equivalent of what SPICE did before */
-        if(! g_ipc.enabled) {
-            if ( call_depth == 0 && line_count == 0 ) {
-                line_count++;
-                if ( fgets( big_buff, 5000, fp ) ) {
-                    /*               buffer = TMALLOC(char, strlen(big_buff) + 1);
-                                   strcpy(buffer, big_buff); */
-                    buffer = copy(big_buff);
-                }
-            } else {
-                buffer = readline(fp);
-                if(! buffer) {
-                    break;
-                }
-            }
-        } else {
-            /* else, get the line from the ipc channel. */
-            /* We assume that newlines are not sent by the client */
-            /* so we add them here */
-            ipc_status = ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
-            if(ipc_status == IPC_STATUS_END_OF_DECK) {
-                buffer = NULL;
-                break;
-            } else if(ipc_status == IPC_STATUS_OK) {
-                buffer = TMALLOC(char, strlen(ipc_buffer) + 3);
-                strcpy(buffer, ipc_buffer);
-                strcat(buffer, "\n");
-            } else { /* No good way to report this so just die */
-                controlled_exit(EXIT_FAILURE);
-            }
-        }
-
-        /* gtri - end - 12/12/90 */
-#else
-    while ((buffer = readline(fp)) != NULL) {
-#endif
-
-#ifdef TRACE
-        /* SDB debug statement */
-        printf ("in inp_readall, just read   %s", buffer);
-#endif
-
-        if ( !buffer ) {
-            continue;
-        }
-        /* OK -- now we have loaded the next line into 'buffer'.  Process it. */
-        /* If input line is blank, ignore it & continue looping.  */
-        if ( (strcmp(buffer,"\n") == 0) || (strcmp(buffer,"\r\n") == 0) ) {
-            if ( call_depth != 0 || (call_depth == 0 && cc != NULL) ) {
-                line_number_orig++;
-                tfree(buffer);      /* was allocated by readline() */
-                continue;
-            }
-        }
-
-        if (*buffer == '@') {
-            tfree(buffer);		/* was allocated by readline() */
-            break;
-        }
-
-        /* now handle .title statement */
-        if (ciprefix(".title", buffer)) {
-            for ( s = buffer; *s && !isspace(*s); s++ ) /* skip over .title */
-                ;
-            while ( isspace(*s) ) s++;             /* advance past space chars */
-
-            /* only the last title line remains valid */
-            if (new_title != NULL) tfree(new_title);
-            new_title = copy(s);
-            if ((s = strstr(new_title, "\n")) != NULL)
-                *s = ' ';
-            *buffer = '*';             /* change .TITLE line to comment line */
-        }
-
-        /* now handle .lib statements */
-        if (ciprefix(".lib", buffer)) {
-            for ( s = buffer; *s && !isspace(*s); s++ )            /* skip over .lib           */
-                ;
-            while ( isspace(*s) || isquote(*s) ) s++;              /* advance past space chars              */
-            if    ( !*s ) {                                        /* if at end of line, error              */
-                fprintf(cp_err, "Error: .lib filename missing\n");
-                tfree(buffer);		                           /* was allocated by readline()           */
-                continue;
-            }                                                      /* Now s points to first char after .lib */
-            for ( t = s; *t && !isspace(*t) && !isquote(*t); t++ )         /* skip to end of word      */
-                ;
-            y = t;
-            while ( isspace(*y) || isquote(*y) ) y++;              /* advance past space chars */
-            // check if rest of line commented out
-            if    ( *y && *y != '$' ) {                            /* .lib <file name> <lib name> */
-                for ( z = y; *z && !isspace(*z) && !isquote(*z); z++ )
-                    ;
-                c  = *t;
-                *t = '\0';
-                *z = '\0';
-
-                if ( *s == '~' ) {
-                    copys = cp_tildexpand(s); /* allocates memory, but can also return NULL */
-                    if( copys != NULL ) {
-                        s = copys;		  /* reuse s, but remember, buffer still points to allocated memory */
-                    }
-                }
-                /* lower case the file name for later string compares */
-                /*           s_ptr = strdup(s); */
-                s_lower = strdup(s);
-                for(s_ptr = s_lower; *s_ptr && (*s_ptr != '\n'); s_ptr++)
-                    *s_ptr = (char) tolower(*s_ptr);
-
-                found_library = FALSE;
-                for ( i = 0; i < num_libraries; i++ ) {
-                    if ( strcmp( library_file[i], s_lower ) == 0 ) {
-                        found_library = TRUE;
-                        break;
-                    }
-                }
-                if ( found_library ) {
-                    if(copys) tfree(copys);   /* allocated by the cp_tildexpand() above */
-                } else {
-                    if ( dir_name != NULL ) sprintf( big_buff2, "%s/%s", dir_name, s );
-                    else                    sprintf( big_buff2, "./%s", s );
-                    dir_name_flag = FALSE;
-                    if ((newfp = inp_pathopen( s, "r" )) == NULL) {
-                        dir_name_flag = TRUE;
-                        if ((newfp = inp_pathopen( big_buff2, "r" )) == NULL ) {
-                            perror(s);
-                            if(copys) tfree(copys);   /* allocated by the cp_tildexpand() above */
-                            tfree(buffer);	    /* allocated by readline() above */
-                            continue;
-                        }
-                    }
-                    if(copys) tfree(copys);     /* allocated by the cp_tildexpand() above */
-
-                    library_file[num_libraries++] = strdup(s_lower);
-
-                    if ( dir_name_flag == FALSE ) {
-                        char *s_dup = strdup(s);
-                        inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, ngdirname(s_dup), FALSE);
-                        tfree(s_dup);
-                    } else
-                        inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, dir_name, FALSE);
-
-                    fclose(newfp);
-                }
-                *t = c;
-                tfree(s_lower);
-
-                /* Make the .lib a comment */
-                *buffer = '*';
-            }
-        }   /*  end of .lib handling  */
-
-        /* now handle .include statements */
-        if (ciprefix(".include", buffer) || ciprefix(".inc", buffer)) {
-            for (s = buffer; *s && !isspace(*s); s++) /* advance past non-space chars */
-                ;
-            while (isspace(*s) || isquote(*s))        /* now advance past space chars */
-                s++;
-            if (!*s) {                                /* if at end of line, error */
-                fprintf(cp_err,  "Error: .include filename missing\n");
-                tfree(buffer);		/* was allocated by readline() */
-                controlled_exit(EXIT_FAILURE);
-            }
-            /* Now s points to first char after .include */
-            inp_stripcomments_line(s);
-            /* stop at trailing \n\r or quote */
-            for (t = s; *t && !(*t=='\n') && !(*t=='\r') && !isquote(*t); t++)
-                ;
-
-            *t = '\0';                         /* place \0 and end of file name in buffer */
-
-            if (*s == '~') {
-                copys = cp_tildexpand(s); /* allocates memory, but can also return NULL */
-                if(copys != NULL) {
-                    s = copys;		/* reuse s, but remember, buffer still points to allocated memory */
-                }
-            }
-
-            /* open file specified by  .include statement */
-            if ( dir_name != NULL ) sprintf( big_buff2, "%s/%s", dir_name, s );
-            else                    sprintf( big_buff2, "./%s", s );
-            dir_name_flag = FALSE;
-            if ((newfp = inp_pathopen(s, "r")) == NULL) {
-                dir_name_flag = TRUE;
-                if ((newfp = inp_pathopen( big_buff2, "r" )) == NULL ) {
-                    perror(s);
-                    if(copys) {
-                        tfree(copys);	/* allocated by the cp_tildexpand() above */
-                    }
-                    fprintf(cp_err,  "Error: .include statement failed.\n");
-                    tfree(buffer);		/* allocated by readline() above */
-                    controlled_exit(EXIT_FAILURE);
-                }
-            }
-
-            if(copys) {
-                tfree(copys);		/* allocated by the cp_tildexpand() above */
-            }
-
-            if ( dir_name_flag == FALSE ) {
-                char *s_dup = strdup(s);
-                inp_readall(newfp, &newcard, call_depth+1, ngdirname(s_dup), FALSE);  /* read stuff in include file into netlist */
-                tfree(s_dup);
-            } else
-                inp_readall(newfp, &newcard, call_depth+1, dir_name, FALSE);  /* read stuff in include file into netlist */
-
-            (void) fclose(newfp);
-
-            /* Make the .include a comment */
-            *buffer = '*';
-
-            /* now check if this is the first pass (i.e. end points to null) */
-            if (end) {                            /* end already exists */
-                end->li_next = alloc(struct line);  /* create next card */
-                end = end->li_next;                 /* make end point to next card */
-            } else {
-                end = cc = alloc(struct line);   /* create the deck & end.  cc will
-						point to beginning of deck, end to
-						the end */
-            }
-
-            /* now fill out rest of struct end. */
-            end->li_next = NULL;
-            end->li_error = NULL;
-            end->li_actual = NULL;
-            end->li_line = copy(buffer);
-            end->li_linenum = end->li_linenum_orig = line_number++;
-            if (newcard) {
-                end->li_next = newcard;
-                /* Renumber the lines */
-                line_number_inc = 1;
-                for (end = newcard; end && end->li_next; end = end->li_next) {
-                    end->li_linenum = line_number++;
-                    end->li_linenum_orig = line_number_inc++;
-                }
-                end->li_linenum = line_number++;	/* SJB - renumber the last line */
-                end->li_linenum_orig = line_number_inc++;	/* SJB - renumber the last line */
-            }
-
-            /* Fix the buffer up a bit. */
-            (void) strncpy(buffer + 1, "end of:", 7);
-        }   /*  end of .include handling  */
-
-        /* loop through 'buffer' until end is reached.  Then test for
-         premature end.  If premature end is reached, spew
-         error and zap the line. */
-        if ( !ciprefix( "write", buffer ) ) {    // exclude 'write' command so filename case preserved
-            for (s = buffer; *s && (*s != '\n'); s++)
-                *s = (char) tolower(*s);
-            if (!*s) {
-                //fprintf(cp_err, "Warning: premature EOF\n");
-            }
-            *s = '\0';      /* Zap the newline. */
-
-            if((s-1) >= buffer && *(s-1) == '\r') /* Zop the carriage return under windows */
-                *(s-1) = '\0';
-        }
-
-        /*      find the true .end command out of .endc, .ends, .endl, .end (comments may follow) */
-        if (ciprefix(".end", buffer)) {
-            if ((*(buffer+4) == '\0') || ( isspace(*(buffer+4))))  {
-                found_end = TRUE;
-                *buffer   = '*';
-            }
-        }
-
-        if ( shell_eol_continuation ) {
-            char *new_buffer = TMALLOC(char, strlen(buffer) + 2);
-            sprintf( new_buffer, "+%s", buffer );
-
-            tfree(buffer);
-            buffer = new_buffer;
-        }
-
-        shell_eol_continuation = chk_for_line_continuation( buffer );
-
-        /* now check if this is the first pass (i.e. end points to null) */
-        if (end) {                              /* end already exists */
-            end->li_next = alloc(struct line);    /* create next card */
-            end = end->li_next;                   /* point to next card */
-        } else {                              /* End doesn't exist.  Create it. */
-            end = cc = alloc(struct line);   /* note that cc points to beginning
-					      of deck, end to the end */
-        }
-
-        /* now put buffer into li */
-        end->li_next = NULL;
-        end->li_error = NULL;
-        end->li_actual = NULL;
-        end->li_line = copy(buffer);
-        end->li_linenum = line_number++;
-        end->li_linenum_orig = line_number_orig++;
-        tfree(buffer);
-    }  /* end while ((buffer = readline(fp)) != NULL) */
-
-    if (!end) { /* No stuff here */
-        *data = NULL;
-        return;
-    }
-
-    if ( call_depth == 0 && found_end == TRUE) {
-        if ( global == NULL ) {
-            global = TMALLOC(char, strlen(".global gnd") + 1);
-            sprintf( global, ".global gnd" );
-        }
-        global_card = alloc(struct line);
-        global_card->li_error   = NULL;
-        global_card->li_actual  = NULL;
-        global_card->li_line    = global;
-        global_card->li_linenum = 1;
-
-        prev                 = cc->li_next;
-        cc->li_next          = global_card;
-        global_card->li_next = prev;
-
-        inp_init_lib_data();
-        inp_determine_libraries(cc, NULL);
-    }
-
-    /*
-       add libraries
-    */
-    found_lib_name = FALSE;
-    if ( call_depth == 0 ) {
-        for( i = 0; i < num_libraries; i++ ) {
-            working = libraries[i];
-            while ( working ) {
-                buffer = working->li_line;
-
-                if ( found_lib_name && ciprefix(".endl", buffer) ) {
-                    /* Make the .endl a comment */
-                    *buffer = '*';
-                    found_lib_name = FALSE;
-
-                    /* set pointer and continue to avoid deleting below */
-                    tmp_ptr2         = working->li_next;
-                    working->li_next = tmp_ptr;
-                    working          = tmp_ptr2;
-
-                    /* end          = working;
-                    * working      = working->li_next;
-                    * end->li_next = NULL; */
-
-                    continue;
-                }   /* for ... */
-
-                if ( ciprefix(".lib", buffer) ) {
-                    if ( found_lib_name == TRUE ) {
-                        fprintf( stderr, "ERROR: .lib is missing .endl!\n" );
-                        controlled_exit(EXIT_FAILURE);
-                    }
-
-                    for   ( s = buffer; *s && !isspace(*s); s++ )             /* skip over .lib                        */
-                        ;
-                    while ( isspace(*s) || isquote(*s) ) s++;                 /* advance past space chars              */
-                    for ( t = s; *t && !isspace(*t) && !isquote(*t); t++ )    /* skip to end of word                   */
-                        ;
-                    keep_char = *t;
-                    *t = '\0';
-                    /* see if library we want to copy */
-                    found_lib_name = FALSE;
-                    for( j = 0; j < num_lib_names[i]; j++ ) {
-                        if ( strcmp( library_name[i][j], s ) == 0 ) {
-                            found_lib_name = TRUE;
-                            start_lib      = working;
-
-                            /* make the .lib a comment */
-                            *buffer = '*';
-
-                            tmp_ptr = library_ll_ptr[i][j]->li_next;
-                            library_ll_ptr[i][j]->li_next = working;
-
-                            /* renumber lines */
-                            line_number_lib = 1;
-                            for ( start_lib = working; !ciprefix(".endl", start_lib->li_line); start_lib = start_lib->li_next ) {
-                                start_lib->li_linenum = line_number++;
-                                start_lib->li_linenum_orig = line_number_lib++;
-                            }
-                            start_lib->li_linenum = line_number++;  // renumber endl line
-                            start_lib->li_linenum_orig = line_number_lib++;
-                            break;
-                        }
-                    }
-                    *t = keep_char;
-                }
-                prev = working;
-                working = working->li_next;
-
-                if ( found_lib_name == FALSE ) {
-                    tfree(prev->li_line);
-                    tfree(prev);
-                }
-            } /* end while */
-        } /* end for */
-
-        if ( found_end == TRUE ) {
-            end->li_next = alloc(struct line);    /* create next card */
-            end = end->li_next;                   /* point to next card */
-
-            buffer = TMALLOC(char, strlen( ".end" ) + 1);
-            sprintf( buffer, ".end" );
-
-            /* now put buffer into li */
-            end->li_next = NULL;
-            end->li_error = NULL;
-            end->li_actual = NULL;
-            end->li_line = buffer;
-            end->li_linenum = end->li_linenum_orig = line_number++;
-            end->li_linenum_orig = line_number_orig++;
-        }
-    }
-
-    /* Replace first line with the new title, if available */
-    if (new_title != NULL) {
-        if (cc->li_line) tfree(cc->li_line);
-        cc->li_line = new_title;
-    }
-
-    /* Now clean up li: remove comments & stitch together continuation lines. */
-    working = cc->li_next;      /* cc points to head of deck.  Start with the
-				   next card. */
-
-    /* sjb - strip or convert end-of-line comments.
-        This must be cone before stitching continuation lines.
-        If the line only contains an end-of-line comment then it is converted
-        into a normal comment with a '*' at the start.  This will then get
-        stripped in the following code. */
-    inp_stripcomments_deck(working);
-
-    while (working) {
-        for (s = working->li_line; (c = *s) != '\0' && c <= ' '; s++)
-            ;
-
-#ifdef TRACE
-        /* SDB debug statement */
-        printf("In inp_readall, processing linked list element line = %d, s = %s . . . \n", working->li_linenum,s);
-#endif
-
-        switch (c) {
-        case '#':
-        case '$':
-        case '*':
-        case '\0':
-            /* this used to be commented out.  Why? */
-            /*  prev = NULL; */
-            working = working->li_next;  /* for these chars, go to next card */
-            break;
-
-        case '+':   /* handle continuation */
-            if (!prev) {
-                working->li_error = copy(
-                                        "Illegal continuation line: ignored.");
-                working = working->li_next;
-                break;
-            }
-
-            /* create buffer and write last and current line into it. */
-            buffer = TMALLOC(char, strlen(prev->li_line) + strlen(s) + 2);
-            (void) sprintf(buffer, "%s %s", prev->li_line, s + 1);
-
-            s = prev->li_line;
-            prev->li_line = buffer;
-            prev->li_next = working->li_next;
-            working->li_next = NULL;
-            if (prev->li_actual) {
-                for (end = prev->li_actual; end->li_next; end = end->li_next)
-                    ;
-                end->li_next = working;
-                tfree(s);
-            } else {
-                newcard = alloc(struct line);
-                newcard->li_linenum = prev->li_linenum;
-                newcard->li_line = s;
-                newcard->li_next = working;
-                newcard->li_error = NULL;
-                newcard->li_actual = NULL;
-                prev->li_actual = newcard;
-            }
-            working = prev->li_next;
-            break;
-
-        default:  /* regular one-line card */
-            prev = working;
-            working = working->li_next;
-            break;
-        }
-    }
-
-    /* The following processing of an input file is not required for command files
-       like spinit or .spiceinit, so return command files here. */
-    if (comfile) {
-        /* save the return value (via **data) */
-        *data = cc;
-        return;
-    }
-
-    working = cc->li_next;
-
-    inp_fix_for_numparam(working);
-    inp_remove_excess_ws(working);
-
-    if ( call_depth == 0 ) {
-        comment_out_unused_subckt_models(working, line_number);
-
-        line_number = inp_split_multi_param_lines(working, line_number);
-
-        inp_fix_macro_param_func_paren_io(working);
-        inp_fix_ternary_operator(working);
-        inp_grab_func(working);
-
-        inp_expand_macros_in_func();
-        inp_expand_macros_in_deck(working);
-        inp_fix_param_values(working);
-
-        /* get end card as last card in list; end card pntr does not appear to always
-           be correct at this point */
-        for(newcard = working; newcard != NULL; newcard = newcard->li_next)
-            end = newcard;
-
-        inp_reorder_params(working, cc, end);
-        inp_fix_inst_calls_for_numparam(working);
-        inp_fix_gnd_name(working);
-        inp_chk_for_multi_in_vcvs(working, &line_number);
-
-
-        if (cp_getvar("addcontrol", CP_BOOL, NULL))
-            inp_add_control_section(working, &line_number);
-        inp_compat_mode = ngspice_compat_mode() ;
-        if (inp_compat_mode == COMPATMODE_ALL) {
-            /* Do all the compatibility stuff here */
-            working = cc->li_next;
-            /* E, G, L, R, C compatibility transformations */
-            inp_compat(working);
-            working = cc->li_next;
-            /* B source numparam compatibility transformation */
-            inp_bsource_compat(working);
-        }
-    }
-
-    /* save the return value (via **data) */
-    *data = cc;
-
-    /* get max. line length and number of lines in input deck,
-       and renumber the lines,
-       count the number of '{' per line as an upper estimate of the number
-       of parameter substitutions in a line*/
-    dynmaxline = 0;
-    max_line_length = 0;
-    for(tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next) {
-        char *s;
-        unsigned int braces_per_line = 0;
-        /* count number of lines */
-        dynmaxline++;
-        /* renumber the lines of the processed input deck */
-        tmp_ptr1->li_linenum = dynmaxline;
-        if (max_line_length < strlen(tmp_ptr1->li_line))
-            max_line_length = strlen(tmp_ptr1->li_line);
-        /* count '{' */
-        for (s = tmp_ptr1->li_line; *s; s++)
-            if (*s == '{') braces_per_line++;
-        if (no_braces <  braces_per_line) no_braces = braces_per_line;
-    }
-
-    if (ft_ngdebug) {
-        /*debug: print into file*/
-        fdo = fopen("debug-out.txt", "w");
-        for(tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
-            fprintf(fdo, "%d  %d  %s\n", tmp_ptr1->li_linenum_orig, tmp_ptr1->li_linenum, tmp_ptr1->li_line);
-
-        (void) fclose(fdo);
-        fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
-                (int) max_line_length, no_braces, dynmaxline);
-    }
-}
-
 /*-------------------------------------------------------------------------*
    removes  " " quotes, returns lower case letters,
    replaces non-printable characterss with '_'                                                                       *
@@ -1776,9 +1767,22 @@ inp_stripcomments_deck(struct line *deck)
     }
 }
 
-/* Strip end of line comment from a string and remove trailing white space
-   supports comments that begin with single characters ';'
-   or double characters '$ ' or '//' or '--'
+
+/*
+ * SJB 21 April 2005
+ * Added support for end-of-line comments that begin with any of the following:
+ *   ';'
+ *   '$ '
+ *   '//' (like in c++ and as per the numparam code)
+ *   '--' (as per the numparam code)
+ * Any following text to the end of the line is ignored.
+ * Note requirement for $ to be followed by a space. This is to avoid conflict
+ * with use in front of a variable.
+ * Comments on a contunuation line (i.e. line begining with '+') are allowed
+ * and are removed before lines are stitched.
+ * Lines that contain only an end-of-line comment with or without leading white
+ * space are also allowed.
+
    If there is only white space before the end-of-line comment the
    the whole line is converted to a normal comment line (i.e. one that
    begins with a '*').
@@ -2817,9 +2821,15 @@ inp_expand_macros_in_deck( struct line *deck )
    Searches for the next '=' in the line to become active.
    Several exceptions (eg. no 'set' or 'b' lines, no .cmodel lines,
    no lines between .control and .endc, no .option lines).
-   .cmodel instead of .model to allow skipping {} in model line, may be obsolete.
    Special handling of vectors with [] and complex values with < >
-*/
+  
+   h_vogt 20 April 2008
+ * For xspice and num_pram compatibility .cmodel added
+ * .cmodel will be replaced by .model in inp_fix_param_values()
+ * and then the entire line is skipped (will not be changed by this function).
+ * Usage of numparam requires {} around the parameters in the .cmodel line.
+ * May be obsolete?
+ */
 static void
 inp_fix_param_values( struct line *deck )
 {
