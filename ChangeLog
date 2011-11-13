@@ -1,6 +1,6 @@
 2011-11-13  Holger Vogt
  * inp.c: code beautify, indentations etc.
- * inpcom.c: reordering, fcn prototypes added
+ * inpcom.c: reordering, fcn prototypes added, docu added
 
 2011-11-04  Holger Vogt
  * INSTALL: give more precise instructions 

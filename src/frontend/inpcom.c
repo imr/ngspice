@@ -1,17 +1,14 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher
+$Id$
 **********/
 
 /*
- * For dealing with spice input decks and command scripts
+   For dealing with spice input decks and command scripts
+
+   Central function is inp_readall()
  */
-
-/* 
-   Central function inp_readall
- */
-
-
 
 #include <ngspice/ngspice.h>
 
@@ -95,9 +92,39 @@ static void inp_chk_for_multi_in_vcvs( struct line *deck, int *line_number );
 static void inp_add_control_section( struct line *deck, int *line_number );
 
 /*-------------------------------------------------------------------------
- * Read the entire input file and return  a pointer to the first line of
- * the linked list of 'card' records in data.  The pointer is stored in
- * *data.
+ Read the entire input file and return  a pointer to the first line of
+ the linked list of 'card' records in data.  The pointer is stored in
+ *data.
+ Called from fcn inp_spsource() in inp.c to load circuit or command files.
+ Called from fcn com_alter_mod() in device.c to load model files.
+ Called from here to load .library or .include files.
+
+ Procedure:
+ read in all lines & put them in the struct cc
+   read next line
+   process .TITLE line
+     store contents in string new_title
+   process .lib lines
+     read file and library name, open file using fcn inp_pathopen()
+     read file contents and put into struct libraries[], one entry per .lib line
+   process .inc lines
+     read file and library name, open file using fcn inp_pathopen()
+     read file contents and add lines to cc
+   make line entry lower case
+   allow for shell end of line continuation (\\)
+     add '+' to beginning of next line
+   add line entry to list cc
+ add '.global gnd'
+ add libraries
+   find library section
+   add lines
+ add .end card
+ strip end-of-line comments
+ make continuation lines a single line
+*** end of processing for command files ***
+ start preparation of input deck for numparam
+   ...
+ debug printout to debug-out.txt
  *-------------------------------------------------------------------------*/
 void
 inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool comfile)
@@ -137,9 +164,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
     char *s_ptr, *s_lower;
 
-    /*   Must set this to NULL or non-tilde includes segfault. -- Tim Molteno   */
-    /* copys = NULL; */   /*  This caused a parse error with gcc 2.96.  Why???  */
-
     if ( call_depth == 0 ) {
         num_subckt_w_params = 0;
         num_libraries       = 0;
@@ -158,8 +182,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
             if ( call_depth == 0 && line_count == 0 ) {
                 line_count++;
                 if ( fgets( big_buff, 5000, fp ) ) {
-                    /*               buffer = TMALLOC(char, strlen(big_buff) + 1);
-                                   strcpy(buffer, big_buff); */
                     buffer = copy(big_buff);
                 }
             } else {
@@ -256,7 +278,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                     }
                 }
                 /* lower case the file name for later string compares */
-                /*           s_ptr = strdup(s); */
                 s_lower = strdup(s);
                 for(s_ptr = s_lower; *s_ptr && (*s_ptr != '\n'); s_ptr++)
                     *s_ptr = (char) tolower(*s_ptr);
@@ -2009,6 +2030,10 @@ inp_remove_ws( char *s )
     return buffer;
 }
 
+/*
+  change quotes from '' to {}
+  modify .subckt lines by calling inp_fix_subckt()
+*/
 static void
 inp_fix_for_numparam(struct line *deck)
 {
