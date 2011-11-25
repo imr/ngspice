@@ -1,3 +1,7 @@
+2011-11-26  Holger Vogt
+ * /frontend/plotting/gnuplot.c: appendwrite and complex
+   variable printing added.
+
 2011-11-13  Holger Vogt
  * inp.c: code beautify, indentations etc.
  * inpcom.c: reordering, fcn prototypes added, docu added

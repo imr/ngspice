@@ -39,13 +39,13 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 
     /* Sanity checking. */
     for ( v = vecs, numVecs = 0; v; v = v->v_link2 ) {
-	numVecs++;
+        numVecs++;
     }
     if (numVecs == 0) {
-	return;
+        return;
     } else if (numVecs > GP_MAXVECTORS) {
-	fprintf( cp_err, "Error: too many vectors for gnuplot.\n" );
-	return;
+        fprintf( cp_err, "Error: too many vectors for gnuplot.\n" );
+        return;
     }
     if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth))
         linewidth = 1;
@@ -54,89 +54,89 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     if (!cp_getvar("pointstyle", CP_STRING, pointstyle)) {
         markers = FALSE;
     } else {
-	if (cieq(pointstyle,"markers")) {
-	    markers = TRUE;
-	} else {
-	    markers = FALSE;
-	}
+        if (cieq(pointstyle,"markers")) {
+            markers = TRUE;
+        } else {
+            markers = FALSE;
+        }
     }
 
 
     /* Make sure the gridtype is supported. */
     switch (gridtype) {
     case GRID_LIN:
-	nogrid = xlog = ylog = FALSE;
-	break;
+        nogrid = xlog = ylog = FALSE;
+        break;
     case GRID_XLOG:
-	xlog = TRUE;
-	nogrid = ylog = FALSE;
-	break;
+        xlog = TRUE;
+        nogrid = ylog = FALSE;
+        break;
     case GRID_YLOG:
-	ylog = TRUE;
-	nogrid = xlog = FALSE;
-	break;
+        ylog = TRUE;
+        nogrid = xlog = FALSE;
+        break;
     case GRID_LOGLOG:
-	xlog = ylog = TRUE;
-	nogrid = FALSE;
-	break;
+        xlog = ylog = TRUE;
+        nogrid = FALSE;
+        break;
     case GRID_NONE:
-	nogrid = TRUE;
-	xlog = ylog = FALSE;
-	break;
+        nogrid = TRUE;
+        xlog = ylog = FALSE;
+        break;
     default:
-	fprintf( cp_err, "Error: grid type unsupported by gnuplot.\n" );
-	return;
+        fprintf( cp_err, "Error: grid type unsupported by gnuplot.\n" );
+        return;
     }
 
     /* Open the output gnuplot file. */
     if ((file = fopen(filename_plt, "w")) == NULL) {
-	perror(filename);
-	return;
+        perror(filename);
+        return;
     }
 
     /* Set up the file header. */
     if (title) {
-	text = cp_unquote(title);
-	fprintf( file, "set title \"%s\"\n", text );
-	tfree(text);
+        text = cp_unquote(title);
+        fprintf( file, "set title \"%s\"\n", text );
+        tfree(text);
     }
     if (xlabel) {
-	text = cp_unquote(xlabel);
-	fprintf( file, "set xlabel \"%s\"\n", text );
-	tfree(text);
+        text = cp_unquote(xlabel);
+        fprintf( file, "set xlabel \"%s\"\n", text );
+        tfree(text);
     }
     if (ylabel) {
-	text = cp_unquote(ylabel);
-	fprintf( file, "set ylabel \"%s\"\n", text );
-	tfree(text);
+        text = cp_unquote(ylabel);
+        fprintf( file, "set ylabel \"%s\"\n", text );
+        tfree(text);
     }
     if (!nogrid) {
-	   if (linewidth > 1)
-	      fprintf( file, "set grid lw %d \n" , linewidth );
-       else
-		  fprintf( file, "set grid\n" );
+        if (linewidth > 1)
+            fprintf( file, "set grid lw %d \n" , linewidth );
+        else
+            fprintf( file, "set grid\n" );
     }
     if (xlog) {
-    	fprintf( file, "set logscale x\n" );
-	if (xlims) {
-	    fprintf( file, "set xrange [%e:%e]\n", xlims[0], xlims[1] );
-	}
+        fprintf( file, "set logscale x\n" );
+        if (xlims) {
+            fprintf( file, "set xrange [%e:%e]\n", xlims[0], xlims[1] );
+        }
     } else {
-    	fprintf( file, "unset logscale x \n" );
-	if (xlims) {
-	    fprintf( file, "set xrange [%e:%e]\n", xlims[0], xlims[1] );
-	}
+        fprintf( file, "unset logscale x \n" );
+        if (xlims) {
+            fprintf( file, "set xrange [%e:%e]\n", xlims[0], xlims[1] );
+        }
     }
     if (ylog) {
-    	fprintf( file, "set logscale y \n" );
-	if (ylims) {
-	    fprintf( file, "set yrange [%e:%e]\n", ylims[0], ylims[1] );
-	}
+        fprintf( file, "set logscale y \n" );
+        if (ylims) {
+            fprintf( file, "set yrange [%e:%e]\n", ylims[0], ylims[1] );
+        }
     } else {
-    	fprintf( file, "unset logscale y \n" );
-	if (ylims) {
-	    fprintf( file, "set yrange [%e:%e]\n", ylims[0], ylims[1] );
-	}
+        fprintf( file, "unset logscale y \n" );
+        if (ylims) {
+            fprintf( file, "set yrange [%e:%e]\n", ylims[0], ylims[1] );
+        }
     }
 
     fprintf( file, "#set xtics 1\n" );
@@ -148,25 +148,25 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         fprintf( file, "set border lw %d\n", linewidth );
 
     if (plottype == PLOT_COMB) {
-	   strcpy(plotstyle, "boxes");
+        strcpy(plotstyle, "boxes");
     } else if (plottype == PLOT_POINT) {
-	   if (markers) {
+        if (markers) {
 //	      fprintf( file, "Markers: True\n" );
-	   } else {
+        } else {
 //	      fprintf( file, "LargePixels: True\n" );
-	   }
-	   strcpy(plotstyle, "points");
-	} else {
-	   strcpy(plotstyle, "lines");
-	}
+        }
+        strcpy(plotstyle, "points");
+    } else {
+        strcpy(plotstyle, "lines");
+    }
 
     /* Open the output gnuplot data file. */
     if ((file_data = fopen(filename_data, "w")) == NULL) {
-	perror(filename);
-	return;
+        perror(filename);
+        return;
     }
 
-    fprintf( file, "plot " ); 
+    fprintf( file, "plot " );
     i = 0;
 
     /* Write out the gnuplot command */
@@ -175,34 +175,34 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         if (v->v_name) {
             i = i + 2;
             if (i > 2) fprintf(file, ",\\\n");
-            fprintf(file, "\'%s\' using %d:%d with %s lw %d title \"%s\" ", 
-               filename_data, i-1, i, plotstyle, linewidth, v->v_name);
+            fprintf(file, "\'%s\' using %d:%d with %s lw %d title \"%s\" ",
+                    filename_data, i-1, i, plotstyle, linewidth, v->v_name);
         }
     }
     fprintf( file, "\n");
     fprintf (file, "set terminal push\n");
-	fprintf (file, "set terminal postscript eps color\n");
-	fprintf (file, "set out \'%s.eps\'\n", filename);
-	fprintf (file, "replot\n");
-	fprintf (file, "set term pop\n");
-	fprintf (file, "replot\n");
+    fprintf (file, "set terminal postscript eps color\n");
+    fprintf (file, "set out \'%s.eps\'\n", filename);
+    fprintf (file, "replot\n");
+    fprintf (file, "set term pop\n");
+    fprintf (file, "replot\n");
 
     (void) fclose( file );
 
     /* Write out the data and setup arrays */
     for ( i = 0; i < scale->v_length; i++ ) {
-	for ( v = vecs; v; v = v->v_link2 ) {
-        	scale = v->v_scale;
+        for ( v = vecs; v; v = v->v_link2 ) {
+            scale = v->v_scale;
 
-	        xval = isreal(scale) ?
-	        scale->v_realdata[i] : realpart(&scale->v_compdata[i]);
+            xval = isreal(scale) ?
+                   scale->v_realdata[i] : realpart(&scale->v_compdata[i]);
 
-	        yval = isreal(v) ?
-	        v->v_realdata[i] : realpart(&v->v_compdata[i]);
+            yval = isreal(v) ?
+                   v->v_realdata[i] : realpart(&v->v_compdata[i]);
 
-        	fprintf( file_data, "% e % e ", xval, yval );
-      	}
-      	fprintf( file_data, "\n");
+            fprintf( file_data, "% e % e ", xval, yval );
+        }
+        fprintf( file_data, "\n");
     }
 
     (void) fclose( file_data );
@@ -210,11 +210,11 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 #if defined(__MINGW32__) || defined(_MSC_VER)
     /* for external fcn system() */
 //    (void) sprintf( buf, "start /B wgnuplot %s -" ,  filename_plt );
-	(void) sprintf( buf, "start /B wgnuplot -persist %s " ,  filename_plt );	
+    (void) sprintf( buf, "start /B wgnuplot -persist %s " ,  filename_plt );
     _flushall();
 #else
-	/* for external fcn system() from LINUX environment */
-	(void) sprintf( buf, "xterm -e gnuplot %s - &", filename_plt );
+    /* for external fcn system() from LINUX environment */
+    (void) sprintf( buf, "xterm -e gnuplot %s - &", filename_plt );
 #endif
     err = system( buf );
 
@@ -222,7 +222,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     return;
 }
 
-/* simple printout of data into a file, similar to data table in ft_gnuplot 
+/* simple printout of data into a file, similar to data table in ft_gnuplot
    command: wrsimple file vecs
  */
 void
@@ -231,8 +231,9 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
 
     FILE *file_data;
     struct dvec *v, *scale = NULL;
-    double xval, yval;
+    double xval;
     int i, numVecs;
+    bool appendwrite;
 
     char filename_data[128];
 
@@ -245,40 +246,41 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
     NG_IGNORE(plottype);
 
     sprintf(filename_data, "%s.data", filename);
+    appendwrite = cp_getvar("appendwrite", CP_BOOL, NULL);
 
     /* Sanity checking. */
     for ( v = vecs, numVecs = 0; v; v = v->v_link2 ) {
-	numVecs++;
+        numVecs++;
     }
     if (numVecs == 0) {
-	return;
+        return;
     }
 
     /* Open the output data file. */
-    if ((file_data = fopen(filename_data, "w")) == NULL) {
-	perror(filename);
-	return;
+    if ((file_data = fopen(filename_data, appendwrite ? "a" : "w")) == NULL) {
+        perror(filename);
+        return;
     }
 
     i = 0;
     for ( v = vecs; v; v = v->v_link2 ) {
-        scale = v->v_scale; 
+        scale = v->v_scale;
     }
 
     /* Write out the data as simple arrays */
     for ( i = 0; i < scale->v_length; i++ ) {
         for ( v = vecs; v; v = v->v_link2 ) {
-        	scale = v->v_scale;
+            scale = v->v_scale;
 
-	        xval = isreal(scale) ?
-	        scale->v_realdata[i] : realpart(&scale->v_compdata[i]);
+            xval = isreal(scale) ?
+                   scale->v_realdata[i] : realpart(&scale->v_compdata[i]);
 
-	        yval = isreal(v) ?
-	        v->v_realdata[i] : realpart(&v->v_compdata[i]);
-
-        	fprintf( file_data, "% e % e ", xval, yval );
-      	}
-      	fprintf( file_data, "\n");
+            if (isreal(v))
+                fprintf( file_data, "% e % e ", xval, v->v_realdata[i] );
+            else
+                fprintf( file_data, "% e % e % e ", xval, realpart(&v->v_compdata[i]), imagpart(&v->v_compdata[i]) );
+        }
+        fprintf( file_data, "\n");
     }
 
     (void) fclose( file_data );
