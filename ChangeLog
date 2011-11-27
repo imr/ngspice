@@ -1,5 +1,5 @@
 2011-11-27  Holger Vogt
- * /frontend/runcoms2.c: command 'remcir' to remove a circuit.
+ * /frontend/runcoms2.c: command 'remcirc' to remove a circuit.
 
 2011-11-26  Holger Vogt
  * /frontend/plotting/gnuplot.c: appendwrite and complex
