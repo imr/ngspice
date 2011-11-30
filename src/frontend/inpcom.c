@@ -3540,61 +3540,125 @@ inp_add_params_to_subckt( struct line *subckt_card )
     }
 }
 
-static void
-inp_reorder_params( struct line *deck, struct line *list_head, struct line *end )
+/*
+ * process a sequence of decks
+ *   starting from a         `.suckt' deck
+ *   upto the corresponding  `.ends'  deck
+ * return a pointer to the terminating `.ends' deck
+ *
+ * recursivly descend
+ *   when another `.subckt' is found
+ *
+ * parameters are removed from the main list
+ *   and collected into a local list `first_param_card'
+ * then processed and reinserted into the main list
+ *
+ */
+
+static struct line *
+inp_reorder_params_subckt(struct line *subckt_card)
 {
-    struct line *c = deck, *subckt_card = NULL, *param_card = NULL, *prev_card = list_head;
-    struct line *subckt_param_card = NULL, *first_param_card = NULL, *first_subckt_param_card = NULL;
-    char *curr_line;
-    bool processing_subckt = FALSE;
+    struct line *first_param_card = NULL;
+    struct line *last_param_card = NULL;
+
+    struct line *prev_card = subckt_card;
+    struct line *c         = subckt_card->li_next;
 
     /* move .param lines to beginning of deck */
     while ( c != NULL ) {
-        curr_line = c->li_line;
+
+        char *curr_line = c->li_line;
+
         if ( *curr_line == '*' ) {
             c = c->li_next;
             continue;
         }
+
         if ( ciprefix( ".subckt", curr_line ) ) {
-            processing_subckt       = TRUE;
-            subckt_card             = c;
-            first_subckt_param_card = NULL;
+            prev_card = inp_reorder_params_subckt(c);
+            c         = prev_card->li_next;
+            continue;
         }
-        if ( ciprefix( ".ends", curr_line ) && processing_subckt ) {
-            processing_subckt          = FALSE;
-            if ( first_subckt_param_card != NULL ) {
-                inp_sort_params( first_subckt_param_card, subckt_param_card, subckt_card, subckt_card, c );
+
+        if ( ciprefix( ".ends", curr_line ) ) {
+            if ( first_param_card ) {
+                inp_sort_params( first_param_card, last_param_card, subckt_card, subckt_card, c );
                 inp_add_params_to_subckt( subckt_card );
             }
+            return c;
         }
 
         if ( ciprefix( ".param", curr_line ) ) {
-            if ( !processing_subckt ) {
-                if ( first_param_card == NULL ) {
-                    first_param_card    = c;
-                } else {
-                    param_card->li_next = c;
-                }
-                param_card          = c;
-                prev_card->li_next  = c->li_next;
-                param_card->li_next = NULL;
-                c                   = prev_card;
-            } else {
-                if ( first_subckt_param_card == NULL ) {
-                    first_subckt_param_card    = c;
-                } else {
-                    subckt_param_card->li_next = c;
-                }
-                subckt_param_card          = c;
-                prev_card->li_next         = c->li_next;
-                c                          = prev_card;
-                subckt_param_card->li_next = NULL;
-            }
+            if ( first_param_card )
+                last_param_card->li_next = c;
+            else
+                first_param_card = c;
+
+            last_param_card    = c;
+            prev_card->li_next = c->li_next;
+            c                  = c->li_next;
+
+            last_param_card->li_next = NULL;
+            continue;
         }
+
         prev_card = c;
         c         = c->li_next;
     }
-    inp_sort_params( first_param_card, param_card, list_head, deck, end );
+
+    /* the terminating `.ends' deck wasn't found */
+    controlled_exit(EXIT_FAILURE);
+    return NULL;
+}
+
+static void
+inp_reorder_params( struct line *deck, struct line *list_head, struct line *end )
+{
+    struct line *first_param_card = NULL;
+    struct line *last_param_card = NULL;
+
+    struct line *prev_card = list_head;
+    struct line *c = deck;
+
+    /* move .param lines to beginning of deck */
+    while ( c != NULL ) {
+
+        char *curr_line = c->li_line;
+
+        if ( *curr_line == '*' ) {
+            c = c->li_next;
+            continue;
+        }
+
+        if ( ciprefix( ".subckt", curr_line ) ) {
+            prev_card = inp_reorder_params_subckt(c);
+            c         = prev_card->li_next;
+            continue;
+        }
+
+        /* check for an unexpected extra `.ends' deck */
+        if ( ciprefix( ".ends", curr_line ) )
+            controlled_exit(EXIT_FAILURE);
+
+        if ( ciprefix( ".param", curr_line ) ) {
+            if ( first_param_card )
+                last_param_card->li_next = c;
+            else
+                first_param_card = c;
+
+            last_param_card    = c;
+            prev_card->li_next = c->li_next;
+            c                  = c->li_next;
+
+            last_param_card->li_next = NULL;
+            continue;
+        }
+
+        prev_card = c;
+        c         = c->li_next;
+    }
+
+    inp_sort_params( first_param_card, last_param_card, list_head, deck, end );
 }
 
 // iterate through deck and find lines with multiply defined parameters

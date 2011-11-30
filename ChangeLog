@@ -1,3 +1,7 @@
+2011-11-30  Robert Larice
+ * src/frontend/inpcom.c :
+  bug fix, parameter processing was broken for nested .subckt
+ 
 2011-11-27  Holger Vogt
  * /frontend/runcoms2.c: command 'remcirc' to remove a circuit.
 
@@ -10,7 +14,7 @@
  * inpcom.c: reordering, fcn prototypes added, docu added
 
 2011-11-04  Holger Vogt
- * INSTALL: give more precise instructions 
+ * INSTALL: give more precise instructions
 
 2011-11-03  Robert Larice
  * src/xspice/icm/GNUmakefile.in :
