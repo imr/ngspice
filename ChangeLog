@@ -1,4 +1,8 @@
 2011-12-03  Robert Larice
+ * src/frontend/numparam/xpressn.c :
+  bug fix, parameter assignment was broken for expressions containing one of '<=' '>=' or '!='
+
+2011-12-03  Robert Larice
  * visualc/vngspice.vcproj :
   remove some unused `vcproj' dependencies
 

@@ -1957,7 +1957,7 @@ nupa_subcktcall (tdico * dico, char *s, char *x, bool err)
    x= a matching subckt call line, with actual params
 */
 {
-    int n, m, i, j, k, g, h, narg = 0, ls, nest;
+    int n, i, j, k, g, h, narg = 0, ls, nest;
     SPICE_DSTRING subname ;
     SPICE_DSTRING tstr ;
     SPICE_DSTRING ustr ;
@@ -2012,36 +2012,48 @@ nupa_subcktcall (tdico * dico, char *s, char *x, bool err)
 
     if (i >= 0)
     {
+        const char *optr, *jptr;
+
         pscopy (&tstr, spice_dstring_value(&tstr), i + 7, spice_dstring_length (&tstr));
-        while (j = cpos ('=', spice_dstring_value(&tstr)), j >= 0)
+
+        /* search identifier to the left of '=' assignments */
+
+        for (optr = spice_dstring_value(&tstr);
+             (jptr = strchr(optr, '=')) != NULL; optr = jptr + 1)
         {
-            /* isolate idents to the left of =-signs */
-            k = j - 1;
-            t_p = spice_dstring_value(&tstr) ;
-            while ((k >= 0) && (t_p[k] <= ' '))
-                k--;
+            const char *kptr, *hptr;
 
-            h = k;
+            /* skip "==" */
+            if(jptr[1] == '=') {
+                jptr++;
+                continue;
+            }
 
-            while ((h >= 0) && alfanum (t_p[h]))
-                h--;
+            /* skip "<=" ">=" "!=" */
+            if(jptr > optr && strchr("<>!", jptr[-1]))
+                continue;
 
-            if (alfa (t_p[h + 1]) && (k > h))
+            kptr = jptr;
+            while (--kptr >= optr && isspace(*kptr))
+                ;
+
+            hptr = kptr;
+            while (hptr >= optr && alfanum(*hptr))
+                hptr--;
+
+            if (hptr < kptr && alfa(hptr[1]))
             {
-                /* we have some id */
-                for (m = (h + 1); m <= k; m++)
-                    cadd (&idlist, t_p[m]);
+                while(hptr++ < kptr)
+                    cadd (&idlist, *hptr);
 
                 sadd (&idlist, "=$;");
                 n++;
             }
             else
                 message (dico, "identifier expected.");
-
-            /* It is j+1 to skip over the '=' */
-            pscopy (&tstr, spice_dstring_value(&tstr), j+1, spice_dstring_length (&tstr));
         }
     }
+
     /***** next, analyze the circuit call line */
     if (!err)
     {
