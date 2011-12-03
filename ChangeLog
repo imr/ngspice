@@ -1,7 +1,11 @@
+2011-12-03  Robert Larice
+ * visualc/vngspice.vcproj :
+  remove some unused `vcproj' dependencies
+
 2011-11-30  Robert Larice
  * src/frontend/inpcom.c :
   bug fix, parameter processing was broken for nested .subckt
- 
+
 2011-11-27  Holger Vogt
  * /frontend/runcoms2.c: command 'remcirc' to remove a circuit.
 

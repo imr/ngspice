@@ -1894,10 +1894,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\adms\mextram\admsva\evaluate.inc"
-				>
-			</File>
-			<File
 				RelativePath="..\src\include\ngspice\evt.h"
 				>
 			</File>
@@ -1923,10 +1919,6 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\fourier.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\adms\mextram\admsva\frontdef.inc"
 				>
 			</File>
 			<File
@@ -2151,10 +2143,6 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\adms\mextram\admsva\initialize.inc"
 				>
 			</File>
 			<File
@@ -2754,10 +2742,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\adms\mextram\admsva\parameters.inc"
-				>
-			</File>
-			<File
 				RelativePath="..\src\frontend\parse.h"
 				>
 			</File>
@@ -3018,10 +3002,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\adms\mextram\admsva\tscaling.inc"
-				>
-			</File>
-			<File
 				RelativePath="..\src\include\ngspice\tskdefs.h"
 				>
 			</File>
@@ -3091,10 +3071,6 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\variable.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\adms\mextram\admsva\variables.inc"
 				>
 			</File>
 			<File
