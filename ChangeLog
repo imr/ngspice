@@ -1,4 +1,10 @@
 2011-12-03  Robert Larice
+ * src/spicelib/analysis/dcpss.c ,
+ * src/spicelib/analysis/dctran.c :
+  cleanup, aiming for higher similarity of dctran.c and dcpss.c
+  this cleanup was checked for identical object code (gcc on linux)
+
+2011-12-03  Robert Larice
  * src/frontend/numparam/xpressn.c :
   bug fix, parameter assignment was broken for expressions containing one of '<=' '>=' or '!='
 
