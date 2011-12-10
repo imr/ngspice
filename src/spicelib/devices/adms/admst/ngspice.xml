@@ -6,12 +6,6 @@
 --> 
 <admst xmlns:admst="http://mot-adms.sourceforge.net/adms/admst.xml" version="2.3.0">
 <admst:value-to select="/#simulator" string="ngspice"/>
-  <!-- global0 -->
-  <admst:variable name="package_name"/>
-  <admst:variable name="package_tarname"/>
-  <admst:variable name="package_version"/>
-  <admst:variable name="package_string"/>
-  <admst:variable name="package_bugreport"/>
   <admst:variable name="zddx"/>
   <admst:variable name="ztmp"/>
   <admst:variable name="zprobe"/>
@@ -33,166 +27,26 @@
     <admst:choose>
       <admst:when test="[arity='unary']">
         <admst:apply-templates select="." match="unary">
-          <!-- spectre admst:return name="x" string="%(returned('x')/value)"/ -->
-          <!-- spectre admst:return name="my_probe" string="%(returned('my_probe')/value)"/ -->
-          <!-- avocad admst:if test="[caller()/template/textmatch/value!='subexpression:differentiate' and caller()/template/textmatch/value!='createparameters']" -->
-            <!-- avocad admst:return name="white_noise" string="%(returned('white_noise')/value)"/ -->
-            <!-- avocad admst:return name="flicker_noise_pwr" string="%(returned('white_noise')/value)"/ -->
-            <!-- avocad admst:return name="flicker_noise_a" string="%(returned('white_noise')/value)"/ -->
-          <!-- avocad /admst:if -->
         </admst:apply-templates>
       </admst:when>
       <admst:when test="[arity='binary']">
         <admst:apply-templates select="." match="binary">
-          <!-- spectre admst:return name="x" string="%(returned('x')/value)"/ -->
-          <!-- spectre admst:return name="my_probe" string="%(returned('my_probe')/value)"/ -->
-          <!-- avocad admst:if test="[caller()/template/textmatch/value!='subexpression:differentiate' and caller()/template/textmatch/value!='createparameters']" -->
-            <!-- avocad admst:return name="white_noise" string="%(returned('white_noise')/value)"/ -->
-            <!-- avocad admst:return name="flicker_noise_pwr" string="%(returned('white_noise')/value)"/ -->
-            <!-- avocad admst:return name="flicker_noise_a" string="%(returned('white_noise')/value)"/ -->
-          <!-- avocad /admst:if -->
         </admst:apply-templates>
       </admst:when>
       <admst:when test="[arity='ternary']">
         <admst:apply-templates select="." match="ternary">
-          <!-- spectre admst:return name="x" string="%(returned('x')/value)"/ -->
-          <!-- spectre admst:return name="my_probe" string="%(returned('my_probe')/value)"/ -->
-          <!-- avocad admst:if test="[caller()/template/textmatch/value!='subexpression:differentiate' and caller()/template/textmatch/value!='createparameters']" -->
-            <!-- avocad admst:return name="white_noise" string="%(returned('white_noise')/value)"/ -->
-            <!-- avocad admst:return name="flicker_noise_pwr" string="%(returned('white_noise')/value)"/ -->
-            <!-- avocad admst:return name="flicker_noise_a" string="%(returned('white_noise')/value)"/ -->
-          <!-- avocad /admst:if -->
         </admst:apply-templates>
       </admst:when>
       <admst:when test="[arity='nary']">
         <admst:apply-templates select="." match="nary">
-          <!-- spectre admst:return name="x" string="%(returned('x')/value)"/ -->
-          <!-- spectre admst:return name="my_probe" string="%(returned('my_probe')/value)"/ -->
-          <!-- avocad admst:if test="[caller()/template/textmatch/value!='subexpression:differentiate' and caller()/template/textmatch/value!='createparameters']" -->
-            <!-- avocad admst:return name="white_noise" string="%(returned('white_noise')/value)"/ -->
-            <!-- avocad admst:return name="flicker_noise_pwr" string="%(returned('white_noise')/value)"/ -->
-            <!-- avocad admst:return name="flicker_noise_a" string="%(returned('white_noise')/value)"/ -->
-          <!-- avocad /admst:if -->
         </admst:apply-templates>
       </admst:when>
       <admst:when test="[arity='callfunction']">
         <admst:apply-templates select="." match="callfunction">
-          <!-- spectre admst:return name="x" string="%(returned('x')/value)"/ -->
-          <!-- spectre admst:return name="my_probe" string="%(returned('my_probe')/value)"/ -->
         </admst:apply-templates>
       </admst:when>
       <admst:otherwise>
         <admst:fatal format="%(.) arity=%(arity) unexpected in function\n"/>
-      </admst:otherwise>
-    </admst:choose>
-  </admst:template>
-  <admst:template match="1:function">
-    <admst:choose>
-      <admst:when test="[arity='unary']">
-        <admst:apply-templates select="." match="1:unary"/>
-      </admst:when>
-      <admst:when test="[arity='binary']">
-        <admst:apply-templates select="." match="1:binary"/>
-      </admst:when>
-      <admst:when test="[arity='ternary']">
-        <admst:apply-templates select="." match="1:ternary"/>
-      </admst:when>
-      <admst:when test="[arity='nary']">
-        <admst:apply-templates select="." match="1:nary"/>
-      </admst:when>
-      <admst:when test="[arity='callfunction']">
-        <admst:apply-templates select="." match="1:callfunction"/>
-      </admst:when>
-      <admst:otherwise>
-        <admst:fatal format="%(.) arity=%(arity) unexpected in 1:function\n"/>
-      </admst:otherwise>
-    </admst:choose>
-  </admst:template>
-  <admst:template match=":function">
-    <admst:choose>
-      <admst:when test="[arity='unary']">
-        <admst:apply-templates select="." match=":unary"/>
-      </admst:when>
-      <admst:when test="[arity='binary']">
-        <admst:apply-templates select="." match=":binary"/>
-      </admst:when>
-      <admst:when test="[arity='ternary']">
-        <admst:apply-templates select="." match=":ternary"/>
-      </admst:when>
-      <admst:when test="[arity='nary']">
-        <admst:apply-templates select="." match=":nary"/>
-      </admst:when>
-      <admst:when test="[arity='callfunction']">
-        <admst:apply-templates select="." match=":callfunction"/>
-      </admst:when>
-      <admst:otherwise>
-        <admst:fatal format="%(.) arity=%(arity) unexpected in :function\n"/>
-      </admst:otherwise>
-    </admst:choose>
-  </admst:template>
-  <admst:template match="c:function">
-    <admst:choose>
-      <admst:when test="[arity='unary']">
-        <admst:apply-templates select="." match="c:unary"/>
-      </admst:when>
-      <admst:when test="[arity='binary']">
-        <admst:apply-templates select="." match="c:binary"/>
-      </admst:when>
-      <admst:when test="[arity='ternary']">
-        <admst:apply-templates select="." match="c:ternary"/>
-      </admst:when>
-      <admst:when test="[arity='nary']">
-        <admst:apply-templates select="." match="c:nary"/>
-      </admst:when>
-      <admst:when test="[arity='callfunction']">
-        <admst:apply-templates select="." match="c:callfunction"/>
-      </admst:when>
-      <admst:otherwise>
-        <admst:fatal format="%(.) arity=%(arity) unexpected in c:function\n"/>
-      </admst:otherwise>
-    </admst:choose>
-  </admst:template>
-  <admst:template match="defs:function">
-    <admst:choose>
-      <admst:when test="[arity='unary']">
-        <admst:apply-templates select="." match="defs:unary"/>
-      </admst:when>
-      <admst:when test="[arity='binary']">
-        <admst:apply-templates select="." match="defs:binary"/>
-      </admst:when>
-      <admst:when test="[arity='ternary']">
-        <admst:apply-templates select="." match="defs:ternary"/>
-      </admst:when>
-      <admst:when test="[arity='nary']">
-        <admst:apply-templates select="." match="defs:nary"/>
-      </admst:when>
-      <admst:when test="[arity='callfunction']">
-        <admst:apply-templates select="." match="defs:callfunction"/>
-      </admst:when>
-      <admst:otherwise>
-        <admst:fatal format="%(.) arity=%(arity) unexpected in defs:function\n"/>
-      </admst:otherwise>
-    </admst:choose>
-  </admst:template>
-  <admst:template match="dofunction">
-    <admst:choose>
-      <admst:when test="[arity='unary']">
-        <admst:apply-templates select="." match="dounary"/>
-      </admst:when>
-      <admst:when test="[arity='binary']">
-        <admst:apply-templates select="." match="dobinary"/>
-      </admst:when>
-      <admst:when test="[arity='ternary']">
-        <admst:apply-templates select="." match="doternary"/>
-      </admst:when>
-      <admst:when test="[arity='nary']">
-        <admst:apply-templates select="." match="donary"/>
-      </admst:when>
-      <admst:when test="[arity='callfunction']">
-        <admst:apply-templates select="." match="docallfunction"/>
-      </admst:when>
-      <admst:otherwise>
-        <admst:fatal format="%(.) arity=%(arity) unexpected in dofunction\n"/>
       </admst:otherwise>
     </admst:choose>
   </admst:template>
@@ -215,72 +69,6 @@
       </admst:when>
       <admst:otherwise>
         <admst:fatal format="%(.) arity=%(arity) unexpected in hxxfunction\n"/>
-      </admst:otherwise>
-    </admst:choose>
-  </admst:template>
-  <admst:template match="pass0:function">
-    <admst:choose>
-      <admst:when test="[arity='unary']">
-        <admst:apply-templates select="." match="pass0:unary"/>
-      </admst:when>
-      <admst:when test="[arity='binary']">
-        <admst:apply-templates select="." match="pass0:binary"/>
-      </admst:when>
-      <admst:when test="[arity='ternary']">
-        <admst:apply-templates select="." match="pass0:ternary"/>
-      </admst:when>
-      <admst:when test="[arity='nary']">
-        <admst:apply-templates select="." match="pass0:nary"/>
-      </admst:when>
-      <admst:when test="[arity='callfunction']">
-        <admst:apply-templates select="." match="pass0:callfunction"/>
-      </admst:when>
-      <admst:otherwise>
-        <admst:fatal format="%(.) arity=%(arity) unexpected in pass0:function\n"/>
-      </admst:otherwise>
-    </admst:choose>
-  </admst:template>
-  <admst:template match="pass1:function">
-    <admst:choose>
-      <admst:when test="[arity='unary']">
-        <admst:apply-templates select="." match="pass1:unary"/>
-      </admst:when>
-      <admst:when test="[arity='binary']">
-        <admst:apply-templates select="." match="pass1:binary"/>
-      </admst:when>
-      <admst:when test="[arity='ternary']">
-        <admst:apply-templates select="." match="pass1:ternary"/>
-      </admst:when>
-      <admst:when test="[arity='nary']">
-        <admst:apply-templates select="." match="pass1:nary"/>
-      </admst:when>
-      <admst:when test="[arity='callfunction']">
-        <admst:apply-templates select="." match="pass1:callfunction"/>
-      </admst:when>
-      <admst:otherwise>
-        <admst:fatal format="%(.) arity=%(arity) unexpected in pass1:function\n"/>
-      </admst:otherwise>
-    </admst:choose>
-  </admst:template>
-  <admst:template match="pass2:function">
-    <admst:choose>
-      <admst:when test="[arity='unary']">
-        <admst:apply-templates select="." match="pass2:unary"/>
-      </admst:when>
-      <admst:when test="[arity='binary']">
-        <admst:apply-templates select="." match="pass2:binary"/>
-      </admst:when>
-      <admst:when test="[arity='ternary']">
-        <admst:apply-templates select="." match="pass2:ternary"/>
-      </admst:when>
-      <admst:when test="[arity='nary']">
-        <admst:apply-templates select="." match="pass2:nary"/>
-      </admst:when>
-      <admst:when test="[arity='callfunction']">
-        <admst:apply-templates select="." match="pass2:callfunction"/>
-      </admst:when>
-      <admst:otherwise>
-        <admst:fatal format="%(.) arity=%(arity) unexpected in pass2:function\n"/>
       </admst:otherwise>
     </admst:choose>
   </admst:template>
@@ -374,191 +162,72 @@
       </admst:otherwise>
     </admst:choose>
   </admst:template>
-  <admst:template match="adms.implicit.xml.module">
-    <admst:variable name="globalmodule" path="."/>
-    <admst:for-each select="modulenode">
-      <admst:value-to select="#module" path=".."/>
-    </admst:for-each>
-    <admst:apply-templates test="[/#argv/#divtrick=1]" select="(modulefunctionp/functionpcode)|(modulecode)" match="divtrick"/>
-    <admst:value-to select="#modulefunctionidx" path="0"/>
-    <admst:apply-templates select="(modulefunctionp/functionpcode)|(modulecode)" match="init"/>
-    <admst:apply-templates select="(modulefunctionp/functionpcode)|(modulecode)" match="dependency"/>
-    <admst:apply-templates select="(modulefunctionp/functionpcode)|(modulecode)" match="partition"/>
-    <admst:push select="@contribution" path="@reversecontribution"/>
-    <admst:for-each select="modulevariablep">
-      <admst:value-to select="[exists(@protoinstance[#dependency!='constant'])]/#OPdependent" string="yes"/>
-      <admst:value-to select="#output" path="isparameter"/>
-      <admst:value-to select="#parametertype" string="model"/>
-      <admst:for-each select="attribute">
-        <admst:value-to select="[name='type' and value='instance']/../#parametertype" string="instance"/>
-        <admst:value-to select="[name='ask' and value='yes']/../#output" string="yes"/>
-        <admst:value-to select="[name='ask' and value='no']/../#output" string="no"/>
-      </admst:for-each>
-      <admst:apply-templates select="default" match="e:#dependency"/>
-      <admst:value-to select="default[exists([(datatypename='function' and arity='unary') and name='minus' and arguments[1]/datatypename='number' and arguments[1]/value='1.0'])]/#exvalue"
-        string="is_neg_one"/>
-      <admst:value-to select="default[exists([datatypename='number' and value='0.0'])]/#exvalue" string="is_zero"/>
-      <admst:value-to select="default[exists([datatypename='number' and value='1.0'])]/#exvalue" string="is_one"/>
-      <admst:value-to select="#scope"
-         test="[(isparameter='yes' and #parametertype!='instance') or (isparameter='no' and (#setinmodel='yes' or #usedinmodel='yes')
-         and (#setininstance='yes' or #setininitial_step='yes' or #setinevaluate='yes' or #setinnoise='yes' or #setinfinal='yes'
-         or #usedininstance='yes' or #usedininitial_step='yes' or #usedinevaluate='yes' or #usedinnoise='yes' or #usedinfinal='yes' or #output='yes'))]"
-         string="global_model"/>
-      <admst:value-to select="#scope"
-         test="[(isparameter='yes' and #parametertype='instance') or       (isparameter='no' and #setinmodel!='yes' and #usedinmodel!='yes' and
-         (((#setininstance='yes' or #usedininstance='yes') and (#setininitial_step='yes' or #setinevaluate='yes' or #setinnoise='yes' or #setinfinal='yes'
-         or #usedininitial_step='yes' or #usedinevaluate='yes' or #usedinnoise='yes' or #usedinfinal='yes' or #output='yes'))
-         or ((#setininitial_step='yes' or #usedininitial_step='yes') and (#setinevaluate='yes' or #setinnoise='yes' or #setinfinal='yes'
-         or #usedinevaluate='yes' or #usedinnoise='yes' or #usedinfinal='yes' or #output='yes'))
-         or ((#setinevaluate='yes' or #usedinevaluate='yes') and (#setinnoise='yes' or #setinfinal='yes'
-         or #usedinnoise='yes' or #usedinfinal='yes' or #output='yes'))
-         or ((#setinnoise='yes' or #usedinnoise='yes') and (#setinfinal='yes' or #usedinfinal='yes' or #output='yes'))
-         or ((#setinfinal='yes' or #usedinfinal='yes') and #output='yes')
-         or (#setinmodel!='yes' and #setininstance!='yes' and #setinevaluate!='yes' and #setinnoise!='yes' and #setinfinal!='yes' and
-             #usedinmodel!='yes' and #usedininstance!='yes' and #usedinevaluate!='yes' and #usedinnoise!='yes' and #usedinfinal!='yes' and #output='yes')))]"
-         string="global_instance"/>
-      <admst:value-to select="#isstate"
-        test="[isparameter='no' and #scope='global_instance' and #setininitial_step='yes' and (#setinevaluate='yes' or #usedinevaluate='yes')]"
-        string="yes"/>
-    </admst:for-each>
-    <admst:template match="modify">
-      <admst:choose>
-        <admst:when test="[datatypename='block']">
-          <admst:apply-templates select="reverse(blockcode)" match="modify"/>
-          <admst:value-to test="blockcode[#modifys=1]" select="#modifys" path="1"/>
-          <admst:value-to test="blockcode[#modifyd=1]" select="#modifyd" path="1"/>
-          <admst:value-to test="blockcode[#modifyfn=1]" select="#modifyfn" path="1"/>
-          <admst:value-to test="blockcode[#modifywn=1]" select="#modifywn" path="1"/>
-          <admst:value-to test="blockcode[#modifyc=1]" select="#modifyc" path="1"/>
-        </admst:when>
-        <admst:when test="[datatypename='conditional']">
-          <admst:apply-templates select="elsecode|thencode" match="modify"/>
-          <admst:value-to test="[thencode/#modifys=1 or elsecode/#modifys=1]" select="#modifys|ifcondition/@exvariable/#modifys" path="1"/>
-          <admst:value-to test="[thencode/#modifyd=1 or elsecode/#modifyd=1]" select="#modifyd|ifcondition/@exvariable/#modifyd" path="1"/>
-          <admst:value-to test="[thencode/#modifyfn=1 or elsecode/#modifyfn=1]" select="#modifyfn|ifcondition/@exvariable/#modifyfn" path="1"/>
-          <admst:value-to test="[thencode/#modifywn=1 or elsecode/#modifywn=1]" select="#modifywn|ifcondition/@exvariable/#modifywn" path="1"/>
-          <admst:value-to test="[thencode/#modifyc=1 or elsecode/#modifyc=1]" select="#modifyc|ifcondition/@exvariable/#modifyc" path="1"/>
-        </admst:when>
-        <admst:when test="[datatypename='whileloop']">
-          <admst:apply-templates select="whilecode" match="modify"/>
-          <admst:value-to test="[whilecode/#modifys=1]" select="#modifys|whilecondition/@exvariable/#modifys" path="1"/>
-          <admst:value-to test="[whilecode/#modifyd=1]" select="#modifyd|whilecondition/@exvariable/#modifyd" path="1"/>
-          <admst:value-to test="[whilecode/#modifyfn=1]" select="#modifyfn|whilecondition/@exvariable/#modifyfn" path="1"/>
-          <admst:value-to test="[whilecode/#modifywn=1]" select="#modifywn|whilecondition/@exvariable/#modifywn" path="1"/>
-          <admst:value-to test="[whilecode/#modifyc=1]" select="#modifyc|whilecondition/@exvariable/#modifyc" path="1"/>
-          <admst:apply-templates select="whilecode" match="modify"/>
-        </admst:when>
-        <admst:when test="[datatypename='forloop']">
-          <admst:apply-templates select="forcode" match="modify"/>
-          <admst:value-to test="[forcode/#modifys=1]" select="#modifys" path="1"/>
-          <admst:value-to test="[forcode/#modifyd=1]" select="#modifyd" path="1"/>
-          <admst:value-to test="[forcode/#modifyfn=1]" select="#modifyfn" path="1"/>
-          <admst:value-to test="[forcode/#modifywn=1]" select="#modifywn" path="1"/>
-          <admst:value-to test="[forcode/#modifyc=1]" select="#modifyc" path="1"/>
-          <admst:apply-templates select="forcode" match="modify"/>
-        </admst:when>
-        <admst:when test="[datatypename='case']">
-          <admst:apply-templates select="caseitem/casecode" match="modify"/>
-          <admst:for-each select="caseitem">
-            <admst:value-to test="[casecode/#modifys=1 and defaultcase='no']" select="#modifys|casealternative/@variable/#modifys" path="1"/>
-            <admst:value-to test="[casecode/#modifyd=1 and defaultcase='no']" select="#modifyd|casealternative/@variable/#modifyd" path="1"/>
-            <admst:value-to test="[casecode/#modifyfn=1 and defaultcase='no']" select="#modifyfn|casealternative/@variable/#modifyfn" path="1"/>
-            <admst:value-to test="[casecode/#modifywn=1 and defaultcase='no']" select="#modifywn|casealternative/@variable/#modifywn" path="1"/>
-            <admst:value-to test="[casecode/#modifyc=1 and defaultcase='no']" select="#modifyc|casealternative/@variable/#modifyc" path="1"/>
-          </admst:for-each>
-          <admst:value-to test="caseitem[#modifys=1]" select="#modifys|casecondition/@variable/#modifys" path="1"/>
-          <admst:value-to test="caseitem[#modifyd=1]" select="#modifyd|casecondition/@variable/#modifyd" path="1"/>
-          <admst:value-to test="caseitem[#modifyfn=1]" select="#modifyfn|casecondition/@variable/#modifyfn" path="1"/>
-          <admst:value-to test="caseitem[#modifywn=1]" select="#modifywn|casecondition/@variable/#modifywn" path="1"/>
-          <admst:value-to test="caseitem[#modifyc=1]" select="#modifyc|casecondition/@variable/#modifyc" path="1"/>
-        </admst:when>
-        <admst:when test="[datatypename='assignment']">
-          <admst:value-to test="lhs[exists(prototype/@protoinstance[#modifys=1])]" select="#modifys|rhs/@exvariable/#modifys" path="1"/>
-          <admst:value-to test="lhs[exists(prototype/@protoinstance[#modifyd=1])]" select="#modifyd|rhs/@exvariable/#modifyd" path="1"/>
-          <admst:value-to test="lhs[exists(prototype/@protoinstance[#modifyfn=1])]" select="#modifyfn|rhs/@exvariable/#modifyfn" path="1"/>
-          <admst:value-to test="lhs[exists(prototype/@protoinstance[#modifywn=1])]" select="#modifywn|rhs/@exvariable/#modifywn" path="1"/>
-          <admst:value-to test="lhs[exists(prototype/@protoinstance[#modifyc=1])]" select="#modifyc|rhs/@exvariable/#modifyc" path="1"/>
-          <admst:value-to test="lhs/prototype/@ddxprobe" select="#TOTOddxprobe" string="yes"/>
-          <admst:push select="rhs/@exvariable/prototype/@ddxprobe" path="lhs/prototype/@ddxprobe" oncompare="nature|pnode|nnode"/>
-          <!-- juste pour zspice!!!!!!! -->
-          <!-- zspice admst:if test="lhs/prototype[#output='yes' and #modifyd!='1' and #modifys!='1' and #modifywn!='1' and #modifyfn!='1']" -->
-            <!-- zspice admst:value-to select="#modifys|(lhs|rhs|rhs/@exvariable)/#modifys" path="1"/ -->
-          <!-- zspice /admst:if -->
-          <!-- juste pour zspice!!!!!!! -->
-        </admst:when>
-        <admst:when test="[datatypename='contribution']">
-          <admst:choose>
-            <admst:when test="[#modifyd=1]">
-              <admst:value-to select="rhs/@exvariable/#modifyd" path="1"/>
-            </admst:when>
-            <admst:when test="[#modifyfn=1]">
-              <admst:value-to select="rhs/@exvariable/#modifyfn" path="1"/>
-            </admst:when>
-            <admst:when test="[#modifywn=1]">
-              <admst:value-to select="rhs/@exvariable/#modifywn" path="1"/>
-            </admst:when>
-            <admst:otherwise>
-              <admst:value-to select="#modifys|(rhs|rhs/@exvariable)/#modifys" path="1"/>
-            </admst:otherwise>
-          </admst:choose>
-        </admst:when>
-        <admst:when test="[datatypename='nilled']"/>
-        <admst:when test="[datatypename='function' and arity='callfunction']">
-          <admst:value-to select="#modifyc|arguments/@exvariable/#modifyc" path="1"/>
-        </admst:when>
-        <admst:otherwise>
-          <admst:fatal format="%(datatypename): case not handled\n"/>
-        </admst:otherwise>
-      </admst:choose>
-    </admst:template>
-    <admst:apply-templates select="modulecode" match="modify"/>
-    <admst:value-to select="modulevariablep[exists(@protoinstance[#modifys=1])]/#modifys" path="1"/>
-    <admst:value-to select="modulevariablep[exists(@protoinstance[#modifyd=1])]/#modifyd" path="1"/>
-    <admst:value-to select="modulevariablep[exists(@protoinstance[#modifyfn=1])]/#modifyfn" path="1"/>
-    <admst:value-to select="modulevariablep[exists(@protoinstance[#modifywn=1])]/#modifywn" path="1"/>
-    <admst:value-to select="modulevariablep[exists(@protoinstance[#modifyc=1])]/#modifyc" path="1"/>
-    <admst:value-to select="modulevariablep[exists(@protoinstance[#modifys=1 or #modifyd=1 or #modifyfn=1 or #modifywn=1])]/#insource" path="1"/>
-    <admst:value-to select="@allvariablecontainer/blockvariablep[exists(@protoinstance[#modifys=1])]/#modifys" path="1"/>
-    <admst:value-to select="@allvariablecontainer/blockvariablep[exists(@protoinstance[#modifyd=1])]/#modifyd" path="1"/>
-    <admst:value-to select="@allvariablecontainer/blockvariablep[exists(@protoinstance[#modifyfn=1])]/#modifyfn" path="1"/>
-    <admst:value-to select="@allvariablecontainer/blockvariablep[exists(@protoinstance[#modifywn=1])]/#modifywn" path="1"/>
-    <admst:value-to select="@allvariablecontainer/blockvariablep[exists(@protoinstance[#modifyc=1])]/#modifyc" path="1"/>
-    <admst:value-to select="@allvariablecontainer/blockvariablep[exists(@protoinstance[#modifys=1 or #modifyd=1 or #modifyfn=1 or #modifywn=1])]/#insource" path="1"/>
-    <!-- jacobian -->
-    <admst:template match="j">
-      <admst:break test="[#r/location='ground' or #c/location='ground']"/>
-      <admst:variable name="myklass" path="#module/@jacobianklass[#row=../../#r and #column=../../#c]"/>
-      <admst:if test="[nilled($myklass)]">
-       <admst:new datatype="number" inputs="0">
-         <admst:variable name="myklass" path="."/>
-         <admst:push select="../#module/@jacobianklass" path="."/>
-         <admst:value-to select="#module" path="../../../#module"/>
-         <admst:value-to select="#row" path="../#r"/>
-         <admst:value-to select="#column" path="../#c"/>
-       </admst:new>
-      </admst:if>
-      <admst:push select="$myklass/@jcontribution" path="../.."/>
-      <admst:variable name="p"/>
-    </admst:template>
-    <admst:for-each select="@contribution">
-      <admst:variable name="mysource" path="."/>
-      <admst:push select="#zcontrib/@jcontribution" path="."/>
-      <!-- case I() &lt;+ .V(). -->
-      <admst:for-each select="rhs/@exprobe[(nature=pnode/discipline/potential)and($mysource/nature=$mysource/pnode/discipline/flow)]">
-        <admst:value-to select="#r" path="$mysource/pnode"/>
-        <admst:value-to select="#c" path="pnode"/>
-        <admst:apply-templates select="." match="j"/>
-        <admst:value-to select="#r" path="$mysource/pnode"/>
-        <admst:value-to select="#c" path="nnode"/>
-        <admst:apply-templates select="." match="j"/>
-        <admst:value-to select="#r" path="$mysource/nnode"/>
-        <admst:value-to select="#c" path="pnode"/>
-        <admst:apply-templates select="." match="j"/>
-        <admst:value-to select="#r" path="$mysource/nnode"/>
-        <admst:value-to select="#c" path="nnode"/>
-        <admst:apply-templates select="." match="j"/>
-      </admst:for-each>
-    </admst:for-each>
+
+  <admst:template match="partition">
+    <admst:value-to select="value/#module" path="$globalmodule"/>
+    <admst:if
+      test="[aname='rhs' or aname='ifcondition'  or aname='whilecondition' or
+             aname='forcondition' or aname='default' or aname='casecondition' or
+             (up/value/datatypename='function' and up/value/arity='callfunction' and aname='arguments')]">
+      <admst:value-to select="#isexpression" path="1"/>
+      <admst:variable name="globalexpression" path="value"/>
+    </admst:if>
+    <admst:choose>
+      <admst:when test="value[datatypename='contribution']">
+        <admst:variable name="globalcontribution" path="value"/>
+      </admst:when>
+      <admst:when test="value[datatypename='assignment']">
+        <admst:variable name="globalassignment" path="value"/>
+      </admst:when>
+      <admst:when test="value[datatypename='probe' and not(tnode/up/value/datatypename='function' and tnode/up/value/name='ddx')]">
+        <admst:push select="$globalexpression/@exprobe" path="value" oncompare="nature|pnode|nnode"/>
+      </admst:when>
+      <admst:when test="value[datatypename='block']">
+        <admst:variable test="value[name='initial_instance']" name="globalpartitionning" string="initial_instance"/>
+        <admst:variable test="value[name='load']" name="globalpartitionning" string="load"/>
+        <admst:push select="value/#module/@allvariablecontainer" path="value"/>
+      </admst:when>
+      <admst:when test="value[datatypename='function' and arity!='callfunction']">
+        <admst:value-to select="value/#expression" path="$globalexpression"/>
+        <admst:value-to test="value[name='ddt']" select="$globalcontribution/#modifyd" path="1"/>
+        <admst:value-to test="value[name='white_noise']" select="$globalcontribution/#modifywn" path="1"/>
+        <admst:value-to test="value[name='flicker_noise']" select="$globalcontribution/#modifyfn" path="1"/>
+        <admst:push
+          test="value[arity='nary'
+                 and not(name='\$realtime' or name='\$temperature' or name='vt' or name='idt' or name='ddt' or
+                         name='\$param_given' or name='ddx' or name='flicker_noise' or name='white_noise')]"
+            select="$globalexpression/@exfunction" path="value"/>
+      </admst:when>
+      <admst:when test="value[datatypename='variable']">
+        <admst:value-to test="value[$globalpartitionning='load']" select="value/prototype/#inevaluate" string="yes"/>
+        <admst:value-to test="value[$globalpartitionning='initial_instance']" select="value/prototype/#ininstance" string="yes"/>
+        <admst:push select="value/prototype/@protoinstance" path="value"/>
+        <admst:push select="$globalexpression/@exvariable" path="value" oncompare="name"/>
+        <admst:push select="$globalexpression/@exprobe" path="value/prototype/@vpprobe" oncompare="nature|pnode|nnode"/>
+      </admst:when>
+    </admst:choose>
+    <admst:apply-templates select="down" match="partition"/>
+    <admst:choose>
+      <admst:when test="[#isexpression=1]">
+        <admst:variable name="globalexpression"/>
+      </admst:when>
+      <admst:when test="value[datatypename='contribution']">
+        <admst:variable name="globalcontribution"/>
+        <admst:push select="value/$globalmodule/@contribution" path="value"/>
+        <admst:variable name="myklass" path="value/#module/@npncontributionklass[nature=../../nature and pnode=../../pnode and nnode=../../nnode]"/>
+        <admst:if test="[nilled($myklass)]">
+          <admst:variable name="myklass" path="value"/>
+          <admst:push select="$globalmodule/@npncontributionklass" path="value"/>
+        </admst:if>
+        <admst:value-to select="value/#zcontrib" path="$myklass"/>
+        <admst:push select="$myklass/@kcontribution" path="value"/>
+        <admst:push select="$myklass/@kprobe" path="value/rhs/@exprobe" oncompare="nature|pnode|nnode"/>
+      </admst:when>
+      <admst:when test="value[datatypename='assignment']">
+        <admst:push select="value/lhs/prototype/@vpprobe" path="value/rhs/@exprobe" oncompare="nature|pnode|nnode"/>
+        <admst:push select="$globalmodule/@assignment" path="value"/>
+      </admst:when>
+    </admst:choose>
   </admst:template>
   <admst:template match="init">
     <admst:choose>
@@ -610,7 +279,6 @@
         <admst:value-to select="#module" path="$globalmodule"/>
         <admst:variable name="globalassignment" path="."/>
         <admst:apply-templates select="rhs" match="e:init"/>
-        <admst:push select="lhs/prototype/@vpprobe" path="rhs/@exprobe" oncompare="nature|pnode|nnode"/>
         <admst:push select="$globalmodule/@assignment" path="."/>
         <admst:push select="lhs/prototype/@protoinstance" path="lhs"/>
       </admst:when>
@@ -632,17 +300,14 @@
         <admst:variable name="globalexpression" path="."/>
         <admst:apply-templates select="." match="e:init"/>
         <admst:variable name="globalexpression"/>
-        <admst:push select="@exfunction" path="@exxfunction"/>
       </admst:when>
       <admst:when test="[datatypename='probe']">
         <admst:value-to select="#module" path="$globalmodule"/>
-        <admst:push select="$globalexpression/@exprobe" path="." oncompare="nature|pnode|nnode"/>
         <admst:push select="$globalmodule/@moduleprobe" path="." oncompare="nature|pnode|nnode"/>
       </admst:when>
       <admst:when test="[datatypename='variable']">
         <admst:push select="$globalexpression/@exvariable" path="." oncompare="name"/>
         <admst:push select="$globaltreenode/@variable" path="." oncompare="prototype"/>
-        <admst:push select="$globalexpression/@exprobe" path="prototype/@vpprobe" oncompare="nature|pnode|nnode"/>
         <admst:push select="prototype/@protoinstance" path="."/>
       </admst:when>
       <admst:when test="[(datatypename='function' and arity='unary')]">
@@ -668,7 +333,7 @@
           </admst:otherwise>
         </admst:choose>
         <admst:choose>
-          <admst:when test="[name='\$realtime' or name='\$temperature' or name='\$vt' or name='idt' or name='ddt' or                            name='\$param_given' or name='\$given' or name='ddx' or name='flicker_noise' or name='white_noise']"/>
+          <admst:when test="[name='\$realtime' or name='\$temperature' or name='\$vt' or name='idt' or name='ddt' or                            name='\$param_given' or name='\$param_given' or name='ddx' or name='flicker_noise' or name='white_noise']"/>
           <!--Trigonometric and hyperbolic functions-->
           <admst:when test="[             name='sin' or name='cos' or name='tan' or name='asin' or name='acos' or name='atan' or             name='atan2' or name='hypot' or             name='sinh' or name='cosh' or name='tanh' or name='asinh' or name='acosh' or name='atanh'           ]">
             <admst:push select="$globalexpression/@exxfunction" path="."/>
@@ -720,7 +385,7 @@
         <admst:value-to select="#dependency" path="#dependency"/>
         <admst:value-to select="#dependency[.='constant' and $globalopdependent='yes']" string="noprobe"/>
       </admst:when>
-      <admst:when test="caller()/template/textmatch[value='adms.implicit.xml.module']">
+      <admst:when test="caller()/template/textmatch[value='main.module']">
         <admst:variable name="globalexpression" path="."/>
         <admst:apply-templates select="." match="e:#dependency"/>
         <admst:variable name="globalexpression"/>
@@ -1036,91 +701,173 @@
       </admst:otherwise>
     </admst:choose>
   </admst:template>
-  <admst:template match="e:partition">
-    <admst:fatal test="[caller()/template/textmatch/value!='partition']" format="should be called by &quot;partition&quot;\n"/>
-    <admst:choose>
-      <admst:when test="[nilled($globalpartitionning)]">
-        <admst:value-to select="@exvariable/prototype/#usedinevaluate" string="yes"/>
-      </admst:when>
-      <admst:when test="[$globalpartitionning='initial_model']">
-        <admst:value-to select="@exvariable/prototype/#usedinmodel" string="yes"/>
-      </admst:when>
-      <admst:when test="[$globalpartitionning='initial_instance']">
-        <admst:value-to select="@exvariable/prototype/#usedininstance" string="yes"/>
-      </admst:when>
-      <admst:when test="[$globalpartitionning='initial_step']">
-        <admst:value-to select="@exvariable/prototype/#usedininitial_step" string="yes"/>
-      </admst:when>
-      <admst:when test="[$globalpartitionning='noise']">
-        <admst:value-to select="@exvariable/prototype/#usedinnoise" string="yes"/>
-      </admst:when>
-      <admst:when test="[$globalpartitionning='final_step']">
-        <admst:value-to select="@exvariable/prototype/#usedinfinal" string="yes"/>
-      </admst:when>
-    </admst:choose>
+  <admst:template match="main.module">
+    <admst:variable name="globalmodule" path="."/>
+    <admst:for-each select="modulenode">
+      <admst:value-to select="#module" path=".."/>
+    </admst:for-each>
+    <admst:value-to select="#modulefunctionidx" path="0"/>
+    <admst:apply-templates select="(modulefunctionp/functionpcode)|(modulecode)" match="init"/>
+    <admst:apply-templates select="(modulefunctionp/functionpcode)|(modulecode)" match="dependency"/>
+    <admst:apply-templates select="tnode" match="partition"/>
+    <admst:push select="@contribution" path="@reversecontribution"/>
+    <admst:for-each select="modulevariablep">
+      <admst:value-to select="[exists(@protoinstance[#dependency!='constant'])]/#OPdependent" string="yes"/>
+      <admst:value-to select="#output" path="isparameter"/>
+      <admst:value-to select="[isparameter='yes']/#parametertype" string="model"/>
+      <admst:for-each select="attribute">
+        <admst:value-to select="[name='type' and value='instance']/../#parametertype" string="instance"/>
+        <admst:value-to select="[name='ask' and value='yes']/../#output" string="yes"/>
+        <admst:value-to select="[name='ask' and value='no']/../#output" string="no"/>
+      </admst:for-each>
+      <admst:value-to select="#scope"
+         test="[#parametertype='instance' or (isparameter='no' and (#ininstance='yes' and #inevaluate='yes'))]"
+         string="global_instance"/>
+      <admst:apply-templates select="default" match="e:#dependency"/>
+      <admst:value-to select="default[exists([(datatypename='function' and arity='unary') and name='minus' and arguments[1]/datatypename='number' and arguments[1]/value='1.0'])]/#exvalue"
+        string="is_neg_one"/>
+      <admst:value-to select="default[exists([datatypename='number' and value='0.0'])]/#exvalue" string="is_zero"/>
+      <admst:value-to select="default[exists([datatypename='number' and value='1.0'])]/#exvalue" string="is_one"/>
+      <admst:value-to select="#isstate"
+        test="[isparameter='no' and #scope='global_instance' and #setininitial_step='yes' and (#setinevaluate='yes' or #usedinevaluate='yes')]"
+        string="yes"/>
+    </admst:for-each>
+    <admst:template match="modify">
+      <admst:choose>
+        <admst:when test="[datatypename='block']">
+          <admst:apply-templates select="reverse(blockcode)" match="modify"/>
+          <admst:value-to test="blockcode[#modifys=1]" select="#modifys" path="1"/>
+          <admst:value-to test="blockcode[#modifyd=1]" select="#modifyd" path="1"/>
+          <admst:value-to test="blockcode[#modifyfn=1]" select="#modifyfn" path="1"/>
+          <admst:value-to test="blockcode[#modifywn=1]" select="#modifywn" path="1"/>
+          <admst:value-to test="blockcode[#modifyc=1]" select="#modifyc" path="1"/>
+        </admst:when>
+        <admst:when test="[datatypename='conditional']">
+          <admst:apply-templates select="elsecode|thencode" match="modify"/>
+          <admst:value-to test="[thencode/#modifys=1 or elsecode/#modifys=1]" select="#modifys|ifcondition/@exvariable/#modifys" path="1"/>
+          <admst:value-to test="[thencode/#modifyd=1 or elsecode/#modifyd=1]" select="#modifyd|ifcondition/@exvariable/#modifyd" path="1"/>
+          <admst:value-to test="[thencode/#modifyfn=1 or elsecode/#modifyfn=1]" select="#modifyfn|ifcondition/@exvariable/#modifyfn" path="1"/>
+          <admst:value-to test="[thencode/#modifywn=1 or elsecode/#modifywn=1]" select="#modifywn|ifcondition/@exvariable/#modifywn" path="1"/>
+          <admst:value-to test="[thencode/#modifyc=1 or elsecode/#modifyc=1]" select="#modifyc|ifcondition/@exvariable/#modifyc" path="1"/>
+        </admst:when>
+        <admst:when test="[datatypename='whileloop']">
+          <admst:apply-templates select="whilecode" match="modify"/>
+          <admst:value-to test="[whilecode/#modifys=1]" select="#modifys|whilecondition/@exvariable/#modifys" path="1"/>
+          <admst:value-to test="[whilecode/#modifyd=1]" select="#modifyd|whilecondition/@exvariable/#modifyd" path="1"/>
+          <admst:value-to test="[whilecode/#modifyfn=1]" select="#modifyfn|whilecondition/@exvariable/#modifyfn" path="1"/>
+          <admst:value-to test="[whilecode/#modifywn=1]" select="#modifywn|whilecondition/@exvariable/#modifywn" path="1"/>
+          <admst:value-to test="[whilecode/#modifyc=1]" select="#modifyc|whilecondition/@exvariable/#modifyc" path="1"/>
+          <admst:apply-templates select="whilecode" match="modify"/>
+        </admst:when>
+        <admst:when test="[datatypename='forloop']">
+          <admst:apply-templates select="forcode" match="modify"/>
+          <admst:value-to test="[forcode/#modifys=1]" select="#modifys" path="1"/>
+          <admst:value-to test="[forcode/#modifyd=1]" select="#modifyd" path="1"/>
+          <admst:value-to test="[forcode/#modifyfn=1]" select="#modifyfn" path="1"/>
+          <admst:value-to test="[forcode/#modifywn=1]" select="#modifywn" path="1"/>
+          <admst:value-to test="[forcode/#modifyc=1]" select="#modifyc" path="1"/>
+          <admst:apply-templates select="forcode" match="modify"/>
+        </admst:when>
+        <admst:when test="[datatypename='case']">
+          <admst:apply-templates select="caseitem/casecode" match="modify"/>
+          <admst:for-each select="caseitem">
+            <admst:value-to test="[casecode/#modifys=1 and defaultcase='no']" select="#modifys|casealternative/@variable/#modifys" path="1"/>
+            <admst:value-to test="[casecode/#modifyd=1 and defaultcase='no']" select="#modifyd|casealternative/@variable/#modifyd" path="1"/>
+            <admst:value-to test="[casecode/#modifyfn=1 and defaultcase='no']" select="#modifyfn|casealternative/@variable/#modifyfn" path="1"/>
+            <admst:value-to test="[casecode/#modifywn=1 and defaultcase='no']" select="#modifywn|casealternative/@variable/#modifywn" path="1"/>
+            <admst:value-to test="[casecode/#modifyc=1 and defaultcase='no']" select="#modifyc|casealternative/@variable/#modifyc" path="1"/>
+          </admst:for-each>
+          <admst:value-to test="caseitem[#modifys=1]" select="#modifys|casecondition/@variable/#modifys" path="1"/>
+          <admst:value-to test="caseitem[#modifyd=1]" select="#modifyd|casecondition/@variable/#modifyd" path="1"/>
+          <admst:value-to test="caseitem[#modifyfn=1]" select="#modifyfn|casecondition/@variable/#modifyfn" path="1"/>
+          <admst:value-to test="caseitem[#modifywn=1]" select="#modifywn|casecondition/@variable/#modifywn" path="1"/>
+          <admst:value-to test="caseitem[#modifyc=1]" select="#modifyc|casecondition/@variable/#modifyc" path="1"/>
+        </admst:when>
+        <admst:when test="[datatypename='assignment']">
+          <admst:value-to test="lhs[exists(prototype/@protoinstance[#modifys=1])]" select="#modifys|rhs/@exvariable/#modifys" path="1"/>
+          <admst:value-to test="lhs[exists(prototype/@protoinstance[#modifyd=1])]" select="#modifyd|rhs/@exvariable/#modifyd" path="1"/>
+          <admst:value-to test="lhs[exists(prototype/@protoinstance[#modifyfn=1])]" select="#modifyfn|rhs/@exvariable/#modifyfn" path="1"/>
+          <admst:value-to test="lhs[exists(prototype/@protoinstance[#modifywn=1])]" select="#modifywn|rhs/@exvariable/#modifywn" path="1"/>
+          <admst:value-to test="lhs[exists(prototype/@protoinstance[#modifyc=1])]" select="#modifyc|rhs/@exvariable/#modifyc" path="1"/>
+          <admst:value-to test="lhs/prototype/@ddxprobe" select="#TOTOddxprobe" string="yes"/>
+          <admst:push select="rhs/@exvariable/prototype/@ddxprobe" path="lhs/prototype/@ddxprobe" oncompare="nature|pnode|nnode"/>
+        </admst:when>
+        <admst:when test="[datatypename='contribution']">
+          <admst:choose>
+            <admst:when test="[#modifyd=1]">
+              <admst:value-to select="rhs/@exvariable/#modifyd" path="1"/>
+            </admst:when>
+            <admst:when test="[#modifyfn=1]">
+              <admst:value-to select="rhs/@exvariable/#modifyfn" path="1"/>
+            </admst:when>
+            <admst:when test="[#modifywn=1]">
+              <admst:value-to select="rhs/@exvariable/#modifywn" path="1"/>
+            </admst:when>
+            <admst:otherwise>
+              <admst:value-to select="#modifys|(rhs|rhs/@exvariable)/#modifys" path="1"/>
+            </admst:otherwise>
+          </admst:choose>
+        </admst:when>
+        <admst:when test="[datatypename='nilled']"/>
+        <admst:when test="[datatypename='function' and arity='callfunction']">
+          <admst:value-to select="#modifyc|arguments/@exvariable/#modifyc" path="1"/>
+        </admst:when>
+        <admst:otherwise>
+          <admst:fatal format="%(datatypename): case not handled\n"/>
+        </admst:otherwise>
+      </admst:choose>
+    </admst:template>
+    <admst:apply-templates select="modulecode" match="modify"/>
+    <admst:value-to select="modulevariablep[exists(@protoinstance[#modifys=1])]/#modifys" path="1"/>
+    <admst:value-to select="modulevariablep[exists(@protoinstance[#modifyd=1])]/#modifyd" path="1"/>
+    <admst:value-to select="modulevariablep[exists(@protoinstance[#modifyfn=1])]/#modifyfn" path="1"/>
+    <admst:value-to select="modulevariablep[exists(@protoinstance[#modifywn=1])]/#modifywn" path="1"/>
+    <admst:value-to select="modulevariablep[exists(@protoinstance[#modifyc=1])]/#modifyc" path="1"/>
+    <admst:value-to select="modulevariablep[exists(@protoinstance[#modifys=1 or #modifyd=1 or #modifyfn=1 or #modifywn=1])]/#insource" path="1"/>
+    <admst:value-to select="@allvariablecontainer/blockvariablep[exists(@protoinstance[#modifys=1])]/#modifys" path="1"/>
+    <admst:value-to select="@allvariablecontainer/blockvariablep[exists(@protoinstance[#modifyd=1])]/#modifyd" path="1"/>
+    <admst:value-to select="@allvariablecontainer/blockvariablep[exists(@protoinstance[#modifyfn=1])]/#modifyfn" path="1"/>
+    <admst:value-to select="@allvariablecontainer/blockvariablep[exists(@protoinstance[#modifywn=1])]/#modifywn" path="1"/>
+    <admst:value-to select="@allvariablecontainer/blockvariablep[exists(@protoinstance[#modifyc=1])]/#modifyc" path="1"/>
+    <admst:value-to select="@allvariablecontainer/blockvariablep[exists(@protoinstance[#modifys=1 or #modifyd=1 or #modifyfn=1 or #modifywn=1])]/#insource" path="1"/>
+    <!-- jacobian -->
+    <admst:template match="j">
+      <admst:break test="[#r/location='ground' or #c/location='ground']"/>
+      <admst:variable name="myklass" path="#module/@jacobianklass[#row=../../#r and #column=../../#c]"/>
+      <admst:if test="[nilled($myklass)]">
+       <admst:new datatype="number" inputs="0">
+         <admst:variable name="myklass" path="."/>
+         <admst:push select="../#module/@jacobianklass" path="."/>
+         <admst:value-to select="#module" path="../../../#module"/>
+         <admst:value-to select="#row" path="../#r"/>
+         <admst:value-to select="#column" path="../#c"/>
+       </admst:new>
+      </admst:if>
+      <admst:push select="$myklass/@jcontribution" path="../.."/>
+      <admst:variable name="p"/>
+    </admst:template>
+    <admst:for-each select="@contribution">
+      <admst:variable name="mysource" path="."/>
+      <admst:push select="#zcontrib/@jcontribution" path="."/>
+      <!-- case I() &lt;+ .V(). -->
+      <admst:for-each select="rhs/@exprobe[(nature=pnode/discipline/potential)and($mysource/nature=$mysource/pnode/discipline/flow)]">
+        <admst:value-to select="#r" path="$mysource/pnode"/>
+        <admst:value-to select="#c" path="pnode"/>
+        <admst:apply-templates select="." match="j"/>
+        <admst:value-to select="#r" path="$mysource/pnode"/>
+        <admst:value-to select="#c" path="nnode"/>
+        <admst:apply-templates select="." match="j"/>
+        <admst:value-to select="#r" path="$mysource/nnode"/>
+        <admst:value-to select="#c" path="pnode"/>
+        <admst:apply-templates select="." match="j"/>
+        <admst:value-to select="#r" path="$mysource/nnode"/>
+        <admst:value-to select="#c" path="nnode"/>
+        <admst:apply-templates select="." match="j"/>
+      </admst:for-each>
+    </admst:for-each>
   </admst:template>
-  <admst:template match="partition">
-    <admst:choose>
-      <admst:when test="[datatypename='function' and arity='callfunction']">
-        <admst:apply-templates select="arguments" match="e:partition"/>
-      </admst:when>
-      <admst:when test="[datatypename='whileloop']">
-        <admst:apply-templates select="whilecondition" match="e:partition"/>
-        <admst:apply-templates select="whilecode" match="partition"/>
-      </admst:when>
-      <admst:when test="[datatypename='forloop']">
-        <admst:apply-templates select="forcondition" match="e:partition"/>
-        <admst:apply-templates select="forinitial|forupdate|forcode" match="partition"/>
-      </admst:when>
-      <admst:when test="[datatypename='case']">
-        <admst:apply-templates select="casecondition" match="e:partition"/>
-        <admst:for-each select="caseitem">
-          <!-- c'est pas une expression admst:apply-templates select="casealternative" match="e:partition"/ -->
-          <admst:apply-templates select="casecode" match="partition"/>
-        </admst:for-each>
-      </admst:when>
-      <admst:when test="[datatypename='conditional']">
-        <admst:apply-templates select="ifcondition" match="e:partition"/>
-        <admst:apply-templates select="thencode|elsecode" match="partition"/>
-      </admst:when>
-      <admst:when test="[datatypename='contribution']">
-        <admst:apply-templates select="rhs" match="e:partition"/>
-      </admst:when>
-      <admst:when test="[datatypename='assignment']">
-        <admst:apply-templates select="rhs" match="e:partition"/>
-      </admst:when>
-      <admst:when test="[datatypename='block']">
-        <admst:variable name="forcepartitionning" string="yes"/>
-        <admst:choose>
-          <admst:when test="[name='initial_model']">
-            <admst:variable name="globalpartitionning" string="initial_model"/>
-          </admst:when>
-          <admst:when test="[name='initial_instance']">
-            <admst:variable name="globalpartitionning" string="initial_instance"/>
-          </admst:when>
-          <admst:when test="[name='initial_step']">
-            <admst:variable name="globalpartitionning" string="initial_step"/>
-          </admst:when>
-          <admst:when test="[name='noise']">
-            <admst:variable name="globalpartitionning" string="noise"/>
-          </admst:when>
-          <admst:when test="[name='final_step']">
-            <admst:variable name="globalpartitionning" string="final_step"/>
-          </admst:when>
-          <admst:otherwise>
-            <admst:variable name="forcepartitionning" string="no"/>
-          </admst:otherwise>
-        </admst:choose>
-        <admst:apply-templates select="blockcode" match="partition"/>
-        <admst:variable test="[$forcepartitionning='yes']" name="globalpartitionning"/>
-      </admst:when>
-      <admst:when test="[datatypename='nilled']"/>
-      <admst:otherwise>
-        <admst:fatal format="%(datatypename): case not handled\n"/>
-      </admst:otherwise>
-    </admst:choose>
-  </admst:template>
-  <admst:template match="adms.implicit.xml.nature">
+
+  <admst:template match="main">
     <admst:push select="/@discipline" path="/items[datatypename='discipline']"/>
     <admst:push select="/@nature" path="/items[datatypename='nature']"/>
     <admst:push select="/@module" path="/items[datatypename='module']"/>
@@ -1128,23 +875,7 @@
       <admst:value-to select="ddt_nature" path="/@nature[name='%(../../ddt_name)']"/>
       <admst:value-to select="idt_nature" path="/@nature[name='%(../../idt_name)']"/>
     </admst:for-each>
-  </admst:template>
-  <admst:template match="adms.implicit.xml">
-    <admst:apply-templates select="." match="adms.implicit.xml.nature"/>
-    <!-- Test command line for threadsafe implementation -->
-    <admst:for-each select="/argv">
-      <admst:choose>
-        <admst:when test="['--nxpt'=.]">
-          <admst:message format="option --nxpt detected - threadsafe mode activated\n"/>
-          <admst:value-to select="/#argv/#threadsafe" path="1"/>
-        </admst:when>
-        <admst:when test="['--nxpd'=.]">
-          <admst:message format="option --nxpd detected - divtrick mode activated\n"/>
-          <admst:value-to select="/#argv/#divtrick" path="1"/>
-        </admst:when>
-      </admst:choose>
-    </admst:for-each>
-    <admst:apply-templates select="/@module" match="adms.implicit.xml.module"/>
+    <admst:apply-templates select="/@module" match="main.module"/>
   </admst:template>
   <admst:template match="af:c:math_h">
 /* math functions and appropriate derivatives */
@@ -2060,82 +1791,12 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
     <admst:variable name="globalopdependent" string="no"/>
     <admst:variable name="globalpartitionning"/>
     <admst:variable name="globaltreenode"/>
-    <admst:template match="e:divtrick">
-      <admst:choose>
-        <admst:when test="[caller()/template/textmatch/value='divtrick']">
-          <admst:apply-templates select="." match="e:divtrick"/>
-        </admst:when>
-        <admst:when test="[(datatypename='function' and arity='unary')]">
-          <admst:apply-templates select="arguments[1]" match="e:divtrick"/>
-        </admst:when>
-        <admst:when test="[(datatypename='function' and arity='binary')]">
-          <admst:apply-templates select="arguments[1]|arguments[2]" match="e:divtrick"/>
-          <admst:value-to test="[name='multdiv']" select="arity" string="nary"/>
-          <admst:value-to test="[name='multdiv']" select="name" string="div"/>
-        </admst:when>
-        <admst:when test="[(datatypename='function' and arity='ternary')]">
-          <admst:apply-templates select="arguments[1]|arguments[2]|arguments[3]" match="e:divtrick"/>
-        </admst:when>
-        <admst:when test="[datatypename='function']">
-          <admst:apply-templates select="arguments" match="e:divtrick"/>
-        </admst:when>
-        <admst:when test="[datatypename='probe']"/>
-        <admst:when test="[datatypename='variable']"/>
-        <admst:when test="[datatypename='number']"/>
-        <admst:when test="[datatypename='string']"/>
-        <admst:otherwise>
-          <admst:fatal format="%(datatypename): case not handled\n"/>
-        </admst:otherwise>
-      </admst:choose>
-    </admst:template>
-    <admst:template match="divtrick">
-      <admst:choose>
-        <admst:when test="[datatypename='function' and arity='callfunction']">
-          <admst:apply-templates select="arguments" match="e:divtrick"/>
-        </admst:when>
-        <admst:when test="[datatypename='whileloop']">
-          <admst:apply-templates select="whilecondition" match="e:divtrick"/>
-          <admst:apply-templates select="whilecode" match="divtrick"/>
-        </admst:when>
-        <admst:when test="[datatypename='forloop']">
-          <admst:apply-templates select="forinitial|forupdate" match="divtrick"/>
-          <admst:apply-templates select="forcondition" match="e:divtrick"/>
-          <admst:apply-templates select="forcode" match="divtrick"/>
-        </admst:when>
-        <admst:when test="[datatypename='case']">
-          <admst:apply-templates select="casecondition" match="e:divtrick"/>
-          <admst:for-each select="caseitem">
-            <admst:for-each select="casealternative">
-              <admst:apply-templates select="." match="e:divtrick"/>
-            </admst:for-each>
-            <admst:apply-templates select="casecode" match="divtrick"/>
-          </admst:for-each>
-        </admst:when>
-        <admst:when test="[datatypename='conditional']">
-          <admst:apply-templates select="ifcondition" match="e:divtrick"/>
-          <admst:apply-templates select="thencode|elsecode" match="divtrick"/>
-        </admst:when>
-        <admst:when test="[datatypename='contribution']">
-          <admst:apply-templates select="rhs" match="e:divtrick"/>
-        </admst:when>
-        <admst:when test="[datatypename='assignment']">
-          <admst:apply-templates select="rhs" match="e:divtrick"/>
-        </admst:when>
-        <admst:when test="[datatypename='block']">
-          <admst:apply-templates select="blockcode" match="divtrick"/>
-        </admst:when>
-        <admst:when test="[datatypename='nilled']"/>
-        <admst:otherwise>
-          <admst:fatal format="%(datatypename): case not handled\n"/>
-        </admst:otherwise>
-      </admst:choose>
-    </admst:template>
-    <admst:apply-templates select="." match="adms.implicit.xml"/>
+    <admst:apply-templates select="." match="main"/>
   </admst:if>
   <!-- implicit -->
   <admst:if test="[/#simulator='ngspice']">
     <admst:message format="option --ngspice activated\n"/>
-    <?escript name="ngspice_1_0_1/ngspiceVersion.xml" ?>
+<?escript name="ngspice_1_0_1/ngspiceVersion.xml" ?>
     <admst:template match="e">
       <admst:apply-templates select="." match="hxx%(datatypename)">$e</admst:apply-templates>
     </admst:template>
@@ -2522,14 +2183,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
       </admst:if>
     </admst:template>
     <admst:template match="nary">
-      <admst:choose>
-        <admst:when test="[$ngspicefile='guesstopology']">
-          <admst:apply-templates select="." match="function:ngg"/>
-        </admst:when>
-        <admst:otherwise>
-          <admst:apply-templates select="." match="function:def"/>
-        </admst:otherwise>
-      </admst:choose>
+      <admst:apply-templates select="." match="function:def"/>
     </admst:template>
     <admst:template match="function:def">
       <admst:choose>
@@ -2538,7 +2192,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
             <admst:variable name="ztmp" string="%(estringifynoprobe(.)/[name='ret']/value)"/>
           </admst:for-each>
         </admst:when>
-        <admst:when test="[name='\$given']">
+        <admst:when test="[name='\$param_given']">
           <admst:for-each select="arguments[1]">
             <admst:error test="[datatypename!='variable']" format="\$given: argument is not a variable\n"/>
             <admst:error test="prototype[isparameter='no']" format="\$given(%(name)): argument is not a parameter\n"/>
@@ -3107,75 +2761,6 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
         </admst:choose>
       </admst:if>
     </admst:template>
-    <!-- modulecode//@contribution -->
-    <admst:template match="contribution">
-      <admst:choose>
-        <admst:when test="[#modifywn!=1 and #modifyfn!=1]">
-          <admst:apply-templates select="." match="contribution:nonoise"/>
-        </admst:when>
-        <admst:otherwise>
-          <admst:apply-templates select="." match="contribution:noise"/>
-        </admst:otherwise>
-      </admst:choose>
-    </admst:template>
-    <admst:template match="contribution:nonoise">
-      <admst:if test="rhs[exists(@exfunction[#class='builtin'])]">
-        <admst:choose>
-          <admst:when test="[#modifys!=1 and #modifyfn!=1 and #modifywn!=1 and #modifyc!=1]">
-            <admst:text format="#if defined(_DYNAMIC)\n"/>
-          </admst:when>
-        </admst:choose>
-        <admst:text format="{\n"/>
-        <admst:text select="rhs/@exfunction" format="double __%(fgetname(.)/[name='fgetname']/value)_%(position()-1)=0.0;\n"/>
-        <admst:apply-templates select="." match="ddx:function:computation"/>
-      </admst:if>
-      <admst:choose>
-        <admst:when test="[#modifys!=1 and #modifyfn!=1 and #modifywn!=1 and #modifyc!=1]">
-          <admst:text format="  _load_dynamic_"/>
-        </admst:when>
-        <admst:otherwise>
-          <admst:text format="  _load_static_"/>
-        </admst:otherwise>
-      </admst:choose>
-      <admst:choose>
-        <admst:when test="nnode[location!='ground']">
-          <admst:text format="residual2(%(pnode/name),%(nnode/name),%(estringifynoprobe(rhs)/[name='ret']/value))\n"/>
-        </admst:when>
-        <admst:otherwise>
-          <admst:text format="residual1(%(pnode/name),%(estringifynoprobe(rhs)/[name='ret']/value))\n"/>
-        </admst:otherwise>
-      </admst:choose>
-      <admst:for-each select="rhs/@exprobe">
-        <admst:variable name="zprobe" path="."/>
-        <admst:apply-templates select=".." match="subexpression:differentiate"/>
-        <admst:choose>
-          <admst:when test="../..[#modifys!=1 and #modifyfn!=1 and #modifywn!=1 and #modifyc!=1]">
-            <admst:text format="  _load_dynamic_"/>
-          </admst:when>
-          <admst:otherwise>
-            <admst:text format="  _load_static_"/>
-          </admst:otherwise>
-        </admst:choose>
-        <admst:if test="pnode[location!='ground']">
-          <admst:if test="../../pnode[location!='ground']">
-            <admst:choose>
-              <admst:when test="nnode[location!='ground']">
-                <admst:text test="../../nnode[location!='ground']" format="jacobian4(%(../../pnode/name),%(../../nnode/name),%(pnode/name),%(nnode/name),$zddx)\n"/>
-                <admst:text test="../../nnode[location='ground']" format="jacobian2p(%(../../pnode/name),%(pnode/name),%(nnode/name),$zddx)\n"/>
-              </admst:when>
-              <admst:otherwise>
-                <admst:text test="../../nnode[location!='ground']" format="jacobian2s(%(../../pnode/name),%(../../nnode/name),%(pnode/name),$zddx)\n"/>
-                <admst:text test="../../nnode[location='ground']" format="jacobian1(%(../../pnode/name),%(pnode/name),$zddx)\n"/>
-              </admst:otherwise>
-            </admst:choose>
-          </admst:if>
-        </admst:if>
-      </admst:for-each>
-      <admst:if test="rhs[exists(@exfunction[#class='builtin'])]">
-        <admst:text format="}\n"/>
-        <admst:text test="[#modifys!=1 and #modifyfn!=1 and #modifywn!=1 and #modifyc!=1]" format="#endif /* _DYNAMIC */\n"/>
-      </admst:if>
-    </admst:template>
     <!-- modulecode//conditional -->
     <admst:template match="conditional">
       <admst:if test="[#modifys!=1 and #modifyfn!=1 and #modifywn!=1 and #modifyc!=1]">
@@ -3279,7 +2864,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
           <admst:variable name="ztmp" string="BP(%(pnode/name),%(nnode/name))"/>
         </admst:when>
         <admst:otherwise>
-          <admst:variable name="ztmp" string="NP(%(pnode/name))"/>
+          <admst:variable name="ztmp" string="voltages(%(pnode/name))"/>
         </admst:otherwise>
       </admst:choose>
     </admst:template>
@@ -3361,11 +2946,6 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
         </admst:when>
       </admst:choose>
     </admst:template>
-    <admst:variable name="package_name" string="ngspice"/>
-    <admst:variable name="package_tarname" string="ngspice"/>
-    <admst:variable name="package_version" string="1.0.0.0"/>
-    <admst:variable name="package_string" string="ngspice 1.0.0.0"/>
-    <admst:variable name="package_bugreport" string="r29173@users.sourceforge.net"/>
     <admst:for-each select="/@module">
         <admst:variable name="fnoise"/>
         <admst:variable name="tnoise"/>
@@ -3490,6 +3070,23 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
             </admst:new>
           </admst:if>
         </admst:when>
+        <admst:when test="[lower-case(name)='igbt']">
+          <admst:if test="[nilled(modulevariablep[name='xigbt'])]">
+            <admst:new datatype="variablep" inputs="'xigbt'">
+              <admst:push select="../modulevariablep" path="." oncompare="."/>
+              <admst:value-to select="sizetype" string="scalar"/>
+              <admst:value-to select="type" string="integer"/>
+              <admst:value-to select="isparameter" string="yes"/>
+              <admst:value-to select="#output" string="yes"/>
+              <admst:value-to select="#parametertype" string="model"/>
+              <admst:value-to select="#scope" string="global_model"/>
+              <admst:new datatype="number" inputs="1">
+                <admst:value-to select="scalingunit" string="1"/>
+                <admst:value-to select="../default" path="."/>
+              </admst:new>
+            </admst:new>
+          </admst:if>
+        </admst:when>
         <admst:when test="[lower-case(name)='psp102va']">
           <admst:if test="[nilled(modulevariablep[name='nmos'])]">
             <admst:new datatype="variablep" inputs="'nmos'">
@@ -3559,7 +3156,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
         </admst:otherwise>
       </admst:choose>
     </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEtemp.c.xml" ?>
+<?escript name="ngspice_1_0_1/ngspiceMODULEtemp.c.xml" ?>
     <admst:template match="dectype">
       <admst:choose>
         <admst:when test="[type='real']">
@@ -3576,14 +3173,7 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
     <admst:template match="code:ng1">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include &lt;ngspice/cktdefs.h&gt;
-#include &lt;ngspice/smpdefs.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/const.h&gt;
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/ifsim.h&gt;
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
 
 //fixme!!! redundant
 #define max(x,y)        (((x)&gt;(y))?(x):(y))
@@ -3626,14 +3216,10 @@ BUILT_SOURCES = \\
 	$(module).hxx		\\
 	$(module)acld.c	\\
 	$(module)ask.c	\\
-	$(module)defs.h	\\
+	$(module)itf.h	\\
 	$(module)del.c	\\
 	$(module)dest.c	\\
-	$(module)ext.h	\\
-	$(module)guesstopology.c	\\
 	$(module)init.c	\\
-	$(module)init.h	\\
-	$(module)itf.h	\\
 	$(module)load.c	\\
 	$(module)mask.c	\\
 	$(module)mdel.c	\\
@@ -3650,25 +3236,21 @@ lib$(module)_la_SOURCES = \\
 CLEANFILES = \\
 	\$(BUILT_SOURCES) \\
 	.$(module).va.adms \\
-	.adms.implicit.xml \\
 	.interface.xml \\
 	*.h \\
 	*.xml
-
-#TODO (not implemented) \\
-	$(module)conv.c	\\
-	$(module)getic.c
 
 AM_CPPFLAGS = -I\$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in
 
 %.c %.hxx \\
-	%acld.c %ask.c %defs.h %del.c %dest.c %ext.h %guesstopology.c \\
-	%init.c %init.h %itf.h %load.c %mask.c %mdel.c %mpar.c %par.c \\
+	%acld.c %ask.c %itf.h %del.c %dest.c \\
+	%init.c %load.c %mask.c %mdel.c %mpar.c %par.c \\
         %pzld.c %setup.c %temp.c %trunc.c \\
-: \$(srcdir)/admsva/%.va \$(ADMSXMLINTERFACE)/ngspice.xml
-	admsXml -I\$(srcdir) -I\$(srcdir)/admsva -f \$&lt; -e \$(ADMSXMLINTERFACE)/ngspice.xml
+: \$(srcdir)/admsva/%.va \$(ADMSXMLINTERFACE)/premint.xml \$(ADMSXMLINTERFACE)/ngspice.xml
+	admsXml -I\$(srcdir) -I\$(srcdir)/admsva -f \$&lt; -e \$(ADMSXMLINTERFACE)/premint.xml
+	admsXml -I\$(srcdir) -f mna.va -e \$(ADMSXMLINTERFACE)/ngspice.xml
 
 </admst:template>
     <admst:if test="[exists(/argv[.='--create_makefile_am'])]">
@@ -3683,45 +3265,19 @@ MAINTAINERCLEANFILES = Makefile.in
       </admst:for-each>
       <admst:break/>
     </admst:if>
-    <admst:for-each select="/@module">
+<admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)temp.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng1"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)temp.c: file created\n"/>
-    </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEitf.h.xml" ?>
-    <admst:template match="code:ng2">
+</admst:for-each>
+
+<?escript name="ngspice_1_0_1/ngspiceMODULEinit.c.xml" ?>
+<admst:template match="code:ng3">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#ifndef DEV_$(module)
-#define DEV_$(module)
-
-extern SPICEdev *get_$(module)_info(void);
-
-#endif
-
-</admst:template>
-    <admst:for-each select="/@module">
-      <admst:open file="%(attribute[name='ngspicename']/value)itf.h">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
-        <admst:apply-templates select="." match="code:ng2"/>
-      </admst:open>
-      <admst:message format="%(attribute[name='ngspicename']/value)itf.h: file created\n"/>
-    </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEinit.c.xml" ?>
-    <admst:template match="code:ng3">
-#include "config.h"
-
-#include &lt;ngspice/devdefs.h&gt;
-
-<admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
-
-#include "$(module)itf.h"
-#include "$(module)ext.h"
-#include "$(module)init.h"
+#include &quot;$(module)itf.h&quot;
 
 SPICEdev $(module)info = {
   {   "$module",
@@ -3793,57 +3349,40 @@ get_$(module)_info(void)
 }
 
 </admst:template>
-    <admst:for-each select="/@module">
+<admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)init.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng3"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)init.c: file created\n"/>
-    </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEinit.h.xml" ?>
-    <admst:template match="code:ng4">
+</admst:for-each>
+<?escript name="ngspice_1_0_1/ngspiceMODULEitf.h.xml" ?>
+<admst:template match="code:ng6">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#ifndef _$(module)INIT_H
-#define _$(module)INIT_H
+#ifndef $(module)
+#define $(module)
 
-extern IFparm $(module)pTable[ ];
-extern IFparm $(module)mPTable[ ];
-extern char *$(module)names[ ];
-extern int $(module)pTSize;
-extern int $(module)mPTSize;
-extern int $(module)nSize;
-extern int $(module)iSize;
-extern int $(module)mSize;
+#include &lt;src/include/ngspice/ngspice.h&gt;
+#include &lt;src/include/ngspice/devdefs.h&gt;
+#include &lt;src/include/ngspice/sperror.h&gt;
+
+#ifndef DEV_$(module)
+#define DEV_$(module)
+
+extern SPICEdev *get_$(module)_info(void);
 
 #endif
-
-</admst:template>
-    <admst:for-each select="/@module">
-      <admst:open file="%(attribute[name='ngspicename']/value)init.h">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
-        <admst:apply-templates select="." match="code:ng4"/>
-      </admst:open>
-      <admst:message format="%(attribute[name='ngspicename']/value)init.h: file created\n"/>
-    </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEext.h.xml" ?>
-    <admst:template match="code:ng5">
-<admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
 #ifndef __$(module)EXT_H
 #define __$(module)EXT_H
 
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include "$(module)defs.h"
-
 extern int $(module)par(int,IFvalue*,GENinstance*,IFvalue*);
 extern int $(module)mParam(int,IFvalue*,GENmodel*);
 extern int $(module)load(GENmodel*,CKTcircuit*);
 extern int $(module)setup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
-extern int $(module)guesstopology(SMPmatrix *, CKTcircuit *, $(module)model *, $(module)instance *);
 extern int $(module)temp(GENmodel*,CKTcircuit*);
 extern int $(module)ask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int $(module)mAsk(CKTcircuit*,GENmodel *,int, IFvalue*);
@@ -3860,27 +3399,19 @@ extern void $(module)destroy(GENmodel**);
 
 #endif
 
-</admst:template>
-    <admst:for-each select="/@module">
-      <admst:open file="%(attribute[name='ngspicename']/value)ext.h">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
-        <admst:apply-templates select="." match="code:ng5"/>
-      </admst:open>
-      <admst:message format="%(attribute[name='ngspicename']/value)ext.h: file created\n"/>
-    </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEdefs.h.xml" ?>
-    <admst:template match="code:ng6">
-<admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
+#ifndef _$(module)INIT_H
+#define _$(module)INIT_H
 
-#ifndef $(module)
-#define $(module)
+extern IFparm $(module)pTable[ ];
+extern IFparm $(module)mPTable[ ];
+extern char *$(module)names[ ];
+extern int $(module)pTSize;
+extern int $(module)mPTSize;
+extern int $(module)nSize;
+extern int $(module)iSize;
+extern int $(module)mSize;
 
-#include &lt;ngspice/cktdefs.h&gt;
-#include &lt;ngspice/ifsim.h&gt;
-#include &lt;ngspice/gendefs.h&gt;
-#include &lt;ngspice/complex.h&gt;
-#include &lt;ngspice/noisedef.h&gt;
+#endif
 
 <admst:for-each select="modulevariablep">
 <admst:variable name="variable" string="%(name)"/>
@@ -3917,6 +3448,8 @@ extern void $(module)destroy(GENmodel**);
 #else
 #define NGSPICE_DEBUG
 #endif
+
+#define myFREE(x)        {if(x) { free(x); (x) = 0; }}
 
 #define EXIT_IF_ISNAN(var) \\
 if(isnan((double) var)) \\
@@ -4100,33 +3633,21 @@ typedef struct s$(module)model {         /* model structure */
   <admst:text format="\n} e_$(module)_instance;\n"/>
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include "$(module)ext.h"
-<admst:if test="[exists(modulefunctionp)]">
-#include "analogfunction.h"
-</admst:if>
-
 #endif /*$(module)*/
 
 </admst:template>
     <admst:for-each select="/@module">
-      <admst:open file="%(attribute[name='ngspicename']/value)defs.h">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+      <admst:open file="%(attribute[name='ngspicename']/value)itf.h">
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng6"/>
       </admst:open>
-      <admst:message format="%(attribute[name='ngspicename']/value)defs.h: file created\n"/>
+      <admst:message format="%(attribute[name='ngspicename']/value)itf.h: file created\n"/>
     </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEask.c.xml" ?>
-    <admst:template match="code:ng7">
+<?escript name="ngspice_1_0_1/ngspiceMODULEask.c.xml" ?>
+<admst:template match="code:ng7">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include &lt;ngspice/const.h&gt;
-#include &lt;ngspice/cktdefs.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/ifsim.h&gt;
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
 
 int $(module)ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
@@ -4160,24 +3681,16 @@ int $(module)ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
 </admst:template>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)ask.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng7"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)ask.c: file created\n"/>
     </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEmask.c.xml" ?>
+<?escript name="ngspice_1_0_1/ngspiceMODULEmask.c.xml" ?>
     <admst:template match="code:ng8">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include &lt;ngspice/const.h&gt;
-#include &lt;ngspice/ifsim.h&gt;
-#include &lt;ngspice/cktdefs.h&gt;
-#include &lt;ngspice/devdefs.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
 
 int $(module)mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
@@ -4208,22 +3721,16 @@ int $(module)mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 </admst:template>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)mask.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng8"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)mask.c: file created\n"/>
     </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEpar.c.xml" ?>
+<?escript name="ngspice_1_0_1/ngspiceMODULEpar.c.xml" ?>
     <admst:template match="code:ng9">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include &lt;ngspice/const.h&gt;
-#include &lt;ngspice/ifsim.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
 
 int $(module)par(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
@@ -4257,22 +3764,16 @@ int $(module)par(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 </admst:template>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)par.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng9"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)par.c: file created\n"/>
     </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEmpar.c.xml" ?>
+<?escript name="ngspice_1_0_1/ngspiceMODULEmpar.c.xml" ?>
     <admst:template match="code:ng10">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include &lt;ngspice/const.h&gt;
-#include &lt;ngspice/ifsim.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
 
 int $(module)mParam(int param, IFvalue *value, GENmodel *inMod)
 {
@@ -4304,26 +3805,85 @@ int $(module)mParam(int param, IFvalue *value, GENmodel *inMod)
 </admst:template>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)mpar.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng10"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)mpar.c: file created\n"/>
     </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEload.c.xml" ?>
+<?escript name="ngspice_1_0_1/ngspiceMODULEload.c.xml" ?>
     <admst:template match="code:ng11">
 #define NGSPICE_DEBUG_OK
 
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include &lt;ngspice/cktdefs.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/const.h&gt;
-#include &lt;ngspice/trandefs.h&gt;
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/devdefs.h&gt;
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
+
+#define ccap qcap+1
+int my$(module)NIintegrate(CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap)
+{
+    static char *ordmsg = "Illegal integration order";
+    static char *methodmsg = "Unknown integration method";
+    char *errMsg; //fixme cest une globale dans ngspice!!!!
+    #define myTMALLOC(t,n)      (t*) malloc(sizeof(t) * (size_t)(n)) 
+
+    switch(ckt->CKTintegrateMethod) {
+
+    case TRAPEZOIDAL:
+        switch(ckt->CKTorder) {
+        case 1:
+            *(ckt->CKTstate0+ccap) = ckt->CKTag[0] * (*(ckt->CKTstate0+qcap)) 
+                    + ckt->CKTag[1] * (*(ckt->CKTstate1+qcap));
+            break;
+        case 2:
+            *(ckt->CKTstate0+ccap) = - *(ckt->CKTstate1+ccap) * ckt->CKTag[1] + 
+                    ckt->CKTag[0] * 
+                    ( *(ckt->CKTstate0+qcap) - *(ckt->CKTstate1+qcap) );
+            break;
+        default:
+            errMsg = myTMALLOC(char, strlen(ordmsg) + 1);
+            strcpy(errMsg,ordmsg);
+            return(E_ORDER);
+        }
+        break;
+    case GEAR:
+        *(ckt->CKTstate0+ccap)=0;
+        switch(ckt->CKTorder) {
+
+        case 6:
+            *(ckt->CKTstate0+ccap) += ckt->CKTag[6]* *(ckt->CKTstate6+qcap);
+            /* fall through */
+        case 5:
+            *(ckt->CKTstate0+ccap) += ckt->CKTag[5]* *(ckt->CKTstate5+qcap);
+            /* fall through */
+        case 4:
+            *(ckt->CKTstate0+ccap) += ckt->CKTag[4]* *(ckt->CKTstate4+qcap);
+            /* fall through */
+        case 3:
+            *(ckt->CKTstate0+ccap) += ckt->CKTag[3]* *(ckt->CKTstate3+qcap);
+            /* fall through */
+        case 2:
+            *(ckt->CKTstate0+ccap) += ckt->CKTag[2]* *(ckt->CKTstate2+qcap);
+            /* fall through */
+        case 1:
+            *(ckt->CKTstate0+ccap) += ckt->CKTag[1]* *(ckt->CKTstate1+qcap);
+            *(ckt->CKTstate0+ccap) += ckt->CKTag[0]* *(ckt->CKTstate0+qcap);
+            break;
+
+        default:
+            return(E_ORDER);
+
+        }
+        break;
+
+    default:
+        errMsg = myTMALLOC(char, strlen(methodmsg) + 1);
+        strcpy(errMsg,methodmsg);
+        return(E_METHOD);
+    }
+    *ceq = *(ckt->CKTstate0+ccap) - ckt->CKTag[0] * *(ckt->CKTstate0+qcap);
+    *geq = ckt->CKTag[0] * cap;
+    return(OK);
+}
 
 /*fixme: noise not implemented in ngspice*/
 #define ngspice_flickernoise(p,n,mag,freq,info)\\
@@ -4333,9 +3893,9 @@ int $(module)mParam(int param, IFvalue *value, GENmodel *inMod)
 {\\
 }
 
-#define NP(p) *(ckt-&gt;CKTrhsOld+here-&gt;p ## Node)
-#define BP(p,n) (NP(p)-NP(n))
-#define DBGNODE(p) printf(#p "=%i - v=%e\\n",here-&gt;p ## Node,NP(p));
+#define voltages(p) *(ckt-&gt;CKTrhsOld+here-&gt;p ## Node)
+#define BP(p,n) (voltages(p)-voltages(n))
+#define DBGNODE(p) printf(#p "=%i - v=%e\\n",here-&gt;p ## Node,voltages(p));
 
 <admst:apply-templates select="." match="debug:strobe"/>
 
@@ -4360,7 +3920,7 @@ int $(module)mParam(int param, IFvalue *value, GENmodel *inMod)
   (here-&gt;JSVAL_ ## Sp ## _ ## Pn)-=v;\\
   (here-&gt;JSVAL_ ## Sn ## _ ## Pp)-=v;
 #define _load_static_jacobian2s(Sp,Sn,Pp,v)\\
-  _load_static_residual2(Sp,Sn,-v*NP(Pp))\\
+  _load_static_residual2(Sp,Sn,-v*voltages(Pp))\\
   *(here-&gt;PTR_J_ ## Sp ## _ ## Pp)+=v;\\
   *(here-&gt;PTR_J_ ## Sn ## _ ## Pp)-=v;\\
   (here-&gt;JSVAL_ ## Sp ## _ ## Pp)+=v;\\
@@ -4372,7 +3932,7 @@ int $(module)mParam(int param, IFvalue *value, GENmodel *inMod)
   (here-&gt;JSVAL_ ## Sp ## _ ## Pp)+=v;\\
   (here-&gt;JSVAL_ ## Sp ## _ ## Pn)-=v;
 #define _load_static_jacobian1(Sp,Pp,v)\\
-  _load_static_residual1(Sp,-v*NP(Pp))\\
+  _load_static_residual1(Sp,-v*voltages(Pp))\\
   *(here-&gt;PTR_J_ ## Sp ## _ ## Pp)+=v;\\
   (here-&gt;JSVAL_ ## Sp ## _ ## Pp)+=v;
 
@@ -4384,7 +3944,7 @@ if(ChargeComputationNeeded)\\
   *(ckt-&gt;CKTstate0+here-&gt;state_##p##_##n)=v;\\
   if(ckt-&gt;CKTmode &amp; MODEINITTRAN)\\
     *(ckt-&gt;CKTstate1+here-&gt;state_##p##_##n)=*(ckt-&gt;CKTstate0+here-&gt;state_##p##_##n);\\
-  error = NIintegrate(ckt,&amp;unused,&amp;unused,0.0,here-&gt;state_##p##_##n);\\
+  error = my$(module)NIintegrate(ckt,&amp;unused,&amp;unused,0.0,here-&gt;state_##p##_##n);\\
   if(error) return(error);\\
   if(ckt-&gt;CKTmode &amp; MODEINITTRAN)\\
     *(ckt-&gt;CKTstate1+here-&gt;state_##p##_##n+1) = *(ckt-&gt;CKTstate0+here-&gt;state_##p##_##n+1);\\
@@ -4399,7 +3959,7 @@ if(ChargeComputationNeeded)\\
   *(ckt-&gt;CKTstate0+here-&gt;state_##p##_GND)=v;\\
   if(ckt-&gt;CKTmode &amp; MODEINITTRAN)\\
     *(ckt-&gt;CKTstate1+here-&gt;state_##p##_GND)=*(ckt-&gt;CKTstate0+here-&gt;state_##p##_GND);\\
-  error = NIintegrate(ckt,&amp;unused,&amp;unused,0.0,here-&gt;state_##p##_GND);\\
+  error = my$(module)NIintegrate(ckt,&amp;unused,&amp;unused,0.0,here-&gt;state_##p##_GND);\\
   if(error) return(error);\\
   if(ckt-&gt;CKTmode &amp; MODEINITTRAN)\\
     *(ckt-&gt;CKTstate1+here-&gt;state_##p##_GND+1) = *(ckt-&gt;CKTstate0+here-&gt;state_##p##_GND+1);\\
@@ -4426,7 +3986,7 @@ if(ChargeComputationNeeded)\\
 if(ChargeComputationNeeded)\\
 {\\
   double geq=(v)*ckt-&gt;CKTag[0];\\
-  double ceq=geq*NP(Pp);\\
+  double ceq=geq*voltages(Pp);\\
   *(ckt-&gt;CKTrhs+here-&gt;Sp##Node)+=ceq;\\
   *(ckt-&gt;CKTrhs+here-&gt;Sn##Node)-=ceq;\\
   *(here-&gt;PTR_J_ ## Sp ## _ ## Pp)+=geq;\\
@@ -4449,7 +4009,7 @@ if(ChargeComputationNeeded)\\
 if(ChargeComputationNeeded)\\
 {\\
   double geq=(v)*ckt-&gt;CKTag[0];\\
-  double ceq=geq*NP(Pp);\\
+  double ceq=geq*voltages(Pp);\\
   *(ckt-&gt;CKTrhs+here-&gt;Sp##Node)+=ceq;\\
   *(here-&gt;PTR_J_ ## Sp ## _ ## Pp)+=geq;\\
 }\\
@@ -4477,7 +4037,7 @@ int $(module)load(GENmodel *inModel, CKTcircuit *ckt)
 <admst:text select="reverse(@jacobianklass[exists(@jcontribution[#modifyd=1])])" format="  here-&gt;JDVAL_%(#row/name)_%(#column/name)=0.0;\n"/>
 }
 {
-#include "$module.hxx"
+#include &quot;$module.hxx&quot;
 }
     } /* End of Instance */
   } /* End of Model */
@@ -4490,7 +4050,7 @@ int $(module)load(GENmodel *inModel, CKTcircuit *ckt)
       <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
       <admst:text format="static void $(module)debug (CKTcircuit *ckt, $(module)model *model, $(module)instance *here)\n"/>
       <admst:text format="{\n"/>
-      <admst:text select="modulenode[location!='ground']" format="  fprintf(stdout,&quot;voltage: %(name)=%e\\n&quot;,NP(%(name)));\n"/>
+      <admst:text select="modulenode[location!='ground']" format="  fprintf(stdout,&quot;voltage: %(name)=%e\\n&quot;,voltages(%(name)));\n"/>
       <admst:for-each select="modulevariablep[isparameter='yes']">
         <admst:choose>
           <admst:when test="[type='integer']">
@@ -4557,21 +4117,16 @@ int $(module)load(GENmodel *inModel, CKTcircuit *ckt)
     </admst:template>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)load.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng11"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)load.c: file created\n"/>
     </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEacld.c.xml" ?>
+<?escript name="ngspice_1_0_1/ngspiceMODULEacld.c.xml" ?>
     <admst:template match="code:ng12">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include &lt;ngspice/cktdefs.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
 
 int $(module)acLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
@@ -4592,22 +4147,16 @@ int $(module)acLoad(GENmodel *inModel, CKTcircuit *ckt)
 </admst:template>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)acld.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng12"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)acld.c: file created\n"/>
     </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEpzld.c.xml" ?>
+<?escript name="ngspice_1_0_1/ngspiceMODULEpzld.c.xml" ?>
     <admst:template match="code:ng13">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include &lt;ngspice/cktdefs.h&gt;
-#include &lt;ngspice/complex.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
 
 int $(module)pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
@@ -4630,21 +4179,84 @@ int $(module)pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 </admst:template>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)pzld.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng13"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)pzld.c: file created\n"/>
     </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEtrunc.c.xml" ?>
+<?escript name="ngspice_1_0_1/ngspiceMODULEtrunc.c.xml" ?>
     <admst:template match="code:ng14">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include &lt;ngspice/cktdefs.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
+
+#define ccap (qcap+1)
+static void my$(module)CKTterr(int qcap, CKTcircuit *ckt, double *timeStep)
+{ 
+    double volttol;
+    double chargetol;
+    double tol;
+    double del;
+    double diff[8];
+    double deltmp[8];
+    double factor=0;
+    int i;
+    int j;
+    static double gearCoeff[] = {
+        .5,
+        .2222222222,
+        .1363636364,
+        .096,
+        .07299270073,
+        .05830903790
+    };
+    static double trapCoeff[] = {
+        .5,
+        .08333333333
+    };
+
+    volttol = ckt-&gt;CKTabstol + ckt-&gt;CKTreltol * 
+            MAX( fabs(*(ckt-&gt;CKTstate0+ccap)), fabs(*(ckt-&gt;CKTstate1+ccap)));
+            
+    chargetol = MAX(fabs(*(ckt-&gt;CKTstate0 +qcap)),fabs(*(ckt-&gt;CKTstate1+qcap)));
+    chargetol = ckt-&gt;CKTreltol * MAX(chargetol,ckt-&gt;CKTchgtol)/ckt-&gt;CKTdelta;
+    tol = MAX(volttol,chargetol);
+    /* now divided differences */
+    for(i=ckt-&gt;CKTorder+1;i&gt;=0;i--) {
+        diff[i] = *(ckt-&gt;CKTstates[i] + qcap);
+    }
+    for(i=0 ; i &lt;= ckt-&gt;CKTorder ; i++) {
+        deltmp[i] = ckt-&gt;CKTdeltaOld[i];
+    }
+    j = ckt-&gt;CKTorder;
+    for (;;) {
+        for(i=0;i &lt;= j;i++) {
+            diff[i] = (diff[i] - diff[i+1])/deltmp[i];
+        }
+        if (--j &lt; 0) break;
+        for(i=0;i &lt;= j;i++) {
+            deltmp[i] = deltmp[i+1] + ckt-&gt;CKTdeltaOld[i];
+        }
+    }
+    switch(ckt-&gt;CKTintegrateMethod) {
+        case GEAR:
+            factor = gearCoeff[ckt-&gt;CKTorder-1];
+            break;
+
+        case TRAPEZOIDAL:
+            factor = trapCoeff[ckt-&gt;CKTorder - 1] ;
+            break;
+    }
+    del = ckt-&gt;CKTtrtol * tol/MAX(ckt-&gt;CKTabstol,factor * fabs(diff[0]));
+    if(ckt-&gt;CKTorder == 2) {
+        del = sqrt(del);
+    } else if (ckt-&gt;CKTorder &gt; 2) {
+        del = exp(log(del)/ckt-&gt;CKTorder);
+    }
+    *timeStep = MIN(*timeStep,del);
+    return;
+}
+
 
 int $(module)trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
@@ -4665,7 +4277,7 @@ int $(module)trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 #endif /* STEPDEBUG */   
  
     <admst:for-each select="@npncontributionklass[exists(@kcontribution[#modifyd=1])]">
-            CKTterr(here-&gt;state_%(pnode/name)_%(nnode/name), ckt, timeStep);
+            my$(module)CKTterr(here-&gt;state_%(pnode/name)_%(nnode/name), ckt, timeStep);
     </admst:for-each>
     
  
@@ -4684,24 +4296,17 @@ int $(module)trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 </admst:template>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)trunc.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng14"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)trunc.c: file created\n"/>
-    </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEsetup.c.xml" ?>
-    <admst:template match="code:ng15">
+</admst:for-each>
+
+<?escript name="ngspice_1_0_1/ngspiceMODULEsetup.c.xml" ?>
+<admst:template match="code:ng15">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include &lt;ngspice/cktdefs.h&gt;
-#include &lt;ngspice/smpdefs.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/const.h&gt;
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/ifsim.h&gt;
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
 
 //fixme!!! redundant
 #define max(x,y)        (((x)&gt;(y))?(x):(y))
@@ -4715,6 +4320,10 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
 {
   register $(module)model *model = ($(module)model*)inModel;
   register $(module)instance *here;
+typedef int FP1(CKTcircuit *ckt, CKTnode **node, IFuid basename, char *suffix);
+typedef double * FP2(SMPmatrix *Matrix, int Row, int Col);
+  FP1*myCKTmkVolt=(FP1*)get_$(module)_info()->DEVunsetup;
+  FP2*mySMPmakeElt=(FP2*)get_$(module)_info()->DEVfindBranch;
   
   /*  loop through all the $(module) device models */
   for ( ;model != NULL ;model = model-&gt;$(module)nextModel )
@@ -4757,10 +4366,8 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
 </admst:for-each>
       /* set Sparse Matrix Pointers */
 <admst:for-each select="reverse(@jacobianklass)">
-      here-&gt;PTR_J_%(#row/name)_%(#column/name)_required=0;
+      here-&gt;PTR_J_%(#row/name)_%(#column/name)_required=1;
 </admst:for-each>
-
-      $(module)guesstopology(matrix,ckt,model,here);
 
       /* Internal Nodes */
       {
@@ -4773,7 +4380,7 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
 </admst:for-each>
         if(here-&gt;%(name)Node == -1)
         {
-          error=CKTmkVolt(ckt,&amp;tmp,here-&gt;$(module)name,"$info");
+          error=myCKTmkVolt(ckt,&amp;tmp,here-&gt;$(module)name,&quot;$info&quot;);
           if(error) return(error);
           here-&gt;%(name)Node = tmp-&gt;number;
         }
@@ -4782,7 +4389,7 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
 <admst:for-each select="reverse(@jacobianklass)">
         if(here-&gt;PTR_J_%(#row/name)_%(#column/name)_required==1)
         {
-          here-&gt;PTR_J_%(#row/name)_%(#column/name)=SMPmakeElt(matrix,here-&gt;%(#row/name)Node,here-&gt;%(#column/name)Node);
+          here-&gt;PTR_J_%(#row/name)_%(#column/name)=mySMPmakeElt(matrix,here-&gt;%(#row/name)Node,here-&gt;%(#column/name)Node);
         }
 </admst:for-each>
 
@@ -4794,20 +4401,16 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
 </admst:template>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)setup.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng15"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)setup.c: file created\n"/>
     </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEdel.c.xml" ?>
+<?escript name="ngspice_1_0_1/ngspiceMODULEdel.c.xml" ?>
     <admst:template match="code:ng16">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
 
 int $(module)delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
 
@@ -4823,7 +4426,7 @@ int $(module)delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
       for (here = *prev; here ; here  = *prev) {
           if(here-&gt;$(module)name == name || (fast &amp;&amp; here==*fast) ) {
 	      *prev = here-&gt;$(module)nextInstance;
-	      FREE(here);
+	      myFREE(here);
 	      return(OK);
 	      }
          
@@ -4835,20 +4438,16 @@ int $(module)delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
 </admst:template>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)del.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng16"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)del.c: file created\n"/>
     </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEmdel.c.xml" ?>
+<?escript name="ngspice_1_0_1/ngspiceMODULEmdel.c.xml" ?>
     <admst:template match="code:ng17">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
 
 int $(module)mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
@@ -4871,30 +4470,27 @@ int $(module)mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
   delgot:
     *oldmod = (*model)-&gt;$(module)nextModel; /* cut deleted device out of list */
     for (here = (*model)-&gt;$(module)instances; here; here = here-&gt;$(module)nextInstance)
-    {    if(prev) FREE(prev);
+    {    if(prev) myFREE(prev);
          prev = here;
     }
-    if(prev) FREE(prev);
-    FREE(*model);
+    if(prev) myFREE(prev);
+    myFREE(*model);
     return(OK);
 }
 
 </admst:template>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)mdel.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng17"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)mdel.c: file created\n"/>
     </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULEdest.c.xml" ?>
+<?escript name="ngspice_1_0_1/ngspiceMODULEdest.c.xml" ?>
     <admst:template match="code:ng18">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
 
 void $(module)destroy(GENmodel **inModel)
 
@@ -4906,16 +4502,16 @@ void $(module)destroy(GENmodel **inModel)
   $(module)model *oldmod = NULL;
   
   for ( ; mod ; mod = mod-&gt;$(module)nextModel ) {
-      if (oldmod) FREE(oldmod);
+      if (oldmod) myFREE(oldmod);
       oldmod = mod;
       prev = ($(module)instance *)NULL;  
       for (here = mod-&gt;$(module)instances; here ; here = here-&gt;$(module)nextInstance) {
-          if(prev) FREE(prev);
+          if(prev) myFREE(prev);
 	  prev = here;
 	  }
-          if(prev) FREE(prev);
+          if(prev) myFREE(prev);
     } 
-    if(oldmod) FREE(oldmod);
+    if(oldmod) myFREE(oldmod);
     *model = NULL;
   return;
 }
@@ -4923,317 +4519,17 @@ void $(module)destroy(GENmodel **inModel)
 </admst:template>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value)dest.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng18"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value)dest.c: file created\n"/>
     </admst:for-each>
 
-<?escript name="ngspice_1_0_1/ngspiceMODULEguesstopology.c.xml" ?>
-    <!-- expression//function: mapping verilog-name == C-name offunction -->
-    <admst:template match="fname:ngg">
-      <admst:choose>
-        <admst:when test="[name='div']">
-          <admst:return name="fname" string="_div1"/>
-        </admst:when>
-        <admst:when test="[name='abs']">
-          <admst:return name="fname" string="fabs"/>
-        </admst:when>
-        <admst:when test="[name='\$shrinkl']">
-          <admst:return name="fname" string="shrinkl"/>
-        </admst:when>
-        <admst:when test="[name='\$shrinka']">
-          <admst:return name="fname" string="shrinka"/>
-        </admst:when>
-        <admst:when test="[name='log']">
-          <admst:return name="fname" string="log10"/>
-        </admst:when>
-        <admst:when test="[name='ln']">
-          <admst:return name="fname" string="log"/>
-        </admst:when>
-        <admst:when test="[name='limexp']">
-          <admst:return name="fname" string="limexp"/>
-        </admst:when>
-        <admst:when test="[name='\$limexp']">
-          <admst:return name="fname" string="limexp"/>
-        </admst:when>
-        <admst:when test="[name='\$model']">
-          <admst:return name="fname" string="_modelname"/>
-        </admst:when>
-        <admst:when test="[name='\$instance']">
-          <admst:return name="fname" string="_instancename"/>
-        </admst:when>
-        <admst:when test="[name='\$temperature']">
-          <admst:return name="fname" string="_circuit_temp"/>
-        </admst:when>
-        <admst:otherwise>
-          <admst:return name="fname" string="%(name)"/>
-        </admst:otherwise>
-      </admst:choose>
-    </admst:template>
-    <admst:template match="function:ngg">
-      <admst:variable name="function" path="name"/>
-      <admst:variable name="args" string=""/>
-      <admst:for-each select="arguments">
-        <admst:variable test="[$args='']" name="args" string="$args,"/>
-        <admst:variable name="args" string="$args%(estringifynoprobe(.)/[name='ret']/value)"/>
-      </admst:for-each>
-      <admst:choose>
-        <admst:when test="[name='\$simparam']">
-          <admst:apply-templates select="." match="function:simparam"/>
-        </admst:when>
-        <admst:when test="[name='analysis']">
-          <admst:apply-templates select="." match="function:analysis"/>
-        </admst:when>
-        <admst:when test="[name='\$given']">
-          <admst:for-each select="arguments[1]">
-            <admst:if test="[datatypename!='variable']">
-              <admst:error format="\$given: argument is not a variable\n"/>
-            </admst:if>
-            <admst:if test="prototype[isparameter='no']">
-              <admst:error format="\$given(%(name)): argument is not a parameter\n"/>
-            </admst:if>
-            <admst:choose>
-              <admst:when test="prototype[#parametertype!='instance']">
-                <admst:variable name="ztmp" string="model-&gt;%(name)_Given"/>
-              </admst:when>
-              <admst:when test="prototype[#parametertype='instance']">
-                <admst:variable name="ztmp" string="here-&gt;%(name)_Given"/>
-              </admst:when>
-              <admst:otherwise>
-                <admst:error format="\$given(%(name)): should not be reached\n"/>
-              </admst:otherwise>
-            </admst:choose>
-          </admst:for-each>
-        </admst:when>
-        <admst:otherwise>
-          <admst:variable name="mycode" string=""/>
-          <admst:if test="[exists(arguments)]">
-            <admst:for-each select="arguments">
-              <admst:apply-templates select="." match="estringifynoprobe"/>
-              <admst:choose>
-                <admst:when test="[$mycode='']">
-                  <admst:variable name="mycode" string="$ztmp"/>
-                </admst:when>
-                <admst:otherwise>
-                  <admst:variable name="mycode" string="$mycode,$ztmp"/>
-                </admst:otherwise>
-              </admst:choose>
-            </admst:for-each>
-            <admst:variable name="mycode" string="($mycode)"/>
-          </admst:if>
-          <admst:variable name="mycode" string="%(fname:ngg(.)/[name='fname']/value)$mycode"/>
-          <admst:variable name="ztmp" string="$mycode"/>
-        </admst:otherwise>
-      </admst:choose>
-    </admst:template>
-    <admst:template match="evaluatetopology:ngg">
-      <admst:choose>
-        <admst:when test="[datatypename='function' and arity='callfunction']"/>
-        <admst:when test="[datatypename='whileloop']">
-          <admst:apply-templates select="whilecode" match="evaluatetopology:ngg"/>
-          <admst:apply-templates select="whilecondition" match="evaluatetopology:ngg"/>
-        </admst:when>
-        <admst:when test="[datatypename='conditional']">
-          <admst:if test="ifcondition[nilled(@exvariable/prototype[#OPdependent='yes'])]">
-            <admst:apply-templates select="ifcondition" match="evaluatetopology:ngg"/>
-            <admst:choose>
-              <admst:when test="ifcondition[#dependency='constant']">
-                <admst:text format="if\n(%(estringifynoprobe(ifcondition)/[name='ret']/value))\n"/>
-                <admst:text format="{\n"/>
-                <admst:apply-templates select="thencode" match="evaluatetopology:ngg"/>
-                <admst:text format="}\n"/>
-                <admst:if test="[exists(elsecode)]">
-                  <admst:text format="else\n"/>
-                  <admst:text format="{\n"/>
-                  <admst:apply-templates select="elsecode" match="evaluatetopology:ngg"/>
-                  <admst:text format="}\n"/>
-                </admst:if>
-              </admst:when>
-              <admst:otherwise>
-                <admst:apply-templates select="thencode" match="evaluatetopology:ngg"/>
-                <admst:apply-templates select="elsecode" match="evaluatetopology:ngg"/>
-              </admst:otherwise>
-            </admst:choose>
-          </admst:if>
-        </admst:when>
-        <admst:when test="[datatypename='contribution']">
-          <admst:if test="[nature=pnode/discipline/potential]">
-            <admst:choose>
-              <admst:when test="[nnode/location!='ground']">
-                <admst:text test="nnode[location='internal']" format="here-&gt;%(nnode/name)Node = here-&gt;%(pnode/name)Node; /* nnode collapsed */ \n"/>
-                <admst:text test="pnode[location='internal']" format="here-&gt;%(pnode/name)Node = here-&gt;%(nnode/name)Node; /* pnode collapsed */ \n"/>
-              </admst:when>
-              <admst:otherwise>
-                <admst:text format="here-&gt;%(pnode/name)Node = 0; /* pnode collapsed to GND */ \n"/>
-              </admst:otherwise>
-            </admst:choose>
-          </admst:if>
-          <admst:variable name="contribution" path="."/>
-          <admst:variable name="psource" path="pnode"/>
-          <admst:variable name="nsource" path="nnode"/>
-          <admst:for-each select="rhs/@exprobe">
-            <admst:variable name="pprobe" path="pnode"/>
-            <admst:variable name="nprobe" path="nnode"/>
-            <admst:choose>
-              <admst:when test="$contribution[#modifys=1]">
-                <admst:text format="  static_"/>
-              </admst:when>
-              <admst:when test="$contribution[#modifyd=1]">
-                <admst:text format="  dynamic_"/>
-              </admst:when>
-              <admst:when test="$contribution[#modifywn=1]">
-                <!--fixme--><admst:text format="  static_"/>
-              </admst:when>
-              <admst:when test="$contribution[#modifyfn=1]">
-                <!--fixme--><admst:text format="  static_"/>
-              </admst:when>
-            </admst:choose>
-            <admst:choose>
-              <admst:when test="[($nprobe/location!='ground')and($nsource/location!='ground')]">
-                <admst:text format="jacobian4(%($psource/name),%($nsource/name),%($pprobe/name),%($nprobe/name))\n"/>
-              </admst:when>
-              <admst:when test="[($nprobe/location!='ground')and($nsource/location='ground')]">
-                <admst:text format="jacobian2p(%($psource/name),%($pprobe/name),%($nprobe/name))\n"/>
-              </admst:when>
-              <admst:when test="[$nsource/location!='ground']">
-                <admst:text format="jacobian2s(%($psource/name),%($nsource/name),%($pprobe/name))\n"/>
-              </admst:when>
-              <admst:when test="[$nsource/location='ground']">
-                <admst:text format="jacobian1(%($psource/name),%($pprobe/name))\n"/>
-              </admst:when>
-            </admst:choose>
-          </admst:for-each>
-        </admst:when>
-        <admst:when test="[datatypename='assignment']">
-          <admst:if test="lhs/prototype[#insource=1 and #OPdependent!='yes']">
-            <admst:apply-templates select="lhs" match="variable:lhs"/>
-            <admst:text format="="/>
-            <admst:text format="%(estringifynoprobe(rhs)/[name='ret']/value);\n"/>
-          </admst:if>
-        </admst:when>
-        <admst:when test="[datatypename='block']">
-          <admst:apply-templates select="blockcode" match="evaluatetopology:ngg"/>
-        </admst:when>
-        <admst:when test="[datatypename='probe']"/>
-        <admst:when test="[datatypename='variable']"/>
-        <admst:when test="[(datatypename='function' and arity='unary')]"/>
-        <admst:when test="[(datatypename='function' and arity='binary')]"/>
-        <admst:when test="[(datatypename='function' and arity='ternary')]"/>
-        <admst:when test="[datatypename='function']"/>
-        <admst:when test="[datatypename='number']"/>
-        <admst:when test="[datatypename='string']"/>
-        <admst:when test="[datatypename='nilled']"/>
-        <admst:otherwise>
-          <admst:fatal format="%(datatypename): element not implemented\n"/>
-        </admst:otherwise>
-      </admst:choose>
-    </admst:template>
-    <admst:template match="code:ng19:ngg">
-
-#include &lt;ngspice/ngspice.h&gt;
-#include &lt;ngspice/cktdefs.h&gt;
-#include &lt;ngspice/smpdefs.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/const.h&gt;
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/ifsim.h&gt;
-#include &lt;ngspice/suffix.h&gt;
-
-#define jacobian(a,b) here-&gt;PTR_J_##a##_##b##_required=1;
-#define static_jacobian4(p,q,r,s)  jacobian(p,r) jacobian(p,s) jacobian(q,r) jacobian(q,s)
-#define static_jacobian2s(p,q,r)   jacobian(p,r) jacobian(q,r)
-#define static_jacobian2p(p,r,s)   jacobian(p,r) jacobian(p,s)
-#define static_jacobian1(p,r)      jacobian(p,r)
-#define dynamic_jacobian4(p,q,r,s) jacobian(p,r) jacobian(p,s) jacobian(q,r) jacobian(q,s)
-#define dynamic_jacobian2s(p,q,r)  jacobian(p,r) jacobian(q,r)
-#define dynamic_jacobian2p(p,r,s)  jacobian(p,r) jacobian(p,s)
-#define dynamic_jacobian1(p,r)     jacobian(p,r)
-#define whitenoise_jacobian4(p,q,r,s)
-#define whitenoise_jacobian2s(p,q,r)
-#define whitenoise_jacobian2p(p,r,s)
-#define whitenoise_jacobian1(p)
-#define flickernoise_jacobian4(p,q,r,s)
-#define flickernoise_jacobian2s(p,q,r)
-#define flickernoise_jacobian2p(p,r,s)
-#define flickernoise_jacobian1(p)
-
-
-int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *model, $(module)instance *here)
-     /* guess topology */
-{
-  NG_IGNOREABLE(matrix);
-  NG_IGNOREABLE(ckt);
-<admst:template match="evaluate.localvariables:ngg">
-  <admst:choose>
-  <admst:when test="[datatypename='assignment']">
-  <admst:push path="lhs/prototype[#insource=1 and #OPdependent!='yes' and (#scope!='global_model' and #scope!='global_instance')]" select="$localvariables" oncompare="."/>
-  </admst:when>
-  <admst:when test="[datatypename='block']">
-  <admst:apply-templates select="blockcode" match="evaluate.localvariables:ngg"/>
-  </admst:when>
-  <admst:when test="[datatypename='conditional']">
-  <admst:push path="ifcondition/@exvariable/prototype[(#scope!='global_model' and #scope!='global_instance') and #OPdependent!='yes']" select="$localvariables" oncompare="."/>
-  <admst:apply-templates select="thencode" match="evaluate.localvariables:ngg"/>
-  <admst:apply-templates select="elsecode" match="evaluate.localvariables:ngg"/>
-  </admst:when>
-  <admst:when test="[datatypename='whileloop']">
-  <admst:apply-templates select="whilecode" match="evaluate.localvariables:ngg"/>
-  </admst:when>
-  <admst:when test="[datatypename='case']">
-  <admst:apply-templates select="caseitem/casecode" match="evaluate.localvariables:ngg"/>
-  </admst:when>
-  <admst:when test="[datatypename='contribution']"/>
-  <admst:when test="[datatypename='nilled']"/>
-  <admst:when test="[datatypename='function' and arity='callfunction']"/>
-  <admst:otherwise>
-  <admst:error format="'%(datatypename): should not be reached\n"/>
-  </admst:otherwise>
-  </admst:choose>
-</admst:template>
-
-<admst:for-each select="modulecode[datatypename='block']/blockcode">
-  <admst:if test="[datatypename!='block' or (datatypename='block' and name!='initial_model' and name!='initializeModel' and name!='initial_instance' and name!='initializeInstance')]">
-    <admst:apply-templates select="." match="evaluate.localvariables:ngg"/>
-  </admst:if>
-</admst:for-each>
-<admst:for-each select="$localvariables">
-  <admst:if test="[type='integer']">int %(name);\n</admst:if>
-  <admst:if test="[type='real']">double %(name)=0.0/0.0;\n</admst:if>
-  <admst:if test="[type='string']">char* %(name);\n</admst:if>
-</admst:for-each>
-<admst:for-each select="modulecode[datatypename='block']/blockcode">
-<admst:apply-templates
-   select="[datatypename!='block' or (datatypename='block' and name!='initial_model' and name!='initializeModel' and name!='initial_instance' and name!='initializeInstance')]"
-   match="evaluatetopology:ngg"/>
-</admst:for-each>
-  return(OK);
-}
-
-</admst:template>
-
-<admst:variable name="localvariables"/>
-<admst:for-each select="/@module">
-      <admst:variable name="module" path="attribute[name='ngspicename']/value"/>
-      <admst:open file="$(module)guesstopology.c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
-        <admst:variable name="ngspicefile" string="guesstopology"/>
-        <admst:apply-templates select="." match="code:ng19:ngg"/>
-        <admst:variable name="ngspicefile"/>
-      </admst:open>
-      <admst:message format="$(module)guesstopology.c: file created\n"/>
-</admst:for-each>
-
 <?escript name="ngspice_1_0_1/ngspiceMODULE.c.xml" ?>
 <admst:template match="code:ng20">
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include &lt;ngspice/devdefs.h&gt;
-#include "$(module)defs.h"
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;$(module)itf.h&quot;
 
 <admst:text format="IFparm $(module)pTable[] = {\n"/>
 <admst:join select="modulevariablep[#parametertype='instance' and isparameter='yes']" separator=",\n">
@@ -5288,13 +4584,12 @@ int $(module)mSize = sizeof($(module)model);
 </admst:template>
     <admst:for-each select="/@module">
       <admst:open file="%(attribute[name='ngspicename']/value).c">
-        <admst:text format="/***\n*** Interface: $package_string\n"/>
-        <admst:text format=" *** created by: %(/fullname) - %(/currentdate) ***/\n"/>
+        <admst:text format="/*** created by: %(/fullname) - %(/currentdate) ***/\n"/>
         <admst:apply-templates select="." match="code:ng20"/>
       </admst:open>
       <admst:message format="%(attribute[name='ngspicename']/value).c: file created\n"/>
     </admst:for-each>
-    <?escript name="ngspice_1_0_1/ngspiceMODULE.hxx.xml" ?>
+<?escript name="ngspice_1_0_1/ngspiceMODULE.hxx.xml" ?>
     <admst:template match="c:math_h">
 /* arithmetics */
 #define EXP90 1.220403294317841e+039
@@ -5338,7 +4633,7 @@ int $(module)mSize = sizeof($(module)model);
 #define m00_log10(v00,x)        v00 = log10(x);
 #define m10_log10(v10,v00,x)    v10 = (1.0/x/log(10));
 #define m00_sqrt(v00,x)         v00 = sqrt(x);
-#define m10_sqrt(v10,v00,x)     v10 = (0.5/v00);
+#define m10_sqrt(v10,v00,x)     v10 = (1.0/((v00&gt;0)?(2.0*v00):1.0E+38));
 #define m00_fabs(v00,x)         v00 = fabs(x);
 #define m10_fabs(v10,v00,x)     v10 = (((x)&gt;=0)?(+1.0):(-1.0));
 #define m00_exp(v00,x)          v00 = exp(x);
@@ -5359,7 +4654,6 @@ int $(module)mSize = sizeof($(module)model);
 #define pModel model
 #define pInst here
 #define mint_get_circuit_tempK() _circuit_temp
-#define voltages(n) NP(n)
 #define _DDT(q) q
 #define _DDX
 #define _DERIVATEFORDDX
@@ -5498,14 +4792,11 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     </admst:template>
     <admst:template match="hxxvariable">
       <admst:choose>
-        <admst:when test="prototype[isparameter='yes' and #parametertype!='instance']">
+        <admst:when test="prototype[#parametertype='model']">
           <admst:variable name="e" string="pModel-&gt;%(name)"/>
         </admst:when>
-        <admst:when test="prototype[isparameter='yes' and #parametertype='instance']">
+        <admst:when test="prototype[#parametertype='instance']">
           <admst:variable name="e" string="pInst-&gt;%(name)"/>
-        </admst:when>
-        <admst:when test="prototype[isparameter='no' and #scope='global_model']">
-          <admst:variable name="e" string="pModel-&gt;%(name)"/>
         </admst:when>
         <admst:when test="prototype[isparameter='no' and #scope='global_instance']">
           <admst:variable name="e" string="pInst-&gt;%(name)"/>
@@ -5534,10 +4825,10 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     <admst:template match="hxxprobe">
       <admst:choose>
         <admst:when test="nnode[location!='ground']">
-          <admst:variable name="e" string="(NP(%(pnode/name))-NP(%(nnode/name)))"/>
+          <admst:variable name="e" string="(voltages(%(pnode/name))-voltages(%(nnode/name)))"/>
         </admst:when>
         <admst:otherwise>
-          <admst:variable name="e" string="NP(%(pnode/name))"/>
+          <admst:variable name="e" string="voltages(%(pnode/name))"/>
         </admst:otherwise>
       </admst:choose>
       <admst:choose>
@@ -6136,7 +5427,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
           <admst:variable name="xpq" string="$epq"/>
           <admst:variable name="e" string="_DDT($x)"/>
         </admst:when>
-        <admst:when test="[name='\$given']">
+        <admst:when test="[name='\$param_given']">
           <admst:variable name="arg1" path="arguments[1]"/>
           <admst:assert test="$arg1[datatypename='variable']" format="\$given: argument is not a variable\n"/>
           <admst:assert test="$arg1/prototype[isparameter='yes']" format="\$given(%(name)): argument is not a parameter\n"/>
@@ -6270,7 +5561,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     </admst:when>
         <admst:when test="[name='absdelay']">
     </admst:when>
-        <admst:when test="[name='\$given']">
+        <admst:when test="[name='\$param_given']">
     </admst:when>
         <admst:when test="[name='\$temperature']">
     </admst:when>
@@ -6338,7 +5629,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
         <admst:choose>
           <admst:when test="[name='absdelay']">
     </admst:when>
-          <admst:when test="[name='\$given']">
+          <admst:when test="[name='\$param_given']">
     </admst:when>
           <admst:when test="[name='\$temperature']">
     </admst:when>
@@ -6672,16 +5963,9 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       </admst:choose>
     </admst:template>
     <admst:template match="contribution:nonoise">
-      <admst:if test="rhs[exists(@exfunction[#class='builtin'])]">
-        <admst:choose>
-          <admst:when test="[#modifys!=1 and #modifyfn!=1 and #modifywn!=1 and #modifyc!=1]">
-            <admst:text format="#if defined(_DYNAMIC)\n"/>
-          </admst:when>
-        </admst:choose>
-        <admst:text format="{\n"/>
-        <admst:text select="rhs/@exfunction[name!='\$simparam']" format="double __%(fgetname(.)/[name='fgetname']/value)_%(position()-1)=0.0;\n"/>
-        <admst:apply-templates select="." match="ddx:function:computation"/>
-      </admst:if>
+      <admst:text test="[#modifys!=1 and #modifyfn!=1 and #modifywn!=1 and #modifyc!=1]" format="#if defined(_DYNAMIC)\n"/>
+      <admst:apply-templates select="rhs/@exfunction" match="function:precomputation"/>
+      <admst:apply-templates select="rhs[exists(@exfunction)]" match="function:derivate:precomputation"/>
       <admst:choose>
         <admst:when test="[#modifyd=1]">
           <admst:text format="  _load_dynamic_"/>
@@ -6728,10 +6012,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
           </admst:if>
         </admst:if>
       </admst:for-each>
-      <admst:if test="rhs[exists(@exfunction[#class='builtin'])]">
-        <admst:text format="}\n"/>
-        <admst:text test="[#modifys!=1 and #modifyfn!=1 and #modifywn!=1 and #modifyc!=1]" format="#endif /* _DYNAMIC */\n"/>
-      </admst:if>
+      <admst:text test="[#modifys!=1 and #modifyfn!=1 and #modifywn!=1 and #modifyc!=1]" format="#endif /* _DYNAMIC */\n"/>
     </admst:template>
     <!-- modulecode//conditional -->
     <admst:template match="hxxconditional">
