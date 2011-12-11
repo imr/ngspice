@@ -152,7 +152,7 @@ void preprocess_mod_file (
    mod_num_errors = 0;
 
    fprintf (mod_yyout, "#line 1 \"%s\"\n", filename);
-   fprintf (mod_yyout, "#include <ngspice/cm.h>\n");
+   fprintf (mod_yyout, "#include \"ngspice/cm.h\"\n");
    fprintf (mod_yyout, "extern void %s(Mif_Private_t *);\n",
       ifs_table.name.c_fcn_name);
    fprintf (mod_yyout, "#line 1 \"%s\"\n", filename);

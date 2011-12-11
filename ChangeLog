@@ -1,4 +1,11 @@
 2011-12-11  Robert Larice
+ * src/xspice/cmpp/pp_mod.c ,
+ * src/xspice/cmpp/writ_ifs.c :
+  #2/4 #include <ngspice/...>  -->  #include "ngspice/..."
+
+  printf strings
+
+2011-12-11  Robert Larice
  * **/* :
   #1/4 #include <ngspice/...>  -->  #include "ngspice/..."
 
