@@ -111,11 +111,9 @@ DCpss(CKTcircuit *ckt, int restart)
            *pssfreqs, *pssmags, *pssphases, *pssnmags, *pssnphases, *pssResults,
            *RHS_max, *RHS_min, err_conv_ref, *S_old, *S_diff;
 
-    PSSan *job = (PSSan*) (ckt->CKTcurJob);
-
     printf("Periodic Steady State analysis started.\n");
 
-    oscnNode = job->PSSoscNode->number;
+    oscnNode = ((PSSan*)ckt->CKTcurJob)->PSSoscNode->number;
     printf("PSS guessed frequency %g.\n", ckt->CKTguessedFreq);
     printf("PSS points %ld.\n", ckt->CKTpsspoints);
     printf("PSS harmonics number %d.\n", ckt->CKTharms);
@@ -851,18 +849,18 @@ nextTime:
 
     /* RESUME */
 resume:
+#ifdef STEPDEBUG
     if( (ckt->CKTdelta <= ckt->CKTfinalTime/50) &&
             (ckt->CKTdelta <= ckt->CKTmaxStep)) {
         ;
     } else {
-#ifdef STEPDEBUG
         if(ckt->CKTfinalTime/50<ckt->CKTmaxStep) {
             (void)printf("limited by Tstop/50\n");
         } else {
             (void)printf("limited by Tmax == %g\n",ckt->CKTmaxStep);
         }
-#endif
     }
+#endif
 #ifdef HAS_WINDOWS
     if (ckt->CKTtime == 0.)
         SetAnalyse( "tran init", 0);

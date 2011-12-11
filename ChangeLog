@@ -1,3 +1,7 @@
+2011-12-11  Robert Larice
+ * src/spicelib/analysis/dcpss.c :
+  similiarity dctran.c versus dcpss.c
+
 2011-12-03  Robert Larice
  * src/spicelib/analysis/dcpss.c ,
  * src/spicelib/analysis/dctran.c :
