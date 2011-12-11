@@ -25,6 +25,7 @@ void SetAnalyse( char * Analyse, int Percent);
 int
 ACan(CKTcircuit *ckt, int restart)
 {
+    #define job ((ACAN *) ckt->CKTcurJob)
 
     double freq;
     double freqTol; /* tolerence parameter for finding final frequency */
@@ -56,31 +57,31 @@ ACan(CKTcircuit *ckt, int restart)
 #endif
 
     /* start at beginning */
-    if(((ACAN*)ckt->CKTcurJob)->ACsaveFreq == 0 || restart) { 
-        if (((ACAN*)ckt->CKTcurJob)->ACnumberSteps < 1)
-            ((ACAN*)ckt->CKTcurJob)->ACnumberSteps = 1;
+    if (job->ACsaveFreq == 0 || restart) {
+        if (job->ACnumberSteps < 1)
+            job->ACnumberSteps = 1;
 
-        switch(((ACAN*)ckt->CKTcurJob)->ACstepType) {
+        switch (job->ACstepType) {
 
         case DECADE:
-            ((ACAN*)ckt->CKTcurJob)->ACfreqDelta =
-                exp(log(10.0)/((ACAN*)ckt->CKTcurJob)->ACnumberSteps);
+            job->ACfreqDelta =
+                exp(log(10.0)/job->ACnumberSteps);
             break;
         case OCTAVE:
-            ((ACAN*)ckt->CKTcurJob)->ACfreqDelta =
-                exp(log(2.0)/((ACAN*)ckt->CKTcurJob)->ACnumberSteps);
+            job->ACfreqDelta =
+                exp(log(2.0)/job->ACnumberSteps);
             break;
         case LINEAR:
-            if (((ACAN*)ckt->CKTcurJob)->ACnumberSteps-1 > 1)
-                ((ACAN*)ckt->CKTcurJob)->ACfreqDelta =
-                    (((ACAN*)ckt->CKTcurJob)->ACstopFreq -
-                    ((ACAN*)ckt->CKTcurJob)->ACstartFreq)/
-                    (((ACAN*)ckt->CKTcurJob)->ACnumberSteps-1);
+            if (job->ACnumberSteps-1 > 1)
+                job->ACfreqDelta =
+                    (job->ACstopFreq -
+                     job->ACstartFreq) /
+                    (job->ACnumberSteps - 1);
             else
             /* Patch from: Richard McRoberts
             * This patch is for a rather pathological case:
             * a linear step with only one point */
-                ((ACAN*)ckt->CKTcurJob)->ACfreqDelta = 0; 
+                job->ACfreqDelta = 0;
             break;
         default:
             return(E_BADPARM);
@@ -170,29 +171,29 @@ ACan(CKTcircuit *ckt, int restart)
 	tfree(nameList);		
 	if(error) return(error);
 
-        if (((ACAN*)ckt->CKTcurJob)->ACstepType != LINEAR) {
+        if (job->ACstepType != LINEAR) {
 	    SPfrontEnd->OUTattributes (acPlot, NULL,
 		    OUT_SCALE_LOG, NULL);
 	}
-        freq = ((ACAN*)ckt->CKTcurJob)->ACstartFreq;
+        freq = job->ACstartFreq;
 
     } else {    /* continue previous analysis */
-        freq = ((ACAN*)ckt->CKTcurJob)->ACsaveFreq;
-        ((ACAN*)ckt->CKTcurJob)->ACsaveFreq = 0; /* clear the 'old' frequency */
+        freq = job->ACsaveFreq;
+        job->ACsaveFreq = 0; /* clear the 'old' frequency */
 	/* fix resume? saj, indeed !*/
 	error = SPfrontEnd->OUTpBeginPlot
 	    (NULL, NULL, NULL, NULL, 0, 666, NULL, 666, &acPlot);
 	/* saj*/    
     }
         
-    switch(((ACAN*)ckt->CKTcurJob)->ACstepType) {
+    switch (job->ACstepType) {
     case DECADE:
     case OCTAVE:
-        freqTol = ((ACAN*)ckt->CKTcurJob)->ACfreqDelta * 
-                ((ACAN*)ckt->CKTcurJob)->ACstopFreq * ckt->CKTreltol;
+        freqTol = job->ACfreqDelta *
+            job->ACstopFreq * ckt->CKTreltol;
         break;
     case LINEAR:
-        freqTol = ((ACAN*)ckt->CKTcurJob)->ACfreqDelta * ckt->CKTreltol;
+        freqTol = job->ACfreqDelta * ckt->CKTreltol;
         break;
     default:
         return(E_BADPARM);
@@ -219,10 +220,10 @@ ACan(CKTcircuit *ckt, int restart)
     startkTime = ckt->CKTstat->STATsyncTime;
 
     /* main loop through all scheduled frequencies */
-    while(freq <= ((ACAN*)ckt->CKTcurJob)->ACstopFreq+freqTol) {
+    while (freq <= job->ACstopFreq + freqTol) {
         if(SPfrontEnd->IFpauseTest()) {
             /* user asked us to pause via an interrupt */
-            ((ACAN*)ckt->CKTcurJob)->ACsaveFreq = freq;
+            job->ACsaveFreq = freq;
             return(E_PAUSE);
         }
         ckt->CKTomega = 2.0 * M_PI *freq;
@@ -284,7 +285,7 @@ ACan(CKTcircuit *ckt, int restart)
             ckt->CKTmode=(ckt->CKTmode&MODEUIC)|MODEDCOP|MODEINITSMSIG;
             save1 = ckt->CKTsenInfo->SENmode;
             ckt->CKTsenInfo->SENmode = ACSEN;
-            if(freq == ((ACAN*)ckt->CKTcurJob)->ACstartFreq){
+            if (freq == job->ACstartFreq) {
                 ckt->CKTsenInfo->SENacpertflag = 1;
             }
             else{
@@ -329,15 +330,15 @@ ACan(CKTcircuit *ckt, int restart)
 
         /*  increment frequency */
 
-        switch(((ACAN*)ckt->CKTcurJob)->ACstepType) {
+        switch (job->ACstepType) {
         case DECADE:
         case OCTAVE:
 
 /* inserted again 14.12.2001  */
 #ifdef HAS_WINDOWS
             {
-                double endfreq   = ((ACAN*)ckt->CKTcurJob)->ACstopFreq;
-                double startfreq = ((ACAN*)ckt->CKTcurJob)->ACstartFreq;
+                double endfreq   = job->ACstopFreq;
+                double startfreq = job->ACstartFreq;
                 endfreq   = log(endfreq);
                 if (startfreq == 0.0)
                     startfreq = 1e-12;
@@ -348,21 +349,21 @@ ACan(CKTcircuit *ckt, int restart)
             }
 #endif
 
-            freq *= ((ACAN*)ckt->CKTcurJob)->ACfreqDelta;
-            if(((ACAN*)ckt->CKTcurJob)->ACfreqDelta==1) goto endsweep;
+            freq *= job->ACfreqDelta;
+            if (job->ACfreqDelta == 1) goto endsweep;
         break;
         case LINEAR:
 
 #ifdef HAS_WINDOWS
 			 {
-				 double endfreq   = ((ACAN*)ckt->CKTcurJob)->ACstopFreq;
-				 double startfreq = ((ACAN*)ckt->CKTcurJob)->ACstartFreq;
+				 double endfreq   = job->ACstopFreq;
+				 double startfreq = job->ACstartFreq;
 				 SetAnalyse( "ac", (int)((freq - startfreq)* 1000.0 / (endfreq-startfreq)));
 			 }
 #endif
 
-            freq += ((ACAN*)ckt->CKTcurJob)->ACfreqDelta;
-            if(((ACAN*)ckt->CKTcurJob)->ACfreqDelta==0) goto endsweep;
+            freq += job->ACfreqDelta;
+            if (job->ACfreqDelta == 0) goto endsweep;
             break;
         default:
             return(E_INTERN);

@@ -26,6 +26,8 @@ int
 DIOnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, 
           Ndata *data, double *OnDens)
 {
+    #define job ((NOISEAN*)ckt->CKTcurJob)
+
     DIOmodel *firstModel = (DIOmodel *) genmodel;
     DIOmodel *model;
     DIOinstance *inst;
@@ -56,7 +58,7 @@ DIOnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 		/* see if we have to to produce a summary report */
 		/* if so, name all the noise generators */
 
-		if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+		if (job->NStpsSm != 0) {
 		    switch (mode) {
 
 		    case N_DENS:
@@ -136,7 +138,7 @@ DIOnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
 			/* clear out our integration variables if it's the first pass */
 
-			if (data->freq == ((NOISEAN*)ckt->CKTcurJob)->NstartFreq) {
+			if (data->freq == job->NstartFreq) {
 			    for (i=0; i < DIONSRCS; i++) {
 				inst->DIOnVar[OUTNOIZ][i] = 0.0;
 				inst->DIOnVar[INNOIZ][i] = 0.0;
@@ -157,7 +159,7 @@ DIOnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 				inst->DIOnVar[LNLSTDENS][i] = lnNdens[i];
 				data->outNoiz += tempOnoise;
 				data->inNoise += tempInoise;
-				if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+				if (job->NStpsSm != 0) {
 				    inst->DIOnVar[OUTNOIZ][i] += tempOnoise;
 				    inst->DIOnVar[OUTNOIZ][DIOTOTNOIZ] += tempOnoise;
 				    inst->DIOnVar[INNOIZ][i] += tempInoise;
@@ -174,7 +176,7 @@ DIOnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 		    break;
 
 		case INT_NOIZ:        /* already calculated, just output */
-		    if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+		    if (job->NStpsSm != 0) {
 			for (i=0; i < DIONSRCS; i++) {
 			    data->outpVector[data->outNumber++] = inst->DIOnVar[OUTNOIZ][i];
 			    data->outpVector[data->outNumber++] = inst->DIOnVar[INNOIZ][i];

@@ -19,6 +19,8 @@ TFanal(CKTcircuit *ckt, int restart)
                     
                     /* forced restart flag */
 {
+    #define job ((TFan *) ckt->CKTcurJob)
+
     int size;
     int insrc = 0, outsrc = 0;
     double outputs[3];
@@ -50,10 +52,10 @@ TFanal(CKTcircuit *ckt, int restart)
     Vtype = CKTtypelook("Vsource");
     if(Itype != -1) {
         error = CKTfndDev(ckt,&Itype,&ptr,
-                ((TFan*)ckt->CKTcurJob)->TFinSrc, NULL, NULL);
+                job->TFinSrc, NULL, NULL);
         if(error ==0) {
-            ((TFan*)ckt->CKTcurJob)->TFinIsI = 1;
-            ((TFan*)ckt->CKTcurJob)->TFinIsV = 0;
+            job->TFinIsI = 1;
+            job->TFinIsV = 0;
         } else {
             ptr = NULL;
         }
@@ -61,15 +63,15 @@ TFanal(CKTcircuit *ckt, int restart)
 
     if( (Vtype != -1) && (ptr==NULL) ) {
         error = CKTfndDev(ckt,&Vtype,&ptr,
-                ((TFan*)ckt->CKTcurJob)->TFinSrc, NULL,
+                job->TFinSrc, NULL,
                 NULL);
-        ((TFan*)ckt->CKTcurJob)->TFinIsV = 1;
-        ((TFan*)ckt->CKTcurJob)->TFinIsI = 0;
+        job->TFinIsV = 1;
+        job->TFinIsI = 0;
         if(error !=0) {
             SPfrontEnd->IFerror (ERR_WARNING,
                     "Transfer function source %s not in circuit",
-                    &(((TFan*)ckt->CKTcurJob)->TFinSrc));
-            ((TFan*)ckt->CKTcurJob)->TFinIsV = 0;
+                    &(job->TFinSrc));
+            job->TFinIsV = 0;
             return(E_NOTFOUND);
         }
     }
@@ -79,11 +81,11 @@ TFanal(CKTcircuit *ckt, int restart)
         ckt->CKTrhs[i] = 0;
     }
 
-    if(((TFan*)ckt->CKTcurJob)->TFinIsI) {
+    if (job->TFinIsI) {
         ckt->CKTrhs[ptr->GENnode1] -= 1;
         ckt->CKTrhs[ptr->GENnode2] += 1;
     } else {
-        insrc = CKTfndBranch(ckt,((TFan*)ckt->CKTcurJob)->TFinSrc);
+        insrc = CKTfndBranch(ckt, job->TFinSrc);
         ckt->CKTrhs[insrc] += 1;
     }
 
@@ -96,37 +98,37 @@ TFanal(CKTcircuit *ckt, int restart)
             UID_OTHER, NULL);
 
     /* make a UID for the input impedance */
-    SPfrontEnd->IFnewUid (ckt, &inuid, ((TFan*)ckt->CKTcurJob)->TFinSrc,
+    SPfrontEnd->IFnewUid (ckt, &inuid, job->TFinSrc,
             "Input_impedance", UID_OTHER, NULL);
 
     /* make a UID for the output impedance */
-    if(((TFan*)ckt->CKTcurJob)->TFoutIsI) {
-        SPfrontEnd->IFnewUid (ckt, &outuid, ((TFan*)ckt->CKTcurJob)->TFoutSrc
+    if (job->TFoutIsI) {
+        SPfrontEnd->IFnewUid (ckt, &outuid, job->TFoutSrc
                 ,"Output_impedance", UID_OTHER, NULL);
     } else {
-        name = TMALLOC(char, strlen(((TFan*)ckt->CKTcurJob)->TFoutName) + 22);
+        name = TMALLOC(char, strlen(job->TFoutName) + 22);
         (void)sprintf(name,"output_impedance_at_%s",
-                ((TFan*)ckt->CKTcurJob)->TFoutName);
+                job->TFoutName);
         SPfrontEnd->IFnewUid (ckt, &outuid, NULL,
                 name, UID_OTHER, NULL);
     }
 
     error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
-            ((TFan*)(ckt->CKTcurJob))->JOBname, NULL, 0, 3,
+            job->JOBname, NULL, 0, 3,
             uids,IF_REAL,&plotptr);
     if(error) return(error);
 
     /*find transfer function */
-    if(((TFan*)ckt->CKTcurJob)->TFoutIsV) {
-        outputs[0] = ckt->CKTrhs[((TFan*)ckt->CKTcurJob)->TFoutPos->number] -
-                ckt->CKTrhs[((TFan*)ckt->CKTcurJob)->TFoutNeg->number] ;
+    if (job->TFoutIsV) {
+        outputs[0] = ckt->CKTrhs[job->TFoutPos->number] -
+            ckt->CKTrhs[job->TFoutNeg->number];
     } else {
-        outsrc = CKTfndBranch(ckt,((TFan*)ckt->CKTcurJob)->TFoutSrc);
+        outsrc = CKTfndBranch(ckt, job->TFoutSrc);
         outputs[0] = ckt->CKTrhs[outsrc];
     }
 
     /* now for input resistance */
-    if(((TFan*)ckt->CKTcurJob)->TFinIsI) {
+    if (job->TFinIsI) {
         outputs[1] = ckt->CKTrhs[ptr->GENnode2] -
                 ckt->CKTrhs[ptr->GENnode1];
     } else {
@@ -137,9 +139,9 @@ TFanal(CKTcircuit *ckt, int restart)
         }
     }
 
-    if(((TFan*)ckt->CKTcurJob)->TFoutIsI && 
-            (((TFan*)ckt->CKTcurJob)->TFoutSrc == 
-            ((TFan*)ckt->CKTcurJob)->TFinSrc)) {
+    if (job->TFoutIsI &&
+            (job->TFoutSrc ==
+            job->TFinSrc)) {
         outputs[2]=outputs[1];
         goto done;
         /* no need to compute output resistance when it is the same as 
@@ -149,17 +151,17 @@ TFanal(CKTcircuit *ckt, int restart)
     for(i=0;i<=size;i++) {
         ckt->CKTrhs[i] = 0;
     }
-    if(((TFan*)ckt->CKTcurJob)->TFoutIsV) {
-        ckt->CKTrhs[((TFan*)ckt->CKTcurJob)->TFoutPos->number] -= 1;
-        ckt->CKTrhs[((TFan*)ckt->CKTcurJob)->TFoutNeg->number] += 1;
+    if (job->TFoutIsV) {
+        ckt->CKTrhs[job->TFoutPos->number] -= 1;
+        ckt->CKTrhs[job->TFoutNeg->number] += 1;
     } else {
         ckt->CKTrhs[outsrc] += 1;
     }
     SMPsolve(ckt->CKTmatrix,ckt->CKTrhs,ckt->CKTrhsSpare);
     ckt->CKTrhs[0]=0;
-    if(((TFan*)ckt->CKTcurJob)->TFoutIsV) {
-        outputs[2]= ckt->CKTrhs[((TFan*)ckt->CKTcurJob)->TFoutNeg->number] -
-                ckt->CKTrhs[((TFan*)ckt->CKTcurJob)->TFoutPos->number];
+    if (job->TFoutIsV) {
+        outputs[2] = ckt->CKTrhs[job->TFoutNeg->number] -
+            ckt->CKTrhs[job->TFoutPos->number];
     } else {
         outputs[2] = 1/MAX(1e-20,ckt->CKTrhs[outsrc]);
     }

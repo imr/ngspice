@@ -82,6 +82,8 @@ CKTcircuit *ckt,
 Ndata *data,
 double *OnDens)
 {
+#define job ((NOISEAN*)ckt->CKTcurJob)
+
 BSIM4v5model *model = (BSIM4v5model *)inModel;
 BSIM4v5instance *here;
 struct bsim4v5SizeDependParam *pParam;
@@ -127,7 +129,7 @@ int i;
                      /* see if we have to to produce a summary report */
                      /* if so, name all the noise generators */
 
-                      if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0)
+                      if (job->NStpsSm != 0)
                       {   switch (mode)
                           {  case N_DENS:
                                   for (i = 0; i < BSIM4v5NSRCS; i++)
@@ -457,7 +459,7 @@ int i;
                                      if it's the first pass
                                    */
                                   if (data->freq ==
-                                      ((NOISEAN*) ckt->CKTcurJob)->NstartFreq)
+                                      job->NstartFreq)
                                   {   for (i = 0; i < BSIM4v5NSRCS; i++)
                                       {    here->BSIM4v5nVar[OUTNOIZ][i] = 0.0;
                                            here->BSIM4v5nVar[INNOIZ][i] = 0.0;
@@ -483,8 +485,7 @@ int i;
                                                 lnNdens[i];
                                            data->outNoiz += tempOnoise;
                                            data->inNoise += tempInoise;
-                                           if (((NOISEAN*)
-                                               ckt->CKTcurJob)->NStpsSm != 0)
+                                           if (job->NStpsSm != 0)
                                            {   here->BSIM4v5nVar[OUTNOIZ][i]
                                                      += tempOnoise;
                                                here->BSIM4v5nVar[OUTNOIZ][BSIM4v5TOTNOIZ]
@@ -507,7 +508,7 @@ int i;
                               break;
                          case INT_NOIZ:
                               /* already calculated, just output */
-                              if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0)
+                              if (job->NStpsSm != 0)
                               {   for (i = 0; i < BSIM4v5NSRCS; i++)
                                   {    data->outpVector[data->outNumber++]
                                              = here->BSIM4v5nVar[OUTNOIZ][i];

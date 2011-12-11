@@ -25,6 +25,8 @@ int
 MOS9noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
            Ndata *data, double *OnDens)
 {
+    #define job ((NOISEAN*)ckt->CKTcurJob)
+
     MOS9model *firstModel = (MOS9model *) genmodel;
     MOS9model *model;
     MOS9instance *inst;
@@ -56,7 +58,7 @@ MOS9noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 		/* see if we have to to produce a summary report */
 		/* if so, name all the noise generators */
 
-		if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+		if (job->NStpsSm != 0) {
 		    switch (mode) {
 
 		    case N_DENS:
@@ -156,7 +158,7 @@ if (!data->namelist) return(E_NOMEM);
 
 			/* clear out our integration variables if it's the first pass */
 
-			if (data->freq == ((NOISEAN*)ckt->CKTcurJob)->NstartFreq) {
+			if (data->freq == job->NstartFreq) {
 			    for (i=0; i < MOS9NSRCS; i++) {
 				inst->MOS9nVar[OUTNOIZ][i] = 0.0;
 				inst->MOS9nVar[INNOIZ][i] = 0.0;
@@ -174,7 +176,7 @@ if (!data->namelist) return(E_NOMEM);
 				inst->MOS9nVar[LNLSTDENS][i] = lnNdens[i];
 				data->outNoiz += tempOnoise;
 				data->inNoise += tempInoise;
-				if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+				if (job->NStpsSm != 0) {
 				    inst->MOS9nVar[OUTNOIZ][i] += tempOnoise;
 				    inst->MOS9nVar[OUTNOIZ][MOS9TOTNOIZ] += tempOnoise;
 				    inst->MOS9nVar[INNOIZ][i] += tempInoise;
@@ -191,7 +193,7 @@ if (!data->namelist) return(E_NOMEM);
 		    break;
 
 		case INT_NOIZ:        /* already calculated, just output */
-		    if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+		    if (job->NStpsSm != 0) {
 			for (i=0; i < MOS9NSRCS; i++) {
 			    data->outpVector[data->outNumber++] = inst->MOS9nVar[OUTNOIZ][i];
 			    data->outpVector[data->outNumber++] = inst->MOS9nVar[INNOIZ][i];

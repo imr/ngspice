@@ -108,6 +108,8 @@ CKTcircuit *ckt,
 Ndata *data,
 double *OnDens)
 {
+#define job ((NOISEAN*)ckt->CKTcurJob)
+
 BSIM3model *model = (BSIM3model *)inModel;
 BSIM3instance *here;
 struct bsim3SizeDependParam *pParam;
@@ -147,7 +149,7 @@ int i;
 		     /* see if we have to to produce a summary report */
 		     /* if so, name all the noise generators */
 
-		      if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0)
+		      if (job->NStpsSm != 0)
 		      {   switch (mode)
 			  {  case N_DENS:
 			          for (i = 0; i < BSIM3NSRCS; i++)
@@ -315,7 +317,7 @@ int i;
 				     if it's the first pass
 				   */
 			          if (data->freq ==
-				      ((NOISEAN*) ckt->CKTcurJob)->NstartFreq)
+				      job->NstartFreq)
 				  {   for (i = 0; i < BSIM3NSRCS; i++)
 				      {    here->BSIM3nVar[OUTNOIZ][i] = 0.0;
 				           here->BSIM3nVar[INNOIZ][i] = 0.0;
@@ -341,8 +343,7 @@ int i;
 						lnNdens[i];
 				           data->outNoiz += tempOnoise;
 				           data->inNoise += tempInoise;
-				           if (((NOISEAN*)
-					       ckt->CKTcurJob)->NStpsSm != 0)
+				           if (job->NStpsSm != 0)
 					   {   here->BSIM3nVar[OUTNOIZ][i]
 						     += tempOnoise;
 				               here->BSIM3nVar[OUTNOIZ][BSIM3TOTNOIZ]
@@ -365,7 +366,7 @@ int i;
 		              break;
 		         case INT_NOIZ:
 			      /* already calculated, just output */
-		              if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0)
+		              if (job->NStpsSm != 0)
 			      {   for (i = 0; i < BSIM3NSRCS; i++)
 				  {    data->outpVector[data->outNumber++]
 					     = here->BSIM3nVar[OUTNOIZ][i];

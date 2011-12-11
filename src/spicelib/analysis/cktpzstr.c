@@ -518,6 +518,8 @@ int CKTpzStrat(PZtrial **set)
 int 
 CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
 {
+    #define job ((PZAN *) ckt->CKTcurJob)
+
     PZtrial	*match, *base, *new_trial;
     PZtrial	*p, *prev;
     SPcomplex	def_frac, diff_frac;
@@ -688,7 +690,7 @@ CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
 		CKTpzLoad(ckt, &new_trial->s);
 		error = SMPcReorder(ckt->CKTmatrix, 1.0e-30,
 		    0.0 /* 0.1 Piv. Rel. */,
-		    &(((PZAN *) ckt->CKTcurJob)->PZnumswaps));
+		    &(job->PZnumswaps));
 	    }
 
 	    if (error != E_SINGULAR) {
@@ -719,8 +721,8 @@ CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
 	else {
 
 	    /* PZnumswaps is either 0 or 1 */
-	    new_trial->f_raw.real *=  ((PZAN *) ckt->CKTcurJob)->PZnumswaps;
-	    new_trial->f_raw.imag *=  ((PZAN *) ckt->CKTcurJob)->PZnumswaps;
+	    new_trial->f_raw.real *=  job->PZnumswaps;
+	    new_trial->f_raw.imag *=  job->PZnumswaps;
 	    
 #ifdef PZDEBUG	    
 	    printf("SMP Det: (%g,%g)^%d\n", new_trial->f_raw.real,

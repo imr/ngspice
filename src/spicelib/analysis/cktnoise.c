@@ -23,6 +23,8 @@ Author: 1987 Gary W. Ng
 int
 CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 {
+    #define job ((NOISEAN*)ckt->CKTcurJob)
+
     double outNdens;
     int i;
     IFvalue outData;    /* output variable (points to list of outputs)*/
@@ -93,7 +95,7 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 	switch (mode) {
 
 	case N_DENS:
-            if ((((NOISEAN*)ckt->CKTcurJob)->NStpsSm == 0)
+            if ((job->NStpsSm == 0)
 		|| data->prtSummary)
 	    {
 		data->outpVector[data->outNumber++] = outNdens;

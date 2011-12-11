@@ -47,6 +47,8 @@ int
 DCtran(CKTcircuit *ckt,
        int restart)   /* forced restart flag */
 {
+    #define job ((TRANan *) ckt->CKTcurJob)
+
     int i;
     double olddelta;
     double delta;
@@ -148,7 +150,7 @@ DCtran(CKTcircuit *ckt,
         error = SPfrontEnd->OUTpBeginPlot (ckt,
         ckt->CKTcurJob,
         ckt->CKTcurJob->JOBname,timeUid,IF_REAL,numNames,nameList,
-        IF_REAL,&(((TRANan*)ckt->CKTcurJob)->TRANplot));
+        IF_REAL, &(job->TRANplot));
         tfree(nameList);
         if(error) return(error);
 
@@ -257,7 +259,7 @@ DCtran(CKTcircuit *ckt,
         /* Send the operating point results for Mspice compatibility */
         if(g_ipc.enabled) {
             ipc_send_dcop_prefix();
-            CKTdump(ckt, 0.0, ((TRANan*)ckt->CKTcurJob)->TRANplot);
+            CKTdump(ckt, 0.0, job->TRANplot);
             ipc_send_dcop_suffix();
         }
 
@@ -349,7 +351,7 @@ DCtran(CKTcircuit *ckt,
         /* To get rawfile working saj*/
         error = SPfrontEnd->OUTpBeginPlot
             (NULL, NULL, NULL, NULL, 0, 666, NULL, 666,
-             &(((TRANan*)ckt->CKTcurJob)->TRANplot));
+             &(job->TRANplot));
         if(error) {
             fprintf(stderr, "Couldn't relink rawfile\n");
             return error;
@@ -447,7 +449,7 @@ DCtran(CKTcircuit *ckt,
             ipc_firsttime || ipc_secondtime || ipc_delta_cut ) {
 
             ipc_send_data_prefix(ckt->CKTtime);
-            CKTdump(ckt, ckt->CKTtime, ((TRANan*)ckt->CKTcurJob)->TRANplot);
+            CKTdump(ckt, ckt->CKTtime, job->TRANplot);
             ipc_send_data_suffix();
 
             if(ipc_firsttime) {
@@ -466,7 +468,7 @@ DCtran(CKTcircuit *ckt,
         CLUoutput(ckt);
 #endif
         if(ckt->CKTtime >= ckt->CKTinitTime)
-            CKTdump(ckt, ckt->CKTtime, ((TRANan*)ckt->CKTcurJob)->TRANplot);
+            CKTdump(ckt, ckt->CKTtime, job->TRANplot);
 #ifdef XSPICE
 /* gtri - begin - wbk - Update event queues/data for accepted timepoint */
     /* Note: this must be done AFTER sending results to SI so it can't */
@@ -483,7 +485,7 @@ DCtran(CKTcircuit *ckt,
         printf(" done:  time is %g, final time is %g, and tol is %g\n",
         ckt->CKTtime, ckt->CKTfinalTime, ckt->CKTminBreak);
 #endif
-        SPfrontEnd->OUTendPlot (((TRANan*)ckt->CKTcurJob)->TRANplot);
+        SPfrontEnd->OUTendPlot (job->TRANplot);
         ckt->CKTcurrentAnalysis = 0;
         ckt->CKTstat->STATtranTime += SPfrontEnd->IFseconds() - startTime;
         ckt->CKTstat->STATtranIter += ckt->CKTstat->STATnumIter - startIters;

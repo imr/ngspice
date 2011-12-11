@@ -24,6 +24,8 @@ Author: 1987 Gary W. Ng
 int
 SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data, double *OnDens)
 {
+    #define job ((NOISEAN*)ckt->CKTcurJob)
+
     SWmodel *firstModel = (SWmodel *) genmodel;
     SWmodel *model;
     SWinstance *inst;
@@ -46,7 +48,7 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
 		/* see if we have to to produce a summary report */
 		/* if so, name the noise generator */
 
-		if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+		if (job->NStpsSm != 0) {
 		    switch (mode) {
 
 		    case N_DENS:
@@ -111,7 +113,7 @@ if (!data->namelist) return(E_NOMEM);
 
 			/* clear out our integration variable if it's the first pass */
 
-			if (data->freq == ((NOISEAN*)ckt->CKTcurJob)->NstartFreq) {
+			if (data->freq == job->NstartFreq) {
 			    inst->SWnVar[OUTNOIZ] = 0.0;
 			}
 		    } else {   /* data->delFreq != 0.0 (we have to integrate) */
@@ -133,7 +135,7 @@ if (!data->namelist) return(E_NOMEM);
 		    break;
 
 		case INT_NOIZ:        /* already calculated, just output */
-		    if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+		    if (job->NStpsSm != 0) {
 			data->outpVector[data->outNumber++] = inst->SWnVar[OUTNOIZ];
 			data->outpVector[data->outNumber++] = inst->SWnVar[INNOIZ];
 		    }    /* if */

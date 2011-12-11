@@ -51,6 +51,8 @@ CKTfour(int, int, double *, double *, double *, double, double *, double *, doub
 int
 DCpss(CKTcircuit *ckt, int restart)
 {
+    #define job ((PSSan *) ckt->CKTcurJob)
+
     int oscnNode;
     int i;
     double olddelta;
@@ -113,7 +115,7 @@ DCpss(CKTcircuit *ckt, int restart)
 
     printf("Periodic Steady State analysis started.\n");
 
-    oscnNode = ((PSSan*)ckt->CKTcurJob)->PSSoscNode->number;
+    oscnNode = job->PSSoscNode->number;
     printf("PSS guessed frequency %g.\n", ckt->CKTguessedFreq);
     printf("PSS points %ld.\n", ckt->CKTpsspoints);
     printf("PSS harmonics number %d.\n", ckt->CKTharms);
@@ -184,7 +186,7 @@ DCpss(CKTcircuit *ckt, int restart)
         error = SPfrontEnd->OUTpBeginPlot (ckt,
                                            ckt->CKTcurJob,
                                            "Time Domain Periodic Steady State",timeUid,IF_REAL,numNames,nameList,
-                                           IF_REAL,&(((PSSan*)ckt->CKTcurJob)->PSSplot_td));
+                                           IF_REAL, &(job->PSSplot_td));
         tfree(nameList);
         if(error) return(error);
 
@@ -249,7 +251,7 @@ DCpss(CKTcircuit *ckt, int restart)
         /* Send the operating point results for Mspice compatibility */
         if(g_ipc.enabled) {
             ipc_send_dcop_prefix();
-            CKTdump(ckt, 0.0, ((PSSan*)ckt->CKTcurJob)->PSSplot_td);
+            CKTdump(ckt, 0.0, job->PSSplot_td);
             ipc_send_dcop_suffix();
         }
 
@@ -341,7 +343,7 @@ DCpss(CKTcircuit *ckt, int restart)
         /* To get rawfile working saj*/
         error = SPfrontEnd->OUTpBeginPlot
             (NULL, NULL, NULL, NULL, 0, 666, NULL, 666,
-             &(((PSSan*)ckt->CKTcurJob)->PSSplot_td));
+             &(job->PSSplot_td));
         if(error) {
             fprintf(stderr, "Couldn't relink rawfile\n");
             return error;
@@ -450,7 +452,7 @@ nextTime:
                     ipc_firsttime || ipc_secondtime || ipc_delta_cut ) {
 
                 ipc_send_data_prefix(ckt->CKTtime);
-                CKTdump(ckt, ckt->CKTtime, ((PSSan*)ckt->CKTcurJob)->PSSplot_td);
+                CKTdump(ckt, ckt->CKTtime, job->PSSplot_td);
                 ipc_send_data_suffix();
 
                 if(ipc_firsttime) {
@@ -472,7 +474,7 @@ nextTime:
 #endif
     if ( in_pss && pss_cycle_counter==1 ) {
         if(ckt->CKTtime >= ckt->CKTinitTime)
-            CKTdump(ckt, ckt->CKTtime, ((PSSan*)ckt->CKTcurJob)->PSSplot_td);
+            CKTdump(ckt, ckt->CKTtime, job->PSSplot_td);
         psstimes[pss_points_cycle] = ckt->CKTtime;
         for(count_1=1; count_1<msize+1; count_1++)
             pssvalues[count_1-1 + pss_points_cycle*msize] = ckt->CKTrhsOld[count_1];
@@ -775,7 +777,7 @@ nextTime:
             pss_cycle_counter++;
             if (pss_cycle_counter>1) {
                 /* End plot in time domain */
-                SPfrontEnd->OUTendPlot (((PSSan*)ckt->CKTcurJob)->PSSplot_td);
+                SPfrontEnd->OUTendPlot (job->PSSplot_td);
                 /* The following line must be placed just before a new OUTpBeginPlot is called */
                 error = CKTnames(ckt,&numNames,&nameList);
                 if (error) return (error);
@@ -784,7 +786,7 @@ nextTime:
                 error = SPfrontEnd->OUTpBeginPlot (ckt,
                                                    ckt->CKTcurJob,
                                                    "Frequency Domain Periodic Steady State",freqUid,IF_REAL,numNames,nameList,
-                                                   IF_REAL,&(((PSSan*)ckt->CKTcurJob)->PSSplot_fd));
+                                                   IF_REAL, &(job->PSSplot_fd));
                 tfree(nameList);
                 /* ************************* */
                 /* Fourier transform on data */
@@ -804,10 +806,10 @@ nextTime:
                     for(i4 = 1; i4 <= msize; i4++) {
                         ckt->CKTrhsOld[i4] =pssResults[(k1-1)+(i4-1)*msize] ;
                     }
-                    CKTdump(ckt, pssfreqs[k1-1], ((PSSan*)ckt->CKTcurJob)->PSSplot_fd);
+                    CKTdump(ckt, pssfreqs[k1-1], job->PSSplot_fd);
                 }
                 /* End plot in freq domain */
-                SPfrontEnd->OUTendPlot (((PSSan*)ckt->CKTcurJob)->PSSplot_fd);
+                SPfrontEnd->OUTendPlot (job->PSSplot_fd);
                 FREE(RHS_copy_se);
                 FREE(RHS_max);
                 FREE(RHS_min);

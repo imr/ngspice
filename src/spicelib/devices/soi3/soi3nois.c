@@ -44,6 +44,8 @@ SOI3noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
            Ndata *data, double *OnDens)
     
 {
+    #define job ((NOISEAN*)ckt->CKTcurJob)
+
     SOI3model *firstModel = (SOI3model *) genmodel;
     SOI3model *model;
     SOI3instance *inst;
@@ -81,7 +83,7 @@ SOI3noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 		/* see if we have to to produce a summary report */
 		/* if so, name all the noise generators */
 
-		if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+		if (job->NStpsSm != 0) {
 		    switch (mode) {
 
 		    case N_DENS:
@@ -223,7 +225,7 @@ if (!data->namelist) return(E_NOMEM);
 
 			/* clear out our integration variables if it's the first pass */
 
-			if (data->freq == ((NOISEAN*)ckt->CKTcurJob)->NstartFreq) {
+			if (data->freq == job->NstartFreq) {
 			    for (i=0; i < SOI3NSRCS; i++) {
 				inst->SOI3nVar[OUTNOIZ][i] = 0.0;
 				inst->SOI3nVar[INNOIZ][i] = 0.0;
@@ -241,7 +243,7 @@ if (!data->namelist) return(E_NOMEM);
 				inst->SOI3nVar[LNLSTDENS][i] = lnNdens[i];
 				data->outNoiz += tempOnoise;
 				data->inNoise += tempInoise;
-				if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+				if (job->NStpsSm != 0) {
 				    inst->SOI3nVar[OUTNOIZ][i] += tempOnoise;
 				    inst->SOI3nVar[OUTNOIZ][SOI3TOTNOIZ] += tempOnoise;
 				    inst->SOI3nVar[INNOIZ][i] += tempInoise;
@@ -258,7 +260,7 @@ if (!data->namelist) return(E_NOMEM);
 		    break;
 
 		case INT_NOIZ:        /* already calculated, just output */
-		    if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+		    if (job->NStpsSm != 0) {
 			for (i=0; i < SOI3NSRCS; i++) {
 			    data->outpVector[data->outNumber++] = inst->SOI3nVar[OUTNOIZ][i];
 			    data->outpVector[data->outNumber++] = inst->SOI3nVar[INNOIZ][i];

@@ -30,6 +30,8 @@ int
 RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, 
           Ndata *data, double *OnDens)
 {
+    #define job ((NOISEAN*)ckt->CKTcurJob)
+
     RESmodel *firstModel = (RESmodel *) genmodel;
     RESmodel *model;
     RESinstance *inst;
@@ -68,7 +70,7 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
                  * if so, name the noise generator 
                  */
 
-                if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+                if (job->NStpsSm != 0) {
                     switch (mode) {
 
                     case N_DENS:
@@ -154,7 +156,7 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
                         
                         /* clear out our integration variable if it's the first pass */
 
-                        if (data->freq == ((NOISEAN*)ckt->CKTcurJob)->NstartFreq) {
+                        if (data->freq == job->NstartFreq) {
                             for (i=0; i < RESNSRCS; i++) {
                             inst->RESnVar[OUTNOIZ][i] = 0.0; /* Clear output noise */
                             inst->RESnVar[INNOIZ][i] = 0.0;  /* Clear input noise */ 
@@ -177,7 +179,7 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
                                    inst->RESnVar[LNLSTDENS][i] = lnNdens[i];
                                    data->outNoiz += tempOutNoise;
                                    data->inNoise += tempInNoise;                         
-                                   if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+                                   if (job->NStpsSm != 0) {
                                        inst->RESnVar[OUTNOIZ][i] += tempOutNoise;
                                        inst->RESnVar[OUTNOIZ][RESTOTNOIZ] += tempOutNoise;
                                        inst->RESnVar[INNOIZ][i] += tempInNoise;
@@ -195,7 +197,7 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
                     break;
 
                 case INT_NOIZ:        /* already calculated, just output */
-                    if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+                    if (job->NStpsSm != 0) {
                         for (i=0; i < RESNSRCS; i++) {
                             data->outpVector[data->outNumber++] = inst->RESnVar[OUTNOIZ][i];
                             data->outpVector[data->outNumber++] = inst->RESnVar[INNOIZ][i];

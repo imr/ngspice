@@ -42,6 +42,8 @@ int HSMHVnoise (
      register Ndata *data,
      double *OnDens)
 {
+  #define job ((NOISEAN*)ckt->CKTcurJob)
+
   register HSMHVmodel *model = (HSMHVmodel *)inModel;
   register HSMHVinstance *here;
   char name[N_MXVLNTH];
@@ -74,7 +76,7 @@ int HSMHVnoise (
 	/* see if we have to to produce a summary report */
 	/* if so, name all the noise generators */
 	  
-	if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+	if (job->NStpsSm != 0) {
 	  switch (mode) {
 	  case N_DENS:
 	    for ( i = 0; i < HSMHVNSRCS; i++ ) { 
@@ -202,7 +204,7 @@ int HSMHVnoise (
 	    /* clear out our integration variables
 	       if it's the first pass
 	    */
-	    if (data->freq == ((NOISEAN*) ckt->CKTcurJob)->NstartFreq) {
+	    if (data->freq == job->NstartFreq) {
 	      for (i = 0; i < HSMHVNSRCS; i++) {
 		here->HSMHVnVar[OUTNOIZ][i] = 0.0;
 		here->HSMHVnVar[INNOIZ][i] = 0.0;
@@ -226,7 +228,7 @@ int HSMHVnoise (
 		here->HSMHVnVar[LNLSTDENS][i] = lnNdens[i];
 		data->outNoiz += tempOnoise;
 		data->inNoise += tempInoise;
-		if ( ((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0 ) {
+		if ( job->NStpsSm != 0 ) {
 		  here->HSMHVnVar[OUTNOIZ][i] += tempOnoise;
 		  here->HSMHVnVar[OUTNOIZ][HSMHVTOTNOIZ] += tempOnoise;
 		  here->HSMHVnVar[INNOIZ][i] += tempInoise;
@@ -244,7 +246,7 @@ int HSMHVnoise (
 	  break;
 	case INT_NOIZ:
 	  /* already calculated, just output */
-	  if ( ((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0 ) {
+	  if ( job->NStpsSm != 0 ) {
 	    for ( i = 0; i < HSMHVNSRCS; i++ ) {
 	      data->outpVector[data->outNumber++] = here->HSMHVnVar[OUTNOIZ][i];
 	      data->outpVector[data->outNumber++] = here->HSMHVnVar[INNOIZ][i];

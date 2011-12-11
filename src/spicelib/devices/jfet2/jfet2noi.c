@@ -27,6 +27,8 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 int
 JFET2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data, double *OnDens)
 {
+    #define job ((NOISEAN*)ckt->CKTcurJob)
+
     JFET2model *firstModel = (JFET2model *) genmodel;
     JFET2model *model;
     JFET2instance *inst;
@@ -60,7 +62,7 @@ JFET2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
 		/* see if we have to to produce a summary report */
 		/* if so, name all the noise generators */
 
-		if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+		if (job->NStpsSm != 0) {
 		    switch (mode) {
 
 		    case N_DENS:
@@ -156,7 +158,7 @@ if (!data->namelist) return(E_NOMEM);
 
 			/* clear out our integration variables if it's the first pass */
 
-			if (data->freq == ((NOISEAN*)ckt->CKTcurJob)->NstartFreq) {
+			if (data->freq == job->NstartFreq) {
 			    for (i=0; i < JFET2NSRCS; i++) {
 				inst->JFET2nVar[OUTNOIZ][i] = 0.0;
 				inst->JFET2nVar[INNOIZ][i] = 0.0;
@@ -174,7 +176,7 @@ if (!data->namelist) return(E_NOMEM);
 				inst->JFET2nVar[LNLSTDENS][i] = lnNdens[i];
 				data->outNoiz += tempOnoise;
 				data->inNoise += tempInoise;
-				if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+				if (job->NStpsSm != 0) {
 				    inst->JFET2nVar[OUTNOIZ][i] += tempOnoise;
 				    inst->JFET2nVar[OUTNOIZ][JFET2TOTNOIZ] += tempOnoise;
 				    inst->JFET2nVar[INNOIZ][i] += tempInoise;
@@ -191,7 +193,7 @@ if (!data->namelist) return(E_NOMEM);
 		    break;
 
 		case INT_NOIZ:        /* already calculated, just output */
-		    if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
+		    if (job->NStpsSm != 0) {
 			for (i=0; i < JFET2NSRCS; i++) {
 			    data->outpVector[data->outNumber++] = inst->JFET2nVar[OUTNOIZ][i];
 			    data->outpVector[data->outNumber++] = inst->JFET2nVar[INNOIZ][i];
