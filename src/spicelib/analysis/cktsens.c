@@ -61,7 +61,7 @@ static double inc_freq(double freq, int type, double step_size);
 static int	error;
 int sens_sens(CKTcircuit *ckt, int restart)
 {
-	SENS_AN	*sen_info = ((SENS_AN *) ckt->CKTcurJob);
+	SENS_AN	*job = ((SENS_AN *) ckt->CKTcurJob);
 	static int	size;
 	static double	*delta_I, *delta_iI,
 			*delta_I_delta_Y, *delta_iI_delta_Y;
@@ -117,13 +117,13 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	if (restart) {
 
 		freq = 0.0;
-		is_dc = (sen_info->step_type == SENS_DC);
-		nfreqs = count_steps(sen_info->step_type, sen_info->start_freq,
-			sen_info->stop_freq, sen_info->n_freq_steps,
+		is_dc = (job->step_type == SENS_DC);
+		nfreqs = count_steps(job->step_type, job->start_freq,
+			job->stop_freq, job->n_freq_steps,
 			&step_size);
 
 		if (!is_dc)
-			freq = sen_info->start_freq;
+			freq = job->start_freq;
 
 		error = CKTop(ckt,
 			(ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
@@ -209,7 +209,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		} else {
 			output_values = NULL;
 			output_cvalues = NEWN(IFcomplex, num_vars);
-			if (sen_info->step_type != SENS_LINEAR)
+			if (job->step_type != SENS_LINEAR)
 			    SPfrontEnd->OUTattributes (sen_data,
 				    NULL, OUT_SCALE_LOG, NULL);
 
@@ -228,8 +228,8 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		printf("start: %f, num: %d, dc: %d\n", freq, nfreqs, is_dc);
 #endif
 
-	if (!sen_info->output_volt)
-		branch_eq = CKTfndBranch(ckt, sen_info->output_src);
+	if (!job->output_volt)
+		branch_eq = CKTfndBranch(ckt, job->output_src);
 	bypass = ckt->CKTbypass;
 	ckt->CKTbypass = 0;
 
@@ -327,7 +327,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		ckt->CKTmatrix = delta_Y;
 
 		/* calc. effect of each param */
-		for (sg = sgen_init(ckt, is_dc /* sen_info->plist */);
+		for (sg = sgen_init(ckt, is_dc /* job->plist */);
 			sg; sgen_next(&sg))
 		{
 
@@ -539,25 +539,25 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			/* delta_I is now equal to delta_E */
 
 			if (is_dc) {
-				if (sen_info->output_volt)
+				if (job->output_volt)
 					output_values[n] = delta_I
-						[sen_info->output_pos->number]
+						[job->output_pos->number]
 						- delta_I
-						[sen_info->output_neg->number];
+						[job->output_neg->number];
 				else {
 					output_values[n] = delta_I[branch_eq];
 				}
 				output_values[n] /= delta_var;
 			} else {
-				if (sen_info->output_volt) {
+				if (job->output_volt) {
 					output_cvalues[n].real = delta_I
-						[sen_info->output_pos->number]
+						[job->output_pos->number]
 						- delta_I
-						[sen_info->output_neg->number];
+						[job->output_neg->number];
 					output_cvalues[n].imag = delta_iI
-						[sen_info->output_pos->number]
+						[job->output_pos->number]
 						- delta_iI
-						[sen_info->output_neg->number];
+						[job->output_neg->number];
 				} else {
 					output_cvalues[n].real =
 						delta_I[branch_eq];
@@ -585,7 +585,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 		SPfrontEnd->OUTpData (sen_data, &value, &nvalue);
 
-		freq = inc_freq(freq, sen_info->step_type, step_size);
+		freq = inc_freq(freq, job->step_type, step_size);
 
 	}
 

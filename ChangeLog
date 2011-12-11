@@ -1,4 +1,11 @@
 2011-12-11  Robert Larice
+ * src/spicelib/analysis/cktdisto.c ,
+ * src/spicelib/analysis/cktpzld.c ,
+ * src/spicelib/analysis/cktsens.c ,
+ * src/spicelib/analysis/dctrcurv.c :
+  variable rename `sen_info' `cv' `pzan' `sen_info' --> `job'
+
+2011-12-11  Robert Larice
  * src/spicelib/analysis/dcpss.c :
   similiarity dctran.c versus dcpss.c
 
