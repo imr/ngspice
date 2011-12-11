@@ -1,4 +1,8 @@
 2011-12-11  Robert Larice
+ * src/spicelib/devices/adms/admst/ngspice.xml :
+  #4/4 #include <ngspice/...>  -->  #include "ngspice/..."  for adms3
+
+2011-12-11  Robert Larice
  * src/spicelib/devices/adms/admst/ngspiceMODULE*.xml :
   #3/4 #include <ngspice/...>  -->  #include "ngspice/..."  for adms
 
