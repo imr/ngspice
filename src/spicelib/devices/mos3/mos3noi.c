@@ -25,7 +25,7 @@ int
 MOS3noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, 
            Ndata *data, double *OnDens)
 {
-    #define job ((NOISEAN*)ckt->CKTcurJob)
+    NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
     MOS3model *firstModel = (MOS3model *) genmodel;
     MOS3model *model;

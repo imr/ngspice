@@ -26,7 +26,7 @@ int
 DIOnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, 
           Ndata *data, double *OnDens)
 {
-    #define job ((NOISEAN*)ckt->CKTcurJob)
+    NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
     DIOmodel *firstModel = (DIOmodel *) genmodel;
     DIOmodel *model;

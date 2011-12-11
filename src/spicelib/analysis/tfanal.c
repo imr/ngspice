@@ -19,7 +19,7 @@ TFanal(CKTcircuit *ckt, int restart)
                     
                     /* forced restart flag */
 {
-    #define job ((TFan *) ckt->CKTcurJob)
+    TFan *job = (TFan *) ckt->CKTcurJob;
 
     int size;
     int insrc = 0, outsrc = 0;

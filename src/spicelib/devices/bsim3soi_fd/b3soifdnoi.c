@@ -98,7 +98,7 @@ int
 B3SOIFDnoise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt, 
               Ndata *data, double *OnDens)
 {
-#define job ((NOISEAN*)ckt->CKTcurJob)
+NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
 B3SOIFDmodel *model = (B3SOIFDmodel *)inModel;
 B3SOIFDinstance *here;

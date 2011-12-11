@@ -178,7 +178,7 @@ int
 BSIM3v32noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 	    Ndata *data, double *OnDens)
 {
-#define job ((NOISEAN*)ckt->CKTcurJob)
+NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
 BSIM3v32model *model = (BSIM3v32model *)inModel;
 BSIM3v32instance *here;

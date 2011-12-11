@@ -518,7 +518,7 @@ int CKTpzStrat(PZtrial **set)
 int 
 CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
 {
-    #define job ((PZAN *) ckt->CKTcurJob)
+    PZAN *job = (PZAN *) ckt->CKTcurJob;
 
     PZtrial	*match, *base, *new_trial;
     PZtrial	*p, *prev;

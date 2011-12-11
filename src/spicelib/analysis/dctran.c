@@ -47,7 +47,7 @@ int
 DCtran(CKTcircuit *ckt,
        int restart)   /* forced restart flag */
 {
-    #define job ((TRANan *) ckt->CKTcurJob)
+    TRANan *job = (TRANan *) ckt->CKTcurJob;
 
     int i;
     double olddelta;

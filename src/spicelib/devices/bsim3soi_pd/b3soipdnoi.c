@@ -102,7 +102,7 @@ int
 B3SOIPDnoise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt, 
               Ndata *data, double *OnDens)
 {
-#define job ((NOISEAN*)ckt->CKTcurJob)
+NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
 B3SOIPDmodel *model = (B3SOIPDmodel *)inModel;
 B3SOIPDinstance *here;

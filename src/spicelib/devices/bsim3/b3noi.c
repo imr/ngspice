@@ -108,7 +108,7 @@ CKTcircuit *ckt,
 Ndata *data,
 double *OnDens)
 {
-#define job ((NOISEAN*)ckt->CKTcurJob)
+NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
 BSIM3model *model = (BSIM3model *)inModel;
 BSIM3instance *here;

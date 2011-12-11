@@ -26,7 +26,7 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 int
 VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data, double *OnDens)
 {
-    #define job ((NOISEAN*)ckt->CKTcurJob)
+    NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
     VBICmodel *firstModel = (VBICmodel *) genmodel;
     VBICmodel *model;

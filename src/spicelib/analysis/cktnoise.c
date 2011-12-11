@@ -23,7 +23,7 @@ Author: 1987 Gary W. Ng
 int
 CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 {
-    #define job ((NOISEAN*)ckt->CKTcurJob)
+    NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
     double outNdens;
     int i;

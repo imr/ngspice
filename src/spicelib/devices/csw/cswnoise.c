@@ -24,7 +24,7 @@ Author: 1987 Gary W. Ng
 int
 CSWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data, double *OnDens)
 {
-    #define job ((NOISEAN*)ckt->CKTcurJob)
+    NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
     CSWmodel *firstModel = (CSWmodel *) genmodel;
     CSWmodel *model;

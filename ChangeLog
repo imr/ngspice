@@ -1,5 +1,9 @@
 2011-12-11  Robert Larice
  * src/spicelib/**/*.c :
+  auxiliary define `job' --> local variable `job'
+
+2011-12-11  Robert Larice
+ * src/spicelib/**/*.c :
   auxiliary define (ANALYSIS*) ckt->CKTcurJob  -->  `job'
 
 2011-12-11  Robert Larice

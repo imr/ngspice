@@ -51,7 +51,7 @@ CKTfour(int, int, double *, double *, double *, double, double *, double *, doub
 int
 DCpss(CKTcircuit *ckt, int restart)
 {
-    #define job ((PSSan *) ckt->CKTcurJob)
+    PSSan *job = (PSSan *) ckt->CKTcurJob;
 
     int oscnNode;
     int i;

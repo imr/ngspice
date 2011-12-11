@@ -39,7 +39,7 @@ int HSM2noise (
      register Ndata *data,
      double *OnDens)
 {
-  #define job ((NOISEAN*)ckt->CKTcurJob)
+  NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
   register HSM2model *model = (HSM2model *)inModel;
   register HSM2instance *here;

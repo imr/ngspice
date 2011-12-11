@@ -25,7 +25,7 @@ void SetAnalyse( char * Analyse, int Percent);
 int
 ACan(CKTcircuit *ckt, int restart)
 {
-    #define job ((ACAN *) ckt->CKTcurJob)
+    ACAN *job = (ACAN *) ckt->CKTcurJob;
 
     double freq;
     double freqTol; /* tolerence parameter for finding final frequency */

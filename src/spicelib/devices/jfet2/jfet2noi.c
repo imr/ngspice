@@ -27,7 +27,7 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 int
 JFET2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data, double *OnDens)
 {
-    #define job ((NOISEAN*)ckt->CKTcurJob)
+    NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
     JFET2model *firstModel = (JFET2model *) genmodel;
     JFET2model *model;

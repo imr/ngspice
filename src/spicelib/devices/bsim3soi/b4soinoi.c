@@ -104,7 +104,7 @@ CKTcircuit *ckt,
 Ndata *data,
 double *OnDens)
 {
-#define job ((NOISEAN*)ckt->CKTcurJob)
+NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
 register B4SOImodel *model = (B4SOImodel *)inModel;
 register B4SOIinstance *here;
