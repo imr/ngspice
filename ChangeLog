@@ -1,4 +1,10 @@
 2011-12-11  Robert Larice
+ * src/spicelib/analysis/acan.c ,
+ * src/spicelib/analysis/dcpss.c ,
+ * src/spicelib/analysis/dctran.c :
+  use a macro to update ckt->CKTstat->STAT..
+
+2011-12-11  Robert Larice
  * src/spicelib/**/*.c :
   auxiliary define `job' --> local variable `job'
 

@@ -43,6 +43,31 @@ extern struct dbcomm *dbs;
 void SetAnalyse(char * Analyse, int Percent);
 #endif
 
+
+#define INIT_STATS() \
+do { \
+    startTime = SPfrontEnd->IFseconds();        \
+    startIters = ckt->CKTstat->STATnumIter;     \
+    startdTime = ckt->CKTstat->STATdecompTime;  \
+    startsTime = ckt->CKTstat->STATsolveTime;   \
+    startlTime = ckt->CKTstat->STATloadTime;    \
+    startcTime = ckt->CKTstat->STATcombineTime; \
+    startkTime = ckt->CKTstat->STATsyncTime;    \
+} while(0)
+
+#define UPDATE_STATS(analysis) \
+do { \
+    ckt->CKTcurrentAnalysis = analysis; \
+    ckt->CKTstat->STATtranTime += SPfrontEnd->IFseconds() - startTime; \
+    ckt->CKTstat->STATtranIter += ckt->CKTstat->STATnumIter - startIters; \
+    ckt->CKTstat->STATtranDecompTime += ckt->CKTstat->STATdecompTime - startdTime; \
+    ckt->CKTstat->STATtranSolveTime += ckt->CKTstat->STATsolveTime - startsTime; \
+    ckt->CKTstat->STATtranLoadTime += ckt->CKTstat->STATloadTime - startlTime; \
+    ckt->CKTstat->STATtranCombTime += ckt->CKTstat->STATcombineTime - startcTime; \
+    ckt->CKTstat->STATtranSyncTime += ckt->CKTstat->STATsyncTime - startkTime; \
+} while(0)
+
+
 int
 DCtran(CKTcircuit *ckt,
        int restart)   /* forced restart flag */
@@ -325,13 +350,7 @@ DCtran(CKTcircuit *ckt,
         }
 #endif
 
-        startTime = SPfrontEnd->IFseconds();
-        startIters = ckt->CKTstat->STATnumIter;
-        startdTime = ckt->CKTstat->STATdecompTime;
-        startsTime = ckt->CKTstat->STATsolveTime;
-        startlTime = ckt->CKTstat->STATloadTime;
-        startcTime = ckt->CKTstat->STATcombineTime;
-        startkTime = ckt->CKTstat->STATsyncTime;
+        INIT_STATS();
 #ifdef CLUSTER
         CLUsetup(ckt);
 #endif
@@ -339,13 +358,7 @@ DCtran(CKTcircuit *ckt,
         /* saj As traninit resets CKTmode */
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITPRED;
         /* saj */
-        startTime = SPfrontEnd->IFseconds();
-        startIters = ckt->CKTstat->STATnumIter;
-        startdTime = ckt->CKTstat->STATdecompTime;
-        startsTime = ckt->CKTstat->STATsolveTime;
-        startlTime = ckt->CKTstat->STATloadTime;
-        startcTime = ckt->CKTstat->STATcombineTime;
-        startkTime = ckt->CKTstat->STATsyncTime;
+        INIT_STATS();
         if(ckt->CKTminBreak==0) ckt->CKTminBreak=ckt->CKTmaxStep*5e-5;
         firsttime=0;
         /* To get rawfile working saj*/
@@ -404,19 +417,7 @@ DCtran(CKTcircuit *ckt,
     ckt->CKTbreak = 0;
     /* XXX Error will cause single process to bail. */
     if(error)  {
-        ckt->CKTcurrentAnalysis = DOING_TRAN;
-        ckt->CKTstat->STATtranTime += SPfrontEnd->IFseconds() - startTime;
-        ckt->CKTstat->STATtranIter += ckt->CKTstat->STATnumIter - startIters;
-        ckt->CKTstat->STATtranDecompTime += ckt->CKTstat->STATdecompTime -
-                startdTime;
-        ckt->CKTstat->STATtranSolveTime += ckt->CKTstat->STATsolveTime -
-                startsTime;
-        ckt->CKTstat->STATtranLoadTime += ckt->CKTstat->STATloadTime -
-                startlTime;
-        ckt->CKTstat->STATtranCombTime += ckt->CKTstat->STATcombineTime -
-                startcTime;
-        ckt->CKTstat->STATtranSyncTime += ckt->CKTstat->STATsyncTime -
-                startkTime;
+        UPDATE_STATS(DOING_TRAN);
         return(error);
     }
 #ifdef XSPICE
@@ -486,19 +487,7 @@ DCtran(CKTcircuit *ckt,
         ckt->CKTtime, ckt->CKTfinalTime, ckt->CKTminBreak);
 #endif
         SPfrontEnd->OUTendPlot (job->TRANplot);
-        ckt->CKTcurrentAnalysis = 0;
-        ckt->CKTstat->STATtranTime += SPfrontEnd->IFseconds() - startTime;
-        ckt->CKTstat->STATtranIter += ckt->CKTstat->STATnumIter - startIters;
-        ckt->CKTstat->STATtranDecompTime += ckt->CKTstat->STATdecompTime -
-                startdTime;
-        ckt->CKTstat->STATtranSolveTime += ckt->CKTstat->STATsolveTime -
-                startsTime;
-        ckt->CKTstat->STATtranLoadTime += ckt->CKTstat->STATloadTime -
-                startlTime;
-        ckt->CKTstat->STATtranCombTime += ckt->CKTstat->STATcombineTime -
-                startcTime;
-        ckt->CKTstat->STATtranSyncTime += ckt->CKTstat->STATsyncTime -
-                startkTime;
+        UPDATE_STATS(0);
 #ifdef WANT_SENSE2
         if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN)){
             ckt->CKTsenInfo->SENmode = save;
@@ -511,19 +500,7 @@ DCtran(CKTcircuit *ckt,
     }
     if(SPfrontEnd->IFpauseTest()) {
         /* user requested pause... */
-        ckt->CKTcurrentAnalysis = DOING_TRAN;
-        ckt->CKTstat->STATtranTime += SPfrontEnd->IFseconds() - startTime;
-        ckt->CKTstat->STATtranIter += ckt->CKTstat->STATnumIter - startIters;
-        ckt->CKTstat->STATtranDecompTime += ckt->CKTstat->STATdecompTime -
-                startdTime;
-        ckt->CKTstat->STATtranSolveTime += ckt->CKTstat->STATsolveTime -
-                startsTime;
-        ckt->CKTstat->STATtranLoadTime += ckt->CKTstat->STATloadTime -
-                startlTime;
-        ckt->CKTstat->STATtranCombTime += ckt->CKTstat->STATcombineTime -
-                startcTime;
-        ckt->CKTstat->STATtranSyncTime += ckt->CKTstat->STATsyncTime -
-                startkTime;
+        UPDATE_STATS(DOING_TRAN);
         return(E_PAUSE);
     }
 resume:
@@ -848,21 +825,7 @@ resume:
             newdelta = ckt->CKTdelta;
             error = CKTtrunc(ckt,&newdelta);
             if(error) {
-                ckt->CKTcurrentAnalysis = DOING_TRAN;
-                ckt->CKTstat->STATtranTime +=
-                        SPfrontEnd->IFseconds() - startTime;
-                ckt->CKTstat->STATtranIter +=
-                        ckt->CKTstat->STATnumIter - startIters;
-                ckt->CKTstat->STATtranDecompTime += ckt->CKTstat->STATdecompTime
-                        - startdTime;
-                ckt->CKTstat->STATtranSolveTime += ckt->CKTstat->STATsolveTime
-                        - startsTime;
-                ckt->CKTstat->STATtranLoadTime += ckt->CKTstat->STATloadTime
-                        - startlTime;
-                ckt->CKTstat->STATtranCombTime += ckt->CKTstat->STATcombineTime
-                        - startcTime;
-                ckt->CKTstat->STATtranSyncTime += ckt->CKTstat->STATsyncTime
-                        - startkTime;
+                UPDATE_STATS(DOING_TRAN);
                 return(error);
             }
             if(newdelta > .9 * ckt->CKTdelta) {
@@ -871,21 +834,7 @@ resume:
                     ckt->CKTorder = 2;
                     error = CKTtrunc(ckt,&newdelta);
                     if(error) {
-                        ckt->CKTcurrentAnalysis = DOING_TRAN;
-                        ckt->CKTstat->STATtranTime +=
-                                SPfrontEnd->IFseconds() - startTime;
-                        ckt->CKTstat->STATtranIter +=
-                                ckt->CKTstat->STATnumIter - startIters;
-                        ckt->CKTstat->STATtranDecompTime +=
-                                ckt->CKTstat->STATdecompTime - startdTime;
-                        ckt->CKTstat->STATtranSolveTime +=
-                                ckt->CKTstat->STATsolveTime - startsTime;
-                        ckt->CKTstat->STATtranLoadTime +=
-                                ckt->CKTstat->STATloadTime - startlTime;
-                        ckt->CKTstat->STATtranCombTime +=
-                                ckt->CKTstat->STATcombineTime - startcTime;
-                        ckt->CKTstat->STATtranSyncTime +=
-                                ckt->CKTstat->STATsyncTime - startkTime;
+                        UPDATE_STATS(DOING_TRAN);
                         return(error);
                     }
                     if(newdelta <= 1.05 * ckt->CKTdelta) {
@@ -954,21 +903,7 @@ resume:
                 (void)printf("delta at delmin\n");
 #endif
             } else {
-                ckt->CKTcurrentAnalysis = DOING_TRAN;
-                ckt->CKTstat->STATtranTime +=
-                        SPfrontEnd->IFseconds() - startTime;
-                ckt->CKTstat->STATtranIter +=
-                        ckt->CKTstat->STATnumIter - startIters;
-                ckt->CKTstat->STATtranDecompTime +=
-                        ckt->CKTstat->STATdecompTime - startdTime;
-                ckt->CKTstat->STATtranSolveTime +=
-                        ckt->CKTstat->STATsolveTime - startsTime;
-                ckt->CKTstat->STATtranLoadTime +=
-                        ckt->CKTstat->STATloadTime - startlTime;
-                ckt->CKTstat->STATtranCombTime +=
-                        ckt->CKTstat->STATcombineTime - startcTime;
-                ckt->CKTstat->STATtranSyncTime +=
-                        ckt->CKTstat->STATsyncTime - startkTime;
+                UPDATE_STATS(DOING_TRAN);
                 errMsg = CKTtrouble(ckt, "Timestep too small");
                 return(E_TIMESTEP);
             }

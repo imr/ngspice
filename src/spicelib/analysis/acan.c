@@ -22,6 +22,29 @@ Modified 2001: AlansFixes
 void SetAnalyse( char * Analyse, int Percent);
 #endif
 
+
+#define INIT_STATS() \
+do { \
+    startTime  = SPfrontEnd->IFseconds();       \
+    startdTime = ckt->CKTstat->STATdecompTime;  \
+    startsTime = ckt->CKTstat->STATsolveTime;   \
+    startlTime = ckt->CKTstat->STATloadTime;    \
+    startcTime = ckt->CKTstat->STATcombineTime; \
+    startkTime = ckt->CKTstat->STATsyncTime;    \
+} while(0)
+
+#define UPDATE_STATS(analysis) \
+do { \
+    ckt->CKTcurrentAnalysis = analysis; \
+    ckt->CKTstat->STATacTime += SPfrontEnd->IFseconds() - startTime; \
+    ckt->CKTstat->STATacDecompTime += ckt->CKTstat->STATdecompTime - startdTime; \
+    ckt->CKTstat->STATacSolveTime += ckt->CKTstat->STATsolveTime - startsTime; \
+    ckt->CKTstat->STATacLoadTime += ckt->CKTstat->STATloadTime - startlTime; \
+    ckt->CKTstat->STATacCombTime += ckt->CKTstat->STATcombineTime - startcTime; \
+    ckt->CKTstat->STATacSyncTime += ckt->CKTstat->STATsyncTime - startkTime; \
+} while(0)
+
+
 int
 ACan(CKTcircuit *ckt, int restart)
 {
@@ -211,13 +234,7 @@ ACan(CKTcircuit *ckt, int restart)
 /* gtri - end - wbk */
 #endif
 
-
-    startTime  = SPfrontEnd->IFseconds();
-    startdTime = ckt->CKTstat->STATdecompTime;
-    startsTime = ckt->CKTstat->STATsolveTime;
-    startlTime = ckt->CKTstat->STATloadTime;
-    startcTime = ckt->CKTstat->STATcombineTime;
-    startkTime = ckt->CKTstat->STATsyncTime;
+    INIT_STATS();
 
     /* main loop through all scheduled frequencies */
     while (freq <= job->ACstopFreq + freqTol) {
@@ -263,18 +280,7 @@ ACan(CKTcircuit *ckt, int restart)
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODEAC;
         error = NIacIter(ckt);
         if (error) {
-            ckt->CKTcurrentAnalysis = DOING_AC;
-            ckt->CKTstat->STATacTime += SPfrontEnd->IFseconds() - startTime;
-            ckt->CKTstat->STATacDecompTime += ckt->CKTstat->STATdecompTime -
-                startdTime;
-            ckt->CKTstat->STATacSolveTime += ckt->CKTstat->STATsolveTime -
-                startsTime;
-            ckt->CKTstat->STATacLoadTime += ckt->CKTstat->STATloadTime -
-                startlTime;
-            ckt->CKTstat->STATacCombTime += ckt->CKTstat->STATcombineTime -
-                startcTime;
-            ckt->CKTstat->STATacSyncTime += ckt->CKTstat->STATsyncTime -
-                startkTime;
+            UPDATE_STATS(DOING_AC);
             return(error);
         }
 
@@ -313,18 +319,7 @@ ACan(CKTcircuit *ckt, int restart)
         error = CKTacDump(ckt,freq,acPlot);
 #endif	
         if (error) {
-	    ckt->CKTcurrentAnalysis = DOING_AC;
-	    ckt->CKTstat->STATacTime += SPfrontEnd->IFseconds() - startTime;
- 	    ckt->CKTstat->STATacDecompTime += ckt->CKTstat->STATdecompTime -
-		    startdTime;
- 	    ckt->CKTstat->STATacSolveTime += ckt->CKTstat->STATsolveTime -
- 		    startsTime;
- 	    ckt->CKTstat->STATacLoadTime += ckt->CKTstat->STATloadTime -
- 		    startlTime;
- 	    ckt->CKTstat->STATacCombTime += ckt->CKTstat->STATcombineTime -
- 		    startcTime;
-	    ckt->CKTstat->STATacSyncTime += ckt->CKTstat->STATsyncTime -
-		    startkTime;
+	    UPDATE_STATS(DOING_AC);
  	    return(error);
  	}
 
@@ -374,18 +369,7 @@ ACan(CKTcircuit *ckt, int restart)
 endsweep:
     SPfrontEnd->OUTendPlot (acPlot);
     acPlot = NULL;
-    ckt->CKTcurrentAnalysis = 0;
-    ckt->CKTstat->STATacTime += SPfrontEnd->IFseconds() - startTime;
-    ckt->CKTstat->STATacDecompTime += ckt->CKTstat->STATdecompTime -
- 	    startdTime;
-    ckt->CKTstat->STATacSolveTime += ckt->CKTstat->STATsolveTime -
- 	    startsTime;
-    ckt->CKTstat->STATacLoadTime += ckt->CKTstat->STATloadTime -
- 	    startlTime;
-    ckt->CKTstat->STATacCombTime += ckt->CKTstat->STATcombineTime -
-	    startcTime;
-    ckt->CKTstat->STATacSyncTime += ckt->CKTstat->STATsyncTime -
-	    startkTime;
+    UPDATE_STATS(0);
     return(0);
 }
 
