@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.7  2011-08-20 17:49:37  rlar
+  Revision 1.8  2011-12-11 18:16:09  rlar
+  #3/4 #include <ngspice/...>  -->  #include "ngspice/..."  for adms
+
+  Revision 1.7  2011/08/20 17:49:37  rlar
   #6/7 use a subdirectory "ngspice" for includes to create a uniq namespace
 
   Revision 1.6  2011/01/13 17:05:46  dwarning
@@ -58,12 +61,12 @@
 <admst:value-of select="attribute[name='ngspicename']/value"/>
 <admst:variable name="module" select="%s"/>
 
-#include &lt;ngspice/ngspice.h&gt;
-#include &lt;ngspice/const.h&gt;
-#include &lt;ngspice/ifsim.h&gt;
+#include &quot;ngspice/ngspice.h&quot;
+#include &quot;ngspice/const.h&quot;
+#include &quot;ngspice/ifsim.h&quot;
 #include &quot;$(module)defs.h&quot;
-#include &lt;ngspice/sperror.h&gt;
-#include &lt;ngspice/suffix.h&gt;
+#include &quot;ngspice/sperror.h&quot;
+#include &quot;ngspice/suffix.h&quot;
 
 int $(module)mParam(int param, IFvalue *value, GENmodel *inMod)
 {
