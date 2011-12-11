@@ -4,12 +4,12 @@ Author: 1985 Thomas L. Quarles
 Modified: Apr 2000 - Paolo Nenzi
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/const.h"
 #include "resdefs.h"
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/sperror.h"
 
 
 /* TODO : there are "double" value compared with 0 (eg: vm == 0)

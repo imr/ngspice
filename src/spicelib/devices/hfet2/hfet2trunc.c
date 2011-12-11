@@ -1,10 +1,10 @@
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/cktdefs.h"
 #include "hfet2defs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 int HFET2trunc(

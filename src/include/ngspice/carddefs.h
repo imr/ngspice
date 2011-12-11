@@ -11,17 +11,17 @@ Authors :  1991 David Gates
 #define CARDDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
-#include <ngspice/bdrydefs.h>
-#include <ngspice/contdefs.h>
-#include <ngspice/domndefs.h>
-#include <ngspice/dopdefs.h>
-#include <ngspice/elctdefs.h>
-#include <ngspice/meshdefs.h>
-#include <ngspice/methdefs.h>
-#include <ngspice/matldefs.h>
-#include <ngspice/mobdefs.h>
-#include <ngspice/modldefs.h>
-#include <ngspice/optndefs.h>
-#include <ngspice/outpdefs.h>
+#include "ngspice/bdrydefs.h"
+#include "ngspice/contdefs.h"
+#include "ngspice/domndefs.h"
+#include "ngspice/dopdefs.h"
+#include "ngspice/elctdefs.h"
+#include "ngspice/meshdefs.h"
+#include "ngspice/methdefs.h"
+#include "ngspice/matldefs.h"
+#include "ngspice/mobdefs.h"
+#include "ngspice/modldefs.h"
+#include "ngspice/optndefs.h"
+#include "ngspice/outpdefs.h"
 
 #endif /* CARDDEFS_H */

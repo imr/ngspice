@@ -14,7 +14,7 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 #ifndef TWOMESH_H
 #define TWOMESH_H
 
-#include <ngspice/material.h>
+#include "ngspice/material.h"
 
 typedef struct sTWOelem
 {

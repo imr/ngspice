@@ -3,11 +3,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Thomas L. Quarles
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/ifsim.h"
 #include "vccsdefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm VCCSpTable[] = { /* parameters */ 
  IOPU("gain",       VCCS_TRANS, IF_REAL, "Transconductance of source (gain)"),

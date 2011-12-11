@@ -28,13 +28,13 @@ Author: Jim Groves
 
 */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/graph.h>
-#include <ngspice/ftedbgra.h>
-#include <ngspice/ftedev.h>
-#include <ngspice/fteinput.h>
-#include <ngspice/fteext.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/graph.h"
+#include "ngspice/ftedbgra.h"
+#include "ngspice/ftedev.h"
+#include "ngspice/fteinput.h"
+#include "ngspice/fteext.h"
 #include "variable.h"
 #include "error.h"
 #include "plotting/graphdb.h"

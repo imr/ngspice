@@ -7,10 +7,10 @@ Author: 1985 Thomas L. Quarles
 #define VCVS
 
 
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/complex.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/complex.h"
 
         /*
          * structures to describe Voltage Controlled Voltage Sources

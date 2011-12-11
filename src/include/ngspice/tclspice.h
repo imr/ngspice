@@ -11,8 +11,8 @@ extern void blt_lockvec(int index);
 /* For things to do per loop */
 int Tcl_ExecutePerLoop(void);
 
-#include <ngspice/graph.h>
-#include <ngspice/ftedev.h>
+#include "ngspice/graph.h"
+#include "ngspice/ftedev.h"
 
 /* For tk ploting */
 disp_fn_Init_t             sp_Tk_Init;
@@ -29,7 +29,7 @@ disp_fn_SetColor_t         sp_Tk_SetColor;
 disp_fn_Update_t           sp_Tk_Update;
 
 /* The blt callback method */
-#include <ngspice/dvec.h>
+#include "ngspice/dvec.h"
 extern int blt_plot(struct dvec *y,struct dvec *x,int new);
 
 #endif

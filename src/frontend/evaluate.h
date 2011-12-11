@@ -6,8 +6,8 @@
 #ifndef _EVALUATE_H
 #define _EVALUATE_H
 
-#include <ngspice/dvec.h>
-#include <ngspice/pnode.h>
+#include "ngspice/dvec.h"
+#include "ngspice/pnode.h"
 
 struct dvec * op_plus(struct pnode *arg1, struct pnode *arg2);
 struct dvec * op_minus(struct pnode *arg1, struct pnode *arg2);

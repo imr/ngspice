@@ -13,7 +13,7 @@ Authors: 1991 David Gates
 #ifndef NUMCARDS_H
 #define NUMCARDS_H
 
-#include <ngspice/ifsim.h>
+#include "ngspice/ifsim.h"
 
 /*
  * Generic header for a linked list of cards 

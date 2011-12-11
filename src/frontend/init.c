@@ -5,8 +5,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 /* Initialize io, cp_chars[], variable "history". */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
 
 #include "init.h"
 #include "variable.h"

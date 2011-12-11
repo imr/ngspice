@@ -6,12 +6,12 @@ Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
 /*
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/const.h"
+#include "ngspice/ifsim.h"
 #include "diodefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 /* ARGSUSED */

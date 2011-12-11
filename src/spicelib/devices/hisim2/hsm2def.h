@@ -16,11 +16,11 @@
 #ifndef HSM2
 #define HSM2
 
-#include <ngspice/ifsim.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/noisedef.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/noisedef.h"
 
 /* declarations for HiSIM2 MOSFETs */
 

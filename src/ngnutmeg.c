@@ -12,12 +12,12 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #define CONFIG
 #include <stdio.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/suffix.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/suffix.h"
 
 IFsimulator SIMinfo = {
     "ngnutmeg",       /* my name */
@@ -64,7 +64,7 @@ IFsimulator SIMinfo = {
 
 #ifdef CIDER
 /* An ugly hack */
-#include <ngspice/cktdefs.h>
+#include "ngspice/cktdefs.h"
 void
 NDEVacct(CKTcircuit *ckt, FILE *file)
 {

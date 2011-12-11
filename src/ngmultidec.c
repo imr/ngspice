@@ -3,10 +3,10 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1990 Jaijeet Roychowdury
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include <math.h>
-#include <ngspice/spmatrix.h>
+#include "ngspice/spmatrix.h"
 
 #define THRSH 0.01
 #define ABS_THRSH 0

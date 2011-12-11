@@ -9,16 +9,16 @@ $Id$
 Two-Dimensional Numerical Device Setup Routines
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numconst.h>
-#include <ngspice/numenum.h>
-#include <ngspice/twomesh.h>
-#include <ngspice/twodev.h>
-#include <ngspice/carddefs.h>		/* XXX Not really modular if we need this. */
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numconst.h"
+#include "ngspice/numenum.h"
+#include "ngspice/twomesh.h"
+#include "ngspice/twodev.h"
+#include "ngspice/carddefs.h"		/* XXX Not really modular if we need this. */
 #include "twoddefs.h"
 #include "twodext.h"
-#include <ngspice/cidersupt.h>
+#include "ngspice/cidersupt.h"
 
 
 /* compute node parameters */

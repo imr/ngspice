@@ -9,9 +9,9 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 /*
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "jfet2defs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 
 void

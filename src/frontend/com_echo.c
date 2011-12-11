@@ -4,13 +4,13 @@
 ************/
 
 #include <config.h>
-#include <ngspice/ngspice.h>
-#include <ngspice/wordlist.h>
-#include <ngspice/bool.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/wordlist.h"
+#include "ngspice/bool.h"
 
 #include "com_echo.h"
 #include "quote.h"
-#include <ngspice/cpextern.h>
+#include "ngspice/cpextern.h"
 
 void
 com_echo(wordlist *wlist)

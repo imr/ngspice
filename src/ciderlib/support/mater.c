@@ -4,12 +4,12 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numconst.h>
-#include <ngspice/numenum.h>
-#include <ngspice/material.h>
-#include <ngspice/cidersupt.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numconst.h"
+#include "ngspice/numenum.h"
+#include "ngspice/material.h"
+#include "ngspice/cidersupt.h"
 
 
 /*

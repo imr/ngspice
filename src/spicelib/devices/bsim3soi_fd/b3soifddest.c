@@ -10,9 +10,9 @@ File: b3soifddest.c          98/5/01
  * BSIMFD2.1 release
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "b3soifddef.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 void
 B3SOIFDdestroy(GENmodel **inModel)

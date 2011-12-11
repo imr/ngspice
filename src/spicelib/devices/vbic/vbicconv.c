@@ -10,11 +10,11 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
  * VBICs in the circuit.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "vbicdefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int
 VBICconvTest(GENmodel *inModel, CKTcircuit *ckt)

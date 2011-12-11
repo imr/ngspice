@@ -9,12 +9,12 @@ Author: 1985 Thomas L. Quarles
      *  find the given Analysis given its name and return the Analysis pointer
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/jobdefs.h>
-#include <ngspice/tskdefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/jobdefs.h"
+#include "ngspice/tskdefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/cktdefs.h"
 
 
 

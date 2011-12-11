@@ -42,9 +42,9 @@ NON-STANDARD FEATURES
 #include <apollo/base.h>
 #include <apollo/mbx.h>
 #include <apollo/error.h>
-#include <ngspice/memory.h>
+#include "ngspice/memory.h"
 
-#include <ngspice/ipc.h>
+#include "ngspice/ipc.h"
 
 
 typedef unsigned char Buffer_char_t;
@@ -64,7 +64,7 @@ static mbx_$server_msg_t        *mbx_ret_ptr;
 static int                      mbx_ret_len;
 static short                    mbx_chan;
 
-#include <ngspice/ipcproto.h>
+#include "ngspice/ipcproto.h"
 
 /*---------------------------------------------------------------------------*/
 

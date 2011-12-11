@@ -8,14 +8,14 @@
  * Author: 2001 Xuemei Xi
  **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "bsim3def.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/const.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/const.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 int

@@ -8,12 +8,12 @@ Modified: 2000 AlansFixes
      * for fast matrix loading 
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
 #include "mos1defs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int
 MOS1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,

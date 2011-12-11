@@ -5,13 +5,13 @@ Author: 2003 Paolo Nenzi
 /*
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/devdefs.h"
 #include "inddefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/suffix.h"
 
 
 /* ARGSUSED */

@@ -11,11 +11,11 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
  * point analysis.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "vbicdefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int
 VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)

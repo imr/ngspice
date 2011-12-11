@@ -15,12 +15,12 @@ Author: 1985 Thomas L. Quarles
 
 #include "spice.h"
 #include <stdio.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/trandefs.h>
-#include <ngspice/suffix.h>
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/trandefs.h"
+#include "ngspice/suffix.h"
 
 
 int

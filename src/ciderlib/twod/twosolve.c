@@ -5,21 +5,21 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 $Id$
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numenum.h>
-#include <ngspice/twodev.h>
-#include <ngspice/twomesh.h>
-#include <ngspice/spmatrix.h>
-#include <ngspice/bool.h>
-#include <ngspice/macros.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numenum.h"
+#include "ngspice/twodev.h"
+#include "ngspice/twomesh.h"
+#include "ngspice/spmatrix.h"
+#include "ngspice/bool.h"
+#include "ngspice/macros.h"
 #include "twoddefs.h"
 #include "twodext.h"
-#include <ngspice/cidersupt.h>
+#include "ngspice/cidersupt.h"
 #include "../../maths/misc/norm.h"
 
 
-#include <ngspice/ifsim.h>
+#include "ngspice/ifsim.h"
 extern IFfrontEnd *SPfrontEnd;
 
 

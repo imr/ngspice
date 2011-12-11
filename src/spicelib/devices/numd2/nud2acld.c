@@ -8,16 +8,16 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * parameters saved during a previous DC operating point analysis.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "numd2def.h"
-#include <ngspice/sperror.h>
-#include <ngspice/complex.h>
+#include "ngspice/sperror.h"
+#include "ngspice/complex.h"
 #include "../../../ciderlib/twod/twoddefs.h"
 #include "../../../ciderlib/twod/twodext.h"
-#include <ngspice/cidersupt.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cidersupt.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/suffix.h"
 
 
 int

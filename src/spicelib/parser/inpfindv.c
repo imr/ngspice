@@ -4,10 +4,10 @@
  * 
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include <string.h>
-#include <ngspice/inpdefs.h>
+#include "ngspice/inpdefs.h"
 #include "inp.h"
 
 char *INPfindVer(char *line, char *version)

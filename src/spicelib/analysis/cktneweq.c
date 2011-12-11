@@ -11,11 +11,11 @@ Author: 1985 Thomas L. Quarles
      *
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
 
 
 int

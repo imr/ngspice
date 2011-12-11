@@ -6,12 +6,12 @@ reserved.
 #ifndef CPL
 #define CPL
 
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/noisedef.h>
-#include <ngspice/swec.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/noisedef.h"
+#include "ngspice/swec.h"
 
 /* information used to describe a single instance */
 

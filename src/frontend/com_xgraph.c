@@ -1,8 +1,8 @@
 #include <stddef.h>
 
-#include <ngspice/ngspice.h>
-#include <ngspice/bool.h>
-#include <ngspice/wordlist.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/bool.h"
+#include "ngspice/wordlist.h"
 
 #include "plotting/plotit.h"
 #include "../misc/mktemp.h"

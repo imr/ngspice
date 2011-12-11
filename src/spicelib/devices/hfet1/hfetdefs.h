@@ -6,11 +6,11 @@ Modified: Paolo Nenzi
 #ifndef HFETA
 #define HFETA
 
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/noisedef.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/noisedef.h"
 
 #define HFETAnumStates 24
 

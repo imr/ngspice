@@ -1,12 +1,12 @@
 #include <config.h>
-#include <ngspice/ngspice.h>
-#include <ngspice/bool.h>
-#include <ngspice/wordlist.h>
-#include <ngspice/inpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/bool.h"
+#include "ngspice/wordlist.h"
+#include "ngspice/inpdefs.h"
 #include "circuits.h"
 #include "com_dump.h"
-#include <ngspice/cpextern.h>
-#include <ngspice/fteext.h>
+#include "ngspice/cpextern.h"
+#include "ngspice/fteext.h"
 #include "spiceif.h"
 
 

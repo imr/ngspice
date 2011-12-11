@@ -1,9 +1,9 @@
 #include <config.h>
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
-#include <ngspice/bool.h>
-#include <ngspice/wordlist.h>
-#include <ngspice/fteext.h>
+#include "ngspice/bool.h"
+#include "ngspice/wordlist.h"
+#include "ngspice/fteext.h"
 
 #include "variable.h"
 #include "com_help.h"

@@ -13,12 +13,12 @@
  * Modified by Xuemei Xi, 03/04/2004.
  **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "bsim4v4def.h"
-#include <ngspice/ifsim.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
-#include <ngspice/const.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
+#include "ngspice/const.h"
 
 int
 BSIM4v4mParam(

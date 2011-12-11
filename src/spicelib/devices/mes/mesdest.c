@@ -5,9 +5,9 @@ Author: 1985 S. Hwang
 /*
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "mesdefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 
 void

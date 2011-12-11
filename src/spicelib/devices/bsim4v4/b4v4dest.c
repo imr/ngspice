@@ -8,9 +8,9 @@
  * Project Director: Prof. Chenming Hu.
  **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "bsim4v4def.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 void
 BSIM4v4destroy(

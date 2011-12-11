@@ -11,14 +11,14 @@
  * Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
  **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "bsim3v32def.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/suffix.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/const.h"
+#include "ngspice/sperror.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/suffix.h"
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15

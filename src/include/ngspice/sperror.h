@@ -6,7 +6,7 @@ Author: 1985 Thomas L. Quarles
 #ifndef _SPERROR_H
 #define _SPERROR_H
 
-#include <ngspice/iferrmsg.h>
+#include "ngspice/iferrmsg.h"
 
 /*
  * definitions for error codes returned by SPICE3 routines.

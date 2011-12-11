@@ -3,13 +3,13 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Thomas L. Quarles
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
 #include "urcdefs.h"
-#include <ngspice/cktdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cktdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 /* ARGSUSED */
 int

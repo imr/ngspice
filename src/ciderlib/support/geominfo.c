@@ -4,11 +4,11 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/gendev.h>
-#include <ngspice/macros.h>
-#include <ngspice/memory.h>
-#include <ngspice/cidersupt.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/gendev.h"
+#include "ngspice/macros.h"
+#include "ngspice/memory.h"
+#include "ngspice/cidersupt.h"
 
 void printCoordInfo(CoordInfo *pFirstCoord)
 {

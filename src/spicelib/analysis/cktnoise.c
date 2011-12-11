@@ -12,12 +12,12 @@ Author: 1987 Gary W. Ng
  *   it evaluates the noise for the entire circuit.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/noisedef.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/noisedef.h"
+#include "ngspice/sperror.h"
 
 
 int

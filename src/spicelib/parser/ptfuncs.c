@@ -9,11 +9,11 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
  */
 
 #include <config.h>
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
-#include <ngspice/fteext.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/inpptree.h>
+#include "ngspice/fteext.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/inpptree.h"
 #include "inp.h"
 
 /* XXX These should be in math.h */

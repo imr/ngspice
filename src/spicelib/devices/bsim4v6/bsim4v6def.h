@@ -21,11 +21,11 @@ Modified by Wenwei Yang, 07/31/2008.
 #ifndef BSIM4v6
 #define BSIM4v6
 
-#include <ngspice/ifsim.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/noisedef.h>         
+#include "ngspice/ifsim.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/noisedef.h"         
 
 #ifdef USE_OMP
 #define USE_OMP4

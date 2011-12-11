@@ -37,7 +37,7 @@ NON-STANDARD FEATURES
 ============================================================================*/
  
 
-#include <ngspice/mif.h>
+#include "ngspice/mif.h"
 
 int MIFiSize = sizeof(MIFinstance);  
 int MIFmSize = sizeof(MIFmodel); 

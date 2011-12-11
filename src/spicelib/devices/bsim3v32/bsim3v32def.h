@@ -10,11 +10,11 @@ File: bsim3v32def.h
 #ifndef BSIM3v32
 #define BSIM3v32
 
-#include <ngspice/ifsim.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/noisedef.h>         
+#include "ngspice/ifsim.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/noisedef.h"         
 
 typedef struct sBSIM3v32instance
 {

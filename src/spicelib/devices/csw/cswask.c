@@ -10,13 +10,13 @@ Author: 1987 Thomas L. Quarles
  * of Current controlled SWitch
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/ifsim.h"
 #include "cswdefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 /* ARGSUSED */

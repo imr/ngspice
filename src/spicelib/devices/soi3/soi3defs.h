@@ -24,11 +24,11 @@ ngspice integration
 #ifndef SOI3
 #define SOI3
 
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/noisedef.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/noisedef.h"
 
 
 /* declarations for SOI3 MOSFETs */

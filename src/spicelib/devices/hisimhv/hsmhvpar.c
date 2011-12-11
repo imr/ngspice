@@ -15,11 +15,11 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
 #include "hsmhvdef.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int HSMHVparam(
      int param,

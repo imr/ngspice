@@ -9,10 +9,10 @@
  * Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
  **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
 #include "bsim3v32def.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm BSIM3v32pTable[] = { /* parameters */
 IOP( "l",   BSIM3v32_L,      IF_REAL   , "Length"),

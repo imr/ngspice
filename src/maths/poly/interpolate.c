@@ -1,6 +1,6 @@
 #include <config.h>
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
 
 #include "interpolate.h"
 #include "polyeval.h"

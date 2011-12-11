@@ -8,11 +8,11 @@ $Id$
  * Routines for dealing with the vector database.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/dvec.h>
-#include <ngspice/sim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/dvec.h"
+#include "ngspice/sim.h"
 
 #include "circuits.h"
 #include "completion.h"

@@ -3,15 +3,15 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/complex.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/complex.h"
 #include "numosdef.h"
-#include <ngspice/sperror.h>
+#include "ngspice/sperror.h"
 #include "../../../ciderlib/twod/twoddefs.h"
 #include "../../../ciderlib/twod/twodext.h"
-#include <ngspice/cidersupt.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cidersupt.h"
+#include "ngspice/suffix.h"
 
 
 int

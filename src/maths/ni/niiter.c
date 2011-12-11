@@ -13,11 +13,11 @@ Modified: 2001 AlansFixes
  *  convergence test function, and the convergence parameters
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/trandefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/trandefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/sperror.h"
 #include "niiter.h"
 
 

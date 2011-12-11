@@ -9,10 +9,10 @@ Author: 1985 Thomas L. Quarles
      *   set a parameter on a node.
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/cktdefs.h"
 
 
 

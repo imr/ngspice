@@ -6,11 +6,11 @@ Author: 1988 Kanwar Jit Singh
  * singh@ic.Berkeley.edu
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "asrcdefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 /*ARGSUSED*/

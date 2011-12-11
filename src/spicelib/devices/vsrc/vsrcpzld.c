@@ -3,12 +3,12 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/sperror.h"
 #include "vsrcdefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 /* ARGSUSED */
 int

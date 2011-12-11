@@ -9,16 +9,16 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 /* data structures used to describe 2D numerical diodes */
 
 /* circuit level includes */
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/gendefs.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/gendefs.h"
 
 /* device level includes */
-#include <ngspice/twomesh.h>
-#include <ngspice/twodev.h>
-#include <ngspice/profile.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/carddefs.h>
+#include "ngspice/twomesh.h"
+#include "ngspice/twodev.h"
+#include "ngspice/profile.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/carddefs.h"
 
 /* information needed per instance */
 typedef struct sNUMD2instance {

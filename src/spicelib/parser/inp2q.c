@@ -4,11 +4,11 @@ Author: 1988 Thomas L. Quarles
 Modified: 2001 Paolo Nenzi (Cider Integration)
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/inpdefs.h>
-#include <ngspice/inpmacs.h>
-#include <ngspice/fteext.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/inpdefs.h"
+#include "ngspice/inpmacs.h"
+#include "ngspice/fteext.h"
 #include "inp.h"
 
 #ifdef ADMS

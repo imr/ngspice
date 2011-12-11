@@ -10,8 +10,8 @@ $Id$
  */
 
 #include <config.h>
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
 #include "backq.h"
 
 

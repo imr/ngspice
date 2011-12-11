@@ -3,14 +3,14 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/sperror.h"
 #include "numddefs.h"
 #include "../../../ciderlib/oned/onedext.h"
-#include <ngspice/cidersupt.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cidersupt.h"
+#include "ngspice/suffix.h"
 
 /* External Declarations */
 extern int ONEacDebug;

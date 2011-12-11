@@ -4,13 +4,13 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numconst.h>
-#include <ngspice/numenum.h>
-#include <ngspice/twomesh.h>
-#include <ngspice/twodev.h>
-#include <ngspice/bool.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numconst.h"
+#include "ngspice/numenum.h"
+#include "ngspice/twomesh.h"
+#include "ngspice/twodev.h"
+#include "ngspice/bool.h"
 #include "twoddefs.h"
 #include "twodext.h"
 
@@ -19,7 +19,7 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #define NEXT		next
 #define SORT		TWOssortElectrodes
 #define SORT1		TWOsortElectrodes
-#include <ngspice/lsort.h>
+#include "ngspice/lsort.h"
 
 #define ARG_MIN(a,b,c) ((a) > (b) ? 1 : ((a) < (b) ? -1 : (c)))
 

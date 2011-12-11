@@ -3,7 +3,7 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "norm.h"
 
 /* functions to compute max and one norms of a given vector of doubles */

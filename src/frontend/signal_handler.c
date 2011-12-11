@@ -7,12 +7,12 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * The signal routines for spice 3 and nutmeg.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/ftedev.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/ftedev.h"
 #include <setjmp.h>
 #include <signal.h>
 #include "signal_handler.h"

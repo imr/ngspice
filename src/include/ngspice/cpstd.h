@@ -22,9 +22,9 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #warning "Please use bool.h, wordlist.h or complex.h rather than cpstd.h"
 #endif
 
-#include <ngspice/bool.h>
-#include <ngspice/wordlist.h>
-#include <ngspice/complex.h>
+#include "ngspice/bool.h"
+#include "ngspice/wordlist.h"
+#include "ngspice/complex.h"
 
 /* Externs defined in std.c */
 

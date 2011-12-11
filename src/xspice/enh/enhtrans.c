@@ -49,14 +49,14 @@ NON-STANDARD FEATURES
 
 /* #include "prefix.h"   */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 //#include "misc.h"
 
-#include <ngspice/fteinp.h>
-#include <ngspice/enh.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/mifproto.h>
+#include "ngspice/fteinp.h"
+#include "ngspice/enh.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/mifproto.h"
 
 /* #include "suffix.h" */
 

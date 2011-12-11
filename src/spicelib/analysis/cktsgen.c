@@ -2,12 +2,12 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/sensgen.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/sensgen.h"
 
 	/* XXX */
 extern char	*Sfilter;

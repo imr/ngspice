@@ -27,7 +27,7 @@
 /*              Header files for C functions                          */
 /**********************************************************************/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "misc/misc_time.h"
 #include <tcl.h>
 
@@ -81,9 +81,9 @@ typedef pthread_t threadId_t;
     #include <unistd.h> /* usleep */
 #endif /* __MINGW32__ */
 
-#include <ngspice/iferrmsg.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/iferrmsg.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/devdefs.h"
 #include <spicelib/devices/dev.h>
 #include <spicelib/analysis/analysis.h>
 #include <misc/ivars.h>
@@ -94,7 +94,7 @@ typedef pthread_t threadId_t;
 #define snprintf _snprintf
 #endif
 #include <frontend/outitf.h>
-#include <ngspice/memory.h>
+#include "ngspice/memory.h"
 #include <frontend/com_measure2.h>
 
 #ifndef HAVE_GETRUSAGE
@@ -111,14 +111,14 @@ typedef void (*sighandler)(int);
 #include "frontend/signal_handler.h"
 
 /*Included for the module to access data*/
-#include <ngspice/dvec.h>
-#include <ngspice/plot.h>
+#include "ngspice/dvec.h"
+#include "ngspice/plot.h"
 
 #ifdef __CYGWIN__
 #undef WIN32
 #endif
 #include <blt.h>
-#include  <ngspice/sim.h>
+#include  "ngspice/sim.h"
 
 /* defines for Tcl support
  * Tcl 8.3 and Tcl 8.4 support, 
@@ -1359,7 +1359,7 @@ static int delta TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   return TCL_OK;
 }
 
-#include <ngspice/trandefs.h>
+#include "ngspice/trandefs.h"
 /* Direct control over the maximum stepsize
  * Spice will still adjust it to keep accuracy wuithin reltol and abstol
  */
@@ -1391,7 +1391,7 @@ static int maxstep TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 /****************************************/
 
 /* Use Tcl_GetStringResult to get canvas size etc. from Tcl */
-#include <ngspice/ftedev.h>
+#include "ngspice/ftedev.h"
 int  sp_Tk_Init(void) {
   /* This is hard coded in C at the mo, use X11 values */
   dispdev->numlinestyles = 8;
@@ -1402,7 +1402,7 @@ int  sp_Tk_Init(void) {
   return 0;
 }
 
-#include <ngspice/graph.h>
+#include "ngspice/graph.h"
 int  sp_Tk_NewViewport(GRAPH *graph) {
   const char *result;
   int width, height, fontwidth, fontheight;

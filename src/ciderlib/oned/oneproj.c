@@ -4,17 +4,17 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 $Id$
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numenum.h>
-#include <ngspice/onemesh.h>
-#include <ngspice/onedev.h>
-#include <ngspice/macros.h>
-#include <ngspice/spmatrix.h>
-#include <ngspice/bool.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numenum.h"
+#include "ngspice/onemesh.h"
+#include "ngspice/onedev.h"
+#include "ngspice/macros.h"
+#include "ngspice/spmatrix.h"
+#include "ngspice/bool.h"
 #include "onedext.h"
 #include "oneddefs.h"
-#include <ngspice/cidersupt.h>
+#include "ngspice/cidersupt.h"
 
 
 /*

@@ -4,15 +4,15 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 Modified: 2001 Paolo Nenzi
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/numconst.h>
-#include <ngspice/numenum.h>
-#include <ngspice/mobdefs.h>
-#include <ngspice/material.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
-#include <ngspice/cidersupt.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/numconst.h"
+#include "ngspice/numenum.h"
+#include "ngspice/mobdefs.h"
+#include "ngspice/material.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
+#include "ngspice/cidersupt.h"
 
 extern int MOBcheck( MOBcard *, MaterialInfo * );
 extern int MOBsetup( MOBcard *, MaterialInfo * );

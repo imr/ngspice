@@ -7,13 +7,13 @@ Author: 1985 Thomas L. Quarles
          * for fast matrix loading 
          */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
 #include "inddefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 #ifdef MUTUAL

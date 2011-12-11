@@ -44,7 +44,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* Better have #ifdef HAS_WAIT XXX */
 #include <sys/wait.h>
 
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 #define MAXJOBS 2
 

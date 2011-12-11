@@ -5,12 +5,12 @@ Model Author: 1995 Colin McAndrew Motorola
 Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "vbicdefs.h"
-#include <ngspice/cktdefs.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/noisedef.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cktdefs.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/noisedef.h"
+#include "ngspice/suffix.h"
 
 /*
  * VBICnoise (mode, operation, firstModel, ckt, data, OnDens)

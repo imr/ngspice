@@ -10,11 +10,11 @@ Modified by Paolo Nenzi 2002
  * BSIMDD2.1 release
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
 #include "b3soidddef.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int
 B3SOIDDparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)

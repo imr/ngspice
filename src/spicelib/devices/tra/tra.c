@@ -3,11 +3,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Thomas L. Quarles
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/ifsim.h"
 #include "tradefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm TRApTable[] = { /* parameters */ 
  IOPU( "z0", TRA_Z0,   IF_REAL   , "Characteristic impedance"),

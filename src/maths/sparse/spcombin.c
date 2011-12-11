@@ -44,7 +44,7 @@
 
 #define spINSIDE_SPARSE
 #include "spconfig.h"
-#include <ngspice/spmatrix.h>
+#include "ngspice/spmatrix.h"
 #include "spdefs.h"
 
 

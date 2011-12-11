@@ -9,12 +9,12 @@ Author: 1985 Thomas L. Quarles
  * all the VCCS in the circuit.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
 #include "vccsdefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 #include "vccsext.h"
 
 

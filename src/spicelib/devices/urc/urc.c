@@ -3,10 +3,10 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Thomas L. Quarles
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
 #include "urcdefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm URCpTable[] = { /* parameters */ 
  IOPU( "l",      URC_LEN,   IF_REAL, "Length of transmission line"),

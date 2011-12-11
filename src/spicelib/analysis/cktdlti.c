@@ -9,10 +9,10 @@ Author: 1985 Thomas L. Quarles
      *  delete the specified instance - not yet supported in spice 
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/sperror.h"
 
 
 

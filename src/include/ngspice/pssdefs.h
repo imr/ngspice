@@ -5,8 +5,8 @@ Author: 2010-05 Stefano Perticaroli ``spertica''
 #ifndef PSS
 #define PSS
 
-#include <ngspice/jobdefs.h>
-#include <ngspice/tskdefs.h>
+#include "ngspice/jobdefs.h"
+#include "ngspice/tskdefs.h"
     /*
      * PSSdefs.h - defs for pss analyses
      */

@@ -9,12 +9,12 @@ Author: 1985 Thomas L. Quarles
      * elements in the given circuit 
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/const.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/const.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
 
 
 int

@@ -8,7 +8,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
  * FIXME: remove smktemp() and adjust all callers to use tmpfile(3).
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "mktemp.h"
 
 #ifdef HAVE_UNISTD_H

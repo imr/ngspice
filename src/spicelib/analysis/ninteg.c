@@ -18,8 +18,8 @@ Author: 1987 Gary W. Ng
  *   Hence, the reason for the constant 'N_INTUSELOG'.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/noisedef.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/noisedef.h"
 
 #define limexp(x) (x > 700 ? exp(700.0)*(1.0+x-700.0) : exp(x))
 

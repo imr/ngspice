@@ -12,11 +12,11 @@ Author: 1985 Thomas L. Quarles
      *  integration method
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/trandefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/smpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/trandefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/smpdefs.h"
 #include "nipred.h"
 
 

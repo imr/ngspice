@@ -14,10 +14,10 @@ Modified 1999 Emmanuel Rouat
      * - return value is non-zero for convergence failure 
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/trandefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/trandefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/sperror.h"
 #include "niaciter.h"
 
 

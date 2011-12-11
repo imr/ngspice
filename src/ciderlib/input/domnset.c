@@ -4,15 +4,15 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 Modifed: 2001 Paolo Nenzi
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/numenum.h>
-#include <ngspice/domndefs.h>
-#include <ngspice/material.h>
-#include <ngspice/meshext.h>
-#include <ngspice/gendev.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/numenum.h"
+#include "ngspice/domndefs.h"
+#include "ngspice/material.h"
+#include "ngspice/meshext.h"
+#include "ngspice/gendev.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 extern int DOMNcheck( DOMNcard *, MATLmaterial * );

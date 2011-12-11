@@ -7,17 +7,17 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Convert a parse tree to a list of data vectors.
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #include <setjmp.h>
 #include <signal.h>
 
-#include <ngspice/ftedefs.h>
-#include <ngspice/dvec.h>
+#include "ngspice/ftedefs.h"
+#include "ngspice/dvec.h"
 
 #include "evaluate.h"
 
-#include <ngspice/sim.h>  /* To get SV_VOLTAGE definition */
+#include "ngspice/sim.h"  /* To get SV_VOLTAGE definition */
 
 /* static declarations */
 static RETSIGTYPE sig_matherr(void);

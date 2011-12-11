@@ -5,15 +5,15 @@ Author: 1992 Charles Hough
 **********/
 
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/const.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ifsim.h"
 #include "txldefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/suffix.h>
-#include <ngspice/swec.h>
+#include "ngspice/sperror.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/suffix.h"
+#include "ngspice/swec.h"
 
 
 /* ARGSUSED */

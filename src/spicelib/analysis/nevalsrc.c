@@ -15,10 +15,10 @@ Author: 1987 Gary W. Ng
  */
 
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/const.h>
-#include <ngspice/noisedef.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/const.h"
+#include "ngspice/noisedef.h"
 
 
 void

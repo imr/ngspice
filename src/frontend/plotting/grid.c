@@ -9,12 +9,12 @@ $Id$
     Routines to draw the various sorts of grids -- linear, log, polar.
 */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/graph.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/graph.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
 
-#include <ngspice/grid.h>
+#include "ngspice/grid.h"
 #include "../display.h"
 
 #define RAD_TO_DEG	(180.0 / M_PI)

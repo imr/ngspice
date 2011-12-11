@@ -13,15 +13,15 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include <math.h>
 #include "hsm2def.h"
-#include <ngspice/cktdefs.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/noisedef.h>
-#include <ngspice/suffix.h>
-#include <ngspice/const.h>  /* jwan */
+#include "ngspice/cktdefs.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/noisedef.h"
+#include "ngspice/suffix.h"
+#include "ngspice/const.h"  /* jwan */
 
 /*
  * HSM2noise (mode, operation, firstModel, ckt, data, OnDens)

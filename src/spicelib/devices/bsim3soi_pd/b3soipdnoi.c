@@ -11,13 +11,13 @@ Modified by Paolo Nenzi 2002
  * BSIMPD2.2.3 release
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "b3soipddef.h"
-#include <ngspice/cktdefs.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/noisedef.h>
-#include <ngspice/suffix.h>
-#include <ngspice/const.h>  /* jwan */
+#include "ngspice/cktdefs.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/noisedef.h"
+#include "ngspice/suffix.h"
+#include "ngspice/const.h"  /* jwan */
 
 /*
  * B3SOIPDnoise (mode, operation, firstModel, ckt, data, OnDens)

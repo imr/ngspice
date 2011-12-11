@@ -40,9 +40,9 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 #include <stdio.h>
-#include <ngspice/cm.h>
+#include "ngspice/cm.h"
 
-#include <ngspice/evtudn.h>
+#include "ngspice/evtudn.h"
 
 void *tmalloc(size_t);
 

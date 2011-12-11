@@ -11,14 +11,14 @@
  */
 
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "bsim3v1def.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/suffix.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/const.h"
+#include "ngspice/sperror.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/suffix.h"
 
 int
 BSIM3v1checkModel(BSIM3v1model *model, BSIM3v1instance *here, CKTcircuit *ckt)

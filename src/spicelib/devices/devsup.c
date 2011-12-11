@@ -6,10 +6,10 @@ Modified: 2000 AlansFixes
 
 /* support routines for device models */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/suffix.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/suffix.h"
 
 /* 
  * Limit the per-iteration change of VDS 

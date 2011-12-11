@@ -3,11 +3,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/inpdefs.h>
-#include <ngspice/inpptree.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/inpdefs.h"
+#include "ngspice/inpptree.h"
 #include "inp.h"
 
 IFvalue *INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables * tab)

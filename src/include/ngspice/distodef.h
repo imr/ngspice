@@ -12,9 +12,9 @@ Modified: 2000 AlansFixes
 #define D_DBG_SMALLTIMES
 #endif
 
-#include <ngspice/jobdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/jobdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/cktdefs.h"
 
 /* structure for passing a large number of values */
 typedef struct {

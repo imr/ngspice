@@ -15,11 +15,11 @@ $Id$
  * with the same name and different arities.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/dvec.h>
-#include <ngspice/fteparse.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/dvec.h"
+#include "ngspice/fteparse.h"
 #include "define.h"
 
 #include "completion.h"

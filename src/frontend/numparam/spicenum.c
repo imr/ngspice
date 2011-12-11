@@ -25,7 +25,7 @@ Todo:
 
 #include "general.h"
 #include "numparam.h"
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #include "../error.h" /* controlled_exit() */
 

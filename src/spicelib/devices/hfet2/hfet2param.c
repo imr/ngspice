@@ -3,11 +3,11 @@ Imported from MacSpice3f4 - Antony Wilson
 Modified: Paolo Nenzi
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
 #include "hfet2defs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 int HFET2param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)

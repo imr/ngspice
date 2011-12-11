@@ -1,13 +1,13 @@
 /* The 'compose' command.  This is a more powerful and convenient form
  * of the 'let' command.  */
-#include <ngspice/ngspice.h>
-#include <ngspice/complex.h>
-#include <ngspice/dvec.h>
-#include <ngspice/bool.h>
-#include <ngspice/sim.h>
-#include <ngspice/pnode.h>
-#include <ngspice/fteext.h>
-#include <ngspice/cpextern.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/complex.h"
+#include "ngspice/dvec.h"
+#include "ngspice/bool.h"
+#include "ngspice/sim.h"
+#include "ngspice/pnode.h"
+#include "ngspice/fteext.h"
+#include "ngspice/cpextern.h"
 
 #include "quote.h"
 #include "com_compose.h"

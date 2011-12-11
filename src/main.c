@@ -8,7 +8,7 @@
    $Id$
 */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #ifdef HAVE_ASPRINTF
 # ifdef HAVE_LIBIBERTY_H /* asprintf */
@@ -43,9 +43,9 @@
  extern int rl_catch_signals;        /* missing from editline/readline.h */
 #endif
 
-#include <ngspice/iferrmsg.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/iferrmsg.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/devdefs.h"
 #include "spicelib/devices/dev.h"
 #include "spicelib/analysis/analysis.h"
 #include "misc/ivars.h"
@@ -67,19 +67,19 @@
 #include "frontend/display.h"  /* added by SDB to pick up Input() fcn */
 #include "frontend/signal_handler.h"
 #include "frontend/misccoms.h"
-#include <ngspice/compatmode.h>
+#include "ngspice/compatmode.h"
 
 /* saj xspice headers */
 #ifdef XSPICE
-# include <ngspice/ipctiein.h>
-# include <ngspice/mif.h>
-# include <ngspice/enh.h>
-# include <ngspice/mifproto.h>
-# include <ngspice/evtproto.h>
+# include "ngspice/ipctiein.h"
+# include "ngspice/mif.h"
+# include "ngspice/enh.h"
+# include "ngspice/mifproto.h"
+# include "ngspice/evtproto.h"
 #endif
 
 #ifdef CIDER
-# include <ngspice/numenum.h>
+# include "ngspice/numenum.h"
 # include "maths/misc/accuracy.h"
 #endif
 

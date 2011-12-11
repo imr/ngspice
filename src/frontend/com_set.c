@@ -1,8 +1,8 @@
 #include <config.h>
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
-#include <ngspice/bool.h>
-#include <ngspice/wordlist.h>
+#include "ngspice/bool.h"
+#include "ngspice/wordlist.h"
 
 #include "variable.h"
 #include "com_set.h"

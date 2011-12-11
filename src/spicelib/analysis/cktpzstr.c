@@ -6,12 +6,12 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
  *	A variant on the "zeroin" method.  This is a bit convoluted.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/pzdefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/pzdefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
 
 
 #ifdef PZDEBUG

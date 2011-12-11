@@ -9,9 +9,9 @@ Author: 1985 Thomas L. Quarles
      *   delete the first time from the breakpoint table for the given circuit
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/sperror.h"
 
 
 

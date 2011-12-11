@@ -15,9 +15,9 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "hsmhvdef.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 void HSMHVdestroy(
      GENmodel **inModel)

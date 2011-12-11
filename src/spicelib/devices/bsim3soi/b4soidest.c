@@ -13,10 +13,10 @@
  * Modified by Tanvir Morshed 12/31/2009
  **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #include "b4soidef.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 void
 B4SOIdestroy(GENmodel **inModel)

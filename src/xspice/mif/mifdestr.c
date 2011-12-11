@@ -38,10 +38,10 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 /* #include "prefix.h" */
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 
-#include <ngspice/mifproto.h>
+#include "ngspice/mifproto.h"
 
 /* #include "suffix.h"  */
 

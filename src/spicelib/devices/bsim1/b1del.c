@@ -5,11 +5,11 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 /*
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "bsim1def.h"
-#include <ngspice/sperror.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/suffix.h"
 
 
 int

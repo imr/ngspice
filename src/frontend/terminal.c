@@ -9,7 +9,7 @@ $Id$
  * dependencies in here, and it isn't clear that versions of this stuff
  * can be written for every possible machine...
  */
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "config.h"
 
 #include <stdarg.h>
@@ -47,7 +47,7 @@ extern int vasprintf(char **out, const char *fmt, va_list ap);
 #include <ncurses/termcap.h>
 #endif
 
-#include <ngspice/cpdefs.h>
+#include "ngspice/cpdefs.h"
 
 #include "variable.h"
 #include "terminal.h"

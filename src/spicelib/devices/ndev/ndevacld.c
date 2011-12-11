@@ -8,12 +8,12 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * parameters saved during a previous DC operating point analysis.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "ndevdefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/complex.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/complex.h"
+#include "ngspice/suffix.h"
 
 
 int

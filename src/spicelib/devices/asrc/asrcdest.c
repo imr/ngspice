@@ -3,9 +3,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Kanwar Jit Singh
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "asrcdefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 void
 ASRCdestroy(GENmodel **model)

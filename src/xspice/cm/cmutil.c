@@ -48,10 +48,10 @@ NON-STANDARD FEATURES
     None.
 
 =========================================================================== */
-#include <ngspice/ngspice.h> /* for NaN */
+#include "ngspice/ngspice.h" /* for NaN */
 #include <stdio.h>
 #include <math.h>
-#include <ngspice/cm.h>
+#include "ngspice/cm.h"
  
 /* Corner Smoothing Function ************************************
 *                                                               *

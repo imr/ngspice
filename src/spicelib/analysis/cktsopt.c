@@ -10,19 +10,19 @@ Modified: 2000 AlansFixes
      *  given circuit 'ckt'.
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
-#include <ngspice/optdefs.h>
-#include <ngspice/tskdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/const.h"
+#include "ngspice/optdefs.h"
+#include "ngspice/tskdefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/sperror.h"
 
 #include "analysis.h"
 
 #ifdef XSPICE
 /* gtri - begin - wbk - add includes */
-#include <ngspice/mif.h>
+#include "ngspice/mif.h"
 /* gtri - end - wbk - add includes */
 #endif
 

@@ -9,8 +9,8 @@ Author: 1985 Thomas L. Quarles
      *  the given circuit 
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 
 
 

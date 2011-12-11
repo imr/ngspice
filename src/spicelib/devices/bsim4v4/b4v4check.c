@@ -14,13 +14,13 @@
  * Modified by Xuemei Xi, 03/04/2004.
  **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "bsim4v4def.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/const.h"
+#include "ngspice/sperror.h"
+#include "ngspice/devdefs.h"
 
 int
 BSIM4v4checkModel(

@@ -3,12 +3,12 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Hong J. Park, Thomas L. Quarles
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "bsim1def.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/const.h>
-#include <ngspice/suffix.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/const.h"
+#include "ngspice/suffix.h"
 
 /* This routine evaluates the drain current, its derivatives and the
  * charges associated with the gate,bulk and drain terminal

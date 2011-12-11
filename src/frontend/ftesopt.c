@@ -4,12 +4,12 @@ Author: 2010 Paolo Nenzi
 **********/
 
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/wordlist.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/const.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/wordlist.h"
 #include "variable.h"
-#include <ngspice/sperror.h>
+#include "ngspice/sperror.h"
 
 
 struct FTEparm {

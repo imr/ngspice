@@ -41,9 +41,9 @@ NON-STANDARD FEATURES
 
 =========================================================================== */
 
-#include  <ngspice/miftypes.h>
-#include  <ngspice/mifdefs.h>
-#include  <ngspice/cktdefs.h>
+#include  "ngspice/miftypes.h"
+#include  "ngspice/mifdefs.h"
+#include  "ngspice/cktdefs.h"
 
 
 typedef struct {

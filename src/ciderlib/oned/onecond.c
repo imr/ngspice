@@ -6,13 +6,13 @@ $Id$
 
 /* Functions to compute device conductances and currents */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numenum.h>
-#include <ngspice/onemesh.h>
-#include <ngspice/onedev.h>
-#include <ngspice/macros.h>
-#include <ngspice/spmatrix.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numenum.h"
+#include "ngspice/onemesh.h"
+#include "ngspice/onedev.h"
+#include "ngspice/macros.h"
+#include "ngspice/spmatrix.h"
 
 #include "onedext.h"
 #include "oneddefs.h"

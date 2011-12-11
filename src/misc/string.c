@@ -6,9 +6,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
  * String functions
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "stringutil.h"
-#include <ngspice/dstring.h>
+#include "ngspice/dstring.h"
 
 int
 prefix(register char *p, register char *s)

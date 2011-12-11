@@ -39,21 +39,21 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 /* #include "prefix.h" */
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/cktdefs.h"
+#include "ngspice/sperror.h"
 
 //#include "util.h"
-#include <ngspice/devdefs.h>
+#include "ngspice/devdefs.h"
 //#include "CONST.h"
-#include <ngspice/trandefs.h>
+#include "ngspice/trandefs.h"
 #include <math.h>
 
-#include <ngspice/mifproto.h>
-#include <ngspice/mifparse.h>
-#include <ngspice/mifdefs.h>
-#include <ngspice/mifcmdat.h>
+#include "ngspice/mifproto.h"
+#include "ngspice/mifparse.h"
+#include "ngspice/mifdefs.h"
+#include "ngspice/mifcmdat.h"
 
 /* #include "suffix.h"  */
 

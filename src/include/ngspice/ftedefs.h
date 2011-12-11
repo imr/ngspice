@@ -13,9 +13,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define DEF_WIDTH   80	/* Line printer width. */
 #define DEF_HEIGHT  60  /* Line printer height. */
 #define IPOINTMIN   20  /* When we start plotting incremental plots. */
-#include <ngspice/fteparse.h>
-#include <ngspice/fteinp.h>
-#include <ngspice/fteoptdefs.h>
+#include "ngspice/fteparse.h"
+#include "ngspice/fteinp.h"
+#include "ngspice/fteoptdefs.h"
 
 struct save_info {
     char	*name;
@@ -56,6 +56,6 @@ struct circ {
 
 #define mylog10(xx) (((xx) > 0.0) ? log10(xx) : (- log10(HUGE)))
 
-#include <ngspice/fteext.h>
+#include "ngspice/fteext.h"
 
 #endif /* FTEdefs_h */

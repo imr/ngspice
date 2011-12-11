@@ -7,11 +7,11 @@ Modified: 2000 AlansFIxes
 #ifndef MOS2
 #define MOS2
 
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/noisedef.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/noisedef.h"
 
 /* declarations for level 2 MOSFETs */
 

@@ -1,6 +1,6 @@
 #include "config.h"
 
-#include <ngspice/devdefs.h>
+#include "ngspice/devdefs.h"
 
 #include "mos2itf.h"
 #include "mos2ext.h"

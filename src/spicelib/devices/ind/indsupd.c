@@ -7,12 +7,12 @@ This function is obsolete (was used by an old sensitivity analysis)
 
 /* update the  charge sensitivities and their derivatives */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
 #include "inddefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int
 INDsUpdate(GENmodel *inModel, CKTcircuit *ckt)

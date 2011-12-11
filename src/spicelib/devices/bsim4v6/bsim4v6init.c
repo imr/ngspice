@@ -1,6 +1,6 @@
 #include "config.h"
 
-#include <ngspice/devdefs.h>
+#include "ngspice/devdefs.h"
 
 #include "bsim4v6itf.h"
 #include "bsim4v6ext.h"

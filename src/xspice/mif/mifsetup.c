@@ -42,15 +42,15 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 
-#include <ngspice/ngspice.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
 
-#include <ngspice/mifproto.h>
-#include <ngspice/mifparse.h>
-#include <ngspice/mifdefs.h>
-#include <ngspice/mifcmdat.h>
+#include "ngspice/mifproto.h"
+#include "ngspice/mifparse.h"
+#include "ngspice/mifdefs.h"
+#include "ngspice/mifcmdat.h"
 
 
 

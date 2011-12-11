@@ -14,7 +14,7 @@
 ***********************************************************************/
 
 #include "hsm2def.h"
-#include <ngspice/cktdefs.h>
+#include "ngspice/cktdefs.h"
 
 #ifndef _HiSIM2_H
 #define _HiSIM2_H

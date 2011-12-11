@@ -11,8 +11,8 @@ Modified: 2000  AlansFixes
 #ifndef CPEXTERN_H
 #define CPEXTERN_H
 
-#include <ngspice/wordlist.h>
-#include <ngspice/bool.h>
+#include "ngspice/wordlist.h"
+#include "ngspice/bool.h"
 
 
 /* com_alias.c */

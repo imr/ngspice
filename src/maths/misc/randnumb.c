@@ -36,9 +36,9 @@ Copyright 2008 Holger Vogt
 */
 //#define HVDEBUG
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -39,7 +39,7 @@ NON-STANDARD FEATURES
 
 =========================================================================== */
 
-#include <ngspice/miftypes.h>
+#include "ngspice/miftypes.h"
 
 /***** Define Constants *******************************************/
 

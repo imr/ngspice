@@ -41,7 +41,7 @@ NON-STANDARD FEATURES
 
 
 #include <stdio.h>
-#include <ngspice/enh.h>
+#include "ngspice/enh.h"
 
 /*
 ENHreport_conv_prob()

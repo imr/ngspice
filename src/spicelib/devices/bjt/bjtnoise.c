@@ -3,12 +3,12 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Gary W. Ng
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "bjtdefs.h"
-#include <ngspice/cktdefs.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/noisedef.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cktdefs.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/noisedef.h"
+#include "ngspice/suffix.h"
 
 /*
  * BJTnoise (mode, operation, firstModel, ckt, data, OnDens)

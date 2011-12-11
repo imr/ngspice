@@ -9,14 +9,14 @@ Modified: 2000 AlansFixes
  * BJTs in the circuit and load them into the matrix as appropriate
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "bjtdefs.h"
-#include <ngspice/const.h>
-#include <ngspice/trandefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/suffix.h>
+#include "ngspice/const.h"
+#include "ngspice/trandefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/suffix.h"
 
 int
 BJTload(GENmodel *inModel, CKTcircuit *ckt)

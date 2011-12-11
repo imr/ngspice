@@ -31,9 +31,9 @@
 /* Table of available commands.  Note that they're sorted so that the
  * commands that appear in the spiceinit file are at the top.  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/cpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/cpdefs.h"
 
 #include "ftehelp.h"
 #include "commands.h"
@@ -96,7 +96,7 @@
 
 #ifdef XSPICE
 /* gtri - begin - wbk - add include files */
-#include <ngspice/evtproto.h>
+#include "ngspice/evtproto.h"
 /* gtri - end - wbk - add include files */
 #endif
 

@@ -38,22 +38,22 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 /* #include "prefix.h"   */  /* jgroves  */
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 //#include "util.h"
-#include <ngspice/ifsim.h>
-#include <ngspice/inpdefs.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/inpmacs.h>
-#include <ngspice/fteext.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/inpdefs.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/inpmacs.h"
+#include "ngspice/fteext.h"
 
-#include <ngspice/mifproto.h>
-#include <ngspice/mifparse.h>
-#include <ngspice/mifdefs.h>
-#include <ngspice/mifcmdat.h>
+#include "ngspice/mifproto.h"
+#include "ngspice/mifparse.h"
+#include "ngspice/mifdefs.h"
+#include "ngspice/mifcmdat.h"
 
-#include <ngspice/evt.h>
-#include <ngspice/evtproto.h>
+#include "ngspice/evt.h"
+#include "ngspice/evtproto.h"
 
 /*  #include "suffix.h"  */  /* jgroves  */
 

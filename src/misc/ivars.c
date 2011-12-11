@@ -2,7 +2,7 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "ivars.h"
 #include "../misc/util.h" /* ngdirname() */
 

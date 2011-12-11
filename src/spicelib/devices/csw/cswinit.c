@@ -2,7 +2,7 @@
 
 #include "config.h"
 
-#include <ngspice/devdefs.h>
+#include "ngspice/devdefs.h"
 
 #include "cswitf.h"
 #include "cswext.h"

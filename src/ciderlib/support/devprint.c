@@ -5,9 +5,9 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 
 /* Device-type Dependent Printing Routines */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/optndefs.h>
-#include <ngspice/cidersupt.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/optndefs.h"
+#include "ngspice/cidersupt.h"
 
 void
 printVoltages(FILE *file, char *mName, char *iName, int devType, 

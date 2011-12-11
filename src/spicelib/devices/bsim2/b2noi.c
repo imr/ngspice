@@ -3,12 +3,12 @@ Copyright 2003 ??.  All rights reserved.
 Author: 2003 Paolo Nenzi
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "bsim2def.h"
-#include <ngspice/cktdefs.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/noisedef.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cktdefs.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/noisedef.h"
+#include "ngspice/suffix.h"
 
 /*
  * B2noise (mode, operation, firstModel, ckt, data, OnDens)

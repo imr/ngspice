@@ -8,8 +8,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  */
 
 #include <config.h>
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
 #include "unixcom.h"
 #include "../frontend/streams.h"
 

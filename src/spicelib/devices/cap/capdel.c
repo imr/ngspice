@@ -6,10 +6,10 @@ Modified: September 2003 Paolo Nenzi
 /*
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "capdefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 int

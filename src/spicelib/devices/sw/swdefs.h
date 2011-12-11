@@ -7,11 +7,11 @@ Modified: 2000 AlansFixes
 #ifndef SW
 #define SW
 
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/noisedef.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/noisedef.h"
 
     /* structures used to describe voltage controlled switches */
 

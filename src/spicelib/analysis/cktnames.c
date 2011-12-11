@@ -9,10 +9,10 @@ Author: 1988 Thomas L. Quarles
      *
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/iferrmsg.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/iferrmsg.h"
 
 
 int

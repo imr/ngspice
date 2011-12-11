@@ -8,10 +8,10 @@ Author: 1985 Thomas L. Quarles
  * the storage it was using.
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "bjtdefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 int

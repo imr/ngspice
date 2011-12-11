@@ -1,9 +1,9 @@
 #ifndef _PLOT_H
 #define _PLOT_H
 
-#include <ngspice/wordlist.h>
-#include <ngspice/bool.h>
-#include <ngspice/dvec.h>
+#include "ngspice/wordlist.h"
+#include "ngspice/bool.h"
+#include "ngspice/dvec.h"
 
 /* The information for a particular set of vectors that come from one
  * plot.  */

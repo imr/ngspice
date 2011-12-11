@@ -11,10 +11,10 @@ Author: 1985 Thomas L. Quarles
  *  how big it is, so allocate RHS vector
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/sperror.h"
 #include "nisenre.h"
 
 

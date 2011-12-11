@@ -10,9 +10,9 @@ Author: 1985 Thomas L. Quarles
  *  than absTol + relTol*(max(old,new)), otherwise returns 0
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/smpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/smpdefs.h"
 #include "niconv.h"
 
 

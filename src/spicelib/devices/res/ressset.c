@@ -6,11 +6,11 @@ Modified: Apr 2000 - Paolo Nenzi
 This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/smpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/smpdefs.h"
 #include "resdefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/sperror.h"
+#include "ngspice/cktdefs.h"
 
 
 int

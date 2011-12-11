@@ -5,7 +5,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #ifndef SENS_DEFS
 #define SENS_DEFS
 
-#include <ngspice/jobdefs.h>
+#include "ngspice/jobdefs.h"
 
     /* structure used to describe an Adjoint Sensitivity analysis */
 

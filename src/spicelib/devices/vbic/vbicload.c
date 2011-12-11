@@ -10,13 +10,13 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
  * VBICs in the circuit and load them into the matrix as appropriate
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "vbicdefs.h"
-#include <ngspice/const.h>
-#include <ngspice/trandefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/const.h"
+#include "ngspice/trandefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/devdefs.h"
 
 int vbic_4T_it_cf_fj(double *,
     double *,double *,double *,double *,double *,double *,

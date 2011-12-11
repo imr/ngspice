@@ -12,14 +12,14 @@ File: b3soiddld.c          98/5/01
  * BSIMDD2.1 release
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "b3soidddef.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/suffix.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/const.h"
+#include "ngspice/sperror.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/suffix.h"
 
 #include "../../../frontend/error.h" /* controlled_exit() */
 

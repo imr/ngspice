@@ -6,11 +6,11 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 	Sydney University Department of Electrical Engineering, Australia
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/devdefs.h"
 #include "jfetdefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm JFETpTable[] = { /* device parameters */ 
  IOPU("off",         JFET_OFF,            IF_FLAG,   "Device initially off"),

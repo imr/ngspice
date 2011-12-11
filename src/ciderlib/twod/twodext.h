@@ -7,12 +7,12 @@
 #ifndef _TWODEXT_H
 #define _TWODEXT_H
 
-#include <ngspice/profile.h>
-#include <ngspice/twomesh.h>
-#include <ngspice/twodev.h>
-#include <ngspice/carddefs.h>
-#include <ngspice/bool.h>
-#include <ngspice/complex.h>
+#include "ngspice/profile.h"
+#include "ngspice/twomesh.h"
+#include "ngspice/twodev.h"
+#include "ngspice/carddefs.h"
+#include "ngspice/bool.h"
+#include "ngspice/complex.h"
  
 /* twoadmit.c */
 extern int NUMD2admittance(TWOdevice *, double, SPcomplex *);

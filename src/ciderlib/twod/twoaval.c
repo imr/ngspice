@@ -4,10 +4,10 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1990 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numenum.h>
-#include <ngspice/twomesh.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numenum.h"
+#include "ngspice/twomesh.h"
 #include "twoddefs.h"
 #include "twodext.h"
 

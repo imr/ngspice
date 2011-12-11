@@ -9,16 +9,16 @@ Author:   2008 Holger Vogt
 
 #define GREEN /* select fast Green's fft */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/dvec.h>
-#include <ngspice/sim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/dvec.h"
+#include "ngspice/sim.h"
 
 #include "com_fft.h"
 #include "variable.h"
 #include "parse.h"
 #include "../misc/misc_time.h"
-#include <ngspice/fftext.h>
+#include "ngspice/fftext.h"
 
 static void fftext(double*, double*, long int, long int, int);
 

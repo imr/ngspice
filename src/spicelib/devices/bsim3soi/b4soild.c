@@ -14,14 +14,14 @@
  * Modified by Larry Wagner, Calvin Bittner, Geoffrey Coram, Tanvir Morshed 05/14/2010
  **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "b4soidef.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/suffix.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/const.h"
+#include "ngspice/sperror.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/suffix.h"
 
 #define EPS0 8.85418e-12 /*4.1*/
 #define EPSOX 3.453133e-11

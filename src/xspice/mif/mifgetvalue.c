@@ -38,20 +38,20 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 /* #include "prefix.h"  */
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ifsim.h"
 //#include "util.h"
-#include <ngspice/inpdefs.h>
-#include <ngspice/inpptree.h>
+#include "ngspice/inpdefs.h"
+#include "ngspice/inpptree.h"
 
 /* #include <stdlib.h> */
 #include <errno.h>
 
-#include <ngspice/mifproto.h>
-#include <ngspice/mifparse.h>
-#include <ngspice/mifdefs.h>
-#include <ngspice/mifcmdat.h>
+#include "ngspice/mifproto.h"
+#include "ngspice/mifparse.h"
+#include "ngspice/mifdefs.h"
+#include "ngspice/mifcmdat.h"
 
 /*  #include "suffix.h"  */
 

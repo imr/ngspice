@@ -4,14 +4,14 @@ Author: 1985 S. Hwang
 Modified: 2000 AlansFixes
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/cktdefs.h"
 #include "mesdefs.h"
-#include <ngspice/const.h>
-#include <ngspice/trandefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/const.h"
+#include "ngspice/trandefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 /* forward declaraction of our helper function */
 

@@ -4,12 +4,12 @@ Author: 1988 Jaijeet S Roychowdhury
 Modified: 2000 AlansFixes
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "bjtdefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/distodef.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/distodef.h"
+#include "ngspice/suffix.h"
 #include "bjtdset.h"
 
 

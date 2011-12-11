@@ -29,15 +29,15 @@
  * HAVE NO OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
  * ENHANCEMENTS, OR MODIFICATIONS. */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "config.h"
 #include "assert.h"
 
-#include <ngspice/devdefs.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/devdefs.h"
+#include "ngspice/ifsim.h"
 
 #include "dev.h"
-#include <ngspice/memory.h> /* to alloc, realloc devices*/
+#include "ngspice/memory.h" /* to alloc, realloc devices*/
 
 
 #ifdef XSPICE
@@ -50,7 +50,7 @@ typedef void *  funptr_t;
 #undef BOOLEAN
 #include <windows.h>
 #ifdef HAS_WINDOWS
-#include <ngspice/wstdio.h>
+#include "ngspice/wstdio.h"
 #endif
 typedef FARPROC funptr_t;
 void *dlopen (const char *, int);
@@ -62,8 +62,8 @@ char *dlerror (void);
 #define RTLD_GLOBAL	4	/* symbols in this dlopen'ed obj are visible to other dlopen'ed objs */
 static char errstr[128];
 #endif /* ifndef HAS_WINDOWS */
-#include <ngspice/dllitf.h> /* the coreInfo Structure*/
-#include <ngspice/evtudn.h> /*Use defined nodes */
+#include "ngspice/dllitf.h" /* the coreInfo Structure*/
+#include "ngspice/evtudn.h" /*Use defined nodes */
 
 Evt_Udn_Info_t  **g_evt_udn_info = NULL;
 int g_evt_num_udn_types = 0;
@@ -345,11 +345,11 @@ void load_alldevs(void){
 
 /*--------------------   XSPICE additions below  ----------------------*/
 #ifdef XSPICE
-#include <ngspice/mif.h>
-#include <ngspice/cm.h>
-#include <ngspice/cpextern.h>
-#include <ngspice/fteext.h>  /* for ft_sim */
-#include <ngspice/cktdefs.h> /* for DEVmaxnum */
+#include "ngspice/mif.h"
+#include "ngspice/cm.h"
+#include "ngspice/cpextern.h"
+#include "ngspice/fteext.h"  /* for ft_sim */
+#include "ngspice/cktdefs.h" /* for DEVmaxnum */
 
 static void relink(void) {
 

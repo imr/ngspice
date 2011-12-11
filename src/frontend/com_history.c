@@ -6,8 +6,8 @@ $Id$
 
 /* Do history substitutions.  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
 
 #include "com_history.h"
 

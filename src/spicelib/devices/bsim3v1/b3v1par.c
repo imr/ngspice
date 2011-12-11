@@ -10,12 +10,12 @@
  * BSIM3v1v3.1,   Released by yuhua  96/12/08
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
 #include "bsim3v1def.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
-#include <ngspice/fteext.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
+#include "ngspice/fteext.h"
 
 int
 BSIM3v1param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)

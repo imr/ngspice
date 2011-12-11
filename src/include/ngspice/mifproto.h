@@ -42,11 +42,11 @@ NON-STANDARD FEATURES
 
 
 
-#include <ngspice/ifsim.h>
-#include <ngspice/inpdefs.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/miftypes.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/inpdefs.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/miftypes.h"
 
 
 

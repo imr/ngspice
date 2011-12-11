@@ -5,11 +5,11 @@ Modified: Apr 2000 - Paolo Nenzi
 Modified: 2000 AlansFixes
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/const.h"
+#include "ngspice/ifsim.h"
 #include "resdefs.h"
-#include <ngspice/sperror.h>
+#include "ngspice/sperror.h"
 
 
 int

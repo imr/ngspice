@@ -4,10 +4,10 @@ Author: 1985 Thomas L. Quarles
 Modified: September 2003 - Paolo Nenzi
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
 #include "capdefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm CAPpTable[] = { /* parameters */ 
  IOPAP("capacitance", CAP_CAP,             IF_REAL, "Device capacitance"),

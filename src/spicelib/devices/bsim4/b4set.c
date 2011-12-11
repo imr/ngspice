@@ -21,18 +21,18 @@
  * Modified by Tanvir Morshed, Darsen Lu 03/27/2011
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/jobdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/jobdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
 #include "bsim4def.h"
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/const.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 #ifdef USE_OMP4
-#include <ngspice/cpextern.h>
+#include "ngspice/cpextern.h"
 int nthreads;
 #endif
 

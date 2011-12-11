@@ -7,12 +7,12 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * This routine sets instance parameters for NBJTs in the circuit.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/const.h"
+#include "ngspice/ifsim.h"
 #include "nbjtdefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int
 NBJTparam(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)

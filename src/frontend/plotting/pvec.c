@@ -1,7 +1,7 @@
-#include <ngspice/ngspice.h>
-#include <ngspice/dvec.h>
-#include <ngspice/plot.h>
-#include <ngspice/fteext.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/dvec.h"
+#include "ngspice/plot.h"
+#include "ngspice/fteext.h"
 
 #include "pvec.h"
 #include "dimens.h"

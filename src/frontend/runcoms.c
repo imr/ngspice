@@ -9,12 +9,12 @@ $Id$
  * Circuit simulation commands.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/ftedev.h>
-#include <ngspice/ftedebug.h>
-#include <ngspice/dvec.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/ftedev.h"
+#include "ngspice/ftedebug.h"
+#include "ngspice/dvec.h"
 
 #include "circuits.h"
 #include "completion.h"
@@ -25,7 +25,7 @@ $Id$
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include ipc stuff */
-#include <ngspice/ipctiein.h>
+#include "ngspice/ipctiein.h"
 /* gtri - end - 12/12/90 */
 #endif
 

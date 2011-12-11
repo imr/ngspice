@@ -10,11 +10,11 @@ File: b3soifdpar.c          98/5/01
  * BSIMFD2.1 release
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
 #include "b3soifddef.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int
 B3SOIFDparam(int param, IFvalue *value, GENinstance *inst, 

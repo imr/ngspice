@@ -7,14 +7,14 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Various post-processor commands having to do with vectors.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/dvec.h>
-#include <ngspice/sim.h>
-#include <ngspice/plot.h>
-#include <ngspice/graph.h>
-#include <ngspice/ftedbgra.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/dvec.h"
+#include "ngspice/sim.h"
+#include "ngspice/plot.h"
+#include "ngspice/graph.h"
+#include "ngspice/ftedbgra.h"
 #include "com_display.h"
 
 #include "completion.h"

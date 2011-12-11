@@ -5,16 +5,16 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 $Id$
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numenum.h>
-#include <ngspice/twomesh.h>
-#include <ngspice/twodev.h>
-#include <ngspice/bool.h>
-#include <ngspice/spmatrix.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numenum.h"
+#include "ngspice/twomesh.h"
+#include "ngspice/twodev.h"
+#include "ngspice/bool.h"
+#include "ngspice/spmatrix.h"
 #include "twoddefs.h"
 #include "twodext.h"
-#include <ngspice/cidersupt.h>
+#include "ngspice/cidersupt.h"
 #include "../../maths/misc/bernoull.h"
 
 

@@ -12,12 +12,12 @@ This function is obsolete (was used by an old sensitivity analysis)
  * allocate parameter #s to design parameters 
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "capdefs.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 int

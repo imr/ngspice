@@ -8,8 +8,8 @@ Author: 1985 Thomas L. Quarles
  * Ask questions about a specified device.  */
 
 #include <config.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
 
 #include "dev.h"
 

@@ -8,13 +8,13 @@ $Id$
  * Stand-alone input routine.
  */
 #include <config.h>
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #include <errno.h>
 
-#include <ngspice/fteinput.h>
+#include "ngspice/fteinput.h"
 #include "input.h"
-#include <ngspice/cpextern.h>
+#include "ngspice/cpextern.h"
 #include "../display.h"
 #ifdef _MSC_VER
 #include "BaseTsd.h" /* for SSIZE_T */

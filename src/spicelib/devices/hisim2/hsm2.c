@@ -13,11 +13,11 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/devdefs.h"
 #include "hsm2def.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm HSM2pTable[] = { /* parameters */
  IOP( "l",   HSM2_L,      IF_REAL   , "Length"),

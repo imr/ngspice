@@ -8,11 +8,11 @@ Author: 1985 Thomas L. Quarles
  * BJTs in the circuit.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "bjtdefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int
 BJTconvTest(GENmodel *inModel, CKTcircuit *ckt)

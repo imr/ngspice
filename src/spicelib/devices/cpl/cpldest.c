@@ -4,9 +4,9 @@ reserved.
 Author: 1992 Charles Hough
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "cpldefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 void
 CPLdestroy(GENmodel **inModel)

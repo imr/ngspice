@@ -1,4 +1,4 @@
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #include "plotting.h"
 

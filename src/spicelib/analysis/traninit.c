@@ -3,10 +3,10 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 Modified: 2000 AlansFixes
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/trandefs.h>
-#include <ngspice/iferrmsg.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/trandefs.h"
+#include "ngspice/iferrmsg.h"
 
 /*
  * this used to be in setup, but we need it here now

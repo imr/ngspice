@@ -8,12 +8,12 @@ $Id$
  * Circuit simulation commands.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/ftedev.h>
-#include <ngspice/ftedebug.h>
-#include <ngspice/dvec.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/ftedev.h"
+#include "ngspice/ftedebug.h"
+#include "ngspice/dvec.h"
 
 #include "circuits.h"
 #include "runcoms2.h"
@@ -23,7 +23,7 @@ $Id$
 #include "plotting/graf.h"
 #include "spiceif.h"
 
-#include <ngspice/inpdefs.h>
+#include "ngspice/inpdefs.h"
 
 #define RAWBUF_SIZE 32768
 extern char rawfileBuf[RAWBUF_SIZE];

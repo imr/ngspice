@@ -1,4 +1,13 @@
 2011-12-11  Robert Larice
+ * **/* :
+  #1/4 #include <ngspice/...>  -->  #include "ngspice/..."
+
+  use "" instead of <> to better express project membership
+
+  <> includes might be skipped by dependency generator tools
+    assuming those being stable system include files
+
+2011-12-11  Robert Larice
  * src/spicelib/analysis/acan.c ,
  * src/spicelib/analysis/dcpss.c ,
  * src/spicelib/analysis/dctran.c :

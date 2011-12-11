@@ -8,15 +8,15 @@ $Id$
  * Code to do fourier transforms on data.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/dvec.h>
-#include <ngspice/sim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/dvec.h"
+#include "ngspice/sim.h"
 
 #include "spec.h"
 #include "parse.h"
 #include "variable.h"
-#include <ngspice/missing_math.h>
+#include "ngspice/missing_math.h"
 #include "../misc/misc_time.h"
 
 void

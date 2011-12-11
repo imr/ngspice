@@ -5,14 +5,14 @@
  */
 
 #define STRICT
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #ifdef HAS_WINDOWS
 
-#include <ngspice/graph.h>
-#include <ngspice/ftedev.h>
-#include <ngspice/ftedbgra.h>
-#include <ngspice/fteext.h>
+#include "ngspice/graph.h"
+#include "ngspice/ftedev.h"
+#include "ngspice/ftedbgra.h"
+#include "ngspice/fteext.h"
 
 /*
  * The ngspice.h file included above defines BOOLEAN (via bool.h) and this
@@ -26,7 +26,7 @@
 #include <windows.h>
 #include <windowsx.h>
 
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif /* _MSC_VER */

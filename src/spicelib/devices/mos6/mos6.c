@@ -3,11 +3,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1989 Takayasu Sakurai
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/ifsim.h"
 #include "mos6defs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm MOS6pTable[] = { /* parameters */ 
  IOPU("l",            MOS6_L,          IF_REAL   , "Length"),

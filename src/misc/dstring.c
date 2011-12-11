@@ -4,7 +4,10 @@ DESCRIPTION:This file contains the routines for manipulating dynamic strings.
 CONTENTS:   
 DATE:	    Wed Mar 24 18:38:28 CDT 2010
 REVISIONS:  $Log$
-REVISIONS:  Revision 1.9  2011-08-20 17:27:12  rlar
+REVISIONS:  Revision 1.10  2011-12-11 18:05:01  rlar
+REVISIONS:  #1/4 #include <ngspice/...>  -->  #include "ngspice/..."
+REVISIONS:
+REVISIONS:  Revision 1.9  2011/08/20 17:27:12  rlar
 REVISIONS:  #1/7 use a subdirectory "ngspice" for includes to create a uniq namespace
 REVISIONS:
 REVISIONS:  Revision 1.8  2011/06/26 20:00:03  rlar
@@ -32,9 +35,9 @@ REVISIONS:  Revision 1.1  2010/03/25 22:44:38  dwarning
 REVISIONS:  Bill Swartz patch
 REVISIONS:
 ----------------------------------------------------------------- */
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdarg.h>
-#include <ngspice/dstring.h>
+#include "ngspice/dstring.h"
 
 /* definitions local to this file only */
 

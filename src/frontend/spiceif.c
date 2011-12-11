@@ -46,15 +46,15 @@ they should be fairly 'safe'. However, ...
 
 CDHW*/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/tskdefs.h> /* Is really needed ? */
-#include <ngspice/ftedefs.h>
-#include <ngspice/fteinp.h>
-#include <ngspice/inpdefs.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/tskdefs.h" /* Is really needed ? */
+#include "ngspice/ftedefs.h"
+#include "ngspice/fteinp.h"
+#include "ngspice/inpdefs.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/ifsim.h"
 
 #include "circuits.h"
 #include "spiceif.h"
@@ -64,12 +64,12 @@ CDHW*/
 
 #ifdef XSPICE
 /* gtri - add - wbk - 11/9/90 - include MIF function prototypes */
-#include <ngspice/mifproto.h>
+#include "ngspice/mifproto.h"
 /* gtri - end - wbk - 11/9/90 */
 
 /* gtri - evt - wbk - 5/20/91 - Add stuff for user-defined nodes */
-#include <ngspice/evtproto.h>
-#include <ngspice/evtudn.h>
+#include "ngspice/evtproto.h"
+#include "ngspice/evtudn.h"
 /* gtri - end - wbk - 5/20/91 - Add stuff for user-defined nodes */
 #endif
 
@@ -1310,8 +1310,8 @@ if_getstat(CKTcircuit *ckt, char *name) {
 
 #ifdef EXPERIMENTAL_CODE
 
-#include <ngspice/cktdefs.h>
-#include <ngspice/trandefs.h>
+#include "ngspice/cktdefs.h"
+#include "ngspice/trandefs.h"
 
 /* arg0: circuit file, arg1: data file */
 void com_loadsnap(wordlist *wl)

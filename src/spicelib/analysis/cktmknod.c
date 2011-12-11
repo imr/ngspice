@@ -8,11 +8,11 @@ Author: 1985 Thomas L. Quarles
      *  Tentatively allocate a new circuit equation structure
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
 
 
 /* ARGSUSED */

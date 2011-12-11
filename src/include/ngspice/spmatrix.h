@@ -83,7 +83,7 @@
  *      and warnings.
  */
 
-#include <ngspice/sperror.h>  /* Spice error definitions. */
+#include "ngspice/sperror.h"  /* Spice error definitions. */
 
 /* Begin error macros. */
 #define  spOKAY                 OK

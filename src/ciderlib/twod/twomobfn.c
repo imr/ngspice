@@ -4,12 +4,12 @@ Author:	1990 David A. Gates, U. C. Berkeley CAD Group
 $Id$
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numconst.h>
-#include <ngspice/numenum.h>
-#include <ngspice/twomesh.h>
-#include <ngspice/material.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numconst.h"
+#include "ngspice/numenum.h"
+#include "ngspice/twomesh.h"
+#include "ngspice/material.h"
 #include "twoddefs.h"
 #include "twodext.h"
 

@@ -24,8 +24,8 @@ DATE:	    Jul  7, 1988 - original coding.
             1988 - 2009 many updates...
 REVISIONS:  
 ----------------------------------------------------------------- */
-#include <ngspice/ngspice.h>
-#include <ngspice/hash.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/hash.h"
 
 /* definitions local to this file only */
 

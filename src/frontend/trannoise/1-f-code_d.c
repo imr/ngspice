@@ -11,11 +11,11 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdarg.h>			// var. argumente
-#include <ngspice/1-f-code.h>
-#include <ngspice/ngspice.h>
+#include "ngspice/1-f-code.h"
+#include "ngspice/ngspice.h"
 
-#include <ngspice/fftext.h>
-#include <ngspice/wallace.h>
+#include "ngspice/fftext.h"
+#include "ngspice/wallace.h"
 
 
 void f_alpha(int n_pts, int n_exp, double X[], double Q_d,

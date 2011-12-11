@@ -3,18 +3,18 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/smpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/smpdefs.h"
 #include "numddefs.h"
-#include <ngspice/numconst.h>
-#include <ngspice/numenum.h>
-#include <ngspice/sperror.h>
+#include "ngspice/numconst.h"
+#include "ngspice/numenum.h"
+#include "ngspice/sperror.h"
 #include "../../../ciderlib/oned/onedext.h"
-#include <ngspice/cidersupt.h>
-#include <ngspice/ciderinp.h>
-#include <ngspice/suffix.h>
-#include <ngspice/meshext.h>
+#include "ngspice/cidersupt.h"
+#include "ngspice/ciderinp.h"
+#include "ngspice/suffix.h"
+#include "ngspice/meshext.h"
 
 #define NIL(type)   ((type *)0)
 #define TSCALLOC(var, size, type)\

@@ -3,12 +3,12 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1989 Takayasu Sakurai
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/const.h"
+#include "ngspice/ifsim.h"
 #include "mos6defs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int
 MOS6mAsk(CKTcircuit *ckt, GENmodel *inModel, int param,

@@ -13,8 +13,8 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #ifndef MESHEXT_H
 #define MESHEXT_H
 
-#include <ngspice/meshdefs.h>
-#include <ngspice/gendev.h>
+#include "ngspice/meshdefs.h"
+#include "ngspice/gendev.h"
 
 
 extern double *MESHmkArray( MESHcoord *, int );

@@ -4,14 +4,14 @@ Author:	2007 Gong Ding, gdiso@ustc.edu
 University of Science and Technology of China 
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/smpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/smpdefs.h"
 #include "ndevdefs.h"
-#include <ngspice/numconst.h>
-#include <ngspice/numenum.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/numconst.h"
+#include "ngspice/numenum.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 #define NIL(type)   ((type *)0)
 #define TSCALLOC(var, size, type)\

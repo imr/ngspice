@@ -3,11 +3,11 @@ Copyright 1993: T. Ytterdal, K. Lee, M. Shur and T. A. Fjeldly. All rights reser
 Author: Trond Ytterdal
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/devdefs.h"
 #include "mesadefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 
 IFparm MESApTable[] = { /* parameters */ 

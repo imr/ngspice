@@ -67,7 +67,7 @@
  /* downloaded from http://www.koders.com/c/fid5FCCD794DA3E7129AC307C40B5D31C268ED04FF5.aspx 
     at 04/10/09 by H. Vogt */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <errno.h>
 
 /* If configure finds getopt.h and fcn getopt_long(), then the rest of this file 

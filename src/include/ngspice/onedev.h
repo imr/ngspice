@@ -14,8 +14,8 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 #ifndef ONEDEV_H
 #define ONEDEV_H
 
-#include <ngspice/gendev.h>
-#include <ngspice/smpdefs.h>
+#include "ngspice/gendev.h"
+#include "ngspice/smpdefs.h"
 
 typedef struct sONEdevice
 {

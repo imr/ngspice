@@ -8,11 +8,11 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * they were using.  The current implementation has memory leaks.
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "nbjt2def.h"
 #include "../../../ciderlib/twod/twoddefs.h"
 #include "../../../ciderlib/twod/twodext.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 void
 NBJT2destroy(GENmodel **inModel)

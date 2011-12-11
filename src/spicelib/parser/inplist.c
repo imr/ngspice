@@ -11,9 +11,9 @@ Author: 1985 Thomas L. Quarles
      *  lines as specified by the type parameter.
      */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
-#include <ngspice/inpdefs.h>
+#include "ngspice/inpdefs.h"
 #include "inp.h"
 
 extern void INPlist(FILE *file, card *deck, int type);  /* nowhere used function */

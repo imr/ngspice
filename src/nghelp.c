@@ -8,9 +8,9 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
  */
 
 #include <config.h>
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/hlpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/hlpdefs.h"
 
 #include "frontend/variable.h"
 

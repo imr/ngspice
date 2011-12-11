@@ -5,10 +5,10 @@ Modified: 2000  AlansFixes
 Modified: 2005 Paolo Nenzi - Restructured
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
 
 
 static int dynamic_gmin (CKTcircuit *, long int, long int, int);

@@ -1,4 +1,4 @@
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #if !HAVE_DECL_ISNAN
 #ifndef HAVE_ISNAN

@@ -9,10 +9,10 @@ Author: 1985 Thomas L. Quarles
      *  specify the node to be the ground node of the given circuit
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/sperror.h"
 
 
 

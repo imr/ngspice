@@ -10,12 +10,12 @@
 
 #include "general.h"
 #include "numparam.h"
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/dvec.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/dvec.h"
 #include "../frontend/variable.h"
-#include <ngspice/compatmode.h>
+#include "ngspice/compatmode.h"
 #include "../frontend/error.h"
 
 /* random numbers in /maths/misc/randnumb.c */

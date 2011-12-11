@@ -10,11 +10,11 @@ File: bsim3def.h
 #ifndef BSIM3
 #define BSIM3
 
-#include <ngspice/ifsim.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/noisedef.h>         
+#include "ngspice/ifsim.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/noisedef.h"         
 
 #ifdef USE_OMP
 #define USE_OMP3

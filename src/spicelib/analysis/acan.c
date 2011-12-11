@@ -4,17 +4,17 @@ Author: 1985 Thomas L. Quarles
 Modified 2001: AlansFixes
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/acdefs.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/acdefs.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
 
 #ifdef XSPICE
 /* gtri - add - wbk - 12/19/90 - Add headers */ 
-#include <ngspice/mif.h>
-#include <ngspice/evtproto.h>
-#include <ngspice/ipctiein.h>
+#include "ngspice/mif.h"
+#include "ngspice/evtproto.h"
+#include "ngspice/ipctiein.h"
 /* gtri - end - wbk */
 #endif
 

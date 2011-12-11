@@ -9,17 +9,17 @@ $Id$
 One-Dimensional Numerical Device Setup Routines
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numconst.h>
-#include <ngspice/numenum.h>
-#include <ngspice/onemesh.h>
-#include <ngspice/onedev.h>
-#include <ngspice/carddefs.h>		/* XXX Not really modular if we need this. */
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numconst.h"
+#include "ngspice/numenum.h"
+#include "ngspice/onemesh.h"
+#include "ngspice/onedev.h"
+#include "ngspice/carddefs.h"		/* XXX Not really modular if we need this. */
 /* #include "material.h" */
 #include "onedext.h"
 #include "oneddefs.h"
-#include <ngspice/cidersupt.h>
+#include "ngspice/cidersupt.h"
 
 /* compute node parameters */
 void

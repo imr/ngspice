@@ -9,9 +9,9 @@
  */
  
 #include "config.h"
-#include <ngspice/ngspice.h> 
-#include <ngspice/cpdefs.h>
-#include <ngspice/fteext.h>
+#include "ngspice/ngspice.h" 
+#include "ngspice/cpdefs.h"
+#include "ngspice/fteext.h"
 #include "com_commands.h"
 
 /* We might compile for Windows, but only as a console application (e.g. tcl) */

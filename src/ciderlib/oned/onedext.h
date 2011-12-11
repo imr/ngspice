@@ -7,12 +7,12 @@
 #ifndef _ONEDEXT_H
 #define _ONEDEXT_H
 
-#include <ngspice/profile.h>
-#include <ngspice/onemesh.h>
-#include <ngspice/onedev.h>
-#include <ngspice/carddefs.h>
-#include <ngspice/bool.h>
-#include <ngspice/complex.h>
+#include "ngspice/profile.h"
+#include "ngspice/onemesh.h"
+#include "ngspice/onedev.h"
+#include "ngspice/carddefs.h"
+#include "ngspice/bool.h"
+#include "ngspice/complex.h"
  
 /* oneadmit.c */
 extern int NUMDadmittance(ONEdevice *, double, SPcomplex *);

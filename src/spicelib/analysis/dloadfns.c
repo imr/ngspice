@@ -3,8 +3,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jaijeet S Roychowdhury
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/distodef.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/distodef.h"
 
 
 /*

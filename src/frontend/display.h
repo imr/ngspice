@@ -8,9 +8,9 @@
 #define DISPLAY_H_INCLUDED
 
 /*  Include a bunch of other stuff to make display.h work  */
-#include <ngspice/ftedev.h>
-#include <ngspice/fteinput.h>
-#include <ngspice/graph.h>
+#include "ngspice/ftedev.h"
+#include "ngspice/fteinput.h"
+#include "ngspice/graph.h"
 
 DISPDEVICE *FindDev(char *name);
 void DevInit(void);

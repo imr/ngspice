@@ -15,14 +15,14 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
 #include "hsmhvdef.h"
 #include "hsmhvevalenv.h"
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/const.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 #define C_m2cm    (1.0e2)
 #define C_cm2m_p3 (1.0e-6)

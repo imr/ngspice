@@ -4,25 +4,25 @@ Author: 1985 Thomas L. Quarles
 Modified: 1999 Paolo Nenzi
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
 #include "res/resdefs.h"
 
-#include <ngspice/cktdefs.h>
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
+#include "ngspice/cktdefs.h"
+#include "ngspice/const.h"
+#include "ngspice/sperror.h"
 
 #ifdef XSPICE
 /* gtri - add - wbk - 12/19/90 - Add headers */
-#include <ngspice/mif.h>
-#include <ngspice/evtproto.h>
-#include <ngspice/ipctiein.h>
+#include "ngspice/mif.h"
+#include "ngspice/evtproto.h"
+#include "ngspice/ipctiein.h"
 /* gtri - end - wbk */
 #endif
 
-#include <ngspice/devdefs.h>
+#include "ngspice/devdefs.h"
 
 #ifdef HAS_WINDOWS
 void SetAnalyse( char * Analyse, int Percent);

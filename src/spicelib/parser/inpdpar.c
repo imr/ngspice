@@ -11,13 +11,13 @@ Author: 1985 Thomas L. Quarles
      *  an optional leading numeric parameter is handled.
      */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/inpdefs.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/fteext.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/inpdefs.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/fteext.h"
 #include "inp.h"
 
 char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,

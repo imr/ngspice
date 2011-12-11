@@ -2,11 +2,11 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/sensdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/sensdefs.h"
 
 #include "analysis.h"
 

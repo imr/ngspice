@@ -14,10 +14,10 @@ Author: 1985 Thomas L. Quarles
  * archaic spice2 bjt model
  */ 
  
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
 #include "bjtdefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm BJTpTable[] = { /* parameters */
  IOPU("off",     BJT_OFF,            IF_FLAG,    "Device initially off"),

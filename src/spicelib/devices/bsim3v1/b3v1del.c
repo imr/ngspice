@@ -11,11 +11,11 @@
  */
 
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "bsim3v1def.h"
-#include <ngspice/sperror.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/suffix.h"
 
 
 int

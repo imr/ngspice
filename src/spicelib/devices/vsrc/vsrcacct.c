@@ -3,14 +3,14 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "vsrcdefs.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
-#include <ngspice/missing_math.h>
-#include <ngspice/1-f-code.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
+#include "ngspice/missing_math.h"
+#include "ngspice/1-f-code.h"
 
 extern int fftInit(long M);
 extern void fftFree(void);

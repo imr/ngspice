@@ -5,12 +5,12 @@ Author: 1985 Thomas L. Quarles
 /*
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/sperror.h"
 #include "ccvsdefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 
 /*ARGSUSED*/

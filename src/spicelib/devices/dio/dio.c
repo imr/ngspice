@@ -4,10 +4,10 @@ Author: 1985 Thomas L. Quarles
 Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
 #include "diodefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm DIOpTable[] = { /* parameters */ 
  IOPU("off",    DIO_OFF,    IF_FLAG, "Initially off"),

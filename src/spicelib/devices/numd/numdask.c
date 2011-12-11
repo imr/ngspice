@@ -4,15 +4,15 @@ Author: 1987 Thomas L. Quarles
 $Id$
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/const.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/devdefs.h"
 #include "numddefs.h"
-#include <ngspice/complex.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/complex.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 /* Check out this one */
 extern int NUMDinitSmSig(NUMDinstance *);

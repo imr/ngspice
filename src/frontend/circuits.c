@@ -6,10 +6,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* Routines for dealing with the circuit database.  This is currently
  * unimplemented.  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/dvec.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/dvec.h"
 #include "circuits.h"
 
 

@@ -9,12 +9,12 @@ Author: 1985 Thomas L. Quarles
      *  Take a parameter by Name and set it on the specified device 
      */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/fteext.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/iferrmsg.h>
+#include "ngspice/cpdefs.h"
+#include "ngspice/fteext.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/iferrmsg.h"
 #include "inp.h"
 
 int INPpName(char *parm, IFvalue * val, CKTcircuit *ckt, int dev, GENinstance *fast)

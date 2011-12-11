@@ -3,16 +3,16 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/inpmacs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/inpmacs.h"
 
 #include "inppas2.h"
 #include "inp.h"
 
 #ifdef XSPICE
 /* gtri - add - wbk - 11/9/90 - include function prototypes */
-#include <ngspice/mifproto.h>
+#include "ngspice/mifproto.h"
 /* gtri - end - wbk - 11/9/90 */
 #endif
 

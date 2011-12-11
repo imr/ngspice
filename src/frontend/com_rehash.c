@@ -4,11 +4,11 @@
 ************/
 
 #include <config.h>
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
-#include <ngspice/wordlist.h>
+#include "ngspice/wordlist.h"
 #include "com_rehash.h"
-#include <ngspice/cpextern.h>
+#include "ngspice/cpextern.h"
 #include "control.h"
 #include "parser/unixcom.h"
 

@@ -52,18 +52,18 @@ NON-STANDARD FEATURES
 
 #define CONFIG
 
-#include <ngspice/ngspice.h>
-#include <ngspice/inpdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/inpdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/cktdefs.h"
 #include "bjt/bjtdefs.h"
 #include "jfet/jfetdefs.h"
 #include "mos1/mos1defs.h"
 #include "mos2/mos2defs.h"
 #include "mos3/mos3defs.h"
-#include <ngspice/mifproto.h>
-#include <ngspice/ipc.h>
-#include <ngspice/ipctiein.h>
+#include "ngspice/mifproto.h"
+#include "ngspice/ipc.h"
+#include "ngspice/ipctiein.h"
 
 
 

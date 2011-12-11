@@ -9,15 +9,15 @@ $Id$
  * in the circuit and load them into the matrix as appropriate
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/cktdefs.h"
 #include "nbjtdefs.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/sperror.h"
 #include "../../../ciderlib/oned/onedext.h"
-#include <ngspice/cidersupt.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cidersupt.h"
+#include "ngspice/suffix.h"
 
 /* Forward declarations */
 int NBJTinitSmSig(NBJTinstance *);

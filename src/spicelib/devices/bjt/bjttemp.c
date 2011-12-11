@@ -4,14 +4,14 @@ Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/smpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/smpdefs.h"
 #include "bjtdefs.h"
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/suffix.h>
+#include "ngspice/const.h"
+#include "ngspice/sperror.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/suffix.h"
 
 
 /* ARGSUSED */

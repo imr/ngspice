@@ -4,13 +4,13 @@ Author: 1985 Gordon Jacobs
 Modified: 2001 Jon Engelbert
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "cswdefs.h"
-#include <ngspice/fteext.h>
-#include <ngspice/trandefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/fteext.h"
+#include "ngspice/trandefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int
 CSWload(GENmodel *inModel, CKTcircuit *ckt)

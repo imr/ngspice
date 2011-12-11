@@ -9,11 +9,11 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
  * code will run without having to compile the oned code
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numenum.h>
-#include <ngspice/spmatrix.h>
-#include <ngspice/cidersupt.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numenum.h"
+#include "ngspice/spmatrix.h"
+#include "ngspice/cidersupt.h"
 
 
 /* Used in Solution Projection Calculations */

@@ -10,9 +10,9 @@
  * BSIM3v3.1,   Released by yuhua  96/12/08
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "bsim3v1def.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 void
 BSIM3v1destroy(GENmodel **inModel)

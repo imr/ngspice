@@ -4,11 +4,11 @@ Author: 1987 Gary W. Ng
 Modified: Apr 2000 - Paolo Nenzi
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "resdefs.h"
-#include <ngspice/cktdefs.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/noisedef.h>
+#include "ngspice/cktdefs.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/noisedef.h"
 
 /*
  * RESnoise (mode, operation, firstModel, ckt, data, OnDens)

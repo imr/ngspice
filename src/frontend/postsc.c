@@ -8,13 +8,13 @@ $Id$
     Postscript driver
 */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/graph.h>
-#include <ngspice/ftedbgra.h>
-#include <ngspice/ftedev.h>
-#include <ngspice/fteinput.h>
-#include <ngspice/fteext.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/graph.h"
+#include "ngspice/ftedbgra.h"
+#include "ngspice/ftedev.h"
+#include "ngspice/fteinput.h"
+#include "ngspice/fteext.h"
 
 #include "postsc.h"
 #include "variable.h"

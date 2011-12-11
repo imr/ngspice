@@ -8,7 +8,7 @@ Modified: 2001 Paolo Nenzi
  * It is up to the caller to allocate space for strings.
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "printnum.h"
 #include <stdio.h>
 

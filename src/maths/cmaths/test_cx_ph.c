@@ -3,11 +3,11 @@
 #include <float.h>
 
 #include <config.h>
-#include <ngspice/memory.h>
-#include <ngspice/dvec.h>
-#include <ngspice/complex.h>
+#include "ngspice/memory.h"
+#include "ngspice/dvec.h"
+#include "ngspice/complex.h"
 
-#include <ngspice/defines.h>
+#include "ngspice/defines.h"
 #include "cmath.h"
 #include "cmath1.h"
 

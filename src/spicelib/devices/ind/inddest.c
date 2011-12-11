@@ -5,9 +5,9 @@ Author: 1985 Thomas L. Quarles
 /*
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "inddefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 
 void

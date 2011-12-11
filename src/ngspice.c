@@ -5,15 +5,15 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 
 #define CONFIG
 
 
-#include <ngspice/devdefs.h>
-#include <ngspice/noisedef.h>
-#include <ngspice/suffix.h>
+#include "ngspice/devdefs.h"
+#include "ngspice/noisedef.h"
+#include "ngspice/suffix.h"
 
 
 /* XXX Should be -1 ? There is always an extra null element at the end ? */

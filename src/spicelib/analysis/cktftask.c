@@ -9,10 +9,10 @@ Author: 1985 Thomas L. Quarles
      *  find the specified task - not yet supported in spice 
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/sperror.h"
 
 
 

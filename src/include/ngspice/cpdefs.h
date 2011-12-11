@@ -11,7 +11,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #ifndef CPDEFS
 #define CPDEFS
 
-#include <ngspice/cpstd.h>
+#include "ngspice/cpstd.h"
 
 #define MAXWORDS 512
 
@@ -94,6 +94,6 @@ struct alias {
 
 /* Get all the extern definitions... */
 
-#include <ngspice/cpextern.h>
+#include "ngspice/cpextern.h"
 
 #endif /*CPDEFS*/

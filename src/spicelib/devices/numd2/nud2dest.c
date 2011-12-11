@@ -8,12 +8,12 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  * they were using.  The current implementation has memory leaks.
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "numd2def.h"
 #include "../../../ciderlib/twod/twoddefs.h"
 #include "../../../ciderlib/twod/twodext.h"
-#include <ngspice/cidersupt.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cidersupt.h"
+#include "ngspice/suffix.h"
 
 void
 NUMD2destroy(GENmodel **inModel)

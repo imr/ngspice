@@ -7,11 +7,11 @@ Author: 1985 Thomas L. Quarles
  *  appropriate strchr for the device found, or -1 for not found 
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/inpdefs.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/fteext.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/inpdefs.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/fteext.h"
+#include "ngspice/ifsim.h"
 #include "inp.h"
 
 int INPtypelook(char *type)

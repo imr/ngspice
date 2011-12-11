@@ -7,13 +7,13 @@
 #ifndef CKT
 #define CKT "CKTdefs.h $Revision$  on $Date$ "
 
-#include <ngspice/typedefs.h>
+#include "ngspice/typedefs.h"
 
 
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 #ifdef XSPICE
-#include <ngspice/evt.h>
-#include <ngspice/enh.h>
+#include "ngspice/evt.h"
+#include "ngspice/enh.h"
 #endif
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 
@@ -22,15 +22,15 @@
 #define MAXNUMDEVNODES 4        /* Max No. of nodes per device */
                          /* Need to change for SOI devs ? */
 
-#include <ngspice/smpdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/acdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/trcvdefs.h>
-#include <ngspice/optdefs.h>
-#include <ngspice/sen2defs.h>
-#include <ngspice/pzdefs.h>
-#include <ngspice/noisedef.h>
+#include "ngspice/smpdefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/acdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/trcvdefs.h"
+#include "ngspice/optdefs.h"
+#include "ngspice/sen2defs.h"
+#include "ngspice/pzdefs.h"
+#include "ngspice/noisedef.h"
 
 
 

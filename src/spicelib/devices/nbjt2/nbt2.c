@@ -3,10 +3,10 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
 #include "nbjt2def.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 /*
  * This file defines the 2d Numerical BJT data structures that are available

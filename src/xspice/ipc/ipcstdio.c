@@ -7,16 +7,16 @@
  *
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #ifdef IPC_DEBUG_VIA_STDIO
 
 #include <stdio.h>
 
 
-#include <ngspice/ipc.h>
+#include "ngspice/ipc.h"
 
-#include <ngspice/ipcproto.h>
+#include "ngspice/ipcproto.h"
 
 #include <assert.h>   /*   12/1/97 jg  */
  

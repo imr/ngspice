@@ -9,12 +9,12 @@ Author: 1985 Thomas L. Quarles
  *  Take a parameter by Name and set it on the specified model
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/sperror.h"
 
 
 /* ARGSUSED */

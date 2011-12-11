@@ -12,11 +12,11 @@ Modified by Paolo Nenzi 2002
  * BSIMFD2.1 release
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "b3soifddef.h"
-#include <ngspice/ifsim.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 int

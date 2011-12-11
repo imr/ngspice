@@ -5,10 +5,10 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 /* CKTdltNod
 */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/sperror.h"
 
 /* ARGSUSED */
 int

@@ -10,8 +10,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * your IBM machine and buy a vax.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
 #include "quote.h"
 
 

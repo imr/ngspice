@@ -20,11 +20,11 @@ Modified by Paolo Nenzi 2002
 ngspice integration
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/ifsim.h"
 #include "soi3defs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 
 char *SOI3names[] = {

@@ -41,11 +41,11 @@ NON-STANDARD FEATURES
 
 =========================================================================== */
 
-#include <ngspice/cmtypes.h>
-#include <ngspice/cmconstants.h> /* K.A. wrong name */
+#include "ngspice/cmtypes.h"
+#include "ngspice/cmconstants.h" /* K.A. wrong name */
 /*#include "Cmconsta.h" */
-#include <ngspice/cmproto.h>
-#include <ngspice/mifcmdat.h>
+#include "ngspice/cmproto.h"
+#include "ngspice/mifcmdat.h"
 
 
 #endif /* CM_DEFINED */

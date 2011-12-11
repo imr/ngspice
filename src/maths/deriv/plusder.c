@@ -3,9 +3,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1989 Jaijeet S. Roychowdhury
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/distodef.h>
-#include <ngspice/suffix.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/distodef.h"
+#include "ngspice/suffix.h"
 
 /*
  * PlusDeriv computes the partial derivatives of the addition

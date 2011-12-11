@@ -15,10 +15,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  *  and return a char * that is cast to complex or double.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/plot.h>
-#include <ngspice/complex.h>
-#include <ngspice/cpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/plot.h"
+#include "ngspice/complex.h"
+#include "ngspice/cpdefs.h"
 
 #include <interpolate.h>
 #include <polyfit.h>
@@ -28,7 +28,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cmath.h"
 #include "cmath4.h"
 
-#include <ngspice/sim.h> /* To get SV_TIME */
+#include "ngspice/sim.h" /* To get SV_TIME */
 
 extern bool cx_degrees;
 

@@ -9,11 +9,11 @@ Author: 1990 Jaijeet S. Roychowdhury
  * level(s) up the calling hierarchy
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/ifsim.h"
 #include "ltradefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm LTRApTable[] = {		/* parameters */
   IOPAU("v1", LTRA_V1, IF_REAL, "Initial voltage at end 1"),

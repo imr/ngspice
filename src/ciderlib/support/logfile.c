@@ -3,8 +3,8 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cidersupt.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cidersupt.h"
 
 static char *LogFileName = "cider.log";
 static int LogError = 0;

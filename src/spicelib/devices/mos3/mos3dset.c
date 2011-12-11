@@ -4,15 +4,15 @@ Author: 1988 Jaijeet S Roychowdhury
 Modified: 2000 AlansFixes
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/devdefs.h"
 #include "mos3defs.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/distodef.h>
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/distodef.h"
+#include "ngspice/const.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int
 MOS3dSetup(GENmodel *inModel, CKTcircuit *ckt)

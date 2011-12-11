@@ -10,9 +10,9 @@ Modified by Paolo Nenzi 2002
  * BSIMDD2.1 release
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "b3soidddef.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 void
 B3SOIDDdestroy(GENmodel **inModel)

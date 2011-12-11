@@ -43,8 +43,8 @@ NON-STANDARD FEATURES
 =========================================================================== */
 
 
-#include  <ngspice/mifcmdat.h>
-#include <ngspice/ifsim.h>
+#include  "ngspice/mifcmdat.h"
+#include "ngspice/ifsim.h"
 
 
 /* The per-instance data structure */

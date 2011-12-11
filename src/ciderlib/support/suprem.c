@@ -7,9 +7,9 @@ $Id$
 
 /* Functions to read SUPREM (Binary or Ascii) & ASCII input files */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/profile.h>
-#include <ngspice/cidersupt.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/profile.h"
+#include "ngspice/cidersupt.h"
 
 void
 readAsciiData( char *fileName, int impType, DOPtable **ppTable )

@@ -387,7 +387,7 @@ extern void * trealloc(void *, size_t);
 }
 #endif
 
-#include <ngspice/defines.h>
+#include "ngspice/defines.h"
 
 
 /*

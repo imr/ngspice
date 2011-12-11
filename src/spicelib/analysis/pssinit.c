@@ -2,11 +2,11 @@
 Author: 2010-05 Stefano Perticaroli ``spertica''
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/trandefs.h>
-#include <ngspice/pssdefs.h>
-#include <ngspice/iferrmsg.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/trandefs.h"
+#include "ngspice/pssdefs.h"
+#include "ngspice/iferrmsg.h"
 
 int PSSinit(CKTcircuit *ckt, JOB *job)
 {

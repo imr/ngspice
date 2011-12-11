@@ -1,4 +1,4 @@
-#include <ngspice/cpdefs.h>
+#include "ngspice/cpdefs.h"
 #include <string.h>
 #include "hcomp.h"
 

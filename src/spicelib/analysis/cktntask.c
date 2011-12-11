@@ -6,11 +6,11 @@ Modified: 2000 AlansFixes
 /*
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/tskdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/iferrmsg.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/tskdefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/iferrmsg.h"
 
 
 /* ARGSUSED */

@@ -3,11 +3,11 @@ Imported from MacSpice3f4 - Antony Wilson
 Modified: Paolo Nenzi
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/devdefs.h"
 #include "hfet2defs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 
 IFparm HFET2pTable[] = { /* parameters */ 

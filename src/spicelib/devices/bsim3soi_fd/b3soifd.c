@@ -12,10 +12,10 @@ File: b3soifd.c          98/5/01
  * BSIMFD2.1 release
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
 #include "b3soifddef.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm B3SOIFDpTable[] = { /* parameters */
 IOP( "l",   B3SOIFD_L,      IF_REAL   , "Length"),

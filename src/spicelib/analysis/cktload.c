@@ -12,15 +12,15 @@ Modified: 2000 AlansFixes
      * given circuit 
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
 
 #ifdef XSPICE
 /* gtri - add - wbk - 11/26/90 - add include for MIF global data */
-#include <ngspice/mif.h>
+#include "ngspice/mif.h"
 /* gtri - end - wbk - 11/26/90 */
 #endif
 

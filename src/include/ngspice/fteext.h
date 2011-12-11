@@ -14,13 +14,13 @@ Modified: 1999 Paolo Nenzi - 2000 AlansFixes
 #include <config.h>
 
 /* needed to find out what the interface structures look like */
-#include <ngspice/typedefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/dvec.h>
-#include <ngspice/plot.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/fteinp.h>
+#include "ngspice/typedefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/dvec.h"
+#include "ngspice/plot.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/fteinp.h"
 
 /* aspice.c */
 

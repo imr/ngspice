@@ -9,13 +9,13 @@ $Id$
  * Spice-2 compatibility stuff for .plot, .print, .four, and .width.
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <assert.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/dvec.h>
-#include <ngspice/fteinp.h>
-#include <ngspice/sim.h>
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/dvec.h"
+#include "ngspice/fteinp.h"
+#include "ngspice/sim.h"
 #include "circuits.h"
 #include "dotcards.h"
 #include "variable.h"

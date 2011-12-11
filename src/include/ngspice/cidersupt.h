@@ -8,10 +8,10 @@
 #ifndef _CIDERSUPT_H
 #define _CIDERSUPT_H
 
-#include <ngspice/numglobs.h>
-#include <ngspice/material.h>
-#include <ngspice/gendev.h>
-#include <ngspice/profile.h>
+#include "ngspice/numglobs.h"
+#include "ngspice/material.h"
+#include "ngspice/gendev.h"
+#include "ngspice/profile.h"
 
 /* externals for database.c */
 extern struct plot* DBread( char *);

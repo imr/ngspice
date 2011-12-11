@@ -4,12 +4,12 @@ Author: 1987 Gary W. Ng
 Modified: Alan Gillespie
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "mos9defs.h"
-#include <ngspice/cktdefs.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/noisedef.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cktdefs.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/noisedef.h"
+#include "ngspice/suffix.h"
 
 /*
  * MOS9noise (mode, operation, firstModel, ckt, data, OnDens)

@@ -4,12 +4,12 @@ Author: 1987 Gary W. Ng
 Modified by Dietmar Warning 2003
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "diodefs.h"
-#include <ngspice/cktdefs.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/noisedef.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cktdefs.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/noisedef.h"
+#include "ngspice/suffix.h"
 
 /*
  * DIOnoise (mode, operation, firstModel, ckt, data, OnDens)

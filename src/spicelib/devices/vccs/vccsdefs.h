@@ -6,10 +6,10 @@ Author: 1985 Thomas L. Quarles
 #ifndef VCCS
 #define VCCS
 
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/complex.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/complex.h"
 
         /*
          * structures to describe Voltage Controlled Current Sources

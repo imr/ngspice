@@ -6,11 +6,11 @@ Author: 1985      Hong June Park, Thomas L. Quarles
 #ifndef BSIM1
 #define BSIM1
 
-#include <ngspice/ifsim.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/noisedef.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/noisedef.h"
 
     /* declarations for B1 MOSFETs */
 

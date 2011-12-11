@@ -6,10 +6,10 @@ Author: 1985 Thomas L. Quarles
 #ifndef TF
 #define TF
 
-#include <ngspice/typedefs.h>
-#include <ngspice/jobdefs.h>
-#include <ngspice/tskdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/typedefs.h"
+#include "ngspice/jobdefs.h"
+#include "ngspice/tskdefs.h"
+#include "ngspice/cktdefs.h"
 
 
     /* TFdefs.h - defs for transfer function analyses */

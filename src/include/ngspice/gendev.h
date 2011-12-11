@@ -10,7 +10,7 @@ Authors: 1992 David Gates
 #ifndef GENDEV_H
 #define GENDEV_H
 
-#include <ngspice/numenum.h>
+#include "ngspice/numenum.h"
 
 typedef struct sStatInfo
 {

@@ -1,14 +1,14 @@
 #include <config.h>
 #include <stdio.h>
 
-#include <ngspice/ngspice.h>
-#include <ngspice/defines.h>
-#include <ngspice/bool.h>
-#include <ngspice/wordlist.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/fteinput.h>
-#include <ngspice/ftedev.h>
-#include <ngspice/ftedbgra.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/defines.h"
+#include "ngspice/bool.h"
+#include "ngspice/wordlist.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/fteinput.h"
+#include "ngspice/ftedev.h"
+#include "ngspice/ftedbgra.h"
 
 #include "plotting/plotit.h"
 #include "plotting/graphdb.h"

@@ -6,12 +6,12 @@ Modified by Dietmar Warning 2003
 /*
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/complex.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/complex.h"
+#include "ngspice/sperror.h"
 #include "diodefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 
 int

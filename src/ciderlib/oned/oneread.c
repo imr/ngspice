@@ -8,15 +8,15 @@ $Id$
  * Functions needed to read solutions for 1D devices.
  */
  
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numenum.h>
-#include <ngspice/onedev.h>
-#include <ngspice/onemesh.h>
-#include <ngspice/plot.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numenum.h"
+#include "ngspice/onedev.h"
+#include "ngspice/onemesh.h"
+#include "ngspice/plot.h"
 #include "onedext.h"
 #include "oneddefs.h"
-#include <ngspice/cidersupt.h>
+#include "ngspice/cidersupt.h"
 
 int
 ONEreadState(ONEdevice *pDevice, char *fileName, int numVolts, 

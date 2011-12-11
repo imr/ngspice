@@ -5,18 +5,18 @@ Modifed: 2001 Paolo Nenzi
 $Id$
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/numenum.h>
-#include <ngspice/dopdefs.h>
-#include <ngspice/meshext.h>
-#include <ngspice/profile.h>
-#include <ngspice/gendev.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
-#include <ngspice/cidersupt.h>
-#include <ngspice/carddefs.h>
-#include <ngspice/ciderinp.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/numenum.h"
+#include "ngspice/dopdefs.h"
+#include "ngspice/meshext.h"
+#include "ngspice/profile.h"
+#include "ngspice/gendev.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
+#include "ngspice/cidersupt.h"
+#include "ngspice/carddefs.h"
+#include "ngspice/ciderinp.h"
 
 extern int DOPnewCard(void**,void*);
 extern int DOPparam(int,IFvalue*,void*);

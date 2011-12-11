@@ -40,8 +40,8 @@ NON-STANDARD FEATURES
 =========================================================================== */
 
 
-#include <ngspice/miftypes.h>
-#include <ngspice/fteinp.h>
+#include "ngspice/miftypes.h"
+#include "ngspice/fteinp.h"
 
 /*
 The following data is used in implementing various enhancements made to the

@@ -5,12 +5,12 @@ Author: 1985 Thomas L. Quarles
 
 #include "spice.h"
 #include <stdio.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
 #include "util.h"
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/const.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 /* This is a routine to initialize the sensitivity
  * data structure

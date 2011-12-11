@@ -6,10 +6,10 @@ Author: 1985 Thomas L. Quarles
 #ifndef MOS6
 #define MOS6
 
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/complex.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/complex.h"
 
 /* declarations for level 5 MOSFETs */
 

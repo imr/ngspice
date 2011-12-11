@@ -3,9 +3,9 @@ Copyright 1999 AG inc.  All rights reserved.
 Author: 1999 Alan Gillespie
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/suffix.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/suffix.h"
 
 void
 CKTncDump(

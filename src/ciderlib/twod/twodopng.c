@@ -4,17 +4,17 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numenum.h>
-#include <ngspice/twomesh.h>
-#include <ngspice/twodev.h>
-#include <ngspice/profile.h>
-#include <ngspice/macros.h>
-#include <ngspice/bool.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numenum.h"
+#include "ngspice/twomesh.h"
+#include "ngspice/twodev.h"
+#include "ngspice/profile.h"
+#include "ngspice/macros.h"
+#include "ngspice/bool.h"
 #include "twoddefs.h"
 #include "twodext.h"
-#include <ngspice/cidersupt.h>
+#include "ngspice/cidersupt.h"
 
 /* functions in this file are used to calculate the conc */
 

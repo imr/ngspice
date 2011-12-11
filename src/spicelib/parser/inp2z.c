@@ -10,12 +10,12 @@ Author: 1988 Thomas L. Quarles
 */
 
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/inpdefs.h>
-#include <ngspice/inpmacs.h>
-#include <ngspice/fteext.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/inpdefs.h"
+#include "ngspice/inpmacs.h"
+#include "ngspice/fteext.h"
 #include "inp.h"
 
 void INP2Z(CKTcircuit *ckt, INPtables * tab, card * current)

@@ -27,12 +27,12 @@
 #  include <float.h>
 #endif
 
-#include <ngspice/memory.h>
-#include <ngspice/defines.h>
-#include <ngspice/macros.h>
-#include <ngspice/bool.h>
-#include <ngspice/complex.h>
-#include <ngspice/typedefs.h>
+#include "ngspice/memory.h"
+#include "ngspice/defines.h"
+#include "ngspice/macros.h"
+#include "ngspice/bool.h"
+#include "ngspice/complex.h"
+#include "ngspice/typedefs.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -41,7 +41,7 @@
 #include <ieeefp.h>
 #endif
 
-#include <ngspice/missing_math.h>
+#include "ngspice/missing_math.h"
 
 #ifdef STDC_HEADERS
 #  include <stdlib.h>
@@ -138,7 +138,7 @@
 #endif
 
 #ifdef HAS_WINDOWS
-#include <ngspice/wstdio.h>
+#include "ngspice/wstdio.h"
 #endif
 
 #if defined (__MINGW32__) || defined (__CYGWIN__) || defined (_MSC_VER)

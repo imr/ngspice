@@ -6,9 +6,9 @@ Modified: Alan Gillespie
 /*
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "mos9defs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 
 void

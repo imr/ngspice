@@ -5,10 +5,10 @@ Modified Apr 2000 - Paolo Nenzi
 Modified: 2000 AlanSfixes
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "resdefs.h"
-#include <ngspice/sperror.h>
+#include "ngspice/sperror.h"
 
 int
 REStemp(GENmodel *inModel, CKTcircuit *ckt)

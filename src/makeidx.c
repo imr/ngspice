@@ -7,9 +7,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/hlpdefs.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cpdefs.h"
+#include "ngspice/hlpdefs.h"
+#include "ngspice/suffix.h"
 
 #define BSIZE_SP  512
 

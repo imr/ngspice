@@ -6,7 +6,7 @@ $Id$
 /*
  * Memory alloction functions
  */
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #ifndef HAVE_LIBGC
 

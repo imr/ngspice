@@ -3,10 +3,10 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Min-Chie Jeng, Hong J. Park, Thomas L. Quarles
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
 #include "bsim2def.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm B2pTable[] = { /* parameters */
  IOP( "l",   BSIM2_L,      IF_REAL   , "Length"),

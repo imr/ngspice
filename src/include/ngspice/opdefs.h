@@ -7,9 +7,9 @@ Author: 1985 Thomas L. Quarles
 #define DCOP
 
 
-#include <ngspice/cktdefs.h>
-#include <ngspice/jobdefs.h>
-#include <ngspice/tskdefs.h>
+#include "ngspice/cktdefs.h"
+#include "ngspice/jobdefs.h"
+#include "ngspice/tskdefs.h"
     /*
      * structures used to describe D.C. operationg point analyses to
      * be performed.

@@ -11,12 +11,12 @@ Author: 1985 Thomas L. Quarles
      *  given circuit 'ckt'.
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/const.h>
-#include <ngspice/optdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/spmatrix.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/const.h"
+#include "ngspice/optdefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/spmatrix.h"
 
 
 

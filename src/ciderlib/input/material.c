@@ -4,14 +4,14 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 Modified: 2001 Paolo Nenzi
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numcards.h>
-#include <ngspice/numgen.h>
-#include <ngspice/numenum.h>
-#include <ngspice/matldefs.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numcards.h"
+#include "ngspice/numgen.h"
+#include "ngspice/numenum.h"
+#include "ngspice/matldefs.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 extern int MATLnewCard(void**,void *);

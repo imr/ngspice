@@ -1,12 +1,12 @@
 /* Command cdump: dump the control structure to the console output */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 
-#include <ngspice/wordlist.h>
+#include "ngspice/wordlist.h"
 
 #include "control.h"
-#include <ngspice/cpextern.h>
+#include "ngspice/cpextern.h"
 
 #include "com_cdump.h"
 

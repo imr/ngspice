@@ -8,13 +8,13 @@ University of Science and Technology of China
 
 #ifdef NDEV
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/inpdefs.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/inpdefs.h"
 #include "../devices/ndev/ndevdefs.h"
-#include <ngspice/inpmacs.h>
-#include <ngspice/fteext.h>
+#include "ngspice/inpmacs.h"
+#include "ngspice/fteext.h"
 #include "inp.h"
 
 void INP2N(CKTcircuit *ckt, INPtables * tab, card * current)

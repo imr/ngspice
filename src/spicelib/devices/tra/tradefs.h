@@ -7,10 +7,10 @@ Author: 1985 Thomas L. Quarles
 #define TRA
 
 
-#include <ngspice/ifsim.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/gendefs.h>
-#include <ngspice/complex.h>
+#include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/complex.h"
 
         /* definitions used to describe transmission liness */
 

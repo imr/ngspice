@@ -9,8 +9,8 @@ $Id$
  */
 
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
 #include <signal.h>
 #include "cshpar.h"
 

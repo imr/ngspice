@@ -5,17 +5,17 @@ Modified: 2000 Alansfixes
 $Id$
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "isrcdefs.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
-#include <ngspice/1-f-code.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
+#include "ngspice/1-f-code.h"
 
 #ifdef XSPICE_EXP
 /* gtri - begin - wbk - modify for supply ramping option */
-#include <ngspice/cmproto.h>
+#include "ngspice/cmproto.h"
 /* gtri - end   - wbk - modify for supply ramping option */
 #endif
 

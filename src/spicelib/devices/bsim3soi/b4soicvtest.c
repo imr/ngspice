@@ -13,15 +13,15 @@
  * Modified by Tanvir Morshed 12/31/2009
  **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
-#include <ngspice/cktdefs.h>
+#include "ngspice/cktdefs.h"
 #include "b4soidef.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/const.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/const.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 
 int

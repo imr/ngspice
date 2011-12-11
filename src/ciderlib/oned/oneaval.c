@@ -3,11 +3,11 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/onemesh.h>
-#include <ngspice/onedev.h>
-#include <ngspice/macros.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/onemesh.h"
+#include "ngspice/onedev.h"
+#include "ngspice/macros.h"
 
 #include "onedext.h"
 #include "oneddefs.h"

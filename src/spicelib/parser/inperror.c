@@ -7,7 +7,7 @@ Author: 1985 Thomas L. Quarles
  *  provide the error message appropriate for the given error code
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #ifdef HAVE_ASPRINTF
 #ifdef HAVE_LIBIBERTY_H /* asprintf */
@@ -19,10 +19,10 @@ extern int vasprintf(char **out, const char *fmt, va_list ap);
 #endif
 #endif
 
-#include <ngspice/fteext.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/sperror.h>
+#include "ngspice/fteext.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/sperror.h"
 #include "inp.h"
 
 char *INPerror(int type)

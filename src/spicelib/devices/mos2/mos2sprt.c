@@ -6,12 +6,12 @@ Modified: 2000 AlansFixes
 This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
 #include "mos2defs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 void
 MOS2sPrint(GENmodel *inModel, CKTcircuit *ckt)

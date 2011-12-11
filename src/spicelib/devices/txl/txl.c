@@ -4,11 +4,11 @@ reserved.
 Author: 1992 Charles Hough
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "txldefs.h"
-#include <ngspice/devdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/suffix.h>
+#include "ngspice/devdefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/suffix.h"
 
 IFparm TXLpTable[] = { 
 	IP("pos_node",   TXL_IN_NODE,     IF_INTEGER,"Positive node of txl"),

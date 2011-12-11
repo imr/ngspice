@@ -7,12 +7,12 @@ $Id$
     Manage graph data structure.
 */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/graph.h>
-#include <ngspice/ftedebug.h>
-#include <ngspice/fteext.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/graph.h"
+#include "ngspice/ftedebug.h"
+#include "ngspice/fteext.h"
 
-#include <ngspice/ftedbgra.h>
+#include "ngspice/ftedbgra.h"
 #include "graphdb.h"
 #include "../breakp2.h"
 #include "../error.h"

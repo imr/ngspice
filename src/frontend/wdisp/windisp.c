@@ -7,14 +7,14 @@
  */
 
 #define STRICT
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
 #ifdef HAS_WINDOWS
 
-#include <ngspice/graph.h>
-#include <ngspice/ftedev.h>
-#include <ngspice/ftedbgra.h>
-#include <ngspice/fteext.h>
+#include "ngspice/graph.h"
+#include "ngspice/ftedev.h"
+#include "ngspice/ftedbgra.h"
+#include "ngspice/fteext.h"
 #include "../plotting/graf.h"
 #include "../plotting/graphdb.h"
 #include "windisp.h"
@@ -30,7 +30,7 @@
 
 #include <windows.h>
 #include <windowsx.h>
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 /* Typen */
 typedef struct {     /* Extra window data */

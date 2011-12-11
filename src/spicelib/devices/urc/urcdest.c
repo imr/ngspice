@@ -6,9 +6,9 @@ Author: 1987 Thomas L. Quarles
  */
 
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "urcdefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 
 void

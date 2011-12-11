@@ -7,11 +7,11 @@ Author: 1985 Thomas L. Quarles
      *  Ask questions about a specified device.
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
 
 
 /* ARGSUSED */

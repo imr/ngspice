@@ -42,12 +42,12 @@ NON-STANDARD FEATURES
 
 #include  <string.h>
 #include  <stdio.h>
-#include <ngspice/ngspice.h>
-#include  <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include  "ngspice/cktdefs.h"
 //#include  "util.h"
-#include  <ngspice/sperror.h>
+#include  "ngspice/sperror.h"
 
-#include  <ngspice/evtproto.h>
+#include  "ngspice/evtproto.h"
 
 
 

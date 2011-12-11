@@ -7,32 +7,32 @@ Modified: 2000  AlansFixes
 /* subroutine to do DC TRANSIENT analysis
         --- ONLY, unlike spice2 routine with the same name! */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "config.h"
-#include <ngspice/cktdefs.h>
+#include "ngspice/cktdefs.h"
 #include "cktaccept.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/fteext.h>
-#include <ngspice/missing_math.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/fteext.h"
+#include "ngspice/missing_math.h"
 
 /* for setting breakpoints required by dbs data base */
 extern struct dbcomm *dbs;
-#include <ngspice/ftedebug.h>
+#include "ngspice/ftedebug.h"
 
 #ifdef XSPICE
 /* gtri - add - wbk - Add headers */
-#include <ngspice/miftypes.h>
+#include "ngspice/miftypes.h"
 
-#include <ngspice/evt.h>
-#include <ngspice/mif.h>
-#include <ngspice/evtproto.h>
-#include <ngspice/ipctiein.h>
+#include "ngspice/evt.h"
+#include "ngspice/mif.h"
+#include "ngspice/evtproto.h"
+#include "ngspice/ipctiein.h"
 /* gtri - end - wbk - Add headers */
 #endif
 
 #ifdef CLUSTER
-#include <ngspice/cluster.h>
+#include "ngspice/cluster.h"
 #endif
 
 #ifdef PREDICTOR

@@ -7,12 +7,12 @@ Author: 1985 Thomas L. Quarles
  *  provide the error message appropriate for the given error code
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
-#include <ngspice/fteext.h>
-#include <ngspice/sperror.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/ifsim.h>
+#include "ngspice/fteext.h"
+#include "ngspice/sperror.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ifsim.h"
 #include "inp.h"
 
 const char *SPerror(int type)

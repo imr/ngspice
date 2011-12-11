@@ -13,14 +13,14 @@
  * Modified by Xuemei Xi, 03/04/2004.
  **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/jobdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/jobdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
 #include "bsim4v4def.h"
-#include <ngspice/const.h>
-#include <ngspice/sperror.h>
+#include "ngspice/const.h"
+#include "ngspice/sperror.h"
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15

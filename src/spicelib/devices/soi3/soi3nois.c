@@ -20,13 +20,13 @@ Modified by Paolo Nenzi 2002
 ngspice integration
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "soi3defs.h"
-#include <ngspice/cktdefs.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/noisedef.h>
-#include <ngspice/const.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cktdefs.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/noisedef.h"
+#include "ngspice/const.h"
+#include "ngspice/suffix.h"
 
 
 /* This routine is VERY closely based on the standard MOS noise function.

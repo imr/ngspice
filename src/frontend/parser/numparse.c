@@ -6,9 +6,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* This routine parses a number.  */
 
 #include <config.h>
-#include <ngspice/ngspice.h>
-#include <ngspice/bool.h>
-#include <ngspice/ftedefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/bool.h"
+#include "ngspice/ftedefs.h"
 #include "numparse.h"
 
 

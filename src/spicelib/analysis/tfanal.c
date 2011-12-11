@@ -5,12 +5,12 @@ Author: 1988 Thomas L. Quarles
 
 /* subroutine to do DC Transfer Function analysis     */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/sperror.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/tfdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/sperror.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/tfdefs.h"
 
 
 /* ARGSUSED */

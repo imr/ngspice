@@ -40,21 +40,21 @@ NON-STANDARD FEATURES
 #include <stdio.h>
 #include <string.h>
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 //nclude "misc.h"
-#include <ngspice/evt.h>
-#include <ngspice/evtudn.h>
-#include <ngspice/evtproto.h>
-#include <ngspice/mif.h>
-#include <ngspice/mifproto.h>
+#include "ngspice/evt.h"
+#include "ngspice/evtudn.h"
+#include "ngspice/evtproto.h"
+#include "ngspice/mif.h"
+#include "ngspice/mifproto.h"
 
 /*saj for output */
-#include <ngspice/sim.h>
-#include <ngspice/dvec.h>
+#include "ngspice/sim.h"
+#include "ngspice/dvec.h"
 //#include "ftedata.h"
 //#include "fteconstant.h"
 //#include "util.h"
-#include <ngspice/cpstd.h>
+#include "ngspice/cpstd.h"
 
 
 /*

@@ -10,25 +10,25 @@ $Id$
    Central function is inp_readall()
  */
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/fteext.h>
-#include <ngspice/dvec.h>
-#include <ngspice/fteinp.h>
-#include <ngspice/compatmode.h>
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/fteext.h"
+#include "ngspice/dvec.h"
+#include "ngspice/fteinp.h"
+#include "ngspice/compatmode.h"
 
 #include "inpcom.h"
 #include "variable.h"
 #include "../misc/util.h" /* ngdirname() */
 #include "../misc/stringutil.h"
-#include <ngspice/wordlist.h>
+#include "ngspice/wordlist.h"
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include new stuff */
-#include <ngspice/ipctiein.h>
-#include <ngspice/enh.h>
+#include "ngspice/ipctiein.h"
+#include "ngspice/enh.h"
 /* gtri - end - 12/12/90 */
 #endif
 

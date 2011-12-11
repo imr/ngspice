@@ -11,10 +11,10 @@ Author: 1985 Thomas L. Quarles
      *  iterations on a sparse matrix filled by the specified load package,
      */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/smpdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/smpdefs.h"
 #include "niinit.h"
 
 

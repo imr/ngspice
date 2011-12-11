@@ -10,10 +10,10 @@ This function is obsolete (was used by an old sensitivity analysis)
  * the resistors in the circuit.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "resdefs.h"
-#include <ngspice/sperror.h>
+#include "ngspice/sperror.h"
 
 
 void

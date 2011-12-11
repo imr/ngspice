@@ -20,9 +20,9 @@ Modified by Paolo Nenzi 2002
 ngspice integration
 **********/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include "soi3defs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 
 void

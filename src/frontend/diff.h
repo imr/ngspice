@@ -6,7 +6,7 @@
 #ifndef _DIFF_H
 #define _DIFF_H
 
-#include <ngspice/wordlist.h>
+#include "ngspice/wordlist.h"
 
 
 void com_diff(wordlist *wl);

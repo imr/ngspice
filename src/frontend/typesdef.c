@@ -7,10 +7,10 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Stuff to deal with nutmeg "types" for vectors and plots.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/dvec.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/dvec.h"
 #include "typesdef.h"
 
 

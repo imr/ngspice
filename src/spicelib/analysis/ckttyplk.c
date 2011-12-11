@@ -7,9 +7,9 @@ Author: 1985 Thomas L. Quarles
  *  appropriate strchr for the device found, or -1 for not found 
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/devdefs.h"
 
 
 int

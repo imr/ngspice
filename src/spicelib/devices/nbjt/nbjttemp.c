@@ -4,15 +4,15 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "nbjtdefs.h"
-#include <ngspice/numenum.h>
-#include <ngspice/carddefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/numenum.h"
+#include "ngspice/carddefs.h"
+#include "ngspice/sperror.h"
 #include "../../../ciderlib/oned/onedext.h"
-#include <ngspice/cidersupt.h>
-#include <ngspice/suffix.h>
+#include "ngspice/cidersupt.h"
+#include "ngspice/suffix.h"
 
 #define NIL(type)   ((type *)0)
 extern int ONEdcDebug;

@@ -4,9 +4,9 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 #include <config.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
+#include "ngspice/cktdefs.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
 #include "string.h"
 
 

@@ -9,13 +9,13 @@ Mesh Setup & Query Routines.
 **********/
 
 /* Imports */
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/meshdefs.h>
-#include <ngspice/meshext.h>
-#include <ngspice/gendev.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/meshdefs.h"
+#include "ngspice/meshext.h"
+#include "ngspice/gendev.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 /* Local Constants */
 #define CMP_TOL	1.0e-9		/* Tolerance on (double) comparisons */

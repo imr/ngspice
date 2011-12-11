@@ -3,14 +3,14 @@ Copyright 2010 Paolo Nenzi.  All rights reserved.
 Author:   2010 Paolo Nenzi
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/optdefs.h>
-#include <ngspice/dvec.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/optdefs.h"
+#include "ngspice/dvec.h"
 #include "ftehelp.h"
-#include <ngspice/hlpdefs.h>
+#include "ngspice/hlpdefs.h"
 
 #include "circuits.h"
 #include "where.h"

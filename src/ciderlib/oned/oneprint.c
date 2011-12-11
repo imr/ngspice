@@ -5,14 +5,14 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 $Id$
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/numglobs.h>
-#include <ngspice/numconst.h>
-#include <ngspice/numenum.h>
-#include <ngspice/onemesh.h>
-#include <ngspice/onedev.h>
-#include <ngspice/carddefs.h>
-#include <ngspice/spmatrix.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/numconst.h"
+#include "ngspice/numenum.h"
+#include "ngspice/onemesh.h"
+#include "ngspice/onedev.h"
+#include "ngspice/carddefs.h"
+#include "ngspice/spmatrix.h"
 #include "onedext.h"
 #include "oneddefs.h"
 

@@ -11,10 +11,10 @@
  */
 
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
 #include "bsim3v1def.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 IFparm BSIM3v1pTable[] = { /* parameters */
 IOP( "l",   BSIM3v1_L,      IF_REAL   , "Length"),

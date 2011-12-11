@@ -4,10 +4,10 @@ Author:	2007 Gong Ding, gdiso@ustc.edu
 University of Science and Technology of China 
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/devdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
 #include "ndevdefs.h"
-#include <ngspice/suffix.h>
+#include "ngspice/suffix.h"
 
 
 IFparm NDEVpTable[] = {		/* parameters */

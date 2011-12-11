@@ -1,8 +1,8 @@
 #include <config.h>
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 
-#include <ngspice/jobdefs.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/jobdefs.h"
+#include "ngspice/cktdefs.h"
 
 #include "analysis.h"
 

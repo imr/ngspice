@@ -39,17 +39,17 @@ NON-STANDARD FEATURES
     None.
 
 =========================================================================== */
-#include <ngspice/ngspice.h>
-#include <ngspice/cm.h>
-#include <ngspice/mif.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cm.h"
+#include "ngspice/mif.h"
 
-#include <ngspice/cktdefs.h>
+#include "ngspice/cktdefs.h"
 
-#include <ngspice/mifdefs.h>
+#include "ngspice/mifdefs.h"
 #include "cap/capdefs.h"
 #include "ind/inddefs.h"
 #include "vsrc/vsrcdefs.h"
-#include <ngspice/inpdefs.h>
+#include "ngspice/inpdefs.h"
 
 
 

@@ -11,7 +11,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #ifndef FTEinput_h
 #define FTEinput_h
 
-#include <ngspice/inpdefs.h>
+#include "ngspice/inpdefs.h"
 
 /* This struct defines a linked list of lines from a SPICE file. */
 struct line {

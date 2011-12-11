@@ -4,11 +4,11 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 //#define TRACE
 
-#include <ngspice/ngspice.h>
-#include <ngspice/ifsim.h>
-#include <ngspice/iferrmsg.h>
-#include <ngspice/inpdefs.h>
-#include <ngspice/inpptree.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/inpdefs.h"
+#include "ngspice/inpptree.h"
 #include "inp.h"
 
 static INPparseNode *mkcon(double value);

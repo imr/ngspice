@@ -6,11 +6,11 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
  * Some new post-processor commands having to do with vectors.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cpdefs.h>
-#include <ngspice/ftedefs.h>
-#include <ngspice/fteparse.h>
-#include <ngspice/dvec.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cpdefs.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/fteparse.h"
+#include "ngspice/dvec.h"
 
 #include "newcoms.h"
 #include "quote.h"

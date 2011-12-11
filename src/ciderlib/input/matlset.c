@@ -5,15 +5,15 @@ Modified: 2001 Paolo Nenzi
 $Id$
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/numconst.h>
-#include <ngspice/numenum.h>
-#include <ngspice/matldefs.h>
-#include <ngspice/material.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
-#include <ngspice/cidersupt.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/numconst.h"
+#include "ngspice/numenum.h"
+#include "ngspice/matldefs.h"
+#include "ngspice/material.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
+#include "ngspice/cidersupt.h"
 
 extern int MATLcheck( MATLcard * );
 extern int MATLsetup( MATLcard *, MaterialInfo ** );

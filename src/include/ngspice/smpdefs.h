@@ -12,7 +12,7 @@ Modified: 2000  AlansFixes
 
 #include <stdio.h>
 #include <math.h>
-#include <ngspice/complex.h>
+#include "ngspice/complex.h"
 
 int SMPaddElt( SMPmatrix *, int , int , double );
 double * SMPmakeElt( SMPmatrix * , int , int );

@@ -9,11 +9,11 @@ Author: 1985 Thomas L. Quarles
  * point analysis.
  */
 
-#include <ngspice/ngspice.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/cktdefs.h"
 #include "bjtdefs.h"
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int
 BJTacLoad(GENmodel *inModel, CKTcircuit *ckt)

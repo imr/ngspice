@@ -13,15 +13,15 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include <ngspice/ngspice.h>
+#include "ngspice/ngspice.h"
 #include <stdio.h>
-#include <ngspice/cktdefs.h>
+#include "ngspice/cktdefs.h"
 #include "hsm2def.h"
-#include <ngspice/trandefs.h>
-#include <ngspice/const.h>
-#include <ngspice/devdefs.h>
-#include <ngspice/sperror.h>
-#include <ngspice/suffix.h>
+#include "ngspice/trandefs.h"
+#include "ngspice/const.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/sperror.h"
+#include "ngspice/suffix.h"
 
 int HSM2convTest(
      GENmodel *inModel,

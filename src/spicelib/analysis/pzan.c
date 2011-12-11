@@ -2,13 +2,13 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/complex.h>
-#include <ngspice/cktdefs.h>
-#include <ngspice/smpdefs.h>
-#include <ngspice/pzdefs.h>
-#include <ngspice/trandefs.h>   /* only to get the 'mode' definitions */
-#include <ngspice/sperror.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/complex.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/pzdefs.h"
+#include "ngspice/trandefs.h"   /* only to get the 'mode' definitions */
+#include "ngspice/sperror.h"
 
 
 #define DEBUG	if (0)

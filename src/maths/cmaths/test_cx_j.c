@@ -1,9 +1,9 @@
 #include <stdio.h>
 
 #include <config.h>
-#include <ngspice/memory.h>
-#include <ngspice/dvec.h>
-#include <ngspice/complex.h>
+#include "ngspice/memory.h"
+#include "ngspice/dvec.h"
+#include "ngspice/complex.h"
 
 #include "cmath.h"
 #include "cmath1.h"

@@ -3,10 +3,10 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
-#include <ngspice/ngspice.h>
-#include <ngspice/fteext.h>
+#include "ngspice/ngspice.h"
+#include "ngspice/fteext.h"
 /* #include "ftedata.h" */
-#include <ngspice/cidersupt.h>
+#include "ngspice/cidersupt.h"
 
 struct plot *
 DBread( char *fileName )
