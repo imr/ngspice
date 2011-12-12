@@ -1,33 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
-  $Id$
-  $Log$
-  Revision 1.6  2011-01-13 17:05:46  dwarning
-  set version parameter to 2.3.0
-
-  Revision 1.5  2007/04/24 08:59:09  r29173
-  added missing new lines (due to changes in adms225)
-  renamed pspva to psp102
-
-  Revision 1.4  2006/03/05 09:38:41  pnenzi
-
-  Updated version to 2.2.0
-
-  Revision 1.3  2006/02/21 08:05:18  dwarning
-  Introduction of alias names for modules to prevent cryptic naming.
-
-  Revision 1.2  2006/02/02 17:56:31  pnenzi
-
-  Changed adms required version to 2.1.3 ,J
-
-  Revision 1.1  2006/01/31 17:53:48  pnenzi
-
-  Initial import for admst (Verilog-AMS) translators for ngspice.
-
--->
-
-<!--
      Written by Laurent Lemaitre - r29173@users.sourceforge.net
      Documentation:
        http://sourceforge.net/docman/display_doc.php?docid=18993&group_id=84289

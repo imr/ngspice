@@ -1,3 +1,13 @@
+2011-12-12  Robert Larice
+ * src/spicelib/devices/adms/admst/ngspiceMODULE*.xml :
+  remove CVS `Id' and `log' keyword incantations
+
+    I did use '-->' in a commit message,
+      which was injected into the source files due to
+      CVS keyword expansion.
+
+    Please use `cvs log' if you really want to know the CVS log
+
 2011-12-11  Robert Larice
  * src/spicelib/devices/adms/admst/ngspice.xml :
   #4/4 #include <ngspice/...>  -->  #include "ngspice/..."  for adms3
