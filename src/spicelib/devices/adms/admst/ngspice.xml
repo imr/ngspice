@@ -3625,11 +3625,11 @@ typedef struct s$(module)model {         /* model structure */
   <admst:text format="  /* flags */\n"/>
   <admst:text format="typedef enum {\n"/>
   <admst:text select="modulevariablep[#parametertype!='instance' and isparameter='yes']" format="  $(module)_model_%(name),\n"/>
-    <admst:text format="  DUMMY_MODEL"/>
+    <admst:text format="  $(module)_DUMMY_MODEL"/>
   <admst:text format="\n} e_$(module)_model;\n"/>
   <admst:text format="typedef enum {\n"/>
   <admst:text select="modulevariablep[#parametertype='instance' and isparameter='yes']" format="  $(module)_instance_%(name),\n"/>
-  <admst:text format="  DUMMY_INSTANCE"/>
+  <admst:text format="  $(module)_DUMMY_INSTANCE"/>
   <admst:text format="\n} e_$(module)_instance;\n"/>
 <admst:variable name="module" string="%(attribute[name='ngspicename']/value)"/>
 
@@ -3819,7 +3819,7 @@ int $(module)mParam(int param, IFvalue *value, GENmodel *inMod)
 #include &quot;$(module)itf.h&quot;
 
 #define ccap qcap+1
-int my$(module)NIintegrate(CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap)
+static int my$(module)NIintegrate(CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap)
 {
     static char *ordmsg = "Illegal integration order";
     static char *methodmsg = "Unknown integration method";
