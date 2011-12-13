@@ -1,4 +1,9 @@
 2011-12-13  Robert Larice
+ * autogen.sh ,
+ * src/spicelib/devices/adms/admst/ngspice.xml :
+  switch --adms3 over to the new adms3va directories
+
+2011-12-13  Robert Larice
  * src/spicelib/devices/adms/hicum0/admsva/hicum0.va ,
  * src/spicelib/devices/adms/mextram/admsva/bjt504t.va ,
  * src/spicelib/devices/adms/psp102/admsva/JUNCAP200_parlist.include ,
