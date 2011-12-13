@@ -1,4 +1,21 @@
 2011-12-13  Robert Larice
+ * src/frontend/outitf.c ,
+ * src/frontend/outitf.h ,
+ * src/frontend/spiceif.c ,
+ * src/include/ngspice/ifsim.h ,
+ * src/spicelib/analysis/acan.c ,
+ * src/spicelib/analysis/cktsens.c ,
+ * src/spicelib/analysis/dcop.c ,
+ * src/spicelib/analysis/dcpss.c ,
+ * src/spicelib/analysis/dctran.c ,
+ * src/spicelib/analysis/dctrcurv.c ,
+ * src/spicelib/analysis/distoan.c ,
+ * src/spicelib/analysis/noisean.c ,
+ * src/spicelib/analysis/pzan.c ,
+ * src/spicelib/analysis/tfanal.c :
+  unify OUTpBeginPlot() invocation
+
+2011-12-13  Robert Larice
  * src/spicelib/analysis/pzan.c :
   unify OUTpBeginPlot() usage of ckt->CKTcurJob
 

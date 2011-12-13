@@ -39,10 +39,14 @@ typedef struct runDesc {
     int windowCount;
 } runDesc;
 
-int OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr, IFuid analName, IFuid refName, 
-		  int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr);
-int OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr, IFuid analName, IFuid refName, 
-		  int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr);
+int OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
+                  IFuid analName,
+                  IFuid refName, int refType,
+                  int numNames, IFuid *dataNames, int dataType, void **plotPtr);
+int OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
+                  IFuid analName,
+                  IFuid refName, int refType,
+                  int numNames, IFuid *dataNames, int dataType, void **plotPtr);
 int OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr);
 int OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr);
 int OUTwData(void *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr);

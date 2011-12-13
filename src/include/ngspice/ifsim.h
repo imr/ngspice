@@ -439,13 +439,17 @@ struct IFfrontEnd {
                             /* what time is it? */
     int (*IFerror) (int, char *, IFuid *);
                             /* output an error or warning message */
-    int (*OUTpBeginPlot) (CKTcircuit *, JOB *, IFuid, IFuid, int,
-            int, IFuid *, int, void **);
+    int (*OUTpBeginPlot) (CKTcircuit *, JOB *,
+                          IFuid,
+                          IFuid, int,
+                          int, IFuid *, int, void **);
                             /* start pointwise output plot */
     int (*OUTpData) (void *, IFvalue *, IFvalue *);
                             /* data for pointwise plot */
-    int (*OUTwBeginPlot) (CKTcircuit *, JOB *, IFuid, IFuid, int,
-            int, IFuid *, int, void **);
+    int (*OUTwBeginPlot) (CKTcircuit *, JOB *,
+                          IFuid,
+                          IFuid, int,
+                          int, IFuid *, int, void **);
                             /* start windowed output plot */
     int (*OUTwReference) (void *, IFvalue *, void **);
                             /* independent vector for windowed plot */

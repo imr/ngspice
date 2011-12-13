@@ -1550,10 +1550,11 @@ do {\
         }
         SPfrontEnd->IFnewUid (ckt, &timeUid, NULL,
                               "time", UID_OTHER, NULL);
-        error = SPfrontEnd->OUTpBeginPlot (ckt,
-                                           ckt->CKTcurJob,
-                                           ckt->CKTcurJob->JOBname,timeUid,IF_REAL,numNames,nameList,
-                                           IF_REAL,&(((TRANan*)ckt->CKTcurJob)->TRANplot));
+        error = SPfrontEnd->OUTpBeginPlot (
+            ckt, ckt->CKTcurJob,
+            ckt->CKTcurJob->JOBname,
+            timeUid, IF_REAL,
+            numNames, nameList, IF_REAL, &(((TRANan*)ckt->CKTcurJob)->TRANplot));
         if(error) {
             fprintf(cp_err,"error in CKTnames\n");
             return;

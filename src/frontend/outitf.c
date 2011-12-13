@@ -88,7 +88,10 @@ static bool shouldstop = FALSE; /* Tell simulator to stop next time it asks. */
 /* The two "begin plot" routines share all their internals... */
 
 int
-OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr, IFuid analName, IFuid refName, int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr)
+OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
+              IFuid analName,
+              IFuid refName, int refType,
+              int numNames, IFuid *dataNames, int dataType, void **plotPtr)
 {
   char *name;   
 
@@ -109,7 +112,10 @@ if (ARCHme != 0) return(OK);
 }
 
 int
-OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr, IFuid analName, IFuid refName, int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr)
+OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
+              IFuid analName,
+              IFuid refName, int refType,
+              int numNames, IFuid *dataNames, int dataType, void **plotPtr)
 {
 #ifdef PARALLEL_ARCH
     if (ARCHme != 0) return(OK);
