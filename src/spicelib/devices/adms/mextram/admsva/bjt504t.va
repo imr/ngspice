@@ -4,25 +4,31 @@
  
 module bjt504tva (c, b, e, s, dt); 
 
+`ifdef insideADMS
+  `define P(p) (*p*)
+`else
+  `define P(p)
+`endif
+
   // External ports  
      inout c, b, e, s, dt; 
   
-     (*info="external collector node"*) electrical 	c;
-     (*info="external base node"*) electrical 	b;
-     (*info="external emitter node"*) electrical 	e;
-     (*info="external substrate node"*) electrical 	s;
-     (*info="external thermal node"*) electrical 	dt;
+     electrical 	c     `P(info="external collector node");
+     electrical 	b     `P(info="external base node");
+     electrical 	e     `P(info="external emitter node");
+     electrical 	s     `P(info="external substrate node");
+     electrical 	dt    `P(info="external thermal node");
   
   // Internal nodes  
-     (*info="internal collector node 1"*) electrical 	c1;
-     (*info="internal emitter node"*) electrical 	e1;
-     (*info="internal base node 1"*) electrical 	b1;
-     (*info="internal base node 2"*) electrical 	b2;
-     (*info="internal collector node 2"*) electrical 	c2;
-     (*info="internal collector node 3"*) electrical 	c3;
-     (*info="internal collector node 4"*) electrical 	c4;
+     electrical 	c1    `P(info="internal collector node 1");
+     electrical 	e1    `P(info="internal emitter node");
+     electrical 	b1    `P(info="internal base node 1");
+     electrical 	b2    `P(info="internal base node 2");
+     electrical 	c2    `P(info="internal collector node 2");
+     electrical 	c3    `P(info="internal collector node 3");
+     electrical 	c4    `P(info="internal collector node 4");
   // For correlated noise implementation 
-     (*info="internal noise node"*) electrical 	noi;
+     electrical 	noi   `P(info="internal noise node");
 
 `include "parameters.inc"
 `include "variables.inc"

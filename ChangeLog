@@ -1,4 +1,12 @@
 2011-12-13  Robert Larice
+ * src/spicelib/devices/adms/hicum0/admsva/hicum0.va ,
+ * src/spicelib/devices/adms/mextram/admsva/bjt504t.va ,
+ * src/spicelib/devices/adms/psp102/admsva/JUNCAP200_parlist.include ,
+ * src/spicelib/devices/adms/psp102/admsva/PSP102_module.include :
+  undo `2011-12-12  Laurent Lemaitre'  which broke --adms in favour of --adms3
+  adms3 shall now be worked upon in `adms3va' subdirectories
+
+2011-12-13  Robert Larice
  * src/spicelib/devices/adms/*/adms3va/* :
   copy old amds .va files to a new directory `adms3va'
 
