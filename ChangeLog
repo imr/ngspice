@@ -1,4 +1,8 @@
 2011-12-13  Robert Larice
+ * **/* :
+  remove CVS `Id',`log' etc. keyword incantations
+
+2011-12-13  Robert Larice
  * src/frontend/outitf.c ,
  * src/frontend/outitf.h ,
  * src/frontend/spiceif.c ,
