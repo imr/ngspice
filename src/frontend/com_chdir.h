@@ -1,6 +1,5 @@
 /*************
 * Header file for com_chdir.c
-* $Id$
 ************/
 
 #ifndef COM_CHDIR_H

@@ -1,6 +1,5 @@
 /*************
 * com_rehash.c
-* $Id$
 ************/
 
 #include <config.h>

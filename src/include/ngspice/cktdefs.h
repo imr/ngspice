@@ -2,7 +2,6 @@
  * Copyright (c) 1985 Thomas L. Quarles
  * Modified 1999 Paolo Nenzi - Removed non STDC definitions
  * Modified 2000 AlansFixes
- * $Id$
  */
 #ifndef CKT
 #define CKT "CKTdefs.h $Revision$  on $Date$ "

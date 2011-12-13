@@ -1,6 +1,5 @@
 /*
   variable.h
-  $Id$
 */
 
 #ifndef _VARIABLE_H

@@ -5,7 +5,6 @@
 
    Authors: Holger Vogt,  Hendrik Vogt
    
-   $Id$
  */
  
 #include "config.h"

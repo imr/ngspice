@@ -1,7 +1,6 @@
 /*************
  * Header file for vectors.c
  * 1999 E. Rouat
- * $Id$
  ************/
 
 #ifndef VECTORS_H_INCLUDED

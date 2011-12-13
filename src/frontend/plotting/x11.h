@@ -1,7 +1,6 @@
 /*************
  * Header file for x11.c
  * 1999 E. Rouat
- * $Id$
  ************/
 
 #ifndef X11_H_INCLUDED

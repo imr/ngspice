@@ -1,6 +1,5 @@
 /*************
 * com_shell.c
-* $Id$
 ************/
 
 #include <config.h>

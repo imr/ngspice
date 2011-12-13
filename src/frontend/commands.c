@@ -1,5 +1,4 @@
 /* NG-SPICE -- An electrical circuit simulator
- * $Id$
  *
  * Copyright (c) 1990 University of California
  * Copyright (c) 2000 Arno W. Peters

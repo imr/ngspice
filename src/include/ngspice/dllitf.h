@@ -1,7 +1,6 @@
 /* 
    DLL load interface
    (c)2000 Arpad Buermen
-   $Id$
 */
 
 #ifndef __DLLITF_H

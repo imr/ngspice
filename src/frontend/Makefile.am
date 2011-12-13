@@ -1,5 +1,4 @@
 ## Process this file with automake to produce Makefile.in
-## $Id$
 
 SUBDIRS = plotting help parser wdisp numparam trannoise
 DIST_SUBDIRS = plotting help parser wdisp numparam trannoise

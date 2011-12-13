@@ -1,4 +1,3 @@
-/* $Id$ */
 #include "ngspice/ngspice.h"
 #include <config.h>
 #include "ngspice/bool.h"

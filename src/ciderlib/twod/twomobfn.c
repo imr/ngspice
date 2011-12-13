@@ -1,7 +1,6 @@
 /**********
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1990 David A. Gates, U. C. Berkeley CAD Group
-$Id$
 **********/
 
 #include "ngspice/ngspice.h"

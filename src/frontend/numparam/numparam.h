@@ -1,6 +1,5 @@
 /*
  * numparam.h 
- * $Id$
  */
 
 /*** interface to spice frontend  subckt.c ***/

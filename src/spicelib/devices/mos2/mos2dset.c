@@ -2,7 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jaijeet S Roychowdhury
 Modified: 2000 AlansFixes
-$Id$
 **********/
 
 #include "ngspice/ngspice.h"

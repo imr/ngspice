@@ -1,39 +1,6 @@
-/* ----------------------------------------------------------------- 
-FILE:	    dstring.c                                       
+/* -----------------------------------------------------------------
+FILE:	    dstring.c
 DESCRIPTION:This file contains the routines for manipulating dynamic strings.
-CONTENTS:   
-DATE:	    Wed Mar 24 18:38:28 CDT 2010
-REVISIONS:  $Log$
-REVISIONS:  Revision 1.10  2011-12-11 18:05:01  rlar
-REVISIONS:  #1/4 #include <ngspice/...>  -->  #include "ngspice/..."
-REVISIONS:
-REVISIONS:  Revision 1.9  2011/08/20 17:27:12  rlar
-REVISIONS:  #1/7 use a subdirectory "ngspice" for includes to create a uniq namespace
-REVISIONS:
-REVISIONS:  Revision 1.8  2011/06/26 20:00:03  rlar
-REVISIONS:  swallow type conversion warnings
-REVISIONS:
-REVISIONS:  Revision 1.7  2011/06/22 17:17:41  rlar
-REVISIONS:  remove some useless casts
-REVISIONS:
-REVISIONS:  Revision 1.6  2010/11/06 20:17:20  rlar
-REVISIONS:  add `int' casts to some strlen() expressions, and center labels on a xlog scale
-REVISIONS:
-REVISIONS:  Revision 1.5  2010/11/06 16:54:11  rlar
-REVISIONS:  (int) cast the return value of some strlen() invocations
-REVISIONS:
-REVISIONS:  Revision 1.4  2010/10/28 19:32:34  rlar
-REVISIONS:  wrap tmalloc MALLOC etc, into two macros TMALLOC and TREALLOC
-REVISIONS:
-REVISIONS:  Revision 1.3  2010/10/09 11:42:10  rlar
-REVISIONS:  remove #define for EOS  use '\0' instead
-REVISIONS:
-REVISIONS:  Revision 1.2  2010/07/01 19:52:26  rlar
-REVISIONS:  cast the return values of malloc() function calls
-REVISIONS:
-REVISIONS:  Revision 1.1  2010/03/25 22:44:38  dwarning
-REVISIONS:  Bill Swartz patch
-REVISIONS:
 ----------------------------------------------------------------- */
 #include "ngspice/ngspice.h"
 #include <stdarg.h>

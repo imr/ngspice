@@ -1,7 +1,6 @@
 /*************
  * Header file for spiceif.c
  * 1999 E. Rouat
- * $Id$
  ************/
 
 #ifndef SPICEIF_H_INCLUDED

@@ -1,5 +1,4 @@
 /* Michael Widlok 		2 Jun 1999 */
-/* $Id$ */
 /* New commands for unloading circuits */
 
 #include "ngspice/ngspice.h"

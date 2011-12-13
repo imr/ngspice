@@ -2,7 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles, 1991 David A. Gates
 Modified: 2001 Paolo Nenzi (Cider Integration)
-$Id$
 **********/
 
 #include "ngspice/ngspice.h"

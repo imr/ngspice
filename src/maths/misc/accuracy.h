@@ -1,7 +1,6 @@
 /**********
 Copyright 1991 Regents of the University of California. All rights reserved.
 Authors: 1987 Karti Mayaram, 1991 David Gates
-$Id$
 **********/
 
 #ifndef ACCURACY_H

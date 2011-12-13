@@ -1,6 +1,5 @@
 /**********
  * Header file for control.c
- * $Id$
 **********/
 
 #ifndef CONTROL_H

@@ -1,7 +1,6 @@
 /*
  * numpaif.h
  * external interface to spice frontend  subckt.c 
- * $Id$
  */
 
 #ifndef NUMPAIF_H

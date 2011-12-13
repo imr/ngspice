@@ -1,6 +1,5 @@
 /*************
 * Header file for winprint.c
-* $Id$
 ************/
 
 #ifndef WINPRINT_H

@@ -3,7 +3,6 @@
     Stand: 28.10.97
     Autor: Holger Vogt
     Stand: 17.10.2009
- $Id$
 */
 #include "config.h"
 #ifdef HAS_WINDOWS

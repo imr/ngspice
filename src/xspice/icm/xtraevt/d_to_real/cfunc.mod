@@ -1,4 +1,3 @@
-/* $Id$ */
 
 void ucm_d_to_real (ARGS)
 {

@@ -1,7 +1,6 @@
 /* I/O Redirection for Spice 3F4 under Win32s
 	Autor: Wolfgang Muees
 	Stand: 21.05.95
-  $Id$
 */
 
 #ifndef WSTDIO_H

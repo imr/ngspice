@@ -1,7 +1,6 @@
 /*************
  * Header file for plot5.c
  * 1999 E. Rouat
- * $Id$
  ************/
 
 #ifndef PLOT5_H_INCLUDED

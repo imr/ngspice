@@ -1,4 +1,3 @@
-/* $Id$ */
 /* $OpenBSD: getopt_long.c,v 1.11 2002/12/10 17:51:42 millert Exp $  */
 /* $NetBSD: getopt_long.c,v 1.15 2002/01/31 22:43:40 tv Exp $  */
 

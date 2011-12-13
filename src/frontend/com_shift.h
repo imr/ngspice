@@ -1,6 +1,5 @@
 /*************
 * Header file for com_shift.c
-* $Id$
 ************/
 
 #ifndef COM_SHIFT_H

@@ -2,7 +2,6 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 Modified: 2001 Paolo Nenzi
-$Id$
 **********/
 /**********
 Mesh Setup & Query Routines.

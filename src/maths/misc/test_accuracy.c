@@ -1,6 +1,5 @@
 /* Paolo Nenzi 2002 - This program tests some machine
  * dependent variables.
- * $Id$
  */
 
 /* Nota:

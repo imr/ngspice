@@ -1,7 +1,5 @@
 /*
  * vbicinit.c
- *
- * $Id$
  */
 
 

@@ -1,7 +1,6 @@
 /*************
  * Header file for runcoms.c
  * 1999 E. Rouat
- * $Id$
  ************/
 
 #ifndef RUNCOMS_H_INCLUDED

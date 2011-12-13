@@ -4,8 +4,6 @@
    
    In addition it contains the fcn com_meas(), which provide the 
    interactive 'meas' command.
-   
-   $Id$   
 */
    
 #include "ngspice/ngspice.h"

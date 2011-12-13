@@ -1,6 +1,5 @@
 /*************
 * Header file for com_shell.c
-* $Id$
 ************/
 
 #ifndef COM_SHELL_H

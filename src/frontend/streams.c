@@ -1,6 +1,5 @@
 /*************
 * streams.c
-* $Id$
 ************/
 
 #include <config.h>

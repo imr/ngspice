@@ -1,7 +1,6 @@
 /*************
  * Header file for parse.c
  * 1999 E. Rouat
- * $Id$
  ************/
 
 #ifndef _PARSE_H

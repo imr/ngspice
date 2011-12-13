@@ -1,5 +1,4 @@
 ## Process this file with automake to produce Makefile.in
-# $Id$
 
 SUBDIRS = misc maths frontend spicelib include/ngspice
 DIST_SUBDIRS = misc maths frontend spicelib include/ngspice xspice ciderlib

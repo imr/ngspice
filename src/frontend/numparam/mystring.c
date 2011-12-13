@@ -2,7 +2,6 @@
  *
  *  This file is part of Numparam, see:  readme.txt
  *  Free software under the terms of the GNU Lesser General Public License
- * $Id$
  */
 
 #include <stdio.h>

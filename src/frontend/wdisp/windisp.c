@@ -3,7 +3,6 @@
  * Wolfgang Muees 27.10.97
  * Holger Vogt  07.12.01
  * Holger Vogt  05.12.07
- $Id$
  */
 
 #define STRICT

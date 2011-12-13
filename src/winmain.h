@@ -1,6 +1,5 @@
 /* Forwards and external function declarations
    for winmain.c
-   $Id$
 */
 
 /* Forward definition of main() */

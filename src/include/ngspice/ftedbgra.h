@@ -4,8 +4,6 @@ Author: 1987 Jeffrey M. Hsu
 **********/
 
 /*
-    $Header$
-
     External definitions for the graph database module.
 */
 

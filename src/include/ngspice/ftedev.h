@@ -4,8 +4,6 @@ Author: 1987 Jeffrey M. Hsu
 **********/
 
 /*
-    $Header$
-
     The display device structure.
 */
 

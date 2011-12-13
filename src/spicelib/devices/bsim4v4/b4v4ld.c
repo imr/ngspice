@@ -1,6 +1,5 @@
 /****
  BSIM4.4.0  Released by Xuemei (Jane) Xi 03/04/2004
- $Id$
 ****/
 /* ngspice multirevision code extension covering 4.2.1 & 4.3.0 & 4.4.0 */
 

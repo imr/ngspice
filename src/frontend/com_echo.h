@@ -1,6 +1,5 @@
 /*************
 * Header file for com_echo.c
-* $Id$
 ************/
 
 #ifndef COM_ECHO_H

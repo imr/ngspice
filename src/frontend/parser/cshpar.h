@@ -1,7 +1,6 @@
 /*************
  * Header file for cshpar.c
  * 1999 E. Rouat
- * $Id$
  ************/
 
 #ifndef CSHPAR_H_INCLUDED

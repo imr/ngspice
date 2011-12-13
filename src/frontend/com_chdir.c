@@ -1,6 +1,5 @@
 /*************
 * com_chdir.c
-* $Id$
 ************/
 
 #include "ngspice/ngspice.h"

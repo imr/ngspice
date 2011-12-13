@@ -2,7 +2,6 @@
  * cidersupt.h
  * 
  * CIDER support library header
- * $Id$
  */
  
 #ifndef _CIDERSUPT_H

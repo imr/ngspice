@@ -1,4 +1,3 @@
-/* $Id$ */
 
 void ucm_real_gain (ARGS)
 {

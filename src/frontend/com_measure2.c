@@ -2,9 +2,8 @@
    Entry point is function get_measure2(), called by fcn do_measure()
    from measure.c.
    Patches by Bill Swartz from 2009-05-18 and 2009-08-21 are included.
-
-   $Id$
 */
+
 #include <config.h>
 #include "ngspice/ngspice.h"
 #include "ngspice/memory.h"

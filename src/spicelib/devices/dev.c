@@ -3,8 +3,6 @@
  * Copyright (c) 1990 University of California
  * Copyright (c) 2000 Arno W. Peters
  *
- * $Id$
- *
  * Permission to use, copy, modify, and distribute this software and
  * its documentation without fee, and without a written agreement is
  * hereby granted, provided that the above copyright notice, this

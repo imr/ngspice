@@ -5,7 +5,6 @@
    Author: 1985 Wayne A. Christopher
 
    The main routine for ngspice
-   $Id$
 */
 
 #include "ngspice/ngspice.h"

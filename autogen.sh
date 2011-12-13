@@ -5,8 +5,6 @@
 # package.
 #
 #
-# $Id$
-#
 # temp-adms.ac: modified configure.ac if --adms is selected
 # for temporary use by autoconf, will be deleted automatically
 # configure.ac stays untouched

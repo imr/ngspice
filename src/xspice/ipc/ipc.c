@@ -8,8 +8,6 @@ Georgia Tech Research Corporation
 Atlanta, Georgia 30332
 All Rights Reserved
 
-$Id$
-
 PROJECT A-8503
 
 AUTHORS

@@ -1,6 +1,5 @@
 /*************
 * Header file for streams.c
-* $Id$
 ************/
 
 #ifndef STREAMS_H

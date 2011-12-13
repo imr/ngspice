@@ -1,4 +1,3 @@
-/* $Id$ */
 #ifndef _PNODE_H
 #define _PNODE_H
 

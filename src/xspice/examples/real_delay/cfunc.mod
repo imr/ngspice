@@ -1,4 +1,3 @@
-/* $Id$ */
 
 
 #define CLK_STATE       0

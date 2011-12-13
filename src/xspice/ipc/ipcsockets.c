@@ -6,8 +6,6 @@
   Georgia Tech Research Corporation, Atlanta, Georgia 30332
   All Rights Reserved
 
-  $Id$
-
   PROJECT ATESSE A-8503
 
   AUTHOR

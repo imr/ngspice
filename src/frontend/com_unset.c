@@ -1,6 +1,5 @@
 /*************
 * com_unset.c
-* $Id$
 ************/
 
 #include <config.h>

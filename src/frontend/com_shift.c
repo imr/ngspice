@@ -1,6 +1,5 @@
 /*************
 * com_shift.c
-* $Id$
 ************/
 
 #include <config.h>

@@ -2,7 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: Jeffrey M. Hsu
 Modified 1999 Emmanuel Rouat
-$Id$
 **********/
 
 #include <config.h>

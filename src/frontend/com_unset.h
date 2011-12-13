@@ -1,6 +1,5 @@
 /*************
 * Header file for com_unset.c
-* $Id$
 ************/
 
 #ifndef COM_UNSET_H
