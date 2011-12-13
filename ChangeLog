@@ -1,3 +1,7 @@
+2011-12-13  Robert Larice
+ * src/spicelib/devices/adms/*/adms3va/* :
+  copy old amds .va files to a new directory `adms3va'
+
 2011-12-12  Robert Larice
  * src/spicelib/devices/adms/admst/ngspiceMODULE*.xml :
   remove CVS `Id' and `log' keyword incantations
@@ -7,6 +11,17 @@
       CVS keyword expansion.
 
     Please use `cvs log' if you really want to know the CVS log
+
+2011-12-12  Laurent Lemaitre
+ * src/spicelib/devices/adms/hicum0/admsva/hicum0.va ,
+ * src/spicelib/devices/adms/mextram/admsva/bjt504t.va ,
+ * src/spicelib/devices/adms/psp102/admsva/JUNCAP200_parlist.include ,
+ * src/spicelib/devices/adms/psp102/admsva/PSP102_module.include :
+   Make veriloga models compliant with Language Reference Manual. They will not compile with --adms flag.
+
+2011-12-12  Laurent Lemaitre
+ * src/spicelib/devices/adms/admst/ngspice.xml :
+   Set name of model C routines unique - make linker happy.
 
 2011-12-11  Robert Larice
  * src/spicelib/devices/adms/admst/ngspice.xml :
@@ -56,6 +71,10 @@
 2011-12-11  Robert Larice
  * src/spicelib/analysis/dcpss.c :
   similiarity dctran.c versus dcpss.c
+
+2011-12-10  Laurent Lemaitre
+ * src/spicelib/devices/adms/admst/ngspice.xml :
+   add dynamic loading feature
 
 2011-12-03  Robert Larice
  * src/spicelib/analysis/dcpss.c ,
