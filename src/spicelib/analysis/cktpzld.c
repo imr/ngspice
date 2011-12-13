@@ -14,7 +14,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 int
 CKTpzLoad(CKTcircuit *ckt, SPcomplex *s)
 {
-    PZAN *job = (PZAN *) (ckt->CKTcurJob);
+    PZAN *job = (PZAN *) ckt->CKTcurJob;
+
     int error;
     int i;
 #ifdef PARALLEL_ARCH

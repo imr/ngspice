@@ -13,37 +13,37 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 int 
 SENSask(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    SENS_AN	*sinfo = (SENS_AN *) anal;
+    SENS_AN *job = (SENS_AN *) anal;
 
     NG_IGNORE(ckt);
 
     switch (which) {
 
     case SENS_START:
-	value->rValue = sinfo->start_freq;
+	value->rValue = job->start_freq;
         break;
 
     case SENS_STOP:
-	value->rValue = sinfo->stop_freq;
+	value->rValue = job->stop_freq;
         break;
 
     case SENS_STEPS:
-	value->iValue = sinfo->n_freq_steps;
+	value->iValue = job->n_freq_steps;
         break;
 
     case SENS_DEC:
     case SENS_OCT:
     case SENS_LIN:
     case SENS_DC:
-	value->iValue = sinfo->step_type == which;
+	value->iValue = job->step_type == which;
         break;
 
     case SENS_DEFTOL:
-	sinfo->deftol = value->rValue;
+	job->deftol = value->rValue;
 	break;
 
     case SENS_DEFPERTURB:
-	value->rValue = sinfo->defperturb;
+	value->rValue = job->defperturb;
 	break;
 
     default:

@@ -18,7 +18,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 int
 CKTpzSetup(CKTcircuit *ckt, int type)
 {
-    PZAN *pzan = (PZAN *) ckt->CKTcurJob;
+    PZAN *job = (PZAN *) ckt->CKTcurJob;
+
     SMPmatrix *matrix;
     int error;
     int i, temp, solution_col, balance_col;
@@ -45,17 +46,17 @@ CKTpzSetup(CKTcircuit *ckt, int type)
     solution_col = 0;
     balance_col = 0;
 
-    input_pos = pzan->PZin_pos;
-    input_neg = pzan->PZin_neg;
+    input_pos = job->PZin_pos;
+    input_neg = job->PZin_neg;
 
     if (type == PZ_DO_ZEROS) {
 	/* Vo/Ii in Y */
-	output_pos = pzan->PZout_pos;
-	output_neg = pzan->PZout_neg;
-    } else if (pzan->PZinput_type == PZ_IN_VOL) {
+	output_pos = job->PZout_pos;
+	output_neg = job->PZout_neg;
+    } else if (job->PZinput_type == PZ_IN_VOL) {
 	/* Vi/Ii in Y */
-	output_pos = pzan->PZin_pos;
-	output_neg = pzan->PZin_neg;
+	output_pos = job->PZin_pos;
+	output_neg = job->PZin_neg;
     } else {
 	/* Denominator */
 	output_pos = 0;
@@ -76,19 +77,19 @@ CKTpzSetup(CKTcircuit *ckt, int type)
     }
 
     if (input_pos)
-	pzan->PZdrive_pptr = SMPmakeElt(matrix, input_pos, solution_col);
+	job->PZdrive_pptr = SMPmakeElt(matrix, input_pos, solution_col);
     else
-	pzan->PZdrive_pptr = NULL;
+	job->PZdrive_pptr = NULL;
 
     if (input_neg)
-	pzan->PZdrive_nptr = SMPmakeElt(matrix, input_neg, solution_col);
+	job->PZdrive_nptr = SMPmakeElt(matrix, input_neg, solution_col);
     else
-	pzan->PZdrive_nptr = NULL;
+	job->PZdrive_nptr = NULL;
 
-    pzan->PZsolution_col = solution_col;
-    pzan->PZbalance_col = balance_col;
+    job->PZsolution_col = solution_col;
+    job->PZbalance_col = balance_col;
 
-    pzan->PZnumswaps = 1;
+    job->PZnumswaps = 1;
 
     error = NIreinit(ckt);
     if (error)

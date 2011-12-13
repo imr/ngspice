@@ -38,7 +38,7 @@ NOISEan (CKTcircuit *ckt, int restart)
     GENinstance *inst;  
     double freqTol; /* tolerence parameter for finding final frequency; hack */
 
-    NOISEAN *job = (NOISEAN*) (ckt->CKTcurJob);
+    NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
     static char *noacinput =    "noise input source has no AC value";
 
     posOutNode = (job->output) -> number;

@@ -34,7 +34,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                 
                 /* forced restart flag */
 {
-    TRCV* job = (TRCV*)ckt->CKTcurJob; /* Where we get the job to do */
+    TRCV *job = (TRCV *) ckt->CKTcurJob;
+
     int i;
     double *temp;
     int converged;

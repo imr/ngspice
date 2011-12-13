@@ -15,70 +15,70 @@ Author: 1985 Thomas L. Quarles
 int 
 DCTsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    TRCV* cv= (TRCV*)anal;
+    TRCV *job = (TRCV *) anal;
 
     NG_IGNORE(ckt);
 
     switch(which) {
 
     case DCT_START1:
-        cv->TRCVvStart[0] = value->rValue;
-        cv->TRCVnestLevel = MAX(0,cv->TRCVnestLevel);
-        cv->TRCVset[0]=TRUE;
+        job->TRCVvStart[0] = value->rValue;
+        job->TRCVnestLevel = MAX(0, job->TRCVnestLevel);
+        job->TRCVset[0] = TRUE;
         break;
 
     case DCT_STOP1:
-        cv->TRCVvStop[0] = value->rValue;
-        cv->TRCVnestLevel = MAX(0,cv->TRCVnestLevel);
-        cv->TRCVset[0]=TRUE;
+        job->TRCVvStop[0] = value->rValue;
+        job->TRCVnestLevel = MAX(0, job->TRCVnestLevel);
+        job->TRCVset[0] = TRUE;
         break;
 
     case DCT_STEP1:
-        cv->TRCVvStep[0] = value->rValue;
-        cv->TRCVnestLevel = MAX(0,cv->TRCVnestLevel);
-        cv->TRCVset[0]=TRUE;
+        job->TRCVvStep[0] = value->rValue;
+        job->TRCVnestLevel = MAX(0, job->TRCVnestLevel);
+        job->TRCVset[0] = TRUE;
         break;
 
     case DCT_START2:
-        cv->TRCVvStart[1] = value->rValue;
-        cv->TRCVnestLevel = MAX(1,cv->TRCVnestLevel);
-        cv->TRCVset[1]=TRUE;
+        job->TRCVvStart[1] = value->rValue;
+        job->TRCVnestLevel = MAX(1, job->TRCVnestLevel);
+        job->TRCVset[1] = TRUE;
         break;
 
     case DCT_STOP2:
-        cv->TRCVvStop[1] = value->rValue;
-        cv->TRCVnestLevel = MAX(1,cv->TRCVnestLevel);
-        cv->TRCVset[1]=TRUE;
+        job->TRCVvStop[1] = value->rValue;
+        job->TRCVnestLevel = MAX(1, job->TRCVnestLevel);
+        job->TRCVset[1] = TRUE;
         break;
 
     case DCT_STEP2:
-        cv->TRCVvStep[1] = value->rValue;
-        cv->TRCVnestLevel = MAX(1,cv->TRCVnestLevel);
-        cv->TRCVset[1]=TRUE;
+        job->TRCVvStep[1] = value->rValue;
+        job->TRCVnestLevel = MAX(1, job->TRCVnestLevel);
+        job->TRCVset[1] = TRUE;
         break;
     
     case DCT_NAME1:
-        cv->TRCVvName[0] = value->uValue;
-        cv->TRCVnestLevel = MAX(0,cv->TRCVnestLevel);
-        cv->TRCVset[0]=TRUE;
+        job->TRCVvName[0] = value->uValue;
+        job->TRCVnestLevel = MAX(0, job->TRCVnestLevel);
+        job->TRCVset[0] = TRUE;
         break;
 
     case DCT_NAME2:
-        cv->TRCVvName[1] = value->uValue;
-        cv->TRCVnestLevel = MAX(1,cv->TRCVnestLevel);
-        cv->TRCVset[1]=TRUE;
+        job->TRCVvName[1] = value->uValue;
+        job->TRCVnestLevel = MAX(1, job->TRCVnestLevel);
+        job->TRCVset[1] = TRUE;
         break;
 
     case DCT_TYPE1:
-        cv->TRCVvType[0] = value->iValue;
-        cv->TRCVnestLevel = MAX(0,cv->TRCVnestLevel);
-        cv->TRCVset[0]=TRUE;
+        job->TRCVvType[0] = value->iValue;
+        job->TRCVnestLevel = MAX(0, job->TRCVnestLevel);
+        job->TRCVset[0] = TRUE;
         break;
 
     case DCT_TYPE2:
-        cv->TRCVvType[1] = value->iValue;
-        cv->TRCVnestLevel = MAX(1,cv->TRCVnestLevel);
-        cv->TRCVset[1]=TRUE;
+        job->TRCVvType[1] = value->iValue;
+        job->TRCVnestLevel = MAX(1, job->TRCVnestLevel);
+        job->TRCVset[1] = TRUE;
         break;
 
     default:

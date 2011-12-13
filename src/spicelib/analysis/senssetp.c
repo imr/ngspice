@@ -14,67 +14,67 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 int 
 SENSsetParam(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    SENS_AN	*sinfo = (SENS_AN *) anal;
+    SENS_AN *job = (SENS_AN *) anal;
 
     NG_IGNORE(ckt);
 
     switch(which) {
 
     case SENS_POS:
-        sinfo->output_pos = value->nValue;
-        sinfo->output_neg = NULL;
-        sinfo->output_volt = 1;
-        sinfo->step_type = SENS_DC;
+        job->output_pos = value->nValue;
+        job->output_neg = NULL;
+        job->output_volt = 1;
+        job->step_type = SENS_DC;
         break;
 
     case SENS_NEG:
-        sinfo->output_neg = value->nValue;
+        job->output_neg = value->nValue;
         break;
 
     case SENS_SRC:
-        sinfo->output_src = value->uValue;
-        sinfo->output_volt = 0;
-        sinfo->step_type = SENS_DC;
+        job->output_src = value->uValue;
+        job->output_volt = 0;
+        job->step_type = SENS_DC;
         break;
 
     case SENS_NAME:
-        sinfo->output_name = value->sValue;
+        job->output_name = value->sValue;
         break;
 
     case SENS_START:
-        sinfo->start_freq = value->rValue;
+        job->start_freq = value->rValue;
         break;
 
     case SENS_STOP:
-        sinfo->stop_freq = value->rValue;
+        job->stop_freq = value->rValue;
         break;
 
     case SENS_STEPS:
-        sinfo->n_freq_steps = value->iValue;
+        job->n_freq_steps = value->iValue;
         break;
 
     case SENS_DEC:
-	sinfo->step_type = SENS_DECADE;
+	job->step_type = SENS_DECADE;
         break;
 
     case SENS_OCT:
-	sinfo->step_type = SENS_OCTAVE;
+	job->step_type = SENS_OCTAVE;
         break;
 
     case SENS_LIN:
-	sinfo->step_type = SENS_LINEAR;
+	job->step_type = SENS_LINEAR;
 	break;
 
     case SENS_DC:
-	sinfo->step_type = SENS_DC;
+	job->step_type = SENS_DC;
 	break;
 
     case SENS_DEFTOL:
-	sinfo->deftol = value->rValue;
+	job->deftol = value->rValue;
 	break;
 
     case SENS_DEFPERTURB:
-	sinfo->defperturb = value->rValue;
+	job->defperturb = value->rValue;
 	break;
 
     default:

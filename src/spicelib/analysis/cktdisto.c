@@ -21,7 +21,8 @@ Author: 1988 Jaijeet S Roychowdhury
 int
 CKTdisto (CKTcircuit *ckt, int mode)
 {
-    DISTOAN* job = (DISTOAN*) (ckt->CKTcurJob);
+    DISTOAN *job = (DISTOAN *) ckt->CKTcurJob;
+
     int i;
     int error=0;
     int size;

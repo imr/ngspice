@@ -61,7 +61,8 @@ static double inc_freq(double freq, int type, double step_size);
 static int	error;
 int sens_sens(CKTcircuit *ckt, int restart)
 {
-	SENS_AN	*job = ((SENS_AN *) ckt->CKTcurJob);
+	SENS_AN	*job = (SENS_AN *) ckt->CKTcurJob;
+
 	static int	size;
 	static double	*delta_I, *delta_iI,
 			*delta_I_delta_Y, *delta_iI_delta_Y;
