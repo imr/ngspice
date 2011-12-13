@@ -12,37 +12,39 @@ Author: 2010-05 Stefano Perticaroli ``spertica''
 int
 PSSaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    #define job ((PSSan *) anal)
+
     NG_IGNORE(ckt);
 
     switch(which) {
 
     case GUESSED_FREQ:
-        value->rValue = ((PSSan *)anal)->PSSguessedFreq;
+        value->rValue = job->PSSguessedFreq;
         break;
     case OSC_NODE:
-        value->nValue = ((PSSan *)anal)->PSSoscNode;
+        value->nValue = job->PSSoscNode;
         break;
     case STAB_TIME:
-        value->rValue = ((PSSan *)anal)->PSSstabTime;
+        value->rValue = job->PSSstabTime;
         break;
     case PSS_UIC:
-        if(((PSSan *)anal)->PSSmode & MODEUIC) {
+        if (job->PSSmode & MODEUIC) {
             value->iValue = 1;
         } else {
             value->iValue = 0;
         }
         break;
     case PSS_POINTS:
-        value->iValue = ((PSSan *)anal)->PSSpoints;
+        value->iValue = job->PSSpoints;
         break;
     case PSS_HARMS:
-        value->iValue = ((PSSan *)anal)->PSSharms;
+        value->iValue = job->PSSharms;
         break;
     case SC_ITER:
-        value->iValue = ((PSSan *)anal)->sc_iter;
+        value->iValue = job->sc_iter;
         break;
     case STEADY_COEFF:
-        value->rValue = ((PSSan *)anal)->steady_coeff;
+        value->rValue = job->steady_coeff;
         break;
 
     default:

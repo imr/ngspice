@@ -14,35 +14,37 @@ Author: 2010-05 Stefano Perticaroli ``spertica''
 int
 PSSsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    #define job ((PSSan *) anal)
+
     NG_IGNORE(ckt);
 
     switch(which) {
 
     case GUESSED_FREQ:
-        ((PSSan *)anal)->PSSguessedFreq = value->rValue;
+        job->PSSguessedFreq = value->rValue;
         break;
     case OSC_NODE:
-        ((PSSan *)anal)->PSSoscNode = value->nValue;
+        job->PSSoscNode = value->nValue;
         break;
     case STAB_TIME:
-        ((PSSan *)anal)->PSSstabTime = value->rValue;
+        job->PSSstabTime = value->rValue;
         break;
     case PSS_POINTS:
-        ((PSSan *)anal)->PSSpoints = value->iValue;
+        job->PSSpoints = value->iValue;
         break;
     case PSS_HARMS:
-        ((PSSan *)anal)->PSSharms = value->iValue;
+        job->PSSharms = value->iValue;
         break;
     case PSS_UIC:
         if(value->iValue) {
-            ((PSSan *)anal)->PSSmode |= MODEUIC;
+            job->PSSmode |= MODEUIC;
         }
         break;
     case SC_ITER:
-        ((PSSan *)anal)->sc_iter = value->iValue;
+        job->sc_iter = value->iValue;
         break;
     case STEADY_COEFF:
-        ((PSSan *)anal)->steady_coeff = value->rValue;
+        job->steady_coeff = value->rValue;
         break;
 
     default:

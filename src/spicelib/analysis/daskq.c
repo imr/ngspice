@@ -14,24 +14,26 @@ Author: 1988 Jaijeet S Roychowdhury
 int 
 DaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    #define job ((DISTOAN *) anal)
+
     NG_IGNORE(ckt);
 
     switch(which) {
 
     case D_START:
-        value->rValue = ((DISTOAN*)anal)->DstartF1;
+        value->rValue = job->DstartF1;
         break;
 
     case D_STOP:
-        value->rValue = ((DISTOAN*)anal)->DstopF1 ;
+        value->rValue = job->DstopF1 ;
         break;
 
     case D_STEPS:
-        value->iValue = ((DISTOAN*)anal)->DnumSteps;
+        value->iValue = job->DnumSteps;
         break;
 
     case D_DEC:
-        if(((DISTOAN*)anal)->DstepType == DECADE) {
+        if (job->DstepType == DECADE) {
             value->iValue=1;
         } else {
             value->iValue=0;
@@ -39,7 +41,7 @@ DaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case D_OCT:
-        if(((DISTOAN*)anal)->DstepType == OCTAVE) {
+        if (job->DstepType == OCTAVE) {
             value->iValue=1;
         } else {
             value->iValue=0;
@@ -47,7 +49,7 @@ DaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case D_LIN:
-        if(((DISTOAN*)anal)->DstepType == LINEAR) {
+        if (job->DstepType == LINEAR) {
             value->iValue=1;
         } else {
             value->iValue=0;
@@ -55,7 +57,7 @@ DaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case D_F2OVRF1:
-	value->rValue = ((DISTOAN*)anal)->Df2ovrF1;
+	value->rValue = job->Df2ovrF1;
 	break;
     default:
         return(E_BADPARM);

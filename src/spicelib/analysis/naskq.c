@@ -13,24 +13,26 @@ Author: 1987 Gary W. Ng
 int 
 NaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    #define job ((NOISEAN *) anal)
+
     NG_IGNORE(ckt);
 
     switch(which) {
 
     case N_OUTPUT:
-        value->nValue = ((NOISEAN*)anal)->output;
+        value->nValue = job->output;
         break;
 
     case N_OUTREF:
-        value->nValue = ((NOISEAN*)anal)->outputRef;
+        value->nValue = job->outputRef;
         break;
 
     case N_INPUT:
-        value->uValue = ((NOISEAN*)anal)->input;
+        value->uValue = job->input;
         break;
 
     case N_DEC:
-        if(((NOISEAN*)anal)->NstpType == DECADE) {
+        if (job->NstpType == DECADE) {
             value->iValue=1;
         } else {
             value->iValue=0;
@@ -38,7 +40,7 @@ NaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case N_OCT:
-        if(((NOISEAN*)anal)->NstpType == OCTAVE) {
+        if (job->NstpType == OCTAVE) {
             value->iValue=1;
         } else {
             value->iValue=0;
@@ -46,7 +48,7 @@ NaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case N_LIN:
-        if(((NOISEAN*)anal)->NstpType == LINEAR) {
+        if (job->NstpType == LINEAR) {
             value->iValue=1;
         } else {
             value->iValue=0;
@@ -54,19 +56,19 @@ NaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case N_STEPS:
-        value->iValue = ((NOISEAN*)anal)->NnumSteps;
+        value->iValue = job->NnumSteps;
         break;
 
     case N_START:
-        value->rValue = ((NOISEAN*)anal)->NstartFreq;
+        value->rValue = job->NstartFreq;
         break;
 
     case N_STOP:
-        value->rValue = ((NOISEAN*)anal)->NstopFreq;
+        value->rValue = job->NstopFreq;
         break;
 
     case N_PTSPERSUM:
-        value->iValue = ((NOISEAN*)anal)->NStpsSm;
+        value->iValue = job->NStpsSm;
 	break;
 
     default:

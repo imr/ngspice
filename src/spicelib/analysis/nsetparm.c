@@ -14,60 +14,62 @@ Author: 1987 Gary W. Ng
 int 
 NsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    #define job ((NOISEAN *) anal)
+
     NG_IGNORE(ckt);
 
     switch(which) {
 
     case N_OUTPUT:
-	((NOISEAN*)anal)->output = value->nValue;
+	job->output = value->nValue;
 	break;
 
     case N_OUTREF:
-	((NOISEAN*)anal)->outputRef = value->nValue;
+	job->outputRef = value->nValue;
 	break;
 
     case N_INPUT:
-	((NOISEAN*)anal)->input = value->uValue;
+	job->input = value->uValue;
 	break;
 
     case N_DEC:
-        ((NOISEAN*)anal)->NstpType = DECADE;
+        job->NstpType = DECADE;
         break;
 
     case N_OCT:
-        ((NOISEAN*)anal)->NstpType = OCTAVE;
+        job->NstpType = OCTAVE;
         break;
 
     case N_LIN:
-        ((NOISEAN*)anal)->NstpType = LINEAR;
+        job->NstpType = LINEAR;
         break;
 
     case N_STEPS:
-        ((NOISEAN*)anal)->NnumSteps = value->iValue;
+        job->NnumSteps = value->iValue;
         break;
 
     case N_START:
 	if (value->rValue <= 0.0) {
 	    errMsg = copy("Frequency of 0 is invalid");
-            ((NOISEAN*)anal)->NstartFreq = 1.0;
+            job->NstartFreq = 1.0;
 	    return(E_PARMVAL);
 	}
 
-        ((NOISEAN*)anal)->NstartFreq = value->rValue;
+        job->NstartFreq = value->rValue;
         break;
 
     case N_STOP:
 	if (value->rValue <= 0.0) {
 	    errMsg = copy("Frequency of 0 is invalid");
-            ((NOISEAN*)anal)->NstartFreq = 1.0;
+            job->NstartFreq = 1.0;
 	    return(E_PARMVAL);
 	}
 
-        ((NOISEAN*)anal)->NstopFreq = value->rValue;
+        job->NstopFreq = value->rValue;
         break;
 
     case N_PTSPERSUM:
-        ((NOISEAN*)anal)->NStpsSm = value->iValue;
+        job->NStpsSm = value->iValue;
         break;
 
     default:

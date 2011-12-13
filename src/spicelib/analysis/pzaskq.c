@@ -15,26 +15,28 @@ Author: 1985 Thomas L. Quarles
 int 
 PZaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    #define job ((PZAN *) anal)
+
     switch(which) {
 
     case PZ_NODEI:
-        value->nValue = CKTnum2nod(ckt, ((PZAN*)anal)->PZin_pos);
+        value->nValue = CKTnum2nod(ckt, job->PZin_pos);
         break;
 
     case PZ_NODEG:
-        value->nValue = CKTnum2nod(ckt, ((PZAN*)anal)->PZin_neg);
+        value->nValue = CKTnum2nod(ckt, job->PZin_neg);
         break;
 
     case PZ_NODEJ:
-        value->nValue = CKTnum2nod(ckt, ((PZAN*)anal)->PZout_pos);
+        value->nValue = CKTnum2nod(ckt, job->PZout_pos);
         break;
 
     case PZ_NODEK:
-        value->nValue = CKTnum2nod(ckt, ((PZAN*)anal)->PZout_neg);
+        value->nValue = CKTnum2nod(ckt, job->PZout_neg);
         break;
 
     case PZ_V:
-        if( ((PZAN*)anal)->PZinput_type == PZ_IN_VOL) {
+        if (job->PZinput_type == PZ_IN_VOL) {
             value->iValue=1;
         } else {
             value->iValue=0;
@@ -42,7 +44,7 @@ PZaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case PZ_I:
-        if( ((PZAN*)anal)->PZinput_type == PZ_IN_CUR) {
+        if (job->PZinput_type == PZ_IN_CUR) {
             value->iValue=1;
         } else {
             value->iValue=0;
@@ -50,7 +52,7 @@ PZaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case PZ_POL:
-        if( ((PZAN*)anal)->PZwhich == PZ_DO_POLES) {
+        if (job->PZwhich == PZ_DO_POLES) {
             value->iValue=1;
         } else {
             value->iValue=0;
@@ -58,7 +60,7 @@ PZaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case PZ_ZER:
-        if( ((PZAN*)anal)->PZwhich == PZ_DO_ZEROS) {
+        if (job->PZwhich == PZ_DO_ZEROS) {
             value->iValue=1;
         } else {
             value->iValue=0;
@@ -66,7 +68,7 @@ PZaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case PZ_PZ:
-        if( ((PZAN*)anal)->PZwhich == (PZ_DO_POLES | PZ_DO_ZEROS)) {
+        if (job->PZwhich == (PZ_DO_POLES | PZ_DO_ZEROS)) {
             value->iValue=1;
         } else {
             value->iValue=0;

@@ -15,30 +15,32 @@ Author: 1985 Thomas L. Quarles
 int 
 TFsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    #define job ((TFan *) anal)
+
     NG_IGNORE(ckt);
 
     switch(which) {
 
     case TF_OUTPOS:
-        ((TFan *)anal)->TFoutPos = value->nValue;
-        ((TFan *)anal)->TFoutIsV = TRUE;
-        ((TFan *)anal)->TFoutIsI = FALSE;
+        job->TFoutPos = value->nValue;
+        job->TFoutIsV = TRUE;
+        job->TFoutIsI = FALSE;
         break;
     case TF_OUTNEG:
-        ((TFan *)anal)->TFoutNeg = value->nValue;
-        ((TFan *)anal)->TFoutIsV = TRUE;
-        ((TFan *)anal)->TFoutIsI = FALSE;
+        job->TFoutNeg = value->nValue;
+        job->TFoutIsV = TRUE;
+        job->TFoutIsI = FALSE;
         break;
     case TF_OUTNAME:
-        ((TFan *)anal)->TFoutName = value->sValue;
+        job->TFoutName = value->sValue;
         break;
     case TF_OUTSRC:
-        ((TFan *)anal)->TFoutSrc = value->uValue;
-        ((TFan *)anal)->TFoutIsV = FALSE;
-        ((TFan *)anal)->TFoutIsI = TRUE;
+        job->TFoutSrc = value->uValue;
+        job->TFoutIsV = FALSE;
+        job->TFoutIsI = TRUE;
         break;
     case TF_INSRC:
-        ((TFan *)anal)->TFinSrc = value->uValue;
+        job->TFinSrc = value->uValue;
         break;
 
     default:

@@ -1,4 +1,22 @@
 2011-12-13  Robert Larice
+ * src/spicelib/analysis/acaskq.c ,
+ * src/spicelib/analysis/acsetp.c ,
+ * src/spicelib/analysis/daskq.c ,
+ * src/spicelib/analysis/dsetparm.c ,
+ * src/spicelib/analysis/naskq.c ,
+ * src/spicelib/analysis/nsetparm.c ,
+ * src/spicelib/analysis/pssaskq.c ,
+ * src/spicelib/analysis/pssinit.c ,
+ * src/spicelib/analysis/psssetp.c ,
+ * src/spicelib/analysis/pzaskq.c ,
+ * src/spicelib/analysis/pzsetp.c ,
+ * src/spicelib/analysis/tfsetp.c ,
+ * src/spicelib/analysis/tranaskq.c ,
+ * src/spicelib/analysis/traninit.c ,
+ * src/spicelib/analysis/transetp.c :
+  auxiliary define (ANALYSIS*) anal  -->  `job'
+
+2011-12-13  Robert Larice
  * autogen.sh ,
  * src/spicelib/devices/adms/admst/ngspice.xml :
   switch --adms3 over to the new adms3va directories

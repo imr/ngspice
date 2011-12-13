@@ -15,6 +15,8 @@ Author: 1988 Jaijeet S Roychowdhury
 int 
 DsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    #define job ((DISTOAN *) anal)
+
     NG_IGNORE(ckt);
 
     switch(which) {
@@ -22,42 +24,42 @@ DsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
     case D_START:
 	if (value->rValue <= 0.0) {
 	    errMsg = copy("Frequency of 0 is invalid");
-            ((DISTOAN*)anal)->DstartF1 = 1.0;
+            job->DstartF1 = 1.0;
 	    return(E_PARMVAL);
 	}
 
-        ((DISTOAN*)anal)->DstartF1 = value->rValue;
+        job->DstartF1 = value->rValue;
         break;
 
     case D_STOP:
 	if (value->rValue <= 0.0) {
 	    errMsg = copy("Frequency of 0 is invalid");
-            ((DISTOAN*)anal)->DstartF1 = 1.0;
+            job->DstartF1 = 1.0;
 	    return(E_PARMVAL);
 	}
 
-        ((DISTOAN*)anal)->DstopF1 = value->rValue;
+        job->DstopF1 = value->rValue;
         break;
 
     case D_STEPS:
-        ((DISTOAN*)anal)->DnumSteps = value->iValue;
+        job->DnumSteps = value->iValue;
         break;
 
     case D_DEC:
-        ((DISTOAN*)anal)->DstepType = DECADE;
+        job->DstepType = DECADE;
         break;
 
     case D_OCT:
-        ((DISTOAN*)anal)->DstepType = OCTAVE;
+        job->DstepType = OCTAVE;
         break;
 
     case D_LIN:
-        ((DISTOAN*)anal)->DstepType = LINEAR;
+        job->DstepType = LINEAR;
         break;
 
     case D_F2OVRF1:
-        ((DISTOAN*)anal)->Df2ovrF1 = value->rValue;
-	((DISTOAN*)anal)->Df2wanted = 1;
+        job->Df2ovrF1 = value->rValue;
+        job->Df2wanted = 1;
         break;
 
     default:

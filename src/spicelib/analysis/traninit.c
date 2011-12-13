@@ -13,12 +13,14 @@ Modified: 2000 AlansFixes
  * (must be done after mode is set as below)
  */
 
-int TRANinit(CKTcircuit	*ckt, JOB *job)
+int TRANinit(CKTcircuit	*ckt, JOB *anal)
 {
-    ckt->CKTfinalTime = ((TRANan*)job)->TRANfinalTime;
-    ckt->CKTstep = ((TRANan*)job)->TRANstep;
-    ckt->CKTinitTime = ((TRANan*)job)->TRANinitTime;
-    ckt->CKTmaxStep = ((TRANan*)job)->TRANmaxStep;
+    #define job ((TRANan *) anal)
+
+    ckt->CKTfinalTime = job->TRANfinalTime;
+    ckt->CKTstep      = job->TRANstep;
+    ckt->CKTinitTime  = job->TRANinitTime;
+    ckt->CKTmaxStep   = job->TRANmaxStep;
    
    
     
@@ -39,7 +41,7 @@ int TRANinit(CKTcircuit	*ckt, JOB *job)
    
     
     ckt->CKTdelmin = 1e-11*ckt->CKTmaxStep;	/* XXX */
-    ckt->CKTmode = ((TRANan*)job)->TRANmode;
+    ckt->CKTmode = job->TRANmode;
 
     return OK;
 }
