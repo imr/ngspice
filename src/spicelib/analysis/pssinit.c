@@ -10,7 +10,7 @@ Author: 2010-05 Stefano Perticaroli ``spertica''
 
 int PSSinit(CKTcircuit *ckt, JOB *anal)
 {
-    #define job ((PSSan *) anal)
+    PSSan *job = (PSSan *) anal;
 
     /* Final time depends on stabilization time requested for PSS
 	and on at least one more oscillation period */

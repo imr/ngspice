@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
 int 
 PZaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    #define job ((PZAN *) anal)
+    PZAN *job = (PZAN *) anal;
 
     switch(which) {
 

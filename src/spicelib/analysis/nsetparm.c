@@ -14,7 +14,7 @@ Author: 1987 Gary W. Ng
 int 
 NsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    #define job ((NOISEAN *) anal)
+    NOISEAN *job = (NOISEAN *) anal;
 
     NG_IGNORE(ckt);
 

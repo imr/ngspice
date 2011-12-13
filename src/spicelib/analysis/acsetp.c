@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
 int 
 ACsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    #define job ((ACAN *) anal)
+    ACAN *job = (ACAN *) anal;
 
     NG_IGNORE(ckt);
 

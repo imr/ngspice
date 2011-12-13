@@ -16,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 int 
 PZsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    #define job ((PZAN *) anal)
+    PZAN *job = (PZAN *) anal;
 
     NG_IGNORE(ckt);
 

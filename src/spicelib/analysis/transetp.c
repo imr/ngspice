@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
 int 
 TRANsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    #define job ((TRANan *) anal)
+    TRANan *job = (TRANan *) anal;
 
     NG_IGNORE(ckt);
 

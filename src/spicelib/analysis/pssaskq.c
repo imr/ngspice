@@ -12,7 +12,7 @@ Author: 2010-05 Stefano Perticaroli ``spertica''
 int
 PSSaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    #define job ((PSSan *) anal)
+    PSSan *job = (PSSan *) anal;
 
     NG_IGNORE(ckt);
 

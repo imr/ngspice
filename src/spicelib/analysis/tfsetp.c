@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
 int 
 TFsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    #define job ((TFan *) anal)
+    TFan *job = (TFan *) anal;
 
     NG_IGNORE(ckt);
 

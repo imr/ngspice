@@ -14,7 +14,7 @@ Author: 1988 Jaijeet S Roychowdhury
 int 
 DaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
-    #define job ((DISTOAN *) anal)
+    DISTOAN *job = (DISTOAN *) anal;
 
     NG_IGNORE(ckt);
 

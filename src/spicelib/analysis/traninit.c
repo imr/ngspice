@@ -15,7 +15,7 @@ Modified: 2000 AlansFixes
 
 int TRANinit(CKTcircuit	*ckt, JOB *anal)
 {
-    #define job ((TRANan *) anal)
+    TRANan *job = (TRANan *) anal;
 
     ckt->CKTfinalTime = job->TRANfinalTime;
     ckt->CKTstep      = job->TRANstep;
