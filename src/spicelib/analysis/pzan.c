@@ -148,7 +148,7 @@ PZpost(CKTcircuit *ckt)
 		name, UID_OTHER, NULL);
     }
 
-    SPfrontEnd->OUTpBeginPlot (ckt, (JOB *)job, job->JOBname,
+    SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
 	    NULL, 0, job->PZnPoles + job->PZnZeros, namelist,
 	    IF_COMPLEX, &pzPlotPtr);
 

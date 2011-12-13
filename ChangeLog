@@ -1,4 +1,8 @@
 2011-12-13  Robert Larice
+ * src/spicelib/analysis/pzan.c :
+  unify OUTpBeginPlot() usage of ckt->CKTcurJob
+
+2011-12-13  Robert Larice
  * src/spicelib/analysis/cktdisto.c ,
  * src/spicelib/analysis/cktpzld.c ,
  * src/spicelib/analysis/cktpzset.c ,
