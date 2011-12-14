@@ -10,10 +10,80 @@ Author: 1988 Thomas L. Quarles
 #include "ngspice/inpmacs.h"
 #include "ngspice/fteext.h"
 #include "inp.h"
+#ifdef ADMS
+#include "error.h" /* controlled_exit() */
+#endif
 
 void INP2U(CKTcircuit *ckt, INPtables * tab, card * current)
 {
+#ifdef ADMS
 
+    /* Uname <node> <node> ... <model> [param1=<val1>] [param1=<val2>] ... */
+
+    char *line;                 /* the part of the current line left to parse */
+    char *iname;                 /* the instance's name */
+    char *name;                 /* the resistor's name */
+    int nsize;                /* number of nodes */
+    int i;
+    CKTnode **node;             /* the first node's node pointer */
+    int error;                  /* error code temporary */
+    GENinstance *fast;          /* pointer to the actual instance */
+    int waslead;                /* flag to indicate that funny unlabeled number was found */
+    double leadval;             /* actual value of unlabeled number */
+
+#ifdef TRACE
+    printf("INP2U: Parsing '%s'\n", current->line);
+#endif
+
+    nsize = 0;
+    node=NULL;
+    line = current->line;
+
+    INPgetTok(&line, &iname, 1);
+    INPinsert(&iname, tab);
+
+    INPgetNetTok(&line, &name, 1);
+    while(!INPlookMod(name) && (*line != '\0'))
+    {
+#ifdef TRACE
+      printf("INP2U: found node %s\n",name);
+#endif
+      nsize++;
+      node=TREALLOC(CKTnode*,node,nsize);
+      INPtermInsert(ckt, &name, tab, &node[nsize-1]);
+      INPgetNetTok(&line, &name, 1);
+    }
+
+    if (INPlookMod(name)) {
+        INPmodel *thismodel;        /* pointer to model description for user's model */
+        thismodel = NULL;
+        INPinsert(&name, tab);
+#ifdef TRACE
+        printf("INP2U: found dynamic model %s\n",name);
+#endif
+        current->error = INPgetMod(ckt, name, &thismodel, tab);
+        if (thismodel == NULL) {
+      	   fprintf(stderr, "%s\nPlease check model, level or number of terminals!\n", current->error);
+      	   controlled_exit(EXIT_BAD);
+        }
+        else
+        {
+          IFC(newInstance, (ckt, thismodel->INPmodfast, &fast, iname));
+          for(i=0;i<nsize;i++)
+          {
+            IFC(bindNode, (ckt, fast, i+1, node[i]));
+          }
+          PARSECALL((&line, ckt, thismodel->INPmodType, fast, &leadval, &waslead, tab));
+#ifdef TRACE
+          printf("INP2U: Looking up model done\n");
+#endif
+        }
+    } else {
+      	   fprintf(stderr, "Unable to find definition of model %s\n", name);
+      	   controlled_exit(EXIT_BAD);
+    }
+
+#else
     /* Uname <node> <node> <model> [l=<val>] [n=<val>] */
 
     int mytype;			/* the type my lookup says URC is */
@@ -74,4 +144,5 @@ void INP2U(CKTcircuit *ckt, INPtables * tab, card * current)
     IFC(bindNode, (ckt, fast, 2, node2));
     IFC(bindNode, (ckt, fast, 3, node3));
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+#endif
 }
