@@ -3248,8 +3248,8 @@ MAINTAINERCLEANFILES = Makefile.in
 	%acld.c %ask.c %itf.h %del.c %dest.c \\
 	%init.c %load.c %mask.c %mdel.c %mpar.c %par.c \\
         %pzld.c %setup.c %temp.c %trunc.c \\
-: \$(srcdir)/adms3va/%.va \$(ADMSXMLINTERFACE)/premint.xml \$(ADMSXMLINTERFACE)/ngspice.xml
-	admsXml -I\$(srcdir) -I\$(srcdir)/adms3va -f \$&lt; -e \$(ADMSXMLINTERFACE)/premint.xml
+: \$(srcdir)/adms3va/%.va \$(ADMSXMLINTERFACE)/prengspice.xml \$(ADMSXMLINTERFACE)/ngspice.xml
+	admsXml -I\$(srcdir) -I\$(srcdir)/adms3va -f \$&lt; -e \$(ADMSXMLINTERFACE)/prengspice.xml
 	admsXml -I\$(srcdir) -f mna.va -e \$(ADMSXMLINTERFACE)/ngspice.xml
 
 </admst:template>
