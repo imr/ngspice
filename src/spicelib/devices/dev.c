@@ -142,7 +142,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #endif
 
 /*saj in xspice the DEVices size can be varied so DEVNUM is an int*/
-#ifdef XSPICE
+#if defined XSPICE || defined ADMS 
    static int DEVNUM = 63;
 #else
    #define DEVNUM 63
@@ -165,6 +165,70 @@ int DEVflag(int type){
 }
 #endif
 
+#ifdef ADMS 
+#include "ngspice/fteext.h"  /* for ft_sim */
+#include "ngspice/cktdefs.h" /* for DEVmaxnum */
+#include <ltdl.h>
+static void varelink(CKTcircuit *ckt) {
+
+/*
+ * This replacement done by SDB on 6.11.2003
+ *
+ * ft_sim->numDevices = num_devices();
+ * DEVmaxnum = num_devices();
+ */
+  ft_sim->numDevices = DEVNUM;
+  DEVmaxnum = DEVNUM;
+
+  ckt->CKThead = TREALLOC(GENmodel *, ckt->CKThead, DEVmaxnum);
+  ckt->CKThead[DEVmaxnum-1] = NULL;
+
+
+  ft_sim->devices = devices_ptr();
+  return;
+}
+int load_vadev(CKTcircuit *ckt, char *name)
+{
+  char libname[50];
+  void *lib;
+  SPICEdev *device;
+
+  int l=(int)strlen("lib")+(int)strlen(name)+(int)strlen(".so");
+
+  strcpy(libname, "lib");
+  strcat(libname,name);
+  strcat(libname,".so");
+  libname[l+1]='\0';
+
+  lt_dlinit ();
+  lt_dlsetsearchpath (".");
+
+  lib = lt_dlopen(libname);
+
+  if(!lib){
+    perror (lt_dlerror ());
+    return -1;
+  }
+  
+  strcpy(libname, "get_");
+  strcat(libname,name);
+  strcat(libname,"_info");
+  device = ((SPICEdev * (*)(void)) lt_dlsym(lib,libname)) ();
+
+  if(!device){
+    perror (lt_dlerror ());
+    return -1;
+  }
+  device->DEVunsetup = ((int (*)(GENmodel *, CKTcircuit *)) &CKTmkVolt);
+  device->DEVfindBranch = ((int (*)(CKTcircuit *, GENmodel *, IFuid)) &SMPmakeElt);
+
+  DEVices = TREALLOC(SPICEdev *, DEVices, DEVNUM + 1);
+  printf("Added device: %s\n",device->DEVpublic.name);
+  DEVices[DEVNUM++] = device;
+  varelink(ckt);
+  return DEVNUM-1;
+}
+#endif
 
 void
 spice_init_devices(void)
@@ -265,6 +329,8 @@ spice_init_devices(void)
 #endif
    DEVices[60] = NULL;
    DEVices[61] = NULL;
+
+
    return;
 }
 
@@ -315,7 +381,7 @@ int load_dev(char *name) {
     printf("%s\n", msg);
     return 1;
   }
-  
+
   strcpy(libname, "get_");
   strcat(libname,name);
   strcat(libname,"_info");
