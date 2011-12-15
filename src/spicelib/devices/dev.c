@@ -223,7 +223,7 @@ int load_vadev(CKTcircuit *ckt, char *name)
   device->mkj = ((int (*)(CKTcircuit *, GENmodel *, IFuid)) &SMPmakeElt);
 
   DEVices = TREALLOC(SPICEdev *, DEVices, DEVNUM + 1);
-  printf("Added device: %s from dynamic library %s\n",((SPICEdev *)device)->DEVpublic.name,libname);
+  printf("Added device: %s from dynamic library %s\n",((SPICEdev *)device)->DEVpublic.name,lib);
   DEVices[DEVNUM++] = (SPICEdev *)device;
   varelink(ckt);
   return DEVNUM-1;
@@ -309,11 +309,11 @@ spice_init_devices(void)
 #endif
           
 #ifdef ADMS
-    DEVices[54] = get_hicum0_info();
-    DEVices[55] = get_hicum2_info();
-    DEVices[56] = get_bjt504t_info();
-    DEVices[57] = get_ekv_info();
-    DEVices[58] = get_psp102_info();
+    DEVices[54] = (SPICEdev*)get_hicum0_info();
+    DEVices[55] = (SPICEdev*)get_hicum2_info();
+    DEVices[56] = (SPICEdev*)get_bjt504t_info();
+    DEVices[57] = (SPICEdev*)get_ekv_info();
+    DEVices[58] = (SPICEdev*)get_psp102_info();
 #else
     DEVices[54] = NULL;
     DEVices[55] = NULL;
