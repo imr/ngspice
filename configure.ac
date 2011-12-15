@@ -140,6 +140,10 @@ dnl --enable-adms: define ADMS in the code. This is for the adms Verilog-A compi
 AC_ARG_ENABLE(adms,
     AS_HELP_STRING([--enable-adms],[Enable ADMS code models, (experimental) ]))
 
+dnl --enable-adms3: define ADMS in the code. This is for the adms Verilog-A compiler support
+AC_ARG_ENABLE(adms3,
+    AS_HELP_STRING([--enable-adms3],[Enable ADMS code models, (experimental) (adms3) ]))
+
 dnl --enable-ndev: define NDEV in the code. An interface for external device i.e. numerical device
 AC_ARG_ENABLE(ndev,
     AS_HELP_STRING([--enable-ndev],[Enable NDEV interface, (experimental) ]))
@@ -867,7 +871,7 @@ AM_CONDITIONAL([NUMDEV_WANTED], [test "$enable_cider" = "yes"])
 
 
 dnl adms option
-if test "$enable_adms" = "yes"; then
+if test "$enable_adms" = "yes" -o "$enable_adms3" = "yes" ; then
    AC_MSG_RESULT(**********************************
 * ADMS  support is  experimental *
 **********************************)
@@ -876,7 +880,11 @@ if test "$enable_adms" = "yes"; then
    if test "$ADMSXML" = "no"; then
       AC_MSG_ERROR(If you want Verilog-A models you should install admsXml)
    fi
-   AC_DEFINE(ADMS,[1],[Support for Verilog-A models])
+   if test "$enable_adms3" = "yes" ; then
+      AC_DEFINE(ADMS,[3],[Support for Verilog-A models (adms3)])
+   else
+      AC_DEFINE(ADMS,[1],[Support for Verilog-A models])
+   fi
 
    VLADEVDIR=" adms/ekv \
                adms/hicum0 \

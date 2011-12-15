@@ -7,7 +7,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
 #include "inp.h"
-#ifdef ADMS
+#if ADMS >= 3
 #include "error.h" /* controlled_exit() */
 #endif
 
@@ -45,7 +45,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     INPinsert(&modname, tab);	   /* stick model name into table */
     INPgetTok(&line, &type_name, 1);     /* get model type */
     
-#ifdef ADMS
+#if ADMS >= 3
     if ((type=load_vadev(ckt,type_name)) && type>=0) {
                           INPmodel *thismodel;
                           char *error;

@@ -1881,8 +1881,8 @@ devmodtranslate(struct line *deck, char *subname)
             tfree(s->li_line);
             s->li_line = buffer;
             break;
-        case 'u': /* urc transmissionline */
-#ifdef ADMS
+#if ADMS >= 3
+        case 'u': /* urc transmissionline */ /* hijacked for adms */
             name = gettok_node(&t);  /* this can be either a model name or a node name. */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                 if (eq(name, wlsub->wl_word)) { /* a three terminal bjt */
@@ -1911,6 +1911,8 @@ devmodtranslate(struct line *deck, char *subname)
             tfree(s->li_line);
             s->li_line = buffer;
             break;
+#else
+        case 'u': /* urc transmissionline */
 #endif
         /* 3 terminal devices */
         case 'w': /* current controlled switch */

@@ -1,3 +1,39 @@
+2011-12-15  Robert Larice
+ * configure.ac ,
+ * src/frontend/inpcom.c ,
+ * src/frontend/subckt.c ,
+ * src/include/ngspice/devdefs.h ,
+ * src/include/ngspice/ngspice.h ,
+ * src/spicelib/devices/dev.c ,
+ * src/spicelib/parser/inp2u.c ,
+ * src/spicelib/parser/inpdomod.c :
+  new: configure --enable-adms3
+
+  make Laurents changes truely --adms3 specific
+  trying to preserve --adms
+
+2011-12-15  Laurent Lemaitre
+ * src/frontend/inpcom.c ,
+ * src/frontend/subckt.c ,
+ * src/include/ngspice/devdefs.h ,
+ * src/spicelib/devices/adms/admst/ngspice.xml ,
+ * src/spicelib/devices/dev.c :
+  added SPICEadmsdev - a super structure of SPICEdev used to build dynamic device libraries
+
+2011-12-14  Laurent Lemaitre
+ * src/spicelib/parser/inp2u.c ,
+ * src/spicelib/parser/inpdomod.c ,
+ * src/spicelib/devices/dev.c ,
+ * src/include/ngspice/ngspice.h ,
+ * src/spicelib/devices/adms/admst/prengspice.xml ,
+ * src/spicelib/devices/adms/admst/ngspice.xml :
+  renamed premint.xml to prengspice.xml.
+  xml file that does preformating of verilog files.
+  add routine load_vadev to public definitions.
+  add routine load_vadev for dynamic loading of modules.
+  add dynamic loading of models. shared libs should be libNAME.so.
+  use u instance as dynamically defined models in --adms mode
+
 2011-12-13  Robert Larice
  * **/* :
   remove CVS `Id',`log' etc. keyword incantations

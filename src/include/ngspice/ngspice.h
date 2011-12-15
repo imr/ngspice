@@ -234,7 +234,7 @@ extern char *Inp_Path;
 extern int ARCHme;	/* My logical process number */
 extern int ARCHsize;	/* Total number of processes */
 
-#ifdef ADMS 
+#if ADMS >= 3
 int load_vadev(CKTcircuit *ckt, char *name);
 #endif
 

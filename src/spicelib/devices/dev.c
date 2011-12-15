@@ -142,7 +142,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #endif
 
 /*saj in xspice the DEVices size can be varied so DEVNUM is an int*/
-#if defined XSPICE || defined ADMS 
+#if defined XSPICE || ADMS >= 3
    static int DEVNUM = 63;
 #else
    #define DEVNUM 63
@@ -165,7 +165,7 @@ int DEVflag(int type){
 }
 #endif
 
-#ifdef ADMS 
+#if ADMS >= 3
 #include "ngspice/fteext.h"  /* for ft_sim */
 #include "ngspice/cktdefs.h" /* for DEVmaxnum */
 #include <ltdl.h>
