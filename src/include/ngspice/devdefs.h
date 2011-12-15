@@ -103,6 +103,15 @@ typedef struct SPICEdev {
 
 } SPICEdev;  /* instance of structure for each possible type of device */
 
+#ifdef ADMS
+typedef struct SPICEadmsdev {
+    SPICEdev spicedev;
+    int (*DEVunsetup)(GENmodel*,CKTcircuit*);
+    int (*mkn)(GENmodel *, CKTcircuit *);
+    int (*mkj)(CKTcircuit *, GENmodel *, IFuid);
+} SPICEadmsdev;
+#endif
+
 
 extern SPICEdev **DEVices;
 extern int        DEVmaxnum;    /* size of DEVices array */

@@ -191,7 +191,7 @@ int load_vadev(CKTcircuit *ckt, char *name)
 {
   char libname[50];
   void *lib;
-  SPICEdev *device;
+  SPICEadmsdev *device;
 
   int l=(int)strlen("lib")+(int)strlen(name)+(int)strlen(".so");
 
@@ -213,18 +213,18 @@ int load_vadev(CKTcircuit *ckt, char *name)
   strcpy(libname, "get_");
   strcat(libname,name);
   strcat(libname,"_info");
-  device = ((SPICEdev * (*)(void)) lt_dlsym(lib,libname)) ();
+  device = ((SPICEadmsdev * (*)(void)) lt_dlsym(lib,libname)) ();
 
   if(!device){
     perror (lt_dlerror ());
     return -1;
   }
-  device->DEVunsetup = ((int (*)(GENmodel *, CKTcircuit *)) &CKTmkVolt);
-  device->DEVfindBranch = ((int (*)(CKTcircuit *, GENmodel *, IFuid)) &SMPmakeElt);
+  device->mkn = ((int (*)(GENmodel *, CKTcircuit *)) &CKTmkVolt);
+  device->mkj = ((int (*)(CKTcircuit *, GENmodel *, IFuid)) &SMPmakeElt);
 
   DEVices = TREALLOC(SPICEdev *, DEVices, DEVNUM + 1);
-  printf("Added device: %s\n",device->DEVpublic.name);
-  DEVices[DEVNUM++] = device;
+  printf("Added device: %s from dynamic library %s\n",((SPICEdev *)device)->DEVpublic.name,libname);
+  DEVices[DEVNUM++] = (SPICEdev *)device;
   varelink(ckt);
   return DEVNUM-1;
 }

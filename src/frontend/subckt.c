@@ -1881,10 +1881,39 @@ devmodtranslate(struct line *deck, char *subname)
             tfree(s->li_line);
             s->li_line = buffer;
             break;
+        case 'u': /* urc transmissionline */
+#ifdef ADMS
+            name = gettok_node(&t);  /* this can be either a model name or a node name. */
+            for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
+                if (eq(name, wlsub->wl_word)) { /* a three terminal bjt */
+                    (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
+                            subname, name);
+                    found = TRUE;
+                    break;
+                }
+            }
+            while (!found) {
+            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            tfree(name);
+            name = gettok_node(&t);  /* this can be either a model name or a node name. */
+            for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
+                if (eq(name, wlsub->wl_word)) { /* a three terminal bjt */
+                    (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
+                            subname, name);
+                    found = TRUE;
+                    break;
+                }
+            }
+            }
+            found = FALSE;
 
+            (void) strcat(buffer, t);
+            tfree(s->li_line);
+            s->li_line = buffer;
+            break;
+#endif
         /* 3 terminal devices */
         case 'w': /* current controlled switch */
-        case 'u': /* urc transmissionline */
         case 'j': /* jfet */
         case 'z': /* hfet, mesa */
             name = gettok(&t);
@@ -2028,6 +2057,9 @@ devmodtranslate(struct line *deck, char *subname)
                 }
             }
 #endif
+
+
+
             if (!found) /* Fallback w/o subckt name before */
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
             tfree(name);

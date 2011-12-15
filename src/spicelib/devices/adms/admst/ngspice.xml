@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE admst PUBLIC "-//noovela//DTD_ADMST 2.3.0//FR" "admst.dtd">
 <!--
-  import file admst.dtd: wget http://www.noovela.com:8001/svn/adms/trunk/admst.dtd
-  validate: xmllint ngspice.xml -noout -postvalid -noblanks
---> 
+Tool 'ngspice.xml'
+Copyright © 2011 Noovela - Author Laurent Lemaitre 
+This code IS to be used for non-commercial usage ONLY.
+Note: publishing technical papers with the affiliation of a commercial company
+which results are produced by the tool are typical commercial usage of the tool. 
+Commercial usage are subject to special fees.
+Contact: r29173@noovela.com or www.noovela.com
+-->
 <admst xmlns:admst="http://mot-adms.sourceforge.net/adms/admst.xml" version="2.3.0">
 <admst:value-to select="/#simulator" string="ngspice"/>
   <admst:variable name="zddx"/>
@@ -3279,33 +3284,33 @@ MAINTAINERCLEANFILES = Makefile.in
 
 #include &quot;$(module)itf.h&quot;
 
-SPICEdev $(module)info = {
-  {   "$module",
-      "$module created by adms",
-      &amp;$(module)nSize,
-      &amp;$(module)nSize,
-      $(module)names,
-      &amp;$(module)pTSize,
-      $(module)pTable,
-      &amp;$(module)mPTSize,
-      $(module)mPTable,
-#ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
-#endif
-      DEV_DEFAULT
-  },
-
+SPICEadmsdev $(module)admsinfo = {
+  {
+    {   "$module",
+        "$module created by adms",
+        &amp;$(module)nSize,
+        &amp;$(module)nSize,
+        $(module)names,
+        &amp;$(module)pTSize,
+        $(module)pTable,
+        &amp;$(module)mPTSize,
+        $(module)mPTable,
+  #ifdef XSPICE
+  /*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
+          NULL,  /* This is a SPICE device, it has no MIF info data */
+  
+          0,     /* This is a SPICE device, it has no MIF info data */
+          NULL,  /* This is a SPICE device, it has no MIF info data */
+  
+          0,     /* This is a SPICE device, it has no MIF info data */
+          NULL,  /* This is a SPICE device, it has no MIF info data */
+  
+          0,     /* This is a SPICE device, it has no MIF info data */
+          NULL,  /* This is a SPICE device, it has no MIF info data */
+  /*---------------------------  End of SDB fix   -------------------------*/
+  #endif
+        DEV_DEFAULT
+    },
     $(module)par,    /* DEVparam       */
     $(module)mParam,   /* DEVmodParam    */
     $(module)load,     /* DEVload        */
@@ -3340,12 +3345,15 @@ SPICEdev $(module)info = {
     &amp;$(module)iSize,   /* DEVinstSize    */
     &amp;$(module)mSize    /* DEVmodSize     */
 
+  }, /*SPICEdev*/
+  NULL, /*mkn*/
+  NULL  /*mkj*/
 };
 
-SPICEdev *
+SPICEadmsdev *
 get_$(module)_info(void)
 {
-    return &amp;$(module)info;
+    return &amp;$(module)admsinfo;
 }
 
 </admst:template>
@@ -3370,7 +3378,7 @@ get_$(module)_info(void)
 #ifndef DEV_$(module)
 #define DEV_$(module)
 
-extern SPICEdev *get_$(module)_info(void);
+extern SPICEadmsdev *get_$(module)_info(void);
 
 #endif
 
@@ -4322,8 +4330,8 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
   register $(module)instance *here;
 typedef int FP1(CKTcircuit *ckt, CKTnode **node, IFuid basename, char *suffix);
 typedef double * FP2(SMPmatrix *Matrix, int Row, int Col);
-  FP1*myCKTmkVolt=(FP1*)get_$(module)_info()->DEVunsetup;
-  FP2*mySMPmakeElt=(FP2*)get_$(module)_info()->DEVfindBranch;
+  FP1*myCKTmkVolt=(FP1*)get_$(module)_info()->mkn;
+  FP2*mySMPmakeElt=(FP2*)get_$(module)_info()->mkj;
   
   /*  loop through all the $(module) device models */
   for ( ;model != NULL ;model = model-&gt;$(module)nextModel )
