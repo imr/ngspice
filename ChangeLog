@@ -1,3 +1,6 @@
+2011-12-16  Holger Vogt
+ * src/frontend/subckt.c: beautify code
+ 
 2011-12-15  Robert Larice
  * configure.ac ,
  * src/frontend/inpcom.c ,
