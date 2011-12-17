@@ -102,6 +102,7 @@ noinst_HEADERS =	\
 	smpdefs.h	\
 	sperror.h	\
 	spmatrix.h	\
+	stringutil.h	\
 	suffix.h	\
 	swec.h		\
 	tfdefs.h	\

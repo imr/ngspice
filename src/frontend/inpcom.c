@@ -21,7 +21,7 @@ Author: 1985 Wayne A. Christopher
 #include "inpcom.h"
 #include "variable.h"
 #include "../misc/util.h" /* ngdirname() */
-#include "../misc/stringutil.h"
+#include "ngspice/stringutil.h"
 #include "ngspice/wordlist.h"
 
 #ifdef XSPICE

@@ -23,7 +23,7 @@ extern void txfree(void *ptr);
 #endif
 
 
-#include "../misc/stringutil.h" /* va: spice3 internally bzero */
+#include "ngspice/stringutil.h" /* va: spice3 internally bzero */
 
 #define alloc(TYPE)    TMALLOC(TYPE, 1)
 #define MALLOC(x)      tmalloc((size_t)(x))

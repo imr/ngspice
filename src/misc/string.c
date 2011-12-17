@@ -7,7 +7,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
  */
 
 #include "ngspice/ngspice.h"
-#include "stringutil.h"
+#include "ngspice/stringutil.h"
 #include "ngspice/dstring.h"
 
 int

@@ -15,7 +15,7 @@
 #include <stdlib.h>         // exit codes
 #include <stdarg.h>         // var. arguments
 #include <assert.h>         // assert macro
-#include "misc/stringutil.h" // copy
+#include "ngspice/stringutil.h" // copy
 #include <io.h>             // _read
 
 #include <errno.h>

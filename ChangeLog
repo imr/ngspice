@@ -1,3 +1,17 @@
+2011-12-17  Robert Larice
+ * src/winmain.c ,
+ * src/frontend/inpcom.c ,
+ * src/include/ngspice/Makefile.am ,
+ * src/include/ngspice/memory.h ,
+ * src/misc/Makefile.am ,
+ * src/misc/string.c ,
+ * visualc/vngspice.vcproj :
+
+ Added      src/include/ngspice/stringutil.h
+ Removed    src/misc/stringutil.h
+
+   move stringutil.h --> src/include/ngspice
+
 2011-12-17  Holger Vogt
  * src/frontend/inpcom.c :
   allow syntax Gxxx n1 n2 value={equation} or Exxx n1 n2 value={equation}

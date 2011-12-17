@@ -19,7 +19,6 @@ libmisc_la_SOURCES = \
 		printnum.c	\
 		printnum.h	\
 		string.c	\
-		stringutil.h	\
 		tilde.c		\
 		tilde.h		\
 		misc_time.c	\

@@ -2934,7 +2934,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\misc\stringutil.h"
+				RelativePath="..\src\include\ngspice\stringutil.h"
 				>
 			</File>
 			<File
