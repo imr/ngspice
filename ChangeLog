@@ -1,3 +1,7 @@
+2011-12-17  Holger Vogt
+ * src/frontend/inpcom.c :
+  allow syntax Gxxx n1 n2 value={equation} or Exxx n1 n2 value={equation}
+
 2011-12-17  Robert Larice
  * src/spicelib/devices/dev.c ,
  * src/spicelib/devices/adms/admst/ngspice.xml :

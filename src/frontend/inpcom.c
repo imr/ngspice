@@ -3640,8 +3640,10 @@ inp_reorder_params( struct line *deck, struct line *list_head, struct line *end 
         }
 
         /* check for an unexpected extra `.ends' deck */
-        if ( ciprefix( ".ends", curr_line ) )
+        if ( ciprefix( ".ends", curr_line ) ) {
+            fprintf(stderr, "Error: Unexpected extra .ends in line:\n  %s.\n", curr_line);         
             controlled_exit(EXIT_FAILURE);
+        }
 
         if ( ciprefix( ".param", curr_line ) ) {
             if ( first_param_card )
@@ -3913,6 +3915,17 @@ static void inp_compat(struct line *deck)
                 *(str_ptr + 3) = ' ';
             }
 
+            /* Exxx n1 n2 value={equation}
+               -->
+               Exxx n1 n2   vol={equation} */
+            if ((str_ptr = strstr( curr_line, "value=" )) != NULL) {
+                *str_ptr = ' ';
+                *(str_ptr + 1) = ' ';
+                *(str_ptr + 2) = 'v';
+                *(str_ptr + 3) = 'o';
+                *(str_ptr + 4) = 'l';
+            }
+
             /* Exxx n1 n2 VOL = {equation}
                -->
                Exxx n1 n2 int1 0 1
@@ -3980,6 +3993,16 @@ static void inp_compat(struct line *deck)
                 *(str_ptr + 3) = ' ';
             }
 
+            /* Gxxx n1 n2 value={equation}
+               -->
+               Gxxx n1 n2   cur={equation} */
+            if ((str_ptr = strstr( curr_line, "value=" )) != NULL) {
+                *str_ptr = ' ';
+                *(str_ptr + 1) = ' ';
+                *(str_ptr + 2) = 'c';
+                *(str_ptr + 3) = 'u';
+                *(str_ptr + 4) = 'r';
+            }
             /*
                Gxxx n1 n2 CUR = {equation}
                -->
