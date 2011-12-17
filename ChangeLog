@@ -1,4 +1,9 @@
 2011-12-17  Robert Larice
+ * src/spicelib/devices/dev.c ,
+ * src/spicelib/devices/adms/admst/ngspice.xml :
+  adms3, use -ldl instead of -lltdl, fix include path
+
+2011-12-17  Robert Larice
  * src/frontend/breakp2.c ,
  * src/frontend/outitf.c ,
  * src/include/ngspice/ftedefs.h ,

@@ -168,7 +168,7 @@ int DEVflag(int type){
 #if ADMS >= 3
 #include "ngspice/fteext.h"  /* for ft_sim */
 #include "ngspice/cktdefs.h" /* for DEVmaxnum */
-#include <ltdl.h>
+#include <dlfcn.h>
 static void varelink(CKTcircuit *ckt) {
 
 /*
@@ -189,41 +189,44 @@ static void varelink(CKTcircuit *ckt) {
 }
 int load_vadev(CKTcircuit *ckt, char *name)
 {
-  char libname[50];
+  char *msg, libname[50];
   void *lib;
   SPICEadmsdev *device;
-
-  int l=(int)strlen("lib")+(int)strlen(name)+(int)strlen(".so");
+  void* fetch;                  /* fixme funptr_t */
 
   strcpy(libname, "lib");
   strcat(libname,name);
   strcat(libname,".so");
-  libname[l+1]='\0';
 
-  lt_dlinit ();
-  lt_dlsetsearchpath (".");
-
-  lib = lt_dlopen(libname);
+  lib = dlopen(libname, RTLD_NOW);
 
   if(!lib){
-    perror (lt_dlerror ());
+    msg = dlerror();
+    printf("%s\n", msg);
     return -1;
   }
-  
+
   strcpy(libname, "get_");
   strcat(libname,name);
   strcat(libname,"_info");
-  device = ((SPICEadmsdev * (*)(void)) lt_dlsym(lib,libname)) ();
+  fetch = dlsym(lib,libname);
 
-  if(!device){
-    perror (lt_dlerror ());
+  if(fetch)
+      device = ((SPICEadmsdev * (*)(void)) fetch) ();
+  else
+      device = NULL;
+
+  if(!device) {
+    msg = dlerror();
+    printf("%s\n", msg);
     return -1;
   }
+
   device->mkn = ((int (*)(GENmodel *, CKTcircuit *)) &CKTmkVolt);
   device->mkj = ((int (*)(CKTcircuit *, GENmodel *, IFuid)) &SMPmakeElt);
 
   DEVices = TREALLOC(SPICEdev *, DEVices, DEVNUM + 1);
-  printf("Added device: %s from dynamic library %s\n",((SPICEdev *)device)->DEVpublic.name,lib);
+  printf("Added device: %s from dynamic library %s\n", ((SPICEdev *)device)->DEVpublic.name, libname);
   DEVices[DEVNUM++] = (SPICEdev *)device;
   varelink(ckt);
   return DEVNUM-1;

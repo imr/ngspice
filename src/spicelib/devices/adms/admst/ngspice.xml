@@ -3371,9 +3371,9 @@ get_$(module)_info(void)
 #ifndef $(module)
 #define $(module)
 
-#include &quot;src/include/ngspice/ngspice.h&quot;
-#include &quot;src/include/ngspice/devdefs.h&quot;
-#include &quot;src/include/ngspice/sperror.h&quot;
+#include &quot;ngspice/ngspice.h&quot;
+#include &quot;ngspice/devdefs.h&quot;
+#include &quot;ngspice/sperror.h&quot;
 
 #ifndef DEV_$(module)
 #define DEV_$(module)
