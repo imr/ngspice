@@ -1,4 +1,13 @@
 2011-12-17  Robert Larice
+ * src/xspice/cmpp/ifs_lex.l ,
+ * src/xspice/cmpp/ifs_yacc.y ,
+ * src/xspice/cmpp/ifs_yacc_y.h ,
+ * src/xspice/cmpp/mod_lex.l ,
+ * src/xspice/cmpp/mod_yacc.y ,
+ * src/xspice/cmpp/mod_yacc_y.h :
+  remove CVS `Id',`log' etc. keyword incantations
+
+2011-12-17  Robert Larice
  * src/winmain.c ,
  * src/frontend/inpcom.c ,
  * src/include/ngspice/Makefile.am ,

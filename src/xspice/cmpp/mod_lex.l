@@ -1,7 +1,7 @@
 %option prefix="mod_yy"
 %option yylineno
 %option noyywrap
-%{ /* $Id$ */
+%{
 
 /*============================================================================
 FILE  mod_lex.l
