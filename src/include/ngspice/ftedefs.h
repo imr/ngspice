@@ -19,7 +19,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 struct save_info {
     char	*name;
-    IFuid	*analysis;
+    IFuid	analysis;
     int		used;
 };
 

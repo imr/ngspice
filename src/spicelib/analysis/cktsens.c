@@ -81,7 +81,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	static int	is_dc;
 	int		k, j, n;
 	int		num_vars, branch_eq=0;
-	char		*sen_data=NULL;
+	void		*sen_data = NULL;
 	char		namebuf[513];
 	IFuid		*output_names, freq_name;
 	int		bypass;

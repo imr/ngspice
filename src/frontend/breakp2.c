@@ -117,7 +117,7 @@ ft_getSaves(struct save_info **savesp)
         if (d->db_type == DB_SAVE) {
             array[i].used = 0;
 	    if (d->db_analysis)
-		array[i].analysis = (IFuid *) copy(d->db_analysis);
+		array[i].analysis = copy(d->db_analysis);
 	    else
 		array[i].analysis = NULL;
             array[i++].name = copy(d->db_nodename1);

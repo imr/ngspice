@@ -177,7 +177,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         savesused = TMALLOC(bool, numsaves);
         saveall = FALSE;
         for (i = 0; i < numsaves; i++) {
-            if (saves[i].analysis && !cieq((char *)saves[i].analysis, an_name)) {
+            if (saves[i].analysis && !cieq(saves[i].analysis, an_name)) {
 		/* ignore this one this time around */
 		savesused[i] = TRUE; 
 		continue;
