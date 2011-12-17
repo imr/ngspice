@@ -1,3 +1,13 @@
+2011-12-17  Holger Vogt
+ * src/frontend/inp.c,
+   src/frontend/options.c
+   src/include/ngspice/fteext.h :
+   variable ft_stricterror to exit ngspice with exit code 1
+   if any error occurs during circuit parsing. 
+   Usage maybe extended to other errors.
+   Tradditionally ngspice uses to continue, issue error messages,
+   deliver wrong results and exit with exit code 0.
+   
 2011-12-16  Holger Vogt
  * src/frontend/subckt.c: beautify code
  

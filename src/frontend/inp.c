@@ -829,13 +829,16 @@ inp_dodeck(
                 if (q)
                     *q = 0;
 
-                if (p == dd->li_error)
+                if (p == dd->li_error) {
                     if (strstr(dd->li_line, ".model"))
                         out_printf("Model issue on line %d : %.*s ...\n%s\n",
                                    dd->li_linenum_orig, 56, dd->li_line, dd->li_error);
                     else
                         out_printf("Error on line %d : %s\n%s\n",
                                    dd->li_linenum_orig, dd->li_line, dd->li_error);
+                    if (ft_stricterror)
+                        controlled_exit(EXIT_BAD);
+                }
                 else
                     out_printf("%s\n", p);
 
