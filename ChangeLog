@@ -1,3 +1,7 @@
+2012-02-10  Robert Larice
+  branch wip-adms3, for Laurents adms3 experiments
+  was 2011-12-18  Robert Larice
+
 2012-02-19  Holger Vogt
  * com_cdump.c, commands.c, main.c:
    dummy functions for SMPprint() and SMPprintRHS() to allow making of ngnutmeg,
