@@ -168,15 +168,9 @@ int DEVflag(int type){
 #if ADMS >= 3
 #include "ngspice/fteext.h"  /* for ft_sim */
 #include "ngspice/cktdefs.h" /* for DEVmaxnum */
-#include <dlfcn.h>
-static void varelink(CKTcircuit *ckt) {
-
-/*
- * This replacement done by SDB on 6.11.2003
- *
- * ft_sim->numDevices = num_devices();
- * DEVmaxnum = num_devices();
- */
+#include <ltdl.h>
+static void varelink(CKTcircuit *ckt)
+{
   ft_sim->numDevices = DEVNUM;
   DEVmaxnum = DEVNUM;
 
@@ -189,27 +183,32 @@ static void varelink(CKTcircuit *ckt) {
 }
 int load_vadev(CKTcircuit *ckt, char *name)
 {
-  char *msg, libname[50];
+  char libname[50];
   void *lib;
   SPICEadmsdev *device;
   void* fetch;                  /* fixme funptr_t */
 
+  int l = (int)(strlen("lib") + strlen(name) + strlen(".so"));
+
   strcpy(libname, "lib");
   strcat(libname,name);
   strcat(libname,".so");
+  libname[l+1] = '\0';
 
-  lib = dlopen(libname, RTLD_NOW);
+  lt_dlinit();
+  lt_dlsetsearchpath(".");
+
+  lib = lt_dlopen(libname);
 
   if(!lib){
-    msg = dlerror();
-    printf("%s\n", msg);
+    perror(lt_dlerror());
     return -1;
   }
 
   strcpy(libname, "get_");
   strcat(libname,name);
   strcat(libname,"_info");
-  fetch = dlsym(lib,libname);
+  fetch = lt_dlsym(lib, libname);
 
   if(fetch)
       device = ((SPICEadmsdev * (*)(void)) fetch) ();
@@ -217,16 +216,15 @@ int load_vadev(CKTcircuit *ckt, char *name)
       device = NULL;
 
   if(!device) {
-    msg = dlerror();
-    printf("%s\n", msg);
+    perror(lt_dlerror());
     return -1;
   }
 
   device->mkn = CKTmkVolt;
   device->mkj = SMPmakeElt;
 
-  DEVices = TREALLOC(SPICEdev *, DEVices, DEVNUM + 1);
   printf("Added device: %s from dynamic library %s\n", device->spicedev.DEVpublic.name, libname);
+  DEVices = TREALLOC(SPICEdev *, DEVices, DEVNUM + 1);
   DEVices[DEVNUM++] = & (device->spicedev);
   varelink(ckt);
   return DEVNUM-1;
