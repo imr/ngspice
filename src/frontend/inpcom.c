@@ -3780,52 +3780,11 @@ inp_split_multi_param_lines( struct line *deck, int line_num )
     return line_num;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* ps compatibility:
-   ECOMP 3 0 TABLE {V(1,2)} = (-1MV 0V) (1MV, 10V)
+   ECOMP 3 0 TABLE {V(1,2)} = (-1 0V) (1, 10V)
    -->
    ECOMP 3 0 int3 int0 1
-   BECOMP int3 int0 V = pwl(V(1,2), -1MV, 0 , 1MV, 10V)
+   BECOMP int3 int0 V = pwl(V(1,2), -2, 0, -1, 0 , 1, 10V, 2, 10V)
 
    GD16 16 1 TABLE {V(16,1)} ((-100V,-1pV)(0,0)(1m,1u)(2m,1m))
    -->
@@ -3925,7 +3884,114 @@ static void inp_compat(struct line *deck)
                 *(str_ptr + 3) = 'o';
                 *(str_ptr + 4) = 'l';
             }
+            /* Exxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
+               -->
+               Exxx n1 n2 int1 0 1
+               BExxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1, y1, x2, y2, x2+(x2-x0)/2, y2)
+             */
+            if ((str_ptr = strstr( curr_line, "table" )) != NULL) {
+                char *expression, *firstno, *ffirstno, *secondno, *midline, *lastno, *lastlastno;
+                double fnumber, lnumber, delta;
+                int nerror;
+                cut_line = curr_line;
+                /* title and nodes */
+                title_tok = gettok(&cut_line);
+                node1 =  gettok(&cut_line);
+                node2 =  gettok(&cut_line);
+                // Exxx  n1 n2 int1 0 1
+                xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
+                       + 20 - 4*2 + 1;
+                ckt_array[0] = TMALLOC(char, xlen);
+                sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
+                        title_tok, node1, node2, title_tok);
+                // get the expression
+                str_ptr = gettok(&cut_line); /* ignore 'table' */
+                tfree(str_ptr);
+                expression = gettok_char(&cut_line, '}', TRUE); /* expression */
+                if (!expression) {
+                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n", 
+                        card->li_linenum_orig, card->li_line);
+                    controlled_exit(EXIT_BAD);
+                }
+                /* remove '{' and '}' from expression */
+                if ((str_ptr = strstr( expression, "{" )) != NULL)
+                    *str_ptr = ' ';
+                if ((str_ptr = strstr( expression, "}" )) != NULL)
+                    *str_ptr = ' ';
+                /* cut_line may now have a '=', if yes, it will have '{' and '}'
+                   (braces around token after '=') */
+                if ((str_ptr = strstr( cut_line, "=" )) != NULL)
+                    *str_ptr = ' ';
+                if ((str_ptr = strstr( cut_line, "{" )) != NULL)
+                    *str_ptr = ' ';
+                if ((str_ptr = strstr( cut_line, "}" )) != NULL)
+                    *str_ptr = ' ';
+                /* get first two numbers to establish extrapolation */
+                str_ptr = cut_line;
+                ffirstno = gettok_node(&cut_line);
+                firstno = copy(ffirstno);
+                fnumber = INPevaluate(&ffirstno, &nerror, TRUE);
+                secondno = gettok_node(&cut_line);
+                midline = cut_line;
+                cut_line = strrchr(str_ptr, '(');
+                /* replace '(' with ',' and ')' with ' ' */
+                while(*str_ptr) {
+                    if (*str_ptr == '(')
+                        *str_ptr = ',';
+                    else if (*str_ptr == ')')
+                        *str_ptr = ' ';
+                    *str_ptr++;
+                }
+                /* scan for last two numbers */
+                lastno = gettok_node(&cut_line);
+                lnumber = INPevaluate(&lastno, &nerror, FALSE); 
+                /* check for max-min and take half the difference for delta */
+                delta = (lnumber-fnumber)/2.;
+                lastlastno = gettok_node(&cut_line);
+                if (!secondno || (*midline == 0) || (delta <= 0.) || !lastlastno) {
+                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n", 
+                        card->li_linenum_orig, card->li_line);
+                    controlled_exit(EXIT_BAD);
+                }
+                xlen = 2*strlen(title_tok) + strlen(expression) + 14 + strlen(firstno) +
+                    2*strlen(secondno) + strlen(midline) + 14 +
+                    strlen(lastlastno) + 50;
+                ckt_array[1] = TMALLOC(char, xlen);
+                sprintf(ckt_array[1], "b%s %s_int1 0 v = pwl(%s, %e, %s, %s, %s, %s, %e, %s)",
+                        title_tok, title_tok, expression, fnumber-delta, secondno,  firstno, secondno,
+                        midline, lnumber + delta, lastlastno);
 
+                // insert new B source line immediately after current line
+                tmp_ptr = card->li_next;
+                for ( i = 0; i < 2; i++ ) {
+                    if ( param_end ) {
+                        param_end->li_next = alloc(struct line);
+                        param_end          = param_end->li_next;
+                    } else {
+                        param_end = param_beg = alloc(struct line);
+                    }
+                    param_end->li_next    = NULL;
+                    param_end->li_error   = NULL;
+                    param_end->li_actual  = NULL;
+                    param_end->li_line    = ckt_array[i];
+                    param_end->li_linenum = 0;
+                }
+                // comment out current variable e line
+                *(card->li_line)   = '*';
+                // insert new param lines immediately after current line
+                tmp_ptr            = card->li_next;
+                card->li_next      = param_beg;
+                param_end->li_next = tmp_ptr;
+                // point 'card' pointer to last in scalar list
+                card               = param_end;
+
+                param_beg = param_end = NULL;
+                tfree(firstno);
+                tfree(lastlastno);
+                tfree(title_tok);
+                tfree(node1);
+                tfree(node2);
+            }
             /* Exxx n1 n2 VOL = {equation}
                -->
                Exxx n1 n2 int1 0 1
@@ -4002,6 +4068,116 @@ static void inp_compat(struct line *deck)
                 *(str_ptr + 2) = 'c';
                 *(str_ptr + 3) = 'u';
                 *(str_ptr + 4) = 'r';
+            }
+
+            /* Gxxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
+               -->
+               Gxxx n1 n2 int1 0 1
+               BGxxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1, y1, x2, y2, x2+(x2-x0)/2, y2) 
+             */
+            if ((str_ptr = strstr( curr_line, "table" )) != NULL) {
+                char *expression, *firstno, *ffirstno, *secondno, *midline, *lastno, *lastlastno;
+                double fnumber, lnumber, delta;
+                int nerror;
+                cut_line = curr_line;
+                /* title and nodes */
+                title_tok = gettok(&cut_line);
+                node1 =  gettok(&cut_line);
+                node2 =  gettok(&cut_line);
+                // Gxxx  n1 n2 int1 0 1
+                xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
+                       + 20 - 4*2 + 1;
+                ckt_array[0] = TMALLOC(char, xlen);
+                sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
+                        title_tok, node1, node2, title_tok);
+                // get the expression
+                str_ptr = gettok(&cut_line); /* ignore 'table' */
+                tfree(str_ptr);
+                expression = gettok_char(&cut_line, '}', TRUE); /* expression */
+                if (!expression) {
+                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n", 
+                        card->li_linenum_orig, card->li_line);
+                    controlled_exit(EXIT_BAD);
+                }
+                /* remove '{' and '}' from expression */
+                if ((str_ptr = strstr( expression, "{" )) != NULL)
+                    *str_ptr = ' ';
+                if ((str_ptr = strstr( expression, "}" )) != NULL)
+                    *str_ptr = ' ';
+                /* cut_line may now have a '=', if yes, it will have '{' and '}'
+                   (braces around token after '=') */
+                if ((str_ptr = strstr( cut_line, "=" )) != NULL)
+                    *str_ptr = ' ';
+                if ((str_ptr = strstr( cut_line, "{" )) != NULL)
+                    *str_ptr = ' ';
+                if ((str_ptr = strstr( cut_line, "}" )) != NULL)
+                    *str_ptr = ' ';
+                /* get first two numbers to establish extrapolation */
+                str_ptr = cut_line;
+                ffirstno = gettok_node(&cut_line);
+                firstno = copy(ffirstno);
+                fnumber = INPevaluate(&ffirstno, &nerror, TRUE);
+                secondno = gettok_node(&cut_line);
+                midline = cut_line;
+                cut_line = strrchr(str_ptr, '(');
+                /* replace '(' with ',' and ')' with ' ' */
+                while(*str_ptr) {
+                    if (*str_ptr == '(')
+                        *str_ptr = ',';
+                    else if (*str_ptr == ')')
+                        *str_ptr = ' ';
+                    *str_ptr++;
+                }
+                /* scan for last two numbers */
+                lastno = gettok_node(&cut_line);
+                lnumber = INPevaluate(&lastno, &nerror, FALSE); 
+                /* check for max-min and take half the difference for delta */
+                delta = (lnumber-fnumber)/2.;
+                lastlastno = gettok_node(&cut_line);
+                if (!secondno || (*midline == 0) || (delta <= 0.) || !lastlastno) {
+                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n", 
+                        card->li_linenum_orig, card->li_line);
+                    controlled_exit(EXIT_BAD);
+                }
+                /* BGxxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1, y1, x2, y2, x2+(x2-x0)/2, y2) */
+                xlen = 2*strlen(title_tok) + strlen(expression) + 14 + strlen(firstno) +
+                    2*strlen(secondno) + strlen(midline) + 14 +
+                    strlen(lastlastno) + 50;
+                ckt_array[1] = TMALLOC(char, xlen);
+                sprintf(ckt_array[1], "b%s %s_int1 0 v = pwl(%s, %e, %s, %s, %s, %s, %e, %s)",
+                        title_tok, title_tok, expression, fnumber-delta, secondno,  firstno, secondno,
+                        midline, lnumber + delta, lastlastno);
+
+                // insert new B source line immediately after current line
+                tmp_ptr = card->li_next;
+                for ( i = 0; i < 2; i++ ) {
+                    if ( param_end ) {
+                        param_end->li_next = alloc(struct line);
+                        param_end          = param_end->li_next;
+                    } else {
+                        param_end = param_beg = alloc(struct line);
+                    }
+                    param_end->li_next    = NULL;
+                    param_end->li_error   = NULL;
+                    param_end->li_actual  = NULL;
+                    param_end->li_line    = ckt_array[i];
+                    param_end->li_linenum = 0;
+                }
+                // comment out current variable e line
+                *(card->li_line)   = '*';
+                // insert new param lines immediately after current line
+                tmp_ptr            = card->li_next;
+                card->li_next      = param_beg;
+                param_end->li_next = tmp_ptr;
+                // point 'card' pointer to last in scalar list
+                card               = param_end;
+
+                param_beg = param_end = NULL;
+                tfree(firstno);
+                tfree(lastlastno);
+                tfree(title_tok);
+                tfree(node1);
+                tfree(node2);
             }
             /*
                Gxxx n1 n2 CUR = {equation}
