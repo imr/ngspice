@@ -169,6 +169,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
         num_functions       = 0;
         global              = NULL;
         found_end           = FALSE;
+        inp_compat_mode = ngspice_compat_mode() ;
     }
 
     /*   gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled   */
@@ -674,6 +675,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
     inp_remove_excess_ws(working);
 
     if ( call_depth == 0 ) {
+
         comment_out_unused_subckt_models(working, line_number);
 
         line_number = inp_split_multi_param_lines(working, line_number);
@@ -699,7 +701,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
         if (cp_getvar("addcontrol", CP_BOOL, NULL))
             inp_add_control_section(working, &line_number);
-        inp_compat_mode = ngspice_compat_mode() ;
+
         if (inp_compat_mode == COMPATMODE_ALL) {
             /* Do all the compatibility stuff here */
             working = cc->li_next;
@@ -1138,10 +1140,11 @@ chk_for_line_continuation( char *line )
 //
 // change .macro --> .subckt
 //        .eom   --> .ends
+//        .subckt name 1 2 3 params: w=9u l=180n --> .subckt name 1 2 3 w=9u l=180n
 //        .subckt name (1 2 3) --> .subckt name 1 2 3
 //        x1 (1 2 3)      --> x1 1 2 3
 //        .param func1(x,y) = {x*y} --> .func func1(x,y) {x*y}
-//
+
 static void
 inp_fix_macro_param_func_paren_io( struct line *begin_card )
 {
@@ -1168,7 +1171,9 @@ inp_fix_macro_param_func_paren_io( struct line *begin_card )
             tfree( card->li_line );
             card->li_line = new_str;
         }
+
         if ( ciprefix( ".subckt", card->li_line ) || ciprefix( "x", card->li_line ) ) {
+            /* remove ( ) */
             str_ptr = card->li_line;
             while( !isspace(*str_ptr) ) str_ptr++;  // skip over .subckt, instance name
             while( isspace(*str_ptr)  ) str_ptr++;
@@ -2035,13 +2040,17 @@ inp_remove_ws( char *s )
 
 /*
   change quotes from '' to {}
-  modify .subckt lines by calling inp_fix_subckt()
-*/
+  .subckt name 1 2 3 params: l=1 w=2 --> .subckt name 1 2 3 l=1 w=2
+   x1 1 2 3 params: l=1 w=2 --> x1 1 2 3 l=1 w=2 
+   modify .subckt lines by calling inp_fix_subckt()
+*/ 
 static void
 inp_fix_for_numparam(struct line *deck)
 {
     bool found_control = FALSE;
     struct line *c=deck;
+    char *str_ptr;
+
     while( c!=NULL) {
         if ( ciprefix( ".modif", c->li_line ) ) *c->li_line = '*';
         if ( ciprefix( "*lib", c->li_line ) ) {
@@ -2060,6 +2069,16 @@ inp_fix_for_numparam(struct line *deck)
 
         if ( !ciprefix( "*lib", c->li_line ) && !ciprefix( "*inc", c->li_line ) )
             inp_change_quotes(c->li_line);
+
+        if (inp_compat_mode == COMPATMODE_ALL) {
+            if ( ciprefix( ".subckt", c->li_line ) || ciprefix( "x", c->li_line ) ) {
+               /* remove params: */
+                str_ptr = strstr(c->li_line, "params:");
+                if (str_ptr) {
+                    memcpy(str_ptr, "       ", 7);
+                }
+            }
+        }
 
         if ( ciprefix( ".subckt", c->li_line ) ) {
             c->li_line = inp_fix_subckt(c->li_line);

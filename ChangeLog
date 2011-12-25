@@ -1,3 +1,7 @@
+2011-12-25  Holger Vogt
+  * src/frontend/inpcom.c : remove 'params:' from X or .SUBCKT lines
+    of input deck (in fcn inp_fix_for_numparam())
+
 2011-12-21  Holger Vogt
   * src/misc/string.c ,
     src/frontend/inpcom.c ,
