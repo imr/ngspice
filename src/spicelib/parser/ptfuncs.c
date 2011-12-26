@@ -340,3 +340,16 @@ PTpwl_derivative(double arg, void *data)
 
   return y;
 }
+
+double
+PTceil(double arg1)
+{
+    return (ceil(arg1));
+}
+
+double
+PTfloor(double arg1)
+{
+    return (floor(arg1));
+}
+

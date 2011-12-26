@@ -1,3 +1,9 @@
+2011-12-26  Holger Vogt
+  * xpressn.c
+  * ptfuncs.c, inpptree.c, inpptree.h, spicelib/parser/inp.h
+  * cmath2.c, cmath2.h, fteext.h, parse.c
+  functions floor and ceil added to numparam, ASRC and scripting language
+
 2011-12-25  Holger Vogt
   * src/frontend/inpcom.c : remove 'params:' from X or .SUBCKT lines
     of input deck (in fcn inp_fix_for_numparam())

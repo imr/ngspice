@@ -73,6 +73,7 @@ double PTgt0(double arg);
 double PTlt0(double arg);
 double PTge0(double arg);
 double PTle0(double arg);
-
+double PTceil(double arg);
+double PTfloor(double arg);
 
 #endif

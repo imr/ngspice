@@ -170,6 +170,8 @@ struct func ft_funcs[] = {
         { "exponential", cx_exponential } ,
         { "sgauss", cx_sgauss } ,
         { "pos",    cx_pos } ,
+        { "floor",  cx_floor } ,
+        { "ceil",   cx_ceil } ,
         { "mean",   cx_mean } ,
         { "avg",    cx_avg } ,               /* A.Roldan 03/06/05 incremental average new function */
         { "group_delay", (cx_function_t*) cx_group_delay } , /* A.Roldan 10/06/05 group delay new function */

@@ -786,3 +786,61 @@ cx_d(void *data, short int type, int length, int *newlength, short int *newtype)
         return ((void *) c);
     }
 }
+
+void *
+cx_floor(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    *newlength = length;
+    if (type == VF_COMPLEX) {
+	ngcomplex_t *c;
+	ngcomplex_t *cc = (ngcomplex_t *) data;
+	int i;
+
+        c = alloc_c(length);
+        *newtype = VF_COMPLEX;
+        for (i = 0; i < length; i++) {
+            realpart(&c[i]) = floor(realpart(&cc[i]));
+            imagpart(&c[i]) = floor(imagpart(&cc[i]));
+        }
+        return ((void *) c);
+    } else {
+	double *d;
+	double *dd = (double *) data;
+	int i;
+
+        d = alloc_d(length);
+        *newtype = VF_REAL;
+        for (i = 0; i < length; i++)
+            d[i] = floor(dd[i]);
+        return ((void *) d);
+    }
+}
+
+void *
+cx_ceil(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    *newlength = length;
+    if (type == VF_COMPLEX) {
+	ngcomplex_t *c;
+	ngcomplex_t *cc = (ngcomplex_t *) data;
+	int i;
+
+        c = alloc_c(length);
+        *newtype = VF_COMPLEX;
+        for (i = 0; i < length; i++) {
+            realpart(&c[i]) = ceil(realpart(&cc[i]));
+            imagpart(&c[i]) = ceil(imagpart(&cc[i]));
+        }
+        return ((void *) c);
+    } else {
+	double *d;
+	double *dd = (double *) data;
+	int i;
+
+        d = alloc_d(length);
+        *newtype = VF_REAL;
+        for (i = 0; i < length; i++)
+            d[i] = ceil(dd[i]);
+        return ((void *) d);
+    }
+}

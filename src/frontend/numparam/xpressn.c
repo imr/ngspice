@@ -88,7 +88,7 @@ initkeys (void)
               " include for to downto is var");
     scopy_up (&fmathS,
               "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log sinh cosh"
-              " tanh ternary_fcn v agauss sgn gauss unif aunif limit");
+              " tanh ternary_fcn v agauss sgn gauss unif aunif limit ceil floor");
 }
 
 static double
@@ -149,10 +149,16 @@ mathfunction (int f, double z, double x)
     case 17:
         y=sinh(x)/cosh(x);
         break;
-    case 21:
+    case 21: /* sgn */
         if (x>0) y=1.;
         else if (x == 0) y=0.;
         else y = -1.;
+        break;
+    case 26:
+        y=ceil(x);
+        break;
+    case 27:
+        y=floor(x);
         break;
     default:
         y = x;

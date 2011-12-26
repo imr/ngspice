@@ -122,6 +122,8 @@ typedef struct INPparseNode {
 #define PTF_POW	30
 #define PTF_MIN	31
 #define PTF_MAX	32
+#define PTF_CEIL	33
+#define PTF_FLOOR	34
 
 /* The following things are used by the parser -- these are the token types the
  * lexer returns.
