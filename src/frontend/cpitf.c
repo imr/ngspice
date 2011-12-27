@@ -16,7 +16,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "define.h"
 #include "misccoms.h"
 
-#include <terminal.h>
+#include "terminal.h"
 
 #include "completion.h"
 #include "variable.h"

@@ -2,7 +2,6 @@
 #include "ngspice/ngspice.h"
 #include "ngspice/wordlist.h"
 #include "ngspice/bool.h"
-#include <variable.h>
 
 #include "variable.h"
 #include "ngspice/cpextern.h"
