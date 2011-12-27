@@ -3,7 +3,7 @@
  * 1999 E. Rouat
  ************/
 
-#include "config.h"
+#include "ngspice/config.h"
 #include "ngspice/bool.h"
 
 #ifndef STRING_H_INCLUDED

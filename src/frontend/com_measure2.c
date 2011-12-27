@@ -4,7 +4,7 @@
    Patches by Bill Swartz from 2009-05-18 and 2009-08-21 are included.
 */
 
-#include <config.h>
+#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/memory.h"
 

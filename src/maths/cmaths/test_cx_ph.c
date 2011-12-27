@@ -2,7 +2,7 @@
 #include <math.h>
 #include <float.h>
 
-#include <config.h>
+#include "ngspice/config.h"
 #include "ngspice/memory.h"
 #include "ngspice/dvec.h"
 #include "ngspice/complex.h"

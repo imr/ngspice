@@ -28,7 +28,7 @@
  * ENHANCEMENTS, OR MODIFICATIONS. */
 
 #include "ngspice/ngspice.h"
-#include "config.h"
+#include "ngspice/config.h"
 #include "assert.h"
 
 #include "ngspice/devdefs.h"

@@ -12,7 +12,7 @@
 #include <math.h>
 #include <stdarg.h>
 
-#include "config.h"
+#include "ngspice/config.h"
 #ifdef HAS_WINDOWS
 #include "ngspice/wstdio.h"
 #endif

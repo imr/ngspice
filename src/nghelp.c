@@ -7,7 +7,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
  * The main routine for the help system in stand-alone mode.
  */
 
-#include <config.h>
+#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/cpdefs.h"
 #include "ngspice/hlpdefs.h"

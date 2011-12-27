@@ -4,7 +4,7 @@
     Autor: Holger Vogt
     Stand: 17.10.2009
 */
-#include "config.h"
+#include "ngspice/config.h"
 #ifdef HAS_WINDOWS
 
 #define STRICT              // strict type checking

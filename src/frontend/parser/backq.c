@@ -8,7 +8,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Do backquote substitution on a word list. 
  */
 
-#include <config.h>
+#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/cpdefs.h"
 #include "backq.h"

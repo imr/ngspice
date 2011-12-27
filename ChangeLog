@@ -1,4 +1,8 @@
 2011-12-27  Robert Larice
+ * **/* :
+  #2/6 config.h --> ngspice/config.h,  #include's
+
+2011-12-27  Robert Larice
  * configure.ac ,
  * .cvsignore ,
  * src/include/ngspice/.cvsignore :

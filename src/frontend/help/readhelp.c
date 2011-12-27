@@ -11,7 +11,7 @@ Modified 1999 Emmanuel Rouat
  * when a complete match is not found - additional code based on code in MacSpice.
  */
 
-#include <config.h>
+#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/cpstd.h"
 #include "ngspice/hlpdefs.h"

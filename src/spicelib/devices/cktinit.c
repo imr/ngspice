@@ -4,7 +4,7 @@ Author: 1985 Thomas L. Quarles
 Modifed: 2000 AlansFixes
 **********/
 
-#include "config.h"
+#include "ngspice/config.h"
 
 #include "ngspice/memory.h"
 #include "ngspice/cktdefs.h"

@@ -2,7 +2,7 @@
 * com_unset.c
 ************/
 
-#include <config.h>
+#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 
 #include "ngspice/macros.h"

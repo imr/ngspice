@@ -8,7 +8,7 @@ Modified 1999 Emmanuel Rouat
  * The main entry point for the help system.
  */
 
-#include <config.h>
+#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/cpstd.h"
 #include "ngspice/hlpdefs.h"

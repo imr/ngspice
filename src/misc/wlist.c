@@ -5,7 +5,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 /* Wordlist manipulation stuff.  */
 
-#include <config.h>
+#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/bool.h"
 #include "ngspice/wordlist.h"

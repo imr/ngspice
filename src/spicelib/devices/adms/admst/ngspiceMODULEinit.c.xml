@@ -23,7 +23,7 @@
 <!DOCTYPE admst SYSTEM "admst.dtd">
 <admst version="2.3.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
 <admst:template match="code">
-#include "config.h"
+#include "ngspice/config.h"
 
 #include &quot;ngspice/devdefs.h&quot;
 

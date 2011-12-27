@@ -7,7 +7,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Routines to do execution of unix commands.
  */
 
-#include <config.h>
+#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/cpdefs.h"
 #include "unixcom.h"

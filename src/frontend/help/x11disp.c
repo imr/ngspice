@@ -4,7 +4,7 @@ Author: Jeffrey M. Hsu
 Modified 1999 Emmanuel Rouat
 **********/
 
-#include <config.h>
+#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 
 #ifndef X_DISPLAY_MISSING

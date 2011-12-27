@@ -12,7 +12,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Others: Use original code with sbrk(0) and some "ugly hacks"
  */
 
-#include "config.h"
+#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/cpdefs.h"
 #include "ngspice/ftedefs.h"

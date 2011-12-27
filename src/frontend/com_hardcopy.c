@@ -1,4 +1,4 @@
-#include <config.h>
+#include "ngspice/config.h"
 #include <stdio.h>
 
 #include "ngspice/ngspice.h"

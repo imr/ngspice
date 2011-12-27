@@ -11,7 +11,7 @@ Modified: 1999 Paolo Nenzi - 2000 AlansFixes
 #ifndef FTEext_h
 #define FTEext_h
 
-#include <config.h>
+#include "ngspice/config.h"
 
 /* needed to find out what the interface structures look like */
 #include "ngspice/typedefs.h"

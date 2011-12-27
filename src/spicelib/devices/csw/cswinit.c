@@ -1,6 +1,6 @@
 /* Modified: 2000 AlansFixes */
 
-#include "config.h"
+#include "ngspice/config.h"
 
 #include "ngspice/devdefs.h"
 

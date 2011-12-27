@@ -1,7 +1,7 @@
 #ifndef _COMPATMODE_H
 #define _COMPATMODE_H
 
-#include <config.h>
+#include "ngspice/config.h"
 
 typedef enum {
   COMPATMODE_NATIVE = 0,

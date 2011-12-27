@@ -17,7 +17,7 @@
 #  define _GNU_SOURCE
 #endif
 
-#include "config.h"
+#include "ngspice/config.h"
 #include <stddef.h>
 
 #ifdef HAVE_LIMITS_H

@@ -7,7 +7,7 @@
    
  */
  
-#include "config.h"
+#include "ngspice/config.h"
 #include "ngspice/ngspice.h" 
 #include "ngspice/cpdefs.h"
 #include "ngspice/fteext.h"

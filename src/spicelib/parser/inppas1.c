@@ -5,7 +5,7 @@ Author: 1985 Thomas L. Quarles
 
 #include <stdio.h>
 
-#include <config.h>
+#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 
 #include "inppas1.h"
