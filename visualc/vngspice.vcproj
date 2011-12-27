@@ -48,7 +48,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;C:\Program Files (x86)\Visual Leak Detector\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;C:\Program Files (x86)\Visual Leak Detector\include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -1726,7 +1726,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\config.h"
+				RelativePath=".\include\ngspice\config.h"
 				>
 			</File>
 			<File
