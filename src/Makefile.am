@@ -84,8 +84,7 @@ DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/vbic/libvbic.la		\
 	spicelib/devices/vccs/libvccs.la		\
 	spicelib/devices/vcvs/libvcvs.la		\
-	spicelib/devices/vsrc/libvsrc.la		\
-	@VLADEV@
+	spicelib/devices/vsrc/libvsrc.la
 
 
 ## Build ngspice first:

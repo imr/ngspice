@@ -884,38 +884,9 @@ if test "$enable_adms" = "yes" -o "$enable_adms3" = "yes" ; then
       AC_DEFINE(ADMS,[1],[Support for Verilog-A models])
    fi
 
-   VLADEVDIR=" adms/ekv \
-               adms/hicum0 \
-               adms/hicum2 \
-               adms/mextram \
-               adms/psp102 "
-
-dnl The makefiles for adms (to be added to AC_CONFIG_FILES by ./autogen.sh --adms)
-#VLAMKF    src/spicelib/devices/adms/ekv/Makefile
-#VLAMKF    src/spicelib/devices/adms/hicum0/Makefile
-#VLAMKF    src/spicelib/devices/adms/hicum2/Makefile
-#VLAMKF    src/spicelib/devices/adms/mextram/Makefile
-#VLAMKF    src/spicelib/devices/adms/psp102/Makefile
-
-   NOTVLADEVDIR=""
-
-   VLADEV=" spicelib/devices/adms/ekv/libekv.la \
-            spicelib/devices/adms/hicum0/libhicum0.la \
-            spicelib/devices/adms/hicum2/libhicum2.la \
-            spicelib/devices/adms/mextram/libbjt504t.la \
-            spicelib/devices/adms/psp102/libpsp102.la "
-
-else
-
-    VLADEVDIR=""
-    NOTVLADEVDIR="adms"
-
 fi
 
 AC_SUBST(ADMSXML)
-AC_SUBST(VLADEVDIR)
-AC_SUBST(VLADEV)
-AC_SUBST(NOTVLADEVDIR)
 
 dnl NDEV option
 if test "$enable_ndev" = "yes"; then

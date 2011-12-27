@@ -48,8 +48,7 @@ SUBDIRS = \
 	vbic	\
 	vccs	\
 	vcvs	\
-	vsrc	\
-	@VLADEVDIR@
+	vsrc
 
 if NDEV_WANTED
 SUBDIRS += ndev
@@ -60,7 +59,6 @@ SUBDIRS += nbjt nbjt2 numd  numd2 numos
 endif
 
 DIST_SUBDIRS = \
-	@VLADEVDIR@ \
 	asrc	\
 	bjt	\
 	bsim1	\
@@ -131,8 +129,6 @@ libdev_la_SOURCES =	\
 	cktfinddev.c	\
 	cktinit.c	\
 	limit.c
-
-EXTRA_DIST = @NOTVLADEVDIR@
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 
