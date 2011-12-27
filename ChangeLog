@@ -1,3 +1,6 @@
+2011-12-27  Holger Vogt
+ * inpcom.c: warnings and error messages in .lib handling (bug no. 3111261)
+ 
 2011-12-26  Holger Vogt
   * xpressn.c
   * ptfuncs.c, inpptree.c, inpptree.h, spicelib/parser/inp.h

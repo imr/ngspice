@@ -257,12 +257,13 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
             if    ( !*s ) {                                        /* if at end of line, error              */
                 fprintf(cp_err, "Error: .lib filename missing\n");
                 tfree(buffer);		                           /* was allocated by readline()           */
-                continue;
+                controlled_exit(EXIT_FAILURE);
             }                                                      /* Now s points to first char after .lib */
             for ( t = s; *t && !isspace(*t) && !isquote(*t); t++ )         /* skip to end of word      */
                 ;
             y = t;
             while ( isspace(*y) || isquote(*y) ) y++;              /* advance past space chars */
+
             // check if rest of line commented out
             if    ( *y && *y != '$' ) {                            /* .lib <file name> <lib name> */
                 for ( z = y; *z && !isspace(*z) && !isquote(*z); z++ )
@@ -322,7 +323,12 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
                 /* Make the .lib a comment */
                 *buffer = '*';
+            } else {   /* no lib name given */
+                fprintf(cp_err, "Warning: library name missing in line\n  %s", buffer);
+                fprintf(cp_err, "  File included as:   .inc %s\n", s);
+                memcpy(buffer, ".inc",4);
             }
+
         }   /*  end of .lib handling  */
 
         /* now handle .include statements */
