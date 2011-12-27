@@ -134,6 +134,6 @@ libdev_la_SOURCES =	\
 
 EXTRA_DIST = @NOTVLADEVDIR@
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 
 MAINTAINERCLEANFILES = Makefile.in

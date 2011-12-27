@@ -103,5 +103,5 @@ libckt_la_SOURCES = \
 		cluster.c
 
 
-AM_CPPFLAGS =  -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
+AM_CPPFLAGS = @AM_CPPFLAGS@  -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 MAINTAINERCLEANFILES = Makefile.in

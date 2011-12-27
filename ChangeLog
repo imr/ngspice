@@ -1,5 +1,9 @@
 2011-12-27  Robert Larice
  * **/Makefile.am ,
+  #4/6 config.h --> ngspice/config.h,  AM_CPPFLAGS
+
+2011-12-27  Robert Larice
+ * **/Makefile.am ,
  * src/spicelib/devices/adms/admst/ngspice.xml ,
  * src/spicelib/devices/adms/admst/ngspiceMakefile.am.xml :
   #3/6 config.h --> ngspice/config.h,  AM_CPPFLAGS

@@ -73,6 +73,6 @@ $(srcdir)/inpptree.c : inpptree-parser.c
 inpptree-parser.c inpptree-parser.h : inpptree-parser.y
 	bison $(srcdir)/inpptree-parser.y
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend
 
 MAINTAINERCLEANFILES = Makefile.in

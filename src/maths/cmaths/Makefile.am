@@ -57,6 +57,6 @@ endif !TCLWIN
 endif !WINDOWS
 
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/maths/poly
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/maths/poly
 
 MAINTAINERCLEANFILES = Makefile.in
