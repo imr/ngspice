@@ -23,5 +23,5 @@ libmos6_la_SOURCES =	\
 
 
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 MAINTAINERCLEANFILES = Makefile.in

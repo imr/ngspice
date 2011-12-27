@@ -31,6 +31,6 @@ libhisim2_la_SOURCES =	hisim2.h	\
 			hsm2trunc.c
 
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in

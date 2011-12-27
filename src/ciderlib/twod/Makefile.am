@@ -29,5 +29,5 @@ libcidertwod_la_SOURCES =	\
 		twosolve.c
 
 EXTRA_DIST = readme
-AM_CPPFLAGS = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 MAINTAINERCLEANFILES = Makefile.in

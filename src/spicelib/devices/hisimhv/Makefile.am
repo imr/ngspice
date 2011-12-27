@@ -31,6 +31,6 @@ libhisimhv_la_SOURCES = hisimhv.h	\
 			hsmhvtemp_eval.h \
 			hsmhvtrunc.c
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in

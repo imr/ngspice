@@ -17,7 +17,7 @@ libcidersuprt_la_SOURCES =	\
 		suprem.c	\
 		suprmitf.c
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = readme

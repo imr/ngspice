@@ -12,5 +12,5 @@ libnumparam_la_SOURCES = \
 	numpaif.h	\
 	numparam.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 MAINTAINERCLEANFILES = Makefile.in

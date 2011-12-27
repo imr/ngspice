@@ -34,5 +34,5 @@ libmos3_la_SOURCES =	\
 	mos3trun.c
 
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 MAINTAINERCLEANFILES = Makefile.in

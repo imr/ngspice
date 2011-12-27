@@ -12,5 +12,5 @@ libmathfft_la_SOURCES =		\
 EXTRA_DIST = NOTE Read-Me
 
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 MAINTAINERCLEANFILES = Makefile.in
