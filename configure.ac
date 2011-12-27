@@ -26,10 +26,12 @@ dnl Revison stamp the generated ./configure script
 AC_REVISION($Revision$)
 
 dnl Create a configuration header
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADER([src/include/ngspice/config.h])
 
 dnl Initialise automake stuff
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([-Wall -Werror nostdinc])
+
+AC_SUBST([AM_CPPFLAGS],['-I. -I$(srcdir) -I$(top_builddir)/src/include'])
 
 AC_CONFIG_MACRO_DIR([m4])
 

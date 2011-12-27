@@ -1,4 +1,10 @@
 2011-12-27  Robert Larice
+ * configure.ac ,
+ * .cvsignore ,
+ * src/include/ngspice/.cvsignore :
+  #1/6 config.h --> ngspice/config.h,  configure.ac
+
+2011-12-27  Robert Larice
  * src/frontend/com_ghelp.c ,
  * src/frontend/cpitf.c :
   cleanup

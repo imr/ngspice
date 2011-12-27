@@ -1,2 +1,4 @@
 Makefile.in
 Makefile
+config.h.in
+config.h
