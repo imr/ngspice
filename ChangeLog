@@ -1,4 +1,9 @@
 2011-12-27  Robert Larice
+ * src/frontend/help/Makefile.am ,
+ * src/xspice/icm/makedefs.in :
+  #5/6 config.h --> ngspice/config.h,  some more -I include paths
+
+2011-12-27  Robert Larice
  * **/Makefile.am ,
   #4/6 config.h --> ngspice/config.h,  AM_CPPFLAGS
 
