@@ -256,13 +256,15 @@ void INPtabEnd(INPtables * tab)
     for (i = 0; i < tab->INPsize; i++)
 	for (t = tab->INPsymtab[i]; t; t = lt) {
 	    lt = t->t_next;
-	    FREE(t);		/* But not t_ent ! */
+	    FREE(t->t_ent);
+        FREE(t);
 	}
     FREE(tab->INPsymtab);
     for (i = 0; i < tab->INPtermsize; i++)
 	for (n = tab->INPtermsymtab[i]; n; n = ln) {
 	    ln = n->t_next;
-	    FREE(n);		/* But not t_ent ! */
+	    FREE(n->t_ent);
+	    FREE(n);		/* But not t_node ! */
 	}
     FREE(tab->INPtermsymtab);
     FREE(tab);

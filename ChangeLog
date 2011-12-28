@@ -1,5 +1,5 @@
 2011-12-28  Holger Vogt
- * cktdest.c: reduce memory leaks for command 'reset'
+ * cktdest.c, inpsymi.c: reduce memory leaks for command 'reset'
    bug no. 3229770
 
 2011-12-27  Robert Larice
