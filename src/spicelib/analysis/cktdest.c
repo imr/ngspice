@@ -43,13 +43,27 @@ CKTdestroy(CKTcircuit *ckt)
     for(i=0;i<=ckt->CKTmaxOrder+1;i++){
         FREE(ckt->CKTstates[i]);
     }
-    if(ckt->CKTmatrix)      SMPdestroy(ckt->CKTmatrix);
-    if(ckt->CKTbreaks)      FREE(ckt->CKTbreaks);
+    if(ckt->CKTmatrix) {
+        SMPdestroy(ckt->CKTmatrix);
+        ckt->CKTmatrix = NULL;
+    }
+    FREE(ckt->CKTbreaks);
     for(node = ckt->CKTnodes; node; ) {
         nnode = node->next;
         FREE(node);
         node = nnode;
     }
+
+    FREE(ckt->CKTrhs);
+    FREE(ckt->CKTrhsOld);
+    FREE(ckt->CKTrhsSpare);
+    FREE(ckt->CKTirhs);
+    FREE(ckt->CKTirhsOld);
+    FREE(ckt->CKTirhsSpare);
+
+    FREE(ckt->CKTstat->STATdevNum);
+    FREE(ckt->CKTstat);
+
     ckt->CKTnodes = NULL;
     ckt->CKTlastNode = NULL;
     FREE(ckt);
