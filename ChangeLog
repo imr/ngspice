@@ -1,3 +1,9 @@
+2011-12-29  Robert Larice
+ * src/xspice/icm/GNUmakefile.in ,
+ * src/xspice/icm/makedefs.in :
+  install codemodels in $(pkglibdir)
+    this was hardwired to $libdir/spice
+
 2011-12-28  Holger Vogt
  * cktdest.c, inpsymi.c: reduce memory leaks for command 'reset'
    bug no. 3229770
