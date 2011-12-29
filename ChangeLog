@@ -1,4 +1,9 @@
 2011-12-29  Robert Larice
+ * configure.ac :
+  remove @libname@
+    has been replaced by $(pkglibdir)
+
+2011-12-29  Robert Larice
  * configure.ac ,
  * src/Makefile.am ,
  * src/spinit.in ,

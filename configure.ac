@@ -807,7 +807,7 @@ AC_CHECK_PROGS(YACC, 'bison -y' byacc yacc)
 
 #################  XSPICE ##################################################
 dnl Add new code models to the build by pointing to them here.
-libname="lib"
+
 if test "$enable_xspice" = "yes"; then
     if test -z "${YACC}" ; then
         AC_MSG_ERROR([XSPICE build requires bison, byacc or yacc parser generator])
@@ -839,14 +839,6 @@ dnl Define variables for LEX
     XSPICEINIT=""
     AC_CHECK_FUNCS([modf])
     AC_CHECK_HEADERS([libintl.h malloc.h])
-dnl Find the library directory (lib or lib64) for XSPICE libs
-    if test -n $libdir ; then
-        libtest=`expr $libdir : '.*\/lib64$'`
-        if test $libtest -gt 5 ; then
-            libname="lib64"
-        fi
-        echo XSPICE libraries in directory $libname
-    fi
 else
     XSPICEINIT="*"
 
@@ -856,7 +848,6 @@ else
 fi
 AC_SUBST(XSPICEINIT)
 AC_SUBST(XSPICEDLLIBS)
-AC_SUBST(libname)
 
 AM_CONDITIONAL([XSPICE_WANTED], [test "$enable_xspice" = "yes"])
 
