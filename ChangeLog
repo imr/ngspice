@@ -1,3 +1,8 @@
+2011-12-29  Holger Vogt
+ * b4v6dest.c : improved removal of circuit installation,
+   bug no. 3229770. Memory leaks are quasi gone for 
+   10 run - reset sequences of a 1000 transistor circuit
+   
 2011-12-29  Robert Larice
  * src/include/ngspice/Makefile.am :
   install headers in $(pkdatadir)/include/ngspice
