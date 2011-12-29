@@ -21,13 +21,13 @@ if $__flag = 0
 * For SPICE2 POLYs, edit the below line to point to the location 
 * of your codemodel.
 
-@XSPICEINIT@ codemodel @prefix@/@libname@/spice/spice2poly.cm
+@XSPICEINIT@ codemodel @pkglibdir@/spice2poly.cm
 
 * The other codemodels
-@XSPICEINIT@ codemodel @prefix@/@libname@/spice/analog.cm
-@XSPICEINIT@ codemodel @prefix@/@libname@/spice/digital.cm
-@XSPICEINIT@ codemodel @prefix@/@libname@/spice/xtradev.cm
-@XSPICEINIT@ codemodel @prefix@/@libname@/spice/xtraevt.cm
+@XSPICEINIT@ codemodel @pkglibdir@/analog.cm
+@XSPICEINIT@ codemodel @pkglibdir@/digital.cm
+@XSPICEINIT@ codemodel @pkglibdir@/xtradev.cm
+@XSPICEINIT@ codemodel @pkglibdir@/xtraevt.cm
 
 end
 unset __flag

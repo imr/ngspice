@@ -280,6 +280,23 @@ ngspice.idx: ngmakeidx$(EXEEXT) $(srcdir)/ngspice.txt
 endif !WINDOWS
 
 
+## create spinit at compile time, see
+##   (info "(autoconf) Installation Directory Variables")
+
+edit = sed \
+	-e 's|@XSPICEINIT[@]|$(XSPICEINIT)|g' \
+	-e 's|@pkglibdir[@]|$(pkglibdir)|g'
+
+spinit tclspinit : Makefile
+	rm -f $@ $@.tmp
+	srcdir=''; \
+	  test -f ./$@.in || srcdir=$(srcdir)/; \
+	  $(edit) $${srcdir}$@.in >$@.tmp
+	mv $@.tmp $@
+
+spinit: $(srcdir)/spinit.in
+tclspinit: $(srcdir)/tclspinit.in
+
 
 ## General Includes and libraries:
 
@@ -422,8 +439,8 @@ install-tcl-recursive:
 	done;
 
 install-tclspice:
-	$(mkinstalldirs) $(DESTDIR)$(libdir)/spice
-	$(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(libdir)/spice
+	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(pkglibdir)
 
 endif TCL_MODULE
 

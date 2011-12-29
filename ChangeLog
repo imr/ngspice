@@ -1,4 +1,13 @@
 2011-12-29  Robert Larice
+ * configure.ac ,
+ * src/Makefile.am ,
+ * src/spinit.in ,
+ * src/tclspinit.in :
+  generate spinit and tclspinit at `make' time
+    to obey (info "(autoconf) Installation Directory Variables")
+  and edit them for codemodels in $(pkglibdir)
+
+2011-12-29  Robert Larice
  * src/xspice/icm/GNUmakefile.in ,
  * src/xspice/icm/makedefs.in :
   install codemodels in $(pkglibdir)

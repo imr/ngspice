@@ -1008,8 +1008,6 @@ AC_CONFIG_FILES([Makefile
                  man/Makefile
                  man/man1/Makefile
                  src/Makefile
-                 src/spinit
-                 src/tclspinit
                  src/spicelib/Makefile
                  src/spicelib/analysis/Makefile
                  src/spicelib/devices/Makefile
