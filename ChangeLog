@@ -1,4 +1,12 @@
 2011-12-29  Robert Larice
+ * src/Makefile.am :
+  cleanup src/Makefile.am
+    TCL_MODULE rules
+    CLEANFILES
+    edit pkgIndex.tcl at `make' time
+      to obey (info "(autoconf) Installation Directory Variables")
+
+2011-12-29  Robert Larice
  * configure.ac :
   remove @libname@
     has been replaced by $(pkglibdir)

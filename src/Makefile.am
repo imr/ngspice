@@ -308,15 +308,17 @@ if WINDOWS
 LIBS += -lpsapi
 endif
 
-MAINTAINERCLEANFILES = Makefile.in ngspice.idx
+CLEANFILES = ngspice.idx spinit tclspinit pkgIndex.tcl
+
+MAINTAINERCLEANFILES = Makefile.in
 
 ## Tcl:
 
 if TCL_MODULE
 lib_LTLIBRARIES = libspice.la
-install: install-libLTLIBRARIES install-tcl-recursive install-tclspice install-data-am
-EXTRA_DIST += tclspice.c
 initdata_DATA += tclspinit
+pkgIndex_DATA = pkgIndex.tcl
+pkgIndexdir = $(pkglibdir)
 
 if TCLWIN
 LIBS += -lpsapi  -ltcl84 -lBLT24
@@ -416,31 +418,21 @@ libspice_la_LDFLAGS +=  -no-undefined
 libspice_la_LDFLAGS += --def spice.def @TCL_LIB_SPEC@
 endif
 
-CLEANFILES = pkgIndex.tcl libspice.so
-
-TCL_PKG_PATH = @TCL_PACKAGE_PATH@
-
 TCLSPICE_VERSION = @VERSION@
 
-TCL_FILES = libspice.la  pkgIndex.tcl
+pkgIndex_edit = sed \
+	-e 's|%LIB_DIR%|$(libdir)|g' \
+	-e 's|%VERSION%|$(TCLSPICE_VERSION)|g'
 
-pkgIndex.tcl: pkgIndex.tcl.in
-	rm -f $@
-	sed -e 's;%LIB_DIR%;$(DESTDIR)$(libdir);g' $< | \
-	sed -e 's;%VERSION%;$(TCLSPICE_VERSION);g' > $@
+pkgIndex.tcl : Makefile
+	rm -f $@ $@.tmp
+	srcdir=''; \
+	  test -f ./$@.in || srcdir=$(srcdir)/; \
+	  $(pkgIndex_edit) $${srcdir}$@.in >$@.tmp
+	mv $@.tmp $@
 
-all: $(TCL_FILES)
+pkgIndex.tcl: $(srcdir)/pkgIndex.tcl.in
 
-install-tcl-recursive:
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  echo "Making $$target in $$subdir"; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) install) \
-	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done;
-
-install-tclspice:
-	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(pkglibdir)
 
 endif TCL_MODULE
 
