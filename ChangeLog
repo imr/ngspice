@@ -1,4 +1,32 @@
 2011-12-29  Robert Larice
+ * src/include/ngspice/Makefile.am :
+  install headers in $(pkdatadir)/include/ngspice
+
+  use them with a single
+     -I $(pkdatadir)/include
+  compiler directive
+
+  This is for user compilation of
+    XSPICE and adms codemodels
+  outside of the ngspice build directory
+
+  Beware of the "ngspice/config.h" file
+
+  Especially if you build twice,
+    (for tclspice and then for ngspice)
+  both will install this file,
+    with different contents.
+
+  These headers are a mess,
+    yet they are at least isolated
+
+  The -I directive
+    will allow them to be found only
+    on explicit demand with a
+    "ngspice/" namespace seperator
+  (use 	#include "ngspice/...")
+
+2011-12-29  Robert Larice
  * src/Makefile.am :
   cleanup src/Makefile.am
     TCL_MODULE rules
