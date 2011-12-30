@@ -4,7 +4,7 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 **********/
 
 #ifndef NBJT2_H
-#define NBJT2_H "NBJT2defs.h $Revision$ on $Date$ "
+#define NBJT2_H
 
 /* structures to describe 2d Numerical Bipolar Junction Transistors */
 

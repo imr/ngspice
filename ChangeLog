@@ -1,3 +1,12 @@
+2011-12-30  Robert Larice
+ * src/include/ngspice/cktdefs.h ,
+ * src/include/ngspice/pzdefs.h ,
+ * src/spicelib/devices/nbjt2/nbjt2def.h ,
+ * src/spicelib/devices/ndev/ndevexch.h ,
+ * src/spicelib/devices/numd2/numd2def.h ,
+ * src/spicelib/devices/numos/numosdef.h :
+  remove CVS `Id',`log' etc. keyword incantations
+
 2011-12-29  Holger Vogt
  * inppas3.c, cktdest.c: reduce memory leaks
  * inpsymt.c: beautify
@@ -7,9 +16,9 @@
 
 2011-12-29  Holger Vogt
  * b4v6dest.c : improved removal of circuit installation,
-   bug no. 3229770. Memory leaks are quasi gone for 
+   bug no. 3229770. Memory leaks are quasi gone for
    10 run - reset sequences of a 1000 transistor circuit
-   
+
 2011-12-29  Robert Larice
  * src/include/ngspice/Makefile.am :
   install headers in $(pkdatadir)/include/ngspice

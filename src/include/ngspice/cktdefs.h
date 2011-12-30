@@ -3,8 +3,8 @@
  * Modified 1999 Paolo Nenzi - Removed non STDC definitions
  * Modified 2000 AlansFixes
  */
-#ifndef CKT
-#define CKT "CKTdefs.h $Revision$  on $Date$ "
+#ifndef CKT_H
+#define CKT_H
 
 #include "ngspice/typedefs.h"
 
@@ -414,4 +414,4 @@ extern void NInzIter(CKTcircuit *, int, int);
 
 extern IFfrontEnd *SPfrontEnd;
 
-#endif /*CKT*/
+#endif

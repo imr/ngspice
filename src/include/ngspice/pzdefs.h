@@ -1,5 +1,5 @@
-#ifndef PZDEFS
-#define PZDEFS "PZdefs.h $Revision$  on $Date$ "
+#ifndef PZDEFS_H
+#define PZDEFS_H
 
     /* structure used to describe an PZ analysis to be performed */
 
@@ -54,4 +54,4 @@ struct PZAN {
 #define PZ_ZER 8
 #define PZ_PZ 9
 
-#endif /*PZDEFS*/
+#endif

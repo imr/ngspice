@@ -4,7 +4,7 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 **********/
 
 #ifndef NUMD2_H
-#define NUMD2_H "NUMD2defs.h $Revision$  on $Date$ "
+#define NUMD2_H
 
 /* data structures used to describe 2D numerical diodes */
 

@@ -4,7 +4,7 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 **********/
 
 #ifndef NUMOS_H
-#define NUMOS_H "NUMOSdefs.h $Revision$ on $Date$ "
+#define NUMOS_H
 
 /* data structures used to describe 2D Numerical MOSFETs */
 
