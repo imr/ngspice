@@ -156,7 +156,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
     struct line *tmp_ptr1 = NULL;
 
     int i, j;
-    bool found_library, found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
+    bool found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
 
     char *s_ptr, *s_lower;
 
@@ -283,15 +283,11 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 for(s_ptr = s_lower; *s_ptr && (*s_ptr != '\n'); s_ptr++)
                     *s_ptr = (char) tolower(*s_ptr);
 
-                found_library = FALSE;
-                for ( i = 0; i < num_libraries; i++ ) {
-                    if ( strcmp( library_file[i], s_lower ) == 0 ) {
-                        found_library = TRUE;
+                for ( i = 0; i < num_libraries; i++ )
+                    if ( strcmp( library_file[i], s_lower ) == 0 )
                         break;
-                    }
-                }
 
-                if ( !found_library ) {
+                if ( i >= num_libraries ) {
 
                     bool dir_name_flag = FALSE;
                     FILE *newfp = inp_pathopen( s, "r" );

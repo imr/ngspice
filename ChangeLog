@@ -1,5 +1,9 @@
 2011-12-30  Robert Larice
  * inpcom.c :
+  cleanup, drop variable `found_library'
+
+2011-12-30  Robert Larice
+ * inpcom.c :
   cleanup scope of variable `newfp'
 
 2011-12-30  Robert Larice
