@@ -157,8 +157,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
     int i, j;
     bool found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
 
-    char *s_lower;
-
     if ( call_depth == 0 ) {
         num_subckt_w_params = 0;
         num_libraries       = 0;
@@ -281,12 +279,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                     if ( copys )
                         s = copys;		  /* reuse s, but remember, buffer still points to allocated memory */
                 }
-                /* lower case the file name for later string compares */
-                s_lower = strdup(s);
-                strtolower(s_lower);
 
                 for ( i = 0; i < num_libraries; i++ )
-                    if ( strcmp( library_file[i], s_lower ) == 0 )
+                    if ( cieq( library_file[i], s ) )
                         break;
 
                 if ( i >= num_libraries ) {
@@ -314,7 +309,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                         dir_name_flag = TRUE;
                     }
 
-                    library_file[num_libraries++] = strdup(s_lower);
+                    library_file[num_libraries++] = strdup(s);
 
                     if ( dir_name_flag == FALSE ) {
                         char *s_dup = strdup(s);
@@ -328,7 +323,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 }
 
                 *t = keep_char;
-                tfree(s_lower);
 
                 if ( copys )
                     tfree(copys);   /* allocated by the cp_tildexpand() above */
@@ -2202,7 +2196,7 @@ inp_determine_libraries( struct line *deck, char *lib_name )
                         s = copys;
                 }
                 for ( i = 0; i < num_libraries; i++ )
-                    if ( strcmp( library_file[i], s ) == 0 ) {
+                    if ( cieq( library_file[i], s ) ) {
                         found_lib_name = FALSE;
                         for ( j = 0; j < num_lib_names[i] && found_lib_name == FALSE; j++ )
                             if ( strcmp( library_name[i][j], y ) == 0 ) found_lib_name = TRUE;

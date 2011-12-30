@@ -1,5 +1,10 @@
 2011-12-30  Robert Larice
  * inpcom.c :
+  cleanup, drop `s_lower'
+    FIXME case insensitive filename compare !!
+
+2011-12-30  Robert Larice
+ * inpcom.c :
   cleanup scope of `y' and `z'
 
 2011-12-30  Robert Larice
