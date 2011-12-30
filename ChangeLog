@@ -1,6 +1,7 @@
 2011-12-30  Holger Vogt
- * b4v5dest.c, b4dest.c : memory leaks reduced
-
+ * b4v5dest.c, b4dest.c, b3dest, b3v32.dest : memory leaks reduced
+ * b3v32... : struct bsim3SizeDependParam --> struct bsim3v32SizeDependParam
+ 
 2011-12-30  Robert Larice
  * inpcom.c :
   cleanup, drop `s_lower'

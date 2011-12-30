@@ -33,7 +33,7 @@ BSIM3v32temp (GENmodel *inModel, CKTcircuit *ckt)
 {
 BSIM3v32model *model = (BSIM3v32model*) inModel;
 BSIM3v32instance *here;
-struct bsim3SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
+struct bsim3v32SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, Ldrn, Wdrn;
 double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 double Nvtm, SourceSatCurrent, DrainSatCurrent;
@@ -231,7 +231,7 @@ int Size_Not_Found;
               }
 
 	      if (Size_Not_Found)
-	      {   pParam = TMALLOC(struct bsim3SizeDependParam, 1);
+	      {   pParam = TMALLOC(struct bsim3v32SizeDependParam, 1);
                   if (pLastKnot == NULL)
                     model->pSizeDependParamKnot = pParam;
                   else

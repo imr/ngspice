@@ -133,7 +133,7 @@ double dQsub0_dVd, dQsub0_dVb;
    
 double m;
 
-struct bsim3SizeDependParam *pParam;
+struct bsim3v32SizeDependParam *pParam;
 int ByPass, Check, ChargeComputationNeeded, error;
 
 ScalingFactor = 1.0e-9;

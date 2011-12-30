@@ -117,7 +117,7 @@ typedef struct sBSIM3v32instance
     double BSIM3v32Abulk;
     double BSIM3v32AbovVgst2Vtm;
 
-    struct bsim3SizeDependParam  *pParam;
+    struct bsim3v32SizeDependParam  *pParam;
 
     unsigned BSIM3v32lGiven :1;
     unsigned BSIM3v32wGiven :1;
@@ -213,7 +213,7 @@ typedef struct sBSIM3v32instance
 
 } BSIM3v32instance ;
 
-struct bsim3SizeDependParam
+struct bsim3v32SizeDependParam
 {
     double Width;
     double Length;
@@ -347,7 +347,7 @@ struct bsim3SizeDependParam
     double BSIM3v32k1ox;
     double BSIM3v32k2ox;
 
-    struct bsim3SizeDependParam  *pNext;
+    struct bsim3v32SizeDependParam  *pNext;
 };
 
 
@@ -820,7 +820,7 @@ typedef struct sBSIM3v32model
     double BSIM3v32af;  
     double BSIM3v32kf;  
 
-    struct bsim3SizeDependParam *pSizeDependParamKnot;
+    struct bsim3v32SizeDependParam *pSizeDependParamKnot;
 
     /* Flags */
     unsigned  BSIM3v32mobModGiven :1;

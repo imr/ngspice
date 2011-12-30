@@ -22,7 +22,7 @@
 int
 BSIM3v32checkModel (BSIM3v32model *model, BSIM3v32instance *here, CKTcircuit *ckt)
 {
-struct bsim3SizeDependParam *pParam;
+struct bsim3v32SizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
 
