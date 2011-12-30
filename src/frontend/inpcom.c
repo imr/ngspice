@@ -329,11 +329,11 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
                 /* Make the .lib a comment */
                 *buffer = '*';
-            } else {   /* no lib name given */
+            } /*else {   // no lib name given
                 fprintf(cp_err, "Warning: library name missing in line\n  %s", buffer);
                 fprintf(cp_err, "  File included as:   .inc %s\n", s);
                 memcpy(buffer, ".inc",4);
-            }
+            } */
 
         }   /*  end of .lib handling  */
 

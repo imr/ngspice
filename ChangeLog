@@ -1,6 +1,7 @@
 2011-12-30  Holger Vogt
  * b4v5dest.c, b4dest.c, b3dest, b3v32.dest : memory leaks reduced
  * b3v32... : struct bsim3SizeDependParam --> struct bsim3v32SizeDependParam
+ * inpcom.c: undo commit from 2011-12-27, lib handling was defect!
  
 2011-12-30  Robert Larice
  * inpcom.c :
@@ -120,7 +121,7 @@
     this was hardwired to $libdir/spice
 
 2011-12-28  Holger Vogt
- * cktdest.c, inpsymi.c: reduce memory leaks for command 'reset'
+ * cktdest.c, inpsymt.c: reduce memory leaks for command 'reset'
    bug no. 3229770
 
 2011-12-27  Robert Larice
