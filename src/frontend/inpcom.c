@@ -145,7 +145,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
     int             ipc_len;
 #endif
     char *new_title = NULL;
-    char keep_char;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
     int line_number_orig = 1, line_number_lib = 1, line_number_inc = 1;
     unsigned int no_braces = 0; /* number of '{' */
@@ -158,7 +157,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
     int i, j;
     bool found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
 
-    char *s_ptr, *s_lower;
+    char *s_lower;
 
     if ( call_depth == 0 ) {
         num_subckt_w_params = 0;
@@ -266,10 +265,11 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
             if    ( *y && *y != '$' ) {                            /* .lib <file name> <lib name> */
 
                 char *copys = NULL;
+                char keep_char;
 
                 for ( z = y; *z && !isspace(*z) && !isquote(*z); z++ )
                     ;
-                c  = *t;
+                keep_char  = *t;
                 *t = '\0';
                 *z = '\0';
 
@@ -280,8 +280,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 }
                 /* lower case the file name for later string compares */
                 s_lower = strdup(s);
-                for(s_ptr = s_lower; *s_ptr && (*s_ptr != '\n'); s_ptr++)
-                    *s_ptr = (char) tolower(*s_ptr);
+                strtolower(s_lower);
 
                 for ( i = 0; i < num_libraries; i++ )
                     if ( strcmp( library_file[i], s_lower ) == 0 )
@@ -325,7 +324,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                     fclose(newfp);
                 }
 
-                *t = c;
+                *t = keep_char;
                 tfree(s_lower);
 
                 if ( copys )
@@ -555,6 +554,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 }   /* for ... */
 
                 if ( ciprefix(".lib", buffer) ) {
+
+                    char keep_char;
+
                     if ( found_lib_name == TRUE ) {
                         fprintf( stderr, "ERROR: .lib is missing .endl!\n" );
                         controlled_exit(EXIT_FAILURE);
