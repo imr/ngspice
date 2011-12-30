@@ -1,5 +1,9 @@
 2011-12-30  Robert Larice
  * inpcom.c :
+  cleanup scope of variable `newfp'
+
+2011-12-30  Robert Larice
+ * inpcom.c :
   cleanup scope of variable `big_buff2'
 
 2011-12-30  Robert Larice

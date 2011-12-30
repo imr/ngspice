@@ -152,7 +152,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
     size_t max_line_length; /* max. line length in input deck */
 
-    FILE *newfp;
     FILE *fdo;
     struct line *tmp_ptr1 = NULL;
 
@@ -295,8 +294,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 if ( !found_library ) {
 
                     bool dir_name_flag = FALSE;
+                    FILE *newfp = inp_pathopen( s, "r" );
 
-                    newfp = inp_pathopen( s, "r" );
                     if ( !newfp ) {
                         char big_buff2[5000];
 
@@ -383,8 +382,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
             {
                 bool dir_name_flag = FALSE;
+                FILE *newfp = inp_pathopen(s, "r");
 
-                newfp = inp_pathopen(s, "r");
                 if ( !newfp ) {
                     char big_buff2[5000];
 
