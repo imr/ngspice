@@ -144,7 +144,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
     char            ipc_buffer[1025];  /* Had better be big enough */
     int             ipc_len;
 #endif
-    char big_buff2[5000];
     char *new_title = NULL;
     char keep_char;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
@@ -297,12 +296,15 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
                     bool dir_name_flag = FALSE;
 
-                    if ( dir_name != NULL ) sprintf( big_buff2, "%s/%s", dir_name, s );
-                    else                    sprintf( big_buff2, "./%s", s );
-
                     newfp = inp_pathopen( s, "r" );
                     if ( !newfp ) {
-                        dir_name_flag = TRUE;
+                        char big_buff2[5000];
+
+                        if ( dir_name )
+                            sprintf( big_buff2, "%s/%s", dir_name, s );
+                        else
+                            sprintf( big_buff2, "./%s", s );
+
                         newfp = inp_pathopen( big_buff2, "r" );
                         if ( !newfp ) {
                             if ( copys )
@@ -311,6 +313,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                             tfree(buffer);
                             controlled_exit(EXIT_FAILURE);
                         }
+
+                        dir_name_flag = TRUE;
                     }
 
                     library_file[num_libraries++] = strdup(s_lower);
@@ -380,13 +384,16 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
             {
                 bool dir_name_flag = FALSE;
 
-                /* open file specified by  .include statement */
-                if ( dir_name != NULL ) sprintf( big_buff2, "%s/%s", dir_name, s );
-                else                    sprintf( big_buff2, "./%s", s );
-
                 newfp = inp_pathopen(s, "r");
                 if ( !newfp ) {
-                    dir_name_flag = TRUE;
+                    char big_buff2[5000];
+
+                    /* open file specified by  .include statement */
+                    if ( dir_name )
+                        sprintf( big_buff2, "%s/%s", dir_name, s );
+                    else
+                        sprintf( big_buff2, "./%s", s );
+
                     newfp = inp_pathopen( big_buff2, "r" );
                     if ( !newfp ) {
                         perror(s);
@@ -396,6 +403,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                         tfree(buffer);          /* allocated by readline() above */
                         controlled_exit(EXIT_FAILURE);
                     }
+
+                    dir_name_flag = TRUE;
                 }
 
                 if ( dir_name_flag == FALSE ) {
