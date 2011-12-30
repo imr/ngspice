@@ -135,7 +135,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 */
 {
     struct line *end = NULL, *cc = NULL, *prev = NULL, *working, *newcard, *start_lib, *global_card, *tmp_ptr = NULL, *tmp_ptr2 = NULL;
-    char *buffer = NULL, *s, *t, *y, *z, c;
+    char *buffer = NULL, *s, *t, c;
     /* segfault fix */
 #ifdef XSPICE
     char big_buff[5000];
@@ -247,6 +247,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
         /* now handle .lib statements */
         if (ciprefix(".lib", buffer)) {
+
+            char *y, *z;
+
             inp_stripcomments_line(buffer);
             for ( s = buffer; *s && !isspace(*s); s++ )            /* skip over .lib           */
                 ;

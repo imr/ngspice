@@ -1,5 +1,9 @@
 2011-12-30  Robert Larice
  * inpcom.c :
+  cleanup scope of `y' and `z'
+
+2011-12-30  Robert Larice
+ * inpcom.c :
   cleanup scope of `keep_char' and `s_lower', drop `s_ptr'
 
 2011-12-30  Robert Larice
