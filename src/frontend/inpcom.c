@@ -251,6 +251,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
         /* now handle .lib statements */
         if (ciprefix(".lib", buffer)) {
+            inp_stripcomments_line(buffer);
             for ( s = buffer; *s && !isspace(*s); s++ )            /* skip over .lib           */
                 ;
             while ( isspace(*s) || isquote(*s) ) s++;              /* advance past space chars              */
@@ -299,10 +300,10 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                     if ((newfp = inp_pathopen( s, "r" )) == NULL) {
                         dir_name_flag = TRUE;
                         if ((newfp = inp_pathopen( big_buff2, "r" )) == NULL ) {
-                            perror(s);
                             if(copys) tfree(copys);   /* allocated by the cp_tildexpand() above */
-                            tfree(buffer);	    /* allocated by readline() above */
-                            continue;
+                            fprintf(cp_err, "Error: Could not find library file %s\n", s);
+                            tfree(buffer);
+                            controlled_exit(EXIT_FAILURE);
                         }
                     }
                     if(copys) tfree(copys);     /* allocated by the cp_tildexpand() above */
@@ -333,20 +334,27 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
         /* now handle .include statements */
         if (ciprefix(".include", buffer) || ciprefix(".inc", buffer)) {
+            inp_stripcomments_line(buffer);
             for (s = buffer; *s && !isspace(*s); s++) /* advance past non-space chars */
                 ;
-            while (isspace(*s) || isquote(*s))        /* now advance past space chars */
+            while (isspace(*s)) /* now advance past space chars */
                 s++;
-            if (!*s) {                                /* if at end of line, error */
+
+            if(isquote(*s)) {
+                for (t = ++s; *t && !isquote(*t); t++)
+                    ;
+                if(!*t)         /* teriminator quote not found */
+                    t = s;
+            } else {
+                for (t = s; *t && !isspace(*t); t++)
+                    ;
+            }
+
+            if(t == s) {
                 fprintf(cp_err,  "Error: .include filename missing\n");
                 tfree(buffer);		/* was allocated by readline() */
                 controlled_exit(EXIT_FAILURE);
             }
-            /* Now s points to first char after .include */
-            inp_stripcomments_line(s);
-            /* stop at trailing \n\r or quote */
-            for (t = s; *t && !(*t=='\n') && !(*t=='\r') && !isquote(*t); t++)
-                ;
 
             *t = '\0';                         /* place \0 and end of file name in buffer */
 
