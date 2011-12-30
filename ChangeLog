@@ -1,6 +1,9 @@
 2011-12-29  Holger Vogt
  * inppas3.c, cktdest.c: reduce memory leaks
  * inpsymt.c: beautify
+ * inp.c: .csparam allows to tranfer a param into a vector
+   for use in the .control section (yet experimental, not safe
+   against syntax errors)
 
 2011-12-29  Holger Vogt
  * b4v6dest.c : improved removal of circuit installation,

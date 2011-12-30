@@ -29,6 +29,7 @@ Author: 1985 Wayne A. Christopher
 #include "subckt.h"
 #include "spiceif.h"
 #include "error.h" /* controlled_exit() */
+#include "com_let.h"
 
 #ifdef XSPICE
 /* include new stuff */
@@ -555,6 +556,37 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                     fprintf(fdo, "%s\n", tmp_ptr1->li_line);
                 ;
                 (void) fclose(fdo);
+            }
+            for(dd = deck; dd != NULL; dd = dd->li_next) {
+                /* get csparams and create vectors */
+                if ( ciprefix(".csparam", dd->li_line) ) {
+                    wordlist *wlist = NULL;
+                    wordlist *wl = NULL;
+                    wordlist *cwl;
+                    char *cstoken[3];
+                    int i;
+                    s = dd->li_line;
+                    *s='*';
+                    s = dd->li_line + 8;
+                    while ( isspace(*s) ) s++;
+                    cstoken[0]=gettok_char(&s, '=', FALSE);                   
+                    cstoken[1]=gettok_char(&s, '=', TRUE);
+                    cstoken[2]=gettok(&s);
+                    for (i=0; i<3;i++) {
+                        cwl = alloc(struct wordlist);
+                        cwl->wl_prev = wl;
+                        if (wl)
+                            wl->wl_next = cwl;
+                        else {
+                            wlist = cwl;
+                            cwl->wl_next = NULL;
+                        }
+                        cwl->wl_word = cstoken[i];
+                        wl = cwl;
+                    }
+                    com_let(wlist);
+                    wl_free(wlist);
+                }
             }
 
             /*merge the two option line structs*/
