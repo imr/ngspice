@@ -144,7 +144,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
     char            ipc_buffer[1025];  /* Had better be big enough */
     int             ipc_len;
 #endif
-    char *copys=NULL, big_buff2[5000];
+    char big_buff2[5000];
     char *new_title = NULL;
     char keep_char;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
@@ -267,6 +267,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
             // check if rest of line commented out
             if    ( *y && *y != '$' ) {                            /* .lib <file name> <lib name> */
+
+                char *copys = NULL;
+
                 for ( z = y; *z && !isspace(*z) && !isquote(*z); z++ )
                     ;
                 c  = *t;
@@ -275,9 +278,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
                 if ( *s == '~' ) {
                     copys = cp_tildexpand(s); /* allocates memory, but can also return NULL */
-                    if( copys != NULL ) {
+                    if ( copys )
                         s = copys;		  /* reuse s, but remember, buffer still points to allocated memory */
-                    }
                 }
                 /* lower case the file name for later string compares */
                 s_lower = strdup(s);
@@ -291,22 +293,22 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                         break;
                     }
                 }
-                if ( found_library ) {
-                    if(copys) tfree(copys);   /* allocated by the cp_tildexpand() above */
-                } else {
+
+                if ( !found_library ) {
+
                     if ( dir_name != NULL ) sprintf( big_buff2, "%s/%s", dir_name, s );
                     else                    sprintf( big_buff2, "./%s", s );
                     dir_name_flag = FALSE;
                     if ((newfp = inp_pathopen( s, "r" )) == NULL) {
                         dir_name_flag = TRUE;
                         if ((newfp = inp_pathopen( big_buff2, "r" )) == NULL ) {
-                            if(copys) tfree(copys);   /* allocated by the cp_tildexpand() above */
+                            if ( copys )
+                                tfree(copys);   /* allocated by the cp_tildexpand() above */
                             fprintf(cp_err, "Error: Could not find library file %s\n", s);
                             tfree(buffer);
                             controlled_exit(EXIT_FAILURE);
                         }
                     }
-                    if(copys) tfree(copys);     /* allocated by the cp_tildexpand() above */
 
                     library_file[num_libraries++] = strdup(s_lower);
 
@@ -319,8 +321,12 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
                     fclose(newfp);
                 }
+
                 *t = c;
                 tfree(s_lower);
+
+                if ( copys )
+                    tfree(copys);   /* allocated by the cp_tildexpand() above */
 
                 /* Make the .lib a comment */
                 *buffer = '*';
@@ -334,6 +340,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
         /* now handle .include statements */
         if (ciprefix(".include", buffer) || ciprefix(".inc", buffer)) {
+
+            char *copys = NULL;
+
             inp_stripcomments_line(buffer);
             for (s = buffer; *s && !isspace(*s); s++) /* advance past non-space chars */
                 ;
@@ -360,9 +369,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
             if (*s == '~') {
                 copys = cp_tildexpand(s); /* allocates memory, but can also return NULL */
-                if(copys != NULL) {
+                if ( copys )
                     s = copys;		/* reuse s, but remember, buffer still points to allocated memory */
-                }
             }
 
             /* open file specified by  .include statement */
@@ -373,17 +381,12 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 dir_name_flag = TRUE;
                 if ((newfp = inp_pathopen( big_buff2, "r" )) == NULL ) {
                     perror(s);
-                    if(copys) {
+                    if ( copys )
                         tfree(copys);	/* allocated by the cp_tildexpand() above */
-                    }
                     fprintf(cp_err,  "Error: .include statement failed.\n");
                     tfree(buffer);		/* allocated by readline() above */
                     controlled_exit(EXIT_FAILURE);
                 }
-            }
-
-            if(copys) {
-                tfree(copys);		/* allocated by the cp_tildexpand() above */
             }
 
             if ( dir_name_flag == FALSE ) {
@@ -394,6 +397,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 inp_readall(newfp, &newcard, call_depth+1, dir_name, FALSE);  /* read stuff in include file into netlist */
 
             (void) fclose(newfp);
+
+            if ( copys )
+                tfree(copys);		/* allocated by the cp_tildexpand() above */
 
             /* Make the .include a comment */
             *buffer = '*';
@@ -2129,7 +2135,7 @@ static void
 inp_determine_libraries( struct line *deck, char *lib_name )
 {
     struct line *c = deck;
-    char *line, *s, *t, *y, *z, *copys, keep_char1, keep_char2;
+    char *line, *s, *t, *y, *z, keep_char1, keep_char2;
     int i, j;
     bool found_lib_name = FALSE;
     bool read_line = FALSE;
@@ -2160,6 +2166,9 @@ inp_determine_libraries( struct line *deck, char *lib_name )
             }
             /* .lib <file name> <lib name> */
             else if ( read_line == TRUE ) {
+
+                char *copys = NULL;
+
                 for ( z = y; *z && !isspace(*z) && !isquote(*z); z++ )
                     ;
                 keep_char1 = *t;
@@ -2169,9 +2178,8 @@ inp_determine_libraries( struct line *deck, char *lib_name )
 
                 if ( *s == '~' ) {
                     copys = cp_tildexpand(s);
-                    if ( copys != NULL ) {
+                    if ( copys )
                         s = copys;
-                    }
                 }
                 for ( i = 0; i < num_libraries; i++ )
                     if ( strcmp( library_file[i], s ) == 0 ) {
@@ -2189,6 +2197,7 @@ inp_determine_libraries( struct line *deck, char *lib_name )
                 *line = '*';  /* comment out .lib line */
                 *t = keep_char1;
                 *z = keep_char2;
+                /* FIXME, copys not freed ?! */
             }
         }
         c = c->li_next;

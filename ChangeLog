@@ -1,5 +1,12 @@
+2011-12-30  Robert Larice
+ * inpcom.c :
+  bug fix, copys not always valid
+    cleanup scope, emphasize live range
+    avoid things to be freed too early
+    avoid incorrect frees
+
 2011-12-30  Holger Vogt
- * inpcom.c: remove a bug reading a file 
+ * inpcom.c: remove a bug reading a file
    (FIXME: .inc and .lib need some general overhauling!)
 
 2011-12-30  Robert Larice
