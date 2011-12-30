@@ -1,5 +1,9 @@
 2011-12-30  Robert Larice
  * inpcom.c :
+  cleanup scope of variable `dir_name_flag'
+
+2011-12-30  Robert Larice
+ * inpcom.c :
   bug fix, copys not always valid
     cleanup scope, emphasize live range
     avoid things to be freed too early

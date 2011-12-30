@@ -159,7 +159,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
     int i, j;
     bool found_library, found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
-    bool dir_name_flag = FALSE;
 
     char *s_ptr, *s_lower;
 
@@ -296,12 +295,16 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
                 if ( !found_library ) {
 
+                    bool dir_name_flag = FALSE;
+
                     if ( dir_name != NULL ) sprintf( big_buff2, "%s/%s", dir_name, s );
                     else                    sprintf( big_buff2, "./%s", s );
-                    dir_name_flag = FALSE;
-                    if ((newfp = inp_pathopen( s, "r" )) == NULL) {
+
+                    newfp = inp_pathopen( s, "r" );
+                    if ( !newfp ) {
                         dir_name_flag = TRUE;
-                        if ((newfp = inp_pathopen( big_buff2, "r" )) == NULL ) {
+                        newfp = inp_pathopen( big_buff2, "r" );
+                        if ( !newfp ) {
                             if ( copys )
                                 tfree(copys);   /* allocated by the cp_tildexpand() above */
                             fprintf(cp_err, "Error: Could not find library file %s\n", s);
@@ -316,8 +319,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                         char *s_dup = strdup(s);
                         inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, ngdirname(s_dup), FALSE);
                         tfree(s_dup);
-                    } else
+                    } else {
                         inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, dir_name, FALSE);
+                    }
 
                     fclose(newfp);
                 }
@@ -373,30 +377,37 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                     s = copys;		/* reuse s, but remember, buffer still points to allocated memory */
             }
 
-            /* open file specified by  .include statement */
-            if ( dir_name != NULL ) sprintf( big_buff2, "%s/%s", dir_name, s );
-            else                    sprintf( big_buff2, "./%s", s );
-            dir_name_flag = FALSE;
-            if ((newfp = inp_pathopen(s, "r")) == NULL) {
-                dir_name_flag = TRUE;
-                if ((newfp = inp_pathopen( big_buff2, "r" )) == NULL ) {
-                    perror(s);
-                    if ( copys )
-                        tfree(copys);	/* allocated by the cp_tildexpand() above */
-                    fprintf(cp_err,  "Error: .include statement failed.\n");
-                    tfree(buffer);		/* allocated by readline() above */
-                    controlled_exit(EXIT_FAILURE);
+            {
+                bool dir_name_flag = FALSE;
+
+                /* open file specified by  .include statement */
+                if ( dir_name != NULL ) sprintf( big_buff2, "%s/%s", dir_name, s );
+                else                    sprintf( big_buff2, "./%s", s );
+
+                newfp = inp_pathopen(s, "r");
+                if ( !newfp ) {
+                    dir_name_flag = TRUE;
+                    newfp = inp_pathopen( big_buff2, "r" );
+                    if ( !newfp ) {
+                        perror(s);
+                        if ( copys )
+                            tfree(copys);       /* allocated by the cp_tildexpand() above */
+                        fprintf(cp_err,  "Error: .include statement failed.\n");
+                        tfree(buffer);          /* allocated by readline() above */
+                        controlled_exit(EXIT_FAILURE);
+                    }
                 }
+
+                if ( dir_name_flag == FALSE ) {
+                    char *s_dup = strdup(s);
+                    inp_readall(newfp, &newcard, call_depth+1, ngdirname(s_dup), FALSE);  /* read stuff in include file into netlist */
+                    tfree(s_dup);
+                } else {
+                    inp_readall(newfp, &newcard, call_depth+1, dir_name, FALSE);  /* read stuff in include file into netlist */
+                }
+
+                (void) fclose(newfp);
             }
-
-            if ( dir_name_flag == FALSE ) {
-                char *s_dup = strdup(s);
-                inp_readall(newfp, &newcard, call_depth+1, ngdirname(s_dup), FALSE);  /* read stuff in include file into netlist */
-                tfree(s_dup);
-            } else
-                inp_readall(newfp, &newcard, call_depth+1, dir_name, FALSE);  /* read stuff in include file into netlist */
-
-            (void) fclose(newfp);
 
             if ( copys )
                 tfree(copys);		/* allocated by the cp_tildexpand() above */
