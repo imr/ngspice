@@ -16,25 +16,43 @@
 
 void
 BSIM4destroy(
-GENmodel **inModel)
+    GENmodel **inModel)
 {
-BSIM4model **model = (BSIM4model**)inModel;
-BSIM4instance *here;
-BSIM4instance *prev = NULL;
-BSIM4model *mod = *model;
-BSIM4model *oldmod = NULL;
+    BSIM4model **model = (BSIM4model**)inModel;
+    BSIM4instance *here;
+    BSIM4instance *prev = NULL;
+    BSIM4model *mod = *model;
+    BSIM4model *oldmod = NULL;
 
-    for (; mod ; mod = mod->BSIM4nextModel)
-    {    if(oldmod) FREE(oldmod);
-         oldmod = mod;
-         prev = (BSIM4instance *)NULL;
-         for (here = mod->BSIM4instances; here; here = here->BSIM4nextInstance)
-	 {    if(prev) FREE(prev);
-              prev = here;
-         }
-         if(prev) FREE(prev);
+    for (; mod ; mod = mod->BSIM4nextModel) {
+    /** added to get rid of link list pSizeDependParamKnot **/      
+        struct bsim4SizeDependParam *pParam, *pParamOld=NULL;
+
+        pParam = mod->pSizeDependParamKnot;
+
+        for (; pParam ; pParam = pParam->pNext) {
+            FREE(pParamOld);
+            pParamOld = pParam;
+        }
+        FREE(pParamOld);
+        pParam = NULL;
+     /** end of extra code **/
+        if(oldmod) FREE(oldmod);
+        oldmod = mod;
+        prev = (BSIM4instance *)NULL;
+        for (here = mod->BSIM4instances; here; here = here->BSIM4nextInstance) {
+            if(prev) FREE(prev);
+            prev = here;
+        }
+        if(prev) FREE(prev);
     }
-    if(oldmod) FREE(oldmod);
+    if(oldmod) {
+#ifdef USE_OMP4
+        /* free just once for all models */
+        FREE(oldmod->BSIM4InstanceArray);
+#endif
+        FREE(oldmod);
+    }
     *model = NULL;
     return;
 }
