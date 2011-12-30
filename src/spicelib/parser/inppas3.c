@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified: AlansFixes 
+Modified: AlansFixes
 **********/
 
 #include "ngspice/config.h"
@@ -22,7 +22,7 @@ extern IFsimulator *ft_sim;
 
 void
 INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
-	IFparm *nodeParms, int numNodeParms)
+        IFparm *nodeParms, int numNodeParms)
 {
 
     card *current;
@@ -46,81 +46,84 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
 #endif
 
     for(current = data; current != NULL; current = current->nextcard) {
-	line = current->line;
-	FREE(token)
-	INPgetTok(&line,&token,1);
+        line = current->line;
+        FREE(token)
+        INPgetTok(&line,&token,1);
 
-	if (strcmp(token,".nodeset")==0) {
-	    which = -1;
+        if (strcmp(token,".nodeset")==0) {
+            which = -1;
 
-	    for(prm = nodeParms; prm < nodeParms + numNodeParms; prm++) {
-		if(strcmp(prm->keyword,"nodeset")==0) {
-		    which = prm->id;
-		    break;
-		}
-	    }
+            for(prm = nodeParms; prm < nodeParms + numNodeParms; prm++) {
+                if(strcmp(prm->keyword,"nodeset")==0) {
+                    which = prm->id;
+                    break;
+                }
+            }
 
-	    if(which == -1) {
-		LITERR("nodeset unknown to simulator. \n")
-		goto quit;
-	    }
+            if(which == -1) {
+                LITERR("nodeset unknown to simulator. \n")
+                goto quit;
+            }
 
-	    for(;;) {
-		/* loop until we run out of data */
-		INPgetTok(&line,&name,1);
+            for(;;) {
+                /* loop until we run out of data */
+                INPgetTok(&line,&name,1);
 
-		/* check to see if in the form V(xxx) and grab the xxx */
-		if( *name == 0) break; /* end of line */
-		if( (*name == 'V' || *name == 'v') && !name[1] ) {
-		    /* looks like V - must be V(xx) - get xx now*/
-		    INPgetTok(&line,&name,1);
-		    if (INPtermInsert(ckt,&name,tab,&node1)!=E_EXISTS)
-			fprintf(stderr,
-				"Warning : Nodeset on non-existant node - %s\n", name);
-		    ptemp.rValue = INPevaluate(&line,&error,1);
-		    IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
-		    continue;
-		}
-		LITERR(" Error: .nodeset syntax error.\n")
-		    break;
-	    }
-	} else if ((strcmp(token,".ic") == 0)) {
-	    /* .ic */
-	    which = -1;
-	    for(prm = nodeParms; prm < nodeParms + numNodeParms; prm++) {
-		if(strcmp(prm->keyword,"ic")==0) {
-		    which = prm->id;
-		    break;
-		}
-	    }
+                /* check to see if in the form V(xxx) and grab the xxx */
+                if( *name == 0) break; /* end of line */
+                if( (*name == 'V' || *name == 'v') && !name[1] ) {
+                    /* looks like V - must be V(xx) - get xx now*/
+                    INPgetTok(&line,&name,1);
+                    if (INPtermInsert(ckt,&name,tab,&node1)!=E_EXISTS)
+                        fprintf(stderr,
+                                "Warning : Nodeset on non-existant node - %s\n", name);
+                    ptemp.rValue = INPevaluate(&line,&error,1);
+                    IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
+                    continue;
+                }
+                LITERR(" Error: .nodeset syntax error.\n")
+                break;
+            }
+        } else if ((strcmp(token,".ic") == 0)) {
+            /* .ic */
+            which = -1;
+            for(prm = nodeParms; prm < nodeParms + numNodeParms; prm++) {
+                if(strcmp(prm->keyword,"ic")==0) {
+                    which = prm->id;
+                    break;
+                }
+            }
 
-	    if(which==-1) {
-		LITERR("ic unknown to simulator. \n")
-		goto quit;
-	    }
+            if(which==-1) {
+                LITERR("ic unknown to simulator. \n")
+                goto quit;
+            }
 
-	    for(;;) {
-		/* loop until we run out of data */
-		INPgetTok(&line,&name,1);
-		/* check to see if in the form V(xxx) and grab the xxx */
-		if( *name == 0) break; /* end of line */
-		if( (*name == 'V' || *name == 'v') && !name[1] ) {
-		    /* looks like V - must be V(xx) - get xx now*/
-		    INPgetTok(&line,&name,1);
-		    if (INPtermInsert(ckt,&name,tab,&node1)!=E_EXISTS)
-			fprintf(stderr,
-				"Warning : IC on non-existant node - %s\n", name);
-		    ptemp.rValue = INPevaluate(&line,&error,1);
-		    IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL))
-			continue;
-		}
-		LITERR(" Error: .ic syntax error.\n")
-		    break;
-	    }
-	}
+            for(;;) {
+                /* loop until we run out of data */
+                INPgetTok(&line,&name,1);
+                /* check to see if in the form V(xxx) and grab the xxx */
+                if( *name == 0) {
+                    FREE(name);
+                    break; /* end of line */
+                }
+                if( (*name == 'V' || *name == 'v') && !name[1] ) {
+                    /* looks like V - must be V(xx) - get xx now*/
+                    INPgetTok(&line,&name,1);
+                    if (INPtermInsert(ckt,&name,tab,&node1)!=E_EXISTS)
+                        fprintf(stderr,
+                                "Warning : IC on non-existant node - %s\n", name);
+                    ptemp.rValue = INPevaluate(&line,&error,1);
+                    IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL))
+                    continue;
+                }
+                LITERR(" Error: .ic syntax error.\n")
+                break;
+            }
+        }
     }
 quit:
     FREE(token);
-   return;
+    return;
 }
 

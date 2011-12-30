@@ -53,6 +53,8 @@ CKTdestroy(CKTcircuit *ckt)
         FREE(node);
         node = nnode;
     }
+    ckt->CKTnodes = NULL;
+    ckt->CKTlastNode = NULL;
 
     FREE(ckt->CKTrhs);
     FREE(ckt->CKTrhsOld);
@@ -63,9 +65,13 @@ CKTdestroy(CKTcircuit *ckt)
 
     FREE(ckt->CKTstat->STATdevNum);
     FREE(ckt->CKTstat);
+    FREE(ckt->CKThead);
 
-    ckt->CKTnodes = NULL;
-    ckt->CKTlastNode = NULL;
+#ifdef XSPICE
+    FREE(ckt->enh);
+    FREE(ckt->evt);
+#endif
+
     FREE(ckt);
     return(OK);
 }

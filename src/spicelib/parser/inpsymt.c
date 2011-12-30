@@ -48,23 +48,23 @@ int INPtermInsert(CKTcircuit *ckt, char **token, INPtables * tab, CKTnode **node
 
     key = hash(*token, tab->INPtermsize);
     for (t = tab->INPtermsymtab[key]; t; t = t->t_next) {
-	if (!strcmp(*token, t->t_ent)) {
-	    FREE(*token);
-	    *token = t->t_ent;
-	    if (node)
-		*node = t->t_node;
-	    return (E_EXISTS);
-	}
+        if (!strcmp(*token, t->t_ent)) {
+            FREE(*token);
+            *token = t->t_ent;
+            if (node)
+                *node = t->t_node;
+            return (E_EXISTS);
+        }
     }
     t = TMALLOC(struct INPnTab, 1);
     if (t == NULL)
-	return (E_NOMEM);
+        return (E_NOMEM);
     ZERO(t, struct INPnTab);
     error = ft_sim->newNode (ckt, &(t->t_node), *token);
     if (error)
-	return (error);
+        return (error);
     if (node)
-	*node = t->t_node;
+        *node = t->t_node;
     t->t_ent = *token;
     t->t_next = tab->INPtermsymtab[key];
     tab->INPtermsymtab[key] = t;
@@ -85,17 +85,17 @@ int INPmkTerm(CKTcircuit *ckt, char **token, INPtables * tab, CKTnode **node)
 
     key = hash(*token, tab->INPtermsize);
     for (t = tab->INPtermsymtab[key]; t; t = t->t_next) {
-	if (!strcmp(*token, t->t_ent)) {
-	    FREE(*token);
-	    *token = t->t_ent;
-	    if (node)
-		*node = t->t_node;
-	    return (E_EXISTS);
-	}
+        if (!strcmp(*token, t->t_ent)) {
+            FREE(*token);
+            *token = t->t_ent;
+            if (node)
+                *node = t->t_node;
+            return (E_EXISTS);
+        }
     }
     t = TMALLOC(struct INPnTab, 1);
     if (t == NULL)
-	return (E_NOMEM);
+        return (E_NOMEM);
     ZERO(t, struct INPnTab);
     t->t_node = *node;
     t->t_ent = *token;
@@ -114,23 +114,23 @@ int INPgndInsert(CKTcircuit *ckt, char **token, INPtables * tab, CKTnode **node)
 
     key = hash(*token, tab->INPtermsize);
     for (t = tab->INPtermsymtab[key]; t; t = t->t_next) {
-	if (!strcmp(*token, t->t_ent)) {
-	    FREE(*token);
-	    *token = t->t_ent;
-	    if (node)
-		*node = t->t_node;
-	    return (E_EXISTS);
-	}
+        if (!strcmp(*token, t->t_ent)) {
+            FREE(*token);
+            *token = t->t_ent;
+            if (node)
+                *node = t->t_node;
+            return (E_EXISTS);
+        }
     }
     t = TMALLOC(struct INPnTab, 1);
     if (t == NULL)
-	return (E_NOMEM);
+        return (E_NOMEM);
     ZERO(t, struct INPnTab);
     error = ft_sim->groundNode (ckt, &(t->t_node), *token);
     if (error)
-	return (error);
+        return (error);
     if (node)
-	*node = t->t_node;
+        *node = t->t_node;
     t->t_ent = *token;
     t->t_next = tab->INPtermsymtab[key];
     tab->INPtermsymtab[key] = t;
@@ -146,10 +146,10 @@ int INPretrieve(char **token, INPtables * tab)
 
     key = hash(*token, tab->INPsize);
     for (t = tab->INPsymtab[key]; t; t = t->t_next)
-	if (!strcmp(*token, t->t_ent)) {
-	    *token = t->t_ent;
-	    return (OK);
-	}
+        if (!strcmp(*token, t->t_ent)) {
+            *token = t->t_ent;
+            return (OK);
+        }
     return (E_BADPARM);
 }
 
@@ -163,14 +163,14 @@ int INPinsert(char **token, INPtables * tab)
 
     key = hash(*token, tab->INPsize);
     for (t = tab->INPsymtab[key]; t; t = t->t_next)
-	if (!strcmp(*token, t->t_ent)) {
-	    FREE(*token);
-	    *token = t->t_ent;
-	    return (E_EXISTS);
-	}
+        if (!strcmp(*token, t->t_ent)) {
+            FREE(*token);
+            *token = t->t_ent;
+            return (E_EXISTS);
+        }
     t = TMALLOC(struct INPtab, 1);
     if (t == NULL)
-	return (E_NOMEM);
+        return (E_NOMEM);
     ZERO(t, struct INPtab);
     t->t_ent = *token;
     t->t_next = tab->INPsymtab[key];
@@ -189,15 +189,15 @@ int INPinsertNofree(char **token, INPtables * tab)
 
     key = hash(*token, tab->INPsize);
     for (t = tab->INPsymtab[key]; t; t = t->t_next)
-	if (!strcmp(*token, t->t_ent)) {
+        if (!strcmp(*token, t->t_ent)) {
 
-	    /* MW. We can't touch memory pointed by token now */
-	    *token = t->t_ent;
-	    return (E_EXISTS);
-	}
+            /* MW. We can't touch memory pointed by token now */
+            *token = t->t_ent;
+            return (E_EXISTS);
+        }
     t = TMALLOC(struct INPtab, 1);
     if (t == NULL)
-	return (E_NOMEM);
+        return (E_NOMEM);
     ZERO(t, struct INPtab);
     t->t_ent = *token;
     t->t_next = tab->INPsymtab[key];
@@ -214,9 +214,9 @@ int INPremove(char *token, INPtables * tab)
     key = hash(token, tab->INPsize);
     prevp = &tab->INPsymtab[key];
     for (t = *prevp; t && token != t->t_ent; t = t->t_next)
-	prevp = &t->t_next;
+        prevp = &t->t_next;
     if (!t)
-	return OK;
+        return OK;
 
     *prevp = t->t_next;
     tfree(t->t_ent);
@@ -234,9 +234,9 @@ int INPremTerm(char *token, INPtables * tab)
     key = hash(token, tab->INPtermsize);
     prevp = &tab->INPtermsymtab[key];
     for (t = *prevp; t && token != t->t_ent; t = t->t_next)
-	prevp = &t->t_next;
+        prevp = &t->t_next;
     if (!t)
-	return OK;
+        return OK;
 
     *prevp = t->t_next;
     tfree(t->t_ent);
@@ -254,18 +254,18 @@ void INPtabEnd(INPtables * tab)
     int i;
 
     for (i = 0; i < tab->INPsize; i++)
-	for (t = tab->INPsymtab[i]; t; t = lt) {
-	    lt = t->t_next;
-	    FREE(t->t_ent);
-        FREE(t);
-	}
+        for (t = tab->INPsymtab[i]; t; t = lt) {
+            lt = t->t_next;
+            FREE(t->t_ent);
+            FREE(t);
+        }
     FREE(tab->INPsymtab);
     for (i = 0; i < tab->INPtermsize; i++)
-	for (n = tab->INPtermsymtab[i]; n; n = ln) {
-	    ln = n->t_next;
-	    FREE(n->t_ent);
-	    FREE(n);		/* But not t_node ! */
-	}
+        for (n = tab->INPtermsymtab[i]; n; n = ln) {
+            ln = n->t_next;
+            FREE(n->t_ent);
+            FREE(n);		/* But not t_node ! */
+        }
     FREE(tab->INPtermsymtab);
     FREE(tab);
     return;
@@ -277,6 +277,6 @@ static int hash(char *name, int tsize)
     register int i = 0;
 
     for (s = name; *s; s++)
-	i += *s;
+        i += *s;
     return (i % tsize);
 }
