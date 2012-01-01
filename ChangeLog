@@ -1,6 +1,8 @@
 2012-01-01  Holger Vogt
- * inpcom.c, main.c, compatmode.h:
+ * inpcom.c, main.c, compatmode.h, spinit.in:
    .lib handling depends on input to compatmode
+ * runcoms.c: enforce 'reset' after tran, op, etc. before next
+   simulation is started 
 
 2011-12-30  Holger Vogt
  * b4v5dest.c, b4dest.c, b3dest, b3v32.dest : memory leaks reduced
