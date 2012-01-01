@@ -261,10 +261,10 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 ;
             y = t;
             while ( isspace(*y) || isquote(*y) ) y++;              /* advance past space chars */
-
-            // check if rest of line commented out
-            if    ( *y && *y != '$' ) {                            /* .lib <file name> <lib name> */
-
+            
+            if ( *y && ((inp_compat_mode == COMPATMODE_ALL) || (inp_compat_mode == COMPATMODE_HS) 
+                || (inp_compat_mode == COMPATMODE_NATIVE))) {     
+                /* .lib <file name> <lib name> */
                 char *copys = NULL;
                 char keep_char;
 
@@ -329,11 +329,12 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
                 /* Make the .lib a comment */
                 *buffer = '*';
-            } /*else {   // no lib name given
+            } else if (inp_compat_mode == COMPATMODE_PS) {   
+                /* .lib <file name> (no lib name given ) */
                 fprintf(cp_err, "Warning: library name missing in line\n  %s", buffer);
                 fprintf(cp_err, "  File included as:   .inc %s\n", s);
                 memcpy(buffer, ".inc",4);
-            } */
+            }
 
         }   /*  end of .lib handling  */
 
@@ -736,7 +737,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
         if (cp_getvar("addcontrol", CP_BOOL, NULL))
             inp_add_control_section(working, &line_number);
 
-        if (inp_compat_mode == COMPATMODE_ALL) {
+        if (inp_compat_mode != COMPATMODE_SPICE3) {
             /* Do all the compatibility stuff here */
             working = cc->li_next;
             /* E, G, L, R, C compatibility transformations */
@@ -2104,7 +2105,7 @@ inp_fix_for_numparam(struct line *deck)
         if ( !ciprefix( "*lib", c->li_line ) && !ciprefix( "*inc", c->li_line ) )
             inp_change_quotes(c->li_line);
 
-        if (inp_compat_mode == COMPATMODE_ALL) {
+        if ((inp_compat_mode == COMPATMODE_ALL) || (inp_compat_mode == COMPATMODE_PS)) {
             if ( ciprefix( ".subckt", c->li_line ) || ciprefix( "x", c->li_line ) ) {
                /* remove params: */
                 str_ptr = strstr(c->li_line, "params:");

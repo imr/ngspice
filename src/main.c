@@ -436,10 +436,12 @@ COMPATMODE_T ngspice_compat_mode(void)
          return( COMPATMODE_ALL ) ;
       if (strcasecmp(behaviour, "hs")==0)
          return( COMPATMODE_HS ) ;
+      if (strcasecmp(behaviour, "ps")==0)
+         return( COMPATMODE_PS ) ;
       if (strcasecmp(behaviour, "spice3")==0)
          return( COMPATMODE_SPICE3 ) ;
    }
-   return(COMPATMODE_NATIVE) ;
+   return(COMPATMODE_ALL) ;
 } /* end ngspice_compat_mode() */
 
 /* -------------------------------------------------------------------------- */

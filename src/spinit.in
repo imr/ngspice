@@ -9,8 +9,6 @@ set x11lineararcs
 *set ngdebug
 ** no asking after quit **
 set noaskquit
-** set the compatibility mode to allow some hspice constructs
-set ngbehavior=all
 ** set the number of threads in openmp
 ** default (if compiled with --enable-openmp) is: 2
 *set num_threads=4
