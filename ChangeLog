@@ -1,14 +1,18 @@
+2012-01-01  Robert Larice
+ * src/Makefile.am :
+  fix tarball, spinit.in was missing
+
 2012-01-01  Holger Vogt
  * inpcom.c, main.c, compatmode.h, spinit.in:
    .lib handling depends on input to compatmode
  * runcoms.c: enforce 'reset' after tran, op, etc. before next
-   simulation is started 
+   simulation is started
 
 2011-12-30  Holger Vogt
  * b4v5dest.c, b4dest.c, b3dest, b3v32.dest : memory leaks reduced
  * b3v32... : struct bsim3SizeDependParam --> struct bsim3v32SizeDependParam
  * inpcom.c: undo commit from 2011-12-27, lib handling was defect!
- 
+
 2011-12-30  Robert Larice
  * inpcom.c :
   cleanup, drop `s_lower'
