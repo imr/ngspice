@@ -1,4 +1,12 @@
 2012-01-02  Robert Larice
+ * src/spicelib/analysis/cktdojob.c :
+  xspice bug fix, invoke EVTsetup(ckt) only when `reset'
+
+   bug fix, tracker ID 3388916
+   Segfault when combining digital models and breakpoint control
+     https://sourceforge.net/tracker/?func=detail&aid=3388916&group_id=38962&atid=423915
+
+2012-01-02  Robert Larice
  * src/frontend/error.c :
   controlled_exit() shall not block waiting for a keyboard press
 

@@ -196,6 +196,7 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
 		    error = CKTic(ckt);
 		if (!error){
 #ifdef XSPICE
+            if(reset) {
                   /* gtri - begin - 6/10/91 - wbk - Setup event-driven data */
                   error = EVTsetup(ckt);
                   if(error) {
@@ -204,6 +205,7 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
                     return(error);
                   }
                   /* gtri - end - 6/10/91 - wbk - Setup event-driven data */
+            }
 #endif
 		    error = analInfo[i]->an_func (ckt, reset);
 			/* txl, cpl addition */
