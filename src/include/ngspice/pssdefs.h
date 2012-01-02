@@ -2,8 +2,8 @@
 Author: 2010-05 Stefano Perticaroli ``spertica''
 **********/
 
-#ifndef PSS
-#define PSS
+#ifndef PSS_H
+#define PSS_H
 
 #include "ngspice/jobdefs.h"
 #include "ngspice/tskdefs.h"
@@ -35,4 +35,5 @@ typedef struct {
 #define PSS_UIC 6
 #define SC_ITER 7
 #define STEADY_COEFF 8
-#endif /*PSS*/
+
+#endif

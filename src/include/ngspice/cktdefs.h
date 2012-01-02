@@ -264,6 +264,7 @@ struct CKTcircuit {
     Enh_Ckt_Data_t *enh;        /* data used by general enhancements */
 #endif
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
+#ifdef WITH_PSS
 /* SP: Steady State Analysis - 100609 */
     double CKTstabTime;		/* PSS stab time */
     double CKTguessedFreq;	/* PSS guessed frequency */
@@ -273,6 +274,7 @@ struct CKTcircuit {
     double CKTsteady_coeff;
     int CKTsc_iter;
 /* SP: 100609 */
+#endif
 
 };
 

@@ -132,27 +132,31 @@ AC_ARG_ENABLE(expdevices,
 
 dnl --enable-xspice: define XSPICE in the code. This is for xspice support
 AC_ARG_ENABLE(xspice,
-    AS_HELP_STRING([--enable-xspice],[Enable XSpice enhancements, (experimental) ]))
+    AS_HELP_STRING([--enable-xspice],[Enable XSpice enhancements, (experimental)]))
 
 dnl --enable-cider: define CIDER in the code. This is for CIDER support
 AC_ARG_ENABLE(cider,
-    AS_HELP_STRING([--enable-cider],[Enable CIDER enhancements, (experimental) ]))
+    AS_HELP_STRING([--enable-cider],[Enable CIDER enhancements, (experimental)]))
 
 dnl --enable-adms: define ADMS in the code. This is for the adms Verilog-A compiler support
 AC_ARG_ENABLE(adms,
-    AS_HELP_STRING([--enable-adms],[Enable ADMS code models, (experimental) ]))
+    AS_HELP_STRING([--enable-adms],[Enable ADMS code models, (experimental)]))
 
 dnl --enable-adms3: define ADMS in the code. This is for the adms Verilog-A compiler support
 AC_ARG_ENABLE(adms3,
-    AS_HELP_STRING([--enable-adms3],[Enable ADMS code models, (experimental) (adms3) ]))
+    AS_HELP_STRING([--enable-adms3],[Enable ADMS code models, (experimental) (adms3)]))
+
+dnl --enable-xspice: define XSPICE in the code. This is for xspice support
+AC_ARG_ENABLE(pss,
+    AS_HELP_STRING([--enable-pss],[Enable PSS analysis, (very experimental)]))
 
 dnl --enable-ndev: define NDEV in the code. An interface for external device i.e. numerical device
 AC_ARG_ENABLE(ndev,
-    AS_HELP_STRING([--enable-ndev],[Enable NDEV interface, (experimental) ]))
+    AS_HELP_STRING([--enable-ndev],[Enable NDEV interface, (experimental)]))
 
 dnl --enable-cluster: define CLUSTER in the code. This is for cluster support
 AC_ARG_ENABLE(cluster,
-    AS_HELP_STRING([--enable-cluster],[Enable cluster support, (experimental) ]))
+    AS_HELP_STRING([--enable-cluster],[Enable cluster support, (experimental)]))
 
 dnl --enable-help: try to force --ansi option to the compiler
 AC_ARG_ENABLE(help,
@@ -782,6 +786,9 @@ if test "$enable_pzdebug" = "yes"; then
     AC_DEFINE(PZDEBUG,[],[Define if you want to debug pole-zero analysis])
     AC_MSG_RESULT(WARNING: Pole/Zero analysis debug is enabled)
 fi
+if test "$enable_pss" = "yes"; then
+    AC_DEFINE(WITH_PSS,[],[Define if you want PSS analysis])
+fi
 if test "$enable_blktmsdebug" = "yes"; then
     AC_DEFINE(D_DBG_BLOCKTIMES,[],[Define if we want debug distortion analysis (BLOCKTIMES)])
     AC_MSG_RESULT(WARNING: Distortion analysis debug *D_DBG_BLOCKTIMES* is enabled)
@@ -862,6 +869,7 @@ AM_CONDITIONAL([CIDER_WANTED],  [test "$enable_cider" = "yes"])
 AM_CONDITIONAL([NUMDEV_WANTED], [test "$enable_cider" = "yes"])
 
 
+AM_CONDITIONAL([PSS_WANTED], [test "$enable_pss" = "yes"])
 
 dnl adms option
 if test "$enable_adms" = "yes" -o "$enable_adms3" = "yes" ; then

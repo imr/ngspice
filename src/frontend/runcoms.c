@@ -178,6 +178,7 @@ com_noise(wordlist *wl)
     return;
 }
 
+#ifdef WITH_PSS
 /* SP: Steady State Analysis */
 void 
 com_pss(wordlist *wl)
@@ -187,6 +188,7 @@ com_pss(wordlist *wl)
     return;
 }
 /* SP */
+#endif
 
 static int
 dosim(

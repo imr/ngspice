@@ -283,6 +283,7 @@ uic:
         }
     }
 
+#ifdef WITH_PSS
     /* *********************** */
     /* PSS - Spertica - 100910 */
     /* *********************** */
@@ -327,6 +328,7 @@ uic:
         if(error) current->error = INPerrCat(current->error,
 	INPerror(error));	
     }
+#endif
 
 next:          
     while(*line) { /* read the entire line */
