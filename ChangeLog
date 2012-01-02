@@ -1,4 +1,8 @@
 2012-01-02  Robert Larice
+  * src/frontend/inpcom.c :
+  cleanup, muffle compiler warning
+
+2012-01-02  Robert Larice
  * src/spicelib/analysis/cktdojob.c :
   xspice bug fix, invoke EVTsetup(ckt) only when `reset'
 

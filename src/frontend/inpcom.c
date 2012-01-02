@@ -3992,13 +3992,11 @@ static void inp_compat(struct line *deck)
                 midline = cut_line;
                 cut_line = strrchr(str_ptr, '(');
                 /* replace '(' with ',' and ')' with ' ' */
-                while(*str_ptr) {
+                for ( ; *str_ptr; *str_ptr++)
                     if (*str_ptr == '(')
                         *str_ptr = ',';
                     else if (*str_ptr == ')')
                         *str_ptr = ' ';
-                    *str_ptr++;
-                }
                 /* scan for last two numbers */
                 lastno = gettok_node(&cut_line);
                 lnumber = INPevaluate(&lastno, &nerror, FALSE); 
@@ -4178,13 +4176,11 @@ static void inp_compat(struct line *deck)
                 midline = cut_line;
                 cut_line = strrchr(str_ptr, '(');
                 /* replace '(' with ',' and ')' with ' ' */
-                while(*str_ptr) {
+                for ( ; *str_ptr; str_ptr++)
                     if (*str_ptr == '(')
                         *str_ptr = ',';
                     else if (*str_ptr == ')')
                         *str_ptr = ' ';
-                    *str_ptr++;
-                }
                 /* scan for last two numbers */
                 lastno = gettok_node(&cut_line);
                 lnumber = INPevaluate(&lastno, &nerror, FALSE); 
