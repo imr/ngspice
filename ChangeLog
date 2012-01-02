@@ -1,3 +1,26 @@
+2012-01-02  Robert Larice
+ * src/frontend/error.c :
+  controlled_exit() shall not block waiting for a keyboard press
+
+  and advertise the exit message to external syntax coloring schemes,
+    emit "ERROR: " at the very beginning of a new line.
+
+2012-01-02  Robert Larice
+ * configure.ac ,
+ * src/frontend/commands.c ,
+ * src/frontend/runcoms.c ,
+ * src/frontend/shyu.c ,
+ * src/frontend/spiceif.c ,
+ * src/include/ngspice/cktdefs.h ,
+ * src/include/ngspice/pssdefs.h ,
+ * src/spicelib/analysis/Makefile.am ,
+ * src/spicelib/analysis/analysis.c ,
+ * src/spicelib/parser/inp2dot.c ,
+ * visualc/vngspice.vcproj :
+  conditionally compile PSS analysis
+  discouraging PSS as being `very experimental', to enable use:
+    configure --enable-pss
+
 2012-01-01  Robert Larice
  * src/Makefile.am :
   fix tarball, spinit.in was missing

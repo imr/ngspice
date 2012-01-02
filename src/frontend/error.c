@@ -4,7 +4,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /*
- *
  * Print out in more detail what a floating point error was.
  */
 
@@ -23,23 +22,18 @@ char ErrorMessage[1024];
 void winmessage(char* new_msg);
 #endif
 
-void 
+
+void
 controlled_exit(int status)
 {
-  if (status != 0)
 #ifdef HAS_WINDOWS
-    winmessage("Fatal error in NGSPICE");
+    if (status)
+        winmessage("Fatal error in NGSPICE");
 #else
-  {
-    if (!ft_pipemode) {
-      fprintf(stderr, " Fatal error in NGSPICE - Press Return to exit\n");       
-      getc(stdin);
-    }
-    else
-    fprintf(stderr, " Fatal error in NGSPICE - Exit\n");      
-  }
+    if (status)
+        fprintf(stderr, "\nERROR: fatal error in ngspice, exit(%d)\n", status);
 #endif
-  exit(status);
+    exit(status);
 }
 
 
@@ -52,9 +46,7 @@ fperror(char *mess, int code)
 }
 
 
-
 /* Print a spice error message. */
-
 void
 ft_sperror(int code, char *mess)
 {
@@ -62,33 +54,32 @@ ft_sperror(int code, char *mess)
     return;
 }
 
+
 void
 fatal(void)
 {
     cp_ccon(FALSE);
-#ifdef FTEDEBUG
-#ifdef SIGQUIT
+
+#if defined(FTEDEBUG) && defined(SIGQUIT)
     (void) signal(SIGQUIT, SIG_DFL);
     (void) kill(getpid(), SIGQUIT);
 #endif
-#endif
+
     exit(EXIT_BAD);
 }
+
 
 /* These error messages are from internal consistency checks. */
 void
 internalerror(char *message)
 {
-
     fprintf(stderr, "ERROR: (internal)  %s\n", message);
-
 }
+
 
 /* These errors are from external routines like fopen. */
 void
 externalerror(char *message)
 {
-
     fprintf(stderr, "ERROR: (external)  %s\n", message);
-
 }
