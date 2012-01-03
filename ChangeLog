@@ -1,3 +1,6 @@
+2012-01-03  Holger Vogt
+ * runcoms.c: undo change from 2012-01-01, conflict with 'alter', altermod'
+
 2012-01-02  Robert Larice
   * src/frontend/inpcom.c :
   cleanup, muffle compiler warning

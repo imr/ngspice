@@ -46,7 +46,6 @@ char rawfileBuf[RAWBUF_SIZE];
 /*To tell resume the rawfile name saj*/
 char *last_used_rawfile = NULL;
 /*end saj */
-static bool firstrundone = FALSE;
 
 /* command "setcirc" */
 void
@@ -110,7 +109,6 @@ void
 com_pz(wordlist *wl)
 {
     dosim("pz", wl);
-    firstrundone = TRUE;
     return;
 }
 
@@ -118,7 +116,6 @@ void
 com_op(wordlist *wl)
 {
     dosim("op", wl);
-    firstrundone = TRUE;
     return;
 }
 
@@ -126,7 +123,6 @@ void
 com_dc(wordlist *wl)
 {
     dosim("dc", wl);
-    firstrundone = TRUE;
     return;
 }
 
@@ -134,7 +130,6 @@ void
 com_ac(wordlist *wl)
 {
     dosim("ac", wl);
-    firstrundone = TRUE;
     return;
 }
 
@@ -142,7 +137,6 @@ void
 com_tf(wordlist *wl)
 {
     dosim("tf", wl);
-    firstrundone = TRUE;
     return;
 }
 
@@ -150,7 +144,6 @@ void
 com_tran(wordlist *wl)
 {
     dosim("tran", wl);
-    firstrundone = TRUE;
     return;
 }
 
@@ -158,7 +151,6 @@ void
 com_sens(wordlist *wl)
 {
     dosim("sens", wl);
-    firstrundone = TRUE;
     return;
 }
 
@@ -166,7 +158,6 @@ void
 com_disto(wordlist *wl)
 {
     dosim("disto", wl);
-    firstrundone = TRUE;
     return;
 }
 
@@ -174,7 +165,6 @@ void
 com_noise(wordlist *wl)
 {
     dosim("noise", wl);
-    firstrundone = TRUE;
     return;
 }
 
@@ -184,7 +174,6 @@ void
 com_pss(wordlist *wl)
 {
     dosim("pss", wl);
-    firstrundone = TRUE;
     return;
 }
 /* SP */
@@ -208,8 +197,6 @@ dosim(
    /* set file type to binary or to what is given by environmental 
       variable SPICE_ASCIIRAWFILE in ivars.c */
    bool ascii = AsciiRawFile;
-   if (firstrundone)
-        com_rset(NULL);
    if (eq(what, "run") && wl)
       dofile = TRUE;
    /* add "what" to beginning of wordlist wl, except "what" equals "run" 
@@ -387,7 +374,6 @@ com_run(wordlist *wl)
 {
 /*    ft_getsaves(); */
     dosim("run", wl);
-    firstrundone = TRUE;
     return;
 }
 
