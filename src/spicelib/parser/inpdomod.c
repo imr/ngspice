@@ -109,7 +109,11 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 #endif
 				default: /* placeholder; use level 4 for the next model */
 				err = INPmkTemp(
+#ifdef ADMS
 				  "Only BJT levels 1-2, 4,6-9 are supported in this binary\n");
+#else
+				  "Only BJT levels 1-2, 4, 9 are supported in this binary\n");
+#endif
 				break;
 
 			}	

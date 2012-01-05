@@ -1,3 +1,6 @@
+2012-01-05  Holger Vogt
+ * inpdomod.c: bug in error message for bjt removed
+
 2012-01-03  Holger Vogt
  * runcoms.c: undo change from 2012-01-01, conflict with 'alter', altermod'
 
