@@ -3992,7 +3992,7 @@ static void inp_compat(struct line *deck)
                 midline = cut_line;
                 cut_line = strrchr(str_ptr, '(');
                 /* replace '(' with ',' and ')' with ' ' */
-                for ( ; *str_ptr; *str_ptr++)
+                for ( ; *str_ptr; str_ptr++)
                     if (*str_ptr == '(')
                         *str_ptr = ',';
                     else if (*str_ptr == ')')

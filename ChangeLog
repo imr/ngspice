@@ -1,4 +1,8 @@
 2012-01-07  Robert Larice
+  * src/frontend/inpcom.c :
+  cleanup, muffle compiler warning
+
+2012-01-07  Robert Larice
  * src/spicelib/analysis/cktdojob.c :
   bug fix, CKTcurJob, make sure this is either up do date or NULL
   fix a valgrind report, access to allready freed memory during CKTtemp()
