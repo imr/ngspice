@@ -54,7 +54,8 @@ JFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             *states += JFET2_STATE_COUNT + 1;
 
 matrixpointers2:
-            if(model->JFET2rs != 0 && here->JFET2sourcePrimeNode==0) {
+            if(model->JFET2rs != 0) {
+                if(here->JFET2sourcePrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->JFET2name,"source");
                 if(error) return(error);
                 here->JFET2sourcePrimeNode = tmp->number;
@@ -70,11 +71,13 @@ matrixpointers2:
                      }
                   }
                 }
+                }
 
             } else {
                 here->JFET2sourcePrimeNode = here->JFET2sourceNode;
             }
-            if(model->JFET2rd != 0 && here->JFET2drainPrimeNode==0) {
+            if(model->JFET2rd != 0) {
+                if(here->JFET2drainPrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->JFET2name,"drain");
                 if(error) return(error);
                 here->JFET2drainPrimeNode = tmp->number;
@@ -89,6 +92,7 @@ matrixpointers2:
                        tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
+                }
                 }
                 
             } else {

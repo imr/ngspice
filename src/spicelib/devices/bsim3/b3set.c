@@ -959,10 +959,12 @@ int nthreads;
 
  /* internal charge node */
 
-            if ((here->BSIM3nqsMod) && (here->BSIM3qNode == 0))
+            if (here->BSIM3nqsMod)
+            {   if (here->BSIM3qNode == 0)
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"charge");
                 if(error) return(error);
                 here->BSIM3qNode = tmp->number;
+            }
             }
             else
             {   here->BSIM3qNode = 0;

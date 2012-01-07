@@ -1794,7 +1794,8 @@ JOB   *job;
                              createNode = 1;
                      }
             }
-            if ( createNode != 0  && (here->BSIM4v5dNodePrime == 0))
+            if ( createNode != 0 )
+            {   if (here->BSIM4v5dNodePrime == 0)
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4v5name,"drain");
                 if(error) return(error);
                 here->BSIM4v5dNodePrime = tmp->number;
@@ -1811,6 +1812,7 @@ JOB   *job;
                
 }
 
+            }
             }
             else
             {   here->BSIM4v5dNodePrime = here->BSIM4v5dNode;
@@ -1839,7 +1841,8 @@ JOB   *job;
                              createNode = 1;
                      }
             }
-            if ( createNode != 0  && here->BSIM4v5sNodePrime == 0)
+            if ( createNode != 0 )
+            {   if (here->BSIM4v5sNodePrime == 0)
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4v5name,"source");
                 if(error) return(error);
                 here->BSIM4v5sNodePrime = tmp->number;
@@ -1856,10 +1859,12 @@ JOB   *job;
                 }				
 		
             }
+            }
             else
                 here->BSIM4v5sNodePrime = here->BSIM4v5sNode;
 
-            if ((here->BSIM4v5rgateMod > 0) && (here->BSIM4v5gNodePrime == 0))
+            if (here->BSIM4v5rgateMod > 0)
+            {   if (here->BSIM4v5gNodePrime == 0)
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4v5name,"gate");
                 if(error) return(error);
                    here->BSIM4v5gNodePrime = tmp->number;
@@ -1876,13 +1881,16 @@ JOB   *job;
                 }
 						
             }
+            }
             else
                 here->BSIM4v5gNodePrime = here->BSIM4v5gNodeExt;
 
-            if ((here->BSIM4v5rgateMod == 3) && (here->BSIM4v5gNodeMid == 0))
+            if (here->BSIM4v5rgateMod == 3)
+            {   if (here->BSIM4v5gNodeMid == 0)
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4v5name,"midgate");
                 if(error) return(error);
                    here->BSIM4v5gNodeMid = tmp->number;
+            }
             }
             else
                 here->BSIM4v5gNodeMid = here->BSIM4v5gNodeExt;
@@ -1922,7 +1930,8 @@ JOB   *job;
 				  = here->BSIM4v5bNode;
 
             /* NQS node */
-            if ((here->BSIM4v5trnqsMod) && (here->BSIM4v5qNode == 0)) 
+            if (here->BSIM4v5trnqsMod)
+            {   if (here->BSIM4v5qNode == 0)
 	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM4v5name,"charge");
                 if(error) return(error);
                 here->BSIM4v5qNode = tmp->number;
@@ -1937,6 +1946,7 @@ JOB   *job;
                      }
                   }
                 }				
+            }
             }
 	    else 
 	        here->BSIM4v5qNode = 0;

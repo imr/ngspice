@@ -1,4 +1,49 @@
 2012-01-07  Robert Larice
+ * src/spicelib/devices/bsim1/b1set.c ,
+ * src/spicelib/devices/bsim2/b2set.c ,
+ * src/spicelib/devices/bsim3/b3set.c ,
+ * src/spicelib/devices/bsim3v0/b3v0set.c ,
+ * src/spicelib/devices/bsim3v1/b3v1set.c ,
+ * src/spicelib/devices/bsim3v32/b3v32set.c ,
+ * src/spicelib/devices/bsim4/b4set.c ,
+ * src/spicelib/devices/bsim4v4/b4v4set.c ,
+ * src/spicelib/devices/bsim4v5/b4v5set.c ,
+ * src/spicelib/devices/bsim4v6/b4v6set.c ,
+ * src/spicelib/devices/hfet1/hfetsetup.c ,
+ * src/spicelib/devices/hfet2/hfet2setup.c ,
+ * src/spicelib/devices/jfet/jfetset.c ,
+ * src/spicelib/devices/jfet2/jfet2set.c ,
+ * src/spicelib/devices/mes/messetup.c ,
+ * src/spicelib/devices/mesa/mesasetup.c ,
+ * src/spicelib/devices/mos1/mos1set.c ,
+ * src/spicelib/devices/mos2/mos2set.c ,
+ * src/spicelib/devices/mos3/mos3set.c ,
+ * src/spicelib/devices/mos6/mos6set.c ,
+ * src/spicelib/devices/mos9/mos9set.c ,
+ * src/spicelib/devices/vbic/vbicsetup.c :
+  bug fix, fix the guard for device generated internal nodes (via CKTmkVolt())
+
+  There is a longstanding bug in spice,
+  responsible for wired behavior when two analyzes are not separated with
+    a `reset' command
+
+  The second invocation of CKTsetup() repeated the construction of
+    internal device nodes (CKTmkVolt and CKTmkCur)
+    yielding an incorrect device matrix with growing vector size.
+
+  Obviously the support for a second CKTsetup() invocation was
+    already included in spice, but not implemented correctly.
+  This patch fixes guards in many device models, which should have
+    prevented repeated invocation of CKTmkVolt() and CKTmkCur()
+
+  This patch fixes many but not all device models,
+    known exceptions are :
+       b4soiset b3soiddset soi3set
+
+  This fix is kept short, for better readability of the patch diff.
+  A large whitespace and indentation patch will follow.
+
+2012-01-07  Robert Larice
   * src/frontend/inpcom.c :
   cleanup, muffle compiler warning
 

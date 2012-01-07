@@ -159,8 +159,8 @@ MOS2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	    }
             if ((model->MOS2drainResistance != 0
                     || (here->MOS2drainSquares != 0
-		    && model->MOS2sheetResistance != 0))
-		    && here->MOS2dNodePrime==0) {
+		    && model->MOS2sheetResistance != 0))) {
+                if (here->MOS2dNodePrime == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MOS2name,"internal#drain");
                 if(error) return(error);
                 here->MOS2dNodePrime = tmp->number;
@@ -173,6 +173,7 @@ MOS2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                      }
                   }
                 }
+                }
                 
             } else {
                 here->MOS2dNodePrime = here->MOS2dNode;
@@ -180,8 +181,8 @@ MOS2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
             if( ( (model->MOS2sourceResistance != 0) || 
                     ((here->MOS2sourceSquares != 0) &&
-                     (model->MOS2sheetResistance != 0)) )  && 
-                     (here->MOS2sNodePrime==0) ) {
+                     (model->MOS2sheetResistance != 0)) )) {
+                if (here->MOS2sNodePrime == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MOS2name,"internal#source");
                 if(error) return(error);
                 here->MOS2sNodePrime = tmp->number;
@@ -193,6 +194,7 @@ MOS2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                        tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
+                }
                 }
                 
             } else {

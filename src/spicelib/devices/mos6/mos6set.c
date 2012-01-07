@@ -153,8 +153,8 @@ MOS6setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 matrixpointers:
             if((model->MOS6drainResistance != 0 ||
                     (model->MOS6sheetResistance != 0 &&
-                     here->MOS6drainSquares != 0) ) &&
-                    here->MOS6dNodePrime==0) {
+                     here->MOS6drainSquares != 0) )) {
+                if (here->MOS6dNodePrime == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MOS6name,"drain");
                 if(error) return(error);
                 here->MOS6dNodePrime = tmp->number;
@@ -166,14 +166,15 @@ matrixpointers:
                      }
                   }
                 }
+                }
             } else {
                 here->MOS6dNodePrime = here->MOS6dNode;
             }
 
             if((model->MOS6sourceResistance != 0 ||
                     (model->MOS6sheetResistance != 0 &&
-                     here->MOS6sourceSquares != 0) ) &&
-                    here->MOS6sNodePrime==0) {
+                     here->MOS6sourceSquares != 0) )) {
+                if (here->MOS6sNodePrime == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MOS6name,"source");
                 if(error) return(error);
                 here->MOS6sNodePrime = tmp->number;
@@ -184,6 +185,7 @@ matrixpointers:
                        tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
+                }
                 }
             } else {
                 here->MOS6sNodePrime = here->MOS6sNode;

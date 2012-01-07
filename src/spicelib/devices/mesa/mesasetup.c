@@ -255,7 +255,8 @@ MESAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             *states += 20;
 
 matrixpointers:
-            if(model->MESAsourceResist != 0 && here->MESAsourcePrimeNode==0) {
+            if(model->MESAsourceResist != 0) {
+                if(here->MESAsourcePrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MESAname,"source");
                 if(error) return(error);
                 here->MESAsourcePrimeNode = tmp->number;
@@ -271,12 +272,14 @@ matrixpointers:
                      }
                   }
                 }
+                }
                 
             } else {
                 here->MESAsourcePrimeNode = here->MESAsourceNode;
             }
             
-            if(model->MESAdrainResist != 0 && here->MESAdrainPrimeNode==0) {
+            if(model->MESAdrainResist != 0) {
+                if(here->MESAdrainPrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MESAname,"drain");
                 if(error) return(error);
                 here->MESAdrainPrimeNode = tmp->number;
@@ -292,11 +295,13 @@ matrixpointers:
                      }
                   }
                 }
+                }
                 
             } else {
                 here->MESAdrainPrimeNode = here->MESAdrainNode;
             }
-            if(model->MESAgateResist != 0 && here->MESAgatePrimeNode==0) {
+            if(model->MESAgateResist != 0) {
+                if(here->MESAgatePrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MESAname,"gate");
                 if(error) return(error);
                 here->MESAgatePrimeNode = tmp->number;
@@ -312,6 +317,7 @@ matrixpointers:
                      }
                   }
                 }
+                }
                 
                 
             } else {
@@ -319,7 +325,8 @@ matrixpointers:
             }
             
             
-            if(model->MESAri != 0 && here->MESAsourcePrmPrmNode==0) {
+            if(model->MESAri != 0) {
+                if(here->MESAsourcePrmPrmNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MESAname,"gs");
                 if(error) return(error);
                 here->MESAsourcePrmPrmNode = tmp->number;
@@ -335,11 +342,13 @@ matrixpointers:
                      }
                   }
                 }
+                }
                 
             } else {
                 here->MESAsourcePrmPrmNode = here->MESAsourcePrimeNode;
             }
-            if(model->MESArf != 0 && here->MESAdrainPrmPrmNode==0) {
+            if(model->MESArf != 0) {
+                if(here->MESAdrainPrmPrmNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MESAname,"gd");
                 if(error) return(error);
                 here->MESAdrainPrmPrmNode = tmp->number;
@@ -354,6 +363,7 @@ matrixpointers:
                        tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
+                }
                 }
                 
             } else {

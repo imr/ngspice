@@ -1000,10 +1000,12 @@ IFuid tmpName;
 
  /* internal charge node */
 
-            if ((here->BSIM3v32nqsMod) && (here->BSIM3v32qNode == 0))
+            if (here->BSIM3v32nqsMod)
+            {   if(here->BSIM3v32qNode == 0)
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM3v32name,"charge");
                 if(error) return(error);
                 here->BSIM3v32qNode = tmp->number;
+            }
             }
             else
             {   here->BSIM3v32qNode = 0;

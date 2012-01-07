@@ -139,7 +139,8 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
         here->HFET2m = 1.0;
 
 matrixpointers:     
-      if(model->HFET2rs != 0 && here->HFET2sourcePrimeNode==0) {
+      if(model->HFET2rs != 0) {
+          if(here->HFET2sourcePrimeNode == 0) {
         error = CKTmkVolt(ckt,&tmp,here->HFET2name,"source");
         if(error) return(error);
         here->HFET2sourcePrimeNode = tmp->number;
@@ -152,11 +153,13 @@ matrixpointers:
                      }
                   }
                 }
+          }
         
       } else {
         here->HFET2sourcePrimeNode = here->HFET2sourceNode;
       }
-      if(model->HFET2rd != 0 && here->HFET2drainPrimeNode==0) {
+      if(model->HFET2rd != 0) {
+          if(here->HFET2drainPrimeNode == 0) {
         error = CKTmkVolt(ckt,&tmp,here->HFET2name,"drain");
         if(error) return(error);
         here->HFET2drainPrimeNode = tmp->number;
@@ -169,6 +172,7 @@ matrixpointers:
                      }
                   }
                 }
+          }
         
       } else {
         here->HFET2drainPrimeNode = here->HFET2drainNode;

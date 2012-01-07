@@ -2311,7 +2311,8 @@ int nthreads;
                              createNode = 1;
                      }
             }
-            if ( createNode != 0  && (here->BSIM4dNodePrime == 0))
+            if ( createNode != 0 )
+            {   if ( here->BSIM4dNodePrime == 0 )
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"drain");
                 if(error) return(error);
                 here->BSIM4dNodePrime = tmp->number;
@@ -2325,6 +2326,7 @@ int nthreads;
                      }
                   }
                 }
+            }
             }
             else
             {   here->BSIM4dNodePrime = here->BSIM4dNode;
@@ -2353,7 +2355,8 @@ int nthreads;
                              createNode = 1;
                      }
             }
-            if ( createNode != 0  && here->BSIM4sNodePrime == 0)
+            if ( createNode != 0 )
+            {   if ( here->BSIM4sNodePrime == 0 )
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"source");
                 if(error) return(error);
                 here->BSIM4sNodePrime = tmp->number;
@@ -2368,10 +2371,12 @@ int nthreads;
                   }
                 }
             }
+            }
             else
                 here->BSIM4sNodePrime = here->BSIM4sNode;
 
-            if ((here->BSIM4rgateMod > 0) && (here->BSIM4gNodePrime == 0))
+            if ( here->BSIM4rgateMod > 0 )
+            {   if ( here->BSIM4gNodePrime == 0 )
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"gate");
                 if(error) return(error);
                    here->BSIM4gNodePrime = tmp->number;
@@ -2386,13 +2391,16 @@ int nthreads;
                   }
                 }
             }
+            }
             else
                 here->BSIM4gNodePrime = here->BSIM4gNodeExt;
 
-            if ((here->BSIM4rgateMod == 3) && (here->BSIM4gNodeMid == 0))
+            if ( here->BSIM4rgateMod == 3 )
+            {   if ( here->BSIM4gNodeMid == 0 )
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"midgate");
                 if(error) return(error);
                    here->BSIM4gNodeMid = tmp->number;
+            }
             }
             else
                 here->BSIM4gNodeMid = here->BSIM4gNodeExt;
@@ -2431,10 +2439,12 @@ int nthreads;
                                   = here->BSIM4bNode;
 
             /* NQS node */
-            if ((here->BSIM4trnqsMod) && (here->BSIM4qNode == 0)) 
+            if ( here->BSIM4trnqsMod )
+            {   if ( here->BSIM4qNode == 0 ) 
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"charge");
                 if(error) return(error);
                 here->BSIM4qNode = tmp->number;
+            }
             }
             else 
                 here->BSIM4qNode = 0;

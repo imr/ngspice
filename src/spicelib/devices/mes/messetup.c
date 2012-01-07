@@ -87,7 +87,8 @@ MESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             *states += MESnumStates;
 
 matrixpointers:
-            if(model->MESsourceResist != 0 && here->MESsourcePrimeNode==0) {
+            if(model->MESsourceResist != 0) {
+                if(here->MESsourcePrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MESname,"source");
                 if(error) return(error);
                 here->MESsourcePrimeNode = tmp->number;
@@ -103,11 +104,13 @@ matrixpointers:
                      }
                   }
                 }
+                }
                 
             } else {
                 here->MESsourcePrimeNode = here->MESsourceNode;
             }
-            if(model->MESdrainResist != 0 && here->MESdrainPrimeNode==0) {
+            if(model->MESdrainResist != 0) {
+                if(here->MESdrainPrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MESname,"drain");
                 if(error) return(error);
                 here->MESdrainPrimeNode = tmp->number;
@@ -122,6 +125,7 @@ matrixpointers:
                        tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
+                }
                 }
                 
             } else {

@@ -792,8 +792,8 @@ IFuid tmpName;
                     
             /* process drain series resistance */
             if ((model->BSIM3v0sheetResistance > 0.0) && 
-                (here->BSIM3v0drainSquares > 0.0 ) &&
-                (here->BSIM3v0dNodePrime == 0))
+                (here->BSIM3v0drainSquares > 0.0 ))
+            {   if(here->BSIM3v0dNodePrime == 0)
 	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM3v0name,"drain");
                 if(error) return(error);
                 here->BSIM3v0dNodePrime = tmp->number;
@@ -807,14 +807,15 @@ IFuid tmpName;
                   }
                 }
             }
+            }
 	    else
 	    {   here->BSIM3v0dNodePrime = here->BSIM3v0dNode;
             }
                    
             /* process source series resistance */
             if ((model->BSIM3v0sheetResistance > 0.0) && 
-                (here->BSIM3v0sourceSquares > 0.0 ) &&
-                (here->BSIM3v0sNodePrime == 0)) 
+                (here->BSIM3v0sourceSquares > 0.0 ))
+            {   if(here->BSIM3v0sNodePrime == 0)
 	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM3v0name,"source");
                 if(error) return(error);
                 here->BSIM3v0sNodePrime = tmp->number;
@@ -829,16 +830,19 @@ IFuid tmpName;
                 }
 		
             }
+            }
 	    else 
 	    {   here->BSIM3v0sNodePrime = here->BSIM3v0sNode;
             }
 
  /* internal charge node */
                    
-            if ((here->BSIM3v0nqsMod) && (here->BSIM3v0qNode == 0)) 
+            if ((here->BSIM3v0nqsMod))
+            {   if(here->BSIM3v0qNode == 0)
 	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM3v0name,"charge");
                 if(error) return(error);
                 here->BSIM3v0qNode = tmp->number;
+            }
             }
 	    else 
 	    {   here->BSIM3v0qNode = 0;

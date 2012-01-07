@@ -249,7 +249,8 @@ HFETAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             *states += HFETAnumStates;
 
 matrixpointers:
-            if(model->HFETArs != 0 && here->HFETAsourcePrimeNode==0) {
+            if(model->HFETArs != 0) {
+                if(here->HFETAsourcePrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->HFETAname,"source");
                 if(error) return(error);
                 here->HFETAsourcePrimeNode = tmp->number;
@@ -266,12 +267,14 @@ matrixpointers:
                      }
                   }
                 }
+                }
 
             } else {
                 here->HFETAsourcePrimeNode = here->HFETAsourceNode;
             }
             
-            if(model->HFETArd != 0 && here->HFETAdrainPrimeNode==0) {
+            if(model->HFETArd != 0) {
+                if(here->HFETAdrainPrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->HFETAname,"drain");
                 if(error) return(error);
                 here->HFETAdrainPrimeNode = tmp->number;
@@ -287,12 +290,14 @@ matrixpointers:
                      }
                   }
                 }
+                }
                 
             } else {
                 here->HFETAdrainPrimeNode = here->HFETAdrainNode;
             }
             
-            if(model->HFETArg != 0 && here->HFETAgatePrimeNode==0) {
+            if(model->HFETArg != 0) {
+                if(here->HFETAgatePrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->HFETAname,"gate");
                 if(error) return(error);
                 here->HFETAgatePrimeNode = tmp->number;
@@ -308,11 +313,13 @@ matrixpointers:
                      }
                   }
                 }     
+                }     
                 
             } else {
                 here->HFETAgatePrimeNode = here->HFETAgateNode;
             }
-            if(model->HFETArf != 0 && here->HFETAdrainPrmPrmNode==0) {
+            if(model->HFETArf != 0) {
+                if(here->HFETAdrainPrmPrmNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->HFETAname,"gd");
                 if(error) return(error);
                 here->HFETAdrainPrmPrmNode = tmp->number;
@@ -328,12 +335,14 @@ matrixpointers:
                      }
                   }
                 }
+                }
 
             } else {
                 here->HFETAdrainPrmPrmNode = here->HFETAdrainPrimeNode;
             }
             
-            if(model->HFETAri != 0 && here->HFETAsourcePrmPrmNode==0) {
+            if(model->HFETAri != 0) {
+                if(here->HFETAsourcePrmPrmNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->HFETAname,"gs");
                 if(error) return(error);
                 here->HFETAsourcePrmPrmNode = tmp->number;
@@ -348,6 +357,7 @@ matrixpointers:
                        tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
+                }
                 }
                 
             } else {
