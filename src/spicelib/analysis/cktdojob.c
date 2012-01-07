@@ -125,6 +125,9 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
 	    FREE(ckt->CKTsenInfo);
 #endif
 
+        /* make sure this is either up do date or NULL */
+        ckt->CKTcurJob = NULL;
+
 	/* normal reset */
 	if (!error)
 	    error = CKTunsetup(ckt);

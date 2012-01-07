@@ -1,3 +1,8 @@
+2012-01-07  Robert Larice
+ * src/spicelib/analysis/cktdojob.c :
+  bug fix, CKTcurJob, make sure this is either up do date or NULL
+  fix a valgrind report, access to allready freed memory during CKTtemp()
+
 2012-01-05  Holger Vogt
  * inpdomod.c: bug in error message for bjt removed
 
