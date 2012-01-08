@@ -1,4 +1,9 @@
 2012-01-08  Robert Larice
+ * src/frontend/parse-bison.c ,
+ * src/frontend/parse-bison.h ,
+   update bison generated files
+
+2012-01-08  Robert Larice
  * src/frontend/parse-bison.y :
   bug fix, broken vdb() vph()
 
