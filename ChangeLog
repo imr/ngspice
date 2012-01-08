@@ -1,4 +1,30 @@
 2012-01-08  Robert Larice
+ * src/frontend/parse-bison.y :
+  bug fix, broken vdb() vph()
+
+  see
+    plot vdb(1) vr(2) vi(3) vm(4) vp(5) no works - ID: 3470791
+    http://sourceforge.net/tracker/?func=detail&atid=423915&group_id=38962&aid=3470791
+
+  revert:
+     2011-08-20  Robert Larice
+       the i() and v() function application have special semantics
+
+  which was meant to fix a problem, when loading a rawfile and trying
+    to access a vector with name "i(vdd)"
+  yet broke the internal user defined functions
+    vdb(x)  -->   db(v(x))
+    ...
+
+  in short
+     load file
+     plot i(vdd)
+  won't work. but
+     load file
+     plot "i(vdd)"
+  will work
+
+2012-01-08  Robert Larice
  * src/frontend/numparam/xpressn.c ,
  * src/maths/poly/polyfit.c :
   bug fix, incorrect '%le' printf format specifier

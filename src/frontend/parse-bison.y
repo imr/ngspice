@@ -78,7 +78,7 @@
  *   manifests my expectation, and will issue a `warning' when not met
  */
 
-%expect 3
+%expect 2
 
 %token <num>  TOK_NUM
 %token <str>  TOK_STR
@@ -146,18 +146,6 @@ exp:
 
   | '-' exp  %prec NEG                { $$ = mkunode(PT_OP_UMINUS, $2); }
   | '~' exp                           { $$ = mkunode(PT_OP_NOT, $2); }
-
-  | TOK_STR '(' TOK_STR ')'           {
-      char c = tolower($1[0]);
-      if((c == 'i' || c == 'v') && $1[1] == '\0') {
-          char buf[BSIZE_SP];
-          sprintf(buf, "%s(%s)", $1, $3);
-          $$ = mksnode(buf);
-      } else {
-          $$ = mkfnode($1, mksnode($3));
-      }
-      if(!$$) YYABORT;
-  }
 
   | TOK_STR '(' exp ')'               { $$ = mkfnode($1, $3); if(!$$) YYABORT; }
 
