@@ -93,7 +93,7 @@ ft_polyfit(double *xdata, double *ydata, double *result,
         if (fabs(d - ydata[i]) > ABS_TOL) {
             /*
             fprintf(cp_err,
-                "Error: polyfit: x = %le, y = %le, int = %le\n",
+                "Error: polyfit: x = %e, y = %le, int = %e\n",
                     xdata[i], ydata[i], d);
             printmat("mat1", mat1, n, n);
             printmat("mat2", mat2, n, 1);
@@ -103,7 +103,7 @@ ft_polyfit(double *xdata, double *ydata, double *result,
                 ABS_TOL) > REL_TOL) {
             /*
             fprintf(cp_err,
-                "Error: polyfit: x = %le, y = %le, int = %le\n",
+                "Error: polyfit: x = %e, y = %le, int = %e\n",
                     xdata[i], ydata[i], d);
             printmat("mat1", mat1, n, n);
             printmat("mat2", mat2, n, 1);

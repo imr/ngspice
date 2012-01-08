@@ -1399,7 +1399,7 @@ evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
          */
 
         char buf[17+1];
-        if(snprintf(buf, sizeof(buf), "% 17.9le", u) != 17) {
+        if(snprintf(buf, sizeof(buf), "% 17.9e", u) != 17) {
             fprintf(stderr, "ERROR: xpressn.c, %s(%d)\n", __FUNCTION__, __LINE__);
             controlled_exit(1);
         }

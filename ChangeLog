@@ -1,3 +1,17 @@
+2012-01-08  Robert Larice
+ * src/frontend/numparam/xpressn.c ,
+ * src/maths/poly/polyfit.c :
+  bug fix, incorrect '%le' printf format specifier
+
+  responsible for failure on mingw. see
+    string parameters cause crash on win32 platform - ID: 3469699
+    http://sourceforge.net/tracker/?func=detail&atid=423915&group_id=38962&aid=3469699
+
+  I've sneaked this in with commit
+    "numparm, 17 digit placeholders --> numparm__XXXXXXXX dummy symbols"
+  from
+    2011-02-19  Robert Larice
+
 2012-01-07  Robert Larice
  * src/spicelib/devices/bsim1/b1set.c ,
  * src/spicelib/devices/bsim2/b2set.c ,
