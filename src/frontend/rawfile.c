@@ -274,6 +274,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
 
 #define skip(s) while (*(s) && !isspace(*(s)))(s)++; while (isspace(*(s)))(s)++
 #define nonl(s) r = (s); while (*r && (*r != '\n')) r++; *r = '\0'
+#define getout {fprintf(cp_err,"Error: bad rawfile\n  point %d, var %s\n  load aborted\n", i, v->v_name); return (NULL);}
 
 struct plot *
 raw_read(char *name) {
@@ -283,7 +284,7 @@ raw_read(char *name) {
     char buf[BSIZE_SP], buf2[BSIZE_SP], *s, *t, *r;
     int flags = 0, nvars = 0, npoints = 0, i, j;
     int ndimpoints, numdims=0, dims[MAXDIMS];
-    bool raw_padded = TRUE;
+    bool raw_padded = TRUE, is_ascii=FALSE;
     double junk;
     struct dvec *v, *nv;
     struct variable *vv;
@@ -297,7 +298,7 @@ raw_read(char *name) {
 
     if ((fp = fopen(name, "r")) == NULL) {
         perror(name);
-        return (NULL);
+        
     }
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
@@ -609,8 +610,12 @@ raw_read(char *name) {
                     }
                 }
             }
+            if ((*buf == 'v') || (*buf == 'V'))
+                is_ascii=TRUE;
+            else
+                is_ascii=FALSE;                
             for (i = 0; i < npoints; i++) {
-                if ((*buf == 'v') || (*buf == 'V')) {
+                if (is_ascii) {
                     /* It's an ASCII file. */
                     (void) fscanf(fp, " %d", &j);
                     for (v = curpl->pl_dvecs; v; v = v->v_next) {
@@ -618,26 +623,22 @@ raw_read(char *name) {
                             if (flags & VF_REAL) {
                                 if (fscanf(fp, " %lf",
                                            &v->v_realdata[i]) != 1)
-                                    fprintf(cp_err,
-                                            "Error: bad rawfile\n");
+                                    getout
                             } else {
                                 if (fscanf(fp, " %lf, %lf",
                                            &realpart(&v->v_compdata[i]),
                                            &imagpart(&v->v_compdata[i])) != 2)
-                                    fprintf(cp_err,
-                                            "Error: bad rawfile\n");
+                                    getout
                             }
                         } else if (raw_padded) {
                             if (flags & VF_REAL) {
                                 if (fscanf(fp, " %lf",
                                            &junk) != 1)
-                                    fprintf(cp_err,
-                                            "Error: bad rawfile\n");
+                                    getout
                             } else {
                                 if (fscanf(fp, " %lf, %lf",
                                            &junk, &junk) != 2)
-                                    fprintf(cp_err,
-                                            "Error: bad rawfile\n");
+                                    getout
                             }
                         }
                     }
@@ -648,33 +649,27 @@ raw_read(char *name) {
                             if (flags & VF_REAL) {
                                 if (fread(&v->v_realdata[i],
                                           sizeof (double), 1, fp) != 1)
-                                    fprintf(cp_err,
-                                            "Error: bad rawfile\n");
+                                    getout
                             } else {
                                 if (fread(&v->v_compdata[i].cx_real,
                                           sizeof (double), 1, fp) != 1)
-                                    fprintf(cp_err,
-                                            "Error: bad rawfile\n");
+                                    getout
                                 if (fread(&v->v_compdata[i].cx_imag,
                                           sizeof (double), 1, fp) != 1)
-                                    fprintf(cp_err,
-                                            "Error: bad rawfile\n");
+                                    getout
                             }
                         } else if (raw_padded) {
                             if (flags & VF_REAL) {
                                 if (fread(&junk,
                                           sizeof (double), 1, fp) != 1)
-                                    fprintf(cp_err,
-                                            "Error: bad rawfile\n");
+                                    getout;
                             } else {
                                 if (fread(&junk,
                                           sizeof (double), 1, fp) != 1)
-                                    fprintf(cp_err,
-                                            "Error: bad rawfile\n");
+                                    getout
                                 if (fread(&junk,
                                           sizeof (double), 1, fp) != 1)
-                                    fprintf(cp_err,
-                                            "Error: bad rawfile\n");
+                                    getout
                             }
                         }
                     }
@@ -682,10 +677,12 @@ raw_read(char *name) {
             }
         } else {
             s = buf;
-//            skip(s);
+            if (is_ascii) {
+                skip(s);
+            }
             if (*s) {
                 fprintf(cp_err,
-                    "Error: strange line in rawfile:\n\"%s\"\nload aborted.\n", s);
+                    "Error: strange line in rawfile:\n  %s\n  load aborted.\n", buf);
                 return (NULL);
             }
         }

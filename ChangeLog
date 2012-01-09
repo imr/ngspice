@@ -1,3 +1,7 @@
+2012-01-09 Holger Vogt
+ * rawfile.c: error messages, bug during
+   loading ascii rawfile removed
+
 2012-01-08  Robert Larice
  * src/frontend/parse-bison.c ,
  * src/frontend/parse-bison.h ,
