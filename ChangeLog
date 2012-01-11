@@ -1,4 +1,8 @@
 2012-01-11  Robert Larice
+ * src/include/ngspice/missing_math.h :
+  wrap isnan declaration, isnan is a macro on modern systems
+
+2012-01-11  Robert Larice
  * src/frontend/resource.c :
   fix printf/scanf format strings to match `unsigned long long' arguments
 
