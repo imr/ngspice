@@ -1,6 +1,12 @@
+2012-01-11  Robert Larice
+ * src/frontend/resource.c :
+  fix printf/scanf format strings to match `unsigned long long' arguments
+
 2012-01-09 Holger Vogt
  * rawfile.c: error messages, bug during
    loading ascii rawfile removed
+     plot i(vdd)
+   from a loaded rawfile is working now.
 
 2012-01-08  Robert Larice
  * src/frontend/parse-bison.c ,

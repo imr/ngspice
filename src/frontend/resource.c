@@ -487,7 +487,7 @@ fprintmem(FILE* stream, unsigned long long memory) {
     else if (memory > 1024) 
       fprintf(stream, "%5.3f kB", (double)memory / 1024.);
     else
-      fprintf(stream, "%" PRIu64 " bytes", memory);
+      fprintf(stream, "%llu bytes", memory);
 }
 
 #if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 
@@ -545,7 +545,7 @@ static int get_procm(struct proc_mem *memall) {
        return 0;
     buffer[bytes_read] = '\0';
     
-    sscanf (buffer, "%" SCNu64 " %" SCNu64 " %" SCNu64 " %" SCNu64 " %" SCNu64 " %" SCNu64 " %" SCNu64, &memall->size, &memall->resident, &memall->shared, &memall->trs, &memall->drs, &memall->lrs, &memall->dt);
+    sscanf (buffer, "%llu %llu %llu %llu %llu %llu %llu", &memall->size, &memall->resident, &memall->shared, &memall->trs, &memall->drs, &memall->lrs, &memall->dt);
 #endif
    return 1;
 }
@@ -591,25 +591,25 @@ static int get_sysmem(struct sys_mem *memall) {
    match = strstr (buffer, "MemTotal");
    if (match == NULL) /* not found */
       return 0;
-   sscanf (match, "MemTotal: %" SCNu64, &mem_got);
+   sscanf (match, "MemTotal: %llu", &mem_got);
    memall->size = mem_got*1024; /* 1MB = 1024KB */
    /* Search for string "MemFree" */
    match = strstr (buffer, "MemFree");
    if (match == NULL) /* not found */
       return 0;
-   sscanf (match, "MemFree: %" SCNu64, &mem_got);
+   sscanf (match, "MemFree: %llu", &mem_got);
    memall->free = mem_got*1024; /* 1MB = 1024KB */  
    /* Search for string "SwapTotal" */
    match = strstr (buffer, "SwapTotal");
    if (match == NULL) /* not found */
       return 0;
-   sscanf (match, "SwapTotal: %" SCNu64, &mem_got);
+   sscanf (match, "SwapTotal: %llu", &mem_got);
    memall->swap_t = mem_got*1024; /* 1MB = 1024KB */
    /* Search for string "SwapFree" */
    match = strstr (buffer, "SwapFree");
    if (match == NULL) /* not found */
       return 0;
-   sscanf (match, "SwapFree: %" SCNu64, &mem_got);
+   sscanf (match, "SwapFree: %llu", &mem_got);
    memall->swap_f = mem_got*1024; /* 1MB = 1024KB */
 #endif   
    return 1;     
