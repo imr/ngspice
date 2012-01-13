@@ -1,3 +1,8 @@
+2012-01-13  Robert Larice
+ * src/include/ngspice/missing_math.h :
+  revert last commit, simply insane
+    checking for being a macro is already done with HAVE_DECL_ISNAN
+
 2012-01-11  Robert Larice
  * src/include/ngspice/missing_math.h :
   wrap isnan declaration, isnan is a macro on modern systems

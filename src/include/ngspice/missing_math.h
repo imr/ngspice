@@ -26,7 +26,7 @@ extern double scalbn(double, int);
 #endif
 
 #if !HAVE_DECL_ISNAN
-#if !defined(HAVE_ISNAN) && !defined(isnan)
+#ifndef HAVE_ISNAN
 extern int isnan(double);
 #endif
 #endif
