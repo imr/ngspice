@@ -1,3 +1,7 @@
+2012-01-15  Holger Vogt
+ * tests\bin\modelQaTestRoutines.pm: $platform
+   should not contain '/' , removed in line 700
+   
 2012-01-13  Robert Larice
  * src/spicelib/devices/hisimhv/.cvsignore :
   add missing .cvsignore file

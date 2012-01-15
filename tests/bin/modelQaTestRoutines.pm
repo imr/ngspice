@@ -697,8 +697,7 @@ sub platform {
         open(UNAME,"uname -r|");chomp($osVer =<UNAME>);close(UNAME);
     }
     $platform = "${archName}_${osName}_${osVer}";
-    $platform =~ s/\(//;
-    $platform =~ s/\)//;
+    $platform =~ s|[()/]||g; 
     return($platform);
 }
 
