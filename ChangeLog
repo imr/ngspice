@@ -1,4 +1,55 @@
 2012-01-15  Robert Larice
+ * src/spicelib/devices/hisim2/hsm2eval.c ,
+ * src/spicelib/devices/hisim2/hsm2temp.c ,
+ * src/spicelib/devices/hisimhv/hsmhveval.c :
+  bug fix, a numerical problem in the hisim2 an hisimhv models
+
+  First seen when compiled with gcc-4.6.2 -g -O1
+
+  The macro `Fn_SZ' which boils down to
+    1/2 * (x + sqrt(x*x + c*c))
+  was used in a context where a negative result
+    blew up the following computations.
+  (used to compute `Egidl', which is used to
+   compute exp(-1 / (Egidl + small_constant)))
+
+  For large negative values of x the computation
+  boils down to
+    1/2 ( x + almost(|x|) )
+  where the summands almost cancel each other,
+  sometimes yielding a small negative result.
+
+  small_constant was too small to avoid a big
+    result for -1/(Egidl + small_constant)
+  yielding an `inf' during the exp() computation,
+  which was later multiplied with a `0'
+    yielding a NaN,
+  which was carried forward
+    during the rest of computations.
+
+  Because the error of the cancellation scales
+  with the magnitude of x, no larger `small_constant'
+  could have avoided the problem.
+
+  Presumably the problem was amplified
+    by a mixture of precisions (double versus extended float)
+    of intermediate values.
+  (the program wasn't compiled for sse)
+
+  ( x was -2.812500e+06,
+    c was  1.000000e-02,
+    Fn_SZ result was -1.853095e-11
+
+    thus the cancellation remainder
+    was of relative size
+      6.6e-18
+    which is approximately
+      2^-57
+    and thus more accurate
+     as a `double float' could have delivered
+  )
+
+2012-01-15  Robert Larice
  * tests/bin/modelQaTestRoutines.pm ,
  * tests/bin/runQaTests.pl :
   perl, defined(%hash) is depreciated

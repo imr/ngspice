@@ -41,6 +41,8 @@
 #define Fn_SZtemp( y , x , delta ) { \
     T1 = sqrt ( ( x ) *  ( x ) + 4.0 * ( delta ) * ( delta) ) ; \
     y = 0.5 * ( ( x ) + T1 ) ; \
+    if (y < 0) \
+        y = 0 ; \
   }
 
 #define Fn_SUtemp( y , x , xmax , delta ) { \
