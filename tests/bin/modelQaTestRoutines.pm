@@ -198,11 +198,7 @@ sub processTestSpec {
     @main::Outputs=();
     @main::ModelParameters=();
     undef(%main::BiasFor);
-    if (defined(%main::isGeneralFloatingPin)) {
-        %main::isFloatingPin=%main::isGeneralFloatingPin;
-    } else {
-        undef(%main::isFloatingPin);
-    }
+    %main::isFloatingPin=%main::isGeneralFloatingPin;
     undef(%isAnalysisPin);
     undef(@main::Temperature);
     foreach (@Spec) {
