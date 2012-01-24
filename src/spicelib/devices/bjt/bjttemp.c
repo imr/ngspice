@@ -204,6 +204,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
             } else if (model->BJTtlevc == 1) {
                 here->BJTtBEcap = model->BJTdepletionCapBE*
                     (1+model->BJTcte*dt);			
+                here->BJTtBEpot = model->BJTpotentialBE - model->BJTtvje*dt;
             }
             if (model->BJTtlevc == 0) {
                 pbo = (model->BJTpotentialBC-pbfact)/fact1;
@@ -218,6 +219,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
             } else if (model->BJTtlevc == 1) {
                 here->BJTtBCcap = model->BJTdepletionCapBC*
                     (1+model->BJTctc*dt);			
+                here->BJTtBCpot = model->BJTpotentialBC - model->BJTtvjc*dt;
             }
             if (model->BJTtlevc == 0) {
                 pbo = (model->BJTpotentialSubstrate-pbfact)/fact1;
@@ -232,6 +234,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
             } else if (model->BJTtlevc == 1) {
                 here->BJTtSubcap = model->BJTcapSub*
                     (1+model->BJTcts*dt);			
+                here->BJTtSubpot = model->BJTpotentialSubstrate - model->BJTtvjs*dt;
             }
 
             here->BJTtDepCap = model->BJTdepletionCapCoeff * here->BJTtBEpot;
