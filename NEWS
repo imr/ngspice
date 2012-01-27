@@ -1,7 +1,36 @@
 Ngspice-24, Jan 29th, 2012
 ============
 
-
+- New features:
+    + .csparam allows to tranfer a param into a vector in .control ... .endc
+	+ functions floor and ceil
+	+ syntax Gxxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
+	+ syntax Gxxx n1 n2 value={equation} or Exxx n1 n2 value={equation}
+	+ variable strict_errorhandling to exit ngspice with exit code 1
+      if any error occurs during circuit parsing
+	+ command altermod allows reading from file
+	+ command "devhelp" to show available devices and describe device parameters
+    + command "inventory" to print the number of istances of each device.
+	+ function cph(vec) delivers phase from a vector without jumps at +-PI
+    + enable 64 bit compilation in MS Visual Studio
+    + --adms3 flag to compile with (experimental) adms code
+	+ still very experimental pss code
+    + command 'remcirc' to remove a circuit from the list
+	+ command 'wrdata' aknowledges appendwrite and prints complex variables
+	+ allow comment lines inside of command files
+	+ path variable NGSPICE_INPUT
+    + 'Filesource' code model
+	
+- Bug fixes:
+    + More on prototypes, type casts, reordering of functions, compiler warnings
+	+ fix a numerical problem in the hisim2 an hisimhv models
+	+  plot i(vdd) from a loaded rawfile
+	+ fix the guard for device generated internal nodes (via CKTmkVolt())
+	+ reduce memory leaks for command 'reset'
+	+ parameter processing for nested .subckt
+	+ bsim4/b4noi.c: correct init the correlated noise slot in noiseDens and lnNdens vector
+	+ Many small bugs	
+	
 Ngspice-23, June 5th, 2011
 ============
 

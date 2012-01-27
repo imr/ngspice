@@ -1,3 +1,7 @@
+2012-01-27  Holger Vogt
+ * NEWS, INSTALL, tests\bin\ngspice.pm, /visualc/include/ngspice/config.h:
+   prepare for release 24
+
 2012-01-24  Dietmar Warning
  * src/spicelib/devices/bjt/bjttemp.c: Add temperature dependent 
    junction potentials also for tlevc=1 capacitor temperature model 
