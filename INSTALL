@@ -3,9 +3,9 @@ Ngspice installation instructions
 
 Table of contents
 
-  1 Ngspice installation
+  1 Ngspice installation (LINUX)
    1.1 Prerequisites
-   1.2 Install from tarball (e.g. ngspice-23.tar.gz)
+   1.2 Install from tarball (e.g. ngspice-24.tar.gz)
    1.3 Install from CVS
    1.4 Advanced Install
     1.4.1 Most useful options
@@ -22,14 +22,13 @@ Table of contents
    9.1 How to make ngspice with MINGW and MSYS
    9.2 make ngspice with MS Visual Studio 2008
    9.3 make ngspice with pure CYGWIN
-   9.4 make ngspice with CYGWIN and external MINGW32
-   9.5 make ngspice with CYGWIN and internal MINGW32 (use config.h made above)
+   9.4 ngspice console app with MINGW or CYGWIN
     
 
 This file describes the procedures to install ngspice from sources.
 
 
-1 Ngspice Installation
+1 Ngspice Installation (LINUX, maybe others)
   ====================
 
 1.1 Prerequisites
@@ -52,14 +51,14 @@ This file describes the procedures to install ngspice from sources.
  information on ngspice and its usage.
 
  
-1.2 Install from tarball (e.g. ngspice-23.tar.gz)
+1.2 Install from tarball (e.g. ngspice-24.tar.gz)
 
  This covers installation from a release distribution (for example 
- ngspice-23.tar.gz, the so called tar ball).
+ ngspice-24.tar.gz, the so called tar ball).
  
  After downloading the tar ball to a local directory unpack it using:
 
- $ tar -zxvf ngspice-23.tar.gz
+ $ tar -zxvf ngspice-24.tar.gz
     
  Now change directories in to the top-level source directory (where this
  INSTALL file can be found).
@@ -161,7 +160,7 @@ This file describes the procedures to install ngspice from sources.
  --enable-adms
         ADMS is an experimental model compiler that translates 
         Verilog-A compact models into C code that can be compiled into 
-        ngspice. This is (as of ngspice-23) still experimental, some
+        ngspice. This is (as of ngspice-24) still experimental, some
         features (e.g. noise) are missing. If you want to use it, please
         refer to the ADMS section on ngspice web site. 
 
@@ -438,14 +437,13 @@ Most of the options now following are not well maintained, are not tested or eve
 
 9.1 How to make ngspice with MINGW and MSYS
   
-     Creating ngspice with MINGW is now a straight forward procedure,
- if you have MSYS/MINGW installed properly. Unfortunately this is rather 
- tedious because you will need several enhancements to the standard install,
- especially if you want to include XSpice. Some links are given below which 
- describe the procedures. 
+     Creating ngspice with MINGW is a straight forward procedure,
+ if you have MSYS/MINGW installed properly. You will need some enhancements 
+ to the standard install (FLEX and BISON have to be made available in MSYS). 
+ Some links are given below which describe the procedures. 
  
-     Installing from the tarball, e.g. ngspice-23.tar.gz, is now simple: After 
- expanding, you may just run ./compile_min.sh from the ngspice-23 directory.
+     Installing from the tarball, e.g. ngspice-24.tar.gz, is now simple: After 
+ expanding, you may just run ./compile_min.sh from the ngspice-24 directory.
   
      The default installation location of ngspice is the Windows path
  C:\spice. The install path can be altered by passing --prefix=NEWPATH
@@ -459,7 +457,7 @@ Most of the options now following are not well maintained, are not tested or eve
  The procedure of compiling a distribution (for example, a tarball from
  the ngspice website), is as follows:
 
- $ cd ngspice-23
+ $ cd ngspice-24
  $ mkdir release
  $ cd release
  $ ../configure --with-windows ...and other options
@@ -467,7 +465,7 @@ Most of the options now following are not well maintained, are not tested or eve
  $ make install
 
  The useful options are:
- --enable-xspice (this requires FLEX and BISON available in MSYS, see below).
+ --enable-xspice
  --enable-cider
  --disable-debug (-O2 optimization, no debug information)
   
@@ -514,8 +512,8 @@ Most of the options now following are not well maintained, are not tested or eve
  $ make install
 
  MINGW and MSYS can be downloaded from http://www.mingw.org/. The making of 
- the code models *.cm for XSpice requires installation of BISON and FLEX to
- MSYS. A typical installation was tested with:
+ ngspice and the code models *.cm for XSpice requires installation of BISON 
+ and FLEX to MSYS. A typical installation was tested with:
  
  bison-2.0-MSYS.tar.gz
  flex-2.5.4a-1-bin.zip
@@ -630,14 +628,9 @@ Most of the options now following are not well maintained, are not tested or eve
  #define NGSPICEBINDIR "D:/MySpice/bin"
  #define NGSPICEDATADIR "D:/MySpice/share/ng-spice-rework" 
   
- nghelp.exe is deprecated and no longer offered, but still available in the binary
- distribution.
- 
  If the code model files *.cm are not available, you will get warning messages,
  but you may use ngspice in the normal way (of course without XSPICE extensions). 
  
- ToDo: Some commands in how-to-ngspice-vstudio.txt and mentioned above
- have to be translated to English.
 
 
 9.3 make ngspice with pure CYGWIN
@@ -653,45 +646,12 @@ Most of the options now following are not well maintained, are not tested or eve
  The procedure of compiling is the same as Linux.
 
 
-The next two compilation options (9.4, and 9.5) are deprecated and not tested. 
+9.4 ngspice console app with MINGW or CYGWIN
  
- 9.4 make ngspice with CYGWIN and external MINGW32
-
- according to http://www.geocrawler.com/lists/3/SourceForge/6013/0/7321042/
-
-
- $ cd ng-spice-rework-18
- $ export PATH="/cygdrive/g/gcc_mingw/bin:$PATH"
- $ autoconf
- $ rm config.cache
- $ ./configure --with-windows --prefix="/cygdrive/g/gcc_mingw/bin"
- $ make clean
- $ make 2> make.err
-
- $ cp config.h config_ming.h
-
- ngspice.exe is o.k.,but make tests does not work (cannot direct console
- output into file). Needs to add .save "what" "where.test" to every input 
- (*.cir) file. Also all given output files have to be adapted to WINDOWS 
- (CR/LF instead of only LF at each line ending) for allowing proper comparison.
-
-
- 9.5 make ngspice with CYGWIN and internal MINGW32 (use config.h made above)
-
- $ cd ng-spice-rework-18
- $ rm config.cache
- $ export CFLAGS="-mno-cygwin -g -O2"
- $ export LDFLAGS="-L/lib/mingw"
- $ export CPPFLAGS="-I/usr/include/mingw"
- $ ./configure --with-windows
- $ cp config_ming.h config.h
- $ make clean
- $ make 2> make.err
-
- ./configure does not work correctly: It finds headers and libs which are not 
- really available in the -mno-cygwin port of MINGW32. Therefore config.h is 
- not o.k.
-
- ToDo: find appropriate presets for variables ?
-       rewrite tests for headers and libs (search exclusively in mingw
-       directories)
+ Omitting the configure flag --with-windows will yield a console ngspice. 
+ You then will not have any graphics interface. In CYGWIN you may add --with-x 
+ for the X11 graphics (not available in mingw). A typical configure command
+ may look like
+ ./configure --enable-adms --enable-xspice --enable-cider --enable-openmp 
+ --disable-debug CFLAGS=-m32 LDFLAGS=-m32 prefix=C:/Spice
+ tested with TDM mingw.
