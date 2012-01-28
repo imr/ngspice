@@ -32,6 +32,12 @@ else
 fi
 
 # If compiling sources from CVS, you may need to uncomment the following two lines:
+#./autogen.sh
+#if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
+
+# Alternatively, if compiling sources from CVS, and want to add adms created devices,
+# you may need to uncomment the following two lines (and don't forget to add adms option
+# to the ../configure statement):
 #./autogen.sh --adms
 #if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
@@ -42,16 +48,16 @@ if test "$1" = "64"; then
   echo "configuring for 64 bit"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-windows --enable-xspice --enable-cider --enable-openmp --disable-debug  prefix="C:/Spice64" CFLAGS="-m64" LDFLAGS="-m64"
+  ../configure --with-windows --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-m64" LDFLAGS="-m64"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
   echo "configuring for 32 bit"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-windows --enable-xspice --enable-cider --enable-openmp --disable-debug CFLAGS="-m32" LDFLAGS="-m32"
+  ../configure --with-windows --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice" CFLAGS="-m32" LDFLAGS="-m32"
 fi
-if [ $? -ne 0 ]; then  echo "./configure failed"; exit 1 ; fi
+if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
 echo
 # make clean is required for properly making the code models
