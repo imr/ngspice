@@ -48,7 +48,7 @@ NON-STANDARD FEATURES
 
 #include "ngspice/suffix.h"
 
-
+#include "ngspice/devdefs.h"
 
 /*
 MIFdelete
@@ -172,7 +172,15 @@ MIFdelete(
     num_inst_var = here->num_inst_var;
     for(i = 0; i < num_inst_var; i++) {
         if(here->inst_var[i]->element != NULL) {
-            FREE(here->inst_var[i]->element);
+    /* Do not delete inst_var[i]->element if MS Windows and is_array==1.
+       Memory is then allocated in the code model dll, and it cannot be
+       guaranteed that it can be freed safely here! A small memory leak is created.
+       FIXME
+       Finally one has to free the memory in the same module where allocated. */
+#if defined(_MSC_VER) || defined(__MINGW32__)
+            if(!DEVices[here->MIFmodPtr->MIFmodType]->DEVpublic.inst_var[i].is_array)
+#endif
+                FREE(here->inst_var[i]->element);
         }
         FREE(here->inst_var[i]);
     }

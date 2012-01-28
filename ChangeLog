@@ -1,5 +1,7 @@
 2012-01-28  Holger Vogt
  * configure.ac, compile_min.sh: prepare for release 24
+ * mifdelete.c: prevent crash upon 'reset', if codemodel is an array
+   FIXME: leads to small memory leak
 
 2012-01-27  Holger Vogt
  * NEWS, INSTALL, tests\bin\ngspice.pm, /visualc/include/ngspice/config.h:
