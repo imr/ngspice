@@ -1,3 +1,7 @@
+2012-01-28  Robert Larice
+ * src/include/ngspice/ngspice.h :
+  define NAN for non C99 environments
+
 2012-01-28  Holger Vogt
  * configure.ac, compile_min.sh: prepare for release 24
  * mifdelete.c: prevent crash upon 'reset', if codemodel is an array
@@ -8,8 +12,8 @@
    prepare for release 24
 
 2012-01-24  Dietmar Warning
- * src/spicelib/devices/bjt/bjttemp.c: Add temperature dependent 
-   junction potentials also for tlevc=1 capacitor temperature model 
+ * src/spicelib/devices/bjt/bjttemp.c: Add temperature dependent
+   junction potentials also for tlevc=1 capacitor temperature model
 
 2012-01-15  Robert Larice
  * src/spicelib/devices/hisim2/hsm2eval.c ,

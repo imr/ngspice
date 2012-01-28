@@ -182,6 +182,10 @@
 #pragma warning(disable: 4127)
 #endif
 
+// for non C99 environments
+#if !defined(NAN)
+#define NAN (0.0/0.0)
+#endif
 
 /* Fast random number generator */
 //#define FastRand
