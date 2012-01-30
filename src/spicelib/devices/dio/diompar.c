@@ -125,6 +125,14 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIOctp = value->rValue;
             model->DIOctpGiven = TRUE;
             break;
+        case DIO_MOD_TBP:
+            model->DIOtbp = value->rValue;
+            model->DIOtbpGiven = TRUE;
+            break;
+        case DIO_MOD_TPHP:
+            model->DIOtphp = value->rValue;
+            model->DIOtphpGiven = TRUE;
+            break;
         case DIO_MOD_FC:
             model->DIOdepletionCapCoeff = value->rValue;
             model->DIOdepletionCapCoeffGiven = TRUE;

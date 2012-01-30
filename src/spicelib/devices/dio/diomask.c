@@ -104,6 +104,12 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case DIO_MOD_CTP:
             value->rValue = model->DIOctp;
             return(OK);
+        case DIO_MOD_TBP:
+            value->rValue = model->DIOtbp;
+            return(OK);
+        case DIO_MOD_TPHP:
+            value->rValue = model->DIOtphp;
+            return(OK);
         case DIO_MOD_FC:
             value->rValue = model->DIOdepletionCapCoeff;
             return(OK);

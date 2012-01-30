@@ -186,6 +186,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOsaturationCurrentExpGiven : 1;
     unsigned DIOctaGiven : 1;
     unsigned DIOctpGiven : 1;
+    unsigned DIOtbpGiven : 1;
+    unsigned DIOtphpGiven : 1;
     unsigned DIOdepletionCapCoeffGiven : 1;
     unsigned DIOdepletionSWcapCoeffGiven :1;
     unsigned DIObreakdownVoltageGiven : 1;
@@ -223,6 +225,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOsaturationCurrentExp; /* Saturation current exponential (XTI) */
     double DIOcta; /* Area junction temperature coefficient */
     double DIOctp; /* Perimeter junction temperature coefficient */
+    double DIOtbp; /* Area junction potential temperature coefficient */
+    double DIOtphp; /* Perimeter junction potential temperature coefficient */
     double DIOdepletionCapCoeff;    /* Depletion Cap fraction coefficient (FC)*/
     double DIOdepletionSWcapCoeff;    /* Depletion sw-Cap fraction coefficient (FCS)*/
     double DIObreakdownVoltage; /* Voltage at reverse breakdown */
@@ -293,7 +297,9 @@ typedef struct sDIOmodel {       /* model structure for a diode */
 #define DIO_MOD_TLEVC 132
 #define DIO_MOD_CTA 133
 #define DIO_MOD_CTP 134
-#define DIO_MOD_TCV 135
+#define DIO_MOD_TBP 135
+#define DIO_MOD_TPHP 136
+#define DIO_MOD_TCV 137
 
 #include "dioext.h"
 #endif /*DIO*/

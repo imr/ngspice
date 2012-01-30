@@ -132,6 +132,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                     here->DIOtJctCap *= 1+here->DIOtGradingCoeff*
                             (400e-6*(here->DIOtemp-REFTEMP)-gmanew);
             } else if (model->DIOtlevc == 1) {
+                    here->DIOtJctPot = model->DIOjunctionPot - model->DIOtbp*(here->DIOtemp-REFTEMP);
                     here->DIOtJctCap = model->DIOjunctionCap *
                             (model->DIOcta*(here->DIOtemp-REFTEMP));
             }
@@ -147,6 +148,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                     here->DIOtJctSWCap *= 1+model->DIOgradingSWCoeff*
                             (400e-6*(here->DIOtemp-REFTEMP)-gmaSWnew);
             } else if (model->DIOtlevc == 1) {
+                    here->DIOtJctSWPot = model->DIOjunctionSWPot - model->DIOtphp*(here->DIOtemp-REFTEMP);
                     here->DIOtJctSWCap = model->DIOjunctionSWCap *
                             (model->DIOctp*(here->DIOtemp-REFTEMP));
             }
