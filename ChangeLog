@@ -1,3 +1,4 @@
+============================ ngspice-24 ==================================
 2012-01-30  Dietmar Warning
  * src/spicelib/devices/dio/diotemp.c: Add temperature dependent
    junction potentials also for tlevc=1 capacitor temperature model
