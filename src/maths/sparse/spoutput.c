@@ -63,26 +63,10 @@ int Printer_Width = PRINTER_WIDTH;
 void spMatrix_CSC(MatrixPtr Matrix, int *Ap, int *Ai, double *Ax, int n, double **bind_Sparse, double **bind_KLU, double **diag) {
 
 	int offset, i ;
-//	int j, *temp_vector_Ap, *temp_vector_Ai, *Q, *Q_new, col;
-//	int pstart, pend, dim, k, max_index, max_Ai, temp_Ai;
-//	int *bind_KLU_P, *bind_KLU_Pinv, kbar ;
-//	spREAL temp_elem, *temp_vector_A ;
-//	Q=(int*)SP_MALLOC(int, n);
-//	temp_vector_Ap=(int*)SP_MALLOC(int, n+1);
-//	temp_vector_Ai=(int*)SP_MALLOC(int, nz);
-//	temp_vector_A=(spREAL*)SP_MALLOC(spREAL, nz);
-//	bind_KLU_P = (int *) SP_MALLOC (int, nz) ;
-//	bind_KLU_Pinv = (int *) SP_MALLOC (int, nz) ;
 
 	offset=0;
-//	temp_vector_Ap[0]=offset;
 	Ap[0]=offset;
 	for (i=1;i<=n;i++) {
-//		offset+=WriteCol_original(Matrix, i, (spREAL*)((long)temp_vector_A+offset*sizeof(spREAL)),
-//					(int*)((long)temp_vector_Ai+offset*sizeof(int)), &col,
-//					(spREAL **)((long)bind_Sparse + offset * sizeof(spREAL *)),
-//					(spREAL **)((long)bind_KLU + offset * sizeof(spREAL *)));
-//		temp_vector_Ap[i]=offset;
 		offset+=WriteCol_original(Matrix, i, (spREAL*)((long)Ax+offset*sizeof(spREAL)),
 					(int*)((long)Ai+offset*sizeof(int)),
 					(spREAL **)((long)bind_Sparse + offset * sizeof(spREAL *)),
@@ -90,73 +74,8 @@ void spMatrix_CSC(MatrixPtr Matrix, int *Ap, int *Ai, double *Ax, int n, double 
 					(spREAL **)((long)diag + (i - 1) * sizeof(spREAL *)));
 
 		Ap[i]=offset;
-//		Q[i-1]=col;
 	}
 
-/*	for (i = 0 ; i < nz ; i++) {
-		bind_KLU_P [i] = i ;
-		bind_KLU_Pinv [i] = i ;
-	}
-
-	for (i=0;i<n;i++) {
-		pstart=temp_vector_Ap[i];
-		pend=temp_vector_Ap[i+1];
-		dim=pend-pstart;
-		for (j=0;j<dim;j++) {
-			max_index=pstart;
-			max_Ai=temp_vector_Ai[pstart];
-			for (k=1;k<dim-j;k++) {
-				if (max_Ai<temp_vector_Ai[pstart+k]) {
-					max_index=pstart+k;
-					max_Ai=temp_vector_Ai[pstart+k];
-				}
-			}
-			if (max_index != pstart + dim - j - 1) {
-				temp_Ai=temp_vector_Ai[pstart+dim-j-1];
-				temp_vector_Ai[pstart+dim-j-1]=temp_vector_Ai[max_index];
-				temp_vector_Ai[max_index]=temp_Ai;
-				temp_elem=temp_vector_A[pstart+dim-j-1];
-				temp_vector_A[pstart+dim-j-1]=temp_vector_A[max_index];
-				temp_vector_A[max_index]=temp_elem;
-				kbar = bind_KLU_Pinv [max_index] ;
-				bind_KLU_P [kbar] = pstart + dim - j - 1 ;
-				bind_KLU_Pinv [pstart + dim - j - 1] = kbar ;
-				bind_KLU_P [pstart + dim - j - 1] = max_index ;
-				bind_KLU_Pinv [max_index] = pstart + dim - j - 1 ;
-			}
-		}
-	}
-
-	Q_new=(int*)SP_MALLOC(int, n);
-	for (i=0;i<n;i++) Q_new[Q[i]]=i;
-//for (i = 0 ; i < n ; i++) printf("Q_new [i] : %d\tQ [i]: %d\n", Q_new [i], Q [i]);
-	offset=0;
-	for (i=0;i<n;i++) {
-		Ap[i]=offset;
-		pstart=temp_vector_Ap[Q_new[i]];
-//		pstart=temp_vector_Ap[i];
-		pend=temp_vector_Ap[Q_new[i]+1];
-//		pend=temp_vector_Ap[i+1];
-		for (j=pstart;j<pend;j++) {
-			Ai[offset]=temp_vector_Ai[j];
-			Ax[offset]=temp_vector_A[j];
-			bind_KLU [bind_KLU_Pinv [j]] = &(Ax [offset]) ;
-//printf("bind_KLU [20] da spOutput: %u\n", bind_KLU [20]) ;
-//			bind_KLU [j] = &(Ax [offset]) ;
-			if (Ai [offset] == i) diag [i] = &(Ax [offset]) ;
-			offset++;
-		}
-	}
-	Ap[n]=offset;
-
-	free(Q);
-	free(Q_new);
-	free(temp_vector_Ap);
-	free(temp_vector_Ai);
-	free(temp_vector_A);
-	free (bind_KLU_P) ;
-	free (bind_KLU_Pinv) ;
-*/
 }
 
 void spMatrix_CSC_dump(MatrixPtr Matrix, char *CSC_output) {
