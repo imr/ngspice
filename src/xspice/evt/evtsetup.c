@@ -456,7 +456,7 @@ static int EVTsetup_jobs(
 
     /* Fill in the pointers, etc. for this new job */
     i = num_jobs - 1;
-    jobs->job_name[i] = MIFcopy((char *) ckt->CKTcurJob->JOBname);
+    jobs->job_name[i] = MIFcopy(ckt->CKTcurJob->JOBname);
     jobs->node_data[i] = data->node;
     jobs->state_data[i] = data->state;
     jobs->msg_data[i] = data->msg;

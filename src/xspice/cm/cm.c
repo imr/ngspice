@@ -663,7 +663,7 @@ int cm_message_send(
     here = g_mif_info.instance;
 
     /* Print the name of the instance and the message */
-    printf("\nInstance: %s   Message: %s\n", (char *) here->MIFname, msg);
+    printf("\nInstance: %s   Message: %s\n", here->MIFname, msg);
 
     return(0);
 }

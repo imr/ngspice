@@ -443,8 +443,8 @@ static void EVTport_insert(
     port->inst_index = inst_index;
     port->node_index = node_index;
     port->node_name  = MIFcopy(node_name);
-    port->inst_name  = MIFcopy((char *) fast->MIFname);
-    port->conn_name  = MIFcopy((char *) fast->conn[conn_num]->name);
+    port->inst_name  = MIFcopy(fast->MIFname);
+    port->conn_name  = MIFcopy(fast->conn[conn_num]->name);
     port->port_num   = port_num;
 
     /* Record the port index in the MIFinstance structure */

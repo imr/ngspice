@@ -1,4 +1,13 @@
 2012-02-06  Robert Larice
+ * src/xspice/cm/cm.c ,
+ * src/xspice/evt/evtsetup.c ,
+ * src/xspice/evt/evttermi.c ,
+ * src/xspice/mif/mifconvt.c ,
+ * src/xspice/mif/mifload.c ,
+ * src/xspice/mif/mifsetup.c :
+   drop some (char*) casts
+
+2012-02-06  Robert Larice
  * src/include/ngspice/inpdefs.h ,
  * src/spicelib/parser/inplkmod.c :
    rewrite INPlookMod(), return INPmodel*/NULL instead of int 1/0

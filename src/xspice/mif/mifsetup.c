@@ -307,7 +307,7 @@ MIFsetup(
                                      (type == MIF_RESISTANCE || type == MIF_DIFF_RESISTANCE) ) {
 
                         /* first, make the current equation */
-                        suffix = TMALLOC(char, strlen((char *) here->MIFname) + 100);
+                        suffix = TMALLOC(char, strlen(here->MIFname) + 100);
                         sprintf(suffix, "branch_%d_%d", i, j);
                         error = CKTmkCur(ckt, &tmp, here->MIFname, suffix);
                         FREE(suffix);
@@ -330,7 +330,7 @@ MIFsetup(
                     if(is_input && (type == MIF_CURRENT || type == MIF_DIFF_CURRENT)) {
 
                         /* first, make the current equation */
-                        suffix = TMALLOC(char, strlen((char *) here->MIFname) + 100);
+                        suffix = TMALLOC(char, strlen(here->MIFname) + 100);
                         sprintf(suffix, "ibranch_%d_%d", i, j);
                         error = CKTmkCur(ckt, &tmp, here->MIFname, suffix);
                         FREE(suffix);

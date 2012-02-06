@@ -361,7 +361,7 @@ MIFload(
                                     /* report convergence problem if last call */
                                     if(ckt->enh->conv_debug.report_conv_probs) {
                                         ENHreport_conv_prob(ENH_ANALOG_INSTANCE,
-                                                            (char *) here->MIFname, "");
+                                                            here->MIFname, "");
                                     }
                                 }
                             }
