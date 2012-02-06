@@ -306,10 +306,10 @@ tcap_init(void)
 	    ysize = tgetnum("li");
 	    if ((xsize <= 0) || (ysize <= 0))
 		xsize = ysize = 0;
-	    clear_chars = (char *) tgetstr("cl", &charbuf);
-	    motion_chars = (char *) tgetstr("cm", &charbuf);
-	    home_chars = (char *) tgetstr("ho", &charbuf);
-	    cleol_chars = (char *) tgetstr("ce", &charbuf);
+	    clear_chars = tgetstr("cl", &charbuf);
+	    motion_chars = tgetstr("cm", &charbuf);
+	    home_chars = tgetstr("ho", &charbuf);
+	    cleol_chars = tgetstr("ce", &charbuf);
 	}
     }
 #endif
