@@ -1,6 +1,10 @@
 2012-02-06  Robert Larice
+ * src/frontend/numparam/spicenum.c :
+   drop (void*) cast of the dispose() argument
+
+2012-02-06  Robert Larice
  * src/frontend/terminal.c :
-  drop tgetstr() return value cast
+   drop tgetstr() return value cast
 
 2012-02-06  Robert Larice
  * src/frontend/parser/complete.c :

@@ -498,15 +498,15 @@ nupa_done (void)
     simulation has finished */
     /*
     for (i = dynmaxline ; i >= 0; i--) {
-      dispose ((void *) dico->dynrefptr[i]);
+      dispose (dico->dynrefptr[i]);
     }
-    dispose ((void *) dico->dynrefptr);
-    dispose ((void *) dico->dyncategory);
-    dispose ((void *) dico->dyndat);
-    dispose ((void *) dico);
+    dispose (dico->dynrefptr);
+    dispose (dico->dyncategory);
+    dispose (dico->dyndat);
+    dispose (dico);
     dico = NULL;
-    dispose ((void *) inst_dico->dyndat);
-    dispose ((void *) inst_dico);
+    dispose (inst_dico->dyndat);
+    dispose (inst_dico);
     inst_dico = NULL;
     */
     if (nerrors)
