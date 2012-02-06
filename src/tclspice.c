@@ -255,7 +255,7 @@ static int spice_header TCL_CMDPROCARGS(clientData,interp,argc,argv){
     title = cur_run->name;
     name = cur_run->type;
     sprintf(buf,"{title \"%s\"} {name \"%s\"} {date \"%s\"} {variables %u}",title,name,date,cur_run->numData);
-    Tcl_AppendResult(interp, (char *)buf,TCL_STATIC);
+    Tcl_AppendResult(interp, buf, TCL_STATIC);
     return TCL_OK;
   }else return TCL_ERROR;
 }
@@ -285,7 +285,7 @@ static int spice_data TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 	type = SV_VOLTAGE;
       sprintf(buf,"{%s %s} ",name,
 	      ft_typenames(type));
-      Tcl_AppendResult(interp, (char *)buf, TCL_STATIC);
+      Tcl_AppendResult(interp, buf, TCL_STATIC);
     }
     return TCL_OK;
   }else return TCL_ERROR;
@@ -308,7 +308,7 @@ static int spice_data TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 	type = SV_VOLTAGE;
       sprintf(buf,"{%s %s} ",name,
 	      ft_typenames(type));
-      Tcl_AppendResult(interp, (char *)buf, TCL_STATIC);
+      Tcl_AppendResult(interp, buf, TCL_STATIC);
     }
     return TCL_OK;
   }
