@@ -145,8 +145,8 @@ namecmp(const void *a, const void *b)
 {
     int i, j;
 
-    char *s = (char *) a;
-    char *t = (char *) b;
+    const char *s = (const char *) a;
+    const char *t = (const char *) b;
     for (;;) {
         while ((*s == *t) && !isdigit(*s) && *s)
             s++, t++;

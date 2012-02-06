@@ -228,8 +228,8 @@ wl_nthelem(int i, wordlist *wl)
 static int
 wlcomp(const void *a, const void *b)
 {
-    char **s = (char **) a;
-    char **t = (char **) b;
+    const char **s = (const char **) a;
+    const char **t = (const char **) b;
     return (strcmp(*s, *t));
 }
 

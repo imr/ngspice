@@ -1,4 +1,9 @@
 2012-02-06  Robert Larice
+ * src/frontend/vectors.c ,
+ * src/misc/wlist.c :
+   preserve const'ness of some casts
+
+2012-02-06  Robert Larice
  * src/frontend/numparam/spicenum.c :
    drop (void*) cast of the dispose() argument
 
