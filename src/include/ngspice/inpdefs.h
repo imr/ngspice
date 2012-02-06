@@ -110,7 +110,7 @@ int INPinsertNofree(char **token, INPtables *tab);
 int INPinsert(char **, INPtables *);
 int INPretrieve(char **, INPtables *);
 int INPremove(char *, INPtables *);
-int INPlookMod(char *);
+INPmodel *INPlookMod(const char *);
 int INPmakeMod(char *, int, card *);
 char *INPmkTemp(char *);
 void INPpas1(CKTcircuit *, card *, INPtables *);

@@ -1,4 +1,9 @@
 2012-02-06  Robert Larice
+ * src/include/ngspice/inpdefs.h ,
+ * src/spicelib/parser/inplkmod.c :
+   rewrite INPlookMod(), return INPmodel*/NULL instead of int 1/0
+
+2012-02-06  Robert Larice
  * src/frontend/com_compose.c ,
  * src/frontend/define.c ,
  * src/frontend/device.c ,
