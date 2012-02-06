@@ -801,7 +801,7 @@ inp_pathopen(char *name, char *mode)
     char buf2[BSIZE_SP];
     /* search in the path where the source (input) file has been found,
        but only if "name" is just a file name */
-    if (!(index(name, DIR_TERM)) && !(index(name, DIR_TERM_LINUX)) && cp_getvar("sourcefile", CP_STRING, buf2)) {
+    if (!strchr(name, DIR_TERM) && !strchr(name, DIR_TERM_LINUX) && cp_getvar("sourcefile", CP_STRING, buf2)) {
         /* If pathname is found, get path.
         (char *dirname(const char *name) might have been used here) */
         if (substring(DIR_PATHSEP, buf2) || substring(DIR_PATHSEP_LINUX, buf2)) {
@@ -821,7 +821,7 @@ inp_pathopen(char *name, char *mode)
     /* If this is an abs pathname, or there is no sourcepath var, just
      * do an fopen.
      */
-    if (index(name, DIR_TERM) || index(name, DIR_TERM_LINUX)
+    if (strchr(name, DIR_TERM) || strchr(name, DIR_TERM_LINUX)
             || !cp_getvar("sourcepath", CP_LIST, &v))
         return (fopen(name, mode));
 #else
@@ -830,7 +830,7 @@ inp_pathopen(char *name, char *mode)
     /* If this is an abs pathname, or there is no sourcepath var, just
      * do an fopen.
      */
-    if (index(name, DIR_TERM)
+    if (strchr(name, DIR_TERM)
             || !cp_getvar("sourcepath", CP_LIST, &v))
         return (fopen(name, mode));
 #endif

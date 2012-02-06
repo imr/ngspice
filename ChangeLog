@@ -1,3 +1,18 @@
+2012-02-06  Robert Larice
+ * src/frontend/com_compose.c ,
+ * src/frontend/define.c ,
+ * src/frontend/device.c ,
+ * src/frontend/inpcom.c ,
+ * src/frontend/parse.c ,
+ * src/frontend/vectors.c ,
+ * src/frontend/parser/complete.c ,
+ * src/frontend/parser/unixcom.c ,
+ * src/frontend/wdisp/windisp.c ,
+ * src/include/ngspice/ngspice.h ,
+ * src/spicelib/parser/inpptree.c :
+   use strchr() instead of index()
+     which is depreciated
+
 ============================ ngspice-24 ==================================
 2012-01-30  Dietmar Warning
  * src/spicelib/devices/dio/diotemp.c: Add temperature dependent

@@ -672,7 +672,7 @@ PPlex(YYSTYPE *lvalp, struct PPltype *llocp, char **line)
                  * name, and otherwise it isn't.
                  * va, ']' too
                  */
-                for (; *sbuf && !index(specials, *sbuf); sbuf++)
+                for (; *sbuf && !strchr(specials, *sbuf); sbuf++)
                     if (*sbuf == '@')
                         atsign = 1;
                     else if (!atsign && ( *sbuf == '[' || *sbuf == ']' ))

@@ -1194,7 +1194,7 @@ int PTlex (YYSTYPE *lvalp, char **line)
         char *tmp;
 	    token = TOK_STR;
 	    for (s = sbuf; *s; s++)
-		if (index(specials, *s))
+		if (strchr(specials, *s))
 		    break;
 	    tmp = TMALLOC(char, s - sbuf + 1);
 	    strncpy(tmp, sbuf, (size_t) (s - sbuf));

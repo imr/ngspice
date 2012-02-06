@@ -365,7 +365,7 @@ vec_get(const char *vec_name)
 
     wd = word = copy(vec_name);   /* Gets mangled below... */
 
-    if (index(word, '.')) {
+    if (strchr(word, '.')) {
         /* Snag the plot... */
         for (i = 0, s = word; *s != '.'; i++, s++)
             buf[i] = *s;
@@ -854,7 +854,7 @@ vec_basename(struct dvec *v)
     char buf[BSIZE_SP], *t, *s;
     int i;
 
-    if (index(v->v_name, '.')) {
+    if (strchr(v->v_name, '.')) {
         for (t = v->v_name, i = 0; *t; t++)
             buf[i++] = *t;
         buf[i] = '\0';

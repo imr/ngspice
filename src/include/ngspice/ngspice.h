@@ -192,14 +192,9 @@
 #define WaGauss
 #define RR_MAX RAND_MAX
 
-#ifdef HAVE_INDEX
+#if !defined(HAVE_STRCHR) && defined(HAVE_INDEX)
 #   define strchr index
 #   define strrchr rindex
-#else /* va: no index, but strchr */
-#    ifdef HAVE_STRCHR
-#        define index  strchr
-#        define rindex strrchr
-#    endif /* va: no index, but strchr */
 #endif
 
 /* added for CYGWIN */

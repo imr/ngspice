@@ -218,7 +218,7 @@ com_compose(wordlist *wl)
                 var = wl->wl_word;
                 val = s + 1;
                 wl = wl->wl_next;
-            } else if (index(wl->wl_word, '=')) {
+            } else if (strchr(wl->wl_word, '=')) {
                 /* This is var= val. */
                 *s = '\0';
                 var = wl->wl_word;

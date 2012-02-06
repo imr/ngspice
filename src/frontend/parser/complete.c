@@ -106,7 +106,7 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
             pmatches = ccfilec(buf);
             s =strrchr(buf, '/');
             i = (int) strlen(s ? s + 1 : buf);
-            if ((*buf == '~') && !index(buf, '/'))
+            if ((*buf == '~') && !strchr(buf, '/'))
                 i--;
         }
 

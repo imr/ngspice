@@ -481,7 +481,7 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
       WIN_ScreentoData(gr, xe, ye, &fxe, &fye);
       
       strncpy(buf2, gr->plotname, sizeof(buf2));
-      if ((t = index(buf2, ':')) != NULL) /* strchr */
+      if ((t = strchr(buf2, ':')) != NULL)
          *t = 0;
 
       if (!eq(plot_cur->pl_typename, buf2)) {

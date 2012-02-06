@@ -57,7 +57,7 @@ com_define(wordlist *wlist)
      * to try really hard to break this here.
      */
     buf[0] = '\0';
-    for (wl = wlist; wl && (index(wl->wl_word, /* ( */ ')') == NULL);
+    for (wl = wlist; wl && (strchr(wl->wl_word, /* ( */ ')') == NULL);
                 wl = wl->wl_next)
         (void) strcat(buf, wl->wl_word);
     if (wl) {

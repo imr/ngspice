@@ -1353,7 +1353,7 @@ devexpand(char *name)
 {
     wordlist *wl, *devices, *tw;
 
-    if (index(name, '*') ||strchr(name, '[') ||strchr(name, '?')) {
+    if (strchr(name, '*') || strchr(name, '[') || strchr(name, '?')) {
         devices = cp_cctowl(ft_curckt->ci_devices);
         for (wl = NULL; devices; devices = devices->wl_next)
             if (cp_globmatch(name, devices->wl_word)) {

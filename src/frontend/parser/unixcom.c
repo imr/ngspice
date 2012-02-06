@@ -162,7 +162,7 @@ cp_unixcom(wordlist *wl)
         wl_print(wl, stdout);
         printf(".\n");
     }
-    if (index(name, '/'))
+    if (strchr(name, '/'))
         return (tryexec(name, argv));
     i = hash(name);
     for (hh = hashtab[i]; hh; hh = hh->h_next) {
