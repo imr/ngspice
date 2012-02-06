@@ -132,7 +132,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
             for(i=1;i<=here->URClumps;i++) {
                 namehi = TMALLOC(char, 10);
                 (void)sprintf(namehi,"hi%d",i);
-                error = CKTmkVolt(ckt,(CKTnode**)&nodehi,here->URCname,namehi);
+                error = CKTmkVolt(ckt, &nodehi, here->URCname, namehi);
                 if(error) return(error);
                 hil = nodehi;
                 if(i==here->URClumps) {
@@ -140,7 +140,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 } else {
                     namelo = TMALLOC(char, 10);
                     (void)sprintf(namelo,"lo%d",i);
-                    error = CKTmkVolt(ckt,(CKTnode**)&nodelo,here->URCname,
+                    error = CKTmkVolt(ckt, &nodelo, here->URCname,
                             namelo);
                     if(error) return(error);
                     lowr = nodelo;

@@ -1,4 +1,9 @@
 2012-02-06  Robert Larice
+ * src/spicelib/analysis/analysis.c ,
+ * src/spicelib/devices/urc/urcsetup.c :
+   drop some casts
+
+2012-02-06  Robert Larice
  * src/xspice/cm/cm.c ,
  * src/xspice/evt/evtsetup.c ,
  * src/xspice/evt/evttermi.c ,

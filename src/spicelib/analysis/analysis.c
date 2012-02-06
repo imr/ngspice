@@ -59,5 +59,5 @@ int spice_num_analysis(void)
 
 SPICEanalysis **spice_analysis_ptr(void)
 {
-    return (SPICEanalysis **) analInfo;
+    return analInfo;
 }
