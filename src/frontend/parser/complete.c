@@ -398,16 +398,16 @@ cp_ccon(bool on)
      * make sure we aren't in raw or cbreak mode.  Hope the (void)
      * ioctl's won't fail.
      */
-    (void) ioctl(fileno(cp_in), TIOCGETC, (char *) &tbuf);
+    (void) ioctl(fileno(cp_in), TIOCGETC, &tbuf);
     if (on)
         tbuf.t_brkc = ESCAPE;
     else
         tbuf.t_brkc = '\0';
-    (void) ioctl(fileno(cp_in), TIOCSETC, (char *) &tbuf);
+    (void) ioctl(fileno(cp_in), TIOCSETC, &tbuf);
 
-    (void) ioctl(fileno(cp_in), TIOCGETP, (char *) &sbuf);
+    (void) ioctl(fileno(cp_in), TIOCGETP, &sbuf);
     sbuf.sg_flags &= ~(RAW|CBREAK);
-    (void) ioctl(fileno(cp_in), TIOCSETP, (char *) &sbuf);
+    (void) ioctl(fileno(cp_in), TIOCSETP, &sbuf);
 #else
 
 #  ifdef HAVE_TERMIO_H
@@ -440,7 +440,7 @@ cp_ccon(bool on)
 #if HAVE_TCGETATTR
 	tcgetattr(fileno(cp_in),&OS_Buf);
 #else
-	(void) ioctl(fileno(cp_in), TERM_GET, (char *) &OS_Buf);
+	(void) ioctl(fileno(cp_in), TERM_GET, &OS_Buf);
 #endif
 	sbuf = OS_Buf;
 	sbuf.c_cc[VEOF] = 0;
@@ -449,13 +449,13 @@ cp_ccon(bool on)
 #if HAVE_TCSETATTR
 	tcsetattr(fileno(cp_in),TCSANOW,&sbuf);
 #else
-	(void) ioctl(fileno(cp_in), TERM_SET, (char *) &sbuf);
+	(void) ioctl(fileno(cp_in), TERM_SET, &sbuf);
 #endif
     } else {
 #ifdef HAVE_TCSETATTR
 	tcsetattr(fileno(cp_in),TCSANOW,&OS_Buf);
 #else
-	(void) ioctl(fileno(cp_in), TERM_SET, (char *) &OS_Buf);
+	(void) ioctl(fileno(cp_in), TERM_SET, &OS_Buf);
 #endif
     }
 

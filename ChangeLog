@@ -1,4 +1,8 @@
 2012-02-06  Robert Larice
+ * src/frontend/parser/complete.c :
+   drop (char*) cast in the third argument of ioctl()
+
+2012-02-06  Robert Larice
  * src/frontend/outitf.c ,
  * src/frontend/spiceif.c ,
  * src/frontend/subckt.c ,
