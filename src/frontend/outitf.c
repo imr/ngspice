@@ -105,8 +105,8 @@ if (ARCHme != 0) return(OK);
    name = "circuit name";
  
  return (beginPlot(analysisPtr, circuitPtr, name,
-		   (char *) analName, (char *) refName, refType, numNames,
-		   (char **) dataNames, dataType, FALSE,
+		   analName, refName, refType, numNames,
+		   dataNames, dataType, FALSE,
 		   (runDesc **) plotPtr));
 }
 
@@ -121,8 +121,8 @@ OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
 #endif /* PARALLEL_ARCH */
 
     return (beginPlot(analysisPtr, circuitPtr, "circuit name",
-            (char *) analName, (char *) refName, refType, numNames,
-            (char **) dataNames, dataType, TRUE,
+            analName, refName, refType, numNames,
+            dataNames, dataType, TRUE,
             (runDesc **) plotPtr));
 }
 

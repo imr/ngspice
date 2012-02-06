@@ -114,9 +114,9 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     }
 
     if (cp_getvar("ticlist", CP_LIST, ticlist)) {
-	wl = (wordlist *)vareval("ticlist");
-	ticlist = (char *)wl_flatten(wl);
-	graph->ticdata = (double *) readtics(ticlist);
+	wl = vareval("ticlist");
+	ticlist = wl_flatten(wl);
+	graph->ticdata = readtics(ticlist);
     } else
 	graph->ticdata = NULL;
 

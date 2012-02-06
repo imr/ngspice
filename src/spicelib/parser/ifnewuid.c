@@ -37,10 +37,10 @@ IFnewUid(CKTcircuit *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
 
     if (olduid) {
 #ifdef HAVE_ASPRINTF    	
-	asprintf(&newname, "%s#%s", (char *) olduid, suffix);
+	asprintf(&newname, "%s#%s", olduid, suffix);
 #else /* ~ HAVE_ASPRINTF */   
-      newname = TMALLOC(char, strlen((char *) olduid) + strlen(suffix) + 2); /* 2 = strlen("#\0") */ 
-      sprintf(newname, "%s#%s", (char *) olduid, suffix);
+      newname = TMALLOC(char, strlen(olduid) + strlen(suffix) + 2); /* 2 = strlen("#\0") */ 
+      sprintf(newname, "%s#%s", olduid, suffix);
 #endif /* HAVE_ASPRINTF */			 
 
     } else {
@@ -62,15 +62,15 @@ IFnewUid(CKTcircuit *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
 	error = INPinsert(&newname, ft_curckt->ci_symtab);
 	if (error && error != E_EXISTS)
 	    return (error);
-	*newuid = (IFuid) newname;
+	*newuid = newname;
 	break;
 
     case UID_SIGNAL:
 	error = INPmkTerm(ckt, &newname,
-			  (INPtables *) ft_curckt->ci_symtab, nodedata);
+			  ft_curckt->ci_symtab, nodedata);
 	if (error && error != E_EXISTS)
 	    return (error);
-	*newuid = (IFuid) newname;
+	*newuid = newname;
 	break;
 
     default:

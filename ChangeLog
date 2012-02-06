@@ -1,4 +1,17 @@
 2012-02-06  Robert Larice
+ * src/frontend/outitf.c ,
+ * src/frontend/spiceif.c ,
+ * src/frontend/subckt.c ,
+ * src/frontend/plotting/graf.c ,
+ * src/spicelib/analysis/cktnames.c ,
+ * src/spicelib/devices/hisim2/hsm2noi.c ,
+ * src/spicelib/devices/hisimhv/hsmhvnoi.c ,
+ * src/spicelib/parser/ifnewuid.c ,
+ * src/spicelib/parser/inpptree.c ,
+ * src/xspice/mif/mifsetup.c :
+   drop some more casts
+
+2012-02-06  Robert Larice
  * src/spicelib/analysis/analysis.c ,
  * src/spicelib/devices/urc/urcsetup.c :
    drop some casts

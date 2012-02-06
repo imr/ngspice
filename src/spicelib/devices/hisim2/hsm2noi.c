@@ -81,7 +81,7 @@ int HSM2noise (
 	  case N_DENS:
 	    for ( i = 0; i < HSM2NSRCS; i++ ) { 
 	      (void) sprintf(name, "onoise.%s%s", 
-			     (char *)here->HSM2name, HSM2nNames[i]);
+			     here->HSM2name, HSM2nNames[i]);
 	      data->namelist = 
 		TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
@@ -94,7 +94,7 @@ int HSM2noise (
 	  case INT_NOIZ:
 	    for ( i = 0; i < HSM2NSRCS; i++ ) {
 	      (void) sprintf(name, "onoise_total.%s%s", 
-			     (char *)here->HSM2name, HSM2nNames[i]);
+			     here->HSM2name, HSM2nNames[i]);
 	      data->namelist = 
 		TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
@@ -104,7 +104,7 @@ int HSM2noise (
 		 NULL, name, UID_OTHER, NULL);
 	      
 	      (void) sprintf(name, "inoise_total.%s%s", 
-			     (char *)here->HSM2name, HSM2nNames[i]);
+			     here->HSM2name, HSM2nNames[i]);
 	      data->namelist = 
 		TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)

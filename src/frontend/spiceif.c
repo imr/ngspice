@@ -889,7 +889,7 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val )
                 if ( prevMod == NULL ) ckt->CKThead[typecode] = mods->GENnextModel;
                 else 	               prevMod->GENnextModel                  = mods->GENnextModel;
 
-                INPgetMod( ckt, (char *)mods->GENmodName, &inpmod, ft_curckt->ci_symtab );
+                INPgetMod( ckt, mods->GENmodName, &inpmod, ft_curckt->ci_symtab );
                 inpmod->INPmodUsed = 0;
                 FREE(mods);
 

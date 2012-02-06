@@ -928,7 +928,7 @@ static INPparseNode *mkinode(char *name)
             values = TMALLOC(IFvalue, 1);
             types = TMALLOC(int, 1);
         }
-        values[i].uValue = (IFuid) name;
+        values[i].uValue = name;
         types[i] = IF_INSTANCE;
         numvalues++;
     }

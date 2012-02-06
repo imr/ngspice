@@ -1071,7 +1071,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             /*  Next we handle the POLY (if any) */
             /* get next token */
             t = s;
-            next_name = (char *)gettok_noparens(&t);
+            next_name = gettok_noparens(&t);
             if ( (strcmp(next_name, "POLY") == 0) ||
                     (strcmp(next_name, "poly") == 0)) {         /* found POLY . . . . */
 
