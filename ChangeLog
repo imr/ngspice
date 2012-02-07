@@ -1,3 +1,7 @@
+2012-02-07  Robert Larice
+ * src/include/ngspice/complex.h :
+   #1/4 drop cast (enable compiler type check)
+
 2012-02-07  Holger Vogt / Robert Larice
  * src/tclspice.c :
    fix varags usage, tcl_printf(), tcl_fprintf(), tcl_vfprintf()
