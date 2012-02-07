@@ -374,9 +374,9 @@ cctowl(struct ccom *cc, bool sib)
 /* We use this in com_device... */
 
 wordlist *
-cp_cctowl(char *stuff)
+cp_cctowl(struct ccom *stuff)
 {
-    return (cctowl((struct ccom *) stuff, TRUE));
+    return (cctowl(stuff, TRUE));
 }
 
 /* Turn on and off the escape break character and cooked mode. */
@@ -553,18 +553,18 @@ cp_remkword(int kw_class, char *word)
  * that position, and the keyword class given is set to the argument.
  */
 
-char *
-cp_kwswitch(int kw_class, char *tree)
+struct ccom *
+cp_kwswitch(int kw_class, struct ccom *tree)
 {
-    char *old;
+    struct ccom *old;
 
     if ((kw_class < 1) || (kw_class >= NCLASSES)) {
         fprintf(cp_err, "cp_addkword: Internal Error: bad class %d\n",
                 kw_class);
         return (NULL);
     }
-    old = (char *) keywords[kw_class];
-    keywords[kw_class] = (struct ccom *) tree;
+    old = keywords[kw_class];
+    keywords[kw_class] = tree;
     return (old);
 }
 

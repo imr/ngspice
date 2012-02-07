@@ -1,4 +1,12 @@
 2012-02-07  Robert Larice
+ * src/frontend/vectors.c ,
+ * src/frontend/parser/complete.c ,
+ * src/include/ngspice/cpextern.h ,
+ * src/include/ngspice/ftedefs.h ,
+ * src/include/ngspice/plot.h :
+   use type `struct ccom'
+
+2012-02-07  Robert Larice
  * src/main.c ,
  * src/frontend/outitf.c ,
  * src/frontend/outitf.h ,

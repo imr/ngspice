@@ -5,6 +5,8 @@
 #include "ngspice/bool.h"
 #include "ngspice/dvec.h"
 
+struct ccom;
+
 /* The information for a particular set of vectors that come from one
  * plot.  */
 struct plot {
@@ -17,7 +19,7 @@ struct plot {
     struct plot *pl_next;	/* List of plots. */
     wordlist *pl_commands;	/* Commands to execute for this plot. */
     struct variable *pl_env;	/* The 'environment' for this plot. */
-    char *pl_ccom;		/* The ccom struct for this plot. */
+    struct ccom *pl_ccom;	/* The ccom struct for this plot. */
     bool pl_written;		/* Some or all of the vecs have been saved. */
     int pl_ndims;		/* Number of dimensions */
 } ;

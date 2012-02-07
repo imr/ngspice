@@ -17,6 +17,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/fteinp.h"
 #include "ngspice/fteoptdefs.h"
 
+struct ccom;
+
 struct save_info {
     char	*name;
     IFuid	analysis;
@@ -39,8 +41,8 @@ struct circ {
     bool ci_runonce;    /* So com_run can to a reset if necessary... */
     wordlist *ci_commands;  /* Things to do when this circuit is done. */
     struct circ *ci_next;   /* The next in the list. */
-    char *ci_nodes;     /* ccom structs for the nodes... */
-    char *ci_devices;   /* and devices in the circuit. */
+    struct ccom *ci_nodes;     /* ccom structs for the nodes... */
+    struct ccom *ci_devices;   /* and devices in the circuit. */
     char *ci_filename;  /* Where this circuit came from. */
     TSKtask *ci_defTask;   /* the default task for this circuit */
     TSKtask *ci_specTask;  /* the special task for command line jobs */

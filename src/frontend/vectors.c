@@ -691,6 +691,7 @@ plot_alloc(char *name)
 {
     struct plot *pl = alloc(struct plot), *tp;
     char *s;
+    struct ccom *ccom;
     char buf[BSIZE_SP];
 
     ZERO(pl, struct plot);
@@ -707,9 +708,9 @@ plot_alloc(char *name)
     pl->pl_typename = copy(buf);
     cp_addkword(CT_PLOT, buf);
     /* va: create a new, empty keyword tree for class CT_VECTOR, s=old tree */
-    s = cp_kwswitch(CT_VECTOR, NULL);
+    ccom = cp_kwswitch(CT_VECTOR, NULL);
     cp_addkword(CT_VECTOR, "all");
-    pl->pl_ccom = cp_kwswitch(CT_VECTOR, s);
+    pl->pl_ccom = cp_kwswitch(CT_VECTOR, ccom);
     /* va: keyword tree is old tree again, new tree is linked to pl->pl_ccom */
     return (pl);
 }

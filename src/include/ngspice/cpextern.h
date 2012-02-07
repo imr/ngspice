@@ -14,6 +14,7 @@ Modified: 2000  AlansFixes
 #include "ngspice/wordlist.h"
 #include "ngspice/bool.h"
 
+struct ccom;
 
 /* com_alias.c */
 
@@ -33,7 +34,7 @@ extern wordlist *cp_bquote(wordlist *wlist);
 
 extern bool cp_nocc;
 extern bool cp_comlook(char *word);
-extern char *cp_kwswitch(int kw_class, char *tree);
+extern struct ccom *cp_kwswitch(int kw_class, struct ccom *tree);
 extern void cp_addcomm(char *word, long int bits0, long int bits1, long int bits2, long int bits3);
 extern void cp_addkword(int kw_class, char *word);
 extern void cp_ccom(wordlist *wlist, char *buf, bool esc);
@@ -41,7 +42,7 @@ extern void cp_ccon(bool on);
 extern void cp_ccrestart(bool kwords);
 extern void cp_remcomm(char *word);
 extern void cp_remkword(int kw_class, char *word);
-extern wordlist *cp_cctowl(char *stuff);
+extern wordlist *cp_cctowl(struct ccom *stuff);
 
 /* cshpar.c */
 
