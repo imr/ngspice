@@ -46,4 +46,6 @@ typedef struct JOB JOB;
 
 typedef struct SPICEanalysis SPICEanalysis;
 
+typedef struct runDesc runDesc;
+
 #endif

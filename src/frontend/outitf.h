@@ -5,6 +5,10 @@
 
 #ifndef OUTITF_H_INCLUDED
 #define OUTITF_H_INCLUDED
+
+#include "ngspice/typedefs.h"
+
+
 typedef struct dataDesc {
     char *name;     /* The name of the vector. */
     int type;       /* The type. */
@@ -20,7 +24,7 @@ typedef struct dataDesc {
     struct dvec *vec;
 } dataDesc;
 
-typedef struct runDesc {
+struct runDesc {
     void *analysis;
     CKTcircuit *circuit;
     char *name;
@@ -37,7 +41,7 @@ typedef struct runDesc {
     int pointCount;
     int isComplex;
     int windowCount;
-} runDesc;
+};
 
 int OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
                   IFuid analName,

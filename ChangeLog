@@ -1,4 +1,9 @@
 2012-02-07  Robert Larice
+ * src/frontend/outitf.h ,
+ * src/include/ngspice/typedefs.h :
+   struct runDesc forward declaration
+
+2012-02-07  Robert Larice
  * src/frontend/rawfile.c :
    comment/pinpoint a local misuse of a structure element
 
