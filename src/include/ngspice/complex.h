@@ -14,8 +14,8 @@ struct ngcomplex {
 
 typedef struct ngcomplex ngcomplex_t;
 
-#define realpart(cval)  (&(cval))->cx_real
-#define imagpart(cval)  (&(cval))->cx_imag
+#define realpart(cval)  (cval).cx_real
+#define imagpart(cval)  (cval).cx_imag
 
 #ifdef CIDER
 /* From Cider numcomplex.h 

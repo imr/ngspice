@@ -1,4 +1,8 @@
 2012-02-07  Robert Larice
+ * src/include/ngspice/complex.h :
+   #4/4 finish the switch from ngcomplex* args to ngcomplex
+
+2012-02-07  Robert Larice
  * src/ngsconvert.c ,
  * src/tclspice.c ,
  * src/ciderlib/support/database.c ,
