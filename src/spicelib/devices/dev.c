@@ -222,12 +222,12 @@ int load_vadev(CKTcircuit *ckt, char *name)
     return -1;
   }
 
-  device->mkn = ((int (*)(GENmodel *, CKTcircuit *)) &CKTmkVolt);
-  device->mkj = ((int (*)(CKTcircuit *, GENmodel *, IFuid)) &SMPmakeElt);
+  device->mkn = CKTmkVolt;
+  device->mkj = SMPmakeElt;
 
   DEVices = TREALLOC(SPICEdev *, DEVices, DEVNUM + 1);
-  printf("Added device: %s from dynamic library %s\n", ((SPICEdev *)device)->DEVpublic.name, libname);
-  DEVices[DEVNUM++] = (SPICEdev *)device;
+  printf("Added device: %s from dynamic library %s\n", device->spicedev.DEVpublic.name, libname);
+  DEVices[DEVNUM++] = & (device->spicedev);
   varelink(ckt);
   return DEVNUM-1;
 }

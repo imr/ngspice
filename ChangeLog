@@ -1,4 +1,10 @@
 2012-02-07  Robert Larice
+ * src/include/ngspice/devdefs.h ,
+ * src/spicelib/devices/dev.c ,
+ * src/spicelib/devices/adms/admst/ngspice.xml :
+   adms3, fix some types
+
+2012-02-07  Robert Larice
  * src/frontend/vectors.c ,
  * src/frontend/parser/complete.c ,
  * src/include/ngspice/cpextern.h ,

@@ -107,8 +107,8 @@ typedef struct SPICEdev {
 typedef struct SPICEadmsdev {
     SPICEdev spicedev;
     int (*DEVunsetup)(GENmodel*,CKTcircuit*);
-    int (*mkn)(GENmodel *, CKTcircuit *);
-    int (*mkj)(CKTcircuit *, GENmodel *, IFuid);
+    int (*mkn)(CKTcircuit *, CKTnode **, IFuid, char *);
+    double *(*mkj)(SMPmatrix *, int, int);
 } SPICEadmsdev;
 #endif
 

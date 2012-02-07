@@ -4330,8 +4330,8 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
   register $(module)instance *here;
 typedef int FP1(CKTcircuit *ckt, CKTnode **node, IFuid basename, char *suffix);
 typedef double * FP2(SMPmatrix *Matrix, int Row, int Col);
-  FP1*myCKTmkVolt=(FP1*)get_$(module)_info()->mkn;
-  FP2*mySMPmakeElt=(FP2*)get_$(module)_info()->mkj;
+  FP1 *myCKTmkVolt  = get_$(module)_info()->mkn;
+  FP2 *mySMPmakeElt = get_$(module)_info()->mkj;
   
   /*  loop through all the $(module) device models */
   for ( ;model != NULL ;model = model-&gt;$(module)nextModel )
