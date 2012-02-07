@@ -441,7 +441,7 @@ cx_group_delay(void *data, short int type, int length, int *newlength, short int
     if (type == VF_COMPLEX)
      for (i = 0; i < length; i++)
      {
-      v_phase[i] = radtodeg(cph(&cc[i]));
+      v_phase[i] = radtodeg(cph(cc[i]));
      }
     else
     {

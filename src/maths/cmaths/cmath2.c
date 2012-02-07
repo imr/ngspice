@@ -46,8 +46,8 @@ cx_max_local(void *data, short int type, int length)
 	int i;
 
         for (i = 0; i < length; i++)
-            if (cmag(&cc[i]) > largest)
-                largest = cmag(&cc[i]);
+            if (cmag(cc[i]) > largest)
+                largest = cmag(cc[i]);
     } else {
 	double *dd = (double *) data;
 	int i;
@@ -434,7 +434,7 @@ cx_vector(void *data, short int type, int length, int *newlength, short int *new
     if (type == VF_REAL)
         len = (int)FTEcabs(*dd);
     else
-        len = (int)cmag(cc);
+        len = (int)cmag(*cc);
     if (len == 0)
         len = 1;
     d = alloc_d(len);
@@ -461,7 +461,7 @@ cx_unitvec(void *data, short int type, int length, int *newlength, short int *ne
     if (type == VF_REAL)
         len = (int)FTEcabs(*dd);
     else
-        len = (int)cmag(cc);
+        len = (int)cmag(*cc);
     if (len == 0)
         len = 1;
     d = alloc_d(len);

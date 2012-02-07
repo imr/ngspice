@@ -243,11 +243,11 @@ com_diff(wordlist *wl)
                     realpart(&c3) = realpart(&c1) - realpart(&c2);
                     imagpart(&c3) = imagpart(&c1) - imagpart(&c2);
                     /* Stupid evil PC compilers */
-                    cm1 = cmag(&c1);
-                    cm2 = cmag(&c2);
+                    cm1 = cmag(c1);
+                    cm2 = cmag(c2);
                     cmax = MAX(cm1, cm2);
                     if (cmax * reltol +
-                            tol < cmag(&c3)) {
+                            tol < cmag(c3)) {
                         
                         printnum(numbuf,  realpart(&c1));
                         printnum(numbuf2, imagpart(&c1));

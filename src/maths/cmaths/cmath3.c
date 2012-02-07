@@ -187,8 +187,8 @@ cln(ngcomplex_t *c)
 {
     static ngcomplex_t r;
 
-    rcheck(cmag(c) != 0, "ln");
-    realpart(&r) = log(cmag(c));
+    rcheck(cmag(*c) != 0, "ln");
+    realpart(&r) = log(cmag(*c));
     if (imagpart(c) != 0.0)
         imagpart(&r) = atan2(imagpart(c), realpart(c));
     else

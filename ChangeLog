@@ -1,4 +1,13 @@
 2012-02-07  Robert Larice
+ * src/frontend/diff.c ,
+ * src/include/ngspice/complex.h ,
+ * src/maths/cmaths/cmath1.c ,
+ * src/maths/cmaths/cmath2.c ,
+ * src/maths/cmaths/cmath3.c ,
+ * src/maths/cmaths/cmath4.c :
+   #2/4 switch cph() and cmag() args from ngcomplex* to ngcomplex
+
+2012-02-07  Robert Larice
  * src/include/ngspice/complex.h :
    #1/4 drop cast (enable compiler type check)
 

@@ -49,7 +49,7 @@ cx_mag(void *data, short int type, int length, int *newlength, short int *newtyp
             d[i] = FTEcabs(dd[i]);
     else
         for (i = 0; i < length; i++)
-            d[i] = cmag(&cc[i]);
+            d[i] = cmag(cc[i]);
     return ((void *) d);
 }
 
@@ -64,7 +64,7 @@ cx_ph(void *data, short int type, int length, int *newlength, short int *newtype
     *newtype = VF_REAL;
     if (type == VF_COMPLEX)
         for (i = 0; i < length; i++) {
-            d[i] = radtodeg(cph(&cc[i]));
+            d[i] = radtodeg(cph(cc[i]));
         }
     /* Otherwise it is 0, but tmalloc zeros the stuff already. */
     return ((void *) d);
@@ -81,10 +81,10 @@ cx_cph(void *data, short int type, int length, int *newlength, short int *newtyp
     *newlength = length;
     *newtype = VF_REAL;
     if (type == VF_COMPLEX) {
-        double last_ph = cph(&cc[0]);
+        double last_ph = cph(cc[0]);
         d[0] = radtodeg(last_ph);
         for (i = 1; i < length; i++) {
-            double ph = cph(&cc[i]);
+            double ph = cph(cc[i]);
             last_ph = ph - (2*M_PI) * floor((ph - last_ph)/(2*M_PI) + 0.5);
             d[i] = radtodeg(last_ph);
         }
@@ -190,7 +190,7 @@ cx_db(void *data, short int type, int length, int *newlength, short int *newtype
     *newtype = VF_REAL;
     if (type == VF_COMPLEX)
         for (i = 0; i < length; i++) {
-            tt = cmag(&cc[i]);
+            tt = cmag(cc[i]);
             rcheck(tt > 0, "db");
             /*
                 if (tt == 0.0)
@@ -226,7 +226,7 @@ cx_log(void *data, short int type, int length, int *newlength, short int *newtyp
         for (i = 0; i < length; i++) {
             double td;
 
-            td = cmag(&cc[i]);
+            td = cmag(cc[i]);
             /* Perhaps we should trap when td = 0.0, but Ken wants
              * this to be possible...
              */
@@ -273,7 +273,7 @@ cx_ln(void *data, short int type, int length, int *newlength, short int *newtype
         for (i = 0; i < length; i++) {
             double td;
 
-            td = cmag(&cc[i]);
+            td = cmag(cc[i]);
             rcheck(td >= 0, "ln");
             if (td == 0.0) {
                 realpart(&c[i]) = - log(HUGE);
@@ -378,10 +378,10 @@ cx_sqrt(void *data, short int type, int length, int *newlength, short int *newty
                     imagpart(&c[i]) = 0.0;
                 } else if (imagpart(&cc[i]) < 0.0) {
                     realpart(&c[i]) = -sqrt(0.5 *
-                                            (cmag(&cc[i]) + realpart(&cc[i])));
+                                            (cmag(cc[i]) + realpart(&cc[i])));
                 } else {
                     realpart(&c[i]) = sqrt(0.5 *
-                                           (cmag(&cc[i]) + realpart(&cc[i])));
+                                           (cmag(cc[i]) + realpart(&cc[i])));
                 }
                 imagpart(&c[i]) = imagpart(&cc[i]) / (2.0 *
                                                       realpart(&c[i]));
@@ -393,11 +393,11 @@ cx_sqrt(void *data, short int type, int length, int *newlength, short int *newty
                 } else {
                     if (imagpart(&cc[i]) < 0.0)
                         imagpart(&c[i]) = - sqrt(0.5 *
-                                                 (cmag(&cc[i]) -
+                                                 (cmag(cc[i]) -
                                                   realpart(&cc[i])));
                     else
                         imagpart(&c[i]) = sqrt(0.5 *
-                                               (cmag(&cc[i]) -
+                                               (cmag(cc[i]) -
                                                 realpart(&cc[i])));
                     realpart(&c[i]) = imagpart(&cc[i]) /
                                       (2.0 * imagpart(&c[i]));
