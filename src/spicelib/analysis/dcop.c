@@ -25,7 +25,7 @@ DCop(CKTcircuit *ckt, int notused)
     int error;
     IFuid *nameList; /* va: tmalloc'ed list */
     int numNames;
-    void *plot = NULL;
+    runDesc *plot = NULL;
 
     NG_IGNORE(notused);
   

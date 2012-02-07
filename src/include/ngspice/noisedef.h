@@ -49,7 +49,7 @@ typedef struct {
 			   /* a do loop. */
     unsigned int prtSummary;
     double *outpVector;  /* pointer to our array of noise outputs */
-    void *NplotPtr; /* the plot pointer */
+    runDesc *NplotPtr; /* the plot pointer */
     IFuid *namelist;       /* list of plot names */
 } Ndata;
 

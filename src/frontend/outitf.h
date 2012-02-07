@@ -46,19 +46,19 @@ struct runDesc {
 int OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
                   IFuid analName,
                   IFuid refName, int refType,
-                  int numNames, IFuid *dataNames, int dataType, void **plotPtr);
+                  int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr);
 int OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
                   IFuid analName,
                   IFuid refName, int refType,
-                  int numNames, IFuid *dataNames, int dataType, void **plotPtr);
-int OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr);
+                  int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr);
+int OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr);
 int OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr);
-int OUTwData(void *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr);
-int OUTwEnd(void *plotPtr);
-int OUTendPlot(void *plotPtr);
-int OUTbeginDomain(void *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue);
-int OUTendDomain(void *plotPtr);
-int OUTattributes(void *plotPtr, IFuid varName, int param, IFvalue *value);
+int OUTwData(runDesc *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr);
+int OUTwEnd(runDesc *plotPtr);
+int OUTendPlot(runDesc *plotPtr);
+int OUTbeginDomain(runDesc *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue);
+int OUTendDomain(runDesc *plotPtr);
+int OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value);
 int OUTstopnow(void);
 void OUTerror(int flags, char *format, IFuid *names);
 

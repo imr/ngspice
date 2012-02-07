@@ -201,14 +201,14 @@ const bool ft_nutmeg = FALSE;
 extern struct comm spcp_coms[ ];
 struct comm *cp_coms = spcp_coms;
 
-extern int OUTpBeginPlot(CKTcircuit *,JOB *,IFuid,IFuid,int,int,IFuid *,int,void **);
-extern int OUTpData(void *,IFvalue *,IFvalue *);
-extern int OUTwBeginPlot(CKTcircuit *,JOB *,IFuid,IFuid,int,int,IFuid *,int,void **);
-extern int OUTwReference(void *,IFvalue *,void **);
-extern int OUTwData(void *,int,IFvalue *,void *), OUTwEnd(void *), OUTendPlot(void *);
-extern int OUTbeginDomain(void *,IFuid,int,IFvalue *);
-extern int OUTendDomain(void *), OUTstopnow(void), OUTerror(int,char *,IFuid *);
-extern int OUTattributes(void *,IFuid,int,IFvalue *);
+extern int OUTpBeginPlot(CKTcircuit *,JOB *,IFuid,IFuid,int,int,IFuid *,int,runDesc **);
+extern int OUTpData(runDesc *,IFvalue *,IFvalue *);
+extern int OUTwBeginPlot(CKTcircuit *,JOB *,IFuid,IFuid,int,int,IFuid *,int,runDesc **);
+extern int OUTwReference(runDesc *,IFvalue *,void **);
+extern int OUTwData(runDesc *,int,IFvalue *,void *), OUTwEnd(runDesc *), OUTendPlot(runDesc *);
+extern int OUTbeginDomain(runDesc *,IFuid,int,IFvalue *);
+extern int OUTendDomain(runDesc *), OUTstopnow(void), OUTerror(int,char *,IFuid *);
+extern int OUTattributes(runDesc *,IFuid,int,IFvalue *);
 
 extern void initw(void);
 

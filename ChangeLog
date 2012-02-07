@@ -1,4 +1,20 @@
 2012-02-07  Robert Larice
+ * src/main.c ,
+ * src/frontend/outitf.c ,
+ * src/frontend/outitf.h ,
+ * src/include/ngspice/ifsim.h ,
+ * src/include/ngspice/noisedef.h ,
+ * src/include/ngspice/trandefs.h ,
+ * src/spicelib/analysis/acan.c ,
+ * src/spicelib/analysis/cktsens.c ,
+ * src/spicelib/analysis/dcop.c ,
+ * src/spicelib/analysis/dctrcurv.c ,
+ * src/spicelib/analysis/distoan.c ,
+ * src/spicelib/analysis/pzan.c ,
+ * src/spicelib/analysis/tfanal.c :
+   use type `runDesc'
+
+2012-02-07  Robert Larice
  * src/frontend/outitf.h ,
  * src/include/ngspice/typedefs.h :
    struct runDesc forward declaration

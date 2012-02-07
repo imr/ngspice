@@ -30,7 +30,7 @@ TFanal(CKTcircuit *ckt, int restart)
     int error;
     int converged;
     int i;
-    void *plotptr = NULL;   /* pointer to out plot */
+    runDesc *plotptr = NULL;   /* pointer to out plot */
     GENinstance *ptr = NULL;
     IFuid uids[3];
     int Itype;

@@ -90,7 +90,7 @@ int
 OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
               IFuid analName,
               IFuid refName, int refType,
-              int numNames, IFuid *dataNames, int dataType, void **plotPtr)
+              int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr)
 {
   char *name;   
 
@@ -107,14 +107,14 @@ if (ARCHme != 0) return(OK);
  return (beginPlot(analysisPtr, circuitPtr, name,
 		   analName, refName, refType, numNames,
 		   dataNames, dataType, FALSE,
-		   (runDesc **) plotPtr));
+		   plotPtr));
 }
 
 int
 OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
               IFuid analName,
               IFuid refName, int refType,
-              int numNames, IFuid *dataNames, int dataType, void **plotPtr)
+              int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr)
 {
 #ifdef PARALLEL_ARCH
     if (ARCHme != 0) return(OK);
@@ -123,7 +123,7 @@ OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
     return (beginPlot(analysisPtr, circuitPtr, "circuit name",
             analName, refName, refType, numNames,
             dataNames, dataType, TRUE,
-            (runDesc **) plotPtr));
+            plotPtr));
 }
 
 static int
@@ -447,9 +447,9 @@ addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind)
 
 
 int
-OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
+OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 {
-    runDesc *run = (runDesc *) plotPtr;
+    runDesc *run = plotPtr;  // FIXME
     IFvalue val;
     int i;
 #ifdef PARALLEL_ARCH
@@ -637,7 +637,7 @@ OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr)
 }
 /* ARGSUSED */ /* until some code gets written */
 int
-OUTwData(void *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
+OUTwData(runDesc *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
 {
     NG_IGNORE(refPtr);
     NG_IGNORE(valuePtr);
@@ -649,7 +649,7 @@ OUTwData(void *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
 
 /* ARGSUSED */ /* until some code gets written */
 int
-OUTwEnd(void *plotPtr)
+OUTwEnd(runDesc *plotPtr)
 {
     NG_IGNORE(plotPtr);
     return (OK);
@@ -658,9 +658,9 @@ OUTwEnd(void *plotPtr)
 
 
 int
-OUTendPlot(void *plotPtr)
+OUTendPlot(runDesc *plotPtr)
 {
-    runDesc *run = (runDesc *) plotPtr;
+    runDesc *run = plotPtr;  // FIXME
 
 #ifdef PARALLEL_ARCH
     if (ARCHme != 0) return(OK);
@@ -682,7 +682,7 @@ OUTendPlot(void *plotPtr)
 
 /* ARGSUSED */ /* until some code gets written */
 int
-OUTbeginDomain(void *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue)
+OUTbeginDomain(runDesc *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue)
 {
     NG_IGNORE(outerRefValue);
     NG_IGNORE(refType);
@@ -694,7 +694,7 @@ OUTbeginDomain(void *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue
 
 /* ARGSUSED */ /* until some code gets written */
 int
-OUTendDomain(void *plotPtr)
+OUTendDomain(runDesc *plotPtr)
 {
     NG_IGNORE(plotPtr);
     return (OK);
@@ -704,9 +704,9 @@ OUTendDomain(void *plotPtr)
 
 /* ARGSUSED */ /* until some code gets written */
 int
-OUTattributes(void *plotPtr, IFuid varName, int param, IFvalue *value)
+OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value)
 {
-    runDesc *run = (runDesc *) plotPtr;
+    runDesc *run = plotPtr;  // FIXME
     struct dvec *d;
     GRIDTYPE type;
     int i;

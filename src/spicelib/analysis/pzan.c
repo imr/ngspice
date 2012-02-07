@@ -22,7 +22,7 @@ PZan(CKTcircuit *ckt, int reset)
     int error;
     int numNames;
     IFuid *nameList;
-    void *plot = NULL;
+    runDesc *plot = NULL;
 
     NG_IGNORE(reset);
 
@@ -127,7 +127,7 @@ int
 PZpost(CKTcircuit *ckt)
 {
     PZAN	*job = (PZAN *) ckt->CKTcurJob;
-    void	*pzPlotPtr = NULL; /* the plot pointer for front end */
+    runDesc	*pzPlotPtr = NULL; /* the plot pointer for front end */
     IFcomplex	*out_list;
     IFvalue	outData;    /* output variable (points to out_list) */
     IFuid	*namelist;

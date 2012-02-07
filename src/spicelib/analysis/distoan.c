@@ -49,7 +49,7 @@ DISTOan(CKTcircuit *ckt, int restart)
     int numNames;
     IFuid *nameList;
     IFuid freqUid;
-    void *acPlot=NULL;
+    runDesc *acPlot = NULL;
     DISTOAN *job = (DISTOAN *) ckt->CKTcurJob;
     static char *nof2src = "No source with f2 distortion input";
 #ifdef DISTODEBUG

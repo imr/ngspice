@@ -442,28 +442,28 @@ struct IFfrontEnd {
     int (*OUTpBeginPlot) (CKTcircuit *, JOB *,
                           IFuid,
                           IFuid, int,
-                          int, IFuid *, int, void **);
+                          int, IFuid *, int, runDesc **);
                             /* start pointwise output plot */
-    int (*OUTpData) (void *, IFvalue *, IFvalue *);
+    int (*OUTpData) (runDesc *, IFvalue *, IFvalue *);
                             /* data for pointwise plot */
     int (*OUTwBeginPlot) (CKTcircuit *, JOB *,
                           IFuid,
                           IFuid, int,
-                          int, IFuid *, int, void **);
+                          int, IFuid *, int, runDesc **);
                             /* start windowed output plot */
-    int (*OUTwReference) (void *, IFvalue *, void **);
+    int (*OUTwReference) (runDesc *, IFvalue *, void **);
                             /* independent vector for windowed plot */
-    int (*OUTwData) (void *, int, IFvalue *, void *);
+    int (*OUTwData) (runDesc *, int, IFvalue *, void *);
                             /* data for windowed plot */
-    int (*OUTwEnd) (void *);
+    int (*OUTwEnd) (runDesc *);
                             /* signal end of windows */
-    int (*OUTendPlot) (void *);
+    int (*OUTendPlot) (runDesc *);
                             /* end of plot */
-    int (*OUTbeginDomain) (void *, IFuid, int, IFvalue *);
+    int (*OUTbeginDomain) (runDesc *, IFuid, int, IFvalue *);
                             /* start nested domain */
-    int (*OUTendDomain) (void *);
+    int (*OUTendDomain) (runDesc *);
                             /* end nested domain */
-    int (*OUTattributes) (void *, IFuid, int, IFvalue *);
+    int (*OUTattributes) (runDesc *, IFuid, int, IFvalue *);
                             /* specify output attributes of node */
 };
 

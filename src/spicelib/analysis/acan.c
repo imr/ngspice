@@ -62,8 +62,8 @@ ACan(CKTcircuit *ckt, int restart)
     int numNames;
     IFuid *nameList;  /* va: tmalloc'ed list of names */
     IFuid freqUid;
-    static void *acPlot = NULL;
-    void *plot = NULL;
+    static runDesc *acPlot = NULL;
+    runDesc *plot = NULL;
 
 
 #ifdef XSPICE

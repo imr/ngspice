@@ -24,7 +24,7 @@ typedef struct {
     double TRANmaxStep;
     double TRANinitTime;
     long TRANmode;
-    void * TRANplot;
+    runDesc *TRANplot;
 } TRANan;
 
 #define TRAN_TSTART 1

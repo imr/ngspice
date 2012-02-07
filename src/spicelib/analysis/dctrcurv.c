@@ -48,7 +48,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
     IFuid *nameList;
     int numNames;
     int firstTime=1;
-    static void *plot=NULL;
+    static runDesc *plot = NULL;
 
 #ifdef WANT_SENSE2
 #ifdef SENSDEBUG
