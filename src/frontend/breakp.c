@@ -432,7 +432,7 @@ satisfied(struct dbcomm *d, struct plot *plot)
         if (isreal(v1))
             d1 = v1->v_realdata[v1->v_length - 1];
         else
-            d1 = realpart(&(v1->v_compdata[v1->v_length - 1]));
+            d1 = realpart((v1->v_compdata[v1->v_length - 1]));
     } else
         d1 = d->db_value1;
 
@@ -445,7 +445,7 @@ satisfied(struct dbcomm *d, struct plot *plot)
         if (isreal(v2))
             d2 = v2->v_realdata[v2->v_length - 1];
         else
-            d2 = realpart(&(v2->v_compdata[v2->v_length - 1]));
+            d2 = realpart((v2->v_compdata[v2->v_length - 1]));
     } else
         d2 = d->db_value2;
 

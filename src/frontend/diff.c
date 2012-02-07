@@ -240,8 +240,8 @@ com_diff(wordlist *wl)
                 } else {
                     c1 = v1->v_compdata[i];
                     c2 = v2->v_compdata[i];
-                    realpart(&c3) = realpart(&c1) - realpart(&c2);
-                    imagpart(&c3) = imagpart(&c1) - imagpart(&c2);
+                    realpart(c3) = realpart(c1) - realpart(c2);
+                    imagpart(c3) = imagpart(c1) - imagpart(c2);
                     /* Stupid evil PC compilers */
                     cm1 = cmag(c1);
                     cm2 = cmag(c2);
@@ -249,10 +249,10 @@ com_diff(wordlist *wl)
                     if (cmax * reltol +
                             tol < cmag(c3)) {
                         
-                        printnum(numbuf,  realpart(&c1));
-                        printnum(numbuf2, imagpart(&c1));
-                        printnum(numbuf3, realpart(&c2));
-                        printnum(numbuf4, imagpart(&c2));
+                        printnum(numbuf,  realpart(c1));
+                        printnum(numbuf2, imagpart(c1));
+                        printnum(numbuf3, realpart(c2));
+                        printnum(numbuf4, imagpart(c2));
                             	
                         fprintf(cp_out,
             "%s.%s[%d] = %-10s, %-10s %s.%s[%d] = %-10s, %s\n",

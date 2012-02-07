@@ -122,8 +122,8 @@ ft_ternary(struct pnode *node)
 
     c = isreal(cond)
         ? (cond->v_realdata[0] != 0.0)
-        : ((realpart(cond->v_compdata) != 0.0) ||
-           (imagpart(cond->v_compdata) != 0.0) );
+        : ((realpart(cond->v_compdata[0]) != 0.0) ||
+           (imagpart(cond->v_compdata[0]) != 0.0) );
 
     arg = c
         ? node->pn_right->pn_left
@@ -261,8 +261,8 @@ doop(char what,
             for ( ; i < length; i++)
                 d1[i] = ld;
         } else {
-            realpart(&lc) = 0.0;
-            imagpart(&lc) = 0.0;
+            realpart(lc) = 0.0;
+            imagpart(lc) = 0.0;
             c1 = TMALLOC(ngcomplex_t, length);
             for (i = 0; i < v1->v_length; i++)
                 c1[i] = v1->v_compdata[i];
@@ -288,8 +288,8 @@ doop(char what,
             for ( ; i < length; i++)
                 d2[i] = ld;
         } else {
-            realpart(&lc) = 0.0;
-            imagpart(&lc) = 0.0;
+            realpart(lc) = 0.0;
+            imagpart(lc) = 0.0;
             c2 = TMALLOC(ngcomplex_t, length);
             for (i = 0; i < v2->v_length; i++)
                 c2[i] = v2->v_compdata[i];
@@ -586,8 +586,8 @@ op_range(struct pnode *arg1, struct pnode *arg2)
     if (isreal(ind)) {
         up = low = *ind->v_realdata;
     } else {
-        up = imagpart(ind->v_compdata);
-        low = realpart(ind->v_compdata);
+        up = imagpart(ind->v_compdata[0]);
+        low = realpart(ind->v_compdata[0]);
     }
     if (up < low) {
         td = up;
@@ -597,7 +597,7 @@ op_range(struct pnode *arg1, struct pnode *arg2)
     }
     for (i = len = 0; i < scale->v_length; i++) {
         td = isreal(scale) ? scale->v_realdata[i] :
-                realpart(&scale->v_compdata[i]);
+                realpart(scale->v_compdata[i]);
         if ((td <= up) && (td >= low))
             len++;
     }
@@ -632,15 +632,15 @@ op_range(struct pnode *arg1, struct pnode *arg2)
     for (i = (rev ? v->v_length - 1 : 0); i != (rev ? -1 : v->v_length);
             rev ? i-- : i++) {
         td = isreal(scale) ? scale->v_realdata[i] :
-                realpart(&scale->v_compdata[i]);
+                realpart(scale->v_compdata[i]);
         if ((td <= up) && (td >= low)) {
             if (isreal(res)) {
                 res->v_realdata[j] = v->v_realdata[i];
             } else {
-                realpart(&res->v_compdata[j]) =
-                        realpart(&v->v_compdata[i]);
-                imagpart(&res->v_compdata[j]) =
-                        imagpart(&v->v_compdata[i]);
+                realpart(res->v_compdata[j]) =
+                        realpart(v->v_compdata[i]);
+                imagpart(res->v_compdata[j]) =
+                        imagpart(v->v_compdata[i]);
             }
             j++;
         }
@@ -718,8 +718,8 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
         down = up = (int)floor(ind->v_realdata[0] + 0.5);
     } else {
         newdim = v->v_numdims;
-        down = (int)floor(realpart(&ind->v_compdata[0]) + 0.5);
-        up = (int)floor(imagpart(&ind->v_compdata[0]) + 0.5);
+        down = (int)floor(realpart(ind->v_compdata[0]) + 0.5);
+        up = (int)floor(imagpart(ind->v_compdata[0]) + 0.5);
     }
     if (up < down) {
         i = up;
@@ -788,10 +788,10 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
                 res->v_realdata[k * blocksize + i] =
                     v->v_realdata[(down + j) * blocksize + i];
             else {
-                realpart(&res->v_compdata[k * blocksize + i]) =
-                    realpart(&v->v_compdata[(down + j) * blocksize + i]);
-                imagpart(&res->v_compdata[k * blocksize + i]) =
-                    imagpart(&v->v_compdata[(down + j) * blocksize + i]);
+                realpart(res->v_compdata[k * blocksize + i]) =
+                    realpart(v->v_compdata[(down + j) * blocksize + i]);
+                imagpart(res->v_compdata[k * blocksize + i]) =
+                    imagpart(v->v_compdata[(down + j) * blocksize + i]);
             }
     }
 

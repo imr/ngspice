@@ -33,9 +33,9 @@ ft_minmax(struct dvec *v, bool real)
         if (isreal(v))
             d = v->v_realdata[i];
         else if (real)
-            d = realpart(&v->v_compdata[i]);
+            d = realpart(v->v_compdata[i]);
         else
-            d = imagpart(&v->v_compdata[i]);
+            d = imagpart(v->v_compdata[i]);
         if (d < res[0])
             res[0] = d;
         if (d > res[1])
@@ -85,7 +85,7 @@ ft_SMITHminmax(struct dvec *v, bool yval)
         if (isreal(v))
 	    SMITH_tfm( v->v_realdata[i], 0.0, &d, &d2 );
 	else
-            SMITH_tfm( realpart(&v->v_compdata[i]), imagpart(&v->v_compdata[i]),
+            SMITH_tfm( realpart(v->v_compdata[i]), imagpart(v->v_compdata[i]),
 								&d, &d2 );
 /* Are we are looking for min/max X or Y ralue
  */

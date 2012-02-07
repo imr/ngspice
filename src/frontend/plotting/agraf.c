@@ -198,7 +198,7 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     for (i = 0; i < maxx; i++) {
         if (nointerp)
             x = isreal(xscale) ? xscale->v_realdata[i] :
-                    realpart(&xscale->v_compdata[i]);
+                    realpart(xscale->v_compdata[i]);
         else if (xlog && xrange[0] > 0.0 && xrange[1] > 0.0)
 	    x = xrange[0] * pow( 10.0, mylog10(xrange[1]/xrange[0])
 			* i / (maxx - 1));
@@ -206,21 +206,21 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
             x = xrange[0] + (xrange[1] - xrange[0]) * i /
                     (maxx - 1);
         while ((isreal(xscale) ? (xscale->v_realdata[upper] < x) :
-                (realpart(&xscale->v_compdata[upper]) < x)) &&
+                (realpart(xscale->v_compdata[upper]) < x)) &&
                 (upper < xscale->v_length - 1))
             upper++;
         while ((isreal(xscale) ? (xscale->v_realdata[lower] < x) :
-                (realpart(&xscale->v_compdata[lower]) < x)) &&
+                (realpart(xscale->v_compdata[lower]) < x)) &&
                 (lower < xscale->v_length - 1))
             lower++;
         if ((isreal(xscale) ? (xscale->v_realdata[lower] > x) :
-                (realpart(&xscale->v_compdata[lower]) > x)) &&
+                (realpart(xscale->v_compdata[lower]) > x)) &&
                 (lower > 0))
             lower--;
         x1 = (isreal(xscale) ? xscale->v_realdata[lower] :
-                realpart(&xscale->v_compdata[lower]));
+                realpart(xscale->v_compdata[lower]));
         x2 = (isreal(xscale) ? xscale->v_realdata[upper] :
-                realpart(&xscale->v_compdata[upper]));
+                realpart(xscale->v_compdata[upper]));
         if (x1 > x2) {
             fprintf(cp_err, "Error: X scale (%s) not monotonic\n",
                     xscale->v_name);
@@ -228,9 +228,9 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
         }
         for (v = vecs; v; v = v->v_link2) {
             yy1 = (isreal(v) ? v->v_realdata[lower] :
-                    realpart(&v->v_compdata[lower]));
+                    realpart(v->v_compdata[lower]));
             y2 = (isreal(v) ? v->v_realdata[upper] :
-                    realpart(&v->v_compdata[upper]));
+                    realpart(v->v_compdata[upper]));
             if (x1 == x2)
                 y = yy1;
             else
@@ -290,7 +290,7 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     for (i = 0; i < maxx; i++) {
         if (nointerp)
           x = isreal(xscale) ? xscale->v_realdata[i] :
-                realpart(&xscale->v_compdata[i]);
+                realpart(xscale->v_compdata[i]);
         else if (xlog && xrange[0] > 0.0 && xrange[1] > 0.0)
 	    x = xrange[0] * pow( 10.0, mylog10(xrange[1]/xrange[0])
 			* i / (maxx - 1));

@@ -56,7 +56,7 @@ cp_enqvar(char *word)
                     vv->va_real = d->v_realdata[0];
                 } else {
                     vv->va_real = 
-                        realpart(&d->v_compdata[0]);
+                        realpart(d->v_compdata[0]);
                 }
             } else {
                 vv = alloc(struct variable);
@@ -71,7 +71,7 @@ cp_enqvar(char *word)
                         tv->va_real = d->v_realdata[i];
                     } else {
                         tv->va_real = 
-                            realpart(&d->v_compdata[i]);
+                            realpart(d->v_compdata[i]);
                     }
                     tv->va_next = vv->va_vlist;
                     vv->va_vlist = tv;

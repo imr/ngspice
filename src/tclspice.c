@@ -1546,7 +1546,7 @@ static void dvecToBlt(Blt_Vector *Data, struct dvec *x) {
     data = TMALLOC(double, x->v_length);
 
     for(i=0;i<x->v_length;i++) {
-      data[i] = realpart(&x->v_compdata[i]);
+      data[i] = realpart(x->v_compdata[i]);
     }
 
     Blt_ResetVector (Data, data, x->v_length, x->v_length, TCL_VOLATILE);

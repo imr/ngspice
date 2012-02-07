@@ -124,14 +124,14 @@ xtend(struct dvec *v, int length)
         oc = v->v_compdata;
         v->v_compdata = TMALLOC(ngcomplex_t, length);
         for (i = 0; i < v->v_length; i++) {
-            realpart(&v->v_compdata[i]) = realpart(&oc[i]);
-            imagpart(&v->v_compdata[i]) = imagpart(&oc[i]);
+            realpart(v->v_compdata[i]) = realpart(oc[i]);
+            imagpart(v->v_compdata[i]) = imagpart(oc[i]);
         }
-        realpart(&c) = realpart(&oc[--i]);
-        imagpart(&c) = imagpart(&oc[i]);
+        realpart(c) = realpart(oc[--i]);
+        imagpart(c) = imagpart(oc[i]);
         while (i < length) {
-            realpart(&v->v_compdata[i]) = realpart(&c);
-            imagpart(&v->v_compdata[i++]) = imagpart(&c);
+            realpart(v->v_compdata[i]) = realpart(c);
+            imagpart(v->v_compdata[i++]) = imagpart(c);
         tfree(oc);
         }
     }
@@ -763,8 +763,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 		for (j = 0; j < d->v_length; j++) {
 		    /* (re - 1, im) / (re + 1, im) */
 
-		    re = realpart(d->v_compdata + j);
-		    im = imagpart(d->v_compdata + j);
+		    re = realpart(d->v_compdata[j]);
+		    im = imagpart(d->v_compdata[j]);
 
 		    rex = re + 1;
 		    imx = im;
@@ -776,11 +776,11 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 		     * i = im / rex - re / rex * imx / rex;
              *
              *
-		     * realpart(d->v_compdata + j) = r / x;
-		     * imagpart(d->v_compdata + j) = i / x;
+		     * realpart(d->v_compdata[j]) = r / x;
+		     * imagpart(d->v_compdata[j]) = i / x;
              */
-		    realpart(d->v_compdata + j) = (rex*re+imx*imx) / (rex*rex+imx*imx);
-		    imagpart(d->v_compdata + j) = (2*imx) / (rex*rex+imx*imx);
+		    realpart(d->v_compdata[j]) = (rex*re+imx*imx) / (rex*rex+imx*imx);
+		    imagpart(d->v_compdata[j]) = (2*imx) / (rex*rex+imx*imx);
 		}
 	    }
 	}

@@ -71,11 +71,11 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
                 break;
             }
        } else {
-        increasing = (realpart (&xs->v_compdata[0]) < 
-				realpart( &xs->v_compdata[1]));
+        increasing = (realpart (xs->v_compdata[0]) < 
+				realpart(xs->v_compdata[1]));
         for (i = 0; i < xs->v_length - 1; i++)
-            if (increasing != (realpart( &xs->v_compdata[i]) < 
-                    		realpart( &xs->v_compdata[i + 1]))) {
+            if (increasing != (realpart(xs->v_compdata[i]) < 
+                    		realpart(xs->v_compdata[i + 1]))) {
                 fprintf(cp_err, 
         "Warning: scale not monotonic, gridsize not relevant.\n");
                 gridsize = 0;
@@ -113,10 +113,10 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
                     0.0, /* v->v_realdata[j], */ 
 		    (j==i ? 1 : i));
             } else {
-                gr_point(v, realpart(&v->v_compdata[i]),
-                    imagpart(&v->v_compdata[i]),
-                    realpart(&v->v_compdata[j]),
-                    imagpart(&v->v_compdata[j]), (j==i ? 1 : i));
+                gr_point(v, realpart(v->v_compdata[i]),
+                    imagpart(v->v_compdata[i]),
+                    realpart(v->v_compdata[j]),
+                    imagpart(v->v_compdata[j]), (j==i ? 1 : i));
             }
 	}
         gr_end(v);
@@ -132,9 +132,9 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
 	dir = 0;
         for (i = 0, j = v->v_length; i < j; i++) {
             dx = isreal(xs) ? xs->v_realdata[i] : 
-                    realpart(&xs->v_compdata[i]);
+                    realpart(xs->v_compdata[i]);
             dy = isreal(v) ? v->v_realdata[i] : 
-                    realpart(&v->v_compdata[i]);
+                    realpart(v->v_compdata[i]);
 	    if ((i == 0 || (dir > 0 ? lx > dx : dir < 0 ? lx < dx : 0))
 		&& xs->v_plot && xs->v_plot->pl_scale == xs)
 	    {
@@ -165,14 +165,14 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         else {
             ydata = TMALLOC(double, v->v_length);
             for (i = 0; i < v->v_length; i++)
-                ydata[i] = realpart(&v->v_compdata[i]);
+                ydata[i] = realpart(v->v_compdata[i]);
         }
         if (isreal(xs))
             xdata = xs->v_realdata;
         else {
             xdata = TMALLOC(double, xs->v_length);
             for (i = 0; i < xs->v_length; i++)
-                xdata[i] = realpart(&xs->v_compdata[i]);
+                xdata[i] = realpart(xs->v_compdata[i]);
         }
         
         mm = ft_minmax(xs, TRUE);
@@ -220,12 +220,12 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         bcopy(v->v_realdata, ydata, (size_t)(degree + 1) * sizeof(double));
     else
         for (i = 0; i <= degree; i++)
-            ydata[i] = realpart(&v->v_compdata[i]);
+            ydata[i] = realpart(v->v_compdata[i]);
     if (isreal(xs))
         bcopy(xs->v_realdata, xdata, (size_t)(degree + 1) * sizeof(double));
     else
         for (i = 0; i <= degree; i++)
-            xdata[i] = realpart(&xs->v_compdata[i]);
+            xdata[i] = realpart(xs->v_compdata[i]);
 
     rot = FALSE;
     while (!ft_polyfit(xdata, ydata, result, degree, scratch)) {
@@ -266,11 +266,11 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         if (isreal(v))
             ydata[i] = v->v_realdata[l];
         else
-            ydata[i] = realpart(&v->v_compdata[l]);
+            ydata[i] = realpart(v->v_compdata[l]);
         if (isreal(xs))
             xdata[i] = xs->v_realdata[l];
         else
-            xdata[i] = realpart(&xs->v_compdata[l]);
+            xdata[i] = realpart(xs->v_compdata[l]);
 
         rot = FALSE;
         while (!ft_polyfit(xdata, ydata, result, degree, scratch)) {

@@ -305,8 +305,8 @@ cp_istrue(wordlist *wl)
 		}
         } else {
             for (i = 0; i < v->v_length; i++)
-                if ((realpart(&v->v_compdata[i]) != 0.0) ||
-                    (imagpart(&v->v_compdata[i]) != 0.0)) {
+                if ((realpart(v->v_compdata[i]) != 0.0) ||
+                    (imagpart(v->v_compdata[i]) != 0.0)) {
 		    free_pnode(pn);
                     return (TRUE);
 		}

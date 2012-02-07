@@ -50,21 +50,21 @@ cx_and(void *data1, void *data2, short int datatype1, short int datatype2, int l
     } else {
         for (i = 0; i < length; i++) {
             if (datatype1 == VF_REAL) {
-                realpart(&c1) = dd1[i];
-                imagpart(&c1) = 0.0;
+                realpart(c1) = dd1[i];
+                imagpart(c1) = 0.0;
             } else {
-                realpart(&c1) = realpart(&cc1[i]);
-                imagpart(&c1) = imagpart(&cc1[i]);
+                realpart(c1) = realpart(cc1[i]);
+                imagpart(c1) = imagpart(cc1[i]);
             }
             if (datatype2 == VF_REAL) {
-                realpart(&c2) = dd2[i];
-                imagpart(&c2) = 0.0;
+                realpart(c2) = dd2[i];
+                imagpart(c2) = 0.0;
             } else {
-                realpart(&c2) = realpart(&cc2[i]);
-                imagpart(&c2) = imagpart(&cc2[i]);
+                realpart(c2) = realpart(cc2[i]);
+                imagpart(c2) = imagpart(cc2[i]);
             }
-            d[i] = ((realpart(&c1) && realpart(&c2)) &&
-                (imagpart(&c1) && imagpart(&c2)));
+            d[i] = ((realpart(c1) && realpart(c2)) &&
+                (imagpart(c1) && imagpart(c2)));
         }
     }
     return ((void *) d);
@@ -88,21 +88,21 @@ cx_or(void *data1, void *data2, short int datatype1, short int datatype2, int le
     } else {
         for (i = 0; i < length; i++) {
             if (datatype1 == VF_REAL) {
-                realpart(&c1) = dd1[i];
-                imagpart(&c1) = 0.0;
+                realpart(c1) = dd1[i];
+                imagpart(c1) = 0.0;
             } else {
-                realpart(&c1) = realpart(&cc1[i]);
-                imagpart(&c1) = imagpart(&cc1[i]);
+                realpart(c1) = realpart(cc1[i]);
+                imagpart(c1) = imagpart(cc1[i]);
             }
             if (datatype2 == VF_REAL) {
-                realpart(&c2) = dd2[i];
-                imagpart(&c2) = 0.0;
+                realpart(c2) = dd2[i];
+                imagpart(c2) = 0.0;
             } else {
-                realpart(&c2) = realpart(&cc2[i]);
-                imagpart(&c2) = imagpart(&cc2[i]);
+                realpart(c2) = realpart(cc2[i]);
+                imagpart(c2) = imagpart(cc2[i]);
             }
-            d[i] = ((realpart(&c1) || realpart(&c2)) &&
-                (imagpart(&c1) || imagpart(&c2)));
+            d[i] = ((realpart(c1) || realpart(c2)) &&
+                (imagpart(c1) || imagpart(c2)));
         }
     }
     return ((void *) d);
@@ -122,8 +122,8 @@ cx_not(void *data, short int type, int length, int *newlength, short int *newtyp
     if (type == VF_COMPLEX) {
         for (i = 0; i < length; i++) {
             /* gcc doens't like !double */
-            d[i] = realpart(&cc[i]) ? 0 : 1;
-            d[i] = imagpart(&cc[i]) ? 0 : 1;
+            d[i] = realpart(cc[i]) ? 0 : 1;
+            d[i] = imagpart(cc[i]) ? 0 : 1;
         }
     } else {
         for (i = 0; i < length; i++)
@@ -265,7 +265,7 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
 	if (pl->pl_scale->v_type == VF_COMPLEX)
 	    /* Not ideal */
 	  for (i = 0; i < length; i++)
-		   scale[i] = realpart(&pl->pl_scale->v_compdata[i]);
+		   scale[i] = realpart(pl->pl_scale->v_compdata[i]);
 	 else
 	    for (i = 0; i < length; i++)
 		   scale[i] = pl->pl_scale->v_realdata[i];
@@ -360,7 +360,7 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
    /* Modified to deal with complex frequency vector */
    if (pl->pl_scale->v_type == VF_COMPLEX)
 	  for (i = 0; i < length; i++)
-		   scale[i] = realpart(&pl->pl_scale->v_compdata[i]);
+		   scale[i] = realpart(pl->pl_scale->v_compdata[i]);
 	else
 	    for (i = 0; i < length; i++)
 		   scale[i] = pl->pl_scale->v_realdata[i];
@@ -389,7 +389,7 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
            */
 
           if (pl->pl_scale->v_type == VF_COMPLEX)
-            x = realpart(&pl->pl_scale->v_compdata[j+base]);  /* For complex scale vector */
+            x = realpart(pl->pl_scale->v_compdata[j+base]);  /* For complex scale vector */
           else
             x = pl->pl_scale->v_realdata[j + base];           /* For real scale vector */
 
@@ -403,7 +403,7 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
           /* Again the same error */
 		  /* x = pl->pl_scale->v_realdata[j + base]; */
           if (pl->pl_scale->v_type == VF_COMPLEX)
-            x = realpart(&pl->pl_scale->v_compdata[j+base]);  /* For complex scale vector */
+            x = realpart(pl->pl_scale->v_compdata[j+base]);  /* For complex scale vector */
           else
             x = pl->pl_scale->v_realdata[j + base];           /* For real scale vector */
 

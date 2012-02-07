@@ -24,8 +24,8 @@ main(void)
     n1 = 1;
     t1 = VF_COMPLEX;
     c = alloc_c(n1);
-    realpart(&c[0]) = .0;
-    imagpart(&c[0]) = 1.0;
+    realpart(c[0]) = .0;
+    imagpart(c[0]) = 1.0;
     d = (double *) cx_mag((void *) c, t1, n1, &n2, &t2);
     if (d[0] == 1)
 	return 0;

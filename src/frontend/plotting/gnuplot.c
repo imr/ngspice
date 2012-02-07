@@ -195,10 +195,10 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
             scale = v->v_scale;
 
             xval = isreal(scale) ?
-                   scale->v_realdata[i] : realpart(&scale->v_compdata[i]);
+                   scale->v_realdata[i] : realpart(scale->v_compdata[i]);
 
             yval = isreal(v) ?
-                   v->v_realdata[i] : realpart(&v->v_compdata[i]);
+                   v->v_realdata[i] : realpart(v->v_compdata[i]);
 
             fprintf( file_data, "% e % e ", xval, yval );
         }
@@ -273,12 +273,12 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
             scale = v->v_scale;
 
             xval = isreal(scale) ?
-                   scale->v_realdata[i] : realpart(&scale->v_compdata[i]);
+                   scale->v_realdata[i] : realpart(scale->v_compdata[i]);
 
             if (isreal(v))
                 fprintf( file_data, "% e % e ", xval, v->v_realdata[i] );
             else
-                fprintf( file_data, "% e % e % e ", xval, realpart(&v->v_compdata[i]), imagpart(&v->v_compdata[i]) );
+                fprintf( file_data, "% e % e % e ", xval, realpart(v->v_compdata[i]), imagpart(v->v_compdata[i]) );
         }
         fprintf( file_data, "\n");
     }

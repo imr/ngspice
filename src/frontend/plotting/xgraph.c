@@ -150,9 +150,9 @@ ft_xgraph(double *xlims, double *ylims, char *filename, char *title, char *xlabe
 	}
 	for ( i = 0; i < scale->v_length; i++ ) {
 	    xval = isreal(scale) ?
-		scale->v_realdata[i] : realpart(&scale->v_compdata[i]);
+		scale->v_realdata[i] : realpart(scale->v_compdata[i]);
 	    yval = isreal(v) ?
-		v->v_realdata[i] : realpart(&v->v_compdata[i]);
+		v->v_realdata[i] : realpart(v->v_compdata[i]);
 	    fprintf( file, "% e % e\n", xval, yval );
 	}
 	fprintf( file, "\n" );

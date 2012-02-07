@@ -996,10 +996,10 @@ vec_transpose(struct dvec *v)
 	    joffset = 0;
 	    for ( j=0; j < dim0; j++ ) {
 		for ( i=0; i < dim1; i++ ) {
-		  realpart(&newcomp[ koffset + joffset + i ]) =
-		    realpart(&oldcomp[ koffset + i*dim0 + j ]);
-		  imagpart(&newcomp[ koffset + joffset + i ]) =
-		    imagpart(&oldcomp[ koffset + i*dim0 + j ]);
+		  realpart(newcomp[ koffset + joffset + i ]) =
+		    realpart(oldcomp[ koffset + i*dim0 + j ]);
+		  imagpart(newcomp[ koffset + joffset + i ]) =
+		    imagpart(oldcomp[ koffset + i*dim0 + j ]);
 		}
 		joffset += dim1;  /* joffset = j*dim0 */
 	    }

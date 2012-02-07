@@ -28,8 +28,8 @@ main(void)
     n1 = 1;
     t1 = VF_COMPLEX;
     c = alloc_c(n1);
-    realpart(&c[0]) = .0;
-    imagpart(&c[0]) = 1.0;
+    realpart(c[0]) = .0;
+    imagpart(c[0]) = 1.0;
     d = (double *) cx_ph((void *) c, t1, n1, &n2, &t2);
     if (M_PI/2 - eps < d[0] && d[0] < M_PI/2 + eps)
 	return 0;

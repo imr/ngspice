@@ -34,15 +34,15 @@ main(void)
     t1 = VF_COMPLEX;
     c = alloc_c(n1);
 
-    realpart(&c[0]) =  0.0; imagpart(&c[0]) = +1.0;  /* i^1 */
-    realpart(&c[1]) = -1.0; imagpart(&c[1]) =  0.0;  /* i^2 */
-    realpart(&c[2]) =  0.0; imagpart(&c[2]) = -1.0;  /* i^3 */
-    realpart(&c[3]) = +1.0; imagpart(&c[3]) =  0.0;  /* i^4 */
-    realpart(&c[4]) =  0.0; imagpart(&c[4]) = +1.0;  /* i^5 */
-    realpart(&c[5]) = +1.0; imagpart(&c[5]) =  0.0;  /* i^4 */
-    realpart(&c[6]) =  0.0; imagpart(&c[6]) = -1.0;  /* i^3 */
-    realpart(&c[7]) = -1.0; imagpart(&c[7]) =  0.0;  /* i^2 */
-    realpart(&c[8]) =  0.0; imagpart(&c[8]) = +1.0;  /* i^1 */
+    realpart(c[0]) =  0.0; imagpart(c[0]) = +1.0;  /* i^1 */
+    realpart(c[1]) = -1.0; imagpart(c[1]) =  0.0;  /* i^2 */
+    realpart(c[2]) =  0.0; imagpart(c[2]) = -1.0;  /* i^3 */
+    realpart(c[3]) = +1.0; imagpart(c[3]) =  0.0;  /* i^4 */
+    realpart(c[4]) =  0.0; imagpart(c[4]) = +1.0;  /* i^5 */
+    realpart(c[5]) = +1.0; imagpart(c[5]) =  0.0;  /* i^4 */
+    realpart(c[6]) =  0.0; imagpart(c[6]) = -1.0;  /* i^3 */
+    realpart(c[7]) = -1.0; imagpart(c[7]) =  0.0;  /* i^2 */
+    realpart(c[8]) =  0.0; imagpart(c[8]) = +1.0;  /* i^1 */
 
     d = (double *) cx_cph((void *) c, t1, n1, &n2, &t2);
 

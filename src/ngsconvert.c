@@ -192,8 +192,8 @@ oldread(char *name)
             } else {
                 tfread(&f1, sizeof (float), 1, fp);
                 tfread(&f2, sizeof (float), 1, fp);
-                realpart(&v->v_compdata[i]) = f1;
-                imagpart(&v->v_compdata[i]) = f2;
+                realpart(v->v_compdata[i]) = f1;
+                imagpart(v->v_compdata[i]) = f2;
             }
         }
     }
@@ -296,11 +296,11 @@ oldwrite(char *name, bool app, struct plot *pl)
                 tfwrite(&zero, sizeof (float), 1, fp);
             } else if ((tp == VF_COMPLEX) && iscomplex(v)) {
                 if (i < v->v_length) {
-                    f1 = (float) realpart(&v->v_compdata[i]);
-                    f2 = (float) imagpart(&v->v_compdata[i]);
+                    f1 = (float) realpart(v->v_compdata[i]);
+                    f2 = (float) imagpart(v->v_compdata[i]);
                 } else {
-                    f1 = (float) realpart(&v->v_compdata[v-> v_length - 1]);
-                    f2 = (float) imagpart(&v->v_compdata[v-> v_length - 1]);
+                    f1 = (float) realpart(v->v_compdata[v-> v_length - 1]);
+                    f2 = (float) imagpart(v->v_compdata[v-> v_length - 1]);
                 }
                 tfwrite(&f1, sizeof (float), 1, fp);
                 tfwrite(&f2, sizeof (float), 1, fp);

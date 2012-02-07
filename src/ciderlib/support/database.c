@@ -41,7 +41,7 @@ DBgetData(struct plot *plot, char *name, int lengthWanted)
     bcopy(v->v_realdata, data, sizeof (double) * (size_t) v->v_length);
   } else {
     for (i=0; i < v->v_length; i++) {
-      data[i] = realpart(&v->v_compdata[i]);
+      data[i] = realpart(v->v_compdata[i]);
     }
   }
   return(data);

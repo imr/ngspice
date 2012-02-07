@@ -171,8 +171,8 @@ com_print(wordlist *wl)
                         printnum(numbuf, *v->v_realdata);
                         out_printf("%s = %s\n", buf, numbuf);
                     } else {
-                        printnum(numbuf,  realpart(v->v_compdata));
-                        printnum(numbuf2, imagpart(v->v_compdata));
+                        printnum(numbuf,  realpart(v->v_compdata[0]));
+                        printnum(numbuf2, imagpart(v->v_compdata[0]));
                         out_printf("%s = %s,%s\n", buf,
                             numbuf,
                             numbuf2);
@@ -195,8 +195,8 @@ com_print(wordlist *wl)
                                 out_send("\t");
                         } else {
                         /*DG*/
-                            printnum(numbuf,  realpart(&v->v_compdata[i]));
-                            printnum(numbuf2, imagpart(&v->v_compdata[i]));
+                            printnum(numbuf,  realpart(v->v_compdata[i]));
+                            printnum(numbuf2, imagpart(v->v_compdata[i]));
                             (void) sprintf(buf, "%s,%s",
                                 numbuf,
                                 numbuf2);
@@ -288,7 +288,7 @@ nextpage:
             */
                 if(eq(v->v_name, "frequency"))
                 {
-                    if(imagpart(&v->v_compdata[0])==0.0)
+                    if(imagpart(v->v_compdata[0])==0.0)
                     {
                         (void) sprintf(buf2, "%-16.15s", v->v_name);
                     }
@@ -337,16 +337,16 @@ loop:
                     /* In case of a single frequency and have a real part avoids print imaginary part equals 0. */
                         if(eq(v->v_name, "frequency"))
                         {
-                            if(imagpart(&v->v_compdata[j])==0.0)
+                            if(imagpart(v->v_compdata[j])==0.0)
                             {
-                                printnum(numbuf,  realpart(&v->v_compdata[j]));
+                                printnum(numbuf,  realpart(v->v_compdata[j]));
                                 (void) sprintf(out_pbuf, "%s\t",numbuf);
                             }
                         }
                         else
                         {
-                            printnum(numbuf,  realpart(&v->v_compdata[j]));
-                            printnum(numbuf2, imagpart(&v->v_compdata[j]));
+                            printnum(numbuf,  realpart(v->v_compdata[j]));
+                            printnum(numbuf2, imagpart(v->v_compdata[j]));
                             (void) sprintf(out_pbuf, "%s,\t%s\t",numbuf,numbuf2);
                         }
                         out_send(out_pbuf);
@@ -750,16 +750,16 @@ com_cross(wordlist *wl)
     for (n = vecs, i = 0; n; n = n->v_link2, i++)
         if (n->v_length > ind) {
             if (comp) {
-                realpart(&v->v_compdata[i]) =
-                        realpart(&n->v_compdata[ind]);
-                imagpart(&v->v_compdata[i]) =
-                        imagpart(&n->v_compdata[ind]);
+                realpart(v->v_compdata[i]) =
+                        realpart(n->v_compdata[ind]);
+                imagpart(v->v_compdata[i]) =
+                        imagpart(n->v_compdata[ind]);
             } else
                 v->v_realdata[i] = n->v_realdata[ind];
         } else {
             if (comp) {
-                realpart(&v->v_compdata[i]) = 0.0;
-                imagpart(&v->v_compdata[i]) = 0.0;
+                realpart(v->v_compdata[i]) = 0.0;
+                imagpart(v->v_compdata[i]) = 0.0;
             } else
                 v->v_realdata[i] = 0.0;
         }
