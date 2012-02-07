@@ -186,7 +186,7 @@ HANDLE outheap;
 
 
 void tcl_stdflush(FILE *f);
-int  tcl_vfprintf(FILE *f, const char *fmt, ...);
+int  tcl_vfprintf(FILE *f, const char *fmt, va_list args);
 int  Spice_Init(Tcl_Interp *interp);
 int  Tcl_ExecutePerLoop(void);
 void triggerEventCheck(ClientData clientData,int flags);
@@ -2408,7 +2408,7 @@ bot:
 /* Redefine the vfprintf() functions for use with tkcon */
 /*------------------------------------------------------*/
 
-int tcl_vfprintf(FILE *f, const char *fmt, ...)
+int tcl_vfprintf(FILE *f, const char *fmt, va_list args)
 {
 #define ostr_sz 128
    static char outstr[ostr_sz] = "puts -nonewline std";
@@ -2417,27 +2417,25 @@ int tcl_vfprintf(FILE *f, const char *fmt, ...)
 #define ostr_off 19
   char *outptr, *bigstr = NULL, *finalstr = NULL;
   int i, nchars, result, escapes = 0;
-  va_list arg;
 
-  va_start (arg, fmt);
   if((fileno(f) !=  STDOUT_FILENO && fileno(f) != STDERR_FILENO &&
 	 f != stderr && f != stdout )
 #ifdef THREADS
      || ( fl_running && bgtid == thread_self())
 #endif
 	)
-      return fprintf(f,fmt, arg);
+      return vfprintf(f, fmt, args);
 
   strcpy (outstr + ostr_off, (f == stderr) ? "err \"" : "out \"");
   //5 characters for ->out "<-
   outptr = outstr;
-  nchars = snprintf(outptr + ostr_off + 5, ostr_sz - 5 - ostr_off, fmt, arg);
+  nchars = vsnprintf(outptr + ostr_off + 5, ostr_sz - 5 - ostr_off, fmt, args);
   if (nchars >= ostr_sz - 5 - ostr_off)
     {
       bigstr = Tcl_Alloc(nchars + 26);
       strncpy(bigstr, outptr, 24);
       outptr = bigstr;
-      snprintf(outptr + 24, nchars + 2, fmt, arg);
+      vsnprintf(outptr + 24, nchars + 2, fmt, args);
     }
   else if (nchars == -1) nchars = 126;
 
@@ -2482,11 +2480,12 @@ int tcl_vfprintf(FILE *f, const char *fmt, ...)
 
 int tcl_fprintf(FILE *f, const char *format, ...)
 {
-  va_list arg;
+  va_list args;
   int rtn;
  
-  va_start (arg, format);
-  rtn = tcl_vfprintf(f, format, arg);
+  va_start (args, format);
+  rtn = tcl_vfprintf(f, format, args);
+  va_end(args);
 
   return rtn;
 }
@@ -2497,11 +2496,12 @@ int tcl_fprintf(FILE *f, const char *format, ...)
 
 int tcl_printf(const char *format, ...)
 {
-  va_list arg;
+  va_list args;
   int rtn;
   
-  va_start (arg, format);
-  rtn = tcl_vfprintf(stdout, format, arg);
+  va_start (args, format);
+  rtn = tcl_vfprintf(stdout, format, args);
+  va_end(args); 
   
   return rtn;
 }
