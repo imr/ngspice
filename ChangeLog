@@ -1,3 +1,7 @@
+2012-02-07  Robert Larice
+ * src/frontend/rawfile.c :
+   comment/pinpoint a local misuse of a structure element
+
 2012-02-06  Robert Larice
  * src/tclspice.c :
    drop some (char*) casts

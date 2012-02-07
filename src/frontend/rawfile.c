@@ -544,7 +544,7 @@ raw_read(char *name) {
                     } else if (ciprefix("color=", t)) {
                         v->v_defcolor = copy(t + 6);
                     } else if (ciprefix("scale=", t)) {
-                        /* This is bad, but... */
+                        // This cast is bad, but...
                         v->v_scale = (struct dvec *)
                                      copy(t + 6);
                     } else if (ciprefix("grid=", t)) {
@@ -597,7 +597,7 @@ raw_read(char *name) {
                 if (v->v_scale) {
                     for (nv = curpl->pl_dvecs; nv; nv =
                                 nv->v_next)
-                        if (cieq((char *) v->v_scale,
+                        if (cieq((char *) v->v_scale, // This cast is bad, but...
                                  nv->v_name)) {
                             v->v_scale = nv;
                             break;
@@ -605,7 +605,7 @@ raw_read(char *name) {
                     if (!nv) {
                         fprintf(cp_err,
                                 "Error: no such vector %s\n",
-                                (char *) v->v_scale);
+                                (char *) v->v_scale); // This cast is bad, but...
                         v->v_scale = NULL;
                     }
                 }
