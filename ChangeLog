@@ -1,3 +1,7 @@
+2012-02-08 Francesco Lannutti (Robert Larice)
+ * Makefile.am :
+   polish make maintainer-clean, make mrproper
+
 2012-02-07  Robert Larice
  * src/include/ngspice/complex.h :
    #4/4 finish the switch from ngcomplex* args to ngcomplex
