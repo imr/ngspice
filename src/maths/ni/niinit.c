@@ -40,10 +40,10 @@ NIinit(CKTcircuit *ckt)
     ckt->CKTmatrix->CKTkluAx = NULL ;
     ckt->CKTmatrix->CKTkluIntermediate = NULL ;
     ckt->CKTmatrix->CKTkluIntermediate_Complex = NULL ;
-    ckt->CKTmatrix->CKTkluBind_Sparse = NULL ;
-    ckt->CKTmatrix->CKTkluBind_KLU = NULL ;
-    ckt->CKTmatrix->CKTkluBind_KLU_Complex = NULL ;
-    ckt->CKTmatrix->CKTkluDiag = NULL ;
+    ckt->CKTmatrix->CKTbind_Sparse = NULL ;
+    ckt->CKTmatrix->CKTbind_CSC = NULL ;
+    ckt->CKTmatrix->CKTbind_CSC_Complex = NULL ;
+    ckt->CKTmatrix->CKTdiag_CSC = NULL ;
     ckt->CKTmatrix->CKTkluN = 0 ;
     ckt->CKTmatrix->CKTklunz = 0 ;
     ckt->CKTmatrix->CKTkluMODE = CKTkluON ; /* TO BE SUBSTITUTED WITH THE HEURISTICS */

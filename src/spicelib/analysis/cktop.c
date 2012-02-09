@@ -30,6 +30,7 @@ CKTop (CKTcircuit * ckt, long int firstmode, long int continuemode,
 #ifdef KLU
     if (ckt->CKTmatrix->CKTkluMODE) {
 
+        int i ;
         int n  = ckt->CKTmatrix->CKTkluN ;
         int nz = ckt->CKTmatrix->CKTklunz ;
 
@@ -38,17 +39,16 @@ CKTop (CKTcircuit * ckt, long int firstmode, long int continuemode,
         ckt->CKTmatrix->CKTkluAx           = TMALLOC (double, nz) ;
         ckt->CKTmatrix->CKTkluIntermediate = TMALLOC (double, n ) ;
 
-        ckt->CKTmatrix->CKTkluBind_Sparse  = TMALLOC (double *, nz) ;
-        ckt->CKTmatrix->CKTkluBind_KLU     = TMALLOC (double *, nz) ;
+        ckt->CKTmatrix->CKTbind_Sparse     = TMALLOC (double *, nz) ;
+        ckt->CKTmatrix->CKTbind_CSC        = TMALLOC (double *, nz) ;
 
-        ckt->CKTmatrix->CKTkluDiag         = TMALLOC (double *, n) ;
+        ckt->CKTmatrix->CKTdiag_CSC        = TMALLOC (double *, n) ;
 
         SMPmatrix_CSC (ckt->CKTmatrix) ;
 
-        DEVices[13]->DEVbindklu (ckt->CKThead[13], ckt);
-        DEVices[17]->DEVbindklu (ckt->CKThead[17], ckt);
-        DEVices[40]->DEVbindklu (ckt->CKThead[40], ckt);
-        DEVices[48]->DEVbindklu (ckt->CKThead[48], ckt);
+        for (i = 0 ; i < DEVmaxnum ; i++)
+            if (DEVices [i] && DEVices [i]->DEVbindCSC)
+                DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
     }
 #endif
 
