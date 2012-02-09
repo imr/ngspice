@@ -26,10 +26,10 @@ libres_la_SOURCES =	\
 	ressset.c	\
 	restemp.c
 
-if KLU_WANTED
-libres_la_SOURCES += resbindklu.c
-endif
 
+if KLU_WANTED
+libres_la_SOURCES += resbindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
