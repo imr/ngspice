@@ -24,6 +24,6 @@ extern int CAPtemp(GENmodel*,CKTcircuit*);
 extern int CAPtrunc(GENmodel*,CKTcircuit*,double*);
 
 #ifdef KLU
-extern int CAPbindklu(GENmodel*,CKTcircuit*);
-extern int CAPbindkluComplex(GENmodel*,CKTcircuit*);
+extern int CAPbindCSC(GENmodel*, CKTcircuit*);
+extern int CAPbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

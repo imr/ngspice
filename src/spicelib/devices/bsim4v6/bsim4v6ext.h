@@ -30,6 +30,6 @@ extern int BSIM4v6noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM4v6unsetup(GENmodel*,CKTcircuit*);
 
 #ifdef KLU
-extern int BSIM4v6bindklu(GENmodel*,CKTcircuit*);
-extern int BSIM4v6bindkluComplex(GENmodel*,CKTcircuit*);
+extern int BSIM4v6bindCSC(GENmodel*, CKTcircuit*);
+extern int BSIM4v6bindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

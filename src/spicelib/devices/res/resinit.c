@@ -74,8 +74,8 @@ SPICEdev RESinfo = {
  /* DEVinstSize   */ &RESiSize,
  /* DEVmodSize    */ &RESmSize,
 #ifdef KLU
- /* DEVbindklu        */   RESbindklu,
- /* DEVbindkluComplex */   RESbindkluComplex,
+ /* DEVbindCSC        */   RESbindCSC,
+ /* DEVbindCSCComplex */   RESbindCSCComplex,
 #endif
 
 };
