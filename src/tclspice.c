@@ -2273,7 +2273,8 @@ int Spice_Init(Tcl_Interp *interp) {
     /* program name*/
     cp_program = ft_sim->simulator;
     
-    srandom(getpid());
+    srand((unsigned int) getpid());
+    TausSeed();
     
     /*parameter fetcher, used in show*/
     if_getparam = spif_getparam;

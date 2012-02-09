@@ -23,12 +23,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cmath2.h"
 
 
-/* MINGW: random, srandom in libiberty.a, but not in libiberty.h 
-#if defined(__MINGW32__) && defined(HAVE_RANDOM)
-extern long int random (void);
-extern void srandom (unsigned int seed);
-#endif
-*/
 extern void checkseed(void); /* seed random or set by 'set rndseed=value'*/
 extern double drand(void);  /* from randnumb.c */
 extern double gauss0(void);  /* from randnumb.c */

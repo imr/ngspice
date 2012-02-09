@@ -22,12 +22,6 @@
 #include <setjmp.h>
 #include <signal.h>
 
-/* MINGW: random, srandom in libiberty.a, but not in libiberty.h */
-#if defined(__MINGW32__) && defined(HAVE_RANDOM)
- extern long int random (void);
- extern void srandom (unsigned int seed);
-#endif
-
 /* Added GNU Readline Support 11/3/97 -- Andrew Veliath <veliaa@rpi.edu> */
 /* from spice3f4 patch to ng-spice. jmr */
 #ifdef HAVE_GNUREADLINE

@@ -1,3 +1,10 @@
+2012-02-09  Robert Larice
+ * src/main.c ,
+ * src/tclspice.c ,
+ * src/maths/cmaths/cmath2.c ,
+ * src/maths/misc/randnumb.c :
+   unuse srandom() and random()
+
 2012-02-08 Francesco Lannutti (Robert Larice)
  * Makefile.am :
    polish make maintainer-clean, make mrproper
