@@ -22,6 +22,6 @@ extern int REStemp(GENmodel*,CKTcircuit*);
 extern int RESnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 
 #ifdef KLU
-extern int RESbindklu(GENmodel*,CKTcircuit*);
-extern int RESbindkluComplex(GENmodel*,CKTcircuit*);
+extern int RESbindCSC(GENmodel*, CKTcircuit*);
+extern int RESbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif
