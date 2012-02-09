@@ -33,7 +33,7 @@ com_removecirc(wordlist *wl)
     NG_IGNORE(wl);
 
     /* Allocation of a temp wordlist */
-    wlist = (struct wordlist *)malloc(sizeof(struct wordlist));
+    wlist = TMALLOC(struct wordlist, 1);
 
     if (ft_curckt == NULL) {
         fprintf(cp_err, "Error: there is no circuit loaded.\n");

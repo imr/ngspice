@@ -843,10 +843,10 @@ fileInit_pass2(runDesc *run)
     /*  Allocate Row buffer  */
 
     if (run->binary) {
-        rowbuflen = (size_t) (run->numData) * sizeof(double);
+        rowbuflen = (size_t) (run->numData);
         if (run->isComplex)
             rowbuflen *= 2;
-        rowbuf = (double *) tmalloc(rowbuflen);
+        rowbuf = TMALLOC(double, rowbuflen);
     } else rowbuf=NULL;
 
     return;
@@ -897,7 +897,7 @@ fileEndPoint(FILE *fp, bool bin)
 {
   if (bin) {
     /*  write row buffer to file  */
-    fwrite(rowbuf, rowbuflen, 1, fp);
+    fwrite(rowbuf, sizeof(double), rowbuflen, fp);
   }; /* otherwise the data has already been written */
   return;
 }

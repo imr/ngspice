@@ -217,7 +217,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 		    if(EOF == fgetc(file))
 			break;
 
-		info->osName = (char*) malloc(size * sizeof(char));
+		info->osName = TMALLOC(char, size);
 		rewind(file);
 		fread(info->osName, sizeof(char), size, file);
 		fclose(file);
@@ -240,7 +240,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 			break;
 
 		/* get complete string */
-		inStr = (char*) malloc((size+1) * sizeof(char));
+		inStr = TMALLOC(char, size+1);
 		rewind(file);
 		fread(inStr, sizeof(char), size, file); 
 		inStr[size] = '\0';
@@ -258,7 +258,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 					if(numToEOL > 2) {
                   /* skip ": "*/
 						numToEOL-=2;
-						info->cpuModelName = (char*) malloc(numToEOL+1);
+						info->cpuModelName = TMALLOC(char, numToEOL+1);
 						memcpy(info->cpuModelName, modelPtr+2, numToEOL);
 						info->cpuModelName[numToEOL] = '\0';					
 					} 
@@ -285,7 +285,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 				if (isblank(*strPtr)) numProcs++;
 			}
 			info->numLogicalProcessors = numProcs;
-			physIDs = (tInt*) malloc(numProcs * sizeof(tInt));
+			physIDs = TMALLOC(tInt, numProcs);
 						
 			/* get number of physical CPUs */
 			numProcs = 0;
@@ -434,7 +434,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 		size_t lengthCSD = strlen(version.szCSDVersion);
 		size_t lengthVer = strlen(versionStr);
 
-		info->osName = malloc(lengthVer + lengthCSD + 2);
+		info->osName = TMALLOC(char, lengthVer + lengthCSD + 2);
 		memcpy(info->osName, versionStr, lengthVer);
 		memcpy(info->osName + lengthVer + 1, version.szCSDVersion, lengthCSD);
 		info->osName[lengthVer] = ' ';

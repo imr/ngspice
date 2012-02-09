@@ -1,4 +1,10 @@
 2012-02-09  Robert Larice
+ * src/frontend/com_sysinfo.c ,
+ * src/frontend/mw_coms.c ,
+ * src/frontend/outitf.c :
+   make use of TMALLOC()
+
+2012-02-09  Robert Larice
  * src/main.c ,
  * src/tclspice.c ,
  * src/maths/cmaths/cmath2.c ,
