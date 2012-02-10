@@ -257,7 +257,11 @@ ft_cpinit(void)
                 break;
 #if defined (HAS_WINDOWS) || defined (__MINGW32__) || defined (_MSC_VER)
             /* search in local directory where ngspice.exe resides */
+#if defined TCL_MODULE
+            } else if ((fp = fopen("./tclspinit", "r")) != NULL) {
+#else
             } else if ((fp = fopen("./spinit", "r")) != NULL) {
+#endif
                 cp_interactive = FALSE;
                 inp_spsource(fp, TRUE, buf);
                 cp_interactive = TRUE;
