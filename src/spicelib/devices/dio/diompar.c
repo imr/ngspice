@@ -125,9 +125,9 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIOctp = value->rValue;
             model->DIOctpGiven = TRUE;
             break;
-        case DIO_MOD_TBP:
-            model->DIOtbp = value->rValue;
-            model->DIOtbpGiven = TRUE;
+        case DIO_MOD_TPB:
+            model->DIOtpb = value->rValue;
+            model->DIOtpbGiven = TRUE;
             break;
         case DIO_MOD_TPHP:
             model->DIOtphp = value->rValue;

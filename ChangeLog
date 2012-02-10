@@ -1,3 +1,6 @@
+2012-02-10  Dietmar Warning
+ * src/spicelib/devices/dio/*.c,*.h: Typo with junction potential name
+
 2012-02-09  Robert Larice
  * src/frontend/com_sysinfo.c ,
  * src/frontend/mw_coms.c ,
