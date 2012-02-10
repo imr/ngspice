@@ -880,6 +880,8 @@ DelPlotWindows(struct plot *pl)
 /*      else
          break; */
    }
+#else
+    NG_IGNORE(pl);
 #endif
 }
 
