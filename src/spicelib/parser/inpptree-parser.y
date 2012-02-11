@@ -1,12 +1,34 @@
 %{
+    /*
+     * (compile (concat "bison " buffer-file-name))
+     */
 
   #include <stdio.h>
   #include <stdlib.h>
+
+  struct PTltype {
+    char *start, *stop;
+  };
+
+  # define YYLTYPE struct PTltype
+
+  # define YYLLOC_DEFAULT(Current, Rhs, N)                               \
+     do                                                                  \
+       if (N) {                                                          \
+           (Current).start = YYRHSLOC(Rhs, 1).start;                     \
+           (Current).stop  = YYRHSLOC(Rhs, N).stop;                      \
+       } else {                                                          \
+           (Current).start = (Current).stop = YYRHSLOC(Rhs, 0).stop;     \
+       }                                                                 \
+     while (0)
+
+
   #include "inpptree-parser.h"
 
-  extern int PTlex (YYSTYPE *lvalp, char **line);
+  extern int PTlex (YYSTYPE *lvalp, struct PTltype *llocp, char **line);
+  extern int PTdebug;
 
-  static void PTerror (char **line, struct INPparseNode **retval, void *ckt, char const *);
+  static void PTerror (YYLTYPE *locp, char **line, struct INPparseNode **retval, void *ckt, char const *);
 
   #if defined (_MSC_VER)
   # define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
@@ -57,13 +79,18 @@
 %initial-action      /* initialize yylval */
 {
     $$.num = 0.0;
+    yylloc.start = yylloc.stop = NULL;
 };
 
 %%
 
-expression:
-    exp { *retval = $1; }
-  ;
+expression: exp
+  {
+      *retval = $1;
+      *line = @1.stop;
+      YYACCEPT;
+ }
+
 
 exp:
     TOK_NUM                           { $$ = mknnode($1); }
@@ -116,8 +143,9 @@ nonempty_arglist:
 
 /* Called by yyparse on error.  */
 static void
-PTerror (char **line, struct INPparseNode **retval, void *ckt, char const *s)
+PTerror (YYLTYPE *locp, char **line, struct INPparseNode **retval, void *ckt, char const *s)
 {
+  NG_IGNORE(locp);
   NG_IGNORE(line);
   NG_IGNORE(retval);
   NG_IGNORE(ckt);

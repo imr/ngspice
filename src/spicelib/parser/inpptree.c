@@ -1028,7 +1028,7 @@ static INPparseNode *mksnode(const char *string, void *ckt)
 
 /* The lexical analysis routine. */
 
-int PTlex (YYSTYPE *lvalp, char **line)
+int PTlex (YYSTYPE *lvalp, struct PTltype *llocp, char **line)
 {
     double td;
     int err;
@@ -1043,6 +1043,8 @@ int PTlex (YYSTYPE *lvalp, char **line)
 #endif
     while ((*sbuf == ' ') || (*sbuf == '\t'))
 	sbuf++;
+
+    llocp->start = sbuf;
 
     switch (*sbuf) {
     case '\0':
@@ -1210,6 +1212,7 @@ int PTlex (YYSTYPE *lvalp, char **line)
 //    printf("PTlexer: token = %d, type = %d, left = '%s'\n", 
 //        el.token, el.type, sbuf); */
 #endif
+    llocp->stop = sbuf;
     return (token);
 }
 

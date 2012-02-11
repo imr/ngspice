@@ -1,3 +1,10 @@
+2012-02-11  Robert Larice
+ * src/spicelib/parser/inpptree-parser.y ,
+ * src/spicelib/parser/inpptree.c :
+   upgrade INPgetTree()
+     this parser did parse the *whole* line,
+     now it parses as much as it can, and passes the rest back in arg `line'
+
 2012-02-10   Holger Vogt / (Robert Larice)
  * src/frontend/cpitf.c :
    search for tclspinit in `cwd' as well
