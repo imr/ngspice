@@ -89,6 +89,7 @@ static void inp_fix_ternary_operator( struct line *start_card );
 static void inp_fix_gnd_name( struct line *deck );
 static void inp_chk_for_multi_in_vcvs( struct line *deck, int *line_number );
 static void inp_add_control_section( struct line *deck, int *line_number );
+static char *get_quoted_token(char *string, char **token);
 
 /*-------------------------------------------------------------------------
  Read the entire input file and return  a pointer to the first line of
@@ -246,62 +247,60 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
         /* now handle .lib statements */
         if (ciprefix(".lib", buffer)) {
 
-            char *y, *z;
+            char *y = NULL;     /* filename */
+            char *z = NULL;     /* libname */
 
             inp_stripcomments_line(buffer);
             for ( s = buffer; *s && !isspace(*s); s++ )            /* skip over .lib           */
                 ;
-            while ( isspace(*s) || isquote(*s) ) s++;              /* advance past space chars              */
-            if    ( !*s ) {                                        /* if at end of line, error              */
+
+            s = strdup(s);
+
+            t = get_quoted_token(s, &y);
+
+            if ( !y ) {
                 fprintf(cp_err, "Error: .lib filename missing\n");
                 tfree(buffer);		                           /* was allocated by readline()           */
                 controlled_exit(EXIT_FAILURE);
-            }                                                      /* Now s points to first char after .lib */
-            for ( t = s; *t && !isspace(*t) && !isquote(*t); t++ )         /* skip to end of word      */
-                ;
-            y = t;
-            while ( isspace(*y) || isquote(*y) ) y++;              /* advance past space chars */
-            
-            if ( *y && ((inp_compat_mode == COMPATMODE_ALL) || (inp_compat_mode == COMPATMODE_HS) 
-                || (inp_compat_mode == COMPATMODE_NATIVE))) {     
-                /* .lib <file name> <lib name> */
-                char *copys = NULL;
-                char keep_char;
+            }
 
-                for ( z = y; *z && !isspace(*z) && !isquote(*z); z++ )
-                    ;
-                keep_char  = *t;
-                *t = '\0';
-                *z = '\0';
+            t = get_quoted_token(t, &z);
 
-                if ( *s == '~' ) {
-                    copys = cp_tildexpand(s); /* allocates memory, but can also return NULL */
-                    if ( copys )
-                        s = copys;		  /* reuse s, but remember, buffer still points to allocated memory */
+            if ( z && (inp_compat_mode == COMPATMODE_ALL ||
+                       inp_compat_mode == COMPATMODE_HS  ||
+                       inp_compat_mode == COMPATMODE_NATIVE) ) {                            /* .lib <file name> <lib name> */
+
+                char *copyy = NULL;
+
+                if ( *y == '~' ) {
+                    copyy = cp_tildexpand(y); /* allocates memory, but can also return NULL */
+                    if ( copyy )
+                        y = copyy;		  /* reuse y, but remember, buffer still points to allocated memory */
                 }
 
                 for ( i = 0; i < num_libraries; i++ )
-                    if ( cieq( library_file[i], s ) )
+                    if ( cieq( library_file[i], y ) )
                         break;
 
                 if ( i >= num_libraries ) {
 
                     bool dir_name_flag = FALSE;
-                    FILE *newfp = inp_pathopen( s, "r" );
+                    FILE *newfp = inp_pathopen( y, "r" );
 
                     if ( !newfp ) {
                         char big_buff2[5000];
 
                         if ( dir_name )
-                            sprintf( big_buff2, "%s/%s", dir_name, s );
+                            sprintf( big_buff2, "%s/%s", dir_name, y );
                         else
-                            sprintf( big_buff2, "./%s", s );
+                            sprintf( big_buff2, "./%s", y );
 
                         newfp = inp_pathopen( big_buff2, "r" );
                         if ( !newfp ) {
-                            if ( copys )
-                                tfree(copys);   /* allocated by the cp_tildexpand() above */
-                            fprintf(cp_err, "Error: Could not find library file %s\n", s);
+                            fprintf(cp_err, "Error: Could not find library file %s\n", y);
+                            if ( copyy )
+                                tfree(copyy);   /* allocated by the cp_tildexpand() above */
+                            tfree(s);
                             tfree(buffer);
                             controlled_exit(EXIT_FAILURE);
                         }
@@ -309,10 +308,10 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                         dir_name_flag = TRUE;
                     }
 
-                    library_file[num_libraries++] = strdup(s);
+                    library_file[num_libraries++] = strdup(y);
 
                     if ( dir_name_flag == FALSE ) {
-                        char *s_dup = strdup(s);
+                        char *s_dup = strdup(y);
                         inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, ngdirname(s_dup), FALSE);
                         tfree(s_dup);
                     } else {
@@ -322,10 +321,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                     fclose(newfp);
                 }
 
-                *t = keep_char;
-
-                if ( copys )
-                    tfree(copys);   /* allocated by the cp_tildexpand() above */
+                if ( copyy )
+                    tfree(copyy);   /* allocated by the cp_tildexpand() above */
+                tfree(s);
 
                 /* Make the .lib a comment */
                 *buffer = '*';
@@ -341,56 +339,46 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
         /* now handle .include statements */
         if (ciprefix(".include", buffer) || ciprefix(".inc", buffer)) {
 
-            char *copys = NULL;
+            char *copyy = NULL;
+            char *y = NULL;
 
             inp_stripcomments_line(buffer);
+
             for (s = buffer; *s && !isspace(*s); s++) /* advance past non-space chars */
                 ;
-            while (isspace(*s)) /* now advance past space chars */
-                s++;
 
-            if(isquote(*s)) {
-                for (t = ++s; *t && !isquote(*t); t++)
-                    ;
-                if(!*t)         /* teriminator quote not found */
-                    t = s;
-            } else {
-                for (t = s; *t && !isspace(*t); t++)
-                    ;
-            }
+            t = get_quoted_token(s, &y);
 
-            if(t == s) {
+            if ( !y ) {
                 fprintf(cp_err,  "Error: .include filename missing\n");
                 tfree(buffer);		/* was allocated by readline() */
                 controlled_exit(EXIT_FAILURE);
             }
 
-            *t = '\0';                         /* place \0 and end of file name in buffer */
-
-            if (*s == '~') {
-                copys = cp_tildexpand(s); /* allocates memory, but can also return NULL */
-                if ( copys )
-                    s = copys;		/* reuse s, but remember, buffer still points to allocated memory */
+            if (*y == '~') {
+                copyy = cp_tildexpand(y); /* allocates memory, but can also return NULL */
+                if ( copyy )
+                    y = copyy;		/* reuse y, but remember, buffer still points to allocated memory */
             }
 
             {
                 bool dir_name_flag = FALSE;
-                FILE *newfp = inp_pathopen(s, "r");
+                FILE *newfp = inp_pathopen(y, "r");
 
                 if ( !newfp ) {
                     char big_buff2[5000];
 
                     /* open file specified by  .include statement */
                     if ( dir_name )
-                        sprintf( big_buff2, "%s/%s", dir_name, s );
+                        sprintf( big_buff2, "%s/%s", dir_name, y );
                     else
-                        sprintf( big_buff2, "./%s", s );
+                        sprintf( big_buff2, "./%s", y );
 
                     newfp = inp_pathopen( big_buff2, "r" );
                     if ( !newfp ) {
-                        perror(s);
-                        if ( copys )
-                            tfree(copys);       /* allocated by the cp_tildexpand() above */
+                        perror(y);
+                        if ( copyy )
+                            tfree(copyy);       /* allocated by the cp_tildexpand() above */
                         fprintf(cp_err,  "Error: .include statement failed.\n");
                         tfree(buffer);          /* allocated by readline() above */
                         controlled_exit(EXIT_FAILURE);
@@ -400,7 +388,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 }
 
                 if ( dir_name_flag == FALSE ) {
-                    char *s_dup = strdup(s);
+                    char *s_dup = strdup(y);
                     inp_readall(newfp, &newcard, call_depth+1, ngdirname(s_dup), FALSE);  /* read stuff in include file into netlist */
                     tfree(s_dup);
                 } else {
@@ -410,8 +398,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 (void) fclose(newfp);
             }
 
-            if ( copys )
-                tfree(copys);		/* allocated by the cp_tildexpand() above */
+            if ( copyy )
+                tfree(copyy);		/* allocated by the cp_tildexpand() above */
 
             /* Make the .include a comment */
             *buffer = '*';
@@ -5014,4 +5002,58 @@ static void inp_bsource_compat(struct line *deck)
             tfree(tmp_char);
         } /* end of if 'b' */
     } /* end of for loop */
+}
+
+
+/*
+ * destructively fetch a token from the input string
+ *   token is either quoted, or a plain nonwhitespace sequence
+ * function will return the place from where to continue
+ */
+
+static char *get_quoted_token(char *string, char **token)
+{
+    char *s = string;
+
+    while (isspace(*s))
+        s++;
+
+    if (!*s)            /* nothing found */
+        return string;
+
+    if (isquote(*s)) {
+
+        char *t = ++s;
+
+        while (*t && !isquote(*t))
+            t++;
+
+        if (!*t) {        /* teriminator quote not found */
+            *token = NULL;
+            return string;
+        }
+
+        *t++ = '\0';
+
+        *token = s;
+        return t;
+
+    } else {
+
+        char *t = s;
+
+        while (*t && !isspace(*t))
+            t++;
+
+        if (t == s) {     /* nothing found */
+            *token = NULL;
+            return string;
+        }
+
+        if (*t)
+            *t++ = '\0';
+
+        *token = s;
+        return t;
+    }
 }

@@ -1,4 +1,11 @@
 2012-02-11  Holger Vogt
+ * inpcom.c: Robert's patch, reading libs, incs etc.
+ 
+2012-02-11  Holger Vogt
+ * tclspice.c, winmain.c, outitf.c, vectors.c, alloc.c:
+   outheap (under Windows) removed
+   
+2012-02-11  Holger Vogt
  * ngspice.h: fprintf --> tcl_fprintf added 
  * tclspice.c: small updates for Windows 
  * outitf.c, vectors.c, alloc.c:
