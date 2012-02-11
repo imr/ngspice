@@ -68,7 +68,7 @@ static void freeRun(runDesc *run);
    to prevent massive memory fragmentation of standard process heap.
    This is especially required by TCL for Windows, but may help
    also under standard Windows GUI. */
-#if (defined(HAS_TCLWIN)) && ((defined(_MSC_VER) || defined(__MINGW32__)))
+#if 0 && (defined(HAS_TCLWIN)) && ((defined(_MSC_VER) || defined(__MINGW32__)))
 #define newrealloc hrealloc
 #else
 #define newrealloc trealloc

@@ -247,6 +247,9 @@ extern int tcl_fprintf(FILE *f, const char *format, ...);
 #undef printf
 #define printf tcl_printf
 
+#undef fprintf
+#define fprintf tcl_fprintf
+
 #undef perror
 #define perror(string) fprintf(stderr,"%s: %s\n",string,sys_errlist[errno])
 

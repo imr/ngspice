@@ -22,6 +22,14 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "plotting/plotting.h"
 #include "error.h" /* controlled_exit() */
 
+#if 0 && defined(HAS_TCLWIN)
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#undef BOOLEAN
+#include <windows.h>
+extern HANDLE outheap;
+#endif
+#endif
+
 #ifdef XSPICE
 /* gtri - begin - add function prototype for EVTfindvec */
 struct dvec *EVTfindvec(char *node);
@@ -813,7 +821,17 @@ vec_free_x(struct dvec *v)
         }
     }
     if (v->v_name) tfree(v->v_name);
+#if 0 && (defined(HAS_TCLWIN)) && ((defined(_MSC_VER) || defined(__MINGW32__)))
+    if (v->v_realdata) {
+        if (HeapValidate(outheap, 0, v->v_realdata))
+            HeapFree(outheap, 0, v->v_realdata);
+        else
+            tfree(v->v_realdata);
+    }
+#else
     if (v->v_realdata) tfree(v->v_realdata);
+#endif
+
     if (v->v_compdata) tfree(v->v_compdata);
     tfree(v);
     return;

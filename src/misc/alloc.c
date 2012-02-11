@@ -14,7 +14,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include <tcl.h>
 #endif
 
-#if defined(HAS_WINDOWS) || defined(HAS_TCLWIN)
+#if defined(HAS_WINDOWS) || (defined(HAS_TCLWIN) && 0)
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #undef BOOLEAN
 #include <windows.h>
@@ -142,7 +142,7 @@ trealloc(void *ptr, size_t num)
    Function is used in outitf.c to prevent heap fragmentation 
    An additional heap outheap is used to store the plot output data.
 */
-#if defined(HAS_TCLWIN)
+#if 0 && defined(HAS_TCLWIN)
 #if defined(_MSC_VER) || defined(__MINGW32__)
 void *
 hrealloc(void *ptr, size_t num)

@@ -1,3 +1,9 @@
+2012-02-11  Holger Vogt
+ * ngspice.h: fprintf --> tcl_fprintf added 
+ * tclspice.c: small updates for Windows 
+ * outitf.c, vectors.c, alloc.c:
+   outheap (under Windows) provided, but deactivated
+
 2012-02-11  Robert Larice
  * src/spicelib/parser/inpptree-parser.c ,
  * src/spicelib/parser/inpptree-parser.h :

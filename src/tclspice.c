@@ -187,6 +187,9 @@ HANDLE outheap;
 
 void tcl_stdflush(FILE *f);
 int  tcl_vfprintf(FILE *f, const char *fmt, va_list args);
+#if defined(__MINGW32__) || defined(_MSC_VER)
+__declspec(dllexport)
+#endif
 int  Spice_Init(Tcl_Interp *interp);
 int  Tcl_ExecutePerLoop(void);
 void triggerEventCheck(ClientData clientData,int flags);
@@ -512,7 +515,7 @@ static int vectoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   var = (char *)argv[1];
   var_dvec = vec_get(var);
   if ( var_dvec == NULL ){
-    Tcl_SetResult(interp, "Bad spice vector",TCL_STATIC);
+    Tcl_SetResult(interp, "Bad spice vector ", TCL_STATIC);
     Tcl_AppendResult(interp, (char *)var, TCL_STATIC);
     return TCL_ERROR;
     }
@@ -2241,7 +2244,7 @@ int Spice_Init(Tcl_Interp *interp) {
   save_interp();
 
 
-#if defined(_MSC_VER) || defined(__MINGW32__)
+#if 0 && (defined(_MSC_VER) || defined(__MINGW32__))
   /* create private heap for current process*/
   outheap = HeapCreate(0, 10000000, 0);
   if (!outheap) {
@@ -2344,9 +2347,9 @@ bot:
     for (i = 0;(key = cp_coms[i].co_comname); i++) {
       sprintf(buf,"%s%s",TCLSPICE_prefix,key);
       if(Tcl_GetCommandInfo(interp,buf, &infoPtr)!= 0){
-	printf("Command '%s' can not be registered!\n", buf);
+         printf("Command '%s' can not be registered!\n", buf);
       }else{ 
-	Tcl_CreateCommand(interp, buf, _tcl_dispatch, NULL, NULL);
+         Tcl_CreateCommand(interp, buf, _tcl_dispatch, NULL, NULL);
       }
     }
     
