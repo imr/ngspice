@@ -29,6 +29,8 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
     int i, j;
     double *derivs;
     double rhs;
+    double difference;
+    double factor;
 
     NG_IGNORE(ckt);
 
@@ -41,6 +43,13 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
 	    if (here->ASRCowner != ARCHme)
                 continue;
+
+	    if(!here->ASRCtc1Given) here->ASRCtc1    = 0.0;
+	    if(!here->ASRCtc2Given) here->ASRCtc2    = 0.0;
+
+	    difference = (here->ASRCtemp + here->ASRCdtemp) - 300.15;
+	    factor = 1.0 + (here->ASRCtc1)*difference + 
+		(here->ASRCtc2)*difference*difference;
 
 	    /*
 	     * Get the function and its derivatives from the
@@ -65,21 +74,21 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 		case IF_INSTANCE:
 		    if( here->ASRCtype == ASRC_VOLTAGE) {
 			/* CCVS */
-			*(here->ASRCposptr[j++]) -= derivs[i];
+			*(here->ASRCposptr[j++]) -= derivs[i] / factor;
 		    } else{
 			/* CCCS */
-			*(here->ASRCposptr[j++]) += derivs[i];
-			*(here->ASRCposptr[j++]) -= derivs[i];
+			*(here->ASRCposptr[j++]) += derivs[i] / factor;
+			*(here->ASRCposptr[j++]) -= derivs[i] / factor;
 		    }
 		    break;
 		case IF_NODE:
 		    if(here->ASRCtype == ASRC_VOLTAGE) {
 			/* VCVS */
-			*(here->ASRCposptr[j++]) -= derivs[i];
+			*(here->ASRCposptr[j++]) -= derivs[i] / factor;
 		    } else {
-			/*VCCS*/
-			*(here->ASRCposptr[j++]) += derivs[i];
-			*(here->ASRCposptr[j++]) -= derivs[i];
+			/* VCCS */
+			*(here->ASRCposptr[j++]) += derivs[i] / factor;
+			*(here->ASRCposptr[j++]) -= derivs[i] / factor;
 		    }
 		    break;
 		default:

@@ -4871,10 +4871,11 @@ static void inp_bsource_compat(struct line *deck)
                         }
                         buf[i] = '\0';
                         /* no parens {} around time, hertz, temper, the constants
-                           pi and e which are defined in inpptree.c and around pwl */
+                           pi and e which are defined in inpptree.c, around pwl and temp. coeffs */
                         if ((*str_ptr == '(') || cieq(buf, "hertz")  || cieq(buf, "temper")
                                 || cieq(buf, "time") || cieq(buf, "pi") || cieq(buf, "e")
-                                || cieq(buf, "pwl")) {
+                                || cieq(buf, "pwl")
+                                || cieq(buf, "tc") || cieq(buf, "tc1") || cieq(buf, "tc2")) {
                             /* special handling of pwl lines:
                                Put braces around tokens and around expressions, use ','
                                as separator like:

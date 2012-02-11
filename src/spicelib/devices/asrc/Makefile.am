@@ -19,7 +19,8 @@ libasrc_la_SOURCES =	\
 	asrcmdel.c	\
 	asrcpar.c	\
 	asrcpzld.c	\
-	asrcset.c
+	asrcset.c \
+	asrctemp.c
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include

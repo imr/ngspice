@@ -1934,10 +1934,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\fteoptdefs.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\include\ngspice\ftedev.h"
 				>
 			</File>
@@ -1959,6 +1955,10 @@
 			</File>
 			<File
 				RelativePath="..\src\include\ngspice\fteinput.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\fteoptdefs.h"
 				>
 			</File>
 			<File
@@ -2146,11 +2146,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp.h"
+				RelativePath="..\src\frontend\inp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\inp.h"
+				RelativePath="..\src\spicelib\parser\inp.h"
 				>
 			</File>
 			<File
@@ -3279,6 +3279,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\asrc\asrcset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\asrc\asrctemp.c"
 				>
 			</File>
 			<File
@@ -5618,6 +5622,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\frontend\ftesopt.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\frontend\gens.c"
 				>
 			</File>
@@ -5655,10 +5663,6 @@
 			</File>
 			<File
 				RelativePath="..\src\misc\hash.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\ftesopt.c"
 				>
 			</File>
 			<File
@@ -6286,15 +6290,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\inventory.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\maths\poly\interpolate.c"
 				>
 			</File>
 			<File
 				RelativePath="..\src\maths\deriv\invderiv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\inventory.c"
 				>
 			</File>
 			<File

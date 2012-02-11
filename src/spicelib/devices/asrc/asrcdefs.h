@@ -6,34 +6,41 @@ Author: 1985 Thomas L. Quarles
 #ifndef ASRC
 #define ASRC
 
-
 #include "ngspice/cktdefs.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/complex.h"
 
-        /*
-         * structures to describe Arbitrary sources
-         */
+/*
+ * structures to describe Arbitrary sources
+*/
 
 /* information to describe a single instance */
 
 typedef struct sASRCinstance {
     struct sASRCmodel *ARRCmodPtr;  /* backpointer to model */
     struct sASRCinstance *ASRCnextInstance;  /* pointer to next instance of 
-                                              *current model*/
+                                              * current model */
     IFuid ASRCname; /* pointer to character string naming this instance */
     int ASRCowner;  /* number of owner process */
     int ASRCstates; /* state info */
     int ASRCposNode;    /* number of positive node of source */
     int ASRCnegNode;    /* number of negative node of source */
-    int ASRCtype;   /* Whether source is voltage or current */
+    int ASRCtype;       /* Whether source is voltage or current */
     int ASRCbranch;     /* number of branch equation added for v source */
     IFparseTree *ASRCtree; /* The parse tree */
+    double ASRCtemp;     /* temperature at which this resistor operates */
+    double ASRCdtemp;    /* delta-temperature of a particular instance  */
+    double ASRCtc1;      /* first temperature coefficient of resistors */
+    double ASRCtc2;      /* second temperature coefficient of resistors */
     double **ASRCposptr;  /* pointer to pointers of the elements
-               * in the sparce matrix */
+                           * in the sparce matrix */
     double ASRCprev_value; /* Previous value for the convergence test */
     double *ASRCacValues;  /* Store rhs and derivatives for ac anal */
     int ASRCcont_br;    /* Temporary store for controlling current branch */
+    unsigned ASRCtempGiven   : 1;    /* indicates temperature specified */
+    unsigned ASRCdtempGiven  : 1;    /* indicates delta-temp specified  */
+    unsigned ASRCtc1Given    : 1;    /* indicates tc1 parameter specified */
+    unsigned ASRCtc2Given    : 1;    /* indicates tc2 parameter specified */
 
 } ASRCinstance ;
 
@@ -59,6 +66,10 @@ typedef struct sASRCmodel {       /* model structure for a source */
 #define ASRC_PARSE_TREE 5
 #define ASRC_OUTPUTVOLTAGE 6
 #define ASRC_OUTPUTCURRENT 7
+#define ASRC_TEMP 8
+#define ASRC_DTEMP 9
+#define ASRC_TC1 10
+#define ASRC_TC2 11
 
 /* module-wide variables */
 

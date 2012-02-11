@@ -47,7 +47,7 @@ SPICEdev ASRCinfo = {
  /* DEVsetup      */ ASRCsetup,
  /* DEVunsetup    */ ASRCunsetup,
  /* DEVpzSetup    */ ASRCsetup,
- /* DEVtemperature*/ NULL,
+ /* DEVtemperature*/ ASRCtemp,
  /* DEVtrunc      */ NULL,
  /* DEVfindBranch */ ASRCfindBr,
  /* DEVacLoad     */ ASRCacLoad,   /* ac and normal load functions NOT identical */

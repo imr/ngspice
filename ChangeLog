@@ -1,3 +1,9 @@
+2012-02-11  Dietmar Warning
+ * src/spicelib/devices/asrc/*.c,*.h,Makefile.am
+ * src/frontend/inpcom.c,
+ * vngspice.vcproj
+   Add temperature coefficients for B sources
+
 2012-02-11  Holger Vogt
  * inpcom.c: Robert's patch, reading libs, incs etc.
  
