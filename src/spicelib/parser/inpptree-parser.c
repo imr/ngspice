@@ -61,7 +61,7 @@
 #define YYPULL 1
 
 /* Using locations.  */
-#define YYLSP_NEEDED 0
+#define YYLSP_NEEDED 1
 
 /* Substitute the variable and function names.  */
 #define yyparse         PTparse
@@ -71,21 +71,43 @@
 #define yychar          PTchar
 #define yydebug         PTdebug
 #define yynerrs         PTnerrs
-
+#define yylloc          PTlloc
 
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
-#line 1 "inpptree-parser.y"
+#line 1 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
 
+    /*
+     * (compile (concat "bison " buffer-file-name))
+     */
 
   #include <stdio.h>
   #include <stdlib.h>
+
+  struct PTltype {
+    char *start, *stop;
+  };
+
+  # define YYLTYPE struct PTltype
+
+  # define YYLLOC_DEFAULT(Current, Rhs, N)                               \
+     do                                                                  \
+       if (N) {                                                          \
+           (Current).start = YYRHSLOC(Rhs, 1).start;                     \
+           (Current).stop  = YYRHSLOC(Rhs, N).stop;                      \
+       } else {                                                          \
+           (Current).start = (Current).stop = YYRHSLOC(Rhs, 0).stop;     \
+       }                                                                 \
+     while (0)
+
+
   #include "inpptree-parser.h"
 
-  extern int PTlex (YYSTYPE *lvalp, char **line);
+  extern int PTlex (YYSTYPE *lvalp, struct PTltype *llocp, char **line);
+  extern int PTdebug;
 
-  static void PTerror (char **line, struct INPparseNode **retval, void *ckt, char const *);
+  static void PTerror (YYLTYPE *locp, char **line, struct INPparseNode **retval, void *ckt, char const *);
 
   #if defined (_MSC_VER)
   # define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
@@ -95,7 +117,7 @@
 
 
 /* Line 189 of yacc.c  */
-#line 99 "inpptree-parser.c"
+#line 121 "inpptree-parser.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -144,7 +166,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 31 "inpptree-parser.y"
+#line 53 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
 
   double num;
   const char  *str;
@@ -153,11 +175,24 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 157 "inpptree-parser.c"
+#line 179 "inpptree-parser.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
+#endif
+
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
+typedef struct YYLTYPE
+{
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+} YYLTYPE;
+# define yyltype YYLTYPE /* obsolescent; will be withdrawn */
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
 #endif
 
 
@@ -165,7 +200,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 169 "inpptree-parser.c"
+#line 204 "inpptree-parser.c"
 
 #ifdef short
 # undef short
@@ -323,13 +358,15 @@ void free (void *); /* INFRINGES ON USER NAME SPACE */
 
 #if (! defined yyoverflow \
      && (! defined __cplusplus \
-	 || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
+	 || (defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL \
+	     && defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
 union yyalloc
 {
   yytype_int16 yyss_alloc;
   YYSTYPE yyvs_alloc;
+  YYLTYPE yyls_alloc;
 };
 
 /* The size of the maximum gap between one aligned stack and the next.  */
@@ -338,8 +375,8 @@ union yyalloc
 /* The size of an array large to enough to hold all stacks, each with
    N elements.  */
 # define YYSTACK_BYTES(N) \
-     ((N) * (sizeof (yytype_int16) + sizeof (YYSTYPE)) \
-      + YYSTACK_GAP_MAXIMUM)
+     ((N) * (sizeof (yytype_int16) + sizeof (YYSTYPE) + sizeof (YYLTYPE)) \
+      + 2 * YYSTACK_GAP_MAXIMUM)
 
 /* Copy COUNT objects from FROM to TO.  The source and destination do
    not overlap.  */
@@ -457,9 +494,9 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    65,    65,    69,    70,    72,    73,    74,    75,    76,
-      78,    80,    82,    84,    86,    91,    92,    93,    94,    95,
-      96,    98,   102,   106,   111,   112
+       0,    87,    87,    96,    97,    99,   100,   101,   102,   103,
+     105,   107,   109,   111,   113,   118,   119,   120,   121,   122,
+     123,   125,   129,   133,   138,   139
 };
 #endif
 
@@ -620,7 +657,7 @@ do								\
     }								\
   else								\
     {								\
-      yyerror (line, retval, ckt, YY_("syntax error: cannot back up")); \
+      yyerror (&yylloc, line, retval, ckt, YY_("syntax error: cannot back up")); \
       YYERROR;							\
     }								\
 while (YYID (0))
@@ -675,9 +712,9 @@ while (YYID (0))
 /* YYLEX -- calling `yylex' with the right arguments.  */
 
 #ifdef YYLEX_PARAM
-# define YYLEX yylex (&yylval, YYLEX_PARAM)
+# define YYLEX yylex (&yylval, &yylloc, YYLEX_PARAM)
 #else
-# define YYLEX yylex (&yylval, line)
+# define YYLEX yylex (&yylval, &yylloc, line)
 #endif
 
 /* Enable debugging if requested.  */
@@ -700,7 +737,7 @@ do {									  \
     {									  \
       YYFPRINTF (stderr, "%s ", Title);					  \
       yy_symbol_print (stderr,						  \
-		  Type, Value, line, retval, ckt); \
+		  Type, Value, Location, line, retval, ckt); \
       YYFPRINTF (stderr, "\n");						  \
     }									  \
 } while (YYID (0))
@@ -714,13 +751,14 @@ do {									  \
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, char **line, struct INPparseNode **retval, void *ckt)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, char **line, struct INPparseNode **retval, void *ckt)
 #else
 static void
-yy_symbol_value_print (yyoutput, yytype, yyvaluep, line, retval, ckt)
+yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, line, retval, ckt)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
+    YYLTYPE const * const yylocationp;
     char **line;
     struct INPparseNode **retval;
     void *ckt;
@@ -728,6 +766,7 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep, line, retval, ckt)
 {
   if (!yyvaluep)
     return;
+  YYUSE (yylocationp);
   YYUSE (line);
   YYUSE (retval);
   YYUSE (ckt);
@@ -752,13 +791,14 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep, line, retval, ckt)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, char **line, struct INPparseNode **retval, void *ckt)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, char **line, struct INPparseNode **retval, void *ckt)
 #else
 static void
-yy_symbol_print (yyoutput, yytype, yyvaluep, line, retval, ckt)
+yy_symbol_print (yyoutput, yytype, yyvaluep, yylocationp, line, retval, ckt)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
+    YYLTYPE const * const yylocationp;
     char **line;
     struct INPparseNode **retval;
     void *ckt;
@@ -769,7 +809,9 @@ yy_symbol_print (yyoutput, yytype, yyvaluep, line, retval, ckt)
   else
     YYFPRINTF (yyoutput, "nterm %s (", yytname[yytype]);
 
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep, line, retval, ckt);
+  YY_LOCATION_PRINT (yyoutput, *yylocationp);
+  YYFPRINTF (yyoutput, ": ");
+  yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, line, retval, ckt);
   YYFPRINTF (yyoutput, ")");
 }
 
@@ -812,11 +854,12 @@ do {								\
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_reduce_print (YYSTYPE *yyvsp, int yyrule, char **line, struct INPparseNode **retval, void *ckt)
+yy_reduce_print (YYSTYPE *yyvsp, YYLTYPE *yylsp, int yyrule, char **line, struct INPparseNode **retval, void *ckt)
 #else
 static void
-yy_reduce_print (yyvsp, yyrule, line, retval, ckt)
+yy_reduce_print (yyvsp, yylsp, yyrule, line, retval, ckt)
     YYSTYPE *yyvsp;
+    YYLTYPE *yylsp;
     int yyrule;
     char **line;
     struct INPparseNode **retval;
@@ -834,7 +877,7 @@ yy_reduce_print (yyvsp, yyrule, line, retval, ckt)
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr, yyrhs[yyprhs[yyrule] + yyi],
 		       &(yyvsp[(yyi + 1) - (yynrhs)])
-		       		       , line, retval, ckt);
+		       , &(yylsp[(yyi + 1) - (yynrhs)])		       , line, retval, ckt);
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -842,7 +885,7 @@ yy_reduce_print (yyvsp, yyrule, line, retval, ckt)
 # define YY_REDUCE_PRINT(Rule)		\
 do {					\
   if (yydebug)				\
-    yy_reduce_print (yyvsp, Rule, line, retval, ckt); \
+    yy_reduce_print (yyvsp, yylsp, Rule, line, retval, ckt); \
 } while (YYID (0))
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -1093,19 +1136,21 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, char **line, struct INPparseNode **retval, void *ckt)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocationp, char **line, struct INPparseNode **retval, void *ckt)
 #else
 static void
-yydestruct (yymsg, yytype, yyvaluep, line, retval, ckt)
+yydestruct (yymsg, yytype, yyvaluep, yylocationp, line, retval, ckt)
     const char *yymsg;
     int yytype;
     YYSTYPE *yyvaluep;
+    YYLTYPE *yylocationp;
     char **line;
     struct INPparseNode **retval;
     void *ckt;
 #endif
 {
   YYUSE (yyvaluep);
+  YYUSE (yylocationp);
   YYUSE (line);
   YYUSE (retval);
   YYUSE (ckt);
@@ -1175,6 +1220,9 @@ int yychar;
 /* The semantic value of the lookahead symbol.  */
 YYSTYPE yylval;
 
+/* Location data for the lookahead symbol.  */
+YYLTYPE yylloc;
+
     /* Number of syntax errors so far.  */
     int yynerrs;
 
@@ -1185,6 +1233,7 @@ YYSTYPE yylval;
     /* The stacks and their tools:
        `yyss': related to states.
        `yyvs': related to semantic values.
+       `yyls': related to locations.
 
        Refer to the stacks thru separate pointers, to allow yyoverflow
        to reallocate them elsewhere.  */
@@ -1199,6 +1248,14 @@ YYSTYPE yylval;
     YYSTYPE *yyvs;
     YYSTYPE *yyvsp;
 
+    /* The location stack.  */
+    YYLTYPE yylsa[YYINITDEPTH];
+    YYLTYPE *yyls;
+    YYLTYPE *yylsp;
+
+    /* The locations where the error started and ended.  */
+    YYLTYPE yyerror_range[2];
+
     YYSIZE_T yystacksize;
 
   int yyn;
@@ -1208,6 +1265,7 @@ YYSTYPE yylval;
   /* The variables used to return semantic value and location from the
      action routines.  */
   YYSTYPE yyval;
+  YYLTYPE yyloc;
 
 #if YYERROR_VERBOSE
   /* Buffer for error messages, and its allocated size.  */
@@ -1216,7 +1274,7 @@ YYSTYPE yylval;
   YYSIZE_T yymsg_alloc = sizeof yymsgbuf;
 #endif
 
-#define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N))
+#define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N), yylsp -= (N))
 
   /* The number of symbols on the RHS of the reduced rule.
      Keep to zero when no symbol should be popped.  */
@@ -1225,6 +1283,7 @@ YYSTYPE yylval;
   yytoken = 0;
   yyss = yyssa;
   yyvs = yyvsa;
+  yyls = yylsa;
   yystacksize = YYINITDEPTH;
 
   YYDPRINTF ((stderr, "Starting parse\n"));
@@ -1240,17 +1299,25 @@ YYSTYPE yylval;
      The wasted elements are never initialized.  */
   yyssp = yyss;
   yyvsp = yyvs;
+  yylsp = yyls;
+
+#if YYLTYPE_IS_TRIVIAL
+  /* Initialize the default location before parsing starts.  */
+  yylloc.first_line   = yylloc.last_line   = 1;
+  yylloc.first_column = yylloc.last_column = 1;
+#endif
 
 /* User initialization code.  */
 
 /* Line 1242 of yacc.c  */
-#line 58 "inpptree-parser.y"
+#line 80 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
 {
     yylval.num = 0.0;
+    yylloc.start = yylloc.stop = NULL;
 }
 
 /* Line 1242 of yacc.c  */
-#line 1254 "inpptree-parser.c"
+#line 1321 "inpptree-parser.c"
   yyvsp[0] = yylval;
 
   goto yysetstate;
@@ -1278,6 +1345,7 @@ YYSTYPE yylval;
 	   memory.  */
 	YYSTYPE *yyvs1 = yyvs;
 	yytype_int16 *yyss1 = yyss;
+	YYLTYPE *yyls1 = yyls;
 
 	/* Each stack pointer address is followed by the size of the
 	   data in use in that stack, in bytes.  This used to be a
@@ -1286,8 +1354,10 @@ YYSTYPE yylval;
 	yyoverflow (YY_("memory exhausted"),
 		    &yyss1, yysize * sizeof (*yyssp),
 		    &yyvs1, yysize * sizeof (*yyvsp),
+		    &yyls1, yysize * sizeof (*yylsp),
 		    &yystacksize);
 
+	yyls = yyls1;
 	yyss = yyss1;
 	yyvs = yyvs1;
       }
@@ -1310,6 +1380,7 @@ YYSTYPE yylval;
 	  goto yyexhaustedlab;
 	YYSTACK_RELOCATE (yyss_alloc, yyss);
 	YYSTACK_RELOCATE (yyvs_alloc, yyvs);
+	YYSTACK_RELOCATE (yyls_alloc, yyls);
 #  undef YYSTACK_RELOCATE
 	if (yyss1 != yyssa)
 	  YYSTACK_FREE (yyss1);
@@ -1319,6 +1390,7 @@ YYSTYPE yylval;
 
       yyssp = yyss + yysize - 1;
       yyvsp = yyvs + yysize - 1;
+      yylsp = yyls + yysize - 1;
 
       YYDPRINTF ((stderr, "Stack size increased to %lu\n",
 		  (unsigned long int) yystacksize));
@@ -1394,7 +1466,7 @@ yybackup:
 
   yystate = yyn;
   *++yyvsp = yylval;
-
+  *++yylsp = yylloc;
   goto yynewstate;
 
 
@@ -1425,91 +1497,96 @@ yyreduce:
      GCC warning that YYVAL may be used uninitialized.  */
   yyval = yyvsp[1-yylen];
 
-
+  /* Default location.  */
+  YYLLOC_DEFAULT (yyloc, (yylsp - yylen), yylen);
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 65 "inpptree-parser.y"
-    { *retval = (yyvsp[(1) - (1)].pnode); ;}
+#line 88 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+    {
+      *retval = (yyvsp[(1) - (1)].pnode);
+      *line = (yylsp[(1) - (1)]).stop;
+      YYACCEPT;
+ ;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 69 "inpptree-parser.y"
+#line 96 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mknnode((yyvsp[(1) - (1)].num)); ;}
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 70 "inpptree-parser.y"
+#line 97 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mksnode((yyvsp[(1) - (1)].str), ckt); ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 72 "inpptree-parser.y"
+#line 99 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkbnode("+", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 73 "inpptree-parser.y"
+#line 100 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkbnode("-", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 74 "inpptree-parser.y"
+#line 101 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkbnode("*", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 75 "inpptree-parser.y"
+#line 102 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkbnode("/", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 76 "inpptree-parser.y"
+#line 103 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkbnode("^", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 78 "inpptree-parser.y"
+#line 105 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = (yyvsp[(2) - (3)].pnode); ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 80 "inpptree-parser.y"
+#line 107 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkfnode("-",(yyvsp[(2) - (2)].pnode)); ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 82 "inpptree-parser.y"
+#line 109 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkfnode((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].pnode)); ;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 86 "inpptree-parser.y"
+#line 113 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ternary_fcn",
                                                mkbnode(",",
                                                  mkbnode(",", (yyvsp[(1) - (5)].pnode), (yyvsp[(3) - (5)].pnode)),
@@ -1519,49 +1596,49 @@ yyreduce:
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 91 "inpptree-parser.y"
+#line 118 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 92 "inpptree-parser.y"
+#line 119 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ne0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 93 "inpptree-parser.y"
+#line 120 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkfnode("gt0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 94 "inpptree-parser.y"
+#line 121 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkfnode("lt0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 95 "inpptree-parser.y"
+#line 122 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ge0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 96 "inpptree-parser.y"
+#line 123 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkfnode("le0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 98 "inpptree-parser.y"
+#line 125 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ne0",
                                                mkbnode("+",
                                                  mkfnode("ne0", (yyvsp[(1) - (3)].pnode)),
@@ -1571,7 +1648,7 @@ yyreduce:
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 102 "inpptree-parser.y"
+#line 129 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0",
                                                mkbnode("+",
                                                  mkfnode("eq0", (yyvsp[(1) - (3)].pnode)),
@@ -1581,21 +1658,21 @@ yyreduce:
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 106 "inpptree-parser.y"
+#line 133 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0", (yyvsp[(2) - (2)].pnode)); ;}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 112 "inpptree-parser.y"
+#line 139 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
     { (yyval.pnode) = mkbnode(",", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1599 "inpptree-parser.c"
+#line 1676 "inpptree-parser.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1605,6 +1682,7 @@ yyreduce:
   YY_STACK_PRINT (yyss, yyssp);
 
   *++yyvsp = yyval;
+  *++yylsp = yyloc;
 
   /* Now `shift' the result of the reduction.  Determine what state
      that goes to, based on the state we popped back to and the rule
@@ -1630,7 +1708,7 @@ yyerrlab:
     {
       ++yynerrs;
 #if ! YYERROR_VERBOSE
-      yyerror (line, retval, ckt, YY_("syntax error"));
+      yyerror (&yylloc, line, retval, ckt, YY_("syntax error"));
 #else
       {
 	YYSIZE_T yysize = yysyntax_error (0, yystate, yychar);
@@ -1654,11 +1732,11 @@ yyerrlab:
 	if (0 < yysize && yysize <= yymsg_alloc)
 	  {
 	    (void) yysyntax_error (yymsg, yystate, yychar);
-	    yyerror (line, retval, ckt, yymsg);
+	    yyerror (&yylloc, line, retval, ckt, yymsg);
 	  }
 	else
 	  {
-	    yyerror (line, retval, ckt, YY_("syntax error"));
+	    yyerror (&yylloc, line, retval, ckt, YY_("syntax error"));
 	    if (yysize != 0)
 	      goto yyexhaustedlab;
 	  }
@@ -1666,7 +1744,7 @@ yyerrlab:
 #endif
     }
 
-
+  yyerror_range[0] = yylloc;
 
   if (yyerrstatus == 3)
     {
@@ -1682,7 +1760,7 @@ yyerrlab:
       else
 	{
 	  yydestruct ("Error: discarding",
-		      yytoken, &yylval, line, retval, ckt);
+		      yytoken, &yylval, &yylloc, line, retval, ckt);
 	  yychar = YYEMPTY;
 	}
     }
@@ -1703,6 +1781,7 @@ yyerrorlab:
   if (/*CONSTCOND*/ 0)
      goto yyerrorlab;
 
+  yyerror_range[0] = yylsp[1-yylen];
   /* Do not reclaim the symbols of the rule which action triggered
      this YYERROR.  */
   YYPOPSTACK (yylen);
@@ -1736,9 +1815,9 @@ yyerrlab1:
       if (yyssp == yyss)
 	YYABORT;
 
-
+      yyerror_range[0] = *yylsp;
       yydestruct ("Error: popping",
-		  yystos[yystate], yyvsp, line, retval, ckt);
+		  yystos[yystate], yyvsp, yylsp, line, retval, ckt);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1746,6 +1825,11 @@ yyerrlab1:
 
   *++yyvsp = yylval;
 
+  yyerror_range[1] = yylloc;
+  /* Using YYLLOC is tempting, but would change the location of
+     the lookahead.  YYLOC is available though.  */
+  YYLLOC_DEFAULT (yyloc, (yyerror_range - 1), 2);
+  *++yylsp = yyloc;
 
   /* Shift the error token.  */
   YY_SYMBOL_PRINT ("Shifting", yystos[yyn], yyvsp, yylsp);
@@ -1773,7 +1857,7 @@ yyabortlab:
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
 yyexhaustedlab:
-  yyerror (line, retval, ckt, YY_("memory exhausted"));
+  yyerror (&yylloc, line, retval, ckt, YY_("memory exhausted"));
   yyresult = 2;
   /* Fall through.  */
 #endif
@@ -1781,7 +1865,7 @@ yyexhaustedlab:
 yyreturn:
   if (yychar != YYEMPTY)
      yydestruct ("Cleanup: discarding lookahead",
-		 yytoken, &yylval, line, retval, ckt);
+		 yytoken, &yylval, &yylloc, line, retval, ckt);
   /* Do not reclaim the symbols of the rule which action triggered
      this YYABORT or YYACCEPT.  */
   YYPOPSTACK (yylen);
@@ -1789,7 +1873,7 @@ yyreturn:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-		  yystos[*yyssp], yyvsp, line, retval, ckt);
+		  yystos[*yyssp], yyvsp, yylsp, line, retval, ckt);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -1807,14 +1891,15 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 114 "inpptree-parser.y"
+#line 141 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
 
 
 
 /* Called by yyparse on error.  */
 static void
-PTerror (char **line, struct INPparseNode **retval, void *ckt, char const *s)
+PTerror (YYLTYPE *locp, char **line, struct INPparseNode **retval, void *ckt, char const *s)
 {
+  NG_IGNORE(locp);
   NG_IGNORE(line);
   NG_IGNORE(retval);
   NG_IGNORE(ckt);
