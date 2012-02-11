@@ -179,12 +179,6 @@ do {\
 } while(0)
 
 
-/* global handle for the output heap */
-#if defined(_MSC_VER) || defined(__MINGW32__)
-HANDLE outheap;
-#endif
-
-
 void tcl_stdflush(FILE *f);
 int  tcl_vfprintf(FILE *f, const char *fmt, va_list args);
 #if defined(__MINGW32__) || defined(_MSC_VER)
@@ -2242,16 +2236,6 @@ int Spice_Init(Tcl_Interp *interp) {
   Tcl_Eval(interp, "namespace eval " TCLSPICE_namespace " { }");
 
   save_interp();
-
-
-#if 0 && (defined(_MSC_VER) || defined(__MINGW32__))
-  /* create private heap for current process*/
-  outheap = HeapCreate(0, 10000000, 0);
-  if (!outheap) {
-    fprintf(stderr,"HeapCreate: Internal Error: can't allocate private output heap");
-    exit(EXIT_BAD);
-  }
-#endif
 
   {
     int i;

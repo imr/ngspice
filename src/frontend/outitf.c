@@ -64,15 +64,6 @@ static void freeRun(runDesc *run);
 #endif
 /*saj*/
 
-/* plot output data shall go into extra heap 
-   to prevent massive memory fragmentation of standard process heap.
-   This is especially required by TCL for Windows, but may help
-   also under standard Windows GUI. */
-#if 0 && (defined(HAS_TCLWIN)) && ((defined(_MSC_VER) || defined(__MINGW32__)))
-#define newrealloc hrealloc
-#else
-#define newrealloc trealloc
-#endif
 
 #define DOUBLE_PRECISION    15
 
@@ -1010,12 +1001,12 @@ plotAddRealValue(dataDesc *desc, double value)
     struct dvec *v = desc->vec;
 
     if (isreal(v)) {
-      v->v_realdata = (double *) newrealloc(v->v_realdata,
+      v->v_realdata = (double *) trealloc(v->v_realdata,
             sizeof(double) * (size_t) (v->v_length + 1));
       v->v_realdata[v->v_length] = value;
     } else {
       /* a real parading as a VF_COMPLEX */
-      v->v_compdata = (ngcomplex_t *) newrealloc(v->v_compdata,
+      v->v_compdata = (ngcomplex_t *) trealloc(v->v_compdata,
             sizeof(ngcomplex_t) * (size_t) (v->v_length + 1));
       v->v_compdata[v->v_length].cx_real = value;
       v->v_compdata[v->v_length].cx_imag = 0.0;
@@ -1031,7 +1022,7 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 {
     struct dvec *v = desc->vec;
 
-    v->v_compdata = (ngcomplex_t *) newrealloc(v->v_compdata,
+    v->v_compdata = (ngcomplex_t *) trealloc(v->v_compdata,
             sizeof(ngcomplex_t) * (size_t) (v->v_length + 1));
     v->v_compdata[v->v_length].cx_real = value.real;
     v->v_compdata[v->v_length].cx_imag = value.imag;

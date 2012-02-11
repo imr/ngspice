@@ -104,8 +104,6 @@ void winmessage(char*);
 int p_r_i_n_t_f(const char * __format, ...);
 int f_f_l_u_s_h( FILE * __stream); */
 
-/* private heap for storing plot data */
-HANDLE outheap;
 
 /* --------------------------<history management>------------------------------ */
 
@@ -931,17 +929,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     UpdateWindow( hwMain);
     SetFocus( swString);
 
-   status = MakeArgcArgv(lpszCmdLine,&argc,&argv);
-
-#if defined(HAS_TCLWIN)
-  /* create private heap for current process */
-  outheap = HeapCreate(0, 10000000, 0);
-  if (!outheap) {
-    fprintf(stderr,"HeapCreate: Internal Error: can't allocate private output heap");
-    winmessage("HeapCreate: Internal Error: can't allocate private output heap");
-    exit(1);
-  }
-#endif
+    status = MakeArgcArgv(lpszCmdLine,&argc,&argv);
 
     /* Wait until everything is settled */
     WaitForIdle();
