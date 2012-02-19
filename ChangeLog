@@ -1,4 +1,8 @@
 2012-02-19  Holger Vogt
+ * com_cdump.c, com_cdump.h, commands.c, smpdefs.h, spoutput.c, spsmp.c,
+   command mrdump to dump the RHS of the matrix to stdout or to a file
+
+2012-02-19  Holger Vogt
  * spiceif.c: savesnap, loadsnap enabled (still experimental!)
  * com_cdump.c, com_cdump.h, commands.c, smpdefs.h, spoutput.c, spsmp.c,
    cktpzstr.c, txlload.c: command mdump to dump the matrix to stdout or to a file

@@ -172,3 +172,29 @@ com_mdump(wordlist *wl)
     
     return;
 }
+
+void
+com_rdump(wordlist *wl)
+{
+    CKTcircuit *ckt = NULL;
+    char *s;
+    
+    if (!ft_curckt || !ft_curckt->ci_ckt) {
+        fprintf(cp_err, "Error: no circuit loaded.\n");
+        return;
+    }
+
+    ckt = ft_curckt->ci_ckt;
+    
+    if ((ckt->CKTmatrix) && (ckt->CKTrhs))
+        if (wl == NULL)
+            SMPprintRHS( ckt->CKTmatrix , NULL, ckt->CKTrhs, ckt->CKTirhs);
+        else {
+            s = cp_unquote(wl->wl_word);
+            SMPprintRHS( ckt->CKTmatrix , s, ckt->CKTrhs, ckt->CKTirhs);
+        }
+    else
+        fprintf(cp_err, "Error: no matrix or RHS available.\n");
+    
+    return;
+}

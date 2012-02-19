@@ -282,6 +282,16 @@ SMPpreOrder(SMPmatrix *Matrix)
  */
 
 void
+SMPprintRHS(SMPmatrix *Matrix, char *Filename, RealVector RHS, RealVector iRHS)
+{
+        spFileVector( Matrix, Filename, RHS, iRHS );
+}
+
+/*
+ * SMPprint()
+ */
+
+void
 SMPprint(SMPmatrix *Matrix, char *Filename)
 {
     if (Filename)

@@ -31,6 +31,7 @@ int SMPnewMatrix( SMPmatrix ** );
 void SMPdestroy( SMPmatrix *);
 int SMPpreOrder( SMPmatrix *);
 void SMPprint( SMPmatrix * , char *);
+void SMPprintRHS( SMPmatrix * , char *, double*, double*);
 void SMPgetError( SMPmatrix *, int *, int *);
 int SMPcProdDiag( SMPmatrix *, SPcomplex *, int *);
 int SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent);
