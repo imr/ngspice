@@ -1,4 +1,5 @@
 /* Command cdump: dump the control structure to the console output */
+/* Command mdump: dump the matrix of the actual circuit to stdout or a file */
 
 #include "ngspice/ngspice.h"
 #include <stdio.h>
@@ -7,7 +8,9 @@
 
 #include "control.h"
 #include "ngspice/cpextern.h"
-
+#include "ngspice/fteext.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/cktdefs.h"
 #include "com_cdump.h"
 
 static int indent;
@@ -141,5 +144,31 @@ com_cdump(wordlist *wl)
     indent = 0;
     for (c = control[stackp]; c; c = c->co_next)
         dodump(c);
+    return;
+}
+
+void
+com_mdump(wordlist *wl)
+{
+    CKTcircuit *ckt = NULL;
+    char *s;
+    
+    if (!ft_curckt || !ft_curckt->ci_ckt) {
+        fprintf(cp_err, "Error: no circuit loaded.\n");
+        return;
+    }
+
+    ckt = ft_curckt->ci_ckt;
+    
+    if (ckt->CKTmatrix)
+        if (wl == NULL)
+            SMPprint( ckt->CKTmatrix , NULL);
+        else {
+            s = cp_unquote(wl->wl_word);
+            SMPprint( ckt->CKTmatrix , s);
+        }
+    else
+        fprintf(cp_err, "Error: no matrix available.\n");
+    
     return;
 }

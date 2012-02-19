@@ -48,7 +48,7 @@ TXLload(GENmodel *inModel, CKTcircuit *ckt)
 
 	/* debug 
 	printf("before txlload\n");
-	SMPprint(ckt->CKTmatrix, stdout);
+	SMPprint(ckt->CKTmatrix, NULL);
 	*/
 
 	h = ckt->CKTdelta;
@@ -254,7 +254,7 @@ TXLload(GENmodel *inModel, CKTcircuit *ckt)
 
 	/* debug 
 	printf("after txlload\n");
-	SMPprint(ckt->CKTmatrix, stdout);
+	SMPprint(ckt->CKTmatrix, NULL);
 	*/
 
     return(OK);

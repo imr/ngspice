@@ -55,7 +55,10 @@
 
 int Printer_Width = PRINTER_WIDTH;
 
-
+#include "ngspice/config.h"
+#ifdef HAS_WINDOWS
+#include "ngspice/wstdio.h"
+#endif
 
 
 

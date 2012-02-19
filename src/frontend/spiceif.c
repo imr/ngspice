@@ -70,6 +70,7 @@ CDHW*/
 #include "ngspice/evtproto.h"
 #include "ngspice/evtudn.h"
 /* gtri - end - wbk - 5/20/91 - Add stuff for user-defined nodes */
+#include "ngspice/mif.h"
 #endif
 
 /* static declarations */
@@ -1312,6 +1313,14 @@ if_getstat(CKTcircuit *ckt, char *name) {
     }
 }
 
+/* Some small updates to make it work, h_vogt, Feb. 2012
+   Still very experimental !
+   It is now possible to save a state during transient simulation,
+   reload it later into a new ngspice run and resume simulation.
+   XSPICE code models probably will not do.
+   LTRA transmission line will not do.
+   Many others are not tested.
+*/
 #ifdef EXPERIMENTAL_CODE
 
 #include "ngspice/cktdefs.h"
@@ -1499,12 +1508,12 @@ do {\
     _foo(ckt->CKTirhs, double,size);
     _foo(ckt->CKTirhsOld, double,size);
     _foo(ckt->CKTirhsSpare, double,size);
-    _foo(ckt->CKTrhsOp, double,size);
-    _foo(ckt->CKTsenRhs, double,size);
-    _foo(ckt->CKTseniRhs, double,size);
+//    _foo(ckt->CKTrhsOp, double,size);
+//    _foo(ckt->CKTsenRhs, double,size);
+//    _foo(ckt->CKTseniRhs, double,size);
 
-    _foo(ckt->CKTtimePoints,double,-1);
-    _foo(ckt->CKTdeltaList,double,-1);
+//    _foo(ckt->CKTtimePoints,double,-1);
+//    _foo(ckt->CKTdeltaList,double,-1);
 
     _foo(ckt->CKTbreaks,double,ckt->CKTbreakSize);
 
@@ -1520,8 +1529,9 @@ do {\
     _foo(ft_curckt->ci_curTask->TSKname, char, -1);
 
     {	/* avoid invalid lvalue assignment errors in the macro _foo() */
-        TRANan * lname = (TRANan *)ft_curckt->ci_curTask->jobs;
-        _foo(lname,TRANan,1);
+//        TRANan * lname = (TRANan *)ft_curckt->ci_curTask->jobs;
+//        _foo(lname,TRANan,1);
+       _foo(ft_curckt->ci_curTask->jobs,JOB,-1);
     }
     ft_curckt->ci_curTask->jobs->JOBname = NULL;
 //    ckt->CKTcurJob = (&(ft_curckt->ci_curTask->taskOptions)) -> jobs;
@@ -1535,6 +1545,14 @@ do {\
     ((TRANan *)ft_curckt->ci_curTask->jobs)->TRANplot = NULL;
 
     _foo(ckt->CKTstat,STATistics,1);
+
+
+#ifdef XSPICE
+    _foo(ckt->evt,Evt_Ckt_Data_t,1);
+    _foo(ckt->enh,Enh_Ckt_Data_t,1);
+    g_mif_info.breakpoint.current = ckt->enh->breakpoint.current;
+    g_mif_info.breakpoint.last = ckt->enh->breakpoint.last;
+#endif
 
     tfree(my_ckt);
     fclose(file);
@@ -1656,12 +1674,12 @@ void com_savesnap(wordlist *wl)
     _foo(ckt->CKTirhs,double,size);
     _foo(ckt->CKTirhsOld,double,size);
     _foo(ckt->CKTirhsSpare,double,size);
-    _foo(ckt->CKTrhsOp,double,size);
-    _foo(ckt->CKTsenRhs,double,size);
-    _foo(ckt->CKTseniRhs,double,size);
+//    _foo(ckt->CKTrhsOp,double,size);
+//    _foo(ckt->CKTsenRhs,double,size);
+//    _foo(ckt->CKTseniRhs,double,size);
 
-    _foo(ckt->CKTtimePoints,double,ckt->CKTtimeListSize);
-    _foo(ckt->CKTdeltaList,double,ckt->CKTtimeListSize);
+//    _foo(ckt->CKTtimePoints,double,ckt->CKTtimeListSize);
+//    _foo(ckt->CKTdeltaList,double,ckt->CKTtimeListSize);
 
     /* need to save the breakpoints, or something */
 
@@ -1686,6 +1704,10 @@ void com_savesnap(wordlist *wl)
 
     _foo(ckt->CKTstat,STATistics,1);
 
+#ifdef XSPICE
+    _foo(ckt->evt,Evt_Ckt_Data_t,1);
+    _foo(ckt->enh,Enh_Ckt_Data_t,1);
+#endif
 
     fclose(file);
 

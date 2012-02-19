@@ -698,7 +698,7 @@ CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
 #ifdef PZDEBUG
 		DEBUG(3) {
 		    printf("Factored:\n");
-		    SMPprint(ckt->CKTmatrix, stdout);
+		    SMPprint(ckt->CKTmatrix, NULL);
 		}
 #endif
 		error = SMPcDProd(ckt->CKTmatrix, &new_trial->f_raw,

@@ -30,7 +30,7 @@ int SMPmatSize( SMPmatrix *);
 int SMPnewMatrix( SMPmatrix ** );
 void SMPdestroy( SMPmatrix *);
 int SMPpreOrder( SMPmatrix *);
-void SMPprint( SMPmatrix * , FILE *);
+void SMPprint( SMPmatrix * , char *);
 void SMPgetError( SMPmatrix *, int *, int *);
 int SMPcProdDiag( SMPmatrix *, SPcomplex *, int *);
 int SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent);
