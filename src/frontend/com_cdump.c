@@ -1,15 +1,12 @@
 /* Command cdump: dump the control structure to the console output */
-/* Command mdump: dump the matrix of the actual circuit to stdout or a file */
 
 #include "ngspice/ngspice.h"
 #include <stdio.h>
 
 #include "ngspice/wordlist.h"
-
 #include "control.h"
 #include "ngspice/cpextern.h"
 #include "ngspice/fteext.h"
-#include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
 #include "com_cdump.h"
 
@@ -147,6 +144,7 @@ com_cdump(wordlist *wl)
     return;
 }
 
+/* dump circuit matrix to stdout or file */
 void
 com_mdump(wordlist *wl)
 {
@@ -162,10 +160,10 @@ com_mdump(wordlist *wl)
     
     if (ckt->CKTmatrix)
         if (wl == NULL)
-            SMPprint( ckt->CKTmatrix , NULL);
+            SMPprint(ckt->CKTmatrix , NULL);
         else {
             s = cp_unquote(wl->wl_word);
-            SMPprint( ckt->CKTmatrix , s);
+            SMPprint(ckt->CKTmatrix , s);
         }
     else
         fprintf(cp_err, "Error: no matrix available.\n");
@@ -173,6 +171,7 @@ com_mdump(wordlist *wl)
     return;
 }
 
+/* dump circuit matrix RHS to stdout or file */
 void
 com_rdump(wordlist *wl)
 {
@@ -188,10 +187,10 @@ com_rdump(wordlist *wl)
     
     if ((ckt->CKTmatrix) && (ckt->CKTrhs))
         if (wl == NULL)
-            SMPprintRHS( ckt->CKTmatrix , NULL, ckt->CKTrhs, ckt->CKTirhs);
+            SMPprintRHS(ckt->CKTmatrix , NULL, ckt->CKTrhs, ckt->CKTirhs);
         else {
             s = cp_unquote(wl->wl_word);
-            SMPprintRHS( ckt->CKTmatrix , s, ckt->CKTrhs, ckt->CKTirhs);
+            SMPprintRHS(ckt->CKTmatrix , s, ckt->CKTrhs, ckt->CKTirhs);
         }
     else
         fprintf(cp_err, "Error: no matrix or RHS available.\n");
