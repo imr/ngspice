@@ -36,6 +36,10 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         for (here = model->ASRCinstances; here != NULL ;
                 here=here->ASRCnextInstance) {
             
+            if(!here->ASRCtc1Given) here->ASRCtc1 = 0.0;
+            if(!here->ASRCtc2Given) here->ASRCtc2 = 0.0;
+            if(!here->ASRCreciproctcGiven) here->ASRCreciproctc = 0;
+
             here->ASRCposptr = NULL;
             j=0; /*strchr of the array holding ptrs to SMP */
             v_first = 1;

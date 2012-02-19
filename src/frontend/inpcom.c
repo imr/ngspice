@@ -3891,6 +3891,9 @@ static void inp_compat(struct line *deck)
     struct line *card;
     int skip_control = 0;
 
+    char *equation, *tc1_ptr=NULL, *tc2_ptr=NULL;
+    double tc1=0.0, tc2=0.0;
+
     for (card = deck; card; card = card->li_next) {
 
         char *curr_line = card->li_line;
@@ -4296,12 +4299,41 @@ static void inp_compat(struct line *deck)
                 fprintf(stderr,"ERROR: mal formed R line: %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
-            xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
-                   strlen(node1) + strlen(node2) + strlen(str_ptr)  +
-                   28 - 6*2 + 1;
-            xline = TMALLOC(char, xlen);
-            sprintf(xline, "b%s %s %s i = v(%s, %s)/(%s)", title_tok, node1, node2,
-                    node1, node2, str_ptr);
+            equation = gettok(&str_ptr);
+            str_ptr = strstr(cut_line, "tc1");
+            if (str_ptr) {
+                tc1_ptr = strstr(str_ptr, "=");
+                tc1 = atof(tc1_ptr+1);
+            }
+            str_ptr = strstr(cut_line, "tc2");
+            if (str_ptr) {
+                tc2_ptr = strstr(str_ptr, "=");
+                tc2 = atof(tc2_ptr+1);
+            }
+            if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
+                xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
+                       strlen(node1) + strlen(node2) + strlen(equation)  +
+                       28 - 6*2 + 1;
+                xline = TMALLOC(char, xlen);
+                sprintf(xline, "b%s %s %s i = v(%s, %s)/(%s)", title_tok, node1, node2,
+                        node1, node2, equation);
+            } else if (tc2_ptr == NULL) {
+                xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
+                       strlen(node1) + strlen(node2) + strlen(equation)  +
+                       28 - 6*2 + 1 + 21 + 13;
+                xline = TMALLOC(char, xlen);
+                sprintf(xline, "b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e reciproctc=1", title_tok, node1, node2,
+                        node1, node2, equation, tc1);
+            } else {
+                xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
+                       strlen(node1) + strlen(node2) + strlen(equation)  +
+                       28 - 6*2 + 1 + 21 + 21 + 13;
+                xline = TMALLOC(char, xlen);
+                sprintf(xline, "b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e tc2=%15.8e reciproctc=1", title_tok, node1, node2,
+                        node1, node2, equation, tc1, tc2);
+            }
+            tc1_ptr = NULL;
+            tc2_ptr = NULL;
             new_line = alloc(struct line);
             new_line->li_next    = NULL;
             new_line->li_error   = NULL;
@@ -4337,6 +4369,17 @@ static void inp_compat(struct line *deck)
                 fprintf(stderr,"ERROR: mal formed C line: %s\n",curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
+            equation = gettok(&str_ptr);
+            str_ptr = strstr(cut_line, "tc1");
+            if (str_ptr) {
+                tc1_ptr = strstr(str_ptr, "=");
+                tc1 = atof(tc1_ptr+1);
+            }
+            str_ptr = strstr(cut_line, "tc2");
+            if (str_ptr) {
+                tc2_ptr = strstr(str_ptr, "=");
+                tc2 = atof(tc2_ptr+1);
+            }
             // Exxx  n-aux 0  n1 n2  1
             xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
                    + 21 - 4*2 + 1;
@@ -4349,12 +4392,27 @@ static void inp_compat(struct line *deck)
             ckt_array[1] = TMALLOC(char, xlen);
             sprintf(ckt_array[1], "c%s %s_int2 0 1", title_tok, title_tok);
             // Bxxx  n2 n1  I = i(Exxx) * equation
-            xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                   + strlen(str_ptr) + 27 - 2*5 + 1;
-            ckt_array[2] = TMALLOC(char, xlen);
-            sprintf(ckt_array[2], "b%s %s %s i = i(e%s) * (%s)",
-                    title_tok, node2, node1, title_tok, str_ptr);
-
+            if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
+                xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
+                       + strlen(equation) + 27 - 2*5 + 1;
+                ckt_array[2] = TMALLOC(char, xlen);
+                sprintf(ckt_array[2], "b%s %s %s i = i(e%s) * (%s)",
+                        title_tok, node2, node1, title_tok, equation);
+            } else if (tc2_ptr == NULL) {
+                xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
+                       + strlen(equation) + 27 - 2*5 + 1 + 21 + 13;
+                ckt_array[2] = TMALLOC(char, xlen);
+                sprintf(ckt_array[2], "b%s %s %s i = i(e%s) * (%s) tc1=%15.8e reciproctc=1",
+                        title_tok, node2, node1, title_tok, equation, tc1);
+            } else {
+                xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
+                       + strlen(equation) + 27 - 2*5 + 1 + 21 + 21 + 13;
+                ckt_array[2] = TMALLOC(char, xlen);
+                sprintf(ckt_array[2], "b%s %s %s i = i(e%s) * (%s) tc1=%15.8e tc2=%15.8e reciproctc=1",
+                        title_tok, node2, node1, title_tok, equation, tc1, tc2);
+            }
+            tc1_ptr = NULL;
+            tc2_ptr = NULL;
             // insert new B source line immediately after current line
             tmp_ptr = card->li_next;
             for ( i = 0; i < 3; i++ ) {
@@ -4402,6 +4460,17 @@ static void inp_compat(struct line *deck)
                 fprintf(stderr,"ERROR: mal formed L line: %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
+            equation = gettok(&str_ptr);
+            str_ptr = strstr(cut_line, "tc1");
+            if (str_ptr) {
+                tc1_ptr = strstr(str_ptr, "=");
+                tc1 = atof(tc1_ptr+1);
+            }
+            str_ptr = strstr(cut_line, "tc2");
+            if (str_ptr) {
+                tc2_ptr = strstr(str_ptr, "=");
+                tc2 = atof(tc2_ptr+1);
+            }
             // Fxxx  n-aux 0  Bxxx  1
             xlen = 3*strlen(title_tok)
                    + 20 - 3*2 + 1;
@@ -4414,12 +4483,27 @@ static void inp_compat(struct line *deck)
             ckt_array[1] = TMALLOC(char, xlen);
             sprintf(ckt_array[1], "l%s %s_int2 0 1", title_tok, title_tok);
             // Bxxx  n1 n2  V = v(n-aux) * equation
-            xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                   + strlen(str_ptr) + 31 - 2*5 + 1;
-            ckt_array[2] = TMALLOC(char, xlen);
-            sprintf(ckt_array[2], "b%s %s %s v = v(%s_int2) * (%s)",
-                    title_tok, node1, node2, title_tok, str_ptr);
-
+            if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
+                xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
+                       + strlen(equation) + 31 - 2*5 + 1;
+                ckt_array[2] = TMALLOC(char, xlen);
+                sprintf(ckt_array[2], "b%s %s %s v = v(%s_int2) * (%s)",
+                        title_tok, node1, node2, title_tok, equation);
+            } else if (tc2_ptr == NULL) {
+                xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
+                       + strlen(equation) + 31 - 2*5 + 1 + 21 + 13;
+                ckt_array[2] = TMALLOC(char, xlen);
+                sprintf(ckt_array[2], "b%s %s %s v = v(%s_int2) * (%s) tc1=%15.8e reciproctc=0",
+                        title_tok, node2, node1, title_tok, equation, tc1);
+            } else {
+                xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
+                       + strlen(equation) + 31 - 2*5 + 1 + 21 + 21 + 13;
+                ckt_array[2] = TMALLOC(char, xlen);
+                sprintf(ckt_array[2], "b%s %s %s v = v(%s_int2) * (%s) tc1=%15.8e tc2=%15.8e reciproctc=0",
+                        title_tok, node2, node1, title_tok, equation, tc1, tc2);
+            }
+            tc1_ptr = NULL;
+            tc2_ptr = NULL;
             // insert new B source line immediately after current line
             tmp_ptr = card->li_next;
             for ( i = 0; i < 3; i++ ) {
@@ -4875,7 +4959,7 @@ static void inp_bsource_compat(struct line *deck)
                         if ((*str_ptr == '(') || cieq(buf, "hertz")  || cieq(buf, "temper")
                                 || cieq(buf, "time") || cieq(buf, "pi") || cieq(buf, "e")
                                 || cieq(buf, "pwl")
-                                || cieq(buf, "tc") || cieq(buf, "tc1") || cieq(buf, "tc2")) {
+                                || cieq(buf, "tc1") || cieq(buf, "tc2") || cieq(buf, "reciproctc")) {
                             /* special handling of pwl lines:
                                Put braces around tokens and around expressions, use ','
                                as separator like:

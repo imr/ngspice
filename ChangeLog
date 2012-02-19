@@ -1,3 +1,9 @@
+2012-02-19  Dietmar Warning
+ * src/spicelib/devices/asrc/*.c,*.h
+ * src/frontend/inpcom.c,
+   Add reciprocal temperature behaviour for B sources used for nonlinear
+   resistors, capacitors and inductors (the latter non-reciprocal)
+
 2012-02-19  Holger Vogt
  * com_cdump.c, com_cdump.h, commands.c, smpdefs.h, spoutput.c, spsmp.c,
    command mrdump to dump the RHS of the matrix to stdout or to a file

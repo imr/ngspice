@@ -32,6 +32,7 @@ typedef struct sASRCinstance {
     double ASRCdtemp;    /* delta-temperature of a particular instance  */
     double ASRCtc1;      /* first temperature coefficient of resistors */
     double ASRCtc2;      /* second temperature coefficient of resistors */
+    int ASRCreciproctc;  /* Flag to calculate reciprocal temperature behaviour */
     double **ASRCposptr;  /* pointer to pointers of the elements
                            * in the sparce matrix */
     double ASRCprev_value; /* Previous value for the convergence test */
@@ -41,7 +42,7 @@ typedef struct sASRCinstance {
     unsigned ASRCdtempGiven  : 1;    /* indicates delta-temp specified  */
     unsigned ASRCtc1Given    : 1;    /* indicates tc1 parameter specified */
     unsigned ASRCtc2Given    : 1;    /* indicates tc2 parameter specified */
-
+    unsigned ASRCreciproctcGiven : 1; /* indicates reciproctc flag parameter specified */
 } ASRCinstance ;
 
 #define ASRCvOld ASRCstates
@@ -70,6 +71,7 @@ typedef struct sASRCmodel {       /* model structure for a source */
 #define ASRC_DTEMP 9
 #define ASRC_TC1 10
 #define ASRC_TC2 11
+#define ASRC_RTC 12
 
 /* module-wide variables */
 
