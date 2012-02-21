@@ -19,3 +19,8 @@ extern int MOS6unsetup(GENmodel*,CKTcircuit*);
 extern int MOS6temp(GENmodel*,CKTcircuit*);
 extern int MOS6trunc(GENmodel*,CKTcircuit*,double*);
 extern int MOS6convTest(GENmodel*,CKTcircuit*);
+
+#ifdef KLU
+extern int MOS6bindCSC(GENmodel*, CKTcircuit*);
+extern int MOS6bindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

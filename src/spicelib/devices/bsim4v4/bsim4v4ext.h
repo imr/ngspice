@@ -31,3 +31,8 @@ extern int BSIM4v4noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM4v4unsetup(GENmodel*,CKTcircuit*);
 
 
+
+#ifdef KLU
+extern int BSIM4v4bindCSC(GENmodel*, CKTcircuit*);
+extern int BSIM4v4bindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

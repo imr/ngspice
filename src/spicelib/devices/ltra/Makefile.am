@@ -25,6 +25,9 @@ libltra_la_SOURCES =	\
 	ltratrun.c
 
 
+if KLU_WANTED
+libltra_la_SOURCES += ltrabindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

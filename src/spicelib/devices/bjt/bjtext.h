@@ -33,3 +33,8 @@ extern int BJTnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BJTdSetup(GENmodel*, register CKTcircuit*);
 
 #endif
+
+#ifdef KLU
+extern int BJTbindCSC(GENmodel*, CKTcircuit*);
+extern int BJTbindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

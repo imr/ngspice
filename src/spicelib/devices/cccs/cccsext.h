@@ -17,3 +17,8 @@ extern void CCCSsPrint(GENmodel*,CKTcircuit*);
 extern int CCCSsSetup(SENstruct*,GENmodel*);
 extern int CCCSsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 
+
+#ifdef KLU
+extern int CCCSbindCSC(GENmodel*, CKTcircuit*);
+extern int CCCSbindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

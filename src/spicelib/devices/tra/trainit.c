@@ -72,7 +72,11 @@ SPICEdev TRAinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &TRAiSize,
- /* DEVmodSize    */ &TRAmSize
+ /* DEVmodSize    */ &TRAmSize,
+#ifdef KLU
+ /* DEVbindCSC        */   TRAbindCSC,
+ /* DEVbindCSCComplex */   TRAbindCSCComplex,
+#endif
 
 };
 

@@ -44,3 +44,8 @@ extern double LTRAh3dashCoeffSetup(double*,int,double,double,double,double*,int,
 extern void LTRArcCoeffsSetup(double*,double*,double*,double*,double*,double*,int,double,double,double,double*,int,double);
 extern void LTRArlcCoeffsSetup(double*,double*,double*,double*,double*,double*,int,double,double,double,double,double*,int,double,int*);
 extern int LTRAstraightLineCheck(double,double,double,double,double,double,double,double);
+
+#ifdef KLU
+extern int LTRAbindCSC(GENmodel*, CKTcircuit*);
+extern int LTRAbindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

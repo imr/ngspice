@@ -24,6 +24,9 @@ libccvs_la_SOURCES =	\
 	ccvssset.c
 
 
+if KLU_WANTED
+libccvs_la_SOURCES += ccvsbindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
