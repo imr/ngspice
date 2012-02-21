@@ -18,3 +18,8 @@ extern int  HFET2setup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int  HFET2temp(GENmodel*,CKTcircuit*);
 extern int  HFET2trunc(GENmodel*,CKTcircuit*,double*);
 extern int  HFET2unsetup( GENmodel*,CKTcircuit*);
+
+#ifdef KLU
+extern int HFET2bindCSC(GENmodel*, CKTcircuit*);
+extern int HFET2bindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

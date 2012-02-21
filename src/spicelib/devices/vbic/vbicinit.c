@@ -77,7 +77,11 @@ SPICEdev VBICinfo = {
     NULL,         /* DEVacct       */
 #endif                                                         
     &VBICiSize,   /* DEVinstSize    */
-    &VBICmSize    /* DEVmodSize     */
+    &VBICmSize,   /* DEVmodSize     */
+#ifdef KLU
+ /* DEVbindCSC        */   VBICbindCSC,
+ /* DEVbindCSCComplex */   VBICbindCSCComplex,
+#endif
 
 };
 

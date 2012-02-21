@@ -34,10 +34,10 @@ struct SMPmatrix {
     double *CKTkluAx ;                    /* KLU element */
     double *CKTkluIntermediate ;          /* KLU RHS Intermediate for Solve Real Step */
     double *CKTkluIntermediate_Complex ;  /* KLU iRHS Intermediate for Solve Complex Step */
-    double **CKTkluBind_Sparse ;          /* KLU - Sparse original element position */
-    double **CKTkluBind_KLU ;             /* KLU - KLU new element position */
-    double **CKTkluBind_KLU_Complex ;     /* KLU - KLU new element position in Complex analysis */
-    double **CKTkluDiag ;                 /* KLU pointer to diagonal element to perform Gmin */
+    double **CKTbind_Sparse ;             /* KLU - Sparse original element position */
+    double **CKTbind_CSC ;                /* KLU - KLU new element position */
+    double **CKTbind_CSC_Complex ;        /* KLU - KLU new element position in Complex analysis */
+    double **CKTdiag_CSC ;                 /* KLU pointer to diagonal element to perform Gmin */
     int CKTkluN ;                         /* KLU N, copied */
     int CKTklunz ;                        /* KLU nz, copied for AC Analysis */
     int CKTkluMODE ;                      /* KLU MODE parameter to enable KLU or not from the heuristic */

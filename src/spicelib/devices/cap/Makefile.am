@@ -30,7 +30,7 @@ libcap_la_SOURCES =	\
 	captrunc.c
 
 if KLU_WANTED
-libcap_la_SOURCES += capbindklu.c
+libcap_la_SOURCES += capbindCSC.c
 endif
 
 

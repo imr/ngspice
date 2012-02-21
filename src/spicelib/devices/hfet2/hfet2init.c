@@ -72,7 +72,11 @@ SPICEdev HFET2info = {
  /* DEVacct       */ NULL,
 #endif    
  /* DEVinstSize   */ &HFET2iSize,
- /* DEVmodSize    */ &HFET2mSize
+ /* DEVmodSize    */ &HFET2mSize,
+#ifdef KLU
+ /* DEVbindCSC        */   HFET2bindCSC,
+ /* DEVbindCSCComplex */   HFET2bindCSCComplex,
+#endif
 
 };
 

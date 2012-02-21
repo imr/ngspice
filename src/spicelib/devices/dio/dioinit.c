@@ -73,7 +73,12 @@ SPICEdev DIOinfo = {
  /* DEVacct       */ NULL,
 #endif                     
  /* DEVinstSize   */ &DIOiSize,
- /* DEVmodSize    */ &DIOmSize
+ /* DEVmodSize    */ &DIOmSize,
+#ifdef KLU
+ /* DEVbindCSC        */   DIObindCSC,
+ /* DEVbindCSCComplex */   DIObindCSCComplex,
+#endif
+
 };
 
 

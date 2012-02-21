@@ -102,8 +102,8 @@ typedef struct SPICEdev {
     int *DEVmodSize;     /* size of a model */
 
 #ifdef KLU
-    int (*DEVbindklu)(GENmodel*, CKTcircuit*);
-    int (*DEVbindkluComplex)(GENmodel*, CKTcircuit*);
+    int (*DEVbindCSC)(GENmodel*, CKTcircuit*);
+    int (*DEVbindCSCComplex)(GENmodel*, CKTcircuit*);
 #endif
 
 } SPICEdev;  /* instance of structure for each possible type of device */

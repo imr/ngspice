@@ -70,7 +70,11 @@ SPICEdev HSM2info = {
  /* DEVacct       */ NULL,
 #endif
  /* DEVinstSize   */ &HSM2iSize,
- /* DEVmodSize    */ &HSM2mSize
+ /* DEVmodSize    */ &HSM2mSize,
+#ifdef KLU
+ /* DEVbindCSC        */   HSM2bindCSC,
+ /* DEVbindCSCComplex */   HSM2bindCSCComplex,
+#endif
 
 };
 

@@ -24,7 +24,7 @@ libvsrc_la_SOURCES =	\
 	vsrctemp.c
 
 if KLU_WANTED
-libvsrc_la_SOURCES += vsrcbindklu.c
+libvsrc_la_SOURCES += vsrcbindCSC.c
 endif
 
 

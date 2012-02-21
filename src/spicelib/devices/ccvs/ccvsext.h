@@ -17,3 +17,8 @@ extern void CCVSsPrint(GENmodel*,CKTcircuit*);
 extern int CCVSsSetup(SENstruct*,GENmodel*);
 extern int CCVSsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int CCVSunsetup(GENmodel*,CKTcircuit*);
+
+#ifdef KLU
+extern int CCVSbindCSC(GENmodel*, CKTcircuit*);
+extern int CCVSbindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

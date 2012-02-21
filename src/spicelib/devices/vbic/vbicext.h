@@ -27,3 +27,8 @@ extern int VBICtrunc(GENmodel*,CKTcircuit*,double*);
 extern int VBICnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 
 #endif
+
+#ifdef KLU
+extern int VBICbindCSC(GENmodel*, CKTcircuit*);
+extern int VBICbindCSCComplex(GENmodel*, CKTcircuit*);
+#endif
