@@ -8,7 +8,7 @@ Author: 2012 Francesco Lannutti
 #include "ngspice/sperror.h"
 
 int
-VSRCbindklu(GENmodel *inModel, CKTcircuit *ckt)
+VSRCbindCSC(GENmodel *inModel, CKTcircuit *ckt)
 {
     VSRCmodel *model = (VSRCmodel *)inModel;
     int i ;
@@ -23,26 +23,26 @@ VSRCbindklu(GENmodel *inModel, CKTcircuit *ckt)
 
 		i = 0 ;
 		if ((here->VSRCposNode != 0) && (here->VSRCbranch != 0)) {
-			while (here->VSRCposIbrptr != ckt->CKTmatrix->CKTkluBind_Sparse [i]) i ++ ;
-			here->VSRCposIbrptr = ckt->CKTmatrix->CKTkluBind_KLU [i] ;
+			while (here->VSRCposIbrptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
+			here->VSRCposIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
 		}
 
 		i = 0 ;
 		if ((here->VSRCnegNode != 0) && (here->VSRCbranch != 0)) {
-			while (here->VSRCnegIbrptr != ckt->CKTmatrix->CKTkluBind_Sparse [i]) i ++ ;
-			here->VSRCnegIbrptr = ckt->CKTmatrix->CKTkluBind_KLU [i] ;
+			while (here->VSRCnegIbrptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
+			here->VSRCnegIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
 		}
 
 		i = 0 ;
 		if ((here->VSRCbranch != 0) && (here->VSRCnegNode != 0)) {
-			while (here->VSRCibrNegptr != ckt->CKTmatrix->CKTkluBind_Sparse [i]) i ++ ;
-			here->VSRCibrNegptr = ckt->CKTmatrix->CKTkluBind_KLU [i] ;
+			while (here->VSRCibrNegptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
+			here->VSRCibrNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
 		}
 
 		i = 0 ;
 		if ((here->VSRCbranch != 0) && (here->VSRCposNode != 0)) {
-			while (here->VSRCibrPosptr != ckt->CKTmatrix->CKTkluBind_Sparse [i]) i ++ ;
-			here->VSRCibrPosptr = ckt->CKTmatrix->CKTkluBind_KLU [i] ;
+			while (here->VSRCibrPosptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
+			here->VSRCibrPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
 		}
 	}
     }
@@ -50,7 +50,7 @@ VSRCbindklu(GENmodel *inModel, CKTcircuit *ckt)
 }
 
 int
-VSRCbindkluComplex(GENmodel *inModel, CKTcircuit *ckt)
+VSRCbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
 {
     VSRCmodel *model = (VSRCmodel *)inModel;
     int i ;
@@ -65,26 +65,26 @@ VSRCbindkluComplex(GENmodel *inModel, CKTcircuit *ckt)
 
 		i = 0 ;
 		if ((here->VSRCposNode != 0) && (here->VSRCbranch != 0)) {
-			while (here->VSRCposIbrptr != ckt->CKTmatrix->CKTkluBind_KLU [i]) i ++ ;
-			here->VSRCposIbrptr = ckt->CKTmatrix->CKTkluBind_KLU_Complex [i] ;
+			while (here->VSRCposIbrptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
+			here->VSRCposIbrptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
 		}
 
 		i = 0 ;
 		if ((here->VSRCnegNode != 0) && (here->VSRCbranch != 0)) {
-			while (here->VSRCnegIbrptr != ckt->CKTmatrix->CKTkluBind_KLU [i]) i ++ ;
-			here->VSRCnegIbrptr = ckt->CKTmatrix->CKTkluBind_KLU_Complex [i] ;
+			while (here->VSRCnegIbrptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
+			here->VSRCnegIbrptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
 		}
 
 		i = 0 ;
 		if ((here->VSRCbranch != 0) && (here->VSRCnegNode != 0)) {
-			while (here->VSRCibrNegptr != ckt->CKTmatrix->CKTkluBind_KLU [i]) i ++ ;
-			here->VSRCibrNegptr = ckt->CKTmatrix->CKTkluBind_KLU_Complex [i] ;
+			while (here->VSRCibrNegptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
+			here->VSRCibrNegptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
 		}
 
 		i = 0 ;
 		if ((here->VSRCbranch != 0) && (here->VSRCposNode != 0)) {
-			while (here->VSRCibrPosptr != ckt->CKTmatrix->CKTkluBind_KLU [i]) i ++ ;
-			here->VSRCibrPosptr = ckt->CKTmatrix->CKTkluBind_KLU_Complex [i] ;
+			while (here->VSRCibrPosptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
+			here->VSRCibrPosptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
 		}
 	}
     }
