@@ -9,7 +9,6 @@ Author: 1985 Thomas L. Quarles
 #include "vccsdefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
-#include "vccsext.h"
 
 
 int
