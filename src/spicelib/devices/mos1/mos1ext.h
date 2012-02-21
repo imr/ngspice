@@ -28,3 +28,8 @@ extern int MOS1convTest(GENmodel*,CKTcircuit*);
 extern int MOS1disto(int,GENmodel*,CKTcircuit*);
 extern int MOS1noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int MOS1dSetup(GENmodel*,CKTcircuit*);
+
+#ifdef KLU
+extern int MOS1bindCSC(GENmodel*, CKTcircuit*);
+extern int MOS1bindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

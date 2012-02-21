@@ -28,3 +28,8 @@ extern int MOS9trunc(GENmodel*,CKTcircuit*,double*);
 extern int MOS9disto(int,GENmodel*,CKTcircuit*);
 extern int MOS9noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int MOS9dSetup(GENmodel*,CKTcircuit*);
+
+#ifdef KLU
+extern int MOS9bindCSC(GENmodel*, CKTcircuit*);
+extern int MOS9bindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

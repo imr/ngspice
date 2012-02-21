@@ -36,4 +36,12 @@ extern void MUTsPrint(GENmodel*,CKTcircuit*);
 extern int MUTsSetup(SENstruct*,GENmodel*);
 extern int MUTsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int MUTtemp(GENmodel *inModel, CKTcircuit *ckt);
+
+#ifdef KLU
+extern int INDbindCSC(GENmodel*, CKTcircuit*);
+extern int INDbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int MUTbindCSC(GENmodel*, CKTcircuit*);
+extern int MUTbindCSCComplex(GENmodel*, CKTcircuit*);
+#endif
+
 #endif

@@ -65,3 +65,8 @@ extern int SOI3convTest(GENmodel*,CKTcircuit*);
 
 /* extern int SOI3disto(int,GENmodel*,CKTcircuit*); */
 extern int SOI3noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+
+#ifdef KLU
+extern int SOI3bindCSC(GENmodel*, CKTcircuit*);
+extern int SOI3bindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

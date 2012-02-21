@@ -72,7 +72,12 @@ SPICEdev ISRCinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &ISRCiSize,
- /* DEVmodSize    */ &ISRCmSize
+ /* DEVmodSize    */ &ISRCmSize,
+#ifdef KLU
+ /* DEVbindCSC        */   NULL,
+ /* DEVbindCSCComplex */   NULL,
+#endif
+
 };
 
 

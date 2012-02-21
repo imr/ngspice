@@ -72,7 +72,12 @@ SPICEdev MOS6info = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &MOS6iSize,
- /* DEVmodSize    */ &MOS6mSize
+ /* DEVmodSize    */ &MOS6mSize,
+#ifdef KLU
+ /* DEVbindCSC        */   MOS6bindCSC,
+ /* DEVbindCSCComplex */   MOS6bindCSCComplex,
+#endif
+
 };
 
 

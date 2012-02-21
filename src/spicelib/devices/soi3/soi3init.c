@@ -72,7 +72,11 @@ SPICEdev SOI3info = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &SOI3iSize,
- /* DEVmodSize    */ &SOI3mSize
+ /* DEVmodSize    */ &SOI3mSize,
+#ifdef KLU
+ /* DEVbindCSC        */   SOI3bindCSC,
+ /* DEVbindCSCComplex */   SOI3bindCSCComplex,
+#endif
 
 };
 

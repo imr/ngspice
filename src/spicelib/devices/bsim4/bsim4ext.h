@@ -28,3 +28,8 @@ extern int BSIM4temp(GENmodel*,CKTcircuit*);
 extern int BSIM4trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM4noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM4unsetup(GENmodel*,CKTcircuit*);
+
+#ifdef KLU
+extern int BSIM4bindCSC(GENmodel*, CKTcircuit*);
+extern int BSIM4bindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

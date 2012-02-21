@@ -72,8 +72,11 @@ SPICEdev VCCSinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &VCCSiSize,
- /* DEVmodSize    */ &VCCSmSize
-
+ /* DEVmodSize    */ &VCCSmSize,
+#ifdef KLU
+ /* DEVbindCSC        */   VCCSbindCSC,
+ /* DEVbindCSCComplex */   VCCSbindCSCComplex,
+#endif
 
 };
 

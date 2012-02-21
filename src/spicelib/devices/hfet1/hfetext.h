@@ -18,3 +18,8 @@ extern int HFETAsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int HFETAtemp(GENmodel*,CKTcircuit*);
 extern int HFETAtrunc(GENmodel*,CKTcircuit*,double*);
 extern int HFETAunsetup(GENmodel*,CKTcircuit*);
+
+#ifdef KLU
+extern int HFETAbindCSC(GENmodel*, CKTcircuit*);
+extern int HFETAbindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

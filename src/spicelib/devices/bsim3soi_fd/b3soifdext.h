@@ -29,3 +29,8 @@ extern int B3SOIFDtrunc(GENmodel*,CKTcircuit*,double*);
 extern int B3SOIFDnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int B3SOIFDunsetup(GENmodel*,CKTcircuit*);
 
+
+#ifdef KLU
+extern int B3SOIFDbindCSC(GENmodel*, CKTcircuit*);
+extern int B3SOIFDbindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

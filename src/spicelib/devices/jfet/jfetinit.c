@@ -72,7 +72,11 @@ SPICEdev JFETinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &JFETiSize,
- /* DEVmodSize    */ &JFETmSize
+ /* DEVmodSize    */ &JFETmSize,
+#ifdef KLU
+ /* DEVbindCSC        */   JFETbindCSC,
+ /* DEVbindCSCComplex */   JFETbindCSCComplex,
+#endif
 
 };
 

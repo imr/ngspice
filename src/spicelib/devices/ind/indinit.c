@@ -71,7 +71,11 @@ SPICEdev INDinfo = {
  /* DEVacct       */ NULL,
 #endif                       
  /* DEVinstSize   */ &INDiSize,
- /* DEVmodSize    */ &INDmSize
+ /* DEVmodSize    */ &INDmSize,
+#ifdef KLU
+ /* DEVbindCSC        */   INDbindCSC,
+ /* DEVbindCSCComplex */   INDbindCSCComplex,
+#endif
 
 };
 
@@ -140,7 +144,11 @@ SPICEdev MUTinfo = {
  /* DEVacct       */ NULL,
 #endif  
     &MUTiSize,
-    &MUTmSize
+    &MUTmSize,
+#ifdef KLU
+ /* DEVbindCSC        */   MUTbindCSC,
+ /* DEVbindCSCComplex */   MUTbindCSCComplex,
+#endif
 
 };
 

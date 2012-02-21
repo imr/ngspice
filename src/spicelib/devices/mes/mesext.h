@@ -23,3 +23,8 @@ extern int MESdisto(int,GENmodel*,CKTcircuit*);
 extern int MESnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int MESdSetup(GENmodel*,CKTcircuit*);
 
+
+#ifdef KLU
+extern int MESbindCSC(GENmodel*, CKTcircuit*);
+extern int MESbindCSCComplex(GENmodel*, CKTcircuit*);
+#endif

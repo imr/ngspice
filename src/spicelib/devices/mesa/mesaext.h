@@ -18,3 +18,8 @@ extern int MESAsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int MESAtemp(GENmodel*,CKTcircuit*);
 extern int MESAtrunc(GENmodel*,CKTcircuit*,double*);
 extern int MESAunsetup(GENmodel*,CKTcircuit*);
+
+#ifdef KLU
+extern int MESAbindCSC(GENmodel*, CKTcircuit*);
+extern int MESAbindCSCComplex(GENmodel*, CKTcircuit*);
+#endif
