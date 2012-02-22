@@ -92,6 +92,8 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			*saved_irhs = 0;
 	MatrixFrame	*saved_matrix = 0;
 
+        delta_Y = TMALLOC(SMPmatrix, 1);
+
 #ifndef notdef
 #ifdef notdef
 	for (sg = sgen_init(ckt, 0); sg; sgen_next(&sg)) {
