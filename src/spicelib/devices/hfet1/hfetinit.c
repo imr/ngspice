@@ -73,7 +73,7 @@ SPICEdev HFETAinfo = {
 #endif    
  /* DEVinstSize   */ &HFETAiSize,
  /* DEVmodSize    */ &HFETAmSize,
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindCSC        */   HFETAbindCSC,
  /* DEVbindCSCComplex */   HFETAbindCSC,
 #endif

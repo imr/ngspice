@@ -75,7 +75,7 @@ SPICEdev CSWinfo = {
 #endif
  /* DEVinstSize   */ &CSWiSize,
  /* DEVmodSize    */ &CSWmSize,
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindCSC        */   CSWbindCSC,
  /* DEVbindCSCComplex */   CSWbindCSCComplex,
 #endif

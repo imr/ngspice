@@ -73,7 +73,7 @@ SPICEdev BSIM4v5info = {
 #endif
     &BSIM4v5iSize,   /* DEVinstSize    */
     &BSIM4v5mSize,   /* DEVmodSize     */
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindCSC        */   BSIM4v5bindCSC,
  /* DEVbindCSCComplex */   BSIM4v5bindCSCComplex,
 #endif

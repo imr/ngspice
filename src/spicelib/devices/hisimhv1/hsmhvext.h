@@ -38,7 +38,7 @@ extern int HSMHVtemp(GENmodel*,CKTcircuit*);
 extern int HSMHVtrunc(GENmodel*,CKTcircuit*,double*);
 extern int HSMHVnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int HSMHVbindCSC(GENmodel*, CKTcircuit*);
 extern int HSMHVbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

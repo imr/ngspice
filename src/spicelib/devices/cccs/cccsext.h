@@ -18,7 +18,7 @@ extern int CCCSsSetup(SENstruct*,GENmodel*);
 extern int CCCSsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int CCCSbindCSC(GENmodel*, CKTcircuit*);
 extern int CCCSbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

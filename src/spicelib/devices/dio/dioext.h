@@ -29,7 +29,7 @@ extern int DIOdisto(int,GENmodel*,CKTcircuit*);
 extern int DIOnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int DIOdSetup(DIOmodel*,CKTcircuit*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int DIObindCSC(GENmodel*, CKTcircuit*);
 extern int DIObindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

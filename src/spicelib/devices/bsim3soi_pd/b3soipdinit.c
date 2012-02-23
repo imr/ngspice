@@ -72,7 +72,7 @@ SPICEdev B3SOIPDinfo = {
 #endif
  /* DEVinstSize*/   &B3SOIPDiSize,
  /* DEVmodSize*/    &B3SOIPDmSize,
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindCSC        */   B3SOIPDbindCSC,
  /* DEVbindCSCComplex */   B3SOIPDbindCSCComplex,
 #endif

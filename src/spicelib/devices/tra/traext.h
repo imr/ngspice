@@ -17,7 +17,7 @@ extern int TRAunsetup(GENmodel*,CKTcircuit*);
 extern int TRAtemp(GENmodel*,CKTcircuit*);
 extern int TRAtrunc(GENmodel*,CKTcircuit*,double*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int TRAbindCSC(GENmodel*, CKTcircuit*);
 extern int TRAbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

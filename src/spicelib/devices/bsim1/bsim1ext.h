@@ -30,7 +30,7 @@ extern int B1trunc(GENmodel*,CKTcircuit*,double*);
 extern int B1disto(int,GENmodel*,CKTcircuit*);
 extern int B1dSetup(GENmodel*, register CKTcircuit*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int B1bindCSC(GENmodel*, CKTcircuit*);
 extern int B1bindCSCComplex(GENmodel*, CKTcircuit*);
 #endif
