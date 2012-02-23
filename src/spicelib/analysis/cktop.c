@@ -27,7 +27,7 @@ CKTop (CKTcircuit * ckt, long int firstmode, long int continuemode,
 #endif
 ckt->CKTmode = firstmode;
 
-#ifdef KLU
+#if defined(KLU)
     if (ckt->CKTmatrix->CKTkluMODE) {
 
         int i ;
@@ -45,6 +45,39 @@ ckt->CKTmode = firstmode;
         ckt->CKTmatrix->CKTdiag_CSC        = TMALLOC (double *, n) ;
 
         SMPmatrix_CSC (ckt->CKTmatrix) ;
+
+        for (i = 0 ; i < DEVmaxnum ; i++)
+            if (DEVices [i] && DEVices [i]->DEVbindCSC)
+                DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
+    }
+#elif defined(SuperLU)
+    if (ckt->CKTmatrix->CKTsuperluMODE)
+    {
+        int i ;
+        int n  = ckt->CKTmatrix->CKTsuperluN ;
+        int nz = ckt->CKTmatrix->CKTsuperlunz ;
+
+	ckt->CKTmatrix->CKTsuperluAp = 		TMALLOC (int, n + 1) ;
+	ckt->CKTmatrix->CKTsuperluAi = 		TMALLOC (int, nz) ;
+	ckt->CKTmatrix->CKTsuperluAx = 		TMALLOC (double, nz) ;
+	ckt->CKTmatrix->CKTsuperluPerm_c = 	TMALLOC (int, n) ;
+	ckt->CKTmatrix->CKTsuperluPerm_r = 	TMALLOC (int, n) ;
+	ckt->CKTmatrix->CKTsuperluEtree = 		TMALLOC (int, n) ;
+
+	ckt->CKTmatrix->CKTsuperluIntermediate = 	TMALLOC (double, n) ;
+
+	ckt->CKTmatrix->CKTbind_Sparse = 	TMALLOC (double *, nz) ;
+	ckt->CKTmatrix->CKTbind_CSC = 		TMALLOC (double *, nz) ;
+
+	ckt->CKTmatrix->CKTdiag_CSC = 	TMALLOC (double *, n) ;
+
+        SMPmatrix_CSC (ckt->CKTmatrix) ;
+
+	dCreate_CompCol_Matrix (&(ckt->CKTmatrix->CKTsuperluA), n, n, nz, ckt->CKTmatrix->CKTsuperluAx,
+                                ckt->CKTmatrix->CKTsuperluAi, ckt->CKTmatrix->CKTsuperluAp, SLU_NC, SLU_D, SLU_GE) ;
+	dCreate_Dense_Matrix (&(ckt->CKTmatrix->CKTsuperluI), n, 1, ckt->CKTmatrix->CKTsuperluIntermediate,
+                              n, SLU_DN, SLU_D, SLU_GE) ;
+	StatInit (&(ckt->CKTmatrix->CKTsuperluStat)) ;
 
         for (i = 0 ; i < DEVmaxnum ; i++)
             if (DEVices [i] && DEVices [i]->DEVbindCSC)

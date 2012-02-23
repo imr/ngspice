@@ -18,14 +18,16 @@ Modified: 2000  AlansFixes
 #include <math.h>
 #include "ngspice/complex.h"
 
-#ifdef KLU
+#if defined(KLU)
 #include "ngspice/klu.h"
+#elif defined(SuperLU)
+#include "ngspice/slu_ddefs.h"
 #endif
 
 struct SMPmatrix {
     MatrixFrame *SPmatrix ;               /* pointer to sparse matrix */
 
-#ifdef KLU
+#if defined(KLU)
     klu_common *CKTkluCommon ;            /* KLU common object */
     klu_symbolic *CKTkluSymbolic ;        /* KLU symbolic object */
     klu_numeric *CKTkluNumeric ;          /* KLU numeric object */
@@ -43,6 +45,31 @@ struct SMPmatrix {
     int CKTkluMODE ;                      /* KLU MODE parameter to enable KLU or not from the heuristic */
     #define CKTkluON  1                   /* KLU MODE ON  definition */
     #define CKTkluOFF 0                   /* KLU MODE OFF definition */
+#elif defined(SuperLU)
+    int *CKTsuperluAp ;
+    int *CKTsuperluAi ;
+    double *CKTsuperluAx ;
+    SuperMatrix CKTsuperluA ;
+    SuperMatrix CKTsuperluL ;
+    SuperMatrix CKTsuperluU ;
+    SuperMatrix CKTsuperluI ;
+    SuperMatrix CKTsuperluAC ;
+    int *CKTsuperluPerm_r ;
+    int *CKTsuperluPerm_c ;
+    int CKTsuperluInfo ;
+    int *CKTsuperluEtree ;
+    superlu_options_t CKTsuperluOptions ;
+    SuperLUStat_t CKTsuperluStat ;
+    double *CKTsuperluIntermediate ;
+    double **CKTbind_Sparse ;
+    double **CKTbind_CSC ;
+    double **CKTbind_CSC_Complex ;
+    double **CKTdiag_CSC ;
+    int CKTsuperluN ;
+    int CKTsuperlunz ;
+    int CKTsuperluMODE ;
+    #define CKTsuperluON 1		   /* SuperLU MODE ON definition */
+    #define CKTsuperluOFF 0		   /* SuperLU MODE OFF definition */
 #endif
 
 };
@@ -51,7 +78,7 @@ struct SMPmatrix {
 typedef struct SMPmatrix SMPmatrix ;
 
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 void SMPmatrix_CSC ( SMPmatrix * ) ;
 void SMPnnz ( SMPmatrix * ) ;
 #endif
