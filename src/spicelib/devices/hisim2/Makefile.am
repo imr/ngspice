@@ -35,6 +35,10 @@ if KLU_WANTED
 libhisim2_la_SOURCES += hsm2bindCSC.c
 endif
 
+if SuperLU_WANTED
+libhisim2_la_SOURCES += hsm2bindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

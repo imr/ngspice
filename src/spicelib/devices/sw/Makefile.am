@@ -28,6 +28,11 @@ if KLU_WANTED
 libsw_la_SOURCES += swbindCSC.c
 endif
 
+if SuperLU_WANTED
+libsw_la_SOURCES += swbindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
+
 MAINTAINERCLEANFILES = Makefile.in

@@ -71,7 +71,7 @@ SPICEdev HSM2info = {
 #endif
  /* DEVinstSize   */ &HSM2iSize,
  /* DEVmodSize    */ &HSM2mSize,
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindCSC        */   HSM2bindCSC,
  /* DEVbindCSCComplex */   HSM2bindCSCComplex,
 #endif

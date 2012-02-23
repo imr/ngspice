@@ -19,7 +19,7 @@ extern int MESAtemp(GENmodel*,CKTcircuit*);
 extern int MESAtrunc(GENmodel*,CKTcircuit*,double*);
 extern int MESAunsetup(GENmodel*,CKTcircuit*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int MESAbindCSC(GENmodel*, CKTcircuit*);
 extern int MESAbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

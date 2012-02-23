@@ -33,6 +33,9 @@ if KLU_WANTED
 libcap_la_SOURCES += capbindCSC.c
 endif
 
+if SuperLU_WANTED
+libcap_la_SOURCES += capbindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

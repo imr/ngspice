@@ -26,7 +26,7 @@ extern int B2unsetup(GENmodel*,CKTcircuit*);
 extern int B2temp(GENmodel*,CKTcircuit*);
 extern int B2trunc(GENmodel*,CKTcircuit*,double*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int B2bindCSC(GENmodel*, CKTcircuit*);
 extern int B2bindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

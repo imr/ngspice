@@ -73,7 +73,7 @@ SPICEdev SOI3info = {
 #endif                        
  /* DEVinstSize   */ &SOI3iSize,
  /* DEVmodSize    */ &SOI3mSize,
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindCSC        */   SOI3bindCSC,
  /* DEVbindCSCComplex */   SOI3bindCSCComplex,
 #endif

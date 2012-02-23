@@ -44,6 +44,11 @@ if KLU_WANTED
 libind_la_SOURCES += indMUTbindCSC.c
 endif
 
+if SuperLU_WANTED
+libind_la_SOURCES += indMUTbindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
+
 MAINTAINERCLEANFILES = Makefile.in

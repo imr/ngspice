@@ -23,7 +23,7 @@ extern int JFETdisto(int,GENmodel*,CKTcircuit*);
 extern int JFETnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int JFETdSetup(GENmodel*,CKTcircuit*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int JFETbindCSC(GENmodel*, CKTcircuit*);
 extern int JFETbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

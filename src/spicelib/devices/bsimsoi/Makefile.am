@@ -32,6 +32,10 @@ if KLU_WANTED
 libbsim4soi_la_SOURCES += b4soibindCSC.c
 endif
 
+if SuperLU_WANTED
+libbsim4soi_la_SOURCES += b4soibindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

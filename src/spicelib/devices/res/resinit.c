@@ -73,7 +73,7 @@ SPICEdev RESinfo = {
 #endif                        
  /* DEVinstSize   */ &RESiSize,
  /* DEVmodSize    */ &RESmSize,
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindCSC        */   RESbindCSC,
  /* DEVbindCSCComplex */   RESbindCSCComplex,
 #endif
