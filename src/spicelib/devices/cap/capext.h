@@ -23,7 +23,7 @@ extern int CAPsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int CAPtemp(GENmodel*,CKTcircuit*);
 extern int CAPtrunc(GENmodel*,CKTcircuit*,double*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int CAPbindCSC(GENmodel*, CKTcircuit*);
 extern int CAPbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

@@ -20,7 +20,7 @@ extern int MOS6temp(GENmodel*,CKTcircuit*);
 extern int MOS6trunc(GENmodel*,CKTcircuit*,double*);
 extern int MOS6convTest(GENmodel*,CKTcircuit*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int MOS6bindCSC(GENmodel*, CKTcircuit*);
 extern int MOS6bindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

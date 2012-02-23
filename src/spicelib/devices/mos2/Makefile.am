@@ -38,6 +38,11 @@ if KLU_WANTED
 libmos2_la_SOURCES += mos2bindCSC.c
 endif
 
+if SuperLU_WANTED
+libmos2_la_SOURCES += mos2bindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
+
 MAINTAINERCLEANFILES = Makefile.in

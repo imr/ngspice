@@ -73,7 +73,7 @@ SPICEdev ISRCinfo = {
 #endif                        
  /* DEVinstSize   */ &ISRCiSize,
  /* DEVmodSize    */ &ISRCmSize,
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindCSC        */   NULL,
  /* DEVbindCSCComplex */   NULL,
 #endif

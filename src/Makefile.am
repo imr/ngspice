@@ -174,6 +174,10 @@ if KLU_WANTED
 ngspice_LDADD += maths/KLU/libKLU.la
 endif
 
+if SuperLU_WANTED
+ngspice_LDADD += maths/SuperLU/libSuperLU.la
+endif
+
 ngspice_LDADD += \
 	maths/sparse/libsparse.la \
 	misc/libmisc.la
@@ -278,6 +282,10 @@ ngmultidec_LDADD =  \
 
 if KLU_WANTED
 ngmultidec_LDADD += maths/KLU/libKLU.la
+endif
+
+if SuperLU_WANTED
+ngmultidec_LDADD += maths/SuperLU/libSuperLU.la
 endif
 
 ## ngmakeidx:
@@ -413,6 +421,10 @@ endif
 
 if KLU_WANTED
 libspice_la_LIBADD += maths/KLU/libKLU.la
+endif
+
+if SuperLU_WANTED
+libspice_la_LIBADD += maths/SuperLU/libSuperLU.la
 endif
 
 libspice_la_LIBADD += \

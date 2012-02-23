@@ -73,7 +73,7 @@ SPICEdev LTRAinfo = {
 #endif                        
  /* DEVinstSize   */ &LTRAiSize,
  /* DEVmodSize    */ &LTRAmSize,
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindCSC        */   LTRAbindCSC,
  /* DEVbindCSCComplex */   LTRAbindCSCComplex,
 #endif

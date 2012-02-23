@@ -23,7 +23,7 @@ extern int JFET2temp(GENmodel*,CKTcircuit*);
 extern int JFET2trunc(GENmodel*,CKTcircuit*,double*);
 extern int JFET2noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int JFET2bindCSC(GENmodel*, CKTcircuit*);
 extern int JFET2bindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

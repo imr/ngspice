@@ -30,7 +30,7 @@ extern int B3SOIFDnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int B3SOIFDunsetup(GENmodel*,CKTcircuit*);
 
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int B3SOIFDbindCSC(GENmodel*, CKTcircuit*);
 extern int B3SOIFDbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

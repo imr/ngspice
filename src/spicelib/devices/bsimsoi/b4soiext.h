@@ -31,7 +31,7 @@ extern int B4SOItrunc(GENmodel*,CKTcircuit*,double*);
 extern int B4SOInoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int B4SOIunsetup(GENmodel*,CKTcircuit*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int B4SOIbindCSC(GENmodel*, CKTcircuit*);
 extern int B4SOIbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

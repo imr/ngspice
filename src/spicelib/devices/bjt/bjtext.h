@@ -34,7 +34,7 @@ extern int BJTdSetup(GENmodel*, register CKTcircuit*);
 
 #endif
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int BJTbindCSC(GENmodel*, CKTcircuit*);
 extern int BJTbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

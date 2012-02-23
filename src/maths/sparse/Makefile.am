@@ -17,7 +17,11 @@ libsparse_la_SOURCES = \
 if KLU_WANTED
 libsparse_la_SOURCES += spCSC.c
 else
+if SuperLU_WANTED
+libsparse_la_SOURCES += spCSC.c
+else
 libsparse_la_SOURCES += spsmp.c
+endif
 endif
 
 

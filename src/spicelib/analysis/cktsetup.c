@@ -78,8 +78,11 @@ CKTsetup(CKTcircuit *ckt)
         }
     }
 
-#ifdef KLU
+#if defined(KLU)
     if (ckt->CKTmatrix->CKTkluMODE)
+        SMPnnz (ckt->CKTmatrix) ;
+#elif defined(SuperLU)
+    if (ckt->CKTmatrix->CKTsuperluMODE)
         SMPnnz (ckt->CKTmatrix) ;
 #endif
 

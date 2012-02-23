@@ -73,7 +73,7 @@ SPICEdev URCinfo = {
 #endif                        
  /* DEVinstSize   */ &URCiSize,
  /* DEVmodSize    */ &URCmSize,
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindCSC        */   NULL,
  /* DEVbindCSCComplex */   NULL,
 #endif

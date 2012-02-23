@@ -73,7 +73,7 @@ SPICEdev B1info = {
 #endif    
  /* DEVinstSize   */ &B1iSize,
  /* DEVmodSize    */ &B1mSize,
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindCSC        */   B1bindCSC,
  /* DEVbindCSCComplex */   B1bindCSCComplex,
 #endif

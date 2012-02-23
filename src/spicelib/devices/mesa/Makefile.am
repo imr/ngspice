@@ -29,6 +29,11 @@ if KLU_WANTED
 libmesa_la_SOURCES += mesabindCSC.c
 endif
 
+if SuperLU_WANTED
+libmesa_la_SOURCES += mesabindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
+
 MAINTAINERCLEANFILES = Makefile.in

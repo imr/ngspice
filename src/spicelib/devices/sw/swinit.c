@@ -74,7 +74,7 @@ SPICEdev SWinfo = {
 #endif /* CIDER */                        
  /* DEVinstSize   */ &SWiSize,
  /* DEVmodSize    */ &SWmSize,
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindCSC        */   SWbindCSC,
  /* DEVbindCSCComplex */   SWbindCSCComplex,
 #endif

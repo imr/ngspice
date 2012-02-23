@@ -31,7 +31,7 @@ NIinit(CKTcircuit *ckt)
 /* Allocation of the new SMPmatrix structure - Francesco Lannuti (2012-02) */
     ckt->CKTmatrix = TMALLOC (SMPmatrix, 1) ;
 
-#ifdef KLU
+#if defined(KLU)
     ckt->CKTmatrix->CKTkluCommon = TMALLOC (klu_common, 1) ;
     ckt->CKTmatrix->CKTkluSymbolic = NULL ;
     ckt->CKTmatrix->CKTkluNumeric = NULL ;
@@ -49,6 +49,23 @@ NIinit(CKTcircuit *ckt)
     ckt->CKTmatrix->CKTkluMODE = CKTkluON ; /* TO BE SUBSTITUTED WITH THE HEURISTICS */
 
     klu_defaults (ckt->CKTmatrix->CKTkluCommon) ;
+
+#elif defined(SuperLU)
+    ckt->CKTmatrix->CKTsuperluAp = NULL ;
+    ckt->CKTmatrix->CKTsuperluAi = NULL ;
+    ckt->CKTmatrix->CKTsuperluAx = NULL ;
+    ckt->CKTmatrix->CKTsuperluPerm_r = NULL ;
+    ckt->CKTmatrix->CKTsuperluPerm_c = NULL ;
+    ckt->CKTmatrix->CKTsuperluInfo = 0 ;
+    ckt->CKTmatrix->CKTsuperluEtree = NULL ;
+    ckt->CKTmatrix->CKTsuperluIntermediate = NULL ;
+    ckt->CKTmatrix->CKTbind_Sparse = NULL ;
+    ckt->CKTmatrix->CKTbind_CSC = NULL ;
+    ckt->CKTmatrix->CKTbind_CSC_Complex = NULL ;
+    ckt->CKTmatrix->CKTdiag_CSC = NULL ;
+    ckt->CKTmatrix->CKTsuperluN = 0 ;
+    ckt->CKTmatrix->CKTsuperlunz = 0 ;
+    ckt->CKTmatrix->CKTsuperluMODE = CKTsuperluON ; /* TO BE SUBSTITUTED WITH THE HEURISTICS */
 #endif
 
     ckt->CKTniState = NIUNINITIALIZED;

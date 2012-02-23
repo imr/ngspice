@@ -72,7 +72,7 @@ SPICEdev CAPinfo = {
 #endif    
  /* DEVinstSize   */ &CAPiSize,
  /* DEVmodSize    */ &CAPmSize,
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindklu        */  CAPbindCSC,
  /* DEVbindkluComplex */  CAPbindCSCComplex,
 #endif

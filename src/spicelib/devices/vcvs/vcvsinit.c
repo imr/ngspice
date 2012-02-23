@@ -73,7 +73,7 @@ SPICEdev VCVSinfo = {
 #endif                          
  /* DEVinstSize   */ &VCVSiSize,
  /* DEVmodSize    */ &VCVSmSize,
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
  /* DEVbindCSC        */   VCVSbindCSC,
  /* DEVbindCSCComplex */   VCVSbindCSCComplex,
 #endif

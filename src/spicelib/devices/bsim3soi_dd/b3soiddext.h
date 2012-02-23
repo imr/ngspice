@@ -29,7 +29,7 @@ extern int B3SOIDDtrunc(GENmodel*,CKTcircuit*,double*);
 extern int B3SOIDDnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int B3SOIDDunsetup(GENmodel*,CKTcircuit*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int B3SOIDDbindCSC(GENmodel*, CKTcircuit*);
 extern int B3SOIDDbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

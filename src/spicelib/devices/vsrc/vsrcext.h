@@ -19,7 +19,7 @@ extern int VSRCunsetup(GENmodel*,CKTcircuit*);
 extern int VSRCpzSetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VSRCtemp(GENmodel*,CKTcircuit*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int VSRCbindCSC(GENmodel*, CKTcircuit*);
 extern int VSRCbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

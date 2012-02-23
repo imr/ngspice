@@ -8,8 +8,21 @@ SUBDIRS += KLU
 DIST_SUBDIRS += KLU
 endif
 
-MAINTAINERCLEANFILES = Makefile.in KLU/Makefile.in
+if SuperLU_WANTED
+SUBDIRS += SuperLU
+DIST_SUBDIRS += SuperLU
+endif
 
-if KLU_WANTED
-MAINTAINERCLEANFILES -= KLU/Makefile.in
+MAINTAINERCLEANFILES = Makefile.in
+
+if !KLU_WANTED
+if SuperLU_WANTED
+MAINTAINERCLEANFILES += KLU/Makefile.in
+else
+MAINTAINERCLEANFILES += KLU/Makefile.in SuperLU/Makefile.in
+endif
+else
+if !SuperLU_WANTED
+MAINTAINERCLEANFILES += SuperLU/Makefile.in
+endif
 endif

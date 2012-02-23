@@ -21,7 +21,7 @@ extern int RESsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int REStemp(GENmodel*,CKTcircuit*);
 extern int RESnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 
-#ifdef KLU
+#if defined(KLU) || defined(SuperLU)
 extern int RESbindCSC(GENmodel*, CKTcircuit*);
 extern int RESbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif
