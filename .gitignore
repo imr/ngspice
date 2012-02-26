@@ -1,0 +1,54 @@
+# NOTE! Please use 'git ls-files -i --exclude-standard'
+# command after changing this file, to see if there are
+# any tracked files which get ignored after the change.
+#
+# (compile "git ls-files -i --exclude-standard")
+
+Makefile
+Makefile.in
+
+.deps
+*.o
+*.lo
+*.la
+.libs
+
+*.orig
+*~
+\#*#
+
+/autom4te.cache
+/compile
+/config.guess
+/config.log
+/config.status
+/config.sub
+/configure
+/depcomp
+/install-sh
+/libtool
+/ltmain.sh
+/aclocal.m4
+/m4
+/missing
+/ylwrap
+
+/src/include/ngspice/config.h.in
+/src/include/ngspice/config.h
+/src/include/ngspice/stamp-h1
+
+/src/maths/cmaths/test_cx_cph
+/src/maths/cmaths/test_cx_j
+/src/maths/cmaths/test_cx_mag
+/src/maths/cmaths/test_cx_ph
+
+/src/ngmakeidx
+/src/ngmultidec
+/src/ngnutmeg
+/src/ngproc2mod
+/src/ngsconvert
+/src/ngspice
+/src/ngspice.idx
+/src/spinit
+
+!/xgraph/Makefile.in

@@ -1,0 +1,8 @@
+*.test
+*.log
+
+ngspiceCkt
+
+/xspice/digital/spinit
+
+results/
