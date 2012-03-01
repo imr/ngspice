@@ -199,6 +199,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
   static char* model_tokens[]    = { "lmin", "lmax", "wmin", "wmax" };
   int          error;
   double       scale;
+  char *err = NULL;
 
   if (!cp_getvar("scale", CP_REAL, &scale))
       scale = 1;
@@ -212,11 +213,26 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
   w = parse_values[1]*scale;
 
   for ( modtmp = modtab; modtmp != NULL; modtmp = modtmp->INPnextModel ) {
-    if ( modtmp->INPmodType != INPtypelook( "BSIM3" ) && modtmp->INPmodType != INPtypelook( "BSIM3v32" ) &&
-	 modtmp->INPmodType != INPtypelook( "BSIM4" ) && modtmp->INPmodType != INPtypelook( "BSIM4v2" ) &&
-	 modtmp->INPmodType != INPtypelook( "BSIM4v3" ) && modtmp->INPmodType != INPtypelook( "BSIM4v4" ) && 
-	 modtmp->INPmodType != INPtypelook( "BSIM4v5" ) )
-      continue;
+    if ( /* This is the list of binable models */
+           modtmp->INPmodType != INPtypelook ("BSIM3")
+        && modtmp->INPmodType != INPtypelook ("BSIM3v32")
+        && modtmp->INPmodType != INPtypelook ("BSIM3v0")
+        && modtmp->INPmodType != INPtypelook ("BSIM3v1")
+        && modtmp->INPmodType != INPtypelook ("BSIM4")
+        && modtmp->INPmodType != INPtypelook ("BSIM4v4")
+        && modtmp->INPmodType != INPtypelook ("BSIM4v5")
+        && modtmp->INPmodType != INPtypelook ("BSIM4v6")
+        && modtmp->INPmodType != INPtypelook ("HiSIM2")
+        && modtmp->INPmodType != INPtypelook ("HiSIMHV")
+       ) continue; /* We left the loop if the model is not in the list */
+
+   if (modtmp->INPmodType < 0) {  /* First check for illegal model type */
+       /* illegal device type, so can't handle */
+       *model = NULL;
+       err = TMALLOC(char, 35 + strlen(name));
+       (void) sprintf(err,"Unknown device type for model %s \n", name);
+       return (err);
+   }  /* end of checking for illegal model */
 
     if ( parse_line( modtmp->INPmodLine->line, model_tokens, 4, parse_values, parse_found ) != TRUE )
       continue;
@@ -225,13 +241,13 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
     wmin = parse_values[2]; wmax = parse_values[3];
 
     if ( strncmp( modtmp->INPmodName, name, strlen( name ) ) == 0 && 
-	 in_range( l, lmin, lmax ) && in_range( w, wmin, wmax ) ) {
-      if ( !modtmp->INPmodUsed ) {
-	error = create_model( ckt, modtmp, tab );
-	if ( error ) return NULL;
-      }
-      *model = modtmp;
-      return NULL;
+      in_range( l, lmin, lmax ) && in_range( w, wmin, wmax ) ) {
+        if ( !modtmp->INPmodUsed ) {
+            error = create_model( ckt, modtmp, tab );
+            if ( error ) return NULL;
+        }
+        *model = modtmp;
+        return NULL;
     }
   }
   return NULL;
