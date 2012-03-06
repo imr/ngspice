@@ -397,7 +397,6 @@ inp_subcktexpand(struct line *deck) {
 static struct line *
 doit(struct line *deck) {
     struct line *c, *last, *lc, *lcc;
-    struct line *savenext;
     struct subs *sssfree = NULL, *sss = NULL, *ks;   /*  *sss and *ks temporarily hold decks to substitute  */
     char *s, *t, *scname, *subname;
     int nest, numpasses = MAXNEST, i;
@@ -604,7 +603,8 @@ doit(struct line *deck) {
                 tfree(subname);
 
                 /* Now splice the decks together. */
-                savenext =  c->li_next;
+              {
+                struct line *savenext = c->li_next;
                 if ( use_numparams==FALSE ) {
                     /* old style: c will drop a dangling pointer: memory leak  */
                     if (lc)
@@ -620,6 +620,7 @@ doit(struct line *deck) {
                     lcc = lcc->li_next;
                 lcc->li_next = c->li_next;
                 lcc->li_next = savenext;
+              }
                 c = lcc->li_next;
                 lc = lcc;
                 tfree(tofree);
