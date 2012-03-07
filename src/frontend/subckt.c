@@ -449,10 +449,12 @@ doit(struct line *deck) {
             int nest = 1;
             for (c = last->li_next;  c;  c = c->li_next) {
                 if (ciprefix(sbend, c->li_line)) { /* found a .ends */
-                    if (!--nest)
-                        break;   /* nest = 0 means we have balanced .subckt and .ends  */
+                    nest--;
                 } else if (ciprefix(start, c->li_line))  /* if .subckt, increment nesting */
                     nest++;
+
+                if(!nest)
+                    break;
                 lcc = c;     /* lcc points to current pos of c  */
             } /* for (nest = 0 . . . */
           }
