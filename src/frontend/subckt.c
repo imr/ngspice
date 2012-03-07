@@ -419,9 +419,12 @@ doit(struct line *deck) {
 #endif
 
   {
-    struct line *last, *lc;
     /* First pass: xtract all the .subckts and stick pointers to them into sss.  */
-    for (last = deck, lc = NULL;  last;  ) {
+
+    struct line *last = deck;
+    struct line *lc   = NULL;
+
+    while (last) {
 
         struct line *c, *lcc;
 
