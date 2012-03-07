@@ -446,13 +446,12 @@ doit(struct line *deck) {
              * .subckt card, and lcc will point to the location of the .ends card.
              */
           {
-            int nest = 0;
+            int nest = 1;
             for (c = last->li_next;  c;  c = c->li_next) {
                 if (ciprefix(sbend, c->li_line)) { /* found a .ends */
-                    if (!nest)
+                    if (!--nest)
                         break;   /* nest = 0 means we have balanced .subckt and .ends  */
                     else {
-                        nest--;    /* decrement nesting, and assign lcc to the current card */
                         lcc = c;   /* (lcc points to the position of the .ends)             */
                         continue;  /* then continue looping                                 */
                     }
