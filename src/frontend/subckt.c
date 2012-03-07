@@ -448,15 +448,16 @@ doit(struct line *deck) {
           {
             int nest = 1;
             for (c = last->li_next;  c;  c = c->li_next) {
-                if (ciprefix(sbend, c->li_line)) { /* found a .ends */
+                if (ciprefix(sbend, c->li_line)) /* found a .ends */
                     nest--;
-                } else if (ciprefix(start, c->li_line))  /* if .subckt, increment nesting */
+                else if (ciprefix(start, c->li_line))  /* found a .subckt */
                     nest++;
 
                 if(!nest)
                     break;
+
                 lcc = c;     /* lcc points to current pos of c  */
-            } /* for (nest = 0 . . . */
+            }
           }
 
             /* Check to see if we have looped through remainder of deck without finding .ends */
