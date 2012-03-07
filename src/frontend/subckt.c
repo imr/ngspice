@@ -397,7 +397,7 @@ inp_subcktexpand(struct line *deck) {
 static struct line *
 doit(struct line *deck) {
     struct line *c, *last, *lc, *lcc;
-    struct subs *sssfree = NULL, *sss = NULL, *ks;   /*  *sss and *ks temporarily hold decks to substitute  */
+    struct subs *sssfree = NULL, *sss = NULL;   /*  *sss temporarily hold decks to substitute  */
     char *s, *t;
     int nest, numpasses = MAXNEST, i;
     bool gotone;
@@ -515,10 +515,13 @@ doit(struct line *deck) {
         return (deck);
 
     /* Otherwise, expand sub-subcircuits recursively. */
+  {
+    struct subs *ks;
     for (ks = sss = subs; sss; sss = sss->su_next)  /* iterate through the list of subcircuits */
         if ((sss->su_def = doit(sss->su_def)) == NULL)
             return (NULL);
     subs = ks;  /* ks has held pointer to start of subcircuits list. */
+  }
 
 #ifdef TRACE
     /* SDB debug statement */
