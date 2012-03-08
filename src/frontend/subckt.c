@@ -396,7 +396,7 @@ inp_subcktexpand(struct line *deck) {
 /*-------------------------------------------------------------------*/
 static struct line *
 doit(struct line *deck) {
-    struct line *c, *lcc;
+    struct line *c;
     struct subs *sssfree = NULL, *sss = NULL;   /*  *sss temporarily hold decks to substitute  */
     int nest, numpasses = MAXNEST;
     bool gotone;
@@ -420,6 +420,8 @@ doit(struct line *deck) {
     struct line *last, *lc;
     /* First pass: xtract all the .subckts and stick pointers to them into sss.  */
     for (last = deck, lc = NULL;  last;  ) {
+
+        struct line *lcc;
 
         if (ciprefix(sbend, last->li_line)) {         /* if line == .ends  */
             fprintf(cp_err, "Error: misplaced %s line: %s\n", sbend,
@@ -498,7 +500,6 @@ doit(struct line *deck) {
             sss->su_next = subs;
             subs = sss;            /* Now that sss is built, assign it to subs */
             last = c->li_next;
-            lcc = subs->su_def;
 
             /*gp */
             c->li_next = NULL;  /* Numparam needs line c */
@@ -548,6 +549,7 @@ doit(struct line *deck) {
 
                 char *tofree, *tofree2, *s, *t;
                 char *scname, *subname;
+                struct line *lcc;
 
                 gotone = TRUE;
                 t = tofree = s = copy(c->li_line);       /*  s & t hold copy of component line  */
