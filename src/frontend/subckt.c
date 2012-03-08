@@ -398,7 +398,7 @@ static struct line *
 doit(struct line *deck) {
     struct line *c, *lcc;
     struct subs *sssfree = NULL, *sss = NULL;   /*  *sss temporarily hold decks to substitute  */
-    char *s, *t;
+    char *s;
     int nest, numpasses = MAXNEST;
     bool gotone;
     wordlist *tmodnames = modnames;
@@ -547,7 +547,7 @@ doit(struct line *deck) {
         for (c = deck, lc = NULL; c; ) {
             if (ciprefix(invoke, c->li_line)) {  /* found reference to .subckt (i.e. component with refdes X)  */
 
-                char *tofree, *tofree2;
+                char *tofree, *tofree2, *t;
                 char *scname, *subname;
 
                 gotone = TRUE;
