@@ -398,7 +398,6 @@ static struct line *
 doit(struct line *deck) {
     struct line *c, *lcc;
     struct subs *sssfree = NULL, *sss = NULL;   /*  *sss temporarily hold decks to substitute  */
-    char *s;
     int nest, numpasses = MAXNEST;
     bool gotone;
     wordlist *tmodnames = modnames;
@@ -477,9 +476,9 @@ doit(struct line *deck) {
 
             /*  Now put the .subckt definition found into sss  */
             sss->su_def = last->li_next;
-            s = last->li_line;
 
           {
+            char *s = last->li_line;
             int i;
             txfree(gettok(&s));
             sss->su_name = gettok(&s);
@@ -547,7 +546,7 @@ doit(struct line *deck) {
         for (c = deck, lc = NULL; c; ) {
             if (ciprefix(invoke, c->li_line)) {  /* found reference to .subckt (i.e. component with refdes X)  */
 
-                char *tofree, *tofree2, *t;
+                char *tofree, *tofree2, *s, *t;
                 char *scname, *subname;
 
                 gotone = TRUE;
@@ -607,7 +606,8 @@ doit(struct line *deck) {
                 if (modtranslate(lcc, scname))    /* this translates the model name in the .model line */
                     devmodtranslate(lcc, scname); /* This translates the model name on all components in the deck */
 
-                s = sss->su_args;
+              {
+                char *s = sss->su_args;
                 txfree(gettok(&t));  /* Throw out the subcircuit refdes */
 
                 /* now invoke translate, which handles the remainder of the
@@ -616,6 +616,7 @@ doit(struct line *deck) {
                 if (!translate(lcc, s, t, scname, subname))
                     error = 1;
                 tfree(subname);
+              }
 
                 /* Now splice the decks together. */
               {
