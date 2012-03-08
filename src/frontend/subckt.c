@@ -397,7 +397,7 @@ inp_subcktexpand(struct line *deck) {
 static struct line *
 doit(struct line *deck) {
     struct subs *sssfree = NULL, *sss = NULL;   /*  *sss temporarily hold decks to substitute  */
-    int nest, numpasses = MAXNEST;
+    int numpasses = MAXNEST;
     bool gotone;
     wordlist *tmodnames = modnames;
     wordlist *tsubmod = submod;
@@ -445,7 +445,9 @@ doit(struct line *deck) {
              * At the end of this section, last will point to the location of the
              * .subckt card, and lcc will point to the location of the .ends card.
              */
-            for (nest = 0, c = last->li_next;  c;  c = c->li_next) {
+          {
+            int nest = 0;
+            for (c = last->li_next;  c;  c = c->li_next) {
                 if (ciprefix(sbend, c->li_line)) { /* found a .ends */
                     if (!nest)
                         break;   /* nest = 0 means we have balanced .subckt and .ends  */
@@ -458,6 +460,7 @@ doit(struct line *deck) {
                     nest++;
                 lcc = c;     /* lcc points to current pos of c  */
             } /* for (nest = 0 . . . */
+          }
 
             /* Check to see if we have looped through remainder of deck without finding .ends */
             if (!c) {
