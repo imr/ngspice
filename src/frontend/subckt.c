@@ -396,7 +396,7 @@ inp_subcktexpand(struct line *deck) {
 /*-------------------------------------------------------------------*/
 static struct line *
 doit(struct line *deck) {
-    struct line *c, *last, *lc, *lcc;
+    struct line *c, *lcc;
     struct subs *sssfree = NULL, *sss = NULL;   /*  *sss temporarily hold decks to substitute  */
     char *s, *t;
     int nest, numpasses = MAXNEST, i;
@@ -416,6 +416,9 @@ doit(struct line *deck) {
     for(c=deck; c; c=c->li_next)
         printf("   %s\n",c->li_line);
 #endif
+
+  {
+    struct line *last, *lc;
     /* First pass: xtract all the .subckts and stick pointers to them into sss.  */
     for (last = deck, lc = NULL;  last;  ) {
 
@@ -502,6 +505,7 @@ doit(struct line *deck) {
             last = last->li_next;
         }
     } /* for (last = deck . . . .  */
+  }
 
 
     /* At this point, sss holds the .subckt definition found, subs holds
@@ -533,6 +537,7 @@ doit(struct line *deck) {
     error = 0;
     /* Second pass: do the replacements. */
     do {                    /*  while (!error && numpasses-- && gotone)  */
+        struct line *lc;
         gotone = FALSE;
         for (c = deck, lc = NULL; c; ) {
             if (ciprefix(invoke, c->li_line)) {  /* found reference to .subckt (i.e. component with refdes X)  */
