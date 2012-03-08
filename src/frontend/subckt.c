@@ -483,19 +483,19 @@ doit(struct line *deck) {
 
           {
             char *s = last->li_line;
-            int i;
             txfree(gettok(&s));
             sss->su_name = gettok(&s);
             sss->su_args = copy(s);
             /* count the number of args in the .subckt line */
-            for (sss->su_numargs = 0, i = 0; s[i]; ) {
-                while (isspace(s[i]))
-                    i++;
-                if (s[i]) {
-                    sss->su_numargs++;
-                    while (s[i] && !isspace(s[i]))
-                        i++;
-                }
+            sss->su_numargs = 0;
+            for (;;) {
+                while (isspace(*s))
+                    s++;
+                if (*s == '\0')
+                    break;
+                while (*s && !isspace(*s))
+                    s++;
+                sss->su_numargs ++;
             }
           }
 
