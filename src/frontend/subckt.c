@@ -396,7 +396,6 @@ inp_subcktexpand(struct line *deck) {
 /*-------------------------------------------------------------------*/
 static struct line *
 doit(struct line *deck) {
-    struct line *c;
     struct subs *sssfree = NULL, *sss = NULL;   /*  *sss temporarily hold decks to substitute  */
     int nest, numpasses = MAXNEST;
     bool gotone;
@@ -411,9 +410,12 @@ doit(struct line *deck) {
 
 #ifdef TRACE
     /* SDB debug statement */
+  {
+    struct line *c;
     printf("In doit, about to start first pass through deck.\n");
     for(c=deck; c; c=c->li_next)
         printf("   %s\n",c->li_line);
+  }
 #endif
 
   {
@@ -421,7 +423,7 @@ doit(struct line *deck) {
     /* First pass: xtract all the .subckts and stick pointers to them into sss.  */
     for (last = deck, lc = NULL;  last;  ) {
 
-        struct line *lcc;
+        struct line *c, *lcc;
 
         if (ciprefix(sbend, last->li_line)) {         /* if line == .ends  */
             fprintf(cp_err, "Error: misplaced %s line: %s\n", sbend,
@@ -534,15 +536,18 @@ doit(struct line *deck) {
 
 #ifdef TRACE
     /* SDB debug statement */
+  {
+    struct line *c;
     printf("In doit, about to start second pass through deck.\n");
     for(c=deck; c; c=c->li_next)
         printf("   %s\n",c->li_line);
+  }
 #endif
 
     error = 0;
     /* Second pass: do the replacements. */
     do {                    /*  while (!error && numpasses-- && gotone)  */
-        struct line *lc;
+        struct line *c, *lc;
         gotone = FALSE;
         for (c = deck, lc = NULL; c; ) {
             if (ciprefix(invoke, c->li_line)) {  /* found reference to .subckt (i.e. component with refdes X)  */
@@ -659,10 +664,13 @@ doit(struct line *deck) {
 
 #ifdef TRACE
     /* Added by H.Tanaka to display converted deck */
+  {
+    struct line *c;
     printf("Converted deck\n");
     for (c = deck; c; c = c->li_next) {
         printf( "%s\n",c->li_line);
     }
+  }
     {
         wordlist * w;
         printf("Models:\n");
