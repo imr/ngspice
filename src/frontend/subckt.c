@@ -399,7 +399,7 @@ doit(struct line *deck) {
     struct line *c, *lcc;
     struct subs *sssfree = NULL, *sss = NULL;   /*  *sss temporarily hold decks to substitute  */
     char *s, *t;
-    int nest, numpasses = MAXNEST, i;
+    int nest, numpasses = MAXNEST;
     bool gotone;
     wordlist *tmodnames = modnames;
     wordlist *tsubmod = submod;
@@ -478,6 +478,9 @@ doit(struct line *deck) {
             /*  Now put the .subckt definition found into sss  */
             sss->su_def = last->li_next;
             s = last->li_line;
+
+          {
+            int i;
             txfree(gettok(&s));
             sss->su_name = gettok(&s);
             sss->su_args = copy(s);
@@ -491,6 +494,8 @@ doit(struct line *deck) {
                         i++;
                 }
             }
+          }
+
             sss->su_next = subs;
             subs = sss;            /* Now that sss is built, assign it to subs */
             last = c->li_next;
