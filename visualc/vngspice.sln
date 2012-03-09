@@ -22,9 +22,9 @@ Global
 		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.console_debug|Win32.Build.0 = console_debug|Win32
 		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.console_debug|x64.ActiveCfg = console_debug|x64
 		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.console_debug|x64.Build.0 = console_debug|x64
-		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.console_release_omp|Win32.ActiveCfg = console_release|Win32
-		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.console_release_omp|x64.ActiveCfg = console_release|x64
-		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.console_release_omp|x64.Build.0 = console_release|x64
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.console_release_omp|Win32.ActiveCfg = console_release_omp|Win32
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.console_release_omp|x64.ActiveCfg = console_release_omp|x64
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.console_release_omp|x64.Build.0 = console_release_omp|x64
 		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.console_release|Win32.ActiveCfg = console_release|Win32
 		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.console_release|Win32.Build.0 = console_release|Win32
 		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.console_release|x64.ActiveCfg = console_release|x64
@@ -46,8 +46,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		AMDCaPersistentConfig = Debug|Win32
-		AMDCaPersistentStartup = vngspice
 		AMDCaProjectFile = D:\Spice_general\ng-spice-rework\visualc\CodeAnalyst\vngspice.caw
+		AMDCaPersistentStartup = vngspice
+		AMDCaPersistentConfig = Debug|Win32
 	EndGlobalSection
 EndGlobal

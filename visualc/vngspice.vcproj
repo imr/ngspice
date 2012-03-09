@@ -33,8 +33,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
-				Outputs="$(IntDir)\conf.obj"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;C:\Program Files (x86)\Visual Leak Detector\include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE;EXPERIMENTAL_CODE"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -124,8 +124,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
-				Outputs="$(IntDir)\conf.obj"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
+				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -213,8 +213,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
-				Outputs="$(IntDir)\conf.obj"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -308,8 +308,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
-				Outputs="$(IntDir)\conf.obj"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
+				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -392,8 +392,8 @@
 		</Configuration>
 		<Configuration
 			Name="console_debug|Win32"
-			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -404,8 +404,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
-				Outputs="$(IntDir)\conf.obj"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -481,8 +481,8 @@
 		</Configuration>
 		<Configuration
 			Name="console_debug|x64"
-			OutputDirectory="$(ConfigurationName)\$(PlatformName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -493,8 +493,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
-				Outputs="$(IntDir)\conf.obj"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
+				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -582,8 +582,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
-				Outputs="$(IntDir)\conf.obj"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -676,8 +676,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
-				Outputs="$(IntDir)\conf.obj"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
+				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -866,7 +866,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
 				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
@@ -950,9 +950,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="ReleaseOMP64|Win32"
+			Name="console_release_omp|Win32"
 			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -962,8 +962,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
-				Outputs="$(IntDir)\conf.obj"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -981,7 +981,7 @@
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;USE_OMP"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -1007,10 +1007,10 @@
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\$(ProjectName)_omp.exe"
+				OutputFile="$(OutDir)\$(ProjectName)_omp_c.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
-				SubSystem="2"
+				SubSystem="1"
 				HeapReserveSize="0"
 				HeapCommitSize="0"
 				StackReserveSize="0"
@@ -1045,7 +1045,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="ReleaseOMP64|x64"
+			Name="console_release_omp|x64"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
@@ -1057,8 +1057,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
-				Outputs="$(IntDir)\conf.obj"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
+				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -1077,13 +1077,12 @@
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP;CONFIG64"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="0"
 				RuntimeTypeInfo="true"
-				OpenMP="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
@@ -1103,10 +1102,10 @@
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\$(ProjectName)64_omp.exe"
+				OutputFile="$(OutDir)\$(ProjectName)64_omp_c.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
-				SubSystem="2"
+				SubSystem="1"
 				HeapReserveSize="0"
 				HeapCommitSize="0"
 				StackReserveSize="0"
