@@ -529,7 +529,7 @@ doit(struct line *deck) {
      * all .subckt defs found, including this one
      */
 
-    if (!sss)            /* if sss == FALSE, we have found no subckts.  Just return.  */
+    if (!subs)            /* we have found no subckts.  Just return.  */
         return (deck);
 
     /* Otherwise, expand sub-subcircuits recursively. */
