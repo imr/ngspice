@@ -396,7 +396,7 @@ inp_subcktexpand(struct line *deck) {
 /*-------------------------------------------------------------------*/
 static struct line *
 doit(struct line *deck) {
-    struct subs *sssfree = NULL, *sss = NULL;   /*  *sss temporarily hold decks to substitute  */
+    struct subs *sss = NULL;   /*  *sss temporarily hold decks to substitute  */
     int numpasses = MAXNEST;
     bool gotone;
     wordlist *tmodnames = modnames;
@@ -476,7 +476,7 @@ doit(struct line *deck) {
             /* c    is the terminating .ends card */
             /* lcc  is one card before, which is the last body card */
 
-            sssfree = sss = alloc(struct subs);
+            sss = alloc(struct subs);
 
             if ( use_numparams==FALSE )
                 lcc->li_next = NULL;    /* shouldn't we free some memory here????? */
@@ -696,9 +696,9 @@ doit(struct line *deck) {
         struct subs *su_next;
     } ;
     */
-    while(sssfree) {
-        struct subs *sss2 = sssfree;
-        sssfree = sssfree->su_next;
+    while (subs) {
+        struct subs *sss2 = subs;
+        subs = subs->su_next;
         tfree(sss2->su_name);
         tfree(sss2->su_args);
         line_free(sss2->su_def, TRUE);
