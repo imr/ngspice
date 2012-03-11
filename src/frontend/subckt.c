@@ -676,9 +676,8 @@ doit(struct line *deck) {
   {
     struct line *c = deck;
     printf("Converted deck\n");
-    for (; c; c = c->li_next) {
+    for (; c; c = c->li_next)
         printf( "%s\n",c->li_line);
-    }
   }
     {
         wordlist *w = modnames;
