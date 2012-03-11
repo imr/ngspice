@@ -80,7 +80,7 @@ extern void line_free_x(struct line * deck, bool recurse);
 struct subs;
 static struct line * doit(struct line *deck);
 static int translate(struct line *deck, char *formal, char *actual, char *scname,
-                     char *subname, struct subs * const * const subs2);
+                     char *subname, struct subs *subs2);
 struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
 static int settrans(char *formal, char *actual, char *subname);
@@ -630,7 +630,7 @@ doit(struct line *deck) {
                 /* now invoke translate, which handles the remainder of the
                  * translation.
                  */
-                if (!translate(lcc, s, t, scname, subname, &subs0))
+                if (!translate(lcc, s, t, scname, subname, subs0))
                     error = 1;
                 tfree(subname);
               }
@@ -892,7 +892,7 @@ bxx_buffer(struct bxx_buffer *t)
  * subname = copy of the subcircuit name
  *-------------------------------------------------------------------------------------------*/
 static int
-translate(struct line *deck, char *formal, char *actual, char *scname, char *subname, struct subs * const * const subs2)
+translate(struct line *deck, char *formal, char *actual, char *scname, char *subname, struct subs *subs2)
 {
     struct line *c;
     struct bxx_buffer buffer;
@@ -1080,7 +1080,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             tfree(t);
 
             /* Next iterate over all nodes (netnames) found and translate them. */
-            nnodes = numnodes(c->li_line, *subs2);
+            nnodes = numnodes(c->li_line, subs2);
 
             while (nnodes-- > 0) {
                 name = gettok_node(&s);
@@ -1225,7 +1225,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             tfree(nametofree);
 
             /* Next iterate over all nodes (netnames) found and translate them. */
-            nnodes = numnodes(c->li_line, *subs2);
+            nnodes = numnodes(c->li_line, subs2);
             while (nnodes-- > 0) {
                 name = gettok_node(&s);
                 if (name == NULL ) {
