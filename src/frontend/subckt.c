@@ -157,8 +157,7 @@ inp_subcktexpand(struct line *deck) {
     char *t;
     int i;
     wordlist *wl;
-    static wordlist *modnames;
-    modnames = NULL;
+    wordlist *modnames = NULL;
 
     if(!cp_getvar("substart", CP_STRING, start))
         (void) strcpy(start, ".subckt");
@@ -327,11 +326,7 @@ inp_subcktexpand(struct line *deck) {
 #endif /* TRACE */
     ll = doit(deck, modnames);
 
-    /* SJB: free up the modnames linked list now we are done with it */
-    if(modnames != NULL) {
-        wl_free(modnames);
-        modnames = NULL;
-    }
+    wl_free(modnames);
 
     /* Count numbers of line in deck after expansion */
     if (ll!=NULL) {
