@@ -78,16 +78,16 @@ extern void line_free_x(struct line * deck, bool recurse);
 
 /* ----- static declarations ----- */
 struct subs;
-static struct line * doit(struct line *deck,  wordlist * modnames1);
+static struct line * doit(struct line *deck,  wordlist *modnames);
 static int translate(struct line *deck, char *formal, char *actual, char *scname,
-                     char *subname, struct subs *subs, wordlist const * const modnames4);
+                     char *subname, struct subs *subs, wordlist const *modnames);
 struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
 static int settrans(char *formal, char *actual, char *subname);
 static char * gettrans(const char *name, const char *name_end);
-static int numnodes(char *name, struct subs *subs, wordlist const * const modnames2);
+static int numnodes(char *name, struct subs *subs, wordlist const *modnames);
 static int  numdevs(char *s);
-static bool modtranslate(struct line *deck, char *subname, wordlist **submod, wordlist  ** const modnames3);
+static bool modtranslate(struct line *deck, char *subname, wordlist **submod, wordlist  ** const modnames);
 static void devmodtranslate(struct line *deck, char *subname, wordlist * const submod);
 static int inp_numnodes(char c);
 
@@ -390,7 +390,7 @@ inp_subcktexpand(struct line *deck) {
 /*  pointer to the deck after the subcircuit has been spliced in.    */
 /*-------------------------------------------------------------------*/
 static struct line *
-doit(struct line *deck, wordlist * modnames1) {
+doit(struct line *deck, wordlist *modnames) {
     struct subs *sss = NULL;   /*  *sss temporarily hold decks to substitute  */
     int numpasses = MAXNEST;
     bool gotone;
@@ -525,7 +525,7 @@ doit(struct line *deck, wordlist * modnames1) {
 
     /* Otherwise, expand sub-subcircuits recursively. */
     for (sss = subs; sss; sss = sss->su_next)  /* iterate through the list of subcircuits */
-        if ((sss->su_def = doit(sss->su_def, modnames1)) == NULL)
+        if ((sss->su_def = doit(sss->su_def, modnames)) == NULL)
             return (NULL);
 
 #ifdef TRACE
@@ -605,7 +605,7 @@ doit(struct line *deck, wordlist * modnames1) {
                 lcc = inp_deckcopy(sss->su_def);
 
                 /* Change the names of .models found in .subckts . . .  */
-                if (modtranslate(lcc, scname, &submod, &modnames1))    /* this translates the model name in the .model line */
+                if (modtranslate(lcc, scname, &submod, &modnames))    /* this translates the model name in the .model line */
                     devmodtranslate(lcc, scname, submod); /* This translates the model name on all components in the deck */
 
               {
@@ -615,7 +615,7 @@ doit(struct line *deck, wordlist * modnames1) {
                 /* now invoke translate, which handles the remainder of the
                  * translation.
                  */
-                if (!translate(lcc, s, t, scname, subname, subs, modnames1))
+                if (!translate(lcc, s, t, scname, subname, subs, modnames))
                     error = 1;
                 tfree(subname);
               }
@@ -666,7 +666,7 @@ doit(struct line *deck, wordlist * modnames1) {
         printf( "%s\n",c->li_line);
   }
     {
-        wordlist *w = modnames1;
+        wordlist *w = modnames;
         printf("Models:\n");
         for(; w; w = w->wl_next)
             printf("%s\n",w->wl_word);
@@ -676,7 +676,7 @@ doit(struct line *deck, wordlist * modnames1) {
     if (error)
         return NULL;	/* error message already reported; should free( ) */
 
-    // fixme, if modnames1 has changed, then something has been prepended to
+    // fixme, if modnames has changed, then something has been prepended to
     //   this list, we should free these prepended wordlists then.
 
     /*
@@ -877,7 +877,7 @@ bxx_buffer(struct bxx_buffer *t)
  * subname = copy of the subcircuit name
  *-------------------------------------------------------------------------------------------*/
 static int
-translate(struct line *deck, char *formal, char *actual, char *scname, char *subname, struct subs *subs, wordlist const * const modnames4)
+translate(struct line *deck, char *formal, char *actual, char *scname, char *subname, struct subs *subs, wordlist const *modnames)
 {
     struct line *c;
     struct bxx_buffer buffer;
@@ -1065,7 +1065,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             tfree(t);
 
             /* Next iterate over all nodes (netnames) found and translate them. */
-            nnodes = numnodes(c->li_line, subs, modnames4);
+            nnodes = numnodes(c->li_line, subs, modnames);
 
             while (nnodes-- > 0) {
                 name = gettok_node(&s);
@@ -1210,7 +1210,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             tfree(nametofree);
 
             /* Next iterate over all nodes (netnames) found and translate them. */
-            nnodes = numnodes(c->li_line, subs, modnames4);
+            nnodes = numnodes(c->li_line, subs, modnames);
             while (nnodes-- > 0) {
                 name = gettok_node(&s);
                 if (name == NULL ) {
@@ -1490,7 +1490,7 @@ model_bin_match( char* token, char* model_name )
 /*-------------------------------------------------------------------*/
 /*-------------------------------------------------------------------*/
 static int
-numnodes(char *name, struct subs *subs, wordlist const * const modnames2)
+numnodes(char *name, struct subs *subs, wordlist const *modnames)
 {
     /* gtri - comment - wbk - 10/23/90 - Do not modify this routine for */
     /* 'A' type devices since the callers will not know how to find the */
@@ -1560,7 +1560,7 @@ numnodes(char *name, struct subs *subs, wordlist const * const modnames2)
         txfree(gettok(&s));	     /* Skip component name */
         while ((i < n) && (*s) && !gotit) {
             t = gettok_node(&s);       /* get nodenames . . .  */
-            for (wl = modnames2; wl; wl = wl->wl_next) {
+            for (wl = modnames; wl; wl = wl->wl_next) {
                 /* also need to check if binnable device mos model */
                 if (eq(t, wl->wl_word) || model_bin_match( t, wl->wl_word ) )
                     gotit = 1;
@@ -1596,7 +1596,7 @@ numnodes(char *name, struct subs *subs, wordlist const * const modnames2)
 
     /* Now, is this a model? */
     t = gettok(&s);
-    for (wl = modnames2; wl; wl = wl->wl_next)
+    for (wl = modnames; wl; wl = wl->wl_next)
         if (eq(t, wl->wl_word)) {
             tfree(t);
             return (3);
@@ -1653,7 +1653,7 @@ numdevs(char *s)
  *  otherwise.
  *----------------------------------------------------------------------*/
 static bool
-modtranslate(struct line *deck, char *subname, wordlist **submod, wordlist ** const modnames3)
+modtranslate(struct line *deck, char *subname, wordlist **submod, wordlist ** const modnames)
 {
     struct line *c;
     char *buffer, *name, *t, model[4 * BSIZE_SP];
@@ -1706,10 +1706,10 @@ modtranslate(struct line *deck, char *subname, wordlist **submod, wordlist ** co
             t = c->li_line;
             txfree(gettok(&t));
             wl = alloc(struct wordlist);
-            wl->wl_next = *modnames3;
-            if (*modnames3)
-                (*modnames3)->wl_prev = wl;
-            (*modnames3) = wl;
+            wl->wl_next = *modnames;
+            if (*modnames)
+                (*modnames)->wl_prev = wl;
+            (*modnames) = wl;
             wl->wl_word = gettok(&t);
 
 #ifdef TRACE
