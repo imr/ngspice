@@ -119,7 +119,7 @@ struct subs {
  * list of translated names (i.e. after subckt expansion)
  */
 
-static wordlist *modnames, *submod0;
+static wordlist *modnames;
 static bool nobjthack = FALSE;
 /* flag indicating use of the experimental numparams library */
 static bool use_numparams = FALSE;
@@ -400,12 +400,11 @@ doit(struct line *deck) {
     int numpasses = MAXNEST;
     bool gotone;
     wordlist *tmodnames = modnames;
-    wordlist *tsubmod = submod0;
     int error;
 
     /* Save all the old stuff... */
     struct subs *subs = NULL;
-    submod0 = NULL;
+    wordlist *submod0 = NULL;
 
 #ifdef TRACE
     /* SDB debug statement */
@@ -686,7 +685,6 @@ doit(struct line *deck) {
         return NULL;	/* error message already reported; should free( ) */
 
     modnames = tmodnames;
-    submod0 = tsubmod;
     /*
     struct subs {
         char *su_name;
