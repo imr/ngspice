@@ -440,7 +440,6 @@ doit(struct line *deck) {
             lcc = NULL;
             wl_free(submod);
             submod = NULL;
-            gotone = FALSE;
 
             /* Here we loop through the deck looking for .subckt and .ends cards.
              * At the end of this section, last will point to the location of the
