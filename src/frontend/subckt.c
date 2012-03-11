@@ -553,9 +553,10 @@ doit(struct line *deck) {
     error = 0;
     /* Second pass: do the replacements. */
     do {                    /*  while (!error && numpasses-- && gotone)  */
-        struct line *c, *lc;
+        struct line *c = deck;
+        struct line *lc = NULL;
         gotone = FALSE;
-        for (c = deck, lc = NULL; c; ) {
+        while (c) {
             if (ciprefix(invoke, c->li_line)) {  /* found reference to .subckt (i.e. component with refdes X)  */
 
                 char *tofree, *tofree2, *s, *t;
