@@ -78,7 +78,7 @@ extern void line_free_x(struct line * deck, bool recurse);
 
 /* ----- static declarations ----- */
 struct subs;
-static struct line * doit(struct line *deck,  wordlist ** const modnames1);
+static struct line * doit(struct line *deck,  wordlist * modnames1);
 static int translate(struct line *deck, char *formal, char *actual, char *scname,
                      char *subname, struct subs *subs, wordlist const * const modnames4);
 struct bxx_buffer;
@@ -325,7 +325,7 @@ inp_subcktexpand(struct line *deck) {
     /* SDB debug statement */
     printf("In inp_subcktexpand, about to call doit.\n");
 #endif /* TRACE */
-    ll = doit(deck, &modnames);
+    ll = doit(deck, modnames);
 
     /* SJB: free up the modnames linked list now we are done with it */
     if(modnames != NULL) {
@@ -395,11 +395,10 @@ inp_subcktexpand(struct line *deck) {
 /*  pointer to the deck after the subcircuit has been spliced in.    */
 /*-------------------------------------------------------------------*/
 static struct line *
-doit(struct line *deck, wordlist ** const modnames1) {
+doit(struct line *deck, wordlist * modnames1) {
     struct subs *sss = NULL;   /*  *sss temporarily hold decks to substitute  */
     int numpasses = MAXNEST;
     bool gotone;
-    wordlist *tmodnames = *modnames1;
     int error;
 
     /* Save all the old stuff... */
@@ -611,7 +610,7 @@ doit(struct line *deck, wordlist ** const modnames1) {
                 lcc = inp_deckcopy(sss->su_def);
 
                 /* Change the names of .models found in .subckts . . .  */
-                if (modtranslate(lcc, scname, &submod, modnames1))    /* this translates the model name in the .model line */
+                if (modtranslate(lcc, scname, &submod, &modnames1))    /* this translates the model name in the .model line */
                     devmodtranslate(lcc, scname, submod); /* This translates the model name on all components in the deck */
 
               {
@@ -621,7 +620,7 @@ doit(struct line *deck, wordlist ** const modnames1) {
                 /* now invoke translate, which handles the remainder of the
                  * translation.
                  */
-                if (!translate(lcc, s, t, scname, subname, subs, *modnames1))
+                if (!translate(lcc, s, t, scname, subname, subs, modnames1))
                     error = 1;
                 tfree(subname);
               }
@@ -672,7 +671,7 @@ doit(struct line *deck, wordlist ** const modnames1) {
         printf( "%s\n",c->li_line);
   }
     {
-        wordlist *w = *modnames1;
+        wordlist *w = modnames1;
         printf("Models:\n");
         for(; w; w = w->wl_next)
             printf("%s\n",w->wl_word);
@@ -682,7 +681,9 @@ doit(struct line *deck, wordlist ** const modnames1) {
     if (error)
         return NULL;	/* error message already reported; should free( ) */
 
-    *modnames1 = tmodnames;
+    // fixme, if modnames1 has changed, then something has been prepended to
+    //   this list, we should free these prepended wordlists then.
+
     /*
     struct subs {
         char *su_name;
