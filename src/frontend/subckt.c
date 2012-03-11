@@ -437,8 +437,6 @@ doit(struct line *deck) {
                 fprintf(cp_err, "Error: no %s line.\n", sbend);
                 return (NULL);
             }
-            wl_free(submod);
-            submod = NULL;
 
             /* Here we loop through the deck looking for .subckt and .ends cards.
              * At the end of this section, last will point to the location of the
