@@ -80,7 +80,7 @@ extern void line_free_x(struct line * deck, bool recurse);
 struct subs;
 static struct line * doit(struct line *deck,  wordlist ** const modnames1);
 static int translate(struct line *deck, char *formal, char *actual, char *scname,
-                     char *subname, struct subs *subs, wordlist const * const * const modnames4);
+                     char *subname, struct subs *subs, wordlist const * const modnames4);
 struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
 static int settrans(char *formal, char *actual, char *subname);
@@ -621,7 +621,7 @@ doit(struct line *deck, wordlist ** const modnames1) {
                 /* now invoke translate, which handles the remainder of the
                  * translation.
                  */
-                if (!translate(lcc, s, t, scname, subname, subs, modnames1))
+                if (!translate(lcc, s, t, scname, subname, subs, *modnames1))
                     error = 1;
                 tfree(subname);
               }
@@ -881,7 +881,7 @@ bxx_buffer(struct bxx_buffer *t)
  * subname = copy of the subcircuit name
  *-------------------------------------------------------------------------------------------*/
 static int
-translate(struct line *deck, char *formal, char *actual, char *scname, char *subname, struct subs *subs, wordlist const * const * const modnames4)
+translate(struct line *deck, char *formal, char *actual, char *scname, char *subname, struct subs *subs, wordlist const * const modnames4)
 {
     struct line *c;
     struct bxx_buffer buffer;
@@ -1069,7 +1069,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             tfree(t);
 
             /* Next iterate over all nodes (netnames) found and translate them. */
-            nnodes = numnodes(c->li_line, subs, *modnames4);
+            nnodes = numnodes(c->li_line, subs, modnames4);
 
             while (nnodes-- > 0) {
                 name = gettok_node(&s);
@@ -1214,7 +1214,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             tfree(nametofree);
 
             /* Next iterate over all nodes (netnames) found and translate them. */
-            nnodes = numnodes(c->li_line, subs, *modnames4);
+            nnodes = numnodes(c->li_line, subs, modnames4);
             while (nnodes-- > 0) {
                 name = gettok_node(&s);
                 if (name == NULL ) {
