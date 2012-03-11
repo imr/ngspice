@@ -80,12 +80,12 @@ extern void line_free_x(struct line * deck, bool recurse);
 struct subs;
 static struct line * doit(struct line *deck);
 static int translate(struct line *deck, char *formal, char *actual, char *scname,
-                     char *subname, struct subs *subs2);
+                     char *subname, struct subs *subs);
 struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
 static int settrans(char *formal, char *actual, char *subname);
 static char * gettrans(const char *name, const char *name_end);
-static int numnodes(char *name, struct subs *subs3);
+static int numnodes(char *name, struct subs *subs);
 static int  numdevs(char *s);
 static bool modtranslate(struct line *deck, char *subname);
 static void devmodtranslate(struct line *deck, char *subname);
@@ -404,7 +404,7 @@ doit(struct line *deck) {
     int error;
 
     /* Save all the old stuff... */
-    struct subs *subs0 = NULL;
+    struct subs *subs = NULL;
     submod = NULL;
 
 #ifdef TRACE
@@ -508,8 +508,8 @@ doit(struct line *deck) {
             }
           }
 
-            sss->su_next = subs0;
-            subs0 = sss;            /* Now that sss is built, assign it to subs */
+            sss->su_next = subs;
+            subs = sss;            /* Now that sss is built, assign it to subs */
 
             last = c->li_next;
 
@@ -535,10 +535,10 @@ doit(struct line *deck) {
     /* Otherwise, expand sub-subcircuits recursively. */
   {
     struct subs *ks;
-    for (ks = sss = subs0; sss; sss = sss->su_next)  /* iterate through the list of subcircuits */
+    for (ks = sss = subs; sss; sss = sss->su_next)  /* iterate through the list of subcircuits */
         if ((sss->su_def = doit(sss->su_def)) == NULL)
             return (NULL);
-    subs0 = ks;  /* ks has held pointer to start of subcircuits list. */
+    subs = ks;  /* ks has held pointer to start of subcircuits list. */
   }
 
 #ifdef TRACE
@@ -589,7 +589,7 @@ doit(struct line *deck) {
                 s++;
 
                 /* iterate through .subckt list and look for .subckt name invoked */
-                for (sss = subs0; sss; sss = sss->su_next)
+                for (sss = subs; sss; sss = sss->su_next)
                     if (eq(sss->su_name, s))
                         break;
 
@@ -628,7 +628,7 @@ doit(struct line *deck) {
                 /* now invoke translate, which handles the remainder of the
                  * translation.
                  */
-                if (!translate(lcc, s, t, scname, subname, subs0))
+                if (!translate(lcc, s, t, scname, subname, subs))
                     error = 1;
                 tfree(subname);
               }
@@ -889,7 +889,7 @@ bxx_buffer(struct bxx_buffer *t)
  * subname = copy of the subcircuit name
  *-------------------------------------------------------------------------------------------*/
 static int
-translate(struct line *deck, char *formal, char *actual, char *scname, char *subname, struct subs *subs2)
+translate(struct line *deck, char *formal, char *actual, char *scname, char *subname, struct subs *subs)
 {
     struct line *c;
     struct bxx_buffer buffer;
@@ -1077,7 +1077,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             tfree(t);
 
             /* Next iterate over all nodes (netnames) found and translate them. */
-            nnodes = numnodes(c->li_line, subs2);
+            nnodes = numnodes(c->li_line, subs);
 
             while (nnodes-- > 0) {
                 name = gettok_node(&s);
@@ -1222,7 +1222,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             tfree(nametofree);
 
             /* Next iterate over all nodes (netnames) found and translate them. */
-            nnodes = numnodes(c->li_line, subs2);
+            nnodes = numnodes(c->li_line, subs);
             while (nnodes-- > 0) {
                 name = gettok_node(&s);
                 if (name == NULL ) {
@@ -1502,7 +1502,7 @@ model_bin_match( char* token, char* model_name )
 /*-------------------------------------------------------------------*/
 /*-------------------------------------------------------------------*/
 static int
-numnodes(char *name, struct subs *subs3)
+numnodes(char *name, struct subs *subs)
 {
     /* gtri - comment - wbk - 10/23/90 - Do not modify this routine for */
     /* 'A' type devices since the callers will not know how to find the */
@@ -1533,7 +1533,7 @@ numnodes(char *name, struct subs *subs3)
         while ((*s != ' ') && (*s != '\t'))
             s--;
         s++;
-        for (sss = subs3; sss; sss = sss->su_next)
+        for (sss = subs; sss; sss = sss->su_next)
             if (eq(sss->su_name, s))
                 return (sss->su_numargs);
         /*
