@@ -533,13 +533,9 @@ doit(struct line *deck) {
         return (deck);
 
     /* Otherwise, expand sub-subcircuits recursively. */
-  {
-    struct subs *ks;
-    for (ks = sss = subs; sss; sss = sss->su_next)  /* iterate through the list of subcircuits */
+    for (sss = subs; sss; sss = sss->su_next)  /* iterate through the list of subcircuits */
         if ((sss->su_def = doit(sss->su_def)) == NULL)
             return (NULL);
-    subs = ks;  /* ks has held pointer to start of subcircuits list. */
-  }
 
 #ifdef TRACE
     /* SDB debug statement */
