@@ -120,7 +120,6 @@ struct subs {
  */
 
 static wordlist *modnames, *submod;
-static struct subs *subs0 = NULL;
 static bool nobjthack = FALSE;
 /* flag indicating use of the experimental numparams library */
 static bool use_numparams = FALSE;
@@ -402,11 +401,10 @@ doit(struct line *deck) {
     bool gotone;
     wordlist *tmodnames = modnames;
     wordlist *tsubmod = submod;
-    struct subs *ts = subs0;
     int error;
 
     /* Save all the old stuff... */
-    subs0 = NULL;
+    struct subs *subs0 = NULL;
     submod = NULL;
 
 #ifdef TRACE
@@ -691,7 +689,6 @@ doit(struct line *deck) {
     if (error)
         return NULL;	/* error message already reported; should free( ) */
 
-    subs0 = ts;
     modnames = tmodnames;
     submod = tsubmod;
     /*
