@@ -442,7 +442,8 @@ doit(struct line *deck) {
 
             /* Here we loop through the deck looking for .subckt and .ends cards.
              * At the end of this section, last will point to the location of the
-             * .subckt card, and lcc will point to the location of the .ends card.
+             * .subckt card, and c will point to the location of the .ends card.
+             * and lcc->li_next === c, thus lcc will be the last body card
              */
           {
             int nest = 1;
@@ -470,15 +471,16 @@ doit(struct line *deck) {
                 return (NULL);
             }
 
+            /* last is the opening .subckt card */
+            /* c    is the terminating .ends card */
+            /* lcc  is one card before, which is the last body card */
 
             sssfree = sss = alloc(struct subs);
 
             if ( use_numparams==FALSE )
                 lcc->li_next = NULL;    /* shouldn't we free some memory here????? */
 
-            /* At this point, last points to the .subckt card, and lcc points to the .ends card */
-
-            /*  what does this do!??!?!  */
+            /* cut the whole .subckt ... .ends sequence from the deck chain */
             if (lc)
                 lc->li_next = c->li_next;
             else
@@ -507,6 +509,7 @@ doit(struct line *deck) {
 
             sss->su_next = subs;
             subs = sss;            /* Now that sss is built, assign it to subs */
+
             last = c->li_next;
 
             /*gp */
@@ -522,10 +525,7 @@ doit(struct line *deck) {
 
 
     /* At this point, sss holds the .subckt definition found, subs holds
-     * all .subckt defs found, including this one,
-     * last points to the NULL at the end of the deck,
-     * lc points to the last non-.subckt or .ends card,
-     * and lcc points to the .ends card
+     * all .subckt defs found, including this one
      */
 
     if (!sss)            /* if sss == FALSE, we have found no subckts.  Just return.  */
