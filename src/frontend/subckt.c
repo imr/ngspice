@@ -447,7 +447,10 @@ doit(struct line *deck) {
           {
             int nest = 1;
             lcc = last;
-            for (c = last->li_next;  c;  c = c->li_next) {
+            c = lcc->li_next;
+
+            while (c) {
+
                 if (ciprefix(sbend, c->li_line)) /* found a .ends */
                     nest--;
                 else if (ciprefix(start, c->li_line))  /* found a .subckt */
@@ -456,7 +459,8 @@ doit(struct line *deck) {
                 if(!nest)
                     break;
 
-                lcc = c;     /* lcc points to current pos of c  */
+                lcc = c;
+                c = lcc->li_next;
             }
           }
 
