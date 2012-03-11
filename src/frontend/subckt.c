@@ -432,7 +432,9 @@ doit(struct line *deck) {
             fprintf(cp_err, "Error: misplaced %s line: %s\n", sbend,
                     last->li_line);
             return (NULL);
-        } else if (ciprefix(start, last->li_line)) {  /* if line == .subckt  */
+        }
+
+        if (ciprefix(start, last->li_line)) {  /* if line == .subckt  */
             if (last->li_next == NULL) {            /* first check that next line is non null */
                 fprintf(cp_err, "Error: no %s line.\n", sbend);
                 return (NULL);
