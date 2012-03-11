@@ -85,7 +85,7 @@ struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
 static int settrans(char *formal, char *actual, char *subname);
 static char * gettrans(const char *name, const char *name_end);
-static int numnodes(char *name, struct subs *subs, wordlist const * const * const modnames2);
+static int numnodes(char *name, struct subs *subs, wordlist const * const modnames2);
 static int  numdevs(char *s);
 static bool modtranslate(struct line *deck, char *subname, wordlist **submod, wordlist  ** const modnames3);
 static void devmodtranslate(struct line *deck, char *subname, wordlist * const submod);
@@ -1069,7 +1069,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             tfree(t);
 
             /* Next iterate over all nodes (netnames) found and translate them. */
-            nnodes = numnodes(c->li_line, subs, modnames4);
+            nnodes = numnodes(c->li_line, subs, *modnames4);
 
             while (nnodes-- > 0) {
                 name = gettok_node(&s);
@@ -1214,7 +1214,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             tfree(nametofree);
 
             /* Next iterate over all nodes (netnames) found and translate them. */
-            nnodes = numnodes(c->li_line, subs, modnames4);
+            nnodes = numnodes(c->li_line, subs, *modnames4);
             while (nnodes-- > 0) {
                 name = gettok_node(&s);
                 if (name == NULL ) {
@@ -1494,7 +1494,7 @@ model_bin_match( char* token, char* model_name )
 /*-------------------------------------------------------------------*/
 /*-------------------------------------------------------------------*/
 static int
-numnodes(char *name, struct subs *subs, wordlist const * const * const modnames2)
+numnodes(char *name, struct subs *subs, wordlist const * const modnames2)
 {
     /* gtri - comment - wbk - 10/23/90 - Do not modify this routine for */
     /* 'A' type devices since the callers will not know how to find the */
@@ -1564,7 +1564,7 @@ numnodes(char *name, struct subs *subs, wordlist const * const * const modnames2
         txfree(gettok(&s));	     /* Skip component name */
         while ((i < n) && (*s) && !gotit) {
             t = gettok_node(&s);       /* get nodenames . . .  */
-            for (wl = *modnames2; wl; wl = wl->wl_next) {
+            for (wl = modnames2; wl; wl = wl->wl_next) {
                 /* also need to check if binnable device mos model */
                 if (eq(t, wl->wl_word) || model_bin_match( t, wl->wl_word ) )
                     gotit = 1;
@@ -1600,7 +1600,7 @@ numnodes(char *name, struct subs *subs, wordlist const * const * const modnames2
 
     /* Now, is this a model? */
     t = gettok(&s);
-    for (wl = *modnames2; wl; wl = wl->wl_next)
+    for (wl = modnames2; wl; wl = wl->wl_next)
         if (eq(t, wl->wl_word)) {
             tfree(t);
             return (3);
