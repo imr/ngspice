@@ -87,8 +87,8 @@ static int settrans(char *formal, char *actual, char *subname);
 static char * gettrans(const char *name, const char *name_end);
 static int numnodes(char *name, struct subs *subs);
 static int  numdevs(char *s);
-static bool modtranslate(struct line *deck, char *subname);
-static void devmodtranslate(struct line *deck, char *subname);
+static bool modtranslate(struct line *deck, char *subname, wordlist **submod);
+static void devmodtranslate(struct line *deck, char *subname, wordlist * const submod);
 static int inp_numnodes(char c);
 
 /*---------------------------------------------------------------------
@@ -119,7 +119,7 @@ struct subs {
  * list of translated names (i.e. after subckt expansion)
  */
 
-static wordlist *modnames, *submod;
+static wordlist *modnames, *submod0;
 static bool nobjthack = FALSE;
 /* flag indicating use of the experimental numparams library */
 static bool use_numparams = FALSE;
@@ -400,12 +400,12 @@ doit(struct line *deck) {
     int numpasses = MAXNEST;
     bool gotone;
     wordlist *tmodnames = modnames;
-    wordlist *tsubmod = submod;
+    wordlist *tsubmod = submod0;
     int error;
 
     /* Save all the old stuff... */
     struct subs *subs = NULL;
-    submod = NULL;
+    submod0 = NULL;
 
 #ifdef TRACE
     /* SDB debug statement */
@@ -438,8 +438,8 @@ doit(struct line *deck) {
                 fprintf(cp_err, "Error: no %s line.\n", sbend);
                 return (NULL);
             }
-            wl_free(submod);
-            submod = NULL;
+            wl_free(submod0);
+            submod0 = NULL;
 
             /* Here we loop through the deck looking for .subckt and .ends cards.
              * At the end of this section, last will point to the location of the
@@ -614,8 +614,8 @@ doit(struct line *deck) {
                 lcc = inp_deckcopy(sss->su_def);
 
                 /* Change the names of .models found in .subckts . . .  */
-                if (modtranslate(lcc, scname))    /* this translates the model name in the .model line */
-                    devmodtranslate(lcc, scname); /* This translates the model name on all components in the deck */
+                if (modtranslate(lcc, scname, &submod0))    /* this translates the model name in the .model line */
+                    devmodtranslate(lcc, scname, submod0); /* This translates the model name on all components in the deck */
 
               {
                 char *s = sss->su_args;
@@ -686,7 +686,7 @@ doit(struct line *deck) {
         return NULL;	/* error message already reported; should free( ) */
 
     modnames = tmodnames;
-    submod = tsubmod;
+    submod0 = tsubmod;
     /*
     struct subs {
         char *su_name;
@@ -1661,7 +1661,7 @@ numdevs(char *s)
  *  otherwise.
  *----------------------------------------------------------------------*/
 static bool
-modtranslate(struct line *deck, char *subname)
+modtranslate(struct line *deck, char *subname, wordlist **submod1)
 {
     struct line *c;
     char *buffer, *name, *t, model[4 * BSIZE_SP];
@@ -1686,11 +1686,11 @@ modtranslate(struct line *deck, char *subname)
             tfree(name);
             name = gettok(&t);                     /* name now holds model name */
             wlsub = alloc(struct wordlist);
-            wlsub->wl_next = submod;
-            if (submod)
-                submod->wl_prev = wlsub;
+            wlsub->wl_next = *submod1;
+            if (*submod1)
+                (*submod1)->wl_prev = wlsub;
             /* here's where we insert the model name into the model name list */
-            submod = wlsub;
+            *submod1 = wlsub;
             wlsub->wl_word = name;
 #ifdef TRACE
             /* SDB debug statement */
@@ -1739,7 +1739,7 @@ modtranslate(struct line *deck, char *subname)
  *  after:    Q1 c b e U1:2N3904
  *-------------------------------------------------------------------*/
 static void
-devmodtranslate(struct line *deck, char *subname)
+devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
 {
     struct line *s;
 
