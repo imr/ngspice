@@ -74,7 +74,7 @@ SPICEdev DIOinfo = {
 #endif                     
  /* DEVinstSize   */ &DIOiSize,
  /* DEVmodSize    */ &DIOmSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   DIObindCSC,
  /* DEVbindCSCComplex */   DIObindCSCComplex,
 #endif

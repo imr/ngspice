@@ -73,7 +73,7 @@ SPICEdev BJTinfo = {                  /* description from struct IFdevice  */
 #endif                     
  /* DEVinstSize   */ &BJTiSize,
  /* DEVmodSize    */ &BJTmSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   BJTbindCSC,
  /* DEVbindCSCComplex */   BJTbindCSCComplex,
 #endif

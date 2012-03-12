@@ -16,7 +16,7 @@ extern int VCCSsSetup(SENstruct*,GENmodel*);
 extern void VCCSsPrint(GENmodel*,CKTcircuit*);
 extern int VCCSsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int VCCSbindCSC(GENmodel*, CKTcircuit*);
 extern int VCCSbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

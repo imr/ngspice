@@ -38,7 +38,7 @@ extern int HSM2temp(GENmodel*,CKTcircuit*);
 extern int HSM2trunc(GENmodel*,CKTcircuit*,double*);
 extern int HSM2noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int HSM2bindCSC(GENmodel*, CKTcircuit*);
 extern int HSM2bindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

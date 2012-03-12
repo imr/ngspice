@@ -45,7 +45,7 @@ extern void LTRArcCoeffsSetup(double*,double*,double*,double*,double*,double*,in
 extern void LTRArlcCoeffsSetup(double*,double*,double*,double*,double*,double*,int,double,double,double,double,double*,int,double,int*);
 extern int LTRAstraightLineCheck(double,double,double,double,double,double,double,double);
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int LTRAbindCSC(GENmodel*, CKTcircuit*);
 extern int LTRAbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

@@ -71,7 +71,7 @@ SPICEdev B3SOIFDinfo = {
 #endif    
  /* DEVinstSize*/	&B3SOIFDiSize,
  /* DEVmodSize*/	&B3SOIFDmSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   B3SOIFDbindCSC,
  /* DEVbindCSCComplex */   B3SOIFDbindCSCComplex,
 #endif

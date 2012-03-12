@@ -72,7 +72,7 @@ SPICEdev INDinfo = {
 #endif                       
  /* DEVinstSize   */ &INDiSize,
  /* DEVmodSize    */ &INDmSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   INDbindCSC,
  /* DEVbindCSCComplex */   INDbindCSCComplex,
 #endif
@@ -145,7 +145,7 @@ SPICEdev MUTinfo = {
 #endif  
     &MUTiSize,
     &MUTmSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   MUTbindCSC,
  /* DEVbindCSCComplex */   MUTbindCSCComplex,
 #endif

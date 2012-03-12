@@ -78,7 +78,7 @@ SPICEdev TXLinfo = {
 #endif
     &TXLiSize,
     &TXLmSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   TXLbindCSC,
  /* DEVbindCSCComplex */   TXLbindCSCComplex,
 #endif
