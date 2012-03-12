@@ -22,6 +22,8 @@ Modified: 2000  AlansFixes
 #include "ngspice/klu.h"
 #elif defined(SuperLU)
 #include "ngspice/slu_ddefs.h"
+#elif defined(UMFPACK)
+#include "ngspice/umfpack.h"
 #endif
 
 struct SMPmatrix {
@@ -70,6 +72,25 @@ struct SMPmatrix {
     int CKTsuperluMODE ;
     #define CKTsuperluON 1		   /* SuperLU MODE ON definition */
     #define CKTsuperluOFF 0		   /* SuperLU MODE OFF definition */
+#elif defined(UMFPACK)
+    int *CKTumfpackAp ;
+    int *CKTumfpackAi ;
+    double *CKTumfpackAx ;
+    void *CKTumfpackSymbolic ;
+    void *CKTumfpackNumeric ;
+    double *CKTumfpackControl ;
+    double *CKTumfpackInfo ;
+    double *CKTumfpackIntermediate ;
+    double *CKTumfpackX ;
+    double **CKTbind_Sparse ;
+    double **CKTbind_CSC ;
+    double **CKTbind_CSC_Complex ;
+    double **CKTdiag_CSC ;
+    int CKTumfpackN ;
+    int CKTumfpacknz ;
+    int CKTumfpackMODE ;
+    #define CKTumfpackON 1		   /* UMFPACK MODE ON definition */
+    #define CKTumfpackOFF 0		   /* UMFPACK MODE OFF definition */
 #endif
 
 };
@@ -78,7 +99,7 @@ struct SMPmatrix {
 typedef struct SMPmatrix SMPmatrix ;
 
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 void SMPmatrix_CSC ( SMPmatrix * ) ;
 void SMPnnz ( SMPmatrix * ) ;
 #endif

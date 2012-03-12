@@ -186,6 +186,10 @@ if SuperLU_WANTED
 ngspice_LDADD += maths/SuperLU/libSuperLU.la
 endif
 
+if UMFPACK_WANTED
+ngspice_LDADD += maths/UMFPACK/libUMFPACK.la
+endif
+
 ngspice_LDADD += \
 	maths/sparse/libsparse.la \
 	misc/libmisc.la
@@ -294,6 +298,10 @@ endif
 
 if SuperLU_WANTED
 ngmultidec_LDADD += maths/SuperLU/libSuperLU.la
+endif
+
+if UMFPACK_WANTED
+ngmultidec_LDADD += maths/UMFPACK/libUMFPACK.la
 endif
 
 
@@ -434,6 +442,10 @@ endif
 
 if SuperLU_WANTED
 libspice_la_LIBADD += maths/SuperLU/libSuperLU.la
+endif
+
+if UMFPACK_WANTED
+libspice_la_LIBADD += maths/UMFPACK/libUMFPACK.la
 endif
 
 libspice_la_LIBADD += \
