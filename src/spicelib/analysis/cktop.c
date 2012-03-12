@@ -83,6 +83,33 @@ ckt->CKTmode = firstmode;
             if (DEVices [i] && DEVices [i]->DEVbindCSC)
                 DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
     }
+#elif defined(UMFPACK)
+    if (ckt->CKTmatrix->CKTumfpackMODE)
+    {
+        int i ;
+	int n = ckt->CKTmatrix->CKTumfpackN ;
+	int nz = ckt->CKTmatrix->CKTumfpacknz ;
+	ckt->CKTmatrix->CKTumfpackAp =			TMALLOC (int, n + 1) ;
+	ckt->CKTmatrix->CKTumfpackAi =			TMALLOC (int, nz) ;
+	ckt->CKTmatrix->CKTumfpackAx =			TMALLOC (double, nz) ;
+	ckt->CKTmatrix->CKTumfpackControl =		TMALLOC (double, UMFPACK_CONTROL) ;
+	ckt->CKTmatrix->CKTumfpackInfo =		TMALLOC (double, UMFPACK_INFO) ;
+
+	ckt->CKTmatrix->CKTumfpackIntermediate =	TMALLOC (double, n) ;
+
+	ckt->CKTmatrix->CKTumfpackX =			TMALLOC (double, n) ;
+
+	ckt->CKTmatrix->CKTbind_Sparse =		TMALLOC (double *, nz) ;
+	ckt->CKTmatrix->CKTbind_CSC =			TMALLOC (double *, nz) ;
+
+	ckt->CKTmatrix->CKTdiag_CSC =			TMALLOC (double *, n) ;
+
+	SMPmatrix_CSC (ckt->CKTmatrix) ;
+
+	for (i = 0 ; i < DEVmaxnum ; i++)
+            if (DEVices [i] && DEVices [i]->DEVbindCSC)
+                DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
+    }
 #endif
 
   if (!ckt->CKTnoOpIter){

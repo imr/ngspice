@@ -112,7 +112,7 @@ typedef struct SPICEdev {
     int *DEVinstSize;    /* size of an instance */
     int *DEVmodSize;     /* size of a model */
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
     int (*DEVbindCSC)(GENmodel*, CKTcircuit*);
     int (*DEVbindCSCComplex)(GENmodel*, CKTcircuit*);
 #endif

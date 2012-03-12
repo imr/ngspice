@@ -1093,9 +1093,27 @@ if test "x$enable_superlu" = "xyes"; then
 fi
 AM_CONDITIONAL([SuperLU_WANTED], [test "x$enable_superlu" = "xyes"])
 
-#REMOVE THIS TEST IN THE FUTURE WHEN BOTH KLU AND SuperLU ARE SUPPORTED IN THE MEAN TIME
-if test "x$enable_klu" = "xyes" && test "x$enable_superlu" = "xyes" ; then
+# --enable-umfpack: Use UMFPACK linear systems solver
+AC_ARG_ENABLE([umfpack],
+    AS_HELP_STRING([--enable-umfpack], [Use UMFPACK linear systems solver]))
+
+# Add UMFPACK solver to ngspice
+if test "x$enable_umfpack" = "xyes"; then
+    AC_MSG_RESULT([Checking for ATLAS library...])
+    AC_CHECK_LIB([atlas], [ATL_buildinfo], [], [AC_MSG_ERROR([ERROR!!! You must have ATLAS installed])])
+    AC_CHECK_LIB([f77blas], [dgemm_], [], [AC_MSG_ERROR([ERROR!!! You must have ATLAS installed])])
+    AC_DEFINE([UMFPACK], [], [Define if we want UMFPACK linear systems solver])
+    AC_MSG_RESULT([WARNING: UMFPACK solver enabled])
+fi
+AM_CONDITIONAL([UMFPACK_WANTED], [test "x$enable_umfpack" = "xyes"])
+
+#REMOVE THIS TEST IN THE FUTURE WHEN KLU, SuperLU AND UMFPACK ARE SUPPORTED IN THE MEAN TIME
+if test "x$enable_klu" = "xyes"  &&  test "x$enable_superlu" = "xyes" ; then
     AC_MSG_ERROR([ERROR: KLU and SuperLU can't be enabled together at the moment])
+elif test "x$enable_klu" = "xyes"  &&  test "x$enable_umfpack" = "xyes" ; then
+    AC_MSG_ERROR([ERROR: KLU and UMFPACK can't be enabled together at the moment])
+elif test "x$enable_superlu" = "xyes"  &&  test "x$enable_umfpack" = "xyes" ; then
+    AC_MSG_ERROR([ERROR: SuperLU and UMFPACK can't be enabled together at the moment])
 fi
 
 # Output Files
@@ -1106,6 +1124,9 @@ AM_COND_IF([KLU_WANTED],
 
 AM_COND_IF([SuperLU_WANTED],
 	[AC_CONFIG_FILES([src/maths/SuperLU/Makefile])])
+
+AM_COND_IF([UMFPACK_WANTED],
+	[AC_CONFIG_FILES([src/maths/UMFPACK/Makefile])])
 
 AC_CONFIG_FILES([Makefile
                  man/Makefile

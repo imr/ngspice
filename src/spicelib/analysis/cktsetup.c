@@ -86,6 +86,9 @@ CKTsetup(CKTcircuit *ckt)
 #elif defined(SuperLU)
     if (ckt->CKTmatrix->CKTsuperluMODE)
         SMPnnz (ckt->CKTmatrix) ;
+#elif defined(UMFPACK)
+    if (ckt->CKTmatrix->CKTumfpackMODE)
+        SMPnnz (ckt->CKTmatrix) ;
 #endif
 
     for(i=0;i<=MAX(2,ckt->CKTmaxOrder)+1;i++) { /* dctran needs 3 states as minimum */
