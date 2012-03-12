@@ -74,7 +74,7 @@ SPICEdev ASRCinfo = {
 #endif                    
  /* DEVinstSize   */ &ASRCiSize,
  /* DEVmodSize    */ &ASRCmSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   NULL,
  /* DEVbindCSCComplex */   NULL,
 #endif

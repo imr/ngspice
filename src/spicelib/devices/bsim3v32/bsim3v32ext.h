@@ -30,7 +30,7 @@ extern int BSIM3v32trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM3v32noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM3v32unsetup(GENmodel*,CKTcircuit*);
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int BSIM3v32bindCSC(GENmodel*, CKTcircuit*);
 extern int BSIM3v32bindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

@@ -73,7 +73,7 @@ SPICEdev MOS9info = {
 #endif                        
  /* DEVinstSize   */ &MOS9iSize,
  /* DEVmodSize    */ &MOS9mSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   MOS9bindCSC,
  /* DEVbindCSCComplex */   MOS9bindCSCComplex,
 #endif

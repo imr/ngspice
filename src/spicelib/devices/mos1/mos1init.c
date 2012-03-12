@@ -73,7 +73,7 @@ SPICEdev MOS1info = {
 #endif                       
  /* DEVinstSize   */ &MOS1iSize,
  /* DEVmodSize    */ &MOS1mSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   MOS1bindCSC,
  /* DEVbindCSCComplex */   MOS1bindCSCComplex,
 #endif

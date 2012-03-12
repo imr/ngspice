@@ -19,7 +19,7 @@ extern int HFETAtemp(GENmodel*,CKTcircuit*);
 extern int HFETAtrunc(GENmodel*,CKTcircuit*,double*);
 extern int HFETAunsetup(GENmodel*,CKTcircuit*);
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int HFETAbindCSC(GENmodel*, CKTcircuit*);
 extern int HFETAbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

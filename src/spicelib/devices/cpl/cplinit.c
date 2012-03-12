@@ -73,7 +73,7 @@ SPICEdev CPLinfo = {
 #endif   
 /* DEVinstSize    */ &CPLiSize,
 /* DEVmodSize     */ &CPLmSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   NULL,
  /* DEVbindCSCComplex */   NULL,
 #endif

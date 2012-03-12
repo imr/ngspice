@@ -36,6 +36,10 @@ if SuperLU_WANTED
 libbsim4v6_la_SOURCES += b4v6bindCSC.c
 endif
 
+if UMFPACK_WANTED
+libbsim4v6_la_SOURCES += b4v6bindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

@@ -18,7 +18,7 @@ extern int CCVSsSetup(SENstruct*,GENmodel*);
 extern int CCVSsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int CCVSunsetup(GENmodel*,CKTcircuit*);
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int CCVSbindCSC(GENmodel*, CKTcircuit*);
 extern int CCVSbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

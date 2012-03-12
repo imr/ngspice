@@ -37,7 +37,7 @@ extern int MUTsSetup(SENstruct*,GENmodel*);
 extern int MUTsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int MUTtemp(GENmodel *inModel, CKTcircuit *ckt);
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int INDbindCSC(GENmodel*, CKTcircuit*);
 extern int INDbindCSCComplex(GENmodel*, CKTcircuit*);
 extern int MUTbindCSC(GENmodel*, CKTcircuit*);

@@ -29,7 +29,7 @@ extern int B3SOIPDtrunc(GENmodel*,CKTcircuit*,double*);
 extern int B3SOIPDnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int B3SOIPDunsetup(GENmodel*,CKTcircuit*);
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int B3SOIPDbindCSC(GENmodel*, CKTcircuit*);
 extern int B3SOIPDbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

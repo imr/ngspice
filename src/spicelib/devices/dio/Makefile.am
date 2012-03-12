@@ -42,6 +42,10 @@ if SuperLU_WANTED
 libdio_la_SOURCES += diobindCSC.c
 endif
 
+if UMFPACK_WANTED
+libdio_la_SOURCES += diobindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

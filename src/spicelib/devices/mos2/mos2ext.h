@@ -30,7 +30,7 @@ extern int MOS2noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 
 extern int MOS2dSetup(GENmodel*,CKTcircuit*);
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int MOS2bindCSC(GENmodel*, CKTcircuit*);
 extern int MOS2bindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

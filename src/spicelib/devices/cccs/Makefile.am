@@ -31,6 +31,10 @@ if SuperLU_WANTED
 libcccs_la_SOURCES += cccsbindCSC.c
 endif
 
+if UMFPACK_WANTED
+libcccs_la_SOURCES += cccsbindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 MAINTAINERCLEANFILES = Makefile.in

@@ -42,6 +42,10 @@ if SuperLU_WANTED
 libmos3_la_SOURCES += mos3bindCSC.c
 endif
 
+if UMFPACK_WANTED
+libmos3_la_SOURCES += mos3bindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

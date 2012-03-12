@@ -73,7 +73,7 @@ SPICEdev MESinfo = {
 #endif                        
  /* DEVinstSize   */ &MESiSize,
  /* DEVmodSize    */ &MESmSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   MESbindCSC,
  /* DEVbindCSCComplex */   MESbindCSCComplex,
 #endif

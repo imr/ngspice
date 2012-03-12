@@ -32,7 +32,7 @@ extern int BSIM4v4unsetup(GENmodel*,CKTcircuit*);
 
 
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int BSIM4v4bindCSC(GENmodel*, CKTcircuit*);
 extern int BSIM4v4bindCSCComplex(GENmodel*, CKTcircuit*);
 #endif
