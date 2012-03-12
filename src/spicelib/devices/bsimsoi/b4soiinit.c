@@ -71,7 +71,7 @@ SPICEdev B4SOIinfo = {
 #endif
  /* DEVinstSize   */ &B4SOIiSize,
  /* DEVmodSize    */ &B4SOImSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   B4SOIbindCSC,
  /* DEVbindCSCComplex */   B4SOIbindCSCComplex,
 #endif

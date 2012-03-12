@@ -72,7 +72,7 @@ SPICEdev BSIM3info = {
 #endif                       
  /* DEVinstSize   */ &BSIM3iSize,
  /* DEVmodSize    */ &BSIM3mSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   BSIM3bindCSC,
  /* DEVbindCSCComplex */   BSIM3bindCSCComplex,
 #endif

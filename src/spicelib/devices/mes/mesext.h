@@ -24,7 +24,7 @@ extern int MESnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int MESdSetup(GENmodel*,CKTcircuit*);
 
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int MESbindCSC(GENmodel*, CKTcircuit*);
 extern int MESbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

@@ -66,6 +66,25 @@ NIinit(CKTcircuit *ckt)
     ckt->CKTmatrix->CKTsuperluN = 0 ;
     ckt->CKTmatrix->CKTsuperlunz = 0 ;
     ckt->CKTmatrix->CKTsuperluMODE = CKTsuperluON ; /* TO BE SUBSTITUTED WITH THE HEURISTICS */
+
+#elif defined(UMFPACK)
+    ckt->CKTmatrix->CKTumfpackAp = NULL ;
+    ckt->CKTmatrix->CKTumfpackAi = NULL ;
+    ckt->CKTmatrix->CKTumfpackAx = NULL ;
+    ckt->CKTmatrix->CKTumfpackSymbolic = NULL ;
+    ckt->CKTmatrix->CKTumfpackNumeric = NULL ;
+    ckt->CKTmatrix->CKTumfpackControl = NULL ;
+    ckt->CKTmatrix->CKTumfpackInfo = NULL ;
+    ckt->CKTmatrix->CKTumfpackIntermediate = NULL ;
+    ckt->CKTmatrix->CKTumfpackX = NULL ;
+    ckt->CKTmatrix->CKTbind_Sparse = NULL ;
+    ckt->CKTmatrix->CKTbind_CSC = NULL ;
+    ckt->CKTmatrix->CKTbind_CSC_Complex = NULL ;
+    ckt->CKTmatrix->CKTdiag_CSC = NULL ;
+    ckt->CKTmatrix->CKTumfpackN = 0 ;
+    ckt->CKTmatrix->CKTumfpacknz = 0 ;
+    ckt->CKTmatrix->CKTumfpackMODE = CKTumfpackON ; /* TO BE SUBSTITUTED WITH THE HEURISTICS */
+
 #endif
 
     ckt->CKTniState = NIUNINITIALIZED;

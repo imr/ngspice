@@ -29,7 +29,7 @@ extern int BSIM4v6trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM4v6noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM4v6unsetup(GENmodel*,CKTcircuit*);
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int BSIM4v6bindCSC(GENmodel*, CKTcircuit*);
 extern int BSIM4v6bindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

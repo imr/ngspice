@@ -72,7 +72,7 @@ SPICEdev CCCSinfo = {
 #endif    
  /* DEVinstSize   */ &CCCSiSize,
  /* DEVmodSize    */ &CCCSmSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   CCCSbindCSC,
  /* DEVbindCSCComplex */   CCCSbindCSCComplex,
 #endif

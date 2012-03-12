@@ -40,6 +40,10 @@ if SuperLU_WANTED
 libhisimhv1_la_SOURCES += hsmhvbindCSC.c
 endif
 
+if UMFPACK_WANTED
+libhisimhv1_la_SOURCES += hsmhvbindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

@@ -18,7 +18,7 @@ extern int CSWsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int CSWnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int CSWtrunc(GENmodel*,CKTcircuit*,double*);
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int CSWbindCSC(GENmodel*, CKTcircuit*);
 extern int CSWbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

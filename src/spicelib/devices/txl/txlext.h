@@ -13,7 +13,7 @@ extern int TXLparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int TXLsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int TXLunsetup(GENmodel*, CKTcircuit*);
 
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int TXLbindCSC(GENmodel*, CKTcircuit*);
 extern int TXLbindCSCComplex(GENmodel*, CKTcircuit*);
 #endif

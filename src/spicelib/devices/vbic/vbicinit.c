@@ -78,7 +78,7 @@ SPICEdev VBICinfo = {
 #endif                                                         
     &VBICiSize,   /* DEVinstSize    */
     &VBICmSize,   /* DEVmodSize     */
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   VBICbindCSC,
  /* DEVbindCSCComplex */   VBICbindCSCComplex,
 #endif

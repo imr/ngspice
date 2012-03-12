@@ -73,7 +73,7 @@ SPICEdev VSRCinfo = {
 #endif                        
  /* DEVinstSize   */ &VSRCiSize,
  /* DEVmodSize    */ &VSRCmSize,
-#if defined(KLU) || defined(SuperLU)
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindklu        */ VSRCbindCSC,
  /* DEVbindkluComplex */ VSRCbindCSCComplex,
 #endif
