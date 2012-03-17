@@ -62,3 +62,8 @@ Makefile.in
 /visualc/vngspice.vcproj.*
 /visualc/vngspice.suo
 /visualc/vngspice.ncb
+
+/release*
+/debug*
+
+/vs-dll*
