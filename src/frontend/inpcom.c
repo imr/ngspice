@@ -1916,11 +1916,11 @@ static char*
 inp_fix_subckt( char *s )
 {
     struct line *head=NULL, *newcard=NULL, *start_card=NULL, *end_card=NULL, *prev_card=NULL, *c=NULL;
-    char *equal = strstr( s, "=" );
-    char *beg, *buffer, *ptr1, *ptr2, *str, *new_str = NULL;
+    char *equal, *beg, *buffer, *ptr1, *ptr2, *str, *new_str = NULL;
     char keep;
-    int  num_params = 0, i = 0;
-
+    int  num_params = 0, i = 0, bracedepth = 0;
+    /* find first '=' */
+    equal = strstr( s, "=" );
     if ( !strstr( s, "params:" ) && equal != NULL ) {
         /* get subckt name (ptr1 will point to name) */
         for ( ptr1 = s; *ptr1 && !isspace(*ptr1); ptr1++ )
@@ -1949,6 +1949,8 @@ inp_fix_subckt( char *s )
         head = alloc(struct line);
         /* create list of parameters that need to get sorted */
         while ( *beg && (ptr1 = strstr( beg, "=" )) != NULL ) {
+#ifdef BRACE
+            /* alternative patch to cope with spaces */
             ptr2 = ptr1+1;
             ptr1--;
             while ( isspace(*ptr1)  ) ptr1--;
@@ -1956,14 +1958,28 @@ inp_fix_subckt( char *s )
             ptr1++;                                    /* ptr1 points to beginning of parameter */
 
             while ( isspace(*ptr2) ) ptr2++;
-            while ( *ptr2 && !isspace(*ptr2) ) ptr2++; /* ptr2 points to end of parameter       */
+            /* if parameter is an expression and starts with '{', find closing '}'
+               Braces maybe nested (will they ever be ?). */
+            if (*ptr2 == '{') {
+                bracedepth = 1;
+                while (bracedepth > 0) {
+                    ptr2++;
+                    if (*ptr2 == '{') bracedepth++;
+                    else if (*ptr2 == '}') bracedepth--;
+                    else if (*ptr2 == '\0') {
+                        fprintf(stderr, "Error: Missing } in line %s\n", s);
+                        controlled_exit(EXIT_FAILURE);
+                    }
+                }
+                ptr2++;/* ptr2 points past end of parameter {...} */
+            }
+            else
+            /* take only the next token (separated by space) as the parameter */
+                while ( *ptr2 && !isspace(*ptr2) ) ptr2++; /* ptr2 points past end of parameter       */
 
             keep  = *ptr2;
             if( keep == '\0' ) {
-                /* End of string - don't go over end.  This needed to change because
-                 * strings don't store line size here anymore since we use dynamic
-                 * strings.  Previously, we could step on string size which was stored
-                 * at string[length+2] and string[length+2] */
+                /* End of string - don't go over end. */
                 beg = ptr2 ;
             } else {
                 *ptr2 = '\0' ;
@@ -1982,7 +1998,49 @@ inp_fix_subckt( char *s )
             prev_card = end_card = newcard;
             num_params++;
         }
+#else
+            /* patch provided by Ivan Riis Nielsen */
+            bool done=FALSE;
+            int buf_len=32, buf_idx=0;
+            char* buf=TMALLOC(char,buf_len), *p1=beg, *p2=beg;
 
+            while (!done) {
+                while (*p2 && !isspace(*p2)) {
+
+                    if (buf_idx>=buf_len) {
+                        buf_len *= 2;
+                        buf = TREALLOC(char,buf,buf_len);
+                    }
+                    buf[buf_idx++] = *(p2++);
+                }
+                for (p1=p2; isspace(*p1); ++p1);
+                if (*p1=='\0' || !(strchr("+-*/<>=(!,{",p2[-1]) || strchr("+-*/<>=()!,}",*p1))) {
+                    if (buf_idx>=buf_len) {
+                        buf_len *= 2;
+                        buf = TREALLOC(char,buf,buf_len);
+                    }
+                    buf[buf_idx++] = '\0';
+                    beg = p1;
+
+                    newcard = alloc(struct line);
+                    str     = buf;
+
+                    newcard->li_line = str;
+                    newcard->li_next = NULL;
+
+                    if ( start_card == NULL  ) head->li_next = start_card = newcard;
+                    else                       prev_card->li_next = newcard;
+
+                    prev_card = end_card = newcard;
+                    num_params++;
+
+                    done = TRUE;
+                }
+                else
+                    p2 = p1;
+            }
+        }
+#endif
         /* now sort parameters in order of dependencies */
         inp_sort_params( start_card, end_card, head, start_card, end_card );
 
