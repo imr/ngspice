@@ -40,7 +40,7 @@ libKLU_real_la_SOURCES = 	\
 	klu_tsolve.c
 
 
-libKLU_real_la_CPPFLAGS = -I$(top_srcdir)/src/include
+libKLU_real_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 
 
 libKLU_complex_la_SOURCES = 	\
@@ -81,7 +81,7 @@ libKLU_complex_la_SOURCES = 	\
 	klu_tsolve.c
 
 
-libKLU_complex_la_CPPFLAGS = -I$(top_srcdir)/src/include -DCOMPLEX
+libKLU_complex_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -DCOMPLEX
 
 
 libKLU_la_SOURCES =		\
@@ -92,6 +92,6 @@ libKLU_la_LIBADD =		\
 	libKLU_complex.la
 
 
-libKLU_la_CPPFLAGS = -I$(top_srcdir)/src/include
+libKLU_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in
