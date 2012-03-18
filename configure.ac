@@ -856,6 +856,7 @@ if test "x$enable_pzdebug" = xyes; then
 fi
 if test "x$enable_pss" = xyes; then
     AC_DEFINE([WITH_PSS], [], [Define if you want PSS analysis])
+    AC_MSG_RESULT(WARNING: PSS analysis enabled)
 fi
 if test "x$enable_blktmsdebug" = xyes; then
     AC_DEFINE([D_DBG_BLOCKTIMES], [], [Define if we want debug distortion analysis (BLOCKTIMES)])
@@ -1114,10 +1115,6 @@ elif (test "$enable_klu" = "yes" && test "$enable_umfpack" = "yes") ; then
     AC_MSG_ERROR(ERROR: KLU and UMFPACK can't be enabled together at the moment)
 elif (test "$enable_superlu" = "yes" && test "$enable_umfpack" = "yes") ; then
     AC_MSG_ERROR(ERROR: SuperLU and UMFPACK can't be enabled together at the moment)
-fi
-
-if test "$enable_pss" = "yes"; then
-    AC_MSG_RESULT(WARNING: PSS analysis enabled)
 fi
 
 # Output Files
