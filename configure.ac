@@ -1088,6 +1088,9 @@ AC_ARG_ENABLE([superlu],
 
 # Add SuperLU solver to ngspice
 if test "x$enable_superlu" = "xyes"; then
+    AC_MSG_RESULT([Checking for ATLAS library...])
+    AC_CHECK_LIB([atlas], [ATL_buildinfo], [], [AC_MSG_ERROR([ERROR!!! You must have ATLAS installed])])
+    AC_CHECK_LIB([f77blas], [dgemm_], [], [AC_MSG_ERROR([ERROR!!! You must have ATLAS installed])])
     AC_DEFINE([SuperLU], [], [Define if we want SuperLU linear systems solver])
     AC_MSG_RESULT([WARNING: SuperLU solver enabled - at the moment it only works with transient analyses])
 fi
@@ -1103,7 +1106,7 @@ if test "x$enable_umfpack" = "xyes"; then
     AC_CHECK_LIB([atlas], [ATL_buildinfo], [], [AC_MSG_ERROR([ERROR!!! You must have ATLAS installed])])
     AC_CHECK_LIB([f77blas], [dgemm_], [], [AC_MSG_ERROR([ERROR!!! You must have ATLAS installed])])
     AC_DEFINE([UMFPACK], [], [Define if we want UMFPACK linear systems solver])
-    AC_MSG_RESULT([WARNING: UMFPACK solver enabled])
+    AC_MSG_RESULT([WARNING: UMFPACK solver enabled - at the moment it only works with transient analyses])
 fi
 AM_CONDITIONAL([UMFPACK_WANTED], [test "x$enable_umfpack" = "xyes"])
 
