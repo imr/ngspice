@@ -63,9 +63,9 @@ libSuperLU_real_la_SOURCES =	\
 	util.c			\
 	xerbla.c
 
-libSuperLU_real_la_CPPFLAGS = -DAdd_ -DUSE_VENDOR_BLAS -I$(top_srcdir)/src/include
+libSuperLU_real_la_CPPFLAGS = @AM_CPPFLAGS@ -DAdd_ -DUSE_VENDOR_BLAS -I$(top_srcdir)/src/include
 
-libSuperLU_real_la_LDFLAGS = -L/usr/lib -lblas
+libSuperLU_real_la_LDFLAGS = -lf77blas -latlas
 
 
 libSuperLU_complex_la_SOURCES =	\
@@ -130,13 +130,15 @@ libSuperLU_complex_la_SOURCES =	\
 	zdiagonal.c		\
 	zlacon.c
 
-libSuperLU_complex_la_CPPFLAGS = -DAdd_ -DUSE_VENDOR_BLAS -I$(top_srcdir)/src/include
+libSuperLU_complex_la_CPPFLAGS = @AM_CPPFLAGS@ -DAdd_ -DUSE_VENDOR_BLAS -I$(top_srcdir)/src/include
 
-libSuperLU_complex_la_LDFLAGS = -L/usr/lib -lblas
+libSuperLU_complex_la_LDFLAGS = -lf77blas -latlas
 
 
 libSuperLU_la_SOURCES =		\
 	superlusmp.c
+
+libSuperLU_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 
 libSuperLU_la_LIBADD =		\
 	libSuperLU_real.la	\

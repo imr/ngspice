@@ -41,7 +41,7 @@ libUMFPACK_AMD_la_SOURCES =			\
 	amd_preprocess.c			\
 	amd_valid.c
 
-libUMFPACK_AMD_la_CPPFLAGS = -I$(top_srcdir)/src/include
+libUMFPACK_AMD_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 
 
 libUMFPACK_global_la_SOURCES =			\
@@ -50,66 +50,66 @@ libUMFPACK_global_la_SOURCES =			\
 	umfpack_timer.c				\
 	umf_triplet.c
 
-libUMFPACK_global_la_CPPFLAGS = -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_global_la_CPPFLAGS = @AM_CPPFLAGS@ -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_global_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_global_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_CONJ_DINT_la_SOURCES =		\
 	umf_ltsolve.c				\
 	umf_utsolve.c
 
-libUMFPACK_CONJ_DINT_la_CPPFLAGS = -DDINT -DCONJUGATE_SOLVE -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_CONJ_DINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DDINT -DCONJUGATE_SOLVE -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_CONJ_DINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_CONJ_DINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_DOMAP_DINT_la_SOURCES =		\
 	umf_triplet.c
 
-libUMFPACK_DOMAP_DINT_la_CPPFLAGS = -DDINT -DDO_MAP -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_DOMAP_DINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DDINT -DDO_MAP -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_DOMAP_DINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_DOMAP_DINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_DOVALUES_DINT_la_SOURCES =		\
 	umf_triplet.c
 
-libUMFPACK_DOVALUES_DINT_la_CPPFLAGS = -DDINT -DDO_VALUES -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_DOVALUES_DINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DDINT -DDO_VALUES -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_DOVALUES_DINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_DOVALUES_DINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_DOMAP_DOVALUES_DINT_la_SOURCES =	\
 	umf_triplet.c
 
-libUMFPACK_DOMAP_DOVALUES_DINT_la_CPPFLAGS = -DDINT -DDO_MAP -DDO_VALUES -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_DOMAP_DOVALUES_DINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DDINT -DDO_MAP -DDO_VALUES -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_DOMAP_DOVALUES_DINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_DOMAP_DOVALUES_DINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_DFIXQ_DINT_la_SOURCES =		\
 	umf_assemble.c
 
-libUMFPACK_DFIXQ_DINT_la_CPPFLAGS = -DDINT -DFIXQ -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_DFIXQ_DINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DDINT -DFIXQ -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_DFIXQ_DINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_DFIXQ_DINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_DDROP_DINT_la_SOURCES =		\
 	umf_store_lu.c
 
-libUMFPACK_DDROP_DINT_la_CPPFLAGS = -DDINT -DDROP -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_DDROP_DINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DDINT -DDROP -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_DDROP_DINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_DDROP_DINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_DWSOLVE_DINT_la_SOURCES =		\
 	umfpack_solve.c
 
-libUMFPACK_DWSOLVE_DINT_la_CPPFLAGS = -DDINT -DWSOLVE -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_DWSOLVE_DINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DDINT -DWSOLVE -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_DWSOLVE_DINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_DWSOLVE_DINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_DINT_la_SOURCES = 			\
@@ -189,9 +189,9 @@ libUMFPACK_DINT_la_SOURCES = 			\
 	umf_valid_numeric.c			\
 	umf_valid_symbolic.c
 
-libUMFPACK_DINT_la_CPPFLAGS = -DDINT -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_DINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DDINT -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_DINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_DINT_la_LDFLAGS = -lf77blas -latlas
 
 
 
@@ -262,72 +262,74 @@ libUMFPACK_ZINT_la_SOURCES =	 		\
 	umf_valid_numeric.c			\
 	umf_valid_symbolic.c
 
-libUMFPACK_ZINT_la_CPPFLAGS = -DZINT -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_ZINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DZINT -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_ZINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_ZINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_CONJ_ZINT_la_SOURCES =		\
 	umf_ltsolve.c				\
 	umf_utsolve.c
 
-libUMFPACK_CONJ_ZINT_la_CPPFLAGS = -DZINT -DCONJUGATE_SOLVE -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_CONJ_ZINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DZINT -DCONJUGATE_SOLVE -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_CONJ_ZINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_CONJ_ZINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_DOMAP_ZINT_la_SOURCES =		\
 	umf_triplet.c
 
-libUMFPACK_DOMAP_ZINT_la_CPPFLAGS = -DZINT -DDO_MAP -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_DOMAP_ZINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DZINT -DDO_MAP -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_DOMAP_ZINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_DOMAP_ZINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_DOVALUES_ZINT_la_SOURCES =		\
 	umf_triplet.c
 
-libUMFPACK_DOVALUES_ZINT_la_CPPFLAGS = -DZINT -DDO_VALUES -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_DOVALUES_ZINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DZINT -DDO_VALUES -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_DOVALUES_ZINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_DOVALUES_ZINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_DOMAP_DOVALUES_ZINT_la_SOURCES =	\
 	umf_triplet.c
 
-libUMFPACK_DOMAP_DOVALUES_ZINT_la_CPPFLAGS = -DZINT -DDO_MAP -DDO_VALUES -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_DOMAP_DOVALUES_ZINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DZINT -DDO_MAP -DDO_VALUES -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_DOMAP_DOVALUES_ZINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_DOMAP_DOVALUES_ZINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_DFIXQ_ZINT_la_SOURCES =		\
 	umf_assemble.c
 
-libUMFPACK_DFIXQ_ZINT_la_CPPFLAGS = -DZINT -DFIXQ -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_DFIXQ_ZINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DZINT -DFIXQ -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_DFIXQ_ZINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_DFIXQ_ZINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_DDROP_ZINT_la_SOURCES =		\
 	umf_store_lu.c
 
-libUMFPACK_DDROP_ZINT_la_CPPFLAGS = -DZINT -DDROP -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_DDROP_ZINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DZINT -DDROP -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_DDROP_ZINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_DDROP_ZINT_la_LDFLAGS = -lf77blas -latlas
 
 
 libUMFPACK_DWSOLVE_ZINT_la_SOURCES =		\
 	umfpack_solve.c
 
-libUMFPACK_DWSOLVE_ZINT_la_CPPFLAGS = -DZINT -DWSOLVE -DNCHOLMOD -I$(top_srcdir)/src/include
+libUMFPACK_DWSOLVE_ZINT_la_CPPFLAGS = @AM_CPPFLAGS@ -DZINT -DWSOLVE -DNCHOLMOD -I$(top_srcdir)/src/include
 
-libUMFPACK_DWSOLVE_ZINT_la_LDFLAGS = -L/usr/lib/atlas-corei7sse3 -lf77blas -latlas
+libUMFPACK_DWSOLVE_ZINT_la_LDFLAGS = -lf77blas -latlas
 
 
 
 
 libUMFPACK_la_SOURCES =				\
 	umfpacksmp.c
+
+libUMFPACK_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 
 libUMFPACK_la_LIBADD =				\
 	libUMFPACK_AMD.la			\
