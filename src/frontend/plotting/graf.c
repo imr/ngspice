@@ -654,6 +654,11 @@ iplot(struct plot *pl, int id)
                 if (!yl)
                   yl = v->v_name;
             }
+        /* generate a small difference between ymin and ymax
+           to catch the y=const case */
+        if (ylims[0] == ylims[1])
+            ylims[1] += 1e-9;
+
         if (ft_grdb)
             fprintf(cp_err, 
               "iplot: after 5, xlims = %G, %G, ylims = %G, %G\n", 
@@ -762,6 +767,8 @@ iplot(struct plot *pl, int id)
                   currentgraph->data.ymin) * YFACTOR; 
 /*                currentgraph->data.ymin +=
                   (dy - currentgraph->data.ymin) * YFACTOR;*/
+/*                currentgraph->data.ymin = dy;
+                currentgraph->data.ymin *= (1 + YFACTOR); */
             }
             if (currentgraph->data.ymax <
                     currentgraph->data.ymin)
@@ -779,9 +786,11 @@ iplot(struct plot *pl, int id)
                 /* set the new y hi value */
                 currentgraph->data.ymax +=
                   (currentgraph->data.ymax -
-                  currentgraph->data.ymin) * YFACTOR; 
+                  currentgraph->data.ymin) * YFACTOR;
 /*                currentgraph->data.ymax +=
                   (dy - currentgraph->data.ymax) * YFACTOR;*/
+/*                currentgraph->data.ymax = dy;
+                currentgraph->data.ymax *= (1 + YFACTOR); */
             }
         }
         if (changed) {
