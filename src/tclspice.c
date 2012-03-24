@@ -372,6 +372,8 @@ void blt_add(int index,double value){
 void blt_lockvec(int index){
 #ifdef THREADS
   mutex_lock(&vectors[index].mutex);
+#else
+  NG_IGNORE(index);
 #endif
   return;
 }
@@ -1380,6 +1382,53 @@ static int maxstep TCL_CMDPROCARGS(clientData,interp,argc,argv) {
     
 }
 
+/* obtain the initial time of a transient analysis */
+static int get_initTime TCL_CMDPROCARGS(clientData,interp,argc,argv) {
+    TRANan *job;
+    double itime;
+    char buf[128];
+    NG_IGNORE(argv);
+    NG_IGNORE(clientData);
+
+    if (argc < 1 ||argc > 1) {
+        Tcl_SetResult(interp, "Wrong # args. spice::get_initTime",TCL_STATIC);
+        return TCL_ERROR;
+    }
+    if (ft_curckt == NULL) {
+        Tcl_SetResult(interp, "No circuit loaded ",TCL_STATIC);
+        return TCL_ERROR;
+    }
+
+    job = (TRANan*)(ft_curckt->ci_ckt)->CKTcurJob;
+    itime = job->TRANinitTime;
+    sprintf(buf,"%g",itime);
+    Tcl_SetResult(interp,buf,TCL_VOLATILE);
+    return TCL_OK;
+}
+
+/* obtain the final time of a transient analysis */
+static int get_finalTime TCL_CMDPROCARGS(clientData,interp,argc,argv) {
+    TRANan *job;
+    double ftime;
+    char buf[128];
+    NG_IGNORE(argv);
+    NG_IGNORE(clientData);
+
+    if (argc < 1 ||argc > 1) {
+        Tcl_SetResult(interp, "Wrong # args. spice::get_finalTime",TCL_STATIC);
+        return TCL_ERROR;
+    }
+    if (ft_curckt == NULL) {
+        Tcl_SetResult(interp, "No circuit loaded ",TCL_STATIC);
+        return TCL_ERROR;
+    }
+
+    job = (TRANan*)(ft_curckt->ci_ckt)->CKTcurJob;
+    ftime = job->TRANfinalTime;
+    sprintf(buf,"%g",ftime);
+    Tcl_SetResult(interp,buf,TCL_VOLATILE);
+    return TCL_OK;
+}
 
 /****************************************/
 /*          The Tk frontend for plot    */
@@ -2349,6 +2398,8 @@ bot:
     Tcl_CreateCommand(interp, TCLSPICE_prefix "get_mod_param", get_mod_param, NULL, NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "delta", delta, NULL, NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "maxstep", maxstep, NULL, NULL);
+    Tcl_CreateCommand(interp, TCLSPICE_prefix "get_initTime", get_initTime, NULL, NULL);
+    Tcl_CreateCommand(interp, TCLSPICE_prefix "get_finalTime", get_finalTime, NULL, NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_variables", plot_variables, NULL, NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_variablesInfo", plot_variablesInfo, NULL, NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_get_value", plot_get_value, NULL, NULL);
