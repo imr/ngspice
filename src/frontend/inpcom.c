@@ -1949,8 +1949,9 @@ inp_fix_subckt( char *s )
         head = alloc(struct line);
         /* create list of parameters that need to get sorted */
         while ( *beg && (ptr1 = strstr( beg, "=" )) != NULL ) {
-#ifdef BRACE
-            /* alternative patch to cope with spaces */
+#ifndef NOBRACE
+            /* alternative patch to cope with spaces:
+               get expression between braces {...} */
             ptr2 = ptr1+1;
             ptr1--;
             while ( isspace(*ptr1)  ) ptr1--;
