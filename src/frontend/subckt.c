@@ -85,7 +85,7 @@ struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
 static int settrans(char *formal, char *actual, char *subname);
 static char * gettrans(const char *name, const char *name_end);
-static int numnodes(char *name, struct subs * const * const subs3);
+static int numnodes(char *name, struct subs *subs3);
 static int  numdevs(char *s);
 static bool modtranslate(struct line *deck, char *subname);
 static void devmodtranslate(struct line *deck, char *subname);
@@ -1080,7 +1080,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             tfree(t);
 
             /* Next iterate over all nodes (netnames) found and translate them. */
-            nnodes = numnodes(c->li_line, subs2);
+            nnodes = numnodes(c->li_line, *subs2);
 
             while (nnodes-- > 0) {
                 name = gettok_node(&s);
@@ -1225,7 +1225,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             tfree(nametofree);
 
             /* Next iterate over all nodes (netnames) found and translate them. */
-            nnodes = numnodes(c->li_line, subs2);
+            nnodes = numnodes(c->li_line, *subs2);
             while (nnodes-- > 0) {
                 name = gettok_node(&s);
                 if (name == NULL ) {
@@ -1505,7 +1505,7 @@ model_bin_match( char* token, char* model_name )
 /*-------------------------------------------------------------------*/
 /*-------------------------------------------------------------------*/
 static int
-numnodes(char *name, struct subs * const * const subs3)
+numnodes(char *name, struct subs *subs3)
 {
     /* gtri - comment - wbk - 10/23/90 - Do not modify this routine for */
     /* 'A' type devices since the callers will not know how to find the */
@@ -1536,7 +1536,7 @@ numnodes(char *name, struct subs * const * const subs3)
         while ((*s != ' ') && (*s != '\t'))
             s--;
         s++;
-        for (sss = *subs3; sss; sss = sss->su_next)
+        for (sss = subs3; sss; sss = sss->su_next)
             if (eq(sss->su_name, s))
                 return (sss->su_numargs);
         /*
