@@ -1713,14 +1713,14 @@ static void
 devmodtranslate(struct line *deck, char *subname)
 {
     struct line *s;
-    char *buffer, *name, *t, c;
-    wordlist *wlsub;
-    char* dot_char;
-    int i, j;
-    char *next_name;
 
     for (s = deck; s; s = s->li_next) {
+
+        char *buffer, *t, c, *name, *next_name;
+        wordlist *wlsub;
+
         t = s->li_line;
+
 #ifdef TRACE
         /* SDB debug stuff */
         printf("In devmodtranslate, examining line %s.\n", t);
@@ -1972,8 +1972,9 @@ devmodtranslate(struct line *deck, char *subname)
 
             /* Now, is this a subcircuit model? */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
-                i = (int) strlen(wlsub->wl_word);
-                j = 0; /* Now, have we a binned model? */
+                int i = (int) strlen(wlsub->wl_word);
+                int j = 0; /* Now, have we a binned model? */
+                char* dot_char;
                 if ( (dot_char = strstr( wlsub->wl_word, "." )) != NULL) {
                     dot_char++;
                     j++;
