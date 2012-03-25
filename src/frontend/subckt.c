@@ -674,16 +674,16 @@ doit(struct line *deck) {
 #ifdef TRACE
     /* Added by H.Tanaka to display converted deck */
   {
-    struct line *c;
+    struct line *c = deck;
     printf("Converted deck\n");
-    for (c = deck; c; c = c->li_next) {
+    for (; c; c = c->li_next) {
         printf( "%s\n",c->li_line);
     }
   }
     {
-        wordlist * w;
+        wordlist *w = modnames;
         printf("Models:\n");
-        for(w = modnames; w; w = w->wl_next)
+        for(; w; w = w->wl_next)
             printf("%s\n",w->wl_word);
     }
 #endif
