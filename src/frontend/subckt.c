@@ -437,7 +437,6 @@ doit(struct line *deck) {
                 fprintf(cp_err, "Error: no %s line.\n", sbend);
                 return (NULL);
             }
-            lcc = NULL;
             wl_free(submod);
             submod = NULL;
 
@@ -447,6 +446,7 @@ doit(struct line *deck) {
              */
           {
             int nest = 1;
+            lcc = NULL;
             for (c = last->li_next;  c;  c = c->li_next) {
                 if (ciprefix(sbend, c->li_line)) /* found a .ends */
                     nest--;
