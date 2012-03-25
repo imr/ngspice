@@ -446,7 +446,7 @@ doit(struct line *deck) {
              */
           {
             int nest = 1;
-            lcc = NULL;
+            lcc = last;
             for (c = last->li_next;  c;  c = c->li_next) {
                 if (ciprefix(sbend, c->li_line)) /* found a .ends */
                     nest--;
@@ -468,8 +468,7 @@ doit(struct line *deck) {
 
 
             sssfree = sss = alloc(struct subs);
-            if (!lcc)               /* if lcc is null, then no .ends was found.  */
-                lcc = last;
+
             if ( use_numparams==FALSE )
                 lcc->li_next = NULL;    /* shouldn't we free some memory here????? */
 
