@@ -1502,12 +1502,24 @@ numnodes(char *name)
         s++;
         for (sss = subs; sss; sss = sss->su_next)
             if (eq(sss->su_name, s))
-                break;
-        if (!sss) {
-            fprintf(cp_err, "Error: no such subcircuit: %s\n", s);
-            return (0);
+                return (sss->su_numargs);
+        /*
+         * number of nodes not known so far.
+         * lets count the nodes ourselves,
+         * assuming `buf' looks like this:
+         *    xname n1 n2 ... nn subname
+         */
+        {
+            int nodes = -2;
+            for(s = buf; *s; ) {
+                nodes++;
+                while(*s && !isspace(*s))
+                    s++;
+                while(isspace(*s))
+                    s++;
+            }
+            return (nodes);
         }
-        return (sss->su_numargs);
     }
 
     n = inp_numnodes(c);
