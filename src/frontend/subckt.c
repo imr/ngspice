@@ -1786,8 +1786,6 @@ devmodtranslate(struct line *deck, char *subname)
 #endif
 
                 if (eq(name, wlsub->wl_word)) {
-                    (void) sprintf(buffer + strlen(buffer), "%s:%s ",
-                                   subname, name);
                     found = TRUE;
                     break;
                 }
@@ -1795,6 +1793,9 @@ devmodtranslate(struct line *deck, char *subname)
 
             if (!found)
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            else
+                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+
             tfree(name);
 
 #ifdef TRACE
@@ -1826,14 +1827,14 @@ devmodtranslate(struct line *deck, char *subname)
                 /* Now, is this a subcircuit model? */
                 for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                     if (eq(name, wlsub->wl_word)) {
-                        (void) sprintf(buffer + strlen(buffer), "%s:%s ",
-                                       subname, name);
                         found = TRUE;
                         break;
                     }
                 }
                 if (!found)
                     (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                else
+                    (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
                 tfree(name);
             }
 
@@ -1843,14 +1844,14 @@ devmodtranslate(struct line *deck, char *subname)
                 /* Now, is this a subcircuit model? */
                 for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                     if (eq(name, wlsub->wl_word)) {
-                        (void) sprintf(buffer + strlen(buffer), "%s:%s ",
-                                       subname, name);
                         found = TRUE;
                         break;
                     }
                 }
                 if (!found)
                     (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                else
+                    (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
                 tfree(name);
             }
 
@@ -1874,8 +1875,6 @@ devmodtranslate(struct line *deck, char *subname)
             /* Now, is this a subcircuit model? */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                 if (eq(name, wlsub->wl_word)) {
-                    (void) sprintf(buffer + strlen(buffer), "%s:%s ",
-                                   subname, name);
                     found = TRUE;
                     break;
                 }
@@ -1883,6 +1882,9 @@ devmodtranslate(struct line *deck, char *subname)
 
             if (!found)
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            else
+                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+
             tfree(name);
             (void) strcat(buffer, t);
             tfree(s->li_line);
@@ -1893,8 +1895,6 @@ devmodtranslate(struct line *deck, char *subname)
             name = gettok_node(&t);  /* this can be either a model name or a node name. */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                 if (eq(name, wlsub->wl_word)) { /* a three terminal bjt */
-                    (void) sprintf(buffer + strlen(buffer), "%s:%s ",
-                                   subname, name);
                     found = TRUE;
                     break;
                 }
@@ -1905,13 +1905,15 @@ devmodtranslate(struct line *deck, char *subname)
                 name = gettok_node(&t);  /* this can be either a model name or a node name. */
                 for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                     if (eq(name, wlsub->wl_word)) { /* a three terminal bjt */
-                        (void) sprintf(buffer + strlen(buffer), "%s:%s ",
-                                       subname, name);
                         found = TRUE;
                         break;
                     }
                 }
             }
+
+            if (found)
+                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+
             found = FALSE;
 
             (void) strcat(buffer, t);
@@ -1938,8 +1940,6 @@ devmodtranslate(struct line *deck, char *subname)
             /* Now, is this a subcircuit model? */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                 if (eq(name, wlsub->wl_word)) {
-                    (void) sprintf(buffer + strlen(buffer), "%s:%s ",
-                                   subname, name);
                     found = TRUE;
                     break;
                 }
@@ -1947,6 +1947,9 @@ devmodtranslate(struct line *deck, char *subname)
 
             if (!found)
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            else
+                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+
             (void) strcat(buffer, t);
             tfree(s->li_line);
             s->li_line = buffer;
@@ -1994,8 +1997,6 @@ devmodtranslate(struct line *deck, char *subname)
                     }
                 }
                 if ( strncmp( name, wlsub->wl_word, (size_t) (i - j) ) == 0 ) {
-                    (void) sprintf(buffer + strlen(buffer), "%s:%s ",
-                                   subname, name);
                     found = TRUE;
                     break;
                 }
@@ -2003,6 +2004,9 @@ devmodtranslate(struct line *deck, char *subname)
 
             if (!found)
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            else
+                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+
             (void) strcat(buffer, t);
             tfree(s->li_line);
             s->li_line = buffer;
@@ -2028,8 +2032,6 @@ devmodtranslate(struct line *deck, char *subname)
             /* Now, is this a subcircuit model? */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                 if (eq(name, wlsub->wl_word)) { /* a three terminal bjt */
-                    (void) sprintf(buffer + strlen(buffer), "%s:%s ",
-                                   subname, name);
                     found = TRUE;
                     break;
                 }
@@ -2042,8 +2044,6 @@ devmodtranslate(struct line *deck, char *subname)
                     /* Now, is this a subcircuit model? */
                     for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                         if (eq(name, wlsub->wl_word)) { /* a four terminal bjt */
-                            (void) sprintf(buffer + strlen(buffer),
-                                           "%s:%s ", subname, name);
                             found = TRUE;
                             break;
                         }
@@ -2059,8 +2059,6 @@ devmodtranslate(struct line *deck, char *subname)
                     /* Now, is this a subcircuit model? */
                     for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                         if (eq(name, wlsub->wl_word)) { /* a five terminal bjt */
-                            (void) sprintf(buffer + strlen(buffer),
-                                           "%s:%s ", subname, name);
                             found = TRUE;
                             break;
                         }
@@ -2073,6 +2071,9 @@ devmodtranslate(struct line *deck, char *subname)
 
             if (!found) /* Fallback w/o subckt name before */
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            else
+                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+
             tfree(name);
 
             found = FALSE;
@@ -2108,8 +2109,6 @@ devmodtranslate(struct line *deck, char *subname)
             /* Now, is this a subcircuit model? */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                 if (eq(name, wlsub->wl_word)) {
-                    (void) sprintf(buffer + strlen(buffer), "%s:%s ",
-                                   subname, name);
                     found = TRUE;
                     break;
                 }
@@ -2117,6 +2116,9 @@ devmodtranslate(struct line *deck, char *subname)
 
             if (!found)
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            else
+                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+
             (void) strcat(buffer, t);
             tfree(s->li_line);
             s->li_line = buffer;
