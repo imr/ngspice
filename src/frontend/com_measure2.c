@@ -296,7 +296,6 @@ int measure_extract_variables( char *line )
    * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
    * ----------------------------------------------------------------- */
 
-   int len ;                   /* length of string */
    int status ;                /* return status */
    char *item ;                /* parsing item */
    char *measure ;             /* measure keyword */
@@ -332,7 +331,7 @@ int measure_extract_variables( char *line )
             variable2 = NULL;
             if (*line == '=') variable2 = gettok_iv(&line) ;
             if( variable ){
-               len = (int) strlen(item);
+               size_t len = strlen(item);
                if( item[len-1] == '=' ){
                } else {
                    /* We may have something like V(n1)=1 
@@ -1159,15 +1158,15 @@ static int measure_parse_stdParams (
       }
 
       if(strcasecmp(pName,"RISE")==0) {
-         meas->m_rise = (int)engVal1;
+         meas->m_rise = (int)floor(engVal1 + 0.5);
          meas->m_fall = -1;
          meas->m_cross = -1;
       } else if(strcasecmp(pName,"FALL")==0) {
-         meas->m_fall = (int)engVal1;
+         meas->m_fall = (int)floor(engVal1 + 0.5);
          meas->m_rise = -1;
          meas->m_cross = -1;
       } else if(strcasecmp(pName,"CROSS")==0) {
-         meas->m_cross = (int)engVal1;
+         meas->m_cross = (int)floor(engVal1 + 0.5);
          meas->m_rise = -1;
          meas->m_fall = -1;
       } else if(strcasecmp(pName,"VAL")==0) {
