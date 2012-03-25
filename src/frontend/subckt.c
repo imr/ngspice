@@ -1962,6 +1962,7 @@ devmodtranslate(struct line *deck, char *subname)
 
             /* Now, is this a subcircuit model? */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
+                /* FIXME, probably too unspecific */
                 int i = (int) strlen(wlsub->wl_word);
                 int j = 0; /* Now, have we a binned model? */
                 char* dot_char;
