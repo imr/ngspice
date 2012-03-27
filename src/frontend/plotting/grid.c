@@ -331,8 +331,6 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
 
         tenpowmag = pow(10.0, (double) mag3);
 
-	*buf = 0;
-
 	i = (mag3 + 18) / 3;
 
 	if (i < 0)
@@ -349,24 +347,28 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
 	else if (j == 2)
 		(void) sprintf(buf, "x100 ");
 	else if (j)
-		(void) sprintf(buf, "x10^%d ", j);
+		(void) snprintf(buf, sizeof(buf) - 1, "x10^%d ", j);
+	else
+		buf[0] = '\0';
 
 	if (scaleletters[i]) {
 		for (p = buf; *p; p++)
 			;
 		*p++ = scaleletters[i];
-		*p++ = 0;
+		*p++ = '\0';
 	}
 
     } else if (mag > 1) {
         tenpowmag = pow(10.0, (double) mag);
-	(void) sprintf(buf, "x10^%d ", mag);
+	(void) snprintf(buf, sizeof(buf), "x10^%d ", mag);
+    } else {
+	buf[0] = '\0';
     }
 
     if ((s = ft_typabbrev(type)) != NULL) {
-	(void) strcat(buf, s);
+	(void) strncat(buf, s, sizeof(buf) - 1);
     } else {
-	(void) strcat(buf, "Units");
+	(void) strncat(buf, "Units", sizeof(buf) - 1);
     }
 
     if (delta == 0.0) {
