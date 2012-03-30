@@ -4358,7 +4358,7 @@ static void inp_compat(struct line *deck)
                 fprintf(stderr,"ERROR: mal formed R line: %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
-            equation = gettok(&str_ptr);
+            equation = gettok_char(&str_ptr, '}', TRUE);
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 tc1_ptr = strstr(str_ptr, "=");
@@ -4428,7 +4428,7 @@ static void inp_compat(struct line *deck)
                 fprintf(stderr,"ERROR: mal formed C line: %s\n",curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
-            equation = gettok(&str_ptr);
+            equation = gettok_char(&str_ptr, '}', TRUE);
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 tc1_ptr = strstr(str_ptr, "=");
@@ -4519,7 +4519,7 @@ static void inp_compat(struct line *deck)
                 fprintf(stderr,"ERROR: mal formed L line: %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
-            equation = gettok(&str_ptr);
+            equation = gettok_char(&str_ptr, '}', TRUE);
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 tc1_ptr = strstr(str_ptr, "=");
@@ -5017,8 +5017,7 @@ static void inp_bsource_compat(struct line *deck)
                            pi and e which are defined in inpptree.c, around pwl and temp. coeffs */
                         if ((*str_ptr == '(') || cieq(buf, "hertz")  || cieq(buf, "temper")
                                 || cieq(buf, "time") || cieq(buf, "pi") || cieq(buf, "e")
-                                || cieq(buf, "pwl")
-                                || cieq(buf, "tc1") || cieq(buf, "tc2") || cieq(buf, "reciproctc")) {
+                                || cieq(buf, "pwl")) {
                             /* special handling of pwl lines:
                                Put braces around tokens and around expressions, use ','
                                as separator like:
@@ -5074,6 +5073,23 @@ static void inp_bsource_compat(struct line *deck)
                                                         }
                             */
                             cwl->wl_word = copy(buf);
+                        }
+                        else if (cieq(buf, "tc1") || cieq(buf, "tc2") || cieq(buf, "reciproctc")) {
+                            while (isspace(*str_ptr))
+                                str_ptr++;
+                            /* no {} around tc1 = or tc2 = , these are temp coeffs. */
+                            if (str_ptr[0] == '='  &&  str_ptr[1] != '=') {
+                                buf[i++] = '=';
+                                buf[i] = '\0';
+                                str_ptr++;
+                                cwl->wl_word = copy(buf);
+                            }
+                            else {
+                                xlen = strlen(buf);
+                                tmp_char = TMALLOC(char, xlen + 3);
+                                sprintf(tmp_char, "{%s}", buf);
+                                cwl->wl_word = tmp_char;
+                            }
                         }
                         /* {} around all other tokens */
                         else {
