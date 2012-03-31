@@ -77,10 +77,16 @@ double INPevaluate(char **line, int *error, int gobble)
         return ((double) mantis * sign);
     }
     if (*here == ':') {
-        /* hack for subcircuit node numbering */
-        *error = 1;
-        *line = tmpline;
-        return 0.0;
+        /* ':' is no longer used for subcircuit node numbering
+           but is part of ternary function a?b:c
+           FIXME : subcircuit models still use ':' for model numbering
+           Will this hurt somewhere? */
+        if (gobble) {
+            FREE(token);
+        } else {
+            *line = here;
+        }
+        return ((double) mantis * sign);
     }
     /* after decimal point! */
     if (*here == '.') {

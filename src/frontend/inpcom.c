@@ -85,6 +85,7 @@ static void inp_bsource_compat(struct line *deck);
 static bool chk_for_line_continuation( char *line );
 static void comment_out_unused_subckt_models( struct line *start_card , int no_of_lines);
 static void inp_fix_macro_param_func_paren_io( struct line *begin_card );
+static char* inp_fix_ternary_operator_str( char *line, bool all);
 static void inp_fix_ternary_operator( struct line *start_card );
 static void inp_fix_gnd_name( struct line *deck );
 static void inp_chk_for_multi_in_vcvs( struct line *deck, int *line_number );
@@ -1319,6 +1320,20 @@ get_model_name( char *line, int num_terminals )
     return model_name;
 }
 
+static char*
+get_model_type( char *line )
+{
+    char *model_type, *beg_ptr = line;
+    if ( !( ciprefix( ".model",   line )))
+        return NULL;
+    while ( !isspace( *beg_ptr ) && *beg_ptr != '\0' ) beg_ptr++; /* eat .model */
+    while ( isspace( *beg_ptr )  && *beg_ptr != '\0' ) beg_ptr++;
+    while ( !isspace( *beg_ptr ) && *beg_ptr != '\0' ) beg_ptr++; /* eat model name */
+    while ( isspace( *beg_ptr )  && *beg_ptr != '\0' ) beg_ptr++;
+    model_type = gettok(&beg_ptr);
+    return model_type;
+}
+
 static char *
 get_adevice_model_name( char *line )
 {
@@ -1564,10 +1579,19 @@ comment_out_unused_subckt_models( struct line *start_card , int no_of_lines)
         }
         if ( remove_subckt ) *line = '*';
         else if ( has_models && (ciprefix( ".model", line ) || ciprefix( ".cmodel", line )) ) {
+            char *model_type = get_model_type( line );
             model_name = get_subckt_model_name( line );
-            found_model = FALSE;
-            for ( i = 0; i < num_used_model_names; i++ )
-                if ( strcmp( used_model_names[i], model_name ) == 0 || model_bin_match( used_model_names[i], model_name ) ) found_model = TRUE;
+            /* keep R, L, C models because in addition to no. of terminals the value may be given,
+               as in RE1 1 2 800 newres dtemp=5, so model name may be token no. 4 or 5, 
+               and, if 5, will not be detected by get_subckt_model_name()*/
+            if (cieq(model_type,"c") || cieq(model_type,"l") || cieq(model_type,"r"))
+                found_model = TRUE;
+            else {
+                found_model = FALSE;
+                for ( i = 0; i < num_used_model_names; i++ )
+                    if ( strcmp( used_model_names[i], model_name ) == 0 || model_bin_match( used_model_names[i], model_name ) ) found_model = TRUE;
+            }
+            if (model_type) tfree(model_type);
 #if ADMS >= 3
             /* ngspice strategy to detect unused models fails with dynamic models - reason: # of terms unknown during parsing */
 #else
@@ -1584,9 +1608,10 @@ comment_out_unused_subckt_models( struct line *start_card , int no_of_lines)
 
 
 
-/* replace ternary operator ? : by fcn ternary_fcn() in .param, .func, and .meas lines */
+/* replace ternary operator ? : by fcn ternary_fcn() in .param, .func, and .meas lines, 
+   if all is FALSE, for all lines if all is TRUE */
 static char*
-inp_fix_ternary_operator_str( char *line )
+inp_fix_ternary_operator_str( char *line, bool all )
 {
     char *conditional, *if_str, *else_str, *question, *colon, keep, *str_ptr, *str_ptr2, *new_str;
     char *paren_ptr = NULL, *end_str = NULL, *beg_str = NULL;
@@ -1595,12 +1620,12 @@ inp_fix_ternary_operator_str( char *line )
     if ( !strstr( line, "?" ) && !strstr( line, ":" ) ) return line;
 
     str_ptr = line;
-    if ( ciprefix( ".param", line ) || ciprefix( ".func", line ) || ciprefix( ".meas", line ) ) {
+    if ( all || ciprefix( ".param", line ) || ciprefix( ".func", line ) || ciprefix( ".meas", line ) ) {
 
         str_ptr = line;
         if ( ciprefix( ".param", line ) || ciprefix( ".meas", line ) ) str_ptr = strstr( line, "=" );
         else                                                           str_ptr = strstr( line, ")" );
-        if (str_ptr == NULL) {
+        if ((str_ptr == NULL) && all==FALSE) {
             fprintf(stderr,"ERROR: mal formed .param, .func or .meas line: %s\n", line);
             controlled_exit(EXIT_FAILURE);
         }
@@ -1679,7 +1704,7 @@ inp_fix_ternary_operator_str( char *line )
     str_ptr2++;
     keep = *str_ptr2;
     *str_ptr2 = '\0';
-    if_str = inp_fix_ternary_operator_str(strdup(str_ptr));
+    if_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
     *str_ptr2 = keep;
 
     // get else
@@ -1705,9 +1730,9 @@ inp_fix_ternary_operator_str( char *line )
         }
         keep = *str_ptr2;
         *str_ptr2 = '\0';
-        else_str = inp_fix_ternary_operator_str(strdup(str_ptr));
+        else_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
         if ( keep != '}' ) {
-            end_str  = inp_fix_ternary_operator_str(strdup(str_ptr2+1));
+            end_str  = inp_fix_ternary_operator_str(strdup(str_ptr2+1), all);
         } else {
             *str_ptr2 = keep;
             end_str = strdup(str_ptr2);
@@ -1716,11 +1741,11 @@ inp_fix_ternary_operator_str( char *line )
     } else {
         if ((str_ptr2 = strstr(str_ptr, "}")) != NULL) {
             *str_ptr2 = '\0';
-            else_str = inp_fix_ternary_operator_str(strdup(str_ptr));
+            else_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
             *str_ptr2 = '}';
             end_str = strdup(str_ptr2);
         } else {
-            else_str = inp_fix_ternary_operator_str(strdup(str_ptr));
+            else_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
         }
     }
 
@@ -1771,7 +1796,7 @@ inp_fix_ternary_operator( struct line *start_card )
         if ( *line == 'B' || *line == 'b' ) continue;
         if ( *line == '*' ) continue;
         if ( strstr( line, "?" ) && strstr( line, ":" ) ) {
-            card->li_line = inp_fix_ternary_operator_str( line );
+            card->li_line = inp_fix_ternary_operator_str( line, FALSE );
         }
     }
 }
@@ -4346,7 +4371,14 @@ static void inp_compat(struct line *deck)
         */
         else if ( *curr_line == 'r' ) {
             if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")))
-                continue;
+                /* no handling in B-Source, so we have to prepare ternary fcn
+                   for numparam */
+                if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) ) {
+                    card->li_line = inp_fix_ternary_operator_str( curr_line, TRUE );
+                    continue;
+                }
+                else
+                    continue;
             cut_line = curr_line;
             /* make BRxxx pos neg I = V(pos, neg)/{equation}*/
             title_tok = gettok(&cut_line);
@@ -4361,13 +4393,21 @@ static void inp_compat(struct line *deck)
             equation = gettok_char(&str_ptr, '}', TRUE);
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
-                tc1_ptr = strstr(str_ptr, "=");
-                tc1 = atof(tc1_ptr+1);
+                /* We need to have 'tc1=something */
+                if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
+                    tc1_ptr = strstr(str_ptr, "=");
+                    if (tc1_ptr)
+                        tc1 = atof(tc1_ptr+1);
+                }
             }
             str_ptr = strstr(cut_line, "tc2");
             if (str_ptr) {
-                tc2_ptr = strstr(str_ptr, "=");
-                tc2 = atof(tc2_ptr+1);
+                /* We need to have 'tc2=something */
+                if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
+                    tc2_ptr = strstr(str_ptr, "=");
+                    if (tc2_ptr)
+                        tc2 = atof(tc2_ptr+1);
+                }
             }
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
                 xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
@@ -4416,7 +4456,14 @@ static void inp_compat(struct line *deck)
          */
         else if ( *curr_line == 'c' ) {
             if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")))
-                continue;
+                /* no handling in B-Source, so we have to prepare ternary fcn
+                   for numparam */
+                if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) ) {
+                    card->li_line = inp_fix_ternary_operator_str( curr_line, TRUE );
+                    continue;
+                }
+                else
+                    continue;
             cut_line = curr_line;
             /* title and nodes */
             title_tok = gettok(&cut_line);
@@ -4431,13 +4478,21 @@ static void inp_compat(struct line *deck)
             equation = gettok_char(&str_ptr, '}', TRUE);
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
-                tc1_ptr = strstr(str_ptr, "=");
-                tc1 = atof(tc1_ptr+1);
+                /* We need to have 'tc1=something */
+                if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
+                    tc1_ptr = strstr(str_ptr, "=");
+                    if (tc1_ptr)
+                        tc1 = atof(tc1_ptr+1);
+                }
             }
             str_ptr = strstr(cut_line, "tc2");
             if (str_ptr) {
-                tc2_ptr = strstr(str_ptr, "=");
-                tc2 = atof(tc2_ptr+1);
+                /* We need to have 'tc2=something */
+                if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
+                    tc2_ptr = strstr(str_ptr, "=");
+                    if (tc2_ptr)
+                        tc2 = atof(tc2_ptr+1);
+                }
             }
             // Exxx  n-aux 0  n1 n2  1
             xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
@@ -4507,7 +4562,14 @@ static void inp_compat(struct line *deck)
          */
         else if ( *curr_line == 'l' ) {
             if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")))
-                continue;
+                /* no handling in B-Source, so we have to prepare ternary fcn
+                   for numparam */
+                if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) ) {
+                    card->li_line = inp_fix_ternary_operator_str( curr_line, TRUE );
+                    continue;
+                }
+                else
+                    continue;
             cut_line = curr_line;
             /* title and nodes */
             title_tok = gettok(&cut_line);
@@ -4522,13 +4584,21 @@ static void inp_compat(struct line *deck)
             equation = gettok_char(&str_ptr, '}', TRUE);
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
-                tc1_ptr = strstr(str_ptr, "=");
-                tc1 = atof(tc1_ptr+1);
+                /* We need to have 'tc1=something */
+                if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
+                    tc1_ptr = strstr(str_ptr, "=");
+                    if (tc1_ptr)
+                        tc1 = atof(tc1_ptr+1);
+                }
             }
             str_ptr = strstr(cut_line, "tc2");
             if (str_ptr) {
-                tc2_ptr = strstr(str_ptr, "=");
-                tc2 = atof(tc2_ptr+1);
+                /* We need to have 'tc2=something */
+                if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
+                    tc2_ptr = strstr(str_ptr, "=");
+                    if (tc2_ptr)
+                        tc2 = atof(tc2_ptr+1);
+                }
             }
             // Fxxx  n-aux 0  Bxxx  1
             xlen = 3*strlen(title_tok)
