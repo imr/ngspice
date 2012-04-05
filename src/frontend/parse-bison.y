@@ -1,6 +1,6 @@
 %{
     /*
-     * (compile (concat "bison " buffer-file-name))
+     * (compile (concat "bison " (file-relative-name buffer-file-name)))
      */
 
   #include <stdio.h>
@@ -132,7 +132,7 @@ one_exp:
 
 exp:
     TOK_NUM                           { $$ = mknnode($1); }
-  | TOK_STR                           { $$ = mksnode($1); }
+  | TOK_STR                           { $$ = mksnode($1); txfree((void*)$1); }
 
   | exp ',' exp                       { $$ = mkbnode(PT_OP_COMMA,  $1, $3); }
   | exp '+' exp                       { $$ = mkbnode(PT_OP_PLUS,   $1, $3); }
@@ -147,7 +147,11 @@ exp:
   | '-' exp  %prec NEG                { $$ = mkunode(PT_OP_UMINUS, $2); }
   | '~' exp                           { $$ = mkunode(PT_OP_NOT, $2); }
 
-  | TOK_STR '(' exp ')'               { $$ = mkfnode($1, $3); if(!$$) YYABORT; }
+  | TOK_STR '(' exp ')'               { $$ = mkfnode($1, $3);
+                                        txfree((void*)$1);
+                                        if(!$$)
+                                            YYABORT;
+                                      }
 
   | exp '=' exp                       { $$ = mkbnode(PT_OP_EQ, $1, $3); }
   | exp TOK_NE exp                    { $$ = mkbnode(PT_OP_NE, $1, $3); }

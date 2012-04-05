@@ -678,7 +678,7 @@ PPlex(YYSTYPE *lvalp, struct PPltype *llocp, char **line)
                     else if (!atsign && ( *sbuf == '[' || *sbuf == ']' ))
                         break;
 
-                lvalp->str = copy_substring(start, sbuf);   /* XXXX !!!! */
+                lvalp->str = copy_substring(start, sbuf);
                 lexer_return(TOK_STR, 0);
             }
         }
