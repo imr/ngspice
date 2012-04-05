@@ -141,7 +141,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
 static bool
 parse_line( char* line, char* tokens[], int num_tokens, double values[], bool found[] )
 {
-  char*     token;
+  char*     token = NULL;
   int       get_index = -1;
   int       i;
   bool      flag = TRUE;
@@ -157,12 +157,13 @@ parse_line( char* line, char* tokens[], int num_tokens, double values[], bool fo
       found[get_index]  = TRUE;
       get_index         = -1;
       continue;
-    } else {
-      INPgetNetTok( &line, &token, 1 );
     }
+
+    INPgetNetTok( &line, &token, 1 );
 
     for ( i = 0; i < num_tokens; i++ )
       if ( strcmp( tokens[i], token ) == 0 ) get_index = i;
+    txfree(token);
   }
 
   for ( i = 0; i < num_tokens; i++ )
@@ -170,6 +171,7 @@ parse_line( char* line, char* tokens[], int num_tokens, double values[], bool fo
       flag = FALSE;
       break;
     }
+
   return flag;
 }
 
