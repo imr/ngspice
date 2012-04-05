@@ -219,10 +219,10 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 	break;
 
     case PT_POWER:
-	/* Two cases... If the power is a constant then we're cool.
-	 * Otherwise we have to be tricky.
-	 */
 	if (p->right->type == PT_CONSTANT) {
+	    /*
+	     * D(f^C) = C * f^(C-1) * D(f)
+	     */
 	    arg1 = PTdifferentiate(p->left, varnum);
 
 	    newp = mkb(PT_TIMES, mkb(PT_TIMES,
@@ -231,8 +231,10 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 					 mkcon(p->right->constant - 1))),
 		       arg1);
 	} else {
-	    /* This is complicated.  f(x) ^ g(x) ->
-	     * exp(y(x) * ln(f(x)) ...
+	    /*
+	     * D(f^g) = D(exp(g*ln(f)))
+	     *	      = exp(g*ln(f)) * D(g*ln(f))
+	     *	      = exp(g*ln(f)) * (D(g)*ln(f) + g*D(f)/f)
 	     */
 	    arg1 = PTdifferentiate(p->left, varnum);
 	    arg2 = PTdifferentiate(p->right, varnum);
@@ -242,9 +244,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 		       mkb(PT_PLUS,
 			   mkb(PT_TIMES, p->right,
 			       mkb(PT_DIVIDE, arg1, p->left)),
-			   mkb(PT_TIMES, arg2, mkf(PTF_LN, /*arg1*/p->left))));
-		                                        /*changed by HT, '05/06/29*/
-
+			   mkb(PT_TIMES, arg2, mkf(PTF_LN, p->left))));
 	}
 	break;
  
@@ -279,7 +279,6 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 	 */
 	switch (p->funcnum) {
 	case PTF_ABS:		/* sgn(u) */
-	    /* arg1 = mkf(PTF_SGN, p->left, 0); */
 	    arg1 = mkf(PTF_SGN, p->left);
 	    break;
 
@@ -349,7 +348,6 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 	    break;
 
 	case PTF_EXP:		/* exp(u) */
-	    /* arg1 = mkf(PTF_EXP, p->left, 0); */
 	    arg1 = mkf(PTF_EXP, p->left);
 	    break;
 
@@ -480,10 +478,10 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
         p->left: ','    p->left->left: a       p->left->right: b 
         */
 
-        /* Two cases...
-           The power is constant 
-        */
             if (p->left->right->type == PT_CONSTANT) {
+		/*
+		 * D(f^C) = C * f^(C-1) * D(f)
+		 */
                 arg1 = PTdifferentiate(p->left->left, varnum);
 
                 newp = mkb(PT_TIMES, mkb(PT_TIMES,
@@ -492,9 +490,11 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 					 mkcon(p->left->right->constant - 1))),
 		             arg1);
             } else {
-            /* This is complicated.  f(x) ^ g(x) ->
-               exp(y(x) * ln(f(x)) ...
-             */
+	    /*
+	     * D(f^g) = D(exp(g*ln(f)))
+	     *	      = exp(g*ln(f)) * D(g*ln(f))
+	     *	      = exp(g*ln(f)) * (D(g)*ln(f) + g*D(f)/f)
+	     */
              arg1 = PTdifferentiate(p->left->left, varnum);
              arg2 = PTdifferentiate(p->left->right, varnum);
              newp = mkb(PT_TIMES, mkf(PTF_EXP, mkb(PT_TIMES,
@@ -503,9 +503,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 		                mkb(PT_PLUS,
 			            mkb(PT_TIMES, p->left->right,
 			            mkb(PT_DIVIDE, arg1, p->left->left)),
-			            mkb(PT_TIMES, arg2, mkf(PTF_LN, /*arg1*/p->left->left))));
-		                                        /*changed by HT, '05/06/29*/
-
+			            mkb(PT_TIMES, arg2, mkf(PTF_LN, p->left->left))));
             }
             arg2 = PTdifferentiate(p->left->left, varnum);
             newp = mkb(PT_TIMES, arg1, arg2);
