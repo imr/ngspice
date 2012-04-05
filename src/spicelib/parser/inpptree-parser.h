@@ -61,7 +61,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 53 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 53 "inpptree-parser.y"
 
   double num;
   const char  *str;

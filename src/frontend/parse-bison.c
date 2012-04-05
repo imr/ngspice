@@ -76,10 +76,10 @@
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
-#line 1 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 1 "parse-bison.y"
 
     /*
-     * (compile (concat "bison " buffer-file-name))
+     * (compile (concat "bison " (file-relative-name buffer-file-name)))
      */
 
   #include <stdio.h>
@@ -161,7 +161,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 53 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 53 "parse-bison.y"
 
   double num;
   const char  *str;
@@ -494,8 +494,8 @@ static const yytype_uint8 yyrline[] =
 {
        0,   117,   117,   118,   122,   123,   127,   134,   135,   137,
      138,   139,   140,   141,   142,   143,   145,   147,   148,   150,
-     152,   153,   154,   155,   156,   157,   159,   160,   162,   163,
-     164
+     156,   157,   158,   159,   160,   161,   163,   164,   166,   167,
+     168
 };
 #endif
 
@@ -1332,7 +1332,7 @@ YYLTYPE yylloc;
 /* User initialization code.  */
 
 /* Line 1242 of yacc.c  */
-#line 105 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 105 "parse-bison.y"
 {
     yylval.num = 0.0;
     yylloc.start = yylloc.stop = NULL;
@@ -1527,28 +1527,28 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 117 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 117 "parse-bison.y"
     { *retval = NULL; ;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 118 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 118 "parse-bison.y"
     { *retval = (yyvsp[(1) - (1)].pnode); ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 123 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 123 "parse-bison.y"
     { (yyvsp[(1) - (2)].pnode)->pn_next = (yyvsp[(2) - (2)].pnode); (yyvsp[(2) - (2)].pnode)->pn_use ++; (yyval.pnode) = (yyvsp[(1) - (2)].pnode); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 127 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 127 "parse-bison.y"
     {
         (yyvsp[(1) - (1)].pnode)->pn_name = copy_substring((yylsp[(1) - (1)]).start, (yylsp[(1) - (1)]).stop);
         (yyval.pnode) = (yyvsp[(1) - (1)].pnode);
@@ -1558,168 +1558,172 @@ yyreduce:
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 134 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 134 "parse-bison.y"
     { (yyval.pnode) = mknnode((yyvsp[(1) - (1)].num)); ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 135 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
-    { (yyval.pnode) = mksnode((yyvsp[(1) - (1)].str)); ;}
+#line 135 "parse-bison.y"
+    { (yyval.pnode) = mksnode((yyvsp[(1) - (1)].str)); txfree((void*)(yyvsp[(1) - (1)].str)); ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 137 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 137 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_COMMA,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 138 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 138 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_PLUS,   (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 139 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 139 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_MINUS,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 140 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 140 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_TIMES,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 141 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 141 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_MOD,    (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 142 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 142 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_DIVIDE, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 143 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 143 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_POWER,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 145 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 145 "parse-bison.y"
     { (yyval.pnode) = (yyvsp[(2) - (3)].pnode); ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 147 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 147 "parse-bison.y"
     { (yyval.pnode) = mkunode(PT_OP_UMINUS, (yyvsp[(2) - (2)].pnode)); ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 148 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 148 "parse-bison.y"
     { (yyval.pnode) = mkunode(PT_OP_NOT, (yyvsp[(2) - (2)].pnode)); ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 150 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
-    { (yyval.pnode) = mkfnode((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].pnode)); if(!(yyval.pnode)) YYABORT; ;}
+#line 150 "parse-bison.y"
+    { (yyval.pnode) = mkfnode((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].pnode));
+                                        txfree((void*)(yyvsp[(1) - (4)].str));
+                                        if(!(yyval.pnode))
+                                            YYABORT;
+                                      ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 152 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 156 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_EQ, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 153 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 157 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_NE, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 154 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 158 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_GT, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 155 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 159 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_LT, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 156 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 160 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_GE, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 157 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 161 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_LE, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 159 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 163 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_AND, (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 160 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 164 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_OR,  (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 162 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 166 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_INDX,  (yyvsp[(1) - (4)].pnode), (yyvsp[(3) - (4)].pnode)); ;}
     break;
 
   case 29:
 
 /* Line 1455 of yacc.c  */
-#line 163 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 167 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_RANGE, (yyvsp[(1) - (4)].pnode), (yyvsp[(3) - (4)].pnode)); ;}
     break;
 
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 164 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 168 "parse-bison.y"
     { (yyval.pnode) = mkbnode(PT_OP_TERNARY,(yyvsp[(1) - (5)].pnode),
                                                      mkbnode(PT_OP_COMMA,(yyvsp[(3) - (5)].pnode),(yyvsp[(5) - (5)].pnode))); ;}
     break;
@@ -1727,7 +1731,7 @@ yyreduce:
 
 
 /* Line 1455 of yacc.c  */
-#line 1731 "parse-bison.c"
+#line 1735 "parse-bison.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1946,7 +1950,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 168 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/frontend/parse-bison.y"
+#line 172 "parse-bison.y"
 
 
 

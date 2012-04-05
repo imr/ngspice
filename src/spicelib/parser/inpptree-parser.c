@@ -76,10 +76,10 @@
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
-#line 1 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 1 "inpptree-parser.y"
 
     /*
-     * (compile (concat "bison " buffer-file-name))
+     * (compile (concat "bison " (file-relative-name buffer-file-name)))
      */
 
   #include <stdio.h>
@@ -166,7 +166,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 53 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 53 "inpptree-parser.y"
 
   double num;
   const char  *str;
@@ -1310,7 +1310,7 @@ YYLTYPE yylloc;
 /* User initialization code.  */
 
 /* Line 1242 of yacc.c  */
-#line 80 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 80 "inpptree-parser.y"
 {
     yylval.num = 0.0;
     yylloc.start = yylloc.stop = NULL;
@@ -1505,7 +1505,7 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 88 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 88 "inpptree-parser.y"
     {
       *retval = (yyvsp[(1) - (1)].pnode);
       *line = (yylsp[(1) - (1)]).stop;
@@ -1516,77 +1516,77 @@ yyreduce:
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 96 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 96 "inpptree-parser.y"
     { (yyval.pnode) = mknnode((yyvsp[(1) - (1)].num)); ;}
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 97 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
-    { (yyval.pnode) = mksnode((yyvsp[(1) - (1)].str), ckt); ;}
+#line 97 "inpptree-parser.y"
+    { (yyval.pnode) = mksnode((yyvsp[(1) - (1)].str), ckt); txfree((void*)(yyvsp[(1) - (1)].str)); ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 99 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 99 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("+", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 100 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 100 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("-", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 101 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 101 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("*", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 102 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 102 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("/", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 103 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 103 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("^", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 105 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 105 "inpptree-parser.y"
     { (yyval.pnode) = (yyvsp[(2) - (3)].pnode); ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 107 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 107 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("-",(yyvsp[(2) - (2)].pnode)); ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 109 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
-    { (yyval.pnode) = mkfnode((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].pnode)); ;}
+#line 109 "inpptree-parser.y"
+    { (yyval.pnode) = mkfnode((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].pnode)); txfree((void*)(yyvsp[(1) - (4)].str)); ;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 113 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 113 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ternary_fcn",
                                                mkbnode(",",
                                                  mkbnode(",", (yyvsp[(1) - (5)].pnode), (yyvsp[(3) - (5)].pnode)),
@@ -1596,49 +1596,49 @@ yyreduce:
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 118 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 118 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 119 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 119 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ne0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 120 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 120 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("gt0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 121 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 121 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("lt0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 122 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 122 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ge0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 123 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 123 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("le0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 125 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 125 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ne0",
                                                mkbnode("+",
                                                  mkfnode("ne0", (yyvsp[(1) - (3)].pnode)),
@@ -1648,7 +1648,7 @@ yyreduce:
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 129 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 129 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0",
                                                mkbnode("+",
                                                  mkfnode("eq0", (yyvsp[(1) - (3)].pnode)),
@@ -1658,14 +1658,14 @@ yyreduce:
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 133 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 133 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0", (yyvsp[(2) - (2)].pnode)); ;}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 139 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 139 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode(",", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
@@ -1891,7 +1891,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 141 "/s/larice/ngspice.work/tmp-1/ng-spice-rework/src/spicelib/parser/inpptree-parser.y"
+#line 141 "inpptree-parser.y"
 
 
 
