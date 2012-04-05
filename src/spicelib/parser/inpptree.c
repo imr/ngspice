@@ -402,12 +402,12 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 	    arg1 = mkf(PTF_USTEP, p->left);
 	    break;
 
-    case PTF_FLOOR:		/* floor(u) */
-        arg1 = mkf(PTF_FLOOR, p->left);
+    case PTF_FLOOR:		/* naive: D(floor(u)) = 0 */
+        arg1 = mkcon(0.0);
         break;
 
-    case PTF_CEIL:		/* ceil(u) */
-        arg1 = mkf(PTF_CEIL, p->left);
+    case PTF_CEIL:		/* naive: D(ceil(u)) = 0 */
+        arg1 = mkcon(0.0);
         break;
 
 
@@ -505,8 +505,6 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 			            mkb(PT_DIVIDE, arg1, p->left->left)),
 			            mkb(PT_TIMES, arg2, mkf(PTF_LN, p->left->left))));
             }
-            arg2 = PTdifferentiate(p->left->left, varnum);
-            newp = mkb(PT_TIMES, arg1, arg2);
             return (newp);
         }
 
