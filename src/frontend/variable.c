@@ -119,6 +119,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
                tfree(v->va_name);
                tfree(v);
             }
+            tfree(copyvarname);
             return;
         } else
             v->va_bool = TRUE;
@@ -144,6 +145,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
         fprintf(cp_err, 
 		"cp_vset: Internal Error: bad variable type %d.\n", 
                 type);
+        tfree(copyvarname);
         return;
     }
     v->va_type = type;
