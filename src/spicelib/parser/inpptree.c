@@ -547,7 +547,7 @@ static INPparseNode *mkcon(double value)
 static INPparseNode *mkb(int type, INPparseNode * left,
 			 INPparseNode * right)
 {
-    INPparseNode *p = TMALLOC(INPparseNode, 1);
+    INPparseNode *p;
     int i;
 
     if ((right->type == PT_CONSTANT) && (left->type == PT_CONSTANT)) {
@@ -621,6 +621,8 @@ static INPparseNode *mkb(int type, INPparseNode * left,
 	break;
      }
  
+     p = TMALLOC(INPparseNode, 1);
+
      p->type = type;
      p->left = left;
      p->right = right;
@@ -647,9 +649,8 @@ static INPparseNode *mkb(int type, INPparseNode * left,
 
 static INPparseNode *mkf(int type, INPparseNode * arg)
 {
-    INPparseNode *p = TMALLOC(INPparseNode, 1);
+    INPparseNode *p;
     int i;
-    double constval;
 
     for (i = 0; i < NUM_FUNCS; i++)
 	if (funcs[i].number == type)
@@ -660,9 +661,11 @@ static INPparseNode *mkf(int type, INPparseNode * arg)
     }
 
     if (arg->type == PT_CONSTANT) {
-	constval = PTunary(funcs[i].funcptr) (arg->constant);
+	double constval = PTunary(funcs[i].funcptr) (arg->constant);
 	return (mkcon(constval));
     }
+
+    p = TMALLOC(INPparseNode, 1);
 
     p->type = PT_FUNCTION;
     p->left = arg;
@@ -726,6 +729,7 @@ static INPparseNode *mkbnode(const char *opstr, INPparseNode * arg1,
 	fprintf(stderr, "Internal Error: no such op num %s\n", opstr);
 	return (NULL);
     }
+
     p = TMALLOC(INPparseNode, 1);
 
     p->type = ops[i].number;
@@ -833,8 +837,6 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
     (void) strcpy(buf, fname);
     strtolower(buf);
 
-    p = TMALLOC(INPparseNode, 1);
-
     if(!strcmp("ternary_fcn", buf)) {
 
 //	extern void printTree(INPparseNode *);
@@ -851,6 +853,8 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 	    INPparseNode *arg2 = arg->left->right;
 	    INPparseNode *arg3 = arg->right;
 
+	    p = TMALLOC(INPparseNode, 1);
+
 	    p->type = PT_TERN;
 	    p->left = arg1;
 	    p->right = mkb(PT_COMMA, arg2, arg3);
@@ -866,6 +870,8 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 	    fprintf(stderr, "Error: no such function '%s'\n", buf);
 	    return (NULL);
 	}
+
+	p = TMALLOC(INPparseNode, 1);
 
 	p->type = PT_FUNCTION;
 	p->left = arg;
