@@ -1021,7 +1021,7 @@ static INPparseNode *mksnode(const char *string, void *ckt)
     if (i == NUM_CONSTANTS) {
 	/* We'd better save this in case it's part of i(something). */
 	p->type = PT_PLACEHOLDER;
-	p->funcname = (/*nonconst*/ char *) string;
+	p->funcname = copy(string);
     } else {
 	p->type = PT_CONSTANT;
 	p->constant = constants[i].value;

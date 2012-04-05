@@ -1,6 +1,6 @@
 %{
     /*
-     * (compile (concat "bison " buffer-file-name))
+     * (compile (concat "bison " (file-relative-name buffer-file-name)))
      */
 
   #include <stdio.h>
@@ -94,7 +94,7 @@ expression: exp
 
 exp:
     TOK_NUM                           { $$ = mknnode($1); }
-  | TOK_STR                           { $$ = mksnode($1, ckt); }
+  | TOK_STR                           { $$ = mksnode($1, ckt); txfree((void*)$1); }
 
   | exp '+' exp                       { $$ = mkbnode("+", $1, $3); }
   | exp '-' exp                       { $$ = mkbnode("-", $1, $3); }
@@ -106,7 +106,7 @@ exp:
 
   | '-' exp  %prec NEG                { $$ = mkfnode("-",$2); }
 
-  | TOK_STR '(' nonempty_arglist ')'  { $$ = mkfnode($1, $3); }
+  | TOK_STR '(' nonempty_arglist ')'  { $$ = mkfnode($1, $3); txfree((void*)$1); }
 
   | TOK_pnode
 
