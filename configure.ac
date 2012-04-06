@@ -167,10 +167,6 @@ dnl Xgraph is a plotting package for X11 once very popular.
 AC_ARG_ENABLE(xgraph,
     AS_HELP_STRING([--enable-xgraph],[Enable xgraph compilation.]))
 
-dnl --enable-x: Compile software using x libraries. A GUI will be provided then.
-AC_ARG_ENABLE(x,
-    AS_HELP_STRING([--enable-x],[Enable X11 gui]))
-
 dnl --with-readline:  Includes GNU readline support into CLI.  Default is "no".
 AC_ARG_WITH(readline,
     AS_HELP_STRING([--with-readline[=yes/no]],[Enable GNU readline support for CLI. Default=no.]))
@@ -490,7 +486,7 @@ case $with_windows in
 		if test "x$enable_help" = "xyes"; then
 		  has_no_help=false
 		else
-		  Has_no_help=true
+		  has_no_help=true
 		fi
 		CFLAGS="$CFLAGS -mwindows";;
 	* )
@@ -502,7 +498,10 @@ dnl Checks for X11 header files and libraries - X11 support can be disabled
 dnl by passing the '--without-x' option to configure:
 
 dnl Try to locate the X-Windows include files and libraries
+dnl   will set no_x="yes" or no_x=""
 AC_PATH_X
+
+dnl will set X_CFLAGS, X_LIBS, and might define X_DISPLAY_MISSING
 AC_PATH_XTRA
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -586,10 +585,8 @@ dnl for MacOSX or Linux, but
 dnl			-lXaw -lXmu -lXt -lXext -lX11
 dnl seems to be the popular choice.
 dnl (The previous order was -lX11 -lXt -lXext -lXmu -lXaw)
-if test "x$enable_x" = "xno"; then
-	no_x = "no"
-fi
-if test ! "$no_x" = "yes" ; then
+
+if test "x$no_x" != "xyes" ; then
 	AC_CHECK_LIB(Xaw,main,X_LIBS="$X_LIBS -lXaw",AC_MSG_ERROR(Couldn't find Xaw library),$X_LIBS  $X_EXTRA_LIBS)
 	AC_CHECK_LIB(Xmu,main,X_LIBS="$X_LIBS -lXmu",AC_MSG_ERROR(Couldn't find Xmu library), $X_LIBS $X_EXTRA_LIBS)
 	X_LIBS="$X_LIBS -lXt"

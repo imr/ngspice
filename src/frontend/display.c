@@ -171,7 +171,7 @@ DevInit(void)
 /* console application under MS Windows */
 #if !defined(HAS_WINDOWS) && !defined(TCL_MODULE) && (defined(_MSC_VER) || defined(__MINGW32__))
         fprintf(cp_err, "Warning: no graphics interface!\n You may use command 'gnuplot'\n if GnuPlot is installed.\n");
-#else
+#elif !defined(X_DISPLAY_MISSING)
         externalerror(
 	         "no graphics interface;\n please check if X-server is running,\n or ngspice is compiled properly (see INSTALL)");
 #endif
