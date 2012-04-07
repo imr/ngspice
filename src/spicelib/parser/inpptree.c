@@ -26,6 +26,74 @@ static INPparseNode *mknnode(double number);
 static INPparseNode *mksnode(const char *string, void *ckt);
 static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum);
 
+static void free_tree(INPparseNode *);
+
+
+/*
+ * LAW for INPparseNode* generator and consumer functions:
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   Newly allocated structs shall be initialized with `usecnt' = 0
+ *   When filling INPparseNode * slots of newly initialized structs
+ *     their `usecnt' shall be incremented
+ *   Generators pass the responsibility `to free' return values
+ *     on to their invokers.
+ *   Functions generally process args with exactly one of:
+ *     - inc_usage(arg) if they insert an argument into a struct
+ *     - release_tree(arg) if they don't make any use of it
+ *     - pass it on to another function()
+ *   Functions use the the result of a function invocations with one of:
+ *     - inc_usage(result) if they insert the result into a struct
+ *     - release_tree(result) if they don't make any use of it
+ *     - pass it on to another function()
+ *     - simply return the result
+ *
+ * mkfirst(first, second)
+ *   is used to safely release its second argument,
+ *   and return its first
+ *
+ */
+
+
+static inline INPparseNode *
+inc_usage(INPparseNode *p)
+{
+    if(p)
+        p->usecnt ++;
+    return p;
+}
+
+
+static void
+dec_usage(INPparseNode *p)
+{
+    if(p && --p->usecnt <= 0)
+        free_tree(p);
+}
+
+
+static void
+release_tree(INPparseNode *p)
+{
+    if(p && p->usecnt <= 0)
+        free_tree(p);
+}
+
+
+static INPparseNode *
+mkfirst(INPparseNode *fst, INPparseNode *snd)
+{
+    if(fst) {
+        fst->usecnt ++;
+        release_tree(snd);
+        fst->usecnt --;
+    } else {
+        release_tree(snd);
+    }
+
+    return fst;
+}
+
+
 #include "inpptree-parser.c"
 
 static IFvalue *values = NULL;
@@ -140,9 +208,10 @@ INPgetTree(char **line, INPparseTree ** pt, CKTcircuit *ckt, INPtables * tab)
 
     rv = PTparse(line, &p, ckt);
 
-    if (rv || !PTcheck(p)) {
+    if (rv || !p || !PTcheck(p)) {
 
 	*pt = NULL;
+	release_tree(p);
 
     } else {
 
@@ -152,12 +221,12 @@ INPgetTree(char **line, INPparseTree ** pt, CKTcircuit *ckt, INPtables * tab)
         (*pt)->p.varTypes = types;
         (*pt)->p.vars = values;
         (*pt)->p.IFeval = IFeval;
-        (*pt)->tree = p;
+        (*pt)->tree = inc_usage(p);
 
         (*pt)->derivs = TMALLOC(INPparseNode *, numvalues);
 
         for (i = 0; i < numvalues; i++)
-            (*pt)->derivs[i] = PTdifferentiate(p, i);
+            (*pt)->derivs[i] = inc_usage(PTdifferentiate(p, i));
 
     }
 
@@ -180,7 +249,7 @@ INPgetTree(char **line, INPparseTree ** pt, CKTcircuit *ckt, INPtables * tab)
 
 static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 {
-    INPparseNode *arg1 = NULL, *arg2, *newp;
+    INPparseNode *arg1 = NULL, *arg2 = NULL, *newp = NULL;
 
     switch (p->type) {
     case PT_TIME:
@@ -278,7 +347,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 //	printTree(newp);
 //	printf("\n");
 
-	return (newp);
+	return mkfirst(newp, p);
       }
 
     case PT_FUNCTION:
@@ -474,7 +543,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
             printTree(newp);
             printf("\n");
 #endif
-            return (newp);
+            return mkfirst(newp, p);
         }
 
         break;
@@ -513,14 +582,13 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 			            mkb(PT_DIVIDE, arg1, p->left->left)),
 			            mkb(PT_TIMES, arg2, mkf(PTF_LN, p->left->left))));
             }
-            return (newp);
+            return mkfirst(newp, p);
         }
 
 	default:
 	    fprintf(stderr, "Internal Error: bad function # %d\n",
 		    p->funcnum);
-	    newp = NULL;
-	    break;
+	    return mkfirst(NULL, p);
 	}
 
 	arg2 = PTdifferentiate(p->left, varnum);
@@ -535,7 +603,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 	break;
     }
 
-    return (newp);
+    return mkfirst(newp, p);
 }
 
 static INPparseNode *mkcon(double value)
@@ -544,6 +612,7 @@ static INPparseNode *mkcon(double value)
 
     p->type = PT_CONSTANT;
     p->constant = value;
+    p->usecnt = 0;
 
     return (p);
 }
@@ -555,81 +624,91 @@ static INPparseNode *mkb(int type, INPparseNode * left,
     int i;
 
     if ((right->type == PT_CONSTANT) && (left->type == PT_CONSTANT)) {
+	double value;
 	switch (type) {
 	case PT_TIMES:
-	    return (mkcon(left->constant * right->constant));
+	    value = left->constant * right->constant;
+	    return mkfirst(mkcon(value), mkfirst(left, right));
 
 	case PT_DIVIDE:
-	    return (mkcon(left->constant / right->constant));
+	    value = left->constant / right->constant;
+	    return mkfirst(mkcon(value), mkfirst(left, right));
 
 	case PT_PLUS:
-	    return (mkcon(left->constant + right->constant));
+	    value = left->constant + right->constant;
+	    return mkfirst(mkcon(value), mkfirst(left, right));
 
 	case PT_MINUS:
-	    return (mkcon(left->constant - right->constant));
+	    value = left->constant - right->constant;
+	    return mkfirst(mkcon(value), mkfirst(left, right));
 
 	case PT_POWER:
-	    return (mkcon(pow(left->constant, right->constant)));
+	    value = pow(left->constant, right->constant);
+	    return mkfirst(mkcon(value), mkfirst(left, right));
 	}
     }
     switch (type) {
     case PT_TIMES:
 	if ((left->type == PT_CONSTANT) && (left->constant == 0))
-	    return (left);
+	    return mkfirst(left, right);
 	else if ((right->type == PT_CONSTANT) && (right->constant == 0))
-	    return (right);
+	    return mkfirst(right, left);
 	else if ((left->type == PT_CONSTANT) && (left->constant == 1))
-	    return (right);
+	    return mkfirst(right, left);
 	else if ((right->type == PT_CONSTANT) && (right->constant == 1))
-	    return (left);
+	    return mkfirst(left, right);
 	break;
 
     case PT_DIVIDE:
 	if ((left->type == PT_CONSTANT) && (left->constant == 0))
-	    return (left);
+	    return mkfirst(left, right);
 	else if ((right->type == PT_CONSTANT) && (right->constant == 1))
-	    return (left);
+	    return mkfirst(left, right);
 	break;
 
     case PT_PLUS:
 	if ((left->type == PT_CONSTANT) && (left->constant == 0))
-	    return (right);
+	    return mkfirst(right, left);
 	else if ((right->type == PT_CONSTANT) && (right->constant == 0))
-	    return (left);
+	    return mkfirst(left, right);
 	break;
 
     case PT_MINUS:
 	if ((right->type == PT_CONSTANT) && (right->constant == 0))
-	    return (left);
+	    return mkfirst(left, right);
 	else if ((left->type == PT_CONSTANT) && (left->constant == 0))
-	    return (mkf(PTF_UMINUS, right));
+	    return mkfirst(mkf(PTF_UMINUS, right), left);
 	break;
 
     case PT_POWER:
 	if (right->type == PT_CONSTANT) {
 	    if (right->constant == 0)
-		return (mkcon(1.0));
+		return mkfirst(mkcon(1.0), mkfirst(left, right));
 	    else if (right->constant == 1)
-		return (left);
+		return mkfirst(left, right);
 	}
 	break;
 
     case PT_TERN:
-	if (left->type == PT_CONSTANT)
+	if (left->type == PT_CONSTANT) {
 	    /*FIXME > 0.0, >= 0.5, != 0.0 or what ? */
-	    return ((left->constant != 0.0) ? right->left : right->right);
+	    p = (left->constant != 0.0) ? right->left : right->right;
+	    return mkfirst(p, mkfirst(right, left));
+	}
 	if((right->left->type == PT_CONSTANT) &&
 	   (right->right->type == PT_CONSTANT) &&
 	   (right->left->constant == right->right->constant))
-	    return (right->left);
+	    return mkfirst(right->left, mkfirst(right, left));
 	break;
      }
  
      p = TMALLOC(INPparseNode, 1);
 
      p->type = type;
-     p->left = left;
-     p->right = right;
+     p->usecnt = 0;
+
+     p->left = inc_usage(left);
+     p->right = inc_usage(right);
  
     if(type == PT_TERN) {
 	p->function = NULL;
@@ -666,13 +745,15 @@ static INPparseNode *mkf(int type, INPparseNode * arg)
 
     if (arg->type == PT_CONSTANT) {
 	double constval = PTunary(funcs[i].funcptr) (arg->constant);
-	return (mkcon(constval));
+	return mkfirst(mkcon(constval), arg);
     }
 
     p = TMALLOC(INPparseNode, 1);
 
     p->type = PT_FUNCTION;
-    p->left = arg;
+    p->usecnt = 0;
+
+    p->left = inc_usage(arg);
 
     p->funcnum = i;
     p->function = funcs[i].funcptr;
@@ -731,16 +812,18 @@ static INPparseNode *mkbnode(const char *opstr, INPparseNode * arg1,
 
     if (i == NUM_OPS) {
 	fprintf(stderr, "Internal Error: no such op num %s\n", opstr);
-	return (NULL);
+	return mkfirst(NULL, mkfirst(arg1, arg2));
     }
 
     p = TMALLOC(INPparseNode, 1);
 
     p->type = ops[i].number;
+    p->usecnt = 0;
+
     p->funcname = ops[i].name;
     p->function = ops[i].funcptr;
-    p->left = arg1;
-    p->right = arg2;
+    p->left = inc_usage(arg1);
+    p->right = inc_usage(arg2);
 
     return (p);
 }
@@ -786,13 +869,15 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
 
     if (i<2 || (i%1)) {
         fprintf(stderr, "Error: PWL(expr, points...) needs an even and >=2 number of constant args\n");
-        return (NULL);
+        return mkfirst(NULL, p);
     }
 
     data = TMALLOC(struct pwldata, 1);
     data->vals = TMALLOC(double, i);
 
     data->n = i;
+
+    p->data = (void *) data;
 
     for (w = p->left ; --i >= 0 ; w = w->left)
         if (w->right->type == PT_CONSTANT) {
@@ -806,7 +891,7 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
             fprintf(stderr, "   type = %d\n", w->right->type);
             //Breakpoint;
             fprintf(stderr, "Error: PWL(expr, points...) only *literal* points are supported\n");
-            return (NULL);
+            return mkfirst(NULL, p);
         }
 
 #ifdef TRACE
@@ -817,15 +902,16 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
     for (i = 2 ; i < data->n ; i += 2)
         if(data->vals[i-2] >= data->vals[i]) {
             fprintf(stderr, "Error: PWL(expr, points...) the abscissa of points must be ascending\n");
-            return (NULL);
+            return mkfirst(NULL, p);
         }
 
     /* strip all but the first arg,
      *   and attach the rest as opaque data to the INPparseNode
      */
 
+    w = inc_usage(w);
+    dec_usage(p->left);
     p->left = w;
-    p->data = (void *) data;
 
     return (p);
 }
@@ -852,14 +938,16 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 	    p = TMALLOC(INPparseNode, 1);
 
 	    p->type = PT_TERN;
-	    p->left = arg1;
-	    p->right = mkb(PT_COMMA, arg2, arg3);
+	    p->usecnt = 0;
 
-	    return (p);
+	    p->left = inc_usage(arg1);
+	    p->right = inc_usage(mkb(PT_COMMA, arg2, arg3));
+
+	    return mkfirst(p, arg);
 	}
 
 	fprintf(stderr, "Error: bogus ternary_fcn form\n");
-	return (NULL);
+	return mkfirst(NULL, arg);
     }
 
     for (i = 0; i < NUM_FUNCS; i++)
@@ -868,13 +956,15 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 
     if (i == NUM_FUNCS) {
         fprintf(stderr, "Error: no such function '%s'\n", buf);
-        return (NULL);
+        return mkfirst(NULL, arg);
     }
 
     p = TMALLOC(INPparseNode, 1);
 
     p->type = PT_FUNCTION;
-    p->left = arg;
+    p->usecnt = 0;
+
+    p->left = inc_usage(arg);
     p->funcname = funcs[i].name;
     p->funcnum = funcs[i].number;
     p->function = funcs[i].funcptr;
@@ -911,6 +1001,7 @@ static INPparseNode *mkvnode(char *name)
     }
     p->valueIndex = i;
     p->type = PT_VAR;
+    p->usecnt = 0;
 
     return (p);
 }
@@ -939,6 +1030,7 @@ static INPparseNode *mkinode(char *name)
     }
     p->valueIndex = i;
     p->type = PT_VAR;
+    p->usecnt = 0;
 
     return (p);
 }
@@ -952,6 +1044,8 @@ static INPparseNode *mknnode(double number)
     p = TMALLOC(INPparseNode, 1);
 
     p->type = PT_CONSTANT;
+    p->usecnt = 0;
+
     p->constant = number;
 
     return (p);
@@ -970,6 +1064,8 @@ static INPparseNode *mksnode(const char *string, void *ckt)
     strtolower(buf);
 
     p = TMALLOC(INPparseNode, 1);
+
+    p->usecnt = 0;
 
     if(!strcmp("time", buf)) {
         p->type = PT_TIME;
@@ -1220,6 +1316,72 @@ int PTlex (YYSTYPE *lvalp, struct PTltype *llocp, char **line)
     llocp->stop = sbuf;
     return (token);
 }
+
+
+void INPfreeTree(IFparseTree *ptree)
+{
+    INPparseTree *pt = (INPparseTree *) ptree;
+
+    int i;
+
+    for (i = 0; i < pt->p.numVars; i++)
+	dec_usage(pt->derivs[i]);
+
+    dec_usage(pt->tree);
+
+    txfree(pt->derivs);
+    txfree(pt->p.varTypes);
+    txfree(pt->p.vars);
+    txfree(pt);
+}
+
+
+void free_tree(INPparseNode *pt)
+{
+    if(!pt)
+        return;
+
+    if(pt->usecnt) {
+        fprintf(stderr, "ERROR: fatal internal error, %s\n", __func__);
+        exit(1);
+    }
+
+    switch (pt->type) {
+    case PT_TIME:
+    case PT_TEMPERATURE:
+    case PT_FREQUENCY:
+    case PT_CONSTANT:
+    case PT_VAR:
+	break;
+
+    case PT_PLUS:
+    case PT_MINUS:
+    case PT_TIMES:
+    case PT_DIVIDE:
+    case PT_POWER:
+    case PT_COMMA:
+    case PT_TERN:
+	dec_usage(pt->right);
+    case PT_FUNCTION:
+	dec_usage(pt->left);
+	break;
+
+    default:
+	printf("oops");
+	break;
+    }
+
+    if(pt->type == PT_FUNCTION && pt->funcnum == PTF_PWL) {
+        struct pwldata { int n; double *vals; } *data = (struct pwldata*)(pt->data);
+        if(data) {
+            txfree(data->vals);
+            txfree(data);
+        }
+    }
+
+    txfree(pt);
+}
+
 
 #ifdef TRACE
 
