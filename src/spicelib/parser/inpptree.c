@@ -835,16 +835,8 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 
     if(!strcmp("ternary_fcn", buf)) {
 
-//	extern void printTree(INPparseNode *);
-//
-//	printf("debug: %s ternary_fcn: ", __func__);
-//	printTree(arg);
-//	printf("\n");
+	if(arg->type == PT_COMMA && arg->left->type == PT_COMMA) {
 
-	if(arg->type != PT_COMMA || arg->left->type != PT_COMMA) {
-	    fprintf(stderr, "Error: bogus ternary_fcn form\n");
-	    return (NULL);
-	} else {
 	    INPparseNode *arg1 = arg->left->left;
 	    INPparseNode *arg2 = arg->left->right;
 	    INPparseNode *arg3 = arg->right;
@@ -854,31 +846,34 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 	    p->type = PT_TERN;
 	    p->left = arg1;
 	    p->right = mkb(PT_COMMA, arg2, arg3);
+
+	    return (p);
 	}
 
-
-    } else {
-	for (i = 0; i < NUM_FUNCS; i++)
-	    if (!strcmp(funcs[i].name, buf))
-		break;
-
-	if (i == NUM_FUNCS) {
-	    fprintf(stderr, "Error: no such function '%s'\n", buf);
-	    return (NULL);
-	}
-
-	p = TMALLOC(INPparseNode, 1);
-
-	p->type = PT_FUNCTION;
-	p->left = arg;
-	p->funcname = funcs[i].name;
-	p->funcnum = funcs[i].number;
-	p->function = funcs[i].funcptr;
-        p->data = NULL;
-
-        if(p->funcnum == PTF_PWL)
-            p = prepare_PTF_PWL(p);
+	fprintf(stderr, "Error: bogus ternary_fcn form\n");
+	return (NULL);
     }
+
+    for (i = 0; i < NUM_FUNCS; i++)
+        if (!strcmp(funcs[i].name, buf))
+            break;
+
+    if (i == NUM_FUNCS) {
+        fprintf(stderr, "Error: no such function '%s'\n", buf);
+        return (NULL);
+    }
+
+    p = TMALLOC(INPparseNode, 1);
+
+    p->type = PT_FUNCTION;
+    p->left = arg;
+    p->funcname = funcs[i].name;
+    p->funcnum = funcs[i].number;
+    p->function = funcs[i].funcptr;
+    p->data = NULL;
+
+    if(p->funcnum == PTF_PWL)
+        p = prepare_PTF_PWL(p);
 
     return (p);
 }
