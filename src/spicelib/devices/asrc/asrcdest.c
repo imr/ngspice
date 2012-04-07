@@ -21,6 +21,9 @@ ASRCdestroy(GENmodel **model)
         for(here = mod->ASRCinstances ; here ; here = next) {
             next = here->ASRCnextInstance;
 	    FREE(here->ASRCacValues);
+	    INPfreeTree(here->ASRCtree);
+	    if(here->ASRCposptr)
+		free(here->ASRCposptr);
             FREE(here);
         }
         nextmod = mod->ASRCnextModel;

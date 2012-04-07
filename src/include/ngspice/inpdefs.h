@@ -104,6 +104,7 @@ char *INPgetModBin(CKTcircuit *, char *, INPmodel **, INPtables *, char *);
 int INPgetTok(char **, char **, int);
 int INPgetNetTok(char **, char **, int);
 void INPgetTree(char **, INPparseTree **, CKTcircuit *, INPtables *);
+void INPfreeTree(IFparseTree *);
 IFvalue *INPgetValue(CKTcircuit *, char **, int, INPtables *);
 int INPgndInsert(CKTcircuit *, char **, INPtables *, CKTnode **);
 int INPinsertNofree(char **token, INPtables *tab);

@@ -52,6 +52,7 @@ typedef struct INPparseNode {
     int funcnum;            /* ... one of PTF_*, */
     void (*function)(void); /* ... and pointer to the function. */
     void *data;                 /* private data for certain functions, currently PTF_PWL */
+    int usecnt;
 } INPparseNode;
 
 
