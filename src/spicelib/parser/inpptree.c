@@ -141,24 +141,32 @@ INPgetTree(char **line, INPparseTree ** pt, CKTcircuit *ckt, INPtables * tab)
     rv = PTparse(line, &p, ckt);
 
     if (rv || !PTcheck(p)) {
+
 	*pt = NULL;
-	return;
+
+    } else {
+
+        (*pt) = TMALLOC(INPparseTree, 1);
+
+        (*pt)->p.numVars = numvalues;
+        (*pt)->p.varTypes = types;
+        (*pt)->p.vars = values;
+        (*pt)->p.IFeval = IFeval;
+        (*pt)->tree = p;
+
+        (*pt)->derivs = TMALLOC(INPparseNode *, numvalues);
+
+        for (i = 0; i < numvalues; i++)
+            (*pt)->derivs[i] = PTdifferentiate(p, i);
+
     }
 
-    (*pt) = TMALLOC(INPparseTree, 1);
+    values = NULL;
+    types = NULL;
+    numvalues = 0;
 
-    (*pt)->p.numVars = numvalues;
-    (*pt)->p.varTypes = types;
-    (*pt)->p.vars = values;
-    (*pt)->p.IFeval = IFeval;
-    (*pt)->tree = p;
-
-    (*pt)->derivs = TMALLOC(INPparseNode *, numvalues);
-
-    for (i = 0; i < numvalues; i++)
-	(*pt)->derivs[i] = PTdifferentiate(p, i);
-
-    return;
+    circuit = NULL;
+    tables = NULL;
 }
 
 /* This routine takes the partial derivative of the parse tree with respect to
