@@ -1335,7 +1335,7 @@ void com_loadsnap(wordlist *wl)
     CKTcircuit *my_ckt, *ckt;
 
     /*
-      Phesudo code:
+      Pseudo code:
 
       source(file_name);
       This should setup all the device structs, voltage nodes, etc.
@@ -1373,10 +1373,7 @@ void com_loadsnap(wordlist *wl)
     /* so it resumes ... */
     ft_curckt->ci_inprogress = TRUE;
 
-
     /* now load the binary file */
-
-
     ckt = ft_curckt->ci_ckt;
 
     file = fopen(wl->wl_next->wl_word,"rb");
@@ -1464,7 +1461,9 @@ void com_loadsnap(wordlist *wl)
     _t(CKTfixLimit);
     _t(CKTnoOpIter);
     _t(CKTisSetup);
-
+#ifdef XSPICE
+    _t(CKTadevFlag);
+#endif
     _t(CKTtimeListSize);
     _t(CKTtimeIndex);
     _t(CKTsizeIncr);
@@ -1485,14 +1484,14 @@ do {\
     fread(&__i,sizeof(int),1,file);\
     if(__i) {\
       if(name)\
-	tfree(name);\
+         tfree(name);\
       name = (type *)tmalloc(__i);\
       fread(name,1,__i,file);\
     } else {\
       fprintf(cp_err, "size for vector " #name " is 0\n");\
     }\
-    if((_size) != -1 && __i != (_size) * sizeof(type)) {\
-      fprintf(cp_err,"expected %ld, but got %d for "#name"\n",(long)(_size)*sizeof(type),__i);\
+    if((_size) != -1 && __i != (_size) * (int)sizeof(type)) {\
+      fprintf(cp_err,"expected %ld, but got %d for "#name"\n",(_size)*(long)sizeof(type),__i);\
     }\
   } while(0)
 
@@ -1545,6 +1544,8 @@ do {\
     ((TRANan *)ft_curckt->ci_curTask->jobs)->TRANplot = NULL;
 
     _foo(ckt->CKTstat,STATistics,1);
+    /* cannot load STATdevNum, so set to zero (needed for 'reset' command) */
+    ckt->CKTstat->STATdevNum = NULL;
 
 
 #ifdef XSPICE
@@ -1606,6 +1607,14 @@ void com_savesnap(wordlist *wl)
     /* save the data */
 
     ckt = ft_curckt->ci_ckt;
+
+#ifdef XSPICE
+    if (ckt->CKTadevFlag == 1) {
+        fprintf(cp_err, "Warning: savesnap not implemented for XSPICE A devices.\n");
+        fprintf(cp_err, "    Command 'savesnap' will be ingnored!\n");
+        return;
+    }
+#endif
 
     task = ft_curckt->ci_curTask;
 
@@ -1704,7 +1713,11 @@ void com_savesnap(wordlist *wl)
 
     _foo(ckt->CKTstat,STATistics,1);
 
+    /* FIXME struct ckt->CKTstat->STATdevNum is not stored */
+
 #ifdef XSPICE
+     /* FIXME struct ckt->evt->data and others are not stored 
+        thus savesnap, loadsnap not compatible with XSPICE code models*/
     _foo(ckt->evt,Evt_Ckt_Data_t,1);
     _foo(ckt->enh,Enh_Ckt_Data_t,1);
 #endif
