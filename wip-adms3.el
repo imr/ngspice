@@ -29,6 +29,7 @@
 ;;; execute
 
 (compile "LD_LIBRARY_PATH=src/spicelib/devices/adms/hicum0/adms3va \
+   SPICE_SCRIPTS=. \
    ../build-wip-adms3/src/ngspice -b hic0.cir")
 
 
