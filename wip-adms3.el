@@ -33,6 +33,10 @@
    ../build-wip-adms3/src/ngspice -b hic0.cir")
 
 
+(compile "LD_LIBRARY_PATH=src/spicelib/devices/adms/hicum0/adms3va \
+   ../build-wip-adms3/src/ngspice -p < hic0+.cir")
+
+
 
 ;;; expected:
 Model issue on line 0 : .model x1:hic0_full hicum0 is=1.3525e-18 vef=8.0 iqf=3.0 ...
