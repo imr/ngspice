@@ -170,10 +170,32 @@ int DEVflag(int type){
 #include "ngspice/cktdefs.h" /* for DEVmaxnum */
 #include <dlfcn.h>
 
+struct admsaux {
+    bool is_adms;
+};
+
+int n_admsaux;
+struct admsaux *a_admsaux;
+
+void
+mark_adms(int type)
+{
+    if(type >= n_admsaux) {
+        int i;
+        a_admsaux = TREALLOC(struct admsaux, a_admsaux, type+1);
+        for(i=n_admsaux; i<type+1; i++)
+            a_admsaux[i].is_adms = FALSE;
+        n_admsaux = type+1;
+    }
+    a_admsaux[type].is_adms = TRUE;
+}
+
 int
 is_adms_type_(int type)
 {
-    return !strcmp("hicum0", DEVices[type]->DEVpublic.name);
+    bool is_adms = type <= n_admsaux && a_admsaux[type].is_adms;
+    printf("%s(%d) --> %d\n", __func__, type, is_adms);
+    return is_adms;
 }
 
 int
@@ -181,18 +203,16 @@ is_adms_type(const char *type_name)
 {
     int i;
 
-    if(strcmp(type_name, "hicum0"))
-        return -1;
-
     for(i=0; i<DEVNUM; i++) {
         if(!DEVices[i])
             continue;
         if(!strcmp(type_name, DEVices[i]->DEVpublic.name)) {
-            printf("found %d\n", i);
-            return i;
+            printf("%s(%s) --> type = %d\n", __func__, type_name, i);
+            return is_adms_type_(i) ? i : -1;
         }
     }
 
+    printf("%s(%s) --> type = <not found>\n", __func__, type_name);
     return -1;
 }
 
@@ -252,6 +272,23 @@ int load_vadev(char *name)
 
   DEVices = TREALLOC(SPICEdev *, DEVices, DEVNUM + 1);
   printf("Added device: %s from dynamic library %s\n", device->spicedev.DEVpublic.name, libname);
+
+  {
+      int i;
+
+      printf("  name = %s\n"
+             "  description = %s\n"
+             "  number of terminals = %d\n",
+             device->spicedev.DEVpublic.name,
+             device->spicedev.DEVpublic.description,
+             *device->spicedev.DEVpublic.terms
+          );
+
+      for(i=0; i<*device->spicedev.DEVpublic.numNames; i++)
+          printf("    terminal[%d] %s\n", i, device->spicedev.DEVpublic.termNames[i]);
+  }
+
+  mark_adms(DEVNUM);
   DEVices[DEVNUM++] = & (device->spicedev);
   relink_fixme();
   return 0;
