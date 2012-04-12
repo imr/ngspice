@@ -177,9 +177,20 @@ struct admsaux {
 int n_admsaux;
 struct admsaux *a_admsaux;
 
+unsigned int adms_candidates;
+
+void
+mark_adms_candidates(char c)
+{
+    if('A' <= c && c <= 'Z')
+        adms_candidates |= (1 << (c - 'A'));
+}
+
 void
 mark_adms(int type)
 {
+    mark_adms_candidates('U');
+
     if(type >= n_admsaux) {
         int i;
         a_admsaux = TREALLOC(struct admsaux, a_admsaux, type+1);

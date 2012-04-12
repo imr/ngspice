@@ -96,6 +96,14 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 	if(islower(c))
 	    c = (char) toupper(c);
 
+        extern unsigned int adms_candidates;
+        if('A' <= c && c <= 'Z' &&
+           ((adms_candidates >> (c - 'A')) & 1) &&
+           INP2tryadms(ckt, tab, current)) {
+            INP2tryadms_do(ckt, tab, current);
+            continue;
+        }
+
 	switch (c) {
 
 	case ' ':
@@ -223,10 +231,7 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 
 	case 'U':
 	    /* Uname <node> <node> <model> [l=<val>] [n=<val>] */
-            if(INP2tryadms(ckt, tab, current))
-                INP2tryadms_do(ckt, tab, current);
-            else
-                INP2U(ckt, tab, current);
+	    INP2U(ckt, tab, current);
 	    break;
 
 	/* Kspice addition - saj */
