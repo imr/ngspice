@@ -103,7 +103,7 @@ typedef struct SPICEdev {
 
 } SPICEdev;  /* instance of structure for each possible type of device */
 
-#if ADMS >= 3
+#if ADMS >= 3 || 1
 typedef struct SPICEadmsdev {
     SPICEdev spicedev;
     int (*DEVunsetup)(GENmodel*,CKTcircuit*);

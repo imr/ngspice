@@ -10,13 +10,13 @@ Author: 1988 Thomas L. Quarles
 #include "ngspice/inpmacs.h"
 #include "ngspice/fteext.h"
 #include "inp.h"
-#if ADMS >= 3
+#if ADMS >= 3 || 1
 #include "error.h" /* controlled_exit() */
 #endif
 
 void INP2U(CKTcircuit *ckt, INPtables * tab, card * current)
 {
-#if ADMS >= 3
+#if ADMS >= 3 || 1
 
     /* Uname <node> <node> ... <model> [param1=<val1>] [param1=<val2>] ... */
 

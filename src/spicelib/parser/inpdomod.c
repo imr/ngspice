@@ -7,7 +7,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
 #include "inp.h"
-#if ADMS >= 3
+#if ADMS >= 3 || 1
 #include "error.h" /* controlled_exit() */
 #endif
 
@@ -45,7 +45,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     INPinsert(&modname, tab);	   /* stick model name into table */
     INPgetTok(&line, &type_name, 1);     /* get model type */
     
-#if ADMS >= 3
+#if ADMS >= 3 || 1
     if ((type=load_vadev(ckt,type_name)) && type>=0) {
                           INPmodel *thismodel;
                           char *error;
@@ -84,7 +84,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 					    "Device type VBIC not available in this binary\n");
 				}
 				break;
-#ifdef ADMS
+#if defined(ADMS) || 1
 				case 6:
 					 type = INPtypelook("bjt504t");
 				if(type < 0) {
@@ -357,7 +357,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 				    INPmkTemp
 				    ("Device type BSIM6 not available in this binary\n");}
 			    break;
-#ifdef ADMS
+#if defined(ADMS) || 1
 			case 44:
 				type = INPtypelook("ekv");
 				if (type < 0) {
@@ -435,7 +435,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 			default:		/* placeholder; use level xxx for the next model */
 			    err =
 				INPmkTemp
-#ifdef ADMS
+#if defined(ADMS) || 1
 				("Only MOS device levels 1-6,8-10,14,44,45,49,54-58,60-62 are supported in this binary\n");
 #else
 				("Only MOS device levels 1-6,8-10,14,49,54-58,60-62 are supported in this binary\n");

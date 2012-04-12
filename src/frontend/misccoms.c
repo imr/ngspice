@@ -212,7 +212,7 @@ com_version(wordlist *wl)
 #ifdef NGDEBUG
             fprintf(cp_out,"** Debugging option (-g) enabled\n");
 #endif
-#ifdef ADMS
+#if defined(ADMS) || 1
             fprintf(cp_out,"** Adms interface enabled\n");
 #endif
 #ifdef USE_OMP

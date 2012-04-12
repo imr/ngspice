@@ -122,7 +122,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "vccs/vccsitf.h"
 #include "vcvs/vcvsitf.h"
 #include "vsrc/vsrcitf.h"
-#ifdef ADMS
+#if defined(ADMS) && 0
 #include "adms/hicum0/hicum0itf.h"
 #include "adms/hicum2/hicum2itf.h"
 #include "adms/mextram/bjt504titf.h"
@@ -142,7 +142,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #endif
 
 /*saj in xspice the DEVices size can be varied so DEVNUM is an int*/
-#if defined XSPICE || ADMS >= 3
+#if defined(XSPICE) || ADMS >= 3 || 1
    static int DEVNUM = 63;
 #else
    #define DEVNUM 63
@@ -165,7 +165,7 @@ int DEVflag(int type){
 }
 #endif
 
-#if ADMS >= 3
+#if ADMS >= 3 || 1
 #include "ngspice/fteext.h"  /* for ft_sim */
 #include "ngspice/cktdefs.h" /* for DEVmaxnum */
 #include <dlfcn.h>
@@ -311,7 +311,7 @@ spice_init_devices(void)
     DEVices[53] = NULL;  
 #endif
           
-#ifdef ADMS
+#if defined(ADMS) && 0
     DEVices[54] = (SPICEdev*)get_hicum0_info();
     DEVices[55] = (SPICEdev*)get_hicum2_info();
     DEVices[56] = (SPICEdev*)get_bjt504t_info();
@@ -356,7 +356,7 @@ SPICEdev ** devices(void)
 #ifdef DEVLIB
 /*not yet usable*/
 
-#ifdef ADMS
+#if defined(ADMS) && 0
 #define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v4", "bsim4v5", "bsim4v6", \
                       "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv", \
                       "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \

@@ -231,7 +231,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 #ifdef CIDER
         && thismodel->INPmodType != INPtypelook ("NUMOS")
 #endif
-#ifdef ADMS
+#if defined(ADMS) || 1
         && thismodel->INPmodType != INPtypelook ("ekv")
         && thismodel->INPmodType != INPtypelook ("psp102")
 #endif      

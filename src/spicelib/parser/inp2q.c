@@ -11,7 +11,7 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "ngspice/fteext.h"
 #include "inp.h"
 
-#ifdef ADMS
+#if defined(ADMS) || 1
 #include "error.h" /* controlled_exit() */
 #endif
 
@@ -28,14 +28,14 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     char *nname2;               /* the second node's name */
     char *nname3;               /* the third node's name */
     char *nname4;               /* the fourth node's name */
-#ifdef ADMS
+#if defined(ADMS) || 1
     char *nname5;               /* the fifth node's name */
 #endif
     CKTnode *node1;             /* the first node's node pointer */
     CKTnode *node2;             /* the second node's node pointer */
     CKTnode *node3;             /* the third node's node pointer */
     CKTnode *node4;             /* the fourth node's node pointer */
-#ifdef ADMS
+#if defined(ADMS) || 1
     CKTnode *node5;             /* the fifth node's node pointer */
 #endif
     int error;                  /* error code temporary */
@@ -87,7 +87,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
            /* 4-terminal device - special case with tnodeout flag not handled */
            INPinsert(&model, tab);
            current->error = INPgetMod(ckt, model, &thismodel, tab);
-#ifdef ADMS
+#if defined(ADMS) || 1
            if (thismodel == NULL) {
         	   fprintf(stderr, "%s\nPlease check model, level or number of terminals!\n", current->error);
         	   controlled_exit(EXIT_BAD);
@@ -126,7 +126,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
          && (thismodel->INPmodType != INPtypelook("NBJT"))
          && (thismodel->INPmodType != INPtypelook("NBJT2"))
 #endif
-#ifdef ADMS
+#if defined(ADMS) || 1
          && (thismodel->INPmodType != INPtypelook("hicum0"))
          && (thismodel->INPmodType != INPtypelook("hicum2"))
          && (thismodel->INPmodType != INPtypelook("bjt504t"))
@@ -136,7 +136,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
             LITERR("incorrect model type")
             return;
         }
-#ifdef ADMS
+#if defined(ADMS) || 1
         if ((nodeflag && (thismodel->INPmodType != INPtypelook("hicum0")))
          && (nodeflag && (thismodel->INPmodType != INPtypelook("hicum2")))
          && (nodeflag && (thismodel->INPmodType != INPtypelook("bjt504t"))))
@@ -176,7 +176,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     IFC(bindNode, (ckt, fast, 3, node3));
     IFC(bindNode, (ckt, fast, 4, node4));
 
-#ifdef ADMS
+#if defined(ADMS) || 1
     if (nodeflag) { /* 5-node device */
         IFC(bindNode, (ckt, fast, 5, node5));
     }

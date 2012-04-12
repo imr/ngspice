@@ -1902,7 +1902,7 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
             tfree(s->li_line);
             s->li_line = buffer;
             break;
-#if ADMS >= 3
+#if ADMS >= 3 || 1
         case 'u': /* urc transmissionline */ /* hijacked for adms */
             name = gettok_node(&t);  /* this can be either a model name or a node name. */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next)
@@ -2048,7 +2048,7 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
                 }
             }
 
-#ifdef ADMS
+#if defined(ADMS) || 1
             if (!wlsub) {
                 if (*t) { /* There is another token - perhaps a model */
                     (void) sprintf(buffer + strlen(buffer), "%s ", name);
