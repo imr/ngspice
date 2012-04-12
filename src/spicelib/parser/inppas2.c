@@ -25,6 +25,8 @@ extern void SetAnalyse( char * Analyse, int Percent);
 
 /* pass 2 - Scan through the lines.  ".model" cards have processed in
  *  pass1 and are ignored here.  */
+int INP2tryadms(CKTcircuit *ckt, INPtables * tab, card * current);
+void INP2tryadms_do(CKTcircuit *ckt, INPtables * tab, card * current);
 
 void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 {
@@ -221,7 +223,10 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 
 	case 'U':
 	    /* Uname <node> <node> <model> [l=<val>] [n=<val>] */
-	    INP2U(ckt, tab, current);
+            if(INP2tryadms(ckt, tab, current))
+                INP2tryadms_do(ckt, tab, current);
+            else
+                INP2U(ckt, tab, current);
 	    break;
 
 	/* Kspice addition - saj */

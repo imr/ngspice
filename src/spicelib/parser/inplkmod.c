@@ -26,3 +26,22 @@ INPlookMod(const char *name)
 
     return NULL;
 }
+
+/*-----------------------------------------------------------------
+ * This fcn accepts a pointer to the model name, and returns 1 if
+ * the model exists in the model table, and returns 0 if hte model
+ * doesn't exist in the model table.
+ *----------------------------------------------------------------*/
+#if 0
+INPmodel *INPlookMod_(char *name)
+{
+    INPmodel *i;
+
+    for (i = modtab; i; i = i->INPnextModel)
+	if (strcmp(i->INPmodName, name) == 0)
+            return i;
+
+    return NULL;
+}
+#endif
+

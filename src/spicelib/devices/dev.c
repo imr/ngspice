@@ -171,6 +171,12 @@ int DEVflag(int type){
 #include <dlfcn.h>
 
 int
+is_adms_type_(int type)
+{
+    return !strcmp("hicum0", DEVices[type]->DEVpublic.name);
+}
+
+int
 is_adms_type(const char *type_name)
 {
     int i;
