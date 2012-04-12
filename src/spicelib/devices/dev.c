@@ -179,6 +179,9 @@ struct admsaux *a_admsaux;
 
 unsigned int adms_candidates;
 
+extern void mark_adms(int type);
+extern void mark_adms_candidates(char c);
+
 void
 mark_adms_candidates(char c)
 {
@@ -243,6 +246,17 @@ relink_fixme(void) {
   return;
 }
 
+int load_vadev_(char *name, char *instance_letters)
+{
+    int type = load_vadev(name);
+    if(type < 0)
+        return -1;
+    mark_adms(type);
+    while(*instance_letters)
+        mark_adms_candidates(*instance_letters++);
+    return 0;
+}
+
 int load_vadev(char *name)
 {
   char *msg, libname[50];
@@ -299,10 +313,9 @@ int load_vadev(char *name)
           printf("    terminal[%d] %s\n", i, device->spicedev.DEVpublic.termNames[i]);
   }
 
-  mark_adms(DEVNUM);
   DEVices[DEVNUM++] = & (device->spicedev);
   relink_fixme();
-  return 0;
+  return DEVNUM-1;
 }
 #endif
 

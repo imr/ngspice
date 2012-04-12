@@ -6,11 +6,13 @@
 
 #if ADMS >= 3 || 1
 void com_admsmodel(wordlist *wl){
-  wordlist *ww;
-  for(ww = wl;ww;ww = ww->wl_next)
-    if(load_vadev(wl->wl_word))
-      fprintf(cp_err,"Error: ADMS Library %s couldn't be loaded!\n",ww->wl_word);
-  return;
+    if(!wl || !wl->wl_next) {
+        fprintf(cp_err,"Error: admsmodel, usage ...\n");
+        return;
+    }
+    if(load_vadev_(wl->wl_word, wl->wl_next->wl_word))
+        fprintf(cp_err,"Error: ADMS Library %s couldn't be loaded!\n",wl->wl_word);
+    return;
 }
 #endif
 #ifdef XSPICE

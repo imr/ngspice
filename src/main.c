@@ -417,8 +417,9 @@ struct dvec *EVTfindvec(char *node){
 }
 #endif /* XSPICE */
 
-int load_vadev(char *name){
+int load_vadev_(char *name, char *type){
   NG_IGNORE(name);
+  NG_IGNORE(type);
   return(1);
 }
 

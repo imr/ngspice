@@ -1,6 +1,6 @@
 // (compile "cat hic0+.cir | ../build-wip-adms3/src/ngspice -p")
 
 // load the adms shared library model
-admsmodel hicum0
+admsmodel hicum0 U
 
 source hic0.cir
