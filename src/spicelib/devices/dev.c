@@ -192,8 +192,6 @@ mark_adms_candidates(char c)
 void
 mark_adms(int type)
 {
-    mark_adms_candidates('U');
-
     if(type >= n_admsaux) {
         int i;
         a_admsaux = TREALLOC(struct admsaux, a_admsaux, type+1);
