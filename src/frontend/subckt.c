@@ -1902,7 +1902,7 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
             tfree(s->li_line);
             s->li_line = buffer;
             break;
-#if ADMS >= 3 || 1
+#if ADMS >= 3 && 0
         case 'u': /* urc transmissionline */ /* hijacked for adms */
             name = gettok_node(&t);  /* this can be either a model name or a node name. */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next)

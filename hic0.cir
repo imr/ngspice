@@ -11,7 +11,7 @@ run
 print i(vc)
 .endc
 .subckt hicumL0V1p1_c_sbt c b e s
-uhcm0 c b e s 0 hic0_full 
+qhcm0 c b e s 0 hic0_full 
 .model hic0_full hicum0 is=1.3525E-18 vef=8.0 iqf=3.0e-2 iqr=1e6
 .ends hicumL0V1p1_c_sbt
 .end
