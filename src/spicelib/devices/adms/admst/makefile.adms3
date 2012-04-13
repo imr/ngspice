@@ -1,0 +1,52 @@
+# -*- makefile -*-
+
+ADMS=/where/is/admsXml
+
+
+%.c %.hxx \
+	%acld.c %ask.c %itf.h %del.c %dest.c \
+	%init.c %load.c %mask.c %mdel.c %mpar.c %par.c \
+	%pzld.c %setup.c %temp.c %trunc.c \
+: $(srcdir)/%.va $(ADMSXMLINTERFACE)/prengspice.xml $(ADMSXMLINTERFACE)/ngspice.xml
+	$(ADMS) -I$(srcdir) -f $< -e $(ADMSXMLINTERFACE)/prengspice.xml
+	$(ADMS) -I$(srcdir) -f mna.va -e $(ADMSXMLINTERFACE)/ngspice.xml
+
+
+lib%.so : %.c \
+	%acld.c %ask.c %itf.h %del.c %dest.c \
+	%init.c %load.c %mask.c %mdel.c %mpar.c %par.c \
+	%pzld.c %setup.c %temp.c %trunc.c
+	gcc -g -Wall -I$(top_builddir)/src/include -I$(top_srcdir)/src/include \
+		-shared -o $@ $^
+
+
+BUILT_SOURCES = \
+	$(device).c	\
+	$(device).hxx	\
+	$(device)acld.c	\
+	$(device)ask.c	\
+	$(device)itf.h	\
+	$(device)del.c	\
+	$(device)dest.c	\
+	$(device)init.c	\
+	$(device)load.c	\
+	$(device)mask.c	\
+	$(device)mdel.c	\
+	$(device)mpar.c	\
+	$(device)par.c	\
+	$(device)pzld.c	\
+	$(device)setup.c	\
+	$(device)temp.c	\
+	$(device)trunc.c
+
+
+CLEANFILES = \
+	$(device).so \
+	$(BUILT_SOURCES) \
+	.$(device).va.adms \
+	.interface.xml \
+	mna.va \
+	.mna.va.adms \
+	.adms.implicit.xml \
+	constants.h \
+	discipline.h
