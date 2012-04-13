@@ -31,6 +31,8 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     char *val;
     double rval=0, lval=0;
 
+    extern int is_adms_type(const char *type_name);
+
     NG_IGNORE(ckt);
 
     line = image->line;
@@ -46,10 +48,11 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     INPgetTok(&line, &type_name, 1);     /* get model type */
     
 #if ADMS >= 3 || 1
-    if ((type=load_vadev(ckt,type_name)) && type>=0) {
+#warning "nono"
+    if ((type=is_adms_type(type_name)) >= 0) {
                           INPmodel *thismodel;
                           char *error;
-#ifdef TRACE
+#if defined(TRACE) || 1
                           printf("inpdomod.c: got model %s from dynamic library - create device # %i\n",type_name,type);
 #endif    
                           INPmakeMod(modname, type, image);

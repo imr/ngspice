@@ -4,6 +4,15 @@
 #include <../spicelib/devices/dev.h> /*for load library commands*/
 #include "com_dl.h"
 
+#if ADMS >= 3 || 1
+void com_admsmodel(wordlist *wl){
+  wordlist *ww;
+  for(ww = wl;ww;ww = ww->wl_next)
+    if(load_vadev(wl->wl_word))
+      fprintf(cp_err,"Error: ADMS Library %s couldn't be loaded!\n",ww->wl_word);
+  return;
+}
+#endif
 #ifdef XSPICE
 void com_codemodel(wordlist *wl){
   wordlist *ww;

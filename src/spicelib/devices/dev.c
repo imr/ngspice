@@ -169,7 +169,29 @@ int DEVflag(int type){
 #include "ngspice/fteext.h"  /* for ft_sim */
 #include "ngspice/cktdefs.h" /* for DEVmaxnum */
 #include <dlfcn.h>
-static void varelink(CKTcircuit *ckt) {
+
+int
+is_adms_type(const char *type_name)
+{
+    int i;
+
+    if(strcmp(type_name, "hicum0"))
+        return -1;
+
+    for(i=0; i<DEVNUM; i++) {
+        if(!DEVices[i])
+            continue;
+        if(!strcmp(type_name, DEVices[i]->DEVpublic.name)) {
+            printf("found %d\n", i);
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+static void
+relink_fixme(void) {
 
 /*
  * This replacement done by SDB on 6.11.2003
@@ -180,14 +202,11 @@ static void varelink(CKTcircuit *ckt) {
   ft_sim->numDevices = DEVNUM;
   DEVmaxnum = DEVNUM;
 
-  ckt->CKThead = TREALLOC(GENmodel *, ckt->CKThead, DEVmaxnum);
-  ckt->CKThead[DEVmaxnum-1] = NULL;
-
-
   ft_sim->devices = devices_ptr();
   return;
 }
-int load_vadev(CKTcircuit *ckt, char *name)
+
+int load_vadev(char *name)
 {
   char *msg, libname[50];
   void *lib;
@@ -228,8 +247,8 @@ int load_vadev(CKTcircuit *ckt, char *name)
   DEVices = TREALLOC(SPICEdev *, DEVices, DEVNUM + 1);
   printf("Added device: %s from dynamic library %s\n", device->spicedev.DEVpublic.name, libname);
   DEVices[DEVNUM++] = & (device->spicedev);
-  varelink(ckt);
-  return DEVNUM-1;
+  relink_fixme();
+  return 0;
 }
 #endif
 

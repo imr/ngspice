@@ -234,7 +234,7 @@ extern int ARCHme;	/* My logical process number */
 extern int ARCHsize;	/* Total number of processes */
 
 #if ADMS >= 3 || 1
-int load_vadev(CKTcircuit *ckt, char *name);
+int load_vadev(char *name);
 #endif
 
 #ifdef TCL_MODULE

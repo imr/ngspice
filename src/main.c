@@ -417,6 +417,11 @@ struct dvec *EVTfindvec(char *node){
 }
 #endif /* XSPICE */
 
+int load_vadev(char *name){
+  NG_IGNORE(name);
+  return(1);
+}
+
 #endif /* SIMULATOR */
 
 char *hlp_filelist[] = { "ngspice", 0 };

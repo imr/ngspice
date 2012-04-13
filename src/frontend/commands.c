@@ -246,6 +246,13 @@ struct comm spcp_coms[] = {
       NULL,
       "library library ... : Loads the opus librarys." } ,
 #endif
+#if ADMS >= 3 || 1
+#warning "yea, its there"
+    { "admsmodel", com_admsmodel, FALSE, TRUE,
+      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
+      NULL,
+      "library library ... : Loads the adms librarys." } ,
+#endif
 #ifdef DEVLIB
     { "use", com_use, FALSE, TRUE,
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
