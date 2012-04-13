@@ -1,0 +1,17 @@
+// Resistor
+
+`include "constants.h"
+`include "discipline.h"
+
+module myvares(p,n);
+ inout p,n;
+ electrical p,n;
+ (*spice_name="myr", info="my resistance"*) parameter real myr= 13.0 from [0:inf);
+
+// analog
+//    V(p,n) <+ myr*I(p,n);
+
+ analog
+    I(p,n) <+ V(p,n)/myr;
+
+endmodule

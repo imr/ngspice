@@ -2,5 +2,6 @@
 
 // load the adms shared library model
 admsmodel hicum0 UQ
+admsmodel myvares UQ
 
 source hic0.cir

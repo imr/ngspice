@@ -19,10 +19,12 @@
 
 (compile "LC_ALL=C make -C src/spicelib/devices/adms/ekv/adms3va top_srcdir=$(pwd) top_builddir=$(readlink -f ../build-adms3) ADMS=$(readlink -f ../../adms/adms-2.3.0-1500/admsXml)")
 (compile "LC_ALL=C make -C src/spicelib/devices/adms/hicum0/adms3va top_srcdir=$(pwd) top_builddir=$(readlink -f ../build-adms3) ADMS=$(readlink -f ../../adms/adms-2.3.0-1500/admsXml)")
+(compile "LC_ALL=C make -C src/spicelib/devices/adms/myvares/adms3va top_srcdir=$(pwd) top_builddir=$(readlink -f ../build-adms3) ADMS=$(readlink -f ../../adms/adms-2.3.0-1500/admsXml)")
 
 
 (compile "LC_ALL=C make -C src/spicelib/devices/adms/ekv/adms3va top_srcdir=$(pwd) clean")
 (compile "LC_ALL=C make -C src/spicelib/devices/adms/hicum0/adms3va top_srcdir=$(pwd) clean")
+(compile "LC_ALL=C make -C src/spicelib/devices/adms/myvares/adms3va top_srcdir=$(pwd) clean")
 
 
 ;;; jetzt passts, ergebnis wie bei laurent ? check ...
@@ -33,7 +35,8 @@
    ../build-wip-adms3/src/ngspice -b hic0.cir")
 
 
-(compile "LD_LIBRARY_PATH=src/spicelib/devices/adms/hicum0/adms3va \
+(compile% "LC_ALL=C make -j3")
+(compile "LD_LIBRARY_PATH=src/spicelib/devices/adms/hicum0/adms3va:src/spicelib/devices/adms/myvares/adms3va \
    ../build-wip-adms3/src/ngspice -p < hic0+.cir")
 
 
