@@ -869,17 +869,10 @@ if test "$enable_adms3" = "yes" ; then
    AC_MSG_RESULT(**********************************
 * ADMS  support is  experimental *
 **********************************)
-   AC_CHECK_PROGS(ADMSXML, admsXml admsXml.exe,no)
-
-   if test "$ADMSXML" = "no"; then
-      AC_MSG_ERROR(If you want Verilog-A models you should install admsXml)
-   fi
 
    AC_DEFINE(ADMS,[3],[Support for Verilog-A models (adms3)])
 
 fi
-
-AC_SUBST(ADMSXML)
 
 AM_CONDITIONAL([ADMS_WANTED], [test "$enable_adms3" = "yes"])
 
@@ -973,7 +966,6 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/Makefile
                  src/spicelib/analysis/Makefile
                  src/spicelib/devices/Makefile
-                 src/spicelib/devices/adms/Makefile
                  src/spicelib/devices/asrc/Makefile
                  src/spicelib/devices/bjt/Makefile
                  src/spicelib/devices/bsim1/Makefile

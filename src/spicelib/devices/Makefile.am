@@ -58,10 +58,6 @@ if NUMDEV_WANTED
 SUBDIRS += nbjt nbjt2 numd  numd2 numos
 endif
 
-if ADMS_WANTED
-SUBDIRS += adms
-endif
-
 DIST_SUBDIRS = \
 	asrc	\
 	bjt	\
