@@ -888,6 +888,8 @@ fi
 
 AC_SUBST(ADMSXML)
 
+AM_CONDITIONAL([ADMS_WANTED], [test "$enable_adms3" = "yes"])
+
 dnl NDEV option
 if test "$enable_ndev" = "yes"; then
     AC_MSG_RESULT(NDEV features enabled)
@@ -978,6 +980,7 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/Makefile
                  src/spicelib/analysis/Makefile
                  src/spicelib/devices/Makefile
+                 src/spicelib/devices/adms/Makefile
                  src/spicelib/devices/asrc/Makefile
                  src/spicelib/devices/bjt/Makefile
                  src/spicelib/devices/bsim1/Makefile
