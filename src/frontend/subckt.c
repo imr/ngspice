@@ -401,6 +401,7 @@ doit(struct line *deck, wordlist *modnames) {
     /* Save all the old stuff... */
     struct subs *subs = NULL;
     wordlist *submod = NULL;
+    wordlist *xmodnames = modnames;
 
 #ifdef TRACE
     /* SDB debug statement */
@@ -595,6 +596,8 @@ doit(struct line *deck, wordlist *modnames) {
                 if (!sss) {
                     lc = c;
                     c = c->li_next;
+                    tfree(tofree);
+                    tfree(tofree2);
                     continue;
                 }
 
@@ -656,7 +659,7 @@ doit(struct line *deck, wordlist *modnames) {
 
     if (!numpasses) {
         fprintf(cp_err, "Error: infinite subckt recursion\n");
-        return (NULL);
+        error = 1;
     }
 
 #ifdef TRACE
@@ -675,11 +678,19 @@ doit(struct line *deck, wordlist *modnames) {
     }
 #endif
 
+    if(modnames != xmodnames) {
+        if(xmodnames && xmodnames->wl_prev) {
+            xmodnames->wl_prev->wl_next = NULL;
+            xmodnames->wl_prev = NULL;
+        }
+        wl_free(modnames);
+    }
+
+    wl_free(submod);
+
     if (error)
         return NULL;    /* error message already reported; should free( ) */
 
-    // fixme, if modnames has changed, then something has been prepended to
-    //   this list, we should free these prepended wordlists then.
 
     /*
       struct subs {
