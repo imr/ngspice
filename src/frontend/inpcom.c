@@ -4370,7 +4370,9 @@ static void inp_compat(struct line *deck)
            BRxxx pos neg I = V(pos, neg)/{equation}
         */
         else if ( *curr_line == 'r' ) {
-            if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")))
+            if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")) 
+                &&  (!strstr(curr_line, "temper")) &&  (!strstr(curr_line, "hertz"))
+                &&  (!strstr(curr_line, "time")))
                 /* no handling in B-Source, so we have to prepare ternary fcn
                    for numparam */
                 if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) ) {
@@ -4455,7 +4457,9 @@ static void inp_compat(struct line *deck)
            Bxxx  n2 n1  I = i(Exxx) * equation
          */
         else if ( *curr_line == 'c' ) {
-            if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")))
+            if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")) 
+                &&  (!strstr(curr_line, "temper")) &&  (!strstr(curr_line, "hertz"))
+                &&  (!strstr(curr_line, "time")))
                 /* no handling in B-Source, so we have to prepare ternary fcn
                    for numparam */
                 if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) ) {
@@ -4561,7 +4565,9 @@ static void inp_compat(struct line *deck)
            Bxxx n1 n2 V = v(n-aux) * equation
          */
         else if ( *curr_line == 'l' ) {
-            if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")))
+            if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")) 
+                &&  (!strstr(curr_line, "temper")) &&  (!strstr(curr_line, "hertz"))
+                &&  (!strstr(curr_line, "time")))
                 /* no handling in B-Source, so we have to prepare ternary fcn
                    for numparam */
                 if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) ) {
