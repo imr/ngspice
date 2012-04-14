@@ -150,7 +150,7 @@ PTeval(INPparseNode * tree, double gmin, double *res, double *vals)
 	break;
 
     case PT_TEMPERATURE:
-        *res = ((CKTcircuit*) tree->data) -> CKTtemp;
+        *res = ((CKTcircuit*) tree->data) -> CKTtemp - CONSTCtoK;
 	break;
 	
     case PT_FREQUENCY:
