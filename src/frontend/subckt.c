@@ -505,6 +505,7 @@ doit(struct line *deck, wordlist *modnames) {
                 sss->su_next = subs;
                 subs = sss;            /* Now that sss is built, assign it to subs */
 
+                line_free_x(last, FALSE);
                 last = c->li_next;
 
                 /*gp */
