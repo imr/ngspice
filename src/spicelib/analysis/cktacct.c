@@ -22,6 +22,10 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/klu.h"
 #endif
 
+/* Francesco Lannutti
+ * If ACCT is called before NIinit, the new SMPmatrix structure is not allocated
+ * so the control must be performed on the CKTmatrix pointer to the SMPmatrix structure
+*/
 
 /* ARGSUSED */
 int
@@ -35,14 +39,14 @@ CKTacct(CKTcircuit *ckt, JOB *anal, int which, IFvalue *val)
         val->iValue = ckt->CKTmaxEqNum;
         break;
     case OPT_ORIGNZ:
-	if ( ckt->CKTmatrix->SPmatrix != NULL ) {
+	if ( ckt->CKTmatrix != NULL ) {
 	    val->iValue = spOriginalCount(ckt->CKTmatrix->SPmatrix);
 	} else {
 	    val->iValue = 0;
 	}
         break;
     case OPT_FILLNZ:
-	if ( ckt->CKTmatrix->SPmatrix != NULL ) {
+	if ( ckt->CKTmatrix != NULL ) {
 #ifdef KLU
 	    if (ckt->CKTmatrix->CKTkluMODE)
 		val->iValue = ckt->CKTmatrix->CKTkluNumeric->lnz + ckt->CKTmatrix->CKTkluNumeric->unz + ckt->CKTmatrix->CKTkluNumeric->nzoff - ckt->CKTmatrix->CKTklunz ;
@@ -56,7 +60,7 @@ CKTacct(CKTcircuit *ckt, JOB *anal, int which, IFvalue *val)
 	}
         break;
     case OPT_TOTALNZ:
-	if ( ckt->CKTmatrix->SPmatrix != NULL ) {
+	if ( ckt->CKTmatrix != NULL ) {
 #ifdef KLU
 	    if (ckt->CKTmatrix->CKTkluMODE)
 		val->iValue = ckt->CKTmatrix->CKTkluNumeric->lnz + ckt->CKTmatrix->CKTkluNumeric->unz + ckt->CKTmatrix->CKTkluNumeric->nzoff ;

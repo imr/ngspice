@@ -1,3 +1,4 @@
+# To be fixed
 2013-01-01  h_vogt <h_vogt>
  * src/include/ngspice/ngspice.h,
  * src/misc/ivars.c:
@@ -5415,6 +5416,260 @@
  * src/xspice/icm/xtraevt/.gitignore,
  * tests/.gitignore:
     .gitignore files
+
+2012-10-22  Francesco Lannutti
+ * a lot of files
+   Removed GENowner flag for all the models
+   Removed the PARALLEL_ARCH macro
+   Removed the Combine algorithm from Sparse and Analyses
+
+2012-04-11  Francesco Lannutti
+ * src/spicelib/analysis/cktacct.c
+  Corrected a bug that caused segmentation fault
+   if the ACCT was called before a simulation
+
+2012-03-18  Francesco Lannutti
+ * src/maths/KLU/Makefile.am
+ * src/maths/SuperLU/Makefile.am
+ * src/maths/UMFPACK/Makefile.am
+ * src/include/ngspice/Makefile.am
+  Corrected a bug which didn't let ngspice compile in an
+   external folder (e.g. "sourcedir/ngspice-klu-release")
+ * configure.ac
+  Added a check for ATLAS library when SuperLU is selected
+   as solver
+
+2012-03-14  Stefano Perticaroli and Francesco Lannutti
+ * src/spicelib/analysis/dcpss.c
+  The PSS Analysis Algorithm has been entirely reviewed and now
+   it works very well. Some additional files have been modified,
+   like configure.ac, plotting strategies and so on...
+
+2012-03-12  Francesco Lannutti
+ * src/maths/UMFPACK
+  Added UMFPACK as new experimental linear solver
+   Some files modified due to UMFPACK integration
+   Some bugs and minor/cosmetic fixed
+   TODO: Correct cktacct.c to let it print fill-ins
+         properly using UMFPACK or SuperLU
+
+2012-02-23  Francesco Lannutti
+ * src/maths/SuperLU
+  Added SuperLU as new experimental linear solver
+   Several files added and/or modified
+
+2012-02-22  Francesco Lannutti
+ * src/frontend/outitf.c
+ * src/frontend/typesdef.c
+ * src/spicelib/analysis/dcpss.c
+  Corrected the plot type in the PSS Frequency Domain
+   and the plot name in the PSS Analysis
+
+ * src/Makefile.am
+ * src/maths/KLU/Makefile.am
+ * src/maths/KLU/klusmp.c (new file)
+ * src/maths/sparse/Makefile.am
+ * src/maths/sparse/spsmp.c
+  SMP to solver interface separated:
+   spsmp.c is the original interface between SMP and Sparse
+   klusmp.c is the new one between SMP and KLU
+
+ * src/spicelib/analysis/cktsens.c
+  Corrected a bug during the Sensitivity Analysis
+   when NG-Spice is compiled with KLU enabled
+ * src/spicelib/parser/inp2dot.c
+  Corrected a minus-cosmetic bug in the name of
+   the PSS Analysis
+
+2012-02-21  Francesco Lannutti
+  Almost all devices now supports KLU
+
+2012-02-16  Francesco Lannutti
+ * src/spicelib/analysis/cktacct.c
+  corrected a bug during the calculation of fill-ins for KLU
+
+2012-02-09  Francesco Lannutti
+  a lot of changed files; now I don't remember :(
+
+2012-02-04  Robert Larice
+ * src/maths/sparse/spoutput.c :
+  drop some disabled experimental code in spMatrix_CSC()
+
+2012-02-04  Robert Larice
+ * configure.ac ,
+ * src/include/ngspice/cktdefs.h ,
+ * src/include/ngspice/smpdefs.h ,
+ * src/maths/ni/niaciter.c ,
+ * src/maths/ni/nidest.c ,
+ * src/maths/ni/niditer.c ,
+ * src/maths/ni/niinit.c ,
+ * src/maths/ni/niiter.c ,
+ * src/maths/sparse/spbuild.c ,
+ * src/maths/sparse/spoutput.c ,
+ * src/maths/sparse/spsmp.c ,
+ * src/spicelib/analysis/acan.c ,
+ * src/spicelib/analysis/cktacct.c ,
+ * src/spicelib/analysis/cktdest.c ,
+ * src/spicelib/analysis/cktload.c ,
+ * src/spicelib/analysis/cktop.c ,
+ * src/spicelib/analysis/cktpzld.c ,
+ * src/spicelib/analysis/cktpzstr.c ,
+ * src/spicelib/analysis/tfanal.c ,
+ * src/spicelib/devices/bsim4v6/bsim4v6ext.h ,
+ * src/spicelib/devices/cap/capext.h ,
+ * src/spicelib/devices/res/resext.h ,
+ * src/spicelib/devices/vsrc/vsrcext.h :
+  whitespace changes
+
+2012-02-04  Robert Larice
+ * src/maths/sparse/spbuild.c ,
+ * src/maths/sparse/spoutput.c ,
+ * src/maths/sparse/spsmp.c ,
+ * src/spicelib/analysis/cktacct.c ,
+ * src/spicelib/analysis/cktload.c ,
+ * src/spicelib/analysis/cktop.c ,
+ * src/spicelib/analysis/cktsetup.c :
+  nit pickery, tiny rewrites
+
+2012-02-04  Robert Larice
+ * src/maths/KLU/amd_internal.h ,
+ * src/maths/KLU/btf_maxtrans.c ,
+ * src/maths/KLU/btf_order.c ,
+ * src/maths/KLU/btf_strongcomp.c ,
+ * src/maths/KLU/colamd.c ,
+ * src/maths/KLU/klu_internal.h ,
+ * src/spicelib/devices/bsim4v6/b4v6bindklu.c ,
+ * src/spicelib/devices/cap/capbindklu.c ,
+ * src/spicelib/devices/res/resbindklu.c ,
+ * src/spicelib/devices/vsrc/vsrcbindklu.c :
+  #include <ngspice/...>  -->  #include "ngspice/..."
+    use "" instead of <> to better express project membership
+
+2012-02-04  Robert Larice
+ * src/maths/ni/niinit.c ,
+ * src/spicelib/analysis/acan.c ,
+ * src/spicelib/analysis/cktop.c :
+  use TMALLOC
+
+2012-02-04  Robert Larice
+ * src/spicelib/devices/bsim4v6/bsim4v6init.c ,
+ * src/spicelib/devices/cap/capinit.c ,
+ * src/spicelib/devices/res/resinit.c ,
+ * src/spicelib/devices/vsrc/vsrcinit.c :
+  polish SPICEdev initialization
+
+2012-02-04  Robert Larice
+ * src/include/ngspice/devdefs.h ,
+ * src/include/ngspice/smpdefs.h ,
+ * src/include/ngspice/spmatrix.h ,
+ * src/maths/sparse/spbuild.c ,
+ * src/maths/sparse/spoutput.c ,
+ * src/maths/sparse/spsmp.c ,
+ * src/spicelib/analysis/acan.c ,
+ * src/spicelib/analysis/cktload.c ,
+ * src/spicelib/analysis/cktsetup.c ,
+ * src/spicelib/devices/bsim4v6/bsim4v6ext.h ,
+ * src/spicelib/devices/bsim4v6/bsim4v6init.c ,
+ * src/spicelib/devices/cap/capext.h ,
+ * src/spicelib/devices/cap/capinit.c ,
+ * src/spicelib/devices/res/resext.h ,
+ * src/spicelib/devices/res/resinit.c ,
+ * src/spicelib/devices/vsrc/vsrcext.h ,
+ * src/spicelib/devices/vsrc/vsrcinit.c :
+  drop Francesco Lannutti name stamp comments from changed files
+    #ifdef KLU is a synonym
+
+2012-02-04  Francesco Lannutti (Robert Larice)
+ * configure.ac ,
+ * src/Makefile.am ,
+ * src/include/ngspice/Makefile.am ,
+ * src/include/ngspice/cktdefs.h ,
+ * src/include/ngspice/devdefs.h ,
+ * src/include/ngspice/smpdefs.h ,
+ * src/include/ngspice/spmatrix.h ,
+ * src/maths/Makefile.am ,
+ * src/maths/ni/niaciter.c ,
+ * src/maths/ni/nidest.c ,
+ * src/maths/ni/niditer.c ,
+ * src/maths/ni/niinit.c ,
+ * src/maths/ni/niiter.c ,
+ * src/maths/sparse/spbuild.c ,
+ * src/maths/sparse/spoutput.c ,
+ * src/maths/sparse/spsmp.c ,
+ * src/spicelib/analysis/acan.c ,
+ * src/spicelib/analysis/cktacct.c ,
+ * src/spicelib/analysis/cktdest.c ,
+ * src/spicelib/analysis/cktload.c ,
+ * src/spicelib/analysis/cktop.c ,
+ * src/spicelib/analysis/cktpzld.c ,
+ * src/spicelib/analysis/cktpzstr.c ,
+ * src/spicelib/analysis/cktsetup.c ,
+ * src/spicelib/analysis/tfanal.c ,
+ * src/spicelib/devices/bsim4v6/Makefile.am ,
+ * src/spicelib/devices/bsim4v6/bsim4v6ext.h ,
+ * src/spicelib/devices/bsim4v6/bsim4v6init.c ,
+ * src/spicelib/devices/cap/Makefile.am ,
+ * src/spicelib/devices/cap/capext.h ,
+ * src/spicelib/devices/cap/capinit.c ,
+ * src/spicelib/devices/res/Makefile.am ,
+ * src/spicelib/devices/res/resext.h ,
+ * src/spicelib/devices/res/resinit.c ,
+ * src/spicelib/devices/vsrc/Makefile.am ,
+ * src/spicelib/devices/vsrc/vsrcext.h ,
+ * src/spicelib/devices/vsrc/vsrcinit.c :
+  import changed ngspice files for project KLU
+
+2012-02-04  Francesco Lannutti (Robert Larice)
+ * src/include/ngspice/UFconfig.h ,
+ * src/include/ngspice/amd.h ,
+ * src/include/ngspice/btf.h ,
+ * src/include/ngspice/colamd.h ,
+ * src/include/ngspice/klu.h ,
+ * src/maths/KLU/Makefile.am ,
+ * src/maths/KLU/amd_1.c ,
+ * src/maths/KLU/amd_2.c ,
+ * src/maths/KLU/amd_aat.c ,
+ * src/maths/KLU/amd_control.c ,
+ * src/maths/KLU/amd_defaults.c ,
+ * src/maths/KLU/amd_dump.c ,
+ * src/maths/KLU/amd_global.c ,
+ * src/maths/KLU/amd_info.c ,
+ * src/maths/KLU/amd_internal.h ,
+ * src/maths/KLU/amd_order.c ,
+ * src/maths/KLU/amd_post_tree.c ,
+ * src/maths/KLU/amd_postorder.c ,
+ * src/maths/KLU/amd_preprocess.c ,
+ * src/maths/KLU/amd_valid.c ,
+ * src/maths/KLU/btf_internal.h ,
+ * src/maths/KLU/btf_maxtrans.c ,
+ * src/maths/KLU/btf_order.c ,
+ * src/maths/KLU/btf_strongcomp.c ,
+ * src/maths/KLU/colamd.c ,
+ * src/maths/KLU/colamd_global.c ,
+ * src/maths/KLU/klu.c ,
+ * src/maths/KLU/klu_analyze.c ,
+ * src/maths/KLU/klu_analyze_given.c ,
+ * src/maths/KLU/klu_defaults.c ,
+ * src/maths/KLU/klu_diagnostics.c ,
+ * src/maths/KLU/klu_dump.c ,
+ * src/maths/KLU/klu_extract.c ,
+ * src/maths/KLU/klu_factor.c ,
+ * src/maths/KLU/klu_free_numeric.c ,
+ * src/maths/KLU/klu_free_symbolic.c ,
+ * src/maths/KLU/klu_internal.h ,
+ * src/maths/KLU/klu_kernel.c ,
+ * src/maths/KLU/klu_memory.c ,
+ * src/maths/KLU/klu_refactor.c ,
+ * src/maths/KLU/klu_scale.c ,
+ * src/maths/KLU/klu_solve.c ,
+ * src/maths/KLU/klu_sort.c ,
+ * src/maths/KLU/klu_tsolve.c ,
+ * src/maths/KLU/klu_version.h ,
+ * src/spicelib/devices/bsim4v6/b4v6bindklu.c ,
+ * src/spicelib/devices/cap/capbindklu.c ,
+ * src/spicelib/devices/res/resbindklu.c ,
+ * src/spicelib/devices/vsrc/vsrcbindklu.c :
+  import new files for project KLU
 
 2012-02-19  Holger Vogt
  * com_cdump.c, commands.c, main.c:
