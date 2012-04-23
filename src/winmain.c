@@ -30,6 +30,7 @@
 /* Constants */
 #define TBufSize 65536       // size of text buffer
 #define CR VK_RETURN        // Carriage Return
+#define VK_EOT 0x1A         // End of Transmission, should emulate ctrl-z
 #define LF 10               // Line Feed
 #define SE 0                // String termination
 #define BorderSize 8        // Umrandung des Stringfeldes
@@ -95,15 +96,6 @@ extern bool ft_batchmode;
 extern FILE *flogp;     /* definition see xmain.c, stdout redirected to file */
 
 #include "winmain.h"
-/* Forward definition of main() */
-//int xmain( int argc, char * argv[]);
-/* forward of Update function */
-/*void DisplayText( void);
-char* rlead(char*);
-void winmessage(char*);
-int p_r_i_n_t_f(const char * __format, ...);
-int f_f_l_u_s_h( FILE * __stream); */
-
 
 /* --------------------------<history management>------------------------------ */
 
@@ -448,10 +440,7 @@ static LRESULT CALLBACK MainWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPA
            /* write all achieved so far to log file */
            if (flogp) f_f_l_u_s_h(flogp);
         goto DEFAULT_AFTER;
-/*
-    case WM_SYSCOLORCHANGE:
-        goto DEFAULT_AFTER;
-*/
+
     case WM_CLOSE:
         /* Put Spice commmand "Quit" to end the program into the text buffer */
         PostSpiceCommand( "quit");
@@ -459,26 +448,6 @@ static LRESULT CALLBACK MainWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPA
         /* If simulation is running, set a breakpoint */ 
         raise (SIGINT);   
         return 0;
-
-/*  //gedacht fuer ctrl C , geht noch nicht
-    case WM_KEYDOWN:
-        i = (UINT) wParam;
-        if ((i == 0x63) && (GetKeyState(VK_CONTROL) < 0)) {
-        // Interrupt zum Unterbrechen (interaktiv) 
-        // oder Beenden (Batch) des Programms ausloesen
-           raise (SIGINT);
-           return 0;
-        }       */
-        
-/*  //gedacht fuer ctrl C , geht noch nicht
-    case WM_CHAR:
-        i = (char) wParam;
-        if ((i == "c") && (GetKeyState(VK_CONTROL) < 0)) {
-        // Interrupt zum Unterbrechen (interaktiv) 
-        // oder Beenden (Batch) des Programms ausloesen
-           raise (SIGINT);
-           return 0;
-        }   */
 
     case WM_SIZE:
         HANDLE_WM_SIZE( hwnd, wParam, lParam, Main_OnSize);
@@ -526,6 +495,19 @@ static LRESULT CALLBACK StringWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
             }
             if (c == VK_ESCAPE)
                 return 0;
+            /* ctrl-z ends input from string window (like a console input),
+            FIXME: not yet working */
+            if (c == VK_EOT) {
+//                strcat( SBuffer, "&#004");
+                SBuffer[0] = c; // '\004';
+                SBuffer[1] = '\n';
+                return 0;
+            }
+            /* ctrl-c interrupts simulation */
+            if (c == VK_CANCEL) {
+                raise (SIGINT);
+                return 0;
+            }
     default:
 DEFAULT:
         return CallWindowProc( swProc, hwnd, uMsg, wParam, lParam);
@@ -543,7 +525,7 @@ static LRESULT CALLBACK TextWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPA
     case WM_KEYDOWN:
         i = (UINT) wParam;
         if ((i == VK_UP) || (i == VK_DOWN) || (i == VK_ESCAPE)) {
-            // Leite um ins String-Fenster
+            /* redirect input into string window */
             SetFocus( swString);
             return SendMessage( swString, uMsg, wParam, lParam);
         }
@@ -552,9 +534,14 @@ static LRESULT CALLBACK TextWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPA
     case WM_CHAR:
         c = (unsigned char) wParam;
         if ((c == CR) || ( c >= ' ') || ( c == VK_ESCAPE)) {
-            // Leite um ins String-Fenster
+            /* redirect input into string window */
             SetFocus( swString);
             return SendMessage( swString, uMsg, wParam, lParam);
+        }
+        /* ctrl-c interrupts simulation */
+        if (c == VK_CANCEL) {
+            raise (SIGINT);
+            return 0;
         }
     default:
 DEFAULT_TEXT:
