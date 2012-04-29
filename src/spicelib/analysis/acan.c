@@ -244,6 +244,8 @@ ACan(CKTcircuit *ckt, int restart)
 
     INIT_STATS();
 
+    ckt->CKTcurrentAnalysis = DOING_AC;
+
     /* main loop through all scheduled frequencies */
     while (freq <= job->ACstopFreq + freqTol) {
         if(SPfrontEnd->IFpauseTest()) {

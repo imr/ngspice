@@ -7,12 +7,15 @@ Author: 1985 Thomas L. Quarles
  *
  * Ask questions about a specified device.  */
 
+#include "ngspice/ngspice.h"
 #include "ngspice/config.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 
 #include "dev.h"
+#include "error.h"
 
+extern bool ft_stricterror;
 
 int
 CKTask(CKTcircuit *ckt, GENinstance *instance, int which, IFvalue *value, IFvalue *selector)
@@ -40,5 +43,9 @@ CKTask(CKTcircuit *ckt, GENinstance *instance, int which, IFvalue *value, IFvalu
     length = sizeof(int);
     BRDCST_(&msgtype, (char *)&error, &length, &from);
 #endif /* PARALLEL_ARCH */
+    if (ft_stricterror) {
+        fprintf(stderr, "\nError: %s\n", errMsg);
+        controlled_exit(EXIT_BAD);
+    }
     return(error);
 }

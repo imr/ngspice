@@ -6,6 +6,8 @@
 #ifndef ERROR_H_INCLUDED
 #define ERROR_H_INCLUDED
 
+#include "ngspice/defines.h"
+
 void controlled_exit(int status);
 
 #endif
