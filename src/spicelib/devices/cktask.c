@@ -31,9 +31,9 @@ CKTask(CKTcircuit *ckt, GENinstance *instance, int which, IFvalue *value, IFvalu
     DEVices = devices();
     if(DEVices[type]->DEVask) {
         error = DEVices[type]->DEVask(ckt,
-                instance, which, value, selector);
+                                      instance, which, value, selector);
     } else {
-	error = E_BADPARM;
+        error = E_BADPARM;
     }
 #ifdef PARALLEL_ARCH
     msgtype = MT_ASK;
@@ -43,7 +43,7 @@ CKTask(CKTcircuit *ckt, GENinstance *instance, int which, IFvalue *value, IFvalu
     length = sizeof(int);
     BRDCST_(&msgtype, (char *)&error, &length, &from);
 #endif /* PARALLEL_ARCH */
-    if (ft_stricterror) {
+    if (error && ft_stricterror) {
         fprintf(stderr, "\nError: %s\n", errMsg);
         controlled_exit(EXIT_BAD);
     }
