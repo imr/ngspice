@@ -1,4 +1,5 @@
-Spice Opus / XSpice code model support.
+ngspice Xspice code model support.
+2012 05 06
 --------------------------------------
 
 Use configure the flag --enable-xspice to compile xspice support in,
@@ -8,16 +9,16 @@ use to load a codemodel.
 
 The command codemodel attempts to load all the codemodels specified in the
 arguments, eg 
-"ngspice 1 ->codemodel /usr/lib/spice/analog.cm /usr/lib/spice/spice2poly.cm"
+"ngspice 1 ->codemodel /usr/lib/ngspice/analog.cm /usr/lib/ngspice/spice2poly.cm"
 
 ( note: the codemodel path must begin with ./ or / to work )
 
 The codemodels are automatically compiled and then installed in
-${prefix}/lib/spice/ when spice is installed.
+${prefix}/lib/ngspice/ when ngspice is installed.
 
 To create your own codemodels:
 
-* Unpack the tclspice source and compile as normal.
+* Unpack the ngspice source and compile as normal.
 
 * cd src/xspice/icm
 
@@ -45,17 +46,14 @@ To create your own codemodels:
 The codemodel can be then found in 
   src/xspice/icm/<library_name>/<library_name>.cm
 
-Stefan Jones 
-	20020219
-        Edited 20030831
 
 -----------------------------------------
 SPICE2 POLY codemodel support.
 
 SPICE2 POLY attributes are now available for controlled sources.  
 
-To use POLY attributes, configure and install ( make install-tcl ) 
-tclspice/ngspice with the --enable-xspice flag set as described above.  
+To use POLY attributes, configure and install ( make install ) 
+ngspice with the --enable-xspice flag set as described above.  
 
 After compilation of ngspice edit 
 ${prefix}/share/tclspice/scripts/spinit or 
@@ -72,8 +70,6 @@ controlled sources will be translated into .models invoking the
 spice2poly codemodel.  You should be able to run ngspice and simulate
 in the usual way!
 
-Please direct questions/comments/complaints to mailto:sdb@cloud9.net.
+Please direct questions/comments/complaints to the ngspice user's list 
+or forum.
 
-6.22.2003 -- SDB.
-
-Edited on 20030831 by Stefan Jones
