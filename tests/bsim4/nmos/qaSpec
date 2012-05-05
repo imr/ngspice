@@ -1,0 +1,325 @@
+
+//
+// Test specification for bsim4 (version 4.5.0)
+//
+
+//
+// Simulator specific information
+// These arguments are added to the model card
+// specification to invoke the desired model in
+// different simulators (which can have different
+// names or levels for the same model) and to switch
+// between nType and pType polarities.
+// It is assumed that there are no polarity specific
+// parameters.
+//
+
+`ifdef spice
+nTypeSelectionArguments     nmos level=14 version=4.7.0
+pTypeSelectionArguments     pmos level=14 version=4.7.0
+`endif
+`ifdef ngspice
+nTypeSelectionArguments     nmos level=14 version=4.7.0
+pTypeSelectionArguments     pmos level=14 version=4.7.0
+`endif
+
+//
+// General test-independent information
+//
+
+keyLetter                   m
+pins                        d g s b
+linearScale                 w l ps pd
+areaScale                   as ad
+temperature                 27 -50 150
+checkPolarity               no
+symmetricPins               d s
+scaleParameters             m
+
+//
+// Specific tests
+//
+
+test                        dcSweep_lw1
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_lw1_vb1
+biases                      V(s)=0 V(b)=-0.1
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_lw1_vb2
+biases                      V(s)=0 V(b)=-0.2
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_lw2
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=10.0e-6 l=0.1e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_lw3
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=10.0e-6 l=0.24e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_lw4
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=1.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_lw5
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=1.0e-6 l=0.1e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_lw6
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=1.0e-6 l=0.24e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_lw7
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=0.6e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_lw8
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=0.6e-6 l=0.1e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_lw9
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=0.6e-6 l=0.24e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_sa
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=10.0e-6 l=0.06e-6 sa=0.3e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_sb
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=10.0e-6 l=0.06e-6 sb=0.4e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_sca
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=10.0e-6 l=0.06e-6 sca=5.0
+modelParameters             parameters/nmosParameters
+modelParameters             wpemod=1 kvth0we=4.11e-03 lkvth0we=-2.1e-10 wkvth0we=-1.66e-10 pkvth0we=1.2e-17 k2we=1.77e-03 lk2we=1.89e-11 wk2we=-1.5e-10 
+
+test                        dcSweep_scb
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=10.0e-6 l=0.06e-6 scb=0.01
+modelParameters             parameters/nmosParameters
+modelParameters             wpemod=1 kvth0we=4.11e-03 lkvth0we=-2.1e-10 wkvth0we=-1.66e-10 pkvth0we=1.2e-17 k2we=1.77e-03 lk2we=1.89e-11 wk2we=-1.5e-10 
+
+test                        dcSweep_scc
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=10.0e-6 l=0.06e-6 scc=0.0001
+modelParameters             parameters/nmosParameters
+modelParameters             wpemod=1 kvth0we=4.11e-03 lkvth0we=-2.1e-10 wkvth0we=-1.66e-10 pkvth0we=1.2e-17 k2we=1.77e-03 lk2we=1.89e-11 wk2we=-1.5e-10 
+
+test                        dcSweep_nrs
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=10.0e-6 l=0.06e-6 nrs=2.0
+modelParameters             parameters/nmosParameters
+
+test                        dcSweep_nrd
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     I(d)
+instanceParameters          w=10.0e-6 l=0.06e-6 nrd=2.0
+modelParameters             parameters/nmosParameters
+
+test                        acVd
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(g)=1.2
+biasSweep                   V(d)=0.1,1.2,0.1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+
+test                        acFreq
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.2 V(g)=1.2
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+
+test                        acFreq_mobmod
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.2 V(g)=1.2
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+modelParameters             modmod=1
+
+test                        acFreq_capmod
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.2 V(g)=1.2
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+modelParameters             capmod=1
+
+test                        acFreq_trnqsmod
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.2 V(g)=1.2
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+modelParameters             trnqsmod=1
+
+test                        acFreq_acnqsmod
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.2 V(g)=1.2
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+modelParameters             acnqsmod=1
+
+test                        acFreq_xpart
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.2 V(g)=1.2
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+modelParameters             xpart=1
+
+test                        acFreq_geomod
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.2 V(g)=1.2
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+modelParameters             geomod=0
+
+test                        acFreq_wpemod
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.2 V(g)=1.2
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+modelParameters             wpemod=1 kvth0we=4.11e-03 lkvth0we=-2.1e-10 wkvth0we=-1.66e-10 pkvth0we=1.2e-17 k2we=1.77e-03 lk2we=1.89e-11 wk2we=-1.5e-10 
+
+test                        acFreq_igcmod
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.2 V(g)=1.2
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+modelParameters             igcmod=0
+
+test                        acFreq_diomod
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.2 V(g)=1.2
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+modelParameters             diomod=0
+
+test                        noise1
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.0
+biasList                    V(g)=0.6,0.8,1.0
+freq                        dec 10 1e3 1e8
+outputs                     N(d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+modelParameters             fnoimod=0 tnoimod=0 kf=1e-30 af=1.2 ef=1.1
+
+test                        noise2
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.0
+biasList                    V(g)=0.6,0.8,1.0
+freq                        dec 10 1e3 1e8
+outputs                     N(d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+modelParameters             fnoimod=1 tnoimod=1 noia=6.25e41 noib=3.125e26 noic=8.75 em=4.1e7 ef=1.1
+
+test                        noise3
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.0
+biasList                    V(g)=0.6,0.8,1.0
+freq                        dec 10 1e3 1e8
+outputs                     N(d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+modelParameters             fnoimod=1 tnoimod=0 noia=6.25e41 noib=3.125e26 noic=8.75 em=4.1e7 ef=1.1
+
+test                        noise4
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=1.0
+biasList                    V(g)=0.6,0.8,1.0
+freq                        dec 10 1e3 1e8
+outputs                     N(d)
+instanceParameters          w=10.0e-6 l=0.06e-6
+modelParameters             parameters/nmosParameters
+modelParameters             fnoimod=0 tnoimod=1 kf=1e-30 af=1.2 ef=1.1
