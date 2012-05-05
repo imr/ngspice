@@ -4372,15 +4372,13 @@ static void inp_compat(struct line *deck)
         else if ( *curr_line == 'r' ) {
             if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")) 
                 &&  (!strstr(curr_line, "temper")) &&  (!strstr(curr_line, "hertz"))
-                &&  (!strstr(curr_line, "time")))
+                &&  (!strstr(curr_line, "time"))) {
                 /* no handling in B-Source, so we have to prepare ternary fcn
                    for numparam */
-                if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) ) {
+                if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) )
                     card->li_line = inp_fix_ternary_operator_str( curr_line, TRUE );
-                    continue;
-                }
-                else
-                    continue;
+                continue;
+            }
             cut_line = curr_line;
             /* make BRxxx pos neg I = V(pos, neg)/{equation}*/
             title_tok = gettok(&cut_line);
@@ -4459,15 +4457,13 @@ static void inp_compat(struct line *deck)
         else if ( *curr_line == 'c' ) {
             if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")) 
                 &&  (!strstr(curr_line, "temper")) &&  (!strstr(curr_line, "hertz"))
-                &&  (!strstr(curr_line, "time")))
+                &&  (!strstr(curr_line, "time"))) {
                 /* no handling in B-Source, so we have to prepare ternary fcn
                    for numparam */
-                if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) ) {
+                if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) )
                     card->li_line = inp_fix_ternary_operator_str( curr_line, TRUE );
-                    continue;
-                }
-                else
-                    continue;
+                continue;
+            }
             cut_line = curr_line;
             /* title and nodes */
             title_tok = gettok(&cut_line);
@@ -4567,15 +4563,13 @@ static void inp_compat(struct line *deck)
         else if ( *curr_line == 'l' ) {
             if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")) 
                 &&  (!strstr(curr_line, "temper")) &&  (!strstr(curr_line, "hertz"))
-                &&  (!strstr(curr_line, "time")))
+                &&  (!strstr(curr_line, "time"))) {
                 /* no handling in B-Source, so we have to prepare ternary fcn
                    for numparam */
-                if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) ) {
+                if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) )
                     card->li_line = inp_fix_ternary_operator_str( curr_line, TRUE );
-                    continue;
-                }
-                else
-                    continue;
+                continue;
+            }
             cut_line = curr_line;
             /* title and nodes */
             title_tok = gettok(&cut_line);
