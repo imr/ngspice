@@ -36,7 +36,6 @@ Author: Jim Groves
 #include "ngspice/fteinput.h"
 #include "ngspice/fteext.h"
 #include "variable.h"
-#include "error.h"
 #include "plotting/graphdb.h"
 #include "hpgl.h"
 

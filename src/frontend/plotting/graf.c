@@ -26,7 +26,6 @@ Author: 1988 Jeffrey M. Hsu
 #include "ngspice/grid.h"
 #include "../terminal.h"
 #include "../breakp2.h"
-#include "../error.h"
 #include "../display.h"
 #include "../runcoms.h"
 

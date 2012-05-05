@@ -10,7 +10,7 @@ Author:	1992 Charles Hough
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-#include "../../../frontend/error.h" /* controlled_exit() */
+#include "ngspice/fteext.h" /* controlled_exit() */
 
 static double ratio[MAX_CP_TX_LINES];
 static int update_cnv_txl(TXLine*, double);

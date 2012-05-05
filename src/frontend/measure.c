@@ -20,8 +20,6 @@
 #include "com_commands.h"
 #include "com_display.h"
 
-#include "error.h" /* controlled_exit() */
- 
 static wordlist *measure_parse_line( char *line ) ;
 
 static bool measure_valid[20000];/* TRUE: if measurement no. [xxx] has been done successfully

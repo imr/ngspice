@@ -342,4 +342,7 @@ extern void vec_transpose(struct dvec *v);
 extern bool ft_intrpt;
 extern bool ft_setflag;
 
+/* error.c */
+extern void controlled_exit(int status);
+
 #endif /* FTEext_h */

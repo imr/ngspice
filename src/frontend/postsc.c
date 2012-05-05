@@ -17,7 +17,6 @@ Author: 1988 Jeffrey M. Hsu
 
 #include "postsc.h"
 #include "variable.h"
-#include "error.h"
 #include "plotting/graphdb.h"
 
 #define RAD_TO_DEG	(180.0 / M_PI)

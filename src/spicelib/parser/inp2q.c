@@ -11,10 +11,6 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "ngspice/fteext.h"
 #include "inp.h"
 
-#ifdef ADMS
-#include "error.h" /* controlled_exit() */
-#endif
-
 void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
 {
 

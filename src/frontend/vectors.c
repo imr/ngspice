@@ -20,7 +20,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "../misc/misc_time.h"
 #include "vectors.h"
 #include "plotting/plotting.h"
-#include "error.h" /* controlled_exit() */
 
 #ifdef XSPICE
 /* gtri - begin - add function prototype for EVTfindvec */

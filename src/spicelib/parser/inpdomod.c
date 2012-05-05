@@ -8,7 +8,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/inpdefs.h"
 #include "inp.h"
 #if ADMS >= 3
-#include "error.h" /* controlled_exit() */
+#include "ngspice/fteext.h" /* controlled_exit() */
 #endif
 
 /*--------------------------------------------------------------

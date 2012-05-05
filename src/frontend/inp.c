@@ -28,7 +28,6 @@ Author: 1985 Wayne A. Christopher
 #include "../misc/misc_time.h"
 #include "subckt.h"
 #include "spiceif.h"
-#include "error.h" /* controlled_exit() */
 #include "com_let.h"
 
 #ifdef XSPICE

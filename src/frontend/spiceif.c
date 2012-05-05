@@ -59,8 +59,6 @@ CDHW*/
 #include "spiceif.h"
 #include "variable.h"
 
-#include "error.h"
-
 #ifdef XSPICE
 /* gtri - add - wbk - 11/9/90 - include MIF function prototypes */
 #include "ngspice/mifproto.h"

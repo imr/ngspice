@@ -20,7 +20,6 @@ Modified: 2000 AlansFixes
 #include "variable.h"
 #include "com_commands.h"
 #include "../misc/util.h" /* ngdirname() */
-#include "error.h" /* controlled_ext() */
 
 #include "gens.h" /* wl_forall */
 

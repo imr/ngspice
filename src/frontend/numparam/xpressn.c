@@ -15,7 +15,6 @@
 #include "ngspice/dvec.h"
 #include "../frontend/variable.h"
 #include "ngspice/compatmode.h"
-#include "../frontend/error.h"
 
 /* random numbers in /maths/misc/randnumb.c */
 extern double gauss0(void);

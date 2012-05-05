@@ -14,7 +14,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "ngspice/ftedbgra.h"
 #include "graphdb.h"
 #include "../breakp2.h"
-#include "../error.h"
 #include "../display.h"
 
 

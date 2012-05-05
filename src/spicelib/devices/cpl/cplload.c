@@ -10,7 +10,7 @@ Author:	1992 Charles Hough
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-#include "../../../frontend/error.h" /* controlled_exit() */
+#include "ngspice/fteext.h" /* controlled_exit() */
 
 VI_list	*pool_vi;
 static double ratio[MAX_CP_TX_LINES];

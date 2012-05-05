@@ -45,7 +45,6 @@ Author: 1988 Jeffrey M. Hsu
 #include "graphdb.h"
 #include "display.h"
 #include "graf.h"
-#include "../error.h"
 
 #define RAD_TO_DEG	(180.0 / M_PI)
 

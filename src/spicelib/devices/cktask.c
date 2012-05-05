@@ -13,9 +13,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 
 #include "dev.h"
-#include "error.h"
-
-extern bool ft_stricterror;
+#include "ngspice/fteext.h" /* controlled_exit() */
 
 int
 CKTask(CKTcircuit *ckt, GENinstance *instance, int which, IFvalue *value, IFvalue *selector)

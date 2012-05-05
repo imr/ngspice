@@ -27,7 +27,7 @@ Todo:
 #include "numparam.h"
 #include "ngspice/ngspice.h"
 
-#include "../error.h" /* controlled_exit() */
+#include "ngspice/fteext.h" /* controlled_exit() */
 
 void dump_symbols(tdico *dico_p);
 

@@ -14,7 +14,7 @@ Modified: 2004 Paolo Nenzi - (ng)spice integration
 
 #include "ngspice/multi_line.h"
 
-#include "../../../frontend/error.h" /* controlled_exit() */
+#include "ngspice/fteext.h" /* controlled_exit() */
 
 
 #define VECTOR_ALLOC(vec, n) { \

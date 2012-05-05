@@ -19,7 +19,7 @@
 
 #include "general.h"
 
-#include "../error.h" /* controlled_exit() */
+#include "ngspice/fteext.h" /* controlled_exit() */
 
 /***** primitive input-output ***/
 

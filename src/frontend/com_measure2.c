@@ -17,8 +17,6 @@
 #include "com_measure2.h"
 #include "breakp2.h"
 
-#include "error.h" /* controlled_exit() */
-
 typedef enum {
    MEASUREMENT_OK = 0,
    MEASUREMENT_FAILURE = 1

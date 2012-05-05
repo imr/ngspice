@@ -16,7 +16,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 #include "display.h"
 #include "variable.h"
-#include "error.h"
 
 /* static declarations */
 static void gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny);
