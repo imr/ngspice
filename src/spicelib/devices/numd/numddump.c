@@ -69,7 +69,7 @@ NUMDdump(GENmodel *inModel, CKTcircuit *ckt)
 	anyOutput = 1;
 	sprintf(fileName, "%s%s.%d.%s", output->OUTProotFile, prefix,
 	    *state_num, inst->NUMDname);
-	if ((fpState = fopen(fileName, "wb")) == NULL) {
+	if ((fpState = fopen(fileName, "w")) == NULL) {
 	  perror(fileName);
 	} else {
 	  NUMDputHeader(fpState, ckt, inst);
@@ -124,28 +124,14 @@ NUMDputHeader(FILE *file, CKTcircuit *ckt, NUMDinstance *inst)
   fprintf(file, "\t%d	i1 	current\n", numVars++);
   fprintf(file, "\t%d	i2 	current\n", numVars++);
   fprintf(file, "\t%d	g11 	conductance\n", numVars++);
-
-  if (0/*AsciiRawFile*/) {
-    fprintf(file, "Values:\n0");
-    if (reference) {
-      fprintf(file, "\t% e\n", refVal);
-    }
-    fprintf(file, "\t% e\n", *(ckt->CKTstate0 + inst->NUMDvoltage));
-    fprintf(file, "\t% e\n", *(ckt->CKTstate0 + inst->NUMDid));
-    fprintf(file, "\t% e\n", - *(ckt->CKTstate0 + inst->NUMDid));
-    fprintf(file, "\t% e\n", *(ckt->CKTstate0 + inst->NUMDconduct));
+  fprintf(file, "Values:\n0");
+  if (reference) {
+    fprintf(file, "\t% e\n", refVal);
   }
-  else {
-    double tmpval = - *(ckt->CKTstate0 + inst->NUMDid);
-    fprintf(file, "Binary:\n");
-    if (reference) {
-      fwrite(&refVal, sizeof (double), 1, file);
-    }
-    fwrite((ckt->CKTstate0 + inst->NUMDvoltage), sizeof (double), 1, file);
-    fwrite((ckt->CKTstate0 + inst->NUMDid), sizeof (double), 1, file);
-    fwrite(&tmpval, sizeof (double), 1, file);
-    fwrite((ckt->CKTstate0 + inst->NUMDconduct), sizeof (double), 1, file);
-  }
+  fprintf(file, "\t% e\n", *(ckt->CKTstate0 + inst->NUMDvoltage));
+  fprintf(file, "\t% e\n", *(ckt->CKTstate0 + inst->NUMDid));
+  fprintf(file, "\t% e\n", - *(ckt->CKTstate0 + inst->NUMDid));
+  fprintf(file, "\t% e\n", *(ckt->CKTstate0 + inst->NUMDconduct));
 }
 
 void
