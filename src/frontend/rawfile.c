@@ -292,41 +292,10 @@ raw_read(char *name) {
     FILE *fp, *lastin, *lastout, *lasterr;
 
 
-#if defined(__MINGW32__) || defined(_MSC_VER)
-    bool binary = TRUE;
-#endif
-
-    if ((fp = fopen(name, "r")) == NULL) {
+    if ((fp = fopen(name, "rb")) == NULL) {
         perror(name);
         
     }
-
-#if defined(__MINGW32__) || defined(_MSC_VER)
-    /* Test, whether file really ASCII, otherwise assume binary  hvogt 15.3.2000 */
-    while (fgets(buf, BSIZE_SP, fp)) {
-        if (ciprefix("values:", buf)) {
-            binary = FALSE;
-            rewind(fp);                /* rewind */
-            fprintf(cp_err, "\nASCII raw file\n");
-            break;
-        }
-        else if (ciprefix("binary:", buf)) {
-            binary = TRUE;
-            rewind(fp);                /* rewind */
-            break;
-        }
-    }
-
-    if (binary) {
-        (void) fclose(fp);
-        if ((fp = fopen(name, "rb")) == NULL) {
-            perror(name);
-            return (NULL);
-        }
-        fprintf(cp_err, "\nbinary raw file\n");
-    }
-    /*--------------------------------------------------------*/
-#endif
 
     /* Since we call cp_evloop() from here, we have to do this junk. */
     lastin = cp_curin;
@@ -339,6 +308,11 @@ raw_read(char *name) {
     cp_pushcontrol();
 
     while (fgets(buf, BSIZE_SP, fp)) {
+        r = strchr(buf, '\n');
+        if(r  &&  r > buf  &&  r[-1] == '\r') {
+            r[-1] = '\n';
+            r[0]  = '\0';
+        }
         /* Figure out what this line is... */
         if (ciprefix("title:", buf)) {
             s = buf;
