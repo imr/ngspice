@@ -69,7 +69,7 @@ NUMDdump(GENmodel *inModel, CKTcircuit *ckt)
 	anyOutput = 1;
 	sprintf(fileName, "%s%s.%d.%s", output->OUTProotFile, prefix,
 	    *state_num, inst->NUMDname);
-	if ((fpState = fopen(fileName, "w")) == NULL) {
+	if ((fpState = fopen(fileName, "wb")) == NULL) {
 	  perror(fileName);
 	} else {
 	  NUMDputHeader(fpState, ckt, inst);
