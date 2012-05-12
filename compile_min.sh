@@ -31,11 +31,11 @@ else
    fi
 fi
 
-# If compiling sources from CVS, you may need to uncomment the following two lines:
+# If compiling sources from git, you may need to uncomment the following two lines:
 #./autogen.sh
 #if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
-# Alternatively, if compiling sources from CVS, and want to add adms created devices,
+# Alternatively, if compiling sources from git, and want to add adms created devices,
 # you may need to uncomment the following two lines (and don't forget to add adms option
 # to the ../configure statement):
 #./autogen.sh --adms
