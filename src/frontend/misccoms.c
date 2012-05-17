@@ -123,16 +123,14 @@ com_bug(wordlist *wl)
         return;
     }
 
-    fprintf(cp_out, "Calling the mail program . . .(sending to %s)\n\n",
+    fprintf(cp_out,
+            "Calling the mail program . . .(sending to %s)\n\n"
+            "Please include the OS version number and machine architecture.\n"
+            "If the problem is with a specific circuit, please include the\n"
+            "input file.\n",
             Bug_Addr);
-    fprintf(cp_out,
-            "Please include the OS version number and machine architecture.\n");
-    fprintf(cp_out,
-            "If the problem is with a specific circuit, please include the\n");
-    fprintf(cp_out, "input file.\n");
 
-    (void) sprintf(buf, SYSTEM_MAIL, ft_sim->simulator,
-                   ft_sim->version, Bug_Addr);
+    (void) sprintf(buf, SYSTEM_MAIL, ft_sim->simulator, ft_sim->version, Bug_Addr);
     (void) system(buf);
 
     fprintf(cp_out, "Bug report sent.  Thank you.\n");
@@ -145,8 +143,9 @@ com_bug(wordlist *wl)
 {
     NG_IGNORE(wl);
 
-    fprintf(cp_out, "Please use the ngspice bug tracker at:\n");
-    fprintf(cp_out, "http://sourceforge.net/tracker/?group_id=38962&atid=423915\n");
+    fprintf(cp_out,
+            "Please use the ngspice bug tracker at:\n"
+            "http://sourceforge.net/tracker/?group_id=38962&atid=423915\n");
 }
 
 #endif
@@ -166,13 +165,13 @@ com_version(wordlist *wl)
         if (ft_pipemode)
             return;
 
-        fprintf(cp_out, "******\n");
-        fprintf(cp_out, "** %s-%s : %s\n", ft_sim->simulator,
-                ft_sim->version, ft_sim->description);
-        fprintf(cp_out, "** The U. C. Berkeley CAD Group\n");
         fprintf(cp_out,
-                "** Copyright 1985-1994, Regents of the University of California.\n");
-        fprintf(cp_out, "** %s\n", Spice_Manual);
+                "******\n"
+                "** %s-%s : %s\n"
+                "** The U. C. Berkeley CAD Group\n"
+                "** Copyright 1985-1994, Regents of the University of California.\n"
+                "** %s\n",
+                ft_sim->simulator, ft_sim->version, ft_sim->description, Spice_Manual);
         if (Spice_Notice != NULL && *Spice_Notice != 0)
             fprintf(cp_out, "** %s\n", Spice_Notice);
         if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
@@ -185,10 +184,11 @@ com_version(wordlist *wl)
 
         if (!strncasecmp(s, "-s", 2)) {
 
-            fprintf(cp_out, "******\n");
-            fprintf(cp_out, "** %s-%s\n", ft_sim->simulator,
-                    ft_sim->version);
-            fprintf(cp_out, "** %s\n", Spice_Manual);
+            fprintf(cp_out,
+                    "******\n"
+                    "** %s-%s\n"
+                    "** %s\n",
+                    ft_sim->simulator, ft_sim->version, Spice_Manual);
             if (Spice_Notice != NULL && *Spice_Notice != 0)
                 fprintf(cp_out, "** %s\n", Spice_Notice);
             if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
@@ -197,14 +197,13 @@ com_version(wordlist *wl)
 
         } else if (!strncasecmp(s, "-f", 2))  {
 
-            fprintf(cp_out, "******\n");
-
-            fprintf(cp_out, "** %s-%s : %s\n", ft_sim->simulator,
-                    ft_sim->version, ft_sim->description);
-            fprintf(cp_out, "** The U. C. Berkeley CAD Group\n");
             fprintf(cp_out,
-                    "** Copyright 1985-1994, Regents of the University of California.\n");
-            fprintf(cp_out, "** %s\n", Spice_Manual);
+                    "******\n"
+                    "** %s-%s : %s\n"
+                    "** The U. C. Berkeley CAD Group\n"
+                    "** Copyright 1985-1994, Regents of the University of California.\n"
+                    "** %s\n",
+                    ft_sim->simulator, ft_sim->version, ft_sim->description, Spice_Manual);
             if (Spice_Notice != NULL && *Spice_Notice != 0)
                 fprintf(cp_out, "** %s\n", Spice_Notice);
             if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
