@@ -9,6 +9,7 @@ Modified: AlansFixes
 #include "ngspice/iferrmsg.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/inpmacs.h"
+#include "ngspice/cktdefs.h"
 
 #include "inppas3.h"
 
@@ -68,9 +69,19 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
             for(;;) {
                 /* loop until we run out of data */
                 INPgetTok(&line,&name,1);
-
-                /* check to see if in the form V(xxx) and grab the xxx */
                 if( *name == 0) break; /* end of line */
+
+                /* If we have 'all = value' , then set all voltage nodes to 'value',
+                   except for ground node at node->number 0 */
+                if ( cieq(name, "all")) {
+                    ptemp.rValue = INPevaluate(&line,&error,1);
+                    for (node1 = ckt->CKTnodes; node1 != NULL; node1 = node1->next) {
+                        if ((node1->type == 3) && (node1->number > 0))
+                            IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
+                    }
+                    break;
+                }
+                /* check to see if in the form V(xxx) and grab the xxx */
                 if( (*name == 'V' || *name == 'v') && !name[1] ) {
                     /* looks like V - must be V(xx) - get xx now*/
                     INPgetTok(&line,&name,1);
