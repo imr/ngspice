@@ -149,8 +149,6 @@ com_bug(wordlist *wl)
 void
 com_version(wordlist *wl)
 {
-    char *s;
-
     if (!wl) {
 
         /* no printout in pipe mode (-p) */
@@ -172,7 +170,7 @@ com_version(wordlist *wl)
 
     } else {
 
-        s = wl_flatten(wl);
+        char *s = wl_flatten(wl);
 
         if (!strncasecmp(s, "-s", 2)) {
 
