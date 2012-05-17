@@ -1,4 +1,3 @@
-#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 
 #include "ngspice/jobdefs.h"
@@ -6,7 +5,6 @@
 
 #include "analysis.h"
 
-extern SPICEanalysis *analInfo[];
 extern SPICEanalysis OPTinfo;
 extern SPICEanalysis ACinfo;
 extern SPICEanalysis DCTinfo;
@@ -19,9 +17,7 @@ extern SPICEanalysis NOISEinfo;
 extern SPICEanalysis SENSinfo;
 
 #ifdef WITH_PSS
-/* SP: Periodic Steady State*/
 extern SPICEanalysis PSSinfo;
-/* SP */
 #endif
 
 SPICEanalysis *analInfo[] = {
@@ -55,7 +51,6 @@ int spice_num_analysis(void)
 {
     return NUMELEMS(analInfo);
 }
-
 
 SPICEanalysis **spice_analysis_ptr(void)
 {

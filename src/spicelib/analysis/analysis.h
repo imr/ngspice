@@ -6,8 +6,8 @@ struct SPICEanalysis {
     int size;
     int domain;
     int do_ic;
-    int (*(setParm))(CKTcircuit *ckt,  JOB *anal, int which, IFvalue *value);
-    int (*(askQuest))(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value);
+    int (*setParm)(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value);
+    int (*askQuest)(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value);
     int (*an_init)(CKTcircuit *ckt, JOB *job);
     int (*an_func)(CKTcircuit *ckt, int restart);
 };
