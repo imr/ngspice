@@ -89,16 +89,14 @@ com_quit(wordlist *wl)
                     if(SIMinfo.deleteCircuit)
                         SIMinfo.deleteCircuit(cc->ci_ckt);
 #endif
-                byemesg();
             }
             else {
                 return;
             }
-        } else
-            byemesg();
-    } else
-        byemesg();
+        }
+    }
 
+    byemesg();
     exit(EXIT_NORMAL);
 }
 
