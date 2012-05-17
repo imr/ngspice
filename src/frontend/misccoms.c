@@ -36,19 +36,13 @@ com_quit(wordlist *wl)
     struct plot *pl;
     int ncc = 0, npl = 0;
     char buf[64];
-    bool noask;
 
-    noask = cp_getvar("noaskquit", CP_BOOL, NULL);
+    bool noask =
+        (wl  &&  wl->wl_word  &&  cieq(wl->wl_word, "noask"))  ||
+        cp_getvar("noaskquit", CP_BOOL, NULL);
 
     gr_clean();
     cp_ccon(FALSE);
-
-    if(wl)
-        if(wl->wl_word)
-            if(cieq(wl->wl_word, "noask")) {
-                byemesg();
-                exit(EXIT_NORMAL);
-            }
 
     /* Make sure the guy really wants to quit. */
     if (!ft_nutmeg && !noask) {
