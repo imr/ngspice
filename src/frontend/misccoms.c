@@ -82,17 +82,15 @@ com_quit(wordlist *wl)
                 *buf = 'y';
             }
 
-            if ((*buf == 'y') || (*buf == 'Y') || (*buf == '\n')) {
-#ifdef EXPERIMENTAL_CODE
-                /* Destroy CKT when quit. Add by Gong Ding, gdiso@ustc.edu */
-                for (cc = ft_circuits; cc; cc = cc->ci_next)
-                    if(SIMinfo.deleteCircuit)
-                        SIMinfo.deleteCircuit(cc->ci_ckt);
-#endif
-            }
-            else {
+            if (!((*buf == 'y') || (*buf == 'Y') || (*buf == '\n')))
                 return;
-            }
+
+#ifdef EXPERIMENTAL_CODE
+            /* Destroy CKT when quit. Add by Gong Ding, gdiso@ustc.edu */
+            for (cc = ft_circuits; cc; cc = cc->ci_next)
+                if(SIMinfo.deleteCircuit)
+                    SIMinfo.deleteCircuit(cc->ci_ckt);
+#endif
         }
     }
 
