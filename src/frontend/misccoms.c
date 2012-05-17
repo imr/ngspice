@@ -41,8 +41,13 @@ com_quit(wordlist *wl)
         (wl  &&  wl->wl_word  &&  cieq(wl->wl_word, "noask"))  ||
         cp_getvar("noaskquit", CP_BOOL, NULL);
 
+    int exitcode = 0;
+
     gr_clean();
     cp_ccon(FALSE);
+
+    if(wl  &&  wl->wl_word  &&  1 == sscanf(wl->wl_word, "%d", &exitcode))
+        exit(exitcode);
 
     /* Make sure the guy really wants to quit. */
     if (!ft_nutmeg && !noask) {
