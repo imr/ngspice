@@ -183,7 +183,7 @@ com_version(wordlist *wl)
 
         s = wl_flatten(wl);
 
-        if (!strncmp(s, "-s", 2) || !strncmp(s, "-S", 2) ) {
+        if (!strncasecmp(s, "-s", 2)) {
 
             fprintf(cp_out, "******\n");
             fprintf(cp_out, "** %s-%s\n", ft_sim->simulator,
@@ -195,7 +195,7 @@ com_version(wordlist *wl)
                 fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
             fprintf(cp_out, "******\n");
 
-        } else if (!strncmp(s, "-f", 2) || !strncmp(s, "-F", 2) )  {
+        } else if (!strncasecmp(s, "-f", 2))  {
 
             fprintf(cp_out, "******\n");
 

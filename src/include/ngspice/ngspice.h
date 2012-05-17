@@ -171,6 +171,7 @@
 #define open _open
 #define write _write
 #define strcasecmp _stricmp
+#define strncasecmp _strnicmp
 #define snprintf _snprintf
 #define inline __inline
 /* NAN not available in MS VS 2008 */

@@ -17,10 +17,6 @@ Modified 1999 Emmanuel Rouat
 #include "ngspice/hlpdefs.h"
 #include "ngspice/suffix.h"
 
-#if defined (_MSC_VER)
-#define strncasecmp _strnicmp
-#endif
-
 static char *getsubject(fplace *place);
 static toplink *getsubtoplink(char **ss);
 
