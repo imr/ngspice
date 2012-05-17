@@ -1,6 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group 
+Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 #include "ngspice/ngspice.h"
@@ -18,16 +18,16 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <readline/readline.h>
 #include <readline/history.h>
 extern char history_file[];
-#endif /* HAVE_GNUREADLINE */
+#endif
 
 #ifdef HAVE_BSDEDITLINE
-/* SJB added edit line support 2005-05-05 */
 #include <editline/readline.h>
 extern char history_file[];
-#endif /* HAVE_BSDEDITLINE */
+#endif
 
 extern IFsimulator SIMinfo;
 static void byemesg(void);
+
 
 void
 com_quit(wordlist *wl)
@@ -39,15 +39,16 @@ com_quit(wordlist *wl)
     bool noask;
 
     noask = cp_getvar("noaskquit", CP_BOOL, NULL);
+
     gr_clean();
     cp_ccon(FALSE);
+
     if(wl)
-      if(wl->wl_word)
-    if(cieq(wl->wl_word,"noask"))
-         {
-           byemesg();
-           exit(EXIT_NORMAL);
-     }
+        if(wl->wl_word)
+            if(cieq(wl->wl_word, "noask")) {
+                byemesg();
+                exit(EXIT_NORMAL);
+            }
 
     /* Make sure the guy really wants to quit. */
     if (!ft_nutmeg && !noask) {
@@ -60,42 +61,42 @@ com_quit(wordlist *wl)
         if (ncc || npl) {
             fprintf(cp_out, "Warning: ");
             if (ncc) {
-                fprintf(cp_out, 
-            "the following simulation%s still in progress:\n",
+                fprintf(cp_out,
+                        "the following simulation%s still in progress:\n",
                         (ncc > 1) ? "s are" : " is");
                 for (cc = ft_circuits; cc; cc = cc->ci_next)
                     if (cc->ci_inprogress)
-                        fprintf(cp_out, "\t%s\n",
-                                cc->ci_name);
+                        fprintf(cp_out, "\t%s\n", cc->ci_name);
             }
             if (npl) {
                 if (ncc)
                     fprintf(cp_out, "and ");
-                fprintf(cp_out, 
-                "the following plot%s been saved:\n",
-                    (npl > 1) ? "s haven't" : " hasn't");
+                fprintf(cp_out,
+                        "the following plot%s been saved:\n",
+                        (npl > 1) ? "s haven't" : " hasn't");
                 for (pl = plot_list; pl; pl = pl->pl_next)
                     if (!pl->pl_written && pl->pl_dvecs)
                         fprintf(cp_out, "%s\t%s, %s\n",
-                                pl->pl_typename,
-                                pl->pl_title,
-                                pl->pl_name);
+                                pl->pl_typename, pl->pl_title, pl->pl_name);
             }
-            fprintf(cp_out, 
-                "\nAre you sure you want to quit (yes)? ");
+
+            fprintf(cp_out, "\nAre you sure you want to quit (yes)? ");
             (void) fflush(cp_out);
+
             if (!fgets(buf, sizeof(buf), stdin)) {
                 clearerr(stdin);
                 *buf = 'y';
             }
+
             if ((*buf == 'y') || (*buf == 'Y') || (*buf == '\n')) {
-#ifdef EXPERIMENTAL_CODE 	    
-	        /* Destroy CKT when quit. Add by Gong Ding, gdiso@ustc.edu */
-	        for (cc = ft_circuits; cc; cc = cc->ci_next) 
-		 if(SIMinfo.deleteCircuit) SIMinfo.deleteCircuit(cc->ci_ckt); 
+#ifdef EXPERIMENTAL_CODE
+                /* Destroy CKT when quit. Add by Gong Ding, gdiso@ustc.edu */
+                for (cc = ft_circuits; cc; cc = cc->ci_next)
+                    if(SIMinfo.deleteCircuit)
+                        SIMinfo.deleteCircuit(cc->ci_ckt);
 #endif
                 byemesg();
-	    }
+            }
             else {
                 return;
             }
@@ -105,7 +106,6 @@ com_quit(wordlist *wl)
         byemesg();
 
     exit(EXIT_NORMAL);
-
 }
 
 
@@ -120,24 +120,25 @@ com_bug(wordlist *wl)
 
     if (!Bug_Addr || !*Bug_Addr) {
         fprintf(cp_err, "Error: No address to send bug reports to.\n");
-	return;
+        return;
     }
+
     fprintf(cp_out, "Calling the mail program . . .(sending to %s)\n\n",
-	    Bug_Addr);
+            Bug_Addr);
     fprintf(cp_out,
-	    "Please include the OS version number and machine architecture.\n");
+            "Please include the OS version number and machine architecture.\n");
     fprintf(cp_out,
-	    "If the problem is with a specific circuit, please include the\n");
+            "If the problem is with a specific circuit, please include the\n");
     fprintf(cp_out, "input file.\n");
 
     (void) sprintf(buf, SYSTEM_MAIL, ft_sim->simulator,
-	    ft_sim->version, Bug_Addr);
+                   ft_sim->version, Bug_Addr);
     (void) system(buf);
+
     fprintf(cp_out, "Bug report sent.  Thank you.\n");
-    return;
 }
 
-#else /* SYSTEM_MAIL */
+#else
 
 void
 com_bug(wordlist *wl)
@@ -146,117 +147,127 @@ com_bug(wordlist *wl)
 
     fprintf(cp_out, "Please use the ngspice bug tracker at:\n");
     fprintf(cp_out, "http://sourceforge.net/tracker/?group_id=38962&atid=423915\n");
-    return;
 }
 
-#endif /* SYSTEM_MAIL */
+#endif
+
 
 /* printout upon startup or 'version' command. options to version are -s (short)
-   or -f (full). 'version' with options may also be used in ngspice pipe mode. */ 
+   or -f (full). 'version' with options may also be used in ngspice pipe mode. */
+
 void
 com_version(wordlist *wl)
 {
     char *s;
 
     if (!wl) {
-    /* no printout in pipe mode (-p) */
-    if (ft_pipemode) return;
-	fprintf(cp_out, "******\n");
 
-	fprintf(cp_out, "** %s-%s : %s\n", ft_sim->simulator,
-		ft_sim->version, ft_sim->description);
-	fprintf(cp_out, "** The U. C. Berkeley CAD Group\n");
-	fprintf(cp_out,
-	  "** Copyright 1985-1994, Regents of the University of California.\n");
-	fprintf(cp_out, "** %s\n", Spice_Manual);
-	if (Spice_Notice != NULL && *Spice_Notice != 0)
-	    fprintf(cp_out, "** %s\n", Spice_Notice);
-	if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
-	    fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
-	fprintf(cp_out, "******\n");
+        /* no printout in pipe mode (-p) */
+        if (ft_pipemode)
+            return;
+
+        fprintf(cp_out, "******\n");
+        fprintf(cp_out, "** %s-%s : %s\n", ft_sim->simulator,
+                ft_sim->version, ft_sim->description);
+        fprintf(cp_out, "** The U. C. Berkeley CAD Group\n");
+        fprintf(cp_out,
+                "** Copyright 1985-1994, Regents of the University of California.\n");
+        fprintf(cp_out, "** %s\n", Spice_Manual);
+        if (Spice_Notice != NULL && *Spice_Notice != 0)
+            fprintf(cp_out, "** %s\n", Spice_Notice);
+        if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
+            fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
+        fprintf(cp_out, "******\n");
 
     } else {
-        s = wl_flatten(wl);
-	if (!strncmp(s, "-s", 2) || !strncmp(s, "-S", 2) ) {
-	    fprintf(cp_out, "******\n");
-	    fprintf(cp_out, "** %s-%s\n", ft_sim->simulator,
-		    ft_sim->version);
-	    fprintf(cp_out, "** %s\n", Spice_Manual);
-	    if (Spice_Notice != NULL && *Spice_Notice != 0)
-		fprintf(cp_out, "** %s\n", Spice_Notice);
-	    if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
-		fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
-	    fprintf(cp_out, "******\n");
-	} else if (!strncmp(s, "-f", 2) || !strncmp(s, "-F", 2) )  { 
-	
-	    fprintf(cp_out, "******\n");
 
-	    fprintf(cp_out, "** %s-%s : %s\n", ft_sim->simulator,
-		    ft_sim->version, ft_sim->description);
-	    fprintf(cp_out, "** The U. C. Berkeley CAD Group\n");
-	    fprintf(cp_out,
-	            "** Copyright 1985-1994, Regents of the University of California.\n");
-	    fprintf(cp_out, "** %s\n", Spice_Manual);
-	    if (Spice_Notice != NULL && *Spice_Notice != 0)
-	        fprintf(cp_out, "** %s\n", Spice_Notice);
-	    if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
-	        fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
-            fprintf(cp_out,"**\n");
+        s = wl_flatten(wl);
+
+        if (!strncmp(s, "-s", 2) || !strncmp(s, "-S", 2) ) {
+
+            fprintf(cp_out, "******\n");
+            fprintf(cp_out, "** %s-%s\n", ft_sim->simulator,
+                    ft_sim->version);
+            fprintf(cp_out, "** %s\n", Spice_Manual);
+            if (Spice_Notice != NULL && *Spice_Notice != 0)
+                fprintf(cp_out, "** %s\n", Spice_Notice);
+            if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
+                fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
+            fprintf(cp_out, "******\n");
+
+        } else if (!strncmp(s, "-f", 2) || !strncmp(s, "-F", 2) )  {
+
+            fprintf(cp_out, "******\n");
+
+            fprintf(cp_out, "** %s-%s : %s\n", ft_sim->simulator,
+                    ft_sim->version, ft_sim->description);
+            fprintf(cp_out, "** The U. C. Berkeley CAD Group\n");
+            fprintf(cp_out,
+                    "** Copyright 1985-1994, Regents of the University of California.\n");
+            fprintf(cp_out, "** %s\n", Spice_Manual);
+            if (Spice_Notice != NULL && *Spice_Notice != 0)
+                fprintf(cp_out, "** %s\n", Spice_Notice);
+            if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
+                fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
+            fprintf(cp_out, "**\n");
 #ifdef CIDER
-            fprintf(cp_out,"** CIDER 1.b1 (CODECS simulator) included\n");	    
-#endif	    
-#ifdef XSPICE
-            fprintf(cp_out,"** XSPICE extensions included\n");
+            fprintf(cp_out, "** CIDER 1.b1 (CODECS simulator) included\n");
 #endif
-            fprintf(cp_out,"** Relevant compilation options (refer to user's manual):\n");
+#ifdef XSPICE
+            fprintf(cp_out, "** XSPICE extensions included\n");
+#endif
+            fprintf(cp_out, "** Relevant compilation options (refer to user's manual):\n");
 #ifdef NGDEBUG
-            fprintf(cp_out,"** Debugging option (-g) enabled\n");
+            fprintf(cp_out, "** Debugging option (-g) enabled\n");
 #endif
 #ifdef ADMS
-            fprintf(cp_out,"** Adms interface enabled\n");
+            fprintf(cp_out, "** Adms interface enabled\n");
 #endif
 #ifdef USE_OMP
-            fprintf(cp_out,"** OpenMP multithreading for BSIM3, BSIM4 enabled\n");
+            fprintf(cp_out, "** OpenMP multithreading for BSIM3, BSIM4 enabled\n");
 #endif
 #if defined(X_DISPLAY_MISSING) && !defined(HAS_WINDOWS)
-            fprintf(cp_out,"** X11 interface not compiled into ngspice\n");
-#endif               
+            fprintf(cp_out, "** X11 interface not compiled into ngspice\n");
+#endif
 #ifdef NOBYPASS
-            fprintf(cp_out,"** --enable-nobypass\n");
-#endif   
+            fprintf(cp_out, "** --enable-nobypass\n");
+#endif
 #ifdef CAPBYPASS
-            fprintf(cp_out,"** --enable-capbypass\n");
-#endif	    
+            fprintf(cp_out, "** --enable-capbypass\n");
+#endif
 #ifdef NODELIMITING
-            fprintf(cp_out,"** --enable-nodelimiting\n");
+            fprintf(cp_out, "** --enable-nodelimiting\n");
 #endif
 #ifdef PREDICTOR
-            fprintf(cp_out,"** --enable-predictor\n");
+            fprintf(cp_out, "** --enable-predictor\n");
 #endif
 #ifdef NEWTRUNC
-            fprintf(cp_out,"** --enable-newtrunc\n");
+            fprintf(cp_out, "** --enable-newtrunc\n");
 #endif
 #ifdef WANT_SENSE2
-            fprintf(cp_out,"** --enable-sense2\n");
+            fprintf(cp_out, "** --enable-sense2\n");
 #endif
-            fprintf(cp_out,"**\n");
+            fprintf(cp_out, "**\n");
 #ifdef EXPERIMENTAL_CODE
-            fprintf(cp_out,"** Experimental code enabled.\n");
+            fprintf(cp_out, "** Experimental code enabled.\n");
 #endif
 #ifdef EXP_DEV
-            fprintf(cp_out,"** Experimental devices enabled.\n");
-#endif	    	    	    
-	    fprintf(cp_out, "******\n");
-	
-	} else if (!eq(ft_sim->version, s)) {
+            fprintf(cp_out, "** Experimental devices enabled.\n");
+#endif
+            fprintf(cp_out, "******\n");
+
+        } else if (!eq(ft_sim->version, s)) {
+
             fprintf(stderr,
-        "Note: rawfile is version %s (current version is %s)\n",
+                    "Note: rawfile is version %s (current version is %s)\n",
                     wl->wl_word, ft_sim->version);
+
         }
+
         tfree(s);
     }
-    return;
 }
+
 
 static void
 byemesg(void)
@@ -265,11 +276,10 @@ byemesg(void)
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
     /*  write out command history only when saying goodbye.  */
     if (cp_interactive && (cp_maxhistlength > 0)) {
-      stifle_history(cp_maxhistlength);
-      write_history(history_file);
+        stifle_history(cp_maxhistlength);
+        write_history(history_file);
     }
-#endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
+#endif
 
     printf("%s-%s done\n", ft_sim->simulator, ft_sim->version);
-    return;
 }
