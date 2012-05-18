@@ -89,7 +89,6 @@ OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
     if (ARCHme != 0) return(OK);
 #endif /* PARALLEL_ARCH */
 
-
     if (ft_curckt->ci_ckt == circuitPtr)
         name = ft_curckt->ci_name;
     else
@@ -101,12 +100,14 @@ OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
                       plotPtr));
 }
 
+
 int
 OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
               IFuid analName,
               IFuid refName, int refType,
               int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr)
 {
+
 #ifdef PARALLEL_ARCH
     if (ARCHme != 0) return(OK);
 #endif /* PARALLEL_ARCH */
@@ -116,6 +117,7 @@ OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
                       dataNames, dataType, TRUE,
                       plotPtr));
 }
+
 
 static int
 beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName, char *refName, int refType, int numNames, char **dataNames, int dataType, bool windowed, runDesc **runp)
@@ -243,7 +245,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
            nodes, and saves the terminal currents instead  */
 
         if (savealli) {
-            depind=0;
+            depind = 0;
             for (i = 0; i < numNames; i++) {
                 if (strstr(dataNames[i], "#internal") ||
                         strstr(dataNames[i], "#source") ||
@@ -251,10 +253,10 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                         strstr(dataNames[i], "#collector") ||
                         strstr(dataNames[i], "#emitter") ||
                         strstr(dataNames[i], "#base")) {
-                    tmpname[0]='@';
-                    tmpname[1]='\0';
+                    tmpname[0] = '@';
+                    tmpname[1] = '\0';
                     strncat(tmpname, dataNames[i], BSIZE_SP-1);
-                    ch=strchr(tmpname, '#');
+                    ch = strchr(tmpname, '#');
 
                     if (strstr(ch, "#collector")!=NULL) {
                         strcpy(ch, "[ic]");
@@ -300,14 +302,17 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
         /* Pass 2. */
         for (i = 0; i < numsaves; i++) {
+
             if (savesused[i])
                 continue;
+
             if (!parseSpecial(saves[i].name, namebuf, parambuf, depbuf)) {
                 if (saves[i].analysis)
                     fprintf(cp_err, "Warning: can't parse '%s': ignored\n",
                             saves[i].name);
                 continue;
             }
+
             /* Now, if there's a dep variable, do we already have it? */
             if (*depbuf) {
                 for (j = 0; j < run->numData; j++)
@@ -330,7 +335,8 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     depind = j;
                 } else
                     depind = run->data[j].outIndex;
-            }
+                }
+
             addSpecialDesc(run, saves[i].name, namebuf, parambuf, depind);
         }
 
@@ -364,12 +370,15 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                 run->runPlot->pl_ndims = 1;
         }
     }
+
     /*Start BLT, initilises the blt vectors saj*/
 #ifdef TCL_MODULE
     blt_init(run);
 #endif
+
     return (OK);
 }
+
 
 static int
 addDataDesc(runDesc *run, char *name, int type, int ind)
@@ -380,6 +389,7 @@ addDataDesc(runDesc *run, char *name, int type, int ind)
         run->data = TMALLOC(dataDesc, 1);
     else
         run->data = TREALLOC(dataDesc, run->data, run->numData + 1);
+
     data = &run->data[run->numData];
     /* so freeRun will get nice NULL pointers for the fields we don't set */
     bzero(data, sizeof(dataDesc));
@@ -391,7 +401,7 @@ addDataDesc(runDesc *run, char *name, int type, int ind)
     data->outIndex = ind;
 
     if (ind == -1) {
-        /* It's the reference vector. */
+    /* It's the reference vector. */
         run->refIndex = run->numData;
     }
 
@@ -399,6 +409,7 @@ addDataDesc(runDesc *run, char *name, int type, int ind)
 
     return (OK);
 }
+
 
 static int
 addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind)
@@ -410,6 +421,7 @@ addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind)
         run->data = TMALLOC(dataDesc, 1);
     else
         run->data = TREALLOC(dataDesc, run->data, run->numData + 1);
+
     data = &run->data[run->numData];
     /* so freeRun will get nice NULL pointers for the fields we don't set */
     bzero(data, sizeof(dataDesc));
@@ -435,25 +447,28 @@ addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind)
 }
 
 
-
 int
 OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 {
     runDesc *run = plotPtr;  // FIXME
     IFvalue val;
     int i;
+
 #ifdef PARALLEL_ARCH
     if (ARCHme != 0) return(OK);
 #endif /* PARALLEL_ARCH */
 
     run->pointCount++;
+
 #ifdef TCL_MODULE
     steps_completed = run->pointCount;
 #endif
 
     if (run->writeOut) {
+
         if (run->pointCount == 1)
             fileInit_pass2(run);
+
         fileStartPoint(run->fp, run->binary, run->pointCount);
 
         if (run->refIndex != -1) {
@@ -465,7 +480,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                       too much CPU time  */
 #ifndef HAS_WINDOWS
                 currclock = clock();
-                if ((currclock-lastclock)>(0.25*CLOCKS_PER_SEC)) {
+                if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                     fprintf(stderr, " Reference value : % 12.5e\r",
                             refValue->cValue.real);
                     lastclock = currclock;
@@ -478,16 +493,18 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                 fileAddRealValue(run->fp, run->binary, refValue->rValue);
 #ifndef HAS_WINDOWS
                 currclock = clock();
-                if ((currclock-lastclock)>(0.25*CLOCKS_PER_SEC)) {
+                if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                     fprintf(stderr, " Reference value : % 12.5e\r", refValue->rValue);
                     lastclock = currclock;
                 }
 #endif
             }
         }
+
         for (i = 0; i < run->numData; i++) {
             /* we've already printed reference vec first */
             if (run->data[i].outIndex == -1) continue;
+
 #ifdef TCL_MODULE
             blt_add(i, refValue ? refValue->rValue : NAN);
 #endif
@@ -510,22 +527,24 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     /*  If this is the first data point, print a warning for any unrecognized
                         variables, since this has not already been checked  */
 
-                    if (run->pointCount==1)
+                    if (run->pointCount == 1)
                         fprintf(stderr, "Warning: unrecognized variable - %s\n",
                                 run->data[i].name);
 
                     if (run->isComplex) {
-                        val.cValue.real=0;
-                        val.cValue.imag=0;
+                        val.cValue.real = 0;
+                        val.cValue.imag = 0;
                         fileAddComplexValue(run->fp, run->binary,
                                             val.cValue);
                     } else {
-                        val.rValue=0;
+                        val.rValue = 0;
                         fileAddRealValue(run->fp, run->binary,
                                          val.rValue);
                     };
+
                     continue;
                 };
+
                 if (run->data[i].type == IF_REAL)
                     fileAddRealValue(run->fp, run->binary,
                                      val.rValue);
@@ -535,11 +554,14 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                 else
                     fprintf(stderr, "OUTpData: unsupported data type\n");
             }
+
 #ifdef TCL_MODULE
             blt_add(i,valuePtr->v.vec.rVec
                     [run->data[i].outIndex]);
 #endif
+
         }
+
         fileEndPoint(run->fp, run->binary);
 
         /*  Check that the write to disk completed successfully, otherwise abort  */
@@ -548,14 +570,16 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             fprintf(stderr, "Warning: rawfile write error !!\n");
             shouldstop = TRUE;
         };
+
     } else {
 
         /*  This is interactive mode. Update the screen with the reference
             variable just the same  */
 
         currclock = clock();
+
 #ifndef HAS_WINDOWS
-        if ((currclock-lastclock)>(0.25*CLOCKS_PER_SEC)) {
+        if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
             if (run->isComplex) {
                 fprintf(stderr, " Reference value : % 12.5e\r",
                         refValue ? refValue->cValue.real : NAN);
@@ -566,11 +590,14 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             lastclock = currclock;
         }
 #endif
+
         for (i = 0; i < run->numData; i++) {
+
 #ifdef TCL_MODULE
             /*Locks the blt vector to stop access*/
             blt_lockvec(i);
 #endif
+
             if (run->data[i].outIndex == -1) {
                 if (run->data[i].type == IF_REAL)
                     plotAddRealValue(&run->data[i], refValue->rValue);
@@ -594,11 +621,14 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                 else
                     fprintf(stderr, "OUTpData: unsupported data type\n");
             }
+
 #ifdef TCL_MODULE
             /*relinks and unlocks vector*/
-            blt_relink(i,(run->data[i]).vec);
+            blt_relink(i, (run->data[i]).vec);
 #endif
+
         }
+
         gr_iplot(run->runPlot);
     }
 
@@ -608,7 +638,6 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #ifdef TCL_MODULE
     Tcl_ExecutePerLoop();
 #endif
-
 
     return (OK);
 }
@@ -624,6 +653,8 @@ OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr)
 
     return (OK);
 }
+
+
 /* ARGSUSED */ /* until some code gets written */
 int
 OUTwData(runDesc *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
@@ -636,14 +667,15 @@ OUTwData(runDesc *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
     return (OK);
 }
 
+
 /* ARGSUSED */ /* until some code gets written */
 int
 OUTwEnd(runDesc *plotPtr)
 {
     NG_IGNORE(plotPtr);
+
     return (OK);
 }
-
 
 
 int
@@ -668,7 +700,6 @@ OUTendPlot(runDesc *plotPtr)
 }
 
 
-
 /* ARGSUSED */ /* until some code gets written */
 int
 OUTbeginDomain(runDesc *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue)
@@ -681,14 +712,15 @@ OUTbeginDomain(runDesc *plotPtr, IFuid refName, int refType, IFvalue *outerRefVa
     return (OK);
 }
 
+
 /* ARGSUSED */ /* until some code gets written */
 int
 OUTendDomain(runDesc *plotPtr)
 {
     NG_IGNORE(plotPtr);
+
     return (OK);
 }
-
 
 
 /* ARGSUSED */ /* until some code gets written */
@@ -729,7 +761,6 @@ OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value)
 
     return (OK);
 }
-
 
 
 /* The file writing routines. */
@@ -782,6 +813,7 @@ fileInit(runDesc *run)
     return;
 }
 
+
 static void
 fileInit_pass2(runDesc *run)
 {
@@ -819,14 +851,15 @@ fileInit_pass2(runDesc *run)
         } else {
             fprintf(run->fp, "\t%d\t%s\t%s", i, name, ft_typenames(type));
         }
+
         if (run->data[i].gtype == GRID_XLOG)
             fprintf(run->fp, "\tgrid=3");
+
         fprintf(run->fp, "\n");
 
     }
 
     fprintf(run->fp, "%s:\n", run->binary ? "Binary" : "Values");
-
     fflush(run->fp);        /* Make all sure this gets to disk */
 
     /*  Allocate Row buffer  */
@@ -842,6 +875,7 @@ fileInit_pass2(runDesc *run)
 
 }
 
+
 static void
 fileStartPoint(FILE *fp, bool bin, int num)
 {
@@ -855,41 +889,43 @@ fileStartPoint(FILE *fp, bool bin, int num)
     return;
 }
 
+
 static void
 fileAddRealValue(FILE *fp, bool bin, double value)
 {
     if (bin)
-        rowbuf[column++]=value;
+        rowbuf[column++] = value;
     else
         fprintf(fp, "\t%.*e\n", DOUBLE_PRECISION, value);
 
     return;
 }
 
+
 static void
 fileAddComplexValue(FILE *fp, bool bin, IFcomplex value)
 {
-
     if (bin) {
-        rowbuf[column++]=value.real;
-        rowbuf[column++]=value.imag;
+        rowbuf[column++] = value.real;
+        rowbuf[column++] = value.imag;
     } else {
         fprintf(fp, "\t%.*e,%.*e\n", DOUBLE_PRECISION, value.real,
                 DOUBLE_PRECISION, value.imag);
     }
-
 }
+
 
 /* ARGSUSED */ /* until some code gets written */
 static void
 fileEndPoint(FILE *fp, bool bin)
 {
     if (bin) {
-        /*  write row buffer to file  */
+    /*  write row buffer to file  */
         fwrite(rowbuf, sizeof(double), rowbuflen, fp);
     }; /* otherwise the data has already been written */
     return;
 }
+
 
 /* Here's the hack...  Run back and fill in the number of points. */
 
@@ -908,6 +944,7 @@ fileEnd(runDesc *run)
         /* Yet another hack-around */
         fprintf(stderr, "@@@ %ld %d\n", run->pointPos, run->pointCount);
     }
+
     fflush(run->fp);
 
     if (run->binary) {
@@ -917,7 +954,6 @@ fileEnd(runDesc *run)
 
     return;
 }
-
 
 
 /* The plot maintenance routines. */
@@ -933,7 +969,7 @@ plotInit(runDesc *run)
 
     pl->pl_title = copy(run->name);
     pl->pl_name = copy(run->type);
-    pl->pl_date = copy(datestring( ));
+    pl->pl_date = copy(datestring());
     pl->pl_ndims = 0;
     plot_new(pl);
     plot_setcur(pl->pl_typename);
@@ -993,6 +1029,7 @@ plotInit(runDesc *run)
     }
 }
 
+
 static void
 plotAddRealValue(dataDesc *desc, double value)
 {
@@ -1010,10 +1047,11 @@ plotAddRealValue(dataDesc *desc, double value)
         v->v_compdata[v->v_length].cx_imag = 0.0;
     }
     v->v_length++;
-    v->v_dims[0]=v->v_length; /* va, must be updated */
+    v->v_dims[0] = v->v_length; /* va, must be updated */
 
     return;
 }
+
 
 static void
 plotAddComplexValue(dataDesc *desc, IFcomplex value)
@@ -1025,20 +1063,20 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
     v->v_compdata[v->v_length].cx_real = value.real;
     v->v_compdata[v->v_length].cx_imag = value.imag;
     v->v_length++;
-    v->v_dims[0]=v->v_length; /* va, must be updated */
+    v->v_dims[0] = v->v_length; /* va, must be updated */
 
     return;
 }
+
 
 /* ARGSUSED */ /* until some code gets written */
 static void
 plotEnd(runDesc *run)
 {
-    fprintf(stderr,"\n");
+    fprintf(stderr, "\n");
     fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
     return;
 }
-
 
 
 /* ParseSpecial takes something of the form "@name[param,index]" and rips
@@ -1084,6 +1122,7 @@ parseSpecial(char *name, char *dev, char *param, char *ind)
         return FALSE;
 }
 
+
 /* This routine must match two names with or without a V() around them. */
 
 static bool
@@ -1091,16 +1130,17 @@ name_eq(char *n1, char *n2)
 {
     char buf1[BSIZE_SP], buf2[BSIZE_SP], *s;
 
-    if ((s =strchr(n1, '(')) != NULL) {
+    if ((s = strchr(n1, '(')) != NULL) {
         strcpy(buf1, s);
-        if ((s =strchr(buf1, ')')) == NULL)
+        if ((s = strchr(buf1, ')')) == NULL)
             return FALSE;
         *s = '\0';
         n1 = buf1;
     }
-    if ((s =strchr(n2, '(')) != NULL) {
+
+    if ((s = strchr(n2, '(')) != NULL) {
         strcpy(buf2, s);
-        if ((s =strchr(buf2, ')')) == NULL)
+        if ((s = strchr(buf2, ')')) == NULL)
             return FALSE;
         *s = '\0';
         n2 = buf2;
@@ -1108,6 +1148,7 @@ name_eq(char *n1, char *n2)
 
     return (strcmp(n1, n2) ? FALSE : TRUE);
 }
+
 
 static bool
 getSpecial(dataDesc *desc, runDesc *run, IFvalue *val)
@@ -1140,35 +1181,38 @@ getSpecial(dataDesc *desc, runDesc *run, IFvalue *val)
     return FALSE;
 }
 
+
 static void
 freeRun(runDesc *run)
 {
-
     int i;
 
-    for (i=0; i < run->numData; i++) {
+    for (i = 0; i < run->numData; i++) {
         tfree(run->data[i].name);
         tfree(run->data[i].specParamName);
     }
+
     tfree(run->data);
 
     tfree(run->type);
     tfree(run->name);
+
     tfree(run);
 
 }
 
+
 int
 OUTstopnow(void)
 {
-
     if (ft_intrpt || shouldstop) {
         ft_intrpt = shouldstop = FALSE;
         return (1);
     } else
-        return (0);
+    return (0);
 
 }
+
 
 /* Print out error messages. */
 
@@ -1181,12 +1225,12 @@ static struct mesg {
     { "Panic", ERR_PANIC } ,
     { "Note", ERR_INFO } ,
     { NULL, 0 }
-} ;
+};
+
 
 void
 OUTerror(int flags, char *format, IFuid *names)
 {
-
     struct mesg *m;
     char buf[BSIZE_SP], *s, *bptr;
     int nindex = 0;
@@ -1211,8 +1255,8 @@ OUTerror(int flags, char *format, IFuid *names)
             *bptr++ = *s;
         }
     }
+
     *bptr = '\0';
     fprintf(cp_err, "%s\n", buf);
     fflush(cp_err);
-
 }
