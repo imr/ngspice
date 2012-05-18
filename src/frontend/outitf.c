@@ -286,7 +286,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                         fprintf(cp_err,
                                 "Debug: could output current for %s\n", tmpname);
                         continue;
-                    };
+                    }
                     if (parseSpecial(tmpname, namebuf, parambuf, depbuf)) {
                         if (*depbuf) {
                             fprintf( stderr,
@@ -540,10 +540,10 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                         val.rValue = 0;
                         fileAddRealValue(run->fp, run->binary,
                                          val.rValue);
-                    };
+                    }
 
                     continue;
-                };
+                }
 
                 if (run->data[i].type == IF_REAL)
                     fileAddRealValue(run->fp, run->binary,
@@ -569,7 +569,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
         if (ferror(run->fp)) {
             fprintf(stderr, "Warning: rawfile write error !!\n");
             shouldstop = TRUE;
-        };
+        }
 
     } else {
 
