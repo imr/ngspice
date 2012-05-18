@@ -809,8 +809,6 @@ fileInit(runDesc *run)
     fprintf(run->fp, "Variables:\n");
 
     printf("No. of Data Columns : %d  \n", run->numData);
-
-    return;
 }
 
 
@@ -870,9 +868,6 @@ fileInit_pass2(runDesc *run)
             rowbuflen *= 2;
         rowbuf = TMALLOC(double, rowbuflen);
     } else rowbuf=NULL;
-
-    return;
-
 }
 
 
@@ -885,8 +880,6 @@ fileStartPoint(FILE *fp, bool bin, int num)
     /*  reset buffer pointer to zero  */
 
     column = 0;
-
-    return;
 }
 
 
@@ -897,8 +890,6 @@ fileAddRealValue(FILE *fp, bool bin, double value)
         rowbuf[column++] = value;
     else
         fprintf(fp, "\t%.*e\n", DOUBLE_PRECISION, value);
-
-    return;
 }
 
 
@@ -923,7 +914,6 @@ fileEndPoint(FILE *fp, bool bin)
     /*  write row buffer to file  */
         fwrite(rowbuf, sizeof(double), rowbuflen, fp);
     }; /* otherwise the data has already been written */
-    return;
 }
 
 
@@ -951,8 +941,6 @@ fileEnd(runDesc *run)
         /* deallocate row buffer */
         tfree(rowbuf);
     }
-
-    return;
 }
 
 
@@ -1048,8 +1036,6 @@ plotAddRealValue(dataDesc *desc, double value)
     }
     v->v_length++;
     v->v_dims[0] = v->v_length; /* va, must be updated */
-
-    return;
 }
 
 
@@ -1064,8 +1050,6 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
     v->v_compdata[v->v_length].cx_imag = value.imag;
     v->v_length++;
     v->v_dims[0] = v->v_length; /* va, must be updated */
-
-    return;
 }
 
 
@@ -1075,7 +1059,6 @@ plotEnd(runDesc *run)
 {
     fprintf(stderr, "\n");
     fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
-    return;
 }
 
 
