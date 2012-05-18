@@ -258,29 +258,26 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     strncat(tmpname, dataNames[i], BSIZE_SP-1);
                     ch = strchr(tmpname, '#');
 
-                    if (strstr(ch, "#collector")!=NULL) {
+                    if (strstr(ch, "#collector")) {
                         strcpy(ch, "[ic]");
-                    } else if (strstr(ch, "#base")!=NULL) {
+                    } else if (strstr(ch, "#base")) {
                         strcpy(ch, "[ib]");
-                    } else if (strstr(ch, "#emitter")!=NULL) {
+                    } else if (strstr(ch, "#emitter")) {
                         strcpy(ch, "[ie]");
-                        if (parseSpecial(tmpname, namebuf, parambuf, depbuf)) {
+                        if (parseSpecial(tmpname, namebuf, parambuf, depbuf))
                             addSpecialDesc(run, tmpname, namebuf, parambuf, depind);
-                        };
                         strcpy(ch, "[is]");
-                    } else if (strstr(ch, "#drain")!=NULL) {
+                    } else if (strstr(ch, "#drain")) {
                         strcpy(ch, "[id]");
-                        if (parseSpecial(tmpname, namebuf, parambuf, depbuf)) {
+                        if (parseSpecial(tmpname, namebuf, parambuf, depbuf))
                             addSpecialDesc(run, tmpname, namebuf, parambuf, depind);
-                        };
                         strcpy(ch, "[ig]");
-                    } else if (strstr(ch, "#source")!=NULL) {
+                    } else if (strstr(ch, "#source")) {
                         strcpy(ch, "[is]");
-                        if (parseSpecial(tmpname, namebuf, parambuf, depbuf)) {
+                        if (parseSpecial(tmpname, namebuf, parambuf, depbuf))
                             addSpecialDesc(run, tmpname, namebuf, parambuf, depind);
-                        };
                         strcpy(ch, "[ib]");
-                    } else if ((strstr(ch, "#internal")!=NULL)&&(tmpname[1]=='d')) {
+                    } else if (strstr(ch, "#internal") && (tmpname[1] == 'd')) {
                         strcpy(ch, "[id]");
                     } else {
                         fprintf(cp_err,
@@ -333,9 +330,10 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     savesused[i] = TRUE;
                     saves[i].used = 1;
                     depind = j;
-                } else
+                } else {
                     depind = run->data[j].outIndex;
                 }
+            }
 
             addSpecialDesc(run, saves[i].name, namebuf, parambuf, depind);
         }
@@ -349,8 +347,8 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         }
 
         if (numNames &&
-                (  (run->numData == 1 && run->refIndex != -1)
-                   || (run->numData == 0 && run->refIndex == -1)) ) { /* va: suggested parentheses */
+                ((run->numData == 1 && run->refIndex != -1) ||
+                 (run->numData == 0 && run->refIndex == -1)) ) {
             fprintf(cp_err, "Error: no data saved for %s; analysis not run\n",
                     spice_analysis_get_description(analysisPtr->JOBtype));
             return E_NOTFOUND;
@@ -362,9 +360,9 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         run->writeOut = ft_getOutReq(&run->fp, &run->runPlot, &run->binary,
                                      run->type, run->name);
 
-        if (run->writeOut)
+        if (run->writeOut) {
             fileInit(run);
-        else {
+        } else {
             plotInit(run);
             if (refName)
                 run->runPlot->pl_ndims = 1;
@@ -400,10 +398,9 @@ addDataDesc(runDesc *run, char *name, int type, int ind)
     data->regular = TRUE;
     data->outIndex = ind;
 
-    if (ind == -1) {
     /* It's the reference vector. */
+    if (ind == -1)
         run->refIndex = run->numData;
-    }
 
     run->numData++;
 
@@ -451,7 +448,6 @@ int
 OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 {
     runDesc *run = plotPtr;  // FIXME
-    IFvalue val;
     int i;
 
 #ifdef PARALLEL_ARCH
@@ -503,7 +499,8 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 
         for (i = 0; i < run->numData; i++) {
             /* we've already printed reference vec first */
-            if (run->data[i].outIndex == -1) continue;
+            if (run->data[i].outIndex == -1)
+                continue;
 
 #ifdef TCL_MODULE
             blt_add(i, refValue ? refValue->rValue : NAN);
@@ -512,15 +509,14 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             if (run->data[i].regular) {
                 if(run->data[i].type == IF_REAL)
                     fileAddRealValue(run->fp, run->binary,
-                                     valuePtr->v.vec.rVec
-                                     [run->data[i].outIndex]);
+                                     valuePtr->v.vec.rVec [run->data[i].outIndex]);
                 else if (run->data[i].type == IF_COMPLEX)
                     fileAddComplexValue(run->fp, run->binary,
-                                        valuePtr->v.vec.cVec
-                                        [run->data[i].outIndex]);
+                                        valuePtr->v.vec.cVec [run->data[i].outIndex]);
                 else
                     fprintf(stderr, "OUTpData: unsupported data type\n");
             } else {
+                IFvalue val;
                 /* should pre-check instance */
                 if (!getSpecial(&run->data[i], run, &val)) {
 
@@ -534,30 +530,25 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     if (run->isComplex) {
                         val.cValue.real = 0;
                         val.cValue.imag = 0;
-                        fileAddComplexValue(run->fp, run->binary,
-                                            val.cValue);
+                        fileAddComplexValue(run->fp, run->binary, val.cValue);
                     } else {
                         val.rValue = 0;
-                        fileAddRealValue(run->fp, run->binary,
-                                         val.rValue);
+                        fileAddRealValue(run->fp, run->binary, val.rValue);
                     }
 
                     continue;
                 }
 
                 if (run->data[i].type == IF_REAL)
-                    fileAddRealValue(run->fp, run->binary,
-                                     val.rValue);
+                    fileAddRealValue(run->fp, run->binary, val.rValue);
                 else if (run->data[i].type == IF_COMPLEX)
-                    fileAddComplexValue(run->fp, run->binary,
-                                        val.cValue);
+                    fileAddComplexValue(run->fp, run->binary, val.cValue);
                 else
                     fprintf(stderr, "OUTpData: unsupported data type\n");
             }
 
 #ifdef TCL_MODULE
-            blt_add(i,valuePtr->v.vec.rVec
-                    [run->data[i].outIndex]);
+            blt_add(i, valuePtr->v.vec.rVec [run->data[i].outIndex]);
 #endif
 
         }
@@ -611,6 +602,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     plotAddComplexValue(&run->data[i],
                                         valuePtr->v.vec.cVec[run->data[i].outIndex]);
             } else {
+                IFvalue val;
                 /* should pre-check instance */
                 if (!getSpecial(&run->data[i], run, &val))
                     continue;
@@ -687,9 +679,9 @@ OUTendPlot(runDesc *plotPtr)
     if (ARCHme != 0) return(OK);
 #endif
 
-    if (run->writeOut)
+    if (run->writeOut) {
         fileEnd(run);
-    else {
+    } else {
         gr_end_iplot();
         plotEnd(run);
     }
@@ -728,9 +720,7 @@ int
 OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value)
 {
     runDesc *run = plotPtr;  // FIXME
-    struct dvec *d;
     GRIDTYPE type;
-    int i;
 
     NG_IGNORE(value);
 
@@ -743,6 +733,7 @@ OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value)
 
     if (run->writeOut) {
         if (varName) {
+            int i;
             for (i = 0; i < run->numData; i++)
                 if (!strcmp(varName, run->data[i].name))
                     run->data[i].gtype = type;
@@ -751,6 +742,7 @@ OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value)
         }
     } else {
         if (varName) {
+            struct dvec *d;
             for (d = run->runPlot->pl_dvecs; d; d = d->v_next)
                 if (!strcmp(varName, d->v_name))
                     d->v_gridtype = type;
@@ -816,11 +808,10 @@ static void
 fileInit_pass2(runDesc *run)
 {
     int i, type;
-    char *name, *branch;
 
     for (i = 0; i < run->numData; i++) {
 
-        name = run->data[i].name;
+        char *name = run->data[i].name;
 
         if (substring("#branch", name))
             type = SV_CURRENT;
@@ -838,12 +829,12 @@ fileInit_pass2(runDesc *run)
             type = SV_VOLTAGE;
 
         if ( type == SV_CURRENT ) {
-            branch = NULL;
-            if ( (branch = strstr( name, "#branch" )) != NULL ) {
+            char *branch = strstr(name, "#branch");
+            if (branch)
                 *branch = '\0';
-            }
             fprintf(run->fp, "\t%d\ti(%s)\t%s", i, name, ft_typenames(type));
-            if ( branch != NULL ) *branch = '#';
+            if (branch)
+                *branch = '#';
         } else if ( type == SV_VOLTAGE ) {
             fprintf(run->fp, "\t%d\tv(%s)\t%s", i, name, ft_typenames(type));
         } else {
@@ -854,11 +845,10 @@ fileInit_pass2(runDesc *run)
             fprintf(run->fp, "\tgrid=3");
 
         fprintf(run->fp, "\n");
-
     }
 
     fprintf(run->fp, "%s:\n", run->binary ? "Binary" : "Values");
-    fflush(run->fp);        /* Make all sure this gets to disk */
+    fflush(run->fp);
 
     /*  Allocate Row buffer  */
 
@@ -867,7 +857,10 @@ fileInit_pass2(runDesc *run)
         if (run->isComplex)
             rowbuflen *= 2;
         rowbuf = TMALLOC(double, rowbuflen);
-    } else rowbuf=NULL;
+    } else {
+        // fIXME rowbuflen = 0;
+        rowbuf = NULL;
+    }
 }
 
 
@@ -910,10 +903,11 @@ fileAddComplexValue(FILE *fp, bool bin, IFcomplex value)
 static void
 fileEndPoint(FILE *fp, bool bin)
 {
-    if (bin) {
     /*  write row buffer to file  */
+    /* otherwise the data has already been written */
+
+    if (bin)
         fwrite(rowbuf, sizeof(double), rowbuflen, fp);
-    }; /* otherwise the data has already been written */
 }
 
 
@@ -922,10 +916,8 @@ fileEndPoint(FILE *fp, bool bin)
 static void
 fileEnd(runDesc *run)
 {
-    long place;
-
     if (run->fp != stdout) {
-        place = ftell(run->fp);
+        long place = ftell(run->fp);
         fseek(run->fp, run->pointPos, SEEK_SET);
         fprintf(run->fp, "%d", run->pointCount);
         fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
@@ -966,9 +958,9 @@ plotInit(runDesc *run)
     /* This is a hack. */
     /* if any of them complex, make them all complex */
     run->isComplex = FALSE;
-    for (i = 0; i < run->numData; i++) {
-        if (run->data[i].type == IF_COMPLEX) run->isComplex = TRUE;
-    }
+    for (i = 0; i < run->numData; i++)
+        if (run->data[i].type == IF_COMPLEX)
+            run->isComplex = TRUE;
 
     for (i = 0; i < run->numData; i++) {
         dd = &run->data[i];
@@ -1024,13 +1016,11 @@ plotAddRealValue(dataDesc *desc, double value)
     struct dvec *v = desc->vec;
 
     if (isreal(v)) {
-        v->v_realdata = (double *) trealloc(v->v_realdata,
-                                            sizeof(double) * (size_t) (v->v_length + 1));
+        v->v_realdata = TREALLOC(double, v->v_realdata, v->v_length + 1);
         v->v_realdata[v->v_length] = value;
     } else {
         /* a real parading as a VF_COMPLEX */
-        v->v_compdata = (ngcomplex_t *) trealloc(v->v_compdata,
-                        sizeof(ngcomplex_t) * (size_t) (v->v_length + 1));
+        v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, v->v_length + 1);
         v->v_compdata[v->v_length].cx_real = value;
         v->v_compdata[v->v_length].cx_imag = 0.0;
     }
@@ -1044,8 +1034,7 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 {
     struct dvec *v = desc->vec;
 
-    v->v_compdata = (ngcomplex_t *) trealloc(v->v_compdata,
-                    sizeof(ngcomplex_t) * (size_t) (v->v_length + 1));
+    v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, v->v_length + 1);
     v->v_compdata[v->v_length].cx_real = value.real;
     v->v_compdata[v->v_length].cx_imag = value.imag;
     v->v_length++;
@@ -1145,7 +1134,9 @@ getSpecial(dataDesc *desc, runDesc *run, IFvalue *val)
                  &selector) == OK) {
         desc->type &= (IF_REAL | IF_COMPLEX);   /* mask out other bits */
         return TRUE;
-    } else if ((vv = if_getstat(run->circuit, &desc->name[1])) != NULL) {
+    }
+
+    if ((vv = if_getstat(run->circuit, &desc->name[1])) != NULL) {
         /* skip @ sign */
         desc->type = IF_REAL;
         if (vv->va_type == CP_REAL)
@@ -1154,9 +1145,8 @@ getSpecial(dataDesc *desc, runDesc *run, IFvalue *val)
             val->rValue = vv->va_num;
         else if (vv->va_type == CP_BOOL)
             val->rValue = (vv->va_bool ? 1.0 : 0.0);
-        else {
+        else
             return FALSE; /* not a real */
-        }
         tfree(vv);
         return TRUE;
     }
@@ -1176,12 +1166,10 @@ freeRun(runDesc *run)
     }
 
     tfree(run->data);
-
     tfree(run->type);
     tfree(run->name);
 
     tfree(run);
-
 }
 
 
@@ -1191,9 +1179,9 @@ OUTstopnow(void)
     if (ft_intrpt || shouldstop) {
         ft_intrpt = shouldstop = FALSE;
         return (1);
-    } else
-    return (0);
+    }
 
+    return (0);
 }
 
 
