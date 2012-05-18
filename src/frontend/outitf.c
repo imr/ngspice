@@ -87,7 +87,7 @@ OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
 
 #ifdef PARALLEL_ARCH
     if (ARCHme != 0) return(OK);
-#endif /* PARALLEL_ARCH */
+#endif
 
     if (ft_curckt->ci_ckt == circuitPtr)
         name = ft_curckt->ci_name;
@@ -110,7 +110,7 @@ OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
 
 #ifdef PARALLEL_ARCH
     if (ARCHme != 0) return(OK);
-#endif /* PARALLEL_ARCH */
+#endif
 
     return (beginPlot(analysisPtr, circuitPtr, "circuit name",
                       analName, refName, refType, numNames,
@@ -456,7 +456,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 
 #ifdef PARALLEL_ARCH
     if (ARCHme != 0) return(OK);
-#endif /* PARALLEL_ARCH */
+#endif
 
     run->pointCount++;
 
@@ -685,7 +685,7 @@ OUTendPlot(runDesc *plotPtr)
 
 #ifdef PARALLEL_ARCH
     if (ARCHme != 0) return(OK);
-#endif /* PARALLEL_ARCH */
+#endif
 
     if (run->writeOut)
         fileEnd(run);
