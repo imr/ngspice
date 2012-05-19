@@ -1,4 +1,5 @@
-/***  B4SOI 04/27/2010 Released by Tanvir Morshed   ***/
+/***  B4SOI 12/16/2010 Released by Tanvir Morshed   ***/
+
 
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
@@ -19,8 +20,8 @@
 #include "ngspice/suffix.h"
 
 void
-B4SOIdestroy(GENmodel **inModel)
-
+B4SOIdestroy(
+GENmodel **inModel)
 {
 B4SOImodel **model = (B4SOImodel**)inModel;
 B4SOIinstance *here;
@@ -31,9 +32,11 @@ B4SOImodel *oldmod = NULL;
     for (; mod ; mod = mod->B4SOInextModel)
     {    if(oldmod) FREE(oldmod);
          oldmod = mod;
-         prev = NULL;
+         prev = (B4SOIinstance *)NULL;
          for (here = mod->B4SOIinstances; here; here = here->B4SOInextInstance)
-	 {    if(prev) FREE(prev);
+         {    
+              if (here->B4SOIowner != ARCHme) continue;
+              if(prev) FREE(prev);
               prev = here;
          }
          if(prev) FREE(prev);

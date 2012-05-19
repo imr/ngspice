@@ -1,4 +1,5 @@
-/***  B4SOI 04/27/2010 Released by Tanvir Morshed  ***/
+/***  B4SOI 12/16/2010 Released by Tanvir Morshed  ***/
+
 
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
@@ -35,7 +36,7 @@ B4SOImodel **oldmod;
     for (; *model ; model = &((*model)->B4SOInextModel)) 
     {    if ((*model)->B4SOImodName == modname || 
              (modfast && *model == modfast))
-	     goto delgot;
+             goto delgot;
          oldmod = model;
     }
     return(E_NOMOD);
@@ -43,7 +44,9 @@ B4SOImodel **oldmod;
 delgot:
     *oldmod = (*model)->B4SOInextModel; /* cut deleted device out of list */
     for (here = (*model)->B4SOIinstances; here; here = here->B4SOInextInstance)
-    {    if(prev) FREE(prev);
+    {    
+         if (here->B4SOIowner != ARCHme) continue;
+         if(prev) FREE(prev);
          prev = here;
     }
     if(prev) FREE(prev);

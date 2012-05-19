@@ -1,4 +1,5 @@
-/**  B4SOI 04/27/2010 Released by Tanvir Morshed  ***/
+/***  B4SOI 12/16/2010 Released by Tanvir Morshed  ***/
+
 
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
@@ -11,9 +12,11 @@
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  * Modified by Tanvir Morshed 09/22/2009
  * Modified by Tanvir Morshed 12/31/2009
+ * Modified by Tanvir Morshed 12/16/2010
  **********/
 
 #include "ngspice/ngspice.h"
+
 #include "ngspice/ifsim.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/devdefs.h"
@@ -29,9 +32,7 @@ int which,
 IFvalue *value)
 {
     B4SOImodel *model = (B4SOImodel *)inst;
-
     NG_IGNORE(ckt);
-
     switch(which) 
     {   case B4SOI_MOD_MOBMOD:
             value->iValue = model->B4SOImobMod; 
@@ -59,61 +60,61 @@ IFvalue *value)
         case  B4SOI_MOD_TOX :
           value->rValue = model->B4SOItox;
             return(OK);
-	    case  B4SOI_MOD_TOXP :
+            case  B4SOI_MOD_TOXP :
           value->rValue = model->B4SOItoxp;
             return(OK);
-	    case  B4SOI_MOD_LEFFEOT :
+            case  B4SOI_MOD_LEFFEOT :
           value->rValue = model->B4SOIleffeot;
             return(OK);
-	    case  B4SOI_MOD_WEFFEOT :
+            case  B4SOI_MOD_WEFFEOT :
           value->rValue = model->B4SOIweffeot;
             return(OK);
-	    case  B4SOI_MOD_VDDEOT :
+            case  B4SOI_MOD_VDDEOT :
           value->rValue = model->B4SOIvddeot;
             return(OK);
-	    case  B4SOI_MOD_TEMPEOT :
+            case  B4SOI_MOD_TEMPEOT :
           value->rValue = model->B4SOItempeot;
             return(OK);
-	    case  B4SOI_MOD_ADOS :
+            case  B4SOI_MOD_ADOS :
           value->rValue = model->B4SOIados;
             return(OK);
-	    case  B4SOI_MOD_BDOS :
+            case  B4SOI_MOD_BDOS :
           value->rValue = model->B4SOIbdos;
             return(OK);
         case B4SOI_MOD_EPSRGATE:
-	    value->rValue = model->B4SOIepsrgate;
-	        return(OK);
+            value->rValue = model->B4SOIepsrgate;
+                return(OK);
         case B4SOI_MOD_PHIG:
-	    value->rValue = model->B4SOIphig;
-	        return(OK);		
+            value->rValue = model->B4SOIphig;
+                return(OK);                
         case B4SOI_MOD_EASUB:
             value->rValue = model->B4SOIeasub;
-            return(OK);		
-		
+            return(OK);                
+                
         case  B4SOI_MOD_TOXM :
           value->rValue = model->B4SOItoxm;
             return(OK); /* v3.2 */
-			
-	    /*4.1*/
-		case  B4SOI_MOD_EOT :
+                        
+            /*4.1*/
+                case  B4SOI_MOD_EOT :
           value->rValue = model->B4SOIeot;
-		  return(OK);
-		case  B4SOI_MOD_EPSROX :
+                  return(OK);
+                case  B4SOI_MOD_EPSROX :
           value->rValue = model->B4SOIepsrox;
             return(OK);
-	    case B4SOI_MOD_EPSRSUB:
+            case B4SOI_MOD_EPSRSUB:
             value->rValue = model->B4SOIepsrsub;
             return(OK);
-	    case B4SOI_MOD_NI0SUB:
+            case B4SOI_MOD_NI0SUB:
             value->rValue = model->B4SOIni0sub;
             return(OK);
-	    case B4SOI_MOD_BG0SUB:
+            case B4SOI_MOD_BG0SUB:
             value->rValue = model->B4SOIbg0sub;
             return(OK);
-	    case B4SOI_MOD_TBGASUB:
+            case B4SOI_MOD_TBGASUB:
             value->rValue = model->B4SOItbgasub;
             return(OK);
-	    case B4SOI_MOD_TBGBSUB:
+            case B4SOI_MOD_TBGBSUB:
             value->rValue = model->B4SOItbgbsub;
             return(OK);
 /* v2.2.3 */
@@ -272,69 +273,69 @@ IFvalue *value)
         case B4SOI_MOD_UTE:
             value->rValue = model->B4SOIute;
             return(OK);
-			
-			/*4.1 mobmod=4*/
+                        
+                        /*4.1 mobmod=4*/
         case B4SOI_MOD_UD:
-		    value->rValue = model->B4SOIud;
-            return(OK);	
+                    value->rValue = model->B4SOIud;
+            return(OK);        
         case B4SOI_MOD_LUD:
-		    value->rValue = model->B4SOIlud;
-            return(OK);	
+                    value->rValue = model->B4SOIlud;
+            return(OK);        
         case B4SOI_MOD_WUD:
-		    value->rValue = model->B4SOIwud;
-            return(OK);	
+                    value->rValue = model->B4SOIwud;
+            return(OK);        
         case B4SOI_MOD_PUD:
-		    value->rValue = model->B4SOIpud;
-            return(OK);	
+                    value->rValue = model->B4SOIpud;
+            return(OK);        
         case B4SOI_MOD_UD1:
-		    value->rValue = model->B4SOIud1;
-            return(OK);	
+                    value->rValue = model->B4SOIud1;
+            return(OK);        
         case B4SOI_MOD_LUD1:
-		    value->rValue = model->B4SOIlud1;
-            return(OK);	
+                    value->rValue = model->B4SOIlud1;
+            return(OK);        
         case B4SOI_MOD_WUD1:
-		    value->rValue = model->B4SOIwud1;
-            return(OK);	
+                    value->rValue = model->B4SOIwud1;
+            return(OK);        
         case B4SOI_MOD_PUD1:
-		    value->rValue = model->B4SOIpud1;
-            return(OK);				
-	    case B4SOI_MOD_EU:
-		    value->rValue = model->B4SOIeu;
+                    value->rValue = model->B4SOIpud1;
+            return(OK);                                
+            case B4SOI_MOD_EU:
+                    value->rValue = model->B4SOIeu;
             return(OK);
-	    case B4SOI_MOD_LEU:
-		    value->rValue = model->B4SOIleu;
+            case B4SOI_MOD_LEU:
+                    value->rValue = model->B4SOIleu;
             return(OK);
-	    case B4SOI_MOD_WEU:
-		    value->rValue = model->B4SOIweu;
+            case B4SOI_MOD_WEU:
+                    value->rValue = model->B4SOIweu;
             return(OK);
-	    case B4SOI_MOD_PEU:
-		    value->rValue = model->B4SOIpeu;
+            case B4SOI_MOD_PEU:
+                    value->rValue = model->B4SOIpeu;
             return(OK);
-	    case B4SOI_MOD_UCS:
-		    value->rValue = model->B4SOIucs;
+            case B4SOI_MOD_UCS:
+                    value->rValue = model->B4SOIucs;
             return(OK);
-		case B4SOI_MOD_LUCS:
-		    value->rValue = model->B4SOIlucs;
+                case B4SOI_MOD_LUCS:
+                    value->rValue = model->B4SOIlucs;
             return(OK);
-		case B4SOI_MOD_WUCS:
-		    value->rValue = model->B4SOIwucs;
+                case B4SOI_MOD_WUCS:
+                    value->rValue = model->B4SOIwucs;
             return(OK);
-		case B4SOI_MOD_PUCS:
-		    value->rValue = model->B4SOIpucs;
+                case B4SOI_MOD_PUCS:
+                    value->rValue = model->B4SOIpucs;
             return(OK);
-		case B4SOI_MOD_UCSTE:
+                case B4SOI_MOD_UCSTE:
             value->rValue = model->B4SOIucste;
             return(OK);
-		case B4SOI_MOD_LUCSTE:
+                case B4SOI_MOD_LUCSTE:
             value->rValue = model->B4SOIlucste;
             return(OK);
-		case B4SOI_MOD_WUCSTE:
+                case B4SOI_MOD_WUCSTE:
             value->rValue = model->B4SOIwucste;
             return(OK);
-		case B4SOI_MOD_PUCSTE:
+                case B4SOI_MOD_PUCSTE:
             value->rValue = model->B4SOIpucste;
-            return(OK);			
-			
+            return(OK);                        
+                        
         case B4SOI_MOD_VOFF:
             value->rValue = model->B4SOIvoff;
             return(OK);
@@ -437,7 +438,7 @@ IFvalue *value)
         case B4SOI_MOD_TSI:
             value->rValue = model->B4SOItsi; 
             return(OK);
-		case B4SOI_MOD_ETSI:
+                case B4SOI_MOD_ETSI:
             value->rValue = model->B4SOIetsi; 
             return(OK);
         case B4SOI_MOD_RTH0:
@@ -474,7 +475,7 @@ IFvalue *value)
             value->rValue = model->B4SOIxtund;
             return(OK);
 
- 	case B4SOI_MOD_TT:
+         case B4SOI_MOD_TT:
             value->rValue = model->B4SOItt; 
             return(OK);
         case B4SOI_MOD_VSDTH:
@@ -510,22 +511,22 @@ IFvalue *value)
         case B4SOI_MOD_RSH:
             value->rValue = model->B4SOIsheetResistance; 
             return(OK);
-        case B4SOI_MOD_PBSWGS:	/* v4.0 */
+        case B4SOI_MOD_PBSWGS:        /* v4.0 */
             value->rValue = model->B4SOIGatesidewallJctSPotential; 
             return(OK);
-        case B4SOI_MOD_PBSWGD:	/* v4.0 */
+        case B4SOI_MOD_PBSWGD:        /* v4.0 */
             value->rValue = model->B4SOIGatesidewallJctDPotential; 
             return(OK);
-        case B4SOI_MOD_MJSWGS:	/* v4.0 */
+        case B4SOI_MOD_MJSWGS:        /* v4.0 */
             value->rValue = model->B4SOIbodyJctGateSideSGradingCoeff; 
             return(OK);
-        case B4SOI_MOD_MJSWGD:	/* v4.0 */
+        case B4SOI_MOD_MJSWGD:        /* v4.0 */
             value->rValue = model->B4SOIbodyJctGateSideDGradingCoeff; 
             return(OK);
-        case B4SOI_MOD_CJSWGS:	/* v4.0 */
+        case B4SOI_MOD_CJSWGS:        /* v4.0 */
             value->rValue = model->B4SOIunitLengthGateSidewallJctCapS; 
             return(OK);
-        case B4SOI_MOD_CJSWGD:	/* v4.0 */
+        case B4SOI_MOD_CJSWGD:        /* v4.0 */
             value->rValue = model->B4SOIunitLengthGateSidewallJctCapD; 
             return(OK);
         case B4SOI_MOD_CSDESW:
@@ -726,10 +727,10 @@ IFvalue *value)
         case B4SOI_MOD_TII:
             value->rValue = model->B4SOItii;
             return(OK);
-			/*4.1 Iii model*/
-		case B4SOI_MOD_TVBCI:
+                        /*4.1 Iii model*/
+                case B4SOI_MOD_TVBCI:
             value->rValue = model->B4SOItvbci;
-            return(OK);	
+            return(OK);        
         case B4SOI_MOD_LII:
             value->rValue = model->B4SOIlii;
             return(OK);
@@ -748,8 +749,8 @@ IFvalue *value)
         case B4SOI_MOD_FBJTII:
             value->rValue = model->B4SOIfbjtii;
             return(OK);
-	/*4.1 Iii model*/
-	case B4SOI_MOD_EBJTII:
+        /*4.1 Iii model*/
+        case B4SOI_MOD_EBJTII:
             value->rValue = model->B4SOIebjtii;
             return(OK);
         case B4SOI_MOD_CBJTII:
@@ -767,61 +768,61 @@ IFvalue *value)
         case B4SOI_MOD_ESATII:
             value->rValue = model->B4SOIesatii;
             return(OK);
-        case B4SOI_MOD_NTUNS:		/* v4.0 */
+        case B4SOI_MOD_NTUNS:                /* v4.0 */
             value->rValue = model->B4SOIntun;
             return(OK);
-        case B4SOI_MOD_NTUND:		/* v4.0 */
+        case B4SOI_MOD_NTUND:                /* v4.0 */
             value->rValue = model->B4SOIntund;
             return(OK);
-        case B4SOI_MOD_NRECF0S:		/* v4.0 */		
+        case B4SOI_MOD_NRECF0S:                /* v4.0 */                
             value->rValue = model->B4SOInrecf0;
             return(OK);
-        case B4SOI_MOD_NRECF0D:		/* v4.0 */		
+        case B4SOI_MOD_NRECF0D:                /* v4.0 */                
             value->rValue = model->B4SOInrecf0d;
             return(OK);
-        case B4SOI_MOD_NRECR0S:		/* v4.0 */
+        case B4SOI_MOD_NRECR0S:                /* v4.0 */
             value->rValue = model->B4SOInrecr0;
             return(OK);
-        case B4SOI_MOD_NRECR0D:		/* v4.0 */
+        case B4SOI_MOD_NRECR0D:                /* v4.0 */
             value->rValue = model->B4SOInrecr0d;
             return(OK);
         case B4SOI_MOD_ISBJT:
             value->rValue = model->B4SOIisbjt;
             return(OK);
-        case B4SOI_MOD_IDBJT:	/* v4.0 */
+        case B4SOI_MOD_IDBJT:        /* v4.0 */
             value->rValue = model->B4SOIidbjt;
             return(OK);
         case B4SOI_MOD_ISDIF:
             value->rValue = model->B4SOIisdif;
             return(OK);
-        case B4SOI_MOD_IDDIF:	/* v4.0 */
+        case B4SOI_MOD_IDDIF:        /* v4.0 */
             value->rValue = model->B4SOIiddif;
             return(OK);
         case B4SOI_MOD_ISREC:
             value->rValue = model->B4SOIisrec;
             return(OK);
-        case B4SOI_MOD_IDREC:	/* v4.0 */
+        case B4SOI_MOD_IDREC:        /* v4.0 */
             value->rValue = model->B4SOIidrec;
             return(OK);
         case B4SOI_MOD_ISTUN:
             value->rValue = model->B4SOIistun;
             return(OK);
-        case B4SOI_MOD_IDTUN:	/* v4.0 */
+        case B4SOI_MOD_IDTUN:        /* v4.0 */
             value->rValue = model->B4SOIidtun;
             return(OK);
         case B4SOI_MOD_LN:
             value->rValue = model->B4SOIln;
             return(OK);
-        case B4SOI_MOD_VREC0S:	/* v4.0 */
+        case B4SOI_MOD_VREC0S:        /* v4.0 */
             value->rValue = model->B4SOIvrec0;
             return(OK);
-        case B4SOI_MOD_VREC0D:	/* v4.0 */
+        case B4SOI_MOD_VREC0D:        /* v4.0 */
             value->rValue = model->B4SOIvrec0d;
             return(OK);
-        case B4SOI_MOD_VTUN0S:	/* v4.0 */
+        case B4SOI_MOD_VTUN0S:        /* v4.0 */
             value->rValue = model->B4SOIvtun0;
             return(OK);
-        case B4SOI_MOD_VTUN0D:	/* v4.0 */
+        case B4SOI_MOD_VTUN0D:        /* v4.0 */
             value->rValue = model->B4SOIvtun0d;
             return(OK);
         case B4SOI_MOD_NBJT:
@@ -839,10 +840,10 @@ IFvalue *value)
         case B4SOI_MOD_AELY:
             value->rValue = model->B4SOIaely;
             return(OK);
-        case B4SOI_MOD_AHLIS:	/* v4.0 */
+        case B4SOI_MOD_AHLIS:        /* v4.0 */
             value->rValue = model->B4SOIahli;
             return(OK);
-        case B4SOI_MOD_AHLID:	/* v4.0 */
+        case B4SOI_MOD_AHLID:        /* v4.0 */
             value->rValue = model->B4SOIahlid;
             return(OK);
         case B4SOI_MOD_RBODY:
@@ -896,7 +897,10 @@ IFvalue *value)
         case B4SOI_MOD_DLBG:
             value->rValue = model->B4SOIdlbg;
             return(OK);
-
+/* v4.4 */
+        case B4SOI_MOD_CFRCOEFF:
+            value->rValue = model->B4SOIcfrcoeff;
+            return(OK);
         case B4SOI_MOD_EGIDL:
             value->rValue = model->B4SOIegidl;
             return(OK);
@@ -918,8 +922,8 @@ IFvalue *value)
         case B4SOI_MOD_FGIDL:
             value->rValue = model->B4SOIfgidl;
             return(OK);
-			
-		 case B4SOI_MOD_EGISL:
+                        
+                 case B4SOI_MOD_EGISL:
             value->rValue = model->B4SOIegisl;
             return(OK);
         case B4SOI_MOD_AGISL:
@@ -939,8 +943,8 @@ IFvalue *value)
             return(OK);
         case B4SOI_MOD_FGISL:
             value->rValue = model->B4SOIfgisl;
-            return(OK);	
-			
+            return(OK);        
+                        
         case B4SOI_MOD_FDMOD:
             value->rValue = model->B4SOIfdMod;
             return(OK);
@@ -949,7 +953,7 @@ IFvalue *value)
             return(OK);
         case B4SOI_MOD_CDSBS:
             value->rValue = model->B4SOIcdsbs;
-            return(OK);	
+            return(OK);        
 
         case B4SOI_MOD_MINVCV:
             value->rValue = model->B4SOIminvcv;
@@ -962,7 +966,7 @@ IFvalue *value)
             return(OK);
         case B4SOI_MOD_PMINVCV:
             value->rValue = model->B4SOIpminvcv;
-            return(OK);			
+            return(OK);                        
         case B4SOI_MOD_VOFFCV:
             value->rValue = model->B4SOIvoffcv;
             return(OK);
@@ -974,7 +978,7 @@ IFvalue *value)
             return(OK); 
         case B4SOI_MOD_PVOFFCV:
             value->rValue = model->B4SOIpvoffcv;
-            return(OK);			
+            return(OK);                        
 /* v3.0 */
         case B4SOI_MOD_SOIMOD:
             value->iValue = model->B4SOIsoiMod;
@@ -1207,11 +1211,11 @@ IFvalue *value)
 /* v4.0 end */
 
 /* v3.2 */
-	case B4SOI_MOD_FNOIMOD :
-	    value->iValue = model->B4SOIfnoiMod;
-	    return(OK);
-	case B4SOI_MOD_TNOIMOD :
-	    value->iValue = model->B4SOItnoiMod;
+        case B4SOI_MOD_FNOIMOD :
+            value->iValue = model->B4SOIfnoiMod;
+            return(OK);
+        case B4SOI_MOD_TNOIMOD :
+            value->iValue = model->B4SOItnoiMod;
         case B4SOI_MOD_TNOIA:
             value->rValue = model->B4SOItnoia;
             return(OK);
@@ -1234,10 +1238,10 @@ IFvalue *value)
             value->iValue = model->B4SOIrgateMod;
             return(OK);
         case B4SOI_MOD_XRCRG1:
-            value->rValue = model->B4SOIxrcrg1; /* Changed from iValue to rvalue */
+            value->rValue = model->B4SOIxrcrg1;
             return(OK);
         case B4SOI_MOD_XRCRG2:
-            value->rValue = model->B4SOIxrcrg2; /* Changed from iValue to rvalue */
+            value->rValue = model->B4SOIxrcrg2;
             return(OK);
         case B4SOI_MOD_RSHG:
             value->rValue = model->B4SOIrshg;
@@ -1257,15 +1261,15 @@ IFvalue *value)
         case B4SOI_MOD_MTRLMOD :
             value->iValue = model->B4SOImtrlMod;
             return(OK);
-		case B4SOI_MOD_VGSTCVMOD:
+                case B4SOI_MOD_VGSTCVMOD:
             value->iValue = model->B4SOIvgstcvMod;
             return(OK);
         case B4SOI_MOD_GIDLMOD :
             value->iValue = model->B4SOIgidlMod;
             return(OK);
-	   case B4SOI_MOD_IIIMOD :
+           case B4SOI_MOD_IIIMOD :
             value->iValue = model->B4SOIiiiMod;
-            return(OK);	
+            return(OK);        
 /* v3.0 */
         case B4SOI_MOD_IGBMOD:
             value->iValue = model->B4SOIigbMod;
@@ -1441,7 +1445,7 @@ IFvalue *value)
             return(OK);
         case B4SOI_MOD_LNSD:
             value->rValue = model->B4SOIlnsd;
-            return(OK);		
+            return(OK);                
         case B4SOI_MOD_LVTH0:
             value->rValue = model->B4SOIlvth0;
             return(OK);
@@ -1613,8 +1617,8 @@ IFvalue *value)
         case B4SOI_MOD_LFBJTII:
             value->rValue = model->B4SOIlfbjtii;
             return(OK);
-			/*4.1 Iii model*/
-			case B4SOI_MOD_LEBJTII:
+                        /*4.1 Iii model*/
+                        case B4SOI_MOD_LEBJTII:
             value->rValue = model->B4SOIlebjtii;
             return(OK);
         case B4SOI_MOD_LCBJTII:
@@ -1680,8 +1684,8 @@ IFvalue *value)
         case B4SOI_MOD_LFGIDL:
             value->rValue = model->B4SOIlfgidl;
             return(OK);
-			
-		case B4SOI_MOD_LAGISL:
+                        
+                case B4SOI_MOD_LAGISL:
             value->rValue = model->B4SOIlagisl;
             return(OK);
         case B4SOI_MOD_LBGISL:
@@ -1701,11 +1705,11 @@ IFvalue *value)
             return(OK);
         case B4SOI_MOD_LFGISL:
             value->rValue = model->B4SOIlfgisl;
-            return(OK);	
-        case B4SOI_MOD_LNTUNS:	/* v4.0 */
+            return(OK);        
+        case B4SOI_MOD_LNTUNS:        /* v4.0 */
             value->rValue = model->B4SOIlntun;
             return(OK);
-        case B4SOI_MOD_LNTUND:	/* v4.0 */
+        case B4SOI_MOD_LNTUND:        /* v4.0 */
             value->rValue = model->B4SOIlntund;
             return(OK);
         case B4SOI_MOD_LNDIODES: /* v4.0 */
@@ -1714,40 +1718,40 @@ IFvalue *value)
         case B4SOI_MOD_LNDIODED: /* v4.0 */
             value->rValue = model->B4SOIlndioded;
             return(OK);
-        case B4SOI_MOD_LNRECF0S:	/* v4.0 */
+        case B4SOI_MOD_LNRECF0S:        /* v4.0 */
             value->rValue = model->B4SOIlnrecf0;
             return(OK);
-        case B4SOI_MOD_LNRECF0D:	/* v4.0 */
+        case B4SOI_MOD_LNRECF0D:        /* v4.0 */
             value->rValue = model->B4SOIlnrecf0d;
             return(OK);
-        case B4SOI_MOD_LNRECR0S:	/* v4.0 */
+        case B4SOI_MOD_LNRECR0S:        /* v4.0 */
             value->rValue = model->B4SOIlnrecr0;
             return(OK);
-        case B4SOI_MOD_LNRECR0D:	/* v4.0 */
+        case B4SOI_MOD_LNRECR0D:        /* v4.0 */
             value->rValue = model->B4SOIlnrecr0d;
             return(OK);
         case B4SOI_MOD_LISBJT:
             value->rValue = model->B4SOIlisbjt;
             return(OK);
-        case B4SOI_MOD_LIDBJT:	/* v4.0 */
+        case B4SOI_MOD_LIDBJT:        /* v4.0 */
             value->rValue = model->B4SOIlidbjt;
             return(OK);
         case B4SOI_MOD_LISDIF:
             value->rValue = model->B4SOIlisdif;
             return(OK);
-        case B4SOI_MOD_LIDDIF:	/* v4.0 */
+        case B4SOI_MOD_LIDDIF:        /* v4.0 */
             value->rValue = model->B4SOIliddif;
             return(OK);
         case B4SOI_MOD_LISREC:
             value->rValue = model->B4SOIlisrec;
             return(OK);
-        case B4SOI_MOD_LIDREC:	/* v4.0 */
+        case B4SOI_MOD_LIDREC:        /* v4.0 */
             value->rValue = model->B4SOIlidrec;
             return(OK);
         case B4SOI_MOD_LISTUN:
             value->rValue = model->B4SOIlistun;
             return(OK);
-        case B4SOI_MOD_LIDTUN:	/* v4.0 */
+        case B4SOI_MOD_LIDTUN:        /* v4.0 */
             value->rValue = model->B4SOIlidtun;
             return(OK);
         case B4SOI_MOD_LVREC0S:  /* v4.0 */
@@ -1774,13 +1778,13 @@ IFvalue *value)
         case B4SOI_MOD_LAELY:
             value->rValue = model->B4SOIlaely;
             return(OK);
-        case B4SOI_MOD_LAHLIS:	/* v4.0 */ 
+        case B4SOI_MOD_LAHLIS:        /* v4.0 */ 
             value->rValue = model->B4SOIlahli;
             return(OK);
-        case B4SOI_MOD_LAHLID:	/* v4.0 */ 
+        case B4SOI_MOD_LAHLID:        /* v4.0 */ 
             value->rValue = model->B4SOIlahlid;
             return(OK);
-	/* CV Model */
+        /* CV Model */
         case B4SOI_MOD_LVSDFB:
             value->rValue = model->B4SOIlvsdfb;
             return(OK);
@@ -2105,8 +2109,8 @@ IFvalue *value)
         case B4SOI_MOD_WFBJTII:
             value->rValue = model->B4SOIwfbjtii;
             return(OK);
-	/*4.1 Iii model*/
-	 case B4SOI_MOD_WEBJTII:
+        /*4.1 Iii model*/
+         case B4SOI_MOD_WEBJTII:
             value->rValue = model->B4SOIwebjtii;
             return(OK);
         case B4SOI_MOD_WCBJTII:
@@ -2165,47 +2169,47 @@ IFvalue *value)
             return(OK);
         case B4SOI_MOD_WRGIDL:
             value->rValue = model->B4SOIwrgidl;
-            return(OK);	
+            return(OK);        
         case B4SOI_MOD_WKGIDL:
             value->rValue = model->B4SOIwkgidl;
             return(OK);
         case B4SOI_MOD_WFGIDL:
             value->rValue = model->B4SOIwfgidl;
             return(OK);
-		
-		case B4SOI_MOD_WAGISL:
+                
+                case B4SOI_MOD_WAGISL:
             value->rValue = model->B4SOIwagisl;
             return(OK);
-			
+                        
         case B4SOI_MOD_WBGISL:
             value->rValue = model->B4SOIwbgisl;
             return(OK);
-			
+                        
         case B4SOI_MOD_WCGISL:
             value->rValue = model->B4SOIwcgisl;
             return(OK);
-			
+                        
         case B4SOI_MOD_WEGISL:
             value->rValue = model->B4SOIwegisl;
             return(OK);
-			
+                        
         case B4SOI_MOD_WRGISL:
             value->rValue = model->B4SOIwrgisl;
-            return(OK);	
-			
+            return(OK);        
+                        
         case B4SOI_MOD_WKGISL:
             value->rValue = model->B4SOIwkgisl;
             return(OK);
-			
+                        
         case B4SOI_MOD_WFGISL:
             value->rValue = model->B4SOIwfgisl;
             return(OK);
-			
-			
-        case B4SOI_MOD_WNTUNS:	/* v4.0 */
+                        
+                        
+        case B4SOI_MOD_WNTUNS:        /* v4.0 */
             value->rValue = model->B4SOIwntun;
             return(OK);
-        case B4SOI_MOD_WNTUND:	/* v4.0 */
+        case B4SOI_MOD_WNTUND:        /* v4.0 */
             value->rValue = model->B4SOIwntund;
             return(OK);
         case B4SOI_MOD_WNDIODES: /* v4.0 */
@@ -2214,40 +2218,40 @@ IFvalue *value)
         case B4SOI_MOD_WNDIODED: /* v4.0 */
             value->rValue = model->B4SOIwndioded;
             return(OK);
-        case B4SOI_MOD_WNRECF0S:	/* v4.0 */
+        case B4SOI_MOD_WNRECF0S:        /* v4.0 */
             value->rValue = model->B4SOIwnrecf0;
             return(OK);
-        case B4SOI_MOD_WNRECF0D:	/* v4.0 */
+        case B4SOI_MOD_WNRECF0D:        /* v4.0 */
             value->rValue = model->B4SOIwnrecf0d;
             return(OK);
-        case B4SOI_MOD_WNRECR0S:	/* v4.0 */
+        case B4SOI_MOD_WNRECR0S:        /* v4.0 */
             value->rValue = model->B4SOIwnrecr0;
             return(OK);
-        case B4SOI_MOD_WNRECR0D:	/* v4.0 */
+        case B4SOI_MOD_WNRECR0D:        /* v4.0 */
             value->rValue = model->B4SOIwnrecr0d;
             return(OK);
         case B4SOI_MOD_WISBJT:
             value->rValue = model->B4SOIwisbjt;
             return(OK);
-        case B4SOI_MOD_WIDBJT:	/* v4.0 */
+        case B4SOI_MOD_WIDBJT:        /* v4.0 */
             value->rValue = model->B4SOIwidbjt;
             return(OK);
         case B4SOI_MOD_WISDIF:
             value->rValue = model->B4SOIwisdif;
             return(OK);
-        case B4SOI_MOD_WIDDIF:	/* v4.0 */
+        case B4SOI_MOD_WIDDIF:        /* v4.0 */
             value->rValue = model->B4SOIwiddif;
             return(OK);
         case B4SOI_MOD_WISREC:
             value->rValue = model->B4SOIwisrec;
             return(OK);
-        case B4SOI_MOD_WIDREC:	/* v4.0 */
+        case B4SOI_MOD_WIDREC:        /* v4.0 */
             value->rValue = model->B4SOIwidrec;
             return(OK);
         case B4SOI_MOD_WISTUN:
             value->rValue = model->B4SOIwistun;
             return(OK);
-        case B4SOI_MOD_WIDTUN:	/* v4.0 */
+        case B4SOI_MOD_WIDTUN:        /* v4.0 */
             value->rValue = model->B4SOIwidtun;
             return(OK);
         case B4SOI_MOD_WVREC0S:  /* v4.0 */
@@ -2274,13 +2278,13 @@ IFvalue *value)
         case B4SOI_MOD_WAELY:
             value->rValue = model->B4SOIwaely;
             return(OK);
-        case B4SOI_MOD_WAHLIS:	/* v4.0 */ 
+        case B4SOI_MOD_WAHLIS:        /* v4.0 */ 
             value->rValue = model->B4SOIwahli;
             return(OK);
-        case B4SOI_MOD_WAHLID:	/* v4.0 */ 
+        case B4SOI_MOD_WAHLID:        /* v4.0 */ 
             value->rValue = model->B4SOIwahlid;
             return(OK);
-	/* CV Model */
+        /* CV Model */
         case B4SOI_MOD_WVSDFB:
             value->rValue = model->B4SOIwvsdfb;
             return(OK);
@@ -2606,8 +2610,8 @@ IFvalue *value)
         case B4SOI_MOD_PFBJTII:
             value->rValue = model->B4SOIpfbjtii;
             return(OK);
-	/*4.1 Iii model*/
-	    case B4SOI_MOD_PEBJTII:
+        /*4.1 Iii model*/
+            case B4SOI_MOD_PEBJTII:
             value->rValue = model->B4SOIpebjtii;
             return(OK);
         case B4SOI_MOD_PCBJTII:
@@ -2622,7 +2626,7 @@ IFvalue *value)
         case B4SOI_MOD_PMBJTII:
             value->rValue = model->B4SOIpmbjtii;
             return(OK);
-			
+                        
         case B4SOI_MOD_PBETA0:
             value->rValue = model->B4SOIpbeta0;
             return(OK);
@@ -2674,8 +2678,8 @@ IFvalue *value)
         case B4SOI_MOD_PFGIDL:
             value->rValue = model->B4SOIpfgidl;
             return(OK);
-			
-		case B4SOI_MOD_PAGISL:
+                        
+                case B4SOI_MOD_PAGISL:
             value->rValue = model->B4SOIpagisl;
             return(OK);
         case B4SOI_MOD_PBGISL:
@@ -2695,42 +2699,42 @@ IFvalue *value)
             return(OK);
         case B4SOI_MOD_PFGISL:
             value->rValue = model->B4SOIpfgisl;
-            return(OK);	
-			
-        case B4SOI_MOD_PNTUNS:		/* v4.0 */
+            return(OK);        
+                        
+        case B4SOI_MOD_PNTUNS:                /* v4.0 */
             value->rValue = model->B4SOIpntun;
             return(OK);
-        case B4SOI_MOD_PNTUND:		/* v4.0 */
+        case B4SOI_MOD_PNTUND:                /* v4.0 */
             value->rValue = model->B4SOIpntund;
             return(OK);
-        case B4SOI_MOD_PNDIODES:	/* v4.0 */
+        case B4SOI_MOD_PNDIODES:        /* v4.0 */
             value->rValue = model->B4SOIpndiode;
             return(OK);
-        case B4SOI_MOD_PNDIODED:	/* v4.0 */
+        case B4SOI_MOD_PNDIODED:        /* v4.0 */
             value->rValue = model->B4SOIpndioded;
             return(OK);
-        case B4SOI_MOD_PNRECF0S:	/* v4.0 */
+        case B4SOI_MOD_PNRECF0S:        /* v4.0 */
             value->rValue = model->B4SOIpnrecf0;
             return(OK);
-        case B4SOI_MOD_PNRECF0D:	/* v4.0 */
+        case B4SOI_MOD_PNRECF0D:        /* v4.0 */
             value->rValue = model->B4SOIpnrecf0d;
             return(OK);
-        case B4SOI_MOD_PNRECR0S:	/* v4.0 */
+        case B4SOI_MOD_PNRECR0S:        /* v4.0 */
             value->rValue = model->B4SOIpnrecr0;
             return(OK);
-        case B4SOI_MOD_PNRECR0D:	/* v4.0 */
+        case B4SOI_MOD_PNRECR0D:        /* v4.0 */
             value->rValue = model->B4SOIpnrecr0d;
             return(OK);
         case B4SOI_MOD_PISBJT:
             value->rValue = model->B4SOIpisbjt;
             return(OK);
-        case B4SOI_MOD_PIDBJT:	/* v4.0 */
+        case B4SOI_MOD_PIDBJT:        /* v4.0 */
             value->rValue = model->B4SOIpidbjt;
             return(OK);
         case B4SOI_MOD_PISDIF:
             value->rValue = model->B4SOIpisdif;
             return(OK);
-        case B4SOI_MOD_PIDDIF:	/* v4.0 */
+        case B4SOI_MOD_PIDDIF:        /* v4.0 */
             value->rValue = model->B4SOIpiddif;
             return(OK);
         case B4SOI_MOD_PISREC:
@@ -2742,7 +2746,7 @@ IFvalue *value)
         case B4SOI_MOD_PISTUN:
             value->rValue = model->B4SOIpistun;
             return(OK);
-        case B4SOI_MOD_PIDTUN:	/* v4.0 */ 
+        case B4SOI_MOD_PIDTUN:        /* v4.0 */ 
             value->rValue = model->B4SOIpidtun;
             return(OK);
         case B4SOI_MOD_PVREC0S:  /* v4.0 */
@@ -2769,13 +2773,13 @@ IFvalue *value)
         case B4SOI_MOD_PAELY:
             value->rValue = model->B4SOIpaely;
             return(OK);
-        case B4SOI_MOD_PAHLIS:	/* v4.0 */
+        case B4SOI_MOD_PAHLIS:        /* v4.0 */
             value->rValue = model->B4SOIpahli;
             return(OK);
-        case B4SOI_MOD_PAHLID:	/* v4.0 */
+        case B4SOI_MOD_PAHLID:        /* v4.0 */
             value->rValue = model->B4SOIpahlid;
             return(OK);
-	/* CV Model */
+        /* CV Model */
         case B4SOI_MOD_PVSDFB:
             value->rValue = model->B4SOIpvsdfb;
             return(OK);

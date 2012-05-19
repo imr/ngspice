@@ -1,4 +1,5 @@
-/***  B4SOI 04/27/2010 Released by Tanvir Morshed    ***/
+/***  B4SOI 12/16/2010 Released by Tanvir Morshed    ***/
+
 
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
@@ -6,11 +7,13 @@
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soimpar.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
  * Authors: 2009- Wenwei Yang, Chung-Hsun Lin, Ali Niknejad, Chenming Hu.
+ * Authors: 2010- Tanvir Morshed, Ali Niknejad, Chenming Hu.
  * File: b4soimpar.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  * Modified by Tanvir Morshed 09/22/2009
  * Modified by Tanvir Morshed 12/31/2009
+ * Modified by Tanvir Morshed 12/16/2010
  **********/
 
 #include "ngspice/ngspice.h"
@@ -30,8 +33,7 @@ GENmodel *inMod)
     B4SOImodel *mod = (B4SOImodel*)inMod;
     switch(param)
     {  
- 
-	case  B4SOI_MOD_MOBMOD :
+        case  B4SOI_MOD_MOBMOD :
             mod->B4SOImobMod = value->iValue;
             mod->B4SOImobModGiven = TRUE;
             break;
@@ -61,19 +63,19 @@ GENmodel *inMod)
             mod->B4SOIversion = value->rValue;
             mod->B4SOIversionGiven = TRUE;
             break;
-		case  B4SOI_MOD_MTRLMOD :
+                case  B4SOI_MOD_MTRLMOD :
             mod->B4SOImtrlMod = value->iValue;
             mod->B4SOImtrlModGiven = TRUE;
             break;
-		case  B4SOI_MOD_VGSTCVMOD :
+                case  B4SOI_MOD_VGSTCVMOD :
             mod->B4SOIvgstcvMod = value->iValue;
             mod->B4SOIvgstcvModGiven = TRUE;
-            break;	
-		case  B4SOI_MOD_GIDLMOD :
+            break;        
+                case  B4SOI_MOD_GIDLMOD :
             mod->B4SOIgidlMod = value->iValue;
             mod->B4SOIgidlModGiven = TRUE;
             break;
-		case  B4SOI_MOD_IIIMOD :
+                case  B4SOI_MOD_IIIMOD :
             mod->B4SOIiiiMod = value->iValue;
             mod->B4SOIiiiModGiven = TRUE;
             break;
@@ -110,48 +112,48 @@ GENmodel *inMod)
             mod->B4SOIbdosGiven = TRUE;
             break;
         case B4SOI_MOD_EPSRGATE:
-	    mod->B4SOIepsrgate = value->rValue;
-	    mod->B4SOIepsrgateGiven = TRUE;
-	        break;
+            mod->B4SOIepsrgate = value->rValue;
+            mod->B4SOIepsrgateGiven = TRUE;
+                break;
         case B4SOI_MOD_PHIG:
-	    mod->B4SOIphig = value->rValue;
-	    mod->B4SOIphigGiven = TRUE;
-	        break;
+            mod->B4SOIphig = value->rValue;
+            mod->B4SOIphigGiven = TRUE;
+                break;
         case B4SOI_MOD_EASUB:
             mod->B4SOIeasub = value->rValue;
             mod->B4SOIeasubGiven = TRUE;
-            break;		
-		
+            break;                
+                
         case  B4SOI_MOD_TOXM :
             mod->B4SOItoxm = value->rValue;
             mod->B4SOItoxmGiven = TRUE;
             break; /* v3.2 */
-		/*4.1	*/
-	    case  B4SOI_MOD_EOT :
+                /*4.1        */
+        case  B4SOI_MOD_EOT :
             mod->B4SOIeot = value->rValue;
             mod->B4SOIeotGiven = TRUE;
             break;
-		case  B4SOI_MOD_EPSROX :
+        case  B4SOI_MOD_EPSROX :
             mod->B4SOIepsrox = value->rValue;
             mod->B4SOIepsroxGiven = TRUE;
             break;
-		case B4SOI_MOD_EPSRSUB:
+        case B4SOI_MOD_EPSRSUB:
             mod->B4SOIepsrsub = value->rValue;
             mod->B4SOIepsrsubGiven = TRUE;
             break;
-		case B4SOI_MOD_NI0SUB:
+        case B4SOI_MOD_NI0SUB:
             mod->B4SOIni0sub = value->rValue;
             mod->B4SOIni0subGiven = TRUE;
             break;
-		case B4SOI_MOD_BG0SUB:
+        case B4SOI_MOD_BG0SUB:
             mod->B4SOIbg0sub = value->rValue;
             mod->B4SOIbg0subGiven = TRUE;
             break;
-		case B4SOI_MOD_TBGASUB:
+        case B4SOI_MOD_TBGASUB:
             mod->B4SOItbgasub = value->rValue;
             mod->B4SOItbgasubGiven = TRUE;
             break;
-		case B4SOI_MOD_TBGBSUB:
+        case B4SOI_MOD_TBGBSUB:
             mod->B4SOItbgbsub = value->rValue;
             mod->B4SOItbgbsubGiven = TRUE;
             break;
@@ -220,21 +222,21 @@ GENmodel *inMod)
         case B4SOI_MOD_NPEAK:
             mod->B4SOInpeak = value->rValue;
             mod->B4SOInpeakGiven = TRUE;
-	/* Bug # 22 Jul09 Proper limiting conditions are specified in the B4SOIcheck.c file*/
-	    /* if (mod->B4SOInpeak > 1.0e20)					
-		mod->B4SOInpeak *= 1.0e-6; */
+        /* Bug # 22 Jul09 Proper limiting conditions are specified in the B4SOIcheck.c file*/
+            /* if (mod->B4SOInpeak > 1.0e20)                                        
+                mod->B4SOInpeak *= 1.0e-6; */
             break;
         case B4SOI_MOD_NSD:
             mod->B4SOInsd = value->rValue;
             mod->B4SOInsdGiven = TRUE;
            /* if (mod->B4SOInsd > 1.0e23)
-                mod->B4SOInsd *= 1.0e-6;  */					/* Bug # 22 Jul09 Proper limiting conditions are specified in the B4SOIcheck.c file*/
+                mod->B4SOInsd *= 1.0e-6;  */                                        /* Bug # 22 Jul09 Proper limiting conditions are specified in the B4SOIcheck.c file*/
             break;
         case B4SOI_MOD_NGATE:
             mod->B4SOIngate = value->rValue;
             mod->B4SOIngateGiven = TRUE;
-	    /* if (mod->B4SOIngate > 1.0e23)
-		mod->B4SOIngate *= 1.0e-6; 			*/					/* Bug # 22 Jul09 Proper limiting conditions are specified in the B4SOIcheck.c file*/
+            /* if (mod->B4SOIngate > 1.0e23)
+                mod->B4SOIngate *= 1.0e-6;                         */                                        /* Bug # 22 Jul09 Proper limiting conditions are specified in the B4SOIcheck.c file*/
             break;
         case B4SOI_MOD_GAMMA1:
             mod->B4SOIgamma1 = value->rValue;
@@ -288,7 +290,7 @@ GENmodel *inMod)
             mod->B4SOIlpe0 = value->rValue;
             mod->B4SOIlpe0Given = TRUE;
             break;
-        case  B4SOI_MOD_LPEB:	/* v4.0 for Vth */
+        case  B4SOI_MOD_LPEB:        /* v4.0 for Vth */
             mod->B4SOIlpeb = value->rValue;
             mod->B4SOIlpebGiven = TRUE;
             break;
@@ -373,82 +375,82 @@ case B4SOI_MOD_UD:
             mod->B4SOIud = value->rValue;
             mod->B4SOIudGiven = TRUE;
             break;
-		case B4SOI_MOD_LUD:
+        case B4SOI_MOD_LUD:
             mod->B4SOIlud = value->rValue;
             mod->B4SOIludGiven = TRUE;
             break;
-		case B4SOI_MOD_WUD:
+        case B4SOI_MOD_WUD:
             mod->B4SOIwud = value->rValue;
             mod->B4SOIwudGiven = TRUE;
             break;
-		case B4SOI_MOD_PUD:
+        case B4SOI_MOD_PUD:
             mod->B4SOIpud = value->rValue;
             mod->B4SOIpudGiven = TRUE;
             break;
-		case B4SOI_MOD_UD1:
+        case B4SOI_MOD_UD1:
             mod->B4SOIud1 = value->rValue;
             mod->B4SOIud1Given = TRUE;
             break;
-		case B4SOI_MOD_LUD1:
+        case B4SOI_MOD_LUD1:
             mod->B4SOIlud1 = value->rValue;
             mod->B4SOIlud1Given = TRUE;
             break;
-		case B4SOI_MOD_WUD1:
+        case B4SOI_MOD_WUD1:
             mod->B4SOIwud1 = value->rValue;
             mod->B4SOIwud1Given = TRUE;
             break;
-		case B4SOI_MOD_PUD1:
+        case B4SOI_MOD_PUD1:
             mod->B4SOIpud1 = value->rValue;
             mod->B4SOIpud1Given = TRUE;
             break;
-		case B4SOI_MOD_EU:
+        case B4SOI_MOD_EU:
             mod->B4SOIeu = value->rValue;
             mod->B4SOIeuGiven = TRUE;
             break;
-		case B4SOI_MOD_LEU:
+        case B4SOI_MOD_LEU:
             mod->B4SOIleu = value->rValue;
             mod->B4SOIleuGiven = TRUE;
             break;
-		case B4SOI_MOD_WEU:
+        case B4SOI_MOD_WEU:
             mod->B4SOIweu = value->rValue;
             mod->B4SOIweuGiven = TRUE;
             break;
-		case B4SOI_MOD_PEU:
+        case B4SOI_MOD_PEU:
             mod->B4SOIpeu = value->rValue;
             mod->B4SOIpeuGiven = TRUE;
             break;
-		case B4SOI_MOD_UCS:
+        case B4SOI_MOD_UCS:
             mod->B4SOIucs = value->rValue;
             mod->B4SOIucsGiven = TRUE;
-			break;
-		case B4SOI_MOD_LUCS:
+                        break;
+        case B4SOI_MOD_LUCS:
             mod->B4SOIlucs = value->rValue;
             mod->B4SOIlucsGiven = TRUE;
-			break;
-		case B4SOI_MOD_WUCS:
+                        break;
+        case B4SOI_MOD_WUCS:
             mod->B4SOIwucs = value->rValue;
             mod->B4SOIwucsGiven = TRUE;
-			break;
-		case B4SOI_MOD_PUCS:
+                        break;
+        case B4SOI_MOD_PUCS:
             mod->B4SOIpucs = value->rValue;
             mod->B4SOIpucsGiven = TRUE;
-			break; /* Bug fix # 31 Jul09 */	
-		case B4SOI_MOD_UCSTE:
+                        break; /* Bug fix # 31 Jul09 */        
+        case B4SOI_MOD_UCSTE:
             mod->B4SOIucste = value->rValue;
             mod->B4SOIucsteGiven = TRUE;
-			break;
-	    case B4SOI_MOD_LUCSTE:
+                        break;
+        case B4SOI_MOD_LUCSTE:
             mod->B4SOIlucste = value->rValue;
             mod->B4SOIlucsteGiven = TRUE;
-			break;
-	    case B4SOI_MOD_WUCSTE:
+                        break;
+        case B4SOI_MOD_WUCSTE:
             mod->B4SOIwucste = value->rValue;
             mod->B4SOIwucsteGiven = TRUE;
-			break;
-	    case B4SOI_MOD_PUCSTE:
+                        break;
+        case B4SOI_MOD_PUCSTE:
             mod->B4SOIpucste = value->rValue;
             mod->B4SOIpucsteGiven = TRUE;
-			break;
+                        break;
         case B4SOI_MOD_VOFF:
             mod->B4SOIvoff = value->rValue;
             mod->B4SOIvoffGiven = TRUE;
@@ -582,7 +584,7 @@ case B4SOI_MOD_UD:
             mod->B4SOItsi = value->rValue;
             mod->B4SOItsiGiven = TRUE;
             break;
-		case  B4SOI_MOD_ETSI :
+                case  B4SOI_MOD_ETSI :
             mod->B4SOIetsi = value->rValue;
             mod->B4SOIetsiGiven = TRUE;
             break;
@@ -605,6 +607,10 @@ case B4SOI_MOD_UD:
         case  B4SOI_MOD_CTH0 :
             mod->B4SOIcth0 = value->rValue;
             mod->B4SOIcth0Given = TRUE;
+            break;
+        case  B4SOI_MOD_CFRCOEFF :        /* v4.4 */
+            mod->B4SOIcfrcoeff = value->rValue;
+            mod->B4SOIcfrcoeffGiven = TRUE;
             break;
         case  B4SOI_MOD_EGIDL :
             mod->B4SOIegidl = value->rValue;
@@ -634,8 +640,8 @@ case B4SOI_MOD_UD:
             mod->B4SOIfgidl = value->rValue;
             mod->B4SOIfgidlGiven = TRUE;
             break;
-			
-			case  B4SOI_MOD_EGISL :
+                        
+                        case  B4SOI_MOD_EGISL :
             mod->B4SOIegisl = value->rValue;
             mod->B4SOIegislGiven = TRUE;
             break;
@@ -666,7 +672,7 @@ case B4SOI_MOD_UD:
         case  B4SOI_MOD_FDMOD :
            /* mod->B4SOIfdMod = value->rValue;  v4.2 */
             mod->B4SOIfdMod = value->iValue;
-			mod->B4SOIfdModGiven = TRUE;
+                        mod->B4SOIfdModGiven = TRUE;
             break; 
         case  B4SOI_MOD_VSCE :
             mod->B4SOIvsce = value->rValue;
@@ -675,7 +681,7 @@ case B4SOI_MOD_UD:
         case  B4SOI_MOD_CDSBS :
             mod->B4SOIcdsbs = value->rValue;
             mod->B4SOIcdsbsGiven = TRUE;
-            break; 	
+            break;         
         case B4SOI_MOD_MINVCV:
             mod->B4SOIminvcv = value->rValue;
             mod->B4SOIminvcvGiven = TRUE;
@@ -708,7 +714,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIpvoffcv = value->rValue; 
             mod->B4SOIpvoffcvGiven = TRUE; 
             break;
-			
+                        
         case  B4SOI_MOD_NDIODES : /* v4.0 */
             mod->B4SOIndiode = value->rValue;
             mod->B4SOIndiodeGiven = TRUE;
@@ -794,27 +800,27 @@ case B4SOI_MOD_UD:
             mod->B4SOIsheetResistance = value->rValue;
             mod->B4SOIsheetResistanceGiven = TRUE;
             break;
-        case  B4SOI_MOD_PBSWGS :	/* v4.0 */
+        case  B4SOI_MOD_PBSWGS :        /* v4.0 */
             mod->B4SOIGatesidewallJctSPotential = value->rValue;
             mod->B4SOIGatesidewallJctSPotentialGiven = TRUE;
             break;
-        case  B4SOI_MOD_PBSWGD :	/* v4.0 */
+        case  B4SOI_MOD_PBSWGD :        /* v4.0 */
             mod->B4SOIGatesidewallJctDPotential = value->rValue;
             mod->B4SOIGatesidewallJctDPotentialGiven = TRUE;
             break;
-        case  B4SOI_MOD_MJSWGS :	/* v4.0 */
+        case  B4SOI_MOD_MJSWGS :        /* v4.0 */
             mod->B4SOIbodyJctGateSideSGradingCoeff = value->rValue;
             mod->B4SOIbodyJctGateSideSGradingCoeffGiven = TRUE;
             break;
-        case  B4SOI_MOD_MJSWGD :	/* v4.0 */
+        case  B4SOI_MOD_MJSWGD :        /* v4.0 */
             mod->B4SOIbodyJctGateSideDGradingCoeff = value->rValue;
             mod->B4SOIbodyJctGateSideDGradingCoeffGiven = TRUE;
             break;
-        case  B4SOI_MOD_CJSWGS :	/* v4.0 */
+        case  B4SOI_MOD_CJSWGS :        /* v4.0 */
             mod->B4SOIunitLengthGateSidewallJctCapS = value->rValue;
             mod->B4SOIunitLengthGateSidewallJctCapSGiven = TRUE;
             break;
-        case  B4SOI_MOD_CJSWGD :	/* v4.0 */
+        case  B4SOI_MOD_CJSWGD :        /* v4.0 */
             mod->B4SOIunitLengthGateSidewallJctCapD = value->rValue;
             mod->B4SOIunitLengthGateSidewallJctCapDGiven = TRUE;
             break;
@@ -1139,7 +1145,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIxrcrg2 = value->rValue;
             mod->B4SOIxrcrg2Given = TRUE;
             break;
-	case B4SOI_MOD_RSHG :
+        case B4SOI_MOD_RSHG :
             mod->B4SOIrshg = value->rValue;
             mod->B4SOIrshgGiven = TRUE;
             break;
@@ -1173,8 +1179,8 @@ case B4SOI_MOD_UD:
         case  B4SOI_MOD_RBDB :
             mod->B4SOIrbdb = value->rValue;
             mod->B4SOIrbdbGiven = TRUE;
-            break; /* Bug fix # 31 Jul 09 */		 
-	 case  B4SOI_MOD_RBSB :
+            break; /* Bug fix # 31 Jul 09 */                 
+         case  B4SOI_MOD_RBSB :
             mod->B4SOIrbsb = value->rValue;
             mod->B4SOIrbsbGiven = TRUE;
             break;
@@ -1333,7 +1339,7 @@ case B4SOI_MOD_UD:
 
         /* v4.0 */
 
-	/* v4.0 stress effect */
+        /* v4.0 stress effect */
         case  B4SOI_MOD_SAREF :
             mod->B4SOIsaref = value->rValue;
             mod->B4SOIsarefGiven = TRUE;
@@ -1409,8 +1415,8 @@ case B4SOI_MOD_UD:
         case  B4SOI_MOD_LODK2 :
             mod->B4SOIlodk2 = value->rValue;
             mod->B4SOIlodk2Given = TRUE;
-       		break; /* Bug fix # 31 Jul 09*/ 
-	case  B4SOI_MOD_STETA0 :
+                       break; /* Bug fix # 31 Jul 09*/ 
+        case  B4SOI_MOD_STETA0 :
             mod->B4SOIsteta0 = value->rValue;
             mod->B4SOIsteta0Given = TRUE;
             break;
@@ -1419,17 +1425,17 @@ case B4SOI_MOD_UD:
             mod->B4SOIlodeta0Given = TRUE;
             break;
 
-	/* v4.0 stress effect end */
+        /* v4.0 stress effect end */
 
-	/* v3.2 */
-	case B4SOI_MOD_FNOIMOD :
-	    mod->B4SOIfnoiMod = value->iValue;
-	    mod->B4SOIfnoiModGiven = TRUE;
-	    break;
-	case B4SOI_MOD_TNOIMOD :
-	    mod->B4SOItnoiMod = value->iValue;
-	    mod->B4SOItnoiModGiven = TRUE;
-	    break;
+        /* v3.2 */
+        case B4SOI_MOD_FNOIMOD :
+            mod->B4SOIfnoiMod = value->iValue;
+            mod->B4SOIfnoiModGiven = TRUE;
+            break;
+        case B4SOI_MOD_TNOIMOD :
+            mod->B4SOItnoiMod = value->iValue;
+            mod->B4SOItnoiModGiven = TRUE;
+            break;
         case  B4SOI_MOD_TNOIA :
             mod->B4SOItnoia = value->rValue;
             mod->B4SOItnoiaGiven = TRUE;
@@ -1451,7 +1457,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIntnoiGiven = TRUE;
             break;
 
-	/* v3.2 end */
+        /* v3.2 end */
 
 /* v2.0 release */
         case  B4SOI_MOD_K1W1 :         
@@ -1490,7 +1496,7 @@ case B4SOI_MOD_UD:
             mod->B4SOItii = value->rValue;
             mod->B4SOItiiGiven = TRUE;
             break;
-		 case  B4SOI_MOD_TVBCI :
+        case  B4SOI_MOD_TVBCI :
             mod->B4SOItvbci = value->rValue;
             mod->B4SOItvbciGiven = TRUE;
             break;
@@ -1518,8 +1524,8 @@ case B4SOI_MOD_UD:
             mod->B4SOIfbjtii = value->rValue;
             mod->B4SOIfbjtiiGiven = TRUE;
             break;
-	/*4.1 Iii model*/
-	   case  B4SOI_MOD_EBJTII :
+        /*4.1 Iii model*/
+           case  B4SOI_MOD_EBJTII :
             mod->B4SOIebjtii = value->rValue;
             mod->B4SOIebjtiiGiven = TRUE;
             break;
@@ -1543,27 +1549,27 @@ case B4SOI_MOD_UD:
             mod->B4SOIesatii = value->rValue;
             mod->B4SOIesatiiGiven = TRUE;
             break;
-        case  B4SOI_MOD_NTUNS :		/* v4.0 */
+        case  B4SOI_MOD_NTUNS :                /* v4.0 */
             mod->B4SOIntun = value->rValue;
             mod->B4SOIntunGiven = TRUE;
             break;
-        case  B4SOI_MOD_NTUND :		/* v4.0 */
+        case  B4SOI_MOD_NTUND :                /* v4.0 */
             mod->B4SOIntund = value->rValue;
             mod->B4SOIntundGiven = TRUE;
             break;
-        case  B4SOI_MOD_NRECF0S :	/* v4.0 */
+        case  B4SOI_MOD_NRECF0S :        /* v4.0 */
             mod->B4SOInrecf0 = value->rValue;
             mod->B4SOInrecf0Given = TRUE;
             break;
-        case  B4SOI_MOD_NRECF0D :	/* v4.0 */
+        case  B4SOI_MOD_NRECF0D :        /* v4.0 */
             mod->B4SOInrecf0d = value->rValue;
             mod->B4SOInrecf0dGiven = TRUE;
             break;
-        case  B4SOI_MOD_NRECR0S :	/* v4.0 */
+        case  B4SOI_MOD_NRECR0S :        /* v4.0 */
             mod->B4SOInrecr0 = value->rValue;
             mod->B4SOInrecr0Given = TRUE;
             break;
-        case  B4SOI_MOD_NRECR0D :	/* v4.0 */
+        case  B4SOI_MOD_NRECR0D :        /* v4.0 */
             mod->B4SOInrecr0d = value->rValue;
             mod->B4SOInrecr0dGiven = TRUE;
             break;
@@ -1571,7 +1577,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIisbjt = value->rValue;
             mod->B4SOIisbjtGiven = TRUE;
             break;
-        case  B4SOI_MOD_IDBJT :	/* v4.0 */
+        case  B4SOI_MOD_IDBJT :        /* v4.0 */
             mod->B4SOIidbjt = value->rValue;
             mod->B4SOIidbjtGiven = TRUE;
             break;
@@ -1579,7 +1585,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIisdif = value->rValue;
             mod->B4SOIisdifGiven = TRUE;
             break;
-        case  B4SOI_MOD_IDDIF :		/* v4.0 */
+        case  B4SOI_MOD_IDDIF :                /* v4.0 */
             mod->B4SOIiddif = value->rValue;
             mod->B4SOIiddifGiven = TRUE;
             break;
@@ -1587,7 +1593,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIisrec = value->rValue;
             mod->B4SOIisrecGiven = TRUE;
             break;
-        case  B4SOI_MOD_IDREC :		/* v4.0 */
+        case  B4SOI_MOD_IDREC :                /* v4.0 */
             mod->B4SOIidrec = value->rValue;
             mod->B4SOIidrecGiven = TRUE;
             break;
@@ -1595,7 +1601,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIistun = value->rValue;
             mod->B4SOIistunGiven = TRUE;
             break;
-        case  B4SOI_MOD_IDTUN :		/* v4.0 */
+        case  B4SOI_MOD_IDTUN :                /* v4.0 */
             mod->B4SOIidtun = value->rValue;
             mod->B4SOIidtunGiven = TRUE;
             break;
@@ -1603,19 +1609,19 @@ case B4SOI_MOD_UD:
             mod->B4SOIln = value->rValue;
             mod->B4SOIlnGiven = TRUE;
             break;
-        case  B4SOI_MOD_VREC0S :	/* v4.0 */
+        case  B4SOI_MOD_VREC0S :        /* v4.0 */
             mod->B4SOIvrec0 = value->rValue;
             mod->B4SOIvrec0Given = TRUE;
             break;
-        case  B4SOI_MOD_VREC0D :	/* v4.0 */
+        case  B4SOI_MOD_VREC0D :        /* v4.0 */
             mod->B4SOIvrec0d = value->rValue;
             mod->B4SOIvrec0dGiven = TRUE;
             break;
-        case  B4SOI_MOD_VTUN0S :	/* v4.0 */
+        case  B4SOI_MOD_VTUN0S :        /* v4.0 */
             mod->B4SOIvtun0 = value->rValue;
             mod->B4SOIvtun0Given = TRUE;
             break;
-        case  B4SOI_MOD_VTUN0D :	/* v4.0 */
+        case  B4SOI_MOD_VTUN0D :        /* v4.0 */
             mod->B4SOIvtun0d = value->rValue;
             mod->B4SOIvtun0dGiven = TRUE;
             break;
@@ -1639,11 +1645,11 @@ case B4SOI_MOD_UD:
             mod->B4SOIaely = value->rValue;
             mod->B4SOIaelyGiven = TRUE;
             break;
-        case  B4SOI_MOD_AHLIS :	/* v4.0 */
+        case  B4SOI_MOD_AHLIS :        /* v4.0 */
             mod->B4SOIahli = value->rValue;
             mod->B4SOIahliGiven = TRUE;
             break;
-        case  B4SOI_MOD_AHLID :	/* v4.0 */
+        case  B4SOI_MOD_AHLID :        /* v4.0 */
             mod->B4SOIahlid = value->rValue;
             mod->B4SOIahlidGiven = TRUE;
             break;
@@ -1933,7 +1939,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIllpe0 = value->rValue;
             mod->B4SOIllpe0Given = TRUE;
             break;
-        case  B4SOI_MOD_LLPEB:	/* v4.0 for Vth */
+        case  B4SOI_MOD_LLPEB:        /* v4.0 for Vth */
             mod->B4SOIllpeb = value->rValue;
             mod->B4SOIllpebGiven = TRUE;
             break;
@@ -2117,8 +2123,8 @@ case B4SOI_MOD_UD:
             mod->B4SOIlfbjtii = value->rValue;
             mod->B4SOIlfbjtiiGiven = TRUE;
             break;
-	/*4.1 Iii model*/
-	 case  B4SOI_MOD_LEBJTII :
+        /*4.1 Iii model*/
+        case  B4SOI_MOD_LEBJTII :
             mod->B4SOIlebjtii = value->rValue;
             mod->B4SOIlebjtiiGiven = TRUE;
             break;
@@ -2138,7 +2144,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIlmbjtii = value->rValue;
             mod->B4SOIlmbjtiiGiven = TRUE;
             break;
-			
+                        
         case  B4SOI_MOD_LBETA0 :
             mod->B4SOIlbeta0 = value->rValue;
             mod->B4SOIlbeta0Given = TRUE;
@@ -2207,8 +2213,8 @@ case B4SOI_MOD_UD:
             mod->B4SOIlfgidl = value->rValue;
             mod->B4SOIlfgidlGiven = TRUE;
             break;
-			
-			case  B4SOI_MOD_LAGISL :
+                        
+                        case  B4SOI_MOD_LAGISL :
             mod->B4SOIlagisl = value->rValue;
             mod->B4SOIlagislGiven = TRUE;
             break;
@@ -2236,35 +2242,35 @@ case B4SOI_MOD_UD:
             mod->B4SOIlfgisl = value->rValue;
             mod->B4SOIlfgislGiven = TRUE;
             break;
-        case  B4SOI_MOD_LNTUNS :	/* v4.0 */
+        case  B4SOI_MOD_LNTUNS :        /* v4.0 */
             mod->B4SOIlntun = value->rValue;
             mod->B4SOIlntunGiven = TRUE;
             break;
-        case  B4SOI_MOD_LNTUND :	/* v4.0 */
+        case  B4SOI_MOD_LNTUND :        /* v4.0 */
             mod->B4SOIlntund = value->rValue;
             mod->B4SOIlntundGiven = TRUE;
             break;
-        case  B4SOI_MOD_LNDIODES :	/* v4.0 */
+        case  B4SOI_MOD_LNDIODES :        /* v4.0 */
             mod->B4SOIlndiode = value->rValue;
             mod->B4SOIlndiodeGiven = TRUE;
             break;
-        case  B4SOI_MOD_LNDIODED :	/* v4.0 */
+        case  B4SOI_MOD_LNDIODED :        /* v4.0 */
             mod->B4SOIlndioded = value->rValue;
             mod->B4SOIlndiodedGiven = TRUE;
             break;
-        case  B4SOI_MOD_LNRECF0S :	/* v4.0 */
+        case  B4SOI_MOD_LNRECF0S :        /* v4.0 */
             mod->B4SOIlnrecf0 = value->rValue;
             mod->B4SOIlnrecf0Given = TRUE;
             break;
-        case  B4SOI_MOD_LNRECF0D :	/* v4.0 */
+        case  B4SOI_MOD_LNRECF0D :        /* v4.0 */
             mod->B4SOIlnrecf0d = value->rValue;
             mod->B4SOIlnrecf0dGiven = TRUE;
             break;
-        case  B4SOI_MOD_LNRECR0S :	/* v4.0 */
+        case  B4SOI_MOD_LNRECR0S :        /* v4.0 */
             mod->B4SOIlnrecr0 = value->rValue;
             mod->B4SOIlnrecr0Given = TRUE;
             break;
-        case  B4SOI_MOD_LNRECR0D :	/* v4.0 */
+        case  B4SOI_MOD_LNRECR0D :        /* v4.0 */
             mod->B4SOIlnrecr0d = value->rValue;
             mod->B4SOIlnrecr0dGiven = TRUE;
             break;
@@ -2272,7 +2278,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIlisbjt = value->rValue;
             mod->B4SOIlisbjtGiven = TRUE;
             break;
-        case  B4SOI_MOD_LIDBJT :	/* v4.0 */
+        case  B4SOI_MOD_LIDBJT :        /* v4.0 */
             mod->B4SOIlidbjt = value->rValue;
             mod->B4SOIlidbjtGiven = TRUE;
             break;
@@ -2280,7 +2286,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIlisdif = value->rValue;
             mod->B4SOIlisdifGiven = TRUE;
             break;
-        case  B4SOI_MOD_LIDDIF :	/* v4.0 */
+        case  B4SOI_MOD_LIDDIF :        /* v4.0 */
             mod->B4SOIliddif = value->rValue;
             mod->B4SOIliddifGiven = TRUE;
             break;
@@ -2288,7 +2294,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIlisrec = value->rValue;
             mod->B4SOIlisrecGiven = TRUE;
             break;
-        case  B4SOI_MOD_LIDREC :	/* v4.0 */
+        case  B4SOI_MOD_LIDREC :        /* v4.0 */
             mod->B4SOIlidrec = value->rValue;
             mod->B4SOIlidrecGiven = TRUE;
             break;
@@ -2296,7 +2302,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIlistun = value->rValue;
             mod->B4SOIlistunGiven = TRUE;
             break;
-        case  B4SOI_MOD_LIDTUN :	/* v4.0 */
+        case  B4SOI_MOD_LIDTUN :        /* v4.0 */
             mod->B4SOIlidtun = value->rValue;
             mod->B4SOIlidtunGiven = TRUE;
             break;
@@ -2332,11 +2338,11 @@ case B4SOI_MOD_UD:
             mod->B4SOIlaely = value->rValue;
             mod->B4SOIlaelyGiven = TRUE;
             break;
-        case  B4SOI_MOD_LAHLIS :	/* v4.0 */
+        case  B4SOI_MOD_LAHLIS :        /* v4.0 */
             mod->B4SOIlahli = value->rValue;
             mod->B4SOIlahliGiven = TRUE;
             break;
-        case  B4SOI_MOD_LAHLID :	/* v4.0 */
+        case  B4SOI_MOD_LAHLID :        /* v4.0 */
             mod->B4SOIlahlid = value->rValue;
             mod->B4SOIlahlidGiven = TRUE;
             break;
@@ -2352,7 +2358,7 @@ case B4SOI_MOD_UD:
             break;
 /* v3.1 for RF end */
 
-	/* CV Model */
+        /* CV Model */
         case  B4SOI_MOD_LVSDFB :
             mod->B4SOIlvsdfb = value->rValue;
             mod->B4SOIlvsdfbGiven = TRUE;
@@ -2599,7 +2605,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIwlpe0 = value->rValue;
             mod->B4SOIwlpe0Given = TRUE;
             break;
-        case  B4SOI_MOD_WLPEB:	/* v4.0 for Vth */
+        case  B4SOI_MOD_WLPEB:        /* v4.0 for Vth */
             mod->B4SOIwlpeb = value->rValue;
             mod->B4SOIwlpebGiven = TRUE;
             break;
@@ -2783,8 +2789,8 @@ case B4SOI_MOD_UD:
             mod->B4SOIwfbjtii = value->rValue;
             mod->B4SOIwfbjtiiGiven = TRUE;
             break;
-		/*4.1 Iii model*/
-		case  B4SOI_MOD_WEBJTII :
+                /*4.1 Iii model*/
+                case  B4SOI_MOD_WEBJTII :
             mod->B4SOIwebjtii = value->rValue;
             mod->B4SOIwebjtiiGiven = TRUE;
             break;
@@ -2804,7 +2810,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIwmbjtii = value->rValue;
             mod->B4SOIwmbjtiiGiven = TRUE;
             break;
-			
+                        
         case  B4SOI_MOD_WBETA0 :
             mod->B4SOIwbeta0 = value->rValue;
             mod->B4SOIwbeta0Given = TRUE;
@@ -2873,44 +2879,44 @@ case B4SOI_MOD_UD:
             mod->B4SOIwfgidl = value->rValue;
             mod->B4SOIwfgidlGiven = TRUE;
             break;
-			
-			
-		case  B4SOI_MOD_WAGISL :
+                        
+                        
+        case  B4SOI_MOD_WAGISL :
             mod->B4SOIwagisl = value->rValue;
             mod->B4SOIwagislGiven = TRUE;
             break;
-			
+                        
         case  B4SOI_MOD_WBGISL :
             mod->B4SOIwbgisl = value->rValue;
             mod->B4SOIwbgislGiven = TRUE;
             break;
-			
+                        
         case  B4SOI_MOD_WCGISL :
             mod->B4SOIwcgisl = value->rValue;
             mod->B4SOIwcgislGiven = TRUE;
             break;
-			
+                        
         case  B4SOI_MOD_WEGISL :
             mod->B4SOIwegisl = value->rValue;
             mod->B4SOIwegislGiven = TRUE;
             break;
-			
+                        
         case  B4SOI_MOD_WRGISL :
             mod->B4SOIwrgisl = value->rValue;
             mod->B4SOIwrgislGiven = TRUE;
             break;
-			
+                        
         case  B4SOI_MOD_WKGISL :
             mod->B4SOIwkgisl = value->rValue;
             mod->B4SOIwkgislGiven = TRUE;
             break;
-			
+                        
         case  B4SOI_MOD_WFGISL :
             mod->B4SOIwfgisl = value->rValue;
             mod->B4SOIwfgislGiven = TRUE;
             break;
-			
-			
+                        
+                        
         case  B4SOI_MOD_WNTUNS :   /* v4.0 */
             mod->B4SOIwntun = value->rValue;
             mod->B4SOIwntunGiven = TRUE;
@@ -2927,19 +2933,19 @@ case B4SOI_MOD_UD:
             mod->B4SOIwndioded = value->rValue;
             mod->B4SOIwndiodedGiven = TRUE;
             break;
-        case  B4SOI_MOD_WNRECF0S :	/* v4.0 */
+        case  B4SOI_MOD_WNRECF0S :        /* v4.0 */
             mod->B4SOIwnrecf0 = value->rValue;
             mod->B4SOIwnrecf0Given = TRUE;
             break;
-        case  B4SOI_MOD_WNRECF0D :	/* v4.0 */
+        case  B4SOI_MOD_WNRECF0D :        /* v4.0 */
             mod->B4SOIwnrecf0d = value->rValue;
             mod->B4SOIwnrecf0dGiven = TRUE;
             break;
-        case  B4SOI_MOD_WNRECR0S :	/* v4.0 */
+        case  B4SOI_MOD_WNRECR0S :        /* v4.0 */
             mod->B4SOIwnrecr0 = value->rValue;
             mod->B4SOIwnrecr0Given = TRUE;
             break;
-        case  B4SOI_MOD_WNRECR0D :	/* v4.0 */
+        case  B4SOI_MOD_WNRECR0D :        /* v4.0 */
             mod->B4SOIwnrecr0d = value->rValue;
             mod->B4SOIwnrecr0dGiven = TRUE;
             break;
@@ -2947,7 +2953,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIwisbjt = value->rValue;
             mod->B4SOIwisbjtGiven = TRUE;
             break;
-        case  B4SOI_MOD_WIDBJT :	/* v4.0 */
+        case  B4SOI_MOD_WIDBJT :        /* v4.0 */
             mod->B4SOIwidbjt = value->rValue;
             mod->B4SOIwidbjtGiven = TRUE;
             break;
@@ -2955,7 +2961,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIwisdif = value->rValue;
             mod->B4SOIwisdifGiven = TRUE;
             break;
-        case  B4SOI_MOD_WIDDIF :	/* v4.0 */
+        case  B4SOI_MOD_WIDDIF :        /* v4.0 */
             mod->B4SOIwiddif = value->rValue;
             mod->B4SOIwiddifGiven = TRUE;
             break;
@@ -2963,7 +2969,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIwisrec = value->rValue;
             mod->B4SOIwisrecGiven = TRUE;
             break;
-        case  B4SOI_MOD_WIDREC :	/* v4.0 */
+        case  B4SOI_MOD_WIDREC :        /* v4.0 */
             mod->B4SOIwidrec = value->rValue;
             mod->B4SOIwidrecGiven = TRUE;
             break;
@@ -2971,7 +2977,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIwistun = value->rValue;
             mod->B4SOIwistunGiven = TRUE;
             break;
-        case  B4SOI_MOD_WIDTUN :	/* v4.0 */
+        case  B4SOI_MOD_WIDTUN :        /* v4.0 */
             mod->B4SOIwidtun = value->rValue;
             mod->B4SOIwidtunGiven = TRUE;
             break;
@@ -3007,11 +3013,11 @@ case B4SOI_MOD_UD:
             mod->B4SOIwaely = value->rValue;
             mod->B4SOIwaelyGiven = TRUE;
             break;
-        case  B4SOI_MOD_WAHLIS :	/* v4.0 */
+        case  B4SOI_MOD_WAHLIS :        /* v4.0 */
             mod->B4SOIwahli = value->rValue;
             mod->B4SOIwahliGiven = TRUE;
             break;
-        case  B4SOI_MOD_WAHLID :	/* v4.0 */
+        case  B4SOI_MOD_WAHLID :        /* v4.0 */
             mod->B4SOIwahlid = value->rValue;
             mod->B4SOIwahlidGiven = TRUE;
             break;
@@ -3027,7 +3033,7 @@ case B4SOI_MOD_UD:
             break;
 /* v3.1 for RF end */
 
-	/* CV Model */
+        /* CV Model */
         case  B4SOI_MOD_WVSDFB :
             mod->B4SOIwvsdfb = value->rValue;
             mod->B4SOIwvsdfbGiven = TRUE;
@@ -3274,7 +3280,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIplpe0 = value->rValue;
             mod->B4SOIplpe0Given = TRUE;
             break;
-        case  B4SOI_MOD_PLPEB:	/* v4.0 for Vth */
+        case  B4SOI_MOD_PLPEB:        /* v4.0 for Vth */
             mod->B4SOIplpeb = value->rValue;
             mod->B4SOIplpebGiven = TRUE;
             break;
@@ -3458,8 +3464,8 @@ case B4SOI_MOD_UD:
             mod->B4SOIpfbjtii = value->rValue;
             mod->B4SOIpfbjtiiGiven = TRUE;
             break;
-			/*4.1 Iii model*/
-       case  B4SOI_MOD_PEBJTII :
+                        /*4.1 Iii model*/
+        case  B4SOI_MOD_PEBJTII :
             mod->B4SOIpebjtii = value->rValue;
             mod->B4SOIpebjtiiGiven = TRUE;
             break;
@@ -3547,8 +3553,8 @@ case B4SOI_MOD_UD:
             mod->B4SOIpfgidl = value->rValue;
             mod->B4SOIpfgidlGiven = TRUE;
             break;
-			
-		case  B4SOI_MOD_PAGISL :
+                        
+        case  B4SOI_MOD_PAGISL :
             mod->B4SOIpagisl = value->rValue;
             mod->B4SOIpagislGiven = TRUE;
             break;
@@ -3575,36 +3581,36 @@ case B4SOI_MOD_UD:
         case  B4SOI_MOD_PFGISL :
             mod->B4SOIpfgisl = value->rValue;
             mod->B4SOIpfgislGiven = TRUE;
-            break;	
-        case  B4SOI_MOD_PNTUNS :	/* v4.0 */
+            break;        
+        case  B4SOI_MOD_PNTUNS :        /* v4.0 */
             mod->B4SOIpntun = value->rValue;
             mod->B4SOIpntunGiven = TRUE;
             break;
-        case  B4SOI_MOD_PNTUND :	/* v4.0 */
+        case  B4SOI_MOD_PNTUND :        /* v4.0 */
             mod->B4SOIpntund = value->rValue;
             mod->B4SOIpntundGiven = TRUE;
             break;
-        case  B4SOI_MOD_PNDIODES :	/* v4.0 */
+        case  B4SOI_MOD_PNDIODES :        /* v4.0 */
             mod->B4SOIpndiode = value->rValue;
             mod->B4SOIpndiodeGiven = TRUE;
             break;
-        case  B4SOI_MOD_PNDIODED :	/* v4.0 */
+        case  B4SOI_MOD_PNDIODED :        /* v4.0 */
             mod->B4SOIpndioded = value->rValue;
             mod->B4SOIpndiodedGiven = TRUE;
             break;
-        case  B4SOI_MOD_PNRECF0S :	/* v4.0 */
+        case  B4SOI_MOD_PNRECF0S :        /* v4.0 */
             mod->B4SOIpnrecf0 = value->rValue;
             mod->B4SOIpnrecf0Given = TRUE;
             break;
-        case  B4SOI_MOD_PNRECF0D :	/* v4.0 */
+        case  B4SOI_MOD_PNRECF0D :        /* v4.0 */
             mod->B4SOIpnrecf0d = value->rValue;
             mod->B4SOIpnrecf0dGiven = TRUE;
             break;
-        case  B4SOI_MOD_PNRECR0S :	/* v4.0 */
+        case  B4SOI_MOD_PNRECR0S :        /* v4.0 */
             mod->B4SOIpnrecr0 = value->rValue;
             mod->B4SOIpnrecr0Given = TRUE;
             break;
-        case  B4SOI_MOD_PNRECR0D :	/* v4.0 */
+        case  B4SOI_MOD_PNRECR0D :        /* v4.0 */
             mod->B4SOIpnrecr0d = value->rValue;
             mod->B4SOIpnrecr0dGiven = TRUE;
             break;
@@ -3612,7 +3618,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIpisbjt = value->rValue;
             mod->B4SOIpisbjtGiven = TRUE;
             break;
-        case  B4SOI_MOD_PIDBJT :	/* v4.0 */
+        case  B4SOI_MOD_PIDBJT :        /* v4.0 */
             mod->B4SOIpidbjt = value->rValue;
             mod->B4SOIpidbjtGiven = TRUE;
             break;
@@ -3620,7 +3626,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIpisdif = value->rValue;
             mod->B4SOIpisdifGiven = TRUE;
             break;
-        case  B4SOI_MOD_PIDDIF :	/* v4.0 */
+        case  B4SOI_MOD_PIDDIF :        /* v4.0 */
             mod->B4SOIpiddif = value->rValue;
             mod->B4SOIpiddifGiven = TRUE;
             break;
@@ -3628,7 +3634,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIpisrec = value->rValue;
             mod->B4SOIpisrecGiven = TRUE;
             break;
-        case  B4SOI_MOD_PIDREC :	/* v4.0 */
+        case  B4SOI_MOD_PIDREC :        /* v4.0 */
             mod->B4SOIpidrec = value->rValue;
             mod->B4SOIpidrecGiven = TRUE;
             break;
@@ -3636,7 +3642,7 @@ case B4SOI_MOD_UD:
             mod->B4SOIpistun = value->rValue;
             mod->B4SOIpistunGiven = TRUE;
             break;
-        case  B4SOI_MOD_PIDTUN :	/* v4.0 */
+        case  B4SOI_MOD_PIDTUN :        /* v4.0 */
             mod->B4SOIpidtun = value->rValue;
             mod->B4SOIpidtunGiven = TRUE;
             break;
@@ -3672,11 +3678,11 @@ case B4SOI_MOD_UD:
             mod->B4SOIpaely = value->rValue;
             mod->B4SOIpaelyGiven = TRUE;
             break;
-        case  B4SOI_MOD_PAHLIS :	/* v4.0 */
+        case  B4SOI_MOD_PAHLIS :        /* v4.0 */
             mod->B4SOIpahli = value->rValue;
             mod->B4SOIpahliGiven = TRUE;
             break;
-        case  B4SOI_MOD_PAHLID :	/* v4.0 */
+        case  B4SOI_MOD_PAHLID :        /* v4.0 */
             mod->B4SOIpahlid = value->rValue;
             mod->B4SOIpahlidGiven = TRUE;
             break;
@@ -3692,7 +3698,7 @@ case B4SOI_MOD_UD:
             break;
 /* v3.1 for RF end */
 
-	/* CV Model */
+        /* CV Model */
         case  B4SOI_MOD_PVSDFB :
             mod->B4SOIpvsdfb = value->rValue;
             mod->B4SOIpvsdfbGiven = TRUE;
@@ -3719,7 +3725,7 @@ case B4SOI_MOD_UD:
             break; /* v3.2 */
 /* Added for binning - END */
 
-	/* 4.0 backward compatibility  */
+        /* 4.0 backward compatibility  */
         case  B4SOI_MOD_NLX:
             mod->B4SOInlx = value->rValue;
             mod->B4SOInlxGiven = TRUE;

@@ -1,4 +1,5 @@
-/***  B4SOI 04/27/2010 Released by Tanvir Morshed   ***/
+/***  B4SOI 12/16/2010 Released by Tanvir Morshed   ***/
+
 
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
@@ -25,8 +26,9 @@
 
 
 int
-B4SOIconvTest(GENmodel *inModel, CKTcircuit *ckt)
-
+B4SOIconvTest(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 register B4SOImodel *model = (B4SOImodel*)inModel;
 register B4SOIinstance *here;
@@ -38,19 +40,21 @@ double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
     {    /* loop through all the instances of the model */
          for (here = model->B4SOIinstances; here != NULL ;
               here=here->B4SOInextInstance) 
-	 {    vbs = model->B4SOItype 
-		  * (*(ckt->CKTrhsOld+here->B4SOIbNode) 
-		  - *(ckt->CKTrhsOld+here->B4SOIsNodePrime));
+         {    
+              if (here->B4SOIowner != ARCHme) continue;
+              vbs = model->B4SOItype 
+                  * (*(ckt->CKTrhsOld+here->B4SOIbNode) 
+                  - *(ckt->CKTrhsOld+here->B4SOIsNodePrime));
               vgs = model->B4SOItype
-		  * (*(ckt->CKTrhsOld+here->B4SOIgNode) 
-		  - *(ckt->CKTrhsOld+here->B4SOIsNodePrime));
+                  * (*(ckt->CKTrhsOld+here->B4SOIgNode) 
+                  - *(ckt->CKTrhsOld+here->B4SOIsNodePrime));
               vds = model->B4SOItype
-		  * (*(ckt->CKTrhsOld+here->B4SOIdNodePrime) 
-		  - *(ckt->CKTrhsOld+here->B4SOIsNodePrime));
+                  * (*(ckt->CKTrhsOld+here->B4SOIdNodePrime) 
+                  - *(ckt->CKTrhsOld+here->B4SOIsNodePrime));
               vbd = vbs - vds;
               vgd = vgs - vds;
               vgdo = *(ckt->CKTstate0 + here->B4SOIvgs) 
-		   - *(ckt->CKTstate0 + here->B4SOIvds);
+                   - *(ckt->CKTstate0 + here->B4SOIvds);
               delvbs = vbs - *(ckt->CKTstate0 + here->B4SOIvbs);
               delvbd = vbd - *(ckt->CKTstate0 + here->B4SOIvbd);
               delvgs = vgs - *(ckt->CKTstate0 + here->B4SOIvgs);
@@ -59,33 +63,33 @@ double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
 
               cd = here->B4SOIcd;
               if (here->B4SOImode >= 0)
-	      {   cdhat = cd - here->B4SOIgjdb * delvbd 
-			+ here->B4SOIgmbs * delvbs + here->B4SOIgm * delvgs
-			+ here->B4SOIgds * delvds;
+              {   cdhat = cd - here->B4SOIgjdb * delvbd 
+                        + here->B4SOIgmbs * delvbs + here->B4SOIgm * delvgs
+                        + here->B4SOIgds * delvds;
               }
-	      else
-	      {   cdhat = cd - (here->B4SOIgjdb - here->B4SOIgmbs) * delvbd 
-			- here->B4SOIgm * delvgd + here->B4SOIgds * delvds;
+              else
+              {   cdhat = cd - (here->B4SOIgjdb - here->B4SOIgmbs) * delvbd 
+                        - here->B4SOIgm * delvgd + here->B4SOIgds * delvds;
               }
 
             /*
              *  check convergence
              */
               if ((here->B4SOIoff == 0)  || (!(ckt->CKTmode & MODEINITFIX)))
-	      {   tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(cd))
-		      + ckt->CKTabstol;
+              {   tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(cd))
+                      + ckt->CKTabstol;
                   if (fabs(cdhat - cd) >= tol)
-		  {   ckt->CKTnoncon++;
+                  {   ckt->CKTnoncon++;
                       return(OK);
                   } 
                   cbs = here->B4SOIcjs;
                   cbd = here->B4SOIcjd;
                   cbhat = cbs + cbd + here->B4SOIgjdb * delvbd 
-		        + here->B4SOIgjsb * delvbs;
+                        + here->B4SOIgjsb * delvbs;
                   tol = ckt->CKTreltol * MAX(fabs(cbhat), fabs(cbs + cbd))
-		      + ckt->CKTabstol;
+                      + ckt->CKTabstol;
                   if (fabs(cbhat - (cbs + cbd)) > tol) 
-		  {   ckt->CKTnoncon++;
+                  {   ckt->CKTnoncon++;
                       return(OK);
                   }
               }

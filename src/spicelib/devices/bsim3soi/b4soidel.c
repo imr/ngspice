@@ -1,4 +1,5 @@
-/***  B4SOI 04/27/2010 Released by Tanvir Morshed   ***/
+/***  B4SOI 12/16/2010 Released by Tanvir Morshed   ***/
+
 
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
@@ -22,8 +23,10 @@
 
 
 int
-B4SOIdelete(GENmodel *inModel, IFuid name, GENinstance **inInst)
-
+B4SOIdelete(
+GENmodel *inModel,
+IFuid name,
+GENinstance **inInst)
 {
 B4SOIinstance **fast = (B4SOIinstance**)inInst;
 B4SOImodel *model = (B4SOImodel*)inModel;
@@ -33,8 +36,8 @@ B4SOIinstance *here;
     for (; model ; model = model->B4SOInextModel) 
     {    prev = &(model->B4SOIinstances);
          for (here = *prev; here ; here = *prev) 
-	 {    if (here->B4SOIname == name || (fast && here==*fast))
-	      {   *prev= here->B4SOInextInstance;
+         {    if (here->B4SOIname == name || (fast && here==*fast))
+              {   *prev= here->B4SOInextInstance;
                   FREE(here);
                   return(OK);
               }

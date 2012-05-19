@@ -1,4 +1,5 @@
-/***  B4SOI 04/27/2010 Released by Tanvir Morshed   ***/
+/***  B4SOI 12/16/2010 Released by Tanvir Morshed   ***/
+
 
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
@@ -22,33 +23,36 @@
 
 
 int
-B4SOIgetic(GENmodel *inModel, CKTcircuit *ckt)
-
+B4SOIgetic(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 B4SOImodel *model = (B4SOImodel*)inModel;
 B4SOIinstance *here;
 
     for (; model ; model = model->B4SOInextModel) 
     {    for (here = model->B4SOIinstances; here; here = here->B4SOInextInstance)
-	 {    if(!here->B4SOIicVBSGiven) 
-	      {  here->B4SOIicVBS = *(ckt->CKTrhs + here->B4SOIbNode) 
-				  - *(ckt->CKTrhs + here->B4SOIsNode);
+         {    
+              if (here->B4SOIowner != ARCHme) continue;
+              if(!here->B4SOIicVBSGiven) 
+              {  here->B4SOIicVBS = *(ckt->CKTrhs + here->B4SOIbNode) 
+                                  - *(ckt->CKTrhs + here->B4SOIsNode);
               }
               if (!here->B4SOIicVDSGiven) 
-	      {   here->B4SOIicVDS = *(ckt->CKTrhs + here->B4SOIdNode) 
-				   - *(ckt->CKTrhs + here->B4SOIsNode);
+              {   here->B4SOIicVDS = *(ckt->CKTrhs + here->B4SOIdNode) 
+                                   - *(ckt->CKTrhs + here->B4SOIsNode);
               }
               if (!here->B4SOIicVGSGiven) 
-	      {   here->B4SOIicVGS = *(ckt->CKTrhs + here->B4SOIgNode) 
-				   - *(ckt->CKTrhs + here->B4SOIsNode);
+              {   here->B4SOIicVGS = *(ckt->CKTrhs + here->B4SOIgNode) 
+                                   - *(ckt->CKTrhs + here->B4SOIsNode);
               }
               if (!here->B4SOIicVESGiven) 
-	      {   here->B4SOIicVES = *(ckt->CKTrhs + here->B4SOIeNode) 
-				   - *(ckt->CKTrhs + here->B4SOIsNode);
+              {   here->B4SOIicVES = *(ckt->CKTrhs + here->B4SOIeNode) 
+                                   - *(ckt->CKTrhs + here->B4SOIsNode);
               }
               if (!here->B4SOIicVPSGiven) 
-	      {   here->B4SOIicVPS = *(ckt->CKTrhs + here->B4SOIpNode) 
-				   - *(ckt->CKTrhs + here->B4SOIsNode);
+              {   here->B4SOIicVPS = *(ckt->CKTrhs + here->B4SOIpNode) 
+                                   - *(ckt->CKTrhs + here->B4SOIsNode);
               }
          }
     }

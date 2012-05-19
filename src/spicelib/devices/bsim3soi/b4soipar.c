@@ -1,4 +1,5 @@
-/***  B4SOI 04/27/2010 Released by Tanvir Morshed   ***/
+/***  B4SOI 12/16/2010 Released by Tanvir Morshed   ***/
+
 
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
@@ -27,9 +28,9 @@ GENinstance *inst,
 IFvalue *select)
 {
     B4SOIinstance *here = (B4SOIinstance*)inst;
-
+    
     NG_IGNORE(select);
-
+    
     switch(param) 
     {   case B4SOI_W:
             here->B4SOIw = value->rValue;
@@ -39,7 +40,7 @@ IFvalue *select)
             here->B4SOIl = value->rValue;
             here->B4SOIlGiven = TRUE;
             break;
-	case B4SOI_M:
+        case B4SOI_M:
             here->B4SOIm = value->rValue;
             here->B4SOImGiven = TRUE;
             break;
@@ -213,19 +214,19 @@ IFvalue *select)
                 case 5:
                     here->B4SOIicVPS = *(value->v.vec.rVec+4);
                     here->B4SOIicVPSGiven = TRUE;
-					break; /* v4.2 bugfix */
+                                        break; /* v4.2 bugfix */
                 case 4:
                     here->B4SOIicVES = *(value->v.vec.rVec+3);
                     here->B4SOIicVESGiven = TRUE;
-					break; /* v4.2 bugfix */
+                                        break; /* v4.2 bugfix */
                 case 3:
                     here->B4SOIicVBS = *(value->v.vec.rVec+2);
                     here->B4SOIicVBSGiven = TRUE;
-					break; /* v4.2 bugfix */
+                                        break; /* v4.2 bugfix */
                 case 2:
                     here->B4SOIicVGS = *(value->v.vec.rVec+1);
                     here->B4SOIicVGSGiven = TRUE;
-					break; /* v4.2 bugfix */
+                                        break; /* v4.2 bugfix */
                 case 1:
                     here->B4SOIicVDS = *(value->v.vec.rVec);
                     here->B4SOIicVDSGiven = TRUE;

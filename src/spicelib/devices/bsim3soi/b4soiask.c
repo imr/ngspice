@@ -1,4 +1,5 @@
-/***  B4SOI 04/27/2010 Released by Tanvir Morshed   ***/
+/***  B4SOI 12/16/2010 Released by Tanvir Morshed   ***/
+
 
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
@@ -20,12 +21,15 @@
 #include "ngspice/devdefs.h"
 #include "b4soidef.h"
 #include "ngspice/sperror.h"
-
 #include "ngspice/suffix.h"
 
 int
-B4SOIask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
-
+B4SOIask(
+CKTcircuit *ckt,
+GENinstance *inst,
+int which,
+IFvalue *value,
+IFvalue *select)
 {
 B4SOIinstance *here = (B4SOIinstance*)inst;
 
@@ -80,9 +84,6 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
 
         case B4SOI_QB:
             value->rValue = here->B4SOIqbulk;
-            return(OK);
-        case B4SOI_QG:
-            value->rValue = here->B4SOIqgate;
             return(OK);
         case B4SOI_QD:
             value->rValue = here->B4SOIqdrn;
@@ -188,7 +189,7 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
      case B4SOI_AGBCP2:
             value->rValue = here->B4SOIagbcp2;
             return(OK);         /* v4.1 for BC improvement */
-        case B4SOI_AGBCPD:	/* v4.0 */
+        case B4SOI_AGBCPD:        /* v4.0 */
             value->rValue = here->B4SOIagbcpd;
             return(OK);
         case B4SOI_AEBCP:
@@ -291,7 +292,7 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
         case B4SOI_IGIDL:
             value->rValue = here->B4SOIigidl;
             return(OK);
-        case B4SOI_IGISL:
+                case B4SOI_IGISL:
             value->rValue = here->B4SOIigisl;
             return(OK);
         case B4SOI_IGS:
@@ -367,9 +368,6 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
             return(OK);
         case B4SOI_QBD:
             value->rValue = *(ckt->CKTstate0 + here->B4SOIqbd); 
-            return(OK);
-        case B4SOI_DEBUG:
-            value->iValue = here->B4SOIdebugMod; 
             return(OK);
 #ifdef B4SOI_DEBUG_OUT
         case B4SOI_DEBUG1:

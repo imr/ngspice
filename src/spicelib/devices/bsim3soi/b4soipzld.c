@@ -1,4 +1,5 @@
-/***  B4SOI  04/27/2010 Released by Tanvir Morshed  ***/
+/***  B4SOI 12/16/2010 Released by Tanvir Morshed  ***/
+
 
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
@@ -14,6 +15,7 @@
  **********/
 
 #include "ngspice/ngspice.h"
+
 #include "ngspice/cktdefs.h"
 #include "ngspice/complex.h"
 #include "ngspice/sperror.h"
@@ -23,8 +25,8 @@
 int
 B4SOIpzLoad(
 GENmodel *inModel,
-register CKTcircuit *ckt,
-register SPcomplex *s)
+CKTcircuit *ckt,
+SPcomplex *s)
 {
 register B4SOImodel *model = (B4SOImodel*)inModel;
 register B4SOIinstance *here;
@@ -41,12 +43,13 @@ double m;
     for (; model != NULL; model = model->B4SOInextModel) 
     {    for (here = model->B4SOIinstances; here!= NULL;
               here = here->B4SOInextInstance) 
-	 {
+         {
+            if (here->B4SOIowner != ARCHme) continue;
             if (here->B4SOImode >= 0) 
-	    {   Gm = here->B4SOIgm;
-		Gmbs = here->B4SOIgmbs;
-		FwdSum = Gm + Gmbs;
-		RevSum = 0.0;
+            {   Gm = here->B4SOIgm;
+                Gmbs = here->B4SOIgmbs;
+                FwdSum = Gm + Gmbs;
+                RevSum = 0.0;
                 cggb = here->B4SOIcggb;
                 cgsb = here->B4SOIcgsb;
                 cgdb = here->B4SOIcgdb;
@@ -59,11 +62,11 @@ double m;
                 cdsb = here->B4SOIcdsb;
                 cddb = here->B4SOIcddb;
             }
-	    else
-	    {   Gm = -here->B4SOIgm;
-		Gmbs = -here->B4SOIgmbs;
-		FwdSum = 0.0;
-		RevSum = -Gm - Gmbs;
+            else
+            {   Gm = -here->B4SOIgm;
+                Gmbs = -here->B4SOIgmbs;
+                FwdSum = 0.0;
+                RevSum = -Gm - Gmbs;
                 cggb = here->B4SOIcggb;
                 cgsb = here->B4SOIcgdb;
                 cgdb = here->B4SOIcgsb;
@@ -85,10 +88,10 @@ double m;
             capbd= here->B4SOIcapbd;
             capbs= here->B4SOIcapbs;
 #endif
-	    GSoverlapCap = here->B4SOIcgso;
-	    GDoverlapCap = here->B4SOIcgdo;
+            GSoverlapCap = here->B4SOIcgso;
+            GDoverlapCap = here->B4SOIcgdo;
 #ifdef BULKCODE
-	    GBoverlapCap = here->pParam->B4SOIcgbo;
+            GBoverlapCap = here->pParam->B4SOIcgbo;
 #endif
 
             xcdgb = (cdgb - GDoverlapCap);

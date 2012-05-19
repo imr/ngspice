@@ -7,7 +7,7 @@
 
 SPICEdev B4SOIinfo = {
     {   "B4SOI",
-        "Berkeley SOI MOSFET  model version 4.3.1",
+        "Berkeley SOI MOSFET model version 4.4.0",
 
         &B4SOInSize,
         &B4SOInSize,
@@ -18,7 +18,7 @@ SPICEdev B4SOIinfo = {
 
         &B4SOImPTSize,
         B4SOImPTable,
-	
+        
 #ifdef XSPICE
 /*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
         NULL,  /* This is a SPICE device, it has no MIF info data */
@@ -33,9 +33,9 @@ SPICEdev B4SOIinfo = {
         NULL,  /* This is a SPICE device, it has no MIF info data */
 /*---------------------------  End of SDB fix   -------------------------*/
 #endif
-	
-	DEV_DEFAULT
-	
+        
+        DEV_DEFAULT
+        
     },
 
  /* DEVparam      */ B4SOIparam,

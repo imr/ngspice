@@ -1,4 +1,5 @@
-/***  B4SOI 04/27/2010 Released by Tanvir Morshed   ***/
+/***  B4SOI 12/16/2010 Released by Tanvir Morshed   ***/
+
 
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
@@ -6,12 +7,14 @@
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soiset.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
  * Authors: 2009- Wenwei Yang, Chung-Hsun Lin, Ali Niknejad, Chenming Hu.
+ * Authors: 2009- Tanvir Morshed, Ali Niknejad, Chenming Hu.
  * File: b4soiset.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  * Modified by Tanvir Morshed 09/22/2009
  * Modified by Tanvir Morshed 12/31/2009
  * Modified by Tanvir Morshed 04/27/2010
+ * Modified by Tanvir Morshed 12/16/2010
  **********/
 
 #include "ngspice/ngspice.h"
@@ -35,7 +38,8 @@ int nthreads;
 #define Meter2Micron 1.0e6
 #define EPS0 8.85418e-12
 
-double epsrox, toxe, epssub; 
+double epsrox, toxe, epssub;
+double NchMax; /* v4.4  */
 
 int
 B4SOIsetup(
@@ -48,6 +52,7 @@ register B4SOImodel *model = (B4SOImodel*)inModel;
 register B4SOIinstance *here;
 int error;
 CKTnode *tmp;
+
 double Cboxt;
 
 /* v3.2 */
@@ -65,90 +70,90 @@ int nthreads;
 /* Default value Processing for B4SOI MOSFET Models */
 
         if (!model->B4SOItypeGiven)
-            model->B4SOItype = NMOS;     
-        if (!model->B4SOImobModGiven) 
+            model->B4SOItype = NMOS;
+        if (!model->B4SOImobModGiven)
             model->B4SOImobMod = 1;
-        if (!model->B4SOIbinUnitGiven) 
+        if (!model->B4SOIbinUnitGiven)
             model->B4SOIbinUnit = 1;
-        if (!model->B4SOIparamChkGiven) 
+        if (!model->B4SOIparamChkGiven)
             model->B4SOIparamChk = 0;
-        if (!model->B4SOIcapModGiven) 
+        if (!model->B4SOIcapModGiven)
             model->B4SOIcapMod = 2;
-		if (!model->B4SOIiiiModGiven) 					/* Bug fix #7 Jun 09 'iiimod' with default value added */
-            model->B4SOIiiiMod = 0;	
-			
-		if (!model->B4SOImtrlModGiven)
+        if (!model->B4SOIiiiModGiven)                                   /* Bug fix #7 Jun 09 'iiimod' with default value added */
+            model->B4SOIiiiMod = 0;
+
+        if (!model->B4SOImtrlModGiven)
             model->B4SOImtrlMod = 0; /*4.1*/
-		if (!model->B4SOIvgstcvModGiven)
-            /*model->B4SOIvgstcvMod = 0;				v4.2 Bugfix */
-			model->B4SOIvgstcvMod = 1;			
-		if (!model->B4SOIgidlModGiven)
-            model->B4SOIgidlMod = 0;			
-		if (!model->B4SOIeotGiven)
+        if (!model->B4SOIvgstcvModGiven)
+            /*model->B4SOIvgstcvMod = 0;                                v4.2 Bugfix */
+            model->B4SOIvgstcvMod = 1;
+        if (!model->B4SOIgidlModGiven)
+            model->B4SOIgidlMod = 0;
+        if (!model->B4SOIeotGiven)
             model->B4SOIeot = 100.0e-10;
-		if (!model->B4SOIepsroxGiven)
+        if (!model->B4SOIepsroxGiven)
             model->B4SOIepsrox = 3.9;
-		if (!model->B4SOIepsrsubGiven)
-  	        model->B4SOIepsrsub = 11.7; 
+        if (!model->B4SOIepsrsubGiven)
+            model->B4SOIepsrsub = 11.7;
         if (!model->B4SOIni0subGiven)
             model->B4SOIni0sub = 1.45e10;   /* unit 1/cm3 */
         if (!model->B4SOIbg0subGiven)
             model->B4SOIbg0sub =  1.16;     /* unit eV */
         if (!model->B4SOItbgasubGiven)
-  	    model->B4SOItbgasub = 7.02e-4;  
+            model->B4SOItbgasub = 7.02e-4;
         if (!model->B4SOItbgbsubGiven)
-	    model->B4SOItbgbsub = 1108.0;  			
+            model->B4SOItbgbsub = 1108.0;
         if (!model->B4SOIleffeotGiven)
             model->B4SOIleffeot = 1.0;
-		if (!model->B4SOIweffeotGiven)
+        if (!model->B4SOIweffeotGiven)
             model->B4SOIweffeot = 10.0;
-	    if (!model->B4SOIvddeotGiven)
+        if (!model->B4SOIvddeotGiven)
             model->B4SOIvddeot = (model->B4SOItype == NMOS) ? 1.5 : -1.5;
-		if (!model->B4SOItempeotGiven)
-		    model->B4SOItempeot = 300.15;
+        if (!model->B4SOItempeotGiven)
+                    model->B4SOItempeot = 300.15;
         if (!model->B4SOIadosGiven)
             model->B4SOIados = 1.0;
         if (!model->B4SOIbdosGiven)
             model->B4SOIbdos = 1.0;
         if (!model->B4SOIepsrgateGiven)
-	        model->B4SOIepsrgate = 11.7;  
+                model->B4SOIepsrgate = 11.7;
         if (!model->B4SOIphigGiven)
-	        model->B4SOIphig = 4.05;
+                model->B4SOIphig = 4.05;
         if (!model->B4SOIeasubGiven)
-            model->B4SOIeasub = 4.05; 
-			
-/*        if (!model->B4SOInoiModGiven) 
-            model->B4SOInoiMod = 1; 	v3.2 */
-        if (!model->B4SOIshModGiven) 
+            model->B4SOIeasub = 4.05;
+
+/*        if (!model->B4SOInoiModGiven)
+            model->B4SOInoiMod = 1;     v3.2 */
+        if (!model->B4SOIshModGiven)
             model->B4SOIshMod = 0;
-        if (!model->B4SOIversionGiven) 
-            model->B4SOIversion = 4.31;
+        if (!model->B4SOIversionGiven)
+            model->B4SOIversion = 4.4;
         if (!model->B4SOItoxGiven)
             model->B4SOItox = 100.0e-10;
        /*model->B4SOIcox = 3.453133e-11 / model->B4SOItox;*/
-	   if(model->B4SOImtrlMod)
-	         {
-	     epsrox = 3.9;
-	     toxe = model->B4SOIeot;
-	     epssub = EPS0 * model->B4SOIepsrsub;
-         //model->B4SOIcox = 3.453133e-11 / model->B4SOItox;
-		 model->B4SOIcox = epsrox * EPS0 / toxe;
-	         }
-	      else
-	         {
-	     epsrox = model->B4SOIepsrox;
-	     toxe = model->B4SOItox;
-	     epssub = EPSSI;
-		 //model->B4SOIcox = epsrox * EPS0 / toxe;
-		 model->B4SOIcox = 3.453133e-11 / model->B4SOItox;
-	         }
-		 
-		 
-	    if (!model->B4SOItoxpGiven)
-            model->B4SOItoxp = model->B4SOItox;
-			
+           if(model->B4SOImtrlMod)
+                 {
+             epsrox = 3.9;
+             toxe = model->B4SOIeot;
+             epssub = EPS0 * model->B4SOIepsrsub;
+         /*model->B4SOIcox = 3.453133e-11 / model->B4SOItox;*/
+                 model->B4SOIcox = epsrox * EPS0 / toxe;
+                 }
+              else
+                 {
+             epsrox = model->B4SOIepsrox;
+             toxe = model->B4SOItox;
+             epssub = EPSSI;
+                 /*model->B4SOIcox = epsrox * EPS0 / toxe;*/
+                 model->B4SOIcox = 3.453133e-11 / model->B4SOItox;
+                 }
 
-			
+
+            if (!model->B4SOItoxpGiven)
+            model->B4SOItoxp = model->B4SOItox;
+
+
+
         if (!model->B4SOItoxmGiven)
             model->B4SOItoxm = model->B4SOItox; /* v3.2 */
 
@@ -172,21 +177,21 @@ int nthreads;
         /* v3.1 added for RF end */
 
         /* v3.2 for noise */
-	if (!model->B4SOIfnoiModGiven)
-	    model->B4SOIfnoiMod = 1;
-	else if ((model->B4SOIfnoiMod != 0) && (model->B4SOIfnoiMod != 1))
-	{    model->B4SOIfnoiMod = 1;
-	     printf("Waring: fnoiMod has been set to default value:1.\n");
-	}
- 
-	if (!model->B4SOItnoiModGiven)
-	    model->B4SOItnoiMod = 0;
-	else if ((model->B4SOItnoiMod != 0) && (model->B4SOItnoiMod != 1)&& (model->B4SOItnoiMod != 2))
-	{    model->B4SOItnoiMod = 0;
-	     printf("Waring: tnoiMod has been set to default value:0.\n");
-	}
-        
-	if (!model->B4SOItnoiaGiven)
+        if (!model->B4SOIfnoiModGiven)
+            model->B4SOIfnoiMod = 1;
+        else if ((model->B4SOIfnoiMod != 0) && (model->B4SOIfnoiMod != 1))
+        {    model->B4SOIfnoiMod = 1;
+             printf("Waring: fnoiMod has been set to default value:1.\n");
+        }
+
+        if (!model->B4SOItnoiModGiven)
+            model->B4SOItnoiMod = 0;
+        else if ((model->B4SOItnoiMod != 0) && (model->B4SOItnoiMod != 1)&& (model->B4SOItnoiMod != 2))
+        {    model->B4SOItnoiMod = 0;
+             printf("Waring: tnoiMod has been set to default value:0.\n");
+        }
+
+        if (!model->B4SOItnoiaGiven)
             model->B4SOItnoia = 1.5;
         if (!model->B4SOItnoibGiven)
             model->B4SOItnoib = 3.5;
@@ -198,15 +203,15 @@ int nthreads;
             model->B4SOIntnoi = 1.0;
         /* v3.2 for noise end */
 
-	/* v4.0 */
+        /* v4.0 */
         if (!model->B4SOIrdsModGiven)
             model->B4SOIrdsMod = 0;
         else if ((model->B4SOIrdsMod != 0) && (model->B4SOIrdsMod != 1))
         {   model->B4SOIrdsMod = 0;
             printf("Warning: rdsMod has been set to its default value: 0.\n");
         }
-        
-	if (!model->B4SOIrbodyModGiven)	
+
+        if (!model->B4SOIrbodyModGiven)
             model->B4SOIrbodyMod = 0;
         else if ((model->B4SOIrbodyMod != 0) && (model->B4SOIrbodyMod != 1))
         {   model->B4SOIrbodyMod = 0;
@@ -227,21 +232,21 @@ int nthreads;
             model->B4SOIdtoxcv = 0.0;
 
         if (!model->B4SOIcdscGiven)
-	    model->B4SOIcdsc = 2.4e-4;   /* unit Q/V/m^2  */
+            model->B4SOIcdsc = 2.4e-4;   /* unit Q/V/m^2  */
         if (!model->B4SOIcdscbGiven)
-	    model->B4SOIcdscb = 0.0;   /* unit Q/V/m^2  */    
-	if (!model->B4SOIcdscdGiven)
-	    model->B4SOIcdscd = 0.0;   /* unit Q/V/m^2  */
+            model->B4SOIcdscb = 0.0;   /* unit Q/V/m^2  */
+        if (!model->B4SOIcdscdGiven)
+            model->B4SOIcdscd = 0.0;   /* unit Q/V/m^2  */
         if (!model->B4SOIcitGiven)
-	    model->B4SOIcit = 0.0;   /* unit Q/V/m^2  */
+            model->B4SOIcit = 0.0;   /* unit Q/V/m^2  */
         if (!model->B4SOInfactorGiven)
-	    model->B4SOInfactor = 1;
+            model->B4SOInfactor = 1;
         if (!model->B4SOIvsatGiven)
-            model->B4SOIvsat = 8.0e4;    /* unit m/s */ 
+            model->B4SOIvsat = 8.0e4;    /* unit m/s */
         if (!model->B4SOIatGiven)
-            model->B4SOIat = 3.3e4;    /* unit m/s */ 
+            model->B4SOIat = 3.3e4;    /* unit m/s */
         if (!model->B4SOIa0Given)
-            model->B4SOIa0 = 1.0;  
+            model->B4SOIa0 = 1.0;
         if (!model->B4SOIagsGiven)
             model->B4SOIags = 0.0;
         if (!model->B4SOIa1Given)
@@ -256,12 +261,12 @@ int nthreads;
             model->B4SOInpeak = 1.7e17;   /* unit 1/cm3 */
         if (!model->B4SOIngateGiven)
             model->B4SOIngate = 0;   /* unit 1/cm3 */
-	    if (!model->B4SOInsdGiven)
-		    model->B4SOInsd = 1.0e20;
+            if (!model->B4SOInsdGiven)
+                    model->B4SOInsd = 1.0e20;
         if (!model->B4SOIvbmGiven)
-	    model->B4SOIvbm = -3.0;
+            model->B4SOIvbm = -3.0;
         if (!model->B4SOIxtGiven)
-	    model->B4SOIxt = 1.55e-7;
+            model->B4SOIxt = 1.55e-7;
         if (!model->B4SOIkt1Given)
             model->B4SOIkt1 = -0.11;      /* unit V */
         if (!model->B4SOIkt1lGiven)
@@ -269,35 +274,35 @@ int nthreads;
         if (!model->B4SOIkt2Given)
             model->B4SOIkt2 = 0.022;      /* No unit */
         if (!model->B4SOIk3Given)
-            model->B4SOIk3 = 0.0;      
+            model->B4SOIk3 = 0.0;
         if (!model->B4SOIk3bGiven)
-            model->B4SOIk3b = 0.0;      
+            model->B4SOIk3b = 0.0;
         if (!model->B4SOIw0Given)
-            model->B4SOIw0 = 2.5e-6;    
+            model->B4SOIw0 = 2.5e-6;
         if (!model->B4SOIlpebGiven)
             model->B4SOIlpeb = 0.0;
         if (!model->B4SOIdvt0Given)
-            model->B4SOIdvt0 = 2.2;    
+            model->B4SOIdvt0 = 2.2;
         if (!model->B4SOIdvt1Given)
-            model->B4SOIdvt1 = 0.53;      
+            model->B4SOIdvt1 = 0.53;
         if (!model->B4SOIdvt2Given)
-            model->B4SOIdvt2 = -0.032;   /* unit 1 / V */     
+            model->B4SOIdvt2 = -0.032;   /* unit 1 / V */
 
         if (!model->B4SOIdvt0wGiven)
-            model->B4SOIdvt0w = 0.0;    
+            model->B4SOIdvt0w = 0.0;
         if (!model->B4SOIdvt1wGiven)
-            model->B4SOIdvt1w = 5.3e6;    
+            model->B4SOIdvt1w = 5.3e6;
         if (!model->B4SOIdvt2wGiven)
-            model->B4SOIdvt2w = -0.032;   
+            model->B4SOIdvt2w = -0.032;
 
         if (!model->B4SOIdroutGiven)
-            model->B4SOIdrout = 0.56;     
+            model->B4SOIdrout = 0.56;
         if (!model->B4SOIdsubGiven)
-            model->B4SOIdsub = model->B4SOIdrout;     
+            model->B4SOIdsub = model->B4SOIdrout;
         if (!model->B4SOIvth0Given)
             model->B4SOIvth0 = (model->B4SOItype == NMOS) ? 0.7 : -0.7;
-        if (!model->B4SOIvfbGiven)    
-            model->B4SOIvfb = -1.0;       /* v4.1 */  		
+        if (!model->B4SOIvfbGiven)
+            model->B4SOIvfb = -1.0;       /* v4.1 */
         if (!model->B4SOIuaGiven)
             model->B4SOIua = 2.25e-9;      /* unit m/V */
         if (!model->B4SOIua1Given)
@@ -307,165 +312,167 @@ int nthreads;
         if (!model->B4SOIub1Given)
             model->B4SOIub1 = -7.61e-18;     /* unit (m/V)**2 */
         if (!model->B4SOIucGiven)
-            model->B4SOIuc = (model->B4SOImobMod == 3) ? -0.0465 : -0.0465e-9;   
+            model->B4SOIuc = (model->B4SOImobMod == 3) ? -0.0465 : -0.0465e-9;
         if (!model->B4SOIuc1Given)
-            model->B4SOIuc1 = (model->B4SOImobMod == 3) ? -0.056 : -0.056e-9;   
+            model->B4SOIuc1 = (model->B4SOImobMod == 3) ? -0.056 : -0.056e-9;
         if (!model->B4SOIu0Given)
             model->B4SOIu0 = (model->B4SOItype == NMOS) ? 0.067 : 0.025;
         if (!model->B4SOIuteGiven)
-	    model->B4SOIute = -1.5;    
-		
-		/*4.1		mobmod =4	*/
+            model->B4SOIute = -1.5;
+
+                /*4.1           mobmod =4       */
          if (!model->B4SOIudGiven)
-		    model->B4SOIud = 0.0;
-		 if (!model->B4SOIludGiven)
-		    model->B4SOIlud = 0.0;
-		 if (!model->B4SOIwudGiven)
-		    model->B4SOIwud = 0.0;
+                    model->B4SOIud = 0.0;
+                 if (!model->B4SOIludGiven)
+                    model->B4SOIlud = 0.0;
+                 if (!model->B4SOIwudGiven)
+                    model->B4SOIwud = 0.0;
          if (!model->B4SOIpudGiven)
-		  /*  model->B4SOIpud1 = 0.0; */ /*Bug fix # 33 Jul 09 */
-		    model->B4SOIpud = 0.0;
+                  /*  model->B4SOIpud1 = 0.0; */ /*Bug fix # 33 Jul 09 */
+                    model->B4SOIpud = 0.0;
          if (!model->B4SOIud1Given)
-		    model->B4SOIud1 = 0.0;
-		 if (!model->B4SOIlud1Given)
-		    model->B4SOIlud1 = 0.0;
-		 if (!model->B4SOIwud1Given)
-		    model->B4SOIwud1 = 0.0;
+                    model->B4SOIud1 = 0.0;
+                 if (!model->B4SOIlud1Given)
+                    model->B4SOIlud1 = 0.0;
+                 if (!model->B4SOIwud1Given)
+                    model->B4SOIwud1 = 0.0;
          if (!model->B4SOIpud1Given)
-		    model->B4SOIpud1 = 0.0;
+                    model->B4SOIpud1 = 0.0;
          if (!model->B4SOIeuGiven)
-            model->B4SOIeu = (model->B4SOItype == NMOS) ? 1.67 : 1.0;	
+            model->B4SOIeu = (model->B4SOItype == NMOS) ? 1.67 : 1.0;
          if (!model->B4SOIleuGiven)
-            model->B4SOIleu = 0.0;	
+            model->B4SOIleu = 0.0;
          if (!model->B4SOIweuGiven)
-            model->B4SOIweu = 0.0;	
+            model->B4SOIweu = 0.0;
          if (!model->B4SOIpeuGiven)
-            model->B4SOIpeu = 0.0;				
-		if (!model->B4SOIucsGiven)
+            model->B4SOIpeu = 0.0;
+                if (!model->B4SOIucsGiven)
             model->B4SOIucs = (model->B4SOItype == NMOS) ? 1.67 : 1.0;
-		if (!model->B4SOIlucsGiven)
+                if (!model->B4SOIlucsGiven)
             model->B4SOIlucs =0.0;
-		if (!model->B4SOIwucsGiven)
+                if (!model->B4SOIwucsGiven)
             model->B4SOIwucs =0.0;
-		if (!model->B4SOIpucsGiven)
+                if (!model->B4SOIpucsGiven)
             model->B4SOIpucs =0.0;
-	    if (!model->B4SOIucsteGiven)
-		    model->B4SOIucste = -4.775e-3;	
-	    if (!model->B4SOIlucsteGiven)
-		    model->B4SOIlucste = 0.0;
+            if (!model->B4SOIucsteGiven)
+                    model->B4SOIucste = -4.775e-3;
+            if (!model->B4SOIlucsteGiven)
+                    model->B4SOIlucste = 0.0;
         if (!model->B4SOIwucsteGiven)
-		    model->B4SOIwucste = 0.0;				
+                    model->B4SOIwucste = 0.0;
         if (!model->B4SOIpucsteGiven)
-		    model->B4SOIpucste = 0.0;
-			
+                    model->B4SOIpucste = 0.0;
+
         if (!model->B4SOIvoffGiven)
-	    model->B4SOIvoff = -0.08;
-        if (!model->B4SOIdeltaGiven)  
+            model->B4SOIvoff = -0.08;
+        if (!model->B4SOIdeltaGiven)
            model->B4SOIdelta = 0.01;
         if (!model->B4SOIrdswGiven)
             model->B4SOIrdsw = 100;
-        if (!model->B4SOIrswGiven)	/* v4.0 */
+        if (!model->B4SOIrswGiven)      /* v4.0 */
             model->B4SOIrsw = 50;
-        if (!model->B4SOIrdwGiven)	/* v4.0 */
+        if (!model->B4SOIrdwGiven)      /* v4.0 */
             model->B4SOIrdw = 50;
-        if (!model->B4SOIrswminGiven)	/* v4.0 */
+        if (!model->B4SOIrswminGiven)   /* v4.0 */
             model->B4SOIrswmin = 0.0;
-        if (!model->B4SOIrdwminGiven)	/* v4.0 */
+        if (!model->B4SOIrdwminGiven)   /* v4.0 */
             model->B4SOIrdwmin = 0.0;
         if (!model->B4SOIprwgGiven)
             model->B4SOIprwg = 0.0;      /* unit 1/V */
         if (!model->B4SOIprwbGiven)
-            model->B4SOIprwb = 0.0;      
+            model->B4SOIprwb = 0.0;
         if (!model->B4SOIprtGiven)
-            model->B4SOIprt = 0.0;      
+            model->B4SOIprt = 0.0;
         if (!model->B4SOIeta0Given)
-            model->B4SOIeta0 = 0.08;      /* no unit  */ 
+            model->B4SOIeta0 = 0.08;      /* no unit  */
         if (!model->B4SOIetabGiven)
-            model->B4SOIetab = -0.07;      /* unit  1/V */ 
+            model->B4SOIetab = -0.07;      /* unit  1/V */
         if (!model->B4SOIpclmGiven)
-            model->B4SOIpclm = 1.3;      /* no unit  */ 
+            model->B4SOIpclm = 1.3;      /* no unit  */
         if (!model->B4SOIpdibl1Given)
             model->B4SOIpdibl1 = .39;    /* no unit  */
         if (!model->B4SOIpdibl2Given)
-            model->B4SOIpdibl2 = 0.0086;    /* no unit  */ 
+            model->B4SOIpdibl2 = 0.0086;    /* no unit  */
         if (!model->B4SOIpdiblbGiven)
-            model->B4SOIpdiblb = 0.0;    /* 1/V  */ 
+            model->B4SOIpdiblb = 0.0;    /* 1/V  */
         if (!model->B4SOIpvagGiven)
-            model->B4SOIpvag = 0.0;     
-        if (!model->B4SOIwrGiven)  
+            model->B4SOIpvag = 0.0;
+        if (!model->B4SOIwrGiven)
             model->B4SOIwr = 1.0;
-        if (!model->B4SOIdwgGiven)  
+        if (!model->B4SOIdwgGiven)
             model->B4SOIdwg = 0.0;
-        if (!model->B4SOIdwbGiven)  
+        if (!model->B4SOIdwbGiven)
             model->B4SOIdwb = 0.0;
         if (!model->B4SOIb0Given)
             model->B4SOIb0 = 0.0;
-        if (!model->B4SOIb1Given)  
+        if (!model->B4SOIb1Given)
             model->B4SOIb1 = 0.0;
-        if (!model->B4SOIalpha0Given)  
+        if (!model->B4SOIalpha0Given)
             model->B4SOIalpha0 = 0.0;
 
-        if (!model->B4SOIcgslGiven)  
+        if (!model->B4SOIcgslGiven)
             model->B4SOIcgsl = 0.0;
-        if (!model->B4SOIcgdlGiven)  
+        if (!model->B4SOIcgdlGiven)
             model->B4SOIcgdl = 0.0;
-        if (!model->B4SOIckappaGiven)  
+        if (!model->B4SOIckappaGiven)
             model->B4SOIckappa = 0.6;
-        if (!model->B4SOIclcGiven)  
+        if (!model->B4SOIclcGiven)
             model->B4SOIclc = 0.1e-7;
-        if (!model->B4SOIcleGiven)  
+        if (!model->B4SOIcleGiven)
             model->B4SOIcle = 0.0;
-        if (!model->B4SOItboxGiven)  
+        if (!model->B4SOItboxGiven)
             model->B4SOItbox = 3e-7;
-        if (!model->B4SOItsiGiven)  
+        if (!model->B4SOItsiGiven)
             model->B4SOItsi = 1e-7;
-		if (!model->B4SOIetsiGiven)  
+                if (!model->B4SOIetsiGiven)
             model->B4SOIetsi = 1e-7;
-        if (!model->B4SOIxjGiven)  
+        if (!model->B4SOIxjGiven)
             model->B4SOIxj = model->B4SOItsi;
-        if (!model->B4SOIrbodyGiven)  
+        if (!model->B4SOIrbodyGiven)
             model->B4SOIrbody = 0.0;
-        if (!model->B4SOIrbshGiven)  
+        if (!model->B4SOIrbshGiven)
             model->B4SOIrbsh = 0.0;
-        if (!model->B4SOIrth0Given)  
+        if (!model->B4SOIrth0Given)
             model->B4SOIrth0 = 0;
 
 /* v3.0 bug fix */
         if (!model->B4SOIcth0Given)
             model->B4SOIcth0 = 1e-5;
+        if (!model->B4SOIcfrcoeffGiven)  /* v4.4 */
+            model->B4SOIcfrcoeff = 1.0;
 
-        if (!model->B4SOIagidlGiven)  
+        if (!model->B4SOIagidlGiven)
             model->B4SOIagidl = 0.0;
-        if (!model->B4SOIbgidlGiven)  
-            model->B4SOIbgidl = 2.3e9; 	/* v4.0 */
-        if (!model->B4SOIcgidlGiven)  	/* v4.0 */
-            model->B4SOIcgidl = 0.5;	/* v4.2 default value changed from 0 to 0.5 */
-		if (!model->B4SOIrgidlGiven)  	/* v4.1 */
+        if (!model->B4SOIbgidlGiven)
+            model->B4SOIbgidl = 2.3e9;  /* v4.0 */
+        if (!model->B4SOIcgidlGiven)    /* v4.0 */
+            model->B4SOIcgidl = 0.5;    /* v4.2 default value changed from 0 to 0.5 */
+                if (!model->B4SOIrgidlGiven)    /* v4.1 */
             model->B4SOIrgidl = 1.0;
-	    if (!model->B4SOIkgidlGiven)  	/* v4.1 */
+            if (!model->B4SOIkgidlGiven)        /* v4.1 */
             model->B4SOIkgidl = 0.0;
-		if (!model->B4SOIfgidlGiven)  	/* v4.1 */
+                if (!model->B4SOIfgidlGiven)    /* v4.1 */
             model->B4SOIfgidl = 0.0;
-		        if (!model->B4SOIagislGiven)  
+                        if (!model->B4SOIagislGiven)
             model->B4SOIagisl = model->B4SOIagidl;
-        if (!model->B4SOIbgislGiven)  
-            model->B4SOIbgisl = model->B4SOIbgidl; 	/* v4.0 */
-        if (!model->B4SOIcgislGiven)  	/* v4.0 */
+        if (!model->B4SOIbgislGiven)
+            model->B4SOIbgisl = model->B4SOIbgidl;      /* v4.0 */
+        if (!model->B4SOIcgislGiven)    /* v4.0 */
             model->B4SOIcgisl = model->B4SOIcgidl;
-		if (!model->B4SOIrgislGiven)  	/* v4.1 */
+                if (!model->B4SOIrgislGiven)    /* v4.1 */
             model->B4SOIrgisl = model->B4SOIrgidl;
-	    if (!model->B4SOIkgislGiven)  	/* v4.1 */
+            if (!model->B4SOIkgislGiven)        /* v4.1 */
             model->B4SOIkgisl = model->B4SOIkgidl;
-		if (!model->B4SOIfgislGiven)  	/* v4.1 */
-            model->B4SOIfgisl = model->B4SOIfgidl;	
-			
-        if (!model->B4SOIndiodeGiven)	/* v4.0 */ 
+                if (!model->B4SOIfgislGiven)    /* v4.1 */
+            model->B4SOIfgisl = model->B4SOIfgidl;
+
+        if (!model->B4SOIndiodeGiven)   /* v4.0 */
             model->B4SOIndiode = 1.0;
-        if (!model->B4SOIndiodedGiven)	/* v4.0 */ 
+        if (!model->B4SOIndiodedGiven)  /* v4.0 */
             model->B4SOIndioded = model->B4SOIndiode;
-        if (!model->B4SOIntunGiven)  	/* v4.0 */
+        if (!model->B4SOIntunGiven)     /* v4.0 */
             model->B4SOIntun = 10.0;
-        if (!model->B4SOIntundGiven)  	/* v4.0 */
+        if (!model->B4SOIntundGiven)    /* v4.0 */
             model->B4SOIntund = model->B4SOIntun;
 
         if (!model->B4SOInrecf0Given)
@@ -476,43 +483,43 @@ int nthreads;
             model->B4SOInrecr0 = 10.0;
         if (!model->B4SOInrecr0dGiven)
             model->B4SOInrecr0d = model->B4SOInrecr0;
- 
-        if (!model->B4SOIisbjtGiven)  
+
+        if (!model->B4SOIisbjtGiven)
             model->B4SOIisbjt = 1e-6;
-        if (!model->B4SOIidbjtGiven)  
+        if (!model->B4SOIidbjtGiven)
             model->B4SOIidbjt = model->B4SOIisbjt;
-        if (!model->B4SOIisdifGiven)  
+        if (!model->B4SOIisdifGiven)
             model->B4SOIisdif = 0.0;
-        if (!model->B4SOIiddifGiven)  
-            model->B4SOIiddif = model->B4SOIisdif;	/* v4.0 */
-        if (!model->B4SOIisrecGiven)  
+        if (!model->B4SOIiddifGiven)
+            model->B4SOIiddif = model->B4SOIisdif;      /* v4.0 */
+        if (!model->B4SOIisrecGiven)
             model->B4SOIisrec = 1e-5;
-        if (!model->B4SOIidrecGiven)  
+        if (!model->B4SOIidrecGiven)
             model->B4SOIidrec = model->B4SOIisrec;
-        if (!model->B4SOIistunGiven)  
+        if (!model->B4SOIistunGiven)
             model->B4SOIistun = 0.0;
-        if (!model->B4SOIidtunGiven)  
+        if (!model->B4SOIidtunGiven)
             model->B4SOIidtun = model->B4SOIistun;
-        if (!model->B4SOIxbjtGiven)  
+        if (!model->B4SOIxbjtGiven)
             model->B4SOIxbjt = 1.0;
         if (!model->B4SOIxdifGiven)
             model->B4SOIxdif = model->B4SOIxbjt;
         if (!model->B4SOIxdifdGiven)
             model->B4SOIxdifd = model->B4SOIxdif;
-        if (!model->B4SOIxrecGiven)  
+        if (!model->B4SOIxrecGiven)
             model->B4SOIxrec = 1.0;
         if (!model->B4SOIxrecdGiven)
             model->B4SOIxrecd =  model->B4SOIxrec;
-        if (!model->B4SOIxtunGiven)  
+        if (!model->B4SOIxtunGiven)
             model->B4SOIxtun = 0.0;
         if (!model->B4SOIxtundGiven)
             model->B4SOIxtund = model->B4SOIxtun;
-        if (!model->B4SOIttGiven)  
+        if (!model->B4SOIttGiven)
             model->B4SOItt = 1e-12;
-        if (!model->B4SOIasdGiven)  
+        if (!model->B4SOIasdGiven)
             model->B4SOIasd = 0.3;
 
-	/* 4.0 backward compatibility  */
+        /* 4.0 backward compatibility  */
         if (!model->B4SOIlpe0Given) {
            if(!model->B4SOInlxGiven)
                model->B4SOIlpe0 = 1.74e-7;
@@ -552,7 +559,7 @@ int nthreads;
            else
                model->B4SOIegidl =  model->B4SOIngidl;
         }
-		        
+
         if(model->B4SOIegidlGiven && model->B4SOIngidlGiven)
            printf("Warning: both egidl and ngidl are given. Egidl value is taken \n");
         if (!model->B4SOIlegidlGiven) {
@@ -560,7 +567,7 @@ int nthreads;
                model->B4SOIlegidl = 0.0;
            else
                model->B4SOIlegidl =  model->B4SOIlngidl;
-	}
+        }
         if(model->B4SOIlegidlGiven && model->B4SOIlngidlGiven)
            printf("Warning: both legidl and lngidl are given. Legidl value is taken \n");
         if (!model->B4SOIwegidlGiven) {
@@ -580,68 +587,68 @@ int nthreads;
         if(model->B4SOIpegidlGiven && model->B4SOIpngidlGiven)
            printf("Warning: both pegidl and pngidl are given. Pegidl value is taken \n");
 
-		if (!model->B4SOIegislGiven) {
+                if (!model->B4SOIegislGiven) {
                 model->B4SOIegisl = model->B4SOIegidl;
                    }
-	    if (!model->B4SOIlegislGiven) {
+            if (!model->B4SOIlegislGiven) {
                 model->B4SOIlegisl = model->B4SOIlegidl;
-                   }	
-	    if (!model->B4SOIwegislGiven) {
+                   }
+            if (!model->B4SOIwegislGiven) {
                 model->B4SOIwegisl = model->B4SOIwegidl;
-                   }	
-	    if (!model->B4SOIpegislGiven) {
+                   }
+            if (!model->B4SOIpegislGiven) {
                 model->B4SOIpegisl = model->B4SOIpegidl;
-                   }				   
+                   }
         /* unit degree celcius */
-        if (!model->B4SOItnomGiven)  
-	    model->B4SOItnom = ckt->CKTnomTemp; 
-        if (!model->B4SOILintGiven)  
+        if (!model->B4SOItnomGiven)
+            model->B4SOItnom = ckt->CKTnomTemp;
+        if (!model->B4SOILintGiven)
            model->B4SOILint = 0.0;
-        if (!model->B4SOILlGiven)  
+        if (!model->B4SOILlGiven)
            model->B4SOILl = 0.0;
-        if (!model->B4SOILlcGiven) 
+        if (!model->B4SOILlcGiven)
            model->B4SOILlc = 0.0; /* v2.2.3 */
-        if (!model->B4SOILlnGiven)  
+        if (!model->B4SOILlnGiven)
            model->B4SOILln = 1.0;
-        if (!model->B4SOILwGiven)  
+        if (!model->B4SOILwGiven)
            model->B4SOILw = 0.0;
-        if (!model->B4SOILwcGiven) 
+        if (!model->B4SOILwcGiven)
            model->B4SOILwc = 0.0; /* v2.2.3 */
-        if (!model->B4SOILwnGiven)  
+        if (!model->B4SOILwnGiven)
            model->B4SOILwn = 1.0;
-        if (!model->B4SOILwlGiven)  
+        if (!model->B4SOILwlGiven)
            model->B4SOILwl = 0.0;
-        if (!model->B4SOILwlcGiven) 
+        if (!model->B4SOILwlcGiven)
            model->B4SOILwlc = 0.0; /* v2.2.3 */
-        if (!model->B4SOILminGiven)  
+        if (!model->B4SOILminGiven)
            model->B4SOILmin = 0.0;
-        if (!model->B4SOILmaxGiven)  
+        if (!model->B4SOILmaxGiven)
            model->B4SOILmax = 1.0;
-        if (!model->B4SOIWintGiven)  
+        if (!model->B4SOIWintGiven)
            model->B4SOIWint = 0.0;
-        if (!model->B4SOIWlGiven)  
+        if (!model->B4SOIWlGiven)
            model->B4SOIWl = 0.0;
-        if (!model->B4SOIWlcGiven) 
+        if (!model->B4SOIWlcGiven)
            model->B4SOIWlc = 0.0; /* v2.2.3 */
-        if (!model->B4SOIWlnGiven)  
+        if (!model->B4SOIWlnGiven)
            model->B4SOIWln = 1.0;
-        if (!model->B4SOIWwGiven)  
+        if (!model->B4SOIWwGiven)
            model->B4SOIWw = 0.0;
-        if (!model->B4SOIWwcGiven) 
+        if (!model->B4SOIWwcGiven)
            model->B4SOIWwc = 0.0; /* v2.2.3 */
-        if (!model->B4SOIWwnGiven)  
+        if (!model->B4SOIWwnGiven)
            model->B4SOIWwn = 1.0;
-        if (!model->B4SOIWwlGiven)  
+        if (!model->B4SOIWwlGiven)
            model->B4SOIWwl = 0.0;
         if (!model->B4SOIWwlcGiven)
            model->B4SOIWwlc = 0.0; /* v2.2.3 */
-        if (!model->B4SOIWminGiven)  
+        if (!model->B4SOIWminGiven)
            model->B4SOIWmin = 0.0;
-        if (!model->B4SOIWmaxGiven)  
+        if (!model->B4SOIWmaxGiven)
            model->B4SOIWmax = 1.0;
-        if (!model->B4SOIdwcGiven)  
+        if (!model->B4SOIdwcGiven)
            model->B4SOIdwc = model->B4SOIWint;
-        if (!model->B4SOIdlcGiven)  
+        if (!model->B4SOIdlcGiven)
            model->B4SOIdlc = model->B4SOILint;
         if (!model->B4SOIdlcigGiven)
            model->B4SOIdlcig = model->B4SOILint; /* v3.0 */
@@ -753,7 +760,7 @@ int nthreads;
 
 
 /* v2.0 release */
-        if (!model->B4SOIk1w1Given) 
+        if (!model->B4SOIk1w1Given)
            model->B4SOIk1w1 = 0.0;
         if (!model->B4SOIk1w2Given)
            model->B4SOIk1w2 = 0.0;
@@ -783,31 +790,31 @@ int nthreads;
            model->B4SOIsiid = 0.0;
         if (!model->B4SOIfbjtiiGiven)
            model->B4SOIfbjtii = 0.0;
-		 /*4.1 Iii model*/
-		if (!model->B4SOIebjtiiGiven)
+                 /*4.1 Iii model*/
+                if (!model->B4SOIebjtiiGiven)
            model->B4SOIebjtii = 0.0;
         if (!model->B4SOIcbjtiiGiven)
            model->B4SOIcbjtii = 0.0;
         if (!model->B4SOIvbciGiven)
            model->B4SOIvbci = 0.0;
-	    if (!model->B4SOItvbciGiven)
+            if (!model->B4SOItvbciGiven)
            model->B4SOItvbci = 0.0;
         if (!model->B4SOIabjtiiGiven)
            model->B4SOIabjtii = 0.0;
         if (!model->B4SOImbjtiiGiven)
            model->B4SOImbjtii = 0.4;
-		   
+
         if (!model->B4SOIesatiiGiven)
             model->B4SOIesatii = 1e7;
         if (!model->B4SOIlnGiven)
            model->B4SOIln = 2e-6;
-        if (!model->B4SOIvrec0Given)	/* v4.0 */
+        if (!model->B4SOIvrec0Given)    /* v4.0 */
            model->B4SOIvrec0 = 0;
-        if (!model->B4SOIvrec0dGiven)	/* v4.0 */
+        if (!model->B4SOIvrec0dGiven)   /* v4.0 */
            model->B4SOIvrec0d = model->B4SOIvrec0;
-        if (!model->B4SOIvtun0Given)	/* v4.0 */
+        if (!model->B4SOIvtun0Given)    /* v4.0 */
            model->B4SOIvtun0 = 0;
-        if (!model->B4SOIvtun0dGiven)	/* v4.0 */
+        if (!model->B4SOIvtun0dGiven)   /* v4.0 */
            model->B4SOIvtun0d = model->B4SOIvtun0;
         if (!model->B4SOInbjtGiven)
            model->B4SOInbjt = 1.0;
@@ -819,9 +826,9 @@ int nthreads;
            model->B4SOIvabjt = 10.0;
         if (!model->B4SOIaelyGiven)
            model->B4SOIaely = 0;
-        if (!model->B4SOIahliGiven)	/* v4.0 */
+        if (!model->B4SOIahliGiven)     /* v4.0 */
            model->B4SOIahli = 0;
-        if (!model->B4SOIahlidGiven)	/* v4.0 */
+        if (!model->B4SOIahlidGiven)    /* v4.0 */
            model->B4SOIahlid = model->B4SOIahli;
         if (!model->B4SOIrbodyGiven)
            model->B4SOIrbody = 0.0;
@@ -949,10 +956,10 @@ int nthreads;
         if (!model->B4SOIlngateGiven)
             model->B4SOIlngate = 0.0;
         if (!model->B4SOIlnsdGiven)
-            model->B4SOIlnsd = 0.0;		
+            model->B4SOIlnsd = 0.0;
         if (!model->B4SOIlvth0Given)
            model->B4SOIlvth0 = 0.0;
-        if (!model->B4SOIlvfbGiven)    
+        if (!model->B4SOIlvfbGiven)
             model->B4SOIlvfb = 0.0;   /* v4.1 */
         if (!model->B4SOIlk1Given)
             model->B4SOIlk1 = 0.0;
@@ -1012,9 +1019,9 @@ int nthreads;
             model->B4SOIla2 = 0.0;
         if (!model->B4SOIlrdswGiven)
             model->B4SOIlrdsw = 0.0;
-        if (!model->B4SOIlrswGiven)	/* v4.0 */
+        if (!model->B4SOIlrswGiven)     /* v4.0 */
             model->B4SOIlrsw = 0.0;
-        if (!model->B4SOIlrdwGiven)	/* v4.0 */
+        if (!model->B4SOIlrdwGiven)     /* v4.0 */
             model->B4SOIlrdw = 0.0;
         if (!model->B4SOIlprwbGiven)
             model->B4SOIlprwb = 0.0;
@@ -1062,8 +1069,8 @@ int nthreads;
             model->B4SOIlalpha0 = 0.0;
         if (!model->B4SOIlfbjtiiGiven)
             model->B4SOIlfbjtii = 0.0;
-			/*4.1 Iii model*/
-		if (!model->B4SOIlebjtiiGiven)
+                        /*4.1 Iii model*/
+                if (!model->B4SOIlebjtiiGiven)
            model->B4SOIlebjtii = 0.0;
         if (!model->B4SOIlcbjtiiGiven)
            model->B4SOIlcbjtii = 0.0;
@@ -1073,7 +1080,7 @@ int nthreads;
            model->B4SOIlabjtii = 0.0;
         if (!model->B4SOIlmbjtiiGiven)
            model->B4SOIlmbjtii = 0.0;
-		   
+
         if (!model->B4SOIlbeta0Given)
             model->B4SOIlbeta0 = 0.0;
         if (!model->B4SOIlbeta1Given)
@@ -1106,8 +1113,8 @@ int nthreads;
             model->B4SOIlkgidl = 0.0;
         if (!model->B4SOIlfgidlGiven)
             model->B4SOIlfgidl = 0.0;
-			
-		        if (!model->B4SOIlagislGiven)
+
+                        if (!model->B4SOIlagislGiven)
             model->B4SOIlagisl = 0.0;
         if (!model->B4SOIlbgislGiven)
             model->B4SOIlbgisl = 0.0;
@@ -1118,22 +1125,22 @@ int nthreads;
         if (!model->B4SOIlkgislGiven)
             model->B4SOIlkgisl = 0.0;
         if (!model->B4SOIlfgislGiven)
-            model->B4SOIlfgisl = 0.0;	
-        if (!model->B4SOIlntunGiven)	/* v4.0 */
+            model->B4SOIlfgisl = 0.0;
+        if (!model->B4SOIlntunGiven)    /* v4.0 */
             model->B4SOIlntun = 0.0;
-        if (!model->B4SOIlntundGiven)	/* v4.0 */
+        if (!model->B4SOIlntundGiven)   /* v4.0 */
             model->B4SOIlntund = model->B4SOIlntun;
-        if (!model->B4SOIlndiodeGiven)	/* v4.0 */
+        if (!model->B4SOIlndiodeGiven)  /* v4.0 */
             model->B4SOIlndiode = 0.0;
-        if (!model->B4SOIlndiodedGiven)	/* v4.0 */
+        if (!model->B4SOIlndiodedGiven) /* v4.0 */
             model->B4SOIlndioded = model->B4SOIlndiode;
-        if (!model->B4SOIlnrecf0Given)	/* v4.0 */
+        if (!model->B4SOIlnrecf0Given)  /* v4.0 */
             model->B4SOIlnrecf0 = 0.0;
-        if (!model->B4SOIlnrecf0dGiven)	/* v4.0 */
+        if (!model->B4SOIlnrecf0dGiven) /* v4.0 */
             model->B4SOIlnrecf0d = model->B4SOIlnrecf0;
-        if (!model->B4SOIlnrecr0Given)	/* v4.0 */
+        if (!model->B4SOIlnrecr0Given)  /* v4.0 */
             model->B4SOIlnrecr0 = 0.0;
-        if (!model->B4SOIlnrecr0dGiven)	/* v4.0 */
+        if (!model->B4SOIlnrecr0dGiven) /* v4.0 */
             model->B4SOIlnrecr0d = model->B4SOIlnrecr0;
         if (!model->B4SOIlisbjtGiven)
             model->B4SOIlisbjt = 0.0;
@@ -1142,7 +1149,7 @@ int nthreads;
         if (!model->B4SOIlisdifGiven)
             model->B4SOIlisdif = 0.0;
         if (!model->B4SOIliddifGiven)
-            model->B4SOIliddif = model->B4SOIlisdif;	/* v4.0 */
+            model->B4SOIliddif = model->B4SOIlisdif;    /* v4.0 */
         if (!model->B4SOIlisrecGiven)
             model->B4SOIlisrec = 0.0;
         if (!model->B4SOIlidrecGiven)
@@ -1167,11 +1174,11 @@ int nthreads;
             model->B4SOIlvabjt = 0.0;
         if (!model->B4SOIlaelyGiven)
             model->B4SOIlaely = 0.0;
-        if (!model->B4SOIlahliGiven)	/* v4.0 */ 
+        if (!model->B4SOIlahliGiven)    /* v4.0 */
             model->B4SOIlahli = 0.0;
-        if (!model->B4SOIlahlidGiven)	/* v4.0 */ 
+        if (!model->B4SOIlahlidGiven)   /* v4.0 */
             model->B4SOIlahlid = model->B4SOIlahli;
-	/* CV Model */
+        /* CV Model */
         if (!model->B4SOIlvsdfbGiven)
             model->B4SOIlvsdfb = 0.0;
         if (!model->B4SOIlvsdthGiven)
@@ -1346,9 +1353,9 @@ int nthreads;
             model->B4SOIwa2 = 0.0;
         if (!model->B4SOIwrdswGiven)
             model->B4SOIwrdsw = 0.0;
-        if (!model->B4SOIwrswGiven)	/* v4.0 */
+        if (!model->B4SOIwrswGiven)     /* v4.0 */
             model->B4SOIwrsw = 0.0;
-        if (!model->B4SOIwrdwGiven)	/* v4.0 */
+        if (!model->B4SOIwrdwGiven)     /* v4.0 */
             model->B4SOIwrdw = 0.0;
         if (!model->B4SOIwprwbGiven)
             model->B4SOIwprwb = 0.0;
@@ -1396,8 +1403,8 @@ int nthreads;
             model->B4SOIwalpha0 = 0.0;
         if (!model->B4SOIwfbjtiiGiven)
             model->B4SOIwfbjtii = 0.0;
-	/*4.1 Iii model*/
-		if (!model->B4SOIwebjtiiGiven)
+        /*4.1 Iii model*/
+                if (!model->B4SOIwebjtiiGiven)
            model->B4SOIwebjtii = 0.0;
         if (!model->B4SOIwcbjtiiGiven)
            model->B4SOIwcbjtii = 0.0;
@@ -1439,8 +1446,8 @@ int nthreads;
             model->B4SOIwkgidl = 0.0;
         if (!model->B4SOIwfgidlGiven)
             model->B4SOIwfgidl = 0.0;
-			
-		if (!model->B4SOIwagislGiven)
+
+                if (!model->B4SOIwagislGiven)
             model->B4SOIwagisl = 0.0;
         if (!model->B4SOIwbgislGiven)
             model->B4SOIwbgisl = 0.0;
@@ -1451,22 +1458,22 @@ int nthreads;
         if (!model->B4SOIwkgislGiven)
             model->B4SOIwkgisl = 0.0;
         if (!model->B4SOIwfgislGiven)
-            model->B4SOIwfgisl = 0.0;	
-        if (!model->B4SOIwntunGiven)	/* v4.0 */
+            model->B4SOIwfgisl = 0.0;
+        if (!model->B4SOIwntunGiven)    /* v4.0 */
             model->B4SOIwntun = 0.0;
-        if (!model->B4SOIwntundGiven)	/* v4.0 */
+        if (!model->B4SOIwntundGiven)   /* v4.0 */
             model->B4SOIwntund = model->B4SOIwntun;
-        if (!model->B4SOIwndiodeGiven)	/* v4.0 */
+        if (!model->B4SOIwndiodeGiven)  /* v4.0 */
             model->B4SOIwndiode = 0.0;
-        if (!model->B4SOIwndiodedGiven)	/* v4.0 */
+        if (!model->B4SOIwndiodedGiven) /* v4.0 */
             model->B4SOIwndioded = model->B4SOIwndiode;
         if (!model->B4SOIwnrecf0Given) /* v4.0 */
             model->B4SOIwnrecf0 = 0.0;
-        if (!model->B4SOIwnrecf0dGiven)	/* v4.0 */
+        if (!model->B4SOIwnrecf0dGiven) /* v4.0 */
             model->B4SOIwnrecf0d = model->B4SOIwnrecf0;
-        if (!model->B4SOIwnrecr0Given)	/* v4.0 */
+        if (!model->B4SOIwnrecr0Given)  /* v4.0 */
             model->B4SOIwnrecr0 = 0.0;
-        if (!model->B4SOIwnrecr0dGiven)	/* v4.0 */
+        if (!model->B4SOIwnrecr0dGiven) /* v4.0 */
             model->B4SOIwnrecr0d = model->B4SOIwnrecr0;
         if (!model->B4SOIwisbjtGiven)
             model->B4SOIwisbjt = 0.0;
@@ -1475,7 +1482,7 @@ int nthreads;
         if (!model->B4SOIwisdifGiven)
             model->B4SOIwisdif = 0.0;
         if (!model->B4SOIwiddifGiven)
-            model->B4SOIwiddif = model->B4SOIwisdif;	/* v4.0 */
+            model->B4SOIwiddif = model->B4SOIwisdif;    /* v4.0 */
         if (!model->B4SOIwisrecGiven)
             model->B4SOIwisrec = 0.0;
         if (!model->B4SOIwidrecGiven)
@@ -1500,9 +1507,9 @@ int nthreads;
             model->B4SOIwvabjt = 0.0;
         if (!model->B4SOIwaelyGiven)
             model->B4SOIwaely = 0.0;
-        if (!model->B4SOIwahliGiven)	/* v4.0 */
+        if (!model->B4SOIwahliGiven)    /* v4.0 */
             model->B4SOIwahli = 0.0;
-        if (!model->B4SOIwahlidGiven)	/* v4.0 */
+        if (!model->B4SOIwahlidGiven)   /* v4.0 */
             model->B4SOIwahlid = model->B4SOIwahli;
 
 /* v3.1 added for RF */
@@ -1512,7 +1519,7 @@ int nthreads;
             model->B4SOIwxrcrg2 =0.0;
 /* v3.1 added for RF end */
 
-	/* CV Model */
+        /* CV Model */
         if (!model->B4SOIwvsdfbGiven)
             model->B4SOIwvsdfb = 0.0;
         if (!model->B4SOIwvsdthGiven)
@@ -1680,9 +1687,9 @@ int nthreads;
             model->B4SOIpa2 = 0.0;
         if (!model->B4SOIprdswGiven)
             model->B4SOIprdsw = 0.0;
-        if (!model->B4SOIprswGiven)	/* v4.0 */
+        if (!model->B4SOIprswGiven)     /* v4.0 */
             model->B4SOIprsw = 0.0;
-        if (!model->B4SOIprdwGiven)	/* v4.0 */
+        if (!model->B4SOIprdwGiven)     /* v4.0 */
             model->B4SOIprdw = 0.0;
         if (!model->B4SOIpprwbGiven)
             model->B4SOIpprwb = 0.0;
@@ -1730,8 +1737,8 @@ int nthreads;
             model->B4SOIpalpha0 = 0.0;
         if (!model->B4SOIpfbjtiiGiven)
             model->B4SOIpfbjtii = 0.0;
-	/*4.1 Iii model*/
-	    if (!model->B4SOIpebjtiiGiven)
+        /*4.1 Iii model*/
+            if (!model->B4SOIpebjtiiGiven)
            model->B4SOIpebjtii = 0.0;
         if (!model->B4SOIpcbjtiiGiven)
            model->B4SOIpcbjtii = 0.0;
@@ -1773,8 +1780,8 @@ int nthreads;
             model->B4SOIpkgidl = 0.0;
         if (!model->B4SOIpfgidlGiven)
             model->B4SOIpfgidl = 0.0;
-			
-		if (!model->B4SOIpagislGiven)
+
+                if (!model->B4SOIpagislGiven)
             model->B4SOIpagisl = 0.0;
         if (!model->B4SOIpbgislGiven)
             model->B4SOIpbgisl = 0.0;
@@ -1785,22 +1792,22 @@ int nthreads;
         if (!model->B4SOIpkgislGiven)
             model->B4SOIpkgisl = 0.0;
         if (!model->B4SOIpfgislGiven)
-            model->B4SOIpfgisl = 0.0;	
-        if (!model->B4SOIpntunGiven)	/* v4.0 */
+            model->B4SOIpfgisl = 0.0;
+        if (!model->B4SOIpntunGiven)    /* v4.0 */
             model->B4SOIpntun = 0.0;
-        if (!model->B4SOIpntundGiven)	/* v4.0 */
+        if (!model->B4SOIpntundGiven)   /* v4.0 */
             model->B4SOIpntund = model->B4SOIpntun;
-        if (!model->B4SOIpndiodeGiven)	/* v4.0 */
+        if (!model->B4SOIpndiodeGiven)  /* v4.0 */
             model->B4SOIpndiode = 0.0;
-        if (!model->B4SOIpndiodedGiven)	/* v4.0 */
+        if (!model->B4SOIpndiodedGiven) /* v4.0 */
             model->B4SOIpndioded = model->B4SOIpndiode;
-        if (!model->B4SOIpnrecf0Given)	/* v4.0 */
+        if (!model->B4SOIpnrecf0Given)  /* v4.0 */
             model->B4SOIpnrecf0 = 0.0;
-        if (!model->B4SOIpnrecf0dGiven)	/* v4.0 */
+        if (!model->B4SOIpnrecf0dGiven) /* v4.0 */
             model->B4SOIpnrecf0d = model->B4SOIpnrecf0;
-        if (!model->B4SOIpnrecr0Given)	/* v4.0 */
+        if (!model->B4SOIpnrecr0Given)  /* v4.0 */
             model->B4SOIpnrecr0 = 0.0;
-        if (!model->B4SOIpnrecr0dGiven)	/* v4.0 */
+        if (!model->B4SOIpnrecr0dGiven) /* v4.0 */
             model->B4SOIpnrecr0d = model->B4SOIpnrecr0;
         if (!model->B4SOIpisbjtGiven)
             model->B4SOIpisbjt = 0.0;
@@ -1818,13 +1825,13 @@ int nthreads;
             model->B4SOIpistun = 0.0;
         if (!model->B4SOIpidtunGiven)
             model->B4SOIpidtun = model->B4SOIpistun;
-        if (!model->B4SOIpvrec0Given)	/* v4.0 */
+        if (!model->B4SOIpvrec0Given)   /* v4.0 */
             model->B4SOIpvrec0 = 0.0;
-        if (!model->B4SOIpvrec0dGiven)	/* v4.0 */
+        if (!model->B4SOIpvrec0dGiven)  /* v4.0 */
             model->B4SOIpvrec0d = model->B4SOIpvrec0;
-        if (!model->B4SOIpvtun0Given)	/* v4.0 */
+        if (!model->B4SOIpvtun0Given)   /* v4.0 */
             model->B4SOIpvtun0 = 0.0;
-        if (!model->B4SOIpvtun0dGiven)	/* v4.0 */
+        if (!model->B4SOIpvtun0dGiven)  /* v4.0 */
             model->B4SOIpvtun0d = model->B4SOIpvtun0;
         if (!model->B4SOIpnbjtGiven)
             model->B4SOIpnbjt = 0.0;
@@ -1834,9 +1841,9 @@ int nthreads;
             model->B4SOIpvabjt = 0.0;
         if (!model->B4SOIpaelyGiven)
             model->B4SOIpaely = 0.0;
-        if (!model->B4SOIpahliGiven)	/* v4.0 */
+        if (!model->B4SOIpahliGiven)    /* v4.0 */
             model->B4SOIpahli = 0.0;
-        if (!model->B4SOIpahlidGiven)	/* v4.0 */
+        if (!model->B4SOIpahlidGiven)   /* v4.0 */
             model->B4SOIpahlid = model->B4SOIpahli;
 
 /* v3.1 for RF */
@@ -1846,7 +1853,7 @@ int nthreads;
             model->B4SOIpxrcrg2 =0.0;
 /* v3.1 for RF end */
 
-	/* CV Model */
+        /* CV Model */
         if (!model->B4SOIpvsdfbGiven)
             model->B4SOIpvsdfb = 0.0;
         if (!model->B4SOIpvsdthGiven)
@@ -1861,62 +1868,62 @@ int nthreads;
             model->B4SOIpnoff = 0.0; /* v3.2 */
 /* Added for binning - END */
 
-	if (!model->B4SOIcfGiven)
+        if (!model->B4SOIcfGiven)
             model->B4SOIcf = 2.0 * EPSOX / PI
-			   * log(1.0 + 0.4e-6 / model->B4SOItox);
+                           * log(1.0 + 0.4e-6 / model->B4SOItox);
         if (!model->B4SOIcgdoGiven)
-	{   if (model->B4SOIdlcGiven && (model->B4SOIdlc > 0.0))
-	    {   model->B4SOIcgdo = model->B4SOIdlc * model->B4SOIcox
-				 - model->B4SOIcgdl ;
-	    }
-	    else
-	        model->B4SOIcgdo = 0.6 * model->B4SOIxj * model->B4SOIcox; 
-	}
+        {   if (model->B4SOIdlcGiven && (model->B4SOIdlc > 0.0))
+            {   model->B4SOIcgdo = model->B4SOIdlc * model->B4SOIcox
+                                 - model->B4SOIcgdl ;
+            }
+            else
+                model->B4SOIcgdo = 0.6 * model->B4SOIxj * model->B4SOIcox;
+        }
         if (!model->B4SOIcgsoGiven)
-	{   if (model->B4SOIdlcGiven && (model->B4SOIdlc > 0.0))
-	    {   model->B4SOIcgso = model->B4SOIdlc * model->B4SOIcox
-				 - model->B4SOIcgsl ;
-	    }
-	    else
-	        model->B4SOIcgso = 0.6 * model->B4SOIxj * model->B4SOIcox; 
-	}
+        {   if (model->B4SOIdlcGiven && (model->B4SOIdlc > 0.0))
+            {   model->B4SOIcgso = model->B4SOIdlc * model->B4SOIcox
+                                 - model->B4SOIcgsl ;
+            }
+            else
+                model->B4SOIcgso = 0.6 * model->B4SOIxj * model->B4SOIcox;
+        }
 
         if (!model->B4SOIcgeoGiven)
-	{   model->B4SOIcgeo = 0.0;
-	}
+        {   model->B4SOIcgeo = 0.0;
+        }
         if (!model->B4SOIxpartGiven)
             model->B4SOIxpart = 0.0;
         if (!model->B4SOIsheetResistanceGiven)
             model->B4SOIsheetResistance = 0.0;
         if (!model->B4SOIcsdeswGiven)
             model->B4SOIcsdesw = 0.0;
-        if (!model->B4SOIunitLengthGateSidewallJctCapSGiven)	/* v4.0 */
+        if (!model->B4SOIunitLengthGateSidewallJctCapSGiven)    /* v4.0 */
             model->B4SOIunitLengthGateSidewallJctCapS = 1e-10;
-        if (!model->B4SOIunitLengthGateSidewallJctCapDGiven)	/* v4.0 */
+        if (!model->B4SOIunitLengthGateSidewallJctCapDGiven)    /* v4.0 */
             model->B4SOIunitLengthGateSidewallJctCapD = model->B4SOIunitLengthGateSidewallJctCapS;
-        if (!model->B4SOIGatesidewallJctSPotentialGiven)	/* v4.0 */
+        if (!model->B4SOIGatesidewallJctSPotentialGiven)        /* v4.0 */
             model->B4SOIGatesidewallJctSPotential = 0.7;
-        if (!model->B4SOIGatesidewallJctDPotentialGiven)	/* v4.0 */
+        if (!model->B4SOIGatesidewallJctDPotentialGiven)        /* v4.0 */
             model->B4SOIGatesidewallJctDPotential = model->B4SOIGatesidewallJctSPotential;
-        if (!model->B4SOIbodyJctGateSideSGradingCoeffGiven)	/* v4.0 */
+        if (!model->B4SOIbodyJctGateSideSGradingCoeffGiven)     /* v4.0 */
             model->B4SOIbodyJctGateSideSGradingCoeff = 0.5;
-        if (!model->B4SOIbodyJctGateSideDGradingCoeffGiven)	/* v4.0 */
+        if (!model->B4SOIbodyJctGateSideDGradingCoeffGiven)     /* v4.0 */
             model->B4SOIbodyJctGateSideDGradingCoeff = model->B4SOIbodyJctGateSideSGradingCoeff;
         if (!model->B4SOIoxideTrapDensityAGiven)
-	{   if (model->B4SOItype == NMOS)
+        {   if (model->B4SOItype == NMOS)
                 model->B4SOIoxideTrapDensityA = 6.25e41;
             else
                 model->B4SOIoxideTrapDensityA=6.188e40;
-	}
+        }
         if (!model->B4SOIoxideTrapDensityBGiven)
-	{   if (model->B4SOItype == NMOS)
+        {   if (model->B4SOItype == NMOS)
                 model->B4SOIoxideTrapDensityB = 3.125e26;
             else
                 model->B4SOIoxideTrapDensityB = 1.5e25;
-	}
+        }
         if (!model->B4SOIoxideTrapDensityCGiven)
             model->B4SOIoxideTrapDensityC = 8.75e9;
-	
+
         if (!model->B4SOIemGiven)
             model->B4SOIem = 4.1e7; /* V/m */
         if (!model->B4SOIefGiven)
@@ -1927,61 +1934,61 @@ int nthreads;
             model->B4SOIkf = 0.0;
         if (!model->B4SOInoifGiven)
             model->B4SOInoif = 1.0;
-        if (!model->B4SOIbfGiven) 	/* v4.0 */
+        if (!model->B4SOIbfGiven)       /* v4.0 */
             model->B4SOIbf = 2.0;
-        if (!model->B4SOIw0flkGiven) 	/* v4.0 */
+        if (!model->B4SOIw0flkGiven)    /* v4.0 */
             model->B4SOIw0flk = 10.0e-6;
-        if (!model->B4SOIfrbodyGiven) 	/* v4.0 */
+        if (!model->B4SOIfrbodyGiven)   /* v4.0 */
             model->B4SOIfrbody = 1;
-        if (!model->B4SOIdvtp0Given)	/* v4.0 for Vth */
+        if (!model->B4SOIdvtp0Given)    /* v4.0 for Vth */
             model->B4SOIdvtp0 = 0.0;
-        if (!model->B4SOIdvtp1Given)	/* v4.0 for Vth */
+        if (!model->B4SOIdvtp1Given)    /* v4.0 for Vth */
             model->B4SOIdvtp1 = 0.0;
-        if (!model->B4SOIdvtp2Given)	/* v4.1 for Vth */
+        if (!model->B4SOIdvtp2Given)    /* v4.1 for Vth */
             model->B4SOIdvtp2 = 0.0;
-        if (!model->B4SOIdvtp3Given)	/* v4.1 for Vth */
+        if (!model->B4SOIdvtp3Given)    /* v4.1 for Vth */
             model->B4SOIdvtp3 = 0.0;
-        if (!model->B4SOIdvtp4Given)	/* v4.1 for Vth */
+        if (!model->B4SOIdvtp4Given)    /* v4.1 for Vth */
             model->B4SOIdvtp4 = 0.0;
-        if (!model->B4SOIldvtp0Given)	/* v4.0 for Vth */
+        if (!model->B4SOIldvtp0Given)   /* v4.0 for Vth */
             model->B4SOIldvtp0 = 0.0;
-        if (!model->B4SOIldvtp1Given)	/* v4.0 for Vth */
+        if (!model->B4SOIldvtp1Given)   /* v4.0 for Vth */
             model->B4SOIldvtp1 = 0.0;
-        if (!model->B4SOIldvtp2Given)	/* v4.1 for Vth */
+        if (!model->B4SOIldvtp2Given)   /* v4.1 for Vth */
             model->B4SOIldvtp2 = 0.0;
-        if (!model->B4SOIldvtp3Given)	/* v4.1 for Vth */
+        if (!model->B4SOIldvtp3Given)   /* v4.1 for Vth */
             model->B4SOIldvtp3 = 0.0;
-        if (!model->B4SOIldvtp4Given)	/* v4.1 for Vth */
+        if (!model->B4SOIldvtp4Given)   /* v4.1 for Vth */
             model->B4SOIldvtp4 = 0.0;
-        if (!model->B4SOIwdvtp0Given)	/* v4.0 for Vth */
+        if (!model->B4SOIwdvtp0Given)   /* v4.0 for Vth */
             model->B4SOIwdvtp0 = 0.0;
-        if (!model->B4SOIwdvtp1Given)	/* v4.0 for Vth */
+        if (!model->B4SOIwdvtp1Given)   /* v4.0 for Vth */
             model->B4SOIwdvtp1 = 0.0;
-        if (!model->B4SOIwdvtp2Given)	/* v4.1 for Vth */
+        if (!model->B4SOIwdvtp2Given)   /* v4.1 for Vth */
             model->B4SOIwdvtp2 = 0.0;
-        if (!model->B4SOIwdvtp3Given)	/* v4.1 for Vth */
+        if (!model->B4SOIwdvtp3Given)   /* v4.1 for Vth */
             model->B4SOIwdvtp3 = 0.0;
-        if (!model->B4SOIwdvtp4Given)	/* v4.1 for Vth */
+        if (!model->B4SOIwdvtp4Given)   /* v4.1 for Vth */
             model->B4SOIwdvtp4 = 0.0;
-        if (!model->B4SOIpdvtp0Given)	/* v4.0 for Vth */
+        if (!model->B4SOIpdvtp0Given)   /* v4.0 for Vth */
             model->B4SOIpdvtp0 = 0.0;
-        if (!model->B4SOIpdvtp1Given)	/* v4.0 for Vth */
+        if (!model->B4SOIpdvtp1Given)   /* v4.0 for Vth */
             model->B4SOIpdvtp1 = 0.0;
-        if (!model->B4SOIpdvtp2Given)	/* v4.1 for Vth */
+        if (!model->B4SOIpdvtp2Given)   /* v4.1 for Vth */
             model->B4SOIpdvtp2 = 0.0;
-        if (!model->B4SOIpdvtp3Given)	/* v4.1 for Vth */
+        if (!model->B4SOIpdvtp3Given)   /* v4.1 for Vth */
             model->B4SOIpdvtp3 = 0.0;
-        if (!model->B4SOIpdvtp4Given)	/* v4.1 for Vth */
+        if (!model->B4SOIpdvtp4Given)   /* v4.1 for Vth */
             model->B4SOIpdvtp4 = 0.0;
-        if (!model->B4SOIminvGiven)	/* v4.0 for Vgsteff */
+        if (!model->B4SOIminvGiven)     /* v4.0 for Vgsteff */
             model->B4SOIminv = 0.0;
-        if (!model->B4SOIlminvGiven)	/* v4.0 for Vgsteff */
+        if (!model->B4SOIlminvGiven)    /* v4.0 for Vgsteff */
             model->B4SOIlminv = 0.0;
-        if (!model->B4SOIwminvGiven)	/* v4.0 for Vgsteff */
+        if (!model->B4SOIwminvGiven)    /* v4.0 for Vgsteff */
             model->B4SOIwminv = 0.0;
-        if (!model->B4SOIpminvGiven)	/* v4.0 for Vgsteff */
+        if (!model->B4SOIpminvGiven)    /* v4.0 for Vgsteff */
             model->B4SOIpminv = 0.0;
-        if (!model->B4SOIfproutGiven)	/* v4.0 for DITS in Id */
+        if (!model->B4SOIfproutGiven)   /* v4.0 for DITS in Id */
             model->B4SOIfprout = 0.0;
         if (!model->B4SOIpditsGiven)
             model->B4SOIpdits = 1e-20;
@@ -2053,12 +2060,12 @@ int nthreads;
             model->B4SOIlodeta0 = 1.0;
 /* stress effect end */
         if (!model->B4SOIfdModGiven)
-            model->B4SOIfdMod = 0; 
+            model->B4SOIfdMod = 0;
         if (!model->B4SOIvsceGiven)
-            model->B4SOIvsce = 0.0; 
+            model->B4SOIvsce = 0.0;
         if (!model->B4SOIcdsbsGiven)
             model->B4SOIcdsbs = 0.0;
-	    if (!model->B4SOIminvcvGiven)     /* v4.1 for Vgsteffcv */
+            if (!model->B4SOIminvcvGiven)     /* v4.1 for Vgsteffcv */
             model->B4SOIminvcv = 0.0;
         if (!model->B4SOIlminvcvGiven)    /* v4.1 for Vgsteffcv */
             model->B4SOIlminvcv = 0.0;
@@ -2067,18 +2074,18 @@ int nthreads;
         if (!model->B4SOIpminvcvGiven)    /* v4.1 for Vgsteffcv */
             model->B4SOIpminvcv = 0.0;
         if (!model->B4SOIvoffcvGiven)
-			/*model->B4SOIvoffcv = -0.08;	v4.2 */
-            model->B4SOIvoffcv = 0.0;		
+                        /*model->B4SOIvoffcv = -0.08;   v4.2 */
+            model->B4SOIvoffcv = 0.0;
         if (!model->B4SOIlvoffcvGiven)
             model->B4SOIlvoffcv = 0.0;
         if (!model->B4SOIwvoffcvGiven)
             model->B4SOIwvoffcv = 0.0;
         if (!model->B4SOIpvoffcvGiven)
-            model->B4SOIpvoffcv = 0.0;			
+            model->B4SOIpvoffcv = 0.0;
         /* loop through all the instances of the model */
         for (here = model->B4SOIinstances; here != NULL ;
-             here=here->B4SOInextInstance) 
-	{   /* allocate a chunk of the state vector */
+             here=here->B4SOInextInstance)
+        {   /* allocate a chunk of the state vector */
             here->B4SOIstates = *states;
             *states += B4SOInumStates;
             /* perform the parameter defaulting */
@@ -2098,14 +2105,14 @@ int nthreads;
                 here->B4SOIicVES = 0;
             if (!here->B4SOIicVPSGiven)
                 here->B4SOIicVPS = 0;
-	    if (!here->B4SOIbjtoffGiven)
-		here->B4SOIbjtoff = 0;
-	    if (!here->B4SOIdebugModGiven)
-		here->B4SOIdebugMod = 0;
-	    if (!here->B4SOIrth0Given)
-		here->B4SOIrth0 = model->B4SOIrth0;
-	    if (!here->B4SOIcth0Given)
-		here->B4SOIcth0 = model->B4SOIcth0;
+            if (!here->B4SOIbjtoffGiven)
+                here->B4SOIbjtoff = 0;
+            if (!here->B4SOIdebugModGiven)
+                here->B4SOIdebugMod = 0;
+            if (!here->B4SOIrth0Given)
+                here->B4SOIrth0 = model->B4SOIrth0;
+            if (!here->B4SOIcth0Given)
+                here->B4SOIcth0 = model->B4SOIcth0;
             if (!here->B4SOIbodySquaresGiven)
                 here->B4SOIbodySquares = 1.0;
             if (!here->B4SOIfrbodyGiven)
@@ -2133,7 +2140,7 @@ int nthreads;
                 here->B4SOIpsbcp = 0;
             if (!here->B4SOIagbcpGiven)
                 here->B4SOIagbcp = 0;
-			if (!here->B4SOIagbcp2Given)
+                        if (!here->B4SOIagbcp2Given)
                 here->B4SOIagbcp2 = 0;   /* v4.1 */
             if (!here->B4SOIagbcpdGiven)
                 here->B4SOIagbcpd = here->B4SOIagbcp;
@@ -2145,53 +2152,74 @@ int nthreads;
 
             /* process drain series resistance */
 
-            if ( ((model->B4SOIsheetResistance > 0.0) && 
+            if ( ((model->B4SOIsheetResistance > 0.0) &&
                 (here->B4SOIdrainSquares > 0.0 ) &&
-                (here->B4SOIdNodePrime == 0)) ) 
-	    {   error = CKTmkVolt(ckt,&tmp,here->B4SOIname,"drain");
+                (here->B4SOIdNodePrime == 0)) )
+            {   error = CKTmkVolt(ckt,&tmp,here->B4SOIname,"drain");
                 if(error) return(error);
                 here->B4SOIdNodePrime = tmp->number;
             }
-	    else
-	    {   here->B4SOIdNodePrime = here->B4SOIdNode;
+            else
+            {   here->B4SOIdNodePrime = here->B4SOIdNode;
             }
 
             /* process source series resistance */
-            if ( ((model->B4SOIsheetResistance > 0.0) && 
+            if ( ((model->B4SOIsheetResistance > 0.0) &&
                 (here->B4SOIsourceSquares > 0.0 ) &&
-                (here->B4SOIsNodePrime == 0)) ) 
-	    {   error = CKTmkVolt(ckt,&tmp,here->B4SOIname,"source");
+                (here->B4SOIsNodePrime == 0)) )
+            {   error = CKTmkVolt(ckt,&tmp,here->B4SOIname,"source");
                 if(error) return(error);
                 here->B4SOIsNodePrime = tmp->number;
             }
-	    else 
-	    {   here->B4SOIsNodePrime = here->B4SOIsNode;
+            else
+            {   here->B4SOIsNodePrime = here->B4SOIsNode;
             }
+
+/* v4.4 -- Check of TsiMax for SOIMOD = 2 */
+    if (model->B4SOIsoiMod == 2){
+        if (model->B4SOImtrlMod){
+            NchMax = (model->B4SOIbg0sub - 0.1) / Charge_q * 2.0e-6 * epssub / (model->B4SOIetsi * model->B4SOIetsi);
+           if (model->B4SOInpeak > NchMax ){
+               printf("Warning: SOIMOD=2 can not support given Nch=%g cm^-3 and Etsi=%g m. \n ", model->B4SOInpeak, model->B4SOIetsi);
+               printf("Exceeds maximum allowed band bending of (Eg-0.1)eV. \n");
+               printf("Nch is set to  %g cm^-3. \n",NchMax);
+               model->B4SOInpeak = NchMax;
+           }
+        } else {
+            NchMax = (1.12 - 0.1) / Charge_q * 2.0e-6 * epssub / (model->B4SOItsi * model->B4SOItsi);
+            if (model->B4SOInpeak > NchMax ) {
+               printf("Warning: SOIMOD=2 can not support given Nch=%g cm^-3 and Tsi=%g m. \n", model->B4SOInpeak, model->B4SOItsi);
+               printf("Exceeds maximum allowed band bending of (Eg-0.1)eV. \n");
+               printf("Nch is set to  %g cm^-3. \n",NchMax);
+               model->B4SOInpeak = NchMax;
+            }
+        }
+    }
 
             /* process effective silicon film thickness */
             model->B4SOIcbox = 3.453133e-11 / model->B4SOItbox;
-			if(model->B4SOImtrlMod)
-			{
+                        if(model->B4SOImtrlMod)
+                        {
             model->B4SOIcsi = 1.03594e-10 / model->B4SOIetsi;
-			}
-			else
-			{
-			model->B4SOIcsi = 1.03594e-10 / model->B4SOItsi;
-			}
+                        }
+                        else
+                        {
+                        model->B4SOIcsi = 1.03594e-10 / model->B4SOItsi;
+                        }
             Cboxt = model->B4SOIcbox * model->B4SOIcsi / (model->B4SOIcbox + model->B4SOIcsi);
 
 
 /* v3.2 */
             if(model->B4SOImtrlMod)
-			{
+                        {
             Qsi = Charge_q * model->B4SOInpeak
                 * (1.0 + model->B4SOIlpe0 / here->B4SOIl) * 1e6 * model->B4SOIetsi;
-		    }
-			else
-			{
-			Qsi = Charge_q * model->B4SOInpeak
+                    }
+                        else
+                        {
+                        Qsi = Charge_q * model->B4SOInpeak
                 * (1.0 + model->B4SOIlpe0 / here->B4SOIl) * 1e6 * model->B4SOItsi;
-			}
+                        }
             Vbs0t = 0.8 - 0.5 * Qsi / model->B4SOIcsi + model->B4SOIvbsa;
 
             if (!here->B4SOIsoiModGiven)
@@ -2202,7 +2230,7 @@ int nthreads;
                 printf("Warning: soiMod has been set to its global value %d.\n", model->B4SOIsoiMod);
             }
 
-            if (here->B4SOIsoiMod == 3) {/* auto selection */
+            if (here->B4SOIsoiMod == 3) { /* auto selection */
                if (Vbs0t > model->B4SOIvbs0fd)
                   here->B4SOIsoiMod = 2; /* ideal FD mode */
                else {
@@ -2225,7 +2253,7 @@ int nthreads;
                   error = CKTmkVolt(ckt,&tmp,here->B4SOIname,"Body");
                   if (error) return(error);
                   here->B4SOIbNode = tmp->number;
-                  here->B4SOIpNode = 0; 
+                  here->B4SOIpNode = 0;
                   here->B4SOIfloat = 1;
                   here->B4SOIbodyMod = 0;
 
@@ -2249,7 +2277,7 @@ int nthreads;
                     }
                     else { /* 6-node body tie, bNode has been assigned */
                        if ((model->B4SOIrbody == 0.0) && (model->B4SOIrbsh == 0.0))
-                       { 
+                       {
                           printf("\n      Warning: model parameter rbody=0!\n");
                           model->B4SOIrbody = 1e0;
                           here->B4SOIbodyMod = 1;
@@ -2266,7 +2294,7 @@ int nthreads;
                        if (error) return(error);
                        here->B4SOIbNode = tmp->number;
                        here->B4SOItempNode = here->B4SOIpNode;
-                       here->B4SOIpNode = 0; 
+                       here->B4SOIpNode = 0;
                        here->B4SOIfloat = 1;
                        here->B4SOIbodyMod = 0;
                     }
@@ -2288,7 +2316,7 @@ int nthreads;
                       }
                       else {  /* 6 nodes & t-node */
                         if ((model->B4SOIrbody == 0.0) && (model->B4SOIrbsh == 0.0))
-                        { 
+                        {
                            printf("\n      Warning: model parameter rbody=0!\n");
                            model->B4SOIrbody = 1e0;
                            here->B4SOIbodyMod = 1;
@@ -2306,7 +2334,7 @@ int nthreads;
             if ((model->B4SOIshMod == 1) && (here->B4SOIrth0!=0))
             {
                if (here->B4SOItempNode == -1) {
-	          error = CKTmkVolt(ckt,&tmp,here->B4SOIname,"Temp");
+                  error = CKTmkVolt(ckt,&tmp,here->B4SOIname,"Temp");
                   if (error) return(error);
                      here->B4SOItempNode = tmp->number;
                }
@@ -2365,8 +2393,8 @@ int nthreads;
                 printf("Warning: rbodyMod has been set to its global value %d.  \n", model->B4SOIrbodyMod);
             }
 
-	    if (here->B4SOIrbodyMod ==1 && here->B4SOIsoiMod == 2) /* v4.0 */
-		here->B4SOIrbodyMod = 0;
+            if (here->B4SOIrbodyMod ==1 && here->B4SOIsoiMod == 2) /* v4.0 */
+                here->B4SOIrbodyMod = 0;
 
             if (here->B4SOIrbodyMod == 1)
             {   if (here->B4SOIdbNode == 0)
@@ -2386,7 +2414,7 @@ int nthreads;
 
 /* v4.0 end */
 
-	    /* v4.0 added */
+            /* v4.0 added */
             if (!here->B4SOIsaGiven) /* stress */
                 here->B4SOIsa = 0.0;
             if (!here->B4SOIsbGiven)
@@ -2402,7 +2430,7 @@ int nthreads;
             if (!here->B4SOIdelvtoGiven)
                 here->B4SOIdelvto = 0.0;
 
-	    /* v4.0 added end */
+            /* v4.0 added end */
 
 
 /* here for debugging purpose only */
@@ -2411,7 +2439,7 @@ int nthreads;
                /* The real Vbs value */
                error = CKTmkVolt(ckt, &tmp, here->B4SOIname, "Vbs");
                if(error) return(error);
-               here->B4SOIvbsNode = tmp->number;   
+               here->B4SOIvbsNode = tmp->number;
 
                error = CKTmkVolt(ckt, &tmp, here->B4SOIname, "Ids");
                if(error) return(error);
@@ -2428,11 +2456,11 @@ int nthreads;
                error = CKTmkVolt(ckt, &tmp, here->B4SOIname, "Ibd");
                if(error) return(error);
                here->B4SOIibdNode = tmp->number;
-       
+
                error = CKTmkVolt(ckt, &tmp, here->B4SOIname, "Iii");
                if(error) return(error);
                here->B4SOIiiiNode = tmp->number;
-     
+
                error = CKTmkVolt(ckt, &tmp, here->B4SOIname, "Ig");
                if(error) return(error);
                here->B4SOIigNode = tmp->number;
@@ -2440,11 +2468,11 @@ int nthreads;
                error = CKTmkVolt(ckt, &tmp, here->B4SOIname, "Gigg");
                if(error) return(error);
                here->B4SOIgiggNode = tmp->number;
-               
+
                error = CKTmkVolt(ckt, &tmp, here->B4SOIname, "Gigd");
                if(error) return(error);
                here->B4SOIgigdNode = tmp->number;
-              
+
                error = CKTmkVolt(ckt, &tmp, here->B4SOIname, "Gigb");
                if(error) return(error);
                here->B4SOIgigbNode = tmp->number;
@@ -2460,7 +2488,7 @@ int nthreads;
                error = CKTmkVolt(ckt, &tmp, here->B4SOIname, "Ibp");
                if(error) return(error);
                here->B4SOIibpNode = tmp->number;
-       
+
                error = CKTmkVolt(ckt, &tmp, here->B4SOIname, "Cbb");
                if(error) return(error);
                here->B4SOIcbbNode = tmp->number;
@@ -2493,7 +2521,7 @@ int nthreads;
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
 }
 
@@ -2518,19 +2546,19 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
 /* v3.0 */
             if (here->B4SOIsoiMod != 0) { /* v3.2 */
-               TSTALLOC(B4SOITempePtr, B4SOItempNode, B4SOIeNode) 
+               TSTALLOC(B4SOITempePtr, B4SOItempNode, B4SOIeNode)
             }
 
         }
         if (here->B4SOIbodyMod == 2) {
             /* Don't create any Jacobian entry for pNode */
         }
-        else if (here->B4SOIbodyMod == 1) { 
+        else if (here->B4SOIbodyMod == 1) {
             TSTALLOC(B4SOIBpPtr, B4SOIbNode, B4SOIpNode)
             TSTALLOC(B4SOIPbPtr, B4SOIpNode, B4SOIbNode)
             TSTALLOC(B4SOIPpPtr, B4SOIpNode, B4SOIpNode)
 
-	    /* 4.1 for Igb2_agbcp2 */
+            /* 4.1 for Igb2_agbcp2 */
             TSTALLOC(B4SOIPgPtr , B4SOIpNode, B4SOIgNode)
             TSTALLOC(B4SOIGpPtr , B4SOIgNode, B4SOIpNode)
         }
@@ -2543,7 +2571,7 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(B4SOIGgePtr, B4SOIgNode, B4SOIgNodeExt)
                 TSTALLOC(B4SOIGEdpPtr, B4SOIgNodeExt, B4SOIdNodePrime)
                 TSTALLOC(B4SOIGEspPtr, B4SOIgNodeExt, B4SOIsNodePrime)
-		if (here->B4SOIsoiMod !=2) /* v3.2 */
+                if (here->B4SOIsoiMod !=2) /* v3.2 */
                    TSTALLOC(B4SOIGEbPtr, B4SOIgNodeExt, B4SOIbNode)
 
                 TSTALLOC(B4SOIGMdpPtr, B4SOIgNodeMid, B4SOIdNodePrime)
@@ -2551,7 +2579,7 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(B4SOIGMgmPtr, B4SOIgNodeMid, B4SOIgNodeMid)
                 TSTALLOC(B4SOIGMgePtr, B4SOIgNodeMid, B4SOIgNodeExt)
                 TSTALLOC(B4SOIGMspPtr, B4SOIgNodeMid, B4SOIsNodePrime)
-		if (here->B4SOIsoiMod !=2) /* v3.2 */
+                if (here->B4SOIsoiMod !=2) /* v3.2 */
                    TSTALLOC(B4SOIGMbPtr, B4SOIgNodeMid, B4SOIbNode)
 
                 TSTALLOC(B4SOIGMePtr, B4SOIgNodeMid, B4SOIeNode)
@@ -2560,7 +2588,7 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(B4SOIGEgmPtr, B4SOIgNodeExt, B4SOIgNodeMid)
                 TSTALLOC(B4SOISPgmPtr, B4SOIsNodePrime, B4SOIgNodeMid)
                 TSTALLOC(B4SOIEgmPtr, B4SOIeNode, B4SOIgNodeMid)
-            } 
+            }
 /* v3.1 added for RF end */
 
 
@@ -2632,10 +2660,10 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(B4SOIDspPtr, B4SOIdNode, B4SOIsNodePrime)
                 TSTALLOC(B4SOISdpPtr, B4SOIsNode, B4SOIdNodePrime)
                 TSTALLOC(B4SOISgPtr,  B4SOIsNode, B4SOIgNode)
-		if (model->B4SOIsoiMod != 2)  {
-                	TSTALLOC(B4SOIDbPtr, B4SOIdNode, B4SOIbNode)
-                	TSTALLOC(B4SOISbPtr, B4SOIsNode, B4SOIbNode)
-		}
+                if (model->B4SOIsoiMod != 2)  {
+                        TSTALLOC(B4SOIDbPtr, B4SOIdNode, B4SOIbNode)
+                        TSTALLOC(B4SOISbPtr, B4SOIsNode, B4SOIbNode)
+                }
             }
 
 
@@ -2644,7 +2672,7 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 /* here for debugging purpose only */
          if (here->B4SOIdebugMod != 0)
          {
-            TSTALLOC(B4SOIVbsPtr, B4SOIvbsNode, B4SOIvbsNode) 
+            TSTALLOC(B4SOIVbsPtr, B4SOIvbsNode, B4SOIvbsNode)
             TSTALLOC(B4SOIIdsPtr, B4SOIidsNode, B4SOIidsNode)
             TSTALLOC(B4SOIIcPtr, B4SOIicNode, B4SOIicNode)
             TSTALLOC(B4SOIIbsPtr, B4SOIibsNode, B4SOIibsNode)
@@ -2712,7 +2740,7 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 #endif
 
     return(OK);
-}  
+}
 
 int
 B4SOIunsetup(
@@ -2722,7 +2750,7 @@ B4SOIunsetup(
 #ifndef HAS_BATCHSIM
     B4SOImodel *model;
     B4SOIinstance *here;
- 
+
     for (model = (B4SOImodel *)inModel; model != NULL;
             model = model->B4SOInextModel)
     {

@@ -1,4 +1,5 @@
-/***  B4SOI 05/14/2010 Released by Tanvir Morshed  ***/
+/***  B4SOI 12/16/2010 Released by Tanvir Morshed  ***/
+
 
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
@@ -12,9 +13,12 @@
  * Modified by Tanvir Morshed 09/22/2009
  * Modified by Tanvir Morshed 12/31/2009
  * Modified by Larry Wagner, Calvin Bittner, Geoffrey Coram, Tanvir Morshed 05/14/2010
+ * Modified by Larry Wagner, Calvin Bittner, 5 fixes.  08/04/2010
+ * Modified by Larry Wagner, Calvin Bittner, FD derivatives fixes.  08/25/2010
  **********/
 
 #include "ngspice/ngspice.h"
+
 #include "ngspice/cktdefs.h"
 #include "b4soidef.h"
 #include "ngspice/trandefs.h"
@@ -29,7 +33,7 @@
 #define Charge_q 1.60219e-19
 #define KboQ 8.617087e-5  /*  Kb / q   */
 #define Eg300 1.115   /*  energy gap at 300K  */
-#define DELTA   1.0E-9 /* v4.0 */
+#define DELTA   1.0E-9  /* v4.0 */
 #define DELTA_1 0.02
 #define DELTA_2 0.02
 #define DELTA_3 0.02
@@ -44,12 +48,12 @@
 #define MAX_EXPL 2.688117142e+43
 #define MIN_EXPL 3.720075976e-44
 #define EXPL_THRESHOLD 100.0
-#define DEXP(A,B,C) {                                                         \
-    if (A > EXPL_THRESHOLD) {                                              \
-        B = MAX_EXPL*(1.0+(A)-EXPL_THRESHOLD);                              \
-        C = MAX_EXPL;                                                            \
-    } else if (A < -EXPL_THRESHOLD)  {                                                \
-        B = MIN_EXPL;                                                      \
+#define DEXP(A,B,C) {                                                     \
+    if (A > EXPL_THRESHOLD) {                                             \
+        B = MAX_EXPL*(1.0+(A)-EXPL_THRESHOLD);                            \
+        C = MAX_EXPL;                                                     \
+    } else if (A < -EXPL_THRESHOLD)  {                                    \
+        B = MIN_EXPL;                                                     \
         C = 0;                                                            \
     } else   {                                                            \
         B = exp(A);                                                       \
@@ -58,7 +62,6 @@
 }
 
 #define FLOG(A)  fabs(A) + 1e-14
-
 
 #ifdef USE_OMP4SOI
 int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt);
@@ -133,12 +136,17 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     register int selfheat;
 
     double Gmin;
-    double ag0, qgd, qgs, von, cbhat, VgstNVt, ExpVgst=0.0, dExpVgst_dT; /* enhanced line Wagner */
-    double dVgstNVt_dT, dVgstNVt2_dT; /* new line Wagner */
+  double dVgstNVt_dT, dVgstNVt2_dT;  /* LFW_FD */
+    double ag0, qgd, qgs, von, cbhat, VgstNVt, ExpVgst, dExpVgst_dT; /* enhanced line Wagner */
+/*  LFW_FD next 4 lines */
+  double dVgstNVt_dVg, dVgstNVt_dVd, dVgstNVt_dVb, dVgstNVt_dVe;
+  double dExpVgst_dVg, dExpVgst_dVd, dExpVgst_dVb, dExpVgst_dVe, dVgstNVt2_dVg;
+  double dVgstNVt2_dVd, dVgstNVt2_dVb, dVgstNVt2_dVe, dExpArg2_dVd, dExpArg2_dVb, dExpArg2_dVe;
+  double dExpVgst2_dVg, dExpVgst2_dVd, dExpVgst2_dVb, dExpVgst2_dVe;
     double cdhat, cdreq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg, ceq, geq;
     double arg;
     double delvbd, delvbs, delvds, delvgd, delvgs;
-    double Vfbeff, dVfbeff_dVg, dVfbeff_dVd, dVfbeff_dVb, V3, V4;
+  double Vfbeff, dVfbeff_dVg, dVfbeff_dVd, dVfbeff_dVe, dVfbeff_dVb, V3, V4;
     double PhiBSWG, MJSWG;
     double gcgdb, gcggb, gcgsb, gcgeb, gcgT;
     double gcsdb, gcsgb, gcssb, gcseb, gcsT;
@@ -146,76 +154,80 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     double gcbdb, gcbgb, gcbsb, gcbeb, gcbT;
     double gcedb, gcegb, gcesb, gceeb, gceT;
     double gcTt, gTtg, gTtb, gTtdp, gTtt, gTtsp;
-    double vbd=0.0, vbs, vds, vgb, vgd, vgs, vgdo;
+    double vbd, vbs, vds, vgb, vgd, vgs, vgdo;
 #ifndef PREDICTOR
     double xfact;
 #endif
     double vg, vd, vs, vp, ve, vb;
     double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;
 
-    double Vgs_eff, Vfb=0.0, dVfb_dVb, dVfb_dVd, dVfb_dT;
-    double Phis, dPhis_dVb, sqrtPhis, dsqrtPhis_dVb, Vth, dVth_dVb, dVth_dVd, dVth_dT;
-    double Vgst, dVgst_dVg, dVgst_dVb, dVgst_dT, dVgs_eff_dVg, dVgs_eff_dT;  /* enhanced line Wagner */
-    double n, dn_dVb, Vtm;
-    double ExpArg, V0;
-    double dExpArg_dT, dExpArg2_dT;    /* new line Wagner */
-    double ueff, dueff_dVg, dueff_dVd, dueff_dVb, dueff_dT;
+  double Vgs_eff, Vfb, dVfb_dVb, dVfb_dVd, dVfb_dVg, dVfb_dVe, dVfb_dT;
+  double Phis, sqrtPhis, dsqrtPhis_dVd, dsqrtPhis_dVe, dsqrtPhis_dVb, dsqrtPhis_dVg;
+  double Vth, dVth_dVb, dVth_dVd, dVth_dVg, dVth_dVe, dVth_dT;
+  double Vgst, dVgst_dVg, dVgst_dVd, dVgst_dVb, dVgst_dVe, dVgst_dT, dVgs_eff_dVg, dVgs_eff_dT;
+  double n, dn_dVb, dn_dVe, dn_dVg, Vtm;
+  double ExpArg, dExpArg_dVg, dExpArg_dVd, dExpArg_dVb, dExpArg_dVe, dExpArg_dT, dExpArg2_dVg, dExpArg2_dT, V0;
+  double ueff, dueff_dVg, dueff_dVd, dueff_dVb, dueff_dVe, dueff_dT;
     double Esat, Vdsat;
-    double EsatL, dEsatL_dVg, dEsatL_dVd, dEsatL_dVb, dEsatL_dT;
-    double dVdsat_dVg, dVdsat_dVb, dVdsat_dVd, dVdsat_dT, Vasat;
-    double dVasat_dVg, dVasat_dVb, dVasat_dVd, dVasat_dT;
-    double Va, dVa_dVd, dVa_dVg, dVa_dVb, dVa_dT;
+  double EsatL, dEsatL_dVg, dEsatL_dVd, dEsatL_dVb, dEsatL_dVe, dEsatL_dT;
+  double dVdsat_dVg, dVdsat_dVb, dVdsat_dVd, dVdsat_dVe, dVdsat_dT, Vasat;
+  double dVasat_dVg, dVasat_dVb, dVasat_dVd, dVasat_dVe, dVasat_dT;
+  double Va, dVa_dVd, dVa_dVg, dVa_dVb, dVa_dVe, dVa_dT;
     double Vbseff, dVbseff_dVb;
     double CoxWL;
-    double T0=0.0, dT0_dVg, dT0_dVd, dT0_dVb, dT0_dT;
+  double T0=0.0, dT0_dVg, dT0_dVd, dT0_dVe, dT0_dVb, dT0_dT;
 
     double T1, dT1_dVg, dT1_dVd, dT1_dVb, dT1_dT;
     double T2, dT2_dVg, dT2_dVd, dT2_dVb, dT2_dT, dT2_dVp;
-    double T3, dT3_dVg, dT3_dVd, dT3_dVb, dT3_dT=0.0;
-    double T4, dT4_dVd, dT4_dVb, dT4_dT;
-    double T5, dT5_dVg, dT5_dVd, dT5_dVb, dT5_dT=0.0;
-    double T6, dT6_dVg, dT6_dVd, dT6_dVb, dT6_dT=0.0, dT6_dVp;
-    double T7;
+  double T3, dT3_dVg, dT3_dVd, dT3_dVe, dT3_dVb, dT3_dT;
+  double T4, dT4_dVe, dT4_dVg, dT4_dVd, dT4_dVb, dT4_dT;
+    double T5, dT5_dVg, dT5_dVd, dT5_dVb, dT5_dT;
+  double T6, dT6_dVg, dT6_dVd, dT6_dVe, dT6_dVb, dT6_dT, dT6_dVp;
+  double T7, dT7_dVg, dT7_dVb, dT7_dVd, dT7_dVe;
     double T8, dT8_dVd;
     double T9, dT9_dVd;
     double T10, dT10_dVb, dT10_dVd;
-    double T11, T12=0.0;
-    double dTL0_dT, TL1, dTL1_dT, TL2, dTL2_dT, TL3, dTL3_dT=0.0, TL4, dTL4_dT, dTL5_dT; /* new line Wagner */
+    double T11, T12;
+  /* LFW_FD 2 new lines */
+  double dT02_dVg, dT02_dVd, dT02_dVb, dT02_dVe, dT12_dVg, dT12_dVd, dT12_dVb, dT12_dVe;
+  double dT22_dVg, dT22_dVd, dT22_dVb, dT22_dVe;
+    double dTL0_dT, TL1, dTL1_dT, TL2, dTL2_dT, TL3, dTL3_dT, TL4, dTL4_dT, dTL5_dT; /* new line Wagner */
+  /* LFW_FD 1 new line */
+  double dTL1_dVg, dTL1_dVd, dTL1_dVb, dTL1_dVe;
     double dTL6_dT, dTL7_dT, dTL8_dT, dTL9_dT;                          /* new line Wagner */
-    double tmp, Abulk, dAbulk_dVb, Abulk0, dAbulk0_dVb;
+  double tmp, Abulk, dAbulk_dVb, Abulk0, dAbulk0_dVg, dAbulk0_dVb, dAbulk0_dVd, dAbulk0_dVe;
     double dAbulk_dT, dAbulk0_dT, dAbulkCV_dT;                          /* new line Wagner */
-    double VACLM, dVACLM_dVg, dVACLM_dVd, dVACLM_dVb, dVACLM_dT;
-    double VADIBL, dVADIBL_dVg, dVADIBL_dVd, dVADIBL_dVb, dVADIBL_dT;
-    double Xdep, dXdep_dVb, lt1, dlt1_dVb, ltw, dltw_dVb;
-    double Delt_vth, dDelt_vth_dVb, dDelt_vth_dT;
-    double Theta0, dTheta0_dVb;
+  double VACLM, dVACLM_dVg, dVACLM_dVd, dVACLM_dVb, dVACLM_dVe, dVACLM_dT;
+  double VADIBL, dVADIBL_dVg, dVADIBL_dVd, dVADIBL_dVb, dVADIBL_dVe, dVADIBL_dT;
+  double Xdep, dXdep_dVd, dXdep_dVe, dXdep_dVb, dXdep_dVg;
+  double lt1, dlt1_dVd, dlt1_dVe, dlt1_dVb, dlt1_dVg;
+  double ltw, dltw_dVd, dltw_dVe, dltw_dVb, dltw_dVg;
+  double Delt_vth, dDelt_vth_dVd, dDelt_vth_dVe, dDelt_vth_dVb, dDelt_vth_dVg, dDelt_vth_dT;
+  double Theta0, dTheta0_dVd, dTheta0_dVe, dTheta0_dVb, dTheta0_dVg;
     double TempRatio, tmp1, tmp2, tmp3, tmp4;
-    double DIBL_Sft, dDIBL_Sft_dVd, Lambda, dLambda_dVg;
+  double DIBL_Sft, dDIBL_Sft_dVd, Lambda, dLambda_dVg, dLambda_dVb, dLambda_dVd, dLambda_dVe;
     double dLambda_dT;                                                  /* new line Wagner */
 
     double a1;
 
     double Vgsteff, dVgsteff_dVg, dVgsteff_dVd, dVgsteff_dVb, dVgsteff_dT;
-    double Vdseff, dVdseff_dVg, dVdseff_dVd, dVdseff_dVb, dVdseff_dT;
-    double VdseffCV, dVdseffCV_dVg, dVdseffCV_dVd, dVdseffCV_dVb;
+  double Vdseff, dVdseff_dVg, dVdseff_dVd, dVdseff_dVb, dVdseff_dVe, dVdseff_dT;
+  double VdseffCV, dVdseffCV_dVg, dVdseffCV_dVd, dVdseffCV_dVb, dVdseffCV_dVe;
     double dVdseffCV_dT;                                                /* new line Wagner */
     double diffVds;
-    double dAbulk_dVg, dn_dVd ;
-    double beta, dbeta_dVg, dbeta_dVd, dbeta_dVb, dbeta_dT;
-    double gche, dgche_dVg, dgche_dVd, dgche_dVb, dgche_dT;
-    double fgche1, dfgche1_dVg, dfgche1_dVd, dfgche1_dVb, dfgche1_dT;
-    double fgche2, dfgche2_dVg, dfgche2_dVd, dfgche2_dVb, dfgche2_dT;
-    double Idl, dIdl_dVg, dIdl_dVd, dIdl_dVb, dIdl_dT;
-    double Ids, Gm, Gds, Gmb;
-    double dIds_dT;                                                     /* new line Wagner */
+  double dAbulk_dVg, dAbulk_dVd, dAbulk_dVe, dn_dVd ;
+  double beta, dbeta_dVg, dbeta_dVd, dbeta_dVb, dbeta_dVe, dbeta_dT;
+  double gche, dgche_dVg, dgche_dVd, dgche_dVb, dgche_dVe, dgche_dT;
+  double fgche1, dfgche1_dVg, dfgche1_dVd, dfgche1_dVb, dfgche1_dVe, dfgche1_dT;
+  double fgche2, dfgche2_dVg, dfgche2_dVd, dfgche2_dVb, dfgche2_dVe, dfgche2_dT;
+  double Idl, dIdl_dVg, dIdl_dVd, dIdl_dVb, dIdl_dVe, dIdl_dT;
+  double Ids, Gm, Gds, Gmb, dIds_dVg, dIds_dVb, dIds_dVd, dIds_dVe, dIds_dT;
     double CoxWovL;
-    double Rds, dRds_dVg, dRds_dVb, dRds_dT, WVCox, WVCoxRds;
-    double dWVCoxRds_dT;                                                /* new line Wagner */
-    double dVdsatCV_dT;                                                 /* new line Wagner */
-    double Vgst2Vtm, dVgst2Vtm_dT, VdsatCV, dVdsatCV_dVg, dVdsatCV_dVb;
-    double Leff, Weff, dWeff_dVg, dWeff_dVb;
-    double dWeff_dT;                                                    /* new line Wagner */
-    double AbulkCV, dAbulkCV_dVb;
+  double Rds, dRds_dVg, dRds_dVb, dRds_dVd, dRds_dVe, dRds_dT, WVCox, WVCoxRds, dWVCoxRds_dT;
+  double dWVCoxRds_dVg, dWVCoxRds_dVb, dWVCoxRds_dVd, dWVCoxRds_dVe;
+  double Vgst2Vtm, dVgst2Vtm_dT, VdsatCV, dVdsatCV_dVg, dVdsatCV_dVd, dVdsatCV_dVb, dVdsatCV_dVe, dVdsatCV_dT;
+  double Leff, Weff, dWeff_dVg, dWeff_dVb, dWeff_dVd, dWeff_dVe, dWeff_dT;
+  double AbulkCV, dAbulkCV_dVg, dAbulkCV_dVb, dAbulkCV_dVd, dAbulkCV_dVe;
     double qgdo, qgso, cgdo, cgso;
 
     double dxpart, sxpart;
@@ -229,11 +241,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     double Gbpbs=0.0, Gbpps;
     double ves, ved, veb, vge=0.0, delves, vedo, delved;
     double vps, vpd, Vps, delvps;
-    double Vbd, Ves, Vesfb, DeltVthtemp, dDeltVthtemp_dT;
+  double Vbd, Ves, Vesfb;
+  double DeltVthtemp, dDeltVthtemp_dVd, dDeltVthtemp_dVe, dDeltVthtemp_dVb, dDeltVthtemp_dVg, dDeltVthtemp_dT;
     double Vbp, dVbp_dVb;
-    double DeltVthw, dDeltVthw_dVb, dDeltVthw_dT;
-    double Gm0, Gds0, Gmb0, GmT0, Gmc, GmT;
-    double dDIBL_Sft_dVb;
+  double DeltVthw, dDeltVthw_dVd, dDeltVthw_dVe, dDeltVthw_dVb, dDeltVthw_dVg, dDeltVthw_dT;
+  double Gm0, Gds0, Gmb0, Gme0, GmT0, GmT;
+  double dDIBL_Sft_dVg, dDIBL_Sft_dVe, dDIBL_Sft_dVb;
     double Igidl, Ggidld=0.0, Ggidlg, Ggidlb=0.0, Ggidlt;   /* enhanced line Wagner */
     double Igisl, Ggisls=0.0, Ggislg, Ggislb=0.0, Ggislt;   /* enhanced line Wagner */
     double Gjsd, Gjsb=0.0, GjsT, Gjdd, Gjdb=0.0, GjdT;
@@ -253,9 +266,9 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     double qinv, qgate=0.0, qbody=0.0, qdrn=0.0, qsrc, qsub=0.0, cqgate, cqbody, cqdrn, cqsub, cqtemp;
     double qgate1;                                                      /* new line Wagner */
 
-    double Cgg, Cgd, Cgb;
-    double Csg, Csd, Csb, Cbg, Cbd, Cbb;
-    double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Csg1, Csd1, Csb1;
+  double Cgg, Cgd, Cgb, Cge;
+  double Csg, Csd, Csb, Cse, Cbg, Cbd, Cbb, Cbe;
+  double Cgg1, Cgb1, Cgd1, Cge1, Cbg1, Cbb1, Cbd1, Cbe1, Csg1, Csd1, Csb1, Cse1;
     double Vdsatii;
     double Ibs1 ,dIbs1_dVb ,dIbs1_dT;
     double Ibs2 ,dIbs2_dVb ,dIbs2_dT;
@@ -266,11 +279,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     double Ibd3 ,dIbd3_dVb ,dIbd3_dVd ,dIbd3_dT;
     double Ibd4 ,dIbd4_dVb ,dIbd4_dVd ,dIbd4_dT;
     double WTsi, NVtm1, NVtm2;
-    double Ic, dIc_dVb=0.0, dIc_dVd=0.0;
+    double Ic  ,dIc_dVb ,dIc_dVd;
     double Ibs;
     double Ibd;
-    double Denomi ,dDenomi_dVg ,dDenomi_dVd ,dDenomi_dVb ,dDenomi_dT;
-    double Qsub0  ,dQsub0_dVg   ,dQsub0_dVb  ,dQsub0_dVd ;
+  double Denomi ,dDenomi_dVg, dDenomi_dVd, dDenomi_dVb, dDenomi_dVe, dDenomi_dT;
+  double Qsub0  ,dQsub0_dVg   ,dQsub0_dVb  ,dQsub0_dVd, dQsub0_dVe ;
     double dqgate_dT, dqgate2_dT, dqbulk_dT, dqsrc_dT, dqdrn_dT, dqbody_dT, dqsub_dT;  /* new line Wagner */
     double Qac0 ,dQac0_dVb   ,dQac0_dVd;
     double Qe1 , dQe1_dVb, dQe1_dVe, dQe1_dT;
@@ -294,11 +307,10 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
     /* v2.0 release */
     double Vbsh, dVbsh_dVb;
-    double sqrtPhisExt, dsqrtPhisExt_dVb;
+  double sqrtPhisExt, dsqrtPhisExt_dVd, dsqrtPhisExt_dVe, dsqrtPhisExt_dVb, dsqrtPhisExt_dVg;
     double T13, T14;
     double dT14_dT;                                                     /* new line Wagner */
-    double dT11_dVb, dT13_dVb, dT14_dVb, dT13_dT;                       /* dT13_dT added -Tanvir*/
-    double dVgst_dVd;
+  double dT11_dVb, dT11_dVd, dT11_dVe, dT13_dVb, dT13_dVd, dT13_dVe, dT14_dVb, dT14_dVd, dT14_dVe, dT13_dVg, dT14_dVg;
     double Vdsatii0, dVdsatii0_dT;
     double VgsStep, dVgsStep_dT, Ratio, dRatio_dVg, dRatio_dVb, dRatio_dVd, dRatio_dT, dTempRatio_dT;
     double Vdiff, dVdiff_dVg, dVdiff_dVb, dVdiff_dVd, dVdiff_dT;
@@ -307,37 +319,37 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     double TempRatioMinus1;
     double Ahlis, dAhlis_dT, Ahlid, dAhlid_dT ;
     double WsTsi, WdTsi;
-    double dPhiBSWG_dT, dcjsbs_dT, darg_dT=0.0, ddT3_dVb_dT=0.0;
+    double dPhiBSWG_dT, dcjsbs_dT, darg_dT, ddT3_dVb_dT;
     double dT7_dT, dT0_dT7, dT1_dT7, dT2_dT7;
     double CoxWLb, CoxWLcenb;
     double ExpVbsNVtm, dExpVbsNVtm_dVb, dExpVbsNVtm_dT;
     double ExpVbdNVtm, dExpVbdNVtm_dVb, dExpVbdNVtm_dVd, dExpVbdNVtm_dT;
     double Ien, dIen_dT, Iendif, dIendif_dT;
-    double Ibsdif=0.0, dIbsdif_dVb=0.0, dIbsdif_dT=0.0;
-    double Ibddif=0.0, dIbddif_dVb=0.0, dIbddif_dT=0.0;
+    double Ibsdif, dIbsdif_dVb, dIbsdif_dT;
+    double Ibddif, dIbddif_dVb, dIbddif_dT;
     double Ehlis, dEhlis_dVb, dEhlis_dT;
     double EhlisFactor, dEhlisFactor_dVb, dEhlisFactor_dT;
     double Ehlid, dEhlid_dVb, dEhlid_dVd, dEhlid_dT;
-    double EhlidFactor, dEhlidFactor_dVb, dEhlidFactor_dVd, dEhlidFactor_dT;
+    double EhlidFactor, dEhlidFactor_dVb, dEhlidFactor_dT;
     double E2ndFactor, dE2ndFactor_dVb, dE2ndFactor_dVd, dE2ndFactor_dT;
-    double dT10_dT, dT11_dT, DioMax;
+    double dT10_dT, dT11_dT, dT13_dT, DioMax;  /* LFW_FD enhance line */
     double cjdbs, dcjdbs_dT;
     double wdios, wdiod;
 
     /* for capMod3 */
     double Cox, Tox, Tcen, dTcen_dVg, dTcen_dVb, LINK, Ccen, Coxeff, dCoxeff_dVg, dCoxeff_dVb;
-    double CoxWLcen, QovCox, dQac0_dVg, DeltaPhi, dDeltaPhi_dVg, dDeltaPhi_dVd, dDeltaPhi_dVb;
-    double dDeltaPhi_dT;                                                /* new line Wagner */
-    double dTcen_dVd, dTcen_dT, dCoxeff_dVd, dCoxeff_dT, dCoxWLcenb_dT, qinoi, qbulk;
-    double qbulk1;                                                      /* new line Wagner */
+  double CoxWLcen, QovCox, dQac0_dVg, dQac0_dVe, DeltaPhi, dDeltaPhi_dVg, dDeltaPhi_dT;
+  double  dDeltaPhi_dVd, dDeltaPhi_dVb, dDeltaPhi_dVe;
+  double dTcen_dVd, dTcen_dVe, dTcen_dT, dCoxeff_dVd, dCoxeff_dT, dCoxWLcenb_dT, qinoi, qbulk, qbulk1;
+  double dCoxeff_dVe;
     double T3zb, lt1zb, ltwzb, Theta0zb;
     double Delt_vthzb, dDelt_vthzb_dT;
     double DeltVthwzb, dDeltVthwzb_dT;
     double DeltVthtempzb, dDeltVthtempzb_dT;
-    double Vthzb=0.0, dVthzb_dT=0.0, Vfbzb, dVfbzb_dT;
+    double Vthzb, dVthzb_dT, Vfbzb, dVfbzb_dT;
 
     /* v3.2 */
-    double noff, dnoff_dVd, dnoff_dVb;
+  double noff, dnoff_dVg, dnoff_dVd, dnoff_dVb, dnoff_dVe;
     double dnoff_dT;                                                    /* new line Wagner */
     double vgmb;
 
@@ -351,8 +363,8 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     double vgge, vggm;
 
     /* v3.0 */
-    double Igc, dIgc_dVg, dIgc_dVd, dIgc_dVb, Igs, dIgs_dVg, dIgs_dVs, Igd, dIgd_dVg, dIgd_dVd;
-    double Igcs, dIgcs_dVg, dIgcs_dVd, dIgcs_dVb, Igcd, dIgcd_dVg, dIgcd_dVd, dIgcd_dVb;
+  double Igc, dIgc_dVg, dIgc_dVd, dIgc_dVe, dIgc_dVb, Igs, dIgs_dVg, dIgs_dVs, Igd, dIgd_dVg, dIgd_dVd;
+  double Igcs, dIgcs_dVg, dIgcs_dVd, dIgcs_dVb, dIgcs_dVe, Igcd, dIgcd_dVg, dIgcd_dVd, dIgcd_dVb, dIgcd_dVe;
     double dIgc_dT, dIgcs_dT, dIgcd_dT;                             /* new line Wagner */
     double vgs_eff, dvgs_eff_dvg, vgd_eff, dvgd_eff_dvg;
     double VxNVt, ExpVxNVt;
@@ -362,9 +374,10 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     double gIgtotg, gIgtotd, gIgtotb, gIgtots, Igtoteq;
 
     /* v3.0 */
-    double Vbsitf, dVbsitf_dVg, dVbsitf_dVd, dVbsitf_dVb, dVbsitf_dVe, dVbsitf_dT;
-    double dIgb1_dVe, gige, Giie, dT0_dVe, dRatio_dVe, dVdiff_dVe;
-    double dT1_dVe, dT5_dVe, dIgb_dVe, dVox_dVe, dVoxdepinv_dVe=0.0, dVaux_dVe;
+  double Vbsitf, dVbsitf_dVg, dVbsitf_dVd, dVbsitf_dVb, dVbsitf_dVe, dVbsitf_dT, dVbs_dVb;
+  double dVbs_dVg, dVbs_dVd, dVbs_dVe, dVbs_dT;
+  double dIgb1_dVe, Giie, dRatio_dVe, dVdiff_dVe;
+    double dT1_dVe, dT5_dVe, dIgb_dVe, dVox_dVe, dVoxdepinv_dVe, dVaux_dVe;
     double Gme, gTte, gbbe, gddpe, gsspe;
     double Vbs0, dVbs0_dVg, dVbs0_dVd, dVbs0_dVe, dVbs0_dT;
     double Vbs0mos, dVbs0mos_dVe, dVbs0mos_dT;
@@ -380,22 +393,21 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     double dVgsteff_dVe, dVbseff_dVg, dVbseff_dVd, dVbseff_dVe, dVbseff_dT;
 
     /* v2.2 release */
-    double Vgb=0.0, dVgb_dVg=0.0, dVgb_dVb=0.0, Vox, dVox_dVg, dVox_dVd, dVox_dVb;
+  double Vgb, dVgb_dVg, dVgb_dVd, dVgb_dVe, dVgb_dVb, Vox, dVox_dVg, dVox_dVd, dVox_dVb;
     double OxideRatio, Vaux, dVaux_dVg, dVaux_dVd, dVaux_dVb;
     double Igb, dIgb_dVg, dIgb_dVd, dIgb_dVb;
     double ceqgate;
     double dT0_dVox, Voxeff, dVoxeff_dVox;
-    double dVox_dT=0.0, dVaux_dT=0.0, dIgb_dT;
-    double Voxacc=0.0, dVoxacc_dVg=0.0, dVoxacc_dVd=0.0, dVoxacc_dVb=0.0, dVoxacc_dT;
-    double Voxdepinv=0.0, dVoxdepinv_dVg=0.0, dVoxdepinv_dVb=0.0, dVoxdepinv_dVd=0.0, dVoxdepinv_dT=0.0;
+    double dVox_dT, dVaux_dT, dIgb_dT;
+  double Voxacc, dVoxacc_dVg, dVoxacc_dVd, dVoxacc_dVe, dVoxacc_dVb, dVoxacc_dT;
+    double Voxdepinv, dVoxdepinv_dVg, dVoxdepinv_dVb, dVoxdepinv_dVd, dVoxdepinv_dT;
     double Igb1, dIgb1_dVg, dIgb1_dVd, dIgb1_dVb, dIgb1_dT;
-    double Igb2, dIgb2_dVg, dIgb2_dVd, dIgb2_dVb, dIgb2_dT;
-    double gigs, gigd, gigb, gigg, gigT;
+  double Igb2, dIgb2_dVg, dIgb2_dVd, dIgb2_dVb, dIgb2_dVe, dIgb2_dT;
+    double gigs, gigd, gigb, gigg, gigT, gige;  /* LFW_FD enhance line */
     double gigpg, gigpp;
 
     /* v4.0 */
     double IdlovVdseff, dIdlovVdseff_dVg, dIdlovVdseff_dVd, dIdlovVdseff_dVb;
-    double IdovVds;
     double vdbs, vsbs, vdbd=0.0, vsbd, vsbdo, vbs_jct, vbd_jct;
     double Vsbs, Vdbd, Vdbs;
     double delvdbd, delvsbs, delvdbs, delvbd_jct,  delvbs_jct;
@@ -403,8 +415,8 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     double ceqqjd=0.0, ceqqjs=0.0;
     double Lpe_Vb; /* v4.0 for Vth */
     double DITS_Sft, DITS_Sft2, dDITS_Sft_dVb, dDITS_Sft_dVd, dDITS_Sft2_dVd, dDITS_Sft_dT;
-    double FP, dFP_dT, dFP_dVg;
-    double VADITS, dVADITS_dVg, dVADITS_dVd, dVADITS_dT; /* for DITS */
+  double FP, dFP_dT, dFP_dVg, dFP_dVb, dFP_dVd, dFP_dVe;
+  double VADITS, dVADITS_dVg, dVADITS_dVd, dVADITS_dVb, dVADITS_dVe, dVADITS_dT; /* for DITS */
     double Iii_Igidl, Giigidl_b, Giigidl_d, Giigidl_g, Giigidl_e, Giigidl_T;
     double gjsdb;
     double Idbdp=0.0, Isbsp=0.0, cdbdp, csbsp, gcjdbdp, gcjsbsp, GGjdb, GGjsb;
@@ -431,39 +443,37 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     double dTheta0_dT, dn_dT, dsqrtPhisExt_dT, dT3zb_dT, dltwzb_dT, dlt1zb_dT, dTheta0zb_dT, dvth0_dT, dDIBL_Sft_dT,dtmp2_dT; /* v4.2 temp deriv */
     double Vgd, Vgd_eff, dVgd_eff_dVg, dVgd_eff_dT;  /* enhanced line Wagner */
     double dVbs0mos_dVd;
-    double Ig_agbcp2, dIg_agbcp2_dVg, dIg_agbcp2_dVp;
-    double vgp_eff, vgp=0.0, dvgp_eff_dvg, dvgp_eff_dvp;
+  double Ig_agbcp2, dIg_agbcp2_dVg, dIg_agbcp2_dVp, dIg_agbcp2_dT;
+  double vgp_eff, vgp=0.0, dvgp_eff_dvg, dvgp_eff_dvp, dvgp_eff_dT;
 
     /* improved body contact charge model */
     double CoxWL2, CoxWLb2;
-    double ExpVgst2, Vgsteff2=0.0, VgstNVt2, ExpArg2;
-    double dVgsteff2_dVd=0.0, dVgsteff2_dVg=0.0, dVgsteff2_dVb=0.0, dVgsteff2_dVe, dVgsteff2_dT=0.0;
-    double T02=0.0;
-    double Qac02, dQac02_dVrg=0.0, dQac02_dVd=0.0, dQac02_dVg=0.0, dQac02_dVb=0.0, dQac02_dT=0.0;
-    double Vgs_eff2=0.0, dVgs_eff2_dVg=0.0;
-    double Vfbzb2=0.0, dVfbzb2_dT=0.0;
-    double Vfb2=0.0, dVfb2_dVd, dVfb2_dVb, dVfb2_dT;
-    double Vfbeff2=0.0, dVfbeff2_dVd=0.0, dVfbeff2_dVrg=0.0, dVfbeff2_dVg=0.0, dVfbeff2_dVb=0.0, dVfbeff2_dT=0.0;
-    double Qsub02, dQsub02_dVg=0.0, dQsub02_dVrg=0.0, dQsub02_dVd=0.0, dQsub02_dVb=0.0, dQsub02_dT=0.0;
-    double VdsatCV2, dVdsatCV2_dVg,  dVdsatCV2_dVb;
-    double dVdsatCV2_dT;                                            /* new line Wagner */
-    double VdseffCV2=0.0, dVdseffCV2_dVg=0.0, dVdseffCV2_dVd=0.0, dVdseffCV2_dVb=0.0;
-    double dVdseffCV2_dT;                                           /* new line Wagner */
-    double Cbg12=0.0, Cbd12=0.0, Cbb12=0.0;
-    double Cgg12=0.0, Cgd12=0.0, Cgb12=0.0;
-    double Csg12=0.0, Csd12=0.0, Csb12=0.0;
-    double Tcen2=0.0, dTcen2_dVg=0.0, dTcen2_dVd, dTcen2_dVb=0.0, dTcen2_dT=0.0;
+    double ExpVgst2, Vgsteff2, VgstNVt2, ExpArg2;
+    double dVgsteff2_dVd, dVgsteff2_dVg, dVgsteff2_dVb, dVgsteff2_dVe, dVgsteff2_dT;
+    double T02;
+  double Qac02, dQac02_dVrg, dQac02_dVd, dQac02_dVg, dQac02_dVb, dQac02_dVe, dQac02_dT;
+    double Vgs_eff2, dVgs_eff2_dVg;
+    double Vfbzb2, dVfbzb2_dT;
+  double Vfb2, dVfb2_dVg, dVfb2_dVd, dVfb2_dVb, dVfb2_dVe, dVfb2_dT;
+  double Vfbeff2, dVfbeff2_dVd, dVfbeff2_dVrg, dVfbeff2_dVg, dVfbeff2_dVb, dVfbeff2_dVe, dVfbeff2_dT;
+  double Qsub02, dQsub02_dVg, dQsub02_dVrg, dQsub02_dVd, dQsub02_dVb, dQsub02_dVe, dQsub02_dT;
+  double VdsatCV2, dVdsatCV2_dVg, dVdsatCV2_dVb, dVdsatCV2_dVd, dVdsatCV2_dVe, dVdsatCV2_dT;
+  double VdseffCV2, dVdseffCV2_dVg, dVdseffCV2_dVd, dVdseffCV2_dVb, dVdseffCV2_dVe, dVdseffCV2_dT;
+  double Cbg12, Cbd12, Cbb12, Cbe12;
+  double Cgg12, Cgd12, Cgb12, Cge12;
+  double Csg12, Csd12, Csb12, Cse12;
+  double Tcen2, dTcen2_dVg, dTcen2_dVd, dTcen2_dVb, dTcen2_dVe, dTcen2_dT;
     double Ccen2;
-    double Coxeff2=0.0, dCoxeff2_dVg=0.0, dCoxeff2_dVd=0.0, dCoxeff2_dVb=0.0, dCoxeff2_dT=0.0;
-    double CoxWLcenb2=0.0, dCoxWLcenb2_dT=0.0;
+  double Coxeff2, dCoxeff2_dVg, dCoxeff2_dVd, dCoxeff2_dVb, dCoxeff2_dVe, dCoxeff2_dT;
+    double CoxWLcenb2, dCoxWLcenb2_dT;
     double QovCox2;
-    double DeltaPhi2=0.0, dDeltaPhi2_dVg=0.0, dDeltaPhi2_dVd, dDeltaPhi2_dVb;
+  double DeltaPhi2, dDeltaPhi2_dVg, dDeltaPhi2_dVd, dDeltaPhi2_dVb, dDeltaPhi2_dVe;
     double dDeltaPhi2_dT;                                           /* new line Wagner */
-    double CoxWLcen2=0.0;
-    double T22=0.0, T52=0.0;
+    double CoxWLcen2;
+    double T22, T52;
     double qsrc2, qbulk2;
     double dqsrc2_dT, dqbulk2_dT;                                   /* new line Wagner */
-    double Csg2, Csd2, Csb2;
+  double Csg2, Csd2, Csb2, Cse2;
     double  DELTA_3_SOI2;
     double dphi_dT,dsqrtPhi_dT,dXdep0_dT,cdep0,theta0vb0,dtheta0vb0_dT;
     double thetaRout,dthetaRout_dT,dcdep0_dT;
@@ -487,6 +497,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     {    for (here = model->B4SOIinstances; here != NULL;
             here = here->B4SOInextInstance)
          {    
+        if (here->B4SOIowner != ARCHme) continue;
 #endif        
         Check = 0;
         ByPass = 0;
@@ -1041,6 +1052,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     *(ckt->CKTstate0 + here->B4SOIdeltemp),5.0,&Check);
 
         }
+
         if(model->B4SOImtrlMod)
         {
             epsrox = 3.9;
@@ -1170,7 +1182,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
           /*dcep0_dT = cdep0 * sqrtPhi * (-1.0) / phi * dsqrtPhi_dT; */
             dcdep0_dT = cdep0 * sqrtPhi * (-1.0) / phi * dsqrtPhi_dT;
 
-            /* T1 = sqrt(EPSSI / (model->B4SOIepsrox * EPSOX / 3.9)   */                  /* Bug fix #3 Jun 09 Body type is generalized for mtrlMod 1*/
+            /* T1 = sqrt(EPSSI / (model->B4SOIepsrox * EPSOX / 3.9)      Bug fix #3 Jun 09 Body type is generalized for mtrlMod 1*/
             /*  * model->B4SOItox * Xdep0); */
             T1 = sqrt(epssub / (epsrox * EPS0)                                                          /* Fix */
                     * toxe * Xdep0);
@@ -1667,10 +1679,8 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
         /* v4.1 for improved BT charge model, no poly depletion  */
 
-        if (here->B4SOIagbcp2 > 0)
-        {   Vgs_eff2 = Vgs;
-            dVgs_eff2_dVg = 1.0;
-        }
+        Vgs_eff2 = Vgs;
+        dVgs_eff2_dVg = 1.0;
 
         /* end v4.1 for improved BT charge model */
         Leff = pParam->B4SOIleff;
@@ -1696,6 +1706,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dVbsmos_dVd = 0.0;
             dVbsmos_dVb = 1.0;
             dVbsmos_dVe = 0.0;
+            /* LFW_FD 5 new lines */
+            dVbs_dVg = 0.0;
+            dVbs_dVd = 0.0;
+            dVbs_dVb = 1.0;
+            dVbs_dVe = 0.0;
+            dVbs_dT = 0.0;
             if (selfheat)  dVbsmos_dT = 0.0;
             else  dVbsmos_dT = 0.0;
 
@@ -1715,7 +1731,8 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 dVbs0t_dVd = 0.0;
                 dVbs0_dVd = 0.0;
                 if (selfheat)
-                    dVbs0t_dT = T1 * dvbi_dT;
+                 /* dVbs0t_dT = T1 * dvbi_dT; */
+                    dVbs0t_dT = (1.0 - T1) * dphi_dT + T1 * dvbi_dT;   /* LFW_FD new line */
                 else
                     dVbs0t_dT = 0.0;
 
@@ -1727,6 +1744,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 T4 = 1.0/(1 + Cbox / model->B4SOIcsi);
                 Vbs0 = T4 * Vbs0t + T2;
                 dVbs0_dVe = T1;
+                dVbs0_dVd = 0.0;   /* flexilint */
                 if (selfheat)
                     dVbs0_dT = T4 * dVbs0t_dT - T1 * dvfbb_dT;
                 else
@@ -1744,7 +1762,8 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 Vbs0t = T5 + T6;
                 dVbs0t_dVd = model->B4SOIcdsbs * T0 * T2;
                 if (selfheat)
-                    dVbs0t_dT = 0.0;
+                 /* dVbs0t_dT = 0.0;  LFW_FD changed line */
+                    dVbs0t_dT = model->B4SOIcsi * T0 * dphi_dT;
                 else
                     dVbs0t_dT = 0.0;
 
@@ -1767,7 +1786,8 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             Vbs0mos = Vbs0 - 0.5 * T3 * T4;
             T5 = 0.5 * T4 * (1 + T1 / T2);
             dVbs0mos_dVe = dVbs0_dVe * (1 + T5);
-            dVbs0mos_dVd = dVbs0_dVd + T5 * (dVbs0t_dVd - dVbs0_dVd);   /* v4.1 */
+         /* dVbs0mos_dVd = dVbs0_dVd + T5 * (dVbs0t_dVd - dVbs0_dVd);   LFW_FD  */
+            dVbs0mos_dVd = dVbs0_dVd * (1 + T5) - T5 * dVbs0t_dVd;
             if (selfheat)
                 dVbs0mos_dT = dVbs0_dT * (1 + T5) - T5 * dVbs0t_dT;
             else
@@ -1790,7 +1810,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
             /* VthFD calculation */
             Phis = phi - Vbs0mos;
-            dPhis_dVb = -1; /* w.r.t Vbs0mos */
+        /*  dPhis_dVb = -1;     LFW_FD not used  */
             sqrtPhis = sqrt(Phis);
             dsqrtPhis_dVb = -0.5 / sqrtPhis;
             Xdep = Xdep0 * sqrtPhis / sqrtPhi;
@@ -1935,7 +1955,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dDelt_vth_dVb = pParam->B4SOIdvt0 * dTheta0_dVb * V0;
             if (selfheat)
                 /*dDelt_vth_dT = here->B4SOIthetavth * dvbi_dT;*/
-                /*dDelt_vth_dT = here->B4SOIthetavth * (dvbi_dT - dphi_dT);*/ /* v4.1 */
+                /*dDelt_vth_dT = here->B4SOIthetavth * (dvbi_dT - dphi_dT);  */
                 dDelt_vth_dT = pParam->B4SOIdvt0 * (dTheta0_dT * V0 + Theta0 * (dvbi_dT - dphi_dT)); /* v4.2 bugfix temp deriv */
             else  dDelt_vth_dT = 0.0;
             T0 = -0.5 * pParam->B4SOIdvt1w * pParam->B4SOIweff * Leff / ltw;
@@ -1957,7 +1977,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dDeltVthw_dVb = pParam->B4SOIdvt0w * dT2_dVb * V0;
             if (selfheat)
                 /* dDeltVthw_dT = T0 * dvbi_dT; */
-                /* dDeltVthw_dT = T0 * (dvbi_dT - dphi_dT);*/ /* v4.1 */ /* v4.2 bugfix temp deriv */
+                /* dDeltVthw_dT = T0 * (dvbi_dT - dphi_dT); v4.1 */ /* v4.2 bugfix temp deriv */
                 dDeltVthw_dT = T0 * (dvbi_dT - dphi_dT) + pParam->B4SOIdvt0w * dT2_dT * V0; /* v4.2 bugfix temp deriv */
             else   dDeltVthw_dT = 0.0;
 
@@ -1974,7 +1994,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             if (selfheat)
                 /*  dDeltVthtemp_dT = T1 / model->B4SOItnom;  */
                 /* dDeltVthtemp_dT = pParam->B4SOIk1ox * (T0 - 1.0) * dsqrtPhi_dT
-                   + T1 / model->B4SOItnom;*/  /* v4.1 */ /* v4.2 bugfix temp deriv */
+                   + T1 / model->B4SOItnom;     v4.1 */ /* v4.2 bugfix temp deriv */
                 dDeltVthtemp_dT = pParam->B4SOIk1ox * (T0 - 1.0) * dsqrtPhi_dT
                     + T1 / model-> B4SOItnom+ pParam->B4SOIkt2 * dVbs0mos_dT* TempRatioMinus1;/* v4.2 bugfix temp deriv */
             else
@@ -2033,11 +2053,17 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 /*   dVthFD_dT = dDeltVthtemp_dT - dDelt_vth_dT
                      - dDeltVthw_dT + dVthFD_dVb * dVbs0mos_dT
                      - dDITS_Sft_dT ;  */
-                dVthFD_dT = dDeltVthtemp_dT - dDelt_vth_dT
-                    - dDeltVthw_dT + dVthFD_dVb * dVbs0mos_dT
-                    - dDITS_Sft_dT
-                    + Lpe_Vb * ( pParam->B4SOIk1ox * 0.5 / sqrtPhis * dphi_dT
-                            - pParam->B4SOIk1eff * dsqrtPhi_dT);  /* v4.1 */
+                /*   dVthFD_dT = dDeltVthtemp_dT - dDelt_vth_dT
+                     - dDeltVthw_dT + dVthFD_dVb * dVbs0mos_dT
+                     - dDITS_Sft_dT
+                     + Lpe_Vb * ( pParam->B4SOIk1ox * 0.5 / sqrtPhis * dphi_dT
+                             - pParam->B4SOIk1eff * dsqrtPhi_dT);     v4.1 */
+                /* LFW_FD fixed expression */
+                dVthFD_dT = (pParam->B4SOIk1ox * dsqrtPhis_dT - pParam->B4SOIk1eff * dsqrtPhi_dT) * Lpe_Vb
+                            - here->B4SOIk2ox * dVbs0mos_dT - dDelt_vth_dT - dDeltVthw_dT
+                            + pParam->B4SOIk3b * dVbs0mos_dT * tmp2
+                            + (pParam->B4SOIk3 + pParam->B4SOIk3b * Vbs0mos) * dtmp2_dT
+                            + dDeltVthtemp_dT - dDIBL_Sft_dT - dDITS_Sft_dT;
 
             else  dVthFD_dT = 0.0;
 
@@ -2045,7 +2071,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             /* VtgseffFD calculation for PhiFD */
             VtgsFD = VthFD - Vgs_eff;
             T10 = model->B4SOInofffd * Vtm;
-            DEXP((VtgsFD - model->B4SOIvofffd)/ T10, ExpVtgsFD, T0);
+            DEXP( ((VtgsFD - model->B4SOIvofffd)/ T10), ExpVtgsFD, T0);
             VtgseffFD = T10 * log(1.0 + ExpVtgsFD);
             T0 /= (1.0 + ExpVtgsFD);
             dVtgseffFD_dVd = T0 * dVthFD_dVd;
@@ -2061,7 +2087,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
             /* surface potential modeling at strong inversion: PhiON */
             VgstFD = Vgs_eff - VthFD;
-            DEXP((VgstFD - model->B4SOIvofffd)/ T10, ExpVgstFD, T0);
+            DEXP( ((VgstFD - model->B4SOIvofffd)/ T10), ExpVgstFD, T0);
             VgsteffFD = T10 * log(1.0 + ExpVgstFD);
             T0 /= (1.0 + ExpVgstFD);
             dVgsteffFD_dVd = -T0 * dVthFD_dVd;
@@ -2187,9 +2213,16 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 dVbsitf_dVg = dVbs0_dVg;
                 dVbsitf_dVd = dVbs0_dVd;
                 dVbsitf_dVe = dVbs0_dVe;
-                dVbsitf_dVb = 0.0;
-                if (selfheat) dVbsitf_dT = dVbs0_dT;
-                else dVbsitf_dT = 0;
+              /*dVbsitf_dVb = 0.0;                   */
+              /*if (selfheat) dVbsitf_dT = dVbs0_dT; */
+              /*else dVbsitf_dT = 0;                 */
+                /* LFW_FD fix */
+                dVbs_dVg = dVbsitf_dVg;
+                dVbs_dVd = dVbsitf_dVd;
+                dVbs_dVb = dVbsitf_dVb = 0.0;
+                dVbs_dVe = dVbsitf_dVe;
+                if (selfheat) {dVbsitf_dT = dVbs0_dT; dVbs_dT = dVbsitf_dT;}
+                else {dVbsitf_dT = 0; dVbs_dT = 0;}
             }
             else /* soiMod = 1 */
             {
@@ -2201,6 +2234,14 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 dVbsitf_dVd = (1 - T3) * dVbs0_dVd;
                 dVbsitf_dVe = (1 - T3) * dVbs0_dVe;
                 dVbsitf_dVb = T3 ;
+                /* LFW_FD  7 new lines */
+        /* Note that Vbs has not been redefined */
+        /*      dVbs_dVb = dVbsitf_dVb;         */
+                dVbs_dVg = 0.0;
+                dVbs_dVd = 0.0;
+                dVbs_dVb = 1.0;
+                dVbs_dVe = 0.0;
+                dVbs_dT  = 0.0;
                 if (selfheat)  dVbsitf_dT = (1 - T3) * dVbs0_dT;
                 else  dVbsitf_dT = 0.0;
             }
@@ -2276,20 +2317,39 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
 
         /* Below all the variables refer to Vbseff */
-        if (dVbseff_dVb < 1e-20) {
-            dVbseff_dVb = 1e-20;
-            dVbsh_dVb *= 1e20;
-        }
-        else
-            dVbsh_dVb /= dVbseff_dVb;
+      /* LFW_FD comment out next 6 lines           */
+      /*if (dVbseff_dVb < 1e-20) {                 */
+      /*    dVbseff_dVb = 1e-20;                   */
+      /*    dVbsh_dVb *= 1e20;                     */
+      /*}                                          */
+      /*else                                       */
+      /*    dVbsh_dVb /= dVbseff_dVb;              */
+      /*=======================================================================*/
+      /* Some derivatives were originally taken w.r.t. Vbseff, and named *_dVb */
+      /* Later in the code, they were corrected by multiplying or dividing     */
+      /* by dVbseff_dVb.                                                       */
+      /* Now, all derivatives labeled *_dVb are taken w.r.t. Vbs               */
+      /* The correction factor "dVbseff_dVb" has been removed where it is      */
+      /* no longer needed.                                                     */
+      /*=======================================================================*/
 
         Phis = phi - Vbseff;
-        dPhis_dVb = -1;
+    /*  dPhis_dVb = -1;     LFW_FD not uesed */
         sqrtPhis = sqrt(Phis);
-        dsqrtPhis_dVb = -0.5 / sqrtPhis;
+      /*dsqrtPhis_dVb = -0.5 / sqrtPhis; */
+      /* LFW_FD  fix/add 4 lines */
+        dsqrtPhis_dVg = -0.5 * dVbseff_dVg / sqrtPhis;
+        dsqrtPhis_dVd = -0.5 * dVbseff_dVd / sqrtPhis;
+        dsqrtPhis_dVb = -0.5 * dVbseff_dVb / sqrtPhis;
+        dsqrtPhis_dVe = -0.5 * dVbseff_dVe / sqrtPhis;
 
         Xdep = Xdep0 * sqrtPhis / sqrtPhi;
-        dXdep_dVb = (Xdep0 / sqrtPhi) * dsqrtPhis_dVb;
+      /*dXdep_dVb = (Xdep0 / sqrtPhi) * dsqrtPhis_dVb; */
+      /* LFW_FD  fix/add 4 lines */
+        dXdep_dVg = Xdep0 * dsqrtPhis_dVg / sqrtPhi;
+        dXdep_dVd = Xdep0 * dsqrtPhis_dVd / sqrtPhi;
+        dXdep_dVb = Xdep0 * dsqrtPhis_dVb / sqrtPhi;
+        dXdep_dVe = Xdep0 * dsqrtPhis_dVe / sqrtPhi;
         /* v4.1 */
         if (selfheat) {
             dPhis_dT = dphi_dT - dVbseff_dT;
@@ -2306,7 +2366,8 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
         } /* end v4.1 */
 
         /* Calculate nstar v3.2 */
-        here->B4SOInstar = model->B4SOIvtm / Charge_q *
+/*      here->B4SOInstar = model->B4SOIvtm / Charge_q *  */
+        here->B4SOInstar = Vtm / Charge_q *
             (model->B4SOIcox + epssub / Xdep + pParam->B4SOIcit);
 
         /* Vth Calculation */
@@ -2323,7 +2384,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             T2 = pParam->B4SOIdvt2 * T4 * T4 ;
         }
         lt1 = model->B4SOIfactor1 * T3 * T1;
-        dlt1_dVb =model->B4SOIfactor1 * (0.5 / T3 * T1 * dXdep_dVb + T3 * T2);
+     /* dlt1_dVb =model->B4SOIfactor1 * (0.5 / T3 * T1 * dXdep_dVb + T3 * T2); */
+     /* LFW_FD fix/add 4 lines */
+        dlt1_dVg = model->B4SOIfactor1 * (T3 * T2 * dVbseff_dVg + 0.5 * T1 * dXdep_dVg / T3);
+        dlt1_dVd = model->B4SOIfactor1 * (T3 * T2 * dVbseff_dVd + 0.5 * T1 * dXdep_dVd / T3);
+        dlt1_dVb = model->B4SOIfactor1 * (T3 * T2 * dVbseff_dVb + 0.5 * T1 * dXdep_dVb / T3);
+        dlt1_dVe = model->B4SOIfactor1 * (T3 * T2 * dVbseff_dVe + 0.5 * T1 * dXdep_dVe / T3);
       /* fix below expression Wagner */
       /*if (selfheat) dlt1_dT = model->B4SOIfactor1 * T1 * 0.5 / T3 * dXdep_dT;*/
         if (selfheat) dlt1_dT = model->B4SOIfactor1 * (T1 * 0.5 / T3 * dXdep_dT
@@ -2341,7 +2407,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             T2 = pParam->B4SOIdvt2w * T4 * T4 ;
         }
         ltw= model->B4SOIfactor1 * T3 * T1;
-        dltw_dVb=model->B4SOIfactor1*(0.5 / T3 * T1 * dXdep_dVb + T3 * T2);
+     /* dltw_dVb=model->B4SOIfactor1*(0.5 / T3 * T1 * dXdep_dVb + T3 * T2); */
+     /* LFW_FD fix/add 4 lines */
+        dltw_dVg = model->B4SOIfactor1 * (T3 * T2 * dVbseff_dVg + 0.5 * T1 * dXdep_dVg / T3);
+        dltw_dVd = model->B4SOIfactor1 * (T3 * T2 * dVbseff_dVd + 0.5 * T1 * dXdep_dVd / T3);
+        dltw_dVb = model->B4SOIfactor1 * (T3 * T2 * dVbseff_dVb + 0.5 * T1 * dXdep_dVb / T3);
+        dltw_dVe = model->B4SOIfactor1 * (T3 * T2 * dVbseff_dVe + 0.5 * T1 * dXdep_dVe / T3);
       /* fix next expression Wagner */
       /*if (selfheat) dltw_dT = model->B4SOIfactor1 * T1 * 0.5 / T3 * dXdep_dT; */
         if (selfheat) dltw_dT = model->B4SOIfactor1 * (T1 * 0.5 / T3 * dXdep_dT
@@ -2351,40 +2422,59 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
         if (T0 > -EXPL_THRESHOLD)
         {   T1 = exp(T0);
             Theta0 = T1 * (1.0 + 2.0 * T1);
-            dT1_dVb = -T0 / lt1 * T1 * dlt1_dVb;
-            dTheta0_dVb = (1.0 + 4.0 * T1) * dT1_dVb;
-            dT1_dT = -T0 / lt1 * T1 * dlt1_dT;   /* v4.2 bugfix temp deriv */
-            dTheta0_dT = (1.0 + 4.0 * T1) * dT1_dT; /* v4.2 bugfix temp deriv */
+          /*dT1_dVb = -T0 / lt1 * T1 * dlt1_dVb;                           */
+          /*dTheta0_dVb = (1.0 + 4.0 * T1) * dT1_dVb;                      */
+          /*dT1_dT = -T0 / lt1 * T1 * dlt1_dT;      v4.2 bugfix temp deriv */
+          /*dTheta0_dT = (1.0 + 4.0 * T1) * dT1_dT;    v4.2 bugfix temp deriv */
+            /* LFW_FD fix 5 derivatives */
+            dTheta0_dVg = -(1.0 + 4.0 * T1) * T1 * T0 * dlt1_dVg / lt1;
+            dTheta0_dVd = -(1.0 + 4.0 * T1) * T1 * T0 * dlt1_dVd / lt1;
+            dTheta0_dVb = -(1.0 + 4.0 * T1) * T1 * T0 * dlt1_dVb / lt1;
+            dTheta0_dVe = -(1.0 + 4.0 * T1) * T1 * T0 * dlt1_dVe / lt1;
+            dTheta0_dT  = -(1.0 + 4.0 * T1) * T1 * T0 * dlt1_dT  / lt1;
         }
         else
         {   T1 = MIN_EXPL;
             Theta0 = T1 * (1.0 + 2.0 * T1);
+            /* LFW_FD fix 5 derivatives */
+            dTheta0_dVg = 0.0;
+            dTheta0_dVd = 0.0;
             dTheta0_dVb = 0.0;
+            dTheta0_dVe = 0.0;
             dTheta0_dT = 0; /* v4.2 bugfix temp deriv */
         }
 
         /* Calculate n */
         T2 = pParam->B4SOInfactor * epssub / Xdep;
+        /* LFW_FD add 3 derivatives */
+        dT2_dVg = - T2 / Xdep * dXdep_dVg;
+        dT2_dVd = - T2 / Xdep * dXdep_dVd;
         dT2_dVb = - T2 / Xdep * dXdep_dVb;
+        dT2_dVe = - T2 / Xdep * dXdep_dVe;
         dT2_dT = - T2 / Xdep * dXdep_dT; /* v4.2 bugfix temp deriv */
         T3 = pParam->B4SOIcdsc + pParam->B4SOIcdscb * Vbseff
             + pParam->B4SOIcdscd * Vds;
-        dT3_dVb = pParam->B4SOIcdscb;
-        dT3_dVd = pParam->B4SOIcdscd;
-        dT3_dT =  pParam->B4SOIcdscb * dVbseff_dT;   /* new line Wagner */
+        /* LFW_FD add/fix 5 derivatives */
+        dT3_dVg = pParam->B4SOIcdscb * dVbseff_dVg;
+        dT3_dVd = pParam->B4SOIcdscb * dVbseff_dVd + pParam->B4SOIcdscd;
+        dT3_dVb = pParam->B4SOIcdscb * dVbseff_dVb;
+        dT3_dVe = pParam->B4SOIcdscb * dVbseff_dVe;
+        dT3_dT =  pParam->B4SOIcdscb * dVbseff_dT; /* LFW */
 
         T4 = (T2 + T3 * Theta0 + pParam->B4SOIcit) / model->B4SOIcox;
-        dT4_dVb = (dT2_dVb + Theta0 * dT3_dVb + dTheta0_dVb * T3)
-            / model->B4SOIcox;
-        dT4_dVd = Theta0 * dT3_dVd / model->B4SOIcox;
+        /* LFW_FD add/fix 5 derivatives */
+        dT4_dVg = (dT2_dVg + T3 * dTheta0_dVg + Theta0 * dT3_dVg) / model->B4SOIcox;
+        dT4_dVd = (dT2_dVd + T3 * dTheta0_dVd + Theta0 * dT3_dVd) / model->B4SOIcox;
+        dT4_dVb = (dT2_dVb + T3 * dTheta0_dVb + Theta0 * dT3_dVb) / model->B4SOIcox;
+        dT4_dVe = (dT2_dVe + T3 * dTheta0_dVe + Theta0 * dT3_dVe) / model->B4SOIcox;
+        dT4_dT = (dT2_dT + dTheta0_dT* T3 + Theta0*dT3_dT)/ model->B4SOIcox; /* LFW */
 
-      /* fix below expression Wagner */
-      /*dT4_dT = (dT2_dT + dTheta0_dT* T3)/ model->B4SOIcox;    v4.2 bugfix temp deriv */
-        dT4_dT = (dT2_dT + dTheta0_dT* T3 + Theta0*dT3_dT)/ model->B4SOIcox;
         if (T4 >= -0.5)
         {   n = 1.0 + T4;
+            dn_dVg = dT4_dVg;
             dn_dVb = dT4_dVb;
             dn_dVd = dT4_dVd;
+            dn_dVe = dT4_dVe;
             dn_dT = dT4_dT; /* v4.2 bugfix temp deriv */
         }
         else
@@ -2395,9 +2485,10 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             n = T0 * T5; /* v4.2 bugfix temp deriv */
             dn_dT = T0 * (3.0 - 8.0 * T5 * T0) * dT4_dT; /* Wagner - moved line up from 3 lines below */
             T0 *= T0;
+            dn_dVg = T0 * dT4_dVg;
             dn_dVb = T0 * dT4_dVb;
             dn_dVd = T0 * dT4_dVd;
-          /*dn_dT = T0 * (3.0 - 8.0 * T5 * T0) * dT4_dT;  wrong place - see 3 lines above Wagner */
+            dn_dVe = T0 * dT4_dVe;
         }
 
         /* v4.0 DITS */
@@ -2433,7 +2524,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
         here->B4SOIthetavth = pParam->B4SOIdvt0 * Theta0;
         Delt_vth = here->B4SOIthetavth * V0;
+        /* LFW_FD add/fix 4 derivatives */
+        dDelt_vth_dVg = pParam->B4SOIdvt0 * dTheta0_dVg * V0;
+        dDelt_vth_dVd = pParam->B4SOIdvt0 * dTheta0_dVd * V0;
         dDelt_vth_dVb = pParam->B4SOIdvt0 * dTheta0_dVb * V0;
+        dDelt_vth_dVe = pParam->B4SOIdvt0 * dTheta0_dVe * V0;
         if (selfheat)  /* dDelt_vth_dT = here->B4SOIthetavth * dvbi_dT; */ /* v4.2 bugfix temp deriv */
             dDelt_vth_dT = pParam->B4SOIdvt0 * (dTheta0_dT * V0 + Theta0 * (dvbi_dT - dphi_dT)); /* v4.2 bugfix temp deriv */
         else  dDelt_vth_dT = 0.0;
@@ -2443,23 +2538,37 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
         if (T0 > -EXPL_THRESHOLD)
         {   T1 = exp(T0);
             T2 = T1 * (1.0 + 2.0 * T1);
-            dT1_dVb = -T0 / ltw * T1 * dltw_dVb;
-            dT2_dVb = (1.0 + 4.0 * T1) * dT1_dVb;
-            dT1_dT = -T0 / ltw * T1 * dltw_dT; /* v4.2 bugfix temp deriv */
-            dT2_dT = (1.0 + 4.0 * T1) * dT1_dT;/* v4.2 bugfix temp deriv */
+          /*dT1_dVb = -T0 / ltw * T1 * dltw_dVb;                         */
+          /*dT2_dVb = (1.0 + 4.0 * T1) * dT1_dVb;                        */
+          /*dT1_dT = -T0 / ltw * T1 * dltw_dT;    v4.2 bugfix temp deriv */
+          /*dT2_dT = (1.0 + 4.0 * T1) * dT1_dT;   v4.2 bugfix temp deriv */
+          /* LFW_FD add/fix 5 derivatives */
+            dT2_dVg = -(1.0 + 4.0 * T1) * T1 * T0 * dltw_dVg / ltw;
+            dT2_dVd = -(1.0 + 4.0 * T1) * T1 * T0 * dltw_dVd / ltw;
+            dT2_dVb = -(1.0 + 4.0 * T1) * T1 * T0 * dltw_dVb / ltw;
+            dT2_dVe = -(1.0 + 4.0 * T1) * T1 * T0 * dltw_dVe / ltw;
+            dT2_dT  = -(1.0 + 4.0 * T1) * T1 * T0 * dltw_dT  / ltw;
         }
         else
         {   T1 = MIN_EXPL;
             T2 = T1 * (1.0 + 2.0 * T1);
+          /* LFW_FD add/fix 5 derivatives */
+            dT2_dVg = 0.0;
+            dT2_dVd = 0.0;
             dT2_dVb = 0.0;
-            dT2_dT = 0.0;     /* new line Wagner */
+            dT2_dVe = 0.0;
+            dT2_dT = 0.0;
         }
 
         T0 = pParam->B4SOIdvt0w * T2;
         DeltVthw = T0 * V0;
+      /* LFW_FD add/fix 5 derivatives */
+        dDeltVthw_dVg = pParam->B4SOIdvt0w * dT2_dVg * V0;
+        dDeltVthw_dVd = pParam->B4SOIdvt0w * dT2_dVd * V0;
         dDeltVthw_dVb = pParam->B4SOIdvt0w * dT2_dVb * V0;
-        if (selfheat)   /*dDeltVthw_dT = T0 * dvbi_dT;*/ /* v4.2 bugfix temp deriv */
-            dDeltVthw_dT = T0 * (dvbi_dT - dphi_dT) + pParam->B4SOIdvt0w * dT2_dT * V0; /* v4.2 bugfix temp deriv */
+        dDeltVthw_dVe = pParam->B4SOIdvt0w * dT2_dVe * V0;
+        if (selfheat)
+        dDeltVthw_dT = T0 * (dvbi_dT - dphi_dT) + pParam->B4SOIdvt0w * dT2_dT * V0;
         else   dDeltVthw_dT = 0.0;
 
         T0 = sqrt(1.0 + pParam->B4SOIlpe0 / Leff);
@@ -2467,10 +2576,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 + pParam->B4SOIkt2 * Vbseff);
         DeltVthtemp = pParam->B4SOIk1ox * (T0 - 1.0) * sqrtPhi
             + T1 * TempRatioMinus1; /* v4.0 */
+      /* LFW_FD add/fix 5 derivatives */
+        dDeltVthtemp_dVg = TempRatioMinus1 * pParam->B4SOIkt2 * dVbseff_dVg;
+        dDeltVthtemp_dVd = TempRatioMinus1 * pParam->B4SOIkt2 * dVbseff_dVd;
+        dDeltVthtemp_dVb = TempRatioMinus1 * pParam->B4SOIkt2 * dVbseff_dVb;
+        dDeltVthtemp_dVe = TempRatioMinus1 * pParam->B4SOIkt2 * dVbseff_dVe;
         if (selfheat)
-            /*dDeltVthtemp_dT = T1 / model->B4SOItnom; */ /* v4.2 bugfix temp deriv */
-          /* fix below expression Wagner */
-          /*dDeltVthtemp_dT = pParam->B4SOIk1ox * (T0 - 1.0) * dsqrtPhi_dT + T1 / model-> B4SOItnom;    v4.2 bugfix temp deriv */
             dDeltVthtemp_dT = pParam->B4SOIk1ox * (T0 - 1.0) * dsqrtPhi_dT + T1 / model-> B4SOItnom
                             + pParam->B4SOIkt2 * TempRatioMinus1 * dVbseff_dT;
         else
@@ -2483,30 +2594,42 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
         {   T9 = 1.0 / (3.0 - 2.0e4 * T3);
             T3 = (2.0e-4 - T3) * T9;
             T4 = T9 * T9 * pParam->B4SOIetab;
-            dT3_dVb = T4 ;
+            /* LFW_FD add/fix 4 derivatives */
+            dT3_dVg = T4 * dVbseff_dVg;
+            dT3_dVd = T4 * dVbseff_dVd;
+            dT3_dVb = T4 * dVbseff_dVb;
+            dT3_dVe = T4 * dVbseff_dVe;
         }
         else
         {
-            dT3_dVb = pParam->B4SOIetab ;
+            /* LFW_FD add/fix 4 derivatives */
+            dT3_dVg = pParam->B4SOIetab * dVbseff_dVg;
+            dT3_dVd = pParam->B4SOIetab * dVbseff_dVd;
+            dT3_dVb = pParam->B4SOIetab * dVbseff_dVb;
+            dT3_dVe = pParam->B4SOIetab * dVbseff_dVe;
         }
         /* DIBL_Sft = T3 * pParam->B4SOItheta0vb0 * Vds;
            dDIBL_Sft_dVd = pParam->B4SOItheta0vb0 * T3;
-           dDIBL_Sft_dVb = pParam->B4SOItheta0vb0 * Vds * dT3_dVb;*/ /* v4.2 bugfix */
+           dDIBL_Sft_dVb = pParam->B4SOItheta0vb0 * Vds * dT3_dVb;  v4.2 bugfix */
         DIBL_Sft = T3 * theta0vb0 * Vds;
-        dDIBL_Sft_dVd = theta0vb0 * T3;
+      /* LFW_FD add/fix 4 derivatives */
+        dDIBL_Sft_dVg = theta0vb0 * Vds * dT3_dVg;
+        dDIBL_Sft_dVd = theta0vb0 * (Vds * dT3_dVd + T3) ;
         dDIBL_Sft_dVb = theta0vb0 * Vds * dT3_dVb;
-      /* fix below expression Wagner */
-      /*dDIBL_Sft_dT = T3 * Vds * dtheta0vb0_dT;    v4.2 bug fix */
+        dDIBL_Sft_dVe = theta0vb0 * Vds * dT3_dVe;
         dDIBL_Sft_dT = T3 * Vds * dtheta0vb0_dT + pParam->B4SOIetab * dVbseff_dT * theta0vb0 * Vds;
+
         Lpe_Vb = sqrt(1.0 + pParam->B4SOIlpeb / Leff);
 
         T9 =  2.2361 / sqrtPhi;
         sqrtPhisExt = sqrtPhis - T9 * (Vbsh - Vbseff);
-        dsqrtPhisExt_dVb = dsqrtPhis_dVb - T9 * (dVbsh_dVb - 1);
-      /* fix 1st line of below expression Wagner */
-      /*dsqrtPhisExt_dT = dsqrtPhis_dT - T9 * (dVbsh_dT) */
-        dsqrtPhisExt_dT = dsqrtPhis_dT - T9 * (dVbsh_dT - dVbseff_dT)
-            + 2.2361 * dsqrtPhi_dT * (Vbsh - Vbseff) / phi; /* v4.2 bugfix temp deriv */
+      /* LFW_FD add/fix 4 derivatives */
+        dsqrtPhisExt_dVg = dsqrtPhis_dVg - T9 * (dVbsh_dVg - dVbseff_dVg);
+        dsqrtPhisExt_dVd = dsqrtPhis_dVd - T9 * (dVbsh_dVd - dVbseff_dVd);
+        dsqrtPhisExt_dVb = dsqrtPhis_dVb - T9 * (dVbsh_dVb - dVbseff_dVb);
+        dsqrtPhisExt_dVe = dsqrtPhis_dVe - T9 * (dVbsh_dVe - dVbseff_dVe);
+        dsqrtPhisExt_dT  = dsqrtPhis_dT - T9 * (dVbsh_dT - dVbseff_dT)
+                         + 2.2361 * dsqrtPhi_dT * (Vbsh - Vbseff) / phi; /* v4.2 bugfix temp deriv */
         /* 4.1 */
         T0 = exp(2.0 * pParam->B4SOIdvtp4 * Vds);
         DITS_Sft2 = pParam->B4SOIdvtp2factor * (T0-1) / (T0+1);
@@ -2519,12 +2642,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             +(pParam->B4SOIk3 + pParam->B4SOIk3b * Vbseff) * tmp2
             + DeltVthtemp - DIBL_Sft - DITS_Sft - DITS_Sft2;
 
-        if (selfheat){
-            if (!model->B4SOIvth0Given)
-                dvth0_dT = dphi_dT + pParam->B4SOIk1eff * dsqrtPhi_dT;
-            else dvth0_dT=0;}
-
-        else dvth0_dT=0;        /* v4.2 temp deriv */
+      /* LFW_FD add/fix 2 derivatives */
+        dVth_dVg = pParam->B4SOIk1ox * dsqrtPhisExt_dVg * Lpe_Vb
+                 - here->B4SOIk2ox * dVbseff_dVg - dDelt_vth_dVg  - dDeltVthw_dVg
+                 + pParam->B4SOIk3b * dVbseff_dVg * tmp2
+                 + dDeltVthtemp_dVg - dDIBL_Sft_dVg;   /* LFW_FD fix line */
+        dvth0_dT=0;
 
 
 
@@ -2532,26 +2655,32 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
         T6 = pParam->B4SOIk3b * tmp2 - here->B4SOIk2ox
             + pParam->B4SOIkt2 * TempRatioMinus1;
-        dVth_dVb = Lpe_Vb * pParam->B4SOIk1ox * dsqrtPhisExt_dVb
-            - dDelt_vth_dVb - dDeltVthw_dVb
-            + T6 - dDIBL_Sft_dVb - dDITS_Sft_dVb;
-        /*  this is actually dVth_dVbseff  */
 
-        dVth_dVd = -dDIBL_Sft_dVd - dDITS_Sft_dVd - dDITS_Sft2_dVd;
+      /* LFW_FD add/fix 4 derivatives */
+        /*  this is actually dVth_dVbseff  */
+        dVth_dVb = pParam->B4SOIk1ox * dsqrtPhisExt_dVb * Lpe_Vb
+                   - here->B4SOIk2ox * dVbseff_dVb - dDelt_vth_dVb - dDeltVthw_dVb
+                   + pParam->B4SOIk3b * dVbseff_dVb * tmp2
+                   + dDeltVthtemp_dVb - dDIBL_Sft_dVb - dDITS_Sft_dVb;
+
+        dVth_dVd = pParam->B4SOIk1ox * dsqrtPhisExt_dVd * Lpe_Vb
+                   - here->B4SOIk2ox * dVbseff_dVd - dDelt_vth_dVd - dDeltVthw_dVd
+                   + pParam->B4SOIk3b * dVbseff_dVd * tmp2
+                   + dDeltVthtemp_dVd - dDIBL_Sft_dVd - dDITS_Sft_dVd - dDITS_Sft2_dVd;
+
+        dVth_dVe = pParam->B4SOIk1ox * dsqrtPhisExt_dVe * Lpe_Vb
+                   - here->B4SOIk2ox * dVbseff_dVe - dDelt_vth_dVe - dDeltVthw_dVe
+                   + pParam->B4SOIk3b * dVbseff_dVe * tmp2
+                   + dDeltVthtemp_dVe - dDIBL_Sft_dVe;  /* LFW_FD fix line */
 
         if (selfheat)
-            /*    dVth_dT = dDeltVthtemp_dT - dDelt_vth_dT - dDeltVthw_dT
-                  - dDITS_Sft_dT; */
-          /* fix below expression Wagner */
-          /*dVth_dT = dDeltVthtemp_dT - dDelt_vth_dT - dDeltVthw_dT - dDITS_Sft_dT
-                +(pParam->B4SOIk1ox * dsqrtPhisExt_dT- pParam->B4SOIk1eff * dsqrtPhi_dT) * Lpe_Vb
-                + model->B4SOItype * dvth0_dT - dDIBL_Sft_dT;     v4.2 temp deriv */
-            dVth_dT = dDeltVthtemp_dT - dDelt_vth_dT - dDeltVthw_dT
-                +(pParam->B4SOIk1ox * dsqrtPhisExt_dT- pParam->B4SOIk1eff * dsqrtPhi_dT) * Lpe_Vb
-                - here->B4SOIk2ox*dVbseff_dT +  pParam->B4SOIk3b*tmp2*dVbseff_dT
-                + (pParam->B4SOIk3 + pParam->B4SOIk3b * Vbseff)*dtmp2_dT
-                + model->B4SOItype * dvth0_dT - dDIBL_Sft_dT - dDITS_Sft_dT;  /* v4.2 temp deriv */
-
+        /* dVth_dT = dDeltVthtemp_dT - dDelt_vth_dT - dDeltVthw_dT
+                   - dDITS_Sft_dT; */
+           dVth_dT = dDeltVthtemp_dT - dDelt_vth_dT - dDeltVthw_dT
+                   +(pParam->B4SOIk1ox * dsqrtPhisExt_dT- pParam->B4SOIk1eff * dsqrtPhi_dT) * Lpe_Vb
+                   - here->B4SOIk2ox*dVbseff_dT +  pParam->B4SOIk3b*tmp2*dVbseff_dT
+                   + (pParam->B4SOIk3 + pParam->B4SOIk3b * Vbseff)*dtmp2_dT
+                   + model->B4SOItype * dvth0_dT - dDIBL_Sft_dT - dDITS_Sft_dT;  /* v4.2 temp deriv */
         else  dVth_dT = 0.0;
 
 
@@ -2608,17 +2737,18 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             Vthzb = model->B4SOItype * here->B4SOIvth0
                 - Delt_vthzb - DeltVthwzb + pParam->B4SOIk3 * tmp2
                 + DeltVthtempzb;
-            dVthzb_dT = dDeltVthtempzb_dT - dDelt_vthzb_dT - dDeltVthwzb_dT;
             dVthzb_dT = model->B4SOItype * dvth0_dT - dDelt_vthzb_dT - dDeltVthwzb_dT + pParam->B4SOIk3 * dtmp2_dT + dDeltVthtempzb_dT; /* v4.2 bugfix temp deriv */
-            /* Vthzb2 = Vthzb + 1.12;*/ /* v4.1 */ /* v4.2 never used */
-        }
+            /* Vthzb2 = Vthzb + 1.12;    v4.1 */ /* v4.2 never used */
+        } else                      /* LFW_FD */
+          Vthzb = dVthzb_dT = 0.0;  /* LFW_FD flexilint */
+
         /* Effective Vgst (Vgsteff) Calculation */
 
         Vgst = Vgs_eff - Vth;
-        dVgst_dVg = dVgs_eff_dVg;
+        dVgst_dVg = dVgs_eff_dVg - dVth_dVg;  /* LFW_FD fix derivative */
         dVgst_dVd = -dVth_dVd;
         dVgst_dVb = -dVth_dVb;
-        /* 4 new lines Wagner */
+        dVgst_dVe = -dVth_dVe;               /* LFW_FD new line */
         if (selfheat) {
            dVgst_dT = dVgs_eff_dT - dVth_dT;
         }
@@ -2626,16 +2756,20 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
         T10 = n * Vtm; /* v4.0 */
         VgstNVt = pParam->B4SOImstar * Vgst / T10; /* v4.0 */
-        ExpArg = (pParam->B4SOIvoff - (1- pParam->B4SOImstar) * Vgst)
-            / T10;              /* v4.0 */
-        /* 11 new lines Wagner */
+      /* LFW_FD add/fix 4 derivatives */
+        dVgstNVt_dVg = (pParam->B4SOImstar * dVgst_dVg - VgstNVt * dn_dVg * Vtm) / T10;
+        dVgstNVt_dVd = (pParam->B4SOImstar * dVgst_dVd - VgstNVt * dn_dVd * Vtm) / T10;
+        dVgstNVt_dVb = (pParam->B4SOImstar * dVgst_dVb - VgstNVt * dn_dVb * Vtm) / T10;
+        dVgstNVt_dVe = (pParam->B4SOImstar * dVgst_dVe - VgstNVt * dn_dVe * Vtm) / T10;
+        ExpArg = (pParam->B4SOIvoff - (1- pParam->B4SOImstar) * Vgst)/T10;  /* LFW_FD */
+      /* LFW_FD add/fix 4 derivatives */
+        dExpArg_dVg = (-(1- pParam->B4SOImstar) * dVgst_dVg - ExpArg * dn_dVg * Vtm) / T10;
+        dExpArg_dVd = (-(1- pParam->B4SOImstar) * dVgst_dVd - ExpArg * dn_dVd * Vtm) / T10;
+        dExpArg_dVb = (-(1- pParam->B4SOImstar) * dVgst_dVb - ExpArg * dn_dVb * Vtm) / T10;
+        dExpArg_dVe = (-(1- pParam->B4SOImstar) * dVgst_dVe - ExpArg * dn_dVe * Vtm) / T10;
         if (selfheat) {
             dT10_dT = n * dVtm_dT + dn_dT * Vtm;
-          /*fix below expression Wagner */
-          /*dVgstNVt_dT = -(pParam->B4SOImstar*dVth_dT + VgstNVt*dT10_dT)/T10; */
             dVgstNVt_dT = -(-pParam->B4SOImstar*dVgst_dT + VgstNVt*dT10_dT)/T10;
-          /*fix 1st line of below expression Wagner */
-          /*dExpArg_dT =  (1- pParam->B4SOImstar)*dVth_dT/T10  */
             dExpArg_dT =  -(1- pParam->B4SOImstar)*dVgst_dT/T10
                           -ExpArg*dT10_dT/T10;
         }
@@ -2645,39 +2779,47 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dExpArg_dT = 0.0;
         }
 
+      /* LFW_FD new line */
+        dExpVgst_dVg = dExpVgst_dVd = dExpVgst_dVb = dExpVgst_dVe = dExpVgst_dT = 0.0;
         /* MCJ: Very small Vgst */
         if (VgstNVt > EXPL_THRESHOLD)
-        {   Vgsteff = Vgst;
+        {   ExpVgst = 1.0;      /* LFW_FD flexilint */
+            Vgsteff = Vgst;
             /* T0 is dVgsteff_dVbseff */
             T0 = -dVth_dVb;
-            dVgsteff_dVg = dVgs_eff_dVg + T0 * dVbseff_dVg; /* v3.0 */
-            dVgsteff_dVd = -dVth_dVd + T0 * dVbseff_dVd; /* v3.0 */
-            dVgsteff_dVb = T0 * dVbseff_dVb;
-            dVgsteff_dVe = T0 * dVbseff_dVe; /* v3.0 */
+          /* LFW_FD add/fix 5 derivatives */
+            dVgsteff_dVg = dVgst_dVg;
+            dVgsteff_dVd = dVgst_dVd;
+            dVgsteff_dVb = dVgst_dVb;
+            dVgsteff_dVe = dVgst_dVe;
             if (selfheat)
-              /*fix below expression Wagner */
-              /*dVgsteff_dT  = -dVth_dT + T0 * dVbseff_dT;    v3.0 */
-                dVgsteff_dT = dVgst_dT;
+               dVgsteff_dT = dVgst_dT                  ; /* LFW */
             else
-                dVgsteff_dT = 0.0;
-            dExpVgst_dT = 0.0;    /* new line Wagner */
+               dVgsteff_dT = 0.0;
         }
         else if (ExpArg > EXPL_THRESHOLD)
         {   T0 = (Vgst - pParam->B4SOIvoff) / (n * Vtm);
             ExpVgst = exp(T0);
+          /* LFW_FD add/fix 4 derivatives */
+            dExpVgst_dVg = (dVgst_dVg - T0 * dn_dVg * Vtm) /(n * Vtm);
+            dExpVgst_dVd = (dVgst_dVd - T0 * dn_dVd * Vtm) /(n * Vtm);
+            dExpVgst_dVb = (dVgst_dVb - T0 * dn_dVb * Vtm) /(n * Vtm);
+            dExpVgst_dVe = (dVgst_dVe - T0 * dn_dVe * Vtm) /(n * Vtm);
             /*Vgsteff = Vtm * pParam->B4SOIcdep0 / model->B4SOIcox * ExpVgst; *//*v4.2 bug fix */
             Vgsteff = Vtm * cdep0 / model->B4SOIcox * ExpVgst; /* v4.2 bug fix */
             T3 = Vgsteff / (n * Vtm) ;
             /* T1 is dVgsteff_dVbseff */
-            T1  = -T3 * (dVth_dVb + T0 * Vtm * dn_dVb);
-            dVgsteff_dVg = T3 * dVgs_eff_dVg+ T1 * dVbseff_dVg; /* v3.0 */
-            dVgsteff_dVd = -T3 * (dVth_dVd + T0 * Vtm * dn_dVd)+ T1 * dVbseff_dVd; /* v3.0 */
-            dVgsteff_dVe = T1 * dVbseff_dVe; /* v3.0 */
-            dVgsteff_dVb = T1 * dVbseff_dVb;
+          /*T1  = -T3 * (dVth_dVb + T0 * Vtm * dn_dVb);*/
+          /* LFW_FD fix T1 and 4 derivatives */
+            T1  = -T3 * (           T0 * Vtm * dn_dVb);
+            dVgsteff_dVg = Vtm * cdep0 / model->B4SOIcox * dExpVgst_dVg;
+            dVgsteff_dVd = Vtm * cdep0 / model->B4SOIcox * dExpVgst_dVd;
+            dVgsteff_dVb = Vtm * cdep0 / model->B4SOIcox * dExpVgst_dVb;
+            dVgsteff_dVe = Vtm * cdep0 / model->B4SOIcox * dExpVgst_dVe;
             /* enhance next if-then-else block - Wagner*/
             if (selfheat) {
                 /* dVgsteff_dT = -T3 * (dVth_dT + T0 * dVtm_dT * n)
-                   + Vgsteff / Temp+ T1 * dVbseff_dT;*/ /* v3.0 */ /* v4.2 temp deriv*/
+                   + Vgsteff / Temp+ T1 * dVbseff_dT;    v3.0 */ /* v4.2 temp deriv*/
                 dVgsteff_dT = -T3 * (-dVgst_dT + T0 * dVtm_dT * n + Vtm * dn_dT)
                             + Vgsteff / Temp+ T1 * dVbseff_dT; /*v4.2 temp deriv*/
                 dTL0_dT = (dVgst_dT - T0 * (dn_dT * Vtm + n * dVtm_dT)) / (n * Vtm);
@@ -2691,17 +2833,22 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
         }
         else
         {   ExpVgst = exp(VgstNVt);
+          /* LFW_FD add/fix 4 derivatives */
+            dExpVgst_dVg = ExpVgst * dVgstNVt_dVg;
+            dExpVgst_dVd = ExpVgst * dVgstNVt_dVd;
+            dExpVgst_dVb = ExpVgst * dVgstNVt_dVb;
+            dExpVgst_dVe = ExpVgst * dVgstNVt_dVe;
             /* 4 new lines Wagner */
             if (selfheat)
                dExpVgst_dT = ExpVgst * dVgstNVt_dT;
             else
                dExpVgst_dT = 0.0;
             T1 = T10 * log(1.0 + ExpVgst);
-            dT1_dVg = ExpVgst / (1.0 + ExpVgst) * pParam->B4SOImstar;
-            dT1_dVb = -dT1_dVg * (dVth_dVb + Vgst / n * dn_dVb)
-                + T1 / n * dn_dVb;
-            dT1_dVd = -dT1_dVg * (dVth_dVd + Vgst / n * dn_dVd)
-                + T1 / n * dn_dVd;
+          /* LFW_FD add/fix 4 derivatives */
+            dT1_dVg = T10 * dExpVgst_dVg / (1.0 + ExpVgst) + T1 * dn_dVg / n;
+            dT1_dVd = T10 * dExpVgst_dVd / (1.0 + ExpVgst) + T1 * dn_dVd / n;
+            dT1_dVb = T10 * dExpVgst_dVb / (1.0 + ExpVgst) + T1 * dn_dVb / n;
+            dT1_dVe = T10 * dExpVgst_dVe / (1.0 + ExpVgst) + T1 * dn_dVe / n;
             /*T3 = (1.0 / Temp); */
             T3 = (1.0 / Temp + dn_dT / n); /* v4.2 temp deriv */
             if (selfheat)
@@ -2718,40 +2865,36 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 * exp(ExpArg) * (1 - pParam->B4SOImstar); /*v4.2 bug fix*/
             T2 = pParam->B4SOImstar - T10 * dT2_dVg
                 / (1.0 - pParam->B4SOImstar);
-            dT2_dVd = -dT2_dVg * (dVth_dVd - Vtm * ExpArg * dn_dVd
-                    / (1.0 - pParam->B4SOImstar))
-                + (T2 - pParam->B4SOImstar) / n * dn_dVd;
-            dT2_dVb = -dT2_dVg * (dVth_dVb - Vtm * ExpArg * dn_dVb
-                    / (1.0 - pParam->B4SOImstar))
-                + (T2 - pParam->B4SOImstar) / n * dn_dVb;
+          /* LFW_FD fix all 5 T2 derivatives */
+            TL1 = dT2_dVg;
+            dTL1_dVg = TL1 * dExpArg_dVg;
+            dTL1_dVd = TL1 * dExpArg_dVd;
+            dTL1_dVb = TL1 * dExpArg_dVb;
+            dTL1_dVe = TL1 * dExpArg_dVe;
+            dT2_dVg  = -(dn_dVg * Vtm * TL1 + T10 * dTL1_dVg) / (1.0 - pParam->B4SOImstar);
+            dT2_dVd  = -(dn_dVd * Vtm * TL1 + T10 * dTL1_dVd) / (1.0 - pParam->B4SOImstar);
+            dT2_dVb  = -(dn_dVb * Vtm * TL1 + T10 * dTL1_dVb) / (1.0 - pParam->B4SOImstar);
+            dT2_dVe  = -(dn_dVe * Vtm * TL1 + T10 * dTL1_dVe) / (1.0 - pParam->B4SOImstar);
             if (selfheat)
-              /*fix below expression Wagner */
-              /*dT2_dT = -dT2_dVg * ( dVth_dT - ExpArg * T10 * T3
-                        / (1.0 - pParam->B4SOImstar) ); */
-                dT2_dT = -(dT10_dT*dT2_dVg
-                           +T10*dT2_dVg*(-dVtm_dT/Vtm-dcdep0_dT/cdep0+dExpArg_dT)
-                           )/(1.0 - pParam->B4SOImstar);
+               dT2_dT = -(dT10_dT * TL1
+                          +T10*TL1*(-dVtm_dT/Vtm-dcdep0_dT/cdep0+dExpArg_dT)
+                          )/(1.0 - pParam->B4SOImstar);
             else
-                dT2_dT = 0.0;
+               dT2_dT = 0.0;
 
             Vgsteff = T1 / T2;
             T3 = T2 * T2;
             /*  T4 is dVgsteff_dVbseff  */
             T4 = (T2 * dT1_dVb - T1 * dT2_dVb) / T3;
-            dVgsteff_dVb = T4 * dVbseff_dVb;
-            dVgsteff_dVe = T4 * dVbseff_dVe; /* v3.0 */
-            dVgsteff_dVg = (T2 * dT1_dVg - T1 * dT2_dVg)
-                / T3 * dVgs_eff_dVg
-                + T4 * dVbseff_dVg; /* v3.0 */
-            dVgsteff_dVd = (T2 * dT1_dVd - T1 * dT2_dVd)
-                / T3+ T4 * dVbseff_dVd; /* v3.0 */
+          /* LFW_FD fix 4 derivatives */
+            dVgsteff_dVg = (T2 * dT1_dVg - T1 * dT2_dVg) / T3;
+            dVgsteff_dVd = (T2 * dT1_dVd - T1 * dT2_dVd) / T3;
+            dVgsteff_dVb = (T2 * dT1_dVb - T1 * dT2_dVb) / T3;
+            dVgsteff_dVe = (T2 * dT1_dVe - T1 * dT2_dVe) / T3;
             if (selfheat)
-              /*fix below expression Wagner */
-              /*dVgsteff_dT = (T2 * dT1_dT - T1 * dT2_dT)
-                    / T3+ T4 * dVbseff_dT;    v3.0 */
-                dVgsteff_dT = (T2 * dT1_dT - T1 * dT2_dT) / T3;
+               dVgsteff_dT = (T2 * dT1_dT - T1 * dT2_dT) / T3;
             else
-                dVgsteff_dT = 0.0;
+               dVgsteff_dT = 0.0;
         }
         Vgst2Vtm = Vgsteff + 2.0 * Vtm;
         if (selfheat)  dVgst2Vtm_dT = dVgsteff_dT + 2.0 * dVtm_dT; /* v3.1.1 bug fix */
@@ -2761,15 +2904,19 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
         /* v4.0 F-factor (degradation factor due to pocket implant) */
         if (pParam->B4SOIfprout <= 0.0)
         {   FP = 1.0;
-            dFP_dVg = dFP_dT = 0.0;
+            /* LFW_FD enhance line */
+            dFP_dVg = dFP_dVb = dFP_dVd = dFP_dVe = dFP_dT = 0.0;
         }
         else
         {   T9 = pParam->B4SOIfprout * sqrt(Leff) / Vgst2Vtm;
             FP = 1.0 / (1.0 + T9);
-            dFP_dVg = FP * FP * T9 / Vgst2Vtm;
-          /* fix "then" expression Wagner */
-          /*if (selfheat) dFP_dT = dFP_dVg * dVgst2Vtm_dT;*/
-            if (selfheat) dFP_dT = FP * T9 * dVgst2Vtm_dT / (1.0 + T9) / Vgst2Vtm;
+            /* LFW_FD fix/add 5 derivatives */
+            dFP_dVg = FP * FP * T9 / Vgst2Vtm * dVgsteff_dVg;
+            dFP_dVb = FP * FP * T9 / Vgst2Vtm * dVgsteff_dVb;
+            dFP_dVd = FP * FP * T9 / Vgst2Vtm * dVgsteff_dVd;
+            dFP_dVe = FP * FP * T9 / Vgst2Vtm * dVgsteff_dVe;
+            if (selfheat)
+                dFP_dT = FP * T9 * dVgst2Vtm_dT / (1.0 + T9) / Vgst2Vtm;
             else dFP_dT = 0.0;
         }
 
@@ -2777,9 +2924,15 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
         T9 = sqrtPhis - sqrtPhi;
         Weff = pParam->B4SOIweff - (2.0 - here->B4SOInbc)
             * (pParam->B4SOIdwg * Vgsteff + pParam->B4SOIdwb * T9);
-        dWeff_dVg = -(2.0 - here->B4SOInbc) * pParam->B4SOIdwg;
-        dWeff_dVb = -(2.0 - here->B4SOInbc) * pParam->B4SOIdwb
-            * dsqrtPhis_dVb;
+      /* LFW_FD fix/add 4 derivatives */
+        dWeff_dVg = -(2.0 - here->B4SOInbc) *
+                      (pParam->B4SOIdwg * dVgsteff_dVg + pParam->B4SOIdwb * dsqrtPhis_dVg);
+        dWeff_dVb = -(2.0 - here->B4SOInbc) *
+                      (pParam->B4SOIdwg * dVgsteff_dVb + pParam->B4SOIdwb * dsqrtPhis_dVb);
+        dWeff_dVd = -(2.0 - here->B4SOInbc) *
+                      (pParam->B4SOIdwg * dVgsteff_dVd + pParam->B4SOIdwb * dsqrtPhis_dVd);
+        dWeff_dVe = -(2.0 - here->B4SOInbc) *
+                      (pParam->B4SOIdwg * dVgsteff_dVe + pParam->B4SOIdwb * dsqrtPhis_dVe);
         /* New - next 5 lines - Wagner */
         if (selfheat)
             dWeff_dT = -(2.0 - here->B4SOInbc) *
@@ -2793,20 +2946,32 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             T0 *= T0 * 4.0e-16;
             dWeff_dVg *= T0;
             dWeff_dVb *= T0;
+          /* LFW_FD add 2 derivatives */
+            dWeff_dVd *= T0;
+            dWeff_dVe *= T0;
             dWeff_dT  *= T0;     /* new line - Wagner */
         }
 
         if (model->B4SOIrdsMod == 1)    /* v4.0 */
-            Rds = dRds_dVg = dRds_dVb = dRds_dT = 0.0;
+          /* LFW_FD enhance line */
+            Rds = dRds_dVg = dRds_dVb = dRds_dVd = dRds_dVe = dRds_dT = 0.0;
         else {
             T0 = pParam->B4SOIprwg * Vgsteff
                 + pParam->B4SOIprwb * T9;
+          /* LFW_FD add 4 derivatives */
+            dT0_dVg = pParam->B4SOIprwg * dVgsteff_dVg + pParam->B4SOIprwb * dsqrtPhis_dVg;
+            dT0_dVb = pParam->B4SOIprwg * dVgsteff_dVb + pParam->B4SOIprwb * dsqrtPhis_dVb;
+            dT0_dVd = pParam->B4SOIprwg * dVgsteff_dVd + pParam->B4SOIprwb * dsqrtPhis_dVd;
+            dT0_dVe = pParam->B4SOIprwg * dVgsteff_dVe + pParam->B4SOIprwb * dsqrtPhis_dVe;
             dT0_dT = pParam->B4SOIprwg*dVgsteff_dT
                 + pParam->B4SOIprwb*(dsqrtPhis_dT - dsqrtPhi_dT);  /* new expression Wagner */
             if (T0 >= -0.9)
             {   Rds = rds0 * (1.0 + T0);
-                dRds_dVg = rds0 * pParam->B4SOIprwg;
-                dRds_dVb = rds0 * pParam->B4SOIprwb * dsqrtPhis_dVb;
+              /* LFW_FD add/fix 4 derivatives */
+                dRds_dVg = rds0 * dT0_dVg;
+                dRds_dVb = rds0 * dT0_dVb;
+                dRds_dVd = rds0 * dT0_dVd;
+                dRds_dVe = rds0 * dT0_dVe;
 
                 if (selfheat && (Rds!=0.0))
                   /*fix below expression Wagner */
@@ -2819,10 +2984,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 /* to avoid the discontinuity problem due to prwg and prwb*/
             {   T1 = 1.0 / (17.0 + 20.0 * T0);
                 Rds = rds0 * (0.8 + T0) * T1;
-                T1 *= T1;
-                dRds_dVg = rds0 * pParam->B4SOIprwg * T1;
-                dRds_dVb = rds0 * pParam->B4SOIprwb * dsqrtPhis_dVb
-                    * T1;
+              /* LFW_FD add/fix 4 derivatives */
+                dRds_dVg = (rds0*T1- 20*Rds*T1) * dT0_dVg;
+                dRds_dVb = (rds0*T1- 20*Rds*T1) * dT0_dVb;
+                dRds_dVd = (rds0*T1- 20*Rds*T1) * dT0_dVd;
+                dRds_dVe = (rds0*T1- 20*Rds*T1) * dT0_dVe;
 
                 if (selfheat && (Rds!=0.0))
                   /*fix below expression Wagner */
@@ -2832,32 +2998,38 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 else  dRds_dT = 0.0;
 
             }
-            /* here->B4SOIrds = Rds;*/ /* v2.2.3 bug fix */ /* v4.2 bugfix # 39 */
+            /* here->B4SOIrds = Rds;    v2.2.3 bug fix */ /* v4.2 bugfix # 39 */
         }
-        here->B4SOIrds = Rds; /* v4.2 bugfix # 39 */
+        here->B4SOIrds = Rds / here->B4SOInf; /* LFW_FD  fix  */
         /* Calculate Abulk */
         if (pParam->B4SOIa0 == 0.0) {
 
             Abulk0 = Abulk = 1.0;
 
-            dAbulk0_dVb = dAbulk_dVg = dAbulk_dVb = 0.0;
-            dAbulk0_dT =  dAbulk_dT = 0.0;   /* new line Wagner */
+           /* LFW_FD expand next 3 lines   */
+            dAbulk_dVg = dAbulk_dVb = dAbulk_dVd = dAbulk_dVe = 0.0;
+            dAbulk0_dVg = dAbulk0_dVb = dAbulk0_dVd = dAbulk0_dVe = 0.0;
+            dAbulk0_dT =  dAbulk_dT = 0.0;
         }
         else {
             T10 = pParam->B4SOIketa * Vbsh;
             if (T10 >= -0.9) {
                 T11 = 1.0 / (1.0 + T10);
+              /* LFW_FD add/fix 5 derivatives */
+                dT11_dVg = -pParam->B4SOIketa * T11 * T11 * dVbsh_dVg;
                 dT11_dVb = -pParam->B4SOIketa * T11 * T11 * dVbsh_dVb;
-             // new line below - Wagner
-                dT11_dT = -pParam->B4SOIketa * T11 * T11 * dVbsh_dT;
+                dT11_dVd = -pParam->B4SOIketa * T11 * T11 * dVbsh_dVd;
+                dT11_dVe = -pParam->B4SOIketa * T11 * T11 * dVbsh_dVe;
+                dT11_dT  = -pParam->B4SOIketa * T11 * T11 * dVbsh_dT;
             }
             else { /* added to avoid the problems caused by Keta */
                 T12 = 1.0 / (0.8 + T10);
                 T11 = (17.0 + 20.0 * T10) * T12;
-             // fix line below - Wagner
-             // dT11_dVb = -pParam->B4SOIketa * T12 * T12 * dVbsh_dVb;
+              /* LFW_FD add/fix 5 derivatives */
+                dT11_dVg = (20.0-T11) * T12 * pParam->B4SOIketa * dVbsh_dVg;
                 dT11_dVb = (20.0-T11) * T12 * pParam->B4SOIketa * dVbsh_dVb;
-             // new line below - Wagner
+                dT11_dVd = (20.0-T11) * T12 * pParam->B4SOIketa * dVbsh_dVd;
+                dT11_dVe = (20.0-T11) * T12 * pParam->B4SOIketa * dVbsh_dVe;
                 dT11_dT  = (20.0-T11) * T12 * pParam->B4SOIketa * dVbsh_dT;
             }
 
@@ -2865,28 +3037,35 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             T10 = phi + pParam->B4SOIketas;
 
             T13 = (Vbsh * T11) / T10;
+          /* LFW_FD add/fix 5 derivatives */
+            dT13_dVg = (Vbsh * dT11_dVg + T11 * dVbsh_dVg) / T10;
             dT13_dVb = (Vbsh * dT11_dVb + T11 * dVbsh_dVb) / T10;
-         // new line below - Wagner
+            dT13_dVd = (Vbsh * dT11_dVd + T11 * dVbsh_dVd) / T10;
+            dT13_dVe = (Vbsh * dT11_dVe + T11 * dVbsh_dVe) / T10;
             dT13_dT = (dVbsh_dT * T11 + Vbsh * dT11_dT - T13 * dphi_dT) / T10;
 
             /* limit 1/sqrt(1-T13) to 6, starting at T13=0.96 */
             if (T13 < 0.96) {
                 T14 = 1 / sqrt(1-T13);
                 T10 = 0.5 * T14 / (1-T13);
+              /* LFW_FD add/fix 5 derivatives */
+                dT14_dVg = T10 * dT13_dVg;
                 dT14_dVb = T10 * dT13_dVb;
-             // new line below - Wagner
+                dT14_dVd = T10 * dT13_dVd;
+                dT14_dVe = T10 * dT13_dVe;
                 dT14_dT = T10 * dT13_dT;
             }
             else {
                 /* IBM tweak */
                 T11 = 1.0 / (1.0 - 1.0593220339*T13);
                 T14 = (6.0169491525 - 6.3559322034 * T13) * T11;
-             // T10 = 0.0179546 * T11 * T11;                      // never used - Wagner
-             // fix line below - Wagner
-             // dT14_dVb = T10 * dT13_dVb;
+             /* T10 = 0.0179546 * T11 * T11;                         never used - Wagner */
+              /* LFW_FD add/fix 5 derivatives */
+                dT14_dVg = (T14 * 1.0593220339 - 6.3559322034) * T11 * dT13_dVg;
                 dT14_dVb = (T14 * 1.0593220339 - 6.3559322034) * T11 * dT13_dVb;
-             // new line below - Wagner
-                dT14_dT  = (T14 * 1.0593220339 - 6.3559322034) * T11 * dT13_dT;
+                dT14_dVd = (T14 * 1.0593220339 - 6.3559322034) * T11 * dT13_dVd;
+                dT14_dVe = (T14 * 1.0593220339 - 6.3559322034) * T11 * dT13_dVe;
+                dT14_dT = (T14 * 1.0593220339 - 6.3559322034) * T11 * dT13_dT;
             }
 
             /* v3.0 bug fix */
@@ -2896,7 +3075,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 / sqrt(phi + pParam->B4SOIketas);       /* v4.0 */
 
             T1 = T10 * T14;
+          /* LFW_FD add/fix 4 derivatives */
+            dT1_dVg = T10 * dT14_dVg;
             dT1_dVb = T10 * dT14_dVb;
+            dT1_dVd = T10 * dT14_dVd;
+            dT1_dVe = T10 * dT14_dVe;
 
             T9 = sqrt(pParam->B4SOIxj * Xdep);
             tmp1 = Leff + 2.0 * T9;
@@ -2905,30 +3088,50 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             tmp3 = pParam->B4SOIweff + pParam->B4SOIb1;
             tmp4 = pParam->B4SOIb0 / tmp3;
             T2 = tmp2 + tmp4;
-            dT2_dVb = -T9 * tmp2 / tmp1 / Xdep * dXdep_dVb;
+          /* LFW_FD add/fix 4 derivatives */
+            dT2_dVg = -tmp2 / tmp1 * pParam->B4SOIxj * dXdep_dVg / T9;
+            dT2_dVb = -tmp2 / tmp1 * pParam->B4SOIxj * dXdep_dVb / T9;
+            dT2_dVd = -tmp2 / tmp1 * pParam->B4SOIxj * dXdep_dVd / T9;
+            dT2_dVe = -tmp2 / tmp1 * pParam->B4SOIxj * dXdep_dVe / T9;
             T6 = T5 * T5;
             T7 = T5 * T6;
+          /* LFW_FD add 4 derivatives */
+            dT7_dVg = -3.0 * T7 / tmp1 * pParam->B4SOIxj * dXdep_dVg / T9;
+            dT7_dVb = -3.0 * T7 / tmp1 * pParam->B4SOIxj * dXdep_dVb / T9;
+            dT7_dVd = -3.0 * T7 / tmp1 * pParam->B4SOIxj * dXdep_dVd / T9;
+            dT7_dVe = -3.0 * T7 / tmp1 * pParam->B4SOIxj * dXdep_dVe / T9;
 
             Abulk0 = 1 + T1 * T2;
+          /* LFW_FD add/fix 4 derivatives */
+            dAbulk0_dVg = T1 * dT2_dVg + T2 * dT1_dVg;
             dAbulk0_dVb = T1 * dT2_dVb + T2 * dT1_dVb;
+            dAbulk0_dVd = T1 * dT2_dVd + T2 * dT1_dVd;
+            dAbulk0_dVe = T1 * dT2_dVe + T2 * dT1_dVe;
 
             T8 = pParam->B4SOIags * pParam->B4SOIa0 * T7;
             dAbulk_dVg = -T1 * T8;
             Abulk = Abulk0 + dAbulk_dVg * Vgsteff;
 
-            dAbulk_dVb = dAbulk0_dVb
-                - T8 * Vgsteff * (dT1_dVb + 3.0 * T1 * dT2_dVb / tmp2);
+          /* LFW_FD add/fix 4 derivatives */
+            dAbulk_dVg = dAbulk0_dVg + dAbulk_dVg * dVgsteff_dVg
+                       - (T1 * pParam->B4SOIags * pParam->B4SOIa0 * dT7_dVg + T8 * dT1_dVg) * Vgsteff;
+            dAbulk_dVb = dAbulk0_dVb - T1 * T8 * dVgsteff_dVb
+                       - (T1 * pParam->B4SOIags * pParam->B4SOIa0 * dT7_dVb + T8 * dT1_dVb) * Vgsteff;
+            dAbulk_dVd = dAbulk0_dVd - T1 * T8 * dVgsteff_dVd
+                       - (T1 * pParam->B4SOIags * pParam->B4SOIa0 * dT7_dVd + T8 * dT1_dVd) * Vgsteff;
+            dAbulk_dVe = dAbulk0_dVe - T1 * T8 * dVgsteff_dVe
+                       - (T1 * pParam->B4SOIags * pParam->B4SOIa0 * dT7_dVe + T8 * dT1_dVe) * Vgsteff;
        /*   21 new lines Wagner */
        /*   need temperature derivs of Abulk & Abulk0  */
             TL2 = phi + pParam->B4SOIketas;
             dTL1_dT = -0.5*T10/TL2*dphi_dT;
-         // TL2 = T14;                                          // not used - Wagner
+         /* TL2 = T14;                                          not used - Wagner */
             dTL3_dT = (0.5*pParam->B4SOIxj/T9)*dXdep_dT;
             dTL4_dT = -2*tmp2*dTL3_dT/tmp1;
-         // dTL5_dT = -T13*dphi_dT/(phi + pParam->B4SOIketas);  // not used - Wagner
-         // dTL6_dT = 0.5*T14*dTL5_dT/(1-T13);                  // not used - Wagner
-         // fix line below - Wagner
-         // dTL7_dT = T10*dTL6_dT + T14*dTL1_dT;
+         /* dTL5_dT = -T13*dphi_dT/(phi + pParam->B4SOIketas);  not used - Wagner */
+         /* dTL6_dT = 0.5*T14*dTL5_dT/(1-T13);                  not used - Wagner */
+         /* fix line below - Wagner                                               */
+         /* dTL7_dT = T10*dTL6_dT + T14*dTL1_dT;                                  */
             dTL7_dT = T10*dT14_dT + T14*dTL1_dT;
             dTL8_dT = -pParam->B4SOIags*pParam->B4SOIa0*6*T7*dTL3_dT/tmp1;
             dTL9_dT = -dTL7_dT*T8 - T1*dTL8_dT;
@@ -2947,11 +3150,14 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
         {
             T9 = 1.0 / (3.0 - 200.0 * Abulk0);
             Abulk0 = (0.02 - Abulk0) * T9;
-         // fix line below - Wagner
-         // dAbulk0_dVb *= T9 * T9;
+         /* fix line below - Wagner */
+         /* dAbulk0_dVb *= T9 * T9; */
             T10 = (200.0 * Abulk0 - 1.0) * T9;
+          /* LFW_FD add/fix 5 derivatives */
+            dAbulk0_dVg *= T10;
             dAbulk0_dVb *= T10;
-         // new line below - Wagner
+            dAbulk0_dVd *= T10;
+            dAbulk0_dVe *= T10;
             dAbulk0_dT *= T10;
         }
 
@@ -2959,13 +3165,15 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
         {
             T9 = 1.0 / (3.0 - 200.0 * Abulk);
             Abulk = (0.02 - Abulk) * T9;
-         // fix line below - Wagner
-         // dAbulk_dVb *= T9 * T9;
-         // T10 = T9 * T9;     /* 3.2 bug fix */
+         /* fix line below - Wagner  */
+         /* dAbulk_dVb *= T9 * T9;   */
+         /* T10 = T9 * T9;        3.2 bug fix */
             T10 = (200.0 * Abulk - 1.0) * T9;
+          /* LFW_FD add/fix 5 derivatives */
             dAbulk_dVg *= T10;         /* 3.2 bug fix */
-            dAbulk_dVb *= T10;
-         // new line below - Wagner
+            dAbulk_dVb *= T10;         /* 3.2 bug fix */
+            dAbulk_dVd *= T10;         /* 3.2 bug fix */
+            dAbulk_dVe *= T10;
             dAbulk_dT *= T10;
         }
 
@@ -2993,38 +3201,43 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 T2 = ua + uc * Vbseff;
                 T3 = T0 / toxe_mob;                                                                                     /* Bug fix #4 Jun 09 implementing Eeff correctly*/
                 T5 = T3 * (T2 + ub * T3);
-                dDenomi_dVg = (T2 + 2.0 * ub * T3) / toxe_mob;                          /* Bug fix #4 Jun 09 implementing Eeff correctly*/
-                dDenomi_dVd = dDenomi_dVg * 2 * dVth_dVd;
-                dDenomi_dVb = dDenomi_dVg * 2 * dVth_dVb + uc * T3 ;
+              /* LFW_FD fix 5 derivatives */
+                dDenomi_dVg = (T2 + 2.0 * ub * T3) / toxe_mob * (dVgsteff_dVg + 2 * dVth_dVg)
+                            + T3 * uc * dVbseff_dVg;
+                dDenomi_dVb = (T2 + 2.0 * ub * T3) / toxe_mob * (dVgsteff_dVb + 2 * dVth_dVb)
+                            + T3 * uc * dVbseff_dVb;
+                dDenomi_dVd = (T2 + 2.0 * ub * T3) / toxe_mob * (dVgsteff_dVd + 2 * dVth_dVd)
+                            + T3 * uc * dVbseff_dVd;
+                dDenomi_dVe = (T2 + 2.0 * ub * T3) / toxe_mob * (dVgsteff_dVe + 2 * dVth_dVe)
+                            + T3 * uc * dVbseff_dVe;
+
                 if (selfheat)
-                  /* fix 1st line of below expression Wagner */
-                  /*dDenomi_dT = dDenomi_dVg * 2 * dVth_dT */
-                    dDenomi_dT = dDenomi_dVg * (2 * dVth_dT + dVgsteff_dT - dT14_dT)
-                        + (dua_dT + Vbseff * duc_dT
-                                + dub_dT * T3 ) * T3;
+                   dDenomi_dT = (T2 + 2.0 * ub * T3) / toxe_mob * (2 * dVth_dT + dVgsteff_dT - dT14_dT)
+                              + (dua_dT + Vbseff * duc_dT + uc * dVbseff_dT
+                              + dub_dT * T3 ) * T3;
                 else
-                    dDenomi_dT = 0.0;
+                   dDenomi_dT = 0.0;
             }
             else if (model->B4SOImobMod == 2)                                                                   /* Bug fix #5 Jun 09 implementing Eeff correctly*/
             {   T5 = (Vgsteff -T14)/ toxe * (ua                                                         /* MobMod=2 does not use Eeff */
                     + uc * Vbseff + ub * (Vgsteff -T14)                                                 /* 'toxe' keeps code consistent with BSIMSOI4.1 Manual*/
                     / toxe);
-            dDenomi_dVg = (ua + uc * Vbseff
-                    + 2.0 * ub * (Vgsteff -T14) / toxe)
-                / toxe;
-            dDenomi_dVd = 0.0;
-            dDenomi_dVb = (Vgsteff -T14) * uc / toxe;
-            if (selfheat)
-              /*fix below expression Wagner */
-              /*dDenomi_dT = (Vgsteff -T14) / toxe
-                    * (dua_dT + Vbseff * duc_dT + dub_dT
-                            * (Vgsteff -T14) / toxe);*/
-                dDenomi_dT = dDenomi_dVg * (dVgsteff_dT - dT14_dT)
-                           + (Vgsteff -T14)/ toxe
-                           * (dua_dT + Vbseff * duc_dT + dub_dT
-                           * (Vgsteff -T14)/ toxe);
-            else
-                dDenomi_dT = 0.0;
+              /* LFW_FD fix 5 derivatives */
+                dDenomi_dVg = (ua + uc * Vbseff + 2.0 * ub * (Vgsteff -T14) / toxe) / toxe * dVgsteff_dVg
+                            + (Vgsteff -T14) /toxe * uc * dVbseff_dVg;
+                dDenomi_dVb = (ua + uc * Vbseff + 2.0 * ub * (Vgsteff -T14) / toxe) / toxe * dVgsteff_dVb
+                            + (Vgsteff -T14) /toxe * uc * dVbseff_dVb;
+                dDenomi_dVd = (ua + uc * Vbseff + 2.0 * ub * (Vgsteff -T14) / toxe) / toxe * dVgsteff_dVd
+                            + (Vgsteff -T14) /toxe * uc * dVbseff_dVd;
+                dDenomi_dVe = (ua + uc * Vbseff + 2.0 * ub * (Vgsteff -T14) / toxe) / toxe * dVgsteff_dVe
+                            + (Vgsteff -T14) / toxe * uc * dVbseff_dVe;
+                if (selfheat)
+                   dDenomi_dT = (ua + uc * Vbseff + 2.0 * ub * (Vgsteff -T14) / toxe) / toxe * (dVgsteff_dT-dT14_dT)
+                              + (Vgsteff -T14)/ toxe
+                              * (dua_dT + Vbseff * duc_dT + uc * dVbseff_dT + dub_dT
+                              * (Vgsteff -T14)/ toxe);
+                else
+                   dDenomi_dT = 0.0;
             }
             else if (model->B4SOImobMod == 3) /*  mobMod == 3  */
             {   T0 = Vgsteff + Vth + Vth - T14;
@@ -3032,19 +3245,21 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 T3 = T0 / toxe_mob;                                                                                     /* Bug fix #4 Jun 09 implementing Eeff correctly*/
                 T4 = T3 * (ua + ub * T3);
                 T5 = T4 * T2;
-                dDenomi_dVg = (ua + 2.0 * ub * T3) * T2
-                    / toxe_mob;                                                                                         /* Bug fix #4 Jun 09 implementing Eeff correctly*/
-                dDenomi_dVd = dDenomi_dVg * 2.0 * dVth_dVd;
-                dDenomi_dVb = dDenomi_dVg * 2.0 * dVth_dVb
-                    + uc * T4 ;
+              /* LFW_FD fix 5 derivatives */
+                dDenomi_dVg = (ua + 2.0 * ub * T3) * T2 * (dVgsteff_dVg + 2 * dVth_dVg) / toxe_mob
+                            + T4 * uc * dVbseff_dVg;
+                dDenomi_dVb = (ua + 2.0 * ub * T3) * T2 * (dVgsteff_dVb + 2 * dVth_dVb) / toxe_mob
+                            + T4 * uc * dVbseff_dVb;
+                dDenomi_dVd = (ua + 2.0 * ub * T3) * T2 * (dVgsteff_dVd + 2 * dVth_dVd) / toxe_mob
+                            + T4 * uc * dVbseff_dVd;
+                dDenomi_dVe = (ua + 2.0 * ub * T3) * T2 * (dVgsteff_dVe + 2 * dVth_dVe) / toxe_mob
+                            + T4 * uc * dVbseff_dVe;
                 if (selfheat)
-                  /*fix line 1 of below expression Wagner */
-                  /*dDenomi_dT = dDenomi_dVg * 2.0 * dVth_dT */
-                    dDenomi_dT = dDenomi_dVg * (2 * dVth_dT + dVgsteff_dT - dT14_dT)
-                        + (dua_dT + dub_dT * T3) * T3 * T2
-                        + T4 * Vbseff * duc_dT;
+                   dDenomi_dT = (ua + 2.0 * ub * T3) * T2 * (dVgsteff_dT + 2 * dVth_dT) / toxe_mob
+                              + (dua_dT + dub_dT * T3) * T3 * T2
+                              + T4 * (Vbseff * duc_dT + uc * dVbseff_dT);
                 else
-                    dDenomi_dT = 0.0;
+                   dDenomi_dT = 0.0;
             }
             else /*  mobMod == 4  */
             {
@@ -3052,7 +3267,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 T0 = (Vgsteff + here->B4SOIvtfbphi1)* 1.0e-8 / toxe/6.0;
                 T1 = exp(pParam->B4SOIeu * log(T0));                                                            /* MobMod=4 does not use Eeff */
                 /* using 'toxe' keeps code consistent with BSIM4 formulation */
-                dT1_dVg = T1 * pParam->B4SOIeu * 1.0e-8/ T0 / toxe/6.0;
+              /* LFW_FD add/fix 5 derivatives */
+                dT1_dVg = T1 * pParam->B4SOIeu * 1.0e-8/ T0 / toxe/6.0 * dVgsteff_dVg;
+                dT1_dVb = T1 * pParam->B4SOIeu * 1.0e-8/ T0 / toxe/6.0 * dVgsteff_dVb;
+                dT1_dVd = T1 * pParam->B4SOIeu * 1.0e-8/ T0 / toxe/6.0 * dVgsteff_dVd;
+                dT1_dVe = T1 * pParam->B4SOIeu * 1.0e-8/ T0 / toxe/6.0 * dVgsteff_dVe;
+                dT1_dT =  T1 * pParam->B4SOIeu * 1.0e-8/ T0 / toxe/6.0 * dVgsteff_dT;
 
                 /*T2 = pParam->B4SOIua + pParam->B4SOIuc * Vbseff; */                           /* v4.2 bugfix # 35 */
                 T2 = ua + uc * Vbseff;
@@ -3071,19 +3291,25 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 /*dT11_dVg = - 0.5 * pParam->B4SOIucs * T11 /(0.5 + 0.5*Vgsteff/VgsteffVth)/VgsteffVth;*/
                 /* dT11_dVg = (pParam->B4SOIucs - 1.0)*pParam->B4SOIud/(VgsteffVth* exp((pParam->B4SOIucs-1.0) * log(1.0 +  Vgsteff/VgsteffVth))); Bug# 21 Jul09*/
 
-                dT11_dVg = (ucs - 1.0)*ud/(VgsteffVth* exp((ucs-1.0) * log(1.0 +  Vgsteff/VgsteffVth))); /* Bug Fix # 21 Jul09*/
+              /* LFW_FD add/fix 5 derivatives */
+                dT11_dVg = - ud * ucs * exp(-(ucs+1.0) * log(1.0 +  Vgsteff/VgsteffVth)) * dVgsteff_dVg / VgsteffVth;
+                dT11_dVb = - ud * ucs * exp(-(ucs+1.0) * log(1.0 +  Vgsteff/VgsteffVth)) * dVgsteff_dVb / VgsteffVth;
+                dT11_dVd = - ud * ucs * exp(-(ucs+1.0) * log(1.0 +  Vgsteff/VgsteffVth)) * dVgsteff_dVd / VgsteffVth;
+                dT11_dVe = - ud * ucs * exp(-(ucs+1.0) * log(1.0 +  Vgsteff/VgsteffVth)) * dVgsteff_dVe / VgsteffVth;
+                dT11_dT =  - ud * ucs * exp(-(ucs+1.0) * log(1.0 +  Vgsteff/VgsteffVth)) * dVgsteff_dT / VgsteffVth;
 
-                dDenomi_dVg = T2 * dT1_dVg + dT11_dVg;
-                dDenomi_dVd = 0.0;
-                /* dDenomi_dVb = T1 * pParam->B4SOIuc;            v4.2 bugfix # 35 */
-                dDenomi_dVb = T1 * uc;
                 T5 = T1 * T2 + T11;
+              /* LFW_FD add/fix 5 derivatives */
+                dDenomi_dVg = T2 * dT1_dVg + T1 * uc * dVbseff_dVg + dT11_dVg;
+                dDenomi_dVb = T2 * dT1_dVb + T1 * uc * dVbseff_dVb + dT11_dVb;
+                dDenomi_dVd = T2 * dT1_dVd + T1 * uc * dVbseff_dVd + dT11_dVd;
+                dDenomi_dVe = T2 * dT1_dVe + T1 * uc * dVbseff_dVe + dT11_dVe;
+
                 if (selfheat)
-                    dDenomi_dT = dDenomi_dVg * pParam->B4SOIeu * dVth_dT
-                        + (dua_dT + dub_dT * T3) * T3 * T2
-                        + T4 * Vbseff * duc_dT;
+                   dDenomi_dT = T2 * dT1_dT + T1 * (dua_dT + Vbseff * duc_dT + uc * dVbseff_dT) + dT11_dT;
+
                 else
-                    dDenomi_dT = 0.0;
+                   dDenomi_dT = 0.0;
 
 
             }
@@ -3097,6 +3323,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 dDenomi_dVg *= T9;
                 dDenomi_dVd *= T9;
                 dDenomi_dVb *= T9;
+                dDenomi_dVe *= T9;   /* LFW_FD  new line */
                 if (selfheat)  dDenomi_dT *= T9;
                 else   dDenomi_dT = 0.0;
             }
@@ -3106,12 +3333,18 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dueff_dVg = T9 * dDenomi_dVg;
             dueff_dVd = T9 * dDenomi_dVd;
             dueff_dVb = T9 * dDenomi_dVb;
+            dueff_dVe = T9 * dDenomi_dVe;    /* LFW_FD  new line */
             if (selfheat)  dueff_dT = T9 * dDenomi_dT + du0temp_dT / Denomi;
             else  dueff_dT = 0.0;
 
             /* Saturation Drain Voltage  Vdsat */
             WVCox = Weff * vsattemp * model->B4SOIcox;
             WVCoxRds = WVCox * Rds;
+          /* LFW_FD add 4 derivatives */
+            dWVCoxRds_dVg = WVCox * dRds_dVg + Rds * vsattemp * model->B4SOIcox * dWeff_dVg;
+            dWVCoxRds_dVb = WVCox * dRds_dVb + Rds * vsattemp * model->B4SOIcox * dWeff_dVb;
+            dWVCoxRds_dVd = WVCox * dRds_dVd + Rds * vsattemp * model->B4SOIcox * dWeff_dVd;
+            dWVCoxRds_dVe = WVCox * dRds_dVe + Rds * vsattemp * model->B4SOIcox * dWeff_dVe;
             /* 5 lines new - Wagner */
             if (selfheat)
                 dWVCoxRds_dT = model->B4SOIcox * Rds *
@@ -3128,6 +3361,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dEsatL_dVg = T0 * dueff_dVg;
             dEsatL_dVd = T0 * dueff_dVd;
             dEsatL_dVb = T0 * dueff_dVb;
+            dEsatL_dVe = T0 * dueff_dVe;   /* LFW_FD new line */
             if (selfheat)
                 dEsatL_dT = T0 * dueff_dT + EsatL / vsattemp * dvsattemp_dT;
             else
@@ -3137,8 +3371,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             a1 = pParam->B4SOIa1;
             if (a1 == 0.0)
             {   Lambda = pParam->B4SOIa2;
+              /* LFW_FD add/fix 5 derivatives */
                 dLambda_dVg = 0.0;
-                dLambda_dT = 0.0;  /* new line Wagner */
+                dLambda_dVb = 0.0;
+                dLambda_dVd = 0.0;
+                dLambda_dVe = 0.0;
+                dLambda_dT  = 0.0;
             }
             else if (a1 > 0.0)
                 /* Added to avoid the discontinuity problem caused by a1 and a2 (Lambda) */
@@ -3146,11 +3384,13 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 T1 = T0 - pParam->B4SOIa1 * Vgsteff - 0.0001;
                 T2 = sqrt(T1 * T1 + 0.0004 * T0);
                 Lambda = pParam->B4SOIa2 + T0 - 0.5 * (T1 + T2);
-                dLambda_dVg = 0.5 * pParam->B4SOIa1 * (1.0 + T1 / T2);
-                /* 5 new lines Wagner */
+              /* LFW_FD add/fix 5 derivatives */
+                dLambda_dVg = 0.5 * pParam->B4SOIa1 * (1.0 + T1 / T2) * dVgsteff_dVg;
+                dLambda_dVb = 0.5 * pParam->B4SOIa1 * (1.0 + T1 / T2) * dVgsteff_dVb;
+                dLambda_dVd = 0.5 * pParam->B4SOIa1 * (1.0 + T1 / T2) * dVgsteff_dVd;
+                dLambda_dVe = 0.5 * pParam->B4SOIa1 * (1.0 + T1 / T2) * dVgsteff_dVe;
                 if (selfheat) {
                    dT1_dT = - pParam->B4SOIa1 * dVgsteff_dT;
-                 /*dT2_dT = 0.5 * T1 * dT1_dT / T2; fixed below */
                    dT2_dT = T1 * dT1_dT / T2;
                    dLambda_dT = -0.5 * (dT1_dT + dT2_dT); }
                 else dLambda_dT = 0.0;
@@ -3159,11 +3399,13 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             {   T1 = pParam->B4SOIa2 + pParam->B4SOIa1 * Vgsteff - 0.0001;
                 T2 = sqrt(T1 * T1 + 0.0004 * pParam->B4SOIa2);
                 Lambda = 0.5 * (T1 + T2);
-                dLambda_dVg = 0.5 * pParam->B4SOIa1 * (1.0 + T1 / T2);
-                /* 5 new lines Wagner */
+              /* LFW_FD add/fix 5 derivatives */
+                dLambda_dVg = 0.5 * pParam->B4SOIa1 * (1.0 + T1 / T2) * dVgsteff_dVg;
+                dLambda_dVb = 0.5 * pParam->B4SOIa1 * (1.0 + T1 / T2) * dVgsteff_dVb;
+                dLambda_dVd = 0.5 * pParam->B4SOIa1 * (1.0 + T1 / T2) * dVgsteff_dVd;
+                dLambda_dVe = 0.5 * pParam->B4SOIa1 * (1.0 + T1 / T2) * dVgsteff_dVe;
                 if (selfheat) {
                    dT1_dT = pParam->B4SOIa1 * dVgsteff_dT;
-                 /*dT2_dT = 0.5 * T1 * dT1_dT / T2; fixed below */
                    dT2_dT = T1 * dT1_dT / T2;
                    dLambda_dT = 0.5 * (dT1_dT + dT2_dT); }
                 else dLambda_dT = 0.0;
@@ -3187,19 +3429,23 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 T3 = EsatL * Vgst2Vtm;
                 Vdsat = T3 * T0;
 
-                dT0_dVg = -(Abulk * dEsatL_dVg + EsatL * dAbulk_dVg + 1.0) * T1;
-                dT0_dVd = -(Abulk * dEsatL_dVd) * T1;
-                dT0_dVb = -(Abulk * dEsatL_dVb + EsatL * dAbulk_dVb) * T1;
+              /* LFW_FD add/fix 5 derivatives */
+                dT0_dVg = -(Abulk * dEsatL_dVg + EsatL * dAbulk_dVg + dVgsteff_dVg) * T1;
+                dT0_dVd = -(Abulk * dEsatL_dVd + EsatL * dAbulk_dVd + dVgsteff_dVd) * T1;
+                dT0_dVb = -(Abulk * dEsatL_dVb + EsatL * dAbulk_dVb + dVgsteff_dVb) * T1;
+                dT0_dVe = -(Abulk * dEsatL_dVe + EsatL * dAbulk_dVe + dVgsteff_dVe) * T1;
                 if (selfheat)
-                    dT0_dT  = -(Abulk * dEsatL_dT + dVgst2Vtm_dT) * T1;
+                   dT0_dT  = -(Abulk * dEsatL_dT + dVgst2Vtm_dT) * T1;
                 else dT0_dT  = 0.0;
 
-                dVdsat_dVg = T3 * dT0_dVg + T2 * dEsatL_dVg + EsatL * T0;
-                dVdsat_dVd = T3 * dT0_dVd + T2 * dEsatL_dVd;
-                dVdsat_dVb = T3 * dT0_dVb + T2 * dEsatL_dVb;
+              /* LFW_FD add/fix 5 derivatives */
+                dVdsat_dVg = T3 * dT0_dVg + T2 * dEsatL_dVg + EsatL * T0 *dVgsteff_dVg;
+                dVdsat_dVb = T3 * dT0_dVb + T2 * dEsatL_dVb + EsatL * T0 *dVgsteff_dVb;
+                dVdsat_dVd = T3 * dT0_dVd + T2 * dEsatL_dVd + EsatL * T0 *dVgsteff_dVd;
+                dVdsat_dVe = T3 * dT0_dVe + T2 * dEsatL_dVe + EsatL * T0 *dVgsteff_dVe;
                 if (selfheat)
-                    dVdsat_dT  = T3 * dT0_dT  + T2 * dEsatL_dT
-                        + EsatL * T0 * dVgst2Vtm_dT;
+                   dVdsat_dT  = T3 * dT0_dT  + T2 * dEsatL_dT
+                              + EsatL * T0 * dVgst2Vtm_dT;
                 else dVdsat_dT  = 0.0;
             }
             else
@@ -3209,13 +3455,15 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 T7 = Vgst2Vtm * T9;
                 T6 = Vgst2Vtm * WVCoxRds;
                 T0 = 2.0 * Abulk * (T9 - 1.0 + 1.0 / Lambda);
-                dT0_dVg = 2.0 * (T8 * tmp2 - Abulk * tmp1
-                        + (2.0 * T9 + 1.0 / Lambda - 1.0) * dAbulk_dVg);
-                /*                    dT0_dVb = 2.0 * (T8 * tmp3  this is equivalent to one below, but simpler
-                              + (2.0 * T9 + 1.0 / Lambda - 1.0) * dAbulk_dVg);  */
-                dT0_dVb = 2.0 * (T8 * (2.0 / Abulk * dAbulk_dVb + tmp3)
-                        + (1.0 / Lambda - 1.0) * dAbulk_dVb);
-                dT0_dVd = 0.0;
+              /* LFW_FD add/fix 4 derivatives */
+                dT0_dVg = 2.0 * ((2.0 * Abulk * WVCoxRds - 1.0 + 1.0 / Lambda) * dAbulk_dVg
+                        + Abulk * Abulk * dWVCoxRds_dVg - Abulk * dLambda_dVg / (Lambda * Lambda));
+                dT0_dVb = 2.0 * ((2.0 * Abulk * WVCoxRds - 1.0 + 1.0 / Lambda) * dAbulk_dVb
+                        + Abulk * Abulk * dWVCoxRds_dVb - Abulk * dLambda_dVb / (Lambda * Lambda));
+                dT0_dVd = 2.0 * ((2.0 * Abulk * WVCoxRds - 1.0 + 1.0 / Lambda) * dAbulk_dVd
+                        + Abulk * Abulk * dWVCoxRds_dVd - Abulk * dLambda_dVd / (Lambda * Lambda));
+                dT0_dVe = 2.0 * ((2.0 * Abulk * WVCoxRds - 1.0 + 1.0 / Lambda) * dAbulk_dVe
+                        + Abulk * Abulk * dWVCoxRds_dVe - Abulk * dLambda_dVe / (Lambda * Lambda));
 
                 if (selfheat)
                 {
@@ -3239,12 +3487,19 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 T1 = Vgst2Vtm * (2.0 / Lambda - 1.0) + Abulk * EsatL
                     + 3.0 * T7;
 
-                dT1_dVg = (2.0 / Lambda - 1.0) - 2.0 * Vgst2Vtm * tmp1
-                    + Abulk * dEsatL_dVg + EsatL * dAbulk_dVg
-                    + 3.0 * (T9 + T7 * tmp2 + T6 * dAbulk_dVg);
-                dT1_dVb = Abulk * dEsatL_dVb + EsatL * dAbulk_dVb
-                    + 3.0 * (T6 * dAbulk_dVb + T7 * tmp3);
-                dT1_dVd = Abulk * dEsatL_dVd;
+              /* LFW_FD add/fix 4 derivatives */
+                dT1_dVg = (2.0 / Lambda - 1.0) * dVgsteff_dVg - 2.0 * Vgst2Vtm * dLambda_dVg / (Lambda * Lambda)
+                        + EsatL * dAbulk_dVg + Abulk * dEsatL_dVg
+                        + 3.0 * (dVgsteff_dVg * Abulk * WVCoxRds + Vgst2Vtm * dAbulk_dVg * WVCoxRds + Vgst2Vtm * Abulk * dWVCoxRds_dVg);
+                dT1_dVb = (2.0 / Lambda - 1.0) * dVgsteff_dVb - 2.0 * Vgst2Vtm * dLambda_dVb / (Lambda * Lambda)
+                        + EsatL * dAbulk_dVb + Abulk * dEsatL_dVb
+                        + 3.0 * (dVgsteff_dVb * Abulk * WVCoxRds + Vgst2Vtm * dAbulk_dVb * WVCoxRds + Vgst2Vtm * Abulk * dWVCoxRds_dVb);
+                dT1_dVd = (2.0 / Lambda - 1.0) * dVgsteff_dVd - 2.0 * Vgst2Vtm * dLambda_dVd / (Lambda * Lambda)
+                        + EsatL * dAbulk_dVd + Abulk * dEsatL_dVd
+                        + 3.0 * (dVgsteff_dVd * Abulk * WVCoxRds + Vgst2Vtm * dAbulk_dVd * WVCoxRds + Vgst2Vtm * Abulk * dWVCoxRds_dVd);
+                dT1_dVe = (2.0 / Lambda - 1.0) * dVgsteff_dVe - 2.0 * Vgst2Vtm * dLambda_dVe / (Lambda * Lambda)
+                        + EsatL * dAbulk_dVe + Abulk * dEsatL_dVe
+                        + 3.0 * (dVgsteff_dVe * Abulk * WVCoxRds + Vgst2Vtm * dAbulk_dVe * WVCoxRds + Vgst2Vtm * Abulk * dWVCoxRds_dVe);
 
               /* fix below "if" expresssion - Wagner */
               /*if (selfheat)
@@ -3264,10 +3519,15 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 else dT1_dT = 0.0;
 
                 T2 = Vgst2Vtm * (EsatL + 2.0 * T6);
-                dT2_dVg = EsatL + Vgst2Vtm * dEsatL_dVg
-                    + T6 * (4.0 + 2.0 * Vgst2Vtm * tmp2);
-                dT2_dVb = Vgst2Vtm * (dEsatL_dVb + 2.0 * T6 * tmp3);
-                dT2_dVd = Vgst2Vtm * dEsatL_dVd;
+              /* LFW_FD add/fix 4 derivatives */
+                dT2_dVg = dVgsteff_dVg * (EsatL + 4.0 * T6)
+                        + Vgst2Vtm * (dEsatL_dVg + 2 * Vgst2Vtm * dWVCoxRds_dVg);
+                dT2_dVb = dVgsteff_dVb * (EsatL + 4.0 * T6)
+                        + Vgst2Vtm * (dEsatL_dVb + 2 * Vgst2Vtm * dWVCoxRds_dVb);
+                dT2_dVd = dVgsteff_dVd * (EsatL + 4.0 * T6)
+                        + Vgst2Vtm * (dEsatL_dVd + 2 * Vgst2Vtm * dWVCoxRds_dVd);
+                dT2_dVe = dVgsteff_dVe * (EsatL + 4.0 * T6)
+                        + Vgst2Vtm * (dEsatL_dVe + 2 * Vgst2Vtm * dWVCoxRds_dVe);
                 if (selfheat)
                   /* fix below expression - Wagner */
                   /*dT2_dT  = Vgst2Vtm * dEsatL_dT + EsatL * dVgst2Vtm_dT
@@ -3284,7 +3544,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             - T0 * dT2_dVg) / T3 - Vdsat * dT0_dVg) / T0;
                 dVdsat_dVb = (dT1_dVb - (T1 * dT1_dVb - dT0_dVb * T2
                             - T0 * dT2_dVb) / T3 - Vdsat * dT0_dVb) / T0;
-                dVdsat_dVd = (dT1_dVd - (T1 * dT1_dVd - T0 * dT2_dVd) / T3) / T0;
+              /* LFW_FD add/fix 2 derivatives */
+                dVdsat_dVd = (dT1_dVd - (T1 * dT1_dVd - dT0_dVd * T2
+                           - T0 * dT2_dVd) / T3 - Vdsat * dT0_dVd) / T0;
+                dVdsat_dVe = (dT1_dVe - (T1 * dT1_dVe - dT0_dVe * T2
+                           - T0 * dT2_dVe) / T3 - Vdsat * dT0_dVe) / T0;
                 if (selfheat)
                     dVdsat_dT  = (dT1_dT - (T1 * dT1_dT - dT0_dT * T2
                                 - T0 * dT2_dT) / T3 - Vdsat * dT0_dT) / T0;
@@ -3298,6 +3562,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dT1_dVg = dVdsat_dVg;
             dT1_dVd = dVdsat_dVd - 1.0;
             dT1_dVb = dVdsat_dVb;
+            dT1_dVe = dVdsat_dVe;   /* LFW_FD new line */
             dT1_dT  = dVdsat_dT;
 
             T2 = sqrt(T1 * T1 + 4.0 * pParam->B4SOIdelta * Vdsat);
@@ -3306,6 +3571,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dT2_dVg = T0 * dT1_dVg + T3 * dVdsat_dVg;
             dT2_dVd = T0 * dT1_dVd + T3 * dVdsat_dVd;
             dT2_dVb = T0 * dT1_dVb + T3 * dVdsat_dVb;
+            dT2_dVe = T0 * dT1_dVe + T3 * dVdsat_dVe;    /* LFW_FD new line */
             if (selfheat)
                 dT2_dT  = T0 * dT1_dT  + T3 * dVdsat_dT;
             else dT2_dT  = 0.0;
@@ -3314,6 +3580,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dVdseff_dVg = dVdsat_dVg - 0.5 * (dT1_dVg + dT2_dVg);
             dVdseff_dVd = dVdsat_dVd - 0.5 * (dT1_dVd + dT2_dVd);
             dVdseff_dVb = dVdsat_dVb - 0.5 * (dT1_dVb + dT2_dVb);
+            dVdseff_dVe = dVdsat_dVe - 0.5 * (dT1_dVe + dT2_dVe);  /* LFW_FD new line */
             if (selfheat)
                 dVdseff_dT  = dVdsat_dT  - 0.5 * (dT1_dT  + dT2_dT);
             else dVdseff_dT  = 0.0;
@@ -3332,13 +3599,23 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             T0 = EsatL + Vdsat + 2.0 * T9 * tmp4;
 
             T7 = 2.0 * WVCoxRds * tmp4;
-            dT0_dVg = dEsatL_dVg + dVdsat_dVg + T7 * (1.0 + tmp2 * Vgsteff)
-                - T8 * (Abulk * dVdsat_dVg - Abulk * Vdsat / Vgst2Vtm
-                        + Vdsat * dAbulk_dVg);
-
-            dT0_dVb = dEsatL_dVb + dVdsat_dVb + T7 * tmp3 * Vgsteff
-                - T8 * (dAbulk_dVb * Vdsat + Abulk * dVdsat_dVb);
-            dT0_dVd = dEsatL_dVd + dVdsat_dVd - T8 * Abulk * dVdsat_dVd;
+          /* LFW_FD fix/add 4 derivatives */
+            dT0_dVg = dEsatL_dVg + dVdsat_dVg
+                    + 2.0 * (tmp4 * (WVCoxRds * dVgsteff_dVg + dWVCoxRds_dVg * Vgsteff)
+                    - T9 * (0.5  * (Abulk * dVdsat_dVg + dAbulk_dVg * Vdsat
+                    - Abulk * Vdsat * dVgsteff_dVg / Vgst2Vtm) / Vgst2Vtm));
+            dT0_dVb = dEsatL_dVb + dVdsat_dVb
+                    + 2.0 * (tmp4 * (WVCoxRds * dVgsteff_dVb + dWVCoxRds_dVb * Vgsteff)
+                    - T9 * (0.5  * (Abulk * dVdsat_dVb + dAbulk_dVb * Vdsat
+                    - Abulk * Vdsat * dVgsteff_dVb / Vgst2Vtm) / Vgst2Vtm));
+            dT0_dVd = dEsatL_dVd + dVdsat_dVd
+                    + 2.0 * (tmp4 * (WVCoxRds * dVgsteff_dVd + dWVCoxRds_dVd * Vgsteff)
+                    - T9 * (0.5  * (Abulk * dVdsat_dVd + dAbulk_dVd * Vdsat
+                    - Abulk * Vdsat * dVgsteff_dVd / Vgst2Vtm) / Vgst2Vtm));
+            dT0_dVe = dEsatL_dVe + dVdsat_dVe
+                    + 2.0 * (tmp4 * (WVCoxRds * dVgsteff_dVe + dWVCoxRds_dVe * Vgsteff)
+                    - T9 * (0.5  * (Abulk * dVdsat_dVe + dAbulk_dVe * Vdsat
+                    - Abulk * Vdsat * dVgsteff_dVe / Vgst2Vtm) / Vgst2Vtm));
 
             if (selfheat)
             {
@@ -3360,8 +3637,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
             T9 = WVCoxRds * Abulk;
             T1 = 2.0 / Lambda - 1.0 + T9;
-            dT1_dVg = -2.0 * tmp1 +  WVCoxRds * (Abulk * tmp2 + dAbulk_dVg);
-            dT1_dVb = dAbulk_dVb * WVCoxRds + T9 * tmp3;
+          /* LFW_FD fix/add 4 derivatives */
+            dT1_dVg = -2.0 * dLambda_dVg / (Lambda * Lambda) + WVCoxRds * dAbulk_dVg + dWVCoxRds_dVg * Abulk;
+            dT1_dVb = -2.0 * dLambda_dVb / (Lambda * Lambda) + WVCoxRds * dAbulk_dVb + dWVCoxRds_dVb * Abulk;
+            dT1_dVd = -2.0 * dLambda_dVd / (Lambda * Lambda) + WVCoxRds * dAbulk_dVd + dWVCoxRds_dVd * Abulk;
+            dT1_dVe = -2.0 * dLambda_dVe / (Lambda * Lambda) + WVCoxRds * dAbulk_dVe + dWVCoxRds_dVe * Abulk;
             if (selfheat)
               /* fix below expression - Wagner */
               /*dT1_dT  = T9 * tmp4;*/
@@ -3374,7 +3654,9 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             Vasat = T0 / T1;
             dVasat_dVg = (dT0_dVg - Vasat * dT1_dVg) / T1;
             dVasat_dVb = (dT0_dVb - Vasat * dT1_dVb) / T1;
-            dVasat_dVd = dT0_dVd / T1;
+          /* LFW_FD fix/add 2 derivatives */
+            dVasat_dVd = (dT0_dVd - Vasat * dT1_dVd) / T1;
+            dVasat_dVe = (dT0_dVe - Vasat * dT1_dVe) / T1;
             if (selfheat) dVasat_dT  = (dT0_dT  - Vasat * dT1_dT)  / T1;
             else dVasat_dT  = 0.0;
 
@@ -3383,12 +3665,17 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             {   T0 = 1.0 / (pParam->B4SOIpclm * Abulk * pParam->B4SOIlitl);
                 dT0_dVb = -T0 / Abulk * dAbulk_dVb;
                 dT0_dVg = -T0 / Abulk * dAbulk_dVg;
+              /* LFW_FD add 2 derivatives */
+                dT0_dVd = -T0 / Abulk * dAbulk_dVd;
+                dT0_dVe = -T0 / Abulk * dAbulk_dVe;
 
                 T2 = Vgsteff / EsatL;
                 T1 = Leff * (Abulk + T2);
-                dT1_dVg = Leff * ((1.0 - T2 * dEsatL_dVg) / EsatL + dAbulk_dVg);
-                dT1_dVb = Leff * (dAbulk_dVb - T2 * dEsatL_dVb / EsatL);
-                dT1_dVd = -T2 * dEsatL_dVd / Esat;
+              /* LFW_FD add/fix 4 derivatives */
+                dT1_dVg = Leff * (dAbulk_dVg + (dVgsteff_dVg - T2 * dEsatL_dVg) / EsatL);
+                dT1_dVb = Leff * (dAbulk_dVb + (dVgsteff_dVb - T2 * dEsatL_dVb) / EsatL);
+                dT1_dVd = Leff * (dAbulk_dVd + (dVgsteff_dVd - T2 * dEsatL_dVd) / EsatL);
+                dT1_dVe = Leff * (dAbulk_dVe + (dVgsteff_dVe - T2 * dEsatL_dVe) / EsatL);
               /* fix below expression - Wagner */
               /*if (selfheat) dT1_dT  = -T2 * dEsatL_dT / Esat; */
                 if (selfheat) dT1_dT  = Leff * (dAbulk_dT
@@ -3401,7 +3688,9 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     + T1 * diffVds * dT0_dVg;
                 dVACLM_dVb = (dT0_dVb * T1 + T0 * dT1_dVb) * diffVds
                     - T9 * dVdseff_dVb;
-                dVACLM_dVd = T0 * dT1_dVd * diffVds + T9 * (1.0 - dVdseff_dVd);
+              /* LFW_FD add/fix 2 derivatives */
+                dVACLM_dVd = (dT0_dVd * T1 + T0 * dT1_dVd) * diffVds + T9 * (1.0 - dVdseff_dVd);
+                dVACLM_dVe = (dT0_dVe * T1 + T0 * dT1_dVe) * diffVds - T9 * dVdseff_dVe;
                 if (selfheat)
                   /* fix below expression - Wagner */
                   /*dVACLM_dT  = T0 * dT1_dT * diffVds - T9 * dVdseff_dT;*/
@@ -3412,7 +3701,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             }
             else
             {   VACLM = MAX_EXPL;
-                dVACLM_dVd = dVACLM_dVg = dVACLM_dVb = dVACLM_dT = 0.0;
+                dVACLM_dVd = dVACLM_dVg = dVACLM_dVb = dVACLM_dVe = dVACLM_dT = 0.0;  /* LFW_FD expand line */
             }
 
 
@@ -3422,13 +3711,17 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             {   T8 = Abulk * Vdsat;
                 T0 = Vgst2Vtm * T8;
                 T1 = Vgst2Vtm + T8;
-                dT0_dVg = Vgst2Vtm * Abulk * dVdsat_dVg + T8
-                    + Vgst2Vtm * Vdsat * dAbulk_dVg;
-                dT1_dVg = 1.0 + Abulk * dVdsat_dVg + Vdsat * dAbulk_dVg;
-                dT1_dVb = dAbulk_dVb * Vdsat + Abulk * dVdsat_dVb;
-                dT0_dVb = Vgst2Vtm * dT1_dVb;
-                dT1_dVd = Abulk * dVdsat_dVd;
-                dT0_dVd = Vgst2Vtm * dT1_dVd;
+              /* LFW_FD fix/add 4 derivatives */
+                dT0_dVg = T8 * dVgsteff_dVg + Vgst2Vtm * (Abulk * dVdsat_dVg + dAbulk_dVg * Vdsat);
+                dT0_dVb = T8 * dVgsteff_dVb + Vgst2Vtm * (Abulk * dVdsat_dVb + dAbulk_dVb * Vdsat);
+                dT0_dVd = T8 * dVgsteff_dVd + Vgst2Vtm * (Abulk * dVdsat_dVd + dAbulk_dVd * Vdsat);
+                dT0_dVe = T8 * dVgsteff_dVe + Vgst2Vtm * (Abulk * dVdsat_dVe + dAbulk_dVe * Vdsat);
+
+              /* LFW_FD fix/add 4 derivatives */
+                dT1_dVg = dVgsteff_dVg + Abulk * dVdsat_dVg + dAbulk_dVg * Vdsat;
+                dT1_dVb = dVgsteff_dVb + Abulk * dVdsat_dVb + dAbulk_dVb * Vdsat;
+                dT1_dVd = dVgsteff_dVd + Abulk * dVdsat_dVd + dAbulk_dVd * Vdsat;
+                dT1_dVe = dVgsteff_dVe + Abulk * dVdsat_dVe + dAbulk_dVe * Vdsat;
                 if (selfheat)
                 {
                   /* fix below expression - Wagner */
@@ -3446,9 +3739,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 /*T2 = pParam->B4SOIthetaRout; */                                                       /* v4.2 bugfix # 36 */
                 T2 = thetaRout;
                 VADIBL = (Vgst2Vtm - T0 / T1) / T2;
-                dVADIBL_dVg = (1.0 - dT0_dVg / T1 + T0 * dT1_dVg / T9) / T2;
-                dVADIBL_dVb = (-dT0_dVb / T1 + T0 * dT1_dVb / T9) / T2;
-                dVADIBL_dVd = (-dT0_dVd / T1 + T0 * dT1_dVd / T9) / T2;
+              /* LFW_FD fix/add 4 derivatives */
+                dVADIBL_dVg = (dVgsteff_dVg - (dT0_dVg - T0 * dT1_dVg /T1 )/T1) / T2;
+                dVADIBL_dVb = (dVgsteff_dVb - (dT0_dVb - T0 * dT1_dVb /T1 )/T1) / T2;
+                dVADIBL_dVd = (dVgsteff_dVd - (dT0_dVd - T0 * dT1_dVd /T1 )/T1) / T2;
+                dVADIBL_dVe = (dVgsteff_dVe - (dT0_dVe - T0 * dT1_dVe /T1 )/T1) / T2;
+
                 if (selfheat)
                   /*fix below expression Wagner */
                   /*dVADIBL_dT = (dVgst2Vtm_dT - dT0_dT/T1 + T0*dT1_dT/T9) / T2;*/
@@ -3460,10 +3756,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 if (T7 >= -0.9)
                 {   T3 = 1.0 / (1.0 + T7);
                     VADIBL *= T3;
-                    dVADIBL_dVg *= T3;
-                    dVADIBL_dVb = (dVADIBL_dVb - VADIBL * pParam->B4SOIpdiblb)
-                        * T3;
-                    dVADIBL_dVd *= T3;
+                  /* LFW_FD fix/add 4 derivatives */
+                    dVADIBL_dVg = (dVADIBL_dVg - VADIBL * pParam->B4SOIpdiblb * dVbseff_dVg) * T3;
+                    dVADIBL_dVb = (dVADIBL_dVb - VADIBL * pParam->B4SOIpdiblb * dVbseff_dVb) * T3;
+                    dVADIBL_dVd = (dVADIBL_dVd - VADIBL * pParam->B4SOIpdiblb * dVbseff_dVd) * T3;
+                    dVADIBL_dVe = (dVADIBL_dVe - VADIBL * pParam->B4SOIpdiblb * dVbseff_dVe) * T3;
                   /*fix below expression Wagner */
                   /*if (selfheat)  dVADIBL_dT  *= T3;*/
                     if (selfheat)
@@ -3475,10 +3772,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     /* Added to avoid the discontinuity problem caused by pdiblcb */
                 {   T4 = 1.0 / (0.8 + T7);
                     T3 = (17.0 + 20.0 * T7) * T4;
-                    dVADIBL_dVg *= T3;
-                    dVADIBL_dVb = dVADIBL_dVb * T3
-                        - VADIBL * pParam->B4SOIpdiblb * T4 * T4;
-                    dVADIBL_dVd *= T3;
+                  /* LFW_FD fix/add 4 derivatives */
+                    dVADIBL_dVg = dVADIBL_dVg * T3 + VADIBL * (20.0 - T3) * T4 * pParam->B4SOIpdiblb * dVbseff_dVg;
+                    dVADIBL_dVb = dVADIBL_dVb * T3 + VADIBL * (20.0 - T3) * T4 * pParam->B4SOIpdiblb * dVbseff_dVb;
+                    dVADIBL_dVd = dVADIBL_dVd * T3 + VADIBL * (20.0 - T3) * T4 * pParam->B4SOIpdiblb * dVbseff_dVd;
+                    dVADIBL_dVe = dVADIBL_dVe * T3 + VADIBL * (20.0 - T3) * T4 * pParam->B4SOIpdiblb * dVbseff_dVe;
                   /*fix below expression Wagner */
                   /*if (selfheat)  dVADIBL_dT  *= T3;*/
                     if (selfheat)
@@ -3491,7 +3789,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             }
             else
             {   VADIBL = MAX_EXPL;
-                dVADIBL_dVd = dVADIBL_dVg = dVADIBL_dVb = dVADIBL_dT = 0.0;
+                dVADIBL_dVd = dVADIBL_dVg = dVADIBL_dVb = dVADIBL_dVe = dVADIBL_dT = 0.0; /* LFW_FD enhance line */
             }
 
             /* v4.0 DITS */
@@ -3508,14 +3806,17 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             {   T2 = 1.0 + model->B4SOIpditsl * Leff;
                 VADITS = (1.0 + T2 * T1) / pParam->B4SOIpdits;
                 dVADITS_dVg = VADITS * dFP_dVg;
-                dVADITS_dVd = FP * T2 * dT1_dVd / pParam->B4SOIpdits;
+              /* LFW_FD fix/add 3 derivatives */
+                dVADITS_dVd = VADITS * dFP_dVd + FP * T2 * dT1_dVd / pParam->B4SOIpdits;
+                dVADITS_dVb = VADITS * dFP_dVb;
+                dVADITS_dVe = VADITS * dFP_dVe;
                 VADITS *= FP;
                 if (selfheat) dVADITS_dT = VADITS * dFP_dT / FP;
                 else dVADITS_dT = 0.0;
             }
             else
             {   VADITS = MAX_EXPL;
-                dVADITS_dVg = dVADITS_dVd = dVADITS_dT = 0;
+                dVADITS_dVg = dVADITS_dVd = dVADITS_dVb = dVADITS_dVe = dVADITS_dT = 0; /* LFW_FD enhance line */
             }
 
             /* Calculate VA */
@@ -3524,9 +3825,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             T9 = T8 * Vgsteff;
             if (T9 > -0.9)
             {   T0 = 1.0 + T9;
-                dT0_dVg = T8 * (1.0 - Vgsteff * dEsatL_dVg / EsatL);
-                dT0_dVb = -T9 * dEsatL_dVb / EsatL;
-                dT0_dVd = -T9 * dEsatL_dVd / EsatL;
+              /* LFW_FD fix/add 4 derivatives */
+                dT0_dVg =  T8 * dVgsteff_dVg - T9 * dEsatL_dVg / EsatL;
+                dT0_dVb =  T8 * dVgsteff_dVb - T9 * dEsatL_dVb / EsatL;
+                dT0_dVd =  T8 * dVgsteff_dVd - T9 * dEsatL_dVd / EsatL;
+                dT0_dVe =  T8 * dVgsteff_dVe - T9 * dEsatL_dVe / EsatL;
                 if (selfheat)
                   /* fix below expression - Wagner */
                   /*dT0_dT  = -T9 * dEsatL_dT / EsatL;*/
@@ -3538,11 +3841,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             {   TL1 = T1 = 1.0 / (17.0 + 20.0 * T9);   /* change LHS name - Wagner */
                 T0 = (0.8 + T9) * T1;
                 T1 *= T1;
-                dT0_dVg = T8 * (1.0 - Vgsteff * dEsatL_dVg / EsatL) * T1;
-
                 T9 *= T1 / EsatL;
-                dT0_dVb = -T9 * dEsatL_dVb;
-                dT0_dVd = -T9 * dEsatL_dVd;
+              /* LFW_FD fix/add 4 derivatives */
+                dT0_dVg = (1.0 - 20.0 * T0) * TL1 * (T8 * dVgsteff_dVg - T9 * dEsatL_dVg / EsatL);
+                dT0_dVb = (1.0 - 20.0 * T0) * TL1 * (T8 * dVgsteff_dVb - T9 * dEsatL_dVb / EsatL);
+                dT0_dVd = (1.0 - 20.0 * T0) * TL1 * (T8 * dVgsteff_dVd - T9 * dEsatL_dVd / EsatL);
+                dT0_dVe = (1.0 - 20.0 * T0) * TL1 * (T8 * dVgsteff_dVe - T9 * dEsatL_dVe / EsatL);
                 if (selfheat)
                   /* fix below expression - Wagner */
                   /*dT0_dT  = -T9 * dEsatL_dT;*/
@@ -3561,6 +3865,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dT1_dVg = (tmp1 * dVADIBL_dVg + tmp2 * dVACLM_dVg) / tmp3;
             dT1_dVd = (tmp1 * dVADIBL_dVd + tmp2 * dVACLM_dVd) / tmp3;
             dT1_dVb = (tmp1 * dVADIBL_dVb + tmp2 * dVACLM_dVb) / tmp3;
+            dT1_dVe = (tmp1 * dVADIBL_dVe + tmp2 * dVACLM_dVe) / tmp3;   /* LFW_FD new line */
             if (selfheat)
               /*fix below expression - Wagner */
               /*dT1_dT  = (tmp1 * dVADIBL_dT  + tmp2 * dVACLM_dT ) / tmp3;*/
@@ -3576,7 +3881,9 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             tmp3 *= tmp3;
             dT2_dVg = (tmp1 * dVADITS_dVg + tmp2 * dT1_dVg) / tmp3;
             dT2_dVd = (tmp1 * dVADITS_dVd + tmp2 * dT1_dVd) / tmp3;
-            dT2_dVb = (                   tmp2 * dT1_dVb) / tmp3;
+          /* LFW_FD fix/add 2 derivatives */
+            dT2_dVb = (tmp1 * dVADITS_dVb + tmp2 * dT1_dVb) / tmp3;
+            dT2_dVe = (tmp1 * dVADITS_dVe + tmp2 * dT1_dVe) / tmp3;
             if (selfheat)
               /*fix below expression - Wagner */
               /*dT2_dT  = (tmp1 * dVADITS_dT  + tmp2 * dT1_dT ) / tmp3;*/
@@ -3598,6 +3905,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dVa_dVg = dVasat_dVg + T2 * dT0_dVg + T0 * dT2_dVg;
             dVa_dVd = dVasat_dVd + T2 * dT0_dVd + T0 * dT2_dVd;
             dVa_dVb = dVasat_dVb + T2 * dT0_dVb + T0 * dT2_dVb;
+            dVa_dVe = dVasat_dVe + T2 * dT0_dVe + T0 * dT2_dVe;  /* LFW_FD new line */
             if (selfheat)
                 dVa_dT  = dVasat_dT  + T2 * dT0_dT  + T0 * dT2_dT;
             else dVa_dT  = 0.0;
@@ -3606,19 +3914,25 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             CoxWovL = model->B4SOIcox * Weff / Leff;
             beta = ueff * CoxWovL;
             dbeta_dVg = CoxWovL * dueff_dVg + beta * dWeff_dVg / Weff ;
-            dbeta_dVd = CoxWovL * dueff_dVd;
+          /* LFW_FD fix/add 3 derivatives */
+            dbeta_dVd = CoxWovL * dueff_dVd + beta * dWeff_dVd / Weff ;
             dbeta_dVb = CoxWovL * dueff_dVb + beta * dWeff_dVb / Weff ;
+            dbeta_dVe = CoxWovL * dueff_dVe + beta * dWeff_dVe / Weff ;
           /* fix below if expresssion - Wagner */
           /*if (selfheat)  dbeta_dT  = CoxWovL * dueff_dT; */
             if (selfheat)  dbeta_dT  = CoxWovL * dueff_dT + beta * dWeff_dT / Weff ;
             else  dbeta_dT  = 0.0;
 
             T0 = 1.0 - 0.5 * Abulk * Vdseff / Vgst2Vtm;
-            dT0_dVg = -0.5 * (Abulk * dVdseff_dVg
-                    - Abulk * Vdseff / Vgst2Vtm + Vdseff * dAbulk_dVg) / Vgst2Vtm;
-            dT0_dVd = -0.5 * Abulk * dVdseff_dVd / Vgst2Vtm;
-            dT0_dVb = -0.5 * (Abulk * dVdseff_dVb + dAbulk_dVb * Vdseff)
-                / Vgst2Vtm;
+          /* LFW_FD fix/add 4 derivatives */
+            dT0_dVg = -0.5 * (Abulk * dVdseff_dVg + dAbulk_dVg * Vdseff
+                      -Abulk * Vdseff * dVgsteff_dVg / Vgst2Vtm) / Vgst2Vtm;
+            dT0_dVb = -0.5 * (Abulk * dVdseff_dVb + dAbulk_dVb * Vdseff
+                      -Abulk * Vdseff * dVgsteff_dVb / Vgst2Vtm) / Vgst2Vtm;
+            dT0_dVd = -0.5 * (Abulk * dVdseff_dVd + dAbulk_dVd * Vdseff
+                      -Abulk * Vdseff * dVgsteff_dVd / Vgst2Vtm) / Vgst2Vtm;
+            dT0_dVe = -0.5 * (Abulk * dVdseff_dVe + dAbulk_dVe * Vdseff
+                      -Abulk * Vdseff * dVgsteff_dVe / Vgst2Vtm) / Vgst2Vtm;
             if (selfheat)
               /* fix first line of below expression - Wagner */
               /*dT0_dT  = -0.5 * (Abulk * dVdseff_dT  */
@@ -3628,9 +3942,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             else dT0_dT = 0.0;
 
             fgche1 = Vgsteff * T0;
-            dfgche1_dVg = Vgsteff * dT0_dVg + T0;
-            dfgche1_dVd = Vgsteff * dT0_dVd;
-            dfgche1_dVb = Vgsteff * dT0_dVb;
+          /* LFW_FD fix/add 4 derivatives */
+            dfgche1_dVg = Vgsteff * dT0_dVg + dVgsteff_dVg * T0;
+            dfgche1_dVb = Vgsteff * dT0_dVb + dVgsteff_dVb * T0;
+            dfgche1_dVd = Vgsteff * dT0_dVd + dVgsteff_dVd * T0;
+            dfgche1_dVe = Vgsteff * dT0_dVe + dVgsteff_dVe * T0;
           /* fix below expression - Wagner */
           /*if (selfheat)  dfgche1_dT  = Vgsteff * dT0_dT;*/
             if (selfheat)  dfgche1_dT  = Vgsteff * dT0_dT + T0 * dVgsteff_dT;
@@ -3641,6 +3957,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dfgche2_dVg = (dVdseff_dVg - T9 * dEsatL_dVg) / EsatL;
             dfgche2_dVd = (dVdseff_dVd - T9 * dEsatL_dVd) / EsatL;
             dfgche2_dVb = (dVdseff_dVb - T9 * dEsatL_dVb) / EsatL;
+            dfgche2_dVe = (dVdseff_dVe - T9 * dEsatL_dVe) / EsatL; /* LFW_FD new line */
             if (selfheat)  dfgche2_dT  = (dVdseff_dT  - T9 * dEsatL_dT)  / EsatL;
             else  dfgche2_dT  = 0.0;
 
@@ -3651,6 +3968,9 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     - gche * dfgche2_dVd) / fgche2;
             dgche_dVb = (beta * dfgche1_dVb + fgche1 * dbeta_dVb
                     - gche * dfgche2_dVb) / fgche2;
+          /* LFW_FD add 1 derivative */
+            dgche_dVe = (beta * dfgche1_dVe + fgche1 * dbeta_dVe
+                      - gche * dfgche2_dVe) / fgche2;
             if (selfheat)
                 dgche_dT  = (beta * dfgche1_dT  + fgche1 * dbeta_dT
                         - gche * dfgche2_dT)  / fgche2;
@@ -3666,9 +3986,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
             dIdl_dVg = (gche * dVdseff_dVg + T9 * dgche_dVg) / T0
                 - Idl * gche / T0 * dRds_dVg ;
-            dIdl_dVd = (gche * dVdseff_dVd + T9 * dgche_dVd) / T0;
+          /* LFW_FD fix/add 3 derivatives */
+            dIdl_dVd = (gche * dVdseff_dVd + T9 * dgche_dVd - Idl * dRds_dVd * gche) / T0;
             dIdl_dVb = (gche * dVdseff_dVb + T9 * dgche_dVb
-                    - Idl * dRds_dVb * gche) / T0;
+                     - Idl * dRds_dVb * gche) / T0;
+            dIdl_dVe = (gche * dVdseff_dVe + T9 * dgche_dVe - Idl * dRds_dVe * gche) / T0;
             if (selfheat)
                 dIdl_dT  = (gche * dVdseff_dT + T9 * dgche_dT
                         - Idl * dRds_dT * gche) / T0;
@@ -3677,6 +3999,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             T9 =  diffVds / Va;
             T0 =  1.0 + T9;
             here->B4SOIids = Ids = Idl * T0 / here->B4SOInseg;
+          /* LFW_FD add 4 derivatives */
+            dIds_dVg = (dIdl_dVg * T0 - Idl * (dVdseff_dVg + T9 * dVa_dVg) / Va)/ here->B4SOInseg;
+            dIds_dVb = (dIdl_dVb * T0 - Idl * (dVdseff_dVb + T9 * dVa_dVb) / Va)/ here->B4SOInseg;
+            dIds_dVd = (dIdl_dVd * T0 + Idl * (1.0 - dVdseff_dVd - T9 * dVa_dVd) / Va)/ here->B4SOInseg;
+            dIds_dVe = (dIdl_dVe * T0 - Idl * (dVdseff_dVe + T9 * dVa_dVe) / Va)/ here->B4SOInseg;
             /* 5 new lines Wagner */
             if (selfheat)
                  dIds_dT = dIdl_dT * T0 / here->B4SOInseg
@@ -3686,13 +4013,14 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
             here->B4SOIidovVds = IdlovVdseff * T0 / here->B4SOInseg;
             /* v4.0 bug fix */
-            IdovVds = IdlovVdseff * T0 / here->B4SOInseg; /* v4.0 */
+/*          IdovVds = IdlovVdseff * T0 / here->B4SOInseg;    LFW_FD not needed */
 
             Gm0 = T0 * dIdl_dVg - Idl * (dVdseff_dVg + T9 * dVa_dVg) / Va;
             Gds0 = T0 * dIdl_dVd + Idl * (1.0 - dVdseff_dVd
                     - T9 * dVa_dVd) / Va;
             Gmb0 = T0 * dIdl_dVb - Idl * (dVdseff_dVb + T9 * dVa_dVb) / Va;
-            Gmc = 0.0;
+            Gme0 = dIdl_dVe * T0 - Idl * (dVdseff_dVe + T9 * dVa_dVe) / Va; /* LFW_FD new line */
+          /*Gmc = 0.0;  LFW_FD not used */
 
             if (selfheat)
                 GmT0 = T0 * dIdl_dT - Idl * (dVdseff_dT + T9 * dVa_dT) / Va;
@@ -3700,16 +4028,30 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
             /* This includes all dependencies from Vgsteff, Vbseff */
 
-            Gm = (Gm0 * dVgsteff_dVg+ Gmb0 * dVbseff_dVg) / here->B4SOInseg; /* v3.0 */
-            Gmb = (Gm0 * dVgsteff_dVb + Gmb0 * dVbseff_dVb) / here->B4SOInseg;
-            Gds = (Gm0 * dVgsteff_dVd+ Gmb0 * dVbseff_dVd + Gds0) / here->B4SOInseg; /* v3.0 */
-            Gme = (Gm0 * dVgsteff_dVe + Gmb0 * dVbseff_dVe) / here->B4SOInseg; /* v3.0 */
+          /*Gm = (Gm0 * dVgsteff_dVg+ Gmb0 * dVbseff_dVg) / here->B4SOInseg;    v3.0 */
+          /*Gmb = (Gm0 * dVgsteff_dVb + Gmb0 * dVbseff_dVb) / here->B4SOInseg;       */
+          /*Gds = (Gm0 * dVgsteff_dVd+ Gmb0 * dVbseff_dVd + Gds0) / here->B4SOInseg;    v3.0 */
+          /*Gme = (Gm0 * dVgsteff_dVe + Gmb0 * dVbseff_dVe) / here->B4SOInseg;    v3.0 */
+          /* LFW_FD fix 4 derivatives */
+            Gm  = dIds_dVg;
+            Gmb = dIds_dVb;
+            Gds = dIds_dVd;
+            Gme = dIds_dVe;
             if (selfheat)
              /* fix below expression Wagner */
              /* GmT = (Gm0 * dVgsteff_dT + Gmb0 * dVbseff_dT + GmT0) / here->B4SOInseg;    v3.0 */
                 GmT = dIds_dT;
             else GmT = 0.0;
 
+            /* LFW_FD flexilint inits */
+            Ibsdif = dIbsdif_dVb = dIbsdif_dT = 0;
+            Ibddif = dIbddif_dVb = dIbddif_dT = 0;
+            Ibs1 = dIbs1_dVb = dIbs1_dT = Ibd1 = dIbd1_dVb = dIbd1_dVd = dIbd1_dT = 0;
+            Ibs2 = dIbs2_dVb = dIbs2_dT = Ibd2 = dIbd2_dVb = dIbd2_dVd = dIbd2_dT = 0;
+            Ibs3 = dIbs3_dVb = dIbs3_dT = Ibd3 = dIbd3_dVb = dIbd3_dVd = dIbd3_dT = 0;
+            Ibs4 = dIbs4_dVb = dIbs4_dT = Ibd4 = dIbd4_dVb = dIbd4_dVd = dIbd4_dT = 0;
+            Igisl = Ggisls = Ggislg = Ggislb = 0.0;
+            dIc_dVd = dIc_dVb = 0.0;
 
             /* v3.1 */
             if (here->B4SOIsoiMod != 2) /* v3.2 */
@@ -3897,7 +4239,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                                Ggislt = T3 * dTL1_dT;
                             else Ggislt = 0.0;
                         }
-                                                T4 = Vbs - fgisl;
+                        T4 = Vbs - fgisl;
                         /*if (T4==0)
                             T5 =1;
                         else
@@ -4114,7 +4456,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         * (1 + pParam->B4SOIntrecf * (TempRatio - 1));
                     NVtmr = 0.026 * nrecr0s    bugfix_snps for DC swapping
                         * (1 + pParam->B4SOIntrecr * (TempRatio - 1));  */
-                                          NVtmf = Vtm00 * nrecf0s   /* bugfix_snps for DC swapping*/
+                    NVtmf = Vtm00 * nrecf0s   /* bugfix_snps for DC swapping*/
                         * (1 + pParam->B4SOIntrecf * (TempRatio - 1));          /* v4.3.1 -Tanvir */
                     NVtmr = Vtm00 * nrecr0s   /* bugfix_snps for DC swapping*/
                         * (1 + pParam->B4SOIntrecr * (TempRatio - 1));          /* v4.3.1 -Tanvir */
@@ -4123,7 +4465,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             * pParam->B4SOIntrecf * dTempRatio_dT;
                         dNVtmr_dT = nrecr0s * 0.026   bugfix_snps for DC swapping
                             * pParam->B4SOIntrecr * dTempRatio_dT;  */
-                                                dNVtmf_dT = nrecf0s * Vtm00   /* bugfix_snps for DC swapping*/
+                        dNVtmf_dT = nrecf0s * Vtm00   /* bugfix_snps for DC swapping*/
                             * pParam->B4SOIntrecf * dTempRatio_dT;              /* v4.3.1 -Tanvir */
                         dNVtmr_dT = nrecr0s * Vtm00  /* bugfix_snps for DC swapping*/
                             * pParam->B4SOIntrecr * dTempRatio_dT;              /* v4.3.1 -Tanvir */
@@ -4252,7 +4594,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     Ibs3 = dIbs3_dVb = dIbs3_dVd = dIbs3_dT = 0.0;
                     Ibd3 = dIbd3_dVb = dIbd3_dVd = dIbd3_dT = 0.0;
                     Ibsdif = dIbsdif_dVb = dIbsdif_dT = 0;
-                    /*Ibddif = dIbddif_dVb = dIbddif_dVd = dIbddif_dT = 0; v4.2 */
+                    /*Ibddif = dIbddif_dVb = dIbddif_dT = 0; v4.2 */
                     Ibddif = dIbddif_dVb = dIbddif_dT = 0;
                     here->B4SOIic = Ic = Gcd = Gcb = GcT = 0.0;
                 }
@@ -4288,7 +4630,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     if ((Ehlid = Ahlid * (ExpVbdNVtm - 1)) < 1e-5) {
                         Ehlid = dEhlid_dVb = dEhlid_dVd = dEhlid_dT = 0;
                         EhlidFactor = 1;
-                        dEhlidFactor_dVb = dEhlidFactor_dVd = dEhlidFactor_dT = 0;
+                        dEhlidFactor_dVb = dEhlidFactor_dT = 0;  /* LFW_FD flexilint */
                     }
                     else {
                         dEhlid_dVb = Ahlid * dExpVbdNVtm_dVb;
@@ -4300,7 +4642,6 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         EhlidFactor = 1.0 / sqrt(1 + Ehlid);
                         T0 = -0.5 * EhlidFactor / (1 + Ehlid);
                         dEhlidFactor_dVb = T0 * dEhlid_dVb;
-                        dEhlidFactor_dVd = -dEhlidFactor_dVb;
                         if (selfheat)
                             dEhlidFactor_dT = T0 * dEhlid_dT;
                         else
@@ -4511,7 +4852,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         dIbd4_dVb = 0;
                         dIbd4_dVd = 0;
                         if (selfheat)
-                            /* dIbs4_dT = (1 - T1) * WsTsi * djtuns_dT;*/ /* Bug fix #8 Jun 09 'typo's corrected for Drain side */
+                            /* dIbs4_dT = (1 - T1) * WsTsi * djtuns_dT;  Bug fix #8 Jun 09 'typo's corrected for Drain side */
                             /* else   dIbs4_dT = 0;     */
                             dIbd4_dT = (1 - T1) * WdTsi * djtund_dT;            /* Fix */
                         else   dIbd4_dT = 0;
@@ -4551,22 +4892,48 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             else /* v3.1 soiMod=2: ideal FD */
             {
                 here->B4SOIigidl= Igidl
-                    = Ggidld = Ggidlg = Ggidlb = 0.0;
-                here->B4SOIigisl= Igisl                                         /* Bug fix #9 Jun 09 Code added to set Igisl components to zero */
-                    = Ggisls = Ggislg = Ggislb = 0.0;                   /* This is an appx solution */
-                /* Final code will comply with BSIM MG in future releases */
+                                = Ggidld = Ggidlg = Ggidlb = Ggidlt = 0.0;  /* LFW_FD inits */
+                here->B4SOIigisl= Igisl /* Bug fix #9 Jun 09 Code added to set Igisl components to zero */
+                                = Ggisls = Ggislg = Ggislb = Ggislt = 0.0; /* This is an appx solution */
+
                 here->B4SOIitun = 0;
                 Ibs = 0;
                 Ibd = 0;
-                here->B4SOIic = Ic = Gcd = Gcb = GcT = 0.0;
+                Gjsb = 0.0;
+                Gjdb = 0.0;
+                Gjsd = 0.0;
+                Gjdd = 0.0;
 
-                Gjsb = 0;
-                Gjsd = 0;
+           /*   here->B4SOIigidl= Igidl  */
+           /*       = Ggidld = Ggidlg = Ggidlb = Ggidlt = 0.0;  LFW_FD enhance line */
+           /*   here->B4SOIigisl= Igisl                         Bug fix #9 Jun 09 Code added to set Igisl components to zero */
+           /*       = Ggisls = Ggislg = Ggislb = Ggislt = 0.0;  This is an appx solution - LFW_FD enhance line */
+                /* Final code will comply with BSIM MG in future releases */
+           /*   here->B4SOIitun = 0;                                      */
+              /* LFW_FD  next 21 lines; fix Ibs, Ibd, and derivatives Gjs* and Gjd*   */
+           /*   Ibs = 0;  */
+           /*   Ibd = 0;  */
+           /* Add Gmin since body node is floating - LFW - DIDN'T Converge */
+           /* Connect to electrical source, since source is BSIM reference */
+           /* Also option to connect to both source and drain              */
+           /*   if (here->B4SOImode == 1)                                  */
+           /*   {                                                          */
+           /*      Ibs = 1.0e-18 * vbs;                                    */
+           /*      Ibd = 1.0e-18 * vbd;                                    */
+           /*   }                                                          */
+           /*   else                                                       */
+           /*   {                                                          */
+           /*      Ibs = 1.0e-18 * vbd;                                    */
+           /*      Ibd = 1.0e-18 * vbs;                                    */
+           /*   }                                                          */
+           /*   Gjsb = 1.0e-18;                                            */
+           /*   Gjdb = 1.0e-18;                                            */
+           /*   Gjsd = 0.0;                                                */
+           /*   Gjdd = -1.0e-18;                                           */
                 GjsT = 0;
-
-                Gjdb = 0;
-                Gjdd = 0;
                 GjdT = 0;
+
+                here->B4SOIic = Ic = Gcd = Gcb = GcT = 0.0;
             }
             if (here->B4SOImode > 0)
             {
@@ -4578,14 +4945,21 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 here->B4SOIibd = Ibs;
                 here->B4SOIibs = Ibd;
             }
-            /* 2 new lines Wagner */
+          /* LFW_FD 12 new lines per flexilint */
+            Vfb = 0.0;
+            Voxacc = dVoxacc_dVg = dVoxacc_dVd = dVoxacc_dVb = dVoxacc_dVe = 0.0;
+            Voxdepinv = dVoxdepinv_dVg = dVoxdepinv_dVd = dVoxdepinv_dVb
+                      = dVoxdepinv_dT= dVoxdepinv_dVe = 0.0;
+
+            Vgb = Vgs_eff - Vbs;      /* flexilint - moved from below if stmt */
+            dVgb_dVg = dVgs_eff_dVg - dVbs_dVg;
+            dVgb_dVd = - dVbs_dVd;
+            dVgb_dVe = - dVbs_dVe;
+            dVgb_dVb = - dVbs_dVb;
             dVoxacc_dT = 0.0;
             dVfb_dT = 0.0;
             /* v3.0: gate-tunneling */
             if ((model->B4SOIigbMod != 0) || (model->B4SOIigcMod != 0)) {
-                Vgb = Vgs_eff - Vbs;
-                dVgb_dVg = dVgs_eff_dVg;
-                dVgb_dVb = -1;
 
                 /* Calculate Vox first */
                 Vfb = model->B4SOItype * here->B4SOIvth0  /* v4.0 */
@@ -4593,15 +4967,20 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 dVfb_dT =  - dphi_dT - pParam->B4SOIk1eff*dsqrtPhi_dT; /* new line Wagner */
 
                 T3 = Vfb - Vgs_eff + Vbs - DELTA_3;
-                dT3_dVg = -dVgs_eff_dVg;
-                dT3_dVd = 0;
-                dT3_dVb = 1;
-                dTL3_dT = dVfb_dT - dVgs_eff_dT; /* new line Wagner */
+              /* LFW_FD add/fix 5 derivatives */
+                dT3_dVg = -dVgs_eff_dVg + dVbs_dVg;
+                dT3_dVd = dVbs_dVd;
+                dT3_dVe = dVbs_dVe;
+                dT3_dVb = dVbs_dVb;
+                dTL3_dT = dVfb_dT - dVgs_eff_dT + dVbs_dT;
 
                 if (Vfb <= 0.0) {
                     T0 = sqrt(T3 * T3 - 4.0 * DELTA_3 * Vfb);
                     dT0_dVg = 1.0/(2.0 * T0) * 2.0*T3 * dT3_dVg;
                     dT0_dVb = 0.5*(1.0/T0) * 2.0*T3 * dT3_dVb;
+                  /* LFW_FD add 2 derivatives */
+                    dT0_dVd = T3 * dT3_dVd / T0;
+                    dT0_dVe = T3 * dT3_dVe / T0;
                     dTL0_dT = (T3 * dTL3_dT - 2.0 * DELTA_3 * dVfb_dT) / T0;  /* new line Wagner */
                     TL1 = -1.0;        /* new line Wagner */
                 }
@@ -4609,6 +4988,9 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     T0 = sqrt(T3 * T3 + 4.0 * DELTA_3 * Vfb);
                     dT0_dVg = 1.0/(2.0 * T0) * 2.0*T3 * dT3_dVg;
                     dT0_dVb = 0.5*(1.0/T0) * 2.0*T3 * dT3_dVb;
+                  /* LFW_FD add 2 derivatives */
+                    dT0_dVd = T3 * dT3_dVd / T0;
+                    dT0_dVe = T3 * dT3_dVe / T0;
                     dTL0_dT = (T3 * dTL3_dT + 2.0 * DELTA_3 * dVfb_dT) / T0;  /* new line Wagner */
                     TL1 = 1.0;         /* new line Wagner */
                 }
@@ -4616,26 +4998,34 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 Vfbeff = Vfb - 0.5 * (T3 + T0);
                 dVfbeff_dVg = -0.5 * (dT3_dVg + dT0_dVg);
                 dVfbeff_dVb = -0.5 * (dT3_dVb + dT0_dVb);
+              /* LFW_FD add 2 derivatives */
+                dVfbeff_dVd = -0.5 * (dT3_dVd + dT0_dVd);
+                dVfbeff_dVe = -0.5 * (dT3_dVe + dT0_dVe);
                 /* 2 new lines - Wagner */
                 if (selfheat) dVfbeff_dT = dVfb_dT - 0.5 * (dTL3_dT + dTL0_dT);
                 else  dVfbeff_dT = 0.0;
 
                 Voxacc = Vfb - Vfbeff;
                 dVoxacc_dVg = -dVfbeff_dVg;
-                dVoxacc_dVd = 0.0;
+              /* LFW_FD add/fix 2 derivatives */
+                dVoxacc_dVd = -dVfbeff_dVd;
+                dVoxacc_dVe = -dVfbeff_dVe;
                 dVoxacc_dVb = -dVfbeff_dVb;
                 if (Voxacc < 0.0)
-                    Voxacc = dVoxacc_dVg = dVoxacc_dVb = 0.0;
+                    Voxacc = dVoxacc_dVg = dVoxacc_dVb = dVoxacc_dVd = dVoxacc_dVe = 0.0; /* LFW_FD enhance line */
                 /* 2 new lines Wagner */
                 if (selfheat) dVoxacc_dT = dVfb_dT - dVfbeff_dT;
                 else dVoxacc_dT = 0.0;
 
 
                 T0 = Vgs_eff - Vgsteff - Vfbeff - Vbseff;
+              /* LFW_FD add/fix 4 derivatives */
                 dT0_dVg = dVgs_eff_dVg - dVgsteff_dVg - dVfbeff_dVg - dVbseff_dVg; /* v3.0 */
-                dT0_dVd = -dVgsteff_dVd - dVbseff_dVd; /* v3.0 */
-                dT0_dVb = -dVgsteff_dVb - dVfbeff_dVb - dVbseff_dVb;
-                dT0_dVe = -dVgsteff_dVe - dVbseff_dVe;
+                dT0_dVd = -dVgsteff_dVd - dVbseff_dVd - dVfbeff_dVd;
+                dT0_dVb = -dVgsteff_dVb - dVbseff_dVb - dVfbeff_dVb;
+                dT0_dVe = -dVgsteff_dVe - dVbseff_dVe - dVfbeff_dVe;
+
+                dVoxdepinv_dT = 0.0;  /* flexilint */
 
                 if (selfheat)
                   /* fix below expression Wagner */
@@ -4672,21 +5062,27 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     }
 
                     Voxdepinv = Vgs_eff - (T1*T1 + Vbs) - Vfb;
-                    dVoxdepinv_dVg = dVgs_eff_dVg - (2.0*T1*dT1_dVg);
-                    dVoxdepinv_dVd = -(2.0*T1*dT1_dVd);
-                    dVoxdepinv_dVb = -(2.0*T1*dT1_dVb + 1);
-                    dVoxdepinv_dVe = -(2.0*T1*dT1_dVe); /* v3.0 */
+                  /* LFW_FD add/fix 5 derivatives */
+                    dVoxdepinv_dVg = dVgs_eff_dVg - (2.0*T1*dT1_dVg) - dVbs_dVg;
+                    dVoxdepinv_dVd = -(2.0*T1*dT1_dVd) - dVbs_dVd;
+                    dVoxdepinv_dVb = -(2.0*T1*dT1_dVb) - dVbs_dVb;
+                    dVoxdepinv_dVe = -(2.0*T1*dT1_dVe) - dVbs_dVe;
                     if (selfheat)
-                      /*fix below expression Wagner */
-                      /*dVoxdepinv_dT = -(2.0*T1*dT1_dT);*/
-                        dVoxdepinv_dT = dVgs_eff_dT -(2.0*T1*dT1_dT) - dVfb_dT;
+                       dVoxdepinv_dT = dVgs_eff_dT -(2.0*T1*dT1_dT) - dVbs_dT - dVfb_dT;
+                    else dVoxdepinv_dT = 0.0;
                 }
             }
 
 
             /* gate-channel tunneling component */
-            ExpVxNVt = 0.0;              /* new line Wagner */
-            dIgcd_dT = dIgcs_dT = 0.0;   /* new line Wagner */
+
+            /* LFW_FD next 6 lines - flexilint inits */
+            Igd  = dIgd_dVg  = dIgd_dVd  = 0.0;
+            Igcd = dIgcd_dVg = dIgcd_dVd = dIgcd_dVb = dIgcd_dVe = 0.0;
+            Igs  = dIgs_dVg  = dIgs_dVs  = 0.0;
+            Igcs = dIgcs_dVg = dIgcs_dVd = dIgcs_dVb = dIgcs_dVe = 0.0;
+            ExpVxNVt = 0.0;
+            dIgcd_dT = dIgcs_dT = 0.0;
 
             if (model->B4SOIigcMod)
             {   T0 = Vtm * pParam->B4SOInigc;
@@ -4723,11 +5119,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     dVaux_dVd = -dVaux_dVg * 0.0;
                     dVaux_dVb = -dVaux_dVg * 0.0;
                     dVaux_dVg *= dVgs_eff_dVg;
+                    /* Wagner New fix (moved from below into else block */
+                    if (selfheat)
+                       dVaux_dT = dT0_dT*log(1.0+ExpVxNVt) + T0*ExpVxNVt*dVxNVt_dT/(1.0+ExpVxNVt);
+                    else dVaux_dT = 0.0;
                 }
-                /* 3 new lines Wagner */
-                if (selfheat)
-                     dVaux_dT = dT0_dT*log(1.0+ExpVxNVt) + T0*ExpVxNVt*dVxNVt_dT/(1.0+ExpVxNVt);
-                else dVaux_dT = 0.0;
 
                 T2 = Vgs_eff * Vaux;
                 dT2_dVg = dVgs_eff_dVg * Vaux + Vgs_eff * dVaux_dVg;
@@ -4746,33 +5142,35 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 T5 = T12 * (pParam->B4SOIaigc + T3 * Voxdepinv
                         - T4 * Voxdepinv * Voxdepinv);
 
-                /* 2 new lines Wagner */
-                if (selfheat) dT5_dT = T12 * (T3 - 2 * T4) * dVoxdepinv_dT;
+                /* LFW_FD fix derivative */
+                if (selfheat) dT5_dT = T12 * (T3 - 2 * T4 * Voxdepinv) * dVoxdepinv_dT;
                 else dT5_dT = 0.0;
 
                 if (T5 > EXPL_THRESHOLD)
                 {   T6 = MAX_EXPL;
-                    dT6_dVg = dT6_dVd = dT6_dVb = 0.0;
+                    dT6_dVg = dT6_dVd = dT6_dVb = dT6_dVe = dT6_dT = 0.0;  /* LFW_FD enhance line */
                 }
                 else if (T5 < -EXPL_THRESHOLD)
                 {   T6 = MIN_EXPL;
-                    dT6_dVg = dT6_dVd = dT6_dVb = 0.0;
+                    dT6_dVg = dT6_dVd = dT6_dVb = dT6_dVe = dT6_dT = 0.0;  /* LFW_FD enhance line */
                 }
                 else
                 {   T6 = exp(T5);
                     dT6_dVg = T6 * T12 * (T3 - 2.0 * T4 * Voxdepinv);
                     dT6_dVd = dT6_dVg * dVoxdepinv_dVd;
+                    dT6_dVe = dT6_dVg * dVoxdepinv_dVe;  /* LFW_FD new line */
                     dT6_dVb = dT6_dVg * dVoxdepinv_dVb;
                     dT6_dVg *= dVoxdepinv_dVg;
+                    /* LFW_FD fix - move from below into this else block */
+                    if (selfheat) dT6_dT = T6 * dT5_dT;
+                    else dT6_dT = 0.0;
                 }
 
-                /* 2 new lines Wagner */
-                if (selfheat) dT6_dT = T6 * dT5_dT;
-                else dT6_dT = 0.0;
 
                 Igc = T11 * T2 * T6;
                 dIgc_dVg = T11 * (T2 * dT6_dVg + T6 * dT2_dVg);
                 dIgc_dVd = T11 * (T2 * dT6_dVd + T6 * dT2_dVd);
+                dIgc_dVe = T11 * (T2 * dT6_dVe);   /* LFW_FD new line */
                 dIgc_dVb = T11 * (T2 * dT6_dVb + T6 * dT2_dVb);
 
                 /* 3 new lines Wagner */
@@ -4805,6 +5203,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 dIgcs_dVg = dIgc_dVg * T10;
                 dIgcs_dVd = dIgc_dVd * T10 + Igc * dT10_dVd;
                 dIgcs_dVb = dIgc_dVb * T10;
+                dIgcs_dVe = dIgc_dVe * T10;  /* LFW_FD new line */
 
                 /* 3 new lines Wagner */
                 if (selfheat)
@@ -4819,6 +5218,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 dIgcd_dVg = dIgc_dVg * T10;
                 dIgcd_dVd = dIgc_dVd * T10 + Igc * dT10_dVd;
                 dIgcd_dVb = dIgc_dVb * T10;
+                dIgcd_dVe = dIgc_dVe * T10;   /* LFW_FD new line */
 
                 /* 3 new lines Wagner */
                 if (selfheat)
@@ -4831,12 +5231,14 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
               /* fix below expression Wagner */
               /*here->B4SOIgIgcsb = dIgcs_dVb * dVbseff_dVb;*/
                 here->B4SOIgIgcsb = dIgcs_dVb;
+                here->B4SOIgIgcse = dIgcs_dVe;   /* LFW_FD new line */
                 here->B4SOIIgcd = Igcd;
                 here->B4SOIgIgcdg = dIgcd_dVg;
                 here->B4SOIgIgcdd = dIgcd_dVd;
               /* fix below expression Wagner */
               /*here->B4SOIgIgcdb = dIgcd_dVb * dVbseff_dVb;*/
                 here->B4SOIgIgcdb = dIgcd_dVb;
+                here->B4SOIgIgcde = dIgcd_dVe;   /* LFW_FD new line */
 
 
                 T0 = vgs - pParam->B4SOIvfbsd;
@@ -4915,11 +5317,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             }
 
             here->B4SOIgIgcss = -(here->B4SOIgIgcsg + here->B4SOIgIgcsd
-                    + here->B4SOIgIgcsb);
+                              + here->B4SOIgIgcsb + here->B4SOIgIgcse);  /* LFW_FD fix line */
             here->B4SOIgIgcds = -(here->B4SOIgIgcdg + here->B4SOIgIgcdd
-                    + here->B4SOIgIgcdb);
+                              + here->B4SOIgIgcdb + here->B4SOIgIgcde);  /* LFW_FD fix line */
 
 
+            Vfb2 = dVox_dT = 0.0;
             /* gate-body tunneling component */
             if ((model->B4SOIigbMod!= 0) && (here->B4SOIsoiMod != 2))  /* v3.2 */
                 /* v3.1: the Igb calculation is skipped for the ideal FD mode */
@@ -4956,11 +5359,8 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 dVaux_dVd = T2 / (1 + T1) * dVox_dVd;
                 dVaux_dVb = T2 / (1 + T1) * dVox_dVb;
                 dVaux_dVe = T2 / (1 + T1) * dVox_dVe; /* v3.0 */
-              /* fix below exprssion Wagner */
-              /*if (selfheat)
-                    dVaux_dT = T2 / (1 + T1) * dVox_dT;*/
                 if (selfheat)
-                    dVaux_dT = model->B4SOIvevb * dT1_dT / (1 + T1);
+                    dVaux_dT = T2 / (1 + T1) * dVox_dT;  /* LFW_FD fix line */
                 else
                     dVaux_dT = 0.0;
 
@@ -4991,6 +5391,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                 T6 = T2*(T3 - T4 * Vox) / T0;
                 if (selfheat) dT6_dT = -T2 * T4 * dVox_dT / T0 - T6/T0 * dT0_dT;
+                else dT6_dT = 0.0;  /* flexilint */
 
                 DEXP(T6, T5, T7); /* T5=exp(T6), T7=dT5_dT6 */
                 dT5_dVg = -T7 * dVox_dVg * T2 / T0 * (T4 + (T3 - T4 * Vox) / T0 * dT0_dVox);
@@ -4999,25 +5400,23 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 dT5_dVe = -T7 * dVox_dVe * T2 / T0 * (T4 + (T3 - T4 * Vox) / T0 * dT0_dVox); /* v3.0 */
                 if (selfheat)
                     dT5_dT = T7 * dT6_dT;
+                else
+                   dT5_dT = 0.0;   /* flexilint */
 
                 Igb1 = T1 * Vgb * Vaux * T5;
-                /* fix expression below - Wagner */
+              /* LFW_FD fix 5 derivatives */
                 dIgb1_dVg = T1 * (Vgb*Vaux*dT5_dVg + dVgb_dVg*Vaux*T5 +
-                     /* Vgb*T5*dVaux_dVg);*/
-                        Vgb*T5*dVaux_dVg)
-                      + Vgb * Vaux * T5 * Leff * dWeff_dVg / here->B4SOInseg;
-                dIgb1_dVd = T1 * (Vgb*Vaux*dT5_dVd + Vgb*T5*dVaux_dVd);
-                /* fix expression below - Wagner */
+                            Vgb*T5*dVaux_dVg)
+                          + Vgb * Vaux * T5 * Leff * dWeff_dVg  * agb1 * OxideRatio / here->B4SOInseg;
+                dIgb1_dVd = T1 * (Vgb*Vaux*dT5_dVd + Vgb*T5*dVaux_dVd + dVgb_dVd*Vaux*T5);
                 dIgb1_dVb = T1 * (Vgb*Vaux*dT5_dVb + dVgb_dVb*Vaux*T5 +
-                      /*Vgb*T5*dVaux_dVb);*/
-                        Vgb*T5*dVaux_dVb)
-                      + Vgb * Vaux * T5 * Leff * dWeff_dVb / here->B4SOInseg;
-                dIgb1_dVe = T1 * (Vgb*Vaux*dT5_dVe + Vgb*T5*dVaux_dVe); /* v3.0 */
+                            Vgb*T5*dVaux_dVb)
+                          + Vgb * Vaux * T5 * Leff * dWeff_dVb  * agb1 * OxideRatio / here->B4SOInseg;
+                dIgb1_dVe = T1 * (Vgb*Vaux*dT5_dVe + Vgb*T5*dVaux_dVe + dVgb_dVe*Vaux*T5);
                 if (selfheat)
-                 /* fix expression below - Wagner */
-                 /* dIgb1_dT = T1 * Vgb * (Vaux*dT5_dT + T5*dVaux_dT);*/
-                    dIgb1_dT = T1 * Vgb * (Vaux*dT5_dT + T5*dVaux_dT)
-                             + Vgb * Vaux * T5 * Leff * dWeff_dT / here->B4SOInseg;
+                   dIgb1_dT = T1 * Vgb * (Vaux*dT5_dT + T5*dVaux_dT)
+                            + Vgb * Vaux * T5 * Leff * dWeff_dT  * agb1 * OxideRatio / here->B4SOInseg
+                            + T1 * dVgs_eff_dT * Vaux * T5;
                 else dIgb1_dT = 0.0;
 
 
@@ -5032,6 +5431,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 Vox = Voxeff;
                 dVox_dVg = dVoxacc_dVg * dVoxeff_dVox;
                 dVox_dVd = dVoxacc_dVd * dVoxeff_dVox;
+                dVox_dVe = dVoxacc_dVe * dVoxeff_dVox;   /* LFW_FD new line */
                 dVox_dVb = dVoxacc_dVb * dVoxeff_dVox;
               /* fix below expression Wagner */
               /*dVox_dT = 0;*/
@@ -5054,9 +5454,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 else dT1_dT = 0;
 
                 Vaux = model->B4SOIvecb* log(1 + T1);
-                dVaux_dVg = -T2 / (1 + T1);
-                dVaux_dVd = 0;
-                dVaux_dVb = -dVaux_dVg;
+              /* LFW_FD fix/add 4 derivatives */
+                dVaux_dVg = - T2 / (1 + T1) * dVgb_dVg;
+                dVaux_dVd = - T2 / (1 + T1) * dVgb_dVd;
+                dVaux_dVe = - T2 / (1 + T1) * dVgb_dVe;
+                dVaux_dVb = - T2 / (1 + T1) * dVgb_dVb;
               /* fix below expression - Wagner */
               /*if (selfheat)
                     dVaux_dT = 0;*/
@@ -5091,31 +5493,30 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                 T6 = T2*(T3 - T4 * Vox) / T0;
                 if (selfheat) dT6_dT = -T2 * T4 * dVox_dT / T0 - T6/T0 * dT0_dT;
+                else dT6_dT = 0.0;  /* flexilint */
 
                 DEXP(T6, T5, T7); /* T5=exp(T6), T7=dT5_dT6 */
                 dT5_dVg = -T7 * dVox_dVg * T2 / T0 * (T4 + (T3 - T4 * Vox) / T0 * dT0_dVox);
                 dT5_dVd = -T7 * dVox_dVd * T2 / T0 * (T4 + (T3 - T4 * Vox) / T0 * dT0_dVox);
                 dT5_dVb = -T7 * dVox_dVb * T2 / T0 * (T4 + (T3 - T4 * Vox) / T0 * dT0_dVox);
+                dT5_dVe = -T7 * dVox_dVe * T2 / T0 * (T4 + (T3 - T4 * Vox) / T0 * dT0_dVox); /* LFW_FD new line */
                 if (selfheat)
                     dT5_dT = T7 * dT6_dT;
+                else
+                    dT5_dT = 0.0;         /* flexilint */
 
                 Igb2 = T1 * Vgb * Vaux * T5;
-                /* fix below expression - Wagner */
-                dIgb2_dVg = T1 * (Vgb*Vaux*dT5_dVg + dVgb_dVg*Vaux*T5 +
-                      /*Vgb*T5*dVaux_dVg);*/
-                        Vgb*T5*dVaux_dVg)
-                      + Vgb * Vaux * T5 * Leff * dWeff_dVg / here->B4SOInseg;
-                dIgb2_dVd = T1 * (Vgb*Vaux*dT5_dVd + Vgb*T5*dVaux_dVd);
-                /* fix below expression - Wagner */
-                dIgb2_dVb = T1 * (Vgb*Vaux*dT5_dVb + dVgb_dVb*Vaux*T5 +
-                      /*Vgb*T5*dVaux_dVb);*/
-                        Vgb*T5*dVaux_dVb)
-                      + Vgb * Vaux * T5 * Leff * dWeff_dVb / here->B4SOInseg;
+              /* LFW_FD fix 5 derivatives */
+                dIgb2_dVg = T1 * (Vgb*Vaux*dT5_dVg + dVgb_dVg*Vaux*T5 + Vgb*T5*dVaux_dVg)
+                          + Vgb * Vaux * T5 * Leff * dWeff_dVg *agb2 * OxideRatio / here->B4SOInseg;
+                dIgb2_dVd = T1 * (Vgb*Vaux*dT5_dVd + dVgb_dVd*Vaux*T5 + Vgb*T5*dVaux_dVd);
+                dIgb2_dVb = T1 * (Vgb*Vaux*dT5_dVb + dVgb_dVb*Vaux*T5 + Vgb*T5*dVaux_dVb)
+                          + Vgb * Vaux * T5 * Leff * dWeff_dVb * agb2 * OxideRatio / here->B4SOInseg;
+                dIgb2_dVe = T1 * (Vgb*Vaux*dT5_dVe + dVgb_dVe*Vaux*T5 + Vgb*T5*dVaux_dVe);
                 if (selfheat)
-                 /* fix below expression - Wagner */
-                 /* dIgb2_dT = T1 * Vgb * (Vaux*dT5_dT + T5*dVaux_dT);*/
-                    dIgb2_dT = T1 * Vgb * (Vaux*dT5_dT + T5*dVaux_dT)
-                             + Vgb * Vaux * T5 * Leff * dWeff_dT / here->B4SOInseg;
+                   dIgb2_dT = T1 * Vgb * (Vaux*dT5_dT + T5*dVaux_dT)
+                            + Vgb * Vaux * T5 * Leff * dWeff_dT * agb2 * OxideRatio / here->B4SOInseg
+                            + T1 * dVgs_eff_dT * Vaux * T5;
                 else dIgb2_dT = 0.0;
 
 
@@ -5136,7 +5537,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     dIgb_dVg = dIgb2_dVg;
                     dIgb_dVd = dIgb2_dVd;
                     dIgb_dVb = dIgb2_dVb;
-                    dIgb_dVe = 0; /* v3.0 */
+                    dIgb_dVe = dIgb2_dVe;   /* LFW_FD fix line */
                     dIgb_dT = dIgb2_dT;
                 }
                 /*Vfb2 = Vfb + 1.12;   Bug fix #18 Jul09*/
@@ -5174,17 +5575,19 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 vgp_eff = 0.5 * (-T0 + T1 - 1.0e-2);
                 dvgp_eff_dvg = 0.5 * (-1.0 + T0 / T1);
                 dvgp_eff_dvp = -dvgp_eff_dvg;
+                dvgp_eff_dT =  0.5 * (1.0 - T0 / T1) * dVfb_dT;  /* LFW_FD new line */
 
                 /* T11=A*  T12=B* */
               /*T11 = (model->B4SOItype == NMOS) ? 3.42537e-7 : 4.97232e-7;
                 T12 = (model->B4SOItype == NMOS) ? 1.16645e12 : 7.45669e11; */
 
-                                T11 = (model->B4SOItype == NMOS) ? agbc2n : agbc2p;             /* bugfix 4.3.1 -Tanvir */
+                T11 = (model->B4SOItype == NMOS) ? agbc2n : agbc2p;             /* bugfix 4.3.1 -Tanvir */
                 T12 = (model->B4SOItype == NMOS) ? bgbc2n : bgbc2p;             /* bugfix 4.3.1 -Tanvir */
 
                 T2 = vgp * vgp_eff;
                 dT2_dVg = vgp * dvgp_eff_dvg + vgp_eff;
                 dT2_dVp = vgp * dvgp_eff_dvp - vgp_eff;
+                dT2_dT  = vgp * dvgp_eff_dT;            /* LFW_FD new line */
 
                 T3 = pParam->B4SOIaigbcp2 * pParam->B4SOIcigbcp2
                     - pParam->B4SOIbigbcp2;
@@ -5196,12 +5599,14 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     T6 = MAX_EXPL;
                     dT6_dVg = 0.0;
                     dT6_dVp = 0.0;
+                    dT6_dT  = 0.0;     /* LFW_FD new line */
                 }
                 else if (T5 < -EXPL_THRESHOLD)
                 {
                     T6 = MIN_EXPL;
                     dT6_dVg = 0.0;
                     dT6_dVp = 0.0;
+                    dT6_dT  = 0.0;     /* LFW_FD new line */
                 }
                 else
                 {
@@ -5210,16 +5615,19 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         (T3 - 2.0 * T4 * vgp_eff);
                     dT6_dVg = T7 * dvgp_eff_dvg;
                     dT6_dVp = T7 * dvgp_eff_dvg;
+                    dT6_dT  = T7 * dvgp_eff_dT;   /* LFW_FD new line */
                 }
                 T11 = T11 * here->B4SOIagbcp2 * pParam->B4SOIoxideRatio;
                 Ig_agbcp2 = T11 * T2 * T6;
                 dIg_agbcp2_dVg = T11 * (T2 * dT6_dVg + T6 * dT2_dVg);
                 dIg_agbcp2_dVp = -dIg_agbcp2_dVg;
+                dIg_agbcp2_dT  = T11 * (T2 * dT6_dT + T6 * dT2_dT);  /* LFW_FD new line */
             }
             else {
                 Ig_agbcp2 = 0.0;
                 dIg_agbcp2_dVg = 0.0;
                 dIg_agbcp2_dVp = 0.0;
+                dIg_agbcp2_dT  = 0.0;  /* LFW_FD new line */
             }
             here->B4SOIigp = Ig_agbcp2;
             here->B4SOIgigpg = dIg_agbcp2_dVg;
@@ -5239,7 +5647,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     if (pParam->B4SOIalpha0 <= 0.0) {
                         Giig = Giib = Giid = GiiT = 0.0;
                         Giie = 0; /* v3.0 */
-                        here->B4SOIiii = Iii = 0.0;
+                        here->B4SOIiii = Iii = Idsmosfet = dIiibjt_dVb = dIiibjt_dVd = dIiibjt_dT = 0.0;
                     }
                     else {
                         Vdsatii0 = pParam->B4SOIvdsatii0 * (1 + model->B4SOItii * (TempRatio-1.0))
@@ -5364,13 +5772,13 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 {
                     /*Idsmosfet part*/
                     if (pParam->B4SOIalpha0 <= 0.0) {
-                        /* Giig = Giib = Giid = GiiT = 0.0;
-                           Giie = 0;*/ /* v3.0 */
-                        /* here->B4SOIiii = Iii = 0.0; */ /* v4.2 bugfix # 38 */
-                        /* Idsmosfet = 0.0; */                          /*v 4.2 bugfix #38 */
-                        /*dIiibjt_dVb = 0.0; */                           /* v4.2 bugfix # 38 */
-                        /*dIiibjt_dVd = 0.0;
-                          dIiibjt_dT  = 0.0; */
+                        /* Giig = Giib = Giid = GiiT = 0.0;  */
+                           Giie = 0; /* v3.0 */
+                        /* here->B4SOIiii = Iii = 0.0; v4.2 bugfix #38 */
+                        /* Idsmosfet = 0.0;           v4.2 bugfix #38 */
+                        /*dIiibjt_dVb = 0.0;          v4.2 bugfix #38 */
+                        /*dIiibjt_dVd = 0.0; */
+                        /*dIiibjt_dT  = 0.0; */
                         Ratio = 0;                                                      /* v4.2 bugfix # 38 */
                     }
                     else {
@@ -5483,7 +5891,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                     Vbci= pParam->B4SOIvbci*(1.0+model->B4SOItvbci*(TempRatio-1.0));
                     /*T1 = Vbci - (Vbs - Vds);          v4.3 bugfix*/
-                                        T1 = Vbci - (vbs_jct - Vds);
+                    T1 = Vbci - (vbs_jct - Vds);
 
                     T2 = pParam->B4SOImbjtii -1.0;
 
@@ -5543,9 +5951,8 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         else
                         {T5 = T2-1.0;
                             if (T1<=0.0)
-                            {dT4_dVd = 0.0;
-                                dT4_dVd = 0.0;
-
+                            { dT4_dVd = 0.0;
+                              dT4_dVb = 0.0;
                             }
                             else
                             {
@@ -5727,6 +6134,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             } /* v3.1 added Rg for RF end */
 
             /* v4.0 Calculate bias-dependent external S/D resistance */
+            Rs = Rd = 0.0;   /* flexilint */
             if (model->B4SOIrdsMod)
             {  /* Rs(V) */
                 T0 = vgs - pParam->B4SOIvfbsd;
@@ -5953,6 +6361,10 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 here->B4SOIcdrain *= here->B4SOInf;
                 here->B4SOIcd *= here->B4SOInf;
                 here->B4SOIcb *= here->B4SOInf;
+
+/* Fix NF problem with tnoimod=1 -  LFW     */
+                here->B4SOIidovVds *= here->B4SOInf;
+
                 here->B4SOIgds *= here->B4SOInf;
                 here->B4SOIgm *= here->B4SOInf;
                 here->B4SOIgmbs *= here->B4SOInf;
@@ -5967,10 +6379,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 here->B4SOIgIgcsg *= here->B4SOInf;
                 here->B4SOIgIgcsd *= here->B4SOInf;
                 here->B4SOIgIgcsb *= here->B4SOInf;
+                here->B4SOIgIgcse *= here->B4SOInf;  /* LFW_FD new line */
                 here->B4SOIIgcd *= here->B4SOInf;
                 here->B4SOIgIgcdg *= here->B4SOInf;
                 here->B4SOIgIgcdd *= here->B4SOInf;
                 here->B4SOIgIgcdb *= here->B4SOInf;
+                here->B4SOIgIgcde *= here->B4SOInf;  /* LFW_FD new line */
 
                 here->B4SOIIgs *= here->B4SOInf;
                 here->B4SOIgIgsg *= here->B4SOInf;
@@ -6024,12 +6438,24 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             }
             here->B4SOIgigs = -(here->B4SOIgigg + here->B4SOIgigd
                     + here->B4SOIgigb + here->B4SOIgige);
+          /* LFW_FD fix 2 derivatives */
             here->B4SOIgIgcss = -(here->B4SOIgIgcsg + here->B4SOIgIgcsd
-                    + here->B4SOIgIgcsb);
+                                + here->B4SOIgIgcsb + here->B4SOIgIgcse);
             here->B4SOIgIgcds = -(here->B4SOIgIgcdg + here->B4SOIgIgcdd
-                    + here->B4SOIgIgcdb);
+                                + here->B4SOIgIgcdb + here->B4SOIgIgcde);
 
             /*  Begin CV (charge) model  */
+
+          /* LFW_FD  9 new lines - flexilint */
+            Cbb = Cbd = Cbg = 0.0;
+            Qsub0 = Qac0 = 0.0;
+            qjs = qjd = 0.0;
+            CboxWL = 0.0;
+            Qe1 = dQe1_dVb = dQe1_dVe = dQe1_dT = 0;
+            Vfbeff2=dVfbeff2_dVd=dVfbeff2_dVrg=dVfbeff2_dVg=dVfbeff2_dVb=dVfbeff2_dVe=dVfbeff2_dT=0.0;
+            VdseffCV2 = dVdseffCV2_dVg = dVdseffCV2_dVd = dVdseffCV2_dVb = dVdseffCV2_dVe = 0.0;
+            Vgsteff2 = 0.0;
+            dVgsteff2_dVd=dVgsteff2_dVg=dVgsteff2_dVb=dVgsteff2_dVe=dVgsteff2_dT=0.0;
 
             if ((model->B4SOIxpart < 0) || (!ChargeComputationNeeded))
             {   qgate  = qdrn = qsrc = qbody = qsub = 0.0; /* v2.2.3 bug fix */
@@ -6041,6 +6467,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             }
             else
             {
+                qgate  = qdrn = qsrc = qbody = qsub = 0.0; /* flexilint */
                 CoxWL  = model->B4SOIcox * (pParam->B4SOIweffCV
                         / here->B4SOInseg * here->B4SOInf /* v4.0 */
                         * pParam->B4SOIleffCV + here->B4SOIagbcp);
@@ -6057,76 +6484,106 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                 /* v3.2 Seperate VgsteffCV with noff */
                 noff = n * pParam->B4SOInoff;
+                dnoff_dVg = pParam->B4SOInoff * dn_dVg;   /* LFW_FD new line */
                 dnoff_dVd = pParam->B4SOInoff * dn_dVd;
                 dnoff_dVb = pParam->B4SOInoff * dn_dVb;
+                dnoff_dVe = pParam->B4SOInoff * dn_dVe;   /* LFW_FD new line */
                 dnoff_dT  = pParam->B4SOInoff * dn_dT;   /* new line Wagner */
                 if (model->B4SOIvgstcvMod == 0)
                 {
                     if ((VgstNVt > -EXPL_THRESHOLD) && (VgstNVt < EXPL_THRESHOLD))
                     {
+                        TL1 = ExpVgst;      /* LFW_FD new line */
                         ExpVgst *= ExpVgst;
                         ExpVgst *= exp( -(pParam->B4SOIdelvt / (noff * Vtm)));
+                      /* LFW_FD  4 new derivatives */
+                        dExpVgst_dVg = 2.0 * TL1 * dExpVgst_dVg * exp( -pParam->B4SOIdelvt / (noff * Vtm))
+                                     + ExpVgst * pParam->B4SOIdelvt * dnoff_dVg / (noff * noff * Vtm);
+                        dExpVgst_dVd = 2.0 * TL1 * dExpVgst_dVd * exp( -pParam->B4SOIdelvt / (noff * Vtm))
+                                     + ExpVgst * pParam->B4SOIdelvt * dnoff_dVd / (noff * noff * Vtm);
+                        dExpVgst_dVb = 2.0 * TL1 * dExpVgst_dVb * exp( -pParam->B4SOIdelvt / (noff * Vtm))
+                                     + ExpVgst * pParam->B4SOIdelvt * dnoff_dVb / (noff * noff * Vtm);
+                        dExpVgst_dVe = 2.0 * TL1 * dExpVgst_dVe * exp( -pParam->B4SOIdelvt / (noff * Vtm))
+                                     + ExpVgst * pParam->B4SOIdelvt * dnoff_dVe / (noff * noff * Vtm);
+
                         Vgsteff = noff * Vtm * log(1.0 + ExpVgst);
+                      /* LFW_FD  4 fix derivatives */
+                        dVgsteff_dVg = Vgsteff * dnoff_dVg / noff + noff * Vtm * dExpVgst_dVg / (1.0 + ExpVgst);
+                        dVgsteff_dVd = Vgsteff * dnoff_dVd / noff + noff * Vtm * dExpVgst_dVd / (1.0 + ExpVgst);
+                        dVgsteff_dVb = Vgsteff * dnoff_dVb / noff + noff * Vtm * dExpVgst_dVb / (1.0 + ExpVgst);
+                        dVgsteff_dVe = Vgsteff * dnoff_dVe / noff + noff * Vtm * dExpVgst_dVe / (1.0 + ExpVgst);
 
                         T0 = ExpVgst / (1.0 + ExpVgst);
-                        T1 = -T0 * (dVth_dVb + (Vgst-pParam->B4SOIdelvt) / noff * dnoff_dVb)
-                            + Vgsteff / noff * dnoff_dVb;
-                        dVgsteff_dVd = -T0 * (dVth_dVd + dVth_dVb*dVbseff_dVd + (Vgst-pParam->B4SOIdelvt)/ noff * dnoff_dVd)
-                            + Vgsteff / noff * dnoff_dVd;
-                        dVgsteff_dVg = T0 * (dVgs_eff_dVg - dVth_dVb*dVbseff_dVg);
-                        dVgsteff_dVb = T1 * dVbseff_dVb;
-                        dVgsteff_dVe = T1 * dVbseff_dVe;
-                        if (selfheat)
-                          /*fix below expression Wagner */
-                          /*dVgsteff_dT = -T0 * (dVth_dT+dVth_dVb*dVbseff_dT */
-                            dVgsteff_dT = -T0 * (-dVgst_dT
-                                          + (Vgst - pParam->B4SOIdelvt) / Temp)
-                                          + Vgsteff / Temp;
+                        T2 = 2.0 * pParam->B4SOImstar * pParam->B4SOInoff;  /* LFW_FD new line */
+                        T1 = -T0 * (T2*dVth_dVb + (T2*Vgst-pParam->B4SOIdelvt) / noff * dnoff_dVb)
+                             + Vgsteff / noff * dnoff_dVb;   /* LFW_FD fix line */
+                      /* LFW_FD  fix _dT derivatives */
+                        if (selfheat) {
+                        dExpVgst_dT = 2.0 * TL1 * dExpVgst_dT * exp( -pParam->B4SOIdelvt / (noff * Vtm))
+                                    + ExpVgst * pParam->B4SOIdelvt * (dVtm_dT / Vtm + dnoff_dT / noff) / (noff * Vtm);
+                        dVgsteff_dT = Vgsteff * (dnoff_dT / noff + dVtm_dT / Vtm) + noff * Vtm * dExpVgst_dT / (1.0 + ExpVgst);
+                        }
                         else dVgsteff_dT  = 0.0;
+
                         /* v4.1 */
                         if (here->B4SOIagbcp2 > 0) {
                            /* ExpVgst2 = ExpVgst * exp(-1.12 / noff / Vtm); */
-                                                        ExpVgst2 = ExpVgst * exp(-eggbcp2 / noff / Vtm);                /* bugfix 4.3.1 -Tanvir */
+                            ExpVgst2 = ExpVgst * exp(-eggbcp2 / noff / Vtm);                /* bugfix 4.3.1 -Tanvir */
+                          /* LFW_FD  add 4 derivatives */
+                            dExpVgst2_dVg = dExpVgst_dVg * exp(-eggbcp2 / noff / Vtm) + ExpVgst2 * eggbcp2 * dnoff_dVg / (noff * noff * Vtm);
+                            dExpVgst2_dVd = dExpVgst_dVd * exp(-eggbcp2 / noff / Vtm) + ExpVgst2 * eggbcp2 * dnoff_dVd / (noff * noff * Vtm);
+                            dExpVgst2_dVb = dExpVgst_dVb * exp(-eggbcp2 / noff / Vtm) + ExpVgst2 * eggbcp2 * dnoff_dVb / (noff * noff * Vtm);
+                            dExpVgst2_dVe = dExpVgst_dVe * exp(-eggbcp2 / noff / Vtm) + ExpVgst2 * eggbcp2 * dnoff_dVe / (noff * noff * Vtm);
+
                             Vgsteff2 = noff * Vtm * log(1.0 + ExpVgst2);
+                          /* LFW_FD  fix 4 derivatives */
+                            dVgsteff2_dVg = Vgsteff2 * dnoff_dVg / noff + noff * Vtm * dExpVgst2_dVg / (1.0 + ExpVgst2);
+                            dVgsteff2_dVd = Vgsteff2 * dnoff_dVd / noff + noff * Vtm * dExpVgst2_dVd / (1.0 + ExpVgst2);
+                            dVgsteff2_dVb = Vgsteff2 * dnoff_dVb / noff + noff * Vtm * dExpVgst2_dVb / (1.0 + ExpVgst2);
+                            dVgsteff2_dVe = Vgsteff2 * dnoff_dVe / noff + noff * Vtm * dExpVgst2_dVe / (1.0 + ExpVgst2);
+
                             T02 = ExpVgst2 / (1.0 + ExpVgst2);
                            /* T12 = -T02 * (dVth_dVb + (Vgst-1.12-pParam->B4SOIdelvt) / noff * dnoff_dVb)
                                 + Vgsteff2 / noff * dnoff_dVb; */
-                                                        T12 = -T02 * (dVth_dVb + (Vgst-eggbcp2-pParam->B4SOIdelvt) / noff * dnoff_dVb)
+                            T12 = -T02 * (dVth_dVb + (Vgst-eggbcp2-pParam->B4SOIdelvt) / noff * dnoff_dVb)
                                 + Vgsteff2 / noff * dnoff_dVb;          /* bugfix 4.3.1 -Tanvir */
-                           /* dVgsteff2_dVd = -T02 * (dVth_dVd + dVth_dVb*dVbseff_dVd + (Vgst-pParam->B4SOIdelvt-1.12) / noff * dnoff_dVd)
-                                + Vgsteff2 / noff * dnoff_dVd; */
-                                                        dVgsteff2_dVd = -T02 * (dVth_dVd + dVth_dVb*dVbseff_dVd + (Vgst-pParam->B4SOIdelvt-eggbcp2) / noff * dnoff_dVd)
-                                + Vgsteff2 / noff * dnoff_dVd;  /* bugfix 4.3.1 -Tanvir */
-                            dVgsteff2_dVg = T02 * (dVgs_eff_dVg - dVth_dVb*dVbseff_dVg);
-                            dVgsteff2_dVb = T12 * dVbseff_dVb;
-                            dVgsteff2_dVe = T12 * dVbseff_dVe;
                             if (selfheat)
                               /*fix below expression Wagner */
                               /*dVgsteff2_dT = -T02 * (dVth_dT+dVth_dVb*dVbseff_dT */
                               /*  dVgsteff2_dT = -T02 * (-dVgst_dT
                                              + (Vgst - 1.12 - pParam->B4SOIdelvt) / Temp)
                                              + Vgsteff2 / Temp; */              /* bugfix 4.3.1 -Tanvir */
-                                                                dVgsteff2_dT = -T02 * (-dVgst_dT
-                                             + (Vgst - eggbcp2 - pParam->B4SOIdelvt) / Temp)
-                                             + Vgsteff2 / Temp;
+                                 dVgsteff2_dT = -T02 * (-dVgst_dT
+                                              + (Vgst - eggbcp2 - pParam->B4SOIdelvt) / Temp)
+                                              + Vgsteff2 / Temp;
                             else dVgsteff2_dT  = 0.0;
                         }
                     }
                 }
                 else if (model->B4SOIvgstcvMod == 1)
-                {ExpVgst = exp(VgstNVt/(pParam->B4SOImstar * pParam->B4SOInoff));
+                {   ExpVgst = exp(VgstNVt/(pParam->B4SOImstar * pParam->B4SOInoff));
                     ExpVgst *= exp( -(pParam->B4SOIdelvt / (noff * Vtm)));
+                  /* LFW_FD  add 4 derivatives */
+                    dExpVgst_dVg = ExpVgst * (dVgstNVt_dVg/(pParam->B4SOImstar * pParam->B4SOInoff)
+                                 + pParam->B4SOIdelvt * dnoff_dVg / (noff * noff * Vtm));
+                    dExpVgst_dVd = ExpVgst * (dVgstNVt_dVd/(pParam->B4SOImstar * pParam->B4SOInoff)
+                                 + pParam->B4SOIdelvt * dnoff_dVd / (noff * noff * Vtm));
+                    dExpVgst_dVb = ExpVgst * (dVgstNVt_dVb/(pParam->B4SOImstar * pParam->B4SOInoff)
+                                 + pParam->B4SOIdelvt * dnoff_dVb / (noff * noff * Vtm));
+                    dExpVgst_dVe = ExpVgst * (dVgstNVt_dVe/(pParam->B4SOImstar * pParam->B4SOInoff)
+                                 + pParam->B4SOIdelvt * dnoff_dVe / (noff * noff * Vtm));
+
                     Vgsteff = noff * Vtm * log(1.0 + ExpVgst);
+                  /* LFW_FD  fix 4 derivatives */
+                    dVgsteff_dVg = Vgsteff * dnoff_dVg / noff + noff * Vtm * dExpVgst_dVg / (1.0 + ExpVgst);
+                    dVgsteff_dVd = Vgsteff * dnoff_dVd / noff + noff * Vtm * dExpVgst_dVd / (1.0 + ExpVgst);
+                    dVgsteff_dVb = Vgsteff * dnoff_dVb / noff + noff * Vtm * dExpVgst_dVb / (1.0 + ExpVgst);
+                    dVgsteff_dVe = Vgsteff * dnoff_dVe / noff + noff * Vtm * dExpVgst_dVe / (1.0 + ExpVgst);
 
                     T0 = ExpVgst / (1.0 + ExpVgst);
                     T1 = -T0 * (dVth_dVb + (Vgst-pParam->B4SOIdelvt) / noff * dnoff_dVb)
                         + Vgsteff / noff * dnoff_dVb;
-                    dVgsteff_dVd = -T0 * (dVth_dVd + dVth_dVb*dVbseff_dVd + (Vgst-pParam->B4SOIdelvt) / noff * dnoff_dVd)
-                        + Vgsteff / noff * dnoff_dVd;
-                    dVgsteff_dVg =  T0 * (dVgs_eff_dVg - dVth_dVb*dVbseff_dVg);
 
-                    dVgsteff_dVb = T1 * dVbseff_dVb;
-                    dVgsteff_dVe = T1 * dVbseff_dVe;
                     if (selfheat)
                       /*fix below expression Wagner */
                       /*dVgsteff_dT = -T0 * (dVth_dT+dVth_dVb*dVbseff_dT */
@@ -6137,18 +6594,25 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     /* v4.1 */
                     if (here->B4SOIagbcp2 > 0) {
                        /* ExpVgst2 = ExpVgst * exp(-1.12 / noff / Vtm); */
-                                                ExpVgst2 = ExpVgst * exp(-eggbcp2 / noff / Vtm);                /* bugfix 4.3.1 -Tanvir */
+                        ExpVgst2 = ExpVgst * exp(-eggbcp2 / noff / Vtm);                /* bugfix 4.3.1 -Tanvir */
+                      /* LFW_FD  add 4 derivatives */
+                        dExpVgst2_dVg = dExpVgst_dVg * exp(-eggbcp2 / noff / Vtm) + ExpVgst2 * eggbcp2 * dnoff_dVg / (noff * noff * Vtm);
+                        dExpVgst2_dVd = dExpVgst_dVd * exp(-eggbcp2 / noff / Vtm) + ExpVgst2 * eggbcp2 * dnoff_dVd / (noff * noff * Vtm);
+                        dExpVgst2_dVb = dExpVgst_dVb * exp(-eggbcp2 / noff / Vtm) + ExpVgst2 * eggbcp2 * dnoff_dVb / (noff * noff * Vtm);
+                        dExpVgst2_dVe = dExpVgst_dVe * exp(-eggbcp2 / noff / Vtm) + ExpVgst2 * eggbcp2 * dnoff_dVe / (noff * noff * Vtm);
+
                         Vgsteff2 = noff * Vtm * log(1.0 + ExpVgst2);
+                      /* LFW_FD  fix 4 derivatives */
+                        dVgsteff2_dVg = Vgsteff2 * dnoff_dVg / noff + noff * Vtm * dExpVgst2_dVg / (1.0 + ExpVgst2);
+                        dVgsteff2_dVd = Vgsteff2 * dnoff_dVd / noff + noff * Vtm * dExpVgst2_dVd / (1.0 + ExpVgst2);
+                        dVgsteff2_dVb = Vgsteff2 * dnoff_dVb / noff + noff * Vtm * dExpVgst2_dVb / (1.0 + ExpVgst2);
+                        dVgsteff2_dVe = Vgsteff2 * dnoff_dVe / noff + noff * Vtm * dExpVgst2_dVe / (1.0 + ExpVgst2);
+
                         T02 = ExpVgst2 / (1.0 + ExpVgst2);
                        /* T12 = -T02 * (dVth_dVb + (Vgst-1.12-pParam->B4SOIdelvt) / noff * dnoff_dVb)
                             + Vgsteff2 / noff * dnoff_dVb; */
                         T12 = -T02 * (dVth_dVb + (Vgst-eggbcp2-pParam->B4SOIdelvt) / noff * dnoff_dVb)
                             + Vgsteff2 / noff * dnoff_dVb;                                              /* bugfix 4.3.1 -Tanvir */
-                                           /* dVgsteff2_dVd = -T02 * (dVth_dVd + dVth_dVb*dVbseff_dVd + (Vgst-pParam->B4SOIdelvt - 1.12) / noff * dnoff_dVd)
-                            + Vgsteff2 / noff * dnoff_dVd;       */
-                        dVgsteff2_dVd = -T02 * (dVth_dVd + dVth_dVb*dVbseff_dVd + (Vgst-pParam->B4SOIdelvt - eggbcp2) / noff * dnoff_dVd)
-                            + Vgsteff2 / noff * dnoff_dVd;       /* bugfix 4.3.1 -Tanvir */
-                                                dVgsteff2_dVg = T02 * (dVgs_eff_dVg - dVth_dVb*dVbseff_dVg);
                         dVgsteff2_dVb = T12 * dVbseff_dVb;
                         dVgsteff2_dVe = T12 * dVbseff_dVe;
                         if (selfheat)
@@ -6169,8 +6633,20 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 {
                     T10 = noff * Vtm;
                     VgstNVt = pParam->B4SOImstarcv * (Vgst - pParam->B4SOIdelvt) / T10;
+                  /* LFW_FD  add 4 derivatives */
+                    dVgstNVt_dVg = (pParam->B4SOImstarcv * dVgst_dVg - VgstNVt * dnoff_dVg * Vtm) / T10;
+                    dVgstNVt_dVd = (pParam->B4SOImstarcv * dVgst_dVd - VgstNVt * dnoff_dVd * Vtm) / T10;
+                    dVgstNVt_dVb = (pParam->B4SOImstarcv * dVgst_dVb - VgstNVt * dnoff_dVb * Vtm) / T10;
+                    dVgstNVt_dVe = (pParam->B4SOImstarcv * dVgst_dVe - VgstNVt * dnoff_dVe * Vtm) / T10;
+
                     ExpArg = (pParam->B4SOIvoffcv -
                             (1- pParam->B4SOImstarcv) * (Vgst - pParam->B4SOIdelvt))/ T10;
+                  /* LFW_FD  add 4 derivatives */
+                    dExpArg_dVg = (-(1- pParam->B4SOImstarcv) * dVgst_dVg - ExpArg * dnoff_dVg * Vtm) / T10;
+                    dExpArg_dVd = (-(1- pParam->B4SOImstarcv) * dVgst_dVd - ExpArg * dnoff_dVd * Vtm) / T10;
+                    dExpArg_dVb = (-(1- pParam->B4SOImstarcv) * dVgst_dVb - ExpArg * dnoff_dVb * Vtm) / T10;
+                    dExpArg_dVe = (-(1- pParam->B4SOImstarcv) * dVgst_dVe - ExpArg * dnoff_dVe * Vtm) / T10;
+
                     /* 11 lines new Wagner */
                     if (selfheat) {
                         dT10_dT = noff * dVtm_dT + dnoff_dT * Vtm;
@@ -6192,10 +6668,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     {   Vgsteff = Vgst - pParam->B4SOIdelvt;
                         /* T0 is dVgsteff_dVbseff */
                         T0 = -dVth_dVb;
-                        dVgsteff_dVg = dVgs_eff_dVg + T0 * dVbseff_dVg;
-                        dVgsteff_dVd = -dVth_dVd + T0 * dVbseff_dVd;
-                        dVgsteff_dVb = T0 * dVbseff_dVb;
-                        dVgsteff_dVe = T0 * dVbseff_dVe;
+                      /* LFW_FD  fix 4 derivatives */
+                        dVgsteff_dVg = dVgst_dVg;
+                        dVgsteff_dVd = dVgst_dVd;
+                        dVgsteff_dVb = dVgst_dVb;
+                        dVgsteff_dVe = dVgst_dVe;
                         if (selfheat)
                           /*fix below expression Wagner */
                           /*dVgsteff_dT  = -dVth_dT + T0 * dVbseff_dT; */
@@ -6206,15 +6683,23 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     else if (ExpArg > EXPL_THRESHOLD)
                     {   T0 = (Vgst - pParam->B4SOIdelvt - pParam->B4SOIvoffcv) / (noff * Vtm);
                         ExpVgst = exp(T0);
+                      /* LFW_FD  add 4 derivatives */
+                        dExpVgst_dVg = (dVgst_dVg - T0 * dnoff_dVg * Vtm) /(noff * Vtm);
+                        dExpVgst_dVd = (dVgst_dVd - T0 * dnoff_dVd * Vtm) /(noff * Vtm);
+                        dExpVgst_dVb = (dVgst_dVb - T0 * dnoff_dVb * Vtm) /(noff * Vtm);
+                        dExpVgst_dVe = (dVgst_dVe - T0 * dnoff_dVe * Vtm) /(noff * Vtm);
+
                         /*Vgsteff = Vtm * pParam->B4SOIcdep0 / model->B4SOIcox * ExpVgst;*/ /*v4.2 bug fix*/
                         Vgsteff = Vtm * cdep0 / model->B4SOIcox * ExpVgst; /* v4.2 bug fix */
                         T3 = Vgsteff / (noff * Vtm) ;
                         /* T1 is dVgsteff_dVbseff */
-                        T1  = -T3 * (dVth_dVb + T0 * Vtm * dnoff_dVb);
-                        dVgsteff_dVg = T3 * dVgs_eff_dVg+ T1 * dVbseff_dVg;
-                        dVgsteff_dVd = -T3 * (dVth_dVd + T0 * Vtm * dnoff_dVd)+ T1 * dVbseff_dVd;
-                        dVgsteff_dVe = T1 * dVbseff_dVe;
-                        dVgsteff_dVb = T1 * dVbseff_dVb;
+                     /* T1  = -T3 * (dVth_dVb + T0 * Vtm * dnoff_dVb); */
+                        T1  = -T3 * (           T0 * Vtm * dnoff_dVb);  /* LFW_FD fixed line */
+                      /* LFW_FD  fix 4 derivatives */
+                        dVgsteff_dVg = Vtm * cdep0 / model->B4SOIcox * dExpVgst_dVg;
+                        dVgsteff_dVd = Vtm * cdep0 / model->B4SOIcox * dExpVgst_dVd;
+                        dVgsteff_dVb = Vtm * cdep0 / model->B4SOIcox * dExpVgst_dVb;
+                        dVgsteff_dVe = Vtm * cdep0 / model->B4SOIcox * dExpVgst_dVe;
                         if (selfheat)
                           /*fix below expression Wagner */
                           /*dVgsteff_dT = -T3 * (dVth_dT + T0 * dVtm_dT * noff)
@@ -6227,12 +6712,19 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     else
                     {
                         ExpVgst = exp(VgstNVt);
+                      /* LFW_FD  add 4 derivatives */
+                        dExpVgst_dVg = ExpVgst * dVgstNVt_dVg;
+                        dExpVgst_dVd = ExpVgst * dVgstNVt_dVd;
+                        dExpVgst_dVb = ExpVgst * dVgstNVt_dVb;
+                        dExpVgst_dVe = ExpVgst * dVgstNVt_dVe;
+
                         T1 = T10 * log(1.0 + ExpVgst);
-                        dT1_dVg = ExpVgst / (1.0 + ExpVgst) * pParam->B4SOImstarcv;
-                        dT1_dVb = -dT1_dVg * (dVth_dVb + (Vgst-pParam->B4SOIdelvt) / noff * dnoff_dVb)
-                            + T1 / noff * dnoff_dVb;
-                        dT1_dVd = -dT1_dVg * (dVth_dVd + (Vgst-pParam->B4SOIdelvt) / noff * dnoff_dVd)
-                            + T1 / noff * dnoff_dVd;
+                      /* LFW_FD  fix 4 derivatives */
+                        dT1_dVg = T10 * dExpVgst_dVg / (1.0 + ExpVgst) + T1 * dnoff_dVg / noff;
+                        dT1_dVd = T10 * dExpVgst_dVd / (1.0 + ExpVgst) + T1 * dnoff_dVd / noff;
+                        dT1_dVb = T10 * dExpVgst_dVb / (1.0 + ExpVgst) + T1 * dnoff_dVb / noff;
+                        dT1_dVe = T10 * dExpVgst_dVe / (1.0 + ExpVgst) + T1 * dnoff_dVe / noff;
+
                       /*fix below expression Wagner */
                       /*T3 = (1.0 / Temp); */
                         T3 = (1.0 / Temp + dnoff_dT / noff);
@@ -6243,24 +6735,28 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         else
                             dT1_dT = 0.0;
 
-                        /* dT2_dVg = -model->B4SOIcox / (Vtm * pParam->B4SOIcdep0)
-                         * exp(ExpArg) * (1 - pParam->B4SOImstarcv);*/ /* v4.2 bug fix */
+                        /* dT2_dVg = -model->B4SOIcox / (Vtm * pParam->B4SOIcdep0) */
+                        /*  * exp(ExpArg) * (1 - pParam->B4SOImstarcv);    v4.2 bug fix */
                         dT2_dVg = -model->B4SOIcox / (Vtm * cdep0)
                             * exp(ExpArg) * (1 - pParam->B4SOImstarcv); /* v4.2 bug fix */
                         T2 = pParam->B4SOImstarcv - T10 * dT2_dVg
                             / (1.0 - pParam->B4SOImstarcv);
-                        dT2_dVd = -dT2_dVg * (dVth_dVd - Vtm * ExpArg * dnoff_dVd
-                                / (1.0 - pParam->B4SOImstarcv))
-                            + (T2 - pParam->B4SOImstarcv) / noff * dnoff_dVd;
-                        dT2_dVb = -dT2_dVg * (dVth_dVb - Vtm * ExpArg * dnoff_dVb
-                                / (1.0 - pParam->B4SOImstarcv))
-                            + (T2 - pParam->B4SOImstarcv) / noff * dnoff_dVb;
+
+                      /* LFW_FD  5 new lines */
+                        TL1 = dT2_dVg;
+                        dTL1_dVg = TL1 * dExpArg_dVg;
+                        dTL1_dVd = TL1 * dExpArg_dVd;
+                        dTL1_dVb = TL1 * dExpArg_dVb;
+                        dTL1_dVe = TL1 * dExpArg_dVe;
+
+                      /* LFW_FD  fix/add 5 derivatives */
+                        dT2_dVg  = -(dnoff_dVg * Vtm * TL1 + T10 * dTL1_dVg) / (1.0 - pParam->B4SOImstarcv);
+                        dT2_dVd  = -(dnoff_dVd * Vtm * TL1 + T10 * dTL1_dVd) / (1.0 - pParam->B4SOImstarcv);
+                        dT2_dVb  = -(dnoff_dVb * Vtm * TL1 + T10 * dTL1_dVb) / (1.0 - pParam->B4SOImstarcv);
+                        dT2_dVe  = -(dnoff_dVe * Vtm * TL1 + T10 * dTL1_dVe) / (1.0 - pParam->B4SOImstarcv);
                         if (selfheat)
-                          /*fix below expression Wagner */
-                          /*dT2_dT = -dT2_dVg * ( dVth_dT - ExpArg * T10 * T3
-                                    / (1.0 - pParam->B4SOImstarcv) ); */
-                            dT2_dT = -(dT10_dT*dT2_dVg
-                                   +T10*dT2_dVg*(-dVtm_dT/Vtm-dcdep0_dT/cdep0+dExpArg_dT)
+                            dT2_dT = -(dT10_dT*TL1
+                                   +T10*TL1*(-dVtm_dT/Vtm-dcdep0_dT/cdep0+dExpArg_dT)
                                    )/(1.0 - pParam->B4SOImstarcv);
                         else
                             dT2_dT = 0.0;
@@ -6270,14 +6766,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         T3 = T2 * T2;
                         /*  T4 is dVgsteff_dVbseff  */
                         T4 = (T2 * dT1_dVb - T1 * dT2_dVb) / T3;
-                        dVgsteff_dVb = T4 * dVbseff_dVb;
-                        dVgsteff_dVe = T4 * dVbseff_dVe;
-                        dVgsteff_dVg = (T2 * dT1_dVg - T1 * dT2_dVg)
-                            / T3 * dVgs_eff_dVg
-                            + T4 * dVbseff_dVg;
-
-                        dVgsteff_dVd = (T2 * dT1_dVd - T1 * dT2_dVd)
-                            / T3+ T4 * dVbseff_dVd;
+                      /* LFW_FD  fix 4 derivatives */
+                        dVgsteff_dVg = (T2 * dT1_dVg - T1 * dT2_dVg) / T3;
+                        dVgsteff_dVd = (T2 * dT1_dVd - T1 * dT2_dVd) / T3;
+                        dVgsteff_dVb = (T2 * dT1_dVb - T1 * dT2_dVb) / T3;
+                        dVgsteff_dVe = (T2 * dT1_dVe - T1 * dT2_dVe) / T3;
                         if (selfheat)
                           /*fix below expression Wagner */
                           /*dVgsteff_dT = (T2 * dT1_dT - T1 * dT2_dT)
@@ -6292,11 +6785,23 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     if (here->B4SOIagbcp2 > 0)
                     {
                      /* VgstNVt2 = pParam->B4SOImstarcv * (Vgst - pParam->B4SOIdelvt - 1.12) / T10; */
-                                                VgstNVt2 = pParam->B4SOImstarcv * (Vgst - pParam->B4SOIdelvt - eggbcp2) / T10; /* bugfix 4.3.1 -Tanvir */
+                        VgstNVt2 = pParam->B4SOImstarcv * (Vgst - pParam->B4SOIdelvt - eggbcp2) / T10; /* bugfix 4.3.1 -Tanvir */
+                      /* LFW_FD  add 4 derivatives */
+                        dVgstNVt2_dVg = (pParam->B4SOImstarcv * dVgst_dVg - VgstNVt2 * dnoff_dVg * Vtm) / T10;
+                        dVgstNVt2_dVd = (pParam->B4SOImstarcv * dVgst_dVd - VgstNVt2 * dnoff_dVd * Vtm) / T10;
+                        dVgstNVt2_dVb = (pParam->B4SOImstarcv * dVgst_dVb - VgstNVt2 * dnoff_dVb * Vtm) / T10;
+                        dVgstNVt2_dVe = (pParam->B4SOImstarcv * dVgst_dVe - VgstNVt2 * dnoff_dVe * Vtm) / T10;
+
                      /* ExpArg2 = (pParam->B4SOIvoffcv -
                                 (1- pParam->B4SOImstarcv) * (Vgst - pParam->B4SOIdelvt - 1.12))/ T10;  */
-                                                ExpArg2 = (pParam->B4SOIvoffcv -
+                        ExpArg2 = (pParam->B4SOIvoffcv -
                                 (1- pParam->B4SOImstarcv) * (Vgst - pParam->B4SOIdelvt - eggbcp2))/ T10; /* bugfix 4.3.1 -Tanvir */
+                      /* LFW_FD  add 4 derivatives */
+                        dExpArg2_dVg = (-(1- pParam->B4SOImstarcv) * dVgst_dVg - ExpArg2 * dnoff_dVg * Vtm) / T10;
+                        dExpArg2_dVd = (-(1- pParam->B4SOImstarcv) * dVgst_dVd - ExpArg2 * dnoff_dVd * Vtm) / T10;
+                        dExpArg2_dVb = (-(1- pParam->B4SOImstarcv) * dVgst_dVb - ExpArg2 * dnoff_dVb * Vtm) / T10;
+                        dExpArg2_dVe = (-(1- pParam->B4SOImstarcv) * dVgst_dVe - ExpArg2 * dnoff_dVe * Vtm) / T10;
+
                         /* 11 new lines Wagner */
                         if (selfheat) {
                           /*fix below expression Wagner */
@@ -6317,13 +6822,14 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         /* MCJ: Very small Vgst */
                         if (VgstNVt2 > EXPL_THRESHOLD)
                         {  /* Vgsteff2 = Vgst - pParam->B4SOIdelvt - 1.12;  */
-                                                        Vgsteff2 = Vgst - pParam->B4SOIdelvt - eggbcp2; /* bugfix 4.3.1 -Tanvir */
-                            /* T0 is dVgsteff2_dVbseff */
+                            Vgsteff2 = Vgst - pParam->B4SOIdelvt - eggbcp2; /* bugfix 4.3.1 -Tanvir */
                             T0 = -dVth_dVb;
-                            dVgsteff2_dVg = dVgs_eff_dVg + T0 * dVbseff_dVg;
-                            dVgsteff2_dVd = -dVth_dVd + T0 * dVbseff_dVd;
-                            dVgsteff2_dVb = T0 * dVbseff_dVb;
-                            dVgsteff2_dVe = T0 * dVbseff_dVe;
+                          /* LFW_FD  fix 4 derivatives */
+                            dVgsteff2_dVg = dVgst_dVg;
+                            dVgsteff2_dVd = dVgst_dVd;
+                            dVgsteff2_dVb = dVgst_dVb;
+                            dVgsteff2_dVe = dVgst_dVe;
+
                             if (selfheat)
                               /*fix below expression Wagner */
                               /*dVgsteff2_dT  = -dVth_dT + T0 * dVbseff_dT;*/
@@ -6334,17 +6840,19 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         else if (ExpArg2 > EXPL_THRESHOLD)
                         { /* T0 = (Vgst - pParam->B4SOIdelvt - pParam->B4SOIvoffcv - 1.12) / (noff * Vtm);
                             ExpVgst2 = exp(T0); */
-                                                        T0 = (Vgst - pParam->B4SOIdelvt - pParam->B4SOIvoffcv - eggbcp2) / (noff * Vtm);
+                            T0 = (Vgst - pParam->B4SOIdelvt - pParam->B4SOIvoffcv - eggbcp2) / (noff * Vtm);
                             ExpVgst2 = exp(T0); /* bugfix 4.3.1 -Tanvir */
                             /*Vgsteff2 = Vtm * pParam->B4SOIcdep0 / model->B4SOIcox * ExpVgst*/
                             Vgsteff2 = Vtm * cdep0 / model->B4SOIcox * ExpVgst2; /*v4.2 bug fix */
                             T3 = Vgsteff2 / (noff * Vtm) ;
                             /* T1 is dVgsteff2_dVbseff */
                             T1  = -T3 * (dVth_dVb + T0 * Vtm * dnoff_dVb);
-                            dVgsteff2_dVg = T3 * dVgs_eff_dVg+ T1 * dVbseff_dVg;
-                            dVgsteff2_dVd = -T3 * (dVth_dVd + T0 * Vtm * dnoff_dVd)+ T1 * dVbseff_dVd;
-                            dVgsteff2_dVe = T1 * dVbseff_dVe;
-                            dVgsteff2_dVb = T1 * dVbseff_dVb;
+                          /* LFW_FD  fix 4 derivatives */
+                            dVgsteff2_dVg = Vgsteff2 * (dVgst_dVg / Vtm - T0 * dnoff_dVg) / noff;
+                            dVgsteff2_dVd = Vgsteff2 * (dVgst_dVd / Vtm - T0 * dnoff_dVd) / noff;
+                            dVgsteff2_dVb = Vgsteff2 * (dVgst_dVb / Vtm - T0 * dnoff_dVb) / noff;
+                            dVgsteff2_dVe = Vgsteff2 * (dVgst_dVe / Vtm - T0 * dnoff_dVe) / noff;
+
                             if (selfheat)
                               /* fix 1st line in below expression Wagner */
                               /*dVgsteff2_dT = -T3 * (dVth_dT + T0 * dVtm_dT * noff) */
@@ -6356,15 +6864,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         else
                         {   ExpVgst2 = exp(VgstNVt2);
                             T1 = T10 * log(1.0 + ExpVgst2);
-                            dT1_dVg = ExpVgst2 / (1.0 + ExpVgst2) * pParam->B4SOImstarcv;
-                         /* dT1_dVb = -dT1_dVg * (dVth_dVb + (Vgst - pParam->B4SOIdelvt - 1.12) / noff * dnoff_dVb)
-                                + T1 / noff * dnoff_dVb;  */
-                                                        dT1_dVb = -dT1_dVg * (dVth_dVb + (Vgst - pParam->B4SOIdelvt - eggbcp2) / noff * dnoff_dVb)
-                                + T1 / noff * dnoff_dVb; /* bugfix 4.3.1 -Tanvir */
-                         /*   dT1_dVd = -dT1_dVg * (dVth_dVd + (Vgst - pParam->B4SOIdelvt - 1.12) / noff * dnoff_dVd)
-                                + T1 / noff * dnoff_dVd; */
-                                                        dT1_dVd = -dT1_dVg * (dVth_dVd + (Vgst - pParam->B4SOIdelvt - eggbcp2) / noff * dnoff_dVd)
-                                + T1 / noff * dnoff_dVd; /* bugfix 4.3.1 -Tanvir */
+                          /* LFW_FD  fix 4 derivatives */
+                            dT1_dVg = dnoff_dVg * T1 / noff + T10 * ExpVgst2 * dVgstNVt2_dVg / (1.0 + ExpVgst2);
+                            dT1_dVd = dnoff_dVg * T1 / noff + T10 * ExpVgst2 * dVgstNVt2_dVd / (1.0 + ExpVgst2);
+                            dT1_dVb = dnoff_dVg * T1 / noff + T10 * ExpVgst2 * dVgstNVt2_dVb / (1.0 + ExpVgst2);
+                            dT1_dVe = dnoff_dVg * T1 / noff + T10 * ExpVgst2 * dVgstNVt2_dVe / (1.0 + ExpVgst2);
                           /*fix below expression Wagner */
                           /*T3 = (1.0 / Temp); */
                             T3 = (1.0 / Temp + dnoff_dT / noff);
@@ -6372,9 +6876,9 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                               /*fix below expression */
                               /*dT1_dT = -dT1_dVg * (dVth_dT + (Vgst - pParam->B4SOIdelvt - 1.12) * T3) + T1 * T3;*/
                               /*  dT1_dT = -dT1_dVg * (-dVgst_dT + (Vgst-pParam->B4SOIdelvt-1.12) * T3) + T1 * T3;  */
-                                                                dT1_dT = -dT1_dVg * (-dVgst_dT + (Vgst-pParam->B4SOIdelvt-eggbcp2) * T3) + T1 * T3; /* bugfix 4.3.1 -Tanvir */
+                               dT1_dT = -dT1_dVg * (-dVgst_dT + (Vgst-pParam->B4SOIdelvt-eggbcp2) * T3) + T1 * T3; /* bugfix 4.3.1 -Tanvir */
                             else
-                                dT1_dT = 0.0;
+                               dT1_dT = 0.0;
 
                             /* dT2_dVg = -model->B4SOIcox / (Vtm * pParam->B4SOIcdep0)
                              * exp(ExpArg2) * (1 - pParam->B4SOImstarcv);*/
@@ -6382,33 +6886,34 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                                 * exp(ExpArg2) * (1 - pParam->B4SOImstarcv); /*v4.2 bug fix */
                             T2 = pParam->B4SOImstarcv - T10 * dT2_dVg
                                 / (1.0 - pParam->B4SOImstarcv);
-                            dT2_dVd = -dT2_dVg * (dVth_dVd - Vtm * ExpArg2 * dnoff_dVd
-                                    / (1.0 - pParam->B4SOImstarcv))
-                                + (T2 - pParam->B4SOImstarcv) / noff * dnoff_dVd;
-                            dT2_dVb = -dT2_dVg * (dVth_dVb - Vtm * ExpArg2 * dnoff_dVb
-                                    / (1.0 - pParam->B4SOImstarcv))
-                                + (T2 - pParam->B4SOImstarcv) / noff * dnoff_dVb;
+                            /* LFW_FD next 5 lines new */
+                            TL1 = dT2_dVg;
+                            dTL1_dVg = TL1 * dExpArg2_dVg;
+                            dTL1_dVd = TL1 * dExpArg2_dVd;
+                            dTL1_dVb = TL1 * dExpArg2_dVb;
+                            dTL1_dVe = TL1 * dExpArg2_dVe;
+
+                            /* LFW_FD fix next 5 derivatives */
+                            dT2_dVg  = -(dnoff_dVg * Vtm * TL1 + T10 * dTL1_dVg) / (1.0 - pParam->B4SOImstarcv);
+                            dT2_dVd  = -(dnoff_dVg * Vtm * TL1 + T10 * dTL1_dVd) / (1.0 - pParam->B4SOImstarcv);
+                            dT2_dVb  = -(dnoff_dVg * Vtm * TL1 + T10 * dTL1_dVb) / (1.0 - pParam->B4SOImstarcv);
+                            dT2_dVe  = -(dnoff_dVg * Vtm * TL1 + T10 * dTL1_dVe) / (1.0 - pParam->B4SOImstarcv);
                             if (selfheat)
-                              /*fix below expression Wagner */
-                              /*dT2_dT = -dT2_dVg * ( dVth_dT - ExpArg2 * T10 * T3
-                                        / (1.0 - pParam->B4SOImstarcv) ); */
-                                dT2_dT = -(dT10_dT*dT2_dVg
-                                       +T10*dT2_dVg*(-dVtm_dT/Vtm-dcdep0_dT/cdep0+dExpArg2_dT)
-                                       )/(1.0 - pParam->B4SOImstarcv);
+                               dT2_dT = -(dT10_dT*TL1
+                                      +T10*TL1*(-dVtm_dT/Vtm-dcdep0_dT/cdep0+dExpArg2_dT)
+                                      )/(1.0 - pParam->B4SOImstarcv);
                             else
-                                dT2_dT = 0.0;
+                               dT2_dT = 0.0;
 
                             Vgsteff2 = T1 / T2;
                             T3 = T2 * T2;
                             /*  T4 is dVgsteff2_dVbseff  */
                             T4 = (T2 * dT1_dVb - T1 * dT2_dVb) / T3;
-                            dVgsteff2_dVb = T4 * dVbseff_dVb;
-                            dVgsteff2_dVe = T4 * dVbseff_dVe;
-                            dVgsteff2_dVg = (T2 * dT1_dVg - T1 * dT2_dVg)
-                                / T3 * dVgs_eff_dVg
-                                + T4 * dVbseff_dVg;
-                            dVgsteff2_dVd = (T2 * dT1_dVd - T1 * dT2_dVd)
-                                / T3+ T4 * dVbseff_dVd;
+                            /* LFW_FD fix next 4 derivatives */
+                            dVgsteff2_dVg = (T2 * dT1_dVg - T1 * dT2_dVg) / T3;
+                            dVgsteff2_dVd = (T2 * dT1_dVd - T1 * dT2_dVd) / T3;
+                            dVgsteff2_dVb = (T2 * dT1_dVb - T1 * dT2_dVb) / T3;
+                            dVgsteff2_dVe = (T2 * dT1_dVe - T1 * dT2_dVe) / T3;
                             if (selfheat)
                               /*fix below expression Wagner */
                               /*dVgsteff2_dT = (T2 * dT1_dT - T1 * dT2_dT)
@@ -6422,8 +6927,14 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 /* v3.2 */
                 /* v3.2 */
 
-                dqsrc_dT = 0.0;       /* new line Wagner */
-                dVdseffCV2_dT = 0;    /* new line Wagner */
+                /* LFW_FD flexilint initializations next 9 lines */
+                Qsub02 = dQsub02_dVrg = dQsub02_dVg = dQsub02_dVd = dQsub02_dVb = dQsub02_dVe = dQsub02_dT = 0.0;
+                Qac02 = dQac02_dVrg = dQac02_dVg = dQac02_dVd = dQac02_dVb = dQac02_dVe = dQac02_dT = 0.0;
+                dqsrc_dT = 0.0;
+                dVdseffCV2_dT = 0;
+                T02 = dT02_dVg = dT02_dVd = dT02_dVb = dT02_dVe = 0.0;
+                T12 = dT12_dVg = dT12_dVd = dT12_dVb = dT12_dVe = 0.0;
+                T22 = dT22_dVg = dT22_dVd = dT22_dVb = dT22_dVe = 0.0;
 
                 if (model->B4SOIcapMod == 2)
                 {
@@ -6431,16 +6942,20 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     /* v3.1 */
                     if (here->B4SOIsoiMod == 2) /* v3.2 */ /* ideal FD */
                     {
-                        Qac0 = dQac0_dVrg = dQac0_dVd = dQac0_dVb = dQac0_dT = 0.0;
-                        dQac02_dVrg = dQac02_dVd = dQac02_dVb = dQac02_dT  = 0.0;
-                        Qsub0 = dQsub0_dVrg = dQsub0_dVg = dQsub0_dVd = dQsub0_dVb = dQsub0_dT = 0.0;
-                        dQsub02_dVrg = dQsub02_dVg = dQsub02_dVd = dQsub02_dVb = dQsub02_dT = 0.0;
+                        /* LFW_FD flexilint initializations next 4 lines */
+                        Qac0 = dQac0_dVrg = dQac0_dVg = dQac0_dVd = dQac0_dVb = dQac0_dVe = dQac0_dT = 0.0;
+                        dQac02_dVrg = dQac02_dVg = dQac02_dVd = dQac02_dVb = dQac02_dVe = dQac02_dT = 0.0;
+                        Qsub0 = dQsub0_dVrg = dQsub0_dVg = dQsub0_dVd = dQsub0_dVb = dQsub0_dVe = dQsub0_dT = 0.0;
+                        dQsub02_dVrg = dQsub02_dVg = dQsub02_dVd = dQsub02_dVb = dQsub02_dVe = dQsub02_dT = 0.0;
                     }
                     else /* soiMod = 0 or 1 */
                     {
                         Vfb = Vth - phi - pParam->B4SOIk1eff * sqrtPhis + pParam->B4SOIdelvt;
                         dVfb_dVb = dVth_dVb - pParam->B4SOIk1eff * dsqrtPhis_dVb;
-                        dVfb_dVd = dVth_dVd;
+                        /* LFW_FD fix/add next 3 derivatives */
+                        dVfb_dVd = dVth_dVd - pParam->B4SOIk1eff * dsqrtPhis_dVd;
+                        dVfb_dVg = dVth_dVg - pParam->B4SOIk1eff * dsqrtPhis_dVg;
+                        dVfb_dVe = dVth_dVe - pParam->B4SOIk1eff * dsqrtPhis_dVe;
                       /*fix below expression Wagner */
                       /*dVfb_dT  = dVth_dT; */
                         dVfb_dT  = dVth_dT - dphi_dT - pParam->B4SOIk1eff*dsqrtPhis_dT;
@@ -6457,8 +6972,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                         T1 = 0.5 * (1.0 + V3 / T0);
                         Vfbeff = Vfb - 0.5 * (V3 + T0);
-                        dVfbeff_dVd = (1.0 - T1 - T2) * dVfb_dVd;
-                        dVfbeff_dVb = (1.0 - T1 - T2) * dVfb_dVb - T1;
+                        /* LFW_FD fix/add next 4 derivatives */
+                        dVfbeff_dVd = (1.0 - T1 - T2) * dVfb_dVd - T1 * dVbseff_dVd;
+                        dVfbeff_dVb = (1.0 - T1 - T2) * dVfb_dVb - T1 * dVbseff_dVb;
+                        dVfbeff_dVg = (1.0 - T1 - T2) * dVfb_dVg - T1 * (dVbseff_dVg - dVgs_eff_dVg);
+                        dVfbeff_dVe = (1.0 - T1 - T2) * dVfb_dVe - T1 * dVbseff_dVe;
                         dVfbeff_dVrg = T1 * dVgs_eff_dVg;
                       /*fix below expression Wagner */
                       /*if (selfheat) dVfbeff_dT = (1.0 - T1 - T2) * dVfb_dT;
@@ -6471,6 +6989,9 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         dQac0_dVrg = CoxWLb * dVfbeff_dVrg;
                         dQac0_dVd = CoxWLb * (dVfbeff_dVd - dVfb_dVd);
                         dQac0_dVb = CoxWLb * (dVfbeff_dVb - dVfb_dVb);
+                        /* LFW_FD add next 2 derivatives */
+                        dQac0_dVg = CoxWLb * (dVfbeff_dVg - dVfb_dVg);
+                        dQac0_dVe = CoxWLb * (dVfbeff_dVe - dVfb_dVe);
                         if (selfheat) dQac0_dT = CoxWLb * (dVfbeff_dT - dVfb_dT);
                         else  dQac0_dT = 0.0;
                         /* v4.1 */
@@ -6481,6 +7002,9 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                                                         Vfb2 = Vfb + eggbcp2; /* bugfix 4.3.1 -Tanvir  */
                             dVfb2_dVb = dVfb_dVb;
                             dVfb2_dVd = dVfb_dVd;
+                            /* LFW_FD add next 2 derivatives */
+                            dVfb2_dVg = dVfb_dVg;
+                            dVfb2_dVe = dVfb_dVe;
                             dVfb2_dT  = dVfb_dT;
                             DELTA_3_SOI2 =  DELTA_3_SOI;
                             V3 = Vfb2 - Vgs_eff2 + Vbseff - DELTA_3_SOI2;
@@ -6494,8 +7018,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             }
                             T1 = 0.5 * (1.0 + V3 / T0);
                             Vfbeff2 = Vfb2 - 0.5 * (V3 + T0);
-                            dVfbeff2_dVd = (1.0 - T1 - T2) * dVfb2_dVd;        /* Samuel Mertens */
-                            dVfbeff2_dVb = (1.0 - T1 - T2) * dVfb2_dVb - T1;   /* Samuel Mertens */
+                            /* LFW_FD fix/add next 4 derivatives */
+                            dVfbeff2_dVg =  (1.0 - T2) * dVfb2_dVg - T1 * (dVfb2_dVg - dVgs_eff2_dVg + dVbseff_dVg);
+                            dVfbeff2_dVd =  (1.0 - T2) * dVfb2_dVd - T1 * (dVfb2_dVd + dVbseff_dVd);
+                            dVfbeff2_dVb =  (1.0 - T2) * dVfb2_dVb - T1 * (dVfb2_dVb + dVbseff_dVb);
+                            dVfbeff2_dVe =  (1.0 - T2) * dVfb2_dVe - T1 * (dVfb2_dVe + dVbseff_dVe);
                             dVfbeff2_dVrg = T1 * dVgs_eff2_dVg;
                           /*fix below expression Wagner */
                           /*if (selfheat) dVfbeff2_dT = (1.0 - T1 - T2) * dVfb2_dT; */
@@ -6507,6 +7034,9 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             dQac02_dVrg = CoxWLb2 * dVfbeff2_dVrg;
                             dQac02_dVd = CoxWLb2 * (dVfbeff2_dVd - dVfb2_dVd);
                             dQac02_dVb = CoxWLb2 * (dVfbeff2_dVb - dVfb2_dVb);
+                            /* LFW_FD add next 2 derivatives */
+                            dQac02_dVg = CoxWLb2 * (dVfbeff2_dVg - dVfb2_dVg);
+                            dQac02_dVe = CoxWLb2 * (dVfbeff2_dVe - dVfb2_dVe);
                             if (selfheat)
                                 dQac02_dT = CoxWLb2 * (dVfbeff2_dT - dVfb2_dT);
                             else  dQac02_dT = 0.0;
@@ -6530,9 +7060,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                         Qsub0 = CoxWLb * pParam->B4SOIk1ox * (T1 - T0); /* 4.1 bug fix */
                         dQsub0_dVrg = T2 * (dVgs_eff_dVg - dVfbeff_dVrg);
-                        dQsub0_dVg = -T2;
-                        dQsub0_dVd = -T2 * dVfbeff_dVd;
-                        dQsub0_dVb = -T2 * (dVfbeff_dVb + 1);
+                        /* LFW_FD fix/add next 4 derivatives */
+                        dQsub0_dVd = -T2 * (dVfbeff_dVd + dVbseff_dVd + dVgsteff_dVd);
+                        dQsub0_dVg = T2 * (dVgs_eff_dVg - dVfbeff_dVg - dVbseff_dVg - dVgsteff_dVg);
+                        dQsub0_dVb = -T2 * (dVfbeff_dVb + dVbseff_dVb + dVgsteff_dVb);
+                        dQsub0_dVe = -T2 * (dVfbeff_dVe + dVbseff_dVe + dVgsteff_dVe);
                       /*fix below expression Wagner */
                       /*if (selfheat) dQsub0_dT  = -T2 * dVfbeff_dT; */
                         if (selfheat) dQsub0_dT  = -T2 * (-dVgs_eff_dT + dVfbeff_dT + dVbseff_dT + dVgsteff_dT);
@@ -6551,9 +7083,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             }
                             Qsub0 += CoxWLb2 * pParam->B4SOIk1ox * (T1 - T0);
                             dQsub02_dVrg = T2 * (dVgs_eff2_dVg - dVfbeff2_dVrg);
-                            dQsub02_dVg = -T2;
-                            dQsub02_dVd = -T2 * dVfbeff2_dVd;
-                            dQsub02_dVb = -T2 * (dVfbeff2_dVb + 1);
+                            /* LFW_FD fix/add next 4 derivatives */
+                            dQsub02_dVg = T2 * (dVgs_eff2_dVg - dVfbeff2_dVg - dVbseff_dVg - dVgsteff2_dVg);
+                            dQsub02_dVd = -T2 * ( dVfbeff2_dVd + dVbseff_dVd + dVgsteff2_dVd);
+                            dQsub02_dVb = -T2 * ( dVfbeff2_dVb + dVbseff_dVb + dVgsteff2_dVb);
+                            dQsub02_dVe = -T2 * ( dVfbeff2_dVe + dVbseff_dVe + dVgsteff2_dVe);
                           /*fix below expression Wagner */
                           /*if (selfheat) dQsub02_dT = -T2 * dVfbeff2_dT; */
                             if (selfheat) dQsub02_dT = -T2 * (dVfbeff2_dT + dVbseff_dT + dVgsteff2_dT);
@@ -6566,12 +7100,19 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
 
                     AbulkCV = Abulk0 * pParam->B4SOIabulkCVfactor;
+                   /* LFW_FD add next 3 derivatives */
+                    dAbulkCV_dVg = pParam->B4SOIabulkCVfactor * dAbulk0_dVg;
+                    dAbulkCV_dVd = pParam->B4SOIabulkCVfactor * dAbulk0_dVd;
+                    dAbulkCV_dVe = pParam->B4SOIabulkCVfactor * dAbulk0_dVe;
                     dAbulkCV_dVb = pParam->B4SOIabulkCVfactor * dAbulk0_dVb;
                     dAbulkCV_dT = dAbulk0_dT * pParam->B4SOIabulkCVfactor;  /* new line Wagner */
 
                     VdsatCV = Vgsteff / AbulkCV;
-                    dVdsatCV_dVg = 1.0 / AbulkCV;
-                    dVdsatCV_dVb = -VdsatCV * dAbulkCV_dVb / AbulkCV;
+                   /* LFW_FD fix/add next 4 derivatives */
+                    dVdsatCV_dVg = (dVgsteff_dVg -VdsatCV * dAbulkCV_dVg) / AbulkCV;
+                    dVdsatCV_dVd = (dVgsteff_dVd -VdsatCV * dAbulkCV_dVd) / AbulkCV;
+                    dVdsatCV_dVb = (dVgsteff_dVb -VdsatCV * dAbulkCV_dVb) / AbulkCV;
+                    dVdsatCV_dVe = (dVgsteff_dVe -VdsatCV * dAbulkCV_dVe) / AbulkCV;
 
                     V4 = VdsatCV - Vds - DELTA_4;
                     T0 = sqrt(V4 * V4 + 4.0 * DELTA_4 * VdsatCV);
@@ -6579,9 +7120,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     T1 = 0.5 * (1.0 + V4 / T0);
                     T2 = DELTA_4 / T0;
                     T3 = (1.0 - T1 - T2) / AbulkCV;
-                    dVdseffCV_dVg = T3;
-                    dVdseffCV_dVd = T1;
-                    dVdseffCV_dVb = -T3 * VdsatCV * dAbulkCV_dVb;
+                   /* LFW_FD fix/add next 4 derivatives */
+                    dVdseffCV_dVg = ( 1.0 - T1 - T2) * dVdsatCV_dVg;
+                    dVdseffCV_dVd = ( 1.0 - T1 - T2) * dVdsatCV_dVd + T1;
+                    dVdseffCV_dVb = ( 1.0 - T1 - T2) * dVdsatCV_dVb;
+                    dVdseffCV_dVe = ( 1.0 - T1 - T2) * dVdsatCV_dVe;
                     /* 10 new lines Wagner */
                     if (selfheat) {
                         dVdsatCV_dT = dVgsteff_dT/AbulkCV
@@ -6596,18 +7139,23 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                     /* v4.1 */
                     if (here->B4SOIagbcp2 > 0)
-                    {  VdsatCV2 = Vgsteff2 / AbulkCV;
-                        dVdsatCV2_dVg = 1.0 / AbulkCV;
-                        dVdsatCV2_dVb = -VdsatCV2 * dAbulkCV_dVb / AbulkCV;
+                    {   VdsatCV2 = Vgsteff2 / AbulkCV;
+                       /* LFW_FD fix/add next 4 derivatives */
+                        dVdsatCV2_dVg = (dVgsteff2_dVg - VdsatCV2 * dAbulkCV_dVg) / AbulkCV;
+                        dVdsatCV2_dVd = (dVgsteff2_dVd - VdsatCV2 * dAbulkCV_dVd) / AbulkCV;
+                        dVdsatCV2_dVb = (dVgsteff2_dVb - VdsatCV2 * dAbulkCV_dVb) / AbulkCV;
+                        dVdsatCV2_dVe = (dVgsteff2_dVe - VdsatCV2 * dAbulkCV_dVe) / AbulkCV;
                         V4 = VdsatCV2 - Vds - DELTA_4;
                         T0 = sqrt(V4 * V4 + 4.0 * DELTA_4 * VdsatCV2);
                         VdseffCV2 = VdsatCV2 - 0.5 * (V4 + T0);
                         T1 = 0.5 * (1.0 + V4 / T0);
                         T2 = DELTA_4 / T0;
                         T3 = (1.0 - T1 - T2) / AbulkCV;
-                        dVdseffCV2_dVg = T3;
-                        dVdseffCV2_dVd = T1;
-                        dVdseffCV2_dVb = -T3 * VdsatCV2 * dAbulkCV_dVb;
+                       /* LFW_FD fix/add next 4 derivatives */
+                        dVdseffCV2_dVg = (1.0 - T1 - T2 ) * dVdsatCV2_dVg;
+                        dVdseffCV2_dVd = (1.0 - T1 - T2 ) * dVdsatCV2_dVd + T1;
+                        dVdseffCV2_dVb = (1.0 - T1 - T2 ) * dVdsatCV2_dVb;
+                        dVdseffCV2_dVe = (1.0 - T1 - T2 ) * dVdsatCV2_dVe;
                         /* 10 new lines Wagner */
                         if (selfheat) {
                             dVdsatCV2_dT = dVgsteff2_dT/AbulkCV
@@ -6623,11 +7171,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     /* end v4.1 */
 
                     /* v3.1 */
+                    Cbg12 = Cbd12 = Cbb12 = Cbe12 = 0; /* LFW_FD flexilint */
                     dqbulk_dT = 0;   /* new line Wagner */
                     if (here->B4SOIsoiMod == 2) /* v3.2 */ /* ideal FD */
                     {
-                        qbulk = Cbg1 = Cbd1 = Cbb1 = 0;
-                        Cbg12 = Cbd12 = Cbb12 = 0; /* v4.1 */
+                        qbulk = Cbg1 = Cbd1 = Cbb1 = Cbe1 = 0;  /* LFW_FD enhance 2 lines */
+                        Cbg12 = Cbd12 = Cbb12 = Cbe12 = 0; /* v4.1 */
                     }
                     else
                     {
@@ -6645,9 +7194,33 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         T5 = -T7 * T5;
                         T6 = -(T7 * T6 + (0.5 * VdseffCV - T3));
 
-                        Cbg1 = CoxWLb * (T4 + T5 * dVdseffCV_dVg);
-                        Cbd1 = CoxWLb * T5 * dVdseffCV_dVd ;
-                        Cbb1 = CoxWLb * (T5 * dVdseffCV_dVb + T6 * dAbulkCV_dVb);
+                       /* LFW_FD fix next 3 lines with next 20 lines */
+/*                      Cbg1 = CoxWLb * (T4 + T5 * dVdseffCV_dVg);   */
+/*                      Cbd1 = CoxWLb * T5 * dVdseffCV_dVd ;         */
+/*                      Cbb1 = CoxWLb * (T5 * dVdseffCV_dVb + T6 * dAbulkCV_dVb);*/
+
+                        dT0_dVg = AbulkCV * dVdseffCV_dVg + dAbulkCV_dVg * VdseffCV;
+                        dT0_dVd = AbulkCV * dVdseffCV_dVd + dAbulkCV_dVd * VdseffCV;
+                        dT0_dVb = AbulkCV * dVdseffCV_dVb + dAbulkCV_dVb * VdseffCV;
+                        dT0_dVe = AbulkCV * dVdseffCV_dVe + dAbulkCV_dVe * VdseffCV;
+
+                        dT1_dVg = 12.0 * (dVgsteff_dVg - 0.5 * dT0_dVg);
+                        dT1_dVd = 12.0 * (dVgsteff_dVd - 0.5 * dT0_dVd);
+                        dT1_dVb = 12.0 * (dVgsteff_dVb - 0.5 * dT0_dVb);
+                        dT1_dVe = 12.0 * (dVgsteff_dVe - 0.5 * dT0_dVe);
+
+                        Cbg1 = CoxWLb * (T7 * (0.5 - T0 / T1) * dVdseffCV_dVg
+                             - T7 * VdseffCV * ((dT0_dVg - T0 * dT1_dVg / T1) / T1)
+                             - dAbulkCV_dVg * (0.5 * VdseffCV - T3) );
+                        Cbd1 = CoxWLb * (T7 * (0.5 - T0 / T1) * dVdseffCV_dVd
+                             - T7 * VdseffCV * ((dT0_dVd - T0 * dT1_dVd / T1) / T1)
+                             - dAbulkCV_dVd * (0.5 * VdseffCV - T3) );
+                        Cbb1 = CoxWLb * (T7 * (0.5 - T0 / T1) * dVdseffCV_dVb
+                             - T7 * VdseffCV * ((dT0_dVb - T0 * dT1_dVb / T1) / T1)
+                             - dAbulkCV_dVb * (0.5 * VdseffCV - T3) );
+                        Cbe1 = CoxWLb * (T7 * (0.5 - T0 / T1) * dVdseffCV_dVe
+                             - T7 * VdseffCV * ((dT0_dVe - T0 * dT1_dVe / T1) / T1)
+                             - dAbulkCV_dVe * (0.5 * VdseffCV - T3) );
 
                         /* 10 new lines Wagner */
                         if (selfheat) {
@@ -6676,9 +7249,34 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             T4 = -T7 * (T4 - 1.0);
                             T5 = -T7 * T5;
                             T6 = -(T7 * T6 + (0.5 * VdseffCV2 - T3));
-                            Cbg12 = CoxWLb2 * (T4 + T5 * dVdseffCV2_dVg);
-                            Cbd12 = CoxWLb2 * T5 * dVdseffCV2_dVd ;
-                            Cbb12 = CoxWLb2 * (T5 * dVdseffCV2_dVb + T6 * dAbulkCV_dVb);
+                           /* LFW_FD fix next 3 lines with next 20 lines */
+/*                          Cbg12 = CoxWLb2 * (T4 + T5 * dVdseffCV2_dVg);*/
+/*                          Cbd12 = CoxWLb2 * T5 * dVdseffCV2_dVd ;      */
+/*                          Cbb12 = CoxWLb2 * (T5 * dVdseffCV2_dVb + T6 * dAbulkCV_dVb);*/
+
+                            dT0_dVg = AbulkCV * dVdseffCV2_dVg + dAbulkCV_dVg * VdseffCV2;
+                            dT0_dVd = AbulkCV * dVdseffCV2_dVd + dAbulkCV_dVd * VdseffCV2;
+                            dT0_dVb = AbulkCV * dVdseffCV2_dVb + dAbulkCV_dVb * VdseffCV2;
+                            dT0_dVe = AbulkCV * dVdseffCV2_dVe + dAbulkCV_dVe * VdseffCV2;
+
+                            dT1_dVg = 12.0 * (dVgsteff2_dVg - 0.5 * dT0_dVg);
+                            dT1_dVd = 12.0 * (dVgsteff2_dVd - 0.5 * dT0_dVd);
+                            dT1_dVb = 12.0 * (dVgsteff2_dVb - 0.5 * dT0_dVb);
+                            dT1_dVe = 12.0 * (dVgsteff2_dVe - 0.5 * dT0_dVe);
+
+                            Cbg12 = CoxWLb2 * (T7 * (0.5 - T0 / T1) * dVdseffCV2_dVg
+                                  - T7 * VdseffCV2 * ((dT0_dVg - T0 * dT1_dVg / T1) / T1)
+                                  - dAbulkCV_dVg * (0.5 * VdseffCV2 - T3) );
+                            Cbd12 = CoxWLb2 * (T7 * (0.5 - T0 / T1) * dVdseffCV2_dVd
+                                  - T7 * VdseffCV2 * ((dT0_dVd - T0 * dT1_dVd / T1) / T1)
+                                  - dAbulkCV_dVd * (0.5 * VdseffCV2 - T3) );
+                            Cbb12 = CoxWLb2 * (T7 * (0.5 - T0 / T1) * dVdseffCV2_dVb
+                                  - T7 * VdseffCV2 * ((dT0_dVb - T0 * dT1_dVb / T1) / T1)
+                                  - dAbulkCV_dVb * (0.5 * VdseffCV2 - T3) );
+                            Cbe12 = CoxWLb2 * (T7 * (0.5 - T0 / T1) * dVdseffCV2_dVe
+                                  - T7 * VdseffCV2 * ((dT0_dVe - T0 * dT1_dVe / T1) / T1)
+                                  - dAbulkCV_dVe * (0.5 * VdseffCV2 - T3) );
+
                             /* 10 new lines Wagner */
                             if (selfheat) {
                                dTL1_dT = AbulkCV * dVdseffCV2_dT + dAbulkCV_dT * VdseffCV2;
@@ -6721,9 +7319,34 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                     here->B4SOIqinv = -qinv; /* for noise v3.2 */
 
-                    Cgg1 = CoxWL * (T4 + T5 * dVdseffCV_dVg);
-                    Cgd1 = CoxWL * T5 * dVdseffCV_dVd;
-                    Cgb1 = CoxWL * (T5 * dVdseffCV_dVb + T6 * dAbulkCV_dVb);
+                /* LFW_FD fix next 3 lines with next 20 lines */
+                /*  Cgg1 = CoxWL * (T4 + T5 * dVdseffCV_dVg); */
+                /*  Cgd1 = CoxWL * T5 * dVdseffCV_dVd;        */
+                /*  Cgb1 = CoxWL * (T5 * dVdseffCV_dVb + T6 * dAbulkCV_dVb);*/
+                    dT0_dVg = dAbulkCV_dVg * VdseffCV + AbulkCV * dVdseffCV_dVg;
+                    dT0_dVd = dAbulkCV_dVd * VdseffCV + AbulkCV * dVdseffCV_dVd;
+                    dT0_dVb = dAbulkCV_dVb * VdseffCV + AbulkCV * dVdseffCV_dVb;
+                    dT0_dVe = dAbulkCV_dVe * VdseffCV + AbulkCV * dVdseffCV_dVe;
+
+                    dT1_dVg = 12.0 * (dVgsteff_dVg - 0.5 * dT0_dVg);
+                    dT1_dVd = 12.0 * (dVgsteff_dVd - 0.5 * dT0_dVd);
+                    dT1_dVb = 12.0 * (dVgsteff_dVb - 0.5 * dT0_dVb);
+                    dT1_dVe = 12.0 * (dVgsteff_dVe - 0.5 * dT0_dVe);
+
+                    dT2_dVg = (dT0_dVg - T2 * dT1_dVg) / T1;
+                    dT2_dVd = (dT0_dVd - T2 * dT1_dVd) / T1;
+                    dT2_dVb = (dT0_dVb - T2 * dT1_dVb) / T1;
+                    dT2_dVe = (dT0_dVe - T2 * dT1_dVe) / T1;
+
+                    dT3_dVg = dT0_dVg * T2 + T0 * dT2_dVg;
+                    dT3_dVd = dT0_dVd * T2 + T0 * dT2_dVd;
+                    dT3_dVb = dT0_dVb * T2 + T0 * dT2_dVb;
+                    dT3_dVe = dT0_dVe * T2 + T0 * dT2_dVe;
+
+                    Cgg1 = CoxWL * (dVgsteff_dVg - 0.5 * dT0_dVg + dT3_dVg);
+                    Cgd1 = CoxWL * (dVgsteff_dVd - 0.5 * dT0_dVd + dT3_dVd);
+                    Cgb1 = CoxWL * (dVgsteff_dVb - 0.5 * dT0_dVb + dT3_dVb);
+                    Cge1 = CoxWL * (dVgsteff_dVe - 0.5 * dT0_dVe + dT3_dVe);
 
                     /* 7 new lines Wagner */
                     if (selfheat) {
@@ -6735,6 +7358,9 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     else dqgate_dT = 0;
 
                     /* v4.1 */
+                    /* LFW_FD 2 new lines per flexilint */
+                    T12 = T02 = Cgg12 = Cgd12 = Cgb12 = Cge12 = 0.0;
+                    Csg12 = Csd12 = Csb12 = Cse12 = 0.0;
                     dqsrc2_dT = 0;   /* new line Wagner */
                     if ((here->B4SOIsoiMod != 2) &&                             /* Bug fix #10 Jun 09 'opposite type Q/C evaluated only if bodymod=1' */
                             (here->B4SOIbodyMod != 0) && here->B4SOIagbcp2 > 0)
@@ -6753,9 +7379,36 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         qgate = qinv;             /* new line Wagner */
                         here->B4SOIqinv = -qinv;
 
-                        Cgg12 = CoxWL2 * (T4 + T5 * dVdseffCV2_dVg);
-                        Cgd12 = CoxWL2 * T5 * dVdseffCV2_dVd;
-                        Cgb12 = CoxWL2 * (T5 * dVdseffCV2_dVb + T6 * dAbulkCV_dVb);
+                       /* LFW_FD fix next 3 lines with next 20 lines */
+                   /*   Cgg12 = CoxWL2 * (T4 + T5 * dVdseffCV2_dVg); */
+                   /*   Cgd12 = CoxWL2 * T5 * dVdseffCV2_dVd;        */
+                   /*   Cgb12 = CoxWL2 * (T5 * dVdseffCV2_dVb + T6 * dAbulkCV_dVb);*/
+
+                        dT02_dVg = dAbulkCV_dVg * VdseffCV2 + AbulkCV * dVdseffCV2_dVg;
+                        dT02_dVd = dAbulkCV_dVd * VdseffCV2 + AbulkCV * dVdseffCV2_dVd;
+                        dT02_dVb = dAbulkCV_dVb * VdseffCV2 + AbulkCV * dVdseffCV2_dVb;
+                        dT02_dVe = dAbulkCV_dVe * VdseffCV2 + AbulkCV * dVdseffCV2_dVe;
+
+                        dT12_dVg = 12.0 * (dVgsteff2_dVg - 0.5 * dT02_dVg);
+                        dT12_dVd = 12.0 * (dVgsteff2_dVd - 0.5 * dT02_dVd);
+                        dT12_dVb = 12.0 * (dVgsteff2_dVb - 0.5 * dT02_dVb);
+                        dT12_dVe = 12.0 * (dVgsteff2_dVe - 0.5 * dT02_dVe);
+
+                        dT2_dVg = (dT02_dVg - T2 * dT12_dVg) / T12;
+                        dT2_dVd = (dT02_dVd - T2 * dT12_dVd) / T12;
+                        dT2_dVb = (dT02_dVb - T2 * dT12_dVb) / T12;
+                        dT2_dVe = (dT02_dVe - T2 * dT12_dVe) / T12;
+
+                        dT3_dVg = dT02_dVg * T2 + T02 * dT2_dVg;
+                        dT3_dVd = dT02_dVd * T2 + T02 * dT2_dVd;
+                        dT3_dVb = dT02_dVb * T2 + T02 * dT2_dVb;
+                        dT3_dVe = dT02_dVe * T2 + T02 * dT2_dVe;
+
+                        Cgg12 = CoxWL2 * (dVgsteff2_dVg - 0.5 * dT02_dVg + dT3_dVg);
+                        Cgd12 = CoxWL2 * (dVgsteff2_dVd - 0.5 * dT02_dVd + dT3_dVd);
+                        Cgb12 = CoxWL2 * (dVgsteff2_dVb - 0.5 * dT02_dVb + dT3_dVb);
+                        Cge12 = CoxWL2 * (dVgsteff2_dVe - 0.5 * dT02_dVe + dT3_dVe);
+
                         /* 8 new lines Wagner */
                         if (selfheat) {
                            dTL1_dT = AbulkCV * dVdseffCV2_dT + dAbulkCV_dT * VdseffCV2;
@@ -6777,9 +7430,23 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         T4 = -(0.5 + 24.0 * T0 * T0 / (T1 * T1));
                         T5 = -(0.25 * AbulkCV - 12.0 * AbulkCV * T0 * T7);
                         T6 = -(0.25 * VdseffCV - 12.0 * T0 * VdseffCV * T7);
-                        Csg1 = CoxWL * (T4 + T5 * dVdseffCV_dVg);
-                        Csd1 = CoxWL * T5 * dVdseffCV_dVd;
-                        Csb1 = CoxWL * (T5 * dVdseffCV_dVb + T6 * dAbulkCV_dVb);
+                       /* LFW_FD fix next 3 lines with next 12 lines */
+                    /*  Csg1 = CoxWL * (T4 + T5 * dVdseffCV_dVg);    */
+                    /*  Csd1 = CoxWL * T5 * dVdseffCV_dVd;           */
+                    /*  Csb1 = CoxWL * (T5 * dVdseffCV_dVb + T6 * dAbulkCV_dVb);*/
+                        dT1_dVg = 2.0 * dT1_dVg;
+                        dT1_dVd = 2.0 * dT1_dVd;
+                        dT1_dVb = 2.0 * dT1_dVb;
+                        dT1_dVe = 2.0 * dT1_dVe;
+
+                        Csg1 = -CoxWL * (0.5 * dVgsteff_dVg + 0.25 * dT0_dVg
+                                     - 2.0 * T0 * dT0_dVg / T1 + T0 * T0 * dT1_dVg / (T1 * T1));
+                        Csd1 = -CoxWL * (0.5 * dVgsteff_dVd + 0.25 * dT0_dVd
+                                     - 2.0 * T0 * dT0_dVd / T1 + T0 * T0 * dT1_dVd / (T1 * T1));
+                        Csb1 = -CoxWL * (0.5 * dVgsteff_dVb + 0.25 * dT0_dVb
+                                     - 2.0 * T0 * dT0_dVb / T1 + T0 * T0 * dT1_dVb / (T1 * T1));
+                        Cse1 = -CoxWL * (0.5 * dVgsteff_dVe + 0.25 * dT0_dVe
+                                     - 2.0 * T0 * dT0_dVe / T1 + T0 * T0 * dT1_dVe / (T1 * T1));
 
                         /* 8 new lines Wagner */
                         if (selfheat) {
@@ -6805,9 +7472,23 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             T4 = -(0.5 + 24.0 * T02 * T02 / (T12 * T12));
                             T5 = -(0.25 * AbulkCV - 12.0 * AbulkCV * T02 * T7);
                             T6 = -(0.25 * VdseffCV2 - 12.0 * T02 * VdseffCV2 * T7);
-                            Csg12 = CoxWL2 * (T4 + T5 * dVdseffCV2_dVg);
-                            Csd12 = CoxWL2 * T5 * dVdseffCV2_dVd;
-                            Csb12 = CoxWL2 * (T5 * dVdseffCV2_dVb + T6 * dAbulkCV_dVb);
+                           /* LFW_FD fix next 3 lines with next 12 lines */
+                         /* Csg12 = CoxWL2 * (T4 + T5 * dVdseffCV2_dVg); */
+                         /* Csd12 = CoxWL2 * T5 * dVdseffCV2_dVd;        */
+                         /* Csb12 = CoxWL2 * (T5 * dVdseffCV2_dVb + T6 * dAbulkCV_dVb);*/
+                            dT12_dVg = 2.0 * dT12_dVg;
+                            dT12_dVd = 2.0 * dT12_dVd;
+                            dT12_dVb = 2.0 * dT12_dVb;
+                            dT12_dVe = 2.0 * dT12_dVe;
+
+                            Csg12 = -CoxWL2 * (0.5 * dVgsteff2_dVg + 0.25 * dT02_dVg
+                                            - 2.0 * T02 * dT02_dVg / T12 + T02 * T02 * dT12_dVg / (T12 * T12));
+                            Csd12 = -CoxWL2 * (0.5 * dVgsteff2_dVd + 0.25 * dT02_dVd
+                                            - 2.0 * T02 * dT02_dVd / T12 + T02 * T02 * dT12_dVd / (T12 * T12));
+                            Csb12 = -CoxWL2 * (0.5 * dVgsteff2_dVb + 0.25 * dT02_dVb
+                                            - 2.0 * T02 * dT02_dVb / T12 + T02 * T02 * dT12_dVb / (T12 * T12));
+                            Cse12 = -CoxWL2 * (0.5 * dVgsteff2_dVe + 0.25 * dT02_dVe
+                                            - 2.0 * T02 * dT02_dVe / T12 + T02 * T02 * dT12_dVe / (T12 * T12));
                             /* 11 new lines Wagner */
                             if (selfheat) {
                                dTL1_dT = AbulkCV * dVdseffCV2_dT + dAbulkCV_dT * VdseffCV2;
@@ -6833,6 +7514,39 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             - 2.0 * T0 * T0 * T0 / 15.0;
                         qsrc = -T2 * T3;
 
+                       /* LFW_FD add next 28 lines of code */
+                        dT1_dVg = dVgsteff_dVg - 0.5 * dT0_dVg;
+                        dT1_dVd = dVgsteff_dVd - 0.5 * dT0_dVd;
+                        dT1_dVb = dVgsteff_dVb - 0.5 * dT0_dVb;
+                        dT1_dVe = dVgsteff_dVe - 0.5 * dT0_dVe;
+
+                        dT2_dVg = - 2.0 * T2 * dT1_dVg / T1;
+                        dT2_dVd = - 2.0 * T2 * dT1_dVd / T1;
+                        dT2_dVb = - 2.0 * T2 * dT1_dVb / T1;
+                        dT2_dVe = - 2.0 * T2 * dT1_dVe / T1;
+
+                        dT3_dVg = dVgsteff_dVg *  (2.0 * T0 * T0 / 3.0 + Vgsteff * (Vgsteff - 4.0 * T0 / 3.0))
+                                + Vgsteff * (4.0 * T0 *dT0_dVg /3 + dVgsteff_dVg * (Vgsteff - 4.0 * T0 / 3.0)
+                                + Vgsteff * (dVgsteff_dVg -4.0 * dT0_dVg / 3.0))
+                                - 2.0 * T0 * T0 * dT0_dVg / 5.0;
+                        dT3_dVd = dVgsteff_dVd *  (2.0 * T0 * T0 / 3.0 + Vgsteff * (Vgsteff - 4.0 * T0 / 3.0))
+                                + Vgsteff * (4.0 * T0 *dT0_dVd /3 + dVgsteff_dVd * (Vgsteff - 4.0 * T0 / 3.0)
+                                + Vgsteff * (dVgsteff_dVd -4.0 * dT0_dVd / 3.0))
+                                - 2.0 * T0 * T0 * dT0_dVd / 5.0;
+                        dT3_dVb = dVgsteff_dVb *  (2.0 * T0 * T0 / 3.0 + Vgsteff * (Vgsteff - 4.0 * T0 / 3.0))
+                                + Vgsteff * (4.0 * T0 *dT0_dVb /3 + dVgsteff_dVb * (Vgsteff - 4.0 * T0 / 3.0)
+                                + Vgsteff * (dVgsteff_dVb -4.0 * dT0_dVb / 3.0))
+                                - 2.0 * T0 * T0 * dT0_dVb / 5.0;
+                        dT3_dVe = dVgsteff_dVe *  (2.0 * T0 * T0 / 3.0 + Vgsteff * (Vgsteff - 4.0 * T0 / 3.0))
+                                + Vgsteff * (4.0 * T0 *dT0_dVe /3 + dVgsteff_dVe * (Vgsteff - 4.0 * T0 / 3.0)
+                                + Vgsteff * (dVgsteff_dVe -4.0 * dT0_dVe / 3.0))
+                                - 2.0 * T0 * T0 * dT0_dVe / 5.0;
+
+                        Csg1 = - T2 * dT3_dVg -  dT2_dVg * T3;
+                        Csd1 = - T2 * dT3_dVd -  dT2_dVd * T3;
+                        Csb1 = - T2 * dT3_dVb -  dT2_dVb * T3;
+                        Cse1 = - T2 * dT3_dVe -  dT2_dVe * T3;
+
                         /* 13 new lines Wagner */
                         if (selfheat) {
                            dTL1_dT = AbulkCV * dVdseffCV_dT + dAbulkCV_dT * VdseffCV;
@@ -6848,16 +7562,17 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         }
                         else dqsrc_dT = 0;
 
-                        T7 = 4.0 / 3.0 * Vgsteff * (Vgsteff - T0)
-                            + 0.4 * T0 * T0;
-                        T4 = -2.0 * qsrc / T1 - T2 * (Vgsteff * (3.0
-                                    * Vgsteff - 8.0 * T0 / 3.0)
-                                + 2.0 * T0 * T0 / 3.0);
-                        T5 = (qsrc / T1 + T2 * T7) * AbulkCV;
-                        T6 = (qsrc / T1 * VdseffCV + T2 * T7 * VdseffCV);
-                        Csg1 = T4 + T5 * dVdseffCV_dVg;
-                        Csd1 = T5 * dVdseffCV_dVd;
-                        Csb1 = T5 * dVdseffCV_dVb + T6 * dAbulkCV_dVb;
+                       /* LFW_FD delete next 10 lines of code */
+                    /*  T7 = 4.0 / 3.0 * Vgsteff * (Vgsteff - T0)        */
+                    /*      + 0.4 * T0 * T0;                             */
+                    /*  T4 = -2.0 * qsrc / T1 - T2 * (Vgsteff * (3.0     */
+                    /*              * Vgsteff - 8.0 * T0 / 3.0)          */
+                    /*          + 2.0 * T0 * T0 / 3.0);                  */
+                    /*  T5 = (qsrc / T1 + T2 * T7) * AbulkCV;            */
+                    /*  T6 = (qsrc / T1 * VdseffCV + T2 * T7 * VdseffCV);*/
+                    /*  Csg1 = T4 + T5 * dVdseffCV_dVg;                  */
+                    /*  Csd1 = T5 * dVdseffCV_dVd;                       */
+                    /*  Csb1 = T5 * dVdseffCV_dVb + T6 * dAbulkCV_dVb;   */
                         /* v4.1 */
                         if ((here->B4SOIsoiMod != 2) &&                 /* Bug fix #10 Jun 09 'opposite type Q/C evaluated only if bodymod=1' */
                                 (here->B4SOIbodyMod != 0) && here->B4SOIagbcp2 >0)
@@ -6876,9 +7591,42 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                                     + 2.0 * T02 * T02 / 3.0);
                             T5 = (qsrc2 / T12 + T2 * T7) * AbulkCV;
                             T6 = (qsrc2 / T12 * VdseffCV2 + T2 * T7 * VdseffCV2);
-                            Csg12 = T4 + T5 * dVdseffCV2_dVg;
-                            Csd12 = T5 * dVdseffCV2_dVd;
-                            Csb12 = T5 * dVdseffCV2_dVb + T6 * dAbulkCV_dVb;
+                           /* LFW_FD fix next 3 lines with next 28 lines */
+                        /*  Csg12 = T4 + T5 * dVdseffCV2_dVg;            */
+                        /*  Csd12 = T5 * dVdseffCV2_dVd;                 */
+                        /*  Csb12 = T5 * dVdseffCV2_dVb + T6 * dAbulkCV_dVb;*/
+
+                            dT12_dVg = dVgsteff2_dVg - 0.5 * dT02_dVg;
+                            dT12_dVd = dVgsteff2_dVd - 0.5 * dT02_dVd;
+                            dT12_dVb = dVgsteff2_dVb - 0.5 * dT02_dVb;
+                            dT12_dVe = dVgsteff2_dVe - 0.5 * dT02_dVe;
+
+                            dT2_dVg = - 2.0 * T2 * dT12_dVg / T12;
+                            dT2_dVd = - 2.0 * T2 * dT12_dVd / T12;
+                            dT2_dVb = - 2.0 * T2 * dT12_dVb / T12;
+                            dT2_dVe = - 2.0 * T2 * dT12_dVe / T12;
+
+                            dT3_dVg = dVgsteff2_dVg *  (2.0 * T02 * T02 / 3.0 + Vgsteff2 * (Vgsteff2 - 4.0 * T02 / 3.0))
+                                    + Vgsteff2 * (4.0 * T02 *dT02_dVg /3 + dVgsteff2_dVg * (Vgsteff2 - 4.0 * T02 / 3.0)
+                                    + Vgsteff2 * (dVgsteff2_dVg -4.0 * dT02_dVg / 3.0))
+                                    - 2.0 * T02 * T02 * dT02_dVg / 5.0;
+                            dT3_dVd = dVgsteff2_dVd *  (2.0 * T02 * T02 / 3.0 + Vgsteff2 * (Vgsteff2 - 4.0 * T02 / 3.0))
+                                    + Vgsteff2 * (4.0 * T02 *dT02_dVd /3 + dVgsteff2_dVd * (Vgsteff2 - 4.0 * T02 / 3.0)
+                                    + Vgsteff2 * (dVgsteff2_dVd -4.0 * dT02_dVd / 3.0))
+                                    - 2.0 * T02 * T02 * dT02_dVd / 5.0;
+                            dT3_dVb = dVgsteff2_dVb *  (2.0 * T02 * T02 / 3.0 + Vgsteff2 * (Vgsteff2 - 4.0 * T02 / 3.0))
+                                    + Vgsteff2 * (4.0 * T02 *dT02_dVb /3 + dVgsteff2_dVb * (Vgsteff2 - 4.0 * T02 / 3.0)
+                                    + Vgsteff2 * (dVgsteff2_dVb -4.0 * dT02_dVb / 3.0))
+                                    - 2.0 * T02 * T02 * dT02_dVb / 5.0;
+                            dT3_dVe = dVgsteff2_dVe *  (2.0 * T02 * T02 / 3.0 + Vgsteff2 * (Vgsteff2 - 4.0 * T02 / 3.0))
+                                    + Vgsteff2 * (4.0 * T02 *dT02_dVe /3 + dVgsteff2_dVe * (Vgsteff2 - 4.0 * T02 / 3.0)
+                                    + Vgsteff2 * (dVgsteff2_dVe -4.0 * dT02_dVe / 3.0))
+                                    - 2.0 * T02 * T02 * dT02_dVe / 5.0;
+
+                            Csg12 = - T2 * dT3_dVg -  dT2_dVg * T3;
+                            Csd12 = - T2 * dT3_dVd -  dT2_dVd * T3;
+                            Csb12 = - T2 * dT3_dVb -  dT2_dVb * T3;
+                            Cse12 = - T2 * dT3_dVe -  dT2_dVe * T3;
 
                             /* 13 new lines Wagner */
                             if (selfheat) {
@@ -6907,6 +7655,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         Csg1 = - 0.5 * (Cgg1 + Cbg1);
                         Csb1 = - 0.5 * (Cgb1 + Cbb1);
                         Csd1 = - 0.5 * (Cgd1 + Cbd1);
+                        Cse1 = - 0.5 * (Cge1 + Cbe1);           /* LFW_FD new line */
                         /* v4.1 */
                         if ((here->B4SOIsoiMod != 2) &&                 /* Bug fix #10 Jun 09 'opposite type Q/C evaluated only if bodymod=1' */
                                 (here->B4SOIbodyMod != 0) && here->B4SOIagbcp2 >0)
@@ -6914,6 +7663,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             Csg12 = -0.5 * (Cgg12 + Cbg12);
                             Csb12 = -0.5 * (Cgb12 + Cbb12);
                             Csd12 = -0.5 * (Cgd12 + Cbd12);
+                            Cse12 = -0.5 * (Cge12 + Cbe12);     /* LFW_FD new line */
                         }
                         dqsrc_dT = -0.5 * (dqgate_dT + dqbulk_dT);   /* new line Wagner */
                         /* end v4.1 */
@@ -6943,6 +7693,10 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
 
                     qgate = qinv + Qac0 + Qsub0;
+                   /* LFW_FD  commentary only; next 2 lines */
+                   /* Correct definition of qgate below. Not used because it changes CMC defined model.*/
+                   /*        qgate = qinv + Qac0 + Qsub0 - qbulk;*/
+
                     qbody = (qbulk - Qac0 - Qsub0 - Qe1);
                     qsub = Qe1;
                     qdrn = -(qgate + qsrc + qbody + qsub);
@@ -6958,20 +7712,30 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     Ce1b = dQe1_dVb;
                     Ce1e = dQe1_dVe;
 
-                    Csg = Csg1 * dVgsteff_dVg;
-                    Csd = Csd1 + Csg1 * dVgsteff_dVd;
-                    Csb = Csg1 * dVgsteff_dVb + Csb1 * dVbseff_dVb;
+                   /* LFW_FD  fix/add next 4 lines */
+                    Csg = Csg1;
+                    Csd = Csd1;
+                    Csb = Csb1;
+                    Cse = Cse1;
+
                   /*fix expression below Wagner */
                   /*if (selfheat) CsT = Csg1 * dVgsteff_dT;*/
                     if (selfheat) CsT = dqsrc_dT;
                     else  CsT = 0.0;
 
-                    Cgg = (Cgg1 + dQsub0_dVg) * dVgsteff_dVg
-                        + dQac0_dVrg + dQsub0_dVrg;
-                    Cgd = (Cgg1 + dQsub0_dVg) * dVgsteff_dVd + Cgd1
-                        + dQac0_dVd + dQsub0_dVd;
-                    Cgb = (Cgg1 + dQsub0_dVg) * dVgsteff_dVb
-                        + (Cgb1 + dQsub0_dVb + dQac0_dVb) * dVbseff_dVb;
+                   /* LFW_FD  fix/add next 4 lines */
+                    Cgg = Cgg1 + dQsub0_dVg + dQac0_dVg;
+                    Cgd = Cgd1 + dQsub0_dVd + dQac0_dVd;
+                    Cgb = Cgb1 + dQsub0_dVb + dQac0_dVb;
+                    Cge = Cge1 + dQsub0_dVe + dQac0_dVe;
+
+                   /* LFW_FD  commentary only; next 5 lines */
+/*           Use these with correct definition of qgate above   */
+/*                  Cgg = Cgg1 + dQsub0_dVg + dQac0_dVg - Cbg1; */
+/*                  Cgd = Cgd1 + dQsub0_dVd + dQac0_dVd - Cbd1; */
+/*                  Cgb = Cgb1 + dQsub0_dVb + dQac0_dVb - Cbb1; */
+/*                  Cge = Cge1 + dQsub0_dVe + dQac0_dVe - Cbe1; */
+
                     if (selfheat)
                       /*fix expression below Wagner */
                       /*CgT = (Cgg1 + dQsub0_dVg) * dVgsteff_dT
@@ -6979,12 +7743,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         CgT = dqgate_dT;
                     else  CgT = 0.0;
 
-                    Cbg = (Cbg1 - dQsub0_dVg) * dVgsteff_dVg
-                        - dQac0_dVrg - dQsub0_dVrg;
-                    Cbd = (Cbg1 - dQsub0_dVg) * dVgsteff_dVd + Cbd1
-                        - dQac0_dVd - dQsub0_dVd;
-                    Cbb = (Cbg1 - dQsub0_dVg) * dVgsteff_dVb - dQe1_dVb
-                        + (Cbb1 - dQsub0_dVb - dQac0_dVb) * dVbseff_dVb;
+                   /* LFW_FD  fix/add next 4 lines */
+                    Cbg = Cbg1 - dQac0_dVg - dQsub0_dVg;
+                    Cbd = Cbd1 - dQac0_dVd - dQsub0_dVd;
+                    Cbb = Cbb1 - dQac0_dVb - dQsub0_dVb - Ce1b;
+                    Cbe = Cbe1 - dQac0_dVe - dQsub0_dVe - Ce1e;
+
                     if (selfheat)
                       /*fix expression below Wagner */
                       /*CbT = (Cbg1 - dQsub0_dVg) * dVgsteff_dT
@@ -6994,46 +7758,34 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     /* v4.1 */
                     if ((here->B4SOIsoiMod != 2) &&                             /* Bug fix #10 Jun 09 'opposite type Q/C evaluated only if bodymod=1' */
                             (here->B4SOIbodyMod != 0) && here->B4SOIagbcp2 >0) {
-                        Csg += Csg12 * dVgsteff2_dVg;
-                        Csd += Csd12 + Csg12 * dVgsteff2_dVd;
-                        Csb += Csg12 * dVgsteff2_dVb + Csb12 * dVbseff_dVb;
-                     /* commented out next "if" Wagner */
-                     /* if (selfheat) CsT += Csg12 * dVgsteff2_dT; */
+                        /* LFW_FD fixed next 12 lines */
+                        Csg += Csg12;
+                        Csd += Csd12;
+                        Csb += Csb12;
+                        Cse += Cse12;
 
-                        Cgg += (Cgg12 + dQsub02_dVg) * dVgsteff2_dVg
-                            + dQac02_dVrg + dQsub02_dVrg;
-                        Cgd += (Cgg12 + dQsub02_dVg) * dVgsteff2_dVd + Cgd12
-                            + dQac02_dVd + dQsub02_dVd;
-                        Cgb += (Cgg12 + dQsub02_dVg) * dVgsteff2_dVb
-                            + (Cgb12 + dQsub02_dVb + dQac02_dVb) * dVbseff_dVb;
-                     /* commented out next "if" Wagner */
-                     /* if (selfheat)
-                            CgT += (Cgg12 + dQsub02_dVg) * dVgsteff2_dT
-                                + dQac02_dT + dQsub02_dT; */
+                        Cgg += Cgg12 + dQsub02_dVg + dQac02_dVg;
+                        Cgd += Cgd12 + dQsub02_dVd + dQac02_dVd;
+                        Cgb += Cgb12 + dQsub02_dVb + dQac02_dVb;
+                        Cge += Cge12 + dQsub02_dVe + dQac02_dVe;
 
-                        Cbg += (Cbg12 - dQsub02_dVg) * dVgsteff2_dVg
-                            - dQac02_dVrg - dQsub02_dVrg;
-                        Cbd += (Cbg12 - dQsub02_dVg) * dVgsteff2_dVd + Cbd12
-                            - dQac02_dVd - dQsub02_dVd;
-                        Cbb += (Cbg12 - dQsub02_dVg) * dVgsteff2_dVb
-                            + (Cbb12 - dQsub02_dVb - dQac02_dVb) * dVbseff_dVb;
-                     /* commented out next "if" Wagner */
-                     /* if (selfheat)
-                            CbT += (Cbg12 - dQsub02_dVg) * dVgsteff2_dT
-                                - dQac02_dT - dQsub02_dT; */
+                        Cbg += Cbg12 - dQac02_dVg - dQsub02_dVg;
+                        Cbd += Cbd12 - dQac02_dVd - dQsub02_dVd;
+                        Cbb += Cbb12 - dQac02_dVb - dQsub02_dVb;
+                        Cbe += Cbe12 - dQac02_dVe - dQsub02_dVe;
                     }
                     /* end v4.1 */
 
                     here->B4SOIcggb = Cgg ;
-                    here->B4SOIcgsb = - (Cgg  + Cgd  + Cgb);
+                    here->B4SOIcgsb = - (Cgg  + Cgd  + Cgb + Cge);   /* LFW_FD fixed line */
                     here->B4SOIcgdb = Cgd;
+                    here->B4SOIcgeb = Cge;                           /* LFW_FD new line */
                     here->B4SOIcgT = CgT;
 
                     here->B4SOIcbgb = Cbg;
-                    here->B4SOIcbsb = -(Cbg  + Cbd  + Cbb)
-                        + Ce1e;
+                    here->B4SOIcbsb = -(Cbg  + Cbd  + Cbb + Cbe); /* LFW_FD fixed line */
                     here->B4SOIcbdb = Cbd;
-                    here->B4SOIcbeb = - Ce1e ;
+                    here->B4SOIcbeb = Cbe;                        /* LFW_FD fixed line */
                     here->B4SOIcbT = CbT;
 
                     here->B4SOIceeb = Ce1e ;
@@ -7041,17 +7793,18 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                     here->B4SOIcdgb = -(Cgg + Cbg + Csg);
                     here->B4SOIcddb = -(Cgd + Cbd + Csd);
-                    here->B4SOIcdeb = 0;
+                    here->B4SOIcdeb = -(Cge + Cse + Cbe) - Ce1e;   /* LFW_FD fixed line */
                     here->B4SOIcdT = -(CgT + CbT + CsT) - dQe1_dT;
-                    here->B4SOIcdsb = (Cgg + Cgd + Cgb
-                            + Cbg + Cbd + Cbb
-                            + Csg + Csd + Csb) + Ce1b;
+                    here->B4SOIcdsb = Cgg + Cgd + Cgb + Cge        /* LFW_FD fixed expression */
+                                    + Cbg + Cbd + Cbb + Cbe + Ce1e
+                                    + Csg + Csd + Csb + Cse + Ce1b;
+
                 } /* End of if capMod == 2 */
 
                 else if (model->B4SOIcapMod == 3)
                 {
 
-                    dVgsteff_dVb /= dVbseff_dVb;
+                 /* dVgsteff_dVb /= dVbseff_dVb;   LFW_FD comment out line */
                     if(model->B4SOImtrlMod == 0)
                         Cox = 3.453133e-11 / model->B4SOItoxp;
                     else
@@ -7063,7 +7816,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                     /* v4.1 */
                     if (here->B4SOIagbcp2 > 0) {
-                        dVgsteff2_dVb /= dVbseff_dVb;
+                     /* dVgsteff2_dVb /= dVbseff_dVb;  LFW_FD comment out line */
                         CoxWL2 *= model->B4SOItox /
                             model->B4SOItoxp;
                         CoxWLb2 *= model->B4SOItox/
@@ -7072,13 +7825,21 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     /* end v4.1 */
 
                     /* v3.1 */
-                    dDeltaPhi2_dT = 0.0;          /* new line Wagner */
+                   /* LFW_FD flexilint inits next 7 lines */
+                    Vfbzb = pParam->B4SOIvfbzb + pParam->B4SOIdelvt;
+                    dVfbzb_dT = 0.0;
+                    Vfbzb2 = dVfbzb2_dT = 0.0;
+                    Tcen2 = dTcen2_dVg = dTcen2_dVd = dTcen2_dVb = dTcen2_dVe = dTcen2_dT = 0.0;
+                    Coxeff2 = dCoxeff2_dVg = dCoxeff2_dVd = dCoxeff2_dVb = dCoxeff2_dVe = dCoxeff2_dT = 0.0;
+                    CoxWLcenb2= dCoxWLcenb2_dT= 0.0;
+                    dDeltaPhi2_dT = 0.0;
                     if (here->B4SOIsoiMod == 2) /* v3.2 */ /* ideal FD */
                     {
-                        Qac0 = dQac0_dVg = dQac0_dVb = dQac0_dT = 0.0;
-                        dQac02_dVg = dQac02_dVb = dQac02_dT = 0.0;
-                        Qsub0 = dQsub0_dVg = dQsub0_dVd = dQsub0_dVb = dQsub0_dT = 0.0;
-                        dQsub02_dVg = dQsub02_dVd = dQsub02_dVb = dQsub02_dT = 0.0;
+                       /* LFW_FD enhance next 4 lines */
+                        Qac0 = dQac0_dVg = dQac0_dVb = dQac0_dVd = dQac0_dVe = dQac0_dT = 0.0;
+                        dQac02_dVg = dQac02_dVb = dQac02_dVd = dQac02_dVe = dQac02_dT = 0.0;
+                        Qsub0 = dQsub0_dVg = dQsub0_dVd = dQsub0_dVb = dQsub0_dVe = dQsub0_dT = 0.0;
+                        dQsub02_dVg = dQsub02_dVd = dQsub02_dVb = dQsub02_dVe = dQsub02_dT = 0.0;
                         Vfbzb = dVfbzb_dT = 0; /* v4.2 bug fix # 20 */
                     }
                     else /* soiMod = 0 or 1 */
@@ -7099,7 +7860,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         if (Vfbzb <= 0.0)
                         {   T0 = sqrt(V3 * V3 - 4.0 * DELTA_3 * Vfbzb);
                             T2 = -DELTA_3 / T0;
-                            dTL0_dT = (V3 * dTL3_dT - 2.0 * DELTA_3 * dVfbzb_dT) / T0; /* new line Wagner */
+                         /* dTL0_dT = (V3 * dTL3_dT - 2.0 * DELTA_3 * dVfbzb_dT) / T0;  LFW_FD delete line */
                         }
                         else
                         {   T0 = sqrt(V3 * V3 + 4.0 * DELTA_3 * Vfbzb);
@@ -7108,8 +7869,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                         T1 = 0.5 * (1.0 + V3 / T0);
                         Vfbeff = Vfbzb - 0.5 * (V3 + T0);
-                        dVfbeff_dVg = T1 * dVgs_eff_dVg;
-                        dVfbeff_dVb = -T1;
+                       /* LFW_FD fix/add next 4 lines */
+                        dVfbeff_dVg = T1 * (dVgs_eff_dVg - dVbseff_dVg);
+                        dVfbeff_dVd = T1 * ( - dVbseff_dVd);
+                        dVfbeff_dVb = T1 * ( - dVbseff_dVb);
+                        dVfbeff_dVe = T1 * ( - dVbseff_dVe);
                       /*fix expression below Wagner */
                       /*if (selfheat) dVfbeff_dT = (1.0 - T1 - T2) * dVfbzb_dT;
                                                  - T1*dVbseff_dT;  */
@@ -7133,8 +7897,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             }
                             T1 = 0.5 * (1.0 + V3 / T0);
                             Vfbeff2 = Vfbzb2 - 0.5 * (V3 + T0);
-                            dVfbeff2_dVg = T1 * dVgs_eff2_dVg;
-                            dVfbeff2_dVb = -T1;
+                          /* LFW_FD fix/add next 4 lines */
+                            dVfbeff2_dVg = T1 * (dVgs_eff2_dVg - dVbseff_dVg);
+                            dVfbeff2_dVd = T1 * ( - dVbseff_dVd);
+                            dVfbeff2_dVb = T1 * ( - dVbseff_dVb);
+                            dVfbeff2_dVe = T1 * ( - dVbseff_dVe);
                           /*fix expression below Wagner */
                           /*if (selfheat) dVfbeff2_dT = (1.0 - T1 - T2) * dVfbzb2_dT;*/
                             if (selfheat) dVfbeff2_dT = (1.0 - T1 - T2) * dVfbzb2_dT
@@ -7144,15 +7911,21 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         /* end v4.1 */
 
                         T0 = (Vgs_eff - Vbseff - Vfbzb) / Tox;
-                        dT0_dVg = dVgs_eff_dVg / Tox;
-                        dT0_dVb = -1.0 / Tox;
+                       /* LFW_FD fix/add next 4 lines */
+                        dT0_dVg = (dVgs_eff_dVg - dVbseff_dVg) /Tox;
+                        dT0_dVd = - dVbseff_dVd /Tox;
+                        dT0_dVb = - dVbseff_dVb /Tox;
+                        dT0_dVe = - dVbseff_dVe /Tox;
 
                         tmp = T0 * pParam->B4SOIacde;
                         if ((-EXPL_THRESHOLD < tmp) && (tmp < EXPL_THRESHOLD))
                         {   Tcen = pParam->B4SOIldeb * exp(tmp);
-                            dTcen_dVg = pParam->B4SOIacde * Tcen;
-                            dTcen_dVb = dTcen_dVg * dT0_dVb;
-                            dTcen_dVg *= dT0_dVg;
+                           /* LFW_FD fix/add next 5 lines */
+                            TL1 = pParam->B4SOIacde * Tcen;
+                            dTcen_dVg = TL1 * dT0_dVg;
+                            dTcen_dVd = TL1 * dT0_dVd;
+                            dTcen_dVb = TL1 * dT0_dVb;
+                            dTcen_dVe = TL1 * dT0_dVe;
                             if (selfheat)
                               /* fix below expression Wagner */
                               /*dTcen_dT = -Tcen * pParam->B4SOIacde * dVfbzb_dT / Tox; */
@@ -7161,13 +7934,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         }
                         else if (tmp <= -EXPL_THRESHOLD)
                         {   Tcen = pParam->B4SOIldeb * MIN_EXPL;
-                            dTcen_dVg = dTcen_dVb = dTcen_dT = 0.0;
-                            dTcen_dT = 0;  /* new line Wagner */
+                            dTcen_dVg = dTcen_dVb = dTcen_dVd = dTcen_dVe = dTcen_dT = 0.0;    /* LFW_FD enhance line */
                         }
                         else
                         {   Tcen = pParam->B4SOIldeb * MAX_EXPL;
-                            dTcen_dVg = dTcen_dVb = dTcen_dT = 0.0;
-                            dTcen_dT = 0;  /* new line Wagner */
+                            dTcen_dVg = dTcen_dVb = dTcen_dVd = dTcen_dVe = dTcen_dT = 0.0;    /* LFW_FD enhance line */
                         }
 
                         /*LINK = 1.0e-3 * (toxe - model->B4SOIdtoxcv);  v2.2.3 */
@@ -7184,32 +7955,39 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                         dTcen_dVg *= T1;
                         dTcen_dVb *= T1;
+                        dTcen_dVd *= T1;   /* LFW_FD new line */
+                        dTcen_dVe *= T1;   /* LFW_FD new line */
                         if (selfheat)
                             dTcen_dT *= T1;
                         else dTcen_dT = 0;
                         /* v4.1 */
                         if (here->B4SOIagbcp2 > 0) {
                             T0 = (Vgs_eff2 - Vbseff - Vfbzb2) / Tox;
-                            dT0_dVg = dVgs_eff2_dVg / Tox;
-                            dT0_dVb = -1.0 / Tox;
+                           /* LFW_FD fix/add next 4 lines */
+                            dT0_dVg = (dVgs_eff2_dVg - dVbseff_dVg) / Tox;
+                            dT0_dVd = -dVbseff_dVd / Tox;
+                            dT0_dVb = -dVbseff_dVb / Tox;
+                            dT0_dVe = -dVbseff_dVe / Tox;
 
                             tmp = T0 * pParam->B4SOIacde;
                             if ((-EXPL_THRESHOLD < tmp) && (tmp < EXPL_THRESHOLD))
                             {   Tcen2 = pParam->B4SOIldeb * exp(tmp);
-                                dTcen2_dVg = pParam->B4SOIacde * Tcen2;
-                                dTcen2_dVb = dTcen2_dVg * dT0_dVb;
-                                dTcen2_dVg *= dT0_dVg;
+                              /* LFW_FD fix/add next 4 lines */
+                                dTcen2_dVg = pParam->B4SOIacde * Tcen2 * dT0_dVg;
+                                dTcen2_dVd = pParam->B4SOIacde * Tcen2 * dT0_dVd;
+                                dTcen2_dVb = pParam->B4SOIacde * Tcen2 * dT0_dVb;
+                                dTcen2_dVe = pParam->B4SOIacde * Tcen2 * dT0_dVe;
                                 if (selfheat)
                                     dTcen2_dT = -Tcen2 * pParam->B4SOIacde * dVfbzb2_dT / Tox;
                                 else dTcen2_dT = 0;
                             }
                             else if (tmp <= -EXPL_THRESHOLD)
                             {   Tcen2 = pParam->B4SOIldeb * MIN_EXPL;
-                                dTcen2_dVg = dTcen2_dVb = dTcen2_dT = 0.0;
+                                dTcen2_dVg = dTcen2_dVd = dTcen2_dVb = dTcen2_dVe = dTcen2_dT = 0.0;  /* LFW_FD enhance line */
                             }
                             else
                             {   Tcen2 = pParam->B4SOIldeb * MAX_EXPL;
-                                dTcen2_dVg = dTcen2_dVb = dTcen2_dT = 0.0;
+                                dTcen2_dVg = dTcen2_dVd = dTcen2_dVb = dTcen2_dVe = dTcen2_dT = 0.0;  /* LFW_FD enhance line */
                             }
 
                             V3 = pParam->B4SOIldeb - Tcen2 - LINK;
@@ -7223,6 +8001,8 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             }
                             dTcen2_dVg *= T1;
                             dTcen2_dVb *= T1;
+                            dTcen2_dVd *= T1;    /* LFW_FD new line */
+                            dTcen2_dVe *= T1;    /* LFW_FD new line */
                             if (selfheat)
                                 dTcen2_dT *= T1;
                             else dTcen2_dT = 0;
@@ -7233,9 +8013,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         T2 = Cox / (Cox + Ccen);
                         Coxeff = T2 * Ccen;
                         T3 = -Ccen / Tcen;
-                        dCoxeff_dVg = T2 * T2 * T3;
-                        dCoxeff_dVb = dCoxeff_dVg * dTcen_dVb;
-                        dCoxeff_dVg *= dTcen_dVg;
+                       /* LFW_FD fix/add next 5 lines */
+                        TL1 = T2 * T2 * T3;
+                        dCoxeff_dVg = TL1 * dTcen_dVg;
+                        dCoxeff_dVd = TL1 * dTcen_dVd;
+                        dCoxeff_dVb = TL1 * dTcen_dVb;
+                        dCoxeff_dVe = TL1 * dTcen_dVe;
                         if (selfheat)
                           /*fix expression below Wagner */
                           /*dCoxeff_dT = T3 * dTcen_dT * (T2 - Coxeff / (Cox + Ccen));*/
@@ -7249,9 +8032,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             T2 = Cox / (Cox + Ccen2);
                             Coxeff2 = T2 * Ccen2;
                             T3 = -Ccen2 / Tcen2;
-                            dCoxeff2_dVg = T2 * T2 * T3;
-                            dCoxeff2_dVb = dCoxeff2_dVg * dTcen2_dVb;
-                            dCoxeff2_dVg *= dTcen2_dVg;
+                          /* LFW_FD fix/add next 5 lines */
+                            TL1 = T2 * T2 * T3;
+                            dCoxeff2_dVg = TL1 * dTcen2_dVg;
+                            dCoxeff2_dVd = TL1 * dTcen2_dVd;
+                            dCoxeff2_dVb = TL1 * dTcen2_dVb;
+                            dCoxeff2_dVe = TL1 * dTcen2_dVe;
                             if (selfheat)
                               /*fix expression below Wagner */
                               /*dCoxeff2_dT = T3 * dTcen2_dT * (T2 - Coxeff2 / (Cox + Ccen2));*/
@@ -7273,10 +8059,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         /* end v4.1 */
                         Qac0 = CoxWLcenb * (Vfbeff - Vfbzb);
                         QovCox = Qac0 / Coxeff;
-                        dQac0_dVg = CoxWLcenb * dVfbeff_dVg
-                            + QovCox * dCoxeff_dVg;
-                        dQac0_dVb = CoxWLcenb * dVfbeff_dVb
-                            + QovCox * dCoxeff_dVb;
+                       /* LFW_FD fix/add next 4 lines */
+                        dQac0_dVg = CoxWLcenb * dVfbeff_dVg + QovCox * dCoxeff_dVg;
+                        dQac0_dVb = CoxWLcenb * dVfbeff_dVb + QovCox * dCoxeff_dVb;
+                        dQac0_dVd = CoxWLcenb * dVfbeff_dVd + QovCox * dCoxeff_dVd;
+                        dQac0_dVe = CoxWLcenb * dVfbeff_dVe + QovCox * dCoxeff_dVe;
                         if (selfheat) dQac0_dT = CoxWLcenb * (dVfbeff_dT - dVfbzb_dT)
                             + dCoxWLcenb_dT * (Vfbeff - Vfbzb);
                         else  dQac0_dT = 0.0;
@@ -7285,10 +8072,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                                 (here->B4SOIbodyMod != 0) && here->B4SOIagbcp2 > 0) {
                             Qac02 = CoxWLcenb2 * (Vfbeff2 - Vfbzb2);
                             QovCox2 = Qac02 / Coxeff2;
-                            dQac02_dVg = CoxWLcenb2 * dVfbeff2_dVg
-                                + QovCox2 * dCoxeff2_dVg;
-                            dQac02_dVb = CoxWLcenb2 * dVfbeff2_dVb
-                                + QovCox2 * dCoxeff2_dVb;
+                           /* LFW_FD fix/add next 4 lines */
+                            dQac02_dVg = CoxWLcenb2 * dVfbeff2_dVg + QovCox2 * dCoxeff2_dVg;
+                            dQac02_dVd = CoxWLcenb2 * dVfbeff2_dVd + QovCox2 * dCoxeff2_dVd;
+                            dQac02_dVb = CoxWLcenb2 * dVfbeff2_dVb + QovCox2 * dCoxeff2_dVb;
+                            dQac02_dVe = CoxWLcenb2 * dVfbeff2_dVe + QovCox2 * dCoxeff2_dVe;
                             if (selfheat) dQac02_dT = CoxWLcenb2 * (dVfbeff2_dT - dVfbzb2_dT)
                                 + dCoxWLcenb2_dT * (Vfbeff2 - Vfbzb2);
                             else  dQac02_dT = 0.0;
@@ -7315,11 +8103,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                         Qsub0 = CoxWLcenb * pParam->B4SOIk1ox * (T1 - T0);
                         QovCox = Qsub0 / Coxeff;
-                        dQsub0_dVg = T2 * (dVgs_eff_dVg - dVfbeff_dVg - dVgsteff_dVg)
-                            + QovCox * dCoxeff_dVg;
-                        dQsub0_dVd = -T2 * dVgsteff_dVd;
-                        dQsub0_dVb = -T2 * (dVfbeff_dVb + 1 + dVgsteff_dVb)
-                            + QovCox * dCoxeff_dVb;
+                       /* LFW_FD fix/add next 4 lines */
+                        dQsub0_dVg = T2 * (dVgs_eff_dVg - dVfbeff_dVg - dVbseff_dVg - dVgsteff_dVg) + QovCox * dCoxeff_dVg;
+                        dQsub0_dVd = -T2 * (dVfbeff_dVd + dVbseff_dVd + dVgsteff_dVd) + QovCox * dCoxeff_dVd;
+                        dQsub0_dVb = -T2 * (dVfbeff_dVb + dVbseff_dVb + dVgsteff_dVb) + QovCox * dCoxeff_dVb;
+                        dQsub0_dVe = -T2 * (dVfbeff_dVe + dVbseff_dVe + dVgsteff_dVe) + QovCox * dCoxeff_dVe;
+
                         if (selfheat)
                           /*fix 1st line of expression below Wagner */
                           /*dQsub0_dT = -T2 * (dVfbeff_dT + dVgsteff_dT)*/
@@ -7346,11 +8135,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                             Qsub02 = CoxWLcenb2 * pParam->B4SOIk1ox * (T1 - T0);
                             QovCox2 = Qsub02 / Coxeff2;
-                            dQsub02_dVg = T2 * (dVgs_eff2_dVg - dVfbeff2_dVg - dVgsteff2_dVg)
-                                + QovCox2 * dCoxeff2_dVg;
-                            dQsub02_dVd = -T2 * dVgsteff2_dVd;
-                            dQsub02_dVb = -T2 * (dVfbeff2_dVb + 1 + dVgsteff2_dVb)
-                                + QovCox2 * dCoxeff2_dVb;
+                           /* LFW_FD fix/add next 4 lines */
+                            dQsub02_dVg = T2 * (dVgs_eff2_dVg - dVfbeff2_dVg - dVbseff_dVg - dVgsteff2_dVg) + QovCox2 * dCoxeff2_dVg;
+                            dQsub02_dVd = -T2 * (dVfbeff2_dVd + dVbseff_dVd + dVgsteff2_dVd) + QovCox2 * dCoxeff2_dVd;
+                            dQsub02_dVb = -T2 * (dVfbeff2_dVb + dVbseff_dVb + dVgsteff2_dVb) + QovCox2 * dCoxeff2_dVb;
+                            dQsub02_dVe = -T2 * (dVfbeff2_dVe + dVbseff_dVe + dVgsteff2_dVe) + QovCox2 * dCoxeff2_dVe;
+
                             if (selfheat)
                                 dQsub02_dT = -T2 * (dVfbeff2_dT + dVgsteff2_dT)
                                     + dCoxWLcenb2_dT * pParam->B4SOIk1ox * (T1 - T0);
@@ -7378,10 +8168,13 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     T1 = 2.0 * T0 + Vgsteff;
 
                     DeltaPhi = Vtm * log(1.0 + T1 * Vgsteff / Denomi);
-                    dDeltaPhi_dVg = 2.0 * Vtm * (T1 -T0) / (Denomi + T1 * Vgsteff);
-                    dDeltaPhi_dVd = dDeltaPhi_dVg * dVgsteff_dVd;
-                    dDeltaPhi_dVb = dDeltaPhi_dVg * dVgsteff_dVb;
-                    DeltaPhi2= dDeltaPhi2_dVg= 0.0;   /* new line Wagner */
+                   /* LFW_FD fix/add next 5 lines */
+                    dDeltaPhi_dVg = 2.0 * Vtm * (T1 -T0) / (Denomi + T1 * Vgsteff) * dVgsteff_dVg;
+                    dDeltaPhi_dVd = 2.0 * Vtm * (T1 -T0) / (Denomi + T1 * Vgsteff) * dVgsteff_dVd;
+                    dDeltaPhi_dVb = 2.0 * Vtm * (T1 -T0) / (Denomi + T1 * Vgsteff) * dVgsteff_dVb;
+                    dDeltaPhi_dVe = 2.0 * Vtm * (T1 -T0) / (Denomi + T1 * Vgsteff) * dVgsteff_dVe;
+
+                    DeltaPhi2 = dDeltaPhi2_dVg = dDeltaPhi2_dVd = dDeltaPhi2_dVb = dDeltaPhi2_dVe = 0.0;   /* flexilint */
 
                     /* 7 new lines Wagner */
                     if (selfheat) {
@@ -7396,9 +8189,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     if (here->B4SOIagbcp2 > 0) {
                         T1 = 2.0 * T0 + Vgsteff2;
                         DeltaPhi2 = Vtm * log(1.0 + T1 * Vgsteff2 / Denomi);
-                        dDeltaPhi2_dVg = 2.0 * Vtm * (T1 -T0) / (Denomi + T1 * Vgsteff2);
-                        dDeltaPhi2_dVd = dDeltaPhi2_dVg * dVgsteff2_dVd;
-                        dDeltaPhi2_dVb = dDeltaPhi2_dVg * dVgsteff2_dVb;
+                       /* LFW_FD fix/add next 4 lines */
+                        dDeltaPhi2_dVg = 2.0 * Vtm * (T1 -T0) / (Denomi + T1 * Vgsteff2) * dVgsteff2_dVg;
+                        dDeltaPhi2_dVd = 2.0 * Vtm * (T1 -T0) / (Denomi + T1 * Vgsteff2) * dVgsteff2_dVd;
+                        dDeltaPhi2_dVb = 2.0 * Vtm * (T1 -T0) / (Denomi + T1 * Vgsteff2) * dVgsteff2_dVb;
+                        dDeltaPhi2_dVe = 2.0 * Vtm * (T1 -T0) / (Denomi + T1 * Vgsteff2) * dVgsteff2_dVe;
 
                         /* 7 new lines Wagner */
                         if (selfheat) {
@@ -7425,10 +8220,13 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     T1 = 1.0 + tmp;
                     T2 = 0.7 * tmp / (T0 * Tox);
                     Tcen = 1.9e-9 / T1;
-                    dTcen_dVg = -Tcen * T2 / T1;
-                    dTcen_dVd = dTcen_dVg * (T5 * 4.0 * dVth_dVd + dVgsteff_dVd);
-                    dTcen_dVb = dTcen_dVg * (T5 * 4.0 * dVth_dVb + dVgsteff_dVb);
-                    dTcen_dVg *= dVgsteff_dVg;
+                   /* LFW_FD fix/add next 5 lines */
+                    TL1 = dTcen_dVg = -Tcen * T2 / T1;
+                    dTcen_dVg = TL1 * (T5 * 4.0 * dVth_dVg + dVgsteff_dVg);
+                    dTcen_dVd = TL1 * (T5 * 4.0 * dVth_dVd + dVgsteff_dVd);
+                    dTcen_dVb = TL1 * (T5 * 4.0 * dVth_dVb + dVgsteff_dVb);
+                    dTcen_dVe = TL1 * (T5 * 4.0 * dVth_dVe + dVgsteff_dVe);
+
                     if (selfheat)
                       /*fix below expression Wagner */
                       /*dTcen_dT = -Tcen * T2 / T1
@@ -7442,12 +8240,16 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     T0 = Cox / (Cox + Ccen);
                     Coxeff = T0 * Ccen;
                     T1 = -Ccen / Tcen;
-                    dCoxeff_dVg = T0 * T0 * T1;
-                    dCoxeff_dVd = dCoxeff_dVg * dTcen_dVd;
-                    dCoxeff_dVb = dCoxeff_dVg * dTcen_dVb;
-                    dCoxeff_dVg *= dTcen_dVg;
+                   /* LFW_FD fix/add next 5 lines */
+                    TL1 = dCoxeff_dVg = T0 * T0 * T1;
+                    dCoxeff_dVg = TL1 * dTcen_dVg;
+                    dCoxeff_dVd = TL1 * dTcen_dVd;
+                    dCoxeff_dVb = TL1 * dTcen_dVb;
+                    dCoxeff_dVe = TL1 * dTcen_dVe;
+
                     if (selfheat)
-                        dCoxeff_dT = T1 * dTcen_dT * (T0 - Coxeff / (Cox + Ccen));
+                      /*dCoxeff_dT = T1 * dTcen_dT * (T0 - Coxeff / (Cox + Ccen));*/
+                        dCoxeff_dT = TL1 * dTcen_dT;     /* LFW_FD fix line */
                     else dCoxeff_dT = 0;
                     CoxWLcen = CoxWL * Coxeff / Cox;
                     CoxWLcenb = CoxWLb * Coxeff / Cox;
@@ -7456,6 +8258,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                        dCoxWLcenb_dT = CoxWLb * dCoxeff_dT / Cox;
                     else dCoxWLcenb_dT = 0;
                     /* v4.1 */
+                    CoxWLcen2 = 0.0;    /* flexilint */
                     if ((here->B4SOIsoiMod != 2) &&                     /* Bug fix #10 Jun 09 'opposite type Q/C evaluated only if bodymod=1' */
                             (here->B4SOIbodyMod != 0) && here->B4SOIagbcp2 > 0) {
                      /* T3 = 4.0 * (Vth + 1.12 - Vfbzb2 - phi);  */
@@ -7469,10 +8272,13 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         T1 = 1.0 + tmp;
                         T2 = 0.7 * tmp / (T0 * Tox);
                         Tcen2 = 1.9e-9 / T1;
-                        dTcen2_dVg = -Tcen2 * T2 / T1;
-                        dTcen2_dVd = dTcen2_dVg * (T5 * 4.0 * dVth_dVd + dVgsteff2_dVd);
-                        dTcen2_dVb = dTcen2_dVg * (T5 * 4.0 * dVth_dVb + dVgsteff2_dVb);
-                        dTcen2_dVg *= dVgsteff2_dVg;
+                       /* LFW_FD fix/add next 5 lines */
+                        TL1 = dTcen2_dVg = -Tcen2 * T2 / T1;
+                        dTcen2_dVg = TL1 * (T5 * 4.0 * dVth_dVg + dVgsteff2_dVg);
+                        dTcen2_dVd = TL1 * (T5 * 4.0 * dVth_dVd + dVgsteff2_dVd);
+                        dTcen2_dVb = TL1 * (T5 * 4.0 * dVth_dVb + dVgsteff2_dVb);
+                        dTcen2_dVe = TL1 * (T5 * 4.0 * dVth_dVe + dVgsteff2_dVe);
+
                         if (selfheat)
                           /*fix below expression Wagner */
                           /*dTcen2_dT = -Tcen2 * T2 / T1
@@ -7485,10 +8291,13 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         T0 = Cox / (Cox + Ccen2);
                         Coxeff2 = T0 * Ccen2;
                         T1 = -Ccen2 / Tcen2;
-                        dCoxeff2_dVg = T0 * T0 * T1;
-                        dCoxeff2_dVd = dCoxeff2_dVg * dTcen2_dVd;
-                        dCoxeff2_dVb = dCoxeff2_dVg * dTcen2_dVb;
-                        dCoxeff2_dVg *= dTcen2_dVg;
+                       /* LFW_FD fix/add next 5 lines */
+                        TL1 = dCoxeff2_dVg = T0 * T0 * T1;
+                        dCoxeff2_dVg = TL1 * dTcen2_dVg;
+                        dCoxeff2_dVd = TL1 * dTcen2_dVd;
+                        dCoxeff2_dVb = TL1 * dTcen2_dVb;
+                        dCoxeff2_dVe = TL1 * dTcen2_dVe;
+
                         if (selfheat)
                             dCoxeff2_dT = T1 * dTcen2_dT * (T0 - Coxeff2 / (Cox + Ccen2));
                         else dCoxeff2_dT = 0;
@@ -7502,13 +8311,23 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     /* end v4.1 */
 
                     AbulkCV = Abulk0 * pParam->B4SOIabulkCVfactor;
+                  /* LFW_FD fix/add next 4 lines */
+                    dAbulkCV_dVg = pParam->B4SOIabulkCVfactor * dAbulk0_dVg;
                     dAbulkCV_dVb = pParam->B4SOIabulkCVfactor * dAbulk0_dVb;
+                    dAbulkCV_dVd = pParam->B4SOIabulkCVfactor * dAbulk0_dVd;
+                    dAbulkCV_dVe = pParam->B4SOIabulkCVfactor * dAbulk0_dVe;
                     /* 3 new lines Wagner */
                     if (selfheat)
                         dAbulkCV_dT = dAbulk0_dT * pParam->B4SOIabulkCVfactor;
                     else dAbulkCV_dT = 0;
 
                     VdsatCV = (Vgsteff - DeltaPhi) / AbulkCV;
+                  /* LFW_FD add next 4 lines */
+                    dVdsatCV_dVg = (dVgsteff_dVg - dDeltaPhi_dVg - VdsatCV * dAbulkCV_dVg) / AbulkCV;
+                    dVdsatCV_dVd = (dVgsteff_dVd - dDeltaPhi_dVd - VdsatCV * dAbulkCV_dVd) / AbulkCV;
+                    dVdsatCV_dVb = (dVgsteff_dVb - dDeltaPhi_dVb - VdsatCV * dAbulkCV_dVb) / AbulkCV;
+                    dVdsatCV_dVe = (dVgsteff_dVe - dDeltaPhi_dVe - VdsatCV * dAbulkCV_dVe) / AbulkCV;
+
                     V4 = VdsatCV - Vds - DELTA_4;
                     T0 = sqrt(V4 * V4 + 4.0 * DELTA_4 * VdsatCV);
                     VdseffCV = VdsatCV - 0.5 * (V4 + T0);
@@ -7516,9 +8335,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     T2 = DELTA_4 / T0;
                     T3 = (1.0 - T1 - T2) / AbulkCV;
                     T4 = T3 * ( 1.0 - dDeltaPhi_dVg);
-                    dVdseffCV_dVg = T4;
-                    dVdseffCV_dVd = T1;
-                    dVdseffCV_dVb = -T3 * VdsatCV * dAbulkCV_dVb;
+                  /* LFW_FD fix/add next 4 lines */
+                    dVdseffCV_dVg = (1.0 - T1 - T2) * dVdsatCV_dVg;
+                    dVdseffCV_dVd = (1.0 - T1 - T2) * dVdsatCV_dVd + T1;
+                    dVdseffCV_dVb = (1.0 - T1 - T2) * dVdsatCV_dVb;
+                    dVdseffCV_dVe = (1.0 - T1 - T2) * dVdsatCV_dVe;
                     /* 10 new lines Wagner */
                     if (selfheat) {
                         dVdsatCV_dT = (dVgsteff_dT-dDeltaPhi_dT)/AbulkCV
@@ -7539,15 +8360,34 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     T5 = AbulkCV * (6.0 * T0 * (4.0 * T1 - T0) / (T2 * T2) - 0.5);
                     T6 = T5 * VdseffCV / AbulkCV;
 
+                  /* LFW_FD add next 16 lines */
+                    dT0_dVg = dAbulkCV_dVg * VdseffCV + AbulkCV * dVdseffCV_dVg;
+                    dT0_dVd = dAbulkCV_dVd * VdseffCV + AbulkCV * dVdseffCV_dVd;
+                    dT0_dVb = dAbulkCV_dVb * VdseffCV + AbulkCV * dVdseffCV_dVb;
+                    dT0_dVe = dAbulkCV_dVe * VdseffCV + AbulkCV * dVdseffCV_dVe;
+
+                    dT1_dVg = dVgsteff_dVg - dDeltaPhi_dVg;
+                    dT1_dVd = dVgsteff_dVd - dDeltaPhi_dVd;
+                    dT1_dVb = dVgsteff_dVb - dDeltaPhi_dVb;
+                    dT1_dVe = dVgsteff_dVe - dDeltaPhi_dVe;
+
+                    dT2_dVg = 12.0 * (dT1_dVg - 0.5 * dT0_dVg);
+                    dT2_dVd = 12.0 * (dT1_dVd - 0.5 * dT0_dVd);
+                    dT2_dVb = 12.0 * (dT1_dVb - 0.5 * dT0_dVb);
+                    dT2_dVe = 12.0 * (dT1_dVe - 0.5 * dT0_dVe);
+
+                    dT3_dVg = (dT0_dVg - T3 * dT2_dVg) / T2;
+                    dT3_dVd = (dT0_dVd - T3 * dT2_dVd) / T2;
+                    dT3_dVb = (dT0_dVb - T3 * dT2_dVb) / T2;
+                    dT3_dVe = (dT0_dVe - T3 * dT2_dVe) / T2;
+
                     qgate1 = qinv = qgate = qinoi = CoxWLcen * (T1 - T0 * (0.5 - T3)); /* enhanced line Wagner */
                     QovCox = qgate / Coxeff;
-                    Cgg1 = CoxWLcen * (T4 * (1.0 - dDeltaPhi_dVg)
-                            + T5 * dVdseffCV_dVg);
-                    Cgd1 = CoxWLcen * T5 * dVdseffCV_dVd + Cgg1
-                        * dVgsteff_dVd + QovCox * dCoxeff_dVd;
-                    Cgb1 = CoxWLcen * (T5 * dVdseffCV_dVb + T6 * dAbulkCV_dVb)
-                        + Cgg1 * dVgsteff_dVb + QovCox * dCoxeff_dVb;
-                    Cgg1 = Cgg1 * dVgsteff_dVg + QovCox * dCoxeff_dVg;
+                  /* LFW_FD fix/add next 4 lines */
+                    Cgg1 = CoxWLcen * (dT1_dVg - dT0_dVg * (0.5 - T3) + T0 * dT3_dVg) + QovCox * dCoxeff_dVg;
+                    Cgd1 = CoxWLcen * (dT1_dVd - dT0_dVd * (0.5 - T3) + T0 * dT3_dVd) + QovCox * dCoxeff_dVd;
+                    Cgb1 = CoxWLcen * (dT1_dVb - dT0_dVb * (0.5 - T3) + T0 * dT3_dVb) + QovCox * dCoxeff_dVb;
+                    Cge1 = CoxWLcen * (dT1_dVe - dT0_dVe * (0.5 - T3) + T0 * dT3_dVe) + QovCox * dCoxeff_dVe;
                     /* 10 new lines Wagner */
                     if (selfheat) {
                        dTL1_dT = AbulkCV * dVdseffCV_dT + dAbulkCV_dT * VdseffCV;
@@ -7560,10 +8400,19 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     }
                     else dqgate_dT = 0;
 
+                   /* LFW_FD 2 new lines per flexilint */
+                    T02 = T12 = T22 = T52 = 0.0;  /* flexilint */
+                    Cgg12 = Cgd12 = Cgb12 = Cge12 = 0.0;
                     /* v4.1 */
                     if ((here->B4SOIsoiMod != 2) &&                             /* Bug fix #10 Jun 09 'opposite type Q/C evaluated only if bodymod=1' */
                             (here->B4SOIbodyMod != 0) && here->B4SOIagbcp2 > 0) {
                         VdsatCV2 = (Vgsteff2 - DeltaPhi2) / AbulkCV;
+                       /* LFW_FD add next 4 lines */
+                        dVdsatCV2_dVg = (dVgsteff2_dVg - dDeltaPhi2_dVg - VdsatCV2 * dAbulkCV_dVg) / AbulkCV;
+                        dVdsatCV2_dVd = (dVgsteff2_dVd - dDeltaPhi2_dVd - VdsatCV2 * dAbulkCV_dVd) / AbulkCV;
+                        dVdsatCV2_dVb = (dVgsteff2_dVb - dDeltaPhi2_dVb - VdsatCV2 * dAbulkCV_dVb) / AbulkCV;
+                        dVdsatCV2_dVe = (dVgsteff2_dVe - dDeltaPhi2_dVe - VdsatCV2 * dAbulkCV_dVe) / AbulkCV;
+
                         V4 = VdsatCV2 - Vds - DELTA_4;
                         T02 = sqrt(V4 * V4 + 4.0 * DELTA_4 * VdsatCV2);
                         VdseffCV2 = VdsatCV2 - 0.5 * (V4 + T02);
@@ -7571,9 +8420,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         T22 = DELTA_4 / T02;
                         T3 = (1.0 - T12 - T22) / AbulkCV;
                         T4 = T3 * ( 1.0 - dDeltaPhi2_dVg);
-                        dVdseffCV2_dVg = T4;
-                        dVdseffCV2_dVd = T12;
-                        dVdseffCV2_dVb = -T3 * VdsatCV2 * dAbulkCV_dVb;
+                       /* LFW_FD fix/add next 4 lines */
+                        dVdseffCV2_dVg = (1.0 - T12 - T22) * dVdsatCV2_dVg;
+                        dVdseffCV2_dVd = (1.0 - T12 - T22) * dVdsatCV2_dVd + T12;
+                        dVdseffCV2_dVb = (1.0 - T12 - T22) * dVdsatCV2_dVb;
+                        dVdseffCV2_dVe = (1.0 - T12 - T22) * dVdsatCV2_dVe;
+
                         /* 10 new lines Wagner */
                         if (selfheat) {
                             dVdsatCV2_dT = (dVgsteff2_dT-dDeltaPhi2_dT)/AbulkCV
@@ -7593,17 +8445,37 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         T4 = 1.0 - 12.0 * T3 * T3;
                         T52 = AbulkCV * (6.0 * T02 * (4.0 * T12 - T02) / (T22 * T22) - 0.5);
                         T6 = T52 * VdseffCV2 / AbulkCV;
+                       /* LFW_FD add next 16 lines */
+                        dT02_dVg = dAbulkCV_dVg * VdseffCV2 + AbulkCV * dVdseffCV2_dVg;
+                        dT02_dVd = dAbulkCV_dVd * VdseffCV2 + AbulkCV * dVdseffCV2_dVd;
+                        dT02_dVb = dAbulkCV_dVb * VdseffCV2 + AbulkCV * dVdseffCV2_dVb;
+                        dT02_dVe = dAbulkCV_dVe * VdseffCV2 + AbulkCV * dVdseffCV2_dVe;
+
+                        dT12_dVg = dVgsteff2_dVg - dDeltaPhi2_dVg;
+                        dT12_dVd = dVgsteff2_dVd - dDeltaPhi2_dVd;
+                        dT12_dVb = dVgsteff2_dVb - dDeltaPhi2_dVb;
+                        dT12_dVe = dVgsteff2_dVe - dDeltaPhi2_dVe;
+
+                        dT22_dVg = 12.0 * (dT12_dVg - 0.5 * dT02_dVg);
+                        dT22_dVd = 12.0 * (dT12_dVd - 0.5 * dT02_dVd);
+                        dT22_dVb = 12.0 * (dT12_dVb - 0.5 * dT02_dVb);
+                        dT22_dVe = 12.0 * (dT12_dVe - 0.5 * dT02_dVe);
+
+                        dT3_dVg = (dT02_dVg - T3 * dT22_dVg) / T22;
+                        dT3_dVd = (dT02_dVd - T3 * dT22_dVd) / T22;
+                        dT3_dVb = (dT02_dVb - T3 * dT22_dVb) / T22;
+                        dT3_dVe = (dT02_dVe - T3 * dT22_dVe) / T22;
+
                         T7 = CoxWLcen2 * (T12 - T02 * (0.5 - T3));
                         qinv += T7;
                         qgate = qinoi = qinv;
                         QovCox2 = T7 / Coxeff2;
-                        Cgg12 = CoxWLcen2 * (T4 * (1.0 - dDeltaPhi2_dVg)
-                                + T52 * dVdseffCV2_dVg);
-                        Cgd12 = CoxWLcen2 * T52 * dVdseffCV2_dVd + Cgg12
-                            * dVgsteff2_dVd + QovCox2 * dCoxeff2_dVd;
-                        Cgb12 = CoxWLcen2 * (T52 * dVdseffCV2_dVb + T6 * dAbulkCV_dVb)
-                            + Cgg12 * dVgsteff2_dVb + QovCox2 * dCoxeff2_dVb;
-                        Cgg12 = Cgg12 * dVgsteff2_dVg + QovCox2 * dCoxeff2_dVg;
+                       /* LFW_FD fix/add next 4 lines */
+                        Cgg12 = CoxWLcen2 * (dT12_dVg - dT02_dVg * (0.5 - T3) + T02 * dT3_dVg) + QovCox2 * dCoxeff2_dVg;
+                        Cgd12 = CoxWLcen2 * (dT12_dVd - dT02_dVd * (0.5 - T3) + T02 * dT3_dVd) + QovCox2 * dCoxeff2_dVd;
+                        Cgb12 = CoxWLcen2 * (dT12_dVb - dT02_dVb * (0.5 - T3) + T02 * dT3_dVb) + QovCox2 * dCoxeff2_dVb;
+                        Cge12 = CoxWLcen2 * (dT12_dVe - dT02_dVe * (0.5 - T3) + T02 * dT3_dVe) + QovCox2 * dCoxeff2_dVe;
+
                         /* 11 new lines Wagner */
                         if (selfheat) {
                            dTL1_dT = AbulkCV * dVdseffCV2_dT + dAbulkCV_dT * VdseffCV2;
@@ -7622,10 +8494,12 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
 
                     /* v3.1 */
-                    dqbulk_dT = 0;       /* new line Wagner */
+                   /* LFW_FD 2 new lines - flexilint */
+                    Csg2 = Cbg12 = Cbd12 = Cbb12 = Cbe12 = 0;
+                    dqbulk_dT = 0;
                     if (here->B4SOIsoiMod == 2) /* v3.2 */ /* ideal FD */
                     {
-                        qbulk = Cbd1 = Cbb1 = Cbg1 = Cbg12 = Cbb12 = Cbd12 = 0;
+                        qbulk = Cbg1 = Cbd1 = Cbb1 = Cbe1 = dqbulk_dT = 0; /* LFW_FD enhance line */
                     }
                     else /* soiMod = 0 or 1 */
                     {
@@ -7638,12 +8512,24 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                         qbulk1 = qbulk = CoxWLcenb * T7 * (0.5 * VdseffCV - T0 * VdseffCV / T2); /* enhanced line Wagner */
                         QovCox = qbulk / Coxeff;
-                        Cbg1 = CoxWLcenb * (T10 + T11 * dVdseffCV_dVg);
-                        Cbd1 = CoxWLcenb * T11 * dVdseffCV_dVd + Cbg1
-                            * dVgsteff_dVd + QovCox * dCoxeff_dVd;
-                        Cbb1 = CoxWLcenb * (T11 * dVdseffCV_dVb + T12 * dAbulkCV_dVb)
-                            + Cbg1 * dVgsteff_dVb + QovCox * dCoxeff_dVb;
-                        Cbg1 = Cbg1 * dVgsteff_dVg + QovCox * dCoxeff_dVg;
+                       /* LFW_FD fix/add next 4 derivatives */
+                        Cbg1 =  CoxWLcenb * T7 * (0.5 - T0 / T2) * dVdseffCV_dVg
+                             - CoxWLcenb * T7 * VdseffCV * ((dT0_dVg -T0 * dT2_dVg / T2) /T2)
+                             - CoxWLcenb * VdseffCV * (0.5 - T0 / T2) * dAbulkCV_dVg
+                             + QovCox * dCoxeff_dVg;
+                        Cbb1 =  CoxWLcenb * T7 * (0.5 - T0 / T2) * dVdseffCV_dVb
+                             - CoxWLcenb * T7 * VdseffCV * ((dT0_dVb -T0 * dT2_dVb / T2) /T2)
+                             - CoxWLcenb * VdseffCV * (0.5 - T0 / T2) * dAbulkCV_dVb
+                             + QovCox * dCoxeff_dVb;
+                        Cbd1 =  CoxWLcenb * T7 * (0.5 - T0 / T2) * dVdseffCV_dVd
+                             - CoxWLcenb * T7 * VdseffCV * ((dT0_dVd -T0 * dT2_dVd / T2) /T2)
+                             - CoxWLcenb * VdseffCV * (0.5 - T0 / T2) * dAbulkCV_dVd
+                             + QovCox * dCoxeff_dVd;
+                        Cbe1 =  CoxWLcenb * T7 * (0.5 - T0 / T2) * dVdseffCV_dVe
+                             - CoxWLcenb * T7 * VdseffCV * ((dT0_dVe -T0 * dT2_dVe / T2) /T2)
+                             - CoxWLcenb * VdseffCV * (0.5 - T0 / T2) * dAbulkCV_dVe
+                             + QovCox * dCoxeff_dVe;
+
                         /* 12 new lines Wagner */
                         if (selfheat) {
                            dTL1_dT = AbulkCV * dVdseffCV_dT + dAbulkCV_dT * VdseffCV;
@@ -7668,12 +8554,24 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                             qbulk2 = CoxWLcenb2 * T7 * (0.5 * VdseffCV2 - T02 * VdseffCV2 / T22);
                             QovCox2 = qbulk2 / Coxeff2;
-                            Cbg12 = CoxWLcenb2 * (T10 + T11 * dVdseffCV2_dVg);
-                            Cbd12 = CoxWLcenb2 * T11 * dVdseffCV2_dVd + Cbg12
-                                * dVgsteff2_dVd + QovCox2 * dCoxeff2_dVd;
-                            Cbb12 = CoxWLcenb2 * (T11 * dVdseffCV2_dVb + T12 * dAbulkCV_dVb)
-                                + Cbg12 * dVgsteff2_dVb + QovCox2 * dCoxeff2_dVb;
-                            Cbg12 = Cbg12 * dVgsteff2_dVg + QovCox2 * dCoxeff2_dVg;
+                          /* LFW_FD fix/add next 4 derivatives */
+                            Cbg12 =  CoxWLcenb2 * T7 * (0.5 - T02 / T22) * dVdseffCV2_dVg
+                                  - CoxWLcenb2 * T7 * VdseffCV2 * ((dT02_dVg -T02 * dT22_dVg / T22) /T22)
+                                  - CoxWLcenb2 * VdseffCV2 * (0.5 - T02 / T22) * dAbulkCV_dVg
+                                  + QovCox2 * dCoxeff2_dVg;
+                            Cbb12 =  CoxWLcenb2 * T7 * (0.5 - T02 / T22) * dVdseffCV2_dVb
+                                  - CoxWLcenb2 * T7 * VdseffCV2 * ((dT02_dVb -T02 * dT22_dVb / T22) /T22)
+                                  - CoxWLcenb2 * VdseffCV2 * (0.5 - T02 / T22) * dAbulkCV_dVb
+                                  + QovCox2 * dCoxeff2_dVb;
+                            Cbd12 =  CoxWLcenb2 * T7 * (0.5 - T02 / T22) * dVdseffCV2_dVd
+                                  - CoxWLcenb2 * T7 * VdseffCV2 * ((dT02_dVd -T02 * dT22_dVd / T22) /T22)
+                                  - CoxWLcenb2 * VdseffCV2 * (0.5 - T02 / T22) * dAbulkCV_dVd
+                                  + QovCox2 * dCoxeff2_dVd;
+                            Cbe12 =  CoxWLcenb2 * T7 * (0.5 - T02 / T22) * dVdseffCV2_dVe
+                                  - CoxWLcenb2 * T7 * VdseffCV2 * ((dT02_dVe -T02 * dT22_dVe / T22) /T22)
+                                  - CoxWLcenb2 * VdseffCV2 * (0.5 - T02 / T22) * dAbulkCV_dVe
+                                  + QovCox2 * dCoxeff2_dVe;
+
                             /* 12 new lines Wagner */
                             if (selfheat) {
                                dTL1_dT = AbulkCV * dVdseffCV2_dT + dAbulkCV_dT * VdseffCV2;
@@ -7697,7 +8595,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     }
                     /* v3.1 */
 
-                    Csg2 = Csd2 = Csb2 = 0.0;    /* CJB  LFW */
+                    Csg2 = Csd2 = Csb2 = Cse2 = 0.0;    /* LFW_FD enhance line */
                     dqsrc2_dT = 0;   /* new line Wagner */
                     if (model->B4SOIxpart > 0.5)
                     {   /* 0/100 partition */
@@ -7722,12 +8620,20 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         T5 = T7 * AbulkCV;
                         T6 = T7 * VdseffCV;
 
-                        Csg = CoxWLcen * (T4 + T5 * dVdseffCV_dVg);
-                        Csd = CoxWLcen * T5 * dVdseffCV_dVd + Csg * dVgsteff_dVd
-                            + QovCox * dCoxeff_dVd;
-                        Csb = CoxWLcen * (T5 * dVdseffCV_dVb + T6 * dAbulkCV_dVb)
-                            + Csg * dVgsteff_dVb + QovCox * dCoxeff_dVb;
-                        Csg = Csg * dVgsteff_dVg + QovCox * dCoxeff_dVg;
+                       /* LFW_FD fix/add next 4 derivatives */
+                        Csg = QovCox * dCoxeff_dVg
+                            - CoxWLcen * (dT1_dVg / 2.0 + dT0_dVg / 4.0
+                            - 2.0 * T0 * dT0_dVg / T2 + 2.0 * T0 * T0 * dT2_dVg / (T2 * T2));
+                        Csd = QovCox * dCoxeff_dVd
+                            - CoxWLcen * (dT1_dVd / 2.0 + dT0_dVd / 4.0
+                            - 2.0 * T0 * dT0_dVd / T2 + 2.0 * T0 * T0 * dT2_dVd / (T2 * T2));
+                        Csb = QovCox * dCoxeff_dVb
+                            - CoxWLcen * (dT1_dVb / 2.0 + dT0_dVb / 4.0
+                            - 2.0 * T0 * dT0_dVb / T2 + 2.0 * T0 * T0 * dT2_dVb / (T2 * T2));
+                        Cse = QovCox * dCoxeff_dVe
+                            - CoxWLcen * (dT1_dVe / 2.0 + dT0_dVe / 4.0
+                            - 2.0 * T0 * dT0_dVe / T2 + 2.0 * T0 * T0 * dT2_dVe / (T2 * T2));
+
                         /* v4.1 */
                         if ((here->B4SOIsoiMod != 2) &&                                 /* Bug fix #10 Jun 09 'opposite type Q/C evaluated only if bodymod=1' */
                                 (here->B4SOIbodyMod != 0) && here->B4SOIagbcp2 > 0) {
@@ -7752,12 +8658,20 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             T4 = -(0.5 + 24.0 * T02 * T02 / T3) * (1.0 - dDeltaPhi2_dVg);
                             T5 = T7 * AbulkCV;
                             T6 = T7 * VdseffCV2;
-                            Csg2 = CoxWLcen2 * (T4 + T5 * dVdseffCV2_dVg);
-                            Csd2 = CoxWLcen2 * T5 * dVdseffCV2_dVd + Csg2 * dVgsteff2_dVd
-                                + QovCox2 * dCoxeff2_dVd;
-                            Csb2 = CoxWLcen2 * (T5 * dVdseffCV2_dVb + T6 * dAbulkCV_dVb)
-                                + Csg2 * dVgsteff2_dVb + QovCox2 * dCoxeff2_dVb;
-                            Csg2 = Csg2 * dVgsteff2_dVg + QovCox2 * dCoxeff2_dVg;
+                           /* LFW_FD fix/add next 4 derivatives */
+                            Csg2 = QovCox2 * dCoxeff2_dVg
+                                 - CoxWLcen2 * (dT12_dVg / 2.0 + dT02_dVg / 4.0
+                                 - 2.0 * T02 * dT02_dVg / T22 + 2.0 * T02 * T02 * dT22_dVg / (T22 * T22));
+                            Csd2 = QovCox2 * dCoxeff2_dVd
+                                 - CoxWLcen2 * (dT12_dVd / 2.0 + dT02_dVd / 4.0
+                                 - 2.0 * T02 * dT02_dVd / T22 + 2.0 * T02 * T02 * dT22_dVd / (T22 * T22));
+                            Csb2 = QovCox2 * dCoxeff2_dVb
+                                 - CoxWLcen2 * (dT12_dVb / 2.0 + dT02_dVb / 4.0
+                                 - 2.0 * T02 * dT02_dVb / T22 + 2.0 * T02 * T02 * dT22_dVb / (T22 * T22));
+                            Cse2 = QovCox2 * dCoxeff2_dVe
+                                 - CoxWLcen2 * (dT12_dVe / 2.0 + dT02_dVe / 4.0
+                                 - 2.0 * T02 * dT02_dVe / T22 + 2.0 * T02 * T02 * dT22_dVe / (T22 * T22));
+
                             qsrc += qsrc2;
                             dqsrc_dT += dqsrc2_dT; /* new line Wagner */
                         }
@@ -7778,12 +8692,48 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         T6 = AbulkCV * (qsrc / T2 + T3 * T8);
                         T7 = T6 * VdseffCV / AbulkCV;
 
-                        Csg = T5 * (1.0 - dDeltaPhi_dVg) + T6 * dVdseffCV_dVg;
-                        Csd = Csg * dVgsteff_dVd + T6 * dVdseffCV_dVd
-                            + QovCox * dCoxeff_dVd;
-                        Csb = Csg * dVgsteff_dVb + T6 * dVdseffCV_dVb
-                            + T7 * dAbulkCV_dVb + QovCox * dCoxeff_dVb;
-                        Csg = Csg * dVgsteff_dVg + QovCox * dCoxeff_dVg;
+                      /* LFW_FD add next 32 lines */
+                        dT2_dVg = dT2_dVg / 12.0;
+                        dT2_dVd = dT2_dVd / 12.0;
+                        dT2_dVb = dT2_dVb / 12.0;
+                        dT2_dVe = dT2_dVe / 12.0;
+
+                        dT3_dVg = T3 * dCoxeff_dVg / Coxeff
+                                - 2.0 * T3 * T2 * dT2_dVg / (T2 * T2);
+                        dT3_dVd = T3 * dCoxeff_dVd / Coxeff
+                                - 2.0 * T3 * T2 * dT2_dVd / (T2 * T2);
+                        dT3_dVb = T3 * dCoxeff_dVb / Coxeff
+                                - 2.0 * T3 * T2 * dT2_dVb / (T2 * T2);
+                        dT3_dVe = T3 * dCoxeff_dVe / Coxeff
+                                - 2.0 * T3 * T2 * dT2_dVe / (T2 * T2);
+
+                        dT4_dVg = dT1_dVg * (2.0 * T0 * T0 / 3.0 + T1 * (T1 - 4.0 * T0 / 3.0))
+                                + T1 * (4.0 * T0 * dT0_dVg / 3.0
+                                + dT1_dVg * (T1 - 4.0 * T0 / 3.0)
+                                + T1 * (dT1_dVg - 4.0 * dT0_dVg /3.0))
+                                - 2.0 * T0 * T0 * dT0_dVg / 5.0;
+                        dT4_dVd = dT1_dVd * (2.0 * T0 * T0 / 3.0 + T1 * (T1 - 4.0 * T0 / 3.0))
+                                + T1 * (4.0 * T0 * dT0_dVd / 3.0
+                                + dT1_dVd * (T1 - 4.0 * T0 / 3.0)
+                                + T1 * (dT1_dVd - 4.0 * dT0_dVd /3.0))
+                                - 2.0 * T0 * T0 * dT0_dVd / 5.0;
+                        dT4_dVb = dT1_dVb * (2.0 * T0 * T0 / 3.0 + T1 * (T1 - 4.0 * T0 / 3.0))
+                                + T1 * (4.0 * T0 * dT0_dVb / 3.0
+                                + dT1_dVb * (T1 - 4.0 * T0 / 3.0)
+                                + T1 * (dT1_dVb - 4.0 * dT0_dVb /3.0))
+                                - 2.0 * T0 * T0 * dT0_dVb / 5.0;
+                        dT4_dVe = dT1_dVe * (2.0 * T0 * T0 / 3.0 + T1 * (T1 - 4.0 * T0 / 3.0))
+                                + T1 * (4.0 * T0 * dT0_dVe / 3.0
+                                + dT1_dVe * (T1 - 4.0 * T0 / 3.0)
+                                + T1 * (dT1_dVe - 4.0 * dT0_dVe /3.0))
+                                - 2.0 * T0 * T0 * dT0_dVe / 5.0;
+
+                                 /* LFW_FD fix/add next 4 derivatives */
+                        Csg = -(dT3_dVg * T4 + T3 * dT4_dVg);
+                        Csd = -(dT3_dVd * T4 + T3 * dT4_dVd);
+                        Csb = -(dT3_dVb * T4 + T3 * dT4_dVb);
+                        Cse = -(dT3_dVe * T4 + T3 * dT4_dVe);
+
                         /* 13 new lines Wagner */
                         if (selfheat) {
                            dTL1_dT = AbulkCV * dVdseffCV_dT + dAbulkCV_dT * VdseffCV;
@@ -7815,12 +8765,47 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             T6 = AbulkCV * (qsrc2 / T22 + T3 * T8);
                             T7 = T6 * VdseffCV2 / AbulkCV;
 
-                            Csg2 = T5 * (1.0 - dDeltaPhi2_dVg) + T6 * dVdseffCV2_dVg;
-                            Csd2 = Csg2 * dVgsteff2_dVd + T6 * dVdseffCV2_dVd
-                                + QovCox2 * dCoxeff2_dVd;
-                            Csb2 = Csg2 * dVgsteff2_dVb + T6 * dVdseffCV2_dVb
-                                + T7 * dAbulkCV_dVb + QovCox2 * dCoxeff2_dVb;
-                            Csg2 = Csg2 * dVgsteff2_dVg + QovCox2 * dCoxeff2_dVg;
+                           /* LFW_FD add next 32 lines */
+                            dT22_dVg = dT22_dVg / 12.0;
+                            dT22_dVd = dT22_dVd / 12.0;
+                            dT22_dVb = dT22_dVb / 12.0;
+                            dT22_dVe = dT22_dVe / 12.0;
+
+                            dT3_dVg = T3 * dCoxeff2_dVg / Coxeff2
+                                    - 2.0 * T3 * T22 * dT22_dVg / (T22 * T22);
+                            dT3_dVd = T3 * dCoxeff2_dVd / Coxeff2
+                                    - 2.0 * T3 * T22 * dT22_dVd / (T22 * T22);
+                            dT3_dVb = T3 * dCoxeff2_dVb / Coxeff2
+                                    - 2.0 * T3 * T22 * dT22_dVb / (T22 * T22);
+                            dT3_dVe = T3 * dCoxeff2_dVe / Coxeff2
+                                    - 2.0 * T3 * T22 * dT22_dVe / (T22 * T22);
+
+                            dT4_dVg = dT12_dVg * (2.0 * T02 * T02 / 3.0 + T12 * (T12 - 4.0 * T02 / 3.0))
+                                    + T12 * (4.0 * T02 * dT02_dVg / 3.0
+                                    + dT12_dVg * (T12 - 4.0 * T02 / 3.0)
+                                    + T12 * (dT12_dVg - 4.0 * dT02_dVg /3.0))
+                                    - 2.0 * T02 * T02 * dT02_dVg / 5.0;
+                            dT4_dVd = dT12_dVd * (2.0 * T02 * T02 / 3.0 + T12 * (T12 - 4.0 * T02 / 3.0))
+                                    + T12 * (4.0 * T02 * dT02_dVd / 3.0
+                                    + dT12_dVd * (T12 - 4.0 * T02 / 3.0)
+                                    + T12 * (dT12_dVd - 4.0 * dT02_dVd /3.0))
+                                    - 2.0 * T02 * T02 * dT02_dVd / 5.0;
+                            dT4_dVb = dT12_dVb * (2.0 * T02 * T02 / 3.0 + T12 * (T12 - 4.0 * T02 / 3.0))
+                                    + T12 * (4.0 * T02 * dT02_dVb / 3.0
+                                    + dT12_dVb * (T12 - 4.0 * T02 / 3.0)
+                                    + T12 * (dT12_dVb - 4.0 * dT02_dVb /3.0))
+                                    - 2.0 * T02 * T02 * dT02_dVb / 5.0;
+                            dT4_dVe = dT12_dVe * (2.0 * T02 * T02 / 3.0 + T12 * (T12 - 4.0 * T02 / 3.0))
+                                    + T12 * (4.0 * T02 * dT02_dVe / 3.0
+                                    + dT12_dVe * (T12 - 4.0 * T02 / 3.0)
+                                    + T12 * (dT12_dVe - 4.0 * dT02_dVe /3.0))
+                                    - 2.0 * T02 * T02 * dT02_dVe / 5.0;
+                           /* LFW_FD fix/add next 4 derivatives */
+                            Csg2 = -(dT3_dVg * T4 + T3 * dT4_dVg);
+                            Csd2 = -(dT3_dVd * T4 + T3 * dT4_dVd);
+                            Csb2 = -(dT3_dVb * T4 + T3 * dT4_dVb);
+                            Cse2 = -(dT3_dVe * T4 + T3 * dT4_dVe);
+
                             /* 14 new lines Wagner */
                             if (selfheat) {
                                dTL1_dT = AbulkCV * dVdseffCV2_dT + dAbulkCV_dT * VdseffCV2;
@@ -7847,14 +8832,15 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         Csg = -0.5 * Cgg1;
                         Csd = -0.5 * Cgd1;
                         Csb = -0.5 * Cgb1;
+                        Cse = -0.5 * Cge1;  /* LFW_FD new line */
                         /* v4.1 */
                         if ((here->B4SOIsoiMod != 2) &&                                         /* Bug fix #10 Jun 09 'opposite type Q/C evaluated only if bodymod=1' */
                                 (here->B4SOIbodyMod != 0) && here->B4SOIagbcp2 > 0) {
+                           /* LFW_FD fix/add next 4 lines */
                             Csg2 = -0.5 * Cgg12;
-                            Csd -= 0.5 * Cgd12;
-                            Csb -= 0.5 * Cgb12;
-                            Csd2 = 0.0;     /* CJB  LFW */
-                            Csb2 = 0.0;     /* CJB  LFW */
+                            Csd2 = -0.5 * Cgd12;
+                            Csb2 = -0.5 * Cgb12;
+                            Cse2 = -0.5 * Cge12;
                         }
                         dqsrc_dT = -0.5 * dqgate_dT; /* new line Wagner */
                         /* end v4.1 */
@@ -7898,70 +8884,59 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     CdT = dqdrn_dT;
 
                     Cbg = Cbg1 - dQac0_dVg - dQsub0_dVg;
-                    Cbd = Cbd1 - dQsub0_dVd;
-                    Cbb = Cbb1 - dQac0_dVb - dQsub0_dVb - Ce1b / dVbseff_dVb;
-                  /* comment out next 4 lines Wagner */
-                  /*if (selfheat)
-                        CbT = Cbg1 * dVgsteff_dT - dQac0_dT
-                            - dQsub0_dT - dQe1_dT;
-                    else CbT = 0.0;*/
+                   /* LFW_FD fix/add next 3 lines */
+                    Cbd = Cbd1 - dQac0_dVd - dQsub0_dVd;
+                    Cbb = Cbb1 - dQac0_dVb - dQsub0_dVb - Ce1b;
+                    Cbe = Cbe1 - dQac0_dVe - dQsub0_dVe - Ce1e;
 
                     Cgg = Cgg1 - Cbg;
                     Cgd = Cgd1 - Cbd;
-                    Cgb = Cgb1 - Cbb - Ce1b / dVbseff_dVb;
+                   /* LFW_FD fix/add next 2 lines */
+                    Cgb = Cgb1 - Cbb - Ce1b;
+                    Cge = Cge1 - Cbe - Ce1e;
                   /* comment out next 4 lines Wagner */
                   /*if (selfheat)
                         CgT = Cgg1 * dVgsteff_dT + dQac0_dT
                             + dQsub0_dT;
                     else  CgT = 0.0;*/
 
-                    Cgb *= dVbseff_dVb;
-                    Cbb *= dVbseff_dVb;
-                    Csb *= dVbseff_dVb;
+                  /*Cgb *= dVbseff_dVb; */
+                  /*Cbb *= dVbseff_dVb; */
+                  /*Csb *= dVbseff_dVb; */
                   /* comment out next 2 lines Wagner */
                   /*if (selfheat) CsT = Csg * dVgsteff_dT;
                     else  CsT = 0.0;*/
                     /* v4.1 */
                     if ((here->B4SOIsoiMod != 2) &&                             /* Bug fix #10 Jun 09 'opposite type Q/C evaluated only if bodymod=1' */
                             (here->B4SOIbodyMod != 0) && here->B4SOIagbcp2 > 0) {
+                       /* LFW_FD fix next 12 lines */
                         Cbg += Cbg12 - dQac02_dVg - dQsub02_dVg;
-                        Cbd += Cbd12 - dQsub02_dVd;
-                        Cbb += (Cbb12 - dQac02_dVb - dQsub02_dVb)*dVbseff_dVb;
-                      /* comment out next 4 lines Wagner */
-                      /*if (selfheat)
-                            CbT += Cbg12 * dVgsteff2_dT - dQac02_dT
-                                - dQsub02_dT;
-                        else CbT = 0.0;*/
+                        Cbd += Cbd12 - dQac02_dVd - dQsub02_dVd;
+                        Cbb += Cbb12 - dQac02_dVb - dQsub02_dVb;
+                        Cbe += Cbe12 - dQac02_dVe - dQsub02_dVe;
+
                         Cgg = Cgg1 + Cgg12 - Cbg;
                         Cgd = Cgd1 + Cgd12 - Cbd;
-                        Cgb = Cgb1 + Cgb12 - Cbb - Ce1b / dVbseff_dVb;
-                      /* comment out next 4 lines Wagner */
-                      /*if (selfheat)
-                            CgT += Cgg12 * dVgsteff2_dT + dQac02_dT
-                                + dQsub02_dT;
-                        else  CgT = 0.0; */
+                        Cgb = Cgb1 + Cgb12 - Cbb - Ce1b;
+                        Cge = Cge1 + Cge12 - Cbe - Ce1e;
 
-                        Cgb *= dVbseff_dVb;
-                    /*  Cbb *= dVbseff_dVb; */
-                      /* comment out next 2 lines Wagner */
-                      /*if (selfheat) CsT += Csg2 * dVgsteff2_dT;
-                        else  CsT = 0.0;*/
                         Csg += Csg2;
-                        Csd += Csd2;  /* CJB  LFW */
-                        Csb += Csb2;  /* CJB  LFW */
+                        Csd += Csd2;
+                        Csb += Csb2;
+                        Cse += Cse2;
                     }
 
                     /* end v4.1 */
                     here->B4SOIcggb = Cgg;
-                    here->B4SOIcgsb = -(Cgg + Cgd + Cgb);
+                    here->B4SOIcgsb = -(Cgg + Cgd + Cgb + Cge);   /* LFW_FD fix line */
                     here->B4SOIcgdb = Cgd;
+                    here->B4SOIcgeb = Cge;                        /* LFW_FD fix line */
                     here->B4SOIcgT  = CgT;
 
                     here->B4SOIcbgb = Cbg;
-                    here->B4SOIcbsb = -(Cbg + Cbd + Cbb)
-                        + Ce1e;
+                    here->B4SOIcbsb = -(Cbg + Cbd + Cbb + Cbe);   /* LFW_FD fix line */
                     here->B4SOIcbdb = Cbd;
-                    here->B4SOIcbeb = -Ce1e;
+                    here->B4SOIcbeb = Cbe;                        /* LFW_FD fix line */
                     here->B4SOIcbT  = CbT;
 
                     here->B4SOIceT = Ce1T;
@@ -7969,10 +8944,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
                     here->B4SOIcdgb = -(Cgg + Cbg + Csg);
                     here->B4SOIcddb = -(Cgd + Cbd + Csd);
-                    here->B4SOIcdeb = 0;
+                    here->B4SOIcdeb =  -(Cge + Cse + Cbe) - Ce1e; /* LFW_FD fix line */
                     here->B4SOIcdT   = -(CgT+CbT+CsT) - Ce1T;
-                    here->B4SOIcdsb = (Cgg + Cgd + Cgb + Cbg + Cbd + Cbb
-                            + Csg + Csd + Csb) + Ce1b;
+                    here->B4SOIcdsb = Cgg + Cgd + Cgb + Cge       /* LFW_FD fix expression */
+                                    + Cbg + Cbd + Cbb + Cbe + Ce1e
+                                    + Csg + Csd + Csb + Cse + Ce1b;
                     here->B4SOIqinv = -qinoi;
 
                 } /* End of if capMod ==3 */
@@ -7999,6 +8975,11 @@ finished: /* returning Values to Calling Routine */
             /*
              *  COMPUTE EQUIVALENT DRAIN CURRENT SOURCE
              */
+
+            /* flexilint inits */
+            gcjdbs = gcjdT = 0.0;
+            gcjsbs = gcjsT = 0.0;
+
             if (ChargeComputationNeeded)
             {
                 /* Intrinsic S/D junction charge */
@@ -8039,22 +9020,28 @@ finished: /* returning Values to Calling Routine */
                         arg = 1.0 - (vbs > DioMax ? DioMax : vbs) / PhiBSWG;            /* Bug fix #6 */
                     if (selfheat)
                         darg_dT = (1 - arg) / PhiBSWG * dPhiBSWG_dT;
+                    else
+                        darg_dT = 1.0;          /* flexilint */
 
                     if (MJSWG == 0.5) {
                         dT3_dVb = 1.0 / sqrt(arg);
 
                         if (selfheat) ddT3_dVb_dT = -0.5 * dT3_dVb / arg * darg_dT;
+                        else ddT3_dVb_dT = 1.0;    /* flexilint */
                     }
                     else {
                         dT3_dVb = exp(-MJSWG * log(arg));
 
                         if (selfheat) ddT3_dVb_dT = -MJSWG * dT3_dVb / arg * darg_dT;
+                        else ddT3_dVb_dT = 1.0;    /* flexilint */
                     }
                     T3 = (1.0 - arg * dT3_dVb) * PhiBSWG / (1.0 - MJSWG);
 
                     if (selfheat)
                         dT3_dT = (1.0 - arg * dT3_dVb) * dPhiBSWG_dT / (1.0 - MJSWG)
                             - (arg * ddT3_dVb_dT + darg_dT * dT3_dVb) * PhiBSWG / (1.0 - MJSWG);
+                    else
+                        dT3_dT = 1.0;  /* flexilint */
 
                     /* if (vbs > DioMax)
                        T3 += dT3_dVb * (vbs - DioMax); */                               /* Bug fix #6 Vbs evaluated taking consideration of Rbody Mode*/
@@ -8107,22 +9094,28 @@ finished: /* returning Values to Calling Routine */
 
                     if (selfheat)
                         darg_dT = (1 - arg) / PhiBSWG * dPhiBSWG_dT;
+                    else
+                        darg_dT = 1.0;          /* flexilint */
 
                     if (MJSWG == 0.5) {
                         dT3_dVb = 1.0 / sqrt(arg);
 
                         if (selfheat) ddT3_dVb_dT = -0.5 * dT3_dVb / arg * darg_dT;
+                        else ddT3_dVb_dT = 1.0;    /* flexilint */
                     }
                     else {
                         dT3_dVb = exp(-MJSWG * log(arg));
 
                         if (selfheat) ddT3_dVb_dT = -MJSWG * dT3_dVb / arg * darg_dT;
+                        else ddT3_dVb_dT = 1.0;    /* flexilint */
                     }
                     T3 = (1.0 - arg * dT3_dVb) * PhiBSWG / (1.0 - MJSWG);
 
                     if (selfheat)
                         dT3_dT = (1.0 - arg * dT3_dVb) * dPhiBSWG_dT / (1.0 - MJSWG)
                             - (arg * ddT3_dVb_dT + darg_dT * dT3_dVb) * PhiBSWG / (1.0 - MJSWG);
+                    else
+                        dT3_dT = 1.0;  /* flexilint */
 
                     /* if (vbd > DioMax)
                        T3 += dT3_dVb * (vbd - DioMax); */                               /* Bug fix #6 Vbd evaluated taking consideration of Rbody Mode*/
@@ -8404,9 +9397,8 @@ finished: /* returning Values to Calling Routine */
 
             if (!ChargeComputationNeeded)
                 goto line850;
-#ifndef NOBYPASS
+
 line755:
-#endif
             ag0 = ckt->CKTag[0];
 
             T0 = vgd + DELTA_1;
@@ -8478,7 +9470,7 @@ line755:
                     gcggb = here->B4SOIcggb * ag0;
                     gcgdb = here->B4SOIcgdb * ag0;
                     gcgsb = here->B4SOIcgsb * ag0;
-                    gcgeb = 0 ;/*v3.1 changed*/
+                    gcgeb = here->B4SOIcgeb * ag0;     /* fix line */
                     gcgbb = -(gcggb + gcgdb + gcgsb + gcgeb);
 
                     gcdgb = here->B4SOIcdgb * ag0;
@@ -8506,7 +9498,7 @@ line755:
                             + pParam->B4SOIcgeo) * ag0;
                     gcgdb = (here->B4SOIcgdb - cgdo) * ag0;
                     gcgsb = (here->B4SOIcgsb - cgso) * ag0;
-                    gcgeb = (-pParam->B4SOIcgeo) *ag0;
+                    gcgeb = (here->B4SOIcgeb - pParam->B4SOIcgeo) *ag0;   /* LFW_FD fix line */
                     gcgbb = -(gcggb + gcgdb + gcgsb + gcgeb);
 
                     gcegb = (- pParam->B4SOIcgeo) * ag0;
@@ -8542,7 +9534,7 @@ line755:
                 gcssb = (cgso + here->B4SOIgcse - (here->B4SOIcgsb
                             + here->B4SOIcbsb + here->B4SOIcdsb)) * ag0;
                 gcseb = -(here->B4SOIgcse + here->B4SOIcbeb
-                        + here->B4SOIcdeb + here->B4SOIceeb) * ag0;
+                        + here->B4SOIcdeb + here->B4SOIcgeb + here->B4SOIceeb) * ag0;     /* LFW_FD fix line */
               /*fix below expression Wagner */
               /*gcsT = - model->B4SOItype * (here->B4SOIcgT */
                 gcsT = -                    (here->B4SOIcgT
@@ -8634,7 +9626,7 @@ line755:
                     gcggb = here->B4SOIcggb * ag0;
                     gcgsb = here->B4SOIcgdb * ag0;
                     gcgdb = here->B4SOIcgsb * ag0;
-                    gcgeb = 0; /* v3.1 */
+                    gcgeb = here->B4SOIcgeb * ag0;    /* LFW_FD fix line */
                     gcgbb = -(gcggb + gcgdb + gcgsb + gcgeb); /* v3.1 added gcgeb */
 
                     gcsgb = here->B4SOIcdgb * ag0;
@@ -8661,10 +9653,10 @@ line755:
                     gcggb = (here->B4SOIcggb + cgdo + cgso + pParam->B4SOIcgeo) * ag0;
                     gcgdb = (here->B4SOIcgsb - cgdo) * ag0;
                     gcgsb = (here->B4SOIcgdb - cgso) * ag0;
-                    gcgeb = (- pParam->B4SOIcgeo) * ag0;
+                    gcgeb = (here->B4SOIcgeb - pParam->B4SOIcgeo) * ag0;   /* LFW_FD  fix line */
                     gcgbb = -(gcggb + gcgdb + gcgsb + gcgeb); /*added gcgbb*/
 
-                    gcegb = gcgeb; /* v3.1 added */
+                    gcegb = (- pParam->B4SOIcgeo) * ag0;      /* LFW_FD  fix line */
                     gcsgb = (here->B4SOIcdgb - cgso) * ag0;
                     gcdgb = -(here->B4SOIcggb + here->B4SOIcbgb + here->B4SOIcdgb + cgdo) * ag0;
                     gcbgb = here->B4SOIcbgb * ag0;
@@ -8696,7 +9688,7 @@ line755:
                 gcddb = (cgdo + here->B4SOIgcde - (here->B4SOIcgsb
                             + here->B4SOIcbsb + here->B4SOIcdsb)) * ag0;
                 gcdeb = -(here->B4SOIgcde + here->B4SOIcbeb
-                        + here->B4SOIcdeb + here->B4SOIceeb) * ag0;
+                        + here->B4SOIcdeb + here->B4SOIcgeb + here->B4SOIceeb) * ag0;  /* LFW_FD fix line */
               /*fix below expression Wagner */
               /*gcdT = - model->B4SOItype * (here->B4SOIcgT */
                 gcdT = -                   (here->B4SOIcgT
@@ -8767,7 +9759,7 @@ line755:
                 /* Lump the overlap capacitance */
                 /*
                    qgd = qgdo;
-                   gs = qgso;
+                   qgs = qgso;
                    qge = pParam->B4SOIcgeo * vge;
                    qgate += qgd + qgs + qge;
                    qsrc = qdrn - qgs + here->B4SOIqse;
@@ -9309,71 +10301,9 @@ line900:
 
             m = here->B4SOIm;
 
-#ifdef USE_OMP4SOI
             /* v3.1 */
 
-            /* v3.1 added ceqgcrg for RF */
-
-            /* OpenMP parallelization: 
-            Temporary storage of right hand side values into instance storage space.
-            Update to matrix will be done by function B4SOILoadRhsMat() only when all
-            instances have their values stored. */
-
-            here->B4SOINode_1 = m * ((ceqgate + ceqqg)
-             + Igtoteq - ceqgcrg);
-            /* v3.1 added ceqgcrg for RF end */
-
-            here->B4SOINode_2 = m * ((ceqbd - cdreq 
-                                                        - ceqqd) + Idtoteq
-             /* v4.0 */                     + ceqgdtot);
-            if (!here->B4SOIrbodyMod) {
-                here->B4SOINode_3 = m * ((cdreq + ceqbs
-                                                            + ceqqg + ceqqb + ceqqd + ceqqe) + Istoteq
-                 + ceqqgmid - ceqgstot); /* v4.0 */
-            }
-            else { /* v4.0 */
-                here->B4SOINode_4 = m * ((cdreq + ceqbs
-                                                            + ceqqg + ceqqb + ceqqd + ceqqe) + Istoteq
-                 + ceqqgmid + ceqqjd + ceqqjs - ceqgstot);
-            }
-
-            here->B4SOINode_5 = m * ceqqe;
-
-            if (here->B4SOIrgateMod == 2)
-                here->B4SOINode_6 = m * ceqgcrg;
-            else if (here->B4SOIrgateMod == 3)
-                here->B4SOINode_7 = m * (ceqqgmid
-                 + ceqgcrg);
-
-            if (here->B4SOIbodyMod == 1) {
-                here->B4SOINode_8 = m * ceqbodcon;
-            }
-
-            if ( here->B4SOIsoiMod != 2 )
-            {if (!here->B4SOIrbodyMod)
-                here->B4SOINode_9 = m * (ceqbody + ceqqb);
-            else /* v4.0 */ {
-                here->B4SOINode_10 = m * (cdbdp + ceqqjd);
-                here->B4SOINode_11 = m * (ceqbody + ceqqb);
-                here->B4SOINode_12 = m * (csbsp + ceqqjs);
-                }
-            }
-            here->B4SOINode_sh = selfheat;
-
-            if (selfheat) {
-                here->B4SOINode_13 = m * (ceqth + ceqqth);
-            }
-
-            if (model->B4SOIrdsMod)
-            {   here->B4SOINode_14 = m * ceqgdtot;
-                here->B4SOINode_15 = m * ceqgstot;
-            }
-#else
-
-
-
-            /* v3.1 */
-
+#ifndef USE_OMP4SOI
             /* v3.1 added ceqgcrg for RF */
             (*(ckt->CKTrhs + here->B4SOIgNode) -= m * ((ceqgate + ceqqg)
              + Igtoteq - ceqgcrg));
@@ -9424,6 +10354,64 @@ line900:
                 (*(ckt->CKTrhs + here->B4SOIsNode) += m * ceqgstot);
             }
 
+#else
+            /* OpenMP parallelization: 
+            Temporary storage of right hand side values into instance storage space.
+            Update to matrix will be done by function B4SOILoadRhsMat() only when all
+            instances have their values stored. */
+
+            /* v3.1 added ceqgcrg for RF */
+            here->B4SOINode_1 = m * ((ceqgate + ceqqg)
+             + Igtoteq - ceqgcrg);
+            /* v3.1 added ceqgcrg for RF end */
+
+            here->B4SOINode_2 = m * ((ceqbd - cdreq 
+                                                        - ceqqd) + Idtoteq
+             /* v4.0 */                     + ceqgdtot);
+            if (!here->B4SOIrbodyMod) {
+                here->B4SOINode_3 = m * ((cdreq + ceqbs
+                                                            + ceqqg + ceqqb + ceqqd + ceqqe) + Istoteq
+                 + ceqqgmid - ceqgstot); /* v4.0 */
+            }
+            else { /* v4.0 */
+                here->B4SOINode_4 = m * ((cdreq + ceqbs
+                                                            + ceqqg + ceqqb + ceqqd + ceqqe) + Istoteq
+                 + ceqqgmid + ceqqjd + ceqqjs - ceqgstot);
+            }
+
+            here->B4SOINode_5 = m * ceqqe;
+
+            if (here->B4SOIrgateMod == 2)
+                here->B4SOINode_6 = m * ceqgcrg;
+            else if (here->B4SOIrgateMod == 3)
+                here->B4SOINode_7 = m * (ceqqgmid
+                 + ceqgcrg);
+
+            if (here->B4SOIbodyMod == 1) {
+                here->B4SOINode_8 = m * ceqbodcon;
+            }
+
+            if ( here->B4SOIsoiMod != 2 )
+            {if (!here->B4SOIrbodyMod)
+                here->B4SOINode_9 = m * (ceqbody + ceqqb);
+            else /* v4.0 */ {
+                here->B4SOINode_10 = m * (cdbdp + ceqqjd);
+                here->B4SOINode_11 = m * (ceqbody + ceqqb);
+                here->B4SOINode_12 = m * (csbsp + ceqqjs);
+                }
+            }
+            here->B4SOINode_sh = selfheat;
+
+            if (selfheat) {
+                here->B4SOINode_13 = m * (ceqth + ceqqth);
+            }
+
+            if (model->B4SOIrdsMod)
+            {   here->B4SOINode_14 = m * ceqgdtot;
+                here->B4SOINode_15 = m * ceqgstot;
+            }
+
+#endif
             if (here->B4SOIdebugMod != 0)
             {
                 *(ckt->CKTrhs + here->B4SOIvbsNode) = here->B4SOIvbseff;
@@ -9448,8 +10436,6 @@ line900:
 
             }
 
-#endif
-
             if (!model->B4SOIrdsMod)
             {   gdpr = here->B4SOIdrainConductance;
                 gspr = here->B4SOIsourceConductance;
@@ -9465,7 +10451,238 @@ line900:
             /* v3.1 added for RF */
             geltd = here->B4SOIgrgeltd;
 
-#ifdef USE_OMP4SOI
+#ifndef USE_OMP4SOI
+            if (here->B4SOIrgateMod == 1)
+            {
+                *(here->B4SOIGEgePtr) += m * geltd;
+                *(here->B4SOIGgePtr) -= m * geltd;
+                *(here->B4SOIGEgPtr) -= m * geltd;
+            }
+            else if (here->B4SOIrgateMod == 2)
+            {
+                *(here->B4SOIGEgePtr) += m * gcrg;
+                *(here->B4SOIGEgPtr) += m * gcrgg;
+                *(here->B4SOIGEdpPtr) += m * gcrgd;
+                *(here->B4SOIGEspPtr) += m * gcrgs;
+                *(here->B4SOIGgePtr) -= m * gcrg;
+                if (here->B4SOIsoiMod !=2) /* v3.2 */
+                    *(here->B4SOIGEbPtr) += m * gcrgb;
+            }
+            else if (here->B4SOIrgateMod == 3)
+            {
+                *(here->B4SOIGEgePtr) += m * geltd;
+                *(here->B4SOIGEgmPtr) -= m * geltd;
+                *(here->B4SOIGMgePtr) -= m * geltd;
+                *(here->B4SOIGMgmPtr) += m * (geltd + gcrg + gcgmgmb);
+
+                *(here->B4SOIGMdpPtr) += m * (gcrgd + gcgmdb);
+                *(here->B4SOIGMgPtr) += m * gcrgg;
+                *(here->B4SOIGMspPtr) += m * (gcrgs + gcgmsb);
+                *(here->B4SOIGMePtr) += m * gcgmeb;
+                if (here->B4SOIsoiMod !=2) /* v3.2 */
+                    *(here->B4SOIGMbPtr) += m * gcrgb;
+
+                *(here->B4SOIDPgmPtr) += m * gcdgmb;
+                *(here->B4SOIGgmPtr) -= m * gcrg;
+                *(here->B4SOISPgmPtr) += m * gcsgmb;
+                *(here->B4SOIEgmPtr) += m * gcegmb;
+            }
+            /* v3.1 added for RF end*/
+
+
+            /* v3.0 */
+            if (here->B4SOIsoiMod != 0) /* v3.2 */
+            {
+                (*(here->B4SOIDPePtr) += m * (Gme + gddpe));
+                (*(here->B4SOISPePtr) += m * (gsspe - Gme));
+
+                if (here->B4SOIsoiMod != 2) /* v3.2 */
+                {
+                    *(here->B4SOIGePtr) += m * gige;
+                    *(here->B4SOIBePtr) -= m * gige;
+                }
+            }
+
+            *(here->B4SOIEdpPtr) += m * gcedb;
+            *(here->B4SOIEspPtr) += m * gcesb;
+            *(here->B4SOIDPePtr) += m * gcdeb;
+            *(here->B4SOISPePtr) += m * gcseb;
+            *(here->B4SOIEgPtr) += m * gcegb;
+            *(here->B4SOIGePtr) += m * gcgeb;
+
+            /* v3.1 */
+            if (here->B4SOIsoiMod != 2) /* v3.2 */
+            {
+                (*(here->B4SOIEbPtr) -= m * (gcegb + gcedb + gcesb + gceeb + gcegmb)); /* 3.2 bug fix */
+
+                /* v3.1 changed GbPtr for RF */
+                if ((here->B4SOIrgateMod == 0) || (here->B4SOIrgateMod == 1))
+                    (*(here->B4SOIGbPtr) -= m * (-gigb + gcggb + gcgdb + gcgsb
+                     + gcgeb - gIgtotb));
+                else /* v3.1 for rgateMod = 2 or 3 */
+                    *(here->B4SOIGbPtr) += m * (gigb + gcgbb +gIgtotb - gcrgb);
+
+
+                (*(here->B4SOIDPbPtr) -= m * (-gddpb - Gmbs - gcdbb + gdtotb
+                 + gIdtotb )); /* v4.0 */
+
+                /*                      (*(here->B4SOIDPbPtr) -= (-gddpb - Gmbs + gcdgb + gcddb
+                                        + gcdeb + gcdsb) + gcdgmb
+                                        + gIdtotb );
+                                        */
+
+                (*(here->B4SOISPbPtr) -= m * (-gsspb + Gmbs - gcsbb + gstotb
+                 + Gmin + gIstotb)); /* v4.0 */
+
+                /*                      (*(here->B4SOISPbPtr) -= (-gsspb + Gmbs + gcsgb + gcsdb
+                                        + gcseb + gcssb) + gcsgmb
+                                        + Gmin + gIstotb);
+                                        */
+                (*(here->B4SOIBePtr) += m * (gbbe + gcbeb)); /* v3.0 */
+                (*(here->B4SOIBgPtr) += m * (-gigg + gcbgb + gbbg));
+                (*(here->B4SOIBdpPtr) += m * (-gigd + gcbdb + gbbdp ));
+
+                (*(here->B4SOIBspPtr) += m * (gcbsb + gbbsp - Gmin
+                 - gigs));
+                /*                    if (!here->B4SOIrbodyMod)
+                */
+                (*(here->B4SOIBbPtr) += m * (-gigb + gbbb - gcbgb - gcbdb
+                 - gcbsb - gcbeb + Gmin)) ;
+                /*                    else
+                              (*(here->B4SOIBbPtr) += -gigb - (Giib - Gbpbs) - gcbgb
+                              - gcbdb - gcbsb - gcbeb + Gmin) ;
+                              */
+                /* v4.0 */
+                if (here->B4SOIrbodyMod) {
+                    (*(here->B4SOIDPdbPtr) += m * (-gcjdbdp - GGjdb));
+                    (*(here->B4SOISPsbPtr) += m * (-gcjsbsp - GGjsb));
+                    (*(here->B4SOIDBdpPtr) += m * (-gcjdbdp - GGjdb));
+                    (*(here->B4SOIDBdbPtr) += m * (gcjdbdp + GGjdb
+                     + here->B4SOIgrbdb));
+                    (*(here->B4SOIDBbPtr) -= m * here->B4SOIgrbdb);
+                    (*(here->B4SOISBspPtr) += m * (-gcjsbsp - GGjsb));
+                    (*(here->B4SOISBbPtr) -= m * here->B4SOIgrbsb);
+                    (*(here->B4SOISBsbPtr) += m * (gcjsbsp + GGjsb
+                     + here->B4SOIgrbsb));
+                    (*(here->B4SOIBdbPtr) -= m * here->B4SOIgrbdb);
+                    (*(here->B4SOIBsbPtr) -= m * here->B4SOIgrbsb);
+                    (*(here->B4SOIBbPtr) += m * (here->B4SOIgrbsb
+                     + here->B4SOIgrbdb));
+                }
+                if (model->B4SOIrdsMod)
+                {
+                    (*(here->B4SOIDbPtr) += m * gdtotb);
+                    (*(here->B4SOISbPtr) += m * gstotb);
+                }
+
+            }
+            /* v3.1 */
+            if (model->B4SOIrdsMod)
+            {   (*(here->B4SOIDgPtr) += m * gdtotg);
+                (*(here->B4SOIDspPtr) += m * gdtots);
+                (*(here->B4SOISdpPtr) += m * gstotd);
+                (*(here->B4SOISgPtr) += m * gstotg);
+            }
+
+            (*(here->B4SOIEePtr) +=  m * gceeb);
+
+            if (here->B4SOIrgateMod == 0)
+            {
+                (*(here->B4SOIGgPtr) += m * (gigg + gcggb + Gmin
+                 + gIgtotg));
+                (*(here->B4SOIGdpPtr) += m * (gigd + gcgdb - Gmin
+                 + gIgtotd));
+                (*(here->B4SOIGspPtr) += m * (gcgsb + gigs + gIgtots));
+            }
+            else if (here->B4SOIrgateMod == 1) /* v3.1 for RF */
+            {
+                *(here->B4SOIGgPtr) += m * (gigg + gcggb + Gmin
+                    + gIgtotg + geltd);
+                *(here->B4SOIGdpPtr) += m * (gigd + gcgdb - Gmin
+                    + gIgtotd);
+                *(here->B4SOIGspPtr) += m * (gcgsb + gigs + gIgtots);
+            }
+            else /* v3.1 for RF rgateMod == 2 or 3 */
+            {
+                *(here->B4SOIGgPtr) += m * (gigg + gcggb + Gmin
+                    + gIgtotg - gcrgg);
+                *(here->B4SOIGdpPtr) += m * (gigd + gcgdb - Gmin
+                    + gIgtotd - gcrgd);
+                *(here->B4SOIGspPtr) += m * (gcgsb + gigs + gIgtots - gcrgs);
+            }
+
+
+            (*(here->B4SOIDPgPtr) += m * ((Gm + gcdgb) + gddpg - Gmin
+             - gIdtotg - gdtotg)); /* v4.0 */
+            (*(here->B4SOIDPdpPtr) += m * ((gdpr + here->B4SOIgds + gddpdp
+                                       + RevSum + gcddb) + Gmin
+             - gIdtotd - gdtotd)); /* v4.0 */
+            (*(here->B4SOIDPspPtr) -= m * ((-gddpsp + here->B4SOIgds + FwdSum
+                                       - gcdsb) + gIdtots + gdtots));
+
+            (*(here->B4SOIDPdPtr) -= m * (gdpr + gdtot));
+
+            (*(here->B4SOISPgPtr) += m * (gcsgb - Gm + gsspg - gIstotg
+             - gstotg)); /* v4.0 */
+            (*(here->B4SOISPdpPtr) -= m * ((here->B4SOIgds - gsspdp + RevSum
+                                       - gcsdb + gIstotd) + gstotd)); /* v4.0 */
+
+            (*(here->B4SOISPspPtr) += m * ((gspr - gstots
+                                       + here->B4SOIgds + gsspsp
+                                       + FwdSum + gcssb)
+             + Gmin - gIstots)); /* v4.0 */
+
+            (*(here->B4SOISPsPtr) -= m * (gspr + gstot));
+
+
+            (*(here->B4SOIDdPtr) += m * (gdpr + gdtot));
+            (*(here->B4SOIDdpPtr) -= m * (gdpr - gdtotd));
+
+
+            (*(here->B4SOISsPtr) += m * (gspr + gstot));
+            (*(here->B4SOISspPtr) -= m * (gspr - gstots));
+
+
+            if (here->B4SOIbodyMod == 1)  {
+                (*(here->B4SOIBpPtr) -= m * gppp);
+                (*(here->B4SOIPbPtr) += m * gppb);
+                (*(here->B4SOIPpPtr) += m * gppp);
+            }
+
+            /* v4.1  Ig_agbcp2 stamping */
+            (*(here->B4SOIGgPtr) += m * gigpg);
+            if (here->B4SOIbodyMod == 1)  {
+                (*(here->B4SOIPpPtr) -= m * gigpp);
+                (*(here->B4SOIPgPtr) -= m * gigpg);
+                (*(here->B4SOIGpPtr) += m * gigpp);
+            }
+            else if(here->B4SOIbodyMod == 2)
+            {
+                (*(here->B4SOIBbPtr) -= m * gigpp);
+                (*(here->B4SOIBgPtr) -= m * gigpg);
+                (*(here->B4SOIGbPtr) += m * gigpp);
+            }
+
+
+            if (selfheat)
+            {
+                (*(here->B4SOIDPtempPtr) += m * (GmT + gddpT + gcdT));
+                (*(here->B4SOISPtempPtr) += m * (-GmT + gsspT + gcsT));
+                (*(here->B4SOIBtempPtr) += m * (gbbT + gcbT - gigT));
+                (*(here->B4SOIEtempPtr) += m * gceT);
+                (*(here->B4SOIGtempPtr) += m * (gcgT + gigT));
+                (*(here->B4SOITemptempPtr) += m * (gTtt  + 1/pParam->B4SOIrth + gcTt));
+                (*(here->B4SOITempgPtr) += m * gTtg);
+                (*(here->B4SOITempbPtr) += m * gTtb);
+                (*(here->B4SOITempdpPtr) += m * gTtdp);
+                (*(here->B4SOITempspPtr) += m * gTtsp);
+
+                /* v3.0 */
+                if (here->B4SOIsoiMod != 0) /* v3.2 */
+                    (*(here->B4SOITempePtr) += m * gTte);
+
+            }
+#else
             /* OpenMP parallelization: 
             Temporary storage of matrix values into instance storage space.
             Update to matrix will be done by function B4SOILoadRhsMat() only when all
@@ -9701,239 +10918,7 @@ line900:
                     (here->B4SOI_102 = m * gTte);
 
             }
-#else
-
-            if (here->B4SOIrgateMod == 1)
-            {
-                *(here->B4SOIGEgePtr) += m * geltd;
-                *(here->B4SOIGgePtr) -= m * geltd;
-                *(here->B4SOIGEgPtr) -= m * geltd;
-            }
-            else if (here->B4SOIrgateMod == 2)
-            {
-                *(here->B4SOIGEgePtr) += m * gcrg;
-                *(here->B4SOIGEgPtr) += m * gcrgg;
-                *(here->B4SOIGEdpPtr) += m * gcrgd;
-                *(here->B4SOIGEspPtr) += m * gcrgs;
-                *(here->B4SOIGgePtr) -= m * gcrg;
-                if (here->B4SOIsoiMod !=2) /* v3.2 */
-                    *(here->B4SOIGEbPtr) += m * gcrgb;
-            }
-            else if (here->B4SOIrgateMod == 3)
-            {
-                *(here->B4SOIGEgePtr) += m * geltd;
-                *(here->B4SOIGEgmPtr) -= m * geltd;
-                *(here->B4SOIGMgePtr) -= m * geltd;
-                *(here->B4SOIGMgmPtr) += m * (geltd + gcrg + gcgmgmb);
-
-                *(here->B4SOIGMdpPtr) += m * (gcrgd + gcgmdb);
-                *(here->B4SOIGMgPtr) += m * gcrgg;
-                *(here->B4SOIGMspPtr) += m * (gcrgs + gcgmsb);
-                *(here->B4SOIGMePtr) += m * gcgmeb;
-                if (here->B4SOIsoiMod !=2) /* v3.2 */
-                    *(here->B4SOIGMbPtr) += m * gcrgb;
-
-                *(here->B4SOIDPgmPtr) += m * gcdgmb;
-                *(here->B4SOIGgmPtr) -= m * gcrg;
-                *(here->B4SOISPgmPtr) += m * gcsgmb;
-                *(here->B4SOIEgmPtr) += m * gcegmb;
-            }
-            /* v3.1 added for RF end*/
-
-
-            /* v3.0 */
-            if (here->B4SOIsoiMod != 0) /* v3.2 */
-            {
-                (*(here->B4SOIDPePtr) += m * (Gme + gddpe));
-                (*(here->B4SOISPePtr) += m * (gsspe - Gme));
-
-                if (here->B4SOIsoiMod != 2) /* v3.2 */
-                {
-                    *(here->B4SOIGePtr) += m * gige;
-                    *(here->B4SOIBePtr) -= m * gige;
-                }
-            }
-
-            *(here->B4SOIEdpPtr) += m * gcedb;
-            *(here->B4SOIEspPtr) += m * gcesb;
-            *(here->B4SOIDPePtr) += m * gcdeb;
-            *(here->B4SOISPePtr) += m * gcseb;
-            *(here->B4SOIEgPtr) += m * gcegb;
-            *(here->B4SOIGePtr) += m * gcgeb;
-
-            /* v3.1 */
-            if (here->B4SOIsoiMod != 2) /* v3.2 */
-            {
-                (*(here->B4SOIEbPtr) -= m * (gcegb + gcedb + gcesb + gceeb + gcegmb)); /* 3.2 bug fix */
-
-                /* v3.1 changed GbPtr for RF */
-                if ((here->B4SOIrgateMod == 0) || (here->B4SOIrgateMod == 1))
-                    (*(here->B4SOIGbPtr) -= m * (-gigb + gcggb + gcgdb + gcgsb
-                     + gcgeb - gIgtotb));
-                else /* v3.1 for rgateMod = 2 or 3 */
-                    *(here->B4SOIGbPtr) += m * (gigb + gcgbb +gIgtotb - gcrgb);
-
-
-                (*(here->B4SOIDPbPtr) -= m * (-gddpb - Gmbs - gcdbb + gdtotb
-                 + gIdtotb )); /* v4.0 */
-
-                /*                      (*(here->B4SOIDPbPtr) -= (-gddpb - Gmbs + gcdgb + gcddb
-                                        + gcdeb + gcdsb) + gcdgmb
-                                        + gIdtotb );
-                                        */
-
-                (*(here->B4SOISPbPtr) -= m * (-gsspb + Gmbs - gcsbb + gstotb
-                 + Gmin + gIstotb)); /* v4.0 */
-
-                /*                      (*(here->B4SOISPbPtr) -= (-gsspb + Gmbs + gcsgb + gcsdb
-                                        + gcseb + gcssb) + gcsgmb
-                                        + Gmin + gIstotb);
-                                        */
-                (*(here->B4SOIBePtr) += m * (gbbe + gcbeb)); /* v3.0 */
-                (*(here->B4SOIBgPtr) += m * (-gigg + gcbgb + gbbg));
-                (*(here->B4SOIBdpPtr) += m * (-gigd + gcbdb + gbbdp));
-
-                (*(here->B4SOIBspPtr) += m * (gcbsb + gbbsp - Gmin
-                 - gigs));
-                /*                    if (!here->B4SOIrbodyMod)
-                */
-                (*(here->B4SOIBbPtr) += m * (-gigb + gbbb - gcbgb - gcbdb
-                 - gcbsb - gcbeb + Gmin));
-                /*                    else
-                              (*(here->B4SOIBbPtr) += -gigb - (Giib - Gbpbs) - gcbgb
-                              - gcbdb - gcbsb - gcbeb + Gmin) ;
-                              */
-                /* v4.0 */
-                if (here->B4SOIrbodyMod) {
-                    (*(here->B4SOIDPdbPtr) += m * (-gcjdbdp - GGjdb));
-                    (*(here->B4SOISPsbPtr) += m * (-gcjsbsp - GGjsb));
-                    (*(here->B4SOIDBdpPtr) += m * (-gcjdbdp - GGjdb));
-                    (*(here->B4SOIDBdbPtr) += m * (gcjdbdp + GGjdb
-                     + here->B4SOIgrbdb));
-                    (*(here->B4SOIDBbPtr) -= m * here->B4SOIgrbdb);
-                    (*(here->B4SOISBspPtr) += m * (-gcjsbsp - GGjsb));
-                    (*(here->B4SOISBbPtr) -= m * here->B4SOIgrbsb);
-                    (*(here->B4SOISBsbPtr) += m * (gcjsbsp + GGjsb
-                     + here->B4SOIgrbsb));
-                    (*(here->B4SOIBdbPtr) -= m * here->B4SOIgrbdb);
-                    (*(here->B4SOIBsbPtr) -= m * here->B4SOIgrbsb);
-                    (*(here->B4SOIBbPtr) += m * (here->B4SOIgrbsb
-                     + here->B4SOIgrbdb));
-                }
-                if (model->B4SOIrdsMod)
-                {
-                    (*(here->B4SOIDbPtr) += m * gdtotb);
-                    (*(here->B4SOISbPtr) += m * gstotb);
-                }
-
-            }
-            /* v3.1 */
-            if (model->B4SOIrdsMod)
-            {   (*(here->B4SOIDgPtr) += m * gdtotg);
-                (*(here->B4SOIDspPtr) += m * gdtots);
-                (*(here->B4SOISdpPtr) += m * gstotd);
-                (*(here->B4SOISgPtr) += m * gstotg);
-            }
-
-            (*(here->B4SOIEePtr) += m * gceeb);
-
-            if (here->B4SOIrgateMod == 0)
-            {
-                (*(here->B4SOIGgPtr) += m * (gigg + gcggb + Gmin
-                 + gIgtotg));
-                (*(here->B4SOIGdpPtr) +=m * ( gigd + gcgdb - Gmin
-                 + gIgtotd));
-                (*(here->B4SOIGspPtr) += m * (gcgsb + gigs + gIgtots));
-            }
-            else if (here->B4SOIrgateMod == 1) /* v3.1 for RF */
-            {
-                *(here->B4SOIGgPtr) += m * (gigg + gcggb + Gmin
-                    + gIgtotg + geltd);
-                *(here->B4SOIGdpPtr) += m * (gigd + gcgdb - Gmin
-                    + gIgtotd);
-                *(here->B4SOIGspPtr) += m * (gcgsb + gigs + gIgtots);
-            }
-            else /* v3.1 for RF rgateMod == 2 or 3 */
-            {
-                *(here->B4SOIGgPtr) += m * (gigg + gcggb + Gmin
-                    + gIgtotg - gcrgg);
-                *(here->B4SOIGdpPtr) += m * (gigd + gcgdb - Gmin
-                    + gIgtotd - gcrgd);
-                *(here->B4SOIGspPtr) += m * (gcgsb + gigs + gIgtots - gcrgs);
-            }
-
-
-            (*(here->B4SOIDPgPtr) += m * ((Gm + gcdgb) + gddpg - Gmin
-             - gIdtotg - gdtotg)); /* v4.0 */
-            (*(here->B4SOIDPdpPtr) += m * ((gdpr + here->B4SOIgds + gddpdp
-                                       + RevSum + gcddb) + Gmin
-             - gIdtotd - gdtotd)); /* v4.0 */
-            (*(here->B4SOIDPspPtr) -= m * ((-gddpsp + here->B4SOIgds + FwdSum
-                                       - gcdsb) + gIdtots + gdtots));
-
-            (*(here->B4SOIDPdPtr) -= m * (gdpr + gdtot));
-
-            (*(here->B4SOISPgPtr) += m * (gcsgb - Gm + gsspg - gIstotg
-             - gstotg)); /* v4.0 */
-            (*(here->B4SOISPdpPtr) -= m * ((here->B4SOIgds - gsspdp + RevSum
-                                       - gcsdb + gIstotd) + gstotd)); /* v4.0 */
-
-            (*(here->B4SOISPspPtr) += m * ((gspr - gstots
-                                       + here->B4SOIgds + gsspsp
-                                       + FwdSum + gcssb)
-             + Gmin - gIstots)); /* v4.0 */
-
-            (*(here->B4SOISPsPtr) -= m * (gspr + gstot));
-
-
-            (*(here->B4SOIDdPtr) += m * (gdpr + gdtot));
-            (*(here->B4SOIDdpPtr) -= m * (gdpr - gdtotd));
-
-
-            (*(here->B4SOISsPtr) += m * (gspr + gstot));
-            (*(here->B4SOISspPtr) -= m * (gspr - gstots));
-
-
-            if (here->B4SOIbodyMod == 1)  {
-                (*(here->B4SOIBpPtr) -= m * gppp);
-                (*(here->B4SOIPbPtr) += m * gppb);
-                (*(here->B4SOIPpPtr) += m * gppp);
-            }
-
-            /* v4.1  Ig_agbcp2 stamping */
-            (*(here->B4SOIGgPtr) += m * gigpg); /* FIXME m or not m ?? h_vogt */
-            if (here->B4SOIbodyMod == 1)  {
-                (*(here->B4SOIPpPtr) -= m * gigpp);
-                (*(here->B4SOIPgPtr) -= m * gigpg);
-                (*(here->B4SOIGpPtr) += m * gigpp);
-            }
-            else if(here->B4SOIbodyMod == 2)
-            {
-                (*(here->B4SOIBbPtr) -= m * gigpp);
-                (*(here->B4SOIBgPtr) -= m * gigpg);
-                (*(here->B4SOIGbPtr) += m * gigpp);
-            }
-
-
-            if (selfheat)
-            {
-                (*(here->B4SOIDPtempPtr) += m * (GmT + gddpT + gcdT));
-                (*(here->B4SOISPtempPtr) += m * (-GmT + gsspT + gcsT));
-                (*(here->B4SOIBtempPtr) += m * (gbbT + gcbT - gigT));
-                (*(here->B4SOIEtempPtr) += m * gceT);
-                (*(here->B4SOIGtempPtr) += m * (gcgT + gigT));
-                (*(here->B4SOITemptempPtr) += m * (gTtt  + 1/pParam->B4SOIrth + gcTt));
-                (*(here->B4SOITempgPtr) += m * gTtg);
-                (*(here->B4SOITempbPtr) += m * gTtb);
-                (*(here->B4SOITempdpPtr) += m * gTtdp);
-                (*(here->B4SOITempspPtr) += m * gTtsp);
-
-                /* v3.0 */
-                if (here->B4SOIsoiMod != 0) /* v3.2 */
-                    (*(here->B4SOITempePtr) += m * gTte);
-
-            }
-
+#endif
             if (here->B4SOIdebugMod != 0)
             {
                 *(here->B4SOIVbsPtr) += 1;
@@ -9956,23 +10941,23 @@ line900:
                 *(here->B4SOIQjsPtr) += 1;
                 *(here->B4SOIQjdPtr) += 1;
             }
-#endif
 
 line1000: ;
 
 #ifndef USE_OMP4SOI
-    }  /* End of Mosfet Instance */
+        }  /* End of Mosfet Instance */
     }   /* End of Model Instance */
 #endif
 
     return(OK);
 }
 
+
 #ifdef USE_OMP4SOI
 
 /* OpenMP parallelization: 
 Update of right hand side and matrix values from instance temporary storage.
-Update to matrix will be done  only when all instances of this model  
+Update to matrix will be done only when all instances of this model  
 have their values calculated and stored. Thus there is no further 
 synchronisation required.*/
 
@@ -9989,8 +10974,6 @@ void B4SOILoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
     for(idx = 0; idx < InstCount; idx++) {
        here = InstArray[idx];
         /* Update b for Ax = b */
-
-
 
             /* v3.1 */
 

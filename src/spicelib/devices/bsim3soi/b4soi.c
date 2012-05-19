@@ -1,5 +1,5 @@
+/***  B4SOI 12/16/2010 Released by Tanvir Morshed   ***/
 
-/***  B4SOI 04/27/2010 Released by Tanvir Morshed   ***/
 
 /**********
  * Copyright 2010 Regents of the University of California.  All rights reserved.
@@ -7,11 +7,13 @@
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soi.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
  * Authors: 2009- Wenwei Yang, Chung-Hsun Lin, Ali Niknejad, Chenming Hu.
+ * Authors: 2010- Tanvir Morshed, Ali Niknejad, Chenming Hu.
  * File: b4soi.c          
  * Modified by Hui Wan, Xuemei Xi 11/30/2005 
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  * Modified by Tanvir Morshed 09/22/2009
  * Modified by Tanvir Morshed 12/31/2009
+ * Modified by Tanvir Morshed 12/16/2010
  **********/
 
 #include "ngspice/ngspice.h"
@@ -46,7 +48,7 @@ OP( "ids",          B4SOI_CD,         IF_REAL,    "Ids"),
 OP( "vbs",          B4SOI_VBS,        IF_REAL,    "Vbs"),
 OP( "vgs",          B4SOI_VGS,        IF_REAL,    "Vgs"),
 OP( "vds",          B4SOI_VDS,        IF_REAL,    "Vds"),
-OP( "ves",	    B4SOI_VES,	      IF_REAL,    "Ves"),
+OP( "ves",            B4SOI_VES,              IF_REAL,    "Ves"),
 OP( "ibd",          B4SOI_IBD,        IF_REAL,    "Ibd"),
 OP( "ibs",          B4SOI_IBS,        IF_REAL,    "Ibs"),
 OP( "isub",         B4SOI_ISUB,       IF_REAL,    "Isub"),
@@ -78,8 +80,8 @@ OP( "debug2",      B4SOI_DEBUG2,     IF_REAL,    "DebugOut2"),
 OP( "debug3",      B4SOI_DEBUG3,     IF_REAL,    "DebugOut3"),
 #endif
 
-IOP( "bjtoff", B4SOI_BJTOFF,	      IF_INTEGER, "BJT on/off flag"),
-IOP( "debug", B4SOI_DEBUG,	      IF_INTEGER, "DEBUG on/off flag"),
+IOP( "bjtoff", B4SOI_BJTOFF,              IF_INTEGER, "BJT on/off flag"),
+IOP( "debug", B4SOI_DEBUG,              IF_INTEGER, "DEBUG on/off flag"),
 IOP( "rth0", B4SOI_RTH0,  IF_REAL,    "Instance Thermal Resistance"),
 IOP( "cth0", B4SOI_CTH0,  IF_REAL,    "Instance Thermal Capacitance"),
 IOP( "nrb", B4SOI_NRB,    IF_REAL,    "Number of squares in body"),
@@ -236,6 +238,8 @@ IOP( "etsi", B4SOI_MOD_ETSI, IF_REAL, "Effective Silicon-on-insulator thickness 
 IOP( "xj", B4SOI_MOD_XJ, IF_REAL, "Junction Depth"),   
 IOP( "rth0", B4SOI_MOD_RTH0, IF_REAL, "Self-heating thermal resistance"),   
 IOP( "cth0", B4SOI_MOD_CTH0, IF_REAL, "Self-heating thermal capacitance"),
+
+IOP( "cfrcoeff", B4SOI_MOD_CFRCOEFF, IF_REAL, "Fringe Cap parameter"), /* v4.4 */   
 IOP( "egidl", B4SOI_MOD_EGIDL, IF_REAL, "GIDL first parameter"),   
 IOP( "agidl", B4SOI_MOD_AGIDL, IF_REAL, "GIDL second parameter"),   
 IOP( "bgidl", B4SOI_MOD_BGIDL, IF_REAL, "GIDL third parameter"),   
@@ -267,8 +271,8 @@ IOP( "pbswg", B4SOI_MOD_PBSWGS, IF_REAL, "Source(gate side) sidewall junction ca
 IOP( "pbswgd", B4SOI_MOD_PBSWGD, IF_REAL, "Drain(gate side) sidewall junction capacitance built in potential"), /* v4.0 */
 IOP( "mjswg", B4SOI_MOD_MJSWGS, IF_REAL, "Source (gate side) sidewall junction capacitance grading coefficient"), /* v4.0 */
 IOP( "mjswgd", B4SOI_MOD_MJSWGD, IF_REAL, "Drain (gate side) sidewall junction capacitance grading coefficient"), /* v4.0 */
-IOP( "cjswg", B4SOI_MOD_CJSWGS, IF_REAL, "Source(gate side) sidewall junction capacitance per unit width"), 	/* v4.0 */
-IOP( "cjswgd", B4SOI_MOD_CJSWGD, IF_REAL, "Drain (gate side) sidewall junction capacitance per unit width"),	/* v4.0 */
+IOP( "cjswg", B4SOI_MOD_CJSWGS, IF_REAL, "Source(gate side) sidewall junction capacitance per unit width"),         /* v4.0 */
+IOP( "cjswgd", B4SOI_MOD_CJSWGD, IF_REAL, "Drain (gate side) sidewall junction capacitance per unit width"),        /* v4.0 */
 IOP( "lint", B4SOI_MOD_LINT, IF_REAL, "Length reduction parameter"),
 IOP( "ll",   B4SOI_MOD_LL, IF_REAL, "Length reduction parameter"),
 IOP( "llc",   B4SOI_MOD_LLC, IF_REAL, "Length reduction parameter"), /* v2.2.3 */
@@ -539,7 +543,7 @@ IOP( "xgl",  B4SOI_MOD_XGL, IF_REAL, "Variation in Ldrawn"),
 /* 4.0 */
 IOP( "rbodymod", B4SOI_MOD_RBODYMOD, IF_INTEGER, "Body R model selector"),
 /* 4.0 */
-IOP( "rdsmod", B4SOI_MOD_RDSMOD, IF_INTEGER, "Bias-dependent S/D resistance model selector"),	/* v4.0 */
+IOP( "rdsmod", B4SOI_MOD_RDSMOD, IF_INTEGER, "Bias-dependent S/D resistance model selector"),        /* v4.0 */
 
 /* v4.1 */
 IOP( "fdmod", B4SOI_MOD_FDMOD, IF_INTEGER, "Improved dVbi model selector"), 
@@ -1114,10 +1118,10 @@ char *B4SOInames[] = {
    "Charge",
 };
 
-int	B4SOInSize = NUMELEMS(B4SOInames);
-int	B4SOIpTSize = NUMELEMS(B4SOIpTable);
-int	B4SOImPTSize = NUMELEMS(B4SOImPTable);
-int	B4SOIiSize = sizeof(B4SOIinstance);
-int	B4SOImSize = sizeof(B4SOImodel);
+int        B4SOInSize = NUMELEMS(B4SOInames);
+int        B4SOIpTSize = NUMELEMS(B4SOIpTable);
+int        B4SOImPTSize = NUMELEMS(B4SOImPTable);
+int        B4SOIiSize = sizeof(B4SOIinstance);
+int        B4SOImSize = sizeof(B4SOImodel);
 
 
