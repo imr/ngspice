@@ -28,7 +28,6 @@ help() {
 
         all                run tests and compare results for all simulators
 
-        spice              run tests and compare results spice
         ngspice            run tests and compare results ngspice
 
         clean              remove all previously generated simulation results
@@ -103,15 +102,6 @@ run_test() {
 
 
 #####
-##### spice tests
-#####
-
-spice() {
-    run_test spice
-}
-
-
-#####
 ##### ngspice tests
 #####
 
@@ -122,13 +112,11 @@ ngspice() {
 
 
 clean() {
-    rm -rf ${qaResultsDirectory}/spice b3v3check.log
     rm -rf ${qaResultsDirectory}/ngspice ngspiceCkt*
 }
 
 
 all() {
-    spice
     ngspice
 }
 
@@ -155,7 +143,7 @@ done
 
 for arg in $@ ; do
     case "$arg" in
-        all | clean | spice | ngspice)
+        all | clean | ngspice)
             "$arg"
             ;;
         *)
