@@ -1,53 +1,17 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = bsim1			\
-	bsim2			\
-	bsim3			\
-	bsim3soi		\
-	bsim3soidd		\
-	bsim3soifd		\
-	bsim3soipd		\
-	bsim4			\
-	filters			\
-	general			\
-	hfet			\
-	hisim			\
-	hisimhv			\
-	jfet			\
-	mes			\
-	mesa			\
-	mos6			\
-	polezero		\
-	resistance		\
-	sensitivity		\
-	transient		\
-	transmission		\
-	vbic
+SUBDIRS = 	bsim3   \
+	bsim3soi    \
+    bsim4       \
+	hisim       \
+	hisimhv
 
 
-DIST_SUBDIRS =	bsim1	\
-	bsim2		\
-	bsim3		\
+DIST_SUBDIRS =	bsim3 \
 	bsim3soi	\
-	bsim3soidd	\
-	bsim3soifd	\
-	bsim3soipd	\
-	bsim4		\
-	filters		\
-	general		\
-	hfet		\
+    bsim4		\
 	hisim		\
-	hisimhv		\
-	jfet		\
-	mes		\
-	mesa		\
-	mos6		\
-	polezero	\
-	resistance	\
-	sensitivity	\
-	transient	\
-	transmission	\
-	vbic
+	hisimhv
 
 if XSPICE_WANTED
 SUBDIRS += xspice
