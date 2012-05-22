@@ -66,4 +66,4 @@ Makefile.in
 /release*
 /debug*
 
-/vs-dll*
+/visualc-tcl*
