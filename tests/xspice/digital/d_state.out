@@ -62,6 +62,7 @@ Transient analysis load calls:              42
 Transient analysis timestep backups:        0
 
 
+binary raw file
 Reducing trtol to 1 for xspice 'A' devices
 Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
 
