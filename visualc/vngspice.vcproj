@@ -33,7 +33,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
 				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;C:\Program Files (x86)\Visual Leak Detector\include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE;EXPERIMENTAL_CODE"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -172,8 +172,8 @@
 				SubSystem="2"
 				HeapReserveSize="0"
 				HeapCommitSize="0"
-				StackReserveSize="0"
-				StackCommitSize="0"
+				StackReserveSize="4194304"
+				StackCommitSize="16384"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="17"
@@ -213,7 +213,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
 				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
@@ -404,7 +404,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
 				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
@@ -582,7 +582,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
 				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
@@ -771,7 +771,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
 				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
@@ -918,8 +918,8 @@
 				SubSystem="2"
 				HeapReserveSize="0"
 				HeapCommitSize="0"
-				StackReserveSize="0"
-				StackCommitSize="0"
+				StackReserveSize="4194304"
+				StackCommitSize="16394"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
@@ -962,7 +962,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;"
+				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
 				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
 			/>
 			<Tool
@@ -1108,8 +1108,8 @@
 				SubSystem="1"
 				HeapReserveSize="0"
 				HeapCommitSize="0"
-				StackReserveSize="0"
-				StackCommitSize="0"
+				StackReserveSize="4194304"
+				StackCommitSize="16384"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
