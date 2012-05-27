@@ -86,10 +86,7 @@
 
 #include "arg.h"
 
-#ifdef EXPERIMENTAL_CODE
-#include "com_option.h"
 #include "spiceif.h" /* for com_loadsnap() and com_savesnap() */
-#endif
 
 #include "com_dl.h"
 
@@ -131,12 +128,16 @@ struct comm spcp_coms[] = {
       "[option] [option = value] ... : Set a variable." } ,
 
 
-/* PN support for altering options in interactive mode */    
+/* support for altering options in interactive mode,
+   using either command 'option' or 'options'*/    
     { "option", com_option, TRUE, TRUE,
       { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
       arg_set,
       "[option] [option = value] ... : Set a simulator option." } ,
-#ifdef EXPERIMENTAL_CODE
+    { "options", com_option, TRUE, TRUE,
+      { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
+      arg_set,
+      "[option] [option = value] ... : Set a simulator option." } ,
     { "savesnap", com_savesnap, FALSE, TRUE,
       { 1, 040000, 040000, 040000 }, E_DEFHMASK, 1, 1,
       NULL,
@@ -145,8 +146,6 @@ struct comm spcp_coms[] = {
       { 1, 040000, 040000, 040000 }, E_DEFHMASK, 2, 2,
       NULL,
       "file : Load a snapshot." } ,
-#endif    
-    
     { "alias", com_alias, FALSE, FALSE,
       { 02, 04, 04, 04 }, E_ADVANCED, 0, LOTS,
       NULL,

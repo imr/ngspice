@@ -1319,7 +1319,6 @@ if_getstat(CKTcircuit *ckt, char *name) {
    LTRA transmission line will not do.
    Many others are not tested.
 */
-#ifdef EXPERIMENTAL_CODE
 
 #include "ngspice/cktdefs.h"
 #include "ngspice/trandefs.h"
@@ -1726,4 +1725,3 @@ void com_savesnap(wordlist *wl)
 
 }
 
-#endif /* EXPERIMENTAL_CODE */

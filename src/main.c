@@ -353,10 +353,8 @@ if_getstat(CKTcircuit *ckt, char *name)
     return (NULL);
 }
 
-#ifdef EXPERIMENTAL_CODE
 void com_loadsnap(wordlist *wl) { return; }
 void com_savesnap(wordlist *wl) { return; }
-#endif
 
 void SMPprint( SMPmatrix *n1 , char *n2)
 {
