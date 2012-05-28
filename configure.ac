@@ -179,10 +179,6 @@ dnl --with-tcl: define TCL_MODULE in the code. This is for tcl support
 AC_ARG_WITH(tcl,
     [  --with-tcl[=tcldir] Compiles the tcl module instead, experimental, see README.Tcl])
 
-dnl --enable-openmp: Use OpenMP on multi-core processors
-AC_ARG_ENABLE(openmp,
-    AS_HELP_STRING([--enable-openmp],[Use OpenMP parallel processing]))
-
 dnl readline and editline cannot both be enabled
 if test "$with_editline" = "yes"; then
     if test "$with_readline" = "yes"; then
@@ -639,7 +635,7 @@ AC_CHECK_FUNCS(localtime)
 
 AC_CHECK_FUNCS(ftime gettimeofday)
 dnl Do not use time or getrusage function for CPU time measurement under OpenMP
-if test "$enable_openmp" = "no"; then
+if test "$enable_openmp" != "yes"; then
      AC_CHECK_FUNCS(time getrusage)
 fi
 AC_CHECK_FUNCS(utimes)
@@ -981,20 +977,18 @@ fi
 dnl Use AC_CHECK_HEADERS so the HAVE_*_H symbol gets defined
 AC_CHECK_HEADERS(ncurses/termcap.h termcap.h)
 
+dnl --enable-openmp: Use OpenMP on multi-core processors
+AC_ARG_ENABLE(openmp,
+    AS_HELP_STRING([--enable-openmp],[Use OpenMP parallel processing]))
+
 dnl Add OpenMP to ngspice.
+: ${enable_openmp:=no}
+AC_OPENMP
+
 if test "$enable_openmp" = "yes"; then
-dnl test for header
-     AC_CHECK_HEADERS([omp.h],
-          [AC_DEFINE(USE_OMP,[1],[OpenMP parallel processing])],
-                     [AC_MSG_ERROR(Couldn't find OpenMP headers.)])
-     if test "x$GCC" = "xyes"; then
-          CFLAGS="$CFLAGS -fopenmp"
-     else
-          CFLAGS="$CFLAGS -xopenmp"
-     fi
-dnl test if timing function is o.k.
-     AC_CHECK_FUNC(omp_get_wtime, [AC_MSG_RESULT(OpenMP features enabled)],
-                     [AC_MSG_ERROR(OpenMP not working correctly.)])
+    AC_DEFINE([USE_OMP], [1], [OpenMP parallel processing])
+    CFLAGS="$CFLAGS $OPENMP_CFLAGS"
+    AC_MSG_RESULT(OpenMP feature enabled)
 fi
 
 dnl Output Files
