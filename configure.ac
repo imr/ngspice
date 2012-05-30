@@ -678,8 +678,8 @@ if test "$TCL_PACKAGE_PATH" = ""; then
   if test "$enable_gc" = "yes"; then
     AC_MSG_RESULT([Checking for the presence of the Garbage Collector:])
     AC_CHECK_LIB([gc], [GC_malloc],
-      AC_DEFINE([HAVE_LIBGC], [], [Define if we want garbage collection enabled])
-  	  LIBS="$LIBS -lgc")
+      [AC_DEFINE([HAVE_LIBGC], [], [Define if we want garbage collection enabled])
+  	  LIBS="$LIBS -lgc"])
   fi
 fi
 dnl check, if we have sigsetjmp and siglongjmp.
@@ -695,7 +695,7 @@ dnl Check for some headers (asprintf, dirname, etc.)
 AC_CHECK_HEADERS([libiberty.h libgen.h])
 
 dnl Check for the asprintf function:
-AC_CHECK_FUNCS([asprintf], [],AC_CHECK_LIB([iberty], [asprintf],AC_DEFINE([HAVE_ASPRINTF], [1], [Have asprintf in libiberty]) LIBS="$LIBS -liberty"))
+AC_CHECK_FUNCS([asprintf], [], [AC_CHECK_LIB([iberty], [asprintf], [AC_DEFINE([HAVE_ASPRINTF], [1], [Have asprintf in libiberty]) LIBS="$LIBS -liberty"])])
 
 dnl Check for the snprintf function:
 if test "$ac_cv_func_asprintf" = no ; then
@@ -703,7 +703,7 @@ if test "$ac_cv_func_asprintf" = no ; then
 fi
 
 dnl Check for the dirname function:
-AC_CHECK_FUNCS([dirname], [],AC_CHECK_LIB([gen], [dirname],AC_DEFINE([HAVE_DIRNAME], [1], [Have dirname in libgen]) LIBS="$LIBS -lgen"))
+AC_CHECK_FUNCS([dirname], [], [AC_CHECK_LIB([gen], [dirname], [AC_DEFINE([HAVE_DIRNAME], [1], [Have dirname in libgen]) LIBS="$LIBS -lgen"])])
 
 AC_CHECK_HEADERS([getopt.h])
 AC_CHECK_FUNC([getopt_long], [getopt_long=true])
@@ -946,7 +946,7 @@ else
                      [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
                      [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
     AC_SEARCH_LIBS([tputs], [ncurses termcap],
-                     AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses or termcap]),
+                     [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses or termcap])],
                      [AC_MSG_ERROR([Found neither ncurses or termcap])])
     AC_CHECK_LIB([readline], [readline],
                      [LIBS="$LIBS -lreadline"],
@@ -966,7 +966,7 @@ else
                      [AC_DEFINE([HAVE_BSDEDITLINE], [1], [Define to enable BSD editline])],
                      [AC_MSG_ERROR([Couldn't find BSD editline headers.])])
     AC_SEARCH_LIBS([tputs], [ncurses termcap],
-                     AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses or termcap]),
+                     [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses or termcap])],
                      [AC_MSG_ERROR([Found neither ncurses or termcap])])
     AC_CHECK_LIB([edit], [readline],
                      [LIBS="$LIBS -ledit"],
