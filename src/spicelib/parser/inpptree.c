@@ -1383,8 +1383,6 @@ void free_tree(INPparseNode *pt)
 }
 
 
-#ifdef TRACE
-
 /* Debugging stuff. */
 
 void printTree(INPparseNode *);
@@ -1497,4 +1495,3 @@ void printTree(INPparseNode * pt)
     return;
 }
 
-#endif

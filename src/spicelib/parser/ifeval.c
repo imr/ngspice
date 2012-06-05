@@ -38,12 +38,32 @@ IFeval(IFparseTree * tree, double gmin, double *result, double *vals,
 	printf("\tvar%d = %lg\n", i, vals[i]);
 #endif
 
-    if ((err = PTeval(myTree->tree, gmin, result, vals)) != OK)
-	return (err);
+    if ((err = PTeval(myTree->tree, gmin, result, vals)) != OK) {
+        if (ft_ngdebug) {
+            INPptPrint("calling PTeval, tree = ", tree);
+            printf("values:");
+            for (i = 0; i < myTree->p.numVars; i++)
+	        printf("\tvar%d = %lg\n", i, vals[i]);
+        }
+        if (ft_stricterror)
+            controlled_exit(EXIT_BAD);
+        else
+            return (err);
+    }
 
     for (i = 0; i < myTree->p.numVars; i++)
-	if ((err = PTeval(myTree->derivs[i], gmin, &derivs[i], vals)) !=
-	    OK) return (err);
+        if ((err = PTeval(myTree->derivs[i], gmin, &derivs[i], vals)) != OK) {
+            if (ft_ngdebug) {
+                INPptPrint("calling PTeval, tree = ", tree);
+                printf("results: function = %lg\n", *result);
+                for (i = 0; i < myTree->p.numVars; i++)
+	                printf("\td / d var%d = %lg\n", i, derivs[i]);
+            }
+            if (ft_stricterror)
+                controlled_exit(EXIT_BAD);
+            else
+                return (err);
+        }
 
 #ifdef TRACE
     printf("results: function = %lg\n", *result);

@@ -55,6 +55,8 @@ typedef struct INPparseNode {
     int usecnt;
 } INPparseNode;
 
+/* A debugging function */
+void INPptPrint(char *str, IFparseTree * ptree);
 
 /* FIXME, less public
  *   and replace with static inline functions for better type check
