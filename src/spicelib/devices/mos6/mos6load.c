@@ -573,8 +573,8 @@ next1:      if(vbs <= -3*vt) {
                  */
 #ifdef CAPBYPASS
                 if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
-                        FABS(delvbs) >= ckt->CKTreltol * MAX(FABS(vbs),
-                        FABS(*(ckt->CKTstate0+here->MOS6vbs)))+
+                        fabs(delvbs) >= ckt->CKTreltol * MAX(fabs(vbs),
+                        fabs(*(ckt->CKTstate0+here->MOS6vbs)))+
                         ckt->CKTvoltTol)|| senflag)
 #endif /*CAPBYPASS*/
                 {
@@ -632,8 +632,8 @@ next1:      if(vbs <= -3*vt) {
                 }
 #ifdef CAPBYPASS
                 if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
-                        FABS(delvbd) >= ckt->CKTreltol * MAX(FABS(vbd),
-                        FABS(*(ckt->CKTstate0+here->MOS6vbd)))+
+                        fabs(delvbd) >= ckt->CKTreltol * MAX(fabs(vbd),
+                        fabs(*(ckt->CKTstate0+here->MOS6vbd)))+
                         ckt->CKTvoltTol)|| senflag)
 #endif /*CAPBYPASS*/
                     /* can't bypass the diode capacitance calculations */

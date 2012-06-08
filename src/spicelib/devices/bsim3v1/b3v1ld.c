@@ -2021,16 +2021,16 @@ finished: /* returning Values to Calling Routine */
 #ifndef NEWCONV
               } 
 	      else
-	      {   tol = ckt->CKTreltol * MAX(FABS(cdhat), FABS(here->BSIM3v1cd))
+	      {   tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(here->BSIM3v1cd))
 		      + ckt->CKTabstol;
-                  if (FABS(cdhat - here->BSIM3v1cd) >= tol)
+                  if (fabs(cdhat - here->BSIM3v1cd) >= tol)
 		  {   ckt->CKTnoncon++;
                   }
 		  else
-		  {   tol = ckt->CKTreltol * MAX(FABS(cbhat), 
-			    FABS(here->BSIM3v1cbs + here->BSIM3v1cbd)) 
+		  {   tol = ckt->CKTreltol * MAX(fabs(cbhat),
+			    fabs(here->BSIM3v1cbs + here->BSIM3v1cbd))
 			    + ckt->CKTabstol;
-                      if (FABS(cbhat - (here->BSIM3v1cbs + here->BSIM3v1cbd)) 
+                      if (fabs(cbhat - (here->BSIM3v1cbs + here->BSIM3v1cbd))
 			  > tol)
 		      {   ckt->CKTnoncon++;
                       }
