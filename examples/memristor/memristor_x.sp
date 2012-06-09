@@ -6,8 +6,10 @@ Memristor with threshold as XSPICE code model
 * XSPICE code model, parameter selection and plotting by
 * Holger Vogt 2012
 
+* ac and op (dc) simulation just use start resistance rinit!
+
 .param stime=10n
-.param vmax = 3
+.param vmax = 4.5
 
 * send parameters to the .control section
 .csparam stime={stime}
@@ -16,15 +18,16 @@ Memristor with threshold as XSPICE code model
 *Xmem 1 0 memristor
 * triangular sweep (you have to adapt the parameters to 'alter' command in the .control section)
 *V1 1 0 DC 0 PWL(0 0 '0.25*stime' 'vmax' '0.5*stime' 0 '0.75*stime' '-vmax' 'stime' 0)
-* sinusoidal sweep
-V1 0 1 DC 0 sin(0 'vmax' '1/stime')
+* sinusoidal sweep for transient, dc for op, ac
+V1 0 1 DC 0.1 ac 1 sin(0 'vmax' '1/stime')
 
+Rl 1 11 1k
 
 * memristor model with limits and threshold
 * "artificial" parameters alpha, beta, and vt. beta and vt adapted to basic programming frequency 
 * just to obtain nice results!
 * You have to care for the physics and set real values! 
-amen 1 2 memr
+amen 11 2 memr
 .model memr memristor (rmin=1k rmax=10k rinit=7k alpha=0 beta='20e3/stime' vt=1.6)
 
 vgnd 2 0 dc 0
@@ -41,6 +44,10 @@ Rmem plus minus r={V(x)}
 * transient simulation same programming voltage but rising frequencies
 .control
 *** first simulation ***
+op 
+print all
+ac lin 101 1 100k
+plot v(11)
 * approx. 100 simulation points
 let deltime = stime/100
 tran $&deltime $&stime uic

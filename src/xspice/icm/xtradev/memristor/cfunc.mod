@@ -28,6 +28,8 @@ SUMMARY
 	
 	** Experimental, still to be tested in circuits !! **
 
+	dc and ac simulation just return rinit.
+
 INTERFACES
 
     cm_memristor()
@@ -56,7 +58,7 @@ double f1(double y);
 
 void cm_memristor (ARGS)
 {
-//    Complex_t   ac_gain;
+    Complex_t   ac_gain;
     double      partial;
     double      int_value;
     double      *rval;
@@ -91,14 +93,19 @@ void cm_memristor (ARGS)
         cm_analog_integrate(int_value, rval, &partial);
 		/* output the current */
         OUTPUT(memris) = INPUT(memris) / *rval;
+        /* This does work, but is questionable */
         PARTIAL(memris, memris) = partial;
+        /* This may be a (safe?) replacement, but in fact is not
+        so good	at high voltage	(at strong non-linearity)
+		cm_analog_auto_partial();*/
     }
-/* no AC and DC modeling so far !	
     else if(ANALYSIS == AC) {
-        ac_gain.real = *vc;
+        ac_gain.real = 1/ *rval;
         ac_gain.imag = 0.0;
         AC_GAIN(memris, memris) = ac_gain;
-    }	*/
+    }
+	else
+	    OUTPUT(memris) = INPUT(memris) / *rval;
 }
 
 /* the window function */
