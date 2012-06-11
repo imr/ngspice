@@ -9,7 +9,7 @@ Memristor with threshold as XSPICE code model
 * ac and op (dc) simulation just use start resistance rinit!
 
 .param stime=10n
-.param vmax = 4.5
+.param vmax = 4.2
 
 * send parameters to the .control section
 .csparam stime={stime}
@@ -54,8 +54,8 @@ tran $&deltime $&stime uic
 * plot i(v1) vs v(1)
 *** you may just stop here ***
 * raise the frequency
-let newfreq = 1.1/stime
-let newstime = stime/1.1
+let newfreq = 1.2/stime
+let newstime = stime/1.2
 let deltime = newstime/100
 alter @V1[sin] [ 0 $&vmax $&newfreq ]
 tran $&deltime $&newstime uic
