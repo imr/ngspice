@@ -14,25 +14,26 @@ uname = $(shell uname)
 
 # C compiler to use
 CC = @CC@
+CFLAGS = @CFLAGS@
 
 # Spice header include path
 INCLUDES = -I$(top_srcdir)/src/include -I$(top_builddir)/src/include
 
 # CFLAGS to use here
-CFLAGS = @CFLAGS@ -fPIC
+EXTRA_CFLAGS = -fPIC
 DEPFLAGS = -MD -MF
 ISMINGW = $(shell uname | grep -c "MINGW32")
 ifeq ($(ISMINGW), 1)
-  CFLAGS = @CFLAGS@
+  EXTRA_CFLAGS =
 endif
 ISCYGWIN = $(shell uname | grep -c "CYGWIN")
 ifeq ($(ISCYGWIN), 1)
-  CFLAGS = @CFLAGS@
+  EXTRA_CFLAGS =
 endif
 ISSUNOS = $(shell uname | grep -c "SunOS")
 ifeq ($(ISSUNOS), 1)
   ifneq "$(CC)" "gcc"
-    CFLAGS = @CFLAGS@ -KPIC
+    EXTRA_CFLAGS = -KPIC
     DEPFLAGS = -xMD -xMF
   endif
 endif

@@ -87,7 +87,7 @@ cm-clean :
 #-----
 
 $(cm)/$(cm).cm : $(cm-objs)
-	$(CC) $(LDFLAGS) -o $@  $(cm-objs)
+	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) $^ -o $@
 
 # "order-only" prerequisites
 #   (info "(make) Prerequisite Types")
@@ -129,7 +129,7 @@ define do-deps
 	rm $$x.pp
 endef
 
-COMPILE = $(CC) $(INCLUDES) -I$(cm) -I$(srcdir)/$(cm) $(CFLAGS)
+COMPILE = $(CC) $(INCLUDES) -I$(cm) -I$(srcdir)/$(cm) $(CFLAGS) $(EXTRA_CFLAGS)
 
 $(cm)/dlmain.o : $(srcdir)/dlmain.c $(cm-descr)
 	$(COMPILE) $(gen_pp)  -o $@ -c $<
