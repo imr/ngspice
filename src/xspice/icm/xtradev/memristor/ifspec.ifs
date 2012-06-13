@@ -1,0 +1,86 @@
+/* ===========================================================================
+FILE    ifspec.ifs
+
+MEMBER OF process XSPICE
+
+Copyright 2012
+Holger Vogt
+Mülheim, Germany
+All Rights Reserved
+
+
+
+AUTHORS
+
+    06/08/2012  Holger Vogt
+
+MODIFICATIONS
+
+    <date> <person name> <nature of modifications>
+
+SUMMARY
+
+    This file contains the definition of a memristor code model
+    with threshold according to
+	Y. V. Pershin, M. Di Ventra: "SPICE model of memristive devices with threshold", 
+    arXiv:1204.2600v1 [physics.comp-ph] 12 Apr 2012, 
+    http://arxiv.org/pdf/1204.2600.pdf.
+	
+	** Experimental, still to be tested in circuits !! **
+
+INTERFACES
+
+    None.
+
+REFERENCED FILES
+
+    None.
+
+NON-STANDARD FEATURES
+
+    None.
+
+=========================================================================== */
+
+NAME_TABLE:
+
+Spice_Model_Name:      memristor
+C_Function_Name:       cm_memristor
+Description:           "Memristor interface"
+
+
+PORT_TABLE:
+
+Port_Name:             memris
+Description:           "memristor terminals"
+Direction:             inout
+Default_Type:          gd
+Allowed_Types:         [gd]
+Vector:                 no
+Vector_Bounds:          -
+Null_Allowed:          no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        rmin                      rmax                   rinit
+Description:           "minimum resistance"      "maximum resistance"   "initial resistance"
+Data_Type:             real                      real                   real
+Default_Value:         10.0                      10000.0                7000.0
+Limits:                -                         -                      -
+Vector:                 no                       no                     no
+Vector_Bounds:          -                        -                      -
+Null_Allowed:          no                        no                     no
+
+PARAMETER_TABLE:
+
+Parameter_Name:        alpha                     beta                    vt
+Description:           "model parameter 1"       "model parameter 2"    "threshold"
+Data_Type:             real                      real                   real
+Default_Value:         0.0                       1.0                    0.0
+Limits:                -                         -                      -
+Vector:                no                        no                     no
+Vector_Bounds:         -                         -                      -
+Null_Allowed:          no                        no                     no
+
+
