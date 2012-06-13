@@ -28,11 +28,6 @@ Modified by Wenwei Yang, 07/31/2008.
 #include "ngspice/noisedef.h"         
 
 #ifdef USE_OMP
-#define USE_OMP4
-#endif
-
-
-#ifdef USE_OMP4
 #include <omp.h>
 #endif
 
@@ -395,7 +390,7 @@ typedef struct sBSIM4v6instance
     double *BSIM4v6GPqPtr;
     double *BSIM4v6SPqPtr;
 
-#ifdef USE_OMP4
+#ifdef USE_OMP
     /* per instance storage of results, to update matrix at a later stge */
     double BSIM4v6rhsdPrime;
     double BSIM4v6rhsgPrime;
@@ -1704,7 +1699,7 @@ typedef struct sBSIM4v6model
     struct bsim4v6SizeDependParam *pSizeDependParamKnot;
 
     
-#ifdef USE_OMP4
+#ifdef USE_OMP
     int BSIM4v6InstCount;
     struct sBSIM4v6instance **BSIM4v6InstanceArray;
 #endif

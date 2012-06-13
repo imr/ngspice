@@ -45,7 +45,7 @@ BSIM3destroy(
         if(prev) FREE(prev);
     }
     if(oldmod) {
-#ifdef USE_OMP3
+#ifdef USE_OMP
         /* free just once for all models */
         FREE(oldmod->BSIM3InstanceArray);
 #endif

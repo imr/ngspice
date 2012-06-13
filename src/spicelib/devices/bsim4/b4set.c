@@ -31,9 +31,8 @@
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-#ifdef USE_OMP4
+#ifdef USE_OMP
 #include "ngspice/cpextern.h"
-int nthreads;
 #endif
 
 #define MAX_EXP 5.834617425e14
@@ -59,7 +58,7 @@ int    noiseAnalGiven = 0, createNode;  /* Criteria for new node creation */
 double Rtot, DMCGeff, DMCIeff, DMDGeff;
 JOB   *job;
 
-#ifdef USE_OMP4
+#ifdef USE_OMP
 unsigned int idx, InstCount;
 BSIM4instance **InstArray;
 int nthreads;
@@ -2547,7 +2546,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
         }
     }
 
-#ifdef USE_OMP4
+#ifdef USE_OMP
     if (!cp_getvar("num_threads", CP_NUM, &nthreads))
         nthreads = 2;
 

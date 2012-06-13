@@ -63,10 +63,9 @@
 
 #define FLOG(A)  fabs(A) + 1e-14
 
-#ifdef USE_OMP4SOI
+#ifdef USE_OMP
 int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt);
 void B4SOILoadRhsMat(GENmodel *inModel, CKTcircuit *ckt);
-extern int nthreads;
 #endif
 
 /* B4SOIlimit(vnew,vold)
@@ -107,7 +106,7 @@ B4SOIload(
     GENmodel *inModel,
     CKTcircuit *ckt)
 {
-#ifdef USE_OMP4SOI
+#ifdef USE_OMP
     int idx;
     B4SOImodel *model = (B4SOImodel*)inModel;
     int good = 0;
@@ -115,7 +114,7 @@ B4SOIload(
     B4SOIinstance **InstArray;
     InstArray = model->B4SOIInstanceArray;
 
-#pragma omp parallel for num_threads(nthreads) private(here)
+#pragma omp parallel for private(here)
     for (idx = 0; idx < model->B4SOIInstCount; idx++) {
         here = InstArray[idx];
         good = B4SOILoadOMP(here, ckt);
@@ -488,11 +487,11 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     double eggbcp2, eggdep, agb1, bgb1, agb2, bgb2, agbc2n, agbc2p, bgbc2n, bgbc2p, Vtm00; /* v4.3.1 bugfix for mtrlMod=1 -Tanvir */
     double m;
 
-#ifdef USE_OMP4SOI
+#ifdef USE_OMP
     model = here->B4SOImodPtr;
 #endif
 
-#ifndef USE_OMP4SOI
+#ifndef USE_OMP
     for (; model != NULL; model = model->B4SOInextModel)
     {    for (here = model->B4SOIinstances; here != NULL;
             here = here->B4SOInextInstance)
@@ -10303,7 +10302,7 @@ line900:
 
             /* v3.1 */
 
-#ifndef USE_OMP4SOI
+#ifndef USE_OMP
             /* v3.1 added ceqgcrg for RF */
             (*(ckt->CKTrhs + here->B4SOIgNode) -= m * ((ceqgate + ceqqg)
              + Igtoteq - ceqgcrg));
@@ -10451,7 +10450,7 @@ line900:
             /* v3.1 added for RF */
             geltd = here->B4SOIgrgeltd;
 
-#ifndef USE_OMP4SOI
+#ifndef USE_OMP
             if (here->B4SOIrgateMod == 1)
             {
                 *(here->B4SOIGEgePtr) += m * geltd;
@@ -10944,7 +10943,7 @@ line900:
 
 line1000: ;
 
-#ifndef USE_OMP4SOI
+#ifndef USE_OMP
         }  /* End of Mosfet Instance */
     }   /* End of Model Instance */
 #endif
@@ -10953,7 +10952,7 @@ line1000: ;
 }
 
 
-#ifdef USE_OMP4SOI
+#ifdef USE_OMP
 
 /* OpenMP parallelization: 
 Update of right hand side and matrix values from instance temporary storage.

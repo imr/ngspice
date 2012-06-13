@@ -59,10 +59,9 @@
         }                                                                     \
     }
 
-#ifdef USE_OMP4
+#ifdef USE_OMP
 int BSIM4LoadOMP(BSIM4instance *here, CKTcircuit *ckt);
 void BSIM4LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt);
-extern int nthreads;
 #endif
 
 int BSIM4polyDepletion(double phi, double ngate,double epsgate, double coxe, double Vgs, double *Vgs_eff, double *dVgs_eff_dVg);
@@ -72,7 +71,7 @@ BSIM4load(
 GENmodel *inModel,
 CKTcircuit *ckt)
 {
-#ifdef USE_OMP4
+#ifdef USE_OMP
     int idx;
     BSIM4model *model = (BSIM4model*)inModel;
     int good = 0;
@@ -80,7 +79,7 @@ CKTcircuit *ckt)
     BSIM4instance **InstArray;
     InstArray = model->BSIM4InstanceArray;
 
-#pragma omp parallel for num_threads(nthreads) private(here)
+#pragma omp parallel for private(here)
     for (idx = 0; idx < model->BSIM4InstCount; idx++) {
         here = InstArray[idx];
         good = BSIM4LoadOMP(here, ckt);
@@ -241,7 +240,7 @@ int ByPass, ChargeComputationNeeded, error, Check, Check1, Check2;
 
 double m;
 
-#ifdef USE_OMP4
+#ifdef USE_OMP
 model = here->BSIM4modPtr;
 #endif
 
@@ -251,7 +250,7 @@ ChargeComputationNeeded =
                  ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)))
                  ? 1 : 0;
 
-#ifndef USE_OMP4
+#ifndef USE_OMP
 for (; model != NULL; model = model->BSIM4nextModel)
 {    for (here = model->BSIM4instances; here != NULL; 
           here = here->BSIM4nextInstance)
@@ -4906,7 +4905,7 @@ line900:
 
               m = here->BSIM4m;
 
-#ifdef USE_OMP4
+#ifdef USE_OMP
        here->BSIM4rhsdPrime = m * (ceqjd - ceqbd + ceqgdtot
                                                     - ceqdrn - ceqqd + Idtoteq);
        here->BSIM4rhsgPrime = m * (ceqqg - ceqgcrg + Igtoteq);
@@ -4992,7 +4991,7 @@ line900:
        geltd = here->BSIM4grgeltd;
 
        T1 = qdef * here->BSIM4gtau;
-#ifdef USE_OMP4
+#ifdef USE_OMP
        if (here->BSIM4rgateMod == 1)
        {   here->BSIM4_1 = m * geltd;
            here->BSIM4_2 = m * geltd;
@@ -5314,7 +5313,7 @@ line900:
 
 line1000:  ;
 
-#ifndef USE_OMP4
+#ifndef USE_OMP
      }  /* End of MOSFET Instance */
 }   /* End of Model Instance */
 #endif
@@ -5356,7 +5355,7 @@ int BSIM4polyDepletion(
     return(0);
 }
 
-#ifdef USE_OMP4
+#ifdef USE_OMP
 void BSIM4LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 {
     unsigned int InstCount, idx;

@@ -47,7 +47,7 @@ BSIM4destroy(
         if(prev) FREE(prev);
     }
     if(oldmod) {
-#ifdef USE_OMP4
+#ifdef USE_OMP
         /* free just once for all models */
         FREE(oldmod->BSIM4InstanceArray);
 #endif

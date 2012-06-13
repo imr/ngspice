@@ -17,10 +17,6 @@ File: bsim3def.h
 #include "ngspice/noisedef.h"         
 
 #ifdef USE_OMP
-#define USE_OMP3
-#endif
-
-#ifdef USE_OMP3
 #include <omp.h>
 #endif
 
@@ -172,7 +168,7 @@ typedef struct sBSIM3instance
     double *BSIM3SPqPtr;
     double *BSIM3BqPtr;
 
-#ifdef USE_OMP3
+#ifdef USE_OMP
     /* per instance storage of results, to update matrix at a later stge */
     double BSIM3rhsG;
     double BSIM3rhsB;
@@ -847,7 +843,7 @@ typedef struct sBSIM3model
     struct bsim3SizeDependParam *pSizeDependParamKnot;
 
     
-#ifdef USE_OMP3
+#ifdef USE_OMP
     int BSIM3InstCount;
     struct sBSIM3instance **BSIM3InstanceArray;
 #endif

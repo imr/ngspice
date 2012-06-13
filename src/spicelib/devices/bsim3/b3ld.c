@@ -32,10 +32,9 @@
 #define DELTA_3 0.02
 #define DELTA_4 0.02
 
-#ifdef USE_OMP3
+#ifdef USE_OMP
 int BSIM3LoadOMP(BSIM3instance *here, CKTcircuit *ckt);
 void BSIM3LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt);
-extern int nthreads;
 #endif
 
 
@@ -44,7 +43,7 @@ BSIM3load(
 GENmodel *inModel,
 CKTcircuit *ckt)
 {
-#ifdef USE_OMP3
+#ifdef USE_OMP
     int idx;
     BSIM3model *model = (BSIM3model*)inModel;
     int good = 0;
@@ -52,7 +51,7 @@ CKTcircuit *ckt)
     BSIM3instance **InstArray;
     InstArray = model->BSIM3InstanceArray;
 
-#pragma omp parallel for num_threads(nthreads) private(here)
+#pragma omp parallel for private(here)
     for (idx = 0; idx < model->BSIM3InstCount; idx++) {
         here = InstArray[idx];
         good = BSIM3LoadOMP(here, ckt);
@@ -173,7 +172,7 @@ struct bsim3SizeDependParam *pParam;
 int ByPass, Check, ChargeComputationNeeded, error;
 /* double junk[50]; */
 
-#ifdef USE_OMP3
+#ifdef USE_OMP
 model = here->BSIM3modPtr;
 #endif
 
@@ -182,7 +181,7 @@ ChargeComputationNeeded =
                  ((ckt->CKTmode & (MODEAC | MODETRAN | MODEINITSMSIG)) ||
                  ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)))
                  ? 1 : 0;
-#ifndef USE_OMP3
+#ifndef USE_OMP
 for (; model != NULL; model = model->BSIM3nextModel)
 {    for (here = model->BSIM3instances; here != NULL; 
           here = here->BSIM3nextInstance)
@@ -2933,7 +2932,7 @@ line900:
 	   }
 
            m = here->BSIM3m;
-#ifdef USE_OMP3
+#ifdef USE_OMP
            here->BSIM3rhsG = m * ceqqg;
            here->BSIM3rhsB = m * (ceqbs + ceqbd + ceqqb);
            here->BSIM3rhsD = m * (ceqbd - cdreq - ceqqd);
@@ -2955,7 +2954,7 @@ line900:
             */
 
 	   T1 = qdef * here->BSIM3gtau;
-#ifdef USE_OMP3
+#ifdef USE_OMP
            here->BSIM3DdPt = m * here->BSIM3drainConductance;
            here->BSIM3GgPt = m * (gcggb - ggtg);
            here->BSIM3SsPt = m * here->BSIM3sourceConductance;
@@ -3059,14 +3058,14 @@ line900:
            }
 #endif
 line1000:  ;
-#ifndef USE_OMP3
+#ifndef USE_OMP
      }  /* End of Mosfet Instance */
 }   /* End of Model Instance */
 #endif
 return(OK);
 }
 
-#ifdef USE_OMP3
+#ifdef USE_OMP
 void BSIM3LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 {
     unsigned int InstCount, idx;

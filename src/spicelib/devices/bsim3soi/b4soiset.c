@@ -25,9 +25,8 @@
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-#ifdef USE_OMP4SOI
+#ifdef USE_OMP
 #include "ngspice/cpextern.h"
-int nthreads;
 #endif
 
 #define SMOOTHFACTOR 0.1
@@ -58,7 +57,7 @@ double Cboxt;
 /* v3.2 */
 double Vbs0t, Qsi;
 
-#ifdef USE_OMP4SOI
+#ifdef USE_OMP
 unsigned int idx, InstCount;
 B4SOIinstance **InstArray;
 int nthreads;
@@ -2698,7 +2697,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
         }
     }
 
-#ifdef USE_OMP4SOI
+#ifdef USE_OMP
     if (!cp_getvar("num_threads", CP_NUM, &nthreads))
         nthreads = 2;
 

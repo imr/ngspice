@@ -17,9 +17,8 @@
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-#ifdef USE_OMP3
+#ifdef USE_OMP
 #include "ngspice/cpextern.h"
-int nthreads;
 #endif
 
 #define MAX_EXP 5.834617425e14
@@ -46,7 +45,7 @@ CKTnode *tmp;
 CKTnode *tmpNode;
 IFuid tmpName;
 
-#ifdef USE_OMP3
+#ifdef USE_OMP
 unsigned int idx, InstCount;
 BSIM3instance **InstArray;
 int nthreads;
@@ -1015,7 +1014,7 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
         }
     }
-#ifdef USE_OMP3
+#ifdef USE_OMP
     if (!cp_getvar("num_threads", CP_NUM, &nthreads))
         nthreads = 2;
 

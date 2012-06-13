@@ -25,11 +25,6 @@ File: b4soidef.h
 #include "ngspice/noisedef.h"
 
 #ifdef USE_OMP
-#define USE_OMP4SOI
-#endif
-
-
-#ifdef USE_OMP4SOI
 #include <omp.h>
 #endif
 
@@ -545,7 +540,7 @@ typedef struct sB4SOIinstance
     double *B4SOIQjsPtr;
     double *B4SOIQjdPtr;
 
-#ifdef USE_OMP4SOI
+#ifdef USE_OMP
     /* per instance storage of results, to update matrix at a later stge */
     int B4SOINode_sh;
     double B4SOINode_1;
@@ -2119,7 +2114,7 @@ typedef struct sB4SOImodel
 
     struct b4soiSizeDependParam *pSizeDependParamKnot;
 
-#ifdef USE_OMP4SOI
+#ifdef USE_OMP
     int B4SOIInstCount;
     struct sB4SOIinstance **B4SOIInstanceArray;
 #endif
