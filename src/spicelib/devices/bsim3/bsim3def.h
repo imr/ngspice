@@ -16,10 +16,6 @@ File: bsim3def.h
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"         
 
-#ifdef USE_OMP
-#include <omp.h>
-#endif
-
 typedef struct sBSIM3instance
 {
     struct sBSIM3model *BSIM3modPtr;

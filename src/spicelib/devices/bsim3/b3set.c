@@ -17,10 +17,6 @@
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-#ifdef USE_OMP
-#include "ngspice/cpextern.h"
-#endif
-
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
 #define EXP_THRESHOLD 34.0
@@ -48,7 +44,6 @@ IFuid tmpName;
 #ifdef USE_OMP
 unsigned int idx, InstCount;
 BSIM3instance **InstArray;
-int nthreads;
 #endif
 
 
@@ -1015,14 +1010,6 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
         }
     }
 #ifdef USE_OMP
-    if (!cp_getvar("num_threads", CP_NUM, &nthreads))
-        nthreads = 2;
-
-    omp_set_num_threads(nthreads);
-    if (nthreads == 1)
-      printf("OpenMP: %d thread is requested in BSIM3\n", nthreads);
-    else
-      printf("OpenMP: %d threads are requested in BSIM3\n", nthreads);
     InstCount = 0;
     model = (BSIM3model*)inModel;
     /* loop through all the BSIM3 device models

@@ -15,7 +15,11 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 
-
+#ifdef USE_OMP
+#include <omp.h>
+#include "ngspice/cpextern.h"
+int nthreads;
+#endif
 
 #define CKALLOC(var,size,type) \
     if(size && ((var = TMALLOC(type, size)) == NULL)){\
@@ -57,6 +61,17 @@ CKTsetup(CKTcircuit *ckt)
     ckt->CKTisSetup = 1;
 
     matrix = ckt->CKTmatrix;
+
+#ifdef USE_OMP
+    if (!cp_getvar("num_threads", CP_NUM, &nthreads))
+        nthreads = 2;
+
+    omp_set_num_threads(nthreads);
+    if (nthreads == 1)
+      printf("OpenMP: %d thread is requested in ngspice\n", nthreads);
+    else
+      printf("OpenMP: %d threads are requested in ngspice\n", nthreads);
+#endif
 
     for (i=0;i<DEVmaxnum;i++) {
 #ifdef HAS_WINDOWS

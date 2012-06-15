@@ -24,10 +24,6 @@ File: b4soidef.h
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
 
-#ifdef USE_OMP
-#include <omp.h>
-#endif
-
 typedef struct sB4SOIinstance
 {
     struct sB4SOImodel *B4SOImodPtr;

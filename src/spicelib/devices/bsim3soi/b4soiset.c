@@ -25,10 +25,6 @@
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-#ifdef USE_OMP
-#include "ngspice/cpextern.h"
-#endif
-
 #define SMOOTHFACTOR 0.1
 #define EPSOX 3.453133e-11
 #define EPSSI 1.03594e-10
@@ -60,7 +56,6 @@ double Vbs0t, Qsi;
 #ifdef USE_OMP
 unsigned int idx, InstCount;
 B4SOIinstance **InstArray;
-int nthreads;
 #endif
 
     /*  loop through all the B4SOI device models */
@@ -2698,14 +2693,6 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     }
 
 #ifdef USE_OMP
-    if (!cp_getvar("num_threads", CP_NUM, &nthreads))
-        nthreads = 2;
-
-    omp_set_num_threads(nthreads);
-    if (nthreads == 1)
-        printf("OpenMP: %d thread is requested in B4SOI\n", nthreads);
-    else
-        printf("OpenMP: %d threads are requested in B4SOI\n", nthreads);
     InstCount = 0;
     model = (B4SOImodel*)inModel;
     /* loop through all the B4SOI device models 

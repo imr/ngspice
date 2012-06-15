@@ -61,7 +61,6 @@ JOB   *job;
 #ifdef USE_OMP
 unsigned int idx, InstCount;
 BSIM4instance **InstArray;
-int nthreads;
 #endif
 
     /* Search for a noise analysis request */
@@ -2547,14 +2546,6 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     }
 
 #ifdef USE_OMP
-    if (!cp_getvar("num_threads", CP_NUM, &nthreads))
-        nthreads = 2;
-
-    omp_set_num_threads(nthreads);
-    if (nthreads == 1)
-        printf("OpenMP: %d thread is requested in BSIM4\n", nthreads);
-    else
-        printf("OpenMP: %d threads are requested in BSIM4\n", nthreads);
     InstCount = 0;
     model = (BSIM4model*)inModel;
     /* loop through all the BSIM4 device models 

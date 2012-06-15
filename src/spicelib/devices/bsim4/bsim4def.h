@@ -28,10 +28,6 @@ Modified by Wenwei Yang, 07/31/2008.
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
 
-#ifdef USE_OMP
-#include <omp.h>
-#endif
-
 typedef struct sBSIM4instance
 {
     struct sBSIM4model *BSIM4modPtr;
