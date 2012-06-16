@@ -39,13 +39,10 @@ LTRAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     switch (value->v.numValue) {
     case 4:
       here->LTRAinitCur2 = *(value->v.vec.rVec + 3);
-      break;
     case 3:
       here->LTRAinitVolt2 = *(value->v.vec.rVec + 2);
-      break;
     case 2:
       here->LTRAinitCur1 = *(value->v.vec.rVec + 1);
-      break;
     case 1:
       here->LTRAinitVolt1 = *(value->v.vec.rVec);
       break;

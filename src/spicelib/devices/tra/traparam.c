@@ -65,13 +65,10 @@ TRAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             switch(value->v.numValue){
                 case 4:
                     here->TRAinitCur2 = *(value->v.vec.rVec+3);
-                    break;
                 case 3:
                     here->TRAinitVolt2 =  *(value->v.vec.rVec+2);
-                    break;
                 case 2:
                     here->TRAinitCur1 = *(value->v.vec.rVec+1);
-                    break;
                 case 1:
                     here->TRAinitVolt1 = *(value->v.vec.rVec);
                     break;
