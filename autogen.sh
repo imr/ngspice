@@ -195,13 +195,13 @@ $znew
 
 fi
 
-echo "Running aclocal $ACLOCAL_FLAGS"
-aclocal $ACLOCAL_FLAGS \
-    || error_and_exit "aclocal failed"
-
 echo "Running libtoolize"
 libtoolize --copy --force \
     || error_and_exit "libtoolize failed"
+
+echo "Running aclocal $ACLOCAL_FLAGS"
+aclocal $ACLOCAL_FLAGS \
+    || error_and_exit "aclocal failed"
 
 # optional feature: autoheader
 (autoheader --version) < /dev/null > /dev/null 2>&1
