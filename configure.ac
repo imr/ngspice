@@ -177,7 +177,7 @@ AC_ARG_WITH([editline],
 
 # --with-tcl: define TCL_MODULE in the code. This is for tcl support
 AC_ARG_WITH([tcl],
-    [  --with-tcl[=tcldir] Compiles the tcl module instead, [experimental], see README.Tcl])
+    [AS_HELP_STRING([--with-tcl=tcldir], [Compiles  the tcl module instead,  experimental, see README.tcl])])
 
 # readline and editline cannot both be enabled
 if test "$with_editline" = "yes"; then
@@ -522,9 +522,8 @@ AC_FUNC_VPRINTF
 _use_rpath=no
 AC_MSG_CHECKING([if hardcoding of the X11 runtime library path is desired])
 AC_ARG_ENABLE([rpath],
-    [  --enable-rpath         Enable hardcoding the X11 runtime library path [default=disabled]],
-    [
-        if test "X$enable_rpath" = "Xno" ; then
+    [AS_HELP_STRING([--enable-rpath], [Enable hardcoding the X11 runtime library path])],
+    [   if test "X$enable_rpath" = "Xno" ; then
             AC_MSG_RESULT([no])
             _use_rpath=no
         else
