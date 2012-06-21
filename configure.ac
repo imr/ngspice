@@ -1,185 +1,185 @@
-dnl configure.ac script for ngspice
-dnl
-dnl This file is part of ngspice.
-dnl
-dnl (Process this file with autoconf to produce a configure script.)
-dnl
-dnl This configure file has been updated to mostly follow the guidence in the
-dnl GNU Autoconf manual for version 2.59
+# configure.ac script for ngspice
+#
+# This file is part of ngspice.
+#
+# (Process this file with autoconf to produce a configure script.)
+#
+# This configure file has been updated to mostly follow the guidence in the
+# GNU Autoconf manual for version 2.59
 
 
-dnl Initialisation
-dnl ---------------
+# Initialisation
+# ---------------
 
-dnl Initialisation of configure
+# Initialisation of configure
 AC_INIT([ngspice], [24], [http://ngspice.sourceforge.net/bugrep.html])
 
-dnl Unique file in the source directory
+# Unique file in the source directory
 AC_CONFIG_SRCDIR([src/ngspice.c])
 
-dnl Ensure a recent version of Autoconf is in use
-dnl Older versions may not work with this script and this will report the
-dnl problem to the user.  (2.52 is a guess and might need some adjustment)
+# Ensure a recent version of Autoconf is in use
+# Older versions may not work with this script and this will report the
+# problem to the user.  (2.52 is a guess and might need some adjustment)
 AC_PREREQ([2.59])
 
-dnl Revison stamp the generated ./configure script
+# Revison stamp the generated ./configure script
 AC_REVISION([$Revision$])
 
-dnl Create a configuration header
+# Create a configuration header
 AC_CONFIG_HEADER([src/include/ngspice/config.h])
 
-dnl Initialise automake stuff
+# Initialise automake stuff
 AM_INIT_AUTOMAKE([-Wall -Werror nostdinc])
 
 AC_SUBST([AM_CPPFLAGS], ['-I. -I$(srcdir) -I$(top_builddir)/src/include'])
 
 AC_CONFIG_MACRO_DIR([m4])
 
-dnl Package Options
-dnl ---------------
+# Package Options
+# ---------------
 
-dnl --enable-ansi: try to force --ansi option to the compiler
+# --enable-ansi: try to force --ansi option to the compiler
 AC_ARG_ENABLE([ansi],
     [AS_HELP_STRING([--enable-ansi], [Force --ansi option for compilation])])
 
-dnl --disable-debug: remove -g and -Wall  option to the compiler
+# --disable-debug: remove -g and -Wall  option to the compiler
 AC_ARG_ENABLE([debug],
     [AS_HELP_STRING([--enable-debug], [Add -g option for compilation (default)])])
 
-dnl --enable-gprof: add -pg option to the compiler (GCC)
+# --enable-gprof: add -pg option to the compiler (GCC)
 AC_ARG_ENABLE([gprof],
    [AS_HELP_STRING([--enable-gprof], [Produce gprof profiling data in 'gmon.out' (GCC only).])])
 
-dnl --enable-checker: add --with-checker-debug  option to the compiler
+# --enable-checker: add --with-checker-debug  option to the compiler
 AC_ARG_ENABLE([checker],
     [AS_HELP_STRING([--enable-checkergcc], [Option for compilation with checkergcc])])
 
-dnl --enable-gc: Enable Boehm-Weiser Conservative Garbage Collector
+# --enable-gc: Enable Boehm-Weiser Conservative Garbage Collector
 AC_ARG_ENABLE([checker],
     [AS_HELP_STRING([--enable-gc], [Use Boehm-Weiser Conservative Garbage Collector. Disabled by default.])])
 
-dnl --enable-nobypass: define NOBYPASS for the code
+# --enable-nobypass: define NOBYPASS for the code
 AC_ARG_ENABLE([nobypass],
     [AS_HELP_STRING([--enable-nobypass], [Don't bypass recalculations of slowly changing variables])])
 
-dnl --enable-capbypass: define CAPBYPASS for the code
+# --enable-capbypass: define CAPBYPASS for the code
 AC_ARG_ENABLE([capbypass],
     [AS_HELP_STRING([--enable-capbypass], [Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd voltages are unchanged])])
 
-dnl --enable-nodelimiting: define NODELIMITING for the code
+# --enable-nodelimiting: define NODELIMITING for the code
 AC_ARG_ENABLE([nodelimiting],
     [AS_HELP_STRING([--enable-nodelimiting], [Experimental damping scheme.])])
 
-dnl --enable-predictor: define PREDICTOR for the code
+# --enable-predictor: define PREDICTOR for the code
 AC_ARG_ENABLE([predictor],
     [AS_HELP_STRING([--enable-predictor], [Enable a predictor method for convergence.])])
 
-dnl --enable-newpred: define NEWPRED for the code
+# --enable-newpred: define NEWPRED for the code
 AC_ARG_ENABLE([newpred],
     [AS_HELP_STRING([--enable-newpred], [Enable NEWPRED whatever it is(?)])])
 
-dnl --enable-newtrunc: define NEWTRUNC for the code
+# --enable-newtrunc: define NEWTRUNC for the code
 AC_ARG_ENABLE([newtrunc],
     [AS_HELP_STRING([--enable-newtrunc], [Enable, how we want extrapolate capacitances.])])
 
-dnl --enable-sense2: define WANT_SENSE2 for the code
+# --enable-sense2: define WANT_SENSE2 for the code
 AC_ARG_ENABLE([sense2],
     [AS_HELP_STRING([--enable-sense2], [Use spice2 sensitivity analysis.])])
 
-dnl --enable-ftedebug: enable frontend debug macros
+# --enable-ftedebug: enable frontend debug macros
 AC_ARG_ENABLE([ftedebug],
     [AS_HELP_STRING([--enable-ftedebug], [Enable ngspice frontend debug])])
 
-dnl --enable-cpdebug: enable frontend debug macros
+# --enable-cpdebug: enable frontend debug macros
 AC_ARG_ENABLE([cpdebug],
     [AS_HELP_STRING([--enable-cpdebug], [Enable ngspice shell debug])])
 
-dnl --enable-sensdebug: define SENSDEBUG for the code
+# --enable-sensdebug: define SENSDEBUG for the code
 AC_ARG_ENABLE([sensdebug],
     [AS_HELP_STRING([--enable-sensdebug], [Debug sensitivity code *SENSDEBUG*])])
 
-dnl --enable-asdebug: define ASDEBUG for the code
+# --enable-asdebug: define ASDEBUG for the code
 AC_ARG_ENABLE([asdebug],
     [AS_HELP_STRING([--enable-asdebug], [Debug sensitivity code *ASDEBUG*])])
 
-dnl --enable-stepdebug: define STEPDEBUG for the code
+# --enable-stepdebug: define STEPDEBUG for the code
 AC_ARG_ENABLE([stepdebug],
     [AS_HELP_STRING([--enable-stepdebug], [Unknown debug option])])
 
-dnl --enable-pzdebug: define PZDEBUG for the code
+# --enable-pzdebug: define PZDEBUG for the code
 AC_ARG_ENABLE([pzdebug],
     [AS_HELP_STRING([--enable-pzdebug], [Debug pole/zero code])])
 
-dnl --enable-blktmsdebug: define D_DBG_BLOCKTIMES for the code
+# --enable-blktmsdebug: define D_DBG_BLOCKTIMES for the code
 AC_ARG_ENABLE([blktmsdebug],
     [AS_HELP_STRING([--enable-blktmsdebug], [Debug distortion code *BLOCKTIMES*])])
 
-dnl --enable-smltmsdebug: define D_DBG_SMALLTIMES for the code
+# --enable-smltmsdebug: define D_DBG_SMALLTIMES for the code
 AC_ARG_ENABLE([smltmsdebug],
     [AS_HELP_STRING([--enable-smltmsdebug], [Debug distortion code *SMALLTIMES*])])
 
-dnl --enable-smoketest: a smoketest
+# --enable-smoketest: a smoketest
 AC_ARG_ENABLE([smoketest],
     [AS_HELP_STRING([--enable-smoketest], [Enable smoketest compile])])
 
-dnl --enable-experimental: define EXPERIMENTAL_CODE for the code
+# --enable-experimental: define EXPERIMENTAL_CODE for the code
 AC_ARG_ENABLE([experimental],
     [AS_HELP_STRING([--enable-experimental], [Enable some experimental code])])
 
-dnl --enable-expdevices: Enable the compilation of experimental devices
+# --enable-expdevices: Enable the compilation of experimental devices
 AC_ARG_ENABLE([expdevices],
     [AS_HELP_STRING([--enable-expdevices], [Enable experimental devices (they do not compile)])])
 
-dnl --enable-xspice: define XSPICE in the code. This is for xspice support
+# --enable-xspice: define XSPICE in the code. This is for xspice support
 AC_ARG_ENABLE([xspice],
     [AS_HELP_STRING([--enable-xspice], [Enable XSpice enhancements, (experimental)])])
 
-dnl --enable-cider: define CIDER in the code. This is for CIDER support
+# --enable-cider: define CIDER in the code. This is for CIDER support
 AC_ARG_ENABLE([cider],
     [AS_HELP_STRING([--enable-cider], [Enable CIDER enhancements, (experimental)])])
 
-dnl --enable-adms: define ADMS in the code. This is for the adms Verilog-A compiler support
+# --enable-adms: define ADMS in the code. This is for the adms Verilog-A compiler support
 AC_ARG_ENABLE([adms],
     [AS_HELP_STRING([--enable-adms], [Enable ADMS code models, (experimental)])])
 
-dnl --enable-adms3: define ADMS in the code. This is for the adms Verilog-A compiler support
+# --enable-adms3: define ADMS in the code. This is for the adms Verilog-A compiler support
 AC_ARG_ENABLE([adms3],
     [AS_HELP_STRING([--enable-adms3], [Enable ADMS code models, (experimental) (adms3)])])
 
-dnl --enable-xspice: define XSPICE in the code. This is for xspice support
+# --enable-xspice: define XSPICE in the code. This is for xspice support
 AC_ARG_ENABLE([pss],
     [AS_HELP_STRING([--enable-pss], [Enable PSS analysis, (very experimental)])])
 
-dnl --enable-ndev: define NDEV in the code. An interface for external device i.e. numerical device
+# --enable-ndev: define NDEV in the code. An interface for external device i.e. numerical device
 AC_ARG_ENABLE([ndev],
     [AS_HELP_STRING([--enable-ndev], [Enable NDEV interface, (experimental)])])
 
-dnl --enable-cluster: define CLUSTER in the code. This is for cluster support
+# --enable-cluster: define CLUSTER in the code. This is for cluster support
 AC_ARG_ENABLE([cluster],
     [AS_HELP_STRING([--enable-cluster], [Enable cluster support, (experimental)])])
 
-dnl --enable-help: try to force --ansi option to the compiler
+# --enable-help: try to force --ansi option to the compiler
 AC_ARG_ENABLE([help],
     [AS_HELP_STRING([--enable-help], [Force building nghelp (deprecated)])])
 
-dnl --enable-xgraph: Compile the xgraph plotting program. Default is "no".
-dnl Xgraph is a plotting package for X11 once very popular.
+# --enable-xgraph: Compile the xgraph plotting program. Default is "no".
+# Xgraph is a plotting package for X11 once very popular.
 AC_ARG_ENABLE([xgraph],
     [AS_HELP_STRING([--enable-xgraph], [Enable xgraph compilation.])])
 
-dnl --with-readline:  Includes GNU readline support into CLI.  Default is "no".
+# --with-readline:  Includes GNU readline support into CLI.  Default is "no".
 AC_ARG_WITH([readline],
     [AS_HELP_STRING([--with-readline[=yes/no]], [Enable GNU readline support for CLI. Default=no.])])
 
-dnl --with-editline:  Includes BSD Editline support into CLI.  Default is "no".
+# --with-editline:  Includes BSD Editline support into CLI.  Default is "no".
 AC_ARG_WITH([editline],
     [AS_HELP_STRING([--with-editline[=yes/no]], [Enable BSD editline support for CLI. Default=no.])])
 
-dnl --with-tcl: define TCL_MODULE in the code. This is for tcl support
+# --with-tcl: define TCL_MODULE in the code. This is for tcl support
 AC_ARG_WITH([tcl],
     [  --with-tcl[=tcldir] Compiles the tcl module instead, [experimental], see README.Tcl])
 
-dnl readline and editline cannot both be enabled
+# readline and editline cannot both be enabled
 if test "$with_editline" = "yes"; then
     if test "$with_readline" = "yes"; then
         AC_MSG_ERROR([Readline and editline cannot both be enabled])
@@ -187,21 +187,21 @@ if test "$with_editline" = "yes"; then
 fi
 
 
-dnl Enable maintainer commands only if requested
+# Enable maintainer commands only if requested
 AM_MAINTAINER_MODE
 
 
-dnl Compiler checks
-dnl ---------------
+# Compiler checks
+# ---------------
 
 ext_CFLAGS="$CFLAGS"
 
 AC_PROG_CC
 
-dnl Work on compiler options according to system:
-dnl Set default CFLAGS - only use -Wall if we have gcc
+# Work on compiler options according to system:
+# Set default CFLAGS - only use -Wall if we have gcc
 
-dnl the above AC_PROG_CC may set CFLAGS to "-O2 -g"
+# the above AC_PROG_CC may set CFLAGS to "-O2 -g"
 if test "$enable_debug" = "no"; then
     if test "x$GCC" = "xyes"; then
         AC_MSG_WARN([Removing debugging option!])
@@ -219,10 +219,10 @@ else
     fi
 fi
 
-dnl the profiling option
+# the profiling option
 if test "$enable_gprof" = "yes"; then
-    dnl Probably other compilers support -pg or something similar;
-    dnl feel free to extend this to include them.
+    # Probably other compilers support -pg or something similar;
+    # feel free to extend this to include them.
     if test "$GCC" = "yes"; then
         if test "$enable_shared" = "yes" ; then
             AC_MSG_ERROR([Can't have --enable-gprof without --disable-shared (we
@@ -239,13 +239,13 @@ if test "$enable_gprof" = "yes"; then
     fi
 fi
 
-dnl Not sure that this will work....
+# Not sure that this will work....
 if test "$with_checkergcc" = "yes"; then
     CC="checkergcc"
 fi
 
 
-dnl Checks for ANSI-C header files.
+# Checks for ANSI-C header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([strings.h])
 
@@ -264,7 +264,7 @@ if test "$enable_ansi" = "yes"; then
 fi
 
 if test "$enable_smoketest" = "yes"; then
-dnl CFLAGS="$CFLAGS -Werror"
+# CFLAGS="$CFLAGS -Werror"
     CFLAGS="$CFLAGS -pedantic -W -Wmissing-prototypes"
     CFLAGS="$CFLAGS -Wstrict-prototypes -Wtraditional"
     CFLAGS="$CFLAGS -Wconversion -Wshadow -Wpointer-arith"
@@ -274,12 +274,12 @@ dnl CFLAGS="$CFLAGS -Werror"
 fi
 
 
-dnl Check system we're on , and tune accordingly
+# Check system we're on , and tune accordingly
 AC_CANONICAL_HOST
 
-dnl Expand the prefix variable
+# Expand the prefix variable
 if eval "test x$prefix = xNONE"; then
-dnl  with the MS WINDOWS executable we suggest C:/Spice/bin as *.exe-path
+#  with the MS WINDOWS executable we suggest C:/Spice/bin as *.exe-path
     if test "$with_windows" = "yes"; then
         dprefix="C:/Spice"
         prefix=$dprefix
@@ -296,9 +296,9 @@ fi
 #
 ##########################################################################
 
-dnl
-dnl The tclSpice options
-dnl
+#
+# The tclSpice options
+#
 if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
     has_tcl_module=true
     AC_DEFINE([TCL_MODULE], [1], [Tcl Module])
@@ -454,7 +454,7 @@ AC_SUBST([TCL_LIB_SPEC])
 
 
 
-dnl Checks for programs
+# Checks for programs
 AC_LIBTOOL_WIN32_DLL
 AC_LIBTOOL_DLOPEN
 AM_PROG_CC_C_O
@@ -462,7 +462,7 @@ AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 
 
-dnl --with-windows : the user wants to use generate the MS WINDOWS executable
+# --with-windows : the user wants to use generate the MS WINDOWS executable
 AC_MSG_CHECKING([whether windows code is enabled])
 AC_ARG_WITH([windows],
     [AS_HELP_STRING([--with-windows], [MS WINDOWS executable])],
@@ -487,17 +487,17 @@ case $with_windows in
         CFLAGS="$CFLAGS -mwindows";;
     * )
 
-dnl Check for /proc (virtual process information file system)
+# Check for /proc (virtual process information file system)
 AC_CHECK_HEADERS([/proc/meminfo])
 
-dnl Checks for X11 header files and libraries - X11 support can be disabled
-dnl by passing the '--without-x' option to configure:
+# Checks for X11 header files and libraries - X11 support can be disabled
+# by passing the '--without-x' option to configure:
 
-dnl Try to locate the X-Windows include files and libraries
-dnl   will set no_x="yes" or no_x=""
+# Try to locate the X-Windows include files and libraries
+#   will set no_x="yes" or no_x=""
 AC_PATH_X
 
-dnl will set X_CFLAGS, X_LIBS, and might define X_DISPLAY_MISSING
+# will set X_CFLAGS, X_LIBS, and might define X_DISPLAY_MISSING
 AC_PATH_XTRA
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -513,9 +513,9 @@ AC_FUNC_SELECT_ARGTYPES
 AC_FUNC_SETVBUF_REVERSED
 AC_FUNC_VPRINTF
 
-dnl  Check if the user wants to use the appropriate rpath commands to compile in
-dnl  the shared library path for the X libraries.  This is off by default since
-dnl  that is how it has been historically.  Using --enable-rpath will turn this on
+#  Check if the user wants to use the appropriate rpath commands to compile in
+#  the shared library path for the X libraries.  This is off by default since
+#  that is how it has been historically.  Using --enable-rpath will turn this on
 
 _use_rpath=no
 AC_MSG_CHECKING([if hardcoding of the X11 runtime library path is desired])
@@ -568,19 +568,19 @@ if test "X$_use_rpath" = "Xyes" ; then
     LIBS=$_save_LIBS
 fi
 
-dnl Checks for X libraries - if X11 wasn't found then don't make following
-dnl tests and compile without X11 support - otherwise, check if the following
-dnl libraries are present (error if they are not)
-dnl In CYGWIN library ordering has to be changed. Is this compatible to LINUX?
-dnl XShmAttach is a struct in CYGWIN, not a function
-dnl SJB: 13th march 2005
-dnl Library order is giving linker warnings on MacOSX
-dnl It's not clear to me which order is required for Cygwin (see comment above)
-dnl and neither can I find any authoritative answer for the correct link order
-dnl for MacOSX or Linux, but
-dnl            -lXaw -lXmu -lXt -lXext -lX11
-dnl seems to be the popular choice.
-dnl (The previous order was -lX11 -lXt -lXext -lXmu -lXaw)
+# Checks for X libraries - if X11 wasn't found then don't make following
+# tests and compile without X11 support - otherwise, check if the following
+# libraries are present (error if they are not)
+# In CYGWIN library ordering has to be changed. Is this compatible to LINUX?
+# XShmAttach is a struct in CYGWIN, not a function
+# SJB: 13th march 2005
+# Library order is giving linker warnings on MacOSX
+# It's not clear to me which order is required for Cygwin (see comment above)
+# and neither can I find any authoritative answer for the correct link order
+# for MacOSX or Linux, but
+#            -lXaw -lXmu -lXt -lXext -lX11
+# seems to be the popular choice.
+# (The previous order was -lX11 -lXt -lXext -lXmu -lXaw)
 
 if test "x$no_x" != "xyes" ; then
     AC_CHECK_LIB([Xaw], [main], [X_LIBS="$X_LIBS -lXaw"], [AC_MSG_ERROR([Couldn't find Xaw library])], [$X_LIBS  $X_EXTRA_LIBS])
@@ -607,18 +607,18 @@ esac
 AM_CONDITIONAL([NO_X], [test x$has_no_x = xtrue])
 AM_CONDITIONAL([NO_HELP], [test x$has_no_help = xtrue])
 
-dnl Check for a few typdefs:
+# Check for a few typdefs:
 AC_TYPE_PID_T
 AC_TYPE_SIGNAL
 
-dnl sighandler_t is the type of the signal handler on GNU variants,
-dnl sig_t is the type of a signal handler on 4.4BSD's,
-dnl other systems use __sighandler_t.
+# sighandler_t is the type of the signal handler on GNU variants,
+# sig_t is the type of a signal handler on 4.4BSD's,
+# other systems use __sighandler_t.
 AC_CHECK_TYPES([sighandler_t, sig_t, __sighandler_t], [], [],
     [#include <sys/types.h>
      #include <signal.h>])
 
-dnl Check for a few libraries and headers:
+# Check for a few libraries and headers:
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS([unistd.h ctype.h pwd.h fcntl.h sys/ioctl.h stropts.h])
 AC_HEADER_SYS_WAIT
@@ -627,14 +627,14 @@ AC_HEADER_STAT
 AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h stddef.h sys/file.h sys/param.h sys/socket.h sys/time.h sys/timeb.h sys/io.h])
 
 
-dnl Check time and resources headers and functions:
+# Check time and resources headers and functions:
 AC_HEADER_TIME
 AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
 AC_CHECK_FUNCS([localtime])
 
 AC_CHECK_FUNCS([ftime gettimeofday])
-dnl Do not use time or getrusage function for CPU time measurement under OpenMP
+# Do not use time or getrusage function for CPU time measurement under OpenMP
 if test "$enable_openmp" != "yes"; then
     AC_CHECK_FUNCS([time getrusage])
 fi
@@ -643,11 +643,11 @@ AC_CHECK_FUNCS([getrlimit ulimit], [break])
 
 AC_CHECK_FUNCS([endpwent gethostbyname memset select socket strdup strerror strncasecmp strstr strtol])
 
-dnl Look for termios first (posix)
+# Look for termios first (posix)
 AC_CHECK_HEADERS([termios.h termio.h sgtty.h], [break])
 AC_CHECK_FUNCS([isatty tcgetattr tcsetattr])
 
-dnl Check for a few functions:
+# Check for a few functions:
 AC_FUNC_FORK([])
 AC_CHECK_FUNCS([access bcopy bzero qsort dup2 popen])
 AC_CHECK_FUNCS([strchr index], [break])
@@ -656,16 +656,16 @@ AC_CHECK_FUNCS([getcwd getwd], [break])
 
 
 AC_MSG_RESULT([Checking mathematical features of the system:])
-dnl Look for math library:
+# Look for math library:
 AC_CHECK_LIB([m], [sqrt])
 AC_CHECK_HEADERS([float.h limits.h values.h ieeefp.h])
 
-dnl Check for a few mathematical functions:
+# Check for a few mathematical functions:
 AC_CHECK_FUNCS([erfc logb scalb scalbn asinh acosh atanh finite])
-dnl According POSIX we should look for macros first
+# According POSIX we should look for macros first
 AC_CHECK_DECLS([isinf], [], [], [[#include <math.h>]])
 AC_CHECK_DECLS([isnan], [], [], [[#include <math.h>]])
-dnl But may be we have still functions
+# But may be we have still functions
 if test "$ac_cv_have_decl_isinf" != yes; then
     AC_CHECK_FUNC([isinf])
 fi
@@ -673,7 +673,7 @@ if test "$ac_cv_have_decl_isnan" != yes; then
     AC_CHECK_FUNC([isnan])
 fi
 
-dnl If user enables garbage collection, look for garbage collector
+# If user enables garbage collection, look for garbage collector
 if test "$TCL_PACKAGE_PATH" = ""; then
     if test "$enable_gc" = "yes"; then
         AC_MSG_RESULT([Checking for the presence of the Garbage Collector:])
@@ -682,27 +682,27 @@ if test "$TCL_PACKAGE_PATH" = ""; then
              LIBS="$LIBS -lgc"])
     fi
 fi
-dnl check, if we have sigsetjmp and siglongjmp.
-dnl A trivial AC_CHECK_FUNCS(sigsetjmp) won't do because sigsetjmp() might be a
-dnl macro declared in <setjmp.h>. (joze)
+# check, if we have sigsetjmp and siglongjmp.
+# A trivial AC_CHECK_FUNCS(sigsetjmp) won't do because sigsetjmp() might be a
+# macro declared in <setjmp.h>. (joze)
 AC_MSG_CHECKING([for sigsetjmp])
 AC_TRY_LINK([#include <setjmp.h>],[jmp_buf env; sigsetjmp(env, 1);],
     [AC_MSG_RESULT([yes])
         AC_DEFINE([HAVE_SIGSETJMP], [], [Define if we have sigsetjmp().])],
     [AC_MSG_RESULT([no])])
 
-dnl Check for some headers (asprintf, dirname, etc.)
+# Check for some headers (asprintf, dirname, etc.)
 AC_CHECK_HEADERS([libiberty.h libgen.h])
 
-dnl Check for the asprintf function:
+# Check for the asprintf function:
 AC_CHECK_FUNCS([asprintf], [], [AC_CHECK_LIB([iberty], [asprintf], [AC_DEFINE([HAVE_ASPRINTF], [1], [Have asprintf in libiberty]) LIBS="$LIBS -liberty"])])
 
-dnl Check for the snprintf function:
+# Check for the snprintf function:
 if test "$ac_cv_func_asprintf" = no ; then
     AC_CHECK_FUNCS([snprintf])
 fi
 
-dnl Check for the dirname function:
+# Check for the dirname function:
 AC_CHECK_FUNCS([dirname], [], [AC_CHECK_LIB([gen], [dirname], [AC_DEFINE([HAVE_DIRNAME], [1], [Have dirname in libgen]) LIBS="$LIBS -lgen"])])
 
 AC_CHECK_HEADERS([getopt.h])
@@ -806,7 +806,7 @@ AC_SUBST([NOTXGRAPH])
 AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc])
 
 #################  XSPICE ##################################################
-dnl Add new code models to the build by pointing to them here.
+# Add new code models to the build by pointing to them here.
 
 if test "$enable_xspice" = "yes"; then
     if test -z "${YACC}" ; then
@@ -814,7 +814,7 @@ if test "$enable_xspice" = "yes"; then
     fi
     AC_MSG_RESULT([X-Spice features included])
     AC_DEFINE([XSPICE], [1], [The xspice enhancements])
-dnl Define variables for LEX
+# Define variables for LEX
     AC_CHECK_PROGS([LEX], [flex lex])
     if test -z $LEX ; then
         AC_MSG_ERROR([Flex is required for building XSPICE])
@@ -852,7 +852,7 @@ AC_SUBST([XSPICEDLLIBS])
 AM_CONDITIONAL([XSPICE_WANTED], [test "$enable_xspice" = "yes"])
 
 
-dnl Add CIDER enhancements to ngspice.
+# Add CIDER enhancements to ngspice.
 if test "$enable_cider" = "yes"; then
     AC_MSG_RESULT([CIDER features enabled])
     AC_DEFINE([CIDER], [1], [The CIDER enhancements])
@@ -864,7 +864,7 @@ AM_CONDITIONAL([NUMDEV_WANTED], [test "$enable_cider" = "yes"])
 
 AM_CONDITIONAL([PSS_WANTED], [test "$enable_pss" = "yes"])
 
-dnl adms option
+# adms option
 if test "$enable_adms" = "yes" -o "$enable_adms3" = "yes" ; then
     AC_MSG_RESULT([**********************************
 * ADMS  support is  experimental *
@@ -886,7 +886,7 @@ if test "$enable_adms" = "yes" -o "$enable_adms3" = "yes" ; then
                 adms/mextram \
                 adms/psp102 "
 
-dnl The makefiles for adms (to be added to AC_CONFIG_FILES by ./autogen.sh --adms)
+# The makefiles for adms (to be added to AC_CONFIG_FILES by ./autogen.sh --adms)
 #VLAMKF    src/spicelib/devices/adms/ekv/Makefile
 #VLAMKF    src/spicelib/devices/adms/hicum0/Makefile
 #VLAMKF    src/spicelib/devices/adms/hicum2/Makefile
@@ -913,7 +913,7 @@ AC_SUBST([VLADEVDIR])
 AC_SUBST([VLADEV])
 AC_SUBST([NOTVLADEVDIR])
 
-dnl NDEV option
+# NDEV option
 if test "$enable_ndev" = "yes"; then
     AC_MSG_RESULT([NDEV features enabled])
     AC_DEFINE([NDEV], [], [The NDEV interface])
@@ -921,7 +921,7 @@ fi
 AM_CONDITIONAL([NDEV_WANTED], [test "$enable_ndev" = "yes"])
 
 
-dnl Cluster option
+# Cluster option
 if test "$enable_cluster" = "yes"; then
     AC_MSG_RESULT([Cluster version is being compiled])
     AC_DEFINE([CLUSTER], [], [Spice cluster support])
@@ -933,9 +933,9 @@ if test "$enable_expdevices" = "yes"; then
     AC_MSG_RESULT([WARNING: Experimental devices enabled])
 fi
 
-dnl  ----  Option to include GNU readline support in ngspice CLI  ----
-dnl  ----  Default: disabled.                                     ----
-dnl  ----  Hope to see in the future readline replacement.        ----
+#  ----  Option to include GNU readline support in ngspice CLI  ----
+#  ----  Default: disabled.                                     ----
+#  ----  Hope to see in the future readline replacement.        ----
 
 if test "$with_readline" != "yes"; then
     AC_MSG_RESULT([GNU readline disabled.])
@@ -955,8 +955,8 @@ else
 fi
 
 
-dnl  ----  Option to include BSD editline support in ngspice CLI  ----
-dnl  ----  Default: disabled.                                     ----
+#  ----  Option to include BSD editline support in ngspice CLI  ----
+#  ----  Default: disabled.                                     ----
 
 if test "$with_editline" != "yes"; then
     AC_MSG_RESULT([BSD editline disabled.])
@@ -974,14 +974,14 @@ else
         [-lncurses])
 fi
 
-dnl Use AC_CHECK_HEADERS so the HAVE_*_H symbol gets defined
+# Use AC_CHECK_HEADERS so the HAVE_*_H symbol gets defined
 AC_CHECK_HEADERS([ncurses/termcap.h termcap.h])
 
-dnl --enable-openmp: Use OpenMP on multi-core processors
+# --enable-openmp: Use OpenMP on multi-core processors
 AC_ARG_ENABLE([openmp],
     [AS_HELP_STRING([--enable-openmp], [Use OpenMP parallel processing])])
 
-dnl Add OpenMP to ngspice.
+# Add OpenMP to ngspice.
 : ${enable_openmp:=no}
 AC_OPENMP
 
@@ -991,8 +991,8 @@ if test "$enable_openmp" = "yes"; then
     AC_MSG_RESULT([OpenMP feature enabled])
 fi
 
-dnl Output Files
-dnl ------------
+# Output Files
+# ------------
 
 AC_CONFIG_FILES([Makefile
                  man/Makefile
