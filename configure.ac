@@ -203,20 +203,20 @@ dnl Set default CFLAGS - only use -Wall if we have gcc
 
 dnl the above AC_PROG_CC may set CFLAGS to "-O2 -g"
 if test "$enable_debug" = "no"; then
-	if test "x$GCC" = "xyes"; then
-		AC_MSG_WARN([Removing debugging option!])
-		CFLAGS="-O2 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -s $ext_CFLAGS"
-	else
-		AC_MSG_WARN([Removing debugging option!])
-		CFLAGS="-O2 $ext_CFLAGS"
-	fi
+    if test "x$GCC" = "xyes"; then
+        AC_MSG_WARN([Removing debugging option!])
+        CFLAGS="-O2 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -s $ext_CFLAGS"
+    else
+        AC_MSG_WARN([Removing debugging option!])
+        CFLAGS="-O2 $ext_CFLAGS"
+    fi
 else
     AC_DEFINE([NGDEBUG], [1], [Compile with debug info])
-	if test "x$GCC" = "xyes"; then
-		CFLAGS="-g -O1 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion $ext_CFLAGS"
-	else
-		CFLAGS="-g $ext_CFLAGS"
-	fi
+    if test "x$GCC" = "xyes"; then
+        CFLAGS="-g -O1 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion $ext_CFLAGS"
+    else
+        CFLAGS="-g $ext_CFLAGS"
+    fi
 fi
 
 dnl the profiling option
@@ -241,7 +241,7 @@ fi
 
 dnl Not sure that this will work....
 if test "$with_checkergcc" = "yes"; then
-        CC="checkergcc"
+    CC="checkergcc"
 fi
 
 
@@ -250,27 +250,27 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS([strings.h])
 
 if test "$enable_ansi" = "yes"; then
-	AC_PROG_CC()
-	AC_DIAGNOSE([obsolete], [AM_PROG_CC_STDC:
+    AC_PROG_CC()
+    AC_DIAGNOSE([obsolete], [AM_PROG_CC_STDC:
 	your code should no longer depend upon `am_cv_prog_cc_stdc', but upon
 	`ac_cv_prog_cc_stdc'.  Remove this warning and the assignment when
 	you adjust the code.  You can also remove the above call to
 	AC_PROG_CC if you already called it elsewhere.])
-	am_cv_prog_cc_stdc=$ac_cv_prog_cc_stdc
+    am_cv_prog_cc_stdc=$ac_cv_prog_cc_stdc
 
-	if test ! "$am_cv_prog_cc_stdc"="yes"; then
-	  AC_MSG_WARN([Failed to find Ansi flag!])
-	fi
+    if test ! "$am_cv_prog_cc_stdc"="yes"; then
+        AC_MSG_WARN([Failed to find Ansi flag!])
+    fi
 fi
 
 if test "$enable_smoketest" = "yes"; then
-dnl	CFLAGS="$CFLAGS -Werror"
-	CFLAGS="$CFLAGS -pedantic -W -Wmissing-prototypes"
-	CFLAGS="$CFLAGS -Wstrict-prototypes -Wtraditional"
-	CFLAGS="$CFLAGS -Wconversion -Wshadow -Wpointer-arith"
-	CFLAGS="$CFLAGS -Wcast-qual -Wcast-align -Wwrite-strings"
-	CFLAGS="$CFLAGS -Waggregate-return -fshort-enums -fno-common"
-	CFLAGS="$CFLAGS -Wnested-externs -Dinline= -g -O4"
+dnl CFLAGS="$CFLAGS -Werror"
+    CFLAGS="$CFLAGS -pedantic -W -Wmissing-prototypes"
+    CFLAGS="$CFLAGS -Wstrict-prototypes -Wtraditional"
+    CFLAGS="$CFLAGS -Wconversion -Wshadow -Wpointer-arith"
+    CFLAGS="$CFLAGS -Wcast-qual -Wcast-align -Wwrite-strings"
+    CFLAGS="$CFLAGS -Waggregate-return -fshort-enums -fno-common"
+    CFLAGS="$CFLAGS -Wnested-externs -Dinline= -g -O4"
 fi
 
 
@@ -280,14 +280,14 @@ AC_CANONICAL_HOST
 dnl Expand the prefix variable
 if eval "test x$prefix = xNONE"; then
 dnl  with the MS WINDOWS executable we suggest C:/Spice/bin as *.exe-path
-  if test "$with_windows" = "yes"; then
-    dprefix="C:/Spice"
-    prefix=$dprefix
-  else
-    dprefix=$ac_default_prefix
-  fi
+    if test "$with_windows" = "yes"; then
+        dprefix="C:/Spice"
+        prefix=$dprefix
+    else
+        dprefix=$ac_default_prefix
+    fi
 else
-  dprefix=$prefix
+    dprefix=$prefix
 fi
 
 ##########################################################################
@@ -300,143 +300,143 @@ dnl
 dnl The tclSpice options
 dnl
 if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
-   has_tcl_module=true
-   AC_DEFINE([TCL_MODULE], [1], [Tcl Module])
-   case $host_os in
-     *mingw* )
-       has_tclwin=true
-       has_no_help=true
-       AC_DEFINE([HAS_TCLWIN], [1], [Tcl Windows]);;
-	 *cygwin* )
-       has_tclcyg=true ;;
-     *)
-     ;;
-   esac
-
-   with_x=no
-   enable_shared=yes
-   enable_static=no
-
-   AC_MSG_CHECKING([for tclConfig.sh])
-   tcl_config_sh=""
-   if test "x$with_tcl" != "xyes" ; then
-      for dir in \
-         $with_tcl
-      do
-         if test -r "$dir/tclConfig.sh" ; then
-            tcl_config_sh="$dir/tclConfig.sh"
-            break
-         elif test -r "$dir/lib/tclConfig.sh" ; then
-            tcl_config_sh="$dir/lib/tclConfig.sh"
-            break
-         elif test -r "$dir/unix/tclConfig.sh" ; then
-            tcl_config_sh="$dir/unix/tclConfig.sh"
-            break
-         fi
-      done
-   else
-      for dir in \
-        $prefix \
-        $exec_prefix
-      do
-         if test -r "$dir/tclConfig.sh" ; then
-            tcl_config_sh="$dir/tclConfig.sh"
-            break
-         elif test -r "$dir/lib/tclConfig.sh" ; then
-            tcl_config_sh="$dir/lib/tclConfig.sh"
-            break
-         elif test -r "$dir/unix/tclConfig.sh" ; then
-            tcl_config_sh="$dir/unix/tclConfig.sh"
-            break
-         fi
-      done
-
-
-      if test "x$tcl_config_sh" = "x" ; then
-         for dir in \
-            `ls -dr /usr/local/tcltk/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
-            `ls -dr /usr/local/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
-            `ls -dr /usr/local/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
-            `ls -dr /usr/share/tcltk/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
-            `ls -dr /usr/share/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
-            `ls -dr /usr/share/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
-            `ls -dr /usr/lib/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
-            `ls -dr /usr/lib/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
-            /usr/local/tcl \
-            /usr/local \
-            /usr \
-            /mingw
-         do
+    has_tcl_module=true
+    AC_DEFINE([TCL_MODULE], [1], [Tcl Module])
+    case $host_os in
+        *mingw* )
+            has_tclwin=true
+            has_no_help=true
+            AC_DEFINE([HAS_TCLWIN], [1], [Tcl Windows]);;
+        *cygwin* )
+            has_tclcyg=true ;;
+        *)
+            ;;
+    esac
+ 
+    with_x=no
+    enable_shared=yes
+    enable_static=no
+ 
+    AC_MSG_CHECKING([for tclConfig.sh])
+    tcl_config_sh=""
+    if test "x$with_tcl" != "xyes" ; then
+        for dir in \
+            $with_tcl
+        do
             if test -r "$dir/tclConfig.sh" ; then
-               echo "Automatic research of tclConfig.sh Found one, accepting it and stopping research."
-               tcl_config_sh="$dir/tclConfig.sh"
-               break
+                tcl_config_sh="$dir/tclConfig.sh"
+                break
             elif test -r "$dir/lib/tclConfig.sh" ; then
-               echo "Automatic research of tclConfig.sh Found one, accepting it and stopping research."
-               tcl_config_sh="$dir/lib/tclConfig.sh"
-               break
+                tcl_config_sh="$dir/lib/tclConfig.sh"
+                break
+            elif test -r "$dir/unix/tclConfig.sh" ; then
+                tcl_config_sh="$dir/unix/tclConfig.sh"
+                break
             fi
-         done
-      fi
-   fi
+        done
+    else
+        for dir in \
+            $prefix \
+            $exec_prefix
+        do
+            if test -r "$dir/tclConfig.sh" ; then
+                tcl_config_sh="$dir/tclConfig.sh"
+                break
+            elif test -r "$dir/lib/tclConfig.sh" ; then
+                tcl_config_sh="$dir/lib/tclConfig.sh"
+                break
+            elif test -r "$dir/unix/tclConfig.sh" ; then
+                tcl_config_sh="$dir/unix/tclConfig.sh"
+                break
+            fi
+        done
+ 
+ 
+       if test "x$tcl_config_sh" = "x" ; then
+           for dir in \
+               `ls -dr /usr/local/tcltk/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+               `ls -dr /usr/local/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+               `ls -dr /usr/local/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+               `ls -dr /usr/share/tcltk/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+               `ls -dr /usr/share/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+               `ls -dr /usr/share/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+               `ls -dr /usr/lib/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+               `ls -dr /usr/lib/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+               /usr/local/tcl \
+               /usr/local \
+               /usr \
+               /mingw
+          do
+              if test -r "$dir/tclConfig.sh" ; then
+                  echo "Automatic research of tclConfig.sh Found one, accepting it and stopping research."
+                  tcl_config_sh="$dir/tclConfig.sh"
+                  break
+              elif test -r "$dir/lib/tclConfig.sh" ; then
+                  echo "Automatic research of tclConfig.sh Found one, accepting it and stopping research."
+                  tcl_config_sh="$dir/lib/tclConfig.sh"
+                  break
+              fi
+          done
+       fi
+    fi
+ 
+    AC_MSG_RESULT([${tcl_config_sh}])
+ 
+    if test "x$tcl_config_sh" = "x" ; then
+        echo "can't find Tcl configuration script \"tclConfig.sh\""
+        find /usr/ -name 'tclConfig.sh' -exec echo "Should you add --with-tcl={} to ./configure arguments?" \; | sed -re "s/\/tclConfig.sh/ /"
+        exit 1
+    fi
+ 
+ .  $tcl_config_sh
+ 
+    CFLAGS="$CFLAGS $TCL_INCLUDE_SPEC"
+    CPPFLAGS="$CPPFLAGS $TCL_INCLUDE_SPEC"
+ 
+    AC_CHECK_HEADERS([tcl.h blt.h], [], [AC_MSG_ERROR([Couldn't find Tcl/BLT headers])])
+ 
+    if test ! -x "$TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION" ; then
+        AC_MSG_ERROR([Couldn't find $TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION])
+    fi
 
-   AC_MSG_RESULT([${tcl_config_sh}])
-
-   if test "x$tcl_config_sh" = "x" ; then
-      echo "can't find Tcl configuration script \"tclConfig.sh\""
-      find /usr/ -name 'tclConfig.sh' -exec echo "Should you add --with-tcl={} to ./configure arguments?" \; | sed -re "s/\/tclConfig.sh/ /"
-      exit 1
-   fi
-
-. $tcl_config_sh
-
-   CFLAGS="$CFLAGS $TCL_INCLUDE_SPEC"
-   CPPFLAGS="$CPPFLAGS $TCL_INCLUDE_SPEC"
-
-   AC_CHECK_HEADERS([tcl.h blt.h], [], [AC_MSG_ERROR([Couldn't find Tcl/BLT headers])])
-
-   if test ! -x "$TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION" ; then
-      AC_MSG_ERROR([Couldn't find $TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION])
-   fi
-
-   AC_MSG_CHECKING([for TCL module BLT])
-rm -f conftest.tcl
-cat > conftest.tcl << EOF
+    AC_MSG_CHECKING([for TCL module BLT])
+    rm -f conftest.tcl
+    cat > conftest.tcl << EOF
 package require BLT;
 exit;
 EOF
 
-   if ($TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION conftest.tcl; exit) 2>/dev/null
-   then
-      AC_MSG_RESULT([Found])
-   else
-      AC_MSG_ERROR([Couldn't find BLT])
-   fi
-   rm -f conftest.tcl
-
-   AC_CHECK_LIB([pthread], [pthread_create])
-
-   if test -n $libdir ; then
-      AC_SUBST([libdir])
-      echo "libraries in "$libdir
-   fi
-
-   if test -z $libdir ; then
-      for TCL_PACKAGE_PATH_ELEMENT in $TCL_PACKAGE_PATH ; do
-         if test -a $TCL_PACKAGE_PATH_ELEMENT ; then
-            libdir=$TCL_PACKAGE_PATH_ELEMENT
-            AC_SUBST([libdir])
-            echo "library in "$libdir
-            break
-         fi
-      done
-   fi
+    if ($TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION conftest.tcl; exit) 2>/dev/null
+    then
+        AC_MSG_RESULT([Found])
+    else
+        AC_MSG_ERROR([Couldn't find BLT])
+    fi
+    rm -f conftest.tcl
+    
+    AC_CHECK_LIB([pthread], [pthread_create])
+    
+    if test -n $libdir ; then
+        AC_SUBST([libdir])
+        echo "libraries in "$libdir
+    fi
+    
+    if test -z $libdir ; then
+        for TCL_PACKAGE_PATH_ELEMENT in $TCL_PACKAGE_PATH ; do
+            if test -a $TCL_PACKAGE_PATH_ELEMENT ; then
+                libdir=$TCL_PACKAGE_PATH_ELEMENT
+                AC_SUBST([libdir])
+                echo "library in "$libdir
+                break
+            fi
+        done
+    fi
 
 else
-   TCL_PACKAGE_PATH=""
-   TCL_LIB_SPEC=""
-   enable_shared=no
-   enable_static=yes
+    TCL_PACKAGE_PATH=""
+    TCL_LIB_SPEC=""
+    enable_shared=no
+    enable_static=yes
 fi
 
 AM_CONDITIONAL([TCL_MODULE], [test x$has_tcl_module = xtrue])
@@ -466,8 +466,8 @@ dnl --with-windows : the user wants to use generate the MS WINDOWS executable
 AC_MSG_CHECKING([whether windows code is enabled])
 AC_ARG_WITH([windows],
     [AS_HELP_STRING([--with-windows], [MS WINDOWS executable])],
-	  [if test "$with_windows" = "yes"; then
-    	AC_DEFINE([HAS_WINDOWS], [1], [define to specify MS Windows executable])
+    [if test "$with_windows" = "yes"; then
+        AC_DEFINE([HAS_WINDOWS], [1], [define to specify MS Windows executable])
     fi],
     [with_windows="no"]
 )
@@ -475,17 +475,17 @@ AC_MSG_RESULT([$with_windows])
 AM_CONDITIONAL([WINDOWS], [test x$with_windows = xyes])
 
 case $with_windows in
-	yes )
-		AC_DEFINE([X_DISPLAY_MISSING])
-		AC_MSG_RESULT([No X display!])
-		has_no_x=true
-		if test "x$enable_help" = "xyes"; then
-		  has_no_help=false
-		else
-		  has_no_help=true
-		fi
-		CFLAGS="$CFLAGS -mwindows";;
-	* )
+    yes )
+        AC_DEFINE([X_DISPLAY_MISSING])
+        AC_MSG_RESULT([No X display!])
+        has_no_x=true
+        if test "x$enable_help" = "xyes"; then
+            has_no_help=false
+        else
+            has_no_help=true
+        fi
+        CFLAGS="$CFLAGS -mwindows";;
+    * )
 
 dnl Check for /proc (virtual process information file system)
 AC_CHECK_HEADERS([/proc/meminfo])
@@ -520,52 +520,52 @@ dnl  that is how it has been historically.  Using --enable-rpath will turn this 
 _use_rpath=no
 AC_MSG_CHECKING([if hardcoding of the X11 runtime library path is desired])
 AC_ARG_ENABLE([rpath],
-	[  --enable-rpath         Enable hardcoding the X11 runtime library path [default=disabled]],
-	[
-	if test "X$enable_rpath" = "Xno" ; then
-		AC_MSG_RESULT([no])
-		_use_rpath=no
-	else
-		AC_MSG_RESULT([yes])
-		_use_rpath=yes
-	fi
-	],
-	[
-		AC_MSG_RESULT([no])
-		_use_rpath=no
-	]
+    [  --enable-rpath         Enable hardcoding the X11 runtime library path [default=disabled]],
+    [
+        if test "X$enable_rpath" = "Xno" ; then
+            AC_MSG_RESULT([no])
+            _use_rpath=no
+        else
+            AC_MSG_RESULT([yes])
+            _use_rpath=yes
+        fi
+    ],
+    [
+        AC_MSG_RESULT([no])
+        _use_rpath=no
+    ]
 )
 
 if test "X$_use_rpath" = "Xyes" ; then
-	# Try to figure out if we need -Rpath for finding X11 libs
-	# at runtime.  Why autoconf doesn't already do this, I don't
-	# know...
-	xlib_path=""
-	for p in $X_LDFLAGS ; do
-		case $p in
-			-L*)
-				xlib_path="$xlib_path $p"
-				;;
-		esac
-	done
+    # Try to figure out if we need -Rpath for finding X11 libs
+    # at runtime.  Why autoconf doesn't already do this, I don't
+    # know...
+    xlib_path=""
+    for p in $X_LDFLAGS ; do
+        case $p in
+            -L*)
+                xlib_path="$xlib_path $p"
+                ;;
+        esac
+    done
 
-	_save_LIBS=$LIBS
-	LIBS="$LIBS $X_LDFLAGS"
-	rpath=""
-	for fl in "-Wl,-rpath " "-Wl,--rpath " "-rpath " "--rpath " "-Wl,-R" "-R" "-R " ; do
-		xlib_rpath=`echo $xlib_path | sed "s/-L/$fl/g"`
-		LIBS="$_save_LIBS $X_LIBS $xlib_rpath"
-		AC_MSG_CHECKING([if the compiler accepts ${fl}path for runtime libraries])
-		AC_LINK_IFELSE([AC_LANG_PROGRAM()],
-			[AC_MSG_RESULT([yes])
-			rpath=$fl],
-			[AC_MSG_RESULT([no])])
-		test -n "$rpath" && break
-	done
-	if test -n "$rpath"; then
-		X_LDFLAGS="$X_LDFLAGS $xlib_rpath"
-	fi
-	LIBS=$_save_LIBS
+    _save_LIBS=$LIBS
+    LIBS="$LIBS $X_LDFLAGS"
+    rpath=""
+    for fl in "-Wl,-rpath " "-Wl,--rpath " "-rpath " "--rpath " "-Wl,-R" "-R" "-R " ; do
+        xlib_rpath=`echo $xlib_path | sed "s/-L/$fl/g"`
+        LIBS="$_save_LIBS $X_LIBS $xlib_rpath"
+        AC_MSG_CHECKING([if the compiler accepts ${fl}path for runtime libraries])
+        AC_LINK_IFELSE([AC_LANG_PROGRAM()],
+            [AC_MSG_RESULT([yes])
+            rpath=$fl],
+            [AC_MSG_RESULT([no])])
+        test -n "$rpath" && break
+    done
+    if test -n "$rpath"; then
+        X_LDFLAGS="$X_LDFLAGS $xlib_rpath"
+    fi
+    LIBS=$_save_LIBS
 fi
 
 dnl Checks for X libraries - if X11 wasn't found then don't make following
@@ -578,27 +578,27 @@ dnl Library order is giving linker warnings on MacOSX
 dnl It's not clear to me which order is required for Cygwin (see comment above)
 dnl and neither can I find any authoritative answer for the correct link order
 dnl for MacOSX or Linux, but
-dnl			-lXaw -lXmu -lXt -lXext -lX11
+dnl            -lXaw -lXmu -lXt -lXext -lX11
 dnl seems to be the popular choice.
 dnl (The previous order was -lX11 -lXt -lXext -lXmu -lXaw)
 
 if test "x$no_x" != "xyes" ; then
-	AC_CHECK_LIB([Xaw], [main], [X_LIBS="$X_LIBS -lXaw"], [AC_MSG_ERROR([Couldn't find Xaw library])], [$X_LIBS  $X_EXTRA_LIBS])
-	AC_CHECK_LIB([Xmu], [main], [X_LIBS="$X_LIBS -lXmu"], [AC_MSG_ERROR([Couldn't find Xmu library])], [$X_LIBS $X_EXTRA_LIBS])
-	X_LIBS="$X_LIBS -lXt"
-	AC_CHECK_LIB([Xext], [XShmAttach], [X_LIBS="$X_LIBS -lXext"], [AC_MSG_ERROR([Couldn't find Xext library])], [$X_LIBS $X_EXTRA_LIBS])
-	X_LIBS="$X_LIBS -lX11"
-	has_no_x=false
+    AC_CHECK_LIB([Xaw], [main], [X_LIBS="$X_LIBS -lXaw"], [AC_MSG_ERROR([Couldn't find Xaw library])], [$X_LIBS  $X_EXTRA_LIBS])
+    AC_CHECK_LIB([Xmu], [main], [X_LIBS="$X_LIBS -lXmu"], [AC_MSG_ERROR([Couldn't find Xmu library])], [$X_LIBS $X_EXTRA_LIBS])
+    X_LIBS="$X_LIBS -lXt"
+    AC_CHECK_LIB([Xext], [XShmAttach], [X_LIBS="$X_LIBS -lXext"], [AC_MSG_ERROR([Couldn't find Xext library])], [$X_LIBS $X_EXTRA_LIBS])
+    X_LIBS="$X_LIBS -lX11"
+    has_no_x=false
 else
-	AC_DEFINE([X_DISPLAY_MISSING])
-	AC_MSG_RESULT([No X display!])
-	has_no_x=true
+    AC_DEFINE([X_DISPLAY_MISSING])
+    AC_MSG_RESULT([No X display!])
+    has_no_x=true
 fi
 
 if ( test "x$enable_help" = "xyes" ) && ! ( test "$no_x" = "yes" ) ; then
-	has_no_help=false
+    has_no_help=false
 else
-	has_no_help=true
+    has_no_help=true
 fi ;;
 
 esac
@@ -615,8 +615,8 @@ dnl sighandler_t is the type of the signal handler on GNU variants,
 dnl sig_t is the type of a signal handler on 4.4BSD's,
 dnl other systems use __sighandler_t.
 AC_CHECK_TYPES([sighandler_t, sig_t, __sighandler_t], [], [],
-   [#include <sys/types.h>
-    #include <signal.h> ])
+    [#include <sys/types.h>
+     #include <signal.h>])
 
 dnl Check for a few libraries and headers:
 AC_HEADER_DIRENT
@@ -636,7 +636,7 @@ AC_CHECK_FUNCS([localtime])
 AC_CHECK_FUNCS([ftime gettimeofday])
 dnl Do not use time or getrusage function for CPU time measurement under OpenMP
 if test "$enable_openmp" != "yes"; then
-     AC_CHECK_FUNCS([time getrusage])
+    AC_CHECK_FUNCS([time getrusage])
 fi
 AC_CHECK_FUNCS([utimes])
 AC_CHECK_FUNCS([getrlimit ulimit], [break])
@@ -667,29 +667,29 @@ AC_CHECK_DECLS([isinf], [], [], [[#include <math.h>]])
 AC_CHECK_DECLS([isnan], [], [], [[#include <math.h>]])
 dnl But may be we have still functions
 if test "$ac_cv_have_decl_isinf" != yes; then
-  AC_CHECK_FUNC([isinf])
+    AC_CHECK_FUNC([isinf])
 fi
 if test "$ac_cv_have_decl_isnan" != yes; then
-  AC_CHECK_FUNC([isnan])
+    AC_CHECK_FUNC([isnan])
 fi
 
 dnl If user enables garbage collection, look for garbage collector
 if test "$TCL_PACKAGE_PATH" = ""; then
-  if test "$enable_gc" = "yes"; then
-    AC_MSG_RESULT([Checking for the presence of the Garbage Collector:])
-    AC_CHECK_LIB([gc], [GC_malloc],
-      [AC_DEFINE([HAVE_LIBGC], [], [Define if we want garbage collection enabled])
-  	  LIBS="$LIBS -lgc"])
-  fi
+    if test "$enable_gc" = "yes"; then
+        AC_MSG_RESULT([Checking for the presence of the Garbage Collector:])
+        AC_CHECK_LIB([gc], [GC_malloc],
+            [AC_DEFINE([HAVE_LIBGC], [], [Define if we want garbage collection enabled])
+             LIBS="$LIBS -lgc"])
+    fi
 fi
 dnl check, if we have sigsetjmp and siglongjmp.
 dnl A trivial AC_CHECK_FUNCS(sigsetjmp) won't do because sigsetjmp() might be a
 dnl macro declared in <setjmp.h>. (joze)
 AC_MSG_CHECKING([for sigsetjmp])
-AC_TRY_LINK([#include <setjmp.h>], [jmp_buf env; sigsetjmp(env, 1);],
+AC_TRY_LINK([#include <setjmp.h>],[jmp_buf env; sigsetjmp(env, 1);],
     [AC_MSG_RESULT([yes])
         AC_DEFINE([HAVE_SIGSETJMP], [], [Define if we have sigsetjmp().])],
-    [AC_MSG_RESULT([no])] )
+    [AC_MSG_RESULT([no])])
 
 dnl Check for some headers (asprintf, dirname, etc.)
 AC_CHECK_HEADERS([libiberty.h libgen.h])
@@ -708,7 +708,7 @@ AC_CHECK_FUNCS([dirname], [], [AC_CHECK_LIB([gen], [dirname], [AC_DEFINE([HAVE_D
 AC_CHECK_HEADERS([getopt.h])
 AC_CHECK_FUNC([getopt_long], [getopt_long=true])
 if test "$getopt_long" = "true"; then
-  AC_DEFINE([HAVE_GETOPT_LONG], [1], [Have fcn getopt_long()])
+    AC_DEFINE([HAVE_GETOPT_LONG], [1], [Have fcn getopt_long()])
 fi
 
 AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo $dprefix/bin`"], [Define the directory for executables])
@@ -816,25 +816,25 @@ if test "$enable_xspice" = "yes"; then
     AC_DEFINE([XSPICE], [1], [The xspice enhancements])
 dnl Define variables for LEX
     AC_CHECK_PROGS([LEX], [flex lex])
-	if test -z $LEX ; then
-	  AC_MSG_ERROR([Flex is required for building XSPICE])
-	fi
+    if test -z $LEX ; then
+        AC_MSG_ERROR([Flex is required for building XSPICE])
+    fi
     case $host_os in
-     *mingw* )
-       AC_DEFINE([IPC_DEBUG_VIA_STDIO], [1], [Client-Server only via stdio.])
-       XSPICEDLLIBS="";;
-     *cygwin* )
-        AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-        XSPICEDLLIBS="" ;;
-     *freebsd* )
-        AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-        XSPICEDLLIBS="";;
-     *openbsd* )
-        AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-        XSPICEDLLIBS="";;
-     * )
-        AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-        XSPICEDLLIBS="-ldl";;
+        *mingw* )
+            AC_DEFINE([IPC_DEBUG_VIA_STDIO], [1], [Client-Server only via stdio.])
+            XSPICEDLLIBS="";;
+        *cygwin* )
+            AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
+            XSPICEDLLIBS="" ;;
+        *freebsd* )
+            AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
+            XSPICEDLLIBS="";;
+        *openbsd* )
+            AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
+            XSPICEDLLIBS="";;
+        * )
+            AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
+            XSPICEDLLIBS="-ldl";;
     esac
     XSPICEINIT=""
     AC_CHECK_FUNCS([modf])
@@ -854,8 +854,8 @@ AM_CONDITIONAL([XSPICE_WANTED], [test "$enable_xspice" = "yes"])
 
 dnl Add CIDER enhancements to ngspice.
 if test "$enable_cider" = "yes"; then
-     AC_MSG_RESULT([CIDER features enabled])
-     AC_DEFINE([CIDER], [1], [The CIDER enhancements])
+    AC_MSG_RESULT([CIDER features enabled])
+    AC_DEFINE([CIDER], [1], [The CIDER enhancements])
 fi
 
 AM_CONDITIONAL([CIDER_WANTED], [test "$enable_cider" = "yes"])
@@ -866,25 +866,25 @@ AM_CONDITIONAL([PSS_WANTED], [test "$enable_pss" = "yes"])
 
 dnl adms option
 if test "$enable_adms" = "yes" -o "$enable_adms3" = "yes" ; then
-   AC_MSG_RESULT([**********************************
+    AC_MSG_RESULT([**********************************
 * ADMS  support is  experimental *
 **********************************])
-   AC_CHECK_PROGS([ADMSXML], [admsXml admsXml.exe], [no])
+    AC_CHECK_PROGS([ADMSXML], [admsXml admsXml.exe], [no])
 
-   if test "$ADMSXML" = "no"; then
-      AC_MSG_ERROR([If you want Verilog-A models you should install admsXml])
-   fi
-   if test "$enable_adms3" = "yes" ; then
-      AC_DEFINE([ADMS], [3], [Support for Verilog-A models (adms3)])
-   else
-      AC_DEFINE([ADMS], [1], [Support for Verilog-A models])
-   fi
+    if test "$ADMSXML" = "no"; then
+        AC_MSG_ERROR([If you want Verilog-A models you should install admsXml])
+    fi
+    if test "$enable_adms3" = "yes" ; then
+        AC_DEFINE([ADMS], [3], [Support for Verilog-A models (adms3)])
+    else
+        AC_DEFINE([ADMS], [1], [Support for Verilog-A models])
+    fi
 
-   VLADEVDIR=" adms/ekv \
-               adms/hicum0 \
-               adms/hicum2 \
-               adms/mextram \
-               adms/psp102 "
+    VLADEVDIR=" adms/ekv \
+                adms/hicum0 \
+                adms/hicum2 \
+                adms/mextram \
+                adms/psp102 "
 
 dnl The makefiles for adms (to be added to AC_CONFIG_FILES by ./autogen.sh --adms)
 #VLAMKF    src/spicelib/devices/adms/ekv/Makefile
@@ -893,13 +893,13 @@ dnl The makefiles for adms (to be added to AC_CONFIG_FILES by ./autogen.sh --adm
 #VLAMKF    src/spicelib/devices/adms/mextram/Makefile
 #VLAMKF    src/spicelib/devices/adms/psp102/Makefile
 
-   NOTVLADEVDIR=""
+    NOTVLADEVDIR=""
 
-   VLADEV=" spicelib/devices/adms/ekv/libekv.la \
-            spicelib/devices/adms/hicum0/libhicum0.la \
-            spicelib/devices/adms/hicum2/libhicum2.la \
-            spicelib/devices/adms/mextram/libbjt504t.la \
-            spicelib/devices/adms/psp102/libpsp102.la "
+    VLADEV=" spicelib/devices/adms/ekv/libekv.la \
+             spicelib/devices/adms/hicum0/libhicum0.la \
+             spicelib/devices/adms/hicum2/libhicum2.la \
+             spicelib/devices/adms/mextram/libbjt504t.la \
+             spicelib/devices/adms/psp102/libpsp102.la "
 
 else
 
@@ -929,8 +929,8 @@ if test "$enable_cluster" = "yes"; then
 fi
 
 if test "$enable_expdevices" = "yes"; then
-	  AC_DEFINE([EXP_DEV], [], [Define if we want to enable experimental devices])
-	  AC_MSG_RESULT([WARNING: Experimental devices enabled])
+    AC_DEFINE([EXP_DEV], [], [Define if we want to enable experimental devices])
+    AC_MSG_RESULT([WARNING: Experimental devices enabled])
 fi
 
 dnl  ----  Option to include GNU readline support in ngspice CLI  ----
@@ -940,18 +940,18 @@ dnl  ----  Hope to see in the future readline replacement.        ----
 if test "$with_readline" != "yes"; then
     AC_MSG_RESULT([GNU readline disabled.])
 else
-  if test "x$with_tcl" = "x" -o "$with_tcl" = "no" ; then
-    AC_MSG_RESULT([Checking for readline:])
-    AC_CHECK_HEADERS([readline/readline.h readline/history.h],
-                     [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
-                     [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
-    AC_SEARCH_LIBS([tputs], [ncurses termcap],
-                     [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses or termcap])],
-                     [AC_MSG_ERROR([Found neither ncurses or termcap])])
-    AC_CHECK_LIB([readline], [readline],
-                     [LIBS="$LIBS -lreadline"],
-                     [AC_MSG_ERROR([Couldn't find readline libraries.])])
-  fi
+    if test "x$with_tcl" = "x" -o "$with_tcl" = "no" ; then
+        AC_MSG_RESULT([Checking for readline:])
+        AC_CHECK_HEADERS([readline/readline.h readline/history.h],
+            [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
+            [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
+        AC_SEARCH_LIBS([tputs], [ncurses termcap],
+            [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses or termcap])],
+            [AC_MSG_ERROR([Found neither ncurses or termcap])])
+        AC_CHECK_LIB([readline], [readline],
+            [LIBS="$LIBS -lreadline"],
+            [AC_MSG_ERROR([Couldn't find readline libraries.])])
+    fi
 fi
 
 
@@ -963,15 +963,15 @@ if test "$with_editline" != "yes"; then
 else
     AC_MSG_RESULT([Checking for editline:])
     AC_CHECK_HEADERS([editline/readline.h],
-                     [AC_DEFINE([HAVE_BSDEDITLINE], [1], [Define to enable BSD editline])],
-                     [AC_MSG_ERROR([Couldn't find BSD editline headers.])])
+        [AC_DEFINE([HAVE_BSDEDITLINE], [1], [Define to enable BSD editline])],
+        [AC_MSG_ERROR([Couldn't find BSD editline headers.])])
     AC_SEARCH_LIBS([tputs], [ncurses termcap],
-                     [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses or termcap])],
-                     [AC_MSG_ERROR([Found neither ncurses or termcap])])
+        [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses or termcap])],
+        [AC_MSG_ERROR([Found neither ncurses or termcap])])
     AC_CHECK_LIB([edit], [readline],
-                     [LIBS="$LIBS -ledit"],
-                     [AC_MSG_ERROR([Couldn't find editline libraries.])],
-                     [-lncurses ])
+        [LIBS="$LIBS -ledit"],
+        [AC_MSG_ERROR([Couldn't find editline libraries.])],
+        [-lncurses])
 fi
 
 dnl Use AC_CHECK_HEADERS so the HAVE_*_H symbol gets defined
