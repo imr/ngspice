@@ -225,8 +225,7 @@ if test "$enable_gprof" = "yes"; then
     # feel free to extend this to include them.
     if test "$GCC" = "yes"; then
         if test "$enable_shared" = "yes" ; then
-            AC_MSG_ERROR([Can't have --enable-gprof without --disable-shared (we
-                         recommend also using --enable-all-static).])
+            AC_MSG_ERROR([Can't have --enable-gprof without --disable-shared (we recommend also using --enable-all-static).])
         fi
         if test ! "$enable_static" = "yes" ; then
             AC_MSG_WARN([We recommend --enable-static with --enable-gprof.])
@@ -306,9 +305,11 @@ if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
         *mingw* )
             has_tclwin=true
             has_no_help=true
-            AC_DEFINE([HAS_TCLWIN], [1], [Tcl Windows]);;
+            AC_DEFINE([HAS_TCLWIN], [1], [Tcl Windows])
+            ;;
         *cygwin* )
-            has_tclcyg=true ;;
+            has_tclcyg=true
+            ;;
         *)
             ;;
     esac
@@ -400,6 +401,7 @@ if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
     fi
 
     AC_MSG_CHECKING([for TCL module BLT])
+
     rm -f conftest.tcl
     cat > conftest.tcl << EOF
 package require BLT;
@@ -469,8 +471,7 @@ AC_ARG_WITH([windows],
     [if test "$with_windows" = "yes"; then
         AC_DEFINE([HAS_WINDOWS], [1], [define to specify MS Windows executable])
     fi],
-    [with_windows="no"]
-)
+    [with_windows="no"])
 AC_MSG_RESULT([$with_windows])
 AM_CONDITIONAL([WINDOWS], [test x$with_windows = xyes])
 
@@ -484,7 +485,8 @@ case $with_windows in
         else
             has_no_help=true
         fi
-        CFLAGS="$CFLAGS -mwindows";;
+        CFLAGS="$CFLAGS -mwindows"
+        ;;
     * )
 
 # Check for /proc (virtual process information file system)
@@ -530,8 +532,7 @@ AC_ARG_ENABLE([rpath],
             _use_rpath=yes
         fi
     ],
-    [
-        AC_MSG_RESULT([no])
+    [   AC_MSG_RESULT([no])
         _use_rpath=no
     ]
 )
@@ -583,10 +584,13 @@ fi
 # (The previous order was -lX11 -lXt -lXext -lXmu -lXaw)
 
 if test "x$no_x" != "xyes" ; then
-    AC_CHECK_LIB([Xaw], [main], [X_LIBS="$X_LIBS -lXaw"], [AC_MSG_ERROR([Couldn't find Xaw library])], [$X_LIBS  $X_EXTRA_LIBS])
-    AC_CHECK_LIB([Xmu], [main], [X_LIBS="$X_LIBS -lXmu"], [AC_MSG_ERROR([Couldn't find Xmu library])], [$X_LIBS $X_EXTRA_LIBS])
+    AC_CHECK_LIB([Xaw], [main], [X_LIBS="$X_LIBS -lXaw"],
+        [AC_MSG_ERROR([Couldn't find Xaw library])], [$X_LIBS $X_EXTRA_LIBS])
+    AC_CHECK_LIB([Xmu], [main], [X_LIBS="$X_LIBS -lXmu"],
+        [AC_MSG_ERROR([Couldn't find Xmu library])], [$X_LIBS $X_EXTRA_LIBS])
     X_LIBS="$X_LIBS -lXt"
-    AC_CHECK_LIB([Xext], [XShmAttach], [X_LIBS="$X_LIBS -lXext"], [AC_MSG_ERROR([Couldn't find Xext library])], [$X_LIBS $X_EXTRA_LIBS])
+    AC_CHECK_LIB([Xext], [XShmAttach], [X_LIBS="$X_LIBS -lXext"],
+        [AC_MSG_ERROR([Couldn't find Xext library])], [$X_LIBS $X_EXTRA_LIBS])
     X_LIBS="$X_LIBS -lX11"
     has_no_x=false
 else
@@ -695,7 +699,10 @@ AC_TRY_LINK([#include <setjmp.h>],[jmp_buf env; sigsetjmp(env, 1);],
 AC_CHECK_HEADERS([libiberty.h libgen.h])
 
 # Check for the asprintf function:
-AC_CHECK_FUNCS([asprintf], [], [AC_CHECK_LIB([iberty], [asprintf], [AC_DEFINE([HAVE_ASPRINTF], [1], [Have asprintf in libiberty]) LIBS="$LIBS -liberty"])])
+AC_CHECK_FUNCS([asprintf], [],
+    [AC_CHECK_LIB([iberty], [asprintf],
+        [AC_DEFINE([HAVE_ASPRINTF], [1], [Have asprintf in libiberty])
+         LIBS="$LIBS -liberty"])])
 
 # Check for the snprintf function:
 if test "$ac_cv_func_asprintf" = no ; then
@@ -703,7 +710,10 @@ if test "$ac_cv_func_asprintf" = no ; then
 fi
 
 # Check for the dirname function:
-AC_CHECK_FUNCS([dirname], [], [AC_CHECK_LIB([gen], [dirname], [AC_DEFINE([HAVE_DIRNAME], [1], [Have dirname in libgen]) LIBS="$LIBS -lgen"])])
+AC_CHECK_FUNCS([dirname], [],
+    [AC_CHECK_LIB([gen], [dirname],
+        [AC_DEFINE([HAVE_DIRNAME], [1], [Have dirname in libgen])
+         LIBS="$LIBS -lgen"])])
 
 AC_CHECK_HEADERS([getopt.h])
 AC_CHECK_FUNC([getopt_long], [getopt_long=true])
@@ -822,19 +832,24 @@ if test "$enable_xspice" = "yes"; then
     case $host_os in
         *mingw* )
             AC_DEFINE([IPC_DEBUG_VIA_STDIO], [1], [Client-Server only via stdio.])
-            XSPICEDLLIBS="";;
+            XSPICEDLLIBS=""
+            ;;
         *cygwin* )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-            XSPICEDLLIBS="" ;;
+            XSPICEDLLIBS=""
+            ;;
         *freebsd* )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-            XSPICEDLLIBS="";;
+            XSPICEDLLIBS=""
+            ;;
         *openbsd* )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-            XSPICEDLLIBS="";;
+            XSPICEDLLIBS=""
+            ;;
         * )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-            XSPICEDLLIBS="-ldl";;
+            XSPICEDLLIBS="-ldl"
+            ;;
     esac
     XSPICEINIT=""
     AC_CHECK_FUNCS([modf])
