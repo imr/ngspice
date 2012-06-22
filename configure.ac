@@ -180,8 +180,8 @@ AC_ARG_WITH([tcl],
     [AS_HELP_STRING([--with-tcl=tcldir], [Compiles  the tcl module instead,  experimental, see README.tcl])])
 
 # readline and editline cannot both be enabled
-if test "$with_editline" = "yes"; then
-    if test "$with_readline" = "yes"; then
+if test "x$with_editline" = xyes; then
+    if test "x$with_readline" = xyes; then
         AC_MSG_ERROR([Readline and editline cannot both be enabled])
     fi
 fi
@@ -202,8 +202,8 @@ AC_PROG_CC
 # Set default CFLAGS - only use -Wall if we have gcc
 
 # the above AC_PROG_CC may set CFLAGS to "-O2 -g"
-if test "$enable_debug" = "no"; then
-    if test "x$GCC" = "xyes"; then
+if test "x$enable_debug" = xno; then
+    if test "x$GCC" = xyes; then
         AC_MSG_WARN([Removing debugging option!])
         CFLAGS="-O2 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -s $ext_CFLAGS"
     else
@@ -212,7 +212,7 @@ if test "$enable_debug" = "no"; then
     fi
 else
     AC_DEFINE([NGDEBUG], [1], [Compile with debug info])
-    if test "x$GCC" = "xyes"; then
+    if test "x$GCC" = xyes; then
         CFLAGS="-g -O1 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion $ext_CFLAGS"
     else
         CFLAGS="-g $ext_CFLAGS"
@@ -220,11 +220,11 @@ else
 fi
 
 # the profiling option
-if test "$enable_gprof" = "yes"; then
+if test "x$enable_gprof" = xyes; then
     # Probably other compilers support -pg or something similar;
     # feel free to extend this to include them.
-    if test "$GCC" = "yes"; then
-        if test "$enable_shared" = "yes" ; then
+    if test "x$GCC" = xyes; then
+        if test "x$enable_shared" = xyes ; then
             AC_MSG_ERROR([Can't have --enable-gprof without --disable-shared (we recommend also using --enable-all-static).])
         fi
         if test "x$enable_static" != xyes ; then
@@ -239,7 +239,7 @@ if test "$enable_gprof" = "yes"; then
 fi
 
 # Not sure that this will work....
-if test "$with_checkergcc" = "yes"; then
+if test "x$with_checkergcc" = xyes; then
     CC="checkergcc"
 fi
 
@@ -248,7 +248,7 @@ fi
 AC_HEADER_STDC
 AC_CHECK_HEADERS([strings.h])
 
-if test "$enable_ansi" = "yes"; then
+if test "x$enable_ansi" = xyes; then
     AC_PROG_CC()
     AC_DIAGNOSE([obsolete], [AM_PROG_CC_STDC:
 	your code should no longer depend upon `am_cv_prog_cc_stdc', but upon
@@ -262,7 +262,7 @@ if test "$enable_ansi" = "yes"; then
     fi
 fi
 
-if test "$enable_smoketest" = "yes"; then
+if test "x$enable_smoketest" = xyes; then
 # CFLAGS="$CFLAGS -Werror"
     CFLAGS="$CFLAGS -pedantic -W -Wmissing-prototypes"
     CFLAGS="$CFLAGS -Wstrict-prototypes -Wtraditional"
@@ -279,7 +279,7 @@ AC_CANONICAL_HOST
 # Expand the prefix variable
 if test "x$prefix" = xNONE ; then
 #  with the MS WINDOWS executable we suggest C:/Spice/bin as *.exe-path
-    if test "$with_windows" = "yes"; then
+    if test "x$with_windows" = xyes; then
         dprefix="C:/Spice"
         prefix=$dprefix
     else
@@ -320,7 +320,7 @@ if test "x$with_tcl" != x  &&  test "x$with_tcl" != xno ; then
  
     AC_MSG_CHECKING([for tclConfig.sh])
     tcl_config_sh=""
-    if test "x$with_tcl" != "xyes" ; then
+    if test "x$with_tcl" != xyes ; then
         for dir in \
             $with_tcl
         do
@@ -353,7 +353,7 @@ if test "x$with_tcl" != x  &&  test "x$with_tcl" != xno ; then
         done
  
  
-       if test "x$tcl_config_sh" = "x" ; then
+       if test "x$tcl_config_sh" = x ; then
            for dir in \
                `ls -dr /usr/local/tcltk/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
                `ls -dr /usr/local/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
@@ -383,7 +383,7 @@ if test "x$with_tcl" != x  &&  test "x$with_tcl" != xno ; then
  
     AC_MSG_RESULT([${tcl_config_sh}])
  
-    if test "x$tcl_config_sh" = "x" ; then
+    if test "x$tcl_config_sh" = x ; then
         echo "can't find Tcl configuration script \"tclConfig.sh\""
         find /usr/ -name 'tclConfig.sh' -exec echo "Should you add --with-tcl={} to ./configure arguments?" \; | sed -re "s/\/tclConfig.sh/ /"
         exit 1
@@ -468,10 +468,10 @@ AC_PROG_LIBTOOL
 AC_MSG_CHECKING([whether windows code is enabled])
 AC_ARG_WITH([windows],
     [AS_HELP_STRING([--with-windows], [MS WINDOWS executable])],
-    [if test "$with_windows" = "yes"; then
+    [if test "x$with_windows" = xyes; then
         AC_DEFINE([HAS_WINDOWS], [1], [define to specify MS Windows executable])
     fi],
-    [with_windows="no"])
+    [with_windows=no])
 AC_MSG_RESULT([$with_windows])
 AM_CONDITIONAL([WINDOWS], [test "x$with_windows" = xyes])
 
@@ -480,7 +480,7 @@ case $with_windows in
         AC_DEFINE([X_DISPLAY_MISSING])
         AC_MSG_RESULT([No X display!])
         has_no_x=true
-        if test "x$enable_help" = "xyes"; then
+        if test "x$enable_help" = xyes; then
             has_no_help=false
         else
             has_no_help=true
@@ -523,7 +523,7 @@ _use_rpath=no
 AC_MSG_CHECKING([if hardcoding of the X11 runtime library path is desired])
 AC_ARG_ENABLE([rpath],
     [AS_HELP_STRING([--enable-rpath], [Enable hardcoding the X11 runtime library path])],
-    [   if test "X$enable_rpath" = "Xno" ; then
+    [   if test "x$enable_rpath" = xno ; then
             AC_MSG_RESULT([no])
             _use_rpath=no
         else
@@ -536,7 +536,7 @@ AC_ARG_ENABLE([rpath],
     ]
 )
 
-if test "X$_use_rpath" = "Xyes" ; then
+if test "x$_use_rpath" = xyes ; then
     # Try to figure out if we need -Rpath for finding X11 libs
     # at runtime.  Why autoconf doesn't already do this, I don't
     # know...
@@ -582,7 +582,7 @@ fi
 # seems to be the popular choice.
 # (The previous order was -lX11 -lXt -lXext -lXmu -lXaw)
 
-if test "x$no_x" != "xyes" ; then
+if test "x$no_x" != xyes ; then
     AC_CHECK_LIB([Xaw], [main], [X_LIBS="$X_LIBS -lXaw"],
         [AC_MSG_ERROR([Couldn't find Xaw library])], [$X_LIBS $X_EXTRA_LIBS])
     AC_CHECK_LIB([Xmu], [main], [X_LIBS="$X_LIBS -lXmu"],
@@ -638,7 +638,7 @@ AC_CHECK_FUNCS([localtime])
 
 AC_CHECK_FUNCS([ftime gettimeofday])
 # Do not use time or getrusage function for CPU time measurement under OpenMP
-if test "$enable_openmp" != "yes"; then
+if test "x$enable_openmp" != xyes; then
     AC_CHECK_FUNCS([time getrusage])
 fi
 AC_CHECK_FUNCS([utimes])
@@ -669,16 +669,16 @@ AC_CHECK_FUNCS([erfc logb scalb scalbn asinh acosh atanh finite])
 AC_CHECK_DECLS([isinf], [], [], [[#include <math.h>]])
 AC_CHECK_DECLS([isnan], [], [], [[#include <math.h>]])
 # But may be we have still functions
-if test "$ac_cv_have_decl_isinf" != yes; then
+if test "x$ac_cv_have_decl_isinf" != xyes; then
     AC_CHECK_FUNC([isinf])
 fi
-if test "$ac_cv_have_decl_isnan" != yes; then
+if test "x$ac_cv_have_decl_isnan" != xyes; then
     AC_CHECK_FUNC([isnan])
 fi
 
 # If user enables garbage collection, look for garbage collector
-if test "$TCL_PACKAGE_PATH" = ""; then
-    if test "$enable_gc" = "yes"; then
+if test "x$TCL_PACKAGE_PATH" = x; then
+    if test "x$enable_gc" = xyes; then
         AC_MSG_RESULT([Checking for the presence of the Garbage Collector:])
         AC_CHECK_LIB([gc], [GC_malloc],
             [AC_DEFINE([HAVE_LIBGC], [], [Define if we want garbage collection enabled])
@@ -704,7 +704,7 @@ AC_CHECK_FUNCS([asprintf], [],
          LIBS="$LIBS -liberty"])])
 
 # Check for the snprintf function:
-if test "$ac_cv_func_asprintf" = no ; then
+if test "x$ac_cv_func_asprintf" = xno ; then
     AC_CHECK_FUNCS([snprintf])
 fi
 
@@ -716,7 +716,7 @@ AC_CHECK_FUNCS([dirname], [],
 
 AC_CHECK_HEADERS([getopt.h])
 AC_CHECK_FUNC([getopt_long], [getopt_long=true])
-if test "$getopt_long" = "true"; then
+if test "x$getopt_long" = xtrue; then
     AC_DEFINE([HAVE_GETOPT_LONG], [1], [Have fcn getopt_long()])
 fi
 
@@ -724,7 +724,7 @@ AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo $dprefix/bin`"], [Define the directo
 AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo $dprefix/share/ngspice`"], [Define the directory for architecture independent data files])
 AC_DEFINE_UNQUOTED([NGSPICEBUILDDATE], ["`date`"], [Define the build date])
 
-if test "$with_windows" = "yes"; then
+if test "x$with_windows" = xyes; then
     AC_MSG_RESULT([WINDOWS code enabled])
     AC_CHECK_FUNCS([memmove])
 fi
@@ -732,74 +732,74 @@ fi
 # Recapitulate settings:
 AC_MSG_RESULT([Settings which were chosen:])
 
-if test "$enable_sense2" = "yes"; then
+if test "x$enable_sense2" = xyes; then
     AC_DEFINE([WANT_SENSE2], [], [Define if we want spice2 sensitivity analysis])
     AC_MSG_RESULT([Spice2 sensitivity analysis enabled])
 fi
-if test "$enable_nobypass" = "yes"; then
+if test "x$enable_nobypass" = xyes; then
     AC_DEFINE([NOBYPASS], [], [Define if we want NOBYPASS])
     AC_MSG_RESULT([NOBYPASS option enabled])
 fi
-if test "$enable_capbypass" = "yes"; then
+if test "x$enable_capbypass" = xyes; then
     AC_DEFINE([CAPBYPASS], [], [Define if we want to bypass cbd/cbs calculation for non varying vbs/vbd])
     AC_MSG_RESULT([CAPBYPASS option enabled])
 fi
-if test "$enable_nodelimiting" = "yes"; then
+if test "x$enable_nodelimiting" = xyes; then
     AC_DEFINE([NODELIMITING], [], [Experimental code never implemented to damp Newton iterations])
     AC_MSG_RESULT([NODELIMITING option enabled])
 fi
-if test "$enable_predictor" = "yes"; then
+if test "x$enable_predictor" = xyes; then
     AC_DEFINE([PREDICTOR], [], [Define if we want predictor algorithm])
     AC_MSG_RESULT([PREDICTOR algorithm enabled])
 fi
-if test "$enable_newpred" = "yes"; then
+if test "x$enable_newpred" = xyes; then
     AC_DEFINE([NEWPRED], [], [Define if you want to discover :)])
     AC_MSG_RESULT([NEWPRED enabled])
 fi
-if test "$enable_newtrunc" = "yes"; then
+if test "x$enable_newtrunc" = xyes; then
     AC_DEFINE([NEWTRUNC], [], [Do not trigger unwanted traps by default])
     AC_MSG_RESULT([New truncation error calculation enabled])
 fi
-if test "$enable_experimental" = "yes"; then
+if test "x$enable_experimental" = xyes; then
     AC_DEFINE([EXPERIMENTAL_CODE], [], [Define if we want some experimental code])
     AC_MSG_RESULT([EXPERIMENTAL_CODE enabled])
 fi
-if test "$enable_cpdebug" = "yes"; then
+if test "x$enable_cpdebug" = xyes; then
     AC_DEFINE([CPDEBUG], [], [Define if you want to debug ngspice shell])
     AC_MSG_RESULT([WARNING: Shell debug is enabled])
 fi
-if test "$enable_ftedebug" = "yes"; then
+if test "x$enable_ftedebug" = xyes; then
     AC_DEFINE([FTEDEBUG], [], [Define if you want to debug frontend])
     AC_MSG_RESULT([WARNING: Frontend debug is enabled])
 fi
-if test "$enable_sensdebug" = "yes"; then
+if test "x$enable_sensdebug" = xyes; then
     AC_DEFINE([SENSDEBUG], [], [Define if we want debug sensititvity analysis])
     AC_MSG_RESULT([WARNING: Sensitivity code debug *SENSDEBUG* is enabled])
 fi
-if test "$enable_asdebug" = "yes"; then
+if test "x$enable_asdebug" = xyes; then
     AC_DEFINE([ASDEBUG], [], [Define if we want debug sensitivity analysis])
     AC_MSG_RESULT([WARNING: Sensitivity code debug *ASDEBUG* is enabled])
 fi
-if test "$enable_stepdebug" = "yes"; then
+if test "x$enable_stepdebug" = xyes; then
     AC_DEFINE([STEPDEBUG], [], [Define if we want stepdebug])
     AC_MSG_RESULT([WARNING: STEPDEBUG debug is enabled])
 fi
-if test "$enable_pzdebug" = "yes"; then
+if test "x$enable_pzdebug" = xyes; then
     AC_DEFINE([PZDEBUG], [], [Define if you want to debug pole-zero analysis])
     AC_MSG_RESULT([WARNING: Pole/Zero analysis debug is enabled])
 fi
-if test "$enable_pss" = "yes"; then
+if test "x$enable_pss" = xyes; then
     AC_DEFINE([WITH_PSS], [], [Define if you want PSS analysis])
 fi
-if test "$enable_blktmsdebug" = "yes"; then
+if test "x$enable_blktmsdebug" = xyes; then
     AC_DEFINE([D_DBG_BLOCKTIMES], [], [Define if we want debug distortion analysis (BLOCKTIMES)])
     AC_MSG_RESULT([WARNING: Distortion analysis debug *D_DBG_BLOCKTIMES* is enabled])
 fi
-if test "$enable_smltmsdebug" = "yes"; then
+if test "x$enable_smltmsdebug" = xyes; then
     AC_DEFINE([D_DBG_SMALLTIMES], [], [Define if we want debug distortion analysis (SMALLTIMES)])
     AC_MSG_RESULT([WARNING: Distortion analysis debug *D_DBG_SMALLTIMES* is enabled])
 fi
-if test "$enable_xgraph" = "yes"; then
+if test "x$enable_xgraph" = xyes; then
     AC_MSG_RESULT([Xgraph compilation enabled.])
     AC_CONFIG_SUBDIRS([xgraph])
     XGRAPHDIR="xgraph"
@@ -817,7 +817,7 @@ AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc])
 #################  XSPICE ##################################################
 # Add new code models to the build by pointing to them here.
 
-if test "$enable_xspice" = "yes"; then
+if test "x$enable_xspice" = xyes; then
     if test -z "${YACC}" ; then
         AC_MSG_ERROR([XSPICE build requires bison, byacc or yacc parser generator])
     fi
@@ -863,20 +863,20 @@ fi
 AC_SUBST([XSPICEINIT])
 AC_SUBST([XSPICEDLLIBS])
 
-AM_CONDITIONAL([XSPICE_WANTED], [test "$enable_xspice" = "yes"])
+AM_CONDITIONAL([XSPICE_WANTED], [test "x$enable_xspice" = xyes])
 
 
 # Add CIDER enhancements to ngspice.
-if test "$enable_cider" = "yes"; then
+if test "x$enable_cider" = xyes; then
     AC_MSG_RESULT([CIDER features enabled])
     AC_DEFINE([CIDER], [1], [The CIDER enhancements])
 fi
 
-AM_CONDITIONAL([CIDER_WANTED], [test "$enable_cider" = "yes"])
-AM_CONDITIONAL([NUMDEV_WANTED], [test "$enable_cider" = "yes"])
+AM_CONDITIONAL([CIDER_WANTED], [test "x$enable_cider" = xyes])
+AM_CONDITIONAL([NUMDEV_WANTED], [test "x$enable_cider" = xyes])
 
 
-AM_CONDITIONAL([PSS_WANTED], [test "$enable_pss" = "yes"])
+AM_CONDITIONAL([PSS_WANTED], [test "x$enable_pss" = xyes])
 
 # adms option
 if test "x$enable_adms" = xyes  ||  test "x$enable_adms3" = xyes ; then
@@ -885,10 +885,10 @@ if test "x$enable_adms" = xyes  ||  test "x$enable_adms3" = xyes ; then
 **********************************])
     AC_CHECK_PROGS([ADMSXML], [admsXml admsXml.exe], [no])
 
-    if test "$ADMSXML" = "no"; then
+    if test "x$ADMSXML" = xno; then
         AC_MSG_ERROR([If you want Verilog-A models you should install admsXml])
     fi
-    if test "$enable_adms3" = "yes" ; then
+    if test "x$enable_adms3" = xyes ; then
         AC_DEFINE([ADMS], [3], [Support for Verilog-A models (adms3)])
     else
         AC_DEFINE([ADMS], [1], [Support for Verilog-A models])
@@ -928,21 +928,21 @@ AC_SUBST([VLADEV])
 AC_SUBST([NOTVLADEVDIR])
 
 # NDEV option
-if test "$enable_ndev" = "yes"; then
+if test "x$enable_ndev" = xyes; then
     AC_MSG_RESULT([NDEV features enabled])
     AC_DEFINE([NDEV], [], [The NDEV interface])
 fi
-AM_CONDITIONAL([NDEV_WANTED], [test "$enable_ndev" = "yes"])
+AM_CONDITIONAL([NDEV_WANTED], [test "x$enable_ndev" = xyes])
 
 
 # Cluster option
-if test "$enable_cluster" = "yes"; then
+if test "x$enable_cluster" = xyes; then
     AC_MSG_RESULT([Cluster version is being compiled])
     AC_DEFINE([CLUSTER], [], [Spice cluster support])
     LIBS="$LIBS -lpthread"
 fi
 
-if test "$enable_expdevices" = "yes"; then
+if test "x$enable_expdevices" = xyes; then
     AC_DEFINE([EXP_DEV], [], [Define if we want to enable experimental devices])
     AC_MSG_RESULT([WARNING: Experimental devices enabled])
 fi
@@ -951,7 +951,7 @@ fi
 #  ----  Default: disabled.                                     ----
 #  ----  Hope to see in the future readline replacement.        ----
 
-if test "$with_readline" != "yes"; then
+if test "x$with_readline" != xyes; then
     AC_MSG_RESULT([GNU readline disabled.])
 else
     if test "x$with_tcl" = x  ||  test "x$with_tcl" = xno ; then
@@ -972,7 +972,7 @@ fi
 #  ----  Option to include BSD editline support in ngspice CLI  ----
 #  ----  Default: disabled.                                     ----
 
-if test "$with_editline" != "yes"; then
+if test "x$with_editline" != xyes; then
     AC_MSG_RESULT([BSD editline disabled.])
 else
     AC_MSG_RESULT([Checking for editline:])
@@ -999,7 +999,7 @@ AC_ARG_ENABLE([openmp],
 : ${enable_openmp:=no}
 AC_OPENMP
 
-if test "$enable_openmp" = "yes"; then
+if test "x$enable_openmp" = xyes; then
     AC_DEFINE([USE_OMP], [1], [OpenMP parallel processing])
     CFLAGS="$CFLAGS $OPENMP_CFLAGS"
     AC_MSG_RESULT([OpenMP feature enabled])
