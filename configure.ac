@@ -227,7 +227,7 @@ if test "$enable_gprof" = "yes"; then
         if test "$enable_shared" = "yes" ; then
             AC_MSG_ERROR([Can't have --enable-gprof without --disable-shared (we recommend also using --enable-all-static).])
         fi
-        if test ! "$enable_static" = "yes" ; then
+        if test "x$enable_static" != xyes ; then
             AC_MSG_WARN([We recommend --enable-static with --enable-gprof.])
         fi
         AC_MSG_NOTICE([Enabling gprof profiling data (to gmon.out).])
@@ -257,7 +257,7 @@ if test "$enable_ansi" = "yes"; then
 	AC_PROG_CC if you already called it elsewhere.])
     am_cv_prog_cc_stdc=$ac_cv_prog_cc_stdc
 
-    if test ! "$am_cv_prog_cc_stdc"="yes"; then
+    if test "x$am_cv_prog_cc_stdc" != xyes ; then
         AC_MSG_WARN([Failed to find Ansi flag!])
     fi
 fi
@@ -277,7 +277,7 @@ fi
 AC_CANONICAL_HOST
 
 # Expand the prefix variable
-if eval "test x$prefix = xNONE"; then
+if test "x$prefix" = xNONE ; then
 #  with the MS WINDOWS executable we suggest C:/Spice/bin as *.exe-path
     if test "$with_windows" = "yes"; then
         dprefix="C:/Spice"
@@ -298,7 +298,7 @@ fi
 #
 # The tclSpice options
 #
-if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
+if test "x$with_tcl" != x  &&  test "x$with_tcl" != xno ; then
     has_tcl_module=true
     AC_DEFINE([TCL_MODULE], [1], [Tcl Module])
     case $host_os in
@@ -418,17 +418,17 @@ EOF
     
     AC_CHECK_LIB([pthread], [pthread_create])
     
-    if test -n $libdir ; then
+    if test -n "$libdir" ; then
         AC_SUBST([libdir])
-        echo "libraries in "$libdir
+        echo "libraries in $libdir"
     fi
     
-    if test -z $libdir ; then
+    if test -z "$libdir" ; then
         for TCL_PACKAGE_PATH_ELEMENT in $TCL_PACKAGE_PATH ; do
-            if test -a $TCL_PACKAGE_PATH_ELEMENT ; then
+            if test -a "$TCL_PACKAGE_PATH_ELEMENT" ; then
                 libdir=$TCL_PACKAGE_PATH_ELEMENT
                 AC_SUBST([libdir])
-                echo "library in "$libdir
+                echo "library in $libdir"
                 break
             fi
         done
@@ -441,9 +441,9 @@ else
     enable_static=yes
 fi
 
-AM_CONDITIONAL([TCL_MODULE], [test x$has_tcl_module = xtrue])
-AM_CONDITIONAL([TCLWIN], [test x$has_tclwin = xtrue])
-AM_CONDITIONAL([TCLCYG], [test x$has_tclcyg = xtrue])
+AM_CONDITIONAL([TCL_MODULE], [test "x$has_tcl_module" = xtrue])
+AM_CONDITIONAL([TCLWIN], [test "x$has_tclwin" = xtrue])
+AM_CONDITIONAL([TCLCYG], [test "x$has_tclcyg" = xtrue])
 
 AC_SUBST([TCL_PACKAGE_PATH])
 AC_SUBST([TCL_LIB_SPEC])
@@ -473,7 +473,7 @@ AC_ARG_WITH([windows],
     fi],
     [with_windows="no"])
 AC_MSG_RESULT([$with_windows])
-AM_CONDITIONAL([WINDOWS], [test x$with_windows = xyes])
+AM_CONDITIONAL([WINDOWS], [test "x$with_windows" = xyes])
 
 case $with_windows in
     yes )
@@ -598,7 +598,7 @@ else
     has_no_x=true
 fi
 
-if ( test "x$enable_help" = "xyes" ) && ! ( test "$no_x" = "yes" ) ; then
+if test "x$enable_help" = xyes  &&  test "x$no_x" != xyes ; then
     has_no_help=false
 else
     has_no_help=true
@@ -607,8 +607,8 @@ fi ;;
 esac
 # end of case --with-windows
 
-AM_CONDITIONAL([NO_X], [test x$has_no_x = xtrue])
-AM_CONDITIONAL([NO_HELP], [test x$has_no_help = xtrue])
+AM_CONDITIONAL([NO_X], [test "x$has_no_x" = xtrue])
+AM_CONDITIONAL([NO_HELP], [test "x$has_no_help" = xtrue])
 
 # Check for a few typdefs:
 AC_TYPE_PID_T
@@ -825,7 +825,7 @@ if test "$enable_xspice" = "yes"; then
     AC_DEFINE([XSPICE], [1], [The xspice enhancements])
 # Define variables for LEX
     AC_CHECK_PROGS([LEX], [flex lex])
-    if test -z $LEX ; then
+    if test -z "$LEX" ; then
         AC_MSG_ERROR([Flex is required for building XSPICE])
     fi
     case $host_os in
@@ -879,7 +879,7 @@ AM_CONDITIONAL([NUMDEV_WANTED], [test "$enable_cider" = "yes"])
 AM_CONDITIONAL([PSS_WANTED], [test "$enable_pss" = "yes"])
 
 # adms option
-if test "$enable_adms" = "yes" -o "$enable_adms3" = "yes" ; then
+if test "x$enable_adms" = xyes  ||  test "x$enable_adms3" = xyes ; then
     AC_MSG_RESULT([**********************************
 * ADMS  support is  experimental *
 **********************************])
@@ -954,7 +954,7 @@ fi
 if test "$with_readline" != "yes"; then
     AC_MSG_RESULT([GNU readline disabled.])
 else
-    if test "x$with_tcl" = "x" -o "$with_tcl" = "no" ; then
+    if test "x$with_tcl" = x  ||  test "x$with_tcl" = xno ; then
         AC_MSG_RESULT([Checking for readline:])
         AC_CHECK_HEADERS([readline/readline.h readline/history.h],
             [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
