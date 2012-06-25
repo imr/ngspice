@@ -1188,7 +1188,7 @@ main(int argc, char **argv)
 
             if(!tempfile) {
                 perror("tmpfile()");
-                exit(1);
+                sp_shutdown(EXIT_BAD);
             }
 
             if (optind == argc && !istty)
@@ -1246,7 +1246,7 @@ main(int argc, char **argv)
             }
 
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-            if (tempfile && tpf && unlink(tpf))
+            if (tpf && (unlink(tpf)==-1))
                 perror("Could not delete temp file");
 #endif
 
