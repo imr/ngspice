@@ -79,10 +79,10 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOgradingSWCoeff = .33;
         }
         if(!model->DIOforwardKneeCurrentGiven) {
-            model->DIOforwardKneeCurrent = 1e-3;
+            model->DIOforwardKneeCurrent = 0.0;
         }
         if(!model->DIOreverseKneeCurrentGiven) {
-            model->DIOreverseKneeCurrent = 1e-3;
+            model->DIOreverseKneeCurrent = 0.0;
         }
         if(!model->DIOtlevGiven) {
             model->DIOtlev = 0;

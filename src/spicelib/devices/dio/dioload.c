@@ -188,7 +188,7 @@ next1:      if (vd >= -3*vte) {  /* forward */
                 cd = csat*(evd-1) + ckt->CKTgmin*vd;
                 gd = csat*evd/vte + ckt->CKTgmin;
 
-                if( (model->DIOforwardKneeCurrentGiven) && (model->DIOforwardKneeCurrent > 0.0) && (cd > 1.0e-18) ) {
+                if( (model->DIOforwardKneeCurrent > 0.0) && (cd > 1.0e-18) ) {
                     gd = gd-ckt->CKTgmin;
                     cd = cd-ckt->CKTgmin*vd;
                     ikf_area_m = model->DIOforwardKneeCurrent*here->DIOarea*here->DIOm;
@@ -205,7 +205,7 @@ next1:      if (vd >= -3*vte) {  /* forward */
                 cd = -csat*(1+arg) + ckt->CKTgmin*vd ;
                 gd = csat*3*arg/vd + ckt->CKTgmin;
 
-                if( (model->DIOreverseKneeCurrentGiven) && (model->DIOreverseKneeCurrent > 0.0) && (cd < -1.0e-18) ) {
+                if( (model->DIOreverseKneeCurrent > 0.0) && (cd < -1.0e-18) ) {
                     gd = gd-ckt->CKTgmin;
                     cd = cd-ckt->CKTgmin*vd;
                     ikr_area_m = model->DIOreverseKneeCurrent*here->DIOarea*here->DIOm;
@@ -214,19 +214,19 @@ next1:      if (vd >= -3*vte) {  /* forward */
                     cd = cd/(1+sqrt_ikr)+ckt->CKTgmin*vd;
                 }
 
-            } else {    /*  breakdown */
+            } else {    /* breakdown */
 
                 evrev = exp(-(here->DIOtBrkdwnV+vd)/vte);
                 cd = -csat*evrev + ckt->CKTgmin*vd;
                 gd = csat*evrev/vte + ckt->CKTgmin;
 
-                if( (model->DIOreverseKneeCurrentGiven) && (model->DIOreverseKneeCurrent > 0.0) && (cd < -1.0e-18) ) {
+                if( (model->DIOreverseKneeCurrent > 0.0) && (cd < -1.0e-18) ) {
                     gd = gd-ckt->CKTgmin;
                     cd = cd-ckt->CKTgmin*vd;
                     ikr_area_m = model->DIOreverseKneeCurrent*here->DIOarea*here->DIOm;
                     sqrt_ikr = sqrt(cd/(-ikr_area_m));
-                    gd = ((1+sqrt_ikr)*gd + cd*gd/(2*sqrt_ikr*ikr_area_m))/(1+2*sqrt_ikr - cd/ikr_area_m);
-                    cd = cd/(1+sqrt_ikr);
+                    gd = ((1+sqrt_ikr)*gd + cd*gd/(2*sqrt_ikr*ikr_area_m))/(1+2*sqrt_ikr - cd/ikr_area_m)+ckt->CKTgmin;
+                    cd = cd/(1+sqrt_ikr)+ckt->CKTgmin*vd;
                 }
 
             }
