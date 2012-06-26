@@ -2148,6 +2148,7 @@ inp_remove_ws( char *s )
   .subckt name 1 2 3 params: l=1 w=2 --> .subckt name 1 2 3 l=1 w=2
    x1 1 2 3 params: l=1 w=2 --> x1 1 2 3 l=1 w=2 
    modify .subckt lines by calling inp_fix_subckt()
+   No changes to lines in .control section !
 */ 
 static void
 inp_fix_for_numparam(struct line *deck)
@@ -2157,23 +2158,20 @@ inp_fix_for_numparam(struct line *deck)
     char *str_ptr;
 
     while( c!=NULL) {
-        if ( ciprefix( ".modif", c->li_line ) ) *c->li_line = '*';
-        if ( ciprefix( "*lib", c->li_line ) ) {
+        if ( ciprefix( "*lib", c->li_line ) || ciprefix( "*inc", c->li_line ) ) {
             c = c->li_next;
             continue;
         }
 
-        /* exclude echo, let, set, plot line between .control and .endc from getting quotes changed */
+        /* exclude lines between .control and .endc from getting quotes changed */
         if ( ciprefix( ".control", c->li_line ) ) found_control = TRUE;
         if ( ciprefix( ".endc",    c->li_line ) ) found_control = FALSE;
-        if ((found_control) && ((ciprefix( "plot", c->li_line )) || (ciprefix( "echo", c->li_line ))
-                                || (ciprefix( "let", c->li_line )) || (ciprefix( "set", c->li_line )))) {
+        if (found_control) {
             c = c->li_next;
             continue;
         }
 
-        if ( !ciprefix( "*lib", c->li_line ) && !ciprefix( "*inc", c->li_line ) )
-            inp_change_quotes(c->li_line);
+        inp_change_quotes(c->li_line);
 
         if ((inp_compat_mode == COMPATMODE_ALL) || (inp_compat_mode == COMPATMODE_PS)) {
             if ( ciprefix( ".subckt", c->li_line ) || ciprefix( "x", c->li_line ) ) {
