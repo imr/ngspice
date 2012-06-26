@@ -662,7 +662,12 @@ static void measure_at(
  
    for (i=0; i < d->v_length; i++) {
       if (ac_check) {
-         value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         if (d->v_compdata)
+            value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         else {
+            value = d->v_realdata[i];
+//            fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
+         }
          svalue = dScale->v_compdata[i].cx_real;
       }
       else if (sp_check) {
