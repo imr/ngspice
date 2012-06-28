@@ -173,6 +173,7 @@
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 #define snprintf _snprintf
+#define isatty _isatty
 #define inline __inline
 /* NAN not available in MS VS 2008 */
 #ifndef NAN
