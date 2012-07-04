@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
+Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 **********/
 
 #include "ngspice/ngspice.h"
@@ -10,13 +10,15 @@ Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
 #include "ngspice/suffix.h"
 
 IFparm DIOpTable[] = { /* parameters */ 
- IOPU("off",    DIO_OFF,    IF_FLAG, "Initially off"),
- IOPU("temp",   DIO_TEMP,   IF_REAL, "Instance temperature"),
- IOPU("dtemp",  DIO_DTEMP,  IF_REAL, "Instance delta temperature"),
- IOPAU("ic",    DIO_IC,     IF_REAL, "Initial device voltage"),
- IOPU("area",   DIO_AREA,   IF_REAL, "Area factor"),
- IOPU("pj",     DIO_PJ,   IF_REAL, "Perimeter factor"),
- IOPU("m",      DIO_M,   IF_REAL, "Multiplier"),
+ IOPU("off",   DIO_OFF,   IF_FLAG, "Initially off"),
+ IOPU("temp",  DIO_TEMP,  IF_REAL, "Instance temperature"),
+ IOPU("dtemp", DIO_DTEMP, IF_REAL, "Instance delta temperature"),
+ IOPAU("ic",   DIO_IC,    IF_REAL, "Initial device voltage"),
+ IOPU("area",  DIO_AREA,  IF_REAL, "Area factor"),
+ IOPU("pj",    DIO_PJ,    IF_REAL, "Perimeter factor"),
+ IOPU("w",     DIO_W,     IF_REAL, "Diode width"),
+ IOPU("l",     DIO_L,     IF_REAL, "Diode length"),
+ IOPU("m",     DIO_M,     IF_REAL, "Multiplier"),
 
  IP("sens_area",DIO_AREA_SENS,IF_FLAG,"flag to request sensitivity WRT area"),
  OP("vd",      DIO_VOLTAGE,IF_REAL, "Diode voltage"),
@@ -37,6 +39,7 @@ IFparm DIOpTable[] = { /* parameters */
 };
 
 IFparm DIOmPTable[] = { /* model parameters */
+ IOP( "level", DIO_MOD_LEVEL, IF_INTEGER, "Diode level selector"),
  IOP(  "is",  DIO_MOD_IS,  IF_REAL, "Saturation current"),
  IOPR( "js",  DIO_MOD_IS,  IF_REAL, "Saturation current"),
  IOP( "jsw", DIO_MOD_JSW,  IF_REAL, "Sidewall Saturation current"),
@@ -48,6 +51,7 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOPR( "trs1", DIO_MOD_TRS, IF_REAL, "Ohmic resistance 1st order temp. coeff."),
  IOP( "trs2", DIO_MOD_TRS2, IF_REAL, "Ohmic resistance 2nd order temp. coeff."),
  IOP( "n",   DIO_MOD_N,   IF_REAL, "Emission Coefficient"),
+ IOP( "ns",   DIO_MOD_NS,   IF_REAL, "Sidewall emission Coefficient"),
  IOPA( "tt",  DIO_MOD_TT,  IF_REAL, "Transit Time"),
  IOPA( "ttt1", DIO_MOD_TTT1, IF_REAL, "Transit Time 1st order temp. coeff."),
  IOPA( "ttt2", DIO_MOD_TTT2, IF_REAL, "Transit Time 2nd order temp. coeff."),
@@ -63,10 +67,13 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "cjp", DIO_MOD_CJSW, IF_REAL, "Sidewall junction capacitance"),
  IOPR( "cjsw", DIO_MOD_CJSW, IF_REAL, "Sidewall junction capacitance"),
  IOP( "php",  DIO_MOD_VJSW,  IF_REAL, "Sidewall junction potential"),
- IOP( "mjsw",   DIO_MOD_MJSW,   IF_REAL, "Sidewall Grading coefficient"),
- IOP( "ikf",   DIO_MOD_IKF,   IF_REAL, "Forward Knee current"),
- IOPR( "ik",   DIO_MOD_IKF,   IF_REAL, "Forward Knee current"),
- IOP( "ikr",    DIO_MOD_IKR,   IF_REAL, "Reverse Knee current"),
+ IOP( "mjsw",  DIO_MOD_MJSW,   IF_REAL, "Sidewall Grading coefficient"),
+ IOP( "ikf",  DIO_MOD_IKF,   IF_REAL, "Forward Knee current"),
+ IOPR( "ik",  DIO_MOD_IKF,   IF_REAL, "Forward Knee current"),
+ IOP( "ikr",  DIO_MOD_IKR,   IF_REAL, "Reverse Knee current"),
+ IOP( "nbv",  DIO_MOD_NBV,   IF_REAL, "Breakdown Emission Coefficient"),
+ IOP("area",  DIO_MOD_AREA,  IF_REAL, "Area factor"),
+ IOP( "pj",   DIO_MOD_PJ,    IF_REAL, "Perimeter factor"),
 
  IOP( "tlev", DIO_MOD_TLEV, IF_INTEGER, "Diode temperature equation selector"),
  IOP( "tlevc", DIO_MOD_TLEVC, IF_INTEGER, "Diode temperature equation selector"),
@@ -76,9 +83,17 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOPR( "ctc", DIO_MOD_CTA, IF_REAL, "Area junction capacitance temperature coefficient"),
  IOP( "ctp", DIO_MOD_CTP, IF_REAL, "Perimeter junction capacitance temperature coefficient"),
 
+ IOP( "ctp", DIO_MOD_CTP, IF_REAL, "Perimeter junction capacitance temperature coefficient"),
+
  IOP( "tpb", DIO_MOD_TPB, IF_REAL, "Area junction potential temperature coefficient"),
  IOPR( "tvj", DIO_MOD_TPB, IF_REAL, "Area junction potential temperature coefficient"),
  IOP( "tphp", DIO_MOD_TPHP, IF_REAL, "Perimeter junction potential temperature coefficient"),
+
+ IOP( "jtun",  DIO_MOD_JTUN, IF_REAL, "Tunneling saturation current"),
+ IOP( "jtunsw", DIO_MOD_JTUNSW, IF_REAL, "Tunneling sidewall saturation current"),
+ IOP( "ntun",  DIO_MOD_NTUN, IF_REAL, "Tunneling emission coefficient"),
+ IOP( "xtitun", DIO_MOD_XTITUN, IF_REAL, "Tunneling saturation current exponential"),
+ IOP( "keg", DIO_MOD_KEG, IF_REAL, "EG correction factor for tunneling"),
 
  IOP( "kf",   DIO_MOD_KF,  IF_REAL, "flicker noise coefficient"),
  IOP( "af",   DIO_MOD_AF,  IF_REAL, "flicker noise exponent"),
@@ -86,6 +101,7 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "fcs",  DIO_MOD_FCS,  IF_REAL, "Forward bias sidewall junction fit parameter"),
  IOP( "bv",  DIO_MOD_BV,  IF_REAL, "Reverse breakdown voltage"),
  IOP( "ibv", DIO_MOD_IBV, IF_REAL, "Current at reverse breakdown voltage"),
+ IOPR( "ib", DIO_MOD_IBV, IF_REAL, "Current at reverse breakdown voltage"),
  IOP( "tcv", DIO_MOD_TCV, IF_REAL, "Reverse breakdown voltage temperature coefficient"),
  OPU( "cond", DIO_MOD_COND,IF_REAL, "Ohmic conductance"),
  IP( "d",    DIO_MOD_D,   IF_FLAG, "Diode model")

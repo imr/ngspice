@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
+Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 **********/
 /*
  */
@@ -19,6 +19,10 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
 {
     DIOmodel *model = (DIOmodel*)inModel;
     switch(param) {
+        case DIO_MOD_LEVEL:
+            model->DIOlevel = value->iValue;
+            model->DIOlevelGiven = TRUE;
+            break;
         case DIO_MOD_IS:
             model->DIOsatCur = value->rValue;
             model->DIOsatCurGiven = TRUE;
@@ -47,6 +51,10 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
         case DIO_MOD_N:
             model->DIOemissionCoeff = value->rValue;
             model->DIOemissionCoeffGiven = TRUE;
+            break;
+        case DIO_MOD_NS:
+            model->DIOswEmissionCoeff = value->rValue;
+            model->DIOswEmissionCoeffGiven = TRUE;
             break;
         case DIO_MOD_TT:
             model->DIOtransitTime = value->rValue;
@@ -99,6 +107,18 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
         case DIO_MOD_IKR:
             model->DIOreverseKneeCurrent = value->rValue;
             model->DIOreverseKneeCurrentGiven = TRUE;
+            break;
+        case DIO_MOD_NBV:
+            model->DIObrkdEmissionCoeff = value->rValue;
+            model->DIObrkdEmissionCoeffGiven = TRUE;
+            break;
+        case DIO_MOD_AREA:
+            model->DIOarea = value->rValue;
+            model->DIOareaGiven = TRUE;
+            break;
+        case DIO_MOD_PJ:
+            model->DIOpj = value->rValue;
+            model->DIOpjGiven = TRUE;
             break;
 
         case DIO_MOD_TLEV:
@@ -153,10 +173,6 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIOtcv = value->rValue;
             model->DIOtcvGiven = TRUE;
             break;
-        case DIO_MOD_D:
-            /* no action - we already know we are a diode, but this */
-            /* makes life easier for spice-2 like parsers */
-            break;
         case DIO_MOD_KF:
             model->DIOfNcoef = value->rValue;
             model->DIOfNcoefGiven = TRUE;
@@ -164,6 +180,30 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
         case DIO_MOD_AF:
             model->DIOfNexp = value->rValue;
             model->DIOfNexpGiven = TRUE;
+            break;
+        case DIO_MOD_JTUN:
+            model->DIOtunSatCur = value->rValue;
+            model->DIOtunSatCurGiven = TRUE;
+            break;
+        case DIO_MOD_JTUNSW:
+            model->DIOtunSatSWCur = value->rValue;
+            model->DIOtunSatSWCurGiven = TRUE;
+            break;
+        case DIO_MOD_NTUN:
+            model->DIOtunEmissionCoeff = value->rValue;
+            model->DIOtunEmissionCoeffGiven = TRUE;
+            break;
+        case DIO_MOD_XTITUN:
+            model->DIOtunSaturationCurrentExp = value->rValue;
+            model->DIOtunSaturationCurrentExpGiven = TRUE;
+            break;
+        case DIO_MOD_KEG:
+            model->DIOtunEGcorrectionFactor = value->rValue;
+            model->DIOtunEGcorrectionFactorGiven = TRUE;
+            break;
+        case DIO_MOD_D:
+            /* no action - we already know we are a diode, but this */
+            /* makes life easier for spice-2 like parsers */
             break;
         default:
             return(E_BADPARM);

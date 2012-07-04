@@ -29,8 +29,8 @@ DIOpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         /* loop through all the instances of the model */
         for (here = model->DIOinstances; here != NULL ;
                 here=here->DIOnextInstance) {
-	    if (here->DIOowner != ARCHme) continue;
-            gspr=here->DIOtConductance*here->DIOarea*here->DIOm;
+            if (here->DIOowner != ARCHme) continue;
+            gspr=here->DIOtConductance*here->DIOarea;
             geq= *(ckt->CKTstate0 + here->DIOconduct);
             xceq= *(ckt->CKTstate0 + here->DIOcapCurrent);
             *(here->DIOposPosPtr ) += gspr;

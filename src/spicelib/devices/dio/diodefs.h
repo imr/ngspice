@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
+Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 **********/
 #ifndef DIO
 #define DIO
@@ -54,6 +54,8 @@ typedef struct sDIOinstance {
     unsigned DIOoff : 1;   /* 'off' flag for diode */
     unsigned DIOareaGiven : 1;   /* flag to indicate area was specified */
     unsigned DIOpjGiven : 1;   /* flag to indicate perimeter was specified */
+    unsigned DIOwGiven : 1;   /* flag to indicate width was specified */
+    unsigned DIOlGiven : 1;   /* flag to indicate length was specified */
     unsigned DIOmGiven : 1;   /* flag to indicate multiplier was specified */
 
     unsigned DIOinitCondGiven : 1;  /* flag to indicate ic was specified */
@@ -63,8 +65,10 @@ typedef struct sDIOinstance {
     unsigned DIOdtempGiven : 1; /* flag to indicate dtemp given */
 
     double DIOarea;     /* area factor for the diode */
-    double DIOpj;     /* perimeter for the diode */
-    double DIOm;     /* multiplier for the diode */
+    double DIOpj;       /* perimeter for the diode */
+    double DIOw;        /* width for the diode */
+    double DIOl;        /* length for the diode */
+    double DIOm;        /* multiplier for the diode */
 
     double DIOinitCond;      /* initial condition */
     double DIOtemp;          /* temperature of the instance */
@@ -81,6 +85,8 @@ typedef struct sDIOinstance {
                         /* the curve matching (Fc * Vj ) */
     double DIOtSatCur;  /* temperature adjusted saturation current */
     double DIOtSatSWCur;  /* temperature adjusted side wall saturation current */
+    double DIOtTunSatCur;        /* tunneling saturation current */
+    double DIOtTunSatSWCur;      /* sidewall tunneling saturation current */
 
     double DIOtVcrit;   /* temperature adjusted V crit */
     double DIOtF1;      /* temperature adjusted f1 */
@@ -91,6 +97,11 @@ typedef struct sDIOinstance {
     double DIOtF2SW;   /* coeff. for capacitance equation precomputation */
     double DIOtF3SW;   /* coeff. for capacitance equation precomputation */
 
+    double DIOforwardKneeCurrent; /* Forward Knee current */
+    double DIOreverseKneeCurrent; /* Reverse Knee current */
+    double DIOjunctionCap;     /* geometry adjusted junction capacitance */
+    double DIOjunctionSWCap;     /* geometry adjusted junction sidewall capacitance */
+
 /*
  * naming convention:
  * x = vdiode
@@ -98,38 +109,38 @@ typedef struct sDIOinstance {
 
 /* the following are relevant to s.s. sinusoidal distortion analysis */
 
-#define DIONDCOEFFS	6
+#define DIONDCOEFFS        6
 
 #ifndef NODISTO
-	double DIOdCoeffs[DIONDCOEFFS];
+        double DIOdCoeffs[DIONDCOEFFS];
 #else /* NODISTO */
-	double *DIOdCoeffs;
+        double *DIOdCoeffs;
 #endif /* NODISTO */
 
 #ifndef CONFIG
 
-#define	id_x2		DIOdCoeffs[0]
-#define	id_x3		DIOdCoeffs[1]
-#define	cdif_x2		DIOdCoeffs[2]
-#define	cdif_x3		DIOdCoeffs[3]
-#define	cjnc_x2		DIOdCoeffs[4]
-#define	cjnc_x3		DIOdCoeffs[5]
+#define        id_x2                DIOdCoeffs[0]
+#define        id_x3                DIOdCoeffs[1]
+#define        cdif_x2                DIOdCoeffs[2]
+#define        cdif_x3                DIOdCoeffs[3]
+#define        cjnc_x2                DIOdCoeffs[4]
+#define        cjnc_x3                DIOdCoeffs[5]
 
 #endif
 
 /* indices to array of diode noise  sources */
 
-#define DIORSNOIZ       0
-#define DIOIDNOIZ       1
-#define DIOFLNOIZ 2
-#define DIOTOTNOIZ    3
+#define DIORSNOIZ    0
+#define DIOIDNOIZ    1
+#define DIOFLNOIZ    2
+#define DIOTOTNOIZ   3
 
 #define DIONSRCS     4
 
 #ifndef NONOISE
      double DIOnVar[NSTATVARS][DIONSRCS];
 #else /* NONOISE */
-	double **DIOnVar;
+        double **DIOnVar;
 #endif /* NONOISE */
 
 } DIOinstance ;
@@ -159,6 +170,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
                                 * that have this model */
     IFuid DIOmodName; /* pointer to character string naming this model */
 
+    unsigned DIOlevelGiven : 1;
     unsigned DIOsatCurGiven : 1;
     unsigned DIOsatSWCurGiven : 1;
 
@@ -166,6 +178,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOresistTemp1Given : 1;
     unsigned DIOresistTemp2Given : 1;
     unsigned DIOemissionCoeffGiven : 1;
+    unsigned DIOswEmissionCoeffGiven : 1;
+    unsigned DIObrkdEmissionCoeffGiven : 1;
     unsigned DIOtransitTimeGiven : 1;
     unsigned DIOtranTimeTemp1Given : 1;
     unsigned DIOtranTimeTemp2Given : 1;
@@ -196,7 +210,16 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOnomTempGiven : 1;
     unsigned DIOfNcoefGiven : 1;
     unsigned DIOfNexpGiven : 1;
+    unsigned DIOareaGiven : 1;
+    unsigned DIOpjGiven : 1;
 
+    unsigned DIOtunSatCurGiven : 1;
+    unsigned DIOtunSatSWCurGiven : 1;
+    unsigned DIOtunEmissionCoeffGiven : 1;
+    unsigned DIOtunSaturationCurrentExpGiven : 1;
+    unsigned DIOtunEGcorrectionFactorGiven : 1;
+
+    int    DIOlevel;   /* level selector */
     double DIOsatCur;   /* saturation current */
     double DIOsatSWCur;   /* Sidewall saturation current */
 
@@ -205,6 +228,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOresistTemp2;        /* series resistance 2nd order temp. coeff. */
     double DIOconductance;        /* conductance corresponding to ohmic R */
     double DIOemissionCoeff;      /* emission coefficient (N) */
+    double DIOswEmissionCoeff;    /* Sidewall emission coefficient (NS) */
+    double DIObrkdEmissionCoeff;  /* Breakdown emission coefficient (NBV) */
     double DIOtransitTime;        /* transit time (TT) */
     double DIOtranTimeTemp1;      /* transit time 1st order coefficient */
     double DIOtranTimeTemp2;      /* transit time 2nd order coefficient */
@@ -216,8 +241,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOjunctionSWCap;      /* Sidewall Junction Capacitance (Cjsw) */
     double DIOjunctionSWPot;      /* Sidewall Junction Potential (Vjsw) or (PBSW) */
     double DIOgradingSWCoeff;     /* Sidewall grading coefficient (mjsw) */
-    double DIOforwardKneeCurrent; /* Forward Knee current */
-    double DIOreverseKneeCurrent; /* Reverse Knee current */
+    double DIOforwardKneeCurrent; /* Forward Knee current (IKF) */
+    double DIOreverseKneeCurrent; /* Reverse Knee current (IKR) */
 
     int    DIOtlev; /* Diode temperature equation selector */
     int    DIOtlevc; /* Diode temperature equation selector */
@@ -232,10 +257,18 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIObreakdownVoltage; /* Voltage at reverse breakdown */
     double DIObreakdownCurrent; /* Current at above voltage */
     double DIOtcv; /* Reverse breakdown voltage temperature coefficient */
+    double DIOarea;     /* area factor for the diode */
+    double DIOpj;       /* perimeter for the diode */
 
-    double DIOnomTemp;  /* nominal temperature (temp at which parms measured */
+    double DIOnomTemp;  /* nominal temperature at which parms measured */
     double DIOfNcoef;
     double DIOfNexp;
+
+    double DIOtunSatCur;        /* tunneling saturation current (JTUN) */
+    double DIOtunSatSWCur;      /* sidewall tunneling saturation current (JTUNSW) */
+    double DIOtunEmissionCoeff; /* tunneling emission coefficient (NTUN) */
+    double DIOtunSaturationCurrentExp; /* exponent for the tunneling current temperature (XTITUN) */
+    double DIOtunEGcorrectionFactor; /* EG correction factor for tunneling (KEG) */
 
 } DIOmodel;
 
@@ -251,18 +284,21 @@ typedef struct sDIOmodel {       /* model structure for a diode */
 #define DIO_AREA_SENS 9
 #define DIO_POWER 10
 #define DIO_TEMP 11
-#define DIO_QUEST_SENS_REAL      12
-#define DIO_QUEST_SENS_IMAG      13
-#define DIO_QUEST_SENS_MAG       14
-#define DIO_QUEST_SENS_PH        15
-#define DIO_QUEST_SENS_CPLX      16
-#define DIO_QUEST_SENS_DC        17
+#define DIO_QUEST_SENS_REAL  12
+#define DIO_QUEST_SENS_IMAG  13
+#define DIO_QUEST_SENS_MAG   14
+#define DIO_QUEST_SENS_PH    15
+#define DIO_QUEST_SENS_CPLX  16
+#define DIO_QUEST_SENS_DC    17
 #define DIO_CAP 18
 #define DIO_PJ 19 
-#define DIO_M 20 
-#define DIO_DTEMP 21
+#define DIO_W 20 
+#define DIO_L 21 
+#define DIO_M 22 
+#define DIO_DTEMP 23
 
 /* model parameters */
+#define DIO_MOD_LEVEL 100
 #define DIO_MOD_IS 101
 #define DIO_MOD_RS 102
 #define DIO_MOD_N 103
@@ -300,6 +336,15 @@ typedef struct sDIOmodel {       /* model structure for a diode */
 #define DIO_MOD_TPB 135
 #define DIO_MOD_TPHP 136
 #define DIO_MOD_TCV 137
+#define DIO_MOD_NBV 138
+#define DIO_MOD_AREA 139
+#define DIO_MOD_PJ 140
+#define DIO_MOD_NS 141
+#define DIO_MOD_JTUN 142
+#define DIO_MOD_JTUNSW 143
+#define DIO_MOD_NTUN 144
+#define DIO_MOD_XTITUN 145
+#define DIO_MOD_KEG 146
 
 #include "dioext.h"
 #endif /*DIO*/

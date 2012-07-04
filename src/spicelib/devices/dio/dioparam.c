@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
+Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 **********/
 /*
  */
@@ -31,6 +31,14 @@ DIOparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->DIOpj = value->rValue;
             here->DIOpjGiven = TRUE;
             break;
+        case DIO_W:
+            here->DIOw = value->rValue;
+            here->DIOwGiven = TRUE;
+            break;
+        case DIO_L:
+            here->DIOl = value->rValue;
+            here->DIOlGiven = TRUE;
+            break;
         case DIO_M:
             here->DIOm = value->rValue;
             here->DIOmGiven = TRUE;
@@ -40,7 +48,7 @@ DIOparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->DIOtemp = value->rValue+CONSTCtoK;
             here->DIOtempGiven = TRUE;
             break;
-	case DIO_DTEMP:
+        case DIO_DTEMP:
             here->DIOdtemp = value->rValue;
             here->DIOdtempGiven = TRUE;
             break;    

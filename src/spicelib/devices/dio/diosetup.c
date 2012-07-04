@@ -2,7 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
-Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
+Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 **********/
 
 /* load the diode structure with those pointers needed later
@@ -27,6 +27,9 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the diode models */
     for( ; model != NULL; model = model->DIOnextModel ) {
 
+        if(!model->DIOlevelGiven) {
+            model->DIOlevel = 1;
+        }
         if(!model->DIOemissionCoeffGiven) {
             model->DIOemissionCoeff = 1;
         }
@@ -35,6 +38,9 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
         if(!model->DIOsatSWCurGiven) {
             model->DIOsatSWCur = 0.0;
+        }
+        if(!model->DIOswEmissionCoeffGiven) {
+            model->DIOswEmissionCoeff = 1;
         }
         if(!model->DIObreakdownCurrentGiven) {
             model->DIObreakdownCurrent = 1e-3;
@@ -84,6 +90,9 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->DIOreverseKneeCurrentGiven) {
             model->DIOreverseKneeCurrent = 0.0;
         }
+        if(!model->DIObrkdEmissionCoeffGiven) {
+            model->DIObrkdEmissionCoeff = model->DIOemissionCoeff;
+        }
         if(!model->DIOtlevGiven) {
             model->DIOtlev = 0;
         }
@@ -123,20 +132,64 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->DIOtcvGiven) {
             model->DIOtcv = 0.0;
         }
+        if(!model->DIOareaGiven) {
+            model->DIOarea = 1.0;
+        }
+        if(!model->DIOpjGiven) {
+            model->DIOpj = 0.0;
+        }
+        if(!model->DIOtunSatCurGiven) {
+            model->DIOtunSatCur = 0.0;
+        }
+        if(!model->DIOtunSatSWCurGiven) {
+            model->DIOtunSatSWCur = 0.0;
+        }
+        if(!model->DIOtunEmissionCoeffGiven) {
+            model->DIOtunEmissionCoeff = 30.0;
+        }
+        if(!model->DIOtunSaturationCurrentExpGiven) {
+            model->DIOtunSaturationCurrentExp = 3.0;
+        }
+        if(!model->DIOtunEGcorrectionFactorGiven) {
+            model->DIOtunEGcorrectionFactor = 1.0;
+        }
+
         /* loop through all the instances of the model */
         for (here = model->DIOinstances; here != NULL ;
                 here=here->DIOnextInstance) {
             if (here->DIOowner != ARCHme) goto matrixpointers;
 
             if(!here->DIOareaGiven) {
-                here->DIOarea = 1;
+                if((!here->DIOwGiven) && (!here->DIOlGiven))  {
+                    here->DIOarea = model->DIOarea;
+                } else {
+                    here->DIOarea = 1;
+                }
             }
             if(!here->DIOpjGiven) {
-                here->DIOpj = 0;
+                if((!here->DIOwGiven) && (!here->DIOlGiven))  {
+                    here->DIOpj = model->DIOpj;
+                } else {
+                    here->DIOpj = 0;
+                }
             }
             if(!here->DIOmGiven) {
                 here->DIOm = 1;
             }
+
+            here->DIOarea = here->DIOarea * here->DIOm;
+            if (model->DIOlevel == 1) {
+                here->DIOpj = here->DIOpj * here->DIOm;
+            } else { /* level=3 */
+                if((here->DIOwGiven) && (here->DIOlGiven))  {
+                    here->DIOarea = here->DIOw * here->DIOl * here->DIOm;
+                    here->DIOpj = (2 * here->DIOw + 2 * here->DIOl) * here->DIOm;
+                }
+            }
+            here->DIOforwardKneeCurrent = model->DIOforwardKneeCurrent * here->DIOarea;
+            here->DIOreverseKneeCurrent = model->DIOreverseKneeCurrent * here->DIOarea;
+            here->DIOjunctionCap = model->DIOjunctionCap * here->DIOarea;
+            here->DIOjunctionSWCap = model->DIOjunctionSWCap * here->DIOpj;
 
             here->DIOstate = *states;
             *states += 5;
@@ -146,7 +199,9 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 matrixpointers:
             if(model->DIOresist == 0) {
+
                 here->DIOposPrimeNode = here->DIOposNode;
+
             } else if(here->DIOposPrimeNode == 0) {
 
                CKTnode *tmpNode;

@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
+Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 **********/
 /*
  */
@@ -24,6 +24,9 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
     NG_IGNORE(ckt);
 
     switch (which) {
+        case DIO_MOD_LEVEL:
+            value->iValue = model->DIOlevel;
+            return (OK);
         case DIO_MOD_IS:
             value->rValue = model->DIOsatCur;
             return(OK);
@@ -45,6 +48,9 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
             return(OK);
         case DIO_MOD_N:
             value->rValue = model->DIOemissionCoeff;
+            return(OK);
+        case DIO_MOD_NS:
+            value->rValue = model->DIOswEmissionCoeff;
             return(OK);
         case DIO_MOD_TT:
             value->rValue = model->DIOtransitTime;
@@ -84,6 +90,9 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
             return(OK);
         case DIO_MOD_IKR:
             value->rValue = model->DIOreverseKneeCurrent;
+            return(OK);
+        case DIO_MOD_NBV:
+            value->rValue = model->DIObrkdEmissionCoeff;
             return(OK);
 
         case DIO_MOD_TLEV:
@@ -131,8 +140,29 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case DIO_MOD_TCV:
             value->rValue = model->DIOtcv;
             return(OK);
+        case DIO_MOD_AREA:
+            value->rValue = model->DIOarea;
+            return(OK);
+        case DIO_MOD_PJ:
+            value->rValue = model->DIOpj;
+            return(OK);
         case DIO_MOD_COND:
             value->rValue = model->DIOconductance;
+            return(OK);
+        case DIO_MOD_JTUN:
+            value->rValue = model->DIOtunSatCur;
+            return(OK);
+        case DIO_MOD_JTUNSW:
+            value->rValue = model->DIOtunSatSWCur;
+            return(OK);
+        case DIO_MOD_NTUN:
+            value->rValue = model->DIOtunEmissionCoeff;
+            return(OK);
+        case DIO_MOD_XTITUN:
+            value->rValue = model->DIOtunSaturationCurrentExp;
+            return(OK);
+        case DIO_MOD_KEG:
+            value->rValue = model->DIOtunEGcorrectionFactor;
             return(OK);
         default:
             return(E_BADPARM);

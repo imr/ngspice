@@ -2,7 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
-Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
+Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 **********/
 
     /* perform the temperature update to the diode */
@@ -124,7 +124,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
             if (model->DIOtlevc == 0) {
                     pbo = (model->DIOjunctionPot-pbfact1)/fact1;
                     gmaold = (model->DIOjunctionPot-pbo)/pbo;
-                    here->DIOtJctCap = model->DIOjunctionCap /
+                    here->DIOtJctCap = here->DIOjunctionCap /
                             (1+here->DIOtGradingCoeff*
                             (400e-6*(model->DIOnomTemp-REFTEMP)-gmaold) );
                     here->DIOtJctPot = pbfact+fact2*pbo;
@@ -133,14 +133,14 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                             (400e-6*(here->DIOtemp-REFTEMP)-gmanew);
             } else if (model->DIOtlevc == 1) {
                     here->DIOtJctPot = model->DIOjunctionPot - model->DIOtpb*(here->DIOtemp-REFTEMP);
-                    here->DIOtJctCap = model->DIOjunctionCap *
+                    here->DIOtJctCap = here->DIOjunctionCap *
                             (model->DIOcta*(here->DIOtemp-REFTEMP));
             }
 
             if (model->DIOtlevc == 0) {
                     pboSW = (model->DIOjunctionSWPot-pbfact1)/fact1;
                     gmaSWold = (model->DIOjunctionSWPot-pboSW)/pboSW;
-                    here->DIOtJctSWCap = model->DIOjunctionSWCap /
+                    here->DIOtJctSWCap = here->DIOjunctionSWCap /
                             (1+model->DIOgradingSWCoeff*
                             (400e-6*(model->DIOnomTemp-REFTEMP)-gmaSWold) );
                     here->DIOtJctSWPot = pbfact+fact2*pboSW;
@@ -149,19 +149,30 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                             (400e-6*(here->DIOtemp-REFTEMP)-gmaSWnew);
             } else if (model->DIOtlevc == 1) {
                     here->DIOtJctSWPot = model->DIOjunctionSWPot - model->DIOtphp*(here->DIOtemp-REFTEMP);
-                    here->DIOtJctSWCap = model->DIOjunctionSWCap *
+                    here->DIOtJctSWCap = here->DIOjunctionSWCap *
                             (model->DIOctp*(here->DIOtemp-REFTEMP));
             }
 
-            here->DIOtSatCur = model->DIOsatCur * exp(
+            here->DIOtSatCur = model->DIOsatCur * here->DIOarea * exp(
                     ((here->DIOtemp/model->DIOnomTemp)-1) *
                     model->DIOactivationEnergy/(model->DIOemissionCoeff*vt) +
                     model->DIOsaturationCurrentExp/model->DIOemissionCoeff*
                     log(here->DIOtemp/model->DIOnomTemp) );
-            here->DIOtSatSWCur = model->DIOsatSWCur * exp(
+            here->DIOtSatSWCur = model->DIOsatSWCur * here->DIOpj * exp(
                     ((here->DIOtemp/model->DIOnomTemp)-1) *
-                    model->DIOactivationEnergy/(model->DIOemissionCoeff*vt) +
-                    model->DIOsaturationCurrentExp/model->DIOemissionCoeff*
+                    model->DIOactivationEnergy/(model->DIOswEmissionCoeff*vt) +
+                    model->DIOsaturationCurrentExp/model->DIOswEmissionCoeff*
+                    log(here->DIOtemp/model->DIOnomTemp) );
+
+            here->DIOtTunSatCur = model->DIOtunSatCur * here->DIOarea * exp(
+                    ((here->DIOtemp/model->DIOnomTemp)-1) *
+                    model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy/(model->DIOtunEmissionCoeff*vt) +
+                    model->DIOtunSaturationCurrentExp/model->DIOtunEmissionCoeff*
+                    log(here->DIOtemp/model->DIOnomTemp) );
+            here->DIOtTunSatSWCur = model->DIOtunSatSWCur * here->DIOpj * exp(
+                    ((here->DIOtemp/model->DIOnomTemp)-1) *
+                    model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy/(model->DIOtunEmissionCoeff*vt) +
+                    model->DIOtunSaturationCurrentExp/model->DIOtunEmissionCoeff*
                     log(here->DIOtemp/model->DIOnomTemp) );
 
             /* the defintion of f1, just recompute after temperature adjusting
@@ -175,17 +186,14 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
             /* and Vcrit */
             vte=model->DIOemissionCoeff*vt;
 
-            here->DIOtVcrit=vte*
-                          log(vte/(CONSTroot2*here->DIOtSatCur*here->DIOarea));
+            here->DIOtVcrit = vte * log(vte/(CONSTroot2*here->DIOtSatCur));
 
             /* and now to compute the breakdown voltage, again, using
              * temperature adjusted basic parameters */
             if (model->DIObreakdownVoltageGiven){
-                cbv=model->DIObreakdownCurrent*here->DIOarea*here->DIOm;
-                if (cbv < here->DIOtSatCur*here->DIOarea*here->DIOm *
-                          model->DIObreakdownVoltage/vt) {
-                    cbv=here->DIOtSatCur*here->DIOarea*here->DIOm *
-                        model->DIObreakdownVoltage/vt;
+                cbv=model->DIObreakdownCurrent * here->DIOarea;
+                if (cbv < here->DIOtSatCur * model->DIObreakdownVoltage/vt) {
+                    cbv=here->DIOtSatCur * model->DIObreakdownVoltage/vt;
 #ifdef TRACE
                     emsg = TMALLOC(char, 100);
                     if(emsg == NULL) return(E_NOMEM);
@@ -200,14 +208,14 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                     xbv=model->DIObreakdownVoltage;
                 } else {
                     tol=ckt->CKTreltol*cbv;
-                    xbv=model->DIObreakdownVoltage-vt*log(1+cbv/
-                            (here->DIOtSatCur*here->DIOarea*here->DIOm));
+                    xbv=model->DIObreakdownVoltage-model->DIObrkdEmissionCoeff*vt*log(1+cbv/
+                            (here->DIOtSatCur));
                     iter=0;
                     for(iter=0 ; iter < 25 ; iter++) {
-                        xbv=model->DIObreakdownVoltage-vt*log(cbv/
-                                (here->DIOtSatCur*here->DIOarea*here->DIOm)+1-xbv/vt);
-                        xcbv=here->DIOtSatCur*here->DIOarea*here->DIOm *
-                             (exp((model->DIObreakdownVoltage-xbv)/vt)-1+xbv/vt);
+                        xbv=model->DIObreakdownVoltage-model->DIObrkdEmissionCoeff*vt*log(cbv/
+                                (here->DIOtSatCur)+1-xbv/vt);
+                        xcbv=here->DIOtSatCur *
+                             (exp((model->DIObreakdownVoltage-xbv)/(model->DIObrkdEmissionCoeff*vt))-1+xbv/vt);
                         if (fabs(xcbv-cbv) <= tol) goto matched;
                     }
 #ifdef TRACE

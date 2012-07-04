@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
+Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 **********/
 
 #include "ngspice/ngspice.h"
@@ -39,6 +39,12 @@ DIOask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case DIO_PJ:
             value->rValue = here->DIOpj;
             return(OK);
+        case DIO_W:
+            value->rValue = here->DIOw;
+            return(OK);
+        case DIO_L:
+            value->rValue = here->DIOl;
+            return(OK);
         case DIO_M:
             value->rValue = here->DIOm;
             return(OK);
@@ -46,7 +52,7 @@ DIOask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case DIO_TEMP:
             value->rValue = here->DIOtemp-CONSTCtoK;
             return(OK);
-	case DIO_DTEMP:
+        case DIO_DTEMP:
             value->rValue = here->DIOdtemp;
             return(OK);    
         case DIO_VOLTAGE:
