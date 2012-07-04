@@ -332,8 +332,8 @@ next1:      if (model->DIOsatSWCurGiven) { /* consider sidewall currents */
               /*
                *   charge storage elements
                */
-                czero=here->DIOtJctCap*here->DIOarea;
-                czeroSW=here->DIOtJctSWCap*here->DIOpj;
+                czero=here->DIOtJctCap;
+                czeroSW=here->DIOtJctSWCap;
                 if (vd < here->DIOtDepCap){
                     arg=1-vd/here->DIOtJctPot;
                     argSW=1-vd/here->DIOtJctSWPot;
