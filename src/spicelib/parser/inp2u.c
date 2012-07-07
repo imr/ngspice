@@ -11,10 +11,10 @@ Author: 1988 Thomas L. Quarles
 #include "ngspice/fteext.h"
 #include "inp.h"
 
-void INP2U(CKTcircuit *ckt, INPtables * tab, card * current)
-{
 #if ADMS >= 3
 
+void INP2adms(CKTcircuit *ckt, INPtables * tab, card * current)
+{
     /* Uname <node> <node> ... <model> [param1=<val1>] [param1=<val2>] ... */
 
     char *line;                 /* the part of the current line left to parse */
@@ -29,7 +29,7 @@ void INP2U(CKTcircuit *ckt, INPtables * tab, card * current)
     double leadval;             /* actual value of unlabeled number */
 
 #ifdef TRACE
-    printf("INP2U: Parsing '%s'\n", current->line);
+    printf("INP2adms: Parsing '%s'\n", current->line);
 #endif
 
     nsize = 0;
@@ -43,7 +43,7 @@ void INP2U(CKTcircuit *ckt, INPtables * tab, card * current)
     while(!INPlookMod(name) && (*line != '\0'))
     {
 #ifdef TRACE
-      printf("INP2U: found node %s\n",name);
+      printf("INP2adms: found node %s\n",name);
 #endif
       nsize++;
       node=TREALLOC(CKTnode*,node,nsize);
@@ -56,7 +56,7 @@ void INP2U(CKTcircuit *ckt, INPtables * tab, card * current)
         thismodel = NULL;
         INPinsert(&name, tab);
 #ifdef TRACE
-        printf("INP2U: found dynamic model %s\n",name);
+        printf("INP2adms: found dynamic model %s\n",name);
 #endif
         current->error = INPgetMod(ckt, name, &thismodel, tab);
         if (thismodel == NULL) {
@@ -72,15 +72,21 @@ void INP2U(CKTcircuit *ckt, INPtables * tab, card * current)
           }
           PARSECALL((&line, ckt, thismodel->INPmodType, fast, &leadval, &waslead, tab));
 #ifdef TRACE
-          printf("INP2U: Looking up model done\n");
+          printf("INP2adms: Looking up model done\n");
 #endif
         }
     } else {
       	   fprintf(stderr, "Unable to find definition of model %s\n", name);
       	   controlled_exit(EXIT_BAD);
     }
+}
+
 
 #else
+
+
+void INP2U(CKTcircuit *ckt, INPtables * tab, card * current)
+{
     /* Uname <node> <node> <model> [l=<val>] [n=<val>] */
 
     int mytype;			/* the type my lookup says URC is */
@@ -141,5 +147,6 @@ void INP2U(CKTcircuit *ckt, INPtables * tab, card * current)
     IFC(bindNode, (ckt, fast, 2, node2));
     IFC(bindNode, (ckt, fast, 3, node3));
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
-#endif
 }
+
+#endif /* ADMS */
