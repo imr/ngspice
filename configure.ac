@@ -315,8 +315,6 @@ if test "x$with_tcl" != x  &&  test "x$with_tcl" != xno ; then
     esac
  
     with_x=no
-    enable_shared=yes
-    enable_static=no
  
     AC_MSG_CHECKING([for tclConfig.sh])
     tcl_config_sh=""
@@ -434,11 +432,12 @@ EOF
         done
     fi
 
+    AC_SUBST([STATIC], [-shared])
+
 else
     TCL_PACKAGE_PATH=""
     TCL_LIB_SPEC=""
-    enable_shared=no
-    enable_static=yes
+    AC_SUBST([STATIC], [-static])
 fi
 
 AM_CONDITIONAL([TCL_MODULE], [test "x$has_tcl_module" = xtrue])

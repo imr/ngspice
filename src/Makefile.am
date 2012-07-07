@@ -302,6 +302,8 @@ tclspinit: $(srcdir)/tclspinit.in
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices @X_CFLAGS@
 
+AM_CFLAGS = -static
+
 LIBS = @LIBS@ @X_LIBS@ @X_PRE_LIBS@ @X_EXTRA_LIBS@
 
 if WINDOWS
@@ -407,7 +409,7 @@ libspice_la_LIBADD += \
 	misc/libmisc.la \
 	$(LIBS)
 
-libspice_la_CFLAGS = $(AM_CFLAGS)
+libspice_la_CFLAGS = -shared
 libspice_la_LDFLAGS =  -shared -Wl,--version-script=$(srcdir)/tclspice.map
 if TCLWIN
 libspice_la_LDFLAGS +=  -no-undefined
