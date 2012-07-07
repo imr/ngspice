@@ -45,11 +45,7 @@
 #include "misc/misc_time.h"
 
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-# include <stdio.h>
 # include "misc/mktemp.h"
-static char *tpf; /* temporary file by name */
-static FILE *tempfile; /* temporary file */
-static void delete_tpf(void);
 #endif
 
 #if defined(HAVE_GETOPT_LONG) && defined(HAVE_GETOPT_H)
@@ -1171,10 +1167,11 @@ main(int argc, char **argv)
                current algorithm is uniform at the expense of a little
                startup time.  */
 
+            FILE *tempfile = tmpfile();
 
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
             char *dname = NULL;   /* input file*/
-            tpf = NULL;     /* temporary file */
+            char *tpf = NULL;     /* temporary file */
             tempfile = tmpfile();
 
             /* tmpfile() returns NULL, if in MS Windows as non admin user
@@ -1183,7 +1180,6 @@ main(int argc, char **argv)
                File will be removed again at exit() using atexit() */
 
             if (tempfile == NULL) {
-                atexit(delete_tpf);
                 tpf = smktemp("sp");
                 tempfile = fopen(tpf, "w+bTD");
                 if (tempfile == NULL) {
@@ -1191,8 +1187,6 @@ main(int argc, char **argv)
                     sp_shutdown(EXIT_BAD);
                 }
             }
-#else
-            FILE *tempfile = tmpfile();
 #endif
 
             if(!tempfile) {
@@ -1349,23 +1343,3 @@ main(int argc, char **argv)
     sp_shutdown(EXIT_NORMAL);
     return 0;
 }
-
-
-#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-
-/* For using with atexit */
-void delete_tpf(void)
-{
-    if(tempfile) {
-        fclose(tempfile);
-        tempfile = NULL;
-    }
-
-    if (tpf) {
-        if (unlink(tpf) == -1)
-            perror("Could not delete temp file\n");
-        tpf = NULL;
-    }
-}
-
-#endif
