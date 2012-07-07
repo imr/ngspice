@@ -30,4 +30,5 @@ libjfet_la_SOURCES =	\
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+AM_CFLAGS = $(STATIC)
 MAINTAINERCLEANFILES = Makefile.in

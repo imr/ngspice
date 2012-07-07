@@ -22,4 +22,5 @@ libcideroned_la_SOURCES =	\
 
 EXTRA_DIST = notes readme
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+AM_CFLAGS = $(STATIC)
 MAINTAINERCLEANFILES = Makefile.in

@@ -15,6 +15,7 @@ libhlp_la_SOURCES = \
 
 
 libhlp_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include @X_CFLAGS@
+libhlp_la_CFLAGS = $(STATIC)
 
 endif
 

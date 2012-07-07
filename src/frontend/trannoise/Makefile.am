@@ -8,5 +8,6 @@ libtrannoise_la_SOURCES = \
 	wallace.c
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend
+AM_CFLAGS = $(STATIC)
 
 MAINTAINERCLEANFILES = Makefile.in

@@ -21,5 +21,6 @@ libmathmisc_la_SOURCES = \
 EXTRA_DIST = test_accuracy.c test_erfc.c
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+AM_CFLAGS = $(STATIC)
 
 MAINTAINERCLEANFILES = Makefile.in

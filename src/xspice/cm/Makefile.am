@@ -14,5 +14,6 @@ libcmxsp_la_SOURCES = \
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
+AM_CFLAGS = $(STATIC)
 
 MAINTAINERCLEANFILES = Makefile.in

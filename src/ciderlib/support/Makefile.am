@@ -18,6 +18,7 @@ libcidersuprt_la_SOURCES =	\
 		suprmitf.c
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+AM_CFLAGS = $(STATIC)
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = readme

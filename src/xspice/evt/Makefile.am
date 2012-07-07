@@ -23,5 +23,6 @@ libevtxsp_la_SOURCES = \
 	evttermi.c
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+AM_CFLAGS = $(STATIC)
 
 MAINTAINERCLEANFILES = Makefile.in

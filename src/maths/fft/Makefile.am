@@ -13,4 +13,5 @@ EXTRA_DIST = NOTE Read-Me
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+AM_CFLAGS = $(STATIC)
 MAINTAINERCLEANFILES = Makefile.in
