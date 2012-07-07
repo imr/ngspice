@@ -190,7 +190,7 @@ static int  ZeroPivot( MatrixPtr, int );
 
 int
 spOrderAndFactor(MatrixPtr eMatrix, RealNumber RHS[], RealNumber RelThreshold,
-		 RealNumber AbsThreshold, int DiagPivoting)
+                 RealNumber AbsThreshold, int DiagPivoting)
 {
     MatrixPtr  Matrix = eMatrix;
     ElementPtr  pPivot;
@@ -203,53 +203,46 @@ spOrderAndFactor(MatrixPtr eMatrix, RealNumber RHS[], RealNumber RelThreshold,
     Matrix->Error = spOKAY;
     Size = Matrix->Size;
     if (RelThreshold <= 0.0)
-	RelThreshold = Matrix->RelThreshold;
+        RelThreshold = Matrix->RelThreshold;
     if (RelThreshold > 1.0)
-	RelThreshold = Matrix->RelThreshold;
+        RelThreshold = Matrix->RelThreshold;
     Matrix->RelThreshold = RelThreshold;
     if (AbsThreshold < 0.0)
-	AbsThreshold = Matrix->AbsThreshold;
+        AbsThreshold = Matrix->AbsThreshold;
     Matrix->AbsThreshold = AbsThreshold;
     ReorderingRequired = NO;
 
-    if (!Matrix->NeedsOrdering)
-    {
-	/* Matrix has been factored before and reordering is not required. */
-        for (Step = 1; Step <= Size; Step++)
-        {
-	    pPivot = Matrix->Diag[Step];
+    if (!Matrix->NeedsOrdering) {
+        /* Matrix has been factored before and reordering is not required. */
+        for (Step = 1; Step <= Size; Step++) {
+            pPivot = Matrix->Diag[Step];
             LargestInCol = FindLargestInCol(pPivot->NextInCol);
-            if ((LargestInCol * RelThreshold < ELEMENT_MAG(pPivot)))
-            {
-		if (Matrix->Complex)
+            if ((LargestInCol * RelThreshold < ELEMENT_MAG(pPivot))) {
+                if (Matrix->Complex)
                     ComplexRowColElimination( Matrix, pPivot );
                 else
                     RealRowColElimination( Matrix, pPivot );
-            }
-            else
-            {
-		ReorderingRequired = YES;
+            } else {
+                ReorderingRequired = YES;
                 break; /* for loop */
             }
         }
         if (!ReorderingRequired)
             goto Done;
-        else
-        {
-	    /* A pivot was not large enough to maintain accuracy, so a
-	     * partial reordering is required.  */
+        else {
+            /* A pivot was not large enough to maintain accuracy, so a
+             * partial reordering is required.  */
 
 #if (ANNOTATE >= ON_STRANGE_BEHAVIOR)
             printf("Reordering,  Step = %1d\n", Step);
 #endif
         }
     } /* End of if(!Matrix->NeedsOrdering) */
-    else
-    {
-	/* This is the first time the matrix has been factored.  These
-	 * few statements indicate to the rest of the code that a full
-	 * reodering is required rather than a partial reordering,
-	 * which occurs during a failure of a fast factorization.  */
+    else {
+        /* This is the first time the matrix has been factored.  These
+         * few statements indicate to the rest of the code that a full
+         * reodering is required rather than a partial reordering,
+         * which occurs during a failure of a fast factorization.  */
         Step = 1;
         if (!Matrix->RowsLinked)
             spcLinkRows( Matrix );
@@ -265,9 +258,8 @@ spOrderAndFactor(MatrixPtr eMatrix, RealNumber RHS[], RealNumber RelThreshold,
     Matrix->MaxRowCountInLowerTri = -1;
 
     /* Perform reordering and factorization. */
-    for (; Step <= Size; Step++)
-    {
-	pPivot = SearchForPivot( Matrix, Step, DiagPivoting );
+    for (; Step <= Size; Step++) {
+        pPivot = SearchForPivot( Matrix, Step, DiagPivoting );
         if (pPivot == NULL) return MatrixIsSingular( Matrix, Step );
         ExchangeRowsAndCols( Matrix, pPivot, Step );
 
@@ -284,7 +276,7 @@ spOrderAndFactor(MatrixPtr eMatrix, RealNumber RHS[], RealNumber RelThreshold,
 #endif
     }
 
- Done:
+Done:
     Matrix->NeedsOrdering = NO;
     Matrix->Reordered = YES;
     Matrix->Factored = YES;
@@ -340,14 +332,13 @@ spFactor(MatrixPtr eMatrix)
     /* Begin `spFactor'. */
     assert( IS_VALID(Matrix) && !Matrix->Factored);
 
-    if (Matrix->NeedsOrdering)
-    {
-	return spOrderAndFactor( eMatrix, NULL,
+    if (Matrix->NeedsOrdering) {
+        return spOrderAndFactor( eMatrix, NULL,
                                  0.0, 0.0, DIAG_PIVOTING_AS_DEFAULT );
     }
     if (!Matrix->Partitioned) spPartition( eMatrix, spDEFAULT_PARTITION );
     if (Matrix->Complex)
-	return FactorComplexMatrix( Matrix );
+        return FactorComplexMatrix( Matrix );
 
     Size = Matrix->Size;
 
@@ -355,69 +346,60 @@ spFactor(MatrixPtr eMatrix)
     Matrix->Diag[1]->Real = 1.0 / Matrix->Diag[1]->Real;
 
     /* Start factorization. */
-    for (Step = 2; Step <= Size; Step++)
-    {
-	if (Matrix->DoRealDirect[Step])
-        {
-	    /* Update column using direct addressing scatter-gather. */
+    for (Step = 2; Step <= Size; Step++) {
+        if (Matrix->DoRealDirect[Step]) {
+            /* Update column using direct addressing scatter-gather. */
             RealNumber *Dest = (RealNumber *)Matrix->Intermediate;
 
-	    /* Scatter. */
+            /* Scatter. */
             pElement = Matrix->FirstInCol[Step];
-            while (pElement != NULL)
-            {
-		Dest[pElement->Row] = pElement->Real;
+            while (pElement != NULL) {
+                Dest[pElement->Row] = pElement->Real;
                 pElement = pElement->NextInCol;
             }
 
-	    /* Update column. */
+            /* Update column. */
             pColumn = Matrix->FirstInCol[Step];
-            while (pColumn->Row < Step)
-            {
-		pElement = Matrix->Diag[pColumn->Row];
+            while (pColumn->Row < Step) {
+                pElement = Matrix->Diag[pColumn->Row];
                 pColumn->Real = Dest[pColumn->Row] * pElement->Real;
                 while ((pElement = pElement->NextInCol) != NULL)
                     Dest[pElement->Row] -= pColumn->Real * pElement->Real;
                 pColumn = pColumn->NextInCol;
             }
 
-	    /* Gather. */
+            /* Gather. */
             pElement = Matrix->Diag[Step]->NextInCol;
-            while (pElement != NULL)
-            {
-		pElement->Real = Dest[pElement->Row];
+            while (pElement != NULL) {
+                pElement->Real = Dest[pElement->Row];
                 pElement = pElement->NextInCol;
             }
 
-	    /* Check for singular matrix. */
+            /* Check for singular matrix. */
             if (Dest[Step] == 0.0) return ZeroPivot( Matrix, Step );
             Matrix->Diag[Step]->Real = 1.0 / Dest[Step];
-        }
-        else
-        {
-	    /* Update column using indirect addressing scatter-gather. */
+        } else {
+            /* Update column using indirect addressing scatter-gather. */
             RealNumber **pDest = (RealNumber **)Matrix->Intermediate;
 
-	    /* Scatter. */
+            /* Scatter. */
             pElement = Matrix->FirstInCol[Step];
-            while (pElement != NULL)
-            {
-		pDest[pElement->Row] = &pElement->Real;
+            while (pElement != NULL) {
+                pDest[pElement->Row] = &pElement->Real;
                 pElement = pElement->NextInCol;
             }
 
-	    /* Update column. */
+            /* Update column. */
             pColumn = Matrix->FirstInCol[Step];
-            while (pColumn->Row < Step)
-            {
-		pElement = Matrix->Diag[pColumn->Row];
+            while (pColumn->Row < Step) {
+                pElement = Matrix->Diag[pColumn->Row];
                 Mult = (*pDest[pColumn->Row] *= pElement->Real);
                 while ((pElement = pElement->NextInCol) != NULL)
                     *pDest[pElement->Row] -= Mult * pElement->Real;
                 pColumn = pColumn->NextInCol;
             }
 
-	    /* Check for singular matrix. */
+            /* Check for singular matrix. */
             if (Matrix->Diag[Step]->Real == 0.0)
                 return ZeroPivot( Matrix, Step );
             Matrix->Diag[Step]->Real = 1.0 / Matrix->Diag[Step]->Real;
@@ -454,9 +436,9 @@ spFactor(MatrixPtr eMatrix)
 static int
 FactorComplexMatrix( MatrixPtr Matrix )
 {
-     ElementPtr  pElement;
-     ElementPtr  pColumn;
-     int  Step, Size;
+    ElementPtr  pElement;
+    ElementPtr  pColumn;
+    int  Step, Size;
     ComplexNumber Mult, Pivot;
 
     /* Begin `FactorComplexMatrix'. */
@@ -469,85 +451,74 @@ FactorComplexMatrix( MatrixPtr Matrix )
     CMPLX_RECIPROCAL( *pElement, *pElement );
 
     /* Start factorization. */
-    for (Step = 2; Step <= Size; Step++)
-    {
-	if (Matrix->DoCmplxDirect[Step])
-        {
-	    /* Update column using direct addressing scatter-gather. */
-             ComplexNumber  *Dest;
+    for (Step = 2; Step <= Size; Step++) {
+        if (Matrix->DoCmplxDirect[Step]) {
+            /* Update column using direct addressing scatter-gather. */
+            ComplexNumber  *Dest;
             Dest = (ComplexNumber *)Matrix->Intermediate;
 
-	    /* Scatter. */
+            /* Scatter. */
             pElement = Matrix->FirstInCol[Step];
-            while (pElement != NULL)
-            {
-		Dest[pElement->Row] = *(ComplexNumber *)pElement;
+            while (pElement != NULL) {
+                Dest[pElement->Row] = *(ComplexNumber *)pElement;
                 pElement = pElement->NextInCol;
             }
 
-	    /* Update column. */
+            /* Update column. */
             pColumn = Matrix->FirstInCol[Step];
-            while (pColumn->Row < Step)
-            {
-		pElement = Matrix->Diag[pColumn->Row];
+            while (pColumn->Row < Step) {
+                pElement = Matrix->Diag[pColumn->Row];
                 /* Cmplx expr: Mult = Dest[pColumn->Row] * (1.0 / *pPivot). */
                 CMPLX_MULT(Mult, Dest[pColumn->Row], *pElement);
                 CMPLX_ASSIGN(*pColumn, Mult);
-                while ((pElement = pElement->NextInCol) != NULL)
-                {
-		    /* Cmplx expr: Dest[pElement->Row] -= Mult * pElement */
+                while ((pElement = pElement->NextInCol) != NULL) {
+                    /* Cmplx expr: Dest[pElement->Row] -= Mult * pElement */
                     CMPLX_MULT_SUBT_ASSIGN(Dest[pElement->Row],Mult,*pElement);
                 }
                 pColumn = pColumn->NextInCol;
             }
 
-	    /* Gather. */
+            /* Gather. */
             pElement = Matrix->Diag[Step]->NextInCol;
-            while (pElement != NULL)
-            {
-		*(ComplexNumber *)pElement = Dest[pElement->Row];
+            while (pElement != NULL) {
+                *(ComplexNumber *)pElement = Dest[pElement->Row];
                 pElement = pElement->NextInCol;
             }
 
-	    /* Check for singular matrix. */
+            /* Check for singular matrix. */
             Pivot = Dest[Step];
             if (CMPLX_1_NORM(Pivot) == 0.0) return ZeroPivot( Matrix, Step );
-            CMPLX_RECIPROCAL( *Matrix->Diag[Step], Pivot );  
-        }
-        else
-        {
-	    /* Update column using direct addressing scatter-gather. */
-             ComplexNumber  **pDest;
+            CMPLX_RECIPROCAL( *Matrix->Diag[Step], Pivot );
+        } else {
+            /* Update column using direct addressing scatter-gather. */
+            ComplexNumber  **pDest;
             pDest = (ComplexNumber **)Matrix->Intermediate;
 
-	    /* Scatter. */
+            /* Scatter. */
             pElement = Matrix->FirstInCol[Step];
-            while (pElement != NULL)
-            {
-		pDest[pElement->Row] = (ComplexNumber *)pElement;
+            while (pElement != NULL) {
+                pDest[pElement->Row] = (ComplexNumber *)pElement;
                 pElement = pElement->NextInCol;
             }
 
-	    /* Update column. */
+            /* Update column. */
             pColumn = Matrix->FirstInCol[Step];
-            while (pColumn->Row < Step)
-            {
-		pElement = Matrix->Diag[pColumn->Row];
+            while (pColumn->Row < Step) {
+                pElement = Matrix->Diag[pColumn->Row];
                 /* Cmplx expr: Mult = *pDest[pColumn->Row] * (1.0 / *pPivot). */
                 CMPLX_MULT(Mult, *pDest[pColumn->Row], *pElement);
                 CMPLX_ASSIGN(*pDest[pColumn->Row], Mult);
-                while ((pElement = pElement->NextInCol) != NULL)
-                {
-		    /* Cmplx expr: *pDest[pElement->Row] -= Mult * pElement */
-		    CMPLX_MULT_SUBT_ASSIGN(*pDest[pElement->Row],Mult,*pElement);
+                while ((pElement = pElement->NextInCol) != NULL) {
+                    /* Cmplx expr: *pDest[pElement->Row] -= Mult * pElement */
+                    CMPLX_MULT_SUBT_ASSIGN(*pDest[pElement->Row],Mult,*pElement);
                 }
                 pColumn = pColumn->NextInCol;
             }
 
-	    /* Check for singular matrix. */
+            /* Check for singular matrix. */
             pElement = Matrix->Diag[Step];
             if (ELEMENT_MAG(pElement) == 0.0) return ZeroPivot( Matrix, Step );
-            CMPLX_RECIPROCAL( *pElement, *pElement );  
+            CMPLX_RECIPROCAL( *pElement, *pElement );
         }
     }
 
@@ -616,25 +587,20 @@ spPartition(MatrixPtr eMatrix, int Mode)
 
     /* If partition is specified by the user, this is easy. */
     if (Mode == spDEFAULT_PARTITION) Mode = DEFAULT_PARTITION;
-    if (Mode == spDIRECT_PARTITION)
-    {
-	for (Step = 1; Step <= Size; Step++) {
+    if (Mode == spDIRECT_PARTITION) {
+        for (Step = 1; Step <= Size; Step++) {
             DoRealDirect[Step] = YES;
-	    DoCmplxDirect[Step] = YES;
-	}
+            DoCmplxDirect[Step] = YES;
+        }
         return;
-    }
-    else if (Mode == spINDIRECT_PARTITION)
-    {
-	for (Step = 1; Step <= Size; Step++)
-	{
+    } else if (Mode == spINDIRECT_PARTITION) {
+        for (Step = 1; Step <= Size; Step++) {
             DoRealDirect[Step] = NO;
-	    DoCmplxDirect[Step] = NO;
-	}
+            DoCmplxDirect[Step] = NO;
+        }
         return;
-    }
-    else
-	assert( Mode == spAUTO_PARTITION );
+    } else
+        assert( Mode == spAUTO_PARTITION );
 
     /* Otherwise, count all operations needed in when factoring matrix. */
     Nc = (int *)Matrix->MarkowitzRow;
@@ -642,21 +608,18 @@ spPartition(MatrixPtr eMatrix, int Mode)
     Nm = (int *)Matrix->MarkowitzProd;
 
     /* Start mock-factorization. */
-    for (Step = 1; Step <= Size; Step++)
-    {
-	Nc[Step] = No[Step] = Nm[Step] = 0;
+    for (Step = 1; Step <= Size; Step++) {
+        Nc[Step] = No[Step] = Nm[Step] = 0;
 
         pElement = Matrix->FirstInCol[Step];
-        while (pElement != NULL)
-        {
-	    Nc[Step]++;
+        while (pElement != NULL) {
+            Nc[Step]++;
             pElement = pElement->NextInCol;
         }
 
         pColumn = Matrix->FirstInCol[Step];
-        while (pColumn->Row < Step)
-        {
-	    pElement = Matrix->Diag[pColumn->Row];
+        while (pColumn->Row < Step) {
+            pElement = Matrix->Diag[pColumn->Row];
             Nm[Step]++;
             while ((pElement = pElement->NextInCol) != NULL)
                 No[Step]++;
@@ -664,19 +627,18 @@ spPartition(MatrixPtr eMatrix, int Mode)
         }
     }
 
-    for (Step = 1; Step <= Size; Step++)
-    {
-	/* The following are just estimates based on a count on the
-	 * number of machine instructions used on each machine to
-	 * perform the various tasks.  It was assumed that each
-	 * machine instruction required the same amount of time (I
-	 * don't believe this is TRUE for the VAX, and have no idea if
-	 * this is TRUE for the 68000 family).  For optimum
-	 * performance, these numbers should be tuned to the machine.
-	 *
-	 *   Nc is the number of nonzero elements in the column.
-	 *   Nm is the number of multipliers in the column.
-	 *   No is the number of operations in the inner loop.  */
+    for (Step = 1; Step <= Size; Step++) {
+        /* The following are just estimates based on a count on the
+         * number of machine instructions used on each machine to
+         * perform the various tasks.  It was assumed that each
+         * machine instruction required the same amount of time (I
+         * don't believe this is TRUE for the VAX, and have no idea if
+         * this is TRUE for the 68000 family).  For optimum
+         * performance, these numbers should be tuned to the machine.
+         *
+         *   Nc is the number of nonzero elements in the column.
+         *   Nm is the number of multipliers in the column.
+         *   No is the number of operations in the inner loop.  */
 
 #define generic
 #ifdef hp9000s300
@@ -701,7 +663,7 @@ spPartition(MatrixPtr eMatrix, int Mode)
 
 #if (ANNOTATE == FULL)
     {
-	int Ops = 0;
+        int Ops = 0;
         for (Step = 1; Step <= Size; Step++)
             Ops += No[Step];
         printf("Operation count for inner loop of factorization = %d.\n", Ops);
@@ -742,40 +704,37 @@ spcCreateInternalVectors( MatrixPtr Matrix )
     /* Create Markowitz arrays. */
     Size= Matrix->Size;
 
-    if (Matrix->MarkowitzRow == NULL)
-    {
-	if (( Matrix->MarkowitzRow = SP_MALLOC(int, Size+1)) == NULL)
-	    Matrix->Error = spNO_MEMORY;
+    if (Matrix->MarkowitzRow == NULL) {
+        if (( Matrix->MarkowitzRow = SP_MALLOC(int, Size+1)) == NULL)
+            Matrix->Error = spNO_MEMORY;
     }
-    if (Matrix->MarkowitzCol == NULL)
-    {
-	if (( Matrix->MarkowitzCol = SP_MALLOC(int, Size+1)) == NULL)
-	    Matrix->Error = spNO_MEMORY;
+    if (Matrix->MarkowitzCol == NULL) {
+        if (( Matrix->MarkowitzCol = SP_MALLOC(int, Size+1)) == NULL)
+            Matrix->Error = spNO_MEMORY;
     }
-    if (Matrix->MarkowitzProd == NULL)
-    {
-	if (( Matrix->MarkowitzProd = SP_MALLOC(long, Size+2)) == NULL)
-	    Matrix->Error = spNO_MEMORY;
+    if (Matrix->MarkowitzProd == NULL) {
+        if (( Matrix->MarkowitzProd = SP_MALLOC(long, Size+2)) == NULL)
+            Matrix->Error = spNO_MEMORY;
     }
 
     /* Create DoDirect vectors for use in spFactor(). */
     if (Matrix->DoRealDirect == NULL) {
-	if (( Matrix->DoRealDirect = SP_MALLOC(int, Size+1)) == NULL)
-	    Matrix->Error = spNO_MEMORY;
+        if (( Matrix->DoRealDirect = SP_MALLOC(int, Size+1)) == NULL)
+            Matrix->Error = spNO_MEMORY;
     }
     if (Matrix->DoCmplxDirect == NULL) {
-	if (( Matrix->DoCmplxDirect = SP_MALLOC(int, Size+1)) == NULL)
-	    Matrix->Error = spNO_MEMORY;
+        if (( Matrix->DoCmplxDirect = SP_MALLOC(int, Size+1)) == NULL)
+            Matrix->Error = spNO_MEMORY;
     }
 
     /* Create Intermediate vectors for use in MatrixSolve. */
     if (Matrix->Intermediate == NULL) {
-	if ((Matrix->Intermediate = SP_MALLOC(RealNumber,2*(Size+1))) == NULL)
-	    Matrix->Error = spNO_MEMORY;
+        if ((Matrix->Intermediate = SP_MALLOC(RealNumber,2*(Size+1))) == NULL)
+            Matrix->Error = spNO_MEMORY;
     }
 
     if (Matrix->Error != spNO_MEMORY)
-	Matrix->InternalVectorsAllocated = YES;
+        Matrix->InternalVectorsAllocated = YES;
     return;
 }
 
@@ -823,34 +782,34 @@ CountMarkowitz(MatrixPtr Matrix,  RealVector  RHS, int Step)
 
     /* Generate MarkowitzRow Count for each row. */
     for (I = Step; I <= Size; I++) {
-	/* Set Count to -1 initially to remove count due to pivot element. */
+        /* Set Count to -1 initially to remove count due to pivot element. */
         Count = -1;
         pElement = Matrix->FirstInRow[I];
         while (pElement != NULL && pElement->Col < Step)
             pElement = pElement->NextInRow;
         while (pElement != NULL) {
-	    Count++;
+            Count++;
             pElement = pElement->NextInRow;
         }
 
-	/* Include nonzero elements in the RHS vector. */
+        /* Include nonzero elements in the RHS vector. */
         ExtRow = Matrix->IntToExtRowMap[I];
 
         if (RHS != NULL)
             if (RHS[ExtRow] != 0.0)
-		Count++;
+                Count++;
         Matrix->MarkowitzRow[I] = Count;
     }
 
     /* Generate the MarkowitzCol count for each column. */
     for (I = Step; I <= Size; I++) {
-	/* Set Count to -1 initially to remove count due to pivot element. */
+        /* Set Count to -1 initially to remove count due to pivot element. */
         Count = -1;
         pElement = Matrix->FirstInCol[I];
         while (pElement != NULL && pElement->Row < Step)
             pElement = pElement->NextInCol;
         while (pElement != NULL) {
-	    Count++;
+            Count++;
             pElement = pElement->NextInCol;
         }
         Matrix->MarkowitzCol[I] = Count;
@@ -911,16 +870,16 @@ MarkowitzProducts(MatrixPtr Matrix, int Step)
     pMarkowitzCol = &(Matrix->MarkowitzCol[Step]);
 
     for (I = Step; I <= Size; I++) {
-	/* If chance of overflow, use real numbers. */
+        /* If chance of overflow, use real numbers. */
         if ((*pMarkowitzRow > LARGEST_SHORT_INTEGER && *pMarkowitzCol != 0) ||
-            (*pMarkowitzCol > LARGEST_SHORT_INTEGER && *pMarkowitzRow != 0)) {
-	    fProduct = (double)(*pMarkowitzRow++) * (double)(*pMarkowitzCol++);
+                (*pMarkowitzCol > LARGEST_SHORT_INTEGER && *pMarkowitzRow != 0)) {
+            fProduct = (double)(*pMarkowitzRow++) * (double)(*pMarkowitzCol++);
             if (fProduct >= LARGEST_LONG_INTEGER)
                 *pMarkowitzProduct++ = LARGEST_LONG_INTEGER;
             else
                 *pMarkowitzProduct++ = (long)fProduct;
         } else {
-	    Product = *pMarkowitzRow++ * *pMarkowitzCol++;
+            Product = *pMarkowitzRow++ * *pMarkowitzCol++;
             if ((*pMarkowitzProduct++ = Product) == 0)
                 Matrix->Singletons++;
         }
@@ -980,51 +939,46 @@ MarkowitzProducts(MatrixPtr Matrix, int Step)
 static ElementPtr
 SearchForPivot( MatrixPtr Matrix, int Step, int DiagPivoting )
 {
-ElementPtr  ChosenPivot;
+    ElementPtr  ChosenPivot;
 
- /* Begin `SearchForPivot'. */
+    /* Begin `SearchForPivot'. */
 
- /* If singletons exist, look for an acceptable one to use as pivot. */
-    if (Matrix->Singletons)
-    {
-    ChosenPivot = SearchForSingleton( Matrix, Step );
-        if (ChosenPivot != NULL)
-        {
-    Matrix->PivotSelectionMethod = 's';
+    /* If singletons exist, look for an acceptable one to use as pivot. */
+    if (Matrix->Singletons) {
+        ChosenPivot = SearchForSingleton( Matrix, Step );
+        if (ChosenPivot != NULL) {
+            Matrix->PivotSelectionMethod = 's';
             return ChosenPivot;
         }
     }
 
 #if DIAGONAL_PIVOTING
-    if (DiagPivoting)
-    {
- /*
- * Either no singletons exist or they weren't acceptable.  Take quick first
- * pass at searching diagonal.  First search for element on diagonal of 
- * remaining submatrix with smallest Markowitz product, then check to see
- * if it okay numerically.  If not, QuicklySearchDiagonal fails.
- */
+    if (DiagPivoting) {
+        /*
+        * Either no singletons exist or they weren't acceptable.  Take quick first
+        * pass at searching diagonal.  First search for element on diagonal of
+        * remaining submatrix with smallest Markowitz product, then check to see
+        * if it okay numerically.  If not, QuicklySearchDiagonal fails.
+        */
         ChosenPivot = QuicklySearchDiagonal( Matrix, Step );
-        if (ChosenPivot != NULL)
-        {
-    Matrix->PivotSelectionMethod = 'q';
+        if (ChosenPivot != NULL) {
+            Matrix->PivotSelectionMethod = 'q';
             return ChosenPivot;
         }
 
- /*
- * Quick search of diagonal failed, carefully search diagonal and check each
- * pivot candidate numerically before even tentatively accepting it.
- */
+        /*
+        * Quick search of diagonal failed, carefully search diagonal and check each
+        * pivot candidate numerically before even tentatively accepting it.
+        */
         ChosenPivot = SearchDiagonal( Matrix, Step );
-        if (ChosenPivot != NULL)
-        {
-    Matrix->PivotSelectionMethod = 'd';
+        if (ChosenPivot != NULL) {
+            Matrix->PivotSelectionMethod = 'd';
             return ChosenPivot;
         }
     }
 #endif /* DIAGONAL_PIVOTING */
 
- /* No acceptable pivot found yet, search entire matrix. */
+    /* No acceptable pivot found yet, search entire matrix. */
     ChosenPivot = SearchEntireMatrix( Matrix, Step );
     Matrix->PivotSelectionMethod = 'e';
 
@@ -1078,146 +1032,133 @@ ElementPtr  ChosenPivot;
 static ElementPtr
 SearchForSingleton( MatrixPtr Matrix, int Step )
 {
- ElementPtr  ChosenPivot;
- int  I;
- long  *pMarkowitzProduct;
-int  Singletons;
-RealNumber  PivotMag;
+    ElementPtr  ChosenPivot;
+    int  I;
+    long  *pMarkowitzProduct;
+    int  Singletons;
+    RealNumber  PivotMag;
 
- /* Begin `SearchForSingleton'. */
- /* Initialize pointer that is to scan through MarkowitzProduct vector. */
+    /* Begin `SearchForSingleton'. */
+    /* Initialize pointer that is to scan through MarkowitzProduct vector. */
     pMarkowitzProduct = &(Matrix->MarkowitzProd[Matrix->Size+1]);
     Matrix->MarkowitzProd[Matrix->Size+1] = Matrix->MarkowitzProd[Step];
 
- /* Decrement the count of available singletons, on the assumption that an
- * acceptable one will be found. */
+    /* Decrement the count of available singletons, on the assumption that an
+    * acceptable one will be found. */
     Singletons = Matrix->Singletons--;
 
- /*
- * Assure that following while loop will always terminate, this is just
- * preventive medicine, if things are working right this should never
- * be needed.
- */
+    /*
+    * Assure that following while loop will always terminate, this is just
+    * preventive medicine, if things are working right this should never
+    * be needed.
+    */
     Matrix->MarkowitzProd[Step-1] = 0;
 
-    while (Singletons-- > 0)
-    {
- /* Singletons exist, find them. */
+    while (Singletons-- > 0) {
+        /* Singletons exist, find them. */
 
- /*
- * This is tricky.  Am using a pointer to sequentially step through the
- * MarkowitzProduct array.  Search terminates when singleton (Product = 0)
- * is found.  Note that the conditional in the while statement
- * ( *pMarkowitzProduct ) is TRUE as long as the MarkowitzProduct is not
- * equal to zero.  The row (and column)strchr on the diagonal is then
- * calculated by subtracting the pointer to the Markowitz product of
- * the first diagonal from the pointer to the Markowitz product of the
- * desired element, the singleton.
- *
- * Search proceeds from the end (high row and column numbers) to the
- * beginning (low row and column numbers) so that rows and columns with
- * large Markowitz products will tend to be move to the bottom of the
- * matrix.  However, choosing Diag[Step] is desirable because it would
- * require no row and column interchanges, so inspect it first by
- * putting its Markowitz product at the end of the MarkowitzProd
- * vector.
- */
+        /*
+        * This is tricky.  Am using a pointer to sequentially step through the
+        * MarkowitzProduct array.  Search terminates when singleton (Product = 0)
+        * is found.  Note that the conditional in the while statement
+        * ( *pMarkowitzProduct ) is TRUE as long as the MarkowitzProduct is not
+        * equal to zero.  The row (and column)strchr on the diagonal is then
+        * calculated by subtracting the pointer to the Markowitz product of
+        * the first diagonal from the pointer to the Markowitz product of the
+        * desired element, the singleton.
+        *
+        * Search proceeds from the end (high row and column numbers) to the
+        * beginning (low row and column numbers) so that rows and columns with
+        * large Markowitz products will tend to be move to the bottom of the
+        * matrix.  However, choosing Diag[Step] is desirable because it would
+        * require no row and column interchanges, so inspect it first by
+        * putting its Markowitz product at the end of the MarkowitzProd
+        * vector.
+        */
 
-        while ( *pMarkowitzProduct-- )
-        {
-    /*
-             * N bottles of beer on the wall;
-             * N bottles of beer.
-             * you take one down and pass it around;
-             * N-1 bottles of beer on the wall.
-             */
+        while ( *pMarkowitzProduct-- ) {
+            /*
+                     * N bottles of beer on the wall;
+                     * N bottles of beer.
+                     * you take one down and pass it around;
+                     * N-1 bottles of beer on the wall.
+                     */
         }
         I = (int)(pMarkowitzProduct - Matrix->MarkowitzProd) + 1;
 
- /* Assure that I is valid. */
+        /* Assure that I is valid. */
         if (I < Step) break;  /* while (Singletons-- > 0) */
         if (I > Matrix->Size) I = Step;
 
- /* Singleton has been found in either/both row or/and column I. */
-        if ((ChosenPivot = Matrix->Diag[I]) != NULL)
-        {
- /* Singleton lies on the diagonal. */
+        /* Singleton has been found in either/both row or/and column I. */
+        if ((ChosenPivot = Matrix->Diag[I]) != NULL) {
+            /* Singleton lies on the diagonal. */
             PivotMag = ELEMENT_MAG(ChosenPivot);
             if
             (    PivotMag > Matrix->AbsThreshold &&
-                 PivotMag > Matrix->RelThreshold *
-                            FindBiggestInColExclude( Matrix, ChosenPivot, Step )
+                    PivotMag > Matrix->RelThreshold *
+                    FindBiggestInColExclude( Matrix, ChosenPivot, Step )
             ) return ChosenPivot;
-        }
-        else
-        {
- /* Singleton does not lie on diagonal, find it. */
-            if (Matrix->MarkowitzCol[I] == 0)
-            {
-    ChosenPivot = Matrix->FirstInCol[I];
+        } else {
+            /* Singleton does not lie on diagonal, find it. */
+            if (Matrix->MarkowitzCol[I] == 0) {
+                ChosenPivot = Matrix->FirstInCol[I];
                 while ((ChosenPivot != NULL) && (ChosenPivot->Row < Step))
                     ChosenPivot = ChosenPivot->NextInCol;
-		if (ChosenPivot != NULL)
-		{
-    /* Reduced column has no elements, matrix is singular. */
-		    break;
-		}
+                if (ChosenPivot != NULL) {
+                    /* Reduced column has no elements, matrix is singular. */
+                    break;
+                }
                 PivotMag = ELEMENT_MAG(ChosenPivot);
                 if
                 (    PivotMag > Matrix->AbsThreshold &&
-                     PivotMag > Matrix->RelThreshold *
-                                FindBiggestInColExclude( Matrix, ChosenPivot,
-                                                         Step )
+                        PivotMag > Matrix->RelThreshold *
+                        FindBiggestInColExclude( Matrix, ChosenPivot,
+                                                 Step )
                 ) return ChosenPivot;
-                else
-                {
-    if (Matrix->MarkowitzRow[I] == 0)
-                    {
-    ChosenPivot = Matrix->FirstInRow[I];
+                else {
+                    if (Matrix->MarkowitzRow[I] == 0) {
+                        ChosenPivot = Matrix->FirstInRow[I];
                         while((ChosenPivot != NULL) && (ChosenPivot->Col<Step))
                             ChosenPivot = ChosenPivot->NextInRow;
-			if (ChosenPivot != NULL)
-			{
-  /* Reduced row has no elements, matrix is singular. */
-			    break;
-			}
+                        if (ChosenPivot != NULL) {
+                            /* Reduced row has no elements, matrix is singular. */
+                            break;
+                        }
                         PivotMag = ELEMENT_MAG(ChosenPivot);
                         if
                         (    PivotMag > Matrix->AbsThreshold &&
-                             PivotMag > Matrix->RelThreshold *
-                                        FindBiggestInColExclude( Matrix,
-                                                                 ChosenPivot,
-                                                                 Step )
+                                PivotMag > Matrix->RelThreshold *
+                                FindBiggestInColExclude( Matrix,
+                                                         ChosenPivot,
+                                                         Step )
                         ) return ChosenPivot;
                     }
                 }
-            }
-            else
-            {
-    ChosenPivot = Matrix->FirstInRow[I];
+            } else {
+                ChosenPivot = Matrix->FirstInRow[I];
                 while ((ChosenPivot != NULL) && (ChosenPivot->Col < Step))
                     ChosenPivot = ChosenPivot->NextInRow;
-		if (ChosenPivot != NULL)
-		{
-    /* Reduced row has no elements, matrix is singular. */
-		    break;
-		}
+                if (ChosenPivot != NULL) {
+                    /* Reduced row has no elements, matrix is singular. */
+                    break;
+                }
                 PivotMag = ELEMENT_MAG(ChosenPivot);
                 if
                 (    PivotMag > Matrix->AbsThreshold &&
-                     PivotMag > Matrix->RelThreshold *
-                                FindBiggestInColExclude( Matrix, ChosenPivot,
-                                                         Step )
+                        PivotMag > Matrix->RelThreshold *
+                        FindBiggestInColExclude( Matrix, ChosenPivot,
+                                                 Step )
                 ) return ChosenPivot;
             }
         }
- /* Singleton not acceptable (too small), try another. */
+        /* Singleton not acceptable (too small), try another. */
     } /* end of while(lSingletons>0) */
 
- /*
- * All singletons were unacceptable.  Restore Matrix->Singletons count.
- * Initial assumption that an acceptable singleton would be found was wrong.
- */
+    /*
+    * All singletons were unacceptable.  Restore Matrix->Singletons count.
+    * Initial assumption that an acceptable singleton would be found was wrong.
+    */
     Matrix->Singletons++;
     return NULL;
 }
@@ -1305,57 +1246,55 @@ RealNumber  PivotMag;
 static ElementPtr
 QuicklySearchDiagonal( MatrixPtr Matrix, int Step )
 {
-long  MinMarkowitzProduct, *pMarkowitzProduct;
- ElementPtr  pDiag, pOtherInRow, pOtherInCol;
-int  I, NumberOfTies;
-ElementPtr  ChosenPivot, TiedElements[MAX_MARKOWITZ_TIES + 1];
-RealNumber  Magnitude, LargestInCol, Ratio, MaxRatio;
-RealNumber  LargestOffDiagonal;
-RealNumber  FindBiggestInColExclude();
+    long  MinMarkowitzProduct, *pMarkowitzProduct;
+    ElementPtr  pDiag, pOtherInRow, pOtherInCol;
+    int  I, NumberOfTies;
+    ElementPtr  ChosenPivot, TiedElements[MAX_MARKOWITZ_TIES + 1];
+    RealNumber  Magnitude, LargestInCol, Ratio, MaxRatio;
+    RealNumber  LargestOffDiagonal;
+    RealNumber  FindBiggestInColExclude();
 
- /* Begin `QuicklySearchDiagonal'. */
+    /* Begin `QuicklySearchDiagonal'. */
     NumberOfTies = -1;
     MinMarkowitzProduct = LARGEST_LONG_INTEGER;
     pMarkowitzProduct = &(Matrix->MarkowitzProd[Matrix->Size+2]);
     Matrix->MarkowitzProd[Matrix->Size+1] = Matrix->MarkowitzProd[Step];
 
- /* Assure that following while loop will always terminate. */
+    /* Assure that following while loop will always terminate. */
     Matrix->MarkowitzProd[Step-1] = -1;
 
- /*
- * This is tricky.  Am using a pointer in the inner while loop to
- * sequentially step through the MarkowitzProduct array.  Search
- * terminates when the Markowitz product of zero placed at location
- * Step-1 is found.  The row (and column)strchr on the diagonal is then
- * calculated by subtracting the pointer to the Markowitz product of
- * the first diagonal from the pointer to the Markowitz product of the
- * desired element. The outer for loop is infinite, broken by using
- * break.
- *
- * Search proceeds from the end (high row and column numbers) to the
- * beginning (low row and column numbers) so that rows and columns with
- * large Markowitz products will tend to be move to the bottom of the
- * matrix.  However, choosing Diag[Step] is desirable because it would
- * require no row and column interchanges, so inspect it first by
- * putting its Markowitz product at the end of the MarkowitzProd
- * vector.
- */
-
-    for(;;)  /* Endless for loop. */
-    {
-    while (MinMarkowitzProduct < *(--pMarkowitzProduct))
-        {
     /*
-             * N bottles of beer on the wall;
-             * N bottles of beer.
-             * You take one down and pass it around;
-             * N-1 bottles of beer on the wall.
-             */
+    * This is tricky.  Am using a pointer in the inner while loop to
+    * sequentially step through the MarkowitzProduct array.  Search
+    * terminates when the Markowitz product of zero placed at location
+    * Step-1 is found.  The row (and column)strchr on the diagonal is then
+    * calculated by subtracting the pointer to the Markowitz product of
+    * the first diagonal from the pointer to the Markowitz product of the
+    * desired element. The outer for loop is infinite, broken by using
+    * break.
+    *
+    * Search proceeds from the end (high row and column numbers) to the
+    * beginning (low row and column numbers) so that rows and columns with
+    * large Markowitz products will tend to be move to the bottom of the
+    * matrix.  However, choosing Diag[Step] is desirable because it would
+    * require no row and column interchanges, so inspect it first by
+    * putting its Markowitz product at the end of the MarkowitzProd
+    * vector.
+    */
+
+    for(;;) { /* Endless for loop. */
+        while (MinMarkowitzProduct < *(--pMarkowitzProduct)) {
+            /*
+                     * N bottles of beer on the wall;
+                     * N bottles of beer.
+                     * You take one down and pass it around;
+                     * N-1 bottles of beer on the wall.
+                     */
         }
 
         I = pMarkowitzProduct - Matrix->MarkowitzProd;
 
- /* Assure that I is valid; if I < Step, terminate search. */
+        /* Assure that I is valid; if I < Step, terminate search. */
         if (I < Step) break; /* Endless for loop */
         if (I > Matrix->Size) I = Step;
 
@@ -1364,84 +1303,71 @@ RealNumber  FindBiggestInColExclude();
         if ((Magnitude = ELEMENT_MAG(pDiag)) <= Matrix->AbsThreshold)
             continue; /* Endless for loop */
 
-        if (*pMarkowitzProduct == 1)
-        {
- /* Case where only one element exists in row and column other than diagonal. */
+        if (*pMarkowitzProduct == 1) {
+            /* Case where only one element exists in row and column other than diagonal. */
 
- /* Find off diagonal elements. */
+            /* Find off diagonal elements. */
             pOtherInRow = pDiag->NextInRow;
             pOtherInCol = pDiag->NextInCol;
-            if (pOtherInRow == NULL && pOtherInCol == NULL)
-            {
-     pOtherInRow = Matrix->FirstInRow[I];
-                 while(pOtherInRow != NULL)
-                 {
-    if (pOtherInRow->Col >= Step && pOtherInRow->Col != I)
-                         break;
-                     pOtherInRow = pOtherInRow->NextInRow;
-                 }
-                 pOtherInCol = Matrix->FirstInCol[I];
-                 while(pOtherInCol != NULL)
-                 {
-    if (pOtherInCol->Row >= Step && pOtherInCol->Row != I)
-                         break;
-                     pOtherInCol = pOtherInCol->NextInCol;
-                 }
+            if (pOtherInRow == NULL && pOtherInCol == NULL) {
+                pOtherInRow = Matrix->FirstInRow[I];
+                while(pOtherInRow != NULL) {
+                    if (pOtherInRow->Col >= Step && pOtherInRow->Col != I)
+                        break;
+                    pOtherInRow = pOtherInRow->NextInRow;
+                }
+                pOtherInCol = Matrix->FirstInCol[I];
+                while(pOtherInCol != NULL) {
+                    if (pOtherInCol->Row >= Step && pOtherInCol->Row != I)
+                        break;
+                    pOtherInCol = pOtherInCol->NextInCol;
+                }
             }
 
- /* Accept diagonal as pivot if diagonal is larger than off diagonals and the
- * off diagonals are placed symmetricly. */
-            if (pOtherInRow != NULL  &&  pOtherInCol != NULL)
-            {
-    if (pOtherInRow->Col == pOtherInCol->Row)
-                {
-    LargestOffDiagonal = MAX(ELEMENT_MAG(pOtherInRow),
-                                                      ELEMENT_MAG(pOtherInCol));
-                    if (Magnitude >= LargestOffDiagonal)
-                    {
- /* Accept pivot, it is unlikely to contribute excess error. */
+            /* Accept diagonal as pivot if diagonal is larger than off diagonals and the
+            * off diagonals are placed symmetricly. */
+            if (pOtherInRow != NULL  &&  pOtherInCol != NULL) {
+                if (pOtherInRow->Col == pOtherInCol->Row) {
+                    LargestOffDiagonal = MAX(ELEMENT_MAG(pOtherInRow),
+                                             ELEMENT_MAG(pOtherInCol));
+                    if (Magnitude >= LargestOffDiagonal) {
+                        /* Accept pivot, it is unlikely to contribute excess error. */
                         return pDiag;
                     }
                 }
             }
         }
 
-        if (*pMarkowitzProduct < MinMarkowitzProduct)
-        {
- /* Notice strict inequality in test. This is a new smallest MarkowitzProduct. */
+        if (*pMarkowitzProduct < MinMarkowitzProduct) {
+            /* Notice strict inequality in test. This is a new smallest MarkowitzProduct. */
             TiedElements[0] = pDiag;
             MinMarkowitzProduct = *pMarkowitzProduct;
             NumberOfTies = 0;
-        }
-        else
-        {
- /* This case handles Markowitz ties. */
-            if (NumberOfTies < MAX_MARKOWITZ_TIES)
-            {
-    TiedElements[++NumberOfTies] = pDiag;
+        } else {
+            /* This case handles Markowitz ties. */
+            if (NumberOfTies < MAX_MARKOWITZ_TIES) {
+                TiedElements[++NumberOfTies] = pDiag;
                 if (NumberOfTies >= MinMarkowitzProduct * TIES_MULTIPLIER)
                     break; /* Endless for loop */
             }
         }
     } /* End of endless for loop. */
 
- /* Test to see if any element was chosen as a pivot candidate. */
+    /* Test to see if any element was chosen as a pivot candidate. */
     if (NumberOfTies < 0)
         return NULL;
 
- /* Determine which of tied elements is best numerically. */
+    /* Determine which of tied elements is best numerically. */
     ChosenPivot = NULL;
     MaxRatio = 1.0 / Matrix->RelThreshold;
 
-    for (I = 0; I <= NumberOfTies; I++)
-    {
-    pDiag = TiedElements[I];
+    for (I = 0; I <= NumberOfTies; I++) {
+        pDiag = TiedElements[I];
         Magnitude = ELEMENT_MAG(pDiag);
         LargestInCol = FindBiggestInColExclude( Matrix, pDiag, Step );
         Ratio = LargestInCol / Magnitude;
-        if (Ratio < MaxRatio)
-        {
-    ChosenPivot = pDiag;
+        if (Ratio < MaxRatio) {
+            ChosenPivot = pDiag;
             MaxRatio = Ratio;
         }
     }
@@ -1511,50 +1437,48 @@ RealNumber  FindBiggestInColExclude();
 static ElementPtr
 QuicklySearchDiagonal( MatrixPtr Matrix, int Step )
 {
-long  MinMarkowitzProduct, *pMarkowitzProduct;
- ElementPtr  pDiag;
-int  I;
-ElementPtr  ChosenPivot, pOtherInRow, pOtherInCol;
-RealNumber  Magnitude, LargestInCol, LargestOffDiagonal;
+    long  MinMarkowitzProduct, *pMarkowitzProduct;
+    ElementPtr  pDiag;
+    int  I;
+    ElementPtr  ChosenPivot, pOtherInRow, pOtherInCol;
+    RealNumber  Magnitude, LargestInCol, LargestOffDiagonal;
 
- /* Begin `QuicklySearchDiagonal'. */
+    /* Begin `QuicklySearchDiagonal'. */
     ChosenPivot = NULL;
     MinMarkowitzProduct = LARGEST_LONG_INTEGER;
     pMarkowitzProduct = &(Matrix->MarkowitzProd[Matrix->Size+2]);
     Matrix->MarkowitzProd[Matrix->Size+1] = Matrix->MarkowitzProd[Step];
 
- /* Assure that following while loop will always terminate. */
+    /* Assure that following while loop will always terminate. */
     Matrix->MarkowitzProd[Step-1] = -1;
 
- /*
- * This is tricky.  Am using a pointer in the inner while loop to
- * sequentially step through the MarkowitzProduct array.  Search
- * terminates when the Markowitz product of zero placed at location
- * Step-1 is found.  The row (and column)strchr on the diagonal is then
- * calculated by subtracting the pointer to the Markowitz product of
- * the first diagonal from the pointer to the Markowitz product of the
- * desired element. The outer for loop is infinite, broken by using
- * break.
- *
- * Search proceeds from the end (high row and column numbers) to the
- * beginning (low row and column numbers) so that rows and columns with
- * large Markowitz products will tend to be move to the bottom of the
- * matrix.  However, choosing Diag[Step] is desirable because it would
- * require no row and column interchanges, so inspect it first by
- * putting its Markowitz product at the end of the MarkowitzProd
- * vector.
- */
+    /*
+    * This is tricky.  Am using a pointer in the inner while loop to
+    * sequentially step through the MarkowitzProduct array.  Search
+    * terminates when the Markowitz product of zero placed at location
+    * Step-1 is found.  The row (and column)strchr on the diagonal is then
+    * calculated by subtracting the pointer to the Markowitz product of
+    * the first diagonal from the pointer to the Markowitz product of the
+    * desired element. The outer for loop is infinite, broken by using
+    * break.
+    *
+    * Search proceeds from the end (high row and column numbers) to the
+    * beginning (low row and column numbers) so that rows and columns with
+    * large Markowitz products will tend to be move to the bottom of the
+    * matrix.  However, choosing Diag[Step] is desirable because it would
+    * require no row and column interchanges, so inspect it first by
+    * putting its Markowitz product at the end of the MarkowitzProd
+    * vector.
+    */
 
-    for (;;)  /* Endless for loop. */
-    {
-    while (*(--pMarkowitzProduct) >= MinMarkowitzProduct)
-        {
-    /* Just passing through. */
+    for (;;) { /* Endless for loop. */
+        while (*(--pMarkowitzProduct) >= MinMarkowitzProduct) {
+            /* Just passing through. */
         }
 
         I = (int)(pMarkowitzProduct - Matrix->MarkowitzProd);
 
- /* Assure that I is valid; if I < Step, terminate search. */
+        /* Assure that I is valid; if I < Step, terminate search. */
         if (I < Step) break; /* Endless for loop */
         if (I > Matrix->Size) I = Step;
 
@@ -1563,42 +1487,35 @@ RealNumber  Magnitude, LargestInCol, LargestOffDiagonal;
         if ((Magnitude = ELEMENT_MAG(pDiag)) <= Matrix->AbsThreshold)
             continue; /* Endless for loop */
 
-        if (*pMarkowitzProduct == 1)
-        {
- /* Case where only one element exists in row and column other than diagonal. */
+        if (*pMarkowitzProduct == 1) {
+            /* Case where only one element exists in row and column other than diagonal. */
 
- /* Find off-diagonal elements. */
+            /* Find off-diagonal elements. */
             pOtherInRow = pDiag->NextInRow;
             pOtherInCol = pDiag->NextInCol;
-            if (pOtherInRow == NULL && pOtherInCol == NULL)
-            {
-     pOtherInRow = Matrix->FirstInRow[I];
-                 while(pOtherInRow != NULL)
-                 {
-    if (pOtherInRow->Col >= Step && pOtherInRow->Col != I)
-                         break;
-                     pOtherInRow = pOtherInRow->NextInRow;
-                 }
-                 pOtherInCol = Matrix->FirstInCol[I];
-                 while(pOtherInCol != NULL)
-                 {
-    if (pOtherInCol->Row >= Step && pOtherInCol->Row != I)
-                         break;
-                     pOtherInCol = pOtherInCol->NextInCol;
-                 }
+            if (pOtherInRow == NULL && pOtherInCol == NULL) {
+                pOtherInRow = Matrix->FirstInRow[I];
+                while(pOtherInRow != NULL) {
+                    if (pOtherInRow->Col >= Step && pOtherInRow->Col != I)
+                        break;
+                    pOtherInRow = pOtherInRow->NextInRow;
+                }
+                pOtherInCol = Matrix->FirstInCol[I];
+                while(pOtherInCol != NULL) {
+                    if (pOtherInCol->Row >= Step && pOtherInCol->Row != I)
+                        break;
+                    pOtherInCol = pOtherInCol->NextInCol;
+                }
             }
 
- /* Accept diagonal as pivot if diagonal is larger than off-diagonals and the
- * off-diagonals are placed symmetricly. */
-            if (pOtherInRow != NULL  &&  pOtherInCol != NULL)
-            {
-    if (pOtherInRow->Col == pOtherInCol->Row)
-                {
-    LargestOffDiagonal = MAX(ELEMENT_MAG(pOtherInRow),
-                                                      ELEMENT_MAG(pOtherInCol));
-                    if (Magnitude >= LargestOffDiagonal)
-                    {
- /* Accept pivot, it is unlikely to contribute excess error. */
+            /* Accept diagonal as pivot if diagonal is larger than off-diagonals and the
+            * off-diagonals are placed symmetricly. */
+            if (pOtherInRow != NULL  &&  pOtherInCol != NULL) {
+                if (pOtherInRow->Col == pOtherInCol->Row) {
+                    LargestOffDiagonal = MAX(ELEMENT_MAG(pOtherInRow),
+                                             ELEMENT_MAG(pOtherInCol));
+                    if (Magnitude >= LargestOffDiagonal) {
+                        /* Accept pivot, it is unlikely to contribute excess error. */
                         return pDiag;
                     }
                 }
@@ -1609,9 +1526,8 @@ RealNumber  Magnitude, LargestInCol, LargestOffDiagonal;
         ChosenPivot = pDiag;
     }  /* End of endless for loop. */
 
-    if (ChosenPivot != NULL)
-    {
-    LargestInCol = FindBiggestInColExclude( Matrix, ChosenPivot, Step );
+    if (ChosenPivot != NULL) {
+        LargestInCol = FindBiggestInColExclude( Matrix, ChosenPivot, Step );
         if( ELEMENT_MAG(ChosenPivot) <= Matrix->RelThreshold * LargestInCol )
             ChosenPivot = NULL;
     }
@@ -1686,9 +1602,9 @@ SearchDiagonal( MatrixPtr Matrix, int Step )
     ElementPtr  pDiag;
     int  NumberOfTies = 0;
     int  Size = Matrix->Size;
-    
+
     ElementPtr  ChosenPivot;
-    RealNumber  Magnitude, Ratio; 
+    RealNumber  Magnitude, Ratio;
     RealNumber  RatioOfAccepted = 0;
     RealNumber  LargestInCol;
 
@@ -1699,8 +1615,7 @@ SearchDiagonal( MatrixPtr Matrix, int Step )
     Matrix->MarkowitzProd[Size+1] = Matrix->MarkowitzProd[Step];
 
     /* Start search of diagonal. */
-    for (J = Size+1; J > Step; J--)
-    {
+    for (J = Size+1; J > Step; J--) {
         if (*(--pMarkowitzProduct) > MinMarkowitzProduct)
             continue; /* for loop */
         if (J > Matrix->Size)
@@ -1712,28 +1627,24 @@ SearchDiagonal( MatrixPtr Matrix, int Step )
         if ((Magnitude = ELEMENT_MAG(pDiag)) <= Matrix->AbsThreshold)
             continue; /* for loop */
 
-	/* Test to see if diagonal's magnitude is acceptable. */
+        /* Test to see if diagonal's magnitude is acceptable. */
         LargestInCol = FindBiggestInColExclude( Matrix, pDiag, Step );
         if (Magnitude <= Matrix->RelThreshold * LargestInCol)
             continue; /* for loop */
 
-        if (*pMarkowitzProduct < MinMarkowitzProduct)
-        {
-	    /* Notice strict inequality in test. This is a new
-               smallest MarkowitzProduct. */
+        if (*pMarkowitzProduct < MinMarkowitzProduct) {
+            /* Notice strict inequality in test. This is a new
+                   smallest MarkowitzProduct. */
             ChosenPivot = pDiag;
             MinMarkowitzProduct = *pMarkowitzProduct;
             RatioOfAccepted = LargestInCol / Magnitude;
             NumberOfTies = 0;
-        }
-        else
-        {
-	    /* This case handles Markowitz ties. */
+        } else {
+            /* This case handles Markowitz ties. */
             NumberOfTies++;
             Ratio = LargestInCol / Magnitude;
-            if (Ratio < RatioOfAccepted)
-            {
-		ChosenPivot = pDiag;
+            if (Ratio < RatioOfAccepted) {
+                ChosenPivot = pDiag;
                 RatioOfAccepted = Ratio;
             }
             if (NumberOfTies >= MinMarkowitzProduct * TIES_MULTIPLIER)
@@ -1827,9 +1738,8 @@ SearchEntireMatrix( MatrixPtr Matrix, int Step )
     MinMarkowitzProduct = LARGEST_LONG_INTEGER;
 
     /* Start search of matrix on column by column basis. */
-    for (I = Step; I <= Size; I++)
-    {
-	pElement = Matrix->FirstInCol[I];
+    for (I = Step; I <= Size; I++) {
+        pElement = Matrix->FirstInCol[I];
 
         while (pElement != NULL && pElement->Row < Step)
             pElement = pElement->NextInCol;
@@ -1837,45 +1747,38 @@ SearchEntireMatrix( MatrixPtr Matrix, int Step )
         if((LargestInCol = FindLargestInCol(pElement)) == 0.0)
             continue; /* for loop */
 
-        while (pElement != NULL)
-        {
-	    /* Check to see if element is the largest encountered so
-	       far.  If so, record its magnitude and address. */
-            if ((Magnitude = ELEMENT_MAG(pElement)) > LargestElementMag)
-            {
-		LargestElementMag = Magnitude;
+        while (pElement != NULL) {
+            /* Check to see if element is the largest encountered so
+               far.  If so, record its magnitude and address. */
+            if ((Magnitude = ELEMENT_MAG(pElement)) > LargestElementMag) {
+                LargestElementMag = Magnitude;
                 pLargestElement = pElement;
             }
-	    /* Calculate element's MarkowitzProduct. */
+            /* Calculate element's MarkowitzProduct. */
             Product = Matrix->MarkowitzRow[pElement->Row] *
-		Matrix->MarkowitzCol[pElement->Col];
+                      Matrix->MarkowitzCol[pElement->Col];
 
-	    /* Test to see if element is acceptable as a pivot
-               candidate. */
+            /* Test to see if element is acceptable as a pivot
+                   candidate. */
             if ((Product <= MinMarkowitzProduct) &&
-                (Magnitude > Matrix->RelThreshold * LargestInCol) &&
-                (Magnitude > Matrix->AbsThreshold))
-            {
-		/* Test to see if element has lowest MarkowitzProduct
-		   yet found, or whether it is tied with an element
-		   found earlier. */
-                if (Product < MinMarkowitzProduct)
-                {
-		    /* Notice strict inequality in test. This is a new
-                       smallest MarkowitzProduct. */
+                    (Magnitude > Matrix->RelThreshold * LargestInCol) &&
+                    (Magnitude > Matrix->AbsThreshold)) {
+                /* Test to see if element has lowest MarkowitzProduct
+                   yet found, or whether it is tied with an element
+                   found earlier. */
+                if (Product < MinMarkowitzProduct) {
+                    /* Notice strict inequality in test. This is a new
+                               smallest MarkowitzProduct. */
                     ChosenPivot = pElement;
                     MinMarkowitzProduct = Product;
                     RatioOfAccepted = LargestInCol / Magnitude;
                     NumberOfTies = 0;
-                }
-                else
-                {
-		    /* This case handles Markowitz ties. */
+                } else {
+                    /* This case handles Markowitz ties. */
                     NumberOfTies++;
                     Ratio = LargestInCol / Magnitude;
-                    if (Ratio < RatioOfAccepted)
-                    {
-			ChosenPivot = pElement;
+                    if (Ratio < RatioOfAccepted) {
+                        ChosenPivot = pElement;
                         RatioOfAccepted = Ratio;
                     }
                     if (NumberOfTies >= MinMarkowitzProduct * TIES_MULTIPLIER)
@@ -1888,9 +1791,8 @@ SearchEntireMatrix( MatrixPtr Matrix, int Step )
 
     if (ChosenPivot != NULL) return ChosenPivot;
 
-    if (LargestElementMag == 0.0)
-    {
-	Matrix->Error = spSINGULAR;
+    if (LargestElementMag == 0.0) {
+        Matrix->Error = spSINGULAR;
         return NULL;
     }
 
@@ -1943,9 +1845,8 @@ FindLargestInCol( ElementPtr pElement )
 
     /* Begin `FindLargestInCol'. */
     /* Search column for largest element beginning at Element. */
-    while (pElement != NULL)
-    {
-	if ((Magnitude = ELEMENT_MAG(pElement)) > Largest)
+    while (pElement != NULL) {
+        if ((Magnitude = ELEMENT_MAG(pElement)) > Largest)
             Largest = Magnitude;
         pElement = pElement->NextInCol;
     }
@@ -2004,31 +1905,29 @@ FindLargestInCol( ElementPtr pElement )
 static RealNumber
 FindBiggestInColExclude( MatrixPtr Matrix, ElementPtr pElement, int Step )
 {
- int  Row;
-int  Col;
-RealNumber  Largest, Magnitude;
+    int  Row;
+    int  Col;
+    RealNumber  Largest, Magnitude;
 
- /* Begin `FindBiggestInColExclude'. */
+    /* Begin `FindBiggestInColExclude'. */
     Row = pElement->Row;
     Col = pElement->Col;
     pElement = Matrix->FirstInCol[Col];
 
- /* Travel down column until reduced submatrix is entered. */
+    /* Travel down column until reduced submatrix is entered. */
     while ((pElement != NULL) && (pElement->Row < Step))
         pElement = pElement->NextInCol;
 
- /* Initialize the variable Largest. */
+    /* Initialize the variable Largest. */
     if (pElement->Row != Row)
         Largest = ELEMENT_MAG(pElement);
     else
         Largest = 0.0;
 
- /* Search rest of column for largest element, avoiding excluded element. */
-    while ((pElement = pElement->NextInCol) != NULL)
-    {
-    if ((Magnitude = ELEMENT_MAG(pElement)) > Largest)
-        {
-    if (pElement->Row != Row)
+    /* Search rest of column for largest element, avoiding excluded element. */
+    while ((pElement = pElement->NextInCol) != NULL) {
+        if ((Magnitude = ELEMENT_MAG(pElement)) > Largest) {
+            if (pElement->Row != Row)
                 Largest = Magnitude;
         }
     }
@@ -2079,10 +1978,10 @@ RealNumber  Largest, Magnitude;
 static void
 ExchangeRowsAndCols( MatrixPtr Matrix, ElementPtr pPivot, int Step )
 {
- int   Row, Col;
-long  OldMarkowitzProd_Step, OldMarkowitzProd_Row, OldMarkowitzProd_Col;
+    int   Row, Col;
+    long  OldMarkowitzProd_Step, OldMarkowitzProd_Row, OldMarkowitzProd_Col;
 
- /* Begin `ExchangeRowsAndCols'. */
+    /* Begin `ExchangeRowsAndCols'. */
     Row = pPivot->Row;
     Col = pPivot->Col;
     Matrix->PivotsOriginalRow = Row;
@@ -2090,79 +1989,70 @@ long  OldMarkowitzProd_Step, OldMarkowitzProd_Row, OldMarkowitzProd_Col;
 
     if ((Row == Step) && (Col == Step)) return;
 
- /* Exchange rows and columns. */
-    if (Row == Col)
-    {
-    spcRowExchange( Matrix, Step, Row );
+    /* Exchange rows and columns. */
+    if (Row == Col) {
+        spcRowExchange( Matrix, Step, Row );
         spcColExchange( Matrix, Step, Col );
         SWAP( long, Matrix->MarkowitzProd[Step], Matrix->MarkowitzProd[Row] );
         SWAP( ElementPtr, Matrix->Diag[Row], Matrix->Diag[Step] );
-    }
-    else
-    {
+    } else {
 
- /* Initialize variables that hold old Markowitz products. */
+        /* Initialize variables that hold old Markowitz products. */
         OldMarkowitzProd_Step = Matrix->MarkowitzProd[Step];
         OldMarkowitzProd_Row = Matrix->MarkowitzProd[Row];
         OldMarkowitzProd_Col = Matrix->MarkowitzProd[Col];
 
- /* Exchange rows. */
-        if (Row != Step)
-        {
-    spcRowExchange( Matrix, Step, Row );
+        /* Exchange rows. */
+        if (Row != Step) {
+            spcRowExchange( Matrix, Step, Row );
             Matrix->NumberOfInterchangesIsOdd =
-                                       !Matrix->NumberOfInterchangesIsOdd;
+                !Matrix->NumberOfInterchangesIsOdd;
             Matrix->MarkowitzProd[Row] = Matrix->MarkowitzRow[Row] *
-                                                   Matrix->MarkowitzCol[Row];
+                                         Matrix->MarkowitzCol[Row];
 
- /* Update singleton count. */
-            if ((Matrix->MarkowitzProd[Row]==0) != (OldMarkowitzProd_Row==0))
-            {
-    if (OldMarkowitzProd_Row == 0)
+            /* Update singleton count. */
+            if ((Matrix->MarkowitzProd[Row]==0) != (OldMarkowitzProd_Row==0)) {
+                if (OldMarkowitzProd_Row == 0)
                     Matrix->Singletons--;
                 else
                     Matrix->Singletons++;
             }
         }
 
- /* Exchange columns. */
-        if (Col != Step)
-        {
-    spcColExchange( Matrix, Step, Col );
+        /* Exchange columns. */
+        if (Col != Step) {
+            spcColExchange( Matrix, Step, Col );
             Matrix->NumberOfInterchangesIsOdd =
-                                       !Matrix->NumberOfInterchangesIsOdd;
+                !Matrix->NumberOfInterchangesIsOdd;
             Matrix->MarkowitzProd[Col] = Matrix->MarkowitzCol[Col] *
-                                                   Matrix->MarkowitzRow[Col];
+                                         Matrix->MarkowitzRow[Col];
 
- /* Update singleton count. */
-            if ((Matrix->MarkowitzProd[Col]==0) != (OldMarkowitzProd_Col==0))
-            {
-    if (OldMarkowitzProd_Col == 0)
+            /* Update singleton count. */
+            if ((Matrix->MarkowitzProd[Col]==0) != (OldMarkowitzProd_Col==0)) {
+                if (OldMarkowitzProd_Col == 0)
                     Matrix->Singletons--;
                 else
                     Matrix->Singletons++;
             }
 
             Matrix->Diag[Col] = spcFindElementInCol( Matrix,
-                                                     Matrix->FirstInCol+Col,
-                                                     Col, Col, NO );
+                                Matrix->FirstInCol+Col,
+                                Col, Col, NO );
         }
-        if (Row != Step)
-        {
-    Matrix->Diag[Row] = spcFindElementInCol( Matrix,
-                                                     Matrix->FirstInCol+Row,
-                                                     Row, Row, NO );
+        if (Row != Step) {
+            Matrix->Diag[Row] = spcFindElementInCol( Matrix,
+                                Matrix->FirstInCol+Row,
+                                Row, Row, NO );
         }
         Matrix->Diag[Step] = spcFindElementInCol( Matrix,
-                                                  Matrix->FirstInCol+Step,
-                                                  Step, Step, NO );
+                             Matrix->FirstInCol+Step,
+                             Step, Step, NO );
 
- /* Update singleton count. */
+        /* Update singleton count. */
         Matrix->MarkowitzProd[Step] = Matrix->MarkowitzCol[Step] *
-                                                    Matrix->MarkowitzRow[Step];
-        if ((Matrix->MarkowitzProd[Step]==0) != (OldMarkowitzProd_Step==0))
-        {
-    if (OldMarkowitzProd_Step == 0)
+                                      Matrix->MarkowitzRow[Step];
+        if ((Matrix->MarkowitzProd[Step]==0) != (OldMarkowitzProd_Step==0)) {
+            if (OldMarkowitzProd_Step == 0)
                 Matrix->Singletons--;
             else
                 Matrix->Singletons++;
@@ -2211,49 +2101,39 @@ long  OldMarkowitzProd_Step, OldMarkowitzProd_Row, OldMarkowitzProd_Col;
 void
 spcRowExchange( MatrixPtr Matrix, int Row1, int Row2 )
 {
- ElementPtr  Row1Ptr, Row2Ptr;
-int  Column;
-ElementPtr  Element1, Element2;
+    ElementPtr  Row1Ptr, Row2Ptr;
+    int  Column;
+    ElementPtr  Element1, Element2;
 
- /* Begin `spcRowExchange'. */
+    /* Begin `spcRowExchange'. */
     if (Row1 > Row2)  SWAP(int, Row1, Row2);
 
     Row1Ptr = Matrix->FirstInRow[Row1];
     Row2Ptr = Matrix->FirstInRow[Row2];
-    while (Row1Ptr != NULL || Row2Ptr != NULL)
-    {
- /* Exchange elements in rows while traveling from left to right. */
-        if (Row1Ptr == NULL)
-        {
-    Column = Row2Ptr->Col;
+    while (Row1Ptr != NULL || Row2Ptr != NULL) {
+        /* Exchange elements in rows while traveling from left to right. */
+        if (Row1Ptr == NULL) {
+            Column = Row2Ptr->Col;
             Element1 = NULL;
             Element2 = Row2Ptr;
             Row2Ptr = Row2Ptr->NextInRow;
-        }
-        else if (Row2Ptr == NULL)
-        {
-    Column = Row1Ptr->Col;
+        } else if (Row2Ptr == NULL) {
+            Column = Row1Ptr->Col;
             Element1 = Row1Ptr;
             Element2 = NULL;
             Row1Ptr = Row1Ptr->NextInRow;
-        }
-        else if (Row1Ptr->Col < Row2Ptr->Col)
-        {
-    Column = Row1Ptr->Col;
+        } else if (Row1Ptr->Col < Row2Ptr->Col) {
+            Column = Row1Ptr->Col;
             Element1 = Row1Ptr;
             Element2 = NULL;
             Row1Ptr = Row1Ptr->NextInRow;
-        }
-        else if (Row1Ptr->Col > Row2Ptr->Col)
-        {
-    Column = Row2Ptr->Col;
+        } else if (Row1Ptr->Col > Row2Ptr->Col) {
+            Column = Row2Ptr->Col;
             Element1 = NULL;
             Element2 = Row2Ptr;
             Row2Ptr = Row2Ptr->NextInRow;
-        }
-        else   /* Row1Ptr->Col == Row2Ptr->Col */
-        {
-    Column = Row1Ptr->Col;
+        } else { /* Row1Ptr->Col == Row2Ptr->Col */
+            Column = Row1Ptr->Col;
             Element1 = Row1Ptr;
             Element2 = Row2Ptr;
             Row1Ptr = Row1Ptr->NextInRow;
@@ -2288,7 +2168,7 @@ ElementPtr  Element1, Element2;
  *
  *  Performs all required operations to exchange two columns. Those operations
  *  include: swap FirstInCol pointers, fixing up the NextInRow pointers,
- *  swapping columnstrchres in MatrixElements, and swapping Markowitz 
+ *  swapping columnstrchres in MatrixElements, and swapping Markowitz
  *  column counts.
  *
  *  >>> Arguments:
@@ -2315,49 +2195,39 @@ ElementPtr  Element1, Element2;
 void
 spcColExchange( MatrixPtr Matrix, int Col1, int Col2 )
 {
- ElementPtr  Col1Ptr, Col2Ptr;
-int  Row;
-ElementPtr  Element1, Element2;
+    ElementPtr  Col1Ptr, Col2Ptr;
+    int  Row;
+    ElementPtr  Element1, Element2;
 
- /* Begin `spcColExchange'. */
+    /* Begin `spcColExchange'. */
     if (Col1 > Col2)  SWAP(int, Col1, Col2);
 
     Col1Ptr = Matrix->FirstInCol[Col1];
     Col2Ptr = Matrix->FirstInCol[Col2];
-    while (Col1Ptr != NULL || Col2Ptr != NULL)
-    {
- /* Exchange elements in rows while traveling from top to bottom. */
-        if (Col1Ptr == NULL)
-        {
-    Row = Col2Ptr->Row;
+    while (Col1Ptr != NULL || Col2Ptr != NULL) {
+        /* Exchange elements in rows while traveling from top to bottom. */
+        if (Col1Ptr == NULL) {
+            Row = Col2Ptr->Row;
             Element1 = NULL;
             Element2 = Col2Ptr;
             Col2Ptr = Col2Ptr->NextInCol;
-        }
-        else if (Col2Ptr == NULL)
-        {
-    Row = Col1Ptr->Row;
+        } else if (Col2Ptr == NULL) {
+            Row = Col1Ptr->Row;
             Element1 = Col1Ptr;
             Element2 = NULL;
             Col1Ptr = Col1Ptr->NextInCol;
-        }
-        else if (Col1Ptr->Row < Col2Ptr->Row)
-        {
-    Row = Col1Ptr->Row;
+        } else if (Col1Ptr->Row < Col2Ptr->Row) {
+            Row = Col1Ptr->Row;
             Element1 = Col1Ptr;
             Element2 = NULL;
             Col1Ptr = Col1Ptr->NextInCol;
-        }
-        else if (Col1Ptr->Row > Col2Ptr->Row)
-        {
-    Row = Col2Ptr->Row;
+        } else if (Col1Ptr->Row > Col2Ptr->Row) {
+            Row = Col2Ptr->Row;
             Element1 = NULL;
             Element2 = Col2Ptr;
             Col2Ptr = Col2Ptr->NextInCol;
-        }
-        else   /* Col1Ptr->Row == Col2Ptr->Row */
-        {
-    Row = Col1Ptr->Row;
+        } else { /* Col1Ptr->Row == Col2Ptr->Row */
+            Row = Col1Ptr->Row;
             Element1 = Col1Ptr;
             Element2 = Col2Ptr;
             Col1Ptr = Col1Ptr->NextInCol;
@@ -2424,68 +2294,57 @@ ElementPtr  Element1, Element2;
 static void
 ExchangeColElements( MatrixPtr Matrix, int Row1, ElementPtr Element1, int Row2, ElementPtr Element2, int Column )
 {
-ElementPtr  *ElementAboveRow1, *ElementAboveRow2;
-ElementPtr  ElementBelowRow1, ElementBelowRow2;
- ElementPtr  pElement;
+    ElementPtr  *ElementAboveRow1, *ElementAboveRow2;
+    ElementPtr  ElementBelowRow1, ElementBelowRow2;
+    ElementPtr  pElement;
 
- /* Begin `ExchangeColElements'. */
- /* Search to find the ElementAboveRow1. */
+    /* Begin `ExchangeColElements'. */
+    /* Search to find the ElementAboveRow1. */
     ElementAboveRow1 = &(Matrix->FirstInCol[Column]);
     pElement = *ElementAboveRow1;
-    while (pElement->Row < Row1)
-    {
-    ElementAboveRow1 = &(pElement->NextInCol);
+    while (pElement->Row < Row1) {
+        ElementAboveRow1 = &(pElement->NextInCol);
         pElement = *ElementAboveRow1;
     }
-    if (Element1 != NULL)
-    {
-    ElementBelowRow1 = Element1->NextInCol;
-        if (Element2 == NULL)
-        {
- /* Element2 does not exist, move Element1 down to Row2. */
-            if ( ElementBelowRow1 != NULL && ElementBelowRow1->Row < Row2 )
-            {
- /* Element1 must be removed from linked list and moved. */
+    if (Element1 != NULL) {
+        ElementBelowRow1 = Element1->NextInCol;
+        if (Element2 == NULL) {
+            /* Element2 does not exist, move Element1 down to Row2. */
+            if ( ElementBelowRow1 != NULL && ElementBelowRow1->Row < Row2 ) {
+                /* Element1 must be removed from linked list and moved. */
                 *ElementAboveRow1 = ElementBelowRow1;
 
- /* Search column for Row2. */
+                /* Search column for Row2. */
                 pElement = ElementBelowRow1;
-                do
-                {
-    ElementAboveRow2 = &(pElement->NextInCol);
+                do {
+                    ElementAboveRow2 = &(pElement->NextInCol);
                     pElement = *ElementAboveRow2;
                 }   while (pElement != NULL && pElement->Row < Row2);
 
- /* Place Element1 in Row2. */
+                /* Place Element1 in Row2. */
                 *ElementAboveRow2 = Element1;
                 Element1->NextInCol = pElement;
                 *ElementAboveRow1 =ElementBelowRow1;
             }
             Element1->Row = Row2;
-        }
-        else
-        {
- /* Element2 does exist, and the two elements must be exchanged. */
-            if ( ElementBelowRow1->Row == Row2)
-            {
- /* Element2 is just below Element1, exchange them. */
+        } else {
+            /* Element2 does exist, and the two elements must be exchanged. */
+            if ( ElementBelowRow1->Row == Row2) {
+                /* Element2 is just below Element1, exchange them. */
                 Element1->NextInCol = Element2->NextInCol;
                 Element2->NextInCol = Element1;
                 *ElementAboveRow1 = Element2;
-            }
-            else
-            {
- /* Element2 is not just below Element1 and must be searched for. */
+            } else {
+                /* Element2 is not just below Element1 and must be searched for. */
                 pElement = ElementBelowRow1;
-                do
-                {
-    ElementAboveRow2 = &(pElement->NextInCol);
+                do {
+                    ElementAboveRow2 = &(pElement->NextInCol);
                     pElement = *ElementAboveRow2;
                 }   while (pElement->Row < Row2);
 
                 ElementBelowRow2 = Element2->NextInCol;
 
- /* Switch Element1 and Element2. */
+                /* Switch Element1 and Element2. */
                 *ElementAboveRow1 = Element2;
                 Element2->NextInCol = ElementBelowRow1;
                 *ElementAboveRow2 = Element1;
@@ -2494,24 +2353,20 @@ ElementPtr  ElementBelowRow1, ElementBelowRow2;
             Element1->Row = Row2;
             Element2->Row = Row1;
         }
-    }
-    else
-    {
- /* Element1 does not exist. */
+    } else {
+        /* Element1 does not exist. */
         ElementBelowRow1 = pElement;
 
- /* Find Element2. */
-        if (ElementBelowRow1->Row != Row2)
-        {
-    do
-            {
-    ElementAboveRow2 = &(pElement->NextInCol);
+        /* Find Element2. */
+        if (ElementBelowRow1->Row != Row2) {
+            do {
+                ElementAboveRow2 = &(pElement->NextInCol);
                 pElement = *ElementAboveRow2;
             }   while (pElement->Row < Row2);
 
-        ElementBelowRow2 = Element2->NextInCol;
+            ElementBelowRow2 = Element2->NextInCol;
 
- /* Move Element2 to Row1. */
+            /* Move Element2 to Row1. */
             *ElementAboveRow2 = Element2->NextInCol;
             *ElementAboveRow1 = Element2;
             Element2->NextInCol = ElementBelowRow1;
@@ -2568,68 +2423,57 @@ ElementPtr  ElementBelowRow1, ElementBelowRow2;
 static void
 ExchangeRowElements( MatrixPtr Matrix, int Col1, ElementPtr Element1, int Col2, ElementPtr Element2, int Row )
 {
-ElementPtr  *ElementLeftOfCol1, *ElementLeftOfCol2;
-ElementPtr  ElementRightOfCol1, ElementRightOfCol2;
-  ElementPtr  pElement;
+    ElementPtr  *ElementLeftOfCol1, *ElementLeftOfCol2;
+    ElementPtr  ElementRightOfCol1, ElementRightOfCol2;
+    ElementPtr  pElement;
 
- /* Begin `ExchangeRowElements'. */
- /* Search to find the ElementLeftOfCol1. */
+    /* Begin `ExchangeRowElements'. */
+    /* Search to find the ElementLeftOfCol1. */
     ElementLeftOfCol1 = &(Matrix->FirstInRow[Row]);
     pElement = *ElementLeftOfCol1;
-    while (pElement->Col < Col1)
-    {
-    ElementLeftOfCol1 = &(pElement->NextInRow);
+    while (pElement->Col < Col1) {
+        ElementLeftOfCol1 = &(pElement->NextInRow);
         pElement = *ElementLeftOfCol1;
     }
-    if (Element1 != NULL)
-    {
-    ElementRightOfCol1 = Element1->NextInRow;
-        if (Element2 == NULL)
-        {
- /* Element2 does not exist, move Element1 to right to Col2. */
-            if ( ElementRightOfCol1 != NULL && ElementRightOfCol1->Col < Col2 )
-            {
- /* Element1 must be removed from linked list and moved. */
+    if (Element1 != NULL) {
+        ElementRightOfCol1 = Element1->NextInRow;
+        if (Element2 == NULL) {
+            /* Element2 does not exist, move Element1 to right to Col2. */
+            if ( ElementRightOfCol1 != NULL && ElementRightOfCol1->Col < Col2 ) {
+                /* Element1 must be removed from linked list and moved. */
                 *ElementLeftOfCol1 = ElementRightOfCol1;
 
- /* Search Row for Col2. */
+                /* Search Row for Col2. */
                 pElement = ElementRightOfCol1;
-                do
-                {
-    ElementLeftOfCol2 = &(pElement->NextInRow);
+                do {
+                    ElementLeftOfCol2 = &(pElement->NextInRow);
                     pElement = *ElementLeftOfCol2;
                 }   while (pElement != NULL && pElement->Col < Col2);
 
- /* Place Element1 in Col2. */
+                /* Place Element1 in Col2. */
                 *ElementLeftOfCol2 = Element1;
                 Element1->NextInRow = pElement;
                 *ElementLeftOfCol1 =ElementRightOfCol1;
             }
             Element1->Col = Col2;
-        }
-        else
-        {
- /* Element2 does exist, and the two elements must be exchanged. */
-            if ( ElementRightOfCol1->Col == Col2)
-            {
- /* Element2 is just right of Element1, exchange them. */
+        } else {
+            /* Element2 does exist, and the two elements must be exchanged. */
+            if ( ElementRightOfCol1->Col == Col2) {
+                /* Element2 is just right of Element1, exchange them. */
                 Element1->NextInRow = Element2->NextInRow;
                 Element2->NextInRow = Element1;
                 *ElementLeftOfCol1 = Element2;
-            }
-            else
-            {
- /* Element2 is not just right of Element1 and must be searched for. */
+            } else {
+                /* Element2 is not just right of Element1 and must be searched for. */
                 pElement = ElementRightOfCol1;
-                do
-                {
-    ElementLeftOfCol2 = &(pElement->NextInRow);
+                do {
+                    ElementLeftOfCol2 = &(pElement->NextInRow);
                     pElement = *ElementLeftOfCol2;
                 }   while (pElement->Col < Col2);
 
                 ElementRightOfCol2 = Element2->NextInRow;
 
- /* Switch Element1 and Element2. */
+                /* Switch Element1 and Element2. */
                 *ElementLeftOfCol1 = Element2;
                 Element2->NextInRow = ElementRightOfCol1;
                 *ElementLeftOfCol2 = Element1;
@@ -2638,24 +2482,20 @@ ElementPtr  ElementRightOfCol1, ElementRightOfCol2;
             Element1->Col = Col2;
             Element2->Col = Col1;
         }
-    }
-    else
-    {
- /* Element1 does not exist. */
+    } else {
+        /* Element1 does not exist. */
         ElementRightOfCol1 = pElement;
 
- /* Find Element2. */
-        if (ElementRightOfCol1->Col != Col2)
-        {
-    do
-            {
-    ElementLeftOfCol2 = &(pElement->NextInRow);
+        /* Find Element2. */
+        if (ElementRightOfCol1->Col != Col2) {
+            do {
+                ElementLeftOfCol2 = &(pElement->NextInRow);
                 pElement = *ElementLeftOfCol2;
             }   while (pElement->Col < Col2);
 
             ElementRightOfCol2 = Element2->NextInRow;
 
- /* Move Element2 to Col1. */
+            /* Move Element2 to Col1. */
             *ElementLeftOfCol2 = Element2->NextInRow;
             *ElementLeftOfCol1 = Element2;
             Element2->NextInRow = ElementRightOfCol1;
@@ -2712,36 +2552,31 @@ RealRowColElimination( MatrixPtr Matrix, ElementPtr pPivot )
     /* Begin `RealRowColElimination'. */
 
     /* Test for zero pivot. */
-    if (ABS(pPivot->Real) == 0.0)
-    {
-	(void)MatrixIsSingular( Matrix, pPivot->Row );
+    if (ABS(pPivot->Real) == 0.0) {
+        (void)MatrixIsSingular( Matrix, pPivot->Row );
         return;
     }
     pPivot->Real = 1.0 / pPivot->Real;
 
     pUpper = pPivot->NextInRow;
-    while (pUpper != NULL)
-    {
-	/* Calculate upper triangular element. */
+    while (pUpper != NULL) {
+        /* Calculate upper triangular element. */
         pUpper->Real *= pPivot->Real;
 
         pSub = pUpper->NextInCol;
         pLower = pPivot->NextInCol;
-        while (pLower != NULL)
-        {
-	    Row = pLower->Row;
+        while (pLower != NULL) {
+            Row = pLower->Row;
 
-	    /* Find element in row that lines up with current lower triangular element. */
+            /* Find element in row that lines up with current lower triangular element. */
             while (pSub != NULL && pSub->Row < Row)
                 pSub = pSub->NextInCol;
 
-	    /* Test to see if desired element was not found, if not, create fill-in. */
-            if (pSub == NULL || pSub->Row > Row)
-            {
-		pSub = CreateFillin( Matrix, Row, pUpper->Col );
-                if (pSub == NULL)
-                {
-		    Matrix->Error = spNO_MEMORY;
+            /* Test to see if desired element was not found, if not, create fill-in. */
+            if (pSub == NULL || pSub->Row > Row) {
+                pSub = CreateFillin( Matrix, Row, pUpper->Col );
+                if (pSub == NULL) {
+                    Matrix->Error = spNO_MEMORY;
                     return;
                 }
             }
@@ -2799,42 +2634,37 @@ ComplexRowColElimination( MatrixPtr Matrix, ElementPtr pPivot )
     /* Begin `ComplexRowColElimination'. */
 
     /* Test for zero pivot. */
-    if (ELEMENT_MAG(pPivot) == 0.0)
-    {
-	(void)MatrixIsSingular( Matrix, pPivot->Row );
+    if (ELEMENT_MAG(pPivot) == 0.0) {
+        (void)MatrixIsSingular( Matrix, pPivot->Row );
         return;
     }
     CMPLX_RECIPROCAL(*pPivot, *pPivot);
 
     pUpper = pPivot->NextInRow;
-    while (pUpper != NULL)
-    {
-	/* Calculate upper triangular element. */
-	/* Cmplx expr: *pUpper = *pUpper * (1.0 / *pPivot). */
+    while (pUpper != NULL) {
+        /* Calculate upper triangular element. */
+        /* Cmplx expr: *pUpper = *pUpper * (1.0 / *pPivot). */
         CMPLX_MULT_ASSIGN(*pUpper, *pPivot);
 
         pSub = pUpper->NextInCol;
         pLower = pPivot->NextInCol;
-        while (pLower != NULL)
-        {
-	    Row = pLower->Row;
+        while (pLower != NULL) {
+            Row = pLower->Row;
 
-	    /* Find element in row that lines up with current lower triangular element. */
+            /* Find element in row that lines up with current lower triangular element. */
             while (pSub != NULL && pSub->Row < Row)
                 pSub = pSub->NextInCol;
 
-	    /* Test to see if desired element was not found, if not, create fill-in. */
-            if (pSub == NULL || pSub->Row > Row)
-            {
-		pSub = CreateFillin( Matrix, Row, pUpper->Col );
-                if (pSub == NULL)
-                {
-		    Matrix->Error = spNO_MEMORY;
+            /* Test to see if desired element was not found, if not, create fill-in. */
+            if (pSub == NULL || pSub->Row > Row) {
+                pSub = CreateFillin( Matrix, Row, pUpper->Col );
+                if (pSub == NULL) {
+                    Matrix->Error = spNO_MEMORY;
                     return;
                 }
             }
 
-	    /* Cmplx expr: pElement -= *pUpper * pLower. */
+            /* Cmplx expr: pElement -= *pUpper * pLower. */
             CMPLX_MULT_SUBT_ASSIGN(*pSub, *pUpper, *pLower);
             pSub = pSub->NextInCol;
             pLower = pLower->NextInCol;
@@ -2883,42 +2713,38 @@ UpdateMarkowitzNumbers( MatrixPtr Matrix, ElementPtr pPivot )
     /* Begin `UpdateMarkowitzNumbers'. */
 
     /* Update Markowitz numbers. */
-    for (ColPtr = pPivot->NextInCol; ColPtr != NULL; ColPtr = ColPtr->NextInCol)
-    {
-	Row = ColPtr->Row;
+    for (ColPtr = pPivot->NextInCol; ColPtr != NULL; ColPtr = ColPtr->NextInCol) {
+        Row = ColPtr->Row;
         --MarkoRow[Row];
 
-	/* Form Markowitz product while being cautious of overflows. */
+        /* Form Markowitz product while being cautious of overflows. */
         if ((MarkoRow[Row] > LARGEST_SHORT_INTEGER && MarkoCol[Row] != 0) ||
-            (MarkoCol[Row] > LARGEST_SHORT_INTEGER && MarkoRow[Row] != 0))
-        {
-	    Product = MarkoCol[Row] * MarkoRow[Row];
+                (MarkoCol[Row] > LARGEST_SHORT_INTEGER && MarkoRow[Row] != 0)) {
+            Product = MarkoCol[Row] * MarkoRow[Row];
             if (Product >= LARGEST_LONG_INTEGER)
                 Matrix->MarkowitzProd[Row] = LARGEST_LONG_INTEGER;
             else
                 Matrix->MarkowitzProd[Row] = (long)Product;
-        }
-        else Matrix->MarkowitzProd[Row] = MarkoRow[Row] * MarkoCol[Row];
+        } else Matrix->MarkowitzProd[Row] = MarkoRow[Row] * MarkoCol[Row];
         if (MarkoRow[Row] == 0)
             Matrix->Singletons++;
     }
 
     for (RowPtr = pPivot->NextInRow;
-	 RowPtr != NULL;
-	 RowPtr = RowPtr->NextInRow) {
-	Col = RowPtr->Col;
+            RowPtr != NULL;
+            RowPtr = RowPtr->NextInRow) {
+        Col = RowPtr->Col;
         --MarkoCol[Col];
 
-	/* Form Markowitz product while being cautious of overflows. */
+        /* Form Markowitz product while being cautious of overflows. */
         if ((MarkoRow[Col] > LARGEST_SHORT_INTEGER && MarkoCol[Col] != 0) ||
-            (MarkoCol[Col] > LARGEST_SHORT_INTEGER && MarkoRow[Col] != 0)) {
-	    Product = MarkoCol[Col] * MarkoRow[Col];
+                (MarkoCol[Col] > LARGEST_SHORT_INTEGER && MarkoRow[Col] != 0)) {
+            Product = MarkoCol[Col] * MarkoRow[Col];
             if (Product >= LARGEST_LONG_INTEGER)
                 Matrix->MarkowitzProd[Col] = LARGEST_LONG_INTEGER;
             else
                 Matrix->MarkowitzProd[Col] = (long)Product;
-        }
-        else Matrix->MarkowitzProd[Col] = MarkoRow[Col] * MarkoCol[Col];
+        } else Matrix->MarkowitzProd[Col] = MarkoRow[Col] * MarkoCol[Col];
         if ((MarkoCol[Col] == 0) && (MarkoRow[Col] != 0))
             Matrix->Singletons++;
     }
@@ -2964,33 +2790,30 @@ UpdateMarkowitzNumbers( MatrixPtr Matrix, ElementPtr pPivot )
 static ElementPtr
 CreateFillin( MatrixPtr Matrix, int Row, int Col )
 {
- ElementPtr  pElement, *ppElementAbove;
+    ElementPtr  pElement, *ppElementAbove;
 
- /* Begin `CreateFillin'. */
+    /* Begin `CreateFillin'. */
 
- /* Find Element above fill-in. */
+    /* Find Element above fill-in. */
     ppElementAbove = &Matrix->FirstInCol[Col];
     pElement = *ppElementAbove;
-    while (pElement != NULL)
-    {
-    if (pElement->Row < Row)
-        {
-    ppElementAbove = &pElement->NextInCol;
+    while (pElement != NULL) {
+        if (pElement->Row < Row) {
+            ppElementAbove = &pElement->NextInCol;
             pElement = *ppElementAbove;
-        }
-        else break; /* while loop */
+        } else break; /* while loop */
     }
 
- /* End of search, create the element. */
+    /* End of search, create the element. */
     pElement = spcCreateElement( Matrix, Row, Col, ppElementAbove, YES );
 
- /* Update Markowitz counts and products. */
+    /* Update Markowitz counts and products. */
     Matrix->MarkowitzProd[Row] = ++Matrix->MarkowitzRow[Row] *
-                                   Matrix->MarkowitzCol[Row];
+                                 Matrix->MarkowitzCol[Row];
     if ((Matrix->MarkowitzRow[Row] == 1) && (Matrix->MarkowitzCol[Row] != 0))
         Matrix->Singletons--;
     Matrix->MarkowitzProd[Col] = ++Matrix->MarkowitzCol[Col] *
-                                   Matrix->MarkowitzRow[Col];
+                                 Matrix->MarkowitzRow[Col];
     if ((Matrix->MarkowitzRow[Col] != 0) && (Matrix->MarkowitzCol[Col] == 1))
         Matrix->Singletons--;
 
@@ -3023,7 +2846,7 @@ CreateFillin( MatrixPtr Matrix, int Row, int Col )
 static int
 MatrixIsSingular( MatrixPtr Matrix, int Step )
 {
- /* Begin `MatrixIsSingular'. */
+    /* Begin `MatrixIsSingular'. */
 
     Matrix->SingularRow = Matrix->IntToExtRowMap[ Step ];
     Matrix->SingularCol = Matrix->IntToExtColMap[ Step ];
@@ -3034,7 +2857,7 @@ MatrixIsSingular( MatrixPtr Matrix, int Step )
 static int
 ZeroPivot( MatrixPtr Matrix, int Step )
 {
- /* Begin `ZeroPivot'. */
+    /* Begin `ZeroPivot'. */
 
     Matrix->SingularRow = Matrix->IntToExtRowMap[ Step ];
     Matrix->SingularCol = Matrix->IntToExtColMap[ Step ];
@@ -3058,19 +2881,26 @@ ZeroPivot( MatrixPtr Matrix, int Step )
 static void
 WriteStatus( MatrixPtr Matrix, int Step )
 {
-int  I;
+    int  I;
 
- /* Begin `WriteStatus'. */
+    /* Begin `WriteStatus'. */
 
     printf("Step = %1d   ", Step);
     printf("Pivot found at %1d,%1d using ", Matrix->PivotsOriginalRow,
-                                            Matrix->PivotsOriginalCol);
-    switch(Matrix->PivotSelectionMethod)
-    {
-    case 's': printf("SearchForSingleton\n");  break;
-        case 'q': printf("QuicklySearchDiagonal\n");  break;
-        case 'd': printf("SearchDiagonal\n");  break;
-        case 'e': printf("SearchEntireMatrix\n");  break;
+           Matrix->PivotsOriginalCol);
+    switch(Matrix->PivotSelectionMethod) {
+    case 's':
+        printf("SearchForSingleton\n");
+        break;
+    case 'q':
+        printf("QuicklySearchDiagonal\n");
+        break;
+    case 'd':
+        printf("SearchDiagonal\n");
+        break;
+    case 'e':
+        printf("SearchEntireMatrix\n");
+        break;
     }
 
     printf("MarkowitzRow     = ");
