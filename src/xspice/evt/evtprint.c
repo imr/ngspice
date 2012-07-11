@@ -16,7 +16,7 @@ AUTHORS
 
 MODIFICATIONS
 
-    <date> <person name> <nature of modifications>
+    7/11/2012  Holger Vogt   Replace printf by out_printf to allow output redirection
 
 SUMMARY
 
@@ -43,9 +43,9 @@ NON-STANDARD FEATURES
 #include <string.h>
 
 #include "ngspice/ngspice.h"
-//#include "misc.h"
 
 #include "ngspice/cpstd.h"
+#include "ngspice/cpextern.h"
 
 #include "ngspice/mif.h"
 #include "ngspice/evt.h"
@@ -90,7 +90,7 @@ in the following areas:
 
 
 
-#define EPRINT_MAXARGS  16
+#define EPRINT_MAXARGS  32
 
 
 void EVTprint(
@@ -140,7 +140,7 @@ void EVTprint(
         return;
     }
     if(nargs > EPRINT_MAXARGS) {
-        printf("ERROR - eprint currently limited to 16 arguments\n");
+        printf("ERROR - eprint currently limited to 32 arguments\n");
         return;
     }
 
@@ -163,15 +163,16 @@ void EVTprint(
         w = w->wl_next;
     }
 
+    out_init();
 
     /* Print results data */
-    printf("\n**** Results Data ****\n\n");
+    out_printf("\n**** Results Data ****\n\n");
 
     /* Print the column identifiers */
-    printf("Time or Step\n");
+    out_printf("Time or Step\n");
     for(i = 0; i < nargs; i++)
-        printf("%s\n",node_name[i]);
-    printf("\n\n");
+        out_printf("%s\n",node_name[i]);
+    out_printf("\n\n");
 
     /* Scan the node data and determine if the first vector */
     /* is for a DCOP analysis or the first step in a swept DC */
@@ -229,11 +230,11 @@ void EVTprint(
         print_data(MIF_FALSE, this_step, node_value, nargs);
 
     } /* end while there is more data */
-    printf("\n\n");
+    out_printf("\n\n");
 
 
     /* Print messages for all ports */
-    printf("\n**** Messages ****\n\n");
+    out_printf("\n**** Messages ****\n\n");
 
     num_ports = ckt->evt->counts.num_ports;
     port_table = ckt->evt->info.port_table;
@@ -248,7 +249,7 @@ void EVTprint(
             continue;
 
         /* Print the port description */
-        printf("Node: %s   Inst: %s   Conn: %s   Port: %d\n\n",
+        out_printf("Node: %s   Inst: %s   Conn: %s   Port: %d\n\n",
                 port_table[i]->node_name,
                 port_table[i]->inst_name,
                 port_table[i]->conn_name,
@@ -263,27 +264,27 @@ void EVTprint(
             printf("%s\n", msg_data->text);
             msg_data = msg_data->next;
         }
-        printf("\n\n");
+        out_printf("\n\n");
 
     } /* end for number of ports */
 
 
     /* Print statistics */
-    printf("\n**** Statistics ****\n\n");
+    out_printf("\n**** Statistics ****\n\n");
 
     statistics = ckt->evt->data.statistics;
-    printf("Operating point analog/event alternations:  %d\n",
+    out_printf("Operating point analog/event alternations:  %d\n",
             statistics->op_alternations);
-    printf("Operating point load calls:                 %d\n",
+    out_printf("Operating point load calls:                 %d\n",
             statistics->op_load_calls);
-    printf("Operating point event passes:               %d\n",
+    out_printf("Operating point event passes:               %d\n",
             statistics->op_event_passes);
-    printf("Transient analysis load calls:              %d\n",
+    out_printf("Transient analysis load calls:              %d\n",
             statistics->tran_load_calls);
-    printf("Transient analysis timestep backups:        %d\n",
+    out_printf("Transient analysis timestep backups:        %d\n",
             statistics->tran_time_backups);
 
-    printf("\n\n");
+    out_printf("\n\n");
 }
 
 
@@ -362,8 +363,8 @@ static void print_data(
     else
         sprintf(step_str, "%-16.9e", step);
 
-    printf("%s", step_str);
+    out_printf("%s", step_str);
     for(i = 0; i < nargs; i++)
-        printf("    %s", node_value[i]);
-    printf("\n");
+        out_printf("    %s", node_value[i]);
+    out_printf("\n");
 }
