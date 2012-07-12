@@ -1216,6 +1216,9 @@ com_alter_common(wordlist *wl, int do_model)
         wlin = wlin->wl_prev;
         /* add ' = value' */
         wlin->wl_next = wleq;
+        wleq->wl_prev = wlin;
+        if(wleq->wl_next)
+            wleq->wl_next->wl_prev = wleq;
         /* step back until 'alter' or 'altermod' is found, 
         then move one step forward */
         while (!ciprefix("alter",wlin->wl_word)) //while (!ciprefix(wlin->wl_word,"alter"))
