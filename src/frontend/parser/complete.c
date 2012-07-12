@@ -364,7 +364,7 @@ cctowl(struct ccom *cc, bool sib)
                 ;
             end->wl_next = cctowl(cc->cc_sibling, TRUE);
             if (end->wl_next)
-                end->wl_next->wl_prev = wl;
+                end->wl_next->wl_prev = end;
         } else
             wl = cctowl(cc->cc_sibling, TRUE);
     }
