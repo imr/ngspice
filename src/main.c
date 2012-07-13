@@ -1172,12 +1172,11 @@ main(int argc, char **argv)
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
             char *dname = NULL;   /* input file*/
             char *tpf = NULL;     /* temporary file */
-            tempfile = tmpfile();
 
             /* tmpfile() returns NULL, if in MS Windows as non admin user
                in directory C:\something (no write permission to root C:).
                Then we add a tempfile in the local directory.
-               File will be removed again at exit() using atexit() */
+               File will be removed automatically due to TD option in fopen */
 
             if (tempfile == NULL) {
                 tpf = smktemp("sp");
