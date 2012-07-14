@@ -294,3 +294,45 @@ wl_range(wordlist *wl, int low, int up)
     return (wl);
 }
 
+
+wordlist *
+wl_cons(char *word, wordlist *tail)
+{
+    wordlist *w = alloc(struct wordlist);
+    w->wl_next = tail;
+    w->wl_prev = NULL;
+    w->wl_word = word;
+
+    if (tail)
+        tail->wl_prev = w;
+
+    return w;
+}
+
+
+void
+wl_append_word(wordlist **first, wordlist **last, char *word)
+{
+    wordlist *w = alloc(struct wordlist);
+    w->wl_next = NULL;
+    w->wl_prev = (*last);
+    w->wl_word = word;
+
+    if (*last)
+        (*last)->wl_next = w;
+    else
+        (*first) = w;
+
+    (*last) = w;
+}
+
+
+wordlist *
+wl_chop_rest(wordlist *wl)
+{
+    wordlist *rest = wl->wl_next;
+    wl->wl_next = NULL;
+    if(rest)
+        rest->wl_prev = NULL;
+    return rest;
+}

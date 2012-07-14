@@ -25,6 +25,11 @@ wordlist * wl_nthelem(int i, wordlist *wl);
 void wl_sort(wordlist *wl);
 wordlist * wl_range(wordlist *wl, int low, int up);
 
+wordlist *wl_cons(char *word, wordlist *tail);
+void wl_append_word(wordlist **first, wordlist **last, char *word);
+
+wordlist *wl_chop_rest(wordlist *wlist);
+
 
 /* For quoting individual characters. '' strings are all quoted, but
  * `` and "" strings are maintained as single words with the quotes
