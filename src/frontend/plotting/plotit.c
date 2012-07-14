@@ -313,11 +313,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 	wl = wl->wl_prev;
 	tw = NULL;  /* Not used, so must be NULL */
     } else {
-	tw = alloc(struct wordlist);
-	wl->wl_prev = tw;
-	tw->wl_next = wl;
-	wl = tw;
-	tw->wl_word = "";
+        wl = wl_cons("", wl);
+        tw = wl;
     }
 
     sameflag = getflag(wl, "samep");

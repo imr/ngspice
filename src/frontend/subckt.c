@@ -156,7 +156,6 @@ inp_subcktexpand(struct line *deck) {
     int ok = 0;
     char *t;
     int i;
-    wordlist *wl;
     wordlist *modnames = NULL;
 
     if (!cp_getvar("substart", CP_STRING, start))
@@ -222,12 +221,7 @@ inp_subcktexpand(struct line *deck) {
         if (ciprefix(model, c->li_line)) {
             s = c->li_line;
             txfree(gettok(&s)); /* discard the model keyword */
-            wl = alloc(struct wordlist);
-            wl->wl_next = modnames;
-            if (modnames)
-                modnames->wl_prev = wl;
-            modnames = wl;
-            wl->wl_word = gettok(&s);  /* wl->wl_word now holds name of model */
+            modnames = wl_cons(gettok(&s), modnames);
         } /* model name finding routine */
 
 #ifdef TRACE
@@ -1671,7 +1665,6 @@ modtranslate(struct line *deck, char *subname, wordlist **submod, wordlist ** co
 {
     struct line *c;
     char *buffer, *name, *t, model[4 * BSIZE_SP];
-    wordlist *wl, *wlsub;
     bool gotone;
 
     (void) strcpy(model, ".model");
@@ -1691,16 +1684,10 @@ modtranslate(struct line *deck, char *subname, wordlist **submod, wordlist ** co
             (void) sprintf(buffer, "%s ", name);    /* at this point, buffer = ".model " */
             tfree(name);
             name = gettok(&t);                     /* name now holds model name */
-            wlsub = alloc(struct wordlist);
-            wlsub->wl_next = *submod;
-            if (*submod)
-                (*submod)->wl_prev = wlsub;
-            /* here's where we insert the model name into the model name list */
-            *submod = wlsub;
-            wlsub->wl_word = name;
+            *submod = wl_cons(name, *submod);
 #ifdef TRACE
             /* SDB debug statement */
-            printf("In modtranslate, sticking model name %s into submod\n", wlsub->wl_word);
+            printf("In modtranslate, sticking model name %s into submod\n", (*submod)->wl_word);
 #endif
 
 
@@ -1719,16 +1706,11 @@ modtranslate(struct line *deck, char *subname, wordlist **submod, wordlist ** co
             /* this looks like it tries to stick the translated model name into the list of model names */
             t = c->li_line;
             txfree(gettok(&t));
-            wl = alloc(struct wordlist);
-            wl->wl_next = *modnames;
-            if (*modnames)
-                (*modnames)->wl_prev = wl;
-            (*modnames) = wl;
-            wl->wl_word = gettok(&t);
+            *modnames = wl_cons(gettok(&t), *modnames);
 
 #ifdef TRACE
             /* SDB debug statement */
-            printf("In modtranslate, sticking model name %s into modnames\n", wl->wl_word);
+            printf("In modtranslate, sticking model name %s into modnames\n", (*modnames)->wl_word);
 #endif
 
         }

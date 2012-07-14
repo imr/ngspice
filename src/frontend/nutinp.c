@@ -119,13 +119,8 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
                     fprintf(cp_err, 
                     "Warning: misplaced .endc line\n");
             } else if (commands || prefix("*#", dd->li_line)) {
-                wl = alloc(struct wordlist);
-                if (controls) {
-                    wl->wl_next = controls;
-                    controls->wl_prev = wl;
-                    controls = wl;
-                } else
-                    controls = wl;
+                controls = wl_cons(NULL, controls);
+                wl = controls;
                 if (prefix("*#", dd->li_line))
                     wl->wl_word = copy(dd->li_line + 2);
                 else
@@ -146,13 +141,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
                         eq(s, ".plot") || 
                         eq(s, ".print") ||
                         eq(s, ".save")) {
-                    if (end) {
-                        end->wl_next = alloc(struct wordlist);
-                        end->wl_next->wl_prev = end;
-                        end = end->wl_next;
-                    } else
-                        wl = end = alloc(struct wordlist);
-                    end->wl_word = copy(dd->li_line);
+                    wl_append_word(&wl, &end, copy(dd->li_line));
                     ld->li_next = dd->li_next;
                     tfree(dd->li_line);
                     tfree(dd);

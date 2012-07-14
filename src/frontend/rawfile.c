@@ -410,12 +410,8 @@ raw_read(char *name) {
             skip(s);
             nonl(s);
             if (curpl) {
-                wl = alloc(struct wordlist);
-                wl->wl_word = copy(s);
-                wl->wl_next = curpl->pl_commands;
-                if (curpl->pl_commands)
-                    curpl->pl_commands->wl_prev = wl;
-                curpl->pl_commands = wl;
+                curpl->pl_commands = wl_cons(copy(s), curpl->pl_commands);
+                wl = curpl->pl_commands;
             } else
                 fprintf(cp_err,
                         "Error: misplaced Command: line\n");

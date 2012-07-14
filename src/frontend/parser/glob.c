@@ -115,11 +115,8 @@ brac1(char *string)
     char *s;
     int nb;
 
-    words = alloc(struct wordlist);
-    words->wl_word = TMALLOC(char, BSIZE_SP);
-    words->wl_word[0] = 0;
-    words->wl_next = NULL;
-    words->wl_prev = NULL;
+    words = wl_cons(TMALLOC(char, BSIZE_SP), NULL);
+    words->wl_word[0] = '\0';
     for (s = string; *s; s++) {
         if (*s == cp_ocurl) {
             nwl = brac2(s);
@@ -141,10 +138,7 @@ brac1(char *string)
             newwl = NULL;
             for (wl = words; wl; wl = wl->wl_next)
                 for (w = nwl; w; w = w->wl_next) {
-                    nw = alloc(struct wordlist);
-		    nw->wl_next = NULL;
-		    nw->wl_prev = NULL;
-                    nw->wl_word = TMALLOC(char, BSIZE_SP);
+                    nw = wl_cons(TMALLOC(char, BSIZE_SP), NULL);
                     (void) strcpy(nw->wl_word, wl->wl_word);
                     (void) strcat(nw->wl_word, w->wl_word);
                     newwl = wl_append(newwl, nw);

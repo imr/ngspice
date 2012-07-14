@@ -107,9 +107,7 @@ backeval(char *string)
     (void) pclose(proc);
     return (wl);
 #else
-    wordlist *wl = alloc(struct wordlist);
-
-    wl->wl_word = copy(string);
+    wordlist *wl = wl_cons(copy(string), NULL);
     return (wl);
 #endif
 }

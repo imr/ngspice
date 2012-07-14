@@ -1095,7 +1095,7 @@ com_alter_common(wordlist *wl, int do_model)
     char *argument;
     char **arglist;
     int i=0, step=0, n, wlen, maxelem=3;
-    wordlist *wl2 = NULL, *wlin, *wleq;
+    wordlist *wl2 = NULL, *wlin, *rhs;
     bool eqfound = FALSE, vecfound = FALSE;
 
     if (!ft_curckt) {
@@ -1207,18 +1207,9 @@ com_alter_common(wordlist *wl, int do_model)
             return;
         }
         /* add the '=' */
-        /* create wordlist with '=' */
-        wleq = TMALLOC(wordlist, 1);
-        wleq->wl_word = copy("=");
-        /* add the last element (the value of the param - value pair) */
-        wleq->wl_next = wlin;
-        /* move back one element to place equal sign */
         wlin = wlin->wl_prev;
-        /* add ' = value' */
-        wlin->wl_next = wleq;
-        wleq->wl_prev = wlin;
-        if(wleq->wl_next)
-            wleq->wl_next->wl_prev = wleq;
+        rhs = wl_chop_rest(wlin);
+        wlin = wl_append(wlin, wl_cons(copy("="), rhs));
         /* step back until 'alter' or 'altermod' is found, 
         then move one step forward */
         while (!ciprefix("alter",wlin->wl_word)) //while (!ciprefix(wlin->wl_word,"alter"))
@@ -1353,26 +1344,18 @@ com_alter_common(wordlist *wl, int do_model)
 static wordlist *
 devexpand(char *name)
 {
-    wordlist *wl, *devices, *tw;
+    wordlist *wl, *devices;
 
     if (strchr(name, '*') || strchr(name, '[') || strchr(name, '?')) {
         devices = cp_cctowl(ft_curckt->ci_devices);
         for (wl = NULL; devices; devices = devices->wl_next)
             if (cp_globmatch(name, devices->wl_word)) {
-                tw = alloc(struct wordlist);
-                if (wl) {
-                    wl->wl_prev = tw;
-                    tw->wl_next = wl;
-                    wl = tw;
-                } else
-                    wl = tw;
-                wl->wl_word = devices->wl_word;
+                wl = wl_cons(devices->wl_word, wl);
             }
     } else if (cieq(name, "all")) {
         wl = cp_cctowl(ft_curckt->ci_devices);
     } else {
-        wl = alloc(struct wordlist);
-        wl->wl_word = name;
+        wl = wl_cons(name, NULL);
     }
     wl_sort(wl);
     return (wl);

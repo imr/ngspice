@@ -64,7 +64,7 @@ hlp_read(fplace *place)
     topic *top = alloc(topic);
     toplink *topiclink;
     toplink *tl, *tend = NULL;
-    wordlist *wl, *end = NULL;
+    wordlist *end = NULL;
     int i, fchanges;
     char *s;
     bool mof = FALSE;
@@ -104,14 +104,7 @@ hlp_read(fplace *place)
                     ((s[0] == '_') && (s[1] == '\b')))
                 fchanges++;
         *s = '\0';
-        wl = alloc(wordlist);
-        wl->wl_word = copy(&buf[6]);
-        if (end)
-            end->wl_next = wl;
-        else
-            top->text = wl;
-        wl->wl_prev = end;
-        end = wl;
+        wl_append_word(&(top->text), &end, copy(&buf[6]));
         top->numlines++;
         i = (int) strlen(&buf[6]) - fchanges;
         if (top->maxcols < i)

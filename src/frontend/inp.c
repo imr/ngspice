@@ -442,24 +442,18 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 else
                     fprintf(cp_err, "Warning: misplaced .endc card\n");
             } else if (commands || prefix("*#", dd->li_line)) {
-                wl = alloc(struct wordlist);
-                if (controls) {
-                    wl->wl_next = controls;
-                    controls->wl_prev = wl;
-                    controls = wl;
-                } else
-                    controls = wl;
                 /* more control lines */
                 if (prefix("*#", dd->li_line))
-                    wl->wl_word = copy(dd->li_line + 2);
+                    s = copy(dd->li_line + 2);
                 else {
-                    wl->wl_word = dd->li_line;
+                    s = dd->li_line;
                     dd->li_line = 0; /* SJB - prevent line_free() freeing the string (now pointed at by wl->wl_word) */
                 }
+                controls = wl_cons(s, controls);
+                wl = controls;
                 /* Look for set or unset numparams.
                    If either are found then we evaluate these lines immediately
                    so they take effect before netlist parsing */
-                s = wl->wl_word;
                 while(isspace(*s)) s++;	/* step past any white space */
                 if(ciprefix("set", s)) {
                     s+=3;
@@ -492,13 +486,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                         || eq(s, ".op")
                         || ciprefix(".meas", s)
                         || eq(s, ".tf")) {
-                    if (end) {
-                        end->wl_next = alloc(struct wordlist);
-                        end->wl_next->wl_prev = end;
-                        end = end->wl_next;
-                    } else
-                        wl_first = end = alloc(struct wordlist);
-                    end->wl_word = copy(dd->li_line);
+                    wl_append_word(&wl_first, &end, copy(dd->li_line));
 
                     if (!eq(s, ".op") && !eq(s, ".tf") && !ciprefix(".meas", s)) {
                         ld->li_next = dd->li_next;
@@ -561,7 +549,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 if ( ciprefix(".csparam", dd->li_line) ) {
                     wordlist *wlist = NULL;
                     wordlist *wl = NULL;
-                    wordlist *cwl;
                     char *cstoken[3];
                     int i;
                     s = dd->li_line;
@@ -572,16 +559,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                     cstoken[1]=gettok_char(&s, '=', TRUE);
                     cstoken[2]=gettok(&s);
                     for (i=0; i<3;i++) {
-                        cwl = alloc(struct wordlist);
-                        cwl->wl_prev = wl;
-                        if (wl)
-                            wl->wl_next = cwl;
-                        else {
-                            wlist = cwl;
-                            cwl->wl_next = NULL;
-                        }
-                        cwl->wl_word = cstoken[i];
-                        wl = cwl;
+                        wl_append_word(&wlist, &wl, cstoken[i]);
                     }
                     com_let(wlist);
                     wl_free(wlist);

@@ -116,9 +116,7 @@ common(char *string, struct wordlist *wl, struct comm *command)
       if ((buf = prompt(cp_in)) == NULL) /* prompt aborted */
         return;               /* don't execute command */
       /* do something with the wordlist */
-      w = alloc(struct wordlist);
-      w->wl_word = buf;
-      w->wl_next = NULL;
+      w = wl_cons(buf, NULL);
 
       w = process(w);
       /* O.K. now call fn */

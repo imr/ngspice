@@ -2990,7 +2990,7 @@ inp_fix_param_values( struct line *deck )
     char *line, *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
     char *vec_str, *natok, *buffer, *newvec, *whereisgt;
     bool control_section = FALSE;
-    wordlist *wl, *nwl;
+    wordlist *nwl;
     int parens;
 
     while ( c != NULL ) {
@@ -3097,7 +3097,6 @@ inp_fix_param_values( struct line *deck )
                 for (;;) {
                     natok = gettok(&vec_str);
                     if (!natok) break;
-                    wl = alloc(struct wordlist);
 
                     buffer = TMALLOC(char, strlen(natok) + 4);
                     if ( isdigit(*natok) || *natok == '{' || *natok == '.' ||
@@ -3130,12 +3129,8 @@ inp_fix_param_values( struct line *deck )
                         (void) sprintf(buffer, "{%s}", natok);
                     }
                     tfree(natok);
-                    wl->wl_word = copy(buffer);
+                    nwl = wl_cons(copy(buffer), nwl);
                     tfree(buffer);
-                    wl->wl_next = nwl;
-                    if (nwl)
-                        nwl->wl_prev = wl;
-                    nwl = wl;
                 }
                 nwl = wl_reverse(nwl);
                 /* new vector elements */
@@ -3165,7 +3160,6 @@ inp_fix_param_values( struct line *deck )
                 for (;;) {
                     natok = gettok(&vec_str);
                     if (!natok) break;
-                    wl = alloc(struct wordlist);
 
                     buffer = TMALLOC(char, strlen(natok) + 4);
                     if ( isdigit(*natok) || *natok == '{' || *natok == '.' ||
@@ -3176,12 +3170,8 @@ inp_fix_param_values( struct line *deck )
                         (void) sprintf(buffer, "{%s}", natok);
                     }
                     tfree(natok);
-                    wl->wl_word = copy(buffer);
+                    nwl = wl_cons(copy(buffer), nwl);
                     tfree(buffer);
-                    wl->wl_next = nwl;
-                    if (nwl)
-                        nwl->wl_prev = wl;
-                    nwl = wl;
                 }
                 nwl = wl_reverse(nwl);
                 /* new elements of complex variable */
@@ -4959,7 +4949,7 @@ static void inp_bsource_compat(struct line *deck)
     char *equal_ptr, *str_ptr, *tmp_char, *new_str, *final_str;
     char actchar, prevchar = ' ';
     struct line *card, *new_line, *tmp_ptr;
-    wordlist *wl = NULL, *wlist = NULL, *cwl;
+    wordlist *wl = NULL, *wlist = NULL;
     char buf[512];
     size_t i, xlen, ustate = 0;
     int skip_control = 0;
@@ -5008,14 +4998,7 @@ static void inp_bsource_compat(struct line *deck)
                     str_ptr++;
                 if (*str_ptr == '\0') break;
                 actchar = *str_ptr;
-                cwl = alloc(struct wordlist);
-                cwl->wl_prev = wl;
-                if (wl)
-                    wl->wl_next = cwl;
-                else {
-                    wlist = cwl;
-                    cwl->wl_next = NULL;
-                }
+                wl_append_word(&wlist, &wl, NULL);
                 if ((actchar == ',') || (actchar == '(') || (actchar == ')')
                         || (actchar == '*') || (actchar == '/') || (actchar == '^')
                         || (actchar == '+') || (actchar == '?') || (actchar == ':')) {
@@ -5025,7 +5008,7 @@ static void inp_bsource_compat(struct line *deck)
                     }
                     buf[0] = actchar;
                     buf[1] = '\0';
-                    cwl->wl_word = copy(buf);
+                    wl->wl_word = copy(buf);
                     str_ptr++;
                     if (actchar == ')') ustate = 0;
                     else ustate = 1; /* we have an operator */
@@ -5035,22 +5018,22 @@ static void inp_bsource_compat(struct line *deck)
                     char *beg = str_ptr++;
                     if ((*str_ptr == '=') || (*str_ptr == '<') || (*str_ptr == '>'))
                         str_ptr++;
-                    cwl->wl_word = copy_substring(beg, str_ptr);
+                    wl->wl_word = copy_substring(beg, str_ptr);
                     ustate = 1; /* we have an operator */
                 } else if ((actchar == '|') || (actchar == '&')) {
                     char *beg = str_ptr++;
                     if ((*str_ptr == '|') || (*str_ptr == '&'))
                         str_ptr++;
-                    cwl->wl_word = copy_substring(beg, str_ptr);
+                    wl->wl_word = copy_substring(beg, str_ptr);
                     ustate = 1; /* we have an operator */
                 } else if ((actchar == '-') && (ustate == 0)) {
                     buf[0] = actchar;
                     buf[1] = '\0';
-                    cwl->wl_word = copy(buf);
+                    wl->wl_word = copy(buf);
                     str_ptr++;
                     ustate = 1; /* we have an operator */
                 } else if ((actchar == '-') && (ustate == 1)) {
-                    cwl->wl_word = copy("");
+                    wl->wl_word = copy("");
                     str_ptr++;
                     ustate = 2; /* place a '-' in front of token */
                 } else if (isalpha(actchar)) {
@@ -5068,7 +5051,7 @@ static void inp_bsource_compat(struct line *deck)
                         }
                         buf[i] = *str_ptr;
                         buf[i+1] = '\0';
-                        cwl->wl_word = copy(buf);
+                        wl->wl_word = copy(buf);
                         str_ptr++;
                     } else {
                         while (isalnum(*str_ptr) || (*str_ptr == '!') || (*str_ptr == '#')
@@ -5138,7 +5121,7 @@ static void inp_bsource_compat(struct line *deck)
                                                             str_ptr++;
                                                         }
                             */
-                            cwl->wl_word = copy(buf);
+                            wl->wl_word = copy(buf);
                         }
                         else if (cieq(buf, "tc1") || cieq(buf, "tc2") || cieq(buf, "reciproctc")) {
                             while (isspace(*str_ptr))
@@ -5148,13 +5131,13 @@ static void inp_bsource_compat(struct line *deck)
                                 buf[i++] = '=';
                                 buf[i] = '\0';
                                 str_ptr++;
-                                cwl->wl_word = copy(buf);
+                                wl->wl_word = copy(buf);
                             }
                             else {
                                 xlen = strlen(buf);
                                 tmp_char = TMALLOC(char, xlen + 3);
                                 sprintf(tmp_char, "{%s}", buf);
-                                cwl->wl_word = tmp_char;
+                                wl->wl_word = tmp_char;
                             }
                         }
                         /* {} around all other tokens */
@@ -5162,7 +5145,7 @@ static void inp_bsource_compat(struct line *deck)
                             xlen = strlen(buf);
                             tmp_char = TMALLOC(char, xlen + 3);
                             sprintf(tmp_char, "{%s}", buf);
-                            cwl->wl_word = tmp_char;
+                            wl->wl_word = tmp_char;
                         }
                     }
                     ustate = 0; /* we have a number */
@@ -5174,7 +5157,7 @@ static void inp_bsource_compat(struct line *deck)
                     if (ustate == 2)
                         dvalue *= -1;
                     sprintf(cvalue,"%18.10e", dvalue);
-                    cwl->wl_word = copy(cvalue);
+                    wl->wl_word = copy(cvalue);
                     ustate = 0; /* we have a number */
                     /* skip the `unit', FIXME INPevaluate() should do this */
                     while(isalpha(*str_ptr))
@@ -5183,10 +5166,9 @@ static void inp_bsource_compat(struct line *deck)
                     printf("Preparing B line for numparam\nWhat is this?\n%s\n", str_ptr);
                     buf[0] = *str_ptr;
                     buf[1] = '\0';
-                    cwl->wl_word = copy(buf);
+                    wl->wl_word = copy(buf);
                     str_ptr++;
                 }
-                wl = cwl;
                 prevchar = actchar;
             }
 

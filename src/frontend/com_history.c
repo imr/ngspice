@@ -133,10 +133,7 @@ dohsubst(char *string)
             break;
 
             case '\0':  /* Maybe this should be cp_event. */
-            wl = alloc(struct wordlist);
-            wl->wl_word = copy("!");
-            wl->wl_next = NULL;
-            wl->wl_prev = NULL;
+            wl = wl_cons(copy("!"), NULL);
             cp_didhsubst = FALSE;
             return (wl);
 

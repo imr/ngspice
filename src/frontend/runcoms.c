@@ -202,11 +202,7 @@ dosim(
    /* add "what" to beginning of wordlist wl, except "what" equals "run" 
       and a rawfile name is given (in wl) */
    if (!dofile) {
-      ww = alloc(struct wordlist);
-      ww->wl_next = wl;
-      if (wl)
-         wl->wl_prev = ww;
-      ww->wl_word = copy(what);
+      ww = wl_cons(copy(what), wl);
    }
    /* reset output file type according to variable given in spinit */
    if (cp_getvar("filetype", CP_STRING, buf)) {

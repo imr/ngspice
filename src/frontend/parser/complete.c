@@ -204,7 +204,7 @@ ccfilec(char *buf)
     DIR *wdir;
     char *lcomp, *dir;
     struct direct *de;
-    wordlist *wl = NULL, *t;
+    wordlist *wl = NULL;
     struct passwd *pw;
 
     buf = copy(buf);    /* Don't mangle anything... */
@@ -217,18 +217,7 @@ ccfilec(char *buf)
             buf++;
             while ((pw = getpwent()) != NULL) {
                 if (prefix(buf, pw->pw_name)) {
-                    if (wl == NULL) {
-                        wl = alloc(struct wordlist);
-                        wl->wl_next = NULL;
-                        wl->wl_prev = NULL;
-                    } else {
-                        t = wl;
-                        wl = alloc(struct wordlist);
-                        wl->wl_prev = NULL;
-                        wl->wl_next = t;
-			t->wl_prev = wl;
-                    }
-                    wl->wl_word = copy(pw->pw_name);
+                    wl = wl_cons(copy(pw->pw_name), wl);
                 }
             }
             (void) endpwent();
@@ -249,18 +238,7 @@ ccfilec(char *buf)
     while ((de = readdir(wdir)) != NULL)
         if ((prefix(lcomp, de->d_name)) && (*lcomp ||
                 (*de->d_name != '.'))) {
-            if (wl == NULL) {
-                wl = alloc(struct wordlist);
-                wl->wl_next = NULL;
-		wl->wl_prev = NULL;
-	    } else {
-                t = wl;
-                wl = alloc(struct wordlist);
-                wl->wl_next = t;
-		t->wl_prev = wl;
-		wl->wl_prev = NULL;
-            }
-            wl->wl_word = copy(de->d_name);
+            wl = wl_cons(copy(de->d_name), wl);
         }
     (void) closedir(wdir);
 
@@ -345,28 +323,16 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
 static wordlist *
 cctowl(struct ccom *cc, bool sib)
 {
-    wordlist *wl, *end;
+    wordlist *wl;
     
     if (!cc)
         return (NULL);
+    wl = cctowl(cc->cc_child, TRUE);
     if (!cc->cc_invalid) {
-        wl = alloc(struct wordlist);
-        wl->wl_word = copy(cc->cc_name);
-        wl->wl_prev = NULL;
-        wl->wl_next = cctowl(cc->cc_child, TRUE);
-        if (wl->wl_next)
-            wl->wl_next->wl_prev = wl;
-    } else
-        wl = cctowl(cc->cc_child, TRUE);
+        wl = wl_cons(copy(cc->cc_name), wl);
+    }
     if (sib) {
-        if (wl) {
-            for (end = wl; end->wl_next; end = end->wl_next)
-                ;
-            end->wl_next = cctowl(cc->cc_sibling, TRUE);
-            if (end->wl_next)
-                end->wl_next->wl_prev = end;
-        } else
-            wl = cctowl(cc->cc_sibling, TRUE);
+        wl = wl_append(wl, cctowl(cc->cc_sibling, TRUE));
     }
     return (wl);
 }

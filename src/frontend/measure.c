@@ -127,9 +127,7 @@ com_meas(wordlist *wl) {
    }
 
    sprintf(newvec, "%s = %e", outvar, result);
-   wl_let = alloc(struct wordlist);
-   wl_let->wl_next = NULL;
-   wl_let->wl_word = copy(newvec);
+   wl_let = wl_cons(copy(newvec), NULL);
    com_let(wl_let);
    wl_free(wl_let);
 //   fprintf(stdout, "in: %s\n", line_in);
@@ -433,10 +431,7 @@ static wordlist *measure_parse_line( char *line )
        txfree( extra_item ) ;
        item = long_str ;
      }
-     new_item = alloc(struct wordlist) ;
-     new_item->wl_word = item ;
-     new_item->wl_next = NULL ;
-     new_item->wl_prev = NULL ;
+     new_item = wl_cons(item, NULL);
      wl = wl_append(wl, new_item) ;
    } while( line && *line ) ;
  

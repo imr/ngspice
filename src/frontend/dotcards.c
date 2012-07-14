@@ -438,17 +438,10 @@ fixdotplot(wordlist *wl)
             d2 = *d;
             tfree(wl->wl_word);
             wl->wl_word = copy("xlimit");
-            wl->wl_next = alloc(struct wordlist);
-            wl->wl_next->wl_prev = wl;
-            wl = wl->wl_next;
-            
             printnum(numbuf, d1);
-            wl->wl_word = copy(numbuf);
-            wl->wl_next = alloc(struct wordlist);
-            wl->wl_next->wl_prev = wl;
-            wl = wl->wl_next;
+            wl_append_word(NULL, &wl, copy(numbuf));
             printnum(numbuf, d2);
-            wl->wl_word = copy(numbuf);
+            wl_append_word(NULL, &wl, copy(numbuf));
         }
         wl = wl->wl_next;
     }
@@ -544,8 +537,7 @@ gettoks(char *s)
 	    continue;
 	l =strrchr(t, '('/*)*/);
 	if (!l) {
-	    wl = alloc(struct wordlist);
-	    wl->wl_word = copy(t);
+	    wl = wl_cons(copy(t), NULL);
 	    *prevp = wl;
 	    prevp = &wl->wl_next;
 	    continue;
@@ -560,7 +552,9 @@ gettoks(char *s)
 	if (c)
 	    *c = 0;
 
-	wl = alloc(struct wordlist);
+	wl = wl_cons(NULL, NULL);
+	*prevp = wl;
+	prevp = &wl->wl_next;
 
 	if (*(l - 1) == 'i' || *(l - 1) == 'I') {
 	    char buf[513];
@@ -570,13 +564,9 @@ gettoks(char *s)
 	} else
 	    wl->wl_word = copy(l + 1);
 
-	*prevp = wl;
-	prevp = &wl->wl_next;
-
 	if (c != r) {
 	    *r = 0;
-	    wl = alloc(struct wordlist);
-	    wl->wl_word = copy(c + 1);
+	    wl = wl_cons(copy(c + 1), NULL);
 	    *prevp = wl;
 	    prevp = &wl->wl_next;
 	}

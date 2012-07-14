@@ -46,17 +46,7 @@ wl_copy(wordlist *wlist)
     wordlist *wl, *nwl = NULL, *w = NULL;
 
     for (wl = wlist; wl; wl = wl->wl_next) {
-        if (nwl == NULL) {
-            nwl = w = alloc(struct wordlist);
-	    w->wl_prev = NULL;
-	    w->wl_next = NULL;
-        } else {
-            w->wl_next = alloc(struct wordlist);
-            w->wl_next->wl_prev = w;
-            w = w->wl_next;
-	    w->wl_next = NULL;
-        }
-        w->wl_word = copy(wl->wl_word);
+        wl_append_word(&nwl, &w, copy(wl->wl_word));
     }
     return (nwl);
 }
@@ -119,19 +109,9 @@ wl_build(char **v)
 {
     wordlist *wlist = NULL;
     wordlist *wl = NULL;
-    wordlist *cwl;
 
     while (*v) {
-        cwl = alloc(struct wordlist);
-        cwl->wl_prev = wl;
-        if (wl)
-            wl->wl_next = cwl;
-        else {
-            wlist = cwl;
-            cwl->wl_next = NULL;
-	}
-        cwl->wl_word = copy(*v);
-        wl = cwl;
+        wl_append_word(&wlist, &wl, copy(*v));
         v++;
     }
     return (wlist);

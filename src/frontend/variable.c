@@ -76,9 +76,7 @@ cp_varwl(struct variable *var)
 		var->va_type);
 	return (NULL);
     }
-    wl = alloc(struct wordlist);
-    wl->wl_next = wl->wl_prev = NULL;
-    wl->wl_word = copy(buf);
+    wl = wl_cons(copy(buf), NULL);
     return (wl);
 }
 
@@ -689,11 +687,10 @@ cp_variablesubst(wordlist *wlist)
                 if (nwl) {
                     (void) strcat(buf, nwl->wl_word);
                     tfree(nwl->wl_word);
+                    nwl->wl_word = copy(buf);
                 } else {
-                    nwl = alloc(struct wordlist);
-		    nwl->wl_next = nwl->wl_prev = NULL;
+                    nwl = wl_cons(copy(buf), NULL);
                 }
-                nwl->wl_word = copy(buf);
             }
 	    
             (void) strcpy(tbuf, t); /* MW. Save t*/
@@ -742,13 +739,8 @@ vareval(char *string)
     switch (*string) {
 
         case '$':
-        wl = alloc(struct wordlist);
-        wl->wl_next = wl->wl_prev = NULL;
-
-
         (void) sprintf(buf, "%d", getpid());
-
-        wl->wl_word = copy(buf);
+        wl = wl_cons(copy(buf), NULL);
         tfree(oldstring);
         return (wl);
 
@@ -769,21 +761,17 @@ vareval(char *string)
         return (wl);
     
         case '?':
-        wl = alloc(struct wordlist);
-        wl->wl_next = wl->wl_prev = NULL;
         string++;
         for (v = variables; v; v = v->va_next)
             if (eq(v->va_name, string))
                 break;
         if (!v)
             v = cp_enqvar(string);
-        wl->wl_word = copy(v ? "1" : "0");
+        wl = wl_cons(copy(v ? "1" : "0"), NULL);
         tfree(oldstring);
         return (wl);
         
         case '#':
-        wl = alloc(struct wordlist);
-        wl->wl_next = wl->wl_prev = NULL;
         string++;
         for (v = variables; v; v = v->va_next)
             if (eq(v->va_name, string))
@@ -802,14 +790,12 @@ vareval(char *string)
         else
             i = (v->va_type != CP_BOOL);
         (void) sprintf(buf, "%d", i);
-        wl->wl_word = copy(buf);
+        wl = wl_cons(copy(buf), NULL);
         tfree(oldstring);
         return (wl);
 
         case '\0':
-        wl = alloc(struct wordlist);
-        wl->wl_next = wl->wl_prev = NULL;
-        wl->wl_word = copy("$");
+        wl = wl_cons(copy("$"), NULL);
         tfree(oldstring);
         return (wl);
     }
@@ -833,9 +819,7 @@ vareval(char *string)
         v = cp_enqvar(string);
     }
     if (!v && (s = getenv(string)) != NULL) {
-        wl = alloc(struct wordlist);
-        wl->wl_next = wl->wl_prev = NULL;
-        wl->wl_word = copy(s);
+        wl = wl_cons(copy(s), NULL);
         tfree(oldstring);
         return (wl);
     }

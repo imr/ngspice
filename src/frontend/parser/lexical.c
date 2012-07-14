@@ -124,8 +124,7 @@ nloop:  i = 0;
     paren = 0;
     bzero(linebuf, NEW_BSIZE_SP);
     bzero(buf, NEW_BSIZE_SP);
-    wlist = cw = alloc(struct wordlist);
-    cw->wl_next = cw->wl_prev = NULL;
+    wlist = cw = wl_cons(NULL, NULL);
     for (;;) {
         if (string) {
             c = *string++;
