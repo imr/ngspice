@@ -275,25 +275,38 @@ wl_range(wordlist *wl, int low, int up)
 }
 
 
+/*
+ *  prepend a new `word'
+ *     to the front of the given `wlist' wordlist
+ *  and return this new list
+ */
+
 wordlist *
-wl_cons(char *word, wordlist *tail)
+wl_cons(char *word, wordlist *wlist)
 {
-    wordlist *w = alloc(struct wordlist);
-    w->wl_next = tail;
+    wordlist *w = alloc(wordlist);
+    w->wl_next = wlist;
     w->wl_prev = NULL;
     w->wl_word = word;
 
-    if (tail)
-        tail->wl_prev = w;
+    if (wlist)
+        wlist->wl_prev = w;
 
     return w;
 }
 
 
+/*
+ * given a wordlist
+ *   described by a `first' and `last' wordlist element
+ * append a new `word'
+ *   and update the given `first' and `last' pointers accordingly
+ */
+
 void
 wl_append_word(wordlist **first, wordlist **last, char *word)
 {
-    wordlist *w = alloc(struct wordlist);
+    wordlist *w = alloc(wordlist);
     w->wl_next = NULL;
     w->wl_prev = (*last);
     w->wl_word = word;
@@ -306,6 +319,12 @@ wl_append_word(wordlist **first, wordlist **last, char *word)
     (*last) = w;
 }
 
+
+/*
+ * given a pointer `wl' into a wordlist
+ *   cut off the rest of the list
+ *   and return this rest
+ */
 
 wordlist *
 wl_chop_rest(wordlist *wl)
