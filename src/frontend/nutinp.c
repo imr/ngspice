@@ -166,12 +166,10 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
         }
 
         /* Now that the deck is loaded, do the commands... */
-        if (controls) {
-            for (end = wl = wl_reverse(controls); wl;
-                    wl = wl->wl_next)
-                (void) cp_evloop(wl->wl_word);
-            wl_free(end);
-        }
+        controls = wl_reverse(controls);
+        for (wl = controls; wl; wl = wl->wl_next)
+            (void) cp_evloop(wl->wl_word);
+        wl_free(controls);
     }
 
     /* Now reset everything.  Pop the control stack, and fix up the IO

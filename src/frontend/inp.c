@@ -668,11 +668,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
         }
 
         /* Now that the deck is loaded, do the commands, if there are any */
-        if (controls) {
-            for (end = wl = wl_reverse(controls); wl; wl = wl->wl_next)
-                cp_evloop(wl->wl_word);
-            wl_free(end);
-        }
+        controls = wl_reverse(controls);
+        for (wl = controls; wl; wl = wl->wl_next)
+            cp_evloop(wl->wl_word);
+        wl_free(controls);
     }
 
     /* linked list dbs is used to store the "save" or .save data (defined in breakp2.c),
