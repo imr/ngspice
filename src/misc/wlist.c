@@ -155,14 +155,17 @@ wl_append(wordlist *wlist, wordlist *nwl)
 wordlist *
 wl_reverse(wordlist *wl)
 {
-    while (wl) {
+    if (!wl)
+        return wl;
+
+    for (;;) {
          wordlist *t = wl->wl_next;
          wl->wl_next = wl->wl_prev;
          wl->wl_prev = t;
+         if (!t)
+             return wl;
          wl = t;
     }
-
-    return wl;
 }
 
 
