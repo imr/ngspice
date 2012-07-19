@@ -27,8 +27,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 void
 ft_cpinit(void)
 {
-    wordlist *wl;
-    wordlist wl1, wl2, wl3;
     bool found = FALSE, t = TRUE;
     char buf[BSIZE_SP], **x, *s, *r,*copys;
     struct comm *c;
@@ -176,6 +174,9 @@ ft_cpinit(void)
     /* Make vectors from values in predefs[] for the current plot. 
      Define functions from entries in udfs[] (like user defined functions).
      */
+
+    {
+    wordlist wl1, wl2, wl3;
     wl1.wl_next = &wl2;
     wl1.wl_prev = NULL;
     wl2.wl_next = NULL;
@@ -211,6 +212,7 @@ ft_cpinit(void)
         wl2.wl_word = udfs[i + 1];
         com_define(&wl1);
     }
+    }
 
     /* Reset this for the front end. */
     cp_hash = '*';
@@ -225,10 +227,14 @@ ft_cpinit(void)
             (void) sprintf(buf, "sourcepath = ( %s %s %s )", DIR_CWD, Lib_Path, Inp_Path);
         else
             (void) sprintf(buf, "sourcepath = ( %s %s )", DIR_CWD, Lib_Path);
+
+        {
+        wordlist *wl;
         wl = cp_doglob(cp_lexer(buf));
         cp_striplist(wl);
         com_set(wl);
         wl_free(wl);
+        }
         
         /* Now source the standard startup file spinit or tclspinit. */
 
@@ -352,7 +358,6 @@ cp_oddcomm(char *s, wordlist *wl)
 {
     FILE *fp;
     char buf[BSIZE_SP];
-    wordlist ww;
 
     if ((fp = inp_pathopen(s, "r")) != NULL) {
         (void) fclose(fp);
@@ -369,11 +374,10 @@ cp_oddcomm(char *s, wordlist *wl)
         cp_remvar("argv");
         return (TRUE);
     } else if (wl && eq(wl->wl_word, "=")) {
-        ww.wl_next = wl;
-        wl->wl_prev = &ww;
-        ww.wl_prev = NULL;
-        ww.wl_word = s;
-        com_let(&ww);
+        wordlist *ww = wl_cons(copy(s), wl);
+        com_let(ww);
+        wl_chop_rest(ww);
+        wl_free(ww);
         return (TRUE);
     } else
         return (FALSE);
