@@ -24,16 +24,12 @@ com_removecirc(wordlist *wl)
     struct circ *caux=NULL;
     struct plot *p;
     struct plot *paux;
-    struct wordlist *wlist;
     int auxCir=1,i,auxPlot;
 
     char* namecircuit;
     char buf[80];
 
     NG_IGNORE(wl);
-
-    /* Allocation of a temp wordlist */
-    wlist = TMALLOC(struct wordlist, 1);
 
     if (ft_curckt == NULL) {
         fprintf(cp_err, "Error: there is no circuit loaded.\n");
@@ -114,22 +110,18 @@ com_removecirc(wordlist *wl)
         ft_curckt->ci_nodes = cp_kwswitch(CT_NODENAMES, ft_circuits->ci_nodes);
     }*/
 if(ft_circuits&&caux->ci_next){
+    struct wordlist *wlist;
 	sprintf(buf,"%d",auxCir);
-    wlist->wl_next = NULL;
-    wlist->wl_prev = NULL;
-    wlist->wl_word = buf;
-    
+    wlist = wl_cons(buf, NULL);
 	com_scirc(wlist);
-	free(wlist);
+    wl_free(wlist);
 }
 else if(ft_circuits){
+    struct wordlist *wlist;
     sprintf(buf,"%d",(auxCir-1));
-    wlist->wl_next = NULL;
-    wlist->wl_prev = NULL;
-    wlist->wl_word = buf;
-    
+    wlist = wl_cons(buf, NULL);
 	com_scirc(wlist);
-	free(wlist);
+    wl_free(wlist);
     
 }
 else
