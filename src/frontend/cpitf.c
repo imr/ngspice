@@ -155,21 +155,21 @@ ft_cpinit(void)
     /* Make the prompt use only the last component of the path... */
 
     if (DIR_TERM) {
-	for (s = cp_program; s && *s; s++)
-	    ;
-	s--;
-	while ((s > cp_program) && (*s != DIR_TERM))
-	    s--;
-	if (*s == DIR_TERM)
-	    s++;
-	(void) strcpy(buf, s);
-	for (s = buf; *s && (*s != '.'); s++)
-	    ;
-	*s = '\0';
-	(void) strcat(buf, " ! -> ");
+        for (s = cp_program; s && *s; s++)
+            ;
+        s--;
+        while ((s > cp_program) && (*s != DIR_TERM))
+            s--;
+        if (*s == DIR_TERM)
+            s++;
+        (void) strcpy(buf, s);
+        for (s = buf; *s && (*s != '.'); s++)
+            ;
+        *s = '\0';
+        (void) strcat(buf, " ! -> ");
 
     } else {
-	(void) sprintf(buf, "%s ! -> ", cp_program);
+        (void) sprintf(buf, "%s ! -> ", cp_program);
     }
 
     cp_vset("prompt", CP_STRING, buf);
@@ -318,14 +318,14 @@ cp_istrue(wordlist *wl)
                 if (v->v_realdata[i] != 0.0) {
                     free_pnode(pn);
                     return (TRUE);
-		}
+                }
         } else {
             for (i = 0; i < v->v_length; i++)
                 if ((realpart(v->v_compdata[i]) != 0.0) ||
                     (imagpart(v->v_compdata[i]) != 0.0)) {
-		    free_pnode(pn);
+                    free_pnode(pn);
                     return (TRUE);
-		}
+                }
         }
 
     free_pnode(pn);

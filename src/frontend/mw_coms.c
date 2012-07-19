@@ -1,4 +1,4 @@
-/* Michael Widlok 		2 Jun 1999 */
+/* Michael Widlok               2 Jun 1999 */
 /* New commands for unloading circuits */
 
 #include "ngspice/ngspice.h"
@@ -41,8 +41,8 @@ com_removecirc(wordlist *wl)
     if_cktfree(ct->ci_ckt, ct->ci_symtab);
 
     for (v = ct->ci_vars; v; v = next) {
-	next = v->va_next;
-	tfree(v);
+        next = v->va_next;
+        tfree(v);
     }
 
     /* PN FTESTATS*/
@@ -54,7 +54,7 @@ com_removecirc(wordlist *wl)
 
     /* The circuit  being removed is the first loaded and you have more circuits */
     if (ft_curckt == ft_circuits  &&  ft_circuits->ci_next)
-    	ft_circuits = ft_circuits->ci_next;
+        ft_circuits = ft_circuits->ci_next;
 
     /* The circuit being removed id the first loaded and there are no more circuits */
     else if (ft_circuits->ci_next == NULL)
@@ -85,21 +85,21 @@ com_removecirc(wordlist *wl)
         plot_list = NULL;
 
     else if (plot_list && plot_list->pl_next) {
-	p = plot_list;
-	while (p) {
+        p = plot_list;
+        while (p) {
             auxPlot = 1;
             /* If the plot is in the first position */
             if (plot_list->pl_next && strcmp(plot_list->pl_title, namecircuit) == 0)
                 plot_list = plot_list->pl_next;
-	    /* otherwise we run over the list of plots */
+            /* otherwise we run over the list of plots */
             else {
                 for (; strcmp(p->pl_title, namecircuit) != 0 && p->pl_next; p = p->pl_next)
                     auxPlot++;
                 if (strcmp(p->pl_title, namecircuit) == 0) {
                     paux = plot_list;
-	            for (i = 1; i < auxPlot-1; i++)
+                    for (i = 1; i < auxPlot-1; i++)
                         paux = paux->pl_next;
-	            paux->pl_next = paux->pl_next->pl_next;
+                    paux->pl_next = paux->pl_next->pl_next;
                 }
             }
             p = p->pl_next;
@@ -113,18 +113,18 @@ com_removecirc(wordlist *wl)
 
     if (ft_circuits && caux->ci_next) {
         struct wordlist *wlist;
-	sprintf(buf, "%d", auxCir);
+        sprintf(buf, "%d", auxCir);
         wlist = wl_cons(copy(buf), NULL);
-	com_scirc(wlist);
+        com_scirc(wlist);
         wl_free(wlist);
     }
     else if (ft_circuits) {
         struct wordlist *wlist;
         sprintf(buf, "%d", auxCir-1);
         wlist = wl_cons(copy(buf), NULL);
-	com_scirc(wlist);
+        com_scirc(wlist);
         wl_free(wlist);
     }
     else
-	ft_curckt = NULL;
+        ft_curckt = NULL;
 }
