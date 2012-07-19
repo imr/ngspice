@@ -114,14 +114,14 @@ com_removecirc(wordlist *wl)
     if (ft_circuits && caux->ci_next) {
         struct wordlist *wlist;
 	sprintf(buf, "%d", auxCir);
-        wlist = wl_cons(buf, NULL);
+        wlist = wl_cons(copy(buf), NULL);
 	com_scirc(wlist);
         wl_free(wlist);
     }
     else if (ft_circuits) {
         struct wordlist *wlist;
         sprintf(buf, "%d", auxCir-1);
-        wlist = wl_cons(buf, NULL);
+        wlist = wl_cons(copy(buf), NULL);
 	com_scirc(wlist);
         wl_free(wlist);
     }
