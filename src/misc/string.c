@@ -361,7 +361,8 @@ gettok_instance(char **s)
 }
 
 /* get the next token starting at next non white spice, stopping
-   at p, if inc_p is true, then including p, else excluding p
+   at p, if inc_p is true, then including p, else excluding p,
+   return NULL if p is not found
 */
 char *
 gettok_char(char **s, char p, bool inc_p)
@@ -382,6 +383,9 @@ gettok_char(char **s, char p, bool inc_p)
         )  {
         spice_dstring_append_char( &buf, *(*s)++ ) ;
     }
+    if (c == '\0')
+        /* p not found */
+        return (NULL);
     if (inc_p)
         spice_dstring_append_char( &buf, *(*s)++ ) ;
 
