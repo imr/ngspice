@@ -2122,7 +2122,8 @@ inp_remove_ws( char *s )
 
             big_buff[big_buff_index++] = *curr;
         }
-        curr++;
+        if ( *curr != '\0' )
+            curr++;
         if ( isspace(*curr) ) {
             while ( isspace(*curr) ) curr++;
             if ( is_expression ) {
@@ -2132,7 +2133,7 @@ inp_remove_ws( char *s )
             }
         }
     }
-//  big_buff[big_buff_index++] = *curr;
+
     big_buff[big_buff_index] = '\0';
 
     buffer = copy(big_buff);
@@ -4024,13 +4025,22 @@ static void inp_compat(struct line *deck)
                         title_tok, node1, node2, title_tok);
                 // get the expression
                 str_ptr = gettok(&cut_line); /* ignore 'table' */
-                tfree(str_ptr);
-                expression = gettok_char(&cut_line, '}', TRUE); /* expression */
-                if (!expression) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n", 
+                if (cieq(str_ptr, "table"))
+                    tfree(str_ptr);
+                else {
+                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
                         card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
+                str_ptr =  gettok_char(&cut_line, '{', FALSE);
+                expression = gettok_char(&cut_line, '}', TRUE); /* expression */
+                if ((!expression) || (!str_ptr)) {
+                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
+                        card->li_linenum_orig, card->li_line);
+                    controlled_exit(EXIT_BAD);
+                }
+                else
+                    tfree(str_ptr);
                 /* remove '{' and '}' from expression */
                 if ((str_ptr = strstr( expression, "{" )) != NULL)
                     *str_ptr = ' ';
@@ -4047,6 +4057,11 @@ static void inp_compat(struct line *deck)
                 /* get first two numbers to establish extrapolation */
                 str_ptr = cut_line;
                 ffirstno = gettok_node(&cut_line);
+                if (!ffirstno) {
+                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
+                        card->li_linenum_orig, card->li_line);
+                    controlled_exit(EXIT_BAD);
+                }
                 firstno = copy(ffirstno);
                 fnumber = INPevaluate(&ffirstno, &nerror, TRUE);
                 secondno = gettok_node(&cut_line);
@@ -4065,7 +4080,7 @@ static void inp_compat(struct line *deck)
                 delta = (lnumber-fnumber)/2.;
                 lastlastno = gettok_node(&cut_line);
                 if (!secondno || (*midline == 0) || (delta <= 0.) || !lastlastno) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n", 
+                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
                         card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
@@ -4208,13 +4223,22 @@ static void inp_compat(struct line *deck)
                         title_tok, node1, node2, title_tok);
                 // get the expression
                 str_ptr = gettok(&cut_line); /* ignore 'table' */
-                tfree(str_ptr);
-                expression = gettok_char(&cut_line, '}', TRUE); /* expression */
-                if (!expression) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n", 
+                if (cieq(str_ptr, "table"))
+                    tfree(str_ptr);
+                else {
+                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
                         card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
+                str_ptr =  gettok_char(&cut_line, '{', FALSE);
+                expression = gettok_char(&cut_line, '}', TRUE); /* expression */
+                if ((!expression) || (!str_ptr)) {
+                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
+                        card->li_linenum_orig, card->li_line);
+                    controlled_exit(EXIT_BAD);
+                }
+                else
+                    tfree(str_ptr);
                 /* remove '{' and '}' from expression */
                 if ((str_ptr = strstr( expression, "{" )) != NULL)
                     *str_ptr = ' ';
@@ -4231,6 +4255,11 @@ static void inp_compat(struct line *deck)
                 /* get first two numbers to establish extrapolation */
                 str_ptr = cut_line;
                 ffirstno = gettok_node(&cut_line);
+                if (!ffirstno) {
+                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
+                        card->li_linenum_orig, card->li_line);
+                    controlled_exit(EXIT_BAD);
+                }
                 firstno = copy(ffirstno);
                 fnumber = INPevaluate(&ffirstno, &nerror, TRUE);
                 secondno = gettok_node(&cut_line);
@@ -4249,7 +4278,7 @@ static void inp_compat(struct line *deck)
                 delta = (lnumber-fnumber)/2.;
                 lastlastno = gettok_node(&cut_line);
                 if (!secondno || (*midline == 0) || (delta <= 0.) || !lastlastno) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n", 
+                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
                         card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
@@ -4349,6 +4378,9 @@ static void inp_compat(struct line *deck)
                 card               = param_end;
 
                 param_beg = param_end = NULL;
+                tfree(title_tok);
+                tfree(node1);
+                tfree(node2);
             }
         }
         /* Rxxx n1 n2 R = {equation} or Rxxx n1 n2 {equation}
@@ -4356,20 +4388,25 @@ static void inp_compat(struct line *deck)
            BRxxx pos neg I = V(pos, neg)/{equation}
         */
         else if ( *curr_line == 'r' ) {
-            if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")) 
-                &&  (!strstr(curr_line, "temper")) &&  (!strstr(curr_line, "hertz"))
-                &&  (!strstr(curr_line, "time"))) {
-                /* no handling in B-Source, so we have to prepare ternary fcn
-                   for numparam */
-                if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) )
-                    card->li_line = inp_fix_ternary_operator_str( curr_line, TRUE );
-                continue;
-            }
             cut_line = curr_line;
             /* make BRxxx pos neg I = V(pos, neg)/{equation}*/
             title_tok = gettok(&cut_line);
             node1 =  gettok(&cut_line);
             node2 =  gettok(&cut_line);
+            /* check only after skipping Rname and nodes, either may contain time (e.g. Rtime)*/
+            if ((!strstr(cut_line, "v(")) &&  (!strstr(cut_line, "i(")) 
+                &&  (!strstr(cut_line, "temper")) &&  (!strstr(cut_line, "hertz"))
+                &&  (!strstr(cut_line, "time"))) {
+                /* no handling in B-Source, so we have to prepare ternary fcn
+                   for numparam */
+                if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) )
+                    card->li_line = inp_fix_ternary_operator_str( curr_line, TRUE );
+                tfree(title_tok);
+                tfree(node1);
+                tfree(node2);
+                continue;
+            }
+
             /* Find equation, starts with '{', till end of line */
             str_ptr = strstr(cut_line, "{");
             if (str_ptr == NULL) {
@@ -4433,6 +4470,9 @@ static void inp_compat(struct line *deck)
             new_line->li_next = tmp_ptr;
             // point 'card' pointer to the new line
             card              = new_line;
+            tfree(title_tok);
+            tfree(node1);
+            tfree(node2);
         }
         /* Cxxx n1 n2 C = {equation} or Cxxx n1 n2 {equation}
            -->
@@ -4441,20 +4481,24 @@ static void inp_compat(struct line *deck)
            Bxxx  n2 n1  I = i(Exxx) * equation
          */
         else if ( *curr_line == 'c' ) {
-            if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")) 
-                &&  (!strstr(curr_line, "temper")) &&  (!strstr(curr_line, "hertz"))
-                &&  (!strstr(curr_line, "time"))) {
+            cut_line = curr_line;
+            title_tok = gettok(&cut_line);
+            node1 =  gettok(&cut_line);
+            node2 =  gettok(&cut_line);
+            /* check only after skipping Cname and nodes, either may contain time (e.g. Ctime)*/
+            if ((!strstr(cut_line, "v(")) &&  (!strstr(cut_line, "i(")) 
+                &&  (!strstr(cut_line, "temper")) &&  (!strstr(cut_line, "hertz"))
+                &&  (!strstr(cut_line, "time"))) {
                 /* no handling in B-Source, so we have to prepare ternary fcn
                    for numparam */
                 if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) )
                     card->li_line = inp_fix_ternary_operator_str( curr_line, TRUE );
+                tfree(title_tok);
+                tfree(node1);
+                tfree(node2);
                 continue;
             }
-            cut_line = curr_line;
-            /* title and nodes */
-            title_tok = gettok(&cut_line);
-            node1 =  gettok(&cut_line);
-            node2 =  gettok(&cut_line);
+
             /* Find equation, starts with '{', till end of line */
             str_ptr = strstr(cut_line, "{");
             if (str_ptr == NULL) {
@@ -4538,6 +4582,9 @@ static void inp_compat(struct line *deck)
             card               = param_end;
 
             param_beg = param_end = NULL;
+            tfree(title_tok);
+            tfree(node1);
+            tfree(node2);
         }
 
         /* Lxxx n1 n2 L = {equation} or Lxxx n1 n2 {equation}
@@ -4547,20 +4594,24 @@ static void inp_compat(struct line *deck)
            Bxxx n1 n2 V = v(n-aux) * equation
          */
         else if ( *curr_line == 'l' ) {
-            if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")) 
-                &&  (!strstr(curr_line, "temper")) &&  (!strstr(curr_line, "hertz"))
-                &&  (!strstr(curr_line, "time"))) {
-                /* no handling in B-Source, so we have to prepare ternary fcn
-                   for numparam */
-                if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) )
-                    card->li_line = inp_fix_ternary_operator_str( curr_line, TRUE );
-                continue;
-            }
             cut_line = curr_line;
             /* title and nodes */
             title_tok = gettok(&cut_line);
             node1 =  gettok(&cut_line);
             node2 =  gettok(&cut_line);
+            if ((!strstr(cut_line, "v(")) &&  (!strstr(cut_line, "i(")) 
+                &&  (!strstr(cut_line, "temper")) &&  (!strstr(cut_line, "hertz"))
+                &&  (!strstr(cut_line, "time"))) {
+                /* no handling in B-Source, so we have to prepare ternary fcn
+                   for numparam */
+                if ( strstr( curr_line, "?" ) && strstr( curr_line, ":" ) )
+                    card->li_line = inp_fix_ternary_operator_str( curr_line, TRUE );
+                tfree(title_tok);
+                tfree(node1);
+                tfree(node2);
+                continue;
+            }
+
             /* Find equation, starts with '{', till end of line */
             str_ptr = strstr(cut_line, "{");
             if (str_ptr == NULL) {
@@ -4634,7 +4685,7 @@ static void inp_compat(struct line *deck)
                 param_end->li_line    = ckt_array[i];
                 param_end->li_linenum = 0;
             }
-            // comment out current variable capacitor line
+            // comment out current variable inductor line
             *(card->li_line)   = '*';
             // insert new param lines immediately after current line
             tmp_ptr            = card->li_next;
@@ -4644,6 +4695,9 @@ static void inp_compat(struct line *deck)
             card               = param_end;
 
             param_beg = param_end = NULL;
+            tfree(title_tok);
+            tfree(node1);
+            tfree(node2);
         }
         /* .probe -> .save
            .print, .plot, .save, .four,
@@ -4695,7 +4749,7 @@ static void inp_compat(struct line *deck)
              * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
 
              The user may set any out_variable to par(' expr ').
-             We have to teplace this by v(pa_xx) and generate a B source line.
+             We have to replace this by v(pa_xx) and generate a B source line.
 
              * ----------------------------------------------------------------- */
             if ( ciprefix(".meas", curr_line) ) {
