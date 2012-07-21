@@ -130,11 +130,7 @@ static void ctl_free(struct control *ctrl)
 static void
 docommand(wordlist *wlist)
 {
-    char *r, *s, *t;
-    int nargs;
-    int i;
-    struct comm *command;
-    wordlist *wl, *nextc, *ee, *rwlist;
+    wordlist *rwlist;
 
     if (cp_debug) {
         printf("docommand ");
@@ -160,22 +156,26 @@ docommand(wordlist *wlist)
 
     /* Now loop through all of the commands given. */
     rwlist = wlist;
-    do {
+    while (wlist) {
+
+        char *s;
+        int i;
+        struct comm *command;
+        wordlist *nextc, *ee;
+
+        if (eq(wlist->wl_word, cp_csep)) {
+            wlist = wlist->wl_next;
+            continue;
+        }
+
         for (nextc = wlist; nextc; nextc = nextc->wl_next)
             if (eq(nextc->wl_word, cp_csep))
                 break;
 
         /* Temporarily hide the rest of the command... */
-        if (nextc && nextc->wl_prev)
-            nextc->wl_prev->wl_next = NULL;
         ee = wlist->wl_prev;
-        if (ee)
-            wlist->wl_prev = NULL;
-
-        if (nextc == wlist) {
-            /* There was no text... */
-            goto out;
-        }
+        wl_chop(nextc);
+        wl_chop(wlist);
 
         /* And do the redirection. */
         cp_ioreset();
@@ -195,22 +195,18 @@ docommand(wordlist *wlist)
         s = wlist->wl_word;
 
         /* Look for the command in the command list. */
-        for (i = 0; cp_coms[i].co_comname; i++) {
-            /* strcmp(cp_coms[i].co_comname, s) ... */
-            for (t = cp_coms[i].co_comname, r = s; *t && *r;
-                    t++, r++)
-                if (*t != *r)
-                    break;
-            if (!*t && !*r)
+        for (i = 0; cp_coms[i].co_comname; i++)
+            if (strcmp(cp_coms[i].co_comname, s) == 0)
                 break;
-        }
+
+        command = &cp_coms[i];
 
         /* Now give the user-supplied command routine a try... */
-        if (!cp_coms[i].co_func && cp_oddcomm(s, wlist->wl_next))
+        if (!command->co_func && cp_oddcomm(s, wlist->wl_next))
             goto out;
 
         /* If it's not there, try it as a unix command. */
-        if (!cp_coms[i].co_comname) {
+        if (!command->co_comname) {
             if (cp_dounixcom && cp_unixcom(wlist))
                 goto out;
             fprintf(cp_err,"%s: no such command available in %s\n",
@@ -218,21 +214,18 @@ docommand(wordlist *wlist)
             goto out;
 
             /* If it hasn't been implemented */
-        } else if (!cp_coms[i].co_func) {
+        } else if (!command->co_func) {
             fprintf(cp_err,"%s: command is not implemented\n", s);
             goto out;
             /* If it's there but spiceonly, and this is nutmeg, error. */
-        } else if (ft_nutmeg && cp_coms[i].co_spiceonly) {
+        } else if (ft_nutmeg && command->co_spiceonly) {
             fprintf(cp_err,"%s: command available only in spice\n", s);
             goto out;
         }
 
         /* The command was a valid spice/nutmeg command. */
-        command = &cp_coms[i];
-        nargs = 0;
-        for (wl = wlist->wl_next; wl; wl = wl->wl_next)
-            nargs++;
         {
+            int nargs = wl_length(wlist->wl_next);
             if (nargs < command->co_minargs) {
                 if (command->co_argfn) {
                     command->co_argfn (wlist->wl_next, command);
@@ -246,17 +239,15 @@ docommand(wordlist *wlist)
             }
         }
 
-        /* Now fix the pointers and advance wlist. */
 out:
-        wlist->wl_prev = ee;
-        if (nextc) {
-            for(wl=wlist; wl->wl_next; wl=wl->wl_next)
-                ;
-            wl->wl_next = nextc;
-            nextc->wl_prev = wl;
-            wlist = nextc->wl_next;
-        }
-    } while (nextc && wlist);
+        wl_append(ee, wlist);
+        wl_append(wlist, nextc);
+
+        if(!ee)
+            rwlist = wlist;
+
+        wlist = nextc;
+    }
 
     wl_free(rwlist);
 
@@ -264,7 +255,6 @@ out:
     cp_periodic();
 
     cp_ioreset();
-    return;
 }
 
 

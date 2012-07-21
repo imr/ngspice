@@ -20,12 +20,12 @@ static wordlist *
 asubst(wordlist *wlist)
 {
     struct alias *al;
-    wordlist *wl, *w = NULL;
+    wordlist *wl;
     char *word;
 
     word = wlist->wl_word;
     if (*word == '\\') {
-        wlist->wl_word++;
+        wlist->wl_word++;       /* FIXME !!!, free() will fail !!! */
         return (NULL);
     }
     for (al = cp_aliases; al; al = al->al_next)
@@ -41,11 +41,7 @@ asubst(wordlist *wlist)
         cp_lastone->hi_wlist = wl_copy(wl);
     } else {
         /* If it had no history args, then append the rest of the wl */
-        for (w = wl; w->wl_next; w = w->wl_next)
-            ;
-        w->wl_next = wl_copy(wlist->wl_next);
-        if (w->wl_next)
-            w->wl_next->wl_prev = w;
+        wl_append(wl, wl_copy(wlist->wl_next));
     }
     return (wl);
 }
@@ -57,31 +53,35 @@ asubst(wordlist *wlist)
 wordlist *
 cp_doalias(wordlist *wlist)
 {
-    int ntries;
-    wordlist *nwl, *nextc = NULL, *end = NULL;
     wordlist *comm;
-
-    while (wlist && eq(wlist->wl_word, cp_csep))
-        wlist = wlist->wl_next;
-    wlist->wl_prev = NULL;
 
     /* The alias process is going to modify the "last" line typed, so
      * save a copy of what it really is and restore it after aliasing
      * is done. We have to do tricky things do get around the problems
      * with ; ...  */
     comm = wlist;
-    do {
-        end = comm->wl_prev;
-        comm->wl_prev = NULL;
+
+    while (comm) {
+
+        int ntries;
+        wordlist *end, *nextc;
+
+        if (eq(comm->wl_word, cp_csep)) {
+            comm = comm->wl_next;
+            continue;
+        }
+
         for (nextc = comm; nextc; nextc = nextc->wl_next)
-            if (eq(nextc->wl_word, cp_csep)) {
-                if (nextc->wl_prev)
-			nextc->wl_prev->wl_next = NULL;
+            if (eq(nextc->wl_word, cp_csep))
                 break;
-            }
-        
+
+        /* Temporarily hide the rest of the command... */
+        end = comm->wl_prev;
+        wl_chop(comm);
+        wl_chop(nextc);
+
         for (ntries = 21; ntries; ntries--) {
-            nwl = asubst(comm);
+            wordlist *nwl = asubst(comm);
             if (nwl == NULL)
                 break;
             if (eq(nwl->wl_word, comm->wl_word)) {
@@ -100,20 +100,15 @@ cp_doalias(wordlist *wlist)
             wlist->wl_word = NULL;
             return (wlist);
         }
-        comm->wl_prev = end;
+
+        wl_append(end, comm);
+        wl_append(comm, nextc);
+
         if (!end)
             wlist = comm;
-        else
-            end->wl_next = comm;
-        while (comm->wl_next)
-            comm = comm->wl_next;
-        comm->wl_next = nextc;
-        if (nextc) {
-            nextc->wl_prev = comm;
-            nextc = nextc->wl_next;
-            comm = nextc;
-        }
-    } while (nextc);
+
+        comm = nextc;
+    }
 
     return (wlist);
 }
