@@ -674,10 +674,7 @@ doit(struct line *deck, wordlist *modnames) {
 #endif
 
     if(modnames != xmodnames) {
-        if(xmodnames && xmodnames->wl_prev) {
-            xmodnames->wl_prev->wl_next = NULL;
-            xmodnames->wl_prev = NULL;
-        }
+        wl_chop(xmodnames);
         wl_free(modnames);
     }
 

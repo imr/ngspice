@@ -323,6 +323,23 @@ wl_append_word(wordlist **first, wordlist **last, char *word)
 
 /*
  * given a pointer `wl' into a wordlist
+ *   cut off this list from its preceding elements
+ *   and return itself
+ */
+
+wordlist *
+wl_chop(wordlist *wl)
+{
+    if (wl && wl->wl_prev) {
+        wl->wl_prev->wl_next = NULL;
+        wl->wl_prev = NULL;
+    }
+    return wl;
+}
+
+
+/*
+ * given a pointer `wl' into a wordlist
  *   cut off the rest of the list
  *   and return this rest
  */
