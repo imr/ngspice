@@ -4032,8 +4032,8 @@ static void inp_compat(struct line *deck)
                         card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
-                str_ptr =  gettok_char(&cut_line, '{', FALSE);
-                expression = gettok_char(&cut_line, '}', TRUE); /* expression */
+                str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
+                expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
                 if ((!expression) || (!str_ptr)) {
                     fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
                         card->li_linenum_orig, card->li_line);
@@ -4230,8 +4230,8 @@ static void inp_compat(struct line *deck)
                         card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
-                str_ptr =  gettok_char(&cut_line, '{', FALSE);
-                expression = gettok_char(&cut_line, '}', TRUE); /* expression */
+                str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
+                expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
                 if ((!expression) || (!str_ptr)) {
                     fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
                         card->li_linenum_orig, card->li_line);
@@ -4413,7 +4413,7 @@ static void inp_compat(struct line *deck)
                 fprintf(stderr,"ERROR: mal formed R line: %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
-            equation = gettok_char(&str_ptr, '}', TRUE);
+            equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 /* We need to have 'tc1=something */
@@ -4505,7 +4505,7 @@ static void inp_compat(struct line *deck)
                 fprintf(stderr,"ERROR: mal formed C line: %s\n",curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
-            equation = gettok_char(&str_ptr, '}', TRUE);
+            equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 /* We need to have 'tc1=something */
@@ -4618,7 +4618,7 @@ static void inp_compat(struct line *deck)
                 fprintf(stderr,"ERROR: mal formed L line: %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
-            equation = gettok_char(&str_ptr, '}', TRUE);
+            equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 /* We need to have 'tc1=something */

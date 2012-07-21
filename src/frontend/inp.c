@@ -555,8 +555,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                     *s='*';
                     s = dd->li_line + 8;
                     while ( isspace(*s) ) s++;
-                    cstoken[0]=gettok_char(&s, '=', FALSE);                   
-                    cstoken[1]=gettok_char(&s, '=', TRUE);
+                    cstoken[0]=gettok_char(&s, '=', FALSE, FALSE);
+                    cstoken[1]=gettok_char(&s, '=', TRUE, FALSE);
                     cstoken[2]=gettok(&s);
                     for (i=0; i<3;i++) {
                         wl_append_word(&wlist, &wl, cstoken[i]);

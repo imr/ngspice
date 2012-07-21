@@ -362,10 +362,12 @@ gettok_instance(char **s)
 
 /* get the next token starting at next non white spice, stopping
    at p, if inc_p is true, then including p, else excluding p,
-   return NULL if p is not found
+   return NULL if p is not found.
+   If '}', ']'  or ')' and nested is true, find corresponding p
+
 */
 char *
-gettok_char(char **s, char p, bool inc_p)
+gettok_char(char **s, char p, bool inc_p, bool nested)
 {
     char c;
     char *token ;				/* return token */
@@ -378,15 +380,38 @@ gettok_char(char **s, char p, bool inc_p)
         return (NULL);  /* return NULL if we come to end of line */
 
     spice_dstring_init(&buf) ;
-    while ((c = **s) != '\0' && 
-         ( **s != p )
-        )  {
-        spice_dstring_append_char( &buf, *(*s)++ ) ;
+    if (nested && (( p == '}' ) || ( p == ')' ) || ( p == ']'))) {
+        char q;
+        int count = 0;
+        /* find opening bracket */
+        if (( p == '}' ) || ( p == ']' )) q = p - 2;
+        else  q = p - 1;
+        /* add string in front of q, excluding q */
+        while ((c = **s) != '\0' && ( **s != q ))  {
+            spice_dstring_append_char( &buf, *(*s)++ ) ;
+        }
+        /* return if nested bracket found, excluding its character */
+        while ((c = **s) != '\0')  {
+            if (c == q) count++;
+            else if (c == p) count--;
+            if (count == 0) {
+                break;
+            }
+            spice_dstring_append_char( &buf, *(*s)++ ) ;
+        }
     }
+    else
+        /* just look for p and return string, excluding p */
+        while ((c = **s) != '\0' && ( **s != p ))  {
+            spice_dstring_append_char( &buf, *(*s)++ ) ;
+        }
+
     if (c == '\0')
         /* p not found */
         return (NULL);
+
     if (inc_p)
+        /* add p */
         spice_dstring_append_char( &buf, *(*s)++ ) ;
 
     /* Now iterate up to next non-whitespace char */

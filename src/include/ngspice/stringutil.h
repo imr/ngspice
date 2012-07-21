@@ -22,7 +22,7 @@ void strtoupper(char *str);
 char * stripWhiteSpacesInsideParens(char *str);
 char * gettok(char **s);
 char * gettok_instance(char **);
-char * gettok_char(char **s, char p, bool inc_p);
+char * gettok_char(char **s, char p, bool inc_p, bool nested);
 
 
 #ifdef CIDER
