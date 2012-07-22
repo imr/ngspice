@@ -1,6 +1,6 @@
 /*************
-* streams.c
-************/
+ * streams.c
+ ************/
 
 #include "ngspice/config.h"
 #include "ngspice/ngspice.h"
@@ -28,8 +28,6 @@ FILE *cp_curin = NULL;
 FILE *cp_curout = NULL;
 FILE *cp_curerr = NULL;
 
-/* static functions */
-static bool fileexists(char *name);
 
 static bool
 fileexists(char *name)
@@ -47,131 +45,125 @@ fileexists(char *name)
 wordlist *
 cp_redirect(wordlist *wl)
 {
-    bool gotinput = FALSE, gotoutput = FALSE, goterror = FALSE;
-    bool app = FALSE, erralso = FALSE;
-    wordlist *w, *bt, *nw;
-    char *s,*copyword;
-    FILE *tmpfp;
+    int gotinput = 0, gotoutput = 0, goterror = 0, append = 0;
+    wordlist *w;
+    char *fname;
+    FILE *fp;
 
     w = wl->wl_next;    /* Don't consider empty commands. */
+
     while (w) {
         if (*w->wl_word == cp_lt) {
-            bt = w;
-            if (gotinput) {
-                fprintf(cp_err, 
-                "Error: ambiguous input redirect.\n");
+
+            wordlist *bt = w->wl_prev;
+
+            if (gotinput++) {
+                fprintf(cp_err, "Error: ambiguous input redirect.\n");
                 goto error;
             }
-            gotinput = TRUE;
             w = w->wl_next;
-            if (w == NULL) {
-                fprintf(cp_err, 
-                "Error: missing name for input.\n");
+
+            if (w && *w->wl_word == cp_lt) {
+                fprintf(cp_err, "Error: `<<' redirection is not implemented.\n");
+                goto error;
+            }
+
+            if (!w) {
+                fprintf(cp_err, "Error: missing name for input.\n");
                 return (NULL);
             }
-            if (*w->wl_word == cp_lt) {
-                /* Do reasonable stuff here... */
-            } else {
-                /*tmpfp = fopen(cp_unquote(w->wl_word), "r"); DG very bad: memory leak the string allocated by cp_unquote is lost*/
-                copyword=cp_unquote(w->wl_word);/*DG*/
-                tmpfp = fopen(copyword, "r"); 
-                tfree(copyword);
-  
-                if (!tmpfp) {
-                    perror(w->wl_word);
-                    goto error;
-                } else
-                    cp_in = tmpfp;
-            }
+
+            fname = cp_unquote(w->wl_word);
+
 #ifdef CPDEBUG
             if (cp_debug)
-                fprintf(cp_err, "Input file is %s...\n",
-                    w->wl_word);
+                fprintf(cp_err, "Input file is %s...\n", fname);
 #endif
-            bt->wl_prev->wl_next = w->wl_next;
-            if (w->wl_next)
-                w->wl_next->wl_prev = bt->wl_prev;
-            nw = w->wl_next;
-            w->wl_next = NULL;
-            w = nw;
-            wl_free(bt);
-        } else if (*w->wl_word == cp_gt) {
-            bt = w;
-            if (gotoutput) {
-                fprintf(cp_err, 
-                "Error: ambiguous output redirect.\n");
-                goto error;
-            }
-            gotoutput = TRUE;
-            w = w->wl_next;
-            if (w == NULL) {
-                fprintf(cp_err, 
-                "Error: missing name for output.\n");
-                return (NULL);
-            }
-            if (*w->wl_word == cp_gt) {
-                app = TRUE;
-                w = w->wl_next;
-                if (w == NULL) {
-                    fprintf(cp_err, 
-                    "Error: missing name for output.\n");
-                    return (NULL);
-                }
-            }
-            if (*w->wl_word == cp_amp) {
-                erralso = TRUE;
-                if (goterror) {
-                    fprintf(cp_err, 
-                "Error: ambiguous error redirect.\n");
-                    return (NULL);
-                }
-                goterror = TRUE;
-                w = w->wl_next;
-                if (w == NULL) {
-                    fprintf(cp_err, 
-                    "Error: missing name for output.\n");
-                    return (NULL);
-                }
-            }
-            s = cp_unquote(w->wl_word);
-            if (cp_noclobber && fileexists(s)) {
-                fprintf(stderr, "Error: %s: file exists\n", s);
-                goto error;
-            }
-            if (app)
-                tmpfp = fopen(s, "a");
-            else
-                tmpfp = fopen(s, "w+");
-            tfree(s);/*DG cp_unquote memory leak*/
-            if (!tmpfp) {
+
+            fp = fopen(fname, "r");
+            tfree(fname);
+
+            if (!fp) {
                 perror(w->wl_word);
                 goto error;
-            } else {
-                cp_out = tmpfp;
-                out_isatty = FALSE;
             }
+
+            cp_in = fp;
+
+            w = wl_chop_rest(w);
+            wl_free(wl_chop_rest(bt));
+            wl_append(bt, w);
+
+        } else if (*w->wl_word == cp_gt) {
+
+            wordlist *bt = w->wl_prev;
+
+            if (gotoutput++) {
+                fprintf(cp_err, "Error: ambiguous output redirect.\n");
+                goto error;
+            }
+            w = w->wl_next;
+
+            if (w && *w->wl_word == cp_gt) {
+                append++;
+                w = w->wl_next;
+            }
+
+            if (w && *w->wl_word == cp_amp) {
+                if (goterror++) {
+                    fprintf(cp_err, "Error: ambiguous error redirect.\n");
+                    return (NULL);
+                }
+                w = w->wl_next;
+            }
+
+            if (!w) {
+                fprintf(cp_err, "Error: missing name for output.\n");
+                return (NULL);
+            }
+
+            fname = cp_unquote(w->wl_word);
+
 #ifdef CPDEBUG
             if (cp_debug)
-                fprintf(cp_err, "Output file is %s... %s\n",
-                    w->wl_word, app ? "(append)" : "");
+                fprintf(cp_err, "Output file is %s... %s\n", fname,
+                        append ? "(append)" : "");
 #endif
-            bt->wl_prev->wl_next = w->wl_next;
-            if (w->wl_next)
-                w->wl_next->wl_prev = bt->wl_prev;
+
+            if (cp_noclobber && fileexists(fname)) {
+                fprintf(stderr, "Error: %s: file exists\n", fname);
+                goto error;
+            }
+
+            fp = fopen(fname, append ? "a" : "w+");
+            tfree(fname);
+
+            if (!fp) {
+                perror(w->wl_word);
+                goto error;
+            }
+
+            cp_out = fp;
+            if (goterror)
+                cp_err = fp;
+
+            out_isatty = FALSE;
+
+            w = wl_chop_rest(w);
+            wl_free(wl_chop_rest(bt));
+            wl_append(bt, w);
+
+        } else {
             w = w->wl_next;
-            if (w)
-                w->wl_prev->wl_next = NULL;
-            wl_free(bt);
-            if (erralso)
-                cp_err = cp_out;
-        } else
-            w = w->wl_next;
+        }
     }
     return (wl);
 
-error:  wl_free(wl);
+error:
+    wl_free(wl);
     return (NULL);
 }
+
 
 /* Reset the cp_* FILE pointers to the standard ones.  This is tricky,
  * since if we are sourcing a command file, and io has been redirected
@@ -200,7 +192,6 @@ cp_ioreset(void)
 
     /*** Minor bug here... */
     out_isatty = TRUE;
-    return;
 }
 
 
@@ -215,5 +206,4 @@ fixdescriptors(void)
         dup2(fileno(cp_out), fileno(stdout));
     if (cp_err != stderr)
         dup2(fileno(cp_err), fileno(stderr));
-    return;
 }
