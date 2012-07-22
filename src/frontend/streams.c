@@ -184,21 +184,19 @@ error:  wl_free(wl);
 void
 cp_ioreset(void)
 {
-    if (cp_in != cp_curin) {
+    if (cp_in != cp_curin)
         if (cp_in)
             fclose(cp_in);
-        cp_in = cp_curin;
-    }
-    if (cp_out != cp_curout) {
+    if (cp_out != cp_curout)
         if (cp_out)
             fclose(cp_out);
-        cp_out = cp_curout;
-    }
-    if (cp_err != cp_curerr) {
-        if (cp_err)
+    if (cp_err != cp_curerr)
+        if (cp_err  &&  cp_err != cp_out)
             fclose(cp_err);
-        cp_err = cp_curerr;
-    }
+
+    cp_in  = cp_curin;
+    cp_out = cp_curout;
+    cp_err = cp_curerr;
 
     /*** Minor bug here... */
     out_isatty = TRUE;
