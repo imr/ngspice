@@ -73,9 +73,9 @@ static void measure_errMessage(char *mName, char *mFunction, char *trigTarg, cha
 {
 
    if(!(chk_only)){
-      printf("\tmeasure '%s'  failed\n", mName);
-      printf("Error: measure  %s  %s(%s) :\n", mName, mFunction, trigTarg);
-      printf("\t%s\n",errMsg);
+      printf("\nError: measure  %s  %s(%s) : ", mName, mFunction, trigTarg);
+      printf("%s",errMsg);
+//      printf("\tmeasure '%s'  failed\n", mName);
    }
    return;
 } /* end measure_errMessage() */
@@ -614,7 +614,7 @@ static void com_measure_when(
    }
 
    if ( init_measured_value ){
-      meas->m_measured = 0.0e0;
+      meas->m_measured = NAN;
    }
    return;
 }
@@ -695,7 +695,7 @@ static void measure_at(
       pvalue = value;
    }
 
-   meas->m_measured = 0.0e0;
+   meas->m_measured = NAN;
    return;
 }
 
@@ -719,8 +719,8 @@ static void measure_minMaxAvg(
 
    mValue =0;
    mValueAt = svalue =0;
-   meas->m_measured = 0.0e0;
-   meas->m_measured_at = 0.0e0;
+   meas->m_measured = NAN;
+   meas->m_measured_at = NAN;
    first =0;
    avgCnt =0;
 
@@ -874,8 +874,8 @@ static void measure_rms_integral(
    bool ac_check = FALSE, sp_check = FALSE, dc_check = FALSE, tran_check = FALSE ;
 
    xvalue =0;
-   meas->m_measured = 0.0e0;
-   meas->m_measured_at = 0.0e0;
+   meas->m_measured = NAN;
+   meas->m_measured_at = NAN;
    first =0;
 
     if (cieq (meas->m_analysis,"ac"))
@@ -1434,7 +1434,7 @@ get_measure2(
    char errbuf[100];
    char *mAnalysis = NULL;             // analysis type
    char *mName = NULL;             // name given to the measured output
-   char *mFunction = NULL;
+   char *mFunction = "";
    int precision;          // measurement precision
    ANALYSIS_TYPE_T mFunctionType = AT_UNKNOWN;
    int wl_cnt;
@@ -1578,7 +1578,7 @@ get_measure2(
             measTrig->m_measured = measTrig->m_at;
 
 
-         if (measTrig->m_measured == 0.0e0) {
+         if (isnan(measTrig->m_measured)) {
              sprintf(errbuf,"out of interval\n");
              measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
              return MEASUREMENT_FAILURE;
@@ -1586,7 +1586,7 @@ get_measure2(
          // measure targ
          com_measure_when(measTarg);
 
-         if (measTarg->m_measured == 0.0e0) {
+         if (isnan(measTarg->m_measured)) {
             sprintf(errbuf,"out of interval\n");
             measure_errMessage(mName, mFunction, "TARG", errbuf, autocheck);
             return MEASUREMENT_FAILURE;
@@ -1630,9 +1630,9 @@ get_measure2(
 
             com_measure_when(measFind);
 
-            if (measFind->m_measured == 0.0e0) {
+            if (isnan(measFind->m_measured)) {
                sprintf(errbuf,"out of interval\n");
-               measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
+               measure_errMessage(mName, mFunction, "AT", errbuf, autocheck);
                return MEASUREMENT_FAILURE;
             }
 
@@ -1643,9 +1643,9 @@ get_measure2(
             measure_at(meas, meas->m_at);
          }
 
-         if (meas->m_measured == 0.0e0) {
+         if (isnan(meas->m_measured)) {
             sprintf(errbuf,"out of interval\n");
-            measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
+            measure_errMessage(mName, mFunction, "AT", errbuf, autocheck);
             return MEASUREMENT_FAILURE;
          }
 
@@ -1670,7 +1670,7 @@ get_measure2(
 
          com_measure_when(meas);
 
-         if (meas->m_measured == 0.0e0) {
+         if (isnan(meas->m_measured)) {
             sprintf(errbuf,"out of interval\n");
             measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
             return MEASUREMENT_FAILURE;
@@ -1701,7 +1701,7 @@ get_measure2(
          // measure
          measure_rms_integral(meas,mFunctionType);
 
-         if (meas->m_measured == 0.0e0) {
+         if (isnan(meas->m_measured)) {
             sprintf(errbuf,"out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
             return MEASUREMENT_FAILURE;
@@ -1735,7 +1735,7 @@ get_measure2(
 
          // measure
          measure_minMaxAvg(meas, mFunctionType);
-         if (meas->m_measured == 0.0e0) {
+         if (isnan(meas->m_measured)) {
             sprintf(errbuf,"out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
             return MEASUREMENT_FAILURE;
@@ -1774,7 +1774,7 @@ get_measure2(
          else
             measure_minMaxAvg(measTrig, AT_MAX);
 
-         if (measTrig->m_measured == 0.0e0) {
+         if (isnan(measTrig->m_measured)) {
             sprintf(errbuf,"out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
             return MEASUREMENT_FAILURE;
@@ -1812,7 +1812,7 @@ get_measure2(
 
          // measure min
          measure_minMaxAvg(measTrig, AT_MIN);
-         if (measTrig->m_measured == 0.0e0) {
+         if (isnan(measTrig->m_measured)) {
             sprintf(errbuf,"out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
             return MEASUREMENT_FAILURE;
@@ -1821,7 +1821,7 @@ get_measure2(
 
          // measure max
          measure_minMaxAvg(measTrig, AT_MAX);
-         if (measTrig->m_measured == 0.0e0) {
+         if (isnan(measTrig->m_measured)) {
             sprintf(errbuf,"out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
             return MEASUREMENT_FAILURE;

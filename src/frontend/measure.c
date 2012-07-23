@@ -122,7 +122,7 @@ com_meas(wordlist *wl) {
    fail = get_measure2(wl, &result, NULL, FALSE) ;
 
    if (fail) {
-      fprintf(stdout, "meas %s failed!\n", line_in);
+      fprintf(stdout, " meas %s failed!\n\n", line_in);
       return;
    }
 
