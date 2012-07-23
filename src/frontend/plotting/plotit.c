@@ -23,9 +23,11 @@ static bool sameflag;
 #include "ngspice/tclspice.h"
 #endif
 
+
 /* This routine gets parameters from the command line, which are of
  * the form "name number ..." It returns a pointer to the parameter
  * values.  */
+
 static double *
 getlims(wordlist *wl, char *name, int number)
 {
@@ -95,9 +97,9 @@ getlims(wordlist *wl, char *name, int number)
 }
 
 
-
 /* Extend a data vector to length by replicating the last element, or
  * truncate it if it is too long.  */
+
 static void
 xtend(struct dvec *v, int length)
 {
@@ -107,10 +109,12 @@ xtend(struct dvec *v, int length)
 
     if (v->v_length == length)
         return;
+
     if (v->v_length > length) {
         v->v_length = length;
         return;
     }
+
     if (isreal(v)) {
         od = v->v_realdata;
         v->v_realdata = TMALLOC(double, length);
@@ -132,9 +136,10 @@ xtend(struct dvec *v, int length)
         while (i < length) {
             realpart(v->v_compdata[i]) = realpart(c);
             imagpart(v->v_compdata[i++]) = imagpart(c);
-        tfree(oc);
+            tfree(oc);
         }
     }
+
     v->v_length = length;
     return;
 }
@@ -153,7 +158,7 @@ compress(struct dvec *d, double *xcomp, double *xind)
         ilo = (int) xind[0];
         ihi = (int) xind[1];
         if ((ihi >= ilo) && (ilo > 0) && (ilo < d->v_length) &&
-                (ihi > 1) && (ihi <= d->v_length)) {
+            (ihi > 1) && (ihi <= d->v_length)) {
             newlen = ihi - ilo;
             if (isreal(d)) {
                 double *dd = TMALLOC(double, newlen);
@@ -175,11 +180,11 @@ compress(struct dvec *d, double *xcomp, double *xind)
         if ((cfac > 1) && (cfac < d->v_length)) {
             for (i = 0; i * cfac < d->v_length; i++)
                 if (isreal(d))
-                    d->v_realdata[i] = 
-                            d->v_realdata[i * cfac];
+                    d->v_realdata[i] =
+                        d->v_realdata[i * cfac];
                 else
-                    d->v_compdata[i] = 
-                            d->v_compdata[i * cfac];
+                    d->v_compdata[i] =
+                        d->v_compdata[i * cfac];
             d->v_length = i;
         }
     }
@@ -188,6 +193,7 @@ compress(struct dvec *d, double *xcomp, double *xind)
 
 
 /* Check for and remove a one-word keyword. */
+
 static bool
 getflag(wordlist *wl, char *name)
 {
@@ -201,11 +207,13 @@ getflag(wordlist *wl, char *name)
         }
         wl = wl->wl_next;
     }
+
     return (FALSE);
 }
 
 
 /* Return a parameter of the form "xlabel foo" */
+
 static char *
 getword(wordlist *wl, char *name)
 {
@@ -216,8 +224,8 @@ getword(wordlist *wl, char *name)
         if (eq(beg->wl_word, name)) {
             if ((beg == wl) || !beg->wl_next) {
                 fprintf(cp_err,
-			"Syntax error: looking for plot keyword at \"%s\".\n",
-			name);
+                        "Syntax error: looking for plot keyword at \"%s\".\n",
+                        name);
                 return (NULL);
             }
             s = copy(beg->wl_next->wl_word);
@@ -229,12 +237,14 @@ getword(wordlist *wl, char *name)
             return (s);
         }
     }
+
     return (NULL);
 }
 
 
 /* The common routine for all plotting commands. This does hardcopy
  * and graphics plotting.  */
+
 bool
 plotit(wordlist *wl, char *hcopy, char *devname)
 {
@@ -262,15 +272,15 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     struct dvec *v, *newv_scale;
     double *newdata, *newscale;
     double tstep, tstart, tstop, ttime;
-    
+
     /* return value, error by default */
     bool rtn = FALSE;
 
     if (!wl)
-    goto quit1;
+        goto quit1;
     wl_root = wl;
 
-    /* First get the command line, without the limits. 
+    /* First get the command line, without the limits.
        Wii be used for zoomed windows */
     wwl = wl_copy(wl);
     xynull = getlims(wwl, "xl", 2); /*  (void) getlims(wwl, "xl", 2); */
@@ -289,18 +299,19 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     (void) sprintf(cline, "plot %s", pname);
     tfree(pname);
     wl_free(wwl);
+
     /* add title, xlabel or ylabel, if available, with quotes '' */
     if (nxlabel) {
-       sprintf(cline, "%s xlabel '%s'", cline, nxlabel);
-       tfree (nxlabel);
+        sprintf(cline, "%s xlabel '%s'", cline, nxlabel);
+        tfree (nxlabel);
     }
     if (nylabel) {
-       sprintf(cline, "%s ylabel '%s'", cline, nylabel);
-       tfree (nylabel);
+        sprintf(cline, "%s ylabel '%s'", cline, nylabel);
+        tfree (nylabel);
     }
     if (ntitle) {
-       sprintf(cline, "%s title '%s'", cline, ntitle);
-       tfree (ntitle);
+        sprintf(cline, "%s title '%s'", cline, ntitle);
+        tfree (ntitle);
     }
 
     /* Now extract all the parameters. */
@@ -310,8 +321,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
      * Otherwise create one.
      */
     if(wl->wl_prev) {
-	wl = wl->wl_prev;
-	tw = NULL;  /* Not used, so must be NULL */
+        wl = wl->wl_prev;
+        tw = NULL;  /* Not used, so must be NULL */
     } else {
         wl = wl_cons("", wl);
         tw = wl;
@@ -363,6 +374,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         (void) getlims(wl, "xdelta", 1);
         (void) getlims(wl, "xdel", 1);
     }
+
     if (!sameflag || !ydelta) {
         ydelta = getlims(wl, "ydelta", 1);
         if (!ydelta)
@@ -371,14 +383,14 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         (void) getlims(wl, "ydelta", 1);
         (void) getlims(wl, "ydel", 1);
     }
-    
+
     /* Get the grid type and the point type.  Note we can't do if-else
      * here because we want to catch all the grid types.
      */
     if (getflag(wl, "lingrid")) {
         if (gfound)
-            fprintf(cp_err, 
-                "Warning: too many grid types given\n");
+            fprintf(cp_err,
+                    "Warning: too many grid types given\n");
         else {
             gtype = GRID_LIN;
             gfound = TRUE;
@@ -386,8 +398,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "loglog")) {
         if (gfound)
-            fprintf(cp_err, 
-                "Warning: too many grid types given\n");
+            fprintf(cp_err,
+                    "Warning: too many grid types given\n");
         else {
             gtype = GRID_LOGLOG;
             gfound = TRUE;
@@ -395,8 +407,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "nogrid")) {
         if (gfound)
-            fprintf(cp_err, 
-                "Warning: too many grid types given\n");
+            fprintf(cp_err,
+                    "Warning: too many grid types given\n");
         else {
             gtype = GRID_NONE;
             gfound = TRUE;
@@ -404,8 +416,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "linear")) {
         if (gfound)
-            fprintf(cp_err, 
-                "Warning: too many grid types given\n");
+            fprintf(cp_err,
+                    "Warning: too many grid types given\n");
         else {
             gtype = GRID_LIN;
             gfound = TRUE;
@@ -413,8 +425,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "xlog")) {
         if (gfound)
-            fprintf(cp_err, 
-                "Warning: too many grid types given\n");
+            fprintf(cp_err,
+                    "Warning: too many grid types given\n");
         else {
             gtype = GRID_XLOG;
             gfound = TRUE;
@@ -422,8 +434,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "ylog")) {
         if (gfound)
-            fprintf(cp_err, 
-                "Warning: too many grid types given\n");
+            fprintf(cp_err,
+                    "Warning: too many grid types given\n");
         else {
             gtype = GRID_YLOG;
             gfound = TRUE;
@@ -431,8 +443,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "polar")) {
         if (gfound)
-            fprintf(cp_err, 
-                "Warning: too many grid types given\n");
+            fprintf(cp_err,
+                    "Warning: too many grid types given\n");
         else {
             gtype = GRID_POLAR;
             gfound = TRUE;
@@ -440,8 +452,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "smith")) {
         if (gfound)
-            fprintf(cp_err, 
-                "Warning: too many grid types given\n");
+            fprintf(cp_err,
+                    "Warning: too many grid types given\n");
         else {
             gtype = GRID_SMITH;
             gfound = TRUE;
@@ -449,8 +461,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "smithgrid")) {
         if (gfound)
-            fprintf(cp_err, 
-                "Warning: too many grid types given\n");
+            fprintf(cp_err,
+                    "Warning: too many grid types given\n");
         else {
             gtype = GRID_SMITHGRID;
             gfound = TRUE;
@@ -477,8 +489,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 gtype = GRID_NONE;
             else {
                 fprintf(cp_err,
-                    "Warning: strange grid type %s\n",
-                    buf);
+                        "Warning: strange grid type %s\n",
+                        buf);
                 gtype = GRID_LIN;
             }
             gfound = TRUE;
@@ -490,8 +502,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
     if (getflag(wl, "linplot")) {
         if (pfound)
-            fprintf(cp_err, 
-                "Warning: too many plot types given\n");
+            fprintf(cp_err,
+                    "Warning: too many plot types given\n");
         else {
             ptype = PLOT_LIN;
             pfound = TRUE;
@@ -499,8 +511,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "combplot")) {
         if (pfound)
-            fprintf(cp_err, 
-                "Warning: too many plot types given\n");
+            fprintf(cp_err,
+                    "Warning: too many plot types given\n");
         else {
             ptype = PLOT_COMB;
             pfound = TRUE;
@@ -508,8 +520,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "pointplot")) {
         if (pfound)
-            fprintf(cp_err, 
-                "Warning: too many plot types given\n");
+            fprintf(cp_err,
+                    "Warning: too many plot types given\n");
         else {
             ptype = PLOT_POINT;
             pfound = TRUE;
@@ -526,8 +538,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 ptype = PLOT_POINT;
             else {
                 fprintf(cp_err,
-                    "Warning: strange plot type %s\n",
-                    buf);
+                        "Warning: strange plot type %s\n",
+                        buf);
                 ptype = PLOT_LIN;
             }
             pfound = TRUE;
@@ -539,10 +551,12 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         xlabel = getword(wl, "xlabel");
     else
         (void) getword(wl, "xlabel");
+
     if (!sameflag || !ylabel)
         ylabel = getword(wl, "ylabel");
     else
         (void) getword(wl, "ylabel");
+
     if (!sameflag || !title)
         title = getword(wl, "title");
     else
@@ -578,23 +592,25 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     /* Now evaluate the names. */
     for (n = names, lv = NULL; n; n = n->pn_next) {
         if (n->pn_value && (n->pn_value->v_length == 0) &&
-                eq(n->pn_value->v_name, "vs")) {
+            eq(n->pn_value->v_name, "vs")) {
             if (!lv) {
                 fprintf(cp_err, "Error: misplaced vs arg\n");
                 goto quit;
             } else {
                 if ((n = n->pn_next) == NULL) {
                     fprintf(cp_err,
-                        "Error: missing vs arg\n");
+                            "Error: missing vs arg\n");
                     goto quit;
                 }
                 dv = ft_evaluate(n);
                 if (!dv)
                     goto quit;
+
                 if (lastvs)
                     lv = lastvs->v_link2;
                 else
                     lv = vecs;
+
                 while (lv) {
                     lv->v_scale = dv;
                     lastvs = lv;
@@ -603,18 +619,24 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             }
             continue;
         }
+
         dv = ft_evaluate(n);
+
         if (!dv)
             goto quit;
+
         if (!d)
             vecs = dv;
         else
             d->v_link2 = dv;
+
         for (d = dv; d->v_link2; d = d->v_link2)
             ;
+
         lv = dv;
     }
-/*    free_pnode(names); pn:really should be commented out ? */ 
+
+    /* free_pnode(names); pn:really should be commented out ? */
     d->v_link2 = NULL;
 
     /* Now check for 0-length vectors. */
@@ -624,23 +646,23 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                     d->v_name);
             goto quit;
         }
-    
+
     /* If there are higher dimensional vectors, transform them into a
      * family of vectors.
      */
     for (d = vecs, lv = NULL; d; d = d->v_link2) {
         if (d->v_numdims > 1) {
-	    if (lv)
-		lv->v_link2 = vec_mkfamily(d);
-	    else
-		vecs = lv = vec_mkfamily(d);
+            if (lv)
+                lv->v_link2 = vec_mkfamily(d);
+            else
+                vecs = lv = vec_mkfamily(d);
             while (lv->v_link2)
                 lv = lv->v_link2;
             lv->v_link2 = d->v_link2;
             d = lv;
         } else {
             lv = d;
-	}
+        }
     }
 
     /* Now fill in the scales for vectors who aren't already fixed up. */
@@ -652,10 +674,10 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 d->v_scale = d;
         }
 
-	/* The following line displays the unit at the time of 
-	 temp-sweep and res-sweep. This may not be a so good solution. by H.T */
-	if(!strcmp(vecs->v_scale->v_name,"temp-sweep")) vecs->v_scale->v_type=SV_TEMP; /* simulation_types in sim.h */
-	if(!strcmp(vecs->v_scale->v_name,"res-sweep")) vecs->v_scale->v_type=SV_RES;
+    /* The following line displays the unit at the time of
+       temp-sweep and res-sweep. This may not be a so good solution. by H.T */
+    if(!strcmp(vecs->v_scale->v_name,"temp-sweep")) vecs->v_scale->v_type=SV_TEMP; /* simulation_types in sim.h */
+    if(!strcmp(vecs->v_scale->v_name,"res-sweep")) vecs->v_scale->v_type=SV_RES;
 
     /* See if the log flag is set anywhere... */
     if (!gfound) {
@@ -665,15 +687,15 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         for (d = vecs; d; d = d->v_link2)
             if (d->v_gridtype == GRID_YLOG) {
                 if ((gtype == GRID_XLOG) ||
-                        (gtype == GRID_LOGLOG))
+                    (gtype == GRID_LOGLOG))
                     gtype = GRID_LOGLOG;
                 else
                     gtype = GRID_YLOG;
             }
         for (d = vecs; d; d = d->v_link2)
             if (d->v_gridtype == GRID_SMITH || d->v_gridtype == GRID_SMITHGRID
-		|| d->v_gridtype == GRID_POLAR)
-	    {
+                || d->v_gridtype == GRID_POLAR)
+            {
                 gtype = d->v_gridtype;
                 break;
             }
@@ -695,17 +717,17 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     /* Check and see if this is pole zero stuff. */
     if ((vecs->v_type == SV_POLE) || (vecs->v_type == SV_ZERO))
         oneval = TRUE;
-    
+
     for (d = vecs; d; d = d->v_link2)
         if (((d->v_type == SV_POLE) || (d->v_type == SV_ZERO)) !=
-                oneval ? 1 : 0) {
+            oneval ? 1 : 0) {
             fprintf(cp_err,
-"Error: plot must be either all pole-zero or contain no poles or zeros\n");
+                    "Error: plot must be either all pole-zero or contain no poles or zeros\n");
             goto quit;
         }
-    
+
     if ((gtype == GRID_POLAR) || (gtype == GRID_SMITH
-	|| gtype == GRID_SMITHGRID))
+                                  || gtype == GRID_SMITHGRID))
     {
         oneval = TRUE;
     }
@@ -713,7 +735,6 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     /* If we are plotting scalars, make sure there is enough
      * data to fit on the screen.
      */
-    
     for (d = vecs; d; d = d->v_link2)
         if (d->v_length == 1)
             xtend(d, d->v_scale->v_length);
@@ -728,74 +749,75 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             compress(d->v_scale, xcompress, xindices);
         }
     }
-    
+
     /* Transform for smith plots */
     if (gtype == GRID_SMITH) {
-	double	re, im, rex, imx;
-	double	r;
-	struct dvec **prevvp, *n;
-	int	j;
+        double  re, im, rex, imx;
+        double  r;
+        struct dvec **prevvp, *n;
+        int     j;
 
-	prevvp = &vecs;
-	for (d = vecs; d; d = d->v_link2) {
-	    if (d->v_flags & VF_PERMANENT) {
-		n = vec_copy(d);
-		n->v_flags &= ~VF_PERMANENT;
-		n->v_link2 = d->v_link2;
-		d = n;
-		*prevvp = d;
-	    }
-	    prevvp = &d->v_link2;
+        prevvp = &vecs;
 
-	    if (isreal(d)) {
-		fprintf(cp_err,
-		    "Warning: plotting real data \"%s\" on a smith grid\n",
-		    d->v_name);
+        for (d = vecs; d; d = d->v_link2) {
+            if (d->v_flags & VF_PERMANENT) {
+                n = vec_copy(d);
+                n->v_flags &= ~VF_PERMANENT;
+                n->v_link2 = d->v_link2;
+                d = n;
+                *prevvp = d;
+            }
+            prevvp = &d->v_link2;
 
-		for (j = 0; j < d->v_length; j++) {
-		    r = d->v_realdata[j];
-		    d->v_realdata[j] = (r - 1) / (r + 1);
-		}
-	    } else {
-		for (j = 0; j < d->v_length; j++) {
-		    /* (re - 1, im) / (re + 1, im) */
+            if (isreal(d)) {
+                fprintf(cp_err,
+                        "Warning: plotting real data \"%s\" on a smith grid\n",
+                        d->v_name);
 
-		    re = realpart(d->v_compdata[j]);
-		    im = imagpart(d->v_compdata[j]);
+                for (j = 0; j < d->v_length; j++) {
+                    r = d->v_realdata[j];
+                    d->v_realdata[j] = (r - 1) / (r + 1);
+                }
+            } else {
+                for (j = 0; j < d->v_length; j++) {
+                    /* (re - 1, im) / (re + 1, im) */
 
-		    rex = re + 1;
-		    imx = im;
-		    re = re - 1;
+                    re = realpart(d->v_compdata[j]);
+                    im = imagpart(d->v_compdata[j]);
 
-		    /* (re, im) / (rex, imx) */
-		    /* x = 1 - (imx / rex) * (imx / rex);
-		     * r = re / rex + im / rex * imx / rex;
-		     * i = im / rex - re / rex * imx / rex;
-             *
-             *
-		     * realpart(d->v_compdata[j]) = r / x;
-		     * imagpart(d->v_compdata[j]) = i / x;
-             */
-		    realpart(d->v_compdata[j]) = (rex*re+imx*imx) / (rex*rex+imx*imx);
-		    imagpart(d->v_compdata[j]) = (2*imx) / (rex*rex+imx*imx);
-		}
-	    }
-	}
+                    rex = re + 1;
+                    imx = im;
+                    re = re - 1;
+
+                    /* (re, im) / (rex, imx) */
+                    /* x = 1 - (imx / rex) * (imx / rex);
+                     * r = re / rex + im / rex * imx / rex;
+                     * i = im / rex - re / rex * imx / rex;
+                     *
+                     *
+                     * realpart(d->v_compdata[j]) = r / x;
+                     * imagpart(d->v_compdata[j]) = i / x;
+                     */
+                    realpart(d->v_compdata[j]) = (rex*re+imx*imx) / (rex*rex+imx*imx);
+                    imagpart(d->v_compdata[j]) = (2*imx) / (rex*rex+imx*imx);
+                }
+            }
+        }
     }
 
     /* Figure out the proper x- and y-axis limits. */
     if (ylim) {
-	    ylims[0] = ylim[0];
-	    ylims[1] = ylim[1];
+        ylims[0] = ylim[0];
+        ylims[1] = ylim[1];
     } else if (oneval) {
         ylims[0] = HUGE;
         ylims[1] = - ylims[0];
         for (d = vecs; d; d = d->v_link2) {
-		/* dd = ft_minmax(d, TRUE); */
-		/* With this we seek the maximum and minimum of imaginary part
-         * that will go to Y axis 
-         */
-		dd = ft_minmax(d, FALSE);
+            /* dd = ft_minmax(d, TRUE); */
+            /* With this we seek the maximum and minimum of imaginary part
+             * that will go to Y axis
+             */
+            dd = ft_minmax(d, FALSE);
             if (dd[0] < ylims[0])
                 ylims[0] = dd[0];
             if (dd[1] > ylims[1])
@@ -812,29 +834,29 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 ylims[1] = dd[1];
         }
 
-	/* XXX */
-	for (d = vecs; d; d = d->v_link2) {
-	    if (d->v_flags & VF_MINGIVEN)
-		if (ylims[0] < d->v_minsignal)
-		    ylims[0] = d->v_minsignal;
-	    if (d->v_flags & VF_MAXGIVEN)
-		if (ylims[1] > d->v_maxsignal)
-		    ylims[1] = d->v_maxsignal;
-	}
+        /* XXX */
+        for (d = vecs; d; d = d->v_link2) {
+            if (d->v_flags & VF_MINGIVEN)
+                if (ylims[0] < d->v_minsignal)
+                    ylims[0] = d->v_minsignal;
+            if (d->v_flags & VF_MAXGIVEN)
+                if (ylims[1] > d->v_maxsignal)
+                    ylims[1] = d->v_maxsignal;
+        }
     }
 
     if (xlim) {
-	    xlims[0] = xlim[0];
-	    xlims[1] = xlim[1];
+        xlims[0] = xlim[0];
+        xlims[1] = xlim[1];
     } else if (oneval) {
         xlims[0] = HUGE;
         xlims[1] = - xlims[0];
         for (d = vecs; d; d = d->v_link2) {
-		/* dd = ft_minmax(d, FALSE); */
-		/* With this we seek the maximum and minimum of imaginary part
-         * that will go to Y axis 
-         */
-		dd = ft_minmax(d, TRUE);
+            /* dd = ft_minmax(d, FALSE); */
+            /* With this we seek the maximum and minimum of imaginary part
+             * that will go to Y axis
+             */
+            dd = ft_minmax(d, TRUE);
 
             if (dd[0] < xlims[0])
                 xlims[0] = dd[0];
@@ -885,22 +907,22 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         xlims[1] *= (xlims[1] > 0) ? 1.1 : 0.9;
     }
     if (ylims[0] == ylims[1]) {
-	    /* || fabs(ylims[0])/(ylims[1]-ylims[0]) > 1.0e9
-	    || fabs(ylims[1])/(ylims[1]-ylims[0]) > 1.0e9) */
+        /* || fabs(ylims[0])/(ylims[1]-ylims[0]) > 1.0e9
+           || fabs(ylims[1])/(ylims[1]-ylims[0]) > 1.0e9) */
         ylims[0] *= (ylims[0] > 0) ? 0.9 : 1.1;
         ylims[1] *= (ylims[1] > 0) ? 1.1 : 0.9;
     }
 
     if ((xlims[0] <= 0.0) && ((gtype == GRID_XLOG) ||
-            (gtype == GRID_LOGLOG))) {
-        fprintf(cp_err, 
-            "Error: X values must be > 0 for log scale\n");
+                              (gtype == GRID_LOGLOG))) {
+        fprintf(cp_err,
+                "Error: X values must be > 0 for log scale\n");
         goto quit;
     }
     if ((ylims[0] <= 0.0) && ((gtype == GRID_YLOG) ||
-            (gtype == GRID_LOGLOG))) {
-        fprintf(cp_err, 
-            "Error: Y values must be > 0 for log scale\n");
+                              (gtype == GRID_LOGLOG))) {
+        fprintf(cp_err,
+                "Error: Y values must be > 0 for log scale\n");
         goto quit;
     }
 
@@ -908,22 +930,22 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     if ((!xlim || !ylim) && (gtype == GRID_POLAR)) {
         /* (0,0) must be in the center of the screen. */
         mx = (fabs(xlims[0]) > fabs(xlims[1])) ? fabs(xlims[0]) :
-                fabs(xlims[1]);
+            fabs(xlims[1]);
         my = (fabs(ylims[0]) > fabs(ylims[1])) ? fabs(ylims[0]) :
-                fabs(ylims[1]);
-       /* rad = (mx > my) ? mx : my; */
-	   /* AM.Roldán
-        * Change this reason that this was discussed, as in the case of 1 + i want to plot point 
-        * is outside the drawing area so I'll stay as the maximum size of the hypotenuse of 
-        * the complex value
-        */
+            fabs(ylims[1]);
+        /* rad = (mx > my) ? mx : my; */
+        /* AM.Roldán
+         * Change this reason that this was discussed, as in the case of 1 + i want to plot point
+         * is outside the drawing area so I'll stay as the maximum size of the hypotenuse of
+         * the complex value
+         */
         rad = sqrt(mx * mx + my * my);
         xlims[0] = - rad;
         xlims[1] = rad;
         ylims[0] = - rad;
         ylims[1] = rad;
     } else if ((!xlim || !ylim) && (gtype == GRID_SMITH
-        || gtype == GRID_SMITHGRID))
+                                    || gtype == GRID_SMITHGRID))
     {
         xlims[0] = -1.0;
         xlims[1] = 1.0;
@@ -935,58 +957,58 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     if (devname && eq(devname, "lpr")) {
         /* check if we should (can) linearize */
         if (!(!ft_curckt || !ft_curckt->ci_ckt ||
-            strcmp(ft_curckt->ci_name, plot_cur->pl_title) ||
-            !if_tranparams(ft_curckt, &tstart, &tstop, &tstep) ||
-            ((tstop - tstart) * tstep <= 0.0) ||
-            ((tstop - tstart) < tstep) ||
-            !plot_cur || !plot_cur->pl_dvecs ||
-            !plot_cur->pl_scale ||
-            !isreal(plot_cur->pl_scale) ||
-            !ciprefix("tran", plot_cur->pl_typename))) {
+              strcmp(ft_curckt->ci_name, plot_cur->pl_title) ||
+              !if_tranparams(ft_curckt, &tstart, &tstop, &tstep) ||
+              ((tstop - tstart) * tstep <= 0.0) ||
+              ((tstop - tstart) < tstep) ||
+              !plot_cur || !plot_cur->pl_dvecs ||
+              !plot_cur->pl_scale ||
+              !isreal(plot_cur->pl_scale) ||
+              !ciprefix("tran", plot_cur->pl_typename))) {
 
-          newlen = (int)((tstop - tstart) / tstep + 1.5);
+            newlen = (int)((tstop - tstart) / tstep + 1.5);
 
-          newscale = TMALLOC(double, newlen);
+            newscale = TMALLOC(double, newlen);
 
-          newv_scale = alloc(struct dvec);
-          newv_scale->v_flags = vecs->v_scale->v_flags;
-          newv_scale->v_type = vecs->v_scale->v_type;
-          newv_scale->v_gridtype = vecs->v_scale->v_gridtype;
-          newv_scale->v_length = newlen;
-          newv_scale->v_name = copy(vecs->v_scale->v_name);
-          newv_scale->v_realdata = newscale;
+            newv_scale = alloc(struct dvec);
+            newv_scale->v_flags = vecs->v_scale->v_flags;
+            newv_scale->v_type = vecs->v_scale->v_type;
+            newv_scale->v_gridtype = vecs->v_scale->v_gridtype;
+            newv_scale->v_length = newlen;
+            newv_scale->v_name = copy(vecs->v_scale->v_name);
+            newv_scale->v_realdata = newscale;
 
-          for (i = 0, ttime = tstart; i < newlen; i++, ttime += tstep)
-            newscale[i] = ttime;
+            for (i = 0, ttime = tstart; i < newlen; i++, ttime += tstep)
+                newscale[i] = ttime;
 
-          for (v = vecs; v; v= v->v_link2) {
-            newdata = TMALLOC(double, newlen);
+            for (v = vecs; v; v= v->v_link2) {
+                newdata = TMALLOC(double, newlen);
 
-            if (!ft_interpolate(v->v_realdata, newdata,
-                v->v_scale->v_realdata, v->v_scale->v_length,
-            newscale, newlen, 1)) {
-            fprintf(cp_err,
-                "Error: can't interpolate %s\n", v->v_name);
-            goto quit;
+                if (!ft_interpolate(v->v_realdata, newdata,
+                                    v->v_scale->v_realdata, v->v_scale->v_length,
+                                    newscale, newlen, 1)) {
+                    fprintf(cp_err,
+                            "Error: can't interpolate %s\n", v->v_name);
+                    goto quit;
+                }
+
+                tfree(v->v_realdata);
+                v->v_realdata = newdata;
+
+                /* Why go to all this trouble if agraf ignores it? */
+                nointerp = TRUE;
             }
 
-            tfree(v->v_realdata);
-            v->v_realdata = newdata;
-
-            /* Why go to all this trouble if agraf ignores it? */
-            nointerp = TRUE;
-          }
-
-          vecs->v_scale = newv_scale;
+            vecs->v_scale = newv_scale;
 
         }
-        ft_agraf(xlims, ylims, vecs->v_scale, vecs->v_plot, vecs, 
-            xdelta ? *xdelta : 0.0, ydelta ? *ydelta : 0.0,
-            ((gtype == GRID_XLOG) || (gtype == GRID_LOGLOG)),
-            ((gtype == GRID_YLOG) || (gtype == GRID_LOGLOG)),
-            nointerp);
+        ft_agraf(xlims, ylims, vecs->v_scale, vecs->v_plot, vecs,
+                 xdelta ? *xdelta : 0.0, ydelta ? *ydelta : 0.0,
+                 ((gtype == GRID_XLOG) || (gtype == GRID_LOGLOG)),
+                 ((gtype == GRID_YLOG) || (gtype == GRID_LOGLOG)),
+                 nointerp);
         rtn = TRUE;
-	goto quit;
+        goto quit;
     }
 
     /* See if there is one type we can give for the y scale... */
@@ -998,47 +1020,47 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
 #ifndef X_DISPLAY_MISSING
     if (devname && eq(devname, "xgraph")) {
-	/* Interface to XGraph-11 Plot Program */
-	ft_xgraph(xlims, ylims, hcopy,
-	    title ? title : vecs->v_plot->pl_title,
-	    xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
-	    ylabel ? ylabel : ft_typabbrev(j),
-	    gtype, ptype, vecs);
-	rtn = TRUE;
-	goto quit;
+        /* Interface to XGraph-11 Plot Program */
+        ft_xgraph(xlims, ylims, hcopy,
+                  title ? title : vecs->v_plot->pl_title,
+                  xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
+                  ylabel ? ylabel : ft_typabbrev(j),
+                  gtype, ptype, vecs);
+        rtn = TRUE;
+        goto quit;
     }
 #endif
 
-   if (devname && eq(devname, "gnuplot")) {
-	/* Interface to Gnuplot Plot Program */
-	ft_gnuplot(xlims, ylims, hcopy,
-	    title ? title : vecs->v_plot->pl_title,
-	    xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
-	    ylabel ? ylabel : ft_typabbrev(j),
-	    gtype, ptype, vecs);
-	rtn = TRUE;
-	goto quit;
+    if (devname && eq(devname, "gnuplot")) {
+        /* Interface to Gnuplot Plot Program */
+        ft_gnuplot(xlims, ylims, hcopy,
+                   title ? title : vecs->v_plot->pl_title,
+                   xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
+                   ylabel ? ylabel : ft_typabbrev(j),
+                   gtype, ptype, vecs);
+        rtn = TRUE;
+        goto quit;
     }
 
-   if (devname && eq(devname, "writesimple")) {
-	/* Interface to simple write output */
-	ft_writesimple(xlims, ylims, hcopy,
-	    title ? title : vecs->v_plot->pl_title,
-	    xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
-	    ylabel ? ylabel : ft_typabbrev(j),
-	    gtype, ptype, vecs);
-	rtn = TRUE;
-	goto quit;
+    if (devname && eq(devname, "writesimple")) {
+        /* Interface to simple write output */
+        ft_writesimple(xlims, ylims, hcopy,
+                       title ? title : vecs->v_plot->pl_title,
+                       xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
+                       ylabel ? ylabel : ft_typabbrev(j),
+                       gtype, ptype, vecs);
+        rtn = TRUE;
+        goto quit;
     }
 
 #ifdef TCL_MODULE
     if (devname && eq(devname, "blt")) {
-    /* Just send the pairs to Tcl/Tk */
-      for (d = vecs; d; d = d->v_link2) {
-        blt_plot(d, oneval ? NULL : d->v_scale, (d == vecs) ? 1 : 0);
-      }
-      rtn = TRUE;
-      goto quit;
+        /* Just send the pairs to Tcl/Tk */
+        for (d = vecs; d; d = d->v_link2) {
+            blt_plot(d, oneval ? NULL : d->v_scale, (d == vecs) ? 1 : 0);
+        }
+        rtn = TRUE;
+        goto quit;
     }
 #endif
 
@@ -1052,9 +1074,9 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     pname = plot_cur->pl_typename;
 
     if (!gr_init(xlims, ylims, (oneval ? NULL : xn),
-            title ? title : vecs->v_plot->pl_title, hcopy, i,
-            xdelta ? *xdelta : 0.0, ydelta ? *ydelta : 0.0, gtype,
-            ptype, xlabel, ylabel, xt, j, pname, cline))
+                 title ? title : vecs->v_plot->pl_title, hcopy, i,
+                 xdelta ? *xdelta : 0.0, ydelta ? *ydelta : 0.0, gtype,
+                 ptype, xlabel, ylabel, xt, j, pname, cline))
         goto quit;
 
     /* Now plot all the graphs. */
@@ -1069,4 +1091,3 @@ quit:
 quit1:
     return rtn;
 }
-
