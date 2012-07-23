@@ -279,6 +279,7 @@ do_measure(
       if( fail ){
 	measure_valid[idx++] = FALSE;
 	measures_passed = FALSE;
+      fprintf(stdout, " %s failed!\n\n", meas_card->li_line);
       } else {
 	if(!(just_chk_meas)){
 	  nupa_add_param( resname, result );
