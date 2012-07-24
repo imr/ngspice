@@ -16,7 +16,7 @@ AUTHORS
 
 MODIFICATIONS
 
-    <date> <person name> <nature of modifications>
+    7/24/2012 Holger Vogt Update to error messages
 
 SUMMARY
 
@@ -162,8 +162,9 @@ struct line * ENHtranslate_poly(
 needs_translating()
 
 Test to see if card needs translating.  Return true if card defines
-an e,f,g, or h controlled source and has too many tokens to be
-a simple linear dependent source.  Otherwise return false.
+an e,f,g, or h controlled source, has too many tokens to be
+a simple linear dependent source and contains the 'poly' token.
+Otherwise return false.
 */
 
 
@@ -180,17 +181,17 @@ static int needs_translating(
 
    case 'e': case 'E':
    case 'g': case 'G':
-      if(count_tokens(card) <=6)
-         return(0);
-      else
+      if(count_tokens(card) > 6)
          return(1);
+      else
+         return(0);
 
    case 'f': case 'F':
    case 'h': case 'H':
-      if(count_tokens(card) <= 5)
-         return(0);
-      else
+      if(count_tokens(card) > 5)
          return(1);
+      else
+         return(0);
 
    default:
       return(0);
@@ -210,11 +211,18 @@ static int count_tokens(
    char *card)           /* the card text on which to count tokens */
 {
    int   i;
+   bool has_poly = FALSE;
 
-   /* Get and count tokens until end of line reached */
-   for(i = 0; *card != '\0'; i++)
-      txfree(MIFgettok(&card));
-
+   /* Get and count tokens until end of line reached and find the "poly" token */
+   for(i = 0; *card != '\0'; i++) {
+      char *newtoken;
+      newtoken = MIFgettok(&card);
+      if ((i == 3) && ciprefix(newtoken, "poly"))
+          has_poly = TRUE;
+      txfree(newtoken);
+   }
+   /* no translation, if 'poly' not in the line */
+   if (!has_poly) i=0;
    return(i);
 
 } /* count_tokens */
