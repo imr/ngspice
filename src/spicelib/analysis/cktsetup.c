@@ -67,10 +67,10 @@ CKTsetup(CKTcircuit *ckt)
         nthreads = 2;
 
     omp_set_num_threads(nthreads);
-    if (nthreads == 1)
+/*    if (nthreads == 1)
       printf("OpenMP: %d thread is requested in ngspice\n", nthreads);
     else
-      printf("OpenMP: %d threads are requested in ngspice\n", nthreads);
+      printf("OpenMP: %d threads are requested in ngspice\n", nthreads);*/
 #endif
 
     for (i=0;i<DEVmaxnum;i++) {
