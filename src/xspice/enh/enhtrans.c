@@ -65,7 +65,7 @@ NON-STANDARD FEATURES
 static int needs_translating(char *card);
 static int count_tokens(char *card);
 static char *two2three_translate(char  *orig_card, char  **inst_card,
-    char  **mod_card);
+                                 char  **mod_card);
 static int get_poly_dimension(char *card);
 
 /*
@@ -84,75 +84,70 @@ to new polynomial controlled source code model syntax.
 /*  It returns (a pointer to) the processed deck.                      */
 /*---------------------------------------------------------------------*/
 struct line * ENHtranslate_poly(
-   struct   line  *deck)          /* Linked list of lines in input deck */
-{
-   struct   line  *d;
-   struct   line  *l1;
-   struct   line  *l2;
+    struct   line  *deck) {        /* Linked list of lines in input deck */
+    struct   line  *d;
+    struct   line  *l1;
+    struct   line  *l2;
 
-   char  *card;
+    char  *card;
 
-   /* Iterate through each card in the deck and translate as needed */
-   for(d = deck; d; d = d->li_next) 
-   {
+    /* Iterate through each card in the deck and translate as needed */
+    for(d = deck; d; d = d->li_next) {
 
 #ifdef TRACE
-     /* SDB debug statement */
-     printf("In ENHtranslate_poly, now examining card %s . . . \n", d->li_line);
+        /* SDB debug statement */
+        printf("In ENHtranslate_poly, now examining card %s . . . \n", d->li_line);
 #endif
 
-     /* If doesn't need to be translated, continue to next card */
-     if(! needs_translating(d->li_line)) {
+        /* If doesn't need to be translated, continue to next card */
+        if(! needs_translating(d->li_line)) {
 
 #ifdef TRACE
-       /* SDB debug statement */
-       /* printf("Card doesn't need translating.  Continuing . . . .\n"); */
+            /* SDB debug statement */
+            /* printf("Card doesn't need translating.  Continuing . . . .\n"); */
+#endif
+            continue;
+        }
+
+#ifdef TRACE
+        /* SDB debug statement */
+        printf("Found a card to translate . . . .\n");
 #endif
 
-       continue;
-     }
+        /* Create two new line structs and splice into deck */
+        l1 = alloc(struct line);
+        l2 = alloc(struct line);
+        l2->li_next = d->li_next;
+        l1->li_next = l2;
+        d->li_next  = l1;
+
+        /* PN 2004: Add original linenumber to ease the debug process
+         * for malfromned netlist
+         */
+
+        l1->li_linenum = d->li_linenum;
+        l2->li_linenum = d->li_linenum;
+
+        /* Create the translated cards */
+        d->li_error = two2three_translate(d->li_line, &(l1->li_line), &(l2->li_line));
+
+        /* Comment out the original line */
+        card = TMALLOC(char, strlen(d->li_line) + 2);
+        strcpy(card,"*");
+        strcat(card, d->li_line);
+        d->li_line = card;
 
 #ifdef TRACE
-     /* SDB debug statement */
-     printf("Found a card to translate . . . .\n");
+        /* SDB debug statement */
+        printf("In ENHtranslate_poly, translated card = %s . . . \n", card);
 #endif
 
-/* Create two new line structs and splice into deck */
-/*      l1 = alloc(line);  */  /* jgroves */
-/*      l2 = alloc(line);  */  /* jgroves */
-     l1 = alloc(struct line);
-     l2 = alloc(struct line);
-     l2->li_next = d->li_next;
-     l1->li_next = l2;
-     d->li_next  = l1;
-     
-/* PN 2004: Add original linenumber to ease the debug process 
- * for malfromned netlist
- */
- 
-     l1->li_linenum = d->li_linenum;
-     l2->li_linenum = d->li_linenum;     
-     
-     /* Create the translated cards */
-     d->li_error = two2three_translate(d->li_line, &(l1->li_line), &(l2->li_line));
-     
-     /* Comment out the original line */
-     card = TMALLOC(char, strlen(d->li_line) + 2);
-     strcpy(card,"*");
-     strcat(card, d->li_line);
-     d->li_line = card;
+        /* Advance deck pointer to last line added */
+        d = l2;
+    }
 
-#ifdef TRACE
-     /* SDB debug statement */
-     printf("In ENHtranslate_poly, translated card = %s . . . \n", card);
-#endif     
-
-     /* Advance deck pointer to last line added */
-     d = l2;
-   }
-   
-   /* Return head of deck */
-   return(deck);
+    /* Return head of deck */
+    return(deck);
 
 } /* ENHtranslate_poly */
 
@@ -173,29 +168,33 @@ static int needs_translating(
 {
 
 #ifdef TRACE
-  /* SDB debug statement */
-  /* printf("In needs_translating, examining card %s . . . \n", card); */
+    /* SDB debug statement */
+    /* printf("In needs_translating, examining card %s . . . \n", card); */
 #endif
 
-   switch(*card) {
+    switch(*card) {
 
-   case 'e': case 'E':
-   case 'g': case 'G':
-      if(count_tokens(card) > 6)
-         return(1);
-      else
-         return(0);
+    case 'e':
+    case 'E':
+    case 'g':
+    case 'G':
+        if(count_tokens(card) > 6)
+            return(1);
+        else
+            return(0);
 
-   case 'f': case 'F':
-   case 'h': case 'H':
-      if(count_tokens(card) > 5)
-         return(1);
-      else
-         return(0);
+    case 'f':
+    case 'F':
+    case 'h':
+    case 'H':
+        if(count_tokens(card) > 5)
+            return(1);
+        else
+            return(0);
 
-   default:
-      return(0);
-   }
+    default:
+        return(0);
+    }
 
 } /* needs_translating */
 
@@ -208,22 +207,22 @@ count_tokens()
 Count and return the number of tokens on the card.
 */
 static int count_tokens(
-   char *card)           /* the card text on which to count tokens */
+    char *card)           /* the card text on which to count tokens */
 {
-   int   i;
-   bool has_poly = FALSE;
+    int   i;
+    bool has_poly = FALSE;
 
-   /* Get and count tokens until end of line reached and find the "poly" token */
-   for(i = 0; *card != '\0'; i++) {
-      char *newtoken;
-      newtoken = MIFgettok(&card);
-      if ((i == 3) && ciprefix(newtoken, "poly"))
-          has_poly = TRUE;
-      txfree(newtoken);
-   }
-   /* no translation, if 'poly' not in the line */
-   if (!has_poly) i=0;
-   return(i);
+    /* Get and count tokens until end of line reached and find the "poly" token */
+    for(i = 0; *card != '\0'; i++) {
+        char *newtoken;
+        newtoken = MIFgettok(&card);
+        if ((i == 3) && ciprefix(newtoken, "poly"))
+            has_poly = TRUE;
+        txfree(newtoken);
+    }
+    /* no translation, if 'poly' not in the line */
+    if (!has_poly) i=0;
+    return(i);
 
 } /* count_tokens */
 
@@ -234,7 +233,7 @@ static int count_tokens(
 
 two2three_translate()
 
-Do the syntax translation of the 2G6 source to the new code model 
+Do the syntax translation of the 2G6 source to the new code model
 syntax.  The translation proceeds according to the template below.
 
 --------------------------------------------
@@ -282,237 +281,230 @@ aname %vnam[Vname] %vd[N+ N-] pname
 /********************************************************************/
 
 static char *two2three_translate(
-   char  *orig_card,    /* the original untranslated card */
-   char  **inst_card,   /* the instance card created by the translation */
-   char  **mod_card)    /* the model card created by the translation */
+    char  *orig_card,    /* the original untranslated card */
+    char  **inst_card,   /* the instance card created by the translation */
+    char  **mod_card)    /* the model card created by the translation */
 {
-   int   dim;
-   int   num_tokens;
+    int   dim;
+    int   num_tokens;
 
-   int   num_conns;
-   int   num_coefs;
-   size_t inst_card_len;
-   size_t mod_card_len;
+    int   num_conns;
+    int   num_coefs;
+    size_t inst_card_len;
+    size_t mod_card_len;
 
-   int   i;
+    int   i;
 
-   char  type;
+    char  type;
 
-   char  *tok;
-   char  *name;
-   char  **out_conn;
-   char  **in_conn;
-   char  **coef;
+    char  *tok;
+    char  *name;
+    char  **out_conn;
+    char  **in_conn;
+    char  **coef;
 
-   char  *card;
+    char  *card;
 
 
 #ifdef TRACE
-   /* SDB debug statement */
-   printf("In two2three_translate, card to translate = %s . . .\n", orig_card);
+    /* SDB debug statement */
+    printf("In two2three_translate, card to translate = %s . . .\n", orig_card);
 #endif
 
-   /* Put the first character into local storage for checking type */
-   type = *orig_card;
+    /* Put the first character into local storage for checking type */
+    type = *orig_card;
 
-   /* Count the number of tokens for use in parsing */
-   num_tokens = count_tokens(orig_card);
+    /* Count the number of tokens for use in parsing */
+    num_tokens = count_tokens(orig_card);
 
-   /* Determine the dimension of the poly source */
-   /* Note that get_poly_dimension returns 0 for "no poly", -1 for 
-      invalid dimensiion, otherwise returns numeric value of POLY */
-   dim = get_poly_dimension(orig_card);
-   if(dim == -1) {
-      char *errmsg;
-      printf("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
-      printf("ERROR  while parsing: %s\n", orig_card);
-      errmsg = copy("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
-      *inst_card = copy(" * ERROR Argument to poly() is not an integer");
-      *mod_card  = copy(" * ERROR Argument to poly() is not an integer");
-      return errmsg;
-   }
+    /* Determine the dimension of the poly source */
+    /* Note that get_poly_dimension returns 0 for "no poly", -1 for
+       invalid dimensiion, otherwise returns numeric value of POLY */
+    dim = get_poly_dimension(orig_card);
+    if(dim == -1) {
+        char *errmsg;
+        printf("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
+        printf("ERROR  while parsing: %s\n", orig_card);
+        errmsg = copy("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
+        *inst_card = copy(" * ERROR Argument to poly() is not an integer");
+        *mod_card  = copy(" * ERROR Argument to poly() is not an integer");
+        return errmsg;
+    }
 
-   /* Compute number of output connections based on type and dimension */
-   switch(type) {
-   case 'E':
-   case 'e':
-   case 'G':
-   case 'g':
-      num_conns = 2 * dim;
-      break;
+    /* Compute number of output connections based on type and dimension */
+    switch(type) {
+    case 'E':
+    case 'e':
+    case 'G':
+    case 'g':
+        num_conns = 2 * dim;
+        break;
 
-   default:
-      num_conns = dim;
-   }
+    default:
+        num_conns = dim;
+    }
 
-   /* Compute number of coefficients.  Return error if less than one. */
-   if(dim == 0)
-     num_coefs = num_tokens - num_conns - 3;  /* no POLY token */
-   else
-     num_coefs = num_tokens - num_conns - 5;  /* POLY token present */
+    /* Compute number of coefficients.  Return error if less than one. */
+    if(dim == 0)
+        num_coefs = num_tokens - num_conns - 3;  /* no POLY token */
+    else
+        num_coefs = num_tokens - num_conns - 5;  /* POLY token present */
 
 #ifdef TRACE
-   /* SDB debug statement */
-   printf("In two2three_translate, num_tokens=%d, num_conns=%d, num_coefs=%d . . .\n", num_tokens, num_conns, num_coefs);
+    /* SDB debug statement */
+    printf("In two2three_translate, num_tokens=%d, num_conns=%d, num_coefs=%d . . .\n", num_tokens, num_conns, num_coefs);
 #endif
 
+    if(num_coefs < 1) {
+        char *errmsg;
+        printf("ERROR - Number of connections differs from poly dimension\n");
+        printf("ERROR  while parsing: %s\n", orig_card);
+        errmsg = copy("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
+        *inst_card = copy("* ERROR - Number of connections differs from poly dimension\n");
+        *mod_card  = copy(" * ERROR - Number of connections differs from poly dimension\n");
+        return(errmsg);
+    }
+    /* Split card into name, output connections, input connections, */
+    /* and coefficients */
 
-   if(num_coefs < 1){
-      char *errmsg;
-      printf("ERROR - Number of connections differs from poly dimension\n");
-      printf("ERROR  while parsing: %s\n", orig_card);
-      errmsg = copy("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
-      *inst_card = copy("* ERROR - Number of connections differs from poly dimension\n");
-      *mod_card  = copy(" * ERROR - Number of connections differs from poly dimension\n");
-      return(errmsg);
-}
-   /* Split card into name, output connections, input connections, */
-   /* and coefficients */
+    card = orig_card;
+    name = MIFgettok(&card);
 
-   card = orig_card;
-   name = MIFgettok(&card);
+    /* Get output connections (2 netnames) */
+    out_conn = TMALLOC(char *, 2);
+    for(i = 0; i < 2; i++)
+        out_conn[i] = MIFgettok(&card);
 
-   /* Get output connections (2 netnames) */
-   out_conn = TMALLOC(char *, 2);
-   for(i = 0; i < 2; i++)
-      out_conn[i] = MIFgettok(&card);
-
-   /* check for POLY, and ignore it if present */
-   if (dim >  0) { 
+    /* check for POLY, and ignore it if present */
+    if (dim >  0) {
 
 #ifdef TRACE
-     /* SDB debug statement */
-     printf("In two2three_translate, found poly!!!  dim = %d \n", dim);
+        /* SDB debug statement */
+        printf("In two2three_translate, found poly!!!  dim = %d \n", dim);
 #endif
 
-     tok = MIFgettok(&card); /* read and discard POLY */
-     tok = MIFgettok(&card); /* read and discard dimension */
-   }
+        tok = MIFgettok(&card); /* read and discard POLY */
+        tok = MIFgettok(&card); /* read and discard dimension */
+    }
 
 
-   /* Get input connections (2 netnames per dimension) */
-   in_conn = TMALLOC(char *, num_conns);
-   for(i = 0; i < num_conns; i++)
-      in_conn[i] = MIFgettok(&card);
+    /* Get input connections (2 netnames per dimension) */
+    in_conn = TMALLOC(char *, num_conns);
+    for(i = 0; i < num_conns; i++)
+        in_conn[i] = MIFgettok(&card);
 
-   /* The remainder of the line are the poly coeffs. */
-   coef = TMALLOC(char *, num_coefs);
-   for(i = 0; i < num_coefs; i++)
-      coef[i] = MIFgettok(&card);
+    /* The remainder of the line are the poly coeffs. */
+    coef = TMALLOC(char *, num_coefs);
+    for(i = 0; i < num_coefs; i++)
+        coef[i] = MIFgettok(&card);
 
-   /* Compute the size needed for the new cards to be created */
-   /* Allow a fair amount of extra space for connection types, etc. */
-   /* to be safe... */
+    /* Compute the size needed for the new cards to be created */
+    /* Allow a fair amount of extra space for connection types, etc. */
+    /* to be safe... */
 
-   inst_card_len = 70;
-   inst_card_len += 2 * (strlen(name) + 1);
-   for(i = 0; i < 2; i++)
+    inst_card_len = 70;
+    inst_card_len += 2 * (strlen(name) + 1);
+    for(i = 0; i < 2; i++)
 
-      inst_card_len += strlen(out_conn[i]) + 1;
-   for(i = 0; i < num_conns; i++)
-      inst_card_len += strlen(in_conn[i]) + 1;
+        inst_card_len += strlen(out_conn[i]) + 1;
+    for(i = 0; i < num_conns; i++)
+        inst_card_len += strlen(in_conn[i]) + 1;
 
-   mod_card_len = 70;
-   mod_card_len += strlen(name) + 1;
-   for(i = 0; i < num_coefs; i++)
-      mod_card_len += strlen(coef[i]) + 1;
+    mod_card_len = 70;
+    mod_card_len += strlen(name) + 1;
+    for(i = 0; i < num_coefs; i++)
+        mod_card_len += strlen(coef[i]) + 1;
 
-   /* Allocate space for the cards and write them into the strings */
+    /* Allocate space for the cards and write them into the strings */
 
-   *inst_card = TMALLOC(char, inst_card_len);
-   *mod_card = TMALLOC(char, mod_card_len);
+    *inst_card = TMALLOC(char, inst_card_len);
+    *mod_card = TMALLOC(char, mod_card_len);
 
-   strcpy(*inst_card, "a$poly$");
-   sprintf(*inst_card + strlen(*inst_card), "%s ", name);
+    strcpy(*inst_card, "a$poly$");
+    sprintf(*inst_card + strlen(*inst_card), "%s ", name);
 
-   /* Write input nets/sources */
-   if((type == 'e') || (type == 'g') ||
-      (type == 'E') || (type == 'G')) {  /* These input port types are vector & need a [. */
-     if (dim > 1) {
-       sprintf(*inst_card + strlen(*inst_card), "%%vd [ ");
-     } 
-     else {
-       sprintf(*inst_card + strlen(*inst_card), "%%vd [ ");  /* need something different? */
-     }
-   }
-   else                                  /* This input port type is scalar */
-     sprintf(*inst_card + strlen(*inst_card), "%%vnam [ ");
+    /* Write input nets/sources */
+    if((type == 'e') || (type == 'g') ||
+            (type == 'E') || (type == 'G')) {  /* These input port types are vector & need a [. */
+        if (dim > 1) {
+            sprintf(*inst_card + strlen(*inst_card), "%%vd [ ");
+        } else {
+            sprintf(*inst_card + strlen(*inst_card), "%%vd [ ");  /* need something different? */
+        }
+    } else                                /* This input port type is scalar */
+        sprintf(*inst_card + strlen(*inst_card), "%%vnam [ ");
 
 
-   for(i = 0; i < num_conns; i++)
-      sprintf(*inst_card + strlen(*inst_card), "%s ", in_conn[i]);
+    for(i = 0; i < num_conns; i++)
+        sprintf(*inst_card + strlen(*inst_card), "%s ", in_conn[i]);
 
 
-   if (dim > 1) {
-     sprintf(*inst_card + strlen(*inst_card), "] ");
-   }
-   else {
-     sprintf(*inst_card + strlen(*inst_card), "] ");  /* need something different? */
-   }
+    if (dim > 1) {
+        sprintf(*inst_card + strlen(*inst_card), "] ");
+    } else {
+        sprintf(*inst_card + strlen(*inst_card), "] ");  /* need something different? */
+    }
 
 
-   /* Write output nets */
-   if((type == 'e') || (type == 'h') ||
-      (type == 'E') || (type == 'H'))
-      sprintf(*inst_card + strlen(*inst_card), "%%vd ( ");
-   else
-      sprintf(*inst_card + strlen(*inst_card), "%%id ( ");
+    /* Write output nets */
+    if((type == 'e') || (type == 'h') ||
+            (type == 'E') || (type == 'H'))
+        sprintf(*inst_card + strlen(*inst_card), "%%vd ( ");
+    else
+        sprintf(*inst_card + strlen(*inst_card), "%%id ( ");
 
-   for(i = 0; i < 2; i++)
-      sprintf(*inst_card + strlen(*inst_card), "%s ", out_conn[i]);
+    for(i = 0; i < 2; i++)
+        sprintf(*inst_card + strlen(*inst_card), "%s ", out_conn[i]);
 
-   sprintf(*inst_card + strlen(*inst_card), ") ");
-
-
-   /* Write model name */   
-   sprintf(*inst_card + strlen(*inst_card), "a$poly$%s", name);
+    sprintf(*inst_card + strlen(*inst_card), ") ");
 
 
-   /* Now create model card */
-   sprintf(*mod_card, ".model a$poly$%s spice2poly coef = [ ", name);
-   for(i = 0; i < num_coefs; i++)
-      sprintf(*mod_card + strlen(*mod_card), "%s ", coef[i]);
-   sprintf(*mod_card + strlen(*mod_card), "]");
+    /* Write model name */
+    sprintf(*inst_card + strlen(*inst_card), "a$poly$%s", name);
+
+
+    /* Now create model card */
+    sprintf(*mod_card, ".model a$poly$%s spice2poly coef = [ ", name);
+    for(i = 0; i < num_coefs; i++)
+        sprintf(*mod_card + strlen(*mod_card), "%s ", coef[i]);
+    sprintf(*mod_card + strlen(*mod_card), "]");
 
 #ifdef TRACE
-   /* SDB debug statement */
-   printf("In two2three_translate, translated statements:\n%s \n%s \n", *inst_card, *mod_card);
+    /* SDB debug statement */
+    printf("In two2three_translate, translated statements:\n%s \n%s \n", *inst_card, *mod_card);
 #endif
 
-   /* Free the temporary space */
-   FREE(name);
-   name = NULL;
+    /* Free the temporary space */
+    FREE(name);
+    name = NULL;
 
-   for(i = 0; i < 2; i++)
-   {
-      FREE(out_conn[i]);
-      out_conn[i] = NULL;
-   }
+    for(i = 0; i < 2; i++) {
+        FREE(out_conn[i]);
+        out_conn[i] = NULL;
+    }
 
-   FREE(out_conn);
-   out_conn = NULL;
+    FREE(out_conn);
+    out_conn = NULL;
 
-   for(i = 0; i < num_conns; i++)
-   {
-      FREE(in_conn[i]);
-      in_conn[i] = NULL;
-   }
+    for(i = 0; i < num_conns; i++) {
+        FREE(in_conn[i]);
+        in_conn[i] = NULL;
+    }
 
-   FREE(in_conn);
-   in_conn = NULL;
+    FREE(in_conn);
+    in_conn = NULL;
 
-   for(i = 0; i < num_coefs; i++)
-   {
-     FREE(coef[i]);
-     coef[i] = NULL;
-   }
+    for(i = 0; i < num_coefs; i++) {
+        FREE(coef[i]);
+        coef[i] = NULL;
+    }
 
-   FREE(coef);
+    FREE(coef);
 
-   coef = NULL;
+    coef = NULL;
 
-   /* Return NULL to indicate no error */
-   return(NULL);
+    /* Return NULL to indicate no error */
+    return(NULL);
 
 } /* two2three_translate */
 
@@ -531,45 +523,41 @@ Otherwise, return the integer dimension.
 
 
 static int get_poly_dimension(
-   char *card)                 /* the card text */
+    char *card)                 /* the card text */
 {
 
-   int   i;
-   int   dim;
-   char  *local_tok;
+    int   i;
+    int   dim;
+    char  *local_tok;
 
+    /* Skip over name and output connections */
+    for(i = 0; i < 3; i++)
+        txfree(MIFgettok(&card));
 
-   /* Skip over name and output connections */
-   for(i = 0; i < 3; i++)
-      txfree(MIFgettok(&card));
+    /* Check the next token to see if it is "poly" */
+    /* If not, return  0                           */
+    local_tok = MIFgettok(&card);
+    if( strcmp(local_tok, "poly") &&
+            strcmp(local_tok, "POLY") ) { /* check that local_tok is *not* poly */
+        FREE(local_tok);
+        local_tok = NULL;
+        return(0);
+    }
 
-   /* Check the next token to see if it is "poly" */
-   /* If not, return  0                           */
-   local_tok = MIFgettok(&card);
-   if( strcmp(local_tok, "poly") &&
-       strcmp(local_tok, "POLY") )   /* check that local_tok is *not* poly */
-   {
-      FREE(local_tok);
-      local_tok = NULL;
-      return(0);
-   }
+    FREE(local_tok);
 
-   FREE(local_tok);
+    /* Must have been "poly", so next line must be a number */
+    /* Try to convert it.  If successful, return the number */
+    /* else, return -1 to indicate an error...               */
+    local_tok = MIFgettok(&card);
+    dim = atoi(local_tok);
+    FREE(local_tok);
 
-   /* Must have been "poly", so next line must be a number */
-   /* Try to convert it.  If successful, return the number */
-   /* else, return -1 to indicate an error...               */
-   local_tok = MIFgettok(&card);
-   dim = atoi(local_tok);
-   FREE(local_tok);
-
-   
-   if (dim > 0) {
-   return(dim);
-   } 
-   else {
-     return(-1);
-   }
+    if (dim > 0) {
+        return(dim);
+    } else {
+        return(-1);
+    }
 
 } /* get_poly_dimension */
 
