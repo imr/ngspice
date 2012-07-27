@@ -144,9 +144,7 @@ com_hardcopy(wordlist *wl)
             buf2 = prompt(cp_in);
             if (!buf2)
                 return;
-            wl = TMALLOC(struct wordlist, 1);
-            wl->wl_word = buf2;
-            wl->wl_next = NULL;
+            wl = wl_cons(buf2, NULL);
             wl = process(wl);
         }
 
