@@ -217,7 +217,7 @@ getword(wordlist *wl, char *name)
     wordlist *beg;
     char *s;
 
-    wl = wl_find(name, wl);
+    beg = wl_find(name, wl);
 
     if (!beg)
         return NULL;
