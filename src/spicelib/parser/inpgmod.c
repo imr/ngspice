@@ -185,7 +185,7 @@ is_equal( double result, double expectedResult )
 static bool
 in_range( double value, double min, double max )
 {
-  if ( (is_equal( value, min ) == TRUE) || (is_equal( value, max ) == TRUE) ||
+  if ( (is_equal( value, min ) == TRUE) || /* the standard binning rule is: min <= value < max */
        (min < value && value < max) ) return TRUE;
   else                                return FALSE;
 }
