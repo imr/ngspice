@@ -994,9 +994,7 @@ old_show(wordlist *wl)
     }
 
     devs = tw;
-    for (tw = parms; tw; tw = tw->wl_next)
-        if (eq(tw->wl_word, "all"))
-            break;
+    tw = wl_find("all", parms);
     if (tw)
         parms = NULL;
 

@@ -163,14 +163,12 @@ docommand(wordlist *wlist)
         struct comm *command;
         wordlist *nextc, *ee;
 
-        if (eq(wlist->wl_word, cp_csep)) {
+        nextc = wl_find(cp_csep, wlist);
+
+        if (nextc == wlist) {   /* skip leading `;' */
             wlist = wlist->wl_next;
             continue;
         }
-
-        for (nextc = wlist; nextc; nextc = nextc->wl_next)
-            if (eq(nextc->wl_word, cp_csep))
-                break;
 
         /* Temporarily hide the rest of the command... */
         ee = wlist->wl_prev;

@@ -66,14 +66,12 @@ cp_doalias(wordlist *wlist)
         int ntries;
         wordlist *end, *nextc;
 
-        if (eq(comm->wl_word, cp_csep)) {
+        nextc = wl_find(cp_csep, comm);
+
+        if(nextc == comm) {     /* skip leading `;' */
             comm = comm->wl_next;
             continue;
         }
-
-        for (nextc = comm; nextc; nextc = nextc->wl_next)
-            if (eq(nextc->wl_word, cp_csep))
-                break;
 
         /* Temporarily hide the rest of the command... */
         end = comm->wl_prev;

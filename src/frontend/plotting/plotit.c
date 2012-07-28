@@ -38,9 +38,7 @@ getlims(wordlist *wl, char *name, int number)
     if(number < 1)
         return NULL;
 
-    for (beg = wl; beg; beg = beg->wl_next)
-        if (eq(beg->wl_word, name))
-            break;
+    beg = wl_find(name, wl);
 
     if(!beg)
         return NULL;
@@ -197,9 +195,7 @@ compress(struct dvec *d, double *xcomp, double *xind)
 static bool
 getflag(wordlist *wl, char *name)
 {
-    for (; wl; wl = wl->wl_next)
-        if (eq(wl->wl_word, name))
-            break;
+    wl = wl_find(name, wl);
 
     if (!wl)
         return FALSE;
@@ -221,9 +217,7 @@ getword(wordlist *wl, char *name)
     wordlist *beg;
     char *s;
 
-    for (beg = wl; beg; beg = beg->wl_next)
-        if (eq(beg->wl_word, name))
-            break;
+    wl = wl_find(name, wl);
 
     if (!beg)
         return NULL;
