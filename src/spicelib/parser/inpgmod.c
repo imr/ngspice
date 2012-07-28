@@ -21,8 +21,8 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 
 extern IFcardInfo *INPcardTab[];
 extern int INPnumCards;
-#define E_MISSING	-1
-#define E_AMBIGUOUS	-2
+#define E_MISSING        -1
+#define E_AMBIGUOUS        -2
 
 static int INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMessage );
 static int INPfindCard( char *name, IFcardInfo *table[], int numCards );
@@ -65,7 +65,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
        modtmp->INPmodType == INPtypelook("NUMOS") ) {
     error = INPparseNumMod( ckt, modtmp, tab, &err );
     if (error) return error;
-  } else {     
+  } else {
     /* It's an analytical model */
 #endif /* CIDER */
 
@@ -76,43 +76,43 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
     printf("In INPgetMod, inserting new model into table.  line = %s . . . \n", line);
 #endif
 
-    INPgetTok(&line, &parm, 1);	/* throw away '.model' */
+    INPgetTok(&line, &parm, 1);        /* throw away '.model' */
     tfree(parm);
-    INPgetTok(&line, &parm, 1);	/* throw away 'modname' */
+    INPgetTok(&line, &parm, 1);        /* throw away 'modname' */
     tfree(parm);
     while (*line != 0) {
       INPgetTok(&line, &parm, 1);
       if (!*parm)
-	continue;
-      
+        continue;
+
       for (j = 0; j < *(ft_sim->devices[modtmp->INPmodType]->numModelParms); j++) {
-	
-	if (strcmp(parm, "txl") == 0) {
-	  if (strcmp("cpl", ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0) {
-	    strcpy(parm, "cpl");
-	  }
-	}
-	
-	if (strcmp(parm, ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0) {
-	  
-	  val = INPgetValue(ckt, &line, ft_sim->devices[modtmp->INPmodType]->modelParms[j].dataType, tab);
-	  
-	  error = ft_sim->setModelParm (ckt, modtmp->INPmodfast,
-					     ft_sim->devices[modtmp->INPmodType]->modelParms[j].id,
-					     val, NULL);
-	  if (error)
-	    return error;
-	  break;
-	}
+
+        if (strcmp(parm, "txl") == 0) {
+          if (strcmp("cpl", ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0) {
+            strcpy(parm, "cpl");
+          }
+        }
+
+        if (strcmp(parm, ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0) {
+
+          val = INPgetValue(ckt, &line, ft_sim->devices[modtmp->INPmodType]->modelParms[j].dataType, tab);
+
+          error = ft_sim->setModelParm (ckt, modtmp->INPmodfast,
+                                             ft_sim->devices[modtmp->INPmodType]->modelParms[j].id,
+                                             val, NULL);
+          if (error)
+            return error;
+          break;
+        }
       } /* end for(j = 0 . . .*/
-      
+
       if (strcmp(parm, "level") == 0) {
-	/* just grab the level number and throw away */
-	/* since we already have that info from pass1 */
-	val = INPgetValue(ckt, &line, IF_REAL, tab);
+        /* just grab the level number and throw away */
+        /* since we already have that info from pass1 */
+        val = INPgetValue(ckt, &line, IF_REAL, tab);
       } else if (j >= *(ft_sim->devices[modtmp->INPmodType]->numModelParms)) {
 
-	/* want only the parameter names in output - not the values */
+        /* want only the parameter names in output - not the values */
         errno = 0;    /* To distinguish success/failure after call */
         dval = strtod(parm, &endptr);
         /* Check for various possible errors */
@@ -151,7 +151,7 @@ parse_line( char* line, char* tokens[], int num_tokens, double values[], bool fo
     found[i] = FALSE;
 
   while( *line != '\0' ) {
-    
+
     if ( get_index != -1 ) {
       values[get_index] = INPevaluate( &line, &error, 1 );
       found[get_index]  = TRUE;
@@ -210,7 +210,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
 
   if ( parse_line( line, instance_tokens, 2, parse_values, parse_found ) != TRUE )
     return NULL;
- 
+
   l = parse_values[0]*scale;
   w = parse_values[1]*scale;
 
@@ -242,7 +242,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
     lmin = parse_values[0]; lmax = parse_values[1];
     wmin = parse_values[2]; wmax = parse_values[3];
 
-    if ( strncmp( modtmp->INPmodName, name, strlen( name ) ) == 0 && 
+    if ( strncmp( modtmp->INPmodName, name, strlen( name ) ) == 0 &&
       in_range( l, lmin, lmax ) && in_range( w, wmin, wmax ) ) {
         if ( !modtmp->INPmodUsed ) {
             error = create_model( ckt, modtmp, tab );
@@ -327,15 +327,15 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
 static int
 INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMessage )
 {
-    card *txtCard;	/* Text description of a card */
-    GENcard *tmpCard;	/* Processed description of a card */
-    IFcardInfo *info;	/* Info about the type of card located */
+    card *txtCard;        /* Text description of a card */
+    GENcard *tmpCard;        /* Processed description of a card */
+    IFcardInfo *info;        /* Info about the type of card located */
     char *line;
-    char *cardName = NULL;	/* name of a card */
-    char *parm;		/* name of a parameter */
-    int cardType;	/* type/index for the current card */
-    int cardNum = 0;	/* number of this card in the overall line */
-    int lastType = E_MISSING;	/* type of previous card */
+    char *cardName = NULL;        /* name of a card */
+    char *parm;                /* name of a parameter */
+    int cardType;        /* type/index for the current card */
+    int cardNum = 0;        /* number of this card in the overall line */
+    int lastType = E_MISSING;        /* type of previous card */
     char *err = NULL, *tmp;    /* Strings for error messages */
     IFvalue *value;
     int error, idx, invert;
@@ -349,124 +349,124 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
 
     /* Now parse each remaining card */
     while (txtCard) {
-	line = txtCard->line;
-	cardType = E_MISSING;
-	cardNum++;
+        line = txtCard->line;
+        cardType = E_MISSING;
+        cardNum++;
 
-	/* Skip the initial '+' and any whitespace. */
-	line++;
-	while (*line == ' ' || *line == '\t')
-	    line++;
+        /* Skip the initial '+' and any whitespace. */
+        line++;
+        while (*line == ' ' || *line == '\t')
+            line++;
 
-	switch (*line) {
-	case '*':
-	case '$':
-	case '#':
-	case '\0':
-	case '\n':
-	    /* comment or empty cards */
-	    lastType = E_MISSING;
-	    break;
+        switch (*line) {
+        case '*':
+        case '$':
+        case '#':
+        case '\0':
+        case '\n':
+            /* comment or empty cards */
+            lastType = E_MISSING;
+            break;
         case '+':
-	    /* continuation card */
-	    if (lastType >= 0) {
-	        cardType = lastType;
-                while (*line == '+') line++;	/* Skip leading '+'s */
-	    } else {
-	        tmp = TMALLOC(char, 55);
-		(void) sprintf(tmp,
-		    "Error on card %d : illegal continuation \'+\' - ignored",
-		    cardNum);
-		err = INPerrCat(err,tmp);
-		lastType = E_MISSING;
-	        break;
-	    }
-	    /* FALL THRU when continuing a card */
+            /* continuation card */
+            if (lastType >= 0) {
+                cardType = lastType;
+                while (*line == '+') line++;        /* Skip leading '+'s */
+            } else {
+                tmp = TMALLOC(char, 55);
+                (void) sprintf(tmp,
+                    "Error on card %d : illegal continuation \'+\' - ignored",
+                    cardNum);
+                err = INPerrCat(err,tmp);
+                lastType = E_MISSING;
+                break;
+            }
+            /* FALL THRU when continuing a card */
         default:
-	    if (cardType == E_MISSING) {
-	        /* new command card */
-		if (cardName) FREE(cardName);	/* get rid of old card name */
-	        INPgetTok(&line,&cardName,1);	/* get new card name */
-		if (*cardName) { 		/* Found a name? */
-		    cardType = INPfindCard(cardName,INPcardTab,INPnumCards);
-		    if (cardType >= 0) {
-		        /* Add card structure to model */
-			info = INPcardTab[cardType];
-			error = info->newCard ((void **) &tmpCard,
-			        model->INPmodfast );
-			if (error) return(error);
-		    /* Handle parameter-less cards */
-		    } else if (cinprefix( cardName, "title", 3 ) ) {
-		        /* Do nothing */
-		    } else if (cinprefix( cardName, "comment", 3 ) ) {
-		        /* Do nothing */
-		    } else if (cinprefix( cardName, "end", 3 ) ) {
-			/* Terminate parsing */
-			txtCard = ((card *) 0);
-			cardType = E_MISSING;
-		    } else {
-		        /* Error */
-		        tmp = TMALLOC(char, 55 + strlen(cardName));
-			(void) sprintf(tmp,
-			    "Error on card %d : unrecognized name (%s) - ignored",
-			    cardNum, cardName );
-			err = INPerrCat(err,tmp);
-		    }
-		}
-	    }
-	    if (cardType >= 0) { /* parse the rest of this line */
-		while (*line) {
-		    /* Strip leading carat from booleans */
-		    if (*line == '^') {
-		      invert = TRUE;
-		      line++;	/* Skip the '^' */
-		    } else {
-		      invert = FALSE;
-		    }
-		    INPgetTok(&line,&parm,1);
-		    if (!*parm)
-		      break;
-		    idx = INPfindParm(parm, info->cardParms, info->numParms);
-		    if (idx == E_MISSING) {
-			/* parm not found */
+            if (cardType == E_MISSING) {
+                /* new command card */
+                if (cardName) FREE(cardName);        /* get rid of old card name */
+                INPgetTok(&line,&cardName,1);        /* get new card name */
+                if (*cardName) {                 /* Found a name? */
+                    cardType = INPfindCard(cardName,INPcardTab,INPnumCards);
+                    if (cardType >= 0) {
+                        /* Add card structure to model */
+                        info = INPcardTab[cardType];
+                        error = info->newCard ((void **) &tmpCard,
+                                model->INPmodfast );
+                        if (error) return(error);
+                    /* Handle parameter-less cards */
+                    } else if (cinprefix( cardName, "title", 3 ) ) {
+                        /* Do nothing */
+                    } else if (cinprefix( cardName, "comment", 3 ) ) {
+                        /* Do nothing */
+                    } else if (cinprefix( cardName, "end", 3 ) ) {
+                        /* Terminate parsing */
+                        txtCard = ((card *) 0);
+                        cardType = E_MISSING;
+                    } else {
+                        /* Error */
+                        tmp = TMALLOC(char, 55 + strlen(cardName));
+                        (void) sprintf(tmp,
+                            "Error on card %d : unrecognized name (%s) - ignored",
+                            cardNum, cardName );
+                        err = INPerrCat(err,tmp);
+                    }
+                }
+            }
+            if (cardType >= 0) { /* parse the rest of this line */
+                while (*line) {
+                    /* Strip leading carat from booleans */
+                    if (*line == '^') {
+                      invert = TRUE;
+                      line++;        /* Skip the '^' */
+                    } else {
+                      invert = FALSE;
+                    }
+                    INPgetTok(&line,&parm,1);
+                    if (!*parm)
+                      break;
+                    idx = INPfindParm(parm, info->cardParms, info->numParms);
+                    if (idx == E_MISSING) {
+                        /* parm not found */
                         tmp = TMALLOC(char, 60 + strlen(parm));
                         (void)sprintf(tmp,
                             "Error on card %d : unrecognized parameter (%s) - ignored",
-			    cardNum, parm);
+                            cardNum, parm);
                         err = INPerrCat(err, tmp);
-		    } else if (idx == E_AMBIGUOUS) {
-			/* parm ambiguous */
+                    } else if (idx == E_AMBIGUOUS) {
+                        /* parm ambiguous */
                         tmp = TMALLOC(char, 58 + strlen(parm));
                         (void)sprintf(tmp,
                             "Error on card %d : ambiguous parameter (%s) - ignored",
-			    cardNum, parm);
+                            cardNum, parm);
                         err = INPerrCat(err, tmp);
-		    } else {
-		        value = INPgetValue( ckt, &line,
-			    ((info->cardParms)[idx]).dataType, tab );
-			if (invert) { /* invert if it's a boolean entry */
-			  if (((((info->cardParms)[idx]).dataType)&IF_VARTYPES)
-			      == IF_FLAG) {
-			    value->iValue = 0;
-			  } else {
+                    } else {
+                        value = INPgetValue( ckt, &line,
+                            ((info->cardParms)[idx]).dataType, tab );
+                        if (invert) { /* invert if it's a boolean entry */
+                          if (((((info->cardParms)[idx]).dataType)&IF_VARTYPES)
+                              == IF_FLAG) {
+                            value->iValue = 0;
+                          } else {
                             tmp = TMALLOC(char, 63 + strlen(parm));
                             (void)sprintf(tmp,
                               "Error on card %d : non-boolean parameter (%s) - \'^\' ignored",
-			      cardNum, parm);
+                              cardNum, parm);
                             err = INPerrCat(err, tmp);
-			  }
-			}
+                          }
+                        }
                         error = info->setCardParm (
-			    ((info->cardParms)[idx]).id, value, tmpCard );
-			if (error) return(error);
-		    }
-		    FREE(parm);
-		}
-	    }
-	    lastType = cardType;
-	    break;
-	}
-	if (txtCard) txtCard = txtCard->nextcard;
+                            ((info->cardParms)[idx]).id, value, tmpCard );
+                        if (error) return(error);
+                    }
+                    FREE(parm);
+                }
+            }
+            lastType = cardType;
+            break;
+        }
+        if (txtCard) txtCard = txtCard->nextcard;
     }
     *errMessage = err;
     return( 0 );
@@ -491,10 +491,10 @@ INPfindCard( char *name, IFcardInfo *table[], int numCards )
     for ( test = 0; test < numCards; test++ ) {
         match = cimatch( name, table[test]->name );
         if ((match == bestMatch ) && (match > 0)){
-	    best = E_AMBIGUOUS;
+            best = E_AMBIGUOUS;
         } else if ((match > bestMatch) && (match == length)) {
-	    best = test;
-	    bestMatch = match;
+            best = test;
+            bestMatch = match;
         }
     }
     return(best);
@@ -519,19 +519,19 @@ INPfindParm( char *name, IFparm *table, int numParms )
     bestMatch = 0;
     for ( test = 0; test < numParms; test++ ) {
         match = cimatch( name, table[test].keyword );
-	if ( (match == length) && (match == (int) strlen(table[test].keyword)) ) {
-	    /* exact match */
-	    best = test;
-	    /* all done */
-	    break;
-	}
-	id = table[test].id;
+        if ( (match == length) && (match == (int) strlen(table[test].keyword)) ) {
+            /* exact match */
+            best = test;
+            /* all done */
+            break;
+        }
+        id = table[test].id;
         if ((match == bestMatch) && (match > 0) && (id != bestId)) {
-	    best = E_AMBIGUOUS;
+            best = E_AMBIGUOUS;
         } else if ((match > bestMatch) && (match == length)) {
-	    bestMatch = match;
-	    bestId = id;
-	    best = test;
+            bestMatch = match;
+            bestId = id;
+            best = test;
         }
     }
     return(best);

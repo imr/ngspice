@@ -13,17 +13,17 @@ Author: 1985 Thomas L. Quarles
 INPmodel *modtab = NULL;
 
 /*--------------------------------------------------------------
- * This fcn takes the model name and looks to see if it is already 
- * in the model table.  If it is, then just return.  Otherwise, 
- * stick the model into the model table. 
- * Note that the model table INPmodel 
+ * This fcn takes the model name and looks to see if it is already
+ * in the model table.  If it is, then just return.  Otherwise,
+ * stick the model into the model table.
+ * Note that the model table INPmodel
  *--------------------------------------------------------------*/
 
 int INPmakeMod(char *token, int type, card * line)
 {
    register INPmodel **i;
 
-   /* First cycle through model table and see if model name 
+   /* First cycle through model table and see if model name
       already exists in there.  If it does, just return. */
    for (i = &modtab; *i != NULL; i = &((*i)->INPnextModel)) {
       if (strcmp((*i)->INPmodName, token) == 0) {
@@ -31,7 +31,7 @@ int INPmakeMod(char *token, int type, card * line)
       }
    }
 
-   /* Model name was not already in model table.  Therefore stick 
+   /* Model name was not already in model table.  Therefore stick
       it in the model table. Then return.  */
 
 #ifdef TRACE
@@ -41,7 +41,7 @@ int INPmakeMod(char *token, int type, card * line)
 
    *i = TMALLOC(INPmodel, 1);
    if (*i == NULL)
-      return (E_NOMEM); 
+      return (E_NOMEM);
 
    (*i)->INPmodName = token;                 /* model name */
    (*i)->INPmodType = type;                  /* model type */
@@ -51,7 +51,4 @@ int INPmakeMod(char *token, int type, card * line)
    (*i)->INPmodfast = NULL;
    return (OK);
 }
-
-
-
 
