@@ -28,6 +28,9 @@ copy(const char *str)
 {
     char *p;
     
+    if (!str)
+        return NULL;
+
     if ((p = TMALLOC(char, strlen(str) + 1)) != NULL)
 	    (void) strcpy(p, str);
     return(p);
