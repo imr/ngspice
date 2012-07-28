@@ -353,3 +353,17 @@ wl_chop_rest(wordlist *wl)
         rest->wl_prev = NULL;
     return rest;
 }
+
+
+/*
+ * search for a string in a wordlist
+ */
+
+wordlist *
+wl_find(const char *string, wordlist *wl)
+{
+    for (; wl; wl = wl->wl_next)
+        if (eq(string, wl->wl_word))
+            break;
+    return wl;
+}

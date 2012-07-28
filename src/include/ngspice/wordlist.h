@@ -31,6 +31,8 @@ void wl_append_word(wordlist **first, wordlist **last, char *word);
 wordlist *wl_chop(wordlist *wlist);
 wordlist *wl_chop_rest(wordlist *wlist);
 
+wordlist *wl_find(const char *string, wordlist *wlist);
+
 
 /* For quoting individual characters. '' strings are all quoted, but
  * `` and "" strings are maintained as single words with the quotes
