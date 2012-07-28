@@ -197,18 +197,19 @@ compress(struct dvec *d, double *xcomp, double *xind)
 static bool
 getflag(wordlist *wl, char *name)
 {
-    while (wl) {
-        if (eq(wl->wl_word, name)) {
-            if (wl->wl_prev)
-                wl->wl_prev->wl_next = wl->wl_next;
-            if (wl->wl_next)
-                wl->wl_next->wl_prev = wl->wl_prev;
-            return (TRUE);
-        }
-        wl = wl->wl_next;
-    }
+    for (; wl; wl = wl->wl_next)
+        if (eq(wl->wl_word, name))
+            break;
 
-    return (FALSE);
+    if (!wl)
+        return FALSE;
+
+    if (wl->wl_prev)
+        wl->wl_prev->wl_next = wl->wl_next;
+    if (wl->wl_next)
+        wl->wl_next->wl_prev = wl->wl_prev;
+
+    return TRUE;
 }
 
 
@@ -220,25 +221,28 @@ getword(wordlist *wl, char *name)
     wordlist *beg;
     char *s;
 
-    for (beg = wl; beg; beg = beg->wl_next) {
-        if (eq(beg->wl_word, name)) {
-            if ((beg == wl) || !beg->wl_next) {
-                fprintf(cp_err,
-                        "Syntax error: looking for plot keyword at \"%s\".\n",
-                        name);
-                return (NULL);
-            }
-            s = copy(beg->wl_next->wl_word);
-            beg->wl_prev->wl_next = beg->wl_next->wl_next;
-            if (beg->wl_next->wl_next)
-                beg->wl_next->wl_next->wl_prev = beg->wl_prev;
-            beg->wl_next->wl_next = NULL;
-            wl_free(beg);
-            return (s);
-        }
+    for (beg = wl; beg; beg = beg->wl_next)
+        if (eq(beg->wl_word, name))
+            break;
+
+    if (!beg)
+        return NULL;
+
+    if ((beg == wl) || !beg->wl_next) {
+        fprintf(cp_err,
+                "Syntax error: looking for plot keyword at \"%s\".\n", name);
+        return NULL;
     }
 
-    return (NULL);
+    s = copy(beg->wl_next->wl_word);
+
+    beg->wl_prev->wl_next = beg->wl_next->wl_next;
+    if (beg->wl_next->wl_next)
+        beg->wl_next->wl_next->wl_prev = beg->wl_prev;
+    beg->wl_next->wl_next = NULL;
+    wl_free(beg);
+
+    return s;
 }
 
 
