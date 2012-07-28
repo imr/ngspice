@@ -16,7 +16,6 @@
 #include "gnuplot.h"
 #include "graf.h"
 
-static wordlist *wl_root;
 static bool sameflag;
 
 #ifdef TCL_MODULE
@@ -38,16 +37,10 @@ getlims(wordlist *wl, char *name, int number)
     if(number < 1)
         return NULL;
 
-    beg = wl_find(name, wl);
+    beg = wl_find(name, wl->wl_next);
 
     if(!beg)
         return NULL;
-
-    if (beg == wl) {
-        fprintf(cp_err,
-                "Syntax error: looking for plot parameters \"%s\".\n", name);
-        return NULL;
-    }
 
     wk = beg;
 
@@ -88,8 +81,7 @@ getlims(wordlist *wl, char *name, int number)
         wk->wl_next = NULL;
     }
 
-    if (beg != wl_root)
-        wl_free(beg);
+    wl_free(beg);
 
     return d;
 }
@@ -195,7 +187,7 @@ compress(struct dvec *d, double *xcomp, double *xind)
 static bool
 getflag(wordlist *wl, char *name)
 {
-    wl = wl_find(name, wl);
+    wl = wl_find(name, wl->wl_next);
 
     if (!wl)
         return FALSE;
@@ -217,12 +209,12 @@ getword(wordlist *wl, char *name)
     wordlist *beg;
     char *s;
 
-    beg = wl_find(name, wl);
+    beg = wl_find(name, wl->wl_next);
 
     if (!beg)
         return NULL;
 
-    if ((beg == wl) || !beg->wl_next) {
+    if (!beg->wl_next) {
         fprintf(cp_err,
                 "Syntax error: looking for plot keyword at \"%s\".\n", name);
         return NULL;
@@ -262,7 +254,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     char *xn;
     int i, j, xt;
     double tt, mx, my, rad;
-    wordlist *wwl, *tw;
+    wordlist *wwl;
     char cline[BSIZE_SP], buf[BSIZE_SP], *pname;
     char *nxlabel = NULL, *nylabel = NULL, *ntitle = NULL;
 
@@ -275,8 +267,14 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     bool rtn = FALSE;
 
     if (!wl)
-        goto quit1;
-    wl_root = wl;
+        return rtn;
+
+    /*
+     * we need a preceding element here,
+     * and we will destructively modify the wordlist in stupid ways,
+     * thus lets make our own copy which fits our purpose
+     */
+    wl = wl_cons(NULL, wl_copy(wl));
 
     /* First get the command line, without the limits.
        Wii be used for zoomed windows */
@@ -293,7 +291,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     nxlabel = getword(wwl, "xlabel");
     nylabel = getword(wwl, "ylabel");
     ntitle = getword(wwl, "title");
-    pname = wl_flatten(wwl);
+    pname = wl_flatten(wwl->wl_next);
     (void) sprintf(cline, "plot %s", pname);
     tfree(pname);
     wl_free(wwl);
@@ -313,18 +311,6 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
 
     /* Now extract all the parameters. */
-
-    /* In case the parameter is the first on the line, we need a
-     * "buffer" word. Use previous word up the chain if available,
-     * Otherwise create one.
-     */
-    if(wl->wl_prev) {
-        wl = wl->wl_prev;
-        tw = NULL;  /* Not used, so must be NULL */
-    } else {
-        wl = wl_cons("", wl);
-        tw = wl;
-    }
 
     sameflag = getflag(wl, "samep");
 
@@ -565,14 +551,10 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     else if (getflag(wl, "nointerp"))
         nointerp = TRUE;
 
-    wl = wl->wl_next;
-    if(tw) tfree(tw);
-    if (!wl) {
+    if (!wl->wl_next) {
         fprintf(cp_err, "Error: no vectors given\n");
         goto quit1;
     }
-
-    wl->wl_prev = NULL;
 
     /* Now parse the vectors.  We have a list of the form
      * "a b vs c d e vs f g h".  Since it's a bit of a hassle for
@@ -583,7 +565,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
      * evaulating the pnodes...
      */
 
-    names = ft_getpnames(wl, FALSE);
+    names = ft_getpnames(wl->wl_next, FALSE);
     if (names == NULL)
         goto quit1;
 
@@ -1087,5 +1069,6 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 quit:
     free_pnode(names);
 quit1:
+    wl_free(wl);
     return rtn;
 }
