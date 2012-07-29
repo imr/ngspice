@@ -367,3 +367,31 @@ wl_find(const char *string, wordlist *wl)
             break;
     return wl;
 }
+
+
+/*
+ * delete elements from a wordlist
+ *   from inclusive `from'
+ *   up to exclusive `to'
+ */
+
+void
+wl_delete_slice(wordlist *from, wordlist *to)
+{
+    wordlist *prev;
+
+    if (from == to)
+        return;
+
+    prev = from->wl_prev;
+
+    if(prev)
+        prev->wl_next = to;
+
+    if (to) {
+        to->wl_prev->wl_next = NULL;
+        to->wl_prev = prev;
+    }
+
+    wl_free(from);
+}
