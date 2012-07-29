@@ -8,6 +8,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/cktdefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/trandefs.h"
+#include "ngspice/cpextern.h"
 
 #include "analysis.h"
 
@@ -71,11 +72,19 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
     ckt->CKTdelmin  = task->TSKdelmin;
     ckt->CKTtrtol  = task->TSKtrtol; 
 #ifdef XSPICE
-/* Lower value of trtol to give smaller stepsize and more accuracy */
-/* but only if there are 'A' devices in the circuit */
+/* Lower value of trtol to give smaller stepsize and more accuracy,
+   but only if there are 'A' devices in the circuit,
+   may be overridden by 'set xtrtol=newval' */
     if (ckt->CKTadevFlag  &&  (ckt->CKTtrtol > 1)) {
-      printf("Reducing trtol to 1 for xspice 'A' devices\n");
-      ckt->CKTtrtol  = 1;
+      int newtol;
+      if (cp_getvar("xtrtol", CP_NUM, &newtol)) {
+        printf("Override trtol to %d for xspice 'A' devices\n", newtol);
+        ckt->CKTtrtol  = newtol;
+      }
+      else {
+        printf("Reducing trtol to 1 for xspice 'A' devices\n");
+        ckt->CKTtrtol  = 1;
+      }
     }
 #endif
     ckt->CKTdefaultMosM  = task->TSKdefaultMosM;
