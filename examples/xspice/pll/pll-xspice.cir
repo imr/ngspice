@@ -54,7 +54,6 @@ abridge-w1 [d_divout d_ref d_U d_D] [s1 s2 u1 d1] dac1
 + t_fall = 1e-10)
 
 .control
-set xtrtol=2
 tran 0.1n $&simtime uic
 rusage
 plot cont s1 s2+1.2 u1+2.4 d1+3.6
