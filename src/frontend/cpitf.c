@@ -381,8 +381,7 @@ cp_oddcomm(char *s, wordlist *wl)
     if (wl && eq(wl->wl_word, "=")) {
         wordlist *ww = wl_cons(copy(s), wl);
         com_let(ww);
-        wl_chop_rest(ww);
-        wl_free(ww);
+        wl_delete_slice(ww, ww->wl_next);
         return (TRUE);
     }
 

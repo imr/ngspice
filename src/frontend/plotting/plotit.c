@@ -42,7 +42,7 @@ getlims(wordlist *wl, char *name, int number)
     if(!beg)
         return NULL;
 
-    wk = beg;
+    wk = beg->wl_next;
 
     d = TMALLOC(double, number);
 
@@ -50,8 +50,6 @@ getlims(wordlist *wl, char *name, int number)
 
         char *ss;
         double *td;
-
-        wk = wk->wl_next;
 
         if (!wk) {
             fprintf(cp_err,
@@ -71,17 +69,11 @@ getlims(wordlist *wl, char *name, int number)
         }
 
         d[n] = *td;
+
+        wk = wk->wl_next;
     }
 
-    if (beg->wl_prev)
-        beg->wl_prev->wl_next = wk->wl_next;
-
-    if (wk->wl_next) {
-        wk->wl_next->wl_prev = beg->wl_prev;
-        wk->wl_next = NULL;
-    }
-
-    wl_free(beg);
+    wl_delete_slice(beg, wk);
 
     return d;
 }
@@ -192,10 +184,7 @@ getflag(wordlist *wl, char *name)
     if (!wl)
         return FALSE;
 
-    if (wl->wl_prev)
-        wl->wl_prev->wl_next = wl->wl_next;
-    if (wl->wl_next)
-        wl->wl_next->wl_prev = wl->wl_prev;
+    wl_delete_slice(wl, wl->wl_next);
 
     return TRUE;
 }
@@ -222,11 +211,7 @@ getword(wordlist *wl, char *name)
 
     s = copy(beg->wl_next->wl_word);
 
-    beg->wl_prev->wl_next = beg->wl_next->wl_next;
-    if (beg->wl_next->wl_next)
-        beg->wl_next->wl_next->wl_prev = beg->wl_prev;
-    beg->wl_next->wl_next = NULL;
-    wl_free(beg);
+    wl_delete_slice(beg, beg->wl_next->wl_next);
 
     return s;
 }

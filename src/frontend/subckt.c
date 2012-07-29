@@ -673,11 +673,7 @@ doit(struct line *deck, wordlist *modnames) {
     }
 #endif
 
-    if(modnames != xmodnames) {
-        wl_chop(xmodnames);
-        wl_free(modnames);
-    }
-
+    wl_delete_slice(modnames, xmodnames);
     wl_free(submod);
 
     if (error)

@@ -55,7 +55,7 @@ cp_redirect(wordlist *wl)
     while (w) {
         if (*w->wl_word == cp_lt) {
 
-            wordlist *bt = w->wl_prev;
+            wordlist *beg = w;
 
             if (gotinput++) {
                 fprintf(cp_err, "Error: ambiguous input redirect.\n");
@@ -74,6 +74,7 @@ cp_redirect(wordlist *wl)
             }
 
             fname = cp_unquote(w->wl_word);
+            w = w->wl_next;
 
 #ifdef CPDEBUG
             if (cp_debug)
@@ -84,19 +85,17 @@ cp_redirect(wordlist *wl)
             tfree(fname);
 
             if (!fp) {
-                perror(w->wl_word);
+                perror(fname);
                 goto error;
             }
 
             cp_in = fp;
 
-            w = wl_chop_rest(w);
-            wl_free(wl_chop_rest(bt));
-            wl_append(bt, w);
+            wl_delete_slice(beg, w);
 
         } else if (*w->wl_word == cp_gt) {
 
-            wordlist *bt = w->wl_prev;
+            wordlist *beg = w;
 
             if (gotoutput++) {
                 fprintf(cp_err, "Error: ambiguous output redirect.\n");
@@ -123,6 +122,7 @@ cp_redirect(wordlist *wl)
             }
 
             fname = cp_unquote(w->wl_word);
+            w = w->wl_next;
 
 #ifdef CPDEBUG
             if (cp_debug)
@@ -139,7 +139,7 @@ cp_redirect(wordlist *wl)
             tfree(fname);
 
             if (!fp) {
-                perror(w->wl_word);
+                perror(fname);
                 goto error;
             }
 
@@ -149,9 +149,7 @@ cp_redirect(wordlist *wl)
 
             out_isatty = FALSE;
 
-            w = wl_chop_rest(w);
-            wl_free(wl_chop_rest(bt));
-            wl_append(bt, w);
+            wl_delete_slice(beg, w);
 
         } else {
             w = w->wl_next;
@@ -160,7 +158,7 @@ cp_redirect(wordlist *wl)
     return (wl);
 
 error:
-    wl_free(wl);
+    wl_free(wl);                /* FIXME, Ouch !! */
     return (NULL);
 }
 
