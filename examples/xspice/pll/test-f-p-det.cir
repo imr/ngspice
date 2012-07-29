@@ -1,0 +1,40 @@
+* test frequency-phase detector similar to 12040
+
+.param vcc=3.3
+.global d_d0 d_d1
+
+*PULSE(V1 V2 TD TR TF PW PER)
+v1 1 0 dc 0 pulse(0 'vcc' 10n 1n 1n 10n 20n)
+v2 2 0 dc 0 pulse(0 'vcc' 8n 1n 1n 10n 20n) 
+
+*digital zero
+v3 3 0 dc 0
+abridgev1 [1 2 3] [d_sig1 d_sig2 d_d0] adc_vbuf
+.model adc_vbuf adc_bridge(in_low = 'vcc*0.5' in_high = 'vcc*0.5')
+*digital one
+ainv1 d_d0 d_d1 invd1
+.model invd1 d_inverter(rise_delay = 1e-10 fall_delay = 1e-10)
+
+Xfpdet d_sig1 d_sig2 d_U d_Un d_D d_Dn  f-p-det
+
+*.include f-p-det-sub.cir
+.include f-p-det-d-sub.cir
+
+* d to a for plotting
+abridge-w1 [d_sig1 d_sig2 d_U d_D] [s1 s2 u1 d1] dac1
+.model dac1 dac_bridge(out_low = 0 out_high = 1 out_undef = 0.5
++ input_load = 5.0e-12 t_rise = 1e-10
++ t_fall = 1e-10)
+
+* loop filter
+.include loop-filter.cir
+Xlf d_u d_D vco loopf
+
+.control
+set xtrtol=2
+tran 0.1n 1000n
+plot s1 s2+1.2 u1+2.4 d1+3.6 xlimit 100n 200n
+plot v(vco)
+.endc
+
+.end
