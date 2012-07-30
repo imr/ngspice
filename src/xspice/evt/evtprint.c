@@ -158,7 +158,12 @@ void EVTprint(
             return;
         }
         udn_index[i] = node_table[node_index[i]]->udn_index;
-        node_data[i] = ckt->evt->data.node->head[node_index[i]];
+        if (ckt->evt->data.node)
+            node_data[i] = ckt->evt->data.node->head[node_index[i]];
+        else  {
+            printf("ERROR - No node data: simulation not yet run?\n");
+            return;
+        }
         node_value[i] = "";
         w = w->wl_next;
     }
