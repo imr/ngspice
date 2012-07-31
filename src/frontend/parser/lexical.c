@@ -193,18 +193,13 @@ gotchar:
                 //   they  won't be accessed any more (see `goto done')
                 bzero(buf, NEW_BSIZE_SP);
                 i = 0;
-                // cw->wl_prev is the recent cw
-                //   thus this wl_next has been NULL per assumtion vrom above
-                cw->wl_prev->wl_next = NULL;
-                tfree(cw);
-            } else  {
+            }
                 if (cw->wl_prev) {
                     cw->wl_prev->wl_next = NULL;
                     tfree(cw);
                 } else {
                     cw->wl_word = NULL;
                 }
-            }
             goto done;
 
 	case '\'':
