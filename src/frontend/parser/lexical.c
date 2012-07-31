@@ -76,11 +76,11 @@ static int numeofs = 0;
 
 #define append \
     {   wordlist *aux = wl_cons(NULL, NULL); \
-        if (cw)  /* which is true here */ \
+        if (cw) \
            cw->wl_next = aux; \
         aux->wl_prev = cw; \
         cw = aux; \
-        if (!wlist) /* which is false here */ \
+        if (!wlist) \
             wlist = cw; \
     }
 
@@ -133,15 +133,7 @@ nloop:
     paren = 0;
     bzero(linebuf, NEW_BSIZE_SP);
     bzero(buf, NEW_BSIZE_SP);
-    // note: wlist == NULL and cw == NULL
-    {   wordlist *aux = wl_cons(NULL, NULL);
-        if (cw)  /* which is false here */
-           cw->wl_next = aux;
-        aux->wl_prev = cw;
-        cw = aux;
-        if (!wlist) /* which is true here */
-            wlist = cw;
-    }
+    append;
     // from here on cw != NULL and wlist != NULL
     for (;;) {
         if (string) {
