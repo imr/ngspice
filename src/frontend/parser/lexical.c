@@ -176,7 +176,6 @@ gotchar:
             c = '\n';
         if ((c == cp_hash) && !cp_interactive && (j == 1)) {
             if (delayed) append;
-            delayed = 0;
             if (string)
                 return (NULL);
             while (((c = input(cp_inp_cur)) != '\n') && (c != EOF))
@@ -204,7 +203,6 @@ gotchar:
                 newword;
             }
             if (delayed) append;
-            delayed = 0;
                 if (cw->wl_prev) {
                     cw->wl_prev->wl_next = NULL;
                     tfree(cw);
@@ -253,7 +251,6 @@ gotchar:
 	case '\004':
 	case EOF:
             if (delayed) append;
-            delayed = 0;
             if (cp_interactive && !cp_nocc && 
                     (string == NULL)) {
                 if (j == 0) {
@@ -301,7 +298,6 @@ gotchar:
 		    fputc(linebuf[j], cp_out);	/* But you can't edit */
 #endif
                 if (delayed) append;
-                delayed = 0;
                 // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
                 cp_ccom(wlist, buf, TRUE);
                 wl_free(wlist);
