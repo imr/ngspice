@@ -74,8 +74,8 @@ static int numeofs = 0;
  * have no business being in the string.
  */
 
-#define append \
-    {   wordlist *aux = wl_cons(NULL, NULL); \
+#define append(word) \
+    {   wordlist *aux = wl_cons(word, NULL); \
         if (cw) \
            cw->wl_next = aux; \
         aux->wl_prev = cw; \
@@ -85,8 +85,7 @@ static int numeofs = 0;
     }
 
 #define newword \
-        append; \
-        cw->wl_word = copy(buf);  \
+        append(copy(buf)); \
         bzero(buf, NEW_BSIZE_SP); \
         i = 0;
 
@@ -171,7 +170,7 @@ gotchar:
         if ((c == EOF) && cp_bqflag)
             c = '\n';
         if ((c == cp_hash) && !cp_interactive && (j == 1)) {
-            append;
+            append(NULL);
             if (string)
                 return (NULL);
             while (((c = input(cp_inp_cur)) != '\n') && (c != EOF))
@@ -198,7 +197,7 @@ gotchar:
                 buf[i] = '\0';
                 newword;
             }
-            append;
+            append(NULL);
                 if (cw->wl_prev) {
                     cw->wl_prev->wl_next = NULL;
                     tfree(cw);
@@ -246,7 +245,7 @@ gotchar:
 
 	case '\004':
 	case EOF:
-            append;
+            append(NULL);
             if (cp_interactive && !cp_nocc && 
                     (string == NULL)) {
                 if (j == 0) {
@@ -293,7 +292,7 @@ gotchar:
 #else
 		    fputc(linebuf[j], cp_out);	/* But you can't edit */
 #endif
-                append;
+                append(NULL);
                 // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
                 cp_ccom(wlist, buf, TRUE);
                 wl_free(wlist);
