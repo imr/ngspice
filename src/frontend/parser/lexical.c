@@ -198,12 +198,9 @@ gotchar:
                 newword;
             }
                 if (cw) {
-                    append(NULL);
-                    cw->wl_prev->wl_next = NULL;
-                    tfree(cw);
+                    ;
                 } else {
                     append(NULL);
-                    cw->wl_word = NULL;
                 }
             goto done;
 
