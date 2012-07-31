@@ -247,6 +247,7 @@ gotchar:
                     }
                     goto done;
                 }
+                // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
                 cp_ccom(wlist, buf, FALSE);
                 wl_free(wlist);
                 (void) fputc('\r', cp_out);
@@ -277,6 +278,7 @@ gotchar:
 #else
 		    fputc(linebuf[j], cp_out);	/* But you can't edit */
 #endif
+                // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
                 cp_ccom(wlist, buf, TRUE);
                 wl_free(wlist);
                 goto nloop;
