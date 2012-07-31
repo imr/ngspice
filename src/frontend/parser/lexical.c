@@ -126,6 +126,7 @@ nloop:
     bzero(linebuf, NEW_BSIZE_SP);
     bzero(buf, NEW_BSIZE_SP);
     wlist = cw = wl_cons(NULL, NULL);
+    // from here on cw != NULL and wlist != NULL
     for (;;) {
         if (string) {
             c = *string++;
