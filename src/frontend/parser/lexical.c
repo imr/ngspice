@@ -133,7 +133,15 @@ nloop:
     paren = 0;
     bzero(linebuf, NEW_BSIZE_SP);
     bzero(buf, NEW_BSIZE_SP);
-    wlist = cw = wl_cons(NULL, NULL);
+    // note: wlist == NULL and cw == NULL
+    {   wordlist *aux = wl_cons(NULL, NULL);
+        if (cw)  /* which is false here */
+           cw->wl_next = aux;
+        aux->wl_prev = cw;
+        cw = aux;
+        if (!wlist) /* which is true here */
+            wlist = cw;
+    }
     // from here on cw != NULL and wlist != NULL
     for (;;) {
         if (string) {
