@@ -184,15 +184,7 @@ gotchar:
 	case '\n':
             if (i) {
                 buf[i] = '\0';
-                cw->wl_word = copy(buf);
-                // assumption: cw != NULL and cw->wl_next == NULL
-                cw->wl_next = wl_cons(NULL, NULL);
-                cw->wl_next->wl_prev = cw;
-                cw = cw->wl_next;
-                // note: we can overwrite buf and i here
-                //   they  won't be accessed any more (see `goto done')
-                bzero(buf, NEW_BSIZE_SP);
-                i = 0;
+                newword;
             }
                 if (cw->wl_prev) {
                     cw->wl_prev->wl_next = NULL;
