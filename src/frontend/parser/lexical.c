@@ -185,11 +185,13 @@ gotchar:
             if (i) {
                 buf[i] = '\0';
                 cw->wl_word = copy(buf);
-            } else if (cw->wl_prev) {
-                cw->wl_prev->wl_next = NULL;
-                tfree(cw);
-            } else {
-                cw->wl_word = NULL;
+            } else  {
+                if (cw->wl_prev) {
+                    cw->wl_prev->wl_next = NULL;
+                    tfree(cw);
+                } else {
+                    cw->wl_word = NULL;
+                }
             }
             goto done;
 
