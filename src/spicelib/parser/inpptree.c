@@ -11,6 +11,8 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/inpptree.h"
 #include "inp.h"
 
+extern void controlled_exit(int status);
+
 static INPparseNode *mkcon(double value);
 static INPparseNode *mkb(int type, INPparseNode * left,
 			 INPparseNode * right);
@@ -857,7 +859,7 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
 
     if (p->funcnum != PTF_PWL) {
         fprintf(stderr, "PWL-INFO: %s, very unexpected\n", __func__);
-        exit(1);
+        controlled_exit(1);
     }
 
 #ifdef TRACE
@@ -1343,7 +1345,7 @@ void free_tree(INPparseNode *pt)
 
     if(pt->usecnt) {
         fprintf(stderr, "ERROR: fatal internal error, %s\n", __func__);
-        exit(1);
+        controlled_exit(1);
     }
 
     switch (pt->type) {

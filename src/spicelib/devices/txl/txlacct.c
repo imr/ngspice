@@ -6,6 +6,7 @@ Author: 1992 Charles Hough
 
 
 #include "ngspice/ngspice.h"
+#include "ngspice/fteext.h"
 #include "ngspice/cktdefs.h"
 #include "txldefs.h"
 #include "ngspice/sperror.h"
@@ -53,7 +54,7 @@ TXLaccept(CKTcircuit *ckt, GENmodel *inModel)
 			else {
 				/* can't happen. */
 				printf("zero h detected\n");
-				exit(1);
+				controlled_exit(1);
 			}
 		}
     }

@@ -6,6 +6,7 @@ Author: 1992 Charles Hough
 
 
 #include "ngspice/ngspice.h"
+#include "ngspice/fteext.h"
 #include "ngspice/smpdefs.h"
 #include "txldefs.h"
 #include "ngspice/sperror.h"
@@ -1157,7 +1158,7 @@ find_roots(double a1, double a2, double a3, double *x1, double *x2, double *x3)
    t = a1 * a1 - 4.0 * a2;
    if (t < 0) {
       printf("***** Two Imaginary Roots in Characteristic Admittance.\n");
-      exit(EXIT_FAILURE);
+      controlled_exit(EXIT_FAILURE);
    }
 
    t *= 1.0e-18;

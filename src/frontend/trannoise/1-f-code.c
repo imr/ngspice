@@ -20,6 +20,8 @@
 #include "ngspice/fftext.h"
 #include "ngspice/wallace.h"
 
+extern void controlled_exit(int status);
+
 
 void f_alpha(int n_pts, int n_exp, double X[], double Q_d,
 double alpha)
@@ -134,7 +136,7 @@ trnoise_state_gen(struct trnoise_state *this, CKTcircuit *ckt)
 
             if(this->top + 1 >= this->oneof_length) {
                 fprintf(stderr,"ouch, noise data exhausted\n");
-                exit(1);
+                controlled_exit(1);
             }
 
             ra1 += this->oneof[this->top]      -  this->oneof[0];

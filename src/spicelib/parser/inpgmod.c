@@ -118,7 +118,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
         /* Check for various possible errors */
         if ((errno == ERANGE && dval == HUGE_VAL) || errno != 0) {
             perror("strtod");
-            exit(EXIT_FAILURE);
+            controlled_exit(EXIT_FAILURE);
         }
         if (endptr == parm) { /* it was no number - it is really a string */
           temp = TMALLOC(char, 40 + strlen(parm));

@@ -4,6 +4,7 @@ Modified: 2000 AlanFixes
 **********/
 
 #include "ngspice/ngspice.h"
+#include "ngspice/fteext.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/sperror.h"
 #include "ngspice/spmatrix.h"
@@ -222,7 +223,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		output_values = NULL;
 		output_cvalues = NULL;
 		fprintf(stderr, "ERROR: restore is not implemented for cktsens\n");
-		exit(1);
+		controlled_exit(1);
 	}
 
 #ifdef ASDEBUG

@@ -40,7 +40,7 @@ NON-STANDARD FEATURES
 /* #include "prefix.h"   */  /* jgroves  */
 #include "ngspice/ngspice.h"
 #include <stdio.h>
-//#include "util.h"
+#include "ngspice/fteext.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/inpdefs.h"
 #include "ngspice/devdefs.h"
@@ -587,7 +587,7 @@ static void  MIFinit_inst(
             break;
         default:
             printf("\nERROR - Impossible direction type in MIFinit_inst\n");
-            exit(1);
+            controlled_exit(1);
         }
     }
 
