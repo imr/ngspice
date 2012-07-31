@@ -75,8 +75,10 @@ static int numeofs = 0;
  */
 
 #define newword cw->wl_word = copy(buf); \
-        wl_append(cw, wl_cons(NULL, NULL)); \
+        cw->wl_next = alloc(struct wordlist); \
+        cw->wl_next->wl_prev = cw; \
         cw = cw->wl_next; \
+        cw->wl_next = NULL; \
         bzero(buf, NEW_BSIZE_SP); \
         i = 0;
 
