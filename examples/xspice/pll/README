@@ -12,3 +12,6 @@ test-vco.cir simulates vco frequency versus control voltage
 test-f-p-det.cir simulates the phase frequency detector and the loop filter.
 
 The main building blocks are organised as subcircuits.
+
+main simulation control with three reference frequencies:
+pll-xspice-fstep.cir
