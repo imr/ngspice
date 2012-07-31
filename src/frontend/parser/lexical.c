@@ -84,8 +84,11 @@ static int numeofs = 0;
             wlist = cw; \
     }
 
-#define newword cw->wl_word = copy(buf); \
-        append; \
+#define newword \
+        if (delayed) append;  \
+        delayed = 0;  \
+        cw->wl_word = copy(buf);  \
+        delayed = 1; \
         bzero(buf, NEW_BSIZE_SP); \
         i = 0;
 
@@ -118,6 +121,7 @@ cp_lexer(char *string)
     wordlist *wlist = NULL, *cw = NULL;
     char buf[NEW_BSIZE_SP], linebuf[NEW_BSIZE_SP];
     int paren;
+    int delayed;
 
    if (cp_inp_cur == NULL)
         cp_inp_cur = cp_in;
@@ -133,8 +137,7 @@ nloop:
     paren = 0;
     bzero(linebuf, NEW_BSIZE_SP);
     bzero(buf, NEW_BSIZE_SP);
-    append;
-    // from here on cw != NULL and wlist != NULL
+    delayed = 1;
     for (;;) {
         if (string) {
             c = *string++;
@@ -172,6 +175,8 @@ gotchar:
         if ((c == EOF) && cp_bqflag)
             c = '\n';
         if ((c == cp_hash) && !cp_interactive && (j == 1)) {
+            if (delayed) append;
+            delayed = 0;
             if (string)
                 return (NULL);
             while (((c = input(cp_inp_cur)) != '\n') && (c != EOF))
@@ -198,6 +203,8 @@ gotchar:
                 buf[i] = '\0';
                 newword;
             }
+            if (delayed) append;
+            delayed = 0;
                 if (cw->wl_prev) {
                     cw->wl_prev->wl_next = NULL;
                     tfree(cw);
@@ -245,6 +252,8 @@ gotchar:
 
 	case '\004':
 	case EOF:
+            if (delayed) append;
+            delayed = 0;
             if (cp_interactive && !cp_nocc && 
                     (string == NULL)) {
                 if (j == 0) {
@@ -291,6 +300,8 @@ gotchar:
 #else
 		    fputc(linebuf[j], cp_out);	/* But you can't edit */
 #endif
+                if (delayed) append;
+                delayed = 0;
                 // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
                 cp_ccom(wlist, buf, TRUE);
                 wl_free(wlist);
