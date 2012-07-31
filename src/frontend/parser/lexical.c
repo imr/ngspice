@@ -75,9 +75,14 @@ static int numeofs = 0;
  */
 
 #define newword cw->wl_word = copy(buf); \
-        cw->wl_next = wl_cons(NULL, NULL); \
-        cw->wl_next->wl_prev = cw; \
-        cw = cw->wl_next; \
+    {   wordlist *aux = wl_cons(NULL, NULL); \
+        if (cw)  /* which is true here */ \
+           cw->wl_next = aux; \
+        aux->wl_prev = cw; \
+        cw = aux; \
+        if (!wlist) /* which is false here */ \
+            wlist = cw; \
+    } \
         bzero(buf, NEW_BSIZE_SP); \
         i = 0;
 
