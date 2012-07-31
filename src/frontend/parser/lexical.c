@@ -197,11 +197,8 @@ gotchar:
                 buf[i] = '\0';
                 newword;
             }
-                if (cw) {
-                    ;
-                } else {
-                    append(NULL);
-                }
+            if (!cw)
+                append(NULL);
             goto done;
 
 	case '\'':
