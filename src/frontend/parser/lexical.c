@@ -74,7 +74,7 @@ static int numeofs = 0;
  * have no business being in the string.
  */
 
-#define newword cw->wl_word = copy(buf); \
+#define append \
     {   wordlist *aux = wl_cons(NULL, NULL); \
         if (cw)  /* which is true here */ \
            cw->wl_next = aux; \
@@ -82,7 +82,10 @@ static int numeofs = 0;
         cw = aux; \
         if (!wlist) /* which is false here */ \
             wlist = cw; \
-    } \
+    }
+
+#define newword cw->wl_word = copy(buf); \
+        append; \
         bzero(buf, NEW_BSIZE_SP); \
         i = 0;
 
