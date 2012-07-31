@@ -118,7 +118,9 @@ cp_lexer(char *string)
         cp_ccon(TRUE);
         prompt();
     }
-nloop:  i = 0;
+nloop:
+    wlist = cw = NULL;
+    i = 0;
     j = 0;
     paren = 0;
     bzero(linebuf, NEW_BSIZE_SP);
@@ -165,6 +167,7 @@ gotchar:
                 return (NULL);
             while (((c = input(cp_inp_cur)) != '\n') && (c != EOF))
                 ;
+            wlist = cw = NULL;
             goto nloop;
         }
 
@@ -258,6 +261,7 @@ gotchar:
 #else
 		    fputc(linebuf[j], cp_out);	/* But you can't edit */
 #endif
+                wlist = cw = NULL;
                 goto nloop;
             } else    /* EOF during a source */
 	    {
@@ -281,6 +285,7 @@ gotchar:
                 // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
                 cp_ccom(wlist, buf, TRUE);
                 wl_free(wlist);
+                wlist = cw = NULL;
                 goto nloop;
             } goto ldefault; /* else continue with default ... */
 	case ',':
