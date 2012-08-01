@@ -9,8 +9,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 #ifndef HAVE_LIBGC
 
-extern void controlled_exit(int status);
-
 /*saj For Tcl module locking*/
 #ifdef TCL_MODULE
 #include <tcl.h>
@@ -44,7 +42,7 @@ tmalloc(size_t num)
 #endif
     if (!s){
       fprintf(stderr,"malloc: Internal Error: can't allocate %ld bytes. \n",(long)num);
-      controlled_exit(EXIT_FAILURE);
+      exit(EXIT_FAILURE);
     }
     return(s);
 }
@@ -80,7 +78,7 @@ trealloc(void *ptr, size_t num)
   }
   if (!s) {
     fprintf(stderr,"realloc: Internal Error: can't allocate %ld bytes.\n", (long)num);
-    controlled_exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE);
   }
   return(s);
 }
