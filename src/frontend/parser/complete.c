@@ -94,11 +94,11 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
 
     buf = cp_unquote(copy(buf));
     cp_wstrip(buf);
-    if (wlist->wl_next) {   /* Not the first word. */
+    if (wlist) {   /* Not the first word. */
         cc = getccom(wlist->wl_word);
         if (cc && cc->cc_invalid)
             cc = NULL;
-        arg = wl_length(wlist) - 2;
+        arg = wl_length(wlist) - 1;
         if (arg > 3)
             arg = 3;
         /* First filenames. */
