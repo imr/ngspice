@@ -170,12 +170,12 @@ gotchar:
         if ((c == EOF) && cp_bqflag)
             c = '\n';
         if ((c == cp_hash) && !cp_interactive && (j == 1)) {
-            append(NULL);
+            wl_free(wlist);
+            wlist = cw = NULL;
             if (string)
                 return (NULL);
             while (((c = input(cp_inp_cur)) != '\n') && (c != EOF))
                 ;
-            wlist = cw = NULL;
             goto nloop;
         }
 
@@ -278,7 +278,7 @@ gotchar:
                     goto done;
                 }
 
-                append(NULL);
+                wl_free(wlist);
                 return (NULL);
             }
 	case ESCAPE:
