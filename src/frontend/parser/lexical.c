@@ -240,7 +240,6 @@ gotchar:
 
 	case '\004':
 	case EOF:
-            append(NULL);
             if (cp_interactive && !cp_nocc && 
                     (string == NULL)) {
                 if (j == 0) {
@@ -253,9 +252,11 @@ gotchar:
                         fputs("quit\n", stdout);
                         cp_doquit();
                     }
+                    append(NULL);
                     goto done;
                 }
                 // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
+                append(NULL);
                 cp_ccom(wlist, buf, FALSE);
                 wl_free(wlist);
                 (void) fputc('\r', cp_out);
@@ -273,9 +274,12 @@ gotchar:
                 if (cp_interactive) {
                     fputs("quit\n", stdout);
                     cp_doquit();
+                    append(NULL);
                     goto done;
-                } else
-                    return (NULL);
+                }
+
+                append(NULL);
+                return (NULL);
             }
 	case ESCAPE:
             if (cp_interactive && !cp_nocc) {
