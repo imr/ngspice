@@ -102,7 +102,6 @@ com_listing(wordlist *wl)
         }
     } else
         fprintf(cp_err, "Error: no circuit loaded.\n");
-    return;
 }
 
 /* returns inp_casefix() or NULL */
@@ -275,7 +274,6 @@ top2:
     } else
         fprintf(cp_err, "inp_list: Internal Error: bad type %d\n",
                 type);
-    return;
 }
 
 /*
@@ -689,8 +687,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     cp_curin = lastin;
     cp_curout = lastout;
     cp_curerr = lasterr;
-
-    return;
 }
 
 
@@ -951,7 +947,6 @@ inp_dodeck(
 
     /* add title of deck to data base */
     cp_addkword(CT_CKTNAMES, tt);
-    return;
 }
 
 
@@ -1039,8 +1034,6 @@ com_edit(wordlist *wl)
         fprintf(cp_out, "running circuit\n");
         com_run(NULL);
     }
-
-    return;
 }
 
 static bool
@@ -1114,7 +1107,6 @@ com_source(wordlist *wl)
     cp_interactive = inter;
     if (tempfile)
         unlink(tempfile);
-    return;
 }
 
 void
@@ -1123,5 +1115,4 @@ inp_source(char *file)
     static struct wordlist wl = { NULL, NULL, NULL } ;
     wl.wl_word = file;
     com_source(&wl);
-    return;
 }

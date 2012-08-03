@@ -123,7 +123,6 @@ xtend(struct dvec *v, int length)
     }
 
     v->v_length = length;
-    return;
 }
 
 
@@ -170,7 +169,6 @@ compress(struct dvec *d, double *xcomp, double *xind)
             d->v_length = i;
         }
     }
-    return;
 }
 
 
