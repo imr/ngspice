@@ -28,14 +28,14 @@ ainv1 d_d0 d_d1 invd1
 .model invd1 d_inverter(rise_delay = 1e-10 fall_delay = 1e-10)
 
 * vco
-.include vco_sub.cir
-.include vco_sub_new.cir
 * buf: analog out
 * d_digout: digital out
 * cont: analog control voltage
 * dd: analog supply voltage
-xvco buf d_digout cont dd d_osc_vco 
+*.include vco_sub.cir
 *xvco buf d_digout cont dd ro_vco
+.include vco_sub_new.cir
+xvco buf d_digout cont dd d_osc_vco 
 
 * digital divider
 adiv1 d_digout d_divout divider

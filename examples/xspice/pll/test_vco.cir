@@ -7,13 +7,18 @@
 .param vcc=3.3
 .csparam simtime=500n
 
-.include vco_sub.cir
-.include vco_sub_new.cir
-
 vdd dd 0 dc 'vcc'
 vco cont 0 dc 2.5
-*xvco buf digout cont dd ro_vco ; ring oscillator vco
-xvco buf digout cont dd d_osc_vco ; code model d_osc vco
+
+* vco
+* buf: analog out
+* d_digout: digital out
+* cont: analog control voltage
+* dd: analog supply voltage
+*.include vco_sub.cir
+*xvco buf d_digout cont dd ro_vco
+.include vco_sub_new.cir
+xvco buf d_digout cont dd d_osc_vco 
 
 .option noacct
 
