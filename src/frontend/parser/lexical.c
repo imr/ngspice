@@ -22,7 +22,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <pwd.h>
 #endif
 
-	/* MW. Linux has TIOCSTI, so we include all headers here */
+/* MW. Linux has TIOCSTI, so we include all headers here */
 #if !defined(__MINGW32__) && !defined(_MSC_VER)
 #include <sys/ioctl.h>
 #endif
@@ -64,6 +64,7 @@ static int numeofs = 0;
 
 #define ESCAPE  '\033'
 
+
 /* Return a list of words, with backslash quoting and '' quoting done.
  * Strings en(void) closed in "" or `` are made single words and returned,
  * but with the "" or `` still present. For the \ and '' cases, the
@@ -74,22 +75,23 @@ static int numeofs = 0;
  * have no business being in the string.
  */
 
-#define append(word) \
-    do { \
-        wordlist *aux = wl_cons(word, NULL); \
-        if (cw) \
-           cw->wl_next = aux; \
-        aux->wl_prev = cw; \
-        cw = aux; \
-        if (!wlist) \
-            wlist = cw; \
+#define append(word)                            \
+    do {                                        \
+        wordlist *aux = wl_cons(word, NULL);    \
+        if (cw)                                 \
+            cw->wl_next = aux;                  \
+        aux->wl_prev = cw;                      \
+        cw = aux;                               \
+        if (!wlist)                             \
+            wlist = cw;                         \
     } while(0)
 
-#define newword \
-    do { \
-        append(copy(buf)); \
-        bzero(buf, NEW_BSIZE_SP); \
-        i = 0; \
+
+#define newword                                 \
+    do {                                        \
+        append(copy(buf));                      \
+        bzero(buf, NEW_BSIZE_SP);               \
+        i = 0;                                  \
     } while(0)
 
 
@@ -103,11 +105,13 @@ pwlist_echo(wordlist *wlist, char *name)
 
     if (!cp_echo || cp_debug)
         return;
+
     fprintf(cp_err, "%s ", name);
     for (wl = wlist; wl; wl = wl->wl_next)
-        fprintf(cp_err, "%s ", wl->wl_word );
-      fprintf(cp_err, "\n");
+        fprintf(cp_err, "%s ", wl->wl_word);
+    fprintf(cp_err, "\n");
 }
+
 
 /* CDHW */
 
@@ -120,7 +124,7 @@ cp_lexer(char *string)
     char buf[NEW_BSIZE_SP], linebuf[NEW_BSIZE_SP];
     int paren;
 
-   if (!cp_inp_cur)
+    if (!cp_inp_cur)
         cp_inp_cur = cp_in;
 
     /* prompt for string if none is passed */
@@ -128,6 +132,7 @@ cp_lexer(char *string)
         cp_ccon(TRUE);
         prompt();
     }
+
 nloop:
     wlist = cw = NULL;
     i = 0;
@@ -135,7 +140,9 @@ nloop:
     paren = 0;
     bzero(linebuf, NEW_BSIZE_SP);
     bzero(buf, NEW_BSIZE_SP);
+
     for (;;) {
+
         if (string) {
             c = *string++;
             if (c == '\0')
@@ -146,15 +153,19 @@ nloop:
             c = input(cp_inp_cur);
         }
 
-gotchar:
-	if ((c != EOF) && (c != ESCAPE))
-	    linebuf[j++] = (char) c;
+    gotchar:
+
+        if ((c != EOF) && (c != ESCAPE))
+            linebuf[j++] = (char) c;
+
         if (c != EOF)
             numeofs = 0;
+
         if (i == NEW_BSIZE_SP - 1) {
             fprintf(cp_err, "Warning: word too long.\n");
             c = ' ';
         }
+
         if (j == NEW_BSIZE_SP - 1) {
             fprintf(cp_err, "Warning: line too long.\n");
             if (cp_bqflag)
@@ -162,16 +173,21 @@ gotchar:
             else
                 c = '\n';
         }
+
         if (c != EOF)           /* Don't need to do this really. */
             c = strip(c);
+
         if ((c == '\\' && DIR_TERM != '\\') || (c == '\026') /* ^V */ ) {
             c = quote(string ? *string++ : input(cp_inp_cur));
             linebuf[j++] = (char) strip(c);
         }
+
         if ((c == '\n') && cp_bqflag)
             c = ' ';
+
         if ((c == EOF) && cp_bqflag)
             c = '\n';
+
         if ((c == cp_hash) && !cp_interactive && (j == 1)) {
             wl_free(wlist);
             wlist = cw = NULL;
@@ -183,18 +199,19 @@ gotchar:
         }
 
         if ((c == '(') || (c == '[')) /* MW. Nedded by parse() */
-	    paren++;
-	else if ((c == ')') || (c == ']'))
-	    paren--;
+            paren++;
+        else if ((c == ')') || (c == ']'))
+            paren--;
 
         switch (c) {
-	case ' ':
-	case '\t':
+
+        case ' ':
+        case '\t':
             if (i > 0)
                 newword;
             break;
 
-	case '\n':
+        case '\n':
             if (i) {
                 buf[i] = '\0';
                 newword;
@@ -203,19 +220,19 @@ gotchar:
                 append(NULL);
             goto done;
 
-	case '\'':
+        case '\'':
             while (((c = (string ? *string++ : input(cp_inp_cur))) != '\'')
-                    && (i < NEW_BSIZE_SP - 1)) {
+                   && (i < NEW_BSIZE_SP - 1)) {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
-                    buf[i++] = (char) quote(c);
-                    linebuf[j++] = (char) c;
+                buf[i++] = (char) quote(c);
+                linebuf[j++] = (char) c;
             }
             linebuf[j++] = '\'';
             break;
 
-	case '"':
-	case '`':
+        case '"':
+        case '`':
             d = c;
             buf[i++] = (char) d;
             while (((c = (string ? *string++ : input(cp_inp_cur))) != d)
@@ -236,9 +253,10 @@ gotchar:
             linebuf[j++] = (char) d;
             break;
 
-	case '\004':
-	case EOF:
+        case '\004':
+        case EOF:
             if (cp_interactive && !cp_nocc && !string) {
+
                 if (j == 0) {
                     if (cp_ignoreeof && (numeofs++ < 23)) {
                         fputs("Use \"quit\" to quit.\n", stdout);
@@ -249,6 +267,7 @@ gotchar:
                     append(NULL);
                     goto done;
                 }
+
                 // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
                 cp_ccom(wlist, buf, FALSE);
                 wl_free(wlist);
@@ -258,23 +277,24 @@ gotchar:
 #ifdef TIOCSTI
                     (void) ioctl(fileno(cp_out), TIOCSTI, linebuf + j);
 #else
-		    fputc(linebuf[j], cp_out);	/* But you can't edit */
+                    fputc(linebuf[j], cp_out);  /* But you can't edit */
 #endif
                 wlist = cw = NULL;
                 goto nloop;
             }
 
             /* EOF during a source */
-                if (cp_interactive) {
-                    fputs("quit\n", stdout);
-                    cp_doquit();
-                    append(NULL);
-                    goto done;
-                }
+            if (cp_interactive) {
+                fputs("quit\n", stdout);
+                cp_doquit();
+                append(NULL);
+                goto done;
+            }
 
-                wl_free(wlist);
-                return NULL;
-	case ESCAPE:
+            wl_free(wlist);
+            return NULL;
+
+        case ESCAPE:
             if (cp_interactive && !cp_nocc) {
                 fputs("\b\b  \b\b\r", cp_out);
                 prompt();
@@ -282,7 +302,7 @@ gotchar:
 #ifdef TIOCSTI
                     (void) ioctl(fileno(cp_out), TIOCSTI, linebuf + j);
 #else
-		    fputc(linebuf[j], cp_out);	/* But you can't edit */
+                    fputc(linebuf[j], cp_out);  /* But you can't edit */
 #endif
                 // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
                 cp_ccom(wlist, buf, TRUE);
@@ -291,52 +311,58 @@ gotchar:
                 goto nloop;
             }
             goto ldefault;
-	case ',':
-	    if ((paren < 1) && (i > 0)) {
-		newword;
-		break;
-	    }
-	    goto ldefault; 
-	case ';':  /* CDHW semicolon inside parentheses is part of expression */
-	    if (paren > 0) {
-	        buf[i++] = (char) c;
-		break;
-	    }
-	    goto ldefault; 
-	case '&':  /* va: $&name is one word */
-	    if ((i == 1) && (buf[i-1] == '$') && (c == '&')) {
-	        buf[i++] = (char) c;
-	        break;
-	    }
-	    goto ldefault;
-	case '<':
-	case '>':  /* va: <=, >= are unbreakable words */
-       if(string)
-	    if ((i == 0) && (*string == '=')) {
-	        buf[i++] = (char) c;
-	        break;
-	    }
-	    goto ldefault;
-	default:
+
+        case ',':
+            if ((paren < 1) && (i > 0)) {
+                newword;
+                break;
+            }
+            goto ldefault;
+
+        case ';':  /* CDHW semicolon inside parentheses is part of expression */
+            if (paren > 0) {
+                buf[i++] = (char) c;
+                break;
+            }
+            goto ldefault;
+
+        case '&':  /* va: $&name is one word */
+            if ((i == 1) && (buf[i-1] == '$') && (c == '&')) {
+                buf[i++] = (char) c;
+                break;
+            }
+            goto ldefault;
+
+        case '<':
+        case '>':  /* va: <=, >= are unbreakable words */
+            if(string)
+                if ((i == 0) && (*string == '=')) {
+                    buf[i++] = (char) c;
+                    break;
+                }
+            goto ldefault;
+
+        default:
             /* We have to remember the special case $<
              * here
              */
         ldefault:
             if ((cp_chars[c] & CPC_BRL) && (i > 0))
-                if ((c != '<') || (buf[i - 1] != '$'))
+                if ((c != '<') || (buf[i-1] != '$'))
                     newword;
             buf[i++] = (char) c;
             if (cp_chars[c] & CPC_BRR)
-                if ((c != '<') || (i < 2) || (buf[i - 2] != '$'))
+                if ((c != '<') || (i < 2) || (buf[i-2] != '$'))
                     newword;
         }
     }
-done:
 
+done:
     if (wlist->wl_word)
         pwlist_echo(wlist,"Command>");
     return wlist;
 }
+
 
 static void
 prompt(void)
@@ -345,24 +371,27 @@ prompt(void)
 
     if (cp_interactive == FALSE)
         return;
+
     if (cp_altprompt)
         s = cp_altprompt;
     else if (cp_promptstring)
         s = cp_promptstring;
     else
         s = "-> ";
+
     while (*s) {
         switch (strip(*s)) {
-            case '!':
-                fprintf(cp_out, "%d", cp_event);
-                break;
-            case '\\':
-                if (*(s + 1))
-                    (void) putc(strip(*++s), cp_out);
-            default:
-                (void) putc(strip(*s), cp_out);
+        case '!':
+            fprintf(cp_out, "%d", cp_event);
+            break;
+        case '\\':
+            if (*(s + 1))
+                (void) putc(strip(*++s), cp_out);
+        default:
+            (void) putc(strip(*s), cp_out);
         }
         s++;
     }
+
     (void) fflush(cp_out);
 }
