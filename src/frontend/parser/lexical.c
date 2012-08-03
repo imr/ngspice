@@ -204,8 +204,7 @@ gotchar:
             goto done;
 
 	case '\'':
-            while (((c = (string ? *string++ : 
-                    input(cp_inp_cur))) != '\'')
+            while (((c = (string ? *string++ : input(cp_inp_cur))) != '\'')
                     && (i < NEW_BSIZE_SP - 1)) {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
@@ -221,14 +220,13 @@ gotchar:
 	case '`':
             d = c;
             buf[i++] = (char) d;
-            while (((c = (string ? *string++ : input(cp_inp_cur)))
-                    != d) && (i < NEW_BSIZE_SP - 2)) {
+            while (((c = (string ? *string++ : input(cp_inp_cur))) != d)
+                   && (i < NEW_BSIZE_SP - 2)) {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
                 else if (c == '\\') {
                     linebuf[j++] = (char) c;
-                    c = (string ? *string++ :
-                            input(cp_inp_cur));
+                    c = (string ? *string++ : input(cp_inp_cur));
                     buf[i++] = (char) quote(c);
                     linebuf[j++] = (char) c;
                 } else {
@@ -242,14 +240,10 @@ gotchar:
 
 	case '\004':
 	case EOF:
-            if (cp_interactive && !cp_nocc && 
-                    (string == NULL)) {
+            if (cp_interactive && !cp_nocc && (string == NULL)) {
                 if (j == 0) {
-                    if (cp_ignoreeof && (numeofs++
-                            < 23)) {
-                        fputs(
-                    "Use \"quit\" to quit.\n",
-                            stdout);
+                    if (cp_ignoreeof && (numeofs++ < 23)) {
+                        fputs("Use \"quit\" to quit.\n", stdout);
                     } else {
                         fputs("quit\n", stdout);
                         cp_doquit();
@@ -297,42 +291,47 @@ gotchar:
                 wl_free(wlist);
                 wlist = cw = NULL;
                 goto nloop;
-            } goto ldefault; /* else continue with default ... */
+            }
+            goto ldefault;
 	case ',':
 	    if (paren < 1 && i > 0) {
 		newword;
 		break;
-	    } goto ldefault; 
+	    }
+	    goto ldefault; 
 	case ';':  /*CDHW semicolon inside parentheses is part of expression CDHW*/
 	    if (paren > 0) {
 	        buf[i++] = (char) c;
 		break;
-	    } goto ldefault; 
+	    }
+	    goto ldefault; 
 	case '&':  /* va: $&name is one word */
 	    if (i==1 && buf[i-1]=='$' && c=='&') {
 	        buf[i++] = (char) c;
 	        break;
-	    } goto ldefault; /* else continue with default ... */
+	    }
+	    goto ldefault;
 	case '<':
 	case '>':  /* va: <=, >= are unbreakable words */
        if(string)
 	    if (i==0 && (*string=='=')) {
 	        buf[i++] = (char) c;
 	        break;
-	    } goto ldefault; /* else continue with default ... */
+	    }
+	    goto ldefault;
 	default:
             /* We have to remember the special case $<
              * here
              */
-ldefault:   if ((cp_chars[c] & CPC_BRL) && (i > 0)) {
+        ldefault:
+            if ((cp_chars[c] & CPC_BRL) && (i > 0)) {
                 if ((c != '<') || (buf[i - 1] != '$')) {
                     newword;
                 }
             }
             buf[i++] = (char) c;
             if (cp_chars[c] & CPC_BRR) {
-                if ((c != '<') || (i < 2) ||
-                        (buf[i - 2] != '$')) {
+                if ((c != '<') || (i < 2) || (buf[i - 2] != '$')) {
                     newword;
                 }
             }
@@ -340,7 +339,8 @@ ldefault:   if ((cp_chars[c] & CPC_BRL) && (i > 0)) {
     }
 done:
 
-    if (wlist->wl_word) pwlist_echo(wlist,"Command>");
+    if (wlist->wl_word)
+        pwlist_echo(wlist,"Command>");
     return wlist;
 }
 
