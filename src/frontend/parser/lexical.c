@@ -22,8 +22,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <pwd.h>
 #endif
 
-#if !defined(__MINGW32__) && !defined(_MSC_VER)
 	/* MW. Linux has TIOCSTI, so we include all headers here */
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
 #include <sys/ioctl.h>
 #endif
 
@@ -94,15 +94,14 @@ static int numeofs = 0;
 
 
 /* CDHW Debug function */
+/* CDHW used to perform function of set echo */
 
 static void
-pwlist_echo(   /*CDHW used to perform function of set echo */
-    wordlist *wlist,
-    char *name)
+pwlist_echo(wordlist *wlist, char *name)
 {
     wordlist *wl;
 
-    if (!cp_echo || cp_debug) /* cpdebug prints the same info */
+    if (!cp_echo || cp_debug)
         return;
     fprintf(cp_err, "%s ", name);
     for (wl = wlist; wl; wl = wl->wl_next)
@@ -121,10 +120,11 @@ cp_lexer(char *string)
     char buf[NEW_BSIZE_SP], linebuf[NEW_BSIZE_SP];
     int paren;
 
-   if (cp_inp_cur == NULL)
+   if (!cp_inp_cur)
         cp_inp_cur = cp_in;
 
-    if (!string && cp_interactive) {/* prompt for string if none is passed */
+    /* prompt for string if none is passed */
+    if (!string && cp_interactive) {
         cp_ccon(TRUE);
         prompt();
     }
@@ -162,8 +162,8 @@ gotchar:
             else
                 c = '\n';
         }
-        if (c != EOF)
-            c = strip(c);   /* Don't need to do this really. */
+        if (c != EOF)           /* Don't need to do this really. */
+            c = strip(c);
         if ((c == '\\' && DIR_TERM != '\\') || (c == '\026') /* ^V */ ) {
             c = quote(string ? *string++ : input(cp_inp_cur));
             linebuf[j++] = (char) strip(c);
@@ -238,7 +238,7 @@ gotchar:
 
 	case '\004':
 	case EOF:
-            if (cp_interactive && !cp_nocc && (string == NULL)) {
+            if (cp_interactive && !cp_nocc && !string) {
                 if (j == 0) {
                     if (cp_ignoreeof && (numeofs++ < 23)) {
                         fputs("Use \"quit\" to quit.\n", stdout);
@@ -297,7 +297,7 @@ gotchar:
 		break;
 	    }
 	    goto ldefault; 
-	case ';':  /*CDHW semicolon inside parentheses is part of expression CDHW*/
+	case ';':  /* CDHW semicolon inside parentheses is part of expression */
 	    if (paren > 0) {
 	        buf[i++] = (char) c;
 		break;
