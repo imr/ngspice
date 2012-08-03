@@ -1470,8 +1470,8 @@ comment_out_unused_subckt_models( struct line *start_card , int no_of_lines)
     struct line *card;
     char **used_subckt_names, **used_model_names, *line = NULL, *subckt_name, *model_name;
     int  num_used_subckt_names = 0, num_used_model_names = 0, i = 0, num_terminals = 0, tmp_cnt = 0;
-    bool processing_subckt = FALSE, found_subckt = FALSE, remove_subckt = FALSE, found_model = FALSE, has_models = FALSE;
-    int skip_control = 0;
+    bool processing_subckt = FALSE, found_subckt = FALSE, remove_subckt = FALSE,  found_model = FALSE, has_models = FALSE;
+    int skip_control = 0, nested_subckt = 0;
 
     /* generate arrays of *char for subckt or model names. Start
     with 1000, but increase, if number of lines in deck is larger */
@@ -1558,22 +1558,29 @@ comment_out_unused_subckt_models( struct line *start_card , int no_of_lines)
         get_subckts_for_subckt( start_card, used_subckt_names[i], used_subckt_names,
                                 &num_used_subckt_names, used_model_names, &num_used_model_names, has_models );
 
-    /* comment out any unused subckts */
+    /* comment out any unused subckts, currently only at top level */
     for ( card = start_card; card != NULL; card = card->li_next ) {
         line = card->li_line;
 
         if ( *line == '*' ) continue;
 
         if ( ciprefix( ".subckt", line ) || ciprefix( ".macro", line ) ) {
+            nested_subckt++;
             subckt_name = get_subckt_model_name( line );
-            remove_subckt = TRUE;
-            for ( i = 0; i < num_used_subckt_names; i++ )
-                if ( strcmp( used_subckt_names[i], subckt_name ) == 0 ) remove_subckt = FALSE;
+            if ( nested_subckt == 1 ) {
+                /* check if unused, only at top level */
+                remove_subckt = TRUE;
+                for ( i = 0; i < num_used_subckt_names; i++ )
+                    if ( strcmp( used_subckt_names[i], subckt_name ) == 0 ) remove_subckt = FALSE;
+            }
             tfree(subckt_name);
         }
         if ( ciprefix( ".ends", line ) || ciprefix( ".eom", line ) ) {
-            if ( remove_subckt ) *line = '*';
-            remove_subckt = FALSE;
+            nested_subckt--;
+            if ( remove_subckt )
+                *line = '*';
+            if ( nested_subckt == 0 )
+                remove_subckt = FALSE;
         }
         if ( remove_subckt ) *line = '*';
         else if ( has_models && (ciprefix( ".model", line ) || ciprefix( ".cmodel", line )) ) {
