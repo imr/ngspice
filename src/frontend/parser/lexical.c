@@ -351,12 +351,12 @@ prompt(void)
 
     if (cp_interactive == FALSE)
         return;
-    if (cp_promptstring == NULL)
-        s = "-> ";
-    else
-        s = cp_promptstring;
     if (cp_altprompt)
         s = cp_altprompt;
+    else if (cp_promptstring)
+        s = cp_promptstring;
+    else
+        s = "-> ";
     while (*s) {
         switch (strip(*s)) {
             case '!':
