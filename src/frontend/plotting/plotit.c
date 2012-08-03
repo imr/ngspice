@@ -356,8 +356,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
      */
     if (getflag(wl, "lingrid")) {
         if (gfound)
-            fprintf(cp_err,
-                    "Warning: too many grid types given\n");
+            fprintf(cp_err, "Warning: too many grid types given\n");
         else {
             gtype = GRID_LIN;
             gfound = TRUE;
@@ -365,8 +364,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "loglog")) {
         if (gfound)
-            fprintf(cp_err,
-                    "Warning: too many grid types given\n");
+            fprintf(cp_err, "Warning: too many grid types given\n");
         else {
             gtype = GRID_LOGLOG;
             gfound = TRUE;
@@ -374,8 +372,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "nogrid")) {
         if (gfound)
-            fprintf(cp_err,
-                    "Warning: too many grid types given\n");
+            fprintf(cp_err, "Warning: too many grid types given\n");
         else {
             gtype = GRID_NONE;
             gfound = TRUE;
@@ -383,8 +380,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "linear")) {
         if (gfound)
-            fprintf(cp_err,
-                    "Warning: too many grid types given\n");
+            fprintf(cp_err, "Warning: too many grid types given\n");
         else {
             gtype = GRID_LIN;
             gfound = TRUE;
@@ -392,8 +388,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "xlog")) {
         if (gfound)
-            fprintf(cp_err,
-                    "Warning: too many grid types given\n");
+            fprintf(cp_err, "Warning: too many grid types given\n");
         else {
             gtype = GRID_XLOG;
             gfound = TRUE;
@@ -401,8 +396,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "ylog")) {
         if (gfound)
-            fprintf(cp_err,
-                    "Warning: too many grid types given\n");
+            fprintf(cp_err, "Warning: too many grid types given\n");
         else {
             gtype = GRID_YLOG;
             gfound = TRUE;
@@ -410,8 +404,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "polar")) {
         if (gfound)
-            fprintf(cp_err,
-                    "Warning: too many grid types given\n");
+            fprintf(cp_err, "Warning: too many grid types given\n");
         else {
             gtype = GRID_POLAR;
             gfound = TRUE;
@@ -419,8 +412,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "smith")) {
         if (gfound)
-            fprintf(cp_err,
-                    "Warning: too many grid types given\n");
+            fprintf(cp_err, "Warning: too many grid types given\n");
         else {
             gtype = GRID_SMITH;
             gfound = TRUE;
@@ -428,8 +420,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "smithgrid")) {
         if (gfound)
-            fprintf(cp_err,
-                    "Warning: too many grid types given\n");
+            fprintf(cp_err, "Warning: too many grid types given\n");
         else {
             gtype = GRID_SMITHGRID;
             gfound = TRUE;
@@ -455,9 +446,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             else if (eq(buf, "nogrid"))
                 gtype = GRID_NONE;
             else {
-                fprintf(cp_err,
-                        "Warning: strange grid type %s\n",
-                        buf);
+                fprintf(cp_err, "Warning: strange grid type %s\n", buf);
                 gtype = GRID_LIN;
             }
             gfound = TRUE;
@@ -469,8 +458,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
     if (getflag(wl, "linplot")) {
         if (pfound)
-            fprintf(cp_err,
-                    "Warning: too many plot types given\n");
+            fprintf(cp_err, "Warning: too many plot types given\n");
         else {
             ptype = PLOT_LIN;
             pfound = TRUE;
@@ -478,8 +466,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "combplot")) {
         if (pfound)
-            fprintf(cp_err,
-                    "Warning: too many plot types given\n");
+            fprintf(cp_err, "Warning: too many plot types given\n");
         else {
             ptype = PLOT_COMB;
             pfound = TRUE;
@@ -487,8 +474,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "pointplot")) {
         if (pfound)
-            fprintf(cp_err,
-                    "Warning: too many plot types given\n");
+            fprintf(cp_err, "Warning: too many plot types given\n");
         else {
             ptype = PLOT_POINT;
             pfound = TRUE;
@@ -504,9 +490,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             else if (eq(buf, "pointplot"))
                 ptype = PLOT_POINT;
             else {
-                fprintf(cp_err,
-                        "Warning: strange plot type %s\n",
-                        buf);
+                fprintf(cp_err, "Warning: strange plot type %s\n", buf);
                 ptype = PLOT_LIN;
             }
             pfound = TRUE;
@@ -561,8 +545,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 goto quit;
             } else {
                 if ((n = n->pn_next) == NULL) {
-                    fprintf(cp_err,
-                            "Error: missing vs arg\n");
+                    fprintf(cp_err, "Error: missing vs arg\n");
                     goto quit;
                 }
                 dv = ft_evaluate(n);
@@ -878,14 +861,12 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
     if ((xlims[0] <= 0.0) && ((gtype == GRID_XLOG) ||
                               (gtype == GRID_LOGLOG))) {
-        fprintf(cp_err,
-                "Error: X values must be > 0 for log scale\n");
+        fprintf(cp_err, "Error: X values must be > 0 for log scale\n");
         goto quit;
     }
     if ((ylims[0] <= 0.0) && ((gtype == GRID_YLOG) ||
                               (gtype == GRID_LOGLOG))) {
-        fprintf(cp_err,
-                "Error: Y values must be > 0 for log scale\n");
+        fprintf(cp_err, "Error: Y values must be > 0 for log scale\n");
         goto quit;
     }
 
@@ -950,8 +931,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 if (!ft_interpolate(v->v_realdata, newdata,
                                     v->v_scale->v_realdata, v->v_scale->v_length,
                                     newscale, newlen, 1)) {
-                    fprintf(cp_err,
-                            "Error: can't interpolate %s\n", v->v_name);
+                    fprintf(cp_err, "Error: can't interpolate %s\n", v->v_name);
                     goto quit;
                 }
 
