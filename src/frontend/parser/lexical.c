@@ -75,19 +75,22 @@ static int numeofs = 0;
  */
 
 #define append(word) \
-    {   wordlist *aux = wl_cons(word, NULL); \
+    do { \
+        wordlist *aux = wl_cons(word, NULL); \
         if (cw) \
            cw->wl_next = aux; \
         aux->wl_prev = cw; \
         cw = aux; \
         if (!wlist) \
             wlist = cw; \
-    }
+    } while(0)
 
 #define newword \
+    do { \
         append(copy(buf)); \
         bzero(buf, NEW_BSIZE_SP); \
-        i = 0;
+        i = 0; \
+    } while(0)
 
 
 /* CDHW Debug function */
@@ -105,7 +108,6 @@ pwlist_echo(   /*CDHW used to perform function of set echo */
     for (wl = wlist; wl; wl = wl->wl_next)
         fprintf(cp_err, "%s ", wl->wl_word );
       fprintf(cp_err, "\n");
-    return;
 }
 
 /* CDHW */
@@ -173,7 +175,7 @@ gotchar:
             wl_free(wlist);
             wlist = cw = NULL;
             if (string)
-                return (NULL);
+                return NULL;
             while (((c = input(cp_inp_cur)) != '\n') && (c != EOF))
                 ;
             goto nloop;
@@ -278,7 +280,7 @@ gotchar:
                 }
 
                 wl_free(wlist);
-                return (NULL);
+                return NULL;
             }
 	case ESCAPE:
             if (cp_interactive && !cp_nocc) {
@@ -339,7 +341,7 @@ ldefault:   if ((cp_chars[c] & CPC_BRL) && (i > 0)) {
 done:
 
     if (wlist->wl_word) pwlist_echo(wlist,"Command>");
-    return (wlist);
+    return wlist;
 }
 
 static void
@@ -369,5 +371,4 @@ prompt(void)
         s++;
     }
     (void) fflush(cp_out);
-    return;
 }
