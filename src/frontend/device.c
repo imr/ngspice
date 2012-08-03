@@ -975,8 +975,7 @@ old_show(wordlist *wl)
     char *nn;
 
     devs = wl;
-    while (wl && !eq(wl->wl_word, ":"))
-        wl = wl->wl_next;
+    wl = wl_find(":", wl);
     if (!wl)
         parms = NULL;
     else {
