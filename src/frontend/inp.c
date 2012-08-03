@@ -112,7 +112,7 @@ upper(char *string)
 
     if (string) {
         strncpy(buf, string, BSIZE_SP - 1);
-        buf[BSIZE_SP - 1] = 0;
+        buf[BSIZE_SP - 1] = '\0';
         inp_casefix(buf);
     } else {
         strcpy(buf, "<null>");
@@ -831,7 +831,7 @@ inp_dodeck(
             do {
                 q =strchr(p, '\n');
                 if (q)
-                    *q = 0;
+                    *q = '\0';
 
                 if (p == dd->li_error) {
                     if (strstr(dd->li_line, ".model"))
