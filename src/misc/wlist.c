@@ -13,12 +13,11 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 /* Determine the length of a word list. */
 int
-wl_length(wordlist *wlist)
+wl_length(const wordlist *wl)
 {
     int i = 0;
-    wordlist *wl;
 
-    for (wl = wlist; wl; wl = wl->wl_next)
+    for (; wl; wl = wl->wl_next)
         i++;
     return (i);
 }
@@ -90,11 +89,9 @@ printword(char *string, FILE *fp)
 
 /* Print a word list. (No \n at the end...) */
 void
-wl_print(wordlist *wlist, FILE *fp)
+wl_print(const wordlist *wl, FILE *fp)
 {
-    wordlist *wl;
-
-    for (wl = wlist; wl; wl = wl->wl_next) {
+    for (; wl; wl = wl->wl_next) {
         printword(wl->wl_word, fp);
         if (wl->wl_next)
             putc(' ', fp);
@@ -360,12 +357,12 @@ wl_chop_rest(wordlist *wl)
  */
 
 wordlist *
-wl_find(const char *string, wordlist *wl)
+wl_find(const char *string, const wordlist *wl)
 {
     for (; wl; wl = wl->wl_next)
         if (eq(string, wl->wl_word))
             break;
-    return wl;
+    return (wordlist *) wl;
 }
 
 
