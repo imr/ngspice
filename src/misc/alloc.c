@@ -7,6 +7,12 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
  */
 #include "ngspice/ngspice.h"
 
+/* We need this because some tests in cmaths and some executables other
+   than ngspice and ngnutmeg under LINUX don't know about controlled_exit */
+#ifdef HAS_WINDOWS
+extern void controlled_exit(int status);
+#endif
+
 #ifndef HAVE_LIBGC
 
 /*saj For Tcl module locking*/
@@ -42,7 +48,11 @@ tmalloc(size_t num)
 #endif
     if (!s){
       fprintf(stderr,"malloc: Internal Error: can't allocate %ld bytes. \n",(long)num);
+#ifdef HAS_WINDOWS
+      controlled_exit(EXIT_FAILURE);
+#else
       exit(EXIT_FAILURE);
+#endif
     }
     return(s);
 }
@@ -78,7 +88,11 @@ trealloc(void *ptr, size_t num)
   }
   if (!s) {
     fprintf(stderr,"realloc: Internal Error: can't allocate %ld bytes.\n", (long)num);
-    exit(EXIT_FAILURE);
+#ifdef HAS_WINDOWS
+      controlled_exit(EXIT_FAILURE);
+#else
+      exit(EXIT_FAILURE);
+#endif
   }
   return(s);
 }
