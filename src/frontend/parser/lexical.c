@@ -76,15 +76,7 @@ static int numeofs = 0;
  */
 
 #define append(word)                            \
-    do {                                        \
-        wordlist *aux = wl_cons(word, NULL);    \
-        if (cw)                                 \
-            cw->wl_next = aux;                  \
-        aux->wl_prev = cw;                      \
-        cw = aux;                               \
-        if (!wlist)                             \
-            wlist = cw;                         \
-    } while(0)
+    wl_append_word(&wlist, &cw, word)
 
 
 #define newword                                 \
