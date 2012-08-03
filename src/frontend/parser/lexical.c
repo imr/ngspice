@@ -102,7 +102,7 @@ pwlist_echo(   /*CDHW used to perform function of set echo */
 {
     wordlist *wl;
 
-    if ((!cp_echo)||cp_debug) /* cpdebug prints the same info */
+    if (!cp_echo || cp_debug) /* cpdebug prints the same info */
         return;
     fprintf(cp_err, "%s ", name);
     for (wl = wlist; wl; wl = wl->wl_next)
@@ -142,8 +142,9 @@ nloop:
                 c = '\n';
             if (c == ESCAPE)
                 c = '[';
-        } else
+        } else {
             c = input(cp_inp_cur);
+        }
 
 gotchar:
 	if ((c != EOF) && (c != ESCAPE))
@@ -189,9 +190,8 @@ gotchar:
         switch (c) {
 	case ' ':
 	case '\t':
-            if (i > 0) {
+            if (i > 0)
                 newword;
-            }
             break;
 
 	case '\n':
@@ -208,10 +208,8 @@ gotchar:
                     && (i < NEW_BSIZE_SP - 1)) {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
-                else {
                     buf[i++] = (char) quote(c);
                     linebuf[j++] = (char) c;
-                }
             }
             linebuf[j++] = '\'';
             break;
@@ -224,7 +222,7 @@ gotchar:
                    && (i < NEW_BSIZE_SP - 2)) {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
-                else if (c == '\\') {
+                if (c == '\\') {
                     linebuf[j++] = (char) c;
                     c = (string ? *string++ : input(cp_inp_cur));
                     buf[i++] = (char) quote(c);
@@ -264,8 +262,9 @@ gotchar:
 #endif
                 wlist = cw = NULL;
                 goto nloop;
-            } else    /* EOF during a source */
-	    {
+            }
+
+            /* EOF during a source */
                 if (cp_interactive) {
                     fputs("quit\n", stdout);
                     cp_doquit();
@@ -275,7 +274,6 @@ gotchar:
 
                 wl_free(wlist);
                 return NULL;
-            }
 	case ESCAPE:
             if (cp_interactive && !cp_nocc) {
                 fputs("\b\b  \b\b\r", cp_out);
@@ -294,7 +292,7 @@ gotchar:
             }
             goto ldefault;
 	case ',':
-	    if (paren < 1 && i > 0) {
+	    if ((paren < 1) && (i > 0)) {
 		newword;
 		break;
 	    }
@@ -306,7 +304,7 @@ gotchar:
 	    }
 	    goto ldefault; 
 	case '&':  /* va: $&name is one word */
-	    if (i==1 && buf[i-1]=='$' && c=='&') {
+	    if ((i == 1) && (buf[i-1] == '$') && (c == '&')) {
 	        buf[i++] = (char) c;
 	        break;
 	    }
@@ -314,7 +312,7 @@ gotchar:
 	case '<':
 	case '>':  /* va: <=, >= are unbreakable words */
        if(string)
-	    if (i==0 && (*string=='=')) {
+	    if ((i == 0) && (*string == '=')) {
 	        buf[i++] = (char) c;
 	        break;
 	    }
@@ -324,17 +322,13 @@ gotchar:
              * here
              */
         ldefault:
-            if ((cp_chars[c] & CPC_BRL) && (i > 0)) {
-                if ((c != '<') || (buf[i - 1] != '$')) {
+            if ((cp_chars[c] & CPC_BRL) && (i > 0))
+                if ((c != '<') || (buf[i - 1] != '$'))
                     newword;
-                }
-            }
             buf[i++] = (char) c;
-            if (cp_chars[c] & CPC_BRR) {
-                if ((c != '<') || (i < 2) || (buf[i - 2] != '$')) {
+            if (cp_chars[c] & CPC_BRR)
+                if ((c != '<') || (i < 2) || (buf[i - 2] != '$'))
                     newword;
-                }
-            }
         }
     }
 done:
