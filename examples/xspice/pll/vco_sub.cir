@@ -1,7 +1,7 @@
 * VCO: 7 stage Ring-Osc. made of gain cells BSIM3
 * P.-H. Hsieh, J. Maxey, C.-K. K. Yang, IEEE JSSC, Sept. 2009, pp. 2488 - 2495
-* automatically tune Vdd to achive a desired frequency of oscillation
-* measure frequency of R.O. either by delay measurement or by fft 
+* 150 MHz to 900 MHz with control voltage 2.5 to 0.5 V at 3.3 V supply
+* BSIM 3 model data for transistors in main file pll-xspice.cir
 
 ***** ring oscillator as voltage controlled oscillator *************** 
 * name: ro_vco
@@ -64,3 +64,4 @@ abridge1 [aout] [dout] adc_buff
 .model adc_buff adc_bridge(in_low = 'vcc*0.5' in_high = 'vcc*0.5')
 .ends ro_vco
 ******************************************************************
+

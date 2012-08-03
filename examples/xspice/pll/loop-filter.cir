@@ -3,7 +3,7 @@
 * out: vout, vco control voltage
 * according to http://www.uwe-kerwien.de/pll/pll-schleifenfilter.htm
 
-.subckt loopf d_U d_D vout
+.subckt loopfe d_U d_D vout
 
 .param loadcur=5m
 .param initcond=2.5

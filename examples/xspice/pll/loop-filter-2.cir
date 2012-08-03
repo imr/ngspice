@@ -1,0 +1,50 @@
+* loop filter for pll
+* in: d_up d_down digital data
+* out: vout, vco control voltage
+* using transistors to switch current
+* according to http://www.uwe-kerwien.de/pll/pll-schleifenfilter.htm
+* digital input d_Un d_D
+* anlog output vout
+
+
+.subckt loopf d_Un d_D vout
+
+.param initcond=2.5
+
+vdd dd 0 dc 'vcc'
+vss ss 0 dc 0
+
+* "driver" circuit, digital in, analog out
+abridge-f1 [d_Un d_D] [u1n d1] dac1
+.model dac1 dac_bridge(out_low = 0 out_high = 'vcc' out_undef = 'vcc/2'
++ input_load = 5.0e-12 t_rise = 1e-10
++ t_fall = 1e-10)
+
+* uses BSIM3 model parameters from pll-xspice_2.cir
+* transistors as switches
+mnd  dra d1  ss  ss  n1  w=12u  l=0.35u  AS=24p AD=24p PS=28u PD=28u
+mpd  dra u1n  dd  dd  p1  w=24u l=0.35u  AS=48p AD=48p PS=52u PD=52u
+
+*** passive filter elements ***
+*third order filter
+*parameters absolutely _not_ optimised
+*better check
+* http://www.national.com/assets/en/boards/deansbook4.pdf
+*to do so
+.ic v(vout)='initcond' v(c1)='initcond' v(dra)='initcond' v(int1)='initcond' v(u1n)='vcc' v(d1)=0
+R1 dra int1 300
+R2 int1 c1 200
+C1 c1 0 10n
+C2 int1 0 5n
+R3 int1 vout 50
+C3 vout 0 0.5n
+
+*second order filter
+*parameters not optimized
+*.ic v(vout)='initcond' v(c1)='initcond' v(dra)='initcond' v(u1n)='vcc' v(d1)=0
+*R1 dra vout 300
+*R2 vout c1 200
+*C1 c1 0 10n
+*C2 vout 0 5n
+
+.ends loopf

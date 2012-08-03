@@ -1,0 +1,30 @@
+***** XSPICE digital controlled oscillator d_osc as vco *************** 
+* 150 MHz to 900 MHz
+* name: d_osc_vco
+* aout analog out
+* dout digital out 
+* cont control voltage
+* dd supply voltage
+
+.subckt d_osc_vco aout dout cont dd
+* curve fitting to ro_vco 'measured' data
+Bfit fitted 0 v = (-58256685.71*v(cont)*v(cont) - 186386142.9*v(cont) + 988722980)/10.
+
+*a5 fitted dout var_clock
+*.model var_clock d_osc(cntl_array = [1.0e7 5.0e7 9.0e7]
+*+ freq_array = [1.0e8 5.0e8 9.0e8]
+
+* linear interpolation, input data from measured ro vco
+a5 cont dout var_clock
+.model var_clock d_osc(cntl_array = [0.5 1 1.5 2 2.5]
++ freq_array = [8.790820e+008 7.472197e+008 5.799500e+008 3.772727e+008 1.611650e+008]
++ duty_cycle = 0.5 init_phase = 180.0
++ rise_delay = 1e-10 fall_delay=1e-10)
+
+*generate an analog output for plotting
+abridge-fit [dout] [aout] dac1
+.model dac1 dac_bridge(out_low = 0 out_high = 1 out_undef = 0.5
++ input_load = 5.0e-12 t_rise = 1e-10
++ t_fall = 1e-10)
+
+.ends d_osc_vco

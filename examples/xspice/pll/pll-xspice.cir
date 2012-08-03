@@ -1,9 +1,11 @@
 * pll circuit using xspice code models
+* output frequency 400 MHz
+* locked to a 1 or 10 MHz reference
 
 .param vcc=3.3
 .param divisor=40
 .param fref=10e6
-.csparam simtime=20u
+.csparam simtime=25u
 
 .global d_d0 d_d1
 
@@ -11,7 +13,7 @@ vdd dd 0 dc 'vcc'
 *vco cont 0 dc 1.9
 
 *PULSE(V1 V2 TD TR TF PW PER)
-* 10 MHz reference frequency
+* reference frequency selected by param fref
 * PULSE(V1 V2 TD TR TF PW PER)
 vref ref 0 dc 0 pulse(0 'vcc' 10n 1n 1n  '1/fref/2' '1/fref')
 abridgeref [ref] [d_ref] adc_vbuf
@@ -27,11 +29,13 @@ ainv1 d_d0 d_d1 invd1
 
 * vco
 .include vco_sub.cir
+.include vco_sub_new.cir
 * buf: analog out
 * d_digout: digital out
 * cont: analog control voltage
 * dd: analog supply voltage
-xvco buf d_digout cont dd ro_vco
+xvco buf d_digout cont dd d_osc_vco 
+*xvco buf d_digout cont dd ro_vco
 
 * digital divider
 adiv1 d_digout d_divout divider
@@ -43,22 +47,29 @@ adiv1 d_digout d_divout divider
 .include f-p-det-d-sub.cir
 Xfpdet d_divout d_ref d_U d_Un d_D d_Dn  f-p-det
 
-* loop filter
-.include loop-filter.cir
-Xlf d_U d_D cont loopf
+* loop filters
+*2nd or 3rd order, transistors as switches
+.include loop-filter-2.cir
+Xlf d_Un d_D cont loopf
+* 2nd order, Exxxx voltage controlled current sources as 'switches'
+* loop filter current sources as charge pump
+*.include loop-filter.cir
+*Xlf d_U d_D cont loopfe
 
 * d to a for plotting
-abridge-w1 [d_divout d_ref d_U d_D] [s1 s2 u1 d1] dac1
+abridge-w1 [d_divout d_ref d_Un d_D] [s1 s2 u1n d1] dac1 ; change to d_u or d_Un
 .model dac1 dac_bridge(out_low = 0 out_high = 1 out_undef = 0.5
 + input_load = 5.0e-12 t_rise = 1e-10
 + t_fall = 1e-10)
 
 .control
-save cont s1 s2 u1 d1 ; to save memory
+save cont s1 s2 u1n d1 v.xlf.vdd#branch; to save memory
+iplot cont
 tran 0.1n $&simtime uic
 rusage
-plot cont s1 s2+1.2 u1+2.4 d1+3.6
-plot cont
+plot cont s1 s2+1.2 u1n+2.4 d1+3.6 xlimit 4u 5u
+plot v.xlf.vdd#branch xlimit 4u 5u ylimit -8m 2m
+*plot cont
 .endc
 
 *model = bsim3v3

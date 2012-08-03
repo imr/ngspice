@@ -31,11 +31,13 @@ ainv1 d_d0 d_d1 invd1
 
 * vco
 .include vco_sub.cir
+.include vco_sub_new.cir
 * buf: analog out
 * d_digout: digital out
 * cont: analog control voltage
 * dd: analog supply voltage
-xvco buf d_digout cont dd ro_vco
+xvco buf d_digout cont dd d_osc_vco 
+*xvco buf d_digout cont dd ro_vco
 
 * digital divider
 adiv1 d_digout d_divout divider
@@ -48,17 +50,23 @@ adiv1 d_digout d_divout divider
 Xfpdet d_divout d_ref d_U d_Un d_D d_Dn  f-p-det
 
 * loop filter
-.include loop-filter.cir
-Xlf d_U d_D cont loopf
+*2nd or 3rd order, transistors as switches
+.include loop-filter-2.cir
+Xlf d_Un d_D cont loopf
+* 2nd order, Exxxx voltage controlled current sources as 'switches'
+* loop filter current sources as charge pump
+*.include loop-filter.cir
+*Xlf d_U d_D cont loopfe
 
 * d to a for plotting
-abridge-w1 [d_divout d_ref d_U d_D] [s1 s2 u1 d1] dac1
+abridge-w1 [d_divout d_ref d_Un d_D] [s1 s2 u1 d1] dac1 ; change to d_u or d_Un
 .model dac1 dac_bridge(out_low = 0 out_high = 1 out_undef = 0.5
 + input_load = 5.0e-12 t_rise = 1e-10
 + t_fall = 1e-10)
 
 .control
 save cont s1 s2 u1 d1
+iplot cont
 * calculate breakpoint for switching frequency
 let t1_3 = simtime/3
 set ti1_3 ="$&t1_3"
@@ -82,7 +90,7 @@ alter @vref[pulse] = [ 0 3.3 10n 1n 1n  $&pw3 $&per3 ]
 resume
 rusage
 plot cont s1 s2+1.2 u1+2.4 d1+3.6 xlimit 15u 16u
-plot cont
+*plot cont
 .endc
 
 *model = bsim3v3

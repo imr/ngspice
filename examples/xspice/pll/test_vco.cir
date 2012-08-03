@@ -1,16 +1,19 @@
-VCO: 7 stage Ring-Osc. made of gain cells BSIM3
+* Test of VCO: frequency versus control voltage
+* 7 stage Ring-Osc. made of gain cells BSIM3
 * P.-H. Hsieh, J. Maxey, C.-K. K. Yang, IEEE JSSC, Sept. 2009, pp. 2488 - 2495
-* get frequency versus control voltage
+* alternatively use d_osc code model
 * measure frequency of R.O. by fft 
 
 .param vcc=3.3
 .csparam simtime=500n
 
 .include vco_sub.cir
+.include vco_sub_new.cir
 
 vdd dd 0 dc 'vcc'
 vco cont 0 dc 2.5
-xvco buf digout cont dd ro_vco
+*xvco buf digout cont dd ro_vco ; ring oscillator vco
+xvco buf digout cont dd d_osc_vco ; code model d_osc vco
 
 .option noacct
 
@@ -75,6 +78,7 @@ setplot $freq_volt
 settype frequency foscvec
 settype voltage vcovec
 plot foscvec vs vcovec
+print vcovec foscvec
 rusage
 .endc
 
