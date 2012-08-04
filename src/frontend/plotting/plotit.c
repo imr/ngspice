@@ -161,11 +161,9 @@ compress(struct dvec *d, double *xcomp, double *xind)
         if ((cfac > 1) && (cfac < d->v_length)) {
             for (i = 0; i * cfac < d->v_length; i++)
                 if (isreal(d))
-                    d->v_realdata[i] =
-                        d->v_realdata[i * cfac];
+                    d->v_realdata[i] = d->v_realdata[i * cfac];
                 else
-                    d->v_compdata[i] =
-                        d->v_compdata[i * cfac];
+                    d->v_compdata[i] = d->v_compdata[i * cfac];
             d->v_length = i;
         }
     }
@@ -622,8 +620,10 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
     /* The following line displays the unit at the time of
        temp-sweep and res-sweep. This may not be a so good solution. by H.T */
-    if(!strcmp(vecs->v_scale->v_name,"temp-sweep")) vecs->v_scale->v_type=SV_TEMP; /* simulation_types in sim.h */
-    if(!strcmp(vecs->v_scale->v_name,"res-sweep")) vecs->v_scale->v_type=SV_RES;
+    if (strcmp(vecs->v_scale->v_name, "temp-sweep") == 0)
+        vecs->v_scale->v_type = SV_TEMP;
+    if (strcmp(vecs->v_scale->v_name, "res-sweep") == 0)
+        vecs->v_scale->v_type = SV_RES;
 
     /* See if the log flag is set anywhere... */
     if (!gfound) {
@@ -632,8 +632,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 gtype = GRID_XLOG;
         for (d = vecs; d; d = d->v_link2)
             if (d->v_gridtype == GRID_YLOG) {
-                if ((gtype == GRID_XLOG) ||
-                    (gtype == GRID_LOGLOG))
+                if ((gtype == GRID_XLOG) || (gtype == GRID_LOGLOG))
                     gtype = GRID_LOGLOG;
                 else
                     gtype = GRID_YLOG;
@@ -873,10 +872,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     /* Fix the plot limits for smith and polar grids. */
     if ((!xlim || !ylim) && (gtype == GRID_POLAR)) {
         /* (0,0) must be in the center of the screen. */
-        mx = (fabs(xlims[0]) > fabs(xlims[1])) ? fabs(xlims[0]) :
-            fabs(xlims[1]);
-        my = (fabs(ylims[0]) > fabs(ylims[1])) ? fabs(ylims[0]) :
-            fabs(ylims[1]);
+        mx = (fabs(xlims[0]) > fabs(xlims[1])) ? fabs(xlims[0]) : fabs(xlims[1]);
+        my = (fabs(ylims[0]) > fabs(ylims[1])) ? fabs(ylims[0]) : fabs(ylims[1]);
         /* rad = (mx > my) ? mx : my; */
         /* AM.Roldán
          * Change this reason that this was discussed, as in the case of 1 + i want to plot point
@@ -950,8 +947,10 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             vecs->v_scale = newv_scale;
 
         }
-        ft_agraf(xlims, ylims, vecs->v_scale, vecs->v_plot, vecs,
-                 xdelta ? *xdelta : 0.0, ydelta ? *ydelta : 0.0,
+        ft_agraf(xlims, ylims,
+                 vecs->v_scale, vecs->v_plot, vecs,
+                 xdelta ? *xdelta : 0.0,
+                 ydelta ? *ydelta : 0.0,
                  ((gtype == GRID_XLOG) || (gtype == GRID_LOGLOG)),
                  ((gtype == GRID_YLOG) || (gtype == GRID_LOGLOG)),
                  nointerp);
@@ -1022,9 +1021,11 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     pname = plot_cur->pl_typename;
 
     if (!gr_init(xlims, ylims, (oneval ? NULL : xn),
-                 title ? title : vecs->v_plot->pl_title, hcopy, i,
-                 xdelta ? *xdelta : 0.0, ydelta ? *ydelta : 0.0, gtype,
-                 ptype, xlabel, ylabel, xt, j, pname, cline))
+                 title ? title : vecs->v_plot->pl_title,
+                 hcopy, i,
+                 xdelta ? *xdelta : 0.0,
+                 ydelta ? *ydelta : 0.0,
+                 gtype, ptype, xlabel, ylabel, xt, j, pname, cline))
         goto quit;
 
     /* Now plot all the graphs. */
