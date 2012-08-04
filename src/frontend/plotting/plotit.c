@@ -234,14 +234,11 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     struct dvec *dv, *d = NULL, *vecs = NULL, *lv, *lastvs = NULL;
     char *xn;
     int i, j, xt;
-    double tt, mx, my, rad;
+    double tt;
     wordlist *wwl;
     char cline[BSIZE_SP], buf[BSIZE_SP], *pname;
     char *nxlabel = NULL, *nylabel = NULL, *ntitle = NULL;
 
-    int newlen;
-    struct dvec *v, *newv_scale;
-    double *newdata, *newscale;
     double tstep, tstart, tstop, ttime;
 
     /* return value, error by default */
@@ -871,6 +868,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
     /* Fix the plot limits for smith and polar grids. */
     if ((!xlim || !ylim) && (gtype == GRID_POLAR)) {
+        double mx, my, rad;
         /* (0,0) must be in the center of the screen. */
         mx = (fabs(xlims[0]) > fabs(xlims[1])) ? fabs(xlims[0]) : fabs(xlims[1]);
         my = (fabs(ylims[0]) > fabs(ylims[1])) ? fabs(ylims[0]) : fabs(ylims[1]);
@@ -912,11 +910,13 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             isreal(plot_cur->pl_scale) &&
             ciprefix("tran", plot_cur->pl_typename))
         {
-            newlen = (int)((tstop - tstart) / tstep + 1.5);
+            int newlen = (int)((tstop - tstart) / tstep + 1.5);
 
-            newscale = TMALLOC(double, newlen);
+            double *newscale = TMALLOC(double, newlen);
 
-            newv_scale = alloc(struct dvec);
+            struct dvec *newv_scale = alloc(struct dvec);
+            struct dvec *v;
+
             newv_scale->v_flags = vecs->v_scale->v_flags;
             newv_scale->v_type = vecs->v_scale->v_type;
             newv_scale->v_gridtype = vecs->v_scale->v_gridtype;
@@ -928,7 +928,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 newscale[i] = ttime;
 
             for (v = vecs; v; v= v->v_link2) {
-                newdata = TMALLOC(double, newlen);
+                double *newdata = TMALLOC(double, newlen);
 
                 if (!ft_interpolate(v->v_realdata, newdata,
                                     v->v_scale->v_realdata, v->v_scale->v_length,
