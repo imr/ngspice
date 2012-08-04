@@ -897,6 +897,11 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         ylims[1] = 1.0;
     }
 
+    if(xlim)
+        tfree(xlim);
+    if(ylim)
+        tfree(ylim);
+
     /* We don't want to try to deal with smith plots for asciiplot. */
     if (devname && eq(devname, "lpr")) {
         /* check if we should (can) linearize */

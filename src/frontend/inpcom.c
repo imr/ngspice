@@ -2996,7 +2996,7 @@ inp_fix_param_values( struct line *deck )
 {
     struct line *c = deck;
     char *line, *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
-    char *vec_str, *natok, *buffer, *newvec, *whereisgt;
+    char *vec_str, *tmp_str, *natok, *buffer, *newvec, *whereisgt;
     bool control_section = FALSE;
     wordlist *nwl;
     int parens;
@@ -3098,7 +3098,7 @@ inp_fix_param_values( struct line *deck )
                 while (*end_of_str != ']')
                     end_of_str++;
                 /* string xx yyy from vector [xx yyy] */
-                vec_str = copy_substring(beg_of_str + 1, end_of_str);
+                tmp_str = vec_str = copy_substring(beg_of_str + 1, end_of_str);
 
                 /* work on vector elements inside [] */
                 nwl = NULL;
@@ -3140,6 +3140,7 @@ inp_fix_param_values( struct line *deck )
                     nwl = wl_cons(copy(buffer), nwl);
                     tfree(buffer);
                 }
+                tfree(tmp_str);
                 nwl = wl_reverse(nwl);
                 /* new vector elements */
                 newvec = wl_flatten(nwl);

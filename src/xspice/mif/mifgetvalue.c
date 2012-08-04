@@ -220,9 +220,11 @@ MIFgetValue (
         if(! is_array)
             break;
 
+        tfree(token);
+
     } /* end forever loop */
 
-
+    tfree(token);
     return(&val);
 }
 

@@ -163,6 +163,7 @@ card         *current ) /* the card we are to parse                     */
 
     char    *def_port_type_str;  /* The default port type in string form */
     char    *next_token;         /* a token string */
+    char    *tmp_token;         /* a token string */
 
     int     i;          /* a loop counter */
     int     j;          /* a loop counter */
@@ -195,8 +196,11 @@ card         *current ) /* the card we are to parse                     */
     INPinsert(&name, tab);
 
     /* locate the last token on the line (i.e. model name) and put it into "model" */
-    while(*line != '\0')
+    while(*line != '\0') {
+        if (model)
+            tfree(model);
         model = MIFgettok(&line);
+    }
 
     /* make sure the model name was there. */
     if(model == NULL) {
@@ -211,7 +215,6 @@ card         *current ) /* the card we are to parse                     */
     if(current->error) {
         return;
     }
-
 
     /* get the integer index into the DEVices data array for this  */
     /* model                                                       */
@@ -237,7 +240,8 @@ card         *current ) /* the card we are to parse                     */
     /* reset 'line', and then read instance name again.  */
     line = current->line;
 
-    MIFgettok(&line);  /* read instance name again . . . .*/
+    tmp_token = MIFgettok(&line);  /* read instance name again . . . .*/
+    tfree(tmp_token);
 
     /*  OK -- now &line points to the first token after
 	the instance name and we are ready to process the connections 
@@ -468,6 +472,8 @@ card         *current ) /* the card we are to parse                     */
         LITERR("Too many connections -- expecting model name but encountered other tokens.");
         return;
     }
+
+    tfree(model);
 
     /* check connection constraints */
 

@@ -978,6 +978,8 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 
             for (;;) {
                 /* rotate the tokens and get the the next one */
+                if (name)
+                    tfree(name);
                 name = next_name;
                 next_name = MIFgettok(&s);
 

@@ -181,11 +181,14 @@ char *MIFgetMod(
                 /* parameter isolation, identification, binding */
                 line = modtmp->INPmodLine->line;
                 INPgetTok(&line,&parm,1);     /* throw away '.model' */
+                tfree(parm);
                 INPgetTok(&line,&parm,1);     /* throw away 'modname' */
+                tfree(parm);
 
                 /* throw away the modtype - we don't treat it as a parameter */
                 /* like SPICE does                                           */
                 INPgetTok(&line,&parm,1);     /* throw away 'modtype' */
+                tfree(parm);
 
                 while(*line != 0) {
                     INPgetTok(&line,&parm,1);
