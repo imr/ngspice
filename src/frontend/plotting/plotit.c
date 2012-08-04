@@ -538,7 +538,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             if (!lv) {
                 fprintf(cp_err, "Error: misplaced vs arg\n");
                 goto quit;
-            } else {
+            }
                 if ((n = n->pn_next) == NULL) {
                     fprintf(cp_err, "Error: missing vs arg\n");
                     goto quit;
@@ -557,7 +557,6 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                     lastvs = lv;
                     lv = lv->v_link2;
                 }
-            }
 
         } else {
 
