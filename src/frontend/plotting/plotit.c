@@ -540,41 +540,41 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 fprintf(cp_err, "Error: misplaced vs arg\n");
                 goto quit;
             }
-                if ((n = n->pn_next) == NULL) {
-                    fprintf(cp_err, "Error: missing vs arg\n");
-                    goto quit;
-                }
-                dv = ft_evaluate(n);
-                if (!dv)
-                    goto quit;
+            if ((n = n->pn_next) == NULL) {
+                fprintf(cp_err, "Error: missing vs arg\n");
+                goto quit;
+            }
 
-                if (lastvs)
-                    lv = lastvs->v_link2;
-                else
-                    lv = vecs;
+            dv = ft_evaluate(n);
+            if (!dv)
+                goto quit;
 
-                while (lv) {
-                    lv->v_scale = dv;
-                    lastvs = lv;
-                    lv = lv->v_link2;
-                }
+            if (lastvs)
+                lv = lastvs->v_link2;
+            else
+                lv = vecs;
+
+            while (lv) {
+                lv->v_scale = dv;
+                lastvs = lv;
+                lv = lv->v_link2;
+            }
 
         } else {
 
-        dv = ft_evaluate(n);
+            dv = ft_evaluate(n);
+            if (!dv)
+                goto quit;
 
-        if (!dv)
-            goto quit;
+            if (!d)
+                vecs = dv;
+            else
+                d->v_link2 = dv;
 
-        if (!d)
-            vecs = dv;
-        else
-            d->v_link2 = dv;
+            for (d = dv; d->v_link2; d = d->v_link2)
+                ;
 
-        for (d = dv; d->v_link2; d = d->v_link2)
-            ;
-
-        lv = dv;
+            lv = dv;
         }
 
     /* free_pnode(names); pn:really should be commented out ? */
@@ -945,6 +945,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             vecs->v_scale = newv_scale;
 
         }
+
         ft_agraf(xlims, ylims,
                  vecs->v_scale, vecs->v_plot, vecs,
                  xdelta ? *xdelta : 0.0,
@@ -1030,8 +1031,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         ft_graf(d, oneval ? NULL : d->v_scale, FALSE);
 
     gr_clean();
-
     rtn = TRUE;
+
 quit:
     free_pnode(names);
 quit1:
