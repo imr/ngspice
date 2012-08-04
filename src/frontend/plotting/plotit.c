@@ -532,9 +532,10 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         goto quit1;
 
     /* Now evaluate the names. */
-    for (n = names, lv = NULL; n; n = n->pn_next) {
+    for (n = names, lv = NULL; n; n = n->pn_next)
         if (n->pn_value && (n->pn_value->v_length == 0) &&
-            eq(n->pn_value->v_name, "vs")) {
+            eq(n->pn_value->v_name, "vs"))
+        {
             if (!lv) {
                 fprintf(cp_err, "Error: misplaced vs arg\n");
                 goto quit;
@@ -575,7 +576,6 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
         lv = dv;
         }
-    }
 
     /* free_pnode(names); pn:really should be commented out ? */
     d->v_link2 = NULL;
@@ -591,7 +591,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     /* If there are higher dimensional vectors, transform them into a
      * family of vectors.
      */
-    for (d = vecs, lv = NULL; d; d = d->v_link2) {
+    for (d = vecs, lv = NULL; d; d = d->v_link2)
         if (d->v_numdims > 1) {
             if (lv)
                 lv->v_link2 = vec_mkfamily(d);
@@ -604,7 +604,6 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         } else {
             lv = d;
         }
-    }
 
     /* Now fill in the scales for vectors who aren't already fixed up. */
     for (d = vecs; d; d = d->v_link2)
@@ -684,13 +683,12 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     /* Now patch up each vector with the compression and thestrchr
      * selection.
      */
-    if (xcompress || xindices) {
+    if (xcompress || xindices)
         for (d = vecs; d; d = d->v_link2) {
             compress(d, xcompress, xindices);
             d->v_scale = vec_copy(d->v_scale);
             compress(d->v_scale, xcompress, xindices);
         }
-    }
 
     /* Transform for smith plots */
     if (gtype == GRID_SMITH) {
@@ -1003,9 +1001,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 #ifdef TCL_MODULE
     if (devname && eq(devname, "blt")) {
         /* Just send the pairs to Tcl/Tk */
-        for (d = vecs; d; d = d->v_link2) {
+        for (d = vecs; d; d = d->v_link2)
             blt_plot(d, oneval ? NULL : d->v_scale, (d == vecs) ? 1 : 0);
-        }
         rtn = TRUE;
         goto quit;
     }
