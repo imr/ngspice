@@ -34,7 +34,6 @@ wl_free(wordlist *wlist)
         tfree(wl->wl_word);
         tfree(wl);
     }
-    return;
 }
 
 
@@ -83,7 +82,6 @@ printword(char *string, FILE *fp)
     if (string)
         for (s = string; *s; s++)
             putc((strip(*s)), fp);
-    return;
 }
 
 
@@ -96,7 +94,6 @@ wl_print(const wordlist *wl, FILE *fp)
         if (wl->wl_next)
             putc(' ', fp);
     }
-    return;
 }
 
 
@@ -153,14 +150,14 @@ wordlist *
 wl_reverse(wordlist *wl)
 {
     if (!wl)
-        return wl;
+        return (wl);
 
     for (;;) {
          wordlist *t = wl->wl_next;
          wl->wl_next = wl->wl_prev;
          wl->wl_prev = t;
          if (!t)
-             return wl;
+             return (wl);
          wl = t;
     }
 }
@@ -177,7 +174,7 @@ wl_flatten(wordlist *wl)
     for (tw = wl; tw; tw = tw->wl_next)
         i += strlen(tw->wl_word) + 1;
     buf = TMALLOC(char, i + 1);
-    *buf = 0;
+    *buf = '\0';
 
     while (wl != NULL) {
         (void) strcat(buf, wl->wl_word);
@@ -230,7 +227,6 @@ wl_sort(wordlist *wl)
     for (i = 0, ww = wl; ww; i++, ww = ww->wl_next)
         ww->wl_word = stuff[i];
     tfree(stuff);
-    return;
 }
 
 
@@ -290,7 +286,7 @@ wl_cons(char *word, wordlist *wlist)
     if (wlist)
         wlist->wl_prev = w;
 
-    return w;
+    return (w);
 }
 
 
@@ -331,7 +327,7 @@ wl_chop(wordlist *wl)
         wl->wl_prev->wl_next = NULL;
         wl->wl_prev = NULL;
     }
-    return wl;
+    return (wl);
 }
 
 
@@ -348,7 +344,7 @@ wl_chop_rest(wordlist *wl)
     wl->wl_next = NULL;
     if(rest)
         rest->wl_prev = NULL;
-    return rest;
+    return (rest);
 }
 
 
@@ -362,7 +358,7 @@ wl_find(const char *string, const wordlist *wl)
     for (; wl; wl = wl->wl_next)
         if (eq(string, wl->wl_word))
             break;
-    return (wordlist *) wl;
+    return ((wordlist *) wl);
 }
 
 
