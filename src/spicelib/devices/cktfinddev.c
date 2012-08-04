@@ -46,8 +46,8 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
       /* have device type, need to find model & device */
       /* look through all models */
       for (mods = ckt->CKThead[*type];
-	     mods != NULL ; 
-	     mods = mods->GENnextModel) 
+             mods != NULL ; 
+             mods = mods->GENnextModel) 
       {
          /* and all instances */
          if (modname == NULL || mods->GENmodName == modname) {

@@ -228,13 +228,13 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
         && modtmp->INPmodType != INPtypelook ("HiSIMHV")
        ) continue; /* We left the loop if the model is not in the list */
 
-   if (modtmp->INPmodType < 0) {  /* First check for illegal model type */
-       /* illegal device type, so can't handle */
-       *model = NULL;
-       err = TMALLOC(char, 35 + strlen(name));
-       (void) sprintf(err,"Unknown device type for model %s \n", name);
-       return (err);
-   }  /* end of checking for illegal model */
+    if (modtmp->INPmodType < 0) {  /* First check for illegal model type */
+      /* illegal device type, so can't handle */
+      *model = NULL;
+      err = TMALLOC(char, 35 + strlen(name));
+      (void) sprintf(err,"Unknown device type for model %s \n", name);
+      return (err);
+    } /* end of checking for illegal model */
 
     if ( parse_line( modtmp->INPmodLine->line, model_tokens, 4, parse_values, parse_found ) != TRUE )
       continue;
