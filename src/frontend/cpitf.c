@@ -360,9 +360,10 @@ bool
 cp_oddcomm(char *s, wordlist *wl)
 {
     FILE *fp;
-    char buf[BSIZE_SP];
 
     if ((fp = inp_pathopen(s, "r")) != NULL) {
+        char buf[BSIZE_SP];
+        wordlist *setarg;
         (void) fclose(fp);
         (void) sprintf(buf, "argc = %d argv = ( ", wl_length(wl));
         while (wl) {
@@ -371,7 +372,9 @@ cp_oddcomm(char *s, wordlist *wl)
             wl = wl->wl_next;
         }
         (void) strcat(buf, ")");
-        com_set(cp_lexer(buf));
+        setarg = cp_lexer(buf);
+        com_set(setarg);
+        wl_free(setarg);
         inp_source(s);
         cp_remvar("argc");
         cp_remvar("argv");
