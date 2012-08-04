@@ -19,6 +19,7 @@ wl_length(const wordlist *wl)
 
     for (; wl; wl = wl->wl_next)
         i++;
+
     return (i);
 }
 
@@ -44,6 +45,7 @@ wl_copy(wordlist *wl)
 
     for (; wl; wl = wl->wl_next)
         wl_append_word(&first, &last, copy(wl->wl_word));
+
     return (first);
 }
 
@@ -102,8 +104,10 @@ wl_build(char **v)
 
     while (*v)
         wl_append_word(&first, &last, copy(*v++));
+
     return (first);
 }
+
 
 char **
 wl_mkvec(wordlist *wl)
@@ -118,6 +122,7 @@ wl_mkvec(wordlist *wl)
         wl = wl->wl_next;
     }
     vec[i] = NULL;
+
     return (vec);
 }
 
@@ -147,12 +152,12 @@ wl_reverse(wordlist *wl)
         return (wl);
 
     for (;;) {
-         wordlist *t = wl->wl_next;
-         wl->wl_next = wl->wl_prev;
-         wl->wl_prev = t;
-         if (!t)
-             return (wl);
-         wl = t;
+        wordlist *t = wl->wl_next;
+        wl->wl_next = wl->wl_prev;
+        wl->wl_prev = t;
+        if (!t)
+            return (wl);
+        wl = t;
     }
 }
 
@@ -167,6 +172,7 @@ wl_flatten(wordlist *wlist)
 
     for (wl = wlist; wl; wl = wl->wl_next)
         len += strlen(wl->wl_word) + 1;
+
     buf = TMALLOC(char, len + 1);
     *buf = '\0';
 
@@ -176,6 +182,7 @@ wl_flatten(wordlist *wlist)
             (void) strcat(buf, " ");
     }
     return (buf);
+
 }
 
 
@@ -186,9 +193,9 @@ wl_nthelem(int i, wordlist *wl)
 {
     while ((i-- > 0) && wl->wl_next)
         wl = wl->wl_next;
+
     return (wl);
 }
-
 
 
 static int
@@ -245,11 +252,11 @@ wl_range(wordlist *wl, int low, int up)
             wl->wl_prev = NULL;
         low--;
     }
-    tt = wl; 
+    tt = wl;
     while (tt && (up > 0)) {
         tt = tt->wl_next;
-        up--; 
-    } 
+        up--;
+    }
     if (tt && tt->wl_next) {
         wl_free(tt->wl_next);
         tt->wl_next = NULL;
