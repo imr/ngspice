@@ -764,9 +764,9 @@ plotit(wordlist *wl, char *hcopy, char *devname)
              * that will go to Y axis
              */
             dd = ft_minmax(d, FALSE);
-            if (dd[0] < ylims[0])
+            if (ylims[0] > dd[0])
                 ylims[0] = dd[0];
-            if (dd[1] > ylims[1])
+            if (ylims[1] < dd[1])
                 ylims[1] = dd[1];
         }
     } else {
@@ -774,9 +774,9 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         ylims[1] = - ylims[0];
         for (d = vecs; d; d = d->v_link2) {
             dd = ft_minmax(d, TRUE);
-            if (dd[0] < ylims[0])
+            if (ylims[0] > dd[0])
                 ylims[0] = dd[0];
-            if (dd[1] > ylims[1])
+            if (ylims[1] < dd[1])
                 ylims[1] = dd[1];
         }
 
@@ -804,9 +804,9 @@ plotit(wordlist *wl, char *hcopy, char *devname)
              */
             dd = ft_minmax(d, TRUE);
 
-            if (dd[0] < xlims[0])
+            if (xlims[0] > dd[0])
                 xlims[0] = dd[0];
-            if (dd[1] > xlims[1])
+            if (xlims[1] < dd[1])
                 xlims[1] = dd[1];
         }
     } else {
@@ -814,9 +814,9 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         xlims[1] = - xlims[0];
         for (d = vecs; d; d = d->v_link2) {
             dd = ft_minmax(d->v_scale, TRUE);
-            if (dd[0] < xlims[0])
+            if (xlims[0] > dd[0])
                 xlims[0] = dd[0];
-            if (dd[1] > xlims[1])
+            if (xlims[1] < dd[1])
                 xlims[1] = dd[1];
         }
         for (d = vecs; d; d = d->v_link2) {
