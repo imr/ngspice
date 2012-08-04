@@ -558,8 +558,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                     lv = lv->v_link2;
                 }
             }
-            continue;
-        }
+
+        } else {
 
         dv = ft_evaluate(n);
 
@@ -575,6 +575,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             ;
 
         lv = dv;
+        }
     }
 
     /* free_pnode(names); pn:really should be commented out ? */
