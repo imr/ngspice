@@ -905,16 +905,16 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     /* We don't want to try to deal with smith plots for asciiplot. */
     if (devname && eq(devname, "lpr")) {
         /* check if we should (can) linearize */
-        if (!(!ft_curckt || !ft_curckt->ci_ckt ||
-              strcmp(ft_curckt->ci_name, plot_cur->pl_title) ||
-              !if_tranparams(ft_curckt, &tstart, &tstop, &tstep) ||
-              ((tstop - tstart) * tstep <= 0.0) ||
-              ((tstop - tstart) < tstep) ||
-              !plot_cur || !plot_cur->pl_dvecs ||
-              !plot_cur->pl_scale ||
-              !isreal(plot_cur->pl_scale) ||
-              !ciprefix("tran", plot_cur->pl_typename))) {
-
+        if (ft_curckt && ft_curckt->ci_ckt &&
+            (strcmp(ft_curckt->ci_name, plot_cur->pl_title) == 0) &&
+            if_tranparams(ft_curckt, &tstart, &tstop, &tstep) &&
+            ((tstop - tstart) * tstep > 0.0) &&
+            ((tstop - tstart) >= tstep) &&
+            plot_cur && plot_cur->pl_dvecs &&
+            plot_cur->pl_scale &&
+            isreal(plot_cur->pl_scale) &&
+            ciprefix("tran", plot_cur->pl_typename))
+        {
             newlen = (int)((tstop - tstart) / tstep + 1.5);
 
             newscale = TMALLOC(double, newlen);
