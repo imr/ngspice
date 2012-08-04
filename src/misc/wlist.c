@@ -25,28 +25,26 @@ wl_length(const wordlist *wl)
 
 /* Free the storage used by a word list. */
 void
-wl_free(wordlist *wlist)
+wl_free(wordlist *wl)
 {
-    wordlist *wl, *nw;
-
-    for (wl = wlist; wl; wl = nw) {
-        nw = wl->wl_next;
+    while (wl) {
+        wordlist *next = wl->wl_next;
         tfree(wl->wl_word);
         tfree(wl);
+        wl = next;
     }
 }
 
 
 /* Copy a wordlist and the words. */
 wordlist *
-wl_copy(wordlist *wlist)
+wl_copy(wordlist *wl)
 {
-    wordlist *wl, *nwl = NULL, *w = NULL;
+    wordlist *first = NULL, *last = NULL;
 
-    for (wl = wlist; wl; wl = wl->wl_next) {
-        wl_append_word(&nwl, &w, copy(wl->wl_word));
-    }
-    return (nwl);
+    for (; wl; wl = wl->wl_next)
+        wl_append_word(&first, &last, copy(wl->wl_word));
+    return (first);
 }
 
 
@@ -77,11 +75,9 @@ wl_splice(wordlist *elt, wordlist *list)
 static void
 printword(char *string, FILE *fp)
 {
-    char *s;
-
     if (string)
-        for (s = string; *s; s++)
-            putc((strip(*s)), fp);
+        while (*string)
+            putc(strip(*string++), fp);
 }
 
 
@@ -101,30 +97,28 @@ wl_print(const wordlist *wl, FILE *fp)
 wordlist *
 wl_build(char **v)
 {
-    wordlist *wlist = NULL;
-    wordlist *wl = NULL;
+    wordlist *first = NULL;
+    wordlist *last = NULL;
 
-    while (*v) {
-        wl_append_word(&wlist, &wl, copy(*v));
-        v++;
-    }
-    return (wlist);
+    while (*v)
+        wl_append_word(&first, &last, copy(*v++));
+    return (first);
 }
 
 char **
 wl_mkvec(wordlist *wl)
 {
-    int len, i;
-    char **v;
+    int  len = wl_length(wl);
+    char **vec = TMALLOC(char *, len + 1);
 
-    len = wl_length(wl);
-    v = TMALLOC(char *, len + 1);
+    int i;
+
     for (i = 0; i < len; i++) {
-        v[i] = copy(wl->wl_word);
+        vec[i] = copy(wl->wl_word);
         wl = wl->wl_next;
     }
-    v[i] = NULL;
-    return (v);
+    vec[i] = NULL;
+    return (vec);
 }
 
 
@@ -165,22 +159,21 @@ wl_reverse(wordlist *wl)
 
 /* Convert a wordlist into a string. */
 char *
-wl_flatten(wordlist *wl)
+wl_flatten(wordlist *wlist)
 {
     char *buf;
-    wordlist *tw;
-    size_t i = 0;
+    wordlist *wl;
+    size_t len = 0;
 
-    for (tw = wl; tw; tw = tw->wl_next)
-        i += strlen(tw->wl_word) + 1;
-    buf = TMALLOC(char, i + 1);
+    for (wl = wlist; wl; wl = wl->wl_next)
+        len += strlen(wl->wl_word) + 1;
+    buf = TMALLOC(char, len + 1);
     *buf = '\0';
 
-    while (wl != NULL) {
+    for (wl = wlist; wl; wl = wl->wl_next) {
         (void) strcat(buf, wl->wl_word);
         if (wl->wl_next)
             (void) strcat(buf, " ");
-        wl = wl->wl_next;
     }
     return (buf);
 }
@@ -191,11 +184,9 @@ wl_flatten(wordlist *wl)
 wordlist *
 wl_nthelem(int i, wordlist *wl)
 {
-    wordlist *ww = wl;
-
-    while ((i-- > 0) && ww->wl_next)
-        ww = ww->wl_next;
-    return (ww);
+    while ((i-- > 0) && wl->wl_next)
+        wl = wl->wl_next;
+    return (wl);
 }
 
 
