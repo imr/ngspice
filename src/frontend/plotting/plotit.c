@@ -262,14 +262,14 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     /* First get the command line, without the limits.
        Wii be used for zoomed windows */
     wwl = wl_copy(wl);
-    xynull = getlims(wwl, "xl", 2); /*  (void) getlims(wwl, "xl", 2); */
-    tfree(xynull); /*memory leak, if return value is not freed */
+    xynull = getlims(wwl, "xl", 2);
+    tfree(xynull);
     xynull = getlims(wwl, "xlimit", 2);
-    tfree(xynull); /*memory leak, if return value is not freed */
+    tfree(xynull);
     xynull = getlims(wwl, "yl", 2);
-    tfree(xynull); /*memory leak, if return value is not freed */
+    tfree(xynull);
     xynull = getlims(wwl, "ylimit", 2);
-    tfree(xynull); /*memory leak, if return value is not freed */
+    tfree(xynull);
     /* remove tile, xlabel, ylabel */
     nxlabel = getword(wwl, "xlabel");
     nylabel = getword(wwl, "ylabel");
