@@ -1247,6 +1247,13 @@ static int measure_parse_find (
    meas->m_to = 0.0e0;
    meas->m_at = 1e99;
 
+   /* for DC, set new outer limits for 'from' and 'to'
+      because 0.0e0 may be valid inside of range */
+   if (cieq("dc", meas->m_analysis)) {
+      meas->m_to = 1.0e99;
+      meas->m_from = -1.0e99;
+   }
+
    pCnt =0;
    while(wl != wlBreak) {
       p = wl->wl_word;
@@ -1314,6 +1321,14 @@ static int measure_parse_when (
    meas->m_to = 0.0e0;
    meas->m_at = 1e99;
 
+
+   /* for DC, set new outer limits for 'from' and 'to'
+      because 0.0e0 may be valid inside of range */
+   if (cieq("dc", meas->m_analysis)) {
+      meas->m_to = 1.0e99;
+      meas->m_from = -1.0e99;
+   }
+
    pCnt =0;
    while (wl) {
       p= wl->wl_word;
@@ -1378,23 +1393,30 @@ static int measure_parse_trigtarg (
    meas->m_to = 0.0e0;
    meas->m_at = 1e99;
 
+   /* for DC, set new outer limits for 'from' and 'to'
+      because 0.0e0 may be valid inside of range */
+   if (cieq("dc", meas->m_analysis)) {
+      meas->m_to = 1.0e99;
+      meas->m_from = -1.0e99;
+   }
+
    pcnt =0;
-      while (words != wlTarg) {
-         p = words->wl_word;
 
-         if ((pcnt == 0) && !ciprefix("at", p)) {
-            meas->m_vec= cp_unquote(words->wl_word);
-            /* correct for vectors like vm, vp etc. */
-            if (cieq("ac", meas->m_analysis) || cieq("sp", meas->m_analysis))
-               correct_vec(meas);
-         } else if (ciprefix("at", p)) {
-            if (measure_parse_stdParams(meas, words, wlTarg, errbuf) == 0)
-               return 0;
-         } else {
-            if (measure_parse_stdParams(meas, words, wlTarg, errbuf) == 0)
-               return 0;
+   while (words != wlTarg) {
+      p = words->wl_word;
+
+      if ((pcnt == 0) && !ciprefix("at", p)) {
+         meas->m_vec= cp_unquote(words->wl_word);
+         /* correct for vectors like vm, vp etc. */
+         if (cieq("ac", meas->m_analysis) || cieq("sp", meas->m_analysis))
+            correct_vec(meas);
+      } else if (ciprefix("at", p)) {
+         if (measure_parse_stdParams(meas, words, wlTarg, errbuf) == 0)
+            return 0;
+      } else {
+         if (measure_parse_stdParams(meas, words, wlTarg, errbuf) == 0)
+            return 0;
          break;
-
       }
 
       words = words->wl_next;
