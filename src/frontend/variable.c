@@ -404,20 +404,14 @@ cp_setparse(wordlist *wl)
 void
 free_struct_variable(struct variable *v)
 {
-    struct variable *tv, *tvv;
-
-    if(!v)
-        return;
-
-    tv = v;
-    while(tv) {
-        tvv = tv->va_next;
-        if(tv->va_type == CP_LIST)
-            free_struct_variable(tv->va_vlist);
-        if(tv->va_type == CP_STRING)
-            tfree(tv->va_string);
-        tfree(tv);
-        tv = tvv;
+    while(v) {
+        struct variable *next_v = v->va_next;
+        if(v->va_type == CP_LIST)
+            free_struct_variable(v->va_vlist);
+        if(v->va_type == CP_STRING)
+            tfree(v->va_string);
+        tfree(v);
+        v = next_v;
     }
 }
 
