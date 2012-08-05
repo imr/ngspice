@@ -77,6 +77,7 @@ SPICEdev DIOinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   DIObindCSC,
  /* DEVbindCSCComplex */   DIObindCSCComplex,
+ /* DEVbindCSCComplexToReal */  DIObindCSCComplexToReal,
 #endif
 
 };

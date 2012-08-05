@@ -76,6 +76,7 @@ SPICEdev MESinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   MESbindCSC,
  /* DEVbindCSCComplex */   MESbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  MESbindCSCComplexToReal,
 #endif
 
 };

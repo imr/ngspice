@@ -74,6 +74,7 @@ SPICEdev BSIM3v1info = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   BSIM3v1bindCSC,
  /* DEVbindCSCComplex */   BSIM3v1bindCSCComplex,
+ /* DEVbindCSCComplexToReal */  BSIM3v1bindCSCComplexToReal,
 #endif
 
 };

@@ -75,6 +75,7 @@ SPICEdev CCCSinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   CCCSbindCSC,
  /* DEVbindCSCComplex */   CCCSbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  CCCSbindCSCComplexToReal,
 #endif
 
 };

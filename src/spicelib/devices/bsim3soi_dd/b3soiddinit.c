@@ -73,6 +73,7 @@ SPICEdev B3SOIDDinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   B3SOIDDbindCSC,
  /* DEVbindCSCComplex */   B3SOIDDbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  B3SOIDDbindCSCComplexToReal,
 #endif
 
 };

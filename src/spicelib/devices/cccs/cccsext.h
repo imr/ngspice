@@ -19,6 +19,7 @@ extern int CCCSsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int CCCSbindCSC(GENmodel*, CKTcircuit*);
-extern int CCCSbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int CCCSbindCSC (GENmodel*, CKTcircuit*) ;
+extern int CCCSbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int CCCSbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

@@ -30,6 +30,7 @@ extern int MOS3noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int MOS3dSetup(GENmodel*,CKTcircuit*);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int MOS3bindCSC(GENmodel*, CKTcircuit*);
-extern int MOS3bindCSCComplex(GENmodel*, CKTcircuit*);
+extern int MOS3bindCSC (GENmodel*, CKTcircuit*) ;
+extern int MOS3bindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int MOS3bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

@@ -75,6 +75,7 @@ SPICEdev INDinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   INDbindCSC,
  /* DEVbindCSCComplex */   INDbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  INDbindCSCComplexToReal,
 #endif
 
 };
@@ -148,6 +149,7 @@ SPICEdev MUTinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   MUTbindCSC,
  /* DEVbindCSCComplex */   MUTbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  MUTbindCSCComplexToReal,
 #endif
 
 };

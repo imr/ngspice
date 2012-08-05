@@ -76,6 +76,7 @@ SPICEdev LTRAinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   LTRAbindCSC,
  /* DEVbindCSCComplex */   LTRAbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  LTRAbindCSCComplexToReal,
 #endif
 
 };

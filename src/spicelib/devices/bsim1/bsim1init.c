@@ -76,6 +76,7 @@ SPICEdev B1info = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   B1bindCSC,
  /* DEVbindCSCComplex */   B1bindCSCComplex,
+ /* DEVbindCSCComplexToReal */  B1bindCSCComplexToReal,
 #endif
 
 };

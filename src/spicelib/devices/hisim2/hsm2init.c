@@ -74,6 +74,7 @@ SPICEdev HSM2info = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   HSM2bindCSC,
  /* DEVbindCSCComplex */   HSM2bindCSCComplex,
+ /* DEVbindCSCComplexToReal */  HSM2bindCSCComplexToReal,
 #endif
 
 };

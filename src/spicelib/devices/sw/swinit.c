@@ -77,6 +77,7 @@ SPICEdev SWinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   SWbindCSC,
  /* DEVbindCSCComplex */   SWbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  SWbindCSCComplexToReal,
 #endif
 
 };

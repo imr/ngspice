@@ -1,4 +1,3 @@
-
 extern int TXLaccept(CKTcircuit*,GENmodel*);
 extern int TXLask(CKTcircuit*, GENinstance*, int, IFvalue*, IFvalue*);
 extern int TXLdelete(GENmodel*,IFuid,GENinstance**);
@@ -14,6 +13,7 @@ extern int TXLsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int TXLunsetup(GENmodel*, CKTcircuit*);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int TXLbindCSC(GENmodel*, CKTcircuit*);
-extern int TXLbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int TXLbindCSC (GENmodel*, CKTcircuit*) ;
+extern int TXLbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int TXLbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

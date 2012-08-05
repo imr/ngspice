@@ -20,6 +20,7 @@ extern int VSRCpzSetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VSRCtemp(GENmodel*,CKTcircuit*);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int VSRCbindCSC(GENmodel*, CKTcircuit*);
-extern int VSRCbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int VSRCbindCSC (GENmodel*, CKTcircuit*) ;
+extern int VSRCbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int VSRCbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
