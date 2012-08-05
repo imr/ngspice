@@ -78,6 +78,7 @@ SPICEdev CSWinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   CSWbindCSC,
  /* DEVbindCSCComplex */   CSWbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  CSWbindCSCComplexToReal,
 #endif
 
 };

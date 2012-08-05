@@ -30,6 +30,7 @@ extern int DIOnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int DIOdSetup(DIOmodel*,CKTcircuit*);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int DIObindCSC(GENmodel*, CKTcircuit*);
-extern int DIObindCSCComplex(GENmodel*, CKTcircuit*);
+extern int DIObindCSC (GENmodel*, CKTcircuit*) ;
+extern int DIObindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int DIObindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

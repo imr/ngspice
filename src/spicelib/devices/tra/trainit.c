@@ -76,6 +76,7 @@ SPICEdev TRAinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   TRAbindCSC,
  /* DEVbindCSCComplex */   TRAbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  TRAbindCSCComplexToReal,
 #endif
 
 };

@@ -19,6 +19,7 @@ extern int VCVSsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VCVSunsetup(GENmodel*,CKTcircuit*);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int VCVSbindCSC(GENmodel*, CKTcircuit*);
-extern int VCVSbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int VCVSbindCSC (GENmodel*, CKTcircuit*) ;
+extern int VCVSbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int VCVSbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

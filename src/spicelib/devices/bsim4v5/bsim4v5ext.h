@@ -30,6 +30,7 @@ extern int BSIM4v5noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM4v5unsetup(GENmodel*,CKTcircuit*);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int BSIM4v5bindCSC(GENmodel*, CKTcircuit*);
-extern int BSIM4v5bindCSCComplex(GENmodel*, CKTcircuit*);
+extern int BSIM4v5bindCSC (GENmodel*, CKTcircuit*) ;
+extern int BSIM4v5bindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int BSIM4v5bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

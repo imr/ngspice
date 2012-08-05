@@ -20,6 +20,7 @@ extern int  HFET2trunc(GENmodel*,CKTcircuit*,double*);
 extern int  HFET2unsetup( GENmodel*,CKTcircuit*);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int HFET2bindCSC(GENmodel*, CKTcircuit*);
-extern int HFET2bindCSCComplex(GENmodel*, CKTcircuit*);
+extern int HFET2bindCSC (GENmodel*, CKTcircuit*) ;
+extern int HFET2bindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int HFET2bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

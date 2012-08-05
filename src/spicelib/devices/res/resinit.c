@@ -76,6 +76,7 @@ SPICEdev RESinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   RESbindCSC,
  /* DEVbindCSCComplex */   RESbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  RESbindCSCComplexToReal,
 #endif
 
 };

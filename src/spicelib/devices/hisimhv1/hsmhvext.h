@@ -39,6 +39,7 @@ extern int HSMHVtrunc(GENmodel*,CKTcircuit*,double*);
 extern int HSMHVnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int HSMHVbindCSC(GENmodel*, CKTcircuit*);
-extern int HSMHVbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int HSMHVbindCSC (GENmodel*, CKTcircuit*);
+extern int HSMHVbindCSCComplex (GENmodel*, CKTcircuit*);
+extern int HSMHVbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

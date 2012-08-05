@@ -84,3 +84,49 @@ SWbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
     }
     return(OK);
 }
+
+int
+SWbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
+{
+    SWmodel *model = (SWmodel *)inModel ;
+    SWinstance *here ;
+    int i ;
+
+    /*  loop through all the sw models */
+    for ( ; model != NULL ; model = model->SWnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->SWinstances ; here != NULL ; here = here->SWnextInstance)
+        {
+            i = 0 ;
+            if ((here->SWposNode != 0) && (here->SWposNode != 0))
+            {
+                while (here->SWposPosptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
+                here->SWposPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
+            }
+
+            i = 0 ;
+            if ((here->SWposNode != 0) && (here->SWnegNode != 0))
+            {
+                while (here->SWposNegptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
+                here->SWposNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
+            }
+
+            i = 0 ;
+            if ((here->SWnegNode != 0) && (here->SWposNode != 0))
+            {
+                while (here->SWnegPosptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
+                here->SWnegPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
+            }
+
+            i = 0 ;
+            if ((here->SWnegNode != 0) && (here->SWnegNode != 0))
+            {
+                while (here->SWnegNegptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
+                here->SWnegNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
+            }
+        }
+    }
+
+    return (OK) ;
+}

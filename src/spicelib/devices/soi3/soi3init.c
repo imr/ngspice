@@ -76,6 +76,7 @@ SPICEdev SOI3info = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   SOI3bindCSC,
  /* DEVbindCSCComplex */   SOI3bindCSCComplex,
+ /* DEVbindCSCComplexToReal */  SOI3bindCSCComplexToReal,
 #endif
 
 };

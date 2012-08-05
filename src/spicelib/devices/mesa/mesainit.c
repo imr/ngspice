@@ -76,6 +76,7 @@ SPICEdev MESAinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   MESAbindCSC,
  /* DEVbindCSCComplex */   MESAbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  MESAbindCSCComplexToReal,
 #endif
 
 };

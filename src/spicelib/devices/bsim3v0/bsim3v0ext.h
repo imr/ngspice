@@ -30,6 +30,7 @@ extern int  BSIM3v0unsetup(GENmodel *, CKTcircuit *);
 
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int BSIM3v0bindCSC(GENmodel*, CKTcircuit*);
-extern int BSIM3v0bindCSCComplex(GENmodel*, CKTcircuit*);
+extern int BSIM3v0bindCSC (GENmodel*, CKTcircuit*) ;
+extern int BSIM3v0bindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int BSIM3v0bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

@@ -76,6 +76,7 @@ SPICEdev JFETinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   JFETbindCSC,
  /* DEVbindCSCComplex */   JFETbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  JFETbindCSCComplexToReal,
 #endif
 
 };

@@ -76,6 +76,7 @@ SPICEdev CCVSinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   CCVSbindCSC,
  /* DEVbindCSCComplex */   CCVSbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  CCVSbindCSCComplexToReal,
 #endif
 
 };

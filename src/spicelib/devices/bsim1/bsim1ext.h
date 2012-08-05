@@ -31,6 +31,7 @@ extern int B1disto(int,GENmodel*,CKTcircuit*);
 extern int B1dSetup(GENmodel*, register CKTcircuit*);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int B1bindCSC(GENmodel*, CKTcircuit*);
-extern int B1bindCSCComplex(GENmodel*, CKTcircuit*);
+extern int B1bindCSC (GENmodel*, CKTcircuit*) ;
+extern int B1bindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int B1bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

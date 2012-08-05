@@ -81,6 +81,7 @@ SPICEdev TXLinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   TXLbindCSC,
  /* DEVbindCSCComplex */   TXLbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  TXLbindCSCComplexToReal,
 #endif
 
 };

@@ -102,8 +102,12 @@ typedef struct SPICEdev {
     int *DEVmodSize;     /* size of a model */
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-    int (*DEVbindCSC)(GENmodel*, CKTcircuit*);
-    int (*DEVbindCSCComplex)(GENmodel*, CKTcircuit*);
+    int (*DEVbindCSC)(GENmodel *, CKTcircuit *) ;
+        /* routine to convert Sparse linked list to Real CSC array */
+    int (*DEVbindCSCComplex)(GENmodel *, CKTcircuit *) ;
+        /* routine to convert Real CSC array to Complex CSC array */
+    int (*DEVbindCSCComplexToReal)(GENmodel *, CKTcircuit *) ;
+        /* routine to convert Complex CSC array to Real CSC array */
 #endif
 
 } SPICEdev;  /* instance of structure for each possible type of device */

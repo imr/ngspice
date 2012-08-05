@@ -19,6 +19,7 @@ extern int CSWnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int CSWtrunc(GENmodel*,CKTcircuit*,double*);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int CSWbindCSC(GENmodel*, CKTcircuit*);
-extern int CSWbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int CSWbindCSC (GENmodel*, CKTcircuit*) ;
+extern int CSWbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int CSWbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

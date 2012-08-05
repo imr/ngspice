@@ -24,6 +24,7 @@ extern int JFETnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int JFETdSetup(GENmodel*,CKTcircuit*);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int JFETbindCSC(GENmodel*, CKTcircuit*);
-extern int JFETbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int JFETbindCSC (GENmodel*, CKTcircuit*) ;
+extern int JFETbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int JFETbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

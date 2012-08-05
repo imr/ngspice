@@ -25,6 +25,7 @@ extern int MESdSetup(GENmodel*,CKTcircuit*);
 
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int MESbindCSC(GENmodel*, CKTcircuit*);
-extern int MESbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int MESbindCSC (GENmodel*, CKTcircuit*) ;
+extern int MESbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int MESbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
