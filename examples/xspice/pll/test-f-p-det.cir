@@ -39,7 +39,6 @@ Xlf d_Un d_D cont loopf
 set xtrtol=2
 tran 0.1n 1000n
 plot s1 s2+1.2 u1+2.4 d1+3.6 xlimit 140n 200n
-plot v(vco)
 .endc
 
 .end

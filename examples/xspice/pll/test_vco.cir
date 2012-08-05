@@ -40,7 +40,7 @@ fft buf
 * start meas at freq > 0 to skip large dc part
 meas sp fosc MAX_AT buf from=1e3 to=1e9
 let {$freq_volt}.foscvec[0]=fosc
-plot digout xlimit 140n 160n
+plot d_digout xlimit 140n 160n
 reset
 alter vco 1
 tran 0.1n $&simtime 0
@@ -49,7 +49,7 @@ linearize buf
 fft buf
 meas sp fosc MAX_AT buf from=1e3 to=1e9
 let {$freq_volt}.foscvec[1]=fosc
-plot digout xlimit 140n 160n
+plot d_digout xlimit 140n 160n
 reset
 alter vco 1.5
 tran 0.1n $&simtime 0
@@ -58,7 +58,7 @@ linearize buf
 fft buf
 meas sp fosc MAX_AT buf from=1e3 to=1e9
 let {$freq_volt}.foscvec[2]=fosc
-plot digout xlimit 140n 160n
+plot d_digout xlimit 140n 160n
 reset
 alter vco 2
 tran 0.1n $&simtime 0
@@ -67,7 +67,7 @@ linearize buf
 fft buf
 meas sp fosc MAX_AT buf from=1e3 to=1e9
 let {$freq_volt}.foscvec[3]=fosc
-plot digout xlimit 140n 160n
+plot d_digout xlimit 140n 160n
 reset
 alter vco 2.5
 tran 0.1n $&simtime 0
@@ -76,7 +76,7 @@ linearize buf
 fft buf
 meas sp fosc MAX_AT buf from=1e3 to=1e9
 let {$freq_volt}.foscvec[4]=fosc
-plot digout xlimit 140n 160n
+plot d_digout xlimit 140n 160n
 plot tran1.buf tran3.buf tran5.buf tran7.buf tran9.buf xlimit 140n 160n
 plot mag(sp2.buf) mag(sp4.buf) mag(sp6.buf) mag(sp8.buf) mag(sp10.buf) xlimit 100e6 1100e6
 setplot $freq_volt
