@@ -243,24 +243,29 @@ ACan(CKTcircuit *ckt, int restart)
     ckt->CKTcurrentAnalysis = DOING_AC;
 
 #ifdef KLU
-   if (ckt->CKTmatrix->CKTkluMODE) {
-        int i, m;
-        double *temp;
-        temp = TMALLOC (double, 2 * ckt->CKTmatrix->CKTklunz) ;
-        ckt->CKTmatrix->CKTbind_CSC_Complex = TMALLOC (double *, ckt->CKTmatrix->CKTklunz) ;
-        ckt->CKTmatrix->CKTkluIntermediate_Complex = TMALLOC (double, 2 * ckt->CKTmatrix->CKTkluN) ;
-        m = 0;
-        for (i = 0 ; i < ckt->CKTmatrix->CKTklunz ; i++) {
-            ckt->CKTmatrix->CKTbind_CSC_Complex [i] = &(temp [m]) ;
-            m += 2;
+    int i, m ;
+
+    if (ckt->CKTmatrix->CKTkluMODE)
+    {
+        if (!ckt->CKTmatrix->CKTkluMatrixIsComplex)
+        {
+            ckt->CKTmatrix->CKTkluAx_Complex = TMALLOC (double, 2 * ckt->CKTmatrix->CKTklunz) ;
+            ckt->CKTmatrix->CKTbind_CSC_Complex = TMALLOC (double *, ckt->CKTmatrix->CKTklunz) ;
+            ckt->CKTmatrix->CKTkluIntermediate_Complex = TMALLOC (double, 2 * ckt->CKTmatrix->CKTkluN) ;
+
+            m = 0 ;
+            for (i = 0 ; i < ckt->CKTmatrix->CKTklunz ; i++)
+            {
+                ckt->CKTmatrix->CKTbind_CSC_Complex [i] = &(ckt->CKTmatrix->CKTkluAx_Complex [m]) ;
+                m += 2 ;
+            }
+
+            for (i = 0 ; i < DEVmaxnum ; i++)
+                if (DEVices [i] && DEVices [i]->DEVbindCSCComplex)
+                    DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
+
+            ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixComplex ;
         }
-
-        for (i = 0 ; i < DEVmaxnum ; i++)
-            if (DEVices [i] && DEVices [i]->DEVbindCSCComplex)
-                DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
-
-        free (ckt->CKTmatrix->CKTkluAx) ;
-        ckt->CKTmatrix->CKTkluAx = temp ;
     }
 #endif
 
@@ -275,6 +280,19 @@ ACan(CKTcircuit *ckt, int restart)
 
         /* Update opertating point, if variable 'hertz' is given */
         if (ckt->CKTvarHertz) {
+
+#ifdef KLU
+                if (ckt->CKTmatrix->CKTkluMODE)
+                {
+                    /* Conversion from Complex Matrix to Real Matrix */
+                    for (i = 0 ; i < DEVmaxnum ; i++)
+                        if (DEVices [i] && DEVices [i]->DEVbindCSCComplexToReal)
+                            DEVices [i]->DEVbindCSCComplexToReal (ckt->CKThead [i], ckt) ;
+
+                    ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
+                }
+#endif
+
 #ifdef XSPICE
             /* Call EVTop if event-driven instances exist */
 
@@ -286,8 +304,7 @@ ACan(CKTcircuit *ckt, int restart)
                     MIF_TRUE);
                 EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
                 EVTop_save(ckt, MIF_TRUE, 0.0);
-            }
-            else 
+            } else
 #endif 
 // If no event-driven instances, do what SPICE normally does
                 error = CKTop(ckt,
@@ -303,6 +320,19 @@ ACan(CKTcircuit *ckt, int restart)
             ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
             error = CKTload(ckt);
             if(error) return(error);
+
+#ifdef KLU
+            if (ckt->CKTmatrix->CKTkluMODE)
+            {
+                /* Conversion from Real Matrix to Complex Matrix */
+                for (i = 0 ; i < DEVmaxnum ; i++)
+                    if (DEVices [i] && DEVices [i]->DEVbindCSCComplex)
+                        DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
+
+                ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixComplex ;
+            }
+#endif
+
         }
 
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODEAC;
@@ -402,6 +432,19 @@ endsweep:
     SPfrontEnd->OUTendPlot (acPlot);
     acPlot = NULL;
     UPDATE_STATS(0);
+
+#ifdef KLU
+    if (ckt->CKTmatrix->CKTkluMODE)
+    {
+        /* Conversion from Complex Matrix to Real Matrix */
+        for (i = 0 ; i < DEVmaxnum ; i++)
+            if (DEVices [i] && DEVices [i]->DEVbindCSCComplexToReal)
+                DEVices [i]->DEVbindCSCComplexToReal (ckt->CKThead [i], ckt) ;
+
+        ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
+    }
+#endif
+
     return(0);
 }
 
