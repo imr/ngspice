@@ -73,8 +73,9 @@ SPICEdev CAPinfo = {
  /* DEVinstSize   */ &CAPiSize,
  /* DEVmodSize    */ &CAPmSize,
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
- /* DEVbindklu        */  CAPbindCSC,
- /* DEVbindkluComplex */  CAPbindCSCComplex,
+ /* DEVbindCSC        */  CAPbindCSC,
+ /* DEVbindCSCComplex */  CAPbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  CAPbindCSCComplexToReal,
 #endif
 
 };

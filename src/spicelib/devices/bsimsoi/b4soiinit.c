@@ -74,6 +74,7 @@ SPICEdev B4SOIinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   B4SOIbindCSC,
  /* DEVbindCSCComplex */   B4SOIbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  B4SOIbindCSCComplexToReal,
 #endif
 
 };

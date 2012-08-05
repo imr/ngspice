@@ -35,6 +35,7 @@ extern int BJTdSetup(GENmodel*, register CKTcircuit*);
 #endif
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int BJTbindCSC(GENmodel*, CKTcircuit*);
-extern int BJTbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int BJTbindCSC (GENmodel*, CKTcircuit*) ;
+extern int BJTbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int BJTbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

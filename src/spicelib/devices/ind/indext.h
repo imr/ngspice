@@ -38,10 +38,12 @@ extern int MUTsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int MUTtemp(GENmodel *inModel, CKTcircuit *ckt);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int INDbindCSC(GENmodel*, CKTcircuit*);
-extern int INDbindCSCComplex(GENmodel*, CKTcircuit*);
-extern int MUTbindCSC(GENmodel*, CKTcircuit*);
-extern int MUTbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int INDbindCSC (GENmodel*, CKTcircuit*) ;
+extern int INDbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int INDbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+extern int MUTbindCSC (GENmodel*, CKTcircuit*) ;
+extern int MUTbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int MUTbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
 
 #endif

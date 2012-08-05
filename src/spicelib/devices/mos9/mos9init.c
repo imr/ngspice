@@ -76,6 +76,7 @@ SPICEdev MOS9info = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   MOS9bindCSC,
  /* DEVbindCSCComplex */   MOS9bindCSCComplex,
+ /* DEVbindCSCComplexToReal */  MOS9bindCSCComplexToReal,
 #endif
 
 };

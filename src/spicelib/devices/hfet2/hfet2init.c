@@ -76,6 +76,7 @@ SPICEdev HFET2info = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   HFET2bindCSC,
  /* DEVbindCSCComplex */   HFET2bindCSCComplex,
+ /* DEVbindCSCComplexToReal */  HFET2bindCSCComplexToReal,
 #endif
 
 };

@@ -24,6 +24,7 @@ extern int CAPtemp(GENmodel*,CKTcircuit*);
 extern int CAPtrunc(GENmodel*,CKTcircuit*,double*);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int CAPbindCSC(GENmodel*, CKTcircuit*);
-extern int CAPbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int CAPbindCSC (GENmodel*, CKTcircuit*) ;
+extern int CAPbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int CAPbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

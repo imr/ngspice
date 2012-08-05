@@ -76,6 +76,7 @@ SPICEdev URCinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   NULL,
  /* DEVbindCSCComplex */   NULL,
+ /* DEVbindCSCComplexToReal */  NULL,
 #endif
 
 };

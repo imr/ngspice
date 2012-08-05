@@ -76,6 +76,7 @@ SPICEdev HFETAinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   HFETAbindCSC,
  /* DEVbindCSCComplex */   HFETAbindCSC,
+ /* DEVbindCSCComplexToReal */  HFETAbindCSCComplexToReal,
 #endif
 
 };

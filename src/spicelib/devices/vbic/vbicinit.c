@@ -81,6 +81,7 @@ SPICEdev VBICinfo = {
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   VBICbindCSC,
  /* DEVbindCSCComplex */   VBICbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  VBICbindCSCComplexToReal,
 #endif
 
 };

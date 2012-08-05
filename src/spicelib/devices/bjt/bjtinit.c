@@ -76,6 +76,7 @@ SPICEdev BJTinfo = {                  /* description from struct IFdevice  */
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   BJTbindCSC,
  /* DEVbindCSCComplex */   BJTbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  BJTbindCSCComplexToReal,
 #endif
 
 };

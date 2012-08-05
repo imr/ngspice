@@ -29,6 +29,7 @@ extern int VBICnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 #endif
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int VBICbindCSC(GENmodel*, CKTcircuit*);
-extern int VBICbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int VBICbindCSC (GENmodel*, CKTcircuit*) ;
+extern int VBICbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int VBICbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

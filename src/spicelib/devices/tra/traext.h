@@ -18,6 +18,7 @@ extern int TRAtemp(GENmodel*,CKTcircuit*);
 extern int TRAtrunc(GENmodel*,CKTcircuit*,double*);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-extern int TRAbindCSC(GENmodel*, CKTcircuit*);
-extern int TRAbindCSCComplex(GENmodel*, CKTcircuit*);
+extern int TRAbindCSC (GENmodel*, CKTcircuit*) ;
+extern int TRAbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int TRAbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
