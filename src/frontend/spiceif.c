@@ -160,7 +160,9 @@ if_inpdeck(struct line *deck, INPtables **tab)
 
     INPpas1( ckt, (card *) deck->li_next, *tab);
     INPpas2( ckt, (card *) deck->li_next, *tab, ft_curckt->ci_defTask);
-    INPkillMods();
+/*    INPkillMods(); FIXME: modtab should removed later - 
+      because needed for alter geometry of binned MOS models, 
+      see below if_setparam_model */
 
     /* INPpas2 has been modified to ignore .NODESET and .IC
      * cards. These are left till INPpas3 so that we can check for
@@ -820,7 +822,7 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model) 
 
 /* 9/26/03 PJB : function to allow setting model of device */
 void
-if_setparam_model(CKTcircuit *ckt, char **name, char *val )
+if_setparam_model(CKTcircuit *ckt, char **name, char *val)
 {
     GENinstance *dev     = NULL;
     GENinstance *prevDev = NULL;
@@ -830,21 +832,29 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val )
     GENinstance *iter;
     GENmodel    *mods, *prevMod;
     int         typecode;
+    char        *modname;
 
     /* retrieve device name from symbol table */
     INPretrieve(name, ft_curckt->ci_symtab);
     /* find the specified device */
     typecode = finddev(ckt, *name, &dev, &curMod);
     if (typecode == -1) {
-        fprintf(cp_err, "Error: no such device or model name %s\n", *name);
+        fprintf(cp_err, "Error: no such device name %s\n", *name);
         return;
     }
     curMod = dev->GENmodPtr;
+    modname = copy(dev->GENmodPtr->GENmodName);
+    modname = strtok(modname, "."); /* want only have the parent model name */
     /*
        retrieve the model from the global model table; also add the model to 'ckt'
        and indicate model is being used
     */
-    INPgetMod( ckt, val, &inpmod, ft_curckt->ci_symtab );
+    INPgetMod( ckt, modname, &inpmod, ft_curckt->ci_symtab );
+    /* check if using model binning -- pass in line since need 'l' and 'w' */
+    if ( inpmod == NULL ) {
+      INPgetModBin( ckt, modname, &inpmod, ft_curckt->ci_symtab, val );
+    }
+    tfree(modname);
     if ( inpmod == NULL ) {
         fprintf(cp_err, "Error: no such model %s.\n", val);
         return;
@@ -852,9 +862,8 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val )
     newMod = inpmod->INPmodfast;
 
     /* see if new model name same as current model name */
-    if ( newMod->GENmodName == curMod->GENmodName ) {
-        fprintf(cp_err, "Warning: new model same as current model; nothing changed.\n");
-        return;
+    if ( newMod->GENmodName != curMod->GENmodName ) {
+        printf("Notice: model has changed from %s to %s.\n", curMod->GENmodName, newMod->GENmodName);
     }
     if ( newMod->GENmodType != curMod->GENmodType ) {
         fprintf(cp_err, "Error: new model %s must be same type as current model.\n", val);

@@ -27,6 +27,7 @@ static wordlist *devexpand(char *name);
 static void all_show(wordlist *wl, int mode);
 static void all_show_old(wordlist *wl, int mode);
 static void com_alter_mod(wordlist *wl);
+static void if_set_binned_model(CKTcircuit *, char *, char *, struct dvec *);
 
 /*
  *      devhelp: lists available devices and information on parameters
@@ -1080,6 +1081,40 @@ com_altermod(wordlist *wl)
 }
 
 static void
+if_set_binned_model(CKTcircuit *ckt, char *devname, char *param, struct dvec *val)
+{
+  char *width_length;
+  double w=0.0, l=0.0;
+  struct variable *v;
+
+  v = if_getparam(ckt, &devname, "w", 0, 0);
+  if (!v) {
+    fprintf(cp_err, "Error: Can't access width instance parameter.\n");
+    return;
+  }
+  w = v->va_V.vV_real;
+
+  v = if_getparam(ckt, &devname, "l", 0, 0);
+  if (!v) {
+    fprintf(cp_err, "Error: Can't access length instance parameter.\n");
+    return;
+  }
+  l = v->va_V.vV_real;
+
+  if (param[0] == 'w') {
+    w = *val->v_realdata; /* overwrite the width with the alter param */
+  } else {
+    l = *val->v_realdata; /* overwrite the length with the alter param */
+  }
+  width_length = TMALLOC(char, 36);
+  (void) sprintf(width_length,"w=%15.7e l=%15.7e", w, l);
+
+  if_setparam_model(ft_curckt->ci_ckt, &devname, width_length);
+  FREE(width_length);
+
+}
+
+static void
 com_alter_common(wordlist *wl, int do_model)
 {
     wordlist *eqword = NULL, *words;
@@ -1326,6 +1361,12 @@ com_alter_common(wordlist *wl, int do_model)
     if (dv->v_length < 1) {
         fprintf(cp_err, "Error: cannot evaluate new parameter value.\n");
         return;
+    }
+
+    /* If we want alter the geometry of a MOS device 
+       we have to ensure that we are in the valid model bin. */
+    if ( (dev[0] == 'm') && ((param[0] == 'w') || (param[0] == 'l')) ) {
+        if_set_binned_model(ft_curckt->ci_ckt, dev, param, dv);
     }
 
     if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
