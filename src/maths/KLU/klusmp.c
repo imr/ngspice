@@ -158,10 +158,10 @@ SMPcClear (SMPmatrix *Matrix)
     if (Matrix->CKTkluMODE)
     {
         spClear (Matrix->SPmatrix) ;
-        if (Matrix->CKTkluAx != NULL)
+        if (Matrix->CKTkluAx_Complex != NULL)
         {
             for (i = 0 ; i < 2 * Matrix->CKTklunz ; i++)
-                Matrix->CKTkluAx [i] = 0 ;
+                Matrix->CKTkluAx_Complex [i] = 0 ;
         }
     } else {
         spClear (Matrix->SPmatrix) ;
@@ -206,7 +206,7 @@ SMPcLUfac (SMPmatrix *Matrix, double PivTol)
     if (Matrix->CKTkluMODE)
     {
         spSetComplex (Matrix->SPmatrix) ;
-        ret = klu_z_refactor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx,
+        ret = klu_z_refactor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex,
                               Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluCommon) ;
         return (!ret) ;
     } else {
@@ -252,8 +252,14 @@ SMPcReorder (SMPmatrix *Matrix, double PivTol, double PivRel, int *NumSwaps)
     {
         *NumSwaps = 1 ;
         spSetComplex (Matrix->SPmatrix) ;
-        klu_z_free_numeric (&(Matrix->CKTkluNumeric), Matrix->CKTkluCommon) ;
-        Matrix->CKTkluNumeric = klu_z_factor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx, Matrix->CKTkluSymbolic, Matrix->CKTkluCommon) ;
+
+        if (Matrix->CKTkluNumeric != NULL)
+        {
+            klu_z_free_numeric (&(Matrix->CKTkluNumeric), Matrix->CKTkluCommon) ;
+            Matrix->CKTkluNumeric = klu_z_factor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex, Matrix->CKTkluSymbolic, Matrix->CKTkluCommon) ;
+        } else
+            Matrix->CKTkluNumeric = klu_z_factor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex, Matrix->CKTkluSymbolic, Matrix->CKTkluCommon) ;
+
         if (Matrix->CKTkluNumeric == NULL)
             return 1 ;
         else
@@ -281,9 +287,8 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
         {
             klu_free_numeric (&(Matrix->CKTkluNumeric), Matrix->CKTkluCommon) ;
             Matrix->CKTkluNumeric = klu_factor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx, Matrix->CKTkluSymbolic, Matrix->CKTkluCommon) ;
-        } else {
+        } else
             Matrix->CKTkluNumeric = klu_factor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx, Matrix->CKTkluSymbolic, Matrix->CKTkluCommon) ;
-        }
 
         if (Matrix->CKTkluNumeric == NULL)
             return 1 ;
@@ -326,17 +331,17 @@ SMPcSolve (SMPmatrix *Matrix, double RHS[], double iRHS[], double Spare[], doubl
         pExtOrder = &Matrix->SPmatrix->IntToExtRowMap [Matrix->CKTkluN] ;
         for (i = 2 * Matrix->CKTkluN - 1 ; i > 0 ; i -= 2)
         {
-            Matrix->CKTkluIntermediate [i] = RHS [*(pExtOrder)] ;
-            Matrix->CKTkluIntermediate [i - 1] = iRHS [*(pExtOrder--)] ;
+            Matrix->CKTkluIntermediate_Complex [i] = RHS [*(pExtOrder)] ;
+            Matrix->CKTkluIntermediate_Complex [i - 1] = iRHS [*(pExtOrder--)] ;
         }
 
-        ret = klu_z_solve (Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluN, 1, Matrix->CKTkluIntermediate, Matrix->CKTkluCommon) ;
+        ret = klu_z_solve (Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluN, 1, Matrix->CKTkluIntermediate_Complex, Matrix->CKTkluCommon) ;
 
         pExtOrder = &Matrix->SPmatrix->IntToExtColMap [Matrix->CKTkluN] ;
         for (i = 2 * Matrix->CKTkluN - 1 ; i > 0 ; i -= 2)
         {
-            RHS [*(pExtOrder)] = Matrix->CKTkluIntermediate [i] ;
-            iRHS [*(pExtOrder--)] = Matrix->CKTkluIntermediate [i - 1] ;
+            RHS [*(pExtOrder)] = Matrix->CKTkluIntermediate_Complex [i] ;
+            iRHS [*(pExtOrder--)] = Matrix->CKTkluIntermediate_Complex [i - 1] ;
         }
 
     } else {
@@ -455,7 +460,13 @@ SMPprint (SMPmatrix *Matrix, FILE *File)
 void
 SMPgetError (SMPmatrix *Matrix, int *Col, int *Row)
 {
-    spWhereSingular (Matrix->SPmatrix, Row, Col) ;
+    if (Matrix->CKTkluMODE)
+    {
+        *Row = Matrix->SPmatrix->IntToExtRowMap [Matrix->CKTkluCommon->singular_col] ;
+        *Col = Matrix->SPmatrix->IntToExtColMap [Matrix->CKTkluCommon->singular_col] ;
+    } else {
+        spWhereSingular (Matrix->SPmatrix, Row, Col) ;
+    }
 }
 
 /*

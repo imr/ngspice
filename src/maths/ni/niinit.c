@@ -28,7 +28,7 @@ NIinit(CKTcircuit *ckt)
     int Error;
 #endif /* SPARSE */
 
-/* Allocation of the new SMPmatrix structure - Francesco Lannuti (2012-02) */
+/* Allocation of the new SMPmatrix structure - Francesco Lannutti (2012-02) */
     ckt->CKTmatrix = TMALLOC (SMPmatrix, 1) ;
 
 #if defined(KLU)
@@ -38,6 +38,7 @@ NIinit(CKTcircuit *ckt)
     ckt->CKTmatrix->CKTkluAp = NULL ;
     ckt->CKTmatrix->CKTkluAi = NULL ;
     ckt->CKTmatrix->CKTkluAx = NULL ;
+    ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
     ckt->CKTmatrix->CKTkluIntermediate = NULL ;
     ckt->CKTmatrix->CKTkluIntermediate_Complex = NULL ;
     ckt->CKTmatrix->CKTbind_Sparse = NULL ;

@@ -35,17 +35,21 @@ struct SMPmatrix {
     klu_numeric *CKTkluNumeric ;          /* KLU numeric object */
     int *CKTkluAp ;                       /* KLU column pointer */
     int *CKTkluAi ;                       /* KLU row pointer */
-    double *CKTkluAx ;                    /* KLU element */
+    double *CKTkluAx ;                    /* KLU Real Elements */
+    double *CKTkluAx_Complex ;            /* KLU Complex Elements */
+    int CKTkluMatrixIsComplex ;           /* KLU Matrix Is Complex Flag */
+    #define CKTkluMatrixReal 0            /* KLU Matrix Real definition */
+    #define CKTkluMatrixComplex 1         /* KLU Matrix Complex definition */
     double *CKTkluIntermediate ;          /* KLU RHS Intermediate for Solve Real Step */
     double *CKTkluIntermediate_Complex ;  /* KLU iRHS Intermediate for Solve Complex Step */
-    double **CKTbind_Sparse ;             /* KLU - Sparse original element position */
-    double **CKTbind_CSC ;                /* KLU - KLU new element position */
-    double **CKTbind_CSC_Complex ;        /* KLU - KLU new element position in Complex analysis */
-    double **CKTdiag_CSC ;                 /* KLU pointer to diagonal element to perform Gmin */
+    double **CKTbind_Sparse ;             /* KLU Sparse original element position */
+    double **CKTbind_CSC ;                /* KLU new element position */
+    double **CKTbind_CSC_Complex ;        /* KLU new element position in Complex analysis */
+    double **CKTdiag_CSC ;                /* KLU pointer to diagonal element to perform Gmin */
     int CKTkluN ;                         /* KLU N, copied */
     int CKTklunz ;                        /* KLU nz, copied for AC Analysis */
     int CKTkluMODE ;                      /* KLU MODE parameter to enable KLU or not from the heuristic */
-    #define CKTkluON  1                   /* KLU MODE ON  definition */
+    #define CKTkluON 1                    /* KLU MODE ON definition */
     #define CKTkluOFF 0                   /* KLU MODE OFF definition */
 #elif defined(SuperLU)
     int *CKTsuperluAp ;
