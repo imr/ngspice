@@ -118,6 +118,12 @@ com_meas(wordlist *wl)
 
     /* get output var name */
     wl_count = wl_count->wl_next;
+    if (!wl_count) {
+        fprintf(stdout,
+                " meas %s failed!\n"
+                "   unspecified output var name\n\n", line_in);
+        return;
+    }
     outvar = wl_count->wl_word;
 
     fail = get_measure2(wl, &result, NULL, FALSE) ;
