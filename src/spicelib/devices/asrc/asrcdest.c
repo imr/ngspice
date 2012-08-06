@@ -6,6 +6,7 @@ Author: 1987 Kanwar Jit Singh
 #include "ngspice/ngspice.h"
 #include "asrcdefs.h"
 #include "ngspice/suffix.h"
+#include "ngspice/inpdefs.h"
 
 void
 ASRCdestroy(GENmodel **model)

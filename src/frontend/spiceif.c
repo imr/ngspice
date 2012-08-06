@@ -1491,8 +1491,8 @@ do {\
     if(__i) {\
       if(name)\
          tfree(name);\
-      name = (type *)tmalloc(__i);\
-      fread(name,1,__i,file);\
+      name = (type *)tmalloc((size_t) __i);\
+      fread(name,1,(size_t) __i,file);\
     } else {\
       fprintf(cp_err, "size for vector " #name " is 0\n");\
     }\
@@ -1642,9 +1642,9 @@ void com_savesnap(wordlist *wl)
  do {\
       int __i;\
       if(name) {\
-	__i = (num) * sizeof(type); fwrite(&__i,sizeof(int),1,file);\
+	__i = (num) * (int)sizeof(type); fwrite(&__i,sizeof(int),1,file);\
 	if((num))\
-	  fwrite(name,sizeof(type),(num),file);\
+	  fwrite(name,sizeof(type),(size_t)(num),file);\
       } else {\
 	__i = 0;\
 	fprintf(cp_err,#name " is NULL, zero written\n");\
@@ -1704,7 +1704,7 @@ void com_savesnap(wordlist *wl)
     /* now save the TSK struct, ft_curckt->ci_curTask*/
 
     _foo(task,TSKtask,1);
-    _foo(task->TSKname,char,(strlen(task->TSKname)+1));
+    _foo(task->TSKname,char,((int)strlen(task->TSKname)+1));
 
     /* now save the JOB struct task->jobs */
     /* lol, only allow one job, tough! */
@@ -1712,7 +1712,7 @@ void com_savesnap(wordlist *wl)
 
     _foo(task->jobs,TRANan,1);
 
-    _foo(task->jobs->JOBname,char,(strlen(task->jobs->JOBname)+1));
+    _foo(task->jobs->JOBname,char,((int)strlen(task->jobs->JOBname)+1));
 
 
     /* Finally the stats */

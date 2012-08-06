@@ -353,8 +353,8 @@ if_getstat(CKTcircuit *ckt, char *name)
     return (NULL);
 }
 
-void com_loadsnap(wordlist *wl) { return; }
-void com_savesnap(wordlist *wl) { return; }
+void com_loadsnap(wordlist *wl) { NG_IGNORE(wl); }
+void com_savesnap(wordlist *wl) { NG_IGNORE(wl); }
 
 void SMPprint( SMPmatrix *n1 , char *n2)
 {

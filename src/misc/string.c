@@ -387,8 +387,12 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
         char q;
         int count = 0;
         /* find opening bracket */
-        if (( p == '}' ) || ( p == ']' )) q = p - 2;
-        else  q = p - 1;
+        if ( p == '}' )
+            q = '{';
+        else if(p == ']' )
+            q = '[';
+        else
+            q = '(';
         /* add string in front of q, excluding q */
         while ((c = **s) != '\0' && ( **s != q ))  {
             spice_dstring_append_char( &buf, *(*s)++ ) ;
