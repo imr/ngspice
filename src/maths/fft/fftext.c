@@ -61,7 +61,7 @@ int fftInit(int M)
                 }
             }
         }
-    };
+    }
     return theError;
 }
 
@@ -73,14 +73,14 @@ void fftFree(void)
         if (BRLowArray[i1] != 0) {
             free(BRLowArray[i1]);
             BRLowArray[i1] = 0;
-        };
-    };
+        }
+    }
     for (i1=8*sizeof(int)-1; i1>=0; i1--) {
         if (UtblArray[i1] != 0) {
             free(UtblArray[i1]);
             UtblArray[i1] = 0;
-        };
-    };
+        }
+    }
 }
 
 /*************************************************

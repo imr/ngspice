@@ -741,8 +741,8 @@ next1:      if(vbs <= -3*vt) {
 			ddldvd = -dldvd;
 			ddldvb = 0.0;
 			goto line520;
-		    };
-		};
+		    }
+		}
 			    
 		if ( model->MOS3maxDriftVel <= 0.0 ) goto line510;
 		if (model->MOS3alpha == 0.0) goto line700;
@@ -790,7 +790,7 @@ line510:
 		  delxl = sqrt(model->MOS3kappa*model->MOS3alpha*
 				     ((here->MOS3mode*vds)-vdsat+(vdsat/8)));
 		  dldvd =  0.5*delxl/((here->MOS3mode*vds)-vdsat+(vdsat/8));
-	        };
+	        }
 		ddldvg = 0.0;
 		ddldvd = -dldvd;
 		ddldvb = 0.0;

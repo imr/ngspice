@@ -36,8 +36,8 @@ CKTncDump(
            fprintf(stdout," *");
       }
       fprintf(stdout,"\n");
-    };
+    }
     i++;
-  };
+  }
   fprintf(stdout,"\n");
 }

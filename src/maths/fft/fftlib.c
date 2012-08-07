@@ -57,7 +57,7 @@ void fftBRInit(int M, short *BRLow)
             if (i1 & bitmask)
                 bitsum = bitsum + (Nroot_1 >> bit);
         BRLow[i1] = (short) bitsum;
-    };
+    }
 }
 
 /************************************************
@@ -174,7 +174,7 @@ static inline void bitrevR2(double *ioptr, int M, short *BRLow)
                 f1i = *(p0r+posAi);
                 iCol -= 1;
                 p1r = IOP + BRLow[iCol]*4;
-            };
+            }
             f2r = *(p0r+2);
             f2i = *(p0r+(2+1));
             f3r = *(p0r+posB);
@@ -198,8 +198,8 @@ static inline void bitrevR2(double *ioptr, int M, short *BRLow)
             *(p0r+posB) = f3r;
             *(p0r+posBi) = f3i;
 
-        };
-    };
+        }
+    }
 }
 
 static inline void fft2pt(double *ioptr);
@@ -1247,7 +1247,7 @@ static inline void scbitrevR2(double *ioptr, int M, short *BRLow, double scale)
                 f1i = *(p0r+posAi);
                 iCol -= 1;
                 p1r = IOP + BRLow[iCol]*4;
-            };
+            }
             f2r = *(p0r+2);
             f2i = *(p0r+(2+1));
             f3r = *(p0r+posB);
@@ -1271,8 +1271,8 @@ static inline void scbitrevR2(double *ioptr, int M, short *BRLow, double scale)
             *(p0r+posB) = scale*f3r;
             *(p0r+posBi) = scale*f3i;
 
-        };
-    };
+        }
+    }
 }
 
 static inline void ifft2pt(double *ioptr, double scale);
@@ -2626,7 +2626,7 @@ static inline void frstage(double *ioptr, int M, double *Utbl)
 
         p0r += 2;
         p1r -= 2;
-    };
+    }
 }
 
 void rffts1(double *ioptr, int M, int Rows, double *Utbl, short *BRLow)
@@ -3123,7 +3123,7 @@ static inline void ifrstage(double *ioptr, int M, double *Utbl)
 
         p0r += 2;
         p1r -= 2;
-    };
+    }
 }
 
 void riffts1(double *ioptr, int M, int Rows, double *Utbl, short *BRLow)

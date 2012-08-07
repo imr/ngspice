@@ -837,7 +837,7 @@ nupa_copy (char *s, int linenum)
         if (!inexpansionS)
         {
             putlogfile (dicoS->dyncategory[linenum], linenum, t);
-        };
+        }
     }
     spice_dstring_free(&u) ;
     return t;

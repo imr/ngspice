@@ -362,7 +362,7 @@ void SMPprint( SMPmatrix *n1 , char *n2)
     NG_IGNORE(n2);
 
     return;
-};
+}
 
 void SMPprintRHS( SMPmatrix *n1, char *n2 , double* n3 , double* n4)
 {
@@ -372,7 +372,7 @@ void SMPprintRHS( SMPmatrix *n1, char *n2 , double* n3 , double* n4)
     NG_IGNORE(n4);
 
     return;
-};
+}
 
 #endif /* SIMULATOR */
 

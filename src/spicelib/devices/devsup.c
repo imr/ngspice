@@ -72,7 +72,7 @@ DEVpnjlim(double vnew, double vold, double vt, double vcrit, int *icheck)
               *icheck = 1;
            } else {
               *icheck = 0;
-           };
+           }
         } else {
            *icheck = 0;
         }

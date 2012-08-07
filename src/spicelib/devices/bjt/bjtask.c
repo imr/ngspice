@@ -102,7 +102,7 @@ BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue
                           !(ckt->CKTmode & MODETRANOP)) {
                       value->rValue -= *(ckt->CKTstate0 + here->BJTcqsub);
                 }
-            };
+            }
             value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_GPI:

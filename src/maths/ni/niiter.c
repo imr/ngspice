@@ -216,8 +216,8 @@ NIiter(CKTcircuit *ckt, int maxIter)
                   diff = (ckt->CKTrhs)[node->number] -
                           (ckt->CKTrhsOld)[node->number];
                   if (diff>maxdiff) maxdiff=diff;
-                };
-              };
+                }
+              }
               if (maxdiff>10) {
                 damp_factor=10/maxdiff;
                 if (damp_factor<0.1) damp_factor=0.1;
@@ -226,13 +226,13 @@ NIiter(CKTcircuit *ckt, int maxIter)
                           (ckt->CKTrhsOld)[node->number];
                   (ckt->CKTrhs)[node->number]=(ckt->CKTrhsOld)[node->number] +
                                                 (damp_factor * diff);
-                };
+                }
                 for(i=0;i<ckt->CKTnumStates;i++) {
                     diff = *(ckt->CKTstate0+i) - *(OldCKTstate0+i);
                     *(ckt->CKTstate0+i) = *(OldCKTstate0+i) +
                                                 (damp_factor * diff);
-                };
-              };
+                }
+              }
             }
 
 

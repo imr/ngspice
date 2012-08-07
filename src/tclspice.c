@@ -549,7 +549,7 @@ static int vectoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
         }
         Blt_ResetVector(imag_BltVector, compData, var_dvec->v_length, var_dvec->v_length, TCL_VOLATILE);
       }
-    };
+    }
   } else
   {
     Blt_ResetVector(real_BltVector, var_dvec->v_realdata, var_dvec->v_length, var_dvec->v_length, TCL_VOLATILE);

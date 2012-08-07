@@ -1152,7 +1152,7 @@ size_t f_w_r_i_t_e(const void * __ptr, size_t __size, size_t __n, FILE * __strea
                 fp_u_t_c(c, __stream);
             } else
                 break;
-        };
+        }
 //      f_r_e_a_d(out, __size, __n, __stream);
 //      p_r_i_n_t_f("test2 %s", out);
         return (int)(i/__size);
