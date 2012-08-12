@@ -22,7 +22,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "spiceif.h"
 
 
-/* static declarations */
 static void setdb(char *str);
 
 bool ft_acctprint = FALSE, ft_noacctprint = FALSE, ft_listprint = FALSE;
@@ -48,51 +47,47 @@ cp_enqvar(char *word)
         word++;
 
         d = vec_get(word);
-        if (d) {
-            if (d->v_length == 1) {
-                vv = alloc(struct variable);
-                vv->va_name = copy(word);
-                vv->va_next = NULL;
-                vv->va_type = CP_REAL;
-                if (isreal(d)) {
-                    vv->va_real = d->v_realdata[0];
-                } else {
-                    vv->va_real =
-                        realpart(d->v_compdata[0]);
-                }
-            } else {
-                vv = alloc(struct variable);
-                vv->va_next = NULL;
-                vv->va_name = copy(word);
-                vv->va_type = CP_LIST;
-                vv->va_vlist = NULL;
-                for (i = d->v_length - 1; i >= 0; i--) {
-                    tv = alloc(struct variable);
-                    tv->va_type = CP_REAL;
-                    if (isreal(d)) {
-                        tv->va_real = d->v_realdata[i];
-                    } else {
-                        tv->va_real =
-                            realpart(d->v_compdata[i]);
-                    }
-                    tv->va_next = vv->va_vlist;
-                    vv->va_vlist = tv;
-                }
-            }
-            if (d->v_link2)
-                fprintf(cp_err,
-                        "Warning: only one vector may be accessed with the $& notation.\n");
-            return (vv);
-        } else
+        if (!d)
             return (NULL);
+
+        if (d->v_length == 1) {
+            vv = alloc(struct variable);
+            vv->va_next = NULL;
+            vv->va_name = copy(word);
+            vv->va_type = CP_REAL;
+            if (isreal(d))
+                vv->va_real = d->v_realdata[0];
+            else
+                vv->va_real = realpart(d->v_compdata[0]);
+        } else {
+            vv = alloc(struct variable);
+            vv->va_next = NULL;
+            vv->va_name = copy(word);
+            vv->va_type = CP_LIST;
+            vv->va_vlist = NULL;
+            for (i = d->v_length - 1; i >= 0; i--) {
+                tv = alloc(struct variable);
+                tv->va_type = CP_REAL;
+                if (isreal(d))
+                    tv->va_real = d->v_realdata[i];
+                else
+                    tv->va_real = realpart(d->v_compdata[i]);
+                tv->va_next = vv->va_vlist;
+                vv->va_vlist = tv;
+            }
+        }
+
+        if (d->v_link2)
+            fprintf(cp_err,
+                    "Warning: only one vector may be accessed with the $& notation.\n");
+        return (vv);
+
     }
 
     if (plot_cur) {
         for (vv = plot_cur->pl_env; vv; vv = vv->va_next)
             if (eq(vv->va_name, word))
-                break;
-        if (vv)
-            return (vv);
+                return (vv);
         if (eq(word, "curplotname")) {
             vv = alloc(struct variable);
             vv->va_next = NULL;
@@ -120,7 +115,6 @@ cp_enqvar(char *word)
         } else if (eq(word, "plots")) {
             vv = alloc(struct variable);
             vv->va_next = NULL;
-            vv->va_vlist = NULL;
             vv->va_name = word;
             vv->va_type = CP_LIST;
             vv->va_vlist = NULL;
@@ -132,18 +126,14 @@ cp_enqvar(char *word)
                 vv->va_vlist = tv;
             }
         }
-        if (vv) {
-            return (vv);
-        }
-    }
-
-    if (ft_curckt) {
-        for (vv = ft_curckt->ci_vars; vv; vv = vv->va_next)
-            if (eq(vv->va_name, word))
-                break;
         if (vv)
             return (vv);
     }
+
+    if (ft_curckt)
+        for (vv = ft_curckt->ci_vars; vv; vv = vv->va_next)
+            if (eq(vv->va_name, word))
+                return (vv);
 
     return (NULL);
 }
@@ -156,10 +146,7 @@ cp_usrvars(struct variable **v1, struct variable **v2)
 {
     struct variable *v, *tv;
 
-    if (plot_cur)
-        v =  plot_cur->pl_env;
-    else
-        v = NULL;
+    v =  plot_cur ? plot_cur->pl_env : NULL;
 
     if ((tv = cp_enqvar("plots")) != NULL) {
         tv->va_next = v;
@@ -183,11 +170,7 @@ cp_usrvars(struct variable **v1, struct variable **v2)
     }
 
     *v1 = v;
-    if (ft_curckt)
-        *v2 = ft_curckt->ci_vars;
-    else
-        *v2 = NULL;
-    return;
+    *v2 = ft_curckt ? ft_curckt->ci_vars : NULL;
 }
 
 
@@ -236,7 +219,7 @@ inp_getoptsc(char *in_line, struct line *com_options)
     next->li_actual  = NULL;
 
     /* put new line in front */
-    if (com_options != NULL)
+    if (com_options)
         next->li_next = com_options;
 
     return next;
@@ -252,7 +235,6 @@ int
 cp_usrset(struct variable *var, bool isset)
 {
     void *vv;
-    char *s;
     struct variable *tv;
     int iv;
     double dv;
@@ -264,11 +246,10 @@ cp_usrset(struct variable *var, bool isset)
                 ft_grdb = ft_gidb = ft_controldb = isset;
         } else if (var->va_type == CP_LIST) {
             for (tv = var->va_vlist; tv; tv = tv->va_next)
-                if (var->va_type != CP_STRING)
-                    fprintf(cp_err,
-                            "Error: bad type for debug var\n");
-                else
+                if (var->va_type == CP_STRING)
                     setdb(tv->va_string);
+                else
+                    fprintf(cp_err, "Error: bad type for debug var\n");
         } else if (var->va_type == CP_STRING) {
             setdb(var->va_string);
         } else
@@ -324,15 +305,14 @@ cp_usrset(struct variable *var, bool isset)
     } else if (eq(var->va_name, "unixcom")) {
         cp_dounixcom = isset;
         if (isset) {
-            s = getenv("PATH");
+            char *s = getenv("PATH");
             if (s)
                 cp_rehash(s, TRUE);
             else
                 fprintf(cp_err, "Warning: no PATH in environment.\n");
         }
     } else if (eq(var->va_name, "units") && (var->va_type == CP_STRING)) {
-        if (isset && ((*var->va_string == 'd') ||
-                      (*var->va_string == 'D')))
+        if (isset && ((*var->va_string == 'd') || (*var->va_string == 'D')))
             cx_degrees = TRUE;
         else
             cx_degrees = FALSE;
@@ -382,26 +362,17 @@ cp_usrset(struct variable *var, bool isset)
     /* Now call the interface option routine. */
     switch (var->va_type) {
     case CP_BOOL:
-        if (var->va_bool) {
-            /*val[0] = '\0';*/
-            bv = TRUE;
-            vv = &bv;
-            /*break;*/
-        } else {
-            bv = FALSE;
-            vv = &bv;
-        }
+        bv = (var->va_bool) ? TRUE : FALSE;
+        vv = &bv;
         break;
     case CP_STRING:
         vv = var->va_string;
         break;
     case CP_NUM:
-        /*(void) sprintf(val, "%d", var->va_num);*/
         iv = var->va_num;
         vv = &iv;
         break;
     case CP_REAL:
-        /*(void) strcpy(val, printnum(var->va_real));*/
         dv = var->va_real;
         vv = &dv;
         break;
@@ -411,16 +382,17 @@ cp_usrset(struct variable *var, bool isset)
         break;
     default:
         fprintf(cp_err,
-                "cp_usrset: Internal Error: Bad var type %d\n",
-                var->va_type);
+                "cp_usrset: Internal Error: Bad var type %d\n", var->va_type);
         return (0);
     }
 
     if (ft_curckt) {
         if (if_option(ft_curckt->ci_ckt, var->va_name, var->va_type, vv))
             return US_SIMVAR;
-    } else if (if_option(NULL, var->va_name, var->va_type, vv))
-        return US_NOSIMVAR;
+    } else {
+        if (if_option(NULL, var->va_name, var->va_type, vv))
+            return US_NOSIMVAR;
+    }
 
     return (US_OK);
 }
@@ -449,5 +421,4 @@ setdb(char *str)
         ft_asyncdb = TRUE;
     else
         fprintf(cp_err, "Warning: no such debug class %s\n", str);
-    return;
 }
