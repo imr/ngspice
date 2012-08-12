@@ -9,7 +9,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * variables, though, and a few commonly used ones are dealt with here.
  */
 
-
 #include "ngspice/ngspice.h"
 #include "ngspice/cpdefs.h"
 #include "ngspice/ftedefs.h"
@@ -30,6 +29,7 @@ bool ft_acctprint = FALSE, ft_noacctprint = FALSE, ft_listprint = FALSE;
 bool ft_nodesprint = FALSE, ft_optsprint = FALSE, ft_noinitprint = FALSE;
 bool ft_ngdebug = FALSE, ft_stricterror = FALSE;
 
+
 /* The user-supplied routine to query the values of variables. This
  * recognises the $&varname notation, and also searches the values of
  * plot and circuit environment variables.
@@ -44,7 +44,9 @@ cp_enqvar(char *word)
     int i;
 
     if (*word == '&') {
+
         word++;
+
         d = vec_get(word);
         if (d) {
             if (d->v_length == 1) {
@@ -55,7 +57,7 @@ cp_enqvar(char *word)
                 if (isreal(d)) {
                     vv->va_real = d->v_realdata[0];
                 } else {
-                    vv->va_real = 
+                    vv->va_real =
                         realpart(d->v_compdata[0]);
                 }
             } else {
@@ -70,7 +72,7 @@ cp_enqvar(char *word)
                     if (isreal(d)) {
                         tv->va_real = d->v_realdata[i];
                     } else {
-                        tv->va_real = 
+                        tv->va_real =
                             realpart(d->v_compdata[i]);
                     }
                     tv->va_next = vv->va_vlist;
@@ -78,12 +80,13 @@ cp_enqvar(char *word)
                 }
             }
             if (d->v_link2)
-                fprintf(cp_err, 
-    "Warning: only one vector may be accessed with the $& notation.\n");
+                fprintf(cp_err,
+                        "Warning: only one vector may be accessed with the $& notation.\n");
             return (vv);
         } else
             return (NULL);
-    } 
+    }
+
     if (plot_cur) {
         for (vv = plot_cur->pl_env; vv; vv = vv->va_next)
             if (eq(vv->va_name, word))
@@ -92,35 +95,35 @@ cp_enqvar(char *word)
             return (vv);
         if (eq(word, "curplotname")) {
             vv = alloc(struct variable);
-	    vv->va_next = NULL;
+            vv->va_next = NULL;
             vv->va_name = word;
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_name);
         } else if (eq(word, "curplottitle")) {
             vv = alloc(struct variable);
-	    vv->va_next = NULL;
+            vv->va_next = NULL;
             vv->va_name = word;
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_title);
         } else if (eq(word, "curplotdate")) {
             vv = alloc(struct variable);
-	    vv->va_next = NULL;
+            vv->va_next = NULL;
             vv->va_name = word;
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_date);
         } else if (eq(word, "curplot")) {
             vv = alloc(struct variable);
-	    vv->va_next = NULL;
+            vv->va_next = NULL;
             vv->va_name = word;
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_typename);
         } else if (eq(word, "plots")) {
             vv = alloc(struct variable);
-	    vv->va_next = NULL;
-	    vv->va_vlist = NULL;
+            vv->va_next = NULL;
+            vv->va_vlist = NULL;
             vv->va_name = word;
             vv->va_type = CP_LIST;
-	    vv->va_vlist = NULL;
+            vv->va_vlist = NULL;
             for (pl = plot_list; pl; pl = pl->pl_next) {
                 tv = alloc(struct variable);
                 tv->va_type = CP_STRING;
@@ -131,8 +134,9 @@ cp_enqvar(char *word)
         }
         if (vv) {
             return (vv);
-	}
+        }
     }
+
     if (ft_curckt) {
         for (vv = ft_curckt->ci_vars; vv; vv = vv->va_next)
             if (eq(vv->va_name, word))
@@ -140,8 +144,10 @@ cp_enqvar(char *word)
         if (vv)
             return (vv);
     }
+
     return (NULL);
 }
+
 
 /* Return the plot and ckt env vars, $plots, and $curplot{name,title,date,} */
 
@@ -154,6 +160,7 @@ cp_usrvars(struct variable **v1, struct variable **v2)
         v =  plot_cur->pl_env;
     else
         v = NULL;
+
     if ((tv = cp_enqvar("plots")) != NULL) {
         tv->va_next = v;
         v = tv;
@@ -174,6 +181,7 @@ cp_usrvars(struct variable **v1, struct variable **v2)
         tv->va_next = v;
         v = tv;
     }
+
     *v1 = v;
     if (ft_curckt)
         *v2 = ft_curckt->ci_vars;
@@ -203,8 +211,10 @@ inp_getopts(struct line *deck)
         } else
             last = dd;
     }
+
     return (opts);
 }
+
 
 /* Extract the option lines from a comfile (spinit, .spiceinit) */
 struct line *
@@ -218,12 +228,13 @@ inp_getoptsc(char *in_line, struct line *com_options)
     /* skip option */
     gettok(&in_line);
     sprintf(line, ".options %s", in_line);
-    
+
     next = TMALLOC(struct line, 1);
     next->li_line    = line;
     next->li_linenum = 0;
     next->li_error   = NULL;
     next->li_actual  = NULL;
+
     /* put new line in front */
     if (com_options != NULL)
         next->li_next = com_options;
@@ -255,7 +266,7 @@ cp_usrset(struct variable *var, bool isset)
             for (tv = var->va_vlist; tv; tv = tv->va_next)
                 if (var->va_type != CP_STRING)
                     fprintf(cp_err,
-                    "Error: bad type for debug var\n");
+                            "Error: bad type for debug var\n");
                 else
                     setdb(tv->va_string);
         } else if (var->va_type == CP_STRING) {
@@ -273,11 +284,11 @@ cp_usrset(struct variable *var, bool isset)
     } else if (eq(var->va_name, "acct")) {
         ft_acctprint = isset;
     } else if (eq(var->va_name, "noacct")) {
-        ft_noacctprint = isset; 
+        ft_noacctprint = isset;
     } else if (eq(var->va_name, "ngdebug")) {
-        ft_ngdebug = isset;          
+        ft_ngdebug = isset;
     } else if (eq(var->va_name, "noinit")) {
-        ft_noinitprint = isset;               
+        ft_noinitprint = isset;
     } else if (eq(var->va_name, "list")) {
         ft_listprint = isset;
     } else if (eq(var->va_name, "nopage")) {
@@ -311,7 +322,6 @@ cp_usrset(struct variable *var, bool isset)
         else
             fprintf(cp_err, "Excuse me??\n");
     } else if (eq(var->va_name, "unixcom")) {
-
         cp_dounixcom = isset;
         if (isset) {
             s = getenv("PATH");
@@ -320,10 +330,9 @@ cp_usrset(struct variable *var, bool isset)
             else
                 fprintf(cp_err, "Warning: no PATH in environment.\n");
         }
-
     } else if (eq(var->va_name, "units") && (var->va_type == CP_STRING)) {
         if (isset && ((*var->va_string == 'd') ||
-                (*var->va_string == 'D')))
+                      (*var->va_string == 'D')))
             cx_degrees = TRUE;
         else
             cx_degrees = FALSE;
@@ -359,11 +368,12 @@ cp_usrset(struct variable *var, bool isset)
         for (tv = plot_cur->pl_env; tv; tv = tv->va_next)
             if (eq(tv->va_name, var->va_name))
                 return (US_READONLY);
+
     /*
-    if (ft_curckt)
-        for (tv = ft_curckt->ci_vars; tv; tv = tv->va_next)
-            if (eq(tv->va_name, var->va_name))
-                return (US_READONLY);
+      if (ft_curckt)
+      for (tv = ft_curckt->ci_vars; tv; tv = tv->va_next)
+      if (eq(tv->va_name, var->va_name))
+      return (US_READONLY);
     */
 
     if (ft_nutmeg)
@@ -371,48 +381,50 @@ cp_usrset(struct variable *var, bool isset)
 
     /* Now call the interface option routine. */
     switch (var->va_type) {
-        case CP_BOOL:
-            if (var->va_bool) {
-                /*val[0] = '\0';*/
-                bv = TRUE;
-                vv = &bv;
-                /*break;*/
-            } else {
-                bv = FALSE;
-                vv = &bv;
-            }
-	    break;
-        case CP_STRING:
-            vv = var->va_string;
-            break;
-        case CP_NUM:
-            /*(void) sprintf(val, "%d", var->va_num);*/
-            iv = var->va_num;
-            vv = &iv;
-            break;
-        case CP_REAL:
-            /*(void) strcpy(val, printnum(var->va_real));*/
-            dv = var->va_real;
-            vv = &dv;
-            break;
-        case CP_LIST:
-            /* if_option can't handle lists anyway. */
-	    vv = NULL;
-            break;
-        default:
-            fprintf(cp_err, 
-            "cp_usrset: Internal Error: Bad var type %d\n",
-                    var->va_type);
-	    return (0);
+    case CP_BOOL:
+        if (var->va_bool) {
+            /*val[0] = '\0';*/
+            bv = TRUE;
+            vv = &bv;
+            /*break;*/
+        } else {
+            bv = FALSE;
+            vv = &bv;
+        }
+        break;
+    case CP_STRING:
+        vv = var->va_string;
+        break;
+    case CP_NUM:
+        /*(void) sprintf(val, "%d", var->va_num);*/
+        iv = var->va_num;
+        vv = &iv;
+        break;
+    case CP_REAL:
+        /*(void) strcpy(val, printnum(var->va_real));*/
+        dv = var->va_real;
+        vv = &dv;
+        break;
+    case CP_LIST:
+        /* if_option can't handle lists anyway. */
+        vv = NULL;
+        break;
+    default:
+        fprintf(cp_err,
+                "cp_usrset: Internal Error: Bad var type %d\n",
+                var->va_type);
+        return (0);
     }
 
     if (ft_curckt) {
         if (if_option(ft_curckt->ci_ckt, var->va_name, var->va_type, vv))
-	    return US_SIMVAR;
+            return US_SIMVAR;
     } else if (if_option(NULL, var->va_name, var->va_type, vv))
-	    return US_NOSIMVAR;
+        return US_NOSIMVAR;
+
     return (US_OK);
 }
+
 
 static void
 setdb(char *str)
