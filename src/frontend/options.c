@@ -240,7 +240,6 @@ inp_getoptsc(char *in_line, struct line *com_options)
 int
 cp_usrset(struct variable *var, bool isset)
 {
-    char val[BSIZE_SP];
     void *vv;
     char *s;
     struct variable *tv;
@@ -384,8 +383,7 @@ cp_usrset(struct variable *var, bool isset)
             }
 	    break;
         case CP_STRING:
-            (void) strcpy(val, var->va_string);
-            vv = val;
+            vv = var->va_string;
             break;
         case CP_NUM:
             /*(void) sprintf(val, "%d", var->va_num);*/
