@@ -138,8 +138,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
     }
 
     if (which != -1) {
-        err = IFnewUid(ckt, &optUid, NULL, "options", UID_ANALYSIS,
-                       NULL);
+        err = IFnewUid(ckt, &optUid, NULL, "options", UID_ANALYSIS, NULL);
         if (err) {
             ft_sperror(err, "newUid");
             return(NULL);
@@ -239,12 +238,10 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         /*CDHW Delete any previous special task CDHW*/
 
         if (ft_curckt->ci_specTask) {
-            if (ft_curckt->ci_specTask == ft_curckt->ci_defTask) { /*CDHW*/
+            if (ft_curckt->ci_specTask == ft_curckt->ci_defTask)   /*CDHW*/
                 printf("Oh dear...something bad has happened to the options.\n");
-            }
 
-            err = ft_sim->deleteTask (ft_curckt->ci_ckt,
-                                      ft_curckt->ci_specTask);
+            err = ft_sim->deleteTask (ft_curckt->ci_ckt, ft_curckt->ci_specTask);
             if (err) {
                 ft_sperror(err, "deleteTask");
                 return(2);
@@ -278,12 +275,11 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
 
         /*CDHW which options available for this simulator? CDHW*/
 
-        for (j = 0; j < ft_sim->numAnalyses; j++) {
+        for (j = 0; j < ft_sim->numAnalyses; j++)
             if (strcmp(ft_sim->analyses[j]->name, "options") == 0) {
                 which = j;
                 break;
             }
-        }
 
         if (which != -1) { /*CDHW options are available CDHW*/
             err = IFnewUid(ft_curckt->ci_ckt, &optUid, NULL, "options",
@@ -373,8 +369,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
                 return(2);
         }
     } else {
-        fprintf(cp_err, "if_run: Internal Error: bad run type %s\n",
-                what);
+        fprintf(cp_err, "if_run: Internal Error: bad run type %s\n", what);
         return(2);
     }
 
@@ -435,12 +430,11 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
         return 0;
     }
 
-    for (i = 0; i < ft_sim->numAnalyses; i++) {
+    for (i = 0; i < ft_sim->numAnalyses; i++)
         if (strcmp(ft_sim->analyses[i]->name, "options") == 0) {
             which = i;
             break;
         }
-    }
 
     if (which == -1) {
         fprintf(cp_err, "Warning:  .options line unsupported\n");
@@ -670,8 +664,10 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
             /* It is a device */
             for (i = 0; i < *(device->numInstanceParms); i++) {
                 opt = &device->instanceParms[i];
-                if (opt->dataType & IF_REDUNDANT || !opt->description) continue;
-                if (!(opt->dataType & IF_ASK)) continue;
+                if (opt->dataType & IF_REDUNDANT || !opt->description)
+                    continue;
+                if (!(opt->dataType & IF_ASK))
+                    continue;
                 pv = doask(ckt, typecode, dev, mod, opt, ind);
                 if (pv) {
                     tv = parmtovar(pv, opt);
@@ -684,7 +680,8 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
                         free(aux_pointer);
                         tv->va_name = copy(auxiliar);
                     }
-                    if (vv) tv->va_next = vv;
+                    if (vv)
+                        tv->va_next = vv;
                     vv = tv;
                 } else
                     fprintf(cp_err, "Internal Error: no parameter '%s' on device '%s'\n",
@@ -695,7 +692,8 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
             /* It is a model */
             for (i = 0; i < *(device->numModelParms); i++) {
                 opt = &device->modelParms[i];
-                if (opt->dataType & IF_REDUNDANT || !opt->description) continue;
+                if (opt->dataType & IF_REDUNDANT || !opt->description)
+                    continue;
 
                 /* We check that the parameter is interesting and therefore is
                  * implemented in the corresponding function ModelAsk. Originally
@@ -705,7 +703,8 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
                  */
 
                 /* if (!(opt->dataType & IF_ASK ) || (opt->dataType & IF_UNINTERESTING ) || (opt->dataType & IF_STRING)) continue; */
-                if (!(opt->dataType & IF_ASK ) || (opt->dataType & IF_UNINTERESTING )) continue;
+                if (!(opt->dataType & IF_ASK ) || (opt->dataType & IF_UNINTERESTING ))
+                    continue;
                 pv = doask(ckt, typecode, dev, mod, opt, ind);
                 if (pv) {
                     tv = parmtovar(pv, opt);
@@ -728,9 +727,8 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
                         /* strcpy(aux_pointer, auxiliar); */
                     }
                     /* tv->va_string = device->modelParms[i].keyword;   Put the name of the variable */
-                    if (vv) {
+                    if (vv)
                         tv->va_next = vv;
-                    }
                     vv = tv;
                 } else
                     fprintf(cp_err, "Internal Error: no parameter '%s' on device '%s'\n", device->modelParms[i].keyword, device->name);
@@ -794,7 +792,8 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model) 
             opt = &device->instanceParms[i];
             if (opt->dataType & IF_REDUNDANT || !opt->description)
                 continue;
-            if (!(opt->dataType & IF_ASK)) continue;
+            if (!(opt->dataType & IF_ASK))
+                continue;
             pv = doask(ckt, typecode, dev, mod, opt, ind);
             if (pv) {
                 tv = parmtovar(pv, opt);
@@ -866,9 +865,8 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val)
     */
     INPgetMod(ckt, modname, &inpmod, ft_curckt->ci_symtab);
     /* check if using model binning -- pass in line since need 'l' and 'w' */
-    if (inpmod == NULL) {
+    if (inpmod == NULL)
         INPgetModBin(ckt, modname, &inpmod, ft_curckt->ci_symtab, val);
-    }
     tfree(modname);
     if (inpmod == NULL) {
         fprintf(cp_err, "Error: no such model %s.\n", val);
@@ -877,9 +875,8 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val)
     newMod = inpmod->INPmodfast;
 
     /* see if new model name same as current model name */
-    if (newMod->GENmodName != curMod->GENmodName) {
+    if (newMod->GENmodName != curMod->GENmodName)
         printf("Notice: model has changed from %s to %s.\n", curMod->GENmodName, newMod->GENmodName);
-    }
     if (newMod->GENmodType != curMod->GENmodType) {
         fprintf(cp_err, "Error: new model %s must be same type as current model.\n", val);
         return;
@@ -887,12 +884,14 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val)
 
     /* fix current model linked list */
     prevDev = NULL;
-    for (iter = curMod->GENinstances; iter != NULL; iter = iter->GENnextInstance) {
+    for (iter = curMod->GENinstances; iter; iter = iter->GENnextInstance) {
         if (iter->GENname == dev->GENname) {
 
             /* see if at beginning of linked list */
-            if (prevDev == NULL) curMod->GENinstances     = iter->GENnextInstance;
-            else                   prevDev->GENnextInstance = iter->GENnextInstance;
+            if (prevDev == NULL)
+                curMod->GENinstances     = iter->GENnextInstance;
+            else
+                prevDev->GENnextInstance = iter->GENnextInstance;
 
             /* update model for device */
             dev->GENmodPtr       = newMod;
@@ -905,12 +904,14 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val)
     /* see if any devices remaining that reference current model */
     if (curMod->GENinstances == NULL) {
         prevMod = NULL;
-        for (mods = ckt->CKThead[typecode]; mods != NULL; mods = mods->GENnextModel) {
+        for (mods = ckt->CKThead[typecode]; mods; mods = mods->GENnextModel) {
             if (mods->GENmodName == curMod->GENmodName) {
 
                 /* see if at beginning of linked list */
-                if (prevMod == NULL) ckt->CKThead[typecode] = mods->GENnextModel;
-                else                   prevMod->GENnextModel                  = mods->GENnextModel;
+                if (prevMod == NULL)
+                    ckt->CKThead[typecode] = mods->GENnextModel;
+                else
+                    prevMod->GENnextModel  = mods->GENnextModel;
 
                 INPgetMod(ckt, mods->GENmodName, &inpmod, ft_curckt->ci_symtab);
                 inpmod->INPmodUsed = 0;
@@ -1067,16 +1068,16 @@ parmlookup(IFdevice *dev, GENinstance **inptr, char *param, int do_model, int in
         return NULL;
     }
 
-    if (dev->numModelParms) {
+    if (dev->numModelParms)
         for (i = 0; i < *(dev->numModelParms); i++)
-            if ((((dev->modelParms[i].dataType & IF_SET) && inout == 1)
-                 || ((dev->modelParms[i].dataType & IF_ASK) && inout == 0))
-                && eq(dev->modelParms[i].keyword, param)) {
+            if ((((dev->modelParms[i].dataType & IF_SET) && inout == 1) ||
+                 ((dev->modelParms[i].dataType & IF_ASK) && inout == 0)) &&
+                eq(dev->modelParms[i].keyword, param))
+            {
                 if (dev->modelParms[i].dataType & IF_REDUNDANT)
                     i -= 1;
                 return(&dev->modelParms[i]);
             }
-    }
 
     return(NULL);
 }
@@ -1099,11 +1100,9 @@ doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
     /* fprintf(cp_err, "Calling doask(%d, %x, %x, %x)\n",
        typecode, dev, mod, opt); */
     if (dev)
-        err = ft_sim->askInstanceQuest (ckt, dev,
-                                        opt->id, &pv, NULL);
+        err = ft_sim->askInstanceQuest (ckt, dev, opt->id, &pv, NULL);
     else
-        err = ft_sim->askModelQuest (ckt, mod,
-                                     opt->id, &pv, NULL);
+        err = ft_sim->askModelQuest (ckt, mod, opt->id, &pv, NULL);
 
     if (err != OK) {
         ft_sperror(err, "if_getparam");
@@ -1185,11 +1184,9 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
        typecode, dev, mod, opt); */
 
     if (dev)
-        err = ft_sim->setInstanceParm (ckt, dev,
-                                       opt->id, &nval, NULL);
+        err = ft_sim->setInstanceParm (ckt, dev, opt->id, &nval, NULL);
     else
-        err = ft_sim->setModelParm (ckt, mod,
-                                    opt->id, &nval, NULL);
+        err = ft_sim->setModelParm (ckt, mod, opt->id, &nval, NULL);
 
     return err;
 }
@@ -1207,13 +1204,15 @@ finddev(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr)
     int type = -1;
 
     err = ft_sim->findInstance (ck, &type, devptr, name, NULL, NULL);
-    if (err == OK) return(type);
+    if (err == OK)
+        return(type);
 
     type = -1;
     *devptr = NULL;
 
     err = ft_sim->findModel (ck, &type, modptr, name);
-    if (err == OK) return(type);
+    if (err == OK)
+        return(type);
 
     *modptr = NULL;
     return(-1);
@@ -1225,13 +1224,10 @@ int
 if_analQbyName(CKTcircuit *ckt, int which, JOB *anal, char *name, IFvalue *parm)
 {
     int i;
-    for (i = 0; i < ft_sim->analyses[which]->numParms; i++) {
-        if (strcmp(ft_sim->analyses[which]->analysisParms[i].keyword, name) == 0) {
-            return(ft_sim->askAnalysisQuest (ckt, anal,
-                                             ft_sim->analyses[which]->analysisParms[i].id, parm,
-                                             NULL));
-        }
-    }
+    for (i = 0; i < ft_sim->analyses[which]->numParms; i++)
+        if (strcmp(ft_sim->analyses[which]->analysisParms[i].keyword, name) == 0)
+            return(ft_sim->askAnalysisQuest
+                   (ckt, anal, ft_sim->analyses[which]->analysisParms[i].id, parm, NULL));
     return(E_BADPARM);
 }
 
@@ -1249,7 +1245,8 @@ if_tranparams(struct circ *ci, double *start, double *stop, double *step)
     JOB *anal;
     IFuid tranUid;
 
-    if (!ci->ci_curTask) return(FALSE);
+    if (!ci->ci_curTask)
+        return(FALSE);
 
     for (i = 0; i < ft_sim->numAnalyses; i++) {
         if (strcmp(ft_sim->analyses[i]->name, "TRAN") == 0) {
@@ -1257,28 +1254,34 @@ if_tranparams(struct circ *ci, double *start, double *stop, double *step)
             break;
         }
     }
-    if (which == -1) return(FALSE);
+    if (which == -1)
+        return(FALSE);
 
     err = IFnewUid(ci->ci_ckt, &tranUid, NULL, "Transient Analysis",
                    UID_ANALYSIS, NULL);
-    if (err != OK) return(FALSE);
+    if (err != OK)
+        return(FALSE);
 
     err = ft_sim->findAnalysis (ci->ci_ckt, &which, &anal, tranUid,
                                 ci->ci_curTask, NULL);
-    if (err != OK) return(FALSE);
+    if (err != OK)
+        return(FALSE);
 
     err = if_analQbyName(ci->ci_ckt, which, anal, "tstart", &tmp);
-    if (err != OK) return(FALSE);
+    if (err != OK)
+        return(FALSE);
 
     *start = tmp.rValue;
 
     err = if_analQbyName(ci->ci_ckt, which, anal, "tstop", &tmp);
-    if (err != OK) return(FALSE);
+    if (err != OK)
+        return(FALSE);
 
     *stop = tmp.rValue;
 
     err = if_analQbyName(ci->ci_ckt, which, anal, "tstep", &tmp);
-    if (err != OK) return(FALSE);
+    if (err != OK)
+        return(FALSE);
 
     *step = tmp.rValue;
     return(TRUE);
@@ -1295,12 +1298,11 @@ if_getstat(CKTcircuit *ckt, char *name) {
     IFvalue parm;
     int which = -1;
 
-    for (i = 0; i < ft_sim->numAnalyses; i++) {
+    for (i = 0; i < ft_sim->numAnalyses; i++)
         if (strcmp(ft_sim->analyses[i]->name, "options") == 0) {
             which = i;
             break;
         }
-    }
 
     if (which == -1) {
         fprintf(cp_err, "Warning:  statistics unsupported\n");
@@ -1315,7 +1317,8 @@ if_getstat(CKTcircuit *ckt, char *name) {
             return(NULL);
         if (ft_sim->askAnalysisQuest (ckt, &(ft_curckt->ci_curTask->taskOptions),
                                       ft_sim->analyses[which]->analysisParms[i].id, &parm,
-                                      NULL) == -1) {
+                                      NULL) == -1)
+        {
             fprintf(cp_err,
                     "if_getstat: Internal Error: can't get %s\n",
                     name);
@@ -1324,9 +1327,8 @@ if_getstat(CKTcircuit *ckt, char *name) {
         return(parmtovar(&parm, &(ft_sim->analyses[which]->analysisParms[i])));
     } else {
         for (i = 0, vars = v = NULL; i < ft_sim->analyses[which]->numParms; i++) {
-            if (!(ft_sim->analyses[which]->analysisParms[i].dataType&IF_ASK)) {
+            if (!(ft_sim->analyses[which]->analysisParms[i].dataType & IF_ASK))
                 continue;
-            }
             if (ft_sim->askAnalysisQuest (ckt, &(ft_curckt->ci_curTask->taskOptions),
                                           ft_sim->analyses[which]->analysisParms[i].id,
                                           &parm, NULL) == -1) {
@@ -1336,12 +1338,12 @@ if_getstat(CKTcircuit *ckt, char *name) {
                 return(NULL);
             }
             if (v) {
-                v->va_next = parmtovar(&parm,
-                                       &(ft_sim->analyses[which]->analysisParms[i]));
+                v->va_next =
+                    parmtovar(&parm, &(ft_sim->analyses[which]->analysisParms[i]));
                 v = v->va_next;
             } else {
-                vars = v = parmtovar(&parm,
-                                     &(ft_sim->analyses[which]->analysisParms[i]));
+                vars = v =
+                    parmtovar(&parm, &(ft_sim->analyses[which]->analysisParms[i]));
             }
         }
         return(vars);
@@ -1389,9 +1391,8 @@ void com_loadsnap(wordlist *wl)
 
     /* source the circuit */
     inp_source(wl->wl_word);
-    if (!ft_curckt) {
+    if (!ft_curckt)
         return;
-    }
 
     /* allocate all the vectors, with luck!  */
     if (!error)
@@ -1530,9 +1531,8 @@ void com_loadsnap(wordlist *wl)
     } while(0)
 
 
-    for (i = 0; i <= ckt->CKTmaxOrder+1; i++) {
+    for (i = 0; i <= ckt->CKTmaxOrder+1; i++)
         _foo(ckt->CKTstates[i], double, ckt->CKTnumStates);
-    }
 
     size = SMPmatSize(ckt->CKTmatrix) + 1;
     _foo(ckt->CKTrhs, double, size);
@@ -1605,8 +1605,7 @@ void com_loadsnap(wordlist *wl)
             fprintf(cp_err, "error in CKTnames\n");
             return;
         }
-        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL,
-                              "time", UID_OTHER, NULL);
+        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL, "time", UID_OTHER, NULL);
         error = SPfrontEnd->OUTpBeginPlot (
             ckt, ckt->CKTcurJob,
             ckt->CKTcurJob->JOBname,
@@ -1631,7 +1630,7 @@ void com_savesnap(wordlist *wl)
     if (!ft_curckt) {
         fprintf(cp_err, "Error: there is no circuit loaded.\n");
         return;
-    } else if (ft_curckt->ci_ckt == NULL) { /* Set noparse? */
+    } else if (!ft_curckt->ci_ckt) { /* Set noparse? */
         fprintf(cp_err, "Error: circuit not parsed.\n");
         return;
     }
@@ -1701,9 +1700,8 @@ void com_savesnap(wordlist *wl)
     */
 
 
-    for (i = 0; i <= ckt->CKTmaxOrder+1; i++) {
+    for (i = 0; i <= ckt->CKTmaxOrder+1; i++)
         _foo(ckt->CKTstates[i], double, ckt->CKTnumStates);
-    }
 
 
     size = SMPmatSize(ckt->CKTmatrix) + 1;
