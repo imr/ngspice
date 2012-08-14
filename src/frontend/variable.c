@@ -104,6 +104,14 @@ cp_vset(char *varname, enum cp_types type, void *value)
         }
         w = v;
     }
+
+    if (alreadythere) {
+        if(v->va_type == CP_LIST)
+            free_struct_variable(v->va_vlist);
+        if(v->va_type == CP_STRING)
+            tfree(v->va_string);
+    }
+
     if (!v) {
         v = alloc(struct variable);
         v->va_name = copy(copyvarname);
@@ -536,8 +544,9 @@ cp_remvar(char *varname)
         break;
     }
 
+    v->va_next = NULL;
     tfree(v->va_name);
-    tfree(v);
+    free_struct_variable(v);
     free_struct_variable(uv1);
 }
 
