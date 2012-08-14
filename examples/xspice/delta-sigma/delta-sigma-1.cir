@@ -1,0 +1,106 @@
+* delta sigma A/D converter 9 bit
+* first-order continuous time delta sigma modulator
+* sinc filter with counter
+* according to Schreier, Temes: Understanding Delta-Sigma Data Converters, 2005
+* Fig. 2.13, p. 31; Fig. 2.27, p.58
+
+** sine input signal parameters
+.param infreq=500 inampl=0.5
+** clock
+.param clkfreq=5Meg
+** simulation time
+.param simtime = 2m
+.csparam simtime = 'simtime'
+** sample clock cycles
+.param samples=500
+
+.global dzero done
+
+** input signal
+* SIN(VO VA FREQ TD THETA)
+vin inp inm dc 0 sin(0 'inampl' 'infreq' 0 0)
+* steps from -0.5 to 0.4
+*vin inp inm dc 0 pwl(0 -0.5 0.2m -0.5 0.201m -0.4 0.4m -0.4 0.401m -0.3 0.6m -0.3
+*+  0.601m -0.2 0.8m -0.2  0.801m -0.1 1.0m -0.1  1.001m 0.0 1.2m 0.0  1.201m 0.1 1.4m 0.1 
+*+  1.401m 0.2 1.6m 0.2 1.601m 0.3 1.8m 0.3 1.801m 0.4 2m 0.4)
+
+** clock and constant logic levels
+* PULSE(V1 V2 TD TR TF PW PER)
+vclk aclk 0 dc 0 pulse(0 1 0.1u 2n 2n '1/clkfreq/2' '1/clkfreq')
+
+* digital one
+* digital zero
+vone aone 0 dc 1
+vzero azero 0 dc 0
+abridge1 [aone azero] [done dzero] adc_buff
+.model adc_buff adc_bridge(in_low = 0.5 in_high = 0.5)
+
+* digital clock
+abridge2 [aclk] [dclk] adc_buff
+.model adc_buff adc_bridge(in_low = 0.5 in_high = 0.5)
+
+****** delta-sigma converter****************************************************************
+* modulator
+* inp inm: analog in + -
+* dclk digital clock in
+* dv, dvb: modulator non-inverting/inverting out
+Xmod inp inm dclk dv dvb mod1
+* sinc filter, decimator
+* dlout1 ..dlout10: converter 10 bit digital out
+xsinc dv dvb dclk  dlout1 dlout2 dlout3 dlout4 dlout5 dlout6 dlout7 dlout8 dlout9 dlout10 sinc1
+********************************************************************************************
+
+** DACs for measuring and plotting
+* converter output
+Xdac_latch dlout1 dlout2 dlout3 dlout4 dlout5 dlout6 dlout7 dlout8 dlout9 dlout10 adaclout dac10 
+* counter inside of sinc filter
+Xdac_counter xsinc.dout1 xsinc.dout2 xsinc.dout3 xsinc.dout4 xsinc.dout5
++ xsinc.dout6 xsinc.dout7 xsinc.dout8 xsinc.dout9 xsinc.dout10 adaccout dac10
+
+* load modulator mod1 subcircuit
+.include mod1-ct.cir
+
+* load counter, d-latch and 10 bit DAC
+.include count-latch-dac.cir
+
+** sinc filter 1st order subcircuit
+.subckt sinc1 din dinb dclk dlout1 dlout2 dlout3 dlout4 dlout5 dlout6 dlout7 dlout8 dlout9 dlout10
+XCounter din dinb dclk ddivndel2 dout1 dout2 dout3 dout4 dout5 dout6 dout7 dout8 dout9 dout10 count10
+Xlatch dout1 dout2 dout3 dout4 dout5 dout6 dout7 dout8 dout9 dout10
++ dlout1 dlout2 dlout3 dlout4 dlout5 dlout6 dlout7 dlout8 dlout9 dlout10 ddivndel1
++ latch10
+
+* digital divider dclk/samples
+adivn dclk ddivn divider
+.model divider d_fdiv(div_factor = 'samples' high_cycles = 1
++ i_count = 0 rise_delay = 1e-9 fall_delay = 1e-9)
+
+* clock delays
+adelay ddivn ddivndel1 buff1 ; set latch
+adelay2 ddivndel1 ddivndel2 buff1 ; reset counter
+.model buff1 d_buffer(rise_delay = '1/clkfreq/8' fall_delay = '1/clkfreq/8'
++ input_load = 0.5e-12)
+
+.ends sinc1
+
+** for plotting
+abridge22 [dclk xsinc.ddivndel1 xsinc.ddivndel2 dv] [acclk acset acres acin] dac1
+.model dac1 dac_bridge(out_low = 0 out_high = 1 out_undef = 0.5
++ input_load = 5.0e-12 t_rise = 1e-9
++ t_fall = 1e-9)
+
+
+.control
+save inp inm adaclout adaccout ; save memory space
+tran 0.1u $&simtime
+* analog out, scaled 'manually'; sinc filter counter; analog differential in
+plot 4.1*(adaclout-0.486) adaccout v(inp)-v(inm) ylimit -0.6 0.6
+* modulator dig out
+* eprint dv > digi1.txt
+* 
+*eprint dlout1 dlout2 dlout3 dlout4 dlout5 dlout6 dlout7 dlout8 dlout9 dlout10 
+*+ xsinc.dout1 xsinc.dout2 xsinc.dout3 xsinc.dout4 xsinc.dout5
+*+ xsinc.dout6 xsinc.dout7 xsinc.dout8 xsinc.dout9 xsinc.dout10 > digi4b.txt
+.endc
+
+.end

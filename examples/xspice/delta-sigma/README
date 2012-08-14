@@ -1,0 +1,25 @@
+A simple delta sigma converter using XSPICE
+according to 
+Schreier, Temes: Understanding Delta-Sigma Data Converters, 2005
+Fig. 2.13, p. 31; Fig. 2.27, p.58
+
+
+delta-sigma-1.cir
+converter complete, tested against sine input
+
+mod1-ct.cir
+first order modulator
+consists of analog continuous time integrator and
+digitally latched comparator
+
+count-latch-dac.cir
+contains subcircuits of 
+10 bit digital latch
+10 bit counter, non-revolving, saturating
+simple 10 bit DAC with analog B source
+
+mod1-ct-test.cir
+test of modulator with sine input, shows noise shaping 20dB/decade
+
+counter-test.cir
+simple test with reset
