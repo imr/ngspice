@@ -54,6 +54,7 @@ com_shell(wordlist *wl)
     if (wl) {
         com = wl_flatten(wl);
         system(com);
+        tfree(com);
     } else
         system(shell);
 #endif
