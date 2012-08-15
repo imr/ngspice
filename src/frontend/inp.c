@@ -31,26 +31,26 @@ Author: 1985 Wayne A. Christopher
 #include "com_let.h"
 
 #ifdef XSPICE
-/* include new stuff */
 #include "ngspice/ipctiein.h"
 #include "ngspice/enh.h"
-/* */
 #endif
 
 #include "numparam/numpaif.h"
 
-#define line_free(line,flag)	{ line_free_x(line,flag); line = NULL; }
 
-/* static declarations */
-static char * upper(register char *string);
+#define line_free(line, flag)   { line_free_x(line, flag); line = NULL; }
+
+static char *upper(register char *string);
 static bool doedit(char *filename);
 static struct line *com_options = NULL;
 
-void line_free_x(struct line * deck, bool recurse);
+void line_free_x(struct line *deck, bool recurse);
+
 
 #ifdef HAS_WINDOWS
-void SetAnalyse( char * Analyse, int Percent);
+void SetAnalyse(char *Analyse, int Percent);
 #endif
+
 
 /* Do a listing. Use is listing [expanded] [logical] [physical] [deck] */
 void
@@ -63,7 +63,7 @@ com_listing(wordlist *wl)
     if (ft_curckt) {  /* if there is a current circuit . . . .  */
         while (wl) {
             s = wl->wl_word;
-            if ( strcmp( s, "param" ) == 0 ) {
+            if (strcmp(s, "param") == 0) {
                 do_param_listing = TRUE;
             } else {
                 switch (*s) {
@@ -84,25 +84,27 @@ com_listing(wordlist *wl)
                     expand = TRUE;
                     break;
                 default:
-                    fprintf(cp_err,
-                            "Error: bad listing type %s\n", s);
+                    fprintf(cp_err, "Error: bad listing type %s\n", s);
                     return; /* SJB - don't go on after an error */
                 }
             }
             wl = wl->wl_next;
         }
-        if ( do_param_listing ) {
+
+        if (do_param_listing) {
             nupa_list_params(cp_out);
         } else {
             if (type != LS_DECK)
                 fprintf(cp_out, "\t%s\n\n", ft_curckt->ci_name);
-            inp_list(cp_out, expand ? ft_curckt->ci_deck :
-                     ft_curckt->ci_origdeck, ft_curckt->ci_options,
-                     type);
+            inp_list(cp_out,
+                     expand ? ft_curckt->ci_deck : ft_curckt->ci_origdeck,
+                     ft_curckt->ci_options, type);
         }
-    } else
+    } else {
         fprintf(cp_err, "Error: no circuit loaded.\n");
+    }
 }
+
 
 /* returns inp_casefix() or NULL */
 static char *
@@ -132,122 +134,113 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
     bool renumber;
     bool useout = (file == cp_out);
     int i = 1;
+
     /* gtri - wbk - 03/07/91 - Don't use 'more' type output if ipc enabled */
 #ifdef XSPICE
-    if(g_ipc.enabled) {
+    if (g_ipc.enabled)
         useout = FALSE;
-    }
 #endif
     /* gtri - end - 03/07/91 */
 
     if (useout)
         out_init();
+
     renumber = cp_getvar("renumber", CP_BOOL, NULL);
+
     if (type == LS_LOGICAL) {
-top1:
+    top1:
         for (here = deck; here; here = here->li_next) {
             if (renumber)
                 here->li_linenum = i;
-            if (ciprefix(".end", here->li_line) &&
-                    !isalpha(here->li_line[4]))
+            if (ciprefix(".end", here->li_line) && !isalpha(here->li_line[4]))
                 continue;
             if (*here->li_line != '*') {
                 if (useout) {
                     sprintf(out_pbuf, "%6d : %s\n",
-                            here->li_linenum,
-                            upper(here->li_line));
+                            here->li_linenum, upper(here->li_line));
                     out_send(out_pbuf);
-                } else
+                } else {
                     fprintf(file, "%6d : %s\n",
-                            here->li_linenum,
-                            upper(here->li_line));
+                            here->li_linenum, upper(here->li_line));
+                }
                 if (here->li_error) {
-                    if (useout) {
+                    if (useout)
                         out_printf("%s\n", here->li_error);
-                    } else
+                    else
                         fprintf(file, "%s\n", here->li_error);
                 }
             }
             i++;
         }
+
         if (extras) {
             deck = extras;
             extras = NULL;
             goto top1;
         }
+
         if (useout) {
             sprintf(out_pbuf, "%6d : .end\n", i);
             out_send(out_pbuf);
-        } else
+        } else {
             fprintf(file, "%6d : .end\n", i);
+        }
+
     } else if ((type == LS_PHYSICAL) || (type == LS_DECK)) {
-top2:
+
+    top2:
         for (here = deck; here; here = here->li_next) {
             if ((here->li_actual == NULL) || (here == deck)) {
                 if (renumber)
                     here->li_linenum = i;
-                if (ciprefix(".end", here->li_line) &&
-                        !isalpha(here->li_line[4]))
+                if (ciprefix(".end", here->li_line) && !isalpha(here->li_line[4]))
                     continue;
                 if (type == LS_PHYSICAL) {
                     if (useout) {
                         sprintf(out_pbuf, "%6d : %s\n",
-                                here->li_linenum,
-                                upper(here->li_line));
+                                here->li_linenum, upper(here->li_line));
                         out_send(out_pbuf);
-                    } else
+                    } else {
                         fprintf(file, "%6d : %s\n",
-                                here->li_linenum,
-                                upper(here->li_line));
+                                here->li_linenum, upper(here->li_line));
+                    }
                 } else {
                     if (useout)
-                        out_printf("%s\n",
-                                   upper(here->li_line));
+                        out_printf("%s\n", upper(here->li_line));
                     else
-                        fprintf(file, "%s\n",
-                                upper(here->li_line));
+                        fprintf(file, "%s\n", upper(here->li_line));
                 }
                 if (here->li_error && (type == LS_PHYSICAL)) {
                     if (useout)
-                        out_printf("%s\n",
-                                   here->li_error);
+                        out_printf("%s\n", here->li_error);
                     else
-                        fprintf(file, "%s\n",
-                                here->li_error);
+                        fprintf(file, "%s\n", here->li_error);
                 }
             } else {
-                for (there = here->li_actual; there;
-                        there = there->li_next) {
+                for (there = here->li_actual; there; there = there->li_next) {
                     there->li_linenum = i++;
-                    if (ciprefix(".end", here->li_line) &&
-                            isalpha(here->li_line[4]))
+                    if (ciprefix(".end", here->li_line) && isalpha(here->li_line[4]))
                         continue;
                     if (type == LS_PHYSICAL) {
                         if (useout) {
                             sprintf(out_pbuf, "%6d : %s\n",
-                                    there->li_linenum,
-                                    upper(there->li_line));
+                                    there->li_linenum, upper(there->li_line));
                             out_send(out_pbuf);
-                        } else
+                        } else {
                             fprintf(file, "%6d : %s\n",
-                                    there->li_linenum,
-                                    upper(there->li_line));
+                                    there->li_linenum, upper(there->li_line));
+                        }
                     } else {
                         if (useout)
-                            out_printf("%s\n",
-                                       upper(there->li_line));
+                            out_printf("%s\n", upper(there->li_line));
                         else
-                            fprintf(file, "%s\n",
-                                    upper(there->li_line));
+                            fprintf(file, "%s\n", upper(there->li_line));
                     }
-                    if (there->li_error &&
-                            (type == LS_PHYSICAL)) {
+                    if (there->li_error && (type == LS_PHYSICAL)) {
                         if (useout)
-                            out_printf("%s\n",
-                                       there->li_error);
+                            out_printf("%s\n", there->li_error);
                         else
-                            fprintf(file, "%s\n",
-                                    there->li_error);
+                            fprintf(file, "%s\n", there->li_error);
                     }
                 }
                 here->li_linenum = i;
@@ -263,18 +256,20 @@ top2:
             if (useout) {
                 sprintf(out_pbuf, "%6d : .end\n", i);
                 out_send(out_pbuf);
-            } else
+            } else {
                 fprintf(file, "%6d : .end\n", i);
+            }
         } else {
             if (useout)
                 out_printf(".end\n");
             else
                 fprintf(file, ".end\n");
         }
-    } else
-        fprintf(cp_err, "inp_list: Internal Error: bad type %d\n",
-                type);
+    } else {
+        fprintf(cp_err, "inp_list: Internal Error: bad type %d\n", type);
+    }
 }
+
 
 /*
  * Free memory used by a line.
@@ -284,15 +279,15 @@ top2:
  * SJB - 22nd May 2001
  */
 void
-line_free_x(struct line * deck, bool recurse)
+line_free_x(struct line *deck, bool recurse)
 {
-    if(!deck)
+    if (!deck)
         return;
     tfree(deck->li_line);
     tfree(deck->li_error);
-    if(recurse)
-        line_free(deck->li_next,TRUE);
-    line_free(deck->li_actual,TRUE);
+    if (recurse)
+        line_free(deck->li_next, TRUE);
+    line_free(deck->li_actual, TRUE);
     tfree(deck);
 }
 
@@ -323,7 +318,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     double startTime, endTime;
 
     /* read in the deck from a file */
-    char *filename_dup = ( filename == NULL ) ? strdup(".") : strdup(filename);
+    char *filename_dup = (filename == NULL) ? strdup(".") : strdup(filename);
 
     startTime = seconds();
     inp_readall(fp, &deck, 0, ngdirname(filename_dup), comfile);
@@ -331,7 +326,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     tfree(filename_dup);
 
     /* if nothing came back from inp_readall, just close fp and return to caller */
-    if (!deck) {	/* MW. We must close fp always when returning */
+    if (!deck) {        /* MW. We must close fp always when returning */
         fclose(fp);
         return;
     }
@@ -378,39 +373,40 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 if (dd->li_line[0] == '*')
                     cp_evloop(dd->li_line + 2);
                 /* option line stored but not processed */
-                else if (ciprefix("option", dd->li_line)) {
+                else if (ciprefix("option", dd->li_line))
                     com_options = inp_getoptsc(dd->li_line, com_options);
-                } else
+                else
                     cp_evloop(dd->li_line);
             }
         }
         /* free the control deck */
-        line_free(deck,TRUE);
+        line_free(deck, TRUE);
         /*         printf("Command deck freed\n"); */
-    } /* end if(comfile) */
+    } /* end if (comfile) */
 
     else {    /* must be regular deck . . . . */
         /* loop through deck and handle control cards */
         for (dd = deck->li_next; dd; dd = ld->li_next) {
             /* get temp from deck */
-            if ( ciprefix(".temp", dd->li_line) ) {
+            if (ciprefix(".temp", dd->li_line)) {
                 s = dd->li_line + 5;
-                while ( isspace(*s) ) s++;
-                if ( temperature != NULL ) {
+                while (isspace(*s))
+                    s++;
+                if (temperature)
                     txfree(temperature);
-                }
                 temperature = strdup(s);
             }
             /* Ignore comment lines, but not lines begining with '*#',
                but remove them, if they are in a .control ... .endc section */
             s = dd->li_line;
-            while(isspace(*s)) s++;
-            if ( (*s == '*') && ( (s != dd->li_line) || (s[1] != '#'))) {
+            while(isspace(*s))
+                s++;
+            if ((*s == '*') && ((s != dd->li_line) || (s[1] != '#'))) {
                 if (commands) {
                     /* Remove comment lines in control sections, so they  don't
-                    * get considered as circuits.  */
+                     * get considered as circuits.  */
                     ld->li_next = dd->li_next;
-                    line_free(dd,FALSE);
+                    line_free(dd, FALSE);
                     continue;
                 }
                 ld = dd;
@@ -427,14 +423,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
             if (ciprefix(".control", dd->li_line)) {
                 ld->li_next = dd->li_next;
-                line_free(dd,FALSE); /* SJB - free this line's memory */
+                line_free(dd, FALSE); /* SJB - free this line's memory */
                 if (commands)
                     fprintf(cp_err, "Warning: redundant .control card\n");
                 else
                     commands = TRUE;
             } else if (ciprefix(".endc", dd->li_line)) {
                 ld->li_next = dd->li_next;
-                line_free(dd,FALSE); /* SJB - free this line's memory */
+                line_free(dd, FALSE); /* SJB - free this line's memory */
                 if (commands)
                     commands = FALSE;
                 else
@@ -452,55 +448,58 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 /* Look for set or unset numparams.
                    If either are found then we evaluate these lines immediately
                    so they take effect before netlist parsing */
-                while(isspace(*s)) s++;	/* step past any white space */
-                if(ciprefix("set", s)) {
-                    s+=3;
-                } else if(ciprefix("unset", s)) {
-                    s+=5;
-                }
-                if(s!=dd->li_line) {	/* one of the above must have matched */
-                    while(isspace(*s)) s++;	/* step past white space */
-                    if(ciprefix("numparams", s)) {
+                while(isspace(*s)) /* step past any white space */
+                    s++;
+                if (ciprefix("set", s))
+                    s += 3;
+                else if (ciprefix("unset", s))
+                    s += 5;
+                if (s != dd->li_line) { /* one of the above must have matched */
+                    while(isspace(*s))  /* step past white space */
+                        s++;
+                    if (ciprefix("numparams", s))
                         cp_evloop(wl->wl_word);
-                    }
                 }
                 ld->li_next = dd->li_next;
-                line_free(dd,FALSE);
+                line_free(dd, FALSE);
             } else if (!*dd->li_line) {
                 /* So blank lines in com files don't get considered as
                  * circuits.  */
                 ld->li_next = dd->li_next;
-                line_free(dd,FALSE);
+                line_free(dd, FALSE);
             } else {
                 /* lines .width, .four, .plot, .print,. save added to wl_first, removed from deck */
                 /* lines .op, .meas, .tf added to wl_first */
                 inp_casefix(s); /* s: first token from line */
                 inp_casefix(dd->li_line);
-                if (eq(s, ".width")
-                        || ciprefix(".four", s)
-                        || eq(s, ".plot")
-                        || eq(s, ".print")
-                        || eq(s, ".save")
-                        || eq(s, ".op")
-                        || ciprefix(".meas", s)
-                        || eq(s, ".tf")) {
+                if (eq(s, ".width") ||
+                    ciprefix(".four", s) ||
+                    eq(s, ".plot") ||
+                    eq(s, ".print") ||
+                    eq(s, ".save") ||
+                    eq(s, ".op") ||
+                    ciprefix(".meas", s) ||
+                    eq(s, ".tf"))
+                {
                     wl_append_word(&wl_first, &end, copy(dd->li_line));
 
                     if (!eq(s, ".op") && !eq(s, ".tf") && !ciprefix(".meas", s)) {
                         ld->li_next = dd->li_next;
-                        line_free(dd,FALSE);
-                    } else
+                        line_free(dd, FALSE);
+                    } else {
                         ld = dd;
-                } else
+                    }
+                } else {
                     ld = dd;
+                }
             }
-        }  /* end for(dd=deck->li_next . . . .  */
+        }  /* end for (dd = deck->li_next . . . .  */
 
         /* set temperature if defined to a preliminary variable which may be used
            in numparam evaluation */
-        if ( temperature != NULL ) {
+        if (temperature) {
             temperature_value = atof(temperature);
-            cp_vset("pretemp", CP_REAL, &temperature_value );
+            cp_vset("pretemp", CP_REAL, &temperature_value);
         }
         if (ft_ngdebug) {
             cp_getvar("pretemp", CP_REAL, &testemp);
@@ -511,12 +510,12 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
         if (deck->li_next) {
             fprintf(cp_out, "\nCircuit: %s\n\n", tt);
 #ifdef HAS_WINDOWS
-            SetAnalyse( "Prepare Deck", 0);
+            SetAnalyse("Prepare Deck", 0);
 #endif
             /* Now expand subcircuit macros and substitute numparams.*/
             if (!cp_getvar("nosubckt", CP_BOOL, NULL))
-                if( (deck->li_next = inp_subcktexpand(deck->li_next)) == NULL ) {
-                    line_free(realdeck,TRUE);
+                if ((deck->li_next = inp_subcktexpand(deck->li_next)) == NULL) {
+                    line_free(realdeck, TRUE);
                     line_free(deck->li_actual, TRUE);
                     return;
                 }
@@ -525,10 +524,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 #ifdef XSPICE
             /* Translate all SPICE 2G6 polynomial type sources */
             deck->li_next = ENHtranslate_poly(deck->li_next);
-
 #endif
 
-            line_free(deck->li_actual,FALSE);
+            line_free(deck->li_actual, FALSE);
             deck->li_actual = realdeck;
 
             /* print out the expanded deck into debug-out2.txt */
@@ -537,28 +535,27 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 struct line *tmp_ptr1 = NULL;
                 /*debug: print into file*/
                 fdo = fopen("debug-out2.txt", "w");
-                for(tmp_ptr1 = deck; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
+                for (tmp_ptr1 = deck; tmp_ptr1; tmp_ptr1 = tmp_ptr1->li_next)
                     fprintf(fdo, "%s\n", tmp_ptr1->li_line);
-                ;
                 (void) fclose(fdo);
             }
-            for(dd = deck; dd != NULL; dd = dd->li_next) {
+            for (dd = deck; dd; dd = dd->li_next) {
                 /* get csparams and create vectors */
-                if ( ciprefix(".csparam", dd->li_line) ) {
+                if (ciprefix(".csparam", dd->li_line)) {
                     wordlist *wlist = NULL;
                     wordlist *wl = NULL;
                     char *cstoken[3];
                     int i;
                     s = dd->li_line;
-                    *s='*';
+                    *s = '*';
                     s = dd->li_line + 8;
-                    while ( isspace(*s) ) s++;
-                    cstoken[0]=gettok_char(&s, '=', FALSE, FALSE);
-                    cstoken[1]=gettok_char(&s, '=', TRUE, FALSE);
-                    cstoken[2]=gettok(&s);
-                    for (i=0; i<3;i++) {
+                    while (isspace(*s))
+                        s++;
+                    cstoken[0] = gettok_char(&s, '=', FALSE, FALSE);
+                    cstoken[1] = gettok_char(&s, '=', TRUE, FALSE);
+                    cstoken[2] = gettok(&s);
+                    for (i = 0; i < 3; i++)
                         wl_append_word(&wlist, &wl, cstoken[i]);
-                    }
                     com_let(wlist);
                     wl_free(wlist);
                 }
@@ -569,16 +566,17 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 options = com_options;
             else if (options && com_options) {
                 /* move to end of options
-                    struct line* tmp_options = options;
-                    while (tmp_options) {
-                       if (!tmp_options->li_next) break;
-                       tmp_options = tmp_options->li_next;
-                    }
-                    tmp_options->li_next = com_options;*/
+                   struct line *tmp_options = options;
+                   while (tmp_options) {
+                   if (!tmp_options->li_next) break;
+                   tmp_options = tmp_options->li_next;
+                   }
+                   tmp_options->li_next = com_options;*/
                 /* move to end of com_options */
-                struct line* tmp_options = com_options;
+                struct line *tmp_options = com_options;
                 while (tmp_options) {
-                    if (!tmp_options->li_next) break;
+                    if (!tmp_options->li_next)
+                        break;
                     tmp_options = tmp_options->li_next;
                 }
                 tmp_options->li_next = options;
@@ -599,14 +597,15 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
         for (dd = deck; dd; dd = dd->li_next) {
             /* all parameter lines should be sequentially ordered and placed at
-             beginning of deck */
-            if ( ciprefix( ".param", dd->li_line ) ) {
+               beginning of deck */
+            if (ciprefix(".param", dd->li_line)) {
                 ft_curckt->ci_param = dd;
                 /* find end of .param statements */
-                while ( ciprefix( ".param", dd->li_line ) ) {
+                while (ciprefix(".param", dd->li_line)) {
                     prev_param = dd;
                     dd = dd->li_next;
-                    if (dd == NULL) break; // no line after .param line
+                    if (dd == NULL)
+                        break; // no line after .param line
                 }
                 prev_card->li_next  = dd;
                 prev_param->li_next = NULL;
@@ -616,17 +615,21 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 }
             }
 
-            if ( ciprefix( ".meas", dd->li_line ) ) {
-                if ( cp_getvar( "autostop", CP_BOOL, NULL) ) {
-                    if ( strstr( dd->li_line, " max " ) || strstr( dd->li_line, " min " ) || strstr( dd->li_line, " avg " ) ||
-                            strstr( dd->li_line, " rms " ) || strstr( dd->li_line, " integ " ) ) {
-                        printf( "Warning: .OPTION AUTOSTOP will not be effective because one of 'max|min|avg|rms|integ' is used in .meas\n" );
-                        printf( "         AUTOSTOP being disabled...\n" );
-                        cp_remvar( "autostop" );
+            if (ciprefix(".meas", dd->li_line)) {
+                if (cp_getvar("autostop", CP_BOOL, NULL)) {
+                    if (strstr(dd->li_line, " max ") ||
+                        strstr(dd->li_line, " min ") ||
+                        strstr(dd->li_line, " avg ") ||
+                        strstr(dd->li_line, " rms ") ||
+                        strstr(dd->li_line, " integ "))
+                    {
+                        printf("Warning: .OPTION AUTOSTOP will not be effective because one of 'max|min|avg|rms|integ' is used in .meas\n");
+                        printf("         AUTOSTOP being disabled...\n");
+                        cp_remvar("autostop");
                     }
                 }
 
-                if ( curr_meas == NULL ) {
+                if (curr_meas == NULL) {
                     curr_meas = ft_curckt->ci_meas = dd;
                 } else {
                     curr_meas->li_next = dd;
@@ -642,9 +645,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
         /* set temperature, if defined, to new value.
            cp_vset will set the variable "temp" and also set CKTtemp,
            so we can do it only here because the circuit has to be already there */
-        if ( temperature != NULL ) {
+        if (temperature) {
             temperature_value = atof(temperature);
-            cp_vset("temp", CP_REAL, &temperature_value );
+            cp_vset("temp", CP_REAL, &temperature_value);
             txfree(temperature);
         }
 
@@ -659,9 +662,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
             struct line *tmp_ptr1 = NULL;
             /*debug: print into file*/
             fdo = fopen("debug-out3.txt", "w");
-            for(tmp_ptr1 = deck; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
+            for (tmp_ptr1 = deck; tmp_ptr1; tmp_ptr1 = tmp_ptr1->li_next)
                 fprintf(fdo, "%s\n", tmp_ptr1->li_line);
-            ;
             (void) fclose(fdo);
         }
 
@@ -674,10 +676,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
     /* linked list dbs is used to store the "save" or .save data (defined in breakp2.c),
        breakpoint and iplot data, will be renewed in ft_dotsaves(). */
-    if(dbs) tfree(dbs);
+    if (dbs)
+        tfree(dbs);
 
     /*saj, to process save commands always, not just in batch mode
-      *(breaks encapsulation of frontend and parsing commands slightly)*/
+     *(breaks encapsulation of frontend and parsing commands slightly)*/
     ft_dotsaves();
 
     /* Now reset everything.  Pop the control stack, and fix up the IO
@@ -704,10 +707,10 @@ inp_dodeck(
     char *tt,              /*in: the title of the deck */
     wordlist *end,         /*in: all lines with .width, .plot, .print, .save, .op, .meas, .tf */
     bool reuse,            /*in: TRUE if called from runcoms2.c com_rset,
-                               FALSE if called from inp_spsource() */
+                             FALSE if called from inp_spsource() */
     struct line *options,  /*in: all .option lines from deck */
     char *filename         /*in: input file of deck */
-)
+    )
 {
     struct circ *ct;
     struct line *dd;
@@ -723,20 +726,18 @@ inp_dodeck(
 
     /* First throw away any old error messages there might be and fix
        the case of the lines.  */
-    for (dd = deck; dd; dd = dd->li_next) {
+    for (dd = deck; dd; dd = dd->li_next)
         if (dd->li_error) {
             tfree(dd->li_error);
             dd->li_error = NULL;
         }
-    }
+
     if (reuse) {
         ct = ft_curckt;
     } else {
         if (ft_curckt) {
-            ft_curckt->ci_devices = cp_kwswitch(CT_DEVNAMES,
-                                                NULL);
-            ft_curckt->ci_nodes = cp_kwswitch(CT_NODENAMES,
-                                              NULL);
+            ft_curckt->ci_devices = cp_kwswitch(CT_DEVNAMES, NULL);
+            ft_curckt->ci_nodes   = cp_kwswitch(CT_NODENAMES, NULL);
         }
         ft_curckt = ct = alloc(struct circ);
 
@@ -750,7 +751,7 @@ inp_dodeck(
        is needed because we need the scale info BEFORE building the circuit
        and seems there is no other way to do this. */
     if (!noparse) {
-        struct line* opt_beg = options;
+        struct line *opt_beg = options;
         for (; options; options = options->li_next) {
             for (s = options->li_line; *s && !isspace(*s); s++)
                 ;
@@ -776,15 +777,15 @@ inp_dodeck(
             case CP_NUM:
                 break;
             case CP_REAL:
-                if ( strcmp("scale",eev->va_name)==0 ) {
-                    cp_vset("scale", CP_REAL, &eev->va_real );
+                if (strcmp("scale", eev->va_name) == 0) {
+                    cp_vset("scale", CP_REAL, &eev->va_real);
                     printf("Scale set\n");
                 }
                 break;
             case CP_STRING:
                 break;
             default: {
-                fprintf(stderr, "ERROR: enumeration value `CP_LIST' not handled in inp_dodeck\nAborting...\n" );
+                fprintf(stderr, "ERROR: enumeration value `CP_LIST' not handled in inp_dodeck\nAborting...\n");
                 controlled_exit(EXIT_FAILURE);
             }
             } /* switch  . . . */
@@ -801,8 +802,9 @@ inp_dodeck(
         startTime = seconds();
         ckt = if_inpdeck(deck, &tab);
         ft_curckt->FTEstats->FTESTATnetParseTime = seconds() - startTime;
-    } else
+    } else {
         ckt = NULL;
+    }
 
     out_init();
 
@@ -829,7 +831,7 @@ inp_dodeck(
 #endif
             p = dd->li_error;
             do {
-                q =strchr(p, '\n');
+                q = strchr(p, '\n');
                 if (q)
                     *q = '\0';
 
@@ -843,8 +845,9 @@ inp_dodeck(
                     if (ft_stricterror)
                         controlled_exit(EXIT_BAD);
                 }
-                else
+                else {
                     out_printf("%s\n", p);
+                }
 
                 if (q)
                     *q++ = '\n';
@@ -856,25 +859,27 @@ inp_dodeck(
 
     /* Only print out netlist if brief is FALSE */
 
-    if(!cp_getvar( "brief", CP_BOOL, NULL )) {
+    if (!cp_getvar("brief", CP_BOOL, NULL)) {
         /* output deck */
-        out_printf( "\nProcessed Netlist\n" );
-        out_printf( "=================\n" );
+        out_printf("\nProcessed Netlist\n");
+        out_printf("=================\n");
         print_listing = 1;
         for (dd = deck; dd; dd = dd->li_next) {
-            if ( ciprefix(".prot", dd->li_line) ) print_listing = 0;
-            if ( print_listing == 1 ) out_printf( "%s\n", dd->li_line );
-            if ( ciprefix(".unprot", dd->li_line) ) print_listing = 1;
+            if (ciprefix(".prot", dd->li_line))
+                print_listing = 0;
+            if (print_listing == 1)
+                out_printf("%s\n", dd->li_line);
+            if (ciprefix(".unprot", dd->li_line))
+                print_listing = 1;
         }
-        out_printf( "\n" );
+        out_printf("\n");
     }
 
     /* Add this circuit to the circuit list. If reuse is TRUE then use
      * the ft_curckt structure.  */
     if (!reuse) {
         /* Be sure that ci_devices and ci_nodes are valid */
-        ft_curckt->ci_devices = cp_kwswitch(CT_DEVNAMES,
-                                            NULL);
+        ft_curckt->ci_devices = cp_kwswitch(CT_DEVNAMES, NULL);
         cp_kwswitch(CT_DEVNAMES, ft_curckt->ci_devices);
         ft_curckt->ci_nodes = cp_kwswitch(CT_NODENAMES, NULL);
         cp_kwswitch(CT_NODENAMES, ft_curckt->ci_nodes);
@@ -901,44 +906,40 @@ inp_dodeck(
 
     if (!noparse) {
         /*        for (; options; options = options->li_next) {
-                    for (s = options->li_line; *s && !isspace(*s); s++)
-                        ;
+                  for (s = options->li_line; *s && !isspace(*s); s++)
+                  ;
 
-                    ii = cp_interactive;
-                    cp_interactive = FALSE;
-                    wl = cp_lexer(s);
-                    cp_interactive = ii;
-                    if (!wl || !wl->wl_word || !*wl->wl_word)
-                        continue;
-                    if (eev)
-                        eev->va_next = cp_setparse(wl);
-                    else
-                        ct->ci_vars = eev = cp_setparse(wl);
-                    while (eev->va_next)
-                        eev = eev->va_next;
-                }
+                  ii = cp_interactive;
+                  cp_interactive = FALSE;
+                  wl = cp_lexer(s);
+                  cp_interactive = ii;
+                  if (!wl || !wl->wl_word || !*wl->wl_word)
+                  continue;
+                  if (eev)
+                  eev->va_next = cp_setparse(wl);
+                  else
+                  ct->ci_vars = eev = cp_setparse(wl);
+                  while (eev->va_next)
+                  eev = eev->va_next;
+                  }
         */
         for (eev = ct->ci_vars; eev; eev = eev->va_next) {
             bool one = TRUE;   /* FIXME, actually eev->va_bool should be TRUE anyway */
             switch (eev->va_type) {
             case CP_BOOL:
-                if_option(ct->ci_ckt, eev->va_name,
-                          eev->va_type, &one);
+                if_option(ct->ci_ckt, eev->va_name, eev->va_type, &one);
                 break;
             case CP_NUM:
-                if_option(ct->ci_ckt, eev->va_name,
-                          eev->va_type, &eev->va_num);
+                if_option(ct->ci_ckt, eev->va_name, eev->va_type, &eev->va_num);
                 break;
             case CP_REAL:
-                if_option(ct->ci_ckt, eev->va_name,
-                          eev->va_type, &eev->va_real);
+                if_option(ct->ci_ckt, eev->va_name, eev->va_type, &eev->va_real);
                 break;
             case CP_STRING:
-                if_option(ct->ci_ckt, eev->va_name,
-                          eev->va_type, eev->va_string);
+                if_option(ct->ci_ckt, eev->va_name, eev->va_type, eev->va_string);
                 break;
             default: {
-                fprintf(stderr, "ERROR: enumeration value `CP_LIST' not handled in inp_dodeck\nAborting...\n" );
+                fprintf(stderr, "ERROR: enumeration value `CP_LIST' not handled in inp_dodeck\nAborting...\n");
                 controlled_exit(EXIT_FAILURE);
             }
             } // switch  . . .
@@ -989,8 +990,7 @@ com_edit(wordlist *wl)
                 cp_interactive = inter;
                 return;
             }
-            inp_list(fp, ft_curckt->ci_deck, ft_curckt->ci_options,
-                     LS_DECK);
+            inp_list(fp, ft_curckt->ci_deck, ft_curckt->ci_options, LS_DECK);
             fprintf(cp_err,
                     "Warning: editing a temporary file -- "
                     "circuit not saved\n");
@@ -1017,7 +1017,7 @@ com_edit(wordlist *wl)
         inp_spsource(fp, FALSE, permfile ? filename : NULL);
 
         /* fclose(fp);  */
-        /*	MW. inp_spsource already closed fp */
+        /*      MW. inp_spsource already closed fp */
 
         if (ft_curckt && !ft_curckt->ci_filename)
             unlink(filename);
@@ -1035,6 +1035,7 @@ com_edit(wordlist *wl)
         com_run(NULL);
     }
 }
+
 
 static bool
 doedit(char *filename)
@@ -1055,6 +1056,7 @@ doedit(char *filename)
     return (system(buf) ? FALSE : TRUE);
 }
 
+
 void
 com_source(wordlist *wl)
 {
@@ -1068,6 +1070,7 @@ com_source(wordlist *wl)
 
     inter = cp_interactive;
     cp_interactive = FALSE;
+
     if (wl->wl_next) {
         /* There are several files -- put them into a temp file  */
         tempfile = smktemp("sp");
@@ -1090,8 +1093,10 @@ com_source(wordlist *wl)
             wl = wl->wl_next;
         }
         fseek(fp, 0L, SEEK_SET);
-    } else
+    } else {
         fp = inp_pathopen(wl->wl_word, "r");
+    }
+
     if (fp == NULL) {
         perror(wl->wl_word);
         cp_interactive = TRUE;
@@ -1099,15 +1104,16 @@ com_source(wordlist *wl)
     }
 
     /* Don't print the title if this is a spice initialisation file. */
-    if (ft_nutmeg || substring(INITSTR, owl->wl_word) || substring(ALT_INITSTR, owl->wl_word)) {
+    if (ft_nutmeg || substring(INITSTR, owl->wl_word) || substring(ALT_INITSTR, owl->wl_word))
         inp_spsource(fp, TRUE, tempfile ? NULL : wl->wl_word);
-    } else {
+    else
         inp_spsource(fp, FALSE, tempfile ? NULL : wl->wl_word);
-    }
+
     cp_interactive = inter;
     if (tempfile)
         unlink(tempfile);
 }
+
 
 void
 inp_source(char *file)
