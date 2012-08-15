@@ -27,80 +27,43 @@ extern char history_file[];
 
 extern IFsimulator SIMinfo;
 static void byemesg(void);
+static int  confirm_quit(void);
 
 
 void
 com_quit(wordlist *wl)
 {
-    struct circ *cc;
-    struct plot *pl;
-    int ncc = 0, npl = 0;
-    char buf[64];
+    int exitcode = EXIT_NORMAL;
 
     bool noask =
+        (wl  &&  wl->wl_word  &&  1 == sscanf(wl->wl_word, "%d", &exitcode)) ||
         (wl  &&  wl->wl_word  &&  cieq(wl->wl_word, "noask"))  ||
         cp_getvar("noaskquit", CP_BOOL, NULL);
 
-    int exitcode = 0;
-
+    /* update screen and reset terminal */
     gr_clean();
     cp_ccon(FALSE);
 
-    if(wl  &&  wl->wl_word  &&  1 == sscanf(wl->wl_word, "%d", &exitcode))
-        exit(exitcode);
-
     /* Make sure the guy really wants to quit. */
-    if (!ft_nutmeg && !noask) {
-        for (cc = ft_circuits; cc; cc = cc->ci_next)
-            if (cc->ci_inprogress)
-                ncc++;
-        for (pl = plot_list; pl; pl = pl->pl_next)
-            if (!pl->pl_written && pl->pl_dvecs)
-                npl++;
-        if (ncc || npl) {
-            fprintf(cp_out, "Warning: ");
-            if (ncc) {
-                fprintf(cp_out,
-                        "the following simulation%s still in progress:\n",
-                        (ncc > 1) ? "s are" : " is");
-                for (cc = ft_circuits; cc; cc = cc->ci_next)
-                    if (cc->ci_inprogress)
-                        fprintf(cp_out, "\t%s\n", cc->ci_name);
-            }
-            if (npl) {
-                if (ncc)
-                    fprintf(cp_out, "and ");
-                fprintf(cp_out,
-                        "the following plot%s been saved:\n",
-                        (npl > 1) ? "s haven't" : " hasn't");
-                for (pl = plot_list; pl; pl = pl->pl_next)
-                    if (!pl->pl_written && pl->pl_dvecs)
-                        fprintf(cp_out, "%s\t%s, %s\n",
-                                pl->pl_typename, pl->pl_title, pl->pl_name);
-            }
+    if (!ft_nutmeg)
+        if(!noask && !confirm_quit())
+            return;
 
-            fprintf(cp_out, "\nAre you sure you want to quit (yes)? ");
-            (void) fflush(cp_out);
-
-            if (!fgets(buf, sizeof(buf), stdin)) {
-                clearerr(stdin);
-                *buf = 'y';
-            }
-
-            if (!((*buf == 'y') || (*buf == 'Y') || (*buf == '\n')))
-                return;
+    /* start to clean up the mess */
 
 #ifdef EXPERIMENTAL_CODE
-            /* Destroy CKT when quit. Add by Gong Ding, gdiso@ustc.edu */
-            for (cc = ft_circuits; cc; cc = cc->ci_next)
-                if(SIMinfo.deleteCircuit)
-                    SIMinfo.deleteCircuit(cc->ci_ckt);
-#endif
-        }
+    /* Destroy CKT when quit. Add by Gong Ding, gdiso@ustc.edu */
+    if (!ft_nutmeg) {
+        struct circ *cc;
+        for (cc = ft_circuits; cc; cc = cc->ci_next)
+            if(SIMinfo.deleteCircuit)
+                SIMinfo.deleteCircuit(cc->ci_ckt);
     }
+#endif
 
+    /* then go away */
     byemesg();
-    exit(EXIT_NORMAL);
+    exit(exitcode);
 }
 
 
@@ -274,4 +237,59 @@ byemesg(void)
 #endif
 
     printf("%s-%s done\n", ft_sim->simulator, ft_sim->version);
+}
+
+
+static int
+confirm_quit(void)
+{
+    struct circ *cc;
+    struct plot *pl;
+    int ncc = 0, npl = 0;
+    char buf[64];
+
+    for (cc = ft_circuits; cc; cc = cc->ci_next)
+        if (cc->ci_inprogress)
+            ncc++;
+
+    for (pl = plot_list; pl; pl = pl->pl_next)
+        if (!pl->pl_written && pl->pl_dvecs)
+            npl++;
+
+    if (!ncc && !npl)
+        return 1;
+
+    fprintf(cp_out, "Warning: ");
+
+    if (ncc) {
+        fprintf(cp_out,
+                "the following simulation%s still in progress:\n",
+                (ncc > 1) ? "s are" : " is");
+        for (cc = ft_circuits; cc; cc = cc->ci_next)
+            if (cc->ci_inprogress)
+                fprintf(cp_out, "\t%s\n", cc->ci_name);
+    }
+
+    if (ncc && npl)
+        fprintf(cp_out, "and ");
+
+    if (npl) {
+        fprintf(cp_out,
+                "the following plot%s been saved:\n",
+                (npl > 1) ? "s haven't" : " hasn't");
+        for (pl = plot_list; pl; pl = pl->pl_next)
+            if (!pl->pl_written && pl->pl_dvecs)
+                fprintf(cp_out, "%s\t%s, %s\n",
+                        pl->pl_typename, pl->pl_title, pl->pl_name);
+    }
+
+    fprintf(cp_out, "\nAre you sure you want to quit (yes)? ");
+    (void) fflush(cp_out);
+
+    if (!fgets(buf, sizeof(buf), stdin)) {
+        clearerr(stdin);
+        *buf = 'y';
+    }
+
+    return((*buf == 'y') || (*buf == 'Y') || (*buf == '\n'));
 }
