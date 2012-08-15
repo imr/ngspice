@@ -280,7 +280,9 @@ card         *current ) /* the card we are to parse                     */
 	    Otherwise use default info 	*/ 
 	if(next_token_type == MIF_PERCENT_TOK) {  /*  we found a %  */
  	   /* get the port type identifier and check it for validity */
-	   next_token = MIFget_token(&line,&next_token_type);
+	   if (next_token)
+	       tfree(next_token);
+	   next_token = MIFget_token(&line, &next_token_type);
 	   /* Note that MIFget_port_type eats the next token and advances the token pointer in line */
 	   MIFget_port_type(ckt,
 			   tab,
@@ -387,6 +389,8 @@ card         *current ) /* the card we are to parse                     */
                 return;
             }
             else  /* eat the [  */
+                if (next_token)
+                    tfree(next_token);
                 next_token = MIFget_token(&line,&next_token_type);
 
             /*------ get and process ports until ] is encountered ------*/
@@ -446,7 +450,9 @@ card         *current ) /* the card we are to parse                     */
 		We'll do that now, since when we enter the loop, we expect next_token
 		to hold the next unprocessed token.
 	    */
-	    next_token = MIFget_token(&line,&next_token_type);
+	    if (next_token)
+	        tfree(next_token);
+	    next_token = MIFget_token(&line, &next_token_type);
 
         }  /* ======  array connection processing   ====== */
 

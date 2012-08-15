@@ -999,6 +999,8 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
                 case '%':
                     bxx_printf(&buffer, "%%");
                     /* don't translate the port type identifier */
+                    if (name)
+                        tfree(name);
                     name = next_name;
                     next_name = MIFgettok(&s);
                     bxx_printf(&buffer, "%s ", name);
