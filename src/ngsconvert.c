@@ -33,9 +33,6 @@ struct circ *ft_curckt = NULL;
 
 char *cp_program = "sconvert";
 
-/* doesn't get used, but some unused routine in some file references it */
-char out_pbuf[BSIZE_SP];
-
 
 #define tfread(ptr, siz, nit, fp)   if (fread((ptr), (siz), \
                         (nit), (fp)) != (nit)) { \

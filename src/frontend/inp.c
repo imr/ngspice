@@ -156,9 +156,8 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
                 continue;
             if (*here->li_line != '*') {
                 if (useout) {
-                    sprintf(out_pbuf, "%6d : %s\n",
+                    out_printf("%6d : %s\n",
                             here->li_linenum, upper(here->li_line));
-                    out_send(out_pbuf);
                 } else {
                     fprintf(file, "%6d : %s\n",
                             here->li_linenum, upper(here->li_line));
@@ -180,8 +179,7 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
         }
 
         if (useout) {
-            sprintf(out_pbuf, "%6d : .end\n", i);
-            out_send(out_pbuf);
+            out_printf("%6d : .end\n", i);
         } else {
             fprintf(file, "%6d : .end\n", i);
         }
@@ -197,9 +195,8 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
                     continue;
                 if (type == LS_PHYSICAL) {
                     if (useout) {
-                        sprintf(out_pbuf, "%6d : %s\n",
+                        out_printf("%6d : %s\n",
                                 here->li_linenum, upper(here->li_line));
-                        out_send(out_pbuf);
                     } else {
                         fprintf(file, "%6d : %s\n",
                                 here->li_linenum, upper(here->li_line));
@@ -223,9 +220,8 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
                         continue;
                     if (type == LS_PHYSICAL) {
                         if (useout) {
-                            sprintf(out_pbuf, "%6d : %s\n",
+                            out_printf("%6d : %s\n",
                                     there->li_linenum, upper(there->li_line));
-                            out_send(out_pbuf);
                         } else {
                             fprintf(file, "%6d : %s\n",
                                     there->li_linenum, upper(there->li_line));
@@ -254,8 +250,7 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
         }
         if (type == LS_PHYSICAL) {
             if (useout) {
-                sprintf(out_pbuf, "%6d : .end\n", i);
-                out_send(out_pbuf);
+                out_printf("%6d : .end\n", i);
             } else {
                 fprintf(file, "%6d : .end\n", i);
             }

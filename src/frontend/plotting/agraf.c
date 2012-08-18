@@ -271,10 +271,7 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     if (j == 0)
         j = 1;
     for (v = vecs; v; v = v->v_link2) {
-	out_pbuf[0] = (char) v->v_linestyle;
-	out_pbuf[1] = '\0';
-/*        out_printf("%c = %-17s", (char) v->v_linestyle, v->v_name); */
-        out_printf("%s = %-17s", out_pbuf, v->v_name);
+        out_printf("%c = %-17s", (char) v->v_linestyle, v->v_name);
         if (!(++i % j) && v->v_link2) {
             out_send("\n         ");
             curline++;
@@ -297,23 +294,15 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
 	else
           x = xrange[0] + (xrange[1] - xrange[0]) * i / (maxx - 1);
         if (x < 0.0) {
-	    sprintf(out_pbuf, "%.3e ", x);
-	    out_send(out_pbuf);
-/*             out_printf("%.3e ", x); */
+            out_printf("%.3e ", x);
         } else {
-	    sprintf(out_pbuf, " %.3e ", x);
-	    out_send(out_pbuf);
-/*            out_printf(" %.3e ", x); */
+            out_printf(" %.3e ", x);
 	}
         if (!novalue) {
             if (values[i] < 0.0) {
-	        sprintf(out_pbuf, "%.3e ", values[i]);
-	        out_send(out_pbuf);
-/*                out_printf("%.3e ", values[i]); */
+                out_printf("%.3e ", values[i]);
             } else {
-	        sprintf(out_pbuf, " %.3e ", values[i]);
-	        out_send(out_pbuf);
-/*                out_printf(" %.3e ", values[i]); */
+                out_printf(" %.3e ", values[i]);
 	    }
         }
         cb = field[(i + 1) * omaxy];

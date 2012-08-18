@@ -317,8 +317,7 @@ pbreak:     /* New page. */
         lineno += 2;
 loop:
         while ((j < npoints) && (lineno < height)) {
-            sprintf(out_pbuf, "%d\t", j);
-            out_send(out_pbuf);
+            out_printf("%d\t", j);
             for (v = bv; (v && (v != lv)); v = v->v_link2) {
                 if (v->v_length <= j) {
                     if (isreal(v))
@@ -329,8 +328,7 @@ loop:
                     if (isreal(v)) 
                     {
                         printnum(numbuf,  v->v_realdata[j]);
-                        (void) sprintf(out_pbuf, "%s\t",numbuf);
-                        out_send(out_pbuf);
+                        out_printf("%s\t", numbuf);
                     }
                     else
                     {
@@ -339,15 +337,14 @@ loop:
                            imagpart(v->v_compdata[j]) == 0.0)
                         {
                                 printnum(numbuf,  realpart(v->v_compdata[j]));
-                                (void) sprintf(out_pbuf, "%s\t",numbuf);
+                                out_printf("%s\t", numbuf);
                         }
                         else
                         {
                             printnum(numbuf,  realpart(v->v_compdata[j]));
                             printnum(numbuf2, imagpart(v->v_compdata[j]));
-                            (void) sprintf(out_pbuf, "%s,\t%s\t",numbuf,numbuf2);
+                            out_printf("%s,\t%s\t", numbuf, numbuf2);
                         }
-                        out_send(out_pbuf);
                     }
                 }
             }

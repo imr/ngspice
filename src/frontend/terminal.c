@@ -51,10 +51,6 @@ extern int vasprintf(char **out, const char *fmt, va_list ap);
 #include "variable.h"
 #include "terminal.h"
 
-/* out_printf doesn't handle double arguments correctly, so we
-    sprintf into this buf and call out_send w/ it */
-char out_pbuf[8*BSIZE_SP];
-
 bool out_moremode = TRUE;
 bool out_isatty = TRUE;
 
@@ -265,12 +261,14 @@ out_printf(char *fmt, ...)
     out_send(tbuf);
     FREE(tbuf);
 #elif defined(HAVE_SNPRINTF) /* the second best */
+    static char out_pbuf[8*BSIZE_SP];
     va_list ap;
     va_start (ap, fmt);
     vsnprintf(out_pbuf, sizeof(out_pbuf), fmt, ap);
     va_end (ap);
     out_send(out_pbuf);
 #else /* guaranteed a bug for long messages */
+    static char out_pbuf[8*BSIZE_SP];
     va_list ap;
     va_start (ap, fmt);
     vsprintf(out_pbuf, fmt, ap);

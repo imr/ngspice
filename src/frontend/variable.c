@@ -919,9 +919,7 @@ cp_vprint(void)
             continue;
         v = vars[j].x_v;
         if (v->va_type == CP_BOOL) {
-            /* out_printf("%c %s\n", vars[j].x_char, v->va_name); */
-            sprintf(out_pbuf, "%c %s\n", vars[j].x_char, v->va_name);
-            out_send(out_pbuf);
+            out_printf("%c %s\n", vars[j].x_char, v->va_name);
         } else {
             out_printf("%c %s\t", vars[j].x_char, v->va_name);
             wl = vareval(v->va_name);

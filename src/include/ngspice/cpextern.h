@@ -116,7 +116,6 @@ extern void cp_init(void);
 
 /* output.c */
 
-extern char out_pbuf[];
 extern bool out_moremode;
 extern bool out_isatty;
 extern void out_init(void);
