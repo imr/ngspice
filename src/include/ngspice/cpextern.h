@@ -119,15 +119,13 @@ extern void cp_init(void);
 extern bool out_moremode;
 extern bool out_isatty;
 extern void out_init(void);
-#ifndef out_printf
-/* don't want to declare it if we have #define'ed it */
+
 #ifdef __GNUC__
 extern void out_printf(char *fmt, ...) __attribute__ ((format (__printf__, 1, 2)));
 #else
 extern void out_printf(char *fmt, ...);
 #endif
 
-#endif
 extern void out_send(char *string);
 
 /* quote.c */

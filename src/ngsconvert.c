@@ -435,9 +435,7 @@ void cp_usrvars(struct variable **v1, struct variable **v2) { *v1 = NULL; *v2 = 
 int cp_evloop(char *s) { NG_IGNORE(s); return (0); }
 void cp_ccon(bool o) { NG_IGNORE(o); }
 char*if_errstring(int c) { NG_IGNORE(c); return ("error"); }
-#ifndef out_printf
 void out_printf(char *fmt, ...) { NG_IGNORE(fmt); }
-#endif
 void out_send(char *string) { NG_IGNORE(string); }
 struct variable * cp_enqvar(char *word) { NG_IGNORE(word); return (NULL); }
 struct dvec *vec_get(const char *word) { NG_IGNORE(word); return (NULL); }
