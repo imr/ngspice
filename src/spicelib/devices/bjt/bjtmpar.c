@@ -430,6 +430,30 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->BJTnkf = value->rValue;
             mods->BJTnkfGiven = TRUE;
             break;
+        case BJT_MOD_TIS1:
+            mods->BJTtis1 = value->rValue;
+            mods->BJTtis1Given = TRUE;
+            break;
+        case BJT_MOD_TIS2:
+            mods->BJTtis2 = value->rValue;
+            mods->BJTtis2Given = TRUE;
+            break;
+        case BJT_MOD_TISE1:
+            mods->BJTtise1 = value->rValue;
+            mods->BJTtise1Given = TRUE;
+            break;
+        case BJT_MOD_TISE2:
+            mods->BJTtise2 = value->rValue;
+            mods->BJTtise2Given = TRUE;
+            break;
+        case BJT_MOD_TISC1:
+            mods->BJTtisc1 = value->rValue;
+            mods->BJTtisc1Given = TRUE;
+            break;
+        case BJT_MOD_TISC2:
+            mods->BJTtisc2 = value->rValue;
+            mods->BJTtisc2Given = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }

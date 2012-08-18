@@ -304,6 +304,24 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->BJTnkf = 1.0;
           } 
         }
+        if(!model->BJTtis1Given) {
+            model->BJTtis1 = 0.0;
+        }
+        if(!model->BJTtis2Given) {
+            model->BJTtis2 = 0.0;
+        }
+        if(!model->BJTtise1Given) {
+            model->BJTtise1 = 0.0;
+        }
+        if(!model->BJTtise2Given) {
+            model->BJTtise2 = 0.0;
+        }
+        if(!model->BJTtisc1Given) {
+            model->BJTtisc1 = 0.0;
+        }
+        if(!model->BJTtisc2Given) {
+            model->BJTtisc2 = 0.0;
+        }
 
 /*
  * COMPATABILITY WARNING!

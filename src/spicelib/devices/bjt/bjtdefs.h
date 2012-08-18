@@ -443,6 +443,12 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTf3;
     double BJTf6;
     double BJTf7;
+    double BJTtis1;
+    double BJTtis2;
+    double BJTtise1;
+    double BJTtise2;
+    double BJTtisc1;
+    double BJTtisc2;
 
     unsigned BJTsubsGiven : 1;
     unsigned BJTtnomGiven : 1;
@@ -543,6 +549,12 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTtns1Given : 1;
     unsigned BJTtns2Given : 1;
     unsigned BJTnkfGiven : 1;
+    unsigned BJTtis1Given : 1;
+    unsigned BJTtis2Given : 1;
+    unsigned BJTtise1Given : 1;
+    unsigned BJTtise2Given : 1;
+    unsigned BJTtisc1Given : 1;
+    unsigned BJTtisc2Given : 1;
 } BJTmodel;
 
 #ifndef NPN
@@ -673,7 +685,13 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
 #define BJT_MOD_TNS1 198
 #define BJT_MOD_TNS2 199
 #define BJT_MOD_SUBS 200
-#define BJT_MOD_NKF 100
+#define BJT_MOD_NKF 201
+#define BJT_MOD_TIS1 202
+#define BJT_MOD_TIS2 203
+#define BJT_MOD_TISE1 204
+#define BJT_MOD_TISE2 205
+#define BJT_MOD_TISC1 206
+#define BJT_MOD_TISC2 207
 
 /* device questions */
 #define BJT_QUEST_FT             201

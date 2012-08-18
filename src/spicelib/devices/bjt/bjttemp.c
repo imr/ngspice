@@ -156,21 +156,25 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
             here->BJTtjunctionExpSub = model->BJTexponentialSubstrate * (1+model->BJTtmjs1*dt+model->BJTtmjs2*dt*dt);
             here->BJTtemissionCoeffS = model->BJTemissionCoeffS * (1+model->BJTtns1*dt+model->BJTtns2*dt*dt);
 
-            vt = here->BJTtemp * CONSTKoverQ;
-            fact2 = here->BJTtemp/REFTEMP;
-            egfet = 1.16-(7.02e-4*here->BJTtemp*here->BJTtemp)/
-                    (here->BJTtemp+1108);
-            arg = -egfet/(2*CONSTboltz*here->BJTtemp)+
-                    1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
-            pbfact = -2*vt*(1.5*log(fact2)+CHARGE*arg);
+            if ((model->BJTtlev == 0) || (model->BJTtlev == 1)) {
+              vt = here->BJTtemp * CONSTKoverQ;
+              fact2 = here->BJTtemp/REFTEMP;
+              egfet = 1.16-(7.02e-4*here->BJTtemp*here->BJTtemp)/
+                      (here->BJTtemp+1108);
+              arg = -egfet/(2*CONSTboltz*here->BJTtemp)+
+                      1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
+              pbfact = -2*vt*(1.5*log(fact2)+CHARGE*arg);
 
-            ratlog = log(here->BJTtemp/model->BJTtnom);
-            ratio1 = here->BJTtemp/model->BJTtnom -1;
-            factlog = ratio1 * model->BJTenergyGap/vt +
-                    model->BJTtempExpIS*ratlog;
-            factor = exp(factlog);
-            here->BJTtSatCur = model->BJTsatCur * factor;
-            here->BJTtSubSatCur = model->BJTsubSatCur * factor;
+              ratlog = log(here->BJTtemp/model->BJTtnom);
+              ratio1 = here->BJTtemp/model->BJTtnom -1;
+              factlog = ratio1 * model->BJTenergyGap/vt +
+                      model->BJTtempExpIS*ratlog;
+              factor = exp(factlog);
+              here->BJTtSatCur = model->BJTsatCur * factor;
+              here->BJTtSubSatCur = model->BJTsubSatCur * factor;
+            } else if (model->BJTtlev == 3) {
+              here->BJTtSatCur = pow(model->BJTsatCur,(1+model->BJTtis1*dt+model->BJTtis2*dt*dt));
+            }
 
             if (model->BJTtlev == 0) {
                 bfactor = exp(ratlog*model->BJTbetaExp);
@@ -186,10 +190,15 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
             else
                 here->BJTtBetaR = model->BJTbetaR * bfactor;
 
-            here->BJTtBEleakCur = model->BJTleakBEcurrent *
-                exp(factlog/model->BJTleakBEemissionCoeff)/bfactor;
-            here->BJTtBCleakCur = model->BJTleakBCcurrent *
-                exp(factlog/model->BJTleakBCemissionCoeff)/bfactor;
+            if ((model->BJTtlev == 0) || (model->BJTtlev == 1)) {
+              here->BJTtBEleakCur = model->BJTleakBEcurrent *
+                  exp(factlog/model->BJTleakBEemissionCoeff)/bfactor;
+              here->BJTtBCleakCur = model->BJTleakBCcurrent *
+                  exp(factlog/model->BJTleakBCemissionCoeff)/bfactor;
+            } else if (model->BJTtlev == 3) {
+              here->BJTtBEleakCur = pow(model->BJTleakBEcurrent,(1+model->BJTtise1*dt+model->BJTtise2*dt*dt));
+              here->BJTtBCleakCur = pow(model->BJTleakBCcurrent,(1+model->BJTtisc1*dt+model->BJTtisc2*dt*dt));
+            }
 
             if (model->BJTtlevc == 0) {
                 pbo = (model->BJTpotentialBE-pbfact)/fact1;

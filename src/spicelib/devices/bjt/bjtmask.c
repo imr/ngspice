@@ -360,6 +360,24 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case BJT_MOD_NKF:
             value->rValue = here->BJTnkf;
             return(OK);
+        case BJT_MOD_TIS1:
+            value->rValue = here->BJTtis1;
+            return(OK);
+        case BJT_MOD_TIS2:
+            value->rValue = here->BJTtis2;
+            return(OK);
+        case BJT_MOD_TISE1:
+            value->rValue = here->BJTtise1;
+            return(OK);
+        case BJT_MOD_TISE2:
+            value->rValue = here->BJTtise2;
+            return(OK);
+        case BJT_MOD_TISC1:
+            value->rValue = here->BJTtisc1;
+            return(OK);
+        case BJT_MOD_TISC2:
+            value->rValue = here->BJTtisc2;
+            return(OK);
         default:
             return(E_BADPARM);
     }
