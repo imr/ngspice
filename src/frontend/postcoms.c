@@ -335,13 +335,11 @@ loop:
                     else
                     {
                     /* In case of a single frequency and have a real part avoids print imaginary part equals 0. */
-                        if(eq(v->v_name, "frequency"))
+                        if(eq(v->v_name, "frequency") &&
+                           imagpart(v->v_compdata[j]) == 0.0)
                         {
-                            if(imagpart(v->v_compdata[j])==0.0)
-                            {
                                 printnum(numbuf,  realpart(v->v_compdata[j]));
                                 (void) sprintf(out_pbuf, "%s\t",numbuf);
-                            }
                         }
                         else
                         {
