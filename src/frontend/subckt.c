@@ -1028,6 +1028,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             /* copy in the last token, which is the model name */
             if (name) {
                 bxx_printf(&buffer, "%s ", name);
+                tfree(name);
             }
             /* Set s to null string for compatibility with code */
             /* after switch statement                           */
