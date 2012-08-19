@@ -373,7 +373,11 @@ void term_home(void) {}
 void term_cleol(void) {}
 void tcap_init(void) {}
 
-void out_send(char *string) {fprintf(cp_out,string);}
+void
+out_send(char *string)
+{
+    fprintf(cp_out, "%s", string);
+}
 
 void
 out_printf(char *fmt, ...)
