@@ -250,33 +250,34 @@ out_send(char *string)
 /* Printf some stuff using more mode. */
 
 void
-out_printf(char *fmt, ...)
+out_vprintf(const char *fmt, va_list ap)
 {
 #if defined(HAVE_ASPRINTF) /* seems the best solution */
     char * tbuf;
-    va_list ap;
-    va_start (ap, fmt);
     vasprintf(&tbuf, fmt, ap);
-    va_end (ap);
     out_send(tbuf);
     FREE(tbuf);
 #elif defined(HAVE_SNPRINTF) /* the second best */
     static char out_pbuf[8*BSIZE_SP];
-    va_list ap;
-    va_start (ap, fmt);
     vsnprintf(out_pbuf, sizeof(out_pbuf), fmt, ap);
-    va_end (ap);
     out_send(out_pbuf);
 #else /* guaranteed a bug for long messages */
     static char out_pbuf[8*BSIZE_SP];
-    va_list ap;
-    va_start (ap, fmt);
     vsprintf(out_pbuf, fmt, ap);
-    va_end (ap);
     out_send(out_pbuf);
 #endif
-    return;
 }
+
+
+void
+out_printf(char *fmt, ...)
+{
+    va_list ap;
+    va_start(ap, fmt);
+    out_vprintf(fmt, ap);
+    va_end(ap);
+}
+
 
 #ifdef HAVE_TERMCAP
 static int
@@ -380,11 +381,17 @@ out_send(char *string)
 }
 
 void
+out_vprintf(const char *fmt, va_list ap)
+{
+    vfprintf(cp_out, fmt, ap);
+}
+
+void
 out_printf(char *fmt, ...)
 {
   va_list ap;
   va_start (ap, fmt);
-  vfprintf(cp_out, fmt, ap);
+  out_vprintf(fmt, ap);
   va_end (ap);
 }
 

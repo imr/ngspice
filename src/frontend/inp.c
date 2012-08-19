@@ -52,6 +52,30 @@ void SetAnalyse(char *Analyse, int Percent);
 #endif
 
 
+/*
+ * create an unique artificial *unusable* FILE ptr
+ *   meant to be used with Xprintf() only to eventually
+ *   redirect output to the `out_vprintf()' family
+ */
+
+static FILE *cp_more;
+static FILE *cp_more = (FILE*) &cp_more;
+
+static void
+Xprintf(FILE *fdst, const char *fmt, ...)
+{
+    va_list ap;
+    va_start(ap, fmt);
+
+    if (fdst == cp_more)
+        out_vprintf(fmt, ap);
+    else
+        vfprintf(fdst, fmt, ap);
+
+    va_end(ap);
+}
+
+
 /* Do a listing. Use is listing [expanded] [logical] [physical] [deck] */
 void
 com_listing(wordlist *wl)
@@ -142,8 +166,10 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
 #endif
     /* gtri - end - 03/07/91 */
 
-    if (useout)
+    if (useout) {
         out_init();
+        file = cp_more;
+    }
 
     renumber = cp_getvar("renumber", CP_BOOL, NULL);
 
@@ -155,19 +181,9 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
             if (ciprefix(".end", here->li_line) && !isalpha(here->li_line[4]))
                 continue;
             if (*here->li_line != '*') {
-                if (useout) {
-                    out_printf("%6d : %s\n",
-                            here->li_linenum, upper(here->li_line));
-                } else {
-                    fprintf(file, "%6d : %s\n",
-                            here->li_linenum, upper(here->li_line));
-                }
-                if (here->li_error) {
-                    if (useout)
-                        out_printf("%s\n", here->li_error);
-                    else
-                        fprintf(file, "%s\n", here->li_error);
-                }
+                Xprintf(file, "%6d : %s\n", here->li_linenum, upper(here->li_line));
+                if (here->li_error)
+                    Xprintf(file, "%s\n", here->li_error);
             }
             i++;
         }
@@ -178,11 +194,7 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
             goto top1;
         }
 
-        if (useout) {
-            out_printf("%6d : .end\n", i);
-        } else {
-            fprintf(file, "%6d : .end\n", i);
-        }
+        Xprintf(file, "%6d : .end\n", i);
 
     } else if ((type == LS_PHYSICAL) || (type == LS_DECK)) {
 
@@ -193,51 +205,25 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
                     here->li_linenum = i;
                 if (ciprefix(".end", here->li_line) && !isalpha(here->li_line[4]))
                     continue;
-                if (type == LS_PHYSICAL) {
-                    if (useout) {
-                        out_printf("%6d : %s\n",
-                                here->li_linenum, upper(here->li_line));
-                    } else {
-                        fprintf(file, "%6d : %s\n",
-                                here->li_linenum, upper(here->li_line));
-                    }
-                } else {
-                    if (useout)
-                        out_printf("%s\n", upper(here->li_line));
-                    else
-                        fprintf(file, "%s\n", upper(here->li_line));
-                }
-                if (here->li_error && (type == LS_PHYSICAL)) {
-                    if (useout)
-                        out_printf("%s\n", here->li_error);
-                    else
-                        fprintf(file, "%s\n", here->li_error);
-                }
+                if (type == LS_PHYSICAL)
+                    Xprintf(file, "%6d : %s\n",
+                            here->li_linenum, upper(here->li_line));
+                else
+                    Xprintf(file, "%s\n", upper(here->li_line));
+                if (here->li_error && (type == LS_PHYSICAL))
+                    Xprintf(file, "%s\n", here->li_error);
             } else {
                 for (there = here->li_actual; there; there = there->li_next) {
                     there->li_linenum = i++;
                     if (ciprefix(".end", here->li_line) && isalpha(here->li_line[4]))
                         continue;
-                    if (type == LS_PHYSICAL) {
-                        if (useout) {
-                            out_printf("%6d : %s\n",
-                                    there->li_linenum, upper(there->li_line));
-                        } else {
-                            fprintf(file, "%6d : %s\n",
-                                    there->li_linenum, upper(there->li_line));
-                        }
-                    } else {
-                        if (useout)
-                            out_printf("%s\n", upper(there->li_line));
-                        else
-                            fprintf(file, "%s\n", upper(there->li_line));
-                    }
-                    if (there->li_error && (type == LS_PHYSICAL)) {
-                        if (useout)
-                            out_printf("%s\n", there->li_error);
-                        else
-                            fprintf(file, "%s\n", there->li_error);
-                    }
+                    if (type == LS_PHYSICAL)
+                        Xprintf(file, "%6d : %s\n",
+                                there->li_linenum, upper(there->li_line));
+                    else
+                        Xprintf(file, "%s\n", upper(there->li_line));
+                    if (there->li_error && (type == LS_PHYSICAL))
+                        Xprintf(file, "%s\n", there->li_error);
                 }
                 here->li_linenum = i;
             }
@@ -248,18 +234,10 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
             extras = NULL;
             goto top2;
         }
-        if (type == LS_PHYSICAL) {
-            if (useout) {
-                out_printf("%6d : .end\n", i);
-            } else {
-                fprintf(file, "%6d : .end\n", i);
-            }
-        } else {
-            if (useout)
-                out_printf(".end\n");
-            else
-                fprintf(file, ".end\n");
-        }
+        if (type == LS_PHYSICAL)
+            Xprintf(file, "%6d : .end\n", i);
+        else
+            Xprintf(file, ".end\n");
     } else {
         fprintf(cp_err, "inp_list: Internal Error: bad type %d\n", type);
     }

@@ -14,6 +14,8 @@ Modified: 2000  AlansFixes
 #include "ngspice/wordlist.h"
 #include "ngspice/bool.h"
 
+#include <stdarg.h>
+
 struct ccom;
 
 /* com_alias.c */
@@ -126,6 +128,7 @@ extern void out_printf(char *fmt, ...) __attribute__ ((format (__printf__, 1, 2)
 extern void out_printf(char *fmt, ...);
 #endif
 
+extern void out_vprintf(const char *fmt, va_list ap);
 extern void out_send(char *string);
 
 /* quote.c */
