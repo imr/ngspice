@@ -18,6 +18,7 @@ AUTHORS
 MODIFICATIONS
 
     30 Sept 1991    Jeffrey P. Murray
+    19 Aug  2012    Holger Vogt
 
 SUMMARY
 
@@ -52,6 +53,10 @@ NON-STANDARD FEATURES
 
 #include "d_source.h"    /*    ...contains macros & type defns.
                                      for this model.  6/13/90 - JPM */
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 /*=== CONSTANTS ========================*/
@@ -61,7 +66,15 @@ NON-STANDARD FEATURES
 
 /*=== MACROS ===========================*/
 
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#define DIR_PATHSEP    "\\"
+#else
+#define DIR_PATHSEP    "/"
+#endif
 
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#endif
 
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
@@ -74,7 +87,16 @@ typedef struct {
                    source.in file.                                  */
 } Source_Table_Info_t;
 
+    double   *all_timepoints;   /* the storage array for the
+                                   timepoints, as read from file.
+                                   This will have size equal
+                                   to "depth"   */
 
+    char          **all_bits;   /* the storage array for the
+                                   output bit representations;
+                                   as read from file. This will have size equal
+                                   to width*depth, one short will hold a
+                                   12-state bit description.    */
 
 /* Type definition for each possible token returned. */
 typedef enum token_type_s {CNV_NO_TOK,CNV_STRING_TOK} Cnv_Token_Type_t;
@@ -452,7 +474,7 @@ double  *p_value )   /* OUT - The numerical value     */
 
 /*==============================================================================
 
-FUNCTION cm_source_mask_and_retrieve()
+FUNCTION cm_source_retrieve()
 
 AUTHORS
 
@@ -462,13 +484,11 @@ MODIFICATIONS
 
     16 Jul 1991     Jeffrey P. Murray
     30 Sep 1991     Jeffrey P. Murray
+    19 Aug 2012     H. Vogt
 
 SUMMARY
 
-    Masks off and retrieves a two-bit value from a short
-    integer word passed to the function, using an offset value.
-    This effectively handles retrieval of eight two-bit values
-    from a single short integer space in order to conserve memory.
+    Retrieves a bit value from a char character
 
 INTERFACES
 
@@ -491,26 +511,20 @@ NON-STANDARD FEATURES
 
 ==============================================================================*/
 
-/*=== Static CM_SOURCE_MASK_AND_RETRIEVE ROUTINE ===*/
+/*=== Static CM_SOURCE_RETRIEVE ROUTINE ===*/
 
 /**************************************************
-*      The following routine masks and retrieves  *
-*   the value passed to it by the out value       *
-*   by masking the appropriate bits in the        *
-*   base integer. The particular bit affected     *
-*   is determined by the bit_offset value.        *
+*      The following routine retrieves            *
+*   the value passed to it by the out value.      *
 *                                                 *
 *   Created 7/15/91               J.P.Murray      *
 **************************************************/
 
-static void cm_source_mask_and_retrieve(short base,int bit_offset,Digital_t *out)
+static void cm_source_retrieve(char val, Digital_t *out)
 {
 
 
-    int value;    /* the hexadecimal value of the masked bit  */
-
-    value = 0x000f & (base >> (bit_offset * 4));
-
+    int value = (int)val;
 
     switch (value) {
 
@@ -567,67 +581,6 @@ static void cm_source_mask_and_retrieve(short base,int bit_offset,Digital_t *out
 
 /*==============================================================================
 
-FUNCTION cm_source_mask_and_store()
-
-AUTHORS
-
-    15 Jul 1991     Jeffrey P. Murray
-
-MODIFICATIONS
-
-    16 Jul 1991     Jeffrey P. Murray
-    30 Sep 1991     Jeffrey P. Murray
-
-SUMMARY
-
-    Masks off and stores a two-bit value to a short
-    integer word passed to the function, using an offset value.
-    This effectively handles storage of eight two-bit values
-    to a single short integer space in order to conserve memory.
-
-INTERFACES
-
-    FILE                 ROUTINE CALLED
-
-    N/A                  N/A
-
-
-RETURNED VALUE
-
-    Returns updated *base value.
-
-GLOBAL VARIABLES
-
-    NONE
-
-NON-STANDARD FEATURES
-
-    NONE
-
-==============================================================================*/
-
-/*=== Static CM_SOURCE_MASK_AND_STORE ROUTINE ===*/
-
-/************************************************
-*      The following routine masks and stores   *
-*   the value passed to it by the out value     *
-*   by masking the appropriate bits in the      *
-*   base integer. The particular bit affected   *
-*   is determined by the ram_offset value.      *
-*                                               *
-*   Created 7/15/91               J.P.Murray    *
-************************************************/
-
-static void cm_source_mask_and_store(short *base,int bit_offset,int bit_value)
-{
-    *base &= (short)  ~ (0x000f << (bit_offset * 4));
-    *base |= (short) (bit_value << (bit_offset * 4));
-}
-
-
-
-
-/*==============================================================================
 
 FUNCTION cm_get_source_value()
 
@@ -639,10 +592,11 @@ MODIFICATIONS
 
     16 Jul 1991     Jeffrey P. Murray
     30 Sep 1991     Jeffrey P. Murray
+    19 Aug 2012     H. Vogt
 
 SUMMARY
 
-    Retrieves four-bit data from short integer array "source".
+    Retrieves a char per bit value from the array "all_bits".
 
 INTERFACES
 
@@ -668,43 +622,20 @@ NON-STANDARD FEATURES
 /*=== Static CM_GET_SOURCE_VALUE ROUTINE ===*/
 
 /************************************************
-*      The following routine retrieves four-bit *
-*   data from short integer array "source". The *
-*   integers are assumed to be at least two     *
-*   bytes each, so each will hold four four-    *
-*   bit values.                                 *
+*      The following routine retrieves a bit    *
+*      from all_bits and stores them in out     *
 *                                               *
-*   Created 7/15/91               J.P.Murray    *
+*      Created 8/19/12               H. Vogt    *
 ************************************************/
 
-static void cm_get_source_value(int word_width,int bit_number,int index,
-                         short *bits, Digital_t *out)
+static void cm_get_source_value(int row, int bit_number, char **all_bits, Digital_t *out)
 
 {
-    int       /*err,*/      /* error index value    */
-             int1,      /* temp storage variable    */
-        bit_index,      /* bits base address at which word bits will
-                           be found */
-       bit_offset;      /* offset from ram base address at which bit[0]
-                           of the required word can be found    */
+    char val;
 
-    short    base;      /* variable to hold current base integer for
-                           comparison purposes. */
+    val = all_bits[row][bit_number];
 
-
-
-    /* obtain offset value from index, word_width & bit_number */
-    int1 = index * word_width + bit_number;
-
-    bit_index = int1 >> 2;
-    bit_offset = int1 & 3;
-
-    /* retrieve entire base_address bits integer... */
-    base = bits[bit_index];
-
-    /* for each offset, mask off the bits and determine values */
-
-    cm_source_mask_and_retrieve(base,bit_offset,out);
+    cm_source_retrieve(val,out);
 
 }
 
@@ -722,6 +653,7 @@ MODIFICATIONS
 
     19 Jul 1991     Jeffrey P. Murray
     30 Sep 1991     Jeffrey P. Murray
+    19 Aug 2012     H. Vogt
 
 SUMMARY
 
@@ -737,7 +669,9 @@ INTERFACES
 
 RETURNED VALUE
 
-    Returns output bits stored in "bits" array.
+    Returns output bits stored in "all_bits" array,
+    time values in "all_timepoints" array,
+    return != 0 code if error.
 
 GLOBAL VARIABLES
 
@@ -761,16 +695,13 @@ NON-STANDARD FEATURES
 *   Created 7/15/91               J.P.Murray      *
 **************************************************/
 
-static int cm_read_source(FILE *source,short *bits,double *timepoints,
+static int cm_read_source(FILE *source,char **all_bits,double *all_timepoints,
                    Source_Table_Info_t *info)
 {
+    size_t      n;  /* loop index */
     int         i,  /* indexing variable    */
                 j,  /* indexing variable    */
-       num_tokens,  /* number of tokens in a given string    */
-        bit_index,  /* index to which bits[] integer we are accessing   */
-       bit_offset,  /* index to which bit within the current bits[]
-                       integer we are accessing   */
-             int1;  /* temporary holding variable   */
+       num_tokens;  /* number of tokens in a given string    */
 
     Cnv_Token_Type_t type;  /* variable for testing token type returned.    */
 
@@ -784,10 +715,8 @@ static int cm_read_source(FILE *source,short *bits,double *timepoints,
 
     double                number;   /* holding variable for timepoint values */
 
-    short              bit_value,   /* holding variable for value read from
+    char               bit_value;   /* holding variable for value read from
                                        source file which needs to be stored */
-                            base;   /* holding variable for existing
-                                       non-masked bits[] integer  */
 
     i = 0;
     s = temp;
@@ -814,11 +743,16 @@ static int cm_read_source(FILE *source,short *bits,double *timepoints,
 
                 /* If this number is incorrect, return with an error    */
                 if ( (info->width + 2) != num_tokens) {
-                    return 1;
+                    return 2;
                 }
 
                 /* reset s to beginning... */
                 s = base_address;
+
+                /* set storage space for bits in a row and set them to 0*/
+                all_bits[i] = (char*)malloc(sizeof(char) * info->width);
+                for (n = 0; n < (unsigned int)info->width; n++)
+                    all_bits[i][n] = 0;
 
                 /** Retrieve each token, analyze, and       **/
                 /** store the timepoint and bit information **/
@@ -831,7 +765,7 @@ static int cm_read_source(FILE *source,short *bits,double *timepoints,
                         /* convert to a floating point number... */
                         cnv_get_spice_value(token,&number);
 
-                        timepoints[i] = number;
+                        all_timepoints[i] = number;
 
 
                         /* provided this is not the first timepoint
@@ -841,8 +775,8 @@ static int cm_read_source(FILE *source,short *bits,double *timepoints,
                             /* if current timepoint value is not greater
                                than the previous value, then return with
                                an error message... */
-                            if ( timepoints[i] <= timepoints[i-1] ) {
-                                return 1;
+                            if ( all_timepoints[i] <= all_timepoints[i-1] ) {
+                                return 3;
                             }
                         }
 
@@ -867,24 +801,10 @@ static int cm_read_source(FILE *source,short *bits,double *timepoints,
 
                         /* if this bit was not recognized, return with an error  */
                         if (12 == bit_value) {
-                            return 1;
+                            return 4;
                         }
-                        else { /* need to store this value in the bits[] array */
-
-                            /* obtain offset value from word_number, word_width &
-                               bit_number */
-                            int1 = i * info->width + (j-1);
-                            bit_index = int1 >> 2;
-                            bit_offset = int1 & 3;
-
-                            /* retrieve entire base_address bits integer... */
-                            base = bits[bit_index];
-
-                            /* for each offset, mask off the bits and store values */
-                            cm_source_mask_and_store(&base,bit_offset,bit_value);
-
-                            /* store modified base value */
-                            bits[bit_index] = base;
+                        else { /* need to store this value in the all_bits[] array */
+                            all_bits[i][j-1] = bit_value;
                         }
                     }
                 }
@@ -912,6 +832,7 @@ MODIFICATIONS
 
      8 Aug 1991     Jeffrey P. Murray
     30 Sep 1991     Jeffrey P. Murray
+    19 Aug 2012     H. Vogt
 
 SUMMARY
 
@@ -945,34 +866,29 @@ NON-STANDARD FEATURES
 /*=== CM_D_SOURCE ROUTINE ==============*/
 
 /************************************************
-*      The following is the model for the       *
-*   digital source for the                      *
-*   ATESSE Version 2.0 system.                  *
+*      The following is the new model for       *
+*      the digital source                       *
 *                                               *
-*   Created 6/13/91               J.P.Murray    *
+*      Created 8/19/12            H. Vogt       *
 ************************************************/
 
 
 void cm_d_source(ARGS)
 {
     int                    i,   /* generic loop counter index */
-                         err,   /* integer for storage of error status  */
-                        test,   /* testing integer  */
-                       dummy;   /* temp holding variable  */
+                         err;   /* integer for storage of error status  */
 
-    short              *bits,   /* the storage array for the
+    char               *bits,   /* the storage array for the
                                    output bit representations...
-                                   this will have size equal to
-                                   (width * depth)/4, since one
-                                   short will hold four 12-state
-                                   bit descriptions.    */
+                                   this will have size equal to width,
+                                   since one short will hold a 12-state
+                                   bit description.    */
                    *bits_old;   /* the storage array for old bit values */
 
+    double        *timepoint,   /* the storage array for the
+                                   timepoints, a single point   */
+              *timepoint_old;   /* the storage  for the old timepoint */
 
-    double       *timepoints,   /* the storage array for the
-                                   timepoints...this will have size equal
-                                   to "depth"   */
-             *timepoints_old;   /* the storage array for the old timepoints */
     volatile double             /* enforce 64 bit precision, (equality comparison) */
                  test_double;   /* test variable for doubles    */
 
@@ -996,7 +912,7 @@ void cm_d_source(ARGS)
                               *s;   /* main string variable */
 
 
-    char *loading_error = "\n***ERROR***\nD_SOURCE: source.in file was not read successfully. \n";
+    char *loading_error = "\nERROR **\n D_SOURCE: source.in file was not read successfully. \n";
 
 
     /**** Setup required state variables ****/
@@ -1004,7 +920,24 @@ void cm_d_source(ARGS)
     if(INIT) {  /* initial pass */
 
         /*** open file and count the number of vectors in it ***/
-        source = fopen_with_path( PARAM(input_file), "r");
+        char* filename = PARAM(input_file);
+        source = fopen_with_path( filename, "r");
+
+        if (!source) {
+            char *lbuffer, *p;
+            lbuffer = getenv("NGSPICE_INPUT_DIR");
+            if (lbuffer && *lbuffer) {
+                p = (char*) malloc(strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(PARAM(input_file)) + 1);
+                sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, PARAM(input_file));
+                source = fopen(p, "r");
+                free(p);
+            }
+            if (!source) {
+                char msg[512];
+                snprintf(msg, sizeof(msg), "cannot open file %s", PARAM(input_file));
+                cm_message_send(msg);
+            }
+        }
 
         /* increment counter if not a comment until EOF reached... */
         i = 0;
@@ -1020,21 +953,22 @@ void cm_d_source(ARGS)
           }
         }
 
+        /*** allocate storage for **all_bits, & *all_timepoints ***/
+        all_timepoints = (double*)malloc(i * sizeof(double));
+        all_bits = (char**)malloc(i * sizeof(char*));
+
         /*** allocate storage for *index, *bits & *timepoints ***/
 
                           cm_event_alloc(0,sizeof(Source_Table_Info_t));
 
+        cm_event_alloc(1, PORT_SIZE(out) * (int) sizeof(char));
 
-        dummy = (PORT_SIZE(out) * i + 3) >> 2;
-
-        cm_event_alloc(1, dummy * (int) sizeof(short));
-
-        cm_event_alloc(2, i * (int) sizeof(double));
+        cm_event_alloc(2, (int) sizeof(double));
 
         /**** Get all pointers again (to avoid realloc problems) ****/
         info = info_old = (Source_Table_Info_t *) cm_event_get_ptr(0,0);
-        bits = bits_old = (short *) cm_event_get_ptr(1,0);
-        timepoints = timepoints_old = (double *) cm_event_get_ptr(2,0);
+        bits = bits_old = (char *) cm_event_get_ptr(1,0);
+        timepoint = timepoint_old = (double *) cm_event_get_ptr(2,0);
 
         /* Initialize info values... */
         info->index = 0;
@@ -1044,22 +978,21 @@ void cm_d_source(ARGS)
         info->width = PORT_SIZE(out);
 
         /* Initialize *bits & *timepoints to zero */
-        for (i=0; i<dummy; i++)
+        for (i=0; i<info->width; i++)
             bits[i] = 0;
-
         for (i=0; i<info->depth; i++)
-            timepoints[i] = 0;
+            all_timepoints[i] = 0.0;
 
         /* Send file pointer and the two array storage pointers */
         /* to "cm_read_source()". This will return after        */
         /* reading the contents of source.in, and if no         */
-        /* errors have occurred, the "*bits" and "*timepoints"  */
+        /* errors have occurred, the "*all_bits" and "*all_timepoints"  */
         /* vectors will be loaded and the width and depth       */
         /* values supplied.                                     */
 
         if (source) {
           rewind(source);
-          err = cm_read_source(source,bits,timepoints,info);
+          err = cm_read_source(source,all_bits,all_timepoints,info);
         } else {
           err=1;
         }
@@ -1068,8 +1001,22 @@ void cm_d_source(ARGS)
             cm_message_send(loading_error);
 
             /* Reset *bits & *timepoints to zero */
-            for (i=0; i<(test = (info->width*info->depth)/4); i++) bits[i] = 0;
-            for (i=0; i<info->depth; i++) timepoints[i] = 0;
+            for (i=0; i<info->width; i++) bits[i] = 0;
+            for (i=0; i<info->depth; i++) all_timepoints[i] = 0;
+            switch (err)
+            {
+            case 2:
+                cm_message_send(" d_source word length and number of columns in file differ.\n" );
+                break;
+            case 3:
+                cm_message_send(" Time values in first column have to increase monotonically.\n");
+                break;
+            case 4:
+                cm_message_send(" Unknown bit value.\n");
+                break;
+            default:
+                break;
+            }
         }
 
         /* close source file */
@@ -1088,42 +1035,35 @@ void cm_d_source(ARGS)
         info->width = info_old->width;
 
         /** Retrieve bits... **/
-        bits = (short *) cm_event_get_ptr(1,0);
-        bits_old = (short *) cm_event_get_ptr(1,1);
+        bits = (char *) cm_event_get_ptr(1,0);
+        bits_old = (char *) cm_event_get_ptr(1,1);
 
-        /* Set old values to new... */
-        dummy = (info->width * info->depth + 3) >> 2;
-
-
-        for (i=0; i<dummy; i++) bits[i] = bits_old[i];
-
-
+        for (i=0; i<PORT_SIZE(out); i++) bits[i] = bits_old[i];
 
         /** Retrieve timepoints... **/
-        timepoints = (double *) cm_event_get_ptr(2,0);
-        timepoints_old = (double *) cm_event_get_ptr(2,1);
+        timepoint = (double *) cm_event_get_ptr(2,0);
+        timepoint_old = (double *) cm_event_get_ptr(2,1);
 
         /* Set old values to new... */
-        for (i=0; i<info->depth; i++)
-            timepoints[i] = timepoints_old[i];
+        timepoint = timepoint_old;
     }
 
     /*** For the case of TIME==0.0, set special breakpoint ***/
 
     if ( 0.0 == TIME ) {
 
-        test_double = timepoints[info->index];
+        test_double = all_timepoints[info->index];
         if ( 0.0 == test_double && info->depth > 0 ) { /* Set DC value */
 
             /* reset current breakpoint */
-            test_double = timepoints[info->index];
+            test_double = all_timepoints[info->index];
             cm_event_queue( test_double );
 
             /* Output new values... */
             for (i=0; i<info->width; i++) {
 
                 /* retrieve output value */
-                cm_get_source_value(info->width,i,info->index,bits,&out);
+                cm_get_source_value(info->index, i, all_bits, &out);
 
                 OUTPUT_STATE(out[i]) = out.state;
                 OUTPUT_STRENGTH(out[i]) = out.strength;
@@ -1136,7 +1076,7 @@ void cm_d_source(ARGS)
             /* set next breakpoint as long as depth
                has not been exceeded    */
             if ( info->index < info->depth ) {
-                test_double = timepoints[info->index] - 1.0e-10;
+                test_double = all_timepoints[info->index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
 
@@ -1146,7 +1086,7 @@ void cm_d_source(ARGS)
             /* set next breakpoint as long as depth
                has not been exceeded    */
             if ( info->index < info->depth ) {
-                test_double = timepoints[info->index] - 1.0e-10;
+                test_double = all_timepoints[info->index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
             for(i=0; i<info->width; i++) {
@@ -1161,7 +1101,7 @@ void cm_d_source(ARGS)
          *** routine based on the last breakpoint's relationship ***
          *** to the current time value.                          ***/
 
-        test_double = timepoints[info->index] - 1.0e-10;
+        test_double = all_timepoints[info->index] - 1.0e-10;
 
         if ( TIME < test_double ) { /* Breakpoint has not occurred */
 
@@ -1171,7 +1111,7 @@ void cm_d_source(ARGS)
             }
 
             if ( info->index < info->depth ) {
-                test_double = timepoints[info->index] - 1.0e-10;
+                test_double = all_timepoints[info->index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
 
@@ -1181,14 +1121,14 @@ void cm_d_source(ARGS)
         if ( TIME == test_double ) { /* Breakpoint reached */
 
             /* reset current breakpoint */
-            test_double = timepoints[info->index] - 1.0e-10;
+            test_double = all_timepoints[info->index] - 1.0e-10;
             cm_event_queue( test_double );
 
             /* Output new values... */
             for (i=0; i<info->width; i++) {
 
                 /* retrieve output value */
-                cm_get_source_value(info->width,i,info->index,bits,&out);
+                cm_get_source_value(info->index, i , all_bits, &out);
 
                 OUTPUT_STATE(out[i]) = out.state;
                 OUTPUT_DELAY(out[i]) = 1.0e-10;
@@ -1201,7 +1141,7 @@ void cm_d_source(ARGS)
             /* set next breakpoint as long as depth
                has not been exceeded    */
             if ( info->index < info->depth ) {
-                test_double = timepoints[info->index] - 1.0e-10;
+                test_double = all_timepoints[info->index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
         }
