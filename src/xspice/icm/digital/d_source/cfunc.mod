@@ -8,17 +8,16 @@ Georgia Tech Research Corporation, Atlanta, Ga. 30332
 All Rights Reserved
 
 PROJECT A-8503-405
-               
 
-AUTHORS                      
+
+AUTHORS
 
     6 June 1991     Jeffrey P. Murray
 
 
-MODIFICATIONS   
+MODIFICATIONS
 
     30 Sept 1991    Jeffrey P. Murray
-                                   
 
 SUMMARY
 
@@ -26,22 +25,22 @@ SUMMARY
     functionally describe the <model_name> code model.
 
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
-    CMmacros.h           cm_message_send();                   
+    CMmacros.h           cm_message_send();
 
     CMevt.c              void *cm_event_alloc()
                          void *cm_event_get_ptr()
                          int  cm_event_queue()
-                         
+
 
 
 REFERENCED FILES
 
     Inputs from and outputs to ARGS structure.
-                     
+
 
 NON-STANDARD FEATURES
 
@@ -54,55 +53,50 @@ NON-STANDARD FEATURES
 #include "d_source.h"    /*    ...contains macros & type defns.
                                      for this model.  6/13/90 - JPM */
 
-                                      
 
 /*=== CONSTANTS ========================*/
 
 #define MAX_STRING_SIZE 200
 
 
-
 /*=== MACROS ===========================*/
 
 
 
-  
-/*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
+/*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
-typedef struct { 
+typedef struct {
     int index,  /* current index into source tables                 */
         width,  /* width of table...equal to size of out port */
-        depth;  /* depth of table...equal to size of                
-                   "timepoints" array, and to the total             
-                   number of vectors retrieved from the             
+        depth;  /* depth of table...equal to size of
+                   "timepoints" array, and to the total
+                   number of vectors retrieved from the
                    source.in file.                                  */
 } Source_Table_Info_t;
-
-
 
 
 
 /* Type definition for each possible token returned. */
 typedef enum token_type_s {CNV_NO_TOK,CNV_STRING_TOK} Cnv_Token_Type_t;
 
-    
-           
+
+
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 
 
 
-                   
+
 
 /*==============================================================================
 
 FUNCTION *CNVgettok()
 
-AUTHORS                      
+AUTHORS
 
     13 Jun 1991     Jeffrey P. Murray
 
-MODIFICATIONS   
+MODIFICATIONS
 
      8 Aug 1991     Jeffrey P. Murray
     30 Sep 1991     Jeffrey P. Murray
@@ -111,18 +105,18 @@ SUMMARY
 
     This function obtains the next token from an input stream.
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
     N/A                  N/A
 
 RETURNED VALUE
-    
+
     Returns a string value representing the next token.
 
 GLOBAL VARIABLES
-    
+
     NONE
 
 NON-STANDARD FEATURES
@@ -175,9 +169,9 @@ static char  *CNVgettok(char **s)
                          /* or a mess o' characters.            */
         i = 0;
         while( (**s != '\0') &&
-               (! ( isspace(**s) || (**s == '=') || 
-                    (**s == '(') || (**s == ')') || 
-                    (**s == ',') 
+               (! ( isspace(**s) || (**s == '=') ||
+                    (**s == '(') || (**s == ')') ||
+                    (**s == ',')
              ) )  ) {
             buf[i] = **s;
             i++;
@@ -209,11 +203,11 @@ static char  *CNVgettok(char **s)
 
 FUNCTION *CNVget_token()
 
-AUTHORS                      
+AUTHORS
 
     13 Jun 1991     Jeffrey P. Murray
 
-MODIFICATIONS   
+MODIFICATIONS
 
      8 Aug 1991     Jeffrey P. Murray
     30 Sep 1991     Jeffrey P. Murray
@@ -222,19 +216,19 @@ SUMMARY
 
     This function obtains the next token from an input stream.
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
     N/A                  N/A
 
 RETURNED VALUE
-    
-    Returns a string value representing the next token. Uses 
+
+    Returns a string value representing the next token. Uses
     *CNVget_tok.
 
 GLOBAL VARIABLES
-    
+
     NONE
 
 NON-STANDARD FEATURES
@@ -290,11 +284,11 @@ static char  *CNVget_token(char **s, Cnv_Token_Type_t *type)
 
 FUNCTION cnv_get_spice_value()
 
-AUTHORS                      
+AUTHORS
 
     ???             Bill Kuhn
 
-MODIFICATIONS   
+MODIFICATIONS
 
     30 Sep 1991     Jeffrey P. Murray
 
@@ -303,19 +297,19 @@ SUMMARY
     This function takes as input a string token from a SPICE
     deck and returns a floating point equivalent value.
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
     N/A                  N/A
 
 RETURNED VALUE
-    
+
     Returns the floating point value in pointer *p_value. Also
     returns an integer representing successful completion.
 
 GLOBAL VARIABLES
-    
+
     NONE
 
 NON-STANDARD FEATURES
@@ -454,17 +448,17 @@ double  *p_value )   /* OUT - The numerical value     */
 
 
 
-                                    
+
 
 /*==============================================================================
 
 FUNCTION cm_source_mask_and_retrieve()
 
-AUTHORS                      
+AUTHORS
 
     15 Jul 1991     Jeffrey P. Murray
 
-MODIFICATIONS   
+MODIFICATIONS
 
     16 Jul 1991     Jeffrey P. Murray
     30 Sep 1991     Jeffrey P. Murray
@@ -472,23 +466,23 @@ MODIFICATIONS
 SUMMARY
 
     Masks off and retrieves a two-bit value from a short
-    integer word passed to the function, using an offset value. 
-    This effectively handles retrieval of eight two-bit values 
+    integer word passed to the function, using an offset value.
+    This effectively handles retrieval of eight two-bit values
     from a single short integer space in order to conserve memory.
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
- 
+    FILE                 ROUTINE CALLED
+
     N/A                  N/A
 
 
 RETURNED VALUE
-    
+
     Returns a Digital_t value.
 
 GLOBAL VARIABLES
-    
+
     NONE
 
 NON-STANDARD FEATURES
@@ -511,7 +505,7 @@ NON-STANDARD FEATURES
 
 static void cm_source_mask_and_retrieve(short base,int bit_offset,Digital_t *out)
 {
-                                                              
+
 
     int value;    /* the hexadecimal value of the masked bit  */
 
@@ -575,11 +569,11 @@ static void cm_source_mask_and_retrieve(short base,int bit_offset,Digital_t *out
 
 FUNCTION cm_source_mask_and_store()
 
-AUTHORS                      
+AUTHORS
 
     15 Jul 1991     Jeffrey P. Murray
 
-MODIFICATIONS   
+MODIFICATIONS
 
     16 Jul 1991     Jeffrey P. Murray
     30 Sep 1991     Jeffrey P. Murray
@@ -587,23 +581,23 @@ MODIFICATIONS
 SUMMARY
 
     Masks off and stores a two-bit value to a short
-    integer word passed to the function, using an offset value. 
-    This effectively handles storage of eight two-bit values 
+    integer word passed to the function, using an offset value.
+    This effectively handles storage of eight two-bit values
     to a single short integer space in order to conserve memory.
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
- 
+    FILE                 ROUTINE CALLED
+
     N/A                  N/A
 
 
 RETURNED VALUE
-    
+
     Returns updated *base value.
 
 GLOBAL VARIABLES
-    
+
     NONE
 
 NON-STANDARD FEATURES
@@ -637,11 +631,11 @@ static void cm_source_mask_and_store(short *base,int bit_offset,int bit_value)
 
 FUNCTION cm_get_source_value()
 
-AUTHORS                      
+AUTHORS
 
     15 Jul 1991     Jeffrey P. Murray
 
-MODIFICATIONS   
+MODIFICATIONS
 
     16 Jul 1991     Jeffrey P. Murray
     30 Sep 1991     Jeffrey P. Murray
@@ -650,19 +644,19 @@ SUMMARY
 
     Retrieves four-bit data from short integer array "source".
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
- 
+    FILE                 ROUTINE CALLED
+
     N/A                  N/A
 
 
 RETURNED VALUE
-    
+
     Returns data via *out pointer.
 
 GLOBAL VARIABLES
-    
+
     NONE
 
 NON-STANDARD FEATURES
@@ -670,7 +664,7 @@ NON-STANDARD FEATURES
     NONE
 
 ==============================================================================*/
-             
+
 /*=== Static CM_GET_SOURCE_VALUE ROUTINE ===*/
 
 /************************************************
@@ -693,10 +687,10 @@ static void cm_get_source_value(int word_width,int bit_number,int index,
                            be found */
        bit_offset;      /* offset from ram base address at which bit[0]
                            of the required word can be found    */
-        
+
     short    base;      /* variable to hold current base integer for
                            comparison purposes. */
-                                        
+
 
 
     /* obtain offset value from index, word_width & bit_number */
@@ -707,7 +701,7 @@ static void cm_get_source_value(int word_width,int bit_number,int index,
 
     /* retrieve entire base_address bits integer... */
     base = bits[bit_index];
-                         
+
     /* for each offset, mask off the bits and determine values */
 
     cm_source_mask_and_retrieve(base,bit_offset,out);
@@ -720,11 +714,11 @@ static void cm_get_source_value(int word_width,int bit_number,int index,
 
 FUNCTION cm_read_source()
 
-AUTHORS                      
+AUTHORS
 
     15 Jul 1991     Jeffrey P. Murray
 
-MODIFICATIONS   
+MODIFICATIONS
 
     19 Jul 1991     Jeffrey P. Murray
     30 Sep 1991     Jeffrey P. Murray
@@ -734,19 +728,19 @@ SUMMARY
     This function reads the source file and stores the results
     for later output by the model.
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
- 
+    FILE                 ROUTINE CALLED
+
     N/A                  N/A
 
 
 RETURNED VALUE
-    
+
     Returns output bits stored in "bits" array.
 
 GLOBAL VARIABLES
-    
+
     NONE
 
 NON-STANDARD FEATURES
@@ -756,7 +750,7 @@ NON-STANDARD FEATURES
 ==============================================================================*/
 
 /*=== Static CM_READ_SOURCE ROUTINE ===*/
-                                     
+
 
 /**************************************************
 *      The following routine reads the file       *
@@ -774,43 +768,41 @@ static int cm_read_source(FILE *source,short *bits,double *timepoints,
                 j,  /* indexing variable    */
        num_tokens,  /* number of tokens in a given string    */
         bit_index,  /* index to which bits[] integer we are accessing   */
-       bit_offset,  /* index to which bit within the current bits[] 
+       bit_offset,  /* index to which bit within the current bits[]
                        integer we are accessing   */
              int1;  /* temporary holding variable   */
 
-
     Cnv_Token_Type_t type;  /* variable for testing token type returned.    */
-
 
     char   temp[MAX_STRING_SIZE],   /* holding string variable for testing
                                        input from source.in */
                               *s,   /* main string variable */
                    *base_address,   /* storage location for base address
-                                       of string.   */    
+                                       of string.   */
                           *token;   /* a particular token from the string   */
-   
 
-    double                number;   /* holding variable for timepoint values */                                             
-                                                 
+
+    double                number;   /* holding variable for timepoint values */
+
     short              bit_value,   /* holding variable for value read from
                                        source file which needs to be stored */
-                            base;   /* holding variable for existing 
+                            base;   /* holding variable for existing
                                        non-masked bits[] integer  */
 
-    i = 0;                                 
+    i = 0;
     s = temp;
     while ( fgets(s,MAX_STRING_SIZE,source) != NULL) {
 
         /* Test this string to see if it is whitespace... */
 
         base_address = s;
-        while(isspace(*s) || (*s == '*')) 
+        while(isspace(*s) || (*s == '*'))
               (s)++;
         if ( *s != '\0' ) {     /* This is not a blank line, so process... */
             s = base_address;
 
             if ( '*' != s[0] ) {
-        
+
                 /* Count up total number of tokens including \0... */
                 j = 0;
                 type = CNV_STRING_TOK;
@@ -819,47 +811,47 @@ static int cm_read_source(FILE *source,short *bits,double *timepoints,
                     j++;
                 }
                 num_tokens = j;
-        
+
                 /* If this number is incorrect, return with an error    */
                 if ( (info->width + 2) != num_tokens) {
                     return 1;
                 }
-        
-                /* reset s to beginning... */                     
+
+                /* reset s to beginning... */
                 s = base_address;
-        
+
                 /** Retrieve each token, analyze, and       **/
                 /** store the timepoint and bit information **/
                 for (j=0; j<(info->width + 1); j++) {
-        
+
                     token = CNVget_token(&s, &type);
-        
+
                     if ( 0 == j ) { /* obtain timepoint value... */
-                        
+
                         /* convert to a floating point number... */
                         cnv_get_spice_value(token,&number);
-        
+
                         timepoints[i] = number;
-                         
-    
+
+
                         /* provided this is not the first timepoint
                            to be written... */
                         if ( 0 != i ) {
-    
+
                             /* if current timepoint value is not greater
-                               than the previous value, then return with 
+                               than the previous value, then return with
                                an error message... */
                             if ( timepoints[i] <= timepoints[i-1] ) {
                                 return 1;
                             }
-                        }    
-    
+                        }
+
                     }
                     else { /* obtain each bit value & set bits entry    */
-        
+
                         /* preset this bit location */
                         bit_value = 12;
-         
+
                         if (0 == strcmp(token,"0s")) bit_value = 0;
                         if (0 == strcmp(token,"1s")) bit_value = 1;
                         if (0 == strcmp(token,"Us")) bit_value = 2;
@@ -872,29 +864,29 @@ static int cm_read_source(FILE *source,short *bits,double *timepoints,
                         if (0 == strcmp(token,"0u")) bit_value = 9;
                         if (0 == strcmp(token,"1u")) bit_value = 10;
                         if (0 == strcmp(token,"Uu")) bit_value = 11;
-         
+
                         /* if this bit was not recognized, return with an error  */
                         if (12 == bit_value) {
-                            return 1;                            
+                            return 1;
                         }
                         else { /* need to store this value in the bits[] array */
-                                                                                    
-                            /* obtain offset value from word_number, word_width & 
+
+                            /* obtain offset value from word_number, word_width &
                                bit_number */
                             int1 = i * info->width + (j-1);
                             bit_index = int1 >> 2;
                             bit_offset = int1 & 3;
-                        
+
                             /* retrieve entire base_address bits integer... */
                             base = bits[bit_index];
-                                                 
+
                             /* for each offset, mask off the bits and store values */
                             cm_source_mask_and_store(&base,bit_offset,bit_value);
-                                                  
+
                             /* store modified base value */
-                            bits[bit_index] = base;                   
+                            bits[bit_index] = base;
                         }
-                    }       
+                    }
                 }
                 i++;
             }
@@ -903,20 +895,20 @@ static int cm_read_source(FILE *source,short *bits,double *timepoints,
     }
     return 0;
 }
-            
 
 
 
-                                        
+
+
 /*==============================================================================
 
 FUNCTION cm_d_source()
 
-AUTHORS                      
+AUTHORS
 
     13 Jun 1991     Jeffrey P. Murray
 
-MODIFICATIONS   
+MODIFICATIONS
 
      8 Aug 1991     Jeffrey P. Murray
     30 Sep 1991     Jeffrey P. Murray
@@ -925,11 +917,11 @@ SUMMARY
 
     This function implements the d_source code model.
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
- 
-    CMmacros.h           cm_message_send();                   
+    FILE                 ROUTINE CALLED
+
+    CMmacros.h           cm_message_send();
 
     CMevt.c              void *cm_event_alloc()
                          void *cm_event_get_ptr()
@@ -937,11 +929,11 @@ INTERFACES
 
 
 RETURNED VALUE
-    
+
     Returns inputs and outputs via ARGS structure.
 
 GLOBAL VARIABLES
-    
+
     NONE
 
 NON-STANDARD FEATURES
@@ -961,25 +953,24 @@ NON-STANDARD FEATURES
 ************************************************/
 
 
-void cm_d_source(ARGS) 
+void cm_d_source(ARGS)
 {
     int                    i,   /* generic loop counter index */
                          err,   /* integer for storage of error status  */
-                        test,   /* testing integer  */   
-                       dummy;   /* temp holding variable  */   
+                        test,   /* testing integer  */
+                       dummy;   /* temp holding variable  */
 
-
-    short              *bits,   /* the storage array for the 
+    short              *bits,   /* the storage array for the
                                    output bit representations...
                                    this will have size equal to
                                    (width * depth)/4, since one
                                    short will hold four 12-state
                                    bit descriptions.    */
-                   *bits_old;   /* the storage array for old bit values */ 
+                   *bits_old;   /* the storage array for old bit values */
 
 
-    double       *timepoints,   /* the storage array for the 
-                                   timepoints...this will have size equal 
+    double       *timepoints,   /* the storage array for the
+                                   timepoints...this will have size equal
                                    to "depth"   */
              *timepoints_old;   /* the storage array for the old timepoints */
     volatile double             /* enforce 64 bit precision, (equality comparison) */
@@ -995,27 +986,22 @@ void cm_d_source(ARGS)
                                        index and depth info. */
                        *info_old;   /* storage location for old info */
 
-                                                                   
+
     Digital_t                out;   /* storage for each output bit */
-                         
+
 
 
     char   temp[MAX_STRING_SIZE],   /* holding string variable for testing
                                        input from source.in */
-                              *s;   /* main string variable */ 
+                              *s;   /* main string variable */
 
 
     char *loading_error = "\n***ERROR***\nD_SOURCE: source.in file was not read successfully. \n";
 
-    
-
-
 
     /**** Setup required state variables ****/
 
-    if(INIT) {  /* initial pass */ 
-                                        
-
+    if(INIT) {  /* initial pass */
 
         /*** open file and count the number of vectors in it ***/
         source = fopen_with_path( PARAM(input_file), "r");
@@ -1026,7 +1012,7 @@ void cm_d_source(ARGS)
           s = temp;
           while ( fgets(s,MAX_STRING_SIZE,source) != NULL) {
               if ( '*' != s[0] ) {
-                  while(isspace(*s) || (*s == '*')) 
+                  while(isspace(*s) || (*s == '*'))
                         (s)++;
                   if ( *s != '\0' ) i++;
               }
@@ -1037,43 +1023,32 @@ void cm_d_source(ARGS)
         /*** allocate storage for *index, *bits & *timepoints ***/
 
                           cm_event_alloc(0,sizeof(Source_Table_Info_t));
-        
 
-                                                           
+
         dummy = (PORT_SIZE(out) * i + 3) >> 2;
 
         cm_event_alloc(1, dummy * (int) sizeof(short));
-                         
+
         cm_event_alloc(2, i * (int) sizeof(double));
-                                       
 
         /**** Get all pointers again (to avoid realloc problems) ****/
         info = info_old = (Source_Table_Info_t *) cm_event_get_ptr(0,0);
         bits = bits_old = (short *) cm_event_get_ptr(1,0);
         timepoints = timepoints_old = (double *) cm_event_get_ptr(2,0);
 
-
-
-
         /* Initialize info values... */
-
         info->index = 0;
         info->depth = i;
 
         /* Retrieve width of the source */
         info->width = PORT_SIZE(out);
 
-
         /* Initialize *bits & *timepoints to zero */
+        for (i=0; i<dummy; i++)
+            bits[i] = 0;
 
-        for (i=0; i<dummy; i++) bits[i] = 0;
-
-        for (i=0; i<info->depth; i++) timepoints[i] = 0;
-
-
-                                        
-
-
+        for (i=0; i<info->depth; i++)
+            timepoints[i] = 0;
 
         /* Send file pointer and the two array storage pointers */
         /* to "cm_read_source()". This will return after        */
@@ -1089,11 +1064,7 @@ void cm_d_source(ARGS)
           err=1;
         }
 
-
-
-
         if (err) { /* problem occurred in load...send error msg. */
-
             cm_message_send(loading_error);
 
             /* Reset *bits & *timepoints to zero */
@@ -1104,7 +1075,6 @@ void cm_d_source(ARGS)
         /* close source file */
         if (source)
             fclose(source);
-
     }
     else {      /*** Retrieve previous values ***/
 
@@ -1117,8 +1087,6 @@ void cm_d_source(ARGS)
         info->depth = info_old->depth;
         info->width = info_old->width;
 
-                                                               
-
         /** Retrieve bits... **/
         bits = (short *) cm_event_get_ptr(1,0);
         bits_old = (short *) cm_event_get_ptr(1,1);
@@ -1129,45 +1097,43 @@ void cm_d_source(ARGS)
 
         for (i=0; i<dummy; i++) bits[i] = bits_old[i];
 
-                                     
+
 
         /** Retrieve timepoints... **/
         timepoints = (double *) cm_event_get_ptr(2,0);
         timepoints_old = (double *) cm_event_get_ptr(2,1);
 
         /* Set old values to new... */
-        for (i=0; i<info->depth; i++) 
+        for (i=0; i<info->depth; i++)
             timepoints[i] = timepoints_old[i];
-
-                                         
     }
 
     /*** For the case of TIME==0.0, set special breakpoint ***/
 
     if ( 0.0 == TIME ) {
-                                    
+
         test_double = timepoints[info->index];
         if ( 0.0 == test_double && info->depth > 0 ) { /* Set DC value */
 
             /* reset current breakpoint */
             test_double = timepoints[info->index];
             cm_event_queue( test_double );
-                                              
+
             /* Output new values... */
             for (i=0; i<info->width; i++) {
-    
+
                 /* retrieve output value */
                 cm_get_source_value(info->width,i,info->index,bits,&out);
-    
+
                 OUTPUT_STATE(out[i]) = out.state;
                 OUTPUT_STRENGTH(out[i]) = out.strength;
             }
-         
+
             /* increment breakpoint */
             (info->index)++;
-    
-    
-            /* set next breakpoint as long as depth 
+
+
+            /* set next breakpoint as long as depth
                has not been exceeded    */
             if ( info->index < info->depth ) {
                 test_double = timepoints[info->index] - 1.0e-10;
@@ -1176,8 +1142,8 @@ void cm_d_source(ARGS)
 
         }
         else { /* Set breakpoint for first time index */
-                     
-            /* set next breakpoint as long as depth 
+
+            /* set next breakpoint as long as depth
                has not been exceeded    */
             if ( info->index < info->depth ) {
                 test_double = timepoints[info->index] - 1.0e-10;
@@ -1194,66 +1160,60 @@ void cm_d_source(ARGS)
         /*** Retrieve last index value and branch to appropriate ***
          *** routine based on the last breakpoint's relationship ***
          *** to the current time value.                          ***/
-        
+
         test_double = timepoints[info->index] - 1.0e-10;
 
         if ( TIME < test_double ) { /* Breakpoint has not occurred */
-    
+
             /** Output hasn't changed...do nothing this time. **/
             for (i=0; i<info->width; i++) {
                 OUTPUT_CHANGED(out[i]) = FALSE;
-            }                                                     
-     
+            }
+
             if ( info->index < info->depth ) {
                 test_double = timepoints[info->index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
-                                                                
+
         }
         else  /* Breakpoint has been reached or exceeded  */
-    
+
         if ( TIME == test_double ) { /* Breakpoint reached */
-                                                                            
+
             /* reset current breakpoint */
             test_double = timepoints[info->index] - 1.0e-10;
             cm_event_queue( test_double );
-                                              
+
             /* Output new values... */
             for (i=0; i<info->width; i++) {
-    
+
                 /* retrieve output value */
                 cm_get_source_value(info->width,i,info->index,bits,&out);
-    
+
                 OUTPUT_STATE(out[i]) = out.state;
                 OUTPUT_DELAY(out[i]) = 1.0e-10;
                 OUTPUT_STRENGTH(out[i]) = out.strength;
             }
-    
-    
-    
+
             /* increment breakpoint */
             (info->index)++;
-    
-    
-            /* set next breakpoint as long as depth 
+
+            /* set next breakpoint as long as depth
                has not been exceeded    */
             if ( info->index < info->depth ) {
                 test_double = timepoints[info->index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
-    
-    
-    
         }
-    
+
         else { /* Last source file breakpoint has been exceeded...
                       do not change the value of the output */
-    
+
             for (i=0; i<info->width; i++) {
                 OUTPUT_CHANGED(out[i]) = FALSE;
-            }                                                     
+            }
         }
-    }                 
+    }
 }
 
 
