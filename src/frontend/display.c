@@ -419,7 +419,8 @@ int DevSwitch(char *devname)
 
     } else {
 
-        dispdev->Close();
+        if (dispdev)
+            dispdev->Close();
         dispdev = lastdev;
         lastdev = NULL;
 

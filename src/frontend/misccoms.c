@@ -10,9 +10,11 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ftehelp.h"
 #include "ngspice/hlpdefs.h"
 #include "misccoms.h"
+#include "postcoms.h"
 #include "circuits.h"
 #include "variable.h"
 #include "plotting/graf.h"
+#include "display.h"
 
 #ifdef HAVE_GNUREADLINE
 #include <readline/readline.h>
@@ -51,6 +53,12 @@ com_quit(wordlist *wl)
 
     /* start to clean up the mess */
 
+    {
+        wordlist *t = wl_cons(copy("all"), NULL);
+        com_destroy(t);
+        wl_free(t);
+    }
+
 #ifdef EXPERIMENTAL_CODE
     /* Destroy CKT when quit. Add by Gong Ding, gdiso@ustc.edu */
     if (!ft_nutmeg) {
@@ -60,6 +68,9 @@ com_quit(wordlist *wl)
                 SIMinfo.deleteCircuit(cc->ci_ckt);
     }
 #endif
+
+    DevSwitch(NULL);
+    DevSwitch(NULL);
 
     /* then go away */
     byemesg();

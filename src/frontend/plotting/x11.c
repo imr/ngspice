@@ -507,7 +507,16 @@ X11_NewViewport(GRAPH *graph)
 int
 X11_Close(void)
 {
-    XCloseDisplay(display);
+    // don't, this has never been mapped, there is no window ...
+    // XtUnmapWidget(toplevel);
+    XtDestroyWidget(toplevel);
+
+    XtAppContext app = XtDisplayToApplicationContext(display);
+    XtDestroyApplicationContext(app);
+
+    // don't, XtDestroyApplicationContext(app) seems to have done that
+    // XCloseDisplay(display);
+
     return 0;
 }
 
@@ -909,7 +918,10 @@ RemoveWindow(GRAPH *graph)
         /* Iplots are done asynchronously */
         DEVDEP(graph).isopen = 0;
         /* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */
+        XtUnmapWidget(DEVDEP(graph).shell);
         XtDestroyWidget(DEVDEP(graph).shell);
+        XFreeFont(display, DEVDEP(graph).font);
+        XFreeGC(display, DEVDEP(graph).gc);
     }
 
     if (graph == currentgraph)
