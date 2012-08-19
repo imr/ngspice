@@ -2648,13 +2648,21 @@ Spice_Init(Tcl_Interp *interp)
 int
 tcl_vfprintf(FILE *f, const char *fmt, va_list args)
 {
-#define ostr_sz 128
-    static char outstr[ostr_sz] = "puts -nonewline std";
-    //outstr a buffer initialised with tcl print command
-    // offset for out: 19
-#define ostr_off 19
-    char *outptr, *bigstr = NULL, *finalstr = NULL;
-    int i, nchars, result, escapes = 0;
+    char buf[1024];
+    char *p, *s;
+    int size, nchars, escapes, result;
+
+    const char * const escape_chars = "$[]\"\\";
+
+    const char * const prolog =
+        (f == stderr)
+        ? "puts -nonewline stderr \""
+        : "puts -nonewline stdout \"";
+
+    const char * const epilog = "\"";
+
+    const int prolog_len = strlen(prolog);
+    const int epilog_len = strlen(epilog);
 
     if ((fileno(f) != STDOUT_FILENO && fileno(f) != STDERR_FILENO &&
          f != stderr && f != stdout)
@@ -2664,51 +2672,69 @@ tcl_vfprintf(FILE *f, const char *fmt, va_list args)
         )
         return vfprintf(f, fmt, args);
 
-    strcpy (outstr + ostr_off, (f == stderr) ? "err \"" : "out \"");
-    //5 characters for ->out "<-
-    outptr = outstr;
-    nchars = vsnprintf(outptr + ostr_off + 5, ostr_sz - 5 - ostr_off, fmt, args);
-    if (nchars >= ostr_sz - 5 - ostr_off) {
-        bigstr = Tcl_Alloc(nchars + 26);
-        strncpy(bigstr, outptr, 24);
-        outptr = bigstr;
-        vsnprintf(outptr + 24, nchars + 2, fmt, args);
-    }
-    else if (nchars == -1) {
-        nchars = 126;
-    }
+    p = buf;
 
-    for (i = 24; *(outptr + i) != '\0'; i++)
-        if (*(outptr + i) == '\"' || *(outptr + i) == '[' ||
-            *(outptr + i) == ']' || *(outptr + i) == '\\')
-            escapes++;
+    // size: how much ist left for chars and terminating '\0'
+    size = sizeof(buf) - prolog_len - epilog_len;
+    // assert(size > 0);
 
+    for (;;) {
+        nchars = vsnprintf(p + prolog_len, size, fmt, args);
 
-    if (escapes > 0) {
-        finalstr = Tcl_Alloc(nchars + escapes + 26);
-        strncpy(finalstr, outptr, 24);
-        escapes = 0;
-        for (i = 24; *(outptr + i) != '\0'; i++) {
-            if (*(outptr + i) == '\"' || *(outptr + i) == '[' ||
-                *(outptr + i) == ']' || *(outptr + i) == '\\')
-            {
-                *(finalstr + i + escapes) = '\\';
-                escapes++;
-            }
-            *(finalstr + i + escapes) = *(outptr + i);
+        if(nchars == -1) {           /* compatibility to old implementations */
+            size *= 2;
+        } else if (size < nchars + 1) {
+            size = nchars + 1;
+        } else {
+            break;
         }
-        outptr = finalstr;
+
+        if(p == buf)
+            p = Tcl_Alloc(prolog_len + size + epilog_len);
+        else
+            p = Tcl_Realloc(p, prolog_len + size + epilog_len);
     }
 
-    *(outptr + 24 + nchars + escapes) = '\"';
-    *(outptr + 25 + nchars + escapes) = '\0';
+    strncpy(p, prolog, prolog_len);
 
-    result = Tcl_Eval(spice_interp, outptr);
+    s = p + prolog_len;
+    for (escapes = 0; ; escapes++) {
+        s = strpbrk(s, escape_chars);
+        if (!s)
+            break;
+        s++;
+    }
 
-    if (bigstr != NULL)
-        Tcl_Free(bigstr);
-    if (finalstr != NULL)
-        Tcl_Free(finalstr);
+    if (escapes) {
+
+        int new_size = prolog_len + nchars + escapes + epilog_len + 1;
+        char *src, *dst;
+
+        if (p != buf) {
+            p = Tcl_Realloc(p, new_size);
+        } else if (new_size > sizeof(buf)) {
+            p = Tcl_Alloc(new_size);
+            strcpy(p, buf);
+        }
+
+        src = p + prolog_len + nchars;
+        dst = src + escapes;
+
+        while (dst > src) {
+            char c = *--src;
+            *--dst = c;
+            if (strchr(escape_chars, c))
+                *--dst = '\\';
+        }
+    }
+
+    strcpy(p + prolog_len + nchars + escapes, epilog);
+
+    result = Tcl_Eval(spice_interp, p);
+
+    if (p != buf)
+        Tcl_Free(p);
+
     return nchars;
 }
 
