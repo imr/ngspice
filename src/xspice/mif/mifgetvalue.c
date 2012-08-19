@@ -301,9 +301,9 @@ static double MIFget_real(char *token, char **err)
 
 static char *MIFget_string(char *token, char **err)
 {
+    char* ctoken = MIFcopy(token);
     *err = NULL;
-
-    return(token);
+    return(ctoken);
 }
 
 
