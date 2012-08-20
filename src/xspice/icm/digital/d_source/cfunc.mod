@@ -737,6 +737,8 @@ static int cm_read_source(FILE *source,char **all_bits,double *all_timepoints,
                 type = CNV_STRING_TOK;
                 while ( type != CNV_NO_TOK ) {
                     token = CNVget_token(&s, &type);
+                    if (token)
+                        free(token);
                     j++;
                 }
                 num_tokens = j;
@@ -807,6 +809,8 @@ static int cm_read_source(FILE *source,char **all_bits,double *all_timepoints,
                             all_bits[i][j-1] = bit_value;
                         }
                     }
+                    if (token)
+                        free(token);
                 }
                 i++;
             }
