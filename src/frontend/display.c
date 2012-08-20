@@ -121,10 +121,10 @@ DISPDEVICE device[] = {
 
     { "printf", 0, 0, 24, 80, 0, 0,
       (disp_fn_Init_t *) nodev, (disp_fn_NewViewport_t *)  nodev,
-      (disp_fn_Close_t *) nodev, (disp_fn_Clear_t *) nodev,
+      (disp_fn_Close_t *) nop, (disp_fn_Clear_t *) nodev,
       (disp_fn_DrawLine_t *) nodev, (disp_fn_Arc_t *) nodev, (disp_fn_Text_t *) nodev,
       (disp_fn_DefineColor_t *) nodev, (disp_fn_DefineLinestyle_t *) nodev,
-      (disp_fn_SetLinestyle_t *) nodev, (disp_fn_SetColor_t *) nodev, (disp_fn_Update_t *) nodev,
+      (disp_fn_SetLinestyle_t *) nodev, (disp_fn_SetColor_t *) nodev, (disp_fn_Update_t *) nop,
       (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, gen_Input,
       (disp_fn_DatatoScreen_t *) nodev, },
 
