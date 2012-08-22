@@ -85,8 +85,6 @@ typedef struct {
                    "timepoints" array, and to the total
                    number of vectors retrieved from the
                    source.in file.                                  */
-} Source_Table_Info_t;
-
     double   *all_timepoints;   /* the storage array for the
                                    timepoints, as read from file.
                                    This will have size equal
@@ -95,8 +93,10 @@ typedef struct {
     char          **all_bits;   /* the storage array for the
                                    output bit representations;
                                    as read from file. This will have size equal
-                                   to width*depth, one short will hold a
+                                   to width*depth, one char will hold a
                                    12-state bit description.    */
+} Source_Table_Info_t;
+
 
 /* Type definition for each possible token returned. */
 typedef enum token_type_s {CNV_NO_TOK,CNV_STRING_TOK} Cnv_Token_Type_t;
@@ -919,6 +919,7 @@ void cm_d_source(ARGS)
     char *loading_error = "\nERROR **\n D_SOURCE: source.in file was not read successfully. \n";
 
 
+
     /**** Setup required state variables ****/
 
     if(INIT) {  /* initial pass */
@@ -957,13 +958,10 @@ void cm_d_source(ARGS)
           }
         }
 
-        /*** allocate storage for **all_bits, & *all_timepoints ***/
-        all_timepoints = (double*)malloc(i * sizeof(double));
-        all_bits = (char**)malloc(i * sizeof(char*));
 
         /*** allocate storage for *index, *bits & *timepoints ***/
 
-                          cm_event_alloc(0,sizeof(Source_Table_Info_t));
+        cm_event_alloc(0,sizeof(Source_Table_Info_t));
 
         cm_event_alloc(1, PORT_SIZE(out) * (int) sizeof(char));
 
@@ -981,11 +979,20 @@ void cm_d_source(ARGS)
         /* Retrieve width of the source */
         info->width = PORT_SIZE(out);
 
+
+        /*** allocate storage for **all_bits, & *all_timepoints ***/
+        info->all_timepoints = (double*)malloc(i * sizeof(double));
+        info->all_bits = (char**)malloc(i * sizeof(char*));
+
+
         /* Initialize *bits & *timepoints to zero */
         for (i=0; i<info->width; i++)
             bits[i] = 0;
         for (i=0; i<info->depth; i++)
-            all_timepoints[i] = 0.0;
+            info->all_timepoints[i] = 0.0;
+
+
+
 
         /* Send file pointer and the two array storage pointers */
         /* to "cm_read_source()". This will return after        */
@@ -996,7 +1003,7 @@ void cm_d_source(ARGS)
 
         if (source) {
           rewind(source);
-          err = cm_read_source(source,all_bits,all_timepoints,info);
+          err = cm_read_source(source,info->all_bits,info->all_timepoints,info);
         } else {
           err=1;
         }
@@ -1006,7 +1013,7 @@ void cm_d_source(ARGS)
 
             /* Reset *bits & *timepoints to zero */
             for (i=0; i<info->width; i++) bits[i] = 0;
-            for (i=0; i<info->depth; i++) all_timepoints[i] = 0;
+            for (i=0; i<info->depth; i++) info->all_timepoints[i] = 0;
             switch (err)
             {
             case 2:
@@ -1056,18 +1063,18 @@ void cm_d_source(ARGS)
 
     if ( 0.0 == TIME ) {
 
-        test_double = all_timepoints[info->index];
+        test_double = info->all_timepoints[info->index];
         if ( 0.0 == test_double && info->depth > 0 ) { /* Set DC value */
 
             /* reset current breakpoint */
-            test_double = all_timepoints[info->index];
+            test_double = info->all_timepoints[info->index];
             cm_event_queue( test_double );
 
             /* Output new values... */
             for (i=0; i<info->width; i++) {
 
                 /* retrieve output value */
-                cm_get_source_value(info->index, i, all_bits, &out);
+                cm_get_source_value(info->index, i, info->all_bits, &out);
 
                 OUTPUT_STATE(out[i]) = out.state;
                 OUTPUT_STRENGTH(out[i]) = out.strength;
@@ -1080,7 +1087,7 @@ void cm_d_source(ARGS)
             /* set next breakpoint as long as depth
                has not been exceeded    */
             if ( info->index < info->depth ) {
-                test_double = all_timepoints[info->index] - 1.0e-10;
+                test_double = info->all_timepoints[info->index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
 
@@ -1090,7 +1097,7 @@ void cm_d_source(ARGS)
             /* set next breakpoint as long as depth
                has not been exceeded    */
             if ( info->index < info->depth ) {
-                test_double = all_timepoints[info->index] - 1.0e-10;
+                test_double = info->all_timepoints[info->index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
             for(i=0; i<info->width; i++) {
@@ -1105,7 +1112,7 @@ void cm_d_source(ARGS)
          *** routine based on the last breakpoint's relationship ***
          *** to the current time value.                          ***/
 
-        test_double = all_timepoints[info->index] - 1.0e-10;
+        test_double = info->all_timepoints[info->index] - 1.0e-10;
 
         if ( TIME < test_double ) { /* Breakpoint has not occurred */
 
@@ -1115,7 +1122,7 @@ void cm_d_source(ARGS)
             }
 
             if ( info->index < info->depth ) {
-                test_double = all_timepoints[info->index] - 1.0e-10;
+                test_double = info->all_timepoints[info->index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
 
@@ -1125,14 +1132,14 @@ void cm_d_source(ARGS)
         if ( TIME == test_double ) { /* Breakpoint reached */
 
             /* reset current breakpoint */
-            test_double = all_timepoints[info->index] - 1.0e-10;
+            test_double = info->all_timepoints[info->index] - 1.0e-10;
             cm_event_queue( test_double );
 
             /* Output new values... */
             for (i=0; i<info->width; i++) {
 
                 /* retrieve output value */
-                cm_get_source_value(info->index, i , all_bits, &out);
+                cm_get_source_value(info->index, i , info->all_bits, &out);
 
                 OUTPUT_STATE(out[i]) = out.state;
                 OUTPUT_DELAY(out[i]) = 1.0e-10;
@@ -1145,7 +1152,7 @@ void cm_d_source(ARGS)
             /* set next breakpoint as long as depth
                has not been exceeded    */
             if ( info->index < info->depth ) {
-                test_double = all_timepoints[info->index] - 1.0e-10;
+                test_double = info->all_timepoints[info->index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
         }
