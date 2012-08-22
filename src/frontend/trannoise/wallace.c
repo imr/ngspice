@@ -70,6 +70,13 @@ void PolarGauss(double* py1, double* py2)
 
 
 
+static void destroy_wallace(void)
+{
+    tfree(pool1);
+    tfree(pool2);
+    tfree(addrif);
+    tfree(addrib);
+}
 
 
 void initw(void)
@@ -87,11 +94,13 @@ void initw(void)
    newpools = 1;
    
    /* set up the two pools */
-   pool1 = TMALLOC(double, n); //(double*)malloc(n * sizeof(double));
-   pool2 = TMALLOC(double, n); //(double*)malloc(n * sizeof(double));
-   addrif = TMALLOC(unsigned int, (n + NOTRANS)); //(unsigned int*)malloc((n + NOTRANS) * sizeof(unsigned int));
-   addrib = TMALLOC(unsigned int, (n + NOTRANS)); //(unsigned int*)malloc((n + NOTRANS) * sizeof(unsigned int));
-   
+   pool1 = TMALLOC(double, n);
+   pool2 = TMALLOC(double, n);
+   addrif = TMALLOC(unsigned int, (n + NOTRANS));
+   addrib = TMALLOC(unsigned int, (n + NOTRANS));
+
+   atexit(destroy_wallace);
+
    /* fill the first pool with normally distributed values */
    PolarGauss(&pool1[0], &pool1[1]);
    for (i = 1; i < n>>1; i++) {
