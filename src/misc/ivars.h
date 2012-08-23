@@ -8,6 +8,6 @@
 
 
 void ivars(char*);
-void cleanvars(void);
+void destroy_ivars(void);
 
 #endif

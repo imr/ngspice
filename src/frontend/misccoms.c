@@ -15,6 +15,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "variable.h"
 #include "plotting/graf.h"
 #include "display.h"
+#include "../misc/ivars.h"
 
 #ifdef HAVE_GNUREADLINE
 #include <readline/readline.h>
@@ -73,6 +74,9 @@ com_quit(wordlist *wl)
     DevSwitch(NULL);
 
     /* then go away */
+
+    destroy_ivars();
+
     byemesg();
     exit(exitcode);
 }

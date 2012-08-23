@@ -489,7 +489,7 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 static void
 sp_shutdown(int exitval)
 {
-    cleanvars();
+    destroy_ivars();
 #ifdef PARALLEL_ARCH
      {
     Error("Fatal error in SPICE", -1);

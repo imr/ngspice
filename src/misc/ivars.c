@@ -109,13 +109,12 @@ ivars(char *argv0)
 }
 
 void
-cleanvars(void)
+destroy_ivars(void)
 {
     tfree(News_File);
     tfree(Default_MFB_Cap);
     tfree(Help_Path);
     tfree(Lib_Path);
     tfree(Spice_Path);
-    if (Inp_Path) /* may be NULL in LINUX */
-        tfree(Inp_Path);
+    tfree(Inp_Path);
 }
