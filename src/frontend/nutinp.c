@@ -180,6 +180,8 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
     cp_curin = lastin;
     cp_curout = lastout;
     cp_curerr = lasterr;
+
+    tfree(tt);
     return;
 }
 

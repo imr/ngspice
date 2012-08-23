@@ -490,6 +490,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 if ((deck->li_next = inp_subcktexpand(deck->li_next)) == NULL) {
                     line_free(realdeck, TRUE);
                     line_free(deck->li_actual, TRUE);
+                    tfree(tt);
                     return;
                 }
 
@@ -557,6 +558,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
             /* now load deck into ft_curckt -- the current circuit. */
             inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
+            /* inp_dodeck did take ownership */
+            tt = NULL;
 
         }     /*  if (deck->li_next) */
 
@@ -663,6 +666,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     cp_curin = lastin;
     cp_curout = lastout;
     cp_curerr = lasterr;
+
+    tfree(tt);
 }
 
 
