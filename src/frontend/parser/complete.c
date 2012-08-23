@@ -496,6 +496,16 @@ cp_addkword(int kw_class, char *word)
     return;
 }
 
+
+void
+cp_destroy_keywords(void)
+{
+    int i;
+    for (i=0; i<NCLASSES; i++)
+        throwaway(keywords[i]);
+    throwaway(commands);
+}
+
 /* Remove a keyword from the database. */
 
 void

@@ -75,6 +75,7 @@ com_quit(wordlist *wl)
 
     /* then go away */
 
+    cp_destroy_keywords();
     destroy_ivars();
 
     byemesg();
