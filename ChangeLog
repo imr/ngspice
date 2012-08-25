@@ -5423,6 +5423,13 @@
    Removed the PARALLEL_ARCH macro
    Removed the Combine algorithm from Sparse and Analyses
 
+2012-08-25  Francesco Lannutti
+ * src/maths/KLU/klusmp.c
+ * src/spicelib/analysis/cktsetup.c
+  Reviewed a bit the way to measure
+   the size of the Matrix and the
+   size of the Number of Non-Zeroes
+
 2012-08-11  Francesco Lannutti
  * src/include/ngspice/devdefs.h
  * src/include/ngspice/smpdefs.h
