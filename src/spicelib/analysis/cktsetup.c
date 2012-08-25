@@ -95,23 +95,26 @@ CKTsetup(CKTcircuit *ckt)
     if (ckt->CKTmatrix->CKTkluMODE)
     {
         int i ;
-        int n  = ckt->CKTmatrix->CKTkluN ;
+        int n = SMPmatSize (ckt->CKTmatrix) ;
+        ckt->CKTmatrix->CKTkluN = n ;
+
         int nz = ckt->CKTmatrix->CKTklunz ;
 
         ckt->CKTmatrix->CKTkluAp           = TMALLOC (int, n + 1) ;
         ckt->CKTmatrix->CKTkluAi           = TMALLOC (int, nz) ;
         ckt->CKTmatrix->CKTkluAx           = TMALLOC (double, nz) ;
-        ckt->CKTmatrix->CKTkluIntermediate = TMALLOC (double, n ) ;
+        ckt->CKTmatrix->CKTkluIntermediate = TMALLOC (double, n) ;
 
         ckt->CKTmatrix->CKTbind_Sparse     = TMALLOC (double *, nz) ;
         ckt->CKTmatrix->CKTbind_CSC        = TMALLOC (double *, nz) ;
 
         ckt->CKTmatrix->CKTdiag_CSC        = TMALLOC (double *, n) ;
 
+        /* Binding Table Sparse-KLU creation */
         SMPmatrix_CSC (ckt->CKTmatrix) ;
 
         for (i = 0 ; i < DEVmaxnum ; i++)
-            if (DEVices [i] && DEVices [i]->DEVbindCSC)
+            if (DEVices [i] && DEVices [i]->DEVbindCSC && ckt->CKThead [i])
                 DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
 
         ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
@@ -120,7 +123,9 @@ CKTsetup(CKTcircuit *ckt)
     if (ckt->CKTmatrix->CKTsuperluMODE)
     {
         int i ;
-        int n  = ckt->CKTmatrix->CKTsuperluN ;
+        int n = SMPmatSize (ckt->CKTmatrix) ;
+        ckt->CKTmatrix->CKTsuperluN = n ;
+
         int nz = ckt->CKTmatrix->CKTsuperlunz ;
 
 	ckt->CKTmatrix->CKTsuperluAp = 		TMALLOC (int, n + 1) ;
@@ -128,15 +133,16 @@ CKTsetup(CKTcircuit *ckt)
 	ckt->CKTmatrix->CKTsuperluAx = 		TMALLOC (double, nz) ;
 	ckt->CKTmatrix->CKTsuperluPerm_c = 	TMALLOC (int, n) ;
 	ckt->CKTmatrix->CKTsuperluPerm_r = 	TMALLOC (int, n) ;
-	ckt->CKTmatrix->CKTsuperluEtree = 		TMALLOC (int, n) ;
+	ckt->CKTmatrix->CKTsuperluEtree = 	TMALLOC (int, n) ;
 
-	ckt->CKTmatrix->CKTsuperluIntermediate = 	TMALLOC (double, n) ;
+	ckt->CKTmatrix->CKTsuperluIntermediate = TMALLOC (double, n) ;
 
 	ckt->CKTmatrix->CKTbind_Sparse = 	TMALLOC (double *, nz) ;
 	ckt->CKTmatrix->CKTbind_CSC = 		TMALLOC (double *, nz) ;
 
 	ckt->CKTmatrix->CKTdiag_CSC = 	TMALLOC (double *, n) ;
 
+        /* Binding Table Sparse-KLU creation */
         SMPmatrix_CSC (ckt->CKTmatrix) ;
 
 	dCreate_CompCol_Matrix (&(ckt->CKTmatrix->CKTsuperluA), n, n, nz, ckt->CKTmatrix->CKTsuperluAx,
@@ -146,15 +152,18 @@ CKTsetup(CKTcircuit *ckt)
 	StatInit (&(ckt->CKTmatrix->CKTsuperluStat)) ;
 
         for (i = 0 ; i < DEVmaxnum ; i++)
-            if (DEVices [i] && DEVices [i]->DEVbindCSC)
+            if (DEVices [i] && DEVices [i]->DEVbindCSC && ckt->CKThead [i])
                 DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
     }
 #elif defined(UMFPACK)
     if (ckt->CKTmatrix->CKTumfpackMODE)
     {
         int i ;
-	int n = ckt->CKTmatrix->CKTumfpackN ;
-	int nz = ckt->CKTmatrix->CKTumfpacknz ;
+        int n = SMPmatSize (ckt->CKTmatrix) ;
+        ckt->CKTmatrix->CKTumfpackN = n ;
+
+        int nz = ckt->CKTmatrix->CKTumfpacknz ;
+
 	ckt->CKTmatrix->CKTumfpackAp =			TMALLOC (int, n + 1) ;
 	ckt->CKTmatrix->CKTumfpackAi =			TMALLOC (int, nz) ;
 	ckt->CKTmatrix->CKTumfpackAx =			TMALLOC (double, nz) ;
@@ -170,10 +179,11 @@ CKTsetup(CKTcircuit *ckt)
 
 	ckt->CKTmatrix->CKTdiag_CSC =			TMALLOC (double *, n) ;
 
+        /* Binding Table Sparse-KLU creation */
 	SMPmatrix_CSC (ckt->CKTmatrix) ;
 
 	for (i = 0 ; i < DEVmaxnum ; i++)
-            if (DEVices [i] && DEVices [i]->DEVbindCSC)
+            if (DEVices [i] && DEVices [i]->DEVbindCSC && ckt->CKThead [i])
                 DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
     }
 #endif
