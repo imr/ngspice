@@ -19,14 +19,12 @@ SUMMARY
  
 NAME_TABLE:
 
-
 C_Function_Name:       cm_d_source
 Spice_Model_Name:      d_source
 Description:           "digital signal source"
 
 
 PORT_TABLE:
-
 
 Port_Name:           out
 Description:         "output"
@@ -41,7 +39,6 @@ Null_Allowed:        no
 
 PARAMETER_TABLE:
 
-
 Parameter_Name:     input_file
 Description:        "digital input vector filename"  
 Data_Type:          string 
@@ -54,7 +51,6 @@ Null_Allowed:       no
 
 PARAMETER_TABLE:
 
-
 Parameter_Name:     input_load
 Description:        "input loading capacitance (F)"  
 Data_Type:          real 
@@ -62,4 +58,11 @@ Default_Value:      1.0e-12
 Limits:             -                                  
 Vector:              no                              
 Vector_Bounds:       -                                
-Null_Allowed:       no                          
+Null_Allowed:       no
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    locdata
+Description:        "local static data"
+Data_Type:          pointer

@@ -79,23 +79,24 @@ NON-STANDARD FEATURES
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
 typedef struct {
-    int index,  /* current index into source tables                 */
-        width,  /* width of table...equal to size of out port */
+    int width,  /* width of table...equal to size of out port */
         depth;  /* depth of table...equal to size of
                    "timepoints" array, and to the total
                    number of vectors retrieved from the
                    source.in file.                                  */
+
     double   *all_timepoints;   /* the storage array for the
                                    timepoints, as read from file.
                                    This will have size equal
                                    to "depth"   */
 
-    char          **all_bits;   /* the storage array for the
+    char          **all_data;   /* the storage array for the
                                    output bit representations;
                                    as read from file. This will have size equal
-                                   to width*depth, one char will hold a
+                                   to width*depth, one short will hold a
                                    12-state bit description.    */
-} Source_Table_Info_t;
+
+} Local_Data_t;
 
 
 /* Type definition for each possible token returned. */
@@ -596,7 +597,7 @@ MODIFICATIONS
 
 SUMMARY
 
-    Retrieves a char per bit value from the array "all_bits".
+    Retrieves a char per bit value from the array "all_data".
 
 INTERFACES
 
@@ -623,17 +624,17 @@ NON-STANDARD FEATURES
 
 /************************************************
 *      The following routine retrieves a bit    *
-*      from all_bits and stores them in out     *
+*      from all_data and stores them in out     *
 *                                               *
 *      Created 8/19/12               H. Vogt    *
 ************************************************/
 
-static void cm_get_source_value(int row, int bit_number, char **all_bits, Digital_t *out)
+static void cm_get_source_value(int row, int bit_number, char **all_data, Digital_t *out)
 
 {
     char val;
 
-    val = all_bits[row][bit_number];
+    val = all_data[row][bit_number];
 
     cm_source_retrieve(val,out);
 
@@ -669,7 +670,7 @@ INTERFACES
 
 RETURNED VALUE
 
-    Returns output bits stored in "all_bits" array,
+    Returns output bits stored in "all_data" array,
     time values in "all_timepoints" array,
     return != 0 code if error.
 
@@ -695,8 +696,7 @@ NON-STANDARD FEATURES
 *   Created 7/15/91               J.P.Murray      *
 **************************************************/
 
-static int cm_read_source(FILE *source,char **all_bits,double *all_timepoints,
-                   Source_Table_Info_t *info)
+static int cm_read_source(FILE *source, Local_Data_t *loc)
 {
     size_t      n;  /* loop index */
     int         i,  /* indexing variable    */
@@ -744,7 +744,7 @@ static int cm_read_source(FILE *source,char **all_bits,double *all_timepoints,
                 num_tokens = j;
 
                 /* If this number is incorrect, return with an error    */
-                if ( (info->width + 2) != num_tokens) {
+                if ( (loc->width + 2) != num_tokens) {
                     return 2;
                 }
 
@@ -752,13 +752,13 @@ static int cm_read_source(FILE *source,char **all_bits,double *all_timepoints,
                 s = base_address;
 
                 /* set storage space for bits in a row and set them to 0*/
-                all_bits[i] = (char*)malloc(sizeof(char) * info->width);
-                for (n = 0; n < (unsigned int)info->width; n++)
-                    all_bits[i][n] = 0;
+                loc->all_data[i] = (char*)malloc(sizeof(char) * loc->width);
+                for (n = 0; n < (unsigned int)loc->width; n++)
+                    loc->all_data[i][n] = 0;
 
                 /** Retrieve each token, analyze, and       **/
                 /** store the timepoint and bit information **/
-                for (j=0; j<(info->width + 1); j++) {
+                for (j=0; j<(loc->width + 1); j++) {
 
                     token = CNVget_token(&s, &type);
 
@@ -767,7 +767,7 @@ static int cm_read_source(FILE *source,char **all_bits,double *all_timepoints,
                         /* convert to a floating point number... */
                         cnv_get_spice_value(token,&number);
 
-                        all_timepoints[i] = number;
+                        loc->all_timepoints[i] = number;
 
 
                         /* provided this is not the first timepoint
@@ -777,7 +777,7 @@ static int cm_read_source(FILE *source,char **all_bits,double *all_timepoints,
                             /* if current timepoint value is not greater
                                than the previous value, then return with
                                an error message... */
-                            if ( all_timepoints[i] <= all_timepoints[i-1] ) {
+                            if ( loc->all_timepoints[i] <= loc->all_timepoints[i-1] ) {
                                 return 3;
                             }
                         }
@@ -805,8 +805,8 @@ static int cm_read_source(FILE *source,char **all_bits,double *all_timepoints,
                         if (12 == bit_value) {
                             return 4;
                         }
-                        else { /* need to store this value in the all_bits[] array */
-                            all_bits[i][j-1] = bit_value;
+                        else { /* need to store this value in the all_data[] array */
+                            loc->all_data[i][j-1] = bit_value;
                         }
                     }
                     if (token)
@@ -882,6 +882,7 @@ void cm_d_source(ARGS)
     int                    i,   /* generic loop counter index */
                          err;   /* integer for storage of error status  */
 
+/**** the state variables, memory allocation with cm_event_alloc *****/
     char               *bits,   /* the storage array for the
                                    output bit representations...
                                    this will have size equal to width,
@@ -889,26 +890,22 @@ void cm_d_source(ARGS)
                                    bit description.    */
                    *bits_old;   /* the storage array for old bit values */
 
+    int           *row_index,        /* current index into source tables */
+                  *row_index_old;    /* previous index into source tables */
+
     double        *timepoint,   /* the storage array for the
                                    timepoints, a single point   */
               *timepoint_old;   /* the storage  for the old timepoint */
+/*********************************************************************/
 
     volatile double             /* enforce 64 bit precision, (equality comparison) */
                  test_double;   /* test variable for doubles    */
-
-
 
     FILE                 *source;   /* pointer to the source.in input
                                        vector file */
 
 
-    Source_Table_Info_t    *info,   /* storage location for source
-                                       index and depth info. */
-                       *info_old;   /* storage location for old info */
-
-
     Digital_t                out;   /* storage for each output bit */
-
 
 
     char   temp[MAX_STRING_SIZE],   /* holding string variable for testing
@@ -918,9 +915,11 @@ void cm_d_source(ARGS)
 
     char *loading_error = "\nERROR **\n D_SOURCE: source.in file was not read successfully. \n";
 
+    Local_Data_t *loc;        /* Pointer to local static data, not to be included
+                                       in the state vector (save memory!) */
 
-
-    /**** Setup required state variables ****/
+    /**** Setup required local and state variables ****/
+    /* local data will be setup once during INIT and never change again */
 
     if(INIT) {  /* initial pass */
 
@@ -958,52 +957,44 @@ void cm_d_source(ARGS)
           }
         }
 
+        /*** allocate static storage for *loc ***/
+        STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
+        loc = STATIC_VAR (locdata);
 
-        /*** allocate storage for *index, *bits & *timepoints ***/
+        /*** allocate storage for *index, *bits & *timepoint ***/
 
-        cm_event_alloc(0,sizeof(Source_Table_Info_t));
+        cm_event_alloc(0, sizeof(int));
 
         cm_event_alloc(1, PORT_SIZE(out) * (int) sizeof(char));
 
         cm_event_alloc(2, (int) sizeof(double));
 
         /**** Get all pointers again (to avoid realloc problems) ****/
-        info = info_old = (Source_Table_Info_t *) cm_event_get_ptr(0,0);
+        row_index = row_index_old = (int *) cm_event_get_ptr(0,0);
         bits = bits_old = (char *) cm_event_get_ptr(1,0);
         timepoint = timepoint_old = (double *) cm_event_get_ptr(2,0);
 
         /* Initialize info values... */
-        info->index = 0;
-        info->depth = i;
+        *row_index = 0;
+        loc->depth = i;
 
         /* Retrieve width of the source */
-        info->width = PORT_SIZE(out);
+        loc->width = PORT_SIZE(out);
 
-
-        /*** allocate storage for **all_bits, & *all_timepoints ***/
-        info->all_timepoints = (double*)malloc(i * sizeof(double));
-        info->all_bits = (char**)malloc(i * sizeof(char*));
-
-
-        /* Initialize *bits & *timepoints to zero */
-        for (i=0; i<info->width; i++)
-            bits[i] = 0;
-        for (i=0; i<info->depth; i++)
-            info->all_timepoints[i] = 0.0;
-
-
-
+        /*** allocate storage for **all_data, & *all_timepoints ***/
+        loc->all_timepoints = (double*)calloc(i, sizeof(double));
+        loc->all_data = (char**)calloc(i, sizeof(char*));
 
         /* Send file pointer and the two array storage pointers */
         /* to "cm_read_source()". This will return after        */
         /* reading the contents of source.in, and if no         */
-        /* errors have occurred, the "*all_bits" and "*all_timepoints"  */
+        /* errors have occurred, the "*all_data" and "*all_timepoints"  */
         /* vectors will be loaded and the width and depth       */
         /* values supplied.                                     */
 
         if (source) {
           rewind(source);
-          err = cm_read_source(source,info->all_bits,info->all_timepoints,info);
+          err = cm_read_source(source, loc);
         } else {
           err=1;
         }
@@ -1011,9 +1002,6 @@ void cm_d_source(ARGS)
         if (err) { /* problem occurred in load...send error msg. */
             cm_message_send(loading_error);
 
-            /* Reset *bits & *timepoints to zero */
-            for (i=0; i<info->width; i++) bits[i] = 0;
-            for (i=0; i<info->depth; i++) info->all_timepoints[i] = 0;
             switch (err)
             {
             case 2:
@@ -1037,13 +1025,13 @@ void cm_d_source(ARGS)
     else {      /*** Retrieve previous values ***/
 
         /** Retrieve info... **/
-        info = (Source_Table_Info_t *) cm_event_get_ptr(0,0);
-        info_old  = (Source_Table_Info_t *) cm_event_get_ptr(0,1);
+        row_index = (int *) cm_event_get_ptr(0,0);
+        row_index_old  = (int *) cm_event_get_ptr(0,1);
+
+        loc = STATIC_VAR (locdata);
 
         /* Set old values to new... */
-        info->index = info_old->index;
-        info->depth = info_old->depth;
-        info->width = info_old->width;
+        *row_index = *row_index_old;
 
         /** Retrieve bits... **/
         bits = (char *) cm_event_get_ptr(1,0);
@@ -1063,31 +1051,31 @@ void cm_d_source(ARGS)
 
     if ( 0.0 == TIME ) {
 
-        test_double = info->all_timepoints[info->index];
-        if ( 0.0 == test_double && info->depth > 0 ) { /* Set DC value */
+        test_double = loc->all_timepoints[*row_index];
+        if ( 0.0 == test_double && loc->depth > 0 ) { /* Set DC value */
 
             /* reset current breakpoint */
-            test_double = info->all_timepoints[info->index];
+            test_double = loc->all_timepoints[*row_index];
             cm_event_queue( test_double );
 
             /* Output new values... */
-            for (i=0; i<info->width; i++) {
+            for (i=0; i<loc->width; i++) {
 
                 /* retrieve output value */
-                cm_get_source_value(info->index, i, info->all_bits, &out);
+                cm_get_source_value(*row_index, i, loc->all_data, &out);
 
                 OUTPUT_STATE(out[i]) = out.state;
                 OUTPUT_STRENGTH(out[i]) = out.strength;
             }
 
             /* increment breakpoint */
-            (info->index)++;
+            (*row_index)++;
 
 
             /* set next breakpoint as long as depth
                has not been exceeded    */
-            if ( info->index < info->depth ) {
-                test_double = info->all_timepoints[info->index] - 1.0e-10;
+            if ( *row_index < loc->depth ) {
+                test_double = loc->all_timepoints[*row_index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
 
@@ -1096,11 +1084,11 @@ void cm_d_source(ARGS)
 
             /* set next breakpoint as long as depth
                has not been exceeded    */
-            if ( info->index < info->depth ) {
-                test_double = info->all_timepoints[info->index] - 1.0e-10;
+            if ( *row_index < loc->depth ) {
+                test_double = loc->all_timepoints[*row_index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
-            for(i=0; i<info->width; i++) {
+            for(i=0; i<loc->width; i++) {
               OUTPUT_STATE(out[i]) = UNKNOWN;
               OUTPUT_STRENGTH(out[i]) = UNDETERMINED;
             }
@@ -1112,17 +1100,17 @@ void cm_d_source(ARGS)
          *** routine based on the last breakpoint's relationship ***
          *** to the current time value.                          ***/
 
-        test_double = info->all_timepoints[info->index] - 1.0e-10;
+        test_double = loc->all_timepoints[*row_index] - 1.0e-10;
 
         if ( TIME < test_double ) { /* Breakpoint has not occurred */
 
             /** Output hasn't changed...do nothing this time. **/
-            for (i=0; i<info->width; i++) {
+            for (i=0; i<loc->width; i++) {
                 OUTPUT_CHANGED(out[i]) = FALSE;
             }
 
-            if ( info->index < info->depth ) {
-                test_double = info->all_timepoints[info->index] - 1.0e-10;
+            if ( *row_index < loc->depth ) {
+                test_double = loc->all_timepoints[*row_index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
 
@@ -1132,14 +1120,14 @@ void cm_d_source(ARGS)
         if ( TIME == test_double ) { /* Breakpoint reached */
 
             /* reset current breakpoint */
-            test_double = info->all_timepoints[info->index] - 1.0e-10;
+            test_double = loc->all_timepoints[*row_index] - 1.0e-10;
             cm_event_queue( test_double );
 
             /* Output new values... */
-            for (i=0; i<info->width; i++) {
+            for (i=0; i<loc->width; i++) {
 
                 /* retrieve output value */
-                cm_get_source_value(info->index, i , info->all_bits, &out);
+                cm_get_source_value(*row_index, i , loc->all_data, &out);
 
                 OUTPUT_STATE(out[i]) = out.state;
                 OUTPUT_DELAY(out[i]) = 1.0e-10;
@@ -1147,12 +1135,12 @@ void cm_d_source(ARGS)
             }
 
             /* increment breakpoint */
-            (info->index)++;
+            (*row_index)++;
 
             /* set next breakpoint as long as depth
                has not been exceeded    */
-            if ( info->index < info->depth ) {
-                test_double = info->all_timepoints[info->index] - 1.0e-10;
+            if ( *row_index < loc->depth ) {
+                test_double = loc->all_timepoints[*row_index] - 1.0e-10;
                 cm_event_queue( test_double );
             }
         }
@@ -1160,7 +1148,7 @@ void cm_d_source(ARGS)
         else { /* Last source file breakpoint has been exceeded...
                       do not change the value of the output */
 
-            for (i=0; i<info->width; i++) {
+            for (i=0; i<loc->width; i++) {
                 OUTPUT_CHANGED(out[i]) = FALSE;
             }
         }
