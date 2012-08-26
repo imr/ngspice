@@ -1,6 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group 
+Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /*
@@ -120,12 +120,12 @@ findvec(char *word, struct plot *pl)
                 break;
     }
 #ifdef XSPICE
-/* gtri - begin - Add processing for getting event-driven vector */
+    /* gtri - begin - Add processing for getting event-driven vector */
 
     if(!d)
-      d = EVTfindvec(word);
+        d = EVTfindvec(word);
 
-/* gtri - end   - Add processing for getting event-driven vector */
+    /* gtri - end   - Add processing for getting event-driven vector */
 #endif
     if (d && d->v_link2) {
         d = vec_copy(d);
@@ -153,14 +153,14 @@ namecmp(const void *a, const void *b)
             return (0);
         if ((*s != *t) && (!isdigit(*s) || !isdigit(*t)))
             return (*s - *t);
-        
+
         /* The beginning of a number... Grab the two numbers and then
          * compare them...  */
         for (i = 0; isdigit(*s); s++)
             i = i * 10 + *s - '0';
         for (j = 0; isdigit(*t); t++)
             j = j * 10 + *t - '0';
-        
+
         if (i != j)
             return (i - j);
     }
@@ -175,7 +175,7 @@ veccmp(const void *a, const void *b)
     struct dvec **d2 = (struct dvec **) b;
 
     if ((i = namecmp((*d1)->v_plot->pl_typename,
-            (*d2)->v_plot->pl_typename)) != 0)
+                     (*d2)->v_plot->pl_typename)) != 0)
         return (i);
     return (namecmp((*d1)->v_name, (*d2)->v_name));
 }
@@ -196,7 +196,7 @@ sortvecs(struct dvec *d)
     array = TMALLOC(struct dvec *, i);
     for (t = d, i = 0; t; t = t->v_link2)
         array[i++] = t;
-    
+
     qsort(array, (size_t) i, sizeof (struct dvec *), veccmp);
 
     /* Now string everything back together... */
@@ -216,7 +216,7 @@ ft_loadfile(char *file)
     struct plot *pl, *np, *pp;
 
     fprintf(cp_out, "Loading raw data file (\"%s\") . . . ", file);
-        pl = raw_read(file);
+    pl = raw_read(file);
     if (pl)
         fprintf(cp_out, "done.\n");
     else
@@ -249,11 +249,11 @@ plot_add(struct plot *pl)
     char *s, buf[BSIZE_SP];
 
     fprintf(cp_out, "Title:  %s\nName: %s\nDate: %s\n\n", pl->pl_title,
-        pl->pl_name, pl->pl_date);
-    
+            pl->pl_name, pl->pl_date);
+
     if (plot_cur)
         plot_cur->pl_ccom = cp_kwswitch(CT_VECTOR, pl->pl_ccom);
-    
+
     for (v = pl->pl_dvecs; v; v = v->v_next)
         cp_addkword(CT_VECTOR, v->v_name);
     cp_addkword(CT_VECTOR, "all");
@@ -323,11 +323,10 @@ vec_fromplot(char *word, struct plot *plot)
 
     /* scanf("%c(%s)" doesn't do what it should do. ) */
     if (!d && (sscanf(word, "%c(%s", /* ) */ &cc, buf) == 2) &&
-        /* ( */ ((s =strrchr(buf, ')')) != NULL) &&
+            /* ( */ ((s =strrchr(buf, ')')) != NULL) &&
             (*(s + 1) == '\0')) {
         *s = '\0';
-	if (prefix("i(", /* ) */ word) || prefix("I(", /* ) */ word))
-	{
+        if (prefix("i(", /* ) */ word) || prefix("I(", /* ) */ word)) {
             /* Spice dependency... */
             (void) sprintf(buf2, "%s#branch", buf);
             (void) strcpy(buf, buf2);
@@ -373,8 +372,9 @@ vec_get(const char *vec_name)
             word = ++s;
             pl = NULL;  /* NULL pl signifies a wildcard. */
         } else {
-            for (pl = plot_list; pl && !plot_prefix(buf, 
-                    pl->pl_typename); pl = pl->pl_next)
+            for (pl = plot_list;
+                 pl && !plot_prefix(buf, pl->pl_typename);
+                 pl = pl->pl_next)
                 ;
             if (pl) {
                 word = ++s;
@@ -406,28 +406,28 @@ vec_get(const char *vec_name)
         }
         d = newv;
         if (!d) {
-            fprintf(cp_err, 
+            fprintf(cp_err,
                     "Error: plot wildcard (name %s) matches nothing\n",
                     word);
             tfree(wd); /* MW. I don't want core leaks here */
             return (NULL);
         }
     }
-    
+
     if (!d && (*word == SPECCHAR)) {
         /* This is a special quantity... */
         if (ft_nutmeg) {
             fprintf(cp_err,
                     "Error: circuit parameters only available with spice\n");
-            tfree(wd); 	/* MW. Memory leak fixed again */       		
+            tfree(wd); 	/* MW. Memory leak fixed again */
             return (NULL); /* va: use NULL */
         }
-        
+
         whole=copy(word);
-        name = ++word;        
+        name = ++word;
         for (param = name; *param && (*param != '['); param++)
-            ;		
-            
+            ;
+
         if (*param) {
             *param++ = '\0';
             for (s = param; *s && *s != ']'; s++)
@@ -435,165 +435,155 @@ vec_get(const char *vec_name)
             *s = '\0';
         } else
             param = NULL;
-            
-	
-	if (ft_curckt) {
-             /*
-              *  This is what is done in case of "alter r1 resistance = 1234"
-              *                                r1    resistance, 0
-              * if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
-              */
+
+
+        if (ft_curckt) {
+            /*
+             *  This is what is done in case of "alter r1 resistance = 1234"
+             *                                r1    resistance, 0
+             * if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
+             */
 
             /* vv = if_getparam (ft_curckt->ci_ckt, &name, param, 0, 0); */
-	    vv = if_getparam (ft_curckt->ci_ckt, &name, param, 0, 0);
-	    if (!vv) {
-	        tfree(whole);
-		tfree(wd);
-		return (NULL);
-	    }
-	} else {
+            vv = if_getparam (ft_curckt->ci_ckt, &name, param, 0, 0);
+            if (!vv) {
+                tfree(whole);
+                tfree(wd);
+                return (NULL);
+            }
+        } else {
             fprintf(cp_err, "Error: No circuit loaded.\n");
-	    tfree(whole);
-	    tfree(wd);
-	    return (NULL);
-	}
+            tfree(whole);
+            tfree(wd);
+            return (NULL);
+        }
 
         d = alloc(struct dvec);
-	ZERO(d, struct dvec);
+        ZERO(d, struct dvec);
         d->v_name = copy(whole); /* MW. The same as word before */
         d->v_type = SV_NOTYPE;
         d->v_flags |= VF_REAL;  /* No complex values yet... */
         d->v_realdata = TMALLOC(double, 1);
         d->v_length = 1;
-    
-    /* In case the represented variable is a REAL vector this takes
-     * the actual value of the first element of the linked list which 
-     * does not make sense.
-     * This is an error.
-     */
-   
-    /* This will copy the contents of the structure vv in another structure
-     * dvec (FTEDATA.H) that do not have INTEGER so that those parameters
-     * defined as IF_INTEGER are not given their value when using 
-     * print @pot[pos_node]
-     * To fix this, it is necessary to define:
-     * OPU( "pos_node",    POT_QUEST_POS_NODE, IF_REAL,"Positive node of potenciometer"),
-     * int POTnegNode;     // number of negative node of potenciometer (Nodo_3)
-     *  case POT_QUEST_POS_NODE:
-     *  value->rValue = (double)fast->POTposNode;
-     *  return(OK);
-     *  Works but with the format 1.00000E0
-     */
 
-    /* We must make a change in format between the data that carries a variable to
-     * put in a dvec.
-     */
-   
-   /*
-    * #define va_bool  va_V.vV_bool
-    * #define va_num    va_V.vV_num
-    *#define va_real  va_V.vV_real
-    *#define va_string   va_V.vV_string
-    *#define va_vlist     va_V.vV_list
-    *enum cp_types {
-    *  CP_BOOL,
-    *  CP_NUM,
-    *  CP_REAL,
-    *  CP_STRING,
-    *  CP_LIST
-    ° };
-    */
+        /* In case the represented variable is a REAL vector this takes
+         * the actual value of the first element of the linked list which
+         * does not make sense.
+         * This is an error.
+         */
 
-   /* The variable is a vector */
-    if (vv->va_type == CP_LIST)
-    {
-     /* Compute the length of the vector, 
-      * used with the parameters of isrc and vsrc
-      */
-     struct variable *nv;
-     double *list;
-     list = TMALLOC(double, 1);
-     nv = alloc(struct variable);
+        /* This will copy the contents of the structure vv in another structure
+         * dvec (FTEDATA.H) that do not have INTEGER so that those parameters
+         * defined as IF_INTEGER are not given their value when using
+         * print @pot[pos_node]
+         * To fix this, it is necessary to define:
+         * OPU( "pos_node",    POT_QUEST_POS_NODE, IF_REAL,"Positive node of potenciometer"),
+         * int POTnegNode;     // number of negative node of potenciometer (Nodo_3)
+         *  case POT_QUEST_POS_NODE:
+         *  value->rValue = (double)fast->POTposNode;
+         *  return(OK);
+         *  Works but with the format 1.00000E0
+         */
 
-     nv = vv->va_vlist;
-     for(i=1; ;i++)
-      {
-       list=TREALLOC(double, list, i);
-       *(list+i-1) = nv->va_real;
-       nv = nv->va_next;
-       if (nv==NULL) break;
-      }
-     d->v_realdata=list;
-     d->v_length = i;
-     /* To be able to identify the vector to represent
-      * belongs to a special "conunto" and should be printed in a
-      * special way.
-      */
-     d->v_dims[1]=1;
-    }
-    else if (vv->va_type == CP_NUM)   /* Variable is an integer */
-    {
-     *d->v_realdata =  (double) vv->va_num;
-    }
-    else if (vv->va_type == CP_REAL)  /* Variable is a real */
-    {
-     if (!(vv->va_next))
-     { 
-       /* Only a real data
-        * usually normal 
-        */
-     *d->v_realdata = vv->va_real;
-     }
-     else
-     { 
-       /* Real data set
-        * When you print a model @ [all]
-        * Just print numerical values, not the string
-        */
-       struct variable *nv;       
-       /* We go to print the list of values
-        * nv->va_name = Parameter description
-        * nv->va_string = Parameter
-        * nv->va_real= Value
-        */ 
-       nv=vv;  
-       for(i=1; ;i++)
-       {
-	switch(nv->va_type)
-	{
-		case  CP_REAL:
-			fprintf(stdout,"%s=%g\n",nv->va_name,nv->va_real);
-			break;
-		case  CP_STRING:
-			fprintf(stdout,"%s=%s\n",nv->va_name,nv->va_string);
-			break;	
-		case  CP_NUM:
-			fprintf(stdout,"%s=%d\n",nv->va_name,nv->va_num);
-			break;	
-                default:
-                {
-                    fprintf(stderr, "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not handled in vec_get\nAborting...\n" );
-                    controlled_exit(EXIT_FAILURE);
+        /* We must make a change in format between the data that carries a variable to
+         * put in a dvec.
+         */
+
+        /*
+         * #define va_bool    va_V.vV_bool
+         * #define va_num     va_V.vV_num
+         * #define va_real    va_V.vV_real
+         * #define va_string  va_V.vV_string
+         * #define va_vlist   va_V.vV_list
+         * enum cp_types {
+         *   CP_BOOL,
+         *   CP_NUM,
+         *   CP_REAL,
+         *   CP_STRING,
+         *   CP_LIST
+         ° };
+         */
+
+        /* The variable is a vector */
+        if (vv->va_type == CP_LIST) {
+            /* Compute the length of the vector,
+             * used with the parameters of isrc and vsrc
+             */
+            struct variable *nv;
+            double *list;
+            list = TMALLOC(double, 1);
+            nv = alloc(struct variable);
+
+            nv = vv->va_vlist;
+            for (i = 1; ; i++) {
+                list = TREALLOC(double, list, i);
+                *(list+i-1) = nv->va_real;
+                nv = nv->va_next;
+                if (!nv)
+                    break;
+            }
+            d->v_realdata = list;
+            d->v_length = i;
+            /* To be able to identify the vector to represent
+             * belongs to a special "conunto" and should be printed in a
+             * special way.
+             */
+            d->v_dims[1] = 1;
+        } else if (vv->va_type == CP_NUM) { /* Variable is an integer */
+            *d->v_realdata = (double) vv->va_num;
+        } else if (vv->va_type == CP_REAL) { /* Variable is a real */
+            if (!(vv->va_next)) {
+                /* Only a real data
+                 * usually normal
+                 */
+                *d->v_realdata = vv->va_real;
+            } else {
+                /* Real data set
+                 * When you print a model @ [all]
+                 * Just print numerical values, not the string
+                 */
+                struct variable *nv;
+                /* We go to print the list of values
+                 * nv->va_name = Parameter description
+                 * nv->va_string = Parameter
+                 * nv->va_real= Value
+                 */
+                nv = vv;
+                for (i = 1; ; i++) {
+                    switch (nv->va_type) {
+                    case  CP_REAL:
+                        fprintf(stdout, "%s=%g\n", nv->va_name, nv->va_real);
+                        break;
+                    case  CP_STRING:
+                        fprintf(stdout, "%s=%s\n", nv->va_name, nv->va_string);
+                        break;
+                    case  CP_NUM:
+                        fprintf(stdout, "%s=%d\n", nv->va_name, nv->va_num);
+                        break;
+                    default: {
+                        fprintf(stderr, "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not handled in vec_get\nAborting...\n" );
+                        controlled_exit(EXIT_FAILURE);
+                    }
+                    }
+                    nv = nv->va_next;
+
+                    if (!nv)
+                        break;
                 }
-	}
-	nv = nv->va_next;
-	
-        if (nv==NULL) break;
-       }
 
-      /* To distinguish those does not take anything for print screen to 
-       * make a print or M1 @ @ M1 [all] leaving only the correct data 
-       * and not the last
-       */	
-      d->v_rlength=1;
-      }
-    }
-        
+                /* To distinguish those does not take anything for print screen to
+                 * make a print or M1 @ @ M1 [all] leaving only the correct data
+                 * and not the last
+                 */
+                d->v_rlength = 1;
+            }
+        }
+
         tfree(vv->va_name);
         tfree(vv); /* va: tfree vv->va_name and vv (avoid memory leakages) */
-        tfree(wd);	
+        tfree(wd);
         vec_new(d);
-	tfree(whole);
+        tfree(whole);
         return (d);
     }
 
@@ -628,7 +618,7 @@ vec_copy(struct dvec *v)
 {
     struct dvec *nv;
     int i;
-    
+
     if (!v)
         return (NULL);
 
@@ -639,14 +629,14 @@ vec_copy(struct dvec *v)
 
     if (isreal(v)) {
         nv->v_realdata = TMALLOC(double, v->v_length);
-        bcopy(v->v_realdata, nv->v_realdata, 
-                sizeof (double) * (size_t) v->v_length);
+        bcopy(v->v_realdata, nv->v_realdata,
+              sizeof (double) * (size_t) v->v_length);
         nv->v_compdata = NULL;
     } else {
         nv->v_realdata = NULL;
         nv->v_compdata = TMALLOC(ngcomplex_t, v->v_length);
-        bcopy(v->v_compdata, nv->v_compdata, 
-                sizeof(ngcomplex_t) * (size_t) v->v_length);
+        bcopy(v->v_compdata, nv->v_compdata,
+              sizeof(ngcomplex_t) * (size_t) v->v_length);
     }
 
     nv->v_minsignal = v->v_minsignal;
@@ -654,18 +644,18 @@ vec_copy(struct dvec *v)
     nv->v_gridtype = v->v_gridtype;
     nv->v_plottype = v->v_plottype;
     nv->v_length = v->v_length;
-    
-    /* Modified to copy the rlength of origin to destination vecor 
-     * instead of always putting it to 0. 
-     * As when it comes to make a print does not leave M1 @ @ M1 = 0.0, 
+
+    /* Modified to copy the rlength of origin to destination vecor
+     * instead of always putting it to 0.
+     * As when it comes to make a print does not leave M1 @ @ M1 = 0.0,
      * to do so in the event that rlength = 0 not print anything on screen
-     * nv-> v_rlength = 0; 
-     * Default -> v_rlength = 0 and only if you come from a print or M1 @ 
-     * @ M1 [all] rlength = 1, after control is one of 
+     * nv-> v_rlength = 0;
+     * Default -> v_rlength = 0 and only if you come from a print or M1 @
+     * @ M1 [all] rlength = 1, after control is one of
      * if (v-> v_rlength == 0) com_print (wordlist * wl)
-     */	
+     */
     nv->v_rlength = v->v_rlength;
-    
+
     nv->v_outindex = 0; /*XXX???*/
     nv->v_linestyle = 0; /*XXX???*/
     nv->v_color = 0; /*XXX???*/
@@ -758,9 +748,9 @@ vec_gc(void)
             nd = d->v_next;
             if (!(d->v_flags & VF_PERMANENT)) {
                 if (ft_vecdb)
-                    fprintf(cp_err, 
-                        "vec_gc: throwing away %s.%s\n",
-                        pl->pl_typename, d->v_name);
+                    fprintf(cp_err,
+                            "vec_gc: throwing away %s.%s\n",
+                            pl->pl_typename, d->v_name);
                 vec_free(d);
             }
         }
@@ -799,8 +789,8 @@ vec_free_x(struct dvec *v)
                 if (lv->v_next == v)
                     break;
             if (lv->v_next == NULL)
-                fprintf(cp_err, 
-                    "vec_free: Internal Error: %s not in plot\n",
+                fprintf(cp_err,
+                        "vec_free: Internal Error: %s not in plot\n",
                         v->v_name);
             lv->v_next = v->v_next;
         }
@@ -830,7 +820,7 @@ vec_eq(struct dvec *v1, struct dvec *v2)
 
     if (v1->v_plot != v2->v_plot)
         return (FALSE);
-    
+
     s1 = vec_basename(v1);
     s2 = vec_basename(v2);
 
@@ -864,7 +854,7 @@ vec_basename(struct dvec *v)
             (void) strcpy(buf, v->v_name);
     } else
         (void) strcpy(buf, v->v_name);
-    
+
     strtolower(buf);
     for (t = buf; isspace(*t); t++)
         ;
@@ -881,7 +871,7 @@ vec_basename(struct dvec *v)
 
 /* Make a plot the current one.  This gets called by cp_usrset() when one
  * does a 'set curplot = name'.
- * va: ATTENTION: has unlinked old keyword-class-tree from keywords[CT_VECTOR] 
+ * va: ATTENTION: has unlinked old keyword-class-tree from keywords[CT_VECTOR]
  *                (potentially memory leak)
  */
 
@@ -906,15 +896,15 @@ plot_setcur(char *name)
         fprintf(cp_err, "Error: no such plot named %s\n", name);
         return;
     }
-/* va: we skip cp_kwswitch, because it confuses the keyword-tree management for 
- *     repeated op-commands. When however cp_kwswitch is necessary for other 
- *     reasons, we should hold the original keyword table pointer in an 
- *     permanent variable, since it will lost here, and can never tfree'd.
-    if (plot_cur)
-    {
-        plot_cur->pl_ccom = cp_kwswitch(CT_VECTOR, pl->pl_ccom);
-    }
-*/
+    /* va: we skip cp_kwswitch, because it confuses the keyword-tree management for
+     *     repeated op-commands. When however cp_kwswitch is necessary for other
+     *     reasons, we should hold the original keyword table pointer in an
+     *     permanent variable, since it will lost here, and can never tfree'd.
+        if (plot_cur)
+        {
+            plot_cur->pl_ccom = cp_kwswitch(CT_VECTOR, pl->pl_ccom);
+        }
+    */
     plot_cur = pl;
     return;
 }
@@ -971,41 +961,41 @@ vec_transpose(struct dvec *v)
      */
 
     if (isreal(v)) {
-	newreal = TMALLOC(double, v->v_length);
-	oldreal = v->v_realdata;
-	koffset = 0;
-	for ( k=0; k < nummatrices; k++ ) {
-	    joffset = 0;
-	    for ( j=0; j < dim0; j++ ) {
-		for ( i=0; i < dim1; i++ ) {
-		  newreal[ koffset + joffset + i ] =
-		    oldreal[ koffset + i*dim0 + j ];
-		}
-		joffset += dim1;  /* joffset = j*dim0 */
-	    }
-	    koffset += blocksize; /* koffset = k*blocksize = k*dim0*dim1 */
-	}
-	tfree(oldreal);
-	v->v_realdata = newreal;
+        newreal = TMALLOC(double, v->v_length);
+        oldreal = v->v_realdata;
+        koffset = 0;
+        for (k = 0; k < nummatrices; k++) {
+            joffset = 0;
+            for (j = 0; j < dim0; j++) {
+                for (i = 0; i < dim1; i++) {
+                    newreal[ koffset + joffset + i ] =
+                        oldreal[ koffset + i*dim0 + j ];
+                }
+                joffset += dim1;  /* joffset = j*dim0 */
+            }
+            koffset += blocksize; /* koffset = k*blocksize = k*dim0*dim1 */
+        }
+        tfree(oldreal);
+        v->v_realdata = newreal;
     } else {
-	newcomp = TMALLOC(ngcomplex_t, v->v_length);
-	oldcomp = v->v_compdata;
-	koffset = 0;
-	for ( k=0; k < nummatrices; k++ ) {
-	    joffset = 0;
-	    for ( j=0; j < dim0; j++ ) {
-		for ( i=0; i < dim1; i++ ) {
-		  realpart(newcomp[ koffset + joffset + i ]) =
-		    realpart(oldcomp[ koffset + i*dim0 + j ]);
-		  imagpart(newcomp[ koffset + joffset + i ]) =
-		    imagpart(oldcomp[ koffset + i*dim0 + j ]);
-		}
-		joffset += dim1;  /* joffset = j*dim0 */
-	    }
-	    koffset += blocksize; /* koffset = k*blocksize = k*dim0*dim1 */
-	}
-	tfree(oldcomp);
-	v->v_compdata = newcomp;
+        newcomp = TMALLOC(ngcomplex_t, v->v_length);
+        oldcomp = v->v_compdata;
+        koffset = 0;
+        for (k = 0; k < nummatrices; k++) {
+            joffset = 0;
+            for (j = 0; j < dim0; j++) {
+                for (i = 0; i < dim1; i++) {
+                    realpart(newcomp[ koffset + joffset + i ]) =
+                        realpart(oldcomp[ koffset + i*dim0 + j ]);
+                    imagpart(newcomp[ koffset + joffset + i ]) =
+                        imagpart(oldcomp[ koffset + i*dim0 + j ]);
+                }
+                joffset += dim1;  /* joffset = j*dim0 */
+            }
+            koffset += blocksize; /* koffset = k*blocksize = k*dim0*dim1 */
+        }
+        tfree(oldcomp);
+        v->v_compdata = newcomp;
     }
 }
 
@@ -1030,17 +1020,17 @@ vec_mkfamily(struct dvec *v)
     for (i = 0, vecs = d = NULL; i < numvecs; i++) {
         if (vecs) {
             d = d->v_link2 = alloc(struct dvec);
-	    ZERO(d, struct dvec);
+            ZERO(d, struct dvec);
         } else {
             d = vecs = alloc(struct dvec);
-	    ZERO(d, struct dvec);
-	}
+            ZERO(d, struct dvec);
+        }
     }
     for (i = 0; i < MAXDIMS; i++)
         count[i] = 0;
     for (d = vecs, j = 0; d; j++, d = d->v_link2) {
-    	indexstring(count, v->v_numdims - 1, buf2);
-	(void) sprintf(buf, "%s%s", v->v_name, buf2);
+        indexstring(count, v->v_numdims - 1, buf2);
+        (void) sprintf(buf, "%s%s", v->v_name, buf2);
         d->v_name = copy(buf);
         d->v_type = v->v_type;
         d->v_flags = v->v_flags;
@@ -1062,8 +1052,8 @@ vec_mkfamily(struct dvec *v)
             d->v_compdata = TMALLOC(ngcomplex_t, size);
             bcopy(v->v_compdata + size*j, d->v_compdata, (size_t) size * sizeof(ngcomplex_t));
         }
-	/* Add one to the counter. */
-	(void) incindex(count, v->v_numdims - 1, v->v_dims, v->v_numdims);
+        /* Add one to the counter. */
+        (void) incindex(count, v->v_numdims - 1, v->v_dims, v->v_numdims);
     }
 
     for (d = vecs; d; d = d->v_link2)
@@ -1082,7 +1072,8 @@ plot_prefix(char *pre, char *str)
     while (*pre && *str) {
         if (*pre != *str)
             break;
-        pre++; str++;
+        pre++;
+        str++;
     }
     if (*pre || (*str && isdigit(pre[-1])))
         return (FALSE);
