@@ -139,28 +139,43 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             errRtn = "RESask";
             strcpy(errMsg, msg);
             return(E_ASKCURRENT);
-        } else {
+        } else if (ckt->CKTrhsOld) {
             value->rValue = (*(ckt->CKTrhsOld + fast->RESposNode) -
                              *(ckt->CKTrhsOld + fast->RESnegNode))
                             *fast->RESconduct;
             value->rValue *= fast->RESm;
+            return(OK);
+        } else {
+            char msgloc[BSIZE_SP];
+            sprintf(msgloc, "No current values available for %s", fast->RESname);
+            errMsg = TMALLOC(char, strlen(msgloc) + 1);
+            errRtn = "RESask";
+            strcpy(errMsg, msgloc);
+            return(E_ASKCURRENT);
         }
-        return(OK);
     case RES_POWER:
         if (ckt->CKTcurrentAnalysis & DOING_AC) {
             errMsg = TMALLOC(char, strlen(msg) + 1);
             errRtn = "RESask";
             strcpy(errMsg, msg);
             return(E_ASKPOWER);
-        } else {
+        } else if (ckt->CKTrhsOld) {
             value->rValue = (*(ckt->CKTrhsOld + fast->RESposNode) -
                              *(ckt->CKTrhsOld + fast->RESnegNode)) *
                             fast->RESconduct *
                             (*(ckt->CKTrhsOld + fast->RESposNode) -
                              *(ckt->CKTrhsOld + fast->RESnegNode));
             value->rValue *= fast->RESm;
+            return(OK);
+        } else {
+            char msgloc[BSIZE_SP];
+            sprintf(msgloc, "No power values available for %s", fast->RESname);
+            errMsg = TMALLOC(char, strlen(msgloc) + 1);
+            errRtn = "RESask";
+            strcpy(errMsg, msgloc);
+            return(E_ASKCURRENT);
         }
-        return(OK);
+        
     default:
         return(E_BADPARM);
     }
