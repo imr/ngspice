@@ -188,7 +188,7 @@ void EVTqueue_inst(
     Evt_Inst_Event_t  *new_event;
     Evt_Inst_Event_t  *next;
 
-    Mif_Boolean_t       splice;
+    Mif_Boolean_t       splice, malloced = FALSE;
 
 
     /* Get pointers for fast access */
@@ -206,6 +206,7 @@ void EVTqueue_inst(
     }
     else {
         new_event = TMALLOC(Evt_Inst_Event_t, 1);
+        malloced = TRUE;
     }
     new_event->event_time = event_time;
     new_event->posted_time = posted_time;
@@ -215,8 +216,11 @@ void EVTqueue_inst(
     here = inst_queue->current[inst_index];
     while(*here) {
         /* If there's an event with the same time, don't duplicate it */
-        if(event_time == (*here)->event_time)
+        if(event_time == (*here)->event_time) {
+            if(malloced)
+                tfree(new_event);
             return;
+        }    
         else if(event_time < (*here)->event_time) {
             splice = MIF_TRUE;
             break;
