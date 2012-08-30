@@ -23,6 +23,7 @@ Author: 1985 Wayne A. Christopher
 #include "completion.h"
 #include "variable.h"
 #include "breakp2.h"
+#include "dotcards.h"
 #include "../misc/util.h" /* ngdirname() */
 #include "../misc/mktemp.h"
 #include "../misc/misc_time.h"
@@ -43,6 +44,7 @@ Author: 1985 Wayne A. Christopher
 static char *upper(register char *string);
 static bool doedit(char *filename);
 static struct line *com_options = NULL;
+static void consaves(wordlist *wl);
 
 void line_free_x(struct line *deck, bool recurse);
 
@@ -354,7 +356,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
         }
         /* free the control deck */
         line_free(deck, TRUE);
-        /*         printf("Command deck freed\n"); */
+        /* do this here and in the 'else' branch of 'if (comfile)' */
+        if (dbs)
+            dbfree(dbs);
+        ft_dotsaves();
     } /* end if (comfile) */
 
     else {    /* must be regular deck . . . . */
@@ -643,21 +648,24 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
             (void) fclose(fdo);
         }
 
+       /* linked list dbs is used to store the "save" or .save data (defined in breakp2.c),
+          (When controls are executed later on, also stores TRACE, IPLOT, and STOP data) */
+        if (dbs)
+            dbfree(dbs);
+        /* .save data stored in dbs.
+           Do this here before controls are run: .save is thus recognized even if
+           .control is used */
+        ft_dotsaves();
+        /* run all 'save' commands upfront, allow same syntax as in .save,
+        then remove them from controls, store data in dbs */
+        consaves(controls);
+
         /* Now that the deck is loaded, do the commands, if there are any */
         controls = wl_reverse(controls);
         for (wl = controls; wl; wl = wl->wl_next)
             cp_evloop(wl->wl_word);
         wl_free(controls);
     }
-
-    /* linked list dbs is used to store the "save" or .save data (defined in breakp2.c),
-       breakpoint and iplot data, will be renewed in ft_dotsaves(). */
-    if (dbs)
-        tfree(dbs);
-
-    /*saj, to process save commands always, not just in batch mode
-     *(breaks encapsulation of frontend and parsing commands slightly)*/
-    ft_dotsaves();
 
     /* Now reset everything.  Pop the control stack, and fix up the IO
      * as it was before the source.  */
@@ -1099,4 +1107,31 @@ inp_source(char *file)
     static struct wordlist wl = { NULL, NULL, NULL } ;
     wl.wl_word = file;
     com_source(&wl);
+}
+
+
+/* find 'save' commands, retrive node name(s) and store
+   them in dbs (by com_save), like ft_dotsaves does with .save */
+static void
+consaves(wordlist *wl_control)
+{
+    wordlist *iline, *wl = NULL;
+    char *s;
+
+    iline = wl_control;
+    while (iline) {
+        if (ciprefix("save", iline->wl_word)) {
+            wordlist *tmplist;
+            s = iline->wl_word;
+            (void) gettok(&s);
+            wl = wl_append(wl, gettoks(s));
+            tmplist = iline->wl_next;
+            wl_delete_slice(iline, iline->wl_next);
+            iline = tmplist;
+        }
+        else
+            iline = iline->wl_next;
+    }
+
+    com_save(wl);
 }
