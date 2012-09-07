@@ -80,3 +80,10 @@ Limits:             -
 Vector:             no
 Vector_Bounds:      -
 Null_Allowed:       yes
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    locdata
+Description:        "local static data"
+Data_Type:          pointer
