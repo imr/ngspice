@@ -249,7 +249,7 @@ void cm_sine(ARGS)  /* structure holding parms,
                 must determine position progressively & then
                 calculate required output.                    ***/
 
-            for (i=0; i<cntl_size; i++) {
+            for (i=0; i<cntl_size-1; i++) {
 
                 if ((cntl_input < *(x+i+1)) && (cntl_input >= *(x+i))) {
 
