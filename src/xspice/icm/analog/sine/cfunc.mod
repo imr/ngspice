@@ -8,31 +8,32 @@ Georgia Tech Research Corporation, Atlanta, Ga. 30332
 All Rights Reserved
 
 PROJECT A-8503-405
-               
 
-AUTHORS                      
+
+AUTHORS
 
     20 Mar 1991     Harry Li
 
 
-MODIFICATIONS   
+MODIFICATIONS
 
      2 Oct 1991    Jeffrey P. Murray
-                                   
+     7 Sep 2012    Holger Vogt
+
 
 SUMMARY
 
     This file contains the model-specific routines used to
-    functionally describe the sine (controlled sine-wave 
+    functionally describe the sine (controlled sine-wave
     oscillator) code model.
 
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
-    CMmacros.h           cm_message_send();                   
-                             
+    CMmacros.h           cm_message_send();
+
     CM.c                 void *cm_analog_alloc()
                          void *cm_analog_get_ptr()
 
@@ -40,7 +41,7 @@ INTERFACES
 REFERENCED FILES
 
     Inputs from and outputs to ARGS structure.
-                     
+
 
 NON-STANDARD FEATURES
 
@@ -50,11 +51,11 @@ NON-STANDARD FEATURES
 
 /*=== INCLUDE FILES ====================*/
 
-#include "sin.h"  
+#include "sin.h"
 #include <math.h>
 
 
-                                      
+
 
 /*=== CONSTANTS ========================*/
 
@@ -65,50 +66,59 @@ NON-STANDARD FEATURES
 
 
 
-  
-/*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
+
+/*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
 
-    
-           
+typedef struct {
+
+    double   *control;   /* the storage array for the
+                            control vector (cntl_array)   */
+
+    double   *freq;   /* the storage array for the
+                         frequency vector (freq_array)   */
+} Local_Data_t;
+
+
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 
 
 
-                   
+
 /*==============================================================================
 
 FUNCTION void cm_sine()
 
-AUTHORS                      
+AUTHORS
 
     20 Mar 1991     Harry Li
 
-MODIFICATIONS   
+MODIFICATIONS
 
      2 Oct 1991    Jeffrey P. Murray
+     7 Sep 2012    Holger Vogt
 
 SUMMARY
 
     This function implements the sine (controlled sinewave
     oscillator) code model.
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
-    CMmacros.h           cm_message_send();                   
-                             
+    CMmacros.h           cm_message_send();
+
     CM.c                 void *cm_analog_alloc()
                          void *cm_analog_get_ptr()
 
 RETURNED VALUE
-    
+
     Returns inputs and outputs via ARGS structure.
 
 GLOBAL VARIABLES
-    
+
     NONE
 
 NON-STANDARD FEATURES
@@ -120,7 +130,7 @@ NON-STANDARD FEATURES
 
 /*=== CM_SINE ROUTINE ===*/
 
-void cm_sine(ARGS)  /* structure holding parms, 
+void cm_sine(ARGS)  /* structure holding parms,
                                    inputs, outputs, etc.     */
 {
         int i;             /* generic loop counter index                    */
@@ -142,13 +152,16 @@ void cm_sine(ARGS)  /* structure holding parms,
 		double radian;     /* phase value in radians                        */
 
     Mif_Complex_t ac_gain;
-                                           
+
+    Local_Data_t *loc;        /* Pointer to local static data, not to be included
+                                       in the state vector */
+
 
     /**** Retrieve frequently used parameters... ****/
 
 
-    cntl_size = PARAM_SIZE(cntl_array);           
-    freq_size = PARAM_SIZE(freq_array);           
+    cntl_size = PARAM_SIZE(cntl_array);
+    freq_size = PARAM_SIZE(freq_array);
     output_low = PARAM(out_low);
     output_hi = PARAM(out_high);
 
@@ -161,11 +174,31 @@ void cm_sine(ARGS)  /* structure holding parms,
 
 	cm_analog_alloc(INT1,sizeof(double));
 
+
+    /*** allocate static storage for *loc ***/
+    STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
+    loc = STATIC_VAR (locdata);
+
+
+    /* Allocate storage for breakpoint domain & freq. range values */
+    x = loc->control = (double *) calloc((size_t) cntl_size, sizeof(double));
+    if (!x) {
+        cm_message_send(allocation_error);
+        return;
+    }
+    y = loc->freq = (double *) calloc((size_t) freq_size, sizeof(double));
+    if (!y) {
+        cm_message_send(allocation_error);
+        return;
+    }
+
+
   }
+
   if(ANALYSIS == MIF_DC){
 
 		OUTPUT(out) = (output_hi + output_low)/2;
-		PARTIAL(out,cntl_in) = 0; 
+		PARTIAL(out,cntl_in) = 0;
 		phase = (double *) cm_analog_get_ptr(INT1,0);
 		*phase = 0;
 
@@ -176,28 +209,19 @@ void cm_sine(ARGS)  /* structure holding parms,
 	phase = (double *) cm_analog_get_ptr(INT1,0);
 	phase1 = (double *) cm_analog_get_ptr(INT1,1);
 
-    /* Allocate storage for breakpoint domain & freq. range values */
-    x = (double *) calloc((size_t) cntl_size, sizeof(double));
-    if (!x) {
-        cm_message_send(allocation_error); 
-        return;
-    }
-    y = (double *) calloc((size_t) freq_size, sizeof(double));
-    if (!y) {
-        cm_message_send(allocation_error);  
-        return;
-    }
+	loc = STATIC_VAR (locdata);
+	x = loc->control;
+	y = loc->freq;
 
-
-    /* Retrieve x and y values. */       
+    /* Retrieve x and y values. */
     for (i=0; i<cntl_size; i++) {
         *(x+i) = PARAM(cntl_array[i]);
         *(y+i) = PARAM(freq_array[i]);
-    }                       
-    
+    }
 
 
-    /* Retrieve cntl_input value. */       
+
+    /* Retrieve cntl_input value. */
     cntl_input = INPUT(cntl_in);
 
 
@@ -211,30 +235,30 @@ void cm_sine(ARGS)  /* structure holding parms,
 	        cm_message_send(sine_freq_clamp);
 	        freq = 1e-16;
          }
-          /* freq = *y; */	
+          /* freq = *y; */
     }
-    else 
+    else
         /*** cntl_input above highest cntl_voltage ***/
-	
-        if (cntl_input >= *(x+cntl_size-1)){ 
+
+        if (cntl_input >= *(x+cntl_size-1)){
             dout_din = (*(y+cntl_size-1) - *(y+cntl_size-2)) /
                           (*(x+cntl_size-1) - *(x+cntl_size-2));
             freq = *(y+cntl_size-1) + (cntl_input - *(x+cntl_size-1)) * dout_din;
 
-        } else { /*** cntl_input within bounds of end midpoints...   
-                must determine position progressively & then 
+        } else { /*** cntl_input within bounds of end midpoints...
+                must determine position progressively & then
                 calculate required output.                    ***/
 
             for (i=0; i<cntl_size; i++) {
 
-                if ((cntl_input < *(x+i+1)) && (cntl_input >= *(x+i))) { 
-            		
+                if ((cntl_input < *(x+i+1)) && (cntl_input >= *(x+i))) {
+
 					/* Interpolate to the correct frequency value */
 
-					freq = ((cntl_input - *(x+i))/(*(x+i+1) - *(x+i)))* 
-							(*(y+i+1)-*(y+i)) + *(y+i); 
-                } 
-    
+					freq = ((cntl_input - *(x+i))/(*(x+i+1) - *(x+i)))*
+							(*(y+i+1)-*(y+i)) + *(y+i);
+                }
+
             }
         }
 /*   calculate the peak value of the wave, the center of the wave, the
@@ -249,9 +273,9 @@ void cm_sine(ARGS)  /* structure holding parms,
 
     } else {                      /* Output AC Gain */
 
-        ac_gain.real = 0.0; 
+        ac_gain.real = 0.0;
         ac_gain.imag= 0.0;
         AC_GAIN(out,cntl_in) = ac_gain;
     }
-} 
+}
 
