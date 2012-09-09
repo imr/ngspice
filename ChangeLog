@@ -5423,6 +5423,15 @@
    Removed the PARALLEL_ARCH macro
    Removed the Combine algorithm from Sparse and Analyses
 
+2012-09-08  Francesco Lannutti
+ * src/maths/KLU/klusmp.c
+ * src/maths/ni/niiter.c
+  Corrected a possible bug that
+   probably comes from SPICE
+   Berkeley in NIiter. It can
+   affect convergence during
+   dynamic gmin stepping algorithm
+
 2012-08-25  Francesco Lannutti
  * src/maths/KLU/klusmp.c
  * src/spicelib/analysis/cktsetup.c
