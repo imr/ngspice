@@ -25,6 +25,10 @@ Modified: 2001 AlansFixes
 int
 NIiter(CKTcircuit *ckt, int maxIter)
 {
+    /* Francesco Lannutti - NEED TO PIVOT Fix */
+    int SMPreorderFromSMPluFac ;
+    SMPreorderFromSMPluFac = 0 ;
+
     int iterno;
     int ipass;
     int error;
@@ -78,10 +82,17 @@ NIiter(CKTcircuit *ckt, int maxIter)
 #else /* NEWPRED */
         if(1) { /* } */
 #endif /* NEWPRED */
-            error = CKTload(ckt);
+
+            /* Francesco Lannutti - NEED TO PIVOT Fix */
+            error = 0 ;
+            if (!SMPreorderFromSMPluFac)
+            {
+                error = CKTload (ckt) ;
+                iterno++ ;
+            }
+
             /*printf("loaded, noncon is %d\n",ckt->CKTnoncon);*/
             /*fflush(stdout);*/
-            iterno++;
             if(error) {
                 ckt->CKTstat->STATnumIter += iterno;
 #ifdef STEPDEBUG
@@ -143,6 +154,10 @@ NIiter(CKTcircuit *ckt, int maxIter)
                     SPfrontEnd->IFseconds() - startTime;
                 if(error) {
                     if( error == E_SINGULAR ) {
+
+                        /* Francesco Lannutti - NEED TO PIVOT Fix */
+                        SMPreorderFromSMPluFac = 1 ;
+fprintf (stderr, "CIAO\n") ;
                         ckt->CKTniState |= NISHOULDREORDER;
                         DEBUGMSG(" forced reordering....\n");
                         continue;
