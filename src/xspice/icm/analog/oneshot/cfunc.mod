@@ -67,6 +67,18 @@ NON-STANDARD FEATURES
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
 
+typedef struct {
+
+    double   *control;   /* the storage array for the
+                            control vector (cntl_array)   */
+
+    double   *pw;   /* the storage array for the
+                         pulse width array (pw_array)   */
+
+    int tran_init; /* for initialization of old_clock) */
+
+} Local_Data_t;
+
 
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
@@ -192,6 +204,8 @@ void cm_oneshot(ARGS)  /* structure holding parms,
 
     Mif_Complex_t ac_gain;
 
+    Local_Data_t *loc;        /* Pointer to local static data, not to be included
+                                       in the state vector */
 
     /**** Retrieve frequently used parameters... ****/
 
@@ -236,6 +250,24 @@ void cm_oneshot(ARGS)  /* structure holding parms,
         cm_analog_alloc(LOCKED,sizeof(int));
         cm_analog_alloc(OUTPUT_OLD,sizeof(double));
 
+        /*** allocate static storage for *loc ***/
+        STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
+        loc = STATIC_VAR (locdata);
+
+        /* Allocate storage for breakpoint domain & pulse width values */
+        x = loc->control = (double *) calloc((size_t) cntl_size, sizeof(double));
+        if (!x) {
+            cm_message_send(oneshot_allocation_error);
+            return;
+        }
+        y = loc->pw = (double *) calloc((size_t) pw_size, sizeof(double));
+        if (!y) {
+            cm_message_send(oneshot_allocation_error);
+            return;
+        }
+
+        loc->tran_init = FALSE;
+
     }
 
     if(ANALYSIS == MIF_DC) {
@@ -270,299 +302,247 @@ void cm_oneshot(ARGS)  /* structure holding parms,
         }
         PARTIAL(out,clk) = 0;
 
-    } else
+    } else if(ANALYSIS == MIF_TRAN) {
 
-        if(ANALYSIS == MIF_TRAN) {
+        /* retrieve previous values, set them equal to the variables
+           Note that these pointer values are immediately dumped into
+           other variables because the previous values can't change-
+           can't rewrite the old values */
 
-            /* retrieve previous values, set them equal to the variables
-               Note that these pointer values are immediately dumped into
-               other variables because the previous values can't change-
-               can't rewrite the old values */
+        t1 = (double *) cm_analog_get_ptr(T1,1);
+        t2 = (double *) cm_analog_get_ptr(T2,1);
+        t3 = (double *) cm_analog_get_ptr(T3,1);
+        t4 = (double *) cm_analog_get_ptr(T4,1);
+        set = (int*) cm_analog_get_ptr(SET,1);
+        state = (int *) cm_analog_get_ptr(STATE,1);
+        locked = (int *) cm_analog_get_ptr(LOCKED,1);
+        clock = (double *) cm_analog_get_ptr(CLOCK,0);
+        old_clock = (double *) cm_analog_get_ptr(CLOCK,1);
+        output_old = (double *) cm_analog_get_ptr(OUTPUT_OLD,1);
 
-            t1 = (double *) cm_analog_get_ptr(T1,1);
-            t2 = (double *) cm_analog_get_ptr(T2,1);
-            t3 = (double *) cm_analog_get_ptr(T3,1);
-            t4 = (double *) cm_analog_get_ptr(T4,1);
-            set = (int*) cm_analog_get_ptr(SET,1);
-            state = (int *) cm_analog_get_ptr(STATE,1);
-            locked = (int *) cm_analog_get_ptr(LOCKED,1);
-            clock = (double *) cm_analog_get_ptr(CLOCK,0);
-            old_clock = (double *) cm_analog_get_ptr(CLOCK,1);
-            output_old = (double *) cm_analog_get_ptr(OUTPUT_OLD,1);
+        time1 = *t1;
+        time2 = *t2;
+        time3 = *t3;
+        time4 = *t4;
+        set1 = *set;
+        state1 = *state;
+        locked1 = *locked;
 
-            time1 = *t1;
-            time2 = *t2;
-            time3 = *t3;
-            time4 = *t4;
-            set1 = *set;
-            state1 = *state;
-            locked1 = *locked;
+        if((PORT_NULL(clear) != 1) && (INPUT(clear) > trig_clk)) {
+            time1 = -1;
+            time2 = -1;
+            time3 = -1;
+            time4 = -1;
+            set1 = 0;
+            locked1 = 0;
+            state1 = 0;
 
-            if((PORT_NULL(clear) != 1) && (INPUT(clear) > trig_clk)) {
+            OUTPUT(out) = output_low;
+        } else {
+            loc = STATIC_VAR (locdata);
+            x = loc->control;
+            y = loc->pw;
 
-                time1 = -1;
-                time2 = -1;
-                time3 = -1;
-                time4 = -1;
-                set1 = 0;
-                locked1 = 0;
+            if (!loc->tran_init) {
+                *old_clock = 0.0;
+                loc->tran_init = TRUE;
+            }
+
+            /* Retrieve control and pulse-width values. */
+            for (i=0; i<cntl_size; i++) {
+                *(x+i) = PARAM(cntl_array[i]);
+                *(y+i) = PARAM(pw_array[i]);
+            }
+
+            /* Retrieve cntl_input and clock value. */
+            if(PORT_NULL(cntl_in) != 1) {
+                cntl_input = INPUT(cntl_in);
+            } else {
+                cntl_input = 0;
+            }
+
+            *clock = INPUT(clk);
+
+            /* Determine segment boundaries within which cntl_input resides */
+            if (cntl_input <= *x) { /* cntl_input below lowest cntl_voltage */
+                dout_din = (*(y+1) - *y)/(*(x+1) - *x);
+                pw = *y + (cntl_input - *x) * dout_din;
+
+                if(pw < 0) {
+                    cm_message_send(oneshot_pw_clamp);
+                    pw = 0;
+                }
+            } else
+
+                /*** cntl_input above highest cntl_voltage ***/
+                if (cntl_input >= *(x+cntl_size-1)) {
+                    dout_din = (*(y+cntl_size-1) - *(y+cntl_size-2)) /
+                               (*(x+cntl_size-1) - *(x+cntl_size-2));
+                    pw = *(y+cntl_size-1) + (cntl_input - *(x+cntl_size-1)) * dout_din;
+
+                } else {
+                    /*** cntl_input within bounds of end midpoints...
+                    must determine position progressively & then
+                    calculate required output.                    ***/
+
+                    for (i=0; i<cntl_size-1; i++) {
+                        if ((cntl_input < *(x+i+1)) && (cntl_input >= *(x+i))) {
+                            /* Interpolate to get the correct pulse width value */
+                            pw = ((cntl_input - *(x+i))/(*(x+i+1) - *(x+i)))*
+                                 (*(y+i+1)-*(y+i)) + *(y+i);
+                        }
+                    }
+                }
+
+            if(trig_pos_edge) { /* for a positive edge trigger */
+
+                if(!set1) {
+                    /* if set1=0, then look for
+                         1.  a rising edge trigger
+                         2.  the clock to be higher than the trigger value */
+
+                    if((*clock > *old_clock) && (*clock > trig_clk)) {
+                        state1 = 1;
+                        set1 = 1;
+                    }
+
+                } else
+                    /* look for a neg edge before resetting the trigger */
+                    if((*clock < *old_clock) && (*clock < trig_clk)) {
+                        set1 = 0;
+                    }
+            } else {
+                /* This stuff belongs to the case where a negative edge
+                is needed */
+
+                if(!set1) {
+                    if((*clock < *old_clock) && (*clock < trig_clk)) {
+                        state1 = 1;
+                        set1 = 1;
+                    }
+                } else
+                    /* look for a pos edge before resetting the trigger */
+                    if((*clock > *old_clock) && (*clock > trig_clk)) {
+                        set1 = 0;
+                    }
+            }
+
+
+            /*  I can only set the breakpoints if the state1 is high and
+                the output is low, and locked = 0 */
+            if((state1) && (*output_old - output_low < 1e-20) && (!locked1)) {
+
+                /* if state1 is 1, and the output is low, then set the time points
+                   and the temporary breakpoints */
+
+                time1 = TIME + del_rise;
+                time2 = time1 + t_rise;
+                time3 = time2 + pw + del_fall;
+                time4 = time3 + t_fall;
+
+                if(PARAM(retrig) == MIF_FALSE) {
+                    locked1 = 1;
+                }
+
+                if((TIME < time1) || (T(1) == 0)) {
+                    cm_analog_set_perm_bkpt(time1);
+                }
+
+                cm_analog_set_perm_bkpt(time2);
+                cm_analog_set_perm_bkpt(time3);
+                cm_analog_set_perm_bkpt(time4);
+
+                /* reset the state value */
                 state1 = 0;
-
                 OUTPUT(out) = output_low;
 
+            } else
 
-            } else {
+                /* state1 = 1, and the output is high,  then just set time3 and time4.
+                Temporary breakpoints don't do for now, so use permanent breakpoints.
+                This implies that the oneshot was retriggered */
 
-                /* Allocate storage for breakpoint domain & freq. range values */
+                if((state1) && (*output_old - output_hi < 1e-20) && (!locked1)) {
 
-                x = (double *) calloc((size_t) cntl_size, sizeof(double));
-                if (!x) {
-                    cm_message_send(oneshot_allocation_error);
-                    return;
-                }
-
-                y = (double *) calloc((size_t) pw_size, sizeof(double));
-                if (!y) {
-                    cm_message_send(oneshot_allocation_error);
-                    return;
-                }
-
-
-                /* Retrieve control and pulse-width values. */
-                for (i=0; i<cntl_size; i++) {
-                    *(x+i) = PARAM(cntl_array[i]);
-                    *(y+i) = PARAM(pw_array[i]);
-                }
-
-
-                /* Retrieve cntl_input and clock value. */
-
-                if(PORT_NULL(cntl_in) != 1) {
-
-                    cntl_input = INPUT(cntl_in);
-
-                } else {
-
-                    cntl_input = 0;
-
-                }
-
-                *clock = INPUT(clk);
-
-
-
-
-                /* Determine segment boundaries within which cntl_input resides */
-
-                if (cntl_input <= *x) { /* cntl_input below lowest cntl_voltage */
-                    dout_din = (*(y+1) - *y)/(*(x+1) - *x);
-                    pw = *y + (cntl_input - *x) * dout_din;
-
-                    if(pw < 0) {
-                        cm_message_send(oneshot_pw_clamp);
-                        pw = 0;
-                    }
-                } else
-                    /*** cntl_input above highest cntl_voltage ***/
-
-                    if (cntl_input >= *(x+cntl_size-1)) {
-                        dout_din = (*(y+cntl_size-1) - *(y+cntl_size-2)) /
-                                   (*(x+cntl_size-1) - *(x+cntl_size-2));
-                        pw = *(y+cntl_size-1) + (cntl_input - *(x+cntl_size-1)) * dout_din;
-
-                    } else {
-                        /*** cntl_input within bounds of end midpoints...
-                                must determine position progressively & then
-                                calculate required output.                    ***/
-
-                        for (i=0; i<cntl_size-1; i++) {
-
-                            if ((cntl_input < *(x+i+1)) && (cntl_input >= *(x+i))) {
-
-                                /* Interpolate to get the correct pulse width value */
-
-                                pw = ((cntl_input - *(x+i))/(*(x+i+1) - *(x+i)))*
-                                     (*(y+i+1)-*(y+i)) + *(y+i);
-                            }
-
-                        }
-                    }
-
-
-                if(trig_pos_edge) { /* for a positive edge trigger */
-
-                    if(!set1) {
-                        /* if set1=0, then look for
-                                         1.  a rising edge trigger
-                                         2.  the clock to be higher than the trigger value */
-
-                        if((*clock > *old_clock) && (*clock > trig_clk)) {
-
-                            state1 = 1;
-                            set1 = 1;
-
-                        }
-
-                    } else
-
-                        /* look for a neg edge before resetting the trigger */
-
-                        if((*clock < *old_clock) && (*clock < trig_clk)) {
-
-                            set1 = 0;
-
-                        }
-
-                } else {
-                    /* This stuff belongs to the case where a negative edge
-                       is needed */
-
-                    if(!set1) {
-
-                        if((*clock < *old_clock) && (*clock < trig_clk)) {
-
-                            state1 = 1;
-                            set1 = 1;
-
-                        }
-
-                    } else
-                        /* look for a pos edge before resetting the trigger */
-
-                        if((*clock > *old_clock) && (*clock > trig_clk)) {
-
-                            set1 = 0;
-                        }
-                }
-
-
-                /*  I can only set the breakpoints if the state1 is high and
-                    the output is low, and locked = 0 */
-                if((state1) && (*output_old - output_low < 1e-20) && (!locked1)) {
-
-                    /* if state1 is 1, and the output is low, then set the time points
-                       and the temporary breakpoints */
-
-                    time1 = TIME + del_rise;
-                    time2 = time1 + t_rise;
-                    time3 = time2 + pw + del_fall;
+                    time3 = TIME + pw + del_rise + del_fall + t_rise;
                     time4 = time3 + t_fall;
 
-                    if(PARAM(retrig) == MIF_FALSE) {
-
-                        locked1 = 1;
-
-                    }
-
-                    if((TIME < time1) || (T(1) == 0)) {
-                        cm_analog_set_temp_bkpt(time1);
-                    }
-
-                    cm_analog_set_temp_bkpt(time2);
-                    cm_analog_set_temp_bkpt(time3);
-                    cm_analog_set_temp_bkpt(time4);
-
-                    /* reset the state value */
-                    state1 = 0;
-                    OUTPUT(out) = output_low;
-
-                } else
-
-                    /* state1 = 1, and the output is high,  then just set time3 and time4
-                       and their temporary breakpoints This implies that the oneshot was
-                       retriggered */
-
-                    if((state1) && (*output_old - output_hi < 1e-20) && (!locked1)) {
-
-                        time3 = TIME + pw + del_rise + del_fall + t_rise;
-                        time4 = time3 + t_fall;
-
-                        cm_analog_set_temp_bkpt(time3);
-                        cm_analog_set_temp_bkpt(time4);
-
-                        OUTPUT(out) = output_hi;
-
-                        state1 = 0;
-
-                    }
-
-                /* reset the state if it's 1 and the locked flag is 1.  This
-                   means that the clock tried to retrigger the oneshot, but
-                   the retrig flag prevented it from doing so */
-
-                if((state1) && (locked1)) {
-
-                    state1 = 0;
-
-                }
-                /*  set the value for the output depending on the current time, and
-                    the values of time1, time2, time3, and time4 */
-                if(TIME < time1) {
-
-                    OUTPUT(out) = output_low;
-
-                } else if((time1 <= TIME) && (TIME < time2)) {
-
-                    OUTPUT(out) = output_low + ((TIME - time1)/(time2 - time1))*
-                                  (output_hi - output_low);
-
-                } else if((time2 <= TIME) && (TIME < time3)) {
+                    cm_analog_set_perm_bkpt(time3);
+                    cm_analog_set_perm_bkpt(time4);
 
                     OUTPUT(out) = output_hi;
 
-                } else if((time3 <= TIME) && (TIME < time4)) {
-
-                    OUTPUT(out) = output_hi + ((TIME - time3)/(time4 - time3))*
-                                  (output_low - output_hi);
-
-                } else {
-
-
-                    OUTPUT(out) = output_low;
-
-                    /* oneshot can now be retriggered, set locked to 0 */
-                    if(PARAM(retrig) == MIF_FALSE) {
-
-                        locked1 = 0;
-
-                    }
+                    state1 = 0;
                 }
 
-                /* set the variables which need to be stored for the next iteration */
+            /* reset the state if it's 1 and the locked flag is 1.  This
+               means that the clock tried to retrigger the oneshot, but
+               the retrig flag prevented it from doing so */
+
+            if((state1) && (locked1)) {
+                state1 = 0;
+
             }
-            t1 = (double *) cm_analog_get_ptr(T1,0);
-            t2 = (double *) cm_analog_get_ptr(T2,0);
-            t3 = (double *) cm_analog_get_ptr(T3,0);
-            t4 = (double *) cm_analog_get_ptr(T4,0);
-            set = (int *) cm_analog_get_ptr(SET,0);
-            locked = (int *) cm_analog_get_ptr(LOCKED,0);
-            state = (int *) cm_analog_get_ptr(STATE,0);
-            output_old = (double *) cm_analog_get_ptr(OUTPUT_OLD,0);
+            /*  set the value for the output depending on the current time, and
+                the values of time1, time2, time3, and time4 */
+            if(TIME < time1) {
+                OUTPUT(out) = output_low;
+            } else if((time1 <= TIME) && (TIME < time2)) {
+                OUTPUT(out) = output_low + ((TIME - time1)/(time2 - time1))*
+                              (output_hi - output_low);
+            } else if((time2 <= TIME) && (TIME < time3)) {
 
-            *t1 = time1;
-            *t2 = time2;
-            *t3 = time3;
-            *t4 = time4;
-            *set = set1;
-            *state = state1;
-            *output_old = OUTPUT(out);
-            *locked = locked1;
+                OUTPUT(out) = output_hi;
 
-            if(PORT_NULL(cntl_in) != 1) {
-                PARTIAL(out,cntl_in) = 0;
+            } else if((time3 <= TIME) && (TIME < time4)) {
+
+                OUTPUT(out) = output_hi + ((TIME - time3)/(time4 - time3))*
+                              (output_low - output_hi);
+
+            } else {
+                OUTPUT(out) = output_low;
+
+                /* oneshot can now be retriggered, set locked to 0 */
+                if(PARAM(retrig) == MIF_FALSE) {
+                    locked1 = 0;
+                }
             }
-            if(PORT_NULL(clear) != 1) {
-                PARTIAL(out,clear) = 0;
-            }
-            PARTIAL(out,clk) = 0 ;
-
-        } else {                      /* Output AC Gain */
-
-            /* This model has no AC capability */
-
-            ac_gain.real = 0.0;
-            ac_gain.imag= 0.0;
-            AC_GAIN(out,clk) = ac_gain;
         }
+        /* set the variables which need to be stored for the next iteration */
+
+        t1 = (double *) cm_analog_get_ptr(T1,0);
+        t2 = (double *) cm_analog_get_ptr(T2,0);
+        t3 = (double *) cm_analog_get_ptr(T3,0);
+        t4 = (double *) cm_analog_get_ptr(T4,0);
+        set = (int *) cm_analog_get_ptr(SET,0);
+        locked = (int *) cm_analog_get_ptr(LOCKED,0);
+        state = (int *) cm_analog_get_ptr(STATE,0);
+        output_old = (double *) cm_analog_get_ptr(OUTPUT_OLD,0);
+
+        *t1 = time1;
+        *t2 = time2;
+        *t3 = time3;
+        *t4 = time4;
+        *set = set1;
+        *state = state1;
+        *output_old = OUTPUT(out);
+        *locked = locked1;
+
+        if(PORT_NULL(cntl_in) != 1) {
+            PARTIAL(out,cntl_in) = 0;
+        }
+        if(PORT_NULL(clear) != 1) {
+            PARTIAL(out,clear) = 0;
+        }
+        PARTIAL(out,clk) = 0 ;
+
+    } else {                      /* Output AC Gain */
+
+        /* This model has no AC capability */
+
+        ac_gain.real = 0.0;
+        ac_gain.imag= 0.0;
+        AC_GAIN(out,clk) = ac_gain;
+    }
 }
 
