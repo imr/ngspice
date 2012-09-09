@@ -18,6 +18,7 @@ AUTHORS
 MODIFICATIONS
 
      2 Oct 1991    Jeffrey P. Murray
+     9 Sep 2012    Holger Vogt
 
 
 SUMMARY
@@ -68,6 +69,18 @@ NON-STANDARD FEATURES
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
 
+typedef struct {
+
+    double   *control;   /* the storage array for the
+                            control vector (cntl_array)   */
+
+    double   *freq;   /* the storage array for the
+                         pulse width array (pw_array)   */
+
+    int tran_init; /* for initialization of phase1) */
+
+} Local_Data_t;
+
 
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
@@ -87,6 +100,7 @@ AUTHORS
 MODIFICATIONS
 
      2 Oct 1991    Jeffrey P. Murray
+     9 Sep 2012    Holger Vogt
 
 SUMMARY
 
@@ -174,6 +188,8 @@ void cm_triangle(ARGS)  /* structure holding parms,
 
     Mif_Complex_t ac_gain;
 
+    Local_Data_t *loc;        /* Pointer to local static data, not to be included
+                                       in the state vector */
 
     /**** Retrieve frequently used parameters... ****/
 
@@ -197,6 +213,23 @@ void cm_triangle(ARGS)  /* structure holding parms,
         cm_analog_alloc(T2,sizeof(double));
         cm_analog_alloc(T3,sizeof(double));
 
+        /*** allocate static storage for *loc ***/
+        STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
+        loc = STATIC_VAR (locdata);
+
+        /* Allocate storage for breakpoint domain & pulse width values */
+        x = loc->control = (double *) calloc((size_t) cntl_size, sizeof(double));
+        if (!x) {
+            cm_message_send(triangle_allocation_error);
+            return;
+        }
+        y = loc->freq = (double *) calloc((size_t) freq_size, sizeof(double));
+        if (!y) {
+            cm_message_send(triangle_allocation_error);
+            return;
+        }
+
+        loc->tran_init = FALSE;
     }
 
     if(ANALYSIS == MIF_DC) {
@@ -228,20 +261,14 @@ void cm_triangle(ARGS)  /* structure holding parms,
         time2 = *t2;
         t_start = *t_end;
 
-        /* Allocate storage for breakpoint domain & freq. range values */
+        loc = STATIC_VAR (locdata);
+        x = loc->control;
+        y = loc->freq;
 
-        x = (double *) calloc((size_t) cntl_size, sizeof(double));
-        if (!x) {
-            cm_message_send(triangle_allocation_error);
-            return;
+        if (!loc->tran_init) {
+            *phase1 = 0.0;
+            loc->tran_init = TRUE;
         }
-
-        y = (double *) calloc((size_t) freq_size, sizeof(double));
-        if (!y) {
-            cm_message_send(triangle_allocation_error);
-            return;
-        }
-
 
         /* Retrieve x and y values. */
         for (i=0; i<cntl_size; i++) {
@@ -288,7 +315,6 @@ void cm_triangle(ARGS)  /* structure holding parms,
                         freq = ((cntl_input - *(x+i))/(*(x+i+1) - *(x+i)))*
                                (*(y+i+1)-*(y+i)) + *(y+i);
                     }
-
                 }
             }
 
@@ -296,7 +322,7 @@ void cm_triangle(ARGS)  /* structure holding parms,
            int_cycle is the integer value for the number cycles. */
 
         *phase = *phase1 + freq*(TIME - T(1));
-        int_cycle = *phase1;
+        int_cycle = (int)*phase1;
         dphase = *phase1 - int_cycle;
         /* if the current time is greater than time1, but less than time2,
             calculate time2 and set the temporary breakpoint.  */
@@ -314,7 +340,6 @@ void cm_triangle(ARGS)  /* structure holding parms,
             /* set output value */
             OUTPUT(out) = output_hi - ((TIME - time1)/(time2 - time1))*
                           (output_hi - output_low);
-
 
         } else {
 

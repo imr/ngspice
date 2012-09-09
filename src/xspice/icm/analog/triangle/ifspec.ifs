@@ -20,7 +20,7 @@ NAME_TABLE:
 
 
 C_Function_Name:       cm_triangle
-Spice_Model_Name:      triangle 
+Spice_Model_Name:      triangle
 Description:           "controlled triangle wave oscillator"
 
 
@@ -69,3 +69,9 @@ Vector:              no
 Vector_Bounds:       -               
 Null_Allowed:       yes            
 
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    locdata
+Description:        "local static data"
+Data_Type:          pointer
