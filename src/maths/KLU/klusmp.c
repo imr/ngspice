@@ -232,7 +232,14 @@ SMPluFac (SMPmatrix *Matrix, double PivTol, double Gmin)
         LoadGmin_CSC (Matrix->CKTdiag_CSC, Matrix->CKTkluN, Gmin) ;
         ret = klu_refactor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx,
                             Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluCommon) ;
-        return (!ret) ;
+        if (ret == 1)
+            return 0 ;
+        else if (ret == 0)
+            return (E_SINGULAR) ;
+        else {
+            fprintf (stderr, "KLU Error in re-factor!") ;
+            return 1 ;
+        }
     } else {
         spSetReal (Matrix->SPmatrix) ;
         LoadGmin (Matrix, Gmin) ;
