@@ -53,7 +53,12 @@ a5 3 1 0 50 oneshot1
 +                        retrig=FALSE)
 *
 *
-*
+*** square block ***
+a6 2 60 square1
+.model square1 square (cntl_array=[-1.0 0.0 10.0 20.0]
++                  freq_array=[500 500 7000 7000]
++                  out_low=-0.8 out_high=1.2 duty_cycle=0.5
++                  rise_time=1e-6 fall_time=2e-6)
 *
 *** resistors to ground ***
 r1 1 0 10k

@@ -69,6 +69,18 @@ NON-STANDARD FEATURES
 
 
 
+typedef struct {
+
+    double   *control;   /* the storage array for the
+                            control vector (cntl_array)   */
+
+    double   *freq;   /* the storage array for the
+                         pulse width array (pw_array)   */
+
+    Boolean_t tran_init; /* for initialization of phase1) */
+
+} Local_Data_t;
+
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
@@ -179,6 +191,9 @@ void cm_square(ARGS)  /* structure holding parms,
 
     Mif_Complex_t ac_gain;
 
+    Local_Data_t *loc;        /* Pointer to local static data, not to be included
+                                       in the state vector */
+
     /**** Retrieve frequently used parameters... ****/
 
     cntl_size = PARAM_SIZE(cntl_array);
@@ -204,6 +219,24 @@ void cm_square(ARGS)  /* structure holding parms,
         cm_analog_alloc(T2,sizeof(double));
         cm_analog_alloc(T3,sizeof(double));
         cm_analog_alloc(T4,sizeof(double));
+
+        /*** allocate static storage for *loc ***/
+        STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
+        loc = STATIC_VAR (locdata);
+
+        /* Allocate storage for breakpoint domain & pulse width values */
+        x = loc->control = (double *) calloc((size_t) cntl_size, sizeof(double));
+        if (!x) {
+            cm_message_send(square_allocation_error);
+            return;
+        }
+        y = loc->freq = (double *) calloc((size_t) freq_size, sizeof(double));
+        if (!y) {
+            cm_message_send(square_allocation_error);
+            return;
+        }
+
+        loc->tran_init = FALSE;
 
     }
 
@@ -239,18 +272,13 @@ void cm_square(ARGS)  /* structure holding parms,
         time3 = *t3;
         time4 = *t4;
 
-        /* Allocate storage for breakpoint domain & freq. range values */
+        loc = STATIC_VAR (locdata);
+        x = loc->control;
+        y = loc->freq;
 
-        x = (double *) calloc((size_t) cntl_size, sizeof(double));
-        if (!x) {
-            cm_message_send(square_allocation_error);
-            return;
-        }
-
-        y = (double *) calloc((size_t) freq_size, sizeof(double));
-        if (!y) {
-            cm_message_send(square_allocation_error);
-            return;
+        if (!loc->tran_init) {
+            *phase1 = 0.0;
+            loc->tran_init = TRUE;
         }
 
         /* Retrieve x and y values. */
@@ -301,7 +329,7 @@ void cm_square(ARGS)  /* structure holding parms,
         *phase = *phase1 + freq*(TIME - T(1));
 
         /* convert the phase to an integer */
-        int_cycle = *phase1;
+        int_cycle = (int)*phase1;
 
         /* dphase is the percent into the cycle for
            the period */
