@@ -147,17 +147,10 @@ void cm_lcouple(ARGS)  /* structure holding parms,
 
 
     Mif_Complex_t ac_gain;  /* AC gain */
-                                                   
-
-
 
     /** Retrieve frequently used parameters... **/
 
     num_turns = PARAM(num_turns);
-
-
-                                                                           
-
 
     if (ANALYSIS != MIF_AC) {     /**** DC & Transient Analyses ****/
 
@@ -174,19 +167,15 @@ void cm_lcouple(ARGS)  /* structure holding parms,
         }
         /* Allocation not necessary...retrieve previous values */
        
-            in_flux = (double *) cm_analog_get_ptr(1,0);  /* Set out pointer to current 
+        in_flux = (double *) cm_analog_get_ptr(1,0);  /* Set out pointer to current 
                                                                 time storage */    
-            in_flux_old = (double *) cm_analog_get_ptr(1,1);  /* Set old-output-state pointer 
-                                                       to previous time storage */    
+        in_flux_old = (double *) cm_analog_get_ptr(1,1);  /* Set old-output-state pointer 
+                                                       to previous time storage */
 
-            /* retrieve fake input and output values for truncation
-               error checking   */
-            in_flux_fake = (double *) cm_analog_get_ptr(2,0);   
-            output_voltage_fake = (double *) cm_analog_get_ptr(3,0);   
-      
-    
-
-
+        /* retrieve fake input and output values for truncation
+           error checking   */
+        in_flux_fake = (double *) cm_analog_get_ptr(2,0);
+        output_voltage_fake = (double *) cm_analog_get_ptr(3,0);
 
         /** Retrieve inputs... **/
 
@@ -202,14 +191,10 @@ void cm_lcouple(ARGS)  /* structure holding parms,
 
         /** Calculate output value for mmf... **/
          
-        output_mmf = num_turns * input_current;  
+        output_mmf = num_turns * input_current;
 
         OUTPUT(mmf_out) = output_mmf;
         PARTIAL(mmf_out,l) = num_turns;
-       
-
-                                     
-
 
 
         /** Calculate output value for output_voltage... **/
@@ -230,10 +215,9 @@ void cm_lcouple(ARGS)  /* structure holding parms,
             PARTIAL(l,mmf_out) = -num_turns / delta;
 
             /* add fake cm_analog_integrate for truncation error checks */
-            cm_analog_integrate(*output_voltage_fake,in_flux_fake,&pout_pin_fake);
-
+            /* not initialized, not used */
+            /*cm_analog_integrate(*output_voltage_fake,in_flux_fake,&pout_pin_fake); */
         }
-
     }
 
     else {                    /**** AC Analysis...****/
@@ -244,7 +228,6 @@ void cm_lcouple(ARGS)  /* structure holding parms,
         ac_gain.real= num_turns;
         ac_gain.imag= 0.0;
         AC_GAIN(mmf_out,l) = ac_gain;
-
     }
 }
 
