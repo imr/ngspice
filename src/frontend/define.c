@@ -441,22 +441,35 @@ com_undefine(wordlist *wlist)
         return;
 
     if (*wlist->wl_word == '*') {
-        udfuncs = NULL;     /* Be sloppy. */
+        for (udf = udfuncs; udf;) {
+            struct udfunc *next = udf->ud_next;
+            cp_remkword(CT_UDFUNCS, udf->ud_name);
+            free_pnode(udf->ud_text);
+            free(udf->ud_name);
+            free(udf);
+            udf = next;
+        }
+        udfuncs = NULL;
         return;
     }
 
     for (; wlist; wlist = wlist->wl_next) {
         ludf = NULL;
-        for (udf = udfuncs; udf; udf = udf->ud_next) {
+        for (udf = udfuncs; udf;) {
+            struct udfunc *next = udf->ud_next;
             if (eq(wlist->wl_word, udf->ud_name)) {
                 if (ludf)
                     ludf->ud_next = udf->ud_next;
                 else
                     udfuncs = udf->ud_next;
                 cp_remkword(CT_UDFUNCS, wlist->wl_word);
+                free_pnode(udf->ud_text);
+                free(udf->ud_name);
+                free(udf);
             } else {
                 ludf = udf;
             }
+            udf = next;
         }
     }
 }
