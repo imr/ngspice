@@ -407,7 +407,7 @@ ntharg(int num, struct pnode *args)
 void
 com_undefine(wordlist *wlist)
 {
-    struct udfunc *udf, *ludf = NULL;
+    struct udfunc *udf, *ludf;
 
     if (!wlist)
         return;
@@ -416,6 +416,7 @@ com_undefine(wordlist *wlist)
         return;
     }
     while (wlist) {
+        ludf = NULL;
         for (udf = udfuncs; udf; udf = udf->ud_next) {
             if (eq(wlist->wl_word, udf->ud_name)) {
                 if (ludf)
