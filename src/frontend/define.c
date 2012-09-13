@@ -210,9 +210,10 @@ prdefs(char *name)
         for (udf = udfuncs; udf; udf = udf->ud_next)
             if (eq(name, udf->ud_name))
                 prtree(udf);
-    } else
+    } else {
         for (udf = udfuncs; udf; udf = udf->ud_next)
             prtree(udf);
+    }
 }
 
 
@@ -264,8 +265,9 @@ prtree1(struct pnode *pn, FILE *fp)
         fprintf(fp, "%s(", pn->pn_op->op_name);
         prtree1(pn->pn_left, fp);
         fputs(")", fp);
-    } else
+    } else {
         fputs("<something strange>", fp);
+    }
 }
 
 
@@ -351,8 +353,9 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
                 return (ntharg(i, nn));
             else
                 return (tree);
-        } else
+        } else {
             return (tree);
+        }
 
     } else if (tree->pn_func) {
 
@@ -382,8 +385,9 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
         if (pn->pn_op->op_arity == 2) {
             pn->pn_right = trcopy(tree->pn_right, args, nn);
             pn->pn_right->pn_use++;
-        } else
+        } else {
             pn->pn_right = NULL;
+        }
         pn->pn_next = NULL;
 
     } else {
@@ -441,7 +445,7 @@ com_undefine(wordlist *wlist)
         return;
     }
 
-    while (wlist) {
+    for (; wlist; wlist = wlist->wl_next) {
         ludf = NULL;
         for (udf = udfuncs; udf; udf = udf->ud_next) {
             if (eq(wlist->wl_word, udf->ud_name)) {
@@ -450,10 +454,10 @@ com_undefine(wordlist *wlist)
                 else
                     udfuncs = udf->ud_next;
                 cp_remkword(CT_UDFUNCS, wlist->wl_word);
-            } else
+            } else {
                 ludf = udf;
+            }
         }
-        wlist = wlist->wl_next;
     }
 }
 
