@@ -88,6 +88,7 @@ ivars(char *argv0)
         /* set path either to <ngspice-bin-directory>/input or,
         if set, to environment variable NGSPICE_INPUT_DIR */
         mkvar(&Inp_Path, ngpath, "input", "NGSPICE_INPUT_DIR");
+        tfree(ngpath);
     }
 #else
     NG_IGNORE(argv0);

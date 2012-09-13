@@ -1455,7 +1455,11 @@ static void com_alter_mod(wordlist *wl)
         filename = copy(eqword);
     }
     modfile = inp_pathopen(filename, readmode);
-    inp_readall(modfile, &modeldeck, 0, ngdirname(filename), 0);
+    {
+        char *dir_name = ngdirname(filename);
+        inp_readall(modfile, &modeldeck, 0, dir_name, 0);
+        free(dir_name);
+    }
     tfree(input);
     tfree(filename);
     /* get all lines starting with *model */

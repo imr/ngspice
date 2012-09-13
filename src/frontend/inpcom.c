@@ -310,9 +310,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                     library_file[num_libraries++] = strdup(y);
 
                     if ( dir_name_flag == FALSE ) {
-                        char *s_dup = strdup(y);
-                        inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, ngdirname(s_dup), FALSE);
-                        tfree(s_dup);
+                        char *y_dir_name = ngdirname(y);
+                        inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, y_dir_name, FALSE);
+                        tfree(y_dir_name);
                     } else {
                         inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, dir_name, FALSE);
                     }
@@ -387,9 +387,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 }
 
                 if ( dir_name_flag == FALSE ) {
-                    char *s_dup = strdup(y);
-                    inp_readall(newfp, &newcard, call_depth+1, ngdirname(s_dup), FALSE);  /* read stuff in include file into netlist */
-                    tfree(s_dup);
+                    char *y_dir_name = ngdirname(y);
+                    inp_readall(newfp, &newcard, call_depth+1, y_dir_name, FALSE);  /* read stuff in include file into netlist */
+                    tfree(y_dir_name);
                 } else {
                     inp_readall(newfp, &newcard, call_depth+1, dir_name, FALSE);  /* read stuff in include file into netlist */
                 }

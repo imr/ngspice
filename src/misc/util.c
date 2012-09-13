@@ -193,14 +193,9 @@ basename(const char *name)
 char *
 ngdirname(const char *name)
 {
-    static char *ret = NULL;
+    char *ret;
     const char *end = NULL;
     int start = 0;
-
-    if (ret) {
-        free(ret);
-        ret = NULL;
-    }
 
     if(name && ((name[0] >= 'a' && name[0] <= 'z') ||
                 (name[0] >= 'A' && name[0] <= 'Z')) && name[1] == ':')
@@ -237,13 +232,8 @@ ngdirname(const char *name)
 char *
 ngdirname(const char *name)
 {
-    static char *ret = NULL;
+    char *ret;
     const char *end;
-
-    if (ret) {
-        free(ret);
-        ret = NULL;
-    }
 
     end = name ? strrchr(name, '/') : NULL;
 
