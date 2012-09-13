@@ -147,7 +147,6 @@ com_define(wordlist *wlist)
     udf->ud_arity = arity;
 
     cp_addkword(CT_UDFUNCS, b);
-    return;
 }
 
 
@@ -190,7 +189,6 @@ savetree(struct pnode *pn)
     } else if (pn->pn_func) {
         savetree(pn->pn_left);
     }
-    return;
 }
 
 
@@ -215,7 +213,6 @@ prdefs(char *name)
     } else
         for (udf = udfuncs; udf; udf = udf->ud_next)
             prtree(udf);
-    return;
 }
 
 
@@ -245,7 +242,6 @@ prtree(struct udfunc *ud)
     fputs(buf, cp_out);
     prtree1(ud->ud_text, cp_out);
     (void) putc('\n', cp_out);
-    return;
 }
 
 
@@ -270,7 +266,6 @@ prtree1(struct pnode *pn, FILE *fp)
         fputs(")", fp);
     } else
         fputs("<something strange>", fp);
-    return;
 }
 
 
@@ -460,7 +455,6 @@ com_undefine(wordlist *wlist)
         }
         wlist = wlist->wl_next;
     }
-    return;
 }
 
 
