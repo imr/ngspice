@@ -30,6 +30,7 @@ AC_CONFIG_HEADER([src/include/ngspice/config.h])
 
 # Initialise automake stuff
 AM_INIT_AUTOMAKE([-Wall -Werror nostdinc])
+AM_SILENT_RULES([yes])
 
 AC_SUBST([AM_CPPFLAGS], ['-I. -I$(srcdir) -I$(top_builddir)/src/include'])
 
