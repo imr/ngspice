@@ -259,7 +259,7 @@ cp_usrset(struct variable *var, bool isset)
                 cp_program);
 #endif
     } else if (eq(var->va_name, "program")) {
-        cp_program = copy(var->va_string);
+        cp_program = var->va_string;
     } else if (eq(var->va_name, "rawfile")) {
         ft_rawfile = copy(var->va_string);
     } else if (eq(var->va_name, "acct")) {

@@ -176,7 +176,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
     else if (eq(varname, "echo"))   /*CDHW*/
         cp_echo = TRUE;             /*CDHW*/
     else if (eq(copyvarname, "prompt") && (type == CP_STRING))
-        cp_promptstring = copy(v->va_string);
+        cp_promptstring = v->va_string;
     else if (eq(copyvarname, "ignoreeof"))
         cp_ignoreeof = TRUE;
     else if (eq(copyvarname, "cpdebug")) {
@@ -478,15 +478,14 @@ cp_remvar(char *varname)
         cp_noclobber = FALSE;
     else if (eq(varname, "echo")) /*CDHW*/
         cp_echo = FALSE;          /*CDHW*/
-    else if (eq(varname, "prompt")) {
-        /* cp_promptstring = ""; Memory leak here the last allocated reference wil be lost*/
-        if(cp_promptstring)
-            strcpy(cp_promptstring, ""); /*DG avoid memory leak*/
-    }
+    else if (eq(varname, "prompt"))
+        cp_promptstring = NULL;
     else if (eq(varname, "cpdebug"))
         cp_debug = FALSE;
     else if (eq(varname, "ignoreeof"))
         cp_ignoreeof = FALSE;
+    else if (eq(varname, "program"))
+        cp_program = "";
 
     switch (i = cp_usrset(v, FALSE)) {
 
