@@ -616,11 +616,14 @@ cp_evloop(char *string)
     char *i;
     int nn;
 
-#define newblock    cend[stackp]->co_children = alloc(struct control);      \
-	    ZERO(cend[stackp]->co_children,struct control), \
-            cend[stackp]->co_children->co_parent = cend[stackp]; \
-            cend[stackp] = cend[stackp]->co_children;        \
-            cend[stackp]->co_type = CO_UNFILLED;
+#define newblock                                                \
+    do {                                                        \
+        cend[stackp]->co_children = alloc(struct control);      \
+        ZERO(cend[stackp]->co_children, struct control);        \
+        cend[stackp]->co_children->co_parent = cend[stackp];    \
+        cend[stackp] = cend[stackp]->co_children;               \
+        cend[stackp]->co_type = CO_UNFILLED;                    \
+    } while(0)
 
     for (;;) {
         wlist = getcommand(string);

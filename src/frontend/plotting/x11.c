@@ -344,9 +344,13 @@ handle_wm_messages(Widget w, XtPointer client_data, XEvent *ev, Boolean *cont)
 
 
 /* Recover from bad NewViewPort call. */
-#define RECOVERNEWVIEWPORT()    tfree(graph);\
-	            graph = NULL; 
-	    /* need to do this or else DestroyGraph will free it again */
+#define RECOVERNEWVIEWPORT()                    \
+    do {                                        \
+        tfree(graph);                           \
+        graph = NULL;                           \
+    } while(0)
+/* need to do this or else DestroyGraph will free it again */
+
 
 /* NewViewport is responsible for filling in graph->viewport */
 int

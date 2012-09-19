@@ -39,7 +39,11 @@ Author: 1985 Wayne A. Christopher
 #include "numparam/numpaif.h"
 
 
-#define line_free(line, flag)   { line_free_x(line, flag); line = NULL; }
+#define line_free(line, flag)                   \
+    do {                                        \
+        line_free_x(line, flag);                \
+        line = NULL;                            \
+    } while(0)
 
 static char *upper(register char *string);
 static bool doedit(char *filename);

@@ -46,9 +46,13 @@ static GBUCKET GBucket[NUMGBUCKETS];
 static int RunningId = 1;
 
 /* initialize graph structure */
-#define SETGRAPH(pgraph, id) (pgraph)->graphid = (id); \
-				(pgraph)->degree = 1; \
-				(pgraph)->linestyle = -1
+#define SETGRAPH(pgraph, id)                    \
+    do {                                        \
+        (pgraph)->graphid = (id);               \
+        (pgraph)->degree = 1;                   \
+        (pgraph)->linestyle = -1;               \
+    } while(0)
+
 
 /* returns NULL on error */
 

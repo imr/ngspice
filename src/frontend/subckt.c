@@ -74,7 +74,13 @@ Modified: 2000 AlansFixes
 #include "numparam/numpaif.h"
 
 extern void line_free_x(struct line * deck, bool recurse);
-#define line_free(line, flag)    { line_free_x(line, flag); line = NULL; }
+
+#define line_free(line, flag)                   \
+    do {                                        \
+        line_free_x(line, flag);                \
+        line = NULL;                            \
+    } while(0)
+
 
 /* ----- static declarations ----- */
 struct subs;

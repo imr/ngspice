@@ -23,18 +23,27 @@ Author: 1982 Giles Billingsley
 #define CODEMINY 2
 #define CODEMAXX 4
 #define CODEMAXY 8
-#define CODE(x,y,c)  c = 0;\
-                     if (x < l)\
-                         c = CODEMINX;\
-                     else if (x > r)\
-                         c = CODEMAXX;\
-                     if (y < b)\
-                         c |= CODEMINY;\
-                     else if (y > t)\
-                         c |= CODEMAXY;
 
+#define CODE(x, y, c)                           \
+    do {                                        \
+        c = 0;                                  \
+        if (x < l)                              \
+            c = CODEMINX;                       \
+        else if (x > r)                         \
+            c = CODEMAXX;                       \
+        if (y < b)                              \
+            c |= CODEMINY;                      \
+        else if (y > t)                         \
+            c |= CODEMAXY;                      \
+    } while(0)
 
-#define SWAPINT(a, b) { int xxxx = (a); (a) = (b); (b) = xxxx; }
+#define SWAPINT(a, b)                           \
+    do {                                        \
+        int xxxx = (a);                         \
+        (a) = (b);                              \
+        (b) = xxxx;                             \
+    } while(0)
+
 
 /* clip_line will clip a line to a rectangular area.  The returned
  * value is 'TRUE' if the line is out of the AOI (therefore does not
@@ -51,8 +60,8 @@ clip_line(int *pX1, int *pY1, int *pX2, int *pY2, int l, int b, int r, int t)
     int x = 0, y = 0;
     int c,c1,c2;
 
-    CODE(x1,y1,c1)
-    CODE(x2,y2,c2)
+    CODE(x1,y1,c1);
+    CODE(x2,y2,c2);
     while (c1 || c2) {
         if (c1 & c2)
             return (TRUE); /* Line is invisible. */
@@ -74,11 +83,11 @@ clip_line(int *pX1, int *pY1, int *pX2, int *pY2, int l, int b, int r, int t)
         if (c == c1) {
             x1 = x;
             y1 = y;
-            CODE(x,y,c1)
+            CODE(x,y,c1);
         } else {
             x2 = x;
             y2 = y; 
-            CODE(x,y,c2)
+            CODE(x,y,c2);
         }
     }
     *pX1 = x1;

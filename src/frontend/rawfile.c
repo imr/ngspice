@@ -272,9 +272,32 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
  * and that the variables precede the values.
  */
 
-#define skip(s) while (*(s) && !isspace(*(s)))(s)++; while (isspace(*(s)))(s)++
-#define nonl(s) r = (s); while (*r && (*r != '\n')) r++; *r = '\0'
-#define getout {fprintf(cp_err,"Error: bad rawfile\n  point %d, var %s\n  load aborted\n", i, v->v_name); return (NULL);}
+#define SKIP(s)                                 \
+    do {                                        \
+        while (*(s) && !isspace(*(s)))          \
+            (s)++;                              \
+        while (isspace(*(s)))                   \
+            (s)++;                              \
+    } while(0)
+
+#define NONL(s)                                 \
+    do {                                        \
+        r = (s);                                \
+        while (*r && (*r != '\n'))              \
+            r++;                                \
+        *r = '\0';                              \
+    } while(0)
+
+#define GETOUT()                                \
+    do {                                        \
+        fprintf(cp_err,                         \
+                "Error: bad rawfile\n"          \
+                "  point %d, var %s\n"          \
+                "  load aborted\n",             \
+                i, v->v_name);                  \
+        return (NULL);                          \
+    } while(0)
+
 
 struct plot *
 raw_read(char *name) {
@@ -316,18 +339,18 @@ raw_read(char *name) {
         /* Figure out what this line is... */
         if (ciprefix("title:", buf)) {
             s = buf;
-            skip(s);
-            nonl(s);
+            SKIP(s);
+            NONL(s);
             title = copy(s);
         } else if (ciprefix("date:", buf)) {
             s = buf;
-            skip(s);
-            nonl(s);
+            SKIP(s);
+            NONL(s);
             date = copy(s);
         } else if (ciprefix("plotname:", buf)) {
             s = buf;
-            skip(s);
-            nonl(s);
+            SKIP(s);
+            NONL(s);
             if (curpl) {    /* reverse commands list */
                 for (wl=curpl->pl_commands,
                         curpl->pl_commands=NULL; wl &&
@@ -349,7 +372,7 @@ raw_read(char *name) {
             nvars = npoints = 0;
         } else if (ciprefix("flags:", buf)) {
             s = buf;
-            skip(s);
+            SKIP(s);
             while ((t = gettok(&s)) != NULL) {
                 if (cieq(t, "real"))
                     flags |= VF_REAL;
@@ -366,13 +389,13 @@ raw_read(char *name) {
             }
         } else if (ciprefix("no. variables:", buf)) {
             s = buf;
-            skip(s);
-            skip(s);
+            SKIP(s);
+            SKIP(s);
             nvars = scannum(s);
         } else if (ciprefix("no. points:", buf)) {
             s = buf;
-            skip(s);
-            skip(s);
+            SKIP(s);
+            SKIP(s);
             npoints = scannum(s);
         } else if (ciprefix("dimensions:", buf)) {
             if (npoints == 0) {
@@ -381,7 +404,7 @@ raw_read(char *name) {
                 continue;
             }
             s = buf;
-            skip(s);
+            SKIP(s);
             if (atodims(s, dims, &numdims)) { /* Something's wrong. */
                 fprintf(cp_err,
                         "Warning: syntax error in dimensions, ignored.\n");
@@ -407,8 +430,8 @@ raw_read(char *name) {
         } else if (ciprefix("command:", buf)) {
             /* Note that we reverse these commands eventually... */
             s = buf;
-            skip(s);
-            nonl(s);
+            SKIP(s);
+            NONL(s);
             if (curpl) {
                 curpl->pl_commands = wl_cons(copy(s), curpl->pl_commands);
                 wl = curpl->pl_commands;
@@ -419,8 +442,8 @@ raw_read(char *name) {
             (void) cp_evloop(s);
         } else if (ciprefix("option:", buf)) {
             s = buf;
-            skip(s);
-            nonl(s);
+            SKIP(s);
+            NONL(s);
             if (curpl) {
                 wl = cp_lexer(s);
                 for (vv = curpl->pl_env; vv && vv->va_next;
@@ -441,7 +464,7 @@ raw_read(char *name) {
                 break;
             }
             s = buf;
-            skip(s);
+            SKIP(s);
             if (!*s) {
                 (void) fgets(buf, BSIZE_SP, fp);
                 s = buf;
@@ -593,22 +616,22 @@ raw_read(char *name) {
                             if (flags & VF_REAL) {
                                 if (fscanf(fp, " %lf",
                                            &v->v_realdata[i]) != 1)
-                                    getout
+                                    GETOUT();
                             } else {
                                 if (fscanf(fp, " %lf, %lf",
                                            &realpart(v->v_compdata[i]),
                                            &imagpart(v->v_compdata[i])) != 2)
-                                    getout
+                                    GETOUT();
                             }
                         } else if (raw_padded) {
                             if (flags & VF_REAL) {
                                 if (fscanf(fp, " %lf",
                                            &junk) != 1)
-                                    getout
+                                    GETOUT();
                             } else {
                                 if (fscanf(fp, " %lf, %lf",
                                            &junk, &junk) != 2)
-                                    getout
+                                    GETOUT();
                             }
                         }
                     }
@@ -619,27 +642,27 @@ raw_read(char *name) {
                             if (flags & VF_REAL) {
                                 if (fread(&v->v_realdata[i],
                                           sizeof (double), 1, fp) != 1)
-                                    getout
+                                    GETOUT();
                             } else {
                                 if (fread(&v->v_compdata[i].cx_real,
                                           sizeof (double), 1, fp) != 1)
-                                    getout
+                                    GETOUT();
                                 if (fread(&v->v_compdata[i].cx_imag,
                                           sizeof (double), 1, fp) != 1)
-                                    getout
+                                    GETOUT();
                             }
                         } else if (raw_padded) {
                             if (flags & VF_REAL) {
                                 if (fread(&junk,
                                           sizeof (double), 1, fp) != 1)
-                                    getout;
+                                    GETOUT();
                             } else {
                                 if (fread(&junk,
                                           sizeof (double), 1, fp) != 1)
-                                    getout
+                                    GETOUT();
                                 if (fread(&junk,
                                           sizeof (double), 1, fp) != 1)
-                                    getout
+                                    GETOUT();
                             }
                         }
                     }
@@ -648,7 +671,7 @@ raw_read(char *name) {
         } else {
             s = buf;
             if (is_ascii) {
-                skip(s);
+                SKIP(s);
             }
             if (*s) {
                 fprintf(cp_err,

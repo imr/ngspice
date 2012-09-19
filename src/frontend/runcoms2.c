@@ -27,7 +27,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define RAWBUF_SIZE 32768
 extern char rawfileBuf[RAWBUF_SIZE];
 extern void line_free_x(struct line * deck, bool recurse);
-#define line_free(line,flag)	{ line_free_x(line,flag); line = NULL; }
+
+#define line_free(line, flag)                   \
+    do {                                        \
+        line_free_x(line, flag);                \
+        line = NULL;                            \
+    } while(0)
+
 
 /* Continue a simulation. If there is non in progress, this is the
  * equivalent of "run".

@@ -12,8 +12,12 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 static FILE *plotfile;
 
-#define putsi(a)    putc((char) (a), plotfile); \
-            putc((char) ((a) >> 8), plotfile)
+#define putsi(a)                                \
+    do {                                        \
+        putc((char) (a), plotfile);             \
+        putc((char) ((a) >> 8), plotfile);      \
+    } while(0)
+
 
 #define SOLID 0
 static char *linestyle[] = { "solid", "dotted", "longdashed", "shortdashed",
