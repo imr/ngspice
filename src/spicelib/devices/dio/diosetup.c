@@ -178,9 +178,8 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
 
             here->DIOarea = here->DIOarea * here->DIOm;
-            if (model->DIOlevel == 1) {
-                here->DIOpj = here->DIOpj * here->DIOm;
-            } else { /* level=3 */
+            here->DIOpj = here->DIOpj * here->DIOm;
+            if (model->DIOlevel == 3) {
                 if((here->DIOwGiven) && (here->DIOlGiven))  {
                     here->DIOarea = here->DIOw * here->DIOl * here->DIOm;
                     here->DIOpj = (2 * here->DIOw + 2 * here->DIOl) * here->DIOm;

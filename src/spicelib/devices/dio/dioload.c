@@ -25,7 +25,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double arg;
     double argsw;
     double capd;
-    double cd, cdsw=0.0;
+    double cd;
     double cdeq;
     double cdhat;
     double ceq;
@@ -44,9 +44,8 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
 
     double delvd;   /* change in diode voltage temporary */
     double evd;
-    double evdsw;
     double evrev;
-    double gd, gdsw=0.0;
+    double gd;
     double geq;
     double gspr;    /* area-scaled conductance */
     double sarg;
@@ -85,6 +84,8 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
 #endif /* SENSDEBUG */
 
             }
+            cd = 0.0;
+            gd = 0.0;
             csat = here->DIOtSatCur;
             csatsw = here->DIOtSatSWCur;
             gspr = here->DIOtConductance * here->DIOarea;
@@ -188,60 +189,35 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   compute dc current and derivitives
              */
-next1:      if (model->DIOsatSWCurGiven) { /* consider sidewall currents */
+next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
 
-                if (model->DIOswEmissionCoeffGiven) { /* sidewall currents with own characteristic */
+                if (model->DIOswEmissionCoeffGiven) {   /* current with own characteristic */
 
                     vtesw = model->DIOswEmissionCoeff * vt;
 
-                    if (vd >= -3*vtesw) {   /* sidewall forward */
+                    if (vd >= -3*vtesw) {               /* forward */
 
-                        evdsw = exp(vd/vtesw);
-                        cdsw = csatsw*(evdsw-1);
-                        gdsw = csatsw*evdsw/vtesw;
-                        if (model->DIOtunSatSWCurGiven) {
-                            vtetun = model->DIOtunEmissionCoeff * vt;
-                            evd = exp(-vd/vtetun);
-                            cdsw = cdsw - here->DIOtTunSatSWCur * (evd - 1);
-                            gdsw = gdsw + here->DIOtTunSatSWCur * evd / vtetun;
-                        }
+                        evd = exp(vd/vtesw);
+                        cd = csatsw*(evd-1);
+                        gd = csatsw*evd/vtesw;
 
-                    } else if((!(model->DIObreakdownVoltageGiven)) ||   /* sidewall reverse */
-                            vd >= -here->DIOtBrkdwnV) {
+                    } else if((!(model->DIObreakdownVoltageGiven)) ||
+                            vd >= -here->DIOtBrkdwnV) { /* reverse */
 
-                        if (model->DIOtunSatSWCurGiven) {
-                            evdsw = exp(vd/vtesw);
-                            cdsw = csatsw*(evdsw-1);
-                            gdsw = csatsw*evdsw/vtesw;
-                            vtetun = model->DIOtunEmissionCoeff * vt;
-                            evdsw = exp(-vd/vtetun);
-                            cdsw = cdsw - here->DIOtTunSatSWCur * (evdsw - 1);
-                            gdsw = gdsw + here->DIOtTunSatSWCur * evdsw / vtetun;
-                        } else {
-                            argsw = 3*vtesw/(vd*CONSTe);
-                            argsw = argsw * argsw * argsw;
-                            cdsw = -csatsw*(1+argsw);
-                            gdsw = csatsw*3*argsw/vd;
-                        }
+                        argsw = 3*vtesw/(vd*CONSTe);
+                        argsw = argsw * argsw * argsw;
+                        cd = -csatsw*(1+argsw);
+                        gd = csatsw*3*argsw/vd;
 
-                    } else {    /* sidewall breakdown */
+                    } else {                            /* breakdown */
 
                         evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
-                        cdsw = -csatsw*evrev;
-                        gdsw = csatsw*evrev/vtebrk;
-                        if (model->DIOtunSatSWCurGiven) {
-                            evd = exp(vd/vte);
-                            cdsw = cdsw - csatsw*(evd-1);
-                            gdsw = gdsw - csatsw*evd/vte;
-                            vtetun = model->DIOtunEmissionCoeff * vt;
-                            evd = exp(-vd/vtetun);
-                            cdsw = cdsw - here->DIOtTunSatSWCur * (evd - 1);
-                            gdsw = gdsw + here->DIOtTunSatSWCur * evd / vtetun;
-                        }
+                        cd = -csatsw*evrev;
+                        gd = csatsw*evrev/vtebrk;
 
                     }
 
-                } else { /* merge the current densities and use same characteristic as bottom diode */
+                } else { /* merge saturation currents and use same characteristic as bottom diode */
 
                     csat = csat + csatsw;
 
@@ -249,65 +225,50 @@ next1:      if (model->DIOsatSWCurGiven) { /* consider sidewall currents */
 
             }
 
-            if (vd >= -3*vte) {   /* bottom forward */
+            if (vd >= -3*vte) {                 /* bottom current forward */
 
                 evd = exp(vd/vte);
-                cd = csat*(evd-1);
-                gd = csat*evd/vte;
-                if (model->DIOtunSatCurGiven) {
-                    vtetun = model->DIOtunEmissionCoeff * vt;
-                    evd = exp(-vd/vtetun);
-                    cd = cd - here->DIOtTunSatCur * (evd - 1);
-                    gd = gd + here->DIOtTunSatCur * evd / vtetun;
-                }
+                cd = cd + csat*(evd-1);
+                gd = gd + csat*evd/vte;
 
-            } else if((!(model->DIObreakdownVoltageGiven)) ||   /* bottom reverse */
-                    vd >= -here->DIOtBrkdwnV) {
+            } else if((!(model->DIObreakdownVoltageGiven)) ||
+                    vd >= -here->DIOtBrkdwnV) { /* reverse */
 
-                if (model->DIOtunSatCurGiven) {
-                    evd = exp(vd/vte);
-                    cd = csat*(evd-1);
-                    gd = csat*evd/vte;
-                    vtetun = model->DIOtunEmissionCoeff * vt;
-                    evd = exp(-vd/vtetun);
-                    cd = cd - here->DIOtTunSatCur * (evd - 1);
-                    gd = gd + here->DIOtTunSatCur * evd / vtetun;
-                } else {
-                    arg = 3*vte/(vd*CONSTe);
-                    arg = arg * arg * arg;
-                    cd = -csat*(1+arg);
-                    gd = csat*3*arg/vd;
-                }
+                arg = 3*vte/(vd*CONSTe);
+                arg = arg * arg * arg;
+                cd = cd - csat*(1+arg);
+                gd = gd + csat*3*arg/vd;
 
-            } else {    /* bottom breakdown */
+            } else {                            /* breakdown */
 
                 evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
-                cd = -csat*evrev;
-                gd = csat*evrev/vtebrk;
-                if (model->DIOtunSatCurGiven) {
-                    evd = exp(vd/vte);
-                    cd = cd - csat*(evd-1);
-                    gd = gd - csat*evd/vte;
-                    vtetun = model->DIOtunEmissionCoeff * vt;
-                    evd = exp(-vd/vtetun);
-                    cd = cd - here->DIOtTunSatCur * (evd - 1);
-                    gd = gd + here->DIOtTunSatCur * evd / vtetun;
-                }
+                cd = cd - csat*evrev;
+                gd = gd + csat*evrev/vtebrk;
 
             }
 
-            if (model->DIOsatSWCurGiven) {
+            if (model->DIOtunSatSWCurGiven) {    /* tunnel sidewall current */
 
-                if (model->DIOswEmissionCoeffGiven) {
+                vtetun = model->DIOtunEmissionCoeff * vt;
+                evd = exp(-vd/vtetun);
 
-                    cd = cdsw + cd;
-                    gd = gdsw + gd;
-
-                }
+                cd = cd - here->DIOtTunSatSWCur * (evd - 1);
+                gd = gd + here->DIOtTunSatSWCur * evd / vtetun;
 
             }
 
-            if (vd >= -3*vte) {   /* limit forward */
+            if (model->DIOtunSatCurGiven) {      /* tunnel bottom current */
+
+                vtetun = model->DIOtunEmissionCoeff * vt;
+                evd = exp(-vd/vtetun);
+
+                cd = cd - here->DIOtTunSatCur * (evd - 1);
+                gd = gd + here->DIOtTunSatCur * evd / vtetun;
+
+            }
+
+
+            if (vd >= -3*vte) { /* limit forward */
 
                 if( (model->DIOforwardKneeCurrent > 0.0) && (cd > 1.0e-18) ) {
                     ikf_area_m = here->DIOforwardKneeCurrent;
@@ -316,7 +277,7 @@ next1:      if (model->DIOsatSWCurGiven) { /* consider sidewall currents */
                     cd = cd/(1+sqrt_ikf) + ckt->CKTgmin;
                 }
 
-            } else {    /* limit reverse */
+            } else {            /* limit reverse */
 
                 if( (model->DIOreverseKneeCurrent > 0.0) && (cd < -1.0e-18) ) {
                     ikr_area_m = here->DIOreverseKneeCurrent;

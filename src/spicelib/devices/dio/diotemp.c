@@ -33,6 +33,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
 #endif
     double dt;
     double factor;
+    double tBreakdownVoltage;
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = model->DIOnextModel ) {
@@ -156,23 +157,23 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
             here->DIOtSatCur = model->DIOsatCur * here->DIOarea * exp(
                     ((here->DIOtemp/model->DIOnomTemp)-1) *
                     model->DIOactivationEnergy/(model->DIOemissionCoeff*vt) +
-                    model->DIOsaturationCurrentExp/model->DIOemissionCoeff*
+                    model->DIOsaturationCurrentExp/model->DIOemissionCoeff *
                     log(here->DIOtemp/model->DIOnomTemp) );
             here->DIOtSatSWCur = model->DIOsatSWCur * here->DIOpj * exp(
                     ((here->DIOtemp/model->DIOnomTemp)-1) *
                     model->DIOactivationEnergy/(model->DIOswEmissionCoeff*vt) +
-                    model->DIOsaturationCurrentExp/model->DIOswEmissionCoeff*
+                    model->DIOsaturationCurrentExp/model->DIOswEmissionCoeff *
                     log(here->DIOtemp/model->DIOnomTemp) );
 
             here->DIOtTunSatCur = model->DIOtunSatCur * here->DIOarea * exp(
                     ((here->DIOtemp/model->DIOnomTemp)-1) *
-                    model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy/(model->DIOtunEmissionCoeff*vt) +
-                    model->DIOtunSaturationCurrentExp/model->DIOtunEmissionCoeff*
+                    model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy/vt +
+                    model->DIOtunSaturationCurrentExp *
                     log(here->DIOtemp/model->DIOnomTemp) );
             here->DIOtTunSatSWCur = model->DIOtunSatSWCur * here->DIOpj * exp(
                     ((here->DIOtemp/model->DIOnomTemp)-1) *
-                    model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy/(model->DIOtunEmissionCoeff*vt) +
-                    model->DIOtunSaturationCurrentExp/model->DIOtunEmissionCoeff*
+                    model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy/vt +
+                    model->DIOtunSaturationCurrentExp *
                     log(here->DIOtemp/model->DIOnomTemp) );
 
             /* the defintion of f1, just recompute after temperature adjusting
@@ -191,9 +192,18 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
             /* and now to compute the breakdown voltage, again, using
              * temperature adjusted basic parameters */
             if (model->DIObreakdownVoltageGiven){
-                cbv=model->DIObreakdownCurrent * here->DIOarea;
-                if (cbv < here->DIOtSatCur * model->DIObreakdownVoltage/vt) {
-                    cbv=here->DIOtSatCur * model->DIObreakdownVoltage/vt;
+                if (model->DIOtlev == 0) {
+                    tBreakdownVoltage = model->DIObreakdownVoltage - model->DIOtcv * dt;
+                } else {
+                    tBreakdownVoltage = model->DIObreakdownVoltage * (1 - model->DIOtcv * dt);
+                }
+                if (model->DIOlevel == 1) {
+                    cbv = model->DIObreakdownCurrent;
+                } else { /* level=3 */
+                    cbv = model->DIObreakdownCurrent * here->DIOarea;
+                }
+                if (cbv < here->DIOtSatCur * tBreakdownVoltage/vt) {
+                    cbv=here->DIOtSatCur * tBreakdownVoltage/vt;
 #ifdef TRACE
                     emsg = TMALLOC(char, 100);
                     if(emsg == NULL) return(E_NOMEM);
@@ -205,17 +215,17 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                     SPfrontEnd->IFerror (ERR_WARNING,
                     "incompatibility with specified saturation current", NULL);
 #endif
-                    xbv=model->DIObreakdownVoltage;
+                    xbv=tBreakdownVoltage;
                 } else {
                     tol=ckt->CKTreltol*cbv;
-                    xbv=model->DIObreakdownVoltage-model->DIObrkdEmissionCoeff*vt*log(1+cbv/
+                    xbv=tBreakdownVoltage-model->DIObrkdEmissionCoeff*vt*log(1+cbv/
                             (here->DIOtSatCur));
                     iter=0;
                     for(iter=0 ; iter < 25 ; iter++) {
-                        xbv=model->DIObreakdownVoltage-model->DIObrkdEmissionCoeff*vt*log(cbv/
+                        xbv=tBreakdownVoltage-model->DIObrkdEmissionCoeff*vt*log(cbv/
                                 (here->DIOtSatCur)+1-xbv/vt);
                         xcbv=here->DIOtSatCur *
-                             (exp((model->DIObreakdownVoltage-xbv)/(model->DIObrkdEmissionCoeff*vt))-1+xbv/vt);
+                             (exp((tBreakdownVoltage-xbv)/(model->DIObrkdEmissionCoeff*vt))-1+xbv/vt);
                         if (fabs(xcbv-cbv) <= tol) goto matched;
                     }
 #ifdef TRACE
@@ -229,11 +239,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
 #endif
                 }
                 matched:
-                if (model->DIOtlev == 0) {
-                    here->DIOtBrkdwnV = xbv - model->DIOtcv * dt;
-                } else if (model->DIOtlev == 1) {
-                    here->DIOtBrkdwnV = xbv * (1 - model->DIOtcv * dt);
-                }
+                    here->DIOtBrkdwnV = xbv;
             }
 
             /* transit time temperature adjust */
