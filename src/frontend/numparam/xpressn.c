@@ -1296,35 +1296,6 @@ formula(tdico *dico, char *s, bool *perror)
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 static bool
 evaluate(tdico *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 {
