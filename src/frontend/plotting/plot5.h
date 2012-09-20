@@ -17,4 +17,4 @@ disp_fn_SetLinestyle_t     Plt5_SetLinestyle;
 disp_fn_SetColor_t         Plt5_SetColor;
 disp_fn_Update_t           Plt5_Update;
 
-#endif /* PLOT5_H_INCLUDED */
+#endif

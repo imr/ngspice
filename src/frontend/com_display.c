@@ -22,7 +22,6 @@ dcomp(const void *d1, const void *d2)
 }
 
 
-
 /* Display vector status, etc.  Note that this only displays stuff
  * from the current plot, and you must do a setplot to see the rest of
  * it.  */
@@ -37,13 +36,13 @@ com_display(wordlist *wl)
     /* Maybe he wants to know about just a few vectors. */
 
     out_init();
+
     while (wl) {
         s = cp_unquote(wl->wl_word);
         d = vec_get(s);
-        tfree(s);/*DG to avoid the cp_unquote memory leak */
+        tfree(s);               /*DG to avoid the cp_unquote memory leak */
         if (d == NULL)
-            fprintf(cp_err, "Error: no such vector as %s.\n", 
-                wl->wl_word);
+            fprintf(cp_err, "Error: no such vector as %s.\n", wl->wl_word);
         else
             while (d) {
                 pvec(d);
@@ -53,27 +52,32 @@ com_display(wordlist *wl)
             return;
         wl = wl->wl_next;
     }
+
     if (plot_cur)
         for (d = plot_cur->pl_dvecs; d; d = d->v_next)
             len++;
+
     if (len == 0) {
         fprintf(cp_out, "There are no vectors currently active.\n");
         return;
     }
+
     out_printf("Here are the vectors currently active:\n\n");
     dvs = TMALLOC(struct dvec *, len);
     for (d = plot_cur->pl_dvecs, i = 0; d; d = d->v_next, i++)
         dvs[i] = d;
     if (!cp_getvar("nosort", CP_BOOL, NULL))
-        qsort(dvs, (size_t) len, sizeof (struct dvec *), dcomp);
+        qsort(dvs, (size_t) len, sizeof(struct dvec *), dcomp);
 
-    out_printf("Title: %s\n",  plot_cur->pl_title);
-    out_printf("Name: %s (%s)\nDate: %s\n\n", 
-        plot_cur->pl_typename, plot_cur->pl_name, 
-        plot_cur->pl_date);
+    out_printf("Title: %s\n", plot_cur->pl_title);
+    out_printf("Name: %s (%s)\nDate: %s\n\n",
+               plot_cur->pl_typename, plot_cur->pl_name,
+               plot_cur->pl_date);
+
     for (i = 0; i < len; i++) {
         d = dvs[i];
         pvec(d);
     }
+
     return;
 }

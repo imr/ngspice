@@ -11,8 +11,6 @@ void indexstring(int *data, int length, char *retstring);
 int incindex(int *counts, int numcounts, int *dims, int numdims);
 int emptydims(int *data, int length);
 int atodims(char *p, int *data, int *outlength);
-char * skipdims(char *p);
-
-
+char *skipdims(char *p);
 
 #endif

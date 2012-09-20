@@ -33,8 +33,8 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
     wordlist *wl = NULL, *end = NULL;
     wordlist *controls = NULL;
     FILE *lastin, *lastout, *lasterr;
-    
-    inp_readall(fp, &deck, 0, NULL, comfile) /* still to check if . or filename instead of NULL */;
+
+    inp_readall(fp, &deck, 0, NULL, comfile); /* still to check if . or filename instead of NULL */
     if (!deck)
         return;
 
@@ -49,7 +49,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
     (void) fclose(fp);
 
     /* Now save the IO context and start a new control set...  After
-     * we are done with the source we'll put the old file descriptors 
+     * we are done with the source we'll put the old file descriptors
      * back.  I guess we could use a FILE stack, but since this routine
      * is recursive anyway...
      */
@@ -62,7 +62,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
 
     cp_pushcontrol();
 
-    /* We should now go through the deck and execute front-end 
+    /* We should now go through the deck and execute front-end
      * commands and remove them. Front-end commands are enclosed by
      * the lines .control and .endc, unless comfile
      * is TRUE, in which case every line must be a front-end command.
@@ -77,19 +77,18 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
             if ((dd->li_line[0] == '*') && (dd->li_line[1] != '#'))
                 continue;
             if (!ciprefix(".control", dd->li_line) &&
-		!ciprefix(".endc", dd->li_line)) {
+                !ciprefix(".endc", dd->li_line)) {
                 if (dd->li_line[0] == '*')
                     (void) cp_evloop(dd->li_line + 2);
                 else
                     (void) cp_evloop(dd->li_line);
-	    }
+            }
             tfree(dd->li_line);
             tfree(dd);
-        }   
+        }
     } else {
         for (dd = deck->li_next; dd; dd = ld->li_next) {
-            if ((dd->li_line[0] == '*') &&
-                    (dd->li_line[1] != '#')) {
+            if ((dd->li_line[0] == '*') && (dd->li_line[1] != '#')) {
                 ld = dd;
                 continue;
             }
@@ -105,8 +104,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
                 tfree(dd->li_line);
                 tfree(dd);
                 if (commands)
-                    fprintf(cp_err, 
-                    "Warning: redundant .control line\n");
+                    fprintf(cp_err, "Warning: redundant .control line\n");
                 else
                     commands = TRUE;
             } else if (ciprefix(".endc", dd->li_line)) {
@@ -116,8 +114,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
                 if (commands)
                     commands = FALSE;
                 else
-                    fprintf(cp_err, 
-                    "Warning: misplaced .endc line\n");
+                    fprintf(cp_err, "Warning: misplaced .endc line\n");
             } else if (commands || prefix("*#", dd->li_line)) {
                 controls = wl_cons(NULL, controls);
                 wl = controls;
@@ -138,15 +135,17 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
                 inp_casefix(s);
                 inp_casefix(dd->li_line);
                 if (eq(s, ".width") || ciprefix(".four", s) ||
-                        eq(s, ".plot") || 
-                        eq(s, ".print") ||
-                        eq(s, ".save")) {
+                    eq(s, ".plot")  ||
+                    eq(s, ".print") ||
+                    eq(s, ".save"))
+                {
                     wl_append_word(&wl, &end, copy(dd->li_line));
                     ld->li_next = dd->li_next;
                     tfree(dd->li_line);
                     tfree(dd);
-                } else
+                } else {
                     ld = dd;
+                }
             }
         }
         if (deck->li_next) {
@@ -154,13 +153,12 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
             fprintf(cp_out, "\nCircuit: %s\n\n", tt);
             fprintf(stderr, "\nCircuit: %s\n\n", tt);
 
-            /* Now expand subcircuit macros. Note that we have to 
-             * fix the case before we do this but after we 
+            /* Now expand subcircuit macros. Note that we have to
+             * fix the case before we do this but after we
              * deal with the commands.
              */
             if (!cp_getvar("nosubckt", CP_BOOL, NULL))
-                deck->li_next = inp_subcktexpand(deck->
-                        li_next);
+                deck->li_next = inp_subcktexpand(deck->li_next);
             deck->li_actual = realdeck;
             nutinp_dodeck(deck, tt, wl, FALSE, options, filename);
         }
@@ -184,6 +182,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
     tfree(tt);
     return;
 }
+
 
 void
 nutcom_source(wordlist *wl)
@@ -219,8 +218,10 @@ nutcom_source(wordlist *wl)
             wl = wl->wl_next;
         }
         (void) fseek(fp, 0L, SEEK_SET);
-    } else
+    } else {
         fp = inp_pathopen(wl->wl_word, "r");
+    }
+
     if (fp == NULL) {
         perror(wl->wl_word);
         cp_interactive = TRUE;
@@ -228,21 +229,26 @@ nutcom_source(wordlist *wl)
     }
 
     /* Don't print the title if this is a .spiceinit file. */
-    if (ft_nutmeg || substring(INITSTR, owl->wl_word)
-            || substring(ALT_INITSTR, owl->wl_word))
+    if (ft_nutmeg ||
+        substring(INITSTR, owl->wl_word) ||
+        substring(ALT_INITSTR, owl->wl_word))
+    {
         inp_nutsource(fp, TRUE, tempfile ? NULL : wl->wl_word);
-    else
+    } else {
         inp_nutsource(fp, FALSE, tempfile ? NULL : wl->wl_word);
+    }
+
     cp_interactive = inter;
     if (tempfile)
         (void) unlink(tempfile);
     return;
 }
 
+
 void
 nutinp_source(char *file)
 {
-    static struct wordlist wl = { NULL, NULL, NULL } ;
+    static struct wordlist wl = { NULL, NULL, NULL };
 
     wl.wl_word = file;
     nutcom_source(&wl);

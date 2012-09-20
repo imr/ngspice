@@ -30,7 +30,7 @@ Modified: 2000 AlansFixes
 
 static void fixdotplot(wordlist *wl);
 static void fixdotprint(wordlist *wl);
-static char * fixem(char *string);
+static char *fixem(char *string);
 void ft_savemeasure(void);
 
 
@@ -39,13 +39,13 @@ setcplot(char *name)
 {
     struct plot *pl;
 
-    for (pl = plot_list; pl; pl = pl->pl_next) {
-        if (ciprefix(name, pl->pl_typename)) {
+    for (pl = plot_list; pl; pl = pl->pl_next)
+        if (ciprefix(name, pl->pl_typename))
             return pl;
-        }
-    }
+
     return NULL;
 }
+
 
 /* All lines with .width, .plot, .print, .save, .op, .meas, .tf
    have been assembled into a wordlist (wl_first) in inp.c:inp_spsource(),
@@ -62,17 +62,17 @@ ft_dotsaves(void)
     if (!ft_curckt) /* Shouldn't happen. */
         return;
 
-    for (iline = ft_curckt->ci_commands; iline; iline = iline->wl_next) {
+    for (iline = ft_curckt->ci_commands; iline; iline = iline->wl_next)
         if (ciprefix(".save", iline->wl_word)) {
             s = iline->wl_word;
             (void) gettok(&s);
             wl = wl_append(wl, gettoks(s));
         }
-    }
 
     com_save(wl);
     return;
 }
+
 
 /* Go through the dot lines given and make up a big "save" command with
  * all the node names mentioned. Note that if a node is requested for
@@ -80,101 +80,102 @@ ft_dotsaves(void)
  */
 
 static char *plot_opts[ ] = {
-	"linear",
-	"xlog",
-	"ylog",
-	"loglog"
-	};
+    "linear",
+    "xlog",
+    "ylog",
+    "loglog"
+};
+
 
 int
 ft_savedotargs(void)
 {
-   wordlist *w, *wl = NULL, *iline, **prev_wl, *w_next;
-   char *name;
-   char *s;
-   int some = 0;
-   static wordlist all = { "all", NULL, NULL };
-   int isaplot;
-   int i;
-   int status;
+    wordlist *w, *wl = NULL, *iline, **prev_wl, *w_next;
+    char *name;
+    char *s;
+    int some = 0;
+    static wordlist all = { "all", NULL, NULL };
+    int isaplot;
+    int i;
+    int status;
 
-   if (!ft_curckt) /* Shouldn't happen. */
-      return 0;
+    if (!ft_curckt) /* Shouldn't happen. */
+        return 0;
 
-   for (iline = ft_curckt->ci_commands; iline; iline = iline->wl_next) {
-      s = iline->wl_word;
-      if (ciprefix(".plot", s))
-         isaplot = 1;
-      else
-         isaplot = 0;
+    for (iline = ft_curckt->ci_commands; iline; iline = iline->wl_next) {
+        s = iline->wl_word;
+        if (ciprefix(".plot", s))
+            isaplot = 1;
+        else
+            isaplot = 0;
 
-      if (isaplot || ciprefix(".print", s)) {
-         (void) gettok(&s);
-         name = gettok(&s);
+        if (isaplot || ciprefix(".print", s)) {
+            (void) gettok(&s);
+            name = gettok(&s);
 
-         if ((w = gettoks(s)) == NULL) {
-            fprintf(cp_err, "Warning: no nodes given: %s\n", iline->wl_word);
-         } else {
-            if (isaplot) {
-               prev_wl = &w;
-               for (wl = w; wl; wl = w_next) {
-                  w_next = wl->wl_next;
-                  for (i = 0; (size_t) i < NUMELEMS(plot_opts); i++) {
-                     if (!strcmp(wl->wl_word, plot_opts[i])) {
-                        /* skip it */
-                        *prev_wl = w_next;
-                        tfree(wl);
-                        break;
-                     }
-                  }
-                  if (i == NUMELEMS(plot_opts))
-                     prev_wl = &wl->wl_next;
-               }
+            if ((w = gettoks(s)) == NULL) {
+                fprintf(cp_err, "Warning: no nodes given: %s\n", iline->wl_word);
+            } else {
+                if (isaplot) {
+                    prev_wl = &w;
+                    for (wl = w; wl; wl = w_next) {
+                        w_next = wl->wl_next;
+                        for (i = 0; (size_t) i < NUMELEMS(plot_opts); i++) {
+                            if (!strcmp(wl->wl_word, plot_opts[i])) {
+                                /* skip it */
+                                *prev_wl = w_next;
+                                tfree(wl);
+                                break;
+                            }
+                        }
+                        if (i == NUMELEMS(plot_opts))
+                            prev_wl = &wl->wl_next;
+                    }
+                }
+                some = 1;
+                com_save2(w, name);
             }
+        } else if (ciprefix(".four", s)) {
+            (void) gettok(&s);
+            (void) gettok(&s);
+            if ((w = gettoks(s)) == NULL) {
+                fprintf(cp_err, "Warning: no nodes given: %s\n", iline->wl_word);
+            } else {
+                some = 1;
+                com_save2(w, "TRAN");       /* A hack */
+            }
+        } else if (ciprefix(".meas", s)) {
+            status = measure_extract_variables(s);
+            if (!(status)) {
+                some = 1;
+            }
+        } else if (ciprefix(".op", s)) {
             some = 1;
-            com_save2(w, name);
-         }
-      } else if (ciprefix(".four", s)) {
-         (void) gettok(&s);
-         (void) gettok(&s);
-         if ((w = gettoks(s)) == NULL)
-            fprintf(cp_err, "Warning: no nodes given: %s\n", iline->wl_word);
-         else {
+            com_save2(&all, "OP");
+        } else if (ciprefix(".tf", s)) {
             some = 1;
-            com_save2(w, "TRAN");	/* A hack */
-         }
-      } else if (ciprefix(".meas", s)) {
-	 status = measure_extract_variables( s ) ;
-	 if(!(status)){
-	   some = 1;
-	 }
-      } else if (ciprefix(".op", s)) {
-         some = 1;
-         com_save2(&all, "OP");
-      } else if (ciprefix(".tf", s)) {
-         some = 1;
-         com_save2(&all, "TF");
-      }
-   }
-   return some;
+            com_save2(&all, "TF");
+        }
+    }
+    return some;
 }
 
 void
 ft_savemeasure(void)
 {
-   char *s;
-   wordlist *iline;
+    char *s;
+    wordlist *iline;
 
-   if (!ft_curckt) /* Shouldn't happen. */
-      return ;
+    if (!ft_curckt) /* Shouldn't happen. */
+        return;
 
-   for (iline = ft_curckt->ci_commands; iline; iline = iline->wl_next) {
-      s = iline->wl_word;
-      if (ciprefix(".measure", s)) {
-	 (void) measure_extract_variables( s ) ;
-      }
-   }
-   return ;
+    for (iline = ft_curckt->ci_commands; iline; iline = iline->wl_next) {
+        s = iline->wl_word;
+        if (ciprefix(".measure", s)) {
+            (void) measure_extract_variables(s);
+        }
+    }
+    return;
 }
 
 /* Execute the .whatever lines found in the deck, after we are done running.
@@ -189,7 +190,7 @@ ft_cktcoms(bool terse)
     wordlist *coms, *command, all;
     char *plottype, *s;
     struct dvec *v;
-    static wordlist twl = { "col", NULL, NULL } ;
+    static wordlist twl = { "col", NULL, NULL };
     struct plot *pl;
     int i, found;
     char numbuf[BSIZE_SP]; /* For printnum*/
@@ -198,7 +199,7 @@ ft_cktcoms(bool terse)
     all.wl_word = "all";
 
     if (!ft_curckt)
-	return 1;
+        return 1;
 
     plot_cur = setcplot("op");
     if (!ft_curckt->ci_commands && !plot_cur)
@@ -208,64 +209,62 @@ ft_cktcoms(bool terse)
 
     /* Listing */
     if (ft_listprint) {
-	if (terse)
-	    fprintf(cp_err, ".options: no listing, rawfile was generated.\n");
-	else
-	    inp_list(cp_out, ft_curckt->ci_deck, ft_curckt->ci_options,
-		     LS_DECK);
+        if (terse)
+            fprintf(cp_err, ".options: no listing, rawfile was generated.\n");
+        else
+            inp_list(cp_out, ft_curckt->ci_deck, ft_curckt->ci_options, LS_DECK);
     }
 
     /* If there was a .op line, then we have to do the .op output. */
     plot_cur = setcplot("op");
     if (plot_cur != NULL) {
-	assert(plot_cur->pl_dvecs != NULL);
-	if (plot_cur->pl_dvecs->v_realdata!=NULL) {
-	    if (terse) {
-		fprintf(cp_out, "OP information in rawfile.\n");
-	    } else {
-		fprintf(cp_out, "\t%-30s%15s\n", "Node", "Voltage");
-		fprintf(cp_out, "\t%-30s%15s\n", "----", "-------");
-		fprintf(cp_out, "\t----\t-------\n");
-		for (v = plot_cur->pl_dvecs; v; v = v->v_next) {
-		    if (!isreal(v)) {
-			fprintf(cp_err, 
-				"Internal error: op vector %s not real\n",
-				v->v_name);
-			continue;
-		    }
-		    if ((v->v_type == SV_VOLTAGE) && (*(v->v_name)!='@')) {
-			printnum(numbuf, v->v_realdata[0]);
-			fprintf(cp_out, "\t%-30s%15s\n", v->v_name, numbuf);
-				}
-		}
-		fprintf(cp_out, "\n\tSource\tCurrent\n");
-		fprintf(cp_out, "\t------\t-------\n\n");
-		for (v = plot_cur->pl_dvecs; v; v = v->v_next)
-		    if (v->v_type == SV_CURRENT) {
-			printnum(numbuf, v->v_realdata[0]);
-			fprintf(cp_out, "\t%-30s%15s\n", v->v_name, numbuf);
-			}
-		fprintf(cp_out, "\n");
+        assert(plot_cur->pl_dvecs != NULL);
+        if (plot_cur->pl_dvecs->v_realdata != NULL) {
+            if (terse) {
+                fprintf(cp_out, "OP information in rawfile.\n");
+            } else {
+                fprintf(cp_out, "\t%-30s%15s\n", "Node", "Voltage");
+                fprintf(cp_out, "\t%-30s%15s\n", "----", "-------");
+                fprintf(cp_out, "\t----\t-------\n");
+                for (v = plot_cur->pl_dvecs; v; v = v->v_next) {
+                    if (!isreal(v)) {
+                        fprintf(cp_err,
+                                "Internal error: op vector %s not real\n",
+                                v->v_name);
+                        continue;
+                    }
+                    if ((v->v_type == SV_VOLTAGE) && (*(v->v_name) != '@')) {
+                        printnum(numbuf, v->v_realdata[0]);
+                        fprintf(cp_out, "\t%-30s%15s\n", v->v_name, numbuf);
+                    }
+                }
+                fprintf(cp_out, "\n\tSource\tCurrent\n");
+                fprintf(cp_out, "\t------\t-------\n\n");
+                for (v = plot_cur->pl_dvecs; v; v = v->v_next)
+                    if (v->v_type == SV_CURRENT) {
+                        printnum(numbuf, v->v_realdata[0]);
+                        fprintf(cp_out, "\t%-30s%15s\n", v->v_name, numbuf);
+                    }
+                fprintf(cp_out, "\n");
 
-		if (!ft_nomod)
-		    com_showmod(&all);
-		com_show(&all);
-	    }
-	}
+                if (!ft_nomod)
+                    com_showmod(&all);
+                com_show(&all);
+            }
+        }
     }
 
-    for (pl = plot_list; pl; pl = pl->pl_next) {
+    for (pl = plot_list; pl; pl = pl->pl_next)
         if (ciprefix("tf", pl->pl_typename)) {
-	    if (terse) {
-		fprintf(cp_out, "TF information in rawfile.\n");
-		break;
-	    }
+            if (terse) {
+                fprintf(cp_out, "TF information in rawfile.\n");
+                break;
+            }
             plot_cur = pl;
-	    fprintf(cp_out, "Transfer function information:\n");
-	    com_print(&all);
-	    fprintf(cp_out, "\n");
-	}
-    }
+            fprintf(cp_out, "Transfer function information:\n");
+            com_print(&all);
+            fprintf(cp_out, "\n");
+        }
 
     /* Now all the '.' lines */
     while (coms) {
@@ -273,11 +272,11 @@ ft_cktcoms(bool terse)
         if (!command)
             goto bad;
         if (eq(command->wl_word, ".width")) {
-            do {
+            do
                 command = command->wl_next;
-            } while (command && !ciprefix("out", command->wl_word));
+            while (command && !ciprefix("out", command->wl_word));
             if (command) {
-                s =strchr(command->wl_word, '=');
+                s = strchr(command->wl_word, '=');
                 if (!s || !s[1]) {
                     fprintf(cp_err, "Error: bad line %s\n", coms->wl_word);
                     coms = coms->wl_next;
@@ -288,8 +287,8 @@ ft_cktcoms(bool terse)
             }
         } else if (eq(command->wl_word, ".print")) {
             if (terse) {
-                fprintf(cp_out, 
-			".print line ignored since rawfile was produced.\n");
+                fprintf(cp_out,
+                        ".print line ignored since rawfile was produced.\n");
             } else {
                 command = command->wl_next;
                 if (!command) {
@@ -301,23 +300,22 @@ ft_cktcoms(bool terse)
                 command = command->wl_next;
                 fixdotprint(command);
                 twl.wl_next = command;
-		found = 0;
-		for (pl = plot_list; pl; pl = pl->pl_next) {
-		    if (ciprefix(plottype, pl->pl_typename)) {
-			plot_cur = pl;
-			com_print(&twl);
-			fprintf(cp_out, "\n");
-			found = 1;
-		    }
-		}
+                found = 0;
+                for (pl = plot_list; pl; pl = pl->pl_next)
+                    if (ciprefix(plottype, pl->pl_typename)) {
+                        plot_cur = pl;
+                        com_print(&twl);
+                        fprintf(cp_out, "\n");
+                        found = 1;
+                    }
                 if (!found)
                     fprintf(cp_err, "Error: .print: no %s analysis found.\n",
-			    plottype);
+                            plottype);
             }
         } else if (eq(command->wl_word, ".plot")) {
             if (terse) {
-                fprintf(cp_out, 
-			".plot line ignored since rawfile was produced.\n");
+                fprintf(cp_out,
+                        ".plot line ignored since rawfile was produced.\n");
             } else {
                 command = command->wl_next;
                 if (!command) {
@@ -329,23 +327,22 @@ ft_cktcoms(bool terse)
                 plottype = command->wl_word;
                 command = command->wl_next;
                 fixdotplot(command);
-		found = 0;
-		for (pl = plot_list; pl; pl = pl->pl_next) {
-		    if (ciprefix(plottype, pl->pl_typename)) {
-			plot_cur = pl;
-			com_asciiplot(command);
-			fprintf(cp_out, "\n");
-			found = 1;
-		    }
-		}
+                found = 0;
+                for (pl = plot_list; pl; pl = pl->pl_next)
+                    if (ciprefix(plottype, pl->pl_typename)) {
+                        plot_cur = pl;
+                        com_asciiplot(command);
+                        fprintf(cp_out, "\n");
+                        found = 1;
+                    }
                 if (!found)
                     fprintf(cp_err, "Error: .plot: no %s analysis found.\n",
-			    plottype);
+                            plottype);
             }
         } else if (ciprefix(".four", command->wl_word)) {
             if (terse) {
-                fprintf(cp_out, 
-			".fourier line ignored since rawfile was produced.\n");
+                fprintf(cp_out,
+                        ".fourier line ignored since rawfile was produced.\n");
             } else {
                 int err;
 
@@ -355,25 +352,25 @@ ft_cktcoms(bool terse)
                     fprintf(cp_out, "\n\n");
                 else
                     fprintf(cp_err, "No transient data available for "
-                        "fourier analysis");
+                            "fourier analysis");
             }
-        } else if (!eq(command->wl_word, ".save")
-            && !eq(command->wl_word, ".op")
-//          && !eq(command->wl_word, ".measure")
-            && !ciprefix(".meas", command->wl_word)
-            && !eq(command->wl_word, ".tf"))
+        } else if (!eq(command->wl_word, ".save") &&
+                   !eq(command->wl_word, ".op") &&
+                   // !eq(command->wl_word, ".measure") &&
+                   !ciprefix(".meas", command->wl_word) &&
+                   !eq(command->wl_word, ".tf"))
         {
             goto bad;
         }
         coms = coms->wl_next;
     }
 
- nocmds:
+nocmds:
     /* Now the node table
-    if (ft_nodesprint)
-        ;
+       if (ft_nodesprint)
+       ;
     */
-    
+
     /* The options */
     if (ft_optsprint) {
         fprintf(cp_out, "Options:\n\n");
@@ -383,19 +380,21 @@ ft_cktcoms(bool terse)
 
     /* And finally the accounting info. */
     if (ft_acctprint) {
-        static wordlist ww = { "everything", NULL, NULL } ;
+        static wordlist ww = { "everything", NULL, NULL };
         com_rusage(&ww);
-    } else if ((!ft_noacctprint) && (!ft_acctprint))
+    } else if ((!ft_noacctprint) && (!ft_acctprint)) {
         com_rusage(NULL);
+    }
     /* absolutely no accounting if noacct is given */
-    
+
     putc('\n', cp_out);
     return 0;
 
- bad:
+bad:
     fprintf(cp_err, "Internal Error: ft_cktcoms: bad commands\n");
     return 1;
 }
+
 
 /* These routines make sure that the arguments to .plot and .print in
  * spice2 decks are acceptable to spice3. The things we look for are:
@@ -425,7 +424,7 @@ fixdotplot(wordlist *wl)
             if (*s != ',') {
                 fprintf(cp_err, "Error: bad limits \"%s\"\n",
                         wl->wl_word);
-                    return;
+                return;
             }
             d1 = *d;
             s++;
@@ -433,7 +432,7 @@ fixdotplot(wordlist *wl)
             if ((*s != /*(*/ ')') || s[1]) {
                 fprintf(cp_err, "Error: bad limits \"%s\"\n",
                         wl->wl_word);
-                    return;
+                return;
             }
             d2 = *d;
             tfree(wl->wl_word);
@@ -448,6 +447,7 @@ fixdotplot(wordlist *wl)
     return;
 }
 
+
 static void
 fixdotprint(wordlist *wl)
 {
@@ -458,6 +458,7 @@ fixdotprint(wordlist *wl)
     return;
 }
 
+
 static char *
 fixem(char *string)
 {
@@ -465,53 +466,92 @@ fixem(char *string)
     char *ss = string;          /* Get rid of ss ? */
 
     if (ciprefix("v(", string) &&strchr(string, ',')) {
-        for (s = string; *s && (*s != ','); s++) ; *s++ = '\0';
-        for (t = s; *t && (*t != ')'); t++) ;      *t   = '\0';
-        if (eq(s, "0")) (void) sprintf(buf, "v(%s)", string + 2);
+        for (s = string; *s && (*s != ','); s++)
+            ;
+        *s++ = '\0';
+        for (t = s; *t && (*t != ')'); t++)
+            ;
+        *t   = '\0';
+        if (eq(s, "0"))
+            (void) sprintf(buf, "v(%s)", string + 2);
         else if (eq(string + 2, "0"))
-                        (void) sprintf(buf, "-v(%s)", s);
-        else            (void) sprintf(buf, "v(%s)-v(%s)", string + 2, s);
+            (void) sprintf(buf, "-v(%s)", s);
+        else
+            (void) sprintf(buf, "v(%s)-v(%s)", string + 2, s);
     } else if (ciprefix("vm(", string) &&strchr(string, ',')) {
-        for (s = string; *s && (*s != ','); s++) ; *s++ = '\0';
-        for (t = s;      *t && (*t != ')'); t++) ; *t   = '\0';
-        if (eq(s, "0")) (void) sprintf(buf, "mag(v(%s))", string + 3);
+        for (s = string; *s && (*s != ','); s++)
+            ;
+        *s++ = '\0';
+        for (t = s;      *t && (*t != ')'); t++)
+            ;
+        *t   = '\0';
+        if (eq(s, "0"))
+            (void) sprintf(buf, "mag(v(%s))", string + 3);
         else if (eq(string + 3, "0"))
-                        (void) sprintf(buf, "mag(-v(%s))", s);
-        else            (void) sprintf(buf, "mag(v(%s)-v(%s))", string + 3, s);
+            (void) sprintf(buf, "mag(-v(%s))", s);
+        else
+            (void) sprintf(buf, "mag(v(%s)-v(%s))", string + 3, s);
     } else if (ciprefix("vp(", string) &&strchr(string, ',')) {
-        for (s = string; *s && (*s != ','); s++) ; *s++ = '\0';
-        for (t = s;      *t && (*t != ')'); t++) ; *t   = '\0';
-        if (eq(s, "0")) (void) sprintf(buf, "ph(v(%s))", string + 3);
+        for (s = string; *s && (*s != ','); s++)
+            ;
+        *s++ = '\0';
+        for (t = s;      *t && (*t != ')'); t++)
+            ;
+        *t   = '\0';
+        if (eq(s, "0"))
+            (void) sprintf(buf, "ph(v(%s))", string + 3);
         else if (eq(string + 3, "0"))
-                        (void) sprintf(buf, "ph(-v(%s))", s);
-        else            (void) sprintf(buf, "ph(v(%s)-v(%s))", string + 3, s);
+            (void) sprintf(buf, "ph(-v(%s))", s);
+        else
+            (void) sprintf(buf, "ph(v(%s)-v(%s))", string + 3, s);
     } else if (ciprefix("vi(", string) &&strchr(string, ',')) {
-        for (s = string; *s && (*s != ','); s++) ; *s++ = '\0';
-        for (t = s;      *t && (*t != ')'); t++) ; *t   = '\0';
-        if (eq(s, "0")) (void) sprintf(buf, "imag(v(%s))", string + 3);
+        for (s = string; *s && (*s != ','); s++)
+            ;
+        *s++ = '\0';
+        for (t = s;      *t && (*t != ')'); t++)
+            ;
+        *t   = '\0';
+        if (eq(s, "0"))
+            (void) sprintf(buf, "imag(v(%s))", string + 3);
         else if (eq(string + 3, "0"))
-                        (void) sprintf(buf, "imag(-v(%s))", s);
-        else            (void) sprintf(buf, "imag(v(%s)-v(%s))", string + 3, s);
+            (void) sprintf(buf, "imag(-v(%s))", s);
+        else
+            (void) sprintf(buf, "imag(v(%s)-v(%s))", string + 3, s);
     } else if (ciprefix("vr(", string) &&strchr(string, ',')) {
-        for (s = string; *s && (*s != ','); s++) ; *s++ = '\0';
-        for (t = s;      *t && (*t != ')'); t++) ; *t   = '\0';
-        if (eq(s, "0")) (void) sprintf(buf, "real(v(%s))", string + 3);
+        for (s = string; *s && (*s != ','); s++)
+            ;
+        *s++ = '\0';
+        for (t = s;      *t && (*t != ')'); t++)
+            ;
+        *t   = '\0';
+        if (eq(s, "0"))
+            (void) sprintf(buf, "real(v(%s))", string + 3);
         else if (eq(string + 3, "0"))
-                        (void) sprintf(buf, "real(-v(%s))", s);
-        else            (void) sprintf(buf, "real(v(%s)-v(%s))", string + 3, s);
+            (void) sprintf(buf, "real(-v(%s))", s);
+        else
+            (void) sprintf(buf, "real(v(%s)-v(%s))", string + 3, s);
     } else if (ciprefix("vdb(", string) &&strchr(string, ',')) {
-        for (s = string; *s && (*s != ','); s++) ; *s++ = '\0';
-        for (t = s;      *t && (*t != ')'); t++) ; *t   = '\0';
-        if (eq(s, "0")) (void) sprintf(buf, "db(v(%s))", string + 4);
+        for (s = string; *s && (*s != ','); s++)
+            ;
+        *s++ = '\0';
+        for (t = s;      *t && (*t != ')'); t++)
+            ;
+        *t   = '\0';
+        if (eq(s, "0"))
+            (void) sprintf(buf, "db(v(%s))", string + 4);
         else if (eq(string + 4, "0"))
-                        (void) sprintf(buf, "db(-v(%s))", s);
-        else            (void) sprintf(buf, "db(v(%s)-v(%s))", string + 4, s);
+            (void) sprintf(buf, "db(-v(%s))", s);
+        else
+            (void) sprintf(buf, "db(v(%s)-v(%s))", string + 4, s);
     } else if (ciprefix("i(", string)) {
-        for (s = string; *s && (*s != ')'); s++) ; *s = '\0';
+        for (s = string; *s && (*s != ')'); s++)
+            ;
+        *s = '\0';
         string += 2;
         (void) sprintf(buf, "%s#branch", string);
+    } else {
+        return (string);
     }
-    else return (string);
 
     tfree(ss);
     string = copy(buf);
@@ -523,53 +563,54 @@ fixem(char *string)
 wordlist *
 gettoks(char *s)
 {
-    char	*t;
-    char	*l, *r, *c;	/* left, right, center/comma */
-    wordlist	*wl, *list, **prevp;
+    char        *t;
+    char        *l, *r, *c;     /* left, right, center/comma */
+    wordlist    *wl, *list, **prevp;
 
 
     list = NULL;
     prevp = &list;
 
-    if (strstr( s, "(" )) s = stripWhiteSpacesInsideParens(s);
+    if (strstr(s, "(")) s = stripWhiteSpacesInsideParens(s);
     while ((t = gettok(&s)) != NULL) {
-	if (*t == '(')
-	    continue;
-	l =strrchr(t, '('/*)*/);
-	if (!l) {
-	    wl = wl_cons(copy(t), NULL);
-	    *prevp = wl;
-	    prevp = &wl->wl_next;
-	    continue;
-	}
+        if (*t == '(')
+            continue;
+        l = strrchr(t, '('/*)*/);
+        if (!l) {
+            wl = wl_cons(copy(t), NULL);
+            *prevp = wl;
+            prevp = &wl->wl_next;
+            continue;
+        }
 
-	r =strchr(t, /*(*/')');
+        r = strchr(t, /*(*/')');
 
-	c =strchr(t, ',');
-	if (!c)
-	    c = r;
+        c = strchr(t, ',');
+        if (!c)
+            c = r;
 
-	if (c)
-	    *c = 0;
+        if (c)
+            *c = 0;
 
-	wl = wl_cons(NULL, NULL);
-	*prevp = wl;
-	prevp = &wl->wl_next;
+        wl = wl_cons(NULL, NULL);
+        *prevp = wl;
+        prevp = &wl->wl_next;
 
-	if (*(l - 1) == 'i' || *(l - 1) == 'I') {
-	    char buf[513];
-	    sprintf(buf, "%s#branch", l + 1);
-	    wl->wl_word = copy(buf);
-	    c = r = NULL;
-	} else
-	    wl->wl_word = copy(l + 1);
+        if (*(l - 1) == 'i' || *(l - 1) == 'I') {
+            char buf[513];
+            sprintf(buf, "%s#branch", l + 1);
+            wl->wl_word = copy(buf);
+            c = r = NULL;
+        } else {
+            wl->wl_word = copy(l + 1);
+        }
 
-	if (c != r) {
-	    *r = 0;
-	    wl = wl_cons(copy(c + 1), NULL);
-	    *prevp = wl;
-	    prevp = &wl->wl_next;
-	}
+        if (c != r) {
+            *r = 0;
+            wl = wl_cons(copy(c + 1), NULL);
+            *prevp = wl;
+            prevp = &wl->wl_next;
+        }
     }
     return list;
 }

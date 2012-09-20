@@ -28,8 +28,8 @@ static void savetree(struct pnode *pn);
 static void prdefs(char *name);
 static void prtree(struct udfunc *ud);
 static void prtree1(struct pnode *pn, FILE *fp);
-static struct pnode * trcopy(struct pnode *tree, char *args, struct pnode *nn);
-static struct pnode * ntharg(int num, struct pnode *args);
+static struct pnode *trcopy(struct pnode *tree, char *args, struct pnode *nn);
+static struct pnode *ntharg(int num, struct pnode *args);
 
 static struct udfunc *udfuncs = NULL;
 
@@ -174,7 +174,7 @@ savetree(struct pnode *pn)
                 pn->pn_value->v_realdata = TMALLOC(double, d->v_length);
                 bcopy(d->v_realdata,
                       pn->pn_value->v_realdata,
-                      sizeof (double) * (size_t) d->v_length);
+                      sizeof(double) * (size_t) d->v_length);
             } else {
                 pn->pn_value->v_compdata = TMALLOC(ngcomplex_t, d->v_length);
                 bcopy(d->v_compdata,
@@ -201,7 +201,7 @@ prdefs(char *name)
     char *s;
 
     if (name) {
-        s =strchr(name, '(' /* ) */);
+        s = strchr(name, '(' /* ) */);
         if (s)
             *s = '\0';
     }
@@ -289,9 +289,9 @@ ft_substdef(const char *name, struct pnode *args)
 
     for (udf = udfuncs; udf; udf = udf->ud_next)
         if (eq(name, udf->ud_name)) {
-            if (arity == udf->ud_arity)
+            if (arity == udf->ud_arity) {
                 break;
-            else {
+            } else {
                 found = TRUE;
                 rarity = udf->ud_arity;
             }
@@ -349,12 +349,16 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
                 while (*s++)   /* Get past the last '\0'. */
                     ;
             }
+
             if (*s)
                 return (ntharg(i, nn));
             else
                 return (tree);
+
         } else {
+
             return (tree);
+
         }
 
     } else if (tree->pn_func) {
@@ -412,7 +416,7 @@ ntharg(int num, struct pnode *args)
 
     ptry = args;
 
-    if (num > 1) {
+    if (num > 1)
         while (--num > 0) {
             if (ptry && ptry->pn_op &&
                 (ptry->pn_op->op_num != PT_OP_COMMA)) {
@@ -423,7 +427,6 @@ ntharg(int num, struct pnode *args)
             }
             ptry = ptry->pn_right;
         }
-    }
 
     if (ptry && ptry->pn_op && (ptry->pn_op->op_num == PT_OP_COMMA))
         ptry = ptry->pn_left;

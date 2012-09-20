@@ -23,6 +23,6 @@ disp_fn_Clear_t            X11_Clear;
 
 int X11_Input(REQUEST *request, RESPONSE *response);
 
-#endif /* X_DISPLAY_MISSING */
+#endif
 
-#endif /* X11_H_INCLUDED */
+#endif

@@ -32,7 +32,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #endif
 
 
-
 char cp_comma = ',';
 char cp_ocurl = '{';
 char cp_ccurl = '}';
@@ -52,7 +51,7 @@ static wordlist *brac2(char *string);
 wordlist *
 cp_doglob(wordlist *wlist)
 {
-  wordlist *wl;
+    wordlist *wl;
     char *s;
 
     /* Expand {a,b,c} */
@@ -76,13 +75,14 @@ cp_doglob(wordlist *wlist)
             s = cp_tildexpand(wl->wl_word);
             txfree(wl->wl_word);    /* sjb - fix memory leak */
             if (!s)
-                *wl->wl_word = '\0';	/* MW. We Con't touch tmalloc addres */
+                *wl->wl_word = '\0';    /* MW. We Con't touch tmalloc addres */
             else
-		wl->wl_word = s;
+                wl->wl_word = s;
         }
 
     return (wlist);
 }
+
 
 static wordlist *
 bracexpand(char *string)
@@ -145,9 +145,10 @@ brac1(char *string)
                 }
             wl_free(words);
             words = newwl;
-        } else
+        } else {
             for (wl = words; wl; wl = wl->wl_next)
                 appendc(wl->wl_word, *s);
+        }
     }
     return (words);
 }
@@ -200,17 +201,17 @@ brac2(char *string)
 char *
 cp_tildexpand(char *string)
 {
-    char	*result;
+    char *result;
 
     result = tildexpand(string);
 
     if (!result) {
-	if (cp_nonomatch) {
-	    return copy(string);
-	} else {
-	    return NULL;
-	}
+        if (cp_nonomatch)
+            return copy(string);
+        else
+            return NULL;
     }
+
     return result;
 }
 
@@ -222,6 +223,5 @@ cp_tildexpand(char *string)
 bool
 cp_globmatch(char *p, char *s)
 {
-    return(!(strcmp(p, s)));
+    return (!(strcmp(p, s)));
 }
-

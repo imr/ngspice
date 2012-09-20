@@ -4,8 +4,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /*
- *
- * Do backquote substitution on a word list. 
+ * Do backquote substitution on a word list.
  */
 
 #include "ngspice/config.h"
@@ -18,6 +17,7 @@ static wordlist *backeval(char *string);
 
 char cp_back = '`';
 
+
 wordlist *
 cp_bquote(wordlist *wlist)
 {
@@ -26,12 +26,13 @@ cp_bquote(wordlist *wlist)
     int i;
 
     for (wl = wlist; wl; wl = wl->wl_next) {
-				
+
         t = wl->wl_word;
         if (!t)
             continue;
         i = 0;
-loop:   	s =strchr(t, cp_back);
+    loop:
+        s = strchr(t, cp_back);
         if (s == NULL)
             continue;
         while (t < s)
@@ -47,28 +48,28 @@ loop:   	s =strchr(t, cp_back);
         /* What the heck, let "echo `foo" work... */
         *s = '\0';
         t++;    /* Get past the second ` */
-	if ((nwl = backeval(buf)) == NULL) {
+        if ((nwl = backeval(buf)) == NULL) {
             wlist->wl_word = NULL;
             return (wlist);
         }
-            (void) strcpy(buf, wbuf);
-	    if (nwl->wl_word) {
-                (void) strcat(buf, nwl->wl_word);
-                tfree(nwl->wl_word);
-	    }
-            nwl->wl_word = copy(buf);
-	
-	    (void) strcpy(tbuf, t);
-    	    wl = wl_splice(wl, nwl);
-		for(wlist = wl; wlist->wl_prev; wlist = wlist->wl_prev)
-		    ;
-		/* MW. We must move to the begging of new wordlist. */
-		
+        (void) strcpy(buf, wbuf);
+        if (nwl->wl_word) {
+            (void) strcat(buf, nwl->wl_word);
+            tfree(nwl->wl_word);
+        }
+        nwl->wl_word = copy(buf);
+
+        (void) strcpy(tbuf, t);
+        wl = wl_splice(wl, nwl);
+        for (wlist = wl; wlist->wl_prev; wlist = wlist->wl_prev)
+            ;
+        /* MW. We must move to the begging of new wordlist. */
+
         (void) strcpy(buf, wl->wl_word);
-	i = (int) strlen(buf);
+        i = (int) strlen(buf);
         (void) strcat(buf, tbuf);
         tfree(wl->wl_word);
-	wl->wl_word = copy(buf);
+        wl->wl_word = copy(buf);
         t = &wl->wl_word[i];
         s = wl->wl_word;
         for (i = 0; s < t; s++)
@@ -77,6 +78,7 @@ loop:   	s =strchr(t, cp_back);
     }
     return (wlist);
 }
+
 
 /* Do a popen with the string, and then reset the file pointers so that
  * we can use the first pass of the parser on the output.

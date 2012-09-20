@@ -381,7 +381,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
             /* Ignore comment lines, but not lines begining with '*#',
                but remove them, if they are in a .control ... .endc section */
             s = dd->li_line;
-            while(isspace(*s))
+            while (isspace(*s))
                 s++;
             if ((*s == '*') && ((s != dd->li_line) || (s[1] != '#'))) {
                 if (commands) {
@@ -419,9 +419,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                     fprintf(cp_err, "Warning: misplaced .endc card\n");
             } else if (commands || prefix("*#", dd->li_line)) {
                 /* more control lines */
-                if (prefix("*#", dd->li_line))
+                if (prefix("*#", dd->li_line)) {
                     s = copy(dd->li_line + 2);
-                else {
+                } else {
                     s = dd->li_line;
                     dd->li_line = 0; /* SJB - prevent line_free() freeing the string (now pointed at by wl->wl_word) */
                 }
@@ -430,14 +430,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 /* Look for set or unset numparams.
                    If either are found then we evaluate these lines immediately
                    so they take effect before netlist parsing */
-                while(isspace(*s)) /* step past any white space */
+                while (isspace(*s)) /* step past any white space */
                     s++;
                 if (ciprefix("set", s))
                     s += 3;
                 else if (ciprefix("unset", s))
                     s += 5;
                 if (s != dd->li_line) { /* one of the above must have matched */
-                    while(isspace(*s))  /* step past white space */
+                    while (isspace(*s))  /* step past white space */
                         s++;
                     if (ciprefix("numparams", s))
                         cp_evloop(wl->wl_word);
@@ -834,8 +834,7 @@ inp_dodeck(
                                    dd->li_linenum_orig, dd->li_line, dd->li_error);
                     if (ft_stricterror)
                         controlled_exit(EXIT_BAD);
-                }
-                else {
+                } else {
                     out_printf("%s\n", p);
                 }
 
@@ -895,23 +894,23 @@ inp_dodeck(
         ct->ci_filename = NULL;
 
     if (!noparse) {
-        /*        for (; options; options = options->li_next) {
-                  for (s = options->li_line; *s && !isspace(*s); s++)
-                  ;
-
-                  ii = cp_interactive;
-                  cp_interactive = FALSE;
-                  wl = cp_lexer(s);
-                  cp_interactive = ii;
-                  if (!wl || !wl->wl_word || !*wl->wl_word)
-                  continue;
-                  if (eev)
-                  eev->va_next = cp_setparse(wl);
-                  else
-                  ct->ci_vars = eev = cp_setparse(wl);
-                  while (eev->va_next)
-                  eev = eev->va_next;
-                  }
+        /*
+         * for (; options; options = options->li_next) {
+         *     for (s = options->li_line; *s && !isspace(*s); s++)
+         *         ;
+         *     ii = cp_interactive;
+         *     cp_interactive = FALSE;
+         *     wl = cp_lexer(s);
+         *     cp_interactive = ii;
+         *     if (!wl || !wl->wl_word || !*wl->wl_word)
+         *         continue;
+         *     if (eev)
+         *         eev->va_next = cp_setparse(wl);
+         *     else
+         *         ct->ci_vars = eev = cp_setparse(wl);
+         *     while (eev->va_next)
+         *         eev = eev->va_next;
+         * }
         */
         for (eev = ct->ci_vars; eev; eev = eev->va_next) {
             bool one = TRUE;   /* FIXME, actually eev->va_bool should be TRUE anyway */
@@ -1108,7 +1107,7 @@ com_source(wordlist *wl)
 void
 inp_source(char *file)
 {
-    static struct wordlist wl = { NULL, NULL, NULL } ;
+    static struct wordlist wl = { NULL, NULL, NULL };
     wl.wl_word = file;
     com_source(&wl);
 }

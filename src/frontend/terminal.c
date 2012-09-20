@@ -13,10 +13,12 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include <stdarg.h>
 
+
 #ifdef HAVE_ASPRINTF
 #ifdef HAVE_LIBIBERTY_H /* asprintf */
 #include <libiberty.h>
-#elif defined(__MINGW32__) || defined(__SUNPRO_C) /* we have asprintf, but not libiberty.h */
+#elif defined(__MINGW32__) || defined(__SUNPRO_C)
+/* we have asprintf, but not libiberty.h */
 #include <stdarg.h>
 extern int asprintf(char **out, const char *fmt, ...);
 extern int vasprintf(char **out, const char *fmt, va_list ap);
@@ -51,18 +53,18 @@ extern int vasprintf(char **out, const char *fmt, va_list ap);
 #include "variable.h"
 #include "terminal.h"
 
+
 bool out_moremode = TRUE;
 bool out_isatty = TRUE;
 
 #ifndef TCL_MODULE
 
 #ifdef HAVE_TERMCAP
-
 static char *motion_chars;
 static char *clear_chars;
 static char *home_chars;
 static char *cleol_chars;
-#endif /* HAVE_TERMCAP */
+#endif
 
 #define DEF_SCRHEIGHT   24
 #define DEF_SCRWIDTH    80
@@ -70,7 +72,6 @@ static char *cleol_chars;
 static int xsize, ysize;
 static int xpos, ypos;
 static bool noprint, nopause;
-
 
 
 /* Start output... */
@@ -87,7 +88,8 @@ out_init(void)
     if (cp_getvar("nomoremode", CP_BOOL, NULL))
         out_moremode = FALSE;
     else
-    out_moremode = TRUE;
+        out_moremode = TRUE;
+
     if (!out_moremode || !cp_interactive)
         out_isatty = FALSE;
 
@@ -118,44 +120,48 @@ out_init(void)
     if (!ysize)
         ysize = DEF_SCRHEIGHT;
     ysize -= 2; /* Fudge room... */
+
     xpos = ypos = 0;
 
     return;
 }
 
+
 /* Putc may not be buffered (sp?), so we do it ourselves. */
 
 static char staticbuf[BUFSIZ];
+
 struct {
     int count;
     char *ptr;
 } ourbuf = { BUFSIZ, staticbuf };
 
+
 /* send buffer out */
 void
 outbufputc(void)
 {
-
     if (ourbuf.count != BUFSIZ) {
-      fputs(staticbuf, cp_out);
-      memset(staticbuf, 0, (size_t) (BUFSIZ - ourbuf.count));
-      ourbuf.count = BUFSIZ;
-      ourbuf.ptr = staticbuf;
+        fputs(staticbuf, cp_out);
+        memset(staticbuf, 0, (size_t) (BUFSIZ - ourbuf.count));
+        ourbuf.count = BUFSIZ;
+        ourbuf.ptr = staticbuf;
     }
 
 }
+
 
 static void
 bufputc(char c)
 {
     if (--ourbuf.count >= 0) {
-	*ourbuf.ptr++ = c;
+        *ourbuf.ptr++ = c;
     } else {
-	/* Flush and reset the buffer */
-	outbufputc();
-	/* and store the character. */
-	ourbuf.count--;
-	*ourbuf.ptr++ = c;
+        /* Flush and reset the buffer */
+        outbufputc();
+        /* and store the character. */
+        ourbuf.count--;
+        *ourbuf.ptr++ = c;
     }
 }
 
@@ -165,38 +171,40 @@ void
 promptreturn(void)
 {
     char buf[16];
+
 moe:
-    fprintf(cp_out,
-        "\n\t-- hit return for more, ? for help -- ");
+    fprintf(cp_out, "\n\t-- hit return for more, ? for help -- ");
+
     if (!fgets(buf, 16, cp_in)) {
         clearerr(cp_in);
         *buf = 'q';
     }
+
     switch (*buf) {
-        case '\n':
-            break;
-        case 'q':
-            noprint = TRUE;
-            break;
-        case 'c':
-            nopause = TRUE;
-            break;
-        case ' ':
-            break;
-        case '?':
-            fprintf(cp_out,
-"\nPossible responses:\n\
+    case '\n':
+        break;
+    case 'q':
+        noprint = TRUE;
+        break;
+    case 'c':
+        nopause = TRUE;
+        break;
+    case ' ':
+        break;
+    case '?':
+        fprintf(cp_out,
+                "\nPossible responses:\n\
 \t<cr>   : Print another screenful\n\
 \tq <cr> : Discard the rest of the output\n\
 \tc <cr> : Continuously print the rest of the output\n\
 \t? <cr> : Print this help message\n");
-            goto moe;
-        default:
-            fprintf(cp_out, "Character %d is no good\n", *buf);
-            goto moe;
+        goto moe;
+    default:
+        fprintf(cp_out, "Character %d is no good\n", *buf);
+        goto moe;
     }
-
 }
+
 
 /* Print a string to the output.  If this would cause the screen to scroll,
  * print "more".
@@ -205,47 +213,53 @@ moe:
 void
 out_send(char *string)
 {
-
     if (noprint)
         return;
+
     if (!out_isatty || nopause) {
         fputs(string, cp_out);
         return;
     }
+
     while (*string) {
         switch (*string) {
-            case '\n':
-                xpos = 0;
-                ypos++;
-                break;
-            case '\f':
-                ypos = ysize;
-                xpos = 0;
-                break;
-            case '\t':
-                xpos = xpos / 8 + 1;
-                xpos *= 8;
-                break;
-            default:
-                xpos++;
-                break;
+        case '\n':
+            xpos = 0;
+            ypos++;
+            break;
+        case '\f':
+            ypos = ysize;
+            xpos = 0;
+            break;
+        case '\t':
+            xpos = xpos / 8 + 1;
+            xpos *= 8;
+            break;
+        default:
+            xpos++;
+            break;
         }
+
         while (xpos >= xsize) {
             xpos -= xsize;
             ypos++;
         }
+
         if (ypos >= ysize) {
             outbufputc();       /* out goes buffer */
             promptreturn();
             (void) fflush(cp_out);
             ypos = xpos = 0;
         }
+
         bufputc(*string);   /* we need to buffer these */
         string++;
     }
+
     (void) outbufputc();
     return;
 }
+
 
 /* Printf some stuff using more mode. */
 
@@ -283,12 +297,13 @@ out_printf(char *fmt, ...)
 static int
 outfn(int c)
 {
-	putc(c, stdout);
-	return c;
+    putc(c, stdout);
+    return c;
 }
-#endif /* HAVE_TERMCAP */
+#endif
 
-void 
+
+void
 tcap_init(void)
 {
     char *s;
@@ -299,18 +314,17 @@ tcap_init(void)
 
     charbuf = buf2;
 
-    if ((s = getenv("TERM")) != NULL) {
-	if (tgetent(tbuf, s) != -1) {
-	    xsize = tgetnum("co");
-	    ysize = tgetnum("li");
-	    if ((xsize <= 0) || (ysize <= 0))
-		xsize = ysize = 0;
-	    clear_chars = tgetstr("cl", &charbuf);
-	    motion_chars = tgetstr("cm", &charbuf);
-	    home_chars = tgetstr("ho", &charbuf);
-	    cleol_chars = tgetstr("ce", &charbuf);
-	}
-    }
+    if ((s = getenv("TERM")) != NULL)
+        if (tgetent(tbuf, s) != -1) {
+            xsize = tgetnum("co");
+            ysize = tgetnum("li");
+            if ((xsize <= 0) || (ysize <= 0))
+                xsize = ysize = 0;
+            clear_chars = tgetstr("cl", &charbuf);
+            motion_chars = tgetstr("cm", &charbuf);
+            home_chars = tgetstr("ho", &charbuf);
+            cleol_chars = tgetstr("ce", &charbuf);
+        }
 #endif
 
     if (!xsize) {
@@ -329,38 +343,38 @@ tcap_init(void)
 }
 
 
-void 
+void
 term_clear(void)
 {
 #ifdef HAVE_TERMCAP
     if (*clear_chars)
-	tputs(clear_chars, 1, outfn);
+        tputs(clear_chars, 1, outfn);
     else
-	fputs("\n", stdout);
+        fputs("\n", stdout);
 #endif
 }
 
 
-void 
+void
 term_home(void)
 {
 #ifdef HAVE_TERMCAP
     if (*home_chars)
-	tputs(home_chars, 1, outfn);
+        tputs(home_chars, 1, outfn);
     else if (*motion_chars)
-	tputs(tgoto(motion_chars, 1, 1), 1, outfn);
+        tputs(tgoto(motion_chars, 1, 1), 1, outfn);
     else
-	fputs("\n", stdout);
+        fputs("\n", stdout);
 #endif
 }
 
 
-void 
+void
 term_cleol(void)
 {
 #ifdef HAVE_TERMCAP
     if (*cleol_chars)
-	tputs(cleol_chars, 1, outfn);
+        tputs(cleol_chars, 1, outfn);
 #endif
 }
 
@@ -374,11 +388,13 @@ void term_home(void) {}
 void term_cleol(void) {}
 void tcap_init(void) {}
 
+
 void
 out_send(char *string)
 {
     fprintf(cp_out, "%s", string);
 }
+
 
 void
 out_vprintf(const char *fmt, va_list ap)
@@ -386,13 +402,14 @@ out_vprintf(const char *fmt, va_list ap)
     vfprintf(cp_out, fmt, ap);
 }
 
+
 void
 out_printf(char *fmt, ...)
 {
-  va_list ap;
-  va_start (ap, fmt);
-  out_vprintf(fmt, ap);
-  va_end (ap);
+    va_list ap;
+    va_start(ap, fmt);
+    out_vprintf(fmt, ap);
+    va_end(ap);
 }
 
 #endif /* TCL_MODULE */

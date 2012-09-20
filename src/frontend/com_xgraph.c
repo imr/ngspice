@@ -21,9 +21,10 @@ com_xgraph(wordlist *wl)
         fname = wl->wl_word;
         wl = wl->wl_next;
     }
-    if (!wl) {
-	return;
-    }
+
+    if (!wl)
+        return;
+
     if (cieq(fname, "temp") || cieq(fname, "tmp")) {
         fname = smktemp("xg");
         tempf = TRUE;

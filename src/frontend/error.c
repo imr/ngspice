@@ -18,7 +18,7 @@ char ErrorMessage[1024];
 
 
 #ifdef HAS_WINDOWS
-void winmessage(char* new_msg);
+void winmessage(char *new_msg);
 #endif
 
 

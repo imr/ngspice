@@ -14,39 +14,37 @@
 void
 com_option(wordlist *wl)
 {
-
-struct variable *vars;
+    struct variable *vars;
 
     CKTcircuit *circuit = NULL;
 
     if (!ft_curckt) {
-         fprintf(cp_err, "Error: no circuit loaded\n");
-         return;
+        fprintf(cp_err, "Error: no circuit loaded\n");
+        return;
     }
 
     circuit = (ft_curckt->ci_ckt);
-
 
     if (wl == NULL) {
         printf("******************************\n");
         printf("* Current simulation options *\n");
         printf("******************************\n\n");
         printf("Temperatures:\n");
-        printf("temp = %f\n",circuit->CKTtemp);
-        printf("tnom = %f\n",circuit->CKTnomTemp);
+        printf("temp = %f\n", circuit->CKTtemp);
+        printf("tnom = %f\n", circuit->CKTnomTemp);
 
         printf("\nIntegration method summary:\n");
         switch (circuit->CKTintegrateMethod)
-          {
-            case TRAPEZOIDAL:
-              printf("Integration Method = TRAPEZOIDAL\n");
-              break;
-            case GEAR:
-              printf("Integration Method = GEAR\n");
-              break;
-            default:
-              printf("Unknown integration method\n");
-          }
+        {
+        case TRAPEZOIDAL:
+            printf("Integration Method = TRAPEZOIDAL\n");
+            break;
+        case GEAR:
+            printf("Integration Method = GEAR\n");
+            break;
+        default:
+            printf("Unknown integration method\n");
+        }
         printf("MaxOrder = %d\n", circuit->CKTmaxOrder);
 
         printf("\nTolerances (absolute):\n");
@@ -87,28 +85,29 @@ struct variable *vars;
 
         return;
     }
+
     vars = cp_setparse(wl);
 
     /* This is sort of a hassle... */
     while (vars) {
         void *s;
         switch (vars->va_type) {
-          case CP_BOOL:
+        case CP_BOOL:
             s = &vars->va_bool;
             break;
-          case CP_NUM:
+        case CP_NUM:
             s = &vars->va_num;
             break;
-          case CP_REAL:
+        case CP_REAL:
             s = &vars->va_real;
             break;
-          case CP_STRING:
+        case CP_STRING:
             s = vars->va_string;
             break;
-          case CP_LIST:
+        case CP_LIST:
             s = vars->va_vlist;
             break;
-          default:
+        default:
             s = NULL;
         }
 

@@ -20,19 +20,20 @@ com_setscale(wordlist *wl)
     char *s;
 
     if (plot_cur) {
-	if (wl) {
-	    s = cp_unquote(wl->wl_word);
-	    d = vec_get(s);
-            if(s) tfree(s);/*DG to avoid the cp_unquote memory leak */
-	    if (d == NULL)
-		fprintf(cp_err, "Error: no such vector as %s.\n", 
-			wl->wl_word);
-	    else
-		plot_cur->pl_scale = d;
-	} else if (plot_cur->pl_scale) {
-	    pvec(plot_cur->pl_scale);
-	}
+        if (wl) {
+            s = cp_unquote(wl->wl_word);
+            d = vec_get(s);
+            if (s)
+                tfree(s);/*DG to avoid the cp_unquote memory leak */
+
+            if (d == NULL)
+                fprintf(cp_err, "Error: no such vector as %s.\n", wl->wl_word);
+            else
+                plot_cur->pl_scale = d;
+        } else if (plot_cur->pl_scale) {
+            pvec(plot_cur->pl_scale);
+        }
     } else {
-	fprintf(cp_err, "Error: no current plot.\n");
+        fprintf(cp_err, "Error: no current plot.\n");
     }
 }

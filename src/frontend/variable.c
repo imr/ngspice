@@ -41,7 +41,7 @@ cp_varwl(struct variable *var)
     char buf[BSIZE_SP], *copystring;
     struct variable *vt;
 
-    switch(var->va_type) {
+    switch (var->va_type) {
     case CP_BOOL:
         /* Can't ever be FALSE. */
         sprintf(buf, "%s", var->va_bool ? "TRUE" : "FALSE");
@@ -62,9 +62,9 @@ cp_varwl(struct variable *var)
     case CP_LIST:   /* The tricky case. */
         for (vt = var->va_vlist; vt; vt = vt->va_next) {
             w = cp_varwl(vt);
-            if (wl == NULL)
+            if (wl == NULL) {
                 wl = wx = w;
-            else {
+            } else {
                 wx->wl_next = w;
                 w->wl_prev = wx;
                 wx = w;
@@ -106,9 +106,9 @@ cp_vset(char *varname, enum cp_types type, void *value)
     }
 
     if (alreadythere) {
-        if(v->va_type == CP_LIST)
+        if (v->va_type == CP_LIST)
             free_struct_variable(v->va_vlist);
-        if(v->va_type == CP_STRING)
+        if (v->va_type == CP_STRING)
             tfree(v->va_string);
     }
 
@@ -123,14 +123,15 @@ cp_vset(char *varname, enum cp_types type, void *value)
     case CP_BOOL:
         if (* ((bool *) value) == FALSE) {
             cp_remvar(copyvarname);
-            if(v_free) {
+            if (v_free) {
                 tfree(v->va_name);
                 tfree(v);
             }
             tfree(copyvarname);
             return;
-        } else
+        } else {
             v->va_bool = TRUE;
+        }
         break;
 
     case CP_NUM:
@@ -200,7 +201,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
     case US_DONTRECORD:
         /* Do nothing... */
         if (alreadythere) {
-            fprintf(cp_err,  "cp_vset: Internal Error: "
+            fprintf(cp_err, "cp_vset: Internal Error: "
                     "%s already there, but 'dont record'\n", v->va_name);
         }
         break;
@@ -208,7 +209,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
     case US_READONLY:
         fprintf(cp_err, "Error: %s is a read-only variable.\n", v->va_name);
         if (alreadythere)
-            fprintf(cp_err,  "cp_vset: Internal Error: "
+            fprintf(cp_err, "cp_vset: Internal Error: "
                     "it was already there too!!\n");
         break;
 
@@ -283,7 +284,7 @@ cp_setparse(wordlist *wl)
 
     while (wl) {
 
-        if(name)
+        if (name)
             tfree(name);
 
         name = cp_unquote(wl->wl_word);
@@ -363,8 +364,9 @@ cp_setparse(wordlist *wl)
                 if (listv) {
                     lv->va_next = vv;
                     lv = vv;
-                } else
+                } else {
                     listv = lv = vv;
+                }
                 wl = wl->wl_next;
             }
             if (balance && !wl) {
@@ -402,7 +404,7 @@ cp_setparse(wordlist *wl)
         tfree(name);  /* va: cp_unquote memory leak: free name for every loop */
     }
 
-    if(name)
+    if (name)
         tfree(name);
     return (vars);
 }
@@ -412,11 +414,11 @@ cp_setparse(wordlist *wl)
 void
 free_struct_variable(struct variable *v)
 {
-    while(v) {
+    while (v) {
         struct variable *next_v = v->va_next;
-        if(v->va_type == CP_LIST)
+        if (v->va_type == CP_LIST)
             free_struct_variable(v->va_vlist);
-        if(v->va_type == CP_STRING)
+        if (v->va_type == CP_STRING)
             tfree(v->va_string);
         tfree(v);
         v = next_v;
@@ -562,7 +564,7 @@ cp_getvar(char *name, enum cp_types type, void *retval)
 
 #ifdef TRACE
     /* SDB debug statement */
-    fprintf(stderr,"in cp_getvar, trying to get value of variable %s.\n", name);
+    fprintf(stderr, "in cp_getvar, trying to get value of variable %s.\n", name);
 #endif
 
     for (v = variables; v && !eq(name, v->va_name); v = v->va_next)
@@ -584,7 +586,7 @@ cp_getvar(char *name, enum cp_types type, void *retval)
     if (v->va_type == type) {
         switch (type) {
         case CP_BOOL:
-            if(retval)
+            if (retval)
                 * (bool *) retval = TRUE;
             break;
         case CP_NUM: {
@@ -619,7 +621,7 @@ cp_getvar(char *name, enum cp_types type, void *retval)
             break;
         }
         free_struct_variable(uv1);
-//        tfree(uv2);
+        // tfree(uv2);
         return (TRUE);
 
     } else {

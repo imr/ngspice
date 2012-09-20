@@ -21,7 +21,7 @@ struct variable {
         struct variable *vV_list;
     } va_V;
     struct variable *va_next;      /* Link. */
-} ;
+};
 
 #define va_bool   va_V.vV_bool
 #define va_num    va_V.vV_num
@@ -32,15 +32,15 @@ struct variable {
 struct xxx {
     struct variable *x_v;
     char x_char;
-} ;
+};
 
 
 extern struct variable *variables;
 extern bool cp_echo;
 
 /* extern struct variable *variables; */
-wordlist * cp_varwl(struct variable *var);
-wordlist * cp_variablesubst(wordlist *wlist);
+wordlist *cp_varwl(struct variable *var);
+wordlist *cp_variablesubst(wordlist *wlist);
 void free_struct_variable(struct variable *v);
 
-#endif /* _VARIABLE_H */
+#endif

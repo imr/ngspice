@@ -48,13 +48,15 @@ struct hashent {
     char *h_name;
     char *h_path;
     struct hashent *h_next;
-} ;
+};
+
 
 #define HASHSIZE 256
 
 static struct hashent *hashtab[HASHSIZE];
 static char *dirbuffer;
 static int dirlength, dirpos;
+
 
 /* Create the hash table for the given search path. pathlist is a : seperated
  * list of directories. If docc is TRUE, then all the commands found are
@@ -79,23 +81,23 @@ cp_rehash(char *pathlist, bool docc)
              */
             tfree(hh);
         }
-	hashtab[i] = NULL;
+        hashtab[i] = NULL;
     }
 
     while (pathlist && *pathlist) {
         /* Copy one path to buf. We have to make sure that the path
          * is a full path name.
          */
-        if (*pathlist == '/')
+        if (*pathlist == '/') {
             i = 0;
-        else {
+        } else {
 #ifdef HAVE_GETWD
             (void) getwd(buf);
 #else
-#  ifdef HAVE_GETCWD 
+#  ifdef HAVE_GETCWD
             (void) getcwd(buf, sizeof(buf));
 #  else
-	    *buf = 0;
+            *buf = 0;
 #  endif
 #endif
             i = strlen(buf);
@@ -115,7 +117,7 @@ cp_rehash(char *pathlist, bool docc)
             (void) strcat(pbuf, entry->d_name);
             /* Now we could make sure that it is really an
              * executable, but that is too slow
-	     * (as if "we" really cared).
+             * (as if "we" really cared).
              */
             hh = alloc(struct hashent);
             hh->h_name = copy(entry->d_name);
@@ -129,18 +131,20 @@ cp_rehash(char *pathlist, bool docc)
                 while (ht->h_next)
                     ht = ht->h_next;
                 ht->h_next = hh;
-            } else
+            } else {
                 hashtab[i] = hh;
+            }
+
             if (docc) {
                 /* Add to completion hash table. */
-                cp_addcomm(entry->d_name, (long) 0, (long) 0, (long) 0,
-                        (long) 0);
+                cp_addcomm(entry->d_name, (long) 0, (long) 0, (long) 0, (long) 0);
             }
         }
-	closedir(pdir);
+        closedir(pdir);
     }
     return;
 }
+
 
 /* The return value is FALSE if no command was found, and TRUE if it was. */
 
@@ -165,15 +169,15 @@ cp_unixcom(wordlist *wl)
     if (strchr(name, '/'))
         return (tryexec(name, argv));
     i = hash(name);
-    for (hh = hashtab[i]; hh; hh = hh->h_next) {
+    for (hh = hashtab[i]; hh; hh = hh->h_next)
         if (eq(name, hh->h_name)) {
             (void) sprintf(buf, "%s/%s", hh->h_path, hh->h_name);
             if (tryexec(buf, argv))
                 return (TRUE);
         }
-    }
     return (FALSE);
 }
+
 
 static bool
 tryexec(char *name, char *argv[])
@@ -183,32 +187,35 @@ tryexec(char *name, char *argv[])
 #  else
     union wait status;
 #  endif
-    int pid, j;
-    RETSIGTYPE (*svint)( ), (*svquit)( ), (*svtstp)( );
 
-    pid = vfork( );
+    int pid, j;
+    RETSIGTYPE (*svint)(), (*svquit)(), (*svtstp)();
+
+    pid = vfork();
     if (pid == 0) {
-	fixdescriptors();
+        fixdescriptors();
         (void) execv(name, argv);
         (void) _exit(120);  /* A random value. */
         /* NOTREACHED */
     } else {
-	svint = signal(SIGINT, SIG_DFL);
-	svquit = signal(SIGQUIT, SIG_DFL);
-	svtstp = signal(SIGTSTP, SIG_DFL);
+        svint = signal(SIGINT, SIG_DFL);
+        svquit = signal(SIGQUIT, SIG_DFL);
+        svtstp = signal(SIGTSTP, SIG_DFL);
         do {
             j = wait(&status);
         } while (j != pid);
-	(void) signal(SIGINT, (SIGNAL_FUNCTION) svint);
-	(void) signal(SIGQUIT, (SIGNAL_FUNCTION) svquit);
-	(void) signal(SIGTSTP, (SIGNAL_FUNCTION) svtstp);
+        (void) signal(SIGINT, (SIGNAL_FUNCTION) svint);
+        (void) signal(SIGQUIT, (SIGNAL_FUNCTION) svquit);
+        (void) signal(SIGTSTP, (SIGNAL_FUNCTION) svtstp);
     }
+
     if (WTERMSIG(status) == 0 && WEXITSTATUS(status) == 120)
-    /*if ((status.w_termsig == 0) && (status.w_retcode == 120)) */
-	return (FALSE);
+        /*if ((status.w_termsig == 0) && (status.w_retcode == 120)) */
+        return (FALSE);
     else
-	return (TRUE);
+        return (TRUE);
 }
+
 
 static int
 hash(register char *str)
@@ -217,8 +224,10 @@ hash(register char *str)
 
     while (*str)
         i += *str++;
+
     return (i % HASHSIZE);
 }
+
 
 /* Debugging. */
 
@@ -235,7 +244,9 @@ cp_hstat(void)
     return;
 }
 
+
 #else
+
 
 void
 cp_rehash(char *pathlist, bool docc)
@@ -243,6 +254,7 @@ cp_rehash(char *pathlist, bool docc)
     NG_IGNORE(docc);
     NG_IGNORE(pathlist);
 }
+
 
 bool
 cp_unixcom(wordlist *wl)
@@ -253,7 +265,6 @@ cp_unixcom(wordlist *wl)
         return (FALSE);
     else
         return (TRUE);
-
 }
 
 #endif

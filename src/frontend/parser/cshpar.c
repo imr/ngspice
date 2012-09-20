@@ -43,7 +43,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  *  and command ignoring. Also deal with command completion.
  * (2) Do history substitutions. (!, ^)
  * (3) Do alias substitution.
- * 
+ *
  * In front.c these things get done:
  * (4) Do variable substitution. ($varname)
  * (5) Do backquote substitution. (``)
@@ -51,7 +51,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * (7) Do io redirection.
  */
 
-/* static functions */
 static void pwlist(wordlist *wlist, char *name);
 
 
@@ -91,6 +90,7 @@ cp_parse(char *string)
     return (wlist);
 }
 
+
 static void
 pwlist(wordlist *wlist, char *name)
 {
@@ -104,4 +104,3 @@ pwlist(wordlist *wlist, char *name)
     fprintf(cp_err, "]\n");
     return;
 }
-

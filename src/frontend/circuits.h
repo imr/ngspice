@@ -7,14 +7,9 @@
 #define CIRCUITS_H_INCLUDED
 
 
-
 struct subcirc {
-    char *sc_name;  /* Whatever... */
-} ;
-
-
-
-
+    char *sc_name;              /* Whatever... */
+};
 
 
 #endif

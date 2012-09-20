@@ -49,7 +49,7 @@ com_quit(wordlist *wl)
 
     /* Make sure the guy really wants to quit. */
     if (!ft_nutmeg)
-        if(!noask && !confirm_quit())
+        if (!noask && !confirm_quit())
             return;
 
     /* start to clean up the mess */
@@ -65,7 +65,7 @@ com_quit(wordlist *wl)
     if (!ft_nutmeg) {
         struct circ *cc;
         for (cc = ft_circuits; cc; cc = cc->ci_next)
-            if(SIMinfo.deleteCircuit)
+            if (SIMinfo.deleteCircuit)
                 SIMinfo.deleteCircuit(cc->ci_ckt);
     }
 #endif
@@ -167,7 +167,7 @@ com_version(wordlist *wl)
                 fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
             fprintf(cp_out, "******\n");
 
-        } else if (!strncasecmp(s, "-f", 2))  {
+        } else if (!strncasecmp(s, "-f", 2)) {
 
             fprintf(cp_out,
                     "******\n"
@@ -307,5 +307,5 @@ confirm_quit(void)
         *buf = 'y';
     }
 
-    return((*buf == 'y') || (*buf == 'Y') || (*buf == '\n'));
+    return ((*buf == 'y') || (*buf == 'Y') || (*buf == '\n'));
 }

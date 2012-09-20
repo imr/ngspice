@@ -191,8 +191,9 @@ inp_getopts(struct line *deck)
                 deck->li_next = dd->li_next;
             dd->li_next = opts;
             opts = dd;
-        } else
+        } else {
             last = dd;
+        }
     }
 
     return (opts);
@@ -204,7 +205,7 @@ struct line *
 inp_getoptsc(char *in_line, struct line *com_options)
 {
     struct line *next = NULL;
-    char* line;
+    char *line;
 
     line = TMALLOC(char, strlen(in_line) + 3);
     /* option -> .options */
@@ -252,8 +253,9 @@ cp_usrset(struct variable *var, bool isset)
                     fprintf(cp_err, "Error: bad type for debug var\n");
         } else if (var->va_type == CP_STRING) {
             setdb(var->va_string);
-        } else
+        } else {
             fprintf(cp_err, "Error: bad type for debug var\n");
+        }
 #ifndef FTEDEBUG
         fprintf(cp_err, "Warning: %s compiled without debug messages\n",
                 cp_program);

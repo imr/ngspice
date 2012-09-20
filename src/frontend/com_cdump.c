@@ -111,7 +111,7 @@ dodump(struct control *cc)
         tab(indent);
         if (cc->co_numtimes != 1)
             fprintf(cp_out, "continue %d\n",
-                cc->co_numtimes);
+                    cc->co_numtimes);
         else
             fprintf(cp_out, "continue\n");
         break;
@@ -128,6 +128,7 @@ dodump(struct control *cc)
         fprintf(cp_out, "bad type %d\n", cc->co_type);
         break;
     }
+
     return;
 }
 
@@ -141,8 +142,10 @@ com_cdump(wordlist *wl)
     indent = 0;
     for (c = control[stackp]; c; c = c->co_next)
         dodump(c);
+
     return;
 }
+
 
 /* dump circuit matrix to stdout or file */
 void
@@ -150,26 +153,27 @@ com_mdump(wordlist *wl)
 {
     CKTcircuit *ckt = NULL;
     char *s;
-    
+
     if (!ft_curckt || !ft_curckt->ci_ckt) {
         fprintf(cp_err, "Error: no circuit loaded.\n");
         return;
     }
 
     ckt = ft_curckt->ci_ckt;
-    
+
     if (ckt->CKTmatrix)
-        if (wl == NULL)
+        if (wl == NULL) {
             SMPprint(ckt->CKTmatrix , NULL);
-        else {
+        } else {
             s = cp_unquote(wl->wl_word);
             SMPprint(ckt->CKTmatrix , s);
         }
     else
         fprintf(cp_err, "Error: no matrix available.\n");
-    
+
     return;
 }
+
 
 /* dump circuit matrix RHS to stdout or file */
 void
@@ -177,23 +181,23 @@ com_rdump(wordlist *wl)
 {
     CKTcircuit *ckt = NULL;
     char *s;
-    
+
     if (!ft_curckt || !ft_curckt->ci_ckt) {
         fprintf(cp_err, "Error: no circuit loaded.\n");
         return;
     }
 
     ckt = ft_curckt->ci_ckt;
-    
+
     if ((ckt->CKTmatrix) && (ckt->CKTrhs))
-        if (wl == NULL)
+        if (wl == NULL) {
             SMPprintRHS(ckt->CKTmatrix , NULL, ckt->CKTrhs, ckt->CKTirhs);
-        else {
+        } else {
             s = cp_unquote(wl->wl_word);
             SMPprintRHS(ckt->CKTmatrix , s, ckt->CKTrhs, ckt->CKTirhs);
         }
     else
         fprintf(cp_err, "Error: no matrix or RHS available.\n");
-    
+
     return;
 }

@@ -34,12 +34,12 @@ getlims(wordlist *wl, char *name, int number)
     wordlist *beg, *wk;
     int n;
 
-    if(number < 1)
+    if (number < 1)
         return NULL;
 
     beg = wl_find(name, wl->wl_next);
 
-    if(!beg)
+    if (!beg)
         return NULL;
 
     wk = beg->wl_next;
@@ -277,15 +277,15 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     /* add title, xlabel or ylabel, if available, with quotes '' */
     if (nxlabel) {
         sprintf(cline, "%s xlabel '%s'", cline, nxlabel);
-        tfree (nxlabel);
+        tfree(nxlabel);
     }
     if (nylabel) {
         sprintf(cline, "%s ylabel '%s'", cline, nylabel);
-        tfree (nylabel);
+        tfree(nylabel);
     }
     if (ntitle) {
         sprintf(cline, "%s title '%s'", cline, ntitle);
-        tfree (ntitle);
+        tfree(ntitle);
     }
 
     /* Now extract all the parameters. */
@@ -350,73 +350,73 @@ plotit(wordlist *wl, char *hcopy, char *devname)
      * here because we want to catch all the grid types.
      */
     if (getflag(wl, "lingrid")) {
-        if (gfound)
+        if (gfound) {
             fprintf(cp_err, "Warning: too many grid types given\n");
-        else {
+        } else {
             gtype = GRID_LIN;
             gfound = TRUE;
         }
     }
     if (getflag(wl, "loglog")) {
-        if (gfound)
+        if (gfound) {
             fprintf(cp_err, "Warning: too many grid types given\n");
-        else {
+        } else {
             gtype = GRID_LOGLOG;
             gfound = TRUE;
         }
     }
     if (getflag(wl, "nogrid")) {
-        if (gfound)
+        if (gfound) {
             fprintf(cp_err, "Warning: too many grid types given\n");
-        else {
+        } else {
             gtype = GRID_NONE;
             gfound = TRUE;
         }
     }
     if (getflag(wl, "linear")) {
-        if (gfound)
+        if (gfound) {
             fprintf(cp_err, "Warning: too many grid types given\n");
-        else {
+        } else {
             gtype = GRID_LIN;
             gfound = TRUE;
         }
     }
     if (getflag(wl, "xlog")) {
-        if (gfound)
+        if (gfound) {
             fprintf(cp_err, "Warning: too many grid types given\n");
-        else {
+        } else {
             gtype = GRID_XLOG;
             gfound = TRUE;
         }
     }
     if (getflag(wl, "ylog")) {
-        if (gfound)
+        if (gfound) {
             fprintf(cp_err, "Warning: too many grid types given\n");
-        else {
+        } else {
             gtype = GRID_YLOG;
             gfound = TRUE;
         }
     }
     if (getflag(wl, "polar")) {
-        if (gfound)
+        if (gfound) {
             fprintf(cp_err, "Warning: too many grid types given\n");
-        else {
+        } else {
             gtype = GRID_POLAR;
             gfound = TRUE;
         }
     }
     if (getflag(wl, "smith")) {
-        if (gfound)
+        if (gfound) {
             fprintf(cp_err, "Warning: too many grid types given\n");
-        else {
+        } else {
             gtype = GRID_SMITH;
             gfound = TRUE;
         }
     }
     if (getflag(wl, "smithgrid")) {
-        if (gfound)
+        if (gfound) {
             fprintf(cp_err, "Warning: too many grid types given\n");
-        else {
+        } else {
             gtype = GRID_SMITHGRID;
             gfound = TRUE;
         }
@@ -445,32 +445,33 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 gtype = GRID_LIN;
             }
             gfound = TRUE;
-        } else
+        } else {
             gtype = GRID_LIN;
+        }
     }
 
     /* Now get the point type.  */
 
     if (getflag(wl, "linplot")) {
-        if (pfound)
+        if (pfound) {
             fprintf(cp_err, "Warning: too many plot types given\n");
-        else {
+        } else {
             ptype = PLOT_LIN;
             pfound = TRUE;
         }
     }
     if (getflag(wl, "combplot")) {
-        if (pfound)
+        if (pfound) {
             fprintf(cp_err, "Warning: too many plot types given\n");
-        else {
+        } else {
             ptype = PLOT_COMB;
             pfound = TRUE;
         }
     }
     if (getflag(wl, "pointplot")) {
-        if (pfound)
+        if (pfound) {
             fprintf(cp_err, "Warning: too many plot types given\n");
-        else {
+        } else {
             ptype = PLOT_POINT;
             pfound = TRUE;
         }
@@ -489,8 +490,9 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 ptype = PLOT_LIN;
             }
             pfound = TRUE;
-        } else
+        } else {
             ptype = PLOT_LIN;
+        }
     }
 
     if (!sameflag || !xlabel)
@@ -634,8 +636,9 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                     gtype = GRID_YLOG;
             }
         for (d = vecs; d; d = d->v_link2)
-            if (d->v_gridtype == GRID_SMITH || d->v_gridtype == GRID_SMITHGRID
-                || d->v_gridtype == GRID_POLAR)
+            if (d->v_gridtype == GRID_SMITH ||
+                d->v_gridtype == GRID_SMITHGRID ||
+                d->v_gridtype == GRID_POLAR)
             {
                 gtype = d->v_gridtype;
                 break;
@@ -667,11 +670,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             goto quit;
         }
 
-    if ((gtype == GRID_POLAR) || (gtype == GRID_SMITH
-                                  || gtype == GRID_SMITHGRID))
-    {
+    if ((gtype == GRID_POLAR) || (gtype == GRID_SMITH || gtype == GRID_SMITHGRID))
         oneval = TRUE;
-    }
 
     /* If we are plotting scalars, make sure there is enough
      * data to fit on the screen.
@@ -881,8 +881,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         xlims[1] = rad;
         ylims[0] = - rad;
         ylims[1] = rad;
-    } else if ((!xlim || !ylim) && (gtype == GRID_SMITH
-                                    || gtype == GRID_SMITHGRID))
+    } else if ((!xlim || !ylim) && (gtype == GRID_SMITH || gtype == GRID_SMITHGRID))
     {
         xlims[0] = -1.0;
         xlims[1] = 1.0;
@@ -890,9 +889,9 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         ylims[1] = 1.0;
     }
 
-    if(xlim)
+    if (xlim)
         tfree(xlim);
-    if(ylim)
+    if (ylim)
         tfree(ylim);
 
     /* We don't want to try to deal with smith plots for asciiplot. */
@@ -925,7 +924,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             for (i = 0, ttime = tstart; i < newlen; i++, ttime += tstep)
                 newscale[i] = ttime;
 
-            for (v = vecs; v; v= v->v_link2) {
+            for (v = vecs; v; v = v->v_link2) {
                 double *newdata = TMALLOC(double, newlen);
 
                 if (!ft_interpolate(v->v_realdata, newdata,

@@ -36,7 +36,7 @@ Modified: 1999 Paolo Nenzi
 #endif
 
 #if !defined(__MINGW32__) && !defined(_MSC_VER)
-	/* MW. We also need ioctl.h here I think */
+/* MW. We also need ioctl.h here I think */
 #include <sys/ioctl.h>
 #endif
 
@@ -54,34 +54,32 @@ Modified: 1999 Paolo Nenzi
 #endif
 
 
-#define	CNTRL_D	'\004'
-#define	ESCAPE	'\033'
+#define CNTRL_D '\004'
+#define ESCAPE  '\033'
 #define NCLASSES 32
 
 bool cp_nocc;               /* Don't do command completion. */
-
 
 
 static struct ccom *commands = NULL;    /* The available commands. */
 static struct ccom *keywords[NCLASSES]; /* Keywords. */
 
 
-/* static declarations */
-
-#ifdef TIOCSTI /* va, functions used in this branch only */ 
-static struct ccom * getccom(char *first);
-static wordlist * ccfilec(char *buf);
-static wordlist * ccmatch(char *word, struct ccom **dbase);
+#ifdef TIOCSTI /* va, functions used in this branch only */
+static struct ccom *getccom(char *first);
+static wordlist *ccfilec(char *buf);
+static wordlist *ccmatch(char *word, struct ccom **dbase);
 static void printem(wordlist *wl);
 #endif
-static wordlist * cctowl(struct ccom *cc, bool sib);
-static struct ccom * clookup(register char *word, struct ccom **dd, bool pref, 
-			     bool create);
+
+static wordlist *cctowl(struct ccom *cc, bool sib);
+static struct ccom *clookup(register char *word, struct ccom **dd, bool pref,
+                            bool create);
 /* MW. I need top node in cdelete */
 static void cdelete(struct ccom *node, struct ccom **top);
 
-
 #ifdef TIOCSTI
+
 
 void
 cp_ccom(wordlist *wlist, char *buf, bool esc)
@@ -89,7 +87,7 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
     struct ccom *cc;
     wordlist *a, *pmatches = NULL;
     char wbuf[BSIZE_SP], *s;
-    int i=0; 
+    int i = 0;
     int j, arg;
 
     buf = cp_unquote(copy(buf));
@@ -104,14 +102,14 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
         /* First filenames. */
         if (cc && (cc->cc_kwords[arg] & 1)) {
             pmatches = ccfilec(buf);
-            s =strrchr(buf, '/');
+            s = strrchr(buf, '/');
             i = (int) strlen(s ? s + 1 : buf);
             if ((*buf == '~') && !strchr(buf, '/'))
                 i--;
         }
 
         /* The keywords. */
-        for (j = 1; j < NCLASSES; j++) {
+        for (j = 1; j < NCLASSES; j++)
             if (cc && (cc->cc_kwords[arg] & (1 << j))) {
                 /* Find all the matching keywords. */
                 a = ccmatch(buf, &keywords[j]);
@@ -121,15 +119,14 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
                 else
                     pmatches = a;
             }
-        }
         wl_sort(pmatches);
     } else {
         pmatches = ccmatch(buf, &commands);
         i = (int) strlen(buf);
     }
-    
-     tfree(buf); /*CDHW*/
-    
+
+    tfree(buf); /*CDHW*/
+
     if (!esc) {
         printem(pmatches);
         wl_free(pmatches);
@@ -151,20 +148,22 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
     for (j = 0;; j++, i++) {
         wbuf[j] = pmatches->wl_word[i];
         for (a = pmatches->wl_next; a; a = a->wl_next)
-                if (a->wl_word[i] != wbuf[j]) {
-                    (void) putchar('\07');
-                    (void) fflush(cp_out);
-                    wbuf[j] = '\0';
-                    goto found;
-                }
+            if (a->wl_word[i] != wbuf[j]) {
+                (void) putchar('\07');
+                (void) fflush(cp_out);
+                wbuf[j] = '\0';
+                goto found;
+            }
         if (wbuf[j] == '\0')
             goto found;
     }
-found:  for (i = 0; wbuf[i]; i++)
+found:
+    for (i = 0; wbuf[i]; i++)
         (void) ioctl(fileno(cp_in), TIOCSTI, &wbuf[i]);
     wl_free(pmatches);
     return;
 }
+
 
 /* Figure out what the command is, given the name. Returns NULL if there
  * is no such command in the command list. This is tricky, because we have
@@ -177,7 +176,7 @@ getccom(char *first)
     struct alias *al;
     int ntries = 21;
 
-    /* First look for aliases. Just interested in the first word... 
+    /* First look for aliases. Just interested in the first word...
      * Don't bother doing history yet -- that might get complicated.
      */
     while (ntries-- > 0) {
@@ -196,6 +195,7 @@ getccom(char *first)
     return (clookup(first, &commands, FALSE, FALSE));
 }
 
+
 /* Figure out what files match the prefix. */
 
 static wordlist *
@@ -209,17 +209,15 @@ ccfilec(char *buf)
 
     buf = copy(buf);    /* Don't mangle anything... */
 
-    lcomp =strrchr(buf, '/');
+    lcomp = strrchr(buf, '/');
     if (lcomp == NULL) {
         dir = ".";
         lcomp = buf;
         if (*buf == cp_til) {   /* User name completion... */
             buf++;
-            while ((pw = getpwent()) != NULL) {
-                if (prefix(buf, pw->pw_name)) {
+            while ((pw = getpwent()) != NULL)
+                if (prefix(buf, pw->pw_name))
                     wl = wl_cons(copy(pw->pw_name), wl);
-                }
-            }
             (void) endpwent();
             return (wl);
         }
@@ -233,13 +231,14 @@ ccfilec(char *buf)
                 return (NULL);
         }
     }
+
     if (!(wdir = opendir(dir)))
         return (NULL);
+
     while ((de = readdir(wdir)) != NULL)
-        if ((prefix(lcomp, de->d_name)) && (*lcomp ||
-                (*de->d_name != '.'))) {
+        if ((prefix(lcomp, de->d_name)) && (*lcomp || (*de->d_name != '.')))
             wl = wl_cons(copy(de->d_name), wl);
-        }
+
     (void) closedir(wdir);
 
     wl_sort(wl);
@@ -257,17 +256,21 @@ ccmatch(char *word, struct ccom **dbase)
 {
     wordlist *wl;
     register struct ccom *cc;
-    
+
     cc = clookup(word, dbase, TRUE, FALSE);
+
     if (cc) {
         if (*word)  /* This is a big drag. */
             wl = cctowl(cc, FALSE);
         else
             wl = cctowl(cc, TRUE);
-    } else
+    } else {
         wl = NULL;
+    }
+
     return (wl);
 }
+
 
 /* Print the words in the wordlist in columns. They are already
  * sorted...  This is a hard thing to do with wordlists...
@@ -280,28 +283,30 @@ printem(wordlist *wl)
     int maxl = 0, num, i, j, k, width = 79, ncols, nlines;
 
     (void) putchar('\n');
-    if (wl == NULL) {
+    if (wl == NULL)
         return;
-    }
+
     num = wl_length(wl);
     for (ww = wl; ww; ww = ww->wl_next) {
         j = (int) strlen(ww->wl_word);
         if (j > maxl)
             maxl = j;
     }
+
     if (++maxl % 8)
         maxl += 8 - (maxl % 8);
     ncols = width / maxl;
     if (ncols == 0)
         ncols = 1;
+
     nlines = num / ncols + (num % ncols ? 1 : 0);
+
     for (k = 0; k < nlines; k++) {
         for (i = 0; i < ncols; i++) {
             j = i * nlines + k;
-            if (j < num) {
-                fprintf(cp_out, "%-*s", maxl,
-                        wl_nthelem(j, wl)->wl_word);
-            } else
+            if (j < num)
+                fprintf(cp_out, "%-*s", maxl, wl_nthelem(j, wl)->wl_word);
+            else
                 break;
         }
         (void) putchar('\n');
@@ -310,6 +315,7 @@ printem(wordlist *wl)
 }
 
 #else /* if not TIOCSTI */
+
 void
 cp_ccom(wordlist *wlist, char *buf, bool esc)
 {
@@ -318,24 +324,25 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
     NG_IGNORE(esc);
     return;
 }
+
 #endif
+
 
 static wordlist *
 cctowl(struct ccom *cc, bool sib)
 {
     wordlist *wl;
-    
+
     if (!cc)
         return (NULL);
     wl = cctowl(cc->cc_child, TRUE);
-    if (!cc->cc_invalid) {
+    if (!cc->cc_invalid)
         wl = wl_cons(copy(cc->cc_name), wl);
-    }
-    if (sib) {
+    if (sib)
         wl = wl_append(wl, cctowl(cc->cc_sibling, TRUE));
-    }
     return (wl);
 }
+
 
 /* We use this in com_device... */
 
@@ -344,6 +351,7 @@ cp_cctowl(struct ccom *stuff)
 {
     return (cctowl(stuff, TRUE));
 }
+
 
 /* Turn on and off the escape break character and cooked mode. */
 
@@ -404,24 +412,24 @@ cp_ccon(bool on)
 
     if (ison == TRUE) {
 #if HAVE_TCGETATTR
-	tcgetattr(fileno(cp_in),&OS_Buf);
+        tcgetattr(fileno(cp_in), &OS_Buf);
 #else
-	(void) ioctl(fileno(cp_in), TERM_GET, &OS_Buf);
+        (void) ioctl(fileno(cp_in), TERM_GET, &OS_Buf);
 #endif
-	sbuf = OS_Buf;
-	sbuf.c_cc[VEOF] = 0;
-	sbuf.c_cc[VEOL] = ESCAPE;
-	sbuf.c_cc[VEOL2] = CNTRL_D;
+        sbuf = OS_Buf;
+        sbuf.c_cc[VEOF] = 0;
+        sbuf.c_cc[VEOL] = ESCAPE;
+        sbuf.c_cc[VEOL2] = CNTRL_D;
 #if HAVE_TCSETATTR
-	tcsetattr(fileno(cp_in),TCSANOW,&sbuf);
+        tcsetattr(fileno(cp_in), TCSANOW, &sbuf);
 #else
-	(void) ioctl(fileno(cp_in), TERM_SET, &sbuf);
+        (void) ioctl(fileno(cp_in), TERM_SET, &sbuf);
 #endif
     } else {
 #ifdef HAVE_TCSETATTR
-	tcsetattr(fileno(cp_in),TCSANOW,&OS_Buf);
+        tcsetattr(fileno(cp_in), TCSANOW, &OS_Buf);
 #else
-	(void) ioctl(fileno(cp_in), TERM_SET, &OS_Buf);
+        (void) ioctl(fileno(cp_in), TERM_SET, &OS_Buf);
 #endif
     }
 
@@ -435,6 +443,7 @@ cp_ccon(bool on)
     return;
 }
 
+
 /* The following routines deal with the command and keyword databases.
  * Say whether a given word exists in the command database.
  */
@@ -447,6 +456,7 @@ cp_comlook(char *word)
     else
         return (FALSE);
 }
+
 
 /* Add a command to the database, with the given keywords and filename
  * flag. */
@@ -465,18 +475,20 @@ cp_addcomm(char *word, long int bits0, long int bits1, long int bits2, long int 
     return;
 }
 
+
 /* Remove a command from the database. */
 
 void
 cp_remcomm(char *word)
 {
     struct ccom *cc;
-    
+
     cc = clookup(word, &commands, FALSE, FALSE);
     if (cc)
         cdelete(cc, &commands);
     return;
 }
+
 
 /* Add a keyword to the database. */
 
@@ -490,7 +502,7 @@ cp_addkword(int kw_class, char *word)
                 kw_class);
         return;
     }
-/*    word = copy(word); va: not necessary, clookup copies itself (memory leak) */
+    /* word = copy(word); va: not necessary, clookup copies itself (memory leak) */
     cc = clookup(word, &keywords[kw_class], FALSE, TRUE);
     cc->cc_invalid = 0;
     return;
@@ -501,10 +513,11 @@ void
 cp_destroy_keywords(void)
 {
     int i;
-    for (i=0; i<NCLASSES; i++)
+    for (i = 0; i < NCLASSES; i++)
         throwaway(keywords[i]);
     throwaway(commands);
 }
+
 
 /* Remove a keyword from the database. */
 
@@ -512,7 +525,7 @@ void
 cp_remkword(int kw_class, char *word)
 {
     struct ccom *cc;
-    
+
     if ((kw_class < 1) || (kw_class >= NCLASSES)) {
         fprintf(cp_err, "cp_remkword: Internal Error: bad class %d\n",
                 kw_class);
@@ -523,6 +536,7 @@ cp_remkword(int kw_class, char *word)
         cdelete(cc, &keywords[kw_class]);
     return;
 }
+
 
 /* This routine is used when there are several keyword sets that are
  * to be switched between rapidly. The return value is the old tree at
@@ -556,18 +570,21 @@ cp_ccrestart(bool kwords)
     return;
 }
 
+
 void
 throwaway(struct ccom *dbase)
 {
-    if (!dbase) return; /* va: security first */
+    if (!dbase)
+        return; /* va: security first */
     if (dbase->cc_child)
         throwaway(dbase->cc_child);
     if (dbase->cc_sibling)
         throwaway(dbase->cc_sibling);
-    tfree(dbase->cc_name); /* va: also tfree dbase->cc_name (memory leak) */	
+    tfree(dbase->cc_name); /* va: also tfree dbase->cc_name (memory leak) */
     tfree(dbase);
     return;
 }
+
 
 /* Look up a word in the database. Because of the way the tree is set
  * up, this also works for looking up all words with a given prefix
@@ -584,11 +601,11 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
 
     if (!place) {
         /* This is the first time we were called. */
-        if (!create)
+        if (!create) {
             return (NULL);
-        else {
+        } else {
             *dd = place = alloc(struct ccom);
-	    ZERO(place, struct ccom);
+            ZERO(place, struct ccom);
             buf[0] = *word;
             buf[1] = '\0';
             place->cc_name = copy(buf);
@@ -596,6 +613,7 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
                 place->cc_invalid = 1;
         }
     }
+
     while (word[ind]) {
         /* Walk down the sibling list until we find a node that
          * matches 'word' to 'ind' places.
@@ -606,7 +624,7 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
             /* This line doesn't go out that far... */
             if (create) {
                 place->cc_sibling = alloc(struct ccom);
-		ZERO(place->cc_sibling, struct ccom);
+                ZERO(place->cc_sibling, struct ccom);
                 place->cc_sibling->cc_ysibling = place;
                 place->cc_sibling->cc_parent = place->cc_parent;
                 place = place->cc_sibling;
@@ -622,7 +640,7 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
             if (create) {
                 /* Put this one between place and its pred. */
                 tmpc = alloc(struct ccom);
-		ZERO(tmpc, struct ccom);
+                ZERO(tmpc, struct ccom);
                 tmpc->cc_parent = place->cc_parent;
                 tmpc->cc_sibling = place;
                 tmpc->cc_ysibling = place->cc_ysibling;
@@ -652,7 +670,7 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
                 /* No children, maybe make one and go on. */
                 if (create) {
                     tmpc = alloc(struct ccom);
-		    ZERO(tmpc, struct ccom);
+                    ZERO(tmpc, struct ccom);
                     tmpc->cc_parent = place;
                     place->cc_child = tmpc;
                     place = tmpc;
@@ -665,57 +683,63 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
                 } else {
                     return (NULL);
                 }
-            } else
+            } else {
                 place = place->cc_child;
+            }
             ind++;
-        } else
+        } else {
             break;
+        }
     }
+
     if (!pref && !create && place->cc_invalid) {
         /* This is no good, we want a real word. */
         return (NULL);
     }
+
     return (place);
 }
 
+
 /* Delete a node from the tree. Returns the new tree... */
-/* MW. It is quite difficoult to free() everything right, but... 
+/* MW. It is quite difficoult to free() everything right, but...
  * Anyway this could be more optimal, I think */
 
 static void
 cdelete(struct ccom *node, struct ccom **top)
 {
-     /* if cc_child exist only mark as deleted */
-     node->cc_invalid = 1;
-     if (node->cc_child)  
-	  return;
-		
-     /* fix cc_sibling */
-     if (node->cc_sibling) 
-	  node->cc_sibling->cc_ysibling = node->cc_ysibling;
-     if (node->cc_ysibling)
-	  node->cc_ysibling->cc_sibling = node->cc_sibling;
-     
-     /* if we have cc_parent, check if it should not be removed too */
-     if (node->cc_parent) {
-	  
-	  /* this node will be free() */
-	  if (node->cc_parent->cc_child == node) {
-	       if (node->cc_ysibling)
-		    node->cc_parent->cc_child = node->cc_ysibling;
-	       else
-		    node->cc_parent->cc_child = node->cc_sibling;
-	  }
-	  if (node->cc_parent->cc_invalid == 1)  
-	       /* free parent only if it is invalid */
-	       cdelete(node->cc_parent, top);
-     }
-     
-     /* now free() everything and check the top */
-     if (node == *top) 
-	  *top = node->cc_sibling;
-     tfree(node->cc_name); /* va: we should allways use tfree */
-     tfree(node);
-     return;
-}
+    /* if cc_child exist only mark as deleted */
+    node->cc_invalid = 1;
+    if (node->cc_child)
+        return;
 
+    /* fix cc_sibling */
+    if (node->cc_sibling)
+        node->cc_sibling->cc_ysibling = node->cc_ysibling;
+    if (node->cc_ysibling)
+        node->cc_ysibling->cc_sibling = node->cc_sibling;
+
+    /* if we have cc_parent, check if it should not be removed too */
+    if (node->cc_parent) {
+
+        /* this node will be free() */
+        if (node->cc_parent->cc_child == node) {
+            if (node->cc_ysibling)
+                node->cc_parent->cc_child = node->cc_ysibling;
+            else
+                node->cc_parent->cc_child = node->cc_sibling;
+        }
+
+        /* free parent only if it is invalid */
+        if (node->cc_parent->cc_invalid == 1)
+            cdelete(node->cc_parent, top);
+    }
+
+    /* now free() everything and check the top */
+    if (node == *top)
+        *top = node->cc_sibling;
+
+    tfree(node->cc_name); /* va: we should allways use tfree */
+    tfree(node);
+    return;
+}

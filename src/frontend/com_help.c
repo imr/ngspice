@@ -29,25 +29,25 @@ com_help(wordlist *wl)
     out_init();
     out_moremode = FALSE;
     if (wl == NULL) {
-	out_printf("For a complete description "
-		   "read the Spice3 User's Manual.\n");
+        out_printf("For a complete description "
+                   "read the Spice3 User's Manual.\n");
 
-	if (!allflag) {
-	    out_printf("For a list of all commands "
-		       "type \"help all\", for a short\n"
-		       "description of \"command\", "
-		       "type \"help command\".\n");
-	}
+        if (!allflag) {
+            out_printf("For a list of all commands "
+                       "type \"help all\", for a short\n"
+                       "description of \"command\", "
+                       "type \"help command\".\n");
+        }
 
         /* Sort the commands */
         for (numcoms = 0; cp_coms[numcoms].co_func != NULL; numcoms++)
             ccc[numcoms] = &cp_coms[numcoms];
-        qsort(ccc, (size_t) numcoms, sizeof (struct comm *), hcomp);
+        qsort(ccc, (size_t) numcoms, sizeof(struct comm *), hcomp);
 
         for (i = 0; i < numcoms; i++) {
-            if ((ccc[i]->co_spiceonly && ft_nutmeg) || 
-                    (ccc[i]->co_help == NULL) || 
-                    (!allflag && !ccc[i]->co_major))
+            if ((ccc[i]->co_spiceonly && ft_nutmeg) ||
+                (ccc[i]->co_help == NULL) ||
+                (!allflag && !ccc[i]->co_major))
                 continue;
             out_printf("%s ", ccc[i]->co_comname);
             out_printf(ccc[i]->co_help, cp_program);
@@ -71,10 +71,10 @@ com_help(wordlist *wl)
                 for (al = cp_aliases; al; al = al->al_next)
                     if (eq(al->al_name, wl->wl_word))
                         break;
-                if (al == NULL)
-                    fprintf(cp_out, "Sorry, no help for %s.\n",
-			    wl->wl_word);
-                else {
+
+                if (al == NULL) {
+                    fprintf(cp_out, "Sorry, no help for %s.\n", wl->wl_word);
+                } else {
                     out_printf("%s is aliased to ", wl->wl_word);
                     /* Minor badness here... */
                     wl_print(al->al_text, cp_out);
@@ -84,6 +84,7 @@ com_help(wordlist *wl)
             wl = wl->wl_next;
         }
     }
+
     out_send("\n");
     return;
 }

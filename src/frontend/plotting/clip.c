@@ -58,10 +58,11 @@ clip_line(int *pX1, int *pY1, int *pX2, int *pY2, int l, int b, int r, int t)
     int x2 = *pX2;
     int y2 = *pY2;
     int x = 0, y = 0;
-    int c,c1,c2;
+    int c, c1, c2;
 
-    CODE(x1,y1,c1);
-    CODE(x2,y2,c2);
+    CODE(x1, y1, c1);
+    CODE(x2, y2, c2);
+
     while (c1 || c2) {
         if (c1 & c2)
             return (TRUE); /* Line is invisible. */
@@ -83,11 +84,11 @@ clip_line(int *pX1, int *pY1, int *pX2, int *pY2, int l, int b, int r, int t)
         if (c == c1) {
             x1 = x;
             y1 = y;
-            CODE(x,y,c1);
+            CODE(x, y, c1);
         } else {
             x2 = x;
-            y2 = y; 
-            CODE(x,y,c2);
+            y2 = y;
+            CODE(x, y, c2);
         }
     }
     *pX1 = x1;
@@ -96,6 +97,7 @@ clip_line(int *pX1, int *pY1, int *pX2, int *pY2, int l, int b, int r, int t)
     *pY2 = y2;
     return (FALSE); /* Line is at least partially visible.*/
 }
+
 
 /* This routine will clip a line to a circle, returning TRUE if the line
  * is entirely outside the circle.  Note that we have to be careful not
@@ -115,13 +117,13 @@ clip_to_circle(int *x1, int *y1, int *x2, int *y2, int cx, int cy, int rad)
 
     /* Get the angles between the origin and the endpoints. */
     if ((*x1-cx) || (*y1-cy))
-	theta1 = atan2((double) *y1 - cy, (double) *x1 - cx);
+        theta1 = atan2((double) *y1 - cy, (double) *x1 - cx);
     else
-	theta1 = M_PI;
+        theta1 = M_PI;
     if ((*x2-cx) || (*y2-cy))
-	theta2 = atan2((double) *y2 - cy, (double) *x2 - cx);
+        theta2 = atan2((double) *y2 - cy, (double) *x2 - cx);
     else
-	theta2 = M_PI;
+        theta2 = M_PI;
 
     if (theta1 < 0.0)
         theta1 = 2 * M_PI + theta1;
@@ -152,8 +154,7 @@ clip_to_circle(int *x1, int *y1, int *x2, int *y2, int cx, int cy, int rad)
     /* Figure out the distances between the points */
     a = sqrt((double) ((*x1 - cx) * (*x1 - cx) + (*y1 - cy) * (*y1 - cy)));
     b = sqrt((double) ((*x2 - cx) * (*x2 - cx) + (*y2 - cy) * (*y2 - cy)));
-    c = sqrt((double) ((*x1 - *x2) * (*x1 - *x2) +
-            (*y1 - *y2) * (*y1 - *y2)));
+    c = sqrt((double) ((*x1 - *x2) * (*x1 - *x2) + (*y1 - *y2) * (*y1 - *y2)));
 
     /* We have three cases now -- either the midpoint of the line is
      * closest to the origon, or point 1 or point 2 is.  Actually the
@@ -198,6 +199,7 @@ clip_to_circle(int *x1, int *y1, int *x2, int *y2, int cx, int cy, int rad)
         *x1 = (int)(cx + rad * cos(theta1 + beta));
         *y1 = (int)(cy + rad * sin(theta1 + beta));
     }
+
     if (b > rad) {
         tt = (c * c + b * b - a * a) / (2 * b * c);
         if (tt > 1.0)
@@ -212,6 +214,7 @@ clip_to_circle(int *x1, int *y1, int *x2, int *y2, int cx, int cy, int rad)
         *x2 = (int)(cx + rad * cos(theta2 - beta));
         *y2 = (int)(cy + rad * sin(theta2 - beta));
     }
+
     if (flip) {
         i = *x1;
         *x1 = *x2;
@@ -220,5 +223,6 @@ clip_to_circle(int *x1, int *y1, int *x2, int *y2, int cx, int cy, int rad)
         *y1 = *y2;
         *y2 = i;
     }
+
     return (FALSE);
 }

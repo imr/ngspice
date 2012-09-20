@@ -139,14 +139,14 @@ FindDev(char *name)
 {
     size_t i;
 
-    for (i=0; i < NUMELEMS(device); i++)
+    for (i = 0; i < NUMELEMS(device); i++)
         if (strcmp(name, device[i].name) == 0)
-            return(device + i);
+            return (device + i);
 
     sprintf(ErrorMessage, "Can't find device %s.", name);
     internalerror(ErrorMessage);
 
-    return(device + 0);
+    return (device + 0);
 }
 
 
@@ -190,15 +190,15 @@ DevInit(void)
 #if !defined(HAS_WINDOWS) && !defined(TCL_MODULE) && (defined(_MSC_VER) || defined(__MINGW32__))
         /* console application under MS Windows */
         fprintf
-            ( cp_err,
-              "Warning: no graphics interface!\n"
-              " You may use command 'gnuplot'\n"
-              " if GnuPlot is installed.\n" );
+            (cp_err,
+             "Warning: no graphics interface!\n"
+             " You may use command 'gnuplot'\n"
+             " if GnuPlot is installed.\n");
 #elif !defined(X_DISPLAY_MISSING)
         externalerror
-            ( "no graphics interface;\n"
-              " please check if X-server is running,\n"
-              " or ngspice is compiled properly (see INSTALL)" );
+            ("no graphics interface;\n"
+             " please check if X-server is running,\n"
+             " or ngspice is compiled properly (see INSTALL)");
 #endif
 
         dispdev = FindDev("error");
@@ -218,61 +218,71 @@ NewViewport(GRAPH *pgraph)
 }
 
 
-void DevClose(void)
+void
+DevClose(void)
 {
     dispdev->Close();
 }
 
 
-void DevClear(void)
+void
+DevClear(void)
 {
     dispdev->Clear();
 }
 
 
-void DevDrawLine(int x1, int y1, int x2, int y2)
+void
+DevDrawLine(int x1, int y1, int x2, int y2)
 {
     dispdev->DrawLine (x1, y1, x2, y2);
 }
 
 
-void DevDrawArc(int x0, int y0, int radius, double theta, double delta_theta)
+void
+DevDrawArc(int x0, int y0, int radius, double theta, double delta_theta)
 {
     dispdev->DrawArc (x0, y0, radius, theta, delta_theta);
 }
 
 
-void DevDrawText(char *text, int x, int y)
+void
+DevDrawText(char *text, int x, int y)
 {
     dispdev->DrawText (text, x, y);
 }
 
 
-void DefineColor(int colorid, double red, double green, double blue)
+void
+DefineColor(int colorid, double red, double green, double blue)
 {
     dispdev->DefineColor (colorid, red, green, blue);
 }
 
 
-void DefineLinestyle(int linestyleid, int mask)
+void
+DefineLinestyle(int linestyleid, int mask)
 {
     dispdev->DefineLinestyle (linestyleid, mask);
 }
 
 
-void SetLinestyle(int linestyleid)
+void
+SetLinestyle(int linestyleid)
 {
     dispdev->SetLinestyle (linestyleid);
 }
 
 
-void SetColor(int colorid)
+void
+SetColor(int colorid)
 {
     dispdev->SetColor (colorid);
 }
 
 
-void DevUpdate(void)
+void
+DevUpdate(void)
 {
     if (dispdev)
         dispdev->Update();
@@ -322,13 +332,15 @@ gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny)
 }
 
 
-void DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny)
+void
+DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny)
 {
     dispdev->DatatoScreen (graph, x, y, screenx, screeny);
 }
 
 
-void Input(REQUEST *request, RESPONSE *response)
+void
+Input(REQUEST *request, RESPONSE *response)
 {
     dispdev->Input (request, response);
 }
@@ -349,28 +361,31 @@ gen_Input(REQUEST *request, RESPONSE *response)
         break;
     }
 
-    return(0);
+    return (0);
 }
 
 
 /* no operation, do nothing */
-static int nop(void)
+static int
+nop(void)
 {
-    return(1);  /* so NewViewport will fail */
+    return (1);  /* so NewViewport will fail */
 }
 
 
-static int nodev(void)
+static int
+nodev(void)
 {
     sprintf(ErrorMessage,
             "This operation is not defined for display type %s.",
             dispdev->name);
     internalerror(ErrorMessage);
-    return(1);
+    return (1);
 }
 
 
-void SaveText(GRAPH *graph, char *text, int x, int y)
+void
+SaveText(GRAPH *graph, char *text, int x, int y)
 {
     struct _keyed *keyed = TMALLOC(struct _keyed, 1);
 
@@ -393,7 +408,8 @@ void SaveText(GRAPH *graph, char *text, int x, int y)
 
 /* if given name of a hardcopy device, finds it and switches devices
    if given NULL, switches back */
-int DevSwitch(char *devname)
+int
+DevSwitch(char *devname)
 {
     static DISPDEVICE *lastdev = NULL;
 
@@ -426,5 +442,5 @@ int DevSwitch(char *devname)
 
     }
 
-    return(0);
+    return (0);
 }

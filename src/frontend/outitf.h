@@ -10,19 +10,20 @@
 
 
 typedef struct dataDesc {
-    char *name;     /* The name of the vector. */
-    int type;       /* The type. */
-    GRIDTYPE gtype;		/* default plot scale */
-    bool regular;       /* Is this given to us? */
-    int outIndex;       /* If regular then the index. */
-    char *specName;     /* The device name if special. */
-    char *specParamName;    /* The parameter name if special. */
-    int specIndex;      /* For sensitivity, if special. */
+    char *name;                 /* The name of the vector. */
+    int type;                   /* The type. */
+    GRIDTYPE gtype;             /* default plot scale */
+    bool regular;               /* Is this given to us? */
+    int outIndex;               /* If regular then the index. */
+    char *specName;             /* The device name if special. */
+    char *specParamName;        /* The parameter name if special. */
+    int specIndex;              /* For sensitivity, if special. */
     int specType;
     GENinstance *specFast;
-    int refIndex;       /* The index of our ref vector. */
+    int refIndex;               /* The index of our ref vector. */
     struct dvec *vec;
 } dataDesc;
+
 
 struct runDesc {
     void *analysis;
@@ -37,11 +38,12 @@ struct runDesc {
     bool binary;
     struct plot *runPlot;
     FILE *fp;
-    long pointPos;          /* where to write pointCount */
+    long pointPos;              /* where to write pointCount */
     int pointCount;
     int isComplex;
     int windowCount;
 };
+
 
 int OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
                   IFuid analName,

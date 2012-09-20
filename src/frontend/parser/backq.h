@@ -7,5 +7,4 @@
 #define BACKQ_H_INCLUDED
 
 
-
 #endif

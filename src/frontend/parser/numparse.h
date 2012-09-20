@@ -7,7 +7,4 @@
 #define NUMPARSE_H_INCLUDED
 
 
-
-
-
 #endif

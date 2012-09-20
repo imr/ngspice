@@ -15,7 +15,7 @@
  * uninterrupted or error-free. The end-user understands that the
  * program was developed for research purposes and is advised not to
  * rely exclusively on the program for any reason.
- * 
+ *
  * IN NO EVENT SHALL THE AUTHORS BE LIABLE TO ANY PARTY FOR DIRECT,
  * INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
  * LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS
@@ -97,7 +97,7 @@
 #endif
 
 /* Information about spice commands (struct comm). */
-    
+
 // char *co_comname;  /* The name of the command. */
 // void (*co_func) (wordlist *wl);  /* The function that handles the command. */
 // bool co_spiceonly;  /* These can't be used from nutmeg. */
@@ -121,7 +121,7 @@ struct comm spcp_coms[] = {
     { "define", com_define, FALSE, TRUE,
       { 010000, 040000, 040000, 040000 }, E_DEFHMASK, 0, LOTS,
       NULL,
-      "[[func (args)] stuff] : Define a user-definable function." } ,    
+      "[[func (args)] stuff] : Define a user-definable function." } ,
     { "set", com_set, FALSE, TRUE,
       { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
       arg_set,
@@ -129,7 +129,7 @@ struct comm spcp_coms[] = {
 
 
 /* support for altering options in interactive mode,
-   using either command 'option' or 'options'*/    
+   using either command 'option' or 'options'*/
     { "option", com_option, TRUE, TRUE,
       { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
       arg_set,
@@ -322,11 +322,11 @@ struct comm spcp_coms[] = {
     { "fft", com_fft, FALSE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 1, LOTS,
       NULL,
-      "vector ... : Create a frequency domain plot with FFT." } ,    
+      "vector ... : Create a frequency domain plot with FFT." } ,
     { "psd", com_psd, FALSE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 2, LOTS,
       NULL,
-      "vector ... : Create a power spetral density plot with FFT." } ,  
+      "vector ... : Create a power spetral density plot with FFT." } ,
     { "fourier", com_fourier, FALSE, TRUE,
       { 0, 040000, 040000, 040000 }, E_DEFHMASK, 1, LOTS,
       NULL,
@@ -338,7 +338,7 @@ struct comm spcp_coms[] = {
     { "meas", com_meas, FALSE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 1, LOTS,
       NULL,
-      "various ... : User defined signal evaluation." } ,  
+      "various ... : User defined signal evaluation." } ,
     { "show", com_show, TRUE, FALSE,
       { 040, 040, 040, 040 }, E_DEFHMASK, 0, LOTS,
       NULL,
@@ -350,7 +350,7 @@ struct comm spcp_coms[] = {
     { "sysinfo", com_sysinfo, TRUE, FALSE,
       { 040, 040, 040, 040 }, E_DEFHMASK, 0, LOTS,
       NULL,
-      "Print out system info summary." } ,      
+      "Print out system info summary." } ,
     { "alter", com_alter, TRUE, FALSE,
       { 040, 040, 040, 040 }, E_DEFHMASK, 0, LOTS,
       NULL,
@@ -603,13 +603,13 @@ struct comm nutcp_coms[] = {
       "[option] [option = value] ... : Set a variable." } ,
 
 #ifdef EXPERIMENTAL_CODE
-/* PN support for altering options in interactive mode */    
+/* PN support for altering options in interactive mode */
     { "option", com_option, TRUE, TRUE,
       { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
       arg_set,
       "[option] [option = value] ... : Set a simulator option." } ,
-#endif    
-     
+#endif
+
     { "alias", com_alias, FALSE, FALSE,
       { 02, 04, 04, 04 }, E_ADVANCED, 0, LOTS,
       NULL,
@@ -753,11 +753,11 @@ struct comm nutcp_coms[] = {
     { "fft", com_fft, FALSE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 1, LOTS,
       NULL,
-      "vector ... : Create a frequency domain plot with FFT." } , 
+      "vector ... : Create a frequency domain plot with FFT." } ,
     { "psd", com_psd, FALSE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 2, LOTS,
       NULL,
-      "vector ... : Create a power spetral density plot with FFT." } , 
+      "vector ... : Create a power spetral density plot with FFT." } ,
     { "fourier", com_fourier, FALSE, TRUE,
       { 0, 040000, 040000, 040000 }, E_DEFHMASK, 1, LOTS,
       NULL,
@@ -959,7 +959,7 @@ struct comm nutcp_coms[] = {
       { 040000, 040000, 040000, 040000 }, E_DEFHMASK, 0, LOTS,
       NULL,
       " [ vec ... ] : Convert plot into one with linear scale." } ,
-    { "devhelp",NULL, FALSE, FALSE,
+    { "devhelp", NULL, FALSE, FALSE,
       { 040, 040, 040, 040 }, E_DEFHMASK, 0, 5 ,
       NULL,
       " devspecs : show device information." },
@@ -971,4 +971,4 @@ struct comm nutcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
       NULL }
-} ;
+};

@@ -25,6 +25,7 @@ power10(double num)   /* Chris Inbody */
 
 bool ft_strictnumparse = FALSE;
 
+
 /* Parse a number. This will handle things like 10M, etc... If the number
  * must not end before the end of the string, then whole is TRUE.
  * If whole is FALSE and there is more left to the number, the argument
@@ -34,6 +35,7 @@ bool ft_strictnumparse = FALSE;
  *
  * If ft_strictnumparse is TRUE, and whole is FALSE, the first of the
  * trailing characters must be a '_'.  */
+
 double *
 ft_numparse(char **s, bool whole)
 {
@@ -44,22 +46,22 @@ ft_numparse(char **s, bool whole)
     char *string = *s;
 
     /* See if the number begins with + or -. */
-    if (*string == '+')
+    if (*string == '+') {
         string++;
-    else if (*string == '-') {
+    } else if (*string == '-') {
         string++;
         sign = -1;
     }
 
     /* We don't want to recognise "P" as 0P, or .P as 0.0P... */
     if ((!isdigit(*string) && *string != '.') ||
-            ((*string == '.') && !isdigit(string[1])))
+        ((*string == '.') && !isdigit(string[1])))
         return (NULL);
 
     /* Now accumulate a number. Note ascii dependencies here... */
     while (isdigit(*string))
         mant = mant * 10.0 + (*string++ - '0');
-    
+
     /* Now maybe a decimal point. */
     if (*string == '.') {
         string++;
@@ -70,81 +72,83 @@ ft_numparse(char **s, bool whole)
 
     /* Now look for the scale factor or the exponent (can't have both). */
     switch (*string) {
-        case 'e':
-        case 'E':
-            /* Parse another number. */
+    case 'e':
+    case 'E':
+        /* Parse another number. */
+        string++;
+        if (*string == '+') {
+            exsign = 1;
             string++;
-            if (*string == '+') {
-                exsign = 1;
-                string++;
-            } else if (*string == '-') {
-                exsign = -1;
-                string++;
-            }
-            while(isdigit(*string))
-                expo = expo * 10.0 + (*string++ - '0');
-            if (*string == '.') {
-                string++;
-                p = 1;
-                while (isdigit(*string))
-                    expo += (*string++ - '0') / power10(p++);
-            }
-            expo *= exsign;
-            break;
-        case 't':
-        case 'T':
-            expo = 12.0;
+        } else if (*string == '-') {
+            exsign = -1;
             string++;
-            break;
-        case 'g':
-        case 'G':
-            expo = 9.0;
+        }
+        while (isdigit(*string))
+            expo = expo * 10.0 + (*string++ - '0');
+        if (*string == '.') {
             string++;
-            break;
-        case 'k':
-        case 'K':
-            expo = 3.0;
-            string++;
-            break;
-        case 'u':
-        case 'U':
+            p = 1;
+            while (isdigit(*string))
+                expo += (*string++ - '0') / power10(p++);
+        }
+        expo *= exsign;
+        break;
+    case 't':
+    case 'T':
+        expo = 12.0;
+        string++;
+        break;
+    case 'g':
+    case 'G':
+        expo = 9.0;
+        string++;
+        break;
+    case 'k':
+    case 'K':
+        expo = 3.0;
+        string++;
+        break;
+    case 'u':
+    case 'U':
+        expo = -6.0;
+        string++;
+        break;
+    case 'n':
+    case 'N':
+        expo = -9.0;
+        string++;
+        break;
+    case 'p':
+    case 'P':
+        expo = -12.0;
+        string++;
+        break;
+    case 'f':
+    case 'F':
+        expo = -15.0;
+        string++;
+        break;
+    case 'm':
+    case 'M':
+        /* Can be either m, mil, or meg. */
+        if (string[1] && string[2] &&
+            ((string[1] == 'e') || (string[1] == 'E')) &&
+            ((string[2] == 'g') || (string[2] == 'G')))
+        {
+            expo = 6.0;
+            string += 3;
+        } else if (string[1] && string[2] &&
+                   ((string[1] == 'i') || (string[1] == 'I')) &&
+                   ((string[2] == 'l') || (string[2] == 'L')))
+        {
             expo = -6.0;
+            mant *= 25.4;
+            string += 3;
+        } else {
+            expo = -3.0;
             string++;
-            break;
-        case 'n':
-        case 'N':
-            expo = -9.0;
-            string++;
-            break;
-        case 'p':
-        case 'P':
-            expo = -12.0;
-            string++;
-            break;
-        case 'f':
-        case 'F':
-            expo = -15.0;
-            string++;
-            break;
-        case 'm':
-        case 'M':
-            /* Can be either m, mil, or meg. */
-            if (string[1] && string[2] && 
-                ((string[1] == 'e') || (string[1] == 'E')) &&
-                ((string[2] == 'g') || (string[2] == 'G'))) {
-                expo = 6.0;
-                string += 3;
-            } else if (string[1] && string[2] && 
-                ((string[1] == 'i') || (string[1] == 'I')) &&
-                ((string[2] == 'l') || (string[2] == 'L'))) {
-                expo = -6.0;
-                mant *= 25.4;
-                string += 3;
-            } else {
-                expo = -3.0;
-                string++;
-            }
-            break;
+        }
+        break;
     }
 
     if (whole && *string != '\0') {

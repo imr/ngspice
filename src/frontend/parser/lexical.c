@@ -213,8 +213,9 @@ nloop:
             goto done;
 
         case '\'':
-            while (((c = (string ? *string++ : input(cp_inp_cur))) != '\'')
-                   && (i < NEW_BSIZE_SP - 1)) {
+            while (((c = (string ? *string++ : input(cp_inp_cur))) != '\'') &&
+                   (i < NEW_BSIZE_SP - 1))
+            {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
                 buf[i++] = (char) quote(c);
@@ -227,8 +228,9 @@ nloop:
         case '`':
             d = c;
             buf[i++] = (char) d;
-            while (((c = (string ? *string++ : input(cp_inp_cur))) != d)
-                   && (i < NEW_BSIZE_SP - 2)) {
+            while (((c = (string ? *string++ : input(cp_inp_cur))) != d) &&
+                   (i < NEW_BSIZE_SP - 2))
+            {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
                 if (c == '\\') {
@@ -269,7 +271,7 @@ nloop:
 #ifdef TIOCSTI
                     (void) ioctl(fileno(cp_out), TIOCSTI, linebuf + j);
 #else
-                    fputc(linebuf[j], cp_out);  /* But you can't edit */
+                fputc(linebuf[j], cp_out);  /* But you can't edit */
 #endif
                 wlist = cw = NULL;
                 goto nloop;
@@ -294,7 +296,7 @@ nloop:
 #ifdef TIOCSTI
                     (void) ioctl(fileno(cp_out), TIOCSTI, linebuf + j);
 #else
-                    fputc(linebuf[j], cp_out);  /* But you can't edit */
+                fputc(linebuf[j], cp_out);  /* But you can't edit */
 #endif
                 // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
                 cp_ccom(wlist, buf, TRUE);
@@ -327,7 +329,7 @@ nloop:
 
         case '<':
         case '>':  /* va: <=, >= are unbreakable words */
-            if(string)
+            if (string)
                 if ((i == 0) && (*string == '=')) {
                     buf[i++] = (char) c;
                     break;
@@ -351,7 +353,7 @@ nloop:
 
 done:
     if (wlist->wl_word)
-        pwlist_echo(wlist,"Command>");
+        pwlist_echo(wlist, "Command>");
     return wlist;
 }
 

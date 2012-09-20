@@ -73,7 +73,6 @@ CDHW*/
 #endif
 
 
-/* static declarations */
 static struct variable *parmtovar(IFvalue *pv, IFparm *opt);
 static IFparm *parmlookup(IFdevice *dev, GENinstance **inptr, char *param,
                            int do_model, int inout);
@@ -107,7 +106,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
     err = ft_sim->newCircuit (&ckt);
     if (err != OK) {
         ft_sperror(err, "CKTinit");
-        return(NULL);
+        return (NULL);
     }
 
     /*CDHW Create a task DDD with a new UID. ci_defTask will point to it CDHW*/
@@ -115,7 +114,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
     err = IFnewUid(ckt, &taskUid, NULL, "default", UID_TASK, NULL);
     if (err) {
         ft_sperror(err, "newUid");
-        return(NULL);
+        return (NULL);
     }
 
 #if (0)
@@ -125,23 +124,22 @@ if_inpdeck(struct line *deck, INPtables **tab)
 #endif
     if (err) {
         ft_sperror(err, "newTask");
-        return(NULL);
+        return (NULL);
     }
 
     /*CDHW which options available for this simulator? CDHW*/
 
-    for (j = 0; j < ft_sim->numAnalyses; j++) {
+    for (j = 0; j < ft_sim->numAnalyses; j++)
         if (strcmp(ft_sim->analyses[j]->name, "options") == 0) {
             which = j;
             break;
         }
-    }
 
     if (which != -1) {
         err = IFnewUid(ckt, &optUid, NULL, "options", UID_ANALYSIS, NULL);
         if (err) {
             ft_sperror(err, "newUid");
-            return(NULL);
+            return (NULL);
         }
 
         err = ft_sim->newAnalysis (ft_curckt->ci_ckt, which, optUid,
@@ -152,7 +150,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
 
         if (err) {
             ft_sperror(err, "createOptions");
-            return(NULL);
+            return (NULL);
         }
 
         ft_curckt->ci_curOpt  = ft_curckt->ci_defOpt;
@@ -181,12 +179,12 @@ if_inpdeck(struct line *deck, INPtables **tab)
     err = EVTinit(ckt);
     if (err) {
         ft_sperror(err, "EVTinit");
-        return(NULL);
+        return (NULL);
     }
     /* gtri - end - wbk - 6/6/91 - Finish initialization of event driven structures */
 #endif
 
-    return(ckt);
+    return (ckt);
 }
 
 
@@ -210,16 +208,16 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
 
     /* First parse the line... */
     /*CDHW Look for an interactive task CDHW*/
-    if (eq(what, "tran")
-        || eq(what, "ac")
-        || eq(what, "dc")
-        || eq(what, "op")
-        || eq(what, "pz")
-        || eq(what, "disto")
-        || eq(what, "adjsen")
-        || eq(what, "sens")
-        || eq(what, "tf")
-        || eq(what, "noise")
+    if (eq(what, "tran") ||
+        eq(what, "ac") ||
+        eq(what, "dc") ||
+        eq(what, "op") ||
+        eq(what, "pz") ||
+        eq(what, "disto") ||
+        eq(what, "adjsen") ||
+        eq(what, "sens") ||
+        eq(what, "tf") ||
+        eq(what, "noise")
 #ifdef WITH_PSS
         /* SP: Steady State Analysis */
         || eq(what, "pss")
@@ -244,7 +242,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
             err = ft_sim->deleteTask (ft_curckt->ci_ckt, ft_curckt->ci_specTask);
             if (err) {
                 ft_sperror(err, "deleteTask");
-                return(2);
+                return (2);
             }
 
             ft_curckt->ci_specTask = NULL;
@@ -257,7 +255,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
                        UID_TASK, NULL);
         if (err) {
             ft_sperror(err, "newUid");
-            return(2);
+            return (2);
         }
 #if (0)
         err = ft_sim->newTask (ft_curckt->ci_ckt,
@@ -270,7 +268,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
 #endif
         if (err) {
             ft_sperror(err, "newTask");
-            return(2);
+            return (2);
         }
 
         /*CDHW which options available for this simulator? CDHW*/
@@ -286,7 +284,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
                            UID_ANALYSIS, NULL);
             if (err) {
                 ft_sperror(err, "newUid");
-                return(2);
+                return (2);
             }
 
             err = ft_sim->newAnalysis (ft_curckt->ci_ckt, which, optUid,
@@ -297,7 +295,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
 
             if (err) {
                 ft_sperror(err, "createOptions");
-                return(2);
+                return (2);
             }
 
             ft_curckt->ci_curOpt  = ft_curckt->ci_specOpt;
@@ -331,23 +329,23 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
 
     /* -- Find out what we are supposed to do.              */
 
-    if (  (eq(what, "tran"))
-          ||(eq(what, "ac"))
-          ||(eq(what, "dc"))
-          ||(eq(what, "op"))
-          ||(eq(what, "pz"))
-          ||(eq(what, "disto"))
-          ||(eq(what, "noise"))
-          ||(eq(what, "adjsen"))
-          ||(eq(what, "sens"))
-          ||(eq(what, "tf"))
+    if ((eq(what, "tran")) ||
+        (eq(what, "ac")) ||
+        (eq(what, "dc")) ||
+        (eq(what, "op")) ||
+        (eq(what, "pz")) ||
+        (eq(what, "disto")) ||
+        (eq(what, "noise")) ||
+        (eq(what, "adjsen")) ||
+        (eq(what, "sens")) ||
+        (eq(what, "tf")) ||
 #ifdef WITH_PSS
-          /* SP: Steady State Analysis */
-          ||(eq(what, "pss"))
-          /* SP */
+        /* SP: Steady State Analysis */
+        (eq(what, "pss")) ||
+        /* SP */
 #endif
-          ||(eq(what, "run"))  )  {
-
+        (eq(what, "run")))
+    {
         /*CDHW Run the analysis pointed to by ci_curTask CDHW*/
 
         ft_curckt->ci_curOpt = ft_curckt->ci_defOpt;
@@ -355,26 +353,27 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
             ft_sperror(err, "doAnalyses");
             /* wrd_end(); */
             if (err == E_PAUSE)
-                return(1);
+                return (1);
             else
-                return(2);
+                return (2);
         }
     } else if (eq(what, "resume")) {
         if ((err = ft_sim->doAnalyses (ckt, 0, ft_curckt->ci_curTask)) != OK) {
             ft_sperror(err, "doAnalyses");
             /* wrd_end(); */
             if (err == E_PAUSE)
-                return(1);
+                return (1);
             else
-                return(2);
+                return (2);
         }
     } else {
         fprintf(cp_err, "if_run: Internal Error: bad run type %s\n", what);
-        return(2);
+        return (2);
     }
 
-    return(0);
+    return (0);
 }
+
 
 /* Set an option in the circuit. Arguments are option name, type, and
  * value (the last a char *), suitable for casting to whatever needed...
@@ -395,6 +394,7 @@ static char *obsolete[] = {
     "lvlcod",
     NULL
 };
+
 
 int
 if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
@@ -449,14 +449,12 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
         /* See if this is unsupported or obsolete. */
         for (vv = unsupported; *vv; vv++)
             if (eq(name, *vv)) {
-                fprintf(cp_err,
-                        "Warning: option %s is currently unsupported.\n", name);
+                fprintf(cp_err, "Warning: option %s is currently unsupported.\n", name);
                 return 1;
             }
         for (vv = obsolete; *vv; vv++)
             if (eq(name, *vv)) {
-                fprintf(cp_err,
-                        "Warning: option %s is obsolete.\n", name);
+                fprintf(cp_err, "Warning: option %s is obsolete.\n", name);
                 return 1;
             }
         return 0;
@@ -544,7 +542,7 @@ badtype:
         break;
     }
     fprintf(cp_err, ", type expected was ");
-    switch(ft_sim->analyses[which]->analysisParms[i].dataType & IF_VARTYPES) {
+    switch (ft_sim->analyses[which]->analysisParms[i].dataType & IF_VARTYPES) {
     case IF_REAL:
         fputs("real.\n", cp_err);
         break;
@@ -561,6 +559,7 @@ badtype:
         fputs("something strange.\n", cp_err);
         break;
     }
+
     if (type == CP_BOOL)
         fputs("\t(Note that you must use an = to separate option name and value.)\n",
               cp_err);
@@ -576,6 +575,7 @@ if_dump(CKTcircuit *ckt, FILE *file)
     fprintf(file, "diagnostic output dump unavailable.");
 }
 
+
 void
 if_cktfree(CKTcircuit *ckt, INPtables *tab)
 {
@@ -583,16 +583,17 @@ if_cktfree(CKTcircuit *ckt, INPtables *tab)
     INPtabEnd(tab);
 }
 
-/* Return a string describing an error code. */
 
+/* Return a string describing an error code. */
 
 /* BLOW THIS AWAY.... */
 
 char *
 if_errstring(int code)
 {
-    return(INPerror(code));
+    return (INPerror(code));
 }
+
 
 /* Get pointers to a device, its model, and its type number given the name. If
  * there is no such device, try to find a model with that name
@@ -617,7 +618,7 @@ finddev_special(
     err = ft_sim->findInstance (ckt, &type, devptr, name, NULL, NULL);
     if (err == OK) {
         *device_or_model = 0;
-        return(type);
+        return (type);
     }
 
     type = -1;
@@ -626,20 +627,22 @@ finddev_special(
     err = ft_sim->findModel (ckt, &type, modptr, name);
     if (err == OK) {
         *device_or_model = 1;
-        return(type);
+        return (type);
     }
 
     *modptr = NULL;
     *device_or_model = 2;
-    return(-1);
+    return (-1);
 }
+
 
 /* Get a parameter value from the circuit. If name is left unspecified,
  * we want a circuit parameter. Now works both for devices and models.
  * A.Roldan (espice)
  */
 struct variable *
-spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do_model) {
+spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
+{
     struct variable *vv = NULL, *tv;
     IFvalue *pv;
     IFparm *opt;
@@ -657,7 +660,7 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
         typecode = finddev_special(ckt, *name, &dev, &mod, &modelo_dispositivo);
         if (typecode == -1) {
             fprintf(cp_err, "Error: no such device or model name %s\n", *name);
-            return(NULL);
+            return (NULL);
         }
         device = ft_sim->devices[typecode];
         if (!modelo_dispositivo) {
@@ -683,11 +686,13 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
                     if (vv)
                         tv->va_next = vv;
                     vv = tv;
-                } else
-                    fprintf(cp_err, "Internal Error: no parameter '%s' on device '%s'\n",
+                } else {
+                    fprintf(cp_err,
+                            "Internal Error: no parameter '%s' on device '%s'\n",
                             device->instanceParms[i].keyword, device->name);
+                }
             }
-            return(vv);
+            return (vv);
         } else { /* Is it a model or a device ? */
             /* It is a model */
             for (i = 0; i < *(device->numModelParms); i++) {
@@ -702,8 +707,8 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
                  * IF_STRING, N-channel or P-channel MOS") would not be printed.
                  */
 
-                /* if (!(opt->dataType & IF_ASK ) || (opt->dataType & IF_UNINTERESTING ) || (opt->dataType & IF_STRING)) continue; */
-                if (!(opt->dataType & IF_ASK ) || (opt->dataType & IF_UNINTERESTING ))
+                /* if (!(opt->dataType & IF_ASK) || (opt->dataType & IF_UNINTERESTING) || (opt->dataType & IF_STRING)) continue; */
+                if (!(opt->dataType & IF_ASK) || (opt->dataType & IF_UNINTERESTING ))
                     continue;
                 pv = doask(ckt, typecode, dev, mod, opt, ind);
                 if (pv) {
@@ -730,33 +735,35 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
                     if (vv)
                         tv->va_next = vv;
                     vv = tv;
-                } else
-                    fprintf(cp_err, "Internal Error: no parameter '%s' on device '%s'\n", device->modelParms[i].keyword, device->name);
+                } else {
+                    fprintf(cp_err,
+                            "Internal Error: no parameter '%s' on device '%s'\n",
+                            device->modelParms[i].keyword, device->name);
+                }
             }
-            return(vv);
+            return (vv);
         }
     } else if (param) {
         INPretrieve(name, ft_curckt->ci_symtab);
         typecode = finddev_special(ckt, *name, &dev, &mod, &modelo_dispositivo);
         if (typecode == -1) {
             fprintf(cp_err, "Error: no such device or model name %s\n", *name);
-            return(NULL);
+            return (NULL);
         }
         device = ft_sim->devices[typecode];
         opt = parmlookup(device, &dev, param, modelo_dispositivo, 0);
         if (!opt) {
             fprintf(cp_err, "Error: no such parameter %s.\n", param);
-            return(NULL);
+            return (NULL);
         }
         pv = doask(ckt, typecode, dev, mod, opt, ind);
         if (pv)
             vv = parmtovar(pv, opt);
-        return(vv);
-    } else
-        return(if_getstat(ckt, *name));
+        return (vv);
+    } else {
+        return (if_getstat(ckt, *name));
+    }
 }
-
-
 
 
 /* Get a parameter value from the circuit. If name is left unspecified,
@@ -764,7 +771,8 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
  */
 
 struct variable *
-spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model) {
+spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
+{
     struct variable *vv = NULL, *tv;
     IFvalue *pv;
     IFparm *opt;
@@ -785,7 +793,7 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model) 
             fprintf(cp_err,
                     "Error: no such device or model name %s\n",
                     *name);
-            return(NULL);
+            return (NULL);
         }
         device = ft_sim->devices[typecode];
         for (i = 0; i < *(device->numInstanceParms); i++) {
@@ -800,37 +808,36 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model) 
                 if (vv)
                     tv->va_next = vv;
                 vv = tv;
-            } else
+            } else {
                 fprintf(cp_err,
                         "Internal Error: no parameter '%s' on device '%s'\n",
                         device->instanceParms[i].keyword,
                         device->name);
+            }
         }
-        return(vv);
+        return (vv);
     } else if (param) {
 
         /* MW.  */
         INPretrieve(name, ft_curckt->ci_symtab);
         typecode = finddev(ckt, *name, &dev, &mod);
         if (typecode == -1) {
-            fprintf(cp_err,
-                    "Error: no such device or model name %s\n",
-                    *name);
-            return(NULL);
+            fprintf(cp_err, "Error: no such device or model name %s\n", *name);
+            return (NULL);
         }
         device = ft_sim->devices[typecode];
         opt = parmlookup(device, &dev, param, do_model, 0);
         if (!opt) {
-            fprintf(cp_err, "Error: no such parameter %s.\n",
-                    param);
-            return(NULL);
+            fprintf(cp_err, "Error: no such parameter %s.\n", param);
+            return (NULL);
         }
         pv = doask(ckt, typecode, dev, mod, opt, ind);
         if (pv)
             vv = parmtovar(pv, opt);
-        return(vv);
-    } else
-        return(if_getstat(ckt, *name));
+        return (vv);
+    } else {
+        return (if_getstat(ckt, *name));
+    }
 }
 
 
@@ -924,6 +931,7 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val)
     }
 }
 
+
 void
 if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_model)
 {
@@ -964,13 +972,17 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
     if ((do_model) && (ckt->CKTtime > 0)) {
         int error = 0;
         error = CKTtemp(ckt);
-        if (error) fprintf(stderr, "Error during changing a device model parameter!\n");
-        if (error) controlled_exit(1);
+        if (error)
+            fprintf(stderr, "Error during changing a device model parameter!\n");
+        if (error)
+            controlled_exit(1);
     }
 }
 
+
 static struct variable *
-parmtovar(IFvalue *pv, IFparm *opt) {
+parmtovar(IFvalue *pv, IFparm *opt)
+{
     struct variable *vv = alloc(struct variable);
     struct variable *nv;
     int i = 0;
@@ -1027,14 +1039,15 @@ parmtovar(IFvalue *pv, IFparm *opt) {
         fprintf(cp_err,
                 "parmtovar: Internal Error: bad PARM type %d.\n",
                 opt->dataType);
-        return(NULL);
+        return (NULL);
     }
 
     /* It's not clear whether we want the keyword or the desc here... */
     vv->va_name = copy(opt->description);
     vv->va_next = NULL;
-    return(vv);
+    return (vv);
 }
+
 
 /* Extract the parameter (IFparm structure) from the device or device's model.
  * If do_mode is TRUE then look in the device's parameters
@@ -1054,15 +1067,16 @@ parmlookup(IFdevice *dev, GENinstance **inptr, char *param, int do_model, int in
     if (!do_model && dev->numInstanceParms) {
         for (i = 0; i < *(dev->numInstanceParms); i++) {
             if (!param && (dev->instanceParms[i].dataType & IF_PRINCIPAL))
-                return(&dev->instanceParms[i]);
+                return (&dev->instanceParms[i]);
             else if (!param)
                 continue;
-            else if ((((dev->instanceParms[i].dataType & IF_SET) && inout == 1)
-                      || ((dev->instanceParms[i].dataType & IF_ASK) && inout == 0))
-                     && cieq(dev->instanceParms[i].keyword, param)) {
+            else if ((((dev->instanceParms[i].dataType & IF_SET) && inout == 1) ||
+                      ((dev->instanceParms[i].dataType & IF_ASK) && inout == 0)) &&
+                     cieq(dev->instanceParms[i].keyword, param))
+            {
                 if (dev->instanceParms[i].dataType & IF_REDUNDANT)
                     i -= 1;
-                return(&dev->instanceParms[i]);
+                return (&dev->instanceParms[i]);
             }
         }
         return NULL;
@@ -1076,16 +1090,16 @@ parmlookup(IFdevice *dev, GENinstance **inptr, char *param, int do_model, int in
             {
                 if (dev->modelParms[i].dataType & IF_REDUNDANT)
                     i -= 1;
-                return(&dev->modelParms[i]);
+                return (&dev->modelParms[i]);
             }
 
-    return(NULL);
+    return (NULL);
 }
+
 
 /* Perform the CKTask call. We have both 'fast' and 'modfast', so the other
  * parameters aren't necessary.
  */
-
 
 static IFvalue *
 doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *opt, int ind)
@@ -1106,16 +1120,16 @@ doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
 
     if (err != OK) {
         ft_sperror(err, "if_getparam");
-        return(NULL);
+        return (NULL);
     }
 
-    return(&pv);
+    return (&pv);
 }
+
 
 /* Perform the CKTset call. We have both 'fast' and 'modfast', so the other
  * parameters aren't necessary.
  */
-
 
 static int
 doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *opt, struct dvec *val)
@@ -1192,7 +1206,6 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
 }
 
 
-
 /* Get pointers to a device, its model, and its type number given the name. If
  * there is no such device, try to find a model with that name.
  */
@@ -1205,18 +1218,19 @@ finddev(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr)
 
     err = ft_sim->findInstance (ck, &type, devptr, name, NULL, NULL);
     if (err == OK)
-        return(type);
+        return (type);
 
     type = -1;
     *devptr = NULL;
 
     err = ft_sim->findModel (ck, &type, modptr, name);
     if (err == OK)
-        return(type);
+        return (type);
 
     *modptr = NULL;
-    return(-1);
+    return (-1);
 }
+
 
 /* get an analysis parameter by name instead of id */
 
@@ -1226,10 +1240,11 @@ if_analQbyName(CKTcircuit *ckt, int which, JOB *anal, char *name, IFvalue *parm)
     int i;
     for (i = 0; i < ft_sim->analyses[which]->numParms; i++)
         if (strcmp(ft_sim->analyses[which]->analysisParms[i].keyword, name) == 0)
-            return(ft_sim->askAnalysisQuest
+            return (ft_sim->askAnalysisQuest
                    (ckt, anal, ft_sim->analyses[which]->analysisParms[i].id, parm, NULL));
-    return(E_BADPARM);
+    return (E_BADPARM);
 }
+
 
 /* Get the parameters tstart, tstop, and tstep from the CKT struct. */
 
@@ -1246,53 +1261,55 @@ if_tranparams(struct circ *ci, double *start, double *stop, double *step)
     IFuid tranUid;
 
     if (!ci->ci_curTask)
-        return(FALSE);
+        return (FALSE);
 
-    for (i = 0; i < ft_sim->numAnalyses; i++) {
+    for (i = 0; i < ft_sim->numAnalyses; i++)
         if (strcmp(ft_sim->analyses[i]->name, "TRAN") == 0) {
             which = i;
             break;
         }
-    }
+
     if (which == -1)
-        return(FALSE);
+        return (FALSE);
 
     err = IFnewUid(ci->ci_ckt, &tranUid, NULL, "Transient Analysis",
                    UID_ANALYSIS, NULL);
     if (err != OK)
-        return(FALSE);
+        return (FALSE);
 
     err = ft_sim->findAnalysis (ci->ci_ckt, &which, &anal, tranUid,
                                 ci->ci_curTask, NULL);
     if (err != OK)
-        return(FALSE);
+        return (FALSE);
 
     err = if_analQbyName(ci->ci_ckt, which, anal, "tstart", &tmp);
     if (err != OK)
-        return(FALSE);
+        return (FALSE);
 
     *start = tmp.rValue;
 
     err = if_analQbyName(ci->ci_ckt, which, anal, "tstop", &tmp);
     if (err != OK)
-        return(FALSE);
+        return (FALSE);
 
     *stop = tmp.rValue;
 
     err = if_analQbyName(ci->ci_ckt, which, anal, "tstep", &tmp);
     if (err != OK)
-        return(FALSE);
+        return (FALSE);
 
     *step = tmp.rValue;
-    return(TRUE);
+    return (TRUE);
 }
+
 
 /* Get the statistic called 'name'.  If this is NULL get all statistics
  * available.
  */
 
 struct variable *
-if_getstat(CKTcircuit *ckt, char *name) {
+if_getstat(CKTcircuit *ckt, char *name)
+{
     int i;
     struct variable *v, *vars;
     IFvalue parm;
@@ -1306,7 +1323,7 @@ if_getstat(CKTcircuit *ckt, char *name) {
 
     if (which == -1) {
         fprintf(cp_err, "Warning:  statistics unsupported\n");
-        return(NULL);
+        return (NULL);
     }
 
     if (name) {
@@ -1314,17 +1331,15 @@ if_getstat(CKTcircuit *ckt, char *name) {
             if (eq(ft_sim->analyses[which]->analysisParms[i].keyword, name))
                 break;
         if (i == ft_sim->analyses[which]->numParms)
-            return(NULL);
+            return (NULL);
         if (ft_sim->askAnalysisQuest (ckt, &(ft_curckt->ci_curTask->taskOptions),
                                       ft_sim->analyses[which]->analysisParms[i].id, &parm,
                                       NULL) == -1)
         {
-            fprintf(cp_err,
-                    "if_getstat: Internal Error: can't get %s\n",
-                    name);
-            return(NULL);
+            fprintf(cp_err, "if_getstat: Internal Error: can't get %s\n", name);
+            return (NULL);
         }
-        return(parmtovar(&parm, &(ft_sim->analyses[which]->analysisParms[i])));
+        return (parmtovar(&parm, &(ft_sim->analyses[which]->analysisParms[i])));
     } else {
         for (i = 0, vars = v = NULL; i < ft_sim->analyses[which]->numParms; i++) {
             if (!(ft_sim->analyses[which]->analysisParms[i].dataType & IF_ASK))
@@ -1335,7 +1350,7 @@ if_getstat(CKTcircuit *ckt, char *name) {
                 fprintf(cp_err,
                         "if_getstat: Internal Error: can't get %s\n",
                         name);
-                return(NULL);
+                return (NULL);
             }
             if (v) {
                 v->va_next =
@@ -1346,9 +1361,10 @@ if_getstat(CKTcircuit *ckt, char *name) {
                     parmtovar(&parm, &(ft_sim->analyses[which]->analysisParms[i]));
             }
         }
-        return(vars);
+        return (vars);
     }
 }
+
 
 /* Some small updates to make it work, h_vogt, Feb. 2012
    Still very experimental !
@@ -1414,17 +1430,14 @@ void com_loadsnap(wordlist *wl)
     file = fopen(wl->wl_next->wl_word, "rb");
 
     if (!file) {
-        fprintf(cp_err,
-                "Error: Couldn't open \"%s\" for reading\n",
-                wl->wl_next->wl_word);
+        fprintf(cp_err, "Error: Couldn't open \"%s\" for reading\n", wl->wl_next->wl_word);
         return;
     }
 
     fread(&tmpI, sizeof(int), 1, file);
-    if (tmpI != sizeof(CKTcircuit) ) {
+    if (tmpI != sizeof(CKTcircuit)) {
         fprintf(cp_err, "loaded num: %d, expected num: %ld\n", tmpI, (long)sizeof(CKTcircuit));
-        fprintf(cp_err,
-                "Error: snapshot saved with different version of spice\n");
+        fprintf(cp_err, "Error: snapshot saved with different version of spice\n");
         fclose(file);
         return;
     }
@@ -1616,7 +1629,7 @@ void com_loadsnap(wordlist *wl)
             return;
         }
     }
-    return ;
+    return;
 }
 
 

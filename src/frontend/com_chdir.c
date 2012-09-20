@@ -31,21 +31,21 @@ com_chdir(wordlist *wl)
 
     if (wl == NULL) {
 
-	s = getenv("HOME");
+        s = getenv("HOME");
 
 #ifdef HAVE_PWD_H
-	if (s == NULL) {
-	    pw = getpwuid(getuid());
-	    if (pw == NULL) {
-		fprintf(cp_err, "Can't get your password entry\n");
-		return;
-	    }           
-	    s = pw->pw_dir;
-	}
+        if (s == NULL) {
+            pw = getpwuid(getuid());
+            if (pw == NULL) {
+                fprintf(cp_err, "Can't get your password entry\n");
+                return;
+            }
+            s = pw->pw_dir;
+        }
 #endif
     } else {
         s = cp_unquote(wl->wl_word);
-	copied = 1;
+        copied = 1;
     }
 
 
@@ -54,16 +54,15 @@ com_chdir(wordlist *wl)
             perror(s);
 
     if (copied)
-	tfree(s);
+        tfree(s);
 
 #ifdef HAVE_GETCWD
     s = getcwd(localbuf, sizeof(localbuf));
     if (s)
-	    printf("Current directory: %s\n", s);
+        printf("Current directory: %s\n", s);
     else
-	    fprintf(cp_err, "Can't get current working directory.\n");
+        fprintf(cp_err, "Can't get current working directory.\n");
 #endif
 
     return;
-
 }

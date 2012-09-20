@@ -46,17 +46,17 @@ JMP_BUF jbuf;
 RETSIGTYPE
 ft_sigintr(void)
 {
-  /*  fprintf (cp_err, "Received interrupt.  Handling it  . . . . .\n");  */
+    /* fprintf(cp_err, "Received interrupt.  Handling it  . . . . .\n"); */
 
-  /* Reinstall ft_signintr as the signal handler. */
-  (void) signal( SIGINT, (SIGNAL_FUNCTION) ft_sigintr );
+    /* Reinstall ft_signintr as the signal handler. */
+    (void) signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
 
     gr_clean();  /* Clean up plot window */
 
-    if (ft_intrpt)     /* check to see if we're being interrupted repeatedly */
-        fprintf(cp_err, "\nInterrupted again (ouch)\n"); 
-    else {
-        fprintf(cp_err, "\nInterrupted once . . .\n"); 
+    if (ft_intrpt) {    /* check to see if we're being interrupted repeatedly */
+        fprintf(cp_err, "\nInterrupted again (ouch)\n");
+    } else {
+        fprintf(cp_err, "\nInterrupted once . . .\n");
         ft_intrpt = TRUE;
     }
 
@@ -64,23 +64,22 @@ ft_sigintr(void)
         return;     /* just return without aborting simulation if ft_setflag = TRUE */
     }
 
-	/* sjb - what to do for editline???
-	   The following are not supported in editline */
-#if defined(HAVE_GNUREADLINE) 
-	/*  Clean up readline after catching signals  */
-        /*  One or all of these might be superfluous  */
-	(void) rl_free_line_state();
-	(void) rl_cleanup_after_signal();
-	(void) rl_reset_after_signal(); 
+    /* sjb - what to do for editline???
+       The following are not supported in editline */
+#if defined(HAVE_GNUREADLINE)
+    /*  Clean up readline after catching signals  */
+    /*  One or all of these might be superfluous  */
+    (void) rl_free_line_state();
+    (void) rl_cleanup_after_signal();
+    (void) rl_reset_after_signal();
 #endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
 
     /* To restore screen after an interrupt to a plot for instance */
     cp_interactive = TRUE;
-    cp_resetcontrol();   
+    cp_resetcontrol();
 
     /* here we jump to the start of command processing in main() after resetting everything.  */
     LONGJMP(jbuf, 1);
-
 }
 
 
@@ -92,13 +91,14 @@ sigfloat(int sig, int code)
     gr_clean();
     fperror("Error", code);
     rewind(cp_out);
-    (void) signal( SIGFPE, (SIGNAL_FUNCTION) sigfloat );
+    (void) signal(SIGFPE, (SIGNAL_FUNCTION) sigfloat);
     LONGJMP(jbuf, 1);
 }
 
+
 /* This should give a new prompt if cshpar is waiting for input.  */
 
-#    ifdef SIGTSTP
+#ifdef SIGTSTP
 
 RETSIGTYPE
 sigstop(void)
@@ -110,6 +110,7 @@ sigstop(void)
     return;
 }
 
+
 RETSIGTYPE
 sigcont(void)
 {
@@ -118,7 +119,9 @@ sigcont(void)
         LONGJMP(jbuf, 1);
 }
 
-#    endif
+
+#endif
+
 
 /* Special (void) signal handlers. */
 
@@ -129,6 +132,7 @@ sigill(void)
     fatal();
 }
 
+
 RETSIGTYPE
 sigbus(void)
 {
@@ -136,22 +140,21 @@ sigbus(void)
     fatal();
 }
 
+
 RETSIGTYPE
 sigsegv(void)
 {
     fprintf(cp_err, "\ninternal error -- segmentation violation\n");
 #ifdef HAS_WINDOWS
     winmessage("Fatal error in NGSPICE");
-#endif    
+#endif
     fatal();
 }
+
 
 RETSIGTYPE
 sig_sys(void)
 {
-    fprintf(cp_err, 
-        "\ninternal error -- bad argument to system call\n");
+    fprintf(cp_err, "\ninternal error -- bad argument to system call\n");
     fatal();
 }
-
-

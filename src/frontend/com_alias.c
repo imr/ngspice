@@ -12,7 +12,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 struct alias *cp_aliases = NULL;
 
 
-
 /* Return NULL if no alias was found. We can get away with just
  * calling cp_histsubst now because the line will have gone onto the
  * history list by now and cp_histsubst will look in the right place.  */
@@ -28,11 +27,13 @@ asubst(wordlist *wlist)
         wlist->wl_word++;       /* FIXME !!!, free() will fail !!! */
         return (NULL);
     }
+
     for (al = cp_aliases; al; al = al->al_next)
         if (eq(word, al->al_name))
             break;
     if (!al)
         return (NULL);
+
     wl = cp_histsubst(wl_copy(al->al_text));
 
     if (cp_didhsubst) {
@@ -43,13 +44,13 @@ asubst(wordlist *wlist)
         /* If it had no history args, then append the rest of the wl */
         wl_append(wl, wl_copy(wlist->wl_next));
     }
+
     return (wl);
 }
 
 
-
-/* MW. This function should not use cp_lastone, see cp_parse in cpshar.c 
- * 	Many things are deleted here and memory leak closed */
+/* MW. This function should not use cp_lastone, see cp_parse in cpshar.c
+ *      Many things are deleted here and memory leak closed */
 wordlist *
 cp_doalias(wordlist *wlist)
 {
@@ -68,7 +69,7 @@ cp_doalias(wordlist *wlist)
 
         nextc = wl_find(cp_csep, comm);
 
-        if(nextc == comm) {     /* skip leading `;' */
+        if (nextc == comm) {     /* skip leading `;' */
             comm = comm->wl_next;
             continue;
         }
@@ -120,10 +121,11 @@ cp_setalias(char *word, wordlist *wlist)
 
     cp_unalias(word);
     cp_addkword(CT_ALIASES, word);
+
     if (cp_aliases == NULL) {
         al = cp_aliases = alloc(struct alias);
-	al->al_next = NULL;
-	al->al_prev = NULL;
+        al->al_next = NULL;
+        al->al_prev = NULL;
     } else {
         for (al = cp_aliases; al->al_next; al = al->al_next) {
             if (strcmp(al->al_name, word) > 0)
@@ -146,6 +148,7 @@ cp_setalias(char *word, wordlist *wlist)
             al = cp_aliases;
         }
     }
+
     al->al_name = copy(word);
     al->al_text = wl_copy(wlist);
     cp_striplist(al->al_text);
@@ -156,31 +159,39 @@ cp_setalias(char *word, wordlist *wlist)
     return;
 }
 
+
 void
 cp_unalias(char *word)
 {
     struct alias *al;
 
     cp_remkword(CT_ALIASES, word);
+
     for (al = cp_aliases; al; al = al->al_next)
         if (eq(word, al->al_name))
             break;
+
     if (al == NULL)
         return;
+
     if (al->al_next)
         al->al_next->al_prev = al->al_prev;
-    if (al->al_prev)
+
+    if (al->al_prev) {
         al->al_prev->al_next = al->al_next;
-    else {
+    } else {
         al->al_next->al_prev = NULL;
         cp_aliases = al->al_next;
     }
+
     wl_free(al->al_text);
     tfree(al->al_name);
     tfree(al);
     cp_remcomm(word);
+
     return;
 }
+
 
 void
 cp_paliases(char *word)
@@ -197,6 +208,7 @@ cp_paliases(char *word)
     return;
 }
 
+
 /* The routine for the "alias" command. */
 
 void
@@ -210,6 +222,7 @@ com_alias(wordlist *wl)
         cp_setalias(wl->wl_word, wl->wl_next);
     return;
 }
+
 
 void
 com_unalias(wordlist *wl)
@@ -226,10 +239,12 @@ com_unalias(wordlist *wl)
         cp_aliases = NULL;
         wl = wl->wl_next;
     }
+
     while (wl != NULL) {
         cp_unalias(wl->wl_word);
         wl = wl->wl_next;
     }
+
     return;
 }
 

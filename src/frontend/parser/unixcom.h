@@ -7,7 +7,4 @@
 #define UNIXCOM_H_INCLUDED
 
 
-
-
-
 #endif

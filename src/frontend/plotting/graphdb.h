@@ -12,6 +12,4 @@ void SetGraphContext(int graphid);
 void PushGraphContext(GRAPH *graph);
 void PopGraphContext(void);
 
-
-
 #endif

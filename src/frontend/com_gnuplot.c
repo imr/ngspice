@@ -21,9 +21,10 @@ com_gnuplot(wordlist *wl)
         fname = wl->wl_word;
         wl = wl->wl_next;
     }
-    if (!wl) {
-	return;
-    }
+
+    if (!wl)
+        return;
+
     if (cieq(fname, "temp") || cieq(fname, "tmp")) {
         fname = smktemp("gp"); /* Is this the correct name ? */
         tempf = TRUE;
@@ -33,12 +34,12 @@ com_gnuplot(wordlist *wl)
 
     /* Leave temp file sitting around so gnuplot can grab it from
        background. */
-    if (tempf) {
+    if (tempf)
         tfree(fname);
-    }
 
     return;
 }
+
 
 /* data printout to file plotargs */
 void
@@ -51,9 +52,10 @@ com_write_simple(wordlist *wl)
         fname = wl->wl_word;
         wl = wl->wl_next;
     }
-    if (!wl) {
-	return;
-    }
+
+    if (!wl)
+        return;
+
     if (cieq(fname, "temp") || cieq(fname, "tmp")) {
         fname = smktemp("gp"); /* Is this the correct name ? */
         tempf = TRUE;
@@ -63,9 +65,8 @@ com_write_simple(wordlist *wl)
 
     /* Leave temp file sitting around so gnuplot can grab it from
        background. */
-    if (tempf) {
+    if (tempf)
         tfree(fname);
-    }
 
     return;
 }

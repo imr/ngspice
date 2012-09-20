@@ -1,6 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group 
+Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /*
@@ -18,8 +18,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "plotcurv.h"
 
 
-static void plotinterval(struct dvec *v, double lo, double hi, register double *coeffs, 
-			 int degree, bool rotated);
+static void plotinterval(struct dvec *v, double lo, double hi, register double *coeffs,
+                         int degree, bool rotated);
 
 
 /* Plot the vector v, with scale xs.  If we are doing curve-fitting, then
@@ -35,18 +35,20 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     register double *xdata, *ydata;
     bool rot, increasing = FALSE;
     double dx = 0.0, dy = 0.0, lx = 0.0, ly = 0.0;
-    int	dir;
+    int dir;
 
     /* if already started, use saved degree */
     if (nostart) {
-      degree = currentgraph->degree;
+        degree = currentgraph->degree;
     } else {
         if (!cp_getvar("polydegree", CP_NUM, &degree))
             degree = 1;
         currentgraph->degree = degree;
     }
+
     if (degree > v->v_length)
         degree = v->v_length;
+
     if (degree < 1) {
         fprintf(cp_err, "Error: polydegree is %d, can't plot...\n",
                 degree);
@@ -55,33 +57,32 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
 
     if (!cp_getvar("gridsize", CP_NUM, &gridsize))
         gridsize = 0;
+
     if ((gridsize < 0) || (gridsize > 10000)) {
         fprintf(cp_err, "Error: bad grid size %d\n", gridsize);
         return;
     }
+
     if (gridsize && xs) {
-      if( isreal(xs) ) {
-        increasing = (xs->v_realdata[0] < xs->v_realdata[1]);
-        for (i = 0; i < xs->v_length - 1; i++)
-            if (increasing != (xs->v_realdata[i] < 
-                    xs->v_realdata[i + 1])) {
-                fprintf(cp_err, 
-        "Warning: scale not monotonic, gridsize not relevant.\n");
-                gridsize = 0;
-                break;
-            }
-       } else {
-        increasing = (realpart (xs->v_compdata[0]) < 
-				realpart(xs->v_compdata[1]));
-        for (i = 0; i < xs->v_length - 1; i++)
-            if (increasing != (realpart(xs->v_compdata[i]) < 
-                    		realpart(xs->v_compdata[i + 1]))) {
-                fprintf(cp_err, 
-        "Warning: scale not monotonic, gridsize not relevant.\n");
-                gridsize = 0;
-                break;
-            }
-       }
+        if (isreal(xs)) {
+            increasing = (xs->v_realdata[0] < xs->v_realdata[1]);
+            for (i = 0; i < xs->v_length - 1; i++)
+                if (increasing != (xs->v_realdata[i] < xs->v_realdata[i + 1])) {
+                    fprintf(cp_err,
+                            "Warning: scale not monotonic, gridsize not relevant.\n");
+                    gridsize = 0;
+                    break;
+                }
+        } else {
+            increasing = (realpart(xs->v_compdata[0]) < realpart(xs->v_compdata[1]));
+            for (i = 0; i < xs->v_length - 1; i++)
+                if (increasing != (realpart(xs->v_compdata[i]) < realpart(xs->v_compdata[i + 1]))) {
+                    fprintf(cp_err,
+                            "Warning: scale not monotonic, gridsize not relevant.\n");
+                    gridsize = 0;
+                    break;
+                }
+        }
     }
 
     if (!nostart)
@@ -92,58 +93,58 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     if (!xs) {
         for (i = 0; i < v->v_length; i++) {
 
-/* We should do the one - point case too!
- *	Important for pole-zero for example
- */
-	    if( v->v_length == 1 ) {
-		j = 0;
-	    } else {
-		j = i-1;
-		if( i == 0 )
-			continue;
-	   }
+            /* We should do the one - point case too!
+             *      Important for pole-zero for example
+             */
+            if (v->v_length == 1) {
+                j = 0;
+            } else {
+                j = i-1;
+                if (i == 0)
+                    continue;
+            }
 
             if (isreal(v)) {
                 /* This isn't good but we may as well do
                  * something useful.
                  */
                 gr_point(v, v->v_realdata[i],
-                    0.0, /* v->v_realdata[i], */
-                    v->v_realdata[j],
-                    0.0, /* v->v_realdata[j], */ 
-		    (j==i ? 1 : i));
+                         0.0, /* v->v_realdata[i], */
+                         v->v_realdata[j],
+                         0.0, /* v->v_realdata[j], */
+                         (j == i ? 1 : i));
             } else {
                 gr_point(v, realpart(v->v_compdata[i]),
-                    imagpart(v->v_compdata[i]),
-                    realpart(v->v_compdata[j]),
-                    imagpart(v->v_compdata[j]), (j==i ? 1 : i));
+                         imagpart(v->v_compdata[i]),
+                         realpart(v->v_compdata[j]),
+                         imagpart(v->v_compdata[j]), (j == i ? 1 : i));
             }
-	}
+        }
         gr_end(v);
         return;
     }
 
     xs->v_flags |= VF_PERMANENT;
 
-    /* First check the simple case, where we don't have to do any 
+    /* First check the simple case, where we don't have to do any
      * interpolation.
      */
     if ((degree == 1) && (gridsize == 0)) {
-	dir = 0;
+        dir = 0;
         for (i = 0, j = v->v_length; i < j; i++) {
-            dx = isreal(xs) ? xs->v_realdata[i] : 
-                    realpart(xs->v_compdata[i]);
-            dy = isreal(v) ? v->v_realdata[i] : 
-                    realpart(v->v_compdata[i]);
-	    if ((i == 0 || (dir > 0 ? lx > dx : dir < 0 ? lx < dx : 0))
-		&& xs->v_plot && xs->v_plot->pl_scale == xs)
-	    {
-		gr_point(v, dx, dy, lx, ly, 0);
-	    } else {
-		gr_point(v, dx, dy, lx, ly, i);
-		if (!dir)
-		    dir = lx > dx ? -1 : lx < dx ? 1 : 0;
-	    }
+            dx = isreal(xs) ? xs->v_realdata[i] :
+                realpart(xs->v_compdata[i]);
+            dy = isreal(v) ? v->v_realdata[i] :
+                realpart(v->v_compdata[i]);
+            if ((i == 0 || (dir > 0 ? lx > dx : dir < 0 ? lx < dx : 0)) &&
+                xs->v_plot && xs->v_plot->pl_scale == xs)
+            {
+                gr_point(v, dx, dy, lx, ly, 0);
+            } else {
+                gr_point(v, dx, dy, lx, ly, i);
+                if (!dir)
+                    dir = lx > dx ? -1 : lx < dx ? 1 : 0;
+            }
             lx = dx;
             ly = dy;
         }
@@ -160,21 +161,22 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         /* This is done quite differently from what we do below... */
         gridbuf = TMALLOC(double, gridsize);
         result = TMALLOC(double, gridsize);
-        if (isreal(v))
+        if (isreal(v)) {
             ydata = v->v_realdata;
-        else {
+        } else {
             ydata = TMALLOC(double, v->v_length);
             for (i = 0; i < v->v_length; i++)
                 ydata[i] = realpart(v->v_compdata[i]);
         }
-        if (isreal(xs))
+
+        if (isreal(xs)) {
             xdata = xs->v_realdata;
-        else {
+        } else {
             xdata = TMALLOC(double, xs->v_length);
             for (i = 0; i < xs->v_length; i++)
                 xdata[i] = realpart(xs->v_compdata[i]);
         }
-        
+
         mm = ft_minmax(xs, TRUE);
         dx = (mm[1] - mm[0]) / gridsize;
         if (increasing)
@@ -184,7 +186,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
             for (i = 0, dy = mm[1]; i < gridsize; i++, dy -= dx)
                 gridbuf[i] = dy;
         if (!ft_interpolate(ydata, result, xdata, v->v_length, gridbuf,
-                gridsize, degree)) {
+                            gridsize, degree)) {
             fprintf(cp_err, "Error: can't put %s on gridsize %d\n",
                     v->v_name, gridsize);
             return;
@@ -194,8 +196,8 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
          * the actual data...
          */
         for (i = 0; i < gridsize; i++)
-            gr_point(v, gridbuf[i], result[i], gridbuf[i ? (i - 1)
-                    : i], result[i ? (i - 1) : i], -1);
+            gr_point(v, gridbuf[i], result[i],
+                     gridbuf[i ? (i - 1) : i], result[i ? (i - 1) : i], -1);
         gr_end(v);
         tfree(gridbuf);
         tfree(result);
@@ -206,7 +208,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         return;
     }
 
-    /* We need to do curve fitting now. First get some scratch 
+    /* We need to do curve fitting now. First get some scratch
      * space
      */
     scratch = TMALLOC(double, (degree + 1) * (degree + 2));
@@ -221,6 +223,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     else
         for (i = 0; i <= degree; i++)
             ydata[i] = realpart(v->v_compdata[i]);
+
     if (isreal(xs))
         bcopy(xs->v_realdata, xdata, (size_t)(degree + 1) * sizeof(double));
     else
@@ -246,13 +249,11 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     /* Plot this part of the curve... */
     for (i = 0; i < degree; i++)
         if (rot)
-            plotinterval(v, ydata[i], ydata[i + 1], result, degree,
-                    TRUE);
+            plotinterval(v, ydata[i], ydata[i + 1], result, degree, TRUE);
         else
-            plotinterval(v, xdata[i], xdata[i + 1], result, degree,
-                    FALSE);
+            plotinterval(v, xdata[i], xdata[i + 1], result, degree, FALSE);
 
-    /* Now plot the rest, piece by piece... l is the 
+    /* Now plot the rest, piece by piece... l is the
      * last element under consideration.
      */
     length = v->v_length;
@@ -263,10 +264,12 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
             xdata[i] = xdata[i + 1];
             ydata[i] = ydata[i + 1];
         }
+
         if (isreal(v))
             ydata[i] = v->v_realdata[l];
         else
             ydata[i] = realpart(v->v_compdata[l]);
+
         if (isreal(xs))
             xdata[i] = xs->v_realdata[l];
         else
@@ -279,25 +282,29 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
                 break;
             }
             if (--degree == 0) {
-                fprintf(cp_err, 
-                    "plotcurve: Internal Error: ack...\n");
+                fprintf(cp_err,
+                        "plotcurve: Internal Error: ack...\n");
                 return;
             }
         }
+
         if (rot)
-            plotinterval(v, ydata[degree - 1], ydata[degree], 
-                    result, degree, TRUE);
+            plotinterval(v, ydata[degree - 1], ydata[degree],
+                         result, degree, TRUE);
         else
             plotinterval(v, xdata[degree - 1], xdata[degree],
-                    result, degree, FALSE);
+                         result, degree, FALSE);
     }
+
     tfree(scratch);
     tfree(xdata);
     tfree(ydata);
     tfree(result);
+
     gr_end(v);
     return;
 }
+
 
 #define GRANULARITY 10
 
@@ -309,10 +316,10 @@ plotinterval(struct dvec *v, double lo, double hi, register double *coeffs, int 
     int steps;
 
     /*
-    fprintf(cp_err, "plotinterval(%s, %G, %G, [ ", v->v_name, lo, hi);
-    for (i = 0; i <= degree; i++)
-        fprintf(cp_err, "%G ", coeffs[i]);
-    fprintf(cp_err, "], %d, %s)\n\r", degree, rotated ? "TRUE" : "FALSE");
+      fprintf(cp_err, "plotinterval(%s, %G, %G, [ ", v->v_name, lo, hi);
+      for (i = 0; i <= degree; i++)
+      fprintf(cp_err, "%G ", coeffs[i]);
+      fprintf(cp_err, "], %d, %s)\n\r", degree, rotated ? "TRUE" : "FALSE");
     */
 
     /* This is a problem -- how do we know what granularity to use?  If
@@ -335,5 +342,6 @@ plotinterval(struct dvec *v, double lo, double hi, register double *coeffs, int 
         ly = dy;
         /* fprintf(cp_err, "plot (%G, %G)\n\r", dx, dy); */
     }
+
     return;
 }

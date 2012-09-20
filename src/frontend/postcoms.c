@@ -1,6 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group 
+Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /*
@@ -23,9 +23,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "variable.h"
 #include "parser/complete.h" /* va: throwaway */
 
-/* static declarations */
+
 static void killplot(struct plot *pl);
 static void DelPlotWindows(struct plot *pl);
+
 
 void
 com_unlet(wordlist *wl)
@@ -37,18 +38,19 @@ com_unlet(wordlist *wl)
     return;
 }
 
+
 /* Load in a file. */
 
 void
 com_load(wordlist *wl)
 {
-char *copypath;
+    char *copypath;
     if (!wl)
         ft_loadfile(ft_rawfile);
     else
         while (wl) {
             /*ft_loadfile(cp_unquote(wl->wl_word)); DG: bad memory leak*/
-            copypath=cp_unquote(wl->wl_word);/*DG*/
+            copypath = cp_unquote(wl->wl_word);/*DG*/
             ft_loadfile(copypath);
             tfree(copypath);
             wl = wl->wl_next;
@@ -59,6 +61,7 @@ char *copypath;
 
     return;
 }
+
 
 /* Print out the value of an expression. When we are figuring out what to
  * print, link the vectors we want with v_link2... This has to be done
@@ -75,7 +78,7 @@ com_print(wordlist *wl)
     struct plot *p;
     bool col = TRUE, nobreak = FALSE, noprintscale, plotnames = FALSE;
     bool optgiven = FALSE;
-    char *s, *buf, *buf2; /*, buf[BSIZE_SP], buf2[BSIZE_SP];*/    
+    char *s, *buf, *buf2; /*, buf[BSIZE_SP], buf2[BSIZE_SP];*/
     char numbuf[BSIZE_SP], numbuf2[BSIZE_SP]; /* Printnum buffers */
     int ngood;
 
@@ -83,8 +86,8 @@ com_print(wordlist *wl)
         return;
 
     buf = TMALLOC(char, BSIZE_SP);
-    buf2 = TMALLOC(char, BSIZE_SP);    
-        
+    buf2 = TMALLOC(char, BSIZE_SP);
+
     if (eq(wl->wl_word, "col")) {
         col = TRUE;
         optgiven = TRUE;
@@ -117,7 +120,7 @@ com_print(wordlist *wl)
             plotnames = TRUE;
             break;
         }
-    
+
     if (!optgiven) {
         /* Figure out whether col or line should be used... */
         col = FALSE;
@@ -125,29 +128,28 @@ com_print(wordlist *wl)
             if (v->v_length > 1) {
                 col = TRUE;
                 /* Improvement made to print cases @[sin] = (0 12 13 100K) */
-                if ( (v->v_plot->pl_scale && v->v_length != v->v_plot->pl_scale->v_length) && ( (*(v->v_name))=='@') )
+                if ((v->v_plot->pl_scale && v->v_length != v->v_plot->pl_scale->v_length) && (*(v->v_name) == '@'))
                 {
                     col = FALSE;
                 }
                 break;
             }
-            /* With this I have found that the vector has less elements than the SCALE vector
-             * in the linked PLOT. But now I must make sure in case of a print @vin[sin] or 
-             * @vin[pulse]
-             * for it appear that the v->v_name begins with '@'
-             * And then be in this case.
-             */
+        /* With this I have found that the vector has less elements than the SCALE vector
+         * in the linked PLOT. But now I must make sure in case of a print @vin[sin] or
+         * @vin[pulse]
+         * for it appear that the v->v_name begins with '@'
+         * And then be in this case.
+         */
     }
 
     out_init();
     if (!col) {
         for (v = vecs; v; v = v->v_link2) {
-            if (plotnames) {
-                (void) sprintf(buf, "%s.%s", v->v_plot->pl_typename,
-                        vec_basename(v));
-            } else {
+            if (plotnames)
+                (void) sprintf(buf, "%s.%s", v->v_plot->pl_typename, vec_basename(v));
+            else
                 (void) strcpy(buf, vec_basename(v));
-            }
+
             for (s = buf; *s; s++)
                 ;
             s--;
@@ -157,31 +159,26 @@ com_print(wordlist *wl)
             }
             ll = 10;
 
-	   /* v->v_rlength = 1 when it comes to make a print @ M1 and does not want to come out on screen
-	    * Multiplier factor [m]=1
-	    *  @M1 = 0,00e+00
-	    * In any other case rlength not used for anything and only applies in the copy of the vectors.
-        */
-            if (v->v_rlength == 0)
-            {	   
-                if (v->v_length == 1) 
-                {
-                    if (isreal(v))
-                    {
+            /* v->v_rlength = 1 when it comes to make a print @ M1 and does not want to come out on screen
+             * Multiplier factor [m]=1
+             *  @M1 = 0,00e+00
+             * In any other case rlength not used for anything and only applies in the copy of the vectors.
+             */
+            if (v->v_rlength == 0) {
+                if (v->v_length == 1) {
+                    if (isreal(v)) {
                         printnum(numbuf, *v->v_realdata);
                         out_printf("%s = %s\n", buf, numbuf);
                     } else {
-                        printnum(numbuf,  realpart(v->v_compdata[0]));
+                        printnum(numbuf, realpart(v->v_compdata[0]));
                         printnum(numbuf2, imagpart(v->v_compdata[0]));
-                        out_printf("%s = %s,%s\n", buf,
-                            numbuf,
-                            numbuf2);
+                        out_printf("%s = %s,%s\n", buf, numbuf, numbuf2);
                     }
                 } else {
                     out_printf("%s = (  ", buf);
                     for (i = 0; i < v->v_length; i++)
                         if (isreal(v)) {
-                    	
+
                             printnum(numbuf, v->v_realdata[i]);
                             (void) strcpy(buf, numbuf);
                             out_send(buf);
@@ -191,15 +188,14 @@ com_print(wordlist *wl)
                             if (ll > 60) {
                                 out_send("\n\t");
                                 ll = 9;
-                            } else
+                            } else {
                                 out_send("\t");
+                            }
                         } else {
-                        /*DG*/
-                            printnum(numbuf,  realpart(v->v_compdata[i]));
+                            /*DG*/
+                            printnum(numbuf, realpart(v->v_compdata[i]));
                             printnum(numbuf2, imagpart(v->v_compdata[i]));
-                            (void) sprintf(buf, "%s,%s",
-                                numbuf,
-                                numbuf2);
+                            (void) sprintf(buf, "%s,%s", numbuf, numbuf2);
                             out_send(buf);
                             ll += (int) strlen(buf);
                             ll = (ll + 7) / 8;
@@ -207,10 +203,11 @@ com_print(wordlist *wl)
                             if (ll > 60) {
                                 out_send("\n\t");
                                 ll = 9;
-                            } else
+                            } else {
                                 out_send("\t");
+                            }
                         }
-                        out_send(")\n");
+                    out_send(")\n");
                 } //end if (v->v_length == 1)
             }  //end  if (v->v_rlength == 1)
         }
@@ -219,10 +216,10 @@ com_print(wordlist *wl)
             width = i;
         if (width < 40)
             width = 40;
-        if (width > BSIZE_SP - 2)  {
+        if (width > BSIZE_SP - 2) {
             buf = TREALLOC(char, buf, width + 1);
-            buf2 = TREALLOC(char, buf2, width + 1); 
-        }            
+            buf2 = TREALLOC(char, buf2, width + 1);
+        }
         if (cp_getvar("height", CP_NUM, &i))
             height = i;
         if (height < 20)
@@ -234,17 +231,17 @@ com_print(wordlist *wl)
             nobreak = TRUE;
         noprintscale = cp_getvar("noprintscale", CP_BOOL, NULL);
         bv = vecs;
-nextpage:
+    nextpage:
         /* Make the first vector of every page be the scale... */
-	/* XXX But what if there is no scale?  e.g. op, pz */
-        if (!noprintscale && bv->v_plot->pl_ndims) {
+        /* XXX But what if there is no scale?  e.g. op, pz */
+        if (!noprintscale && bv->v_plot->pl_ndims)
             if (bv->v_plot->pl_scale && !vec_eq(bv, bv->v_plot->pl_scale)) {
                 nv = vec_copy(bv->v_plot->pl_scale);
                 vec_new(nv);
                 nv->v_link2 = bv;
                 bv = nv;
             }
-        }
+
         ll = 8;
         for (lv = bv; lv; lv = lv->v_link2) {
             if (isreal(lv))
@@ -258,7 +255,7 @@ nextpage:
 
         /* Print the header on the first page only. */
         p = bv->v_plot;
-        j = (width - (int) strlen(p->pl_title)) / 2;	/* Yes, keep "(int)" */
+        j = (width - (int) strlen(p->pl_title)) / 2;    /* Yes, keep "(int)" */
         if (j < 0)
             j = 0;
         for (i = 0; i < j; i++)
@@ -279,26 +276,22 @@ nextpage:
         out_send(buf2);
         (void) sprintf(buf, "Index   ");
         for (v = bv; v && (v != lv); v = v->v_link2) {
-            if (isreal(v))
+            if (isreal(v)) {
                 (void) sprintf(buf2, "%-16.15s", v->v_name);
-            else
-            {
-            /* The frequency vector is complex but often with imaginary part = 0, 
-            * this prevents to print two columns.
-            */
-                if(eq(v->v_name, "frequency"))
-                {
-                    if(imagpart(v->v_compdata[0])==0.0)
-                    {
+            } else {
+                /* The frequency vector is complex but often with imaginary part = 0,
+                 * this prevents to print two columns.
+                 */
+                if (eq(v->v_name, "frequency")) {
+                    if (imagpart(v->v_compdata[0]) == 0.0)
                         (void) sprintf(buf2, "%-16.15s", v->v_name);
-                    }
                     else
                         (void) sprintf(buf2, "%-32.31s", v->v_name);
-                }
-                else
+                } else {
                     (void) sprintf(buf2, "%-32.31s", v->v_name);
+                }
             }
-            (void) strcat(buf, buf2);   
+            (void) strcat(buf, buf2);
         }
         lineno = 3;
         j = 0;
@@ -306,7 +299,7 @@ nextpage:
         for (v = bv; (v && (v != lv)); v = v->v_link2)
             if (v->v_length > npoints)
                 npoints = v->v_length;
-pbreak:     /* New page. */
+    pbreak:     /* New page. */
         out_send(buf);
         out_send("\n");
         for (i = 0; i < width; i++)
@@ -315,7 +308,7 @@ pbreak:     /* New page. */
         buf2[width+1] = '\0';
         out_send(buf2);
         lineno += 2;
-loop:
+    loop:
         while ((j < npoints) && (lineno < height)) {
             out_printf("%d\t", j);
             for (v = bv; (v && (v != lv)); v = v->v_link2) {
@@ -325,23 +318,18 @@ loop:
                     else
                         out_send("\t\t\t\t");
                 } else {
-                    if (isreal(v)) 
-                    {
-                        printnum(numbuf,  v->v_realdata[j]);
+                    if (isreal(v)) {
+                        printnum(numbuf, v->v_realdata[j]);
                         out_printf("%s\t", numbuf);
-                    }
-                    else
-                    {
-                    /* In case of a single frequency and have a real part avoids print imaginary part equals 0. */
-                        if(eq(v->v_name, "frequency") &&
-                           imagpart(v->v_compdata[j]) == 0.0)
+                    } else {
+                        /* In case of a single frequency and have a real part avoids print imaginary part equals 0. */
+                        if (eq(v->v_name, "frequency") &&
+                            imagpart(v->v_compdata[j]) == 0.0)
                         {
-                                printnum(numbuf,  realpart(v->v_compdata[j]));
-                                out_printf("%s\t", numbuf);
-                        }
-                        else
-                        {
-                            printnum(numbuf,  realpart(v->v_compdata[j]));
+                            printnum(numbuf, realpart(v->v_compdata[j]));
+                            out_printf("%s\t", numbuf);
+                        } else {
+                            printnum(numbuf, realpart(v->v_compdata[j]));
                             printnum(numbuf2, imagpart(v->v_compdata[j]));
                             out_printf("%s,\t%s\t", numbuf, numbuf2);
                         }
@@ -375,6 +363,7 @@ done:
     return;
 }
 
+
 /* Write out some data. write filename expr ... Some cleverness here is
  * required.  If the user mentions a few vectors from various plots,
  * probably he means for them to be written out seperate plots.  In any
@@ -388,7 +377,7 @@ com_write(wordlist *wl)
     char *file, buf[BSIZE_SP];
     struct pnode *n;
     struct dvec *d, *vecs = NULL, *lv = NULL, *end, *vv;
-    static wordlist all = { "all", NULL, NULL } ;
+    static wordlist all = { "all", NULL, NULL };
     struct pnode *names;
     bool ascii = AsciiRawFile;
     bool scalefound, appendwrite;
@@ -397,14 +386,16 @@ com_write(wordlist *wl)
     if (wl) {
         file = wl->wl_word;
         wl = wl->wl_next;
-    } else
+    } else {
         file = ft_rawfile;
+    }
+
     if (cp_getvar("filetype", CP_STRING, buf)) {
         if (eq(buf, "binary"))
             ascii = FALSE;
         else if (eq(buf, "ascii"))
             ascii = TRUE;
-	else
+        else
             fprintf(cp_err, "Warning: strange file type %s\n", buf);
     }
     appendwrite = cp_getvar("appendwrite", CP_BOOL, NULL);
@@ -413,8 +404,10 @@ com_write(wordlist *wl)
         names = ft_getpnames(wl, TRUE);
     else
         names = ft_getpnames(&all, TRUE);
+
     if (names == NULL)
         return;
+
     for (n = names; n; n = n->pn_next) {
         d = ft_evaluate(n);
         if (!d)
@@ -433,7 +426,7 @@ com_write(wordlist *wl)
         tpl = vecs->v_plot;
         tpl->pl_written = TRUE;
         end = NULL;
-        bcopy(tpl, &newplot, sizeof (struct plot));
+        bcopy(tpl, &newplot, sizeof(struct plot));
         scalefound = FALSE;
 
         /* Figure out how many vectors are in this plot. Also look
@@ -471,15 +464,14 @@ com_write(wordlist *wl)
             newplot.pl_dvecs = newplot.pl_scale;
         }
 
-        /* Now let's go through and make sure that everything that 
+        /* Now let's go through and make sure that everything that
          * has its own scale has it in the plot.
          */
         for (;;) {
             scalefound = FALSE;
             for (d = newplot.pl_dvecs; d; d = d->v_next) {
                 if (d->v_scale) {
-                    for (vv = newplot.pl_dvecs; vv; vv =
-                            vv->v_next)
+                    for (vv = newplot.pl_dvecs; vv; vv = vv->v_next)
                         if (vec_eq(vv, d->v_scale))
                             break;
                     /* We have to grab it... */
@@ -489,6 +481,7 @@ com_write(wordlist *wl)
                     scalefound = TRUE;
                 }
             }
+
             if (!scalefound)
                 break;
             /* Otherwise loop through again... */
@@ -505,42 +498,46 @@ com_write(wordlist *wl)
                 if (lv) {
                     lv->v_link2 = d->v_link2;
                     d = lv;
-                } else
+                } else {
                     vecs = d->v_link2;
-            } else
+                }
+            } else {
                 lv = d;
+            }
         /* If there are more plots we want them appended... */
         appendwrite = TRUE;
     }
     return;
 }
 
+
 /* Write scattering parameters into a file with Touchstone File Format Version 1
-with command wrs2p file .
-Format info from http://www.eda.org/ibis/touchstone_ver2.0/touchstone_ver2_0.pdf
-See example 13 on page 15: Two port, ASCII, real-imaginary
-Check if S11, S21, S12, S22 and frequency vectors are available
-Check if vector Rbase is available
-Call spar_write()
- */
+   with command wrs2p file .
+   Format info from http://www.eda.org/ibis/touchstone_ver2.0/touchstone_ver2_0.pdf
+   See example 13 on page 15: Two port, ASCII, real-imaginary
+   Check if S11, S21, S12, S22 and frequency vectors are available
+   Check if vector Rbase is available
+   Call spar_write()
+*/
 
 void
 com_write_sparam(wordlist *wl)
 {
     char *file;
-    char* sbuf[6];
+    char *sbuf[6];
     wordlist *wl_sparam;
     struct pnode *n;
-    struct dvec *d, *vecs = NULL, *lv = NULL, *end, *vv, *Rbasevec=NULL;
+    struct dvec *d, *vecs = NULL, *lv = NULL, *end, *vv, *Rbasevec = NULL;
     struct pnode *names;
-    bool scalefound, appendwrite=FALSE;
+    bool scalefound, appendwrite = FALSE;
     struct plot *tpl, newplot;
     double Rbaseval;
 
-    if (wl) {
+    if (wl)
         file = wl->wl_word;
-    } else
+    else
         file = "s_param.s2p";
+
     /* generate wordlist with all vectors required*/
     sbuf[0] = "frequency";
     sbuf[1] = "S11";
@@ -553,21 +550,25 @@ com_write_sparam(wordlist *wl)
     names = ft_getpnames(wl_sparam, TRUE);
     if (names == NULL)
         return;
+
     for (n = names; n; n = n->pn_next) {
         d = ft_evaluate(n);
         if (!d)
             return;
+
         if (vecs)
             lv->v_link2 = d;
         else
             vecs = d;
+
         for (lv = d; lv->v_link2; lv = lv->v_link2)
             ;
     }
+
     Rbasevec = vec_get("Rbase");
-    if (Rbasevec)
+    if (Rbasevec) {
         Rbaseval = Rbasevec->v_realdata[0];
-    else {
+    } else {
         fprintf(stderr, "Error: No Rbase vector given\n");
         return;
     }
@@ -578,7 +579,7 @@ com_write_sparam(wordlist *wl)
         tpl = vecs->v_plot;
         tpl->pl_written = TRUE;
         end = NULL;
-        bcopy(tpl, &newplot, sizeof (struct plot));
+        bcopy(tpl, &newplot, sizeof(struct plot));
         scalefound = FALSE;
 
         /* Figure out how many vectors are in this plot. Also look
@@ -616,15 +617,14 @@ com_write_sparam(wordlist *wl)
             newplot.pl_dvecs = newplot.pl_scale;
         }
 
-        /* Now let's go through and make sure that everything that 
+        /* Now let's go through and make sure that everything that
          * has its own scale has it in the plot.
          */
         for (;;) {
             scalefound = FALSE;
             for (d = newplot.pl_dvecs; d; d = d->v_next) {
                 if (d->v_scale) {
-                    for (vv = newplot.pl_dvecs; vv; vv =
-                            vv->v_next)
+                    for (vv = newplot.pl_dvecs; vv; vv = vv->v_next)
                         if (vec_eq(vv, d->v_scale))
                             break;
                     /* We have to grab it... */
@@ -647,10 +647,12 @@ com_write_sparam(wordlist *wl)
                 if (lv) {
                     lv->v_link2 = d->v_link2;
                     d = lv;
-                } else
+                } else {
                     vecs = d->v_link2;
-            } else
+                }
+            } else {
                 lv = d;
+            }
         /* If there are more plots we want them appended... */
         appendwrite = TRUE;
     }
@@ -673,8 +675,7 @@ com_transpose(wordlist *wl)
         d = vec_get(s);
         tfree(s); /*DG: Avoid Memory Leak */
         if (d == NULL)
-            fprintf(cp_err, "Error: no such vector as %s.\n", 
-                wl->wl_word);
+            fprintf(cp_err, "Error: no such vector as %s.\n", wl->wl_word);
         else
             while (d) {
                 vec_transpose(d);
@@ -685,6 +686,7 @@ com_transpose(wordlist *wl)
         wl = wl->wl_next;
     }
 }
+
 
 /* Take a set of vectors and form a new vector of the nth elements of each. */
 void
@@ -713,20 +715,23 @@ com_cross(wordlist *wl)
     while (pn) {
         if ((n = ft_evaluate(pn)) == NULL)
             return;
+
         if (!vecs)
             vecs = lv = n;
         else
             lv->v_link2 = n;
+
         for (lv = n; lv->v_link2; lv = lv->v_link2)
             ;
         pn = pn->pn_next;
     }
+
     for (n = vecs, i = 0; n; n = n->v_link2) {
         if (iscomplex(n))
             comp = TRUE;
         i++;
     }
-    
+
     vec_remove(newvec);
     v = alloc(struct dvec);
     v->v_name = copy(newvec);
@@ -745,18 +750,18 @@ com_cross(wordlist *wl)
     for (n = vecs, i = 0; n; n = n->v_link2, i++)
         if (n->v_length > ind) {
             if (comp) {
-                realpart(v->v_compdata[i]) =
-                        realpart(n->v_compdata[ind]);
-                imagpart(v->v_compdata[i]) =
-                        imagpart(n->v_compdata[ind]);
-            } else
+                realpart(v->v_compdata[i]) = realpart(n->v_compdata[ind]);
+                imagpart(v->v_compdata[i]) = imagpart(n->v_compdata[ind]);
+            } else {
                 v->v_realdata[i] = n->v_realdata[ind];
+            }
         } else {
             if (comp) {
                 realpart(v->v_compdata[i]) = 0.0;
                 imagpart(v->v_compdata[i]) = 0.0;
-            } else
+            } else {
                 v->v_realdata[i] = 0.0;
+            }
         }
     vec_new(v);
     v->v_flags |= VF_PERMANENT;
@@ -764,50 +769,46 @@ com_cross(wordlist *wl)
     return;
 }
 
+
 void
 com_destroy(wordlist *wl)
 {
     struct plot *pl, *npl = NULL;
 
     if (!wl) {
-       DelPlotWindows(plot_cur);
-       killplot(plot_cur);
-    }
-    else if (eq(wl->wl_word, "all")) {
+        DelPlotWindows(plot_cur);
+        killplot(plot_cur);
+    } else if (eq(wl->wl_word, "all")) {
         for (pl = plot_list; pl; pl = npl) {
             npl = pl->pl_next;
-            if (!eq(pl->pl_typename, "const"))
-	         {
-                DelPlotWindows(pl);   
+            if (!eq(pl->pl_typename, "const")) {
+                DelPlotWindows(pl);
                 killplot(pl);
+            } else {
+                plot_num = 1;
             }
-            else
-            {
-                plot_num=1;
-            } 
         }
     } else {
         while (wl) {
             for (pl = plot_list; pl; pl = pl->pl_next)
                 if (eq(pl->pl_typename, wl->wl_word))
                     break;
-            if (pl)
-            {
+            if (pl) {
                 DelPlotWindows(pl);
                 killplot(pl);
-            }
-            else
+            } else {
                 fprintf(cp_err, "Error: no such plot %s\n", wl->wl_word);
+            }
             wl = wl->wl_next;
         }
     }
     return;
 }
 
+
 static void
 killplot(struct plot *pl)
 {
-
     struct dvec *v, *nv = NULL;
     struct plot *op;
 
@@ -831,7 +832,7 @@ killplot(struct plot *pl)
                 break;
         if (!op)
             fprintf(cp_err,
-                "Internal Error: kill plot -- not in list\n");
+                    "Internal Error: kill plot -- not in list\n");
         op->pl_next = pl->pl_next;
         if (pl == plot_cur)
             plot_cur = op;
@@ -842,43 +843,45 @@ killplot(struct plot *pl)
     wl_free(pl->pl_commands);
     tfree(pl->pl_date); /* va: also tfree (memory leak) */
     if (pl->pl_ccom)    /* va: also tfree (memory leak) */
-    {
         throwaway((struct ccom *)pl->pl_ccom);
-    }
-    if (pl->pl_env) /* The 'environment' for this plot. */
-    {
-    	/* va: HOW to do? */
-        printf("va: killplot should tfree pl->pl_env=(%p)\n", pl->pl_env); fflush(stdout);
+
+    if (pl->pl_env) { /* The 'environment' for this plot. */
+        /* va: HOW to do? */
+        printf("va: killplot should tfree pl->pl_env=(%p)\n", pl->pl_env);
+        fflush(stdout);
     }
     tfree(pl); /* va: also tfree pl itself (memory leak) */
-    
+
     return;
 }
 
-/* delete all windows with graphs dedrived from a given plot */ 
+
+/* delete all windows with graphs dedrived from a given plot */
 static void
 DelPlotWindows(struct plot *pl)
 {
-/* do this only if windows or X11 is defined */
+    /* do this only if windows or X11 is defined */
 #if defined(HAS_WINDOWS) || !defined(X_DISPLAY_MISSING)
-   GRAPH *dgraph;
-   int n;
-   /* find and remove all graph structures derived from a given plot */
-   for (n=1; n < 100; n++) { /* should be no more than 100 */
-      dgraph = FindGraph(n);
-      if(dgraph) {
-         if (ciprefix(pl->pl_typename, dgraph->plotname))
-            RemoveWindow(dgraph);
-      }
-/* We have to run through all potential graph ids. If some numbers are
-   already missing, 'else break;' might miss the plotwindow to be removed. */
-/*      else
-         break; */
-   }
+    GRAPH *dgraph;
+    int n;
+    /* find and remove all graph structures derived from a given plot */
+    for (n = 1; n < 100; n++) { /* should be no more than 100 */
+        dgraph = FindGraph(n);
+        if (dgraph) {
+            if (ciprefix(pl->pl_typename, dgraph->plotname))
+                RemoveWindow(dgraph);
+        }
+        /* We have to run through all potential graph ids. If some numbers are
+           already missing, 'else break;' might miss the plotwindow to be removed. */
+        /* else
+           break;
+        */
+    }
 #else
     NG_IGNORE(pl);
 #endif
 }
+
 
 void
 com_splot(wordlist *wl)
@@ -896,7 +899,7 @@ com_splot(wordlist *wl)
         fprintf(cp_out, "%s%s\t%s (%s)\n",
                 (pl == plot_cur) ? "Current " : "\t",
                 pl->pl_typename, pl->pl_title, pl->pl_name);
-    
+
     fprintf(cp_out, "? ");
     if (!fgets(buf, BSIZE_SP, cp_in)) {
         clearerr(cp_in);
@@ -909,4 +912,3 @@ com_splot(wordlist *wl)
     plot_setcur(s);
     return;
 }
-

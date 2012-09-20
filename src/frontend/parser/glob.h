@@ -7,5 +7,4 @@
 #define GLOB_H_INCLUDED
 
 
-
 #endif

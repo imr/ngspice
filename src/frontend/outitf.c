@@ -36,7 +36,6 @@ extern char *spice_analysis_get_name(int index);
 extern char *spice_analysis_get_description(int index);
 
 
-/* static declarations */
 static int beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName,
                      char *refName, int refType, int numNames, char **dataNames, int dataType,
                      bool windowed, runDesc **runp);
@@ -86,7 +85,8 @@ OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
     char *name;
 
 #ifdef PARALLEL_ARCH
-    if (ARCHme != 0) return(OK);
+    if (ARCHme != 0)
+        return (OK);
 #endif
 
     if (ft_curckt->ci_ckt == circuitPtr)
@@ -109,7 +109,8 @@ OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
 {
 
 #ifdef PARALLEL_ARCH
-    if (ARCHme != 0) return(OK);
+    if (ARCHme != 0)
+        return (OK);
 #endif
 
     return (beginPlot(analysisPtr, circuitPtr, "circuit name",
@@ -133,9 +134,9 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     bool savealli = FALSE;
     char *an_name;
     /*to resume a run saj
-    *All it does is reassign the file pointer and return (requires *runp to be NULL if this is not needed)
-    */
-    if(dataType == 666 && numNames == 666) {
+     *All it does is reassign the file pointer and return (requires *runp to be NULL if this is not needed)
+     */
+    if (dataType == 666 && numNames == 666) {
         run = *runp;
         run->writeOut = ft_getOutReq(&run->fp, &run->runPlot, &run->binary,
                                      run->type, run->name);
@@ -211,33 +212,28 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
         /* Pass 1. */
         if (numsaves && !saveall) {
-            for (i = 0; i < numsaves; i++) {
-                if (!savesused[i]) {
-                    for (j = 0; j < numNames; j++) {
+            for (i = 0; i < numsaves; i++)
+                if (!savesused[i])
+                    for (j = 0; j < numNames; j++)
                         if (name_eq(saves[i].name, dataNames[j])) {
                             addDataDesc(run, dataNames[j], dataType, j);
                             savesused[i] = TRUE;
                             saves[i].used = 1;
                             break;
                         }
-                    }
-                }
-            }
         } else {
             for (i = 0; i < numNames; i++)
-                if (!refName || !name_eq(dataNames[i], refName)) {
-
+                if (!refName || !name_eq(dataNames[i], refName))
                     /*  Save the node as long as it's an internal device node  */
-
                     if (!strstr(dataNames[i], "#internal") &&
-                            !strstr(dataNames[i], "#source") &&
-                            !strstr(dataNames[i], "#drain") &&
-                            !strstr(dataNames[i], "#collector") &&
-                            !strstr(dataNames[i], "#emitter") &&
-                            !strstr(dataNames[i], "#base")) {
+                        !strstr(dataNames[i], "#source") &&
+                        !strstr(dataNames[i], "#drain") &&
+                        !strstr(dataNames[i], "#collector") &&
+                        !strstr(dataNames[i], "#emitter") &&
+                        !strstr(dataNames[i], "#base"))
+                    {
                         addDataDesc(run, dataNames[i], dataType, i);
                     }
-                }
         }
 
         /* Pass 1 and a bit.
@@ -248,11 +244,12 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             depind = 0;
             for (i = 0; i < numNames; i++) {
                 if (strstr(dataNames[i], "#internal") ||
-                        strstr(dataNames[i], "#source") ||
-                        strstr(dataNames[i], "#drain") ||
-                        strstr(dataNames[i], "#collector") ||
-                        strstr(dataNames[i], "#emitter") ||
-                        strstr(dataNames[i], "#base")) {
+                    strstr(dataNames[i], "#source") ||
+                    strstr(dataNames[i], "#drain") ||
+                    strstr(dataNames[i], "#collector") ||
+                    strstr(dataNames[i], "#emitter") ||
+                    strstr(dataNames[i], "#base"))
+                {
                     tmpname[0] = '@';
                     tmpname[1] = '\0';
                     strncat(tmpname, dataNames[i], BSIZE_SP-1);
@@ -286,8 +283,8 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     }
                     if (parseSpecial(tmpname, namebuf, parambuf, depbuf)) {
                         if (*depbuf) {
-                            fprintf( stderr,
-                                     "Warning : unexpected dependent variable on %s\n", tmpname);
+                            fprintf(stderr,
+                                    "Warning : unexpected dependent variable on %s\n", tmpname);
                         } else {
                             addSpecialDesc(run, tmpname, namebuf, parambuf, depind);
                         }
@@ -347,8 +344,9 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         }
 
         if (numNames &&
-                ((run->numData == 1 && run->refIndex != -1) ||
-                 (run->numData == 0 && run->refIndex == -1)) ) {
+            ((run->numData == 1 && run->refIndex != -1) ||
+             (run->numData == 0 && run->refIndex == -1)))
+        {
             fprintf(cp_err, "Error: no data saved for %s; analysis not run\n",
                     spice_analysis_get_description(analysisPtr->JOBtype));
             return E_NOTFOUND;
@@ -451,7 +449,8 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
     int i;
 
 #ifdef PARALLEL_ARCH
-    if (ARCHme != 0) return(OK);
+    if (ARCHme != 0)
+        return (OK);
 #endif
 
     run->pointCount++;
@@ -472,8 +471,8 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                 fileAddComplexValue(run->fp, run->binary, refValue->cValue);
 
                 /*  While we're looking at the reference value, print it to the screen
-                      every quarter of a second, to give some feedback without using
-                      too much CPU time  */
+                    every quarter of a second, to give some feedback without using
+                    too much CPU time  */
 #ifndef HAS_WINDOWS
                 currclock = clock();
                 if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
@@ -490,7 +489,8 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #ifndef HAS_WINDOWS
                 currclock = clock();
                 if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
-                    fprintf(stderr, " Reference value : % 12.5e\r", refValue->rValue);
+                    fprintf(stderr, " Reference value : % 12.5e\r",
+                            refValue->rValue);
                     lastclock = currclock;
                 }
 #endif
@@ -507,7 +507,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #endif
 
             if (run->data[i].regular) {
-                if(run->data[i].type == IF_REAL)
+                if (run->data[i].type == IF_REAL)
                     fileAddRealValue(run->fp, run->binary,
                                      valuePtr->v.vec.rVec [run->data[i].outIndex]);
                 else if (run->data[i].type == IF_COMPLEX)
@@ -676,7 +676,8 @@ OUTendPlot(runDesc *plotPtr)
     runDesc *run = plotPtr;  // FIXME
 
 #ifdef PARALLEL_ARCH
-    if (ARCHme != 0) return(OK);
+    if (ARCHme != 0)
+        return (OK);
 #endif
 
     if (run->writeOut) {
@@ -828,14 +829,14 @@ fileInit_pass2(runDesc *run)
         else
             type = SV_VOLTAGE;
 
-        if ( type == SV_CURRENT ) {
+        if (type == SV_CURRENT) {
             char *branch = strstr(name, "#branch");
             if (branch)
                 *branch = '\0';
             fprintf(run->fp, "\t%d\ti(%s)\t%s", i, name, ft_typenames(type));
             if (branch)
                 *branch = '#';
-        } else if ( type == SV_VOLTAGE ) {
+        } else if (type == SV_VOLTAGE) {
             fprintf(run->fp, "\t%d\tv(%s)\t%s", i, name, ft_typenames(type));
         } else {
             fprintf(run->fp, "\t%d\t%s\t%s", i, name, ft_typenames(type));
@@ -968,8 +969,9 @@ plotInit(runDesc *run)
         if (isdigit(*dd->name)) {
             (void) sprintf(buf, "V(%s)", dd->name);
             v->v_name = copy(buf);
-        } else
+        } else {
             v->v_name = copy(dd->name);
+        }
         if (substring("#branch", v->v_name))
             v->v_type = SV_CURRENT;
         else if (cieq(v->v_name, "time"))
@@ -1024,6 +1026,7 @@ plotAddRealValue(dataDesc *desc, double value)
         v->v_compdata[v->v_length].cx_real = value;
         v->v_compdata[v->v_length].cx_imag = 0.0;
     }
+
     v->v_length++;
     v->v_dims[0] = v->v_length; /* va, must be updated */
 }
@@ -1037,6 +1040,7 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
     v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, v->v_length + 1);
     v->v_compdata[v->v_length].cx_real = value.real;
     v->v_compdata[v->v_length].cx_imag = value.imag;
+
     v->v_length++;
     v->v_dims[0] = v->v_length; /* va, must be updated */
 }
@@ -1070,6 +1074,7 @@ parseSpecial(char *name, char *dev, char *param, char *ind)
     while (*name && (*name != '['))
         *s++ = *name++;
     *s = '\0';
+
     if (!*name)
         return TRUE;
     name++;
@@ -1078,6 +1083,7 @@ parseSpecial(char *name, char *dev, char *param, char *ind)
     while (*name && (*name != ',') && (*name != ']'))
         *s++ = *name++;
     *s = '\0';
+
     if (*name == ']')
         return (!name[1] ? TRUE : FALSE);
     else if (!*name)
@@ -1088,6 +1094,7 @@ parseSpecial(char *name, char *dev, char *param, char *ind)
     while (*name && (*name != ']'))
         *s++ = *name++;
     *s = '\0';
+
     if (*name && !name[1])
         return TRUE;
     else

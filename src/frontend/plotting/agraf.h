@@ -11,8 +11,8 @@
 #include "ngspice/plot.h"
 
 void ft_agraf(double *xlims, double *ylims, struct dvec *xscale,
-	      struct plot *plot, struct dvec *vecs,
-	      double xdel, double ydel, bool xlog, bool ylog, 
-	      bool nointerp);
+              struct plot *plot, struct dvec *vecs,
+              double xdel, double ydel, bool xlog, bool ylog,
+              bool nointerp);
 
 #endif

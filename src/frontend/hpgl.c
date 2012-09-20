@@ -65,14 +65,14 @@ typedef struct {
 } GLdevdep;
 
 static char *linestyle[] = {
-                "",             /* solid */
-                "1",        /* was 1 - dotted */
-                "",        /* longdashed */
-                "3",        /* shortdashed */
-                "4",    /* longdotdashed */
-                "5",    /* shortdotdashed */
-                "1"
-                };
+    "",     /* solid */
+    "1",    /* was 1 - dotted */
+    "",     /* longdashed */
+    "3",    /* shortdashed */
+    "4",    /* longdotdashed */
+    "5",    /* shortdotdashed */
+    "1"
+};
 
 static FILE *plotfile;
 extern char psscale[32];
@@ -83,6 +83,7 @@ static int screenflag = 0;
 static double tocm = 0.0025;
 static double scale;    /* Used for fine tuning */
 static int hcopygraphid;
+
 
 int GL_Init(void)
 {
@@ -105,30 +106,28 @@ int GL_Init(void)
     dispdev->minx = (int)(XOFF * 1.0);
     dispdev->miny = (int)(YOFF * 1.0);
 
-    return(0);
-
+    return (0);
 }
 
-/* devdep initially contains name of output file */
-int GL_NewViewport(
-GRAPH *graph)
-{
-/*    double scaleps, scalex, scaley; */
 
+/* devdep initially contains name of output file */
+int
+GL_NewViewport(GRAPH *graph)
+{
     hcopygraphid = graph->graphid;
 
     if ((plotfile = fopen((char*) graph->devdep, "w")) == NULL) {
         perror((char*) graph->devdep);
-      graph->devdep = NULL;
-      return(1);
+        graph->devdep = NULL;
+        return (1);
     }
 
     if (graph->absolute.width) {
-      /* hardcopying from the screen */
+        /* hardcopying from the screen */
 
-      screenflag = 1;
+        screenflag = 1;
 
-      /* scale to fit on 8 1/2 square */
+        /* scale to fit on 8 1/2 square */
 
     }
 
@@ -147,13 +146,13 @@ GRAPH *graph)
 
     /* start file off with a % */
     fprintf(plotfile, "IN;DF;PA;");
-    fprintf(plotfile, "SI %f,%f;", tocm*jgmult*fontwidth*scale,tocm*jgmult*fontheight*scale);
+    fprintf(plotfile, "SI %f,%f;", tocm*jgmult*fontwidth*scale, tocm*jgmult*fontheight*scale);
 
 #ifdef notdef
     if (!screenflag)
 #endif
 
-    graph->devdep = TMALLOC(GLdevdep, 1);
+        graph->devdep = TMALLOC(GLdevdep, 1);
     DEVDEP(graph).lastlinestyle = -1;
     DEVDEP(graph).lastx = -1;
     DEVDEP(graph).lasty = -1;
@@ -163,51 +162,52 @@ GRAPH *graph)
     return 0;
 }
 
-int GL_Close(void)
-{
 
+int
+GL_Close(void)
+{
     /* in case GL_Close is called as part of an abort,
-            w/o having reached GL_NewViewport */
+       w/o having reached GL_NewViewport */
     if (plotfile) {
-      if (DEVDEP(currentgraph).lastlinestyle != -1) {
-        DEVDEP(currentgraph).linecount = 0;
-      }
-      fclose(plotfile);
-      plotfile = NULL;
+        if (DEVDEP(currentgraph).lastlinestyle != -1) {
+            DEVDEP(currentgraph).linecount = 0;
+        }
+        fclose(plotfile);
+        plotfile = NULL;
     }
     /* In case of hardcopy command destroy the hardcopy graph
      * and reset currentgraph to graphid 1, if possible
      */
     if (!screenflag) {
-      DestroyGraph(hcopygraphid);
-      currentgraph = FindGraph(1);
+        DestroyGraph(hcopygraphid);
+        currentgraph = FindGraph(1);
     }
 
     return 0;
 }
 
-int GL_Clear(void)
+
+int
+GL_Clear(void)
 {
-
     /* do nothing */
-
 
     return 0;
 }
 
-int GL_DrawLine(
-int x1, int y1, int x2, int y2)
-{
 
+int
+GL_DrawLine(int x1, int y1, int x2, int y2)
+{
     /* note: this is not extendible to more than one graph
-        => will have to give NewViewport a writeable graph XXX */
+       => will have to give NewViewport a writeable graph XXX */
 
 
     if (DEVDEP(currentgraph).linecount == 0
-            || x1 != DEVDEP(currentgraph).lastx
-            || y1 != DEVDEP(currentgraph).lasty)
+        || x1 != DEVDEP(currentgraph).lastx
+        || y1 != DEVDEP(currentgraph).lasty)
     {
-      fprintf(plotfile, "PU;PA %d , %d ;", jgmult*(x1 + xoff), jgmult*(y1 + yoff));
+        fprintf(plotfile, "PU;PA %d , %d ;", jgmult*(x1 + xoff), jgmult*(y1 + yoff));
     }
     if (x1 != x2 || y1 != y2) {
         fprintf(plotfile, "PD;PA %d , %d ;", jgmult*(x2 + xoff), jgmult*(y2 + yoff));
@@ -221,10 +221,10 @@ int x1, int y1, int x2, int y2)
     return 0;
 }
 
+
 /* ARGSUSED */
-int GL_Arc(
-int x0, int y0, int r,
-double theta, double delta_theta)
+int
+GL_Arc(int x0, int y0, int r, double theta, double delta_theta)
 {
     int  x1, y1, angle;
 
@@ -241,14 +241,10 @@ double theta, double delta_theta)
     return 0;
 }
 
-int GL_Text(
-char *text,
-int x, int y)
+
+int
+GL_Text(char *text, int x, int y)
 {
-
-/*    int savedlstyle; */
-
-
     /* move to (x, y) */
 
     fprintf(plotfile, "PU;PA %d , %d;", jgmult*(x+xoff+XTADJ), jgmult*(y+yoff+YTADJ));
@@ -257,49 +253,47 @@ int x, int y)
     DEVDEP(currentgraph).lastx = -1;
     DEVDEP(currentgraph).lasty = -1;
 
-
     return 0;
 }
 
-int
-GL_SetLinestyle(
-int linestyleid)
-{
 
+int
+GL_SetLinestyle(int linestyleid)
+{
     /* special case
-        get it when GL_Text restores a -1 linestyle */
+       get it when GL_Text restores a -1 linestyle */
     if (linestyleid == -1) {
-      currentgraph->linestyle = -1;
-      return 0;
+        currentgraph->linestyle = -1;
+        return 0;
     }
 
     if (linestyleid < 0 || linestyleid > dispdev->numlinestyles) {
-      internalerror("bad linestyleid");
-      return 0;
+        internalerror("bad linestyleid");
+        return 0;
     }
 
     if (currentgraph->linestyle != linestyleid) {
-      fprintf(plotfile, "LT %s ;", linestyle[linestyleid]);
-      currentgraph->linestyle = linestyleid;
+        fprintf(plotfile, "LT %s ;", linestyle[linestyleid]);
+        currentgraph->linestyle = linestyleid;
     }
-    return 0;
 
+    return 0;
 }
 
-/* ARGSUSED */
-int GL_SetColor(
-int colorid)
-{
-/*va: unused:    static int flag = 0;*/        /* A hack */
 
+/* ARGSUSED */
+int
+GL_SetColor(int colorid)
+{
     fprintf(plotfile, "SP %d;", colorid);
 
     return 0;
 }
 
-int GL_Update(void)
-{
 
+int
+GL_Update(void)
+{
     fflush(plotfile);
 
     return 0;

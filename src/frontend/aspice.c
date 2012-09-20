@@ -15,8 +15,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "variable.h"
 #include "circuits.h"
 
+
 #  ifdef HAVE_SYS_WAIT_H
-     /* should be more tests here I think */
+/* should be more tests here I think */
 #    define OK_ASPICE
 #  endif
 
@@ -38,11 +39,11 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "../misc/mktemp.h"
 
 /*
- This is required for the GCC pre-processor and might be needed for others
- Added to resolve ngspice bug 1293746
- http://sourceforge.net/tracker/index.php?func=detail&aid=1293746&group_id=38962&atid=423915
+  This is required for the GCC pre-processor and might be needed for others
+  Added to resolve ngspice bug 1293746
+  http://sourceforge.net/tracker/index.php?func=detail&aid=1293746&group_id=38962&atid=423915
 */
-#if !defined(SOLARIS) && defined (__SVR4) && defined(__sun)
+#if !defined(SOLARIS) && defined(__SVR4) && defined(__sun)
 #  define SOLARIS
 #endif
 
@@ -54,17 +55,18 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 static RETSIGTYPE sigchild(void);
 
 struct proc {
-    int pr_pid;     /* The pid of the spice job. */
-    char *pr_rawfile;   /* The temporary raw file. */
-    char *pr_name;      /* The name of the spice run. */
-    char *pr_inpfile;   /* The name of the input file. */
-    char *pr_outfile;   /* The name of the (tmp) output file. */
-    bool pr_saveout;    /* Don't (void) unlink the output file */
-    struct proc *pr_next;   /* Link. */
-} ;
+    int pr_pid;                 /* The pid of the spice job. */
+    char *pr_rawfile;           /* The temporary raw file. */
+    char *pr_name;              /* The name of the spice run. */
+    char *pr_inpfile;           /* The name of the input file. */
+    char *pr_outfile;           /* The name of the (tmp) output file. */
+    bool pr_saveout;            /* Don't (void) unlink the output file */
+    struct proc *pr_next;       /* Link. */
+};
 
 static struct proc *running = NULL;
-static int numchanged = 0;  /* How many children have changed in state. */
+static int numchanged = 0;      /* How many children have changed in state. */
+
 
 void
 com_aspice(wordlist *wl)
@@ -78,11 +80,11 @@ com_aspice(wordlist *wl)
 
     deck = wl->wl_word;
     if (!cp_getvar("spicepath", CP_STRING, spicepath)) {
-	if (!Spice_Path || !*Spice_Path) {
-	    fprintf(cp_err,
-		"No spice-3 binary is available for the aspice command.\n");
-	    return;
-	}
+        if (!Spice_Path || !*Spice_Path) {
+            fprintf(cp_err,
+                    "No spice-3 binary is available for the aspice command.\n");
+            return;
+        }
         (void) strcpy(spicepath, Spice_Path);
     }
 
@@ -113,11 +115,11 @@ com_aspice(wordlist *wl)
     if (pid == 0) {
         if (!(freopen(deck, "r", stdin))) {
             perror(deck);
-            exit (EXIT_BAD);
+            exit(EXIT_BAD);
         }
         if (!(freopen(output, "w", stdout))) {
             perror(output);
-            exit (EXIT_BAD);
+            exit(EXIT_BAD);
         }
         (void) dup2(fileno(stdout), fileno(stderr));
 
@@ -162,17 +164,18 @@ com_jobs(wordlist *wl)
     return;
 }
 
+
 static RETSIGTYPE
 sigchild(void)
 {
     numchanged++;
     if (ft_asyncdb)
         fprintf(cp_err, "%d jobs done now\n", numchanged);
-    if (cp_cwait) {
+    if (cp_cwait)
         ft_checkkids();
-    }
     return;
 }
+
 
 /* This gets called every once in a while, and checks to see if any
  * jobs have finished. If they have it gets the data.  The problem is
@@ -184,7 +187,9 @@ sigchild(void)
  * On posix systems, wait() is:
  * pid_t wait(int *status);
  */
+
 int status;
+
 
 void
 ft_checkkids(void)
@@ -203,47 +208,55 @@ ft_checkkids(void)
     while (numchanged > 0) {
         pid = wait(&status);
         if (pid == -1) {
-            fprintf(cp_err,  
-               "ft_checkkids: Internal Error: should be %d jobs done but there aren't any.\n", 
-                numchanged);
+            fprintf(cp_err,
+                    "ft_checkkids: Internal Error: should be %d jobs done but there aren't any.\n",
+                    numchanged);
             numchanged = 0;
             running = NULL;
             here = FALSE;
             return;
         }
+
         for (p = running; p; p = p->pr_next) {
             if (p->pr_pid == pid)
                 break;
             lp = p;
         }
+
         if (p == NULL) {
             fprintf(cp_err,
-            "ft_checkkids: Internal Error: Process %d not a job!\n",
+                    "ft_checkkids: Internal Error: Process %d not a job!\n",
                     (int) pid);
             here = FALSE;
             return;
         }
+
         if (p == running)
             running = p->pr_next;
         else
             lp->pr_next = p->pr_next;
+
         fprintf(cp_out, "Job finished: %.60s\n", p->pr_name);
         numchanged--;
         ft_loadfile(p->pr_rawfile);
         (void) unlink(p->pr_rawfile);
         out_init();
+
         if (!(fp = fopen(p->pr_outfile, "r"))) {
             perror(p->pr_outfile);
             here = FALSE;
             return;
         }
+
         while (fgets(buf, BSIZE_SP, fp))
             out_send(buf);
+
         (void) fclose(fp);
         if (!p->pr_saveout)
             (void) unlink(p->pr_outfile);
         printf("\n-----\n");
     }
+
     printf("\n");
 #ifdef TIOCSTI
     (void) ioctl(0, TIOCSTI, "\022");   /* Reprint the line. */
@@ -251,6 +264,7 @@ ft_checkkids(void)
     here = FALSE;
     return;
 }
+
 
 /* Run a spice job remotely. See the description of the spice daemon for
  * the protocol. This is no longer 4.2 specific.
@@ -267,8 +281,8 @@ com_rspice(wordlist *wl)
     size_t n;
     int to_serv[2], from_serv[2], err_serv[2];
     int pid;
-    long	pos;
-    int	num;
+    long        pos;
+    int num;
     char *p;
 
     /* Figure out where the spicedaemon is and connect to it. */
@@ -281,50 +295,50 @@ com_rspice(wordlist *wl)
 
     if (*rhost == '\0') {
         fprintf(cp_err,
-    "Error: there is no remote ngspice.host for this site -- set \"rhost\".\n");
-	return;
+                "Error: there is no remote ngspice.host for this site -- set \"rhost\".\n");
+        return;
     }
     if (*program == '\0') {
         fprintf(cp_err,
-"Error: there is no remote spice program for this site -- set \"rprogram\".\n");
-	return;
+                "Error: there is no remote spice program for this site -- set \"rprogram\".\n");
+        return;
     }
 
     if (pipe(to_serv) < 0) {
-	perror("pipe to server");
-	return;
+        perror("pipe to server");
+        return;
     }
     if (pipe(from_serv) < 0) {
-	perror("pipe from server");
-	return;
+        perror("pipe from server");
+        return;
     }
     if (pipe(err_serv) < 0) {
-	perror("2nd pipe from server");
-	return;
+        perror("2nd pipe from server");
+        return;
     }
 
-    pid = fork( );
+    pid = fork();
     if (pid == 0) {
-	/* I am the "server" process */
-	close(to_serv[1]);
-	close(from_serv[0]);
-	close(err_serv[0]);
+        /* I am the "server" process */
+        close(to_serv[1]);
+        close(from_serv[0]);
+        close(err_serv[0]);
 
-	fclose(stdin);
-	fclose(stdout);
-	fclose(stderr);
+        fclose(stdin);
+        fclose(stdout);
+        fclose(stderr);
 
-	dup2(to_serv[0], 0);	/* stdin */
-	dup2(from_serv[1], 1);	/* stdout */
-	dup2(err_serv[1], 2);	/* stderr */
+        dup2(to_serv[0], 0);    /* stdin */
+        dup2(from_serv[1], 1);  /* stdout */
+        dup2(err_serv[1], 2);   /* stderr */
 
-	execlp(remote_shell, remote_shell, rhost, program, "-s", (void*)0);
-	/* system(com_buf); */
-	perror(remote_shell);
-	exit(-1);
+        execlp(remote_shell, remote_shell, rhost, program, "-s", (void*)0);
+        /* system(com_buf); */
+        perror(remote_shell);
+        exit(-1);
     } else if (pid == -1) {
-	perror("fork");
-	return;
+        perror("fork");
+        return;
     }
 
     /* I am the "client" side */
@@ -344,23 +358,23 @@ com_rspice(wordlist *wl)
                 continue;   /* Should be careful */
             }
             while ((n = fread(buf, 1, BSIZE_SP, inp)) > 0)
-		(void) fwrite(buf, 1, strlen(buf), srv_input);
-                /* (void) write(s, buf, n); */
+                (void) fwrite(buf, 1, strlen(buf), srv_input);
+            /* (void) write(s, buf, n); */
             wl = wl->wl_next;
-	    fclose(inp);
+            fclose(inp);
         }
         /* (void) write(s, "@\n", 3);*/
     } else {
         if (ft_nutmeg || !ft_curckt) {
             fprintf(cp_err, "Error: no circuits loaded\n");
-	    fclose(srv_input);
-	    fclose(serv);
+            fclose(srv_input);
+            fclose(serv);
             return;
         }
-            
-        inp_list(srv_input, ft_curckt->ci_deck, ft_curckt->ci_options,
-                LS_DECK);
+
+        inp_list(srv_input, ft_curckt->ci_deck, ft_curckt->ci_options, LS_DECK);
     }
+
     fclose(srv_input);
 
     /* Now wait for things to come through */
@@ -369,33 +383,36 @@ com_rspice(wordlist *wl)
             break;
         fputs(buf, cp_out);
     }
+
     outfile = smktemp("rsp");
     if ((out = fopen(outfile, "w+")) == NULL) {
         perror(outfile);
         (void) fclose(serv);
         return;
     }
+
     if (p)
-	fputs(buf, out);
-    while ((n = fread(buf, 1, BSIZE_SP, serv)) != 0) {
+        fputs(buf, out);
+
+    while ((n = fread(buf, 1, BSIZE_SP, serv)) != 0)
         (void) fwrite(buf, 1, n, out);
-    }
+
     /* We hope that positioning info + error messages < pipe size */
-    while (fgets(buf, BSIZE_SP, err_outp)) {
-	if (!strncmp("@@@", buf, 3)) {
-	    if (sscanf(buf, "@@@ %ld %d", &pos, &num) != 2) {
-		fprintf(stderr, "Error reading rawdata: %s\n", buf);
-		continue;
-	    }
-	    if (fseek(out, pos, SEEK_SET))
-		fprintf(stderr,
-			"Error adjusting rawfile: write \"%d\" at %ld\n",
-			num, pos);
-	    else
-		fprintf(out, "%d", num);
-	} else
-	    fprintf(stderr, "%s", buf);
-    }
+    while (fgets(buf, BSIZE_SP, err_outp))
+        if (!strncmp("@@@", buf, 3)) {
+            if (sscanf(buf, "@@@ %ld %d", &pos, &num) != 2) {
+                fprintf(stderr, "Error reading rawdata: %s\n", buf);
+                continue;
+            }
+            if (fseek(out, pos, SEEK_SET))
+                fprintf(stderr,
+                        "Error adjusting rawfile: write \"%d\" at %ld\n",
+                        num, pos);
+            else
+                fprintf(out, "%d", num);
+        } else {
+            fprintf(stderr, "%s", buf);
+        }
 
     (void) fclose(out);
     (void) fclose(serv);
@@ -412,36 +429,36 @@ com_rspice(wordlist *wl)
 #else
 
 void
-com_aspice(
-    wordlist *wl)
+com_aspice(wordlist *wl)
 {
-	NG_IGNORE(wl);
-	fprintf(cp_err, "Asynchronous spice jobs are not available.\n");
-	return;
+    NG_IGNORE(wl);
+    fprintf(cp_err, "Asynchronous spice jobs are not available.\n");
+    return;
 }
 
+
 void
-com_jobs(
-    wordlist *wl)
+com_jobs(wordlist *wl)
 {
-	NG_IGNORE(wl);
-	fprintf(cp_err, "Asynchronous spice jobs are not available.\n");
-	return;
+    NG_IGNORE(wl);
+    fprintf(cp_err, "Asynchronous spice jobs are not available.\n");
+    return;
 }
+
 
 void
 ft_checkkids(void)
 {
-	return;
+    return;
 }
 
+
 void
-com_rspice(
-    wordlist *wl)
+com_rspice(wordlist *wl)
 {
-	NG_IGNORE(wl);
-	fprintf(cp_err, "Remote spice jobs are not available.\n");
-	return;
+    NG_IGNORE(wl);
+    fprintf(cp_err, "Remote spice jobs are not available.\n");
+    return;
 }
 
 #endif

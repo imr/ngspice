@@ -7,10 +7,11 @@
 struct plot constantplot = {
     "Constant values", Spice_Build_Date, "constants",
     "const", NULL, NULL, NULL, NULL, NULL, NULL, TRUE, 0
-} ;
+};
 
 struct plot *plot_cur = &constantplot;
 struct plot *plot_list = &constantplot;
+
 int plotl_changed;      /* TRUE after a load */
 
 int plot_num = 1;

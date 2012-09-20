@@ -40,10 +40,11 @@ extern void line_free_x(struct line * deck, bool recurse);
  */
 
 /* This is a hack to tell iplot routine to redraw the grid and initialize
-	the display device
- */
+   the display device
+*/
 
 bool resumption = FALSE;
+
 
 void
 com_resume(wordlist *wl)
@@ -77,11 +78,10 @@ com_resume(wordlist *wl)
     ft_curckt->ci_inprogress = TRUE;
     ft_setflag = TRUE;
 
-    reset_trace( );
-    for ( db = dbs, resumption = FALSE; db; db = db->db_next )
-        if( db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL ) {
+    reset_trace();
+    for (db = dbs, resumption = FALSE; db; db = db->db_next)
+        if (db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL)
             resumption = TRUE;
-        }
 
     /*rawfile output saj*/
     if (last_used_rawfile)
@@ -94,8 +94,7 @@ com_resume(wordlist *wl)
             ascii = TRUE;
         else
             fprintf(cp_err,
-                    "Warning: strange file type \"%s\" (using \"ascii\")\n",
-                    buf);
+                    "Warning: strange file type \"%s\" (using \"ascii\")\n", buf);
     }
 
     if (dofile) {
@@ -107,14 +106,14 @@ com_resume(wordlist *wl)
 #if defined(__MINGW32__) || defined(_MSC_VER)
             /* ask if binary or ASCII, open file with w or wb   hvogt 15.3.2000 */
             else if (ascii) {
-                if((rawfileFp = fopen(last_used_rawfile, "a")) == NULL) {
+                if ((rawfileFp = fopen(last_used_rawfile, "a")) == NULL) {
                     setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
                     perror(last_used_rawfile);
                     ft_setflag = FALSE;
                     return;
                 }
             } else if (!ascii) {
-                if((rawfileFp = fopen(last_used_rawfile, "ab")) == NULL) {
+                if ((rawfileFp = fopen(last_used_rawfile, "ab")) == NULL) {
                     setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
                     perror(last_used_rawfile);
                     ft_setflag = FALSE;
@@ -147,7 +146,7 @@ com_resume(wordlist *wl)
 
     /*close rawfile saj*/
     if (rawfileFp) {
-        if (ftell(rawfileFp)==0) {
+        if (ftell(rawfileFp) == 0) {
             (void) fclose(rawfileFp);
             (void) unlink(last_used_rawfile);
         } else {
@@ -163,10 +162,13 @@ com_resume(wordlist *wl)
     } else if (err == 2) {
         fprintf(cp_err, "simulation aborted\n");
         ft_curckt->ci_inprogress = FALSE;
-    } else
+    } else {
         ft_curckt->ci_inprogress = FALSE;
+    }
+
     return;
 }
+
 
 /* Throw out the circuit struct and recreate it from the deck.  This command
  * should be obsolete.
@@ -223,9 +225,9 @@ com_remcirc(wordlist *wl)
     ft_curckt->ci_vars = NULL;
     /* delete the deck and parameter list in ft_curckt */
     dd = ft_curckt->ci_deck;
-    line_free(dd,TRUE);
+    line_free(dd, TRUE);
     dd = ft_curckt->ci_param;
-    line_free(dd,TRUE);
+    line_free(dd, TRUE);
 
     tfree(ft_curckt->FTEstats);
     tfree(ft_curckt->ci_defTask);
@@ -257,4 +259,3 @@ com_remcirc(wordlist *wl)
 
     return;
 }
-

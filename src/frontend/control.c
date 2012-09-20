@@ -49,19 +49,20 @@ int stackp = 0;
  * input is ok though -- use ft_controlreset.  */
 
 /* Notes by CDHW:
-* This routine leaked like a sieve because each getcommand() created a
-* wordlist that was never freed because it might have been added into
-* the control structure. I've tackled this by making sure that everything
-* put into the cend[stackp] is a copy. This means that wlist can be
-* destroyed safely
-*/
+ * This routine leaked like a sieve because each getcommand() created a
+ * wordlist that was never freed because it might have been added into
+ * the control structure. I've tackled this by making sure that everything
+ * put into the cend[stackp] is a copy. This means that wlist can be
+ * destroyed safely
+ */
 
 /* no redirection after the following commands (we may need more to add here!) */
-static char *noredirect[] = { "stop", "define", NULL } ;
+static char *noredirect[] = { "stop", "define", NULL };
 
 
 static struct control *
-findlabel(char *s, struct control *ct) {
+findlabel(char *s, struct control *ct)
+{
     while (ct) {
         if ((ct->co_type == CO_LABEL) && eq(s, ct->co_text->wl_word))
             break;
@@ -103,11 +104,14 @@ pwlist_echo(wordlist *wlist, char *name)   /*CDHW used to perform function of se
     return;
 }
 
+
 /*CDHW Remove control structure and free the memory its hogging CDHW*/
 
-static void ctl_free(struct control *ctrl)
+static void
+ctl_free(struct control *ctrl)
 {
-    if (!ctrl) return;
+    if (!ctrl)
+        return;
     wl_free(ctrl->co_cond);
     ctrl->co_cond = NULL;
     tfree(ctrl->co_foreachvar);
@@ -180,12 +184,11 @@ docommand(wordlist *wlist)
         for (i = 0; noredirect[i]; i++)
             if (eq(wlist->wl_word, noredirect[i]))
                 break;
-        if (!noredirect[i]) {
+        if (!noredirect[i])
             if ((wlist = cp_redirect(wlist)) == NULL) {
                 cp_ioreset();
                 return;
             }
-        }
 
         /* Get rid of all the 8th bits now... */
         cp_striplist(wlist);
@@ -207,17 +210,17 @@ docommand(wordlist *wlist)
         if (!command->co_comname) {
             if (cp_dounixcom && cp_unixcom(wlist))
                 goto out;
-            fprintf(cp_err,"%s: no such command available in %s\n",
+            fprintf(cp_err, "%s: no such command available in %s\n",
                     s, cp_program);
             goto out;
 
             /* If it hasn't been implemented */
         } else if (!command->co_func) {
-            fprintf(cp_err,"%s: command is not implemented\n", s);
+            fprintf(cp_err, "%s: command is not implemented\n", s);
             goto out;
             /* If it's there but spiceonly, and this is nutmeg, error. */
         } else if (ft_nutmeg && command->co_spiceonly) {
-            fprintf(cp_err,"%s: command available only in spice\n", s);
+            fprintf(cp_err, "%s: command available only in spice\n", s);
             goto out;
         }
 
@@ -237,11 +240,11 @@ docommand(wordlist *wlist)
             }
         }
 
-out:
+    out:
         wl_append(ee, wlist);
         wl_append(wlist, nextc);
 
-        if(!ee)
+        if (!ee)
             rwlist = wlist;
 
         wlist = nextc;
@@ -279,7 +282,7 @@ doblock(struct control *bl, int *num)
     char *i;
     int nn;
 
-    nn = *num + 1 ; /*CDHW this is a guess... CDHW*/
+    nn = *num + 1; /*CDHW this is a guess... CDHW*/
 
     switch (bl->co_type) {
     case CO_WHILE:
@@ -298,9 +301,9 @@ doblock(struct control *bl, int *num)
                     break;
 
                 case BROKEN:    /* Break. */
-                    if (nn < 2)
+                    if (nn < 2) {
                         return (NORMAL_STR);
-                    else {
+                    } else {
                         *num = nn - 1;
                         return (BROKEN_STR);
                     }
@@ -334,9 +337,9 @@ doblock(struct control *bl, int *num)
                     break;
 
                 case BROKEN:    /* Break. */
-                    if (nn < 2)
+                    if (nn < 2) {
                         return (NORMAL_STR);
-                    else {
+                    } else {
                         *num = nn - 1;
                         return (BROKEN_STR);
                     }
@@ -369,7 +372,7 @@ doblock(struct control *bl, int *num)
           bl->co_numtimes = -1: repeat forever
           bl->co_timestodo: remaining repeats*/
         while ((bl->co_timestodo > 0) ||
-                (bl->co_timestodo == -1)) {
+               (bl->co_timestodo == -1)) {
             if (!bl->co_children) cp_periodic();  /*CDHW*/
             if (bl->co_timestodo != -1) bl->co_timestodo--;
             /* loop through all stements inside rpeat ... end */
@@ -384,9 +387,9 @@ doblock(struct control *bl, int *num)
                 case BROKEN:    /* Break. */
                     /* before leaving repeat loop set remaining timestodo to 0 */
                     bl->co_timestodo = 0;
-                    if (nn < 2)
+                    if (nn < 2) {
                         return (NORMAL_STR);
-                    else {
+                    } else {
                         *num = nn - 1;
                         return (BROKEN_STR);
                     }
@@ -436,8 +439,7 @@ doblock(struct control *bl, int *num)
                 cn = ch->co_next;
                 i = doblock(ch, &nn);
                 if (*i > 2) {
-                    cn = findlabel(i,
-                                   bl->co_elseblock);
+                    cn = findlabel(i, bl->co_elseblock);
                     if (!cn)
                         return (i);
                 } else if (*i != NORMAL) {
@@ -450,8 +452,8 @@ doblock(struct control *bl, int *num)
 
     case CO_FOREACH:
         for (wl = cp_variablesubst(cp_bquote(cp_doglob(wl_copy(bl->co_text))));
-                wl;
-                wl = wl->wl_next) {
+             wl;
+             wl = wl->wl_next) {
             cp_vset(bl->co_foreachvar, CP_STRING, wl->wl_word);
             for (ch = bl->co_children; ch; ch = cn) {
                 cn = ch->co_next;
@@ -462,9 +464,9 @@ doblock(struct control *bl, int *num)
                     break;
 
                 case BROKEN:    /* Break. */
-                    if (nn < 2)
+                    if (nn < 2) {
                         return (NORMAL_STR);
-                    else {
+                    } else {
                         *num = nn - 1;
                         return (BROKEN_STR);
                     }
@@ -535,8 +537,9 @@ doblock(struct control *bl, int *num)
     return (NORMAL_STR);
 }
 
+
 /* Maxiumum number of cheverons used for the alternative prompt */
-#define MAX_CHEVRONS	16
+#define MAX_CHEVRONS    16
 
 /* Get the alternate prompt.
    Number of chevrons indicates stack depth.
@@ -546,7 +549,7 @@ char *
 get_alt_prompt(void)
 {
     int i = 0, j;
-    static char buf[MAX_CHEVRONS + 2];	/* includes terminating space & null */
+    static char buf[MAX_CHEVRONS + 2];  /* includes terminating space & null */
     struct control *c;
 
     /* if nothing on the command stack return NULL */
@@ -562,11 +565,11 @@ get_alt_prompt(void)
 
     /* Avoid overflow of buffer and
        indicate when we've limited the chevrons by starting with a '+' */
-    if(i > MAX_CHEVRONS) {
+    if (i > MAX_CHEVRONS) {
         i = MAX_CHEVRONS;
-        buf[0]='+';
+        buf[0] = '+';
     } else {
-        buf[0]='>';
+        buf[0] = '>';
     }
 
     /* return one chevron per command stack depth */
@@ -607,6 +610,7 @@ getcommand(char *string)
     return (wlist);
 }
 
+
 /* va: TODO: free control structure(s) before overwriting (memory leakage) */
 int
 cp_evloop(char *string)
@@ -631,15 +635,16 @@ cp_evloop(char *string)
             if (cend[stackp]->co_parent && !string) {
                 cp_resetcontrol();
                 continue;
-            } else
+            } else {
                 return (0);
+            }
         }
         if ((wlist->wl_word == NULL) || (*wlist->wl_word == '\0')) {
             /* User just typed return. */
             wl_free(wlist); /* va, avoid memory leak */
-            if (string)
+            if (string) {
                 return (1);
-            else {
+            } else {
                 cp_event--;
                 continue;
             }
@@ -708,10 +713,11 @@ cp_evloop(char *string)
                         *dd = 0.0;
                     }
                     cend[stackp]->co_numtimes = (int) *dd;
-                } else
+                } else {
                     fprintf(cp_err,
                             "Error: bad repeat argument %s\n",
                             t->wl_next->wl_word); /* CDHW */
+                }
                 wl_free(t);
                 t = NULL;  /* CDHW */
             }
@@ -733,9 +739,10 @@ cp_evloop(char *string)
                 cend[stackp]->co_foreachvar =
                     copy(wlist->wl_word);
                 wlist = wlist->wl_next;
-            } else
+            } else {
                 fprintf(stderr,
                         "Error: missing foreach variable.\n");
+            }
             wlist = cp_doglob(wlist);  /*CDHW Possible leak around here? */
             cend[stackp]->co_text = wl_copy(wlist);
             newblock;
@@ -748,8 +755,9 @@ cp_evloop(char *string)
                 if (wlist->wl_next->wl_next)
                     fprintf(cp_err,
                             "Warning: ignored extra junk after label.\n");
-            } else
+            } else {
                 fprintf(stderr, "Error: missing label.\n");
+            }
 
         } else if (eq(wlist->wl_word, "goto")) {
             /* Incidentally, this won't work if the values 1 and 2 ever get
@@ -761,8 +769,9 @@ cp_evloop(char *string)
                 if (wlist->wl_next->wl_next)
                     fprintf(cp_err,
                             "Warning: ignored extra junk after goto.\n");
-            } else
+            } else {
                 fprintf(stderr, "Error: missing label.\n");
+            }
         } else if (eq(wlist->wl_word, "continue")) {
             cend[stackp]->co_type = CO_CONTINUE;
             if (wlist->wl_next) {
@@ -772,8 +781,9 @@ cp_evloop(char *string)
                     fprintf(cp_err,
                             "Warning: ignored extra junk after continue %d.\n",
                             cend[stackp]->co_numtimes);
-            } else
+            } else {
                 cend[stackp]->co_numtimes = 1;
+            }
         } else if (eq(wlist->wl_word, "break")) {
             cend[stackp]->co_type = CO_BREAK;
             if (wlist->wl_next) {
@@ -783,8 +793,9 @@ cp_evloop(char *string)
                     fprintf(cp_err,
                             "Warning: ignored extra junk after break %d.\n",
                             cend[stackp]->co_numtimes);
-            } else
+            } else {
                 cend[stackp]->co_numtimes = 1;
+            }
         } else if (eq(wlist->wl_word, "end")) {
             /* Throw away this thing. */
             if (!cend[stackp]->co_parent) {
@@ -795,18 +806,18 @@ cp_evloop(char *string)
                 x = cend[stackp];
                 cend[stackp] = cend[stackp]->co_parent;
                 tfree(x);
-                x=NULL;
+                x = NULL;
             } else {
                 x = cend[stackp];
                 cend[stackp] = cend[stackp]->co_parent;
                 cend[stackp]->co_children = NULL;
                 tfree(x);
-                x=NULL;
+                x = NULL;
             }
         } else if (eq(wlist->wl_word, "else")) {
             if (!cend[stackp]->co_parent ||
-                    (cend[stackp]->co_parent->co_type !=
-                     CO_IF)) {
+                (cend[stackp]->co_parent->co_type !=
+                 CO_IF)) {
                 fprintf(stderr, "Error: misplaced else.\n");
                 cend[stackp]->co_type = CO_UNFILLED;
             } else {
@@ -852,14 +863,15 @@ cp_evloop(char *string)
         }
         wl_free(wlist);
         wlist = NULL;
-        if (string) {
+        if (string)
             return (1); /* The return value is irrelevant. */
-        }
     }
+
     wl_free(wlist);
     wlist = NULL;
     return (0); /* va: which value? */
 }
+
 
 /* This blows away the control structures... */
 void cp_free_control(void); /* needed by resetcontrol */
@@ -883,9 +895,9 @@ cp_popcontrol(void)
 {
     if (cp_debug)
         fprintf(cp_err, "pop: stackp: %d -> %d\n", stackp, stackp - 1);
-    if (stackp < 1)
+    if (stackp < 1) {
         fprintf(cp_err, "cp_popcontrol: Internal Error: stack empty\n");
-    else {
+    } else {
         /* va: free unused control structure */
         ctl_free(control[stackp]);
         stackp--;
@@ -924,13 +936,14 @@ cp_toplevel(void)
 
 
 /* va: This totally frees the control structures */
-void cp_free_control(void)
+void
+cp_free_control(void)
 {
     int i;
 
-    for (i=stackp; i>=0; i--) ctl_free(control[i]);
+    for (i = stackp; i >= 0; i--)
+        ctl_free(control[i]);
 
     control[0] = cend[0] = NULL;
     stackp = 0;
 }
-

@@ -21,19 +21,18 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "variable.h"
 
 
-/* static declarations */
-static char * pn(double num);
-static int CKTfour(int ndata, int numFreq, double *thd, double *Time, double *Value, 
-		   double FundFreq, double *Freq, double *Mag, double *Phase, double *nMag, 
-		   double *nPhase);
+static char *pn(double num);
+static int CKTfour(int ndata, int numFreq, double *thd, double *Time, double *Value,
+                   double FundFreq, double *Freq, double *Mag, double *Phase, double *nMag,
+                   double *nPhase);
 
 
 
 #define DEF_FOURGRIDSIZE 200
 
 
-/* CKTfour(ndata,numFreq,thd,Time,Value,FundFreq,Freq,Mag,Phase,nMag,nPhase)
- *         len   10      ?   inp  inp   inp      out  out out   out  out
+/* CKTfour(ndata, numFreq, thd, Time, Value, FundFreq, Freq, Mag, Phase, nMag, nPhase)
+ *         len    10       ?    inp   inp    inp       out   out  out    out   out
  */
 
 /* FIXME: This function leaks memory due to non local exit bypassing
@@ -53,7 +52,7 @@ fourier(wordlist *wl, struct plot *current_plot)
     int shift;
 
     if (!current_plot)
-	return 1;
+        return 1;
 
     sprintf(xbuf, "%1.1e", 0.0);
     shift = (int) strlen(xbuf) - 7;
@@ -95,14 +94,13 @@ fourier(wordlist *wl, struct plot *current_plot)
         names = names->pn_next;
         while (vec) {
             if (vec->v_length != time->v_length) {
-                fprintf(cp_err, 
-                    "Error: lengths don't match: %d, %d\n",
+                fprintf(cp_err,
+                        "Error: lengths don't match: %d, %d\n",
                         vec->v_length, time->v_length);
                 continue;
             }
             if (!isreal(vec)) {
-                fprintf(cp_err, "Error: %s isn't real!\n", 
-                        vec->v_name);
+                fprintf(cp_err, "Error: %s isn't real!\n", vec->v_name);
                 continue;
             }
 
@@ -115,8 +113,7 @@ fourier(wordlist *wl, struct plot *current_plot)
                 /* Now get the last fund freq... */
                 d = 1 / fundfreq;   /* The wavelength... */
                 if (dp[1] - dp[0] < d) {
-                    fprintf(cp_err, 
-			    "Error: wavelength longer than time span\n");
+                    fprintf(cp_err, "Error: wavelength longer than time span\n");
                     return 1;
                 } else if (dp[1] - dp[0] > d) {
                     dp[0] = dp[1] - d;
@@ -125,14 +122,13 @@ fourier(wordlist *wl, struct plot *current_plot)
                 d = (dp[1] - dp[0]) / fourgridsize;
                 for (i = 0; i < fourgridsize; i++)
                     grid[i] = dp[0] + i * d;
-                
+
                 /* Now interpolate the stuff... */
                 if (!ft_interpolate(vec->v_realdata, stuff,
-                        time->v_realdata, vec->v_length,
-                        grid, fourgridsize, 
-                        polydegree)) {
-                    fprintf(cp_err, 
-                        "Error: can't interpolate\n");
+                                    time->v_realdata, vec->v_length,
+                                    grid, fourgridsize,
+                                    polydegree)) {
+                    fprintf(cp_err, "Error: can't interpolate\n");
                     return 1;
                 }
                 timescale = grid;
@@ -143,25 +139,24 @@ fourier(wordlist *wl, struct plot *current_plot)
             }
 
             err = CKTfour(fourgridsize, nfreqs, &thd, timescale,
-                    stuff, fundfreq, freq, mag, phase, nmag,
-                    nphase);
+                          stuff, fundfreq, freq, mag, phase, nmag,
+                          nphase);
             if (err != OK) {
                 ft_sperror(err, "fourier");
                 return 1;
             }
 
-            fprintf(cp_out, "Fourier analysis for %s:\n", 
-                    vec->v_name);
-            fprintf(cp_out, 
-"  No. Harmonics: %d, THD: %g %%, Gridsize: %d, Interpolation Degree: %d\n\n",
-                nfreqs,  thd, fourgridsize, 
-                polydegree);
+            fprintf(cp_out, "Fourier analysis for %s:\n", vec->v_name);
+            fprintf(cp_out,
+                    "  No. Harmonics: %d, THD: %g %%, Gridsize: %d, Interpolation Degree: %d\n\n",
+                    nfreqs, thd, fourgridsize,
+                    polydegree);
             /* Each field will have width cp_numdgt + 6 (or 7
              * with HP-UX) + 1 if there is a - sign.
              */
             fw = ((cp_numdgt > 0) ? cp_numdgt : 6) + 5 + shift;
             fprintf(cp_out, "Harmonic %-*s %-*s %-*s %-*s %-*s\n",
-                    fw, "Frequency", fw, "Magnitude", 
+                    fw, "Frequency", fw, "Magnitude",
                     fw, "Phase", fw, "Norm. Mag",
                     fw, "Norm. Phase");
             fprintf(cp_out, "-------- %-*s %-*s %-*s %-*s %-*s\n",
@@ -170,23 +165,25 @@ fourier(wordlist *wl, struct plot *current_plot)
                     fw, "-----------");
             for (i = 0; i < nfreqs; i++)
                 fprintf(cp_out,
-                    " %-4d    %-*s %-*s %-*s %-*s %-*s\n",
-                    i,
-                    fw, pn(freq[i]),
-                    fw, pn(mag[i]),
-                    fw, pn(phase[i]),
-                    fw, pn(nmag[i]),
-                    fw, pn(nphase[i]));
+                        " %-4d    %-*s %-*s %-*s %-*s %-*s\n",
+                        i,
+                        fw, pn(freq[i]),
+                        fw, pn(mag[i]),
+                        fw, pn(phase[i]),
+                        fw, pn(nmag[i]),
+                        fw, pn(nphase[i]));
             fputs("\n", cp_out);
             vec = vec->v_link2;
         }
     }
+
     free_pnode(first_name);
     tfree(freq);
     tfree(mag);
     tfree(phase);
     tfree(nmag);
     tfree(nphase);
+
     return 0;
 }
 
@@ -196,7 +193,6 @@ com_fourier(wordlist *wl)
 {
     fourier(wl, plot_cur);
 }
-
 
 
 static char *
@@ -212,6 +208,7 @@ pn(double num)
         sprintf(buf, "%.*g", i - 1, num);
     else
         sprintf(buf, "%.*g", i, num);
+
     return (copy(buf));
 }
 
@@ -224,25 +221,25 @@ pn(double num)
  * vectors of time and data values to have the fourier analysis
  * performed on them.  */
 static int
-CKTfour(int ndata,		/* number of entries in the Time and
+CKTfour(int ndata,              /* number of entries in the Time and
                                    Value arrays */
-	int numFreq,		/* number of harmonics to calculate */
-	double *thd,		/* total harmonic distortion (percent)
+        int numFreq,            /* number of harmonics to calculate */
+        double *thd,            /* total harmonic distortion (percent)
                                    to be returned */
-	double *Time,		/* times at which the voltage/current
+        double *Time,           /* times at which the voltage/current
                                    values were measured*/
-	double *Value,		/* voltage or current vector whose
+        double *Value,          /* voltage or current vector whose
                                    transform is desired */
-	double FundFreq,	/* the fundamental frequency of the
+        double FundFreq,        /* the fundamental frequency of the
                                    analysis */
-	double *Freq,		/* the frequency value of the various
+        double *Freq,           /* the frequency value of the various
                                    harmonics */
-	double *Mag,		/* the Magnitude of the fourier
+        double *Mag,            /* the Magnitude of the fourier
                                    transform */
-	double *Phase,		/* the Phase of the fourier transform */
-	double *nMag,		/* the normalized magnitude of the
+        double *Phase,          /* the Phase of the fourier transform */
+        double *nMag,           /* the normalized magnitude of the
                                    transform: nMag(fund)=1*/
-	double *nPhase)		/* the normalized phase of the
+        double *nPhase)         /* the normalized phase of the
                                    transform: Nphase(fund)=0 */
 {
     /* Note: we can consider these as a set of arrays.  The sizes are:
@@ -265,30 +262,31 @@ CKTfour(int ndata,		/* number of entries in the Time and
 
     /* clear output/computation arrays */
 
-    for(i=0;i<numFreq;i++) {
-        Mag[i]=0;
-        Phase[i]=0;
-    }
-    for(i=0;i<ndata;i++) {
-        for(j=0;j<numFreq;j++) {
-            Mag[j]   += (Value[i]*sin(j*2.0*M_PI*i/((double) ndata)));
-            Phase[j] += (Value[i]*cos(j*2.0*M_PI*i/((double) ndata)));
-        }
+    for (i = 0; i < numFreq; i++) {
+        Mag[i] = 0;
+        Phase[i] = 0;
     }
 
+    for (i = 0; i < ndata; i++)
+        for (j = 0; j < numFreq; j++) {
+            Mag[j]   += Value[i] * sin(j*2.0*M_PI*i/((double)ndata));
+            Phase[j] += Value[i] * cos(j*2.0*M_PI*i/((double)ndata));
+        }
+
     Mag[0] = Phase[0]/ndata;
-    Phase[0]=nMag[0]=nPhase[0]=Freq[0]=0;
+    Phase[0] = nMag[0] = nPhase[0] = Freq[0] = 0;
     *thd = 0;
-    for(i=1;i<numFreq;i++) {
-        tmp = Mag[i]*2.0 /ndata;
-        Phase[i] *= 2.0/ndata;
+    for (i = 1; i < numFreq; i++) {
+        tmp = Mag[i] * 2.0 / ndata;
+        Phase[i] *= 2.0 / ndata;
         Freq[i] = i * FundFreq;
-        Mag[i] = sqrt(tmp*tmp+Phase[i]*Phase[i]);
-        Phase[i] = atan2(Phase[i],tmp)*180.0/M_PI;
-        nMag[i] = Mag[i]/Mag[1];
-        nPhase[i] = Phase[i]-Phase[1];
-        if(i>1) *thd += nMag[i]*nMag[i];
+        Mag[i] = sqrt(tmp*tmp + Phase[i]*Phase[i]);
+        Phase[i] = atan2(Phase[i], tmp) * 180.0/M_PI;
+        nMag[i] = Mag[i] / Mag[1];
+        nPhase[i] = Phase[i] - Phase[1];
+        if (i > 1)
+            *thd += nMag[i] * nMag[i];
     }
     *thd = 100*sqrt(*thd);
-    return(OK);
+    return (OK);
 }

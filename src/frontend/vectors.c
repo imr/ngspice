@@ -27,6 +27,7 @@ struct dvec *EVTfindvec(char *node);
 /* gtri - end   - add function prototype for EVTfindvec */
 #endif
 
+
 /* Find a named vector in a plot. We are careful to copy the vector if
  * v_link2 is set, because otherwise we will get screwed up.  */
 static struct dvec *
@@ -44,8 +45,9 @@ findvec(char *word, struct plot *pl)
                 if (d->v_link2) {
                     v = vec_copy(d);
                     vec_new(v);
-                } else
+                } else {
                     v = d;
+                }
                 if (end)
                     end->v_link2 = v;
                 else
@@ -62,8 +64,9 @@ findvec(char *word, struct plot *pl)
                 if (d->v_link2) {
                     v = vec_copy(d);
                     vec_new(v);
-                } else
+                } else {
                     v = d;
+                }
                 if (end)
                     end->v_link2 = v;
                 else
@@ -80,8 +83,9 @@ findvec(char *word, struct plot *pl)
                 if (d->v_link2) {
                     v = vec_copy(d);
                     vec_new(v);
-                } else
+                } else {
                     v = d;
+                }
                 if (end)
                     end->v_link2 = v;
                 else
@@ -98,8 +102,9 @@ findvec(char *word, struct plot *pl)
                 if (d->v_link2) {
                     v = vec_copy(d);
                     vec_new(v);
-                } else
+                } else {
                     v = d;
+                }
                 if (end)
                     end->v_link2 = v;
                 else
@@ -122,7 +127,7 @@ findvec(char *word, struct plot *pl)
 #ifdef XSPICE
     /* gtri - begin - Add processing for getting event-driven vector */
 
-    if(!d)
+    if (!d)
         d = EVTfindvec(word);
 
     /* gtri - end   - Add processing for getting event-driven vector */
@@ -146,6 +151,7 @@ namecmp(const void *a, const void *b)
 
     const char *s = (const char *) a;
     const char *t = (const char *) b;
+
     for (;;) {
         while ((*s == *t) && !isdigit(*s) && *s)
             s++, t++;
@@ -197,7 +203,7 @@ sortvecs(struct dvec *d)
     for (t = d, i = 0; t; t = t->v_link2)
         array[i++] = t;
 
-    qsort(array, (size_t) i, sizeof (struct dvec *), veccmp);
+    qsort(array, (size_t) i, sizeof(struct dvec *), veccmp);
 
     /* Now string everything back together... */
     for (j = 0; j < i - 1; j++)
@@ -241,6 +247,7 @@ ft_loadfile(char *file)
     return;
 }
 
+
 void
 plot_add(struct plot *pl)
 {
@@ -278,6 +285,7 @@ plot_add(struct plot *pl)
     return;
 }
 
+
 /* Remove a vector from the database, if it is there. */
 
 void
@@ -285,10 +293,10 @@ vec_remove(char *name)
 {
     struct dvec *ov;
 
-    for (ov = plot_cur->pl_dvecs; ov; ov = ov->v_next) {
+    for (ov = plot_cur->pl_dvecs; ov; ov = ov->v_next)
         if (cieq(name, ov->v_name) && (ov->v_flags & VF_PERMANENT))
             break;
-    }
+
     if (!ov)
         return;
 
@@ -298,6 +306,7 @@ vec_remove(char *name)
     cp_remkword(CT_VECTOR, name);
     return;
 }
+
 
 /* Get a vector by name. This deals with v(1), etc. almost properly. Also,
  * it checks for pre-defined vectors.
@@ -323,8 +332,8 @@ vec_fromplot(char *word, struct plot *plot)
 
     /* scanf("%c(%s)" doesn't do what it should do. ) */
     if (!d && (sscanf(word, "%c(%s", /* ) */ &cc, buf) == 2) &&
-            /* ( */ ((s =strrchr(buf, ')')) != NULL) &&
-            (*(s + 1) == '\0')) {
+        /* ( */ ((s = strrchr(buf, ')')) != NULL) &&
+        (*(s + 1) == '\0')) {
         *s = '\0';
         if (prefix("i(", /* ) */ word) || prefix("I(", /* ) */ word)) {
             /* Spice dependency... */
@@ -336,6 +345,7 @@ vec_fromplot(char *word, struct plot *plot)
 
     return (d);
 }
+
 
 /* This is the main lookup routine for names. The possible types of names are:
  *  name        An ordinary vector.
@@ -383,8 +393,9 @@ vec_get(const char *vec_name)
                 pl = plot_cur;
             }
         }
-    } else
+    } else {
         pl = plot_cur;
+    }
 
     if (pl) {
         d = vec_fromplot(word, pl);
@@ -419,11 +430,11 @@ vec_get(const char *vec_name)
         if (ft_nutmeg) {
             fprintf(cp_err,
                     "Error: circuit parameters only available with spice\n");
-            tfree(wd); 	/* MW. Memory leak fixed again */
+            tfree(wd);  /* MW. Memory leak fixed again */
             return (NULL); /* va: use NULL */
         }
 
-        whole=copy(word);
+        whole = copy(word);
         name = ++word;
         for (param = name; *param && (*param != '['); param++)
             ;
@@ -433,8 +444,9 @@ vec_get(const char *vec_name)
             for (s = param; *s && *s != ']'; s++)
                 ;
             *s = '\0';
-        } else
+        } else {
             param = NULL;
+        }
 
 
         if (ft_curckt) {
@@ -445,7 +457,7 @@ vec_get(const char *vec_name)
              */
 
             /* vv = if_getparam (ft_curckt->ci_ckt, &name, param, 0, 0); */
-            vv = if_getparam (ft_curckt->ci_ckt, &name, param, 0, 0);
+            vv = if_getparam(ft_curckt->ci_ckt, &name, param, 0, 0);
             if (!vv) {
                 tfree(whole);
                 tfree(wd);
@@ -481,7 +493,7 @@ vec_get(const char *vec_name)
          * int POTnegNode;     // number of negative node of potenciometer (Nodo_3)
          *  case POT_QUEST_POS_NODE:
          *  value->rValue = (double)fast->POTposNode;
-         *  return(OK);
+         *  return (OK);
          *  Works but with the format 1.00000E0
          */
 
@@ -502,7 +514,7 @@ vec_get(const char *vec_name)
          *   CP_STRING,
          *   CP_LIST
          ° };
-         */
+        */
 
         /* The variable is a vector */
         if (vv->va_type == CP_LIST) {
@@ -561,7 +573,7 @@ vec_get(const char *vec_name)
                         fprintf(stdout, "%s=%d\n", nv->va_name, nv->va_num);
                         break;
                     default: {
-                        fprintf(stderr, "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not handled in vec_get\nAborting...\n" );
+                        fprintf(stderr, "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not handled in vec_get\nAborting...\n");
                         controlled_exit(EXIT_FAILURE);
                     }
                     }
@@ -591,6 +603,7 @@ vec_get(const char *vec_name)
     return (sortvecs(d));
 }
 
+
 /* Execute the commands for a plot. This is done whenever a plot becomes
  * the current plot.
  */
@@ -611,6 +624,7 @@ plot_docoms(wordlist *wl)
     return;
 }
 
+
 /* Create a copy of a vector. */
 
 struct dvec *
@@ -630,7 +644,7 @@ vec_copy(struct dvec *v)
     if (isreal(v)) {
         nv->v_realdata = TMALLOC(double, v->v_length);
         bcopy(v->v_realdata, nv->v_realdata,
-              sizeof (double) * (size_t) v->v_length);
+              sizeof(double) * (size_t) v->v_length);
         nv->v_compdata = NULL;
     } else {
         nv->v_realdata = NULL;
@@ -671,6 +685,7 @@ vec_copy(struct dvec *v)
     return (nv);
 }
 
+
 /* Create a new plot structure. This just fills in the typename and sets up
  * the ccom struct.
  */
@@ -704,6 +719,7 @@ plot_alloc(char *name)
     return (pl);
 }
 
+
 /* Stick a new vector in the proper place in the plot list. */
 
 void
@@ -729,6 +745,7 @@ vec_new(struct dvec *d)
     d->v_plot->pl_dvecs = d;
     return;
 }
+
 
 /* Because of the way that all vectors, including temporary vectors,
  * are linked together under the current plot, they can often be
@@ -762,6 +779,7 @@ vec_gc(void)
     return;
 }
 
+
 /* Free a dvector. This is sort of a pain because we also have to make sure
  * that it has been unlinked from its plot structure. If the name of the
  * vector is NULL, then we have already freed it so don't try again. (This
@@ -782,9 +800,9 @@ vec_free_x(struct dvec *v)
 
     /* Now we have to take this dvec out of the plot list. */
     if (pl != NULL) {
-        if (pl->pl_dvecs == v)
+        if (pl->pl_dvecs == v) {
             pl->pl_dvecs = v->v_next;
-        else {
+        } else {
             for (lv = pl->pl_dvecs; lv->v_next; lv = lv->v_next)
                 if (lv->v_next == v)
                     break;
@@ -801,12 +819,18 @@ vec_free_x(struct dvec *v)
                 pl->pl_scale = NULL;
         }
     }
-    if (v->v_name) tfree(v->v_name);
-    if (v->v_realdata) tfree(v->v_realdata);
-    if (v->v_compdata) tfree(v->v_compdata);
+
+    if (v->v_name)
+        tfree(v->v_name);
+    if (v->v_realdata)
+        tfree(v->v_realdata);
+    if (v->v_compdata)
+        tfree(v->v_compdata);
+
     tfree(v);
     return;
 }
+
 
 /* This is something we do in a few places...  Since vectors get copied a lot,
  * we can't just compare pointers to tell if two vectors are 'really' the same.
@@ -834,6 +858,7 @@ vec_eq(struct dvec *v1, struct dvec *v2)
     return rtn;
 }
 
+
 /* Return the name of the vector with the plot prefix stripped off.  This
  * is no longer trivial since '.' doesn't always mean 'plot prefix'.
  */
@@ -852,8 +877,9 @@ vec_basename(struct dvec *v)
             (void) strcpy(buf, t + 1);
         else
             (void) strcpy(buf, v->v_name);
-    } else
+    } else {
         (void) strcpy(buf, v->v_name);
+    }
 
     strtolower(buf);
     for (t = buf; isspace(*t); t++)
@@ -865,8 +891,6 @@ vec_basename(struct dvec *v)
         *--t = '\0';
     return (copy(s));
 }
-
-
 
 
 /* Make a plot the current one.  This gets called by cp_usrset() when one
@@ -884,7 +908,7 @@ plot_setcur(char *name)
         pl = plot_alloc("unknown");
         pl->pl_title = copy("Anonymous");
         pl->pl_name = copy("unknown");
-        pl->pl_date = copy(datestring( ));
+        pl->pl_date = copy(datestring());
         plot_new(pl);
         plot_cur = pl;
         return;
@@ -900,14 +924,15 @@ plot_setcur(char *name)
      *     repeated op-commands. When however cp_kwswitch is necessary for other
      *     reasons, we should hold the original keyword table pointer in an
      *     permanent variable, since it will lost here, and can never tfree'd.
-        if (plot_cur)
-        {
-            plot_cur->pl_ccom = cp_kwswitch(CT_VECTOR, pl->pl_ccom);
-        }
+     if (plot_cur)
+     {
+     plot_cur->pl_ccom = cp_kwswitch(CT_VECTOR, pl->pl_ccom);
+     }
     */
     plot_cur = pl;
     return;
 }
+
 
 /* Add a plot to the plot list. This is different from plot_add() in that
  * all this does is update the list and the variable $plots.
@@ -921,6 +946,7 @@ plot_new(struct plot *pl)
 
     return;
 }
+
 
 /* This routine takes a multi-dimensional vector, treats it as a
  * group of 2-dimensional matrices and transposes each matrix.
@@ -999,6 +1025,7 @@ vec_transpose(struct dvec *v)
     }
 }
 
+
 /* This routine takes a multi-dimensional vector and turns it into a family
  * of 1-d vectors, linked together with v_link2.  It is here so that plot
  * can do intelligent things.
@@ -1062,6 +1089,7 @@ vec_mkfamily(struct dvec *v)
     return (vecs);
 }
 
+
 /* This function will match "op" with "op1", but not "op1" with "op12". */
 
 bool
@@ -1069,15 +1097,16 @@ plot_prefix(char *pre, char *str)
 {
     if (!*pre)
         return (TRUE);
+
     while (*pre && *str) {
         if (*pre != *str)
             break;
         pre++;
         str++;
     }
+
     if (*pre || (*str && isdigit(pre[-1])))
         return (FALSE);
     else
         return (TRUE);
 }
-

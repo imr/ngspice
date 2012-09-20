@@ -13,6 +13,7 @@
 #include "com_compose.h"
 #include "completion.h"
 
+
 /* Copy the data from a vector into a buffer with larger dimensions. */
 static void
 dimxpand(struct dvec *v, int *newdims, double *data)
@@ -24,7 +25,7 @@ dimxpand(struct dvec *v, int *newdims, double *data)
 
     for (i = 0; i < MAXDIMS; i++)
         ncount[i] = ocount[i] = 0;
-    
+
     for (;;) {
         for (o = n = i = 0; i < v->v_numdims; i++) {
             for (j = i, t = u = 1; j < v->v_numdims; j++) {
@@ -41,24 +42,23 @@ dimxpand(struct dvec *v, int *newdims, double *data)
             realpart(cdata[n]) = realpart(v->v_compdata[o]);
             imagpart(cdata[n]) = imagpart(v->v_compdata[o]);
         }
+
         /* Now find the nextstrchr element... */
-        for (i = v->v_numdims - 1; i >= 0; i--) {
-            if ((ocount[i] < v->v_dims[i] - 1) &&
-                    (ncount[i] < newdims[i] - 1)) {
+        for (i = v->v_numdims - 1; i >= 0; i--)
+            if ((ocount[i] < v->v_dims[i] - 1) && (ncount[i] < newdims[i] - 1)) {
                 ocount[i]++;
                 ncount[i]++;
                 break;
-            } else
+            } else {
                 ocount[i] = ncount[i] = 0;
-        }
+            }
+
         if (i < 0)
             break;
     }
 
     return;
 }
-
-
 
 
 /* The general syntax is 'compose name parm = val ...'
@@ -118,40 +118,46 @@ com_compose(wordlist *wl)
     bool realflag = TRUE;
     int dims[MAXDIMS];
     struct dvec *result, *vecs = NULL, *v, *lv = NULL;
-    struct pnode *pn, *first_pn=NULL;
+    struct pnode *pn, *first_pn = NULL;
     bool reverse = FALSE;
 
     resname = cp_unquote(wl->wl_word);
     vec_remove(resname);
     wl = wl->wl_next;
+
     if (eq(wl->wl_word, "values")) {
         /* Build up the vector from the rest of the line... */
         wl = wl->wl_next;
         if ((pn = ft_getpnames(wl, TRUE)) == NULL)
             return;
-	first_pn = pn;
+        first_pn = pn;
         while (pn) {
             if ((v = ft_evaluate(pn)) == NULL)
                 return;
+
             if (!vecs)
                 vecs = lv = v;
             else
                 lv->v_link2 = v;
+
             for (lv = v; lv->v_link2; lv = lv->v_link2)
                 ;
             pn = pn->pn_next;
         }
+
         /* Now make sure these are all of the same dimensionality.  We
          * can coerce the sizes...
          */
         dim = vecs->v_numdims;
         if (dim < 2)
             dim = (vecs->v_length > 1) ? 1 : 0;
+
         if (dim == MAXDIMS) {
             fprintf(cp_err, "Error: max dimensionality is %d\n",
                     MAXDIMS);
             return;
         }
+
         for (v = vecs; v; v = v->v_link2)
             if (v->v_numdims < 2)
                 v->v_dims[0] = v->v_length;
@@ -162,13 +168,14 @@ com_compose(wordlist *wl)
                 i = (v->v_length > 1) ? 1 : 0;
             if (i != dim) {
                 fprintf(cp_err,
-        "Error: all vectors must be of the same dimensionality\n");
+                        "Error: all vectors must be of the same dimensionality\n");
                 return;
             }
             length++;
             if (iscomplex(v))
                 realflag = FALSE;
         }
+
         for (i = 0; i < dim; i++) {
             dims[i] = vecs->v_dims[i];
             for (v = vecs->v_link2; v; v = v->v_link2)
@@ -179,6 +186,7 @@ com_compose(wordlist *wl)
         dims[dim - 1] = length;
         for (i = 0, blocksize = 1; i < dim - 1; i++)
             blocksize *= dims[i];
+
         if (realflag)
             data = TMALLOC(double, length * blocksize);
         else
@@ -189,23 +197,20 @@ com_compose(wordlist *wl)
          */
         for (v = vecs, i = 0; v; v = v->v_link2) {
             if (dim == 1) {
-                if (realflag && isreal(v))
+                if (realflag && isreal(v)) {
                     data[i] = v->v_realdata[0];
-                else if (isreal(v)) {
-                    realpart(cdata[i]) =
-                        realpart(v->v_compdata[0]);
+                } else if (isreal(v)) {
+                    realpart(cdata[i]) = realpart(v->v_compdata[0]);
                     imagpart(cdata[i]) = 0.0;
                 } else {
-                    realpart(cdata[i]) =
-                        realpart(v->v_compdata[0]);
-                    imagpart(cdata[i]) =
-                        imagpart(v->v_compdata[0]);
+                    realpart(cdata[i]) = realpart(v->v_compdata[0]);
+                    imagpart(cdata[i]) = imagpart(v->v_compdata[0]);
                 }
                 i++;
                 continue;
             }
-            dimxpand(v, dims, (realflag ? (data + i * blocksize) : 
-                    (double *) (cdata + i * blocksize)));
+            dimxpand(v, dims, (realflag ? (data + i * blocksize) :
+                               (double *) (cdata + i * blocksize)));
         }
 
         length *= blocksize;
@@ -238,7 +243,7 @@ com_compose(wordlist *wl)
                     val = wl->wl_word;
                     if (*val != '=') {
                         fprintf(cp_err,
-                            "Error: bad syntax\n");
+                                "Error: bad syntax\n");
                         return;
                     }
                     val++;
@@ -248,7 +253,7 @@ com_compose(wordlist *wl)
                             val = wl->wl_word;
                         } else {
                             fprintf(cp_err,
-                            "Error: bad syntax\n");
+                                    "Error: bad syntax\n");
                             return;
                         }
                     }
@@ -262,8 +267,7 @@ com_compose(wordlist *wl)
                 startgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                        "Error: bad parm %s = %s\n",
-                        var, val);
+                            "Error: bad parm %s = %s\n", var, val);
                     return;
                 }
                 start = *td;
@@ -271,8 +275,7 @@ com_compose(wordlist *wl)
                 stopgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                        "Error: bad parm %s = %s\n",
-                        var, val);
+                            "Error: bad parm %s = %s\n", var, val);
                     return;
                 }
                 stop = *td;
@@ -280,8 +283,7 @@ com_compose(wordlist *wl)
                 stepgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                        "Error: bad parm %s = %s\n",
-                        var, val);
+                            "Error: bad parm %s = %s\n", var, val);
                     return;
                 }
                 step = *td;
@@ -289,8 +291,7 @@ com_compose(wordlist *wl)
                 centergiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                        "Error: bad parm %s = %s\n",
-                        var, val);
+                            "Error: bad parm %s = %s\n", var, val);
                     return;
                 }
                 center = *td;
@@ -298,8 +299,7 @@ com_compose(wordlist *wl)
                 spangiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                        "Error: bad parm %s = %s\n",
-                        var, val);
+                            "Error: bad parm %s = %s\n", var, val);
                     return;
                 }
                 span = *td;
@@ -307,8 +307,7 @@ com_compose(wordlist *wl)
                 meangiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                        "Error: bad parm %s = %s\n",
-                        var, val);
+                            "Error: bad parm %s = %s\n", var, val);
                     return;
                 }
                 mean = *td;
@@ -316,8 +315,7 @@ com_compose(wordlist *wl)
                 sdgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                        "Error: bad parm %s = %s\n",
-                        var, val);
+                            "Error: bad parm %s = %s\n", var, val);
                     return;
                 }
                 sd = *td;
@@ -325,8 +323,7 @@ com_compose(wordlist *wl)
                 lingiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                        "Error: bad parm %s = %s\n",
-                        var, val);
+                            "Error: bad parm %s = %s\n", var, val);
                     return;
                 }
                 lin = *td;
@@ -334,8 +331,7 @@ com_compose(wordlist *wl)
                 loggiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                        "Error: bad parm %s = %s\n",
-                        var, val);
+                            "Error: bad parm %s = %s\n", var, val);
                     return;
                 }
                 log = (int)(*td);
@@ -343,8 +339,7 @@ com_compose(wordlist *wl)
                 decgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                        "Error: bad parm %s = %s\n",
-                        var, val);
+                            "Error: bad parm %s = %s\n", var, val);
                     return;
                 }
                 dec = (int)(*td);
@@ -352,8 +347,7 @@ com_compose(wordlist *wl)
                 gaussgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                        "Error: bad parm %s = %s\n",
-                        var, val);
+                            "Error: bad parm %s = %s\n", var, val);
                     return;
                 }
                 gauss = (int)(*td);
@@ -361,8 +355,7 @@ com_compose(wordlist *wl)
                 randmgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                        "Error: bad parm %s = %s\n",
-                        var, val);
+                            "Error: bad parm %s = %s\n", var, val);
                     return;
                 }
                 randm = (int)(*td);
@@ -373,11 +366,10 @@ com_compose(wordlist *wl)
         }
 
 #ifdef LINT
-/* XXX Now, doesn't this look just a little suspicious */
-        if (centergiven || spangiven || meangiven || sdgiven ||
-                poolgiven)
+        /* XXX Now, doesn't this look just a little suspicious */
+        if (centergiven || spangiven || meangiven || sdgiven || poolgiven)
             j = k = l = m = q = inds = center + span + mean + sd +
-                    log + dec + gauss + randm + pool;
+                log + dec + gauss + randm + pool;
 #endif
         /* Now see what we have... start and stop are pretty much
          * compatible with everything...
@@ -386,19 +378,19 @@ com_compose(wordlist *wl)
             fprintf(cp_err, "Error: step cannot = 0.0\n");
             return;
         }
+
         if (startgiven && stopgiven && (start > stop)) {
             tt = start;
             start = stop;
             stop = tt;
             reverse = TRUE;
         }
-        if (lingiven + loggiven + decgiven + randmgiven + gaussgiven
-                > 1) {
+
+        if (lingiven + loggiven + decgiven + randmgiven + gaussgiven > 1) {
             fprintf(cp_err,
-    "Error: can have at most one of (lin, log, dec, random, gauss)\n");
+                    "Error: can have at most one of (lin, log, dec, random, gauss)\n");
             return;
-        } else if (lingiven + loggiven + decgiven + randmgiven +
-                gaussgiven == 0) {
+        } else if (lingiven + loggiven + decgiven + randmgiven + gaussgiven == 0) {
             /* Hmm, if we have a start, stop, and step we're ok. */
             if (startgiven && stopgiven && stepgiven) {
                 lingiven = TRUE;
@@ -406,33 +398,31 @@ com_compose(wordlist *wl)
                 stepgiven = FALSE;  /* Problems below... */
             } else {
                 fprintf(cp_err,
-"Error: either one of (lin, log, dec, random, gauss) must be given, or all\n");
+                        "Error: either one of (lin, log, dec, random, gauss) must be given, or all\n");
                 fprintf(cp_err,
-            "\tof (start, stop, and step) must be given.\n");
+                        "\tof (start, stop, and step) must be given.\n");
                 return;
             }
         }
+
         if (lingiven) {
             /* Create a linear sweep... */
             data = TMALLOC(double, (int) lin);
             if (stepgiven && startgiven && stopgiven) {
-                if (step != (stop - start) / lin * (reverse ?
-                        -1 : 1)) {
-                    fprintf(cp_err, 
-                    "Warning: bad step -- should be %g\n",
-                            (stop - start) / lin *
-                            (reverse ? -1 : 1));
+                if (step != (stop - start) / lin * (reverse ? -1 : 1)) {
+                    fprintf(cp_err,
+                            "Warning: bad step -- should be %g\n",
+                            (stop - start) / lin * (reverse ? -1 : 1));
                     stepgiven = FALSE;
                 }
-            } 
+            }
             if (!startgiven) {
-                if (stopgiven && stepgiven) {
+                if (stopgiven && stepgiven)
                     start = stop - step * lin;
-                } else if (stopgiven) {
+                else if (stopgiven)
                     start = stop - lin;
-                } else {
+                else
                     start = 0;
-                }
                 startgiven = TRUE;
             }
             if (!stopgiven) {
@@ -441,17 +431,15 @@ com_compose(wordlist *wl)
                 else
                     stop = start + lin;
                 stopgiven = TRUE;
-            } 
+            }
             if (!stepgiven) {
                 step = (stop - start) / lin;
             }
             if (reverse)
-                for (i = 0, tt = stop; i < lin;
-                        i++, tt -= step)
+                for (i = 0, tt = stop; i < lin; i++, tt -= step)
                     data[i] = tt;
             else
-                for (i = 0, tt = start; i < lin;
-                        i++, tt += step)
+                for (i = 0, tt = start; i < lin; i++, tt += step)
                     data[i] = tt;
             length = (int)lin;
         } else if (loggiven || decgiven) {
@@ -462,10 +450,12 @@ com_compose(wordlist *wl)
             /* Create a gaussian distribution... */
         }
     }
+
     result = alloc(struct dvec);
     ZERO(result, struct dvec);
     result->v_name = copy(resname);
     result->v_type = type;
+
     if (realflag) {
         result->v_flags = VF_REAL | VF_PERMANENT;
         result->v_realdata = data;
@@ -473,12 +463,14 @@ com_compose(wordlist *wl)
         result->v_flags =  VF_COMPLEX | VF_PERMANENT;
         result->v_compdata = cdata;
     }
+
     result->v_length = length;
     result->v_numdims = 1;
     result->v_dims[0] = length;
+
     vec_new(result);
     cp_addkword(CT_VECTOR, result->v_name);
     free_pnode(first_pn);
-    tfree(resname);/*DG: resname has been copied so its remains allocated: memory leak One can remove this and not copy resname*/
+    tfree(resname); /*DG: resname has been copied so its remains allocated: memory leak One can remove this and not copy resname*/
     return;
 }

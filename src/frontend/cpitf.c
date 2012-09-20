@@ -268,7 +268,7 @@ ft_cpinit(void)
                 found = TRUE;
                 break;
 
-#if defined (HAS_WINDOWS) || defined (__MINGW32__) || defined (_MSC_VER)
+#if defined(HAS_WINDOWS) || defined(__MINGW32__) || defined(_MSC_VER)
                 /* search in local directory where ngspice.exe resides */
 #if defined TCL_MODULE
             } else if ((fp = fopen("./tclspinit", "r")) != NULL) {
@@ -281,8 +281,9 @@ ft_cpinit(void)
                 found = TRUE;
                 break;
 #endif
-            } else if (ft_controldb)
+            } else if (ft_controldb) {
                 fprintf(cp_err, "Note: can't open \"%s\".\n", buf);
+            }
         }
 
         if (!found)
@@ -291,6 +292,7 @@ ft_cpinit(void)
 
     tcap_init();
 }
+
 
 /* Decide whether a condition is TRUE or not. */
 
@@ -332,6 +334,7 @@ cp_istrue(wordlist *wl)
     return (FALSE);
 }
 
+
 /* This gets called before every command is executed...
    from fcns do_command() or do_block() in control.c */
 
@@ -345,11 +348,13 @@ cp_periodic(void)
     vec_gc();       /* remove vectors which do not have permanent flag set (vectors.c) */
 }
 
+
 void
 cp_doquit(void)
 {
     com_quit(NULL);
 }
+
 
 /* This is how we deal with emulation of commands by scripts... If the script
  * is found, then set the variables argc and argv and call the script.  Note

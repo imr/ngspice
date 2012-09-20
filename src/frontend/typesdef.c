@@ -43,15 +43,15 @@ struct type types[NUMTYPES] = {
     { "pole", NULL } ,
     { "zero", NULL } ,
     { "s-param", NULL } ,
-    { "temp-sweep", "Celsius" } ,/* Added by HT */
-    { "res-sweep", "Ohms" } ,    /* Added by HT */
-    { "impedance", "Ohms" } ,    /* Added by A.Roldan */
-    { "admittance", "Mhos" } ,   /* Added by A.Roldan */
-    { "power", "W" } ,           /* Added by A.Roldan */
-    { "phase", "Degree" } ,      /* Added by A.Roldan */
-    { "decibel", "dB" } ,        /* Added by A.Roldan */
+    { "temp-sweep", "Celsius" } , /* Added by HT */
+    { "res-sweep", "Ohms" } ,     /* Added by HT */
+    { "impedance", "Ohms" } ,     /* Added by A.Roldan */
+    { "admittance", "Mhos" } ,    /* Added by A.Roldan */
+    { "power", "W" } ,            /* Added by A.Roldan */
+    { "phase", "Degree" } ,       /* Added by A.Roldan */
+    { "decibel", "dB" } ,         /* Added by A.Roldan */
 
-} ;
+};
 
 /* The stuff for plot names. */
 
@@ -77,10 +77,11 @@ struct plotab plotabs[NUMPLOTTYPES] = {
     { "sp", "sp" } ,
     { "harm", "harm" },
     { "spect", "spect" },
-} ;
+};
 
-int notypes = 19 ;
+int notypes = 19;
 int noplotabs = 21;
+
 
 /* A command to define types for vectors and plots.  This will generally
  * be used in the Command: field of the rawfile.
@@ -98,8 +99,8 @@ com_dftype(wordlist *wl)
     int i;
 
     switch (*wl->wl_word) {
-        case 'v':
-        case 'V':
+    case 'v':
+    case 'V':
         wl = wl->wl_next;
         name = copy(wl->wl_word);
         wl = wl->wl_next;
@@ -118,8 +119,8 @@ com_dftype(wordlist *wl)
         notypes++;
         break;
 
-        case 'p':
-        case 'P':
+    case 'p':
+    case 'P':
         wl = wl->wl_next;
         name = copy(wl->wl_word);
         wl = wl->wl_next;
@@ -143,12 +144,14 @@ com_dftype(wordlist *wl)
         }
         break;
 
-        default:
+    default:
         fprintf(cp_err, "Error: missing 'p' or 'v' argument\n");
         break;
     }
+
     return;
 }
+
 
 /* Return the abbreviation associated with a number. */
 
@@ -161,6 +164,7 @@ ft_typabbrev(int typenum)
         return (NULL);
 }
 
+
 /* Return the typename associated with a number. */
 
 char *
@@ -172,6 +176,7 @@ ft_typenames(int typenum)
         return (NULL);
 }
 
+
 /* Return the type number associated with the name. */
 
 int
@@ -181,11 +186,14 @@ ft_typnum(char *name)
 
     if (eq(name, "none"))
         name = "notype";
+
     for (i = 0; (i < NUMTYPES) && types[i].t_name; i++)
         if (cieq(name, types[i].t_name))
             return (i);
+
     return (0);
 }
+
 
 /* For plots... */
 
@@ -209,6 +217,7 @@ ft_plotabbrev(char *string)
     return (NULL);
 }
 
+
 /* Change the type of a vector. */
 
 void
@@ -219,24 +228,24 @@ com_stype(wordlist *wl)
     struct dvec *v, *vv;
     char *s;
 
-    for (tt = 0; ; tt++) {
+    for (tt = 0; ; tt++)
         if ((s = ft_typenames(tt)) == NULL || eq(type, s))
             break;
-    }
+
     if (!s) {
         fprintf(cp_err, "Error: no such type as '%s'\n", type);
         return;
     }
+
     for (wl = wl->wl_next; wl; wl = wl->wl_next) {
         v = vec_get(wl->wl_word);
         if (!v)
-            fprintf(cp_err, "Error: no such vector %s.\n",
-                    wl->wl_word);
-        else 
+            fprintf(cp_err, "Error: no such vector %s.\n", wl->wl_word);
+        else
             for (vv = v; vv; vv = vv->v_link2)
                 if (vv->v_flags & VF_PERMANENT)
                     vv->v_type = tt;
     }
+
     return;
 }
-

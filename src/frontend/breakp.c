@@ -18,11 +18,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "completion.h"
 
+
 static bool satisfied(struct dbcomm *d, struct plot *plot);
 static void printcond(struct dbcomm *d, FILE *fp);
 
 static int howmanysteps = 0;
 static int steps = 0;
+
 
 /* Set a breakpoint. Possible commands are:
  *  stop after n
@@ -41,45 +43,47 @@ com_stop(wordlist *wl)
     double *val;
 
     while (wl) {
-        if (thisone == NULL)
+        if (thisone == NULL) {
             thisone = d = alloc(struct dbcomm);
-        else {
+        } else {
             d->db_also = alloc(struct dbcomm);
             d = d->db_also;
         }
 
         /* Figure out what the first condition is. */
-	d->db_analysis = NULL;
+        d->db_analysis = NULL;
         if (eq(wl->wl_word, "after") && wl->wl_next) {
             d->db_type = DB_STOPAFTER;
             d->db_number = debugnumber;
-	    if (!wl->wl_next->wl_word)
-		i = 0;
-	    else {
+            if (!wl->wl_next->wl_word) {
+                i = 0;
+            } else {
 #ifdef HAVE_CTYPE_H
-		for (s = wl->wl_next->wl_word, i = 0; *s; s++)
-		    if (!isdigit(*s))
-			goto bad;
-		    else
-			i = i * 10 + (*s - '0');
+                for (s = wl->wl_next->wl_word, i = 0; *s; s++)
+                    if (!isdigit(*s))
+                        goto bad;
+                    else
+                        i = i * 10 + (*s - '0');
 #else
-		i = atoi(wl->wl_next->wl_word); /* etoi ??? */
+                i = atoi(wl->wl_next->wl_word); /* etoi ??? */
 #endif
-	    }
+            }
             d->db_iteration = i;
             wl = wl->wl_next->wl_next;
         } else if (eq(wl->wl_word, "when") && wl->wl_next) {
-            /* cp_lexer(string) will not discriminate '=', so we have 
+            /* cp_lexer(string) will not discriminate '=', so we have
                to do it here */
-            if (strstr(wl->wl_next->wl_word,"=") && (!(wl->wl_next->wl_next) ||
-               strstr(wl->wl_next->wl_next->wl_word,"when") || 
-               strstr(wl->wl_next->wl_next->wl_word,"after"))) {
+            if (strstr(wl->wl_next->wl_word, "=") &&
+                (!(wl->wl_next->wl_next) ||
+                 strstr(wl->wl_next->wl_next->wl_word, "when") ||
+                 strstr(wl->wl_next->wl_next->wl_word, "after")))
+            {
                 /* we have vec=val in a single word */
-                wordlist * wln;
-                char** charr = TMALLOC(char*, 4) ;
+                wordlist *wln;
+                char **charr = TMALLOC(char*, 4);
                 char *tok = copy(wl->wl_next->wl_word);
-                char *tokeq = strstr(tok,"=");
-                char *tokafter = copy(tokeq+1);
+                char *tokeq = strstr(tok, "=");
+                char *tokafter = copy(tokeq + 1);
                 *tokeq = '\0';
                 charr[0] = tok;
                 charr[1] = copy("eq");
@@ -89,8 +93,7 @@ com_stop(wordlist *wl)
                 wl_splice(wl->wl_next, wln);
             }
             /* continue with parsing the enhanced wordlist */
-            if (wl->wl_next->wl_next && 
-                wl->wl_next->wl_next->wl_next) {
+            if (wl->wl_next->wl_next && wl->wl_next->wl_next->wl_next) {
                 wl = wl->wl_next;
                 d->db_number = debugnumber;
                 d->db_type = DB_STOPWHEN;
@@ -127,17 +130,20 @@ com_stop(wordlist *wl)
                 else
                     d->db_nodename2 = copy(wl->wl_word);
                 wl = wl->wl_next;
-            } else
+            } else {
                 goto bad;
+            }
         }
     }
+
     if (thisone) {
         if (dbs) {
             for (d = dbs; d->db_next; d = d->db_next)
                 ;
             d->db_next = thisone;
-        } else
+        } else {
             dbs = thisone;
+        }
         (void) sprintf(buf, "%d", debugnumber);
         cp_addkword(CT_DBNUMS, buf);
         debugnumber++;
@@ -145,9 +151,11 @@ com_stop(wordlist *wl)
 
     return;
 
-bad:    fprintf(cp_err, "Syntax error parsing breakpoint specification.\n");
+bad:
+    fprintf(cp_err, "Syntax error parsing breakpoint specification.\n");
     return;
 }
+
 
 /* Trace a node (have wrd_point print it). Usage is "trace node ..."*/
 
@@ -158,24 +166,24 @@ com_trce(wordlist *wl)
     return;
 }
 
+
 /* Incrementally plot a value. This is just like trace. */
 
 void
 com_iplot(wordlist *wl)
 {
-
     /* settrace(wl, VF_PLOT); */
 
     struct dbcomm *d, *td, *currentdb = NULL;
     char *s;
 
     /* We use a modified ad-hoc algorithm here where db_also denotes
-        vectors on the same command line and db_next denotes
-        separate iplot commands. */
+       vectors on the same command line and db_next denotes
+       separate iplot commands. */
     while (wl) {
         s = cp_unquote(wl->wl_word);
         d = alloc(struct dbcomm);
-	d->db_analysis = NULL;
+        d->db_analysis = NULL;
         d->db_number = debugnumber++;
         if (eq(s, "all")) {
             d->db_type = DB_IPLOTALL;
@@ -188,16 +196,18 @@ com_iplot(wordlist *wl)
         currentdb = d;
         wl = wl->wl_next;
     }
+
     if (dbs) {
         for (td = dbs; td->db_next; td = td->db_next)
             ;
         td->db_next = currentdb;
-    } else
+    } else {
         dbs = currentdb;
+    }
 
     return;
-
 }
+
 
 /* Step a number of iterations. */
 
@@ -208,9 +218,12 @@ com_step(wordlist *wl)
         steps = howmanysteps = atoi(wl->wl_word);
     else
         steps = howmanysteps = 1;
+
     com_resume(NULL);
+
     return;
 }
+
 
 /* Print out the currently active breakpoints and traces. If we are printing
  * to a file, assume that the file will be used for a later source and leave
@@ -230,24 +243,19 @@ com_sttus(wordlist *wl)
     for (d = dbs; d; d = d->db_next) {
         if (d->db_type == DB_TRACENODE) {
             if (isatty(fileno(cp_out)))
-                fprintf(cp_out, "%-4d trace %s", d->db_number,
-                    d->db_nodename1);
+                fprintf(cp_out, "%-4d trace %s", d->db_number, d->db_nodename1);
             else
                 fprintf(cp_out, "trace %s", d->db_nodename1);
         } else if (d->db_type == DB_IPLOT) {
-            if (isatty(fileno(cp_out))) {
-                fprintf(cp_out, "%-4d iplot %s", d->db_number,
-                    d->db_nodename1);
-            } else {
+            if (isatty(fileno(cp_out)))
+                fprintf(cp_out, "%-4d iplot %s", d->db_number, d->db_nodename1);
+            else
                 fprintf(cp_out, "iplot %s", d->db_nodename1);
-            }
-            for (dc = d->db_also; dc; dc = dc->db_also) {
-              fprintf(cp_out, " %s", dc->db_nodename1);
-            }
+            for (dc = d->db_also; dc; dc = dc->db_also)
+                fprintf(cp_out, " %s", dc->db_nodename1);
         } else if (d->db_type == DB_SAVE) {
             if (isatty(fileno(cp_out)))
-                fprintf(cp_out, "%-4d save %s", d->db_number,
-                    d->db_nodename1);
+                fprintf(cp_out, "%-4d save %s", d->db_number, d->db_nodename1);
             else
                 fprintf(cp_out, "save %s", d->db_nodename1);
         } else if (d->db_type == DB_TRACEALL) {
@@ -265,8 +273,7 @@ com_sttus(wordlist *wl)
                 fprintf(cp_out, "%-4d save all", d->db_number);
             else
                 fprintf(cp_out, "save all");
-        } else if ((d->db_type == DB_STOPAFTER) ||
-                (d->db_type == DB_STOPWHEN)) {
+        } else if ((d->db_type == DB_STOPAFTER) || (d->db_type == DB_STOPWHEN)) {
             if (isatty(fileno(cp_out)))
                 fprintf(cp_out, "%-4d stop", d->db_number);
             else
@@ -275,20 +282,22 @@ com_sttus(wordlist *wl)
         } else if ((d->db_type == DB_DEADIPLOT)) {
             if (isatty(fileno(cp_out))) {
                 fprintf(cp_out, "%-4d exiting iplot %s", d->db_number,
-                    d->db_nodename1);
+                        d->db_nodename1);
             } else {
                 fprintf(cp_out, "exiting iplot %s", d->db_nodename1);
             }
-            for (dc = d->db_also; dc; dc = dc->db_also) {
-              fprintf(cp_out, " %s", dc->db_nodename1);
-            }
-        } else
-            fprintf(cp_err, 
-                "com_sttus: Internal Error: bad db %d\n", d->db_type);
+            for (dc = d->db_also; dc; dc = dc->db_also)
+                fprintf(cp_out, " %s", dc->db_nodename1);
+        } else {
+            fprintf(cp_err,
+                    "com_sttus: Internal Error: bad db %d\n", d->db_type);
+        }
         (void) putc('\n', cp_out);
     }
+
     return;
 }
+
 
 void
 dbfree(struct dbcomm *db)
@@ -301,8 +310,10 @@ dbfree(struct dbcomm *db)
         tfree(dd->db_nodename2);
         tfree(dd);
     }
+
     return;
 }
+
 
 /* Delete breakpoints and traces. Usage is delete [number ...] */
 
@@ -326,21 +337,26 @@ com_delete(wordlist *wl)
             return;
         }
     }
+
     while (wl) {
-	if (wl->wl_word) {
+
+        if (wl->wl_word) {
 #ifdef HAVE_CTYPE_H
-	    for (s = wl->wl_word, i = 0; *s; s++)
-		if (!isdigit(*s)) {
-		    fprintf(cp_err, "Error: %s isn't a number.\n",
-			    wl->wl_word);
-		    goto bad;
-		} else
-		    i = i * 10 + (*s - '0');
+            for (s = wl->wl_word, i = 0; *s; s++)
+                if (!isdigit(*s)) {
+                    fprintf(cp_err, "Error: %s isn't a number.\n",
+                            wl->wl_word);
+                    goto bad;
+                } else {
+                    i = i * 10 + (*s - '0');
+                }
 #else
-	    i = atoi(wl->wl_next->wl_word); /* etoi ??? */
+            i = atoi(wl->wl_next->wl_word); /* etoi ??? */
 #endif
-	} else
-	    i = 0;
+        } else {
+            i = 0;
+        }
+
         for (d = dbs, dt = NULL; d; d = d->db_next) {
             if (d->db_number == i) {
                 if (dt)
@@ -354,10 +370,14 @@ com_delete(wordlist *wl)
             }
             dt = d;
         }
-bad:        wl = wl->wl_next;
+
+    bad:
+        wl = wl->wl_next;
     }
+
     return;
 }
+
 
 /* Writedata calls this routine to see if it should keep going. If it
  * returns TRUE, then the run should resume.
@@ -378,42 +398,46 @@ ft_bpcheck(struct plot *runplot, int iteration)
     for (d = dbs; d; d = d->db_next) {
         for (dt = d; dt; dt = dt->db_also) {
             switch (dt->db_type) {
-                case DB_TRACENODE:
-                case DB_TRACEALL:
-                case DB_IPLOT:
-                case DB_DEADIPLOT:
-                case DB_IPLOTALL:
-                case DB_SAVE:
-                case DB_SAVEALL:
+            case DB_TRACENODE:
+            case DB_TRACEALL:
+            case DB_IPLOT:
+            case DB_DEADIPLOT:
+            case DB_IPLOTALL:
+            case DB_SAVE:
+            case DB_SAVEALL:
+                goto more;
+            case DB_STOPAFTER:
+                if (iteration == dt->db_iteration)
+                    break;
+                else
                     goto more;
-                case DB_STOPAFTER:
-                    if (iteration == dt->db_iteration)
-                        break;
-                    else
-                        goto more;
-                case DB_STOPWHEN:
-                    /* See if the condition is TRUE. */
-                    if (satisfied(dt, runplot))
-                        break;
-                    else
-                        goto more;
-                default:
-                    fprintf(cp_err, "ft_bpcheck: Internal Error: bad db %d\n", 
-			    dt->db_type);
+            case DB_STOPWHEN:
+                /* See if the condition is TRUE. */
+                if (satisfied(dt, runplot))
+                    break;
+                else
+                    goto more;
+            default:
+                fprintf(cp_err, "ft_bpcheck: Internal Error: bad db %d\n",
+                        dt->db_type);
             }
         }
+
         if (dt == NULL) {
             /* It made it */
-            fprintf(cp_err, "%-2d: condition met: stop ",
-                d->db_number);
+            fprintf(cp_err, "%-2d: condition met: stop ", d->db_number);
             printcond(d, cp_err);
             (void) putc('\n', cp_err);
             return (FALSE);
         }
-more:   /* Just continue */ ;
+
+    more:   /* Just continue */
+        ;
     }
+
     return (TRUE);
 }
+
 
 /* This is called to determine whether a STOPWHEN is TRUE. */
 
@@ -425,51 +449,51 @@ satisfied(struct dbcomm *d, struct plot *plot)
 
     if (d->db_nodename1) {
         if ((v1 = vec_fromplot(d->db_nodename1, plot)) == NULL) {
-            fprintf(cp_err, "Error: %s: no such node\n", 
-                    d->db_nodename1);
+            fprintf(cp_err, "Error: %s: no such node\n", d->db_nodename1);
             return (FALSE);
         }
         if (isreal(v1))
             d1 = v1->v_realdata[v1->v_length - 1];
         else
             d1 = realpart((v1->v_compdata[v1->v_length - 1]));
-    } else
+    } else {
         d1 = d->db_value1;
+    }
 
     if (d->db_nodename2) {
         if ((v2 = vec_fromplot(d->db_nodename2, plot)) == NULL) {
-            fprintf(cp_err, "Error: %s: no such node\n", 
-                    d->db_nodename2);
+            fprintf(cp_err, "Error: %s: no such node\n", d->db_nodename2);
             return (FALSE);
         }
         if (isreal(v2))
             d2 = v2->v_realdata[v2->v_length - 1];
         else
             d2 = realpart((v2->v_compdata[v2->v_length - 1]));
-    } else
+    } else {
         d2 = d->db_value2;
+    }
 
     switch (d->db_op) {
-        case DBC_EQU:
-            return (AlmostEqualUlps(d1, d2, 3) ? TRUE : FALSE);
-//            return ((d1 == d2) ? TRUE : FALSE);
-        case DBC_NEQ:
-            return ((d1 != d2) ? TRUE : FALSE);
-        case DBC_GTE:
-            return ((d1 >= d2) ? TRUE : FALSE);
-        case DBC_LTE:
-            return ((d1 <= d2) ? TRUE : FALSE);
-        case DBC_GT:
-            return ((d1 > d2) ? TRUE : FALSE);
-        case DBC_LT:
-            return ((d1 < d2) ? TRUE : FALSE);
-        default:
-            fprintf(cp_err, 
-                "satisfied: Internal Error: bad cond %d\n", 
-                    d->db_op);
-            return (FALSE);
+    case DBC_EQU:
+        return (AlmostEqualUlps(d1, d2, 3) ? TRUE : FALSE);
+        // return ((d1 == d2) ? TRUE : FALSE);
+    case DBC_NEQ:
+        return ((d1 != d2) ? TRUE : FALSE);
+    case DBC_GTE:
+        return ((d1 >= d2) ? TRUE : FALSE);
+    case DBC_LTE:
+        return ((d1 <= d2) ? TRUE : FALSE);
+    case DBC_GT:
+        return ((d1 > d2) ? TRUE : FALSE);
+    case DBC_LT:
+        return ((d1 < d2) ? TRUE : FALSE);
+    default:
+        fprintf(cp_err,
+                "satisfied: Internal Error: bad cond %d\n", d->db_op);
+        return (FALSE);
     }
 }
+
 
 /* Writedata calls this before it starts a run, to set the proper flags
  * on the dvecs. If a change is made during a break, then the routine
@@ -484,50 +508,51 @@ ft_trquery(void)
     return;
 }
 
+
 static void
 printcond(struct dbcomm *d, FILE *fp)
 {
     struct dbcomm *dt;
 
     for (dt = d; dt; dt = dt->db_also) {
-        if (dt->db_type == DB_STOPAFTER)
+        if (dt->db_type == DB_STOPAFTER) {
             fprintf(fp, " after %d", dt->db_iteration);
-        else {
+        } else {
             if (dt->db_nodename1)
-                fprintf(fp, " when %s",
-                    dt->db_nodename1);
+                fprintf(fp, " when %s", dt->db_nodename1);
             else
                 fprintf(fp, " when %g", dt->db_value1);
+
             switch (dt->db_op) {
-                case DBC_EQU:
-                    fputs(" =", fp);
-                    break;
-                case DBC_NEQ:
-                    fputs(" <>", fp);
-                    break;
-                case DBC_GT:
-                    fputs(" >", fp);
-                    break;
-                case DBC_LT:
-                    fputs(" <", fp);
-                    break;
-                case DBC_GTE:
-                    fputs(" >=", fp);
-                    break;
-                case DBC_LTE:
-                    fputs(" <=", fp);
-                    break;
-                default:
-                    fprintf(cp_err,
-                "printcond: Internal Error: bad cond %d", 
-                        dt->db_op);
+            case DBC_EQU:
+                fputs(" =", fp);
+                break;
+            case DBC_NEQ:
+                fputs(" <>", fp);
+                break;
+            case DBC_GT:
+                fputs(" >", fp);
+                break;
+            case DBC_LT:
+                fputs(" <", fp);
+                break;
+            case DBC_GTE:
+                fputs(" >=", fp);
+                break;
+            case DBC_LTE:
+                fputs(" <=", fp);
+                break;
+            default:
+                fprintf(cp_err,
+                        "printcond: Internal Error: bad cond %d", dt->db_op);
             }
+
             if (dt->db_nodename2)
                 fprintf(fp, " %s", dt->db_nodename2);
             else
                 fprintf(fp, " %g", dt->db_value2);
         }
     }
+
     return;
 }
-

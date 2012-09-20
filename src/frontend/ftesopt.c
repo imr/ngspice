@@ -45,9 +45,10 @@ ft_getstat(struct circ *ft_curckt, char *name)
                     vv->va_type = FTEOPTtbl[i].dataType;
                     vv->va_name = copy(FTEOPTtbl[i].description);
                     vv->va_next = NULL;
-                    return(vv);
-                } else
+                    return (vv);
+                } else {
                     return (NULL);
+                }
             }
         return (NULL);
     } else {
@@ -88,7 +89,8 @@ getFTEstat(struct circ *ft_curckt, int id)
         break;
     default:
         tfree(v);
-        return(NULL);
+        return (NULL);
     }
-    return(v);
+
+    return (v);
 }

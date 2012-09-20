@@ -19,11 +19,11 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "ngspice/sim.h"  /* To get SV_VOLTAGE definition */
 
-/* static declarations */
+
 static RETSIGTYPE sig_matherr(void);
-static struct dvec * apply_func(struct func *func, struct pnode *arg);
+static struct dvec *apply_func(struct func *func, struct pnode *arg);
 static struct dvec *ft_ternary(struct pnode *node);
-static char * mkcname(char what, char *v1, char *v2);
+static char *mkcname(char what, char *v1, char *v2);
 
 
 /* We are careful here to catch SIGILL and recognise them as math errors.
@@ -43,8 +43,8 @@ sig_matherr(void)
 
 /* Note that ft_evaluate will return NULL on invalid expressions. */
 /* va: NOTE: ft_evaluate returns a new vector for expressions (func, op, ...)
-       and an existing vector (node->pn_value) when node->pn_value != NULL. 
-       For garbage collection caller must vec_free() expression-vector. */
+   and an existing vector (node->pn_value) when node->pn_value != NULL.
+   For garbage collection caller must vec_free() expression-vector. */
 struct dvec *
 ft_evaluate(struct pnode *node)
 {
@@ -60,7 +60,7 @@ ft_evaluate(struct pnode *node)
         if (node->pn_op->op_arity == 1)
             d = node->pn_op->op_func.unary (node->pn_left);
         else if (node->pn_op->op_arity == 2) {
-            if(node->pn_op->op_num == PT_OP_TERNARY)
+            if (node->pn_op->op_num == PT_OP_TERNARY)
                 d = ft_ternary(node);
             else
                 d = node->pn_op->op_func.binary (node->pn_left, node->pn_right);
@@ -70,12 +70,11 @@ ft_evaluate(struct pnode *node)
         d = NULL;
     }
 
-    if (d==NULL) {
+    if (d == NULL)
         return NULL;
-    }
 
     if (node->pn_name && !ft_evdb && d && !d->v_link2) {
-        if (d->v_name) 
+        if (d->v_name)
             tfree(d->v_name); /* patch by Stefan Jones */
         d->v_name = copy(node->pn_name);
     }
@@ -83,8 +82,9 @@ ft_evaluate(struct pnode *node)
     if (!d->v_length) {
         fprintf(cp_err, "Error: no such vector %s\n", d->v_name);
         return (NULL);
-    } else
+    } else {
         return (d);
+    }
 }
 
 
@@ -95,7 +95,7 @@ ft_ternary(struct pnode *node)
     struct pnode *arg;
     int c;
 
-    if(!node->pn_right->pn_op || node->pn_right->pn_op->op_func.binary != op_comma)
+    if (!node->pn_right->pn_op || node->pn_right->pn_op->op_func.binary != op_comma)
     {
         fprintf(cp_err, "Error: ft_ternary(), daemons ...\n");
         return NULL;
@@ -103,27 +103,27 @@ ft_ternary(struct pnode *node)
 
     cond = ft_evaluate(node->pn_left);
 
-    if(cond->v_link2) {
+    if (cond->v_link2) {
         fprintf(cp_err, "Error: ft_ternary(), whats that ?\n");
         return NULL;
     }
 
-    if(cond->v_numdims != 1) {
+    if (cond->v_numdims != 1) {
         fprintf(cp_err, "Error: ft_ternary(), condition must be scalar, but numdims=%d\n",
-            cond->v_numdims);
+                cond->v_numdims);
         return NULL;
     }
 
-    if(cond->v_length != 1) {
+    if (cond->v_length != 1) {
         fprintf(cp_err, "Error: ft_ternary(), condition must be scalar, but length=%d\n",
-            cond->v_length);
+                cond->v_length);
         return NULL;
     }
 
     c = isreal(cond)
         ? (cond->v_realdata[0] != 0.0)
         : ((realpart(cond->v_compdata[0]) != 0.0) ||
-           (imagpart(cond->v_compdata[0]) != 0.0) );
+           (imagpart(cond->v_compdata[0]) != 0.0));
 
     arg = c
         ? node->pn_right->pn_left
@@ -148,9 +148,9 @@ ft_ternary(struct pnode *node)
 
 static void *
 doop_funcall(
-    void* (*func) (void *data1, void *data2,
-                   short int datatype1, short int datatype2,
-                   int length),
+    void * (*func) (void *data1, void *data2,
+                    short int datatype1, short int datatype2,
+                    int length),
     void *data1, void *data2,
     short int datatype1, short int datatype2,
     int length)
@@ -167,7 +167,7 @@ doop_funcall(
 
     (void) signal(SIGILL, (SIGNAL_FUNCTION) sig_matherr);
 
-    data = func (data1, data2, datatype1, datatype2, length);
+    data = func(data1, data2, datatype1, datatype2, length);
 
     /* Back to normal */
     (void) signal(SIGILL, SIG_DFL);
@@ -178,14 +178,14 @@ doop_funcall(
 
 static struct dvec *
 doop(char what,
-     void*(*func) (void *data1, void *data2,
-		   short int datatype1, short int datatype2,
-		   int length),
+     void * (*func) (void *data1, void *data2,
+                     short int datatype1, short int datatype2,
+                     int length),
      struct pnode *arg1,
      struct pnode *arg2)
 {
     struct dvec *v1, *v2, *res;
-    ngcomplex_t *c1 = NULL, *c2 = NULL , lc;
+    ngcomplex_t *c1 = NULL, *c2 = NULL, lc;
     double *d1 = NULL, *d2 = NULL, ld;
     int length = 0, i;
     void *data;
@@ -217,32 +217,31 @@ doop(char what,
     if ((v1->v_numdims > 1) && (v2->v_numdims > 1)) {
         if (v1->v_numdims != v2->v_numdims) {
             fprintf(cp_err,
-            "Warning: operands %s and %s have incompatible shapes.\n",
-            v1->v_name, v2->v_name);
-            return (NULL);
-        }
-        for (i = 1; i < v1->v_numdims; i++) {
-            if ((v1->v_dims[i] != v2->v_dims[i])) {
-                fprintf(cp_err,
                     "Warning: operands %s and %s have incompatible shapes.\n",
                     v1->v_name, v2->v_name);
+            return (NULL);
+        }
+        for (i = 1; i < v1->v_numdims; i++)
+            if ((v1->v_dims[i] != v2->v_dims[i])) {
+                fprintf(cp_err,
+                        "Warning: operands %s and %s have incompatible shapes.\n",
+                        v1->v_name, v2->v_name);
                 return (NULL);
             }
-        }
     }
 
     /* This is a bad way to do this. */
     switch (what) {
-        case '=':
-        case '>':
-        case '<':
-        case 'G':
-        case 'L':
-        case 'N':
-        case '&':
-        case '|':
-        case '~':
-            relflag = TRUE;
+    case '=':
+    case '>':
+    case '<':
+    case 'G':
+    case 'L':
+    case 'N':
+    case '&':
+    case '|':
+    case '~':
+        relflag = TRUE;
     }
 
     /* Type checking is done later */
@@ -258,7 +257,7 @@ doop(char what,
                 d1[i] = v1->v_realdata[i];
             if (i > 0)
                 ld = v1->v_realdata[i - 1];
-            for ( ; i < length; i++)
+            for (; i < length; i++)
                 d1[i] = ld;
         } else {
             realpart(lc) = 0.0;
@@ -268,14 +267,16 @@ doop(char what,
                 c1[i] = v1->v_compdata[i];
             if (i > 0)
                 lc = v1->v_compdata[i - 1];
-            for ( ; i < length; i++)
+            for (; i < length; i++)
                 c1[i] = lc;
         }
-    } else
+    } else {
         if (isreal(v1))
             d1 = v1->v_realdata;
         else
             c1 = v1->v_compdata;
+    }
+
     if (v2->v_length < length) {
         free2 = TRUE;
         if (isreal(v2)) {
@@ -285,7 +286,7 @@ doop(char what,
                 d2[i] = v2->v_realdata[i];
             if (i > 0)
                 ld = v2->v_realdata[i - 1];
-            for ( ; i < length; i++)
+            for (; i < length; i++)
                 d2[i] = ld;
         } else {
             realpart(lc) = 0.0;
@@ -295,29 +296,30 @@ doop(char what,
                 c2[i] = v2->v_compdata[i];
             if (i > 0)
                 lc = v2->v_compdata[i - 1];
-            for ( ; i < length; i++)
+            for (; i < length; i++)
                 c2[i] = lc;
         }
-    } else
+    } else {
         if (isreal(v2))
             d2 = v2->v_realdata;
         else
             c2 = v2->v_compdata;
+    }
 
     /* Now pass the vectors to the appropriate function. */
     data = doop_funcall
-        ( func,
-          isreal(v1) ? (void *) d1 : (void *) c1,
-          isreal(v2) ? (void *) d2 : (void *) c2,
-          isreal(v1) ? VF_REAL : VF_COMPLEX,
-          isreal(v2) ? VF_REAL : VF_COMPLEX,
-          length);
+        (func,
+         isreal(v1) ? (void *) d1 : (void *) c1,
+         isreal(v2) ? (void *) d2 : (void *) c2,
+         isreal(v1) ? VF_REAL : VF_COMPLEX,
+         isreal(v2) ? VF_REAL : VF_COMPLEX,
+         length);
 
     if (!data)
         return (NULL);
     /* Make up the new vector. */
     res = alloc(struct dvec);
-    ZERO(res,struct dvec);
+    ZERO(res, struct dvec);
     if (relflag || (isreal(v1) && isreal(v2) && (func != cx_comma))) {
         res->v_flags = (v1->v_flags | v2->v_flags |
                         VF_REAL) & ~ VF_COMPLEX;
@@ -336,8 +338,9 @@ doop(char what,
         fprintf(cp_err, "Warning: scales of %s and %s are different.\n",
                 v1->v_name, v2->v_name);
         res->v_scale = NULL;
-    } else
+    } else {
         res->v_scale = v1->v_scale;
+    }
 
     /* Copy a few useful things */
     res->v_defcolor = v1->v_defcolor;
@@ -361,103 +364,105 @@ doop(char what,
      */
     switch (what)
     {
-	    case '*':  /* Multiplication of two vectors */
-           switch(v1->v_type)
-           {
-               case SV_VOLTAGE:
-                   switch(v2->v_type)
-                   {
-                       case SV_VOLTAGE:
-                           res->v_type = SV_VOLTAGE;
-                           break;
-                       case SV_CURRENT:
-                           res->v_type = SV_POWER;
-                           break;
-                       default:
-                           break;
-                    }
-                    break;
+    case '*':  /* Multiplication of two vectors */
+        switch (v1->v_type)
+        {
+        case SV_VOLTAGE:
+            switch (v2->v_type)
+            {
+            case SV_VOLTAGE:
+                res->v_type = SV_VOLTAGE;
+                break;
+            case SV_CURRENT:
+                res->v_type = SV_POWER;
+                break;
+            default:
+                break;
+            }
+            break;
 
-               case SV_CURRENT:
-                    switch(v2->v_type)
-                    {
-                        case SV_VOLTAGE:
-                            res->v_type = SV_POWER;
-                            break;
-                        case SV_CURRENT:
-                            res->v_type = SV_CURRENT;
-                            break;
-                        default:
-                            break;
-                     }
-                     break;
+        case SV_CURRENT:
+            switch (v2->v_type)
+            {
+            case SV_VOLTAGE:
+                res->v_type = SV_POWER;
+                break;
+            case SV_CURRENT:
+                res->v_type = SV_CURRENT;
+                break;
+            default:
+                break;
+            }
+            break;
 
-               default:
-                   break;
-           }
-           break;
-       case '/':   /* division of two vectors */
-           switch(v1->v_type)
-           {
-               case SV_VOLTAGE:
-                   switch(v2->v_type)
-                   {
-                       case SV_VOLTAGE:
-                           res->v_type = SV_NOTYPE;
-                           break;
-                       case SV_CURRENT:
-                           res->v_type = SV_IMPEDANCE;
-                           break;
-                       default:
-                           break;
-                    }
-                    break;
+        default:
+            break;
+        }
+        break;
+    case '/':   /* division of two vectors */
+        switch (v1->v_type)
+        {
+        case SV_VOLTAGE:
+            switch (v2->v_type)
+            {
+            case SV_VOLTAGE:
+                res->v_type = SV_NOTYPE;
+                break;
+            case SV_CURRENT:
+                res->v_type = SV_IMPEDANCE;
+                break;
+            default:
+                break;
+            }
+            break;
 
-               case SV_CURRENT:
-                   switch(v2->v_type)
-                   {
-                       case SV_VOLTAGE:
-                           res->v_type = SV_ADMITTANCE;
-                           break;
-                       case SV_CURRENT:
-                           res->v_type = SV_NOTYPE;
-                           break;
-                       default:
-                           break;
-                    }
-                    break;
+        case SV_CURRENT:
+            switch (v2->v_type)
+            {
+            case SV_VOLTAGE:
+                res->v_type = SV_ADMITTANCE;
+                break;
+            case SV_CURRENT:
+                res->v_type = SV_NOTYPE;
+                break;
+            default:
+                break;
+            }
+            break;
 
-               default:
-                   break;
-           }
+        default:
+            break;
+        }
 
-       default:
-           break;
+    default:
+        break;
     }
+
     vec_new(res);
 
     /* Free the temporary data areas we used, if we allocated any. */
     if (free1) {
-        if (isreal(v1)) {
+        if (isreal(v1))
             tfree(d1);
-        } else {
+        else
             tfree(c1);
-        }
     }
+
     if (free2) {
-        if (isreal(v2)) {
+        if (isreal(v2))
             tfree(d2);
-        } else {
+        else
             tfree(c2);
-        }
     }
 
     /* va: garbage collection */
-    if (arg1->pn_value==NULL && v1!=NULL) vec_free(v1);
-    if (arg2->pn_value==NULL && v2!=NULL) vec_free(v2);
+    if (arg1->pn_value == NULL && v1 != NULL)
+        vec_free(v1);
+    if (arg2->pn_value == NULL && v2 != NULL)
+        vec_free(v2);
+
     return (res);
 }
-
 
 
 /* The binary operations. */
@@ -551,6 +556,7 @@ op_or(struct pnode *arg1, struct pnode *arg2)
     return (doop('|', cx_or, arg1, arg2));
 }
 
+
 /* This is an odd operation.  The first argument is the name of a vector, and
  * the second is a range in the scale, so that v(1)[[10, 20]] gives all the
  * values of v(1) for which the TIME value is between 10 and 20.  If there is
@@ -562,7 +568,7 @@ op_or(struct pnode *arg1, struct pnode *arg2)
 struct dvec *
 op_range(struct pnode *arg1, struct pnode *arg2)
 {
-    struct dvec *v, *ind, *res, *scale; /* , *nscale; */
+    struct dvec *v, *ind, *res, *scale;
     double up, low, td;
     int len, i, j;
     bool rev = FALSE;
@@ -571,9 +577,11 @@ op_range(struct pnode *arg1, struct pnode *arg2)
     ind = ft_evaluate(arg2);
     if (!v || !ind)
         return (NULL);
+
     scale = v->v_scale;
     if (!scale)
         scale = v->v_plot->pl_scale;
+
     if (!scale) {
         fprintf(cp_err, "Error: no scale for vector %s\n", v->v_name);
         return (NULL);
@@ -583,27 +591,30 @@ op_range(struct pnode *arg1, struct pnode *arg2)
         fprintf(cp_err, "Error: strange range specification\n");
         return (NULL);
     }
+
     if (isreal(ind)) {
         up = low = *ind->v_realdata;
     } else {
         up = imagpart(ind->v_compdata[0]);
         low = realpart(ind->v_compdata[0]);
     }
+
     if (up < low) {
         td = up;
         up = low;
         low = td;
         rev = TRUE;
     }
+
     for (i = len = 0; i < scale->v_length; i++) {
         td = isreal(scale) ? scale->v_realdata[i] :
-                realpart(scale->v_compdata[i]);
+            realpart(scale->v_compdata[i]);
         if ((td <= up) && (td >= low))
             len++;
     }
 
     res = alloc(struct dvec);
-    ZERO(res,struct dvec);
+    ZERO(res, struct dvec);
     res->v_name = mkcname('R', v->v_name, ind->v_name);
     res->v_type = v->v_type;
     res->v_flags = v->v_flags;
@@ -614,9 +625,9 @@ op_range(struct pnode *arg1, struct pnode *arg2)
     res->v_length = len;
     res->v_scale = /* nscale; */ scale;
     /* Dave says get rid of this
-    res->v_numdims = v->v_numdims;
-    for (i = 0; i < v->v_numdims; i++)
-        res->v_dims[i] = v->v_dims[i];
+       res->v_numdims = v->v_numdims;
+       for (i = 0; i < v->v_numdims; i++)
+       res->v_dims[i] = v->v_dims[i];
     */
     res->v_numdims = 1;
     res->v_dims[0] = len;
@@ -629,22 +640,25 @@ op_range(struct pnode *arg1, struct pnode *arg2)
     /* Toss in the data */
 
     j = 0;
-    for (i = (rev ? v->v_length - 1 : 0); i != (rev ? -1 : v->v_length);
-            rev ? i-- : i++) {
+    for (i = (rev ? v->v_length - 1 : 0);
+         i != (rev ? -1 : v->v_length);
+         rev ? i-- : i++)
+    {
         td = isreal(scale) ? scale->v_realdata[i] :
-                realpart(scale->v_compdata[i]);
+            realpart(scale->v_compdata[i]);
         if ((td <= up) && (td >= low)) {
             if (isreal(res)) {
                 res->v_realdata[j] = v->v_realdata[i];
             } else {
                 realpart(res->v_compdata[j]) =
-                        realpart(v->v_compdata[i]);
+                    realpart(v->v_compdata[i]);
                 imagpart(res->v_compdata[j]) =
-                        imagpart(v->v_compdata[i]);
+                    imagpart(v->v_compdata[i]);
             }
             j++;
         }
     }
+
     if (j != len)
         fprintf(cp_err, "Error: something funny..\n");
 
@@ -656,10 +670,14 @@ op_range(struct pnode *arg1, struct pnode *arg2)
     vec_new(res);
 
     /* va: garbage collection */
-    if (arg1->pn_value==NULL && v!=NULL) vec_free(v);
-    if (arg2->pn_value==NULL && ind!=NULL) vec_free(ind);
+    if (arg1->pn_value == NULL && v != NULL)
+        vec_free(v);
+    if (arg2->pn_value == NULL && ind != NULL)
+        vec_free(ind);
+
     return (res);
 }
+
 
 /* This is another operation we do specially -- if the argument is a vector of
  * dimension n, n > 0, the result will be either a vector of dimension n - 1,
@@ -685,8 +703,8 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
             j *= v->v_dims[i];
         if (v->v_length != j) {
             fprintf(cp_err,
-                "op_ind: Internal Error: len %d should be %d\n",
-                v->v_length, j);
+                    "op_ind: Internal Error: len %d should be %d\n",
+                    v->v_length, j);
             return (NULL);
         }
     } else {
@@ -753,7 +771,7 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
 
     /* Make up the new vector. */
     res = alloc(struct dvec);
-    ZERO(res,struct dvec);
+    ZERO(res, struct dvec);
     res->v_name = mkcname('[', v->v_name, ind->v_name);
     res->v_type = v->v_type;
     res->v_flags = v->v_flags;
@@ -764,12 +782,12 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
     res->v_length = length;
     res->v_numdims = newdim;
     if (up != down) {
-	for (i = 0; i < newdim; i++)
-	    res->v_dims[i] = v->v_dims[i];
+        for (i = 0; i < newdim; i++)
+            res->v_dims[i] = v->v_dims[i];
         res->v_dims[0] = up - down + 1;
     } else {
-	for (i = 0; i < newdim; i++)
-	    res->v_dims[i] = v->v_dims[i + 1];
+        for (i = 0; i < newdim; i++)
+            res->v_dims[i] = v->v_dims[i + 1];
     }
 
     if (isreal(res))
@@ -784,10 +802,10 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
         else
             k = j;
         for (i = 0; i < blocksize; i++)
-            if (isreal(res))
+            if (isreal(res)) {
                 res->v_realdata[k * blocksize + i] =
                     v->v_realdata[(down + j) * blocksize + i];
-            else {
+            } else {
                 realpart(res->v_compdata[k * blocksize + i]) =
                     realpart(v->v_compdata[(down + j) * blocksize + i]);
                 imagpart(res->v_compdata[k * blocksize + i]) =
@@ -809,10 +827,14 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
     vec_new(res);
 
     /* va: garbage collection */
-    if (arg1->pn_value==NULL && v!=NULL) vec_free(v);
-    if (arg2->pn_value==NULL && ind!=NULL) vec_free(ind);
+    if (arg1->pn_value == NULL && v != NULL)
+        vec_free(v);
+    if (arg2->pn_value == NULL && ind != NULL)
+        vec_free(ind);
+
     return (res);
 }
+
 
 /* Apply a function to an argument. Complex functions are called as follows:
  *  cx_something(data, type, length, &newlength, &newtype),
@@ -839,20 +861,22 @@ apply_func_funcall(struct func *func, struct dvec *v, int *newlength, short int 
 
     if (eq(func->fu_name, "interpolate") || eq(func->fu_name, "deriv") || eq(func->fu_name, "group_delay"))       /* Ack */
     {
-        void *(*f)(void *data, short int type, int length,
-                   int *newlength, short int *newtype, struct plot *, struct plot *, int) = (void *(*)(void *, short int, int, int *, short int *, struct plot *, struct plot *, int)) func->fu_func;
-        data = f (
-            isreal(v) ? (void *) v->v_realdata : (void *) v->v_compdata,
-            (short) (isreal(v) ? VF_REAL : VF_COMPLEX),
-            v->v_length,
-            newlength, newtype,
-            v->v_plot, plot_cur, v->v_dims[0]);
+        void * (*f) (void *data, short int type, int length,
+                     int *newlength, short int *newtype,
+                     struct plot *, struct plot *, int) =
+            (void * (*) (void *, short int, int, int *, short int *, struct plot *, struct plot *, int)) func->fu_func;
+        data = f
+            (isreal(v) ? (void *) v->v_realdata : (void *) v->v_compdata,
+             (short) (isreal(v) ? VF_REAL : VF_COMPLEX),
+             v->v_length,
+             newlength, newtype,
+             v->v_plot, plot_cur, v->v_dims[0]);
     } else {
-        data = func->fu_func (
-            isreal(v) ? (void *) v->v_realdata : (void *) v->v_compdata,
-            (short) (isreal(v) ? VF_REAL : VF_COMPLEX),
-            v->v_length,
-            newlength, newtype);
+        data = func->fu_func
+            (isreal(v) ? (void *) v->v_realdata : (void *) v->v_compdata,
+             (short) (isreal(v) ? VF_REAL : VF_COMPLEX),
+             v->v_length,
+             newlength, newtype);
     }
 
     /* Back to normal */
@@ -903,52 +927,57 @@ apply_func(struct func *func, struct pnode *arg)
             return (NULL);
 
         t = alloc(struct dvec);
-	ZERO(t,struct dvec);
+        ZERO(t, struct dvec);
 
         t->v_flags = (v->v_flags & ~VF_COMPLEX & ~VF_REAL &
-                ~VF_PERMANENT & ~VF_MINGIVEN & ~VF_MAXGIVEN);
+                      ~VF_PERMANENT & ~VF_MINGIVEN & ~VF_MAXGIVEN);
         t->v_flags |= type;
 #ifdef FTEDEBUG
         if (ft_evdb)
             fprintf(cp_err,
-                "apply_func: func %s to %s len %d, type %d\n",
+                    "apply_func: func %s to %s len %d, type %d\n",
                     func->fu_name, v->v_name, len, type);
 #endif
-	if (isreal(t))
-	    t->v_realdata = (double *) data;
-	else
-	    t->v_compdata = (ngcomplex_t *) data;
-	if (eq(func->fu_name, "minus"))
-	    t->v_name = mkcname('a', func->fu_name, v->v_name);
-	else if (eq(func->fu_name, "not"))
-	    t->v_name = mkcname('c', func->fu_name, v->v_name);
-	else
-	    t->v_name = mkcname('b', v->v_name, NULL);
-	t->v_type = v->v_type; /* This is strange too. */
-	t->v_length = len;
-	t->v_scale = v->v_scale;
+        if (isreal(t))
+            t->v_realdata = (double *) data;
+        else
+            t->v_compdata = (ngcomplex_t *) data;
 
-	/* Copy a few useful things */
-	t->v_defcolor = v->v_defcolor;
-	t->v_gridtype = v->v_gridtype;
-	t->v_plottype = v->v_plottype;
-	t->v_numdims = v->v_numdims;
-	for (i = 0; i < t->v_numdims; i++)
-	    t->v_dims[i] = v->v_dims[i];
+        if (eq(func->fu_name, "minus"))
+            t->v_name = mkcname('a', func->fu_name, v->v_name);
+        else if (eq(func->fu_name, "not"))
+            t->v_name = mkcname('c', func->fu_name, v->v_name);
+        else
+            t->v_name = mkcname('b', v->v_name, NULL);
 
-	vec_new(t);
+        t->v_type = v->v_type; /* This is strange too. */
+        t->v_length = len;
+        t->v_scale = v->v_scale;
 
-	if (end)
-	    end->v_link2 = t;
-	else
-	    newv = t;
-	end = t;
+        /* Copy a few useful things */
+        t->v_defcolor = v->v_defcolor;
+        t->v_gridtype = v->v_gridtype;
+        t->v_plottype = v->v_plottype;
+        t->v_numdims = v->v_numdims;
+        for (i = 0; i < t->v_numdims; i++)
+            t->v_dims[i] = v->v_dims[i];
+
+        vec_new(t);
+
+        if (end)
+            end->v_link2 = t;
+        else
+            newv = t;
+        end = t;
     }
 
     /* va: garbage collection */
-    if (arg->pn_value==NULL && v!=NULL) vec_free(v);
+    if (arg->pn_value == NULL && v != NULL)
+        vec_free(v);
+
     return (newv);
 }
+
 
 /* The unary minus operation. */
 
@@ -964,6 +993,7 @@ op_not(struct pnode *arg)
     return (apply_func(&func_not, arg));
 }
 
+
 /* Create a reasonable name for the result of a function application, etc.
  * The what values 'a' and 'b' mean "make a function name" and "make a
  * unary minus", respectively.
@@ -975,18 +1005,17 @@ mkcname(char what, char *v1, char *v2)
     char buf[BSIZE_SP], *s;
 
     if (what == 'a')
-	(void) sprintf(buf, "%s(%s)", v1, v2);
+        (void) sprintf(buf, "%s(%s)", v1, v2);
     else if (what == 'b')
-	(void) sprintf(buf, "-(%s)", v1);
+        (void) sprintf(buf, "-(%s)", v1);
     else if (what == 'c')
-	(void) sprintf(buf, "~(%s)", v1);
+        (void) sprintf(buf, "~(%s)", v1);
     else if (what == '[')
-	(void) sprintf(buf, "%s[%s]", v1, v2);
+        (void) sprintf(buf, "%s[%s]", v1, v2);
     else if (what == 'R')
-	(void) sprintf(buf, "%s[[%s]]", v1, v2);
+        (void) sprintf(buf, "%s[[%s]]", v1, v2);
     else
-	(void) sprintf(buf, "(%s)%c(%s)", v1, what, v2);
+        (void) sprintf(buf, "(%s)%c(%s)", v1, what, v2);
     s = copy(buf);
     return (s);
 }
-
