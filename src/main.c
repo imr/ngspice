@@ -374,6 +374,10 @@ void SMPprintRHS( SMPmatrix *n1, char *n2 , double* n3 , double* n4)
     return;
 }
 
+void spice_destroy_devices(void)
+{
+}
+
 #endif /* SIMULATOR */
 
 #ifndef SIMULATOR

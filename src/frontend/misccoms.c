@@ -29,6 +29,7 @@ extern char history_file[];
 #endif
 
 extern IFsimulator SIMinfo;
+extern void spice_destroy_devices(void); /* FIXME need a better place */
 static void byemesg(void);
 static int  confirm_quit(void);
 
@@ -80,6 +81,7 @@ com_quit(wordlist *wl)
 
     byemesg();
     destroy_const_plot();
+    spice_destroy_devices();
     exit(exitcode);
 }
 

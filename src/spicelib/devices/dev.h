@@ -3,6 +3,7 @@
 
 
 void spice_init_devices(void);
+void spice_destroy_devices(void);
 int num_devices(void);
 IFdevice **devices_ptr(void);
 SPICEdev **devices(void);

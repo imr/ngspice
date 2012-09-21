@@ -233,6 +233,18 @@ int load_vadev(CKTcircuit *ckt, char *name)
 }
 #endif
 
+
+void
+spice_destroy_devices(void)
+{
+#ifdef XSPICE
+    tfree(g_evt_udn_info);
+    tfree(DEVicesfl);
+#endif
+    tfree(DEVices);
+}
+
+
 void
 spice_init_devices(void)
 {
