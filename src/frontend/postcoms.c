@@ -843,7 +843,7 @@ killplot(struct plot *pl)
     wl_free(pl->pl_commands);
     tfree(pl->pl_date); /* va: also tfree (memory leak) */
     if (pl->pl_ccom)    /* va: also tfree (memory leak) */
-        throwaway((struct ccom *)pl->pl_ccom);
+        throwaway(pl->pl_ccom);
 
     if (pl->pl_env) { /* The 'environment' for this plot. */
         /* va: HOW to do? */
