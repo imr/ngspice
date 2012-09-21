@@ -79,6 +79,7 @@ com_quit(wordlist *wl)
     destroy_ivars();
 
     byemesg();
+    destroy_const_plot();
     exit(exitcode);
 }
 

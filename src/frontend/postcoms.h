@@ -16,5 +16,7 @@ void com_cross(wordlist *wl);
 void com_destroy(wordlist *wl);
 void com_splot(wordlist *wl);
 
+void destroy_const_plot(void);
+
 
 #endif

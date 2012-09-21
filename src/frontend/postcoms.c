@@ -22,6 +22,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "quote.h"
 #include "variable.h"
 #include "parser/complete.h" /* va: throwaway */
+#include "plotting/plotting.h"
 
 
 static void killplot(struct plot *pl);
@@ -853,6 +854,29 @@ killplot(struct plot *pl)
     tfree(pl); /* va: also tfree pl itself (memory leak) */
 
     return;
+}
+
+
+void
+destroy_const_plot(void)
+{
+    struct dvec *v, *nv = NULL;
+    struct plot *pl = &constantplot;
+
+    /*  pl_dvecs, pl_scale */
+    for (v = pl->pl_dvecs; v; v = nv) {
+        nv = v->v_next;
+        vec_free(v);
+    }
+    wl_free(pl->pl_commands);
+    if (pl->pl_ccom)    /* va: also tfree (memory leak) */
+        throwaway(pl->pl_ccom);
+
+    if (pl->pl_env) { /* The 'environment' for this plot. */
+        /* va: HOW to do? */
+        printf("va: killplot should tfree pl->pl_env=(%p)\n", pl->pl_env);
+        fflush(stdout);
+    }
 }
 
 
