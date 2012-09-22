@@ -16,6 +16,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "plotting/graf.h"
 #include "display.h"
 #include "../misc/ivars.h"
+#include "com_alias.h"
+#include "define.h"
 
 #ifdef HAVE_GNUREADLINE
 #include <readline/readline.h>
@@ -55,11 +57,23 @@ com_quit(wordlist *wl)
 
     /* start to clean up the mess */
 
+#if 0
     {
-        wordlist *t = wl_cons(copy("all"), NULL);
-        com_destroy(t);
-        wl_free(t);
+        wordlist all = { "all", NULL, NULL };
+        wordlist star = { "*", NULL, NULL };
+
+        com_destroy(&all);
+        com_unalias(&star);
+        com_undefine(&star);
+
+        cp_remvar("history");
+        cp_remvar("noglob");
+        cp_remvar("brief");
+        cp_remvar("sourcepath");
+        cp_remvar("program");
+        cp_remvar("prompt");
     }
+#endif
 
 #ifdef EXPERIMENTAL_CODE
     /* Destroy CKT when quit. Add by Gong Ding, gdiso@ustc.edu */
