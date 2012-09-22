@@ -36,7 +36,6 @@ com_unlet(wordlist *wl)
         vec_remove(wl->wl_word);
         wl = wl->wl_next;
     }
-    return;
 }
 
 
@@ -59,8 +58,6 @@ com_load(wordlist *wl)
 
     /* note: default is to display the vectors in the last (current) plot */
     com_display(NULL);
-
-    return;
 }
 
 
@@ -361,7 +358,6 @@ done:
     /* Get rid of the vectors. */
     tfree(buf);
     tfree(buf2);
-    return;
 }
 
 
@@ -508,7 +504,6 @@ com_write(wordlist *wl)
         /* If there are more plots we want them appended... */
         appendwrite = TRUE;
     }
-    return;
 }
 
 
@@ -657,7 +652,6 @@ com_write_sparam(wordlist *wl)
         /* If there are more plots we want them appended... */
         appendwrite = TRUE;
     }
-    return;
 }
 
 
@@ -767,7 +761,6 @@ com_cross(wordlist *wl)
     vec_new(v);
     v->v_flags |= VF_PERMANENT;
     cp_addkword(CT_VECTOR, v->v_name);
-    return;
 }
 
 
@@ -803,7 +796,6 @@ com_destroy(wordlist *wl)
             wl = wl->wl_next;
         }
     }
-    return;
 }
 
 
@@ -852,8 +844,6 @@ killplot(struct plot *pl)
         fflush(stdout);
     }
     tfree(pl); /* va: also tfree pl itself (memory leak) */
-
-    return;
 }
 
 
@@ -934,5 +924,4 @@ com_splot(wordlist *wl)
         return;
 
     plot_setcur(s);
-    return;
 }

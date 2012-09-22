@@ -26,5 +26,4 @@ ft_newcirc(struct circ *ckt)
 {
     ckt->ci_next = ft_circuits;
     ft_circuits = ckt;
-    return;
 }

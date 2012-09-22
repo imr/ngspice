@@ -21,5 +21,4 @@ com_dump(wordlist *wl)
     }
 
     if_dump(ft_curckt->ci_ckt, cp_out);
-    return;
 }

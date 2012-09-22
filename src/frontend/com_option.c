@@ -115,6 +115,5 @@ com_option(wordlist *wl)
         cp_vset(vars->va_name, vars->va_type, s);
         vars = vars->va_next;
     }
-    return;
 }
 

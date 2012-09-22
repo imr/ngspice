@@ -78,7 +78,6 @@ measure_errMessage(char *mName, char *mFunction, char *trigTarg, char *errMsg, i
         printf("%s", errMsg);
         // printf("\tmeasure '%s'  failed\n", mName);
     }
-    return;
 }
 
 
@@ -116,7 +115,6 @@ correct_vec(MEASUREPTR meas)
         tfree(vecfirst);
         meas->m_vec2 = copy(newvec2);
     }
-    return;
 }
 
 
@@ -614,8 +612,6 @@ com_measure_when(
 
     if (init_measured_value)
         meas->m_measured = NAN;
-
-    return;
 }
 
 
@@ -694,7 +690,6 @@ measure_at(
     }
 
     meas->m_measured = NAN;
-    return;
 }
 
 
@@ -844,7 +839,6 @@ measure_minMaxAvg(
     default :
         fprintf(cp_err, "Error: improper min/max/avg call.\n");
     }
-    return;
 }
 
 
@@ -1042,7 +1036,6 @@ measure_rms(
     // Calculates the square root of the area under the 'out_var2' curve
     //  divided be the period of interest
     measure_rms_integral(meas, AT_RMS);
-    return;
 }
 #endif
 
@@ -1058,7 +1051,6 @@ measure_integ(
 {
     // INTEGRAL INTEG
     measure_rms_integral(meas, AT_INTEG);
-    return;
 }
 #endif
 
@@ -1069,7 +1061,6 @@ static void
 measure_deriv(void)
 {
     // DERIVATIVE DERIV
-    return;
 }
 #endif
 
@@ -1079,25 +1070,21 @@ measure_deriv(void)
 static void
 measure_ERR(void)
 {
-    return;
 }
 
 static void
 measure_ERR1(void)
 {
-    return;
 }
 
 static void
 measure_ERR2(void)
 {
-    return;
 }
 
 static void
 measure_ERR3(void)
 {
-    return;
 }
 #endif
 
@@ -1110,8 +1097,6 @@ com_dotmeasure(wordlist *wl)
     /* simulation info */
     // printf("*%s\n", plot_cur->pl_title);
     // printf("\t %s, %s\n", plot_cur->pl_name, plot_cur->pl_date); // missing temp
-
-    return;
 }
 
 

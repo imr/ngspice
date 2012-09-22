@@ -14,7 +14,6 @@ void
 com_plot(wordlist *wl)
 {
     plotit(wl, NULL, NULL);
-    return;
 }
 
 #ifdef TCL_MODULE
@@ -22,7 +21,6 @@ void
 com_bltplot(wordlist *wl)
 {
     plotit(wl, NULL, "blt");
-    return;
 }
 
 #endif

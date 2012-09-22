@@ -302,7 +302,6 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     tfree(result);
 
     gr_end(v);
-    return;
 }
 
 
@@ -342,6 +341,4 @@ plotinterval(struct dvec *v, double lo, double hi, register double *coeffs, int 
         ly = dy;
         /* fprintf(cp_err, "plot (%G, %G)\n\r", dx, dy); */
     }
-
-    return;
 }

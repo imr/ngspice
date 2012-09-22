@@ -156,7 +156,6 @@ cp_setalias(char *word, wordlist *wlist)
      * keyword lookup is done the alias is evaluated.  Make everything
      * file completion, just in case...  */
     cp_addcomm(word, (long) 1, (long) 1, (long) 1, (long) 1);
-    return;
 }
 
 
@@ -188,8 +187,6 @@ cp_unalias(char *word)
     tfree(al->al_name);
     tfree(al);
     cp_remcomm(word);
-
-    return;
 }
 
 
@@ -205,7 +202,6 @@ cp_paliases(char *word)
             wl_print(al->al_text, cp_out);
             (void) putc('\n', cp_out);
         }
-    return;
 }
 
 
@@ -220,7 +216,6 @@ com_alias(wordlist *wl)
         cp_paliases(wl->wl_word);
     else
         cp_setalias(wl->wl_word, wl->wl_next);
-    return;
 }
 
 
@@ -244,7 +239,5 @@ com_unalias(wordlist *wl)
         cp_unalias(wl->wl_word);
         wl = wl->wl_next;
     }
-
-    return;
 }
 

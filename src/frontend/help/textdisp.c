@@ -139,7 +139,6 @@ hlp_tkillwin(topic *top)
         curtop = curtop->parent;
     if (curtop && !quitflag)
         (void) hlp_tdisplay(curtop);
-    return;
 }
 
 
@@ -160,7 +159,6 @@ putline(char *s)
     }
     buf[i] = '\0';
     out_printf("%s\n", buf);
-    return;
 }
 
 

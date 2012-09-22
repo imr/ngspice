@@ -36,8 +36,6 @@ com_gnuplot(wordlist *wl)
        background. */
     if (tempf)
         tfree(fname);
-
-    return;
 }
 
 
@@ -67,6 +65,4 @@ com_write_simple(wordlist *wl)
        background. */
     if (tempf)
         tfree(fname);
-
-    return;
 }

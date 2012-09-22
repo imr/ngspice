@@ -70,7 +70,6 @@ ft_dotsaves(void)
         }
 
     com_save(wl);
-    return;
 }
 
 
@@ -176,7 +175,6 @@ ft_savemeasure(void)
             (void) measure_extract_variables(s);
         }
     }
-    return;
 }
 
 
@@ -446,7 +444,6 @@ fixdotplot(wordlist *wl)
         }
         wl = wl->wl_next;
     }
-    return;
 }
 
 
@@ -457,7 +454,6 @@ fixdotprint(wordlist *wl)
         wl->wl_word = fixem(wl->wl_word);
         wl = wl->wl_next;
     }
-    return;
 }
 
 

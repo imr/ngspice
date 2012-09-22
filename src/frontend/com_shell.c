@@ -61,5 +61,4 @@ com_shell(wordlist *wl)
     }
 #endif
 
-    return;
 }

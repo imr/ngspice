@@ -510,7 +510,6 @@ timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
         *msec += 1000;
         (*sec)--;
     }
-    return;
 }
 
 

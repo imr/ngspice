@@ -24,5 +24,4 @@ com_strcmp(wordlist *wl)
     tfree(s1);/*DG  cp_unquote memory leak*/
     tfree(s2);
     cp_vset(var, CP_NUM, &i);
-    return;
 }

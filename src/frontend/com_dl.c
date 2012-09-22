@@ -12,7 +12,6 @@ void com_codemodel(wordlist *wl)
     for (ww = wl; ww; ww = ww->wl_next)
         if (load_opus(wl->wl_word))
             fprintf(cp_err, "Error: Library %s couldn't be loaded!\n", ww->wl_word);
-    return;
 }
 #endif
 
@@ -24,6 +23,5 @@ void com_use(wordlist *wl)
     for (ww = wl; ww; ww = ww->wl_next)
         if (load_dev(wl->wl_word))
             fprintf(cp_err, "Error: Library %s couldn't be loaded!\n", ww->wl_word);
-    return;
 }
 #endif

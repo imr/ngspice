@@ -142,7 +142,6 @@ cp_rehash(char *pathlist, bool docc)
         }
         closedir(pdir);
     }
-    return;
 }
 
 
@@ -241,7 +240,6 @@ cp_hstat(void)
         for (hh = hashtab[i]; hh; hh = hh->h_next)
             fprintf(cp_err, "i = %d, name = %s, path = %s\n",
                     i, hh->h_name, hh->h_path);
-    return;
 }
 
 

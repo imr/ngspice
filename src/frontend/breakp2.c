@@ -33,7 +33,6 @@ void
 com_save(wordlist *wl)
 {
     settrace(wl, VF_ACCUM, NULL);
-    return;
 }
 
 
@@ -42,7 +41,6 @@ void
 com_save2(wordlist *wl, char *name)
 {
     settrace(wl, VF_ACCUM, name);
-    return;
 }
 
 
@@ -100,8 +98,6 @@ settrace(wordlist *wl, int what, char *name)
 
         wl = wl->wl_next;
     }
-
-    return;
 }
 
 

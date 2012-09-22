@@ -180,7 +180,6 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
     cp_curerr = lasterr;
 
     tfree(tt);
-    return;
 }
 
 
@@ -241,7 +240,6 @@ nutcom_source(wordlist *wl)
     cp_interactive = inter;
     if (tempfile)
         (void) unlink(tempfile);
-    return;
 }
 
 
@@ -252,7 +250,6 @@ nutinp_source(char *file)
 
     wl.wl_word = file;
     nutcom_source(&wl);
-    return;
 }
 
 

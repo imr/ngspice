@@ -458,7 +458,6 @@ gr_pmsg(char *text)
         fprintf(cp_err, " %s \n", text);
 
     DevUpdate();
-    return;
 }
 
 
@@ -466,7 +465,6 @@ void
 gr_clean(void)
 {
     DevUpdate();
-    return;
 }
 
 
@@ -841,7 +839,6 @@ set(struct plot *plot, struct dbcomm *db, bool unset, short mode)
         else
             v->v_flags |= mode;
     }
-    return;
 }
 
 
@@ -1020,8 +1017,6 @@ gr_end_iplot(void)
             }
         }
     }
-
-    return;
 }
 
 

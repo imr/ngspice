@@ -213,7 +213,6 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 #endif
     err = system(buf);
 
-    return;
 }
 
 
@@ -276,6 +275,4 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
     }
 
     (void) fclose(file_data);
-
-    return;
 }

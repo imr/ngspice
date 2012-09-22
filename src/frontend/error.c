@@ -41,7 +41,6 @@ fperror(char *mess, int code)
 {
     NG_IGNORE(code);
     fprintf(cp_err, "%s: floating point exception.\n", mess);
-    return;
 }
 
 
@@ -50,7 +49,6 @@ void
 ft_sperror(int code, char *mess)
 {
     fprintf(cp_err, "%s: %s\n", mess, if_errstring(code));
-    return;
 }
 
 

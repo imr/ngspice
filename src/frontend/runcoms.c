@@ -103,7 +103,6 @@ com_scirc(wordlist *wl)
         ft_curckt->ci_nodes = cp_kwswitch(CT_NODENAMES, p->ci_nodes);
     }
     ft_curckt = p;
-    return;
 }
 
 
@@ -111,7 +110,6 @@ void
 com_pz(wordlist *wl)
 {
     dosim("pz", wl);
-    return;
 }
 
 
@@ -119,7 +117,6 @@ void
 com_op(wordlist *wl)
 {
     dosim("op", wl);
-    return;
 }
 
 
@@ -127,7 +124,6 @@ void
 com_dc(wordlist *wl)
 {
     dosim("dc", wl);
-    return;
 }
 
 
@@ -135,7 +131,6 @@ void
 com_ac(wordlist *wl)
 {
     dosim("ac", wl);
-    return;
 }
 
 
@@ -143,7 +138,6 @@ void
 com_tf(wordlist *wl)
 {
     dosim("tf", wl);
-    return;
 }
 
 
@@ -151,7 +145,6 @@ void
 com_tran(wordlist *wl)
 {
     dosim("tran", wl);
-    return;
 }
 
 
@@ -159,7 +152,6 @@ void
 com_sens(wordlist *wl)
 {
     dosim("sens", wl);
-    return;
 }
 
 
@@ -167,7 +159,6 @@ void
 com_disto(wordlist *wl)
 {
     dosim("disto", wl);
-    return;
 }
 
 
@@ -175,7 +166,6 @@ void
 com_noise(wordlist *wl)
 {
     dosim("noise", wl);
-    return;
 }
 
 
@@ -185,7 +175,6 @@ void
 com_pss(wordlist *wl)
 {
     dosim("pss", wl);
-    return;
 }
 /* SP */
 #endif
@@ -384,7 +373,6 @@ com_run(wordlist *wl)
 {
     /* ft_getsaves(); */
     dosim("run", wl);
-    return;
 }
 
 

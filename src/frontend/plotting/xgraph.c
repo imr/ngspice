@@ -164,6 +164,4 @@ ft_xgraph(double *xlims, double *ylims, char *filename, char *title, char *xlabe
     (void) fclose(file);
     (void) sprintf(buf, "xgraph %s &", filename);
     (void) system(buf);
-
-    return;
 }

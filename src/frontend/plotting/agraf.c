@@ -333,6 +333,4 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     tfree(line2);
     if (!novalue)
         tfree(values);
-
-    return;
 }

@@ -29,5 +29,4 @@ com_state(wordlist *wl)
     fprintf(cp_out, "Number of points so far: %d\n",
             plot_cur->pl_scale->v_length);
     fprintf(cp_out, "(That's all this command does so far)\n");
-    return;
 }

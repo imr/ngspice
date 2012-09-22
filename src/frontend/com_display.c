@@ -78,6 +78,4 @@ com_display(wordlist *wl)
         d = dvs[i];
         pvec(d);
     }
-
-    return;
 }

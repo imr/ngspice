@@ -61,7 +61,6 @@ hlp_main(char *path, wordlist *wl)
     hlp_free();
 #endif
 
-    return;
 }
 
 
@@ -173,5 +172,4 @@ hlp_pathfix(char *buf)
 
     if (s)
         tfree(s);
-    return;
 }

@@ -122,8 +122,6 @@ out_init(void)
     ysize -= 2; /* Fudge room... */
 
     xpos = ypos = 0;
-
-    return;
 }
 
 
@@ -257,7 +255,6 @@ out_send(char *string)
     }
 
     (void) outbufputc();
-    return;
 }
 
 

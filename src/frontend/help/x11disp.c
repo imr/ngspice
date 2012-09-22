@@ -301,7 +301,6 @@ hlp_xkillwin(topic *top)
         }
     }
     XtDestroyWidget(top->shellwidget);
-    return;
 }
 
 
@@ -326,8 +325,6 @@ sputline(char *buf, char *s)
     /* strcat can't handle long strings */
     tmpp = buf + strlen(buf);
     sprintf(tmpp, "%s\n", tmp);
-
-    return;
 }
 
 #endif  /* X_DISPLAY_MISSING */

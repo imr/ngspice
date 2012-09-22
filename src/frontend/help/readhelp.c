@@ -54,7 +54,6 @@ sortlist(toplink **tlp)
         vec[i]->next = vec[i + 1];
     vec[i]->next = NULL;
     tfree(vec);
-    return;
 }
 
 
@@ -334,7 +333,6 @@ void tlfree(toplink *tl)
         tfree(tl);
         tl = nt;
     }
-    return;
 }
 
 
@@ -353,7 +351,6 @@ hlp_free(void)
         tfree(top);
     }
     alltopics = NULL;
-    return;
 }
 
 

@@ -64,5 +64,4 @@ com_chdir(wordlist *wl)
         fprintf(cp_err, "Can't get current working directory.\n");
 #endif
 
-    return;
 }

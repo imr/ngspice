@@ -1040,8 +1040,6 @@ old_show(wordlist *wl)
         }
         devs = devs->wl_next;
     }
-
-    return;
 }
 
 
@@ -1386,7 +1384,6 @@ com_alter_common(wordlist *wl, int do_model)
     if (names->pn_value == NULL && dv != NULL)
         vec_free(dv);
     free_pnode(names); /* free also dv, if pnode names is simple value */
-    return;
 }
 
 

@@ -83,6 +83,4 @@ com_ahelp(wordlist *wl)
     }
 
     out_send("\n");
-
-    return;
 }

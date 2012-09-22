@@ -47,6 +47,5 @@ lincopy(struct dvec *ov, double *newscale, int newlen, struct dvec *oldscale)
     v->v_realdata = nd;
 
     vec_new(v);
-    return;
 }
 

@@ -148,7 +148,6 @@ com_aspice(wordlist *wl)
     (void) signal(SIGCLD, (SIGNAL_FUNCTION) sigchild);
 #    endif
 #  endif
-    return;
 }
 
 
@@ -161,7 +160,6 @@ com_jobs(wordlist *wl)
 
     for (p = running; p; p = p->pr_next)
         fprintf(cp_out, "%d\t%.70s\n", p->pr_pid, p->pr_name);
-    return;
 }
 
 
@@ -173,7 +171,6 @@ sigchild(void)
         fprintf(cp_err, "%d jobs done now\n", numchanged);
     if (cp_cwait)
         ft_checkkids();
-    return;
 }
 
 
@@ -262,7 +259,6 @@ ft_checkkids(void)
     (void) ioctl(0, TIOCSTI, "\022");   /* Reprint the line. */
 #endif
     here = FALSE;
-    return;
 }
 
 
@@ -423,7 +419,6 @@ com_rspice(wordlist *wl)
         plot_add(pl);
     (void) unlink(outfile);
     fprintf(stderr, "done.\n");
-    return;
 }
 
 #else
@@ -433,7 +428,6 @@ com_aspice(wordlist *wl)
 {
     NG_IGNORE(wl);
     fprintf(cp_err, "Asynchronous spice jobs are not available.\n");
-    return;
 }
 
 
@@ -442,14 +436,12 @@ com_jobs(wordlist *wl)
 {
     NG_IGNORE(wl);
     fprintf(cp_err, "Asynchronous spice jobs are not available.\n");
-    return;
 }
 
 
 void
 ft_checkkids(void)
 {
-    return;
 }
 
 
@@ -458,7 +450,6 @@ com_rspice(wordlist *wl)
 {
     NG_IGNORE(wl);
     fprintf(cp_err, "Remote spice jobs are not available.\n");
-    return;
 }
 
 #endif

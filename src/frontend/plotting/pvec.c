@@ -93,5 +93,4 @@ pvec(struct dvec *d)
         strcat(buf, "\n");
 
     out_send(buf);
-    return;
 }

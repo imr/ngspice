@@ -13,5 +13,4 @@ void
 com_asciiplot(wordlist *wl)
 {
     plotit(wl, NULL, "lpr");
-    return;
 }

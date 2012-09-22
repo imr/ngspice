@@ -107,7 +107,6 @@ sigstop(void)
     cp_ccon(FALSE);
     (void) signal(SIGTSTP, SIG_DFL);
     (void) kill(getpid(), SIGTSTP); /* This should stop us */
-    return;
 }
 
 

@@ -116,8 +116,6 @@ gr_fixgrid(GRAPH *graph, double xdelta, double ydelta, int xtype, int ytype)
       graph->viewport.height + graph->viewportyoff);
       SetLinestyle(1);
     */
-
-    return;
 }
 
 
@@ -975,7 +973,6 @@ drawpolargrid(GRAPH *graph)
                 graph->grid.yaxis.circular.center
                 - graph->grid.xaxis.circular.radius);
     DevUpdate();
-    return;
 }
 
 
@@ -1009,7 +1006,6 @@ adddeglabel(GRAPH *graph, int deg, int x, int y, int cx, int cy, int lx, int ly)
     DevDrawText(buf, x, y);
     DevDrawText("o", x + (int) strlen(buf) * graph->fontwidth,
                 y + graph->fontheight / 2);
-    return;
 }
 
 
@@ -1032,7 +1028,6 @@ addradlabel(GRAPH *graph, int lab, double theta, int x, int y)
         x -= graph->fontwidth * (int) strlen(buf) + 3;
     }
     DevDrawText(buf, x, y);
-    return;
 }
 
 
@@ -1324,7 +1319,6 @@ drawsmithgrid(GRAPH *graph)
     DevDrawText(buf, gr_xcenter + gr_radius, gr_ycenter - gr_radius);
 
     DevUpdate();
-    return;
 }
 
 
@@ -1415,8 +1409,6 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
      * if ((x > gr_xmargin) && (x < gi_maxx))
      *     DevDrawText(nlab, x, centy + yoffset - gi_fntheight - 1);
      */
-
-    return;
 }
 
 

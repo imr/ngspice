@@ -39,5 +39,4 @@ com_xgraph(wordlist *wl)
         (void) unlink(fname);
 #endif
 
-    return;
 }

@@ -102,5 +102,4 @@ pwlist(wordlist *wlist, char *name)
     for (wl = wlist; wl; wl = wl->wl_next)
         fprintf(cp_err, "%s ", wl->wl_word);
     fprintf(cp_err, "]\n");
-    return;
 }

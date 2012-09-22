@@ -380,7 +380,6 @@ cp_addhistent(int event, wordlist *wlist)
     freehist(histlength - cp_maxhistlength);
     histlength++;
 #endif
-    return;
 }
 
 
@@ -438,7 +437,6 @@ cp_hprint(int eventhi, int eventlo, bool rev)
                 (void) putc('\n', cp_out);
             }
     }
-    return;
 }
 
 
@@ -478,7 +476,6 @@ freehist(int num)
 
     wl_free(hi->hi_wlist);
     tfree(hi);
-    return;
 }
 
 #endif /* !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE) */
@@ -572,6 +569,4 @@ com_history(wordlist *wl)
     else
         cp_hprint(cp_event - 1, cp_event - 1 - atoi(wl->wl_word), rev);
 #endif
-
-    return;
 }

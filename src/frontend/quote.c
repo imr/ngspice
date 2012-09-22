@@ -29,7 +29,6 @@ cp_wstrip(char *str)
                 *str = d;
             str++;
         }
-    return;
 }
 
 
@@ -43,7 +42,6 @@ cp_quoteword(char *str)
             *str = (char) quote(*str);
             str++;
         }
-    return;
 }
 
 
@@ -57,7 +55,6 @@ cp_printword(char *string, FILE *fp)
     if (string)
         for (s = string; *s; s++)
             (void) putc((strip(*s)), fp);
-    return;
 }
 
 
@@ -70,7 +67,6 @@ cp_striplist(wordlist *wlist)
 
     for (wl = wlist; wl; wl = wl->wl_next)
         cp_wstrip(wl->wl_word);
-    return;
 }
 
 

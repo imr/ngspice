@@ -741,8 +741,6 @@ slopelocation(GRAPH *graph, int x0, int y0)
                     (fy1-fy0)/(fx1-fx0), (fx1-fx0)/(fy1-fy0));
         }
     }
-
-    return;
 }
 
 

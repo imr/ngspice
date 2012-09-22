@@ -128,8 +128,6 @@ dodump(struct control *cc)
         fprintf(cp_out, "bad type %d\n", cc->co_type);
         break;
     }
-
-    return;
 }
 
 
@@ -142,8 +140,6 @@ com_cdump(wordlist *wl)
     indent = 0;
     for (c = control[stackp]; c; c = c->co_next)
         dodump(c);
-
-    return;
 }
 
 
@@ -170,8 +166,6 @@ com_mdump(wordlist *wl)
         }
     else
         fprintf(cp_err, "Error: no matrix available.\n");
-
-    return;
 }
 
 
@@ -198,6 +192,4 @@ com_rdump(wordlist *wl)
         }
     else
         fprintf(cp_err, "Error: no matrix or RHS available.\n");
-
-    return;
 }

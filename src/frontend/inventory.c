@@ -47,5 +47,4 @@ com_inventory(wordlist *wl)
                        ft_sim->devices[k]->name,
                        devList[k].instNum);
     out_send("\n");
-    return;
 }

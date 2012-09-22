@@ -29,5 +29,4 @@ com_rehash(wordlist *wl)
         cp_rehash(s, TRUE);
     else
         fprintf(cp_err, "Error: no PATH in environment.\n");
-    return;
 }

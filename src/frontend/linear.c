@@ -95,6 +95,4 @@ com_linearize(wordlist *wl)
             lincopy(v, newtime->v_realdata, len, oldtime);
         }
     }
-    return;
-
 }

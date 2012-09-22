@@ -695,7 +695,6 @@ passdone:
     }
 
     /* We have a new lot of variates in wk1 */
-    return;
 }
 
 
@@ -743,7 +742,6 @@ nextpair:
     if (i < ll)
         goto nextpair;
     /* Horrid, but good enough */
-    return;
 }
 
 
@@ -835,7 +833,6 @@ docheck:
     } else {
         printf ("\nInitnorm check OK\n");
     }
-    return;
 }
 
 

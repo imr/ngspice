@@ -245,5 +245,4 @@ quit:
         vec_free(t);
     free_pnode(nn); /* frees also t, if pnode nn is simple value */
     tfree(p);
-    return;
 }

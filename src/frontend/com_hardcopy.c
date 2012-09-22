@@ -208,5 +208,4 @@ com_hardcopy(wordlist *wl)
 
     /* restore previous graphics context by retrieving the previous currentgraph */
     PopGraphContext();
-    return;
 }

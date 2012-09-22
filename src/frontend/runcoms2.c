@@ -165,8 +165,6 @@ com_resume(wordlist *wl)
     } else {
         ft_curckt->ci_inprogress = FALSE;
     }
-
-    return;
 }
 
 
@@ -196,7 +194,6 @@ com_rset(wordlist *wl)
 
     inp_dodeck(ft_curckt->ci_deck, ft_curckt->ci_name, NULL,
                TRUE, ft_curckt->ci_options, ft_curckt->ci_filename);
-    return;
 }
 
 
@@ -257,6 +254,4 @@ com_remcirc(wordlist *wl)
 
     /* make first entry in ft_circuits the actual circuit (or NULL) */
     ft_curckt = ft_circuits;
-
-    return;
 }

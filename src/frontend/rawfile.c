@@ -253,7 +253,6 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
         }
     }
     (void) fclose(fp);
-    return;
 }
 
 
@@ -700,8 +699,6 @@ fixdims(struct dvec *v, char *s)
         v->v_numdims = 0;
     else
         v->v_length = ndimpoints;
-
-    return;
 }
 
 
@@ -806,5 +803,4 @@ spar_write(char *name, struct plot *pl, double Rbaseval)
     }
 
     (void) fclose(fp);
-    return;
 }

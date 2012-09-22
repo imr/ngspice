@@ -29,5 +29,4 @@ com_unset(wordlist *wl)
         cp_remvar(name);
         wl = wl->wl_next;
     }
-    return;
 }

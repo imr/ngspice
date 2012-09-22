@@ -84,7 +84,6 @@ pwlist(wordlist *wlist, char *name)
     for (wl = wlist; wl; wl = wl->wl_next)
         fprintf(cp_err, "%s ", wl->wl_word);
     fprintf(cp_err, "]\n");
-    return;
 }
 
 
@@ -101,7 +100,6 @@ pwlist_echo(wordlist *wlist, char *name)   /*CDHW used to perform function of se
     for (wl = wlist; wl; wl = wl->wl_next)
         fprintf(cp_err, "%s ", wl->wl_word);
     fprintf(cp_err, "\n");
-    return;
 }
 
 
@@ -885,7 +883,6 @@ void cp_resetcontrol(void)
     control[0] = cend[0] = NULL;
     stackp = 0;
     cp_kwswitch(CT_LABEL, NULL);
-    return;
 }
 
 
@@ -902,7 +899,6 @@ cp_popcontrol(void)
         ctl_free(control[stackp]);
         stackp--;
     }
-    return;
 }
 
 
@@ -919,7 +915,6 @@ cp_pushcontrol(void)
         stackp++;
         control[stackp] = cend[stackp] = NULL;
     }
-    return;
 }
 
 
@@ -931,7 +926,6 @@ cp_toplevel(void)
     if (cend[stackp])
         while (cend[stackp]->co_parent)
             cend[stackp] = cend[stackp]->co_parent;
-    return;
 }
 
 

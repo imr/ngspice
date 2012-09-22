@@ -41,6 +41,4 @@ cp_init(void)
     /* io redirection in streams.c:
        cp_in set to cp_curin etc. */
     cp_ioreset();
-
-    return;
 }

@@ -1629,7 +1629,6 @@ void com_loadsnap(wordlist *wl)
             return;
         }
     }
-    return;
 }
 
 
@@ -1765,5 +1764,4 @@ void com_savesnap(wordlist *wl)
 #endif
 
     fclose(file);
-    return;
 }

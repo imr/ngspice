@@ -264,6 +264,5 @@ com_diff(wordlist *wl)
             }
         }
     }
-    return;
 }
 

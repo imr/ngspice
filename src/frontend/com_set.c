@@ -54,6 +54,4 @@ com_set(wordlist *wl)
         /* don't free oldvar->va_list! This structure is used furthermore! */
         tfree(oldvar);
     }
-
-    return;
 }

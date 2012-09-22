@@ -140,7 +140,6 @@ com_rusage(wordlist *wl)
         (void) putc('\n', cp_out);
         printres("space");
     }
-    return;
 }
 
 
@@ -188,8 +187,6 @@ ft_ckspace(void)
         fprintmem(cp_err, limit);
         fprintf(cp_err, "\n");
     }
-
-    return;
 }
 
 
@@ -479,7 +476,6 @@ printres(char *name)
 
     if (vfree)
         free_struct_variable(vfree);
-    return;
 }
 
 

@@ -299,5 +299,4 @@ com_spec(wordlist *wl)
     tfree(win);
 #endif
 
-    return;
 }

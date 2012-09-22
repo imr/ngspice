@@ -148,8 +148,6 @@ com_dftype(wordlist *wl)
         fprintf(cp_err, "Error: missing 'p' or 'v' argument\n");
         break;
     }
-
-    return;
 }
 
 
@@ -246,6 +244,4 @@ com_stype(wordlist *wl)
                 if (vv->v_flags & VF_PERMANENT)
                     vv->v_type = tt;
     }
-
-    return;
 }

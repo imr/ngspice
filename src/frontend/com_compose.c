@@ -56,8 +56,6 @@ dimxpand(struct dvec *v, int *newdims, double *data)
         if (i < 0)
             break;
     }
-
-    return;
 }
 
 
@@ -472,5 +470,4 @@ com_compose(wordlist *wl)
     cp_addkword(CT_VECTOR, result->v_name);
     free_pnode(first_pn);
     tfree(resname); /*DG: resname has been copied so its remains allocated: memory leak One can remove this and not copy resname*/
-    return;
 }

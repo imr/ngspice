@@ -1964,7 +1964,6 @@ inp_casefix(char *string)
                 *string = (char) tolower(*string);
             string++;
         }
-    return;
 #endif
 }
 

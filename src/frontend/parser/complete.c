@@ -161,7 +161,6 @@ found:
     for (i = 0; wbuf[i]; i++)
         (void) ioctl(fileno(cp_in), TIOCSTI, &wbuf[i]);
     wl_free(pmatches);
-    return;
 }
 
 
@@ -311,7 +310,6 @@ printem(wordlist *wl)
         }
         (void) putchar('\n');
     }
-    return;
 }
 
 #else /* if not TIOCSTI */
@@ -322,7 +320,6 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
     NG_IGNORE(wlist);
     NG_IGNORE(buf);
     NG_IGNORE(esc);
-    return;
 }
 
 #endif
@@ -440,7 +437,6 @@ cp_ccon(bool on)
     NG_IGNORE(on);
 #endif
 
-    return;
 }
 
 
@@ -472,7 +468,6 @@ cp_addcomm(char *word, long int bits0, long int bits1, long int bits2, long int 
     cc->cc_kwords[1] = bits1;
     cc->cc_kwords[2] = bits2;
     cc->cc_kwords[3] = bits3;
-    return;
 }
 
 
@@ -486,7 +481,6 @@ cp_remcomm(char *word)
     cc = clookup(word, &commands, FALSE, FALSE);
     if (cc)
         cdelete(cc, &commands);
-    return;
 }
 
 
@@ -505,7 +499,6 @@ cp_addkword(int kw_class, char *word)
     /* word = copy(word); va: not necessary, clookup copies itself (memory leak) */
     cc = clookup(word, &keywords[kw_class], FALSE, TRUE);
     cc->cc_invalid = 0;
-    return;
 }
 
 
@@ -534,7 +527,6 @@ cp_remkword(int kw_class, char *word)
     cc = clookup(word, &keywords[kw_class], FALSE, FALSE);
     if (cc)
         cdelete(cc, &keywords[kw_class]);
-    return;
 }
 
 
@@ -567,7 +559,6 @@ cp_ccrestart(bool kwords)
     NG_IGNORE(kwords);
 
     /* Ack. */
-    return;
 }
 
 
@@ -582,7 +573,6 @@ throwaway(struct ccom *dbase)
         throwaway(dbase->cc_sibling);
     tfree(dbase->cc_name); /* va: also tfree dbase->cc_name (memory leak) */
     tfree(dbase);
-    return;
 }
 
 
@@ -741,5 +731,4 @@ cdelete(struct ccom *node, struct ccom **top)
 
     tfree(node->cc_name); /* va: we should allways use tfree */
     tfree(node);
-    return;
 }

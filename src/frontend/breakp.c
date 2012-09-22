@@ -153,7 +153,6 @@ com_stop(wordlist *wl)
 
 bad:
     fprintf(cp_err, "Syntax error parsing breakpoint specification.\n");
-    return;
 }
 
 
@@ -163,7 +162,6 @@ void
 com_trce(wordlist *wl)
 {
     settrace(wl, VF_PRINT, 0);
-    return;
 }
 
 
@@ -204,8 +202,6 @@ com_iplot(wordlist *wl)
     } else {
         dbs = currentdb;
     }
-
-    return;
 }
 
 
@@ -220,8 +216,6 @@ com_step(wordlist *wl)
         steps = howmanysteps = 1;
 
     com_resume(NULL);
-
-    return;
 }
 
 
@@ -294,8 +288,6 @@ com_sttus(wordlist *wl)
         }
         (void) putc('\n', cp_out);
     }
-
-    return;
 }
 
 
@@ -310,8 +302,6 @@ dbfree(struct dbcomm *db)
         tfree(dd->db_nodename2);
         tfree(dd);
     }
-
-    return;
 }
 
 
@@ -374,8 +364,6 @@ com_delete(wordlist *wl)
     bad:
         wl = wl->wl_next;
     }
-
-    return;
 }
 
 
@@ -505,7 +493,6 @@ satisfied(struct dbcomm *d, struct plot *plot)
 void
 ft_trquery(void)
 {
-    return;
 }
 
 
@@ -553,6 +540,4 @@ printcond(struct dbcomm *d, FILE *fp)
                 fprintf(fp, " %g", dt->db_value2);
         }
     }
-
-    return;
 }

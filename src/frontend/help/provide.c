@@ -143,6 +143,5 @@ hlp_killfamily(topic *top)
         hlp_tkillwin(top);
 
     top->children = NULL;
-    return;
 }
 

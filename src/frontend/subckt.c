@@ -2081,7 +2081,6 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
             break;
         }
     }
-    return;
 }
 
 

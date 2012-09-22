@@ -47,5 +47,4 @@ com_shift(wordlist *wl)
     }
 
     v->va_vlist = vv;
-    return;
 }
