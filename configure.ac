@@ -32,6 +32,8 @@ AC_CONFIG_HEADER([src/include/ngspice/config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror nostdinc])
 AM_SILENT_RULES([yes])
 
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+
 AC_SUBST([AM_CPPFLAGS], ['-I. -I$(srcdir) -I$(top_builddir)/src/include'])
 
 AC_CONFIG_MACRO_DIR([m4])
