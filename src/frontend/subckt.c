@@ -185,38 +185,27 @@ inp_subcktexpand(struct line *deck) {
 
 #ifdef TRACE
         fprintf(stderr, "Numparams is processing this deck:\n");
-        c = deck;
-        while (c) {
+        for (c = deck; c; c = c->li_next)
             fprintf(stderr, "%3d:%s\n", c->li_linenum, c->li_line);
-            c = c->li_next;
-        }
-#endif  /* TRACE */
+#endif
 
         ok = nupa_signal(NUPADECKCOPY, NULL);
         /* get the subckt/model names from the deck */
-        c = deck;
-        while (c) {  /* first Numparam pass */
+        for (c = deck; c; c = c->li_next) {  /* first Numparam pass */
             if (ciprefix(".subckt", c->li_line))
                 nupa_scan(c->li_line, c->li_linenum, TRUE);
             if (ciprefix(".model", c->li_line))
                 nupa_scan(c->li_line, c->li_linenum, FALSE);
-            c = c->li_next;
         }
-        c = deck;
-        while (c) {  /* first Numparam pass */
+        for (c = deck; c; c = c->li_next)  /* first Numparam pass */
             c->li_line = nupa_copy(c->li_line, c->li_linenum);
-            c = c->li_next;
-        }
         /* now copy instances */
 
 #ifdef TRACE
         fprintf(stderr, "Numparams transformed deck:\n");
-        c = deck;
-        while (c) {
+        for (c = deck; c; c = c->li_next)
             fprintf(stderr, "%3d:%s\n", c->li_linenum, c->li_line);
-            c = c->li_next;
-        }
-#endif  /* TRACE */
+#endif
 
     }
 
@@ -237,12 +226,13 @@ inp_subcktexpand(struct line *deck) {
         for (w = modnames; w; w = w->wl_next)
             printf("%s\n", w->wl_word);
     }
-#endif /* TRACE */
+#endif
 
     /* Added by H.Tanaka to find global nodes */
     for (i = 0; i < 128; i++)
         strcpy(node[i], ""); /* Clear global node holder */
-    for (c = deck; c; c = c->li_next) {
+
+    for (c = deck; c; c = c->li_next)
         if (ciprefix(".global", c->li_line)) {
             s = c->li_line;
             txfree(gettok(&s));
@@ -264,10 +254,9 @@ inp_subcktexpand(struct line *deck) {
             for (i = 0; i<numgnode; i++)
                 printf("***Global node no.%d is %s.***\n", i, node[i]);
             printf("\n");
-#endif /* TRACE */
+#endif
             c->li_line[0] = '*'; /* comment it out */
-        }/* if (ciprefix.. */
-    } /* for (c = deck.. */
+        }
 
     /* Let's do a few cleanup things... Get rid of ( ) around node lists... */
     for (c = deck; c; c = c->li_next) {    /* iterate on lines in deck */
@@ -322,11 +311,12 @@ inp_subcktexpand(struct line *deck) {
         } /* any other line */
     }   /*  for (c = deck . . . */
 
-    /* doit does the actual splicing in of the .subckt . . .  */
 #ifdef TRACE
     /* SDB debug statement */
     printf("In inp_subcktexpand, about to call doit.\n");
-#endif /* TRACE */
+#endif
+
+    /* doit does the actual splicing in of the .subckt . . .  */
     ll = doit(deck, modnames);
 
     wl_free(modnames);
@@ -337,22 +327,20 @@ inp_subcktexpand(struct line *deck) {
         for (c = ll; c; c = c->li_next)
             dynMaxckt++;
     }
+
     /* Now check to see if there are still subckt instances undefined... */
-    if (ll) {
-        for (c = ll; c; c = c->li_next) {
-            if (ciprefix(invoke, c->li_line)) {
-                fprintf(cp_err, "Error: unknown subckt: %s\n", c->li_line);
-                if (use_numparams)
-                    ok = ok && nupa_signal(NUPAEVALDONE, NULL);
-                return NULL;
-            }
+    for (c = ll; c; c = c->li_next)
+        if (ciprefix(invoke, c->li_line)) {
+            fprintf(cp_err, "Error: unknown subckt: %s\n", c->li_line);
+            if (use_numparams)
+                ok = ok && nupa_signal(NUPAEVALDONE, NULL);
+            return NULL;
         }
-    }
+
     if (use_numparams) {
         /* the NUMPARAM final line translation pass */
         ok = ok && nupa_signal(NUPASUBDONE, NULL);
-        c = ll;
-        while (c) {
+        for (c = ll; c; c = c->li_next)
             /* 'param' .meas statements can have dependencies on measurement values */
             /* need to skip evaluating here and evaluate after other .meas statements */
             if (ciprefix(".meas", c->li_line)) {
@@ -361,21 +349,18 @@ inp_subcktexpand(struct line *deck) {
             } else {
                 nupa_eval(c->li_line, c->li_linenum, c->li_linenum_orig);
             }
-            c = c->li_next;
-        }
+
 #ifdef TRACE
         fprintf(stderr, "Numparams converted deck:\n");
-        c = ll;
-        while (c) {
+        for (c = ll; c; c = c->li_next)
             fprintf(stderr, "%3d:%s\n", c->li_linenum, c->li_line);
-            c = c->li_next;
-        }
-#endif  /* TRACE */
+#endif
 
         /*nupa_list_params(stdout);*/
         nupa_copy_inst_dico();
         ok = ok && nupa_signal(NUPAEVALDONE, NULL);
     }
+
     return (ll);  /* return the spliced deck.  */
 }
 
