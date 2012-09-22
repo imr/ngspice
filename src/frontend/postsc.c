@@ -444,7 +444,7 @@ PS_SelectColor(int colorid)           /* should be replaced by PS_DefineColor */
         internalerror("bad colorid inside PS_SelectColor");
     } else if (scale == 1) {  /* colorN is not an rgbstring, use default color */
         sprintf(colorstring, "%1.3f %1.3f %1.3f", colors[colorid].red/255.0,
-                colors[colorid].green/255.0, colors[colorid].blue/255.0) ;
+                colors[colorid].green/255.0, colors[colorid].blue/255.0);
         strcpy(pscolor, colorstring);
     }
 }

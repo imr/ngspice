@@ -1,6 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group 
+Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 Modified 1999 Emmanuel Rouat
 **********/
 
@@ -23,6 +23,7 @@ static toplink *getsubtoplink(char **ss);
 static topic *alltopics = NULL;
 
 static fplace *copy_fplace(fplace *place);
+
 
 static int
 sortcmp(const void *a, const void *b)
@@ -70,13 +71,15 @@ hlp_read(fplace *place)
     bool mof = FALSE;
 
     if (!place)
-	return 0;
+        return 0;
 
     top->place = copy_fplace(place);
 
     /* get the title */
-    if (!place->fp) place->fp = hlp_fopen(place->filename);
-    if (!place->fp) return(NULL);
+    if (!place->fp)
+        place->fp = hlp_fopen(place->filename);
+    if (!place->fp)
+        return (NULL);
     fseek(place->fp, place->fpos, SEEK_SET);
     (void) fgets(buf, BSIZE_SP, place->fp);    /* skip subject */
     (void) fgets(buf, BSIZE_SP, place->fp);
@@ -88,20 +91,22 @@ hlp_read(fplace *place)
     /* get the text */
     /* skip to TEXT: */
     while (fgets(buf, BSIZE_SP, place->fp)) {
-      if (!strncmp("TEXT: ", buf, 6)) break;
-      if ((*buf == '\0') ||		/* SJB - bug fix */
-        !strncmp("SEEALSO: ", buf, 9) ||
-        !strncmp("SUBTOPIC: ", buf, 10)) {
-        /* no text */
-        top->text = NULL;
-        goto endtext;
-      }
+        if (!strncmp("TEXT: ", buf, 6))
+            break;
+        if ((*buf == '\0') ||             /* SJB - bug fix */
+            !strncmp("SEEALSO: ", buf, 9) ||
+            !strncmp("SUBTOPIC: ", buf, 10))
+        {
+            /* no text */
+            top->text = NULL;
+            goto endtext;
+        }
     }
     mof = TRUE;
     while (mof && !strncmp("TEXT: ", buf, 6)) {
         for (s = &buf[6], fchanges = 0; *s && (*s != '\n'); s++)
             if (((s[0] == '\033') && s[1]) ||
-                    ((s[0] == '_') && (s[1] == '\b')))
+                ((s[0] == '_') && (s[1] == '\b')))
                 fchanges++;
         *s = '\0';
         wl_append_word(&(top->text), &end, copy(&buf[6]));
@@ -117,15 +122,15 @@ endtext:
     while(mof && !strncmp("SUBTOPIC: ", buf, 10)) {
         s = &buf[10];
         /* process tokens within line, updating pointer */
-	while (*s) {
-          if ((topiclink = getsubtoplink(&s)) != NULL) {
-            if (tend)
-              tend->next = topiclink;
-            else
-              top->subtopics = topiclink;
-            tend = topiclink;
-          }
-	}
+        while (*s) {
+            if ((topiclink = getsubtoplink(&s)) != NULL) {
+                if (tend)
+                    tend->next = topiclink;
+                else
+                    top->subtopics = topiclink;
+                tend = topiclink;
+            }
+        }
         mof = fgets(buf, BSIZE_SP, place->fp) == NULL ? FALSE : TRUE;
     }
 
@@ -134,93 +139,103 @@ endtext:
     while(mof && !strncmp("SEEALSO: ", buf, 9)) {
         s = &buf[9];
         /* process tokens within line, updating pointer */
-	while (*s) {
-          if ((topiclink = getsubtoplink(&s)) != NULL) {
-            if (tend)
-              tend->next = topiclink;
-            else
-              top->seealso = topiclink;
-            tend = topiclink;
-          }
-	}
+        while (*s) {
+            if ((topiclink = getsubtoplink(&s)) != NULL) {
+                if (tend)
+                    tend->next = topiclink;
+                else
+                    top->seealso = topiclink;
+                tend = topiclink;
+            }
+        }
         mof = fgets(buf, BSIZE_SP, place->fp) == NULL ? FALSE : TRUE;
     }
 
-        /* Now we have to fill in the subjects
-        for the seealsos and subtopics. */
+    /* Now we have to fill in the subjects
+       for the seealsos and subtopics. */
     for (tl = top->seealso; tl; tl = tl->next)
         tl->description = getsubject(tl->place);
     for (tl = top->subtopics; tl; tl = tl->next)
         tl->description = getsubject(tl->place);
-    
+
     sortlist(&top->seealso);
     /* sortlist(&top->subtopics); It looks nicer if they
-				    are in the original order */
-    
+       are in the original order */
+
     top->readlink = alltopics;
     alltopics = top;
 
     return (top);
 }
 
+
 /* *ss is of the form filename:subject */
-static toplink *getsubtoplink(char **ss)
+static toplink *
+getsubtoplink(char **ss)
 {
     toplink *tl;
     char *tmp, *s, *t;
     char subject[BSIZE_SP];
 
-    if (!**ss) return(NULL);
+    if (!**ss)
+        return (NULL);
 
     s = *ss;
 
     tl = alloc(toplink);
     if ((tmp =strchr(s, ':')) != NULL) {
-      tl->place = alloc(fplace);
-      tl->place->filename = strncpy(
-            TMALLOC(char, tmp - s + 1),
-            s, (size_t) (tmp - s));
-      tl->place->filename[tmp - s] = '\0';
-      strtolower(tl->place->filename);
+        tl->place = alloc(fplace);
+        tl->place->filename =
+            strncpy(TMALLOC(char, tmp - s + 1), s, (size_t) (tmp - s));
+        tl->place->filename[tmp - s] = '\0';
+        strtolower(tl->place->filename);
 
-      /* see if filename is on approved list */
-      if (!hlp_approvedfile(tl->place->filename)) {
-        tfree(tl->place);
-        tfree(tl);
-        /* skip up to next comma or newline */
-        while (*s && *s != ',' && *s != '\n') s++;
-        while (*s && (*s == ',' || *s == ' ' || *s == '\n')) s++;
-        *ss = s;
-        return(NULL);
-      }
+        /* see if filename is on approved list */
+        if (!hlp_approvedfile(tl->place->filename)) {
+            tfree(tl->place);
+            tfree(tl);
+            /* skip up to next comma or newline */
+            while (*s && *s != ',' && *s != '\n')
+                s++;
+            while (*s && (*s == ',' || *s == ' ' || *s == '\n'))
+                s++;
+            *ss = s;
+            return (NULL);
+        }
 
-      tl->place->fp = hlp_fopen(tl->place->filename);
-      for (s = tmp + 1, t = subject; *s && *s != ',' && *s != '\n'; s++) {
-        *t++ = *s;
-      }
-      *t = '\0';
-      tl->place->fpos = findsubject(tl->place->filename, subject);
-      if (tl->place->fpos == -1) {
-        tfree(tl->place);
-        tfree(tl);
-        while (*s && (*s == ',' || *s == ' ' || *s == '\n')) s++;
-        *ss = s;
-        return(NULL);
-      }
+        tl->place->fp = hlp_fopen(tl->place->filename);
+        for (s = tmp + 1, t = subject; *s && *s != ',' && *s != '\n'; s++)
+            *t++ = *s;
+        *t = '\0';
+        tl->place->fpos = findsubject(tl->place->filename, subject);
+        if (tl->place->fpos == -1) {
+            tfree(tl->place);
+            tfree(tl);
+            while (*s && (*s == ',' || *s == ' ' || *s == '\n'))
+                s++;
+            *ss = s;
+            return (NULL);
+        }
     } else {
-      fprintf(stderr, "bad filename:subject pair %s\n", s);
-      /* skip up to next free space */
-      while (*s && *s != ',' && *s != '\n') s++;
-      while (*s && (*s == ',' || *s == ' ' || *s == '\n')) s++;
-      *ss = s;
-      tfree(tl->place);
-      tfree(tl);
-      return(NULL);
+        fprintf(stderr, "bad filename:subject pair %s\n", s);
+        /* skip up to next free space */
+        while (*s && *s != ',' && *s != '\n')
+            s++;
+        while (*s && (*s == ',' || *s == ' ' || *s == '\n'))
+            s++;
+        *ss = s;
+        tfree(tl->place);
+        tfree(tl);
+        return (NULL);
     }
-    while (*s && (*s == ',' || *s == ' ' || *s == '\n')) s++;
+
+    while (*s && (*s == ',' || *s == ' ' || *s == '\n'))
+        s++;
     *ss = s;
-    return(tl);
+
+    return (tl);
 }
+
 
 /* returns a file position, -1 on error */
 long
@@ -232,67 +247,69 @@ findsubject(char *filename, char *subject)
     struct hlp_index indexitem;
 
     if (!filename) {
-	return -1;
+        return -1;
     }
 
     /* open up index for filename */
     sprintf(buf, "%s%s%s.idx", hlp_directory, DIR_PATHSEP, filename);
     hlp_pathfix(buf);
     if ((fp = fopen(buf, "rb")) == NULL) {
-      perror(buf);
-      return(-1);
+        perror(buf);
+        return (-1);
     }
 
     /* try it exactly (but ignore case) */
     while(fread(&indexitem, sizeof (struct hlp_index), 1, fp)) {
-      if (!strncasecmp(subject, indexitem.subject, 64)) { /* sjb - ignore case */
-        fclose(fp);
-        return(indexitem.fpos);
-      }
+        if (!strncasecmp(subject, indexitem.subject, 64)) { /* sjb - ignore case */
+            fclose(fp);
+            return (indexitem.fpos);
+        }
     }
 
     fclose(fp);
 
     if ((fp = fopen(buf, "rb")) == NULL) {
-      perror(buf);
-      return(-1);
+        perror(buf);
+        return (-1);
     }
 
     /* try it abbreviated (ignore case)  */
     while(fread(&indexitem, sizeof (struct hlp_index), 1, fp)) {
-      if (!strncasecmp(indexitem.subject,subject, strlen(subject))) {
-        fclose(fp);
-        return(indexitem.fpos);
-      }
+        if (!strncasecmp(indexitem.subject,subject, strlen(subject))) {
+            fclose(fp);
+            return (indexitem.fpos);
+        }
     }
 
     fclose(fp);
 
     if ((fp = fopen(buf, "rb")) == NULL) {
-      perror(buf);
-      return(-1);
+        perror(buf);
+        return (-1);
     }
 
-	/* try it within */ /* FIXME: need a case independent version of strstr() */
+    /* try it within */ /* FIXME: need a case independent version of strstr() */
     while(fread(&indexitem, sizeof (struct hlp_index), 1, fp)) {
-	  if (strstr(indexitem.subject,subject)) {
-        fclose(fp);
-        return(indexitem.fpos);
-      }
+        if (strstr(indexitem.subject,subject)) {
+            fclose(fp);
+            return (indexitem.fpos);
+        }
     }
 
     fclose(fp);
-    return(-1);
-
+    return (-1);
 }
+
 
 static char *
 getsubject(fplace *place)
 {
     char buf[BSIZE_SP], *s;
 
-    if (!place->fp) place->fp = hlp_fopen(place->filename);
-    if (!place->fp) return(NULL);
+    if (!place->fp)
+        place->fp = hlp_fopen(place->filename);
+    if (!place->fp)
+        return(NULL);
 
     fseek(place->fp, place->fpos, SEEK_SET);
     (void) fgets(buf, BSIZE_SP, place->fp);
@@ -303,7 +320,7 @@ getsubject(fplace *place)
 }
 
 
-static 
+static
 void tlfree(toplink *tl)
 {
     toplink *nt = NULL;
@@ -339,6 +356,7 @@ hlp_free(void)
     return;
 }
 
+
 static fplace *
 copy_fplace(fplace *place)
 {
@@ -349,5 +367,5 @@ copy_fplace(fplace *place)
     newplace->fpos = place->fpos;
     newplace->fp = place->fp;
 
-    return(newplace);
+    return (newplace);
 }

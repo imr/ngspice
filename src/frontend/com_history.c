@@ -375,6 +375,7 @@ cp_addhistent(int event, wordlist *wlist)
     cp_lastone->hi_next = NULL;
     cp_lastone->hi_event = event;
     cp_lastone->hi_wlist = wl_copy(wlist);
+
 #if !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE)
     freehist(histlength - cp_maxhistlength);
     histlength++;
@@ -570,7 +571,7 @@ com_history(wordlist *wl)
         cp_hprint(cp_event - 1, cp_event - histlength, rev);
     else
         cp_hprint(cp_event - 1, cp_event - 1 - atoi(wl->wl_word), rev);
-#endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
+#endif
 
     return;
 }

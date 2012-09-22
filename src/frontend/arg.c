@@ -46,7 +46,7 @@ countargs(wordlist *wl)
     wordlist *w;
 
     for (w = wl; w; w = w->wl_next)
-        number++ ;
+        number++;
 
     return (number);
 }

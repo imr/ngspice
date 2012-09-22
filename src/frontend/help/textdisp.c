@@ -1,6 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group 
+Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 
@@ -23,6 +23,7 @@ static void putline(char *s);
 static int putstuff(toplink *tl, int base);
 
 int hlp_width = 72;
+
 
 bool
 hlp_tdisplay(topic *top)
@@ -47,6 +48,7 @@ hlp_tdisplay(topic *top)
     out_printf("\n");
     return (TRUE);
 }
+
 
 toplink *
 hlp_thandle(topic **parent)
@@ -73,28 +75,30 @@ hlp_thandle(topic **parent)
         for (s = buf; *s && isspace(*s); s++)
             ;
         switch (*s) {
-            case '?':
+        case '?':
             fprintf(cp_out,
-"\nType the number of a sub-topic or see also, or one of:\n\
-\tr\tReprint the current topic\n\
-\tp or CR\tReturn to the previous topic\n\
-\tq\tQuit help\n\
-\t?\tPrint this message\n\n");
+                    "\n"
+                    "Type the number of a sub-topic or see also, or one of:\n"
+                    "\tr\tReprint the current topic\n"
+                    "\tp or CR\tReturn to the previous topic\n"
+                    "\tq\tQuit help\n"
+                    "\t?\tPrint this message\n"
+                    "\n");
             continue;
 
-            case 'r':
+        case 'r':
             (void) hlp_tdisplay(curtop);
             continue;
 
-            case 'q':
+        case 'q':
             quitflag = TRUE;
             *parent = NULL;
             return (NULL);
 
-            case 'p':
-            case '\n':
-            case '\r':
-            case '\0':
+        case 'p':
+        case '\n':
+        case '\r':
+        case '\0':
             *parent = curtop;
             return (NULL);
         }
@@ -124,6 +128,7 @@ hlp_thandle(topic **parent)
     }
 }
 
+
 /* ARGSUSED */
 void
 hlp_tkillwin(topic *top)
@@ -137,6 +142,7 @@ hlp_tkillwin(topic *top)
     return;
 }
 
+
 /* This has to rip out the font changes from the lines... */
 
 static void
@@ -147,7 +153,7 @@ putline(char *s)
 
     while (*s) {
         if (((*s == '\033') && s[1]) ||
-                ((*s == '_') && (s[1] == '\b')))
+            ((*s == '_') && (s[1] == '\b')))
             s += 2;
         else
             buf[i++] = *s++;
@@ -156,6 +162,7 @@ putline(char *s)
     out_printf("%s\n", buf);
     return;
 }
+
 
 /* Figure out the number of columns we can use.  Assume an entry like
  * nn) word -- add 5 characters to the width...
@@ -195,7 +202,7 @@ putstuff(toplink *tl, int base)
         for (j = 0; j < ncols; j++) {
             if (tt)
                 out_printf("%2d) %-*s ", base + j * nrows + i + 1,
-                    maxwidth - 5, tt->description);
+                           maxwidth - 5, tt->description);
             for (k = 0; k < nrows; k++)
                 if (tt)
                     tt = tt->next;
@@ -205,4 +212,3 @@ putstuff(toplink *tl, int base)
 
     return (nbuts);
 }
-

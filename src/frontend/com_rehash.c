@@ -22,7 +22,9 @@ com_rehash(wordlist *wl)
         fprintf(cp_err, "Error: unixcom not set.\n");
         return;
     }
+
     s = getenv("PATH");
+
     if (s)
         cp_rehash(s, TRUE);
     else

@@ -10,5 +10,4 @@ void com_define(wordlist *wlist);
 void com_undefine(wordlist *wlist);
 
 
-
 #endif

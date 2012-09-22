@@ -3,7 +3,7 @@
 ************/
 
 #ifndef HPGH_H
-#define HPGH_H 
+#define HPGH_H
 
 disp_fn_Init_t             GL_Init;
 disp_fn_NewViewport_t      GL_NewViewport;
@@ -16,4 +16,5 @@ disp_fn_SetLinestyle_t     GL_SetLinestyle;
 disp_fn_SetColor_t         GL_SetColor;
 disp_fn_Update_t           GL_Update;
 
-#endif /* HPGH_H */
+
+#endif

@@ -804,6 +804,7 @@ spar_write(char *name, struct plot *pl, double Rbaseval)
         }
         (void) putc('\n', fp);
     }
+
     (void) fclose(fp);
     return;
 }

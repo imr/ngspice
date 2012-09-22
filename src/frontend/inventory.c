@@ -41,12 +41,11 @@ com_inventory(wordlist *wl)
 
     out_init();
     out_send("Circuit Inventory\n\n");
-    for (k = 0; k < ft_sim->numDevices; k++) {
+    for (k = 0; k < ft_sim->numDevices; k++)
         if (ft_sim->devices[k])
             out_printf("%s: %d\n",
                        ft_sim->devices[k]->name,
                        devList[k].instNum);
-    }
     out_send("\n");
     return;
 }

@@ -254,6 +254,7 @@ com_remcirc(wordlist *wl)
         }
         prev = p;
     }
+
     /* make first entry in ft_circuits the actual circuit (or NULL) */
     ft_curckt = ft_circuits;
 

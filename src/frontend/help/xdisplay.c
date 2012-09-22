@@ -1,6 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group 
+Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 Modified 1999 Emmanuel Rouat
 **********/
 
@@ -22,24 +22,42 @@ int hlp_initypos = START_YPOS;
 int hlp_buttonstyle = BS_LEFT;
 
 
-
 #ifdef X_DISPLAY_MISSING
-bool hlp_xdisplay(topic *top)  { 
+
+bool
+hlp_xdisplay(topic *top)
+{
     NG_IGNORE(top);
-    return (FALSE); 
+    return (FALSE);
 }
 
-void hlp_xkillwin(topic *top)  {
+
+void
+hlp_xkillwin(topic *top)
+{
     NG_IGNORE(top);
 }
+
 #endif
 
-void hlp_xwait(topic *top, bool on)
+
+void
+hlp_xwait(topic *top, bool on)
 {
     NG_IGNORE(on);
     NG_IGNORE(top);
 }
 
-void hlp_xclosedisplay(void) {}
-toplink * hlp_xhandle(topic **pp) { *pp = NULL; return (NULL); }
 
+void
+hlp_xclosedisplay(void)
+{
+}
+
+
+toplink *
+hlp_xhandle(topic **pp)
+{
+    *pp = NULL;
+    return (NULL);
+}

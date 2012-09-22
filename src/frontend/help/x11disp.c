@@ -31,16 +31,19 @@ static Atom atom_wm_delete_window;
 static Atom atom_wm_protocols;
 static Display *display;
 
+
 /* callback function for catching window deletion by WM x-button */
-static void handle_wm_messages(Widget w, XtPointer client_data, XEvent *event, Boolean *cont) {
+static void
+handle_wm_messages(Widget w, XtPointer client_data, XEvent *event, Boolean *cont)
+{
     topic *top = (topic *) client_data;
 
     NG_IGNORE(cont);
     NG_IGNORE(w);
 
-    if (event->type == ClientMessage
-            && event->xclient.message_type == atom_wm_protocols
-            && (Atom) event->xclient.data.l[0] == atom_wm_delete_window) 
+    if (event->type == ClientMessage &&
+        event->xclient.message_type == atom_wm_protocols &&
+        (Atom) event->xclient.data.l[0] == atom_wm_delete_window)
     {
         hlp_killfamily(top);
         hlp_fixchildren(top);
@@ -90,122 +93,120 @@ hlp_xdisplay(topic *top)
 
     if (!started) {     /* have to init everything */
 
-      /* assume X toolkit already initialize */
+        /* assume X toolkit already initialize */
 
-      started = TRUE;
+        started = TRUE;
 
     }
 
-    top->shellwidget = XtCreateApplicationShell("shell",
-            topLevelShellWidgetClass, NULL, 0);
+    top->shellwidget = XtCreateApplicationShell
+        ("shell", topLevelShellWidgetClass, NULL, 0);
 
     if (!top->parent) {
-      top->xposition = hlp_initxpos;
-      top->yposition = hlp_initypos;
+        top->xposition = hlp_initxpos;
+        top->yposition = hlp_initypos;
     } else {
-      top->xposition = top->parent->xposition + X_INCR;
-      top->yposition = top->parent->yposition + Y_INCR;
+        top->xposition = top->parent->xposition + X_INCR;
+        top->yposition = top->parent->yposition + Y_INCR;
     }
+
     XtSetArg(formargs[0], XtNx, top->xposition);
     XtSetArg(formargs[1], XtNy, top->yposition);
-    top->formwidget = XtCreateManagedWidget("form", formWidgetClass,
-            top->shellwidget, formargs, XtNumber(formargs));
+    top->formwidget = XtCreateManagedWidget
+        ("form", formWidgetClass, top->shellwidget, formargs, XtNumber(formargs));
 
     /* we really want a title bar widget for this, sigh */
-    top->titlewidget = XtCreateManagedWidget("title",
-            boxWidgetClass, top->formwidget,
-            titleargs, XtNumber(titleargs));
+    top->titlewidget = XtCreateManagedWidget
+        ("title", boxWidgetClass, top->formwidget, titleargs, XtNumber(titleargs));
     XtSetArg(labelargs[0], XtNlabel, top->title);
-    XtCreateManagedWidget("titlelabel", labelWidgetClass,
-            top->titlewidget, labelargs, 1);
+    XtCreateManagedWidget
+        ("titlelabel", labelWidgetClass, top->titlewidget, labelargs, 1);
     XtSetArg(buttonargs[0], XtNlabel, "quit help");
-    buttonwidget = XtCreateManagedWidget("quit", commandWidgetClass,
-            top->titlewidget, buttonargs, 1);
+    buttonwidget = XtCreateManagedWidget
+        ("quit", commandWidgetClass, top->titlewidget, buttonargs, 1);
     XtAddCallback(buttonwidget, XtNcallback, quit, top);
     XtSetArg(buttonargs[0], XtNlabel, "delete window");
-    buttonwidget = XtCreateManagedWidget("delete", commandWidgetClass,
-            top->titlewidget, buttonargs, XtNumber(buttonargs));
+    buttonwidget = XtCreateManagedWidget
+        ("delete", commandWidgetClass, top->titlewidget, buttonargs, XtNumber(buttonargs));
     XtAddCallback(buttonwidget, XtNcallback, delete_w, top);
 
     buf = TMALLOC(char, 80 * top->numlines + 100);
     buf[0] = '\0';
     for (wl = top->text; wl; wl = wl->wl_next) {
-      sputline(buf, wl->wl_word);
+        sputline(buf, wl->wl_word);
     }
     top->chartext = buf;  /* make sure gets deallocated later XXX */
     XtSetArg(htextargs[0], XtNstring, top->chartext);
     XtSetArg(htextargs[1], XtNallowResize, True);
-    XtSetArg(htextargs[2], XtNscrollHorizontal, XawtextScrollWhenNeeded );
-    XtSetArg(htextargs[3], XtNscrollVertical, XawtextScrollAlways );
+    XtSetArg(htextargs[2], XtNscrollHorizontal, XawtextScrollWhenNeeded);
+    XtSetArg(htextargs[3], XtNscrollVertical, XawtextScrollAlways);
     XtSetArg(htextargs[4], XtNfromVert, top->titlewidget);
     XtSetArg(htextargs[5], XtNwidth, 660);
     XtSetArg(htextargs[6], XtNheight, 350);
-    top->textwidget = XtCreateManagedWidget("helptext",
-           asciiTextWidgetClass, top->formwidget, htextargs,
-	   XtNumber(htextargs));
+    top->textwidget = XtCreateManagedWidget
+        ("helptext", asciiTextWidgetClass, top->formwidget, htextargs, XtNumber(htextargs));
 
     if (top->subtopics) {
-      XtSetArg(labelargs[0], XtNfromVert, top->textwidget);
-      XtSetArg(labelargs[1], XtNvertDistance, 8);
-      XtSetArg(labelargs[2], XtNlabel, "Subtopics: ");
-      top->sublabelwidget = XtCreateManagedWidget("sublabel",
-          labelWidgetClass, top->formwidget, labelargs, XtNumber(labelargs));
+        XtSetArg(labelargs[0], XtNfromVert, top->textwidget);
+        XtSetArg(labelargs[1], XtNvertDistance, 8);
+        XtSetArg(labelargs[2], XtNlabel, "Subtopics: ");
+        top->sublabelwidget = XtCreateManagedWidget
+            ("sublabel", labelWidgetClass, top->formwidget, labelargs, XtNumber(labelargs));
 
-      XtSetArg(bboxargs[0], XtNwidth, 400);
-      XtSetArg(bboxargs[1], XtNallowResize, True);
-      XtSetArg(bboxargs[2], XtNfromVert, top->sublabelwidget);
-      top->subboxwidget = XtCreateManagedWidget("buttonbox",
-          boxWidgetClass, top->formwidget, bboxargs, XtNumber(bboxargs));
+        XtSetArg(bboxargs[0], XtNwidth, 400);
+        XtSetArg(bboxargs[1], XtNallowResize, True);
+        XtSetArg(bboxargs[2], XtNfromVert, top->sublabelwidget);
+        top->subboxwidget = XtCreateManagedWidget
+            ("buttonbox", boxWidgetClass, top->formwidget, bboxargs, XtNumber(bboxargs));
 
-      for (tl = top->subtopics; tl; tl = tl->next) {
-        tl->button.text = tl->description;
-        tl->button.tag = tl->place;
-        if (!tl->button.text)
-          tl->button.text = "<unknown>";
+        for (tl = top->subtopics; tl; tl = tl->next) {
+            tl->button.text = tl->description;
+            tl->button.tag = tl->place;
+            if (!tl->button.text)
+                tl->button.text = "<unknown>";
 
-        XtSetArg(buttonargs[0], XtNlabel, tl->button.text);
-        buttonwidget = XtCreateManagedWidget(tl->button.text,
-		commandWidgetClass, top->subboxwidget, buttonargs,
-		XtNumber(buttonargs));
-                                /* core leak XXX */
-        hand = TMALLOC(handle, 1);
-        hand->result = tl;
-        hand->parent = top;
-        XtAddCallback(buttonwidget, XtNcallback, newtopic, hand);
-      }
+            XtSetArg(buttonargs[0], XtNlabel, tl->button.text);
+            buttonwidget = XtCreateManagedWidget
+                (tl->button.text, commandWidgetClass, top->subboxwidget, buttonargs, XtNumber(buttonargs));
+            /* core leak XXX */
+            hand = TMALLOC(handle, 1);
+            hand->result = tl;
+            hand->parent = top;
+            XtAddCallback(buttonwidget, XtNcallback, newtopic, hand);
+        }
     }
 
     if (top->seealso) {
-      if (top->subtopics)
-        XtSetArg(labelargs[0], XtNfromVert, top->subboxwidget);
-      else
-        XtSetArg(labelargs[0], XtNfromVert, top->textwidget);
-      XtSetArg(labelargs[1], XtNvertDistance, 8);
-      XtSetArg(labelargs[2], XtNlabel, "See also: ");
-      top->seelabelwidget = XtCreateManagedWidget("seelabel",
-          labelWidgetClass, top->formwidget, labelargs, XtNumber(labelargs));
+        if (top->subtopics)
+            XtSetArg(labelargs[0], XtNfromVert, top->subboxwidget);
+        else
+            XtSetArg(labelargs[0], XtNfromVert, top->textwidget);
+        XtSetArg(labelargs[1], XtNvertDistance, 8);
+        XtSetArg(labelargs[2], XtNlabel, "See also: ");
+        top->seelabelwidget = XtCreateManagedWidget
+            ("seelabel", labelWidgetClass, top->formwidget, labelargs, XtNumber(labelargs));
 
-      XtSetArg(bboxargs[0], XtNwidth, 400);
-      XtSetArg(bboxargs[1], XtNallowResize, True);
-      XtSetArg(bboxargs[2], XtNfromVert, top->seelabelwidget);
-      top->seeboxwidget = XtCreateManagedWidget("buttonbox",
-          boxWidgetClass, top->formwidget, bboxargs, XtNumber(bboxargs));
+        XtSetArg(bboxargs[0], XtNwidth, 400);
+        XtSetArg(bboxargs[1], XtNallowResize, True);
+        XtSetArg(bboxargs[2], XtNfromVert, top->seelabelwidget);
+        top->seeboxwidget = XtCreateManagedWidget
+            ("buttonbox", boxWidgetClass, top->formwidget, bboxargs, XtNumber(bboxargs));
 
-      for (tl = top->seealso; tl; tl = tl->next) {
-        tl->button.text = tl->description;
-        tl->button.tag = tl->place;
-        if (!tl->button.text)
-          tl->button.text = "<unknown>";
+        for (tl = top->seealso; tl; tl = tl->next) {
+            tl->button.text = tl->description;
+            tl->button.tag = tl->place;
+            if (!tl->button.text)
+                tl->button.text = "<unknown>";
 
-        XtSetArg(buttonargs[0], XtNlabel, tl->button.text);
-        buttonwidget = XtCreateManagedWidget(tl->button.text,
-		commandWidgetClass, top->seeboxwidget, buttonargs, 1);
-		hand = TMALLOC(handle, 1);
-                                /* core leak XXX */
-        hand->result = tl;
-        hand->parent = top;
-        XtAddCallback(buttonwidget, XtNcallback, newtopic, hand);
-      }
+            XtSetArg(buttonargs[0], XtNlabel, tl->button.text);
+            buttonwidget = XtCreateManagedWidget
+                (tl->button.text, commandWidgetClass, top->seeboxwidget, buttonargs, 1);
+            hand = TMALLOC(handle, 1);
+            /* core leak XXX */
+            hand->result = tl;
+            hand->parent = top;
+            XtAddCallback(buttonwidget, XtNcallback, newtopic, hand);
+        }
     }
 
     XtRealizeWidget(top->shellwidget);
@@ -222,8 +223,8 @@ hlp_xdisplay(topic *top)
     XSetWMProtocols(display, XtWindow(top->shellwidget), &atom_wm_delete_window, 1);
 
     return (TRUE);
-
 }
+
 
 static void
 newtopic(Widget w, XtPointer client_data, XtPointer call_data)
@@ -236,7 +237,7 @@ newtopic(Widget w, XtPointer client_data, XtPointer call_data)
     NG_IGNORE(w);
 
     if (!(newtop = hlp_read(result->place))) {
-      fprintf(stderr, "Internal error: bad link\n");
+        fprintf(stderr, "Internal error: bad link\n");
     }
 
     newtop->next = parent->children;
@@ -250,10 +251,10 @@ newtopic(Widget w, XtPointer client_data, XtPointer call_data)
     }
 }
 
+
 static void
 delete_w(Widget w, XtPointer client_data, XtPointer call_data)
 {
-
     topic *top = (topic *) client_data;
 
     NG_IGNORE(call_data);
@@ -263,18 +264,21 @@ delete_w(Widget w, XtPointer client_data, XtPointer call_data)
     hlp_fixchildren(top);
 }
 
+
 static void
 quit(Widget w, XtPointer client_data, XtPointer call_data)
 {
-
     topic *top = (topic *) client_data, *parent = top->parent;
 
     NG_IGNORE(call_data);
     NG_IGNORE(w);
 
-    while (parent && parent->parent) parent = parent->parent;
+    while (parent && parent->parent)
+        parent = parent->parent;
+
     hlp_killfamily(parent ? parent : top);
 }
+
 
 void
 hlp_xkillwin(topic *top)
@@ -284,8 +288,8 @@ hlp_xkillwin(topic *top)
     if (top == topics)
         topics = top->winlink;
     else if (top->winlink) {        /* we need this check for the
-            pathological case where you have two helps running,
-            normally hp_killfamily doesn't let this happen */
+                                       pathological case where you have two helps running,
+                                       normally hp_killfamily doesn't let this happen */
         for (last = topics; last->winlink; last = last->winlink)
             if (last->winlink == top) {
                 last->winlink = top->winlink;
@@ -300,6 +304,7 @@ hlp_xkillwin(topic *top)
     return;
 }
 
+
 /* rip out font changes and write at end of buffer */
 static void
 sputline(char *buf, char *s)
@@ -310,11 +315,12 @@ sputline(char *buf, char *s)
 
     while (*s) {
         if (((*s == '\033') && s[1]) ||
-                ((*s == '_') && (s[1] == '\b')))
+            ((*s == '_') && (s[1] == '\b')))
             s += 2;
         else
             tmp[i++] = *s++;
     }
+
     tmp[i] = '\0';
 
     /* strcat can't handle long strings */

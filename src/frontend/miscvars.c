@@ -129,4 +129,4 @@ char *ft_setkwords[] = {
     "xfont",
 
     NULL
-} ;
+};

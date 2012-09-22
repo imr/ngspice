@@ -19,6 +19,7 @@ com_dump(wordlist *wl)
         fprintf(cp_err, "Error: no circuit loaded.\n");
         return;
     }
+
     if_dump(ft_curckt->ci_ckt, cp_out);
     return;
 }

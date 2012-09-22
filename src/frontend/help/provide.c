@@ -1,6 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group 
+Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 Modified 1999 Emmanuel Rouat
 **********/
 
@@ -20,6 +20,7 @@ Modified 1999 Emmanuel Rouat
 
 bool hlp_usex = FALSE;
 
+
 void
 hlp_provide(topic *top)
 {
@@ -27,7 +28,7 @@ hlp_provide(topic *top)
     topic *parent, *newtop;
 
     if (!top)
-	return;
+        return;
 
 #ifndef X_DISPLAY_MISSING
     if (getenv("DISPLAY") || hlp_displayname)
@@ -48,9 +49,10 @@ hlp_provide(topic *top)
     }
 
 #ifndef X_DISPLAY_MISSING       /* X11 does this asynchronously */
-    if (hlp_usex) return;
+    if (hlp_usex)
+        return;
 #endif
-    
+
     for (;;) {
         if (hlp_usex)
             res = hlp_xhandle(&parent);
@@ -59,8 +61,9 @@ hlp_provide(topic *top)
         if (!res && !parent) {
             /* No more windows. */
             hlp_killfamily(top);
-            if (hlp_usex) hlp_xclosedisplay(); /* need to change 
-                    display pointer back J.H. */
+            if (hlp_usex)
+                hlp_xclosedisplay(); /* need to change
+                                        display pointer back J.H. */
             return;
         }
         if (res) {
@@ -81,25 +84,25 @@ hlp_provide(topic *top)
             newtop->yposition = parent->yposition + 50;
             if (hlp_usex) {
                 if (!hlp_xdisplay(newtop)) {
-                    fprintf(stderr, "Couldn't open win\n"); 
-                    return; 
+                    fprintf(stderr, "Couldn't open win\n");
+                    return;
                 }
             } else {
                 if (!hlp_tdisplay(newtop)) {
-                    fprintf(stderr, "Couldn't display\n"); 
-                    return; 
+                    fprintf(stderr, "Couldn't display\n");
+                    return;
                 }
             }
         } else {
             /* Blow this one and its descendants away. */
             hlp_killfamily(parent);
-        hlp_fixchildren(parent);
+            hlp_fixchildren(parent);
             if (parent == top)
                 return;
         }
     }
-
 }
+
 
 void
 hlp_fixchildren(topic *parent)
@@ -109,20 +112,18 @@ hlp_fixchildren(topic *parent)
 
     if (parent->parent) {
         if (parent->parent->children == parent)
-            parent->parent->children =
-                    parent->next;
+            parent->parent->children = parent->next;
         else {
-            for (pa = parent->parent->children;
-                    pa->next; pa = pa->next)
+            for (pa = parent->parent->children; pa->next; pa = pa->next)
                 if (pa->next == parent)
                     break;
-            if (!pa->next) {
+            if (!pa->next)
                 fprintf(stderr, "bah...\n");
-            }
             pa->next = pa->next->next;
         }
     }
 }
+
 
 /* Note that this doesn't actually free the data structures, just gets
  * rid of the window.
@@ -135,10 +136,12 @@ hlp_killfamily(topic *top)
 
     for (ch = top->children; ch; ch = ch->next)
         hlp_killfamily(ch);
+
     if (hlp_usex)
         hlp_xkillwin(top);
     else
         hlp_tkillwin(top);
+
     top->children = NULL;
     return;
 }

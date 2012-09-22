@@ -35,7 +35,7 @@ com_ghelp(wordlist *wl)
         com_help(wl);
         return;
     }
-#ifndef X_DISPLAY_MISSING /* 1 */ 
+#ifndef X_DISPLAY_MISSING /* 1 */
     path = npath;
     if (cp_getvar("helpregfont", CP_STRING, buf))
         hlp_regfontname = copy(buf);
@@ -76,6 +76,6 @@ com_ghelp(wordlist *wl)
 #ifdef HAS_WINDOWS
     printf("Internal help is no longer avaialable!\n");
     printf("Please check for\n");
-    printf("http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/\n"); 
+    printf("http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/\n");
 #endif
 }

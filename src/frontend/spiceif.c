@@ -708,7 +708,7 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
                  */
 
                 /* if (!(opt->dataType & IF_ASK) || (opt->dataType & IF_UNINTERESTING) || (opt->dataType & IF_STRING)) continue; */
-                if (!(opt->dataType & IF_ASK) || (opt->dataType & IF_UNINTERESTING ))
+                if (!(opt->dataType & IF_ASK) || (opt->dataType & IF_UNINTERESTING))
                     continue;
                 pv = doask(ckt, typecode, dev, mod, opt, ind);
                 if (pv) {

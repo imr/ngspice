@@ -29,13 +29,13 @@ com_linearize(wordlist *wl)
 
     if (!ft_curckt || !ft_curckt->ci_ckt ||
         !if_tranparams(ft_curckt, &tstart, &tstop, &tstep)) {
-        fprintf(cp_err, 
-            "Error: can't get transient parameters from circuit\n");
+        fprintf(cp_err,
+                "Error: can't get transient parameters from circuit\n");
         return;
     }
     if (((tstop - tstart) * tstep <= 0.0) || ((tstop - tstart) < tstep)) {
-        fprintf(cp_err, 
-         "Error: bad parameters -- start = %G, stop = %G, step = %G\n",
+        fprintf(cp_err,
+                "Error: bad parameters -- start = %G, stop = %G, step = %G\n",
                 tstart, tstop, tstep);
         return;
     }

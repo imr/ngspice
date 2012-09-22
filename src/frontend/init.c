@@ -38,9 +38,9 @@ cp_init(void)
     cp_curout = stdout;
     cp_curerr = stderr;
 
-    /* io redirection in streams.c: 
+    /* io redirection in streams.c:
        cp_in set to cp_curin etc. */
-    cp_ioreset(); 
+    cp_ioreset();
 
     return;
 }

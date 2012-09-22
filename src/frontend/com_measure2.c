@@ -93,7 +93,8 @@ correct_vec(MEASUREPTR meas)
 
     vec = meas->m_vec;
     /* return if not of type VM() etc */
-    if ((*vec != 'v') || (!strstr(vec, "("))) return;
+    if ((*vec != 'v') || (!strstr(vec, "(")))
+        return;
 
     if (*(++vec) != '(') {
         vecfirst = copy(meas->m_vec);

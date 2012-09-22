@@ -27,7 +27,7 @@ com_shift(wordlist *wl)
     }
     if (wl)
         num = scannum(wl->wl_word);
-    
+
     for (v = variables; v; v = v->va_next)
         if (eq(v->va_name, n))
             break;

@@ -26,7 +26,7 @@ struct control {
     struct control *co_elseblock;   /* For if-then-else. */
     struct control *co_next;
     struct control *co_prev;
-} ;
+};
 
 enum co_command {
     CO_UNFILLED,
