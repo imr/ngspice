@@ -389,6 +389,9 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
             if (dst > div_list[i].div_lim)
                 break;
 
+        if ((size_t) i == NUMELEMS(div_list))
+            i--;
+
         do {
             step = div_list[i].step;
             nsp = (int)((dst + step - 0.0001) / step);
