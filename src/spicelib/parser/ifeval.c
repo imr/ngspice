@@ -80,7 +80,7 @@ PTeval(INPparseNode * tree, double gmin, double *res, double *vals)
     double r1, r2;
     int err;
 
-    PTfudge_factor = gmin;
+    PTfudge_factor = gmin * 1.0e-20; /* defaults to 1e-32, should be small enough */
     switch (tree->type) {
     case PT_CONSTANT:
 	*res = tree->constant;
