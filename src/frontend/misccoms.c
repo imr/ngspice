@@ -91,16 +91,12 @@ com_quit(wordlist *wl)
 
     /* then go away */
 
-#if 0
     cp_destroy_keywords();
     destroy_ivars();
-#endif
 
     byemesg();
-#if 0
     destroy_const_plot();
     spice_destroy_devices();
-#endif
     exit(exitcode);
 }
 
