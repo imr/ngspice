@@ -842,13 +842,11 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         ylims[1] = ylims[0];
         ylims[0] = tt;
     }
-    if (xlims[0] == xlims[1]) {
+    if (AlmostEqualUlps(xlims[0], xlims[1], 10)) {
         xlims[0] *= (xlims[0] > 0) ? 0.9 : 1.1;
         xlims[1] *= (xlims[1] > 0) ? 1.1 : 0.9;
     }
-    if (ylims[0] == ylims[1]) {
-        /* || fabs(ylims[0])/(ylims[1]-ylims[0]) > 1.0e9
-           || fabs(ylims[1])/(ylims[1]-ylims[0]) > 1.0e9) */
+    if (AlmostEqualUlps(ylims[0], ylims[1], 10)) {
         ylims[0] *= (ylims[0] > 0) ? 0.9 : 1.1;
         ylims[1] *= (ylims[1] > 0) ? 1.1 : 0.9;
     }
