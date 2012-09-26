@@ -57,7 +57,6 @@ com_quit(wordlist *wl)
 
     /* start to clean up the mess */
 
-#if 0
     {
         wordlist all = { "all", NULL, NULL };
         wordlist star = { "*", NULL, NULL };
@@ -74,7 +73,6 @@ com_quit(wordlist *wl)
         cp_remvar("program");
         cp_remvar("prompt");
     }
-#endif
 
 #ifdef EXPERIMENTAL_CODE
     /* Destroy CKT when quit. Add by Gong Ding, gdiso@ustc.edu */
