@@ -123,17 +123,21 @@ ACan(CKTcircuit *ckt, int restart)
     }
     else 
 #endif 
-/* If no event-driven instances, do what SPICE normally does */
-    error = CKTop(ckt,
-        (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
-        (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
-        ckt->CKTdcMaxIter);
+    /* If no event-driven instances, do what SPICE normally does */
+    if (!ckt->CKTnoopac) { /* skip OP if option NOOPAC is set and circuit is linear */
+        error = CKTop(ckt,
+            (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+            (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+            ckt->CKTdcMaxIter);
 
-    if(error){
-        fprintf(stdout,"\nAC operating point failed -\n");
-        CKTncDump(ckt);
-        return(error);
-    } 
+        if(error){
+            fprintf(stdout,"\nAC operating point failed -\n");
+            CKTncDump(ckt);
+            return(error);
+        }
+    }
+    else
+        fprintf(stdout,"\n Linear circuit, option noopac given: no OP analysis\n");
 		
 #ifdef XSPICE
 /* gtri - add - wbk - 12/19/90 - Add IPC stuff */

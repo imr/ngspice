@@ -70,6 +70,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKnodeDamping     = def->TSKnodeDamping;
         tsk->TSKabsDv           = def->TSKabsDv;
         tsk->TSKrelDv           = def->TSKrelDv;
+        tsk->TSKnoopac          = def->TSKnoopac;
 #ifdef NEWTRUNC
         tsk->TSKlteReltol       = def->TSKlteReltol;
         tsk->TSKlteAbstol       = def->TSKlteAbstol;

@@ -10,6 +10,7 @@ Author: 1985 Wayne A. Christopher
 
 #include "ngspice/ngspice.h"
 
+#include "ngspice/cktdefs.h"
 #include "ngspice/cpdefs.h"
 #include "ngspice/inpdefs.h"
 #include "ngspice/ftedefs.h"
@@ -49,6 +50,7 @@ static char *upper(register char *string);
 static bool doedit(char *filename);
 static struct line *com_options = NULL;
 static void consaves(wordlist *wl);
+static void cktislinear(CKTcircuit *ckt, struct line *deck);
 
 void line_free_x(struct line *deck, bool recurse);
 
@@ -796,6 +798,7 @@ inp_dodeck(
         ckt = NULL;
     }
 
+    cktislinear(ckt, deck);
     out_init();
 
     ft_curckt->FTEstats->FTESTATdeckNumLines = 0;
@@ -1137,4 +1140,41 @@ consaves(wordlist *wl_control)
     }
 
     com_save(wl);
+}
+
+
+/* check the input deck (after inpcom and numparam extensions)
+   for linear elements. If only linear elements are found,
+   ckt->CKTisLinear is set to 1. Return immediately if a first
+   non-linear element is found. */
+static void
+cktislinear(CKTcircuit *ckt, struct line *deck)
+{
+    struct line *dd;
+    char firstchar;
+
+    if (deck->li_next)
+        for (dd = deck->li_next; dd; dd = dd->li_next) {
+            firstchar = *dd->li_line;
+            switch (firstchar) {
+                case 'r':
+                case 'l':
+                case 'c':
+                case 'i':
+                case 'v':
+                case '*':
+                case '.':
+                case 'e':
+                case 'g':
+                case 'f':
+                case 'h':
+                    continue;
+                    break;
+                default:
+                    ckt->CKTisLinear = 0;
+                    return;
+            }
+        }
+
+    ckt->CKTisLinear = 1;
 }

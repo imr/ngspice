@@ -275,7 +275,10 @@ struct CKTcircuit {
     int CKTsc_iter;
 /* SP: 100609 */
 #endif
-
+    unsigned int CKTisLinear:1; /* flag to indicate that the circuit
+                                   contains only linear elements */
+    unsigned int CKTnoopac:1; /* flag to indicate that OP will not be evaluated
+                                 during AC simulation */
 };
 
 

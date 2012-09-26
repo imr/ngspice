@@ -103,6 +103,7 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
     ckt->CKTrelDv = task->TSKrelDv;
     ckt->CKTtroubleNode  = 0;
     ckt->CKTtroubleElt  = NULL;
+    ckt->CKTnoopac = task->TSKnoopac && ckt->CKTisLinear;
 #ifdef NEWTRUNC
     ckt->CKTlteReltol = task->TSKlteReltol;
     ckt->CKTlteAbstol = task->TSKlteAbstol;

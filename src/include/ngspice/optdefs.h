@@ -124,6 +124,8 @@ typedef struct {
 #define OPT_ABSDV        66  /* Original: 51 (Node_Damping) */ 
 #define OPT_RELDV        67  /* Original: 52 (Node_Damping) */
 
+#define OPT_NOOPAC       68
+
 #ifdef XSPICE
 /* gtri - begin - wbk - add new options */
 #define OPT_ENH_NOOPALTER           100
