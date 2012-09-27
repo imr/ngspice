@@ -169,7 +169,7 @@ savetree(struct pnode *pn)
             pn->pn_value->v_length = d->v_length;
             pn->pn_value->v_type = d->v_type;
             pn->pn_value->v_flags = d->v_flags;
-            pn->pn_value->v_plot = d->v_plot;
+            pn->pn_value->v_plot = NULL; /* this dvec isn't member of any plot */
             if (isreal(d)) {
                 pn->pn_value->v_realdata = TMALLOC(double, d->v_length);
                 bcopy(d->v_realdata,
