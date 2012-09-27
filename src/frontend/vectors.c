@@ -784,7 +784,6 @@ void
 vec_free_x(struct dvec *v)
 {
     struct plot *pl;
-    struct dvec *lv;
 
     if ((v == NULL) || (v->v_name == NULL))
         return;
@@ -795,14 +794,17 @@ vec_free_x(struct dvec *v)
         if (pl->pl_dvecs == v) {
             pl->pl_dvecs = v->v_next;
         } else {
-            for (lv = pl->pl_dvecs; lv->v_next; lv = lv->v_next)
-                if (lv->v_next == v)
-                    break;
-            if (lv->v_next == NULL)
+            struct dvec *lv = pl->pl_dvecs;
+            if (lv)
+                for (; lv->v_next; lv = lv->v_next)
+                    if (lv->v_next == v)
+                        break;
+            if (lv && lv->v_next)
+                lv->v_next = v->v_next;
+            else
                 fprintf(cp_err,
                         "vec_free: Internal Error: %s not in plot\n",
                         v->v_name);
-            lv->v_next = v->v_next;
         }
         if (pl->pl_scale == v) {
             if (pl->pl_dvecs)
