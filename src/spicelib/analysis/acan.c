@@ -300,6 +300,8 @@ ACan(CKTcircuit *ckt, int restart)
 
 #ifdef WANT_SENSE2
         if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode&ACSEN) ){
+            long save;
+            int save1;
 
             save = ckt->CKTmode;
             ckt->CKTmode=(ckt->CKTmode&MODEUIC)|MODEDCOP|MODEINITSMSIG;
@@ -311,7 +313,9 @@ ACan(CKTcircuit *ckt, int restart)
             else{
                 ckt->CKTsenInfo->SENacpertflag = 0;
             }
-            if(error = CKTsenAC(ckt)) return (error);
+            error = CKTsenAC(ckt);
+            if (error)
+                return (error);
             ckt->CKTmode = save;
             ckt->CKTsenInfo->SENmode = save1;
         }
