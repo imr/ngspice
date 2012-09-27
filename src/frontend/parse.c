@@ -27,7 +27,7 @@ static struct pnode *mksnode(const char *string);
 
 #include "parse-bison.c"
 
-char *db_print_pnode_tree(struct pnode *p, char *print);
+void db_print_pnode_tree(struct pnode *p, char *print);
 
 
 struct pnode *
@@ -545,13 +545,12 @@ db_print_pnode(FILE *fdst, struct pnode *p)
 }
 
 
-char *
+void
 db_print_pnode_tree(struct pnode *p, char *print)
 {
 #if 1
     NG_IGNORE(print);
     db_print_pnode(stdout, p);
-    return NULL;
 #else
     char *buf;
     size_t  buf_size;
@@ -560,7 +559,7 @@ db_print_pnode_tree(struct pnode *p, char *print)
     fclose(db_stream);
     if (print)
         printf("%s:%d: %s {%s}\n%s\n", __FILE__, __LINE__, __func__, print, buf);
-    return buf;
+    free(buf);
 #endif
 }
 
