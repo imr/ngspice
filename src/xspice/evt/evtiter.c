@@ -38,9 +38,6 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
-#include <stdio.h>
-#include <string.h>
-
 #include "ngspice/ngspice.h"
 //#include "misc.h"
 #include "ngspice/cktdefs.h"

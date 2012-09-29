@@ -13,7 +13,6 @@
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
 
-#include <stdio.h>
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "hsm2def.h"

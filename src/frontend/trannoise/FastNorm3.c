@@ -61,10 +61,10 @@ Normal  (a very fast routine)
 */
 
 /* ----------------- inclusions and some definitions ------------ */
-#include <math.h>
 #ifndef NOSPICE
 #include "ngspice/ngspice.h"
 #endif
+#include <math.h>
 #include "ngspice/FastNorm3.h"
 
 

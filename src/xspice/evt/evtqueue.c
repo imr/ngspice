@@ -50,8 +50,6 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 
-#include <stdio.h>
-
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 //#include "util.h"

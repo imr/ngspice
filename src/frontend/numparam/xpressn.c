@@ -4,12 +4,10 @@
    Free software under the terms of the GNU Lesser General Public License
 */
 
-#include <stdio.h>                /* for function message() only. */
-#include <stdarg.h>
+#include "ngspice/ngspice.h"
 
 #include "general.h"
 #include "numparam.h"
-#include "ngspice/ngspice.h"
 #include "ngspice/cpdefs.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"

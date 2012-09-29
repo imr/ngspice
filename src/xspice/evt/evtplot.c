@@ -37,9 +37,6 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
-#include <stdio.h>
-#include <string.h>
-
 #include "ngspice/ngspice.h"
 //nclude "misc.h"
 #include "ngspice/evt.h"

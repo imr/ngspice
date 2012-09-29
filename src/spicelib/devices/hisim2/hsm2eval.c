@@ -130,16 +130,11 @@ using the HiSIM2 standard.
 /*---------------------------------------------------*
 * Header files.
 *-----------------*/
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <float.h>
+#include "ngspice/ngspice.h"
 #ifdef __STDC__
 /* #include <ieeefp.h> */
 #endif
 #include "ngspice/cktdefs.h"
-
-#include "ngspice/ngspice.h"
 
 /*-----------------------------------*
 * HiSIM macros

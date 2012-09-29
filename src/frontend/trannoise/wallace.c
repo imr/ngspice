@@ -4,8 +4,13 @@
 
 //#define FASTNORM_ORIG
 
-#include <stdio.h>
-#include <stdlib.h>
+#ifdef HasMain
+#include <sys/timeb.h>
+#else
+#ifndef NOSPICE
+#include "ngspice/ngspice.h"
+#endif
+#endif
 #ifdef _MSC_VER
 #include <process.h>
 #define getpid _getpid
@@ -15,14 +20,6 @@
 #include <math.h>
 #include "ngspice/wallace.h"
 #include "ngspice/FastNorm3.h"
-
-#ifdef HasMain
-#include <sys/timeb.h>
-#else
-#ifndef NOSPICE
-#include "ngspice/ngspice.h"
-#endif
-#endif
 
 #define POOLSIZE 4096
 #define LPOOLSIZE 12

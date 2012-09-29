@@ -7,11 +7,6 @@
  Volume 83,  Issue 5,  May 1995 Page(s):802 - 827
 */
 
-#include <math.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <stdarg.h>                     // var. argumente
 #include "ngspice/ngspice.h"
 #include "ngspice/cpextern.h"
 #include "ngspice/cktdefs.h"

@@ -40,7 +40,6 @@ NON-STANDARD FEATURES
 
 
 /*=== INCLUDE FILES ===*/
-#include <stdio.h>
 #include "ngspice/ngspice.h"
 
 #include "ngspice/cktdefs.h"

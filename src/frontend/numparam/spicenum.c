@@ -21,11 +21,10 @@ Todo:
   add support for nested .if .elsif .else .endif controls.
 */
 
-#include <stdio.h>
+#include "ngspice/ngspice.h"
 
 #include "general.h"
 #include "numparam.h"
-#include "ngspice/ngspice.h"
 
 #include "ngspice/fteext.h" /* controlled_exit() */
 

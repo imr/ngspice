@@ -4,9 +4,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 #include "ngspice/config.h"
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "ngspice/ngspice.h"
 #include "ngspice/bool.h"
