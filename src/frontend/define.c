@@ -42,7 +42,7 @@ com_define(wordlist *wlist)
     int arity = 0, i;
     char buf[BSIZE_SP], tbuf[BSIZE_SP], *s, *t, *b;
     wordlist *wl;
-    struct pnode *pn;
+    struct pnode *names;
     struct udfunc *udf;
 
     /* If there's nothing then print all the definitions. */
@@ -102,7 +102,7 @@ com_define(wordlist *wlist)
     /* Parse the rest of it. We can't know if there are the right
      * number of undefined variables in the expression.
      */
-    if ((pn = ft_getpnames(wl, FALSE)) == NULL)
+    if ((names = ft_getpnames(wl, FALSE)) == NULL)
         return;
 
     /* This is a pain -- when things are garbage-collected, any
@@ -110,7 +110,7 @@ com_define(wordlist *wlist)
      * away. So go down the tree and save any vectors that aren't
      * formal parameters.
      */
-    savetree(pn);
+    savetree(names);
 
     /* Format the name properly and add to the list. */
     b = copy(buf);
@@ -142,7 +142,7 @@ com_define(wordlist *wlist)
         }
     }
 
-    udf->ud_text = pn;
+    udf->ud_text = names;
     udf->ud_name = b;
     udf->ud_arity = arity;
 
