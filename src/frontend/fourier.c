@@ -21,7 +21,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "variable.h"
 
 
-static char *pn(double num);
+static char *pnum(double num);
 static int CKTfour(int ndata, int numFreq, double *thd, double *Time, double *Value,
                    double FundFreq, double *Freq, double *Mag, double *Phase, double *nMag,
                    double *nPhase);
@@ -41,7 +41,7 @@ int
 fourier(wordlist *wl, struct plot *current_plot)
 {
     struct dvec *time, *vec;
-    struct pnode *names, *first_name;
+    struct pnode *pn, *names;
     double *ff, fundfreq, *dp, *stuff;
     int nfreqs, fourgridsize, polydegree;
     double *freq, *mag, *phase, *nmag, *nphase;  /* Outputs from CKTfour */
@@ -87,11 +87,11 @@ fourier(wordlist *wl, struct plot *current_plot)
     nphase = TMALLOC(double, nfreqs);
 
     wl = wl->wl_next;
-    names = ft_getpnames(wl, TRUE);
-    first_name = names;
-    while (names) {
-        vec = ft_evaluate(names);
-        names = names->pn_next;
+    pn = ft_getpnames(wl, TRUE);
+    names = pn;
+    while (pn) {
+        vec = ft_evaluate(pn);
+        pn = pn->pn_next;
         while (vec) {
             if (vec->v_length != time->v_length) {
                 fprintf(cp_err,
@@ -169,17 +169,17 @@ fourier(wordlist *wl, struct plot *current_plot)
                 fprintf(cp_out,
                         " %-4d    %-*s %-*s %-*s %-*s %-*s\n",
                         i,
-                        fw, pn(freq[i]),
-                        fw, pn(mag[i]),
-                        fw, pn(phase[i]),
-                        fw, pn(nmag[i]),
-                        fw, pn(nphase[i]));
+                        fw, pnum(freq[i]),
+                        fw, pnum(mag[i]),
+                        fw, pnum(phase[i]),
+                        fw, pnum(nmag[i]),
+                        fw, pnum(nphase[i]));
             fputs("\n", cp_out);
             vec = vec->v_link2;
         }
     }
 
-    free_pnode(first_name);
+    free_pnode(names);
     tfree(freq);
     tfree(mag);
     tfree(phase);
@@ -198,7 +198,7 @@ com_fourier(wordlist *wl)
 
 
 static char *
-pn(double num)
+pnum(double num)
 {
     char buf[BSIZE_SP];
     int i = cp_numdgt;
