@@ -97,10 +97,12 @@ fourier(wordlist *wl, struct plot *current_plot)
                 fprintf(cp_err,
                         "Error: lengths don't match: %d, %d\n",
                         vec->v_length, time->v_length);
+                vec = vec->v_link2;
                 continue;
             }
             if (!isreal(vec)) {
                 fprintf(cp_err, "Error: %s isn't real!\n", vec->v_name);
+                vec = vec->v_link2;
                 continue;
             }
 
