@@ -599,6 +599,10 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
             buf[0] = *word;
             buf[1] = '\0';
             place->cc_name = copy(buf);
+            if (word[0] == '\0') {
+                fprintf(stderr, "ERROR, internal error, clookup() needs fixing to process the empty string\n");
+                controlled_exit(EXIT_FAILURE);
+            }
             if (word[1])
                 place->cc_invalid = 1;
         }

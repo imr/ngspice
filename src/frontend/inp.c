@@ -939,7 +939,14 @@ inp_dodeck(
     } // if (!noparse)  . . .
 
     /* add title of deck to data base */
+    /* this won't work if the title is the empty string
+    *    cp_addkword() doesn't work for tt === ""
+    *  since CT_CKTNAMES doesn't seem to be used anywhere
+    *  I've disabled this piece.
+    */
+#if 0
     cp_addkword(CT_CKTNAMES, tt);
+#endif
 }
 
 
