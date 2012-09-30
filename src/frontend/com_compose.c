@@ -126,10 +126,12 @@ com_compose(wordlist *wl)
     if (eq(wl->wl_word, "values")) {
         /* Build up the vector from the rest of the line... */
         wl = wl->wl_next;
-        if ((pn = ft_getpnames(wl, TRUE)) == NULL)
+
+        names = ft_getpnames(wl, TRUE);
+        if (!names)
             return;
-        names = pn;
-        while (pn) {
+
+        for (pn = names; pn; pn = pn->pn_next) {
             if ((v = ft_evaluate(pn)) == NULL)
                 return;
 
@@ -140,7 +142,6 @@ com_compose(wordlist *wl)
 
             for (lv = v; lv->v_link2; lv = lv->v_link2)
                 ;
-            pn = pn->pn_next;
         }
 
         /* Now make sure these are all of the same dimensionality.  We
