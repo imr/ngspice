@@ -116,7 +116,7 @@ com_compose(wordlist *wl)
     bool realflag = TRUE;
     int dims[MAXDIMS];
     struct dvec *result, *vecs = NULL, *v, *lv = NULL;
-    struct pnode *pn, *first_pn = NULL;
+    struct pnode *pn, *names = NULL;
     bool reverse = FALSE;
 
     resname = cp_unquote(wl->wl_word);
@@ -128,7 +128,7 @@ com_compose(wordlist *wl)
         wl = wl->wl_next;
         if ((pn = ft_getpnames(wl, TRUE)) == NULL)
             return;
-        first_pn = pn;
+        names = pn;
         while (pn) {
             if ((v = ft_evaluate(pn)) == NULL)
                 return;
@@ -468,6 +468,6 @@ com_compose(wordlist *wl)
 
     vec_new(result);
     cp_addkword(CT_VECTOR, result->v_name);
-    free_pnode(first_pn);
+    free_pnode(names);
     tfree(resname); /*DG: resname has been copied so its remains allocated: memory leak One can remove this and not copy resname*/
 }
