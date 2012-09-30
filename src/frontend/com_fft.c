@@ -33,7 +33,7 @@ com_fft(wordlist *wl)
     double  delta_t, span;
     int     fpts, i, j, tlen, ngood;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
-    struct pnode *names, *first_name;
+    struct pnode *pn, *names;
 
 #ifdef GREEN
     int mm;
@@ -155,13 +155,13 @@ com_fft(wordlist *wl)
         }
     }
 
-    names = ft_getpnames(wl, TRUE);
-    first_name = names;
+    pn = ft_getpnames(wl, TRUE);
+    names = pn;
     vlist = NULL;
     ngood = 0;
-    while (names) {
-        vec = ft_evaluate(names);
-        names = names->pn_next;
+    while (pn) {
+        vec = ft_evaluate(pn);
+        pn = pn->pn_next;
         while (vec) {
             if (vec->v_length != tlen) {
                 fprintf(cp_err, "Error: lengths of %s vectors don't match: %d, %d\n",
@@ -187,7 +187,7 @@ com_fft(wordlist *wl)
             ngood++;
         }
     }
-    free_pnode_o(first_name);
+    free_pnode_o(names);
     if (!ngood) {
         tfree(win);
         return;
@@ -288,7 +288,7 @@ com_psd(wordlist *wl)
     unsigned long size, ngood, fpts, i, j, tlen, jj, smooth, hsmooth;
     char    *s;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
-    struct pnode *names, *first_name;
+    struct pnode *pn, *names;
 
     double *reald, *imagd;
     int sign, isreal;
@@ -425,13 +425,13 @@ com_psd(wordlist *wl)
         }
     }
 
-    names = ft_getpnames(wl, TRUE);
-    first_name = names;
+    pn = ft_getpnames(wl, TRUE);
+    names = pn;
     vlist = NULL;
     ngood = 0;
-    while (names) {
-        vec = ft_evaluate(names);
-        names = names->pn_next;
+    while (pn) {
+        vec = ft_evaluate(pn);
+        pn = pn->pn_next;
         while (vec) {
             if (vec->v_length != (int)tlen) {
                 fprintf(cp_err, "Error: lengths of %s vectors don't match: %d, %lu\n",
@@ -457,7 +457,7 @@ com_psd(wordlist *wl)
             ngood++;
         }
     }
-    free_pnode_o(first_name);
+    free_pnode_o(names);
     if (!ngood)
         return;
 

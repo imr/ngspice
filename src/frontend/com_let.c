@@ -19,7 +19,7 @@ com_let(wordlist *wl)
     wordlist fake_wl;
     int need_open;
     int offset, length;
-    struct pnode *nn;
+    struct pnode *names;
     struct dvec *n, *t;
     int i, cube;
     int j, depth;
@@ -80,16 +80,16 @@ com_let(wordlist *wl)
             /* evaluate expression between s and q */
             /* va, indexing */
             fake_wl.wl_word = s;
-            nn = ft_getpnames(&fake_wl, TRUE);
-            if (!nn) {
+            names = ft_getpnames(&fake_wl, TRUE);
+            if (!names) {
                 /* XXX error message */
                 tfree(p);
                 return;
             }
-            t = ft_evaluate(nn);
+            t = ft_evaluate(names);
             if (!t) {
                 fprintf(cp_err, "Error: Can't evaluate %s\n", s);
-                free_pnode(nn);
+                free_pnode(names);
                 tfree(p);
                 return;
             }
@@ -106,10 +106,10 @@ com_let(wordlist *wl)
 
             indices[numdims++] = j;
 
-            /* va: garbage collection for t, if pnode nn is no simple value */
-            if (nn != NULL && nn->pn_value == NULL && t != NULL)
+            /* va: garbage collection for t, if pnode `names' is no simple value */
+            if (names != NULL && names->pn_value == NULL && t != NULL)
                 vec_free(t);
-            free_pnode(nn); /* frees also t, if pnode nn is simple value */
+            free_pnode(names); /* frees also t, if pnode `names' is simple value */
 
             for (s = q; *s && isspace(*s); s++)
                 ;
@@ -131,16 +131,16 @@ com_let(wordlist *wl)
 
     /* evaluate rhs */
     fake_wl.wl_word = rhs;
-    nn = ft_getpnames(&fake_wl, TRUE);
-    if (nn == NULL) {
+    names = ft_getpnames(&fake_wl, TRUE);
+    if (names == NULL) {
         /* XXX error message */
         tfree(p);
         return;
     }
-    t = ft_evaluate(nn);
+    t = ft_evaluate(names);
     if (!t) {
         fprintf(cp_err, "Error: Can't evaluate %s\n", rhs);
-        free_pnode(nn);
+        free_pnode(names);
         tfree(p);
         return;
     }
@@ -240,9 +240,9 @@ com_let(wordlist *wl)
         cp_addkword(CT_VECTOR, n->v_name);
 
 quit:
-    /* va: garbage collection for t, if pnode nn is no simple value */
-    if (nn != NULL && nn->pn_value == NULL && t != NULL)
+    /* va: garbage collection for t, if pnode `names' is no simple value */
+    if (names != NULL && names->pn_value == NULL && t != NULL)
         vec_free(t);
-    free_pnode(nn); /* frees also t, if pnode nn is simple value */
+    free_pnode(names); /* frees also t, if pnode `names' is simple value */
     tfree(p);
 }
