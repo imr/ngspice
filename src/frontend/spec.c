@@ -30,7 +30,7 @@ com_spec(wordlist *wl)
     bool    trace;
     char    *s;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
-    struct pnode *names, *first_name;
+    struct pnode *pn, *names;
 
     if (!plot_cur || !plot_cur->pl_scale) {
         fprintf(cp_err, "Error: no vectors loaded.\n");
@@ -166,13 +166,13 @@ com_spec(wordlist *wl)
         }
     }
 
-    names = ft_getpnames(wl, TRUE);
-    first_name = names;
+    pn = ft_getpnames(wl, TRUE);
+    names = pn;
     vlist = NULL;
     ngood = 0;
-    while (names) {
-        vec = ft_evaluate(names);
-        names = names->pn_next;
+    while (pn) {
+        vec = ft_evaluate(pn);
+        pn = pn->pn_next;
         while (vec) {
             if (vec->v_length != tlen) {
                 fprintf(cp_err, "Error: lengths don't match: %d, %d\n",
@@ -199,7 +199,7 @@ com_spec(wordlist *wl)
             ngood++;
         }
     }
-    free_pnode_o(first_name); /* h_vogt 081206 */
+    free_pnode_o(names); /* h_vogt 081206 */
     if (!ngood) {
         tfree(win);
         return;
