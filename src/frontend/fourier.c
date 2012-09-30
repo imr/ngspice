@@ -87,22 +87,20 @@ fourier(wordlist *wl, struct plot *current_plot)
     nphase = TMALLOC(double, nfreqs);
 
     wl = wl->wl_next;
-    pn = ft_getpnames(wl, TRUE);
-    names = pn;
-    while (pn) {
+    names = ft_getpnames(wl, TRUE);
+    for (pn = names; pn; pn = pn->pn_next) {
         vec = ft_evaluate(pn);
-        pn = pn->pn_next;
-        while (vec) {
+        for (; vec; vec = vec->v_link2) {
+
             if (vec->v_length != time->v_length) {
                 fprintf(cp_err,
                         "Error: lengths don't match: %d, %d\n",
                         vec->v_length, time->v_length);
-                vec = vec->v_link2;
                 continue;
             }
+
             if (!isreal(vec)) {
                 fprintf(cp_err, "Error: %s isn't real!\n", vec->v_name);
-                vec = vec->v_link2;
                 continue;
             }
 
@@ -175,7 +173,6 @@ fourier(wordlist *wl, struct plot *current_plot)
                         fw, pnum(nmag[i]),
                         fw, pnum(nphase[i]));
             fputs("\n", cp_out);
-            vec = vec->v_link2;
         }
     }
 
