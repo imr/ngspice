@@ -155,35 +155,34 @@ com_fft(wordlist *wl)
         }
     }
 
-    pn = ft_getpnames(wl, TRUE);
-    names = pn;
+    names = ft_getpnames(wl, TRUE);
     vlist = NULL;
     ngood = 0;
-    while (pn) {
+    for (pn = names; pn; pn = pn->pn_next) {
         vec = ft_evaluate(pn);
-        pn = pn->pn_next;
-        while (vec) {
+        for (; vec; vec = vec->v_link2) {
+
             if (vec->v_length != tlen) {
                 fprintf(cp_err, "Error: lengths of %s vectors don't match: %d, %d\n",
                         vec->v_name, vec->v_length, tlen);
-                vec = vec->v_link2;
                 continue;
             }
+
             if (!isreal(vec)) {
                 fprintf(cp_err, "Error: %s isn't real!\n", vec->v_name);
-                vec = vec->v_link2;
                 continue;
             }
+
             if (vec->v_type == SV_TIME) {
-                vec = vec->v_link2;
                 continue;
             }
+
             if (!vlist)
                 vlist = vec;
             else
                 lv->v_link2 = vec;
+
             lv = vec;
-            vec = vec->v_link2;
             ngood++;
         }
     }
@@ -425,35 +424,34 @@ com_psd(wordlist *wl)
         }
     }
 
-    pn = ft_getpnames(wl, TRUE);
-    names = pn;
+    names = ft_getpnames(wl, TRUE);
     vlist = NULL;
     ngood = 0;
-    while (pn) {
+    for (pn = names; pn; pn = pn->pn_next) {
         vec = ft_evaluate(pn);
-        pn = pn->pn_next;
-        while (vec) {
+        for (; vec; vec = vec->v_link2) {
+
             if (vec->v_length != (int)tlen) {
                 fprintf(cp_err, "Error: lengths of %s vectors don't match: %d, %lu\n",
                         vec->v_name, vec->v_length, tlen);
-                vec = vec->v_link2;
                 continue;
             }
+
             if (!isreal(vec)) {
                 fprintf(cp_err, "Error: %s isn't real!\n", vec->v_name);
-                vec = vec->v_link2;
                 continue;
             }
+
             if (vec->v_type == SV_TIME) {
-                vec = vec->v_link2;
                 continue;
             }
+
             if (!vlist)
                 vlist = vec;
             else
                 lv->v_link2 = vec;
+
             lv = vec;
-            vec = vec->v_link2;
             ngood++;
         }
     }
