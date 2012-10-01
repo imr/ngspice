@@ -357,6 +357,7 @@ com_print(wordlist *wl)
     }
 done:
     /* Get rid of the vectors. */
+    free_pnode(names);
     tfree(buf);
     tfree(buf2);
 }
