@@ -107,7 +107,7 @@ com_compose(wordlist *wl)
     char *pool;
     int i;
 
-    char *resname, *s, *var, *val;
+    char *s, *var, *val;
     double *td, tt;
     double *data = NULL;
     ngcomplex_t *cdata = NULL;
@@ -119,7 +119,8 @@ com_compose(wordlist *wl)
     struct pnode *pn, *names = NULL;
     bool reverse = FALSE;
 
-    resname = cp_unquote(wl->wl_word);
+    char *resname = cp_unquote(wl->wl_word);
+
     vec_remove(resname);
     wl = wl->wl_next;
 
@@ -129,11 +130,11 @@ com_compose(wordlist *wl)
 
         names = ft_getpnames(wl, TRUE);
         if (!names)
-            return;
+            goto done;
 
         for (pn = names; pn; pn = pn->pn_next) {
             if ((v = ft_evaluate(pn)) == NULL)
-                return;
+                goto done;
 
             if (!vecs)
                 vecs = lv = v;
@@ -154,7 +155,7 @@ com_compose(wordlist *wl)
         if (dim == MAXDIMS) {
             fprintf(cp_err, "Error: max dimensionality is %d\n",
                     MAXDIMS);
-            return;
+            goto done;
         }
 
         for (v = vecs; v; v = v->v_link2)
@@ -168,7 +169,7 @@ com_compose(wordlist *wl)
             if (i != dim) {
                 fprintf(cp_err,
                         "Error: all vectors must be of the same dimensionality\n");
-                return;
+                goto done;
             }
             length++;
             if (iscomplex(v))
@@ -232,7 +233,7 @@ com_compose(wordlist *wl)
                     wl = wl->wl_next;
                 } else {
                     fprintf(cp_err, "Error: bad syntax\n");
-                    return;
+                    goto done;
                 }
             } else {
                 /* This is var =val or var = val. */
@@ -243,7 +244,7 @@ com_compose(wordlist *wl)
                     if (*val != '=') {
                         fprintf(cp_err,
                                 "Error: bad syntax\n");
-                        return;
+                        goto done;
                     }
                     val++;
                     if (!*val) {
@@ -253,13 +254,13 @@ com_compose(wordlist *wl)
                         } else {
                             fprintf(cp_err,
                                     "Error: bad syntax\n");
-                            return;
+                            goto done;
                         }
                     }
                     wl = wl->wl_next;
                 } else {
                     fprintf(cp_err, "Error: bad syntax\n");
-                    return;
+                    goto done;
                 }
             }
             if (cieq(var, "start")) {
@@ -267,7 +268,7 @@ com_compose(wordlist *wl)
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                             "Error: bad parm %s = %s\n", var, val);
-                    return;
+                    goto done;
                 }
                 start = *td;
             } else if (cieq(var, "stop")) {
@@ -275,7 +276,7 @@ com_compose(wordlist *wl)
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                             "Error: bad parm %s = %s\n", var, val);
-                    return;
+                    goto done;
                 }
                 stop = *td;
             } else if (cieq(var, "step")) {
@@ -283,7 +284,7 @@ com_compose(wordlist *wl)
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                             "Error: bad parm %s = %s\n", var, val);
-                    return;
+                    goto done;
                 }
                 step = *td;
             } else if (cieq(var, "center")) {
@@ -291,7 +292,7 @@ com_compose(wordlist *wl)
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                             "Error: bad parm %s = %s\n", var, val);
-                    return;
+                    goto done;
                 }
                 center = *td;
             } else if (cieq(var, "span")) {
@@ -299,7 +300,7 @@ com_compose(wordlist *wl)
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                             "Error: bad parm %s = %s\n", var, val);
-                    return;
+                    goto done;
                 }
                 span = *td;
             } else if (cieq(var, "mean")) {
@@ -307,7 +308,7 @@ com_compose(wordlist *wl)
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                             "Error: bad parm %s = %s\n", var, val);
-                    return;
+                    goto done;
                 }
                 mean = *td;
             } else if (cieq(var, "sd")) {
@@ -315,7 +316,7 @@ com_compose(wordlist *wl)
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                             "Error: bad parm %s = %s\n", var, val);
-                    return;
+                    goto done;
                 }
                 sd = *td;
             } else if (cieq(var, "lin")) {
@@ -323,7 +324,7 @@ com_compose(wordlist *wl)
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                             "Error: bad parm %s = %s\n", var, val);
-                    return;
+                    goto done;
                 }
                 lin = *td;
             } else if (cieq(var, "log")) {
@@ -331,7 +332,7 @@ com_compose(wordlist *wl)
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                             "Error: bad parm %s = %s\n", var, val);
-                    return;
+                    goto done;
                 }
                 log = (int)(*td);
             } else if (cieq(var, "dec")) {
@@ -339,7 +340,7 @@ com_compose(wordlist *wl)
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                             "Error: bad parm %s = %s\n", var, val);
-                    return;
+                    goto done;
                 }
                 dec = (int)(*td);
             } else if (cieq(var, "gauss")) {
@@ -347,7 +348,7 @@ com_compose(wordlist *wl)
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                             "Error: bad parm %s = %s\n", var, val);
-                    return;
+                    goto done;
                 }
                 gauss = (int)(*td);
             } else if (cieq(var, "random")) {
@@ -355,7 +356,7 @@ com_compose(wordlist *wl)
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
                             "Error: bad parm %s = %s\n", var, val);
-                    return;
+                    goto done;
                 }
                 randm = (int)(*td);
             } else if (cieq(var, "pool")) {
@@ -375,7 +376,7 @@ com_compose(wordlist *wl)
          */
         if (stepgiven && (step == 0.0)) {
             fprintf(cp_err, "Error: step cannot = 0.0\n");
-            return;
+            goto done;
         }
 
         if (startgiven && stopgiven && (start > stop)) {
@@ -388,7 +389,7 @@ com_compose(wordlist *wl)
         if (lingiven + loggiven + decgiven + randmgiven + gaussgiven > 1) {
             fprintf(cp_err,
                     "Error: can have at most one of (lin, log, dec, random, gauss)\n");
-            return;
+            goto done;
         } else if (lingiven + loggiven + decgiven + randmgiven + gaussgiven == 0) {
             /* Hmm, if we have a start, stop, and step we're ok. */
             if (startgiven && stopgiven && stepgiven) {
@@ -400,7 +401,7 @@ com_compose(wordlist *wl)
                         "Error: either one of (lin, log, dec, random, gauss) must be given, or all\n");
                 fprintf(cp_err,
                         "\tof (start, stop, and step) must be given.\n");
-                return;
+                goto done;
             }
         }
 
@@ -452,7 +453,8 @@ com_compose(wordlist *wl)
 
     result = alloc(struct dvec);
     ZERO(result, struct dvec);
-    result->v_name = copy(resname);
+    result->v_name = resname;
+    resname = NULL;             /* resname storage has been consumed */
     result->v_type = type;
 
     if (realflag) {
@@ -469,6 +471,8 @@ com_compose(wordlist *wl)
 
     vec_new(result);
     cp_addkword(CT_VECTOR, result->v_name);
+
+done:
     free_pnode(names);
-    tfree(resname); /*DG: resname has been copied so its remains allocated: memory leak One can remove this and not copy resname*/
+    tfree(resname);
 }
