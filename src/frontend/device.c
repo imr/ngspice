@@ -1366,11 +1366,11 @@ com_alter_common(wordlist *wl, int do_model)
 
     dv = ft_evaluate(names);
     if (!dv)
-        return;
+        goto done;
 
     if (dv->v_length < 1) {
         fprintf(cp_err, "Error: cannot evaluate new parameter value.\n");
-        return;
+        goto done;
     }
 
     /* If we want alter the geometry of a MOS device
@@ -1383,6 +1383,8 @@ com_alter_common(wordlist *wl, int do_model)
     /* va: garbage collection for dv, if pnode names is no simple value */
     if (names->pn_value == NULL && dv != NULL)
         vec_free(dv);
+
+done:
     free_pnode(names); /* free also dv, if pnode names is simple value */
 }
 
