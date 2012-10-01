@@ -550,7 +550,7 @@ com_write_sparam(wordlist *wl)
 
     names = ft_getpnames(wl_sparam, TRUE);
     if (names == NULL)
-        return;
+        goto done;
 
     for (pn = names; pn; pn = pn->pn_next) {
         d = ft_evaluate(pn);
@@ -660,6 +660,7 @@ com_write_sparam(wordlist *wl)
 
 done:
     free_pnode(names);
+    wl_free(wl_sparam);
 }
 
 
