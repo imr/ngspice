@@ -230,7 +230,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
     bool gfound = FALSE, pfound = FALSE, oneval = FALSE;
     double *dd, ylims[2], xlims[2];
-    struct pnode *n, *names;
+    struct pnode *pn, *names;
     struct dvec *dv, *d = NULL, *vecs = NULL, *lv, *lastvs = NULL;
     char *xn;
     int i, j, xt;
@@ -534,20 +534,20 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         goto quit1;
 
     /* Now evaluate the names. */
-    for (n = names, lv = NULL; n; n = n->pn_next)
-        if (n->pn_value && (n->pn_value->v_length == 0) &&
-            eq(n->pn_value->v_name, "vs"))
+    for (pn = names, lv = NULL; pn; pn = pn->pn_next)
+        if (pn->pn_value && (pn->pn_value->v_length == 0) &&
+            eq(pn->pn_value->v_name, "vs"))
         {
             if (!lv) {
                 fprintf(cp_err, "Error: misplaced vs arg\n");
                 goto quit;
             }
-            if ((n = n->pn_next) == NULL) {
+            if ((pn = pn->pn_next) == NULL) {
                 fprintf(cp_err, "Error: missing vs arg\n");
                 goto quit;
             }
 
-            dv = ft_evaluate(n);
+            dv = ft_evaluate(pn);
             if (!dv)
                 goto quit;
 
@@ -564,7 +564,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
         } else {
 
-            dv = ft_evaluate(n);
+            dv = ft_evaluate(pn);
             if (!dv)
                 goto quit;
 

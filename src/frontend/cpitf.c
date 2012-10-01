@@ -301,7 +301,7 @@ cp_istrue(wordlist *wl)
 {
     int i;
     struct dvec *v;
-    struct pnode *pn;
+    struct pnode *names;
 
     /* First do all the csh-type stuff here... */
     wl = wl_copy(wl);
@@ -309,28 +309,28 @@ cp_istrue(wordlist *wl)
     wl = cp_bquote(wl);
     cp_striplist(wl);
 
-    pn = ft_getpnames(wl, TRUE);
+    names = ft_getpnames(wl, TRUE);
     wl_free(wl);
 
-    v = ft_evaluate(pn);
+    v = ft_evaluate(names);
 
     for (; v; v = v->v_link2)
         if (isreal(v)) {
             for (i = 0; i < v->v_length; i++)
                 if (v->v_realdata[i] != 0.0) {
-                    free_pnode(pn);
+                    free_pnode(names);
                     return (TRUE);
                 }
         } else {
             for (i = 0; i < v->v_length; i++)
                 if ((realpart(v->v_compdata[i]) != 0.0) ||
                     (imagpart(v->v_compdata[i]) != 0.0)) {
-                    free_pnode(pn);
+                    free_pnode(names);
                     return (TRUE);
                 }
         }
 
-    free_pnode(pn);
+    free_pnode(names);
     return (FALSE);
 }
 

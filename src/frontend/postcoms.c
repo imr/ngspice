@@ -72,7 +72,7 @@ com_print(wordlist *wl)
 {
     struct dvec *v, *lv = NULL, *bv, *nv, *vecs = NULL;
     int i, j, ll, width = DEF_WIDTH, height = DEF_HEIGHT, npoints, lineno;
-    struct pnode *nn, *names;
+    struct pnode *pn, *names;
     struct plot *p;
     bool col = TRUE, nobreak = FALSE, noprintscale, plotnames = FALSE;
     bool optgiven = FALSE;
@@ -98,8 +98,8 @@ com_print(wordlist *wl)
 
     ngood = 0;
     names = ft_getpnames(wl, TRUE);
-    for (nn = names; nn; nn = nn->pn_next) {
-        if ((v = ft_evaluate(nn)) == NULL)
+    for (pn = names; pn; pn = pn->pn_next) {
+        if ((v = ft_evaluate(pn)) == NULL)
             continue;
         if (!vecs)
             vecs = lv = v;
@@ -373,7 +373,7 @@ void
 com_write(wordlist *wl)
 {
     char *file, buf[BSIZE_SP];
-    struct pnode *n;
+    struct pnode *pn;
     struct dvec *d, *vecs = NULL, *lv = NULL, *end, *vv;
     static wordlist all = { "all", NULL, NULL };
     struct pnode *names;
@@ -406,8 +406,8 @@ com_write(wordlist *wl)
     if (names == NULL)
         return;
 
-    for (n = names; n; n = n->pn_next) {
-        d = ft_evaluate(n);
+    for (pn = names; pn; pn = pn->pn_next) {
+        d = ft_evaluate(pn);
         if (!d)
             return;
         if (vecs)
@@ -523,7 +523,7 @@ com_write_sparam(wordlist *wl)
     char *file;
     char *sbuf[6];
     wordlist *wl_sparam;
-    struct pnode *n;
+    struct pnode *pn;
     struct dvec *d, *vecs = NULL, *lv = NULL, *end, *vv, *Rbasevec = NULL;
     struct pnode *names;
     bool scalefound, appendwrite = FALSE;
@@ -548,8 +548,8 @@ com_write_sparam(wordlist *wl)
     if (names == NULL)
         return;
 
-    for (n = names; n; n = n->pn_next) {
-        d = ft_evaluate(n);
+    for (pn = names; pn; pn = pn->pn_next) {
+        d = ft_evaluate(pn);
         if (!d)
             return;
 
