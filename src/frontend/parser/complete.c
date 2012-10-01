@@ -15,6 +15,7 @@ Modified: 1999 Paolo Nenzi
 
 #include "ngspice/config.h"
 #include "ngspice/ngspice.h"
+#include "ngspice/fteext.h"
 #include "ngspice/cpdefs.h"
 #include "complete.h"
 
