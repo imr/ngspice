@@ -410,7 +410,7 @@ com_write(wordlist *wl)
     for (pn = names; pn; pn = pn->pn_next) {
         d = ft_evaluate(pn);
         if (!d)
-            return;
+            goto done;
         if (vecs)
             lv->v_link2 = d;
         else
@@ -506,6 +506,9 @@ com_write(wordlist *wl)
         /* If there are more plots we want them appended... */
         appendwrite = TRUE;
     }
+
+done:
+    free_pnode(names);
 }
 
 
@@ -552,7 +555,7 @@ com_write_sparam(wordlist *wl)
     for (pn = names; pn; pn = pn->pn_next) {
         d = ft_evaluate(pn);
         if (!d)
-            return;
+            goto done;
 
         if (vecs)
             lv->v_link2 = d;
@@ -568,7 +571,7 @@ com_write_sparam(wordlist *wl)
         Rbaseval = Rbasevec->v_realdata[0];
     } else {
         fprintf(stderr, "Error: No Rbase vector given\n");
-        return;
+        goto done;
     }
 
     /* Now we have to write them out plot by plot. */
@@ -654,6 +657,9 @@ com_write_sparam(wordlist *wl)
         /* If there are more plots we want them appended... */
         appendwrite = TRUE;
     }
+
+done:
+    free_pnode(names);
 }
 
 
@@ -711,7 +717,7 @@ com_cross(wordlist *wl)
     names = ft_getpnames(wl, TRUE);
     for (pn = names; pn; pn = pn->pn_next) {
         if ((n = ft_evaluate(pn)) == NULL)
-            return;
+            goto done;
 
         if (!vecs)
             vecs = lv = n;
@@ -762,6 +768,9 @@ com_cross(wordlist *wl)
     vec_new(v);
     v->v_flags |= VF_PERMANENT;
     cp_addkword(CT_VECTOR, v->v_name);
+
+done:
+    free_pnode(names);
 }
 
 
