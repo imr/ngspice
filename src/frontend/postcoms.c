@@ -72,7 +72,7 @@ com_print(wordlist *wl)
 {
     struct dvec *v, *lv = NULL, *bv, *nv, *vecs = NULL;
     int i, j, ll, width = DEF_WIDTH, height = DEF_HEIGHT, npoints, lineno;
-    struct pnode *nn;
+    struct pnode *nn, *names;
     struct plot *p;
     bool col = TRUE, nobreak = FALSE, noprintscale, plotnames = FALSE;
     bool optgiven = FALSE;
@@ -97,7 +97,8 @@ com_print(wordlist *wl)
     }
 
     ngood = 0;
-    for (nn = ft_getpnames(wl, TRUE); nn; nn = nn->pn_next) {
+    names = ft_getpnames(wl, TRUE);
+    for (nn = names; nn; nn = nn->pn_next) {
         if ((v = ft_evaluate(nn)) == NULL)
             continue;
         if (!vecs)
@@ -689,7 +690,7 @@ com_cross(wordlist *wl)
 {
     char *newvec, *s;
     struct dvec *n, *v, *vecs = NULL, *lv = NULL;
-    struct pnode *pn;
+    struct pnode *pn, *names;
     int i, ind;
     bool comp = FALSE;
     double *d;
@@ -706,8 +707,8 @@ com_cross(wordlist *wl)
         return;
     }
     wl = wl->wl_next;
-    pn = ft_getpnames(wl, TRUE);
-    while (pn) {
+    names = ft_getpnames(wl, TRUE);
+    for (pn = names; pn; pn = pn->pn_next) {
         if ((n = ft_evaluate(pn)) == NULL)
             return;
 
@@ -718,7 +719,6 @@ com_cross(wordlist *wl)
 
         for (lv = n; lv->v_link2; lv = lv->v_link2)
             ;
-        pn = pn->pn_next;
     }
 
     for (n = vecs, i = 0; n; n = n->v_link2) {
