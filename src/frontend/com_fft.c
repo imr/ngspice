@@ -279,8 +279,8 @@ com_fft(wordlist *wl)
 void
 com_psd(wordlist *wl)
 {
-    ngcomplex_t **fdvec;
-    double  **tdvec;
+    ngcomplex_t **fdvec = NULL;
+    double  **tdvec = NULL;
     double  *freq, *win, *time, *ave;
     double  delta_t, span, noipower;
     int     mm;
@@ -289,7 +289,7 @@ com_psd(wordlist *wl)
     struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *pn, *names;
 
-    double *reald, *imagd;
+    double *reald = NULL, *imagd = NULL;
     int sign, isreal;
     double scaling, sum;
     int order;
@@ -419,8 +419,7 @@ com_psd(wordlist *wl)
             */
         } else {
             fprintf(cp_err, "Warning: unknown window type %s\n", window);
-            tfree(win);
-            return;
+            goto done;
         }
     }
 
@@ -457,7 +456,7 @@ com_psd(wordlist *wl)
     }
     free_pnode_o(names);
     if (!ngood)
-        return;
+        goto done;
 
     plot_cur = plot_alloc("spectrum");
     plot_cur->pl_next = plot_list;
@@ -571,11 +570,13 @@ com_psd(wordlist *wl)
             fdvec[i][j].cx_real = reald[j];
     }
 
+done:
     free(reald);
     free(imagd);
 
     tfree(tdvec);
     tfree(fdvec);
+    tfree(win);
 }
 
 
