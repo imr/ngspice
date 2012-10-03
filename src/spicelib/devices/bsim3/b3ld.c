@@ -178,7 +178,7 @@ model = here->BSIM3modPtr;
 
 ScalingFactor = 1.0e-9;
 ChargeComputationNeeded =  
-                 ((ckt->CKTmode & (MODEAC | MODETRAN | MODEINITSMSIG)) ||
+                 ((ckt->CKTmode & (MODEDC | MODEAC | MODETRAN | MODEINITSMSIG)) ||
                  ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)))
                  ? 1 : 0;
 #ifndef USE_OMP
