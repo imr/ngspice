@@ -50,7 +50,8 @@ struct type types[NUMTYPES] = {
     { "power", "W" } ,            /* Added by A.Roldan */
     { "phase", "Degree" } ,       /* Added by A.Roldan */
     { "decibel", "dB" } ,         /* Added by A.Roldan */
-
+    { "capacitance", "F" } ,
+    { "charge", "C" } ,
 };
 
 /* The stuff for plot names. */

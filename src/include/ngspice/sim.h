@@ -18,7 +18,11 @@ enum simulation_types {
   SV_RES,
   SV_IMPEDANCE,
   SV_ADMITTANCE,
-  SV_POWER
+  SV_POWER,
+  SV_PHASE,
+  SV_DB,
+  SV_CAPACITANCE,
+  SV_CHARGE
 };
 
 #endif

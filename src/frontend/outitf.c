@@ -826,6 +826,12 @@ fileInit_pass2(runDesc *run)
             type = SV_RES;
         else if ((*name == '@') && (substring("[g", name)))
             type = SV_ADMITTANCE;
+        else if ((*name == '@') && (substring("[c", name)))
+            type = SV_CAPACITANCE;
+        else if ((*name == '@') && (substring("[i", name)))
+            type = SV_CURRENT;
+        else if ((*name == '@') && (substring("[q", name)))
+            type = SV_CHARGE;
         else
             type = SV_VOLTAGE;
 
@@ -992,6 +998,12 @@ plotInit(runDesc *run)
             v->v_type = SV_RES;
         else if ((*(v->v_name) == '@') && (substring("[g", v->v_name)))
             v->v_type = SV_ADMITTANCE;
+        else if ((*(v->v_name) == '@') && (substring("[c", v->v_name)))
+            v->v_type = SV_CAPACITANCE;
+        else if ((*(v->v_name) == '@') && (substring("[i", v->v_name)))
+            v->v_type = SV_CURRENT;
+        else if ((*(v->v_name) == '@') && (substring("[q", v->v_name)))
+            v->v_type = SV_CHARGE;
         else
             v->v_type = SV_VOLTAGE;
         v->v_length = 0;
