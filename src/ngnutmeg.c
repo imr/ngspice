@@ -1,5 +1,4 @@
 /* Configuration file for nutmeg */
-#include "ngspice/config.h"
 
 /*
  * Devices

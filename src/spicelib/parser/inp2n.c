@@ -4,11 +4,10 @@ Author:	2007 Gong Ding, gdiso@ustc.edu
 University of Science and Technology of China 
 **********/
 
-#include "ngspice/config.h"
+#include "ngspice/ngspice.h"
 
 #ifdef NDEV
 
-#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/ifsim.h"
 #include "ngspice/inpdefs.h"

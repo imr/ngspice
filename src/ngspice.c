@@ -1,5 +1,4 @@
 /* Configuration file for ng-spice */
-#include "ngspice/config.h"
 
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
