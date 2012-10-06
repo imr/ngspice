@@ -22,32 +22,32 @@ Author:   1994 Anthony E. Parker, Department of Electronics, Macquarie Uni.
 void
 com_spec(wordlist *wl)
 {
-    ngcomplex_t **fdvec;
-    double  **tdvec;
-    double  *freq, *win, *time, *dc;
+    ngcomplex_t **fdvec = NULL;
+    double  **tdvec = NULL;
+    double  *freq, *win = NULL, *time, *dc = NULL;
     double  startf, stopf, stepf, span;
     int     fpts, i, j, k, tlen, ngood;
     bool    trace;
     char    *s;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
-    struct pnode *pn, *names;
+    struct pnode *pn, *names = NULL;
 
     if (!plot_cur || !plot_cur->pl_scale) {
         fprintf(cp_err, "Error: no vectors loaded.\n");
-        return;
+        goto done;
     }
 
     if (!isreal(plot_cur->pl_scale) ||
         ((plot_cur->pl_scale)->v_type != SV_TIME)) {
         fprintf(cp_err, "Error: spec needs real time scale\n");
-        return;
+        goto done;
     }
 
     s = wl->wl_word;
     tlen = (plot_cur->pl_scale)->v_length;
     if ((freq = ft_numparse(&s, FALSE)) == NULL || (*freq < 0.0)) {
         fprintf(cp_err, "Error: bad start freq %s\n", wl->wl_word);
-        return;
+        goto done;
     }
     startf = *freq;
 
@@ -55,7 +55,7 @@ com_spec(wordlist *wl)
     s = wl->wl_word;
     if ((freq = ft_numparse(&s, FALSE)) == NULL || (*freq <= startf)) {
         fprintf(cp_err, "Error: bad stop freq %s\n", wl->wl_word);
-        return;
+        goto done;
     }
     stopf = *freq;
 
@@ -63,7 +63,7 @@ com_spec(wordlist *wl)
     s = wl->wl_word;
     if ((freq = ft_numparse(&s, FALSE)) == NULL || !(*freq <= (stopf-startf))) {
         fprintf(cp_err, "Error: bad step freq %s\n", wl->wl_word);
-        return;
+        goto done;
     }
     stepf = *freq;
 
@@ -74,7 +74,7 @@ com_spec(wordlist *wl)
         fprintf(cp_err,
                 "Error: nyquist limit exceeded, try stop freq less than %e Hz\n",
                 tlen/2/span);
-        return;
+        goto done;
     }
     span = ((int)(span*stepf*1.000000000001))/stepf;
     if (span > 0) {
@@ -85,7 +85,7 @@ com_spec(wordlist *wl)
     } else {
         fprintf(cp_err, "Error: time span limits step freq to %1.1e Hz\n",
                 1/(time[tlen-1] - time[0]));
-        return;
+        goto done;
     }
     win = TMALLOC(double, tlen);
     {
@@ -161,8 +161,7 @@ com_spec(wordlist *wl)
             }
         } else {
             fprintf(cp_err, "Warning: unknown window type %s\n", window);
-            tfree(win);
-            return;
+            goto done;
         }
     }
 
@@ -197,11 +196,9 @@ com_spec(wordlist *wl)
             ngood++;
         }
     }
-    free_pnode_o(names); /* h_vogt 081206 */
-    if (!ngood) {
-        tfree(win);
-        return;
-    }
+
+    if (!ngood)
+        goto done;
 
     plot_cur = plot_alloc("spectrum");
     plot_cur->pl_next = plot_list;
@@ -271,6 +268,7 @@ com_spec(wordlist *wl)
         SetAnalyse("spec", (int)(j * 1000./ fpts));
 #endif
     }
+
     if (startf == 0) {
         freq[0] = 0;
         for (i = 0; i < ngood; i++) {
@@ -278,23 +276,28 @@ com_spec(wordlist *wl)
             fdvec[i][0].cx_imag = 0;
         }
     }
+
     if (trace)
         fprintf(cp_err, "                           \r");
-    tfree(dc);
-    tfree(tdvec);
-    tfree(fdvec);
 
 #ifdef KEEPWINDOW
-    f = alloc(struct dvec);
-    ZERO(f, struct dvec);
-    f->v_name = copy("win");
-    f->v_type = SV_NOTYPE;
-    f->v_flags = (VF_REAL | VF_PERMANENT);
-    f->v_length = tlen;
-    f->v_realdata = win;
-    vec_new(f);
-#else
-    tfree(win);
+        f = alloc(struct dvec);
+        ZERO(f, struct dvec);
+        f->v_name = copy("win");
+        f->v_type = SV_NOTYPE;
+        f->v_flags = (VF_REAL | VF_PERMANENT);
+        f->v_length = tlen;
+        f->v_realdata = win;
+        win = NULL;
+        vec_new(f);
 #endif
 
+done:
+    tfree(dc);
+
+    tfree(tdvec);
+    tfree(fdvec);
+    tfree(win);
+
+    free_pnode(names);
 }

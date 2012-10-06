@@ -13,6 +13,5 @@
 #define free_pnode(ptr)  free_pnode_x(ptr); ptr=NULL;
 #endif
 
-void free_pnode_o(struct pnode *t);
 
 #endif

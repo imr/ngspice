@@ -27,30 +27,30 @@ static void fftext(double*, double*, long int, long int, int);
 void
 com_fft(wordlist *wl)
 {
-    ngcomplex_t **fdvec;
-    double  **tdvec;
-    double  *freq, *win, *time;
+    ngcomplex_t **fdvec = NULL;
+    double  **tdvec = NULL;
+    double  *freq, *win = NULL, *time;
     double  delta_t, span;
     int     fpts, i, j, tlen, ngood;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
-    struct pnode *pn, *names;
+    struct pnode *pn, *names = NULL;
 
 #ifdef GREEN
     int mm;
 #endif
 
-    double *reald, *imagd;
+    double *reald = NULL, *imagd = NULL;
     int size, sign, order;
     double scale, sigma;
 
     if (!plot_cur || !plot_cur->pl_scale) {
         fprintf(cp_err, "Error: no vectors loaded.\n");
-        return;
+        goto done;
     }
     if (!isreal(plot_cur->pl_scale) ||
         ((plot_cur->pl_scale)->v_type != SV_TIME)) {
         fprintf(cp_err, "Error: fft needs real time scale\n");
-        return;
+        goto done;
     }
 
     tlen = (plot_cur->pl_scale)->v_length;
@@ -150,8 +150,7 @@ com_fft(wordlist *wl)
             }
         } else {
             fprintf(cp_err, "Warning: unknown window type %s\n", window);
-            tfree(win);
-            return;
+            goto done;
         }
     }
 
@@ -186,11 +185,9 @@ com_fft(wordlist *wl)
             ngood++;
         }
     }
-    free_pnode_o(names);
-    if (!ngood) {
-        tfree(win);
-        return;
-    }
+
+    if (!ngood)
+        goto done;
 
     plot_cur = plot_alloc("spectrum");
     plot_cur->pl_next = plot_list;
@@ -267,12 +264,15 @@ com_fft(wordlist *wl)
 #endif
     }
 
+done:
     tfree(reald);
     tfree(imagd);
 
     tfree(tdvec);
     tfree(fdvec);
     tfree(win);
+
+    free_pnode(names);
 }
 
 
@@ -281,13 +281,13 @@ com_psd(wordlist *wl)
 {
     ngcomplex_t **fdvec = NULL;
     double  **tdvec = NULL;
-    double  *freq, *win, *time, *ave;
+    double  *freq, *win = NULL, *time, *ave;
     double  delta_t, span, noipower;
     int     mm;
     unsigned long size, ngood, fpts, i, j, tlen, jj, smooth, hsmooth;
     char    *s;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
-    struct pnode *pn, *names;
+    struct pnode *pn, *names = NULL;
 
     double *reald = NULL, *imagd = NULL;
     int sign, isreal;
@@ -297,12 +297,12 @@ com_psd(wordlist *wl)
 
     if (!plot_cur || !plot_cur->pl_scale) {
         fprintf(cp_err, "Error: no vectors loaded.\n");
-        return;
+        goto done;
     }
     if (!isreal(plot_cur->pl_scale) ||
         ((plot_cur->pl_scale)->v_type != SV_TIME)) {
         fprintf(cp_err, "Error: fft needs real time scale\n");
-        return;
+        goto done;
     }
 
     tlen = (plot_cur->pl_scale)->v_length;
@@ -454,7 +454,7 @@ com_psd(wordlist *wl)
             ngood++;
         }
     }
-    free_pnode_o(names);
+
     if (!ngood)
         goto done;
 
@@ -577,6 +577,8 @@ done:
     tfree(tdvec);
     tfree(fdvec);
     tfree(win);
+
+    free_pnode(names);
 }
 
 
