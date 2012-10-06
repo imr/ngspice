@@ -9,7 +9,6 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
  * can be written for every possible machine...
  */
 #include "ngspice/ngspice.h"
-#include "ngspice/config.h"
 
 #include <stdarg.h>
 

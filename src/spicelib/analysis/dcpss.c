@@ -19,7 +19,6 @@
 #include "../../frontend/fourier.h"
 #include "../../frontend/variable.h"
 
-#include "ngspice/config.h"
 #include "cktaccept.h"
 #include "ngspice/trandefs.h"
 #include "ngspice/fteext.h"

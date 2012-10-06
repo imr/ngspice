@@ -12,7 +12,6 @@ Modified 1999 Emmanuel Rouat
  * Toss the help window up on the screen, and deal with the graph...
  */
 
-#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/cpstd.h"
 #include "ngspice/hlpdefs.h"

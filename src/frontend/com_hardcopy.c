@@ -1,5 +1,3 @@
-#include "ngspice/config.h"
-
 #include "ngspice/ngspice.h"
 #include "ngspice/defines.h"
 #include "ngspice/bool.h"

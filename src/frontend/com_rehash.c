@@ -2,7 +2,6 @@
 * com_rehash.c
 ************/
 
-#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 
 #include "ngspice/wordlist.h"

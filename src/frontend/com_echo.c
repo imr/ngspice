@@ -2,7 +2,6 @@
 * com_echo.c
 ************/
 
-#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/wordlist.h"
 #include "ngspice/bool.h"

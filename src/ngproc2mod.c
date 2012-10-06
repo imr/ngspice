@@ -3,7 +3,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 /* convert .process file to set of .model cards */
 
-#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include <stdio.h>
 #include <stdlib.h>

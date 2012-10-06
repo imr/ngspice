@@ -8,7 +8,6 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
  * if their argument is out of range.
  */
 
-#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/fteext.h"

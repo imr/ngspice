@@ -1,5 +1,4 @@
 /* Modified: 2000 AlansFixes */
-#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "dup2.h"
 

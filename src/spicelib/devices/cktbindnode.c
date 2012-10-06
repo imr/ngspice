@@ -9,7 +9,6 @@ Author: 1985 Thomas L. Quarles
  * in the specified circuit.  */
 
 #include "ngspice/ngspice.h"
-#include "ngspice/config.h"
 #include <stdio.h>
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"

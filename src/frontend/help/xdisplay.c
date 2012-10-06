@@ -4,7 +4,6 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 Modified 1999 Emmanuel Rouat
 **********/
 
-#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/cpstd.h"
 #include "ngspice/hlpdefs.h"

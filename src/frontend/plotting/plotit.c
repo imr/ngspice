@@ -1,5 +1,4 @@
 #include "ngspice/ngspice.h"
-#include "ngspice/config.h"
 #include "ngspice/bool.h"
 #include "ngspice/wordlist.h"
 #include "ngspice/graph.h"

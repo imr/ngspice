@@ -6,7 +6,6 @@ Author: 1988 Jeffrey M. Hsu
 /*
  * Stand-alone input routine.
  */
-#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 
 #include <errno.h>

@@ -1,4 +1,3 @@
-#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 
 #include "ngspice/macros.h"

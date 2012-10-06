@@ -8,7 +8,6 @@ Modified: 2000  AlansFixes
         --- ONLY, unlike spice2 routine with the same name! */
 
 #include "ngspice/ngspice.h"
-#include "ngspice/config.h"
 #include "ngspice/cktdefs.h"
 #include "cktaccept.h"
 #include "ngspice/trandefs.h"

@@ -7,7 +7,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Expand global characters.
  */
 
-#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/cpdefs.h"
 #include "glob.h"

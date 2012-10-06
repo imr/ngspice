@@ -4,7 +4,6 @@ Author: 1985 Thomas L. Quarles
 Modified: AlansFixes
 **********/
 
-#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/iferrmsg.h"
 #include "ngspice/ifsim.h"

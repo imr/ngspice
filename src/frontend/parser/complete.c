@@ -13,7 +13,6 @@ Modified: 1999 Paolo Nenzi
  * filename completion.
  */
 
-#include "ngspice/config.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/fteext.h"
 #include "ngspice/cpdefs.h"
