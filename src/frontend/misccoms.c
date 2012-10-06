@@ -62,6 +62,7 @@ com_quit(wordlist *wl)
         wordlist all = { "all", NULL, NULL };
         wordlist star = { "*", NULL, NULL };
 
+        com_remcirc(NULL);
         com_destroy(&all);
         com_unalias(&star);
         com_undefine(&star);
