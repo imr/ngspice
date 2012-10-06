@@ -7,16 +7,19 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "ngspice/ngspice.h"
 
 #define CONFIG
+
 #include <stdio.h>
 #include "ngspice/ifsim.h"
 #include "ngspice/suffix.h"
 
+
 IFsimulator SIMinfo = {
-    "ngnutmeg",       /* my name */
+    "ngnutmeg",                                /* my name */
     "data analysis and manipulation program",  /* more about me */
-    Spice_Version,         /* my version */
-    NULL,       /* newCircuit function */
-    NULL,       /* deleteCircuit function */
+    Spice_Version,                             /* my version */
+
+    NULL,           /* newCircuit function */
+    NULL,           /* deleteCircuit function */
     NULL,           /* newNode function */ /* NEEDED */
     NULL,           /* groundNode function */
     NULL,           /* bindNode function */
@@ -43,7 +46,7 @@ IFsimulator SIMinfo = {
     NULL,           /* findTask function */
     NULL,           /* deleteTask function */
     NULL,           /* doAnalyses function */
-    NULL,	    /* non-convergence message function */
+    NULL,           /* non-convergence message function */
     0,
     NULL,
     0,
@@ -51,16 +54,21 @@ IFsimulator SIMinfo = {
     0,
     NULL,
     0,
-    NULL,	
+    NULL,
 };
 
-#ifdef CIDER
+
 /* An ugly hack */
+
+#ifdef CIDER
+
 #include "ngspice/cktdefs.h"
+
 void
 NDEVacct(CKTcircuit *ckt, FILE *file)
 {
-NG_IGNORE(ckt);
-fprintf(file, "Ouch, you have called NDEV from ngnutmeg\n");
+    NG_IGNORE(ckt);
+    fprintf(file, "Ouch, you have called NDEV from ngnutmeg\n");
 }
+
 #endif
