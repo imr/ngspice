@@ -1,12 +1,5 @@
 /* Configuration file for nutmeg */
 
-/*
- * Devices
- */
-
-#define DEVICES_USED ""
-#define ANALYSES_USED ""
-
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
