@@ -93,15 +93,15 @@ static void replace_token(char *string, char *token, int where, int total);
 
 #define SKIP_nonWS_0I(d)        while (*d && !isspace(*d)) d++
 #define SKIP_nonWS_BACK_0I(d)   while (*d && !isspace(*d)) d--
-#define SKIP_nonWS_BACK(d)      while (!isspace(*d))       d--
-#define SKIP_nonWS_BACK_I0(d)   while (!isspace(*d) && *d) d--
-#define SKIP_nonWS(d)           while (!isspace(*d))       d++
-#define SKIP_nonWS_I0(d)        while (!isspace(*d) && *d) d++
-#define SKIP_WS_0I(d)           while (*d && isspace(*d))  d++
-#define SKIP_WS_BACK_0I(d)      while (*d && isspace(*d))  d--
+#define SKIP_nonWS_BACK(d)      while (*d && !isspace(*d)) d--
+#define SKIP_nonWS_BACK_I0(d)   while (*d && !isspace(*d)) d--
+#define SKIP_nonWS(d)           while (*d && !isspace(*d)) d++
+#define SKIP_nonWS_I0(d)        while (*d && !isspace(*d)) d++
+#define SKIP_WS_0I(d)           while (isspace(*d))        d++
+#define SKIP_WS_BACK_0I(d)      while (isspace(*d))        d--
 #define SKIP_WS_BACK(d)         while (isspace(*d))        d--
 #define SKIP_WS(d)              while (isspace(*d))        d++
-#define SKIP_WS_I0(d)           while (isspace(*d) && *d)  d++
+#define SKIP_WS_I0(d)           while (isspace(*d))        d++
 #define SKIP_nonWS_FOR_0I(d, s) for (d = s; *d && !isspace(*d); d++)
 
 /*-------------------------------------------------------------------------
