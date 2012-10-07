@@ -89,6 +89,7 @@ static void inp_fix_gnd_name(struct line *deck);
 static void inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number);
 static void inp_add_control_section(struct line *deck, int *line_number);
 static char *get_quoted_token(char *string, char **token);
+static void replace_token(char *string, char *token, int where, int total);
 
 /*-------------------------------------------------------------------------
  Read the entire input file and return  a pointer to the first line of
@@ -4262,12 +4263,7 @@ inp_compat(struct line *deck)
         if (*curr_line == 'e') {
             /*    Exxx n1 n2 VCVS n3 n4 gain --> Exxx n1 n2 n3 n4 gain
                   remove vcvs */
-            if ((str_ptr = strstr(curr_line, "vcvs")) != NULL) {
-                *str_ptr = ' ';
-                *(str_ptr + 1) = ' ';
-                *(str_ptr + 2) = ' ';
-                *(str_ptr + 3) = ' ';
-            }
+            replace_token(curr_line, "vcvs", 4, 7);
 
             /* Exxx n1 n2 value={equation}
                -->
@@ -4459,12 +4455,7 @@ inp_compat(struct line *deck)
         } else if (*curr_line == 'g') {
             /* Gxxx n1 n2 VCCS n3 n4 tr --> Gxxx n1 n2 n3 n4 tr
                remove vccs */
-            if ((str_ptr = strstr(curr_line, "vccs")) != NULL) {
-                *str_ptr = ' ';
-                *(str_ptr + 1) = ' ';
-                *(str_ptr + 2) = ' ';
-                *(str_ptr + 3) = ' ';
-            }
+            replace_token(curr_line, "vccs", 4, 7);
 
             /* Gxxx n1 n2 value={equation}
                -->
@@ -5031,13 +5022,14 @@ inp_compat(struct line *deck)
 
              * ----------------------------------------------------------------- */
             if (ciprefix(".meas", curr_line)) {
-                if (strstr(curr_line, "par") == NULL)
+                if (strstr(curr_line, "par(") == NULL)
                     continue;
                 cut_line = curr_line;
-                // search for 'par'
-                while ((str_ptr = strstr(cut_line, "par")) != NULL) {
+                // search for 'par('
+                while ((str_ptr = strstr(cut_line, "par(")) != NULL) {
                     if (pai > 99) {
-                        fprintf(stderr, "ERROR: No more than 99 'par' per input file\n");
+                        fprintf(stderr, "ERROR: More than 99 function calls to par()\n");
+                        fprintf(stderr, "  Limited to 99 per input file\n");
                         controlled_exit(EXIT_FAILURE);
                     }
 
@@ -5150,13 +5142,14 @@ inp_compat(struct line *deck)
                        (ciprefix(".print", curr_line)) ||
                        (ciprefix(".plot", curr_line)))
             {
-                if (strstr(curr_line, "par") == NULL)
+                if (strstr(curr_line, "par(") == NULL)
                     continue;
                 cut_line = curr_line;
-                // search for 'par'
-                while ((str_ptr = strstr(cut_line, "par")) != NULL) {
+                // search for 'par('
+                while ((str_ptr = strstr(cut_line, "par(")) != NULL) {
                     if (pai > 99) {
-                        fprintf(stderr, "ERROR: No more than 99 'par' per input file!\n");
+                        fprintf(stderr, "ERROR: More than 99 function calls to par()\n");
+                        fprintf(stderr, "  Limited to 99 per input file\n");
                         controlled_exit(EXIT_FAILURE);
                     }
 
@@ -5234,7 +5227,7 @@ inp_compat(struct line *deck)
                     // nothing to replace
                     else
                         cut_line = str_ptr + 1;
-                } // while 'par'
+                } // while 'par('
                 // no replacement done, go to next line
                 if (pai == paui)
                     continue;
@@ -5269,6 +5262,39 @@ inp_compat(struct line *deck)
                 // continue;
             } // if .print etc.
         } // if ('.')
+    }
+}
+
+/* replace a token (length 4 char) in string by spaces, if it is found
+    at the correct position and the total number of tokens is o.k. */
+static void
+replace_token(char *string, char *token, int wherereplace, int total)
+{
+    char *nexttoken;
+    int count = 0, i;
+    char *actstring = string;
+
+    /* token to be replaced not in string */
+    if (strstr(string, token) == NULL)
+        return;
+
+    /* get total number of tokens */
+    while (*actstring) {
+        nexttoken = gettok(&actstring);
+        count++;
+    }
+    /* If total number of tokens correct */
+    if (count == total) {
+        actstring = string;
+        for (i = 1; i < wherereplace; i++)
+            nexttoken = gettok(&actstring);
+        /* If token to be replaced at right position */
+        if (ciprefix(token, actstring)) {
+            *actstring = ' ';
+            *(actstring + 1) = ' ';
+            *(actstring + 2) = ' ';
+            *(actstring + 3) = ' ';
+        }
     }
 }
 
