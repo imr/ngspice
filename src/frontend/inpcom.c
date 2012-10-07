@@ -229,10 +229,10 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
         /* now handle .title statement */
         if (ciprefix(".title", buffer)) {
-            for (s = buffer; *s && !isspace(*s); s++) /* skip over .title */
-                ;
-            while (isspace(*s)) /* advance past space chars */
-                s++;
+            for (s = buffer; *s && !isspace(*s); s++)
+                ;               /* skip over .title */
+            while (isspace(*s))
+                s++;            /* advance past space chars */
 
             /* only the last title line remains valid */
             if (new_title != NULL)
@@ -250,8 +250,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
             char *z = NULL;     /* libname */
 
             inp_stripcomments_line(buffer);
-            for (s = buffer; *s && !isspace(*s); s++) /* skip over .lib           */
-                ;
+            for (s = buffer; *s && !isspace(*s); s++)
+                ;               /* skip over .lib           */
 
             s = strdup(s);
 
@@ -343,8 +343,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
             inp_stripcomments_line(buffer);
 
-            for (s = buffer; *s && !isspace(*s); s++) /* advance past non-space chars */
-                ;
+            for (s = buffer; *s && !isspace(*s); s++)
+                ;               /* advance past non-space chars */
 
             t = get_quoted_token(s, &y);
 
