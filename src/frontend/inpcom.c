@@ -91,18 +91,11 @@ static void inp_add_control_section(struct line *deck, int *line_number);
 static char *get_quoted_token(char *string, char **token);
 static void replace_token(char *string, char *token, int where, int total);
 
-#define SKIP_nonWS_0I(d)        while (*d && !isspace(*d)) d++
-#define SKIP_nonWS_BACK_0I(d)   while (*d && !isspace(*d)) d--
 #define SKIP_nonWS_BACK(d)      while (*d && !isspace(*d)) d--
-#define SKIP_nonWS_BACK_I0(d)   while (*d && !isspace(*d)) d--
 #define SKIP_nonWS(d)           while (*d && !isspace(*d)) d++
-#define SKIP_nonWS_I0(d)        while (*d && !isspace(*d)) d++
-#define SKIP_WS_0I(d)           while (isspace(*d))        d++
-#define SKIP_WS_BACK_0I(d)      while (isspace(*d))        d--
 #define SKIP_WS_BACK(d)         while (isspace(*d))        d--
 #define SKIP_WS(d)              while (isspace(*d))        d++
-#define SKIP_WS_I0(d)           while (isspace(*d))        d++
-#define SKIP_nonWS_FOR_0I(d, s) for (d = s; *d && !isspace(*d); d++)
+#define SKIP_nonWS_FOR(d, s)    for (d = s; *d && !isspace(*d); d++)
 
 /*-------------------------------------------------------------------------
  Read the entire input file and return  a pointer to the first line of
@@ -242,7 +235,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
         /* now handle .title statement */
         if (ciprefix(".title", buffer)) {
-            SKIP_nonWS_FOR_0I(s, buffer);               /* skip over .title */
+            SKIP_nonWS_FOR(s, buffer);               /* skip over .title */
             SKIP_WS(s);            /* advance past space chars */
 
             /* only the last title line remains valid */
@@ -261,7 +254,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
             char *z = NULL;     /* libname */
 
             inp_stripcomments_line(buffer);
-            SKIP_nonWS_FOR_0I(s, buffer);               /* skip over .lib           */
+            SKIP_nonWS_FOR(s, buffer);               /* skip over .lib           */
 
             s = strdup(s);
 
@@ -353,7 +346,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
             inp_stripcomments_line(buffer);
 
-            SKIP_nonWS_FOR_0I(s, buffer);               /* advance past non-space chars */
+            SKIP_nonWS_FOR(s, buffer);               /* advance past non-space chars */
 
             t = get_quoted_token(s, &y);
 
@@ -555,7 +548,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                         controlled_exit(EXIT_FAILURE);
                     }
 
-                    SKIP_nonWS_FOR_0I(s, buffer);       /* skip over .lib                        */
+                    SKIP_nonWS_FOR(s, buffer);       /* skip over .lib                        */
                     while (isspace(*s) || isquote(*s))
                         s++;    /* advance past space chars              */
                     for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
@@ -1318,21 +1311,21 @@ get_model_name(char *line, int num_terminals)
     char *beg_ptr = line, *end_ptr, keep, *model_name = NULL;
     int  i = 0;
 
-    SKIP_nonWS_I0(beg_ptr); /* eat device name */
-    SKIP_WS_I0(beg_ptr);
+    SKIP_nonWS(beg_ptr); /* eat device name */
+    SKIP_WS(beg_ptr);
 
     for (i = 0; i < num_terminals; i++) { /* skip the terminals */
-        SKIP_nonWS_I0(beg_ptr);
-        SKIP_WS_I0(beg_ptr);
+        SKIP_nonWS(beg_ptr);
+        SKIP_WS(beg_ptr);
     }
     if (*line == 'r')           /* special dealing for r models */
         if ((*beg_ptr == '+') || (*beg_ptr == '-') || isdigit(*beg_ptr)) { /* looking for a value before model */
-            SKIP_nonWS_I0(beg_ptr); /* skip the value */
-            SKIP_WS_I0(beg_ptr);
+            SKIP_nonWS(beg_ptr); /* skip the value */
+            SKIP_WS(beg_ptr);
         }
 
     end_ptr = beg_ptr;
-    SKIP_nonWS_0I(end_ptr);
+    SKIP_nonWS(end_ptr);
     keep = *end_ptr;
     *end_ptr = '\0';
 
@@ -1350,10 +1343,10 @@ get_model_type(char *line)
     char *model_type, *beg_ptr = line;
     if (!(ciprefix(".model", line)))
         return NULL;
-    SKIP_nonWS_I0(beg_ptr); /* eat .model */
-    SKIP_WS_I0(beg_ptr);
-    SKIP_nonWS_I0(beg_ptr); /* eat model name */
-    SKIP_WS_I0(beg_ptr);
+    SKIP_nonWS(beg_ptr); /* eat .model */
+    SKIP_WS(beg_ptr);
+    SKIP_nonWS(beg_ptr); /* eat model name */
+    SKIP_WS(beg_ptr);
     model_type = gettok(&beg_ptr);
     return model_type;
 }
@@ -2052,7 +2045,7 @@ inp_fix_subckt(char *s)
     equal = strstr(s, "=");
     if (!strstr(s, "params:") && equal != NULL) {
         /* get subckt name (ptr1 will point to name) */
-        SKIP_nonWS_FOR_0I(ptr1, s);
+        SKIP_nonWS_FOR(ptr1, s);
         SKIP_WS(ptr1);
         for (ptr2 = ptr1; *ptr2 && !isspace(*ptr2) && !isquote(*ptr2); ptr2++)
             ;
@@ -2068,8 +2061,8 @@ inp_fix_subckt(char *s)
         /* s    will contain only subckt definition */
         /* beg  will point to start of param list   */
         beg = equal-1;
-        SKIP_WS_BACK_0I(beg);
-        SKIP_nonWS_BACK_0I(beg);
+        SKIP_WS_BACK(beg);
+        SKIP_nonWS_BACK(beg);
         *beg = '\0';
         beg++;
 
@@ -2082,7 +2075,7 @@ inp_fix_subckt(char *s)
             ptr2 = ptr1+1;
             ptr1--;
             SKIP_WS_BACK(ptr1);
-            SKIP_nonWS_BACK_I0(ptr1);
+            SKIP_nonWS_BACK(ptr1);
             ptr1++;             /* ptr1 points to beginning of parameter */
 
             SKIP_WS(ptr2);
@@ -2105,7 +2098,7 @@ inp_fix_subckt(char *s)
             }
             else
             /* take only the next token (separated by space) as the parameter */
-                SKIP_nonWS_0I(ptr2); /* ptr2 points past end of parameter       */
+                SKIP_nonWS(ptr2); /* ptr2 points past end of parameter       */
 
             keep  = *ptr2;
             if (keep == '\0') {
@@ -2357,7 +2350,7 @@ inp_determine_libraries(struct line *deck, char *lib_name)
             read_line = FALSE;
 
         if (ciprefix("*lib", line) || ciprefix(".lib", line)) {
-            SKIP_nonWS_FOR_0I(s, line);
+            SKIP_nonWS_FOR(s, line);
             while (isspace(*s) || isquote(*s))
                 s++;
             for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
@@ -2437,7 +2430,7 @@ inp_get_subckt_name(char *s)
     if (end_ptr != NULL) {
         end_ptr--;
         SKIP_WS_BACK(end_ptr);
-        SKIP_nonWS_BACK_0I(end_ptr);
+        SKIP_nonWS_BACK(end_ptr);
     } else {
         end_ptr = s + strlen(s);
     }
@@ -2485,9 +2478,9 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
 
         /* get parameter name */
         name = equal_ptr - 1;
-        SKIP_WS_BACK_0I(name);
+        SKIP_WS_BACK(name);
         end  = name + 1;
-        SKIP_nonWS_BACK_0I(name);
+        SKIP_nonWS_BACK(name);
         name++;
 
         keep = *end;
@@ -2497,7 +2490,7 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
 
         /* get parameter value */
         value = equal_ptr + 1;
-        SKIP_WS_0I(value);
+        SKIP_WS(value);
 
         if (*value == '{')
             is_expression = TRUE;
@@ -2506,7 +2499,7 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
             while (*end && *end != '}')
                 end++;
         else
-            SKIP_nonWS_0I(end);
+            SKIP_nonWS(end);
 
         if (is_expression)
             end++;
@@ -2676,7 +2669,7 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
                 while (d != NULL) {
                     subckt_line = d->li_line;
                     if (ciprefix(".subckt", subckt_line)) {
-                        SKIP_nonWS_0I(subckt_line);
+                        SKIP_nonWS(subckt_line);
                         SKIP_WS(subckt_line);
 
                         sprintf(name_w_space, "%s ", subckt_name);
@@ -2728,7 +2721,7 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
                     while (d != NULL) {
                         subckt_line = d->li_line;
                         if (ciprefix(".subckt", subckt_line)) {
-                            SKIP_nonWS_0I(subckt_line);
+                            SKIP_nonWS(subckt_line);
                             SKIP_WS(subckt_line);
 
                             if (strncmp(subckt_line, name_w_space, strlen(name_w_space)) == 0) {
@@ -3732,8 +3725,8 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
             str_ptr = curr_line;
 
             for (j = 0; j < num_terminals+1; j++) {
-                SKIP_nonWS_I0(str_ptr);
-                SKIP_WS_I0(str_ptr);
+                SKIP_nonWS(str_ptr);
+                SKIP_WS(str_ptr);
             }
 
             while ((str_ptr = strstr(str_ptr, param_names[i])) != NULL) {
@@ -5299,7 +5292,7 @@ inp_bsource_compat(struct line *deck)
             /* scan the expression */
             str_ptr = equal_ptr + 1;
             while (*str_ptr != '\0') {
-                SKIP_WS_0I(str_ptr);
+                SKIP_WS(str_ptr);
                 if (*str_ptr == '\0')
                     break;
                 actchar = *str_ptr;
@@ -5567,7 +5560,7 @@ get_quoted_token(char *string, char **token)
 
         char *t = s;
 
-        SKIP_nonWS_0I(t);
+        SKIP_nonWS(t);
 
         if (t == s) {     /* nothing found */
             *token = NULL;
