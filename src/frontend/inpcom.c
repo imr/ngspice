@@ -91,6 +91,19 @@ static void inp_add_control_section(struct line *deck, int *line_number);
 static char *get_quoted_token(char *string, char **token);
 static void replace_token(char *string, char *token, int where, int total);
 
+#define SKIP_nonWS_0I(d)        while (*d && !isspace(*d)) d++
+#define SKIP_nonWS_BACK_0I(d)   while (*d && !isspace(*d)) d--
+#define SKIP_nonWS_BACK(d)      while (!isspace(*d))       d--
+#define SKIP_nonWS_BACK_I0(d)   while (!isspace(*d) && *d) d--
+#define SKIP_nonWS(d)           while (!isspace(*d))       d++
+#define SKIP_nonWS_I0(d)        while (!isspace(*d) && *d) d++
+#define SKIP_WS_0I(d)           while (*d && isspace(*d))  d++
+#define SKIP_WS_BACK_0I(d)      while (*d && isspace(*d))  d--
+#define SKIP_WS_BACK(d)         while (isspace(*d))        d--
+#define SKIP_WS(d)              while (isspace(*d))        d++
+#define SKIP_WS_I0(d)           while (isspace(*d) && *d)  d++
+#define SKIP_nonWS_FOR_0I(d, s) for (d = s; *d && !isspace(*d); d++)
+
 /*-------------------------------------------------------------------------
  Read the entire input file and return  a pointer to the first line of
  the linked list of 'card' records in data.  The pointer is stored in
