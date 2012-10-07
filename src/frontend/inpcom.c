@@ -4186,7 +4186,7 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
 
 /* hs compatibility:
    Exxx n1 n2 VCVS n3 n4 gain --> Exxx n1 n2 n3 n4 gain
-   Gxxx n1 n2 VCCS n3 n4 tr --> Exxx n1 n2 n3 n4 tr
+   Gxxx n1 n2 VCCS n3 n4 tr --> Gxxx n1 n2 n3 n4 tr
 
    Two step approach to keep the original names for reuse,
    i.e. for current measurements like i(Exxx):
@@ -4650,6 +4650,20 @@ inp_compat(struct line *deck)
                 tfree(node2);
             }
         }
+
+        /* F element compatibility */
+        else if (*curr_line == 'f') {
+            /* Fxxx n1 n2 CCCS vnam gain --> Fxxx n1 n2 vnam gain
+               remove cccs */
+            replace_token(curr_line, "cccs", 4, 6);
+        }
+        /* H element compatibility */
+        else if (*curr_line == 'h') {
+            /* Hxxx n1 n2 CCVS vnam transres --> Hxxx n1 n2 vnam transres
+               remove cccs */
+            replace_token(curr_line, "ccvs", 4, 6);
+        }
+
         /* Rxxx n1 n2 R = {equation} or Rxxx n1 n2 {equation}
            -->
            BRxxx pos neg I = V(pos, neg)/{equation}
