@@ -2105,10 +2105,11 @@ inp_fix_subckt(char *s)
         /* go to beginning of first parameter word  */
         /* s    will contain only subckt definition */
         /* beg  will point to start of param list   */
-        for (beg = equal-1; *beg && isspace(*beg); beg--)
-            ;
-        for (             ; *beg && !isspace(*beg); beg--)
-            ;
+        beg = equal-1;
+        while (*beg && isspace(*beg))
+            beg--;
+        while (*beg && !isspace(*beg))
+            beg--;
         *beg = '\0';
         beg++;
 
@@ -2188,8 +2189,9 @@ inp_fix_subckt(char *s)
                     }
                     buf[buf_idx++] = *(p2++);
                 }
-                for (p1 = p2; isspace(*p1); ++p1)
-                    ;
+                p1 = p2;
+                while (isspace(*p1))
+                    p1++;
                 if (*p1 == '\0' || !(strchr("+-*/<>=(!,{", p2[-1]) || strchr("+-*/<>=()!,}", *p1))) {
                     if (buf_idx >= buf_len) {
                         buf_len *= 2;
@@ -2484,8 +2486,8 @@ inp_get_subckt_name(char *s)
         end_ptr--;
         while (isspace(*end_ptr))
             end_ptr--;
-        for (; *end_ptr && !isspace(*end_ptr); end_ptr--)
-            ;
+        while (*end_ptr && !isspace(*end_ptr))
+            end_ptr--;
     } else {
         end_ptr = s + strlen(s);
     }
@@ -2493,8 +2495,8 @@ inp_get_subckt_name(char *s)
     subckt_name = end_ptr;
     while (isspace(*subckt_name))
         subckt_name--;
-    for (; !isspace(*subckt_name); subckt_name--)
-        ;
+    while (!isspace(*subckt_name))
+        subckt_name--;
     subckt_name++;
 
     keep     = *end_ptr;
@@ -2733,8 +2735,8 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
                 while (d != NULL) {
                     subckt_line = d->li_line;
                     if (ciprefix(".subckt", subckt_line)) {
-                        for (; *subckt_line && !isspace(*subckt_line); subckt_line++)
-                            ;
+                        while (*subckt_line && !isspace(*subckt_line))
+                            subckt_line++;
                         while (isspace(*subckt_line))
                             subckt_line++;
 
@@ -2787,8 +2789,8 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
                     while (d != NULL) {
                         subckt_line = d->li_line;
                         if (ciprefix(".subckt", subckt_line)) {
-                            for (; *subckt_line && !isspace(*subckt_line); subckt_line++)
-                                ;
+                            while (*subckt_line && !isspace(*subckt_line))
+                                subckt_line++;
                             while (isspace(*subckt_line))
                                 subckt_line++;
 
