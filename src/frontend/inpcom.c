@@ -91,11 +91,16 @@ static void inp_add_control_section(struct line *deck, int *line_number);
 static char *get_quoted_token(char *string, char **token);
 static void replace_token(char *string, char *token, int where, int total);
 
-#define SKIP_nonWS_BACK(d)      while (*d && !isspace(*d)) d--
-#define SKIP_nonWS(d)           while (*d && !isspace(*d)) d++
-#define SKIP_WS_BACK(d)         while (isspace(*d))        d--
-#define SKIP_WS(d)              while (isspace(*d))        d++
-#define SKIP_nonWS_FOR(d, s)    for (d = s; *d && !isspace(*d); d++)
+static char *skip_back_non_ws(char *d) { while (*d && !isspace(*d)) d--; return d; }
+static char *skip_non_ws(char *d)      { while (*d && !isspace(*d)) d++; return d; }
+static char *skip_back_ws(char *d)     { while (isspace(*d))        d--; return d; }
+static char *skip_ws(char *d)          { while (isspace(*d))        d++; return d; }
+
+#define SKIP_nonWS_BACK(d)      d = skip_back_non_ws(d)
+#define SKIP_nonWS(d)           d = skip_non_ws(d)
+#define SKIP_WS_BACK(d)         d = skip_back_ws(d)
+#define SKIP_WS(d)              d = skip_ws(d)
+#define SKIP_nonWS_FOR(d, s)    d = skip_non_ws(s)
 
 /*-------------------------------------------------------------------------
  Read the entire input file and return  a pointer to the first line of
