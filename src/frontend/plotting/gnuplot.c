@@ -26,7 +26,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 {
     FILE *file, *file_data;
     struct dvec *v, *scale = NULL;
-    double xval, yval;
+    double xval, yval, extrange;
     int i, numVecs, linewidth, err;
     bool xlog, ylog, nogrid, markers;
     char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text, plotstyle[BSIZE_SP];
@@ -47,6 +47,15 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         fprintf(cp_err, "Error: too many vectors for gnuplot.\n");
         return;
     }
+
+    if (fabs((ylims[1]-ylims[0])/ylims[0]) < 1.0e-6) {
+        fprintf(cp_err, "Error: range min ... max too small for using gnuplot.\n");
+        fprintf(cp_err, "  Consider plotting with offset %g.\n", ylims[0]);
+        return;
+    }
+
+    extrange = 0.05 * (ylims[1] - ylims[0]);
+
     if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth))
         linewidth = 1;
     if (linewidth < 1) linewidth = 1;
@@ -59,7 +68,6 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         else
             markers = FALSE;
     }
-
 
     /* Make sure the gridtype is supported. */
     switch (gridtype) {
@@ -118,6 +126,8 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     if (xlog) {
         fprintf(file, "set logscale x\n");
         if (xlims)
+            /* fprintf(file, "set xrange [%1.0e:%1.0e]\n",
+                 pow(10, floor(log10(xlims[0]))), pow(10, ceil(log10(xlims[1])))); */
             fprintf(file, "set xrange [%e:%e]\n", xlims[0], xlims[1]);
     } else {
         fprintf(file, "unset logscale x \n");
@@ -127,11 +137,12 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     if (ylog) {
         fprintf(file, "set logscale y \n");
         if (ylims)
-            fprintf(file, "set yrange [%e:%e]\n", ylims[0], ylims[1]);
+            fprintf(file, "set yrange [%1.0e:%1.0e]\n",
+                pow(10, floor(log10(ylims[0]))), pow(10, ceil(log10(ylims[1]))));
     } else {
         fprintf(file, "unset logscale y \n");
         if (ylims)
-            fprintf(file, "set yrange [%e:%e]\n", ylims[0], ylims[1]);
+            fprintf(file, "set yrange [%e:%e]\n", ylims[0] - extrange, ylims[1] + extrange);
     }
 
     fprintf(file, "#set xtics 1\n");
@@ -160,7 +171,8 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         perror(filename);
         return;
     }
-
+    fprintf(file, "set format y \"%%g\"\n");
+    fprintf(file, "set format x \"%%g\"\n");
     fprintf(file, "plot ");
     i = 0;
 
@@ -178,8 +190,10 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     fprintf(file, "set terminal push\n");
     fprintf(file, "set terminal postscript eps color\n");
     fprintf(file, "set out \'%s.eps\'\n", filename);
+
     fprintf(file, "replot\n");
     fprintf(file, "set term pop\n");
+
     fprintf(file, "replot\n");
 
     (void) fclose(file);
@@ -195,7 +209,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
             yval = isreal(v) ?
                    v->v_realdata[i] : realpart(v->v_compdata[i]);
 
-            fprintf(file_data, "% e % e ", xval, yval);
+            fprintf(file_data, "%e %e ", xval, yval);
         }
         fprintf(file_data, "\n");
     }

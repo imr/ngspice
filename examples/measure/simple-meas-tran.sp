@@ -2,6 +2,7 @@ File: simple-meas-tran.sp
 * Simple .measurement examples
 * transient simulation of two sine signals with different frequencies
 vac1 1 0 DC 0 sin(0 1 1k 0 0)
+R1 1 0 100k
 vac2 2 0 DC 0 sin(0 1.2 0.9k 0 0)
 .tran 10u 5m
 *
@@ -31,6 +32,7 @@ vac2 2 0 DC 0 sin(0 1.2 0.9k 0 0)
 .control
 run
 plot v(1) v(2)
+gnuplot ttt i(vac1)
 meas tran tdiff TRIG v(1) VAL=0.5 RISE=1 TARG v(1) VAL=0.5 RISE=2
 meas tran tdiff TRIG v(1) VAL=0.5 RISE=1 TARG v(1) VAL=0.5 RISE=3
 meas tran tdiff TRIG v(1) VAL=0.5 RISE=1 TARG v(1) VAL=0.5 FALL=1
