@@ -1006,13 +1006,11 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
                         str_ptr2--;
                     xy_str1 = str_ptr2;
                     str_ptr2--;
-                    str_ptr2 = skip_back_ws(str_ptr2);
-                    str_ptr2++;
+                    str_ptr2 = skip_back_ws(str_ptr2) + 1;
                 } else {
                     str_ptr2 = skip_back_non_ws(str_ptr2);
                     xy_str1 = str_ptr2 + 1;
-                    str_ptr2 = skip_back_ws(str_ptr2);
-                    str_ptr2++;
+                    str_ptr2 = skip_back_ws(str_ptr2) + 1;
                 }
                 keep = *str_ptr2;
                 *str_ptr2 = '\0';
@@ -1192,8 +1190,7 @@ inp_fix_macro_param_func_paren_io(struct line *begin_card)
             continue;
 
         if (ciprefix(".macro", card->li_line) || ciprefix(".eom", card->li_line)) {
-            str_ptr = card->li_line;
-            str_ptr = skip_non_ws(str_ptr);
+            str_ptr = skip_non_ws(card->li_line);
 
             if (ciprefix(".macro", card->li_line)) {
                 new_str = TMALLOC(char, strlen(".subckt") + strlen(str_ptr) + 1);
@@ -1209,8 +1206,7 @@ inp_fix_macro_param_func_paren_io(struct line *begin_card)
 
         if (ciprefix(".subckt", card->li_line) || ciprefix("x", card->li_line)) {
             /* remove () */
-            str_ptr = card->li_line;
-            str_ptr = skip_non_ws(str_ptr);  // skip over .subckt, instance name
+            str_ptr = skip_non_ws(card->li_line);  // skip over .subckt, instance name
             str_ptr = skip_ws(str_ptr);
             if (ciprefix(".subckt", card->li_line)) {
                 str_ptr = skip_non_ws(str_ptr);  // skip over subckt name
@@ -1230,8 +1226,7 @@ inp_fix_macro_param_func_paren_io(struct line *begin_card)
         }
         is_func = FALSE;
         if (ciprefix(".param", card->li_line)) {
-            str_ptr = card->li_line;
-            str_ptr = skip_non_ws(str_ptr);  // skip over .param
+            str_ptr = skip_non_ws(card->li_line);  // skip over .param
             str_ptr = skip_ws(str_ptr);
             while (!isspace(*str_ptr) && *str_ptr != '=') {
                 if (*str_ptr == '(')
@@ -1266,14 +1261,11 @@ get_instance_subckt(char *line)
         end_ptr = equal_ptr - 1;
         end_ptr = skip_back_ws(end_ptr);
         end_ptr = skip_back_non_ws(end_ptr);
-        end_ptr = skip_back_ws(end_ptr);
-        end_ptr++;
+        end_ptr = skip_back_ws(end_ptr) + 1;
         keep     = *end_ptr;
         *end_ptr = '\0';
     }
-    inst_name_ptr = end_ptr;
-    inst_name_ptr = skip_back_non_ws(inst_name_ptr);
-    inst_name_ptr++;
+    inst_name_ptr = skip_back_non_ws(end_ptr) + 1;
 
     inst_name = strdup(inst_name_ptr);
 
@@ -1287,14 +1279,13 @@ get_instance_subckt(char *line)
 static char*
 get_subckt_model_name(char *line)
 {
-    char *name = line, *end_ptr = NULL, *subckt_name;
+    char *name, *end_ptr, *subckt_name;
     char keep;
 
-    name = skip_non_ws(name);   // eat .subckt|.model
+    name = skip_non_ws(line);   // eat .subckt|.model
     name = skip_ws(name);
 
-    end_ptr = name;
-    end_ptr = skip_non_ws(end_ptr);
+    end_ptr = skip_non_ws(name);
     keep     = *end_ptr;
     *end_ptr = '\0';
 
@@ -1308,10 +1299,10 @@ get_subckt_model_name(char *line)
 static char*
 get_model_name(char *line, int num_terminals)
 {
-    char *beg_ptr = line, *end_ptr, keep, *model_name = NULL;
+    char *beg_ptr, *end_ptr, keep, *model_name;
     int  i = 0;
 
-    beg_ptr = skip_non_ws(beg_ptr); /* eat device name */
+    beg_ptr = skip_non_ws(line); /* eat device name */
     beg_ptr = skip_ws(beg_ptr);
 
     for (i = 0; i < num_terminals; i++) { /* skip the terminals */
@@ -1324,8 +1315,7 @@ get_model_name(char *line, int num_terminals)
             beg_ptr = skip_ws(beg_ptr);
         }
 
-    end_ptr = beg_ptr;
-    end_ptr = skip_non_ws(end_ptr);
+    end_ptr = skip_non_ws(beg_ptr);
     keep = *end_ptr;
     *end_ptr = '\0';
 
@@ -1361,8 +1351,7 @@ get_adevice_model_name(char *line)
         ptr_end--;
     ptr_beg = ptr_end - 1;
 
-    ptr_beg = skip_back_non_ws(ptr_beg);
-    ptr_beg++;
+    ptr_beg = skip_back_non_ws(ptr_beg) + 1;
     keep = *ptr_end;
     *ptr_end = '\0';
     model_name = strdup(ptr_beg);
@@ -1690,11 +1679,9 @@ inp_fix_ternary_operator_str(char *line, bool all)
     if (!strstr(line, "?") && !strstr(line, ":"))
         return line;
 
-    str_ptr = line;
     if (all || ciprefix(".param", line) ||
         ciprefix(".func", line) || ciprefix(".meas", line))
     {
-        str_ptr = line;
         if (ciprefix(".param", line) || ciprefix(".meas", line))
             str_ptr = strstr(line, "=");
         else
@@ -1705,11 +1692,9 @@ inp_fix_ternary_operator_str(char *line, bool all)
             controlled_exit(EXIT_FAILURE);
         }
 
-        str_ptr++;
-        str_ptr = skip_ws(str_ptr);
+        str_ptr = skip_ws(str_ptr + 1);
         if (*str_ptr == '{') {
-            str_ptr++;
-            str_ptr = skip_ws(str_ptr);
+            str_ptr = skip_ws(str_ptr + 1);
         }
 
         question  = strstr(str_ptr, "?");
@@ -1750,8 +1735,7 @@ inp_fix_ternary_operator_str(char *line, bool all)
     *str_ptr = keep;
 
     // get if
-    str_ptr = question + 1;
-    str_ptr = skip_ws(str_ptr);
+    str_ptr = skip_ws(question + 1);
     if (*str_ptr == '(') {
         // find closing paren
         count    = 1;
@@ -1774,11 +1758,9 @@ inp_fix_ternary_operator_str(char *line, bool all)
             fprintf(stderr, "ERROR: problem parsing ternary string (finding ':') %s!\n", line);
             controlled_exit(EXIT_FAILURE);
         }
-        str_ptr2 = colon - 1;
-        str_ptr2 = skip_back_ws(str_ptr2);
+        str_ptr2 = skip_back_ws(colon - 1);
     } else if ((colon = strstr(str_ptr, ":")) != NULL) {
-        str_ptr2 = colon - 1;
-        str_ptr2 = skip_back_ws(str_ptr2);
+        str_ptr2 = skip_back_ws(colon - 1);
     } else {
         fprintf(stderr, "ERROR: problem parsing ternary string (missing ':') %s!\n", line);
         controlled_exit(EXIT_FAILURE);
@@ -1790,8 +1772,7 @@ inp_fix_ternary_operator_str(char *line, bool all)
     *str_ptr2 = keep;
 
     // get else
-    str_ptr = colon + 1;
-    str_ptr = skip_ws(str_ptr);
+    str_ptr = skip_ws(colon + 1);
     if (paren_ptr != NULL) {
         // find end paren ')'
         bool found_paren = FALSE;
@@ -2060,8 +2041,7 @@ inp_fix_subckt(char *s)
         /* go to beginning of first parameter word  */
         /* s    will contain only subckt definition */
         /* beg  will point to start of param list   */
-        beg = equal-1;
-        beg = skip_back_ws(beg);
+        beg = skip_back_ws(equal - 1);
         beg = skip_back_non_ws(beg);
         *beg = '\0';
         beg++;
@@ -2073,10 +2053,9 @@ inp_fix_subckt(char *s)
             /* alternative patch to cope with spaces:
                get expression between braces {...} */
             ptr2 = ptr1+1;
-            ptr1--;
-            ptr1 = skip_back_ws(ptr1);
-            ptr1 = skip_back_non_ws(ptr1);
-            ptr1++;             /* ptr1 points to beginning of parameter */
+            ptr1 = skip_back_ws(ptr1 - 1);
+            ptr1 = skip_back_non_ws(ptr1) + 1;
+            /* ptr1 points to beginning of parameter */
 
             ptr2 = skip_ws(ptr2);
             /* if parameter is an expression and starts with '{', find closing '}'
@@ -2138,8 +2117,7 @@ inp_fix_subckt(char *s)
                     }
                     buf[buf_idx++] = *(p2++);
                 }
-                p1 = p2;
-                p1 = skip_ws(p1);
+                p1 = skip_ws(p2);
                 if (*p1 == '\0' || !(strchr("+-*/<>=(!,{", p2[-1]) || strchr("+-*/<>=()!,}", *p1))) {
                     if (buf_idx >= buf_len) {
                         buf_len *= 2;
@@ -2222,8 +2200,7 @@ inp_remove_ws(char *s)
 
         big_buff[big_buff_index++] = *curr;
         if (*curr == '=' || (is_expression && (is_arith_char(*curr) || *curr == ','))) {
-            curr++;
-            curr = skip_ws(curr);
+            curr = skip_ws(curr + 1);
 
             if (*curr == '{')
                 is_expression = TRUE;
@@ -2435,10 +2412,8 @@ inp_get_subckt_name(char *s)
         end_ptr = s + strlen(s);
     }
 
-    subckt_name = end_ptr;
-    subckt_name = skip_back_ws(subckt_name);
-    subckt_name = skip_back_non_ws(subckt_name);
-    subckt_name++;
+    subckt_name = skip_back_ws(end_ptr);
+    subckt_name = skip_back_non_ws(subckt_name) + 1;
 
     keep     = *end_ptr;
     *end_ptr = '\0';
@@ -2477,11 +2452,9 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
         is_expression = FALSE;
 
         /* get parameter name */
-        name = equal_ptr - 1;
-        name = skip_back_ws(name);
+        name = skip_back_ws(equal_ptr - 1);
         end  = name + 1;
-        name = skip_back_non_ws(name);
-        name++;
+        name = skip_back_non_ws(name) + 1;
 
         keep = *end;
         *end = '\0';
@@ -2489,8 +2462,7 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
         *end = keep;
 
         /* get parameter value */
-        value = equal_ptr + 1;
-        value = skip_ws(value);
+        value = skip_ws(equal_ptr + 1);
 
         if (*value == '{')
             is_expression = TRUE;
@@ -2814,8 +2786,7 @@ inp_get_func_from_line(char *line)
     while (*end != '(')
         end++;
     while (*end != ')') {
-        end++;
-        end = skip_ws(end);
+        end = skip_ws(end + 1);
         ptr = end;
         while (!isspace(*end) && *end != ',' && *end != ')')
             end++;
@@ -3225,8 +3196,7 @@ inp_fix_param_values(struct line *deck)
                 continue;
             }
 
-            beg_of_str = equal_ptr + 1;
-            beg_of_str = skip_ws(beg_of_str);
+            beg_of_str = skip_ws(equal_ptr + 1);
             /* all cases where no {} have to be put around selected token */
             if (isdigit(*beg_of_str) ||
                 *beg_of_str == '{' ||
@@ -3393,8 +3363,7 @@ get_param_name(char *line)
 
     if ((equal_ptr = strstr(line, "=")) != NULL) {
         equal_ptr--;
-        equal_ptr = skip_back_ws(equal_ptr);
-        equal_ptr++;
+        equal_ptr = skip_back_ws(equal_ptr) + 1;
 
         beg = equal_ptr-1;
         while (!isspace(*beg) && beg != line)
@@ -3820,11 +3789,9 @@ inp_add_params_to_subckt(struct line *subckt_card)
             new_line = TMALLOC(char, strlen(subckt_line) + strlen("params: ") + strlen(param_ptr) + 2);
             sprintf(new_line, "%s params: %s", subckt_line, param_ptr);
 
-            subckt_name = subckt_card->li_line;
-            subckt_name = skip_non_ws(subckt_name);
+            subckt_name = skip_non_ws(subckt_card->li_line);
             subckt_name = skip_ws(subckt_name);
-            end_ptr = subckt_name;
-            end_ptr = skip_non_ws(end_ptr);
+            end_ptr = skip_non_ws(subckt_name);
             keep     = *end_ptr;
             *end_ptr = '\0';
             subckt_w_params[num_subckt_w_params++] = strdup(subckt_name);
@@ -4028,11 +3995,9 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
                     continue;
                 }
 
-                beg_param = equal_ptr - 1;
-                end_param = equal_ptr + 1;
-                beg_param = skip_back_ws(beg_param);
+                beg_param = skip_back_ws(equal_ptr - 1);
                 beg_param = skip_back_non_ws(beg_param);
-                end_param = skip_ws(end_param);
+                end_param = skip_ws(equal_ptr + 1);
                 while (*end_param != '\0' && (!isspace(*end_param) || get_expression || get_paren_expression)) {
                     if (*end_param == '{')
                         get_expression = TRUE;
@@ -5532,9 +5497,7 @@ inp_bsource_compat(struct line *deck)
 static char *
 get_quoted_token(char *string, char **token)
 {
-    char *s = string;
-
-    s = skip_ws(s);
+    char *s = skip_ws(string);
 
     if (!*s)            /* nothing found */
         return string;
@@ -5558,9 +5521,7 @@ get_quoted_token(char *string, char **token)
 
     } else {
 
-        char *t = s;
-
-        t = skip_non_ws(t);
+        char *t = skip_non_ws(s);
 
         if (t == s) {     /* nothing found */
             *token = NULL;
