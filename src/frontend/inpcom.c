@@ -976,10 +976,8 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
                 model_name = strdup(line);
                 *str_ptr1  = keep;
 
-                str_ptr2 = bool_ptr - 1;
                 str_ptr1 = skip_ws(str_ptr1);
-                str_ptr2 = skip_back_ws(str_ptr2);
-                str_ptr2++;
+                str_ptr2 = skip_back_ws(bool_ptr - 1) + 1;
                 keep = *str_ptr2;
                 *str_ptr2 = '\0';
                 node_str  = strdup(str_ptr1);
@@ -997,16 +995,13 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
                     fprintf(stderr, "ERROR: mal formed line: %s\n", line);
                     controlled_exit(EXIT_FAILURE);
                 }
-                str_ptr1++;
-                str_ptr2--;
-                str_ptr2 = skip_back_ws(str_ptr2);
-                str_ptr1 = skip_ws(str_ptr1);
+                str_ptr2 = skip_back_ws(str_ptr2 - 1);
+                str_ptr1 = skip_ws(str_ptr1 + 1);
                 if (*str_ptr2 == '}') {
                     while (*str_ptr2 != '{')
                         str_ptr2--;
                     xy_str1 = str_ptr2;
-                    str_ptr2--;
-                    str_ptr2 = skip_back_ws(str_ptr2) + 1;
+                    str_ptr2 = skip_back_ws(str_ptr2 - 1) + 1;
                 } else {
                     str_ptr2 = skip_back_non_ws(str_ptr2);
                     xy_str1 = str_ptr2 + 1;
@@ -1017,8 +1012,7 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
                 ctrl_node_str = strdup(str_ptr1);
                 *str_ptr2 = keep;
 
-                str_ptr1 = comma_ptr + 1;
-                str_ptr1 = skip_ws(str_ptr1);
+                str_ptr1 = skip_ws(comma_ptr + 1);
                 if (*str_ptr1 == '{') {
                     while (*str_ptr1 != '}')
                         str_ptr1++;
@@ -1258,8 +1252,7 @@ get_instance_subckt(char *line)
 
     // see if instance has parameters
     if ((equal_ptr = strstr(line, "=")) != NULL) {
-        end_ptr = equal_ptr - 1;
-        end_ptr = skip_back_ws(end_ptr);
+        end_ptr = skip_back_ws(equal_ptr - 1);
         end_ptr = skip_back_non_ws(end_ptr);
         end_ptr = skip_back_ws(end_ptr) + 1;
         keep     = *end_ptr;
@@ -1330,10 +1323,10 @@ get_model_name(char *line, int num_terminals)
 static char*
 get_model_type(char *line)
 {
-    char *model_type, *beg_ptr = line;
+    char *model_type, *beg_ptr;
     if (!(ciprefix(".model", line)))
         return NULL;
-    beg_ptr = skip_non_ws(beg_ptr); /* eat .model */
+    beg_ptr = skip_non_ws(line); /* eat .model */
     beg_ptr = skip_ws(beg_ptr);
     beg_ptr = skip_non_ws(beg_ptr); /* eat model name */
     beg_ptr = skip_ws(beg_ptr);
@@ -1349,9 +1342,7 @@ get_adevice_model_name(char *line)
 
     while (isspace(*(ptr_end-1)))
         ptr_end--;
-    ptr_beg = ptr_end - 1;
-
-    ptr_beg = skip_back_non_ws(ptr_beg) + 1;
+    ptr_beg = skip_back_non_ws(ptr_end - 1) + 1;
     keep = *ptr_end;
     *ptr_end = '\0';
     model_name = strdup(ptr_beg);
@@ -1708,9 +1699,8 @@ inp_fix_ternary_operator_str(char *line, bool all)
     }
 
     // get conditional
-    str_ptr2 = question = strstr(str_ptr, "?");
-    str_ptr2--;
-    str_ptr2 = skip_back_ws(str_ptr2);
+    question = strstr(str_ptr, "?");
+    str_ptr2 = skip_back_ws(question - 1);
     if (*str_ptr2 == ')') {
         count = 1;
         str_ptr = str_ptr2;
@@ -2052,12 +2042,11 @@ inp_fix_subckt(char *s)
 #ifndef NOBRACE
             /* alternative patch to cope with spaces:
                get expression between braces {...} */
-            ptr2 = ptr1+1;
+            ptr2 = skip_ws(ptr1 + 1);
             ptr1 = skip_back_ws(ptr1 - 1);
             ptr1 = skip_back_non_ws(ptr1) + 1;
             /* ptr1 points to beginning of parameter */
 
-            ptr2 = skip_ws(ptr2);
             /* if parameter is an expression and starts with '{', find closing '}'
                Braces maybe nested (will they ever be ?). */
             if (*ptr2 == '{') {
@@ -2405,8 +2394,7 @@ inp_get_subckt_name(char *s)
     char keep;
 
     if (end_ptr != NULL) {
-        end_ptr--;
-        end_ptr = skip_back_ws(end_ptr);
+        end_ptr = skip_back_ws(end_ptr - 1);
         end_ptr = skip_back_non_ws(end_ptr);
     } else {
         end_ptr = s + strlen(s);
@@ -2510,8 +2498,7 @@ inp_fix_inst_line(char *inst_line,
     *inst_name_end  = keep;
 
     if (end != NULL) {
-        end--;
-        end = skip_back_ws(end);
+        end = skip_back_ws(end - 1);
         end = skip_back_non_ws(end);
         *end = '\0';
     }
@@ -3362,8 +3349,7 @@ get_param_name(char *line)
     char keep;
 
     if ((equal_ptr = strstr(line, "=")) != NULL) {
-        equal_ptr--;
-        equal_ptr = skip_back_ws(equal_ptr) + 1;
+        equal_ptr = skip_back_ws(equal_ptr - 1) + 1;
 
         beg = equal_ptr-1;
         while (!isspace(*beg) && beg != line)
@@ -3385,14 +3371,12 @@ get_param_name(char *line)
 static char*
 get_param_str(char *line)
 {
-    char *equal_ptr;
+    char *equal_ptr = strstr(line, "=");
 
-    if ((equal_ptr = strstr(line, "=")) != NULL) {
-        equal_ptr++;
-        equal_ptr = skip_ws(equal_ptr);
-        return equal_ptr;
-    }
-    return line;
+    if (equal_ptr)
+        return skip_ws(equal_ptr + 1);
+    else
+        return line;
 }
 
 
