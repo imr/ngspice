@@ -1338,10 +1338,9 @@ get_model_type(char *line)
 static char *
 get_adevice_model_name(char *line)
 {
-    char *model_name, *ptr_end = line + strlen(line), *ptr_beg, keep;
+    char *model_name, *ptr_end, *ptr_beg, keep;
 
-    while (isspace(*(ptr_end-1)))
-        ptr_end--;
+    ptr_end = skip_back_ws(line + strlen(line) - 1) + 1;
     ptr_beg = skip_back_non_ws(ptr_end - 1) + 1;
     keep = *ptr_end;
     *ptr_end = '\0';
