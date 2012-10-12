@@ -951,7 +951,7 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
     int  xy_count1 = 0, xy_count2 = 0, skip_control = 0;
 
     for (c = deck; c != NULL; c = c->li_next) {
-        str_ptr1 = line = c->li_line;
+        line = c->li_line;
 
         /* there is no e source inside .control ... .endc */
         if (ciprefix(".control", line)) {
@@ -970,7 +970,7 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
                 (bool_ptr = strstr(line, "nor(")) != NULL ||
                 (bool_ptr = strstr(line, "or(")) != NULL)
             {
-                str_ptr1 = skip_non_ws(str_ptr1);
+                str_ptr1 = skip_non_ws(line);
                 keep = *str_ptr1;
                 *str_ptr1  = '\0';
                 model_name = strdup(line);
@@ -1683,14 +1683,13 @@ inp_fix_ternary_operator_str(char *line, bool all)
         }
 
         str_ptr = skip_ws(str_ptr + 1);
-        if (*str_ptr == '{') {
+        if (*str_ptr == '{')
             str_ptr = skip_ws(str_ptr + 1);
-        }
 
         question  = strstr(str_ptr, "?");
         paren_ptr = strstr(str_ptr, "(");
 
-        if (paren_ptr != NULL && paren_ptr < question)
+        if (paren_ptr && paren_ptr < question)
             paren_ptr = NULL;
 
     } else {
@@ -3350,7 +3349,7 @@ get_param_name(char *line)
     if ((equal_ptr = strstr(line, "=")) != NULL) {
         equal_ptr = skip_back_ws(equal_ptr - 1) + 1;
 
-        beg = equal_ptr-1;
+        beg = equal_ptr - 1;
         while (!isspace(*beg) && beg != line)
             beg--;
         if (beg != line)
