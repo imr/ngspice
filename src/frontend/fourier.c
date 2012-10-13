@@ -35,8 +35,6 @@ static int CKTfour(int ndata, int numFreq, double *thd, double *Time, double *Va
  *         len    10       ?    inp   inp    inp       out   out  out    out   out
  */
 
-/* FIXME: This function leaks memory due to non local exit bypassing
-   freeing of memory at the end of the function. */
 int
 fourier(wordlist *wl, struct plot *current_plot)
 {
@@ -129,7 +127,7 @@ fourier(wordlist *wl, struct plot *current_plot)
                                     grid, fourgridsize,
                                     polydegree)) {
                     fprintf(cp_err, "Error: can't interpolate\n");
-                    return 1;
+                    goto ret_on_err;
                 }
                 timescale = grid;
             } else {
@@ -143,7 +141,7 @@ fourier(wordlist *wl, struct plot *current_plot)
                           nphase);
             if (err != OK) {
                 ft_sperror(err, "fourier");
-                return 1;
+                goto ret_on_err;
             }
 
             fprintf(cp_out, "Fourier analysis for %s:\n", vec->v_name);
@@ -163,16 +161,31 @@ fourier(wordlist *wl, struct plot *current_plot)
                     fw, "---------", fw, "---------",
                     fw, "-----", fw, "---------",
                     fw, "-----------");
-            for (i = 0; i < nfreqs; i++)
+            for (i = 0; i < nfreqs; i++) {
+                char *pnumfr, *pnumma, *pnumph,  *pnumnm,   *pnumnp;
+                pnumfr = pnum(freq[i]);
+                pnumma = pnum(mag[i]);
+                pnumph = pnum(phase[i]);
+                pnumnm = pnum(nmag[i]);
+                pnumnp = pnum(nphase[i]);
                 fprintf(cp_out,
                         " %-4d    %-*s %-*s %-*s %-*s %-*s\n",
                         i,
-                        fw, pnum(freq[i]),
-                        fw, pnum(mag[i]),
-                        fw, pnum(phase[i]),
-                        fw, pnum(nmag[i]),
-                        fw, pnum(nphase[i]));
+                        fw, pnumfr,
+                        fw, pnumma,
+                        fw, pnumph,
+                        fw, pnumnm,
+                        fw, pnumnp);
+                tfree(pnumfr);
+                tfree(pnumma);
+                tfree(pnumph);
+                tfree(pnumnm);
+                tfree(pnumnp);
+            }
             fputs("\n", cp_out);
+            /* generate name for new vector, using vec->name */
+            /* generate vector of size 3 * nfreqs in current plot */
+            /* store data in vector freq, mag, phase */
         }
     }
 
@@ -182,8 +195,24 @@ fourier(wordlist *wl, struct plot *current_plot)
     tfree(phase);
     tfree(nmag);
     tfree(nphase);
-
+    if (polydegree) {
+        tfree(grid);
+        tfree(stuff);
+    }
     return 0;
+
+ret_on_err:
+    free_pnode(names);
+    tfree(freq);
+    tfree(mag);
+    tfree(phase);
+    tfree(nmag);
+    tfree(nphase);
+    if (polydegree) {
+        tfree(grid);
+        tfree(stuff);
+    }
+    return 1;
 }
 
 
