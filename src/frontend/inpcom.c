@@ -1756,13 +1756,11 @@ inp_fix_ternary_operator_str(char *line, bool all)
         keep = *str_ptr2;
         *str_ptr2 = '\0';
         else_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
-        if (keep != '}') {
-            end_str  = inp_fix_ternary_operator_str(strdup(str_ptr2+1), all);
-        } else {
-            *str_ptr2 = keep;
-            end_str = strdup(str_ptr2);
-        }
         *str_ptr2 = keep;
+        if (keep != '}')
+            end_str = inp_fix_ternary_operator_str(strdup(str_ptr2+1), all);
+        else
+            end_str = strdup(str_ptr2);
     } else {
         if ((str_ptr2 = strstr(str_ptr, "}")) != NULL) {
             *str_ptr2 = '\0';
