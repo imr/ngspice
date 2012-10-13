@@ -971,10 +971,7 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
                 (bool_ptr = strstr(line, "or(")) != NULL)
             {
                 str_ptr1 = skip_non_ws(line);
-                keep = *str_ptr1;
-                *str_ptr1  = '\0';
-                model_name = strdup(line);
-                *str_ptr1  = keep;
+                model_name = copy_substring(line, str_ptr1);
 
                 str_ptr1 = skip_ws(str_ptr1);
                 str_ptr2 = skip_back_ws(bool_ptr - 1) + 1;
@@ -986,9 +983,7 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
                 str_ptr1 = bool_ptr + 1;
                 while (*str_ptr1 != '(')
                     str_ptr1++;
-                *str_ptr1 = '\0';
-                fcn_name = strdup(bool_ptr);
-                *str_ptr1 = '(';
+                fcn_name = copy_substring(bool_ptr, str_ptr1);
                 str_ptr1  = strstr(str_ptr1, ")");
                 comma_ptr = str_ptr2 = strstr(line, ",");
                 if ((str_ptr1 == NULL)|| (str_ptr1 == NULL)) {
@@ -1272,27 +1267,20 @@ get_instance_subckt(char *line)
 static char*
 get_subckt_model_name(char *line)
 {
-    char *name, *end_ptr, *subckt_name;
-    char keep;
+    char *name, *end_ptr;
 
     name = skip_non_ws(line);   // eat .subckt|.model
     name = skip_ws(name);
 
     end_ptr = skip_non_ws(name);
-    keep     = *end_ptr;
-    *end_ptr = '\0';
-
-    subckt_name = strdup(name);
-    *end_ptr    = keep;
-
-    return subckt_name;
+    return copy_substring(name, end_ptr);
 }
 
 
 static char*
 get_model_name(char *line, int num_terminals)
 {
-    char *beg_ptr, *end_ptr, keep, *model_name;
+    char *beg_ptr, *end_ptr;
     int  i = 0;
 
     beg_ptr = skip_non_ws(line); /* eat device name */
@@ -1309,14 +1297,7 @@ get_model_name(char *line, int num_terminals)
         }
 
     end_ptr = skip_non_ws(beg_ptr);
-    keep = *end_ptr;
-    *end_ptr = '\0';
-
-    model_name = strdup(beg_ptr);
-
-    *end_ptr = keep;
-
-    return model_name;
+    return copy_substring(beg_ptr, end_ptr);
 }
 
 
@@ -1338,16 +1319,11 @@ get_model_type(char *line)
 static char *
 get_adevice_model_name(char *line)
 {
-    char *model_name, *ptr_end, *ptr_beg, keep;
+    char *ptr_end, *ptr_beg;
 
     ptr_end = skip_back_ws(line + strlen(line) - 1) + 1;
     ptr_beg = skip_back_non_ws(ptr_end - 1) + 1;
-    keep = *ptr_end;
-    *ptr_end = '\0';
-    model_name = strdup(ptr_beg);
-    *ptr_end = keep;
-
-    return model_name;
+    return copy_substring(ptr_beg, ptr_end);
 }
 
 
@@ -2019,12 +1995,7 @@ inp_fix_subckt(char *s)
         for (ptr2 = ptr1; *ptr2 && !isspace(*ptr2) && !isquote(*ptr2); ptr2++)
             ;
 
-        keep  = *ptr2;
-        *ptr2 = '\0';
-
-        subckt_w_params[num_subckt_w_params++] = strdup(ptr1);
-
-        *ptr2 = keep;
+        subckt_w_params[num_subckt_w_params++] = copy_substring(ptr1, ptr2);
 
         /* go to beginning of first parameter word  */
         /* s    will contain only subckt definition */
@@ -2387,8 +2358,6 @@ inp_init_lib_data(void)
 static char*
 inp_get_subckt_name(char *s)
 {
-    char *subckt_name_copy;
-    char keep;
     char *subckt_name, *end_ptr = strstr(s, "=");
 
     if (end_ptr) {
@@ -2401,14 +2370,7 @@ inp_get_subckt_name(char *s)
     end_ptr = skip_back_ws(end_ptr - 1) + 1;
     subckt_name = skip_back_non_ws(end_ptr - 1) + 1;
 
-    keep     = *end_ptr;
-    *end_ptr = '\0';
-
-    subckt_name_copy = strdup(subckt_name);
-
-    *end_ptr = keep;
-
-    return subckt_name_copy;
+    return copy_substring(subckt_name, end_ptr);
 }
 
 
@@ -2442,10 +2404,7 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
         end  = name + 1;
         name = skip_back_non_ws(name) + 1;
 
-        keep = *end;
-        *end = '\0';
-        param_names[num_params++] = strdup(name);
-        *end = keep;
+        param_names[num_params++] = copy_substring(name, end);
 
         /* get parameter value */
         value = skip_ws(equal_ptr + 1);
@@ -2486,14 +2445,10 @@ inp_fix_inst_line(char *inst_line,
 {
     char *end, *inst_name, *inst_name_end;
     char *curr_line = inst_line, *new_line = NULL;
-    char keep;
     int i, j;
 
     inst_name_end = skip_non_ws(inst_line);
-    keep            = *inst_name_end;
-    *inst_name_end  = '\0';
-    inst_name       = strdup(inst_line);
-    *inst_name_end  = keep;
+    inst_name = copy_substring(inst_line, inst_name_end);
 
     end = strstr(inst_line, "=");
     if (end) {
@@ -3762,7 +3717,6 @@ inp_add_params_to_subckt(struct line *subckt_card)
     char        *curr_line   = card->li_line;
     char        *subckt_line = subckt_card->li_line;
     char        *new_line, *param_ptr, *subckt_name, *end_ptr;
-    char        keep;
 
     while (card != NULL && ciprefix(".param", curr_line)) {
         param_ptr = strstr(curr_line, " ");
@@ -3775,10 +3729,7 @@ inp_add_params_to_subckt(struct line *subckt_card)
             subckt_name = skip_non_ws(subckt_card->li_line);
             subckt_name = skip_ws(subckt_name);
             end_ptr = skip_non_ws(subckt_name);
-            keep     = *end_ptr;
-            *end_ptr = '\0';
-            subckt_w_params[num_subckt_w_params++] = strdup(subckt_name);
-            *end_ptr = keep;
+            subckt_w_params[num_subckt_w_params++] = copy_substring(subckt_name, end_ptr);
         } else {
             new_line = TMALLOC(char, strlen(subckt_line) + strlen(param_ptr) + 2);
             sprintf(new_line, "%s %s", subckt_line, param_ptr);
