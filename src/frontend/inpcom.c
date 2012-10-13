@@ -2387,11 +2387,11 @@ inp_init_lib_data(void)
 static char*
 inp_get_subckt_name(char *s)
 {
-    char *end_ptr = strstr(s, "=");
-    char *subckt_name, *subckt_name_copy;
+    char *subckt_name_copy;
     char keep;
+    char *subckt_name, *end_ptr = strstr(s, "=");
 
-    if (end_ptr != NULL) {
+    if (end_ptr) {
         end_ptr = skip_back_ws(end_ptr - 1);
         end_ptr = skip_back_non_ws(end_ptr) + 1;
     } else {
@@ -2484,18 +2484,19 @@ inp_fix_inst_line(char *inst_line,
                    int num_subckt_params, char *subckt_param_names[], char *subckt_param_values[],
                    int num_inst_params, char *inst_param_names[], char *inst_param_values[])
 {
-    char *end = strstr(inst_line, "="), *inst_name, *inst_name_end = inst_line;
+    char *end, *inst_name, *inst_name_end;
     char *curr_line = inst_line, *new_line = NULL;
     char keep;
     int i, j;
 
-    inst_name_end = skip_non_ws(inst_name_end);
+    inst_name_end = skip_non_ws(inst_line);
     keep            = *inst_name_end;
     *inst_name_end  = '\0';
     inst_name       = strdup(inst_line);
     *inst_name_end  = keep;
 
-    if (end != NULL) {
+    end = strstr(inst_line, "=");
+    if (end) {
         end = skip_back_ws(end - 1);
         end = skip_back_non_ws(end);
         *end = '\0';
