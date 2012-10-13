@@ -1657,13 +1657,6 @@ inp_fix_ternary_operator_str(char *line, bool all)
         str_ptr = skip_ws(str_ptr + 1);
         if (*str_ptr == '{')
             str_ptr = skip_ws(str_ptr + 1);
-
-        question  = strchr(str_ptr, '?');
-        paren_ptr = strchr(str_ptr, '(');
-
-        if (paren_ptr && paren_ptr < question)
-            paren_ptr = NULL;
-
     } else {
         return line;
     }
@@ -1733,7 +1726,8 @@ inp_fix_ternary_operator_str(char *line, bool all)
 
     // get else
     str_ptr = skip_ws(colon + 1);
-    if (paren_ptr != NULL) {
+    paren_ptr = strchr(question, '(');
+    if (paren_ptr) {
         // find end paren ')'
         bool found_paren = FALSE;
         count = 0;
