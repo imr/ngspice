@@ -50,6 +50,10 @@ fourier(wordlist *wl, struct plot *current_plot)
     int shift;
     int rv = 1;
 
+    char newvecname[32];
+    struct dvec *n;
+    int newveccount = 0;
+
     if (!current_plot)
         return 1;
 
@@ -183,9 +187,33 @@ fourier(wordlist *wl, struct plot *current_plot)
                 tfree(pnumnp);
             }
             fputs("\n", cp_out);
+
             /* generate name for new vector, using vec->name */
-            /* generate vector of size 3 * nfreqs in current plot */
-            /* store data in vector freq, mag, phase */
+            sprintf(newvecname, "fourier_%d", newveccount);
+
+            /* create and assign a new vector n */
+            /* with size 3 * nfreqs in current plot */
+            n = alloc(struct dvec);
+            ZERO(n, struct dvec);
+            n->v_name = copy(newvecname);
+            n->v_type = 0;
+            n->v_flags = (1 | VF_PERMANENT);
+            n->v_length = 3 * nfreqs;
+            n->v_numdims = 2;
+            n->v_dims[0] = 3;
+            n->v_dims[1] = nfreqs;
+
+            n->v_realdata = TMALLOC(double, n->v_length);
+
+            vec_new(n);
+
+            /* store data in vector: freq, mag, phase */
+            for (i = 0; i < nfreqs; i++) {
+                n->v_realdata[i] = freq[i];
+                n->v_realdata[i + nfreqs] = mag[i];
+                n->v_realdata[i + 2 * nfreqs] = phase[i];
+            }
+            newveccount++;
 
             if (polydegree) {
                 tfree(timescale);
