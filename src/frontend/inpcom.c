@@ -1248,11 +1248,12 @@ get_instance_subckt(char *line)
     // see if instance has parameters
     if (equal_ptr) {
         end_ptr = skip_back_ws(equal_ptr - 1);
-        end_ptr = skip_back_non_ws(end_ptr);
-        end_ptr = skip_back_ws(end_ptr) + 1;
+        end_ptr = skip_back_non_ws(end_ptr) + 1;
     } else {
         end_ptr = line + strlen(line);
     }
+
+    end_ptr = skip_back_ws(end_ptr - 1) + 1;
 
     inst_name_ptr = skip_back_non_ws(end_ptr - 1) + 1;
     return copy_substring(inst_name_ptr, end_ptr);
