@@ -1753,19 +1753,14 @@ inp_fix_ternary_operator_str(char *line, bool all)
             fprintf(stderr, "ERROR: problem parsing ternary line %s!\n", line);
             controlled_exit(EXIT_FAILURE);
         }
-        keep = *str_ptr2;
-        *str_ptr2 = '\0';
-        else_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
-        *str_ptr2 = keep;
-        if (keep != '}')
+        else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, str_ptr2), all);
+        if (*str_ptr2 != '}')
             end_str = inp_fix_ternary_operator_str(strdup(str_ptr2+1), all);
         else
             end_str = strdup(str_ptr2);
     } else {
         if ((str_ptr2 = strstr(str_ptr, "}")) != NULL) {
-            *str_ptr2 = '\0';
-            else_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
-            *str_ptr2 = '}';
+            else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, str_ptr2), all);
             end_str = strdup(str_ptr2);
         } else {
             else_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
