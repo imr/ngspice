@@ -2393,13 +2393,13 @@ inp_get_subckt_name(char *s)
 
     if (end_ptr != NULL) {
         end_ptr = skip_back_ws(end_ptr - 1);
-        end_ptr = skip_back_non_ws(end_ptr);
+        end_ptr = skip_back_non_ws(end_ptr) + 1;
     } else {
         end_ptr = s + strlen(s);
     }
 
-    subckt_name = skip_back_ws(end_ptr);
-    subckt_name = skip_back_non_ws(subckt_name) + 1;
+    end_ptr = skip_back_ws(end_ptr - 1) + 1;
+    subckt_name = skip_back_non_ws(end_ptr - 1) + 1;
 
     keep     = *end_ptr;
     *end_ptr = '\0';
