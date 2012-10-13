@@ -40,14 +40,15 @@ fourier(wordlist *wl, struct plot *current_plot)
 {
     struct dvec *time, *vec;
     struct pnode *pn, *names;
-    double *ff, fundfreq, *dp, *stuff;
+    double *ff, fundfreq, *data = NULL;
     int nfreqs, fourgridsize, polydegree;
     double *freq, *mag, *phase, *nmag, *nphase;  /* Outputs from CKTfour */
-    double thd, *timescale, *grid, d;
+    double thd, *timescale = NULL;
     char *s;
     int i, err, fw;
     char xbuf[20];
     int shift;
+    int rv = 1;
 
     if (!current_plot)
         return 1;
@@ -103,45 +104,44 @@ fourier(wordlist *wl, struct plot *current_plot)
             }
 
             if (polydegree) {
+                double *dp, d;
                 /* Build the grid... */
-                grid = TMALLOC(double, fourgridsize);
-                stuff = TMALLOC(double, fourgridsize);
+                timescale = TMALLOC(double, fourgridsize);
+                data = TMALLOC(double, fourgridsize);
                 dp = ft_minmax(time, TRUE);
-
                 /* Now get the last fund freq... */
                 d = 1 / fundfreq;   /* The wavelength... */
                 if (dp[1] - dp[0] < d) {
                     fprintf(cp_err, "Error: wavelength longer than time span\n");
-                    return 1;
+                    goto done;
                 } else if (dp[1] - dp[0] > d) {
                     dp[0] = dp[1] - d;
                 }
 
                 d = (dp[1] - dp[0]) / fourgridsize;
                 for (i = 0; i < fourgridsize; i++)
-                    grid[i] = dp[0] + i * d;
+                    timescale[i] = dp[0] + i * d;
 
-                /* Now interpolate the stuff... */
-                if (!ft_interpolate(vec->v_realdata, stuff,
+                /* Now interpolate the data... */
+                if (!ft_interpolate(vec->v_realdata, data,
                                     time->v_realdata, vec->v_length,
-                                    grid, fourgridsize,
+                                    timescale, fourgridsize,
                                     polydegree)) {
                     fprintf(cp_err, "Error: can't interpolate\n");
-                    goto ret_on_err;
+                    goto done;
                 }
-                timescale = grid;
             } else {
                 fourgridsize = vec->v_length;
-                stuff = vec->v_realdata;
+                data = vec->v_realdata;
                 timescale = time->v_realdata;
             }
 
             err = CKTfour(fourgridsize, nfreqs, &thd, timescale,
-                          stuff, fundfreq, freq, mag, phase, nmag,
+                          data, fundfreq, freq, mag, phase, nmag,
                           nphase);
             if (err != OK) {
                 ft_sperror(err, "fourier");
-                goto ret_on_err;
+                goto done;
             }
 
             fprintf(cp_out, "Fourier analysis for %s:\n", vec->v_name);
@@ -186,22 +186,19 @@ fourier(wordlist *wl, struct plot *current_plot)
             /* generate name for new vector, using vec->name */
             /* generate vector of size 3 * nfreqs in current plot */
             /* store data in vector freq, mag, phase */
+
+            if (polydegree) {
+                tfree(timescale);
+                tfree(data);
+            }
+            timescale = NULL;
+            data = NULL;
         }
     }
 
-    free_pnode(names);
-    tfree(freq);
-    tfree(mag);
-    tfree(phase);
-    tfree(nmag);
-    tfree(nphase);
-    if (polydegree) {
-        tfree(grid);
-        tfree(stuff);
-    }
-    return 0;
+    rv = 0;
 
-ret_on_err:
+done:
     free_pnode(names);
     tfree(freq);
     tfree(mag);
@@ -209,10 +206,11 @@ ret_on_err:
     tfree(nmag);
     tfree(nphase);
     if (polydegree) {
-        tfree(grid);
-        tfree(stuff);
+        tfree(timescale);
+        tfree(data);
     }
-    return 1;
+
+    return rv;
 }
 
 
