@@ -1242,25 +1242,20 @@ inp_fix_macro_param_func_paren_io(struct line *begin_card)
 static char *
 get_instance_subckt(char *line)
 {
-    char *equal_ptr, *end_ptr = line + strlen(line), *inst_name_ptr, *inst_name;
-    char keep = ' ';
+    char *end_ptr, *inst_name_ptr;
+    char *equal_ptr = strstr(line, "=");
 
     // see if instance has parameters
-    if ((equal_ptr = strstr(line, "=")) != NULL) {
+    if (equal_ptr) {
         end_ptr = skip_back_ws(equal_ptr - 1);
         end_ptr = skip_back_non_ws(end_ptr);
         end_ptr = skip_back_ws(end_ptr) + 1;
-        keep     = *end_ptr;
-        *end_ptr = '\0';
+    } else {
+        end_ptr = line + strlen(line);
     }
+
     inst_name_ptr = skip_back_non_ws(end_ptr - 1) + 1;
-
-    inst_name = strdup(inst_name_ptr);
-
-    if (equal_ptr)
-        *end_ptr = keep;
-
-    return inst_name;
+    return copy_substring(inst_name_ptr, end_ptr);
 }
 
 
