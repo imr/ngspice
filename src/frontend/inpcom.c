@@ -242,7 +242,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
             if (new_title != NULL)
                 tfree(new_title);
             new_title = copy(s);
-            if ((s = strstr(new_title, "\n")) != NULL)
+            if ((s = strchr(new_title, '\n')) != NULL)
                 *s = ' ';
             *buffer = '*';      /* change .TITLE line to comment line */
         }
@@ -984,8 +984,8 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
                 while (*str_ptr1 != '(')
                     str_ptr1++;
                 fcn_name = copy_substring(bool_ptr, str_ptr1);
-                str_ptr1  = strstr(str_ptr1, ")");
-                comma_ptr = str_ptr2 = strstr(line, ",");
+                str_ptr1  = strchr(str_ptr1, ')');
+                comma_ptr = str_ptr2 = strchr(line, ',');
                 if ((str_ptr1 == NULL)|| (str_ptr1 == NULL)) {
                     fprintf(stderr, "ERROR: mal formed line: %s\n", line);
                     controlled_exit(EXIT_FAILURE);
@@ -1224,7 +1224,7 @@ inp_fix_macro_param_func_paren_io(struct line *begin_card)
             }
 
             if (is_func) {
-                str_ptr = strstr(card->li_line, "=");
+                str_ptr = strchr(card->li_line, '=');
                 if (str_ptr)
                     *str_ptr = ' ';
                 str_ptr = card->li_line + 1;
@@ -1243,7 +1243,7 @@ static char *
 get_instance_subckt(char *line)
 {
     char *end_ptr, *inst_name_ptr;
-    char *equal_ptr = strstr(line, "=");
+    char *equal_ptr = strchr(line, '=');
 
     // see if instance has parameters
     if (equal_ptr) {
@@ -1425,7 +1425,7 @@ model_bin_match(char *token, char *model_name)
     bool  flag = FALSE;
 
     if (strncmp(model_name, token, strlen(token)) == 0)
-        if ((dot_char = strstr(model_name, ".")) != NULL) {
+        if ((dot_char = strchr(model_name, '.')) != NULL) {
             flag = TRUE;
             dot_char++;
             while (*dot_char != '\0') {
@@ -1467,7 +1467,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             has_models = TRUE;
         if (ciprefix(".cmodel", card->li_line))
             has_models = TRUE;
-        if (ciprefix(".param", card->li_line) && !strstr(card->li_line, "="))
+        if (ciprefix(".param", card->li_line) && !strchr(card->li_line, '='))
             *card->li_line = '*';
     }
 
@@ -1638,16 +1638,16 @@ inp_fix_ternary_operator_str(char *line, bool all)
     char *paren_ptr = NULL, *end_str = NULL, *beg_str = NULL;
     int  count = 0;
 
-    if (!strstr(line, "?") && !strstr(line, ":"))
+    if (!strchr(line, '?') && !strchr(line, ':'))
         return line;
 
     if (all || ciprefix(".param", line) ||
         ciprefix(".func", line) || ciprefix(".meas", line))
     {
         if (ciprefix(".param", line) || ciprefix(".meas", line))
-            str_ptr = strstr(line, "=");
+            str_ptr = strchr(line, '=');
         else
-            str_ptr = strstr(line, ")");
+            str_ptr = strchr(line, ')');
 
         if ((str_ptr == NULL) && all == FALSE) {
             fprintf(stderr, "ERROR: mal formed .param, .func or .meas line: %s\n", line);
@@ -1658,8 +1658,8 @@ inp_fix_ternary_operator_str(char *line, bool all)
         if (*str_ptr == '{')
             str_ptr = skip_ws(str_ptr + 1);
 
-        question  = strstr(str_ptr, "?");
-        paren_ptr = strstr(str_ptr, "(");
+        question  = strchr(str_ptr, '?');
+        paren_ptr = strchr(str_ptr, '(');
 
         if (paren_ptr && paren_ptr < question)
             paren_ptr = NULL;
@@ -1669,7 +1669,7 @@ inp_fix_ternary_operator_str(char *line, bool all)
     }
 
     // get conditional
-    question = strstr(str_ptr, "?");
+    question = strchr(str_ptr, '?');
     str_ptr2 = skip_back_ws(question - 1);
     if (*str_ptr2 == ')') {
         count = 1;
@@ -1719,7 +1719,7 @@ inp_fix_ternary_operator_str(char *line, bool all)
             controlled_exit(EXIT_FAILURE);
         }
         str_ptr2 = skip_back_ws(colon - 1);
-    } else if ((colon = strstr(str_ptr, ":")) != NULL) {
+    } else if ((colon = strchr(str_ptr, ':')) != NULL) {
         str_ptr2 = skip_back_ws(colon - 1);
     } else {
         fprintf(stderr, "ERROR: problem parsing ternary string (missing ':') %s!\n", line);
@@ -1759,7 +1759,7 @@ inp_fix_ternary_operator_str(char *line, bool all)
         else
             end_str = strdup(str_ptr2);
     } else {
-        if ((str_ptr2 = strstr(str_ptr, "}")) != NULL) {
+        if ((str_ptr2 = strchr(str_ptr, '}')) != NULL) {
             else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, str_ptr2), all);
             end_str = strdup(str_ptr2);
         } else {
@@ -1821,7 +1821,7 @@ inp_fix_ternary_operator(struct line *start_card)
             continue;
         if (*line == '*')
             continue;
-        if (strstr(line, "?") && strstr(line, ":"))
+        if (strchr(line, '?') && strchr(line, ':'))
             card->li_line = inp_fix_ternary_operator_str(line, FALSE);
     }
 }
@@ -1976,7 +1976,7 @@ inp_fix_subckt(char *s)
     char keep;
     int  num_params = 0, i = 0, bracedepth = 0;
     /* find first '=' */
-    equal = strstr(s, "=");
+    equal = strchr(s, '=');
     if (!strstr(s, "params:") && equal != NULL) {
         /* get subckt name (ptr1 will point to name) */
         ptr1 = skip_non_ws(s);
@@ -1996,7 +1996,7 @@ inp_fix_subckt(char *s)
 
         head = alloc(struct line);
         /* create list of parameters that need to get sorted */
-        while (*beg && (ptr1 = strstr(beg, "=")) != NULL) {
+        while (*beg && (ptr1 = strchr(beg, '=')) != NULL) {
 #ifndef NOBRACE
             /* alternative patch to cope with spaces:
                get expression between braces {...} */
@@ -2347,7 +2347,7 @@ inp_init_lib_data(void)
 static char*
 inp_get_subckt_name(char *s)
 {
-    char *subckt_name, *end_ptr = strstr(s, "=");
+    char *subckt_name, *end_ptr = strchr(s, '=');
 
     if (end_ptr) {
         end_ptr = skip_back_ws(end_ptr - 1);
@@ -2366,14 +2366,14 @@ inp_get_subckt_name(char *s)
 static int
 inp_get_params(char *line, char *param_names[], char *param_values[])
 {
-    char *equal_ptr = strstr(line, "=");
+    char *equal_ptr = strchr(line, '=');
     char *end, *name, *value;
     int  num_params = 0;
     char tmp_str[1000];
     char keep;
     bool is_expression = FALSE;
 
-    while ((equal_ptr = strstr(line, "=")) != NULL) {
+    while ((equal_ptr = strchr(line, '=')) != NULL) {
 
         // check for equality '=='
         if (*(equal_ptr+1) == '=') {
@@ -2439,7 +2439,7 @@ inp_fix_inst_line(char *inst_line,
     inst_name_end = skip_non_ws(inst_line);
     inst_name = copy_substring(inst_line, inst_name_end);
 
-    end = strstr(inst_line, "=");
+    end = strchr(inst_line, '=');
     if (end) {
         end = skip_back_ws(end - 1);
         end = skip_back_non_ws(end);
@@ -3046,7 +3046,7 @@ inp_fix_param_values(struct line *deck)
     while (c != NULL) {
         line = c->li_line;
 
-        if (*line == '*' || (ciprefix(".param", line) && strstr(line, "{"))) {
+        if (*line == '*' || (ciprefix(".param", line) && strchr(line, '{'))) {
             c = c->li_next;
             continue;
         }
@@ -3099,7 +3099,7 @@ inp_fix_param_values(struct line *deck)
             continue;
         }
 
-        while ((equal_ptr = strstr(line, "=")) != NULL) {
+        while ((equal_ptr = strchr(line, '=')) != NULL) {
 
             // special case: .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN out_variable2=out_variable3
             // no braces around out_variable3. out_variable3 may be v(...) or i(...)
@@ -3291,7 +3291,7 @@ get_param_name(char *line)
     char *name = NULL, *equal_ptr, *beg;
     char keep;
 
-    if ((equal_ptr = strstr(line, "=")) != NULL) {
+    if ((equal_ptr = strchr(line, '=')) != NULL) {
         equal_ptr = skip_back_ws(equal_ptr - 1) + 1;
 
         beg = equal_ptr - 1;
@@ -3314,7 +3314,7 @@ get_param_name(char *line)
 static char*
 get_param_str(char *line)
 {
-    char *equal_ptr = strstr(line, "=");
+    char *equal_ptr = strchr(line, '=');
 
     if (equal_ptr)
         return skip_ws(equal_ptr + 1);
@@ -3397,7 +3397,7 @@ get_number_terminals(char *c)
             char *inst = gettok_instance(&c);
             strncpy(nam_buf, inst, 32);
             txfree(inst);
-            if (strstr(nam_buf, "off") || strstr(nam_buf, "="))
+            if (strstr(nam_buf, "off") || strchr(nam_buf, '='))
                 break;
             i++;
         }
@@ -3408,7 +3408,7 @@ get_number_terminals(char *c)
         /* find the last token in the line*/
         while ((i < 100) && (*c != '\0')) {
             strncpy(nam_buf, gettok_instance(&c), 32);
-            if (strstr(nam_buf, "="))
+            if (strchr(nam_buf, '='))
                 j++;
             i++;
         }
@@ -3423,10 +3423,10 @@ get_number_terminals(char *c)
         while ((i < 12) && (*c != '\0')) {
             char *comma;
             name[i] = gettok_instance(&c);
-            if (strstr(name[i], "off") || strstr(name[i], "="))
+            if (strstr(name[i], "off") || strchr(name[i], '='))
                 j++;
             /* If we have IC=VBE, VCE instead of IC=VBE,VCE we need to inc j */
-            if ((comma = strstr(name[i], ",")) != NULL && (*(++comma) == '\0'))
+            if ((comma = strchr(name[i], ',')) != NULL && (*(++comma) == '\0'))
                 j++;
             /* If we have IC=VBE , VCE ("," is a token) we need to inc j */
             if (eq(name[i], ","))
@@ -3446,7 +3446,7 @@ get_number_terminals(char *c)
                     only_digits = FALSE;
                 nametmp++;
             }
-            if (only_digits && (strstr(name[k-1], ",") == NULL))
+            if (only_digits && (strchr(name[k-1], ',') == NULL))
                 area_found = TRUE;
         }
         if (area_found) {
@@ -3494,7 +3494,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     /* determine the number of lines with .param */
     ptr = start_card;
     while (ptr != NULL) {
-        if (strstr(ptr->li_line, "="))
+        if (strchr(ptr->li_line, '='))
             num_params++;
         ptr = ptr->li_next;
     }
@@ -3521,7 +3521,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     ptr = start_card;
     while (ptr != NULL) {
         // ignore .param lines without '='
-        if (strstr(ptr->li_line, "=")) {
+        if (strchr(ptr->li_line, '=')) {
             depends_on[num_params][0] = NULL;
             level[num_params]         = -1;
             param_names[num_params]   = get_param_name(ptr->li_line); /* strdup in fcn */
@@ -3556,7 +3556,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
             param_str = param_strs[j];
 
             while ((param_ptr = strstr(param_str, param_name)) != NULL) {
-                ioff = (strstr(param_ptr, "}") != NULL ? 1 : 0);  /* want prevent wrong memory access below */
+                ioff = (strchr(param_ptr, '}') != NULL ? 1 : 0);  /* want prevent wrong memory access below */
                 /* looking for curly braces or other string limiter */
                 if ((!isalnum(*(param_ptr-ioff)) && *(param_ptr-ioff) != '_' &&
                      !isalnum(*(param_ptr+strlen(param_name))) &&
@@ -3708,7 +3708,7 @@ inp_add_params_to_subckt(struct line *subckt_card)
     char        *new_line, *param_ptr, *subckt_name, *end_ptr;
 
     while (card != NULL && ciprefix(".param", curr_line)) {
-        param_ptr = strstr(curr_line, " ");
+        param_ptr = strchr(curr_line, ' ');
         param_ptr = skip_ws(param_ptr);
 
         if (!strstr(subckt_line, "params:")) {
@@ -3884,7 +3884,7 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
 
         if (ciprefix(".param", curr_line)) {
             counter = 0;
-            while ((equal_ptr = strstr(curr_line, "=")) != NULL) {
+            while ((equal_ptr = strchr(curr_line, '=')) != NULL) {
                 // check for equality '=='
                 if (*(equal_ptr+1) == '=') {
                     curr_line = equal_ptr+2;
@@ -3906,7 +3906,7 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
             // need to split multi param line
             curr_line = card->li_line;
             counter   = 0;
-            while (curr_line < card->li_line+strlen(card->li_line) && (equal_ptr = strstr(curr_line, "=")) != NULL) {
+            while (curr_line < card->li_line+strlen(card->li_line) && (equal_ptr = strchr(curr_line, '=')) != NULL) {
                 // check for equality '=='
                 if (*(equal_ptr+1) == '=') {
                     curr_line = equal_ptr+2;
@@ -4119,17 +4119,17 @@ inp_compat(struct line *deck)
                 else
                     tfree(str_ptr);
                 /* remove '{' and '}' from expression */
-                if ((str_ptr = strstr(expression, "{")) != NULL)
+                if ((str_ptr = strchr(expression, '{')) != NULL)
                     *str_ptr = ' ';
-                if ((str_ptr = strstr(expression, "}")) != NULL)
+                if ((str_ptr = strchr(expression, '}')) != NULL)
                     *str_ptr = ' ';
                 /* cut_line may now have a '=', if yes, it will have '{' and '}'
                    (braces around token after '=') */
-                if ((str_ptr = strstr(cut_line, "=")) != NULL)
+                if ((str_ptr = strchr(cut_line, '=')) != NULL)
                     *str_ptr = ' ';
-                if ((str_ptr = strstr(cut_line, "{")) != NULL)
+                if ((str_ptr = strchr(cut_line, '{')) != NULL)
                     *str_ptr = ' ';
-                if ((str_ptr = strstr(cut_line, "}")) != NULL)
+                if ((str_ptr = strchr(cut_line, '}')) != NULL)
                     *str_ptr = ' ';
                 /* get first two numbers to establish extrapolation */
                 str_ptr = cut_line;
@@ -4212,7 +4212,7 @@ inp_compat(struct line *deck)
                 node1 =  gettok(&cut_line);
                 node2 =  gettok(&cut_line);
                 /* Find equation, starts with '{', till end of line */
-                str_ptr = strstr(cut_line, "{");
+                str_ptr = strchr(cut_line, '{');
                 if (str_ptr == NULL) {
                     fprintf(stderr, "ERROR: mal formed E line: %s\n", curr_line);
                     controlled_exit(EXIT_FAILURE);
@@ -4312,17 +4312,17 @@ inp_compat(struct line *deck)
                 else
                     tfree(str_ptr);
                 /* remove '{' and '}' from expression */
-                if ((str_ptr = strstr(expression, "{")) != NULL)
+                if ((str_ptr = strchr(expression, '{')) != NULL)
                     *str_ptr = ' ';
-                if ((str_ptr = strstr(expression, "}")) != NULL)
+                if ((str_ptr = strchr(expression, '}')) != NULL)
                     *str_ptr = ' ';
                 /* cut_line may now have a '=', if yes, it will have '{' and '}'
                    (braces around token after '=') */
-                if ((str_ptr = strstr(cut_line, "=")) != NULL)
+                if ((str_ptr = strchr(cut_line, '=')) != NULL)
                     *str_ptr = ' ';
-                if ((str_ptr = strstr(cut_line, "{")) != NULL)
+                if ((str_ptr = strchr(cut_line, '{')) != NULL)
                     *str_ptr = ' ';
-                if ((str_ptr = strstr(cut_line, "}")) != NULL)
+                if ((str_ptr = strchr(cut_line, '}')) != NULL)
                     *str_ptr = ' ';
                 /* get first two numbers to establish extrapolation */
                 str_ptr = cut_line;
@@ -4407,7 +4407,7 @@ inp_compat(struct line *deck)
                 node1 =  gettok(&cut_line);
                 node2 =  gettok(&cut_line);
                 /* Find equation, starts with '{', till end of line */
-                str_ptr = strstr(cut_line, "{");
+                str_ptr = strchr(cut_line, '{');
                 if (str_ptr == NULL) {
                     fprintf(stderr, "ERROR: mal formed G line: %s\n", curr_line);
                     controlled_exit(EXIT_FAILURE);
@@ -4485,7 +4485,7 @@ inp_compat(struct line *deck)
                 (!strstr(cut_line, "time"))) {
                 /* no handling in B-Source, so we have to prepare ternary fcn
                    for numparam */
-                if (strstr(curr_line, "?") && strstr(curr_line, ":"))
+                if (strchr(curr_line, '?') && strchr(curr_line, ':'))
                     card->li_line = inp_fix_ternary_operator_str(curr_line, TRUE);
                 tfree(title_tok);
                 tfree(node1);
@@ -4494,7 +4494,7 @@ inp_compat(struct line *deck)
             }
 
             /* Find equation, starts with '{', till end of line */
-            str_ptr = strstr(cut_line, "{");
+            str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
                 fprintf(stderr, "ERROR: mal formed R line: %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
@@ -4504,7 +4504,7 @@ inp_compat(struct line *deck)
             if (str_ptr) {
                 /* We need to have 'tc1=something */
                 if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc1_ptr = strstr(str_ptr, "=");
+                    tc1_ptr = strchr(str_ptr, '=');
                     if (tc1_ptr)
                         tc1 = atof(tc1_ptr+1);
                 }
@@ -4513,7 +4513,7 @@ inp_compat(struct line *deck)
             if (str_ptr) {
                 /* We need to have 'tc2=something */
                 if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc2_ptr = strstr(str_ptr, "=");
+                    tc2_ptr = strchr(str_ptr, '=');
                     if (tc2_ptr)
                         tc2 = atof(tc2_ptr+1);
                 }
@@ -4578,7 +4578,7 @@ inp_compat(struct line *deck)
             {
                 /* no handling in B-Source, so we have to prepare ternary fcn
                    for numparam */
-                if (strstr(curr_line, "?") && strstr(curr_line, ":"))
+                if (strchr(curr_line, '?') && strchr(curr_line, ':'))
                     card->li_line = inp_fix_ternary_operator_str(curr_line, TRUE);
                 tfree(title_tok);
                 tfree(node1);
@@ -4587,7 +4587,7 @@ inp_compat(struct line *deck)
             }
 
             /* Find equation, starts with '{', till end of line */
-            str_ptr = strstr(cut_line, "{");
+            str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
                 fprintf(stderr, "ERROR: mal formed C line: %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
@@ -4597,7 +4597,7 @@ inp_compat(struct line *deck)
             if (str_ptr) {
                 /* We need to have 'tc1=something */
                 if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc1_ptr = strstr(str_ptr, "=");
+                    tc1_ptr = strchr(str_ptr, '=');
                     if (tc1_ptr)
                         tc1 = atof(tc1_ptr+1);
                 }
@@ -4606,7 +4606,7 @@ inp_compat(struct line *deck)
             if (str_ptr) {
                 /* We need to have 'tc2=something */
                 if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc2_ptr = strstr(str_ptr, "=");
+                    tc2_ptr = strchr(str_ptr, '=');
                     if (tc2_ptr)
                         tc2 = atof(tc2_ptr+1);
                 }
@@ -4692,7 +4692,7 @@ inp_compat(struct line *deck)
             {
                 /* no handling in B-Source, so we have to prepare ternary fcn
                    for numparam */
-                if (strstr(curr_line, "?") && strstr(curr_line, ":"))
+                if (strchr(curr_line, '?') && strchr(curr_line, ':'))
                     card->li_line = inp_fix_ternary_operator_str(curr_line, TRUE);
                 tfree(title_tok);
                 tfree(node1);
@@ -4701,7 +4701,7 @@ inp_compat(struct line *deck)
             }
 
             /* Find equation, starts with '{', till end of line */
-            str_ptr = strstr(cut_line, "{");
+            str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
                 fprintf(stderr, "ERROR: mal formed L line: %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
@@ -4711,7 +4711,7 @@ inp_compat(struct line *deck)
             if (str_ptr) {
                 /* We need to have 'tc1=something */
                 if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc1_ptr = strstr(str_ptr, "=");
+                    tc1_ptr = strchr(str_ptr, '=');
                     if (tc1_ptr)
                         tc1 = atof(tc1_ptr+1);
                 }
@@ -4720,7 +4720,7 @@ inp_compat(struct line *deck)
             if (str_ptr) {
                 /* We need to have 'tc2=something */
                 if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc2_ptr = strstr(str_ptr, "=");
+                    tc2_ptr = strchr(str_ptr, '=');
                     if (tc2_ptr)
                         tc2 = atof(tc2_ptr+1);
                 }
@@ -5161,7 +5161,7 @@ inp_bsource_compat(struct line *deck)
             card->li_line = inp_remove_ws(card->li_line);
             curr_line = card->li_line;
             /* store starting point for later parsing, beginning of {expression} */
-            equal_ptr = strstr(curr_line, "=");
+            equal_ptr = strchr(curr_line, '=');
             /* check for errors */
             if (equal_ptr == NULL) {
                 fprintf(stderr, "ERROR: mal formed B line: %s\n", curr_line);
@@ -5376,7 +5376,7 @@ inp_bsource_compat(struct line *deck)
             wl = NULL;
 
             tmp_char = copy(curr_line);
-            equal_ptr = strstr(tmp_char, "=");
+            equal_ptr = strchr(tmp_char, '=');
             if (str_ptr == NULL) {
                 fprintf(stderr, "ERROR: mal formed B line: %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
