@@ -860,14 +860,10 @@ char *
 vec_basename(struct dvec *v)
 {
     char buf[BSIZE_SP], *t, *s;
-    int i;
 
     if (strchr(v->v_name, '.')) {
-        for (t = v->v_name, i = 0; *t; t++)
-            buf[i++] = *t;
-        buf[i] = '\0';
-        if (cieq(v->v_plot->pl_typename, buf))
-            (void) strcpy(buf, t + 1);
+        if (cieq(v->v_plot->pl_typename, v->v_name))
+            (void) strcpy(buf, v->v_name + strlen(v->v_name) + 1);
         else
             (void) strcpy(buf, v->v_name);
     } else {
