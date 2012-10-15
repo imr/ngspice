@@ -52,7 +52,8 @@ fourier(wordlist *wl, struct plot *current_plot)
 
     char newvecname[32];
     struct dvec *n;
-    int newveccount = 0;
+    int newveccount = 1;
+    static int callstof = 1;
 
     if (!current_plot)
         return 1;
@@ -189,7 +190,7 @@ fourier(wordlist *wl, struct plot *current_plot)
             fputs("\n", cp_out);
 
             /* generate name for new vector, using vec->name */
-            sprintf(newvecname, "fourier_%d", newveccount);
+            sprintf(newvecname, "fourier%d%d", callstof, newveccount);
 
             /* create and assign a new vector n */
             /* with size 3 * nfreqs in current plot */
@@ -224,6 +225,7 @@ fourier(wordlist *wl, struct plot *current_plot)
         }
     }
 
+    callstof++;
     rv = 0;
 
 done:
