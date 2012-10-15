@@ -434,11 +434,13 @@ com_write(wordlist *wl)
          */
         for (d = vecs; d; d = d->v_link2) {
             if (d->v_plot == tpl) {
+                char *basename = vec_basename(d);
                 vv = vec_copy(d);
                 /* Note that since we are building a new plot
                  * we don't want to vec_new this one...
                  */
-                vv->v_name = vec_basename(vv);
+                tfree(vv->v_name);
+                vv->v_name = basename;
 
                 if (end)
                     end->v_next = vv;
@@ -490,6 +492,13 @@ com_write(wordlist *wl)
             raw_write(file, &newplot, appendwrite, FALSE);
         else
             raw_write(file, &newplot, appendwrite, TRUE);
+
+        for (vv = newplot.pl_dvecs; vv;) {
+            struct dvec *next_vv = vv->v_next;
+            vv->v_plot = NULL;
+            vec_free(vv);
+            vv = next_vv;
+        }
 
         /* Now throw out the vectors we have written already... */
         for (d = vecs, lv = NULL;  d; d = d->v_link2)
@@ -589,11 +598,13 @@ com_write_sparam(wordlist *wl)
          */
         for (d = vecs; d; d = d->v_link2) {
             if (d->v_plot == tpl) {
+                char *basename = vec_basename(d);
                 vv = vec_copy(d);
                 /* Note that since we are building a new plot
                  * we don't want to vec_new this one...
                  */
-                vv->v_name = vec_basename(vv);
+                tfree(vv->v_name);
+                vv->v_name = basename;
 
                 if (end)
                     end->v_next = vv;
@@ -641,6 +652,13 @@ com_write_sparam(wordlist *wl)
         }
 
         spar_write(file, &newplot, Rbaseval);
+
+        for (vv = newplot.pl_dvecs; vv;) {
+            struct dvec *next_vv = vv->v_next;
+            vv->v_plot = NULL;
+            vec_free(vv);
+            vv = next_vv;
+        }
 
         /* Now throw out the vectors we have written already... */
         for (d = vecs, lv = NULL;  d; d = d->v_link2)
