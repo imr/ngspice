@@ -3443,6 +3443,8 @@ get_number_terminals(char *c)
             if (only_digits && (strchr(name[k-1], ',') == NULL))
                 area_found = TRUE;
         }
+        for (k = i; k >= 0; k--)
+            tfree(name[k]);
         if (area_found) {
             return i-j-2;
         } else {
