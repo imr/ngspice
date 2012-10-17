@@ -223,6 +223,7 @@ found:;
         ckt->CKTcurJob->JOBname,
         varUid, IF_REAL,
         numNames, nameList, IF_REAL, &plot);
+    tfree(nameList);
     
     if(error) return(error);
     /* now have finished the initialization - can start doing hard part */
