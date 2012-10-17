@@ -288,6 +288,7 @@ mkfnode(const char *func, struct pnode *arg)
     if ((f->fu_name == NULL) && arg->pn_value) {
         /* Kludge -- maybe it is really a variable name. */
         (void) sprintf(buf, "%s(%s)", func, arg->pn_value->v_name);
+        free_pnode(arg);
         d = vec_get(buf);
         if (d == NULL) {
             /* Well, too bad. */
@@ -300,6 +301,7 @@ mkfnode(const char *func, struct pnode *arg)
     } else if (f->fu_name == NULL) {
         fprintf(cp_err, "Error: no function as %s with that arity.\n",
                 func);
+        free_pnode(arg);
         return (NULL);
     }
 
