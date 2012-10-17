@@ -1650,7 +1650,14 @@ inp_fix_ternary_operator_str(char *line, bool all)
             str_ptr = strchr(line, ')');
 
         if ((str_ptr == NULL) && all == FALSE) {
-            fprintf(stderr, "ERROR: mal formed .param, .func or .meas line: %s\n", line);
+            fprintf(stderr, "ERROR: mal formed .param, .func or .meas line:\n  %s\n", line);
+            controlled_exit(EXIT_FAILURE);
+        }
+
+        if ((str_ptr == NULL) && all == TRUE) {
+            fprintf(stderr, "ERROR: mal formed expression in line:\n  %s\n", line);
+            fprintf(stderr, "  We need parentheses around 'if' clause and nested ternary functions\n");
+            fprintf(stderr, "  like:  Rtern4 1 0 '(ut > 0.7) ? 2k : ((ut < 0.3) ? 500 : 1k)'\n");
             controlled_exit(EXIT_FAILURE);
         }
 
@@ -1815,6 +1822,7 @@ inp_fix_ternary_operator(struct line *start_card)
             continue;
         if (*line == '*')
             continue;
+        /* .param, .func, and .meas lines handled here (2nd argument FALSE) */
         if (strchr(line, '?') && strchr(line, ':'))
             card->li_line = inp_fix_ternary_operator_str(line, FALSE);
     }
@@ -5374,7 +5382,7 @@ inp_bsource_compat(struct line *deck)
             tmp_char = copy(curr_line);
             equal_ptr = strchr(tmp_char, '=');
             if (str_ptr == NULL) {
-                fprintf(stderr, "ERROR: mal formed B line: %s\n", curr_line);
+                fprintf(stderr, "ERROR: mal formed B line:\n  %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
             /* cut the tmp_char after the equal sign */
