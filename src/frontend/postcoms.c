@@ -144,10 +144,12 @@ com_print(wordlist *wl)
     out_init();
     if (!col) {
         for (v = vecs; v; v = v->v_link2) {
+            char *basename = vec_basename(v);
             if (plotnames)
-                (void) sprintf(buf, "%s.%s", v->v_plot->pl_typename, vec_basename(v));
+                (void) sprintf(buf, "%s.%s", v->v_plot->pl_typename, basename);
             else
-                (void) strcpy(buf, vec_basename(v));
+                (void) strcpy(buf, basename);
+            tfree(basename);
 
             for (s = buf; *s; s++)
                 ;
