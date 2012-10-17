@@ -66,6 +66,7 @@ char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 		error = ft_sim->setInstanceParm (ckt, fast,
 						 ft_sim->devices[dev]->instanceParms[i].id,
 						 val, NULL);
+		tfree(val->v.vec.rVec);
 		if (error) {
 		    rtn = INPerror(error);
 		    goto quit;
