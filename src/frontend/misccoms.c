@@ -37,6 +37,35 @@ static int  confirm_quit(void);
 
 
 void
+tabula_rasa(void)
+{
+    wordlist all = { "all", NULL, NULL };
+    wordlist star = { "*", NULL, NULL };
+
+    DevSwitch(NULL);
+    DevSwitch(NULL);
+
+    com_remcirc(NULL);
+    com_destroy(&all);
+    com_unalias(&star);
+    com_undefine(&star);
+
+    cp_remvar("history");
+    cp_remvar("noglob");
+    cp_remvar("brief");
+    cp_remvar("sourcepath");
+    cp_remvar("program");
+    cp_remvar("prompt");
+
+    cp_destroy_keywords();
+    destroy_ivars();
+
+    destroy_const_plot();
+    spice_destroy_devices();
+}
+
+
+void
 com_quit(wordlist *wl)
 {
     int exitcode = EXIT_NORMAL;
@@ -55,25 +84,6 @@ com_quit(wordlist *wl)
         if (!noask && !confirm_quit())
             return;
 
-    /* start to clean up the mess */
-
-    {
-        wordlist all = { "all", NULL, NULL };
-        wordlist star = { "*", NULL, NULL };
-
-        com_remcirc(NULL);
-        com_destroy(&all);
-        com_unalias(&star);
-        com_undefine(&star);
-
-        cp_remvar("history");
-        cp_remvar("noglob");
-        cp_remvar("brief");
-        cp_remvar("sourcepath");
-        cp_remvar("program");
-        cp_remvar("prompt");
-    }
-
 #ifdef EXPERIMENTAL_CODE
     /* Destroy CKT when quit. Add by Gong Ding, gdiso@ustc.edu */
     if (!ft_nutmeg) {
@@ -84,17 +94,12 @@ com_quit(wordlist *wl)
     }
 #endif
 
-    DevSwitch(NULL);
-    DevSwitch(NULL);
+    byemesg();
+
+    /* clean up the mess */
+    tabula_rasa();
 
     /* then go away */
-
-    cp_destroy_keywords();
-    destroy_ivars();
-
-    byemesg();
-    destroy_const_plot();
-    spice_destroy_devices();
     exit(exitcode);
 }
 
