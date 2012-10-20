@@ -248,6 +248,14 @@ initdico(tdico *dico)
 
 
 void
+destroy_numparm_keys(tdico *dico)
+{
+    spice_dstring_free(&keyS);
+    spice_dstring_free(&fmathS);
+}
+
+
+void
 dico_free_entry(entry *entry_p)
 {
     if (entry_p->symbol)

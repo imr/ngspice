@@ -470,7 +470,14 @@ nupa_init(char *srcfile)
 static void
 nupa_done(void)
 {
-    /* int i; not needed so far, see below */
+/*
+error: ‘dico’ undeclared (first use in this function)
+error: (Each undeclared identifier is reported only once
+error: for each function it appears in.)
+error: ‘inst_dico’ undeclared (first use in this function)
+*/
+
+    int i;
     char *reply;                /* user reply */
     SPICE_DSTRING rep;          /* dynamic report */
     int dictsize, nerrors;
@@ -485,22 +492,29 @@ nupa_done(void)
     nerrors = dicoS->errcount;
     dictsize = donedico(dicoS);
 
-    /* We cannot remove dico here because numparam is usedby
-       the .measure statement, which is invoked only after the
-       simulation has finished */
-    /*
-     *  for (i = dynmaxline; i >= 0; i--) {
-     *      dispose(dico->dynrefptr[i]);
-     *  }
-     *  dispose(dico->dynrefptr);
-     *  dispose(dico->dyncategory);
-     *  dispose(dico->dyndat);
-     *  dispose(dico);
-     *  dico = NULL;
-     *  dispose(inst_dico->dyndat);
-     *  dispose(inst_dico);
-     *  inst_dico = NULL;
-    */
+    for (i = dynmaxline; i >= 0; i--) {
+        dispose(dicoS->dynrefptr[i]);
+    }
+    for (i = 0; i <= dicoS->stack_depth; i++) {
+        if (dicoS->local_symbols[i])
+            nghash_free(dicoS->local_symbols[i], (void (*)(void*)) dico_free_entry, NULL);
+        dicoS->inst_name[i];
+    }
+    dispose(dicoS->local_symbols);
+    dispose(dicoS->inst_name);
+    destroy_numparm_keys(dicoS);
+    dispose(dicoS->dynrefptr);
+    if (dicoS->inst_symbols)
+        fprintf(stderr, "ouch, what's to free here ?\n");
+    dispose(dicoS->dyncategory);
+    if(dicoS->global_symbols)
+        nghash_free(dicoS->global_symbols, (void (*)(void*)) dico_free_entry, NULL);
+//  dispose(dicoS->dyndat);
+    dispose(dicoS);
+    dicoS = NULL;
+//  dispose(inst_dico->dyndat);
+//  dispose(inst_dico);
+//  inst_dico = NULL;
 
     if (nerrors) {
         /* debug: ask if spice run really wanted */
