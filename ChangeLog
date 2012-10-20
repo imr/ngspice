@@ -3068,7 +3068,7 @@ M visualc/vngspice.vcproj
 
 2010-11-06  Robert Larice
  * src/frontend/inpcom.c :
-    Thank you Éric Larouche, for the report and fix of a bug concerning
+    Thank you Ã‰ric Larouche, for the report and fix of a bug concerning
       the number of terminals of the current-controlled switch device
     (`w' device) (committed at 2007-10-08)
 

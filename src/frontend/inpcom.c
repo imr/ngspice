@@ -911,7 +911,7 @@ inp_fix_gnd_name(struct line *deck)
             c = c->li_next;
             continue;
         }
-        // replace "§gnd§" by "§ 0 §", § being a ' '  ','  '('  ')'.
+        // replace "?gnd?" by "? 0 ?", ? being a ' '  ','  '('  ')'.
         while ((gnd = strstr(gnd, "gnd")) != NULL) {
             if ((isspace(*(gnd-1)) || *(gnd-1) == '(' || *(gnd-1) == ',') &&
                 (isspace(*(gnd+3)) || *(gnd+3) == ')' || *(gnd+3) == ',')) {

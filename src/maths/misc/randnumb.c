@@ -13,13 +13,13 @@ Copyright 2008 Holger Vogt
 	Algorithm has been suggested in: 
 	GPUGems 3, Addison Wesley, 2008, Chapter 37.
 	It combines a three component Tausworthe generator taus88 
-	(see P. L'Ecuyer: "Maximally equidistributed combined Tausworthe
+	(see P. L’Ecuyer: "Maximally equidistributed combined Tausworthe
 	generators", Mathematics of Computation, 1996, 
-	www.iro.umontreal.ca/~lecuyer/myftp/papers/tausme.ps)
+	http://www.iro.umontreal.ca/~lecuyer/myftp/papers/tausme.ps )
 	and a quick linear congruent generator (LCG), decribed in:
 	Press: "Numerical recipes in C", Cambridge, 1992, p. 284.
 	Generator has passed the bbattery_SmallCrush(gen) test of the
-	TestU01 library from Pierre L�Ecuyer and Richard Simard,
+	TestU01 library from Pierre L’Ecuyer and Richard Simard,
 	http://www.iro.umontreal.ca/~simardr/testu01/tu01.html
 */
 

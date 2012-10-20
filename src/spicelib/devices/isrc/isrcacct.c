@@ -83,7 +83,7 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         tshift = TD;
 
 #ifdef XSPICE
-                     /* normalize phase to 0 - 360° */
+                     /* normalize phase to 0 - 360Â° */
                      /* normalize phase to cycles */
                         phase = PHASE / 360.0;
                         phase = fmod(phase, 1.0);

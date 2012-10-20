@@ -94,7 +94,7 @@ static void poly_W(int, int);
 static void eval_frequency(int, int);
 static void store(int, int);
 static void store_SiSv_1(int, int);
-/*static int check(); quale è il prototipo ?*/
+/*static int check(); quale Ã¨ il prototipo ?*/
 static int coupled(int);
 static int generate_out(int, int);
 static int ReadCpL(CPLinstance*, CKTcircuit*);
