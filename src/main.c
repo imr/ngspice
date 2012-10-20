@@ -1281,9 +1281,11 @@ main(int argc, char **argv)
             fprintf(stderr,
                     "Note: No \".plot\", \".print\", or \".fourier\" lines; "
                     "no simulations run\n");
+            tabula_rasa();
             sp_shutdown(EXIT_BAD);
         }
 
+        tabula_rasa();
         sp_shutdown(EXIT_NORMAL);
         return 0;
     }  /* ---  if (ft_batchmode) ---  */
@@ -1322,6 +1324,7 @@ main(int argc, char **argv)
             app_rl_readlines();
         }
 
+    tabula_rasa();
     sp_shutdown(EXIT_NORMAL);
     return 0;
 }
