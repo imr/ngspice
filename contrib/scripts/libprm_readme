@@ -10,5 +10,4 @@ that it will better to enclose all used programs in this packet. Spiceprm
 has it's own directory with very good readme and examples. If You want to
 find out more about libprm or mslib look for the source code. These are rather
 short and easy programs - they are all that I could write in quite short
-time. 
-	
+time.

@@ -29,7 +29,3 @@ parameters I have written a small shell script "libprm". This program
 automatic runs spiceprm and mslib on Your's deck to give a working spice
 input file. To see how this all works please read "libprm_readme" and 
 spiceprm readme.
-
-
-   
-	
