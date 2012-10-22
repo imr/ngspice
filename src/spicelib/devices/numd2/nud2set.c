@@ -245,6 +245,7 @@ NUMD2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 if ((inst->ptr = SMPmakeElt(matrix, inst->first, inst->second)) == NULL){\
   return(E_NOMEM);\
 }
+
       TSTALLOC(NUMD2posPosPtr, NUMD2posNode, NUMD2posNode)
       TSTALLOC(NUMD2negNegPtr, NUMD2negNode, NUMD2negNode)
       TSTALLOC(NUMD2negPosPtr, NUMD2negNode, NUMD2posNode)

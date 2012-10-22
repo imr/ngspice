@@ -100,9 +100,9 @@ DCpss(CKTcircuit *ckt, int restart)
     IFuid *nameList;
     int numNames;
     double maxstepsize=0.0;
-
     int ltra_num;
     CKTnode *node;
+
 #ifdef XSPICE
 /* gtri - add - wbk - 12/19/90 - Add IPC stuff */
     Ipc_Boolean_t  ipc_firsttime = IPC_TRUE;

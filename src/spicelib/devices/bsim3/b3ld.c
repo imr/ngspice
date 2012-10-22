@@ -185,7 +185,7 @@ ChargeComputationNeeded =
 for (; model != NULL; model = model->BSIM3nextModel)
 {    for (here = model->BSIM3instances; here != NULL; 
           here = here->BSIM3nextInstance)
-          {    
+          {
 #endif
           Check = 1;
           ByPass = 0;

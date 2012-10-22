@@ -41,4 +41,3 @@ CAPsSetup(SENstruct *info, GENmodel *inModel)
     }
     return(OK);
 }
-

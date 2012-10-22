@@ -80,7 +80,7 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
                 *states += 2 * (ckt->CKTsenInfo->SENparms);
             }
-            
+
             if(here->INDbrEq == 0) {
                 error = CKTmkCur(ckt,&tmp,here->INDname,"branch");
                 if(error) return(error);

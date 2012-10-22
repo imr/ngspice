@@ -25,7 +25,7 @@ BSIM3instance *here;
 
     for (; model ; model = model->BSIM3nextModel) 
     {    for (here = model->BSIM3instances; here; here = here->BSIM3nextInstance)
-	 {    
+	 {
               if (!here->BSIM3icVBSGiven) 
 	      {  here->BSIM3icVBS = *(ckt->CKTrhs + here->BSIM3bNode) 
 				  - *(ckt->CKTrhs + here->BSIM3sNode);
@@ -42,5 +42,3 @@ BSIM3instance *here;
     }
     return(OK);
 }
-
-

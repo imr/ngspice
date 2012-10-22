@@ -36,7 +36,7 @@ double m;
     for (; model != NULL; model = model->B3SOIPDnextModel) 
     {    for (here = model->B3SOIPDinstances; here!= NULL;
               here = here->B3SOIPDnextInstance) 
-	 {  
+	 {
             if (here->B3SOIPDmode >= 0) 
 	    {   Gm = here->B3SOIPDgm;
 		Gmbs = here->B3SOIPDgmbs;

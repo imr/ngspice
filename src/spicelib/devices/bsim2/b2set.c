@@ -434,9 +434,9 @@ B2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         for (here = model->B2instances; here != NULL ;
                 here=here->B2nextInstance) {
 
-		/* allocate a chunk of the state vector */
-		here->B2states = *states;
-		*states += B2numStates;
+            /* allocate a chunk of the state vector */
+            here->B2states = *states;
+            *states += B2numStates;
 
             /* perform the parameter defaulting */
 

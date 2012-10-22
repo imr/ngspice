@@ -33,12 +33,14 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
  * Paolo Nenzi 2003
  *  The following lines are needed if I will move the defaulting code
  *  from REStemp to RESsetup, as in other (more recent ?) spice devices
- *  	
+ *
+ * ------------------------------------------LEGACY CODE - Francesco Lannutti - October 22, 2012
  * if (here->RESowner != ARCHme)
  *		goto matrixpointers;
- *       
+ *
  * matrixpointers:
- * 
+ * ------------------------------------------
+ *
  * put here instance parameter defaulting.
  */
 	    

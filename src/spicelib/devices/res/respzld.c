@@ -32,7 +32,7 @@ RESpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
                 here=here->RESnextInstance) {
-            
+
 	    m = here->RESm;
 	    
             *(here->RESposPosptr) += m * here->RESconduct;

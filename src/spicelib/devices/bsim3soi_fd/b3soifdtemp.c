@@ -73,7 +73,7 @@ int Size_Not_Found;
 	 /* MCJ: Length and Width not initialized */
          for (here = model->B3SOIFDinstances; here != NULL;
               here = here->B3SOIFDnextInstance) 
-	 {    
+	 {	      
 	      here->B3SOIFDrbodyext = here->B3SOIFDbodySquares *
                                     model->B3SOIFDrbsh;
 	      pSizeDependParamKnot = model->pSizeDependParamKnot;

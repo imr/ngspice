@@ -39,4 +39,3 @@ VCCSsSetup(SENstruct *info, GENmodel *inModel)
     }
     return(OK);
 }
-

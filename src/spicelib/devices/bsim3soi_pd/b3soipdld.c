@@ -294,7 +294,7 @@ double m;
 for (; model != NULL; model = model->B3SOIPDnextModel)
 {    for (here = model->B3SOIPDinstances; here != NULL; 
           here = here->B3SOIPDnextInstance)
-     {    
+     {
           Check = 0;
           ByPass = 0;
           selfheat = (model->B3SOIPDshMod == 1) && (here->B3SOIPDrth0 != 0.0);

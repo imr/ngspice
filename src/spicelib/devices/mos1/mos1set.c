@@ -92,12 +92,13 @@ MOS1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         for (here = model->MOS1instances; here != NULL ;
                 here=here->MOS1nextInstance) {
 
-		/* allocate a chunk of the state vector */
-		here->MOS1states = *states;
-		*states += MOS1numStates;
-		if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-		    *states += 10 * (ckt->CKTsenInfo->SENparms);
-		}
+            /* allocate a chunk of the state vector */
+            here->MOS1states = *states;
+            *states += MOS1numStates;
+
+            if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
+                *states += 10 * (ckt->CKTsenInfo->SENparms);
+            }
 
             if(!here->MOS1drainPerimiterGiven) {
                 here->MOS1drainPerimiter = 0;

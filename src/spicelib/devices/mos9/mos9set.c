@@ -147,9 +147,10 @@ MOS9setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             CKTnode *tmpNode;
             IFuid tmpName;
 
-                /* allocate a chunk of the state vector */
-                here->MOS9states = *states;
-                *states += MOS9NUMSTATES;
+            /* allocate a chunk of the state vector */
+            here->MOS9states = *states;
+            *states += MOS9NUMSTATES;
+
             if(!here->MOS9drainAreaGiven) {
                 here->MOS9drainArea = ckt->CKTdefaultMosAD;
             }

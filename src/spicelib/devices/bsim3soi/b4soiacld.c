@@ -80,7 +80,7 @@ double m;
 
       for (here = model->B4SOIinstances; here!= NULL;
               here = here->B4SOInextInstance) 
-         {    
+         {
               selfheat = (model->B4SOIshMod == 1) && (here->B4SOIrth0 != 0.0);
               if (here->B4SOImode >= 0) 
               {   Gm = here->B4SOIgm;

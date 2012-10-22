@@ -24,8 +24,7 @@ int NDEVaccept(CKTcircuit *ckt, GENmodel *inModel)
   {
         /* loop through all the instances of the model */
         for (here = model->NDEVinstances; here != NULL ; here=here->NDEVnextInstance) 
-	{ 
-	     
+	{
 	     /* set ckt accept_flag */
 	     here->CKTInfo.DEV_CALL = NDEV_ACCEPT; 
              here->CKTInfo.CKTmode  = ckt->CKTmode;
@@ -48,6 +47,7 @@ int NDEVconvTest(GENmodel *inModel, CKTcircuit *ckt)
  
     for( ; model != NULL; model = model->NDEVnextModel) {
         for(here=model->NDEVinstances;here!=NULL;here = here->NDEVnextInstance){
+
             /*
              *   get convergence information from ndev
              */

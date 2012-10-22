@@ -38,6 +38,7 @@ register B4SOIinstance *here;
     {    for (here = model->B4SOIinstances; here != NULL;
               here = here->B4SOInextInstance)
          {
+
 #ifdef STEPDEBUG
             debugtemp = *timeStep;
 #endif /* STEPDEBUG */

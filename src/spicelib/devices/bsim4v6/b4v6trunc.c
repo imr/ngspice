@@ -34,6 +34,7 @@ BSIM4v6instance *here;
     {    for (here = model->BSIM4v6instances; here != NULL;
 	      here = here->BSIM4v6nextInstance)
 	 {
+
 #ifdef STEPDEBUG
             debugtemp = *timeStep;
 #endif /* STEPDEBUG */

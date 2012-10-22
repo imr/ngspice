@@ -25,7 +25,7 @@ B3SOIPDinstance *here;
 
     for (; model ; model = model->B3SOIPDnextModel) 
     {    for (here = model->B3SOIPDinstances; here; here = here->B3SOIPDnextInstance)
-	 {    
+	 {
 	      if(!here->B3SOIPDicVBSGiven) 
 	      {  here->B3SOIPDicVBS = *(ckt->CKTrhs + here->B3SOIPDbNode) 
 				  - *(ckt->CKTrhs + here->B3SOIPDsNode);

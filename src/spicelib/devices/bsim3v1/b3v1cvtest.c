@@ -33,7 +33,7 @@ double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
     {    /* loop through all the instances of the model */
          for (here = model->BSIM3v1instances; here != NULL ;
               here=here->BSIM3v1nextInstance) 
-	 {    
+	 {
 	      vbs = model->BSIM3v1type 
 		  * (*(ckt->CKTrhsOld+here->BSIM3v1bNode) 
 		  - *(ckt->CKTrhsOld+here->BSIM3v1sNodePrime));

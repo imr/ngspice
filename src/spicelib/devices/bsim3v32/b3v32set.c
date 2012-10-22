@@ -896,9 +896,9 @@ IFuid tmpName;
         for (here = model->BSIM3v32instances; here != NULL ;
              here=here->BSIM3v32nextInstance)
         {
-              /* allocate a chunk of the state vector */
-              here->BSIM3v32states = *states;
-              *states += BSIM3v32numStates;
+            /* allocate a chunk of the state vector */
+            here->BSIM3v32states = *states;
+            *states += BSIM3v32numStates;
 
             /* perform the parameter defaulting */
             if (!here->BSIM3v32drainAreaGiven)

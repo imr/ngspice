@@ -92,7 +92,7 @@ double tmp3, T7;
 	 /* MCJ: Length and Width not initialized */
          for (here = model->B3SOIPDinstances; here != NULL;
               here = here->B3SOIPDnextInstance) 
-	 {    
+	 {
               here->B3SOIPDrbodyext = here->B3SOIPDbodySquares *
                                     model->B3SOIPDrbsh;
 	      pSizeDependParamKnot = model->pSizeDependParamKnot;

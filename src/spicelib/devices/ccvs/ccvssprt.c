@@ -47,4 +47,3 @@ CCVSsPrint(GENmodel *inModel, CKTcircuit *ckt)
         }
     } 
 }
-

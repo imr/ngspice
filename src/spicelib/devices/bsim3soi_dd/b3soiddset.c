@@ -876,10 +876,10 @@ IFuid tmpName;
         /* loop through all the instances of the model */
         for (here = model->B3SOIDDinstances; here != NULL ;
              here=here->B3SOIDDnextInstance) 
-	{   
-                /* allocate a chunk of the state vector */
-		    here->B3SOIDDstates = *states;
-                    *states += B3SOIDDnumStates;
+	{
+            /* allocate a chunk of the state vector */
+            here->B3SOIDDstates = *states;
+            *states += B3SOIDDnumStates;
 	    
 	    /* perform the parameter defaulting */
             if (!here->B3SOIDDdrainAreaGiven)

@@ -48,6 +48,3 @@ BSIM3instance *here;
     }
     return(OK);
 }
-
-
-

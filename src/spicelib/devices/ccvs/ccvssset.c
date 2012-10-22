@@ -36,4 +36,3 @@ CCVSsSetup(SENstruct *info, GENmodel *inModel)
     }
     return(OK);
 }
-

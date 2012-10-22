@@ -42,4 +42,3 @@ VCVSsLoad(GENmodel *inModel, CKTcircuit *ckt)
     }
     return(OK);
 }
-

@@ -31,7 +31,7 @@ CCCSsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->CCCSinstances; here != NULL ;
                 here=here->CCCSnextInstance) {
-            
+
             if(here->CCCSsenParmNo){
 
                 ic = *(ckt->CKTrhsOld + here->CCCScontBranch);
@@ -49,4 +49,3 @@ CCCSsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     }
     return(OK);
 }
-

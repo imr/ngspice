@@ -147,9 +147,9 @@ MOS3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
          CKTnode *tmpNode;
          IFuid tmpName;
             
-		/* allocate a chunk of the state vector */
-		here->MOS3states = *states;
-		*states += MOS3NUMSTATES;
+            /* allocate a chunk of the state vector */
+            here->MOS3states = *states;
+            *states += MOS3NUMSTATES;
 
             if(!here->MOS3drainAreaGiven) {
                 here->MOS3drainArea = ckt->CKTdefaultMosAD;

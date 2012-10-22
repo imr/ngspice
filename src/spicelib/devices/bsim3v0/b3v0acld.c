@@ -32,7 +32,7 @@ double m;
 
       for (here = model->BSIM3v0instances; here!= NULL;
               here = here->BSIM3v0nextInstance) 
-	 {    
+	 {
 	      if (here->BSIM3v0mode >= 0) 
 	      {   Gm = here->BSIM3v0gm;
 		  Gmbs = here->BSIM3v0gmbs;

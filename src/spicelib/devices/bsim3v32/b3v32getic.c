@@ -23,7 +23,7 @@ BSIM3v32instance *here;
 
     for (; model ; model = model->BSIM3v32nextModel) 
     {    for (here = model->BSIM3v32instances; here; here = here->BSIM3v32nextInstance)
-	 {   	
+	 {
 	      if (!here->BSIM3v32icVBSGiven) 
 	      {  here->BSIM3v32icVBS = *(ckt->CKTrhs + here->BSIM3v32bNode) 
 				  - *(ckt->CKTrhs + here->BSIM3v32sNode);

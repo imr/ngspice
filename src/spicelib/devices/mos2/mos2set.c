@@ -124,12 +124,13 @@ MOS2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
          CKTnode *tmpNode;
          IFuid tmpName;
             
-		/* allocate a chunk of the state vector */
-		here->MOS2states = *states;
-		*states += MOS2numStates;
-		if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-		    *states += 10 * (ckt->CKTsenInfo->SENparms);
-		}
+            /* allocate a chunk of the state vector */
+            here->MOS2states = *states;
+            *states += MOS2numStates;
+
+            if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
+                *states += 10 * (ckt->CKTsenInfo->SENparms);
+            }
 
             if(!here->MOS2drainPerimiterGiven) {
                 here->MOS2drainPerimiter = 0;

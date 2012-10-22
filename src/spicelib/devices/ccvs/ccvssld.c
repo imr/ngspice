@@ -39,4 +39,3 @@ CCVSsLoad(GENmodel *inModel, CKTcircuit *ckt)
     }
     return(OK);
 }
-

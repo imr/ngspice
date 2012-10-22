@@ -18,7 +18,7 @@ typedef struct sBSIM3v1instance
 {
     struct sBSIM3v1model *BSIM3v1modPtr;
     struct sBSIM3v1instance *BSIM3v1nextInstance;
-    IFuid BSIM3v1name;  
+    IFuid BSIM3v1name;
     int BSIM3v1states;     /* index into state table for this device */
 
     int BSIM3v1dNode;

@@ -325,9 +325,9 @@ SOI3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->SOI3gMd = 0.0;
             here->SOI3gMdeltaT = 0.0;
             
-	       /* allocate a chunk of the state vector */
-               here->SOI3states = *states;
-               *states += SOI3numStates;
+            /* allocate a chunk of the state vector */
+            here->SOI3states = *states;
+            *states += SOI3numStates;
 /*               if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
                    *states += 10 * (ckt->CKTsenInfo->SENparms);
                }

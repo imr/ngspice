@@ -47,6 +47,3 @@ BSIM3v1instance *here;
     }
     return(OK);
 }
-
-
-

@@ -28,7 +28,7 @@ NDEVload(GENmodel * inModel, CKTcircuit * ckt)
 
         /* loop through all the instances of the model */
         for (here = model->NDEVinstances; here != NULL ; here=here->NDEVnextInstance) 
-	{ 
+	{
 	     /* sent ckt information to device simulator */
 	     here->CKTInfo.DEV_CALL = NDEV_LOAD; 
              here->CKTInfo.CKTmode  = ckt->CKTmode;
@@ -55,7 +55,7 @@ NDEVload(GENmodel * inModel, CKTcircuit * ckt)
 	
         /* loop through all the instances of the model */
         for (here = model->NDEVinstances; here != NULL ; here=here->NDEVnextInstance) 
-	{ 
+	{
              /* reveive terminal current and conductional matrix from device simulator */
 	     for(i=0;i<here->term;i++)  
 	     {
@@ -98,5 +98,3 @@ int NDEVgetic(GENmodel *inModel, CKTcircuit *ckt)
     }
     return(OK);
 }
-
-

@@ -25,7 +25,7 @@ B3SOIFDinstance *here;
 
     for (; model ; model = model->B3SOIFDnextModel) 
     {    for (here = model->B3SOIFDinstances; here; here = here->B3SOIFDnextInstance)
-	 {    
+	 {
 	      if(!here->B3SOIFDicVBSGiven) 
 	      {  here->B3SOIFDicVBS = *(ckt->CKTrhs + here->B3SOIFDbNode) 
 				  - *(ckt->CKTrhs + here->B3SOIFDsNode);

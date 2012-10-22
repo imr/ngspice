@@ -48,6 +48,3 @@ B3SOIFDinstance *here;
     }
     return(OK);
 }
-
-
-

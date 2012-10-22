@@ -47,6 +47,3 @@ B3SOIPDinstance *here;
     }
     return(OK);
 }
-
-
-

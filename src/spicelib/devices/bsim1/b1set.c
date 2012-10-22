@@ -276,9 +276,9 @@ B1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         CKTnode *tmpNode;
         IFuid tmpName;
 
-		/* allocate a chunk of the state vector */
-		here->B1states = *states;
-		*states += B1numStates;
+            /* allocate a chunk of the state vector */
+            here->B1states = *states;
+            *states += B1numStates;
 
             /* perform the parameter defaulting */
             if(!here->B1drainAreaGiven) {

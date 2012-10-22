@@ -131,7 +131,7 @@ int i;
     for (; model != NULL; model = model->B3SOIFDnextModel)
     {    for (here = model->B3SOIFDinstances; here != NULL;
 	      here = here->B3SOIFDnextInstance)
-	 {   
+	 {	 
 	      pParam = here->pParam;
 	      switch (operation)
 	      {  case N_OPEN:
