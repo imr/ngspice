@@ -32,7 +32,6 @@ VCVSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         /* loop through all the instances of the model */
         for (here = model->VCVSinstances; here != NULL ;
                 here=here->VCVSnextInstance) {
-	    if (here->VCVSowner != ARCHme) continue;
             
             *(here->VCVSposIbrptr) += 1.0 ;
             *(here->VCVSnegIbrptr) -= 1.0 ;

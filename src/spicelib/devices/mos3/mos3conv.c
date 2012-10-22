@@ -32,7 +32,6 @@ MOS3convTest(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = model->MOS3nextModel) {
         for(here = model->MOS3instances; here!= NULL;
                 here = here->MOS3nextInstance) {
-	    if (here->MOS3owner != ARCHme) continue;
         
             vbs = model->MOS3type * ( 
                 *(ckt->CKTrhs+here->MOS3bNode) -

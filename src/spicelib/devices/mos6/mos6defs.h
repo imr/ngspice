@@ -20,7 +20,6 @@ typedef struct sMOS6instance {
     struct sMOS6instance *MOS6nextInstance;  /* pointer to next instance of
                                               *current model*/
     IFuid MOS6name; /* pointer to character string naming this instance */
-    int MOS6owner;  /* number of owner process */
     int MOS6states;     /* index into state table for this device */
     int MOS6dNode;  /* number of the gate node of the mosfet */
     int MOS6gNode;  /* number of the gate node of the mosfet */

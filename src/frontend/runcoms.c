@@ -250,9 +250,6 @@ dosim(
     ft_intrpt = FALSE;
     /* command "run" is given with rawfile name in wl */
     if (dofile) {
-#ifdef PARALLEL_ARCH
-        if (ARCHme == 0) {
-#endif /* PARALLEL_ARCH */
             if (!*wl->wl_word)
                 rawfileFp = stdout;
 #if defined(__MINGW32__) || defined(_MSC_VER)
@@ -283,11 +280,6 @@ dosim(
             }
 #endif /* __MINGW32__ */
             rawfileBinary = !ascii;
-#ifdef PARALLEL_ARCH
-        } else {
-            rawfileFp = NULL;
-        }
-#endif /* PARALLEL_ARCH */
     } else {
         rawfileFp = NULL;
     }

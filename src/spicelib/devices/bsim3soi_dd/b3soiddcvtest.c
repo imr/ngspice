@@ -34,10 +34,6 @@ double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
          for (here = model->B3SOIDDinstances; here != NULL ;
               here=here->B3SOIDDnextInstance) 
 	 {    
-	 
-              if (here->B3SOIDDowner != ARCHme)
-                      continue;
-	 
 	      vbs = model->B3SOIDDtype 
 		  * (*(ckt->CKTrhsOld+here->B3SOIDDbNode) 
 		  - *(ckt->CKTrhsOld+here->B3SOIDDsNodePrime));

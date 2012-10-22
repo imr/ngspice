@@ -45,7 +45,6 @@ delgot:
     *oldmod = (*model)->B4SOInextModel; /* cut deleted device out of list */
     for (here = (*model)->B4SOIinstances; here; here = here->B4SOInextInstance)
     {    
-         if (here->B4SOIowner != ARCHme) continue;
          if(prev) FREE(prev);
          prev = here;
     }

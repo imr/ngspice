@@ -48,7 +48,6 @@ B2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
     for (model=firstModel; model != NULL; model=model->B2nextModel) {
 	for (inst=model->B2instances; inst != NULL; inst=inst->B2nextInstance) {
-	    if (inst->B2owner != ARCHme) continue;
         
 	    switch (operation) {
 

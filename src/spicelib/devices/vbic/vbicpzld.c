@@ -39,8 +39,6 @@ VBICpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         for( here = model->VBICinstances; here!= NULL; 
                 here = here->VBICnextInstance) {
 
-            if (here->VBICowner != ARCHme) continue;
-
             Ibe_Vbei  = *(ckt->CKTstate0 + here->VBICibe_Vbei);
             Ibex_Vbex = *(ckt->CKTstate0 + here->VBICibex_Vbex);
             Itzf_Vbei = *(ckt->CKTstate0 + here->VBICitzf_Vbei);

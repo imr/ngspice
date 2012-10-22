@@ -66,7 +66,6 @@ MOS3dSetup(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->MOS3instances; here != NULL ;
                 here=here->MOS3nextInstance) {
-	    if (here->MOS3owner != ARCHme) continue;
 
             vt = CONSTKoverQ * here->MOS3temp;
 

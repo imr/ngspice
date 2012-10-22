@@ -40,7 +40,6 @@ JFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* loop through all the instances of the model */
         for (here = model->JFET2instances; here != NULL ;
                 here=here->JFET2nextInstance) {
-            if (here->JFET2owner != ARCHme) goto matrixpointers2;
             
             if(!here->JFET2areaGiven) {
                 here->JFET2area = 1;
@@ -53,7 +52,6 @@ JFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->JFET2state = *states;
             *states += JFET2_STATE_COUNT + 1;
 
-matrixpointers2:
             if(model->JFET2rs != 0) {
                 if(here->JFET2sourcePrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->JFET2name,"source");

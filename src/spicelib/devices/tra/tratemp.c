@@ -31,7 +31,6 @@ TRAtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->TRAinstances; here != NULL ;
                 here=here->TRAnextInstance) {
-	    if (here->TRAowner != ARCHme) continue;
             
             if(!here->TRAtdGiven) {
                 here->TRAtd = here->TRAnl/here->TRAf;

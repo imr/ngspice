@@ -36,8 +36,6 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->INDinstances; here != NULL ;
                 here=here->INDnextInstance) {
-	    
-	    if (here->INDowner != ARCHme) continue;
 
             if(!(ckt->CKTmode & (MODEDC|MODEINITPRED))) {
                 if(ckt->CKTmode & MODEUIC && ckt->CKTmode & MODEINITTRAN) {
@@ -59,8 +57,6 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (muthere = mutmodel->MUTinstances; muthere != NULL ;
                 muthere=muthere->MUTnextInstance) {
-	    
-	    if (muthere->MUTowner != ARCHme) continue;
 
             if(!(ckt->CKTmode& (MODEDC|MODEINITPRED))) {
                 *(ckt->CKTstate0 + muthere->MUTind1->INDflux)  +=
@@ -84,7 +80,6 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->INDinstances; here != NULL ;
                 here=here->INDnextInstance) {
-	    if (here->INDowner != ARCHme) continue;
 
 #endif /*MUTUAL*/
             if(ckt->CKTmode & MODEDC) {

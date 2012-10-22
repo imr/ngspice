@@ -18,7 +18,6 @@ HFETAtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
     for( ; model != NULL; model = model->HFETAnextModel) {
         for(here=model->HFETAinstances;here!=NULL;here = here->HFETAnextInstance){
-            if (here->HFETAowner != ARCHme) continue;
 
             CKTterr(here->HFETAqgs,ckt,timeStep);
             CKTterr(here->HFETAqgd,ckt,timeStep);

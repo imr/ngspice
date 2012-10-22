@@ -43,8 +43,6 @@ MESAtemp(GENmodel *inModel, CKTcircuit *ckt)
     for (here = model->MESAinstances; here != NULL ;
               here=here->MESAnextInstance) {
 
-       if (here->MESAowner != ARCHme) continue;
-
       vt                = CONSTKoverQ * here->MESAts;
       if(model->MESAmu1 == 0 && model->MESAmu2 == 0)
         here->MESAtMu = model->MESAmu*pow(here->MESAts/

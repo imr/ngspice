@@ -60,7 +60,6 @@ NUMOSdump(GENmodel *inModel, CKTcircuit *ckt)
     output = model->NUMOSoutputs;
     for (inst = model->NUMOSinstances; inst != NULL;
 	inst = inst->NUMOSnextInstance) {
-      if (inst->NUMOSowner != ARCHme) continue;
 
       if (inst->NUMOSprintGiven) {
 	if ((ckt->CKTmode & MODETRAN) &&
@@ -162,7 +161,6 @@ NUMOSacct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
     output = model->NUMOSoutputs;
     for (inst = model->NUMOSinstances; inst != NULL;
 	inst = inst->NUMOSnextInstance) {
-      if (inst->NUMOSowner != ARCHme) continue;
 
       if (output->OUTPstats) {
 	TWOmemStats(file, inst->NUMOSpDevice);

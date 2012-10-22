@@ -49,7 +49,6 @@ MOS9noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
     for (model=firstModel; model != NULL; model=model->MOS9nextModel) {
 	for (inst=model->MOS9instances; inst != NULL; inst=inst->MOS9nextInstance) {
-           if (inst->MOS9owner != ARCHme) continue;
 
 	    switch (operation) {
 

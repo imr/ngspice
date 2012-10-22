@@ -117,7 +117,6 @@ MOS1temp(GENmodel *inModel, CKTcircuit *ckt)
             double arg;     /* 1 - fc */
             double sarg;    /* (1-fc) ^^ (-mj) */
             double sargsw;  /* (1-fc) ^^ (-mjsw) */
-	    if (here->MOS1owner != ARCHme) continue;
 
             /* perform the parameter defaulting */
             

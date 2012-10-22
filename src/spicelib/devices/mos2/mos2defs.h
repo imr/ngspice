@@ -22,7 +22,6 @@ typedef struct sMOS2instance {
     struct sMOS2instance *MOS2nextInstance;  /* pointer to next instance of
                                               *current model*/
     IFuid MOS2name; /* pointer to character string naming this instance */
-    int MOS2owner;  /* number of owner process */
     int MOS2states;     /* index into state table for this device */
     int MOS2dNode;  /* number of the gate node of the mosfet */
     int MOS2gNode;  /* number of the gate node of the mosfet */

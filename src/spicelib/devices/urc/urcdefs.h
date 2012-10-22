@@ -23,7 +23,6 @@ typedef struct sURCinstance {
     struct sURCinstance *URCnextInstance;   /* pointer to next instance of 
                                              * current model*/
     IFuid URCname;  /* pointer to character string naming this instance */
-    int URCowner;  /* number of owner process */
     int URCstate;	/* not used */
     int URCposNode;   /* number of positive node of URC */
     int URCnegNode;   /* number of negative node of URC */

@@ -54,7 +54,6 @@ BJTnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 for (model=firstModel; model != NULL; model=model->BJTnextModel) {
 	for (inst=model->BJTinstances; inst != NULL;
 		inst=inst->BJTnextInstance) {
-	    if (inst->BJTowner != ARCHme) continue;
 
 	    switch (operation) {
 

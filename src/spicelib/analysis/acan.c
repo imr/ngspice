@@ -29,7 +29,6 @@ do { \
     startdTime = ckt->CKTstat->STATdecompTime;  \
     startsTime = ckt->CKTstat->STATsolveTime;   \
     startlTime = ckt->CKTstat->STATloadTime;    \
-    startcTime = ckt->CKTstat->STATcombineTime; \
     startkTime = ckt->CKTstat->STATsyncTime;    \
 } while(0)
 
@@ -40,7 +39,6 @@ do { \
     ckt->CKTstat->STATacDecompTime += ckt->CKTstat->STATdecompTime - startdTime; \
     ckt->CKTstat->STATacSolveTime += ckt->CKTstat->STATsolveTime - startsTime; \
     ckt->CKTstat->STATacLoadTime += ckt->CKTstat->STATloadTime - startlTime; \
-    ckt->CKTstat->STATacCombTime += ckt->CKTstat->STATcombineTime - startcTime; \
     ckt->CKTstat->STATacSyncTime += ckt->CKTstat->STATsyncTime - startkTime; \
 } while(0)
 
@@ -55,7 +53,6 @@ ACan(CKTcircuit *ckt, int restart)
     double startdTime;
     double startsTime;
     double startlTime;
-    double startcTime;
     double startkTime;
     double startTime;
     int error;
@@ -405,9 +402,6 @@ CKTacLoad(CKTcircuit *ckt)
     int i;
     int size;
     int error;
-#ifdef PARALLEL_ARCH
-    long type = MT_ACLOAD, length = 1;
-#endif /* PARALLEL_ARCH */
     double startTime;
 
     startTime  = SPfrontEnd->IFseconds();
@@ -421,11 +415,7 @@ CKTacLoad(CKTcircuit *ckt)
     for (i=0;i<DEVmaxnum;i++) {
         if ( DEVices[i] && DEVices[i]->DEVacLoad && ckt->CKThead[i] ) {
             error = DEVices[i]->DEVacLoad (ckt->CKThead[i], ckt);
-#ifdef PARALLEL_ARCH
-	    if (error) goto combine;
-#else
             if(error) return(error);
-#endif /* PARALLEL_ARCH */
         }
     }
     
@@ -457,24 +447,6 @@ CKTacLoad(CKTcircuit *ckt)
 #endif
 
     
-#ifdef PARALLEL_ARCH
-combine:
-    ckt->CKTstat->STATloadTime += SPfrontEnd->IFseconds() - startTime;
-    startTime  = SPfrontEnd->IFseconds();
-    /* See if any of the DEVload functions bailed. If not, proceed. */
-    IGOP_( &type, &error, &length, "max" );
-    ckt->CKTstat->STATsyncTime += SPfrontEnd->IFseconds() - startTime;
-    if (error == OK) {
-      startTime  = SPfrontEnd->IFseconds();
-      SMPcCombine( ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTrhsSpare,
-	  ckt->CKTirhs, ckt->CKTirhsSpare );
-      ckt->CKTstat->STATcombineTime += SPfrontEnd->IFseconds() - startTime;
-      return(OK);
-    } else {
-      return(error);
-    }
-#else
     ckt->CKTstat->STATloadTime += SPfrontEnd->IFseconds() - startTime;
     return(OK);
-#endif /* PARALLEL_ARCH */
 }

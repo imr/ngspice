@@ -131,7 +131,6 @@ MOS2sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = model->MOS2nextModel) {
         for(here = model->MOS2instances; here!= NULL;
                 here = here->MOS2nextInstance) {
-	    if (here->MOS2owner != ARCHme) continue;
 
             /* save the unperturbed values in the state vector */
             for(i=0; i <= 16; i++)

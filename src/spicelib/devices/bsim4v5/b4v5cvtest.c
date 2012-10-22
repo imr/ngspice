@@ -43,7 +43,6 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
     {    for (here = model->BSIM4v5instances; here != NULL ;
               here=here->BSIM4v5nextInstance) 
          {    
-	            if (here->BSIM4v5owner != ARCHme) continue; 
 	 	          vds = model->BSIM4v5type
                   * (*(ckt->CKTrhsOld + here->BSIM4v5dNodePrime)
                   - *(ckt->CKTrhsOld + here->BSIM4v5sNodePrime));

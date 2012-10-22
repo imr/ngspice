@@ -38,10 +38,6 @@ double m;
     {    for (here = model->B3SOIDDinstances; here!= NULL;
               here = here->B3SOIDDnextInstance) 
 	 {
-	 
-            if (here->B3SOIDDowner != ARCHme)
-                    continue;
-
             if (here->B3SOIDDmode >= 0) 
 	    {   Gm = here->B3SOIDDgm;
 		Gmbs = here->B3SOIDDgmbs;

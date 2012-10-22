@@ -100,7 +100,6 @@ MOS6load(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->MOS6instances; here != NULL ;
                 here=here->MOS6nextInstance) {
-	    if (here->MOS6owner != ARCHme) continue;
 
             vt = CONSTKoverQ * here->MOS6temp;
             Check=1;

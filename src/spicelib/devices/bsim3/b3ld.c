@@ -186,8 +186,6 @@ for (; model != NULL; model = model->BSIM3nextModel)
 {    for (here = model->BSIM3instances; here != NULL; 
           here = here->BSIM3nextInstance)
           {    
-	  if (here->BSIM3owner != ARCHme)
-	    continue;
 #endif
           Check = 1;
           ByPass = 0;

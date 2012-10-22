@@ -93,7 +93,6 @@ NBJTload(GENmodel *inModel, CKTcircuit *ckt)
     /* loop through all the instances of the model */
     for (inst = model->NBJTinstances; inst != NULL;
 	inst = inst->NBJTnextInstance) {
-      if (inst->NBJTowner != ARCHme) continue;
 
       pDevice = inst->NBJTpDevice;
 

@@ -64,7 +64,6 @@ INDsLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->INDinstances; here != NULL ;
                 here=here->INDnextInstance) {
-	    if (here->INDowner != ARCHme) continue;
 
 #ifdef MUTUAL
         }
@@ -77,7 +76,6 @@ INDsLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (muthere = mutmodel->MUTinstances; muthere != NULL ;
             muthere=muthere->MUTnextInstance) {
-	    if (muthere->MUTowner != ARCHme) continue;
 
             if(muthere->MUTsenParmNo ||
                 muthere->MUTind1->INDsenParmNo ||
@@ -123,7 +121,6 @@ INDsLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->INDinstances; here != NULL ;
                 here=here->INDnextInstance) {
-	    if (here->INDowner != ARCHme) continue;
 
 #endif /* MUTUAL */
             cind = *(ckt->CKTrhsOld + here->INDbrEq);

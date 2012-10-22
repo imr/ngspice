@@ -59,7 +59,6 @@ NUMDdump(GENmodel *inModel, CKTcircuit *ckt)
     output = model->NUMDoutputs;
     for (inst = model->NUMDinstances; inst != NULL;
 	inst = inst->NUMDnextInstance) {
-      if (inst->NUMDowner != ARCHme) continue;
 
       if (inst->NUMDprintGiven) {
 	if ((ckt->CKTmode & MODETRAN) &&
@@ -147,7 +146,6 @@ NUMDacct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
     output = model->NUMDoutputs;
     for (inst = model->NUMDinstances; inst != NULL;
 	inst = inst->NUMDnextInstance) {
-      if (inst->NUMDowner != ARCHme) continue;
 
       if (output->OUTPstats) {
 	ONEmemStats(file, inst->NUMDpDevice);

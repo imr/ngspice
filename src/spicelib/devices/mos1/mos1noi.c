@@ -60,7 +60,6 @@ MOS1noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
         }
 	coxSquared *= coxSquared;
 	for (inst=model->MOS1instances; inst != NULL; inst=inst->MOS1nextInstance) {
-	    if (inst->MOS1owner != ARCHme) continue;
         
 	    switch (operation) {
 

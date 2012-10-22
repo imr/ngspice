@@ -35,8 +35,6 @@ MESApzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         for( here = model->MESAinstances; here != NULL; 
              here = here->MESAnextInstance) {
 
-            if (here->MESAowner != ARCHme) continue;
-
             f      = ckt->CKTomega/2/M_PI;
             if(here->MESAdelf == 0)
               lambda = here->MESAtLambda;

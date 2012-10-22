@@ -24,7 +24,6 @@ MOS3getic(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model ; model = model->MOS3nextModel) {
         for(here = model->MOS3instances; here ; here = here->MOS3nextInstance) {
-	    if (here->MOS3owner != ARCHme) continue;
         
             if(!here->MOS3icVBSGiven) {
                 here->MOS3icVBS = 

@@ -96,7 +96,6 @@ NBJT2load(GENmodel *inModel, CKTcircuit *ckt)
     /* loop through all the instances of the model */
     for (inst = model->NBJT2instances; inst != NULL;
 	inst = inst->NBJT2nextInstance) {
-      if (inst->NBJT2owner != ARCHme) continue;
 
       pDevice = inst->NBJT2pDevice;
 

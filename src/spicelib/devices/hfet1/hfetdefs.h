@@ -18,7 +18,6 @@ typedef struct sHFETAinstance {
     struct sHFETAmodel *HFETAmodPtr;
     struct sHFETAinstance *HFETAnextInstance;
     IFuid HFETAname;
-    int HFETAowner;	  /* number of owner process */
     int HFETAstate;   /* index into state table for this device */
     
     int HFETAdrainNode;

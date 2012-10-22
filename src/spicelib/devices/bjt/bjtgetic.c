@@ -31,7 +31,6 @@ BJTgetic(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model ; model = model->BJTnextModel) {
         for(here = model->BJTinstances; here ; here = here->BJTnextInstance) {
-	    if (here->BJTowner != ARCHme) continue;
 
             if(!here->BJTicVBEGiven) {
                 here->BJTicVBE = 

@@ -231,8 +231,6 @@ HFETAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* loop through all the instances of the model */
         for (here = model->HFETAinstances; here != NULL ;
                 here=here->HFETAnextInstance) {
-  
-            if (here->HFETAowner != ARCHme) goto matrixpointers;
            
             if(!here->HFETAlengthGiven) {
                 here->HFETAlength = 1e-6;
@@ -248,7 +246,6 @@ HFETAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             /* *states += 24; */
             *states += HFETAnumStates;
 
-matrixpointers:
             if(model->HFETArs != 0) {
                 if(here->HFETAsourcePrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->HFETAname,"source");

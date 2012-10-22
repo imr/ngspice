@@ -22,8 +22,6 @@ INDacLoad(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = model->INDnextModel) {
         for( here = model->INDinstances;here != NULL; 
                 here = here->INDnextInstance) {
-		
-	    if (here->INDowner != ARCHme) continue;
     
             val = ckt->CKTomega * here->INDinduct;
 	    

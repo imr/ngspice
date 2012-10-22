@@ -33,7 +33,6 @@ CAPsSetup(SENstruct *info, GENmodel *inModel)
         /* loop through all the instances of the model */
         for (here = model->CAPinstances; here != NULL ;
                 here=here->CAPnextInstance) {
-	    if (here->CAPowner != ARCHme) continue;
 
             if(here->CAPsenParmNo){
                 here->CAPsenParmNo = ++(info->SENparms);

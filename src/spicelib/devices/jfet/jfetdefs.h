@@ -25,7 +25,6 @@ typedef struct sJFETinstance {
     struct sJFETinstance *JFETnextInstance; /* pointer to next instance of 
                                              * current model*/
     IFuid JFETname; /* pointer to character string naming this instance */
-    int JFETowner;  /* number of owner process */
     int JFETstate; /* pointer to start of state vector for jfet */
     int JFETdrainNode;  /* number of drain node of jfet */
     int JFETgateNode;   /* number of gate node of jfet */

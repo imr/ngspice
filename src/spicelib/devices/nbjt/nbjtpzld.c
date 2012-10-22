@@ -42,7 +42,6 @@ NBJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     for (inst = model->NBJTinstances; inst != NULL;
 	inst = inst->NBJTnextInstance) {
-      if (inst->NBJTowner != ARCHme) continue;
 
       startTime = SPfrontEnd->IFseconds();
       /* Get Temp.-Dep. Global Parameters */

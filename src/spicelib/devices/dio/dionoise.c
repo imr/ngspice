@@ -49,7 +49,6 @@ DIOnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
     for (model=firstModel; model != NULL; model=model->DIOnextModel) {
 	for (inst=model->DIOinstances; inst != NULL; inst=inst->DIOnextInstance) {
-	    if (inst->DIOowner != ARCHme) continue;
 
 	    switch (operation) {
 

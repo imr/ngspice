@@ -29,7 +29,6 @@ typedef struct sB4SOIinstance
     struct sB4SOImodel *B4SOImodPtr;
     struct sB4SOIinstance *B4SOInextInstance;
     IFuid B4SOIname;
-    int B4SOIowner;      /* number of owner process */ 
     int B4SOIstates;     /* index into state table for this device */
 
     int B4SOIdNode;

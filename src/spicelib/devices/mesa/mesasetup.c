@@ -229,7 +229,6 @@ MESAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* loop through all the instances of the model */
         for (here = model->MESAinstances; here != NULL ;
                 here=here->MESAnextInstance) {
-            if (here->MESAowner != ARCHme) goto matrixpointers;
          
             if(!here->MESAlengthGiven) {
                 here->MESAlength = 1e-6;
@@ -254,7 +253,6 @@ MESAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->MESAstate = *states;
             *states += 20;
 
-matrixpointers:
             if(model->MESAsourceResist != 0) {
                 if(here->MESAsourcePrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MESAname,"source");

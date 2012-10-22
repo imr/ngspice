@@ -4905,10 +4905,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\analysis\cktpartn.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\analysis\cktpmnam.c"
 				>
 			</File>
@@ -8134,10 +8130,6 @@
 			</File>
 			<File
 				RelativePath="..\src\maths\sparse\spbuild.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\sparse\spcombin.c"
 				>
 			</File>
 			<File

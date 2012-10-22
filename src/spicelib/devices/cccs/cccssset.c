@@ -29,7 +29,6 @@ CCCSsSetup(SENstruct *info, GENmodel *inModel)
         /* loop through all the instances of the model */
         for (here = model->CCCSinstances; here != NULL ;
                 here=here->CCCSnextInstance) {
-	    if (here->CCCSowner != ARCHme) continue;
 
             if(here->CCCSsenParmNo){
                 here->CCCSsenParmNo = ++(info->SENparms);

@@ -341,9 +341,6 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             CKTnode *tmpNode;
             IFuid tmpName;
 
-            if (here->BJTowner != ARCHme)
-                goto matrixpointers;
-
             if(!here->BJTareaGiven) {
                 here->BJTarea = 1.0;
             }
@@ -363,7 +360,6 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 *states += 8 * (ckt->CKTsenInfo->SENparms);
             }
 
-matrixpointers:
             if(model->BJTcollectorResist == 0) {
                 here->BJTcolPrimeNode = here->BJTcolNode;
             } else if(here->BJTcolPrimeNode == 0) {

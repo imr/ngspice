@@ -157,7 +157,6 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* loop through all the instances of the model */
         for (here = model->DIOinstances; here != NULL ;
                 here=here->DIOnextInstance) {
-            if (here->DIOowner != ARCHme) goto matrixpointers;
 
             if(!here->DIOareaGiven) {
                 if((!here->DIOwGiven) && (!here->DIOlGiven))  {
@@ -196,7 +195,6 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 *states += 2 * (ckt->CKTsenInfo->SENparms);
             }
 
-matrixpointers:
             if(model->DIOresist == 0) {
 
                 here->DIOposPrimeNode = here->DIOposNode;

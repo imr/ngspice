@@ -13,7 +13,6 @@ typedef struct sHFET2instance {
     struct sHFET2model *HFET2modPtr;
     struct sHFET2instance *HFET2nextInstance;
     IFuid HFET2name;
-    int HFET2owner;   /* number of owner process */
     int HFET2state;   /* index into state table for this device */
      
     int HFET2drainNode;

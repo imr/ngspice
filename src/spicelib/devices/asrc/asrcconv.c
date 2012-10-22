@@ -23,7 +23,6 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = model->ASRCnextModel) {
         for( here = model->ASRCinstances; here != NULL;
                 here = here->ASRCnextInstance) {
-	    if (here->ASRCowner != ARCHme) continue;
 
 	    i = here->ASRCtree->numVars;
 	    if (asrc_nvals < i) {

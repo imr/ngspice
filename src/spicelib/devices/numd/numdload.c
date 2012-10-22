@@ -91,7 +91,6 @@ NUMDload(GENmodel *inModel, CKTcircuit *ckt)
     /* Now do instance things */
     for (inst = model->NUMDinstances; inst != NULL;
 	inst = inst->NUMDnextInstance) {
-      if (inst->NUMDowner != ARCHme) continue;
 
       pDevice = inst->NUMDpDevice;
 

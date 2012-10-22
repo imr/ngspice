@@ -165,7 +165,6 @@ NUMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /* loop through all the instances of the model */
     for (inst = model->NUMOSinstances; inst != NULL;
 	inst = inst->NUMOSnextInstance) {
-      if (inst->NUMOSowner != ARCHme) goto matrixpointers;
 
       startTime = SPfrontEnd->IFseconds();
 
@@ -246,7 +245,6 @@ if ((inst->ptr = SMPmakeElt(matrix, inst->first, inst->second)) == NULL){\
   return(E_NOMEM);\
 }
 
-matrixpointers:
       TSTALLOC(NUMOSdrainDrainPtr, NUMOSdrainNode, NUMOSdrainNode)
       TSTALLOC(NUMOSdrainSourcePtr, NUMOSdrainNode, NUMOSsourceNode)
       TSTALLOC(NUMOSdrainGatePtr, NUMOSdrainNode, NUMOSgateNode)

@@ -33,7 +33,6 @@ MESpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         
         for( here = model->MESinstances; here != NULL; 
                 here = here->MESnextInstance) {
-	    if (here->MESowner != ARCHme) continue;
 
             m = here->MESm;
 

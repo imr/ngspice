@@ -1,4 +1,3 @@
-
 #include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/cktdefs.h"
@@ -19,8 +18,6 @@ double *tiHFET2tep)
   for( ; model != NULL; model = model->HFET2nextModel) {
     for(here=model->HFET2instances;here!=NULL;
         here = here->HFET2nextInstance){
-      
-       if (here->HFET2owner != ARCHme) continue;
 
       CKTterr(here->HFET2qgs,ckt,tiHFET2tep);
       CKTterr(here->HFET2qgd,ckt,tiHFET2tep);

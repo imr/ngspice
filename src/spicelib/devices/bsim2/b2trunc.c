@@ -20,7 +20,6 @@ B2trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
     for( ; model != NULL; model = model->B2nextModel) {
         for(here=model->B2instances;here!=NULL;here = here->B2nextInstance){
-	    if (here->B2owner != ARCHme) continue;
         
 #ifdef STEPDEBUG
             debugtemp = *timeStep;

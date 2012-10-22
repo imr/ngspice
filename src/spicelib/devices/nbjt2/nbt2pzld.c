@@ -39,7 +39,6 @@ NBJT2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     for (inst = model->NBJT2instances; inst != NULL;
 	inst = inst->NBJT2nextInstance) {
-      if (inst->NBJT2owner != ARCHme) continue;
 
       startTime = SPfrontEnd->IFseconds();
 

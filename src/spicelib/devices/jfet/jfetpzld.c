@@ -33,7 +33,6 @@ JFETpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         
         for( here = model->JFETinstances; here != NULL; 
                 here = here->JFETnextInstance) {
-	    if (here->JFETowner != ARCHme) continue;
 
             m = here->JFETm;
 

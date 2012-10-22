@@ -309,10 +309,6 @@ double m;
 {    for (here = model->B3SOIDDinstances; here != NULL; 
           here = here->B3SOIDDnextInstance)
      {    
-     
-          if (here->B3SOIDDowner != ARCHme)
-	          continue;
-     
           Check = 0;
           ByPass = 0;
           selfheat = (model->B3SOIDDshMod == 1) && (here->B3SOIDDrth0 != 0.0);

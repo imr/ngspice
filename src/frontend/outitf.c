@@ -84,11 +84,6 @@ OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
 {
     char *name;
 
-#ifdef PARALLEL_ARCH
-    if (ARCHme != 0)
-        return (OK);
-#endif
-
     if (ft_curckt->ci_ckt == circuitPtr)
         name = ft_curckt->ci_name;
     else
@@ -107,11 +102,6 @@ OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
               IFuid refName, int refType,
               int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr)
 {
-
-#ifdef PARALLEL_ARCH
-    if (ARCHme != 0)
-        return (OK);
-#endif
 
     return (beginPlot(analysisPtr, circuitPtr, "circuit name",
                       analName, refName, refType, numNames,
@@ -448,11 +438,6 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
     runDesc *run = plotPtr;  // FIXME
     int i;
 
-#ifdef PARALLEL_ARCH
-    if (ARCHme != 0)
-        return (OK);
-#endif
-
     run->pointCount++;
 
 #ifdef TCL_MODULE
@@ -674,11 +659,6 @@ int
 OUTendPlot(runDesc *plotPtr)
 {
     runDesc *run = plotPtr;  // FIXME
-
-#ifdef PARALLEL_ARCH
-    if (ARCHme != 0)
-        return (OK);
-#endif
 
     if (run->writeOut) {
         fileEnd(run);

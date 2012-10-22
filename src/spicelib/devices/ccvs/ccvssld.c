@@ -29,7 +29,6 @@ CCVSsLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->CCVSinstances; here != NULL ;
                 here=here->CCVSnextInstance) {
-	    if (here->CCVSowner != ARCHme) continue;
             
             if(here->CCVSsenParmNo){
                 ic = *(ckt->CKTrhsOld + here->CCVScontBranch);

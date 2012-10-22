@@ -31,7 +31,6 @@ VCCSload(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->VCCSinstances; here != NULL ;
                 here=here->VCCSnextInstance) {
-	    if (here->VCCSowner != ARCHme) continue;
             
             *(here->VCCSposContPosptr) += here->VCCScoeff ;
             *(here->VCCSposContNegptr) -= here->VCCScoeff ;

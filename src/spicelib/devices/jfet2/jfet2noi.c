@@ -53,7 +53,6 @@ JFET2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
 
     for (model=firstModel; model != NULL; model=model->JFET2nextModel) {
 	for (inst=model->JFET2instances; inst != NULL; inst=inst->JFET2nextInstance) {
-        if (inst->JFET2owner != ARCHme) continue;
 
 	    switch (operation) {
 

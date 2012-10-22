@@ -91,8 +91,6 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->VBICinstances; here != NULL ;
                 here=here->VBICnextInstance) {
 
-            if (here->VBICowner != ARCHme) continue;
-
             vt = here->VBICtemp * CONSTKoverQ;
 
             if(ckt->CKTsenInfo){

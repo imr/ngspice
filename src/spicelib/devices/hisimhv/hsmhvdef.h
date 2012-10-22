@@ -217,7 +217,6 @@ typedef struct sHSMHVinstance {
   struct sHSMHVinstance *HSMHVnextInstance;  /* pointer to next instance of 
                                               current model*/
   IFuid HSMHVname; /* pointer to character string naming this instance */
-  int HSMHVowner;  /* number of owner process (ngspice specific !) */
   int HSMHVstates; /* index into state table for this device */
 
   int HSMHVdNode;      /* number of the drain node of the mosfet */

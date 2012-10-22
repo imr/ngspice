@@ -101,7 +101,6 @@ MESAload(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->MESAinstances; here != NULL ;
                 here=here->MESAnextInstance) {
-            if (here->MESAowner != ARCHme) continue;
 
             /*
              *  dc model parameters 

@@ -25,9 +25,6 @@ BSIM3v0instance *here;
     {    for (here = model->BSIM3v0instances; here != NULL;
 	      here = here->BSIM3v0nextInstance)
 	 {
-            
-	    if (here->BSIM3v0owner != ARCHme)
-                    continue;
 
 #ifdef STEPDEBUG
             debugtemp = *timeStep;

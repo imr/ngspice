@@ -20,10 +20,6 @@ BSIM3v0instance *here;
     for (; model ; model = model->BSIM3v0nextModel) 
     {    for (here = model->BSIM3v0instances; here; here = here->BSIM3v0nextInstance)
 	 {    
-	 
-	      if (here->BSIM3v0owner != ARCHme)
-                      continue;
-
 	      if(!here->BSIM3v0icVBSGiven) 
 	      {  here->BSIM3v0icVBS = *(ckt->CKTrhs + here->BSIM3v0bNode) 
 				  - *(ckt->CKTrhs + here->BSIM3v0sNode);

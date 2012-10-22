@@ -25,7 +25,6 @@ typedef struct sINDinstance {
     struct sINDinstance *INDnextInstance;   /* pointer to next instance of 
                                              * current model*/
     IFuid INDname;  /* pointer to character string naming this instance */
-    int INDowner;  /* number of owner process */
     int INDstate;   /* pointer to beginning of state vector for inductor */
     int INDposNode; /* number of positive node of inductor */
     int INDnegNode; /* number of negative node of inductor */
@@ -113,7 +112,6 @@ typedef struct sMUTinstance {
     struct sMUTinstance *MUTnextInstance;   /* pointer to next instance of 
                                              * current model*/
     IFuid MUTname;  /* pointer to character string naming this instance */
-    int MUTowner;  /* number of owner process */
     double MUTcoupling;     /* mutual inductance input by user */
     double MUTfactor;       /* mutual inductance scaled for internal use */
     IFuid MUTindName1;  /* name of coupled inductor 1 */

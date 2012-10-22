@@ -27,7 +27,6 @@ MOS1sSetup(SENstruct *info, GENmodel *inModel)
         /* loop through all the instances of the model */
         for (here = model->MOS1instances; here != NULL ;
                 here=here->MOS1nextInstance) {
-	    if (here->MOS1owner != ARCHme) continue;
 
             if(here->MOS1senParmNo){
                 if((here->MOS1sens_l)&&(here->MOS1sens_w)){

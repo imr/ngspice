@@ -36,7 +36,6 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->SWinstances; here != NULL ;
                 here=here->SWnextInstance) {
-	    if (here->SWowner != ARCHme) continue;
 	     
 			old_current_state = *(ckt->CKTstates[0] + here->SWstate);
 			previous_state = *(ckt->CKTstates[1] + here->SWstate);

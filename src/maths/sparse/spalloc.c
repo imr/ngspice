@@ -66,10 +66,6 @@
 #include "spconfig.h"
 #include "ngspice/spmatrix.h"
 #include "spdefs.h"
-#ifdef PARALLEL_ARCH
-#define COMBINE 1
-#endif /* PARALLEL_ARCH */
-
 
 /*
  *  Function declarations

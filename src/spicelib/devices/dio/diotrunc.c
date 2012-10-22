@@ -20,7 +20,6 @@ DIOtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
     for( ; model != NULL; model = model->DIOnextModel) {
         for(here=model->DIOinstances;here!=NULL;here = here->DIOnextInstance){
-	    if (here->DIOowner != ARCHme) continue;
             CKTterr(here->DIOcapCharge,ckt,timeStep);
         }
     }

@@ -33,8 +33,6 @@ int HFET2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     for( here = model->HFET2instances; here != NULL; 
          here = here->HFET2nextInstance) {
 
-      if (here->HFET2owner != ARCHme) continue;  
-
       m = here->HFET2m;
 
       gdpr=model->HFET2drainConduct;

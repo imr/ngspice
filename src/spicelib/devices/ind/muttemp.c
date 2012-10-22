@@ -29,7 +29,6 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->MUTinstances; here != NULL ;
                 here=here->MUTnextInstance) {
-	    if (here->MUTowner != ARCHme) continue;
 
             /* Value Processing for mutual inductors */
 	   
@@ -45,4 +44,3 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
     }
     return(OK);
 }
-

@@ -36,7 +36,6 @@ MUTsPrint(GENmodel *inModel, CKTcircuit* ckt)
         /* loop through all the instances of the model */
         for (here = model->MUTinstances; here != NULL ;
                 here=here->MUTnextInstance) {
-	    if (here->MUTowner != ARCHme) continue;
 
             printf("    Instance name:%s\n",here->MUTname);
             printf("      Mutual Inductance: %g ",here->MUTcoupling);

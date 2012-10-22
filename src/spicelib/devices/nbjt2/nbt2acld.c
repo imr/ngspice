@@ -42,7 +42,6 @@ NBJT2acLoad(GENmodel *inModel, CKTcircuit *ckt)
 
     for (inst = model->NBJT2instances; inst != NULL;
 	inst = inst->NBJT2nextInstance) {
-      if (inst->NBJT2owner != ARCHme) continue;
 
       startTime = SPfrontEnd->IFseconds();
       /* Get Temp.-Dep. Global Parameters */

@@ -20,7 +20,6 @@ struct GENinstance {
     GENinstance *GENnextInstance;   /* pointer to next instance of
                                      * current model*/
     IFuid GENname;  /* pointer to character string naming this instance */
-    int GENowner;   /* number of owner process */
     int GENstate;   /* state index number */
     int GENnode1;   /* appropriate node numbers */
     int GENnode2;   /* appropriate node numbers */

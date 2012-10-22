@@ -58,7 +58,6 @@ HFETAtemp(GENmodel *inModel, CKTcircuit *ckt)
           
         for (here = model->HFETAinstances; here != NULL ;
                 here=here->HFETAnextInstance) {
-            if (here->HFETAowner != ARCHme) continue;
 
             if(!here->HFETAdtempGiven) {
                 here->HFETAdtemp = 0.0;

@@ -24,7 +24,6 @@ DIOgetic(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model ; model = model->DIOnextModel) {
         for(here = model->DIOinstances; here ; here = here->DIOnextInstance) {
-	    if (here->DIOowner != ARCHme) continue;
 
             if(!here->DIOinitCondGiven) {
                 here->DIOinitCond = 

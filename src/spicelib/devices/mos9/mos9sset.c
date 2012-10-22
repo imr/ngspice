@@ -29,8 +29,6 @@ MOS9sSetup(SENstruct *info, GENmodel *inModel)
         /* loop through all the instances of the model */
         for (here = model->MOS9instances; here != NULL ;
                 here=here->MOS9nextInstance) {
-            if (here->MOS9owner != ARCHme) continue;
-
 
             if(here->MOS9senParmNo){
                 if((here->MOS9sens_l)&&(here->MOS9sens_w)){

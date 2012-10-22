@@ -28,7 +28,6 @@ LTRAtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     /* loop through all the instances of the model */
     for (here = model->LTRAinstances; here != NULL;
 	here = here->LTRAnextInstance) {
-      if (here->LTRAowner != ARCHme) continue;
 
       switch (model->LTRAspecialCase) {
 

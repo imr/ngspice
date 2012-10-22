@@ -279,10 +279,6 @@ for (; model != NULL; model = model->B3SOIFDnextModel)
 {    for (here = model->B3SOIFDinstances; here != NULL; 
           here = here->B3SOIFDnextInstance)
      {    
-          
-	  if (here->B3SOIFDowner != ARCHme)
-	          continue;
-   
           Check = 0;
           ByPass = 0;
           selfheat = (model->B3SOIFDshMod == 1) && (here->B3SOIFDrth0 != 0.0);

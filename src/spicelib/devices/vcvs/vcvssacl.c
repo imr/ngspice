@@ -30,7 +30,6 @@ VCVSsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->VCVSinstances; here != NULL ;
                 here=here->VCVSnextInstance) {
-	    if (here->VCVSowner != ARCHme) continue;
 
 	    if(here->VCVSsenParmNo){
 

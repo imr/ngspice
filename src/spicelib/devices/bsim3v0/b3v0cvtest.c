@@ -28,10 +28,6 @@ double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
          for (here = model->BSIM3v0instances; here != NULL ;
               here=here->BSIM3v0nextInstance) 
 	 {    
-
-              if (here->BSIM3v0owner != ARCHme)
-                      continue;
-
 	      vbs = model->BSIM3v0type 
 		  * (*(ckt->CKTrhsOld+here->BSIM3v0bNode) 
 		  - *(ckt->CKTrhsOld+here->BSIM3v0sNodePrime));

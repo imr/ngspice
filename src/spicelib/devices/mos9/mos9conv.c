@@ -34,7 +34,6 @@ MOS9convTest(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = model->MOS9nextModel) {
         for(here = model->MOS9instances; here!= NULL;
                 here = here->MOS9nextInstance) {
-            if (here->MOS9owner != ARCHme) continue;
         
             vbs = model->MOS9type * ( 
                 *(ckt->CKTrhs+here->MOS9bNode) -

@@ -47,9 +47,6 @@ double m;
     {    for (here = model->BSIM3instances; here!= NULL;
               here = here->BSIM3nextInstance) 
 	 {
-	      if (here->BSIM3owner != ARCHme)
-			continue;
-
               Csd = -(here->BSIM3cddb + here->BSIM3cgdb + here->BSIM3cbdb);
               Csg = -(here->BSIM3cdgb + here->BSIM3cggb + here->BSIM3cbgb);
               Css = -(here->BSIM3cdsb + here->BSIM3cgsb + here->BSIM3cbsb);

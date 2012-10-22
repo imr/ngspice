@@ -22,7 +22,6 @@ typedef struct sMESAinstance {
     struct sMESAinstance *MESAnextInstance; /* pointer to next instance of 
                                              * current model*/
     IFuid MESAname; /* pointer to character string naming this instance */
-    int MESAowner;  /* number of owner process */
     int MESAstate; /* pointer to start of state vector for MESAfet */
     
     int MESAdrainNode;  /* number of drain node of MESAfet */

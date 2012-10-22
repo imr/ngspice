@@ -31,7 +31,6 @@ MOS2sPrint(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->MOS2instances; here != NULL ;
                 here=here->MOS2nextInstance) {
-	    if (here->MOS2owner != ARCHme) continue;
 
             printf("    Instance name:%s\n",here->MOS2name);
             printf("      Drain, Gate , Source nodes: %s, %s ,%s\n",

@@ -19,8 +19,6 @@ MESAtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     for( ; model != NULL; model = model->MESAnextModel) {
         for(here=model->MESAinstances;here!=NULL;
             here = here->MESAnextInstance){
-            if (here->MESAowner != ARCHme) continue;
-
 
             CKTterr(here->MESAqgs,ckt,timeStep);
             CKTterr(here->MESAqgd,ckt,timeStep);

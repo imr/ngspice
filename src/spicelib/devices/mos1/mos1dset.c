@@ -84,7 +84,6 @@ MOS1dSetup(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->MOS1instances; here != NULL ;
                 here=here->MOS1nextInstance) {
-	    if (here->MOS1owner != ARCHme) continue;
 
             vt = CONSTKoverQ * here->MOS1temp;
             EffectiveLength=here->MOS1l - 2*model->MOS1latDiff;

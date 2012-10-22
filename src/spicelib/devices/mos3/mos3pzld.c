@@ -38,7 +38,6 @@ MOS3pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     for( ; model != NULL; model = model->MOS3nextModel) {
         for(here = model->MOS3instances; here!= NULL;
                 here = here->MOS3nextInstance) {
-	    if (here->MOS3owner != ARCHme) continue;
         
             if (here->MOS3mode < 0) {
                 xnrm=0;

@@ -56,7 +56,6 @@ NBJTtemp(GENmodel *inModel, CKTcircuit *ckt)
 
     for (inst = model->NBJTinstances; inst != NULL;
 	inst = inst->NBJTnextInstance) {
-      if (inst->NBJTowner != ARCHme) continue;
 
       startTime = SPfrontEnd->IFseconds();
 

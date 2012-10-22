@@ -211,7 +211,6 @@ int Size_Not_Found;
    for (here = model->BSIM3v32instances; here != NULL;
               here = here->BSIM3v32nextInstance)
 	 {
-	      if (here->BSIM3v32owner != ARCHme) continue;
 	      pSizeDependParamKnot = model->pSizeDependParamKnot;
 	      Size_Not_Found = 1;
 	      while ((pSizeDependParamKnot != NULL) && Size_Not_Found)

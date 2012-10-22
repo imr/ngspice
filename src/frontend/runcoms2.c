@@ -98,9 +98,6 @@ com_resume(wordlist *wl)
     }
 
     if (dofile) {
-#ifdef PARALLEL_ARCH
-        if (ARCHme == 0) {
-#endif /* PARALLEL_ARCH */
             if (!last_used_rawfile)
                 rawfileFp = stdout;
 #if defined(__MINGW32__) || defined(_MSC_VER)
@@ -129,11 +126,6 @@ com_resume(wordlist *wl)
                 return;
             }
 #endif
-#ifdef PARALLEL_ARCH
-        } else {
-            rawfileFp = NULL;
-        }
-#endif /* PARALLEL_ARCH */
         rawfileBinary = !ascii;
     } else {
         rawfileFp = NULL;

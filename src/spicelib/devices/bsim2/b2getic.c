@@ -25,7 +25,6 @@ B2getic(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model ; model = model->B2nextModel) {
         for(here = model->B2instances; here ; here = here->B2nextInstance) {
-	    if (here->B2owner != ARCHme) continue;
         
             if(!here->B2icVBSGiven) {
                 here->B2icVBS = 

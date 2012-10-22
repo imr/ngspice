@@ -20,7 +20,6 @@ typedef struct sCCCSinstance {
     struct sCCCSinstance *CCCSnextInstance;  /* pointer to next instance of 
                                              *current model*/
     IFuid CCCSname; /* pointer to character string naming this instance */
-    int CCCSowner;  /* number of owner process */
     int CCCSstate; /* not used */
 
     int CCCSposNode;    /* number of positive node of source */

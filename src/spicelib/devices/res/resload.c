@@ -33,8 +33,6 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
 	    if(!here->REStc2Given) here->REStc2    = 0.0;
 	    if(!here->RESmGiven)   here->RESm      = 1.0;
 
-	    if (here->RESowner != ARCHme) continue;
-
 	    here->REScurrent = (*(ckt->CKTrhsOld+here->RESposNode) - 
 		*(ckt->CKTrhsOld+here->RESnegNode)) * here->RESconduct;
 		
@@ -77,8 +75,6 @@ RESacload(GENmodel *inModel, CKTcircuit *ckt)
 	    if(!here->REStc1Given) here->REStc1    = 0.0;
 	    if(!here->REStc2Given) here->REStc2    = 0.0;
 	    if(!here->RESmGiven)   here->RESm      = 1.0;
-            
-	    if (here->RESowner != ARCHme) continue;
 	    
 	    difference = (here->REStemp + here->RESdtemp) - 300.15;
 	    factor = 1.0 + (here->REStc1)*difference + 

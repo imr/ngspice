@@ -68,7 +68,6 @@ DIOsLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->DIOinstances; here != NULL ;
                 here=here->DIOnextInstance) {
-	    if (here->DIOowner != ARCHme) continue;
 
 #ifdef SENSDEBUG
             fprintf(file,"pos = %d , posprm = %d ,neg = %d, senparmno = %d\n",

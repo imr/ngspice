@@ -18,9 +18,6 @@ CKTpzLoad(CKTcircuit *ckt, SPcomplex *s)
 
     int error;
     int i;
-#ifdef PARALLEL_ARCH
-    long type = MT_PZLOAD, length = 1;
-#endif /* PARALLEL_ARCH */
 
     for (i = 0; i <= SMPmatSize(ckt->CKTmatrix); i++) {
 	ckt->CKTrhs[i] = 0.0;
@@ -31,24 +28,9 @@ CKTpzLoad(CKTcircuit *ckt, SPcomplex *s)
     for (i = 0; i < DEVmaxnum; i++) {
         if (DEVices[i] && DEVices[i]->DEVpzLoad != NULL && ckt->CKThead[i] != NULL) {
             error = DEVices[i]->DEVpzLoad (ckt->CKThead[i], ckt, s);
-#ifdef PARALLEL_ARCH
-	    if (error) goto combine;
-#else
             if(error) return(error);
-#endif /* PARALLEL_ARCH */
         }
     }
-#ifdef PARALLEL_ARCH
-combine:
-    /* See if any of the DEVload functions bailed. If not, proceed. */
-    IGOP_( &type, &error, &length, "max" );
-    if (error == OK) {
-	SMPcCombine(ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTrhsSpare,
-		    ckt->CKTirhs, ckt->CKTirhsSpare );
-    } else {
-	return(error);
-    }
-#endif /* PARALLEL_ARCH */
 
     if (job->PZbalance_col && job->PZsolution_col) {
 	SMPcAddCol(ckt->CKTmatrix, job->PZbalance_col, job->PZsolution_col);

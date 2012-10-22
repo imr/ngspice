@@ -71,8 +71,6 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->VBICinstances; here != NULL ;
                 here=here->VBICnextInstance) {
- 
-            if (here->VBICowner != ARCHme) continue;
 
             if(!here->VBICtempGiven) here->VBICtemp = ckt->CKTtemp;
 

@@ -39,10 +39,5 @@ SMPelement * SMPfindElt( SMPmatrix *, int , int , int );
 int SMPcZeroCol(SMPmatrix *eMatrix, int Col);
 int SMPcAddCol(SMPmatrix *eMatrix, int Accum_Col, int Addend_Col);
 int SMPzeroRow(SMPmatrix *eMatrix, int Row);
-#ifdef PARALLEL_ARCH
-void SMPcombine(SMPmatrix *Matrix, double RHS[], double Spare[]);
-void SMPcCombine(SMPmatrix *Matrix, double RHS[], double Spare[],
-		 double iRHS[], double iSpare[]);
-#endif
 
 #endif /*SMP*/

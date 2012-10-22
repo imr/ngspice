@@ -41,7 +41,6 @@ double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
          for (here = model->B4SOIinstances; here != NULL ;
               here=here->B4SOInextInstance) 
          {    
-              if (here->B4SOIowner != ARCHme) continue;
               vbs = model->B4SOItype 
                   * (*(ckt->CKTrhsOld+here->B4SOIbNode) 
                   - *(ckt->CKTrhsOld+here->B4SOIsNodePrime));

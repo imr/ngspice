@@ -30,9 +30,6 @@ Author: 1985 Thomas L. Quarles
 #define E_NOF2SRC (E_PRIVATE+15) /* no source at F2 for IM disto analysis */
 #define E_NODISTO (E_PRIVATE+16) /* no distortion analysis - NODISTO defined */
 #define E_NONOISE (E_PRIVATE+17) /* no noise analysis - NONOISE defined */
-#ifdef PARALLEL_ARCH
-#define E_MULTIERR (E_PRIVATE+18) /* multiple errors from diff. processes */
-#endif /* PARALLEL_ARCH */
 
 const char *SPerror(int type);
 

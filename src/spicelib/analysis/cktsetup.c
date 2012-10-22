@@ -54,8 +54,6 @@ CKTsetup(CKTcircuit *ckt)
     if (ckt->CKTisSetup)
         return E_NOCHANGE;
 
-    CKTpartition(ckt);
-
     error = NIinit(ckt);
     if (error) return(error);
     ckt->CKTisSetup = 1;

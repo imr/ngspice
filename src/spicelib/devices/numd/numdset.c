@@ -146,7 +146,6 @@ NUMDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /* loop through all the instances of the model */
     for (inst = model->NUMDinstances; inst != NULL;
 	inst = inst->NUMDnextInstance) {
-      if ((inst->NUMDowner != ARCHme)) goto matrixpointers;
 
       startTime = SPfrontEnd->IFseconds();
 
@@ -222,7 +221,6 @@ if ((inst->ptr = SMPmakeElt(matrix, inst->first, inst->second)) == NULL){\
   return(E_NOMEM);\
 }
 
-matrixpointers:
       TSTALLOC(NUMDposPosPtr, NUMDposNode, NUMDposNode)
       TSTALLOC(NUMDnegNegPtr, NUMDnegNode, NUMDnegNode)
       TSTALLOC(NUMDnegPosPtr, NUMDnegNode, NUMDposNode)

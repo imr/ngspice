@@ -22,7 +22,6 @@ MESAgetic(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model ; model = model->MESAnextModel) {
         for(here = model->MESAinstances; here ; here = here->MESAnextInstance) {
-            if (here->MESAowner != ARCHme) continue;
 
             if(!here->MESAicVDSGiven) {
                 here->MESAicVDS = 

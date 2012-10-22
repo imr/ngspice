@@ -18,7 +18,6 @@ int HFET2getic(GENmodel *inModel, CKTcircuit *ckt)
 
   for( ; model ; model = model->HFET2nextModel) {
     for(here = model->HFET2instances; here ; here = here->HFET2nextInstance) {
-        if (here->HFET2owner != ARCHme) continue;
 
       if(!here->HFET2icVDSGiven) {
         here->HFET2icVDS = *(ckt->CKTrhs + here->HFET2drainNode) - 

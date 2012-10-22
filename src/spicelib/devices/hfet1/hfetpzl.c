@@ -36,8 +36,6 @@ HFETApzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         for( here = model->HFETAinstances; here != NULL; 
              here = here->HFETAnextInstance) {
 
-            if (here->HFETAowner != ARCHme) continue;
-
             gm  = *(ckt->CKTstate0 + here->HFETAgm);
             gds = *(ckt->CKTstate0 + here->HFETAgds);
             xds = CDS*ckt->CKTomega;

@@ -40,7 +40,6 @@ BJTacLoad(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = model->BJTnextModel) {
         for( here = model->BJTinstances; here!= NULL;
                 here = here->BJTnextInstance) {
-            if (here->BJTowner != ARCHme) continue;
 
             m = here->BJTm;
 

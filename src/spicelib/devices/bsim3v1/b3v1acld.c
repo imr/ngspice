@@ -39,11 +39,6 @@ BSIM3v1acLoad (GENmodel * inModel, CKTcircuit * ckt)
       for (here = model->BSIM3v1instances; here != NULL;
 	   here = here->BSIM3v1nextInstance)
 	{
-
-	  if (here->BSIM3v1owner != ARCHme)
-	    continue;
-
-
 	  if (here->BSIM3v1mode >= 0)
 	    {
 	      Gm = here->BSIM3v1gm;

@@ -41,7 +41,6 @@ typedef struct sSOI3instance {
     struct sSOI3instance *SOI3nextInstance;  /* pointer to next instance of
                                               *current model*/
     IFuid SOI3name;     /* pointer to character string naming this instance */
-    int SOI3owner;      /* number of owner process */ 
     int SOI3states;     /* index into state table for this device */
 
 

@@ -35,7 +35,6 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->VSRCinstances; here != NULL ;
                 here=here->VSRCnextInstance) {
-            if (here->VSRCowner != ARCHme) continue;
 
             *(here->VSRCposIbrptr) += 1.0 ;
             *(here->VSRCnegIbrptr) -= 1.0 ;

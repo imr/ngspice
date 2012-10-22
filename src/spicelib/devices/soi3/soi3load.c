@@ -162,9 +162,6 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->SOI3instances; here != NULL ;
                 here=here->SOI3nextInstance) {
-		
-	    if (here->SOI3owner != ARCHme)
-	             continue;
 
             vt = CONSTKoverQ * here->SOI3temp;
             Check=1;

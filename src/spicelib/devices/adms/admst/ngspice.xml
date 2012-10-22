@@ -3563,7 +3563,6 @@ typedef struct s$(module)instance {
   struct s$(module)model *$(module)modPtr;           /* pointer to model */
   struct s$(module)instance *$(module)nextInstance;  /* pointer to next instance of current model*/
   IFuid $(module)name; /* pointer to character string naming this instance */
-  int $(module)owner;  /* number of owner process */
   int $(module)state; /* index into state table for this device */
 
   /* node */

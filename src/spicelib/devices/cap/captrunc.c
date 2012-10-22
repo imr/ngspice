@@ -22,7 +22,6 @@ CAPtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     for( ; model!= NULL; model = model->CAPnextModel) {
         for(here = model->CAPinstances ; here != NULL ;
                 here = here->CAPnextInstance) {
-	    if (here->CAPowner != ARCHme) continue;
 
             CKTterr(here->CAPqcap,ckt,timeStep);
         }

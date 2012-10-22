@@ -38,8 +38,6 @@ CKTcircuit *ckt)
     DELTA2 = DELTA*DELTA;
     for (here = model->HFET2instances; here != NULL; 
          here=here->HFET2nextInstance) {
- 
-    if (here->HFET2owner != ARCHme) continue;
 
     if(!here->HFET2dtempGiven)
        here->HFET2dtemp = 0.0;

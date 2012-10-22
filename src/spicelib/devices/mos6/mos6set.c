@@ -114,8 +114,6 @@ MOS6setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here=here->MOS6nextInstance) {
             CKTnode *tmpNode;
             IFuid tmpName;
-            
-	    if (here->MOS6owner != ARCHme) goto matrixpointers;
 
             if(!here->MOS6drainPerimiterGiven) {
                 here->MOS6drainPerimiter = 0;
@@ -150,7 +148,6 @@ MOS6setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 *states += 10 * (ckt->CKTsenInfo->SENparms);
             }
 
-matrixpointers:
             if((model->MOS6drainResistance != 0 ||
                     (model->MOS6sheetResistance != 0 &&
                      here->MOS6drainSquares != 0) )) {

@@ -24,7 +24,6 @@ typedef struct sB3SOIFDinstance
     struct sB3SOIFDmodel *B3SOIFDmodPtr;
     struct sB3SOIFDinstance *B3SOIFDnextInstance;
     IFuid B3SOIFDname;
-    int B3SOIFDowner;      /* number of owner process */   
     int B3SOIFDstates;     /* index into state table for this device */
 
     int B3SOIFDdNode;

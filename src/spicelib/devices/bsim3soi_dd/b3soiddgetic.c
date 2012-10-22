@@ -26,10 +26,6 @@ B3SOIDDinstance *here;
     for (; model ; model = model->B3SOIDDnextModel) 
     {    for (here = model->B3SOIDDinstances; here; here = here->B3SOIDDnextInstance)
 	 {    
-	 
-	      if (here->B3SOIDDowner != ARCHme)
-                      continue;
-
 	      if(!here->B3SOIDDicVBSGiven) 
 	      {  here->B3SOIDDicVBS = *(ckt->CKTrhs + here->B3SOIDDbNode) 
 				  - *(ckt->CKTrhs + here->B3SOIDDsNode);

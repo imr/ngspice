@@ -21,7 +21,6 @@ typedef struct sASRCinstance {
     struct sASRCinstance *ASRCnextInstance;  /* pointer to next instance of 
                                               * current model */
     IFuid ASRCname; /* pointer to character string naming this instance */
-    int ASRCowner;  /* number of owner process */
     int ASRCstates; /* state info */
     int ASRCposNode;    /* number of positive node of source */
     int ASRCnegNode;    /* number of negative node of source */

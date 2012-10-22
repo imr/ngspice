@@ -44,7 +44,6 @@ double m;
     {    for (here = model->B4SOIinstances; here!= NULL;
               here = here->B4SOInextInstance) 
          {
-            if (here->B4SOIowner != ARCHme) continue;
             if (here->B4SOImode >= 0) 
             {   Gm = here->B4SOIgm;
                 Gmbs = here->B4SOIgmbs;

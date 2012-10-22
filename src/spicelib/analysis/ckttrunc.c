@@ -22,9 +22,6 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
 #ifndef NEWTRUNC
     int i;
     double timetemp;
-#ifdef PARALLEL_ARCH
-    long type = MT_TRUNC, length = 1;
-#endif /* PARALLEL_ARCH */
 #ifdef STEPDEBUG
     double debugtemp;
 #endif /* STEPDEBUG */
@@ -54,10 +51,6 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
         }
     }
     *timeStep = MIN(2 * *timeStep,timetemp);
-
-#ifdef PARALLEL_ARCH
-    DGOP_( &type, timeStep, &length, "min" );
-#endif /* PARALLEL_ARCH */
 
     ckt->CKTstat->STATtranTruncTime += SPfrontEnd->IFseconds() - startTime;
     return(OK);
@@ -188,9 +181,6 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
 
     }
     *timeStep = MIN(2 * *timeStep,timetemp);
-#ifdef PARALLEL_ARCH
-    DGOP_( &type, timeStep, &length, "min" );
-#endif /* PARALLEL_ARCH */
     ckt->CKTstat->STATtranTruncTime += SPfrontEnd->IFseconds() - startTime;
     return(OK);
 #endif /* NEWTRUNC */

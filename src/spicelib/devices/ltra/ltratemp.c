@@ -149,7 +149,6 @@ LTRAtemp(GENmodel *inModel, CKTcircuit *ckt)
     /* loop through all the instances of the model */
     for (here = model->LTRAinstances; here != NULL;
 	here = here->LTRAnextInstance) {
-      if (here->LTRAowner != ARCHme) continue;
 
       here->LTRAv1 = NULL;
       here->LTRAi1 = NULL;

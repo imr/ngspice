@@ -24,7 +24,6 @@ JFETgetic(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model ; model = model->JFETnextModel) {
         for(here = model->JFETinstances; here ; here = here->JFETnextInstance) {
-	    if (here->JFETowner != ARCHme) continue;
 
             if(!here->JFETicVDSGiven) {
                 here->JFETicVDS = 

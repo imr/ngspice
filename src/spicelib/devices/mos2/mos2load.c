@@ -108,7 +108,6 @@ MOS2load(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->MOS2instances; here != NULL ;
                 here=here->MOS2nextInstance) {
-	    if (here->MOS2owner != ARCHme) continue;
 
             vt = CONSTKoverQ * here->MOS2temp;
             Check=1;

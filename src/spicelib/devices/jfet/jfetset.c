@@ -89,7 +89,6 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* loop through all the instances of the model */
         for (here = model->JFETinstances; here != NULL ;
                 here=here->JFETnextInstance) {
-	    if (here->JFETowner != ARCHme) goto matrixpointers;
             
             if(!here->JFETareaGiven) {
                 here->JFETarea = 1;
@@ -100,7 +99,6 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->JFETstate = *states;
             *states += 13;
 
-matrixpointers:
             if(model->JFETsourceResist != 0) {
                 if(here->JFETsourcePrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->JFETname,"source");

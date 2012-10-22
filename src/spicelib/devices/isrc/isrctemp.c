@@ -28,7 +28,6 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->ISRCinstances; here != NULL ;
                 here=here->ISRCnextInstance) {
-            if (here->ISRCowner != ARCHme) continue;
 
             if(here->ISRCacGiven && !here->ISRCacMGiven) {
                 here->ISRCacMag = 1;

@@ -57,7 +57,6 @@ NUMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
     for (inst = model->NUMOSinstances; inst != NULL;
 	inst = inst->NUMOSnextInstance) {
-      if (inst->NUMOSowner != ARCHme) continue;
 
       startTime = SPfrontEnd->IFseconds();
 

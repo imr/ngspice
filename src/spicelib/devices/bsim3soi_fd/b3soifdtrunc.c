@@ -31,9 +31,6 @@ B3SOIFDinstance *here;
     {    for (here = model->B3SOIFDinstances; here != NULL;
 	      here = here->B3SOIFDnextInstance)
 	 {
-            
-	    if (here->B3SOIFDowner != ARCHme)
-                    continue;
 
 #ifdef STEPDEBUG
             debugtemp = *timeStep;

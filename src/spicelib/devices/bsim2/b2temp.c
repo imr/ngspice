@@ -52,7 +52,6 @@ B2temp(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->B2instances; here != NULL ;
                 here=here->B2nextInstance) {
-	    if (here->B2owner != ARCHme) continue;
 
 	    pSizeDependParamKnot = model->pSizeDependParamKnot;
 	    Size_Not_Found = 1;

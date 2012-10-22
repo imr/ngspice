@@ -21,7 +21,6 @@ typedef struct sCPLinstance {
                                              * current model*/
 
     IFuid CPLname;  /* pointer to character string naming this instance */
-    int CPLowner;   /* number of owner process */
     int CPLstate;   /* not used */
 
 	int *CPLposNodes;

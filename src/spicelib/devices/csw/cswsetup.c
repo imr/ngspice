@@ -43,13 +43,11 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* loop through all the instances of the model */
         for (here = model->CSWinstances; here != NULL ;
                 here=here->CSWnextInstance) {
-	    if (here->CSWowner != ARCHme) goto matrixpointers;
 
             /* Default Value Processing for Switch Instance */
             here->CSWstate = *states;
             *states += CSW_NUM_STATES;
 
-matrixpointers:
             here->CSWcontBranch = CKTfndBranch(ckt,here->CSWcontName);
             if(here->CSWcontBranch == 0) {
                 IFuid namarray[2];

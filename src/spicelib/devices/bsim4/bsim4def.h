@@ -33,7 +33,6 @@ typedef struct sBSIM4instance
     struct sBSIM4model *BSIM4modPtr;
     struct sBSIM4instance *BSIM4nextInstance;
     IFuid BSIM4name;
-    int BSIM4owner;      /* Number of owner process */
     int BSIM4states;     /* index into state table for this device */
     int BSIM4dNode;
     int BSIM4gNodeExt;

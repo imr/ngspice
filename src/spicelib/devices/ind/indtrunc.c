@@ -20,7 +20,6 @@ INDtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     for( ; model!= NULL; model = model->INDnextModel) {
         for(here = model->INDinstances ; here != NULL ;
                 here = here->INDnextInstance) {
-	    if (here->INDowner != ARCHme) continue;
 
             CKTterr(here->INDflux,ckt,timeStep);
         }

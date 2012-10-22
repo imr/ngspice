@@ -58,7 +58,6 @@ BJTdisto(int mode, GENmodel *genmodel, CKTcircuit *ckt)
 	    /* loop through all the instances of the model */
 	    for (here = model->BJTinstances; here != NULL ;
 		 here=here->BJTnextInstance) {
-		if (here->BJTowner != ARCHme) continue;
 
 		/* getting Volterra kernels */
 		/* until further notice x = vbe, y = vbc, z= vbed */

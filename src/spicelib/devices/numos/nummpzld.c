@@ -38,7 +38,6 @@ NUMOSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     for (inst = model->NUMOSinstances; inst != NULL;
 	inst = inst->NUMOSnextInstance) {
-      if (inst->NUMOSowner != ARCHme) continue;
 
       startTime = SPfrontEnd->IFseconds();
       /* Get Temp.-Dep. Global Parameters */

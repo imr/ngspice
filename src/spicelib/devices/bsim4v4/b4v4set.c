@@ -1627,10 +1627,8 @@ JOB   *job;
         for (here = model->BSIM4v4instances; here != NULL ;
              here=here->BSIM4v4nextInstance)
         {   /* allocate a chunk of the state vector */
-          if ( here->BSIM4v4owner == ARCHme) {
             here->BSIM4v4states = *states;
             *states += BSIM4v4numStates;
-          }
             /* perform the parameter defaulting */
             if (!here->BSIM4v4lGiven)
                 here->BSIM4v4l = 5.0e-6;

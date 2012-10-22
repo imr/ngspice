@@ -68,8 +68,6 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
     for(here = model->HFET2instances; here != NULL; 
         here=here->HFET2nextInstance) {
 
-      if (here->HFET2owner != ARCHme) continue;
-
       gdpr = model->HFET2drainConduct;
       gspr = model->HFET2sourceConduct;
       vcrit = VCRIT;

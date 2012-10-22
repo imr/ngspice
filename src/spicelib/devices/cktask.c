@@ -19,10 +19,6 @@ CKTask(CKTcircuit *ckt, GENinstance *instance, int which, IFvalue *value, IFvalu
 {
     int type = instance->GENmodPtr->GENmodType;
     int error;
-#ifdef PARALLEL_ARCH
-    long msgtype, length;
-    long from = instance->GENowner;
-#endif /* PARALLEL_ARCH */
     SPICEdev **DEVices;
 
     DEVices = devices();
@@ -32,14 +28,6 @@ CKTask(CKTcircuit *ckt, GENinstance *instance, int which, IFvalue *value, IFvalu
     } else {
         error = E_BADPARM;
     }
-#ifdef PARALLEL_ARCH
-    msgtype = MT_ASK;
-    length = sizeof(IFvalue);
-    BRDCST_(&msgtype, (char *)value,  &length, &from);
-    msgtype++;
-    length = sizeof(int);
-    BRDCST_(&msgtype, (char *)&error, &length, &from);
-#endif /* PARALLEL_ARCH */
     if (error && ft_stricterror) {
         fprintf(stderr, "\nError: %s\n", errMsg);
         controlled_exit(EXIT_BAD);

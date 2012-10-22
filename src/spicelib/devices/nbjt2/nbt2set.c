@@ -167,7 +167,6 @@ NBJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /* loop through all the instances of the model */
     for (inst = model->NBJT2instances; inst != NULL;
 	inst = inst->NBJT2nextInstance) {
-      if (inst->NBJT2owner != ARCHme) goto matrixpointers;
 
       startTime = SPfrontEnd->IFseconds();
 
@@ -249,7 +248,6 @@ if ((inst->ptr = SMPmakeElt(matrix, inst->first, inst->second)) == NULL){\
   return(E_NOMEM);\
 }
 
-matrixpointers:
       TSTALLOC(NBJT2colColPtr, NBJT2colNode, NBJT2colNode)
       TSTALLOC(NBJT2colBasePtr, NBJT2colNode, NBJT2baseNode)
       TSTALLOC(NBJT2colEmitPtr, NBJT2colNode, NBJT2emitNode)

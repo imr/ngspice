@@ -31,8 +31,6 @@
  *  SMPcProdDiag
  *  LoadGmin
  *  SMPfindElt
- *  SMPcombine
- *  SMPcCombine
  */
 
 /*
@@ -558,26 +556,3 @@ SMPzeroRow(SMPmatrix *eMatrix, int Row)
 
     return spError( Matrix );
 }
-
-#ifdef PARALLEL_ARCH
-/*
- * SMPcombine()
- */
-void
-SMPcombine(SMPmatrix *Matrix, double RHS[], double Spare[])
-{
-    spSetReal( Matrix );
-    spCombine( Matrix, RHS, Spare, NULL, NULL );
-}
-
-/*
- * SMPcCombine()
- */
-void
-SMPcCombine(SMPmatrix *Matrix, double RHS[], double Spare[],
-	    double iRHS[], double iSpare[])
-{
-    spSetComplex( Matrix );
-    spCombine( Matrix, RHS, Spare, iRHS, iSpare );
-}
-#endif /* PARALLEL_ARCH */

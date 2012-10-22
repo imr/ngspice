@@ -48,7 +48,6 @@ LTRAaccept(CKTcircuit *ckt, GENmodel *inModel)
     /* loop through all the instances of the model */
     for (here = model->LTRAinstances; here != NULL;
 	here = here->LTRAnextInstance) {
-      if (here->LTRAowner != ARCHme) continue; /* XXX */
 
       if (ckt->CKTmode & MODEINITTRAN) {
 	here->LTRAinstListSize = 10;

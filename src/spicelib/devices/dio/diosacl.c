@@ -77,7 +77,6 @@ DIOsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->DIOinstances; here != NULL ;
                 here=here->DIOnextInstance) {
-	    if (here->DIOowner != ARCHme) continue;
 
             /* save the unperturbed values in the state vector */
             for(i=0; i <= 4; i++) {

@@ -95,10 +95,6 @@ CKTconvTest (CKTcircuit * ckt)
 {
   int i;
   int error = OK;
-#ifdef PARALLEL_ARCH
-  int ibuf[2];
-  long type = MT_CONV, length = 2;
-#endif /* PARALLEL_ARCH */
 
   for (i = 0; i < DEVmaxnum; i++)
     {
@@ -106,10 +102,6 @@ CKTconvTest (CKTcircuit * ckt)
 	{
 	  error = DEVices[i]->DEVconvTest (ckt->CKThead[i], ckt);
 	}
-#ifdef PARALLEL_ARCH
-      if (error || ckt->CKTnoncon)
-	goto combine;
-#else
       if (error)
 	return (error);
       if (ckt->CKTnoncon)
@@ -118,23 +110,8 @@ CKTconvTest (CKTcircuit * ckt)
 	   * DEVices[i]->DEVpublic.name); */
 	  return (OK);
 	}
-#endif /* PARALLEL_ARCH */
     }
-#ifdef PARALLEL_ARCH
-combine:
-  /* See if any of the DEVconvTest functions bailed. If not, proceed. */
-  ibuf[0] = error;
-  ibuf[1] = ckt->CKTnoncon;
-  IGOP_ (&type, ibuf, &length, "+");
-  ckt->CKTnoncon = ibuf[1];
-  if (ibuf[0] != error)
-    {
-      error = E_MULTIERR;
-    }
-  return (error);
-#else
   return (OK);
-#endif /* PARALLEL_ARCH */
 }
 
 

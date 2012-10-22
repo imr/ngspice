@@ -25,7 +25,6 @@ B1getic(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model ; model = model->B1nextModel) {
         for(here = model->B1instances; here ; here = here->B1nextInstance) {
-	    if (here->B1owner != ARCHme) continue;
         
             if(!here->B1icVBSGiven) {
                 here->B1icVBS = 

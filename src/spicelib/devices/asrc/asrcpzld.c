@@ -34,9 +34,6 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         for (here = model->ASRCinstances; here != NULL ;
                 here=here->ASRCnextInstance)
         {
-            if (here->ASRCowner != ARCHme)
-                continue;
-
 	    difference = (here->ASRCtemp + here->ASRCdtemp) - 300.15;
 	    factor = 1.0 + (here->ASRCtc1)*difference + 
 		    (here->ASRCtc2)*difference*difference;

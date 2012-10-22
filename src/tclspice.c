@@ -2562,10 +2562,6 @@ Spice_Init(Tcl_Interp *interp)
         /* initilise Tk display */
         DevInit();
 
-        /*parrallel arch support, or not */
-        ARCHme = 0;
-        ARCHsize = 1;
-
         /* init the mutex */
 #ifdef HAVE_LIBPTHREAD
         pthread_mutex_init(&triggerMutex, NULL);

@@ -31,7 +31,6 @@ CCVSsPrint(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->CCVSinstances; here != NULL ;
                 here=here->CCVSnextInstance) {
-	    if (here->CCVSowner != ARCHme) continue;
             
             printf("    Instance name:%s\n",here->CCVSname);
             printf("      Positive, negative nodes: %s, %s\n",

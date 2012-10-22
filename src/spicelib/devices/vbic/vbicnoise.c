@@ -63,8 +63,6 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
         for (inst=model->VBICinstances; inst != NULL;
                 inst=inst->VBICnextInstance) {
 
-            if (inst->VBICowner != ARCHme) continue;
-
             switch (operation) {
 
             case N_OPEN:

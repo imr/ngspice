@@ -29,8 +29,6 @@ CAPpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     for( ; model != NULL; model = model->CAPnextModel) {
         for( here = model->CAPinstances;here != NULL; 
                 here = here->CAPnextInstance) {
-	    
-	    if (here->CAPowner != ARCHme) continue;
     
             val = here->CAPcapac;
             m = here->CAPm;

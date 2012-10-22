@@ -23,7 +23,6 @@ MUTacLoad(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = model->MUTnextModel) {
         for( here = model->MUTinstances;here != NULL; 
                 here = here->MUTnextInstance) {
-	    if (here->MUTowner != ARCHme) continue;
     
             val = ckt->CKTomega * here->MUTfactor;
             *(here->MUTbr1br2 +1) -= val;

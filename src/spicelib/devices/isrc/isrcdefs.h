@@ -23,7 +23,6 @@ typedef struct sISRCinstance {
     struct sISRCinstance *ISRCnextInstance;  /* pointer to next instance of
                                               *current model */
     IFuid ISRCname; /* pointer to character string naming this instance */
-    int ISRCowner;  /* number of owner process */
     int ISRCstate;  /* not used */
 
     int ISRCnegNode;    /* number of negative node of source */

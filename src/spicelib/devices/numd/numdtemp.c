@@ -53,7 +53,6 @@ NUMDtemp(GENmodel *inModel, CKTcircuit *ckt)
 
     for (inst = model->NUMDinstances; inst != NULL;
 	inst = inst->NUMDnextInstance) {
-      if (inst->NUMDowner != ARCHme) continue;
 
       startTime = SPfrontEnd->IFseconds();
 

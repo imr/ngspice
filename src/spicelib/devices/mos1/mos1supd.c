@@ -56,7 +56,6 @@ MOS1sUpdate(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->MOS1instances; here != NULL ;
                 here=here->MOS1nextInstance) {
-	    if (here->MOS1owner != ARCHme) continue;
 
 #ifdef SENSDEBUG
             printf("senupdate instance name %s\n",here->MOS1name);

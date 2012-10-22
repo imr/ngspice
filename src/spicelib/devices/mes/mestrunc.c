@@ -20,7 +20,6 @@ MEStrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
     for( ; model != NULL; model = model->MESnextModel) {
         for(here=model->MESinstances;here!=NULL;here = here->MESnextInstance){
-	    if (here->MESowner != ARCHme) continue;
 
             CKTterr(here->MESqgs,ckt,timeStep);
             CKTterr(here->MESqgd,ckt,timeStep);

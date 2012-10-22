@@ -50,10 +50,6 @@ for( ; model != NULL; model = model->MOS3nextModel ) {
   /* loop through all the instances of the model */
   for (here = model->MOS3instances; here != NULL ;
 	here=here->MOS3nextInstance) {
-    if (here->MOS3owner != ARCHme) continue;
-        
-
-
 
     /* loading starts here */
 

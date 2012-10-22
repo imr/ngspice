@@ -136,10 +136,6 @@ int i;
     {    for (here = model->B3SOIPDinstances; here != NULL;
 	      here = here->B3SOIPDnextInstance)
 	 {    
-	 
-	      if (here->B3SOIPDowner != ARCHme)
-	              continue;
-		      
 	      pParam = here->pParam;
 	      switch (operation)
 	      {  case N_OPEN:

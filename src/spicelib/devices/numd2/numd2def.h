@@ -27,7 +27,6 @@ typedef struct sNUMD2instance {
 						 * of current model */
   IFuid NUMD2name;		/* pointer to character string naming this
 				 * instance */
-  int NUMD2owner;		/* number of owner process */
   int NUMD2state;		/* pointer to start of state vector for diode */
 
 #define NUMD2voltage NUMD2state

@@ -47,7 +47,6 @@ DIOsUpdate(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->DIOinstances; here != NULL ;
                 here=here->DIOnextInstance) {
-	    if (here->DIOowner != ARCHme) continue;
 
 #ifdef SENSDEBUG
             printf("capd = %.7e \n",here->DIOcap);

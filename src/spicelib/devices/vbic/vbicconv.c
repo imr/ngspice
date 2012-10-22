@@ -48,8 +48,6 @@ VBICconvTest(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = model->VBICnextModel) {
         for(here=model->VBICinstances;here!=NULL;here = here->VBICnextInstance) {
 
-            if (here->VBICowner != ARCHme) continue;
-
             Vbei=model->VBICtype*(
                 *(ckt->CKTrhsOld+here->VBICbaseBINode)-
                 *(ckt->CKTrhsOld+here->VBICemitEINode));

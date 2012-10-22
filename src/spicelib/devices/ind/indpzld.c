@@ -26,8 +26,6 @@ INDpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     for( ; model != NULL; model = model->INDnextModel) {
         for( here = model->INDinstances;here != NULL; 
                 here = here->INDnextInstance) {
-	    
-	    if (here->INDowner != ARCHme) continue;
     
             val = here->INDinduct;
 	    

@@ -48,7 +48,6 @@ INDsUpdate(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->INDinstances; here != NULL ;
                 here=here->INDnextInstance) {
-	    if (here->INDowner != ARCHme) continue;
 
             for(iparmno = 1;iparmno<=info->SENparms;iparmno++){
 

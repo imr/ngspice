@@ -52,7 +52,6 @@ $(module)noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Nd
   {
     for (inst=model-&gt;$(module)instances; inst != NULL; inst=inst->$(module)nextInstance)
     {
-      if (inst-&gt;$(module)owner != ARCHme) continue;
       switch (operation)
       {
         case N_OPEN:

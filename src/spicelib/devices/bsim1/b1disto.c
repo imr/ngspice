@@ -51,7 +51,6 @@ for( ; model != NULL; model = model->B1nextModel ) {
   /* loop through all the instances of the model */
   for (here = model->B1instances; here != NULL ;
       here=here->B1nextInstance) {
-    if (here->B1owner != ARCHme) continue;
 
     /* loading starts here */
 

@@ -35,7 +35,6 @@ B4SOImodel *oldmod = NULL;
          prev = (B4SOIinstance *)NULL;
          for (here = mod->B4SOIinstances; here; here = here->B4SOInextInstance)
          {    
-              if (here->B4SOIowner != ARCHme) continue;
               if(prev) FREE(prev);
               prev = here;
          }

@@ -25,7 +25,6 @@ MOS9getic(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model ; model = model->MOS9nextModel) {
         for(here = model->MOS9instances; here ; here = here->MOS9nextInstance) {
-            if (here->MOS9owner != ARCHme) continue;
 
             if(!here->MOS9icVBSGiven) {
                 here->MOS9icVBS = 

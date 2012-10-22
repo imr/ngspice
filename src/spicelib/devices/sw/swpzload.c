@@ -34,7 +34,6 @@ SWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         /* loop through all the instances of the model */
         for (here = model->SWinstances; here != NULL ;
                 here=here->SWnextInstance) {
-	    if (here->SWowner != ARCHme) continue;
 
             /* In AC analysis, just propogate the state... */
 

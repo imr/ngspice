@@ -27,7 +27,6 @@ typedef struct sNBJT2instance {
 						 * of current model */
   IFuid NBJT2name;		/* pointer to character string naming this
 				 * instance */
-  int NBJT2owner;		/* number of owner process */
   int NBJT2state;		/* pointer to start of state vector for bjt */
 
   /* entries in the state vector for bjt: */

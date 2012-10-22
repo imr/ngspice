@@ -27,7 +27,6 @@ MUTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     for( ; model != NULL; model = model->MUTnextModel) {
         for( here = model->MUTinstances;here != NULL; 
                 here = here->MUTnextInstance) {
-	    if (here->MUTowner != ARCHme) continue;
     
             val =  here->MUTfactor;
             *(here->MUTbr1br2 ) -= val * s->real;

@@ -24,7 +24,6 @@ typedef struct sBSIM1instance {
     struct sBSIM1instance *B1nextInstance;  /* pointer to next instance of 
                                               *current model*/
     IFuid B1name; /* pointer to character string naming this instance */
-    int B1owner;  /* number of owner process */
     int B1states;     /* index into state table for this device */
 
     int B1dNode;  /* number of the gate node of the mosfet */

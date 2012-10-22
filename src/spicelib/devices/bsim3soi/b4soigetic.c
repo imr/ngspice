@@ -33,7 +33,6 @@ B4SOIinstance *here;
     for (; model ; model = model->B4SOInextModel) 
     {    for (here = model->B4SOIinstances; here; here = here->B4SOInextInstance)
          {    
-              if (here->B4SOIowner != ARCHme) continue;
               if(!here->B4SOIicVBSGiven) 
               {  here->B4SOIicVBS = *(ckt->CKTrhs + here->B4SOIbNode) 
                                   - *(ckt->CKTrhs + here->B4SOIsNode);

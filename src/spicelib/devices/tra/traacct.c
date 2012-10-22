@@ -30,7 +30,6 @@ TRAaccept(CKTcircuit *ckt, GENmodel *inModel)
         /* loop through all the instances of the model */
         for (here = model->TRAinstances; here != NULL ;
                 here=here->TRAnextInstance) {
-	    if (here->TRAowner != ARCHme) continue; /* XXX */
             
             if( (ckt->CKTtime - here->TRAtd) > *(here->TRAdelays+6)) {
                 /* shift! */

@@ -21,8 +21,6 @@ ASRCtemp(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->ASRCinstances; here != NULL ;
                 here=here->ASRCnextInstance) {
 
-          if (here->ASRCowner != ARCHme) continue;
-
             /* Default Value Processing for Source Instance */
 
           if(!here->ASRCtempGiven) {

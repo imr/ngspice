@@ -145,8 +145,6 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
 {    for (here = model->BSIM3v32instances; here != NULL; 
           here = here->BSIM3v32nextInstance)
      {    
-	  if (here->BSIM3v32owner != ARCHme)
-	    continue;
      	  Check = 1;
           ByPass = 0;
 	  pParam = here->pParam;

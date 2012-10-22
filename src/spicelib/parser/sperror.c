@@ -104,11 +104,6 @@ const char *SPerror(int type)
     case E_NOF2SRC:
 	msg = "no F2 source for IM disto analysis";
 	break;
-#ifdef PARALLEL_ARCH
-    case E_MULTIERR:
-	msg = "Multiple errors detected by parallel machine";
-	break;
-#endif /* PARALLEL_ARCH */
     case OK:
 	return (NULL);
     default:

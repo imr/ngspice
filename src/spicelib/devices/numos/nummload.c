@@ -93,7 +93,6 @@ NUMOSload(GENmodel *inModel, CKTcircuit *ckt)
     /* loop through all the instances of the model */
     for (inst = model->NUMOSinstances; inst != NULL;
 	inst = inst->NUMOSnextInstance) {
-      if (inst->NUMOSowner != ARCHme) continue;
 
       pDevice = inst->NUMOSpDevice;
 

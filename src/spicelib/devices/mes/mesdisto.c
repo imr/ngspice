@@ -45,7 +45,6 @@ for( ; model != NULL; model = model->MESnextModel ) {
   /* loop through all the instances of the model */
   for (here = model->MESinstances; here != NULL ;
       here=here->MESnextInstance) {
-    if (here->MESowner != ARCHme) continue;
 
     /* loading starts here */
 

@@ -22,7 +22,6 @@ typedef struct sDIOinstance {
     struct sDIOinstance *DIOnextInstance;   /* pointer to next instance of 
                                              * current model*/
     IFuid DIOname;      /* pointer to character string naming this instance */
-    int DIOowner;  /* number of owner process */
     int DIOstate;   /* pointer to start of state vector for diode */
     int DIOposNode;     /* number of positive node of diode */
     int DIOnegNode;     /* number of negative node of diode */

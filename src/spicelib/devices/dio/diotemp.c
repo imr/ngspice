@@ -82,8 +82,6 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
             double fact2,pbfact,arg,egfet,gmanew,gmaSWnew;
             /* loop through all the instances */
 
-            if (here->DIOowner != ARCHme) continue;
-
             if(!here->DIOdtempGiven) here->DIOdtemp = 0.0;
 
             if(!here->DIOtempGiven)

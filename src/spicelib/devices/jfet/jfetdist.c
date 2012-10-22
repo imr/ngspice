@@ -45,7 +45,6 @@ for( ; model != NULL; model = model->JFETnextModel ) {
   /* loop through all the instances of the model */
   for (here = model->JFETinstances; here != NULL ;
  		here=here->JFETnextInstance) {
-    if (here->JFETowner != ARCHme) continue;
 
     /* loading starts here */
 

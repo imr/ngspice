@@ -31,7 +31,6 @@ MUTsSetup(SENstruct *info, GENmodel *inModel)
         /* loop through all the instances of the model */
         for (here = model->MUTinstances; here != NULL ;
                 here=here->MUTnextInstance) {
-	    if (here->MUTowner != ARCHme) continue;
 
             if(here->MUTsenParmNo){
                 here->MUTsenParmNo = ++(info->SENparms);
@@ -43,4 +42,3 @@ MUTsSetup(SENstruct *info, GENmodel *inModel)
     return(OK);
 }
 #endif /* MUTUAL */
-

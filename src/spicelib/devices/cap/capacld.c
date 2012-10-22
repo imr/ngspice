@@ -25,8 +25,6 @@ CAPacLoad(GENmodel *inModel, CKTcircuit *ckt)
         for( here = model->CAPinstances;here != NULL; 
                 here = here->CAPnextInstance) {
 	    
-	    if (here->CAPowner != ARCHme) continue;
-	    
 	    m = here -> CAPm;
     
             val = ckt->CKTomega * here->CAPcapac;

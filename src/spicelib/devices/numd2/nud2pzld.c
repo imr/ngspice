@@ -39,7 +39,6 @@ NUMD2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     for (inst = model->NUMD2instances; inst != NULL;
 	inst = inst->NUMD2nextInstance) {
-      if (inst->NUMD2owner != ARCHme) continue;
 
       startTime = SPfrontEnd->IFseconds();
       /* Get Temp.-Dep. Global Parameters */

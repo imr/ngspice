@@ -22,7 +22,6 @@ typedef struct sMOS1instance {
     struct sMOS1instance *MOS1nextInstance;  /* pointer to next instance of
                                               *current model*/
     IFuid MOS1name; /* pointer to character string naming this instance */
-    int MOS1owner;  /* number of owner process */
     int MOS1states;     /* index into state table for this device */
 
     int MOS1dNode;  /* number of the gate node of the mosfet */

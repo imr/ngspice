@@ -43,7 +43,6 @@ SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* loop through all the instances of the model */
         for (here = model->SWinstances; here != NULL ;
                 here=here->SWnextInstance) {
-	    if (here->SWowner != ARCHme) goto matrixpointers;
 
             here->SWstate = *states;
             *states += SW_NUM_STATES;
@@ -57,7 +56,6 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 }
 
-matrixpointers:
             TSTALLOC(SWposPosptr, SWposNode, SWposNode)
             TSTALLOC(SWposNegptr, SWposNode, SWnegNode)
             TSTALLOC(SWnegPosptr, SWnegNode, SWposNode)

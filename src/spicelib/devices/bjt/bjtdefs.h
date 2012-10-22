@@ -21,7 +21,6 @@ typedef struct sBJTinstance {
     struct sBJTinstance *BJTnextInstance;   /* pointer to next instance of
                                              * current model*/
     IFuid BJTname;  /* pointer to character string naming this instance */
-    int BJTowner;  /* number of owner process */
     int BJTstate; /* pointer to start of state vector for bjt */
 
     int BJTcolNode; /* number of collector node of bjt */

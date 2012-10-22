@@ -32,7 +32,6 @@ JFETacLoad(GENmodel *inModel, CKTcircuit *ckt)
         
         for( here = model->JFETinstances; here != NULL; 
                 here = here->JFETnextInstance) {
-	    if (here->JFETowner != ARCHme) continue;
 
             gdpr=model->JFETdrainConduct * here->JFETarea;
             gspr=model->JFETsourceConduct * here->JFETarea;

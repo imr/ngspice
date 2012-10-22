@@ -39,7 +39,6 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
 
     for (model=firstModel; model != NULL; model=model->SWnextModel) {
 	for (inst=model->SWinstances; inst != NULL; inst=inst->SWnextInstance) {
-	    if (inst->SWowner != ARCHme) continue;
 
 	    switch (operation) {
 

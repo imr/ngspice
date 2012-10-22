@@ -16,7 +16,6 @@ typedef struct sTXLinstance {
                                              * current model*/
 
     IFuid TXLname;  /* pointer to character string naming this instance */
-    int TXLowner;  /* number of owner process */
     
         int dimensions; /* may we not need this but ... */
 	int TXLposNode;

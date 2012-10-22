@@ -5,7 +5,6 @@ noinst_LTLIBRARIES = libsparse.la
 libsparse_la_SOURCES = \
 	spalloc.c	\
 	spbuild.c	\
-	spcombin.c	\
 	spconfig.h	\
 	spdefs.h	\
 	spextra.c	\

@@ -163,7 +163,6 @@ B4SOItemp(
         for (here = model->B4SOIinstances; here != NULL;
                 here = here->B4SOInextInstance)
         {
-            if (here->B4SOIowner != ARCHme) continue;
             here->B4SOIrbodyext = here->B4SOIbodySquares *
                 model->B4SOIrbsh;
             pSizeDependParamKnot = model->pSizeDependParamKnot;

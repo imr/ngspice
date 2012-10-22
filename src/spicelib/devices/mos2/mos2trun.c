@@ -20,7 +20,6 @@ MOS2trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
     for( ; model != NULL; model = model->MOS2nextModel) {
         for(here=model->MOS2instances;here!=NULL;here = here->MOS2nextInstance){
-	    if (here->MOS2owner != ARCHme) continue;
         
             CKTterr(here->MOS2qgs,ckt,timeStep);
             CKTterr(here->MOS2qgd,ckt,timeStep);

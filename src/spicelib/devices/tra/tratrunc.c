@@ -28,7 +28,6 @@ TRAtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
         /* loop through all the instances of the model */
         for (here = model->TRAinstances; here != NULL ;
                 here=here->TRAnextInstance) {
-	    if (here->TRAowner != ARCHme) continue;
 
             v1 = ( *(ckt->CKTrhsOld + here->TRAposNode2)
                 - *(ckt->CKTrhsOld + here->TRAnegNode2))

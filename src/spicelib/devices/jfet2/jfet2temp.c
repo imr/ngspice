@@ -80,8 +80,6 @@ JFET2temp(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->JFET2instances; here != NULL ;
                 here=here->JFET2nextInstance) {
-            
-            if (here->JFET2owner != ARCHme) continue;
 
             if(!(here->JFET2dtempGiven)) {
                 here->JFET2dtemp = 0.0;

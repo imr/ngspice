@@ -36,7 +36,6 @@ NBJTtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     model->NBJTpInfo->lteCoeff = computeLTECoeff(model->NBJTpInfo);
     for (inst = model->NBJTinstances; inst != NULL;
 	inst = inst->NBJTnextInstance) {
-      if (inst->NBJTowner != ARCHme) continue;
 
       startTime = SPfrontEnd->IFseconds();
       deltaNew = ONEtrunc(inst->NBJTpDevice, model->NBJTpInfo,

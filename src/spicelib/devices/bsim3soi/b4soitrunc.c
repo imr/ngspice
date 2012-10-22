@@ -38,7 +38,6 @@ register B4SOIinstance *here;
     {    for (here = model->B4SOIinstances; here != NULL;
               here = here->B4SOInextInstance)
          {
-            if (here->B4SOIowner != ARCHme) continue;
 #ifdef STEPDEBUG
             debugtemp = *timeStep;
 #endif /* STEPDEBUG */

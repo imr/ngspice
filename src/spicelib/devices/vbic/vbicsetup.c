@@ -375,9 +375,6 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             CKTnode *tmpNode;
             IFuid tmpName;
 
-	    if (here->VBICowner != ARCHme)
-		goto matrixpointers;
-
             if(!here->VBICareaGiven) {
                 here->VBICarea = 1.0;
             }
@@ -394,7 +391,6 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 *states += 8 * (ckt->CKTsenInfo->SENparms);
             }
 
-matrixpointers:
             if(model->VBICextCollResist == 0) {
                 here->VBICcollCXNode = here->VBICcollNode;
             } else if(here->VBICcollCXNode == 0) {

@@ -20,7 +20,6 @@ typedef struct sCCVSinstance {
     struct sCCVSinstance *CCVSnextInstance;     /* pointer to next instance of 
                                                  *current model*/
     IFuid CCVSname; /* pointer to character string naming this instance */
-    int CCVSowner;  /* number of owner process */
     int CCVSstate; /* not used */
 
     int CCVSposNode;    /* number of positive node of source */

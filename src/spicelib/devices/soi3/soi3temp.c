@@ -310,10 +310,6 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
             double arg;     /* 1 - fc */
             double sarg;    /* (1-fc) ^^ (-mj) */
 
-            
-	    if (here->SOI3owner != ARCHme)
-                    continue;
-
             /* perform the parameter defaulting */
             
 	    /* JimB - if device temperature not given, OR, if self-heating switched */

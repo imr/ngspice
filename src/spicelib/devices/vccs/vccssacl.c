@@ -33,7 +33,6 @@ VCCSsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->VCCSinstances; here != NULL ;
                 here=here->VCCSnextInstance) {
-	    if (here->VCCSowner != ARCHme) continue;
 
 	    if (here->VCCSsenParmNo){
                 vc = *(ckt->CKTrhsOld + here->VCCScontPosNode)

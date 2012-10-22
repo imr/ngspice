@@ -24,7 +24,6 @@ typedef struct sRESinstance {
                                              * current model*/
 
     IFuid RESname;      /* pointer to character string naming this instance */
-    int RESowner;       /* number of owner process */
     int RESstate;       /* not used but needed for sructure consistency */
     int RESposNode;     /* number of positive node of resistor */
     int RESnegNode;     /* number of negative node of resistor */

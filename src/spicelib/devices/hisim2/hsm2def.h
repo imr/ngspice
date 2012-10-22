@@ -104,7 +104,6 @@ typedef struct sHSM2instance {
   struct sHSM2instance *HSM2nextInstance;  /* pointer to next instance of 
                                               current model*/
   IFuid HSM2name; /* pointer to character string naming this instance */
-  int HSM2owner;  /* number of owner process (ngspice specific !) */
   int HSM2states; /* index into state table for this device */
 
   int HSM2dNode;      /* number of the drain node of the mosfet */

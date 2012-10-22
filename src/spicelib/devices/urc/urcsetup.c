@@ -163,7 +163,6 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 ptemp.rValue = r;
                 error = CKTpName("resistance",&ptemp,ckt,rtype,nameelt,&fast);
                 if(error) return(error);
-		fast->GENowner = here->URCowner;
 
                 nameelt = TMALLOC(char, 10);
                 (void)sprintf(nameelt,"rhi%d",i);
@@ -180,7 +179,6 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 ptemp.rValue = r;
                 error = CKTpName("resistance",&ptemp,ckt,rtype,nameelt,&fast);
                 if(error) return(error);
-		fast->GENowner = here->URCowner;
 
                 if(model->URCisPerLGiven) {
                     /* use diode */
@@ -201,7 +199,6 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                     ptemp.rValue = prop;
                     error = CKTpName("area",&ptemp,ckt,dtype,nameelt,&fast);
                     if(error) return(error);
-		    fast->GENowner = here->URCowner;
                 } else {
                     /* use simple capacitor */
                     nameelt = TMALLOC(char, 10);
@@ -221,7 +218,6 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                     error = CKTpName("capacitance",&ptemp,ckt,ctype,nameelt,
                             &fast);
                     if(error) return(error);
-		    fast->GENowner = here->URCowner;
                 }
 
                 if(i!=here->URClumps){
@@ -244,7 +240,6 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                         ptemp.rValue = prop;
                         error=CKTpName("area",&ptemp,ckt,dtype,nameelt,&fast);
                         if(error) return(error);
-			fast->GENowner = here->URCowner;
                     } else {
                         /* use simple capacitor */
                         nameelt = TMALLOC(char, 10);
@@ -265,7 +260,6 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                         error =CKTpName("capacitance",&ptemp,ckt,ctype,nameelt,
                                 &fast);
                         if(error) return(error);
-			fast->GENowner = here->URCowner;
                     }
                 }
                 prop *= p;

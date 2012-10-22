@@ -345,7 +345,6 @@ extern int CKTop(CKTcircuit *, long, long, int);
 extern int CKTpModName(char *, IFvalue *, CKTcircuit *, int , IFuid , GENmodel **);
 extern int CKTpName(char *, IFvalue *, CKTcircuit *, int , char *, GENinstance **);
 extern int CKTparam(CKTcircuit *, GENinstance *, int , IFvalue *, IFvalue *);
-extern int CKTpartition(register CKTcircuit *ckt);
 extern int CKTpzFindZeros(CKTcircuit *, PZtrial **, int *);
 extern int CKTpzLoad(CKTcircuit *, SPcomplex *);
 extern int CKTpzSetup(CKTcircuit *, int);

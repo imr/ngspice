@@ -35,8 +35,6 @@ CAPsPrint(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->CAPinstances; here != NULL ;
                 here=here->CAPnextInstance) {
-	    if (here->CAPowner != ARCHme) continue;
-                
 
             printf("    Instance name:%s\n",here->CAPname);
             printf("      Positive, negative nodes: %s, %s\n",

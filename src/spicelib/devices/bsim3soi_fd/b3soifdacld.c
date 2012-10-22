@@ -55,10 +55,6 @@ double m;
       for (here = model->B3SOIFDinstances; here!= NULL;
               here = here->B3SOIFDnextInstance) 
 	 {    
-              
-	      if (here->B3SOIFDowner != ARCHme)
-		      continue;
-	      
 	      selfheat = (model->B3SOIFDshMod == 1) && (here->B3SOIFDrth0 != 0.0);
               if (here->B3SOIFDdebugMod > 2)
               {

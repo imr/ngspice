@@ -25,7 +25,6 @@ typedef struct sVSRCinstance {
     struct sVSRCinstance *VSRCnextInstance;  /* pointer to next instance of
                                               *current model */
     IFuid VSRCname; /* pointer to character string naming this instance */
-    int VSRCowner;  /* number of owner process */
     int VSRCstate;  /* not used */
 
     int VSRCposNode;    /* number of positive node of source */

@@ -33,20 +33,17 @@ typedef struct {
     double STATdecompTime;      /* total time spent in LU decomposition */
     double STATsolveTime;       /* total time spent in F-B subst. */
     double STATreorderTime;     /* total time spent reordering */
-    double STATcombineTime;     /* total time spent combining */
     double STATsyncTime;        /* total time spent sync'ing after load */
     double STATtranTime;        /* transient analysis time */
     double STATtranDecompTime;  /* time spent in transient LU decomposition */
     double STATtranSolveTime;   /* time spent in transient F-B subst. */
     double STATtranLoadTime;    /* time spent in transient device loading */
     double STATtranTruncTime;   /* time spent calculating LTE and new step */
-    double STATtranCombTime;    /* time spent in transient combining */
     double STATtranSyncTime;    /* time spent in transient sync'ing */
     double STATacTime;          /* AC analysis time */
     double STATacDecompTime;    /* time spent in AC LU decomposition */
     double STATacSolveTime;     /* time spent in AC F-B subst. */
     double STATacLoadTime;      /* time spent in AC device loading */
-    double STATacCombTime;      /* time spent in AC combining */
     double STATacSyncTime;      /* time spent in transient sync'ing */
     STATdevList *STATdevNum;    /* PN: Number of instances and models for each device */
 } STATistics;
@@ -106,9 +103,6 @@ typedef struct {
 #define OPT_ORIGNZ 52
 #define OPT_FILLNZ 53
 #define OPT_TOTALNZ 54
-#define OPT_COMBTIME 55
-#define OPT_TRANCOMB 56
-#define OPT_ACCOMB 57
 #define OPT_SYNCTIME 58
 #define OPT_TRANSYNC 59
 #define OPT_ACSYNC 60

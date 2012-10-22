@@ -91,7 +91,6 @@ BJTsLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->BJTinstances; here != NULL ;
                 here=here->BJTnextInstance) {
-	    if (here->BJTowner != ARCHme) continue;
 
 #ifdef SENSDEBUG
             printf("base = %d , baseprm = %d ,col = %d, colprm = %d\n",

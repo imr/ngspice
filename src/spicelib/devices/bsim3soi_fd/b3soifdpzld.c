@@ -37,10 +37,6 @@ double m;
     {    for (here = model->B3SOIFDinstances; here!= NULL;
               here = here->B3SOIFDnextInstance) 
 	 {
-            
-            if (here->B3SOIFDowner != ARCHme)
-                    continue;
-
 	    if (here->B3SOIFDmode >= 0) 
 	    {   Gm = here->B3SOIFDgm;
 		Gmbs = here->B3SOIFDgmbs;

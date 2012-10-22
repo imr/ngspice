@@ -65,7 +65,6 @@ JFET2load(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->JFET2instances; here != NULL ;
                 here=here->JFET2nextInstance) {
-             if (here->JFET2owner != ARCHme) continue;
             /*
              *  dc model parameters 
              */

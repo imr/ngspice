@@ -105,10 +105,6 @@ char *ft_rawfile = "rawspice.raw";
 /* Frontend and circuit options */
 IFsimulator *ft_sim = NULL;
 
-/* (Virtual) Machine architecture parameters */
-int ARCHme;
-int ARCHsize;
-
 char *errRtn;     /* name of the routine declaring error */
 char *errMsg;     /* descriptive message about what went wrong */
 char *cp_program; /* program name 'ngspice' */
@@ -494,13 +490,6 @@ static void
 sp_shutdown(int exitval)
 {
     destroy_ivars();
-#ifdef PARALLEL_ARCH
-     {
-    Error("Fatal error in SPICE", -1);
-    } else {
-    PEND_();
-    }
-#endif /* PARALLEL_ARCH */
 #ifdef HAS_WINDOWS
     if (exitval == EXIT_BAD)
         winmessage("Fatal error in SPICE");
@@ -833,19 +822,6 @@ main(int argc, char **argv)
         application_name = argv[0];
 #endif
 
-#ifdef PARALLEL_ARCH
-    PBEGIN_(argc, argv);
-    ARCHme = NODEID_();
-    ARCHsize = NNODES_();
-    SETDBG_(&debug_flag);
-    fprintf( stderr, "On-line: process %d of %d total.\n", ARCHme, ARCHsize );
-    evlog(EVKEY_ENABLE, EVKEY_EVENT, "On-line", EVKEY_DUMP, EVKEY_DISABLE,
-      EVKEY_LAST_ARG);
-#else
-    ARCHme = 0;
-    ARCHsize = 1;
-#endif
-
     ivars(argv[0]);
 
     cp_in  = stdin;
@@ -950,11 +926,7 @@ main(int argc, char **argv)
               if (optarg) {
                   /* turn off buffering for stdout */
                   setbuf(stdout, NULL);
-#ifdef PARALLEL_ARCH
-                  sprintf (log_file, "%s%03d", optarg, ARCHme);
-#else
                   sprintf (log_file, "%s", optarg);
-#endif
                   orflag = TRUE;
               }
               break;

@@ -23,7 +23,6 @@ typedef struct sVCVSinstance {
     struct sVCVSinstance *VCVSnextInstance;  /* pointer to next instance of 
                                               *current model*/
     IFuid VCVSname; /* pointer to character string naming this instance */
-    int VCVSowner;  /* number of owner process */
     int VCVSstates; /* state info */
 
     int VCVSposNode;    /* number of positive node of source */

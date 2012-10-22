@@ -39,9 +39,6 @@ SOI3getic(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model ; model = model->SOI3nextModel) {
         for(here = model->SOI3instances; here ; here = here->SOI3nextInstance) {
-            
-	    if (here->SOI3owner != ARCHme)
-                    continue;
 	    
 	    if(!here->SOI3icVBSGiven) {
                 here->SOI3icVBS =

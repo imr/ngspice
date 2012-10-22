@@ -222,7 +222,6 @@ LTRAload(GENmodel *inModel, CKTcircuit *ckt)
     /* loop through all the instances of the model */
     for (here = model->LTRAinstances; here != NULL;
 	here = here->LTRAnextInstance) {
-      if (here->LTRAowner != ARCHme) continue;
 
       if ((ckt->CKTmode & MODEDC) ||
 	  (model->LTRAspecialCase == LTRA_MOD_RG)) {

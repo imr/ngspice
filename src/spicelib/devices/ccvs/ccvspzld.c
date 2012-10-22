@@ -33,7 +33,6 @@ CCVSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         /* loop through all the instances of the model */
         for (here = model->CCVSinstances; here != NULL ;
                 here=here->CCVSnextInstance) {
-	    if (here->CCVSowner != ARCHme) continue;
             
             *(here->CCVSposIbrptr) += 1.0 ;
             *(here->CCVSnegIbrptr) -= 1.0 ;

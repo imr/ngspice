@@ -2176,11 +2176,9 @@ BSIM4instance **InstArray;
         for (here = model->BSIM4instances; here != NULL ;
              here=here->BSIM4nextInstance) 
         {
-            if (here->BSIM4owner == ARCHme) {
               /* allocate a chunk of the state vector */
               here->BSIM4states = *states;
               *states += BSIM4numStates;
-            }
             /* perform the parameter defaulting */
             if (!here->BSIM4lGiven)
                 here->BSIM4l = 5.0e-6;

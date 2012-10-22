@@ -864,12 +864,9 @@ BSIM3instance **InstArray;
         for (here = model->BSIM3instances; here != NULL ;
              here=here->BSIM3nextInstance)
         {
-            if (here->BSIM3owner == ARCHme)
-            {
               /* allocate a chunk of the state vector */
               here->BSIM3states = *states;
               *states += BSIM3numStates;
-            }
             /* perform the parameter defaulting */
             if (!here->BSIM3drainAreaGiven)
                 here->BSIM3drainArea = 0.0;

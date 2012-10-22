@@ -1051,13 +1051,9 @@ IFuid tmpName;
         for (here = model->B3SOIPDinstances; here != NULL ;
              here=here->B3SOIPDnextInstance) 
 	{   
-	
-            if (here->B3SOIPDowner == ARCHme)
-            {
                 /* allocate a chunk of the state vector */
                 here->B3SOIPDstates = *states;
                 *states += B3SOIPDnumStates;
-            }
 	    
             /* perform the parameter defaulting */
             if (!here->B3SOIPDdrainAreaGiven)

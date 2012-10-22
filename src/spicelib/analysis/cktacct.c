@@ -85,9 +85,6 @@ CKTacct(CKTcircuit *ckt, JOB *anal, int which, IFvalue *val)
     case OPT_SYNCTIME:
         val->rValue = ckt->CKTstat->STATsyncTime;
         break;
-    case OPT_COMBTIME:
-        val->rValue = ckt->CKTstat->STATcombineTime;
-        break;
     case OPT_REORDTIME:
         val->rValue = ckt->CKTstat->STATreorderTime;
         break;
@@ -103,9 +100,6 @@ CKTacct(CKTcircuit *ckt, JOB *anal, int which, IFvalue *val)
     case OPT_TRANSYNC:
         val->rValue = ckt->CKTstat->STATtranSyncTime;
         break;
-    case OPT_TRANCOMB:
-        val->rValue = ckt->CKTstat->STATtranCombTime;
-        break;
     case OPT_TRANDECOMP:
         val->rValue = ckt->CKTstat->STATtranDecompTime;
         break;
@@ -120,9 +114,6 @@ CKTacct(CKTcircuit *ckt, JOB *anal, int which, IFvalue *val)
         break;
     case OPT_ACSYNC:
         val->rValue = ckt->CKTstat->STATacSyncTime;
-        break;
-    case OPT_ACCOMB:
-        val->rValue = ckt->CKTstat->STATacCombTime;
         break;
     case OPT_ACDECOMP:
         val->rValue = ckt->CKTstat->STATacDecompTime;

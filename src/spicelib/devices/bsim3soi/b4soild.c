@@ -496,7 +496,6 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     {    for (here = model->B4SOIinstances; here != NULL;
             here = here->B4SOInextInstance)
          {    
-        if (here->B4SOIowner != ARCHme) continue;
 #endif        
         Check = 0;
         ByPass = 0;

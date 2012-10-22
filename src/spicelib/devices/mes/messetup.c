@@ -75,7 +75,6 @@ MESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* loop through all the instances of the model */
         for (here = model->MESinstances; here != NULL ;
                 here=here->MESnextInstance) {
-	    if (here->MESowner != ARCHme) goto matrixpointers;
             
             if(!here->MESareaGiven) {
                 here->MESarea = 1.0;
@@ -86,7 +85,6 @@ MESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->MESstate = *states;
             *states += MESnumStates;
 
-matrixpointers:
             if(model->MESsourceResist != 0) {
                 if(here->MESsourcePrimeNode == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MESname,"source");

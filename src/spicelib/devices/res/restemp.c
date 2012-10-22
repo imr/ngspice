@@ -42,8 +42,6 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
                 here=here->RESnextInstance) {
-	    
-	    if (here->RESowner != ARCHme) continue;
             
             /* Default Value Processing for Resistor Instance */
             

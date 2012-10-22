@@ -29,7 +29,6 @@ typedef struct sNDEVinstance {
 						 * of current model */
   IFuid NDEVname;		/* pointer to character string naming this
 				 * instance */
-  int NDEVowner;		/* number of owner process */
   int NDEVstate;		/* pointer to start of state vector for diode */
   int pin[7];                   /* max 7 terminals are allowed */
   int  term;                    /* the real number of terminals */

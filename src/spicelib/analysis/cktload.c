@@ -34,10 +34,6 @@ CKTload(CKTcircuit *ckt)
     double startTime;
     CKTnode *node;
     int error;
-#ifdef PARALLEL_ARCH
-    int ibuf[2];
-    long type = MT_LOAD, length = 2;
-#endif /* PARALLEL_ARCH */
 #ifdef STEPDEBUG
     int noncon;
 #endif /* STEPDEBUG */
@@ -74,11 +70,7 @@ CKTload(CKTcircuit *ckt)
                 noncon = ckt->CKTnoncon;
             }
 #endif /* STEPDEBUG */
-#ifdef PARALLEL_ARCH
-            if (error) goto combine;
-#else
             if (error) return(error);
-#endif /* PARALLEL_ARCH */
         }
     }
 
@@ -167,31 +159,8 @@ CKTload(CKTcircuit *ckt)
     /* SMPprint(ckt->CKTmatrix, stdout); if you want to debug, this is a
     good place to start ... */
 
-#ifdef PARALLEL_ARCH
-combine:
-    ckt->CKTstat->STATloadTime += SPfrontEnd->IFseconds() - startTime;
-    startTime = SPfrontEnd->IFseconds();
-    /* See if any of the DEVload functions bailed. If not, proceed. */
-    ibuf[0] = error;
-    ibuf[1] = ckt->CKTnoncon;
-    IGOP_(&type, ibuf, &length, "+");
-    ckt->CKTnoncon = ibuf[1];
-    ckt->CKTstat->STATsyncTime += SPfrontEnd->IFseconds() - startTime;
-    if (ibuf[0] == OK) {
-        startTime = SPfrontEnd->IFseconds();
-        SMPcombine(ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTrhsSpare);
-        ckt->CKTstat->STATcombineTime += SPfrontEnd->IFseconds() - startTime;
-        return(OK);
-    } else {
-        if (ibuf[0] != error) {
-            error = E_MULTIERR;
-        }
-        return(error);
-    }
-#else
     ckt->CKTstat->STATloadTime += SPfrontEnd->IFseconds()-startTime;
     return(OK);
-#endif /* PARALLEL_ARCH */
 }
 
 static int

@@ -92,7 +92,6 @@ NUMD2load(GENmodel *inModel, CKTcircuit *ckt)
     /* loop through all the instances of the model */
     for (inst = model->NUMD2instances; inst != NULL;
 	inst = inst->NUMD2nextInstance) {
-      if (inst->NUMD2owner != ARCHme) continue;
 
       pDevice = inst->NUMD2pDevice;
 

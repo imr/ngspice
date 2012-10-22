@@ -753,12 +753,9 @@ IFuid tmpName;
              here=here->BSIM3v0nextInstance) 
 	{   
 	
-           if (here->BSIM3v0owner == ARCHme)
-           {   
 	        /* allocate a chunk of the state vector */
                  here->BSIM3v0states = *states;
                  *states += BSIM3v0numStates;
-           }    
 	    
 	    /* perform the parameter defaulting */
 	    if (!here->BSIM3v0drainAreaGiven)

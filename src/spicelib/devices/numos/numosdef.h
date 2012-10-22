@@ -27,7 +27,6 @@ typedef struct sNUMOSinstance {
 						 * of current model */
   IFuid NUMOSname;		/* pointer to character string naming this
 				 * instance */
-  int NUMOSowner;		/* number of owner process */
   int NUMOSstate;		/* pointer to start of state vector for
 				 * mosfet */
 

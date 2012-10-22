@@ -56,7 +56,6 @@ B1acLoad(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = model->B1nextModel) {
         for(here = model->B1instances; here!= NULL;
                 here = here->B1nextInstance) {
-	    if (here->B1owner != ARCHme) continue;
         
             if (here->B1mode >= 0) {
                 xnrm=1;

@@ -37,10 +37,6 @@ SOI3trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     {
         for(here=model->SOI3instances;here!=NULL;here = here->SOI3nextInstance)
         {
-	
-	if (here->SOI3owner != ARCHme)
-                continue;
-
             CKTterr(here->SOI3qgf,ckt,timeStep);
             CKTterr(here->SOI3qd,ckt,timeStep);
             CKTterr(here->SOI3qs,ckt,timeStep);

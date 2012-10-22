@@ -23,7 +23,6 @@ typedef struct sVBICinstance {
     struct sVBICinstance *VBICnextInstance;   /* pointer to next instance of
                                                  current model*/
     IFuid VBICname;  /* pointer to character string naming this instance */
-    int VBICowner;   /* number of owner process */
     int VBICstate;   /* pointer to start of state vector for vbic */
 
     int VBICcollNode;   /* number of collector node of vbic */

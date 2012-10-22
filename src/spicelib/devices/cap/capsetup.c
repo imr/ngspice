@@ -78,7 +78,6 @@ CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* loop through all the instances of the model */
         for (here = model->CAPinstances; here != NULL ;
                 here=here->CAPnextInstance) {
-	    if (here->CAPowner != ARCHme) goto matrixpointers;
 
             /* Default Value Processing for Capacitor Instance */
             if (!here->CAPlengthGiven) {
@@ -97,7 +96,6 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 }
 
-matrixpointers:
             TSTALLOC(CAPposPosptr,CAPposNode,CAPposNode)
             TSTALLOC(CAPnegNegptr,CAPnegNode,CAPnegNode)
             TSTALLOC(CAPposNegptr,CAPposNode,CAPnegNode)

@@ -46,7 +46,6 @@ B2convTest(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->B2instances; here != NULL ;
                 here=here->B2nextInstance) {
-	    if (here->B2owner != ARCHme) continue;
 
             vbs = model->B2type * ( 
                 *(ckt->CKTrhsOld+here->B2bNode) -

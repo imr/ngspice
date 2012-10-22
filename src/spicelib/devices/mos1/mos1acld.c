@@ -36,7 +36,6 @@ MOS1acLoad(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = model->MOS1nextModel) {
         for(here = model->MOS1instances; here!= NULL;
                 here = here->MOS1nextInstance) {
-	    if (here->MOS1owner != ARCHme) continue;
         
             if (here->MOS1mode < 0) {
                 xnrm=0;

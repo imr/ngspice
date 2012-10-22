@@ -325,9 +325,6 @@ SOI3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->SOI3gMd = 0.0;
             here->SOI3gMdeltaT = 0.0;
             
-	    if (here->SOI3owner == ARCHme)
-	    {
-
 	       /* allocate a chunk of the state vector */
                here->SOI3states = *states;
                *states += SOI3numStates;
@@ -335,7 +332,6 @@ SOI3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                    *states += 10 * (ckt->CKTsenInfo->SENparms);
                }
 */
-            }
 				/****** Part 4 - check resistance values for internal nodes, ******/
             /****** to see which internal nodes need to be created.      ******/
 

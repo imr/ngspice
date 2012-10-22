@@ -108,7 +108,6 @@ next:
         /* loop through all the instances of the model */
         for (here = model->MOS9instances; here != NULL ;
                 here=here->MOS9nextInstance) {
-            if (here->MOS9owner != ARCHme) continue;
 
             vt = CONSTKoverQ * here->MOS9temp;
             Check=1;

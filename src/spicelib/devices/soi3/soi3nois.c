@@ -73,9 +73,6 @@ SOI3noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
     for (model=firstModel; model != NULL; model=model->SOI3nextModel) {
 	for (inst=model->SOI3instances; inst != NULL; inst=inst->SOI3nextInstance) {
 	    
-	     if (inst->SOI3owner != ARCHme)
-	             continue;
-	    
 	    switch (operation) {
 
 	    case N_OPEN:

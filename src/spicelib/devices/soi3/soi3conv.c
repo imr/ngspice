@@ -61,9 +61,6 @@ SOI3convTest(GENmodel *inModel, CKTcircuit *ckt)
         for(here = model->SOI3instances; here!= NULL;
                 here = here->SOI3nextInstance) {
 
-            if (here->SOI3owner != ARCHme)
-                    continue;
-
             vbs = model->SOI3type * (
                 *(ckt->CKTrhs+here->SOI3bNode) -
                 *(ckt->CKTrhs+here->SOI3sNodePrime));

@@ -24,7 +24,6 @@ MESgetic(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model ; model = model->MESnextModel) {
         for(here = model->MESinstances; here ; here = here->MESnextInstance) {
-	    if (here->MESowner != ARCHme) continue;
 
             if(!here->MESicVDSGiven) {
                 here->MESicVDS = 

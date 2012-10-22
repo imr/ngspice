@@ -22,7 +22,6 @@ typedef struct sLTRAinstance {
     struct sLTRAinstance *LTRAnextInstance;   /* pointer to next instance of 
                                              * current model*/
     IFuid LTRAname;      /* pointer to character string naming this instance */
-    int LTRAowner;  /* number of owner process */
     int LTRAstate;	 /* not used */
     int LTRAposNode1;    /* number of positive node of end 1 of t. line */
     int LTRAnegNode1;    /* number of negative node of end 1 of t. line */

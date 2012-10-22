@@ -22,7 +22,6 @@ typedef struct sMOS9instance {
     struct sMOS9instance *MOS9nextInstance;  /* pointer to next instance of 
                                               *current model*/
     IFuid MOS9name; /* pointer to character string naming this instance */
-    int MOS9owner;  /* number of owner process */
     int MOS9states;     /* index into state table for this device */
     int MOS9dNode;  /* number of the gate node of the mosfet */
     int MOS9gNode;  /* number of the gate node of the mosfet */

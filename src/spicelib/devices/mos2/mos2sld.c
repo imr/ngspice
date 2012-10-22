@@ -98,7 +98,6 @@ MOS2sLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->MOS2instances; here != NULL ;
                 here=here->MOS2nextInstance) {
-	    if (here->MOS2owner != ARCHme) continue;
 
 #ifdef SENSDEBUG
             printf("senload instance name %s\n",here->MOS2name);

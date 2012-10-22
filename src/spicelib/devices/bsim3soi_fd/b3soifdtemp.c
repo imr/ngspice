@@ -74,10 +74,6 @@ int Size_Not_Found;
          for (here = model->B3SOIFDinstances; here != NULL;
               here = here->B3SOIFDnextInstance) 
 	 {    
-
-              if (here->B3SOIFDowner != ARCHme)
-                      continue;
-	      
 	      here->B3SOIFDrbodyext = here->B3SOIFDbodySquares *
                                     model->B3SOIFDrbsh;
 	      pSizeDependParamKnot = model->pSizeDependParamKnot;

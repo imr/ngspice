@@ -24,7 +24,6 @@ CAPgetic(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model ; model = model->CAPnextModel) {
         for(here = model->CAPinstances; here ; here = here->CAPnextInstance) {
-	    if (here->CAPowner != ARCHme) continue;
                 
             if(!here->CAPicGiven) {
                 here->CAPinitCond = 

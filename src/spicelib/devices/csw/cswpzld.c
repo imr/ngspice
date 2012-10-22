@@ -35,7 +35,6 @@ CSWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         /* loop through all the instances of the model */
         for (here = model->CSWinstances; here != NULL ;
                 here=here->CSWnextInstance) {
-	    if (here->CSWowner != ARCHme) continue;
 
             current_state = (int)*(ckt->CKTstate0 + here->CSWstate);
 

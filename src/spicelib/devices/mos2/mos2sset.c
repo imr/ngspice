@@ -27,7 +27,6 @@ MOS2sSetup(SENstruct *info, GENmodel *inModel)
         /* loop through all the instances of the model */
         for (here = model->MOS2instances; here != NULL ;
                 here=here->MOS2nextInstance) {
-	    if (here->MOS2owner != ARCHme) continue;
 
             if(here->MOS2senParmNo){
                 if((here->MOS2sens_l)&&(here->MOS2sens_w)){

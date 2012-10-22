@@ -40,9 +40,6 @@ double m;
     {    for (here = model->BSIM3v32instances; here!= NULL;
               here = here->BSIM3v32nextInstance) 
 	 { 
-	      if (here->BSIM3v32owner != ARCHme)
-			continue;
-
 	      if (here->BSIM3v32mode >= 0) 
 	      {   Gm = here->BSIM3v32gm;
                   Gmbs = here->BSIM3v32gmbs;

@@ -48,8 +48,6 @@ B1temp(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->B1instances; here != NULL ;
                 here=here->B1nextInstance) {
 
-	    if (here->B1owner != ARCHme) continue;
-
             if( (EffChanLength = here->B1l - model->B1deltaL *1e-6 )<=0) { 
                 IFuid namarray[2];
                 namarray[0] = model->B1modName;

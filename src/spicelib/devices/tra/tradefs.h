@@ -22,7 +22,6 @@ typedef struct sTRAinstance {
     struct sTRAinstance *TRAnextInstance;   /* pointer to next instance of 
                                              * current model*/
     IFuid TRAname;      /* pointer to character string naming this instance */
-    int TRAowner;  /* number of owner process */
     int TRAstate;	/* not used */
     int TRAposNode1;    /* number of positive node of end 1 of t. line */
     int TRAnegNode1;    /* number of negative node of end 1 of t. line */

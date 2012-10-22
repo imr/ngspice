@@ -28,7 +28,6 @@ INDsSetup(SENstruct *info, GENmodel *inModel)
         /* loop through all the instances of the model */
         for (here = model->INDinstances; here != NULL ;
                 here=here->INDnextInstance) {
-	    if (here->INDowner != ARCHme) continue;
 
 	    if(here->INDsenParmNo){
                 here->INDsenParmNo = ++(info->SENparms);

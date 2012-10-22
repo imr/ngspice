@@ -23,7 +23,6 @@ typedef struct sSWinstance {
     struct sSWinstance *SWnextInstance;   /* pointer to next instance of 
                                              * current model*/
     IFuid SWname;  /* pointer to character string naming this instance */
-    int SWowner;  /* number of owner process */
     int SWstate;   /* pointer to start of switch's section of state vector */
 
     int SWposNode; /* number of positive node of switch */

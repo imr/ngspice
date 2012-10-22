@@ -31,7 +31,6 @@ DIOsSetup(SENstruct *info, GENmodel *inModel)
         /* loop through all the instances of the model */
         for (here = model->DIOinstances; here != NULL ;
                 here=here->DIOnextInstance) {
-	    if (here->DIOowner != ARCHme) continue;
 
             if(here->DIOsenParmNo){
                 here->DIOsenParmNo = ++(info->SENparms);

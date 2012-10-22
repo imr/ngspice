@@ -120,8 +120,6 @@ MOS6temp(GENmodel *inModel, CKTcircuit *ckt)
             double arg;     /* 1 - fc */
             double sarg;    /* (1-fc) ^^ (-mj) */
             double sargsw;  /* (1-fc) ^^ (-mjsw) */
-	    
-            if (here->MOS6owner != ARCHme) continue;
 
             /* perform the parameter defaulting */
             if(!here->MOS6dtempGiven) {

@@ -34,7 +34,6 @@ BJTsPrint(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->BJTinstances; here != NULL ;
                 here=here->BJTnextInstance) {
-	    if (here->BJTowner != ARCHme) continue;
 
             ckt->CKTsenInfo->SEN_parmVal[here->BJTsenParmNo] = here->BJTarea;
 
@@ -50,4 +49,3 @@ BJTsPrint(GENmodel *inModel, CKTcircuit *ckt)
         }
     }
 }
-

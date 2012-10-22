@@ -80,9 +80,6 @@ SOI3acLoad(GENmodel *inModel, CKTcircuit *ckt)
         for(here = model->SOI3instances; here!= NULL;
                 here = here->SOI3nextInstance)
         {
-        
-           if (here->SOI3owner != ARCHme)
-                   continue;
 	
             if (here->SOI3mode < 0)
             {

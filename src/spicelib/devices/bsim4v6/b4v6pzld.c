@@ -56,7 +56,6 @@ double m;
     {    for (here = model->BSIM4v6instances; here!= NULL;
               here = here->BSIM4v6nextInstance) 
          {
-              if (here->BSIM4v6owner != ARCHme) continue;
               pParam = here->pParam;
               capbd = here->BSIM4v6capbd;
               capbs = here->BSIM4v6capbs;

@@ -125,8 +125,6 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
       
       CKTnode *tmpNode;
       IFuid tmpName;
-
-      if (here->HFET2owner != ARCHme) goto matrixpointers;
    
       here->HFET2state = *states;
       *states += 13;
@@ -138,7 +136,6 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
       if(!here->HFET2mGiven)
         here->HFET2m = 1.0;
 
-matrixpointers:     
       if(model->HFET2rs != 0) {
           if(here->HFET2sourcePrimeNode == 0) {
         error = CKTmkVolt(ckt,&tmp,here->HFET2name,"source");

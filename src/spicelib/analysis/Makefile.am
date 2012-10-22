@@ -50,7 +50,6 @@ libckt_la_SOURCES = \
 		cktnum2n.c	\
 		cktop.c		\
 		cktparam.c	\
-		cktpartn.c	\
 		cktpmnam.c	\
 		cktpname.c	\
 		cktpzld.c	\

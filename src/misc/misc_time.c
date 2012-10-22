@@ -100,9 +100,6 @@ seconds(void)
     int ret;
     struct rusage ruse;
 
-#ifdef PARALLEL_ARCH
-    return (TCGTIME_());
-#else
     memset(&ruse, 0, sizeof(ruse));
     ret = getrusage(RUSAGE_SELF, &ruse);
     if(ret == -1) {
@@ -110,7 +107,6 @@ seconds(void)
       return 1;
     }
     return ((double)ruse.ru_utime.tv_sec + (double) ruse.ru_utime.tv_usec / 1000000.0);
-#endif /* PARALLEL_ARCH */
 #else
 #ifdef HAVE_TIMES
 

@@ -31,8 +31,6 @@ VBICgetic(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model ; model = model->VBICnextModel) {
         for(here = model->VBICinstances; here ; here = here->VBICnextInstance) {
 
-            if (here->VBICowner != ARCHme) continue;
-
             if(!here->VBICicVBEGiven) {
                 here->VBICicVBE = 
                         *(ckt->CKTrhs + here->VBICbaseNode) - 
