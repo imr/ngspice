@@ -25,7 +25,8 @@ BSIM4v5instance *here;
 
     for (; model ; model = model->BSIM4v5nextModel) 
     {    for (here = model->BSIM4v5instances; here; here = here->BSIM4v5nextInstance)
-	       {   if (here->BSIM4v5owner != ARCHme) continue;
+	      {
+	           if (here->BSIM4v5owner != ARCHme) continue;
 	           if (!here->BSIM4v5icVDSGiven) 
 	      {   here->BSIM4v5icVDS = *(ckt->CKTrhs + here->BSIM4v5dNode) 
 				   - *(ckt->CKTrhs + here->BSIM4v5sNode);

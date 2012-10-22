@@ -387,7 +387,8 @@ int Size_Not_Found, i;
          /* loop through all the instances of the model */
          for (here = model->BSIM4v6instances; here != NULL;
               here = here->BSIM4v6nextInstance) 
-	 {    if (here->BSIM4v6owner != ARCHme) continue;
+	 {
+	      if (here->BSIM4v6owner != ARCHme) continue;
 	      pSizeDependParamKnot = model->pSizeDependParamKnot;
 	      Size_Not_Found = 1;
 	      while ((pSizeDependParamKnot != NULL) && Size_Not_Found)

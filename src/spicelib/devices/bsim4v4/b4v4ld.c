@@ -208,7 +208,8 @@ ChargeComputationNeeded =
 for (; model != NULL; model = model->BSIM4v4nextModel)
 {    for (here = model->BSIM4v4instances; here != NULL;
           here = here->BSIM4v4nextInstance)
-     {    if (here->BSIM4v4owner != ARCHme) continue;
+     {
+          if (here->BSIM4v4owner != ARCHme) continue;
           Check = Check1 = Check2 = 1;
           ByPass = 0;
           pParam = here->pParam;
