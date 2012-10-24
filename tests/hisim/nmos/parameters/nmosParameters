@@ -3,7 +3,7 @@
 + COADOV = ( 1 )
 + COISUB = ( 0 )
 + COIIGS = ( 0 )
-+ COGIDL = ( 1 )
++ COGIDL = ( 0 )
 + COOVLP = ( 1 )
 + COFLICK = ( 0 )
 + COISTI = ( 0 )
