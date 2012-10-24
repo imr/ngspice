@@ -1,12 +1,12 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM_2.5.1 
+ VERSION : HiSIM 2.6.1 
  FILE : hsm2par.c
 
- date : 2011.04.07
+ date : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -14,7 +14,6 @@
 ***********************************************************************/
 
 #include "ngspice/ngspice.h"
-#include <stdio.h>
 #include "ngspice/ifsim.h"
 #include "hsm2def.h"
 #include "ngspice/sperror.h"
@@ -174,6 +173,20 @@ int HSM2param(
     here->HSM2_m = value->rValue;
     here->HSM2_m_Given = TRUE;
     break;
+
+/* WPE */
+  case HSM2_SCA:
+    here->HSM2_sca = value->rValue;
+	here->HSM2_sca_Given = TRUE;
+	break;
+  case HSM2_SCB:
+    here->HSM2_scb = value->rValue;
+	here->HSM2_scb_Given = TRUE;
+	break;
+  case HSM2_SCC:
+    here->HSM2_scc= value->rValue;
+	here->HSM2_scc_Given = TRUE;
+	break;
   default:
     return(E_BADPARM);
   }

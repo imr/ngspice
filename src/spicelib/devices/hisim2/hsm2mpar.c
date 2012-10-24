@@ -1,12 +1,12 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM_2.5.1 
+ VERSION : HiSIM 2.6.1 
  FILE : hsm2mpar.c
 
- date : 2011.04.07
+ date : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -14,7 +14,6 @@
 ***********************************************************************/
 
 #include "ngspice/ngspice.h"
-#include <stdio.h>
 #include "hsm2def.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/sperror.h"
@@ -1083,6 +1082,27 @@ int HSM2mParam(
     mod->HSM2_muepwp2 = value->rValue;
     mod->HSM2_muepwp2_Given = TRUE;
     break;
+/* WPE */
+  case HSM2_MOD_WEB:
+    mod->HSM2_web = value->rValue;
+    mod->HSM2_web_Given = TRUE;
+    break;
+  case HSM2_MOD_WEC:
+    mod->HSM2_wec = value->rValue;
+	mod->HSM2_wec_Given = TRUE;
+	break;
+  case HSM2_MOD_NSUBCWPE:
+    mod->HSM2_nsubcwpe = value->rValue;
+	mod->HSM2_nsubcwpe_Given = TRUE;
+	break;
+  case HSM2_MOD_NPEXTWPE:
+    mod->HSM2_npextwpe = value->rValue;
+	mod->HSM2_npextwpe_Given = TRUE;
+	break;
+  case HSM2_MOD_NSUBPWPE:
+    mod->HSM2_nsubpwpe = value->rValue;
+	mod->HSM2_nsubpwpe_Given = TRUE;
+	break;
   case  HSM2_MOD_VGSMIN:
     mod->HSM2_Vgsmin = value->rValue;
     mod->HSM2_Vgsmin_Given = TRUE;

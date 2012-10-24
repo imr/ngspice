@@ -1,12 +1,12 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM_2.5.1 
+ VERSION : HiSIM 2.6.1 
  FILE : hsm2def.h
 
- date : 2011.04.07
+ date : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -23,6 +23,37 @@
 #include "ngspice/noisedef.h"
 
 /* declarations for HiSIM2 MOSFETs */
+
+typedef struct sHSM2modelCGSParam {
+  double HSM2_tox ;
+  double HSM2_xld ;
+  double HSM2_xwd ;
+  double HSM2_xqy ;
+  double HSM2_xl ;
+  double HSM2_xw ;
+  double HSM2_saref ;
+  double HSM2_sbref ;
+  double HSM2_ll ;
+  double HSM2_lld ;
+  double HSM2_wl ;
+  double HSM2_wld ;
+  double HSM2_lp ;
+  double HSM2_tpoly ;
+  double HSM2_parl2 ;
+  double HSM2_qme1 ;
+  double HSM2_qme3 ;
+  double HSM2_cgbo ;
+  double HSM2_cj ;
+  double HSM2_cjsw ; 
+  double HSM2_cjswg ;
+  double HSM2_lpext ;
+  double HSM2_wl1 ;
+  double HSM2_rs ;
+  double HSM2_rd ;
+  double HSM2_gdld ;
+  double HSM2_muepwd ;
+  double HSM2_muepld ;
+} HSM2modelCGSParam ;
 
 /* binning parameters */
 typedef struct sHSM2binningParam {
@@ -98,6 +129,21 @@ typedef struct sHSM2binningParam {
   double HSM2_ibpc2 ;
 } HSM2binningParam ;
 
+/* unit-converted parameters for each instance */
+typedef struct sHSM2hereCGSParam {
+  double HSM2_l;
+  double HSM2_w;
+  double HSM2_ad;
+  double HSM2_as;
+  double HSM2_pd;
+  double HSM2_ps;
+  double HSM2_xgl;
+  double HSM2_xgw;
+  double HSM2_sa;
+  double HSM2_sb;
+  double HSM2_sd;
+} HSM2hereCGSParam ;
+
 /* information needed for each instance */
 typedef struct sHSM2instance {
   struct sHSM2model *HSM2modPtr;           /* pointer to model */
@@ -118,9 +164,10 @@ typedef struct sHSM2instance {
   int HSM2sbNode;
 
   double HSM2_noiflick; /* for 1/f noise calc. */
-  double HSM2_noithrml; /* for thrmal noise calc. */
+  double HSM2_noithrml; /* for thermal noise calc. */
   double HSM2_noiigate; /* for induced gate noise */
   double HSM2_noicross; /* for induced gate noise */
+  double HSM2_Qdrat;    /* for induced gate noise */
 
   /* instance */
   double HSM2_l;    /* the length of the channel region */
@@ -131,7 +178,7 @@ typedef struct sHSM2instance {
   double HSM2_ps;   /* perimeter of source junction [m] */
   double HSM2_nrd;  /* equivalent num of squares of drain [-] (unused) */
   double HSM2_nrs;  /* equivalent num of squares of source [-] (unused) */
-  double HSM2_temp; /* lattice temperature [K] */
+  double HSM2_temp; /* lattice temperature [C] */
   double HSM2_dtemp;
 
   double HSM2_weff; /* the effective width of the channel region */
@@ -158,6 +205,11 @@ typedef struct sHSM2instance {
   double HSM2_nsubcdfm; /* DFM */
   double HSM2_mphdfm; /* DFM */
   double HSM2_m;
+  
+/* WPE */
+  double HSM2_sca;  /* scc */
+  double HSM2_scb;  /* scb */
+  double HSM2_scc;  /* scc */
 
   int HSM2_called; /* flag to check the first call */
   /* previous values to evaluate initial guess */
@@ -376,8 +428,13 @@ typedef struct sHSM2instance {
   double HSM2_gdl0;
   double HSM2_muecb0;
   double HSM2_muecb1;
+  double HSM2_ktemp; /* lattice temperature [K] */
+  double HSM2_mueph1 ;
+  double HSM2_nsubp ;
+  double HSM2_nsubc ;
 
   HSM2binningParam pParam ; /* binning parameters */
+  HSM2hereCGSParam hereCGS ; /* unit-converted parameters */
   
   /* no use in SPICE3f5
       double HSM2drainSquares;       the length of the drain in squares
@@ -427,6 +484,10 @@ typedef struct sHSM2instance {
   unsigned HSM2_mphdfm_Given  :1; /* DFM */
   unsigned HSM2_m_Given  :1;
   
+ /* WPE */
+  unsigned HSM2_sca_Given :1;	/* sca */
+  unsigned HSM2_scb_Given :1;	/* scb */
+  unsigned HSM2_scc_Given :1;	/* scc */
   /* pointer to sparse matrix */
 
   double *HSM2GgPtr;   /* pointer to sparse matrix element at (gate node,gate node) */
@@ -812,6 +873,12 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   double HSM2_muephw2 ;
   double HSM2_muepwp2 ;
 
+  /* variables for WPE */
+  double HSM2_web ;
+  double HSM2_wec ;
+  double HSM2_nsubcwpe ;	
+  double HSM2_npextwpe ;	
+  double HSM2_nsubpwpe ;	
   /* for Ps0_min */
   double HSM2_Vgsmin ; 
   double HSM2_sc3Vbs ; /* SC3 clamping  */
@@ -1048,7 +1115,10 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   double HSM2_vcrit ;
   int HSM2_flg_qme ;
   double HSM2_qme12 ;
+  double HSM2_ktnom ;
   int HSM2_bypass_enable ;
+
+  HSM2modelCGSParam modelCGS ; /* unit-converted parameters */
 
   /* flag for model */
   unsigned HSM2_type_Given  :1;
@@ -1316,6 +1386,12 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   unsigned HSM2_muephw2_Given :1;
   unsigned HSM2_muepwp2_Given :1;
 
+  /* val set flag for WPE */
+  unsigned HSM2_web_Given :1;
+  unsigned HSM2_wec_Given :1;
+  unsigned HSM2_nsubcwpe_Given :1;
+  unsigned HSM2_npextwpe_Given :1;
+  unsigned HSM2_nsubpwpe_Given :1;
   unsigned HSM2_Vgsmin_Given :1;
   unsigned HSM2_sc3Vbs_Given :1;
   unsigned HSM2_byptol_Given :1;
@@ -1617,6 +1693,11 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 #define HSM2_MPHDFM      84
 #define HSM2_M           83
 
+/* val symbol for WPE */
+#define HSM2_SCA	 85	/* sca */
+#define HSM2_SCB	 86	/* scb */
+#define HSM2_SCC	 87	/* scc */
+
 /* model parameters */
 #define HSM2_MOD_VMAX      100
 #define HSM2_MOD_BGTMP1    101
@@ -1849,6 +1930,13 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 #define HSM2_MOD_NSUBCWP2  462
 #define HSM2_MOD_MUEPHW2   463
 #define HSM2_MOD_MUEPWP2   464
+
+/* val symbol for WPE */
+#define HSM2_MOD_WEB	    88
+#define HSM2_MOD_WEC	    89
+#define HSM2_MOD_NSUBCWPE  91
+#define HSM2_MOD_NPEXTWPE  41
+#define HSM2_MOD_NSUBPWPE  43
 
 #define HSM2_MOD_VGSMIN    466
 #define HSM2_MOD_SC3VBS    467

@@ -1,12 +1,12 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM_2.5.1 
+ VERSION : HiSIM 2.6.1 
  FILE : hsm2mask.c
 
- date : 2011.04.07
+ date : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -14,7 +14,6 @@
 ***********************************************************************/
 
 #include "ngspice/ngspice.h"
-#include <stdio.h>
 #include "ngspice/ifsim.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/devdefs.h"
@@ -822,6 +821,22 @@ int HSM2mAsk(
     return(OK);
   case  HSM2_MOD_MUEPWP2:
     value->rValue = model->HSM2_muepwp2;
+    return(OK);
+/* WPE */
+  case HSM2_MOD_WEB:
+    value->rValue = model->HSM2_web;
+	return(OK);
+  case HSM2_MOD_WEC:
+    value->rValue = model->HSM2_wec;
+    return(OK);
+  case HSM2_MOD_NSUBCWPE:
+    value->rValue = model->HSM2_nsubcwpe;
+    return(OK);
+  case HSM2_MOD_NPEXTWPE:
+    value->rValue = model->HSM2_npextwpe;
+    return(OK);
+  case HSM2_MOD_NSUBPWPE:
+    value->rValue = model->HSM2_nsubpwpe;
     return(OK);
   case  HSM2_MOD_VGSMIN:
     value->rValue = model->HSM2_Vgsmin;

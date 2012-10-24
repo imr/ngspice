@@ -1,12 +1,12 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM_2.5.1 
+ VERSION : HiSIM 2.6.1 
  FILE : hsm2pzld.c
 
- date : 2011.04.07
+ date : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -14,7 +14,6 @@
 ***********************************************************************/
 
 #include "ngspice/ngspice.h"
-#include <stdio.h>
 #include "ngspice/cktdefs.h"
 #include "ngspice/complex.h"
 #include "ngspice/sperror.h"
@@ -28,8 +27,8 @@ int HSM2pzLoad(
 {
   register HSM2model *model = (HSM2model*)inModel;
   register HSM2instance *here;
-  double xcggb, xcgdb, xcgsb, xcgbb, xcbgb, xcbdb, xcbsb, xcbbb;
-  double xcdgb, xcddb, xcdsb, xcdbb, xcsgb, xcsdb, xcssb, xcsbb;
+  double xcggb, xcgdb, xcgsb, xcgbb, xcbgb, xcbdb = 0.0, xcbsb, xcbbb;
+  double xcdgb, xcddb, xcdsb, xcdbb, xcsgb, xcsdb = 0.0, xcssb, xcsbb;
   double xcdbdb = 0.0, xcsbsb = 0.0;
   double gdpr, gspr, gds, gbd, gbs, capbd, capbs, FwdSum, RevSum, gm, gmbs;
   double gjbd, gjbs, grg;

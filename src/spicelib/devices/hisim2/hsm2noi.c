@@ -1,12 +1,12 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM_2.5.1 
+ VERSION : HiSIM 2.6.1 
  FILE : hsm2noi.c
 
- date : 2011.04.07
+ date : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -14,8 +14,6 @@
 ***********************************************************************/
 
 #include "ngspice/ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "hsm2def.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/iferrmsg.h"
@@ -32,6 +30,9 @@
  *    all of the MOSFET's is summed with the variable "OnDens".
  */
 
+extern void   NevalSrc();
+extern double Nintegrate();
+
 int HSM2noise (
      int mode, int operation,
      GENmodel *inModel,
@@ -39,8 +40,6 @@ int HSM2noise (
      register Ndata *data,
      double *OnDens)
 {
-  NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
-
   register HSM2model *model = (HSM2model *)inModel;
   register HSM2instance *here;
   char name[N_MXVLNTH];
@@ -51,6 +50,11 @@ int HSM2noise (
   register int i;
   double R = 0.0 , G = 0.0 ;
   double TTEMP = 0.0 ;
+ 
+  /* for induced gate noise calculation: */
+  double omega = ckt->CKTomega;
+  double sid, ci, sigrat, Qdrat;
+  double realXds, imagXds, realXgs, imagXgs ;
 
   /* define the names of the noise sources */
   static char * HSM2nNames[HSM2NSRCS] = {
@@ -76,42 +80,45 @@ int HSM2noise (
 	/* see if we have to to produce a summary report */
 	/* if so, name all the noise generators */
 	  
-	if (job->NStpsSm != 0) {
+	if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
 	  switch (mode) {
 	  case N_DENS:
 	    for ( i = 0; i < HSM2NSRCS; i++ ) { 
 	      (void) sprintf(name, "onoise.%s%s", 
-			     here->HSM2name, HSM2nNames[i]);
+			     (char *)here->HSM2name, HSM2nNames[i]);
 	      data->namelist = 
-		TREALLOC(IFuid, data->namelist, data->numPlots + 1);
+		(IFuid *) trealloc((char *) data->namelist,
+				   (data->numPlots + 1) * sizeof(IFuid));
 	      if (!data->namelist)
 		return(E_NOMEM);
-	      SPfrontEnd->IFnewUid
+	      (*(SPfrontEnd->IFnewUid)) 
 		(ckt, &(data->namelist[data->numPlots++]),
-		 NULL, name, UID_OTHER, NULL);
+		 (IFuid) NULL, name, UID_OTHER, NULL);
 	    }
 	    break;
 	  case INT_NOIZ:
 	    for ( i = 0; i < HSM2NSRCS; i++ ) {
 	      (void) sprintf(name, "onoise_total.%s%s", 
-			     here->HSM2name, HSM2nNames[i]);
+			     (char *)here->HSM2name, HSM2nNames[i]);
 	      data->namelist = 
-		TREALLOC(IFuid, data->namelist, data->numPlots + 1);
+		(IFuid *) trealloc((char *) data->namelist,
+				   (data->numPlots + 1) * sizeof(IFuid));
 	      if (!data->namelist)
 		return(E_NOMEM);
-	      SPfrontEnd->IFnewUid
+	      (*(SPfrontEnd->IFnewUid)) 
 		(ckt, &(data->namelist[data->numPlots++]),
-		 NULL, name, UID_OTHER, NULL);
+		 (IFuid) NULL, name, UID_OTHER, NULL);
 	      
 	      (void) sprintf(name, "inoise_total.%s%s", 
-			     here->HSM2name, HSM2nNames[i]);
+			     (char *)here->HSM2name, HSM2nNames[i]);
 	      data->namelist = 
-		TREALLOC(IFuid, data->namelist, data->numPlots + 1);
+		(IFuid *) trealloc((char *) data->namelist,
+				   (data->numPlots + 1) * sizeof(IFuid));
 	      if (!data->namelist)
 		return(E_NOMEM);
-	      SPfrontEnd->IFnewUid
+	      (*(SPfrontEnd->IFnewUid)) 
 		(ckt, &(data->namelist[data->numPlots++]),
-		 NULL, name, UID_OTHER, NULL);
+		 (IFuid) NULL, name, UID_OTHER, NULL);
 	    }
 	    break;
 	  }
@@ -123,7 +130,7 @@ int HSM2noise (
 
 	  /* temperature */
 	  TTEMP = ckt->CKTtemp ;
-	  if ( here->HSM2_temp_Given ) TTEMP = here->HSM2_temp ;
+	  if ( here->HSM2_temp_Given ) TTEMP = here->HSM2_ktemp ;
 	  if ( here->HSM2_dtemp_Given ) {
 	    TTEMP = TTEMP + here->HSM2_dtemp ;
 	  }
@@ -215,11 +222,19 @@ int HSM2noise (
 	  switch ( model->HSM2_noise ) {
 	  case 1:
 	    /* HiSIM model */
-	    NevalSrc(&noizDens[HSM2IGNOIZ], (double*) NULL,
-		     ckt, N_GAIN, 
-		     here->HSM2dNodePrime, here->HSM2sNodePrime, 
-		     (double) 0.0);
-	    noizDens[HSM2IGNOIZ] *= here->HSM2_noiigate * here->HSM2_noicross * here->HSM2_noicross * data->freq * data->freq;
+            sid = 4.0 * CONSTboltz * TTEMP * here->HSM2_noithrml ;
+            ci  = here->HSM2_noicross ;
+            sigrat = (sid > 0.0 && here->HSM2_noiigate > 0.0) ? sqrt(here->HSM2_noiigate/sid) : 0.0 ;
+            Qdrat  = here->HSM2_Qdrat ;
+
+            realXds = *(ckt->CKTrhs +here->HSM2dNodePrime) - *(ckt->CKTrhs +here->HSM2sNodePrime);
+            imagXds = *(ckt->CKTirhs+here->HSM2dNodePrime) - *(ckt->CKTirhs+here->HSM2sNodePrime);
+            realXgs = *(ckt->CKTrhs +here->HSM2gNodePrime) - *(ckt->CKTrhs +here->HSM2sNodePrime);
+            imagXgs = *(ckt->CKTirhs+here->HSM2gNodePrime) - *(ckt->CKTirhs+here->HSM2sNodePrime);
+
+            noizDens[HSM2IGNOIZ] = 2.0 * omega * ci * sigrat * sid * ( realXgs*imagXds - realXds*imagXgs ) 
+                                  + omega*omega * sigrat*sigrat * sid * ( (realXgs-Qdrat*realXds) * (realXgs-Qdrat*realXds)
+                                                                         +(imagXgs-Qdrat*imagXds) * (imagXgs-Qdrat*imagXds) ) ;
 	    lnNdens[HSM2IGNOIZ] = log(MAX(noizDens[HSM2IGNOIZ], N_MINLOG));
 	    break;
 	  }
@@ -247,7 +262,7 @@ int HSM2noise (
 	    /* clear out our integration variables
 	       if it's the first pass
 	    */
-	    if (data->freq == job->NstartFreq) {
+	    if (data->freq == ((NOISEAN*) ckt->CKTcurJob)->NstartFreq) {
 	      for (i = 0; i < HSM2NSRCS; i++) {
 		here->HSM2nVar[OUTNOIZ][i] = 0.0;
 		here->HSM2nVar[INNOIZ][i] = 0.0;
@@ -271,7 +286,7 @@ int HSM2noise (
 		here->HSM2nVar[LNLSTDENS][i] = lnNdens[i];
 		data->outNoiz += tempOnoise;
 		data->inNoise += tempInoise;
-		if ( job->NStpsSm != 0 ) {
+		if ( ((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0 ) {
 		  here->HSM2nVar[OUTNOIZ][i] += tempOnoise;
 		  here->HSM2nVar[OUTNOIZ][HSM2TOTNOIZ] += tempOnoise;
 		  here->HSM2nVar[INNOIZ][i] += tempInoise;
@@ -289,7 +304,7 @@ int HSM2noise (
 	  break;
 	case INT_NOIZ:
 	  /* already calculated, just output */
-	  if ( job->NStpsSm != 0 ) {
+	  if ( ((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0 ) {
 	    for ( i = 0; i < HSM2NSRCS; i++ ) {
 	      data->outpVector[data->outNumber++] = here->HSM2nVar[OUTNOIZ][i];
 	      data->outpVector[data->outNumber++] = here->HSM2nVar[INNOIZ][i];

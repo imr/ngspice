@@ -1,12 +1,12 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM_2.5.1 
+ VERSION : HiSIM 2.6.1 
  FILE : hsm2.c
 
- date : 2011.04.07
+ date : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -14,7 +14,6 @@
 ***********************************************************************/
 
 #include "ngspice/ngspice.h"
-#include <stdio.h>
 #include "ngspice/devdefs.h"
 #include "hsm2def.h"
 #include "ngspice/suffix.h"
@@ -50,7 +49,12 @@ IFparm HSM2pTable[] = { /* parameters */
  IOP("nsubcdfm", HSM2_NSUBCDFM, IF_REAL, "constant part of Nsub for DFM [1/cm^3]"),
  IOP("mphdfm", HSM2_MPHDFM, IF_REAL, "NSUBCDFM dependence of phonon scattering for DFM"),
  IOP("m", HSM2_M, IF_REAL, "Multiplication factor [-]"),
- /* Output Physical Values: */
+/* WPE */
+ IOP("sca", HSM2_SCA, IF_REAL, "WPE sca"),
+ IOP("scb", HSM2_SCB, IF_REAL, "WPE scb"),
+ IOP("scc", HSM2_SCC, IF_REAL, "WPE scc"),
+
+	/* Output Physical Values: */
  OP ( "ids",   HSM2_CD,    IF_REAL   , "Ids"),  /* Drain-Source current */
  OP ( "isub",  HSM2_ISUB,  IF_REAL   , "Isub"),  /* Substrate current */
  OP ( "igidl", HSM2_IGIDL, IF_REAL   , "Igidl"), /* Gate-Induced Drain Leakage current */
@@ -359,7 +363,13 @@ IFparm HSM2mPTable[] = { /* model parameters */
   IOP("nsubcwp2", HSM2_MOD_NSUBCWP2, IF_REAL, ""),
   IOP("muephw2", HSM2_MOD_MUEPHW2, IF_REAL, ""),
   IOP("muepwp2", HSM2_MOD_MUEPWP2, IF_REAL, ""),
-
+  
+/* WPE */
+  IOP("web", HSM2_MOD_WEB, IF_REAL, "Description for the model parameter WPE web"),
+  IOP("wec", HSM2_MOD_WEC, IF_REAL, "Description for the model parameter WPE wec"),
+  IOP("nsubcwpe" , HSM2_MOD_NSUBCWPE, IF_REAL, "Description for the model parameter WPE nsubcwpe"),
+  IOP("npextwpe" , HSM2_MOD_NPEXTWPE, IF_REAL, "Description for the model parameter WPE npextwpe"),
+  IOP("nsubpwpe" , HSM2_MOD_NSUBPWPE, IF_REAL, "Description for the model parameter WPE nsubpwpe"),
   IOP("vgsmin", HSM2_MOD_VGSMIN, IF_REAL, "minimal/maximal expected Vgs (NMOS/PMOS) [V]"),
   IOP("sc3vbs", HSM2_MOD_SC3VBS, IF_REAL, "Vbs value for clamping sc3 [V]"),
   IOP("byptol", HSM2_MOD_BYPTOL, IF_REAL, "BYP_TOL_FACTOR for bypass control"),

@@ -1,12 +1,12 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM_2.5.1 
+ VERSION : HiSIM 2.6.1 
  FILE : hsm2set.c
 
- date : 2011.04.07
+ date : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -14,7 +14,6 @@
 ***********************************************************************/
 
 #include "ngspice/ngspice.h"
-#include <stdio.h>
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
 #include "hsm2def.h"
@@ -49,13 +48,13 @@ int HSM2setup(
     model->HSM2_noise = 1; /* allways noise is set to be 1 */
 
     if ( !model->HSM2_version_Given) {
-        model->HSM2_version = 251; /* default 251 */
-	printf("           251 is selected for VERSION. (default) \n");
+        model->HSM2_version = 261; /* default 261 */
+	printf("           261 is selected for VERSION. (default) \n");
     } else {
-      if (model->HSM2_version != 251) {
-	model->HSM2_version = 251; /* default 251 */
-	printf("           251 is only available for VERSION. \n");
-	printf("           251 is selected for VERSION. (default) \n");
+      if (model->HSM2_version != 261) {
+	model->HSM2_version = 261; /* default 261 */
+	printf("           261 is only available for VERSION. \n");
+	printf("           261 is selected for VERSION. (default) \n");
       } else {
 	printf("           %d is selected for VERSION \n", (int)model->HSM2_version);
       }
@@ -357,6 +356,12 @@ int HSM2setup(
     if ( !model->HSM2_nsubcwp2_Given ) model->HSM2_nsubcwp2 = 1.0 ;
     if ( !model->HSM2_muephw2_Given ) model->HSM2_muephw2 = 0.0 ;
     if ( !model->HSM2_muepwp2_Given ) model->HSM2_muepwp2 = 1.0 ;
+    /* WPE set default Model parameter value */
+    if ( !model->HSM2_web_Given ) model->HSM2_web = 0.0 ;
+    if ( !model->HSM2_wec_Given ) model->HSM2_wec = 0.0 ;
+    if ( !model->HSM2_nsubcwpe_Given ) model->HSM2_nsubcwpe = 0.0 ; 
+    if ( !model->HSM2_npextwpe_Given ) model->HSM2_npextwpe = 0.0 ; 
+    if ( !model->HSM2_nsubpwpe_Given ) model->HSM2_nsubpwpe = 0.0 ; 
     if ( !model->HSM2_Vgsmin_Given ) model->HSM2_Vgsmin = -5.0 * model->HSM2_type ;
     if ( !model->HSM2_sc3Vbs_Given ) model->HSM2_sc3Vbs =  0.0 ;
     if ( !model->HSM2_byptol_Given ) model->HSM2_byptol =  0.0 ;
@@ -611,8 +616,8 @@ int HSM2setup(
       if ( !here->HSM2_as_Given     ) here->HSM2_as     = 0.0 ;
       if ( !here->HSM2_pd_Given     ) here->HSM2_pd     = 0.0 ;
       if ( !here->HSM2_ps_Given     ) here->HSM2_ps     = 0.0 ;
-      if ( !here->HSM2_nrd_Given    ) here->HSM2_nrd    = 1.0 ;
-      if ( !here->HSM2_nrs_Given    ) here->HSM2_nrs    = 1.0 ;
+      if ( !here->HSM2_nrd_Given    ) here->HSM2_nrd    = 0.0 ;
+      if ( !here->HSM2_nrs_Given    ) here->HSM2_nrs    = 0.0 ;
       if ( !here->HSM2_ngcon_Given  ) here->HSM2_ngcon  = 1.0 ;
       if ( !here->HSM2_xgw_Given    ) here->HSM2_xgw    = 0e0 ;
       if ( !here->HSM2_xgl_Given    ) here->HSM2_xgl    = 0e0 ;
@@ -649,34 +654,42 @@ int HSM2setup(
       if ( !here->HSM2_mphdfm_Given ) here->HSM2_mphdfm = model->HSM2_mphdfm ;
       if ( !here->HSM2_m_Given      ) here->HSM2_m      = 1.0 ;
 
-
-
+      /* WPE */
+      if ( !here->HSM2_sca_Given ) here->HSM2_sca = 0.0 ; /* default value */
+      if ( !here->HSM2_scb_Given ) here->HSM2_scb = 0.0 ; /* default value */
+      if ( !here->HSM2_scc_Given ) here->HSM2_scc = 0.0 ; /* default value */
 
       /* process drain series resistance */
       if ((model->HSM2_corsrd < 0 && 
-	   (model->HSM2_rsh > 0.0 || model->HSM2_rd > 0.0)) && here->HSM2dNodePrime == 0) {
+	   (model->HSM2_rsh > 0.0 || model->HSM2_rd > 0.0))) {
+	if(here->HSM2dNodePrime <= 0) {
 	error = CKTmkVolt(ckt, &tmp, here->HSM2name, "drain");
 	if (error) return(error);
 	here->HSM2dNodePrime = tmp->number;
+       }
       } else {
 	here->HSM2dNodePrime = here->HSM2dNode;
       }
       
       /* process source series resistance */
       if ((model->HSM2_corsrd < 0 && 
-	   (model->HSM2_rsh > 0.0 || model->HSM2_rs > 0.0)) && here->HSM2sNodePrime == 0) {
+	   (model->HSM2_rsh > 0.0 || model->HSM2_rs > 0.0))) {
+	if(here->HSM2sNodePrime == 0) {
 	error = CKTmkVolt(ckt, &tmp, here->HSM2name, "source");
 	if (error) return(error);
 	here->HSM2sNodePrime = tmp->number;
+       }
       } else {
 	here->HSM2sNodePrime = here->HSM2sNode;
       }
 
       /* process gate resistance */
-      if ((here->HSM2_corg == 1 && model->HSM2_rshg > 0.0) && here->HSM2gNodePrime == 0) {
+      if ((here->HSM2_corg == 1 && model->HSM2_rshg > 0.0)) {
+       if(here->HSM2gNodePrime <= 0) {
 	error = CKTmkVolt(ckt, &tmp, here->HSM2name, "gate");
 	if (error) return(error);
 	here->HSM2gNodePrime = tmp->number;
+       }
       } else {
 	here->HSM2gNodePrime = here->HSM2gNode;
       }
@@ -772,7 +785,6 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
   }
   return(OK);
 } 
-
 
 int
 HSM2unsetup(

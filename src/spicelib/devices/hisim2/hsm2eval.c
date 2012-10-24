@@ -1,12 +1,12 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM_2.5.1 
+ VERSION : HiSIM 2.6.1 
  FILE : hsm2eval.c
 
- date : 2011.04.07
+ date : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -23,55 +23,32 @@ All users need to follow the "HiSIM2 Distribution Statement and
 Copyright Notice" attached to HiSIM2 model.
 
 -----HiSIM2 Distribution Statement and Copyright Notice--------------
- Hiroshima University and/or Semiconductor Technology Academic Research 
-Center ("STARC") grants to Licensee a worldwide, royalty-free, 
-sub-licensable, retroactive, perpetual, irrevocable license to make, 
-have made, offer to sell, sell, import, export, use, copy, redistribute, 
-perform, display and incorporate HiSIM2 intellectual property (the 
-"License") subject to the conditions set forth below. 
- This License includes rights to use and modify copyrighted material 
-for any purpose if the copyright is acknowledged as well as the use of 
-related patents which STARC owns, has applied for or will apply for 
-in connection with HiSIM2 intellectual property for the purpose of 
-implementing and using the HiSIM2 intellectual property in connection
-with the standard. This license applies to all past and future versions 
-of HiSIM2.
 
-1. HiSIM2 intellectual property is offered "as is" without any warranty, 
-explicit or implied, or service support. Hiroshima University, STARC, 
-its University staff and employees assume no liability for the quality 
-and performance of HiSIM2 intellectual property.
+Software is distributed as is, completely without warranty or service
+support. Hiroshima University or STARC and its employees are not liable
+for the condition or performance of the software.
 
-2. As the owner of the HiSIM2 intellectual property, and all other 
-related rights, Hiroshima University and/or STARC grant the License 
-as set forth above.
+Hiroshima University and STARC own the copyright and grant users a perpetual,
+irrevocable, worldwide, non-exclusive, royalty-free license with respect 
+to the software as set forth below.   
 
-3. A Licensee may not charge an end user a fee for the HiSIM2 source 
-code, which Hiroshima University and STARC own, by itself, however, 
-a Licensee may charge an end user a fee for alterations or additions 
-to the HiSIM2 source code or for maintenance service.
+Hiroshima University and STARC hereby disclaim all implied warranties.
 
-4. A Licensee of HiSIM2 intellectual property agrees that Hiroshima 
-University and STARC are the developers of HiSIM2 in all products 
-containing HiSIM2 and the alteration thereof (subject to Licensee's 
-ownership of the alterations). 
-If future versions of HiSIM2 incorporate elements of other CMC models 
-the copyrights of those elements remains with the original developers. 
-For this purpose the copyright notice as shown below shall be used.
+Hiroshima University and STARC grant the users the right to modify, copy,
+and redistribute the software and documentation, both within the user's
+organization and externally, subject to the following restrictions
 
-"The HiSIM2 source code, and all copyrights, trade secrets or other 
-intellectual property rights in and to the source code, is owned 
-by Hiroshima University and/or STARC."
+1. The users agree not to charge for Hiroshima University and STARC code
+itself but may charge for additions, extensions, or support.
 
-5. A Licensee of HiSIM2 intellectual property will comply with the 
-export obligations pertaining to the export of the HiSIM2 intellectual 
-property.
+2. In any product based on the software, the users agree to acknowledge
+Hiroshima University and STARC that developed the software. This
+acknowledgment shall appear in the product documentation.
 
-6.  By using HiSIM2 intellectual property owned by Hiroshima University
-and/or STARC, Licensee agrees not to prosecute any patents or patent  
-held by Licensee that are required for implementation of HiSIM2 against
-any party who is infringing those patents solely by implementing and/or
-using the HiSIM2 standard.
+3. The users agree to reproduce any copyright notice which appears on
+the software on any copy or modification of such made available
+to others."
+
 
 *************************************************************************/
 
@@ -228,15 +205,12 @@ double TMF1 , TMF2 , TMF3 , TMF4 ;
     TMF2 = sqrt ( ( x ) *  ( x ) + 4.0 * ( delta ) * ( delta) ) ; \
     dx = 0.5 * ( 1.0 + ( x ) / TMF2 ) ; \
     y = 0.5 * ( ( x ) + TMF2 ) ; \
-    if (y < 0) \
-        y = 0 ; \
   }
-
+#if 0
 /*---------------------------------------------------*
 * smoothZero: flooring to zero.
 *      y = 0.5 ( x + sqrt( x^2 + 4 delta^2 ) )
 *-----------------*/
-#if 0
 static double smoothZero
 (
  double x,
@@ -248,7 +222,6 @@ static double smoothZero
   if (dx) *dx = 0.5 * ( 1.0 + x / sqr ) ;
   return 0.5 * ( x + sqr ) ;
 }
-#endif
 /*---------------------------------------------------*
 * CeilingPow: ceiling for positive x, flooring for negative x.
 *      y = x * xmax / ( x^{2m} + xmax^{2m} )^{1/(2m)}
@@ -257,7 +230,6 @@ static double smoothZero
 *   - -xmax < y < xmax.
 *   - dy/dx|_{x=0} = 1.
 *-----------------*/
-#if 0
 static double CeilingPow
 (
  double x,
@@ -392,6 +364,8 @@ int HSM2evaluate
  ) 
 {
   HSM2binningParam *pParam = &here->pParam ;
+  HSM2modelCGSParam *modelCGS = &model->modelCGS ;
+  HSM2hereCGSParam *hereCGS = &here->hereCGS ;
   /*-----------------------------------*
    * Constants for Smoothing functions
    *---------------*/
@@ -442,6 +416,7 @@ int HSM2evaluate
   const double Vbs_min = -10.5e0 ;
   const double epsm10 = 10.0e0 * C_EPS_M ;
   const double small = 1.0e-50 ;
+  const double small2 = 1.0e-12 ;  /* for Qover */
 
   double Vbs_max = 0.8e0 ;
   double Vbs_bnd = 0.4e0 ; /* start point of positive Vbs bending */
@@ -453,7 +428,7 @@ int HSM2evaluate
   int flg_rsrd = 0 ; /* Flag for bias loop accounting Rs and Rd */
   int flg_iprv = 0 ; /* Flag for initial guess of Ids */
   int flg_pprv = 0 ; /* Flag for initial guesses of Ps0 and Pds */
-  int flg_noqi = 0 ;     /* Flag for the cases regarding Qi=Qd=0 */
+  int flg_noqi = 0 ; /* Flag for the cases regarding Qi=Qd=0 */
   int flg_vbsc = 0 ; /* Flag for Vbs confining */
   int flg_info = 0 ; 
   int flg_conv = 0 ; /* Flag for Poisson loop convergence */
@@ -848,8 +823,7 @@ int HSM2evaluate
   double Qovs_dVbs = 0.0, Qovs_dVds = 0.0, Qovs_dVgs = 0.0 ;
   int    lcover = 0, flg_ovloops = 0, flg_ovloopd = 0 ;
   int    flg_overs = 0, flg_overd = 0 ;
-  double VgpLD , VgpLD_dVgs ;
-  double Vgp_fb_LD ;
+  double VgpLD ;
   double QbdLD = 0.0 , QbdLD_dVbs = 0.0 , QbdLD_dVds = 0.0 , QbdLD_dVgs = 0.0 ;
   double QidLD = 0.0 , QidLD_dVbs = 0.0 , QidLD_dVds = 0.0 , QidLD_dVgs = 0.0 ;
   double QbsLD = 0.0 , QbsLD_dVbs = 0.0 , QbsLD_dVds = 0.0 , QbsLD_dVgs = 0.0 ;
@@ -861,10 +835,9 @@ int HSM2evaluate
   double QbuLD = 0.0 , QbuLD_dVbs = 0.0 , QbuLD_dVds = 0.0 , QbuLD_dVgs = 0.0 ;
   double QsuLD = 0.0 , QsuLD_dVbs = 0.0 , QsuLD_dVds = 0.0 , QsuLD_dVgs = 0.0 ;
   double QiuLD = 0.0 , QiuLD_dVbs = 0.0 , QiuLD_dVds = 0.0 , QiuLD_dVgs = 0.0 ;
-  double Ps0LD = 0.0 , Ps0LD_dVbs = 0.0 , Ps0LD_dVds = 0.0 , Ps0LD_dVgs = 0.0 ;
+  double Ps0LD = 0.0 , Ps0LD_dVds = 0.0 ;
   double QbuLD_dVxb = 0.0 , QbuLD_dVgb = 0.0 ;
   double QsuLD_dVxb = 0.0 , QsuLD_dVgb = 0.0 ;
-  double VthLD = 0.0;
   int   flg_ovzone = 0 ;
 
   /* Vgsz for SCE and PGD */
@@ -892,6 +865,36 @@ int HSM2evaluate
 
   double Pb2over ;
 
+  /* Qover Iterative and Analytical Model */
+  const double large_arg = 80 ;
+  int lp_ld ;
+  double T1_dVxb, T1_dVgb, T5_dVxb, T5_dVgb ;
+  double Vgb_fb_LD,  VgpLD_dVgb ;
+  double VgpLD_shift, VgpLD_shift_dVxb, VgpLD_shift_dVgb ;
+  double TX_dVxb, TX_dVgb, TY_dVxb, TY_dVgb ;
+  double Ac1_dVxb, Ac1_dVgb, Ac2_dVxb, Ac2_dVgb ;
+  double Ac3_dVxb, Ac3_dVgb, Ac31_dVxb, Ac31_dVgb ; 
+  double Acd_dVxb, Acd_dVgb, Acn_dVxb, Acn_dVgb ;  
+  double Ta = 9.3868e-3, Tb = -0.1047839 ;
+  double Tc, Tp ;
+  double Td, Td_dVxb, Td_dVgb ;
+  double Tq, Tq_dVxb, Tq_dVgb ;
+  double Tu, Tu_dVxb, Tu_dVgb ;
+  double Tv, Tv_dVxb, Tv_dVgb ;
+  double exp_bVbs_dVxb, exp_bPs0 ;
+  double cnst1over ; 
+  double gamma, gamma_dVxb ; 
+  double Chi_dVxb, Chi_dVgb ;
+  double Chi_A, Chi_A_dVxb, Chi_A_dVgb ;
+  double Chi_B, Chi_B_dVxb, Chi_B_dVgb ;
+  double Chi_1, Chi_1_dVxb, Chi_1_dVgb ;
+  double psi_B, arg_B ;
+  double psi, psi_dVgb, psi_dVxb ;
+  double Ps0_iniA_dVxb, Ps0_iniA_dVgb ;
+  double Ps0_iniB_dVxb, Ps0_iniB_dVgb ;
+  double Psa_dVxb, Psa_dVgb, Ps0LD_dVxb, Ps0LD_dVgb ;
+  double fs02_dVxb, fs02_dVgb ;
+
   /* SCE LOOP */
   double A , A_dVgs, A_dVds, A_dVbs ;
   int    NNN ;
@@ -907,6 +910,7 @@ int HSM2evaluate
 
 
   /* modify Qy in accumulation region */
+/*  double eps_qy = 5.0e-3 ;*/
   double Aclm_eff, Aclm_eff_dVds, Aclm_eff_dVgs, Aclm_eff_dVbs ;
 
   double Idd1 , Idd1_dVbs ,  Idd1_dVgs ,  Idd1_dVds ;
@@ -1022,7 +1026,7 @@ int HSM2evaluate
   c_eox = here->HSM2_cecox ;
 
   /* Tox and Cox without QME */
-   Tox0 = model->HSM2_tox ;
+   Tox0 = modelCGS->HSM2_tox ;
    Cox0 = c_eox / Tox0 ;
    Cox0_inv = 1.0 / Cox0 ;
 
@@ -1320,6 +1324,7 @@ int HSM2evaluate
 	T5_dVd =      - Vthq_dVd ;
 	T5_dVg =  1.0 ;
   	Fn_SZ( T2 , T5 , qme_dlt, T3) ;
+  	T2 = T2 + small ;
   	T2_dVb = T3 * T5_dVb ; 
   	T2_dVd = T3 * T5_dVd ; 
   	T2_dVg = T3 * T5_dVg ; 
@@ -1339,8 +1344,8 @@ int HSM2evaluate
   	T2_dVd = T6 * T3_dVd ;
   	T2_dVg = T6 * T3_dVg ;
 
-	dTox = model->HSM2_qme1 * T2 + model->HSM2_qme3 ;
-        T7   = model->HSM2_qme1 ;
+	dTox = modelCGS->HSM2_qme1 * T2 + modelCGS->HSM2_qme3 ;
+        T7   = modelCGS->HSM2_qme1 ;
 	dTox_dVb = T7 * T2_dVb ;
 	dTox_dVd = T7 * T2_dVd ;
 	dTox_dVg = T7 * T2_dVg ;
@@ -1640,7 +1645,7 @@ int HSM2evaluate
      * dVthLP : Short-channel effect induced by pocket.
      * - Vth0 : Vth without pocket.
      *-----------------*/
-    if ( model->HSM2_lp != 0.0 ) {
+    if ( modelCGS->HSM2_lp != 0.0 ) {
 
       if( corecip ){
 
@@ -1711,7 +1716,7 @@ int HSM2evaluate
           dqb_dPS0Z = 0.0 ;
 	}
 
-	T1 = 2.0 * C_QE * pParam->HSM2_nsubc * C_ESI ;
+	T1 = 2.0 * C_QE * here->HSM2_nsubc * C_ESI ;
 	T2 = sqrt( T1 ) ;
 	T2_dVb = 0.0 ;
 	T2_dVd = 0.0 ;
@@ -1729,7 +1734,7 @@ int HSM2evaluate
 	T1_dVg = C_ESI * Cox_inv_dVg ;
 	T2 = here->HSM2_wdplp ;
 
-	T4 = 1.0e0 / ( model->HSM2_lp * model->HSM2_lp ) ;
+	T4 = 1.0e0 / ( modelCGS->HSM2_lp * modelCGS->HSM2_lp ) ;
 	T3 = 2.0 * ( model->HSM2_vbi - Pb20 ) * T2 * T4 ;
 
 	T5 = T1 * T3 ;
@@ -1767,11 +1772,11 @@ int HSM2evaluate
 	T9_dVg = PS0Z_SCE_dVgs - Vbsz2_dVgs ;
         T9_dPS0Z = 1.0 ;
 
-	T3     = pParam->HSM2_scp1 + pParam->HSM2_scp3 * T9 / model->HSM2_lp + pParam->HSM2_scp2 * Vdsz ;
-	T3_dVb = pParam->HSM2_scp3 * T9_dVb / model->HSM2_lp ;
-	T3_dVd = pParam->HSM2_scp3 * T9_dVd / model->HSM2_lp + pParam->HSM2_scp2 * Vdsz_dVds ; 
-	T3_dVg = pParam->HSM2_scp3 * T9_dVg / model->HSM2_lp ;
-        T3_dPS0Z = pParam->HSM2_scp3 * T9_dPS0Z / model->HSM2_lp ;
+	T3     = pParam->HSM2_scp1 + pParam->HSM2_scp3 * T9 / modelCGS->HSM2_lp + pParam->HSM2_scp2 * Vdsz ;
+	T3_dVb = pParam->HSM2_scp3 * T9_dVb / modelCGS->HSM2_lp ;
+	T3_dVd = pParam->HSM2_scp3 * T9_dVd / modelCGS->HSM2_lp + pParam->HSM2_scp2 * Vdsz_dVds ; 
+	T3_dVg = pParam->HSM2_scp3 * T9_dVg / modelCGS->HSM2_lp ;
+        T3_dPS0Z = pParam->HSM2_scp3 * T9_dPS0Z / modelCGS->HSM2_lp ;
 
 	Vdx = model->HSM2_scp21 + Vdsz ;
 	Vdx2 = Vdx * Vdx + small ;
@@ -1820,7 +1825,7 @@ int HSM2evaluate
 	dqb_dVd = Vthp_dVd - Qbmm_dVd * Cox_inv - Qbmm * Cox_inv_dVd ;
 	dqb_dVg = Vthp_dVg - Qbmm_dVg * Cox_inv - Qbmm * Cox_inv_dVg ;
 
-	T1 = 2.0 * C_QE * pParam->HSM2_nsubc * C_ESI ;
+	T1 = 2.0 * C_QE * here->HSM2_nsubc * C_ESI ;
 	T2 = sqrt( T1 * ( Pb2c - Vbsz2 ) ) ;
 	Vth0 = Pb2c + Vfb + T2 * Cox_inv ;
 	T3 = 0.5 * T1 / T2 * Cox_inv ;
@@ -1830,7 +1835,7 @@ int HSM2evaluate
 
 	T1 = C_ESI * Cox_inv ;
 	T2 = here->HSM2_wdplp ;
-	T4 = 1.0e0 / ( model->HSM2_lp * model->HSM2_lp ) ;
+	T4 = 1.0e0 / ( modelCGS->HSM2_lp * modelCGS->HSM2_lp ) ;
 	T5 = 2.0e0 * ( model->HSM2_vbi - Pb20b ) * T1 * T2 * T4 ;
 	dVth0 = T5 * sqrt_Pbsum ;
 	T6 = 0.5 * T5 / sqrt_Pbsum ;
@@ -1841,14 +1846,14 @@ int HSM2evaluate
 	dVth0_dVg = T6 * Pbsum_dVg + T7 * Cox_inv_dVg + T8 * Pb20b_dVg ;
       
 	T1 = Vthp - Vth0 ;
-	T2 = pParam->HSM2_scp1 + pParam->HSM2_scp3 * Pbsum / model->HSM2_lp ;
+	T2 = pParam->HSM2_scp1 + pParam->HSM2_scp3 * Pbsum / modelCGS->HSM2_lp ;
 	T3 = T2 + pParam->HSM2_scp2 * Vdsz ;
     
 	Vdx = model->HSM2_scp21 + Vdsz ;
 	Vdx2 = Vdx * Vdx + small ;
       
 	dVthLP = T1 * dVth0 * T3 + dqb - here->HSM2_msc / Vdx2 ;
-	T4 = T1 * dVth0 * pParam->HSM2_scp3 / model->HSM2_lp ;
+	T4 = T1 * dVth0 * pParam->HSM2_scp3 / modelCGS->HSM2_lp ;
 	dVthLP_dVb = (Vthp_dVb - Vth0_dVb) * dVth0 * T3 + T1 * dVth0_dVb * T3 
 	  + T4 * Pbsum_dVb + dqb_dVb ;
 	dVthLP_dVd = (Vthp_dVd - Vth0_dVd) * dVth0 * T3 + T1 * dVth0_dVd * T3 
@@ -1873,7 +1878,7 @@ int HSM2evaluate
 
     if( corecip ){ 
 
-      T3 = here->HSM2_lgate - model->HSM2_parl2 ;
+      T3 = here->HSM2_lgate - modelCGS->HSM2_parl2 ;
       T4 = 1.0e0 / ( T3 * T3 ) ;
       T5 = pParam->HSM2_sc3 / here->HSM2_lgate ;
 
@@ -1948,7 +1953,7 @@ int HSM2evaluate
 
       T1 = C_ESI * Cox_inv ;
       T2 = here->HSM2_wdpl ;
-      T3 = here->HSM2_lgate - model->HSM2_parl2 ;
+      T3 = here->HSM2_lgate - modelCGS->HSM2_parl2 ;
       T4 = 1.0e0 / ( T3 * T3 ) ;
       T5 = 2.0e0 * ( model->HSM2_vbi - Pb20b ) * T1 * T2 * T4 ;
 
@@ -2082,7 +2087,7 @@ int HSM2evaluate
      * dVthLP : Short-channel effect induced by pocket.
      * - Vth0 : Vth without pocket.
      *-----------------*/
-    if ( model->HSM2_lp != 0.0 ) {
+    if ( modelCGS->HSM2_lp != 0.0 ) {
 
       if( corecip ){
 	T1 = here->HSM2_2qnsub_esi ;
@@ -2153,7 +2158,7 @@ int HSM2evaluate
           dqb_dPS0Z = 0.0 ;
 	}
 
-	T1 = 2.0 * C_QE * pParam->HSM2_nsubc * C_ESI ;
+	T1 = 2.0 * C_QE * here->HSM2_nsubc * C_ESI ;
 	T2 = sqrt( T1 ) ;
 	T2_dVb = 0.0 ;
 	T2_dVd = 0.0 ;
@@ -2168,7 +2173,7 @@ int HSM2evaluate
 	T1 = C_ESI * Cox_inv ;
 	T2 = here->HSM2_wdplp ;
 
-	T4 = 1.0e0 / ( model->HSM2_lp * model->HSM2_lp ) ;
+	T4 = 1.0e0 / ( modelCGS->HSM2_lp * modelCGS->HSM2_lp ) ;
 	T5 = 2.0e0 * ( model->HSM2_vbi - Pb20 ) * T1 * T2 * T4 ;
 	T5_dVb = 0.0 ;
 	T5_dVd = 0.0 ;
@@ -2204,11 +2209,11 @@ int HSM2evaluate
 	T9_dVg = PS0Z_SCE_dVgs - Vbsz2_dVgs ;
         T9_dPS0Z = 1.0 ;
 
-	T3 = pParam->HSM2_scp1 + pParam->HSM2_scp3 * T9 / model->HSM2_lp + pParam->HSM2_scp2 * Vdsz ;
-	T3_dVb = pParam->HSM2_scp3 * T9_dVb / model->HSM2_lp ;
-	T3_dVd = pParam->HSM2_scp3 * T9_dVd / model->HSM2_lp + pParam->HSM2_scp2 * Vdsz_dVds ; 
-	T3_dVg = pParam->HSM2_scp3 * T9_dVg / model->HSM2_lp ;
-        T3_dPS0Z = pParam->HSM2_scp3 * T9_dPS0Z / model->HSM2_lp ;
+	T3 = pParam->HSM2_scp1 + pParam->HSM2_scp3 * T9 / modelCGS->HSM2_lp + pParam->HSM2_scp2 * Vdsz ;
+	T3_dVb = pParam->HSM2_scp3 * T9_dVb / modelCGS->HSM2_lp ;
+	T3_dVd = pParam->HSM2_scp3 * T9_dVd / modelCGS->HSM2_lp + pParam->HSM2_scp2 * Vdsz_dVds ; 
+	T3_dVg = pParam->HSM2_scp3 * T9_dVg / modelCGS->HSM2_lp ;
+        T3_dPS0Z = pParam->HSM2_scp3 * T9_dPS0Z / modelCGS->HSM2_lp ;
 
 	Vdx = model->HSM2_scp21 + Vdsz ;
 	Vdx2 = Vdx * Vdx + small ;
@@ -2258,7 +2263,7 @@ int HSM2evaluate
 	dqb_dVd = Vthp_dVd - Qbmm_dVd * Cox_inv ;
 	dqb_dVg = Vthp_dVg - Qbmm_dVg * Cox_inv ;
 
-	T1 = 2.0 * C_QE * pParam->HSM2_nsubc * C_ESI ;
+	T1 = 2.0 * C_QE * here->HSM2_nsubc * C_ESI ;
 	T2 = sqrt( T1 * ( Pb2c - Vbsz2 ) ) ;
 	Vth0 = Pb2c + Vfb + T2 * Cox_inv ;
 	T3 = 0.5 * T1 / T2 * Cox_inv ;
@@ -2269,7 +2274,7 @@ int HSM2evaluate
 	T1 = C_ESI * Cox_inv ;
 	T2 = here->HSM2_wdplp ;
 
-	T4 = 1.0e0 / ( model->HSM2_lp * model->HSM2_lp ) ;
+	T4 = 1.0e0 / ( modelCGS->HSM2_lp * modelCGS->HSM2_lp ) ;
 	T5 = 2.0e0 * ( model->HSM2_vbi - Pb20b ) * T1 * T2 * T4 ;
 	dVth0 = T5 * sqrt_Pbsum ;
 	T6 = 0.5 * T5 / sqrt_Pbsum ;
@@ -2280,14 +2285,14 @@ int HSM2evaluate
 	dVth0_dVg = T6 * Pbsum_dVg + T8 * Pb20b_dVg ;
       
 	T1 = Vthp - Vth0 ;
-	T2 = pParam->HSM2_scp1 + pParam->HSM2_scp3 * Pbsum / model->HSM2_lp ;
+	T2 = pParam->HSM2_scp1 + pParam->HSM2_scp3 * Pbsum / modelCGS->HSM2_lp ;
 	T3 = T2 + pParam->HSM2_scp2 * Vdsz ;
     
 	Vdx = model->HSM2_scp21 + Vdsz ;
 	Vdx2 = Vdx * Vdx + small ;
       
 	dVthLP = T1 * dVth0 * T3 + dqb - here->HSM2_msc / Vdx2 ;
-	T4 = T1 * dVth0 * pParam->HSM2_scp3 / model->HSM2_lp ;
+	T4 = T1 * dVth0 * pParam->HSM2_scp3 / modelCGS->HSM2_lp ;
 	dVthLP_dVb = (Vthp_dVb - Vth0_dVb) * dVth0 * T3 + T1 * dVth0_dVb * T3 
 	  + T4 * Pbsum_dVb + dqb_dVb ;
 	dVthLP_dVd = (Vthp_dVd - Vth0_dVd) * dVth0 * T3 + T1 * dVth0_dVd * T3 
@@ -2312,7 +2317,7 @@ int HSM2evaluate
      *-----------------*/
 
     if( corecip ){
-      T3 = here->HSM2_lgate - model->HSM2_parl2 ;
+      T3 = here->HSM2_lgate - modelCGS->HSM2_parl2 ;
       T4 = 1.0e0 / ( T3 * T3 ) ;
       T5 = pParam->HSM2_sc3 / here->HSM2_lgate ;
 
@@ -2381,7 +2386,7 @@ int HSM2evaluate
 
       T1 = C_ESI * Cox_inv ;
       T2 = here->HSM2_wdpl ;
-      T3 = here->HSM2_lgate - model->HSM2_parl2 ;
+      T3 = here->HSM2_lgate - modelCGS->HSM2_parl2 ;
       T4 = 1.0e0 / ( T3 * T3 ) ;
       T5 = 2.0e0 * ( model->HSM2_vbi - Pb20b ) * T1 * T2 * T4 ;
 
@@ -2991,9 +2996,15 @@ int HSM2evaluate
         /*-------------------------------------------*
          * zone-D3.  (Ps0)
          *-----------------*/
-        exp_Chi = exp( Chi ) ;
-        fs01 = cfs1 * ( exp_Chi - 1.0e0 ) ;
-        fs01_dPs0 = cfs1 * beta * ( exp_Chi ) ;
+         if ( Chi < large_arg ) { /* avoid exp_Chi to become extremely large */
+            exp_Chi = exp( Chi ) ;
+            fs01 = cfs1 * ( exp_Chi - 1.0e0 ) ;
+            fs01_dPs0 = cfs1 * beta * ( exp_Chi ) ;
+         } else {
+            exp_bPs0 = exp( beta*Ps0 ) ;
+            fs01 = cnst1 * ( exp_bPs0 - exp_bVbs ) ;
+            fs01_dPs0 = cnst1 * beta * exp_bPs0 ;
+         }
         fs02 = sqrt( Chi - 1.0 + fs01 ) ;
         fs02_dPs0 = ( beta + fs01_dPs0 ) / ( fs02 + fs02 ) ;
       } /* end of if ( Chi ... ) else block */
@@ -4469,7 +4480,7 @@ start_of_mobility:
        *-----------------*/      
       T1 = C_ESI * Cox_inv ;
       T2 = here->HSM2_wdpl ;
-      T3 =  here->HSM2_lgatesm - model->HSM2_parl2 ;
+      T3 =  here->HSM2_lgatesm - modelCGS->HSM2_parl2 ;
       T4 = 1.0 / (T3 * T3) ;
       T5 = 2.0 * (model->HSM2_vbi - Pb20b) * T1 * T2 * T4 ;
       
@@ -5225,7 +5236,7 @@ start_of_mobility:
   /*-----------------------------------------------------------*
    * End of PART-2. (label) 
    *-----------------*/
-/* end_of_part_2: */
+/* end_of_part_2:*/ 
 
   /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
    * PART-3: Overlap charge
@@ -5246,7 +5257,7 @@ start_of_mobility:
       Psdl_dVgs = Ps0_dVgs ;
     }
     
-    if (model->HSM2_xqy !=0) {
+    if (modelCGS->HSM2_xqy !=0) {
       Ec = 0.0e0 ;
       Ec_dVbs =0.0e0 ;
       Ec_dVds =0.0e0 ;
@@ -5254,7 +5265,7 @@ start_of_mobility:
     }
   } else {
     /* Ec is removed from Lred calc. part */
-    if (model->HSM2_xqy !=0) {
+    if (modelCGS->HSM2_xqy !=0) {
       if ( Idd < C_IDD_MIN ) {
         Ec = 0.0e0 ;
         Ec_dVbs =0.0e0 ;
@@ -5287,21 +5298,21 @@ start_of_mobility:
     Lov = pParam->HSM2_lover ;
 
     if ( pParam->HSM2_nover == 0.0 ){
-    T4 = cov_slp * T1 * ( cov_mag + covvg ) ;
-    T4_dVg = cov_slp * T1 * covvg_dVgs ;
-    T4_dVd = 0.0 ;
-    T5 = Lov * T1 ;
+      T4 = cov_slp * T1 * ( cov_mag + covvg ) ;
+      T4_dVg = cov_slp * T1 * covvg_dVgs ;
+      T4_dVd = 0.0 ;
+      T5 = Lov * T1 ;
      
-    TX = Ps0 ;
-    TX_dVbs = Ps0_dVbs ;
-    TX_dVds = Ps0_dVds ;
-    TX_dVgs = Ps0_dVgs ;
+      TX = Ps0 ;
+      TX_dVbs = Ps0_dVbs ;
+      TX_dVds = Ps0_dVds ;
+      TX_dVgs = Ps0_dVgs ;
 
-    T9 = 1.2e0 - TX ;
-    Qgos = Vgs * T5 - T9 * T4 ;
-    Qgos_dVbs =      T4 * TX_dVbs ;
-    Qgos_dVds =      T4 * TX_dVds - T9 * T4_dVd ;
-    Qgos_dVgs = T5 + T4 * TX_dVgs - T9 * T4_dVg ;
+      T9 = 1.2e0 - TX ;
+      Qgos = Vgs * T5 - T9 * T4 ;
+      Qgos_dVbs =      T4 * TX_dVbs ;
+      Qgos_dVds =      T4 * TX_dVds - T9 * T4_dVd ;
+      Qgos_dVgs = T5 + T4 * TX_dVgs - T9 * T4_dVg ;
 
       T4 = cov_slp * T1 * ( cov_mag + covvg - Vds ) ;
       T4_dVg = cov_slp * T1 * covvg_dVgs ;
@@ -5319,593 +5330,570 @@ start_of_mobility:
       for ( lcover = -1 ; lcover <= +1 ; lcover += 2 ) {
         flg_ovloops = ( 1 - lcover ) / 2 ; /* 1 in Source overlap calc. */
         flg_ovloopd = ( 1 + lcover ) / 2 ; /* 1 in Drain overlap calc. */
-      /*-------------------------------------------*
-       * Qover (G/D overlap charge)  |  note: _dVxs means _dVxse 
-       *------------------------*/
-      Vbsgmt = ModeNML * Vbse + ModeRVS * ( Vbse - Vdse ) ;
-      Vdsgmt = ModeNML * Vdse + ModeRVS * ( - Vdse ) ; 
-      Vgsgmt = ModeNML * Vgse + ModeRVS * ( Vgse - Vdse ) ;
-      Vdbgmt = Vdsgmt - Vbsgmt ;
-      Vgbgmt = Vgsgmt - Vbsgmt ;
-      Vsbgmt = - Vbsgmt ;
-      flg_overs = flg_ovloops * (int)ModeNML + flg_ovloopd * (int)ModeRVS ; /* geometrical source */
-      flg_overd = flg_ovloops * (int)ModeRVS + flg_ovloopd * (int)ModeNML ; /* geometrical drain */
-      Vxbgmt = flg_overs * Vsbgmt + flg_overd * Vdbgmt ;
-
-	/*---------------------------------------------------*
-	 * Clamp -Vxbgmt. 
-	 *-----------------*/
-	T0 = - Vxbgmt;
-	if ( T0 > Vbs_bnd ) {
-	  Fn_SUPoly4( TY, (T0 - Vbs_bnd), (Vbs_max - Vbs_bnd), T10_dVb ) ;
-	  T10 = Vbs_bnd + TY ;
-	}  else if ( T0 < Vbs_min ) {
-	  T10 = Vbs_min ;
-	  T10_dVb = 0.0;
-	}  else {
-	  T10 = T0 ;
-	  T10_dVb = 1.0;
-	}
-	Vxbgmtcl = - T10;
-	Vxbgmtcl_dVxbgmt = T10_dVb;
-    fac1 = here->HSM2_cnst0over * Cox0_inv ;
-    fac1_dVbs = 0.0; fac1_dVds = 0.0; fac1_dVgs = 0.0;
-    fac1p2 = fac1 * fac1 ;
-  
-    VgpLD = - Vgbgmt + 2.0 * pParam->HSM2_vfbover;
-    VgpLD_dVgs = - 1.0e0 ;
-  
-    Vgp_fb_LD =  pParam->HSM2_vfbover - Vxbgmtcl ;
-  
-    /*-----------------------------------*
-     * QsuLD: total charge = Accumulation | Depletion+inversion
-     *-----------------*/
-    if (   VgpLD  < Vgp_fb_LD ){
-      /*---------------------------*
-       * Accumulation
-       *-----------------*/
-      flg_ovzone = -1 ; 
-      T1 = 1.0 / ( beta * here->HSM2_cnst0over ) ;
-      TY = T1 * Cox0 ;
-      Ac41 = 2.0 + 3.0 * C_SQRT_2 * TY ;
-      Ac4 = 8.0 * Ac41 * Ac41 * Ac41 ;
-
-      Pb2over = here->HSM2_pb2over ;  
-      Ps0_min = here->HSM2_eg - Pb2over ;
-  
-      TX = beta * ( VgpLD + Vxbgmtcl ) ;
-      TX_dVds = beta * Vxbgmtcl_dVxbgmt ;
-      TX_dVgs = beta * VgpLD_dVgs ;
-  
-      Ac31 = 7.0 * C_SQRT_2 - 9.0 * TY * ( TX - 2.0 ) ;
-      Ac31_dVds = - 9.0 * TY * TX_dVds ;
-      Ac31_dVgs = - 9.0 * TY * TX_dVgs ;
-  
-      Ac3 = Ac31 * Ac31 ;
-      T1 = 2.0 * Ac31 ;
-      Ac3_dVds = T1 * Ac31_dVds ;
-      Ac3_dVgs = T1 * Ac31_dVgs ;
-  
-      Ac2 = sqrt( Ac4 + Ac3 ) ;
-      T1 = 0.5 / Ac2 ;
-      Ac2_dVds = T1 *  Ac3_dVds ;
-      Ac2_dVgs = T1 *  Ac3_dVgs ;
-    
-      Ac1 = -7.0 * C_SQRT_2 + Ac2 + 9.0 * TY * ( TX - 2.0 ) ;
-      Ac1_dVds = Ac2_dVds + 9.0 * TY * TX_dVds ;
-      Ac1_dVgs = Ac2_dVgs + 9.0 * TY * TX_dVgs ;
-  
-      Acd = pow( Ac1 , C_1o3 ) ;
-      T1 = C_1o3 / ( Acd * Acd ) ;
-      Acd_dVds = Ac1_dVds * T1 ;
-      Acd_dVgs = Ac1_dVgs * T1 ;
-  
-      Acn = -4.0 * C_SQRT_2 - 12.0 * TY + 2.0 * Acd + C_SQRT_2 * Acd * Acd ;
-      T1 = 2.0 + 2.0 * C_SQRT_2 * Acd ;
-      Acn_dVds = T1 * Acd_dVds ;
-      Acn_dVgs = T1 * Acd_dVgs ;
-   
-      Chi = Acn / Acd ;
-      T1 = 1.0 / ( Acd * Acd ) ;
-      Chi_dVds = ( Acn_dVds * Acd - Acn * Acd_dVds ) * T1 ;
-      Chi_dVgs = ( Acn_dVgs * Acd - Acn * Acd_dVgs ) * T1 ;
-  
-      Psa = Chi * beta_inv - Vxbgmtcl ;
-      Psa_dVds = Chi_dVds * beta_inv - Vxbgmtcl_dVxbgmt ;
-      Psa_dVgs = Chi_dVgs * beta_inv ;
-  
-      T1 = Psa + Vxbgmtcl ;
-      T2 = T1 / Ps0_min ;
-      T3 = sqrt( 1.0 + ( T2 * T2 ) ) ;
-  
-      T9 = T2 / T3 / Ps0_min ;
-      T3_dVd = T9 * ( Psa_dVds + Vxbgmtcl_dVxbgmt ) ;
-      T3_dVg = T9 * Psa_dVgs ;
-
-      Ps0LD = T1 / T3 - Vxbgmtcl ;
-      T9 = 1.0 / ( T3 * T3 ) ;
-      Ps0LD_dVds = T9 * ( ( Psa_dVds + Vxbgmtcl_dVxbgmt ) * T3 - T1 * T3_dVd ) - Vxbgmtcl_dVxbgmt ;
-      Ps0LD_dVgs = T9 * ( Psa_dVgs * T3 - T1 * T3_dVg );
-
-      T2 = ( VgpLD - Ps0LD ) ;
-      QbuLD = Cox0 * T2 ;
-      QbuLD_dVxb = - Cox0 * Ps0LD_dVds ;
-      QbuLD_dVgb = Cox0 * ( VgpLD_dVgs - Ps0LD_dVgs ) ;
-
-      QsuLD = QbuLD ;
-      QsuLD_dVxb = QbuLD_dVxb ;
-      QsuLD_dVgb = QbuLD_dVgb ;
-  
-    } else {
-
-   if ( model->HSM2_coqovsm != 1 ) { /*-- COQOVSM != 1: Analytical solution --(Original)--*/
-
-    Ps0_iniA = - Vxbgmtcl ;
-    Ps0_iniA_dVds = - Vxbgmtcl_dVxbgmt;
-    Ps0_iniA_dVgs = 0.0;
-
-      /*-----------------------------------*
-       * Depletion
-       *-----------------*/
-      TX = 1.0e0 + 4.0e0 
-         * ( beta * ( VgpLD + Vxbgmtcl ) - 1.0e0 ) / ( fac1p2 * beta2 ) ;
-      TX_dVds = 4.0e0 * ( beta * ( Vxbgmtcl_dVxbgmt ) ) / ( fac1p2 * beta2 );
-      TX_dVgs = 4.0e0 * ( beta * ( VgpLD_dVgs       ) ) / ( fac1p2 * beta2 );
-      
-      TX = Fn_Max( TX , epsm10 ) ;
-      Ps0_iniA = VgpLD + fac1p2 * beta / 2.0e0 * ( 1.0e0 - sqrt( TX ) ) ;
-      Ps0_iniA_dVds =            - fac1p2 * beta / 2.0e0 * TX_dVds * 0.5 / sqrt( TX );
-      Ps0_iniA_dVgs = VgpLD_dVgs - fac1p2 * beta / 2.0e0 * TX_dVgs * 0.5 / sqrt( TX );
-  
-      Chi = beta * ( Ps0_iniA + Vxbgmtcl ) ;
-      Chi_dVds = beta * ( Ps0_iniA_dVds + Vxbgmtcl_dVxbgmt ) ;
-      Chi_dVgs = beta * ( Ps0_iniA_dVgs ) ;
-  
-      if ( Chi < znbd3 ) { 
-        flg_ovzone = 1 ; 
-        /*-----------------------------------*
-         * zone-D1/D2
-         * - Ps0LD is the analytical solution of Qs=Qb0 with
-         *   Qb0 being approximated to 3-degree polynomial.
-         *-----------------*/
-        TY = beta * ( VgpLD + Vxbgmtcl ) ;
-        TY_dVds = beta * ( Vxbgmtcl_dVxbgmt ) ;
-        TY_dVgs = beta * ( VgpLD_dVgs ) ;
-
-        T1 = 1.0e0 / ( cn_nc3 * beta * fac1 ) ;
-        T2 = 81.0 + 3.0 * T1 ;
-        T3 = -2916.0 - 81.0 * T1 + 27.0 * T1 * TY ;
-        T3_dVd = 27.0 * T1 * TY_dVds ;
-        T3_dVg = 27.0 * T1 * TY_dVgs ;
-
-        T4 = 1458.0 - 81.0 * ( 54.0 + T1 ) + 27.0 * T1 * TY ;
-        T4_dVd = 27.0 * T1 * TY_dVds ;
-        T4_dVg = 27.0 * T1 * TY_dVgs ;
-	T0 = 2.0 * T4;
-        T4 = T4 * T4 ;
-        T4_dVd = T0 * T4_dVd ;
-        T4_dVg = T0 * T4_dVg ;
-
-        T5 = pow( T3 + sqrt( 4 * T2 * T2 * T2 + T4 ) , C_1o3 ) ;
-	T0 = C_1o3 / ( T5 * T5 );
-	T1 = sqrt( 4 * T2 * T2 * T2 + T4 );
-	T5_dVd = ( T3_dVd + T4_dVd * 0.5 / T1 ) * T0 ;
-	T5_dVg = ( T3_dVg + T4_dVg * 0.5 / T1 ) * T0 ;
-
-        TX = 3.0 - ( C_2p_1o3 * T2 ) / ( 3.0 * T5 )
-          + 1 / ( 3.0 * C_2p_1o3 ) * T5 ;
-	T0 = 1 / ( 3.0 * C_2p_1o3 );
-	T1 = ( 9.0 * T5 * T5 );
-	TX_dVds = - ( - C_2p_1o3 * T2 * 3.0 * T5_dVd ) / T1 + T0 * T5_dVd;
-	TX_dVgs = - ( - C_2p_1o3 * T2 * 3.0 * T5_dVg ) / T1 + T0 * T5_dVg;
-        
-        Ps0_iniA = TX * beta_inv - Vxbgmtcl ;
-	Ps0_iniA_dVds = TX_dVds * beta_inv - Vxbgmtcl_dVxbgmt;
-	Ps0_iniA_dVgs = TX_dVgs * beta_inv;
-   
-      } else {
-        flg_ovzone = 3 ; 
-      } 
-    
-     /*---------------------------------------------------*
-      * Assign initial guess.
-      *-----------------*/
-      Ps0LD = Ps0_iniA ;
-      Ps0LD_dVds = Ps0_iniA_dVds;
-      Ps0LD_dVgs = Ps0_iniA_dVgs;
-   
-      Chi = beta * ( Ps0LD + Vxbgmtcl ) ;
-      Chi_dVds = beta * ( Ps0LD_dVds + Vxbgmtcl_dVxbgmt ) ;
-      Chi_dVgs = beta * ( Ps0LD_dVgs ) ;
-   
-      if ( Chi < znbd5 ) { 
-        if ( flg_ovzone == 3 ) { flg_ovzone = 2 ;}
         /*-------------------------------------------*
-         * zone-D1/D2. (Ps0LD)
+         * Qover (G/D overlap charge)  |  note: _dVxs means _dVxse 
+         *------------------------*/
+        Vbsgmt = ModeNML * Vbse + ModeRVS * ( Vbse - Vdse ) ;
+        Vdsgmt = ModeNML * Vdse + ModeRVS * ( - Vdse ) ; 
+        Vgsgmt = ModeNML * Vgse + ModeRVS * ( Vgse - Vdse ) ;
+        Vdbgmt = Vdsgmt - Vbsgmt ;
+        Vgbgmt = Vgsgmt - Vbsgmt ;
+        Vsbgmt = - Vbsgmt ;
+        flg_overs = flg_ovloops * (int)ModeNML + flg_ovloopd * (int)ModeRVS ; /* geometrical source */
+        flg_overd = flg_ovloops * (int)ModeRVS + flg_ovloopd * (int)ModeNML ; /* geometrical drain */
+        Vxbgmt = flg_overs * Vsbgmt + flg_overd * Vdbgmt ;
+
+    
+        /*---------------------------------------------------*
+         * Clamp -Vxbgmt.
          *-----------------*/
-
-          fb = Chi * ( cn_nc51 
-             + Chi * ( cn_nc52 
-             + Chi * ( cn_nc53 
-             + Chi * ( cn_nc54 + Chi * cn_nc55 ) ) ) ) ;
-          fb_dChi = cn_nc51 
-             + Chi * ( 2 * cn_nc52 
-             + Chi * ( 3 * cn_nc53
-             + Chi * ( 4 * cn_nc54 + Chi * 5 * cn_nc55 ) ) ) ;
+        T0 = - Vxbgmt;
+        if ( T0 > Vbs_bnd ) {
+          T1 =    T0   - Vbs_bnd;
+          T2 =    Vbs_max    - Vbs_bnd;
     
-          fs02 = fb ;
-          fs02_dVds = fb_dChi * Chi_dVds;
-          fs02_dVgs = fb_dChi * Chi_dVgs;
+          Fn_SUPoly4( TY, T1, T2, T11 );
     
-          /* memo: Fs0   = VgpLD - Ps0LD - fac1 * fs02 */
+          T10 = Vbs_bnd + TY ;
+        }  else {
+          T10 = T0 ;
+          T11 = 1.0 ;
+        }
+        Vxbgmtcl = - T10 - small2 ;
+        Vxbgmtcl_dVxbgmt = T11;
     
-          QbuLD = here->HSM2_cnst0over * fs02 ;
-          QbuLD_dVxb = here->HSM2_cnst0over * fs02_dVds;
-          QbuLD_dVgb = here->HSM2_cnst0over * fs02_dVgs;
-  
-      } else { 
-       /*-------------------------------------------*
-        * zone-D3. (Ps0LD)
-        *-----------------*/
-   
-	if ( model->HSM2_coqovsm > 0 && VgpLD > 0.0 ) {
-	  /*-----------------------------------*
-	   * Strong inversion zone.  
-	   * - Ps0_iniB : upper bound.
-	   *-----------------*/
-	  flg_ovzone = 5 ;
-	  T1 = here->HSM2_ps0ldinib; /* (1 / cnst1 / cnstCoxi) */
-	  T2 = T1 * VgpLD * VgpLD ;
-	  T2_dVg = T1 * 2.0 * VgpLD * VgpLD_dVgs ;
-	  T3 = beta + 2.0 / VgpLD ;
-	  T3_dVg = - 2.0 * VgpLD_dVgs / ( VgpLD * VgpLD );
-	  
-	  Ps0_iniB = log( T2 + small ) / T3 ;
-	  Ps0_iniB_dVgs = ( T2_dVg / T2 * T3 - log( T2 ) * T3_dVg ) / ( T3 * T3 );
-	  
-	  Fn_SU2( Ps0LD, Ps0LD, Ps0_iniB, c_ps0ini_2, T1, T2 );
-	  Ps0LD_dVds *= T1;
-	  Ps0LD_dVgs = Ps0LD_dVgs * T1 + Ps0_iniB_dVgs * T2;
-	}
-        
-        /* T1: Xi */
-        T1 = beta * ( Ps0LD + Vxbgmtcl ) - 1.0 ;
-        T1_dVd = beta * ( Ps0LD_dVds + Vxbgmtcl_dVxbgmt ) ;
-        T1_dVg = beta * ( Ps0LD_dVgs ) ;
-  
-        if ( T1 > 0.0 ){ T2 = sqrt( T1 ); } else{ T2 = small; }
-        QbuLD = here->HSM2_cnst0over * T2 ;
-        T3 = here->HSM2_cnst0over * 0.5 / T2 ;
-        QbuLD_dVxb = T3 * T1_dVd ;
-        QbuLD_dVgb = T3 * T1_dVg ;
-      } /* end of if ( Chi  ... ) block */
-      /*-----------------------------------------------------------*
-       * QsuLD : Qovs or Qovd in unit area.
-       * note: QsuLD = Qdep+Qinv. 
-       *-----------------*/
-      QsuLD = Cox0 * ( VgpLD - Ps0LD ) ;
-      QsuLD_dVxb = Cox0 * ( - Ps0LD_dVds ) ;
-      QsuLD_dVgb = Cox0 * ( VgpLD_dVgs - Ps0LD_dVgs ) ;
-
-      } else { /*-- COQOVSM == 1: Iterative solution ---------------*/
-
-      VthLD = here->HSM2_pb2over + 2.0 * pParam->HSM2_vfbover
-	+ sqrt( 2 * C_QE * pParam->HSM2_nover * C_ESI * here->HSM2_pb2over ) * Cox0_inv ;
-      /*-----------------------------------*
-       * Depletion
-       *-----------------*/
-      TX = 1.0e0 + 4.0e0 
-         * ( beta * ( VgpLD + Vxbgmtcl ) - 1.0e0 ) / ( fac1p2 * beta2 ) ;
+        fac1 = here->HSM2_cnst0over * Cox0_inv ;
+        fac1_dVbs = 0.0; fac1_dVds = 0.0; fac1_dVgs = 0.0;
+    
+        fac1p2 = fac1 * fac1 ;
       
-      TX = Fn_Max( TX , epsm10 ) ;
-      Ps0_iniA = VgpLD + fac1p2 * beta / 2.0e0 * ( 1.0e0 - sqrt( TX ) ) ;
-  
-      Chi = beta * ( Ps0_iniA + Vxbgmtcl ) ;
-  
-      if ( Chi < znbd3 ) { 
+        VgpLD = - Vgbgmt + pParam->HSM2_vfbover;  
+        VgpLD_dVgb = - 1.0e0 ;
+    
+        T0 = pParam->HSM2_nover / here->HSM2_nin ;
+        Pb2over = 2.0 / beta * log( T0 ) ;
+    
+        Vgb_fb_LD =  - Vxbgmtcl ;
+    
         /*-----------------------------------*
-         * zone-D1/D2
-         * - Ps0LD is the analytical solution of Qs=Qb0 with
-         *   Qb0 being approximated to 3-degree polynomial.
+         * QsuLD: total charge = Accumulation | Depletion+inversion
          *-----------------*/
-        TY = beta * ( VgpLD + Vxbgmtcl ) ;
-        T1 = 1.0e0 / ( cn_nc3 * beta * fac1 ) ;
-        T2 = 81.0 + 3.0 * T1 ;
-        T3 = -2916.0 - 81.0 * T1 + 27.0 * T1 * TY ;
-        T4 = 1458.0 - 81.0 * ( 54.0 + T1 ) + 27.0 * T1 * TY ;
-        T4 = T4 * T4 ;
-        T5 = pow( T3 + sqrt( 4 * T2 * T2 * T2 + T4 ) , C_1o3 ) ;
-        TX = 3.0 - ( C_2p_1o3 * T2 ) / ( 3.0 * T5 )
-          + 1 / ( 3.0 * C_2p_1o3 ) * T5 ;
+        if (   VgpLD  < Vgb_fb_LD ){   
+          /*---------------------------*
+           * Accumulation
+           *-----------------*/
+          flg_ovzone = -1 ; 
+          T1 = 1.0 / ( beta * here->HSM2_cnst0over ) ;
+          TY = T1 * Cox0 ;
+          Ac41 = 2.0 + 3.0 * C_SQRT_2 * TY ;
+          Ac4 = 8.0 * Ac41 * Ac41 * Ac41 ;
+      
+          Ps0_min = here->HSM2_eg - Pb2over ;
+      
+          TX = beta * ( VgpLD + Vxbgmtcl ) ;
+          TX_dVxb = beta * Vxbgmtcl_dVxbgmt ;
+          TX_dVgb = beta * VgpLD_dVgb ;
+      
+          Ac31 = 7.0 * C_SQRT_2 - 9.0 * TY * ( TX - 2.0 ) ;
+          Ac31_dVxb = - 9.0 * TY * TX_dVxb ;
+          Ac31_dVgb = - 9.0 * TY * TX_dVgb ;
+      
+          Ac3 = Ac31 * Ac31 ;
+          T1 = 2.0 * Ac31 ;
+          Ac3_dVxb = T1 * Ac31_dVxb ;
+          Ac3_dVgb = T1 * Ac31_dVgb ;
+      
+          Ac2 = sqrt( Ac4 + Ac3 ) ;
+          T1 = 0.5 / Ac2 ;
+          Ac2_dVxb = T1 *  Ac3_dVxb ;
+          Ac2_dVgb = T1 *  Ac3_dVgb ;
         
-        Ps0_iniA = TX * beta_inv - Vxbgmtcl ;
-        Ps0_ini = Ps0_iniA ;
-   
-      } else if ( - Vgbgmt <= VthLD ) {
-        Ps0_ini = Ps0_iniA ;
-
-      } else {
-	/*-----------------------------------*
-	 * Strong inversion zone.  
-	 * - Ps0_iniB : upper bound.
-	 *-----------------*/
-	T1 = here->HSM2_ps0ldinib; /* (1 / cnst1 / cnstCoxi) */
-       T2 = T1 * VgpLD * VgpLD ;
-       T3 = beta + 2.0 / VgpLD ;
-
-       Ps0_iniB = log( T2 + small ) / T3 ; 
-
-       Fn_SU( Ps0_ini , Ps0_iniA, Ps0_iniB, c_ps0ini_2, T1) ;
-      }
-    
-      TX = - Vxbgmtcl + 0.5 * ps_conv ;
-      if ( Ps0_ini < TX ) Ps0_ini = TX ;
-
-     /*---------------------------------------------------*
-      * Assign initial guess.
-      *-----------------*/
-      Ps0LD = Ps0_ini ;
-   
-    /*---------------------------------------------------*
-     * Calculation of Ps0LD. (beginning of Newton loop) 
-     * - Fs0 : Fs0 = 0 is the equation to be solved. 
-     * - dPs0 : correction value. 
-     *-----------------*/
-    exp_bVbs = exp( beta * - Vxbgmtcl ) ;
-    T0 = here->HSM2_nin / pParam->HSM2_nover;
-    T1 = T0 * T0; /* cnst1_over */
-    cfs1 = T1 * exp_bVbs ;
-    
-    flg_conv = 0 ;
-    for ( lp_s0 = 1 ; lp_s0 <= lp_s0_max + 1 ; lp_s0 ++ ) { 
-
-      Chi = beta * ( Ps0LD + Vxbgmtcl ) ;
-   
-      if ( Chi < znbd5 ) { 
-        /*-------------------------------------------*
-         * zone-D1/D2. (Ps0LD)
-         *-----------------*/
-        fi = Chi * Chi * Chi 
-          * ( cn_im53 + Chi * ( cn_im54 + Chi * cn_im55 ) ) ;
-        fi_dChi = Chi * Chi 
-          * ( 3 * cn_im53 + Chi * ( 4 * cn_im54 + Chi * 5 * cn_im55 ) ) ;
+          Ac1 = -7.0 * C_SQRT_2 + Ac2 + 9.0 * TY * ( TX - 2.0 ) ;
+          Ac1_dVxb = Ac2_dVxb + 9.0 * TY * TX_dVxb ;
+          Ac1_dVgb = Ac2_dVgb + 9.0 * TY * TX_dVgb ;
       
-        fs01 = cfs1 * fi * fi ;
-        fs01_dPs0 = cfs1 * beta * 2 * fi * fi_dChi ;
-
-          fb = Chi * ( cn_nc51 
-             + Chi * ( cn_nc52 
-             + Chi * ( cn_nc53 
-             + Chi * ( cn_nc54 + Chi * cn_nc55 ) ) ) ) ;
-          fb_dChi = cn_nc51 
-             + Chi * ( 2 * cn_nc52 
-             + Chi * ( 3 * cn_nc53
-             + Chi * ( 4 * cn_nc54 + Chi * 5 * cn_nc55 ) ) ) ;
-    
-        fs02 = sqrt( fb * fb + fs01 ) ;
-        fs02_dPs0 = ( beta * fb_dChi * 2 * fb + fs01_dPs0 ) / ( fs02 + fs02 ) ;
-    
-      } else { 
-       /*-------------------------------------------*
-        * zone-D3. (Ps0LD)
-        *-----------------*/
-        exp_Chi = exp( Chi ) ;
-        fs01 = cfs1 * ( exp_Chi - 1.0e0 ) ;
-        fs01_dPs0 = cfs1 * beta * ( exp_Chi ) ;
-        fs02 = sqrt( Chi - 1.0 + fs01 ) ;
-        fs02_dPs0 = ( beta + fs01_dPs0 ) / fs02 * 0.5 ;
-   
-      } /* end of if ( Chi  ... ) block */
-      /*-----------------------------------------------------------*
-       * Fs0
-       *-----------------*/
-      Fs0 = VgpLD - Ps0LD - fac1 * fs02 ;
-      Fs0_dPs0 = - 1.0e0 - fac1 * fs02_dPs0 ;
-
-      if ( flg_conv == 1 ) break ;
-
-      dPs0 = - Fs0 / Fs0_dPs0 ;
-
-      /*-------------------------------------------*
-       * Update Ps0LD .
-       *-----------------*/
-      dPlim = 0.5*dP_max*(1.0 + Fn_Max(1.e0,fabs(Ps0LD))) ;
-      if ( fabs( dPs0 ) > dPlim ) dPs0 = dPlim * Fn_Sgn( dPs0 ) ;
-
-      Ps0LD = Ps0LD + dPs0 ;
-
-      TX = -Vxbgmtcl + ps_conv / 2 ;
-      if ( Ps0LD < TX ) Ps0LD = TX ;
+          Acd = pow( Ac1 , C_1o3 ) ;
+          T1 = C_1o3 / ( Acd * Acd ) ;
+          Acd_dVxb = Ac1_dVxb * T1 ;
+          Acd_dVgb = Ac1_dVgb * T1 ;
       
-      /*-------------------------------------------*
-       * Check convergence. 
-       *-----------------*/
-      if ( fabs( dPs0 ) <= ps_conv && fabs( Fs0 ) <= gs_conv ) {
-        flg_conv = 1 ;
-      }
+          Acn = -4.0 * C_SQRT_2 - 12.0 * TY + 2.0 * Acd + C_SQRT_2 * Acd * Acd ;
+          T1 = 2.0 + 2.0 * C_SQRT_2 * Acd ;
+          Acn_dVxb = T1 * Acd_dVxb ;
+          Acn_dVgb = T1 * Acd_dVgb ;
+       
+          Chi = Acn / Acd ;
+          T1 = 1.0 / ( Acd * Acd ) ;
+          Chi_dVxb = ( Acn_dVxb * Acd - Acn * Acd_dVxb ) * T1 ;
+          Chi_dVgb = ( Acn_dVgb * Acd - Acn * Acd_dVgb ) * T1 ;
       
-    } /* end of Ps0LD Newton loop */
-
-    /*-------------------------------------------*
-     * Procedure for diverged case.
-     *-----------------*/
-    if ( flg_conv == 0 ) { 
-      fprintf( stderr , 
-               "*** warning(HiSIM): Went Over Iteration Maximum (Ps0LD)\n" ) ;
-      fprintf( stderr , 
-               " -Vxbgmtcl = %e   Vgbgmt = %e\n" , 
-               -Vxbgmtcl , Vgbgmt ) ;
-      if ( flg_info >= 2 ) {
-        printf( "*** warning(HiSIM): Went Over Iteration Maximum (Ps0LD)\n" ) ;
-      }
-    } 
-
-    /*---------------------------------------------------*
-     * Evaluate derivatives of Ps0LD. 
-     *-----------------*/
-    if ( Chi < znbd5 ) { 
-      fs01_dVbs = cfs1 * beta * fi * ( - fi + 2 * fi_dChi ) ; /* fs01_dVxbgmtcl */
-      T2 = 1.0e0 / ( fs02 + fs02 ) ;
-      fs02_dVbs = ( + beta * fb_dChi * 2 * fb + fs01_dVbs ) * T2 ; /* fs02_dVxbgmtcl */
-    } else {
-      fs01_dVbs = + cfs1 * beta ; /* fs01_dVxbgmtcl */
-      T2 = 0.5e0 / fs02 ;
-      fs02_dVbs = ( + beta + fs01_dVbs ) * T2 ; /* fs02_dVxbgmtcl */
-    }
-
-    T1 = 1.0 / Fs0_dPs0 ;
-    Ps0LD_dVbs = - ( - fac1 * fs02_dVbs ) * T1 ;
-    Ps0LD_dVds = 0.0 ;
-    Ps0LD_dVgs = - ( VgpLD_dVgs - fac1_dVgs * fs02 ) * T1 ;
-
-    if ( Chi < znbd5 ) { 
-      /*-------------------------------------------*
-       * zone-D1/D2. (Ps0LD)
-       *-----------------*/
-      if ( Chi < znbd3 ) { flg_ovzone = 1; }
-      else { flg_ovzone = 2 ; }
-
-      Xi0 = fb * fb + epsm10 ;
-      T1 = 2 * fb * fb_dChi * beta ;
-      Xi0_dVbs = T1 * ( Ps0LD_dVbs + 1.0 ) ; /* Xi0_dVxbgmtcl */
-      Xi0_dVds = T1 * Ps0LD_dVds ;
-      Xi0_dVgs = T1 * Ps0LD_dVgs ;
-
-      Xi0p12 = fb + epsm10 ;
-      T1 = fb_dChi * beta ;
-      Xi0p12_dVbs = T1 * ( Ps0LD_dVbs + 1.0 ) ; /* Xi0p12_dVxbgmtcl */
-      Xi0p12_dVds = T1 * Ps0LD_dVds ;
-      Xi0p12_dVgs = T1 * Ps0LD_dVgs ;
-
-      Xi0p32 = fb * fb * fb + epsm10 ;
-      T1 = 3 * fb * fb * fb_dChi * beta ;
-      Xi0p32_dVbs = T1 * ( Ps0LD_dVbs + 1.0 ) ; /* Xi0p32_dVxbgmtcl */
-      Xi0p32_dVds = T1 * Ps0LD_dVds ;
-      Xi0p32_dVgs = T1 * Ps0LD_dVgs ;
- 
-    } else { 
-      /*-------------------------------------------*
-       * zone-D3. (Ps0LD)
-       *-----------------*/
-      flg_ovzone = 3 ;
-
-      Xi0 = Chi - 1.0e0 ;
-      Xi0_dVbs = beta * ( Ps0LD_dVbs + 1.0e0 ) ; /* Xi0_dVxbgmtcl */
-      Xi0_dVds = beta * Ps0LD_dVds ;
-      Xi0_dVgs = beta * Ps0LD_dVgs ;
- 
-      Xi0p12 = sqrt( Xi0 ) ;
-      T1 = 0.5e0 / Xi0p12 ;
-      Xi0p12_dVbs = T1 * Xi0_dVbs ;
-      Xi0p12_dVds = T1 * Xi0_dVds ;
-      Xi0p12_dVgs = T1 * Xi0_dVgs ;
- 
-      Xi0p32 = Xi0 * Xi0p12 ;
-      T1 = 1.5e0 * Xi0p12 ;
-      Xi0p32_dVbs = T1 * Xi0_dVbs ;
-      Xi0p32_dVds = T1 * Xi0_dVds ;
-      Xi0p32_dVgs = T1 * Xi0_dVgs ;
-
-    } /* end of if ( Chi  ... ) block */
+          Psa = Chi * beta_inv - Vxbgmtcl ;
+          Psa_dVxb = Chi_dVxb * beta_inv - Vxbgmtcl_dVxbgmt ;
+          Psa_dVgb = Chi_dVgb * beta_inv ;
+      
+          T1 = Psa + Vxbgmtcl ;
+          T2 = T1 / Ps0_min ;
+          T3 = sqrt( 1.0 + ( T2 * T2 ) ) ;
+      
+          T9 = T2 / T3 / Ps0_min ;
+          T3_dVd = T9 * ( Psa_dVxb + Vxbgmtcl_dVxbgmt ) ;
+          T3_dVg = T9 * Psa_dVgb ;
     
-    /*-----------------------------------------------------------*
-     * - Recalculate the derivatives of fs01 and fs02.
-     *-----------------*/
-    fs01_dVbs = Ps0LD_dVbs * fs01_dPs0 + fs01_dVbs ;
-    fs01_dVds = Ps0LD_dVds * fs01_dPs0 ;
-    fs01_dVgs = Ps0LD_dVgs * fs01_dPs0 ;
-    fs02_dVbs = Ps0LD_dVbs * fs02_dPs0 + fs02_dVbs ;
-    fs02_dVds = Ps0LD_dVds * fs02_dPs0 ;
-    fs02_dVgs = Ps0LD_dVgs * fs02_dPs0 ;
+          Ps0LD = T1 / T3 - Vxbgmtcl ;
+          T9 = 1.0 / ( T3 * T3 ) ;
+          Ps0LD_dVxb = T9 * ( ( Psa_dVxb + Vxbgmtcl_dVxbgmt ) * T3 - T1 * T3_dVd ) - Vxbgmtcl_dVxbgmt ;
+          Ps0LD_dVgb = T9 * ( Psa_dVgb * T3 - T1 * T3_dVg );
+         
+          T2 = ( VgpLD - Ps0LD ) ;
+          QsuLD = Cox0 * T2 ;
+          QsuLD_dVxb = - Cox0 * Ps0LD_dVxb ;
+          QsuLD_dVgb = Cox0 * ( VgpLD_dVgb - Ps0LD_dVgb ) ;
+      
+          QbuLD = QsuLD ;
+          QbuLD_dVxb = QsuLD_dVxb ;
+          QbuLD_dVgb = QsuLD_dVgb ;
+      
+        } else {
+      
+          /*---------------------------*
+           * Depletion and inversion
+           *-----------------*/
+    
+          /* initial value for a few fixpoint iterations
+             to get Ps0_iniA from simplified Poisson equation: */
+           flg_ovzone = 2 ;
+           Chi = znbd3 ;
+           Chi_dVxb = 0.0 ; Chi_dVgb = 0.0 ;
 
-    /*-----------------------------------------------------------*
-     * QbuLD and QiuLD
-     *-----------------*/
-    QbuLD = here->HSM2_cnst0over * Xi0p12 ;
-    QbuLD_dVxb = here->HSM2_cnst0over * Xi0p12_dVbs ;
-    QbuLD_dVgb = here->HSM2_cnst0over * Xi0p12_dVgs ;
+           Ps0_iniA= Chi/beta - Vxbgmtcl ;
+           Ps0_iniA_dVxb = Chi_dVxb/beta - Vxbgmtcl_dVxbgmt ;
+           Ps0_iniA_dVgb = Chi_dVgb/beta ;
+          
+          /* 1 .. 2 relaxation steps should be sufficient */
+          for ( lp_ld = 1; lp_ld <= 2; lp_ld ++ ) {
+            TY = exp(-Chi);
+            TY_dVxb = -Chi_dVxb * TY;
+            TY_dVgb = -Chi_dVgb * TY;
+            TX = 1.0e0 + 4.0e0 
+               * ( beta * ( VgpLD + Vxbgmtcl ) - 1.0e0 + TY ) / ( fac1p2 * beta2 ) ;
+            TX_dVxb = 4.0e0 * ( beta * ( Vxbgmtcl_dVxbgmt ) + TY_dVxb ) / ( fac1p2 * beta2 );
+            TX_dVgb = 4.0e0 * ( beta * ( VgpLD_dVgb       ) + TY_dVgb ) / ( fac1p2 * beta2 );
+            T1 = ( beta * ( VgpLD + Vxbgmtcl ) - 1.0e0 + TY );
+            T3 = fac1p2 * beta2 ;
+            if ( TX < epsm10) {
+              TX = epsm10;
+            }
+    
+            Ps0_iniA = VgpLD + fac1p2 * beta / 2.0e0 * ( 1.0e0 - sqrt( TX ) ) ;
+            Ps0_iniA_dVxb =            - fac1p2 * beta / 2.0e0 * TX_dVxb * 0.5 / sqrt( TX );
+            Ps0_iniA_dVgb = VgpLD_dVgb - fac1p2 * beta / 2.0e0 * TX_dVgb * 0.5 / sqrt( TX );
+            T1 = fac1p2 * beta ;
+            T2 = 1.0 - sqrt( TX );
+      
+            Chi = beta * ( Ps0_iniA + Vxbgmtcl ) ;
+            Chi_dVxb = beta * ( Ps0_iniA_dVxb + Vxbgmtcl_dVxbgmt ) ;
+            Chi_dVgb = beta * ( Ps0_iniA_dVgb ) ;
+          } /* End of iteration */
+    
+          if ( Chi < znbd3 ) { 
+    
+            flg_ovzone = 1 ; 
+    
+            /*-----------------------------------*
+             * zone-D1
+             * - Ps0_iniA is the analytical solution of QovLD=Qb0 with
+             *   Qb0 being approximated by 3-degree polynomial.
+             *
+             *   new: Inclusion of exp(-Chi) term at right border
+             *-----------------*/
+            Ta =  1.0/(9.0*sqrt(2.0)) - (5.0+7.0*exp(-3.0)) / (54.0*sqrt(2.0+exp(-3.0)));
+            Tb = (1.0+exp(-3.0)) / (2.0*sqrt(2.0+exp(-3.0))) - sqrt(2.0) / 3.0;
+            Tc =  1.0/sqrt(2.0) + 1.0/(beta*fac1);
+            Td = - (VgpLD + Vxbgmtcl) / fac1;
+            Td_dVxb = - Vxbgmtcl_dVxbgmt / fac1;
+            Td_dVgb = - VgpLD_dVgb / fac1;
+            Tq = Tb*Tb*Tb / (27.0*Ta*Ta*Ta) - Tb*Tc/(6.0*Ta*Ta) + Td/(2.0*Ta);
+            Tq_dVxb = Td_dVxb/(2.0*Ta);
+            Tq_dVgb = Td_dVgb / (2.0*Ta);
+            Tp = (3.0*Ta*Tc-Tb*Tb)/(9.0*Ta*Ta);
+            T5      = sqrt(Tq*Tq + Tp*Tp*Tp);
+            T5_dVxb = 2.0*Tq*Tq_dVxb / (2.0*T5);
+            T5_dVgb = 2.0*Tq*Tq_dVgb / (2.0*T5);
+            Tu = pow(-Tq + T5,C_1o3);
+            Tu_dVxb = Tu / (3.0 * (-Tq + T5)) * (-Tq_dVxb + T5_dVxb);
+            Tu_dVgb = Tu / (3.0 * (-Tq + T5)) * (-Tq_dVgb + T5_dVgb);
+            Tv = -pow(Tq + T5,C_1o3);
+            Tv_dVxb = Tv / (3.0 * (-Tq - T5)) * (-Tq_dVxb - T5_dVxb);
+            Tv_dVgb = Tv / (3.0 * (-Tq - T5)) * (-Tq_dVgb - T5_dVgb);
+            TX      = Tu + Tv - Tb/(3.0*Ta);
+            TX_dVxb = Tu_dVxb + Tv_dVxb;
+            TX_dVgb = Tu_dVgb + Tv_dVgb;
+            
+            Ps0_iniA = TX * beta_inv - Vxbgmtcl ;
+            Ps0_iniA_dVxb = TX_dVxb * beta_inv - Vxbgmtcl_dVxbgmt;
+            Ps0_iniA_dVgb = TX_dVgb * beta_inv;
+    
+            Chi = beta * ( Ps0_iniA + Vxbgmtcl ) ;
+            Chi_dVxb = beta * ( Ps0_iniA_dVxb + Vxbgmtcl_dVxbgmt ) ;
+            Chi_dVgb = beta * ( Ps0_iniA_dVgb ) ;
+          }
+    
+          if ( model->HSM2_coqovsm > 0 ) {
+    	  /*-----------------------------------*
+    	   * - Ps0_iniB : upper bound.
+    	   *-----------------*/
+            flg_ovzone += 2;
+    
+            VgpLD_shift = VgpLD + Vxbgmtcl + 0.1;
+            VgpLD_shift_dVgb = VgpLD_dVgb;
+            VgpLD_shift_dVxb = Vxbgmtcl_dVxbgmt;
+            exp_bVbs = exp( beta * - Vxbgmtcl ) + small ;
+            exp_bVbs_dVxb = - exp_bVbs * beta * Vxbgmtcl_dVxbgmt;
+            T0 = here->HSM2_nin / pParam->HSM2_nover;
+            cnst1over = T0 * T0;
+            gamma = cnst1over * exp_bVbs ;
+            gamma_dVxb = cnst1over * exp_bVbs_dVxb;
+         
+            T0    = beta2 * fac1p2;
+    
+            psi = beta*VgpLD_shift;
+            psi_dVgb = beta*VgpLD_shift_dVgb;
+            psi_dVxb = beta*VgpLD_shift_dVxb;
+            Chi_1      = log(gamma*T0 + psi*psi) - log(cnst1over*T0) + beta*Vxbgmtcl;
+            Chi_1_dVgb = 2.0*psi*psi_dVgb/ (gamma*T0 + psi*psi);
+            Chi_1_dVxb = (gamma_dVxb*T0+2.0*psi*psi_dVxb)/(gamma*T0+psi*psi)
+                                + beta*Vxbgmtcl_dVxbgmt;    
+    
+            Fn_SU2( Chi_1, Chi_1, psi, 1.0, T1, T2 );
+            Chi_1_dVgb = Chi_1_dVgb*T1 + psi_dVgb*T2;
+            Chi_1_dVxb = Chi_1_dVxb*T1 + psi_dVxb*T2;
+    
+         /* 1 fixpoint step for getting more accurate Chi_B */
+            psi      -= Chi_1 ;
+            psi_dVgb -= Chi_1_dVgb ;
+            psi_dVxb -= Chi_1_dVxb ;
+         
+            psi      += beta*0.1 ;
+    
+            psi_B = psi;
+            arg_B = psi*psi/(gamma*T0);
+            Chi_B = log(gamma*T0 + psi*psi) - log(cnst1over*T0) + beta*Vxbgmtcl;
+            Chi_B_dVgb = 2.0*psi*psi_dVgb/ (gamma*T0 + psi*psi);
+            Chi_B_dVxb = (gamma_dVxb*T0+2.0*psi*psi_dVxb)/(gamma*T0+psi*psi)
+                                + beta*Vxbgmtcl_dVxbgmt;    
+            Ps0_iniB      = Chi_B/beta - Vxbgmtcl ;
+            Ps0_iniB_dVgb = Chi_B_dVgb/beta;
+            Ps0_iniB_dVxb = Chi_B_dVxb/beta- Vxbgmtcl_dVxbgmt;
+    
+            
+            /* construction of Ps0LD by taking Ps0_iniB as an upper limit of Ps0_iniA
+             *
+             * Limiting is done for Chi rather than for Ps0LD, to avoid shifting
+             * for Fn_SU2 */
+    
+            Chi_A = Chi;
+            Chi_A_dVxb = Chi_dVxb;
+            Chi_A_dVgb = Chi_dVgb;
+    
+            Fn_SU2( Chi, Chi_A, Chi_B, c_ps0ini_2*75.00, T1, T2 ); /* org: 50 */
+            Chi_dVgb = Chi_A_dVgb * T1 + Chi_B_dVgb * T2;  
+            Chi_dVxb = Chi_A_dVxb * T1 + Chi_B_dVxb * T2;
+    
+          }
+    
+            /* updating Ps0LD */
+            Ps0LD= Chi/beta - Vxbgmtcl ;
+            Ps0LD_dVgb = Chi_dVgb/beta;
+            Ps0LD_dVxb = Chi_dVxb/beta- Vxbgmtcl_dVxbgmt;
+    
+          T1      = Chi - 1.0 + exp(-Chi);
+          T1_dVxb = (1.0 - exp(-Chi)) * Chi_dVxb ;
+          T1_dVgb = (1.0 - exp(-Chi)) * Chi_dVgb ;
+          if (T1 < epsm10) {
+             T1 = epsm10 ;
+             T1_dVxb = 0.0 ;
+             T1_dVgb = 0.0 ;
+          }
+          T2 = sqrt(T1);
+          QbuLD = here->HSM2_cnst0over * T2 ;
+          T3 = here->HSM2_cnst0over * 0.5 / T2 ;
+          QbuLD_dVxb = T3 * T1_dVxb ;
+          QbuLD_dVgb = T3 * T1_dVgb ;
+         
+          /*-----------------------------------------------------------*
+           * QsuLD : Qovs or Qovd in unit area.
+           * note: QsuLD = Qdep+Qinv. 
+           *-----------------*/
+          QsuLD = Cox0 * ( VgpLD - Ps0LD ) ;
+          QsuLD_dVxb = Cox0 * ( - Ps0LD_dVxb ) ;
+          QsuLD_dVgb = Cox0 * ( VgpLD_dVgb - Ps0LD_dVgb ) ;
+    
+          if ( model->HSM2_coqovsm == 1 ) { /* take initial values from analytical model */ 
+    
+       
+            /*---------------------------------------------------*
+             * Calculation of Ps0LD. (beginning of Newton loop) 
+             * - Fs0 : Fs0 = 0 is the equation to be solved. 
+             * - dPs0 : correction value. 
+             *-----------------*/
+    
+            /* initial value too close to flat band should not be used */
+            exp_bVbs = exp( beta * - Vxbgmtcl ) ;
+            T0 = here->HSM2_nin / pParam->HSM2_nover;
+            cnst1over = T0 * T0;
+            cfs1 = cnst1over * exp_bVbs ;
+        
+            flg_conv = 0 ;
+            for ( lp_s0 = 1 ; lp_s0 <= 2*lp_s0_max + 1 ; lp_s0 ++ ) { 
+    
+                Chi = beta * ( Ps0LD + Vxbgmtcl ) ;
+       
+                if ( Chi < znbd5 ) { 
+                  /*-------------------------------------------*
+                   * zone-D1/D2. (Ps0LD)
+                   *-----------------*/
+                  fi = Chi * Chi * Chi 
+                    * ( cn_im53 + Chi * ( cn_im54 + Chi * cn_im55 ) ) ;
+                  fi_dChi = Chi * Chi 
+                    * ( 3 * cn_im53 + Chi * ( 4 * cn_im54 + Chi * 5 * cn_im55 ) ) ;
+          
+                  fs01 = cfs1 * fi * fi ;
+                  fs01_dPs0 = cfs1 * beta * 2 * fi * fi_dChi ;
+    
+                  fb = Chi * ( cn_nc51 
+                     + Chi * ( cn_nc52 
+                     + Chi * ( cn_nc53 
+                     + Chi * ( cn_nc54 + Chi * cn_nc55 ) ) ) ) ;
+                  fb_dChi = cn_nc51 
+                     + Chi * ( 2 * cn_nc52 
+                     + Chi * ( 3 * cn_nc53
+                     + Chi * ( 4 * cn_nc54 + Chi * 5 * cn_nc55 ) ) ) ;
+    
+                  fs02 = sqrt( fb * fb + fs01 + small ) ;
+                  fs02_dPs0 = ( beta * fb_dChi * 2 * fb + fs01_dPs0 ) / ( fs02 + fs02 ) ;
+    
+                } else {
+                 /*-------------------------------------------*
+                  * zone-D3. (Ps0LD)
+                  *-----------------*/
+                 if ( Chi < large_arg ) { /* avoid exp_Chi to become extremely large */
+    	        exp_Chi = exp( Chi ) ;
+    	        fs01 = cfs1 * ( exp_Chi - 1.0e0 ) ;
+    	        fs01_dPs0 = cfs1 * beta * ( exp_Chi ) ;
+                 } else {
+                    exp_bPs0 = exp( beta*Ps0LD ) ;
+                    fs01     = cnst1over * ( exp_bPs0 - exp_bVbs ) ;
+                    fs01_dPs0 = cnst1over * beta * exp_bPs0 ;
+                 }
+                 fs02 = sqrt( Chi - 1.0 + fs01 ) ;
+                 fs02_dPs0 = ( beta + fs01_dPs0 ) / fs02 * 0.5 ;
+       
+                } /* end of if ( Chi  ... ) block */
+                /*-----------------------------------------------------------*
+                 * Fs0
+                 *-----------------*/
+                Fs0 = VgpLD - Ps0LD - fac1 * fs02 ;
+                Fs0_dPs0 = - 1.0e0 - fac1 * fs02_dPs0 ;
+    
+                if ( flg_conv == 1 ) break ;
+    
+                dPs0 = - Fs0 / Fs0_dPs0 ;
+    
+                /*-------------------------------------------*
+                 * Update Ps0LD .
+                 *-----------------*/
+                dPlim = 0.5*dP_max*(1.0 + Fn_Max(1.e0,fabs(Ps0LD))) ;
+                if ( fabs( dPs0 ) > dPlim ) dPs0 = dPlim * Fn_Sgn( dPs0 ) ;
+    
+                Ps0LD = Ps0LD + dPs0 ;
+    
+                TX = -Vxbgmtcl + ps_conv / 2 ;
+                if ( Ps0LD < TX ) Ps0LD = TX ;
+          
+                /*-------------------------------------------*
+                 * Check convergence. 
+                 *-----------------*/
+                if ( fabs( dPs0 ) <= ps_conv && fabs( Fs0 ) <= gs_conv ) {
+                  flg_conv = 1 ;
+                }
+          
+            } /* end of Ps0LD Newton loop */
+    
+            /*-------------------------------------------*
+             * Procedure for diverged case.
+             *-----------------*/
+            if ( flg_conv == 0 ) { 
+              fprintf( stderr , 
+                       "*** warning(HiSIM_HV): Went Over Iteration Maximum (Ps0LD)\n" ) ;
+              fprintf( stderr , " -Vxbgmtcl = %e   Vgbgmt = %e\n" , -Vxbgmtcl , Vgbgmt ) ;
+            } 
+    
+            /*---------------------------------------------------*
+             * Evaluate derivatives of Ps0LD. 
+             *-----------------*/
+    
+            if ( Chi < znbd5 ) { 
+              fs01_dVbs = cfs1 * beta * fi * ( - fi + 2 * fi_dChi ) ; /* fs01_dVxbgmtcl */
+              T2 = 1.0e0 / ( fs02 + fs02 ) ;
+              fs02_dVbs = ( + beta * fb_dChi * 2 * fb + fs01_dVbs ) * T2 ; /* fs02_dVxbgmtcl */
+            } else {
+              if ( Chi < large_arg ) {
+                fs01_dVbs = + cfs1 * beta ; /* fs01_dVxbgmtcl */
+              } else {
+                fs01_dVbs   = + cfs1 * beta ;
+              }
+              T2 = 0.5e0 / fs02 ;
+              fs02_dVbs = ( + beta + fs01_dVbs ) * T2 ; /* fs02_dVxbgmtcl */
+            }
+    
+            T1 = 1.0 / Fs0_dPs0 ;
+            Ps0LD_dVxb = - ( - fac1 * fs02_dVbs ) * T1 ;
+            Ps0LD_dVds = 0.0 ;
+            Ps0LD_dVgb = - ( VgpLD_dVgb - fac1_dVgs * fs02 ) * T1 ;
+    
+    
+            if ( Chi < znbd5 ) { 
+              /*-------------------------------------------*
+               * zone-D1/D2. (Ps0LD)
+               *-----------------*/
+              if ( Chi < znbd3 ) { flg_ovzone = 1; }
+                            else { flg_ovzone = 2; }
+    
+              Xi0 = fb * fb + epsm10 ;
+              T1 = 2 * fb * fb_dChi * beta ;
+              Xi0_dVbs = T1 * ( Ps0LD_dVxb + 1.0 ) ; /* Xi0_dVxbgmtcl */
+              Xi0_dVds = T1 * Ps0LD_dVds ;
+              Xi0_dVgs = T1 * Ps0LD_dVgb ;
+    
+              Xi0p12 = fb + epsm10 ;
+              T1 = fb_dChi * beta ;
+              Xi0p12_dVbs = T1 * ( Ps0LD_dVxb + 1.0 ) ; /* Xi0p12_dVxbgmtcl */
+              Xi0p12_dVds = T1 * Ps0LD_dVds ;
+              Xi0p12_dVgs = T1 * Ps0LD_dVgb ;
+    
+              Xi0p32 = fb * fb * fb + epsm10 ;
+              T1 = 3 * fb * fb * fb_dChi * beta ;
+              Xi0p32_dVbs = T1 * ( Ps0LD_dVxb + 1.0 ) ; /* Xi0p32_dVxbgmtcl */
+              Xi0p32_dVds = T1 * Ps0LD_dVds ;
+              Xi0p32_dVgs = T1 * Ps0LD_dVgb ;
+     
+            } else { 
+              /*-------------------------------------------*
+               * zone-D3. (Ps0LD)
+               *-----------------*/
+              flg_ovzone = 3 ;
+    
+              Xi0 = Chi - 1.0e0 ;
+              Xi0_dVbs = beta * ( Ps0LD_dVxb + 1.0e0 ) ; /* Xi0_dVxbgmtcl */
+              Xi0_dVds = beta * Ps0LD_dVds ;
+              Xi0_dVgs = beta * Ps0LD_dVgb ;
+     
+              Xi0p12 = sqrt( Xi0 ) ;
+              T1 = 0.5e0 / Xi0p12 ;
+              Xi0p12_dVbs = T1 * Xi0_dVbs ;
+              Xi0p12_dVds = T1 * Xi0_dVds ;
+              Xi0p12_dVgs = T1 * Xi0_dVgs ;
+    
+              Xi0p32 = Xi0 * Xi0p12 ;
+              T1 = 1.5e0 * Xi0p12 ;
+              Xi0p32_dVbs = T1 * Xi0_dVbs ;
+              Xi0p32_dVds = T1 * Xi0_dVds ;
+              Xi0p32_dVgs = T1 * Xi0_dVgs ;
+    
+              if ( Chi < large_arg ) {
+              } else {
+              }
+            } /* end of if ( Chi  ... ) block */
+        
+            /*-----------------------------------------------------------*
+             * - Recalculate the derivatives of fs01 and fs02.
+             *-----------------*/
+            fs01_dVbs = Ps0LD_dVxb * fs01_dPs0 + fs01_dVbs ;
+            fs01_dVds = Ps0LD_dVds * fs01_dPs0 ;
+            fs01_dVgs = Ps0LD_dVgb * fs01_dPs0 ;
+            fs02_dVbs = Ps0LD_dVxb * fs02_dPs0 + fs02_dVbs ;
+            fs02_dVxb = Ps0LD_dVds * fs02_dPs0 ;
+            fs02_dVgb = Ps0LD_dVgb * fs02_dPs0 ;
+    
+            /*-----------------------------------------------------------*
+             * QbuLD and QiuLD
+             *-----------------*/
+            QbuLD = here->HSM2_cnst0over * Xi0p12 ;
+            QbuLD_dVxb = here->HSM2_cnst0over * Xi0p12_dVbs ;
+            QbuLD_dVgb = here->HSM2_cnst0over * Xi0p12_dVgs ;
+    
+            T1 = 1.0 / ( fs02 + Xi0p12 ) ;
+            QiuLD = here->HSM2_cnst0over * fs01 * T1 ;
+            T2 = 1.0 / ( fs01 + epsm10 ) ;
+            QiuLD_dVbs = QiuLD * ( fs01_dVbs * T2 - ( fs02_dVbs + Xi0p12_dVbs ) * T1 ) ;
+            QiuLD_dVgs = QiuLD * ( fs01_dVgs * T2 - ( fs02_dVgb + Xi0p12_dVgs ) * T1 ) ;
+    
+            /*-----------------------------------------------------------*
+             * Extrapolation: X_dVxbgmt = X_dVxbgmtcl * Vxbgmtcl_dVxbgmt
+             *-----------------*/
+            QbuLD_dVxb *= Vxbgmtcl_dVxbgmt ;
+            QiuLD_dVbs *= Vxbgmtcl_dVxbgmt ;
+    
+            /*-----------------------------------------------------------*
+             * Total overlap charge
+             *-----------------*/
+            QsuLD = QbuLD + QiuLD;
+            QsuLD_dVxb = QbuLD_dVxb + QiuLD_dVbs;
+            QsuLD_dVgb = QbuLD_dVgb + QiuLD_dVgs;
+    
+          } /* end of COQOVSM branches */
+    
+        } /* end of Vgbgmt region blocks */
+      
 
-    T1 = 1.0 / ( fs02 + Xi0p12 ) ;
-    QiuLD = here->HSM2_cnst0over * fs01 * T1 ;
-    T2 = 1.0 / ( fs01 + epsm10 ) ;
-    QiuLD_dVbs = QiuLD * ( fs01_dVbs * T2 - ( fs02_dVbs + Xi0p12_dVbs ) * T1 ) ;
-    QiuLD_dVgs = QiuLD * ( fs01_dVgs * T2 - ( fs02_dVgs + Xi0p12_dVgs ) * T1 ) ;
+        /* convert to source ref. */
+        QsuLD_dVbs = - (QsuLD_dVxb + QsuLD_dVgb) ;
+        QsuLD_dVds =    QsuLD_dVxb * flg_overd   ;
+        QsuLD_dVgs =                 QsuLD_dVgb  ;
 
-    /*-----------------------------------------------------------*
-     * make QiuLD=0 if VgVt <= VgVt_small 
-     *-----------------*/
-    if ( QiuLD * Cox_inv <= VgVt_small ) {
-      flg_ovzone = 4 ;
-      QiuLD = 0.0 ;
-      QiuLD_dVbs = 0.0 ;
-      QiuLD_dVgs = 0.0 ;
-    }
+        QbuLD_dVbs = - (QbuLD_dVxb + QbuLD_dVgb) ;
+        QbuLD_dVds =    QbuLD_dVxb * flg_overd   ;
+        QbuLD_dVgs =                 QbuLD_dVgb  ;
 
-    /*-----------------------------------------------------------*
-     * Extrapolation: X_dVxbgmt = X_dVxbgmtcl * Vxbgmtcl_dVxbgmt
-     *-----------------*/
-    QbuLD_dVxb *= Vxbgmtcl_dVxbgmt;
-    QiuLD_dVbs *= Vxbgmtcl_dVxbgmt;
+        /* inversion charge = total - depletion */
+        QiuLD = QsuLD - QbuLD  ;
+        QiuLD_dVbs = QsuLD_dVbs - QbuLD_dVbs ;
+        QiuLD_dVds = QsuLD_dVds - QbuLD_dVds ;
+        QiuLD_dVgs = QsuLD_dVgs - QbuLD_dVgs ;
 
-    /*-----------------------------------------------------------*
-     * Total overlap charge
-     *-----------------*/
-    QsuLD = QbuLD + QiuLD;
-    QsuLD_dVxb = QbuLD_dVxb + QiuLD_dVbs;
-    QsuLD_dVgb = QbuLD_dVgb + QiuLD_dVgs;
+        /* assign final outputs of Qover model */
+        /* note: Qovs and Qovd are exchanged in reverse mode */
+        T4 = here->HSM2_weff_nf * Lov ;
 
-      } /* end of COQOVSM branches */
+        if(flg_ovloops) {
+          Qovs =  T4 * QsuLD ;
+          Qovs_dVbs = T4 * QsuLD_dVbs ;
+          Qovs_dVds = T4 * QsuLD_dVds ;
+          Qovs_dVgs = T4 * QsuLD_dVgs ;
+          QisLD = T4 * QiuLD ;
+          QisLD_dVbs = T4 * QiuLD_dVbs ;
+          QisLD_dVds = T4 * QiuLD_dVds ;
+          QisLD_dVgs = T4 * QiuLD_dVgs ;
+          QbsLD = T4 * QbuLD ;
+          QbsLD_dVbs = T4 * QbuLD_dVbs ;
+          QbsLD_dVds = T4 * QbuLD_dVds ;
+          QbsLD_dVgs = T4 * QbuLD_dVgs ;
+        }
 
-    } /* end of Vgbgmt region blocks */
-  
-    /* convert to source ref. */
-    QsuLD_dVbs = - (QsuLD_dVxb + QsuLD_dVgb) ;
-    QsuLD_dVds =    QsuLD_dVxb * flg_overd   ;
-    QsuLD_dVgs =                 QsuLD_dVgb  ;
-
-    QbuLD_dVbs = - (QbuLD_dVxb + QbuLD_dVgb) ;
-    QbuLD_dVds =    QbuLD_dVxb * flg_overd   ;
-    QbuLD_dVgs =                 QbuLD_dVgb  ;
-
-    /* inversion charge = total - depletion */
-    QiuLD = QsuLD - QbuLD  ;
-    QiuLD_dVbs = QsuLD_dVbs - QbuLD_dVbs ;
-    QiuLD_dVds = QsuLD_dVds - QbuLD_dVds ;
-    QiuLD_dVgs = QsuLD_dVgs - QbuLD_dVgs ;
-
-    /* assign final outputs of Qover model */
-    /* note: Qovs and Qovd are exchanged in reverse mode */
-    T4 = here->HSM2_weff_nf * Lov ;
-
-    if(flg_ovloops) {
-      Qovs =  T4 * QsuLD ;
-      Qovs_dVbs = T4 * QsuLD_dVbs ;
-      Qovs_dVds = T4 * QsuLD_dVds ;
-      Qovs_dVgs = T4 * QsuLD_dVgs ;
-      QisLD = T4 * QiuLD ;
-      QisLD_dVbs = T4 * QiuLD_dVbs ;
-      QisLD_dVds = T4 * QiuLD_dVds ;
-      QisLD_dVgs = T4 * QiuLD_dVgs ;
-      QbsLD = T4 * QbuLD ;
-      QbsLD_dVbs = T4 * QbuLD_dVbs ;
-      QbsLD_dVds = T4 * QbuLD_dVds ;
-      QbsLD_dVgs = T4 * QbuLD_dVgs ;
-    }
-
-    if(flg_ovloopd) {
-      Qovd =  T4 * QsuLD ;
-      Qovd_dVbs = T4 * QsuLD_dVbs ;
-      Qovd_dVds = T4 * QsuLD_dVds ;
-      Qovd_dVgs = T4 * QsuLD_dVgs ;
-      QidLD = T4 * QiuLD ;
-      QidLD_dVbs = T4 * QiuLD_dVbs ;
-      QidLD_dVds = T4 * QiuLD_dVds ;
-      QidLD_dVgs = T4 * QiuLD_dVgs ;
-      QbdLD = T4 * QbuLD ;
-      QbdLD_dVbs = T4 * QbuLD_dVbs ;
-      QbdLD_dVds = T4 * QbuLD_dVds ;
-      QbdLD_dVgs = T4 * QbuLD_dVgs ;
-    }
+        if(flg_ovloopd) {
+          Qovd =  T4 * QsuLD ;
+          Qovd_dVbs = T4 * QsuLD_dVbs ;
+          Qovd_dVds = T4 * QsuLD_dVds ;
+          Qovd_dVgs = T4 * QsuLD_dVgs ;
+          QidLD = T4 * QiuLD ;
+          QidLD_dVbs = T4 * QiuLD_dVbs ;
+          QidLD_dVds = T4 * QiuLD_dVds ;
+          QidLD_dVgs = T4 * QiuLD_dVgs ;
+          QbdLD = T4 * QbuLD ;
+          QbdLD_dVbs = T4 * QbuLD_dVbs ;
+          QbdLD_dVds = T4 * QbuLD_dVds ;
+          QbdLD_dVgs = T4 * QbuLD_dVgs ;
+        }
   
       } /* end of lcover loop */
 
@@ -5978,7 +5966,7 @@ start_of_mobility:
   /*-------------------------------------------*
    * Gate/Bulk overlap charge: Qgbo
    *-----------------*/
-  Cgbo_loc = - model->HSM2_cgbo * here->HSM2_lgate ;
+  Cgbo_loc = - modelCGS->HSM2_cgbo * here->HSM2_lgate ;
   Qgbo = - Cgbo_loc * (Vgs -Vbs) ;
   Qgbo_dVgs = - Cgbo_loc ;
   Qgbo_dVbs =   Cgbo_loc ;
@@ -5987,7 +5975,7 @@ start_of_mobility:
   /*---------------------------------------------------*
    * Lateral-field-induced capacitance.
    *-----------------*/
-  if ( model->HSM2_coqy == 0 || model->HSM2_xqy == 0 ){
+  if ( model->HSM2_coqy == 0 || modelCGS->HSM2_xqy == 0 ){
     Qy = 0.0e0 ;
     Qy_dVds = 0.0e0 ;
     Qy_dVgs = 0.0e0 ;
@@ -6024,7 +6012,7 @@ start_of_mobility:
     T3 = T10 * 1.3 ;
     T2 = C_ESI * here->HSM2_weff_nf * T3 ;
     T7 = 1.0e-7 ; /* 1nm */
-    T0 = Fn_Max( model->HSM2_xqy , T7 ) ;
+    T0 = Fn_Max( modelCGS->HSM2_xqy , T7 ) ;
     T4 = T2 / T0 ;
     Qy =       - ( Ps0      + Vds   - T1     ) * T4 ;
     Qy_dVds =  - ( Ps0_dVds + 1.0e0 - T1_dVd ) * T4 ;
@@ -6200,19 +6188,19 @@ start_of_mobility:
   tcjbdswg=model->HSM2_tcjbdswg;
   tcjbsswg=model->HSM2_tcjbsswg;
 
-  czbs = model->HSM2_cj * here->HSM2_as ;
-  czbs = czbs * ( 1.0 + tcjbs * ( TTEMP - model->HSM2_tnom )) ;
+  czbs = modelCGS->HSM2_cj * hereCGS->HSM2_as ;
+  czbs = czbs * ( 1.0 + tcjbs * ( TTEMP - model->HSM2_ktnom )) ;
 
-  czbd = model->HSM2_cj * here->HSM2_ad ;
-  czbd = czbd * ( 1.0 + tcjbd * ( TTEMP - model->HSM2_tnom )) ;
+  czbd = modelCGS->HSM2_cj * hereCGS->HSM2_ad ;
+  czbd = czbd * ( 1.0 + tcjbd * ( TTEMP - model->HSM2_ktnom )) ;
 
   /* Source Bulk Junction */
-  if (here->HSM2_ps > here->HSM2_weff_nf) {
-    czbssw = model->HSM2_cjsw * ( here->HSM2_ps - here->HSM2_weff_nf ) ;
-    czbssw = czbssw * ( 1.0 + tcjbssw * ( TTEMP - model->HSM2_tnom )) ;
+  if (hereCGS->HSM2_ps > here->HSM2_weff_nf) {
+    czbssw = modelCGS->HSM2_cjsw * ( hereCGS->HSM2_ps - here->HSM2_weff_nf ) ;
+    czbssw = czbssw * ( 1.0 + tcjbssw * ( TTEMP - model->HSM2_ktnom )) ;
 
-    czbsswg = model->HSM2_cjswg * here->HSM2_weff_nf ;
-    czbsswg = czbsswg * ( 1.0 + tcjbsswg * ( TTEMP - model->HSM2_tnom )) ;
+    czbsswg = modelCGS->HSM2_cjswg * here->HSM2_weff_nf ;
+    czbsswg = czbsswg * ( 1.0 + tcjbsswg * ( TTEMP - model->HSM2_ktnom )) ;
 
     if (vbs_jct == 0.0) {  
       Qbs = 0.0 ;
@@ -6257,8 +6245,8 @@ start_of_mobility:
       Capbs = T1 + vbs_jct * T2 ;
     }
   } else {
-    czbsswg = model->HSM2_cjswg * here->HSM2_ps ;
-    czbsswg = czbsswg * ( 1.0 + tcjbsswg * ( TTEMP - model->HSM2_tnom )) ;
+    czbsswg = modelCGS->HSM2_cjswg * hereCGS->HSM2_ps ;
+    czbsswg = czbsswg * ( 1.0 + tcjbsswg * ( TTEMP - model->HSM2_ktnom )) ;
     if (vbs_jct == 0.0) {
       Qbs = 0.0 ;
       Capbs = czbs + czbsswg ;
@@ -6294,11 +6282,11 @@ start_of_mobility:
   }    
     
   /* Drain Bulk Junction */
-  if (here->HSM2_pd > here->HSM2_weff_nf) {
-    czbdsw = model->HSM2_cjsw * ( here->HSM2_pd - here->HSM2_weff_nf ) ;
-    czbdsw = czbdsw * ( 1.0 + tcjbdsw * ( TTEMP - model->HSM2_tnom )) ; 
-    czbdswg = model->HSM2_cjswg * here->HSM2_weff_nf ;
-    czbdswg = czbdswg * ( 1.0 + tcjbdswg * ( TTEMP - model->HSM2_tnom )) ;
+  if (hereCGS->HSM2_pd > here->HSM2_weff_nf) {
+    czbdsw = modelCGS->HSM2_cjsw * ( hereCGS->HSM2_pd - here->HSM2_weff_nf ) ;
+    czbdsw = czbdsw * ( 1.0 + tcjbdsw * ( TTEMP - model->HSM2_ktnom )) ; 
+    czbdswg = modelCGS->HSM2_cjswg * here->HSM2_weff_nf ;
+    czbdswg = czbdswg * ( 1.0 + tcjbdswg * ( TTEMP - model->HSM2_ktnom )) ;
     if (vbd_jct == 0.0) {
       Qbd = 0.0 ;
       Capbd = czbd + czbdsw + czbdswg ;
@@ -6343,8 +6331,8 @@ start_of_mobility:
     }
     
   } else {
-    czbdswg = model->HSM2_cjswg * here->HSM2_pd ;
-    czbdswg = czbdswg * ( 1.0 + tcjbdswg * ( TTEMP - model->HSM2_tnom )) ;
+    czbdswg = modelCGS->HSM2_cjswg * hereCGS->HSM2_pd ;
+    czbdswg = czbdswg * ( 1.0 + tcjbdswg * ( TTEMP - model->HSM2_ktnom )) ;
     if (vbd_jct == 0.0) {   
       Qbd = 0.0 ;
       Capbd = czbd + czbdswg ;
@@ -7545,9 +7533,10 @@ start_of_mobility:
       here->HSM2_noicross = crl_f ;
       if ( here->HSM2_noiigate < 0.0 ) here->HSM2_noiigate = 0.0e0 ;
     }else{
-      here->HSM2_noiigate = 0.0e0 ;
-      here->HSM2_noicross = 0.0e0 ;
-    }
+    here->HSM2_noiigate = 0.0e0 ;
+    here->HSM2_noicross = 0.0e0 ;
+  }
+  here->HSM2_Qdrat = Qdrat ; /* needed for calculating induced gate noise */
   }else{
     here->HSM2_noiigate = 0.0e0 ;
     here->HSM2_noicross = 0.0e0 ;

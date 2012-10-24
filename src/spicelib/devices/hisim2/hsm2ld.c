@@ -1,12 +1,12 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM_2.5.1 
+ VERSION : HiSIM 2.6.1 
  FILE : hsm2ld.c
 
- date : 2011.04.07
+ date : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -45,7 +45,6 @@ static double vsum0 = 1.0e5 ;
 #endif
 #endif
 
-
 static void ShowPhysVals
 (
  HSM2instance *here,
@@ -61,7 +60,6 @@ static void ShowPhysVals
 {
   NG_IGNORE(vgd);
   NG_IGNORE(vbd);
-
   /* regard the epsilon-quantity as 0.0 */
   vds = (fabs(vds) < SHOW_EPS_QUANT) ? 0.0 : vds;
   vgs = (fabs(vgs) < SHOW_EPS_QUANT) ? 0.0 : vgs;
@@ -906,7 +904,7 @@ tm0 = gtodsecld() ;
 	*(ckt->CKTstate1 + here->HSM2qbd) = *(ckt->CKTstate0 + here->HSM2qbd);
       }
     }
-
+    
     return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM2qb));
     return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM2qg));
     return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSM2qd));
