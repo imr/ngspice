@@ -145,10 +145,6 @@ AC_ARG_ENABLE([cider],
 AC_ARG_ENABLE([adms],
     [AS_HELP_STRING([--enable-adms], [Enable ADMS code models, (experimental)])])
 
-# --enable-adms3: define ADMS in the code. This is for the adms Verilog-A compiler support
-AC_ARG_ENABLE([adms3],
-    [AS_HELP_STRING([--enable-adms3], [Enable ADMS code models, (experimental) (adms3)])])
-
 # --enable-xspice: define XSPICE in the code. This is for xspice support
 AC_ARG_ENABLE([pss],
     [AS_HELP_STRING([--enable-pss], [Enable PSS analysis, (very experimental)])])
@@ -881,7 +877,7 @@ AM_CONDITIONAL([NUMDEV_WANTED], [test "x$enable_cider" = xyes])
 AM_CONDITIONAL([PSS_WANTED], [test "x$enable_pss" = xyes])
 
 # adms option
-if test "x$enable_adms" = xyes  ||  test "x$enable_adms3" = xyes ; then
+if test "x$enable_adms" = xyes ; then
     AC_MSG_RESULT([**********************************
 * ADMS  support is  experimental *
 **********************************])
@@ -890,11 +886,7 @@ if test "x$enable_adms" = xyes  ||  test "x$enable_adms3" = xyes ; then
     if test "x$ADMSXML" = xno; then
         AC_MSG_ERROR([If you want Verilog-A models you should install admsXml])
     fi
-    if test "x$enable_adms3" = xyes ; then
-        AC_DEFINE([ADMS], [3], [Support for Verilog-A models (adms3)])
-    else
-        AC_DEFINE([ADMS], [1], [Support for Verilog-A models])
-    fi
+    AC_DEFINE([ADMS], [1], [Support for Verilog-A models])
 
     VLADEVDIR=" adms/ekv \
                 adms/hicum0 \

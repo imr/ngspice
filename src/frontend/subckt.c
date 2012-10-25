@@ -1873,28 +1873,7 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
             tfree(s->li_line);
             s->li_line = buffer;
             break;
-#if ADMS >= 3
-        case 'u': /* urc transmissionline */ /* hijacked for adms */
-            name = gettok_node(&t);  /* this can be either a model name or a node name. */
-            wlsub = wl_find(name, submod);
-
-            while (!wlsub) {
-                (void) sprintf(buffer + strlen(buffer), "%s ", name);
-                tfree(name);
-                name = gettok_node(&t);  /* this can be either a model name or a node name. */
-                wlsub = wl_find(name, submod);
-            }
-
-            if (wlsub)
-                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
-
-            (void) strcat(buffer, t);
-            tfree(s->li_line);
-            s->li_line = buffer;
-            break;
-#else
         case 'u': /* urc transmissionline */
-#endif
             /* 3 terminal devices */
         case 'w': /* current controlled switch */
         case 'j': /* jfet */

@@ -232,10 +232,6 @@ extern char *Help_Path;
 extern char *Lib_Path;
 extern char *Inp_Path;
 
-#if ADMS >= 3
-int load_vadev(CKTcircuit *ckt, char *name);
-#endif
-
 #ifdef TCL_MODULE
 
 #include <errno.h>

@@ -7,9 +7,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
 #include "inp.h"
-#if ADMS >= 3
-#include "ngspice/fteext.h" /* controlled_exit() */
-#endif
 
 /*--------------------------------------------------------------
  * This fcn takes the model card & examines it.  Depending upon
@@ -45,24 +42,6 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     INPinsert(&modname, tab);	   /* stick model name into table */
     INPgetTok(&line, &type_name, 1);     /* get model type */
     
-#if ADMS >= 3
-    if ((type=load_vadev(ckt,type_name)) && type>=0) {
-                          INPmodel *thismodel;
-                          char *error;
-#ifdef TRACE
-                          printf("inpdomod.c: got model %s from dynamic library - create device # %i\n",type_name,type);
-#endif    
-                          INPmakeMod(modname, type, image);
-                          thismodel=NULL;
-                          error=INPgetMod(ckt, modname, &thismodel, tab);
-                          if (thismodel == NULL)
-                          {
-                             fprintf(stderr, "%s\nPlease check model, level or number of terminals!\n", error);
-                             controlled_exit(EXIT_BAD);
-                          }
-    } 
-    else
-#endif
     /*  -----  Check if model is a BJT --------- */
     if (strcmp(type_name, "npn") == 0 || strcmp(type_name, "pnp") == 0) {
 			err = INPfindLev(line,&lev);

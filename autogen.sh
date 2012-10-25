@@ -28,7 +28,6 @@ help()
     echo "$PROJECT autogen.sh help"
     echo
     echo "--adms     -a: enables adms feature"
-    echo "--adms3      : enables adms3 feature"
     echo "--help     -h: print this file"
     echo "--version  -v: print version"
     echo
@@ -104,11 +103,6 @@ case "$1" in
         ADMS=1
         ;;
 
-    "--adms3" )
-        check_adms
-        ADMS=3
-        ;;
-
     "--help" | "-h")
         help
         exit 0
@@ -176,17 +170,9 @@ $znew
                     echo "-->"$ADMSDIR/$adms_dir
                     (
                         cd $ADMSDIR/$adms_dir
-                        if [ "$ADMS" -eq 3 ]; then
-                            $ADMSXML \
-                                -I adms3va \
-                                --create_makefile_am \
-                                -e ../admst/ngspice.xml \
-                                `ls adms3va/*.va`
-                        else
-                            $ADMSXML `ls admsva/*.va` -Iadmsva -xv \
-                                -e ../admst/ngspiceVersion.xml \
-                                -e ../admst/ngspiceMakefile.am.xml
-                        fi
+                        $ADMSXML `ls admsva/*.va` -Iadmsva -xv \
+                            -e ../admst/ngspiceVersion.xml \
+                            -e ../admst/ngspiceMakefile.am.xml
                     )
                     ;;
             esac

@@ -1611,12 +1611,8 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             }
             if (model_type)
                 tfree(model_type);
-#if ADMS >= 3
-            /* ngspice strategy to detect unused models fails with dynamic models - reason: # of terms unknown during parsing */
-#else
             if (!found_model)
                 *line = '*';
-#endif
             tfree(model_name);
         }
     }

@@ -33,9 +33,6 @@ void INP2W(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2Y(CKTcircuit *ckt, INPtables *tab, card *current);
 void INP2Z(CKTcircuit *ckt, INPtables *tab, card *current);
 
-#if ADMS >= 3
-void INP2adms(CKTcircuit *ckt, INPtables *tab, card *current);
-#endif
 
 /* ptfuncs.c */
 

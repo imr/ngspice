@@ -221,11 +221,7 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 
 	case 'U':
 	    /* Uname <node> <node> <model> [l=<val>] [n=<val>] */
-#if ADMS >= 3
-	    INP2adms(ckt, tab, current);
-#else
 	    INP2U(ckt, tab, current);
-#endif
 	    break;
 
 	/* Kspice addition - saj */
