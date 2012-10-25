@@ -1,8 +1,0 @@
-ngspice customizations of package psp102.1
-------------------------------------------
-
-- Mon Apr 30 15:28:25 WEDT 2007 (Berlin)
-  o renamed 'initializeModel/initializeInstance' to 'initial_model/initial_instance'.
-    (this issue should go away when auto-partionning done in adms.)
-  o redefined macro P(txt) in order to 'see' instance parameters
-  o status: psp code created by adms compiles
