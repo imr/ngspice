@@ -1,9 +1,0 @@
-Makefile.in
-Makefile
-.deps
-.libs
-test_cx_mag
-test_cx_j
-test_cx_ph
-*.la
-*.lo
