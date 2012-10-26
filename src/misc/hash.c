@@ -916,7 +916,7 @@ void nghash_distribution(NGHASHPTR hashtable)
     if( this_count > 0 ){
       nzero_cnt++ ;
     }
-    diff = this_count - avg ;
+    diff = (double)this_count - avg ;
     diff2 = diff * diff ;
     sum2 += diff2 ;
   }

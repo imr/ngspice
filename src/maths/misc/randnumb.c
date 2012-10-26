@@ -86,7 +86,7 @@ void checkseed(void)
 /*   printf("Enter checkseed()\n"); */
    if (cp_getvar("rndseed", CP_NUM, &newseed)) {
       if ((newseed > 0) && (oldseed != newseed)) {
-         srand(newseed);
+         srand((unsigned int)newseed);
          TausSeed();
          oldseed = newseed;
          printf("Seed value for random number generator is set to %d\n", newseed);
@@ -173,13 +173,13 @@ float CombLCGTaus2(void)
 {
    unsigned long b;
    b = (((CombState1 << 13) ^ CombState1) >> 19);
-   CombState1 = (((CombState1 & 4294967294UL) << 12) ^ b);
+   CombState1 = (unsigned int)(((CombState1 & 4294967294UL) << 12) ^ b);
    b = (((CombState2 << 2) ^ CombState2) >> 25);
-   CombState2 = (((CombState2 & 4294967288UL) << 4) ^ b);   
+   CombState2 = (unsigned int)(((CombState2 & 4294967288UL) << 4) ^ b);   
    b = (((CombState3 << 3) ^ CombState3) >> 11);
-   CombState3 = (((CombState3 & 4294967280UL) << 17) ^ b);
-   CombState4 = (1664525 * CombState4 + 1013904223UL);   
-   return ((CombState1 ^ CombState2 ^ CombState3 ^ CombState4) *  2.3283064365387e-10f);
+   CombState3 = (unsigned int)(((CombState3 & 4294967280UL) << 17) ^ b);
+   CombState4 = (unsigned int)(1664525 * CombState4 + 1013904223UL);   
+   return ((float)(CombState1 ^ CombState2 ^ CombState3 ^ CombState4) *  2.3283064365387e-10f);
 }
 
 
@@ -187,12 +187,12 @@ unsigned int CombLCGTausInt2(void)
 {
    unsigned long b;
    b = (((CombState5 << 13) ^ CombState5) >> 19);
-   CombState5 = (((CombState5 & 4294967294UL) << 12) ^ b);
+   CombState5 = (unsigned int)(((CombState5 & 4294967294UL) << 12) ^ b);
    b = (((CombState6 << 2) ^ CombState6) >> 25);
-   CombState6 = (((CombState6 & 4294967288UL) << 4) ^ b);   
+   CombState6 = (unsigned int)(((CombState6 & 4294967288UL) << 4) ^ b);   
    b = (((CombState7 << 3) ^ CombState7) >> 11);
-   CombState7 = (((CombState7 & 4294967280UL) << 17) ^ b);
-   CombState8 = (1664525 * CombState8 + 1013904223UL);   
+   CombState7 = (unsigned int)(((CombState7 & 4294967280UL) << 17) ^ b);
+   CombState8 = (unsigned int)(1664525 * CombState8 + 1013904223UL);   
    return (CombState5 ^ CombState6 ^ CombState7 ^ CombState8);
 }
 

@@ -1066,11 +1066,11 @@ operate(char op, double x, double y)
             x = z;
         break;
     case '%':                   /* % */
-        t = np_trunc(x / y);
+        t = (double)(np_trunc(x / y));
         x = x - y * t;
         break;
     case '\\':                  /* / */
-        x = np_trunc(absf(x / y));
+        x = (double)(np_trunc(absf(x / y)));
         break;
     }
 

@@ -355,7 +355,7 @@ VNoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
                             double V1 = trnoise_state_get(state, ckt, n1);
                             double V2 = trnoise_state_get(state, ckt, n1+1);
 
-                            value = V1 + (V2 - V1) * (time / TS - n1);
+                            value = V1 + (V2 - V1) * (time / TS - (double)n1);
                         }
 
                         /* RTS noise */

@@ -161,7 +161,7 @@ card         *current ) /* the card we are to parse                     */
     char    *name;      /* the name of the instance */
     char    *model=NULL;     /* the name of the model */
 
-    char    *def_port_type_str;  /* The default port type in string form */
+    char    *def_port_type_str = NULL;  /* The default port type in string form */
     char    *next_token;         /* a token string */
     char    *tmp_token;         /* a token string */
 
@@ -178,7 +178,7 @@ card         *current ) /* the card we are to parse                     */
 
     Mif_Conn_Info_t  *conn_info;  /* for faster access to conn info struct */
     Mif_Param_Info_t  *param_info;  /* for faster access to param info struct */
-    Mif_Port_Type_t  def_port_type;  /* the default port type */
+    Mif_Port_Type_t  def_port_type = 0;  /* the default port type */
     Mif_Status_t     status;         /* return status */
     Mif_Token_Type_t next_token_type; /* the type of the next token */
 

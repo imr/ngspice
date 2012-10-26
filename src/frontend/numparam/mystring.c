@@ -365,7 +365,7 @@ nadd(SPICE_DSTRINGPTR dstr_p, long n)
     }
 
     while (n > 0) {
-        d[k] = n % 10;
+        d[k] = (int)(n % 10);
         k++;
         n = n / 10;
     }

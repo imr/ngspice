@@ -93,8 +93,6 @@ evt_dest(Evt_Ckt_Data_t *evt)
     Evt_Node_Info_t     **node_table;
     Evt_Port_Info_t     **port_table;
 
-    Evt_Inst_Index_t    *inst_list;
-
     Evt_State_Data_t    *state_data;
     Evt_State_t         *statenext, *state;
 
