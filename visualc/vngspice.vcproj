@@ -1245,19 +1245,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soidef.h"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soidef.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soiext.h"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiext.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soiinit.h"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiinit.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soiitf.h"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiitf.h"
 				>
 			</File>
 			<File
@@ -4029,79 +4029,79 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soi.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soi.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soiacld.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiacld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soiask.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiask.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soicheck.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soicheck.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soicvtest.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soicvtest.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soidel.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soidel.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soidest.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soidest.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soigetic.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soigetic.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soiinit.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiinit.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soild.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soild.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soimask.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soimask.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soimdel.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soimdel.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soimpar.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soimpar.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soinoi.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soinoi.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soipar.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soipar.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soipzld.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soipzld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soiset.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiset.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soitemp.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soitemp.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi\b4soitrunc.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soitrunc.c"
 				>
 			</File>
 			<File

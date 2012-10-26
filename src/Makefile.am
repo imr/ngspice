@@ -50,10 +50,10 @@ DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/bsim4v5/libbsim4v5.la		\
 	spicelib/devices/bsim4v6/libbsim4v6.la		\
 	spicelib/devices/cap/libcap.la			\
-	spicelib/devices/bsim3soi/libbsim4soi.la	\
 	spicelib/devices/bsim3soi_pd/libbsim3soipd.la	\
 	spicelib/devices/bsim3soi_fd/libbsim3soifd.la	\
 	spicelib/devices/bsim3soi_dd/libbsim3soidd.la	\
+	spicelib/devices/bsimsoi/libbsim4soi.la		\
 	spicelib/devices/cccs/libcccs.la		\
 	spicelib/devices/ccvs/libccvs.la		\
 	spicelib/devices/cpl/libcpl.la			\

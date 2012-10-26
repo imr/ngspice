@@ -1021,10 +1021,10 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/bsim4v4/Makefile
                  src/spicelib/devices/bsim4v5/Makefile
                  src/spicelib/devices/bsim4v6/Makefile
-                 src/spicelib/devices/bsim3soi/Makefile
                  src/spicelib/devices/bsim3soi_pd/Makefile
                  src/spicelib/devices/bsim3soi_fd/Makefile
                  src/spicelib/devices/bsim3soi_dd/Makefile
+                 src/spicelib/devices/bsimsoi/Makefile
                  src/spicelib/devices/cap/Makefile
                  src/spicelib/devices/cccs/Makefile
                  src/spicelib/devices/ccvs/Makefile
@@ -1103,11 +1103,11 @@ AC_CONFIG_FILES([Makefile
                  tests/bsim3/ac_sim/Makefile
                  tests/bsim3/dc_sim/Makefile
                  tests/bsim3/tran_sim/Makefile
-                 tests/bsim3soi/Makefile
                  tests/bsim3soidd/Makefile
                  tests/bsim3soifd/Makefile
                  tests/bsim3soipd/Makefile
                  tests/bsim4/Makefile
+                 tests/bsimsoi/Makefile
                  tests/filters/Makefile
                  tests/general/Makefile
                  tests/hfet/Makefile

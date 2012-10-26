@@ -1,15 +1,15 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = 	bsim3   \
-	bsim3soi    \
-    bsim4       \
-	hisim       \
+SUBDIRS = bsim3		\
+	bsim4		\
+	bsimsoi		\
+	hisim		\
 	hisimhv
 
 
-DIST_SUBDIRS =	bsim3 \
-	bsim3soi	\
-    bsim4		\
+DIST_SUBDIRS = bsim3	\
+	bsim4		\
+	bsimsoi		\
 	hisim		\
 	hisimhv
 
