@@ -22,6 +22,14 @@ ADMS=0
 DIE=0
 
 
+# Check for Mac OS X
+uname -a | grep -q "Darwin"
+if [ $? -eq 0 ]; then
+    LIBTOOLIZE=glibtoolize
+else
+    LIBTOOLIZE=libtoolize
+fi
+
 help()
 {
     echo
@@ -68,7 +76,7 @@ check_autoconf()
 	DIE=1
     }
 
-    (libtoolize --version) < /dev/null > /dev/null 2>&1 || {
+    ($LIBTOOLIZE --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have libtool installed to compile $PROJECT."
 	echo "See http://www.gnu.org/software/libtool/"
@@ -181,9 +189,9 @@ $znew
 
 fi
 
-echo "Running libtoolize"
-libtoolize --copy --force \
-    || error_and_exit "libtoolize failed"
+echo "Running $LIBTOOLIZE"
+$LIBTOOLIZE --copy --force \
+    || error_and_exit "$LIBTOOLIZE failed"
 
 echo "Running aclocal $ACLOCAL_FLAGS"
 aclocal $ACLOCAL_FLAGS \
