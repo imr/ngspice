@@ -75,7 +75,9 @@ com_ghelp(wordlist *wl)
 #endif /* X_DISPLAY_MISSING 1  */
 #ifdef HAS_WINDOWS
     printf("Internal help is no longer avaialable!\n");
-    printf("Please check for\n");
+    printf("Please check for the actual ngspice manual at\n");
+    printf("http://ngspice.sourceforge.net/docs/ngspice-manual.pdf\n");
+    printf("or for help on spice3 at\n");
     printf("http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/\n");
 #endif
 }
