@@ -90,6 +90,7 @@ static void inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number);
 static void inp_add_control_section(struct line *deck, int *line_number);
 static char *get_quoted_token(char *string, char **token);
 static void replace_token(char *string, char *token, int where, int total);
+static void inp_add_series_resistor(struct line *deck);
 
 static char *skip_back_non_ws(char *d) { while (*d && !isspace(*d)) d--; return d; }
 static char *skip_non_ws(char *d)      { while (*d && !isspace(*d)) d++; return d; }
@@ -720,7 +721,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
         inp_fix_gnd_name(working);
         inp_chk_for_multi_in_vcvs(working, &line_number);
 
-
         if (cp_getvar("addcontrol", CP_BOOL, NULL))
             inp_add_control_section(working, &line_number);
 
@@ -733,6 +733,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
             /* B source numparam compatibility transformation */
             inp_bsource_compat(working);
         }
+
+        inp_add_series_resistor(working);
     }
 
     /* save the return value (via **data) */
@@ -5457,4 +5459,109 @@ get_quoted_token(char *string, char **token)
         *token = s;
         return t;
     }
+}
+
+
+/* Option RSERIES=rval
+ * Lxxx n1 n2 Lval
+ * -->
+ * Lxxx n1 n2_intern__ Lval
+ * RLxxx_n2_intern__ n2_intern__ n2 rval
+*/
+
+static void
+inp_add_series_resistor(struct line *deck)
+{
+    size_t skip_control = 0, xlen, i;
+    bool has_rseries = FALSE;
+    struct line *card;
+    char *tmp_p, *title_tok, *node1, *node2, *rval = NULL;
+    char *ckt_array[10];
+    struct line  *tmp_ptr, *param_end = NULL, *param_beg = NULL;
+
+    for (card = deck; card; card = card->li_next) {
+        char *curr_line = card->li_line;
+        if (*curr_line == '*')
+            continue;
+        if (strstr(curr_line, "option") && strstr(curr_line, "rseries"))
+            has_rseries = TRUE;
+        else
+            continue;
+        tmp_p = strstr(curr_line, "rseries");
+        /* default to "1m" if no value given */
+        if (ciprefix("=", tmp_p)) {
+            tmp_p = strchr(tmp_p, '=') + 1;
+            rval = gettok(&tmp_p);
+        }
+        else
+            rval = copy("1m");
+    }
+
+    if (!has_rseries || !rval)
+        return;
+
+    fprintf(stdout,
+            "\nOption rseries given: \n"
+            "resistor %s Ohms added in series to each inductor L\n\n", rval);
+
+    for (card = deck; card; card = card->li_next) {
+        char *cut_line;
+        char *curr_line = cut_line = card->li_line;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control ++;
+            continue;
+        } else if (ciprefix(".endc", curr_line)) {
+            skip_control --;
+            continue;
+        } else if (skip_control > 0) {
+            continue;
+        }
+
+        if (ciprefix("l", curr_line)) {
+            title_tok = gettok(&cut_line);
+            node1 =  gettok(&cut_line);
+            node2 =  gettok(&cut_line);
+            /* new L line */
+            xlen = strlen(curr_line) + 9;
+            ckt_array[0] = TMALLOC(char, xlen);
+            sprintf(ckt_array[0], "%s %s %s_intern__ %s",
+                    title_tok, node1, node2, cut_line);
+            /* new R line */
+            xlen = strlen(curr_line) + 19;
+            ckt_array[1] = TMALLOC(char, xlen);
+            sprintf(ckt_array[1], "R%s_intern__ %s_intern__ %s %s",
+                    title_tok, node2, node2, rval);
+            /* assemble new L and R lines */
+            tmp_ptr = card->li_next;
+            for (i = 0; i < 2; i++) {
+                if (param_end) {
+                    param_end->li_next = alloc(struct line);
+                    param_end          = param_end->li_next;
+                } else {
+                    param_end = param_beg = alloc(struct line);
+                }
+                param_end->li_next    = NULL;
+                param_end->li_error   = NULL;
+                param_end->li_actual  = NULL;
+                param_end->li_line    = ckt_array[i];
+                param_end->li_linenum = 0;
+            }
+            // comment out current L line
+            *(card->li_line)   = '*';
+            // insert new new L and R lines immediately after current line
+            tmp_ptr            = card->li_next;
+            card->li_next      = param_beg;
+            param_end->li_next = tmp_ptr;
+            // point 'card' pointer to last in scalar list
+            card               = param_end;
+            param_beg = param_end = NULL;
+            tfree(title_tok);
+            tfree(node1);
+            tfree(node2);
+        }
+    }
+
+    tfree(rval);
 }
