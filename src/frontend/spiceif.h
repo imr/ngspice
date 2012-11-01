@@ -13,7 +13,7 @@ void if_dump(CKTcircuit *ckt, FILE *file);
 void if_cktfree(CKTcircuit *ckt, INPtables *tab);
 int  if_analQbyName(CKTcircuit *ckt, int which, JOB *anal, char *name, IFvalue *parm);
 
-void com_loadsnap(wordlist *wl);
-void com_savesnap(wordlist *wl);
+void com_snload(wordlist *wl);
+void com_snsave(wordlist *wl);
 
 #endif /* SPICEIF_H_INCLUDED */

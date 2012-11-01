@@ -1379,7 +1379,7 @@ if_getstat(CKTcircuit *ckt, char *name)
 #include "ngspice/trandefs.h"
 
 /* arg0: circuit file, arg1: data file */
-void com_loadsnap(wordlist *wl)
+void com_snload(wordlist *wl)
 {
     int error = 0;
     FILE *file;
@@ -1632,7 +1632,7 @@ void com_loadsnap(wordlist *wl)
 }
 
 
-void com_savesnap(wordlist *wl)
+void com_snsave(wordlist *wl)
 {
     FILE *file;
     int i, size;
@@ -1653,8 +1653,8 @@ void com_savesnap(wordlist *wl)
 
 #ifdef XSPICE
     if (ckt->CKTadevFlag == 1) {
-        fprintf(cp_err, "Warning: savesnap not implemented for XSPICE A devices.\n");
-        fprintf(cp_err, "    Command 'savesnap' will be ingnored!\n");
+        fprintf(cp_err, "Warning: snsave not implemented for XSPICE A devices.\n");
+        fprintf(cp_err, "    Command 'snsave' will be ingnored!\n");
         return;
     }
 #endif
@@ -1758,10 +1758,11 @@ void com_savesnap(wordlist *wl)
 
 #ifdef XSPICE
     /* FIXME struct ckt->evt->data and others are not stored
-       thus savesnap, loadsnap not compatible with XSPICE code models*/
+       thus snsave, snload not compatible with XSPICE code models*/
     _foo(ckt->evt, Evt_Ckt_Data_t, 1);
     _foo(ckt->enh, Enh_Ckt_Data_t, 1);
 #endif
 
     fclose(file);
+    fprintf(stdout, "Snapshot saved to %s.\n", wl->wl_word);
 }

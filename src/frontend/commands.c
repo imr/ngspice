@@ -86,7 +86,7 @@
 
 #include "arg.h"
 
-#include "spiceif.h" /* for com_loadsnap() and com_savesnap() */
+#include "spiceif.h" /* for com_snload() and com_snsave() */
 
 #include "com_dl.h"
 
@@ -138,11 +138,11 @@ struct comm spcp_coms[] = {
       { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
       arg_set,
       "[option] [option = value] ... : Set a simulator option." } ,
-    { "savesnap", com_savesnap, FALSE, TRUE,
+    { "snsave", com_snsave, FALSE, TRUE,
       { 1, 040000, 040000, 040000 }, E_DEFHMASK, 1, 1,
       NULL,
       "file : Save a snapshot." } ,
-    { "loadsnap", com_loadsnap, FALSE, TRUE,
+    { "snload", com_snload, FALSE, TRUE,
       { 1, 040000, 040000, 040000 }, E_DEFHMASK, 2, 2,
       NULL,
       "file : Load a snapshot." } ,
