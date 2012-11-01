@@ -157,7 +157,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
                         /* Francesco Lannutti - NEED TO PIVOT Fix */
                         SMPreorderFromSMPluFac = 1 ;
-fprintf (stderr, "CIAO\n") ;
+
                         ckt->CKTniState |= NISHOULDREORDER;
                         DEBUGMSG(" forced reordering....\n");
                         continue;
