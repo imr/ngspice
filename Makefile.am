@@ -40,4 +40,4 @@ mrproper: maintainer-clean
 	rm -f `find $(top_srcdir) -type f -name "*.rej" -print`
 
 maintainer-clean-local:
-	rm -rf $(top_srcdir)/m4/*.m4
+	rm -rf $(top_srcdir)/m4
