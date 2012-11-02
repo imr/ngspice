@@ -276,7 +276,7 @@ SMPpreOrder(SMPmatrix *Matrix)
 }
 
 /*
- * SMPprint()
+ * SMPprintRHS()
  */
 
 void

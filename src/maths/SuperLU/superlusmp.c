@@ -417,15 +417,30 @@ SMPpreOrder (SMPmatrix *Matrix)
 }
 
 /*
+ * SMPprintRHS()
+ */
+
+void
+SMPprintRHS (SMPmatrix *Matrix, char *Filename, RealVector RHS, RealVector iRHS)
+{
+    if (!Matrix->CKTsuperluMODE)
+        spFileVector (Matrix->SPmatrix, Filename, RHS, iRHS) ;
+}
+
+/*
  * SMPprint()
  */
-/*ARGSUSED*/
-void
-SMPprint (SMPmatrix *Matrix, FILE *File)
-{
-    NG_IGNORE (File) ;
 
-    spPrint (Matrix->SPmatrix, 0, 1, 1) ;
+void
+SMPprint (SMPmatrix *Matrix, char *Filename)
+{
+    if (!Matrix->CKTsuperluMODE)
+    {
+        if (Filename)
+            spFileMatrix (Matrix->SPmatrix, Filename, "Circuit Matrix", 0, 1, 1) ;
+        else
+            spPrint (Matrix->SPmatrix, 0, 1, 1) ;
+    }
 }
 
 /*
