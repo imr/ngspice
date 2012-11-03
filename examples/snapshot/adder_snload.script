@@ -1,0 +1,15 @@
+*  SCRIPT: ADDER - 4 BIT BINARY
+* script to reload circuit and continue the simulation
+* begin with editing the file location
+* to be started with 'ngspice adder_snload.script'
+
+.control
+* cd to where all files are located
+cd D:\Spice_general\ngspice\examples\snapshot
+* load circuit and snpashot file
+snload adder_mos_circ.cir adder500.snap
+* continue simulation
+resume
+* plot some node voltages
+plot v(10) v(11) v(12)
+.endc

@@ -1,0 +1,26 @@
+  Example: snsave
+* load a circuit (including transistor models and .tran command)
+* starts transient simulation until stop point
+* store intermediate data to file
+* begin with editing the file location
+* to be run with 'ngspice adder_mos.cir'
+
+.include adder_mos_circ.cir
+
+.control
+*cd to where all files are located
+cd D:\Spice_general\ngspice\examples\snapshot
+set noaskquit
+unset ngdebug
+set noinit
+save vcc#branch 10
+iplot v(10)
+*interrupt condition for the simulation
+stop when time > 500n
+* simulate
+run
+* store snapshot to file
+snsave adder500.snap
+.endc
+
+.END
