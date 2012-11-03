@@ -1400,7 +1400,8 @@ void com_snload(wordlist *wl)
     */
 
 
-    if (ft_curckt) {
+    if (ft_curckt && !strstr(ft_curckt->ci_name, "script")) {
+        /* Circuit, not a script */
         fprintf(cp_err, "Error: there is already a circuit loaded.\n");
         return;
     }
@@ -1564,8 +1565,9 @@ void com_snload(wordlist *wl)
     _foo(ckt->CKTbreaks, double, ckt->CKTbreakSize);
 
     {   /* avoid invalid lvalue assignment errors in the macro _foo() */
-        TSKtask *lname = ft_curckt->ci_curTask;
+        TSKtask *lname = NULL;
         _foo(lname, TSKtask, 1);
+        ft_curckt->ci_curTask = lname;
     }
 
     /* To stop the Free */
@@ -1574,26 +1576,20 @@ void com_snload(wordlist *wl)
 
     _foo(ft_curckt->ci_curTask->TSKname, char, -1);
 
-    {   /* avoid invalid lvalue assignment errors in the macro _foo() */
-//        TRANan * lname = (TRANan *)ft_curckt->ci_curTask->jobs;
-//        _foo(lname, TRANan, 1);
-        _foo(ft_curckt->ci_curTask->jobs, JOB, -1);
+    {
+        TRANan *lname = NULL;
+        _foo(lname, TRANan, -1);
+        ft_curckt->ci_curTask->jobs = (JOB *)lname;
     }
     ft_curckt->ci_curTask->jobs->JOBname = NULL;
-//    ckt->CKTcurJob = (&(ft_curckt->ci_curTask->taskOptions)) -> jobs;
-    ckt->CKTcurJob = ft_curckt->ci_curTask->jobs;
-
-
     _foo(ft_curckt->ci_curTask->jobs->JOBname, char, -1);
-
     ft_curckt->ci_curTask->jobs->JOBnextJob = NULL;
-
+    ckt->CKTcurJob = ft_curckt->ci_curTask->jobs;
     ((TRANan *)ft_curckt->ci_curTask->jobs)->TRANplot = NULL;
 
     _foo(ckt->CKTstat, STATistics, 1);
-    /* cannot load STATdevNum, so set to zero (needed for 'reset' command) */
     ckt->CKTstat->STATdevNum = NULL;
-
+    _foo(ckt->CKTstat->STATdevNum, STATdevList, -1);
 
 #ifdef XSPICE
     _foo(ckt->evt, Evt_Ckt_Data_t, 1);
@@ -1732,29 +1728,21 @@ void com_snsave(wordlist *wl)
 //    _foo(ckt->CKTdeltaList, double, ckt->CKTtimeListSize);
 
     /* need to save the breakpoints, or something */
-
     _foo(ckt->CKTbreaks, double, ckt->CKTbreakSize);
 
-
     /* now save the TSK struct, ft_curckt->ci_curTask*/
-
     _foo(task, TSKtask, 1);
     _foo(task->TSKname, char, ((int)strlen(task->TSKname)+1));
 
     /* now save the JOB struct task->jobs */
     /* lol, only allow one job, tough! */
     /* Note that JOB is a base class, need to save actual type!! */
-
     _foo(task->jobs, TRANan, 1);
-
     _foo(task->jobs->JOBname, char, ((int)strlen(task->jobs->JOBname)+1));
 
-
     /* Finally the stats */
-
     _foo(ckt->CKTstat, STATistics, 1);
-
-    /* FIXME struct ckt->CKTstat->STATdevNum is not stored */
+    _foo(ckt->CKTstat->STATdevNum, STATdevList, 1);
 
 #ifdef XSPICE
     /* FIXME struct ckt->evt->data and others are not stored
