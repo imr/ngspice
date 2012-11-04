@@ -243,25 +243,15 @@ ACan(CKTcircuit *ckt, int restart)
     ckt->CKTcurrentAnalysis = DOING_AC;
 
 #ifdef KLU
-    int i, m ;
+    int i ;
 
     if (ckt->CKTmatrix->CKTkluMODE)
     {
+        /* Conversion from Real Matrix to Complex Matrix */
         if (!ckt->CKTmatrix->CKTkluMatrixIsComplex)
         {
-            ckt->CKTmatrix->CKTkluAx_Complex = TMALLOC (double, 2 * ckt->CKTmatrix->CKTklunz) ;
-            ckt->CKTmatrix->CKTbind_CSC_Complex = TMALLOC (double *, ckt->CKTmatrix->CKTklunz) ;
-            ckt->CKTmatrix->CKTkluIntermediate_Complex = TMALLOC (double, 2 * ckt->CKTmatrix->CKTkluN) ;
-
-            m = 0 ;
-            for (i = 0 ; i < ckt->CKTmatrix->CKTklunz ; i++)
-            {
-                ckt->CKTmatrix->CKTbind_CSC_Complex [i] = &(ckt->CKTmatrix->CKTkluAx_Complex [m]) ;
-                m += 2 ;
-            }
-
             for (i = 0 ; i < DEVmaxnum ; i++)
-                if (DEVices [i] && DEVices [i]->DEVbindCSCComplex)
+                if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
                     DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
 
             ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixComplex ;
@@ -286,7 +276,7 @@ ACan(CKTcircuit *ckt, int restart)
                 {
                     /* Conversion from Complex Matrix to Real Matrix */
                     for (i = 0 ; i < DEVmaxnum ; i++)
-                        if (DEVices [i] && DEVices [i]->DEVbindCSCComplexToReal)
+                        if (DEVices [i] && DEVices [i]->DEVbindCSCComplexToReal && ckt->CKThead [i])
                             DEVices [i]->DEVbindCSCComplexToReal (ckt->CKThead [i], ckt) ;
 
                     ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
@@ -326,7 +316,7 @@ ACan(CKTcircuit *ckt, int restart)
             {
                 /* Conversion from Real Matrix to Complex Matrix */
                 for (i = 0 ; i < DEVmaxnum ; i++)
-                    if (DEVices [i] && DEVices [i]->DEVbindCSCComplex)
+                    if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
                         DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
 
                 ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixComplex ;
@@ -438,7 +428,7 @@ endsweep:
     {
         /* Conversion from Complex Matrix to Real Matrix */
         for (i = 0 ; i < DEVmaxnum ; i++)
-            if (DEVices [i] && DEVices [i]->DEVbindCSCComplexToReal)
+            if (DEVices [i] && DEVices [i]->DEVbindCSCComplexToReal && ckt->CKThead [i])
                 DEVices [i]->DEVbindCSCComplexToReal (ckt->CKThead [i], ckt) ;
 
         ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;

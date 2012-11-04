@@ -26,6 +26,24 @@ int nthreads;
             return(E_NOMEM);\
 }
 
+#ifdef HAS_WINDOWS
+extern void SetAnalyse( char * Analyse, int Percent);
+#endif
+
+#ifdef KLU
+#include <stdlib.h>
+
+static
+int
+BindCompare (const void *a, const void *b)
+{
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
+
+    return ((int)(A->Sparse - B->Sparse)) ;
+}
+#endif
 
 int
 CKTsetup(CKTcircuit *ckt)
@@ -105,14 +123,23 @@ CKTsetup(CKTcircuit *ckt)
         ckt->CKTmatrix->CKTkluAx           = TMALLOC (double, nz) ;
         ckt->CKTmatrix->CKTkluIntermediate = TMALLOC (double, n) ;
 
-        ckt->CKTmatrix->CKTbind_Sparse     = TMALLOC (double *, nz) ;
-        ckt->CKTmatrix->CKTbind_CSC        = TMALLOC (double *, nz) ;
+//        ckt->CKTmatrix->CKTbind_Sparse     = TMALLOC (double *, nz) ;
+//        ckt->CKTmatrix->CKTbind_CSC        = TMALLOC (double *, nz) ;
+        ckt->CKTmatrix->CKTbindStruct      = TMALLOC (BindElement, nz) ;
 
         ckt->CKTmatrix->CKTdiag_CSC        = TMALLOC (double *, n) ;
 
-        /* Binding Table Sparse-KLU creation */
+        /* Complex Stuff needed for AC Analysis */
+        ckt->CKTmatrix->CKTkluAx_Complex = TMALLOC (double, 2 * nz) ;
+        ckt->CKTmatrix->CKTkluIntermediate_Complex = TMALLOC (double, 2 * n) ;
+
+        /* Binding Table from Sparse to CSC Format Creation */
         SMPmatrix_CSC (ckt->CKTmatrix) ;
 
+        /* Binding Table Sorting */
+        qsort (ckt->CKTmatrix->CKTbindStruct, (size_t)nz, sizeof(BindElement), BindCompare) ;
+
+        /* KLU Pointers Assignment */
         for (i = 0 ; i < DEVmaxnum ; i++)
             if (DEVices [i] && DEVices [i]->DEVbindCSC && ckt->CKThead [i])
                 DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
@@ -137,13 +164,18 @@ CKTsetup(CKTcircuit *ckt)
 
 	ckt->CKTmatrix->CKTsuperluIntermediate = TMALLOC (double, n) ;
 
-	ckt->CKTmatrix->CKTbind_Sparse = 	TMALLOC (double *, nz) ;
-	ckt->CKTmatrix->CKTbind_CSC = 		TMALLOC (double *, nz) ;
+//	ckt->CKTmatrix->CKTbind_Sparse = 	TMALLOC (double *, nz) ;
+//	ckt->CKTmatrix->CKTbind_CSC = 		TMALLOC (double *, nz) ;
+        ckt->CKTmatrix->CKTbindStruct      = TMALLOC (BindElement, nz) ;
 
 	ckt->CKTmatrix->CKTdiag_CSC = 	TMALLOC (double *, n) ;
 
-        /* Binding Table Sparse-KLU creation */
+        /* Binding Table from Sparse to CSC Format Creation */
         SMPmatrix_CSC (ckt->CKTmatrix) ;
+
+        /* Binding Table Sorting */
+        qsort (ckt->CKTmatrix->CKTbindStruct, (size_t)nz, sizeof(BindElement), BindCompare) ;
+
 
 	dCreate_CompCol_Matrix (&(ckt->CKTmatrix->CKTsuperluA), n, n, nz, ckt->CKTmatrix->CKTsuperluAx,
                                 ckt->CKTmatrix->CKTsuperluAi, ckt->CKTmatrix->CKTsuperluAp, SLU_NC, SLU_D, SLU_GE) ;
@@ -174,13 +206,18 @@ CKTsetup(CKTcircuit *ckt)
 
 	ckt->CKTmatrix->CKTumfpackX =			TMALLOC (double, n) ;
 
-	ckt->CKTmatrix->CKTbind_Sparse =		TMALLOC (double *, nz) ;
-	ckt->CKTmatrix->CKTbind_CSC =			TMALLOC (double *, nz) ;
+//	ckt->CKTmatrix->CKTbind_Sparse =		TMALLOC (double *, nz) ;
+//	ckt->CKTmatrix->CKTbind_CSC =			TMALLOC (double *, nz) ;
+        ckt->CKTmatrix->CKTbindStruct      = TMALLOC (BindElement, nz) ;
 
 	ckt->CKTmatrix->CKTdiag_CSC =			TMALLOC (double *, n) ;
 
-        /* Binding Table Sparse-KLU creation */
-	SMPmatrix_CSC (ckt->CKTmatrix) ;
+        /* Binding Table from Sparse to CSC Format Creation */
+        SMPmatrix_CSC (ckt->CKTmatrix) ;
+
+        /* Binding Table Sorting */
+        qsort (ckt->CKTmatrix->CKTbindStruct, (size_t)nz, sizeof(BindElement), BindCompare) ;
+
 
 	for (i = 0 ; i < DEVmaxnum ; i++)
             if (DEVices [i] && DEVices [i]->DEVbindCSC && ckt->CKThead [i])

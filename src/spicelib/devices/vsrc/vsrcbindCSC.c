@@ -7,88 +7,103 @@ Author: 2012 Francesco Lannutti
 #include "vsrcdefs.h"
 #include "ngspice/sperror.h"
 
+#include <stdlib.h>
+
+static
 int
-VSRCbindCSC(GENmodel *inModel, CKTcircuit *ckt)
+BindCompare (const void *a, const void *b)
 {
-    VSRCmodel *model = (VSRCmodel *)inModel;
-    int i ;
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
 
-    /*  loop through all the resistor models */
-    for( ; model != NULL; model = model->VSRCnextModel ) {
-	VSRCinstance *here;
-
-        /* loop through all the instances of the model */
-        for (here = model->VSRCinstances; here != NULL ;
-	    here = here->VSRCnextInstance) {
-
-		i = 0 ;
-		if ((here->VSRCposNode != 0) && (here->VSRCbranch != 0)) {
-			while (here->VSRCposIbrptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->VSRCposIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->VSRCnegNode != 0) && (here->VSRCbranch != 0)) {
-			while (here->VSRCnegIbrptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->VSRCnegIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->VSRCbranch != 0) && (here->VSRCnegNode != 0)) {
-			while (here->VSRCibrNegptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->VSRCibrNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->VSRCbranch != 0) && (here->VSRCposNode != 0)) {
-			while (here->VSRCibrPosptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->VSRCibrPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-	}
-    }
-    return(OK);
+    return ((int)(A->Sparse - B->Sparse)) ;
 }
 
 int
-VSRCbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
+VSRCbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
-    VSRCmodel *model = (VSRCmodel *)inModel;
-    int i ;
+    VSRCmodel *model = (VSRCmodel *)inModel ;
+    VSRCinstance *here ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-    /*  loop through all the resistor models */
-    for( ; model != NULL; model = model->VSRCnextModel ) {
-	VSRCinstance *here;
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
+    /* loop through all the voltage source models */
+    for ( ; model != NULL ; model = model->VSRCnextModel)
+    {
         /* loop through all the instances of the model */
-        for (here = model->VSRCinstances; here != NULL ;
-	    here = here->VSRCnextInstance) {
+        for (here = model->VSRCinstances ; here != NULL ; here = here->VSRCnextInstance)
+        {
+            if ((here->VSRCposNode != 0) && (here->VSRCbranch != 0))
+            {
+                i = here->VSRCposIbrptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->VSRCposIbrStructPtr = matched ;
+                here->VSRCposIbrptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->VSRCposNode != 0) && (here->VSRCbranch != 0)) {
-			while (here->VSRCposIbrptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->VSRCposIbrptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->VSRCnegNode != 0) && (here->VSRCbranch != 0))
+            {
+                i = here->VSRCnegIbrptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->VSRCnegIbrStructPtr = matched ;
+                here->VSRCnegIbrptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->VSRCnegNode != 0) && (here->VSRCbranch != 0)) {
-			while (here->VSRCnegIbrptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->VSRCnegIbrptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->VSRCbranch != 0) && (here->VSRCnegNode != 0))
+            {
+                i = here->VSRCibrNegptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->VSRCibrNegStructPtr = matched ;
+                here->VSRCibrNegptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->VSRCbranch != 0) && (here->VSRCnegNode != 0)) {
-			while (here->VSRCibrNegptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->VSRCibrNegptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->VSRCbranch != 0) && (here->VSRCposNode != 0)) {
-			while (here->VSRCibrPosptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->VSRCibrPosptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-	}
+            if ((here->VSRCbranch != 0) && (here->VSRCposNode != 0))
+            {
+                i = here->VSRCibrPosptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->VSRCibrPosStructPtr = matched ;
+                here->VSRCibrPosptr = matched->CSC ;
+            }
+        }
     }
-    return(OK);
+
+    return (OK) ;
+}
+
+int
+VSRCbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
+{
+    VSRCmodel *model = (VSRCmodel *)inModel ;
+    VSRCinstance *here ;
+
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the voltage source models */
+    for ( ; model != NULL ; model = model->VSRCnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->VSRCinstances ; here != NULL ; here = here->VSRCnextInstance)
+        {
+            if ((here->VSRCposNode != 0) && (here->VSRCbranch != 0))
+                here->VSRCposIbrptr = here->VSRCposIbrStructPtr->CSC_Complex ;
+
+            if ((here->VSRCnegNode != 0) && (here->VSRCbranch != 0))
+                here->VSRCnegIbrptr = here->VSRCnegIbrStructPtr->CSC_Complex ;
+
+            if ((here->VSRCbranch != 0) && (here->VSRCnegNode != 0))
+                here->VSRCibrNegptr = here->VSRCibrNegStructPtr->CSC_Complex ;
+
+            if ((here->VSRCbranch != 0) && (here->VSRCposNode != 0))
+                here->VSRCibrPosptr = here->VSRCibrPosStructPtr->CSC_Complex ;
+        }
+    }
+
+    return (OK) ;
 }
 
 int
@@ -96,41 +111,26 @@ VSRCbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     VSRCmodel *model = (VSRCmodel *)inModel ;
     VSRCinstance *here ;
-    int i ;
 
-    /*  loop through all the source models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the voltage source models */
     for ( ; model != NULL ; model = model->VSRCnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->VSRCinstances ; here != NULL ; here = here->VSRCnextInstance)
         {
-            i = 0 ;
             if ((here->VSRCposNode != 0) && (here->VSRCbranch != 0))
-            {
-                while (here->VSRCposIbrptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->VSRCposIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->VSRCposIbrptr = here->VSRCposIbrStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->VSRCnegNode != 0) && (here->VSRCbranch != 0))
-            {
-                while (here->VSRCnegIbrptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->VSRCnegIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->VSRCnegIbrptr = here->VSRCnegIbrStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->VSRCbranch != 0) && (here->VSRCnegNode != 0))
-            {
-                while (here->VSRCibrNegptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->VSRCibrNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->VSRCibrNegptr = here->VSRCibrNegStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->VSRCbranch != 0) && (here->VSRCposNode != 0))
-            {
-                while (here->VSRCibrPosptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->VSRCibrPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->VSRCibrPosptr = here->VSRCibrPosStructPtr->CSC ;
         }
     }
 
