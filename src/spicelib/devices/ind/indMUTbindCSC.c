@@ -7,100 +7,114 @@ Author: 2012 Francesco Lannutti
 #include "inddefs.h"
 #include "ngspice/sperror.h"
 
+#include <stdlib.h>
+
+static
 int
-INDbindCSC(GENmodel *inModel, CKTcircuit *ckt)
+BindCompare (const void *a, const void *b)
 {
-    INDmodel *model = (INDmodel *)inModel;
-    INDinstance *here;
-    int i ;
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
 
-        /*  loop through all the INDacitor models */
-        for( ; model != NULL; model = model->INDnextModel ) {
-
-            /* loop through all the instances of the model */
-            for (here = model->INDinstances; here != NULL ;
-                    here=here->INDnextInstance) {
-
-		i = 0 ;
-		if ((here->INDposNode != 0) && (here->INDbrEq != 0)) {
-			while (here->INDposIbrptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->INDposIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->INDnegNode != 0) && (here->INDbrEq != 0)) {
-			while (here->INDnegIbrptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->INDnegIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->INDbrEq != 0) && (here->INDnegNode != 0)) {
-			while (here->INDibrNegptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->INDibrNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->INDbrEq != 0) && (here->INDposNode != 0)) {
-			while (here->INDibrPosptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->INDibrPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->INDbrEq != 0) && (here->INDbrEq != 0)) {
-			while (here->INDibrIbrptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->INDibrIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-	    }
-	}
-    return(OK);
+    return ((int)(A->Sparse - B->Sparse)) ;
 }
 
 int
-INDbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
+INDbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
-    INDmodel *model = (INDmodel *)inModel;
-    INDinstance *here;
-    int i ;
+    INDmodel *model = (INDmodel *)inModel ;
+    INDinstance *here ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-        /*  loop through all the INDacitor models */
-        for( ; model != NULL; model = model->INDnextModel ) {
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
-            /* loop through all the instances of the model */
-            for (here = model->INDinstances; here != NULL ;
-                    here=here->INDnextInstance) {
+    /* loop through all the inductor models */
+    for ( ; model != NULL ; model = model->INDnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->INDinstances ; here != NULL ; here = here->INDnextInstance)
+        {
+            if ((here->INDposNode != 0) && (here->INDbrEq != 0))
+            {
+                i = here->INDposIbrptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->INDposIbrStructPtr = matched ;
+                here->INDposIbrptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->INDposNode != 0) && (here->INDbrEq != 0)) {
-			while (here->INDposIbrptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->INDposIbrptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->INDnegNode != 0) && (here->INDbrEq != 0))
+            {
+                i = here->INDnegIbrptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->INDnegIbrStructPtr = matched ;
+                here->INDnegIbrptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->INDnegNode != 0) && (here->INDbrEq != 0)) {
-			while (here->INDnegIbrptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->INDnegIbrptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->INDbrEq != 0) && (here->INDnegNode != 0))
+            {
+                i = here->INDibrNegptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->INDibrNegStructPtr = matched ;
+                here->INDibrNegptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->INDbrEq != 0) && (here->INDnegNode != 0)) {
-			while (here->INDibrNegptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->INDibrNegptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->INDbrEq != 0) && (here->INDposNode != 0))
+            {
+                i = here->INDibrPosptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->INDibrPosStructPtr = matched ;
+                here->INDibrPosptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->INDbrEq != 0) && (here->INDposNode != 0)) {
-			while (here->INDibrPosptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->INDibrPosptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->INDbrEq != 0) && (here->INDbrEq != 0))
+            {
+                i = here->INDibrIbrptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->INDibrIbrStructPtr = matched ;
+                here->INDibrIbrptr = matched->CSC ;
+            }
+        }
+    }
 
-		i = 0 ;
-		if ((here->INDbrEq != 0) && (here->INDbrEq != 0)) {
-			while (here->INDibrIbrptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->INDibrIbrptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-	    }
-	}
-    return(OK);
+    return (OK) ;
+}
+
+int
+INDbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
+{
+    INDmodel *model = (INDmodel *)inModel ;
+    INDinstance *here ;
+
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the inductor models */
+    for ( ; model != NULL ; model = model->INDnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->INDinstances ; here != NULL ; here = here->INDnextInstance)
+        {
+            if ((here->INDposNode != 0) && (here->INDbrEq != 0))
+                here->INDposIbrptr = here->INDposIbrStructPtr->CSC_Complex ;
+
+            if ((here->INDnegNode != 0) && (here->INDbrEq != 0))
+                here->INDnegIbrptr = here->INDnegIbrStructPtr->CSC_Complex ;
+
+            if ((here->INDbrEq != 0) && (here->INDnegNode != 0))
+                here->INDibrNegptr = here->INDibrNegStructPtr->CSC_Complex ;
+
+            if ((here->INDbrEq != 0) && (here->INDposNode != 0))
+                here->INDibrPosptr = here->INDibrPosStructPtr->CSC_Complex ;
+
+            if ((here->INDbrEq != 0) && (here->INDbrEq != 0))
+                here->INDibrIbrptr = here->INDibrIbrStructPtr->CSC_Complex ;
+        }
+    }
+
+    return (OK) ;
 }
 
 int
@@ -108,48 +122,29 @@ INDbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     INDmodel *model = (INDmodel *)inModel ;
     INDinstance *here ;
-    int i ;
 
-    /*  loop through all the Inductor models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the inductor models */
     for ( ; model != NULL ; model = model->INDnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->INDinstances ; here != NULL ; here = here->INDnextInstance)
         {
-            i = 0 ;
             if ((here->INDposNode != 0) && (here->INDbrEq != 0))
-            {
-                while (here->INDposIbrptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->INDposIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->INDposIbrptr = here->INDposIbrStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->INDnegNode != 0) && (here->INDbrEq != 0))
-            {
-                while (here->INDnegIbrptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->INDnegIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->INDnegIbrptr = here->INDnegIbrStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->INDbrEq != 0) && (here->INDnegNode != 0))
-            {
-                while (here->INDibrNegptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->INDibrNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->INDibrNegptr = here->INDibrNegStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->INDbrEq != 0) && (here->INDposNode != 0))
-            {
-                while (here->INDibrPosptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->INDibrPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->INDibrPosptr = here->INDibrPosStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->INDbrEq != 0) && (here->INDbrEq != 0))
-            {
-                while (here->INDibrIbrptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->INDibrIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->INDibrIbrptr = here->INDibrIbrStructPtr->CSC ;
         }
     }
 
@@ -158,63 +153,67 @@ INDbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 
 #ifdef MUTUAL
 int
-MUTbindCSC(GENmodel *inModel, CKTcircuit *ckt)
+MUTbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
-    MUTmodel *model = (MUTmodel *)inModel;
-    MUTinstance *here;
-    int i ;
+    MUTmodel *model = (MUTmodel *)inModel ;
+    MUTinstance *here ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-        /*  loop through all the INDacitor models */
-        for( ; model != NULL; model = model->MUTnextModel ) {
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
-            /* loop through all the instances of the model */
-            for (here = model->MUTinstances; here != NULL ;
-                    here=here->MUTnextInstance) {
+    /* loop through all the mutual inductor models */
+    for ( ; model != NULL ; model = model->MUTnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->MUTinstances ; here != NULL ; here = here->MUTnextInstance)
+        {
+            if ((here->MUTind1->INDbrEq != 0) && (here->MUTind2->INDbrEq != 0))
+            {
+                i = here->MUTbr1br2 ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MUTbr1br2StructPtr = matched ;
+                here->MUTbr1br2 = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MUTind1->INDbrEq != 0) && (here->MUTind2->INDbrEq != 0)) {
-			while (here->MUTbr1br2 != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MUTbr1br2 = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
+            if ((here->MUTind2->INDbrEq != 0) && (here->MUTind1->INDbrEq != 0))
+            {
+                i = here->MUTbr2br1 ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MUTbr2br1StructPtr = matched ;
+                here->MUTbr2br1 = matched->CSC ;
+            }
+        }
+    }
 
-		i = 0 ;
-		if ((here->MUTind2->INDbrEq != 0) && (here->MUTind1->INDbrEq != 0)) {
-			while (here->MUTbr2br1 != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MUTbr2br1 = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-	    }
-	}
-    return(OK);
+    return (OK) ;
 }
 
 int
-MUTbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
+MUTbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
 {
-    MUTmodel *model = (MUTmodel *)inModel;
-    MUTinstance *here;
-    int i ;
+    MUTmodel *model = (MUTmodel *)inModel ;
+    MUTinstance *here ;
 
-        /*  loop through all the INDacitor models */
-        for( ; model != NULL; model = model->MUTnextModel ) {
+    NG_IGNORE (ckt) ;
 
-            /* loop through all the instances of the model */
-            for (here = model->MUTinstances; here != NULL ;
-                    here=here->MUTnextInstance) {
+    /* loop through all the mutual inductor models */
+    for ( ; model != NULL ; model = model->MUTnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->MUTinstances ; here != NULL ; here = here->MUTnextInstance)
+        {
+            if ((here->MUTind1->INDbrEq != 0) && (here->MUTind2->INDbrEq != 0))
+                here->MUTbr1br2 = here->MUTbr1br2StructPtr->CSC_Complex ;
 
-		i = 0 ;
-		if ((here->MUTind1->INDbrEq != 0) && (here->MUTind2->INDbrEq != 0)) {
-			while (here->MUTbr1br2 != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MUTbr1br2 = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MUTind2->INDbrEq != 0) && (here->MUTind1->INDbrEq != 0))
+                here->MUTbr2br1 = here->MUTbr2br1StructPtr->CSC_Complex ;
+        }
+    }
 
-		i = 0 ;
-		if ((here->MUTind2->INDbrEq != 0) && (here->MUTind1->INDbrEq != 0)) {
-			while (here->MUTbr2br1 != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MUTbr2br1 = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-	    }
-	}
-    return(OK);
+    return (OK) ;
 }
 
 int
@@ -222,27 +221,20 @@ MUTbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     MUTmodel *model = (MUTmodel *)inModel ;
     MUTinstance *here ;
-    int i ;
 
-    /*  loop through all the MutualInductor models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the mutual inductor models */
     for ( ; model != NULL ; model = model->MUTnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->MUTinstances ; here != NULL ; here = here->MUTnextInstance)
         {
-            i = 0 ;
             if ((here->MUTind1->INDbrEq != 0) && (here->MUTind2->INDbrEq != 0))
-            {
-                while (here->MUTbr1br2 != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->MUTbr1br2 = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->MUTbr1br2 = here->MUTbr1br2StructPtr->CSC ;
 
-            i = 0 ;
             if ((here->MUTind2->INDbrEq != 0) && (here->MUTind1->INDbrEq != 0))
-            {
-                while (here->MUTbr2br1 != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->MUTbr2br1 = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->MUTbr2br1 = here->MUTbr2br1StructPtr->CSC ;
         }
     }
 

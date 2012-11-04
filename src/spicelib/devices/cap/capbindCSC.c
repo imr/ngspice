@@ -7,44 +7,70 @@ Author: 2012 Francesco Lannutti
 #include "capdefs.h"
 #include "ngspice/sperror.h"
 
+#include <stdlib.h>
+
+static
+int
+BindCompare (const void *a, const void *b)
+{
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
+
+    return ((int)(A->Sparse - B->Sparse)) ;
+}
+
 int
 CAPbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
     CAPmodel *model = (CAPmodel *)inModel ;
     CAPinstance *here ;
-    int i ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-        /*  loop through all the capacitor models */
-        for ( ; model != NULL ; model = model->CAPnextModel)
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
+
+    /* loop through all the capacitor models */
+    for ( ; model != NULL ; model = model->CAPnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->CAPinstances ; here != NULL ; here = here->CAPnextInstance)
         {
-            /* loop through all the instances of the model */
-            for (here = model->CAPinstances ; here != NULL ; here = here->CAPnextInstance)
+            if ((here->CAPposNode != 0) && (here->CAPposNode != 0))
             {
-		i = 0 ;
-		if ((here->CAPposNode != 0) && (here->CAPposNode != 0)) {
-			while (here->CAPposPosptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->CAPposPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
+                i = here->CAPposPosptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->CAPposPosStructPtr = matched ;
+                here->CAPposPosptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->CAPnegNode != 0) && (here->CAPnegNode != 0)) {
-			while (here->CAPnegNegptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->CAPnegNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
+            if ((here->CAPnegNode != 0) && (here->CAPnegNode != 0))
+            {
+                i = here->CAPnegNegptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->CAPnegNegStructPtr = matched ;
+                here->CAPnegNegptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->CAPposNode != 0) && (here->CAPnegNode != 0)) {
-			while (here->CAPposNegptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->CAPposNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
+            if ((here->CAPposNode != 0) && (here->CAPnegNode != 0))
+            {
+                i = here->CAPposNegptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->CAPposNegStructPtr = matched ;
+                here->CAPposNegptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->CAPnegNode != 0) && (here->CAPposNode != 0)) {
-			while (here->CAPnegPosptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->CAPnegPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-	    }
-	}
+            if ((here->CAPnegNode != 0) && (here->CAPposNode != 0))
+            {
+                i = here->CAPnegPosptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->CAPnegPosStructPtr = matched ;
+                here->CAPnegPosptr = matched->CSC ;
+            }
+        }
+    }
 
     return (OK) ;
 }
@@ -54,39 +80,28 @@ CAPbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
 {
     CAPmodel *model = (CAPmodel *)inModel ;
     CAPinstance *here ;
-    int i ;
 
-        /*  loop through all the capacitor models */
-        for ( ; model != NULL ; model = model->CAPnextModel)
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the capacitor models */
+    for ( ; model != NULL ; model = model->CAPnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->CAPinstances ; here != NULL ; here = here->CAPnextInstance)
         {
-            /* loop through all the instances of the model */
-            for (here = model->CAPinstances ; here != NULL ; here = here->CAPnextInstance)
-            {
-		i = 0 ;
-		if ((here->CAPposNode != 0) && (here->CAPposNode != 0)) {
-			while (here->CAPposPosptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->CAPposPosptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->CAPposNode != 0) && (here->CAPposNode != 0))
+                here->CAPposPosptr = here->CAPposPosStructPtr->CSC_Complex ;
 
-		i = 0 ;
-		if ((here->CAPnegNode != 0) && (here->CAPnegNode != 0)) {
-			while (here->CAPnegNegptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->CAPnegNegptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->CAPnegNode != 0) && (here->CAPnegNode != 0))
+                here->CAPnegNegptr = here->CAPnegNegStructPtr->CSC_Complex ;
 
-		i = 0 ;
-		if ((here->CAPposNode != 0) && (here->CAPnegNode != 0)) {
-			while (here->CAPposNegptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->CAPposNegptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->CAPposNode != 0) && (here->CAPnegNode != 0))
+                here->CAPposNegptr = here->CAPposNegStructPtr->CSC_Complex ;
 
-		i = 0 ;
-		if ((here->CAPnegNode != 0) && (here->CAPposNode != 0)) {
-			while (here->CAPnegPosptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->CAPnegPosptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-	    }
-	}
+            if ((here->CAPnegNode != 0) && (here->CAPposNode != 0))
+                here->CAPnegPosptr = here->CAPnegPosStructPtr->CSC_Complex ;
+        }
+    }
 
     return (OK) ;
 }
@@ -96,41 +111,26 @@ CAPbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     CAPmodel *model = (CAPmodel *)inModel ;
     CAPinstance *here ;
-    int i ;
 
-    /*  loop through all the capacitor models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the capacitor models */
     for ( ; model != NULL ; model = model->CAPnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->CAPinstances ; here != NULL ; here = here->CAPnextInstance)
         {
-            i = 0 ;
             if ((here->CAPposNode != 0) && (here->CAPposNode != 0))
-            {
-                while (here->CAPposPosptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->CAPposPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->CAPposPosptr = here->CAPposPosStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->CAPnegNode != 0) && (here->CAPnegNode != 0))
-            {
-                while (here->CAPnegNegptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->CAPnegNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->CAPnegNegptr = here->CAPnegNegStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->CAPposNode != 0) && (here->CAPnegNode != 0))
-            {
-                while (here->CAPposNegptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->CAPposNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->CAPposNegptr = here->CAPposNegStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->CAPnegNode != 0) && (here->CAPposNode != 0))
-            {
-                while (here->CAPnegPosptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->CAPnegPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->CAPnegPosptr = here->CAPnegPosStructPtr->CSC ;
         }
     }
 

@@ -7,88 +7,103 @@ Author: 2012 Francesco Lannutti
 #include "resdefs.h"
 #include "ngspice/sperror.h"
 
+#include <stdlib.h>
+
+static
 int
-RESbindCSC(GENmodel *inModel, CKTcircuit *ckt)
+BindCompare (const void *a, const void *b)
 {
-    RESmodel *model = (RESmodel *)inModel;
-    int i ;
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
 
-    /*  loop through all the resistor models */
-    for( ; model != NULL; model = model->RESnextModel ) {
-	RESinstance *here;
-
-        /* loop through all the instances of the model */
-        for (here = model->RESinstances; here != NULL ;
-	    here = here->RESnextInstance) {
-
-		i = 0 ;
-		if ((here->RESposNode != 0) && (here->RESposNode != 0)) {
-			while (here->RESposPosptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->RESposPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->RESnegNode != 0) && (here->RESnegNode != 0)) {
-			while (here->RESnegNegptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->RESnegNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->RESposNode != 0) && (here->RESnegNode != 0)) {
-			while (here->RESposNegptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->RESposNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->RESnegNode != 0) && (here->RESposNode != 0)) {
-			while (here->RESnegPosptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->RESnegPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-	}
-    }
-    return(OK);
+    return ((int)(A->Sparse - B->Sparse)) ;
 }
 
 int
-RESbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
+RESbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
-    RESmodel *model = (RESmodel *)inModel;
-    int i ;
+    RESmodel *model = (RESmodel *)inModel ;
+    RESinstance *here ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-    /*  loop through all the resistor models */
-    for( ; model != NULL; model = model->RESnextModel ) {
-	RESinstance *here;
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
+    /* loop through all the resistor models */
+    for ( ; model != NULL ; model = model->RESnextModel)
+    {
         /* loop through all the instances of the model */
-        for (here = model->RESinstances; here != NULL ;
-	    here = here->RESnextInstance) {
+        for (here = model->RESinstances ; here != NULL ; here = here->RESnextInstance)
+        {
+            if ((here->RESposNode != 0) && (here->RESposNode != 0))
+            {
+                i = here->RESposPosptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->RESposPosStructPtr = matched ;
+                here->RESposPosptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->RESposNode != 0) && (here->RESposNode != 0)) {
-			while (here->RESposPosptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->RESposPosptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->RESnegNode != 0) && (here->RESnegNode != 0))
+            {
+                i = here->RESnegNegptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->RESnegNegStructPtr = matched ;
+                here->RESnegNegptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->RESnegNode != 0) && (here->RESnegNode != 0)) {
-			while (here->RESnegNegptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->RESnegNegptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->RESposNode != 0) && (here->RESnegNode != 0))
+            {
+                i = here->RESposNegptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->RESposNegStructPtr = matched ;
+                here->RESposNegptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->RESposNode != 0) && (here->RESnegNode != 0)) {
-			while (here->RESposNegptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->RESposNegptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->RESnegNode != 0) && (here->RESposNode != 0)) {
-			while (here->RESnegPosptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->RESnegPosptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-	}
+            if ((here->RESnegNode != 0) && (here->RESposNode != 0))
+            {
+                i = here->RESnegPosptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->RESnegPosStructPtr = matched ;
+                here->RESnegPosptr = matched->CSC ;
+            }
+        }
     }
-    return(OK);
+
+    return (OK) ;
+}
+
+int
+RESbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
+{
+    RESmodel *model = (RESmodel *)inModel ;
+    RESinstance *here ;
+
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the resistor models */
+    for ( ; model != NULL ; model = model->RESnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->RESinstances ; here != NULL ; here = here->RESnextInstance)
+        {
+            if ((here->RESposNode != 0) && (here->RESposNode != 0))
+                here->RESposPosptr = here->RESposPosStructPtr->CSC_Complex ;
+
+            if ((here->RESnegNode != 0) && (here->RESnegNode != 0))
+                here->RESnegNegptr = here->RESnegNegStructPtr->CSC_Complex ;
+
+            if ((here->RESposNode != 0) && (here->RESnegNode != 0))
+                here->RESposNegptr = here->RESposNegStructPtr->CSC_Complex ;
+
+            if ((here->RESnegNode != 0) && (here->RESposNode != 0))
+                here->RESnegPosptr = here->RESnegPosStructPtr->CSC_Complex ;
+        }
+    }
+
+    return (OK) ;
 }
 
 int
@@ -96,41 +111,26 @@ RESbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     RESmodel *model = (RESmodel *)inModel ;
     RESinstance *here ;
-    int i ;
 
-    /*  loop through all the resistor models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the resistor models */
     for ( ; model != NULL ; model = model->RESnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->RESinstances ; here != NULL ; here = here->RESnextInstance)
         {
-            i = 0 ;
             if ((here->RESposNode != 0) && (here->RESposNode != 0))
-            {
-                while (here->RESposPosptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->RESposPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->RESposPosptr = here->RESposPosStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->RESnegNode != 0) && (here->RESnegNode != 0))
-            {
-                while (here->RESnegNegptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->RESnegNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->RESnegNegptr = here->RESnegNegStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->RESposNode != 0) && (here->RESnegNode != 0))
-            {
-                while (here->RESposNegptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->RESposNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->RESposNegptr = here->RESposNegStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->RESnegNode != 0) && (here->RESposNode != 0))
-            {
-                while (here->RESnegPosptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->RESnegPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->RESnegPosptr = here->RESnegPosStructPtr->CSC ;
         }
     }
 
