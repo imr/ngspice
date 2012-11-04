@@ -2136,7 +2136,7 @@ inp_remove_ws(char *s)
     char *buffer, *curr;
     bool is_expression = FALSE;
 
-    big_buff = TMALLOC(char, strlen(s) + 1);
+    big_buff = TMALLOC(char, strlen(s) + 2);
     curr = s;
 
     while (*curr != '\0') {
@@ -5488,13 +5488,14 @@ inp_add_series_resistor(struct line *deck)
         else
             continue;
         tmp_p = strstr(curr_line, "rseries");
-        /* default to "1m" if no value given */
+        tmp_p += 7;
+        /* default to "1e-3" if no value given */
         if (ciprefix("=", tmp_p)) {
             tmp_p = strchr(tmp_p, '=') + 1;
             rval = gettok(&tmp_p);
         }
         else
-            rval = copy("1m");
+            rval = copy("1e-3");
     }
 
     if (!has_rseries || !rval)
