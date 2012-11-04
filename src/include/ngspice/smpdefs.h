@@ -20,13 +20,15 @@ Modified: 2000  AlansFixes
 
 #if defined(KLU)
 #include "ngspice/klu.h"
+#include "ngspice/spmatrix.h"
 #elif defined(SuperLU)
 #include "ngspice/slu_ddefs.h"
 #elif defined(UMFPACK)
 #include "ngspice/umfpack.h"
 #endif
 
-struct SMPmatrix {
+/* SMPmatrix structure - Francesco Lannutti (2012-02) */
+typedef struct sSMPmatrix {
     MatrixFrame *SPmatrix ;               /* pointer to sparse matrix */
 
 #if defined(KLU)
@@ -45,6 +47,7 @@ struct SMPmatrix {
     double **CKTbind_Sparse ;             /* KLU Sparse original element position */
     double **CKTbind_CSC ;                /* KLU new element position */
     double **CKTbind_CSC_Complex ;        /* KLU new element position in Complex analysis */
+    BindElement *CKTbindStruct ;          /* KLU - Sparse Binding Structure */
     double **CKTdiag_CSC ;                /* KLU pointer to diagonal element to perform Gmin */
     int CKTkluN ;                         /* KLU N, copied */
     int CKTklunz ;                        /* KLU nz, copied for AC Analysis */
@@ -97,10 +100,7 @@ struct SMPmatrix {
     #define CKTumfpackOFF 0		   /* UMFPACK MODE OFF definition */
 #endif
 
-};
-
-/* SMPmatrix structure alias - Francesco Lannutti (2012-02) */
-typedef struct SMPmatrix SMPmatrix ;
+} SMPmatrix ;
 
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)

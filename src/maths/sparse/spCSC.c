@@ -21,7 +21,7 @@
 
 /* Body */
 int
-WriteCol_original (MatrixPtr Matrix, int Col, spREAL *CSC_Element, int *CSC_Row, spREAL **bind_Sparse, spREAL **bind_KLU, spREAL **diag)
+WriteCol_original (MatrixPtr Matrix, int Col, spREAL *CSC_Element, spREAL *CSC_Element_Complex, int *CSC_Row, BindElement *BindSparseCSC, spREAL **diag)
 {
     int i ;
     ElementPtr current ;
@@ -30,8 +30,9 @@ WriteCol_original (MatrixPtr Matrix, int Col, spREAL *CSC_Element, int *CSC_Row,
     current = Matrix->FirstInCol [Col] ;
 
     while (current != NULL) {
-        bind_Sparse [i] = (double *)current ;
-        bind_KLU [i] = &(CSC_Element [i]) ;
+        BindSparseCSC [i].Sparse = (double *)current ;
+        BindSparseCSC [i].CSC = &(CSC_Element [i]) ;
+        BindSparseCSC [i].CSC_Complex = &(CSC_Element_Complex [2 * i]) ;
         CSC_Row [i] = (current->Row) - 1 ;
         if (CSC_Row [i] == Col - 1)
             diag [0] = &(CSC_Element [i]) ;
@@ -61,15 +62,15 @@ WriteCol_original_dump (MatrixPtr Matrix, int Col, spREAL *CSC_Element, int *CSC
 }
 
 void
-spMatrix_CSC (MatrixPtr Matrix, int *Ap, int *Ai, double *Ax, int n, double **bind_Sparse, double **bind_KLU, double **diag)
+spMatrix_CSC (MatrixPtr Matrix, int *Ap, int *Ai, double *Ax, double *Ax_Complex, int n, BindElement *BindSparseCSC, double **diag)
 {
     int offset, i ;
 
     offset = 0 ;
     Ap[0] = offset ;
     for (i = 1 ; i <= n ; i++) {
-        offset += WriteCol_original (Matrix, i, (spREAL *)(Ax + offset), (int *)(Ai + offset), (spREAL **)(bind_Sparse + offset),
-                                    (spREAL **)(bind_KLU + offset), (spREAL **)(diag + (i - 1))) ;
+        offset += WriteCol_original (Matrix, i, (spREAL *)(Ax + offset), (spREAL *)(Ax_Complex + 2 * offset),
+                                     (int *)(Ai + offset), BindSparseCSC + offset, (spREAL **)(diag + (i - 1))) ;
 
         Ap[i] = offset ;
     }

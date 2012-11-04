@@ -81,6 +81,13 @@ typedef struct sRESinstance {
     double **RESnVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *RESposPosStructPtr ;
+    BindElement *RESposNegStructPtr ;
+    BindElement *RESnegPosStructPtr ;
+    BindElement *RESnegNegStructPtr ;
+#endif
+
 } RESinstance ;
 
 

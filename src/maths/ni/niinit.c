@@ -44,6 +44,7 @@ NIinit(CKTcircuit *ckt)
     ckt->CKTmatrix->CKTbind_Sparse = NULL ;
     ckt->CKTmatrix->CKTbind_CSC = NULL ;
     ckt->CKTmatrix->CKTbind_CSC_Complex = NULL ;
+    ckt->CKTmatrix->CKTbindStruct = NULL ;
     ckt->CKTmatrix->CKTdiag_CSC = NULL ;
     ckt->CKTmatrix->CKTkluN = 0 ;
     ckt->CKTmatrix->CKTklunz = 0 ;

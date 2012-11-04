@@ -63,6 +63,14 @@ typedef struct sINDinstance {
     int  INDsenParmNo;   /* parameter # for sensitivity use;
             set equal to  0 if not a design parameter*/
 
+#ifdef KLU
+    BindElement *INDposIbrStructPtr ;
+    BindElement *INDnegIbrStructPtr ;
+    BindElement *INDibrPosStructPtr ;
+    BindElement *INDibrNegStructPtr ;
+    BindElement *INDibrIbrStructPtr ;
+#endif
+
 } INDinstance ;
 
 #define INDflux INDstate    /* flux in the inductor */
@@ -129,6 +137,10 @@ unsigned MUTindGiven : 1;   /* flag to indicate inductance was specified */
 int  MUTsenParmNo;   /* parameter # for sensitivity use;
             set equal to  0 if not a design parameter*/
 
+#ifdef KLU
+    BindElement *MUTbr1br2StructPtr ;
+    BindElement *MUTbr2br1StructPtr ;
+#endif
 
 } MUTinstance ;
 
