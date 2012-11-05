@@ -19,10 +19,12 @@ all:
 
 install: all
 	$(MKDIR_P) "$(DESTDIR)$(pkglibdir)"
+	$(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
 	for cm in $(CMDIRS) ; do \
 		$(INSTALL_PROGRAM) $$cm/$$cm.cm "$(DESTDIR)$(pkglibdir)" \
 		|| exit 1; \
 	done
+	$(INSTALL_DATA) $(srcdir)/dlmain.c "$(DESTDIR)$(pkgdatadir)" || exit $$?;
 
 
 uninstall:
