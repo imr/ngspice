@@ -1724,6 +1724,7 @@ static void
 devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
 {
     struct line *s;
+    int found;
 
     for (s = deck; s; s = s->li_next) {
 
@@ -1873,6 +1874,7 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
             tfree(s->li_line);
             s->li_line = buffer;
             break;
+
         case 'u': /* urc transmissionline */
             /* 3 terminal devices */
         case 'w': /* current controlled switch */
@@ -1901,7 +1903,6 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
             break;
 
             /* 4 terminal devices */
-        case 'm':
         case 'o':    /* ltra */
         case 's':    /* vc switch */
         case 'y':    /* txl */
@@ -1926,26 +1927,7 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
             tfree(name);
             name = gettok(&t);
 
-            /* Now, is this a subcircuit model? */
-            for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
-                /* FIXME, probably too unspecific */
-                int i = (int) strlen(wlsub->wl_word);
-                int j = 0; /* Now, have we a binned model? */
-                char* dot_char;
-                if ((dot_char = strstr(wlsub->wl_word, ".")) != NULL) {
-                    dot_char++;
-                    j++;
-                    while (*dot_char != '\0') {
-                        if (!isdigit(*dot_char)) {
-                            break;
-                        }
-                        dot_char++;
-                        j++;
-                    }
-                }
-                if (strncmp(name, wlsub->wl_word, (size_t) (i - j)) == 0)
-                    break;
-            }
+            wlsub = wl_find(name, submod);
 
             if (!wlsub)
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
@@ -1958,7 +1940,68 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
             tfree(name);
             break;
 
-            /* 3-5 terminal devices */
+             /* 4-7 terminal mos devices */
+        case 'm':
+            name = gettok(&t);  /* get refdes */
+            (void) sprintf(buffer, "%s ", name);
+            tfree(name);
+            name = gettok_node(&t);  /* get first attached netname */
+            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            tfree(name);
+            name = gettok_node(&t);  /* get second attached netname */
+            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            tfree(name);
+            name = gettok_node(&t);  /* get third attached netname */
+            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            tfree(name);
+            name = gettok_node(&t);  /* get fourth attached netname */
+            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            tfree(name);
+            name = gettok(&t);
+
+            found = 0;
+            while (*t && !found) {
+                /* Now, is this a subcircuit model? */
+                for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
+                    /* FIXME, probably too unspecific */
+                    int i = (int) strlen(wlsub->wl_word);
+                    int j = 0; /* Now, have we a binned model? */
+                    char* dot_char;
+                    if ((dot_char = strstr(wlsub->wl_word, ".")) != NULL) {
+                        dot_char++;
+                        j++;
+                        while (*dot_char != '\0') {
+                            if (!isdigit(*dot_char)) {
+                                break;
+                            }
+                            dot_char++;
+                            j++;
+                        }
+                    }
+                    if (strncmp(name, wlsub->wl_word, (size_t) (i - j)) == 0) {
+                        found = 1;
+                        break;
+                    }
+                }
+                if (!found) { /* name was not a model - was a netname */
+                    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                    tfree(name);
+                    name = gettok(&t);
+                }
+            }  /* while  */
+
+            if (!found)
+                (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            else
+                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+
+            (void) strcat(buffer, t);
+            tfree(s->li_line);
+            s->li_line = buffer;
+            tfree(name);
+            break;
+
+            /* 3-5 terminal bjt devices */
         case 'q':
             name = gettok(&t);  /* get refdes */
             (void) sprintf(buffer, "%s ", name);
