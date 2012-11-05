@@ -1,7 +1,7 @@
 #include "ngspice/ngspice.h" /* for wl */
 #include "ngspice/ftedefs.h"
 #include "ngspice/devdefs.h" /* solve deps in dev.h*/
-#include <../spicelib/devices/dev.h> /*for load library commands*/
+#include "../spicelib/devices/dev.h" /* for load library commands */
 #include "com_dl.h"
 
 
