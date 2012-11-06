@@ -19,20 +19,10 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 compile config.guess \
 ACLOCAL_AMFLAGS = -I m4
 
 dist-hook:
-	rm -rf `find $(distdir)/contrib -name CVS`
-	rm -rf `find $(distdir)/patches -name CVS`
-	rm -rf `find $(distdir)/examples -name CVS`
-	rm -rf `find $(distdir)/visualc -name CVS`
-	rm -rf `find $(distdir)/visualc/include -name CVS`
-	rm -rf `find $(distdir)/xgraph -name .cvsignore`
 	rm -rf `find $(distdir)/xgraph -name .deps`
-	rm -rf `find $(distdir)/xgraph -name CVS`
 	rm -rf `find $(distdir)/xgraph -name config.status`
 	rm -rf `find $(distdir)/xgraph -name config.log`
 	rm -rf `find $(distdir)/xgraph -name Makefile`
-	rm -rf `find $(distdir)/xgraph/bitmaps -name CVS`
-	rm -rf `find $(distdir)/xgraph/examples -name CVS`
-	rm -rf `find $(distdir)/unsupported -name CVS`
 
 mrproper: maintainer-clean
 	rm -f `find $(top_srcdir) -type f -name "*~" -print`

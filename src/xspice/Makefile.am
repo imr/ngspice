@@ -10,11 +10,8 @@ SUBDIRS = mif cm enh evt ipc idn cmpp icm
 
 
 dist-hook:
-	rm -rf `find $(distdir)/examples -name CVS`
 	rm -f "$(distdir)/icm/makedefs"
 	rm -f "$(distdir)/icm/GNUmakefile"
-	rm -rf `find $(distdir)/icm -name CVS`
-	rm -rf `find $(distdir)/icm -name .cvsignore`
 	rm -rf `find $(distdir)/icm -name .deps`
 	rm -rf `find $(distdir)/icm -name *.o`
 	rm -rf `find $(distdir)/icm -name *.cm`

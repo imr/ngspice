@@ -165,9 +165,6 @@ $znew
         if [ -d "$ADMSDIR/$adms_dir" ]; then
 
             case "$adms_dir" in
-                "CVS")
-                    echo "Skipping CVS"
-                    ;;
 
                 "admst")
                     echo "Skipping scripts dir"
