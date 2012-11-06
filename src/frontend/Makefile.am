@@ -114,7 +114,6 @@ libfte_la_SOURCES =	\
 	dotcards.c	\
 	dotcards.h	\
 	error.c		\
-	error.h		\
 	evaluate.c	\
 	evaluate.h	\
 	fourier.c	\
