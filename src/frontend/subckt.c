@@ -1882,12 +1882,16 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
         case 'z': /* hfet, mesa */
             name = gettok(&t);
             (void) sprintf(buffer, "%s ", name);
+            tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            tfree(name);
             name = gettok(&t);
 
             wlsub = wl_find(name, submod);
@@ -1897,6 +1901,7 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
             else
                 (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
 
+            tfree(name);
             (void) strcat(buffer, t);
             tfree(s->li_line);
             s->li_line = buffer;
@@ -2077,6 +2082,8 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
             else
                 (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+
+            tfree(name);
 
             (void) strcat(buffer, t);
             tfree(s->li_line);
