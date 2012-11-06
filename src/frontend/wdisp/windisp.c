@@ -5,7 +5,6 @@
  * Holger Vogt  05.12.07
  */
 
-#define STRICT
 #include "ngspice/ngspice.h"
 
 #ifdef HAS_WINDOWS
@@ -27,6 +26,7 @@
  */
 #undef BOOLEAN
 
+#define STRICT
 #include <windows.h>
 #include <windowsx.h>
 #include "ngspice/suffix.h"
