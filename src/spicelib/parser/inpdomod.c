@@ -394,7 +394,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 				    ("Device type SOI3 not available in this binary (STAG release)\n");
 			    }
 			    break;
-			case 61:
+			case 61: case 68:
 			    type = INPtypelook("HiSIM2");
 			    if (type < 0) {
 				    err =
@@ -402,7 +402,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 				    ("Placeholder: Device type HiSIM2 not available in this binary\n");
 			    }
 			    break;
-			case 62:
+			case 62: case 73:
 			    type = INPtypelook("HiSIMHV");
 			    if (type < 0) {
 				    err =
