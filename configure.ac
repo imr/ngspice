@@ -1123,15 +1123,6 @@ fi
 # Output Files
 # ------------
 
-AM_COND_IF([KLU_WANTED],
-	[AC_CONFIG_FILES([src/maths/KLU/Makefile])])
-
-AM_COND_IF([SuperLU_WANTED],
-	[AC_CONFIG_FILES([src/maths/SuperLU/Makefile])])
-
-AM_COND_IF([UMFPACK_WANTED],
-	[AC_CONFIG_FILES([src/maths/UMFPACK/Makefile])])
-
 AC_CONFIG_FILES([Makefile
                  man/Makefile
                  man/man1/Makefile
@@ -1215,6 +1206,9 @@ AC_CONFIG_FILES([Makefile
                  src/maths/deriv/Makefile
                  src/maths/poly/Makefile
                  src/maths/sparse/Makefile
+                 src/maths/KLU/Makefile
+                 src/maths/SuperLU/Makefile
+                 src/maths/UMFPACK/Makefile
                  src/misc/Makefile
                  src/xspice/Makefile
                  src/xspice/cm/Makefile
