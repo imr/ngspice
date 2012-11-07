@@ -552,9 +552,8 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
         /*  This is interactive mode. Update the screen with the reference
             variable just the same  */
 
-        currclock = clock();
-
 #ifndef HAS_WINDOWS
+        currclock = clock();
         if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
             if (run->isComplex) {
                 fprintf(stderr, " Reference value : % 12.5e\r",
