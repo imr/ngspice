@@ -303,8 +303,7 @@ cp_setparse(wordlist *wl)
                 tfree(name);    /*DG: cp_unquote Memory leak*/
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
-                else
-                    return (NULL);
+                return (NULL);
             }
             val = wl->wl_word;
             wl = wl->wl_next;
@@ -320,8 +319,7 @@ cp_setparse(wordlist *wl)
                     tfree(name); /*DG: cp_unquote Memory leak: free name before exiting*/
                     if (ft_stricterror)
                         controlled_exit(EXIT_BAD);
-                    else
-                        return (NULL);
+                    return (NULL);
                 } else {
                     val = wl->wl_word;
                     wl = wl->wl_next;
@@ -332,8 +330,7 @@ cp_setparse(wordlist *wl)
             tfree(name); /*DG: cp_unquote Memory leak: free name befor exiting */
             if (ft_stricterror)
                 controlled_exit(EXIT_BAD);
-            else
-                return (NULL);
+            return (NULL);
         }
 
         /*   val = cp_unquote(val);  DG: bad   old val is lost*/
@@ -378,8 +375,7 @@ cp_setparse(wordlist *wl)
                 tfree(name); /* va: cp_unquote memory leak: free name before exiting */
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
-                else
-                    return (NULL);
+                return (NULL);
             }
 
             vv = alloc(struct variable);
