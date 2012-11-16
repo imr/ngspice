@@ -1,13 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = bsim3		\
-	bsim4		\
-	bsimsoi		\
-	hisim		\
-	hisimhv
-
-
-DIST_SUBDIRS = bsim3	\
+SUBDIRS =		\
+	bsim3		\
 	bsim4		\
 	bsimsoi		\
 	hisim		\
@@ -17,12 +11,38 @@ if XSPICE_WANTED
 SUBDIRS += xspice
 endif
 
-DIST_SUBDIRS += xspice
 
-TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
+DIST_SUBDIRS =		\
+	bsim1		\
+	bsim2		\
+	bsim3		\
+	bsim3soidd	\
+	bsim3soifd	\
+	bsim3soipd	\
+	bsim4		\
+	bsimsoi		\
+	filters		\
+	general		\
+	hfet		\
+	hisim		\
+	hisimhv		\
+	jfet		\
+	mes		\
+	mesa		\
+	mos6		\
+	polezero	\
+	resistance	\
+	sensitivity	\
+	transient	\
+	transmission	\
+	vbic		\
+	xspice
+
+
+TESTS_ENVIRONMENT = \
+	$(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
-	README bin
-
+	README bin .gitignore
 
 MAINTAINERCLEANFILES = Makefile.in

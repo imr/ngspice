@@ -2,7 +2,7 @@
 
 BUILT_SOURCES = ifs_lex.c ifs_yacc.c ifs_yacc.h mod_lex.c mod_yacc.c mod_yacc.h
 
-EXTRA_DIST = ifs_lex.l mod_lex.l ifs_yacc.h mod_yacc.h
+EXTRA_DIST = ifs_lex.l mod_lex.l ifs_yacc.h mod_yacc.h .gitignore
 
 MAINTAINERCLEANFILES = Makefile.in
 

@@ -1,6 +1,6 @@
 # Process this file with automake
 
-EXTRA_DIST = README examples icm xspice.c
+EXTRA_DIST = README examples icm xspice.c .gitignore
 
 ## This is removed because icm relies upon the existance of all other
 ## libs.  It is currently compiled manually, last.

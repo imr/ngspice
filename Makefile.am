@@ -9,7 +9,7 @@ EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		README.adms contrib \
 		doc examples m4 visualc @NOTXGRAPH@ \
 		xgraph/aclocal.m4 \
-		compile_min.sh
+		compile_min.sh .gitignore
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 ar-lib compile config.guess \
 			src/include/ngspice/config.h.in config.sub configure install-sh \
