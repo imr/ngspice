@@ -97,7 +97,7 @@ libckt_la_SOURCES = \
 		transetp.c
 
 
-if HAVE_CLUSTER_WANTED
+if CLUSTER_WANTED
 libckt_la_SOURCES += cluster.c
 endif
 
