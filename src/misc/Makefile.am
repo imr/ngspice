@@ -4,8 +4,6 @@ noinst_LTLIBRARIES = libmisc.la
 
 
 libmisc_la_SOURCES = \
-		alloc.c		\
-		alloc.h		\
 		dup2.c		\
 		dstring.c	\
 		dup2.h		\
@@ -37,6 +35,11 @@ else
 if !HAVE_GETOPT_LONG
 libmisc_la_SOURCES += getopt_long_bsd.c getopt_bsd.h
 endif
+endif
+
+### alloc.c ###
+if !HAVE_LIBGC_WANTED
+libmisc_la_SOURCES += alloc.c alloc.h
 endif
 
 

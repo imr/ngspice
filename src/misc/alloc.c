@@ -13,8 +13,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 extern void controlled_exit(int status);
 #endif
 
-#ifndef HAVE_LIBGC
-
 /*saj For Tcl module locking*/
 #ifdef TCL_MODULE
 #include <tcl.h>
@@ -114,5 +112,3 @@ txfree(void *ptr)
   Tcl_MutexUnlock(alloc);
 #endif
 }
-
-#endif
