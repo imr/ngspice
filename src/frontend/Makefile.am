@@ -202,10 +202,6 @@ AM_CFLAGS = $(STATIC)
 
 MAINTAINERCLEANFILES = Makefile.in
 
-if !WINDOWS
-MAINTAINERCLEANFILES += wdisp/Makefile.in
-endif
-
 parse-bison.c parse-bison.h : parse-bison.y
 	bison $(srcdir)/parse-bison.y
 
