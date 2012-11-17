@@ -1,7 +1,13 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = plotting help parser wdisp numparam trannoise
-DIST_SUBDIRS = plotting help parser wdisp numparam trannoise
+SUBDIRS = plotting help parser numparam trannoise
+DIST_SUBDIRS = plotting help parser numparam trannoise
+
+if WINDOWS
+SUBDIRS += wdisp
+DIST_SUBDIRS += wdisp
+endif
+
 EXTRA_DIST = testcommands.c parse-bison.y
 ## For Windows with Visual Studio
 EXTRA_DIST += parse-bison.c parse-bison.h
@@ -196,6 +202,10 @@ AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include @X_CFLAGS@
 AM_CFLAGS = $(STATIC)
 
 MAINTAINERCLEANFILES = Makefile.in
+
+if !WINDOWS
+MAINTAINERCLEANFILES += wdisp/Makefile.in
+endif
 
 parse-bison.c parse-bison.h : parse-bison.y
 	bison $(srcdir)/parse-bison.y
