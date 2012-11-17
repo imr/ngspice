@@ -16,11 +16,11 @@ libmathmisc_la_SOURCES = \
 	randnumb.c
 
 
-if !HAVE_DECL_ISINF_WANTED
+if !HAVE_DECL_ISINF
 libmathmisc_la_SOURCES += isinf.c
 endif
 
-if !HAVE_DECL_ISNAN_WANTED
+if !HAVE_DECL_ISNAN
 libmathmisc_la_SOURCES += isnan.c
 endif
 

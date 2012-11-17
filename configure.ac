@@ -659,17 +659,10 @@ AC_CHECK_HEADERS([float.h limits.h values.h ieeefp.h])
 # Check for a few mathematical functions:
 AC_CHECK_FUNCS([erfc logb scalb scalbn asinh acosh atanh finite])
 # According POSIX we should look for macros first
-AC_CHECK_DECLS([isinf], [], [], [[#include <math.h>]])
-AC_CHECK_DECLS([isnan], [], [], [[#include <math.h>]])
-# But may be we have still functions
-if test "x$ac_cv_have_decl_isinf" != xyes; then
-    AC_CHECK_FUNC([isinf])
-fi
-AM_CONDITIONAL([HAVE_DECL_ISINF_WANTED], [test "x$ac_cv_have_decl_isinf" = xyes])
-if test "x$ac_cv_have_decl_isnan" != xyes; then
-    AC_CHECK_FUNC([isnan])
-fi
-AM_CONDITIONAL([HAVE_DECL_ISNAN_WANTED], [test "x$ac_cv_have_decl_isnan" = xyes])
+AC_CHECK_DECLS([isinf], [], [AC_CHECK_FUNC([isinf])], [[#include <math.h>]])
+AC_CHECK_DECLS([isnan], [], [AC_CHECK_FUNC([isnan])], [[#include <math.h>]])
+AM_CONDITIONAL([HAVE_DECL_ISINF], [test "x$ac_cv_have_decl_isinf" = xyes])
+AM_CONDITIONAL([HAVE_DECL_ISNAN], [test "x$ac_cv_have_decl_isnan" = xyes])
 
 # If user enables garbage collection, look for garbage collector
 if test "x$TCL_PACKAGE_PATH" = x; then
