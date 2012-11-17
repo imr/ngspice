@@ -1,0 +1,48 @@
+* agauss test in ngspice
+* generate a sequence of gaussian distributed random numbers.
+* test the distribution by sorting the numbers into 
+* a histogram (buckets) 
+* chapt. 17.8.6
+.control
+  define agauss(nom, avar, sig) (nom + avar/sig * sgauss(0))
+  let mc_runs = 200
+  let run = 0
+  let no_buck = 8                $ number of buckets
+  let bucket = unitvec(no_buck)  $ each element contains 1
+  let delta = 3e-11    $ width of each bucket, depends 
+                       $ on avar and sig
+  let lolimit = 1e-09 - 3*delta	
+  let hilimit = 1e-09 + 3*delta  
+  
+  dowhile run < mc_runs
+    let val = agauss(1e-09, 1e-10, 3) $ get the random number
+    if (val < lolimit)
+        let bucket[0] = bucket[0] + 1 $ 'lowest' bucket
+    end
+    let part = 1 	
+    dowhile part < (no_buck - 1)
+      if ((val < (lolimit + part*delta)) & 
++ (val > (lolimit + (part-1)*delta)))
+        let bucket[part] = bucket[part] + 1
+		break
+      end
+      let part = part + 1	  
+    end
+    if (val > hilimit)
+* 'highest' bucket
+      let bucket[no_buck - 1] = bucket[no_buck - 1] + 1 
+    end	
+    let run = run + 1 
+  end
+
+  let part = 0
+  dowhile part < no_buck
+    let value = bucket[part] - 1
+    set value = "$&value"
+* print the buckets' contents
+    echo $value                                
+    let part = part + 1	
+  end
+  
+.endc
+.end

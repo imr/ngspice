@@ -1,0 +1,34 @@
+** MOSFET Gain Stage (AC): Benchmarking Implementation of BSIM4.0.0 
+** by Weidong Liu 5/16/2000.
+** output redirection into file
+** chapter 17.8.8
+
+M1 3 2 0 0 N1 L=1u W=4u
+Rsource 1 2 100k
+Rload 3 vdd 25k
+Vdd vdd 0 1.8 
+Vin 1 0 1.2 ac 0.1
+
+.control
+ac dec 10 100 1000Meg
+plot v(2) v(3)
+let flen = length(frequency) $ length of the vector
+let loopcounter = 0
+echo output test > text.txt  $ start new file test.txt
+* loop
+while loopcounter lt flen
+  let vout2 = v(2)[loopcounter]  $ generate a single point complex vector
+  let vout2re = real(vout2)  $ generate a single point real vector
+  let vout2im = imag(vout2)  $ generate a single point imaginary vector
+  let vout3 = v(3)[loopcounter]  $ generate a single point complex vector  
+  let vout3re = real(vout3)  $ generate a single point real vector
+  let vout3im = imag(vout3)  $ generate a single point imaginary vector
+  let freq = frequency[loopcounter] $ generate a single point vector
+  echo  bbb "$&freq" "$&vout2re" "$&vout2im" "$&vout3re" "$&vout3im" >>
++text.txt   $ append text and data to file (continued fromm line above)
+  let loopcounter = loopcounter + 1
+end
+.endc
+
+.MODEL N1 NMOS LEVEL=14 VERSION=4.3.0 TNOM=27
+.end
