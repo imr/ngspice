@@ -1,11 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
 SUBDIRS = plotting help parser numparam trannoise
-DIST_SUBDIRS = plotting help parser numparam trannoise
+DIST_SUBDIRS = plotting help parser wdisp numparam trannoise
 
 if WINDOWS
 SUBDIRS += wdisp
-DIST_SUBDIRS += wdisp
 endif
 
 EXTRA_DIST = testcommands.c parse-bison.y
