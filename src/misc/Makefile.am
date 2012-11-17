@@ -27,14 +27,14 @@ libmisc_la_SOURCES = \
 
 
 ### getopt_long_bsd.c ###
-if !HAVE_GETOPT_H_WANTED
-if !HAVE_GETOPT_LONG_WANTED
+if !HAVE_GETOPT_H
+if !HAVE_GETOPT_LONG
 libmisc_la_SOURCES += getopt_long_bsd.c getopt_bsd.h
 else
 libmisc_la_SOURCES += getopt_long_bsd.c getopt_bsd.h
 endif
 else
-if !HAVE_GETOPT_LONG_WANTED
+if !HAVE_GETOPT_LONG
 libmisc_la_SOURCES += getopt_long_bsd.c getopt_bsd.h
 endif
 endif
