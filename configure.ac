@@ -45,9 +45,9 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_ARG_ENABLE([ansi],
     [AS_HELP_STRING([--enable-ansi], [Force --ansi option for compilation])])
 
-# --disable-debug: remove -g and -Wall  option to the compiler
+# --disable-debug: remove -g and option to the compiler
 AC_ARG_ENABLE([debug],
-    [AS_HELP_STRING([--enable-debug], [Add -g option for compilation (default)])])
+    [AS_HELP_STRING([--disable-debug], [Remove -g option for compilation, applied by default])])
 
 # --enable-gprof: add -pg option to the compiler (GCC)
 AC_ARG_ENABLE([gprof],
@@ -107,7 +107,7 @@ AC_ARG_ENABLE([asdebug],
 
 # --enable-stepdebug: define STEPDEBUG for the code
 AC_ARG_ENABLE([stepdebug],
-    [AS_HELP_STRING([--enable-stepdebug], [Unknown debug option])], [summary=yes])
+    [AS_HELP_STRING([--enable-stepdebug], [Core debug option])], [summary=yes])
 
 # --enable-pzdebug: define PZDEBUG for the code
 AC_ARG_ENABLE([pzdebug],
