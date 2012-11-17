@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libckt.la
 
-libckt_la_SOURCES = \
+libckt_la_SOURCES =		\
 		acan.c		\
 		acaskq.c	\
 		acsetp.c	\
@@ -103,7 +103,7 @@ endif
 
 
 if PSS_WANTED
-libckt_la_SOURCES += \
+libckt_la_SOURCES +=		\
 		dcpss.c		\
 		pssaskq.c	\
 		pssinit.c	\

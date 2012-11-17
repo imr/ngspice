@@ -801,7 +801,6 @@ else
     XGRAPHDIR=""
     NOTXGRAPH="xgraph"
 fi
-
 AC_SUBST([XGRAPHDIR])
 AC_SUBST([NOTXGRAPH])
 

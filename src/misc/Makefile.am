@@ -3,25 +3,25 @@
 noinst_LTLIBRARIES = libmisc.la
 
 
-libmisc_la_SOURCES = \
-		dup2.c		\
-		dstring.c	\
-		dup2.h		\
-		hash.c		\
-		ivars.c		\
-		ivars.h		\
-		mktemp.c	\
-		mktemp.h	\
-		printnum.c	\
-		printnum.h	\
-		string.c	\
-		tilde.c		\
-		tilde.h		\
-		misc_time.c	\
-		misc_time.h	\
-		wlist.c		\
-		util.c		\
-		util.h
+libmisc_la_SOURCES =	\
+	dup2.c		\
+	dstring.c	\
+	dup2.h		\
+	hash.c		\
+	ivars.c		\
+	ivars.h		\
+	mktemp.c	\
+	mktemp.h	\
+	printnum.c	\
+	printnum.h	\
+	string.c	\
+	tilde.c		\
+	tilde.h		\
+	misc_time.c	\
+	misc_time.h	\
+	wlist.c		\
+	util.c		\
+	util.h
 
 
 ### getopt_long_bsd.c ###
