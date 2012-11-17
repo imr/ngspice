@@ -723,7 +723,15 @@ if test "x$with_windows" = xyes; then
 fi
 
 # Recapitulate settings:
-AC_MSG_RESULT([Settings which were chosen:])
+if test "x$enable_sense2" = xyes || test "x$enable_nobypass" = xyes || test "x$enable_capbypass" = xyes ||
+   test "x$enable_nodelimiting" = xyes || test "x$enable_predictor" = xyes || test "x$enable_newpred" = xyes ||
+   test "x$enable_newtrunc" = xyes || test "x$enable_experimental" = xyes || test "x$enable_cpdebug" = xyes ||
+   test "x$enable_ftedebug" = xyes || test "x$enable_sensdebug" = xyes || test "x$enable_asdebug" = xyes ||
+   test "x$enable_stepdebug" = xyes || test "x$enable_pzdebug" = xyes || test "x$enable_pss" = xyes ||
+   test "x$enable_blktmsdebug" = xyes || test "x$enable_smltmsdebug" = xyes || test "x$enable_xgraph" = xyes ||
+   test "x$enable_devlib" = xyes; then
+    AC_MSG_RESULT([Settings which were chosen:])
+fi
 
 if test "x$enable_sense2" = xyes; then
     AC_DEFINE([WANT_SENSE2], [], [Define if we want spice2 sensitivity analysis])
