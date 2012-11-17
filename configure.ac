@@ -179,11 +179,8 @@ AC_ARG_WITH([tcl],
     [AS_HELP_STRING([--with-tcl=tcldir], [Compiles  the tcl module instead,  experimental, see README.tcl])])
 
 # readline and editline cannot both be enabled
-if test "x$with_editline" = xyes; then
-    if test "x$with_readline" = xyes; then
-        AC_MSG_ERROR([Readline and editline cannot both be enabled])
-    fi
-fi
+AS_IF([test "x$with_editline" = xyes],
+      [AS_IF([test "x$with_readline" = xyes], [AC_MSG_ERROR([Readline and editline cannot both be enabled])])])
 
 
 # Enable maintainer commands only if requested
