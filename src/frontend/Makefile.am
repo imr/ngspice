@@ -31,8 +31,6 @@ libfte_la_SOURCES =	\
 	com_compose.c	\
 	com_compose.h	\
 	com_commands.h	\
-	com_dl.c	\
-	com_dl.h	\
 	com_display.c	\
 	com_display.h	\
 	com_dump.c	\
@@ -185,6 +183,24 @@ libfte_la_SOURCES =	\
 	vectors.h	\
 	where.c		\
 	where.h
+
+
+### com_dl ###
+if XSPICE_WANTED
+if DEVLIB_WANTED
+libfte_la_SOURCES += com_dl.c	\
+	com_dl.h
+else
+libfte_la_SOURCES += com_dl.c	\
+	com_dl.h
+endif
+else
+if DEVLIB_WANTED
+libfte_la_SOURCES += com_dl.c	\
+	com_dl.h
+endif
+endif
+
 
 # TESTS = testcommands
 #

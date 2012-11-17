@@ -166,6 +166,10 @@ AC_ARG_ENABLE([help],
 AC_ARG_ENABLE([xgraph],
     [AS_HELP_STRING([--enable-xgraph], [Enable xgraph compilation.])])
 
+# --enable-devlib: Enable Dynamic Library Load (experimental)
+AC_ARG_ENABLE([devlib],
+    [AS_HELP_STRING([--enable-devlib], [Enable Dynamic Library Load (experimental)])])
+
 # --with-readline:  Includes GNU readline support into CLI.  Default is "no".
 AC_ARG_WITH([readline],
     [AS_HELP_STRING([--with-readline[=yes/no]], [Enable GNU readline support for CLI. Default=no.])])
@@ -800,6 +804,12 @@ fi
 
 AC_SUBST([XGRAPHDIR])
 AC_SUBST([NOTXGRAPH])
+
+if test "x$enable_devlib" = xyes; then
+    AC_DEFINE([DEVLIB], [], [Define Dynamic Load Function (experimental)])
+    AC_MSG_RESULT([WARNING: Dynamic Load Function (experimental) ENABLED])
+fi
+AM_CONDITIONAL([DEVLIB_WANTED], [test "x$enable_devlib" = xyes])
 
 AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc])
 
