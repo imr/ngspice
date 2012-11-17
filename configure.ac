@@ -645,11 +645,12 @@ AC_CHECK_FUNCS([isatty tcgetattr tcsetattr])
 
 # Check for a few functions:
 AC_FUNC_FORK([])
-AC_CHECK_FUNCS([access bcopy bzero qsort dup2 popen])
+AC_CHECK_FUNCS([access bcopy bzero dup2 popen])
 AC_CHECK_FUNCS([strchr index], [break])
 AC_CHECK_FUNCS([strrchr rindex], [break])
 AC_CHECK_FUNCS([getcwd getwd], [break])
-
+AC_CHECK_FUNC([qsort], [qsort_checked=true])
+AM_CONDITIONAL([HAVE_QSORT_WANTED], [test "x$qsort_checked" = xtrue])
 
 AC_MSG_RESULT([Checking mathematical features of the system:])
 # Look for math library:

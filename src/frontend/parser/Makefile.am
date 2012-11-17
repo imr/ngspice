@@ -17,10 +17,13 @@ libparser_la_SOURCES = \
 		lexical.h	\
 		numparse.c	\
 		numparse.h	\
-		std.c		\
 		unixcom.c	\
 		unixcom.h
 
+
+if !HAVE_QSORT_WANTED
+libparser_la_SOURCES += std.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

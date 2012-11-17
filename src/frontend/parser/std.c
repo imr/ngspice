@@ -14,8 +14,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 /* This might not be around.  If not then forget about sorting. */
 
-#ifndef HAVE_QSORT
 #ifndef qsort
 qsort() {}
-#endif
 #endif
