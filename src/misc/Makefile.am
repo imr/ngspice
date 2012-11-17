@@ -38,7 +38,7 @@ endif
 endif
 
 ### alloc.c ###
-if !HAVE_LIBGC_WANTED
+if !HAVE_LIBGC
 libmisc_la_SOURCES += alloc.c alloc.h
 endif
 

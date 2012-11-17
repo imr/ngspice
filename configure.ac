@@ -673,7 +673,7 @@ if test "x$TCL_PACKAGE_PATH" = x; then
              LIBS="$LIBS -lgc"])
     fi
 fi
-AM_CONDITIONAL([HAVE_LIBGC_WANTED], [test "x$TCL_PACKAGE_PATH" = x && test "x$enable_gc" = xyes])
+AM_CONDITIONAL([HAVE_LIBGC], [test "x$TCL_PACKAGE_PATH" = x && test "x$enable_gc" = xyes])
 
 # check, if we have sigsetjmp and siglongjmp.
 # A trivial AC_CHECK_FUNCS(sigsetjmp) won't do because sigsetjmp() might be a
