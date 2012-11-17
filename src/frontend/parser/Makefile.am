@@ -21,7 +21,7 @@ libparser_la_SOURCES = \
 		unixcom.h
 
 
-if !HAVE_QSORT_WANTED
+if !HAVE_QSORT
 libparser_la_SOURCES += std.c
 endif
 
