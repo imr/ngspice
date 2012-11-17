@@ -1,6 +1,5 @@
 /* Spice hooks */
 #include "ngspice/ngspice.h"
-#ifdef CLUSTER
 #include "ngspice/inpdefs.h"
 #include "ngspice/cluster.h"
 #include "ngspice/cktdefs.h"
@@ -423,4 +422,3 @@ int CLUsync(double time,double *delta, int error){
     return 1;
   }
 }
-#endif

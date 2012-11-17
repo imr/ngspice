@@ -94,8 +94,12 @@ libckt_la_SOURCES = \
 		tfsetp.c	\
 		tranaskq.c	\
 		traninit.c	\
-		transetp.c	\
-		cluster.c
+		transetp.c
+
+
+if HAVE_CLUSTER_WANTED
+libckt_la_SOURCES += cluster.c
+endif
 
 
 if PSS_WANTED

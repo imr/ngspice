@@ -935,6 +935,7 @@ if test "x$enable_cluster" = xyes; then
     AC_DEFINE([CLUSTER], [], [Spice cluster support])
     LIBS="$LIBS -lpthread"
 fi
+AM_CONDITIONAL([HAVE_CLUSTER_WANTED], [test "x$enable_cluster" = xyes])
 
 if test "x$enable_expdevices" = xyes; then
     AC_DEFINE([EXP_DEV], [], [Define if we want to enable experimental devices])
