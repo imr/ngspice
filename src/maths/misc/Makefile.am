@@ -9,13 +9,20 @@ libmathmisc_la_SOURCES = \
 	bernoull.c	\
 	erfc.c		\
 	equality.c	\
-	isinf.c		\
-	isnan.c		\
 	logb.c		\
 	scalb.c		\
 	norm.h		\
 	norm.c		\
 	randnumb.c
+
+
+if !HAVE_DECL_ISINF_WANTED
+libmathmisc_la_SOURCES += isinf.c
+endif
+
+if !HAVE_DECL_ISNAN_WANTED
+libmathmisc_la_SOURCES += isnan.c
+endif
 
 
 EXTRA_DIST = test_accuracy.c test_erfc.c

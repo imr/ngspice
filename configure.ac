@@ -665,9 +665,11 @@ AC_CHECK_DECLS([isnan], [], [], [[#include <math.h>]])
 if test "x$ac_cv_have_decl_isinf" != xyes; then
     AC_CHECK_FUNC([isinf])
 fi
+AM_CONDITIONAL([HAVE_DECL_ISINF_WANTED], [test "x$ac_cv_have_decl_isinf" = xyes])
 if test "x$ac_cv_have_decl_isnan" != xyes; then
     AC_CHECK_FUNC([isnan])
 fi
+AM_CONDITIONAL([HAVE_DECL_ISNAN_WANTED], [test "x$ac_cv_have_decl_isnan" = xyes])
 
 # If user enables garbage collection, look for garbage collector
 if test "x$TCL_PACKAGE_PATH" = x; then

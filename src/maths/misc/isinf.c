@@ -1,6 +1,5 @@
 #include "ngspice/ngspice.h"
 
-#if !HAVE_DECL_ISINF
 #ifndef HAVE_ISINF
 #if defined(HAVE_FINITE)
 
@@ -30,4 +29,3 @@ isinf (const double x)
 #else /* HAVE_ISINF */
 int Dummy_Symbol_5;
 #endif /* HAVE_ISINF */
-#endif /* HAVE_DECL_ISINF */
