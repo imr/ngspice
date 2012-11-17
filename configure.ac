@@ -63,63 +63,63 @@ AC_ARG_ENABLE([checker],
 
 # --enable-nobypass: define NOBYPASS for the code
 AC_ARG_ENABLE([nobypass],
-    [AS_HELP_STRING([--enable-nobypass], [Don't bypass recalculations of slowly changing variables])])
+    [AS_HELP_STRING([--enable-nobypass], [Don't bypass recalculations of slowly changing variables])], [summary=yes])
 
 # --enable-capbypass: define CAPBYPASS for the code
 AC_ARG_ENABLE([capbypass],
-    [AS_HELP_STRING([--enable-capbypass], [Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd voltages are unchanged])])
+    [AS_HELP_STRING([--enable-capbypass], [Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd voltages are unchanged])], [summary=yes])
 
 # --enable-nodelimiting: define NODELIMITING for the code
 AC_ARG_ENABLE([nodelimiting],
-    [AS_HELP_STRING([--enable-nodelimiting], [Experimental damping scheme.])])
+    [AS_HELP_STRING([--enable-nodelimiting], [Experimental damping scheme.])], [summary=yes])
 
 # --enable-predictor: define PREDICTOR for the code
 AC_ARG_ENABLE([predictor],
-    [AS_HELP_STRING([--enable-predictor], [Enable a predictor method for convergence.])])
+    [AS_HELP_STRING([--enable-predictor], [Enable a predictor method for convergence.])], [summary=yes])
 
 # --enable-newpred: define NEWPRED for the code
 AC_ARG_ENABLE([newpred],
-    [AS_HELP_STRING([--enable-newpred], [Enable NEWPRED whatever it is(?)])])
+    [AS_HELP_STRING([--enable-newpred], [Enable NEWPRED whatever it is(?)])], [summary=yes])
 
 # --enable-newtrunc: define NEWTRUNC for the code
 AC_ARG_ENABLE([newtrunc],
-    [AS_HELP_STRING([--enable-newtrunc], [Enable, how we want extrapolate capacitances.])])
+    [AS_HELP_STRING([--enable-newtrunc], [Enable, how we want extrapolate capacitances.])], [summary=yes])
 
 # --enable-sense2: define WANT_SENSE2 for the code
 AC_ARG_ENABLE([sense2],
-    [AS_HELP_STRING([--enable-sense2], [Use spice2 sensitivity analysis.])])
+    [AS_HELP_STRING([--enable-sense2], [Use spice2 sensitivity analysis.])], [summary=yes])
 
 # --enable-ftedebug: enable frontend debug macros
 AC_ARG_ENABLE([ftedebug],
-    [AS_HELP_STRING([--enable-ftedebug], [Enable ngspice frontend debug])])
+    [AS_HELP_STRING([--enable-ftedebug], [Enable ngspice frontend debug])], [summary=yes])
 
 # --enable-cpdebug: enable frontend debug macros
 AC_ARG_ENABLE([cpdebug],
-    [AS_HELP_STRING([--enable-cpdebug], [Enable ngspice shell debug])])
+    [AS_HELP_STRING([--enable-cpdebug], [Enable ngspice shell debug])], [summary=yes])
 
 # --enable-sensdebug: define SENSDEBUG for the code
 AC_ARG_ENABLE([sensdebug],
-    [AS_HELP_STRING([--enable-sensdebug], [Debug sensitivity code *SENSDEBUG*])])
+    [AS_HELP_STRING([--enable-sensdebug], [Debug sensitivity code *SENSDEBUG*])], [summary=yes])
 
 # --enable-asdebug: define ASDEBUG for the code
 AC_ARG_ENABLE([asdebug],
-    [AS_HELP_STRING([--enable-asdebug], [Debug sensitivity code *ASDEBUG*])])
+    [AS_HELP_STRING([--enable-asdebug], [Debug sensitivity code *ASDEBUG*])], [summary=yes])
 
 # --enable-stepdebug: define STEPDEBUG for the code
 AC_ARG_ENABLE([stepdebug],
-    [AS_HELP_STRING([--enable-stepdebug], [Unknown debug option])])
+    [AS_HELP_STRING([--enable-stepdebug], [Unknown debug option])], [summary=yes])
 
 # --enable-pzdebug: define PZDEBUG for the code
 AC_ARG_ENABLE([pzdebug],
-    [AS_HELP_STRING([--enable-pzdebug], [Debug pole/zero code])])
+    [AS_HELP_STRING([--enable-pzdebug], [Debug pole/zero code])], [summary=yes])
 
 # --enable-blktmsdebug: define D_DBG_BLOCKTIMES for the code
 AC_ARG_ENABLE([blktmsdebug],
-    [AS_HELP_STRING([--enable-blktmsdebug], [Debug distortion code *BLOCKTIMES*])])
+    [AS_HELP_STRING([--enable-blktmsdebug], [Debug distortion code *BLOCKTIMES*])], [summary=yes])
 
 # --enable-smltmsdebug: define D_DBG_SMALLTIMES for the code
 AC_ARG_ENABLE([smltmsdebug],
-    [AS_HELP_STRING([--enable-smltmsdebug], [Debug distortion code *SMALLTIMES*])])
+    [AS_HELP_STRING([--enable-smltmsdebug], [Debug distortion code *SMALLTIMES*])], [summary=yes])
 
 # --enable-smoketest: a smoketest
 AC_ARG_ENABLE([smoketest],
@@ -127,7 +127,7 @@ AC_ARG_ENABLE([smoketest],
 
 # --enable-experimental: define EXPERIMENTAL_CODE for the code
 AC_ARG_ENABLE([experimental],
-    [AS_HELP_STRING([--enable-experimental], [Enable some experimental code])])
+    [AS_HELP_STRING([--enable-experimental], [Enable some experimental code])], [summary=yes])
 
 # --enable-expdevices: Enable the compilation of experimental devices
 AC_ARG_ENABLE([expdevices],
@@ -147,7 +147,7 @@ AC_ARG_ENABLE([adms],
 
 # --enable-xspice: define XSPICE in the code. This is for xspice support
 AC_ARG_ENABLE([pss],
-    [AS_HELP_STRING([--enable-pss], [Enable PSS analysis, (very experimental)])])
+    [AS_HELP_STRING([--enable-pss], [Enable PSS analysis, (very experimental)])], [summary=yes])
 
 # --enable-ndev: define NDEV in the code. An interface for external device i.e. numerical device
 AC_ARG_ENABLE([ndev],
@@ -164,11 +164,11 @@ AC_ARG_ENABLE([help],
 # --enable-xgraph: Compile the xgraph plotting program. Default is "no".
 # Xgraph is a plotting package for X11 once very popular.
 AC_ARG_ENABLE([xgraph],
-    [AS_HELP_STRING([--enable-xgraph], [Enable xgraph compilation.])])
+    [AS_HELP_STRING([--enable-xgraph], [Enable xgraph compilation.])], [summary=yes])
 
 # --enable-devlib: Enable Dynamic Library Load (experimental)
 AC_ARG_ENABLE([devlib],
-    [AS_HELP_STRING([--enable-devlib], [Enable Dynamic Library Load (experimental)])])
+    [AS_HELP_STRING([--enable-devlib], [Enable Dynamic Library Load (experimental)])], [summary=yes])
 
 # --with-readline:  Includes GNU readline support into CLI.  Default is "no".
 AC_ARG_WITH([readline],
@@ -723,13 +723,7 @@ if test "x$with_windows" = xyes; then
 fi
 
 # Recapitulate settings:
-if test "x$enable_sense2" = xyes || test "x$enable_nobypass" = xyes || test "x$enable_capbypass" = xyes ||
-   test "x$enable_nodelimiting" = xyes || test "x$enable_predictor" = xyes || test "x$enable_newpred" = xyes ||
-   test "x$enable_newtrunc" = xyes || test "x$enable_experimental" = xyes || test "x$enable_cpdebug" = xyes ||
-   test "x$enable_ftedebug" = xyes || test "x$enable_sensdebug" = xyes || test "x$enable_asdebug" = xyes ||
-   test "x$enable_stepdebug" = xyes || test "x$enable_pzdebug" = xyes || test "x$enable_pss" = xyes ||
-   test "x$enable_blktmsdebug" = xyes || test "x$enable_smltmsdebug" = xyes || test "x$enable_xgraph" = xyes ||
-   test "x$enable_devlib" = xyes; then
+if test "x$summary" = xyes; then
     AC_MSG_RESULT([Settings which were chosen:])
 fi
 
