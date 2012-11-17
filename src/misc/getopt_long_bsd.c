@@ -73,7 +73,6 @@
    will not be used. Otherwise (as in MS Visual Studio) this file provides the fcn
    getopt_long(), used in main() of ngspice 
 */
-#if !defined(HAVE_GETOPT_LONG) || !defined(HAVE_GETOPT_H)
 
 #include "getopt_bsd.h"
 
@@ -552,6 +551,3 @@ getopt_long_only(int nargc, char * const *nargv, const char *options,
    return (getopt_internal(nargc, nargv, options, long_options, idx,
        FLAG_PERMUTE|FLAG_LONGONLY));
 }
-
-#endif /* HAVE_GETOPT_LONG */
-

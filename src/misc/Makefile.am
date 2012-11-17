@@ -4,8 +4,6 @@ noinst_LTLIBRARIES = libmisc.la
 
 
 libmisc_la_SOURCES = \
-		getopt_long_bsd.c	\
-		getopt_bsd.h	\
 		alloc.c		\
 		alloc.h		\
 		dup2.c		\
@@ -27,11 +25,19 @@ libmisc_la_SOURCES = \
 		util.c		\
 		util.h
 
-## Note that the getopt files get compiled unconditionnaly but some
-## magic #define away the body of their own code if the compilation environment
-## provides an implementation of its own (like GNU libc)
 
-
+### getopt_long_bsd.c ###
+if !HAVE_GETOPT_H_WANTED
+if !HAVE_GETOPT_LONG_WANTED
+libmisc_la_SOURCES += getopt_long_bsd.c getopt_bsd.h
+else
+libmisc_la_SOURCES += getopt_long_bsd.c getopt_bsd.h
+endif
+else
+if !HAVE_GETOPT_LONG_WANTED
+libmisc_la_SOURCES += getopt_long_bsd.c getopt_bsd.h
+endif
+endif
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include

@@ -707,11 +707,14 @@ AC_CHECK_FUNCS([dirname], [],
         [AC_DEFINE([HAVE_DIRNAME], [1], [Have dirname in libgen])
          LIBS="$LIBS -lgen"])])
 
-AC_CHECK_HEADERS([getopt.h])
+AC_CHECK_HEADERS([getopt.h], [getopt_h=true])
+AM_CONDITIONAL([HAVE_GETOPT_H_WANTED], [test "x$getopt_h" = xtrue])
+
 AC_CHECK_FUNC([getopt_long], [getopt_long=true])
 if test "x$getopt_long" = xtrue; then
     AC_DEFINE([HAVE_GETOPT_LONG], [1], [Have fcn getopt_long()])
 fi
+AM_CONDITIONAL([HAVE_GETOPT_LONG_WANTED], [test "x$getopt_long" = xtrue])
 
 AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo $dprefix/bin`"], [Define the directory for executables])
 AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo $dprefix/share/ngspice`"], [Define the directory for architecture independent data files])
