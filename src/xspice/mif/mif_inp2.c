@@ -16,7 +16,7 @@ AUTHORS
 
 MODIFICATIONS
 
-    <date> <person name> <nature of modifications>
+    11/19/12 H Vogt patch by Marcel (mhx) added
 
 SUMMARY
 
@@ -55,15 +55,7 @@ NON-STANDARD FEATURES
 #include "ngspice/evt.h"
 #include "ngspice/evtproto.h"
 
-/*  #include "suffix.h"  */  /* jgroves  */
-
-
-
-/*#define NUM_SPICE3_MODELS 40    (was 23 - jgroves Number of Berkeley models in DEVices array. */
-/* See CKT/SPIinit.c                           */
-
 extern int *DEVicesfl; /*flags for the devices */
-
 
 static void  MIFinit_inst(MIFmodel *mdfast, MIFinstance *fast);
 
@@ -139,6 +131,7 @@ and error checks are performed.
     the following:
      -- Scalar:  Process it, then continue loop.
      -- Array:   Loop through all tokens until ] is found & process tokens.
+                 If token is a %, then read next token to get port type
                  Then continue outer loop over port tokens.
 13.  After looping through connection tokens, do error checks.
      At this point, nothing should be left in 'line'
@@ -394,13 +387,43 @@ MIF_INP2A (
                     (*line != '\0');
                     j++) {
 
-                /* First, do some error checks */
-                /* check for required leading array delim character */
-                if(next_token_type == MIF_LARRAY_TOK) {
-                    LITERR("ERROR - Unexpected [ - Arrays of arrays not allowed");
-                    printf("ERROR - Unexpected [ - Arrays of arrays not allowed.  Returning . . .");
+                /********** mhx Friday, August 19, 2011, 15:08 begin ***
+                 Now if we had a % token, get actual info about connection type,
+                 or else use the port type for this connection that was setup BEFORE the '[' token.
+                 Do NOT use conn_info->default_port_type! */
+                if (next_token_type == MIF_PERCENT_TOK) {
+                    next_token = MIFget_token (&line,&next_token_type);
+                    MIFget_port_type(ckt,
+                                     tab,
+                                     current,
+                                     &line,
+                                     &next_token,
+                                     &next_token_type,
+                                     &def_port_type,
+                                     &def_port_type_str,
+                                     conn_info,
+                                     &status);
+                    if(status == MIF_ERROR)
+                        return;
+                }
+                /* At this point, next_token should be either a [ or ] char (not allowed),
+                or hold a non-null connection (netname) */
+                if(next_token_type == MIF_NULL_TOK) {
+                    LITERR("NULL connection found where not allowed");
+                    printf("NULL connection found where not allowed. Returning . . .");
                     return;
                 }
+                if(next_token_type == MIF_LARRAY_TOK) {
+                    LITERR("ERROR - Unexpected [ - Arrays of arrays not allowed");
+                    printf("ERROR - Unexpected [ - Arrays of arrays not allowed. Returning . . .");
+                    return;
+                }
+                if(next_token_type == MIF_RARRAY_TOK) {
+                    LITERR("ERROR - Unexpected ]");
+                    printf("ERROR - Unexpected ]. Returning . . .");
+                    return;
+                }
+                /********** mhx Friday, August 19, 2011, 15:08 end ***/
 
                 /* If all OK, get the port nodes into the instance struct */
                 /* allocating the port member of the instance struct as needed */
