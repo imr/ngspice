@@ -60,7 +60,7 @@ NON-STANDARD FEATURES
 
 
 /*#define NUM_SPICE3_MODELS 40    (was 23 - jgroves Number of Berkeley models in DEVices array. */
-                               /* See CKT/SPIinit.c                           */
+/* See CKT/SPIinit.c                           */
 
 extern int *DEVicesfl; /*flags for the devices */
 
@@ -122,7 +122,7 @@ and error checks are performed.
 
 1.  Get the spice card.  Place card string into variable 'line'.
 2.  Get the name of the instance and add it to the symbol table
-3.  Locate the last token on the line and assign it to variable 'model' 
+3.  Locate the last token on the line and assign it to variable 'model'
 4.  Locate the model from pass 1.  If it hasn't been processed yet,
     allocate structure in ckt for it, process the parameters, and return a
     pointer to its structure in 'thismodel'
@@ -132,30 +132,30 @@ and error checks are performed.
 7.  Reset 'line'.  Then read instance name again to go over it.
 8.  Read initial token.
 9   Start loop through port tokens:
-10.      If token is a %, then read next token to get port type
-         and save this port type.  Otherwise, use default port type.
-11.      Check if connection is null.  If so, iterate to next conn.
-12.      Get next token.  Depending upon token type (scalar or array) do
-         the following:
-	 -- Scalar:  Process it, then continue loop.
-	 -- Array:   Loop through all tokens until ] is found & process tokens.
-	             Then continue outer loop over port tokens.
-13.  After looping through connection tokens, do error checks.  
+10. If token is a %, then read next token to get port type
+    and save this port type.  Otherwise, use default port type.
+11. Check if connection is null.  If so, iterate to next conn.
+12. Get next token.  Depending upon token type (scalar or array) do
+    the following:
+     -- Scalar:  Process it, then continue loop.
+     -- Array:   Loop through all tokens until ] is found & process tokens.
+                 Then continue outer loop over port tokens.
+13.  After looping through connection tokens, do error checks.
      At this point, nothing should be left in 'line'
 
 -------------------------------------------------------------------------*/
 
 void
 MIF_INP2A (
-CKTcircuit   *ckt,      /* circuit structure to put mod/inst structs in */
-INPtables    *tab,      /* symbol table for node names, etc.            */
-card         *current ) /* the card we are to parse                     */
-                        /* Must be called "current" for compatibility   */
-                        /* with macros                                  */
+    CKTcircuit   *ckt,      /* circuit structure to put mod/inst structs in */
+    INPtables    *tab,      /* symbol table for node names, etc.            */
+    card         *current ) /* the card we are to parse                     */
+/* Must be called "current" for compatibility   */
+/* with macros                                  */
 {
 
-/* parse a code model instance card */
-/* Aname <connection list> <mname> */
+    /* parse a code model instance card */
+    /* Aname <connection list> <mname> */
 
     char    *line;      /* the text line for this card */
     char    *name;      /* the name of the instance */
@@ -244,11 +244,11 @@ card         *current ) /* the card we are to parse                     */
     tfree(tmp_token);
 
     /*  OK -- now &line points to the first token after
-	the instance name and we are ready to process the connections 
-	(netnames)  
+    the instance name and we are ready to process the connections
+    (netnames)
     */
 
-    /* now get next token.  It should be either a % token, 
+    /* now get next token.  It should be either a % token,
        a [, or a connection (netname) which might be 'null'.
     */
     next_token = MIFget_token(&line,&next_token_type);
@@ -256,8 +256,8 @@ card         *current ) /* the card we are to parse                     */
     /* When we enter the loop, next_token holds the first thing *after* the instance name.
        Upon each iteration, we start the iteration with next_token holding
        the next *unprocessed* token.
-       The loop proceeds through the fixed number of connections expected, as defined in the 
-       DEVices struct.    
+       The loop proceeds through the fixed number of connections expected, as defined in the
+       DEVices struct.
     */
     for(i = 0; i < DEVices[type]->DEVpublic.num_conn; i++) {
 
@@ -267,54 +267,52 @@ card         *current ) /* the card we are to parse                     */
             return;
         }
 
-	/* At this point, we have one of three possibilities:
-	   1.  next_token holds a %, and &line points to either the port type identifier (id, vd, etc)
-	   2.  next_token holds a netname and &line points to the thing *after* the first netname.  
-	   3.  next_token holds a [ indicating the start of an array of ports.
-	*/
+        /* At this point, we have one of three possibilities:
+           1.  next_token holds a %, and &line points to either the port type identifier (id, vd, etc)
+           2.  next_token holds a netname and &line points to the thing *after* the first netname.
+           3.  next_token holds a [ indicating the start of an array of ports.
+        */
 
         /* prepare a pointer for fast access to info about this connection */
         conn_info = &(DEVices[type]->DEVpublic.conn[i]);
 
-	/*  Now if we had a % token, get actual info about connection type.
-	    Otherwise use default info 	*/ 
-	if(next_token_type == MIF_PERCENT_TOK) {  /*  we found a %  */
- 	   /* get the port type identifier and check it for validity */
-	   if (next_token)
-	       tfree(next_token);
-	   next_token = MIFget_token(&line, &next_token_type);
-	   /* Note that MIFget_port_type eats the next token and advances the token pointer in line */
-	   MIFget_port_type(ckt,
-			   tab,
-			   current,
-			   &line,
-			   &next_token,
-			   &next_token_type,
-			   &def_port_type,
-			   &def_port_type_str,
-			   conn_info,
-			   &status);
-	   if(status == MIF_ERROR)
-	      return;
-	}
-	else {     /* use the default port type for this connection */
-	   def_port_type = conn_info->default_port_type;
-	   def_port_type_str = conn_info->default_type;
+        /*  Now if we had a % token, get actual info about connection type.
+            Otherwise use default info */
+        if(next_token_type == MIF_PERCENT_TOK) {  /*  we found a %  */
+            /* get the port type identifier and check it for validity */
+            if (next_token)
+                tfree(next_token);
+            next_token = MIFget_token(&line, &next_token_type);
+            /* Note that MIFget_port_type eats the next token and advances the token pointer in line */
+            MIFget_port_type(ckt,
+                             tab,
+                             current,
+                             &line,
+                             &next_token,
+                             &next_token_type,
+                             &def_port_type,
+                             &def_port_type_str,
+                             conn_info,
+                             &status);
+            if(status == MIF_ERROR)
+                return;
+        } else {   /* use the default port type for this connection */
+            def_port_type = conn_info->default_port_type;
+            def_port_type_str = conn_info->default_type;
         }
 
-	/* At this point, next_token should be either a [ char, or should hold 
-	   the the first connection (netname) 
-	*/
+        /* At this point, next_token should be either a [ char, or should hold
+           the the first connection (netname)
+        */
 
         /* set analog and event_driven flags on instance and model */
-        if((def_port_type == MIF_DIGITAL) || 
-	   (def_port_type == MIF_USER_DEFINED)) {
-	      fast[0]->event_driven = MIF_TRUE;
-	      mdfast->event_driven = MIF_TRUE;
-        }
-        else {
-              fast[0]->analog = MIF_TRUE;
-              mdfast->analog = MIF_TRUE;
+        if((def_port_type == MIF_DIGITAL) ||
+                (def_port_type == MIF_USER_DEFINED)) {
+            fast[0]->event_driven = MIF_TRUE;
+            mdfast->event_driven = MIF_TRUE;
+        } else {
+            fast[0]->analog = MIF_TRUE;
+            mdfast->analog = MIF_TRUE;
         }
 
 
@@ -333,8 +331,7 @@ card         *current ) /* the card we are to parse                     */
             /* eat the null token and continue to next connection */
             next_token = MIFget_token(&line,&next_token_type);
             continue;  /* iterate */
-        }
-        else {
+        } else {
             /* set the null flag to false */
             fast[0]->conn[i]->is_null = MIF_FALSE;
         }
@@ -342,7 +339,7 @@ card         *current ) /* the card we are to parse                     */
 
         /* =====  process connection as appropriate for scalar or array  ====== */
         if(! conn_info->is_array) {     /* a scalar connection - the simpler case */
-	    /*  If we get to there, next_token should hold a netname in the port netlist.  */
+            /*  If we get to there, next_token should hold a netname in the port netlist.  */
             /*  First, do a couple of error checks */
             if(next_token_type == MIF_LARRAY_TOK) {
                 LITERR("ERROR - Scalar connection expected, [ found");
@@ -357,7 +354,7 @@ card         *current ) /* the card we are to parse                     */
 
             /* If all OK, get the port data into the instance struct */
             /* allocating the port member of the instance struct as needed */
-	    /*  Note that MIFget_port eats next_token, and advances the &line pointer..  */
+            /*  Note that MIFget_port eats next_token, and advances the &line pointer..  */
             MIFget_port(ckt,
                         tab,
                         current,
@@ -377,27 +374,25 @@ card         *current ) /* the card we are to parse                     */
 
             fast[0]->conn[i]->size = 1;
 
-	    /* when we leave here, next_token should hold the next, unprocessed netname */
+            /* when we leave here, next_token should hold the next, unprocessed netname */
 
-        }
-        else {  /* ====== the connection is an array - much to be done ... ====== */
-	    /* At this point, the next_token should be a [ */
+        } else { /* ====== the connection is an array - much to be done ... ====== */
+            /* At this point, the next_token should be a [ */
             /* check for required leading array delim character [ and eat it if found */
             if(next_token_type != MIF_LARRAY_TOK) {
                 LITERR("Missing [, an array connection was expected");
                 printf("Missing [, an array connection was expected.  Returning . . .");
                 return;
-            }
-            else  /* eat the [  */
+            } else /* eat the [  */
                 if (next_token)
                     tfree(next_token);
-                next_token = MIFget_token(&line,&next_token_type);
+            next_token = MIFget_token(&line,&next_token_type);
 
             /*------ get and process ports until ] is encountered ------*/
             for(j = 0;
-                (next_token_type != MIF_RARRAY_TOK) &&
-                (*line != '\0');
-                j++) {    
+                    (next_token_type != MIF_RARRAY_TOK) &&
+                    (*line != '\0');
+                    j++) {
 
                 /* First, do some error checks */
                 /* check for required leading array delim character */
@@ -409,7 +404,7 @@ card         *current ) /* the card we are to parse                     */
 
                 /* If all OK, get the port nodes into the instance struct */
                 /* allocating the port member of the instance struct as needed */
-		/* Note that MIFget_port eats next_token and advances &line by one.  */
+                /* Note that MIFget_port eats next_token and advances &line by one.  */
                 MIFget_port(ckt,
                             tab,
                             current,
@@ -428,12 +423,12 @@ card         *current ) /* the card we are to parse                     */
                     return;
             } /*------ end of for loop until ] is encountered ------*/
 
-	    /*  At this point, next_token should hold the next token after the 
-		port netnames.  This token should be a ].  */
+            /*  At this point, next_token should hold the next token after the
+            port netnames.  This token should be a ].  */
 
             /* make sure we exited because the end of the array connection
-               was reached.                                               
-	     */
+               was reached.
+            */
             if(*line == '\0') {
                 LITERR("Missing ] in array connection");
                 return;
@@ -446,20 +441,20 @@ card         *current ) /* the card we are to parse                     */
             }
             fast[0]->conn[i]->size = j;
 
-	    /*  At this point, the next time we get_token, we should get a % or a net name.
-		We'll do that now, since when we enter the loop, we expect next_token
-		to hold the next unprocessed token.
-	    */
-	    if (next_token)
-	        tfree(next_token);
-	    next_token = MIFget_token(&line, &next_token_type);
+            /*  At this point, the next time we get_token, we should get a % or a net name.
+            We'll do that now, since when we enter the loop, we expect next_token
+            to hold the next unprocessed token.
+            */
+            if (next_token)
+                tfree(next_token);
+            next_token = MIFget_token(&line, &next_token_type);
 
         }  /* ======  array connection processing   ====== */
 
         /* be careful about putting stuff here, there is a 'continue' used */
         /* in the processing of NULL connections above                     */
 
-	/*  At this point, next_token should hold the next unprocessed token.  */
+        /*  At this point, next_token should hold the next unprocessed token.  */
 
     } /******* for number of connections *******/
 
@@ -488,7 +483,7 @@ card         *current ) /* the card we are to parse                     */
         conn_info = &(DEVices[type]->DEVpublic.conn[i]);
 
         if( (fast[0]->conn[i]->is_null) &&
-            (! conn_info->null_allowed) ) {
+                (! conn_info->null_allowed) ) {
             LITERR("Null found for connection where not allowed");
             return;
         }
@@ -520,8 +515,7 @@ card         *current ) /* the card we are to parse                     */
             if(! param_info->has_default) {
                 LITERR("Parameter on model has no default");
                 return;
-            }
-            else if((param_info->is_array) && (! param_info->has_conn_ref)) {
+            } else if((param_info->is_array) && (! param_info->has_conn_ref)) {
                 LITERR("Defaulted array parameter must have associated array connection");
                 return;
             }
@@ -617,8 +611,7 @@ static void  MIFinit_inst(
             fast->inst_var[i]->size = 0;
             fast->inst_var[i]->element = NULL;
             /* The code model allocates space for the data and sets the size */
-        }
-        else {
+        } else {
             fast->inst_var[i]->size = 1;
             fast->inst_var[i]->element = TMALLOC(Mif_Value_t, 1);
         }
@@ -650,13 +643,13 @@ This function gets the port type identifier and checks it for validity.  It also
 replaces false default information in conn_info with the real info based upon
 the discovered port type string.
 
-When we call it, we expect that the next token type (sent from above) 
+When we call it, we expect that the next token type (sent from above)
 should be the port type (MIF_STRING_TOK type).  That is, we should be sitting right
 on the def of the port type (i.e. %vnam, %vd, %id, etc.)  Note that the parser
 should have stripped the % already.
 
 Upon return, this fcn should leave next_token holding the token *after* the
-port type (i.e. the thing after vnam, v, vd, id, etc).  
+port type (i.e. the thing after vnam, v, vd, id, etc).
 */
 
 
@@ -715,21 +708,20 @@ MIFget_port_type(
     if(! found_type) {
         LITERR("Port type is invalid");
         *status = MIF_ERROR;
-    }
-    else {
+    } else {
 
-      /* Fix by SDB so that the netlist parser uses the actual nature
-	 of the port instead of the default state to decide if it is an array.  */
-      /*
-      if ( (*port_type == MIF_DIFF_VOLTAGE) ||
-	   (*port_type == MIF_DIFF_CURRENT) ||
-	   (*port_type == MIF_DIFF_CONDUCTANCE) ||
-	   (*port_type == MIF_DIFF_RESISTANCE) ) {
-	conn_info->is_array = 1;
-      }
-      */
+        /* Fix by SDB so that the netlist parser uses the actual nature
+        of the port instead of the default state to decide if it is an array.  */
+        /*
+        if ( (*port_type == MIF_DIFF_VOLTAGE) ||
+         (*port_type == MIF_DIFF_CURRENT) ||
+         (*port_type == MIF_DIFF_CONDUCTANCE) ||
+         (*port_type == MIF_DIFF_RESISTANCE) ) {
+        conn_info->is_array = 1;
+             }
+             */
 
-      *status = MIF_OK;
+        *status = MIF_OK;
     }
 
     if (temp)
@@ -748,11 +740,11 @@ MIFget_port
 This function processes a port being parsed, either single ended,
 or both connections of a differential.
 
-When we call this fcn, next_token should be the *first* netname in the port 
+When we call this fcn, next_token should be the *first* netname in the port
 net list.  Depending upon the type of port, this fcn should eat the appropriate
 number of net tokens.
 
-When we leave this fcn, next_token should hold the next token after the last 
+When we leave this fcn, next_token should hold the next token after the last
 netname processed.
 */
 
@@ -781,15 +773,14 @@ MIFget_port(
     CKTnode         *pos_node[1];          /* positive connection node */
     CKTnode         *neg_node[1];          /* negative connection node */
 
-	char            *node;
+    char            *node;
 
 
     /* allocate space in the instance data struct for this port */
     if(port_num == 0) {
         fast->conn[conn_num]->port = TMALLOC(Mif_Port_Data_t *, 1);
         fast->conn[conn_num]->port[0] = TMALLOC(Mif_Port_Data_t, 1);
-    }
-    else {
+    } else {
         fast->conn[conn_num]->port = TREALLOC(Mif_Port_Data_t *, fast->conn[conn_num]->port, port_num + 1);
         fast->conn[conn_num]->port[port_num] = TMALLOC(Mif_Port_Data_t, 1);
     }
@@ -815,8 +806,7 @@ MIFget_port(
             *status = MIF_ERROR;
             return;
         }
-    }
-    else
+    } else
         fast->conn[conn_num]->port[port_num]->invert = MIF_FALSE;
 
 
@@ -840,8 +830,7 @@ MIFget_port(
         *next_token = MIFget_token(line, next_token_type);
         *status = MIF_OK;
         return;
-    }
-    else {
+    } else {
         /* set the (port specific) null flag to false */
         fast->conn[conn_num]->port[port_num]->is_null = MIF_FALSE;
     }
@@ -895,12 +884,12 @@ MIFget_port(
     case MIF_USER_DEFINED:
         /* Insert data into event-driven info structs */
         EVTtermInsert(ckt,
-                       fast,
-                       *next_token,
-                       def_port_type_str,
-                       conn_num,
-                       port_num,
-                       &(current->error));
+                      fast,
+                      *next_token,
+                      def_port_type_str,
+                      conn_num,
+                      port_num,
+                      &(current->error));
         if(current->error) {
             *status = MIF_ERROR;
             return;
@@ -928,16 +917,16 @@ MIFget_port(
     case MIF_CONDUCTANCE:
     case MIF_RESISTANCE:
         /* These are single ended types, so default other node to ground */
-	 // This don't work dickhead, INPtermInsert tries to FREE(&node) K.A. Feb 27, 2000
-         // which was not allocted
-		node = TMALLOC(char, 2);// added by K.A. march 5th 2000
+        // This don't work dickhead, INPtermInsert tries to FREE(&node) K.A. Feb 27, 2000
+        // which was not allocted
+        node = TMALLOC(char, 2);// added by K.A. march 5th 2000
 
-		*node = '0';	// added by K.A. March 5th 2000
-		node[1] ='\0';	// added by K.A. March 5th 2000
-//		node = "0";		// deleted by K.A. March 5th 2000, this is incorrect, it creates a new pointer
-						// that cause a crash in INPtermInsert()
+        *node = '0';    // added by K.A. March 5th 2000
+        node[1] ='\0';  // added by K.A. March 5th 2000
+//      node = "0";     // deleted by K.A. March 5th 2000, this is incorrect, it creates a new pointer
+        // that cause a crash in INPtermInsert()
 
-		INPtermInsert(ckt, &node, tab, neg_node);
+        INPtermInsert(ckt, &node, tab, neg_node);
 
         fast->conn[conn_num]->port[port_num]->neg_node_str = node;
         fast->conn[conn_num]->port[port_num]->smp_data.neg_node = neg_node[0]->number;
