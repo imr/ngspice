@@ -27,9 +27,9 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     FILE *file, *file_data;
     struct dvec *v, *scale = NULL;
     double xval, yval, extrange;
-    int i, numVecs, linewidth, err;
+    int i, numVecs, linewidth, err, terminal_type;
     bool xlog, ylog, nogrid, markers;
-    char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text, plotstyle[BSIZE_SP];
+    char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text, plotstyle[BSIZE_SP], terminal[BSIZE_SP];
 
     char filename_data[128];
     char filename_plt[128];
@@ -55,6 +55,14 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     }
 
     extrange = 0.05 * (ylims[1] - ylims[0]);
+
+    if (!cp_getvar("gnuplot_terminal", CP_STRING, terminal)) {
+        terminal_type = 1;
+    } else {
+        terminal_type = 1;
+        if (cieq(terminal,"png"))
+            terminal_type = 2;
+    }
 
     if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth))
         linewidth = 1;
@@ -126,9 +134,11 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     if (xlog) {
         fprintf(file, "set logscale x\n");
         if (xlims)
-            /* fprintf(file, "set xrange [%1.0e:%1.0e]\n",
-                 pow(10, floor(log10(xlims[0]))), pow(10, ceil(log10(xlims[1])))); */
+            fprintf(file, "set xrange [%1.0e:%1.0e]\n", 
+                pow(10, floor(log10(xlims[0]))), pow(10, ceil(log10(xlims[1]))));
             fprintf(file, "set xrange [%e:%e]\n", xlims[0], xlims[1]);
+            fprintf(file, "set mxtics 10\n");
+            fprintf(file, "set grid mxtics\n");
     } else {
         fprintf(file, "unset logscale x \n");
         if (xlims)
@@ -137,8 +147,10 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     if (ylog) {
         fprintf(file, "set logscale y \n");
         if (ylims)
-            fprintf(file, "set yrange [%1.0e:%1.0e]\n",
+            fprintf(file, "set yrange [%1.0e:%1.0e]\n", 
                 pow(10, floor(log10(ylims[0]))), pow(10, ceil(log10(ylims[1]))));
+            fprintf(file, "set mytics 10\n");
+            fprintf(file, "set grid mytics\n");
     } else {
         fprintf(file, "unset logscale y \n");
         if (ylims)
@@ -188,9 +200,13 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     }
     fprintf(file, "\n");
     fprintf(file, "set terminal push\n");
-    fprintf(file, "set terminal postscript eps color\n");
-    fprintf(file, "set out \'%s.eps\'\n", filename);
-
+    if (terminal_type == 1) {
+        fprintf(file, "set terminal postscript eps color\n");
+        fprintf(file, "set out \'%s.eps\'\n", filename);
+    } else {
+        fprintf(file, "set terminal png\n");
+        fprintf(file, "set out \'%s.png\'\n", filename);
+    }
     fprintf(file, "replot\n");
     fprintf(file, "set term pop\n");
 
