@@ -3,10 +3,12 @@
  HiSIM (Hiroshima University STARC IGFET Model)
  Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM 2.6.1 
+ MODEL NAME : HiSIM
+ ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ 
  FILE : hsm2def.h
 
- date : 2012.4.6
+ Date : 2012.10.25
 
  released by 
                 Hiroshima University &
@@ -24,36 +26,31 @@
 
 /* declarations for HiSIM2 MOSFETs */
 
-typedef struct sHSM2modelCGSParam {
-  double HSM2_tox ;
-  double HSM2_xld ;
-  double HSM2_xwd ;
-  double HSM2_xqy ;
-  double HSM2_xl ;
-  double HSM2_xw ;
-  double HSM2_saref ;
-  double HSM2_sbref ;
+/* unit-converted model parameters */
+typedef struct sHSM2modelMKSParam {
+  double HSM2_npext ;
+  double HSM2_nsubcwpe ;
+  double HSM2_nsubpwpe ;
+  double HSM2_npextwpe ;
   double HSM2_ll ;
-  double HSM2_lld ;
   double HSM2_wl ;
-  double HSM2_wld ;
-  double HSM2_lp ;
-  double HSM2_tpoly ;
-  double HSM2_parl2 ;
-  double HSM2_qme1 ;
-  double HSM2_qme3 ;
-  double HSM2_cgbo ;
-  double HSM2_cj ;
-  double HSM2_cjsw ; 
-  double HSM2_cjswg ;
-  double HSM2_lpext ;
-  double HSM2_wl1 ;
-  double HSM2_rs ;
-  double HSM2_rd ;
-  double HSM2_gdld ;
-  double HSM2_muepwd ;
-  double HSM2_muepld ;
-} HSM2modelCGSParam ;
+  double HSM2_svgsl ;
+  double HSM2_svgsw ;
+  double HSM2_svbsl ;
+  double HSM2_slgl ;
+  double HSM2_sub1l ;
+  double HSM2_slg ;
+  double HSM2_sub2l ;
+  double HSM2_nsubcmax ;
+  double HSM2_glksd3 ;
+  double HSM2_gleak2 ;
+  double HSM2_gleak4 ;
+  double HSM2_gleak5 ;
+  double HSM2_gleak7 ;
+  double HSM2_cit ;
+  double HSM2_ovslp ;
+  double HSM2_dly3 ;
+} HSM2modelMKSParam ;
 
 /* binning parameters */
 typedef struct sHSM2binningParam {
@@ -102,6 +99,9 @@ typedef struct sHSM2binningParam {
   double HSM2_nsubpsti1 ;
   double HSM2_nsubpsti2 ;
   double HSM2_nsubpsti3 ;
+  double HSM2_nsubcsti1;
+  double HSM2_nsubcsti2;
+  double HSM2_nsubcsti3;
   double HSM2_cgso ;
   double HSM2_cgdo ;
   double HSM2_js0 ;
@@ -130,19 +130,9 @@ typedef struct sHSM2binningParam {
 } HSM2binningParam ;
 
 /* unit-converted parameters for each instance */
-typedef struct sHSM2hereCGSParam {
-  double HSM2_l;
-  double HSM2_w;
-  double HSM2_ad;
-  double HSM2_as;
-  double HSM2_pd;
-  double HSM2_ps;
-  double HSM2_xgl;
-  double HSM2_xgw;
-  double HSM2_sa;
-  double HSM2_sb;
-  double HSM2_sd;
-} HSM2hereCGSParam ;
+typedef struct sHSM2hereMKSParam {
+  double HSM2_nsubcdfm ;
+} HSM2hereMKSParam ;
 
 /* information needed for each instance */
 typedef struct sHSM2instance {
@@ -433,8 +423,8 @@ typedef struct sHSM2instance {
   double HSM2_nsubp ;
   double HSM2_nsubc ;
 
+  HSM2hereMKSParam hereMKS ; /* unit-converted parameters */
   HSM2binningParam pParam ; /* binning parameters */
-  HSM2hereCGSParam hereCGS ; /* unit-converted parameters */
   
   /* no use in SPICE3f5
       double HSM2drainSquares;       the length of the drain in squares
@@ -633,6 +623,7 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   int HSM2_corecip;
   int HSM2_coqy;
   int HSM2_coqovsm ;
+  int HSM2_coerrrep;
 
   /* HiSIM original */
   double HSM2_vmax ;
@@ -676,11 +667,14 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 /*   double HSM2_nf; */
   double HSM2_vfbc ;
   double HSM2_vbi ;
+  double HSM2_vfbcl;
+  double HSM2_vfbclp;
   double HSM2_nsubc ;
   double HSM2_parl2 ;
   double HSM2_lp ;
   double HSM2_nsubp ;
   double HSM2_nsubpl ;
+  double HSM2_nsubpdlt;
   double HSM2_nsubpfac ;
   double HSM2_nsubpw ;
   double HSM2_nsubpwp ;
@@ -755,6 +749,9 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   double HSM2_muesti3 ;
   double HSM2_nsubpsti1 ;
   double HSM2_nsubpsti2 ;
+  double HSM2_nsubcsti1;
+  double HSM2_nsubcsti2;
+  double HSM2_nsubcsti3;
   double HSM2_nsubpsti3 ;
   double HSM2_lpext ;
   double HSM2_npext ;
@@ -817,6 +814,8 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   double HSM2_gidl2 ;
   double HSM2_gidl3 ;
   double HSM2_gidl4 ;
+  double HSM2_gidl6;
+  double HSM2_gidl7;
   double HSM2_gidl5 ;
   double HSM2_gleak1 ;
   double HSM2_gleak2 ;
@@ -940,6 +939,9 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   double HSM2_lmuesti3 ;
   double HSM2_lnsubpsti1 ;
   double HSM2_lnsubpsti2 ;
+  double HSM2_lnsubcsti1;
+  double HSM2_lnsubcsti2;
+  double HSM2_lnsubcsti3;
   double HSM2_lnsubpsti3 ;
   double HSM2_lcgso ;
   double HSM2_lcgdo ;
@@ -1012,6 +1014,9 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   double HSM2_wmuesti3 ;
   double HSM2_wnsubpsti1 ;
   double HSM2_wnsubpsti2 ;
+  double HSM2_wnsubcsti1;
+  double HSM2_wnsubcsti2;
+  double HSM2_wnsubcsti3;
   double HSM2_wnsubpsti3 ;
   double HSM2_wcgso ;
   double HSM2_wcgdo ;
@@ -1084,6 +1089,9 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   double HSM2_pmuesti3 ;
   double HSM2_pnsubpsti1 ;
   double HSM2_pnsubpsti2 ;
+  double HSM2_pnsubcsti1;
+  double HSM2_pnsubcsti2;
+  double HSM2_pnsubcsti3;
   double HSM2_pnsubpsti3 ;
   double HSM2_pcgso ;
   double HSM2_pcgdo ;
@@ -1118,8 +1126,7 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   double HSM2_ktnom ;
   int HSM2_bypass_enable ;
 
-  HSM2modelCGSParam modelCGS ; /* unit-converted parameters */
-
+  HSM2modelMKSParam modelMKS ; /* unit-converted parameters */
   /* flag for model */
   unsigned HSM2_type_Given  :1;
   unsigned HSM2_level_Given  :1;
@@ -1146,6 +1153,7 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   unsigned HSM2_corecip_Given  :1;
   unsigned HSM2_coqy_Given  :1;
   unsigned HSM2_coqovsm_Given  :1;
+  unsigned HSM2_coerrrep_Given :1;
   unsigned HSM2_kappa_Given :1;  
   unsigned HSM2_vdiffj_Given :1; 
   unsigned HSM2_vmax_Given  :1;
@@ -1189,11 +1197,14 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 /*   unsigned HSM2_nf_Given  :1; */
   unsigned HSM2_vfbc_Given  :1;
   unsigned HSM2_vbi_Given  :1;
+  unsigned HSM2_vfbcl_Given :1;
+  unsigned HSM2_vfbclp_Given :1;
   unsigned HSM2_nsubc_Given  :1;
   unsigned HSM2_parl2_Given  :1;
   unsigned HSM2_lp_Given  :1;
   unsigned HSM2_nsubp_Given  :1;
   unsigned HSM2_nsubpl_Given  :1;
+  unsigned HSM2_nsubpdlt_Given :1;
   unsigned HSM2_nsubpfac_Given  :1;
   unsigned HSM2_nsubpw_Given  :1;
   unsigned HSM2_nsubpwp_Given  :1;
@@ -1268,6 +1279,9 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   unsigned HSM2_muesti3_Given  :1;
   unsigned HSM2_nsubpsti1_Given  :1;
   unsigned HSM2_nsubpsti2_Given  :1;
+  unsigned HSM2_nsubcsti1_Given :1;
+  unsigned HSM2_nsubcsti2_Given :1;
+  unsigned HSM2_nsubcsti3_Given :1;
   unsigned HSM2_nsubpsti3_Given  :1;
   unsigned HSM2_lpext_Given  :1;
   unsigned HSM2_npext_Given  :1;
@@ -1330,6 +1344,8 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   unsigned HSM2_gidl2_Given  :1;
   unsigned HSM2_gidl3_Given  :1;
   unsigned HSM2_gidl4_Given  :1;
+  unsigned HSM2_gidl6_Given :1;
+  unsigned HSM2_gidl7_Given :1;
   unsigned HSM2_gidl5_Given  :1;
   unsigned HSM2_gleak1_Given  :1;
   unsigned HSM2_gleak2_Given  :1;
@@ -1451,6 +1467,9 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   unsigned HSM2_lmuesti3_Given :1;
   unsigned HSM2_lnsubpsti1_Given :1;
   unsigned HSM2_lnsubpsti2_Given :1;
+  unsigned HSM2_lnsubcsti1_Given :1;
+  unsigned HSM2_lnsubcsti2_Given :1;
+  unsigned HSM2_lnsubcsti3_Given :1;
   unsigned HSM2_lnsubpsti3_Given :1;
   unsigned HSM2_lcgso_Given :1;
   unsigned HSM2_lcgdo_Given :1;
@@ -1523,6 +1542,9 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   unsigned HSM2_wmuesti3_Given :1;
   unsigned HSM2_wnsubpsti1_Given :1;
   unsigned HSM2_wnsubpsti2_Given :1;
+  unsigned HSM2_wnsubcsti1_Given :1;
+  unsigned HSM2_wnsubcsti2_Given :1;
+  unsigned HSM2_wnsubcsti3_Given :1;
   unsigned HSM2_wnsubpsti3_Given :1;
   unsigned HSM2_wcgso_Given :1;
   unsigned HSM2_wcgdo_Given :1;
@@ -1595,6 +1617,9 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   unsigned HSM2_pmuesti3_Given :1;
   unsigned HSM2_pnsubpsti1_Given :1;
   unsigned HSM2_pnsubpsti2_Given :1;
+  unsigned HSM2_pnsubcsti1_Given :1;
+  unsigned HSM2_pnsubcsti2_Given :1;
+  unsigned HSM2_pnsubcsti3_Given :1;
   unsigned HSM2_pnsubpsti3_Given :1;
   unsigned HSM2_pcgso_Given :1;
   unsigned HSM2_pcgdo_Given :1;
@@ -1658,6 +1683,7 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 #define HSM2_MOD_CORECIP 37
 #define HSM2_MOD_COQY    38
 #define HSM2_MOD_COQOVSM 39
+#define HSM2_MOD_COERRREP     153
 /* device parameters */
 #define HSM2_L           51
 #define HSM2_W           52
@@ -1744,6 +1770,8 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 #define HSM2_MOD_VFBC      121
 #define HSM2_MOD_VBI       122
 #define HSM2_MOD_NSUBC     123
+#define HSM2_MOD_VFBCL     272
+#define HSM2_MOD_VFBCLP    273
 #define HSM2_MOD_TNOM      124
 #define HSM2_MOD_PARL2     125
 #define HSM2_MOD_SC1       126
@@ -1810,6 +1838,7 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 #define HSM2_MOD_NSUBP     181
 #define HSM2_MOD_NSUBPL    196
 #define HSM2_MOD_NSUBPFAC  197
+#define HSM2_MOD_NSUBPDLT     274
 #define HSM2_MOD_NSUBPW    182
 #define HSM2_MOD_NSUBPWP   183
 #define HSM2_MOD_SCP1      184
@@ -1872,6 +1901,9 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 #define HSM2_MOD_NSUBPSTI1 238
 #define HSM2_MOD_NSUBPSTI2 239
 #define HSM2_MOD_NSUBPSTI3 240
+#define HSM2_MOD_NSUBCSTI1    198
+#define HSM2_MOD_NSUBCSTI2    247
+#define HSM2_MOD_NSUBCSTI3    252
 #define HSM2_MOD_LPEXT     241
 #define HSM2_MOD_NPEXT     242
 #define HSM2_MOD_NPEXTW    471
@@ -1893,6 +1925,8 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 #define HSM2_MOD_OVMAG     262
 #define HSM2_MOD_GIDL4     281
 #define HSM2_MOD_GIDL5     282
+#define HSM2_MOD_GIDL6        189
+#define HSM2_MOD_GIDL7        194
 #define HSM2_MOD_SVGS      283
 #define HSM2_MOD_SVBS      284
 #define HSM2_MOD_SVBSL     285
@@ -1998,6 +2032,9 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 #define HSM2_MOD_LNSUBPSTI1 1238
 #define HSM2_MOD_LNSUBPSTI2 1239
 #define HSM2_MOD_LNSUBPSTI3 1240
+#define HSM2_MOD_LNSUBCSTI1   253
+#define HSM2_MOD_LNSUBCSTI2   264
+#define HSM2_MOD_LNSUBCSTI3   265
 #define HSM2_MOD_LCGSO      1154
 #define HSM2_MOD_LCGDO      1155
 #define HSM2_MOD_LJS0       1157
@@ -2070,6 +2107,9 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 #define HSM2_MOD_WNSUBPSTI1 2238
 #define HSM2_MOD_WNSUBPSTI2 2239
 #define HSM2_MOD_WNSUBPSTI3 2240
+#define HSM2_MOD_WNSUBCSTI1   266
+#define HSM2_MOD_WNSUBCSTI2   267
+#define HSM2_MOD_WNSUBCSTI3   268
 #define HSM2_MOD_WCGSO      2154
 #define HSM2_MOD_WCGDO      2155
 #define HSM2_MOD_WJS0       2157
@@ -2142,6 +2182,9 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 #define HSM2_MOD_PNSUBPSTI1 3238
 #define HSM2_MOD_PNSUBPSTI2 3239
 #define HSM2_MOD_PNSUBPSTI3 3240
+#define HSM2_MOD_PNSUBCSTI1   269
+#define HSM2_MOD_PNSUBCSTI2   270
+#define HSM2_MOD_PNSUBCSTI3   271
 #define HSM2_MOD_PCGSO      3154
 #define HSM2_MOD_PCGDO      3155
 #define HSM2_MOD_PJS0       3157

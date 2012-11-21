@@ -3,10 +3,12 @@
  HiSIM (Hiroshima University STARC IGFET Model)
  Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM 2.6.1 
+ MODEL NAME : HiSIM
+ ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ 
  FILE : hsm2set.c
 
- date : 2012.4.6
+ Date : 2012.10.25
 
  released by 
                 Hiroshima University &
@@ -23,6 +25,33 @@
 #include "ngspice/suffix.h"
 
 
+#define BINNING(param) pParam->HSM2_##param = model->HSM2_##param \
+  + model->HSM2_l##param / Lbin + model->HSM2_w##param / Wbin \
+  + model->HSM2_p##param / LWbin ;
+
+#define RANGECHECK(param, min, max, pname)          \
+  if ( model->HSM2_coerrrep && ((param) < (min) || (param) > (max)) ) { \
+    printf("warning: (%s = %g) range [%g , %g].\n", \
+           (pname), (param), (min), (max) );   \
+  }
+#define RANGERESET(param, min, max, pname)              \
+  if ( model->HSM2_coerrrep && ((param) > (max)) ) {   \
+    printf("reset  : (%s = %g to %g) range [%g , %g].\n", \
+           (pname), (param), (max), (min), (max) );     \
+  } \
+  if ( model->HSM2_coerrrep && ((param) < (min)) ) {   \
+    printf("reset  : (%s = %g to %g) range [%g , %g].\n", \
+           (pname), (param), (min), (min), (max) );     \
+  } \
+  if ( (param) < (min) ) {  param  = (min); }    \
+  if ( (param) > (max) ) {  param  = (max); } 
+#define MINCHECK(param, min, pname)    \
+  if ( model->HSM2_coerrrep && ((param) < (min)) ) {             \
+    printf("warning: (%s = %g) range [%g , %g].\n", \
+           (pname), (param), (min), (min) );                   \
+  }
+
+
 int HSM2setup(
      register SMPmatrix *matrix,
      register GENmodel *inModel,
@@ -36,6 +65,11 @@ int HSM2setup(
   register HSM2instance *here;
   int error;
   CKTnode *tmp;
+  HSM2binningParam *pParam ;
+  HSM2modelMKSParam *modelMKS ;
+  HSM2hereMKSParam  *hereMKS ;
+  double Lgate =0.0, LG =0.0, Wgate =0.0, WG=0.0 ;
+  double Lbin=0.0, Wbin=0.0, LWbin =0.0; /* binning */
   
   /*  loop through all the HSM2 device models */
   for ( ;model != NULL ;model = model->HSM2nextModel ) {
@@ -48,13 +82,13 @@ int HSM2setup(
     model->HSM2_noise = 1; /* allways noise is set to be 1 */
 
     if ( !model->HSM2_version_Given) {
-        model->HSM2_version = 261; /* default 261 */
-	printf("           261 is selected for VERSION. (default) \n");
+        model->HSM2_version = 270; /* default 270 */
+	printf("           270 is selected for VERSION. (default) \n");
     } else {
-      if (model->HSM2_version != 261) {
-	model->HSM2_version = 261; /* default 261 */
-	printf("           261 is only available for VERSION. \n");
-	printf("           261 is selected for VERSION. (default) \n");
+      if (model->HSM2_version != 270) {
+	model->HSM2_version = 270; /* default 270 */
+	printf("           270 is only available for VERSION. \n");
+	printf("           270 is selected for VERSION. (default) \n");
       } else {
 	printf("           %d is selected for VERSION \n", (int)model->HSM2_version);
       }
@@ -83,6 +117,7 @@ int HSM2setup(
     if ( !model->HSM2_corecip_Given    ) model->HSM2_corecip    = 1 ;
     if ( !model->HSM2_coqy_Given       ) model->HSM2_coqy       = 0 ;
     if ( !model->HSM2_coqovsm_Given    ) model->HSM2_coqovsm    = 1 ;
+    if ( !model->HSM2_coerrrep_Given   ) model->HSM2_coerrrep   = 1 ;
 
 
     if ( !model->HSM2_vmax_Given    ) model->HSM2_vmax    = 1.0e7 ;
@@ -126,11 +161,14 @@ int HSM2setup(
     if ( !model->HSM2_vfbc_Given   ) model->HSM2_vfbc  = -1.0 ;
     if ( !model->HSM2_vbi_Given    ) model->HSM2_vbi   = 1.1 ;
     if ( !model->HSM2_nsubc_Given  ) model->HSM2_nsubc = 5.0e17 ;
+    if ( !model->HSM2_vfbcl_Given  ) model->HSM2_vfbcl  = 0 ;
+    if ( !model->HSM2_vfbclp_Given ) model->HSM2_vfbclp = 1 ;
     if ( !model->HSM2_parl2_Given  ) model->HSM2_parl2 = 10.0e-9 ;
     if ( !model->HSM2_lp_Given     ) model->HSM2_lp    = 15.0e-9 ;
     if ( !model->HSM2_nsubp_Given  ) model->HSM2_nsubp = 1.0e18 ;
     if ( !model->HSM2_nsubpl_Given ) model->HSM2_nsubpl = 0.001 ; /* um */
     if ( !model->HSM2_nsubpfac_Given ) model->HSM2_nsubpfac = 1.0 ;
+    if ( !model->HSM2_nsubpdlt_Given ) model->HSM2_nsubpdlt = 0.01 ;
 
     if ( !model->HSM2_nsubpw_Given ) model->HSM2_nsubpw = 0.0 ;
     if ( !model->HSM2_nsubpwp_Given ) model->HSM2_nsubpwp = 1.0 ;
@@ -222,6 +260,9 @@ int HSM2setup(
     if ( !model->HSM2_nsubpsti1_Given ) model->HSM2_nsubpsti1 = 0.0 ;
     if ( !model->HSM2_nsubpsti2_Given ) model->HSM2_nsubpsti2 = 0.0 ;
     if ( !model->HSM2_nsubpsti3_Given ) model->HSM2_nsubpsti3 = 1.0 ;
+    if ( !model->HSM2_nsubcsti1_Given  ) model->HSM2_nsubcsti1  = 0.0 ;
+    if ( !model->HSM2_nsubcsti2_Given  ) model->HSM2_nsubcsti2  = 0.0 ;
+    if ( !model->HSM2_nsubcsti3_Given  ) model->HSM2_nsubcsti3  = 1.0 ;
 
     if ( !model->HSM2_lpext_Given ) model->HSM2_lpext = 1.0e-50 ;
     if ( !model->HSM2_npext_Given ) model->HSM2_npext = 5.0e17 ;
@@ -288,6 +329,8 @@ int HSM2setup(
     if ( !model->HSM2_gidl3_Given ) model->HSM2_gidl3 = 0.9e0 ;
     if ( !model->HSM2_gidl4_Given ) model->HSM2_gidl4 = 0.0 ;
     if ( !model->HSM2_gidl5_Given ) model->HSM2_gidl5 = 0.2e0 ;
+    if ( !model->HSM2_gidl6_Given      ) model->HSM2_gidl6      = 0 ;
+    if ( !model->HSM2_gidl7_Given      ) model->HSM2_gidl7      = 1 ;
 
     if ( !model->HSM2_gleak1_Given ) model->HSM2_gleak1 = 50e0 ;
     if ( !model->HSM2_gleak2_Given ) model->HSM2_gleak2 = 10e6 ;
@@ -421,6 +464,9 @@ int HSM2setup(
     if ( !model->HSM2_lnsubpsti1_Given ) model->HSM2_lnsubpsti1 = 0.0 ;
     if ( !model->HSM2_lnsubpsti2_Given ) model->HSM2_lnsubpsti2 = 0.0 ;
     if ( !model->HSM2_lnsubpsti3_Given ) model->HSM2_lnsubpsti3 = 0.0 ;
+    if ( !model->HSM2_lnsubcsti1_Given ) model->HSM2_lnsubcsti1 = 0.0 ;
+    if ( !model->HSM2_lnsubcsti2_Given ) model->HSM2_lnsubcsti2 = 0.0 ;
+    if ( !model->HSM2_lnsubcsti3_Given ) model->HSM2_lnsubcsti3 = 0.0 ;
     if ( !model->HSM2_lcgso_Given ) model->HSM2_lcgso = 0.0 ;
     if ( !model->HSM2_lcgdo_Given ) model->HSM2_lcgdo = 0.0 ;
     if ( !model->HSM2_ljs0_Given ) model->HSM2_ljs0 = 0.0 ;
@@ -492,6 +538,9 @@ int HSM2setup(
     if ( !model->HSM2_wnsubpsti1_Given ) model->HSM2_wnsubpsti1 = 0.0 ;
     if ( !model->HSM2_wnsubpsti2_Given ) model->HSM2_wnsubpsti2 = 0.0 ;
     if ( !model->HSM2_wnsubpsti3_Given ) model->HSM2_wnsubpsti3 = 0.0 ;
+    if ( !model->HSM2_wnsubcsti1_Given ) model->HSM2_wnsubcsti1 = 0.0 ;
+    if ( !model->HSM2_wnsubcsti2_Given ) model->HSM2_wnsubcsti2 = 0.0 ;
+    if ( !model->HSM2_wnsubcsti3_Given ) model->HSM2_wnsubcsti3 = 0.0 ;
     if ( !model->HSM2_wcgso_Given ) model->HSM2_wcgso = 0.0 ;
     if ( !model->HSM2_wcgdo_Given ) model->HSM2_wcgdo = 0.0 ;
     if ( !model->HSM2_wjs0_Given ) model->HSM2_wjs0 = 0.0 ;
@@ -563,6 +612,9 @@ int HSM2setup(
     if ( !model->HSM2_pnsubpsti1_Given ) model->HSM2_pnsubpsti1 = 0.0 ;
     if ( !model->HSM2_pnsubpsti2_Given ) model->HSM2_pnsubpsti2 = 0.0 ;
     if ( !model->HSM2_pnsubpsti3_Given ) model->HSM2_pnsubpsti3 = 0.0 ;
+    if ( !model->HSM2_pnsubcsti1_Given ) model->HSM2_pnsubcsti1 = 0.0 ;
+    if ( !model->HSM2_pnsubcsti2_Given ) model->HSM2_pnsubcsti2 = 0.0 ;
+    if ( !model->HSM2_pnsubcsti3_Given ) model->HSM2_pnsubcsti3 = 0.0 ;
     if ( !model->HSM2_pcgso_Given ) model->HSM2_pcgso = 0.0 ;
     if ( !model->HSM2_pcgdo_Given ) model->HSM2_pcgdo = 0.0 ;
     if ( !model->HSM2_pjs0_Given ) model->HSM2_pjs0 = 0.0 ;
@@ -593,11 +645,11 @@ int HSM2setup(
     if ( model->HSM2_corecip == 1 ){
       model->HSM2_sc2 =  0.0 ; model->HSM2_lsc2 =  0.0 ; model->HSM2_wsc2 =  0.0 ; model->HSM2_psc2 =  0.0 ;
       model->HSM2_scp2 = 0.0 ; model->HSM2_lscp2 = 0.0 ; model->HSM2_wscp2 = 0.0 ; model->HSM2_pscp2 = 0.0 ;
-      model->HSM2_sc4 = 0.0 ;
+      model->HSM2_sc4 = 0.0  ; model->HSM2_lsc4 = 0.0  ; model->HSM2_wsc4 = 0.0  ; model->HSM2_psc4 = 0.0 ;
       model->HSM2_coqy = 0 ;
     }
 
-
+    modelMKS = &model->modelMKS ;
 
     /* loop through all the instances of the model */
     for ( here = model->HSM2instances ;here != NULL ;
@@ -609,6 +661,7 @@ int HSM2setup(
       else 
 	*states += HSM2numStates;
 
+      hereMKS  = &here->hereMKS ;
       /* perform the parameter defaulting */
       if ( !here->HSM2_l_Given      ) here->HSM2_l      = 5.0e-6 ;
       if ( !here->HSM2_w_Given      ) here->HSM2_w      = 5.0e-6 ;
@@ -636,6 +689,7 @@ int HSM2setup(
 	here->HSM2_corbnet = model->HSM2_corbnet ;
       else if ( here->HSM2_corbnet != 0 && here->HSM2_corbnet != 1 ) {
 	here->HSM2_corbnet = model->HSM2_corbnet ;
+        if(model->HSM2_coerrrep)
 	printf("warning(HiSIM2): CORBNET has been set to its default value: %d.\n", here->HSM2_corbnet);
       }
       if ( !here->HSM2_rbdb_Given) here->HSM2_rbdb = model->HSM2_rbdb; /* in ohm */
@@ -648,6 +702,7 @@ int HSM2setup(
 	here->HSM2_corg = model->HSM2_corg ;
       else if ( here->HSM2_corg != 0 && here->HSM2_corg != 1 ) {
 	here->HSM2_corg = model->HSM2_corg ;
+        if(model->HSM2_coerrrep)
 	printf("warning(HiSIM2): CORG has been set to its default value: %d.\n", here->HSM2_corg);
       }
 
@@ -781,8 +836,266 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 	TSTALLOC(HSM2BbPtr, HSM2bNode, HSM2bNode);
       }
 
+
+      /*-----------------------------------------------------------*
+       * Range check of instance parameters
+       *-----------------*/
+      RANGECHECK(here->HSM2_l, model->HSM2_lmin, model->HSM2_lmax, "L") ;
+      RANGECHECK(here->HSM2_w/here->HSM2_nf, model->HSM2_wmin, model->HSM2_wmax, "W/NF") ;
+      RANGECHECK(here->HSM2_mphdfm,        -3.0,              3.0, "MPHDFM") ;
+
+
+    /*-----------------------------------------------------------*
+     * Change unit into Kelvin.
+     *-----------------*/
+      here->HSM2_ktemp = here->HSM2_temp + 273.15 ; /* [C] -> [K] */
+
+      here->HSM2_lgate = Lgate = here->HSM2_l + model->HSM2_xl ;
+      Wgate = here->HSM2_w / here->HSM2_nf  + model->HSM2_xw ;
+
+      LG = Lgate * C_m2um ;
+      here->HSM2_wg = WG = Wgate * C_m2um ;
+
+      /* binning calculation */
+      pParam = &here->pParam ;
+      Lbin = pow(LG, model->HSM2_lbinn) ;
+      Wbin = pow(WG, model->HSM2_wbinn) ;
+      LWbin = Lbin * Wbin ;
+
+      BINNING(vmax)
+      BINNING(bgtmp1)
+      BINNING(bgtmp2)
+      BINNING(eg0)
+      BINNING(lover)
+      BINNING(vfbover)
+      BINNING(nover)
+      BINNING(wl2)
+      BINNING(vfbc)
+      BINNING(nsubc)
+      BINNING(nsubp)
+      BINNING(scp1)
+      BINNING(scp2)
+      BINNING(scp3)
+      BINNING(sc1)
+      BINNING(sc2)
+      BINNING(sc3)
+      BINNING(sc4)
+      BINNING(pgd1)
+      BINNING(ndep)
+      BINNING(ninv)
+      BINNING(muecb0)
+      BINNING(muecb1)
+      BINNING(mueph1)
+      BINNING(vtmp)
+      BINNING(wvth0)
+      BINNING(muesr1)
+      BINNING(muetmp)
+      BINNING(sub1)
+      BINNING(sub2)
+      BINNING(svds)
+      BINNING(svbs)
+      BINNING(svgs)
+      BINNING(nsti)
+      BINNING(wsti)
+      BINNING(scsti1)
+      BINNING(scsti2)
+      BINNING(vthsti)
+      BINNING(muesti1)
+      BINNING(muesti2)
+      BINNING(muesti3)
+      BINNING(nsubpsti1)
+      BINNING(nsubpsti2)
+      BINNING(nsubpsti3)
+      BINNING(nsubcsti1)
+      BINNING(nsubcsti2)
+      BINNING(nsubcsti3)
+      BINNING(cgso)
+      BINNING(cgdo)
+      BINNING(js0)
+      BINNING(js0sw)
+      BINNING(nj)
+      BINNING(cisbk)
+      BINNING(clm1)
+      BINNING(clm2)
+      BINNING(clm3)
+      BINNING(wfc)
+      BINNING(gidl1)
+      BINNING(gidl2)
+      BINNING(gleak1)
+      BINNING(gleak2)
+      BINNING(gleak3)
+      BINNING(gleak6)
+      BINNING(glksd1)
+      BINNING(glksd2)
+      BINNING(glkb1)
+      BINNING(glkb2)
+      BINNING(nftrp)
+      BINNING(nfalp)
+      BINNING(vdiffj)
+      BINNING(ibpc1)
+      BINNING(ibpc2)
+
+      /*-----------------------------------------------------------*
+       * Range check of binning parameters
+       *-----------------*/
+      RANGECHECK(pParam->HSM2_vmax,     1.0e5,   20.0e6, "VMAX") ;
+      RANGECHECK(pParam->HSM2_bgtmp1, 50.0e-6,   1.0e-3, "BGTMP1") ;
+      RANGECHECK(pParam->HSM2_bgtmp2, -1.0e-6,   1.0e-6, "BGTMP2") ;
+      RANGECHECK(pParam->HSM2_eg0,        1.0,      1.3, "EG0") ;
+      RANGECHECK(pParam->HSM2_vfbc,      -1.2,     -0.8, "VFBC") ;
+      RANGECHECK(pParam->HSM2_vfbover,   -0.2,      0.2, "VFBOVER") ;
+      RANGECHECK(pParam->HSM2_nsubc,   1.0e16,   1.0e19, "NSUBC") ;
+      RANGECHECK(pParam->HSM2_nsubp,   1.0e16,   1.0e19, "NSUBP") ;
+      RANGECHECK(pParam->HSM2_scp1,       0.0,     20.0, "SCP1") ;
+      RANGECHECK(pParam->HSM2_scp2,       0.0,      2.0, "SCP2") ;
+      RANGECHECK(pParam->HSM2_scp3,       0.0, 100.0e-9, "SCP3") ;
+      RANGECHECK(pParam->HSM2_sc1,        0.0,     20.0, "SC1") ;
+      RANGECHECK(pParam->HSM2_sc2,        0.0,      2.0, "SC2") ;
+      RANGECHECK(pParam->HSM2_sc3,        0.0, 200.0e-9, "SC3") ;
+      RANGECHECK(pParam->HSM2_pgd1,       0.0,  50.0e-3, "PGD1") ;
+      RANGECHECK(pParam->HSM2_ndep,       0.0,      1.0, "NDEP") ;
+      RANGECHECK(pParam->HSM2_ninv,       0.0,      1.0, "NINV") ;
+      RANGECHECK(pParam->HSM2_muecb0,   100.0,  100.0e3, "MUECB0") ;
+      RANGECHECK(pParam->HSM2_muecb1,     5.0,    1.0e4, "MUECB1") ;
+      RANGECHECK(pParam->HSM2_mueph1,   2.0e3,   35.0e3, "MUEPH1") ;
+      RANGECHECK(pParam->HSM2_vtmp,      -5.0,      1.0, "VTMP") ;
+      RANGECHECK(pParam->HSM2_muesr1,  1.0e13,   1.0e16, "MUESR1") ;
+      RANGECHECK(pParam->HSM2_muetmp,     0.5,      2.0, "MUETMP") ;
+      RANGECHECK(pParam->HSM2_clm1,       0.5,      1.0, "CLM1") ;
+      RANGECHECK(pParam->HSM2_clm2,       1.0,      4.0, "CLM2") ;
+      RANGECHECK(pParam->HSM2_clm3,       0.5,      5.0, "CLM3") ;
+      RANGECHECK(pParam->HSM2_wfc,   -5.0e-15,   1.0e-6, "WFC") ;
+      RANGECHECK(pParam->HSM2_cgso,       0.0, 100e-9 * 100*C_VAC*model->HSM2_kappa/model->HSM2_tox*C_m2cm, "CGSO") ;
+      RANGECHECK(pParam->HSM2_cgdo,       0.0, 100e-9 * 100*C_VAC*model->HSM2_kappa/model->HSM2_tox*C_m2cm, "CGDO") ;
+      RANGECHECK(pParam->HSM2_ibpc1,      0.0,   1.0e12, "IBPC1") ;
+      RANGECHECK(pParam->HSM2_ibpc2,      0.0,   1.0e12, "IBPC2") ;
+      RANGECHECK(pParam->HSM2_nsti,    1.0e16,   1.0e19, "NSTI") ;
+
+      /*-----------------------------------------------------------*
+       * Lg dependence of binning parameters
+       *-----------------*/
+
+      /* Vfbc  */
+      pParam->HSM2_vfbc = pParam->HSM2_vfbc
+        * (1.0e0 + (model->HSM2_vfbcl / pow (LG, model->HSM2_vfbclp))) ;
+
+      /*-----------------------------------------------------------*
+       * Conversion to MKS unit for instance parameters.
+       *-----------------*/
+      hereMKS->HSM2_nsubcdfm  = here->HSM2_nsubcdfm / C_cm2m_p3 ;
+ 
+      pParam->HSM2_nsubc      = pParam->HSM2_nsubc  / C_cm2m_p3 ;
+      pParam->HSM2_nsubp      = pParam->HSM2_nsubp  / C_cm2m_p3 ;
+      pParam->HSM2_nsti       = pParam->HSM2_nsti   / C_cm2m_p3 ;
+      pParam->HSM2_nover      = pParam->HSM2_nover  / C_cm2m_p3 ;
+      pParam->HSM2_nsubpsti1  = pParam->HSM2_nsubpsti1 / C_m2cm ;
+      pParam->HSM2_nsubcsti1  = pParam->HSM2_nsubcsti1 / C_m2cm ;
+      pParam->HSM2_muesti1    = pParam->HSM2_muesti1 / C_m2cm ;
+      pParam->HSM2_ndep       = pParam->HSM2_ndep / C_m2cm ;
+      pParam->HSM2_ninv       = pParam->HSM2_ninv / C_m2cm ;
+
+      pParam->HSM2_vmax       = pParam->HSM2_vmax   / C_m2cm ;
+      pParam->HSM2_wfc        = pParam->HSM2_wfc    * C_m2cm_p2 ;
+      pParam->HSM2_glksd1     = pParam->HSM2_glksd1 / C_m2cm ;
+      pParam->HSM2_glksd2     = pParam->HSM2_glksd2 * C_m2cm ;
+      pParam->HSM2_gleak2     = pParam->HSM2_gleak2 * C_m2cm ;
+      pParam->HSM2_glkb2      = pParam->HSM2_glkb2  * C_m2cm ;
+      pParam->HSM2_gidl1      = pParam->HSM2_gidl1  / C_m2cm_p1o2 ;
+      pParam->HSM2_gidl2      = pParam->HSM2_gidl2  * C_m2cm ;
+      pParam->HSM2_nfalp      = pParam->HSM2_nfalp  / C_m2cm ;
+      pParam->HSM2_nftrp      = pParam->HSM2_nftrp  * C_m2cm_p2 ;
+
+    } /* End of instance */
+
+    /*-----------------------------------------------------------*
+     * Range check of model parameters
+     *-----------------*/
+    MINCHECK  (model->HSM2_tox,        0.0, "TOX") ;
+    RANGECHECK(model->HSM2_xld,        0.0,  50.0e-9, "XLD") ;
+    RANGECHECK(model->HSM2_xwd,   -10.0e-9, 100.0e-9, "XWD") ;
+    RANGECHECK(model->HSM2_rsh,        0.0,   1.0e-3, "RSH") ;
+    RANGECHECK(model->HSM2_rshg,       0.0,    100.0, "RSHG") ;
+    RANGECHECK(model->HSM2_xqy,    10.0e-9,  50.0e-9, "XQY") ;
+    RANGECHECK(model->HSM2_rs,         0.0,  10.0e-3, "RS") ;
+    RANGECHECK(model->HSM2_rd,         0.0,  10.0e-3, "RD") ;
+    RANGECHECK(model->HSM2_vbi,        1.0,      1.2, "VBI") ;
+    RANGECHECK(model->HSM2_parl2,      0.0,  50.0e-9, "PARL2") ;
+    RANGECHECK(model->HSM2_lp,         0.0, 300.0e-9, "LP") ;
+    RANGECHECK(model->HSM2_pgd2,       0.0,      1.5, "PGD2") ;
+    RANGECHECK(model->HSM2_pgd4,       0.0,      3.0, "PGD4") ;
+    RANGECHECK(model->HSM2_muecb0lp,   0.0,      2.0, "MUECB0LP") ;
+    RANGECHECK(model->HSM2_muecb1lp,   0.0,      2.0, "MUECB1LP") ;
+    RANGECHECK(model->HSM2_mueph0,    0.25,     0.35, "MUEPH0") ;
+    RANGECHECK(model->HSM2_muesr0,     1.8,      2.2, "MUESR0") ;
+    RANGECHECK(model->HSM2_lpext,  1.0e-50,  10.0e-6, "LPEXT") ;
+    RANGECHECK(model->HSM2_npext,   1.0e16,   1.0e18, "NPEXT") ;
+    RANGECHECK(model->HSM2_scp21,      0.0,      5.0, "SCP21") ;
+    RANGECHECK(model->HSM2_scp22,      0.0,      0.0, "SCP22") ;
+    RANGECHECK(model->HSM2_bs1,        0.0,  50.0e-3, "BS1") ;
+    RANGECHECK(model->HSM2_bs2,        0.5,      1.0, "BS2") ;
+    MINCHECK  (model->HSM2_cgbo,       0.0, "CGBO") ;
+    RANGECHECK(model->HSM2_clm5,       0.0,      2.0, "CLM5") ;
+    RANGECHECK(model->HSM2_clm6,       0.0,     20.0, "CLM6") ;
+    RANGECHECK(model->HSM2_vover,      0.0,     50.0, "VOVER") ;
+    RANGECHECK(model->HSM2_voverp,     0.0,      2.0, "VOVERP") ;
+    RANGECHECK(model->HSM2_qme1,       0.0, 300.0e-9, "QME1") ;
+    RANGECHECK(model->HSM2_qme3,       0.0,800.0e-12, "QME3") ;
+    RANGECHECK(model->HSM2_tnom,      22.0,     32.0, "TNOM") ;
+    RANGECHECK(model->HSM2_ddltmax,    1.0,     20.0, "DDLTMAX") ;
+    RANGECHECK(model->HSM2_ddltict,   -3.0,     20.0, "DDLTICT") ;
+    RANGECHECK(model->HSM2_ddltslp,    0.0,     20.0, "DDLTSLP") ;
+    RANGECHECK(model->HSM2_cvb,       -0.1,      0.2, "CVB") ;
+    RANGECHECK(model->HSM2_cvbk,      -0.1,      0.2, "CVBK") ;
+    RANGECHECK(model->HSM2_byptol,     0.0,      1.0, "BYPTOL") ;
+    RANGECHECK(model->HSM2_sc3Vbs,    -3.0,      0.0, "SC3VBS") ;
+    RANGERESET(model->HSM2_nsubpfac,   0.2,      1.0, "NSUBPFAC") ;
+    RANGERESET(model->HSM2_nsubpdlt, 1E-50,      0.1, "NSUBPDLT") ;
+
+    /*-----------------------------------------------------------*
+     * Conversion to MKS unit for model parameters.
+     *-----------------*/
+     modelMKS->HSM2_npext     = model->HSM2_npext     / C_cm2m_p3 ;
+     modelMKS->HSM2_nsubcwpe  = model->HSM2_nsubcwpe  / C_cm2m_p3 ;
+     modelMKS->HSM2_nsubpwpe  = model->HSM2_nsubpwpe  / C_cm2m_p3 ;
+     modelMKS->HSM2_npextwpe  = model->HSM2_npextwpe  / C_cm2m_p3 ;
+     modelMKS->HSM2_ll        = model->HSM2_ll        / pow( C_m2cm , model->HSM2_lln ) ;
+     modelMKS->HSM2_wl        = model->HSM2_wl        / pow( C_m2cm , model->HSM2_wln ) ;
+     modelMKS->HSM2_svgsl     = model->HSM2_svgsl     / pow( C_m2cm , model->HSM2_svgslp ) ;
+     modelMKS->HSM2_svgsw     = model->HSM2_svgsw     / pow( C_m2cm , model->HSM2_svgswp ) ;
+     modelMKS->HSM2_svbsl     = model->HSM2_svbsl     / pow( C_m2cm , model->HSM2_svbslp ) ;
+     modelMKS->HSM2_slgl      = model->HSM2_slgl      / pow( C_m2cm , model->HSM2_slglp ) ;
+     modelMKS->HSM2_sub1l     = model->HSM2_sub1l     / pow( C_m2cm , model->HSM2_sub1lp ) ;
+     modelMKS->HSM2_slg       = model->HSM2_slg       / C_m2cm ;
+     modelMKS->HSM2_sub2l     = model->HSM2_sub2l     / C_m2cm ;
+     modelMKS->HSM2_nsubcmax  = model->HSM2_nsubcmax  / C_cm2m_p3 ;
+
+     modelMKS->HSM2_glksd3    = model->HSM2_glksd3    * C_m2cm ;
+     modelMKS->HSM2_gleak2    = model->HSM2_gleak2    * C_m2cm ;
+     modelMKS->HSM2_gleak4    = model->HSM2_gleak4    * C_m2cm ;
+     modelMKS->HSM2_gleak5    = model->HSM2_gleak5    * C_m2cm ;
+     modelMKS->HSM2_gleak7    = model->HSM2_gleak7    / C_m2cm_p2 ;
+     modelMKS->HSM2_cit       = model->HSM2_cit       * C_m2cm_p2 ;
+     modelMKS->HSM2_ovslp     = model->HSM2_ovslp     / C_m2cm ;
+     modelMKS->HSM2_dly3      = model->HSM2_dly3      / C_m2cm_p2 ;
+
+    /*-----------------------------------------------------------*
+     * Change unit into Kelvin.
+     *-----------------*/
+    model->HSM2_ktnom = model->HSM2_tnom + 273.15 ; /* [C] -> [K] */
+
+    /* SourceSatCurrent = 1.0e-14 */
+    /* DrainSatCurrent = 1.0e-14 */
+    model->HSM2_vcrit = CONSTvt0 * log( CONSTvt0 / (CONSTroot2 * 1.0e-14) ) ;
+
+    /* Quantum Mechanical Effect */
+    if ( ( model->HSM2_qme1 == 0.0 && model->HSM2_qme3 == 0.0 ) || model->HSM2_qme2 == 0.0 ) {
+      model->HSM2_flg_qme = 0 ;
+    } else {
+      model->HSM2_flg_qme = 1 ;
+      model->HSM2_qme12 = model->HSM2_qme1 / ( model->HSM2_qme2 * model->HSM2_qme2 ) ;
     }
-  }
+
+  }   /* End of model */
   return(OK);
 } 
 

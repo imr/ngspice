@@ -1,5 +1,3 @@
-#include "ngspice/config.h"
-
 #include "ngspice/devdefs.h"
 
 #include "hsm2def.h"
@@ -8,7 +6,7 @@
 
 SPICEdev HSM2info = {
   {   "HiSIM2",
-      "Hiroshima University STARC IGFET Model 2.6.1",
+      "Hiroshima University STARC IGFET Model 2.7.0",
       
       &HSM2nSize,
       &HSM2nSize,

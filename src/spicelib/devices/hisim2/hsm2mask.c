@@ -3,10 +3,12 @@
  HiSIM (Hiroshima University STARC IGFET Model)
  Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM 2.6.1 
+ MODEL NAME : HiSIM
+ ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ 
  FILE : hsm2mask.c
 
- date : 2012.4.6
+ Date : 2012.10.25
 
  released by 
                 Hiroshima University &
@@ -109,6 +111,9 @@ int HSM2mAsk(
     return(OK);
   case  HSM2_MOD_COQOVSM:
     value->iValue = model->HSM2_coqovsm;
+    return(OK);
+  case HSM2_MOD_COERRREP:
+    value->iValue = model->HSM2_coerrrep;
     return(OK);
   case  HSM2_MOD_VMAX:
     value->rValue = model->HSM2_vmax;
@@ -236,6 +241,12 @@ int HSM2mAsk(
   case  HSM2_MOD_NSUBC:
     value->rValue = model->HSM2_nsubc;
       return(OK);
+  case HSM2_MOD_VFBCL:
+    value->rValue = model->HSM2_vfbcl;
+    return(OK);
+  case HSM2_MOD_VFBCLP:
+    value->rValue = model->HSM2_vfbclp;
+    return(OK);
   case  HSM2_MOD_PARL2:
     value->rValue = model->HSM2_parl2;
     return(OK);
@@ -250,6 +261,9 @@ int HSM2mAsk(
     return(OK);
   case  HSM2_MOD_NSUBPFAC:
     value->rValue = model->HSM2_nsubpfac;
+    return(OK);
+  case HSM2_MOD_NSUBPDLT:
+    value->rValue = model->HSM2_nsubpdlt;
     return(OK);
   case  HSM2_MOD_NSUBPW:
     value->rValue = model->HSM2_nsubpw;
@@ -473,6 +487,15 @@ int HSM2mAsk(
   case  HSM2_MOD_NSUBPSTI3:
     value->rValue = model->HSM2_nsubpsti3;
     return(OK);
+  case HSM2_MOD_NSUBCSTI1:
+    value->rValue = model->HSM2_nsubcsti1;
+    return(OK);
+  case HSM2_MOD_NSUBCSTI2:
+    value->rValue = model->HSM2_nsubcsti2;
+    return(OK);
+  case HSM2_MOD_NSUBCSTI3:
+    value->rValue = model->HSM2_nsubcsti3;
+    return(OK);
   case  HSM2_MOD_LPEXT:
     value->rValue = model->HSM2_lpext;
     return(OK);
@@ -656,6 +679,12 @@ int HSM2mAsk(
     return(OK);
   case  HSM2_MOD_GIDL5:
     value->rValue = model->HSM2_gidl5;
+    return(OK);
+  case HSM2_MOD_GIDL6:
+    value->rValue = model->HSM2_gidl6;
+    return(OK);
+  case HSM2_MOD_GIDL7:
+    value->rValue = model->HSM2_gidl7;
     return(OK);
   case  HSM2_MOD_GLEAK1:
     value->rValue = model->HSM2_gleak1;
@@ -1011,6 +1040,15 @@ int HSM2mAsk(
   case  HSM2_MOD_LNSUBPSTI3:
     value->rValue = model->HSM2_lnsubpsti3;
     return(OK);
+  case HSM2_MOD_LNSUBCSTI1:
+    value->rValue = model->HSM2_lnsubcsti1;
+    return(OK);
+  case HSM2_MOD_LNSUBCSTI2:
+    value->rValue = model->HSM2_lnsubcsti2;
+    return(OK);
+  case HSM2_MOD_LNSUBCSTI3:
+    value->rValue = model->HSM2_lnsubcsti3;
+    return(OK);
   case  HSM2_MOD_LCGSO:
     value->rValue = model->HSM2_lcgso;
     return(OK);
@@ -1223,6 +1261,15 @@ int HSM2mAsk(
   case  HSM2_MOD_WNSUBPSTI3:
     value->rValue = model->HSM2_wnsubpsti3;
     return(OK);
+  case HSM2_MOD_WNSUBCSTI1:
+    value->rValue = model->HSM2_wnsubcsti1;
+    return(OK);
+  case HSM2_MOD_WNSUBCSTI2:
+    value->rValue = model->HSM2_wnsubcsti2;
+    return(OK);
+  case HSM2_MOD_WNSUBCSTI3:
+    value->rValue = model->HSM2_wnsubcsti3;
+    return(OK);
   case  HSM2_MOD_WCGSO:
     value->rValue = model->HSM2_wcgso;
     return(OK);
@@ -1434,6 +1481,15 @@ int HSM2mAsk(
     return(OK);
   case  HSM2_MOD_PNSUBPSTI3:
     value->rValue = model->HSM2_pnsubpsti3;
+    return(OK);
+  case HSM2_MOD_PNSUBCSTI1:
+    value->rValue = model->HSM2_pnsubcsti1;
+    return(OK);
+  case HSM2_MOD_PNSUBCSTI2:
+    value->rValue = model->HSM2_pnsubcsti2;
+    return(OK);
+  case HSM2_MOD_PNSUBCSTI3:
+    value->rValue = model->HSM2_pnsubcsti3;
     return(OK);
   case  HSM2_MOD_PCGSO:
     value->rValue = model->HSM2_pcgso;

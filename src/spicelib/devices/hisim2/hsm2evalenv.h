@@ -3,10 +3,12 @@
  HiSIM (Hiroshima University STARC IGFET Model)
  Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM 2.6.1 
+ MODEL NAME : HiSIM
+ ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ 
  FILE : hsm2evalenv.h
 
- date : 2012.4.6
+ Date : 2012.10.25
 
  released by 
                 Hiroshima University &
@@ -52,6 +54,9 @@
 #define C_m2cm_p2 (1.0e4)
 #define C_m2cm_p1o2 (1.0e1)
 #define C_m2um    (1.0e6)
+#define C_cm2m_p3 (1.0e-6)
+#define C_vmax    (1.0e5)
+#define C_E0_p2   (1.0e9)
 
 /*---------------------------------------------------*
 * Physical constants/properties. (macro) 
@@ -63,9 +68,9 @@
 #define C_KB    (1.3806226e-23) 
 
 /* Permitivity of Si, SiO2 and vacuum */
-#define C_ESI   (1.034943e-12) 
-#define C_EOX   (3.453133e-13) 
-#define C_VAC   (8.8541878e-14) 
+#define C_ESI   (1.034943e-10) 
+#define C_EOX   (3.453133e-11) 
+#define C_VAC   (8.8541878e-12) 
 
 /* Room temperature constants */
 #define C_T300  (300e+00)
@@ -77,7 +82,7 @@
 
 
 /* Intrinsic carrier density at 300K */
-#define C_Nin0  (1.04e+10)
+#define C_Nin0  (1.04e+16)
 
 
 /*---------------------------------------------------*

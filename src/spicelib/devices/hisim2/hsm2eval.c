@@ -3,10 +3,12 @@
  HiSIM (Hiroshima University STARC IGFET Model)
  Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM 2.6.1 
+ MODEL NAME : HiSIM
+ ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) 
+ 
  FILE : hsm2eval.c
 
- date : 2012.4.6
+ Date : 2012.10.25
 
  released by 
                 Hiroshima University &
@@ -134,7 +136,7 @@ double TMF1 , TMF2 , TMF3 , TMF4 ;
 * pow
 *=================*/
 #ifdef POW_TO_EXP_AND_LOG
-#define Fn_Pow( x , y )  exp( y * log( x )  ) 
+#define Fn_Pow( x , y )  exp( (y) * log( x )  ) 
 #else
 #define Fn_Pow( x , y )  pow( x , y )
 #endif
@@ -170,14 +172,18 @@ double TMF1 , TMF2 , TMF3 , TMF4 ;
 
 #define Fn_SU( y , x , xmax , delta , dx ) { \
     TMF1 = ( xmax ) - ( x ) - ( delta ) ; \
-    TMF2 = sqrt ( TMF1 *  TMF1 + 4.0 * ( xmax ) * ( delta) ) ; \
+    TMF2 = 4.0 * ( xmax ) * ( delta) ; \
+    TMF2 = TMF2 > 0.0 ?  TMF2 : - ( TMF2 ) ; \
+    TMF2 = sqrt ( TMF1 * TMF1 + TMF2 ) ; \
     dx = 0.5 * ( 1.0 + TMF1 / TMF2 ) ; \
     y = ( xmax ) - 0.5 * ( TMF1 + TMF2 ) ; \
   }
 
 #define Fn_SU2( y , x , xmax , delta , dy_dx , dy_dxmax ) { \
     TMF1 = ( xmax ) - ( x ) - ( delta ) ; \
-    TMF2 = sqrt ( TMF1 *  TMF1 + 4.0 * ( xmax ) * ( delta) ) ; \
+    TMF2 = 4.0 * ( xmax ) * ( delta) ; \
+    TMF2 = TMF2 > 0.0 ?  TMF2 : - ( TMF2 ) ; \
+    TMF2 = sqrt ( TMF1 * TMF1 + TMF2 ) ; \
     dy_dx = 0.5 * ( 1.0 + TMF1 / TMF2 ) ; \
     dy_dxmax = 0.5 * ( 1.0 - ( TMF1 + 2.0 * delta ) / TMF2 ) ; \
     y = ( xmax ) - 0.5 * ( TMF1 + TMF2 ) ; \
@@ -191,7 +197,9 @@ double TMF1 , TMF2 , TMF3 , TMF4 ;
 
 #define Fn_SL( y , x , xmin , delta , dx ) { \
     TMF1 = ( x ) - ( xmin ) - ( delta ) ; \
-    TMF2 = sqrt ( TMF1 *  TMF1 + 4.0 * ( xmin ) * ( delta ) ) ; \
+    TMF2 = 4.0 * ( xmin ) * ( delta ) ; \
+    TMF2 = TMF2 > 0.0 ?  TMF2 : - ( TMF2 ) ; \
+    TMF2 = sqrt ( TMF1 * TMF1 + TMF2 ) ; \
     dx = 0.5 * ( 1.0 + TMF1 / TMF2 ) ; \
     y = ( xmin ) + 0.5 * ( TMF1 + TMF2 ) ; \
   }
@@ -205,8 +213,7 @@ double TMF1 , TMF2 , TMF3 , TMF4 ;
     TMF2 = sqrt ( ( x ) *  ( x ) + 4.0 * ( delta ) * ( delta) ) ; \
     dx = 0.5 * ( 1.0 + ( x ) / TMF2 ) ; \
     y = 0.5 * ( ( x ) + TMF2 ) ; \
-    if (y < 0) \
-        y = 0 ; \
+    if( y < 0.0 ) { y=0.0; dx=0.0; } \
   }
 #if 0
 /*---------------------------------------------------*
@@ -366,8 +373,8 @@ int HSM2evaluate
  ) 
 {
   HSM2binningParam *pParam = &here->pParam ;
-  HSM2modelCGSParam *modelCGS = &model->modelCGS ;
-  HSM2hereCGSParam *hereCGS = &here->hereCGS ;
+  HSM2modelMKSParam *modelMKS = &model->modelMKS ;
+/*  HSM2hereMKSParam *hereMKS = &here->hereMKS ;*/
   /*-----------------------------------*
    * Constants for Smoothing functions
    *---------------*/
@@ -375,7 +382,7 @@ int HSM2evaluate
   /*  const double cclmmdf = 1.0e-2 ;*/
   const double cclmmdf = 1.0e-1 ;
   const double qme_dlt = 1.0e-4 ;
-  const double eef_dlt = 1.0e-2 ;
+  const double eef_dlt = 1.0e-2 * C_m2cm ;
   const double sti2_dlt = 2.0e-3 ;
   const double pol_dlt = 5.0e-2 ; 
   const double psisti_dlt = 5.0e-3 ;
@@ -430,393 +437,394 @@ int HSM2evaluate
   int flg_rsrd = 0 ; /* Flag for bias loop accounting Rs and Rd */
   int flg_iprv = 0 ; /* Flag for initial guess of Ids */
   int flg_pprv = 0 ; /* Flag for initial guesses of Ps0 and Pds */
-  int flg_noqi = 0 ; /* Flag for the cases regarding Qi=Qd=0 */
+  int flg_noqi =0;     /* Flag for the cases regarding Qi=Qd=0 */
   int flg_vbsc = 0 ; /* Flag for Vbs confining */
   int flg_info = 0 ; 
   int flg_conv = 0 ; /* Flag for Poisson loop convergence */
   int flg_qme = 0 ; /* Flag for QME */
 
   /* flag for NQS calculation */
-  int flg_nqs;
+  int flg_nqs=0 ;
   
   /* Important Variables in HiSIM -------*/
   /* external bias */
-  double Vbse , Vdse , Vgse ;
+  double Vbse =0.0, Vdse =0.0, Vgse =0.0 ;
   /* confine bias */
-  double Vbsc , Vdsc , Vgsc ;
+  double Vbsc =0.0, Vdsc =0.0, Vgsc =0.0 ;
   double Vbsc_dVbse = 1.0 ;
   /* internal bias */
-  double Vbs , Vds , Vgs , Vdb , Vsb ;
+  double Vbs =0.0, Vds =0.0, Vgs =0.0, Vdb =0.0, Vsb =0.0 ;
   double Vbs_dVbse = 1.0 , Vbs_dVdse = 0.0 , Vbs_dVgse = 0.0 ;
   double Vds_dVbse = 0.0 , Vds_dVdse = 1.0 , Vds_dVgse = 0.0 ;
   double Vgs_dVbse = 0.0 , Vgs_dVdse = 0.0 , Vgs_dVgse = 1.0 ;
-  double Vgp = 0.0 ;
-  double Vgp_dVbs = 0.0 , Vgp_dVds = 0.0 , Vgp_dVgs = 0.0 ;
-  double Vgs_fb ;
+  double Vgp =0.0 ;
+  double Vgp_dVbs =0.0, Vgp_dVds =0.0, Vgp_dVgs =0.0 ;
+  double Vgs_fb =0.0 ;
   /* Ps0 : surface potential at the source side */
-  double Ps0 = 0.0 ;
-  double Ps0_dVbs = 0.0 , Ps0_dVds = 0.0 , Ps0_dVgs = 0.0 ;
-  double Ps0_ini = 0.0 , Ps0_iniA , Ps0_iniB ;
+  double Ps0 =0.0 ;
+  double Ps0_dVbs =0.0, Ps0_dVds =0.0, Ps0_dVgs =0.0 ;
+  double Ps0_ini =0.0, Ps0_iniA =0.0, Ps0_iniB =0.0 ;
   /* Psl : surface potential at the drain side */
-  double Psl = 0.0 ;
-  double Psl_dVbs = 0.0 , Psl_dVds = 0.0 , Psl_dVgs = 0.0 ;
-  double Psl_lim , dPlim ;
+  double Psl =0.0 ;
+  double Psl_dVbs =0.0, Psl_dVds =0.0, Psl_dVgs =0.0 ;
+  double Psl_lim =0.0, dPlim =0.0 ;
   /* Pds := Psl - Ps0 */
   double Pds = 0.0 ;
   double Pds_dVbs = 0.0, Pds_dVds = 0.0 , Pds_dVgs  = 0.0 ;
-  double Pds_ini = 0.0 ;
-  double Pds_max ;
+  double Pds_ini =0.0 ;
+  double Pds_max =0.0 ;
   /* iteration numbers of Ps0 and Psl equations. */
   int lp_s0 = 0 , lp_sl = 0 ;
   /* Xi0 := beta * ( Ps0 - Vbs ) - 1. */
-  double Xi0 = 0.0 ;
-  double Xi0_dVbs = 0.0 , Xi0_dVds = 0.0 , Xi0_dVgs = 0.0 ;
-  double Xi0p12 = 0.0 ;
-  double Xi0p12_dVbs = 0.0 , Xi0p12_dVds = 0.0 , Xi0p12_dVgs = 0.0 ;
-  double Xi0p32 = 0.0 ;
+  double Xi0 =0.0 ;
+  double Xi0_dVbs =0.0, Xi0_dVds =0.0, Xi0_dVgs =0.0 ;
+  double Xi0p12 =0.0 ;
+  double Xi0p12_dVbs =0.0, Xi0p12_dVds =0.0, Xi0p12_dVgs =0.0 ;
+  double Xi0p32 =0.0 ;
   /* Xil := beta * ( Psl - Vbs ) - 1. */
-  double Xilp12 = 0.0 ;
-  double Xilp32 = 0.0 ;
-  double Xil = 0.0 ;
+  double Xilp12 =0.0 ;
+  double Xilp32 =0.0 ;
+  double Xil =0.0 ;
   /* modified bias and potential for sym.*/
-  double Vbsz = 0.0 , Vdsz = 0.0 , Vgsz = 0.0 ;
-  double Vbsz_dVbs = 0.0 , Vbsz_dVds = 0.0 ;
-  double Vdsz_dVds = 0.0 ;
-  double Vgsz_dVgs = 0.0 , Vgsz_dVds = 0.0 ;
-  double Vzadd , Vzadd_dVds ;
-  double Ps0z = 0.0 , Ps0z_dVbs = 0.0 , Ps0z_dVds = 0.0 , Ps0z_dVgs = 0.0 ;
-  double Pzadd , Pzadd_dVbs , Pzadd_dVds , Pzadd_dVgs ;
+  double Vbsz =0.0, Vdsz =0.0, Vgsz =0.0 ;
+  double Vbsz_dVbs =0.0, Vbsz_dVds =0.0 ;
+  double Vdsz_dVds =0.0 ;
+  double Vgsz_dVgs =0.0, Vgsz_dVds =0.0 ;
+  double Vzadd =0.0, Vzadd_dVds =0.0 ;
+  double Ps0z =0.0, Ps0z_dVbs =0.0, Ps0z_dVds =0.0, Ps0z_dVgs =0.0 ;
+  double Pzadd =0.0, Pzadd_dVbs =0.0, Pzadd_dVds =0.0, Pzadd_dVgs =0.0 ;
   double Vgpz , Vgpz_dVbs , Vgpz_dVds , Vgpz_dVgs ; /* (tmp) */
 
   /* IBPC */
-  double dVbsIBPC , dVbsIBPC_dVbs , dVbsIBPC_dVds , dVbsIBPC_dVgs ;
-  double betaWL = 0.0 , betaWL_dVbs = 0.0 , betaWL_dVds = 0.0 , betaWL_dVgs = 0.0 ;
-  double Xi0p32_dVbs = 0.0 , Xi0p32_dVds = 0.0 , Xi0p32_dVgs = 0.0 ;
-  double Xil_dVbs = 0.0 , Xil_dVds = 0.0 , Xil_dVgs = 0.0 ;
-  double Xilp12_dVbs = 0.0 , Xilp12_dVds = 0.0 , Xilp12_dVgs = 0.0 ;
-  double Xilp32_dVbs = 0.0 , Xilp32_dVds = 0.0 , Xilp32_dVgs = 0.0 ;
-  double dG3 , dG3_dVbs , dG3_dVds , dG3_dVgs ;
-  double dG4 , dG4_dVbs , dG4_dVds , dG4_dVgs ;
-  double dIdd , dIdd_dVbs , dIdd_dVds , dIdd_dVgs ;
+  double dVbsIBPC =0.0, dVbsIBPC_dVbs =0.0, dVbsIBPC_dVds =0.0, dVbsIBPC_dVgs =0.0 ;
+  double betaWL =0.0, betaWL_dVbs =0.0, betaWL_dVds =0.0, betaWL_dVgs =0.0 ;
+  double Xi0p32_dVbs =0.0, Xi0p32_dVds =0.0, Xi0p32_dVgs =0.0 ;
+  double Xil_dVbs =0.0, Xil_dVds =0.0, Xil_dVgs =0.0 ;
+  double Xilp12_dVbs =0.0, Xilp12_dVds =0.0, Xilp12_dVgs =0.0 ;
+  double Xilp32_dVbs =0.0, Xilp32_dVds =0.0, Xilp32_dVgs =0.0 ;
+  double dG3 =0.0, dG3_dVbs =0.0, dG3_dVds =0.0, dG3_dVgs =0.0 ;
+  double dG4 =0.0, dG4_dVbs =0.0, dG4_dVds =0.0, dG4_dVgs =0.0 ;
+  double dIdd =0.0, dIdd_dVbs =0.0, dIdd_dVds =0.0, dIdd_dVgs =0.0 ;
 
   /* Chi := beta * ( Ps{0/l} - Vbs ) */
-  double Chi = 0.0 ;
-  double Chi_dVbs , Chi_dVds , Chi_dVgs ;
+  double Chi =0.0 ;
+  double Chi_dVbs =0.0, Chi_dVds =0.0, Chi_dVgs =0.0 ;
   /* Rho := beta * ( Psl - Vds ) */
-  double Rho ;
+  double Rho =0.0 ;
   /* threshold voltage */
-  double Vth = 0.0 ;
-  double Vth0 = 0.0 ;
-  double Vth0_dVb = 0.0 , Vth0_dVd = 0.0 , Vth0_dVg = 0.0 ;
+  double Vth =0.0 ;
+  double Vth0 =0.0 ;
+  double Vth0_dVb =0.0, Vth0_dVd =0.0, Vth0_dVg =0.0 ;
   /* variation of threshold voltage */
-  double dVth = 0.0 ;
-  double dVth_dVb = 0.0 , dVth_dVd = 0.0 , dVth_dVg = 0.0 ;
-  double dVth0 = 0.0 ;
-  double dVth0_dVb = 0.0 , dVth0_dVd = 0.0 , dVth0_dVg = 0.0 ;
-  double dVthSC = 0.0 ;
-  double dVthSC_dVb = 0.0 , dVthSC_dVd = 0.0 , dVthSC_dVg = 0.0 ;
-  double Pb20b ;
-  double Pb20b_dVg , Pb20b_dVb , Pb20b_dVd ;
-  double dVthW ;
-  double dVthW_dVb , dVthW_dVd , dVthW_dVg ;
+  double dVth =0.0 ;
+  double dVth_dVb =0.0, dVth_dVd =0.0, dVth_dVg =0.0 ;
+  double dVth0 =0.0 ;
+  double dVth0_dVb =0.0, dVth0_dVd =0.0, dVth0_dVg =0.0 ;
+  double dVthSC =0.0 ;
+  double dVthSC_dVb =0.0, dVthSC_dVd =0.0, dVthSC_dVg =0.0 ;
+  double Pb20b =0.0 ;
+  double Pb20b_dVg =0.0, Pb20b_dVb =0.0, Pb20b_dVd =0.0 ;
+  double dVthW =0.0 ;
+  double dVthW_dVb =0.0, dVthW_dVd =0.0, dVthW_dVg =0.0 ;
   /* Alpha and related parameters */
-  double Alpha = 0.0 ;
-  double Alpha_dVbs , Alpha_dVds , Alpha_dVgs ;
-  double Achi ;
-  double Achi_dVbs , Achi_dVds , Achi_dVgs ;
+  double Alpha =0.0 ;
+  double Alpha_dVbs =0.0, Alpha_dVds =0.0, Alpha_dVgs =0.0 ;
+  double Achi =0.0 ;
+  double Achi_dVbs =0.0, Achi_dVds =0.0, Achi_dVgs =0.0 ;
   double VgVt = 0.0 ;
   double VgVt_dVbs = 0.0, VgVt_dVds = 0.0, VgVt_dVgs = 0.0 ;
   double Pslsat = 0.0 ;
   double Vdsat = 0.0 ;
   double VdsatS = 0.0 ;
   double VdsatS_dVbs = 0.0, VdsatS_dVds = 0.0, VdsatS_dVgs = 0.0 ;
-  double Delta ;
+  double Delta =0.0 ;
   /* Q_B and capacitances */
-  double Qb = 0.0 , Qb_dVbs = 0.0 , Qb_dVds = 0.0 , Qb_dVgs = 0.0 ;
-  double Qb_dVbse , Qb_dVdse , Qb_dVgse ;
+  double Qb =0.0, Qb_dVbs =0.0, Qb_dVds =0.0, Qb_dVgs =0.0 ;
+  double Qb_dVbse =0.0, Qb_dVdse =0.0, Qb_dVgse =0.0 ;
   double Qbu = 0.0 , Qbu_dVbs = 0.0 , Qbu_dVds = 0.0 , Qbu_dVgs = 0.0 ;
   /* Q_I and capacitances */
-  double Qi = 0.0 , Qi_dVbs = 0.0 , Qi_dVds = 0.0 , Qi_dVgs = 0.0 ;
-  double Qi_dVbse , Qi_dVdse , Qi_dVgse ;
+  double Qi =0.0, Qi_dVbs =0.0, Qi_dVds =0.0, Qi_dVgs =0.0 ;
+  double Qi_dVbse =0.0, Qi_dVdse =0.0, Qi_dVgse =0.0 ;
   double Qiu = 0.0 , Qiu_dVbs = 0.0 , Qiu_dVds = 0.0 , Qiu_dVgs = 0.0 ;
   /* Q_D and capacitances */
-  double Qd , Qd_dVbs , Qd_dVds , Qd_dVgs ;
-  double Qd_dVbse , Qd_dVdse , Qd_dVgse ;
-  double qd_dVgse, qd_dVdse, qd_dVbse, qd_dVsse ;
+  double Qd =0.0, Qd_dVbs =0.0, Qd_dVds =0.0, Qd_dVgs =0.0 ;
+  double Qd_dVbse =0.0, Qd_dVdse =0.0, Qd_dVgse =0.0 ;
+  double qd_dVgse=0.0, qd_dVdse=0.0, qd_dVbse=0.0, qd_dVsse =0.0 ;
   /* channel current */
-  double Ids ;
-  double Ids_dVbs = 0.0 , Ids_dVds = 0.0 , Ids_dVgs = 0.0 ;
-  double Ids_dVbse , Ids_dVdse , Ids_dVgse ;
-  double Ids0 ;
-  double Ids0_dVbs , Ids0_dVds , Ids0_dVgs ;
+  double Ids =0.0 ;
+  double Ids_dVbs =0.0, Ids_dVds =0.0, Ids_dVgs =0.0 ;
+  double Ids_dVbse =0.0, Ids_dVdse =0.0, Ids_dVgse =0.0 ;
+  double Ids0 =0.0 ;
+  double Ids0_dVbs =0.0, Ids0_dVds =0.0, Ids0_dVgs =0.0 ;
   /* STI */
-  double dVthSCSTI ;
-  double dVthSCSTI_dVg , dVthSCSTI_dVd , dVthSCSTI_dVb ;
-  double Vgssti ;
-  double Vgssti_dVbs , Vgssti_dVds , Vgssti_dVgs ;
-  double costi0 , costi1 , costi3 ;
-  double costi4 , costi5 , costi6 , costi7 ;
-  double costi3_dVb , costi3_dVd, costi3_dVg ;
-  double costi3_dVb_c3 , costi3_dVd_c3, costi3_dVg_c3 ;
-  double Psasti ;
-  double Psasti_dVbs , Psasti_dVds , Psasti_dVgs ;
-  double Psbsti ;
-  double Psbsti_dVbs , Psbsti_dVds , Psbsti_dVgs ;
-  double Psab ;
-  double Psab_dVbs , Psab_dVds , Psab_dVgs ;
-  double Psti ;
-  double Psti_dVbs , Psti_dVds , Psti_dVgs ;
-  double sq1sti ;
-  double sq1sti_dVbs , sq1sti_dVds , sq1sti_dVgs ;
-  double sq2sti ;
-  double sq2sti_dVbs , sq2sti_dVds , sq2sti_dVgs ;
-  double Qn0sti ;
-  double Qn0sti_dVbs , Qn0sti_dVds , Qn0sti_dVgs ;
-  double Idssti ;
-  double Idssti_dVbs , Idssti_dVds , Idssti_dVgs ;
+  double dVthSCSTI =0.0 ;
+  double dVthSCSTI_dVg =0.0, dVthSCSTI_dVd =0.0, dVthSCSTI_dVb =0.0 ;
+  double Vgssti =0.0 ;
+  double Vgssti_dVbs =0.0, Vgssti_dVds =0.0, Vgssti_dVgs =0.0 ;
+  double costi0 =0.0, costi1 =0.0, costi3 =0.0 ;
+  double costi4 =0.0, costi5 =0.0, costi6 =0.0, costi7 =0.0 ;
+  double costi3_dVb =0.0, costi3_dVd=0.0, costi3_dVg =0.0 ;
+  double costi3_dVb_c3 =0.0, costi3_dVd_c3=0.0, costi3_dVg_c3 =0.0 ;
+  double Psasti =0.0 ;
+  double Psasti_dVbs =0.0, Psasti_dVds =0.0, Psasti_dVgs =0.0 ;
+  double Psbsti =0.0 ;
+  double Psbsti_dVbs =0.0, Psbsti_dVds =0.0, Psbsti_dVgs =0.0 ;
+  double Psab =0.0 ;
+  double Psab_dVbs =0.0, Psab_dVds =0.0, Psab_dVgs =0.0 ;
+  double Psti =0.0 ;
+  double Psti_dVbs =0.0, Psti_dVds =0.0, Psti_dVgs =0.0 ;
+  double sq1sti =0.0 ;
+  double sq1sti_dVbs =0.0, sq1sti_dVds =0.0, sq1sti_dVgs =0.0 ;
+  double sq2sti =0.0 ;
+  double sq2sti_dVbs =0.0, sq2sti_dVds =0.0, sq2sti_dVgs =0.0 ;
+  double Qn0sti =0.0 ;
+  double Qn0sti_dVbs =0.0, Qn0sti_dVds =0.0, Qn0sti_dVgs =0.0 ;
+  double Idssti =0.0 ;
+  double Idssti_dVbs =0.0, Idssti_dVds =0.0, Idssti_dVgs =0.0 ;
   /* constants */
-  double beta , beta_inv ;
-  double beta2 ;
-  double Pb2 ;
-  double Pb20 ;
-  double Pb2c ;
-  double Vfb ;
-  double c_eox ;
-  double Leff, Weff ;
-  double q_Nsub ;
+  double beta =0.0, beta_inv =0.0 ;
+  double beta2 =0.0 ;
+  double Pb2 =0.0 ;
+  double Pb20 =0.0 ;
+  double Pb2c =0.0 ;
+  double Vfb =0.0 ;
+  double c_eox =0.0 ;
+  double Leff=0.0, Weff =0.0 ;
+  double q_Nsub =0.0 ;
   /* PART-1 */
   /* Accumulation zone */
-  double Psa ;
-  double Psa_dVbs , Psa_dVds , Psa_dVgs ;
+  double Psa =0.0 ;
+  double Psa_dVbs =0.0, Psa_dVds =0.0, Psa_dVgs =0.0 ;
   /* CLM*/
-  double Psdl = 0.0 , Psdl_dVbs = 0.0 , Psdl_dVds = 0.0 , Psdl_dVgs = 0.0 ;
-  double Lred = 0.0 , Lred_dVbs = 0.0 , Lred_dVds = 0.0 , Lred_dVgs = 0.0 ;
-  double Lch = 0.0 , Lch_dVbs = 0.0 , Lch_dVds = 0.0 , Lch_dVgs = 0.0 ;
-  double Wd , Wd_dVbs , Wd_dVds , Wd_dVgs ;
-  double Aclm ;
+  double Psdl =0.0, Psdl_dVbs =0.0, Psdl_dVds =0.0, Psdl_dVgs =0.0 ;
+  double Lred =0.0, Lred_dVbs =0.0, Lred_dVds =0.0, Lred_dVgs =0.0 ;
+  double Lch =0.0, Lch_dVbs =0.0, Lch_dVds =0.0, Lch_dVgs =0.0 ;
+  double Wd =0.0, Wd_dVbs =0.0, Wd_dVds =0.0, Wd_dVgs =0.0 ;
+  double Aclm =0.0 ;
   /* Pocket Implant */
-  double Vthp, Vthp_dVb, Vthp_dVd, Vthp_dVg ;
-  double dVthLP = 0.0, dVthLP_dVb = 0.0, dVthLP_dVd = 0.0, dVthLP_dVg = 0.0 ;
-  double bs12, bs12_dVb, bs12_dVd , bs12_dVg ;
-  double Qbmm, Qbmm_dVb, Qbmm_dVd , Qbmm_dVg ;
-  double dqb, dqb_dVb, dqb_dVg, dqb_dVd ;
-  double Vdx, Vdx2 ;
-  double Pbsum, sqrt_Pbsum ;
-  double Pbsum_dVb, Pbsum_dVd, Pbsum_dVg ;
+  double Vthp=0.0, Vthp_dVb=0.0, Vthp_dVd=0.0, Vthp_dVg =0.0 ;
+  double dVthLP=0.0, dVthLP_dVb=0.0, dVthLP_dVd=0.0, dVthLP_dVg =0.0 ;
+  double bs12=0.0, bs12_dVb=0.0, bs12_dVd =0.0, bs12_dVg =0.0 ;
+  double Qbmm=0.0, Qbmm_dVb=0.0, Qbmm_dVd =0.0, Qbmm_dVg =0.0 ;
+  double dqb=0.0, dqb_dVb=0.0, dqb_dVg=0.0, dqb_dVd =0.0 ;
+  double Vdx=0.0, Vdx2 =0.0 ;
+  double Pbsum=0.0, sqrt_Pbsum =0.0 ;
+  double Pbsum_dVb=0.0, Pbsum_dVd=0.0, Pbsum_dVg =0.0 ;
   /* Poly-Depletion Effect */
   const double pol_b = 1.0 ;
-  double dPpg = 0.0 , dPpg_dVb = 0.0 , dPpg_dVd = 0.0 , dPpg_dVg = 0.0 ; 
+  double dPpg =0.0, dPpg_dVb =0.0, dPpg_dVd =0.0, dPpg_dVg =0.0; 
   /* Quantum Effect */
-  double Tox , Tox_dVb , Tox_dVd , Tox_dVg ;
-  double dTox , dTox_dVb , dTox_dVd , dTox_dVg ;
-  double Cox = 0.0 , Cox_dVb = 0.0 , Cox_dVd = 0.0 , Cox_dVg = 0.0 ;
-  double Cox_inv = 0.0 , Cox_inv_dVb , Cox_inv_dVd , Cox_inv_dVg ;
-  double Tox0 , Cox0 , Cox0_inv ;
-  double Vthq, Vthq_dVb , Vthq_dVd ;
+  double Tox =0.0, Tox_dVb =0.0, Tox_dVd =0.0, Tox_dVg =0.0 ;
+  double dTox =0.0, dTox_dVb =0.0, dTox_dVd =0.0, dTox_dVg =0.0 ;
+  double Cox =0.0, Cox_dVb =0.0, Cox_dVd =0.0, Cox_dVg =0.0 ;
+  double Cox_inv =0.0, Cox_inv_dVb =0.0, Cox_inv_dVd =0.0, Cox_inv_dVg =0.0 ;
+  double Tox0 =0.0, Cox0 =0.0, Cox0_inv =0.0 ;
+  double Vthq=0.0, Vthq_dVb =0.0, Vthq_dVd =0.0 ;
   /* Igate , Igidl , Igisl */
   const double igate_dlt = 1.0e-2 ;
-  double Psdlz , Psdlz_dVbs , Psdlz_dVds , Psdlz_dVgs ;
-  double Egp12 , Egp32 ;
-  double E1 , E1_dVb , E1_dVd , E1_dVg ;
-  double Etun , Etun_dVbs , Etun_dVds , Etun_dVgs ;
-  double Egidl , Egidl_dVb , Egidl_dVd , Egidl_dVg ;
-  double Egisl , Egisl_dVb , Egisl_dVd , Egisl_dVg ;
-  double Igate , Igate_dVbs , Igate_dVds , Igate_dVgs ;
-  double Igate_dVbse , Igate_dVdse , Igate_dVgse ;
-  double Igs , Igd , Igb ;
-  double Igs_dVbs , Igs_dVds , Igs_dVgs ;
-  double Igs_dVbse , Igs_dVdse , Igs_dVgse ;
-  double Igd_dVbs , Igd_dVds , Igd_dVgs ;
-  double Igd_dVbse , Igd_dVdse , Igd_dVgse ;
-  double Igb_dVbs , Igb_dVds , Igb_dVgs ;
-  double Igb_dVbse , Igb_dVdse , Igb_dVgse ;
-  double Igidl , Igidl_dVbs , Igidl_dVds , Igidl_dVgs ;
-  double Igidl_dVbse , Igidl_dVdse , Igidl_dVgse ;
-  double Igisl , Igisl_dVbs , Igisl_dVds , Igisl_dVgs ;
-  double Igisl_dVbse , Igisl_dVdse , Igisl_dVgse ;
+  double Psdlz =0.0, Psdlz_dVbs =0.0, Psdlz_dVds =0.0, Psdlz_dVgs =0.0 ;
+  double Egp12 =0.0, Egp32 =0.0 ;
+  double E1 =0.0, E1_dVb =0.0, E1_dVd =0.0, E1_dVg =0.0 ;
+  double Qb0Cox =0.0, Qb0Cox_dVb =0.0, Qb0Cox_dVd =0.0, Qb0Cox_dVg =0.0 ;
+  double Etun =0.0, Etun_dVbs =0.0, Etun_dVds =0.0, Etun_dVgs =0.0 ;
+  double Egidl =0.0, Egidl_dVb =0.0, Egidl_dVd =0.0, Egidl_dVg =0.0 ;
+  double Egisl =0.0, Egisl_dVb =0.0, Egisl_dVd =0.0, Egisl_dVg =0.0 ;
+  double Igate =0.0, Igate_dVbs =0.0, Igate_dVds =0.0, Igate_dVgs =0.0 ;
+  double Igate_dVbse =0.0, Igate_dVdse =0.0, Igate_dVgse =0.0 ;
+  double Igs =0.0, Igd =0.0, Igb =0.0 ;
+  double Igs_dVbs =0.0, Igs_dVds =0.0, Igs_dVgs =0.0 ;
+  double Igs_dVbse =0.0, Igs_dVdse =0.0, Igs_dVgse =0.0 ;
+  double Igd_dVbs =0.0, Igd_dVds =0.0, Igd_dVgs =0.0 ;
+  double Igd_dVbse =0.0, Igd_dVdse =0.0, Igd_dVgse =0.0 ;
+  double Igb_dVbs =0.0, Igb_dVds =0.0, Igb_dVgs =0.0 ;
+  double Igb_dVbse =0.0, Igb_dVdse =0.0, Igb_dVgse =0.0 ;
+  double Igidl =0.0, Igidl_dVbs =0.0, Igidl_dVds =0.0, Igidl_dVgs =0.0 ;
+  double Igidl_dVbse =0.0, Igidl_dVdse =0.0, Igidl_dVgse =0.0 ;
+  double Igisl =0.0, Igisl_dVbs =0.0, Igisl_dVds =0.0, Igisl_dVgs =0.0 ;
+  double Igisl_dVbse =0.0, Igisl_dVdse =0.0, Igisl_dVgse =0.0 ;
   /* connecting function */
-  double FD2 = 0.0 , FD2_dVbs = 0.0 , FD2_dVds = 0.0 , FD2_dVgs = 0.0 ;
-  double FMDVDS = 0.0 , FMDVDS_dVbs = 0.0 , FMDVDS_dVds = 0.0 , FMDVDS_dVgs = 0.0 ;
+  double FD2 =0.0, FD2_dVbs =0.0, FD2_dVds =0.0, FD2_dVgs =0.0 ;
+  double FMDVDS =0.0, FMDVDS_dVbs =0.0, FMDVDS_dVds =0.0, FMDVDS_dVgs =0.0 ;
 
-  double cnst0 , cnst1 ;
+  double cnst0 =0.0, cnst1 =0.0 ;
   double cnstCoxi =0.0 , cnstCoxi_dVg =0.0 , cnstCoxi_dVd =0.0 , cnstCoxi_dVb =0.0 ;
-  double fac1 = 0.0 ;
-  double fac1_dVbs , fac1_dVds , fac1_dVgs ;
-  double fac1p2 ;
-  double fs01 = 0.0 ;
-  double fs01_dPs0 = 0.0 ;
-  double fs01_dVbs , fs01_dVds , fs01_dVgs ;
-  double fs02 = 0.0 ;
-  double fs02_dPs0 = 0.0 ;
-  double fs02_dVbs , fs02_dVds , fs02_dVgs ;
-  double fsl1 ;
-  double fsl1_dPsl ;
-  double fsl1_dVbs , fsl1_dVds , fsl1_dVgs ; /* Vdseff */
-  double fsl2 = 0.0 ;
-  double fsl2_dPsl ;
-  double fsl2_dVbs , fsl2_dVds , fsl2_dVgs ; /* Vdseff */
-  double cfs1 ;
-  double fb = 0.0 , fb_dChi = 0.0 ;
-  double fi = 0.0 , fi_dChi = 0.0 ;
-  double exp_Chi , exp_Rho = 0.0 , exp_bVbs , exp_bVbsVds ;
-  double Fs0, Fsl ;
-  double Fs0_dPs0 = 0.0 , Fsl_dPsl = 0.0 ;
-  double dPs0 , dPsl ;
+  double fac1 =0.0 ;
+  double fac1_dVbs =0.0, fac1_dVds =0.0, fac1_dVgs =0.0 ;
+  double fac1p2 =0.0 ;
+  double fs01 =0.0 ;
+  double fs01_dPs0 =0.0 ;
+  double fs01_dVbs =0.0, fs01_dVds =0.0, fs01_dVgs =0.0 ;
+  double fs02 =0.0 ;
+  double fs02_dPs0 =0.0 ;
+  double fs02_dVbs =0.0, fs02_dVds =0.0, fs02_dVgs =0.0 ;
+  double fsl1 =0.0 ;
+  double fsl1_dPsl =0.0 ;
+  double fsl1_dVbs =0.0, fsl1_dVds =0.0, fsl1_dVgs =0.0; /* Vdseff */
+  double fsl2 =0.0 ;
+  double fsl2_dPsl =0.0 ;
+  double fsl2_dVbs =0.0, fsl2_dVds =0.0, fsl2_dVgs =0.0; /* Vdseff */
+  double cfs1 =0.0 ;
+  double fb =0.0, fb_dChi =0.0 ;
+  double fi =0.0, fi_dChi =0.0 ;
+  double exp_Chi =0.0, exp_Rho =0.0, exp_bVbs =0.0, exp_bVbsVds =0.0 ;
+  double Fs0=0.0, Fsl =0.0 ;
+  double Fs0_dPs0 =0.0, Fsl_dPsl =0.0 ;
+  double dPs0 =0.0, dPsl =0.0 ;
   double Qn0 = 0.0e0 ;
-  double Qn0_dVbs = 0.0 , Qn0_dVds = 0.0 , Qn0_dVgs = 0.0 ;
-  double Qb0 ;
-  double Qb0_dVb , Qb0_dVd , Qb0_dVg ;
-  double Qbnm ;
-  double Qbnm_dVbs , Qbnm_dVds , Qbnm_dVgs ;
-  double DtPds ;
-  double DtPds_dVbs , DtPds_dVds , DtPds_dVgs ;
-  double Qinm ;
-  double Qinm_dVbs , Qinm_dVds , Qinm_dVgs ;
-  double Qidn ;
-  double Qidn_dVbs , Qidn_dVds , Qidn_dVgs ;
-  double Qdnm ;
-  double Qdnm_dVbs , Qdnm_dVds , Qdnm_dVgs ;
-  double Qddn ;
-  double Qddn_dVbs , Qddn_dVds , Qddn_dVgs ;
-  double Quot ;
-  double Qdrat = 0.5;
-  double Qdrat_dVbs = 0.0 , Qdrat_dVds = 0.0, Qdrat_dVgs = 0.0;
-  double Qdrat_dVbse , Qdrat_dVdse , Qdrat_dVgse ;
-  double Idd = 0.0 ;
-  double Idd_dVbs = 0.0 , Idd_dVds = 0.0 , Idd_dVgs = 0.0 ;
-  double Fdd ;
-  double Fdd_dVbs , Fdd_dVds , Fdd_dVgs ;
-  double Eeff ;
-  double Eeff_dVbs , Eeff_dVds , Eeff_dVgs ;
-  double Rns ;
+  double Qn0_dVbs =0.0, Qn0_dVds =0.0, Qn0_dVgs =0.0 ;
+  double Qb0 =0.0 ;
+  double Qb0_dVb =0.0, Qb0_dVd =0.0, Qb0_dVg =0.0 ;
+  double Qbnm =0.0 ;
+  double Qbnm_dVbs =0.0, Qbnm_dVds =0.0, Qbnm_dVgs =0.0 ;
+  double DtPds =0.0 ;
+  double DtPds_dVbs =0.0, DtPds_dVds =0.0, DtPds_dVgs =0.0 ;
+  double Qinm =0.0 ;
+  double Qinm_dVbs =0.0, Qinm_dVds =0.0, Qinm_dVgs =0.0 ;
+  double Qidn =0.0 ;
+  double Qidn_dVbs =0.0, Qidn_dVds =0.0, Qidn_dVgs =0.0 ;
+  double Qdnm =0.0 ;
+  double Qdnm_dVbs =0.0, Qdnm_dVds =0.0, Qdnm_dVgs =0.0 ;
+  double Qddn =0.0 ;
+  double Qddn_dVbs =0.0, Qddn_dVds =0.0, Qddn_dVgs =0.0 ;
+  double Quot =0.0 ;
+  double Qdrat = 0.5 ;
+  double Qdrat_dVbs = 0.0 , Qdrat_dVds = 0.0, Qdrat_dVgs = 0.0 ;
+  double Qdrat_dVbse =0.0, Qdrat_dVdse =0.0, Qdrat_dVgse =0.0 ;
+  double Idd =0.0 ;
+  double Idd_dVbs =0.0, Idd_dVds =0.0, Idd_dVgs =0.0 ;
+  double Fdd =0.0 ;
+  double Fdd_dVbs =0.0, Fdd_dVds =0.0, Fdd_dVgs =0.0 ;
+  double Eeff =0.0 ;
+  double Eeff_dVbs =0.0, Eeff_dVds =0.0, Eeff_dVgs =0.0 ;
+  double Rns =0.0 ;
   double Mu = 0.0 ;
-  double Mu_dVbs = 0.0 , Mu_dVds = 0.0 , Mu_dVgs = 0.0 ;
-  double Muun = 0.0 , Muun_dVbs , Muun_dVds , Muun_dVgs ;
+  double Mu_dVbs =0.0, Mu_dVds =0.0, Mu_dVgs =0.0 ;
+  double Muun =0.0, Muun_dVbs =0.0, Muun_dVds =0.0, Muun_dVgs =0.0 ;
   double Ey = 0e0 ;
-  double Ey_dVbs = 0.0 , Ey_dVds = 0.0 , Ey_dVgs = 0.0 ;
-  double Em ;
-  double Em_dVbs , Em_dVds , Em_dVgs ;
-  double Vmax ;
-  double Eta ;
-  double Eta_dVbs , Eta_dVds , Eta_dVgs ;
-  double Eta1 , Eta1p12 , Eta1p32 , Eta1p52 ;
-  double Zeta12 , Zeta32 , Zeta52 ;
-  double F00 ;
-  double F00_dVbs , F00_dVds , F00_dVgs ;
-  double F10 ;
-  double F10_dVbs , F10_dVds , F10_dVgs ;
-  double F30 ;
-  double F30_dVbs , F30_dVds , F30_dVgs ;
-  double F11 ;
-  double F11_dVbs , F11_dVds , F11_dVgs ;
-  double Ps0_min ;
-  double Ps0_min_dVbs , Ps0_min_dVds , Ps0_min_dVgs ;
-  double Acn , Acd , Ac1 , Ac2 , Ac3 , Ac4 , Ac31 , Ac41 ;
-  double Acn_dVbs , Acn_dVds , Acn_dVgs ;
-  double Acd_dVbs , Acd_dVds , Acd_dVgs ;
-  double Ac1_dVbs , Ac1_dVds , Ac1_dVgs ;
-  double Ac2_dVbs , Ac2_dVds , Ac2_dVgs ;
-  double Ac3_dVbs , Ac3_dVds , Ac3_dVgs ;
-  double Ac4_dVbs , Ac4_dVds , Ac4_dVgs ;
-  double Ac31_dVbs , Ac31_dVds , Ac31_dVgs ;
+  double Ey_dVbs =0.0, Ey_dVds =0.0, Ey_dVgs =0.0 ;
+  double Em =0.0 ;
+  double Em_dVbs =0.0, Em_dVds =0.0, Em_dVgs =0.0 ;
+  double Vmax =0.0 ;
+  double Eta =0.0 ;
+  double Eta_dVbs =0.0, Eta_dVds =0.0, Eta_dVgs =0.0 ;
+  double Eta1 =0.0, Eta1p12 =0.0, Eta1p32 =0.0, Eta1p52 =0.0 ;
+  double Zeta12 =0.0, Zeta32 =0.0, Zeta52 =0.0 ;
+  double F00 =0.0 ;
+  double F00_dVbs =0.0, F00_dVds =0.0, F00_dVgs =0.0 ;
+  double F10 =0.0 ;
+  double F10_dVbs =0.0, F10_dVds =0.0, F10_dVgs =0.0 ;
+  double F30 =0.0 ;
+  double F30_dVbs =0.0, F30_dVds =0.0, F30_dVgs =0.0 ;
+  double F11 =0.0 ;
+  double F11_dVbs =0.0, F11_dVds =0.0, F11_dVgs =0.0 ;
+  double Ps0_min =0.0 ;
+  double Ps0_min_dVbs =0.0, Ps0_min_dVds =0.0, Ps0_min_dVgs =0.0 ;
+  double Acn =0.0, Acd =0.0, Ac1 =0.0, Ac2 =0.0, Ac3 =0.0, Ac4 =0.0, Ac31 =0.0, Ac41 =0.0 ;
+  double Acn_dVbs =0.0, Acn_dVds =0.0, Acn_dVgs =0.0 ;
+  double Acd_dVbs =0.0, Acd_dVds =0.0, Acd_dVgs =0.0 ;
+  double Ac1_dVbs =0.0, Ac1_dVds =0.0, Ac1_dVgs =0.0 ;
+  double Ac2_dVbs =0.0, Ac2_dVds =0.0, Ac2_dVgs =0.0 ;
+  double Ac3_dVbs =0.0, Ac3_dVds =0.0, Ac3_dVgs =0.0 ;
+  double Ac4_dVbs =0.0, Ac4_dVds =0.0, Ac4_dVgs =0.0 ;
+  double Ac31_dVbs =0.0, Ac31_dVds =0.0, Ac31_dVgs =0.0 ;
   /* PART-2 (Isub) */
-  double Isub ;
-  double Isub_dVbs , Isub_dVds , Isub_dVgs ;
-  double Isub_dVbse , Isub_dVdse , Isub_dVgse ;
-  double Psislsat, Psisubsat ;
-  double Psislsat_dVd, Psislsat_dVg, Psislsat_dVb ;
-  double Psisubsat_dVd, Psisubsat_dVg, Psisubsat_dVb ;
+  double Isub =0.0 ;
+  double Isub_dVbs =0.0, Isub_dVds =0.0, Isub_dVgs =0.0 ;
+  double Isub_dVbse =0.0, Isub_dVdse =0.0, Isub_dVgse =0.0 ;
+  double Psislsat=0.0, Psisubsat =0.0 ;
+  double Psislsat_dVd=0.0, Psislsat_dVg=0.0, Psislsat_dVb =0.0 ;
+  double Psisubsat_dVd=0.0, Psisubsat_dVg=0.0, Psisubsat_dVb =0.0 ;
   /* PART-3 (overlap) */
-  double cov_slp , cov_mag , covvg , covvg_dVgs ;
-  double Lov ;
+  double cov_slp =0.0, cov_mag =0.0, covvg =0.0, covvg_dVgs =0.0 ;
+  double Lov =0.0 ;
   double Qgos = 0.0, Qgos_dVbs = 0.0, Qgos_dVds = 0.0, Qgos_dVgs = 0.0 ;
-  double Qgos_dVbse , Qgos_dVdse , Qgos_dVgse ;
+  double Qgos_dVbse =0.0, Qgos_dVdse =0.0, Qgos_dVgse =0.0 ;
   double Qgod = 0.0, Qgod_dVbs = 0.0, Qgod_dVds = 0.0, Qgod_dVgs = 0.0 ;
-  double Qgod_dVbse , Qgod_dVdse , Qgod_dVgse ;
+  double Qgod_dVbse =0.0, Qgod_dVdse =0.0, Qgod_dVgse =0.0 ;
 
   int flg_overgiven =0 ;
 
-  double Qgbo , Qgbo_dVbs , Qgbo_dVds , Qgbo_dVgs ;
-  double Qgbo_dVbse , Qgbo_dVdse , Qgbo_dVgse ;
-  double Cggo = 0.0 , Cgdo = 0.0 , Cgso = 0.0 , Cgbo = 0.0 , Cgbo_loc;
+  double Qgbo =0.0, Qgbo_dVbs =0.0, Qgbo_dVds =0.0, Qgbo_dVgs =0.0 ;
+  double Qgbo_dVbse =0.0, Qgbo_dVdse =0.0, Qgbo_dVgse =0.0 ;
+  double Cggo = 0.0 , Cgdo = 0.0 , Cgso = 0.0 , Cgbo = 0.0 , Cgbo_loc=0.0 ;
   /* fringing capacitance */
-  double Cf ;
-  double Qfd , Qfs ;
+  double Cf =0.0 ;
+  double Qfd =0.0, Qfs =0.0 ;
   /* Cqy */
-  double Ec = 0.0 , Ec_dVbs = 0.0 , Ec_dVds = 0.0 , Ec_dVgs = 0.0 ;
-  double Pslk , Pslk_dVbs , Pslk_dVds , Pslk_dVgs ;
-  double Qy ;
-  double Cqyd, Cqyg, Cqys, Cqyb ;
-  double Qy_dVbs , Qy_dVds , Qy_dVgs;
-  double Qy_dVbse , Qy_dVdse, Qy_dVgse;
-  double Qys, Qys_dVbse , Qys_dVdse, Qys_dVgse;
+  double Ec =0.0, Ec_dVbs =0.0, Ec_dVds =0.0, Ec_dVgs =0.0 ;
+  double Pslk =0.0, Pslk_dVbs =0.0, Pslk_dVds =0.0, Pslk_dVgs =0.0 ;
+  double Qy =0.0 ;
+  double Cqyd=0.0, Cqyg=0.0, Cqys=0.0, Cqyb =0.0 ;
+  double Qy_dVbs =0.0, Qy_dVds =0.0, Qy_dVgs=0.0 ;
+  double Qy_dVbse =0.0, Qy_dVdse=0.0, Qy_dVgse=0.0 ;
+  double Qys=0.0, Qys_dVbse =0.0, Qys_dVdse=0.0, Qys_dVgse=0.0 ;
   /* PART-4 (junction diode) */
-  double Ibs , Ibd , Gbs , Gbd , Gbse , Gbde ;
+  double Ibs =0.0, Ibd =0.0, Gbs =0.0, Gbd =0.0, Gbse =0.0, Gbde =0.0 ;
   /* junction capacitance */
-  double Qbs , Qbd , Capbs , Capbd , Capbse , Capbde ;
-  double czbd , czbdsw , czbdswg , czbs , czbssw , czbsswg ;
-  double arg , sarg ;
+  double Qbs =0.0, Qbd =0.0, Capbs =0.0, Capbd =0.0, Capbse =0.0, Capbde =0.0 ;
+  double czbd =0.0, czbdsw =0.0, czbdswg =0.0, czbs =0.0, czbssw =0.0, czbsswg =0.0 ;
+  double arg =0.0, sarg =0.0 ;
   /* PART-5 (NQS) */
-  double tau = 0.0, Qi_prev ; 
-  double tau_dVgs = 0.0, tau_dVds = 0.0, tau_dVbs = 0.0 ;
-  double tau_dVgse = 0.0, tau_dVdse = 0.0, tau_dVbse = 0.0 ;
-  double Qi_nqs = 0.0 ;
-  double Qi_dVbs_nqs = 0.0, Qi_dVds_nqs = 0.0, Qi_dVgs_nqs = 0.0 ;
-  double Qi_dVbse_nqs = 0.0, Qi_dVdse_nqs = 0.0, Qi_dVgse_nqs = 0.0 ;
-  double taub = 0.0, Qb_prev ; 
-  double taub_dVgs = 0.0, taub_dVds = 0.0, taub_dVbs = 0.0 ;
-  double taub_dVgse = 0.0, taub_dVdse = 0.0, taub_dVbse = 0.0 ;
-  double Qb_nqs = 0.0 ;
-  double Qb_dVbs_nqs = 0.0, Qb_dVds_nqs = 0.0, Qb_dVgs_nqs = 0.0 ;
-  double Qb_dVbse_nqs = 0.0, Qb_dVdse_nqs = 0.0, Qb_dVgse_nqs = 0.0 ;
+  double tau=0.0, Qi_prev =0.0; 
+  double tau_dVgs=0.0, tau_dVds=0.0, tau_dVbs =0.0 ;
+  double tau_dVgse=0.0, tau_dVdse=0.0, tau_dVbse =0.0 ;
+  double Qi_nqs =0.0 ;
+  double Qi_dVbs_nqs=0.0, Qi_dVds_nqs=0.0, Qi_dVgs_nqs =0.0 ;
+  double Qi_dVbse_nqs=0.0, Qi_dVdse_nqs=0.0, Qi_dVgse_nqs =0.0 ;
+  double taub=0.0, Qb_prev =0.0; 
+  double taub_dVgs=0.0, taub_dVds=0.0, taub_dVbs =0.0 ;
+  double taub_dVgse=0.0, taub_dVdse=0.0, taub_dVbse =0.0 ;
+  double Qb_nqs =0.0 ;
+  double Qb_dVbs_nqs=0.0, Qb_dVds_nqs=0.0, Qb_dVgs_nqs =0.0 ;
+  double Qb_dVbse_nqs=0.0, Qb_dVdse_nqs=0.0, Qb_dVgse_nqs =0.0 ;
   /* PART-6 (noise) */
   /* 1/f */
-  double NFalp , NFtrp , Cit , Nflic ;
+  double NFalp =0.0, NFtrp =0.0, Cit =0.0, Nflic =0.0 ;
   /* thermal */
-  double Eyd, Mu_Ave, Nthrml, Mud_hoso = 0.0 ;
+  double Eyd=0.0, Mu_Ave=0.0, Nthrml=0.0, Mud_hoso =0.0 ;
   /* induced gate noise ( Part 0/3 ) */
-  double kusai00 = 0.0 , kusaidd , kusaiL = 0.0 , kusai00L = 0.0 ;
+  double kusai00 =0.0, kusaidd =0.0, kusaiL =0.0, kusai00L =0.0 ;
   int flg_ign = 0 ;
-  double sqrtkusaiL = 0.0 , kusai_ig = 0.0 , gds0_ign = 0.0 , gds0_h2 , GAMMA , crl_f = 0.0 ;
+  double sqrtkusaiL =0.0, kusai_ig =0.0, gds0_ign =0.0, gds0_h2 =0.0, GAMMA =0.0, crl_f =0.0 ;
   const double c_sqrt_15 = 3.872983346207417e0 ; /* sqrt(15) */
   const double Cox_small = 1.0e-6 ;
   const double c_16o135 = 1.185185185185185e-1 ; /* 16/135 */
-  double Nign0 , MuModA , MuModB , correct_w1 ;
+  double Nign0 =0.0, MuModA =0.0, MuModB =0.0, correct_w1 =0.0 ;
 
   /* Bias iteration accounting Rs/Rd */
-  int lp_bs ;
-  double Ids_last ;
+  int lp_bs =0 ;
+  double Ids_last =0.0 ;
   double vtol_iprv = 2.0e-1 ;
   double vtol_pprv = 1.01e-1 ;
-  double Vbsc_dif , Vdsc_dif , Vgsc_dif , sum_vdif ;
-  double Vbsc_dif2 = 0.0 , Vdsc_dif2 = 0.0 , Vgsc_dif2 = 0.0 , sum_vdif2 ;
-  double Rs = 0.0 , Rd = 0.0 ;
-  double Fbs , Fds , Fgs ;
-  double DJ , DJI = 0.0 ;
-  double JI11 , JI12 , JI13 , JI21 , JI22 , JI23 , JI31 , JI32 , JI33 ;
-  double dVbs , dVds , dVgs ;
-  double dV_sum ;
+  double Vbsc_dif =0.0, Vdsc_dif =0.0, Vgsc_dif =0.0, sum_vdif =0.0 ;
+  double Vbsc_dif2 =0.0, Vdsc_dif2 =0.0, Vgsc_dif2 =0.0, sum_vdif2 =0.0 ;
+  double Rs =0.0, Rd =0.0 ;
+  double Fbs =0.0, Fds =0.0, Fgs =0.0 ;
+  double DJ =0.0, DJI =0.0 ;
+  double JI11 =0.0, JI12 =0.0, JI13 =0.0, JI21 =0.0, JI22 =0.0, JI23 =0.0, JI31 =0.0, JI32 =0.0, JI33 =0.0 ;
+  double dVbs =0.0, dVds =0.0, dVgs =0.0 ;
+  double dV_sum =0.0 ;
   /* temporary vars. */
   double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12 ;
-  double TX , TX_dVbs , TX_dVds , TX_dVgs ;
-  double TY , TY_dVbs , TY_dVds , TY_dVgs ;
-  double T1_dVb , T1_dVd , T1_dVg ;
-  double T2_dVb , T2_dVd , T2_dVg ;
-  double T3_dVb , T3_dVd , T3_dVg ;
-  double T4_dVb , T4_dVd , T4_dVg ;
-  double T5_dVb , T5_dVd , T5_dVg ;
-  double T6_dVb , T6_dVd , T6_dVg ;
-  double T7_dVb , T7_dVd , T7_dVg ;
-  double T8_dVb , T8_dVd , T8_dVg ;
-  double T9_dVb , T9_dVd , T9_dVg ;
-  double T10_dVb , T10_dVd , T10_dVg ;
+  double TX =0.0, TX_dVbs =0.0, TX_dVds =0.0, TX_dVgs =0.0 ;
+  double TY =0.0, TY_dVbs =0.0, TY_dVds =0.0, TY_dVgs =0.0 ;
+  double T1_dVb =0.0, T1_dVd =0.0, T1_dVg =0.0 ;
+  double T2_dVb =0.0, T2_dVd =0.0, T2_dVg =0.0 ;
+  double T3_dVb =0.0, T3_dVd =0.0, T3_dVg =0.0 ;
+  double T4_dVb =0.0, T4_dVd =0.0, T4_dVg =0.0 ;
+  double T5_dVb =0.0, T5_dVd =0.0, T5_dVg =0.0 ;
+  double T6_dVb =0.0, T6_dVd =0.0, T6_dVg =0.0 ;
+  double T7_dVb =0.0, T7_dVd =0.0, T7_dVg =0.0 ;
+  double T8_dVb =0.0, T8_dVd =0.0, T8_dVg =0.0 ;
+  double T9_dVb =0.0, T9_dVd =0.0, T9_dVg =0.0 ;
+  double T10_dVb =0.0, T10_dVd =0.0, T10_dVg =0.0 ;
 
   int   flg_zone = 0 ;
-  double Vfbsft = 0.0 , Vfbsft_dVbs , Vfbsft_dVds , Vfbsft_dVgs ;
+  double Vfbsft = 0.0 , Vfbsft_dVbs =0.0, Vfbsft_dVds =0.0, Vfbsft_dVgs =0.0 ;
 
   /* Vdseff */
-  double Vdseff , Vdsorg ;
-  double Vdseff_dVbs , Vdseff_dVds , Vdseff_dVgs ;
+  double Vdseff =0.0, Vdsorg =0.0 ;
+  double Vdseff_dVbs =0.0, Vdseff_dVds =0.0, Vdseff_dVgs =0.0 ;
 
   /* G/S and G/D Overlap Charges: Qovs/Qovd */
   double Qovd = 0.0, Qovd_dVbse = 0.0, Qovd_dVdse = 0.0, Qovd_dVgse = 0.0 ;
@@ -825,7 +833,7 @@ int HSM2evaluate
   double Qovs_dVbs = 0.0, Qovs_dVds = 0.0, Qovs_dVgs = 0.0 ;
   int    lcover = 0, flg_ovloops = 0, flg_ovloopd = 0 ;
   int    flg_overs = 0, flg_overd = 0 ;
-  double VgpLD ;
+  double VgpLD =0.0 ;
   double QbdLD = 0.0 , QbdLD_dVbs = 0.0 , QbdLD_dVds = 0.0 , QbdLD_dVgs = 0.0 ;
   double QidLD = 0.0 , QidLD_dVbs = 0.0 , QidLD_dVds = 0.0 , QidLD_dVgs = 0.0 ;
   double QbsLD = 0.0 , QbsLD_dVbs = 0.0 , QbsLD_dVds = 0.0 , QbsLD_dVgs = 0.0 ;
@@ -843,18 +851,18 @@ int HSM2evaluate
   int   flg_ovzone = 0 ;
 
   /* Vgsz for SCE and PGD */
-  double Vbsz2 , Vbsz2_dVbs , Vbsz2_dVds , Vbsz2_dVgs ;
+  double Vbsz2 =0.0, Vbsz2_dVbs =0.0, Vbsz2_dVds =0.0, Vbsz2_dVgs =0.0 ;
 
   /* Multiplication factor of a MOSFET instance */
   double M = 1.0 ;
 
   /* Mode flag ( = 0 | 1 )  */
-  double ModeNML , ModeRVS ;
+  double ModeNML =0.0, ModeRVS =0.0 ;
 
   /* For Gate Leak Current Partitioning */
   double GLPART1 ; 
-  double GLPART1_dVgs, GLPART1_dVds, GLPART1_dVbs ; 
-  double GLPART1_dVgse, GLPART1_dVdse, GLPART1_dVbse ; 
+  double GLPART1_dVgs=0.0, GLPART1_dVds=0.0, GLPART1_dVbs =0.0; 
+  double GLPART1_dVgse=0.0, GLPART1_dVdse=0.0, GLPART1_dVbse =0.0; 
 
   /* IBPC */
   double IdsIBPC = 0.0 ;
@@ -862,87 +870,86 @@ int HSM2evaluate
   double IdsIBPC_dVbse = 0.0 , IdsIBPC_dVdse = 0.0 , IdsIBPC_dVgse = 0.0 ;
 
   /* Overlap Charge: Qover */
-  double Vbsgmt , Vdsgmt , Vgsgmt , Vdbgmt , Vgbgmt , Vsbgmt , Vxbgmt ;
-  double Vxbgmtcl = 0.0, Vxbgmtcl_dVxbgmt = 0.0;
+  double Vbsgmt =0.0, Vdsgmt =0.0, Vgsgmt =0.0, Vdbgmt =0.0, Vgbgmt =0.0, Vsbgmt =0.0, Vxbgmt =0.0 ;
+  double Vxbgmtcl = 0.0, Vxbgmtcl_dVxbgmt = 0.0 ;
 
-  double Pb2over ;
+  double Pb2over =0.0 ;
 
   /* Qover Iterative and Analytical Model */
   const double large_arg = 80 ;
-  int lp_ld ;
-  double T1_dVxb, T1_dVgb, T5_dVxb, T5_dVgb ;
-  double Vgb_fb_LD,  VgpLD_dVgb ;
-  double VgpLD_shift, VgpLD_shift_dVxb, VgpLD_shift_dVgb ;
-  double TX_dVxb, TX_dVgb, TY_dVxb, TY_dVgb ;
-  double Ac1_dVxb, Ac1_dVgb, Ac2_dVxb, Ac2_dVgb ;
-  double Ac3_dVxb, Ac3_dVgb, Ac31_dVxb, Ac31_dVgb ; 
-  double Acd_dVxb, Acd_dVgb, Acn_dVxb, Acn_dVgb ;  
+  int lp_ld =0 ;
+  double T1_dVxb=0.0, T1_dVgb=0.0, T5_dVxb=0.0, T5_dVgb =0.0 ;
+  double Vgb_fb_LD=0.0,  VgpLD_dVgb =0.0 ;
+  double VgpLD_shift=0.0, VgpLD_shift_dVxb=0.0, VgpLD_shift_dVgb =0.0 ;
+  double TX_dVxb=0.0, TX_dVgb=0.0, TY_dVxb=0.0, TY_dVgb =0.0 ;
+  double Ac1_dVxb=0.0, Ac1_dVgb=0.0, Ac2_dVxb=0.0, Ac2_dVgb =0.0 ;
+  double Ac3_dVxb=0.0, Ac3_dVgb=0.0, Ac31_dVxb=0.0, Ac31_dVgb =0.0; 
+  double Acd_dVxb=0.0, Acd_dVgb=0.0, Acn_dVxb=0.0, Acn_dVgb =0.0;  
   double Ta = 9.3868e-3, Tb = -0.1047839 ;
-  double Tc, Tp ;
-  double Td, Td_dVxb, Td_dVgb ;
-  double Tq, Tq_dVxb, Tq_dVgb ;
-  double Tu, Tu_dVxb, Tu_dVgb ;
-  double Tv, Tv_dVxb, Tv_dVgb ;
-  double exp_bVbs_dVxb, exp_bPs0 ;
-  double cnst1over ; 
-  double gamma, gamma_dVxb ; 
-  double Chi_dVxb, Chi_dVgb ;
-  double Chi_A, Chi_A_dVxb, Chi_A_dVgb ;
-  double Chi_B, Chi_B_dVxb, Chi_B_dVgb ;
-  double Chi_1, Chi_1_dVxb, Chi_1_dVgb ;
-  double psi_B, arg_B ;
-  double psi, psi_dVgb, psi_dVxb ;
-  double Ps0_iniA_dVxb, Ps0_iniA_dVgb ;
-  double Ps0_iniB_dVxb, Ps0_iniB_dVgb ;
-  double Psa_dVxb, Psa_dVgb, Ps0LD_dVxb, Ps0LD_dVgb ;
-  double fs02_dVxb, fs02_dVgb ;
+  double Tc=0.0, Tp =0.0 ;
+  double Td=0.0, Td_dVxb=0.0, Td_dVgb =0.0 ;
+  double Tq=0.0, Tq_dVxb=0.0, Tq_dVgb =0.0 ;
+  double Tu=0.0, Tu_dVxb=0.0, Tu_dVgb =0.0 ;
+  double Tv=0.0, Tv_dVxb=0.0, Tv_dVgb =0.0 ;
+  double exp_bVbs_dVxb=0.0, exp_bPs0 =0.0 ;
+  double cnst1over =0.0; 
+  double gamma=0.0, gamma_dVxb =0.0; 
+  double Chi_dVxb=0.0, Chi_dVgb =0.0 ;
+  double Chi_A=0.0, Chi_A_dVxb=0.0, Chi_A_dVgb =0.0 ;
+  double Chi_B=0.0, Chi_B_dVxb=0.0, Chi_B_dVgb =0.0 ;
+  double Chi_1=0.0, Chi_1_dVxb=0.0, Chi_1_dVgb =0.0 ;
+  double psi_B=0.0, arg_B =0.0 ;
+  double psi=0.0, psi_dVgb=0.0, psi_dVxb =0.0 ;
+  double Ps0_iniA_dVxb=0.0, Ps0_iniA_dVgb =0.0 ;
+  double Ps0_iniB_dVxb=0.0, Ps0_iniB_dVgb =0.0 ;
+  double Psa_dVxb=0.0, Psa_dVgb=0.0, Ps0LD_dVxb=0.0, Ps0LD_dVgb =0.0 ;
+  double fs02_dVxb=0.0, fs02_dVgb =0.0 ;
 
   /* SCE LOOP */
-  double A , A_dVgs, A_dVds, A_dVbs ;
-  int    NNN ;
+  double A =0.0, A_dVgs=0.0, A_dVds=0.0, A_dVbs =0.0 ;
+  int    NNN =0 ;
   double PS0_SCE=0 ,  PS0_SCE_dVgs = 0 ,  PS0_SCE_dVds = 0 ,  PS0_SCE_dVbs = 0 ;
   double PS0Z_SCE=0 , PS0Z_SCE_dVgs = 0 , PS0Z_SCE_dVds = 0 , PS0Z_SCE_dVbs = 0 ;
    /* double arg0 = 0.01 , arg1 = 0.04 ; */
    double arg0 = 0.01 ;
-   double arg2 = here->HSM2_2qnsub_esi * 1.0e-4;
-   int MAX_LOOP_SCE ;
+   double arg2 = here->HSM2_2qnsub_esi * 1.0e-4 ;
+   int MAX_LOOP_SCE =0 ;
 
   int codqb = 0 ;
   int corecip = model->HSM2_corecip ;
 
 
   /* modify Qy in accumulation region */
-/*  double eps_qy = 5.0e-3 ;*/
-  double Aclm_eff, Aclm_eff_dVds, Aclm_eff_dVgs, Aclm_eff_dVbs ;
+  double Aclm_eff=0.0, Aclm_eff_dVds=0.0, Aclm_eff_dVgs=0.0, Aclm_eff_dVbs =0.0 ;
 
-  double Idd1 , Idd1_dVbs ,  Idd1_dVgs ,  Idd1_dVds ;
+  double Idd1 =0.0, Idd1_dVbs =0.0,  Idd1_dVgs =0.0,  Idd1_dVds =0.0 ;
 
   double tcjbs=0.0, tcjbssw=0.0, tcjbsswg=0.0,
          tcjbd=0.0, tcjbdsw=0.0, tcjbdswg=0.0 ;
-  double TTEMP ;
+  double TTEMP =0.0 ;
 
   double PS0_SCE_tol = 4.0e-7 ;
-  double PS0_SCE_deriv_tol = 1.0e-8;
+  double PS0_SCE_deriv_tol = 1.0e-8 ;
   double Ps0_ini_dVds  =0.0,  Ps0_ini_dVgs =0.0, Ps0_ini_dVbs  =0.0 ;
   double Ps0_iniA_dVds =0.0, Ps0_iniA_dVgs =0.0, Ps0_iniA_dVbs =0.0 ;
   double Ps0_iniB_dVds =0.0, Ps0_iniB_dVgs =0.0, Ps0_iniB_dVbs =0.0 ;
 
-  double A_dPS0Z = 0.0,      dqb_dPS0Z = 0.0,    dVth_dPS0Z = 0.0,   dVth0_dPS0Z = 0.0, 
+  double A_dPS0Z = 0.0,      dqb_dPS0Z = 0.0,    dVth_dPS0Z = 0.0,   dVth0_dPS0Z = 0.0,
          dVthLP_dPS0Z = 0.0, dVthSC_dPS0Z = 0.0, Qbmm_dPS0Z = 0.0,   Vfbsft_dPS0Z = 0.0,
          Vgp_dPS0Z = 0.0,    Vgpz_dPS0Z = 0.0,                       Vthp_dPS0Z = 0.0,
          Vth0_dPS0Z = 0.0 ;
-  double T1_dPS0Z,           T3_dPS0Z,           T4_dPS0Z,           T5_dPS0Z,
-         T6_dPS0Z,           T7_dPS0Z,           T8_dPS0Z,           T9_dPS0Z,
-         T10_dPS0Z,          TX_dPS0Z ;
-  double Ac1_dPS0Z,          Ac2_dPS0Z,          Ac3_dPS0Z,          Ac31_dPS0Z,
-         Acd_dPS0Z,          Acn_dPS0Z,          Chi_dPS0Z,          Psa_dPS0Z ;
-  double Fs0_dPS0Z,          Fsl_dPS0Z,          Ps0_dPS0Z,          Psl_dPS0Z,
-         Pds_dPS0Z,          Pzadd_dPS0Z,        Ps0z_dPS0Z ;
-  double G,                  delta_PS0Z_SCE,     delta_PS0Z_SCE_dVds,
-         delta_PS0Z_SCE_dVgs,delta_PS0Z_SCE_dVbs ;
+  double T1_dPS0Z=0.0,           T3_dPS0Z=0.0,           T4_dPS0Z=0.0,           T5_dPS0Z=0.0,
+         T6_dPS0Z=0.0,           T7_dPS0Z=0.0,           T8_dPS0Z=0.0,           T9_dPS0Z=0.0,
+         T10_dPS0Z=0.0,          TX_dPS0Z =0.0 ;
+  double Ac1_dPS0Z=0.0,          Ac2_dPS0Z=0.0,          Ac3_dPS0Z=0.0,          Ac31_dPS0Z=0.0,
+         Acd_dPS0Z=0.0,          Acn_dPS0Z=0.0,          Chi_dPS0Z=0.0,          Psa_dPS0Z =0.0 ;
+  double Fs0_dPS0Z=0.0,          Fsl_dPS0Z=0.0,          Ps0_dPS0Z=0.0,          Psl_dPS0Z=0.0,
+         Pds_dPS0Z=0.0,          Pzadd_dPS0Z=0.0,        Ps0z_dPS0Z =0.0 ;
+  double G=0.0,                  delta_PS0Z_SCE=0.0,     delta_PS0Z_SCE_dVds=0.0,
+         delta_PS0Z_SCE_dVgs=0.0, delta_PS0Z_SCE_dVbs =0.0 ;
 
 
-  double Vgs_min ;
+  double Vgs_min =0.0 ;
 
   /*================ Start of executable code.=================*/
 
@@ -1028,7 +1035,7 @@ int HSM2evaluate
   c_eox = here->HSM2_cecox ;
 
   /* Tox and Cox without QME */
-   Tox0 = modelCGS->HSM2_tox ;
+   Tox0 = model->HSM2_tox ;
    Cox0 = c_eox / Tox0 ;
    Cox0_inv = 1.0 / Cox0 ;
 
@@ -1268,9 +1275,9 @@ int HSM2evaluate
     VdsatS = Pslsat - Pb2 ;
     Fn_SL( VdsatS , VdsatS , 0.1 , 5e-2 , T6 ) ;
 
-    VdsatS_dVbs = T6 * T5 / TX ;
+    VdsatS_dVbs = ( TX ? (T6 * T5 / TX ) : 0.0 ) ;
     VdsatS_dVds = 0.0 ;
-    VdsatS_dVgs = T6 * ( 1.0 - T5 / TX ) ;
+    VdsatS_dVgs = ( TX ? (T6 * ( 1.0 - T5 / TX )) : 0.0 ) ;
 
 
     T1 = Vds / VdsatS ;
@@ -1346,8 +1353,8 @@ int HSM2evaluate
   	T2_dVd = T6 * T3_dVd ;
   	T2_dVg = T6 * T3_dVg ;
 
-	dTox = modelCGS->HSM2_qme1 * T2 + modelCGS->HSM2_qme3 ;
-        T7   = modelCGS->HSM2_qme1 ;
+	dTox = model->HSM2_qme1 * T2 + model->HSM2_qme3 ;
+        T7   = model->HSM2_qme1 ;
 	dTox_dVb = T7 * T2_dVb ;
 	dTox_dVd = T7 * T2_dVd ;
 	dTox_dVg = T7 * T2_dVg ;
@@ -1647,7 +1654,7 @@ int HSM2evaluate
      * dVthLP : Short-channel effect induced by pocket.
      * - Vth0 : Vth without pocket.
      *-----------------*/
-    if ( modelCGS->HSM2_lp != 0.0 ) {
+    if ( model->HSM2_lp != 0.0 ) {
 
       if( corecip ){
 
@@ -1736,7 +1743,7 @@ int HSM2evaluate
 	T1_dVg = C_ESI * Cox_inv_dVg ;
 	T2 = here->HSM2_wdplp ;
 
-	T4 = 1.0e0 / ( modelCGS->HSM2_lp * modelCGS->HSM2_lp ) ;
+	T4 = 1.0e0 / ( model->HSM2_lp * model->HSM2_lp ) ;
 	T3 = 2.0 * ( model->HSM2_vbi - Pb20 ) * T2 * T4 ;
 
 	T5 = T1 * T3 ;
@@ -1774,11 +1781,11 @@ int HSM2evaluate
 	T9_dVg = PS0Z_SCE_dVgs - Vbsz2_dVgs ;
         T9_dPS0Z = 1.0 ;
 
-	T3     = pParam->HSM2_scp1 + pParam->HSM2_scp3 * T9 / modelCGS->HSM2_lp + pParam->HSM2_scp2 * Vdsz ;
-	T3_dVb = pParam->HSM2_scp3 * T9_dVb / modelCGS->HSM2_lp ;
-	T3_dVd = pParam->HSM2_scp3 * T9_dVd / modelCGS->HSM2_lp + pParam->HSM2_scp2 * Vdsz_dVds ; 
-	T3_dVg = pParam->HSM2_scp3 * T9_dVg / modelCGS->HSM2_lp ;
-        T3_dPS0Z = pParam->HSM2_scp3 * T9_dPS0Z / modelCGS->HSM2_lp ;
+	T3     = pParam->HSM2_scp1 + pParam->HSM2_scp3 * T9 / model->HSM2_lp + pParam->HSM2_scp2 * Vdsz ;
+	T3_dVb = pParam->HSM2_scp3 * T9_dVb / model->HSM2_lp ;
+	T3_dVd = pParam->HSM2_scp3 * T9_dVd / model->HSM2_lp + pParam->HSM2_scp2 * Vdsz_dVds ; 
+	T3_dVg = pParam->HSM2_scp3 * T9_dVg / model->HSM2_lp ;
+        T3_dPS0Z = pParam->HSM2_scp3 * T9_dPS0Z / model->HSM2_lp ;
 
 	Vdx = model->HSM2_scp21 + Vdsz ;
 	Vdx2 = Vdx * Vdx + small ;
@@ -1837,7 +1844,7 @@ int HSM2evaluate
 
 	T1 = C_ESI * Cox_inv ;
 	T2 = here->HSM2_wdplp ;
-	T4 = 1.0e0 / ( modelCGS->HSM2_lp * modelCGS->HSM2_lp ) ;
+	T4 = 1.0e0 / ( model->HSM2_lp * model->HSM2_lp ) ;
 	T5 = 2.0e0 * ( model->HSM2_vbi - Pb20b ) * T1 * T2 * T4 ;
 	dVth0 = T5 * sqrt_Pbsum ;
 	T6 = 0.5 * T5 / sqrt_Pbsum ;
@@ -1848,14 +1855,14 @@ int HSM2evaluate
 	dVth0_dVg = T6 * Pbsum_dVg + T7 * Cox_inv_dVg + T8 * Pb20b_dVg ;
       
 	T1 = Vthp - Vth0 ;
-	T2 = pParam->HSM2_scp1 + pParam->HSM2_scp3 * Pbsum / modelCGS->HSM2_lp ;
+	T2 = pParam->HSM2_scp1 + pParam->HSM2_scp3 * Pbsum / model->HSM2_lp ;
 	T3 = T2 + pParam->HSM2_scp2 * Vdsz ;
     
 	Vdx = model->HSM2_scp21 + Vdsz ;
 	Vdx2 = Vdx * Vdx + small ;
       
 	dVthLP = T1 * dVth0 * T3 + dqb - here->HSM2_msc / Vdx2 ;
-	T4 = T1 * dVth0 * pParam->HSM2_scp3 / modelCGS->HSM2_lp ;
+	T4 = T1 * dVth0 * pParam->HSM2_scp3 / model->HSM2_lp ;
 	dVthLP_dVb = (Vthp_dVb - Vth0_dVb) * dVth0 * T3 + T1 * dVth0_dVb * T3 
 	  + T4 * Pbsum_dVb + dqb_dVb ;
 	dVthLP_dVd = (Vthp_dVd - Vth0_dVd) * dVth0 * T3 + T1 * dVth0_dVd * T3 
@@ -1880,7 +1887,7 @@ int HSM2evaluate
 
     if( corecip ){ 
 
-      T3 = here->HSM2_lgate - modelCGS->HSM2_parl2 ;
+      T3 = here->HSM2_lgate - model->HSM2_parl2 ;
       T4 = 1.0e0 / ( T3 * T3 ) ;
       T5 = pParam->HSM2_sc3 / here->HSM2_lgate ;
 
@@ -1955,7 +1962,7 @@ int HSM2evaluate
 
       T1 = C_ESI * Cox_inv ;
       T2 = here->HSM2_wdpl ;
-      T3 = here->HSM2_lgate - modelCGS->HSM2_parl2 ;
+      T3 = here->HSM2_lgate - model->HSM2_parl2 ;
       T4 = 1.0e0 / ( T3 * T3 ) ;
       T5 = 2.0e0 * ( model->HSM2_vbi - Pb20b ) * T1 * T2 * T4 ;
 
@@ -2089,7 +2096,7 @@ int HSM2evaluate
      * dVthLP : Short-channel effect induced by pocket.
      * - Vth0 : Vth without pocket.
      *-----------------*/
-    if ( modelCGS->HSM2_lp != 0.0 ) {
+    if ( model->HSM2_lp != 0.0 ) {
 
       if( corecip ){
 	T1 = here->HSM2_2qnsub_esi ;
@@ -2175,7 +2182,7 @@ int HSM2evaluate
 	T1 = C_ESI * Cox_inv ;
 	T2 = here->HSM2_wdplp ;
 
-	T4 = 1.0e0 / ( modelCGS->HSM2_lp * modelCGS->HSM2_lp ) ;
+	T4 = 1.0e0 / ( model->HSM2_lp * model->HSM2_lp ) ;
 	T5 = 2.0e0 * ( model->HSM2_vbi - Pb20 ) * T1 * T2 * T4 ;
 	T5_dVb = 0.0 ;
 	T5_dVd = 0.0 ;
@@ -2188,6 +2195,7 @@ int HSM2evaluate
         T6_dPS0Z = 1.0 ;   
 
 	Fn_SZ(T6, T6, C_sce_dlt, T0 );
+        T6 += small ;
 	T6_dVb *= T0 ;
 	T6_dVd *= T0 ;
 	T6_dVg *= T0 ;
@@ -2211,11 +2219,11 @@ int HSM2evaluate
 	T9_dVg = PS0Z_SCE_dVgs - Vbsz2_dVgs ;
         T9_dPS0Z = 1.0 ;
 
-	T3 = pParam->HSM2_scp1 + pParam->HSM2_scp3 * T9 / modelCGS->HSM2_lp + pParam->HSM2_scp2 * Vdsz ;
-	T3_dVb = pParam->HSM2_scp3 * T9_dVb / modelCGS->HSM2_lp ;
-	T3_dVd = pParam->HSM2_scp3 * T9_dVd / modelCGS->HSM2_lp + pParam->HSM2_scp2 * Vdsz_dVds ; 
-	T3_dVg = pParam->HSM2_scp3 * T9_dVg / modelCGS->HSM2_lp ;
-        T3_dPS0Z = pParam->HSM2_scp3 * T9_dPS0Z / modelCGS->HSM2_lp ;
+	T3 = pParam->HSM2_scp1 + pParam->HSM2_scp3 * T9 / model->HSM2_lp + pParam->HSM2_scp2 * Vdsz ;
+	T3_dVb = pParam->HSM2_scp3 * T9_dVb / model->HSM2_lp ;
+	T3_dVd = pParam->HSM2_scp3 * T9_dVd / model->HSM2_lp + pParam->HSM2_scp2 * Vdsz_dVds ; 
+	T3_dVg = pParam->HSM2_scp3 * T9_dVg / model->HSM2_lp ;
+        T3_dPS0Z = pParam->HSM2_scp3 * T9_dPS0Z / model->HSM2_lp ;
 
 	Vdx = model->HSM2_scp21 + Vdsz ;
 	Vdx2 = Vdx * Vdx + small ;
@@ -2276,7 +2284,7 @@ int HSM2evaluate
 	T1 = C_ESI * Cox_inv ;
 	T2 = here->HSM2_wdplp ;
 
-	T4 = 1.0e0 / ( modelCGS->HSM2_lp * modelCGS->HSM2_lp ) ;
+	T4 = 1.0e0 / ( model->HSM2_lp * model->HSM2_lp ) ;
 	T5 = 2.0e0 * ( model->HSM2_vbi - Pb20b ) * T1 * T2 * T4 ;
 	dVth0 = T5 * sqrt_Pbsum ;
 	T6 = 0.5 * T5 / sqrt_Pbsum ;
@@ -2287,14 +2295,14 @@ int HSM2evaluate
 	dVth0_dVg = T6 * Pbsum_dVg + T8 * Pb20b_dVg ;
       
 	T1 = Vthp - Vth0 ;
-	T2 = pParam->HSM2_scp1 + pParam->HSM2_scp3 * Pbsum / modelCGS->HSM2_lp ;
+	T2 = pParam->HSM2_scp1 + pParam->HSM2_scp3 * Pbsum / model->HSM2_lp ;
 	T3 = T2 + pParam->HSM2_scp2 * Vdsz ;
     
 	Vdx = model->HSM2_scp21 + Vdsz ;
 	Vdx2 = Vdx * Vdx + small ;
       
 	dVthLP = T1 * dVth0 * T3 + dqb - here->HSM2_msc / Vdx2 ;
-	T4 = T1 * dVth0 * pParam->HSM2_scp3 / modelCGS->HSM2_lp ;
+	T4 = T1 * dVth0 * pParam->HSM2_scp3 / model->HSM2_lp ;
 	dVthLP_dVb = (Vthp_dVb - Vth0_dVb) * dVth0 * T3 + T1 * dVth0_dVb * T3 
 	  + T4 * Pbsum_dVb + dqb_dVb ;
 	dVthLP_dVd = (Vthp_dVd - Vth0_dVd) * dVth0 * T3 + T1 * dVth0_dVd * T3 
@@ -2319,7 +2327,7 @@ int HSM2evaluate
      *-----------------*/
 
     if( corecip ){
-      T3 = here->HSM2_lgate - modelCGS->HSM2_parl2 ;
+      T3 = here->HSM2_lgate - model->HSM2_parl2 ;
       T4 = 1.0e0 / ( T3 * T3 ) ;
       T5 = pParam->HSM2_sc3 / here->HSM2_lgate ;
 
@@ -2388,7 +2396,7 @@ int HSM2evaluate
 
       T1 = C_ESI * Cox_inv ;
       T2 = here->HSM2_wdpl ;
-      T3 = here->HSM2_lgate - modelCGS->HSM2_parl2 ;
+      T3 = here->HSM2_lgate - model->HSM2_parl2 ;
       T4 = 1.0e0 / ( T3 * T3 ) ;
       T5 = 2.0e0 * ( model->HSM2_vbi - Pb20b ) * T1 * T2 * T4 ;
 
@@ -2465,9 +2473,10 @@ int HSM2evaluate
     dVth_dPS0Z = dVthSC_dPS0Z + dVthLP_dPS0Z ;
 
     /*---------------------------------------------------*
-     * Vth : Threshold voltage. 
+     * Vth : Threshold voltagei for OP. 
      *-----------------*/
-    Vth = Vthq - dVth ;
+    T2 = sqrt( here->HSM2_2qnsub_esi * Pb2 ) ;
+    Vth = Pb2 + Vfb + T2 * Cox0_inv - dVth ;
 
     /*-----------------------------------------------------------*
      * Constants in the equation of Ps0 . 
@@ -3363,6 +3372,7 @@ int HSM2evaluate
     T1_dVg = ( T5_dVg * T2 - T5 * T2_dVg ) * T0 / T2 ;
 
     Fn_SZ( T1 , T1 , 0.05 , T9 ) ;
+    T1 += small ;
     T1_dVb *= T9 ;
     T1_dVd *= T9 ;
     T1_dVg *= T9 ;
@@ -3377,6 +3387,7 @@ int HSM2evaluate
     T10_dVd = Vgpz_dVds + T2_dVd * ( 1.0e0 - T3 ) - T2 * T3_dVd ;
     T10_dVg = Vgpz_dVgs + T2_dVg * ( 1.0e0 - T3 ) - T2 * T3_dVg ;
     Fn_SZ( T10 , T10 , 0.01 , T0 ) ;
+    T10 += epsm10 ;
     T10_dVb *= T0 ;
     T10_dVd *= T0 ;
     T10_dVg *= T0 ;
@@ -3959,7 +3970,7 @@ start_of_loopl:
       T5_dVg = (Idd_dVgs - T2 * Qn0_dVgs) * T1 ;
       
       T10 = q_Nsub / C_ESI ;
-      T1 = 1.0e5 ;
+      T1 = C_E0_p2 ;  // E0^2
       T2 = 1.0 / Leff ;
       T11 = (2.0 * T5 + 2.0 * T10 * T6 * T4 + T1 * T4) * T2 ;
       T3 = T2 * T4 ;
@@ -4178,8 +4189,8 @@ start_of_loopl:
 start_of_mobility:
 
     Lch = Leff - Lred ;
-    if ( Lch < 1.0e-7 ) {
-      Lch = 1.0e-7 ; Lch_dVbs = Lch_dVds = Lch_dVgs = 0.0 ;
+    if ( Lch < 1.0e-9 ) {
+         Lch = 1.0e-9 ; Lch_dVbs = Lch_dVds = Lch_dVgs = 0.0 ;
     } else { Lch_dVbs = - Lred_dVbs ; Lch_dVds = - Lred_dVds ; Lch_dVgs = - Lred_dVgs ; }
 
 
@@ -4207,7 +4218,7 @@ start_of_mobility:
 
 
     /*-----------------------------------------------------------*
-     * Muun : universal mobility. 
+     * Muun : universal mobility. (CGS unit)
      *-----------------*/
 
     T1 = here->HSM2_ndep_o_esi ;
@@ -4240,7 +4251,8 @@ start_of_mobility:
     T6 = T7 * Eeff ;
 
 
-    Rns = Qiu / C_QE ;
+    T9 = C_QE * C_m2cm_p2 ;
+    Rns = Qiu / T9 ;
     T1 = 1.0e0 / ( here->HSM2_muecb0 + here->HSM2_muecb1 * Rns / 1.0e11 ) 
       + here->HSM2_mphn0 * T8 + T6 / pParam->HSM2_muesr1 ;
     Muun = 1.0e0 / T1 ;
@@ -4250,7 +4262,7 @@ start_of_mobility:
     T2 = 1.0e0 / ( T2 * T2 ) ;
     T3 = here->HSM2_mphn1 * T5 ;
     T4 = here->HSM2_muesr * T7 / pParam->HSM2_muesr1 ;
-    T5 = - 1.0e-11 * here->HSM2_muecb1 / C_QE * T2 ;
+    T5 = - 1.0e-11 * here->HSM2_muecb1 / C_QE * T2 / C_m2cm_p2 ;
     Muun_dVbs = - ( T5 * Qiu_dVbs 
                     + Eeff_dVbs * T3 + Eeff_dVbs * T4 ) * T1 ;
     Muun_dVds = - ( T5 * Qiu_dVds  
@@ -4258,6 +4270,11 @@ start_of_mobility:
     Muun_dVgs = - ( T5 * Qiu_dVgs  
                     + Eeff_dVgs * T3 + Eeff_dVgs * T4 ) * T1 ;
 
+    /*  Change to MKS unit */
+    Muun      /= C_m2cm_p2 ;
+    Muun_dVbs /= C_m2cm_p2 ;
+    Muun_dVds /= C_m2cm_p2 ;
+    Muun_dVgs /= C_m2cm_p2 ;
     /*-----------------------------------------------------------*
      * Mu : mobility 
      *-----------------*/
@@ -4362,6 +4379,7 @@ start_of_mobility:
       T1_dVg =     - ( Ps0_dVgs + T6_dVg );
 
       Fn_SZ( T2 , T1 , 0.05 , T0 ) ;
+      T2 += small ;
       T2_dVb = T1_dVb * T0 ;
       T2_dVd = T1_dVd * T0 ;
       T2_dVg = T1_dVg * T0 ;
@@ -4482,7 +4500,7 @@ start_of_mobility:
        *-----------------*/      
       T1 = C_ESI * Cox_inv ;
       T2 = here->HSM2_wdpl ;
-      T3 =  here->HSM2_lgatesm - modelCGS->HSM2_parl2 ;
+      T3 =  here->HSM2_lgatesm - model->HSM2_parl2 ;
       T4 = 1.0 / (T3 * T3) ;
       T5 = 2.0 * (model->HSM2_vbi - Pb20b) * T1 * T2 * T4 ;
       
@@ -4553,6 +4571,7 @@ start_of_mobility:
       T1_dVd = (T6 * T3_dVd - T7 * costi3_dVd_c3) ;
       T1_dVg = (T6 * T3_dVg - T7 * costi3_dVg_c3) ;
       Fn_SZ( T1 , T1, 1.0e-2, T2) ;
+      T1 += small ;
       T1_dVb *= T2 ;
       T1_dVd *= T2 ;
       T1_dVg *= T2 ;
@@ -4635,6 +4654,7 @@ start_of_mobility:
       T1_dVg = Psasti_dVgs - Psti_dVgs ;
 
       Fn_SZ( T1 , T1 , 1.0e-1 , T2 ) ;
+      T1 += epsm10 ;
       T1_dVb *= T2 ;
       T1_dVd *= T2 ;
       T1_dVg *= T2 ;
@@ -4956,10 +4976,10 @@ start_of_mobility:
       Psdlz_dVds = Ps0z_dVds + Vdsz_dVds ;
       Psdlz_dVgs = Ps0z_dVgs ;
 
-      T1 = Vgsz - Vfb + model->HSM2_gleak4 * (dVth - dPpg) * Leff - Psdlz * pParam->HSM2_gleak3 ;
-      T1_dVg = Vgsz_dVgs + model->HSM2_gleak4 * (dVth_dVg - dPpg_dVg) * Leff - Psdlz_dVgs * pParam->HSM2_gleak3 ;
-      T1_dVd = Vgsz_dVds + model->HSM2_gleak4 * (dVth_dVd - dPpg_dVd) * Leff - Psdlz_dVds * pParam->HSM2_gleak3 ;
-      T1_dVb = model->HSM2_gleak4 * ( dVth_dVb - dPpg_dVb ) * Leff - Psdlz_dVbs * pParam->HSM2_gleak3 ;
+      T1 = Vgsz - Vfb + modelMKS->HSM2_gleak4 * (dVth - dPpg) * Leff - Psdlz * pParam->HSM2_gleak3 ;
+      T1_dVg = Vgsz_dVgs + modelMKS->HSM2_gleak4 * (dVth_dVg - dPpg_dVg) * Leff - Psdlz_dVgs * pParam->HSM2_gleak3 ;
+      T1_dVd = Vgsz_dVds + modelMKS->HSM2_gleak4 * (dVth_dVd - dPpg_dVd) * Leff - Psdlz_dVds * pParam->HSM2_gleak3 ;
+      T1_dVb = modelMKS->HSM2_gleak4 * ( dVth_dVb - dPpg_dVb ) * Leff - Psdlz_dVbs * pParam->HSM2_gleak3 ;
 
       T3 = 1.0 / Tox0 ;
       T2 = T1 * T3 ;
@@ -4967,7 +4987,7 @@ start_of_mobility:
       T2_dVd = (T1_dVd ) * T3 ;
       T2_dVb = (T1_dVb ) * T3 ;
       
-      T3 = 1.0 / model->HSM2_gleak5 ;
+      T3 = 1.0 / modelMKS->HSM2_gleak5 ;
 
       if ( VgVt <= VgVt_small ) {
         Ey = 0.0 ;
@@ -5003,7 +5023,7 @@ start_of_mobility:
       Etun *= T1 ;
 
       T0 = Leff * here->HSM2_weff_nf ;
-      T7 = model->HSM2_gleak7 / (model->HSM2_gleak7 + T0) ;
+      T7 = modelMKS->HSM2_gleak7 / (modelMKS->HSM2_gleak7 + T0) ;
       
       T6 = pParam->HSM2_gleak6 ;
       T9 = T6 / (T6 + Vdsz) ;
@@ -5037,7 +5057,7 @@ start_of_mobility:
     }
 
     /* Igs */
-      T0 = - pParam->HSM2_glksd2 * Vgs + model->HSM2_glksd3 ;
+      T0 = - pParam->HSM2_glksd2 * Vgs + modelMKS->HSM2_glksd3 ;
       T2 = exp (Tox0 * T0);
       T2_dVg = (- Tox0 * pParam->HSM2_glksd2) * T2;
         
@@ -5060,7 +5080,7 @@ start_of_mobility:
 
     /* Igd */
       T1 = Vgs - Vds ;
-      T0 = - pParam->HSM2_glksd2 * T1 + model->HSM2_glksd3 ;
+      T0 = - pParam->HSM2_glksd2 * T1 + modelMKS->HSM2_glksd3 ;
       T2 = exp (Tox0 * T0);
       T2_dVg = (- Tox0 * pParam->HSM2_glksd2) * T2;
       T2_dVd = (+ Tox0 * pParam->HSM2_glksd2) * T2;
@@ -5133,21 +5153,40 @@ start_of_mobility:
     Igidl_dVds = 0.0e0 ;
     Igidl_dVgs = 0.0e0 ;
   } else {
-    T1 = model->HSM2_gidl3 * (Vds  + model->HSM2_gidl4) - Vgs + (dVthSC + dVthLP) * model->HSM2_gidl5 ;
+    T3 = here->HSM2_2qnsub_esi ;
+    Qb0 = sqrt (T3 * (Pb20 - Vbsz2)) ;
+    T4 = 0.5 * T3 / Qb0 ;
+    Qb0_dVb = T4 * (- Vbsz2_dVbs) ;
+    Qb0_dVd = T4 * (- Vbsz2_dVds) ;
+    Qb0_dVg = T4 * (- Vbsz2_dVgs) ;
+
+    Qb0Cox = model->HSM2_gidl6 * Qb0 * Cox_inv ;
+    Qb0Cox_dVb = model->HSM2_gidl6 * ( Qb0_dVb * Cox_inv + Qb0 * Cox_inv_dVb ) ;
+    Qb0Cox_dVd = model->HSM2_gidl6 * ( Qb0_dVd * Cox_inv + Qb0 * Cox_inv_dVd ) ;
+    Qb0Cox_dVg = model->HSM2_gidl6 * ( Qb0_dVg * Cox_inv + Qb0 * Cox_inv_dVg ) ;
+
+    T1 = model->HSM2_gidl3 * (Vds  + model->HSM2_gidl4) - Vgs + (dVthSC + dVthLP) * model->HSM2_gidl5 - Qb0Cox ;
 
     T2 = 1.0 / Tox0 ;
     E1 = T1 * T2 ;
 
-    E1_dVb = model->HSM2_gidl5 * (dVthSC_dVb + dVthLP_dVb) * T2 ;
-    E1_dVd = ( model->HSM2_gidl3 + model->HSM2_gidl5 * (dVthSC_dVd + dVthLP_dVd) ) * T2 ;
-    E1_dVg = ( -1.0 + model->HSM2_gidl5 * (dVthSC_dVg + dVthLP_dVg) ) * T2 ;
+    E1_dVb = ( model->HSM2_gidl5 * (dVthSC_dVb + dVthLP_dVb) - Qb0Cox_dVb ) * T2 ;
+    E1_dVd = ( model->HSM2_gidl3 + model->HSM2_gidl5 * (dVthSC_dVd + dVthLP_dVd) - Qb0Cox_dVd ) * T2 ;
+    E1_dVg = ( -1.0 + model->HSM2_gidl5 * (dVthSC_dVg + dVthLP_dVg) - Qb0Cox_dVg ) * T2 ;
 
     Fn_SZ( Egidl , E1, eef_dlt, T5) ;
     Egidl_dVb = T5 * E1_dVb ;
     Egidl_dVd = T5 * E1_dVd ;
     Egidl_dVg = T5 * E1_dVg ;
+    Egidl    += small ;
 
-    T0 = - pParam->HSM2_gidl2 * Egp32 / (Egidl + small) ;
+    T6 = pow(Egidl,model->HSM2_gidl7) ;
+    T1 = model->HSM2_gidl7 * pow(Egidl,model->HSM2_gidl7 -1.0) ;
+    T6_dVb = Egidl_dVb * T1 ;
+    T6_dVd = Egidl_dVd * T1 ;
+    T6_dVg = Egidl_dVg * T1 ;
+
+    T0 = - pParam->HSM2_gidl2 * Egp32 / T6 ;
     if ( T0 < - EXP_THR ) {
       Igidl = 0.0 ;
       Igidl_dVbs = Igidl_dVds = Igidl_dVgs = 0.0 ;
@@ -5155,7 +5194,7 @@ start_of_mobility:
       T1 = exp ( T0 ) ;    
       T2 = pParam->HSM2_gidl1 / Egp12 * C_QE * here->HSM2_weff_nf ;
       Igidl = T2 * Egidl * Egidl * T1 ;
-      T3 = T2 * T1 * Egidl * (2.0 + pParam->HSM2_gidl2 * Egp32 * Egidl / (Egidl + small) / (Egidl + small)) ;
+      T3 = T2 * T1 * Egidl * (2.0 + pParam->HSM2_gidl2 * Egp32 * Egidl / T6 / T6 ) ;
       Igidl_dVbs = T3 * Egidl_dVb ;
       Igidl_dVds = T3 * Egidl_dVd ;
       Igidl_dVgs = T3 * Egidl_dVg ;
@@ -5190,19 +5229,27 @@ start_of_mobility:
     Igisl_dVgs = 0.0e0 ;
   } else {
     T1 = model->HSM2_gidl3 * ( - Vds + model->HSM2_gidl4 )
-      - ( Vgs - Vds ) + ( dVthSC + dVthLP ) * model->HSM2_gidl5 ;
+      - ( Vgs - Vds ) + ( dVthSC + dVthLP ) * model->HSM2_gidl5 - Qb0Cox ;
+
     T2 = 1.0 / Tox0 ;
     E1 = T1 * T2 ;
-    E1_dVb = model->HSM2_gidl5 * (dVthSC_dVb + dVthLP_dVb) * T2 ;
-    E1_dVd = ( -1.0 * model->HSM2_gidl3 + 1.0 + model->HSM2_gidl5 * (dVthSC_dVd + dVthLP_dVd) ) * T2 ;
-    E1_dVg = ( -1.0 + model->HSM2_gidl5 * (dVthSC_dVg + dVthLP_dVg) ) * T2 ;
+    E1_dVb = ( model->HSM2_gidl5 * (dVthSC_dVb + dVthLP_dVb) - Qb0Cox_dVb ) * T2 ;
+    E1_dVd = ( -1.0 * model->HSM2_gidl3 + 1.0 + model->HSM2_gidl5 * (dVthSC_dVd + dVthLP_dVd) - Qb0Cox_dVd ) * T2 ;
+    E1_dVg = ( -1.0 + model->HSM2_gidl5 * (dVthSC_dVg + dVthLP_dVg) - Qb0Cox_dVg ) * T2 ;
 
     Fn_SZ( Egisl , E1, eef_dlt, T5) ;
     Egisl_dVb = T5 * E1_dVb ;
     Egisl_dVd = T5 * E1_dVd ;
     Egisl_dVg = T5 * E1_dVg ;
+    Egisl    += small ;
 
-    T0 = - pParam->HSM2_gidl2 * Egp32 / (Egisl + small) ;
+    T6 = pow(Egisl,model->HSM2_gidl7) ;
+    T1 = model->HSM2_gidl7 * pow(Egisl,model->HSM2_gidl7 -1.0) ;
+    T6_dVb = Egisl_dVb * T1 ;
+    T6_dVd = Egisl_dVd * T1 ;
+    T6_dVg = Egisl_dVg * T1 ;
+
+    T0 = - pParam->HSM2_gidl2 * Egp32 / T6 ;
     if ( T0 < - EXP_THR ) {
       Igisl = 0.0 ;
       Igisl_dVbs = Igisl_dVds = Igisl_dVgs = 0.0 ;
@@ -5210,7 +5257,7 @@ start_of_mobility:
       T1 = exp ( T0 ) ;
       T2 = pParam->HSM2_gidl1 / Egp12 * C_QE * here->HSM2_weff_nf ;
       Igisl = T2 * Egisl * Egisl * T1 ;
-      T3 = T2 * T1 * Egisl * (2.0 + pParam->HSM2_gidl2 * Egp32 * Egisl / (Egisl + small) / (Egisl + small)) ;
+      T3 = T2 * T1 * Egisl * (2.0 + pParam->HSM2_gidl2 * Egp32 * Egisl / T6 / T6) ;
       Igisl_dVbs = T3 * Egisl_dVb ;
       Igisl_dVds = T3 * Egisl_dVd ;
       Igisl_dVgs = T3 * Egisl_dVg ;
@@ -5238,7 +5285,7 @@ start_of_mobility:
   /*-----------------------------------------------------------*
    * End of PART-2. (label) 
    *-----------------*/
-/* end_of_part_2:*/ 
+/* end_of_part_2: */
 
   /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
    * PART-3: Overlap charge
@@ -5259,7 +5306,7 @@ start_of_mobility:
       Psdl_dVgs = Ps0_dVgs ;
     }
     
-    if (modelCGS->HSM2_xqy !=0) {
+    if (model->HSM2_xqy !=0) {
       Ec = 0.0e0 ;
       Ec_dVbs =0.0e0 ;
       Ec_dVds =0.0e0 ;
@@ -5267,7 +5314,7 @@ start_of_mobility:
     }
   } else {
     /* Ec is removed from Lred calc. part */
-    if (modelCGS->HSM2_xqy !=0) {
+    if (model->HSM2_xqy !=0) {
       if ( Idd < C_IDD_MIN ) {
         Ec = 0.0e0 ;
         Ec_dVbs =0.0e0 ;
@@ -5290,7 +5337,7 @@ start_of_mobility:
    * Overlap charges: Qgod, Qgos, and Qover 
    *-----------------*/
   if ( model->HSM2_coovlp >= 1 && pParam->HSM2_lover > 0.0 ){
-    cov_slp = model->HSM2_ovslp ;
+    cov_slp = modelMKS->HSM2_ovslp ;
     cov_mag = model->HSM2_ovmag ;
 
     covvg = Vgs ;
@@ -5343,7 +5390,7 @@ start_of_mobility:
         Vsbgmt = - Vbsgmt ;
         flg_overs = flg_ovloops * (int)ModeNML + flg_ovloopd * (int)ModeRVS ; /* geometrical source */
         flg_overd = flg_ovloops * (int)ModeRVS + flg_ovloopd * (int)ModeNML ; /* geometrical drain */
-        Vxbgmt = flg_overs * Vsbgmt + flg_overd * Vdbgmt ;
+        Vxbgmt = flg_overs * Vsbgmt + flg_overd * Vdbgmt + epsm10 ;
 
     
         /*---------------------------------------------------*
@@ -5483,7 +5530,7 @@ start_of_mobility:
             T1 = ( beta * ( VgpLD + Vxbgmtcl ) - 1.0e0 + TY );
             T3 = fac1p2 * beta2 ;
             if ( TX < epsm10) {
-              TX = epsm10;
+              TX = epsm10; TX_dVxb = 0.0; TX_dVgb = 0.0;
             }
     
             Ps0_iniA = VgpLD + fac1p2 * beta / 2.0e0 * ( 1.0e0 - sqrt( TX ) ) ;
@@ -5968,7 +6015,7 @@ start_of_mobility:
   /*-------------------------------------------*
    * Gate/Bulk overlap charge: Qgbo
    *-----------------*/
-  Cgbo_loc = - modelCGS->HSM2_cgbo * here->HSM2_lgate ;
+  Cgbo_loc = - model->HSM2_cgbo * here->HSM2_lgate ;
   Qgbo = - Cgbo_loc * (Vgs -Vbs) ;
   Qgbo_dVgs = - Cgbo_loc ;
   Qgbo_dVbs =   Cgbo_loc ;
@@ -5977,7 +6024,7 @@ start_of_mobility:
   /*---------------------------------------------------*
    * Lateral-field-induced capacitance.
    *-----------------*/
-  if ( model->HSM2_coqy == 0 || modelCGS->HSM2_xqy == 0 ){
+  if ( model->HSM2_coqy == 0 || model->HSM2_xqy == 0 ){
     Qy = 0.0e0 ;
     Qy_dVds = 0.0e0 ;
     Qy_dVgs = 0.0e0 ;
@@ -6013,8 +6060,8 @@ start_of_mobility:
     T10 = here->HSM2_wdpl ;
     T3 = T10 * 1.3 ;
     T2 = C_ESI * here->HSM2_weff_nf * T3 ;
-    T7 = 1.0e-7 ; /* 1nm */
-    T0 = Fn_Max( modelCGS->HSM2_xqy , T7 ) ;
+    T7 = 1.0e-9 ; /* 1nm */
+    T0 = Fn_Max( model->HSM2_xqy , T7 ) ;
     T4 = T2 / T0 ;
     Qy =       - ( Ps0      + Vds   - T1     ) * T4 ;
     Qy_dVds =  - ( Ps0_dVds + 1.0e0 - T1_dVd ) * T4 ;
@@ -6190,18 +6237,18 @@ start_of_mobility:
   tcjbdswg=model->HSM2_tcjbdswg;
   tcjbsswg=model->HSM2_tcjbsswg;
 
-  czbs = modelCGS->HSM2_cj * hereCGS->HSM2_as ;
+  czbs = model->HSM2_cj * here->HSM2_as ;
   czbs = czbs * ( 1.0 + tcjbs * ( TTEMP - model->HSM2_ktnom )) ;
 
-  czbd = modelCGS->HSM2_cj * hereCGS->HSM2_ad ;
+  czbd = model->HSM2_cj * here->HSM2_ad ;
   czbd = czbd * ( 1.0 + tcjbd * ( TTEMP - model->HSM2_ktnom )) ;
 
   /* Source Bulk Junction */
-  if (hereCGS->HSM2_ps > here->HSM2_weff_nf) {
-    czbssw = modelCGS->HSM2_cjsw * ( hereCGS->HSM2_ps - here->HSM2_weff_nf ) ;
+  if (here->HSM2_ps > here->HSM2_weff_nf) {
+    czbssw = model->HSM2_cjsw * ( here->HSM2_ps - here->HSM2_weff_nf ) ;
     czbssw = czbssw * ( 1.0 + tcjbssw * ( TTEMP - model->HSM2_ktnom )) ;
 
-    czbsswg = modelCGS->HSM2_cjswg * here->HSM2_weff_nf ;
+    czbsswg = model->HSM2_cjswg * here->HSM2_weff_nf ;
     czbsswg = czbsswg * ( 1.0 + tcjbsswg * ( TTEMP - model->HSM2_ktnom )) ;
 
     if (vbs_jct == 0.0) {  
@@ -6247,7 +6294,7 @@ start_of_mobility:
       Capbs = T1 + vbs_jct * T2 ;
     }
   } else {
-    czbsswg = modelCGS->HSM2_cjswg * hereCGS->HSM2_ps ;
+    czbsswg = model->HSM2_cjswg * here->HSM2_ps ;
     czbsswg = czbsswg * ( 1.0 + tcjbsswg * ( TTEMP - model->HSM2_ktnom )) ;
     if (vbs_jct == 0.0) {
       Qbs = 0.0 ;
@@ -6284,10 +6331,10 @@ start_of_mobility:
   }    
     
   /* Drain Bulk Junction */
-  if (hereCGS->HSM2_pd > here->HSM2_weff_nf) {
-    czbdsw = modelCGS->HSM2_cjsw * ( hereCGS->HSM2_pd - here->HSM2_weff_nf ) ;
+  if (here->HSM2_pd > here->HSM2_weff_nf) {
+    czbdsw = model->HSM2_cjsw * ( here->HSM2_pd - here->HSM2_weff_nf ) ;
     czbdsw = czbdsw * ( 1.0 + tcjbdsw * ( TTEMP - model->HSM2_ktnom )) ; 
-    czbdswg = modelCGS->HSM2_cjswg * here->HSM2_weff_nf ;
+    czbdswg = model->HSM2_cjswg * here->HSM2_weff_nf ;
     czbdswg = czbdswg * ( 1.0 + tcjbdswg * ( TTEMP - model->HSM2_ktnom )) ;
     if (vbd_jct == 0.0) {
       Qbd = 0.0 ;
@@ -6333,7 +6380,7 @@ start_of_mobility:
     }
     
   } else {
-    czbdswg = modelCGS->HSM2_cjswg * hereCGS->HSM2_pd ;
+    czbdswg = model->HSM2_cjswg * here->HSM2_pd ;
     czbdswg = czbdswg * ( 1.0 + tcjbdswg * ( TTEMP - model->HSM2_ktnom )) ;
     if (vbd_jct == 0.0) {   
       Qbd = 0.0 ;
@@ -6438,7 +6485,7 @@ start_of_mobility:
         Qi_dVbs_nqs = T3 * (Qi_dVbs - T4 * tau_dVbs);
 
         /* tau for bulk charge */
-        T2 = model->HSM2_dly3 ;
+        T2 = modelMKS->HSM2_dly3 ;
         taub = T2 * Cox ;
         taub_dVgs = T2 * Cox_dVg ;
         taub_dVds = T2 * Cox_dVd ;
@@ -6497,7 +6544,7 @@ start_of_mobility:
       tau_dVgs = tau_dVds = tau_dVbs = 0.0 ;
     }
 
-    T1 = model->HSM2_dly3 ;
+    T1 = modelMKS->HSM2_dly3 ;
     taub = T1 * Cox ;
     taub_dVgs = T1 * Cox_dVg ;
     taub_dVds = T1 * Cox_dVd ;
@@ -6520,7 +6567,7 @@ start_of_mobility:
     
     NFalp = pParam->HSM2_nfalp ;
     NFtrp = pParam->HSM2_nftrp ;
-    Cit = model->HSM2_cit ;
+    Cit = modelMKS->HSM2_cit ;
 
     T1 = Qn0 / C_QE ;
     T2 = ( Cox + Qn0 / ( Ps0 - Vbs ) + Cit ) * beta_inv / C_QE ;
@@ -6543,7 +6590,7 @@ start_of_mobility:
   if ( model->HSM2_cothrml != 0 && !flg_noqi ) {
 
     Eyd = ( Psdl - Ps0 ) / Lch ;
-    T12 = Muun * Eyd / 1.0e7 ;
+    T12 = Muun * Eyd / C_vmax ;
     /* note: model->HSM2_bb = 2 (electron) ;1 (hole) */
     if ( 1.0e0 - epsm10 <= model->HSM2_bb && model->HSM2_bb <= 1.0e0 + epsm10 ) {
       T7  = 1.0e0 ;

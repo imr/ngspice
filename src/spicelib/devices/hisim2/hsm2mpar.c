@@ -3,10 +3,12 @@
  HiSIM (Hiroshima University STARC IGFET Model)
  Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM 2.6.1 
+ MODEL NAME : HiSIM
+ ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ 
  FILE : hsm2mpar.c
 
- date : 2012.4.6
+ Date : 2012.10.25
 
  released by 
                 Hiroshima University &
@@ -133,6 +135,10 @@ int HSM2mParam(
   case  HSM2_MOD_COQOVSM:
     mod->HSM2_coqovsm = value->iValue;
     mod->HSM2_coqovsm_Given = TRUE;
+    break;
+  case HSM2_MOD_COERRREP:
+    mod->HSM2_coerrrep = value->iValue;
+    mod->HSM2_coerrrep_Given = TRUE;
     break;
   case  HSM2_MOD_VMAX:
     mod->HSM2_vmax = value->rValue;
@@ -302,6 +308,14 @@ int HSM2mParam(
     mod->HSM2_nsubc = value->rValue;
     mod->HSM2_nsubc_Given = TRUE;
     break;
+  case HSM2_MOD_VFBCL:
+    mod->HSM2_vfbcl = value->rValue;
+    mod->HSM2_vfbcl_Given = TRUE;
+    break;
+  case HSM2_MOD_VFBCLP:
+    mod->HSM2_vfbclp = value->rValue;
+    mod->HSM2_vfbclp_Given = TRUE;
+    break;
   case  HSM2_MOD_PARL2:
     mod->HSM2_parl2 = value->rValue;
     mod->HSM2_parl2_Given = TRUE;
@@ -321,6 +335,10 @@ int HSM2mParam(
   case  HSM2_MOD_NSUBPFAC:
     mod->HSM2_nsubpfac = value->rValue;
     mod->HSM2_nsubpfac_Given = TRUE;
+    break;
+  case HSM2_MOD_NSUBPDLT:
+    mod->HSM2_nsubpdlt = value->rValue;
+    mod->HSM2_nsubpdlt_Given = TRUE;
     break;
   case  HSM2_MOD_NSUBPW:
     mod->HSM2_nsubpw = value->rValue;
@@ -618,6 +636,18 @@ int HSM2mParam(
     mod->HSM2_nsubpsti3 = value->rValue;
     mod->HSM2_nsubpsti3_Given = TRUE;
     break;
+  case HSM2_MOD_NSUBCSTI1:
+    mod->HSM2_nsubcsti1 = value->rValue;
+    mod->HSM2_nsubcsti1_Given = TRUE;
+    break;
+  case HSM2_MOD_NSUBCSTI2:
+    mod->HSM2_nsubcsti2 = value->rValue;
+    mod->HSM2_nsubcsti2_Given = TRUE;
+    break;
+  case HSM2_MOD_NSUBCSTI3:
+    mod->HSM2_nsubcsti3 = value->rValue;
+    mod->HSM2_nsubcsti3_Given = TRUE;
+    break;
   case  HSM2_MOD_LPEXT:
     mod->HSM2_lpext = value->rValue;
     mod->HSM2_lpext_Given = TRUE;
@@ -863,6 +893,14 @@ int HSM2mParam(
   case  HSM2_MOD_GIDL5:
     mod->HSM2_gidl5 = value->rValue;
     mod->HSM2_gidl5_Given = TRUE;
+    break;
+  case HSM2_MOD_GIDL6:
+    mod->HSM2_gidl6 = value->rValue;
+    mod->HSM2_gidl6_Given = TRUE;
+    break;
+  case HSM2_MOD_GIDL7:
+    mod->HSM2_gidl7 = value->rValue;
+    mod->HSM2_gidl7_Given = TRUE;
     break;
   case  HSM2_MOD_GLEAK1:
     mod->HSM2_gleak1 = value->rValue;
@@ -1332,6 +1370,18 @@ int HSM2mParam(
     mod->HSM2_lnsubpsti3 = value->rValue;
     mod->HSM2_lnsubpsti3_Given = TRUE;
     break;
+  case HSM2_MOD_LNSUBCSTI1:
+    mod->HSM2_lnsubcsti1 = value->rValue;
+    mod->HSM2_lnsubcsti1_Given = TRUE;
+    break;
+  case HSM2_MOD_LNSUBCSTI2:
+    mod->HSM2_lnsubcsti2 = value->rValue;
+    mod->HSM2_lnsubcsti2_Given = TRUE;
+    break;
+  case HSM2_MOD_LNSUBCSTI3:
+    mod->HSM2_lnsubcsti3 = value->rValue;
+    mod->HSM2_lnsubcsti3_Given = TRUE;
+    break;
   case  HSM2_MOD_LCGSO:
     mod->HSM2_lcgso = value->rValue;
     mod->HSM2_lcgso_Given = TRUE;
@@ -1614,6 +1664,18 @@ int HSM2mParam(
     mod->HSM2_wnsubpsti3 = value->rValue;
     mod->HSM2_wnsubpsti3_Given = TRUE;
     break;
+  case HSM2_MOD_WNSUBCSTI1:
+    mod->HSM2_wnsubcsti1 = value->rValue;
+    mod->HSM2_wnsubcsti1_Given = TRUE;
+    break;
+  case HSM2_MOD_WNSUBCSTI2:
+    mod->HSM2_wnsubcsti2 = value->rValue;
+    mod->HSM2_wnsubcsti2_Given = TRUE;
+    break;
+  case HSM2_MOD_WNSUBCSTI3:
+    mod->HSM2_wnsubcsti3 = value->rValue;
+    mod->HSM2_wnsubcsti3_Given = TRUE;
+    break;
   case  HSM2_MOD_WCGSO:
     mod->HSM2_wcgso = value->rValue;
     mod->HSM2_wcgso_Given = TRUE;
@@ -1895,6 +1957,18 @@ int HSM2mParam(
   case  HSM2_MOD_PNSUBPSTI3:
     mod->HSM2_pnsubpsti3 = value->rValue;
     mod->HSM2_pnsubpsti3_Given = TRUE;
+    break;
+  case HSM2_MOD_PNSUBCSTI1:
+    mod->HSM2_pnsubcsti1 = value->rValue;
+    mod->HSM2_pnsubcsti1_Given = TRUE;
+    break;
+  case HSM2_MOD_PNSUBCSTI2:
+    mod->HSM2_pnsubcsti2 = value->rValue;
+    mod->HSM2_pnsubcsti2_Given = TRUE;
+    break;
+  case HSM2_MOD_PNSUBCSTI3:
+    mod->HSM2_pnsubcsti3 = value->rValue;
+    mod->HSM2_pnsubcsti3_Given = TRUE;
     break;
   case  HSM2_MOD_PCGSO:
     mod->HSM2_pcgso = value->rValue;

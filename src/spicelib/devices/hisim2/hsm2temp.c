@@ -3,10 +3,12 @@
  HiSIM (Hiroshima University STARC IGFET Model)
  Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM 2.6.1 
+ MODEL NAME : HiSIM
+ ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ 
  FILE : hsm2temp.c
 
- date : 2012.4.6
+ Date : 2012.10.25
 
  released by 
                 Hiroshima University &
@@ -22,17 +24,16 @@
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-#define BINNING(param) pParam->HSM2_##param = model->HSM2_##param \
-  + model->HSM2_l##param / Lbin + model->HSM2_w##param / Wbin \
-  + model->HSM2_p##param / LWbin ;
+#define  Nsubmin     (1e15 / C_cm2m_p3) 
+#define  Nsubmin_dlt (0.01 / C_cm2m_p3)
+#define  lpext_dlt   (1e-8 / C_m2cm) 
 
-#define RANGECHECK(param, min, max, pname)                              \
-  if ( (param) < (min) || (param) > (max) ) {             \
-    printf("warning(HiSIM2): The model/instance parameter %s (= %e) must be in the range [%e , %e].\n", \
-           (pname), (param), (min), (max) );                     \
+#define RANGECHECK(param, min, max, pname)          \
+  if ( model->HSM2_coerrrep && ((param) < (min) || (param) > (max)) ) { \
+    printf("warning: (%s = %g) range [%g , %g].\n", \
+           (pname), (param), (min), (max) );  \
   }
-
-
+ 
 /*---------------------------------------------------*
 * smoothZero: flooring to zero.
 *      y = 0.5 ( x + sqrt( x^2 + 4 delta^2 ) )
@@ -41,19 +42,21 @@
 #define Fn_SZtemp( y , x , delta ) { \
     T1 = sqrt ( ( x ) *  ( x ) + 4.0 * ( delta ) * ( delta) ) ; \
     y = 0.5 * ( ( x ) + T1 ) ; \
-    if (y < 0) \
-        y = 0 ; \
   }
 
 #define Fn_SUtemp( y , x , xmax , delta ) { \
     T1 = ( xmax ) - ( x ) - ( delta ) ; \
-    T2 = sqrt ( T1 *  T1 + 4.0 * ( xmax ) * ( delta) ) ; \
+    T2 = 4.0 * ( xmax ) * ( delta) ; \
+    T2 = T2 > 0.0 ?  T2 : - ( T2 ) ; \
+    T2 = sqrt ( T1 * T1 + T2 ) ; \
     y = ( xmax ) - 0.5 * ( T1 + T2 ) ; \
   }
 
 #define Fn_SLtemp( y , x , xmin , delta ) { \
     T1 = ( x ) - ( xmin ) - ( delta ) ; \
-    T2 = sqrt ( T1 *  T1 + 4.0 * ( xmin ) * ( delta ) ) ; \
+    T2 = 4.0 * ( xmin ) * ( delta ) ; \
+    T2 = T2 > 0.0 ?  T2 : - ( T2 ) ; \
+    T2 = sqrt ( T1 * T1 + T2 ) ; \
     y = ( xmin ) + 0.5 * ( T1 + T2 ) ; \
   }
 
@@ -64,11 +67,10 @@ int HSM2temp(
   register HSM2model *model = (HSM2model *)inModel ;
   register HSM2instance *here ;
   HSM2binningParam *pParam ;
-  HSM2modelCGSParam *modelCGS ;
-  HSM2hereCGSParam *hereCGS ;
+  HSM2modelMKSParam *modelMKS ;
+  HSM2hereMKSParam  *hereMKS ;
   double mueph ;
   double Leff, dL , LG, Weff, dW , WG , WL , Lgate , Wgate;
-  double Lbin, Wbin, LWbin ; /* binning */
   double Nsubpp, Nsubps, Nsub, q_Nsub, Nsubb, Npext ;
   double Lod_half, Lod_half_ref ;
   double MUEPWD = 0.0 ;
@@ -90,268 +92,21 @@ int HSM2temp(
 
 
   for ( ;model ;model = model->HSM2nextModel ) {
-    modelCGS = &model->modelCGS ;
 
-    /*-----------------------------------------------------------*
-     * Range check of model parameters
-     *-----------------*/
-    if ( model->HSM2_tox <= 0 ) {
-      printf("warning(HiSIM2): TOX = %e\n ", model->HSM2_tox);
-      printf("warning(HiSIM2): The model parameter TOX must be positive.\n");
-    }
-    RANGECHECK(model->HSM2_xld,        0.0,  50.0e-9, "XLD") ;
-    RANGECHECK(model->HSM2_xwd,   -10.0e-9, 100.0e-9, "XWD") ;
-    RANGECHECK(model->HSM2_rsh,        0.0,   1.0e-3, "RSH") ;
-    RANGECHECK(model->HSM2_rshg,       0.0,    100.0, "RSHG") ;
-    RANGECHECK(model->HSM2_xqy,    10.0e-9,  50.0e-9, "XQY") ;
-    RANGECHECK(model->HSM2_rs,         0.0,  10.0e-3, "RS") ;
-    RANGECHECK(model->HSM2_rd,         0.0,  10.0e-3, "RD") ;
-    RANGECHECK(model->HSM2_vbi,        1.0,      1.2, "VBI") ;
-    RANGECHECK(model->HSM2_parl2,      0.0,  50.0e-9, "PARL2") ;
-    RANGECHECK(model->HSM2_lp,         0.0, 300.0e-9, "LP") ;
-    RANGECHECK(model->HSM2_pgd2,       0.0,      1.5, "PGD2") ;
-    RANGECHECK(model->HSM2_pgd4,       0.0,      3.0, "PGD4") ;
-    RANGECHECK(model->HSM2_muecb0lp,   0.0,      2.0, "MUECB0LP") ;
-    RANGECHECK(model->HSM2_muecb1lp,   0.0,      2.0, "MUECB1LP") ;
-    RANGECHECK(model->HSM2_mueph0,    0.25,     0.35, "MUEPH0") ;
-    RANGECHECK(model->HSM2_muesr0,     1.8,      2.2, "MUESR0") ;
-    RANGECHECK(model->HSM2_lpext,  1.0e-50,  10.0e-6, "LPEXT") ;
-    RANGECHECK(model->HSM2_npext,   1.0e16,   1.0e18, "NPEXT") ;
-    RANGECHECK(model->HSM2_scp21,      0.0,      5.0, "SCP21") ;
-    RANGECHECK(model->HSM2_scp22,      0.0,      0.0, "SCP22") ;
-    RANGECHECK(model->HSM2_bs1,        0.0,  50.0e-3, "BS1") ;
-    RANGECHECK(model->HSM2_bs2,        0.5,      1.0, "BS2") ;
-    if ( model->HSM2_cgbo < 0.0 ) { 
-      printf("warning(HiSIM2): %s = %e\n", "CGBO", model->HSM2_cgbo ); 
-      printf("warning(HiSIM2): The model parameter %s must not be less than %s.\n", "CGBO", "0.0" ); 
-    }
-    RANGECHECK(model->HSM2_clm5,       0.0,      2.0, "CLM5") ;
-    RANGECHECK(model->HSM2_clm6,       0.0,     20.0, "CLM6") ;
-    RANGECHECK(model->HSM2_vover,      0.0,     50.0, "VOVER") ;
-    RANGECHECK(model->HSM2_voverp,     0.0,      2.0, "VOVERP") ;
-    RANGECHECK(model->HSM2_qme1,       0.0, 300.0e-9, "QME1") ;
-    RANGECHECK(model->HSM2_qme3,       0.0,800.0e-12, "QME3") ;
-    RANGECHECK(model->HSM2_tnom,      22.0,     32.0, "TNOM") ;
-    RANGECHECK(model->HSM2_ddltmax,    1.0,     20.0, "DDLTMAX") ;
-    RANGECHECK(model->HSM2_ddltict,   -3.0,     20.0, "DDLTICT") ;
-    RANGECHECK(model->HSM2_ddltslp,    0.0,     20.0, "DDLTSLP") ;
-    RANGECHECK(model->HSM2_cvb,       -0.1,      0.2, "CVB") ;
-    RANGECHECK(model->HSM2_cvbk,      -0.1,      0.2, "CVBK") ;
-    RANGECHECK(model->HSM2_byptol,     0.0,      1.0, "BYPTOL") ;
-    RANGECHECK(model->HSM2_sc3Vbs,    -3.0,      0.0, "SC3VBS") ;
-
-    /*-----------------------------------------------------------*
-     * Change units into CGS.
-     *-----------------*/
-    modelCGS->HSM2_tox   = model->HSM2_tox * C_m2cm ;
-    modelCGS->HSM2_xld   = model->HSM2_xld * C_m2cm ;
-    modelCGS->HSM2_xwd   = model->HSM2_xwd * C_m2cm ;
-    modelCGS->HSM2_xqy   = model->HSM2_xqy * C_m2cm ;
-    modelCGS->HSM2_xl    = model->HSM2_xl * C_m2cm ;
-    modelCGS->HSM2_xw    = model->HSM2_xw * C_m2cm ;
-    modelCGS->HSM2_saref = model->HSM2_saref * C_m2cm ;
-    modelCGS->HSM2_sbref = model->HSM2_sbref * C_m2cm ;
-    modelCGS->HSM2_ll    = model->HSM2_ll * C_m2cm ;
-    modelCGS->HSM2_lld   = model->HSM2_lld * C_m2cm ;
-    modelCGS->HSM2_wl    = model->HSM2_wl * C_m2cm ;
-    modelCGS->HSM2_wld   = model->HSM2_wld * C_m2cm ;
-    modelCGS->HSM2_lp    = model->HSM2_lp * C_m2cm ;
-    modelCGS->HSM2_tpoly = model->HSM2_tpoly * C_m2cm ;
-    modelCGS->HSM2_parl2 = model->HSM2_parl2 * C_m2cm ;
-    modelCGS->HSM2_qme1  = model->HSM2_qme1 * C_m2cm ;
-    modelCGS->HSM2_qme3  = model->HSM2_qme3 * C_m2cm ;
-    modelCGS->HSM2_cgbo  = model->HSM2_cgbo / C_m2cm ;
-    modelCGS->HSM2_cj    = model->HSM2_cj / C_m2cm_p2 ;
-    modelCGS->HSM2_cjsw  = model->HSM2_cjsw / C_m2cm ;
-    modelCGS->HSM2_cjswg = model->HSM2_cjswg / C_m2cm ;
-    modelCGS->HSM2_lpext = model->HSM2_lpext * C_m2cm ;
-    modelCGS->HSM2_wl1   = model->HSM2_wl1 * C_m2cm ;
-    modelCGS->HSM2_rs    = model->HSM2_rs * C_m2cm ;
-    modelCGS->HSM2_rd    = model->HSM2_rd * C_m2cm ;
-    GDLD = model->HSM2_gdld * C_m2um ;
-
-    /*-----------------------------------------------------------*
-     * Change unit into Kelvin.
-     *-----------------*/
-    model->HSM2_ktnom = model->HSM2_tnom + 273.15 ; /* [C] -> [K] */
-
-
-    /* SourceSatCurrent = 1.0e-14 */
-    /* DrainSatCurrent = 1.0e-14 */
-    model->HSM2_vcrit = CONSTvt0 * log( CONSTvt0 / (CONSTroot2 * 1.0e-14) ) ;
-
-    /* Quantum Mechanical Effect */
-    if ( ( model->HSM2_qme1 == 0.0 && model->HSM2_qme3 == 0.0 ) || model->HSM2_qme2 == 0.0 ) {
-      model->HSM2_flg_qme = 0 ;
-    } else {
-      model->HSM2_flg_qme = 1 ;
-      model->HSM2_qme12 = model->HSM2_qme1 / ( model->HSM2_qme2 * model->HSM2_qme2 ) ;
-    }
+    modelMKS = &model->modelMKS ;
 
     for ( here = model->HSM2instances; here; here = here->HSM2nextInstance ) {
-      hereCGS = &here->hereCGS ;
       pParam = &here->pParam ;
+      hereMKS = &here->hereMKS ;
 
-      /*-----------------------------------------------------------*
-       * Range check of instance parameters
-       *-----------------*/
-      RANGECHECK(here->HSM2_l, model->HSM2_lmin, model->HSM2_lmax, "L") ;
-      RANGECHECK(here->HSM2_w/here->HSM2_nf, model->HSM2_wmin, model->HSM2_wmax, "W/NF") ;
-      RANGECHECK(here->HSM2_mphdfm,        -3.0,              3.0, "MPHDFM") ;
+      here->HSM2_lgate = Lgate = here->HSM2_l + model->HSM2_xl ;
+      Wgate = here->HSM2_w / here->HSM2_nf  + model->HSM2_xw ;
 
-      /*-----------------------------------------------------------*
-       * Change units into CGS.
-       *-----------------*/
-      hereCGS->HSM2_l    = here->HSM2_l  * C_m2cm ;
-      hereCGS->HSM2_w    = here->HSM2_w  * C_m2cm ;
-      hereCGS->HSM2_as   = here->HSM2_as * C_m2cm_p2 ;
-      hereCGS->HSM2_ad   = here->HSM2_ad * C_m2cm_p2 ;
-      hereCGS->HSM2_ps   = here->HSM2_ps * C_m2cm ;
-      hereCGS->HSM2_pd   = here->HSM2_pd * C_m2cm ;
-      hereCGS->HSM2_xgw  = here->HSM2_xgw * C_m2cm ;
-      hereCGS->HSM2_xgl  = here->HSM2_xgl * C_m2cm ;
-      hereCGS->HSM2_sa   = here->HSM2_sa  * C_m2cm ;
-      hereCGS->HSM2_sb   = here->HSM2_sb  * C_m2cm ;
-      hereCGS->HSM2_sd   = here->HSM2_sd  * C_m2cm ;
-    /*-----------------------------------------------------------*
-     * Change unit into Kelvin.
-     *-----------------*/
-      here->HSM2_ktemp = here->HSM2_temp + 273.15 ; /* [C] -> [K] */
-
-
-      here->HSM2_lgate = Lgate = hereCGS->HSM2_l + modelCGS->HSM2_xl ;
-      Wgate = hereCGS->HSM2_w / here->HSM2_nf  + modelCGS->HSM2_xw ;
-
-      LG = Lgate * 1.0e4 ;
-      here->HSM2_wg = WG = Wgate * 1.0e4 ; 
+      LG = Lgate * C_m2um ;
+      here->HSM2_wg = WG = Wgate * C_m2um ; 
       WL = WG * LG ;
       MUEPWD = model->HSM2_muepwd * C_m2um ;
       MUEPLD = model->HSM2_muepld * C_m2um ;
-
-      /* binning calculation */
-      Lbin = pow(LG, model->HSM2_lbinn) ;
-      Wbin = pow(WG, model->HSM2_wbinn) ;
-      LWbin = Lbin * Wbin ;
-
-      BINNING(vmax)
-      BINNING(bgtmp1)
-      BINNING(bgtmp2)
-      BINNING(eg0)
-      BINNING(lover)
-      BINNING(vfbover)
-      BINNING(nover)
-      BINNING(wl2)
-      BINNING(vfbc)
-      BINNING(nsubc)
-      BINNING(nsubp)
-      BINNING(scp1)
-      BINNING(scp2)
-      BINNING(scp3)
-      BINNING(sc1)
-      BINNING(sc2)
-      BINNING(sc3)
-      BINNING(sc4)
-      BINNING(pgd1)
-      BINNING(ndep)
-      BINNING(ninv)
-      BINNING(muecb0)
-      BINNING(muecb1)
-      BINNING(mueph1)
-      BINNING(vtmp)
-      BINNING(wvth0)
-      BINNING(muesr1)
-      BINNING(muetmp)
-      BINNING(sub1)
-      BINNING(sub2)
-      BINNING(svds)
-      BINNING(svbs)
-      BINNING(svgs)
-      BINNING(nsti)
-      BINNING(wsti)
-      BINNING(scsti1)
-      BINNING(scsti2)
-      BINNING(vthsti)
-      BINNING(muesti1)
-      BINNING(muesti2)
-      BINNING(muesti3)
-      BINNING(nsubpsti1)
-      BINNING(nsubpsti2)
-      BINNING(nsubpsti3)
-      BINNING(cgso)
-      BINNING(cgdo)
-      BINNING(js0)
-      BINNING(js0sw)
-      BINNING(nj)
-      BINNING(cisbk)
-      BINNING(clm1)
-      BINNING(clm2)
-      BINNING(clm3)
-      BINNING(wfc)
-      BINNING(gidl1)
-      BINNING(gidl2)
-      BINNING(gleak1)
-      BINNING(gleak2)
-      BINNING(gleak3)
-      BINNING(gleak6)
-      BINNING(glksd1)
-      BINNING(glksd2)
-      BINNING(glkb1)
-      BINNING(glkb2)
-      BINNING(nftrp)
-      BINNING(nfalp)
-      BINNING(vdiffj)
-      BINNING(ibpc1)
-      BINNING(ibpc2)
-
-      /*-----------------------------------------------------------*
-       * Range check of model parameters
-       *-----------------*/
-      RANGECHECK(pParam->HSM2_vmax,     1.0e5,   20.0e6, "VMAX") ;
-      RANGECHECK(pParam->HSM2_bgtmp1, 50.0e-6,   1.0e-3, "BGTMP1") ;
-      RANGECHECK(pParam->HSM2_bgtmp2, -1.0e-6,   1.0e-6, "BGTMP2") ;
-      RANGECHECK(pParam->HSM2_eg0,        1.0,      1.3, "EG0") ;
-      RANGECHECK(pParam->HSM2_vfbc,      -1.2,     -0.8, "VFBC") ;
-      RANGECHECK(pParam->HSM2_vfbover,   -0.2,      0.2, "VFBOVER") ;
-      RANGECHECK(pParam->HSM2_nsubc,   1.0e16,   1.0e19, "NSUBC") ;
-      RANGECHECK(pParam->HSM2_nsubp,   1.0e16,   1.0e19, "NSUBP") ;
-      RANGECHECK(pParam->HSM2_scp1,       0.0,     20.0, "SCP1") ;
-      RANGECHECK(pParam->HSM2_scp2,       0.0,      2.0, "SCP2") ;
-      RANGECHECK(pParam->HSM2_scp3,       0.0, 100.0e-9, "SCP3") ;
-      RANGECHECK(pParam->HSM2_sc1,        0.0,     20.0, "SC1") ;
-      RANGECHECK(pParam->HSM2_sc2,        0.0,      2.0, "SC2") ;
-      RANGECHECK(pParam->HSM2_sc3,        0.0, 200.0e-9, "SC3") ;
-      RANGECHECK(pParam->HSM2_pgd1,       0.0,  50.0e-3, "PGD1") ;
-      RANGECHECK(pParam->HSM2_ndep,       0.0,      1.0, "NDEP") ;
-      RANGECHECK(pParam->HSM2_ninv,       0.0,      1.0, "NINV") ;
-      RANGECHECK(pParam->HSM2_muecb0,   100.0,  100.0e3, "MUECB0") ;
-      RANGECHECK(pParam->HSM2_muecb1,     5.0,    1.0e4, "MUECB1") ;
-      RANGECHECK(pParam->HSM2_mueph1,   2.0e3,   35.0e3, "MUEPH1") ;
-      RANGECHECK(pParam->HSM2_vtmp,      -5.0,      1.0, "VTMP") ;
-      RANGECHECK(pParam->HSM2_muesr1,  1.0e13,   1.0e16, "MUESR1") ;
-      RANGECHECK(pParam->HSM2_muetmp,     0.5,      2.0, "MUETMP") ;
-      RANGECHECK(pParam->HSM2_clm1,       0.5,      1.0, "CLM1") ;
-      RANGECHECK(pParam->HSM2_clm2,       1.0,      4.0, "CLM2") ;
-      RANGECHECK(pParam->HSM2_clm3,       0.5,      5.0, "CLM3") ;
-      RANGECHECK(pParam->HSM2_wfc,   -5.0e-15,   1.0e-6, "WFC") ;
-      RANGECHECK(pParam->HSM2_cgso,       0.0, 100e-9 * 100*C_VAC*model->HSM2_kappa/model->HSM2_tox*C_m2cm, "CGSO") ;
-      RANGECHECK(pParam->HSM2_cgdo,       0.0, 100e-9 * 100*C_VAC*model->HSM2_kappa/model->HSM2_tox*C_m2cm, "CGDO") ;
-      RANGECHECK(pParam->HSM2_ibpc1,      0.0,   1.0e12, "IBPC1") ;
-      RANGECHECK(pParam->HSM2_ibpc2,      0.0,   1.0e12, "IBPC2") ;
-      RANGECHECK(pParam->HSM2_nsti,    1.0e16,   1.0e19, "NSTI") ;
-
-      /*-----------------------------------------------------------*
-       * Change units into CGS.
-       *-----------------*/
-      pParam->HSM2_lover  *= C_m2cm ;
-      pParam->HSM2_sc3    *= C_m2cm ;
-      pParam->HSM2_scp3   *= C_m2cm ;
-      pParam->HSM2_wfc    *= C_m2cm ;
-      pParam->HSM2_wsti   *= C_m2cm ;
-      pParam->HSM2_gidl1  *= C_m2cm_p1o2 ;
-      pParam->HSM2_cgso   /= C_m2cm ;
-      pParam->HSM2_cgdo   /= C_m2cm ;
-      pParam->HSM2_js0    /= C_m2cm_p2 ;
-      pParam->HSM2_js0sw  /= C_m2cm ;
 
       /* Band gap */
       here->HSM2_egtnom = pParam->HSM2_eg0 - model->HSM2_ktnom    
@@ -375,26 +130,26 @@ int HSM2temp(
       here->HSM2_clmmod = 1e0 + pow( LG , model->HSM2_clm5 ) * model->HSM2_clm6 ;
 
       /* Half length of diffusion */
-      T1 = 1.0 / (modelCGS->HSM2_saref + 0.5 * hereCGS->HSM2_l) 
-         + 1.0 / (modelCGS->HSM2_sbref + 0.5 * hereCGS->HSM2_l);
+      T1 = 1.0 / (model->HSM2_saref + 0.5 * here->HSM2_l)
+         + 1.0 / (model->HSM2_sbref + 0.5 * here->HSM2_l);
       Lod_half_ref = 2.0 / T1 ;
 
-      if (hereCGS->HSM2_sa > 0.0 && hereCGS->HSM2_sb > 0.0 &&
+      if (here->HSM2_sa > 0.0 && here->HSM2_sb > 0.0 &&
 	  (here->HSM2_nf == 1.0 ||
-           (here->HSM2_nf > 1.0 && hereCGS->HSM2_sd > 0.0))) {
+           (here->HSM2_nf > 1.0 && here->HSM2_sd > 0.0))) {
         T1 = 0.0;
         for (i = 0; i < here->HSM2_nf; i++) {
-          T1 += 1.0 / (hereCGS->HSM2_sa + 0.5 * hereCGS->HSM2_l 
-                       + i * (hereCGS->HSM2_sd + hereCGS->HSM2_l))
-              + 1.0 / (hereCGS->HSM2_sb + 0.5 * hereCGS->HSM2_l 
-                       + i * (hereCGS->HSM2_sd + hereCGS->HSM2_l));
+          T1 += 1.0 / (here->HSM2_sa + 0.5 * here->HSM2_l
+                       + i * (here->HSM2_sd + here->HSM2_l))
+              + 1.0 / (here->HSM2_sb + 0.5 * here->HSM2_l
+                       + i * (here->HSM2_sd + here->HSM2_l));
         }
         Lod_half = 2.0 * here->HSM2_nf / T1;
       } else {
         Lod_half = 0.0;
       }
 
-      Npext = model->HSM2_npext * ( 1.0 + model->HSM2_npextw / pow( WG, model->HSM2_npextwp ) ); /* new */
+      Npext = modelMKS->HSM2_npext * ( 1.0 + model->HSM2_npextw / pow( WG, model->HSM2_npextwp ) ); /* new */
       here->HSM2_mueph1 = pParam->HSM2_mueph1 ;
       here->HSM2_nsubp  = pParam->HSM2_nsubp ;
       here->HSM2_nsubc  = pParam->HSM2_nsubc ;
@@ -403,31 +158,31 @@ int HSM2temp(
       if ( model->HSM2_codfm == 1 && here->HSM2_nsubcdfm_Given ) {
 	RANGECHECK(here->HSM2_nsubcdfm,   1.0e16,   1.0e19, "NSUBCDFM") ;
  	here->HSM2_mueph1 *= here->HSM2_mphdfm
-	  * ( log(here->HSM2_nsubcdfm) - log(here->HSM2_nsubc) ) + 1.0 ;
-	here->HSM2_nsubp += here->HSM2_nsubcdfm - here->HSM2_nsubc ;
- 	Npext += here->HSM2_nsubcdfm - here->HSM2_nsubc ;
- 	here->HSM2_nsubc = here->HSM2_nsubcdfm ;
+	  * ( log(hereMKS->HSM2_nsubcdfm) - log(here->HSM2_nsubc) ) + 1.0 ;
+	here->HSM2_nsubp += hereMKS->HSM2_nsubcdfm - here->HSM2_nsubc ;
+ 	Npext += hereMKS->HSM2_nsubcdfm - here->HSM2_nsubc ;
+ 	here->HSM2_nsubc = hereMKS->HSM2_nsubcdfm ;
       }
 
 	/* WPE */
-        T0 = model->HSM2_nsubcwpe *
+        T0 = modelMKS->HSM2_nsubcwpe *
               ( here->HSM2_sca
                 + model->HSM2_web * here->HSM2_scb
                 + model->HSM2_wec * here->HSM2_scc ) ;
         here->HSM2_nsubc +=  T0 ;
-        Fn_SLtemp( here->HSM2_nsubc , here->HSM2_nsubc , 1e15 , 0.01 ) ;
-        T0 = model->HSM2_nsubpwpe *
+        Fn_SLtemp( here->HSM2_nsubc , here->HSM2_nsubc , Nsubmin , Nsubmin_dlt ) ;
+        T0 = modelMKS->HSM2_nsubpwpe *
               ( here->HSM2_sca
                 + model->HSM2_web * here->HSM2_scb
                 + model->HSM2_wec * here->HSM2_scc ) ;
         here->HSM2_nsubp +=  T0 ;
-        Fn_SLtemp( here->HSM2_nsubp , here->HSM2_nsubp , 1e15 , 0.01 ) ;
-        T0 = model->HSM2_npextwpe *
+        Fn_SLtemp( here->HSM2_nsubp , here->HSM2_nsubp , Nsubmin , Nsubmin_dlt ) ;
+        T0 = modelMKS->HSM2_npextwpe *
               ( here->HSM2_sca
                 + model->HSM2_web * here->HSM2_scb
                 + model->HSM2_wec * here->HSM2_scc ) ;
         Npext +=  T0 ;
-        Fn_SLtemp( Npext , Npext , 1e15 , 0.01 ) ;
+        Fn_SLtemp( Npext , Npext , Nsubmin , Nsubmin_dlt ) ;
 	/* WPE end */
 
       /* Coulomb Scattering */
@@ -435,7 +190,7 @@ int HSM2temp(
       here->HSM2_muecb1 = pParam->HSM2_muecb1 * pow( LG, model->HSM2_muecb1lp );
 
       /* Phonon Scattering (temperature-independent part) */
-      mueph = pParam->HSM2_mueph1 
+      mueph = here->HSM2_mueph1  
         * (1.0e0 + (model->HSM2_muephw / pow( WG + MUEPWD , model->HSM2_muepwp))) 
         * (1.0e0 + (model->HSM2_muephl / pow( LG + MUEPLD , model->HSM2_mueplp))) 
         * (1.0e0 + (model->HSM2_muephw2 / pow( WG, model->HSM2_muepwp2))) 
@@ -467,13 +222,13 @@ int HSM2temp(
       here->HSM2_ninv_o_esi = pParam->HSM2_ninv / C_ESI ;
 
       /* Metallurgical channel geometry */
-      dL = modelCGS->HSM2_xld  
-        + (modelCGS->HSM2_ll / pow (Lgate + modelCGS->HSM2_lld, model->HSM2_lln)) ;
-      dW = modelCGS->HSM2_xwd  
-        + (modelCGS->HSM2_wl / pow (Wgate + modelCGS->HSM2_wld, model->HSM2_wln)) ;  
+      dL = model->HSM2_xld 
+        + (modelMKS->HSM2_ll / pow (Lgate + model->HSM2_lld, model->HSM2_lln)) ;
+      dW = model->HSM2_xwd 
+        + (modelMKS->HSM2_wl / pow (Wgate + model->HSM2_wld, model->HSM2_wln)) ;  
     
       Leff = Lgate - 2.0e0 * dL ;
-      if ( Leff <= 1.0e-7 ) {   
+      if ( Leff <= 1.0e-9 ) {   
         IFuid namarr[2];
         namarr[0] = model->HSM2modName;
         namarr[1] = here->HSM2name;
@@ -488,11 +243,11 @@ int HSM2temp(
       here->HSM2_leff = Leff ;
 
       /* Wg dependence for short channel devices */
-      here->HSM2_lgatesm = Lgate + modelCGS->HSM2_wl1 / pow( WL , model->HSM2_wl1p ) ;
+      here->HSM2_lgatesm = Lgate + model->HSM2_wl1 / pow( WL , model->HSM2_wl1p ) ;
       here->HSM2_dVthsm = pParam->HSM2_wl2 / pow( WL , model->HSM2_wl2p ) ;
 
       /* Lg dependence of wsti */
-      T1 = 1.0e0 + model->HSM2_wstil / pow( here->HSM2_lgatesm * 1e4 , model->HSM2_wstilp ) ;
+      T1 = 1.0e0 + model->HSM2_wstil / pow( here->HSM2_lgatesm * C_m2um , model->HSM2_wstilp ) ;
       T2 = 1.0e0 + model->HSM2_wstiw / pow( WG , model->HSM2_wstiwp ) ;
       here->HSM2_wsti = pParam->HSM2_wsti * T1 * T2 ;
 
@@ -512,11 +267,13 @@ int HSM2temp(
       here->HSM2_weff_nf = Weff * here->HSM2_nf ;
 
       /* Surface impurity profile */
-
+      /* Nsubp */
+      if(model->HSM2_nsubpfac < 1.0) {
       T1 = 2.0 * ( 1.0 - model->HSM2_nsubpfac ) / model->HSM2_nsubpl * LG + 2.0 * model->HSM2_nsubpfac - 1.0 ;
-      Fn_SUtemp( T1 , T1 , 1 , 0.01 ) ;
-      Fn_SLtemp( T1 , T1 , model->HSM2_nsubpfac  , 0.01 ) ;
+      Fn_SUtemp( T1 , T1 , 1 , model->HSM2_nsubpdlt ) ;
+      Fn_SLtemp( T1 , T1 , model->HSM2_nsubpfac  , model->HSM2_nsubpdlt ) ;
       here->HSM2_nsubp *= T1 ;
+      }
 
       /* Note: Sign Changed --> */
       Nsubpp = here->HSM2_nsubp  
@@ -534,33 +291,40 @@ int HSM2temp(
 
       T2 = 1.0e0 + ( model->HSM2_nsubcw / pow ( WG, model->HSM2_nsubcwp )) ;
       T2 *= 1.0e0 + ( model->HSM2_nsubcw2 / pow ( WG, model->HSM2_nsubcwp2 )) ;
-      T3 = model->HSM2_nsubcmax / here->HSM2_nsubc ;
+      T3 = modelMKS->HSM2_nsubcmax / here->HSM2_nsubc ;
 
       Fn_SUtemp( T1 , T2 , T3 , 0.01 ) ;
       here->HSM2_nsubc *= T1 ;
 
-      if ( here->HSM2_nsubc <= 0.0 ) {
+      if (Lod_half > 0.0) {
+        T1 = 1.0e0 / (1.0e0 + pParam->HSM2_nsubcsti2) ;
+        T2 = pow (pParam->HSM2_nsubcsti1 / Lod_half, pParam->HSM2_nsubcsti3) ;
+        T3 = pow (pParam->HSM2_nsubcsti1 / Lod_half_ref, pParam->HSM2_nsubcsti3) ;
+        here->HSM2_nsubc = here->HSM2_nsubc * (1.0e0 + T1 * T2) / (1.0e0 + T1 * T3) ;
+      }
+
+      if(model->HSM2_coerrrep && (here->HSM2_nsubc <= 0.0)) {
         fprintf ( stderr , "*** warning(HiSIM): actual NSUBC value is negative -> reset to 1E+15.\n" ) ;
         fprintf ( stderr , "    The model parameter  NSUBCW/NSUBCWP and/or NSUBCW2/NSUBCW2P might be wrong.\n" ) ;
-        here->HSM2_nsubc = 1e15 ;
+        here->HSM2_nsubc = 1e15 / C_cm2m_p3 ;
       }
-      if(Npext < here->HSM2_nsubc || Npext > here->HSM2_nsubp) {
+      if(model->HSM2_coerrrep && (Npext < here->HSM2_nsubc || Npext > here->HSM2_nsubp)) {
         fprintf ( stderr , "*** warning(HiSIM): actual NPEXT value is smaller than NSUBC and/or greater than NSUBP.\n" ) ;
         fprintf ( stderr , "    ( Npext = %e , NSUBC = %e , NSUBP = %e ) \n",Npext,here->HSM2_nsubc,here->HSM2_nsubp);
         fprintf ( stderr , "    The model parameter  NPEXTW and/or NPEXTWP might be wrong.\n" ) ;
       }
 
-      if( Lgate > modelCGS->HSM2_lp ){
-        Nsub = (here->HSM2_nsubc * (Lgate - modelCGS->HSM2_lp) 
-                +  Nsubps  * modelCGS->HSM2_lp) / Lgate ;
+      if( Lgate > model->HSM2_lp ){
+        Nsub = (here->HSM2_nsubc * (Lgate - model->HSM2_lp) 
+                +  Nsubps  * model->HSM2_lp) / Lgate ;
       } else {
         Nsub = Nsubps
-          + (Nsubps - here->HSM2_nsubc) * (modelCGS->HSM2_lp - Lgate) 
-          / modelCGS->HSM2_lp ;
+          + (Nsubps - here->HSM2_nsubc) * (model->HSM2_lp - Lgate) 
+          / model->HSM2_lp ;
       }
-      T3 = 0.5e0 * Lgate - modelCGS->HSM2_lp ;
-      Fn_SZtemp( T3 , T3 , 1e-8 ) ;
-      T1 = Fn_Max(0.0e0, modelCGS->HSM2_lpext ) ;
+      T3 = 0.5e0 * Lgate - model->HSM2_lp ;
+      Fn_SZtemp( T3 , T3 , lpext_dlt ) ;
+      T1 = Fn_Max(0.0e0, model->HSM2_lpext ) ;
       T2 = T3 * T1 / ( T3 + T1 ) ;
 
       here->HSM2_nsub = 
@@ -570,10 +334,10 @@ int HSM2temp(
       here->HSM2_2qnsub_esi = 2.0 * here->HSM2_qnsub_esi ;
 
       /* Pocket Overlap (temperature-independent part) */
-      if ( Lgate <= 2.0e0 * modelCGS->HSM2_lp ) {
+      if ( Lgate <= 2.0e0 * model->HSM2_lp ) {
         Nsubb = 2.0e0 * Nsubps 
           - (Nsubps - here->HSM2_nsubc) * Lgate 
-          / modelCGS->HSM2_lp - here->HSM2_nsubc ;
+          / model->HSM2_lp - here->HSM2_nsubc ;
         here->HSM2_ptovr0 = log (Nsubb / here->HSM2_nsubc) ;
       } else {
         here->HSM2_ptovr0 = 0.0e0 ;
@@ -603,12 +367,13 @@ int HSM2temp(
 
       /* Gate resistance */
       if ( here->HSM2_corg == 1 ) {
-        T1 = hereCGS->HSM2_xgw + Weff / (3.0e0 * here->HSM2_ngcon);
-        T2 = Lgate - hereCGS->HSM2_xgl; 
+        T1 = here->HSM2_xgw + Weff / (3.0e0 * here->HSM2_ngcon);
+        T2 = Lgate - here->HSM2_xgl;
         here->HSM2_grg = model->HSM2_rshg * T1 / (here->HSM2_ngcon * T2 * here->HSM2_nf);
         if (here->HSM2_grg > 1.0e-3) here->HSM2_grg = here->HSM2_m / here->HSM2_grg;
         else {
           here->HSM2_grg = here->HSM2_m * 1.0e3;
+          if(model->HSM2_coerrrep) 
           printf("warning(HiSIM2): The gate conductance reset to 1.0e3 mho.\n");
         }
       }
@@ -618,16 +383,16 @@ int HSM2temp(
       if ( model->HSM2_rsh > 0.0 ) {
         here->HSM2_rd += model->HSM2_rsh * here->HSM2_nrd ;
       } 
-      if ( modelCGS->HSM2_rd > 0.0 ) {
-       here->HSM2_rd += modelCGS->HSM2_rd / here->HSM2_weff_nf ;
+      if ( model->HSM2_rd > 0.0 ) {
+       here->HSM2_rd += model->HSM2_rd / here->HSM2_weff_nf ;
      }
 
       here->HSM2_rs = 0.0;
       if ( model->HSM2_rsh > 0.0 ) {
         here->HSM2_rs += model->HSM2_rsh * here->HSM2_nrs ;
       }
-      if ( modelCGS->HSM2_rs > 0.0 ) {
-        here->HSM2_rs += modelCGS->HSM2_rs / here->HSM2_weff_nf ; 
+      if ( model->HSM2_rs > 0.0 ) {
+        here->HSM2_rs += model->HSM2_rs / here->HSM2_weff_nf ; 
       }
 
       if (model->HSM2_corsrd < 0) {
@@ -686,35 +451,36 @@ int HSM2temp(
       T2 = pow( Weff , model->HSM2_svgswp ) ;
       here->HSM2_vg2const = pParam->HSM2_svgs
          * ( 1.0e0
-           + model->HSM2_svgsl / pow( here->HSM2_lgate , model->HSM2_svgslp ) )
-         * ( T2 / ( T2 + model->HSM2_svgsw ) ) ; 
+           + modelMKS->HSM2_svgsl / pow( here->HSM2_lgate , model->HSM2_svgslp ) )
+         * ( T2 / ( T2 + modelMKS->HSM2_svgsw ) ) ; 
 
       here->HSM2_xvbs = pParam->HSM2_svbs 
          * ( 1.0e0
-           + model->HSM2_svbsl / pow( here->HSM2_lgate , model->HSM2_svbslp ) ) ;
-      here->HSM2_xgate = model->HSM2_slg 
+           + modelMKS->HSM2_svbsl / pow( here->HSM2_lgate , model->HSM2_svbslp ) ) ;
+      here->HSM2_xgate = modelMKS->HSM2_slg  
          * ( 1.0
-         + model->HSM2_slgl / pow( here->HSM2_lgate , model->HSM2_slglp ) ) ;
+         + modelMKS->HSM2_slgl / pow( here->HSM2_lgate , model->HSM2_slglp ) ) ;
 
       here->HSM2_xsub1 = pParam->HSM2_sub1 
          * ( 1.0 
-         + model->HSM2_sub1l / pow( here->HSM2_lgate , model->HSM2_sub1lp ) ) ;
+         + modelMKS->HSM2_sub1l / pow( here->HSM2_lgate , model->HSM2_sub1lp ) ) ;
 
       here->HSM2_xsub2 = pParam->HSM2_sub2
-         * ( 1.0 + model->HSM2_sub2l / here->HSM2_lgate ) ;
+         * ( 1.0 + modelMKS->HSM2_sub2l / here->HSM2_lgate ) ;
 
       /* Fringing capacitance */
       here->HSM2_cfrng = C_EOX / ( C_Pi / 2.0e0 ) * here->HSM2_weff_nf 
-         * log( 1.0e0 + modelCGS->HSM2_tpoly / modelCGS->HSM2_tox ) ; 
+         * log( 1.0e0 + model->HSM2_tpoly / model->HSM2_tox ) ; 
 
       /* Additional term of lateral-field-induced capacitance */
-      here->HSM2_cqyb0 = 1.0e4 * here->HSM2_weff_nf
+      here->HSM2_cqyb0 = C_m2um * here->HSM2_weff_nf
 	* model->HSM2_xqy1 / pow( LG , model->HSM2_xqy2 ) ;
 
       /* Parasitic component of the channel current */
+      GDLD = model->HSM2_gdld * C_m2um ;
       here->HSM2_ptl0 = model->HSM2_ptl * pow( LG        , - model->HSM2_ptlp ) ;
       here->HSM2_pt40 = model->HSM2_pt4 * pow( LG        , - model->HSM2_pt4p ) ;
-      here->HSM2_gdl0 = model->HSM2_gdl * pow( LG + modelCGS->HSM2_gdld , - model->HSM2_gdlp ) ;
+      here->HSM2_gdl0 = model->HSM2_gdl * pow( LG + GDLD , - model->HSM2_gdlp ) ;
 
 
       /*-----------------------------------------------------------*
@@ -782,7 +548,7 @@ int HSM2temp(
 	   here->HSM2_pb2over = 2.0 / beta * log( pParam->HSM2_nover / Nin ) ;
 
            /* (1 / cnst1 / cnstCoxi) for Ps0LD_iniB */
-           T1 = here->HSM2_cnst0over * modelCGS->HSM2_tox / here->HSM2_cecox  ;
+           T1 = here->HSM2_cnst0over * model->HSM2_tox / here->HSM2_cecox  ;
            T2 = pParam->HSM2_nover / Nin ;
            T1 = T2 * T2 / ( T1 * T1 ) ;
            here->HSM2_ps0ldinib  = T1 ; /* (1 / cnst1 / cnstCoxi) */
@@ -818,10 +584,10 @@ int HSM2temp(
           * exp ((here->HSM2_egtnom * here->HSM2_betatnom - Eg * beta
                   + model->HSM2_xti2 * log (TTEMP / model->HSM2_ktnom)) / model->HSM2_njsw) ; 
       
-        here->HSM2_isbd = hereCGS->HSM2_ad * js + hereCGS->HSM2_pd * jssw ;
-        here->HSM2_isbd2 = hereCGS->HSM2_ad * js2 + hereCGS->HSM2_pd * jssw2 ;
-        here->HSM2_isbs = hereCGS->HSM2_as * js + hereCGS->HSM2_ps * jssw ;
-        here->HSM2_isbs2 = hereCGS->HSM2_as * js2 + hereCGS->HSM2_ps * jssw2 ;
+        here->HSM2_isbd = here->HSM2_ad * js + here->HSM2_pd * jssw ;
+        here->HSM2_isbd2 = here->HSM2_ad * js2 + here->HSM2_pd * jssw2 ;
+        here->HSM2_isbs = here->HSM2_as * js + here->HSM2_ps * jssw ;
+        here->HSM2_isbs2 = here->HSM2_as * js2 + here->HSM2_ps * jssw2 ;
 
         here->HSM2_vbdt = pParam->HSM2_nj / beta 
           * log (pParam->HSM2_vdiffj * (TTEMP / model->HSM2_ktnom) * (TTEMP / model->HSM2_ktnom) 
@@ -851,7 +617,7 @@ int HSM2temp(
           cnst0    = here->HSM2_cnst0 ;
           cnst1    = here->HSM2_cnst1 ;
           c_eox    = here->HSM2_cecox ;
-          Tox      = modelCGS->HSM2_tox ;
+          Tox      = model->HSM2_tox ;
           Cox      = c_eox / Tox ;
           Cox_inv  = 1.0 / Cox ;
           fac1     = cnst0 * Cox_inv ;
@@ -879,7 +645,7 @@ int HSM2temp(
           Vth0   = Ps0 + Vfb + T2 * Cox_inv ;
           T1     = C_ESI * Cox_inv ;
           T2     = here->HSM2_wdplp ;
-          T4     = 1.0e0 / ( modelCGS->HSM2_lp * modelCGS->HSM2_lp ) ;
+          T4     = 1.0e0 / ( model->HSM2_lp * model->HSM2_lp ) ;
           T3     = 2.0 * ( model->HSM2_vbi - Pb20 ) * T2 * T4 ;
           T5     = T1 * T3 ;
           T6     = Ps0 - sc3Vbs ;
@@ -889,12 +655,12 @@ int HSM2temp(
           T1     = Vthp - Vth0 ;
           T9     = Ps0 - sc3Vbs ;
           T9_dVb = Ps0_dVbs - 1.0 ;
-          T3     = pParam->HSM2_scp1 + pParam->HSM2_scp3 * T9 / modelCGS->HSM2_lp; 
-          T3_dVb = pParam->HSM2_scp3 * T9_dVb / modelCGS->HSM2_lp ;
+          T3     = pParam->HSM2_scp1 + pParam->HSM2_scp3 * T9 / model->HSM2_lp;
+          T3_dVb = pParam->HSM2_scp3 * T9_dVb / model->HSM2_lp ;
           dVthLP = T1 * dVth0 * T3 ;
           dVthLP_dVb = T1 * dVth0_dVb * T3 + T1 * dVth0 * T3_dVb;
 
-          T3 = here->HSM2_lgate - modelCGS->HSM2_parl2 ;
+          T3 = here->HSM2_lgate - model->HSM2_parl2 ;
           T4 = 1.0e0 / ( T3 * T3 ) ;
           T0 = C_ESI * here->HSM2_wdpl * 2.0e0 * ( model->HSM2_vbi - Pb20 ) * T4 ;
           T2 = T0 * Cox_inv ;

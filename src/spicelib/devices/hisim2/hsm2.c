@@ -3,10 +3,12 @@
  HiSIM (Hiroshima University STARC IGFET Model)
  Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM 2.6.1 
+ MODEL NAME : HiSIM
+ ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ 
  FILE : hsm2.c
 
- date : 2012.4.6
+ Date : 2012.10.25
 
  released by 
                 Hiroshima University &
@@ -117,6 +119,7 @@ IFparm HSM2mPTable[] = { /* model parameters */
   IOP("corecip", HSM2_MOD_CORECIP, IF_INTEGER, "capacitance reciprocity takes first priority"),
   IOP("coqy", HSM2_MOD_COQY, IF_INTEGER, "calculate lateral-field-induced charge/capacitance"),
   IOP("coqovsm", HSM2_MOD_COQOVSM, IF_INTEGER, "select smoothing method of Qover"),
+  IOP("coerrrep", HSM2_MOD_COERRREP, IF_INTEGER, "selector for error report"),
   IOP("vmax", HSM2_MOD_VMAX, IF_REAL, "saturation velocity [cm/s"),
   IOP("bgtmp1", HSM2_MOD_BGTMP1, IF_REAL, "first order temp. coeff. for band gap [V/K]"),
   IOP("bgtmp2", HSM2_MOD_BGTMP2, IF_REAL, "second order temp. coeff. for band gap [V/K^2]"),
@@ -159,11 +162,14 @@ IFparm HSM2mPTable[] = { /* model parameters */
   IOP("vfbc", HSM2_MOD_VFBC, IF_REAL, "constant part of Vfb [V]"),
   IOP("vbi", HSM2_MOD_VBI, IF_REAL, "built-in potential [V]"),
   IOP("nsubc", HSM2_MOD_NSUBC, IF_REAL, "constant part of Nsub [1/cm^3]"),
+  IOP("vfbcl",  HSM2_MOD_VFBCL, IF_REAL,  "gate-length dependence of VFBC [um]"),
+  IOP("vfbclp", HSM2_MOD_VFBCLP, IF_REAL, "gate-length dependence of VFBC [-]"),
   IOP("parl2", HSM2_MOD_PARL2, IF_REAL, "under diffusion [m]"),
   IOP("lp", HSM2_MOD_LP, IF_REAL, "length of pocket potential [m]"),
   IOP("nsubp", HSM2_MOD_NSUBP, IF_REAL, "[1/cm^3]"),
   IOP("nsubpl", HSM2_MOD_NSUBPL, IF_REAL, "gate-length dependence of NSUBP"),
   IOP("nsubpfac", HSM2_MOD_NSUBPFAC, IF_REAL, "gate-length dependence of NSUBP"),
+  IOP("nsubpdlt", HSM2_MOD_NSUBPDLT, IF_REAL, "Delta for nsubp smoothing [-]"),
   IOP("nsubpw", HSM2_MOD_NSUBPW, IF_REAL, "pocket implant parameter"),
   IOP("nsubpwp", HSM2_MOD_NSUBPWP, IF_REAL, "pocket implant parameter"),
   IOP("scp1", HSM2_MOD_SCP1, IF_REAL, "parameter for pocket [-]"),
@@ -239,6 +245,9 @@ IFparm HSM2mPTable[] = { /* model parameters */
   IOP("nsubpsti1", HSM2_MOD_NSUBPSTI1, IF_REAL, "STI Stress pocket impla parameter"),
   IOP("nsubpsti2", HSM2_MOD_NSUBPSTI2, IF_REAL, "STI Stress pocket impla parameter"),
   IOP("nsubpsti3", HSM2_MOD_NSUBPSTI3, IF_REAL, "STI Stress pocket impla parameter"),
+  IOP("nsubcsti1", HSM2_MOD_NSUBCSTI1, IF_REAL, "STI Stress Parameter for Nsubc [-]"),
+  IOP("nsubcsti2", HSM2_MOD_NSUBCSTI2, IF_REAL, "STI Stress Parameter for Nsubc [-]"),
+  IOP("nsubcsti3", HSM2_MOD_NSUBCSTI3, IF_REAL, "STI Stress Parameter for Nsubc [-]"),
   IOP("lpext", HSM2_MOD_LPEXT, IF_REAL, "Pocket extension"),
   IOP("npext", HSM2_MOD_NPEXT, IF_REAL, "Pocket extension"),
   IOP("npextw", HSM2_MOD_NPEXTW, IF_REAL, "new model parameter NPEXTW"),
@@ -303,6 +312,8 @@ IFparm HSM2mPTable[] = { /* model parameters */
   IOP("gidl3", HSM2_MOD_GIDL3, IF_REAL, "parameter for GIDL [?]"),
   IOP("gidl4", HSM2_MOD_GIDL4, IF_REAL, "parameter for GIDL [?]"),
   IOP("gidl5", HSM2_MOD_GIDL5, IF_REAL, "parameter for GIDL [?]"),
+  IOP("gidl6",   HSM2_MOD_GIDL6, IF_REAL,   "parameter for GIDL [-]"),
+  IOP("gidl7",   HSM2_MOD_GIDL7, IF_REAL,   "parameter for GIDL [-]"),
   IOP("gleak1", HSM2_MOD_GLEAK1, IF_REAL, "parameter for gate current [A*V^(-3/2)/C]"),
   IOP("gleak2", HSM2_MOD_GLEAK2, IF_REAL, "parameter for gate current [V^(-1/2)/m ]"),
   IOP("gleak3", HSM2_MOD_GLEAK3, IF_REAL, "parameter for gate current [-]"),
@@ -431,6 +442,9 @@ IFparm HSM2mPTable[] = { /* model parameters */
   IOP("lnsubpsti1", HSM2_MOD_LNSUBPSTI1, IF_REAL, "Length dependence of nsubpsti1"),
   IOP("lnsubpsti2", HSM2_MOD_LNSUBPSTI2, IF_REAL, "Length dependence of nsubpsti2"),
   IOP("lnsubpsti3", HSM2_MOD_LNSUBPSTI3, IF_REAL, "Length dependence of nsubpsti3"),
+  IOP("lnsubcsti1", HSM2_MOD_LNSUBCSTI1, IF_REAL, "Length dependence of nsubcsti1"),
+  IOP("lnsubcsti2", HSM2_MOD_LNSUBCSTI2, IF_REAL, "Length dependence of nsubcsti2"),
+  IOP("lnsubcsti3", HSM2_MOD_LNSUBCSTI3, IF_REAL, "Length dependence of nsubcsti3"),
   IOP("lcgso", HSM2_MOD_LCGSO, IF_REAL, "Length dependence of cgso"),
   IOP("lcgdo", HSM2_MOD_LCGDO, IF_REAL, "Length dependence of cgdo"),
   IOP("ljs0", HSM2_MOD_LJS0, IF_REAL, "Length dependence of js0"),
@@ -503,6 +517,9 @@ IFparm HSM2mPTable[] = { /* model parameters */
   IOP("wnsubpsti1", HSM2_MOD_WNSUBPSTI1, IF_REAL, "Width dependence of nsubpsti1"),
   IOP("wnsubpsti2", HSM2_MOD_WNSUBPSTI2, IF_REAL, "Width dependence of nsubpsti2"),
   IOP("wnsubpsti3", HSM2_MOD_WNSUBPSTI3, IF_REAL, "Width dependence of nsubpsti3"),
+  IOP("wnsubcsti1", HSM2_MOD_WNSUBCSTI1, IF_REAL, "Wength dependence of nsubcsti1"),
+  IOP("wnsubcsti2", HSM2_MOD_WNSUBCSTI2, IF_REAL, "Wength dependence of nsubcsti2"),
+  IOP("wnsubcsti3", HSM2_MOD_WNSUBCSTI3, IF_REAL, "Wength dependence of nsubcsti3"),
   IOP("wcgso", HSM2_MOD_WCGSO, IF_REAL, "Width dependence of cgso"),
   IOP("wcgdo", HSM2_MOD_WCGDO, IF_REAL, "Width dependence of cgdo"),
   IOP("wjs0", HSM2_MOD_WJS0, IF_REAL, "Width dependence of js0"),
@@ -575,6 +592,9 @@ IFparm HSM2mPTable[] = { /* model parameters */
   IOP("pnsubpsti1", HSM2_MOD_PNSUBPSTI1, IF_REAL, "Cross-term dependence of nsubpsti1"),
   IOP("pnsubpsti2", HSM2_MOD_PNSUBPSTI2, IF_REAL, "Cross-term dependence of nsubpsti2"),
   IOP("pnsubpsti3", HSM2_MOD_PNSUBPSTI3, IF_REAL, "Cross-term dependence of nsubpsti3"),
+  IOP("pnsubcsti1", HSM2_MOD_PNSUBCSTI1, IF_REAL, "Cross-term dependence of nsubcsti1"),
+  IOP("pnsubcsti2", HSM2_MOD_PNSUBCSTI2, IF_REAL, "Cross-term dependence of nsubcsti2"),
+  IOP("pnsubcsti3", HSM2_MOD_PNSUBCSTI3, IF_REAL, "Cross-term dependence of nsubcsti3"),
   IOP("pcgso", HSM2_MOD_PCGSO, IF_REAL, "Cross-term dependence of cgso"),
   IOP("pcgdo", HSM2_MOD_PCGDO, IF_REAL, "Cross-term dependence of cgdo"),
   IOP("pjs0", HSM2_MOD_PJS0, IF_REAL, "Cross-term dependence of js0"),

@@ -3,10 +3,12 @@
  HiSIM (Hiroshima University STARC IGFET Model)
  Copyright (C) 2012 Hiroshima University & STARC
 
- VERSION : HiSIM 2.6.1 
+ MODEL NAME : HiSIM
+ ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ 
  FILE : hsm2ld.c
 
- date : 2012.4.6
+ Date : 2012.10.25
 
  released by 
                 Hiroshima University &
@@ -44,6 +46,7 @@ double vsum ;
 static double vsum0 = 1.0e5 ;
 #endif
 #endif
+
 
 static void ShowPhysVals
 (
@@ -179,38 +182,38 @@ int HSM2load(
   register HSM2model *model = (HSM2model*)inModel;
   register HSM2instance *here;
   HSM2binningParam *pParam;
-  double cbhat, cdrain, cdhat, cdreq, cgbhat, cgshat, cgdhat;
-  double Ibtot, Idtot, Igbtot, Igstot, Igdtot;
-  double ceq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg;
-  double ceqjs, ceqjd, ceqqjs = 0.0, ceqqjd = 0.0;
-  double delvbd, delvbs, delvds, delvgd, delvgs;
-  double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb;
-  double gcgdb, gcggb, gcgsb, gcgbb, gcsdb, gcsgb, gcssb;
-  double geq, xfact;
-  double vbd, vbs, vds, vgb, vgd, vgdo, vgs, von;
-  double gbbdp, gbbsp, gbspg, gbspdp, gbspb, gbspsp;
-  double qgate, qbulk, qdrn;
-  double cqgate, cqbulk, cqdrn;
-  double gbdpdp, gbdpg, gbdpb, gbdpsp; 
-  double gm, gmbs, FwdSum, RevSum;
-  double ag0;
-  double Ibtoteq, gIbtotg, gIbtotd, gIbtots, gIbtotb;
-  double Igtoteq, gIgtotg, gIgtotd, gIgtots, gIgtotb;
-  double Idtoteq, gIdtotg, gIdtotd, gIdtots, gIdtotb;
-  double Istoteq, gIstotg, gIstotd, gIstots, gIstotb;
-  double ivds, ivgs, ivbs;
-  double gjbs, gjbd, gcdbdb, gcsbsb, gcbbb, gcdbb, gcsbb, grg;
-  double vdbs, vsbs, vdbd, delvdbs, delvsbs, delvdbd;
-  double vges, vged, delvges, delvged, vgedo;
-  double vsbdo, vsbd; 
-  double vbs_jct, vbd_jct, delvbs_jct, delvbd_jct;
-  int ByPass, Check, Check1, Check2;
-  int BYPASS_enable ;
+  double cbhat=0.0, cdrain=0.0, cdhat=0.0, cdreq=0.0, cgbhat=0.0, cgshat=0.0, cgdhat=0.0 ;
+  double Ibtot=0.0, Idtot=0.0, Igbtot=0.0, Igstot=0.0, Igdtot=0.0 ;
+  double ceq=0.0, ceqbd=0.0, ceqbs=0.0, ceqqb=0.0, ceqqd=0.0, ceqqg=0.0 ;
+  double ceqjs=0.0, ceqjd=0.0, ceqqjs=0.0, ceqqjd=0.0 ;
+  double delvbd=0.0, delvbs=0.0, delvds=0.0, delvgd=0.0, delvgs=0.0 ;
+  double gcbdb=0.0, gcbgb=0.0, gcbsb=0.0, gcddb=0.0, gcdgb=0.0, gcdsb=0.0 ;
+  double gcgdb=0.0, gcggb=0.0, gcgsb=0.0, gcgbb=0.0, gcsdb=0.0, gcsgb=0.0, gcssb=0.0 ;
+  double geq=0.0, xfact=0.0 ;
+  double vbd=0.0, vbs=0.0, vds=0.0, vgb=0.0, vgd=0.0, vgdo=0.0, vgs=0.0, von=0.0 ;
+  double gbbdp=0.0, gbbsp=0.0, gbspg=0.0, gbspdp=0.0, gbspb=0.0, gbspsp=0.0 ;
+  double qgate=0.0, qbulk=0.0, qdrn=0.0 ;
+  double cqgate=0.0, cqbulk=0.0, cqdrn=0.0 ;
+  double gbdpdp=0.0, gbdpg=0.0, gbdpb=0.0, gbdpsp=0.0; 
+  double gm=0.0, gmbs=0.0, FwdSum=0.0, RevSum=0.0 ;
+  double ag0=0.0 ;
+  double Ibtoteq=0.0, gIbtotg=0.0, gIbtotd=0.0, gIbtots=0.0, gIbtotb=0.0 ;
+  double Igtoteq=0.0, gIgtotg=0.0, gIgtotd=0.0, gIgtots=0.0, gIgtotb=0.0 ;
+  double Idtoteq=0.0, gIdtotg=0.0, gIdtotd=0.0, gIdtots=0.0, gIdtotb=0.0 ;
+  double Istoteq=0.0, gIstotg=0.0, gIstotd=0.0, gIstots=0.0, gIstotb=0.0 ;
+  double ivds=0.0, ivgs=0.0, ivbs=0.0 ;
+  double gjbs=0.0, gjbd=0.0, gcdbdb=0.0, gcsbsb=0.0, gcbbb=0.0, gcdbb=0.0, gcsbb=0.0, grg=0.0 ;
+  double vdbs=0.0, vsbs=0.0, vdbd=0.0, delvdbs=0.0, delvsbs=0.0, delvdbd=0.0 ;
+  double vges=0.0, vged=0.0, delvges=0.0, delvged=0.0, vgedo=0.0 ;
+  double vsbdo=0.0, vsbd=0.0; 
+  double vbs_jct=0.0, vbd_jct=0.0, delvbs_jct=0.0, delvbd_jct=0.0 ;
+  int ByPass=0, Check=0, Check1=0, Check2=0 ;
+  int BYPASS_enable =0 ;
 #ifndef NOBYPASS
-  double tempv;
+  double tempv=0.0 ;
 #endif /*NOBYPASS*/
 #ifndef NEWCONV
-  double tol, tol2, tol3, tol4;
+  double tol=0.0, tol2=0.0, tol3=0.0, tol4=0.0 ;
 #endif
   int ChargeComputationNeeded =  
     ((ckt->CKTmode & (MODEAC | MODETRAN | MODEINITSMSIG)) ||
