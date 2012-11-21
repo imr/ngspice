@@ -246,7 +246,7 @@ model = here->BSIM4modPtr;
 
 ScalingFactor = 1.0e-9;
 ChargeComputationNeeded =  
-                 ((ckt->CKTmode & (MODEDC | MODEAC | MODETRAN | MODEINITSMSIG)) ||
+                 ((ckt->CKTmode & (MODEDCTRANCURVE | MODEAC | MODETRAN | MODEINITSMSIG)) ||
                  ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)))
                  ? 1 : 0;
 
