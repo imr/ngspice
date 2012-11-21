@@ -1,6 +1,6 @@
 
 //
-// Test specification for HiSIM (version 2.6.0)
+// Test specification for HiSIM (version 2.7.0)
 //
 
 //
@@ -13,13 +13,9 @@
 // It is assumed that there are no polarity specific
 //
 
-`ifdef spice
-nTypeSelectionArguments pmos level=61 version=261
-pTypeSelectionArguments nmos level=61 version=261
-`endif
 `ifdef ngspice
-nTypeSelectionArguments pmos level=61 version=261
-pTypeSelectionArguments nmos level=61 version=261
+nTypeSelectionArguments pmos level=61 version=270
+pTypeSelectionArguments nmos level=61 version=270
 `endif
 
 //
@@ -31,134 +27,180 @@ pins                        d g s b
 linearScale                 w l ps pd
 areaScale                   as ad 
 temperature                 27 -50 150
-//checkPolarity             yes
-//symmetricpins		    d s
 scaleParameters             m
+
 
 //
 // Specific tests
 //
 
-test                        2_dcSweep_CORSRD=0
+test                        1_dcSweep_CORSRD=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             CORSRD=0
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             CORSRD=0 GDLD=0.001
 
-test                        2-1_dcSweep_CORSRD=0
+test                        2_dcSweep_CORSRD=-1_GDLD
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=1.0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             CORSRD=0
+instanceParameters          W=10e-6 L=100e-9 
+instanceParameters	    NRD=0.1 NRS=0.01 
+modelParameters             CORSRD=-1 RSH=1 GDLD=0.0001
 
-test                        2-2_dcSweep_CORSRD=0
+test                        3_dcSweep_CORSRD=-1_PT
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=-0.5
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9 
-instanceParameters	    AD=1e-8 AS=1e-8 PD=1e-3 PS=1e-3
-modelParameters             CORSRD=0
+instanceParameters          W=10e-6 L=100e-9 
+instanceParameters	    NRD=0.01 NRS=0.1 AD=1e-8 AS=1e-8 PD=1e-3 PS=1e-3
+modelParameters             CORSRD=-1 RSH=10 PT4P=0.1
 
-test                        7_dcSweep_COISUB=0
+test                        4_dcSweep_NSUBPFAC
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
-outputs                     I(b)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COISUB=0
-
-test                        8_dcSweep_COISUB=1
-temperature                 -55 27 150
-modelParameters             parameters/pmosParameters
-biases                      V(s)=0 V(b)=0
-biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
-outputs                     I(b)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COISUB=1
-
-test                        9_dcSweep_COIIGS=0
-temperature                 -55 27 150
-modelParameters             parameters/pmosParameters
-biases                      V(s)=0 V(b)=0
-biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
-outputs                     I(g)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COIIGS=0
-
-test                        10_dcSweep_COIIGS=1
-temperature                 -55 27 150
-modelParameters             parameters/pmosParameters
-biases                      V(s)=0 V(b)=0
-biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
-outputs                     I(g)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COIIGS=1
-
-test                        11_dcSweep_COGIDL=0
-temperature                 -55 27 150
-modelParameters             parameters/pmosParameters
-biases                      V(s)=0 V(b)=0
-biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COGIDL=0
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             NSUBPL=0.1 NSUBPFAC=0.6 
+
+test                        5_dcSweep_NSUBPDLT
+temperature                 -55 27 150
+modelParameters             parameters/pmosParameters
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
+outputs                     I(d)
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             NSUBPL=0.1 NSUBPFAC=0.8  NSUBPDLT=0.0001
+
+test                        6_dcSweep_COISUB=0
+temperature                 -55 27 150
+modelParameters             parameters/pmosParameters
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
+outputs                     I(b)
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COISUB=0 SUB1=1 SVGS=1 SVDS=1 SUB1L=0.1 SUB2L=0.1 SLG=1 SVBS=1
+
+test                        7_dcSweep_COISUB=1
+temperature                 -55 27 150
+modelParameters             parameters/pmosParameters
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
+outputs                     I(d) I(b)
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COISUB=1 SUB1=1 SVGS=1 SVDS=1 SUB1L=0.1 SUB2L=0.1 SLG=1 SVBS=1
+
+test                        8_dcSweep_COIIGS=0
+temperature                 -55 27 150
+modelParameters             parameters/pmosParameters
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
+outputs                     I(g)
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COIIGS=0 
+
+test                        9_dcSweep_COIIGS=1
+temperature                 -55 27 150
+modelParameters             parameters/pmosParameters
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
+outputs                     I(g) 
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COIIGS=1 
+
+test                        10_dcSweep_COGIDL=0
+temperature                 -55 27 150
+modelParameters             parameters/pmosParameters
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
+outputs                     I(d) I(b)
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COGIDL=1 GIDL6=-1.0 GIDL7=1.05
+
+test                        11_dcSweep_COGIDL=1
+temperature                 -55 27 150
+modelParameters             parameters/pmosParameters
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
+outputs                     I(d) I(b)
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COGIDL=1 GIDL6=-1.0 
 
 test                        12_dcSweep_COGIDL=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COGIDL=1
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COGIDL=1 GIDL7=1.05
 
 test                        13_dcSweep_COISTI=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COISTI=0
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COISTI=0 WSTI=0.1E-4
+instanceParameters          SA=1e-6  SB=2e-6 SD=1e-6 NF=5
+modelParameters             NSUBPSTI1=2e-6 NSUBPSTI2=1e-6 NSUBPSTI3=1.5
 
-test                        14_dcSweep_COISTI=1
+test                        14_dcSweep_COISTI=1_NSUBC
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COISTI=1
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COISTI=1 WSTI=0.1E-4
+instanceParameters          SA=1e-6 SB=2e-6 SD=1e-6 NF=5
+modelParameters             NSUBCSTI1=2e-6 NSUBCSTI2=1e-6 NSUBCSTI3=1.4
 
-test                        15_dcSweep_WPE
+test                        15_dcSweep_COISTI=1_NSUBP
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             WEB=1200 WEC=1200 NSUBCWPE2=1e15
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COISTI=1 WSTI=0.1E-4
+instanceParameters          SA=1e-6 SB=2e-6 SD=1e-6 NF=2
+modelParameters             NSUBPSTI1=2e-6 NSUBPSTI2=1e-6 NSUBPSTI3=1.5
+
+test                        16_dcSweep_WPE
+temperature                 -55 27 150
+modelParameters             parameters/pmosParameters
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
+outputs                     I(d)
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             WPEB=-1200 WPEC=-1200 NSUBCWPE=1E-16 NSUBPWPE=1E16 NPEXTWPE=1E16 
 instanceParameters	    SCA=4.244122e-01 SCB=2.561023e-09 SCC=3.215142e-18
 
 test                        19_dcSweep_CORG=0
@@ -166,29 +208,29 @@ temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             CORG=0
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             CORG=0 RSHG=10 NGCON=0.1
 
 test                        20_dcSweep_CORG=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             CORG=1
+instanceParameters          W=10e-6 L=100e-9 NGCON=0.1
+modelParameters             CORG=1 RSHG=10
 
 test                        21_dcSweep_CORBNET=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
-outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
+outputs                     I(d) I(b)
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             CORBNET=0
 
 test                        22_dcSweep_CORBNET=1
@@ -196,361 +238,382 @@ temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
-outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
+outputs                     I(d) I(b)
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             CORBNET=1
 
-test                        33_dcSweep_CODFM=0
+test                        23_dcSweep_CODFM=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             CODFM=0
+instanceParameters          W=10e-6 L=100e-9  NSUBCDFM=1E17
+modelParameters             CODFM=0 
 
-test                        34_dcSweep_CODFM=1
+test                        24_dcSweep_CODFM=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             CODFM=1
+instanceParameters          W=10e-6 L=100e-9  NSUBCDFM=1E17
+modelParameters             CODFM=1 
 
-test                        36_acVd_CORSRD=0
+test                        25_dcSweep_VFBCL
+temperature                 -55 27 150
+modelParameters             parameters/pmosParameters
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
+outputs                     I(d)
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             VFBCL=0.8 VFBCLP=1.2
+
+test                        35_acVd_CORSRD=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(g)=-1.2
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             CORSRD=0
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             CORSRD=0 GDLD=0.001
 
-test                        36-1_acVd_CORSRD=0
+test                        36_acVd_CORSRD=-1_GDLD
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=1.0 V(g)=-1.2
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             CORSRD=0
+instanceParameters          W=10e-6 L=100e-9
+instanceParameters	    NRD=1 NRS=0.1
+modelParameters             CORSRD=-1 RSH=10 GDLD=0.001
 
-test                        36-2_acVd_CORSRD=0
+test                        37_acVd_CORSRD=-1_PT
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=-0.5 V(g)=-1.2
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-instanceParameters	    AD=1e-8 AS=1e-8 PD=1e-3 PS=1e-3
-modelParameters             CORSRD=0
+instanceParameters          W=10e-6 L=100e-9
+instanceParameters	    NRD=0.1 NRS=1 AD=1e-8 AS=1e-8 PD=1e-3 PS=1e-3
+modelParameters             CORSRD=-1 RSH=100 PT4P=0.1
 
-test                        37_acVd_WPE
+test                        38_acVd_WPE
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=-0.5 V(g)=-1.2
-biasSweep                   V(d)=-0.2,-1.8000000001,-0.1
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             WEB=1200 WEC=1200 NSUBCWPE2=1e15
-instanceParameters	    SCA=4.244122e-01 SCB=2.561023e-09 SCC=3.215142e-18
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             WPEB=-1200 WPEC=-1200 NSUBCWPE=1E-16 NSUBPWPE=2E16 NPEXTWPE=3E16 
+instanceParameters	    SCA=4.25e-01 SCB=2.56e-09 SCC=3.2e-18
 
-test                        40_acFreq_COOVLP=1
+test                        39_acVd_VFBCL
+temperature                 -55 27 150
+modelParameters             parameters/pmosParameters
+biases                      V(s)=0 V(b)=-0.5 V(g)=-1.2
+biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=10e-6 L=500e-9
+modelParameters             VFBCL=0.8 VFBCLP=1.2
+
+
+test                        45_acFreq_COOVLP=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             COOVLP=1
 
-test                        41_acFreq_COISUB=0
+test                        46_acFreq_COISUB=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COISUB=0
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COISUB=0  SUB1=1 SVGS=1 SVDS=1 SUB1L=0.1 SUB2L=0.1 SLG=1 SVBS=1
 
-test                        42_acFreq_COISUB=1
+test                        47_acFreq_COISUB=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COISUB=1
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COISUB=1  SUB1=1 SVGS=1 SVDS=1 SUB1L=0.1 SUB2L=0.1 SLG=1 SVBS=1
 
-test                        43_acFreq_COIIGS=0
+test                        48_acFreq_COIIGS=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COIIGS=0
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COIIGS=0 
 
-test                        44_acFreq_COIIGS=1
+test                        49_acFreq_COIIGS=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COIIGS=1
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COIIGS=1 
 
-test                        45_acFreq_COGIDL=0
+test                        50_acFreq_COGIDL=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COGIDL=0
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COGIDL=0 GIDL6=-1.0 GIDL7=1.05
 
-test                        46_acFreq_COGIDL=1
+test                        51_acFreq_COGIDL=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             COGIDL=1
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             COGIDL=1 GIDL6=-1.0 GIDL7=1.05
 
-test                        47_acFreq_COSTI=0
+test                        52_acFreq_COSTI=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             COSTI=0
 
-test                        48_acFreq_COSTI=1
+test                        53_acFreq_COSTI=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             COSTI=1
 
-test                        49_acFreq_COADOV=0
+test                        54_acFreq_COADOV=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             COADOV=0
 
-test                        50_acFreq_COADOV=1
+test                        55_acFreq_COADOV=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             COADOV=1
 
-test                        51_acFreq_CONQS=0
+test                        56_acFreq_CONQS=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             CONQS=0
 
-test                        52_acFreq_CONQS=1
+test                        57_acFreq_CONQS=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             CONQS=1
 
-test                        53_acFreq_CORG=0
+test                        58_acFreq_CORG=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             CORG=0
+instanceParameters          W=10e-6 L=100e-9 NGCON=0.1
+modelParameters             CORG=0 RSHG=10 
 
-test                        54_acFreq_CORG=1
+test                        59_acFreq_CORG=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             CORG=1
+instanceParameters          W=10e-6 L=100e-9 NGCON=0.1
+modelParameters             CORG=1 RSHG=10
 
-test                        55_acFreq_CORBNET=0
+test                        60_acFreq_CORBNET=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             CORBNET=0
 
-test                        56_acFreq_CORBNET=1
+test                        61_acFreq_CORBNET=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             CORBNET=1
 
-test                        57_acFreq_COFLICK=0
+test                        62_acFreq_COFLICK=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             COFLICK=0
 
-test                        58_acFreq_COFLICK=1
+test                        63_acFreq_COFLICK=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             COFLICK=1
 
-test                        59_acFreq_COTHRML=0
+test                        64_acFreq_COTHRML=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             COTHRML=0
 
-test                        60_acFreq_COTHRML=1
+test                        65_acFreq_COTHRML=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             COTHRML=1
 
-test                        61_acFreq_COIGN=0
+test                        66_acFreq_COIGN=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             COIGN=0
 
-test                        62_acFreq_COIGN=1
+test                        67_acFreq_COIGN=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
+instanceParameters          W=10e-6 L=100e-9
 modelParameters             COIGN=1
 
-test                        63_acFreq_WPE
+test                        68_acFreq_WPE
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             WEB=1200 WEC=1200 NSUBCWPE2=1e15
-instanceParameters	    SCA=4.244122e-01 SCB=2.561023e-09 SCC=3.215142e-18
+instanceParameters          W=10e-6 L=100e-9
+modelParameters             WPEB=-1200 WPEC=-1200 NSUBCWPE=1E-16 NSUBPWPE=1E16 NPEXTWPE=1E16 
+instanceParameters	    SCA=4.25e-01 SCB=2.56e-09 SCC=3.2e-18
 
-test                        67_acFreq_CODFM=0
+test                        69_acFreq_CODFM=0
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             CODFM=0
+instanceParameters          W=10e-6 L=100e-9  NSUBCDFM=1E17
+modelParameters             CODFM=0 
 
-test                        68_acFreq_CODFM=1
+test                        70_acFreq_CODFM=1
 temperature                 -55 27 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
-instanceParameters          W=10e-6 L=90e-9
-modelParameters             CODFM=1
+instanceParameters          W=10e-6 L=100e-9  NSUBCDFM=1E17
+modelParameters             CODFM=1 
 
-test                        69_noise_COIGN=1_T27
+test                        75_noise_COIGN=1_T27
 temperature                 27 
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.0
 biasList                    V(g)=-0.5,-1.0
 freq                        dec 10 1e3 1e11
 outputs                     N(g)
-instanceParameters          W=10e-6 L=90e-9 
+instanceParameters          W=10e-6 L=100e-9 
 modelParameters             COIIGS=0 COTHRML=1 COIGN=1 
 
-test                        69-1_noise_COIGN=1_T-55
+test                        76_noise_COIGN=1_T-55
 temperature                 -55 
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.0
 biasList                    V(g)=-0.5,-1.0
 freq                        dec 10 1e3 1e11
 outputs                     N(g)
-instanceParameters          W=10e-6 L=90e-9 
+instanceParameters          W=10e-6 L=100e-9 
 modelParameters             COIIGS=0 COTHRML=1 COIGN=1 
 
-test                        69-2_noise_COIGN=1_T150
+test                        77_noise_COIGN=1_T150
 temperature                 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.0
 biasList                    V(g)=-0.5,-1.0
 freq                        dec 10 1e3 1e11
 outputs                     N(g)
-instanceParameters          W=10e-6 L=90e-9 
+instanceParameters          W=10e-6 L=100e-9 
 modelParameters             COIIGS=0 COTHRML=1 COIGN=1 
 
-test                        70_noise_COIGN=0_T27
+test                        78_noise_COIGN=0_T27
 temperature                 27 
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.0
 biasList                    V(g)=-0.5,-1.0
 freq                        dec 10 1e3 1e11
 outputs                     N(g)
-instanceParameters          W=10e-6 L=90e-9 
+instanceParameters          W=10e-6 L=100e-9 
 modelParameters             COIIGS=0 COTHRML=1 COIGN=0 COFLICK=1 FALPH=1.0 
 
-test                        70-1_noise_COIGN=0_T-55
+test                        79_noise_COIGN=0_T-55
 temperature                 -55 
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.0
 biasList                    V(g)=-0.5,-1.0
 freq                        dec 10 1e3 1e11
 outputs                     N(g)
-instanceParameters          W=10e-6 L=90e-9 
+instanceParameters          W=10e-6 L=100e-9 
 modelParameters             COIIGS=0 COTHRML=1 COIGN=0 COFLICK=1 FALPH=1.0 
 
-test                        70-2_noise_COIGN=0_T150
+test                        80_noise_COIGN=0_T150
 temperature                 150
 modelParameters             parameters/pmosParameters
 biases                      V(s)=0 V(b)=0 V(d)=-1.0
 biasList                    V(g)=-0.5,-1.0
 freq                        dec 10 1e3 1e11
 outputs                     N(g)
-instanceParameters          W=10e-6 L=90e-9 
+instanceParameters          W=10e-6 L=100e-9 
 modelParameters             COIIGS=0 COTHRML=1 COIGN=0 COFLICK=1 FALPH=1.0 
 
