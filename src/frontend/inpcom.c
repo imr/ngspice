@@ -5525,7 +5525,7 @@ inp_add_series_resistor(struct line *deck)
             node1 =  gettok(&cut_line);
             node2 =  gettok(&cut_line);
             /* new L line */
-            xlen = strlen(curr_line) + 9;
+            xlen = strlen(curr_line) + 10;
             ckt_array[0] = TMALLOC(char, xlen);
             sprintf(ckt_array[0], "%s %s %s_intern__ %s",
                     title_tok, node1, node2, cut_line);
