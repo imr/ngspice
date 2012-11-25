@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LTLIBRARIES = libhisimhv.la
+noinst_LTLIBRARIES = libhisimhv1.la
 
-libhisimhv_la_SOURCES = hisimhv.h	\
+libhisimhv1_la_SOURCES = hisimhv.h	\
 			hsmhv.c		\
 			hsmhvacld.c	\
 			hsmhvask.c 	\

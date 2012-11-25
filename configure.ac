@@ -1036,7 +1036,7 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/hfet1/Makefile
                  src/spicelib/devices/hfet2/Makefile
                  src/spicelib/devices/hisim2/Makefile
-                 src/spicelib/devices/hisimhv/Makefile
+                 src/spicelib/devices/hisimhv1/Makefile
                  src/spicelib/devices/jfet/Makefile
                  src/spicelib/devices/jfet2/Makefile
                  src/spicelib/devices/ltra/Makefile
@@ -1112,7 +1112,7 @@ AC_CONFIG_FILES([Makefile
                  tests/general/Makefile
                  tests/hfet/Makefile
                  tests/hisim/Makefile
-                 tests/hisimhv/Makefile
+                 tests/hisimhv1/Makefile
                  tests/jfet/Makefile
                  tests/mes/Makefile
                  tests/mesa/Makefile

@@ -28,7 +28,7 @@ SUBDIRS = \
 	hfet1	\
 	hfet2	\
 	hisim2	\
-	hisimhv	\
+	hisimhv1	\
 	jfet	\
 	jfet2	\
 	ltra	\
@@ -88,7 +88,7 @@ DIST_SUBDIRS = \
 	hfet1	\
 	hfet2	\
 	hisim2	\
-	hisimhv	\
+	hisimhv1	\
 	jfet	\
 	jfet2	\
 	ltra	\

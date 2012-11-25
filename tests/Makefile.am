@@ -5,7 +5,7 @@ SUBDIRS =		\
 	bsim4		\
 	bsimsoi		\
 	hisim		\
-	hisimhv
+	hisimhv1
 
 if XSPICE_WANTED
 SUBDIRS += xspice
@@ -25,7 +25,7 @@ DIST_SUBDIRS =		\
 	general		\
 	hfet		\
 	hisim		\
-	hisimhv		\
+	hisimhv1	\
 	jfet		\
 	mes		\
 	mesa		\
