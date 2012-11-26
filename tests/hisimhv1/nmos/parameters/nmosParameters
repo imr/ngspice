@@ -21,7 +21,7 @@
 + COSYM = ( 0 )
 + COTEMP = ( 0 )
 + COLDRIFT = ( 0 )
-+ VERSION = ( 1.22 )
++ VERSION = ( 1.23 )
 + VMAX = ( 1E+07 )
 + VMAXT1 = ( 0 )
 + VMAXT2 = ( 0 )

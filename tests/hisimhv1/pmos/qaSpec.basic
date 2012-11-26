@@ -1,6 +1,6 @@
 
 //
-// Test specification for HiSIM_HV (version 1.2.2)
+// Test specification for HiSIM_HV (version 1.2.3)
 //
 
 //
@@ -14,14 +14,23 @@
 // parameters.
 //
 
-`ifdef spice
-nTypeSelectionArguments     pmos level=62 version=1.22
-pTypeSelectionArguments     nmos level=62 version=1.22
-`endif
 `ifdef ngspice
-nTypeSelectionArguments     pmos level=62 version=1.22
-pTypeSelectionArguments     nmos level=62 version=1.22
+nTypeSelectionArguments     pmos level=62 version=1.23
+pTypeSelectionArguments     nmos level=62 version=1.23
 `endif
+`ifdef hspice
+nTypeSelectionArguments     hisimhv_va TYPE=-1
+pTypeSelectionArguments     hisimhv_va TYPE=1
+`endif
+`ifdef smartspice
+nTypeSelectionArguments     hisimhv_va TYPE=-1
+pTypeSelectionArguments     hisimhv_va TYPE=1
+`endif
+`ifdef spectre
+nTypeSelectionArguments     hisimhv_va TYPE=-1
+pTypeSelectionArguments     hisimhv_va TYPE=1
+`endif
+
 
 //
 // General test-independent information
@@ -45,23 +54,23 @@ biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-2,-5,-10
 biasSweep                   V(d)=-1,-20,-0.5
 outputs                     I(d) I(g) I(s) I(b)
-instanceParameters          W=10.0e-6 L=5.0e-6
+instanceParameters          W=10.0e-6 L=2.0e-6
 modelParameters             parameters/pmosParameters
 
 test                        dcSw_Id1_vb1
-biases                      V(s)=0 V(b)=0.5
+biases                      V(s)=0 V(b)=5
 biasList                    V(g)=-2,-5,-10
 biasSweep                   V(d)=-1,-20,-0.5
 outputs                     I(d) I(g) I(s) I(b)
-instanceParameters          W=10.0e-6 L=5.0e-6
+instanceParameters          W=10.0e-6 L=2.0e-6
 modelParameters             parameters/pmosParameters
 
 test                        dcSw_Id1_vb2
-biases                      V(s)=0 V(b)=1.5
+biases                      V(s)=0 V(b)=10
 biasList                    V(g)=-2,-5,-10
 biasSweep                   V(d)=-1,-20,-0.5
 outputs                     I(d) I(g) I(s) I(b)
-instanceParameters          W=10.0e-6 L=5.0e-6
+instanceParameters          W=10.0e-6 L=2.0e-6
 modelParameters             parameters/pmosParameters
 
 test                        dcSw_Id1_vb0_jd
@@ -69,7 +78,7 @@ biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-2,-5,-10
 biasSweep                   V(d)=-1,-20,-0.5
 outputs                     I(d) I(g) I(s) I(b)
-instanceParameters          W=10.0e-6 L=5.0e-6 AD=20e-12 AS=20e-12 PD=12e-6 PS=12e-6
+instanceParameters          W=10.0e-6 L=2.0e-6 AD=20e-12 AS=20e-12 PD=12e-6 PS=12e-6
 modelParameters             parameters/pmosParameters
 
 test                        dcSw_Ig1_vb0
@@ -77,19 +86,19 @@ biases                      V(s)=0 V(b)=0
 biasList                    V(d)=-2,-5,-10
 biasSweep                   V(g)=-1,-20,-0.5
 outputs                     I(d) I(g) I(s) I(b)
-instanceParameters          W=10.0e-6 L=2e-6
+instanceParameters          W=5.0e-6 L=2e-6
 modelParameters             parameters/pmosParameters
 
 test                        dcSw_Ig1_vb1
-biases                      V(s)=0 V(b)=0.5
+biases                      V(s)=0 V(b)=5
 biasList                    V(d)=-2,-5,-10
 biasSweep                   V(g)=-1,-20,-0.5
 outputs                     I(d) I(g) I(s) I(b)
-instanceParameters          W=10.0e-6 L=2e-6
+instanceParameters          W=5.0e-6 L=2e-6
 modelParameters             parameters/pmosParameters
 
 test                        dcSw_Ig1_vb2
-biases                      V(s)=0 V(b)=1.5
+biases                      V(s)=0 V(b)=10
 biasList                    V(d)=-2,-5,-10
 biasSweep                   V(g)=-1,-20,-0.5
 outputs                     I(d) I(g) I(s) I(b)
@@ -101,7 +110,7 @@ biases                      V(s)=0 V(b)=0
 biasList                    V(d)=-2,-5,-10
 biasSweep                   V(g)=-1,-20,-0.5
 outputs                     I(d) I(g) I(s) I(b)
-instanceParameters          W=10.0e-6 L=2.0e-6 AD=20e-12 AS=20e-12 PD=12e-6 PS=12e-6
+instanceParameters          W=5e-6 L=2.0e-6 AD=20e-12 AS=20e-12 PD=12e-6 PS=12e-6
 modelParameters             parameters/pmosParameters
 
 test                        dcSw_ld2
@@ -123,18 +132,18 @@ modelParameters             parameters/pmosParameters
 test                        dcSw_cosym
 biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-2,-5,-10
-biasSweep                   V(d)=0.1,30.1,0.5
+biasSweep                   V(d)=-0.1,-30.1,0.5
 outputs                     I(d) I(g) I(s) I(b)
 instanceParameters          W=10.0e-6 L=2e-6
 modelParameters             parameters/pmosParameters
-modelParameters             COSYM=1
+modelParameters             COSYM=1 RD=0.1
 
 test                        dcSw_rs2m
 biases                      V(s)=0 V(b)=0
-biasList                    V(g)=-0.3,-0.6,-2.5
+biasList                    V(g)=-2,-5,-10
 biasSweep                   V(d)=-1,-20,-0.5
 outputs                     I(d) I(g) I(s) I(b)
-instanceParameters          W=10e-6 L=5.0e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
+instanceParameters          W=10e-6 L=50e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
 modelParameters             parameters/pmosParameters
 modelParameters             COSYM=1 RS=2e-3
 
@@ -225,7 +234,7 @@ biasSweep                   V(d)=-1,-20,-1
 outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
 instanceParameters          W=10.0e-6 L=2e-6
 modelParameters             parameters/pmosParameters
-modelParameters             COSYM=1
+modelParameters             COSYM=1 RD=0.1
 
 test                        acVd_cvdsover
 temperature                 27 150
@@ -251,7 +260,7 @@ freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
 instanceParameters          W=10e-6 L=5.0e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
 modelParameters             parameters/pmosParameters
-modelParameters             COSYM=1
+modelParameters             COSYM=1 RD=0.1
 
 test                        acFreq_coovlp
 temperature                 27

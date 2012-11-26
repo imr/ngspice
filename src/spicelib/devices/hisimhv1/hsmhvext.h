@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 2 )
- Model Parameter VERSION : 1.22
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhvext.h
 
- DATE : 2011.6.29
+ DATE : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -27,7 +27,7 @@ extern int HSMHVmDelete(GENmodel**,IFuid,GENmodel*);
 extern int HSMHVmParam(int,IFvalue*,GENmodel*);
 extern void HSMHVmosCap(CKTcircuit*, double, double, double, double*,
         double, double, double, double, double, double,
-        double*, double*, double*, double*, double*, double*, double*, double*,
+	double*, double*, double*, double*, double*, double*, double*, double*,
         double*, double*, double*, double*, double*, double*, double*, 
         double*);
 extern int HSMHVparam(int,IFvalue*,GENinstance*,IFvalue*);

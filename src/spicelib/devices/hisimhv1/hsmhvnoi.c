@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 2 )
- Model Parameter VERSION : 1.22
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhvnoi.c
 
- DATE : 2011.6.29
+ DATE : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -18,7 +18,6 @@
 #include "ngspice/ngspice.h"
 #include "hsmhvdef.h"
 #include "ngspice/cktdefs.h"
-/* #include "fteconst.h" */
 #include "ngspice/iferrmsg.h"
 #include "ngspice/noisedef.h"
 #include "ngspice/suffix.h"
@@ -35,6 +34,9 @@
  *    all of the MOSFET's is summed with the variable "OnDens".
  */
 
+extern void   NevalSrc();
+extern double Nintegrate();
+
 int HSMHVnoise (
      int mode, int operation,
      GENmodel *inModel,
@@ -42,8 +44,6 @@ int HSMHVnoise (
      register Ndata *data,
      double *OnDens)
 {
-  NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
-
   register HSMHVmodel *model = (HSMHVmodel *)inModel;
   register HSMHVinstance *here;
   char name[N_MXVLNTH];
@@ -76,13 +76,15 @@ int HSMHVnoise (
 	/* see if we have to to produce a summary report */
 	/* if so, name all the noise generators */
 	  
-	if (job->NStpsSm != 0) {
+	if (((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0) {
 	  switch (mode) {
 	  case N_DENS:
 	    for ( i = 0; i < HSMHVNSRCS; i++ ) { 
 	      (void) sprintf(name, "onoise.%s%s", 
-			     here->HSMHVname, HSMHVnNames[i]);
-	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
+			     (char *)here->HSMHVname, HSMHVnNames[i]);
+	      data->namelist = 
+		(IFuid *) trealloc((char *) data->namelist,
+				   (data->numPlots + 1) * sizeof(IFuid));
 	      if (!data->namelist)
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 
@@ -93,8 +95,10 @@ int HSMHVnoise (
 	  case INT_NOIZ:
 	    for ( i = 0; i < HSMHVNSRCS; i++ ) {
 	      (void) sprintf(name, "onoise_total.%s%s", 
-			     here->HSMHVname, HSMHVnNames[i]);
-	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
+			     (char *)here->HSMHVname, HSMHVnNames[i]);
+	      data->namelist = 
+		(IFuid *) trealloc((char *) data->namelist,
+				   (data->numPlots + 1) * sizeof(IFuid));
 	      if (!data->namelist)
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 
@@ -102,8 +106,10 @@ int HSMHVnoise (
 		 (IFuid) NULL, name, UID_OTHER, NULL);
 	      
 	      (void) sprintf(name, "inoise_total.%s%s", 
-			     here->HSMHVname, HSMHVnNames[i]);
-	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
+			     (char *)here->HSMHVname, HSMHVnNames[i]);
+	      data->namelist = 
+		(IFuid *) trealloc((char *) data->namelist,
+				   (data->numPlots + 1) * sizeof(IFuid));
 	      if (!data->namelist)
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 
@@ -204,7 +210,7 @@ int HSMHVnoise (
 	    /* clear out our integration variables
 	       if it's the first pass
 	    */
-	    if (data->freq == job->NstartFreq) {
+	    if (data->freq == ((NOISEAN*) ckt->CKTcurJob)->NstartFreq) {
 	      for (i = 0; i < HSMHVNSRCS; i++) {
 		here->HSMHVnVar[OUTNOIZ][i] = 0.0;
 		here->HSMHVnVar[INNOIZ][i] = 0.0;
@@ -228,7 +234,7 @@ int HSMHVnoise (
 		here->HSMHVnVar[LNLSTDENS][i] = lnNdens[i];
 		data->outNoiz += tempOnoise;
 		data->inNoise += tempInoise;
-		if ( job->NStpsSm != 0 ) {
+		if ( ((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0 ) {
 		  here->HSMHVnVar[OUTNOIZ][i] += tempOnoise;
 		  here->HSMHVnVar[OUTNOIZ][HSMHVTOTNOIZ] += tempOnoise;
 		  here->HSMHVnVar[INNOIZ][i] += tempInoise;
@@ -246,7 +252,7 @@ int HSMHVnoise (
 	  break;
 	case INT_NOIZ:
 	  /* already calculated, just output */
-	  if ( job->NStpsSm != 0 ) {
+	  if ( ((NOISEAN*)ckt->CKTcurJob)->NStpsSm != 0 ) {
 	    for ( i = 0; i < HSMHVNSRCS; i++ ) {
 	      data->outpVector[data->outNumber++] = here->HSMHVnVar[OUTNOIZ][i];
 	      data->outpVector[data->outNumber++] = here->HSMHVnVar[INNOIZ][i];
@@ -268,7 +274,3 @@ int HSMHVnoise (
 
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <float.h>

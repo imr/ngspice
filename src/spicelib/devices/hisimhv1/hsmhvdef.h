@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 2 )
- Model Parameter VERSION : 1.22
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhvdef
 
- DATE : 2011.6.29
+ DATE : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -488,6 +488,26 @@ typedef struct sHSMHVinstance {
   double HSMHV_dqsp_dVgse ;
   double HSMHV_dqsp_dVbse ;
   double HSMHV_dqsp_dTi   ;
+  double HSMHV_qgext ;
+  double HSMHV_dQgext_dVdse ;
+  double HSMHV_dQgext_dVgse ;
+  double HSMHV_dQgext_dVbse ;
+  double HSMHV_dQgext_dTi   ;
+  double HSMHV_qdext ;
+  double HSMHV_dQdext_dVdse ;
+  double HSMHV_dQdext_dVgse ;
+  double HSMHV_dQdext_dVbse ;
+  double HSMHV_dQdext_dTi   ;
+  double HSMHV_qbext ;
+  double HSMHV_dQbext_dVdse ;
+  double HSMHV_dQbext_dVgse ;
+  double HSMHV_dQbext_dVbse ;
+  double HSMHV_dQbext_dTi   ;
+  double HSMHV_qsext ;
+  double HSMHV_dQsext_dVdse ;
+  double HSMHV_dQsext_dVgse ;
+  double HSMHV_dQsext_dVbse ;
+  double HSMHV_dQsext_dTi   ;
   /* junctions */
   double HSMHV_ibd;
   double HSMHV_gbd;
@@ -633,6 +653,11 @@ typedef struct sHSMHVinstance {
   double HSMHV_rthtemp0 ;
   double HSMHV_powratio ;
 
+  double HSMHV_mueph1 ;
+  double HSMHV_nsubp;
+  double HSMHV_nsubc;
+
+
   HSMHVhereMKSParam hereMKS ; /* unit-converted parameters */
 
   HSMHVbinningParam pParam ; /* binning parameters */
@@ -716,6 +741,7 @@ typedef struct sHSMHVinstance {
 
   double *HSMHVDdPtr;   /* pointer to sparse matrix element at (Drain node,drain node) */
   double *HSMHVDdpPtr;  /* pointer to sparse matrix element at (drain node,drain prime node) */
+  double *HSMHVDspPtr;  /* pointer to sparse matrix element at (drain node,source prime node) */
   double *HSMHVDdbPtr;  /* pointer to sparse matrix element at (drain node,drain body node) */
 
   double *HSMHVSPsPtr;  /* pointer to sparse matrix element at (source prime node,source node) */
@@ -726,14 +752,15 @@ typedef struct sHSMHVinstance {
 
   double *HSMHVSsPtr;   /* pointer to sparse matrix element at (source node,source node) */
   double *HSMHVSspPtr;  /* pointer to sparse matrix element at (source node,source prime node) */
+  double *HSMHVSdpPtr;  /* pointer to sparse matrix element at (source node,drain prime node) */
   double *HSMHVSsbPtr;  /* pointer to sparse matrix element at (source node,source body node) */
 
   double *HSMHVBPgpPtr; /* pointer to sparse matrix element at (bulk prime node,gate prime node) */
   double *HSMHVBPbpPtr; /* pointer to sparse matrix element at (bulk prime node,bulk prime node) */
   double *HSMHVBPdPtr;  /* pointer to sparse matrix element at (bulk prime node,drain node) */
   double *HSMHVBPdpPtr; /* pointer to sparse matrix element at (bulk prime node,drain prime node) */
-  double *HSMHVBPsPtr;  /* pointer to sparse matrix element at (bulk prime node,source node) */
   double *HSMHVBPspPtr; /* pointer to sparse matrix element at (bulk prime node,source prime node) */
+  double *HSMHVBPsPtr;  /* pointer to sparse matrix element at (bulk prime node,source node) */
   double *HSMHVBPbPtr;  /* pointer to sparse matrix element at (bulk prime node,bulk node) */
   double *HSMHVBPdbPtr; /* pointer to sparse matrix element at (bulk prime node,source body node) */
   double *HSMHVBPsbPtr; /* pointer to sparse matrix element at (bulk prime node,source body node) */
@@ -846,15 +873,19 @@ typedef struct sHSMHVinstance {
 #define HSMHVqfs HSMHVstates+ 27
 #define HSMHVcqfs HSMHVstates+ 28
 
-#define HSMHVnumStates 29
+/*add external drain capacitance*/
+#define HSMHVqdE HSMHVstates+ 29
+#define HSMHVcqdE HSMHVstates+ 30
+
+#define HSMHVnumStates 31
 
 /* nqs charges */
-#define HSMHVqi_nqs HSMHVstates+ 30
-#define HSMHVdotqi_nqs HSMHVstates + 31
-#define HSMHVqb_nqs HSMHVstates+ 32
-#define HSMHVdotqb_nqs HSMHVstates + 33
+#define HSMHVqi_nqs HSMHVstates+ 32
+#define HSMHVdotqi_nqs HSMHVstates + 33
+#define HSMHVqb_nqs HSMHVstates+ 34
+#define HSMHVdotqb_nqs HSMHVstates + 35
 
-#define HSMHVnumStatesNqs 34
+#define HSMHVnumStatesNqs 36
 
 /* indices to the array of HiSIMHV NOISE SOURCES */
 #define HSMHVRDNOIZ       0

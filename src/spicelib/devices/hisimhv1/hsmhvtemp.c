@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 2 )
- Model Parameter VERSION : 1.22
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhvtemp.c
 
- DATE : 2011.6.29
+ DATE : 2012.4.6
 
  released by
                 Hiroshima University &
@@ -33,14 +33,18 @@
 
 #define Fn_SU( y , x , xmax , delta , dx ) { \
     TMF1 = ( xmax ) - ( x ) - ( delta ) ; \
-    TMF2 = sqrt ( TMF1 *  TMF1 + 4.0 * ( xmax ) * ( delta) ) ; \
+    TMF2 = 4.0 * ( xmax ) * ( delta ) ; \
+    TMF2 = TMF2 > 0.0 ?  TMF2 : -( TMF2) ; \
+    TMF2 = sqrt ( TMF1 * TMF1 + TMF2 ) ; \
     dx = 0.5 * ( 1.0 + TMF1 / TMF2 ) ; \
     y = ( xmax ) - 0.5 * ( TMF1 + TMF2 ) ; \
   }
 
 #define Fn_SL( y , x , xmin , delta , dx ) { \
     TMF1 = ( x ) - ( xmin ) - ( delta ) ; \
-    TMF2 = sqrt ( TMF1 *  TMF1 + 4.0 * ( xmin ) * ( delta ) ) ; \
+    TMF2 = 4.0 * ( xmin ) * ( delta ) ; \
+    TMF2 = TMF2 > 0.0 ?  TMF2 : -( TMF2 ); \
+    TMF2 = sqrt ( TMF1 * TMF1 + TMF2 ) ; \
     dx = 0.5 * ( 1.0 + TMF1 / TMF2 ) ; \
     y = ( xmin ) + 0.5 * ( TMF1 + TMF2 ) ; \
   }
@@ -75,6 +79,7 @@ int HSMHVtemp(
   double TMF1 , TMF2 ;
   const double small = 1.0e-50 ;
   const double dlt_rd23 = 1.0e-6 / C_m2cm ;
+  const double large_arg = 80 ;
 
   for ( ;model ;model = model->HSMHVnextModel ) {
 
@@ -146,18 +151,22 @@ int HSMHVtemp(
       }
 
       Npext = pParam->HSMHV_npext ;
+      here->HSMHV_mueph1 = pParam->HSMHV_mueph1 ;
+      here->HSMHV_nsubp  = pParam->HSMHV_nsubp ;
+      here->HSMHV_nsubc  = pParam->HSMHV_nsubc ;
+
       /* DFM */
       if ( model->HSMHV_codfm == 1 && here->HSMHV_nsubcdfm_Given ) {
 	RANGECHECK(hereMKS->HSMHV_nsubcdfm,   1.0e16,   1.0e19, "NSUBCDFM") ;
- 	pParam->HSMHV_mueph1 *= model->HSMHV_mphdfm
-	  * ( log(hereMKS->HSMHV_nsubcdfm) - log(pParam->HSMHV_nsubc) ) + 1.0 ;
-	pParam->HSMHV_nsubp += hereMKS->HSMHV_nsubcdfm - pParam->HSMHV_nsubc ;
-	Npext += hereMKS->HSMHV_nsubcdfm - pParam->HSMHV_nsubc ;
- 	pParam->HSMHV_nsubc = hereMKS->HSMHV_nsubcdfm ;
+ 	here->HSMHV_mueph1 *= model->HSMHV_mphdfm
+	  * ( log(hereMKS->HSMHV_nsubcdfm) - log(here->HSMHV_nsubc) ) + 1.0 ;
+	here->HSMHV_nsubp += hereMKS->HSMHV_nsubcdfm - here->HSMHV_nsubc ;
+	Npext += hereMKS->HSMHV_nsubcdfm - here->HSMHV_nsubc ;
+ 	here->HSMHV_nsubc = hereMKS->HSMHV_nsubcdfm ;
       }
 
       /* Phonon Scattering (temperature-independent part) */
-      mueph = pParam->HSMHV_mueph1 
+      mueph = here->HSMHV_mueph1  
         * (1.0e0 + (model->HSMHV_muephw / pow( WG, model->HSMHV_muepwp))) 
         * (1.0e0 + (model->HSMHV_muephl / pow( LG, model->HSMHV_mueplp))) 
         * (1.0e0 + (model->HSMHV_muephs / pow( WL, model->HSMHV_muepsp)));  
@@ -239,7 +248,7 @@ int HSMHVtemp(
 
       /* Surface impurity profile */
       /* Note: Sign Changed --> */
-      Nsubpp = pParam->HSMHV_nsubp 
+      Nsubpp = here->HSMHV_nsubp  
         * (1.0e0 + (model->HSMHV_nsubp0 / pow (WG, model->HSMHV_nsubwp))) ;
       /* <-- Note: Sign Changed */
 
@@ -252,21 +261,21 @@ int HSMHVtemp(
         Nsubps = Nsubpp ;
       }
    
-      pParam->HSMHV_nsubc *= 1.0e0 + ( model->HSMHV_nsubcw / pow ( WG, model->HSMHV_nsubcwp )) ;
+      here->HSMHV_nsubc *= 1.0e0 + ( model->HSMHV_nsubcw / pow ( WG, model->HSMHV_nsubcwp )) ;
 
       if( Lgate > model->HSMHV_lp ){
-        Nsub = (pParam->HSMHV_nsubc * (Lgate - model->HSMHV_lp) 
+        Nsub = (here->HSMHV_nsubc * (Lgate - model->HSMHV_lp) 
                 +  Nsubps  * model->HSMHV_lp) / Lgate ;
       } else {
         Nsub = Nsubps
-          + (Nsubps - pParam->HSMHV_nsubc) * (model->HSMHV_lp - Lgate) 
+          + (Nsubps - here->HSMHV_nsubc) * (model->HSMHV_lp - Lgate) 
           / model->HSMHV_lp ;
       }
       T3 = 0.5e0 * Lgate - model->HSMHV_lp ;
       T1 = 1.0e0 / ( 1.0e0 / T3 + 1.0e0 / model->HSMHV_lpext ) ;
       T2 = Fn_Max (0.0e0, T1) ;
       here->HSMHV_nsub = 
-	Nsub = Nsub + T2 * (Npext - pParam->HSMHV_nsubc) / Lgate ;
+	Nsub = Nsub + T2 * (Npext - here->HSMHV_nsubc) / Lgate ;
       here->HSMHV_qnsub = q_Nsub  = C_QE * Nsub ;
       here->HSMHV_qnsub_esi = q_Nsub * C_ESI ;
       here->HSMHV_2qnsub_esi = 2.0 * here->HSMHV_qnsub_esi ;
@@ -274,9 +283,9 @@ int HSMHVtemp(
       /* Pocket Overlap (temperature-independent part) */
       if ( Lgate <= 2.0e0 * model->HSMHV_lp ) {
         Nsubb = 2.0e0 * Nsubps 
-          - (Nsubps - pParam->HSMHV_nsubc) * Lgate 
-          / model->HSMHV_lp - pParam->HSMHV_nsubc ;
-        here->HSMHV_ptovr0 = log (Nsubb / pParam->HSMHV_nsubc) ;
+          - (Nsubps - here->HSMHV_nsubc) * Lgate 
+          / model->HSMHV_lp - here->HSMHV_nsubc ;
+        here->HSMHV_ptovr0 = log (Nsubb / here->HSMHV_nsubc) ;
         /* here->HSMHV_ptovr0 will be divided by beta later. */
       } else {
         here->HSMHV_ptovr0 = 0.0e0 ;
@@ -294,7 +303,7 @@ int HSMHVtemp(
       /* @300K, with pocket */
       here->HSMHV_pb20 = 2.0e0 / C_b300 * log (Nsub / C_Nin0) ;
       /* @300K, w/o pocket */
-      here->HSMHV_pb2c = 2.0e0 / C_b300 * log (pParam->HSMHV_nsubc / C_Nin0) ;
+      here->HSMHV_pb2c = 2.0e0 / C_b300 * log (here->HSMHV_nsubc / C_Nin0) ;
 
 
       /* constant for Poly depletion */
@@ -327,13 +336,17 @@ int HSMHVtemp(
         here->HSMHV_rdtemp0 = 1.0 + model->HSMHV_rds / pow( here->HSMHV_w * C_m2um * LG , model->HSMHV_rdsp ) ;
 	if( pParam->HSMHV_rdvd != 0.0 ){
 	  T7 = ( 1.0 + model->HSMHV_rdvds / pow( here->HSMHV_w * C_m2um * LG , model->HSMHV_rdvdsp ) );
-          T6 = exp( - model->HSMHV_rdvdl * pow( LG , model->HSMHV_rdvdlp ) ) ;
+          T6 = ( - model->HSMHV_rdvdl * pow( LG , model->HSMHV_rdvdlp ) ) ;
+          if(T6 > large_arg) T6 = large_arg ;  
+          T6 = exp( T6 ) ;
           here->HSMHV_rdvdtemp0 = T6 * T7 ;
         }
       }
       if( pParam->HSMHV_rd23 != 0.0 ){
 	T2 = ( 1.0 + model->HSMHV_rd23s / pow( here->HSMHV_w * C_m2um * LG , model->HSMHV_rd23sp ) );
-        T1 = exp( - model->HSMHV_rd23l * pow( LG , model->HSMHV_rd23lp ) ) ;
+        T1 = ( - model->HSMHV_rd23l * pow( LG , model->HSMHV_rd23lp ) ) ;
+        if(T1 > large_arg)  T1 = large_arg ; 
+        T1 = exp( T1 ) ;
         T3 = pParam->HSMHV_rd23 * T2 * T1 ;
         here->HSMHV_rd23 = 0.5 * ( T3 + sqrt ( T3 * T3 + 4.0 * dlt_rd23 * dlt_rd23 ) ) ;
       } else {

@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 2 )
- Model Parameter VERSION : 1.22
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhvset.c
 
- DATE : 2011.6.29
+ DATE : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -35,7 +35,7 @@
 #define RANGECHECK(param, min, max, pname)                              \
   if ( (param) < (min) || (param) > (max) ) {             \
     printf("warning(HiSIMHV): The model/instance parameter %s (= %e) must be in the range [%e , %e].\n", \
-           (pname), (param), (double) (min), (double) (max) );   \
+           (pname), (param), (double) (min), (double) (max) );                     \
   }
 #define MINCHECK(param, min, pname)                              \
   if ( (param) < (min) ) {             \
@@ -74,13 +74,13 @@ int HSMHVsetup(
     model->HSMHV_noise = 1;
 
     if ( !model->HSMHV_version_Given) {
-        model->HSMHV_version = "1.22" ;
-       printf("          1.22 is selected for VERSION. (default) \n");
+        model->HSMHV_version = "1.23" ;
+       printf("          1.23 is selected for VERSION. (default) \n");
     } else {
-      if (strcmp(model->HSMHV_version,"1.22") != 0 ) {
-       model->HSMHV_version = "1.22" ;
-       printf("          1.22 is only available for VERSION. \n");
-       printf("          1.22 is selected for VERSION. (default) \n");
+      if (strcmp(model->HSMHV_version,"1.23") != 0 ) {
+       model->HSMHV_version = "1.23" ;
+       printf("          1.23 is only available for VERSION. \n");
+       printf("          1.23 is selected for VERSION. (default) \n");
       } else {
        printf("           %s is selected for VERSION \n", model->HSMHV_version);
       }
@@ -122,7 +122,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_bgtmp2_Given  ) model->HSMHV_bgtmp2  = 1.0e-7 ;
     if ( !model->HSMHV_eg0_Given     ) model->HSMHV_eg0     = 1.1785e0 ;
     if ( !model->HSMHV_tox_Given     ) model->HSMHV_tox     = 30e-9 ;
-    if ( !model->HSMHV_xld_Given     ) model->HSMHV_xld     = 30e-9 ;
+    if ( !model->HSMHV_xld_Given     ) model->HSMHV_xld     = 0.0 ;
     if ( !model->HSMHV_lovers_Given  ) model->HSMHV_lovers  = 30e-9 ;
     if (  model->HSMHV_lover_Given   ) model->HSMHV_lovers  = model->HSMHV_lover ;
     if ( !model->HSMHV_rdov11_Given  ) model->HSMHV_rdov11   = 0.0 ;
@@ -139,7 +139,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_ldrift2s_Given ) model->HSMHV_ldrift2s  = 1.0e-6 ;
     if ( !model->HSMHV_subld1_Given  ) model->HSMHV_subld1  = 0.0 ;
     if ( !model->HSMHV_subld2_Given  ) model->HSMHV_subld2  = 0.0 ;
-    if ( !model->HSMHV_ddltmax_Given ) model->HSMHV_ddltmax = 1.0 ;  /* Vdseff */
+    if ( !model->HSMHV_ddltmax_Given ) model->HSMHV_ddltmax = 10.0 ;  /* Vdseff */
     if ( !model->HSMHV_ddltslp_Given ) model->HSMHV_ddltslp = 0.0 ;  /* Vdseff */
     if ( !model->HSMHV_ddltict_Given ) model->HSMHV_ddltict = 10.0 ; /* Vdseff */
     if ( !model->HSMHV_vfbover_Given ) model->HSMHV_vfbover = -0.5 ;
@@ -173,19 +173,19 @@ int HSMHVsetup(
     if ( !model->HSMHV_rd_Given     ) model->HSMHV_rd    = 5.0e-3 ;
     if ( !model->HSMHV_vfbc_Given   ) model->HSMHV_vfbc  = -1.0 ;
     if ( !model->HSMHV_vbi_Given    ) model->HSMHV_vbi   = 1.1 ;
-    if ( !model->HSMHV_nsubc_Given  ) model->HSMHV_nsubc = 1.0e17 ;
+    if ( !model->HSMHV_nsubc_Given  ) model->HSMHV_nsubc = 5.0e17 ;
     if ( !model->HSMHV_parl2_Given  ) model->HSMHV_parl2 = 10.0e-9 ;
     if ( !model->HSMHV_lp_Given     ) model->HSMHV_lp    = 0.0 ;
-    if ( !model->HSMHV_nsubp_Given  ) model->HSMHV_nsubp = 1.0e17 ;
+    if ( !model->HSMHV_nsubp_Given  ) model->HSMHV_nsubp = 1.0e18 ;
 
     if ( !model->HSMHV_nsubp0_Given ) model->HSMHV_nsubp0 = 0.0 ;
     if ( !model->HSMHV_nsubwp_Given ) model->HSMHV_nsubwp = 1.0 ;
 
     if ( !model->HSMHV_scp1_Given  ) model->HSMHV_scp1 = 1.0 ;
-    if ( !model->HSMHV_scp2_Given  ) model->HSMHV_scp2 = 0.1 ;
+    if ( !model->HSMHV_scp2_Given  ) model->HSMHV_scp2 = 0.0 ;
     if ( !model->HSMHV_scp3_Given  ) model->HSMHV_scp3 = 0.0 ;
     if ( !model->HSMHV_sc1_Given   ) model->HSMHV_sc1  = 1.0 ;
-    if ( !model->HSMHV_sc2_Given   ) model->HSMHV_sc2  = 1.0 ;
+    if ( !model->HSMHV_sc2_Given   ) model->HSMHV_sc2  = 0.0 ;
     if ( !model->HSMHV_sc3_Given   ) model->HSMHV_sc3  = 0.0 ;
     if ( !model->HSMHV_sc4_Given   ) model->HSMHV_sc4  = 0.0 ;
     if ( !model->HSMHV_pgd1_Given  ) model->HSMHV_pgd1 = 0.0 ;
@@ -222,15 +222,15 @@ int HSMHVsetup(
     if ( !model->HSMHV_mueswp_Given ) model->HSMHV_mueswp = 1.0 ;
     if ( !model->HSMHV_mueslp_Given ) model->HSMHV_mueslp = 1.0 ;
 
-    if ( !model->HSMHV_muetmp_Given  ) model->HSMHV_muetmp = 1.7 ;
+    if ( !model->HSMHV_muetmp_Given  ) model->HSMHV_muetmp = 1.5 ;
 
     if ( !model->HSMHV_bb_Given ) {
       if (model->HSMHV_type == NMOS) model->HSMHV_bb = 2.0 ;
       else model->HSMHV_bb = 1.0 ;
     }
 
-    if ( !model->HSMHV_sub1_Given  ) model->HSMHV_sub1  = 50e-3 ;
-    if ( !model->HSMHV_sub2_Given  ) model->HSMHV_sub2  = 100e0 ;
+    if ( !model->HSMHV_sub1_Given  ) model->HSMHV_sub1  = 10.0 ;
+    if ( !model->HSMHV_sub2_Given  ) model->HSMHV_sub2  = 25.0 ;
     if ( !model->HSMHV_svgs_Given  ) model->HSMHV_svgs  = 0.8e0 ;
     if ( !model->HSMHV_svbs_Given  ) model->HSMHV_svbs  = 0.5e0 ;
     if ( !model->HSMHV_svbsl_Given ) model->HSMHV_svbsl = 0e0 ;
@@ -300,7 +300,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_cvbk_Given  ) model->HSMHV_cvbk  = 0.0e0 ;
     if ( !model->HSMHV_divx_Given  ) model->HSMHV_divx  = 0.0e0 ;
 
-    if ( !model->HSMHV_clm1_Given  ) model->HSMHV_clm1 = 50e-3 ;
+    if ( !model->HSMHV_clm1_Given  ) model->HSMHV_clm1 = 0.7 ;
     if ( !model->HSMHV_clm2_Given  ) model->HSMHV_clm2 = 2.0 ;
     if ( !model->HSMHV_clm3_Given  ) model->HSMHV_clm3 = 1.0 ;
     if ( !model->HSMHV_clm5_Given   ) model->HSMHV_clm5   = 1.0 ;
@@ -311,7 +311,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_nsubcw_Given    ) model->HSMHV_nsubcw  = 0.0 ;
     if ( !model->HSMHV_nsubcwp_Given   ) model->HSMHV_nsubcwp = 1.0 ;
     if ( !model->HSMHV_qme1_Given   ) model->HSMHV_qme1   = 0.0 ;
-    if ( !model->HSMHV_qme2_Given   ) model->HSMHV_qme2   = 1.0 ;
+    if ( !model->HSMHV_qme2_Given   ) model->HSMHV_qme2   = 0.0 ;
     if ( !model->HSMHV_qme3_Given   ) model->HSMHV_qme3   = 0.0 ;
 
     if ( !model->HSMHV_vovers_Given  ) model->HSMHV_vovers  = 0.0 ;
@@ -320,7 +320,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_gidl1_Given ) model->HSMHV_gidl1 = 2e0 ;
     if ( !model->HSMHV_gidl2_Given ) model->HSMHV_gidl2 = 3e7 ;
     if ( !model->HSMHV_gidl3_Given ) model->HSMHV_gidl3 = 0.9e0 ;
-    if ( !model->HSMHV_gidl4_Given ) model->HSMHV_gidl4 = 0.9 ;
+    if ( !model->HSMHV_gidl4_Given ) model->HSMHV_gidl4 = 0.0 ;
     if ( !model->HSMHV_gidl5_Given ) model->HSMHV_gidl5 = 0.2e0 ;
 
     if ( !model->HSMHV_gleak1_Given ) model->HSMHV_gleak1 = 50e0 ;
@@ -360,8 +360,8 @@ int HSMHVsetup(
     if ( !model->HSMHV_dly3_Given   ) model->HSMHV_dly3   = 0.8e-6 ;
     if ( !model->HSMHV_tnom_Given   ) model->HSMHV_tnom   = 27.0 ; /* [C] */
 
-    if ( !model->HSMHV_ovslp_Given  ) model->HSMHV_ovslp = 2.0e-8 ;
-    if ( !model->HSMHV_ovmag_Given  ) model->HSMHV_ovmag = 500.0 ;
+    if ( !model->HSMHV_ovslp_Given  ) model->HSMHV_ovslp = 2.1e-7 ;
+    if ( !model->HSMHV_ovmag_Given  ) model->HSMHV_ovmag = 0.6 ;
 
     if ( !model->HSMHV_gbmin_Given  ) model->HSMHV_gbmin = 1.0e-12; /* in mho */
     if ( !model->HSMHV_rbpb_Given   ) model->HSMHV_rbpb  = 50.0e0 ;
@@ -848,12 +848,13 @@ int HSMHVsetup(
 	   * ( here->HSMHV_ldrift2 * model->HSMHV_rdslp2 * C_m2um  + model->HSMHV_rdict2 ) ;
       Rd = model->HSMHV_rsh * here->HSMHV_nrd * here->HSMHV_nf + (model->HSMHV_rd + model->HSMHV_rdvd) * T2 ;
       if ( (model->HSMHV_corsrd == 1 || model->HSMHV_corsrd == 3)
-           && Rd > 0.0 
-	   && here->HSMHVdNodePrime <= 0) {
+           && Rd > 0.0 ) {
+	if(here->HSMHVdNodePrime <= 0) {
         model->HSMHV_rd   = ( model->HSMHV_rd   == 0.0 ) ? 1e-50 :  model->HSMHV_rd ;
         error = CKTmkVolt(ckt, &tmp, here->HSMHVname, "drain");
 	if (error) return(error);
 	here->HSMHVdNodePrime = tmp->number;
+       }
       } else {
 	here->HSMHVdNodePrime = here->HSMHVdNode;
       }
@@ -865,23 +866,24 @@ int HSMHVsetup(
 	   * ( here->HSMHV_ldrift2s * model->HSMHV_rdslp2 * C_m2um + model->HSMHV_rdict2 ) ;
       Rs = model->HSMHV_rsh * here->HSMHV_nrs * here->HSMHV_nf + model->HSMHV_rs * T2 ;
       if ( (model->HSMHV_corsrd == 1 || model->HSMHV_corsrd == 3)
-           && Rs > 0.0
-           && here->HSMHVsNodePrime == 0) {
+           && Rs > 0.0 ) {
+       if(here->HSMHVsNodePrime == 0) {
         error = CKTmkVolt(ckt, &tmp, here->HSMHVname, "source");
 	if (error) return(error);
 	here->HSMHVsNodePrime = tmp->number;
+       }
       } else {
 	here->HSMHVsNodePrime = here->HSMHVsNode;
       }
       here->HSMHVsourceConductance = 0.0 ; /* initialized for hsmhvnoi.c */
-      /* printf("HSMHV_set: corsrd=%d dNode=%d dNodePrime=%d sNode=%d sNodePrime=%d\n",model->HSMHV_corsrd,
-                         here->HSMHVdNode,here->HSMHVdNodePrime,here->HSMHVsNode,here->HSMHVsNodePrime); */
 
       /* process gate resistance */
-      if ((here->HSMHV_corg == 1 && model->HSMHV_rshg > 0.0) && here->HSMHVgNodePrime == 0) {
+      if ( (here->HSMHV_corg == 1 && model->HSMHV_rshg > 0.0) ) {
+       if(here->HSMHVgNodePrime == 0) {
 	error = CKTmkVolt(ckt, &tmp, here->HSMHVname, "gate");
 	if (error) return(error);
 	here->HSMHVgNodePrime = tmp->number;
+       }
       } else {
 	here->HSMHVgNodePrime = here->HSMHVgNode;
       }
@@ -945,8 +947,8 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
       TSTALLOC(HSMHVGPbpPtr, HSMHVgNodePrime, HSMHVbNodePrime)
 
       TSTALLOC(HSMHVBPdPtr,  HSMHVbNodePrime, HSMHVdNode)
-      TSTALLOC(HSMHVBPdpPtr, HSMHVbNodePrime, HSMHVdNodePrime)
       TSTALLOC(HSMHVBPsPtr,  HSMHVbNodePrime, HSMHVsNode)
+      TSTALLOC(HSMHVBPdpPtr, HSMHVbNodePrime, HSMHVdNodePrime)
       TSTALLOC(HSMHVBPspPtr, HSMHVbNodePrime, HSMHVsNodePrime)
       TSTALLOC(HSMHVBPgpPtr, HSMHVbNodePrime, HSMHVgNodePrime)
       TSTALLOC(HSMHVBPbpPtr, HSMHVbNodePrime, HSMHVbNodePrime)
@@ -998,11 +1000,13 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
       TSTALLOC(HSMHVDgpPtr, HSMHVdNode, HSMHVgNodePrime);
       TSTALLOC(HSMHVDsPtr, HSMHVdNode, HSMHVsNode);
       TSTALLOC(HSMHVDbpPtr, HSMHVdNode, HSMHVbNodePrime);
+      TSTALLOC(HSMHVDspPtr, HSMHVdNode, HSMHVsNodePrime);
       TSTALLOC(HSMHVDPsPtr, HSMHVdNodePrime, HSMHVsNode);
 
       TSTALLOC(HSMHVSgpPtr, HSMHVsNode, HSMHVgNodePrime);
       TSTALLOC(HSMHVSdPtr, HSMHVsNode, HSMHVdNode);
       TSTALLOC(HSMHVSbpPtr, HSMHVsNode, HSMHVbNodePrime);
+      TSTALLOC(HSMHVSdpPtr, HSMHVsNode, HSMHVdNodePrime);
       TSTALLOC(HSMHVSPdPtr, HSMHVsNodePrime, HSMHVdNode);
 
       TSTALLOC(HSMHVGPdPtr, HSMHVgNodePrime, HSMHVdNode);
@@ -1063,7 +1067,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
        * Range check of instance parameters
        *-----------------*/
       RANGECHECK(here->HSMHV_l, model->HSMHV_lmin, model->HSMHV_lmax, "L") ;
-      RANGECHECK(here->HSMHV_w, model->HSMHV_wmin, model->HSMHV_wmax, "W") ;
+      RANGECHECK(here->HSMHV_w/here->HSMHV_nf, model->HSMHV_wmin, model->HSMHV_wmax, "W/NF") ;
 
       /* binning calculation */
       pParam = &here->pParam ;
@@ -1172,32 +1176,32 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
        * Range check of model parameters
        *-----------------*/
       RANGECHECK(pParam->HSMHV_vmax,     1.0e6,   20.0e6, "VMAX") ;
-      RANGECHECK(pParam->HSMHV_bgtmp1, 50.0e-6, 100.0e-6, "BGTMP1") ;
+      RANGECHECK(pParam->HSMHV_bgtmp1, 50.0e-6,   1.0e-3, "BGTMP1") ;
       RANGECHECK(pParam->HSMHV_bgtmp2, -1.0e-6,   1.0e-6, "BGTMP2") ;
       RANGECHECK(pParam->HSMHV_eg0,        1.0,      1.3, "EG0") ;
       RANGECHECK(pParam->HSMHV_vfbover,   -1.0,      1.0, "VFBOVER") ;
       RANGECHECK(pParam->HSMHV_vfbc,      -1.2,     -0.8, "VFBC") ;
       RANGECHECK(pParam->HSMHV_nsubc,   1.0e16,   1.0e19, "NSUBC") ;
       RANGECHECK(pParam->HSMHV_nsubp,   1.0e16,   1.0e19, "NSUBP") ;
-      RANGECHECK(pParam->HSMHV_scp1,       0.0,     50.0, "SCP1") ;
-      RANGECHECK(pParam->HSMHV_scp2,       0.0,     50.0, "SCP2") ;
-      RANGECHECK(pParam->HSMHV_scp3,       0.0,   1.0e-3, "SCP3") ;
-      RANGECHECK(pParam->HSMHV_sc1,        0.0,    200.0, "SC1") ;
-      RANGECHECK(pParam->HSMHV_sc2,        0.0,     50.0, "SC2") ;
-      RANGECHECK(pParam->HSMHV_sc3,        0.0,   1.0e-3, "SC3") ;
+      RANGECHECK(pParam->HSMHV_scp1,       0.0,     20.0, "SCP1") ;
+      RANGECHECK(pParam->HSMHV_scp2,       0.0,      2.0, "SCP2") ;
+      RANGECHECK(pParam->HSMHV_scp3,       0.0,   200e-9, "SCP3") ;
+      RANGECHECK(pParam->HSMHV_sc1,        0.0,     20.0, "SC1") ;
+      RANGECHECK(pParam->HSMHV_sc2,        0.0,      2.0, "SC2") ;
+      RANGECHECK(pParam->HSMHV_sc3,        0.0,   200e-9, "SC3") ;
       RANGECHECK(pParam->HSMHV_pgd1,       0.0,  50.0e-3, "PGD1") ;
-      RANGECHECK(pParam->HSMHV_pgd3,       0.0,      1.0, "PGD3") ;
+      RANGECHECK(pParam->HSMHV_pgd3,       0.0,      1.2, "PGD3") ;
       RANGECHECK(pParam->HSMHV_ndep,       0.0,      1.0, "NDEP") ;
       RANGECHECK(pParam->HSMHV_ninv,       0.0,      1.0, "NINV") ;
       RANGECHECK(pParam->HSMHV_muecb0,   100.0,  100.0e3, "MUECB0") ;
-      RANGECHECK(pParam->HSMHV_muecb1,    15.0,   10.0e3, "MUECB1") ;
+      RANGECHECK(pParam->HSMHV_muecb1,     5.0,   10.0e3, "MUECB1") ;
       RANGECHECK(pParam->HSMHV_mueph1,   2.0e3,   30.0e3, "MUEPH1") ;
       RANGECHECK(pParam->HSMHV_vtmp,      -2.0,      1.0, "VTMP") ;
       RANGECHECK(pParam->HSMHV_muesr1,  1.0e14,   1.0e16, "MUESR1") ;
       RANGECHECK(pParam->HSMHV_muetmp,     0.5,      2.0, "MUETMP") ;
       RANGECHECK(pParam->HSMHV_clm1,       0.01,      1.0, "CLM1") ;
-      RANGECHECK(pParam->HSMHV_clm2,       1.0,      2.0, "CLM2") ;
-      RANGECHECK(pParam->HSMHV_clm3,       1.0,      5.0, "CLM3") ;
+      RANGECHECK(pParam->HSMHV_clm2,       1.0,      4.0, "CLM2") ;
+      RANGECHECK(pParam->HSMHV_clm3,       0.5,      5.0, "CLM3") ;
       RANGECHECK(pParam->HSMHV_wfc,   -5.0e-15,   1.0e-6, "WFC") ;
       RANGECHECK(pParam->HSMHV_cgso,       0.0, 100e-9 * 100*C_VAC*model->HSMHV_kappa/model->HSMHV_tox*C_m2cm, "CGSO") ;
       RANGECHECK(pParam->HSMHV_cgdo,       0.0, 100e-9 * 100*C_VAC*model->HSMHV_kappa/model->HSMHV_tox*C_m2cm, "CGDO") ;
@@ -1223,7 +1227,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
       MINCHECK(  pParam->HSMHV_rdvg11,     0.0,           "RDVG11") ;
       RANGECHECK(pParam->HSMHV_rs,         0.0,  10.0e-3, "RS") ;
       RANGECHECK(pParam->HSMHV_rth0,       0.0,     10.0, "RTH0") ;
-      RANGECHECK(pParam->HSMHV_vover,      0.0,      1.0, "VOVER") ;
+      RANGECHECK(pParam->HSMHV_vover,      0.0,      4.0, "VOVER") ;
 
       /*-----------------------------------------------------------*
        * Change unit into MKS for instance parameters.
@@ -1296,14 +1300,20 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     RANGECHECK(model->HSMHV_muesr0,     1.8,      2.2, "MUESR0") ;
     RANGECHECK(model->HSMHV_lpext,  1.0e-50,  10.0e-6, "LPEXT") ;
     RANGECHECK(model->HSMHV_scp21,      0.0,      5.0, "SCP21") ;
-    RANGECHECK(model->HSMHV_scp22,      0.0,  50.0e-3, "SCP22") ;
-    RANGECHECK(model->HSMHV_bs1,        0.0, 100.0e-3, "BS1") ;
+    RANGECHECK(model->HSMHV_scp22,      0.0,      0.0, "SCP22") ;
+    RANGECHECK(model->HSMHV_bs1,        0.0,  50.0e-3, "BS1") ;
     RANGECHECK(model->HSMHV_bs2,        0.5,      1.0, "BS2") ;
-    RANGECHECK(model->HSMHV_clm5,       0.0,      5.0, "CLM5") ;
-    RANGECHECK(model->HSMHV_clm6,       0.0,      5.0, "CLM6") ;
+    RANGECHECK(model->HSMHV_clm5,       0.0,      2.0, "CLM5") ;
+    RANGECHECK(model->HSMHV_clm6,       0.0,     20.0, "CLM6") ;
+    MINCHECK  (model->HSMHV_ninvd,      0.0,           "NINVD") ;
+    MINCHECK  (model->HSMHV_ninvdw,     0.0,           "NINVDW") ;
+    MINCHECK  (model->HSMHV_ninvdwp,    0.0,           "NINVDWP") ;
+    MINCHECK  (model->HSMHV_ninvdt1,    0.0,           "NINVDT1") ;
+    MINCHECK  (model->HSMHV_ninvdt2,    0.0,           "NINVDT2") ;
+    RANGECHECK(model->HSMHV_sub2l,      0.0,      1.0, "SUB2L") ;
     RANGECHECK(model->HSMHV_voverp,     0.0,      2.0, "VOVERP") ;
     RANGECHECK(model->HSMHV_qme1,       0.0, 300.0e-9, "QME1") ;
-    RANGECHECK(model->HSMHV_qme2,       0.0,      3.0, "QME2") ;
+    RANGECHECK(model->HSMHV_qme2,       0.0,      0.0, "QME2") ;
     RANGECHECK(model->HSMHV_qme3,       0.0,800.0e-12, "QME3") ;
     RANGECHECK(model->HSMHV_glpart1,    0.0,      1.0, "GLPART1") ;
     RANGECHECK(model->HSMHV_tnom,      22.0,     32.0, "TNOM") ;
@@ -1327,13 +1337,13 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     RANGECHECK(model->HSMHV_rth0w,     -100,      100, "RTH0W") ;
     RANGECHECK(model->HSMHV_rth0wp,     -10,       10, "RTH0WP") ;
     RANGECHECK(model->HSMHV_rth0nf,    -5.0,      5.0, "RTH0NF") ;
+    RANGECHECK(model->HSMHV_powrat,     0.0,      1.0, "POWRAT") ;
     RANGECHECK(model->HSMHV_prattemp1, -1.0,      1.0, "PRATTEMP1") ;
     RANGECHECK(model->HSMHV_prattemp2, -1.0,      1.0, "PRATTEMP2") ;
     MINCHECK(  model->HSMHV_xldld,      0.0,           "XLDLD") ;
     MINCHECK(  model->HSMHV_loverld,    0.0,           "LOVERLD") ;
     MINCHECK(  model->HSMHV_lovers,     0.0,           "LOVERS") ;
     MINCHECK(  model->HSMHV_lover,      0.0,           "LOVER") ;
-    RANGECHECK(model->HSMHV_qovsm,    10e-3,      1.0, "QOVSM") ;
     MINCHECK(  model->HSMHV_ldrift1,    0.0,           "LDRIFT1") ;
     MINCHECK(  model->HSMHV_ldrift1s,   0.0,           "LDRIFT1S") ;
     MINCHECK(  model->HSMHV_ldrift2,    0.0,           "LDRIFT2") ;

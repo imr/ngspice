@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 2 )
- Model Parameter VERSION : 1.22
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhvacld.c
 
- DATE : 2011.6.29
+ DATE : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -183,6 +183,10 @@ int HSMHVacLoad(
       }
      
       /*bulk prime*/
+      *(here->HSMHVBPdPtr) +=  here->HSMHV_ydc_bP[dNode];
+      *(here->HSMHVBPdPtr +1) +=  omega*here->HSMHV_ydyn_bP[dNode];
+      *(here->HSMHVBPsPtr) +=  here->HSMHV_ydc_bP[sNode];
+      *(here->HSMHVBPsPtr +1) +=  omega*here->HSMHV_ydyn_bP[sNode];
       *(here->HSMHVBPdpPtr) +=  here->HSMHV_ydc_bP[dNodePrime];
       *(here->HSMHVBPdpPtr +1) +=  omega*here->HSMHV_ydyn_bP[dNodePrime];
       *(here->HSMHVBPgpPtr) +=  here->HSMHV_ydc_bP[gNodePrime] ;

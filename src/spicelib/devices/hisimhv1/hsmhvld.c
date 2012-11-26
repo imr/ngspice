@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 2 )
- Model Parameter VERSION : 1.22
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhvld.c
 
- DATE : 2011.6.29
+ DATE : 2012.4.6
 
  released by 
                 Hiroshima University &
@@ -40,8 +40,8 @@ static void ShowPhysVals
  )
 {
 
-  NG_IGNORE(vgd);
-  NG_IGNORE(vbd);
+NG_IGNORE(vgd);
+NG_IGNORE(vbd);
 
   /*                                                            */
   /*                                                            */
@@ -222,6 +222,7 @@ int HSMHVload(
 
   /* displacement currents */
   double cq_d=0.0,  cq_dP=0.0,  cq_g=0.0,  cq_gP=0.0,  cq_s=0.0,  cq_sP=0.0,  cq_bP=0.0,  cq_b=0.0,  cq_db=0.0,    cq_sb=0.0,  cq_t=0.0  ; 
+  double cq_dE=0.0, cq_gE=0.0,  cq_sE=0.0,  cq_bE=0.0 ;
 
   /* node currents */
   double cur_d=0.0, cur_dP=0.0, cur_g=0.0, cur_gP=0.0, cur_s=0.0, cur_sP=0.0, cur_bP=0.0, cur_b=0.0, cur_db=0.0,   cur_sb=0.0, cur_t=0.0 ;
@@ -247,6 +248,10 @@ int HSMHVload(
   double Qfd=0.0, dQfd_dVdse=0.0, dQfd_dVgse=0.0, dQfd_dVbse=0.0, dQfd_dT=0.0 ;
   double Qfs=0.0, dQfs_dVdse=0.0, dQfs_dVgse=0.0, dQfs_dVbse=0.0, dQfs_dT=0.0 ;
 
+  double Qdext=0.0, dQdext_dVdse=0.0, dQdext_dVgse=0.0, dQdext_dVbse=0.0, dQdext_dT=0.0 ;
+  double Qgext=0.0, dQgext_dVdse=0.0, dQgext_dVgse=0.0, dQgext_dVbse=0.0, dQgext_dT=0.0 ;
+  double Qsext=0.0, dQsext_dVdse=0.0, dQsext_dVgse=0.0, dQsext_dVbse=0.0, dQsext_dT=0.0 ;
+  double Qbext=0.0, dQbext_dVdse=0.0, dQbext_dVgse=0.0, dQbext_dVbse=0.0, dQbext_dT=0.0 ;
   /* 5th substrate node */
   int flg_subNode = 0 ;
   
@@ -270,7 +275,9 @@ int HSMHVload(
 
 #define Fn_SU( y , x , xmax , delta , dx ) { \
     TMF1 = ( xmax ) - ( x ) - ( delta ) ; \
-    TMF2 = sqrt ( TMF1 *  TMF1 + 4.0 * ( xmax ) * ( delta) ) ; \
+    TMF2 = 4.0 * ( xmax ) * ( delta) ; \
+    TMF2 = TMF2 > 0.0 ?  TMF2 :  -( TMF2 ) ; \
+    TMF2 = sqrt ( TMF1 *  TMF1 + TMF2 ) ; \
     dx = 0.5 * ( 1.0 + TMF1 / TMF2 ) ; \
     y = ( xmax ) - 0.5 * ( TMF1 + TMF2 ) ; \
   }
@@ -306,7 +313,7 @@ int HSMHVload(
   double ydyn_bP[XDIM], ydyn_b[XDIM],  ydyn_db[XDIM], ydyn_sb[XDIM], ydyn_t[XDIM], ydyn_qi[XDIM], ydyn_qb[XDIM] ;
 
   /* limiter, bypass, and convergence */
-  int ByPass=0, Check=0, Check1=0, Check2=0, Check3=0;
+  int ByPass=0, Check=0, Check1=0, Check2=0, Check3=0 ;
   double von=0.0, limval =0.0 ;
   double i_dP_hat=0.0, i_gP_hat=0.0, i_sP_hat=0.0, i_db_hat=0.0, i_sb_hat =0.0         ;
 
@@ -1090,6 +1097,27 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         dQfs_dVgse = here->HSMHV_dqsp_dVgse ;
         dQfs_dVbse = here->HSMHV_dqsp_dVbse ;
         dQfs_dT    = (flg_tempNode > 0) ? here->HSMHV_dqsp_dTi : 0.0  ;
+
+        Qdext        = here->HSMHV_qdext ;
+        dQdext_dVdse = here->HSMHV_dQdext_dVdse ;
+        dQdext_dVgse = here->HSMHV_dQdext_dVgse ;
+        dQdext_dVbse = here->HSMHV_dQdext_dVbse ;
+        dQdext_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQdext_dTi : 0.0  ;
+        Qgext        = here->HSMHV_qgext ;
+        dQgext_dVdse = here->HSMHV_dQgext_dVdse ;
+        dQgext_dVgse = here->HSMHV_dQgext_dVgse ;
+        dQgext_dVbse = here->HSMHV_dQgext_dVbse ;
+        dQgext_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQgext_dTi : 0.0  ;
+        Qsext        = here->HSMHV_qsext ;
+        dQsext_dVdse = here->HSMHV_dQsext_dVdse ;
+        dQsext_dVgse = here->HSMHV_dQsext_dVgse ;
+        dQsext_dVbse = here->HSMHV_dQsext_dVbse ;
+        dQsext_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQsext_dTi : 0.0  ;
+        Qbext        = - (here->HSMHV_qgext + here->HSMHV_qdext + here->HSMHV_qsext) ;
+        dQbext_dVdse = here->HSMHV_dQbext_dVdse ;
+        dQbext_dVgse = here->HSMHV_dQbext_dVgse ;
+        dQbext_dVbse = here->HSMHV_dQbext_dVbse ;
+        dQbext_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQbext_dTi : 0.0  ;
 	Isub         = here->HSMHV_isub ;
 	dIsub_dVds   = here->HSMHV_dIsub_dVdsi ; 
 	dIsub_dVgs   = here->HSMHV_dIsub_dVgsi ; 
@@ -1231,6 +1259,27 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         dQfs_dVgse =   here->HSMHV_dqdp_dVgse ;
         dQfs_dVbse =   here->HSMHV_dqdp_dVbse ;
         dQfs_dT    =   (flg_tempNode > 0) ? here->HSMHV_dqdp_dTi : 0.0  ;
+
+        Qdext        = here->HSMHV_qsext ;
+        dQdext_dVdse = - (here->HSMHV_dQsext_dVdse + here->HSMHV_dQsext_dVgse + here->HSMHV_dQsext_dVbse);
+        dQdext_dVgse = here->HSMHV_dQsext_dVgse ;
+        dQdext_dVbse = here->HSMHV_dQsext_dVbse ;
+        dQdext_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQsext_dTi : 0.0  ;
+        Qgext        = here->HSMHV_qgext ;
+        dQgext_dVdse = - (here->HSMHV_dQgext_dVdse + here->HSMHV_dQgext_dVgse + here->HSMHV_dQgext_dVbse);
+        dQgext_dVgse = here->HSMHV_dQgext_dVgse ;
+        dQgext_dVbse = here->HSMHV_dQgext_dVbse ;
+        dQgext_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQgext_dTi : 0.0  ;
+        Qsext        = here->HSMHV_qdext ;
+        dQsext_dVdse = - (here->HSMHV_dQdext_dVdse + here->HSMHV_dQdext_dVgse + here->HSMHV_dQdext_dVbse);
+        dQsext_dVgse = here->HSMHV_dQdext_dVgse ;
+        dQsext_dVbse = here->HSMHV_dQdext_dVbse ;
+        dQsext_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQdext_dTi : 0.0  ;
+        Qbext        = - (here->HSMHV_qgext + here->HSMHV_qdext + here->HSMHV_qsext) ;
+        dQbext_dVdse = - (here->HSMHV_dQbext_dVdse + here->HSMHV_dQbext_dVgse + here->HSMHV_dQbext_dVbse);
+        dQbext_dVgse = here->HSMHV_dQbext_dVgse ;
+        dQbext_dVbse = here->HSMHV_dQbext_dVbse ;
+        dQbext_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQbext_dTi : 0.0  ;
 	Isub         = 0.0 ;
 	dIsub_dVds   = 0.0 ; 
 	dIsub_dVgs   = 0.0 ; 
@@ -1956,13 +2005,13 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         if (!ByPass) { /* loading of state vector not necessary in case of Bypass */
 
           /*  intrinsic gate node (without fringing charges) */
-          *(ckt->CKTstate0 + here->HSMHVqg) = Qg + Qg_nqs ;
+          *(ckt->CKTstate0 + here->HSMHVqg) = Qg + Qg_nqs + Qgext;
 
           /*  intrinsic drain node */
           *(ckt->CKTstate0 + here->HSMHVqd) = Qd + Qd_nqs ; 
 
           /* intrinsic bulk node */
-          *(ckt->CKTstate0 + here->HSMHVqb) = Qb + Qb_nqs ;
+          *(ckt->CKTstate0 + here->HSMHVqb) = Qb + Qb_nqs + Qbext;
 
           /*  drain bulk node */
           *(ckt->CKTstate0 + here->HSMHVqbd) = Qbd ;
@@ -1977,6 +2026,9 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
           *(ckt->CKTstate0 + here->HSMHVqfd) = Qfd ;
           *(ckt->CKTstate0 + here->HSMHVqfs) = Qfs ;
 
+          /* external drain node */
+          *(ckt->CKTstate0 + here->HSMHVqdE) = Qdext;
+
           /* nqs charges Qi_nqs, Qb_nqs: already loaded above */
           /* if ( flg_nqs ) {                                 */
           /*   *(ckt->CKTstate0 + here->HSMHVqi_nqs) = Qi_nqs; */
@@ -1987,17 +2039,17 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         /* ... assemble capacitance matrix */
 
         /* ...... drain node */
-        ydyn_d[dNode] = dQfd_dVdse + Cbd;
+        ydyn_d[dNode] = dQfd_dVdse + Cbd + dQdext_dVdse ;
         /* ydyn_d[dNodePrime] = 0.0 ; */
         /* ydyn_d[gNode] = 0.0 ; */
-        ydyn_d[gNodePrime] = dQfd_dVgse;
-        ydyn_d[sNode] = - (dQfd_dVdse + dQfd_dVgse+ dQfd_dVbse);
+        ydyn_d[gNodePrime] = dQfd_dVgse + dQdext_dVgse ;
+        ydyn_d[sNode] = - (dQfd_dVdse + dQfd_dVgse+ dQfd_dVbse) - ( dQdext_dVdse + dQdext_dVgse + dQdext_dVbse ) ;
         /* ydyn_d[sNodePrime ] = 0.0 ; */
-        ydyn_d[bNodePrime] = dQfd_dVbse;
+        ydyn_d[bNodePrime] = dQfd_dVbse + dQdext_dVbse;
         /* ydyn_d[bNode ] = 0.0 ; */
         ydyn_d[dbNode] = - Cbd ;
         /* ydyn_d[sbNode ] = 0.0 ; */
-        ydyn_d[tempNode] = dQfd_dT - Cbdt;
+        ydyn_d[tempNode] = dQfd_dT - Cbdt + dQdext_dT ;
 
         /* ...... intrinsic drain node */
         /* ydyn_dP[dNode] = 0.0 ; */
@@ -2016,30 +2068,31 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         /*        (no entry) */
 
         /* ...... intrinsic gate node */
-        ydyn_gP[dNode] = -dQfd_dVdse - dQfs_dVdse ;
+        ydyn_gP[dNode] = -dQfd_dVdse - dQfs_dVdse + dQgext_dVdse ;
         ydyn_gP[dNodePrime] = dQg_dVds ; 
         /* ydyn_gP[gNode] = 0.0 ; */
-        ydyn_gP[gNodePrime] = dQg_dVgs -dQfd_dVgse - dQfs_dVgse; 
-        ydyn_gP[sNode] = dQfd_dVdse + dQfs_dVdse + dQfd_dVgse + dQfs_dVgse + dQfd_dVbse + dQfs_dVbse;
+        ydyn_gP[gNodePrime] = dQg_dVgs -dQfd_dVgse - dQfs_dVgse + dQgext_dVgse ; 
+        ydyn_gP[sNode] = dQfd_dVdse + dQfs_dVdse + dQfd_dVgse + dQfs_dVgse + dQfd_dVbse + dQfs_dVbse
+                       - ( dQgext_dVdse + dQgext_dVgse + dQgext_dVbse ) ;
         ydyn_gP[sNodePrime] = -( dQg_dVds + dQg_dVgs + dQg_dVbs ) ;
-        ydyn_gP[bNodePrime] = dQg_dVbs -dQfd_dVbse - dQfs_dVbse;
+        ydyn_gP[bNodePrime] = dQg_dVbs -dQfd_dVbse - dQfs_dVbse + dQgext_dVbse ;
         /* ydyn_gP[bNode] = 0.0 ; */
         /* ydyn_gP[dbNode] = 0.0 ; */
         /* ydyn_gP[sbNode] = 0.0 ; */
-        ydyn_gP[tempNode] = dQg_dT - dQfd_dT - dQfs_dT ;
+        ydyn_gP[tempNode] = dQg_dT - dQfd_dT - dQfs_dT + dQgext_dT ;
 
         /* ...... source node */
-        ydyn_s[dNode] = dQfs_dVdse;
+        ydyn_s[dNode] = dQfs_dVdse + dQsext_dVdse ;
         /* ydyn_d[dNodePrime ] = 0.0 ; */
         /* ydyn_d[gNode ] = 0.0 ; */
-        ydyn_s[gNodePrime] = dQfs_dVgse;
-        ydyn_s[sNode] = Cbs - (dQfs_dVdse + dQfs_dVgse+ dQfs_dVbse);
+        ydyn_s[gNodePrime] = dQfs_dVgse + dQsext_dVgse ;
+        ydyn_s[sNode] = Cbs - (dQfs_dVdse + dQfs_dVgse+ dQfs_dVbse) - ( dQsext_dVdse + dQsext_dVgse + dQsext_dVbse ) ;
         /* ydyn_d[sNodePrime ] = 0.0 ; */
-        ydyn_s[bNodePrime] = dQfs_dVbse;
+        ydyn_s[bNodePrime] = dQfs_dVbse + dQsext_dVbse ;
         /* ydyn_d[bNode ] = 0.0 ; */
         /* ydyn_d[dbNode ] = 0.0 ; */
         ydyn_s[sbNode] = - Cbs ;
-        ydyn_s[tempNode] = dQfs_dT - Cbst;
+        ydyn_s[tempNode] = dQfs_dT - Cbst + dQsext_dT ;
 
         /* ...... intrinsic source node */
         /* ydyn_sP[dNode] = 0.0 ; */
@@ -2055,17 +2108,17 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         ydyn_sP[tempNode] = dQs_dT ;
 
         /* ...... intrinsic bulk node */
-        /* ydyn_bP[dNode] = 0.0 ; */
+        ydyn_bP[dNode] = dQbext_dVdse ;
         ydyn_bP[dNodePrime] =  dQb_dVds ;
         /* ydyn_bP[gNode] = 0.0 ; */
-        ydyn_bP[gNodePrime] = dQb_dVgs ; 
-        /* ydyn_bP[sNode] = 0.0 ; */ 
+        ydyn_bP[gNodePrime] = dQb_dVgs + dQbext_dVgse ; 
+        ydyn_bP[sNode] = - ( dQbext_dVdse + dQbext_dVgse + dQbext_dVbse ) ;  
         ydyn_bP[sNodePrime] = - ( dQb_dVds + dQb_dVgs + dQb_dVbs );
-        ydyn_bP[bNodePrime] = dQb_dVbs;
+        ydyn_bP[bNodePrime] = dQb_dVbs + dQbext_dVbse ;
         /* ydyn_bP[bNode] = 0.0 ; */
         /* ydyn_bP[dbNode] = 0.0 ; */
         /* ydyn_bP[sbNode] = 0.0 ; */
-        ydyn_bP[tempNode] = dQb_dT ;
+        ydyn_bP[tempNode] = dQb_dT + dQbext_dT ;
 
         /* ...... bulk node  */
         /*        (no entry) */
@@ -2192,7 +2245,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
           /* store small signal parameters */
           if (ckt->CKTmode & MODEINITSMSIG) {
             /* printf("HSMHV_load: (small signal) ByPass=%d\n",ByPass);
-          printf("HSMHV_load: ydc_dP=%e %e %e %e %e %e %e %e\n",
+/*          printf("HSMHV_load: ydc_dP=%e %e %e %e %e %e %e %e\n",
                     ydc_dP[0],ydc_dP[1],ydc_dP[2],ydc_dP[3],ydc_dP[4],ydc_dP[5],ydc_dP[6],ydc_dP[7]);
             printf("HSMHV_load: ych_dP=%e %e %e %e %e %e %e %e\n",
                     ydyn_dP[0],ydyn_dP[1],ydyn_dP[2],ydyn_dP[3],ydyn_dP[4],ydyn_dP[5],ydyn_dP[6],ydyn_dP[7]);
@@ -2252,12 +2305,14 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
             *(ckt->CKTstate1 + here->HSMHVqfd) = *(ckt->CKTstate0 + here->HSMHVqfd);
             *(ckt->CKTstate1 + here->HSMHVqfs) = *(ckt->CKTstate0 + here->HSMHVqfs);
 
+            *(ckt->CKTstate1 + here->HSMHVqdE) = *(ckt->CKTstate0 + here->HSMHVqdE);
+
             if (flg_nqs) {
               *(ckt->CKTstate1 + here->HSMHVqi_nqs) = *(ckt->CKTstate0 + here->HSMHVqi_nqs);
               *(ckt->CKTstate1 + here->HSMHVqb_nqs) = *(ckt->CKTstate0 + here->HSMHVqb_nqs);
             }
           }
-
+     
           return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqb));
           return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqg));
           return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqd));
@@ -2268,6 +2323,8 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
 
           return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqfd));
           return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqfs));
+
+          return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqdE));
 
           if (flg_nqs) {
             return_if_error (NIintegrate(ckt, &geq, &ceq, 0.0, here->HSMHVqi_nqs));
@@ -2287,6 +2344,8 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
             *(ckt->CKTstate1 + here->HSMHVcqbd) = *(ckt->CKTstate0 + here->HSMHVcqbd);
             *(ckt->CKTstate1 + here->HSMHVcqfd) = *(ckt->CKTstate0 + here->HSMHVcqfd);
             *(ckt->CKTstate1 + here->HSMHVcqfs) = *(ckt->CKTstate0 + here->HSMHVcqfs);
+
+            *(ckt->CKTstate1 + here->HSMHVcqdE) = *(ckt->CKTstate0 + here->HSMHVcqdE);
             if (flg_nqs) {
               *(ckt->CKTstate1 + here->HSMHVdotqi_nqs) = *(ckt->CKTstate0 + here->HSMHVdotqi_nqs);
               *(ckt->CKTstate1 + here->HSMHVdotqb_nqs) = *(ckt->CKTstate0 + here->HSMHVdotqb_nqs);
@@ -2303,6 +2362,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         cq_sP = - *(ckt->CKTstate0 + here->HSMHVcqg)
                 - *(ckt->CKTstate0 + here->HSMHVcqb)
                 - *(ckt->CKTstate0 + here->HSMHVcqd);
+        cq_dE = *(ckt->CKTstate0 + here->HSMHVcqdE);
         cq_db = *(ckt->CKTstate0 + here->HSMHVcqbd);
         cq_sb = *(ckt->CKTstate0 + here->HSMHVcqbs);
         cq_g = 0.0 ;
@@ -2340,10 +2400,20 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
           cq_t += ag0*Cth    *deldeltemp ;
           cq_d += ag0*dQfd_dT*deldeltemp ;
           cq_s += ag0*dQfs_dT*deldeltemp ;
+
+          cq_gE += ag0*dQgext_dT*deldeltemp ;
+          cq_dE += ag0*dQdext_dT*deldeltemp ;
+          cq_bE += ag0*dQbext_dT*deldeltemp ;
+          cq_sE  = - ( cq_gE + cq_dE + cq_bE );
         }
         if (delvgse || delvdse || delvbse) {
           cq_d += ag0*(dQfd_dVgse*delvgse + dQfd_dVdse*delvdse + dQfd_dVbse*delvbse) ;
           cq_s += ag0*(dQfs_dVgse*delvgse + dQfs_dVdse*delvdse + dQfs_dVbse*delvbse) ;
+
+          cq_gE += ag0*(dQgext_dVgse*delvgse + dQgext_dVdse*delvdse + dQgext_dVbse*delvbse) ;
+          cq_dE += ag0*(dQdext_dVgse*delvgse + dQdext_dVdse*delvdse + dQdext_dVbse*delvbse) ;
+          cq_bE += ag0*(dQbext_dVgse*delvgse + dQbext_dVdse*delvdse + dQbext_dVbse*delvbse) ;
+          cq_sE  = - ( cq_gE + cq_dE + cq_bE );
         }
 
         if (flg_nqs) {
@@ -2369,13 +2439,13 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
 
       /* Assemble total node currents (type-handling shifted to stamping) */
 
-      cur_d  = i_d  + cq_d - cq_db;
+      cur_d  = i_d  + cq_d - cq_db + cq_dE ;
       cur_dP = i_dP + cq_dP ;
       cur_g  = i_g  + cq_g  ;
-      cur_gP = i_gP + cq_gP - cq_d - cq_s ;
-      cur_s  = i_s  + cq_s - cq_sb;
+      cur_gP = i_gP + cq_gP - cq_d - cq_s + cq_gE ;
+      cur_s  = i_s  + cq_s - cq_sb + cq_sE ;
       cur_sP = i_sP + cq_sP;
-      cur_bP = i_bP + cq_bP;
+      cur_bP = i_bP + cq_bP + cq_bE ;
       cur_b  = i_b  + cq_b;
       cur_db = i_db + cq_db;
       cur_sb = i_sb + cq_sb;
@@ -2413,6 +2483,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       *(here->HSMHVDdpPtr) += ydc_d[dNodePrime]    + ag0*ydyn_d[dNodePrime];
       *(here->HSMHVDgpPtr) += ydc_d[gNodePrime]    + ag0*ydyn_d[gNodePrime];
       *(here->HSMHVDsPtr)  += ydc_d[sNode]         + ag0*ydyn_d[sNode];
+      *(here->HSMHVDspPtr) += ydc_d[sNodePrime]    + ag0*ydyn_d[sNodePrime];
       *(here->HSMHVDbpPtr) += ydc_d[bNodePrime]    + ag0*ydyn_d[bNodePrime];
       *(here->HSMHVDdbPtr) += ydc_d[dbNode]        + ag0*ydyn_d[dbNode];
       if (flg_subNode > 0) {
@@ -2464,8 +2535,9 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
 
       /*source*/
       *(here->HSMHVSdPtr)  += ydc_s[dNode]         + ag0*ydyn_s[dNode];
-      *(here->HSMHVSgpPtr) += ydc_s[gNodePrime]    + ag0*ydyn_s[gNodePrime];
       *(here->HSMHVSsPtr)  += ydc_s[sNode]         + ag0*ydyn_s[sNode];
+      *(here->HSMHVSdpPtr) += ydc_s[dNodePrime]    + ag0*ydyn_s[dNodePrime];
+      *(here->HSMHVSgpPtr) += ydc_s[gNodePrime]    + ag0*ydyn_s[gNodePrime];
       *(here->HSMHVSspPtr) += ydc_s[sNodePrime]    + ag0*ydyn_s[sNodePrime];
       *(here->HSMHVSbpPtr) += ydc_s[bNodePrime]    + ag0*ydyn_s[bNodePrime];
       *(here->HSMHVSsbPtr) += ydc_s[sbNode]        + ag0*ydyn_s[sbNode];
@@ -2496,11 +2568,11 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       }
 
       /*bulk prime*/
-      *(here->HSMHVBPdPtr)  +=  ydc_bP[dNode]; /* ydc_bP[dNode] + ag0*ydyn_bP[dNodePrime] */
+      *(here->HSMHVBPdPtr)  +=  ydc_bP[dNode]      + ag0*ydyn_bP[dNode]; 
       *(here->HSMHVBPdpPtr) +=  ydc_bP[dNodePrime] + ag0*ydyn_bP[dNodePrime];
       *(here->HSMHVBPgpPtr) +=  ydc_bP[gNodePrime] + ag0*ydyn_bP[gNodePrime];
-      *(here->HSMHVBPsPtr)  +=  ydc_bP[sNode]      + ag0*ydyn_bP[sNode];
       *(here->HSMHVBPspPtr) +=  ydc_bP[sNodePrime] + ag0*ydyn_bP[sNodePrime];
+      *(here->HSMHVBPsPtr)  +=  ydc_bP[sNode]      + ag0*ydyn_bP[sNode];
       *(here->HSMHVBPbpPtr) +=  ydc_bP[bNodePrime] + ag0*ydyn_bP[bNodePrime];
       *(here->HSMHVBPbPtr)  +=  ydc_bP[bNode]      + ag0*ydyn_bP[bNode];
       *(here->HSMHVBPdbPtr) +=  ydc_bP[dbNode]     + ag0*ydyn_bP[dbNode];

@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 2 )
- Model Parameter VERSION : 1.22
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhvtemp_eval.h
 
- DATE : 2011.6.29
+ DATE : 2012.4.6
 
  released by
                 Hiroshima University &
@@ -145,7 +145,7 @@ Tdiff_2 =  TTEMP  * TTEMP  - model->HSMHV_ktnom * model->HSMHV_ktnom ;
         /* Depletion Width */
         T1 = 2.0e0 * C_ESI / C_QE ;
         here->HSMHV_wdpl = sqrt ( T1 / here->HSMHV_nsub ) ;
-        here->HSMHV_wdplp = sqrt( T1 / ( pParam->HSMHV_nsubp ) ) ; 
+        here->HSMHV_wdplp = sqrt( T1 / ( here->HSMHV_nsubp ) ) ; 
 
         /* Coefficient of the F function for bulk charge */
         here->HSMHV_cnst0 = sqrt ( 2.0 * C_ESI * C_QE * here->HSMHV_nsub / beta ) ;

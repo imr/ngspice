@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2011 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 2 )
- Model Parameter VERSION : 1.22
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhveval_qover.h
 
- DATE : 2011.6.29
+ DATE : 2012.4.6
 
  released by
                 Hiroshima University &
@@ -37,7 +37,7 @@
       T11 = 1.0 ;
       T10_dT = 0.0;
     }
-    Vxbgmtcl = - T10;
+    Vxbgmtcl = - T10 - small2 ;
     Vxbgmtcl_dVxbgmt = T11;
     Vxbgmtcl_dT = - T10_dT;
 
@@ -166,13 +166,8 @@
          to get Ps0_iniA from simplified Poisson equation: */
        flg_ovzone = 2 ;
        Chi = znbd3 ;
-       T4  = sqrt(Chi+exp(-Chi)-1.0);
-       T5  = 1.0 + 0.5*beta*fac1*(1.0-exp(-Chi))/T4;
-       T6  = beta / T5;
-       Chi_dVxb = T6 * Vxbgmtcl_dVxbgmt;
-       Chi_dVgb = T6 * VgpLD_dVgb;
-       Chi_dT = ( beta_dT*(VgpLD+Vxbgmtcl-fac1*T4) 
-                + beta*(Vxbgmtcl_dT-fac1_dT*T4) ) / T5;
+       Chi_dVxb = 0.0 ; Chi_dVgb = 0.0 ; Chi_dT = 0.0 ;
+
        Ps0_iniA= Chi/beta - Vxbgmtcl ;
        Ps0_iniA_dVxb = Chi_dVxb/beta - Vxbgmtcl_dVxbgmt ;
        Ps0_iniA_dVgb = Chi_dVgb/beta ;
@@ -342,12 +337,9 @@
         Chi_A_dT   = Chi_dT;
 
         Fn_SU2( Chi, Chi_A, Chi_B, c_ps0ini_2*75.00, T1, T2 ); /* org: 50 */
-        Chi_dVgb = Chi_A_dVgb * T1*(1.05) + Chi_B_dVgb * T2;   /* 1.05 */
+        Chi_dVgb = Chi_A_dVgb * T1 + Chi_B_dVgb * T2;
         Chi_dVxb = Chi_A_dVxb * T1 + Chi_B_dVxb * T2;
         Chi_dT   = Chi_A_dT   * T1 + Chi_B_dT   * T2;
-        Fn_SU( Chi_dVgb , -Chi_dVgb , -Chi_A_dVgb , 1.0e-5 , T3 ) /* 1.0e-5 */
-        Chi_dVgb = - Chi_dVgb;
-        Fn_SL( Chi_dVxb , Chi_dVxb , Chi_A_dVxb , 1.0e-5 , T3 )
 
       }
 
@@ -393,7 +385,7 @@
          *-----------------*/
 
         /* initial value too close to flat band should not be used */
-        if (Ps0LD+Vxbgmtcl < 1.0e-2) Ps0LD = 1.0e-2 - Vxbgmtcl;
+//      if (Ps0LD+Vxbgmtcl < 1.0e-2) Ps0LD = 1.0e-2 - Vxbgmtcl;
         exp_bVbs = exp( beta * - Vxbgmtcl ) ;
         T0 = here->HSMHV_nin / Nover_func;
         cnst1over = T0 * T0;
@@ -549,8 +541,6 @@
           Xi0p32_dVgs = T1 * Ps0LD_dVgb ;
           Xi0p32_dT = 3 * fb * fb * fb_dChi * Chi_dT ;
  
-          fs01_dT = cfs1 * 2 * fi * fi_dChi * Chi_dT + fi * fi * cfs1_dT ;
-          fs02_dT = ( 2 * fb * fb_dChi * Chi_dT + fs01_dT ) * T2 ;
         } else { 
           /*-------------------------------------------*
            * zone-D3. (Ps0LD)
@@ -577,14 +567,6 @@
           Xi0p32_dVgs = T1 * Xi0_dVgs ;
           Xi0p32_dT = T1 * Xi0_dT ;
 
-          if ( Chi < large_arg ) {
-            exp_Chi_dT = exp_Chi * Chi_dT ;
-            fs01_dT = ( exp_Chi - 1.0e0 ) * cfs1_dT + cfs1 * exp_Chi_dT ;
-          } else {
-            exp_bPs0_dT = exp_bPs0 * (beta_dT * Ps0LD + beta * Ps0LD_dT) ;
-            fs01_dT     = cnst1over_dT*(exp_bPs0-exp_bVbs) + cnst1over*(exp_bPs0_dT-exp_bVbs_dT) ;
-          }
-          fs02_dT = T2 * ( Chi_dT + fs01_dT ) ;
         } /* end of if ( Chi  ... ) block */
     
         /*-----------------------------------------------------------*
