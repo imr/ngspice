@@ -4561,6 +4561,7 @@ inp_compat(struct line *deck)
             tfree(title_tok);
             tfree(node1);
             tfree(node2);
+            tfree(equation);
         }
         /* Cxxx n1 n2 C = {equation} or Cxxx n1 n2 {equation}
            -->
@@ -4674,6 +4675,7 @@ inp_compat(struct line *deck)
             tfree(title_tok);
             tfree(node1);
             tfree(node2);
+            tfree(equation);
         }
 
         /* Lxxx n1 n2 L = {equation} or Lxxx n1 n2 {equation}
@@ -4788,6 +4790,7 @@ inp_compat(struct line *deck)
             tfree(title_tok);
             tfree(node1);
             tfree(node2);
+            tfree(equation);
         }
         /* .probe -> .save
            .print, .plot, .save, .four,
