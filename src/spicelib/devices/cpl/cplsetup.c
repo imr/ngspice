@@ -222,6 +222,7 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                             CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
                             if (error) return (error);
                             here->CPLibr1[m] = tmp->number;
+                            tfree(branchname[m]);
                     }
                     here->CPLibr1Given = 1;
             }
@@ -235,6 +236,7 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                             CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
                             if (error) return (error);
                             here->CPLibr2[m] = tmp->number;
+                            tfree(branchname[m]);
                     }
                     here->CPLibr2Given = 1;
             }
@@ -668,6 +670,7 @@ match(int n, double *cof, double *xa, double *ya)
    }
    free_vector(y, 0, n);
    free_vector(x, 0, n);
+   free_vector(xx, 0, n);
 
    /****   check   ****/
    /*
@@ -1496,6 +1499,9 @@ matrix_p_mult(
                   p[l] /= t1;
             }
          }
+   for (i  = 0; i < dim; i++)
+      for (j = 0; j < dim; j++)
+        tfree(T[i][j]);
       
       /**********
    for (i  = 0; i < dim; i++)
@@ -2069,6 +2075,12 @@ diag(int dims)
 
    for (i = 0; i < dim; i++)
       D[i] = ZY[i][i] / fmin;
+
+   while (row) {
+      MAXE_PTR tmp_row = row->next;
+      tfree(row);
+      row = tmp_row;
+   }
 }
 
 /****************************************************************
