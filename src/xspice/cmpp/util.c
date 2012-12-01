@@ -42,6 +42,7 @@ NON-STANDARD FEATURES
 #include  <stdio.h>
 #include  <ctype.h>
 #include  <stdlib.h>
+#include  <stdarg.h>
 #include  <string.h>
 
 
@@ -62,10 +63,16 @@ void init_error (char *program_name)
 
 /* Print an error message to stderr */
 
-void print_error(
-    char *msg)       /* The message to write */
+void print_error(const char *fmt, ...)
 {
-    fprintf(stderr, "%s: %s\n", prog_name, msg);
+    va_list ap;
+    va_start(ap, fmt);
+
+    fprintf(stderr, "%s: ", prog_name);
+    vfprintf(stderr, fmt, ap);
+    fprintf(stderr, "\n");
+
+    va_end(ap);
 }
 
 

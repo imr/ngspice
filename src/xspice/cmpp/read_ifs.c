@@ -95,8 +95,6 @@ Status_t  read_ifs_file(
    
    FILE     *fp;                     /* Ifs file pointer */
    
-   char     msg[MAX_PATH_LEN+257];   /* space for an error message */
-   
    Status_t status;                  /* returned status from function */
    
    
@@ -106,8 +104,7 @@ Status_t  read_ifs_file(
    
    if(fp == NULL) {
       perror (prog_name);
-      sprintf(msg, "ERROR - File not found: %s", filename);
-      print_error(msg);
+      print_error("ERROR - File not found: %s", filename);
       return(ERROR);
    }
 

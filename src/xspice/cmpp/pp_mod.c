@@ -115,7 +115,6 @@ void preprocess_mod_file (
    
    Ifs_Table_t     ifs_table;   /* info read from ifspec.ifs file */
    Status_t        status;      /* Return status */
-   char		   error_str[200];
    char		   output_filename[200];
    
    /*
@@ -130,9 +129,7 @@ void preprocess_mod_file (
    
    mod_yyin = fopen_with_path (filename, "r");
    if (mod_yyin == NULL) {
-      sprintf(error_str, "ERROR - Could not open input .mod file: %s",
-	      filename);
-      print_error(error_str);
+      print_error("ERROR - Could not open input .mod file: %s", filename);
       exit(1);
    }
    
@@ -142,9 +139,7 @@ void preprocess_mod_file (
    mod_yyout = fopen_with_path (output_filename, "w");
 
    if (mod_yyout == NULL) {
-      sprintf(error_str, "ERROR - Could not open output .c: %s",
-	      output_filename);
-      print_error(error_str);
+      print_error("ERROR - Could not open output .c : %s", output_filename);
       exit(1);
    }
    
@@ -160,8 +155,7 @@ void preprocess_mod_file (
    mod_yylineno = 1;
 
    if (mod_yyparse() || (mod_num_errors > 0)) {
-      sprintf (error_str, "Error parsing .mod file: \"%s\"", filename);
-      print_error (error_str);
+      print_error("Error parsing .mod file: \"%s\"", filename);
       unlink (output_filename);
       exit (1);
    }

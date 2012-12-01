@@ -276,7 +276,13 @@ void preprocess_mod_file(char *filename);
 
 
 void init_error (char *program_name);
-void print_error(char *message);
+
+#ifdef __GNUC__
+void print_error(const char *fmt, ...) __attribute__ ((format (__printf__, 1, 2)));
+#else
+void print_error(const char *fmt, ...);
+#endif
+
 void str_to_lower(char *s);
 
 

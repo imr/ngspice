@@ -114,7 +114,6 @@ Status_t write_ifs_c_file(
     Ifs_Table_t *ifs_table)   /* Table of Interface Specification data */
 {
     FILE     *fp;                     /* File pointer */
-    char     msg[MAX_PATH_LEN+257];   /* space for an error message */
     int      int_status;              /* returned status from fclose */
 
 
@@ -123,8 +122,7 @@ Status_t write_ifs_c_file(
     fp = fopen_with_path(filename, "w");
 
     if(fp == NULL) {
-        sprintf(msg, "ERROR - Can't create file: %s", filename);
-        print_error(msg);
+        print_error("ERROR - Can't create file: %s", filename);
         return(ERROR);
     }
 

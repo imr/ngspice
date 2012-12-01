@@ -221,7 +221,6 @@ static Status_t read_modpath(
 )
 {
     FILE     *fp;                     /* Model pathname file pointer */
-    char     msg[MAX_PATH_LEN+257];   /* space for an error message */
     char     path[MAX_PATH_LEN+2];    /* space to read pathnames into */
     Model_Info_t  *model = NULL;      /* temporary pointer to model info */
 
@@ -241,8 +240,7 @@ static Status_t read_modpath(
     fp = fopen_with_path(filename, "r");
 
     if(fp == NULL) {
-        sprintf(msg, "ERROR - File not found: %s", filename);
-        print_error(msg);
+        print_error("ERROR - File not found: %s", filename);
         return(ERROR);
     }
 
@@ -256,9 +254,8 @@ static Status_t read_modpath(
 
         /* If line was too long for buffer, exit with error */
         if(len > MAX_PATH_LEN) {
-            sprintf(msg, "ERROR - Line %d of %s exceeds %d characters",
-                    line_num, filename, MAX_PATH_LEN);
-            print_error(msg);
+            print_error("ERROR - Line %d of %s exceeds %d characters",
+                        line_num, filename, MAX_PATH_LEN);
             return(ERROR);
         }
 
@@ -286,9 +283,8 @@ static Status_t read_modpath(
 
         /* Make sure pathname is short enough to add a filename at the end */
         if(len > (MAX_PATH_LEN - (MAX_FN_LEN + 1)) ) {
-            sprintf(msg, "ERROR - Pathname on line %d of %s exceeds %d characters",
-                    line_num, filename, (MAX_PATH_LEN - (MAX_FN_LEN + 1)));
-            print_error(msg);
+            print_error("ERROR - Pathname on line %d of %s exceeds %d characters",
+                        line_num, filename, (MAX_PATH_LEN - (MAX_FN_LEN + 1)));
             return(ERROR);
         }
 
@@ -341,7 +337,6 @@ static Status_t read_udnpath(
 )
 {
     FILE     *fp;                     /* Udn pathname file pointer */
-    char     msg[MAX_PATH_LEN+257];   /* space for an error message */
     char     path[MAX_PATH_LEN+2];    /* space to read pathnames into */
     Node_Info_t  *node = NULL;        /* temporary pointer to node info */
 
@@ -362,8 +357,7 @@ static Status_t read_udnpath(
 
     /* For backward compatibility, return with WARNING only if file not found */
     if(fp == NULL) {
-        sprintf(msg, "WARNING - File not found: %s", filename);
-        print_error(msg);
+        print_error("WARNING - File not found: %s", filename);
         return(OK);
     }
 
@@ -377,9 +371,8 @@ static Status_t read_udnpath(
 
         /* If line was too long for buffer, exit with error */
         if(len > MAX_PATH_LEN) {
-            sprintf(msg, "ERROR - Line %d of %s exceeds %d characters",
-                    line_num, filename, MAX_PATH_LEN);
-            print_error(msg);
+            print_error("ERROR - Line %d of %s exceeds %d characters",
+                        line_num, filename, MAX_PATH_LEN);
             return(ERROR);
         }
 
@@ -407,9 +400,8 @@ static Status_t read_udnpath(
 
         /* Make sure pathname is short enough to add a filename at the end */
         if(len > (MAX_PATH_LEN - (MAX_FN_LEN + 1)) ) {
-            sprintf(msg, "ERROR - Pathname on line %d of %s exceeds %d characters",
-                    line_num, filename, (MAX_PATH_LEN - (MAX_FN_LEN + 1)));
-            print_error(msg);
+            print_error("ERROR - Pathname on line %d of %s exceeds %d characters",
+                        line_num, filename, (MAX_PATH_LEN - (MAX_FN_LEN + 1)));
             return(ERROR);
         }
 
@@ -460,7 +452,6 @@ static Status_t read_model_names(
 {
     Boolean_t   all_found;               /* True if all ifspec files read */
     int         i;                       /* A temporary counter */
-    char        msg[MAX_PATH_LEN+257];   /* space for an error message */
     char        path[MAX_PATH_LEN+1];    /* full pathname to ifspec file */
     Status_t    status;                  /* Return status */
     Ifs_Table_t ifs_table;   /* Repository for info read from ifspec file */
@@ -486,9 +477,8 @@ static Status_t read_model_names(
         }
         else {
             all_found = FALSE;
-            sprintf(msg, "ERROR - Problems reading %s in directory %s",
-                    IFSPEC_FILENAME, model_info[i].path_name);
-            print_error(msg);
+            print_error("ERROR - Problems reading %s in directory %s",
+                        IFSPEC_FILENAME, model_info[i].path_name);
         }
     }
 
@@ -518,7 +508,6 @@ static Status_t read_node_names(
 {
     Boolean_t   all_found;               /* True if all files read OK */
     int         i;                       /* A temporary counter */
-    char        msg[MAX_PATH_LEN+257];   /* space for an error message */
     char        path[MAX_PATH_LEN+1];    /* full pathname to file */
     Status_t    status;                  /* Return status */
     char        *node_name;              /* Name of node type read from file */
@@ -542,9 +531,8 @@ static Status_t read_node_names(
         }
         else {
             all_found = FALSE;
-            sprintf(msg, "ERROR - Problems reading %s in directory %s",
-                    UDNFUNC_FILENAME, node_info[i].path_name);
-            print_error(msg);
+            print_error("ERROR - Problems reading %s in directory %s",
+                        UDNFUNC_FILENAME, node_info[i].path_name);
         }
     }
 
@@ -577,7 +565,6 @@ static Status_t check_uniqueness(
 {
     int         i;                       /* A temporary counter */
     int         j;                       /* A temporary counter */
-    char        msg[MAX_PATH_LEN+257];   /* space for an error message */
     Boolean_t   all_unique;              /* true if names are unique */
 
     /* Define a list of model names used internally by XSPICE */
@@ -633,10 +620,8 @@ static Status_t check_uniqueness(
         for(j = 0; j < numSPICEmodels; j++) {
             if(strcmp(model_info[i].spice_name, SPICEmodel[j]) == 0) {
                 all_unique = FALSE;
-                sprintf(msg,
-                        "ERROR - Model name '%s' is same as internal SPICE model name\n",
-                        model_info[i].spice_name);
-                print_error(msg);
+                print_error("ERROR - Model name '%s' is same as internal SPICE model name\n",
+                            model_info[i].spice_name);
             }
         }
 
@@ -656,17 +641,13 @@ static Status_t check_uniqueness(
                 all_unique = FALSE;
                 model_info[i].spice_unique = FALSE;
                 model_info[j].spice_unique = FALSE;
-                sprintf(msg,
-                        "ERROR - Model name '%s' in directory: %s",
-                        model_info[i].spice_name,
-                        model_info[i].path_name);
-                print_error(msg);
+                print_error("ERROR - Model name '%s' in directory: %s",
+                            model_info[i].spice_name,
+                            model_info[i].path_name);
                 print_error("        is same as");
-                sprintf(msg,
-                        "        model name '%s' in directory: %s\n",
-                        model_info[j].spice_name,
-                        model_info[j].path_name);
-                print_error(msg);
+                print_error("        model name '%s' in directory: %s\n",
+                            model_info[j].spice_name,
+                            model_info[j].path_name);
             }
         }
 
@@ -692,17 +673,13 @@ static Status_t check_uniqueness(
                 all_unique = FALSE;
                 model_info[i].cfunc_unique = FALSE;
                 model_info[j].cfunc_unique = FALSE;
-                sprintf(msg,
-                        "ERROR - C function name '%s' in directory: %s",
-                        model_info[i].cfunc_name,
-                        model_info[i].path_name);
-                print_error(msg);
+                print_error("ERROR - C function name '%s' in directory: %s",
+                            model_info[i].cfunc_name,
+                            model_info[i].path_name);
                 print_error("        is same as");
-                sprintf(msg,
-                        "        C function name '%s' in directory: %s\n",
-                        model_info[j].cfunc_name,
-                        model_info[j].path_name);
-                print_error(msg);
+                print_error("        C function name '%s' in directory: %s\n",
+                            model_info[j].cfunc_name,
+                            model_info[j].path_name);
             }
         }
 
@@ -716,10 +693,8 @@ static Status_t check_uniqueness(
         for(j = 0; j < numUDNidentifiers; j++) {
             if(strcmp(node_info[i].node_name, UDNidentifier[j]) == 0) {
                 all_unique = FALSE;
-                sprintf(msg,
-                        "ERROR - Node type '%s' is same as internal node type\n",
-                        node_info[i].node_name);
-                print_error(msg);
+                print_error("ERROR - Node type '%s' is same as internal node type\n",
+                            node_info[i].node_name);
             }
         }
 
@@ -739,17 +714,13 @@ static Status_t check_uniqueness(
                 all_unique = FALSE;
                 node_info[i].unique = FALSE;
                 node_info[j].unique = FALSE;
-                sprintf(msg,
-                        "ERROR - Node type '%s' in directory: %s",
-                        node_info[i].node_name,
-                        node_info[i].path_name);
-                print_error(msg);
+                print_error("ERROR - Node type '%s' in directory: %s",
+                            node_info[i].node_name,
+                            node_info[i].path_name);
                 print_error("        is same as");
-                sprintf(msg,
-                        "        node type '%s' in directory: %s\n",
-                        node_info[j].node_name,
-                        node_info[j].path_name);
-                print_error(msg);
+                print_error("        node type '%s' in directory: %s\n",
+                            node_info[j].node_name,
+                            node_info[j].path_name);
             }
         }
     }
@@ -995,7 +966,6 @@ static Status_t read_udn_type_name(
 )
 {
     FILE        *fp;                    /* file pointer for opened file */
-    /*char        msg[MAX_PATH_LEN+257];*/  /* space for an error message */
     Boolean_t   found;                  /* true if name found successfully */
     Boolean_t   in_struct;              /* true if found struct with name */
     char        name[MAX_NAME_LEN + 1]; /* temporary storage for name read */
