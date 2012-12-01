@@ -34,9 +34,6 @@
  *    all of the MOSFET's is summed with the variable "OnDens".
  */
 
-extern void   NevalSrc();
-extern double Nintegrate();
-
 int HSMHVnoise (
      int mode, int operation,
      GENmodel *inModel,
@@ -81,10 +78,8 @@ int HSMHVnoise (
 	  case N_DENS:
 	    for ( i = 0; i < HSMHVNSRCS; i++ ) { 
 	      (void) sprintf(name, "onoise.%s%s", 
-			     (char *)here->HSMHVname, HSMHVnNames[i]);
-	      data->namelist = 
-		(IFuid *) trealloc((char *) data->namelist,
-				   (data->numPlots + 1) * sizeof(IFuid));
+			     here->HSMHVname, HSMHVnNames[i]);
+	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 
@@ -95,10 +90,8 @@ int HSMHVnoise (
 	  case INT_NOIZ:
 	    for ( i = 0; i < HSMHVNSRCS; i++ ) {
 	      (void) sprintf(name, "onoise_total.%s%s", 
-			     (char *)here->HSMHVname, HSMHVnNames[i]);
-	      data->namelist = 
-		(IFuid *) trealloc((char *) data->namelist,
-				   (data->numPlots + 1) * sizeof(IFuid));
+			     here->HSMHVname, HSMHVnNames[i]);
+	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 
@@ -106,10 +99,8 @@ int HSMHVnoise (
 		 (IFuid) NULL, name, UID_OTHER, NULL);
 	      
 	      (void) sprintf(name, "inoise_total.%s%s", 
-			     (char *)here->HSMHVname, HSMHVnNames[i]);
-	      data->namelist = 
-		(IFuid *) trealloc((char *) data->namelist,
-				   (data->numPlots + 1) * sizeof(IFuid));
+			     here->HSMHVname, HSMHVnNames[i]);
+	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
 	      (*(SPfrontEnd->IFnewUid)) 

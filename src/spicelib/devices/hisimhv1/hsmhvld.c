@@ -2244,7 +2244,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
 
           /* store small signal parameters */
           if (ckt->CKTmode & MODEINITSMSIG) {
-            /* printf("HSMHV_load: (small signal) ByPass=%d\n",ByPass);
+            /* printf("HSMHV_load: (small signal) ByPass=%d\n",ByPass); */
 /*          printf("HSMHV_load: ydc_dP=%e %e %e %e %e %e %e %e\n",
                     ydc_dP[0],ydc_dP[1],ydc_dP[2],ydc_dP[3],ydc_dP[4],ydc_dP[5],ydc_dP[6],ydc_dP[7]);
             printf("HSMHV_load: ych_dP=%e %e %e %e %e %e %e %e\n",
