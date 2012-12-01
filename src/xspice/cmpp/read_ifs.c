@@ -63,7 +63,7 @@ extern Boolean_t    parser_just_names;
 
 static Status_t read_ifs_table(FILE *fp, int mode, Ifs_Table_t *ifs_table);
 
-char *current_filename;
+const char *current_filename;
 
 /* *********************************************************************** */
 
@@ -88,7 +88,7 @@ from read_ifs_table(), the file is closed.
 
 
 Status_t  read_ifs_file(
-    char        *filename,   /* File to read */
+    const char  *filename,   /* File to read */
     int         mode,        /* Get names only or get everything? */
     Ifs_Table_t *ifs_table)  /* Table to put info in */
 {
@@ -100,7 +100,7 @@ Status_t  read_ifs_file(
    
    /* Open the ifs file for read access */
    
-   fp = fopen_with_path(filename, "r");
+   fp = fopen_cmpp(&filename, "r");
    
    if(fp == NULL) {
       perror (prog_name);

@@ -96,7 +96,7 @@ static Status_t write_UDNextrn(int num_nodes, Node_Info_t *node_info);
 static Status_t write_UDNinfo(int num_nodes, Node_Info_t *node_info);
 static Status_t write_objects_inc(int num_models, Model_Info_t *model_info,
                                   int num_nodes, Node_Info_t *node_info);
-static Status_t read_udn_type_name(char *path, char **node_name);
+static Status_t read_udn_type_name(const char *path, char **node_name);
 
 
 /* *********************************************************************** */
@@ -230,14 +230,14 @@ static Status_t read_modpath(
     int     len;
     int     line_num;
 
-    static char *filename = MODPATH_FILENAME;
+    const char *filename = MODPATH_FILENAME;
 
 
     /* Initialize number of models to zero in case of error */
     *num_models = 0;
 
     /* Open the model pathname file */
-    fp = fopen_with_path(filename, "r");
+    fp = fopen_cmpp(&filename, "r");
 
     if(fp == NULL) {
         print_error("ERROR - File not found: %s", filename);
@@ -346,14 +346,14 @@ static Status_t read_udnpath(
     int     len;
     int     line_num;
 
-    static char *filename = UDNPATH_FILENAME;
+    const char *filename = UDNPATH_FILENAME;
 
 
     /* Initialize number of nodes to zero in case of error */
     *num_nodes = 0;
 
     /* Open the node pathname file */
-    fp = fopen_with_path(filename, "r");
+    fp = fopen_cmpp(&filename, "r");
 
     /* For backward compatibility, return with WARNING only if file not found */
     if(fp == NULL) {
@@ -756,11 +756,12 @@ static Status_t write_CMextrn(
     int         i;                       /* A temporary counter */
     FILE        *fp;   /* File pointer for writing CMextrn.h */
 
+    const char *filename = "cmextrn.h";
 
     /* Open the file to be written */
-    fp = fopen_with_path("cmextrn.h", "w");
+    fp = fopen_cmpp(&filename, "w");
     if(fp == NULL) {
-        print_error("ERROR - Problems opening CMextrn.h for write");
+        print_error("ERROR - Problems opening %s for write", filename);
         return(ERROR);
     }
 
@@ -796,11 +797,12 @@ static Status_t write_CMinfo(
     int         i;                       /* A temporary counter */
     FILE        *fp;   /* File pointer for writing CMinfo.h */
 
+    const char *filename = "cminfo.h";
 
     /* Open the file to be written */
-    fp = fopen_with_path("cminfo.h", "w");
+    fp = fopen_cmpp(&filename, "w");
     if(fp == NULL) {
-        print_error("ERROR - Problems opening CMinfo.h for write");
+        print_error("ERROR - Problems opening %s for write", filename);
         return(ERROR);
     }
 
@@ -840,11 +842,12 @@ static Status_t write_UDNextrn(
     int         i;                       /* A temporary counter */
     FILE        *fp;   /* File pointer for writing UDNextrn.h */
 
+    const char *filename = "udnextrn.h";
 
     /* Open the file to be written */
-    fp = fopen_with_path("udnextrn.h", "w");
+    fp = fopen_cmpp(&filename, "w");
     if(fp == NULL) {
-        print_error("ERROR - Problems opening UDNextrn.h for write");
+        print_error("ERROR - Problems opening %s for write", filename);
         return(ERROR);
     }
 
@@ -882,11 +885,12 @@ static Status_t write_UDNinfo(
     int         i;                       /* A temporary counter */
     FILE        *fp;   /* File pointer for writing UDNinfo.h */
 
+    const char *filename = "udninfo.h";
 
     /* Open the file to be written */
-    fp = fopen_with_path("udninfo.h", "w");
+    fp = fopen_cmpp(&filename, "w");
     if(fp == NULL) {
-        print_error("ERROR - Problems opening UDNinfo.h for write");
+        print_error("ERROR - Problems opening %s for write", filename);
         return(ERROR);
     }
 
@@ -921,11 +925,12 @@ static Status_t write_objects_inc(
     int         i;                       /* A temporary counter */
     FILE        *fp;   /* File pointer for writing make_include */
 
+    const char *filename = "objects.inc";
 
     /* Open the file to be written */
-    fp = fopen_with_path("objects.inc", "w");
+    fp = fopen_cmpp(&filename, "w");
     if(fp == NULL) {
-        print_error("ERROR - Problems opening objects.inc file for write");
+        print_error("ERROR - Problems opening %s for write", filename);
         return(ERROR);
     }
 
@@ -961,7 +966,7 @@ member of the structure.
 */
 
 static Status_t read_udn_type_name(
-    char *path,                 /* the path to the node definition file */
+    const char *path,           /* the path to the node definition file */
     char **node_name            /* the node type name found in the file */
 )
 {
@@ -975,7 +980,7 @@ static Status_t read_udn_type_name(
     static char *struct_type = "Evt_Udn_Info_t";
 
     /* Open the file from which the node type name will be read */
-    fp = fopen_with_path(path, "r");
+    fp = fopen_cmpp(&path, "r");
     if(fp == NULL)
         return(ERROR);
 

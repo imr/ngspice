@@ -286,9 +286,9 @@ void print_error(const char *fmt, ...);
 void str_to_lower(char *s);
 
 
-Status_t read_ifs_file(char *filename, int mode, Ifs_Table_t *ifs_table);
+Status_t read_ifs_file(const char *filename, int mode, Ifs_Table_t *ifs_table);
 
-Status_t write_ifs_c_file(char *filename, Ifs_Table_t *ifs_table);
+Status_t write_ifs_c_file(const char *filename, Ifs_Table_t *ifs_table);
 
 
-FILE *fopen_with_path(const char *path, const char *mode);
+FILE *fopen_cmpp(const char **path_p, const char *mode);

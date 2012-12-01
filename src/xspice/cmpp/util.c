@@ -91,8 +91,10 @@ void str_to_lower(char *s)
 }
 
 
-FILE *fopen_with_path(const char *path, const char *mode)
+FILE *fopen_cmpp(const char **path_p, const char *mode)
 {
+    const char *path = *path_p;
+
     char buf[MAX_PATH_LEN+1];
 
     if(path[0] != '/') {
@@ -108,6 +110,8 @@ FILE *fopen_with_path(const char *path, const char *mode)
             }
         }
     }
+
+    *path_p = strdup(path);
 
     return fopen(path, mode);
 }

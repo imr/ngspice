@@ -110,7 +110,7 @@ The output file is then closed.
 
 
 Status_t write_ifs_c_file(
-    char        *filename,    /* File to write to */
+    const char  *filename,    /* File to write to */
     Ifs_Table_t *ifs_table)   /* Table of Interface Specification data */
 {
     FILE     *fp;                     /* File pointer */
@@ -119,7 +119,7 @@ Status_t write_ifs_c_file(
 
     /* Open the ifspec.c file for write access */
 
-    fp = fopen_with_path(filename, "w");
+    fp = fopen_cmpp(&filename, "w");
 
     if(fp == NULL) {
         print_error("ERROR - Can't create file: %s", filename);

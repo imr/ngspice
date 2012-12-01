@@ -72,23 +72,20 @@ extern int   mod_num_errors;
 
 extern Ifs_Table_t *mod_ifs_table;
 
-extern char *current_filename;
+extern const char *current_filename;
 extern char *prog_name;
 
 /*---------------------------------------------------------------------------*/
-static void change_extension (char *filename, char *ext, char *new_filename)
+static char *change_extension (char *filename, char *ext)
 {
-   int i = (int) strlen (filename);
-   
-   strcpy (new_filename, filename);
+   char *p = strrchr(filename, '.');
+   size_t prefix_len = p ? (size_t) (p-filename+1) : strlen(filename);
+   char *new_filename = malloc(prefix_len + strlen(ext) + 1);
 
-   for (; i >= 0; i--) {
-      if (new_filename[i] == '.') {
-	 new_filename[i+1] = '\0';
-	 break;
-      }
-   }
-   strcat (new_filename, ext);
+   strncpy(new_filename, filename, prefix_len);
+   strcpy(new_filename+prefix_len, ext);
+
+   return new_filename;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -115,7 +112,7 @@ void preprocess_mod_file (
    
    Ifs_Table_t     ifs_table;   /* info read from ifspec.ifs file */
    Status_t        status;      /* Return status */
-   char		   output_filename[200];
+   const char     *output_filename;
    
    /*
     * Read the entire ifspec.ifs file and load the data into ifs_table
@@ -127,35 +124,35 @@ void preprocess_mod_file (
       exit(1);
    }
    
-   mod_yyin = fopen_with_path (filename, "r");
+   current_filename = filename;
+
+   mod_yyin = fopen_cmpp (&current_filename, "r");
    if (mod_yyin == NULL) {
-      print_error("ERROR - Could not open input .mod file: %s", filename);
+      print_error("ERROR - Could not open input .mod file: %s", current_filename);
       exit(1);
    }
    
-   current_filename = filename;
-
-   change_extension (filename, "c", output_filename);
-   mod_yyout = fopen_with_path (output_filename, "w");
+   output_filename = change_extension (filename, "c");
+   mod_yyout = fopen_cmpp (&output_filename, "w");
 
    if (mod_yyout == NULL) {
-      print_error("ERROR - Could not open output .c : %s", output_filename);
+      print_error("ERROR - Could not open output .c file: %s", output_filename);
       exit(1);
    }
    
    mod_ifs_table = &ifs_table;
    mod_num_errors = 0;
 
-   fprintf (mod_yyout, "#line 1 \"%s\"\n", filename);
+   fprintf (mod_yyout, "#line 1 \"%s\"\n", current_filename);
    fprintf (mod_yyout, "#include \"ngspice/cm.h\"\n");
    fprintf (mod_yyout, "extern void %s(Mif_Private_t *);\n",
       ifs_table.name.c_fcn_name);
-   fprintf (mod_yyout, "#line 1 \"%s\"\n", filename);
+   fprintf (mod_yyout, "#line 1 \"%s\"\n", current_filename);
 
    mod_yylineno = 1;
 
    if (mod_yyparse() || (mod_num_errors > 0)) {
-      print_error("Error parsing .mod file: \"%s\"", filename);
+      print_error("Error parsing .mod file: \"%s\"", current_filename);
       unlink (output_filename);
       exit (1);
    }
