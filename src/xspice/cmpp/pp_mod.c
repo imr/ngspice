@@ -133,7 +133,7 @@ void preprocess_mod_file (
       sprintf(error_str, "ERROR - Could not open input .mod file: %s",
 	      filename);
       print_error(error_str);
-      return;
+      exit(1);
    }
    
    current_filename = filename;
@@ -145,7 +145,7 @@ void preprocess_mod_file (
       sprintf(error_str, "ERROR - Could not open output .c: %s",
 	      output_filename);
       print_error(error_str);
-      return;
+      exit(1);
    }
    
    mod_ifs_table = &ifs_table;
