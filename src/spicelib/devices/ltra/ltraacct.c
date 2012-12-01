@@ -159,8 +159,6 @@ LTRAaccept(CKTcircuit *ckt, GENmodel *inModel)
 	    return (error);
 	}
 #else
-        double dt_01, dt_12;
-
 	/*
 	 * remove the hack here - store the total inputs for the last 2 or 3
 	 * timesteps
@@ -185,18 +183,18 @@ LTRAaccept(CKTcircuit *ckt, GENmodel *inModel)
 	    *(here->LTRAi2 + ckt->CKTtimeIndex - 2) *
 	    model->LTRAimped) * model->LTRAattenuation;
 
-        dt_01 = (*(ckt->CKTtimePoints + ckt->CKTtimeIndex) -
-                 *(ckt->CKTtimePoints + ckt->CKTtimeIndex - 1));
-
-        dt_12 = (ckt->CKTtimeIndex < 2)
-            ? dt_01
-            : (*(ckt->CKTtimePoints + ckt->CKTtimeIndex - 1) -
-               *(ckt->CKTtimePoints + ckt->CKTtimeIndex - 2));
-
-	d1 = (v1 - v2) / dt_01;
-	d2 = (v2 - v3) / dt_12;
-	d3 = (v4 - v5) / dt_01;
-	d4 = (v5 - v6) / dt_12;
+	d1 = (v1 - v2) / (*(ckt->CKTtimePoints + ckt->CKTtimeIndex) -
+			  *(ckt->CKTtimePoints + ckt->CKTtimeIndex - 1));
+	d2 = (ckt->CKTtimeIndex < 2)
+	    ? 0
+	    : (v2 - v3) / (*(ckt->CKTtimePoints + ckt->CKTtimeIndex - 1) -
+			   *(ckt->CKTtimePoints + ckt->CKTtimeIndex - 2));
+	d3 = (v4 - v5) / (*(ckt->CKTtimePoints + ckt->CKTtimeIndex) -
+			  *(ckt->CKTtimePoints + ckt->CKTtimeIndex - 1));
+	d4 = (ckt->CKTtimeIndex < 2)
+	    ? 0
+	    : (v5 - v6) / (*(ckt->CKTtimePoints + ckt->CKTtimeIndex - 1) -
+			   *(ckt->CKTtimePoints + ckt->CKTtimeIndex - 2));
 
 	/*
 	 * here we have a big problem with the scheme boxed by the *s below.
