@@ -149,7 +149,6 @@ int INPgetNetTok(char **line, char **token, int gobble)
 		    /* eat non-whitespace trash AFTER token? */
 {
     char *point;
-    int signstate;
     int diffpoints;
 
     /* scan along throwing away garbage characters until end of line
@@ -176,7 +175,6 @@ int INPgetNetTok(char **line, char **token, int gobble)
     /* now find all good characters up to next occurance of a 
        separation character. INPgetNetTok is very liberal about
        what it accepts.  */
-    signstate = 0;
     for (point = *line; *point != '\0'; point++) {
 	if (*point == ' ')
 	    break;

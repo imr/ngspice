@@ -34,9 +34,7 @@ int
 CKTdnames(CKTcircuit *ckt)
 {
     CKTnode *here;
-    int i;
 
-    i=0;
     for (here = ckt->CKTnodes->next; here; here = here->next)  {
         printf("%03d: %s\n", here->number, here->name);
     }

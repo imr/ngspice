@@ -5140,7 +5140,7 @@ static void
 inp_bsource_compat(struct line *deck)
 {
     char *equal_ptr, *str_ptr, *tmp_char, *new_str, *final_str;
-    char actchar, prevchar = ' ';
+    char actchar;
     struct line *card, *new_line, *tmp_ptr;
     wordlist *wl = NULL, *wlist = NULL;
     char buf[512];
@@ -5374,7 +5374,6 @@ inp_bsource_compat(struct line *deck)
                     wl->wl_word = copy(buf);
                     str_ptr++;
                 }
-                prevchar = actchar;
             }
 
             new_str = wl_flatten(wlist);

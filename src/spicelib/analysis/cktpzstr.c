@@ -520,7 +520,7 @@ CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
 {
     PZAN *job = (PZAN *) ckt->CKTcurJob;
 
-    PZtrial	*match, *base, *new_trial;
+    PZtrial	*match, *new_trial;
     PZtrial	*p, *prev;
     SPcomplex	def_frac, diff_frac;
     double	reltol, abstol;
@@ -550,7 +550,6 @@ CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
 	shifted = 0;
 
 	prev = NULL;
-	base = NULL;
 	match = NULL;
 
 	for (p = Trials; p != NULL; p = p->next) {
@@ -560,8 +559,6 @@ CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
 	    if (diff_frac.real < 0.0
 		|| (diff_frac.real == 0.0 && diff_frac.imag < 0.0)) {
 		prev = p;
-		if (p->flags & ISAMINIMA)
-		    base = p;
 	    }
 
 	    if (p->flags & ISAROOT) {

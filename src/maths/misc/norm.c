@@ -13,19 +13,15 @@ maxNorm(double *vector, int size)
 {
     double norm = 0.0;
     double candidate;
-    int index, nIndex;
+    int index;
 
-    nIndex = 1;
     for( index = 1; index <= size; index++ ) {
 	candidate = fabs(vector[ index ]);
 	if( candidate > norm ) {
 	    norm = candidate;
-	    nIndex = index;
 	}
     }
-    /*
-    printf("\n maxNorm: index = %d", nIndex);
-    */
+
     return( norm );
 }
 

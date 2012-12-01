@@ -28,7 +28,6 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
     ASRCinstance *here;
     int i, j;
     double *derivs;
-    double rhs;
     double difference;
     double factor;
 
@@ -57,7 +56,6 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
 	    j=0;
 	    derivs = here->ASRCacValues;
-	    rhs = (here->ASRCacValues)[here->ASRCtree->numVars];
 
             if( here->ASRCtype == ASRC_VOLTAGE) {
                 *(here->ASRCposptr[j++]) += 1.0;

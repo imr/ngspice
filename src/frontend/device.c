@@ -256,7 +256,7 @@ all_show(wordlist *wl, int mode)
     wordlist    *params, *nextgroup, *thisgroup;
     wordlist    *prev, *next, *w;
     int         screen_width;
-    dgen        *dg, *listdg;
+    dgen        *dg;
     int         instances;
     int         i, j, n;
     int         param_flag, dev_flag;
@@ -364,8 +364,6 @@ all_show(wordlist *wl, int mode)
                 fprintf(cp_out, "%s:\n", dg->instance->GENname);
                 fprintf(cp_out, "    %-19s= %s\n", "model", dg->model->GENmodName);
 
-                listdg = dg;
-
                 if (param_flag)
                     param_forall(dg, param_flag);
                 else if (!params)
@@ -420,7 +418,7 @@ all_show_old(wordlist *wl, int mode)
     wordlist    *params, *nextgroup, *thisgroup;
     wordlist    *prev, *next, *w;
     int         screen_width;
-    dgen        *dg, *listdg;
+    dgen        *dg;
     int         instances;
     int         i, j, n;
     int         param_flag, dev_flag;
@@ -544,7 +542,6 @@ all_show_old(wordlist *wl, int mode)
                         fprintf(cp_out, "\n");
                     } while (j);
                 }
-                listdg = dg;
 
                 if (param_flag)
                     param_forall_old(dg, param_flag);
@@ -626,11 +623,9 @@ printstr_m(dgen *dg, IFparm *p, int i)
 void
 param_forall(dgen *dg, int flags)
 {
-    int i, j, k, found;
+    int i, j, k;
     int xcount;
     IFparm *plist;
-
-    found = 0;
 
     if (dg->flags & DGEN_INSTANCE) {
         xcount = *ft_sim->devices[dg->dev_type_no]->numInstanceParms;
@@ -663,11 +658,9 @@ param_forall(dgen *dg, int flags)
 void
 param_forall_old(dgen *dg, int flags)
 {
-    int i, j, k, found;
+    int i, j, k;
     int xcount;
     IFparm *plist;
-
-    found = 0;
 
     if (dg->flags & DGEN_INSTANCE) {
         xcount = *ft_sim->devices[dg->dev_type_no]->numInstanceParms;
@@ -1135,7 +1128,7 @@ com_alter_common(wordlist *wl, int do_model)
     char **arglist;
     int i = 0, step = 0, n, wlen, maxelem = 3;
     wordlist *wl2 = NULL, *wlin, *rhs;
-    bool eqfound = FALSE, vecfound = FALSE;
+    bool eqfound = FALSE;
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
@@ -1230,7 +1223,6 @@ com_alter_common(wordlist *wl, int do_model)
                 wlin = wlin->wl_prev;
                 maxelem++;
                 if (eq(wlin->wl_word, "[")) {
-                    vecfound = TRUE;
                     break;
                 }
                 if (wlin->wl_prev == NULL) {

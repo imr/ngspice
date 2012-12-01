@@ -27,7 +27,6 @@ dgen *
 dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model)
 {
     dgen  *dg, *dg_save;
-    wordlist **prevp;
 
     NG_IGNORE(nomix);
 
@@ -39,8 +38,6 @@ dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model)
     dg->dev_list = wl;
     dg->flags = 0;
     dg_save = dg; /* va: save, to avoid memory leak */
-
-    prevp = &wl;
 
     if (model)
         dg->flags = (DGEN_ALL & ~ DGEN_INSTANCE) | DGEN_INIT;

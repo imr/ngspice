@@ -32,7 +32,7 @@ com_fft(wordlist *wl)
     ngcomplex_t **fdvec = NULL;
     double  **tdvec = NULL;
     double  *freq, *win = NULL, *time;
-    double  delta_t, span;
+    double  span;
     int     fpts, i, j, tlen, ngood;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *pn, *names = NULL;
@@ -58,7 +58,6 @@ com_fft(wordlist *wl)
     tlen = (plot_cur->pl_scale)->v_length;
     time = (plot_cur->pl_scale)->v_realdata;
     span = time[tlen-1] - time[0];
-    delta_t = span/(tlen - 1);
 
 #ifdef GREEN
     // size of input vector is power of two and larger than spice vector
@@ -284,7 +283,7 @@ com_psd(wordlist *wl)
     ngcomplex_t **fdvec = NULL;
     double  **tdvec = NULL;
     double  *freq, *win = NULL, *time, *ave;
-    double  delta_t, span, noipower;
+    double  span, noipower;
     int     mm;
     unsigned long size, ngood, fpts, i, j, tlen, jj, smooth, hsmooth;
     char    *s;
@@ -292,7 +291,7 @@ com_psd(wordlist *wl)
     struct pnode *pn, *names = NULL;
 
     double *reald = NULL, *imagd = NULL;
-    int sign, isreal;
+    int sign;
     double scaling, sum;
     int order;
     double scale, sigma;
@@ -310,7 +309,6 @@ com_psd(wordlist *wl)
     tlen = (plot_cur->pl_scale)->v_length;
     time = (plot_cur->pl_scale)->v_realdata;
     span = time[tlen-1] - time[0];
-    delta_t = span/(tlen - 1);
 
     // get filter length from parameter input
     s = wl->wl_word;
@@ -500,7 +498,6 @@ com_psd(wordlist *wl)
     printf("PSD: Freq. resolution: %g Hz, output length: %lu\n", 1.0/span*tlen/size, fpts);
 
     sign = 1;
-    isreal = 1;
 
     reald = TMALLOC(double, size);
     imagd = TMALLOC(double, size);

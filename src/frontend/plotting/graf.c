@@ -1023,7 +1023,7 @@ gr_end_iplot(void)
 double *
 readtics(char *string)
 {
-    int i, k;
+    int k;
     char *words, *worde;
     double *tics, *ticsk;
 
@@ -1031,7 +1031,7 @@ readtics(char *string)
     ticsk = tics;
     words = string;
 
-    for (i = k = 0; *words && k < MAXTICS; words = worde) {
+    for (k = 0; *words && k < MAXTICS; words = worde) {
 
         while (isspace(*words))
             words++;

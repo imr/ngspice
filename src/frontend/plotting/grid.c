@@ -224,7 +224,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
     int mag, mag2, mag3;
     double hmt, lmt, dst;
     int nsp;
-    double tenpowmag = 0.0, tenpowmag2, step, spacing;
+    double tenpowmag = 0.0, tenpowmag2, spacing;
     bool onedec = FALSE;
     int margin;
     int max;
@@ -438,7 +438,6 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
         nsp = (int)((hi - lo) / delta);
         if (nsp > 100)
             nsp = 100;
-        step = (max - margin) * delta / (hi - lo);
     }
     spacing = (max - margin) / nsp;
 
@@ -757,7 +756,6 @@ polargrid(GRAPH *graph)
     double d, mx, my, tenpowmag;
     int hmt, lmt, mag;
     double minrad, maxrad;
-    bool centered = FALSE;
 
     /* Make sure that our area is square. */
     if (graph->viewport.width > graph->viewport.height)
@@ -792,11 +790,6 @@ polargrid(GRAPH *graph)
     if ((graph->data.xmin < 0) && (graph->data.ymin < 0) &&
         (graph->data.xmax > 0) && (graph->data.ymax > 0))
         minrad = 0;
-
-    if ((graph->data.xmin == - graph->data.xmax) &&
-        (graph->data.ymin == -graph->data.ymax) &&
-        (graph->data.xmin == graph->data.ymin))
-        centered = TRUE;
 
     mag = (int)floor(mylog10(maxrad));
     tenpowmag = pow(10.0, (double) mag);
@@ -839,14 +832,13 @@ drawpolargrid(GRAPH *graph)
     int hmt, lmt, i, step, mag;
     int relcx, relcy, relrad, dist, degs;
     int x1, y1, x2, y2;
-    double minrad, maxrad, pixperunit;
+    double minrad, pixperunit;
     char buf[64];
 
     hmt = graph->grid.xaxis.circular.hmt;
     lmt = graph->grid.xaxis.circular.lmt;
     mag = graph->grid.xaxis.circular.mag;
     tenpowmag = pow(10.0, (double) mag);
-    maxrad = hmt * tenpowmag;
     minrad = lmt * tenpowmag;
 
     if ((minrad == 0) && ((hmt - lmt) > 5)) {
@@ -1049,7 +1041,6 @@ static void
 smithgrid(GRAPH *graph)
 {
     double mx, my;
-    bool centered = FALSE;
 
     SetLinestyle(0);
 
@@ -1108,11 +1099,6 @@ smithgrid(GRAPH *graph)
         graph->datawindow.xmax += (my - mx) / 2;
     }
 
-    if ((graph->datawindow.xmin == - graph->datawindow.xmax) &&
-        (graph->datawindow.ymin == - graph->datawindow.ymax) &&
-        (graph->datawindow.xmin ==   graph->datawindow.ymin))
-        centered = TRUE;
-
     /* Issue a warning if our data range is not normalized */
     if (graph->datawindow.ymax > 1.1) {
         printf("\nwarning: exceeding range for smith chart");
@@ -1127,7 +1113,7 @@ smithgrid(GRAPH *graph)
 static void
 drawsmithgrid(GRAPH *graph)
 {
-    double mx, my, tenpowmag, d, dphi[CMAX], minrad, maxrad, rnorm[CMAX];
+    double mx, my, d, dphi[CMAX], maxrad, rnorm[CMAX];
     double pixperunit;
     int mag, i = 0, j = 0, k;
     double ir[CMAX], rr[CMAX], ki[CMAX], kr[CMAX], ks[CMAX];
@@ -1140,10 +1126,8 @@ drawsmithgrid(GRAPH *graph)
     my = (graph->datawindow.ymin + graph->datawindow.ymax) / 2;
     d = sqrt(mx * mx + my * my);
     maxrad = d + (graph->datawindow.xmax - graph->datawindow.xmin) / 2;
-    minrad = d - (graph->datawindow.xmax - graph->datawindow.xmin) / 2;
 
     mag = (int)floor(mylog10(maxrad));
-    tenpowmag = pow(10.0, (double) mag);
 
     pixperunit = graph->viewport.width / (graph->datawindow.xmax -
                                           graph->datawindow.xmin);

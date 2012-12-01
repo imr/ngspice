@@ -708,7 +708,7 @@ void
 spar_write(char *name, struct plot *pl, double Rbaseval)
 {
     FILE *fp;
-    int length, numdims;
+    int length;
     int i, prec;
     struct dvec *v, *lv;
 
@@ -723,7 +723,7 @@ spar_write(char *name, struct plot *pl, double Rbaseval)
     else
         prec = 6;
 
-    numdims = length = 0;
+    length = 0;
     for (v = pl->pl_dvecs; v; v = v->v_next) {
 
         /* All vectors have to have same length,
