@@ -158,19 +158,6 @@ void preprocess_mod_file (
    fprintf (mod_yyout, "#line 1 \"%s\"\n", filename);
 
    mod_yylineno = 1;
-   if (!mod_yyin) {
-      sprintf (error_str, "Could not open .mod file: \"%s\"", filename);
-      print_error (error_str);
-      unlink (output_filename);
-      exit(1);
-   }
-   if (!mod_yyout) {
-      sprintf (error_str, "Could not create .c file: \"%s\"",
-	       output_filename);
-      print_error (error_str);
-      unlink (output_filename);
-      exit(1);
-   }
 
    if (mod_yyparse() || (mod_num_errors > 0)) {
       sprintf (error_str, "Error parsing .mod file: \"%s\"", filename);
