@@ -3407,7 +3407,9 @@ get_number_terminals(char *c)
         i = j = 0;
         /* find the last token in the line*/
         while ((i < 100) && (*c != '\0')) {
-            strncpy(nam_buf, gettok_instance(&c), 32);
+            char *tmp_inst = gettok_instance(&c);
+            strncpy(nam_buf, tmp_inst, 32);
+            tfree(tmp_inst);
             if (strchr(nam_buf, '='))
                 j++;
             i++;
