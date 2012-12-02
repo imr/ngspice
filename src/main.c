@@ -627,7 +627,13 @@ app_rl_readlines(void)
        SETJMP(jbuf, 1);    /* Set location to jump to after handling SIGINT (ctrl-C)  */
 
        line = readline(prompt());
-       if (line && *line) {
+
+       if (!line) {
+           cp_evloop("quit");
+           continue;
+       }
+
+       if (*line) {
            int s = history_expand(line, &expanded_line);
 
            if (s == 2) {
@@ -640,7 +646,8 @@ app_rl_readlines(void)
            }
            free(expanded_line);
        }
-       if (line) free(line);
+
+       free(line);
     }
     /* History gets written in ../fte/misccoms.c com_quit */
 
