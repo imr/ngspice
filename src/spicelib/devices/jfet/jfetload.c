@@ -3,8 +3,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
 Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
-	Laboratory for Communication Science Engineering
-	Sydney University Department of Electrical Engineering, Australia
+        Laboratory for Communication Science Engineering
+        Sydney University Department of Electrical Engineering, Australia
 **********/
 
 #include "ngspice/ngspice.h"
@@ -89,7 +89,7 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *  dc model parameters 
              */
-            beta = model->JFETbeta * here->JFETarea;
+            beta = here->JFETtBeta * here->JFETarea;
             gdpr=model->JFETdrainConduct*here->JFETarea;
             gspr=model->JFETsourceConduct*here->JFETarea;
             csat=here->JFETtSatCur*here->JFETarea;
@@ -177,13 +177,14 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
                     (fabs(delvgs) < ckt->CKTreltol*MAX(fabs(vgs),
                         fabs(*(ckt->CKTstate0 + here->JFETvgs)))+
                         ckt->CKTvoltTol) )
-        if ( (fabs(delvgd) < ckt->CKTreltol*MAX(fabs(vgd),
+                if ( (fabs(delvgd) < ckt->CKTreltol*MAX(fabs(vgd),
                         fabs(*(ckt->CKTstate0 + here->JFETvgd)))+
                         ckt->CKTvoltTol))
-        if ( (fabs(cghat-*(ckt->CKTstate0 + here->JFETcg)) 
+                if ( (fabs(cghat-*(ckt->CKTstate0 + here->JFETcg)) 
                         < ckt->CKTreltol*MAX(fabs(cghat),
                         fabs(*(ckt->CKTstate0 + here->JFETcg)))+
-                        ckt->CKTabstol) ) if ( /* hack - expression too big */
+                        ckt->CKTabstol) ) 
+                if ( /* hack - expression too big */
                     (fabs(cdhat-*(ckt->CKTstate0 + here->JFETcd))
                         < ckt->CKTreltol*MAX(fabs(cdhat),
                         fabs(*(ckt->CKTstate0 + here->JFETcd)))+
@@ -214,9 +215,9 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
                     icheck=1;
                 }
                 vgs = DEVfetlim(vgs,*(ckt->CKTstate0 + here->JFETvgs),
-                        model->JFETthreshold);
+                        here->JFETtThreshold);
                 vgd = DEVfetlim(vgd,*(ckt->CKTstate0 + here->JFETvgd),
-                        model->JFETthreshold);
+                        here->JFETtThreshold);
             }
             /*
              *   determine dc current and derivatives 
@@ -248,8 +249,8 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
             
             cg = cg+cgd;
 
-	    /* Modification for Sydney University JFET model */
-            vto = model->JFETthreshold;
+            /* Modification for Sydney University JFET model */
+            vto = here->JFETtThreshold;
             if (vds >= 0) {
                 vgst = vgs - vto;
                 /*
@@ -325,13 +326,13 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
             }
 
 #ifdef notdef
-	    /* The original section is now commented out */
-	    /* end Sydney University mod */
+            /* The original section is now commented out */
+            /* end Sydney University mod */
             /*
              *   compute drain current and derivitives for normal mode 
              */
             if (vds >= 0) {
-                vgst=vgs-model->JFETthreshold;
+                vgst=vgs-here->JFETtThreshold;
                 /*
                  *   normal mode, cutoff region 
                  */
@@ -363,7 +364,7 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
                 /*
                  *   compute drain current and derivitives for inverse mode 
                  */
-                vgdt=vgd-model->JFETthreshold;
+                vgdt=vgd-here->JFETtThreshold;
                 if (vgdt <= 0) {
                     /*
                      *   inverse mode, cutoff region 
@@ -392,7 +393,7 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
                     }
                 }
             }
-	    /* end of original section, now deleted (replaced w/SU mod */
+            /* end of original section, now deleted (replaced w/SU mod */
 #endif
 
             /*
@@ -473,14 +474,14 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
              *  check convergence 
              */
             if( (!(ckt->CKTmode & MODEINITFIX)) |
-		(!(ckt->CKTmode & MODEUIC))) {
-		if((icheck == 1) ||
-		   (fabs(cghat-cg) >= ckt->CKTreltol *
-		    MAX(fabs(cghat), fabs(cg)) + ckt->CKTabstol) ||
-		   (fabs(cdhat-cd) > ckt->CKTreltol *
-		    MAX(fabs(cdhat), fabs(cd)) + ckt->CKTabstol)) {
+                (!(ckt->CKTmode & MODEUIC))) {
+                if((icheck == 1) ||
+                   (fabs(cghat-cg) >= ckt->CKTreltol *
+                    MAX(fabs(cghat), fabs(cg)) + ckt->CKTabstol) ||
+                   (fabs(cdhat-cd) > ckt->CKTreltol *
+                    MAX(fabs(cdhat), fabs(cd)) + ckt->CKTabstol)) {
                     ckt->CKTnoncon++;
-		    ckt->CKTtroubleElt = (GENinstance *) here;
+                    ckt->CKTtroubleElt = (GENinstance *) here;
                 }
             }
             *(ckt->CKTstate0 + here->JFETvgs) = vgs;

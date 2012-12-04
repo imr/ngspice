@@ -75,6 +75,13 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	}
 	/* end Sydney University mod */
 
+	if(!model->JFETtcvGiven) {
+	    model->JFETtcv = 0.0;
+	}
+	if(!model->JFETbexGiven) {
+	    model->JFETbex = 0.0;
+	}
+
         if(model->JFETdrainResist != 0) {
             model->JFETdrainConduct = 1/model->JFETdrainResist;
         } else {

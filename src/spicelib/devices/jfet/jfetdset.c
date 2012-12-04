@@ -77,7 +77,7 @@ JFETdSetup(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *  dc model parameters 
              */
-            beta = model->JFETbeta * here->JFETarea * here->JFETm;
+            beta = here->JFETtBeta * here->JFETarea * here->JFETm;
             gdpr=model->JFETdrainConduct*here->JFETarea * here->JFETm;
             gspr=model->JFETsourceConduct*here->JFETarea * here-> JFETm;
             csat=here->JFETtSatCur*here->JFETarea * here-> JFETm;
@@ -130,7 +130,7 @@ JFETdSetup(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   compute drain current and derivatives
              */
-                vgst=vgs-model->JFETthreshold;
+                vgst=vgs-here->JFETtThreshold;
                 /*
                  *   cutoff region 
                  */

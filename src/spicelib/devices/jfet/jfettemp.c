@@ -2,8 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
-	Laboratory for Communication Science Engineering
-	Sydney University Department of Electrical Engineering, Australia
+        Laboratory for Communication Science Engineering
+        Sydney University Department of Electrical Engineering, Australia
 **********/
 
 #include "ngspice/ngspice.h"
@@ -71,10 +71,10 @@ JFETtemp(GENmodel *inModel, CKTcircuit *ckt)
         xfc = log(1 - model->JFETdepletionCapCoeff);
         model->JFETf2 = exp((1+.5)*xfc);
         model->JFETf3 = 1 - model->JFETdepletionCapCoeff * (1 + .5);
-	/* Modification for Sydney University JFET model */
-	model->JFETbFac = (1 - model->JFETb)
-		/ (model->JFETgatePotential - model->JFETthreshold);
-	/* end Sydney University mod */
+        /* Modification for Sydney University JFET model */
+        model->JFETbFac = (1 - model->JFETb)
+                / (model->JFETgatePotential - model->JFETthreshold);
+        /* end Sydney University mod */
 
         /* loop through all the instances of the model */
         for (here = model->JFETinstances; here != NULL ;
@@ -107,7 +107,10 @@ JFETtemp(GENmodel *inModel, CKTcircuit *ckt)
                     here->JFETtGatePot;
             here->JFETf1 = here->JFETtGatePot * (1 - exp((1-.5)*xfc))/(1-.5);
             here->JFETvcrit = vt * log(vt/(CONSTroot2 * here->JFETtSatCur));
-            
+
+            here->JFETtThreshold = model->JFETthreshold - model->JFETtcv*(here->JFETtemp-model->JFETtnom);
+            here->JFETtBeta = model->JFETbeta * pow(here->JFETtemp/model->JFETtnom,model->JFETbex);
+
         }
     }
     return(OK);

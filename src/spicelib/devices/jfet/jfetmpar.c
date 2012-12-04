@@ -86,6 +86,14 @@ JFETmParam(int param, IFvalue *value, GENmodel *inModels)
 	    model->JFETb = value->rValue;
 	    return(OK);
 	/* end Sydney University mod */
+	case JFET_MOD_TCV:
+	    model->JFETtcvGiven = TRUE;
+	    model->JFETtcv = value->rValue;
+	    break;
+	case JFET_MOD_BEX:
+	    model->JFETbexGiven = TRUE;
+	    model->JFETbex = value->rValue;
+	    break;
         default:
             return(E_BADPARM);
     }

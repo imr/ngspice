@@ -146,7 +146,8 @@ typedef struct sJFETinstance {
     double JFETcorDepCap;   /* joining point of the fwd bias dep. cap eq.s */
     double JFETvcrit;   /* critical voltage for the instance */
     double JFETf1;      /* coefficient of capacitance polynomial exp */
-
+    double JFETtThreshold;    /* temperature adjusted threshold voltage */
+    double JFETtBeta;   /* temperature adjusted beta */
 
 } JFETinstance ;
 
@@ -198,6 +199,8 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
     double JFETbFac;  /* internal derived doping profile parameter */
     /* end Sydney University mod */
     double JFETtnom;    /* temperature at which parameters were measured */
+    double JFETtcv;
+    double JFETbex;
 
     unsigned JFETthresholdGiven : 1;
     unsigned JFETbetaGiven : 1;
@@ -215,7 +218,8 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
     unsigned JFETtnomGiven : 1; /* user specified Tnom for model */
     unsigned JFETfNcoefGiven : 1;
     unsigned JFETfNexpGiven : 1;
-
+    unsigned JFETtcvGiven : 1;
+    unsigned JFETbexGiven : 1;
 
 } JFETmodel;
 
@@ -255,6 +259,8 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
 /* Modification for Sydney University JFET model */
 #define JFET_MOD_B 116
 /* end Sydney University mod */
+#define JFET_MOD_TCV 117
+#define JFET_MOD_BEX 118
 
 /* device questions */
 #define JFET_DRAINNODE        301

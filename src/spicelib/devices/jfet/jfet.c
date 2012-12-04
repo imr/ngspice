@@ -67,8 +67,10 @@ IFparm JFETmPTable[] = { /* model parameters */
  IOP("b",     JFET_MOD_B,        IF_REAL,"Doping tail parameter"),
  /* end Sydney University mod. */
  IOPU("tnom",   JFET_MOD_TNOM,    IF_REAL,"parameter measurement temperature"),
- IOP("kf",  JFET_MOD_KF,IF_REAL,"Flicker Noise Coefficient"),
- IOP("af",  JFET_MOD_AF,IF_REAL,"Flicker Noise Exponent")
+ IOP("kf",  JFET_MOD_KF, IF_REAL, "Flicker Noise Coefficient"),
+ IOP("af",  JFET_MOD_AF, IF_REAL, "Flicker Noise Exponent"),
+ IOP("tcv", JFET_MOD_TCV, IF_REAL, "Threshold voltage temperature coefficient"),
+ IOP("bex", JFET_MOD_BEX, IF_REAL, "Mobility temperature exponent")
 };
 
 
