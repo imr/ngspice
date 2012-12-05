@@ -32,6 +32,10 @@ static bool measures_passed; /* TRUE: stop simulation (if option autostop is set
 extern bool ft_batchmode;
 extern bool rflag;
 
+#ifdef HAS_WINDOWS    /* hvogt 10.03.99, nach W. Mues */
+extern void SetAnalyse(char *Analyse, int Percent);
+#endif
+
 
 /* measure in interactive mode:
    meas command inside .control ... .endc loop or manually entered.
@@ -225,6 +229,12 @@ do_measure(
     wordlist    *measure_word_list;
     int         precision = measure_get_precision();
 
+
+#ifdef HAS_WINDOWS
+    if (!chk_only)
+        SetAnalyse("meas", 0);
+#endif
+
     just_chk_meas = chk_only;
 
     an_name = strdup(what); /* analysis type, e.g. "tran" */
@@ -279,7 +289,7 @@ do_measure(
             first_time = FALSE;
 
             if (just_chk_meas != TRUE && strcmp(an_type, "tran") == 0) {
-                fprintf(stdout, "             Transient Analysis\n\n");
+                fprintf(stdout, "\n  Measurements for Transient Analysis\n\n");
                 // plot_cur = setcplot("tran");
             }
         }
