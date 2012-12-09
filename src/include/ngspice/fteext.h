@@ -266,7 +266,7 @@ extern void spar_write(char *name, struct plot *pl, double val);
 extern struct plot *raw_read(char *name);
 
 /* meas.c */
-extern void do_measure(char *what, bool chk_only);
+extern bool do_measure(char *what, bool chk_only);
 extern bool check_autostop(char *what);
 
 /* randnumb.c */
