@@ -101,6 +101,75 @@ char *spice_dstring_append(SPICE_DSTRINGPTR dsPtr,char *string,int length)
 
 } /* end spice_dstring_append() */
 
+/*
+ *----------------------------------------------------------------------
+ *
+ * spice_dstring_append_lower --
+ *
+ *      Append more characters converted to lower case to the current
+ *      value of a dynamic string.
+ *
+ * Results:
+ *      The return value is a pointer to the dynamic string's new value.
+ *
+ * Side effects:
+ *      Length bytes from string (or all of string if length is less
+ *      than zero) are added to the current value of the string. Memory
+ *      gets reallocated if needed to accomodate the string's new size.
+ *
+ * Notes: char *string;    String to append.  If length is -1 then
+ *                         this must be null-terminated.
+ *        INT length;      Number of characters from string to append.
+ *                         If < 0, then append all of string, up to null at end.
+ *
+ *----------------------------------------------------------------------
+ */
+char *spice_dstring_append_lower(SPICE_DSTRINGPTR dsPtr,char *string,int length)
+{
+    int newSize ;                       /* needed size */
+    char *newString ;                   /* newly allocated string buffer */
+    char *dst ;                         /* destination */
+    char *end ;                         /* end of string */
+
+    if( length < 0){
+        length = (int) strlen(string) ;
+    }
+    newSize = length + dsPtr->length ;
+
+    /* -----------------------------------------------------------------
+     * Allocate a larger buffer for the string if the current one isn't
+     * large enough. Allocate extra space in the new buffer so that there
+     * will be room to grow before we have to allocate again.
+     ----------------------------------------------------------------- */
+    if (newSize >= dsPtr->spaceAvl) {
+        dsPtr->spaceAvl = 2 * newSize ;
+        newString = TMALLOC(char, dsPtr->spaceAvl) ;
+        memcpy(newString, dsPtr->string, (size_t) dsPtr->length) ;
+        if (dsPtr->string != dsPtr->staticSpace) {
+            txfree(dsPtr->string) ;
+        }
+        dsPtr->string = newString;
+    }
+
+    /* -----------------------------------------------------------------
+     * Copy the new string into the buffer at the end of the old
+     * one.
+     ----------------------------------------------------------------- */
+    for( dst = dsPtr->string + dsPtr->length, end = string+length;
+            string < end; string++, dst++) {
+        if( isupper(*string) ) {
+          *dst = (char)tolower(*string) ;
+        } else {
+          *dst = *string ;
+        }
+    }
+    *dst = '\0' ;
+    dsPtr->length += length ;
+
+    return(dsPtr->string) ;
+
+} /* end spice_dstring_append_lower() */
+
 /* -----------------------------------------------------------------
  * Function: add character c to dynamic string dstr_p.
  * ----------------------------------------------------------------- */
