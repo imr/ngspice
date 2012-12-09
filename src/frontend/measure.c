@@ -137,7 +137,7 @@ com_meas(wordlist *wl)
     wl_let = wl_cons(copy(newvec), NULL);
     com_let(wl_let);
     wl_free(wl_let);
-    // fprintf(stdout, "in: %s\n", line_in);
+    tfree(line_in);
 }
 
 
@@ -315,6 +315,7 @@ do_measure(
                     txfree(an_type);
                     txfree(resname);
                     txfree(meastype);
+                    wl_free(measure_word_list);
                     break;
                 }
             } else {
@@ -346,9 +347,10 @@ do_measure(
 
     } /* end of for loop (first pass through .meas lines) */
 
-        if (chk_only)
-            return (measures_passed);
-
+    if (chk_only) {
+        tfree(an_name);
+        return (measures_passed);
+    }
     /* second pass through .meas cards: now do param|expr .meas statements */
     newcard = meas_results;
     for (meas_card = ft_curckt->ci_meas; meas_card != NULL; meas_card = meas_card->li_next) {
@@ -461,7 +463,7 @@ measure_parse_line(char *line)
     char *extra_item;                   /* extra item */
 
     wl = NULL;
-    (void) gettok(&line);
+    txfree(gettok(&line));
     do {
         item = gettok(&line);
         if (!(item))

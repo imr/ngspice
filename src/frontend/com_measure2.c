@@ -236,6 +236,8 @@ measure_function_type(char *operation)
     else
         mFunctionType = AT_UNKNOWN;
 
+    tfree(mFunction);
+
     return (mFunctionType);
 }
 
@@ -1479,6 +1481,7 @@ get_measure2(
     ANALYSIS_TYPE_T mFunctionType = AT_UNKNOWN;
     int wl_cnt;
     char *p;
+    int ret_val = MEASUREMENT_FAILURE;
 
     *result = 0.0e0;        /* default result */
 
@@ -1586,14 +1589,14 @@ get_measure2(
 
         if (measure_parse_trigtarg(measTrig, words , wlTarg, "trig", errbuf) == 0) {
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret1;
         }
 
         if ((measTrig->m_rise == -1) && (measTrig->m_fall == -1) &&
             (measTrig->m_cross == -1) && (measTrig->m_at == 1e99)) {
             sprintf(errbuf, "at, rise, fall or cross must be given\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret1;
         }
 
         while (words != wlTarg)
@@ -1604,14 +1607,14 @@ get_measure2(
 
         if (measure_parse_trigtarg(measTarg, words , NULL, "targ", errbuf) == 0) {
             measure_errMessage(mName, mFunction, "TARG", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret1;
         }
 
         if ((measTarg->m_rise == -1) && (measTarg->m_fall == -1) &&
             (measTarg->m_cross == -1)&& (measTarg->m_at == 1e99)) {
             sprintf(errbuf, "at, rise, fall or cross must be given\n");
             measure_errMessage(mName, mFunction, "TARG", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret1;
         }
 
         // measure trig
@@ -1624,7 +1627,7 @@ get_measure2(
         if (isnan(measTrig->m_measured)) {
             sprintf(errbuf, "out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret1;
         }
         // measure targ
         com_measure_when(measTarg);
@@ -1632,7 +1635,7 @@ get_measure2(
         if (isnan(measTarg->m_measured)) {
             sprintf(errbuf, "out of interval\n");
             measure_errMessage(mName, mFunction, "TARG", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret1;
         }
 
         // print results
@@ -1642,7 +1645,18 @@ get_measure2(
             printf("%-20s=  %e targ=  %e trig=  %e\n", mName, (measTarg->m_measured - measTrig->m_measured), measTarg->m_measured, measTrig->m_measured);
 
         *result = (measTarg->m_measured - measTrig->m_measured);
-        return MEASUREMENT_OK;
+
+        ret_val = MEASUREMENT_OK;
+
+err_ret1:
+        tfree(mAnalysis);
+        tfree(mName);
+        tfree(measTarg->m_vec);
+        tfree(measTarg);
+        tfree(measTrig->m_vec);
+        tfree(measTrig);
+
+        return ret_val;
     }
     case AT_FIND:
     {
@@ -1654,7 +1668,7 @@ get_measure2(
 
         if (measure_parse_find(meas, words, wlWhen, errbuf) == 0) {
             measure_errMessage(mName, mFunction, "FIND", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret2;
         }
 
         if (meas->m_at == 1e99) {
@@ -1667,7 +1681,7 @@ get_measure2(
 
             if (measure_parse_when(measFind, words, errbuf) == 0) {
                 measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
-                return MEASUREMENT_FAILURE;
+                goto err_ret2;
             }
 
             com_measure_when(measFind);
@@ -1675,7 +1689,7 @@ get_measure2(
             if (isnan(measFind->m_measured)) {
                 sprintf(errbuf, "out of interval\n");
                 measure_errMessage(mName, mFunction, "AT", errbuf, autocheck);
-                return MEASUREMENT_FAILURE;
+                goto err_ret2;
             }
 
             measure_at(meas, measFind->m_measured);
@@ -1688,7 +1702,7 @@ get_measure2(
         if (isnan(meas->m_measured)) {
             sprintf(errbuf, "out of interval\n");
             measure_errMessage(mName, mFunction, "AT", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret2;
         }
 
         // print results
@@ -1698,7 +1712,18 @@ get_measure2(
             printf("%-20s=  %e\n", mName, meas->m_measured);
 
         *result = meas->m_measured;
-        return MEASUREMENT_OK;
+
+        ret_val = MEASUREMENT_OK;
+
+err_ret2:
+        tfree(mAnalysis);
+        tfree(mName);
+        tfree(meas->m_vec);
+        tfree(meas);
+        tfree(measFind->m_vec);
+        tfree(measFind);
+
+        return ret_val;
     }
     case AT_WHEN:
     {
@@ -1707,7 +1732,7 @@ get_measure2(
         meas->m_analysis = mAnalysis;
         if (measure_parse_when(meas, words, errbuf) == 0) {
             measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret3;
         }
 
         com_measure_when(meas);
@@ -1715,7 +1740,7 @@ get_measure2(
         if (isnan(meas->m_measured)) {
             sprintf(errbuf, "out of interval\n");
             measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret3;
         }
 
         // print results
@@ -1725,7 +1750,16 @@ get_measure2(
             printf("%-20s=  %e\n", mName, meas->m_measured);
 
         *result = meas->m_measured;
-        return MEASUREMENT_OK;
+
+        ret_val = MEASUREMENT_OK;
+
+err_ret3:
+        tfree(mAnalysis);
+        tfree(mName);
+        tfree(meas->m_vec);
+        tfree(meas);
+
+        return ret_val;
     }
     case AT_RMS:
     case AT_INTEG:
@@ -1736,7 +1770,7 @@ get_measure2(
         meas->m_analysis = mAnalysis;
         if (measure_parse_trigtarg(meas, words , NULL, "trig", errbuf) == 0) {
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret4;
         }
 
         // measure
@@ -1745,7 +1779,7 @@ get_measure2(
         if (isnan(meas->m_measured)) {
             sprintf(errbuf, "out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
-            return MEASUREMENT_FAILURE;
+            goto err_ret4;
         }
 
         if (meas->m_at == 1e99)
@@ -1758,7 +1792,16 @@ get_measure2(
             printf("%-20s=  %.*e from=  %.*e to=  %.*e\n", mName, precision, meas->m_measured, precision, meas->m_from, precision, meas->m_to);
 
         *result = meas->m_measured;
-        return MEASUREMENT_OK;
+
+        ret_val = MEASUREMENT_OK;
+
+err_ret4:
+        tfree(mAnalysis);
+        tfree(mName);
+        tfree(meas->m_vec);
+        tfree(meas);
+
+        return ret_val;
 
     }
     case AT_AVG:
@@ -1771,7 +1814,7 @@ get_measure2(
 
         if (measure_parse_trigtarg(meas, words , NULL, "trig", errbuf) == 0) {
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret5;
         }
 
         // measure
@@ -1779,7 +1822,7 @@ get_measure2(
         if (isnan(meas->m_measured)) {
             sprintf(errbuf, "out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
-            return MEASUREMENT_FAILURE;
+            goto err_ret5;
         }
 
         if (meas->m_at == 1e99)
@@ -1792,8 +1835,16 @@ get_measure2(
             printf("%-20s=  %e from=  %e to=  %e\n", mName, meas->m_measured, meas->m_at, meas->m_measured_at);
 
         *result = meas->m_measured;
-        return MEASUREMENT_OK;
 
+        ret_val = MEASUREMENT_OK;
+
+err_ret5:
+        tfree(mAnalysis);
+        tfree(mName);
+        tfree(meas->m_vec);
+        tfree(meas);
+
+        return ret_val;
     }
     case AT_MIN:
     case AT_MAX:
@@ -1806,7 +1857,7 @@ get_measure2(
         measTrig->m_analysis = mAnalysis;
         if (measure_parse_trigtarg(measTrig, words , NULL, "trig", errbuf) == 0) {
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret6;
         }
 
         // measure
@@ -1818,7 +1869,7 @@ get_measure2(
         if (isnan(measTrig->m_measured)) {
             sprintf(errbuf, "out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
-            return MEASUREMENT_FAILURE;
+            goto err_ret6;
         }
 
         if ((mFunctionType == AT_MIN) || (mFunctionType == AT_MAX)) {
@@ -1838,7 +1889,16 @@ get_measure2(
 
             *result = measTrig->m_measured_at;
         }
-        return MEASUREMENT_OK;
+
+        ret_val = MEASUREMENT_OK;
+
+err_ret6:
+        tfree(mAnalysis);
+        tfree(mName);
+        tfree(measTrig->m_vec);
+        tfree(measTrig);
+
+        return ret_val;
     }
     case AT_PP:
     {
@@ -1848,7 +1908,7 @@ get_measure2(
         measTrig->m_analysis = mAnalysis;
         if (measure_parse_trigtarg(measTrig, words , NULL, "trig", errbuf) == 0) {
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
-            return MEASUREMENT_FAILURE;
+            goto err_ret7;
         }
 
         // measure min
@@ -1856,7 +1916,7 @@ get_measure2(
         if (isnan(measTrig->m_measured)) {
             sprintf(errbuf, "out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
-            return MEASUREMENT_FAILURE;
+            goto err_ret7;
         }
         minValue = measTrig->m_measured;
 
@@ -1865,7 +1925,7 @@ get_measure2(
         if (isnan(measTrig->m_measured)) {
             sprintf(errbuf, "out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
-            return MEASUREMENT_FAILURE;
+            goto err_ret7;
         }
         maxValue = measTrig->m_measured;
 
@@ -1876,7 +1936,16 @@ get_measure2(
             printf("%-20s=  %e from=  %e to=  %e\n", mName, (maxValue - minValue), measTrig->m_from, measTrig->m_to);
 
         *result = (maxValue - minValue);
-        return MEASUREMENT_OK;
+
+        ret_val = MEASUREMENT_OK;
+
+err_ret7:
+        tfree(mAnalysis);
+        tfree(mName);
+        tfree(measTrig->m_vec);
+        tfree(measTrig);
+
+        return ret_val;
     }
 
     case AT_DERIV:
