@@ -33,6 +33,7 @@ char *INPerror(int type)
     /*CDHW Lots of things set errMsg but it is never used  so let's hack it in CDHW*/
     if ( errMsg ) {
         val = errMsg;
+        errMsg = NULL;
     } else
         /*CDHW end of hack CDHW*/
         val = copy(SPerror(type));
