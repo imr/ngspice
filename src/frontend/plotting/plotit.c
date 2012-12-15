@@ -296,8 +296,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         if (!xlim)
             xlim = getlims(wl, "xlimit", 2);
     } else {
-        (void) getlims(wl, "xl", 2);
-        (void) getlims(wl, "xlimit", 2);
+        txfree(getlims(wl, "xl", 2));
+        txfree(getlims(wl, "xlimit", 2));
     }
 
     if (!sameflag || !ylim) {
@@ -305,8 +305,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         if (!ylim)
             ylim = getlims(wl, "ylimit", 2);
     } else {
-        (void) getlims(wl, "yl", 2);
-        (void) getlims(wl, "ylimit", 2);
+        txfree(getlims(wl, "yl", 2));
+        txfree(getlims(wl, "ylimit", 2));
     }
 
     if (!sameflag || !xcompress) {
@@ -314,8 +314,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         if (!xcompress)
             xcompress = getlims(wl, "xcomp", 1);
     } else {
-        (void) getlims(wl, "xcompress", 1);
-        (void) getlims(wl, "xcomp", 1);
+        txfree(getlims(wl, "xcompress", 1));
+        txfree(getlims(wl, "xcomp", 1));
     }
 
     if (!sameflag || !xindices) {
@@ -323,8 +323,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         if (!xindices)
             xindices = getlims(wl, "xind", 2);
     } else {
-        (void) getlims(wl, "xindices", 2);
-        (void) getlims(wl, "xind", 2);
+        txfree(getlims(wl, "xindices", 2));
+        txfree(getlims(wl, "xind", 2));
     }
 
     if (!sameflag || !xdelta) {
@@ -332,8 +332,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         if (!xdelta)
             xdelta = getlims(wl, "xdel", 1);
     } else {
-        (void) getlims(wl, "xdelta", 1);
-        (void) getlims(wl, "xdel", 1);
+        txfree(getlims(wl, "xdelta", 1));
+        txfree(getlims(wl, "xdel", 1));
     }
 
     if (!sameflag || !ydelta) {
@@ -341,8 +341,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         if (!ydelta)
             ydelta = getlims(wl, "ydel", 1);
     } else {
-        (void) getlims(wl, "ydelta", 1);
-        (void) getlims(wl, "ydel", 1);
+        txfree(getlims(wl, "ydelta", 1));
+        txfree(getlims(wl, "ydel", 1));
     }
 
     /* Get the grid type and the point type.  Note we can't do if-else
@@ -497,17 +497,17 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     if (!sameflag || !xlabel)
         xlabel = getword(wl, "xlabel");
     else
-        (void) getword(wl, "xlabel");
+        txfree(getword(wl, "xlabel"));
 
     if (!sameflag || !ylabel)
         ylabel = getword(wl, "ylabel");
     else
-        (void) getword(wl, "ylabel");
+        txfree(getword(wl, "ylabel"));
 
     if (!sameflag || !title)
         title = getword(wl, "title");
     else
-        (void) getword(wl, "title");
+        txfree(getword(wl, "title"));
 
     if (!sameflag)
         nointerp = getflag(wl, "nointerp");
@@ -1031,6 +1031,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
 quit:
     free_pnode(names);
+    FREE(title);
 quit1:
     wl_free(wl);
     return rtn;
