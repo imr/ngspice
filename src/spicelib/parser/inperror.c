@@ -27,16 +27,15 @@ extern int vasprintf(char **out, const char *fmt, va_list ap);
 
 char *INPerror(int type)
 {
-    const char *val;
+    char *val;
     char *ebuf;
 
     /*CDHW Lots of things set errMsg but it is never used  so let's hack it in CDHW*/
     if ( errMsg ) {
         val = errMsg;
-        errMsg = NULL;
     } else
         /*CDHW end of hack CDHW*/
-        val = SPerror(type);
+        val = copy(SPerror(type));
 
     if (!val)
         return NULL;
@@ -55,6 +54,6 @@ char *INPerror(int type)
         sprintf(ebuf, "%s\n", val);
     }
 #endif /* HAVE_ASPRINTF */
-    FREE(errMsg); /* pn: really needed ? */
+    tfree(val);
     return ebuf;
 }

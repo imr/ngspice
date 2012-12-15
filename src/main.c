@@ -106,7 +106,7 @@ char *ft_rawfile = "rawspice.raw";
 IFsimulator *ft_sim = NULL;
 
 char *errRtn;     /* name of the routine declaring error */
-char *errMsg;     /* descriptive message about what went wrong */
+char *errMsg = NULL;     /* descriptive message about what went wrong */
 char *cp_program; /* program name 'ngspice' */
 
 
