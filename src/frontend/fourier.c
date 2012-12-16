@@ -16,6 +16,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/fteparse.h"
 #include "ngspice/sperror.h"
 #include "ngspice/const.h"
+#include "ngspice/sim.h"
 
 #include "fourier.h"
 #include "variable.h"
@@ -197,7 +198,7 @@ fourier(wordlist *wl, struct plot *current_plot)
             n = alloc(struct dvec);
             ZERO(n, struct dvec);
             n->v_name = copy(newvecname);
-            n->v_type = 0;
+            n->v_type = SV_NOTYPE;
             n->v_flags = (1 | VF_PERMANENT);
             n->v_length = 3 * nfreqs;
             n->v_numdims = 2;

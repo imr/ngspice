@@ -94,7 +94,7 @@ findvec(char *word, struct plot *pl)
 
     if (cieq(word, "allv")) {
         for (d = pl->pl_dvecs; d; d = d->v_next) {
-            if ((d->v_flags & VF_PERMANENT) && (d->v_type == 3)) {
+            if ((d->v_flags & VF_PERMANENT) && (d->v_type == SV_VOLTAGE)) {
                 if (d->v_link2) {
                     v = vec_copy(d);
                     vec_new(v);
@@ -113,7 +113,7 @@ findvec(char *word, struct plot *pl)
 
     if (cieq(word, "alli")) {
         for (d = pl->pl_dvecs; d; d = d->v_next) {
-            if ((d->v_flags & VF_PERMANENT) && (d->v_type == 4)) {
+            if ((d->v_flags & VF_PERMANENT) && (d->v_type == SV_CURRENT)) {
                 if (d->v_link2) {
                     v = vec_copy(d);
                     vec_new(v);
