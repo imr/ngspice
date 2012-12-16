@@ -1312,7 +1312,7 @@ com_alter_common(wordlist *wl, int do_model)
         /* Put this to try to resolve the case of
            alter @vin[pulse] = [ 0 5 10n 10n 10n 50n 100n ]
         */
-        char *xsbuf;
+        char *xsbuf, *rem_xsbuf;
         int type = IF_REALVEC, i = 0;
 
         double *list;
@@ -1321,7 +1321,7 @@ com_alter_common(wordlist *wl, int do_model)
         /* move beyond '[' to allow INPevaluate() */
         if (eq(words->wl_word, "["))
             words = words->wl_next;
-        xsbuf = wl_flatten(words);
+        xsbuf = rem_xsbuf = wl_flatten(words);
         /* fprintf(cp_err, "Chain    converted  %s \n", xsbuf); */
         dv = TMALLOC(struct dvec, 1);
         dv->v_name = copy("real vector");
@@ -1353,6 +1353,8 @@ com_alter_common(wordlist *wl, int do_model)
          */
         if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
 
+        tfree(rem_xsbuf);
+        vec_free(dv);
         return;
     }
 
