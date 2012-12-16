@@ -864,6 +864,10 @@ killplot(struct plot *pl)
     tfree(pl->pl_title);
     tfree(pl->pl_name);
     tfree(pl->pl_typename);
+
+    if (pl->pl_lookup_table)
+        nghash_free(pl->pl_lookup_table, NULL, NULL);
+
     wl_free(pl->pl_commands);
     tfree(pl->pl_date); /* va: also tfree (memory leak) */
     if (pl->pl_ccom)    /* va: also tfree (memory leak) */
@@ -889,6 +893,10 @@ destroy_const_plot(void)
         nv = v->v_next;
         vec_free(v);
     }
+
+    if (pl->pl_lookup_table)
+        nghash_free(pl->pl_lookup_table, NULL, NULL);
+
     wl_free(pl->pl_commands);
     if (pl->pl_ccom)    /* va: also tfree (memory leak) */
         throwaway(pl->pl_ccom);
