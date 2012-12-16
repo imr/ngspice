@@ -199,7 +199,7 @@ fourier(wordlist *wl, struct plot *current_plot)
             ZERO(n, struct dvec);
             n->v_name = copy(newvecname);
             n->v_type = SV_NOTYPE;
-            n->v_flags = (1 | VF_PERMANENT);
+            n->v_flags = (VF_REAL | VF_PERMANENT);
             n->v_length = 3 * nfreqs;
             n->v_numdims = 2;
             n->v_dims[0] = 3;
