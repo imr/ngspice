@@ -72,3 +72,15 @@ NDEVacct(CKTcircuit *ckt, FILE *file)
 }
 
 #endif
+
+/* DEVLIB hack */
+#ifdef DEVLIB
+int load_dev (char *) ;
+
+int load_dev (char *name)
+{
+    NG_IGNORE (name) ;
+
+    return 0 ;
+}
+#endif

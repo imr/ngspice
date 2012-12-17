@@ -8,7 +8,7 @@ File: b3soifditf.h
 
 #include "b3soifdext.h"
 
-SPICEdev *get_b3soifd_info (void);
+SPICEdev *get_bsim3soifd_info (void);
 
 #endif
 

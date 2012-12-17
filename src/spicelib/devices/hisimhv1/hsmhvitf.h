@@ -18,6 +18,6 @@
 #ifndef DEV_HISIMHV
 #define DEV_HISIMHV
 
-SPICEdev *get_hsmhv_info(void);
+SPICEdev *get_hisimhv1_info(void);
 
 #endif

@@ -37,7 +37,7 @@
 #include "ngspice/memory.h" /* to alloc, realloc devices*/
 
 
-#ifdef XSPICE
+#if defined(XSPICE) || defined(DEVLIB)
 /*saj headers for xspice*/
 #include <string.h> /* for strcpy, strcat*/
 #if (!defined HAS_WINDOWS) && (!defined __MINGW32__) && (!defined _MSC_VER)
@@ -59,6 +59,7 @@ char *dlerror (void);
 #define RTLD_GLOBAL	4	/* symbols in this dlopen'ed obj are visible to other dlopen'ed objs */
 static char errstr[128];
 #endif /* ifndef HAS_WINDOWS */
+#ifdef XSPICE
 #include "ngspice/dllitf.h" /* the coreInfo Structure*/
 #include "ngspice/evtudn.h" /*Use defined nodes */
 
@@ -70,9 +71,12 @@ extern Evt_Udn_Info_t idn_digital_info;
 int add_device(int n, SPICEdev **devs, int flag);
 int add_udn(int,Evt_Udn_Info_t **);
 /*saj*/
+#else
+int add_device_init (int, SPICEdev **) ;
+#endif /* XSPICE */
 #endif
 
-
+#ifndef DEVLIB
 #include "asrc/asrcitf.h"
 #include "bjt/bjtitf.h"
 #include "bsim1/bsim1itf.h"
@@ -139,10 +143,13 @@ int add_udn(int,Evt_Udn_Info_t **);
 #ifdef NDEV
 #include "ndev/ndevitf.h"
 #endif
+#endif /* DEVLIB */
 
 /*saj in xspice the DEVices size can be varied so DEVNUM is an int*/
-#if defined XSPICE
+#if defined(XSPICE)
    static int DEVNUM = 63;
+#elif defined(DEVLIB)
+   static int DEVNUM = 0 ;
 #else
    #define DEVNUM 63
 #endif
@@ -176,7 +183,6 @@ spice_destroy_devices(void)
     tfree(DEVices);
 }
 
-
 void
 spice_init_devices(void)
 {
@@ -190,6 +196,9 @@ spice_init_devices(void)
     /* tmalloc should automatically zero the array! */
 #endif
 
+#ifdef DEVLIB
+    load_alldevs () ;
+#else
     DEVices = TMALLOC(SPICEdev *, DEVNUM);
     /* URC device MUST precede both resistors and capacitors */
     DEVices[ 0] = get_urc_info();
@@ -201,14 +210,14 @@ spice_init_devices(void)
     DEVices[ 6] = get_bsim3v0_info();
     DEVices[ 7] = get_bsim3v1_info();
     DEVices[ 8] = get_bsim3v32_info();
-    DEVices[ 9] = get_b4soi_info();
+    DEVices[ 9] = get_bsim4soi_info();
     DEVices[10] = get_bsim4_info();
     DEVices[11] = get_bsim4v4_info();
     DEVices[12] = get_bsim4v5_info();
     DEVices[13] = get_bsim4v6_info();
-    DEVices[14] = get_b3soipd_info();
-    DEVices[15] = get_b3soifd_info();
-    DEVices[16] = get_b3soidd_info();
+    DEVices[14] = get_bsim3soipd_info();
+    DEVices[15] = get_bsim3soifd_info();
+    DEVices[16] = get_bsim3soidd_info();
     DEVices[17] = get_cap_info();
     DEVices[18] = get_cccs_info();
     DEVices[19] = get_ccvs_info();
@@ -276,7 +285,7 @@ spice_init_devices(void)
 #endif
    DEVices[60] = NULL;
    DEVices[61] = NULL;
-
+#endif /* DEVLIB */
 
    return;
 }
@@ -301,16 +310,17 @@ SPICEdev ** devices(void)
 /*not yet usable*/
 
 #ifdef ADMS
-#define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v4", "bsim4v5", "bsim4v6", \
+#define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v1", "bsim4", "bsim4v4", "bsim4v5", "bsim4v6", \
                       "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv1", \
                       "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \
                       "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum0", "hicum2", "bjt504t", "ekv", "psp102"}
 #else
-#define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v4", "bsim4v5", "bsim4v6", \
+#define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v1", "bsim4", "bsim4v4", "bsim4v5", "bsim4v6", \
                       "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv1", \
                       "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \
                       "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc"}
 #endif
+
 int load_dev(char *name) {
   char *msg;
   char libname[50];
@@ -340,7 +350,9 @@ int load_dev(char *name) {
     return 1;
   }
   device = ((SPICEdev * (*)(void)) fetch) ();
-  add_device(1,&device,0);
+
+  add_device_init (1, &device) ;
+
   return 0;
 }
 
@@ -352,7 +364,24 @@ void load_alldevs(void){
     load_dev(devs[i]);
   return;
 }
+
+#ifndef XSPICE
+int add_device_init (int n, SPICEdev **devs)
+{
+  int i;
+  DEVices = TREALLOC(SPICEdev *, DEVices, DEVNUM + n);
+  for(i = 0; i < n;i++){
+#ifdef TRACE
+      printf("Added device: %s\n",devs[i]->DEVpublic.name);
 #endif
+    DEVices[DEVNUM+i] = devs[i];
+  }
+
+  DEVNUM += n;
+  return 0;
+}
+#endif /* XSPICE */
+#endif /* DEVLIB */
 
 /*--------------------   XSPICE additions below  ----------------------*/
 #ifdef XSPICE

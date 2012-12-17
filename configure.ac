@@ -185,6 +185,14 @@ if test "x$with_editline" = xyes; then
     fi
 fi
 
+# --enable-devlib: Enable Dynamic Loading of NGSPICE Libraries
+AC_ARG_ENABLE([devlib],
+    [AS_HELP_STRING([--enable-devlib], [Enable Dynamic Loading of NGSPICE Libraries])])
+if test "x$enable_devlib" = xyes; then
+    AC_MSG_RESULT([Dynamic Loading of NGSPICE Libraries ENABLED])
+    AC_DEFINE([DEVLIB], [], [Enable Dynamic Loading of NGSPICE Libraries])
+fi
+AM_CONDITIONAL([DEVLIB_WANTED], [test "x$enable_devlib" = xyes])
 
 # Enable maintainer commands only if requested
 AM_MAINTAINER_MODE

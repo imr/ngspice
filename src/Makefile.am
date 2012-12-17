@@ -98,6 +98,10 @@ ngspice_SOURCES = \
 
 ngspice_CPPFLAGS = $(AM_CPPFLAGS) -DSIMULATOR
 
+if DEVLIB_WANTED
+ngspice_LDFLAGS = -rdynamic
+endif
+
 if WINDOWS
 ngspice_SOURCES += winmain.c
 endif
@@ -113,9 +117,15 @@ endif
 ngspice_LDADD += \
 	frontend/plotting/libplotting.la
 
+if !DEVLIB_WANTED
 ngspice_LDADD += \
-	spicelib/devices/dev.lo \
+	spicelib/devices/dev.lo
+endif
+
+if !DEVLIB_WANTED
+ngspice_LDADD += \
 	$(DYNAMIC_DEVICELIBS)
+endif
 
 if NDEV_WANTED
 ngspice_LDADD += spicelib/devices/ndev/libndev.la
@@ -130,6 +140,9 @@ ngspice_LDADD += \
 	spicelib/devices/numos/libnumos.la
 endif
 
+if DEVLIB_WANTED
+ngspice_LDFLAGS += -Wl,--whole-archive,spicelib/analysis/.libs/libckt.a,spicelib/devices/.libs/libdev.a -Wl,--no-whole-archive
+endif
 ngspice_LDADD += \
 	spicelib/analysis/libckt.la \
 	spicelib/devices/libdev.la
@@ -159,6 +172,9 @@ ngspice_LDADD += \
 	ciderlib/support/libcidersuprt.la
 endif
 
+if DEVLIB_WANTED
+ngspice_LDFLAGS += -Wl,--whole-archive,maths/ni/.libs/libni.a,maths/deriv/.libs/libderiv.a -Wl,--no-whole-archive
+endif
 ngspice_LDADD += \
 	maths/deriv/libderiv.la \
 	maths/cmaths/libcmaths.la \
@@ -198,6 +214,9 @@ ngnutmeg_LDADD += \
 	frontend/wdisp/libwindisp.la
 endif
 
+if DEVLIB_WANTED
+ngspice_LDFLAGS += -Wl,--whole-archive,frontend/trannoise/.libs/libtrannoise.a -Wl,--no-whole-archive
+endif
 ngnutmeg_LDADD += \
 	frontend/plotting/libplotting.la \
 	frontend/parser/libparser.la \

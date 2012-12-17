@@ -1,6 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
+if DEVLIB_WANTED
+lib_LTLIBRARIES = libcpl.la
+else
 noinst_LTLIBRARIES = libcpl.la
+endif
 
 libcpl_la_SOURCES = \
 	cpl.c      \
@@ -20,6 +24,10 @@ libcpl_la_SOURCES = \
 	cplinit.c
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+if DEVLIB_WANTED
+AM_CFLAGS = -fPIC
+AM_LDFLAGS = -shared
+else
 AM_CFLAGS = $(STATIC)
-
+endif
 MAINTAINERCLEANFILES = Makefile.in

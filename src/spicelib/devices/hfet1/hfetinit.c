@@ -78,7 +78,7 @@ SPICEdev HFETAinfo = {
 
 
 SPICEdev *
-get_hfeta_info(void)
+get_hfet_info(void)
 {
     return &HFETAinfo;
 }

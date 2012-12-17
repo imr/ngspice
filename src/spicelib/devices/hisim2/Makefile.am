@@ -1,8 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
-EXTRA_DIST =
-
+if DEVLIB_WANTED
+lib_LTLIBRARIES = libhisim2.la
+else
 noinst_LTLIBRARIES = libhisim2.la
+endif
 
 libhisim2_la_SOURCES =	hisim2.h	\
 			hsm2.c		\
@@ -32,6 +34,10 @@ libhisim2_la_SOURCES =	hisim2.h	\
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+if DEVLIB_WANTED
+AM_CFLAGS = -fPIC
+AM_LDFLAGS = -shared
+else
 AM_CFLAGS = $(STATIC)
-
+endif
 MAINTAINERCLEANFILES = Makefile.in

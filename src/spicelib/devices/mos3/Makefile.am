@@ -1,6 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
+if DEVLIB_WANTED
+lib_LTLIBRARIES = libmos3.la
+else
 noinst_LTLIBRARIES = libmos3.la
+endif
 
 libmos3_la_SOURCES =	\
 	mos3.c		\
@@ -35,5 +39,10 @@ libmos3_la_SOURCES =	\
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+if DEVLIB_WANTED
+AM_CFLAGS = -fPIC
+AM_LDFLAGS = -shared
+else
 AM_CFLAGS = $(STATIC)
+endif
 MAINTAINERCLEANFILES = Makefile.in

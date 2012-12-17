@@ -1,6 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
+if DEVLIB_WANTED
+lib_LTLIBRARIES = libbsim3soidd.la
+else
 noinst_LTLIBRARIES = libbsim3soidd.la
+endif
 
 libbsim3soidd_la_SOURCES = \
 	b3soidd.c	\
@@ -30,8 +34,12 @@ libbsim3soidd_la_SOURCES = \
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+if DEVLIB_WANTED
+AM_CFLAGS = -fPIC
+AM_LDFLAGS = -shared
+else
 AM_CFLAGS = $(STATIC)
-
+endif
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = BsimTerms_use

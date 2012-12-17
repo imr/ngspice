@@ -1,7 +1,7 @@
 #ifndef DEV_HFETA
 #define DEV_HFETA
 
-SPICEdev *get_hfeta_info(void);
+SPICEdev *get_hfet_info(void);
 
 #endif
 

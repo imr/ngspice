@@ -75,7 +75,7 @@ SPICEdev B3SOIPDinfo = {
 };
 
 SPICEdev *
-get_b3soipd_info (void)
+get_bsim3soipd_info (void)
 {
   return &B3SOIPDinfo;
 }

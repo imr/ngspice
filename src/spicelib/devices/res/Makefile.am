@@ -1,6 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
+if DEVLIB_WANTED
+lib_LTLIBRARIES = libres.la
+else
 noinst_LTLIBRARIES = libres.la
+endif
 
 libres_la_SOURCES =	\
 	res.c		\
@@ -29,5 +33,10 @@ libres_la_SOURCES =	\
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+if DEVLIB_WANTED
+AM_CFLAGS = -fPIC
+AM_LDFLAGS = -shared
+else
 AM_CFLAGS = $(STATIC)
+endif
 MAINTAINERCLEANFILES = Makefile.in

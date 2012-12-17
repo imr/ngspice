@@ -12,7 +12,7 @@ File: b4soiitf.h
 
 #include "b4soiext.h"
 
-SPICEdev *get_b4soi_info (void);
+SPICEdev *get_bsim4soi_info (void);
 
 #endif
 
