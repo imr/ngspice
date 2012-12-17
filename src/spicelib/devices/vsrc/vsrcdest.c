@@ -24,6 +24,8 @@ VSRCdestroy(GENmodel **inModel)
         oldmod = mod;
         prev = NULL;
         for(here = mod->VSRCinstances ; here ; here = here->VSRCnextInstance) {
+            tfree(here->VSRCcoeffs);
+            tfree(here->VSRC_state);
             if(prev) FREE(prev);
             prev = here;
         }
