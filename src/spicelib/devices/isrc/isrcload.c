@@ -424,7 +424,6 @@ INoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
 
                 } // switch
             } // else (line 48)
-loadDone:
 
 /* gtri - begin - wbk - modify for supply ramping option */
 #ifdef XSPICE_EXP
