@@ -38,7 +38,7 @@ VSRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
             }
 
             if(here->VSRCbranch == 0) {
-                error = CKTmkCur(ckt,&tmp,here->VSRCname,"branch");
+                error = CKTmkCur(ckt,&tmp,here->VSRCname,"branch"); /* !! */
                 if(error) return(error);
                 here->VSRCbranch = tmp->number;
             }

@@ -21,7 +21,7 @@ static void copy_coeffs(VSRCinstance *here, IFvalue *value)
     if(here->VSRCcoeffs)
         tfree(here->VSRCcoeffs);
 
-    here->VSRCcoeffs = TMALLOC(double, n);
+    here->VSRCcoeffs = TMALLOC(double, n); /* !! */
     here->VSRCfunctionOrder = n;
     here->VSRCcoeffsGiven = TRUE;
 

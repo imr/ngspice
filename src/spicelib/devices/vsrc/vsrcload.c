@@ -102,7 +102,7 @@ pwl_state_init(struct pwl_state *this, VSRCinstance *here)
 #endif
 
     if (!this)
-        this = TMALLOC(struct pwl_state, 1);
+        this = TMALLOC(struct pwl_state, 1); /* !! */
 
     this->len = here->VSRCfunctionOrder;
     this->arr = here->VSRCcoeffs;
