@@ -107,10 +107,10 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             for (i=0; i<(here->VSRCfunctionOrder/2)-1; i++) {
                 if (here->VSRCcoeffs[2*i + 2] < here->VSRCcoeffs[2*i]) {
                     fprintf(stderr,
-                            "Warning : voltage source %s"
-                            " has non-increasing PWL time points.\n",
+                            "ERROR: voltage source %s,"
+                            " PWL time stamps are not allowed to decrease.\n",
                             here->VSRCname);
-                    break;
+                    return(E_PARMVAL);
                 }
             }
 

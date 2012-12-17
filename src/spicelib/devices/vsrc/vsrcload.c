@@ -20,8 +20,13 @@ Modified: 2000 AlansFixes
 
 
 static double
-pwl_state_get(struct pwl_state *this, double time, double td, double tp, int XrBreakpt)
+pwl_state_get(struct pwl_state *this, double time)
 {
+    double td = this->td;
+    double tp = this->tp;
+
+    int rBreakpt = this->rBreakpt;
+
     /* fixme, enter mehrmals im sägezahn ...
      *   1) optimier dafür
      *   2) stelle sicher, dass das jeweils höchste timestamp zum zug kommt
@@ -54,13 +59,13 @@ pwl_state_get(struct pwl_state *this, double time, double td, double tp, int XrB
              *   suffices t1 == t2
              */
 
-            this->position = XrBreakpt;
+            this->position = rBreakpt;
             this->rpt_cnt++;
             continue;
         }
 
         if (time < t1) {
-            if (this->position > XrBreakpt) { /*fixme must be 0 !! vfor non repeat*/
+            if (this->position > rBreakpt) {
                 this->position -= 2;
                 continue;
             }
@@ -89,10 +94,21 @@ static void
 pwl_state_init(struct pwl_state *this, VSRCinstance *here)
 {
 
+#if 0
+    assert
+        ( here->VSRCrGiven
+          ? here->VSRCr >= 0 && here->VSRCrperiod  > 0 && here->VSRCrBreakpt >= 0
+          : here->VSRCr == 0 && here->VSRCrperiod == 0 && here->VSRCrBreakpt == 0 );
+#endif
+
     this->len = here->VSRCfunctionOrder;
     this->arr = here->VSRCcoeffs;
     this->position = 0;
     this->rpt_cnt = 0;
+
+    this->td = here->VSRCrdelay;
+    this->tp = here->VSRCrperiod;
+    this->rBreakpt = here->VSRCrBreakpt;
 }
 
 
@@ -371,23 +387,12 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 
                     case PWL: {
 
-                        struct pwl_state *state;
-
-                        double td = here->VSRCrdelay;
-                        double tp = here->VSRCrperiod;
-
                         if (!here->VSRC_state) {
                             here->VSRC_state = TMALLOC(struct pwl_state, 1);
                             pwl_state_init((struct pwl_state *) here->VSRC_state, here);
                         }
 
-                        state = (struct pwl_state *) here -> VSRC_state;
-
-                        if (here->VSRCrGiven) {
-                            value = pwl_state_get(state, time, td, tp, here->VSRCrBreakpt);
-                        } else {
-                            value = pwl_state_get(state, time, td, 0.0, 0);
-                        }
+                        value = pwl_state_get((struct pwl_state *) here -> VSRC_state, time);
                     }
                     break;
 

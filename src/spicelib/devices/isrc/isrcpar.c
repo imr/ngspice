@@ -105,12 +105,13 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             copy_coeffs(here, value);
 
             for (i=0; i<(here->ISRCfunctionOrder/2)-1; i++) {
-                  /* fixme identical soll erlaubt werden */
-                  if (*(here->ISRCcoeffs+2*(i+1))<=*(here->ISRCcoeffs+2*i)) {
-                     fprintf(stderr, "Warning : current source %s",
-                                                               here->ISRCname);
-                     fprintf(stderr, " has non-increasing PWL time points.\n");
-                  }
+                if (here->ISRCcoeffs[2*i + 2] < here->ISRCcoeffs[2*i]) {
+                    fprintf(stderr,
+                            "ERROR: current source %s,"
+                            " PWL time stamps are not allowed to decrease.\n",
+                            here->ISRCname);
+                    return(E_PARMVAL);
+                }
             }
 
             break;
@@ -120,28 +121,30 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             break;
 
         case ISRC_R: {
-            double end_time;
-            here->ISRCr = value->rValue;
-            here->ISRCrGiven = TRUE;
+            double Tr = value->rValue;
+            double Tperiod;
 
-            for ( i = 0; i < here->ISRCfunctionOrder; i += 2 ) {
-              here->ISRCrBreakpt = i;
-                  if ( here->ISRCr == *(here->ISRCcoeffs+i) ) break;
+            for ( i = 0; i < here->ISRCfunctionOrder; i += 2 )
+                if ( Tr == here->ISRCcoeffs[i] )
+                    break;
+
+            if (i == here->ISRCfunctionOrder) {
+                fprintf(stderr, "ERROR: repeat start time value %g for pwl current source does not match any time point given!\n", Tr );
+                return ( E_PARMVAL );
             }
 
-            end_time     = *(here->ISRCcoeffs + here->ISRCfunctionOrder-2);
-            /* actually ok, würde stationaer bedeuten ... und ist so gut wie no repeat */
-            if ( here->ISRCr > end_time ) {
-              fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source must be smaller than final time point given!\n", here->ISRCr );
-              return ( E_PARMVAL );
+            Tperiod =
+                here->ISRCcoeffs[here->ISRCfunctionOrder-2] - Tr;
+
+            if (Tperiod == 0.0) {
+                fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source would cause a period of 0\n", Tr );
+                return ( E_PARMVAL );
             }
 
-            if ( here->ISRCr != *(here->ISRCcoeffs+here->ISRCrBreakpt) ) {
-              fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source does not match any time point given!\n", here->ISRCr );
-              return ( E_PARMVAL );
-            }
-
-            here ->ISRCrperiod = end_time - here->ISRCcoeffs[here->ISRCrBreakpt];
+            here->ISRCrGiven   = TRUE;
+            here->ISRCr        = Tr;
+            here->ISRCrperiod  = Tperiod;
+            here->ISRCrBreakpt = i;
         }
         break;
 
