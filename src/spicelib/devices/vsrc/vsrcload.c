@@ -18,6 +18,55 @@ Modified: 2000 AlansFixes
 /* gtri - end   - wbk - modify for supply ramping option */
 #endif
 
+
+static double
+pwl_state_get(struct pwl_state *this, double time)
+{
+    for (;;) {
+
+        double t1 = this->arr[this->position + 0];
+        double t2 = this->arr[this->position + 2];
+
+        double v1, v2;
+
+        if (time >= t2) {
+            if (this->position+4 >= this->len)
+                return this->arr[this->len-1];
+            this->position += 2;
+            continue;
+        }
+
+        if (time < t1) {
+            if (this->position == 0)
+                return this->arr[1];
+            this->position = 0;
+            continue;
+        }
+
+        /* invariant:  t1 <= time < t2  ==> t1 != t2 */
+
+        v1 = this->arr[this->position + 1];
+        v2 = this->arr[this->position + 3];
+
+        return v1 + ((v2-v1)/(t2-t1)) * (time - t1);
+    }
+}
+
+
+static void
+pwl_state_init(struct pwl_state *this, VSRCinstance *here)
+{
+
+    this->len = here->VSRCfunctionOrder;
+    this->arr = here->VSRCcoeffs;
+    this->position = 0;
+    this->bpoint = 0;
+}
+
+
+/*-----------------------------------------------------------------------------*/
+
+
 int
 VSRCload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current value into the
@@ -289,45 +338,22 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                     break;
 
                     case PWL: {
-                        int i = 0, num_repeat = 0, ii = 0;
-                        double foo, repeat_time = 0, end_time, breakpt_time, itime;
 
-                        time -= here->VSRCrdelay;
+                        struct pwl_state *state;
 
-                        if(time < *(here->VSRCcoeffs)) {
-                            foo = *(here->VSRCcoeffs + 1) ;
-                            value = foo;
-                            goto loadDone;
+                        if (!here->VSRC_state) {
+                            here->VSRC_state = TMALLOC(struct pwl_state, 1);
+                            pwl_state_init((struct pwl_state *) here->VSRC_state, here);
                         }
 
-                        do {
-                            for(i=ii ; i<(here->VSRCfunctionOrder/2)-1; i++ ) {
-                                itime = *(here->VSRCcoeffs+2*i);
-                                if (  AlmostEqualUlps(itime+repeat_time, time, 3 )) {
-                                    foo   = *(here->VSRCcoeffs+2*i+1);
-                                    value = foo;
-                                    goto loadDone;
-                                } else if ( (*(here->VSRCcoeffs+2*i)+repeat_time < time)
-                                   && (*(here->VSRCcoeffs+2*(i+1))+repeat_time > time) ) {
-                                    foo   = *(here->VSRCcoeffs+2*i+1) + (((time-(*(here->VSRCcoeffs+2*i)+repeat_time))/
-                                       (*(here->VSRCcoeffs+2*(i+1)) - *(here->VSRCcoeffs+2*i))) *
-                                       (*(here->VSRCcoeffs+2*i+3)    - *(here->VSRCcoeffs+2*i+1)));
-                                    value = foo;
-                                    goto loadDone;
-                                }
-                            }
-                            foo = *(here->VSRCcoeffs+ here->VSRCfunctionOrder-1) ;
-                            value = foo;
+                        state = (struct pwl_state *) here -> VSRC_state;
 
-                            if ( !here->VSRCrGiven ) goto loadDone;
+                        /* fixme repeat value ignored */
+                        value = pwl_state_get(state, time - here->VSRCrdelay);
 
-                            end_time = *(here->VSRCcoeffs + here->VSRCfunctionOrder-2);
-                            breakpt_time = *(here->VSRCcoeffs + here->VSRCrBreakpt);
-                            repeat_time  = end_time + (end_time - breakpt_time)*num_repeat++ - breakpt_time;
-                            ii            = here->VSRCrBreakpt/2;
-                        } while ( here->VSRCrGiven );
-                        break;
+                        goto loadDone;
                     }
+                    break;
 
 /**** tansient noise routines:
 VNoi2 2 0  DC 0 TRNOISE(10n 0.5n 0 0n) : generate gaussian distributed noise

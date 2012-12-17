@@ -52,9 +52,12 @@ typedef struct sVSRCinstance {
 
     struct trnoise_state *VSRCtrnoise_state; /* transient noise */
     struct trrandom_state *VSRCtrrandom_state; /* transient random source */
+    struct pwl_state *VSRC_state;
 
+    int nxt, rpt;
     double VSRCr;           /* pwl repeat */
     double VSRCrdelay;     /* pwl delay period */
+    double VSRCrperiod;
     double *VSRCposIbrptr;  /* pointer to sparse matrix element at
                              * (positive node, branch equation) */
     double *VSRCnegIbrptr;  /* pointer to sparse matrix element at
@@ -76,6 +79,15 @@ typedef struct sVSRCinstance {
     unsigned VSRCdF2given    :1 ;  /* flag to indicate source is an f2 distortion input */
     unsigned VSRCrGiven      :1 ;  /* flag to indicate repeating pwl */
 } VSRCinstance ;
+
+
+struct pwl_state
+{
+    double *arr;
+    int len;
+    int position;
+    int bpoint;
+};
 
 
 /* per model data */

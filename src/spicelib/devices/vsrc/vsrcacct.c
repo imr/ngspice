@@ -165,22 +165,75 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     break;
 
                     case PWL: {
-                        int i;
-                        if(ckt->CKTtime < *(here->VSRCcoeffs)) {
+                        double td = here->VSRCrdelay;
+                        double tp = here->VSRCrperiod;
+                        volatile double bp;
+
+                        if (ckt->CKTtime < here->VSRCcoeffs [0] + td) {
+                            here->nxt = 0;
+                            here->rpt = 0;
                             if(ckt->CKTbreak) {
-                                error = CKTsetBreak(ckt,*(here->VSRCcoeffs));
+                                error = CKTsetBreak(ckt, here->VSRCcoeffs [0] + td);
                                 break;
                             }
                         }
-                        for(i=0;i<(here->VSRCfunctionOrder/2)-1;i++) {
-                            if ( ckt->CKTbreak && AlmostEqualUlps(*(here->VSRCcoeffs+2*i), ckt->CKTtime, 3 ) ) {
-                                error = CKTsetBreak(ckt, *(here->VSRCcoeffs+2*i+2));
-                                if(error) return(error);
-                                goto bkptset;
+
+                        /* check td + first >= 0 */
+
+                        /*
+                         * Postition:
+                         *   nxt = [0, order[
+                         *   rpt = [0.. [
+                         * with
+                         *   time == arr[nxt] + rpt*period + td
+                         *
+                         * (fixme, no thats inclusive see above)
+                         *
+                         * evtl ==order als Ende Kriterium,  !!! must
+                         */
+
+                        /* (libc) Remainder Functions, `same sign ...' and magnitude ... */
+
+#if 0
+                        if (repeat && (time > tstart))
+                            rest = tstart + fmod(time - tstart, period);
+                        else
+                            rest = time;
+#endif
+
+                        if (!ckt->CKTbreak || here->nxt >= here->VSRCfunctionOrder)
+                            break;
+
+                        bp = here->VSRCcoeffs[here->nxt] + td + (here->rpt * tp);
+
+                        if (!AlmostEqualUlps(bp, ckt->CKTtime, 3))
+                            break;
+
+                        for (;;) {
+                            volatile double t;
+
+                            here->nxt += 2;
+                            if (here->nxt >= here->VSRCfunctionOrder) {
+                                if (!here->VSRCrGiven)
+                                    break;
+                                here->nxt = here->VSRCrBreakpt;
+                                here->rpt++;
                             }
+
+                            t = here->VSRCcoeffs[here->nxt] + td + (here->rpt * tp);
+
+                            /* CKTtime isn't exactly identical to bp, thus ... */
+                            if (t <= ckt->CKTtime || t <= bp)
+                                continue;
+
+                            bp = t;
+                            error = CKTsetBreak(ckt, bp);
+                            if (error)
+                                return(error);
+                            break;
                         }
-                        break;
                     }
+                    break;
 
     /**** tansient noise routines:
     VNoi2 2 0  DC 0 TRNOISE(10n 0.5n 0 0n) : generate gaussian distributed noise
@@ -289,7 +342,6 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 
                 } // switch
             } // if ... else
-bkptset: ;
         } // for
     } // for
 

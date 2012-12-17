@@ -105,6 +105,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             copy_coeffs(here, value);
 
             for (i=0; i<(here->VSRCfunctionOrder/2)-1; i++) {
+                  /* fixme identical soll erlaubt werden */
                   if (*(here->VSRCcoeffs+2*(i+1))<=*(here->VSRCcoeffs+2*i)) {
                      fprintf(stderr, "Warning : voltage source %s",
                                                                here->VSRCname);
@@ -129,6 +130,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             }
 
             end_time     = *(here->VSRCcoeffs + here->VSRCfunctionOrder-2);
+            /* actually ok, würde stationaer bedeuten ... und ist so gut wie no repeat */
             if ( here->VSRCr > end_time ) {
               fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source must be smaller than final time point given!\n", here->VSRCr );
               return ( E_PARMVAL );
@@ -139,8 +141,9 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
               return ( E_PARMVAL );
             }
 
-            break;
+            here ->VSRCrperiod = end_time - here->VSRCcoeffs[here->VSRCrBreakpt];
         }
+        break;
 
         case VSRC_SFFM:
             if(value->v.numValue < 2)
