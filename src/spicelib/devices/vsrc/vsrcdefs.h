@@ -10,6 +10,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/cktdefs.h"
 #include "ngspice/gendefs.h"
 #include "ngspice/complex.h"
+#include "uisrc.h"
 
 struct trnoise_state;
 
@@ -79,15 +80,6 @@ typedef struct sVSRCinstance {
     unsigned VSRCdF2given    :1 ;  /* flag to indicate source is an f2 distortion input */
     unsigned VSRCrGiven      :1 ;  /* flag to indicate repeating pwl */
 } VSRCinstance ;
-
-
-struct pwl_state
-{
-    double *arr;
-    int len;
-    int position;
-    int bpoint;
-};
 
 
 /* per model data */

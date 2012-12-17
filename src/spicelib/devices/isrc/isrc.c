@@ -40,6 +40,8 @@ IFparm ISRCpTable[] = { /* parameters */
  OP  ("current", ISRC_CURRENT,   IF_REAL,   "Current in DC or Transient mode"),
 #endif
 /* gtri - end - add parameter for current source value */
+ IP  ("r",       ISRC_R,         IF_REAL,   "pwl repeat value"),
+ IP  ("td",      ISRC_TD,        IF_REAL,   "pwl delay value"),
  IP  ("distof1", ISRC_D_F1,      IF_REALVEC,"f1 input for distortion"),
  IP  ("distof2", ISRC_D_F2,      IF_REALVEC,"f2 input for distortion")
 };

@@ -10,6 +10,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/cktdefs.h"
 #include "ngspice/gendefs.h"
 #include "ngspice/complex.h"
+#include "uisrc.h"
 
 /*
  * structures to describe independent current sources
@@ -30,6 +31,7 @@ typedef struct sISRCinstance {
 
     int ISRCfunctionType;   /* code number of function type for source */
     int ISRCfunctionOrder;  /* order of the function for the source */
+    int ISRCrBreakpt;       /* pwl repeat breakpoint index */
     double *ISRCcoeffs; /* pointer to array of coefficients */
 
     double ISRCdcValue; /* DC and TRANSIENT value of source */
@@ -47,6 +49,12 @@ typedef struct sISRCinstance {
 
     struct trnoise_state *ISRCtrnoise_state; /* transient noise */
     struct trrandom_state *ISRCtrrandom_state; /* transient random source */
+    struct pwl_state *ISRC_state;
+
+    int nxt, rpt;
+    double ISRCr;           /* pwl repeat */
+    double ISRCrdelay;      /* pwl delay period */
+    double ISRCrperiod;
 
 /* gtri - begin - add member to hold current source value */
 #ifdef XSPICE
@@ -64,6 +72,7 @@ typedef struct sISRCinstance {
     unsigned ISRCdGiven      :1 ;  /* flag to indicate source is a distortion input */
     unsigned ISRCdF1given    :1 ;  /* flag to indicate source is an f1 distortion input */
     unsigned ISRCdF2given    :1 ;  /* flag to indicate source is an f2 distortion input */
+    unsigned ISRCrGiven      :1 ;  /* flag to indicate repeating pwl */
 } ISRCinstance ;
 
 
@@ -123,6 +132,8 @@ typedef struct sISRCmodel {
 /* gtri - end - add define for current source value */
 #define ISRC_TRNOISE 25
 #define ISRC_TRRANDOM 26
+#define ISRC_R 27
+#define ISRC_TD 28
 
 /* model parameters */
 

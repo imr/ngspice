@@ -165,22 +165,75 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     break;
 
                     case PWL: {
-                        int i;
-                        if(ckt->CKTtime < *(here->ISRCcoeffs)) {
+                        double td = here->ISRCrdelay;
+                        double tp = here->ISRCrperiod;
+                        volatile double bp;
+
+                        if (ckt->CKTtime < here->ISRCcoeffs [0] + td) {
+                            here->nxt = 0;
+                            here->rpt = 0;
                             if(ckt->CKTbreak) {
-                                error = CKTsetBreak(ckt,*(here->ISRCcoeffs));
+                                error = CKTsetBreak(ckt, here->ISRCcoeffs [0] + td);
                                 break;
                             }
                         }
-                        for(i=0;i<(here->ISRCfunctionOrder/2)-1;i++) {
-                            if ( ckt->CKTbreak && AlmostEqualUlps(*(here->ISRCcoeffs+2*i), ckt->CKTtime, 3 ) ) {
-                                error = CKTsetBreak(ckt, *(here->ISRCcoeffs+2*i+2));
-                                if(error) return(error);
-                                goto bkptset;
+
+                        /* check td + first >= 0 */
+
+                        /*
+                         * Postition:
+                         *   nxt = [0, order[
+                         *   rpt = [0.. [
+                         * with
+                         *   time == arr[nxt] + rpt*period + td
+                         *
+                         * (fixme, no thats inclusive see above)
+                         *
+                         * evtl ==order als Ende Kriterium,  !!! must
+                         */
+
+                        /* (libc) Remainder Functions, `same sign ...' and magnitude ... */
+
+#if 0
+                        if (repeat && (time > tstart))
+                            rest = tstart + fmod(time - tstart, period);
+                        else
+                            rest = time;
+#endif
+
+                        if (!ckt->CKTbreak || here->nxt >= here->ISRCfunctionOrder)
+                            break;
+
+                        bp = here->ISRCcoeffs[here->nxt] + td + (here->rpt * tp);
+
+                        if (!AlmostEqualUlps(bp, ckt->CKTtime, 3))
+                            break;
+
+                        for (;;) {
+                            volatile double t;
+
+                            here->nxt += 2;
+                            if (here->nxt >= here->ISRCfunctionOrder) {
+                                if (!here->ISRCrGiven)
+                                    break;
+                                here->nxt = here->ISRCrBreakpt;
+                                here->rpt++;
                             }
+
+                            t = here->ISRCcoeffs[here->nxt] + td + (here->rpt * tp);
+
+                            /* CKTtime isn't exactly identical to bp, thus ... */
+                            if (t <= ckt->CKTtime || t <= bp)
+                                continue;
+
+                            bp = t;
+                            error = CKTsetBreak(ckt, bp);
+                            if (error)
+                                return(error);
+                            break;
                         }
-                        break;
                     }
+                    break;
 
     /**** tansient noise routines:
     INoi2 2 0  DC 0 TRNOISE(10n 0.5n 0 0n) : generate gaussian distributed noise
@@ -200,7 +253,7 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         /* FIXME, dont' want this here, over to aof_get or somesuch */
                         if (ckt->CKTtime == 0.0) {
                             if (ft_ngdebug)
-                                printf("VSRC: free fft tables\n");
+                                printf("ISRC: free fft tables\n");
                             fftFree();
                         }
 
@@ -289,7 +342,6 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 
                 } // switch
             } // if ... else
-bkptset: ;
         } // for
     } // for
 

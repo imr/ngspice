@@ -70,6 +70,12 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
         case ISRC_AC_IMAG:
             value->rValue = here->ISRCacImag;
             return (OK);
+        case ISRC_R:
+            value->rValue = here->ISRCr;
+            return (OK);
+        case ISRC_TD:
+            value->rValue = here->ISRCrdelay;
+            return (OK);
         case ISRC_FCN_ORDER:
             value->rValue = here->ISRCfunctionOrder;
             return (OK);

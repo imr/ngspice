@@ -18,6 +18,64 @@ Modified: 2000 Alansfixes
 /* gtri - end   - wbk - modify for supply ramping option */
 #endif
 
+
+static double
+pwl_state_get(struct pwl_state *this, double time)
+{
+    /* fixme, enter mehrmals im sägezahn ...
+     *   1) optimier dafür
+     *   2) stelle sicher, dass das jeweils höchste timestamp zum zug kommt
+     *       (allow step antwort *)
+     * invariant bei repeat:
+     *   enter time < timof(last-point)
+     *   this->position < indexof(last-point) (fixme really ? wenn es nur 2 points sind zB )
+     */
+
+    for (;;) {
+
+        double t1 = this->arr[this->position + 0];
+        double t2 = this->arr[this->position + 2];
+
+        double v1, v2;
+
+        if (time >= t2) {
+            if (this->position+4 >= this->len)
+                return this->arr[this->len-1];
+            this->position += 2;
+            continue;
+        }
+
+        if (time < t1) {
+            if (this->position == 0)
+                return this->arr[1];
+            this->position = 0;
+            continue;
+        }
+
+        /* invariant:  t1 <= time < t2  ==> t1 != t2 */
+
+        v1 = this->arr[this->position + 1];
+        v2 = this->arr[this->position + 3];
+
+        return v1 + ((v2-v1)/(t2-t1)) * (time - t1);
+    }
+}
+
+
+static void
+pwl_state_init(struct pwl_state *this, ISRCinstance *here)
+{
+
+    this->len = here->ISRCfunctionOrder;
+    this->arr = here->ISRCcoeffs;
+    this->position = 0;
+    this->bpoint = 0;
+}
+
+
+/*-----------------------------------------------------------------------------*/
+
+
 int
 ISRCload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current value into the
@@ -289,30 +347,29 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                     break;
 
                     case PWL: {
-                        int i;
-                        if(time < *(here->ISRCcoeffs)) {
-                            value = *(here->ISRCcoeffs + 1) ;
-                            break;
+
+                        struct pwl_state *state;
+
+                        double td = here->ISRCrdelay;
+                        double tp = here->ISRCrperiod;
+                        double r  = here->ISRCr;
+
+                        if (!here->ISRC_state) {
+                            here->ISRC_state = TMALLOC(struct pwl_state, 1);
+                            pwl_state_init((struct pwl_state *) here->ISRC_state, here);
                         }
-                        for(i=0;i<=(here->ISRCfunctionOrder/2)-1;i++) {
-                            if((*(here->ISRCcoeffs+2*i)==time)) {
-                                value = *(here->ISRCcoeffs+2*i+1);
-                                goto loadDone;
-                            }
-                            if((*(here->ISRCcoeffs+2*i)<time) &&
-                               (*(here->ISRCcoeffs+2*(i+1)) >time)) {
-                                value = *(here->ISRCcoeffs+2*i+1) +
-                                   (((time-*(here->ISRCcoeffs+2*i))/
-                                   (*(here->ISRCcoeffs+2*(i+1)) -
-                                    *(here->ISRCcoeffs+2*i))) *
-                                   (*(here->ISRCcoeffs+2*i+3) -
-                                    *(here->ISRCcoeffs+2*i+1)));
-                                goto loadDone;
-                            }
+
+                        state = (struct pwl_state *) here -> ISRC_state;
+
+                        /* fixme repeat value ignored */
+                        if (here->ISRCrGiven && time - td - r >= 0) {
+                            double t = fmod(time - td - r, tp) + r;
+                            value = pwl_state_get(state, t);
+                        } else {
+                            value = pwl_state_get(state, time - td);
                         }
-                        value = *(here->ISRCcoeffs+ here->ISRCfunctionOrder-1) ;
-                        break;
                     }
+                    break;
 
 /**** tansient noise routines:
 INoi2 2 0  DC 0 TRNOISE(10n 0.5n 0 0n) : generate gaussian distributed noise
