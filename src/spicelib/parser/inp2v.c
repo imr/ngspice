@@ -51,7 +51,7 @@ void INP2V(CKTcircuit *ckt, INPtables * tab, card * current)
     IFC(newInstance, (ckt, tab->defVmod, &fast, name));
     IFC(bindNode, (ckt, fast, 1, node1));
     IFC(bindNode, (ckt, fast, 2, node2));
-    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab)); /* !! */
     if (waslead) {
 	ptemp.rValue = leadval;
 	GCA(INPpName, ("dc", &ptemp, ckt, type, fast));

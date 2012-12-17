@@ -37,7 +37,7 @@ IFvalue *INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables * tab)
 	    /*printf(" returning vector value %g\n",tmp); */
 	    temp.v.numValue++;
 	    list =
-		TREALLOC(double, list, temp.v.numValue);
+		TREALLOC(double, list, temp.v.numValue); /* !! */
 	    *(list + temp.v.numValue - 1) = tmp;
 	    tmp = INPevaluate(line, &error, 1);
 	}

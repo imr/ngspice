@@ -56,7 +56,7 @@ char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 	for (i = 0; i < *(ft_sim->devices[dev]->numInstanceParms); i++) {
 	    if (strcmp(parm, ft_sim->devices[dev]->instanceParms[i].keyword) == 0) {
 		val =
-		    INPgetValue(ckt, line,
+		    INPgetValue(ckt, line, /* !! */
 				ft_sim->devices[dev]->instanceParms[i].dataType,
 				tab);
 		if (!val) {
