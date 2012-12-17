@@ -69,7 +69,7 @@ pwl_state_init(struct pwl_state *this, ISRCinstance *here)
     this->len = here->ISRCfunctionOrder;
     this->arr = here->ISRCcoeffs;
     this->position = 0;
-    this->bpoint = 0;
+#warning "Baustelle, ..."
 }
 
 

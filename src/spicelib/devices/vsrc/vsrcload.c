@@ -20,35 +20,58 @@ Modified: 2000 AlansFixes
 
 
 static double
-pwl_state_get(struct pwl_state *this, double time)
+pwl_state_get(struct pwl_state *this, double time, double td, double tp, int XrBreakpt)
 {
     /* fixme, enter mehrmals im sägezahn ...
      *   1) optimier dafür
      *   2) stelle sicher, dass das jeweils höchste timestamp zum zug kommt
      *       (allow step antwort *)
      * invariant bei repeat:
-     *   enter time < timof(last-point)
      *   this->position < indexof(last-point) (fixme really ? wenn es nur 2 points sind zB )
      */
 
+    /* fixme, einen warp einbauen wenns nicht passt ? */
+
     for (;;) {
 
-        double t1 = this->arr[this->position + 0];
-        double t2 = this->arr[this->position + 2];
+        /* carefully exactly duplicate the math in vsrcacct .. */
+
+        volatile double t1 = this->arr[this->position + 0] + td + (this->rpt_cnt * tp);
+        volatile double t2 = this->arr[this->position + 2] + td + (this->rpt_cnt * tp);
 
         double v1, v2;
 
         if (time >= t2) {
-            if (this->position+4 >= this->len)
+            if (this->position+4 < this->len) {
+                this->position += 2;
+                continue;
+            }
+
+            if (tp == 0.0)
                 return this->arr[this->len-1];
-            this->position += 2;
+
+            /* actually a += 4 step, but the intermediate
+             *   suffices t1 == t2
+             */
+
+            this->position = XrBreakpt;
+            this->rpt_cnt++;
             continue;
         }
 
         if (time < t1) {
-            if (this->position == 0)
+            if (this->position > XrBreakpt) { /*fixme must be 0 !! vfor non repeat*/
+                this->position -= 2;
+                continue;
+            }
+
+            if (tp == 0.0 || this->rpt_cnt == 0)
                 return this->arr[1];
-            this->position = 0;
+
+            /* actually a -= 4 step, but ... */
+
+            this->position = this->len - 4;
+            this->rpt_cnt--;
             continue;
         }
 
@@ -69,7 +92,7 @@ pwl_state_init(struct pwl_state *this, VSRCinstance *here)
     this->len = here->VSRCfunctionOrder;
     this->arr = here->VSRCcoeffs;
     this->position = 0;
-    this->bpoint = 0;
+    this->rpt_cnt = 0;
 }
 
 
@@ -352,7 +375,6 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 
                         double td = here->VSRCrdelay;
                         double tp = here->VSRCrperiod;
-                        double r  = here->VSRCr;
 
                         if (!here->VSRC_state) {
                             here->VSRC_state = TMALLOC(struct pwl_state, 1);
@@ -361,12 +383,10 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 
                         state = (struct pwl_state *) here -> VSRC_state;
 
-                        /* fixme repeat value ignored */
-                        if (here->VSRCrGiven && time - td - r >= 0) {
-                            double t = fmod(time - td - r, tp) + r;
-                            value = pwl_state_get(state, t);
+                        if (here->VSRCrGiven) {
+                            value = pwl_state_get(state, time, td, tp, here->VSRCrBreakpt);
                         } else {
-                            value = pwl_state_get(state, time - td);
+                            value = pwl_state_get(state, time, td, 0.0, 0);
                         }
                     }
                     break;

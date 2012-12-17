@@ -6,7 +6,8 @@ struct pwl_state
     double *arr;
     int len;
     int position;
-    int bpoint;
+    int XrBreakpt;
+    int rpt_cnt;
 };
 
 #endif
