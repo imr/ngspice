@@ -105,12 +105,13 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             copy_coeffs(here, value);
 
             for (i=0; i<(here->VSRCfunctionOrder/2)-1; i++) {
-                  /* fixme identical soll erlaubt werden */
-                  if (*(here->VSRCcoeffs+2*(i+1))<=*(here->VSRCcoeffs+2*i)) {
-                     fprintf(stderr, "Warning : voltage source %s",
-                                                               here->VSRCname);
-                     fprintf(stderr, " has non-increasing PWL time points.\n");
-                  }
+                if (here->VSRCcoeffs[2*i + 2] < here->VSRCcoeffs[2*i]) {
+                    fprintf(stderr,
+                            "Warning : voltage source %s"
+                            " has non-increasing PWL time points.\n",
+                            here->VSRCname);
+                    break;
+                }
             }
 
             break;
@@ -120,28 +121,30 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             break;
 
         case VSRC_R: {
-            double end_time;
-            here->VSRCr = value->rValue;
-            here->VSRCrGiven = TRUE;
+            double Tr = value->rValue;
+            double Tperiod;
 
-            for ( i = 0; i < here->VSRCfunctionOrder; i += 2 ) {
-              here->VSRCrBreakpt = i;
-                  if ( here->VSRCr == *(here->VSRCcoeffs+i) ) break;
+            for ( i = 0; i < here->VSRCfunctionOrder; i += 2 )
+                if ( Tr == here->VSRCcoeffs[i] )
+                    break;
+
+            if (i == here->VSRCfunctionOrder) {
+                fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source does not match any time point given!\n", Tr );
+                return ( E_PARMVAL );
             }
 
-            end_time     = *(here->VSRCcoeffs + here->VSRCfunctionOrder-2);
-            /* actually ok, würde stationaer bedeuten ... und ist so gut wie no repeat */
-            if ( here->VSRCr > end_time ) {
-              fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source must be smaller than final time point given!\n", here->VSRCr );
-              return ( E_PARMVAL );
+            Tperiod =
+                here->VSRCcoeffs[here->VSRCfunctionOrder-2] - Tr;
+
+            if (Tperiod == 0.0) {
+                fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source would cause a period of 0\n", Tr );
+                return ( E_PARMVAL );
             }
 
-            if ( here->VSRCr != *(here->VSRCcoeffs+here->VSRCrBreakpt) ) {
-              fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source does not match any time point given!\n", here->VSRCr );
-              return ( E_PARMVAL );
-            }
-
-            here ->VSRCrperiod = end_time - here->VSRCcoeffs[here->VSRCrBreakpt];
+            here->VSRCrGiven   = TRUE;
+            here->VSRCr        = Tr;
+            here->VSRCrperiod  = Tperiod;
+            here->VSRCrBreakpt = i;
         }
         break;
 
