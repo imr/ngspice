@@ -12,8 +12,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/complex.h"
 #include "uisrc.h"
 
-struct trnoise_state;
-
 /*
  * structures to describe independent voltage sources
  */
