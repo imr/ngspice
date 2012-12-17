@@ -84,8 +84,8 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
 {
     ISRCmodel *model = (ISRCmodel *) inModel;
     ISRCinstance *here;
-    double value;
     double time;
+    double value = 0.0;
 
     /*  loop through all the source models */
     for( ; model != NULL; model = model->ISRCnextModel ) {
