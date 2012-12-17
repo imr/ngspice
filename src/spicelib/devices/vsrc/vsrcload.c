@@ -90,7 +90,7 @@ pwl_state_get(struct pwl_state *this, double time)
 }
 
 
-static void
+static struct pwl_state *
 pwl_state_init(struct pwl_state *this, VSRCinstance *here)
 {
 
@@ -101,6 +101,9 @@ pwl_state_init(struct pwl_state *this, VSRCinstance *here)
           : here->VSRCr == 0 && here->VSRCrperiod == 0 && here->VSRCrBreakpt == 0 );
 #endif
 
+    if (!this)
+        this = TMALLOC(struct pwl_state, 1);
+
     this->len = here->VSRCfunctionOrder;
     this->arr = here->VSRCcoeffs;
     this->position = 0;
@@ -109,6 +112,8 @@ pwl_state_init(struct pwl_state *this, VSRCinstance *here)
     this->td = here->VSRCrdelay;
     this->tp = here->VSRCrperiod;
     this->rBreakpt = here->VSRCrBreakpt;
+
+    return this;
 }
 
 
@@ -387,10 +392,8 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 
                     case PWL: {
 
-                        if (!here->VSRC_state) {
-                            here->VSRC_state = TMALLOC(struct pwl_state, 1);
-                            pwl_state_init((struct pwl_state *) here->VSRC_state, here);
-                        }
+                        if (!here->VSRC_state)
+                            here->VSRC_state = pwl_state_init(NULL, here);
 
                         value = pwl_state_get((struct pwl_state *) here -> VSRC_state, time);
                     }

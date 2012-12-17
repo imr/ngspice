@@ -70,6 +70,7 @@ VSRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->VSRCinstances; here != NULL;
                 here=here->VSRCnextInstance)
 	{
+            /* here free * ? */
 	    if (here->VSRCbranch) {
 		CKTdltNNum(ckt, here->VSRCbranch);
 		here->VSRCbranch = 0;

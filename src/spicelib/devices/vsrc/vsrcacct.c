@@ -178,20 +178,6 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                             }
                         }
 
-                        /* check td + first >= 0 */
-
-                        /*
-                         * Postition:
-                         *   nxt = [0, order[
-                         *   rpt = [0.. [
-                         * with
-                         *   time == arr[nxt] + rpt*period + td
-                         *
-                         * (fixme, no thats inclusive see above)
-                         *
-                         * evtl ==order als Ende Kriterium,  !!! must
-                         */
-
                         /* (libc) Remainder Functions, `same sign ...' and magnitude ... */
 
 #if 0
@@ -201,6 +187,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                             rest = time;
 #endif
 
+/*hier gehts weiter*/
                         if (!ckt->CKTbreak || here->nxt >= here->VSRCfunctionOrder)
                             break;
 

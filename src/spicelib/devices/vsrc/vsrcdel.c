@@ -27,6 +27,7 @@ VSRCdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
                 FREE(here);
                 return(OK);
             }
+            /* oder here delete ? */
             prev = &(here->VSRCnextInstance);
         }
     }
