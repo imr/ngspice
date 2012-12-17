@@ -1,0 +1,54 @@
+vsrc-pwl-2
+
+* (compile (concat "../../../../w32/src/ngspice -b " buffer-file-name) t)
+* (compile (concat "valgrind --track-origins=yes --leak-check=full --show-reachable=yes ../../../../w32/src/ngspice -b " buffer-file-name) t)
+*
+* emhasize `step' response
+*   geht im prinzip, aber es gibt nicht automatisch sampels
+*     kurz vor der jeweiligen discontinuity
+*   print.. zeigt die richtigen werte,
+*     aber plot linearinterpoliert schaut nicht so aus wie man es gerne hätte
+
+v1 1 0 dc=0 pwl(0 10.0  11ns 10.0  11ns 11.0  18ns 11.0  18ns 18.0  1us 18.0)
+v2 2 0 dc=0 pwl(0 10.0  11ns 10.0  11ns 11.0  18ns 11.0  18ns 18.0  1us 18.0) r=0 td=15ns
+v3 3 0 dc=0 pwl(0 10.0  11ns 10.0  11ns 11.0  18ns 11.0  18ns 10.0  31ns 10.0 31ns 11.0) r=11ns
+
+.control
+
+tran 200ps 100ns
+reset
+tran 200ps 100ns
+
+**--------------------
+** setup the tests
+**   wegen eines bugs, müssen die check-vsrc am schluss kommen (bug-2)
+** FIXME, how to append vectoren ?
+*
+let vv1  = v(1)
+let seq1 = @v1[pwl]
+let td1  = 0
+*
+*
+let vv2  = v(2)
+let seq2 = @v2[pwl]
+let td2  = 15ns
+*
+*
+let vv3  = v(3)
+let td3  = 0
+
+compose seq3 values
++ 0 10.0   11ns 10.0   11ns 11.0   18ns 11.0   18ns 10.0   31ns 10.0
++                      31ns 11.0   38ns 11.0   38ns 10.0   51ns 10.0 
++                      51ns 11.0   58ns 11.0   58ns 10.0   71ns 10.0 
++                      71ns 11.0   78ns 11.0   78ns 10.0   91ns 10.0 
++                      91ns 11.0   98ns 11.0   98ns 10.0  111ns 10.0 
++                     111ns 11.0  118ns 11.0  118ns 10.0  131ns 10.0 
+
+check-vsrc.sp vv1 seq1 td1 3
+check-vsrc.sp vv2 seq2 td2 3
+check-vsrc.sp vv3 seq3 td3 11
+
+.endc
+
+.end

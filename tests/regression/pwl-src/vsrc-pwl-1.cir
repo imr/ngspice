@@ -1,0 +1,85 @@
+vsrc-pwl-1
+
+* (compile (concat "../../../../w32/src/ngspice -b " buffer-file-name) t)
+* (compile (concat "valgrind --track-origins=yes --leak-check=full --show-reachable=yes ../../../../w32/src/ngspice -b " buffer-file-name) t)
+*
+* broken, stept nicht wo er soll
+*   wenn r=0 td=15 ...
+* in vsrcacct war td nicht berücksichtigt
+*
+* was ist die semantic von r genau, laut doku muss das exact matchen zu einem punkt
+*
+*        case VSRC_TD:
+*            here->VSRCrdelay = value->rValue;
+*            break;
+*        case VSRC_R: {
+*            double end_time;
+*            here->VSRCr = value->rValue;
+*            here->VSRCrGiven = TRUE;
+*
+*              here->VSRCrBreakpt = i;  der index des matchenden elements ...
+* if kleiner erster punkt dann erster punkt
+*
+*   repeat_time = 0, ...
+*              repeat_time  = (end_time - breakpt_time)* ++num_repeat;
+* also der rest von punkten wird wiederhohlt
+*   wie genau ??   der punkt wird exact über den endpunkt gesetzt, step !! ?
+
+* FIXME,
+*   teste varianten mit step in zero time, auch an repeat grenze ...
+
+* manual example ?
+* v2 1 0 pwl(0 -7 10ns -7 11ns -3 17ns -3 18ns -7 50ns -7) r=0 td=15ns
+
+v1 1 0 dc=0 pwl(0 10.0  10ns 10.0  11ns 11.0  17ns 11.0  18ns 18.0  1us 18.0)
+v2 2 0 dc=0 pwl(0 10.0  10ns 10.0  11ns 11.0  17ns 11.0  18ns 18.0  1us 18.0) r=0 td=15ns
+v3 3 0 dc=0 pwl(0 10.0  10ns 10.0  11ns 11.0  17ns 11.0  30ns 10.0) r=10ns
+v4 4 0 dc=0 pwl(0 10.0  10ns 10.0  11ns 11.0  17ns 11.0  18ns 18.0  60ns 18.0) r=0 td=15ns
+
+.control
+
+tran 200ps 100ns
+
+*--------------------
+* setup the tests
+*   wegen eines bugs, müssen die check-vsrc am schluss kommen (bug-2)
+* FIXME, how to append vectoren ?
+
+let vv1  = v(1)
+let seq1 = @v1[pwl]
+let td1  = 0
+
+
+let vv2  = v(2)
+let seq2 = @v2[pwl]
+let td2  = 15ns
+
+
+let vv3  = v(3)
+let td3  = 0
+
+compose seq3 values
++ 0 10.0   10ns 10.0   11ns 11.0   17ns 11.0   30ns 10.0
++                      31ns 11.0   37ns 11.0   50ns 10.0 
++                      51ns 11.0   57ns 11.0   70ns 10.0 
++                      71ns 11.0   77ns 11.0   90ns 10.0 
++                      91ns 11.0   97ns 11.0  110ns 10.0 
++                     111ns 11.0  117ns 11.0  130ns 10.0 
+
+
+let vv4  = v(4)
+let td4  = 15ns
+
+compose seq4 values
++  0ns 10.0   10ns 10.0   11ns 11.0   17ns 11.0   18ns 18  60ns 18.0
++ 60ns 10.0   70ns 10.0   71ns 11.0   77ns 11.0   78ns 18 120ns 18.0
+
+
+check-vsrc.sp vv1 seq1 td1 5
+check-vsrc.sp vv2 seq2 td2 5
+check-vsrc.sp vv3 seq3 td3 16
+check-vsrc.sp vv4 seq4 td4 10
+
+.endc
+
+.end

@@ -1,0 +1,46 @@
+Circuit: vsrc-pwl-2
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+
+No. of Data Rows : 547
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+
+No. of Data Rows : 547
+
+Circuit: check-vsrc
+
+checking vv1
+info: hit at 0
+info: hit at 1.1E-08
+info: hit at 1.8E-08
+info: breakpoint seem to be ok
+
+
+Circuit: check-vsrc
+
+checking vv2
+info: hit at 1.5E-08
+info: hit at 2.6E-08
+info: hit at 3.3E-08
+info: breakpoint seem to be ok
+
+
+Circuit: check-vsrc
+
+checking vv3
+info: hit at 0
+info: hit at 1.1E-08
+info: hit at 1.8E-08
+info: hit at 3.1E-08
+info: hit at 3.8E-08
+info: hit at 5.1E-08
+info: hit at 5.8E-08
+info: hit at 7.1E-08
+info: hit at 7.8E-08
+info: hit at 9.1E-08
+info: hit at 9.8E-08
+info: breakpoint seem to be ok
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
