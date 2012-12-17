@@ -376,6 +376,9 @@ INoi2 2 0  DC 0 TRNOISE(10n 0.5n 0 0n) : generate gaussian distributed noise
                         rms value, time step, 0 0
 INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
                         0,  time step, exponent < 2, rms value
+
+INoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
+                        0 0 0 0, amplitude, capture time, emission time
 */
                     case TRNOISE: {
 
