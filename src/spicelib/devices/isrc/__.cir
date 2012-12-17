@@ -1,0 +1,17 @@
+* (compile (concat "../../../../w32/src/ngspice -b " buffer-file-name) t)
+* (compile (concat "valgrind --track-origins=yes --leak-check=full --show-reachable=yes ../../../../../w32/src/ngspice -b " buffer-file-name) t)
+*
+
+v1 1 0 dc=0 pwl(0 10.0  10ns 10.0  11ns 11.0  17ns 11.0  18ns 18.0  1us 18.0)
+
+i2 2 0 dc=0 pwl(0 10.0  10ns 10.0  11ns 11.0  17ns 11.0  18ns 18.0  1us 18.0)
+r2 2 0 1k
+
+.control
+
+tran 200ps 100ns
+tran 200ps 100ns
+
+.endc
+
+.end
