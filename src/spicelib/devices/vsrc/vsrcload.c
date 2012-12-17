@@ -22,6 +22,15 @@ Modified: 2000 AlansFixes
 static double
 pwl_state_get(struct pwl_state *this, double time)
 {
+    /* fixme, enter mehrmals im sägezahn ...
+     *   1) optimier dafür
+     *   2) stelle sicher, dass das jeweils höchste timestamp zum zug kommt
+     *       (allow step antwort *)
+     * invariant bei repeat:
+     *   enter time < timof(last-point)
+     *   this->position < indexof(last-point) (fixme really ? wenn es nur 2 points sind zB )
+     */
+
     for (;;) {
 
         double t1 = this->arr[this->position + 0];
@@ -341,6 +350,10 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 
                         struct pwl_state *state;
 
+                        double td = here->VSRCrdelay;
+                        double tp = here->VSRCrperiod;
+                        double r  = here->VSRCr;
+
                         if (!here->VSRC_state) {
                             here->VSRC_state = TMALLOC(struct pwl_state, 1);
                             pwl_state_init((struct pwl_state *) here->VSRC_state, here);
@@ -349,9 +362,12 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                         state = (struct pwl_state *) here -> VSRC_state;
 
                         /* fixme repeat value ignored */
-                        value = pwl_state_get(state, time - here->VSRCrdelay);
-
-                        goto loadDone;
+                        if (here->VSRCrGiven && time - td - r >= 0) {
+                            double t = fmod(time - td - r, tp) + r;
+                            value = pwl_state_get(state, t);
+                        } else {
+                            value = pwl_state_get(state, time - td);
+                        }
                     }
                     break;
 
