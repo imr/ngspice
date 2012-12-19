@@ -162,7 +162,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
     INPpas1(ckt, (card *) deck->li_next, *tab);
     INPpas2(ckt, (card *) deck->li_next, *tab, ft_curckt->ci_defTask);
 
-    /* INPkillMods(); FIXME: modtab should removed later -
+    /* INPkillMods(); modtab removed later on the end of inp_spsource
        because needed for alter geometry of binned MOS models,
        see below if_setparam_model */
 

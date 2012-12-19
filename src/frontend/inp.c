@@ -676,6 +676,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
         wl_free(controls);
     }
 
+    INPkillMods(); /* remove the modtab after the job is done */
+
     /* Now reset everything.  Pop the control stack, and fix up the IO
      * as it was before the source.  */
     cp_popcontrol();
