@@ -171,7 +171,7 @@ MIF_INP2A (
 
     Mif_Conn_Info_t  *conn_info;  /* for faster access to conn info struct */
     Mif_Param_Info_t  *param_info;  /* for faster access to param info struct */
-    Mif_Port_Type_t  def_port_type = 0;  /* the default port type */
+    Mif_Port_Type_t  def_port_type = MIF_VOLTAGE;  /* the default port type */
     Mif_Status_t     status;         /* return status */
     Mif_Token_Type_t next_token_type; /* the type of the next token */
 
