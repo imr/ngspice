@@ -71,9 +71,8 @@ extern Evt_Udn_Info_t idn_digital_info;
 int add_device(int n, SPICEdev **devs, int flag);
 int add_udn(int,Evt_Udn_Info_t **);
 /*saj*/
-#else
-int add_device_init (int, SPICEdev **) ;
 #endif /* XSPICE */
+int add_device_init (int, SPICEdev **) ;
 #endif
 
 #ifndef DEVLIB
@@ -359,13 +358,14 @@ int load_dev(char *name) {
 void load_alldevs(void){
   char *devs[] = DEVICES_USED;
   int num = NUMELEMS(devs);
-  int i;
+  int i, ret ;
   for(i=0; i< num;i++)
-    load_dev(devs[i]);
+    ret = load_dev (devs [i]) ;
+    if (ret)
+        exit (1) ;
   return;
 }
 
-#ifndef XSPICE
 int add_device_init (int n, SPICEdev **devs)
 {
   int i;
@@ -380,7 +380,6 @@ int add_device_init (int n, SPICEdev **devs)
   DEVNUM += n;
   return 0;
 }
-#endif /* XSPICE */
 #endif /* DEVLIB */
 
 /*--------------------   XSPICE additions below  ----------------------*/
