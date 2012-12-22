@@ -55,6 +55,9 @@ char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 	}
 	for (i = 0; i < *(ft_sim->devices[dev]->numInstanceParms); i++) {
 	    if (strcmp(parm, ft_sim->devices[dev]->instanceParms[i].keyword) == 0) {
+
+		int type;
+
 		val =
 		    INPgetValue(ckt, line,
 				ft_sim->devices[dev]->instanceParms[i].dataType,
@@ -70,6 +73,15 @@ char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 		    rtn = INPerror(error);
 		    goto quit;
 		}
+
+		/* delete the union val */
+		type = ft_sim->devices[dev]->instanceParms[i].dataType;
+		type &= IF_VARTYPES;
+		if (type == IF_REALVEC)
+		    tfree(val->v.vec.rVec);
+		else if (type == IF_INTVEC)
+		    tfree(val->v.vec.iVec);
+
 		break;
 	    }
 	}
