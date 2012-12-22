@@ -1,6 +1,6 @@
-  Ngspice F.A.Q.Version 1.8 (rework-23 release)
+  Ngspice F.A.Q.Version 1.9 (rework-25 release)
   Maintained by Paolo Nenzi, Holger Vogt
-  Last update: 05-06-2011
+  Last update: 22-12-2012
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -295,8 +295,8 @@
 
   To join the development just code the feature you want to add and send
   your patch in the mailing list.  Before you start coding check the
-  latest development release of ngspice from our CVS. It might be that
-  your feature has already been implemented.
+  latest development release of ngspice from our git repository. It
+  might be that your feature has already been implemented.
   
   There is no bureaucracy here.
 

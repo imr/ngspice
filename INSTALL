@@ -5,8 +5,8 @@ Table of contents
 
   1 Ngspice installation (LINUX)
    1.1 Prerequisites
-   1.2 Install from tarball (e.g. ngspice-24.tar.gz)
-   1.3 Install from CVS
+   1.2 Install from tarball (e.g. ngspice-25.tar.gz)
+   1.3 Install from git repository
    1.4 Advanced Install
     1.4.1 Most useful options
     1.4.2 Options Specific to Using Ngspice
@@ -40,7 +40,7 @@ This file describes the procedures to install ngspice from sources.
  The following software must be installed in your system to compile ngspice: 
  bison, flex, and X11 headers and libs.
 
- If you want to compile the CVS source you need additional software:
+ If you want to compile the git repository you need additional software:
  autoconf, automake, libtool, texinfo. 
 
  The following software may be needed when enabling additional features:
@@ -51,14 +51,14 @@ This file describes the procedures to install ngspice from sources.
  information on ngspice and its usage.
 
  
-1.2 Install from tarball (e.g. ngspice-24.tar.gz)
+1.2 Install from tarball (e.g. ngspice-25.tar.gz)
 
  This covers installation from a release distribution (for example 
- ngspice-24.tar.gz, the so called tar ball).
+ ngspice-25.tar.gz, the so called tar ball).
  
  After downloading the tar ball to a local directory unpack it using:
 
- $ tar -zxvf ngspice-24.tar.gz
+ $ tar -zxvf ngspice-25.tar.gz
     
  Now change directories in to the top-level source directory (where this
  INSTALL file can be found).
@@ -95,16 +95,16 @@ This file describes the procedures to install ngspice from sources.
  $ sudo make uninstall
 
  
-1.3 Install from CVS
+1.3 Install from the git repository
 
      This section describes how to install from source code taken directly
- from CVS.  It is intended for those who want to use the most recent enahancements
- of ngspice and for developers. For user install instructions using source from a
- released distributions, please see the sections titled 'Install from tarball' 
- and 'Advanced Install'.
+ from the git repository.  It is intended for those who want to use the most
+ recent enahancements of ngspice and for developers. For user install
+ instructions using source from a released distributions, please see the
+ sections titled 'Install from tarball' and 'Advanced Install'.
 
- Download ngspice sources from CVS as described on the sourceforge project page
- (see http://sourceforge.net/projects/ngspice/ and click on the CVS link)
+ Download ngspice sources from the git repository as described on the sourceforge project page
+ (see http://sourceforge.net/projects/ngspice/ and click on the git link)
 
  Now change directories in to the top-level source directory (where this
  INSTALL file can be found).
@@ -476,17 +476,16 @@ Most of the options now following are not well maintained, are not tested or eve
  $ ../configure --with-windows --enable-cider --disable-debug --enable-openmp --enable-xspice --enable-adms
  $ make install
  
- However, to compile code extracted from the CVS repository the procedure is
+ However, to compile code extracted from the git repository the procedure is
  a little different. To obtain ngspice, you may do the following:
   
  Go to a directory of your choice, e.g. D:\Spice
  $ cd /d/Spice
 
  Issue the command for downloading ngspice:
- $ cvs -z3 -d:pserver:anonymous@ngspice.cvs.sourceforge.net:/cvsroot/ngspice co
- -P ngspice/ng-spice-rework
+ $ $ git clone git://ngspice.git.sourceforge.net/gitroot/ngspice/ngspice
  
- This will create directory /ngspice with subdirectory /ngspice/ng-spice-rework.
+ This will create directory /ngspice.
 
  Go to directory ng-spice-rework
  $ cd /d/Spice/ngspice/ng-spice-rework
@@ -495,15 +494,14 @@ Most of the options now following are not well maintained, are not tested or eve
  $ ./compile_min.sh
 
  Update the ngspice files:
- Go to directory ng-spice-rework
- $ cd /d/Spice/ngspice/ng-spice-rework
+ Go to directory ngspice
+ $ cd /d/Spice/ngspice
  Issue command for update
- $ cvs -z3 -q -d:pserver:anonymous@ngspice.cvs.sourceforge.net:/cvsroot/ngspice
- -lf update -d -P
+ $ git pull
 
  Instead of calling  ./compile_min.sh, you may choose to issue 
  individual commands like:
- $ cd ng-spice-rework
+ $ cd ngspice
  $ ./autogen.sh
  $ mkdir release
  $ cd release
@@ -526,8 +524,8 @@ Most of the options now following are not well maintained, are not tested or eve
  The last three are from 
  http://sourceforge.net/project/showfiles.php?group_id=23617.
  
- Installing from CVS needs more packages to MSYS in advance: 
- cvs, automake, autoconf, libtool
+ Installing from git needs more packages to MSYS in advance: 
+ git, automake, autoconf, libtool
 
  You may also look at 
  http://www.mingw.org/wiki/HOWTO_Install_the_MinGW_GCC_Compiler_Suite
@@ -565,7 +563,7 @@ Most of the options now following are not well maintained, are not tested or eve
  MS VS 2008 C++ Express Edition (which is available at no cost from
  http://www.microsoft.com/express/product/default.aspx) is adequate.
  
- Goto  /ng-spice-rework/visualc.
+ Goto  /ngspice/visualc.
  
  Start MS Visual Studio 2008 by double click onto vngspice.sln.
  
@@ -608,7 +606,7 @@ Most of the options now following are not well maintained, are not tested or eve
                 ngnutmeg.1
                 ngsconvert.1
                 ngspice.1
-        ng-spice-rework\
+        ngspice\
             helpdir\
                 ngspice.idx
                 ngspice.txt
@@ -623,10 +621,10 @@ Most of the options now following are not well maintained, are not tested or eve
  If you intend to install vngspice into another directory, e.g. D:\MySpice,
  you have to edit  /visualc/include/config.h and alter the entries:
  #define NGSPICEBINDIR "C:/Spice/bin"
- #define NGSPICEDATADIR "C:/Spice/share/ng-spice-rework"
+ #define NGSPICEDATADIR "C:/Spice/share/ngspice"
  to
  #define NGSPICEBINDIR "D:/MySpice/bin"
- #define NGSPICEDATADIR "D:/MySpice/share/ng-spice-rework" 
+ #define NGSPICEDATADIR "D:/MySpice/share/ngspice" 
   
  If the code model files *.cm are not available, you will get warning messages,
  but you may use ngspice in the normal way (of course without XSPICE extensions). 
