@@ -228,6 +228,9 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                             double RTSEMT = state->RTSEMT;
 
                             if (ckt->CKTtime == 0) {
+                                /* initialzing here again needed for repeated calls to tran command */
+                                state->RTScapTime = RTScapTime = exprand(RTSCAPT);
+                                state->RTSemTime = RTSemTime = RTScapTime + exprand(RTSEMT);
                                 if (ckt->CKTbreak) {
                                     error = CKTsetBreak(ckt, RTScapTime);
                                     if(error)

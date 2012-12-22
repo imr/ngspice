@@ -327,6 +327,10 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
                         double TS = state -> TS;
                         double RTSAM = state->RTSAM;
 
+                        /* reset top (hack for repeated tran commands) */
+                        if (time == 0)
+                            state->top = 0;
+
                         /* no noise */
                         if(TS == 0.0) {
                             value = 0.0;
