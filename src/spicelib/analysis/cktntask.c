@@ -20,6 +20,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
 
     NG_IGNORE(ckt);
 
+    FREE(*taskPtr); /* clear old task upon repeated calls to tran etc.*/
     *taskPtr = TMALLOC(TSKtask, 1);
     if (*taskPtr == NULL)
         return(E_NOMEM);
