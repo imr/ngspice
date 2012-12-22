@@ -27,8 +27,6 @@ Ngspice is an ongoing project, growing everyday from users contributions,
 suggestions and reports. What we will be able to do depends mostly on 
 user interests, contributions and feedback. 
 
-Ngspice is part of the gEDA project.
-
 
 MAILING LISTS:
 -------------
@@ -60,6 +58,3 @@ WEB SITEs:
 This project is hosted on Sourceforge.net. 
 The home page is http://ngspice.sourceforge.net
 The summary page is http://sourceforge.net/projects/ngspice
-The ngspice page on gEDA site is http://geda.seul.org/tools/ngspice/index.html
-
-

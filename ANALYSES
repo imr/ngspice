@@ -17,6 +17,7 @@ Table of Contents
  7 Sensitivity analysis (SENS)
  8 Transfer function analysis (TF)
  9 Transient analysis (TRAN)
+ 10 Periodic steady state analysis (PSS, experimental feature)
 
 
 
@@ -96,6 +97,12 @@ Table of Contents
     The transient analysis computes the transient output variables as a
  function of time over a user-specified time interval. The initial conditions 
  are automatically determined by a dc analysis. All sources which are not time 
- dependent (for example, power supplies) are set to their dc value. 
+ dependent (for example, power supplies) are set to their dc value.
+ 
+ 
+ 10 Periodic steady state analysis (PSS)
+ 
+     The periodic steady state analysis computes solutions for oscillating 
+	 circuits. Currently only the autonomous case is implemented.
 
 
