@@ -33,15 +33,15 @@ This file describes the procedures to install ngspice from sources.
 
 1.1 Prerequisites
 
-     Ngspice is written in C and thus a complete C compilation environment is 
- needed. Almost any LINUX offers a complete C development environment.
+     Ngspice is written in C and thus a complete C compilation environment
+ is needed. Almost any LINUX offers a complete C development environment.
  Ngspice is developed on GNU/Linux with gcc and GNU make.  
 
  The following software must be installed in your system to compile ngspice: 
  bison, flex, and X11 headers and libs.
 
- If you want to compile the git repository you need additional software:
- autoconf, automake, libtool, texinfo. 
+ If you want to compile the source from the git repository you need
+ additional software: autoconf, automake, libtool, texinfo. 
 
  The following software may be needed when enabling additional features:
  editline, tcl/tk, adms
@@ -160,7 +160,7 @@ This file describes the procedures to install ngspice from sources.
  --enable-adms
         ADMS is an experimental model compiler that translates 
         Verilog-A compact models into C code that can be compiled into 
-        ngspice. This is (as of ngspice-24) still experimental, some
+        ngspice. This is (as of ngspice-25) still experimental, some
         features (e.g. noise) are missing. If you want to use it, please
         refer to the ADMS section on ngspice web site. 
 
@@ -442,8 +442,8 @@ Most of the options now following are not well maintained, are not tested or eve
  to the standard install (FLEX and BISON have to be made available in MSYS). 
  Some links are given below which describe the procedures. 
  
-     Installing from the tarball, e.g. ngspice-24.tar.gz, is now simple: After 
- expanding, you may just run ./compile_min.sh from the ngspice-24 directory.
+     Installing from the tarball, e.g. ngspice-25.tar.gz, is now simple: After 
+ expanding, you may just run ./compile_min.sh from the ngspice-25 directory.
   
      The default installation location of ngspice is the Windows path
  C:\spice. The install path can be altered by passing --prefix=NEWPATH
@@ -457,7 +457,7 @@ Most of the options now following are not well maintained, are not tested or eve
  The procedure of compiling a distribution (for example, a tarball from
  the ngspice website), is as follows:
 
- $ cd ngspice-24
+ $ cd ngspice-25
  $ mkdir release
  $ cd release
  $ ../configure --with-windows ...and other options
@@ -483,12 +483,12 @@ Most of the options now following are not well maintained, are not tested or eve
  $ cd /d/Spice
 
  Issue the command for downloading ngspice:
- $ $ git clone git://ngspice.git.sourceforge.net/gitroot/ngspice/ngspice
+ $ git clone git://ngspice.git.sourceforge.net/gitroot/ngspice/ngspice
  
- This will create directory /ngspice.
+ This will create directory /ngspice .
 
- Go to directory ng-spice-rework
- $ cd /d/Spice/ngspice/ng-spice-rework
+ Go to directory ngspice
+ $ cd /d/Spice/ngspice
  Start compiling, e.g. by calling
  $ ./autogen.sh --adms
  $ ./compile_min.sh

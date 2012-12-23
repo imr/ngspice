@@ -1,3 +1,41 @@
+Ngspice-25, Jan 4th, 2013
+============
+
+- New features:
+    + add temperature coefficients for B source
+	+ commands "mdump", "mrdump" to dump matrix to file
+	+ allow `time', `temper', and `hertz' in expressions with behavioral R, L, C 
+	+ Enable ctrl-c to interrupt a simulation also for Windows GUI
+	+ tests/bsim4: use the standard CMC model check
+	+ implement exit code for command "quit"
+	+ .nodeset all = value
+	+ memristor code model in extradev
+	+ new scalable diode model including tunnel component
+	+ variable xtrtol may override the XSPICE reduction of trtol
+	+ XSPICE example: delta-sigma converter
+	+ XSPICE: new d_source model
+	+ new option noopac
+	+ bsim3: make additonal parameters accessible with @mxx[par]
+	+ hisim2 update to version 2.6.1, new qa tests
+	+ enable Mac OS X compilation
+	+ option reseries = val
+	+ commands "snsave", "snload"
+	+ update hisim to version 2.7.0
+	+ hisimhv update to version 1.2.3
+	+ allow Ctrl-d to quit
+	+ jfet model temperature extension, tcv and bex parameter
+	+ speed up vector handling by hash table for vector address storage and retrieval
+	+ update PSS code
+
+
+- Bug fixes:
+    + many, many ... please see 
+	  http://ngspice.git.sourceforge.net/git/gitweb.cgi?p=ngspice/ngspice;a=shortlog;pg=0
+    + remove memory leaks
+    + update tclspice for MS Windows
+	+ adms3 removed due to licensing issues
+	
+
 Ngspice-24, Jan 29th, 2012
 ============
 
@@ -23,8 +61,8 @@ Ngspice-24, Jan 29th, 2012
 	
 - Bug fixes:
     + More on prototypes, type casts, reordering of functions, compiler warnings
-	+ fix a numerical problem in the hisim2 an hisimhv models
-	+  plot i(vdd) from a loaded rawfile
+	+ fix a numerical problem in the hisim2 and hisimhv models
+	+ plot i(vdd) from a loaded rawfile
 	+ fix the guard for device generated internal nodes (via CKTmkVolt())
 	+ reduce memory leaks for command 'reset'
 	+ parameter processing for nested .subckt

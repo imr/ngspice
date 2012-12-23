@@ -21,7 +21,7 @@
 
 Welcome to tclspice README_tcl
 
-This files acompanies ngspice sources starting with ngspice-rework-18. It 
+This file acompanies ngspice sources starting with ngspice-rework-18. It 
 describes what tclspice is, its installation, and points to resources that will
 help you to start with it. It also contains usefull datas to keep informed,
 get help, or get involved in the project.
@@ -57,7 +57,7 @@ tk  : the graphical extension of tcl, to represent data graphically and for GUIs
 blt : BLT toolkit gives number handling and plotting features to tcl/tk
 
 The most tested configuration is the latest:
-tclspice-18
+tclspice-25
 tcl 8.4
 tk 8.4
 blt 2.4
