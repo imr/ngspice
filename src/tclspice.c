@@ -15,7 +15,7 @@
 #define TCLSPICE_prefix  "spice::"
 #define TCLSPICE_namespace "spice"
 #ifdef _MSC_VER
-#define TCLSPICE_version "18.1"
+#define TCLSPICE_version "25.1"
 #define STDIN_FILENO    0
 #define STDOUT_FILENO   1
 #define STDERR_FILENO   2
