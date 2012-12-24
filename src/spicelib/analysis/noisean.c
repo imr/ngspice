@@ -17,7 +17,6 @@ Modified: 2001 AlansFixes
 #include "ngspice/sperror.h"
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
-#include "../maths/ni/niniter.h" /* va, NInzIter */
 
 
 int

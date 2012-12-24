@@ -18,7 +18,6 @@ Modified: 2001 AlansFixes
 #include "ngspice/cktdefs.h"
 #include "ngspice/smpdefs.h"
 #include "ngspice/sperror.h"
-#include "niiter.h"
 
 
 /* NIiter() - return value is non-zero for convergence failure */

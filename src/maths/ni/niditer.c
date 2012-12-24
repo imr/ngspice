@@ -16,7 +16,6 @@ Author: 1988 Jaijeet S. Roychowdhury
 #include "ngspice/trandefs.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/sperror.h"
-#include "niditer.h"
 
 
 int

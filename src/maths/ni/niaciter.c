@@ -18,7 +18,6 @@ Modified 1999 Emmanuel Rouat
 #include "ngspice/trandefs.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/sperror.h"
-#include "niaciter.h"
 
 
 int

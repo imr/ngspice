@@ -5,7 +5,7 @@ Author: 1987 Gary W. Ng
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "niniter.h"
+
 
 /*
  * NInzIter (ckt, posDrive, negDrive)

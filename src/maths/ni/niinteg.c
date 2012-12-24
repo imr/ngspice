@@ -11,7 +11,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/sperror.h"
-#include "niinteg.h"
 
 #define ccap qcap+1
 

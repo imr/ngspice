@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/sperror.h"
-#include "nicomcof.h"
 
 
 int

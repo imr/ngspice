@@ -2549,55 +2549,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\maths\ni\niaciter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nicomcof.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\niconv.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nidest.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\niditer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\niinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\niinteg.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\niiter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\niniter.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\maths\ni\nipred.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nipzmeth.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nireinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nisenre.h"
 				>
 			</File>
 			<File

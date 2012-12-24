@@ -13,7 +13,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/smpdefs.h"
-#include "niconv.h"
 
 
 int

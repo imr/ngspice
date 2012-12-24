@@ -13,7 +13,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/cktdefs.h"
 #include "ngspice/smpdefs.h"
 #include "ngspice/sperror.h"
-#include "nireinit.h"
 
 
 #define CKALLOC(ptr,size,type) if(( ckt->ptr =\

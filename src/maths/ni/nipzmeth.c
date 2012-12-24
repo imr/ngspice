@@ -8,7 +8,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "ngspice/cktdefs.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
-#include "nipzmeth.h"
 
 
 #ifdef PZDEBUG
