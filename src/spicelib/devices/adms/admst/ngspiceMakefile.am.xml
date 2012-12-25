@@ -75,7 +75,11 @@ CLEANFILES = \\
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I\$(top_srcdir)/src/include
 AM_CFLAGS = \$(STATIC)
 
-MAINTAINERCLEANFILES = Makefile.in
+MAINTAINERCLEANFILES = Makefile.in \\
+	Makefile.am
+
+DISTCLEANFILES = Makefile.am \\
+	Makefile.in
 
 \%.c \%.hxx \\
 	\%acld.c \%ask.c \%defs.h \%del.c \%dest.c \%ext.h \%guesstopology.c \\
