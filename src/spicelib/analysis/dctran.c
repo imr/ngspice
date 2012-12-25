@@ -34,10 +34,6 @@ extern struct dbcomm *dbs;
 #include "ngspice/cluster.h"
 #endif
 
-#ifdef PREDICTOR
-#include "../maths/ni/nipred.h"
-#endif /* PREDICTOR */
-
 #ifdef HAS_WINDOWS    /* hvogt 10.03.99, nach W. Mues */
 void SetAnalyse(char * Analyse, int Percent);
 #endif

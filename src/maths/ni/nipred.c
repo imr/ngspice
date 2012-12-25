@@ -17,8 +17,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/cktdefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/smpdefs.h"
-#include "nipred.h"
-
 
 #ifdef PREDICTOR
 int

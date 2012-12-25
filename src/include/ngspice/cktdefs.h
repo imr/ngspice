@@ -415,6 +415,9 @@ extern int NIsenReinit(CKTcircuit *);
 extern int NIdIter (CKTcircuit *);
 extern void NInzIter(CKTcircuit *, int, int);
 
+#ifdef PREDICTOR
+extern int NIpred(CKTcircuit *ckt);
+#endif
 
 extern IFfrontEnd *SPfrontEnd;
 

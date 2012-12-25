@@ -2549,10 +2549,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\maths\ni\nipred.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\include\ngspice\noisedef.h"
 				>
 			</File>

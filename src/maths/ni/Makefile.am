@@ -13,7 +13,6 @@ libni_la_SOURCES = \
 		niiter.c	\
 		niniter.c	\
 		nipred.c	\
-		nipred.h	\
 		nipzmeth.c	\
 		nireinit.c	\
 		nisenre.c
