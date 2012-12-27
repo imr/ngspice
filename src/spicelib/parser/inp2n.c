@@ -14,7 +14,7 @@ University of Science and Technology of China
 #include "../devices/ndev/ndevdefs.h"
 #include "ngspice/inpmacs.h"
 #include "ngspice/fteext.h"
-#include "inp.h"
+#include "inpxx.h"
 
 void INP2N(CKTcircuit *ckt, INPtables * tab, card * current)
 {

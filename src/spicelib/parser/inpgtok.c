@@ -16,7 +16,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/ngspice.h"
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
-#include "inp.h"
+#include "inpxx.h"
 
 /*-------------------------------------------------------------------
  * INPgetTok -- this fcn extracts a generic input token from 

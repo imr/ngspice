@@ -17,7 +17,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/fteext.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/iferrmsg.h"
-#include "inp.h"
+#include "inpxx.h"
 
 int
 INPaName(char *parm, IFvalue * val, CKTcircuit *ckt, int *dev, char *devnam,

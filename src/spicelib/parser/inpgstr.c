@@ -11,7 +11,7 @@ Author: 1985 Thomas L. Quarles
 #include <stdio.h>
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
-#include "inp.h"
+#include "inpxx.h"
 
 int INPgetStr(char **line, char **token, int gobble)
 				/* eat non-whitespace trash AFTER token? */

@@ -67,7 +67,7 @@ libinp_la_SOURCES = \
 		inptyplk.c	\
 		ptfuncs.c	\
 		sperror.c	\
-		inp.h
+		inpxx.h
 
 $(srcdir)/inpptree.c : inpptree-parser.c
 inpptree-parser.c inpptree-parser.h : inpptree-parser.y

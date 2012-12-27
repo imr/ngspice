@@ -9,7 +9,7 @@ Author: 1985 Thomas L. Quarles
 #include <ctype.h>
 #include "ngspice/fteext.h"
 #include "ngspice/inpdefs.h"
-#include "inp.h"
+#include "inpxx.h"
 
 
 void INPcaseFix(register char *string)

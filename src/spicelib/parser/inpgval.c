@@ -8,7 +8,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/ifsim.h"
 #include "ngspice/inpdefs.h"
 #include "ngspice/inpptree.h"
-#include "inp.h"
+#include "inpxx.h"
 
 IFvalue *INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables * tab)
 {

@@ -9,7 +9,7 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "ngspice/ifsim.h"
 #include "ngspice/cpstd.h"
 #include "ngspice/fteext.h"
-#include "inp.h"
+#include "inpxx.h"
 #include <errno.h>
 
 #ifdef CIDER

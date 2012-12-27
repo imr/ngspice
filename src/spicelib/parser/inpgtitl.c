@@ -14,7 +14,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/iferrmsg.h"
 #include "ngspice/cpstd.h"
 #include "ngspice/fteext.h"
-#include "inp.h"
+#include "inpxx.h"
 
 int INPgetTitle(CKTcircuit **ckt, card ** data)
 {

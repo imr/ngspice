@@ -16,7 +16,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/inpdefs.h"
 #include "ngspice/cpstd.h"
 #include "ngspice/fteext.h"
-#include "inp.h"
+#include "inpxx.h"
 
 
 static int hash(char *name, int tsize);

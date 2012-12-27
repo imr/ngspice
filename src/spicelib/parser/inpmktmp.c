@@ -8,7 +8,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/inpdefs.h"
-#include "inp.h"
+#include "inpxx.h"
 
 
 char *INPmkTemp(char *string)

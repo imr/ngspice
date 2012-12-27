@@ -7,7 +7,7 @@ Author: 1985 Thomas L. Quarles
 #include <stdio.h>
 #include <ctype.h>
 #include "ngspice/inpdefs.h"
-#include "inp.h"
+#include "inpxx.h"
 
 double INPevaluate(char **line, int *error, int gobble)
 		/* non-zero to gobble rest of token, zero to leave it alone */

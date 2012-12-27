@@ -12,7 +12,7 @@ Remarks:  This code is based on a version written by Serban Popescu which
 #include "ngspice/inpdefs.h"
 #include "ngspice/inpmacs.h"
 #include "ngspice/fteext.h"
-#include "inp.h"
+#include "inpxx.h"
 
 /* undefine to add tracing to this file */
 /* #define TRACE */

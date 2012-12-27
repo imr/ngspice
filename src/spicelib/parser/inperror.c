@@ -23,7 +23,7 @@ extern int vasprintf(char **out, const char *fmt, va_list ap);
 #include "ngspice/ifsim.h"
 #include "ngspice/iferrmsg.h"
 #include "ngspice/sperror.h"
-#include "inp.h"
+#include "inpxx.h"
 
 char *INPerror(int type)
 {

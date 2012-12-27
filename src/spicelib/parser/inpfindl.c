@@ -12,7 +12,7 @@ Modified: 1999 Paolo Nenzi - Now we can use a two digits level code -
 
 #include "ngspice/ngspice.h"
 #include "ngspice/inpdefs.h"
-#include "inp.h"
+#include "inpxx.h"
 
 char *INPfindLev(char *line, int *level)
 {

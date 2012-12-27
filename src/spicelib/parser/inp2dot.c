@@ -10,7 +10,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/inpdefs.h"
 #include "ngspice/inpmacs.h"
 #include "ngspice/fteext.h"
-#include "inp.h"
+#include "inpxx.h"
 #include "ngspice/cpdefs.h"
 #include "ngspice/tskdefs.h"
 

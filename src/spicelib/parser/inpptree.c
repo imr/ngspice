@@ -9,7 +9,7 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
 #include "ngspice/inpptree.h"
-#include "inp.h"
+#include "inpxx.h"
 
 extern void controlled_exit(int status);
 

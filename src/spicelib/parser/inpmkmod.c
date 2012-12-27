@@ -7,7 +7,7 @@ Author: 1985 Thomas L. Quarles
 #include <stdio.h>
 #include "ngspice/inpdefs.h"
 #include "ngspice/iferrmsg.h"
-#include "inp.h"
+#include "inpxx.h"
 
 /*  global input model table.  */
 INPmodel *modtab = NULL;

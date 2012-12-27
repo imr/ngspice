@@ -16,7 +16,7 @@ Author: 1988 Thomas L. Quarles
 #include "ngspice/inpdefs.h"
 #include "ngspice/inpmacs.h"
 #include "ngspice/fteext.h"
-#include "inp.h"
+#include "inpxx.h"
 
 void INP2Z(CKTcircuit *ckt, INPtables * tab, card * current)
 {

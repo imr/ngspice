@@ -6,7 +6,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/ngspice.h"
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
-#include "inp.h"
+#include "inpxx.h"
 
 /*--------------------------------------------------------------
  * This fcn takes the model card & examines it.  Depending upon

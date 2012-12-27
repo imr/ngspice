@@ -9,7 +9,7 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "ngspice/inpdefs.h"
 #include "ngspice/inpmacs.h"
 #include "ngspice/fteext.h"
-#include "inp.h"
+#include "inpxx.h"
 
 void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
 {

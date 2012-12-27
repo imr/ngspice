@@ -9,7 +9,7 @@ Author: 1992 Charles Hough
 #include "ngspice/inpdefs.h"
 #include "ngspice/inpmacs.h"
 #include "ngspice/fteext.h"
-#include "inp.h"
+#include "inpxx.h"
 
 void
 INP2P(

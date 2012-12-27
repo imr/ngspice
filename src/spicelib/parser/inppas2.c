@@ -8,7 +8,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/inpmacs.h"
 
 #include "inppas2.h"
-#include "inp.h"
+#include "inpxx.h"
 
 #ifdef XSPICE
 /* gtri - add - wbk - 11/9/90 - include function prototypes */

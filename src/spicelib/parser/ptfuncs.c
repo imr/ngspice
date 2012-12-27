@@ -13,7 +13,7 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/fteext.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/inpptree.h"
-#include "inp.h"
+#include "inpxx.h"
 
 /* XXX These should be in math.h */
 

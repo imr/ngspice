@@ -12,7 +12,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/cpdefs.h"
 #include "ngspice/fteext.h"
 #include "ngspice/ifsim.h"
-#include "inp.h"
+#include "inpxx.h"
 
 int INPtypelook(char *type)
 {

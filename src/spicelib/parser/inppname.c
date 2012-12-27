@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/fteext.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/iferrmsg.h"
-#include "inp.h"
+#include "inpxx.h"
 
 int INPpName(char *parm, IFvalue * val, CKTcircuit *ckt, int dev, GENinstance *fast)
 		    /* the name of the parameter to set */

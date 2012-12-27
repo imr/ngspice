@@ -18,7 +18,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/iferrmsg.h"
 #include "ngspice/cpdefs.h"
 #include "ngspice/fteext.h"
-#include "inp.h"
+#include "inpxx.h"
 
 char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 		  double *leading, int *waslead, INPtables * tab)

@@ -10,7 +10,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/fteext.h"
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpptree.h"
-#include "inp.h"
+#include "inpxx.h"
 #include "ngspice/cktdefs.h"
 
 /* Uncomment to allow tracing */

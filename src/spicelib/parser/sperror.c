@@ -13,7 +13,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/ifsim.h"
-#include "inp.h"
+#include "inpxx.h"
 
 const char *SPerror(int type)
 {
