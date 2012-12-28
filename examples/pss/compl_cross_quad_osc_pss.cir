@@ -1,0 +1,35 @@
+Complimentary Cross Quad CMOS Oscillator
+* Predicted frequency is 5.61224e+08 Hz.
+*
+* PLOT i1
+
+* Supply
+vdd	vdd	gnd	1.2 pwl 0 1.2 1e-9 1.2
+rdd	vdd	vdd_ana	70m
+rgnd	gnd	gnd_ana	70m
+
+* Cross quad
+mpsx	v_plus	v_minus	vdd_ana	vdd_ana	pch	w=10u l=0.1u
+mnsx	v_plus	v_minus	gnd_ana	gnd_ana	nch	w=10u l=0.1u
+mpdx	v_minus	v_plus	vdd_ana	vdd_ana	pch	w=10u l=0.1u
+mndx	v_minus	v_plus	gnd_ana	gnd_ana	nch	w=10u l=0.1u
+
+* Lumped elements model of real inductor
+ls	v_plus	i1	19.462n	ic=0.06
+rs	i1	v_minus	7.789
+cs	v_plus	v_minus	443f
+coxs	v_plus	is	2.178p
+coxd	v_minus	id	2.178p
+rsis	is	gnd_ana	308
+rsid	id	gnd_ana	308
+csis	is	gnd_ana	51f
+csid	id	gnd_ana	51f
+
+* Parallel capacitor to determine leading resonance
+cp	v_plus	v_minus	3.4p
+
+.model nch nmos ( version=4.4 level=54 lmin=0.1u lmax=20u wmin=0.1u wmax=10u  )
+.model pch pmos ( version=4.4 level=54 lmin=0.1u lmax=20u wmin=0.1u wmax=10u  )
+
+*.tran 0.05n 1u uic
+.pss 500e6 1u 1 1024 10 10 5e-3 uic

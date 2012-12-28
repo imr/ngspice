@@ -2757,6 +2757,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\include\ngspice\pssdefs.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\frontend\plotting\pvec.h"
 				>
 			</File>

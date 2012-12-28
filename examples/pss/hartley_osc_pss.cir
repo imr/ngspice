@@ -1,0 +1,21 @@
+Hartley's Oscillator Circuit
+* Hartley is an harmonic oscillator (LC based) which use
+* an inductive partition of resonator to feed the single 
+* active device. Output is taken on node 2.
+* Prediceted frequency is about 121.176 Hz.
+*
+* PLOT V(3)
+
+* Models:
+.model qnl npn(level=1 bf=80 rb=100 ccs=2pf tf=0.3ns tr=6ns cje=3pf cjc=2pf va=50)
+
+vcc 	1 0 	5 pwl 0 0 1e-5 5
+r1	1 2	0.2k
+q1	2 3 0	qnl
+c1	3 4	633n
+l1	3 0	1.5
+l2	0 4	500m
+r2	4 2	100
+
+*.tran 300n 50m
+.pss 50 200e-3 2 1024 11 10 5e-3 uic

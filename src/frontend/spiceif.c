@@ -218,6 +218,11 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         eq(what, "sens") ||
         eq(what, "tf") ||
         eq(what, "noise")
+#ifdef WITH_PSS
+        /* SP: Steady State Analysis */
+        || eq(what, "pss")
+        /* SP */
+#endif
         )
     {
         s = wl_flatten(args); /* va: tfree char's tmalloc'ed in wl_flatten */
@@ -334,6 +339,11 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         (eq(what, "adjsen")) ||
         (eq(what, "sens")) ||
         (eq(what, "tf")) ||
+#ifdef WITH_PSS
+        /* SP: Steady State Analysis */
+        (eq(what, "pss")) ||
+        /* SP */
+#endif
         (eq(what, "run")))
     {
         /*CDHW Run the analysis pointed to by ci_curTask CDHW*/

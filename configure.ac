@@ -145,6 +145,10 @@ AC_ARG_ENABLE([cider],
 AC_ARG_ENABLE([adms],
     [AS_HELP_STRING([--enable-adms], [Enable ADMS code models, (experimental)])])
 
+# --enable-pss: enable PSS Analysis
+AC_ARG_ENABLE([pss],
+    [AS_HELP_STRING([--enable-pss], [Enable PSS Analysis, (experimental)])])
+
 # --enable-ndev: define NDEV in the code. An interface for external device i.e. numerical device
 AC_ARG_ENABLE([ndev],
     [AS_HELP_STRING([--enable-ndev], [Enable NDEV interface, (experimental)])])
@@ -782,6 +786,9 @@ if test "x$enable_pzdebug" = xyes; then
     AC_DEFINE([PZDEBUG], [], [Define if you want to debug pole-zero analysis])
     AC_MSG_RESULT([WARNING: Pole/Zero analysis debug is enabled])
 fi
+if test "x$enable_pss" = xyes; then
+    AC_DEFINE([WITH_PSS], [], [Define if you want PSS analysis])
+fi
 if test "x$enable_blktmsdebug" = xyes; then
     AC_DEFINE([D_DBG_BLOCKTIMES], [], [Define if we want debug distortion analysis (BLOCKTIMES)])
     AC_MSG_RESULT([WARNING: Distortion analysis debug *D_DBG_BLOCKTIMES* is enabled])
@@ -866,6 +873,8 @@ fi
 AM_CONDITIONAL([CIDER_WANTED], [test "x$enable_cider" = xyes])
 AM_CONDITIONAL([NUMDEV_WANTED], [test "x$enable_cider" = xyes])
 
+
+AM_CONDITIONAL([PSS_WANTED], [test "x$enable_pss" = xyes])
 
 # adms option
 if test "x$enable_adms" = xyes ; then
@@ -988,6 +997,10 @@ if test "x$enable_openmp" = xyes; then
     AC_DEFINE([USE_OMP], [1], [OpenMP parallel processing])
     CFLAGS="$CFLAGS $OPENMP_CFLAGS"
     AC_MSG_RESULT([OpenMP feature enabled])
+fi
+
+if test "x$enable_pss" = "xyes"; then
+    AC_MSG_RESULT([WARNING: PSS analysis enabled])
 fi
 
 # Output Files

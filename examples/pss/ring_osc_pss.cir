@@ -1,0 +1,29 @@
+Ring CMOS Oscillator
+* Oscillation is taken on node "bout".
+* Predicted frequency is 3.8e+09 Hz.
+*
+* PLOT bout
+
+* Supply
+vdd	vdd	gnd	1.2 pwl 0 1.2 1e-9 1.2
+rdd	vdd	vdd_ana	70m
+rgnd	gnd	gnd_ana	70m
+
+* Inverter
+mp1	inv1	inv3	vdd_ana vdd_ana	pch	w=10u l=0.18u
+mn1	inv1	inv3	gnd_ana	gnd_ana	nch	w=10u l=0.18u
+mp2	inv2	inv1	vdd_ana	vdd_ana	pch	w=10u l=0.18u
+mn2	inv2	inv1	gnd_ana	gnd_ana	nch	w=10u l=0.18u
+mp3	inv3	inv2	vdd_ana	vdd_ana	pch	w=10u l=0.18u
+mn3	inv3	inv2	gnd_ana	gnd_ana	nch	w=10u l=0.18u
+
+* Buffer out
+mp4	bout	inv3	vdd_ana	vdd_ana	pch	w=10u l=0.18u
+mn4	bout	inv3	gnd_ana	gnd_ana	nch	w=10u l=0.18u
+
+.model nch nmos ( version=4.4 level=54 lmin=0.1u lmax=20u wmin=0.1u wmax=10u  )
+.model pch pmos ( version=4.4 level=54 lmin=0.1u lmax=20u wmin=0.1u wmax=10u  )
+
+*.tran 0.005n 100n
+*.plot tran v(4)
+.pss 624e6 500n 1 1024 10 5 5e-3 uic

@@ -1,0 +1,17 @@
+Van Der Pol Oscillator
+* Prediceted frequency is about 4.54167e+06 Hz.
+
+* Third harmonic is high as the first one
+Ba	gib 0	I=-1e-2*v(gib,0)+1e-2*v(gib,0)^3
+* Q is about 10
+La	gib 0	1.2e-6
+Ra	gib 0	158.113
+Ca	gib 0	1e-9 ic=0.5
+*La	gib 0	1e-9
+*Ra	gib 0	474.6
+*Ca	gib 0	1e-9 ic=0.5
+* Ghost node... Test for my PSS!
+Rb	bad 0	1k
+
+*.tran 1e-9 150e-6 uic
+.pss 0.8e6 130e-6 1 50 10 50 5e-3 uic

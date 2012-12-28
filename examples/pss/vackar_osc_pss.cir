@@ -1,0 +1,21 @@
+Vackar's Oscillator Circuit
+* Vackar is a derivation of Colpitt's oscillator (LC based).
+* Oscillation is taken on node 4.
+* Predicted frequency is 1.91803e+06Hz.
+
+* Models:
+.model qnl npn(level=1 bf=80 rb=100 ccs=2pf tf=0.3ns tr=6ns cje=3pf cjc=2pf va=50)
+
+vcc 	1 0 	5 pwl 0 10 1e-9 5
+lrfc	1 2	100u
+cdec	2 0	7n
+q1 	3 2 0	qnl	
+rb 	3 0 	4700
+c1 	3 4 	100p
+c2 	3 0 	600p
+c0	4 0	1n
+l1 	4 1 	6.2u
+
+*.tran 30n 12u
+*.plot tran v(4)
+.pss 1e6 10e-6 4 1024 10 50 5e-3 uic
