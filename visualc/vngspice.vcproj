@@ -5249,6 +5249,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\analysis\dcpss.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\analysis\dctaskq.c"
 				>
 			</File>
@@ -7854,6 +7858,18 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\jfet2\psmodel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\pssaskq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\pssinit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\psssetp.c"
 				>
 			</File>
 			<File

@@ -628,6 +628,8 @@ DCpss(CKTcircuit *ckt,
 
     case SHOOTING:
     {
+        double offset, interval, nextBreak ;
+        int i ;
         /* Calculation of error norms of RHS solution of every accepted nextTime */
         err = 0 ;
         for (i = 0 ; i < msize ; i++)
@@ -685,9 +687,9 @@ DCpss(CKTcircuit *ckt,
         /* Force the tran analysis to evaluate requested breakpoints. Breakpoints are even more closer as
            the next occurence of guessed period is approaching. La lunga notte dei robot viventi... */
 
-        double offset, interval, nextBreak ;
+/*        double offset, interval, nextBreak ;
         int i ;
-
+*/
         if ((ckt->CKTtime > time_temp + (1 / ckt->CKTguessedFreq) * 0.995) && (ckt->CKTtime <= time_temp + (1 / ckt->CKTguessedFreq)))
         {
             offset = time_temp + (1 / ckt->CKTguessedFreq) * 0.995 ;
@@ -740,6 +742,8 @@ DCpss(CKTcircuit *ckt,
         /* If evolution is near shooting... */
         if ((AlmostEqualUlps (ckt->CKTtime, time_temp + 1 / ckt->CKTguessedFreq, 10)) || (ckt->CKTtime > time_temp + 1 / ckt->CKTguessedFreq))
         {
+            int excessive_err_nodes = 0 ;
+
             /* Calculation of error norms of RHS solution of every accepted nextTime */
             predsum = 0 ;
             for (i = 0 ; i < msize ; i++)
@@ -769,7 +773,7 @@ DCpss(CKTcircuit *ckt,
 
             }
 
-            int excessive_err_nodes = 0 ;
+//            int excessive_err_nodes = 0 ;
 
             if (shooting_cycle_counter == 0)
             {

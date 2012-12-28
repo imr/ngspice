@@ -538,6 +538,9 @@
 /* Define if we want spice2 sensitivity analysis */
 /* #undef WANT_SENSE2 */
 
+/* Define if you want PSS analysis */
+#define WITH_PSS /**/
+
 /* The xspice enhancements */
 #define XSPICE 1
 
