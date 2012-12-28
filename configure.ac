@@ -145,10 +145,6 @@ AC_ARG_ENABLE([cider],
 AC_ARG_ENABLE([adms],
     [AS_HELP_STRING([--enable-adms], [Enable ADMS code models, (experimental)])])
 
-# --enable-xspice: define XSPICE in the code. This is for xspice support
-AC_ARG_ENABLE([pss],
-    [AS_HELP_STRING([--enable-pss], [Enable PSS analysis, (very experimental)])])
-
 # --enable-ndev: define NDEV in the code. An interface for external device i.e. numerical device
 AC_ARG_ENABLE([ndev],
     [AS_HELP_STRING([--enable-ndev], [Enable NDEV interface, (experimental)])])
@@ -786,9 +782,6 @@ if test "x$enable_pzdebug" = xyes; then
     AC_DEFINE([PZDEBUG], [], [Define if you want to debug pole-zero analysis])
     AC_MSG_RESULT([WARNING: Pole/Zero analysis debug is enabled])
 fi
-if test "x$enable_pss" = xyes; then
-    AC_DEFINE([WITH_PSS], [], [Define if you want PSS analysis])
-fi
 if test "x$enable_blktmsdebug" = xyes; then
     AC_DEFINE([D_DBG_BLOCKTIMES], [], [Define if we want debug distortion analysis (BLOCKTIMES)])
     AC_MSG_RESULT([WARNING: Distortion analysis debug *D_DBG_BLOCKTIMES* is enabled])
@@ -873,8 +866,6 @@ fi
 AM_CONDITIONAL([CIDER_WANTED], [test "x$enable_cider" = xyes])
 AM_CONDITIONAL([NUMDEV_WANTED], [test "x$enable_cider" = xyes])
 
-
-AM_CONDITIONAL([PSS_WANTED], [test "x$enable_pss" = xyes])
 
 # adms option
 if test "x$enable_adms" = xyes ; then

@@ -98,15 +98,6 @@ libckt_la_SOURCES = \
 		cluster.c
 
 
-if PSS_WANTED
-libckt_la_SOURCES += \
-		dcpss.c		\
-		pssaskq.c	\
-		pssinit.c	\
-		psssetp.c
-endif
-
-
 AM_CPPFLAGS = @AM_CPPFLAGS@  -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 AM_CFLAGS = $(STATIC)
 MAINTAINERCLEANFILES = Makefile.in
