@@ -97,6 +97,9 @@ static char *skip_non_ws(char *d)      { while (*d && !isspace(*d)) d++; return 
 static char *skip_back_ws(char *d)     { while (isspace(*d))        d--; return d; }
 static char *skip_ws(char *d)          { while (isspace(*d))        d++; return d; }
 
+#ifndef XSPICE
+static void inp_poly_err(struct line *deck);
+#endif
 
 /*-------------------------------------------------------------------------
  Read the entire input file and return  a pointer to the first line of
@@ -723,7 +726,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
         if (cp_getvar("addcontrol", CP_BOOL, NULL))
             inp_add_control_section(working, &line_number);
-
+#ifndef XSPICE
+        inp_poly_err(working);
+#endif
         if (inp_compat_mode != COMPATMODE_SPICE3) {
             /* Do all the compatibility stuff here */
             working = cc->li_next;
@@ -5096,7 +5101,6 @@ inp_compat(struct line *deck)
 static void
 replace_token(char *string, char *token, int wherereplace, int total)
 {
-    char *nexttoken;
     int count = 0, i;
     char *actstring = string;
 
@@ -5106,14 +5110,14 @@ replace_token(char *string, char *token, int wherereplace, int total)
 
     /* get total number of tokens */
     while (*actstring) {
-        nexttoken = gettok(&actstring);
+        txfree(gettok(&actstring));
         count++;
     }
     /* If total number of tokens correct */
     if (count == total) {
         actstring = string;
         for (i = 1; i < wherereplace; i++)
-            nexttoken = gettok(&actstring);
+            txfree(gettok(&actstring));
         /* If token to be replaced at right position */
         if (ciprefix(token, actstring)) {
             *actstring = ' ';
@@ -5570,3 +5574,47 @@ inp_add_series_resistor(struct line *deck)
 
     tfree(rval);
 }
+
+/* If XSPICE option is not selected, run this function to alert and exit
+   if the 'poly' option is found in e, g, f, or h controlled sources. */
+
+#ifndef XSPICE
+static void
+inp_poly_err(struct line *deck)
+{
+    struct line *card;
+
+    size_t skip_control = 0;
+    for (card = deck; card; card = card->li_next) {
+        char *curr_line = card->li_line;
+        if (*curr_line == '*')
+            continue;
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control ++;
+            continue;
+        } else if (ciprefix(".endc", curr_line)) {
+            skip_control --;
+            continue;
+        } else if (skip_control > 0) {
+            continue;
+        }
+        /* get the fourth token in a controlled source line and exit,
+        if it is 'poly' */
+        if ((ciprefix("e", curr_line)) || (ciprefix("g", curr_line)) ||
+            (ciprefix("f", curr_line)) || (ciprefix("h", curr_line))) {
+            txfree(gettok(&curr_line));
+            txfree(gettok(&curr_line));
+            txfree(gettok(&curr_line));
+            if (ciprefix("poly", curr_line)) {
+                fprintf(stderr,
+                    "\nError: XSPICE is required to run the 'poly' option in line %d\n",
+                    card->li_linenum_orig);
+                fprintf(stderr, "  %s\n", card->li_line);
+                fprintf(stderr, "\nSee manual chapt. 31 for installation instructions\n");
+                controlled_exit(EXIT_BAD);
+            }
+        }
+    }
+}
+#endif
