@@ -1230,9 +1230,11 @@ resume:
         fprintf (stderr, "    brk_pt: %g    ckt_time: %g    ckt_min_break: %g\n", ckt->CKTbreaks [0], ckt->CKTtime, ckt->CKTminBreak) ;
 #endif
         if(AlmostEqualUlps(ckt->CKTbreaks[0], ckt->CKTtime, 100) ||
-           ckt->CKTbreaks[0] <= ckt->CKTtime + ckt->CKTminBreak) {
+            ckt->CKTbreaks[0] <= ckt->CKTtime + ckt->CKTminBreak) {
+#ifdef STEPDEBUG
             fprintf (stderr, "throwing out permanent breakpoint times <= current time (brk pt: %g)\n", ckt->CKTbreaks [0]) ;
             fprintf (stderr, "ckt_time: %g    ckt_min_break: %g\n", ckt->CKTtime, ckt->CKTminBreak) ;
+#endif
             CKTclrBreak(ckt);
         } else {
             break;
