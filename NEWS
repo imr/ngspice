@@ -2,11 +2,11 @@ Ngspice-25, Jan 4th, 2013
 ============
 
 - New features:
-    + add temperature coefficients for B source
+	+ add temperature coefficients for B source
 	+ commands "mdump", "mrdump" to dump matrix to file
 	+ allow `time', `temper', and `hertz' in expressions with behavioral R, L, C 
 	+ Enable ctrl-c to interrupt a simulation also for Windows GUI
-	+ tests/bsim4: use the standard CMC model check
+	+ tests/bsim4: use the standard CMC model qa check
 	+ implement exit code for command "quit"
 	+ .nodeset all = value
 	+ memristor code model in extradev
@@ -16,12 +16,11 @@ Ngspice-25, Jan 4th, 2013
 	+ XSPICE: new d_source model
 	+ new option noopac
 	+ bsim3: make additonal parameters accessible with @mxx[par]
-	+ hisim2 update to version 2.6.1, new qa tests
 	+ enable Mac OS X compilation
 	+ option reseries = val
 	+ commands "snsave", "snload"
-	+ update hisim to version 2.7.0
-	+ hisimhv update to version 1.2.3
+	+ update hisim to version 2.7.0, new qa tests
+	+ hisimhv update to version 1.2.3, new qa tests
 	+ allow Ctrl-d to quit
 	+ jfet model temperature extension, tcv and bex parameter
 	+ speed up vector handling by hash table for vector address storage and retrieval
@@ -33,7 +32,7 @@ Ngspice-25, Jan 4th, 2013
 	  http://ngspice.git.sourceforge.net/git/gitweb.cgi?p=ngspice/ngspice;a=shortlog;pg=0
     + remove memory leaks
     + update tclspice for MS Windows
-	+ adms3 removed due to licensing issues
+    + adms3 removed due to licensing issues
 	
 
 Ngspice-24, Jan 29th, 2012
