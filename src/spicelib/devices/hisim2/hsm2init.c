@@ -1,3 +1,5 @@
+#include "ngspice/config.h"
+
 #include "ngspice/devdefs.h"
 
 #include "hsm2def.h"
