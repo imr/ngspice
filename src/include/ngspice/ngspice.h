@@ -226,7 +226,6 @@ extern char Spice_Build_Date[];
 extern char Spice_Manual[];
 
 extern char *News_File;
-extern char *Default_MFB_Cap;
 extern char *Spice_Path;
 extern char *Help_Path;
 extern char *Lib_Path;

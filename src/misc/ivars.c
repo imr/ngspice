@@ -18,7 +18,6 @@ extern int vasprintf(char **out, const char *fmt, va_list ap);
 
 char *Spice_Path;
 char *News_File;
-char *Default_MFB_Cap;
 char *Help_Path;
 char *Lib_Path;
 char *Inp_Path;
@@ -72,8 +71,6 @@ ivars(char *argv0)
 
     /* for printing a news file */
     mkvar(&News_File, Spice_Lib_Dir, "news", "SPICE_NEWS");
-    /* not used in ngspice */
-    mkvar(&Default_MFB_Cap, Spice_Lib_Dir, "mfbcap", "SPICE_MFBCAP");
     /* help directory, not used in Windows mode */
     mkvar(&Help_Path, Spice_Lib_Dir, "helpdir", "SPICE_HELP_DIR");
     /* where spinit is found */
@@ -95,6 +92,7 @@ ivars(char *argv0)
     /* set path either to environment variable NGSPICE_INPUT_DIR
     (if given) or to NULL */
     env_overr(&Inp_Path, "NGSPICE_INPUT_DIR");
+    Inp_Path = copy(Inp_Path); /* allow tfree */
 #endif
     env_overr(&Spice_Host, "SPICE_HOST"); /* aspice */
     env_overr(&Bug_Addr, "SPICE_BUGADDR");
@@ -113,7 +111,6 @@ void
 destroy_ivars(void)
 {
     tfree(News_File);
-    tfree(Default_MFB_Cap);
     tfree(Help_Path);
     tfree(Lib_Path);
     tfree(Spice_Path);
