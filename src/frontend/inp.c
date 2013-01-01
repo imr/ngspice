@@ -49,7 +49,7 @@ Author: 1985 Wayne A. Christopher
 static char *upper(register char *string);
 static bool doedit(char *filename);
 static struct line *com_options = NULL;
-static void consaves(wordlist *wl);
+static wordlist *consaves(wordlist *wl);
 static void cktislinear(CKTcircuit *ckt, struct line *deck);
 
 void line_free_x(struct line *deck, bool recurse);
@@ -666,8 +666,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
         ft_dotsaves();
 
         /* run all 'save' commands upfront, allow same syntax as in .save,
-        then remove them from controls, store data in dbs */
-        consaves(controls);
+        then remove them from controls, store data in dbs. If controls contains
+        only 'save' commands, NULL is returned. */
+        controls = consaves(controls);
 
         /* Now that the deck is loaded, do the commands, if there are any */
         controls = wl_reverse(controls);
@@ -1130,11 +1131,12 @@ inp_source(char *file)
 
 /* find 'save' commands, retrive node name(s) and store
    them in dbs (by com_save), like ft_dotsaves does with .save */
-static void
+static wordlist *
 consaves(wordlist *wl_control)
 {
     wordlist *iline, *wl = NULL;
     char *s;
+    bool onlysave = TRUE;
 
     iline = wl_control;
     while (iline) {
@@ -1147,11 +1149,22 @@ consaves(wordlist *wl_control)
             wl_delete_slice(iline, iline->wl_next);
             iline = tmplist;
         }
-        else
+        else {
+            if (onlysave)
+                /* first occurence of a non 'save' line */
+                wl_control = iline;
             iline = iline->wl_next;
+            onlysave = FALSE; /* we have lines other than save... */
+        }
     }
 
     com_save(wl);
+
+    /* If controls is eaten up without other than 'save...' lines, return NULL */
+    if (onlysave)
+        return (NULL);
+
+    return (wl_control);
 }
 
 
