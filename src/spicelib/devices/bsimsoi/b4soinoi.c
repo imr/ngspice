@@ -423,7 +423,7 @@ double m;
                               switch( model->B4SOIfnoiMod )
                               {  case 0:
                                    if (model->B4SOIw0flk > 0) { /* v4.0 */
-                                      noizDens[B4SOIFLNOIZ] *= here->B4SOInf
+                                      noizDens[B4SOIFLNOIZ] *= m * here->B4SOInf
                                       * pParam->B4SOIweff/model->B4SOIw0flk 
                                       * model->B4SOIkf * exp(model->B4SOIaf
                                       * log(MAX(fabs(here->B4SOIcd
@@ -436,7 +436,7 @@ double m;
                                    }
                                   else {
                                       noizDens[B4SOIFLNOIZ] *=
-                                      model->B4SOIkf * exp(model->B4SOIaf
+                                      m * model->B4SOIkf * exp(model->B4SOIaf
                                       * log(MAX(fabs(here->B4SOIcd), N_MINLOG)))
                                       / (pow(data->freq, model->B4SOIef)
                                       * pow(pParam->B4SOIleff,
@@ -475,7 +475,7 @@ double m;
                                             * here->B4SOIcd;
                                       T1 = Swi + Ssi;
                                       if (T1 > 0.0)
-                                           noizDens[B4SOIFLNOIZ] *= (Ssi
+                                           noizDens[B4SOIFLNOIZ] *= m * (Ssi
                                                                   * Swi) / T1;
                                       else
                                            noizDens[B4SOIFLNOIZ] *= 0.0;
