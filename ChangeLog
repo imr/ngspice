@@ -1,3 +1,5421 @@
+2013-01-01  h_vogt <h_vogt>
+ * src/include/ngspice/ngspice.h,
+ * src/misc/ivars.c:
+    ivars.c: prevent crash in CYGWIN batch mode, if NGSPICE_INPUT_DIR given
+    remove unused Default_MFB_Cap
+
+2013-01-01  dwarning <dwarning>
+ * src/spicelib/devices/bsimsoi/b4soinoi.c:
+    b4soinoi.c: Correct the flicker noise model with device multiplier
+
+2013-01-01  h_vogt <h_vogt>
+ * src/frontend/inp.c:
+    inp.c: remove buf if .control section contains only 'save...' lines
+
+2012-12-31  dwarning <dwarning>
+ * DEVICES,
+ * FAQ,
+ * NEWS:
+    update the hisim and hisimhv versions
+
+2012-12-31  rlar <rlar>
+ * src/spicelib/devices/hisim2/hsm2init.c:
+    fix commit "update hisim to version 2.7.0"
+
+    missing #include "ngspice/config.h"
+
+    thats required for consistent interpretation of the type
+      struct IFdevice
+    from ngspice/ifsim.h
+    included from ngspice/devdefs.h
+
+    (invisible XSPICE definition leading
+       to different size and layout of this struct)
+
+2012-12-31  rlar <rlar>
+ * tests/bin/check.sh:
+    compare a little bit less when running `make check'
+
+    windows ngspice emmits a user notice "binary raw file" when running ngspice
+    don't compare that
+
+2012-12-30  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: exit if 'poly' option is required, but XSPICE not available,
+    remove memory leak
+
+2012-12-30  h_vogt <h_vogt>
+ * src/spicelib/analysis/dcpss.c:
+    dcpss.c: Allow XSPICE usage without excessive debug message
+
+2012-12-30  h_vogt <h_vogt>
+ * src/frontend/com_dl.c:
+    com_dl.c: exit upon codemodel load error
+
+2012-12-28  h_vogt <h_vogt>
+ * src/spicelib/analysis/dcpss.c,
+ * visualc/include/ngspice/config.h,
+ * visualc/vngspice.vcproj:
+    dcpss.c : compatibility to MS Visual Studio C
+    vngspice.vcproj, config.h: add PSS to Vc project
+
+2012-12-28  Stefano Perticaroli <Stefano Perticaroli>
+ * configure.ac,
+ * examples/pss/colpitt_osc_pss.cir,
+ * examples/pss/compl_cross_quad_osc_pss.cir,
+ * examples/pss/hartley_osc_pss.cir,
+ * examples/pss/ring_osc_pss.cir,
+ * examples/pss/vackar_osc_pss.cir,
+ * examples/pss/vdp_osc_pss.cir,
+ * src/frontend/commands.c,
+ * src/frontend/outitf.c,
+ * src/frontend/runcoms.c,
+ * src/frontend/runcoms.h,
+ * src/frontend/shyu.c,
+ * src/frontend/spiceif.c,
+ * src/frontend/typesdef.c,
+ * src/include/ngspice/Makefile.am,
+ * src/include/ngspice/cktdefs.h,
+ * src/include/ngspice/pssdefs.h,
+ * src/spicelib/analysis/Makefile.am,
+ * src/spicelib/analysis/analysis.c,
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/pssaskq.c,
+ * src/spicelib/analysis/pssinit.c,
+ * src/spicelib/analysis/psssetp.c,
+ * src/spicelib/parser/inp2dot.c,
+ * visualc/vngspice.vcproj:
+    next version of PSS2
+
+    which was reviewed and rewritten on branch `PSS-2-try-to-rebase+4'
+    by Stefano Perticaroli and Francesco Lannutti
+
+2012-12-28  rlar <rlar>
+ * configure.ac,
+ * examples/pss/colpitt_osc_pss.cir,
+ * examples/pss/compl_cross_quad_osc_pss.cir,
+ * examples/pss/hartley_osc_pss.cir,
+ * examples/pss/ring_osc_pss.cir,
+ * examples/pss/vackar_osc_pss.cir,
+ * examples/pss/vdp_osc_pss.cir,
+ * src/frontend/commands.c,
+ * src/frontend/runcoms.c,
+ * src/frontend/runcoms.h,
+ * src/frontend/shyu.c,
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/Makefile.am,
+ * src/include/ngspice/cktdefs.h,
+ * src/include/ngspice/pssdefs.h,
+ * src/spicelib/analysis/Makefile.am,
+ * src/spicelib/analysis/analysis.c,
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/pssaskq.c,
+ * src/spicelib/analysis/pssinit.c,
+ * src/spicelib/analysis/psssetp.c,
+ * src/spicelib/parser/inp2dot.c,
+ * visualc/vngspice.vcproj:
+    remove PSS2
+
+2012-12-27  h_vogt <h_vogt>
+ * src/spicelib/parser/Makefile.am,
+ * src/spicelib/parser/ifeval.c,
+ * src/spicelib/parser/ifnewuid.c,
+ * src/spicelib/parser/inp.h,
+ * src/spicelib/parser/inp2b.c,
+ * src/spicelib/parser/inp2c.c,
+ * src/spicelib/parser/inp2d.c,
+ * src/spicelib/parser/inp2dot.c,
+ * src/spicelib/parser/inp2e.c,
+ * src/spicelib/parser/inp2f.c,
+ * src/spicelib/parser/inp2g.c,
+ * src/spicelib/parser/inp2h.c,
+ * src/spicelib/parser/inp2i.c,
+ * src/spicelib/parser/inp2j.c,
+ * src/spicelib/parser/inp2k.c,
+ * src/spicelib/parser/inp2l.c,
+ * src/spicelib/parser/inp2m.c,
+ * src/spicelib/parser/inp2n.c,
+ * src/spicelib/parser/inp2o.c,
+ * src/spicelib/parser/inp2p.c,
+ * src/spicelib/parser/inp2q.c,
+ * src/spicelib/parser/inp2r.c,
+ * src/spicelib/parser/inp2s.c,
+ * src/spicelib/parser/inp2t.c,
+ * src/spicelib/parser/inp2u.c,
+ * src/spicelib/parser/inp2v.c,
+ * src/spicelib/parser/inp2w.c,
+ * src/spicelib/parser/inp2y.c,
+ * src/spicelib/parser/inp2z.c,
+ * src/spicelib/parser/inpaname.c,
+ * src/spicelib/parser/inpapnam.c,
+ * src/spicelib/parser/inpcfix.c,
+ * src/spicelib/parser/inpdomod.c,
+ * src/spicelib/parser/inpdpar.c,
+ * src/spicelib/parser/inperrc.c,
+ * src/spicelib/parser/inperror.c,
+ * src/spicelib/parser/inpeval.c,
+ * src/spicelib/parser/inpfindl.c,
+ * src/spicelib/parser/inpfindv.c,
+ * src/spicelib/parser/inpgmod.c,
+ * src/spicelib/parser/inpgstr.c,
+ * src/spicelib/parser/inpgtitl.c,
+ * src/spicelib/parser/inpgtok.c,
+ * src/spicelib/parser/inpgval.c,
+ * src/spicelib/parser/inpkmods.c,
+ * src/spicelib/parser/inplist.c,
+ * src/spicelib/parser/inpmkmod.c,
+ * src/spicelib/parser/inpmktmp.c,
+ * src/spicelib/parser/inppas2.c,
+ * src/spicelib/parser/inppname.c,
+ * src/spicelib/parser/inpptree.c,
+ * src/spicelib/parser/inpsymt.c,
+ * src/spicelib/parser/inptyplk.c,
+ * src/spicelib/parser/inpxx.h,
+ * src/spicelib/parser/ptfuncs.c,
+ * src/spicelib/parser/sperror.c,
+ * visualc/vngspice.vcproj:
+    rename spicelib/parser/inp.h to inpxx.h
+
+    since we have another "inp.h" in src/frontend
+
+2012-12-25  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/maths/ni/nipred.c:
+    nipred.c, remove unused variable `temp'
+
+2012-12-25  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/include/ngspice/cktdefs.h,
+ * src/maths/ni/Makefile.am,
+ * src/maths/ni/nipred.c,
+ * src/maths/ni/nipred.h,
+ * src/spicelib/analysis/dctran.c,
+ * visualc/vngspice.vcproj:
+    remove almost empty src/maths/ni/nipred.h
+
+2012-12-25  dwarning <dwarning>
+ * src/spicelib/devices/adms/admst/ngspiceMakefile.am.xml:
+    distclean and maintainer-clean shall remove generated Makefile.am files in adms directories
+
+2012-12-24  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/maths/ni/Makefile.am,
+ * src/maths/ni/niaciter.c,
+ * src/maths/ni/niaciter.h,
+ * src/maths/ni/nicomcof.c,
+ * src/maths/ni/nicomcof.h,
+ * src/maths/ni/niconv.c,
+ * src/maths/ni/niconv.h,
+ * src/maths/ni/nidest.c,
+ * src/maths/ni/nidest.h,
+ * src/maths/ni/niditer.c,
+ * src/maths/ni/niditer.h,
+ * src/maths/ni/niinit.c,
+ * src/maths/ni/niinit.h,
+ * src/maths/ni/niinteg.c,
+ * src/maths/ni/niinteg.h,
+ * src/maths/ni/niiter.c,
+ * src/maths/ni/niiter.h,
+ * src/maths/ni/niniter.c,
+ * src/maths/ni/niniter.h,
+ * src/maths/ni/nipzmeth.c,
+ * src/maths/ni/nipzmeth.h,
+ * src/maths/ni/nireinit.c,
+ * src/maths/ni/nireinit.h,
+ * src/maths/ni/nisenre.c,
+ * src/maths/ni/nisenre.h,
+ * src/spicelib/analysis/noisean.c,
+ * visualc/vngspice.vcproj:
+    remove empty src/maths/ni/*.h include files
+
+2012-12-23  h_vogt <h_vogt>
+ * src/tclspice.c,
+ * tests/bin/ngspice.pm,
+ * visualc/include/ngspice/config.h:
+    tclspice.c, ngspice.pm, config.h in visualc: prepare ngspice-25
+
+2012-12-23  h_vogt <h_vogt>
+ * configure.ac:
+    configure.ac: prepare ngspice-25
+
+2012-12-23  h_vogt <h_vogt>
+ * COPYING,
+ * FAQ,
+ * INSTALL,
+ * NEWS,
+ * README.tcl:
+    prepare ngspice-25, Robert's patches and more
+
+2012-12-15  rlar <rlar>
+ * configure.ac:
+    configure.ac, defensive use of `AC_OPENMP'
+
+2012-12-22  h_vogt <h_vogt>
+ * src/spicelib/parser/inpdpar.c:
+    inpdpar.c: remove memory leak
+
+2012-12-22  h_vogt <h_vogt>
+ * ANALYSES,
+ * AUTHORS,
+ * COPYING,
+ * README:
+    prepare ngspice-25
+
+2012-12-22  h_vogt <h_vogt>
+ * src/spicelib/devices/isrc/isrcacct.c,
+ * src/spicelib/devices/isrc/isrcload.c,
+ * src/spicelib/devices/vsrc/vsrcacct.c,
+ * src/spicelib/devices/vsrc/vsrcload.c:
+    vsrc, isrc TRNOISE: allow repeated calls to 'tran'
+
+2012-12-22  h_vogt <h_vogt>
+ * src/spicelib/analysis/cktntask.c:
+    cktntask.c: remove meory leak
+
+2012-12-22  h_vogt <h_vogt>
+ * FAQ,
+ * INSTALL:
+    FAQ, INSTALL: update to git, ngspice-25
+
+2012-12-20  rlar <rlar>
+ * src/xspice/mif/mif_inp2.c:
+    use enum Mif_Port_Type_t values instead of numericals
+
+2012-12-19  dwarning <dwarning>
+ * src/frontend/inp.c,
+ * src/frontend/spiceif.c:
+    remove of modtab after the job is done to issue additional source commands
+
+2012-12-18  h_vogt <h_vogt>
+ * src/spicelib/devices/isrc/isrcload.c:
+    isrcload.c: remove memory read beyond array boundary
+
+2012-12-16  rlar <rlar>
+ * src/frontend/fourier.c:
+    use enum dvec_flags values instead of numericals
+
+2012-12-16  rlar <rlar>
+ * src/frontend/fourier.c,
+ * src/frontend/vectors.c:
+    use enum simulation_types values instead of numericals
+
+2012-12-16  h_vogt <h_vogt>
+ * src/frontend/device.c:
+    device.c: plug memory leak in 'alter' command
+
+2012-12-15  h_vogt <h_vogt>
+ * src/frontend/plotting/plotit.c:
+    plotit.c: remove memory leaks
+
+2012-12-15  h_vogt <h_vogt>
+ * src/frontend/com_display.c:
+    com_display.c: remove memory leak
+
+2012-12-15  rlar <rlar>
+ * src/spicelib/parser/inperror.c:
+    inperror.c, release errMsg when it has been consumed
+
+2012-12-15  h_vogt <h_vogt>
+ * src/maths/ni/niiter.c:
+    niiter.c: indentations
+
+2012-12-15  h_vogt <h_vogt>
+ * src/main.c,
+ * src/spicelib/parser/inperror.c:
+    main.c, inperror.c: unify errMsg
+
+2012-12-15  h_vogt <h_vogt>
+ * src/spicelib/parser/inperror.c:
+    inperror.c: indentations
+
+2012-12-09  h_vogt <h_vogt>
+ * src/frontend/com_measure2.c,
+ * src/frontend/measure.c:
+    com_measure.c, measure.c: remove memory leaks
+
+2012-12-09  h_vogt <h_vogt>
+ * src/frontend/measure.c,
+ * src/include/ngspice/fteext.h:
+    measure.c, rewrite do_measure()
+
+2012-12-09  h_vogt <h_vogt>
+ * src/frontend/evaluate.c:
+    apply_func(), use arg->pn_value->v_name instead of recreated name
+
+2012-12-09  h_vogt <h_vogt>
+ * src/frontend/diff.c:
+    com_diff(), use hash tables for the vector search
+
+    patch originally provided by Bill Swartz, 2010
+    reduces vector search time from O(n*n) to O(n)
+
+2012-12-09  h_vogt <h_vogt>
+ * src/frontend/plotting/plotting.c,
+ * src/frontend/vectors.c,
+ * src/include/ngspice/plot.h:
+    findvec(), use hash tables for the vector search
+
+    patch originally provided by Bill Swartz, 2010
+    reduces vector search time from O(n) to O(1)
+
+2012-12-09  h_vogt <h_vogt>
+ * src/include/ngspice/dstring.h,
+ * src/misc/dstring.c:
+    implement spice_dstring_append_lower()
+
+    patch originally provided by Bill Swartz, 2010
+
+2012-12-05  h_vogt <h_vogt>
+ * src/frontend/measure.c:
+    measure.c: outputting 'meas' status in Windows GUI
+
+2012-12-04  dwarning <dwarning>
+ * src/spicelib/devices/jfet/jfet.c,
+ * src/spicelib/devices/jfet/jfetdefs.h,
+ * src/spicelib/devices/jfet/jfetdset.c,
+ * src/spicelib/devices/jfet/jfetload.c,
+ * src/spicelib/devices/jfet/jfetmask.c,
+ * src/spicelib/devices/jfet/jfetmpar.c,
+ * src/spicelib/devices/jfet/jfetset.c,
+ * src/spicelib/devices/jfet/jfettemp.c:
+    jfet model temperature extension, tcv and bex parameter
+
+2012-12-02  rlar <rlar>
+ * src/main.c:
+    allow Ctrl-d to quit
+
+    based upon Cody Creagers patch,
+      EOF Control-D support - ID: 3586069
+      http://sourceforge.net/tracker/?func=detail&aid=3586069&group_id=38962&atid=423917
+
+2012-12-01  rlar <rlar>
+ * src/xspice/cmpp/cmpp.h,
+ * src/xspice/cmpp/pp_lst.c,
+ * src/xspice/cmpp/pp_mod.c,
+ * src/xspice/cmpp/read_ifs.c,
+ * src/xspice/cmpp/util.c,
+ * src/xspice/cmpp/writ_ifs.c:
+    cmpp, rewrite for proper report of error locations
+
+2012-12-01  rlar <rlar>
+ * src/xspice/cmpp/cmpp.h,
+ * src/xspice/cmpp/pp_lst.c,
+ * src/xspice/cmpp/pp_mod.c,
+ * src/xspice/cmpp/read_ifs.c,
+ * src/xspice/cmpp/util.c,
+ * src/xspice/cmpp/writ_ifs.c:
+    cmpp, use <stdarg.h> for print_error()
+
+2012-12-01  rlar <rlar>
+ * src/xspice/cmpp/pp_mod.c:
+    cmpp, remove dead code
+
+2012-12-01  rlar <rlar>
+ * src/xspice/cmpp/pp_mod.c:
+    cmpp, don't exit(0) when reporting an error
+
+2012-12-01  rlar <rlar>
+ * src/frontend/com_fft.c,
+ * src/frontend/device.c,
+ * src/frontend/gens.c,
+ * src/frontend/inpcom.c,
+ * src/frontend/plotting/graf.c,
+ * src/frontend/plotting/grid.c,
+ * src/frontend/rawfile.c,
+ * src/maths/misc/norm.c,
+ * src/spicelib/analysis/cktnames.c,
+ * src/spicelib/analysis/cktpzstr.c,
+ * src/spicelib/devices/asrc/asrcacld.c,
+ * src/spicelib/parser/inpgtok.c:
+    remove unused variables
+
+2012-12-01  rlar <rlar>
+ * src/spicelib/devices/hisimhv1/hsmhvld.c,
+ * src/spicelib/devices/hisimhv1/hsmhvnoi.c:
+    hisimhv1, avoid warnings
+
+2012-12-01  h_vogt <h_vogt>
+ * src/spicelib/devices/cpl/cplsetup.c:
+    cplsetup.c: indentations etc.
+
+2012-12-01  h_vogt <h_vogt>
+ * src/spicelib/devices/cpl/cplsetup.c:
+    cplsetup.c: remove memory leaks
+
+2012-12-01  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: remove memory leak
+
+2012-12-01  rlar <rlar>
+ * src/spicelib/devices/ltra/ltraacct.c:
+    ltraacct.c, shortcutting the bug fix
+
+    use following fact at the artificial timestep time[-1]
+       voltage[-1]  ===  voltage[0]
+    to shortcut the expressions
+
+2012-12-01  rlar <rlar>
+ * src/spicelib/devices/ltra/ltraacct.c:
+    ltraacct.c, bug fix
+
+    reported by Gary Hennigan
+    on tracker
+      http://sourceforge.net/tracker/index.php?func=detail&aid=3591132&group_id=38962&atid=423915
+
+    access to uninitialized memory,
+      trying to acquire the "time" of a projected auxiliary timestep in the past.
+
+    now using the following auxiliary timestep t[-1]
+
+      voltage(t[-1])  ===  voltage(t[0])
+    and
+      t[-1]   ===   t[0]  -  (t[1] - t[0])
+
+    the details are not understood,
+      but thats certainly better than accessing uninitialized memory.
+
+2012-11-27  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: plug memory leaks
+
+2012-11-26  dwarning <dwarning>
+ * tests/hisimhv1/nmos/reference/dcVsub_Id1_vb0.standard,
+ * tests/hisimhv1/nmos/reference/dcVsub_Id1_vb0_jd.standard,
+ * tests/hisimhv1/nmos/reference/dcVsub_Id1_vb1.standard,
+ * tests/hisimhv1/nmos/reference/dcVsub_Id1_vb2.standard,
+ * tests/hisimhv1/nmos/reference/dcVsub_Ig1_vb0.standard,
+ * tests/hisimhv1/nmos/reference/dcVsub_Ig1_vb0_jd.standard,
+ * tests/hisimhv1/nmos/reference/dcVsub_Ig1_vb1.standard,
+ * tests/hisimhv1/nmos/reference/dcVsub_Ig1_vb2.standard,
+ * tests/hisimhv1/pmos/reference/dcVsub_Id1_vb0.standard,
+ * tests/hisimhv1/pmos/reference/dcVsub_Id1_vb0_jd.standard,
+ * tests/hisimhv1/pmos/reference/dcVsub_Id1_vb1.standard,
+ * tests/hisimhv1/pmos/reference/dcVsub_Id1_vb2.standard,
+ * tests/hisimhv1/pmos/reference/dcVsub_Ig1_vb0.standard,
+ * tests/hisimhv1/pmos/reference/dcVsub_Ig1_vb0_jd.standard,
+ * tests/hisimhv1/pmos/reference/dcVsub_Ig1_vb1.standard,
+ * tests/hisimhv1/pmos/reference/dcVsub_Ig1_vb2.standard:
+    hisimhv update to version 1.2.3
+
+2012-11-26  dwarning <dwarning>
+ * src/spicelib/devices/hisimhv1/hisimhv.h,
+ * src/spicelib/devices/hisimhv1/hsmhv.c,
+ * src/spicelib/devices/hisimhv1/hsmhvacld.c,
+ * src/spicelib/devices/hisimhv1/hsmhvask.c,
+ * src/spicelib/devices/hisimhv1/hsmhvcvtest.c,
+ * src/spicelib/devices/hisimhv1/hsmhvdef.h,
+ * src/spicelib/devices/hisimhv1/hsmhvdel.c,
+ * src/spicelib/devices/hisimhv1/hsmhvdest.c,
+ * src/spicelib/devices/hisimhv1/hsmhveval.c,
+ * src/spicelib/devices/hisimhv1/hsmhveval_qover.h,
+ * src/spicelib/devices/hisimhv1/hsmhvevalenv.h,
+ * src/spicelib/devices/hisimhv1/hsmhvext.h,
+ * src/spicelib/devices/hisimhv1/hsmhvgetic.c,
+ * src/spicelib/devices/hisimhv1/hsmhvitf.h,
+ * src/spicelib/devices/hisimhv1/hsmhvld.c,
+ * src/spicelib/devices/hisimhv1/hsmhvld_info_eval.h,
+ * src/spicelib/devices/hisimhv1/hsmhvmask.c,
+ * src/spicelib/devices/hisimhv1/hsmhvmdel.c,
+ * src/spicelib/devices/hisimhv1/hsmhvmpar.c,
+ * src/spicelib/devices/hisimhv1/hsmhvnoi.c,
+ * src/spicelib/devices/hisimhv1/hsmhvpar.c,
+ * src/spicelib/devices/hisimhv1/hsmhvpzld.c,
+ * src/spicelib/devices/hisimhv1/hsmhvset.c,
+ * src/spicelib/devices/hisimhv1/hsmhvtemp.c,
+ * src/spicelib/devices/hisimhv1/hsmhvtemp_eval.h,
+ * src/spicelib/devices/hisimhv1/hsmhvtrunc.c,
+ * tests/hisimhv1/nmos/parameters/nmosParameters,
+ * tests/hisimhv1/nmos/qaSpec,
+ * tests/hisimhv1/nmos/qaSpec.basic,
+ * tests/hisimhv1/nmos/reference/acFreq.standard,
+ * tests/hisimhv1/nmos/reference/acFreq_coadov.standard,
+ * tests/hisimhv1/nmos/reference/acFreq_coiigs.standard,
+ * tests/hisimhv1/nmos/reference/acFreq_conqs.standard,
+ * tests/hisimhv1/nmos/reference/acFreq_coovlp.standard,
+ * tests/hisimhv1/nmos/reference/acFreq_cosym.standard,
+ * tests/hisimhv1/nmos/reference/acFreq_nover.standard,
+ * tests/hisimhv1/nmos/reference/acVd.standard,
+ * tests/hisimhv1/nmos/reference/acVd_corsrd1.standard,
+ * tests/hisimhv1/nmos/reference/acVd_corsrd2.standard,
+ * tests/hisimhv1/nmos/reference/acVd_cosym.standard,
+ * tests/hisimhv1/nmos/reference/acVd_cvdsover.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Id1_vb0.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Id1_vb0_jd.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Id1_vb1.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Id1_vb2.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Ig1_vb0.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Ig1_vb0_jd.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Ig1_vb1.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Ig1_vb2.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_corsrd0.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_corsrd1.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_corsrd2.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_cosym.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_gidl.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_isub.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_ld2.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_lg2.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_rs2m.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_she.standard,
+ * tests/hisimhv1/nmos/reference/noise1.standard,
+ * tests/hisimhv1/nmos/reference/noise2.standard,
+ * tests/hisimhv1/pmos/parameters/pmosParameters,
+ * tests/hisimhv1/pmos/qaSpec,
+ * tests/hisimhv1/pmos/qaSpec.basic,
+ * tests/hisimhv1/pmos/reference/acFreq.standard,
+ * tests/hisimhv1/pmos/reference/acFreq_coadov.standard,
+ * tests/hisimhv1/pmos/reference/acFreq_coiigs.standard,
+ * tests/hisimhv1/pmos/reference/acFreq_conqs.standard,
+ * tests/hisimhv1/pmos/reference/acFreq_coovlp.standard,
+ * tests/hisimhv1/pmos/reference/acFreq_cosym.standard,
+ * tests/hisimhv1/pmos/reference/acFreq_nover.standard,
+ * tests/hisimhv1/pmos/reference/acVd.standard,
+ * tests/hisimhv1/pmos/reference/acVd_corsrd1.standard,
+ * tests/hisimhv1/pmos/reference/acVd_corsrd2.standard,
+ * tests/hisimhv1/pmos/reference/acVd_cosym.standard,
+ * tests/hisimhv1/pmos/reference/acVd_cvdsover.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Id1_vb0.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Id1_vb0_jd.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Id1_vb1.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Id1_vb2.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Ig1_vb0.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Ig1_vb0_jd.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Ig1_vb1.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Ig1_vb2.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_corsrd0.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_corsrd1.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_corsrd2.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_cosym.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_gidl.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_isub.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_ld2.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_lg2.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_rs2m.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_she.standard,
+ * tests/hisimhv1/pmos/reference/noise1.standard,
+ * tests/hisimhv1/pmos/reference/noise2.standard:
+    hisimhv update to version 1.2.3
+
+2012-11-25  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: prevent invalid memory read/write
+
+2012-11-25  dwarning <dwarning>
+ * configure.ac,
+ * src/Makefile.am,
+ * src/spicelib/devices/Makefile.am,
+ * src/spicelib/devices/dev.c,
+ * src/spicelib/devices/hisimhv1/Makefile.am,
+ * tests/Makefile.am,
+ * visualc/vngspice.vcproj:
+    change model name from hisimhv to hisimhv1
+
+2012-11-25  dwarning <dwarning>
+ * src/spicelib/devices/hisimhv/Makefile.am,
+ * src/spicelib/devices/hisimhv/hisimhv.h,
+ * src/spicelib/devices/hisimhv/hsmhv.c,
+ * src/spicelib/devices/hisimhv/hsmhvacld.c,
+ * src/spicelib/devices/hisimhv/hsmhvask.c,
+ * src/spicelib/devices/hisimhv/hsmhvcvtest.c,
+ * src/spicelib/devices/hisimhv/hsmhvdef.h,
+ * src/spicelib/devices/hisimhv/hsmhvdel.c,
+ * src/spicelib/devices/hisimhv/hsmhvdest.c,
+ * src/spicelib/devices/hisimhv/hsmhveval.c,
+ * src/spicelib/devices/hisimhv/hsmhveval_qover.h,
+ * src/spicelib/devices/hisimhv/hsmhvevalenv.h,
+ * src/spicelib/devices/hisimhv/hsmhvext.h,
+ * src/spicelib/devices/hisimhv/hsmhvgetic.c,
+ * src/spicelib/devices/hisimhv/hsmhvinit.c,
+ * src/spicelib/devices/hisimhv/hsmhvinit.h,
+ * src/spicelib/devices/hisimhv/hsmhvitf.h,
+ * src/spicelib/devices/hisimhv/hsmhvld.c,
+ * src/spicelib/devices/hisimhv/hsmhvld_info_eval.h,
+ * src/spicelib/devices/hisimhv/hsmhvmask.c,
+ * src/spicelib/devices/hisimhv/hsmhvmdel.c,
+ * src/spicelib/devices/hisimhv/hsmhvmpar.c,
+ * src/spicelib/devices/hisimhv/hsmhvnoi.c,
+ * src/spicelib/devices/hisimhv/hsmhvpar.c,
+ * src/spicelib/devices/hisimhv/hsmhvpzld.c,
+ * src/spicelib/devices/hisimhv/hsmhvset.c,
+ * src/spicelib/devices/hisimhv/hsmhvtemp.c,
+ * src/spicelib/devices/hisimhv/hsmhvtemp_eval.h,
+ * src/spicelib/devices/hisimhv/hsmhvtrunc.c,
+ * src/spicelib/devices/hisimhv1/Makefile.am,
+ * src/spicelib/devices/hisimhv1/hisimhv.h,
+ * src/spicelib/devices/hisimhv1/hsmhv.c,
+ * src/spicelib/devices/hisimhv1/hsmhvacld.c,
+ * src/spicelib/devices/hisimhv1/hsmhvask.c,
+ * src/spicelib/devices/hisimhv1/hsmhvcvtest.c,
+ * src/spicelib/devices/hisimhv1/hsmhvdef.h,
+ * src/spicelib/devices/hisimhv1/hsmhvdel.c,
+ * src/spicelib/devices/hisimhv1/hsmhvdest.c,
+ * src/spicelib/devices/hisimhv1/hsmhveval.c,
+ * src/spicelib/devices/hisimhv1/hsmhveval_qover.h,
+ * src/spicelib/devices/hisimhv1/hsmhvevalenv.h,
+ * src/spicelib/devices/hisimhv1/hsmhvext.h,
+ * src/spicelib/devices/hisimhv1/hsmhvgetic.c,
+ * src/spicelib/devices/hisimhv1/hsmhvinit.c,
+ * src/spicelib/devices/hisimhv1/hsmhvinit.h,
+ * src/spicelib/devices/hisimhv1/hsmhvitf.h,
+ * src/spicelib/devices/hisimhv1/hsmhvld.c,
+ * src/spicelib/devices/hisimhv1/hsmhvld_info_eval.h,
+ * src/spicelib/devices/hisimhv1/hsmhvmask.c,
+ * src/spicelib/devices/hisimhv1/hsmhvmdel.c,
+ * src/spicelib/devices/hisimhv1/hsmhvmpar.c,
+ * src/spicelib/devices/hisimhv1/hsmhvnoi.c,
+ * src/spicelib/devices/hisimhv1/hsmhvpar.c,
+ * src/spicelib/devices/hisimhv1/hsmhvpzld.c,
+ * src/spicelib/devices/hisimhv1/hsmhvset.c,
+ * src/spicelib/devices/hisimhv1/hsmhvtemp.c,
+ * src/spicelib/devices/hisimhv1/hsmhvtemp_eval.h,
+ * src/spicelib/devices/hisimhv1/hsmhvtrunc.c,
+ * tests/hisimhv/Makefile.am,
+ * tests/hisimhv/nmos/parameters/nmosParameters,
+ * tests/hisimhv/nmos/qaSpec,
+ * tests/hisimhv/nmos/qaSpec.basic,
+ * tests/hisimhv/nmos/reference/acFreq.standard,
+ * tests/hisimhv/nmos/reference/acFreq_coadov.standard,
+ * tests/hisimhv/nmos/reference/acFreq_coiigs.standard,
+ * tests/hisimhv/nmos/reference/acFreq_conqs.standard,
+ * tests/hisimhv/nmos/reference/acFreq_coovlp.standard,
+ * tests/hisimhv/nmos/reference/acFreq_cosym.standard,
+ * tests/hisimhv/nmos/reference/acFreq_nover.standard,
+ * tests/hisimhv/nmos/reference/acVd.standard,
+ * tests/hisimhv/nmos/reference/acVd_corsrd1.standard,
+ * tests/hisimhv/nmos/reference/acVd_corsrd2.standard,
+ * tests/hisimhv/nmos/reference/acVd_cosym.standard,
+ * tests/hisimhv/nmos/reference/acVd_cvdsover.standard,
+ * tests/hisimhv/nmos/reference/dcSw_Id1_vb0.standard,
+ * tests/hisimhv/nmos/reference/dcSw_Id1_vb0_jd.standard,
+ * tests/hisimhv/nmos/reference/dcSw_Id1_vb1.standard,
+ * tests/hisimhv/nmos/reference/dcSw_Id1_vb2.standard,
+ * tests/hisimhv/nmos/reference/dcSw_Ig1_vb0.standard,
+ * tests/hisimhv/nmos/reference/dcSw_Ig1_vb0_jd.standard,
+ * tests/hisimhv/nmos/reference/dcSw_Ig1_vb1.standard,
+ * tests/hisimhv/nmos/reference/dcSw_Ig1_vb2.standard,
+ * tests/hisimhv/nmos/reference/dcSw_corsrd0.standard,
+ * tests/hisimhv/nmos/reference/dcSw_corsrd1.standard,
+ * tests/hisimhv/nmos/reference/dcSw_corsrd2.standard,
+ * tests/hisimhv/nmos/reference/dcSw_cosym.standard,
+ * tests/hisimhv/nmos/reference/dcSw_gidl.standard,
+ * tests/hisimhv/nmos/reference/dcSw_isub.standard,
+ * tests/hisimhv/nmos/reference/dcSw_ld2.standard,
+ * tests/hisimhv/nmos/reference/dcSw_lg2.standard,
+ * tests/hisimhv/nmos/reference/dcSw_rs2m.standard,
+ * tests/hisimhv/nmos/reference/dcSw_she.standard,
+ * tests/hisimhv/nmos/reference/noise1.standard,
+ * tests/hisimhv/nmos/reference/noise2.standard,
+ * tests/hisimhv/nmos/run,
+ * tests/hisimhv/pmos/parameters/pmosParameters,
+ * tests/hisimhv/pmos/qaSpec,
+ * tests/hisimhv/pmos/qaSpec.basic,
+ * tests/hisimhv/pmos/reference/acFreq.standard,
+ * tests/hisimhv/pmos/reference/acFreq_coadov.standard,
+ * tests/hisimhv/pmos/reference/acFreq_coiigs.standard,
+ * tests/hisimhv/pmos/reference/acFreq_conqs.standard,
+ * tests/hisimhv/pmos/reference/acFreq_coovlp.standard,
+ * tests/hisimhv/pmos/reference/acFreq_cosym.standard,
+ * tests/hisimhv/pmos/reference/acFreq_nover.standard,
+ * tests/hisimhv/pmos/reference/acVd.standard,
+ * tests/hisimhv/pmos/reference/acVd_corsrd1.standard,
+ * tests/hisimhv/pmos/reference/acVd_corsrd2.standard,
+ * tests/hisimhv/pmos/reference/acVd_cosym.standard,
+ * tests/hisimhv/pmos/reference/acVd_cvdsover.standard,
+ * tests/hisimhv/pmos/reference/dcSw_Id1_vb0.standard,
+ * tests/hisimhv/pmos/reference/dcSw_Id1_vb0_jd.standard,
+ * tests/hisimhv/pmos/reference/dcSw_Id1_vb1.standard,
+ * tests/hisimhv/pmos/reference/dcSw_Id1_vb2.standard,
+ * tests/hisimhv/pmos/reference/dcSw_Ig1_vb0.standard,
+ * tests/hisimhv/pmos/reference/dcSw_Ig1_vb0_jd.standard,
+ * tests/hisimhv/pmos/reference/dcSw_Ig1_vb1.standard,
+ * tests/hisimhv/pmos/reference/dcSw_Ig1_vb2.standard,
+ * tests/hisimhv/pmos/reference/dcSw_corsrd0.standard,
+ * tests/hisimhv/pmos/reference/dcSw_corsrd1.standard,
+ * tests/hisimhv/pmos/reference/dcSw_corsrd2.standard,
+ * tests/hisimhv/pmos/reference/dcSw_cosym.standard,
+ * tests/hisimhv/pmos/reference/dcSw_gidl.standard,
+ * tests/hisimhv/pmos/reference/dcSw_isub.standard,
+ * tests/hisimhv/pmos/reference/dcSw_ld2.standard,
+ * tests/hisimhv/pmos/reference/dcSw_lg2.standard,
+ * tests/hisimhv/pmos/reference/dcSw_rs2m.standard,
+ * tests/hisimhv/pmos/reference/dcSw_she.standard,
+ * tests/hisimhv/pmos/reference/noise1.standard,
+ * tests/hisimhv/pmos/reference/noise2.standard,
+ * tests/hisimhv/pmos/run,
+ * tests/hisimhv1/Makefile.am,
+ * tests/hisimhv1/nmos/parameters/nmosParameters,
+ * tests/hisimhv1/nmos/qaSpec,
+ * tests/hisimhv1/nmos/qaSpec.basic,
+ * tests/hisimhv1/nmos/reference/acFreq.standard,
+ * tests/hisimhv1/nmos/reference/acFreq_coadov.standard,
+ * tests/hisimhv1/nmos/reference/acFreq_coiigs.standard,
+ * tests/hisimhv1/nmos/reference/acFreq_conqs.standard,
+ * tests/hisimhv1/nmos/reference/acFreq_coovlp.standard,
+ * tests/hisimhv1/nmos/reference/acFreq_cosym.standard,
+ * tests/hisimhv1/nmos/reference/acFreq_nover.standard,
+ * tests/hisimhv1/nmos/reference/acVd.standard,
+ * tests/hisimhv1/nmos/reference/acVd_corsrd1.standard,
+ * tests/hisimhv1/nmos/reference/acVd_corsrd2.standard,
+ * tests/hisimhv1/nmos/reference/acVd_cosym.standard,
+ * tests/hisimhv1/nmos/reference/acVd_cvdsover.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Id1_vb0.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Id1_vb0_jd.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Id1_vb1.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Id1_vb2.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Ig1_vb0.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Ig1_vb0_jd.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Ig1_vb1.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_Ig1_vb2.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_corsrd0.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_corsrd1.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_corsrd2.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_cosym.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_gidl.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_isub.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_ld2.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_lg2.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_rs2m.standard,
+ * tests/hisimhv1/nmos/reference/dcSw_she.standard,
+ * tests/hisimhv1/nmos/reference/noise1.standard,
+ * tests/hisimhv1/nmos/reference/noise2.standard,
+ * tests/hisimhv1/nmos/run,
+ * tests/hisimhv1/pmos/parameters/pmosParameters,
+ * tests/hisimhv1/pmos/qaSpec,
+ * tests/hisimhv1/pmos/qaSpec.basic,
+ * tests/hisimhv1/pmos/reference/acFreq.standard,
+ * tests/hisimhv1/pmos/reference/acFreq_coadov.standard,
+ * tests/hisimhv1/pmos/reference/acFreq_coiigs.standard,
+ * tests/hisimhv1/pmos/reference/acFreq_conqs.standard,
+ * tests/hisimhv1/pmos/reference/acFreq_coovlp.standard,
+ * tests/hisimhv1/pmos/reference/acFreq_cosym.standard,
+ * tests/hisimhv1/pmos/reference/acFreq_nover.standard,
+ * tests/hisimhv1/pmos/reference/acVd.standard,
+ * tests/hisimhv1/pmos/reference/acVd_corsrd1.standard,
+ * tests/hisimhv1/pmos/reference/acVd_corsrd2.standard,
+ * tests/hisimhv1/pmos/reference/acVd_cosym.standard,
+ * tests/hisimhv1/pmos/reference/acVd_cvdsover.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Id1_vb0.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Id1_vb0_jd.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Id1_vb1.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Id1_vb2.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Ig1_vb0.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Ig1_vb0_jd.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Ig1_vb1.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_Ig1_vb2.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_corsrd0.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_corsrd1.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_corsrd2.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_cosym.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_gidl.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_isub.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_ld2.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_lg2.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_rs2m.standard,
+ * tests/hisimhv1/pmos/reference/dcSw_she.standard,
+ * tests/hisimhv1/pmos/reference/noise1.standard,
+ * tests/hisimhv1/pmos/reference/noise2.standard,
+ * tests/hisimhv1/pmos/run:
+    rename directories hisimhv --> hisimhv1
+
+2012-11-21  dwarning <dwarning>
+ * src/frontend/plotting/gnuplot.c:
+    gnuplot.c: allow png terminal by gnuplot_terminal variable
+
+2012-11-21  dwarning <dwarning>
+ * tests/hisim/nmos/reference/10_dcSweep_COGIDL=0.standard,
+ * tests/hisim/nmos/reference/11_dcSweep_COGIDL=1.standard,
+ * tests/hisim/nmos/reference/12_dcSweep_COGIDL=1.standard,
+ * tests/hisim/nmos/reference/13_dcSweep_COISTI=0.standard,
+ * tests/hisim/nmos/reference/14_dcSweep_COISTI=1_NSUBC.standard,
+ * tests/hisim/nmos/reference/15_dcSweep_COISTI=1_NSUBP.standard,
+ * tests/hisim/nmos/reference/16_dcSweep_WPE.standard,
+ * tests/hisim/nmos/reference/19_dcSweep_CORG=0.standard,
+ * tests/hisim/nmos/reference/1_dcSweep_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/20_dcSweep_CORG=1.standard,
+ * tests/hisim/nmos/reference/21_dcSweep_CORBNET=0.standard,
+ * tests/hisim/nmos/reference/22_dcSweep_CORBNET=1.standard,
+ * tests/hisim/nmos/reference/23_dcSweep_CODFM=0.standard,
+ * tests/hisim/nmos/reference/24_dcSweep_CODFM=1.standard,
+ * tests/hisim/nmos/reference/25_dcSweep_VFBCL.standard,
+ * tests/hisim/nmos/reference/2_dcSweep_CORSRD=-1_GDLD.standard,
+ * tests/hisim/nmos/reference/35_acVd_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/36_acVd_CORSRD=-1_GDLD.standard,
+ * tests/hisim/nmos/reference/37_acVd_CORSRD=-1_PT.standard,
+ * tests/hisim/nmos/reference/38_acVd_WPE.standard,
+ * tests/hisim/nmos/reference/39_acVd_VFBCL.standard,
+ * tests/hisim/nmos/reference/3_dcSweep_CORSRD=-1_PT.standard,
+ * tests/hisim/nmos/reference/45_acFreq_COOVLP=1.standard,
+ * tests/hisim/nmos/reference/46_acFreq_COISUB=0.standard,
+ * tests/hisim/nmos/reference/47_acFreq_COISUB=1.standard,
+ * tests/hisim/nmos/reference/48_acFreq_COIIGS=0.standard,
+ * tests/hisim/nmos/reference/49_acFreq_COIIGS=1.standard,
+ * tests/hisim/nmos/reference/4_dcSweep_NSUBPFAC.standard,
+ * tests/hisim/nmos/reference/50_acFreq_COGIDL=0.standard,
+ * tests/hisim/nmos/reference/51_acFreq_COGIDL=1.standard,
+ * tests/hisim/nmos/reference/52_acFreq_COSTI=0.standard,
+ * tests/hisim/nmos/reference/53_acFreq_COSTI=1.standard,
+ * tests/hisim/nmos/reference/54_acFreq_COADOV=0.standard,
+ * tests/hisim/nmos/reference/55_acFreq_COADOV=1.standard,
+ * tests/hisim/nmos/reference/56_acFreq_CONQS=0.standard,
+ * tests/hisim/nmos/reference/57_acFreq_CONQS=1.standard,
+ * tests/hisim/nmos/reference/58_acFreq_CORG=0.standard,
+ * tests/hisim/nmos/reference/59_acFreq_CORG=1.standard,
+ * tests/hisim/nmos/reference/5_dcSweep_NSUBPDLT.standard,
+ * tests/hisim/nmos/reference/60_acFreq_CORBNET=0.standard,
+ * tests/hisim/nmos/reference/61_acFreq_CORBNET=1.standard,
+ * tests/hisim/nmos/reference/62_acFreq_COFLICK=0.standard,
+ * tests/hisim/nmos/reference/63_acFreq_COFLICK=1.standard,
+ * tests/hisim/nmos/reference/64_acFreq_COTHRML=0.standard,
+ * tests/hisim/nmos/reference/65_acFreq_COTHRML=1.standard,
+ * tests/hisim/nmos/reference/66_acFreq_COIGN=0.standard,
+ * tests/hisim/nmos/reference/67_acFreq_COIGN=1.standard,
+ * tests/hisim/nmos/reference/68_acFreq_WPE.standard,
+ * tests/hisim/nmos/reference/69_acFreq_CODFM=0.standard,
+ * tests/hisim/nmos/reference/6_dcSweep_COISUB=0.standard,
+ * tests/hisim/nmos/reference/70_acFreq_CODFM=1.standard,
+ * tests/hisim/nmos/reference/75_noise_COIGN=1_T27.standard,
+ * tests/hisim/nmos/reference/76_noise_COIGN=1_T-55.standard,
+ * tests/hisim/nmos/reference/77_noise_COIGN=1_T150.standard,
+ * tests/hisim/nmos/reference/78_noise_COIGN=0_T27.standard,
+ * tests/hisim/nmos/reference/79_noise_COIGN=0_T-55.standard,
+ * tests/hisim/nmos/reference/7_dcSweep_COISUB=1.standard,
+ * tests/hisim/nmos/reference/80_noise_COIGN=0_T150.standard,
+ * tests/hisim/nmos/reference/8_dcSweep_COIIGS=0.standard,
+ * tests/hisim/nmos/reference/9_dcSweep_COIIGS=1.standard,
+ * tests/hisim/pmos/reference/10_dcSweep_COGIDL=0.standard,
+ * tests/hisim/pmos/reference/11_dcSweep_COGIDL=1.standard,
+ * tests/hisim/pmos/reference/12_dcSweep_COGIDL=1.standard,
+ * tests/hisim/pmos/reference/13_dcSweep_COISTI=0.standard,
+ * tests/hisim/pmos/reference/14_dcSweep_COISTI=1_NSUBC.standard,
+ * tests/hisim/pmos/reference/15_dcSweep_COISTI=1_NSUBP.standard,
+ * tests/hisim/pmos/reference/16_dcSweep_WPE.standard,
+ * tests/hisim/pmos/reference/19_dcSweep_CORG=0.standard,
+ * tests/hisim/pmos/reference/1_dcSweep_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/20_dcSweep_CORG=1.standard,
+ * tests/hisim/pmos/reference/21_dcSweep_CORBNET=0.standard,
+ * tests/hisim/pmos/reference/22_dcSweep_CORBNET=1.standard,
+ * tests/hisim/pmos/reference/23_dcSweep_CODFM=0.standard,
+ * tests/hisim/pmos/reference/24_dcSweep_CODFM=1.standard,
+ * tests/hisim/pmos/reference/25_dcSweep_VFBCL.standard,
+ * tests/hisim/pmos/reference/2_dcSweep_CORSRD=-1_GDLD.standard,
+ * tests/hisim/pmos/reference/35_acVd_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/36_acVd_CORSRD=-1_GDLD.standard,
+ * tests/hisim/pmos/reference/37_acVd_CORSRD=-1_PT.standard,
+ * tests/hisim/pmos/reference/38_acVd_WPE.standard,
+ * tests/hisim/pmos/reference/39_acVd_VFBCL.standard,
+ * tests/hisim/pmos/reference/3_dcSweep_CORSRD=-1_PT.standard,
+ * tests/hisim/pmos/reference/45_acFreq_COOVLP=1.standard,
+ * tests/hisim/pmos/reference/46_acFreq_COISUB=0.standard,
+ * tests/hisim/pmos/reference/47_acFreq_COISUB=1.standard,
+ * tests/hisim/pmos/reference/48_acFreq_COIIGS=0.standard,
+ * tests/hisim/pmos/reference/49_acFreq_COIIGS=1.standard,
+ * tests/hisim/pmos/reference/4_dcSweep_NSUBPFAC.standard,
+ * tests/hisim/pmos/reference/50_acFreq_COGIDL=0.standard,
+ * tests/hisim/pmos/reference/51_acFreq_COGIDL=1.standard,
+ * tests/hisim/pmos/reference/52_acFreq_COSTI=0.standard,
+ * tests/hisim/pmos/reference/53_acFreq_COSTI=1.standard,
+ * tests/hisim/pmos/reference/54_acFreq_COADOV=0.standard,
+ * tests/hisim/pmos/reference/55_acFreq_COADOV=1.standard,
+ * tests/hisim/pmos/reference/56_acFreq_CONQS=0.standard,
+ * tests/hisim/pmos/reference/57_acFreq_CONQS=1.standard,
+ * tests/hisim/pmos/reference/58_acFreq_CORG=0.standard,
+ * tests/hisim/pmos/reference/59_acFreq_CORG=1.standard,
+ * tests/hisim/pmos/reference/5_dcSweep_NSUBPDLT.standard,
+ * tests/hisim/pmos/reference/60_acFreq_CORBNET=0.standard,
+ * tests/hisim/pmos/reference/61_acFreq_CORBNET=1.standard,
+ * tests/hisim/pmos/reference/62_acFreq_COFLICK=0.standard,
+ * tests/hisim/pmos/reference/63_acFreq_COFLICK=1.standard,
+ * tests/hisim/pmos/reference/64_acFreq_COTHRML=0.standard,
+ * tests/hisim/pmos/reference/65_acFreq_COTHRML=1.standard,
+ * tests/hisim/pmos/reference/66_acFreq_COIGN=0.standard,
+ * tests/hisim/pmos/reference/67_acFreq_COIGN=1.standard,
+ * tests/hisim/pmos/reference/68_acFreq_WPE.standard,
+ * tests/hisim/pmos/reference/69_acFreq_CODFM=0.standard,
+ * tests/hisim/pmos/reference/6_dcSweep_COISUB=0.standard,
+ * tests/hisim/pmos/reference/70_acFreq_CODFM=1.standard,
+ * tests/hisim/pmos/reference/75_noise_COIGN=1_T27.standard,
+ * tests/hisim/pmos/reference/76_noise_COIGN=1_T-55.standard,
+ * tests/hisim/pmos/reference/77_noise_COIGN=1_T150.standard,
+ * tests/hisim/pmos/reference/78_noise_COIGN=0_T27.standard,
+ * tests/hisim/pmos/reference/79_noise_COIGN=0_T-55.standard,
+ * tests/hisim/pmos/reference/7_dcSweep_COISUB=1.standard,
+ * tests/hisim/pmos/reference/80_noise_COIGN=0_T150.standard,
+ * tests/hisim/pmos/reference/8_dcSweep_COIIGS=0.standard,
+ * tests/hisim/pmos/reference/9_dcSweep_COIIGS=1.standard:
+    update hisim to version 2.7.0
+
+2012-11-21  dwarning <dwarning>
+ * tests/hisim/nmos/parameters/nmosParameters,
+ * tests/hisim/nmos/qaSpec,
+ * tests/hisim/nmos/reference/10_dcSweep_COIIGS=1.standard,
+ * tests/hisim/nmos/reference/11_dcSweep_COGIDL=0.standard,
+ * tests/hisim/nmos/reference/12_dcSweep_COGIDL=1.standard,
+ * tests/hisim/nmos/reference/13_dcSweep_COISTI=0.standard,
+ * tests/hisim/nmos/reference/14_dcSweep_COISTI=1.standard,
+ * tests/hisim/nmos/reference/15_dcSweep_WPE.standard,
+ * tests/hisim/nmos/reference/19_dcSweep_CORG=0.standard,
+ * tests/hisim/nmos/reference/2-1_dcSweep_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/2-2_dcSweep_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/20_dcSweep_CORG=1.standard,
+ * tests/hisim/nmos/reference/21_dcSweep_CORBNET=0.standard,
+ * tests/hisim/nmos/reference/22_dcSweep_CORBNET=1.standard,
+ * tests/hisim/nmos/reference/2_dcSweep_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/33_dcSweep_CODFM=0.standard,
+ * tests/hisim/nmos/reference/34_dcSweep_CODFM=1.standard,
+ * tests/hisim/nmos/reference/36-1_acVd_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/36-2_acVd_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/36_acVd_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/37_acVd_WPE.standard,
+ * tests/hisim/nmos/reference/40_acFreq_COOVLP=1.standard,
+ * tests/hisim/nmos/reference/41_acFreq_COISUB=0.standard,
+ * tests/hisim/nmos/reference/42_acFreq_COISUB=1.standard,
+ * tests/hisim/nmos/reference/43_acFreq_COIIGS=0.standard,
+ * tests/hisim/nmos/reference/44_acFreq_COIIGS=1.standard,
+ * tests/hisim/nmos/reference/45_acFreq_COGIDL=0.standard,
+ * tests/hisim/nmos/reference/46_acFreq_COGIDL=1.standard,
+ * tests/hisim/nmos/reference/47_acFreq_COSTI=0.standard,
+ * tests/hisim/nmos/reference/48_acFreq_COSTI=1.standard,
+ * tests/hisim/nmos/reference/49_acFreq_COADOV=0.standard,
+ * tests/hisim/nmos/reference/50_acFreq_COADOV=1.standard,
+ * tests/hisim/nmos/reference/51_acFreq_CONQS=0.standard,
+ * tests/hisim/nmos/reference/52_acFreq_CONQS=1.standard,
+ * tests/hisim/nmos/reference/53_acFreq_CORG=0.standard,
+ * tests/hisim/nmos/reference/54_acFreq_CORG=1.standard,
+ * tests/hisim/nmos/reference/55_acFreq_CORBNET=0.standard,
+ * tests/hisim/nmos/reference/56_acFreq_CORBNET=1.standard,
+ * tests/hisim/nmos/reference/57_acFreq_COFLICK=0.standard,
+ * tests/hisim/nmos/reference/58_acFreq_COFLICK=1.standard,
+ * tests/hisim/nmos/reference/59_acFreq_COTHRML=0.standard,
+ * tests/hisim/nmos/reference/60_acFreq_COTHRML=1.standard,
+ * tests/hisim/nmos/reference/61_acFreq_COIGN=0.standard,
+ * tests/hisim/nmos/reference/62_acFreq_COIGN=1.standard,
+ * tests/hisim/nmos/reference/63_acFreq_WPE.standard,
+ * tests/hisim/nmos/reference/67_acFreq_CODFM=0.standard,
+ * tests/hisim/nmos/reference/68_acFreq_CODFM=1.standard,
+ * tests/hisim/nmos/reference/69-1_noise_COIGN=1_T-55.standard,
+ * tests/hisim/nmos/reference/69-2_noise_COIGN=1_T150.standard,
+ * tests/hisim/nmos/reference/69_noise_COIGN=1_T27.standard,
+ * tests/hisim/nmos/reference/70-1_noise_COIGN=0_T-55.standard,
+ * tests/hisim/nmos/reference/70-2_noise_COIGN=0_T150.standard,
+ * tests/hisim/nmos/reference/70_noise_COIGN=0_T27.standard,
+ * tests/hisim/nmos/reference/7_dcSweep_COISUB=0.standard,
+ * tests/hisim/nmos/reference/8_dcSweep_COISUB=1.standard,
+ * tests/hisim/nmos/reference/9_dcSweep_COIIGS=0.standard,
+ * tests/hisim/pmos/qaSpec,
+ * tests/hisim/pmos/reference/10_dcSweep_COIIGS=1.standard,
+ * tests/hisim/pmos/reference/11_dcSweep_COGIDL=0.standard,
+ * tests/hisim/pmos/reference/12_dcSweep_COGIDL=1.standard,
+ * tests/hisim/pmos/reference/13_dcSweep_COISTI=0.standard,
+ * tests/hisim/pmos/reference/14_dcSweep_COISTI=1.standard,
+ * tests/hisim/pmos/reference/15_dcSweep_WPE.standard,
+ * tests/hisim/pmos/reference/19_dcSweep_CORG=0.standard,
+ * tests/hisim/pmos/reference/2-1_dcSweep_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/2-2_dcSweep_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/20_dcSweep_CORG=1.standard,
+ * tests/hisim/pmos/reference/21_dcSweep_CORBNET=0.standard,
+ * tests/hisim/pmos/reference/22_dcSweep_CORBNET=1.standard,
+ * tests/hisim/pmos/reference/2_dcSweep_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/33_dcSweep_CODFM=0.standard,
+ * tests/hisim/pmos/reference/34_dcSweep_CODFM=1.standard,
+ * tests/hisim/pmos/reference/36-1_acVd_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/36-2_acVd_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/36_acVd_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/37_acVd_WPE.standard,
+ * tests/hisim/pmos/reference/40_acFreq_COOVLP=1.standard,
+ * tests/hisim/pmos/reference/41_acFreq_COISUB=0.standard,
+ * tests/hisim/pmos/reference/42_acFreq_COISUB=1.standard,
+ * tests/hisim/pmos/reference/43_acFreq_COIIGS=0.standard,
+ * tests/hisim/pmos/reference/44_acFreq_COIIGS=1.standard,
+ * tests/hisim/pmos/reference/45_acFreq_COGIDL=0.standard,
+ * tests/hisim/pmos/reference/46_acFreq_COGIDL=1.standard,
+ * tests/hisim/pmos/reference/47_acFreq_COSTI=0.standard,
+ * tests/hisim/pmos/reference/48_acFreq_COSTI=1.standard,
+ * tests/hisim/pmos/reference/49_acFreq_COADOV=0.standard,
+ * tests/hisim/pmos/reference/50_acFreq_COADOV=1.standard,
+ * tests/hisim/pmos/reference/51_acFreq_CONQS=0.standard,
+ * tests/hisim/pmos/reference/52_acFreq_CONQS=1.standard,
+ * tests/hisim/pmos/reference/53_acFreq_CORG=0.standard,
+ * tests/hisim/pmos/reference/54_acFreq_CORG=1.standard,
+ * tests/hisim/pmos/reference/55_acFreq_CORBNET=0.standard,
+ * tests/hisim/pmos/reference/56_acFreq_CORBNET=1.standard,
+ * tests/hisim/pmos/reference/57_acFreq_COFLICK=0.standard,
+ * tests/hisim/pmos/reference/58_acFreq_COFLICK=1.standard,
+ * tests/hisim/pmos/reference/59_acFreq_COTHRML=0.standard,
+ * tests/hisim/pmos/reference/60_acFreq_COTHRML=1.standard,
+ * tests/hisim/pmos/reference/61_acFreq_COIGN=0.standard,
+ * tests/hisim/pmos/reference/62_acFreq_COIGN=1.standard,
+ * tests/hisim/pmos/reference/63_acFreq_WPE.standard,
+ * tests/hisim/pmos/reference/67_acFreq_CODFM=0.standard,
+ * tests/hisim/pmos/reference/68_acFreq_CODFM=1.standard,
+ * tests/hisim/pmos/reference/69-1_noise_COIGN=1_T-55.standard,
+ * tests/hisim/pmos/reference/69-2_noise_COIGN=1_T150.standard,
+ * tests/hisim/pmos/reference/69_noise_COIGN=1_T27.standard,
+ * tests/hisim/pmos/reference/70-1_noise_COIGN=0_T-55.standard,
+ * tests/hisim/pmos/reference/70-2_noise_COIGN=0_T150.standard,
+ * tests/hisim/pmos/reference/70_noise_COIGN=0_T27.standard,
+ * tests/hisim/pmos/reference/7_dcSweep_COISUB=0.standard,
+ * tests/hisim/pmos/reference/8_dcSweep_COISUB=1.standard,
+ * tests/hisim/pmos/reference/9_dcSweep_COIIGS=0.standard:
+    update hisim to version 2.7.0
+
+2012-11-21  dwarning <dwarning>
+ * src/spicelib/devices/hisim2/hisim2.h,
+ * src/spicelib/devices/hisim2/hsm2.c,
+ * src/spicelib/devices/hisim2/hsm2acld.c,
+ * src/spicelib/devices/hisim2/hsm2ask.c,
+ * src/spicelib/devices/hisim2/hsm2cvtest.c,
+ * src/spicelib/devices/hisim2/hsm2def.h,
+ * src/spicelib/devices/hisim2/hsm2del.c,
+ * src/spicelib/devices/hisim2/hsm2dest.c,
+ * src/spicelib/devices/hisim2/hsm2eval.c,
+ * src/spicelib/devices/hisim2/hsm2evalenv.h,
+ * src/spicelib/devices/hisim2/hsm2ext.h,
+ * src/spicelib/devices/hisim2/hsm2getic.c,
+ * src/spicelib/devices/hisim2/hsm2init.c,
+ * src/spicelib/devices/hisim2/hsm2itf.h,
+ * src/spicelib/devices/hisim2/hsm2ld.c,
+ * src/spicelib/devices/hisim2/hsm2mask.c,
+ * src/spicelib/devices/hisim2/hsm2mdel.c,
+ * src/spicelib/devices/hisim2/hsm2mpar.c,
+ * src/spicelib/devices/hisim2/hsm2noi.c,
+ * src/spicelib/devices/hisim2/hsm2par.c,
+ * src/spicelib/devices/hisim2/hsm2pzld.c,
+ * src/spicelib/devices/hisim2/hsm2set.c,
+ * src/spicelib/devices/hisim2/hsm2temp.c,
+ * src/spicelib/devices/hisim2/hsm2trunc.c:
+    update hisim to version 2.7.0
+
+2012-11-21  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/spicelib/devices/bsim3/b3ld.c,
+ * src/spicelib/devices/bsim3v32/b3v32ld.c,
+ * src/spicelib/devices/bsim4/b4ld.c:
+    b3ld.c, b4ld.c, b3v32ld.c: charge computation for MODEDCTRANCURCE instead of MODEDC
+
+    this is a fix for commit:
+    b3ld.c, b4ld.c, b3v32ld.c: enable capacitance calculation during dc sweep
+
+2012-11-19  h_vogt <h_vogt>
+ * src/xspice/mif/mif_inp2.c:
+    mif_inp2.c: bug 3389072 fixed
+
+2012-11-19  h_vogt <h_vogt>
+ * src/xspice/mif/mif_inp2.c:
+    beautify code
+
+2012-11-17  h_vogt <h_vogt>
+ * examples/various/adder_mos.cir,
+ * examples/various/agauss_test.cir,
+ * examples/various/gain_stage.cir,
+ * examples/various/param_sweep.cir:
+    input examples drawn from manual
+
+2012-11-17  h_vogt <h_vogt>
+ * src/frontend/inp.c:
+    inp.c: pre_<command> to allow command execution from the .control section before parsing the circuit
+
+2012-11-16  rlar <rlar>
+ * Makefile.am,
+ * src/xspice/Makefile.am,
+ * src/xspice/cmpp/Makefile.am,
+ * tests/Makefile.am:
+    fix `make dist'
+
+2012-11-07  h_vogt <h_vogt>
+ * src/frontend/outitf.c:
+    outitf.c: do not call clock() if MS Windows GUI
+
+2012-11-07  rlar <rlar>
+ * src/frontend/variable.c:
+    improve commit `variable.c: add strict error handling'
+
+2012-11-07  dwarning <dwarning>
+ * src/spicelib/parser/inpdomod.c:
+    make the level switch compatible for HiSIM2 and HiSIMHV
+
+2012-11-07  dwarning <dwarning>
+ * src/spicelib/parser/inpdomod.c:
+    rm whitespaces
+
+2012-11-06  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/frontend/Makefile.am:
+    remove "error.h" from Makefile.am
+
+    this file is not anymore in the "frontend" folder
+    and "make dist" failed to generate the tarball
+
+2012-11-06  dwarning <dwarning>
+ * src/frontend/subckt.c:
+    fix a leak in devmodtranslate 3 terminal section
+
+2012-11-06  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/frontend/wdisp/windisp.c,
+ * src/frontend/wdisp/winprint.c:
+    move windows specific `STRICT' definition to canonical place
+
+2012-11-06  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * Makefile.am:
+    Makefile.am, add `ar-lib' to the MAINTAINERCLEANFILES
+
+2012-11-06  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * Makefile.am,
+ * autogen.sh,
+ * src/spicelib/Makefile.am,
+ * src/xspice/Makefile.am:
+    Makefiles, drop some CVS remnants
+
+2012-11-06  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/frontend/com_fft.c:
+    avoid a compiler warning, (unused static function)
+
+2012-11-06  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/xspice/icm/makedefs.in:
+    Added datarootdir variable as usual behavior and to avoid autoconf warning
+
+2012-11-06  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/ngsconvert.c:
+    Solved linking error for ngsconvert after ft_stricterror patch in src/frontend/variable.c
+
+2012-11-05  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/frontend/com_dl.c:
+    fix #include <> versus ""
+
+2012-11-05  rlar <rlar>
+ * src/xspice/icm/GNUmakefile.in,
+ * src/xspice/icm/makedefs.in:
+    XSPICE, install dlmain.c
+
+    for separate compilation of XSPICE user models
+
+2012-11-05  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * configure.ac:
+    configure.ac, defensive use of `AM_SILENT_RULES'
+
+2012-11-05  dwarning <dwarning>
+ * src/frontend/subckt.c:
+    allow more then 4 terminal mos models in subckts
+
+2012-11-04  h_vogt <h_vogt>
+ * src/frontend/variable.c:
+    variable.c: add strict error handling
+
+2012-11-04  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: remove bug in inp_add_series_resistor(),
+    prevent crash in inp_remove_ws() upon erroneous input
+
+2012-11-04  h_vogt <h_vogt>
+ * src/frontend/inp.c:
+    inp.c: avoid crash if setparse() returns NULL
+
+2012-11-03  h_vogt <h_vogt>
+ * examples/snapshot/adder_mos.cir,
+ * examples/snapshot/adder_mos_circ.cir,
+ * examples/snapshot/adder_snload.script:
+    examples/snapshot: start, interrupt and resume simulation
+
+2012-11-03  h_vogt <h_vogt>
+ * src/frontend/spiceif.c:
+    spiceif.c: correct types being loaded by snload()
+
+2012-11-02  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * Makefile.am:
+    make maintainer-clean shall remove the m4/ directory too
+
+2012-11-01  h_vogt <h_vogt>
+ * src/frontend/commands.c,
+ * src/frontend/spiceif.c,
+ * src/frontend/spiceif.h,
+ * src/main.c:
+    rename commands 'savesnap', 'loadsnap' to 'snsave', 'snload'
+
+    to avoid conflict with command 'save'
+
+2012-01-15  rlar <rlar>
+ * src/spicelib/devices/hisim2/hsm2eval.c,
+ * src/spicelib/devices/hisim2/hsm2temp.c:
+    hisim2, bug fix, a numerical problem in the hisim2 and hisimhv models
+
+    First seen when compiled with gcc-4.6.2 -g -O1
+
+    The macro `Fn_SZ' which boils down to
+      1/2 * (x + sqrt(x*x + c*c))
+    was used in a context where a negative result
+      blew up the following computations.
+    (used to compute `Egidl', which is used to
+     compute exp(-1 / (Egidl + small_constant)))
+
+    For large negative values of x the computation
+    boils down to
+      1/2 ( x + almost(|x|) )
+    where the summands almost cancel each other,
+    sometimes yielding a small negative result.
+
+    small_constant was too small to avoid a big
+      result for -1/(Egidl + small_constant)
+    yielding an `inf' during the exp() computation,
+    which was later multiplied with a `0'
+      yielding a NaN,
+    which was carried forward
+      during the rest of computations.
+
+    Because the error of the cancellation scales
+    with the magnitude of x, no larger `small_constant'
+    could have avoided the problem.
+
+    Presumably the problem was amplified
+      by a mixture of precisions (double versus extended float)
+      of intermediate values.
+    (the program wasn't compiled for sse)
+
+    ( x was -2.812500e+06,
+      c was  1.000000e-02,
+      Fn_SZ result was -1.853095e-11
+
+      thus the cancellation remainder
+      was of relative size
+        6.6e-18
+      which is approximately
+        2^-57
+      and thus more accurate
+       as a `double float' could have delivered
+    )
+
+2012-11-01  rlar <rlar>
+ * src/spicelib/devices/hisim2/hsm2noi.c:
+    hisim2, use TMALLOC, funcall, and NULL casts
+
+2011-05-22  rlar <rlar>
+ * src/spicelib/devices/hisim2/hsm2noi.c:
+    hisim2, fix NevalSrc(), Nintegrate() redeclaration
+
+2012-10-29  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: add series resistor to each inductor with option rseries=1m
+
+2012-10-29  h_vogt <h_vogt>
+ * src/frontend/com_ghelp.c:
+    com_ghelp.c: better message for help under Windows
+
+2012-10-29  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * autogen.sh:
+    autogen.sh, fix for Mac OS X
+
+2012-10-26  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * .cvsignore,
+ * doc/.cvsignore,
+ * man/.cvsignore,
+ * man/man1/.cvsignore,
+ * src/.cvsignore,
+ * src/ciderlib/.cvsignore,
+ * src/ciderlib/input/.cvsignore,
+ * src/ciderlib/oned/.cvsignore,
+ * src/ciderlib/support/.cvsignore,
+ * src/ciderlib/twod/.cvsignore,
+ * src/frontend/.cvsignore,
+ * src/frontend/help/.cvsignore,
+ * src/frontend/numparam/.cvsignore,
+ * src/frontend/parser/.cvsignore,
+ * src/frontend/plotting/.cvsignore,
+ * src/frontend/trannoise/.cvsignore,
+ * src/frontend/wdisp/.cvsignore,
+ * src/include/ngspice/.cvsignore,
+ * src/maths/.cvsignore,
+ * src/maths/cmaths/.cvsignore,
+ * src/maths/deriv/.cvsignore,
+ * src/maths/fft/.cvsignore,
+ * src/maths/misc/.cvsignore,
+ * src/maths/ni/.cvsignore,
+ * src/maths/poly/.cvsignore,
+ * src/maths/sparse/.cvsignore,
+ * src/misc/.cvsignore,
+ * src/spicelib/.cvsignore,
+ * src/spicelib/analysis/.cvsignore,
+ * src/spicelib/devices/.cvsignore,
+ * src/spicelib/devices/adms/ekv/.cvsignore,
+ * src/spicelib/devices/adms/hicum0/.cvsignore,
+ * src/spicelib/devices/adms/hicum2/.cvsignore,
+ * src/spicelib/devices/adms/mextram/.cvsignore,
+ * src/spicelib/devices/adms/psp102/.cvsignore,
+ * src/spicelib/devices/asrc/.cvsignore,
+ * src/spicelib/devices/bjt/.cvsignore,
+ * src/spicelib/devices/bsim1/.cvsignore,
+ * src/spicelib/devices/bsim2/.cvsignore,
+ * src/spicelib/devices/bsim3/.cvsignore,
+ * src/spicelib/devices/bsim3soi_dd/.cvsignore,
+ * src/spicelib/devices/bsim3soi_fd/.cvsignore,
+ * src/spicelib/devices/bsim3soi_pd/.cvsignore,
+ * src/spicelib/devices/bsim3v0/.cvsignore,
+ * src/spicelib/devices/bsim3v1/.cvsignore,
+ * src/spicelib/devices/bsim3v32/.cvsignore,
+ * src/spicelib/devices/bsim4/.cvsignore,
+ * src/spicelib/devices/bsim4v4/.cvsignore,
+ * src/spicelib/devices/bsim4v5/.cvsignore,
+ * src/spicelib/devices/bsim4v6/.cvsignore,
+ * src/spicelib/devices/bsimsoi/.cvsignore,
+ * src/spicelib/devices/cap/.cvsignore,
+ * src/spicelib/devices/cccs/.cvsignore,
+ * src/spicelib/devices/ccvs/.cvsignore,
+ * src/spicelib/devices/cpl/.cvsignore,
+ * src/spicelib/devices/csw/.cvsignore,
+ * src/spicelib/devices/dio/.cvsignore,
+ * src/spicelib/devices/hfet1/.cvsignore,
+ * src/spicelib/devices/hfet2/.cvsignore,
+ * src/spicelib/devices/hisim2/.cvsignore,
+ * src/spicelib/devices/hisimhv/.cvsignore,
+ * src/spicelib/devices/ind/.cvsignore,
+ * src/spicelib/devices/isrc/.cvsignore,
+ * src/spicelib/devices/jfet/.cvsignore,
+ * src/spicelib/devices/jfet2/.cvsignore,
+ * src/spicelib/devices/ltra/.cvsignore,
+ * src/spicelib/devices/mes/.cvsignore,
+ * src/spicelib/devices/mesa/.cvsignore,
+ * src/spicelib/devices/mos1/.cvsignore,
+ * src/spicelib/devices/mos2/.cvsignore,
+ * src/spicelib/devices/mos3/.cvsignore,
+ * src/spicelib/devices/mos6/.cvsignore,
+ * src/spicelib/devices/mos9/.cvsignore,
+ * src/spicelib/devices/nbjt/.cvsignore,
+ * src/spicelib/devices/nbjt2/.cvsignore,
+ * src/spicelib/devices/ndev/.cvsignore,
+ * src/spicelib/devices/numd/.cvsignore,
+ * src/spicelib/devices/numd2/.cvsignore,
+ * src/spicelib/devices/numos/.cvsignore,
+ * src/spicelib/devices/res/.cvsignore,
+ * src/spicelib/devices/soi3/.cvsignore,
+ * src/spicelib/devices/sw/.cvsignore,
+ * src/spicelib/devices/tra/.cvsignore,
+ * src/spicelib/devices/txl/.cvsignore,
+ * src/spicelib/devices/urc/.cvsignore,
+ * src/spicelib/devices/vbic/.cvsignore,
+ * src/spicelib/devices/vccs/.cvsignore,
+ * src/spicelib/devices/vcvs/.cvsignore,
+ * src/spicelib/devices/vsrc/.cvsignore,
+ * src/spicelib/parser/.cvsignore,
+ * src/xspice/.cvsignore,
+ * src/xspice/cm/.cvsignore,
+ * src/xspice/cmpp/.cvsignore,
+ * src/xspice/enh/.cvsignore,
+ * src/xspice/evt/.cvsignore,
+ * src/xspice/icm/.cvsignore,
+ * src/xspice/icm/analog/.cvsignore,
+ * src/xspice/icm/analog/climit/.cvsignore,
+ * src/xspice/icm/analog/d_dt/.cvsignore,
+ * src/xspice/icm/analog/divide/.cvsignore,
+ * src/xspice/icm/analog/file_source/.cvsignore,
+ * src/xspice/icm/analog/gain/.cvsignore,
+ * src/xspice/icm/analog/hyst/.cvsignore,
+ * src/xspice/icm/analog/ilimit/.cvsignore,
+ * src/xspice/icm/analog/int/.cvsignore,
+ * src/xspice/icm/analog/limit/.cvsignore,
+ * src/xspice/icm/analog/mult/.cvsignore,
+ * src/xspice/icm/analog/multi_input_pwl/.cvsignore,
+ * src/xspice/icm/analog/oneshot/.cvsignore,
+ * src/xspice/icm/analog/pwl/.cvsignore,
+ * src/xspice/icm/analog/s_xfer/.cvsignore,
+ * src/xspice/icm/analog/sine/.cvsignore,
+ * src/xspice/icm/analog/slew/.cvsignore,
+ * src/xspice/icm/analog/square/.cvsignore,
+ * src/xspice/icm/analog/summer/.cvsignore,
+ * src/xspice/icm/analog/triangle/.cvsignore,
+ * src/xspice/icm/digital/.cvsignore,
+ * src/xspice/icm/digital/adc_bridge/.cvsignore,
+ * src/xspice/icm/digital/d_and/.cvsignore,
+ * src/xspice/icm/digital/d_buffer/.cvsignore,
+ * src/xspice/icm/digital/d_dff/.cvsignore,
+ * src/xspice/icm/digital/d_dlatch/.cvsignore,
+ * src/xspice/icm/digital/d_fdiv/.cvsignore,
+ * src/xspice/icm/digital/d_inverter/.cvsignore,
+ * src/xspice/icm/digital/d_jkff/.cvsignore,
+ * src/xspice/icm/digital/d_nand/.cvsignore,
+ * src/xspice/icm/digital/d_nor/.cvsignore,
+ * src/xspice/icm/digital/d_open_c/.cvsignore,
+ * src/xspice/icm/digital/d_open_e/.cvsignore,
+ * src/xspice/icm/digital/d_or/.cvsignore,
+ * src/xspice/icm/digital/d_osc/.cvsignore,
+ * src/xspice/icm/digital/d_pulldown/.cvsignore,
+ * src/xspice/icm/digital/d_pullup/.cvsignore,
+ * src/xspice/icm/digital/d_ram/.cvsignore,
+ * src/xspice/icm/digital/d_source/.cvsignore,
+ * src/xspice/icm/digital/d_srff/.cvsignore,
+ * src/xspice/icm/digital/d_srlatch/.cvsignore,
+ * src/xspice/icm/digital/d_state/.cvsignore,
+ * src/xspice/icm/digital/d_tff/.cvsignore,
+ * src/xspice/icm/digital/d_tristate/.cvsignore,
+ * src/xspice/icm/digital/d_xnor/.cvsignore,
+ * src/xspice/icm/digital/d_xor/.cvsignore,
+ * src/xspice/icm/digital/dac_bridge/.cvsignore,
+ * src/xspice/icm/spice2poly/.cvsignore,
+ * src/xspice/icm/spice2poly/icm_spice2poly/.cvsignore,
+ * src/xspice/icm/xtradev/.cvsignore,
+ * src/xspice/icm/xtradev/aswitch/.cvsignore,
+ * src/xspice/icm/xtradev/capacitor/.cvsignore,
+ * src/xspice/icm/xtradev/cmeter/.cvsignore,
+ * src/xspice/icm/xtradev/core/.cvsignore,
+ * src/xspice/icm/xtradev/inductor/.cvsignore,
+ * src/xspice/icm/xtradev/lcouple/.cvsignore,
+ * src/xspice/icm/xtradev/lmeter/.cvsignore,
+ * src/xspice/icm/xtradev/potentiometer/.cvsignore,
+ * src/xspice/icm/xtradev/zener/.cvsignore,
+ * src/xspice/icm/xtraevt/.cvsignore,
+ * src/xspice/icm/xtraevt/d_to_real/.cvsignore,
+ * src/xspice/icm/xtraevt/int/.cvsignore,
+ * src/xspice/icm/xtraevt/real/.cvsignore,
+ * src/xspice/icm/xtraevt/real_delay/.cvsignore,
+ * src/xspice/icm/xtraevt/real_gain/.cvsignore,
+ * src/xspice/icm/xtraevt/real_to_v/.cvsignore,
+ * src/xspice/idn/.cvsignore,
+ * src/xspice/ipc/.cvsignore,
+ * src/xspice/mif/.cvsignore,
+ * tests/.cvsignore,
+ * tests/bsim1/.cvsignore,
+ * tests/bsim2/.cvsignore,
+ * tests/bsim3/.cvsignore,
+ * tests/bsim3/ac_sim/.cvsignore,
+ * tests/bsim3/dc_sim/.cvsignore,
+ * tests/bsim3/tran_sim/.cvsignore,
+ * tests/bsim3soidd/.cvsignore,
+ * tests/bsim3soifd/.cvsignore,
+ * tests/bsim3soipd/.cvsignore,
+ * tests/bsim4/.cvsignore,
+ * tests/bsimsoi/.cvsignore,
+ * tests/filters/.cvsignore,
+ * tests/general/.cvsignore,
+ * tests/hfet/.cvsignore,
+ * tests/hisim/.cvsignore,
+ * tests/hisimhv/.cvsignore,
+ * tests/jfet/.cvsignore,
+ * tests/mes/.cvsignore,
+ * tests/mesa/.cvsignore,
+ * tests/mos6/.cvsignore,
+ * tests/polezero/.cvsignore,
+ * tests/resistance/.cvsignore,
+ * tests/sensitivity/.cvsignore,
+ * tests/transient/.cvsignore,
+ * tests/transmission/.cvsignore,
+ * tests/vbic/.cvsignore,
+ * tests/xspice/.cvsignore,
+ * tests/xspice/digital/.cvsignore,
+ * xgraph/.cvsignore:
+    remove all .cvsignore files
+
+2012-10-26  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/frontend/numparam/mystring.c,
+ * src/frontend/numparam/xpressn.c,
+ * src/maths/misc/randnumb.c,
+ * src/misc/hash.c,
+ * src/spicelib/analysis/cktdest.c,
+ * src/spicelib/devices/isrc/isrcload.c,
+ * src/spicelib/devices/vsrc/vsrcload.c,
+ * src/xspice/mif/mif_inp2.c:
+    remove compilation warnings (type casts)
+
+2012-10-26  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * configure.ac,
+ * src/Makefile.am,
+ * src/spicelib/devices/Makefile.am,
+ * src/spicelib/devices/bsim3soi/.cvsignore,
+ * src/spicelib/devices/bsim3soi/BsimTerms_use,
+ * src/spicelib/devices/bsim3soi/Makefile.am,
+ * src/spicelib/devices/bsim3soi/b4soi.c,
+ * src/spicelib/devices/bsim3soi/b4soiacld.c,
+ * src/spicelib/devices/bsim3soi/b4soiask.c,
+ * src/spicelib/devices/bsim3soi/b4soicheck.c,
+ * src/spicelib/devices/bsim3soi/b4soicvtest.c,
+ * src/spicelib/devices/bsim3soi/b4soidef.h,
+ * src/spicelib/devices/bsim3soi/b4soidel.c,
+ * src/spicelib/devices/bsim3soi/b4soidest.c,
+ * src/spicelib/devices/bsim3soi/b4soiext.h,
+ * src/spicelib/devices/bsim3soi/b4soigetic.c,
+ * src/spicelib/devices/bsim3soi/b4soiinit.c,
+ * src/spicelib/devices/bsim3soi/b4soiinit.h,
+ * src/spicelib/devices/bsim3soi/b4soiitf.h,
+ * src/spicelib/devices/bsim3soi/b4soild.c,
+ * src/spicelib/devices/bsim3soi/b4soimask.c,
+ * src/spicelib/devices/bsim3soi/b4soimdel.c,
+ * src/spicelib/devices/bsim3soi/b4soimpar.c,
+ * src/spicelib/devices/bsim3soi/b4soinoi.c,
+ * src/spicelib/devices/bsim3soi/b4soipar.c,
+ * src/spicelib/devices/bsim3soi/b4soipzld.c,
+ * src/spicelib/devices/bsim3soi/b4soiset.c,
+ * src/spicelib/devices/bsim3soi/b4soitemp.c,
+ * src/spicelib/devices/bsim3soi/b4soitrunc.c,
+ * src/spicelib/devices/bsimsoi/.cvsignore,
+ * src/spicelib/devices/bsimsoi/BsimTerms_use,
+ * src/spicelib/devices/bsimsoi/Makefile.am,
+ * src/spicelib/devices/bsimsoi/b4soi.c,
+ * src/spicelib/devices/bsimsoi/b4soiacld.c,
+ * src/spicelib/devices/bsimsoi/b4soiask.c,
+ * src/spicelib/devices/bsimsoi/b4soicheck.c,
+ * src/spicelib/devices/bsimsoi/b4soicvtest.c,
+ * src/spicelib/devices/bsimsoi/b4soidef.h,
+ * src/spicelib/devices/bsimsoi/b4soidel.c,
+ * src/spicelib/devices/bsimsoi/b4soidest.c,
+ * src/spicelib/devices/bsimsoi/b4soiext.h,
+ * src/spicelib/devices/bsimsoi/b4soigetic.c,
+ * src/spicelib/devices/bsimsoi/b4soiinit.c,
+ * src/spicelib/devices/bsimsoi/b4soiinit.h,
+ * src/spicelib/devices/bsimsoi/b4soiitf.h,
+ * src/spicelib/devices/bsimsoi/b4soild.c,
+ * src/spicelib/devices/bsimsoi/b4soimask.c,
+ * src/spicelib/devices/bsimsoi/b4soimdel.c,
+ * src/spicelib/devices/bsimsoi/b4soimpar.c,
+ * src/spicelib/devices/bsimsoi/b4soinoi.c,
+ * src/spicelib/devices/bsimsoi/b4soipar.c,
+ * src/spicelib/devices/bsimsoi/b4soipzld.c,
+ * src/spicelib/devices/bsimsoi/b4soiset.c,
+ * src/spicelib/devices/bsimsoi/b4soitemp.c,
+ * src/spicelib/devices/bsimsoi/b4soitrunc.c,
+ * src/spicelib/devices/dev.c,
+ * tests/Makefile.am,
+ * tests/bsim3soi/.cvsignore,
+ * tests/bsim3soi/Makefile.am,
+ * tests/bsim3soi/nmos/parameters/nmosParameters,
+ * tests/bsim3soi/nmos/qaSpec,
+ * tests/bsim3soi/nmos/reference/acFreq01.standard,
+ * tests/bsim3soi/nmos/reference/acFreq02.standard,
+ * tests/bsim3soi/nmos/reference/acVd01.standard,
+ * tests/bsim3soi/nmos/reference/acVd02.standard,
+ * tests/bsim3soi/nmos/reference/dcSweep01.standard,
+ * tests/bsim3soi/nmos/reference/dcSweep02.standard,
+ * tests/bsim3soi/nmos/reference/dcSweep03.standard,
+ * tests/bsim3soi/nmos/reference/noise01.standard,
+ * tests/bsim3soi/nmos/reference/noise02.standard,
+ * tests/bsim3soi/nmos/reference/noise03.standard,
+ * tests/bsim3soi/pmos/parameters/pmosParameters,
+ * tests/bsim3soi/pmos/qaSpec,
+ * tests/bsim3soi/pmos/reference/acFreq01.standard,
+ * tests/bsim3soi/pmos/reference/acFreq02.standard,
+ * tests/bsim3soi/pmos/reference/acVd01.standard,
+ * tests/bsim3soi/pmos/reference/acVd02.standard,
+ * tests/bsim3soi/pmos/reference/dcSweep01.standard,
+ * tests/bsim3soi/pmos/reference/dcSweep02.standard,
+ * tests/bsim3soi/pmos/reference/dcSweep03.standard,
+ * tests/bsim3soi/pmos/reference/noise01.standard,
+ * tests/bsim3soi/pmos/reference/noise02.standard,
+ * tests/bsim3soi/pmos/reference/noise03.standard,
+ * tests/bsimsoi/.cvsignore,
+ * tests/bsimsoi/Makefile.am,
+ * tests/bsimsoi/nmos/parameters/nmosParameters,
+ * tests/bsimsoi/nmos/qaSpec,
+ * tests/bsimsoi/nmos/reference/acFreq01.standard,
+ * tests/bsimsoi/nmos/reference/acFreq02.standard,
+ * tests/bsimsoi/nmos/reference/acVd01.standard,
+ * tests/bsimsoi/nmos/reference/acVd02.standard,
+ * tests/bsimsoi/nmos/reference/dcSweep01.standard,
+ * tests/bsimsoi/nmos/reference/dcSweep02.standard,
+ * tests/bsimsoi/nmos/reference/dcSweep03.standard,
+ * tests/bsimsoi/nmos/reference/noise01.standard,
+ * tests/bsimsoi/nmos/reference/noise02.standard,
+ * tests/bsimsoi/nmos/reference/noise03.standard,
+ * tests/bsimsoi/pmos/parameters/pmosParameters,
+ * tests/bsimsoi/pmos/qaSpec,
+ * tests/bsimsoi/pmos/reference/acFreq01.standard,
+ * tests/bsimsoi/pmos/reference/acFreq02.standard,
+ * tests/bsimsoi/pmos/reference/acVd01.standard,
+ * tests/bsimsoi/pmos/reference/acVd02.standard,
+ * tests/bsimsoi/pmos/reference/dcSweep01.standard,
+ * tests/bsimsoi/pmos/reference/dcSweep02.standard,
+ * tests/bsimsoi/pmos/reference/dcSweep03.standard,
+ * tests/bsimsoi/pmos/reference/noise01.standard,
+ * tests/bsimsoi/pmos/reference/noise02.standard,
+ * tests/bsimsoi/pmos/reference/noise03.standard,
+ * visualc/vngspice.vcproj:
+    rename "bsim3soi" device to "bsimsoi"
+
+2012-10-25  rlar <rlar>
+ * src/spicelib/devices/adms/admst/ngspice.xml,
+ * src/spicelib/devices/adms/admst/prengspice.xml,
+ * src/spicelib/devices/adms/ekv/adms3va/ekv.va,
+ * src/spicelib/devices/adms/hicum0/adms3va/hicum0.va,
+ * src/spicelib/devices/adms/hicum2/adms3va/hicum2.va,
+ * src/spicelib/devices/adms/mextram/adms3va/COPYRIGHT_NOTICE,
+ * src/spicelib/devices/adms/mextram/adms3va/bjt504t.va,
+ * src/spicelib/devices/adms/mextram/adms3va/evaluate.inc,
+ * src/spicelib/devices/adms/mextram/adms3va/frontdef.inc,
+ * src/spicelib/devices/adms/mextram/adms3va/initialize.inc,
+ * src/spicelib/devices/adms/mextram/adms3va/opinfo.inc,
+ * src/spicelib/devices/adms/mextram/adms3va/opvars.inc,
+ * src/spicelib/devices/adms/mextram/adms3va/parameters.inc,
+ * src/spicelib/devices/adms/mextram/adms3va/tscaling.inc,
+ * src/spicelib/devices/adms/mextram/adms3va/variables.inc,
+ * src/spicelib/devices/adms/psp102/adms3va/JUNCAP200_InitModel.include,
+ * src/spicelib/devices/adms/psp102/adms3va/JUNCAP200_macrodefs.include,
+ * src/spicelib/devices/adms/psp102/adms3va/JUNCAP200_parlist.include,
+ * src/spicelib/devices/adms/psp102/adms3va/JUNCAP200_varlist.include,
+ * src/spicelib/devices/adms/psp102/adms3va/PSP102_ChargesNQS.include,
+ * src/spicelib/devices/adms/psp102/adms3va/PSP102_InitNQS.include,
+ * src/spicelib/devices/adms/psp102/adms3va/PSP102_binning.include,
+ * src/spicelib/devices/adms/psp102/adms3va/PSP102_binpars.include,
+ * src/spicelib/devices/adms/psp102/adms3va/PSP102_macrodefs.include,
+ * src/spicelib/devices/adms/psp102/adms3va/PSP102_module.include,
+ * src/spicelib/devices/adms/psp102/adms3va/PSP102_nqs_macrodefs.include,
+ * src/spicelib/devices/adms/psp102/adms3va/SIMKIT_macrodefs.include,
+ * src/spicelib/devices/adms/psp102/adms3va/psp102.va,
+ * src/spicelib/devices/adms/psp102/adms3va/readme.ngspice,
+ * src/spicelib/devices/adms/psp102/adms3va/readme.txt:
+    remove adms3 #2/2, files
+
+2012-10-25  rlar <rlar>
+ * autogen.sh,
+ * configure.ac,
+ * src/frontend/inpcom.c,
+ * src/frontend/subckt.c,
+ * src/include/ngspice/devdefs.h,
+ * src/include/ngspice/ngspice.h,
+ * src/spicelib/devices/dev.c,
+ * src/spicelib/parser/inp.h,
+ * src/spicelib/parser/inp2u.c,
+ * src/spicelib/parser/inpdomod.c,
+ * src/spicelib/parser/inppas2.c:
+    remove adms3 #1/2, code
+
+    due to license issues, and with the aim to approach the next
+      ngspice release 25
+    we have to move this over to a development branch
+
+2012-10-24  h_vogt <h_vogt>
+ * visualc/vngspice.vcproj:
+    vngspice.vcproj: 64 bit compilation improved
+
+2012-10-24  dwarning <dwarning>
+ * src/spicelib/devices/hisim2/hisim2.h,
+ * src/spicelib/devices/hisim2/hsm2.c,
+ * src/spicelib/devices/hisim2/hsm2acld.c,
+ * src/spicelib/devices/hisim2/hsm2ask.c,
+ * src/spicelib/devices/hisim2/hsm2cvtest.c,
+ * src/spicelib/devices/hisim2/hsm2def.h,
+ * src/spicelib/devices/hisim2/hsm2del.c,
+ * src/spicelib/devices/hisim2/hsm2dest.c,
+ * src/spicelib/devices/hisim2/hsm2eval.c,
+ * src/spicelib/devices/hisim2/hsm2evalenv.h,
+ * src/spicelib/devices/hisim2/hsm2ext.h,
+ * src/spicelib/devices/hisim2/hsm2getic.c,
+ * src/spicelib/devices/hisim2/hsm2init.c,
+ * src/spicelib/devices/hisim2/hsm2itf.h,
+ * src/spicelib/devices/hisim2/hsm2ld.c,
+ * src/spicelib/devices/hisim2/hsm2mask.c,
+ * src/spicelib/devices/hisim2/hsm2mdel.c,
+ * src/spicelib/devices/hisim2/hsm2mpar.c,
+ * src/spicelib/devices/hisim2/hsm2noi.c,
+ * src/spicelib/devices/hisim2/hsm2par.c,
+ * src/spicelib/devices/hisim2/hsm2pzld.c,
+ * src/spicelib/devices/hisim2/hsm2set.c,
+ * src/spicelib/devices/hisim2/hsm2temp.c,
+ * src/spicelib/devices/hisim2/hsm2trunc.c:
+    hisim2 update to version 2.6.1
+
+2012-10-24  dwarning <dwarning>
+ * tests/hisim/nmos/parameters/nmosParameters,
+ * tests/hisim/nmos/qaSpec,
+ * tests/hisim/nmos/reference/10_dcSweep_COIIGS=1.standard,
+ * tests/hisim/nmos/reference/11_dcSweep_COGIDL=0.standard,
+ * tests/hisim/nmos/reference/12_dcSweep_COGIDL=1.standard,
+ * tests/hisim/nmos/reference/13_dcSweep_COISTI=0.standard,
+ * tests/hisim/nmos/reference/14-1_dcSweep_COISTI=1.standard,
+ * tests/hisim/nmos/reference/14-2_dcSweep_COISTI=1.standard,
+ * tests/hisim/nmos/reference/14_dcSweep_COISTI=1.standard,
+ * tests/hisim/nmos/reference/15_dcSweep_WPE.standard,
+ * tests/hisim/nmos/reference/19_dcSweep_CORG=0.standard,
+ * tests/hisim/nmos/reference/2-1_dcSweep_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/2-2_dcSweep_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/20-1_dcSweep_CORG=1.standard,
+ * tests/hisim/nmos/reference/20-2_dcSweep_CORG=1.standard,
+ * tests/hisim/nmos/reference/20_dcSweep_CORG=1.standard,
+ * tests/hisim/nmos/reference/21_dcSweep_CORBNET=0.standard,
+ * tests/hisim/nmos/reference/22-1_dcSweep_CORBNET=1.standard,
+ * tests/hisim/nmos/reference/22-2_dcSweep_CORBNET=1.standard,
+ * tests/hisim/nmos/reference/22_dcSweep_CORBNET=1.standard,
+ * tests/hisim/nmos/reference/2_dcSweep_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/33_dcSweep_CODFM=0.standard,
+ * tests/hisim/nmos/reference/34-1_dcSweep_CODFM=1.standard,
+ * tests/hisim/nmos/reference/34-2_dcSweep_CODFM=1.standard,
+ * tests/hisim/nmos/reference/34_dcSweep_CODFM=1.standard,
+ * tests/hisim/nmos/reference/36-1_acVd_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/36-2_acVd_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/36_acVd_CORSRD=0.standard,
+ * tests/hisim/nmos/reference/37_acVd_WPE.standard,
+ * tests/hisim/nmos/reference/40_acFreq_COOVLP=1.standard,
+ * tests/hisim/nmos/reference/41_acFreq_COISUB=0.standard,
+ * tests/hisim/nmos/reference/42_acFreq_COISUB=1.standard,
+ * tests/hisim/nmos/reference/43_acFreq_COIIGS=0.standard,
+ * tests/hisim/nmos/reference/44_acFreq_COIIGS=1.standard,
+ * tests/hisim/nmos/reference/45_acFreq_COGIDL=0.standard,
+ * tests/hisim/nmos/reference/46_acFreq_COGIDL=1.standard,
+ * tests/hisim/nmos/reference/47_acFreq_COSTI=0.standard,
+ * tests/hisim/nmos/reference/48-1_acFreq_COSTI=1.standard,
+ * tests/hisim/nmos/reference/48-2_acFreq_COSTI=1.standard,
+ * tests/hisim/nmos/reference/48_acFreq_COSTI=1.standard,
+ * tests/hisim/nmos/reference/49_acFreq_COADOV=0.standard,
+ * tests/hisim/nmos/reference/50_acFreq_COADOV=1.standard,
+ * tests/hisim/nmos/reference/51_acFreq_CONQS=0.standard,
+ * tests/hisim/nmos/reference/52-1_acFreq_CONQS=1.standard,
+ * tests/hisim/nmos/reference/52-2_acFreq_CONQS=1.standard,
+ * tests/hisim/nmos/reference/52_acFreq_CONQS=1.standard,
+ * tests/hisim/nmos/reference/53_acFreq_CORG=0.standard,
+ * tests/hisim/nmos/reference/54-1_acFreq_CORG=1.standard,
+ * tests/hisim/nmos/reference/54-2_acFreq_CORG=1.standard,
+ * tests/hisim/nmos/reference/54_acFreq_CORG=1.standard,
+ * tests/hisim/nmos/reference/55_acFreq_CORBNET=0.standard,
+ * tests/hisim/nmos/reference/55_acFreq_CORBNETt=0.standard,
+ * tests/hisim/nmos/reference/56-1_acFreq_CORBNETt=1.standard,
+ * tests/hisim/nmos/reference/56-2_acFreq_CORBNETt=1.standard,
+ * tests/hisim/nmos/reference/56_acFreq_CORBNET=1.standard,
+ * tests/hisim/nmos/reference/56_acFreq_CORBNETt=1.standard,
+ * tests/hisim/nmos/reference/57_acFreq_COFLICK=0.standard,
+ * tests/hisim/nmos/reference/58_acFreq_COFLICK=1.standard,
+ * tests/hisim/nmos/reference/59_acFreq_COTHRML=0.standard,
+ * tests/hisim/nmos/reference/60_acFreq_COTHRML=1.standard,
+ * tests/hisim/nmos/reference/61_acFreq_COIGN=0.standard,
+ * tests/hisim/nmos/reference/62_acFreq_COIGN=1.standard,
+ * tests/hisim/nmos/reference/63_acFreq_WPE.standard,
+ * tests/hisim/nmos/reference/67_acFreq_CODFM=0.standard,
+ * tests/hisim/nmos/reference/68-1_acFreq_CODFM=1.standard,
+ * tests/hisim/nmos/reference/68-2_acFreq_CODFM=1.standard,
+ * tests/hisim/nmos/reference/68_acFreq_CODFM=1.standard,
+ * tests/hisim/nmos/reference/69-1_noise_COIGN=1_T-55.standard,
+ * tests/hisim/nmos/reference/69-2_noise_COIGN=1_T150.standard,
+ * tests/hisim/nmos/reference/69_noise_COIGN=1_T27.standard,
+ * tests/hisim/nmos/reference/70-1_noise_COIGN=0_T-55.standard,
+ * tests/hisim/nmos/reference/70-2_noise_COIGN=0_T150.standard,
+ * tests/hisim/nmos/reference/70_noise_COIGN=0_T27.standard,
+ * tests/hisim/nmos/reference/7_dcSweep_COISUB=0.standard,
+ * tests/hisim/nmos/reference/8_dcSweep_COISUB=1.standard,
+ * tests/hisim/nmos/reference/9_dcSweep_COIIGS=0.standard,
+ * tests/hisim/pmos/parameters/pmosParameters,
+ * tests/hisim/pmos/qaSpec,
+ * tests/hisim/pmos/reference/10_dcSweep_COIIGS=1.standard,
+ * tests/hisim/pmos/reference/11_dcSweep_COGIDL=0.standard,
+ * tests/hisim/pmos/reference/12_dcSweep_COGIDL=1.standard,
+ * tests/hisim/pmos/reference/13_dcSweep_COISTI=0.standard,
+ * tests/hisim/pmos/reference/14-1_dcSweep_COISTI=1.standard,
+ * tests/hisim/pmos/reference/14-2_dcSweep_COISTI=1.standard,
+ * tests/hisim/pmos/reference/14_dcSweep_COISTI=1.standard,
+ * tests/hisim/pmos/reference/15_dcSweep_WPE.standard,
+ * tests/hisim/pmos/reference/19_dcSweep_CORG=0.standard,
+ * tests/hisim/pmos/reference/2-1_dcSweep_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/2-2_dcSweep_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/20-1_dcSweep_CORG=1.standard,
+ * tests/hisim/pmos/reference/20-2_dcSweep_CORG=1.standard,
+ * tests/hisim/pmos/reference/20_dcSweep_CORG=1.standard,
+ * tests/hisim/pmos/reference/21_dcSweep_CORBNET=0.standard,
+ * tests/hisim/pmos/reference/22-1_dcSweep_CORBNET=1.standard,
+ * tests/hisim/pmos/reference/22-2_dcSweep_CORBNET=1.standard,
+ * tests/hisim/pmos/reference/22_dcSweep_CORBNET=1.standard,
+ * tests/hisim/pmos/reference/2_dcSweep_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/33_dcSweep_CODFM=0.standard,
+ * tests/hisim/pmos/reference/34-1_dcSweep_CODFM=1.standard,
+ * tests/hisim/pmos/reference/34-2_dcSweep_CODFM=1.standard,
+ * tests/hisim/pmos/reference/34_dcSweep_CODFM=1.standard,
+ * tests/hisim/pmos/reference/36-1_acVd_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/36-2_acVd_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/36_acVd_CORSRD=0.standard,
+ * tests/hisim/pmos/reference/37_acVd_WPE.standard,
+ * tests/hisim/pmos/reference/40_acFreq_COOVLP=1.standard,
+ * tests/hisim/pmos/reference/41_acFreq_COISUB=0.standard,
+ * tests/hisim/pmos/reference/42_acFreq_COISUB=1.standard,
+ * tests/hisim/pmos/reference/43_acFreq_COIIGS=0.standard,
+ * tests/hisim/pmos/reference/44_acFreq_COIIGS=1.standard,
+ * tests/hisim/pmos/reference/45_acFreq_COGIDL=0.standard,
+ * tests/hisim/pmos/reference/46_acFreq_COGIDL=1.standard,
+ * tests/hisim/pmos/reference/47_acFreq_COSTI=0.standard,
+ * tests/hisim/pmos/reference/48-1_acFreq_COSTI=1.standard,
+ * tests/hisim/pmos/reference/48-2_acFreq_COSTI=1.standard,
+ * tests/hisim/pmos/reference/48_acFreq_COSTI=1.standard,
+ * tests/hisim/pmos/reference/49_acFreq_COADOV=0.standard,
+ * tests/hisim/pmos/reference/50_acFreq_COADOV=1.standard,
+ * tests/hisim/pmos/reference/51_acFreq_CONQS=0.standard,
+ * tests/hisim/pmos/reference/52-1_acFreq_CONQS=1.standard,
+ * tests/hisim/pmos/reference/52-2_acFreq_CONQS=1.standard,
+ * tests/hisim/pmos/reference/52_acFreq_CONQS=1.standard,
+ * tests/hisim/pmos/reference/53_acFreq_CORG=0.standard,
+ * tests/hisim/pmos/reference/54-1_acFreq_CORG=1.standard,
+ * tests/hisim/pmos/reference/54-2_acFreq_CORG=1.standard,
+ * tests/hisim/pmos/reference/54_acFreq_CORG=1.standard,
+ * tests/hisim/pmos/reference/55_acFreq_CORBNET=0.standard,
+ * tests/hisim/pmos/reference/55_acFreq_CORBNETt=0.standard,
+ * tests/hisim/pmos/reference/56-1_acFreq_CORBNETt=1.standard,
+ * tests/hisim/pmos/reference/56-2_acFreq_CORBNETt=1.standard,
+ * tests/hisim/pmos/reference/56_acFreq_CORBNET=1.standard,
+ * tests/hisim/pmos/reference/56_acFreq_CORBNETt=1.standard,
+ * tests/hisim/pmos/reference/57_acFreq_COFLICK=0.standard,
+ * tests/hisim/pmos/reference/58_acFreq_COFLICK=1.standard,
+ * tests/hisim/pmos/reference/59_acFreq_COTHRML=0.standard,
+ * tests/hisim/pmos/reference/60_acFreq_COTHRML=1.standard,
+ * tests/hisim/pmos/reference/61_acFreq_COIGN=0.standard,
+ * tests/hisim/pmos/reference/62_acFreq_COIGN=1.standard,
+ * tests/hisim/pmos/reference/63_acFreq_WPE.standard,
+ * tests/hisim/pmos/reference/67_acFreq_CODFM=0.standard,
+ * tests/hisim/pmos/reference/68-1_acFreq_CODFM=1.standard,
+ * tests/hisim/pmos/reference/68-2_acFreq_CODFM=1.standard,
+ * tests/hisim/pmos/reference/68_acFreq_CODFM=1.standard,
+ * tests/hisim/pmos/reference/69-1_noise_COIGN=1_T-55.standard,
+ * tests/hisim/pmos/reference/69-2_noise_COIGN=1_T150.standard,
+ * tests/hisim/pmos/reference/69_noise_COIGN=1_T27.standard,
+ * tests/hisim/pmos/reference/70-1_noise_COIGN=0_T-55.standard,
+ * tests/hisim/pmos/reference/70-2_noise_COIGN=0_T150.standard,
+ * tests/hisim/pmos/reference/70_noise_COIGN=0_T27.standard,
+ * tests/hisim/pmos/reference/7_dcSweep_COISUB=0.standard,
+ * tests/hisim/pmos/reference/8_dcSweep_COISUB=1.standard,
+ * tests/hisim/pmos/reference/9_dcSweep_COIIGS=0.standard:
+    hisim2 new qa tests
+
+2012-10-22  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/frontend/runcoms.c,
+ * src/frontend/runcoms2.c,
+ * src/spicelib/analysis/cktop.c:
+    white space changes
+
+2012-10-22  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/devices/bsim1/b1set.c,
+ * src/spicelib/devices/bsim2/b2set.c,
+ * src/spicelib/devices/bsim3/b3cvtest.c,
+ * src/spicelib/devices/bsim3/b3getic.c,
+ * src/spicelib/devices/bsim3/b3ld.c,
+ * src/spicelib/devices/bsim3/b3pzld.c,
+ * src/spicelib/devices/bsim3/b3set.c,
+ * src/spicelib/devices/bsim3/b3temp.c,
+ * src/spicelib/devices/bsim3/b3trunc.c,
+ * src/spicelib/devices/bsim3soi/b4soiacld.c,
+ * src/spicelib/devices/bsim3soi/b4soicvtest.c,
+ * src/spicelib/devices/bsim3soi/b4soidest.c,
+ * src/spicelib/devices/bsim3soi/b4soigetic.c,
+ * src/spicelib/devices/bsim3soi/b4soild.c,
+ * src/spicelib/devices/bsim3soi/b4soimdel.c,
+ * src/spicelib/devices/bsim3soi/b4soinoi.c,
+ * src/spicelib/devices/bsim3soi/b4soitrunc.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddcvtest.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddgetic.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddld.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddnoi.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddset.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddtemp.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdacld.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdcvtest.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdgetic.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdld.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdnoi.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdset.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdtemp.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdtrunc.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdacld.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdcvtest.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdgetic.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdld.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdnoi.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdpzld.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdset.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdtemp.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdtrunc.c,
+ * src/spicelib/devices/bsim3v0/b3v0acld.c,
+ * src/spicelib/devices/bsim3v0/b3v0cvtest.c,
+ * src/spicelib/devices/bsim3v0/b3v0getic.c,
+ * src/spicelib/devices/bsim3v0/b3v0ld.c,
+ * src/spicelib/devices/bsim3v0/b3v0noi.c,
+ * src/spicelib/devices/bsim3v0/b3v0set.c,
+ * src/spicelib/devices/bsim3v0/b3v0temp.c,
+ * src/spicelib/devices/bsim3v0/b3v0trunc.c,
+ * src/spicelib/devices/bsim3v1/b3v1cvtest.c,
+ * src/spicelib/devices/bsim3v1/b3v1getic.c,
+ * src/spicelib/devices/bsim3v1/b3v1ld.c,
+ * src/spicelib/devices/bsim3v1/b3v1noi.c,
+ * src/spicelib/devices/bsim3v1/b3v1set.c,
+ * src/spicelib/devices/bsim3v1/b3v1temp.c,
+ * src/spicelib/devices/bsim3v1/b3v1trunc.c,
+ * src/spicelib/devices/bsim3v1/bsim3v1def.h,
+ * src/spicelib/devices/bsim3v32/b3v32getic.c,
+ * src/spicelib/devices/bsim3v32/b3v32set.c,
+ * src/spicelib/devices/bsim4/b4set.c,
+ * src/spicelib/devices/bsim4v4/b4v4cvtest.c,
+ * src/spicelib/devices/bsim4v4/b4v4set.c,
+ * src/spicelib/devices/bsim4v5/b4v5cvtest.c,
+ * src/spicelib/devices/bsim4v5/b4v5set.c,
+ * src/spicelib/devices/bsim4v5/b4v5trunc.c,
+ * src/spicelib/devices/bsim4v6/b4v6set.c,
+ * src/spicelib/devices/bsim4v6/b4v6trunc.c,
+ * src/spicelib/devices/cap/capgetic.c,
+ * src/spicelib/devices/cap/capsset.c,
+ * src/spicelib/devices/cccs/cccsload.c,
+ * src/spicelib/devices/cccs/cccspzld.c,
+ * src/spicelib/devices/cccs/cccssacl.c,
+ * src/spicelib/devices/cccs/cccssset.c,
+ * src/spicelib/devices/ccvs/ccvssacl.c,
+ * src/spicelib/devices/ccvs/ccvssld.c,
+ * src/spicelib/devices/ccvs/ccvssprt.c,
+ * src/spicelib/devices/ccvs/ccvssset.c,
+ * src/spicelib/devices/dio/diosset.c,
+ * src/spicelib/devices/hfet2/hfet2defs.h,
+ * src/spicelib/devices/ind/indsetup.c,
+ * src/spicelib/devices/mos1/mos1set.c,
+ * src/spicelib/devices/mos2/mos2acld.c,
+ * src/spicelib/devices/mos2/mos2conv.c,
+ * src/spicelib/devices/mos2/mos2ic.c,
+ * src/spicelib/devices/mos2/mos2noi.c,
+ * src/spicelib/devices/mos2/mos2pzld.c,
+ * src/spicelib/devices/mos2/mos2set.c,
+ * src/spicelib/devices/mos2/mos2trun.c,
+ * src/spicelib/devices/mos3/mos3set.c,
+ * src/spicelib/devices/mos9/mos9set.c,
+ * src/spicelib/devices/ndev/ndevaccept.c,
+ * src/spicelib/devices/ndev/ndevload.c,
+ * src/spicelib/devices/numd2/nud2set.c,
+ * src/spicelib/devices/res/resload.c,
+ * src/spicelib/devices/res/resnoise.c,
+ * src/spicelib/devices/res/respzld.c,
+ * src/spicelib/devices/res/ressetup.c,
+ * src/spicelib/devices/res/ressload.c,
+ * src/spicelib/devices/res/restemp.c,
+ * src/spicelib/devices/soi3/soi3set.c,
+ * src/spicelib/devices/vccs/vccssld.c,
+ * src/spicelib/devices/vccs/vccssset.c,
+ * src/spicelib/devices/vcvs/vcvssld.c,
+ * src/spicelib/devices/vcvs/vcvssset.c:
+    white space changes
+
+2012-10-22  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/frontend/outitf.c,
+ * src/frontend/runcoms.c,
+ * src/frontend/runcoms2.c,
+ * src/include/ngspice/cktdefs.h,
+ * src/include/ngspice/gendefs.h,
+ * src/include/ngspice/ngspice.h,
+ * src/include/ngspice/optdefs.h,
+ * src/include/ngspice/smpdefs.h,
+ * src/include/ngspice/sperror.h,
+ * src/main.c,
+ * src/maths/sparse/Makefile.am,
+ * src/maths/sparse/spalloc.c,
+ * src/maths/sparse/spcombin.c,
+ * src/maths/sparse/spsmp.c,
+ * src/misc/misc_time.c,
+ * src/spicelib/analysis/Makefile.am,
+ * src/spicelib/analysis/acan.c,
+ * src/spicelib/analysis/cktacct.c,
+ * src/spicelib/analysis/cktload.c,
+ * src/spicelib/analysis/cktop.c,
+ * src/spicelib/analysis/cktpartn.c,
+ * src/spicelib/analysis/cktpzld.c,
+ * src/spicelib/analysis/cktsetup.c,
+ * src/spicelib/analysis/cktsopt.c,
+ * src/spicelib/analysis/ckttrunc.c,
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/devices/adms/admst/ngspice.xml,
+ * src/spicelib/devices/adms/admst/ngspiceMODULEdefs.h.xml,
+ * src/spicelib/devices/adms/admst/ngspiceMODULEnoise.c.xml,
+ * src/spicelib/devices/asrc/asrcacld.c,
+ * src/spicelib/devices/asrc/asrcconv.c,
+ * src/spicelib/devices/asrc/asrcdefs.h,
+ * src/spicelib/devices/asrc/asrcload.c,
+ * src/spicelib/devices/asrc/asrcpzld.c,
+ * src/spicelib/devices/asrc/asrctemp.c,
+ * src/spicelib/devices/bjt/bjtacld.c,
+ * src/spicelib/devices/bjt/bjtconv.c,
+ * src/spicelib/devices/bjt/bjtdefs.h,
+ * src/spicelib/devices/bjt/bjtdisto.c,
+ * src/spicelib/devices/bjt/bjtgetic.c,
+ * src/spicelib/devices/bjt/bjtload.c,
+ * src/spicelib/devices/bjt/bjtnoise.c,
+ * src/spicelib/devices/bjt/bjtpzld.c,
+ * src/spicelib/devices/bjt/bjtsetup.c,
+ * src/spicelib/devices/bjt/bjtsload.c,
+ * src/spicelib/devices/bjt/bjtsprt.c,
+ * src/spicelib/devices/bjt/bjtsset.c,
+ * src/spicelib/devices/bjt/bjtsupd.c,
+ * src/spicelib/devices/bjt/bjttemp.c,
+ * src/spicelib/devices/bjt/bjttrunc.c,
+ * src/spicelib/devices/bsim1/b1acld.c,
+ * src/spicelib/devices/bsim1/b1cvtest.c,
+ * src/spicelib/devices/bsim1/b1disto.c,
+ * src/spicelib/devices/bsim1/b1dset.c,
+ * src/spicelib/devices/bsim1/b1getic.c,
+ * src/spicelib/devices/bsim1/b1ld.c,
+ * src/spicelib/devices/bsim1/b1noi.c,
+ * src/spicelib/devices/bsim1/b1pzld.c,
+ * src/spicelib/devices/bsim1/b1set.c,
+ * src/spicelib/devices/bsim1/b1temp.c,
+ * src/spicelib/devices/bsim1/b1trunc.c,
+ * src/spicelib/devices/bsim1/bsim1def.h,
+ * src/spicelib/devices/bsim2/b2acld.c,
+ * src/spicelib/devices/bsim2/b2cvtest.c,
+ * src/spicelib/devices/bsim2/b2getic.c,
+ * src/spicelib/devices/bsim2/b2ld.c,
+ * src/spicelib/devices/bsim2/b2noi.c,
+ * src/spicelib/devices/bsim2/b2pzld.c,
+ * src/spicelib/devices/bsim2/b2set.c,
+ * src/spicelib/devices/bsim2/b2temp.c,
+ * src/spicelib/devices/bsim2/b2trunc.c,
+ * src/spicelib/devices/bsim2/bsim2def.h,
+ * src/spicelib/devices/bsim3/b3acld.c,
+ * src/spicelib/devices/bsim3/b3cvtest.c,
+ * src/spicelib/devices/bsim3/b3getic.c,
+ * src/spicelib/devices/bsim3/b3ld.c,
+ * src/spicelib/devices/bsim3/b3pzld.c,
+ * src/spicelib/devices/bsim3/b3set.c,
+ * src/spicelib/devices/bsim3/b3temp.c,
+ * src/spicelib/devices/bsim3/b3trunc.c,
+ * src/spicelib/devices/bsim3/bsim3def.h,
+ * src/spicelib/devices/bsim3soi/b4soiacld.c,
+ * src/spicelib/devices/bsim3soi/b4soicvtest.c,
+ * src/spicelib/devices/bsim3soi/b4soidef.h,
+ * src/spicelib/devices/bsim3soi/b4soidest.c,
+ * src/spicelib/devices/bsim3soi/b4soigetic.c,
+ * src/spicelib/devices/bsim3soi/b4soild.c,
+ * src/spicelib/devices/bsim3soi/b4soimdel.c,
+ * src/spicelib/devices/bsim3soi/b4soinoi.c,
+ * src/spicelib/devices/bsim3soi/b4soipzld.c,
+ * src/spicelib/devices/bsim3soi/b4soitemp.c,
+ * src/spicelib/devices/bsim3soi/b4soitrunc.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddacld.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddcvtest.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soidddef.h,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddgetic.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddld.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddnoi.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddpzld.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddset.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddtemp.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddtrunc.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdacld.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdcvtest.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifddef.h,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdgetic.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdld.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdnoi.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdpzld.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdset.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdtemp.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdtrunc.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdacld.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdcvtest.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipddef.h,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdgetic.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdld.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdnoi.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdpzld.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdset.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdtemp.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdtrunc.c,
+ * src/spicelib/devices/bsim3v0/b3v0acld.c,
+ * src/spicelib/devices/bsim3v0/b3v0cvtest.c,
+ * src/spicelib/devices/bsim3v0/b3v0getic.c,
+ * src/spicelib/devices/bsim3v0/b3v0ld.c,
+ * src/spicelib/devices/bsim3v0/b3v0noi.c,
+ * src/spicelib/devices/bsim3v0/b3v0pzld.c,
+ * src/spicelib/devices/bsim3v0/b3v0set.c,
+ * src/spicelib/devices/bsim3v0/b3v0temp.c,
+ * src/spicelib/devices/bsim3v0/b3v0trunc.c,
+ * src/spicelib/devices/bsim3v0/bsim3v0def.h,
+ * src/spicelib/devices/bsim3v1/ChangeLog,
+ * src/spicelib/devices/bsim3v1/b3v1acld.c,
+ * src/spicelib/devices/bsim3v1/b3v1cvtest.c,
+ * src/spicelib/devices/bsim3v1/b3v1getic.c,
+ * src/spicelib/devices/bsim3v1/b3v1ld.c,
+ * src/spicelib/devices/bsim3v1/b3v1noi.c,
+ * src/spicelib/devices/bsim3v1/b3v1pzld.c,
+ * src/spicelib/devices/bsim3v1/b3v1set.c,
+ * src/spicelib/devices/bsim3v1/b3v1temp.c,
+ * src/spicelib/devices/bsim3v1/b3v1trunc.c,
+ * src/spicelib/devices/bsim3v1/bsim3v1def.h,
+ * src/spicelib/devices/bsim3v32/b3v32acld.c,
+ * src/spicelib/devices/bsim3v32/b3v32cvtest.c,
+ * src/spicelib/devices/bsim3v32/b3v32getic.c,
+ * src/spicelib/devices/bsim3v32/b3v32ld.c,
+ * src/spicelib/devices/bsim3v32/b3v32pzld.c,
+ * src/spicelib/devices/bsim3v32/b3v32set.c,
+ * src/spicelib/devices/bsim3v32/b3v32temp.c,
+ * src/spicelib/devices/bsim3v32/b3v32trunc.c,
+ * src/spicelib/devices/bsim3v32/bsim3v32def.h,
+ * src/spicelib/devices/bsim4/b4acld.c,
+ * src/spicelib/devices/bsim4/b4cvtest.c,
+ * src/spicelib/devices/bsim4/b4getic.c,
+ * src/spicelib/devices/bsim4/b4ld.c,
+ * src/spicelib/devices/bsim4/b4pzld.c,
+ * src/spicelib/devices/bsim4/b4set.c,
+ * src/spicelib/devices/bsim4/b4temp.c,
+ * src/spicelib/devices/bsim4/b4trunc.c,
+ * src/spicelib/devices/bsim4/bsim4def.h,
+ * src/spicelib/devices/bsim4v4/b4v4acld.c,
+ * src/spicelib/devices/bsim4v4/b4v4cvtest.c,
+ * src/spicelib/devices/bsim4v4/b4v4getic.c,
+ * src/spicelib/devices/bsim4v4/b4v4ld.c,
+ * src/spicelib/devices/bsim4v4/b4v4pzld.c,
+ * src/spicelib/devices/bsim4v4/b4v4set.c,
+ * src/spicelib/devices/bsim4v4/b4v4temp.c,
+ * src/spicelib/devices/bsim4v4/b4v4trunc.c,
+ * src/spicelib/devices/bsim4v4/bsim4v4def.h,
+ * src/spicelib/devices/bsim4v5/b4v5acld.c,
+ * src/spicelib/devices/bsim4v5/b4v5cvtest.c,
+ * src/spicelib/devices/bsim4v5/b4v5getic.c,
+ * src/spicelib/devices/bsim4v5/b4v5ld.c,
+ * src/spicelib/devices/bsim4v5/b4v5pzld.c,
+ * src/spicelib/devices/bsim4v5/b4v5set.c,
+ * src/spicelib/devices/bsim4v5/b4v5temp.c,
+ * src/spicelib/devices/bsim4v5/b4v5trunc.c,
+ * src/spicelib/devices/bsim4v5/bsim4v5def.h,
+ * src/spicelib/devices/bsim4v6/b4v6acld.c,
+ * src/spicelib/devices/bsim4v6/b4v6cvtest.c,
+ * src/spicelib/devices/bsim4v6/b4v6getic.c,
+ * src/spicelib/devices/bsim4v6/b4v6ld.c,
+ * src/spicelib/devices/bsim4v6/b4v6pzld.c,
+ * src/spicelib/devices/bsim4v6/b4v6set.c,
+ * src/spicelib/devices/bsim4v6/b4v6temp.c,
+ * src/spicelib/devices/bsim4v6/b4v6trunc.c,
+ * src/spicelib/devices/bsim4v6/bsim4v6def.h,
+ * src/spicelib/devices/cap/capacld.c,
+ * src/spicelib/devices/cap/capdefs.h,
+ * src/spicelib/devices/cap/capgetic.c,
+ * src/spicelib/devices/cap/capload.c,
+ * src/spicelib/devices/cap/cappzld.c,
+ * src/spicelib/devices/cap/capsacl.c,
+ * src/spicelib/devices/cap/capsetup.c,
+ * src/spicelib/devices/cap/capsload.c,
+ * src/spicelib/devices/cap/capsprt.c,
+ * src/spicelib/devices/cap/capsset.c,
+ * src/spicelib/devices/cap/capsupd.c,
+ * src/spicelib/devices/cap/captemp.c,
+ * src/spicelib/devices/cap/captrunc.c,
+ * src/spicelib/devices/cccs/cccsdefs.h,
+ * src/spicelib/devices/cccs/cccsload.c,
+ * src/spicelib/devices/cccs/cccspzld.c,
+ * src/spicelib/devices/cccs/cccssacl.c,
+ * src/spicelib/devices/cccs/cccssprt.c,
+ * src/spicelib/devices/cccs/cccssset.c,
+ * src/spicelib/devices/ccvs/ccvsdefs.h,
+ * src/spicelib/devices/ccvs/ccvsload.c,
+ * src/spicelib/devices/ccvs/ccvspzld.c,
+ * src/spicelib/devices/ccvs/ccvssacl.c,
+ * src/spicelib/devices/ccvs/ccvssld.c,
+ * src/spicelib/devices/ccvs/ccvssprt.c,
+ * src/spicelib/devices/ccvs/ccvssset.c,
+ * src/spicelib/devices/cktask.c,
+ * src/spicelib/devices/cpl/cpldefs.h,
+ * src/spicelib/devices/csw/cswacld.c,
+ * src/spicelib/devices/csw/cswdefs.h,
+ * src/spicelib/devices/csw/cswload.c,
+ * src/spicelib/devices/csw/cswnoise.c,
+ * src/spicelib/devices/csw/cswpzld.c,
+ * src/spicelib/devices/csw/cswsetup.c,
+ * src/spicelib/devices/dio/dioacld.c,
+ * src/spicelib/devices/dio/dioconv.c,
+ * src/spicelib/devices/dio/diodefs.h,
+ * src/spicelib/devices/dio/diodisto.c,
+ * src/spicelib/devices/dio/diodset.c,
+ * src/spicelib/devices/dio/diogetic.c,
+ * src/spicelib/devices/dio/dioload.c,
+ * src/spicelib/devices/dio/dionoise.c,
+ * src/spicelib/devices/dio/diopzld.c,
+ * src/spicelib/devices/dio/diosacl.c,
+ * src/spicelib/devices/dio/diosetup.c,
+ * src/spicelib/devices/dio/diosload.c,
+ * src/spicelib/devices/dio/diosprt.c,
+ * src/spicelib/devices/dio/diosset.c,
+ * src/spicelib/devices/dio/diosupd.c,
+ * src/spicelib/devices/dio/diotemp.c,
+ * src/spicelib/devices/dio/diotrunc.c,
+ * src/spicelib/devices/hfet1/hfetacl.c,
+ * src/spicelib/devices/hfet1/hfetdefs.h,
+ * src/spicelib/devices/hfet1/hfetgetic.c,
+ * src/spicelib/devices/hfet1/hfetload.c,
+ * src/spicelib/devices/hfet1/hfetpzl.c,
+ * src/spicelib/devices/hfet1/hfetsetup.c,
+ * src/spicelib/devices/hfet1/hfettemp.c,
+ * src/spicelib/devices/hfet1/hfettrunc.c,
+ * src/spicelib/devices/hfet2/hfet2acl.c,
+ * src/spicelib/devices/hfet2/hfet2defs.h,
+ * src/spicelib/devices/hfet2/hfet2getic.c,
+ * src/spicelib/devices/hfet2/hfet2load.c,
+ * src/spicelib/devices/hfet2/hfet2pzl.c,
+ * src/spicelib/devices/hfet2/hfet2setup.c,
+ * src/spicelib/devices/hfet2/hfet2temp.c,
+ * src/spicelib/devices/hfet2/hfet2trunc.c,
+ * src/spicelib/devices/hisim2/hsm2def.h,
+ * src/spicelib/devices/hisimhv/hsmhvdef.h,
+ * src/spicelib/devices/ind/indacld.c,
+ * src/spicelib/devices/ind/inddefs.h,
+ * src/spicelib/devices/ind/indload.c,
+ * src/spicelib/devices/ind/indpzld.c,
+ * src/spicelib/devices/ind/indsetup.c,
+ * src/spicelib/devices/ind/indsload.c,
+ * src/spicelib/devices/ind/indsprt.c,
+ * src/spicelib/devices/ind/indsset.c,
+ * src/spicelib/devices/ind/indsupd.c,
+ * src/spicelib/devices/ind/indtemp.c,
+ * src/spicelib/devices/ind/indtrunc.c,
+ * src/spicelib/devices/ind/mutacld.c,
+ * src/spicelib/devices/ind/mutpzld.c,
+ * src/spicelib/devices/ind/mutsprt.c,
+ * src/spicelib/devices/ind/mutsset.c,
+ * src/spicelib/devices/ind/muttemp.c,
+ * src/spicelib/devices/isrc/isrcacld.c,
+ * src/spicelib/devices/isrc/isrcdefs.h,
+ * src/spicelib/devices/isrc/isrcload.c,
+ * src/spicelib/devices/isrc/isrctemp.c,
+ * src/spicelib/devices/jfet/jfetacld.c,
+ * src/spicelib/devices/jfet/jfetdefs.h,
+ * src/spicelib/devices/jfet/jfetdist.c,
+ * src/spicelib/devices/jfet/jfetdset.c,
+ * src/spicelib/devices/jfet/jfetic.c,
+ * src/spicelib/devices/jfet/jfetload.c,
+ * src/spicelib/devices/jfet/jfetnoi.c,
+ * src/spicelib/devices/jfet/jfetpzld.c,
+ * src/spicelib/devices/jfet/jfetset.c,
+ * src/spicelib/devices/jfet/jfettemp.c,
+ * src/spicelib/devices/jfet/jfettrun.c,
+ * src/spicelib/devices/jfet2/jfet2acld.c,
+ * src/spicelib/devices/jfet2/jfet2defs.h,
+ * src/spicelib/devices/jfet2/jfet2ic.c,
+ * src/spicelib/devices/jfet2/jfet2load.c,
+ * src/spicelib/devices/jfet2/jfet2noi.c,
+ * src/spicelib/devices/jfet2/jfet2set.c,
+ * src/spicelib/devices/jfet2/jfet2temp.c,
+ * src/spicelib/devices/jfet2/jfet2trun.c,
+ * src/spicelib/devices/ltra/ltraacct.c,
+ * src/spicelib/devices/ltra/ltraacld.c,
+ * src/spicelib/devices/ltra/ltradefs.h,
+ * src/spicelib/devices/ltra/ltraload.c,
+ * src/spicelib/devices/ltra/ltratemp.c,
+ * src/spicelib/devices/ltra/ltratrun.c,
+ * src/spicelib/devices/mes/mesacl.c,
+ * src/spicelib/devices/mes/mesdefs.h,
+ * src/spicelib/devices/mes/mesdisto.c,
+ * src/spicelib/devices/mes/mesdset.c,
+ * src/spicelib/devices/mes/mesgetic.c,
+ * src/spicelib/devices/mes/mesload.c,
+ * src/spicelib/devices/mes/mesnoise.c,
+ * src/spicelib/devices/mes/mespzld.c,
+ * src/spicelib/devices/mes/messetup.c,
+ * src/spicelib/devices/mes/mestrunc.c,
+ * src/spicelib/devices/mesa/mesaacl.c,
+ * src/spicelib/devices/mesa/mesadefs.h,
+ * src/spicelib/devices/mesa/mesagetic.c,
+ * src/spicelib/devices/mesa/mesaload.c,
+ * src/spicelib/devices/mesa/mesapzl.c,
+ * src/spicelib/devices/mesa/mesasetup.c,
+ * src/spicelib/devices/mesa/mesatemp.c,
+ * src/spicelib/devices/mesa/mesatrunc.c,
+ * src/spicelib/devices/mos1/mos1acld.c,
+ * src/spicelib/devices/mos1/mos1conv.c,
+ * src/spicelib/devices/mos1/mos1defs.h,
+ * src/spicelib/devices/mos1/mos1dist.c,
+ * src/spicelib/devices/mos1/mos1dset.c,
+ * src/spicelib/devices/mos1/mos1ic.c,
+ * src/spicelib/devices/mos1/mos1load.c,
+ * src/spicelib/devices/mos1/mos1noi.c,
+ * src/spicelib/devices/mos1/mos1pzld.c,
+ * src/spicelib/devices/mos1/mos1sacl.c,
+ * src/spicelib/devices/mos1/mos1set.c,
+ * src/spicelib/devices/mos1/mos1sld.c,
+ * src/spicelib/devices/mos1/mos1sprt.c,
+ * src/spicelib/devices/mos1/mos1sset.c,
+ * src/spicelib/devices/mos1/mos1supd.c,
+ * src/spicelib/devices/mos1/mos1temp.c,
+ * src/spicelib/devices/mos1/mos1trun.c,
+ * src/spicelib/devices/mos2/mos2acld.c,
+ * src/spicelib/devices/mos2/mos2conv.c,
+ * src/spicelib/devices/mos2/mos2defs.h,
+ * src/spicelib/devices/mos2/mos2dist.c,
+ * src/spicelib/devices/mos2/mos2dset.c,
+ * src/spicelib/devices/mos2/mos2ic.c,
+ * src/spicelib/devices/mos2/mos2load.c,
+ * src/spicelib/devices/mos2/mos2noi.c,
+ * src/spicelib/devices/mos2/mos2pzld.c,
+ * src/spicelib/devices/mos2/mos2sacl.c,
+ * src/spicelib/devices/mos2/mos2set.c,
+ * src/spicelib/devices/mos2/mos2sld.c,
+ * src/spicelib/devices/mos2/mos2sprt.c,
+ * src/spicelib/devices/mos2/mos2sset.c,
+ * src/spicelib/devices/mos2/mos2supd.c,
+ * src/spicelib/devices/mos2/mos2temp.c,
+ * src/spicelib/devices/mos2/mos2trun.c,
+ * src/spicelib/devices/mos3/mos3acld.c,
+ * src/spicelib/devices/mos3/mos3conv.c,
+ * src/spicelib/devices/mos3/mos3defs.h,
+ * src/spicelib/devices/mos3/mos3dist.c,
+ * src/spicelib/devices/mos3/mos3dset.c,
+ * src/spicelib/devices/mos3/mos3ic.c,
+ * src/spicelib/devices/mos3/mos3load.c,
+ * src/spicelib/devices/mos3/mos3noi.c,
+ * src/spicelib/devices/mos3/mos3pzld.c,
+ * src/spicelib/devices/mos3/mos3sacl.c,
+ * src/spicelib/devices/mos3/mos3set.c,
+ * src/spicelib/devices/mos3/mos3sld.c,
+ * src/spicelib/devices/mos3/mos3sprt.c,
+ * src/spicelib/devices/mos3/mos3sset.c,
+ * src/spicelib/devices/mos3/mos3supd.c,
+ * src/spicelib/devices/mos3/mos3temp.c,
+ * src/spicelib/devices/mos3/mos3trun.c,
+ * src/spicelib/devices/mos6/mos6conv.c,
+ * src/spicelib/devices/mos6/mos6defs.h,
+ * src/spicelib/devices/mos6/mos6ic.c,
+ * src/spicelib/devices/mos6/mos6load.c,
+ * src/spicelib/devices/mos6/mos6set.c,
+ * src/spicelib/devices/mos6/mos6temp.c,
+ * src/spicelib/devices/mos6/mos6trun.c,
+ * src/spicelib/devices/mos9/mos9acld.c,
+ * src/spicelib/devices/mos9/mos9conv.c,
+ * src/spicelib/devices/mos9/mos9defs.h,
+ * src/spicelib/devices/mos9/mos9dist.c,
+ * src/spicelib/devices/mos9/mos9dset.c,
+ * src/spicelib/devices/mos9/mos9ic.c,
+ * src/spicelib/devices/mos9/mos9load.c,
+ * src/spicelib/devices/mos9/mos9noi.c,
+ * src/spicelib/devices/mos9/mos9pzld.c,
+ * src/spicelib/devices/mos9/mos9sacl.c,
+ * src/spicelib/devices/mos9/mos9set.c,
+ * src/spicelib/devices/mos9/mos9sld.c,
+ * src/spicelib/devices/mos9/mos9sprt.c,
+ * src/spicelib/devices/mos9/mos9sset.c,
+ * src/spicelib/devices/mos9/mos9supd.c,
+ * src/spicelib/devices/mos9/mos9temp.c,
+ * src/spicelib/devices/mos9/mos9trun.c,
+ * src/spicelib/devices/nbjt/nbjtacld.c,
+ * src/spicelib/devices/nbjt/nbjtdefs.h,
+ * src/spicelib/devices/nbjt/nbjtdump.c,
+ * src/spicelib/devices/nbjt/nbjtload.c,
+ * src/spicelib/devices/nbjt/nbjtpzld.c,
+ * src/spicelib/devices/nbjt/nbjtset.c,
+ * src/spicelib/devices/nbjt/nbjttemp.c,
+ * src/spicelib/devices/nbjt/nbjttrun.c,
+ * src/spicelib/devices/nbjt2/nbjt2def.h,
+ * src/spicelib/devices/nbjt2/nbt2acld.c,
+ * src/spicelib/devices/nbjt2/nbt2dump.c,
+ * src/spicelib/devices/nbjt2/nbt2load.c,
+ * src/spicelib/devices/nbjt2/nbt2pzld.c,
+ * src/spicelib/devices/nbjt2/nbt2set.c,
+ * src/spicelib/devices/nbjt2/nbt2temp.c,
+ * src/spicelib/devices/nbjt2/nbt2trun.c,
+ * src/spicelib/devices/ndev/ndevaccept.c,
+ * src/spicelib/devices/ndev/ndevdefs.h,
+ * src/spicelib/devices/ndev/ndevload.c,
+ * src/spicelib/devices/numd/numdacld.c,
+ * src/spicelib/devices/numd/numddefs.h,
+ * src/spicelib/devices/numd/numddump.c,
+ * src/spicelib/devices/numd/numdload.c,
+ * src/spicelib/devices/numd/numdpzld.c,
+ * src/spicelib/devices/numd/numdset.c,
+ * src/spicelib/devices/numd/numdtemp.c,
+ * src/spicelib/devices/numd/numdtrun.c,
+ * src/spicelib/devices/numd2/nud2acld.c,
+ * src/spicelib/devices/numd2/nud2dump.c,
+ * src/spicelib/devices/numd2/nud2load.c,
+ * src/spicelib/devices/numd2/nud2pzld.c,
+ * src/spicelib/devices/numd2/nud2set.c,
+ * src/spicelib/devices/numd2/nud2temp.c,
+ * src/spicelib/devices/numd2/nud2trun.c,
+ * src/spicelib/devices/numd2/numd2def.h,
+ * src/spicelib/devices/numos/nummacld.c,
+ * src/spicelib/devices/numos/nummdump.c,
+ * src/spicelib/devices/numos/nummload.c,
+ * src/spicelib/devices/numos/nummpzld.c,
+ * src/spicelib/devices/numos/nummset.c,
+ * src/spicelib/devices/numos/nummtemp.c,
+ * src/spicelib/devices/numos/nummtrun.c,
+ * src/spicelib/devices/numos/numosdef.h,
+ * src/spicelib/devices/res/resdefs.h,
+ * src/spicelib/devices/res/resload.c,
+ * src/spicelib/devices/res/resnoise.c,
+ * src/spicelib/devices/res/respzld.c,
+ * src/spicelib/devices/res/ressacl.c,
+ * src/spicelib/devices/res/ressload.c,
+ * src/spicelib/devices/res/ressprt.c,
+ * src/spicelib/devices/res/ressset.c,
+ * src/spicelib/devices/res/restemp.c,
+ * src/spicelib/devices/soi3/soi3acld.c,
+ * src/spicelib/devices/soi3/soi3conv.c,
+ * src/spicelib/devices/soi3/soi3defs.h,
+ * src/spicelib/devices/soi3/soi3ic.c,
+ * src/spicelib/devices/soi3/soi3load.c,
+ * src/spicelib/devices/soi3/soi3nois.c,
+ * src/spicelib/devices/soi3/soi3set.c,
+ * src/spicelib/devices/soi3/soi3temp.c,
+ * src/spicelib/devices/soi3/soi3trun.c,
+ * src/spicelib/devices/sw/swacload.c,
+ * src/spicelib/devices/sw/swdefs.h,
+ * src/spicelib/devices/sw/swload.c,
+ * src/spicelib/devices/sw/swnoise.c,
+ * src/spicelib/devices/sw/swpzload.c,
+ * src/spicelib/devices/sw/swsetup.c,
+ * src/spicelib/devices/tra/traacct.c,
+ * src/spicelib/devices/tra/traacld.c,
+ * src/spicelib/devices/tra/tradefs.h,
+ * src/spicelib/devices/tra/traload.c,
+ * src/spicelib/devices/tra/tratemp.c,
+ * src/spicelib/devices/tra/tratrunc.c,
+ * src/spicelib/devices/txl/txldefs.h,
+ * src/spicelib/devices/urc/urcdefs.h,
+ * src/spicelib/devices/urc/urcsetup.c,
+ * src/spicelib/devices/vbic/vbicacld.c,
+ * src/spicelib/devices/vbic/vbicconv.c,
+ * src/spicelib/devices/vbic/vbicdefs.h,
+ * src/spicelib/devices/vbic/vbicgetic.c,
+ * src/spicelib/devices/vbic/vbicload.c,
+ * src/spicelib/devices/vbic/vbicnoise.c,
+ * src/spicelib/devices/vbic/vbicpzld.c,
+ * src/spicelib/devices/vbic/vbicsetup.c,
+ * src/spicelib/devices/vbic/vbictemp.c,
+ * src/spicelib/devices/vbic/vbictrunc.c,
+ * src/spicelib/devices/vccs/vccsdefs.h,
+ * src/spicelib/devices/vccs/vccsload.c,
+ * src/spicelib/devices/vccs/vccspzld.c,
+ * src/spicelib/devices/vccs/vccssacl.c,
+ * src/spicelib/devices/vccs/vccssld.c,
+ * src/spicelib/devices/vccs/vccssprt.c,
+ * src/spicelib/devices/vccs/vccssset.c,
+ * src/spicelib/devices/vcvs/vcvsdefs.h,
+ * src/spicelib/devices/vcvs/vcvsload.c,
+ * src/spicelib/devices/vcvs/vcvspzld.c,
+ * src/spicelib/devices/vcvs/vcvssacl.c,
+ * src/spicelib/devices/vcvs/vcvssld.c,
+ * src/spicelib/devices/vcvs/vcvssprt.c,
+ * src/spicelib/devices/vcvs/vcvssset.c,
+ * src/spicelib/devices/vsrc/vsrcacld.c,
+ * src/spicelib/devices/vsrc/vsrcdefs.h,
+ * src/spicelib/devices/vsrc/vsrcload.c,
+ * src/spicelib/devices/vsrc/vsrcpzld.c,
+ * src/spicelib/devices/vsrc/vsrctemp.c,
+ * src/spicelib/parser/sperror.c,
+ * src/tclspice.c,
+ * visualc/vngspice.vcproj:
+    removed ancient PARALLEL_ARCH feature
+
+    removed variables
+      ARCHme
+      ARCHsize
+
+    removed functions
+      SMPcombine()
+      SMPcCombine()
+      CKTpartition()
+
+    removed files
+      spcombin.c
+      cktpartn.c
+
+    removed struct slots
+      STATcombineTime
+      STATtranCombTime
+      STATacCombTime
+      GENowner
+      <MODEL>owner
+
+2012-10-22  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/spicelib/devices/bsim4/b4acld.c,
+ * src/spicelib/devices/bsim4/b4cvtest.c,
+ * src/spicelib/devices/bsim4/b4getic.c,
+ * src/spicelib/devices/bsim4/b4ld.c,
+ * src/spicelib/devices/bsim4/b4pzld.c,
+ * src/spicelib/devices/bsim4/b4temp.c,
+ * src/spicelib/devices/bsim4v4/b4v4acld.c,
+ * src/spicelib/devices/bsim4v4/b4v4getic.c,
+ * src/spicelib/devices/bsim4v4/b4v4ld.c,
+ * src/spicelib/devices/bsim4v4/b4v4pzld.c,
+ * src/spicelib/devices/bsim4v4/b4v4temp.c,
+ * src/spicelib/devices/bsim4v5/b4v5acld.c,
+ * src/spicelib/devices/bsim4v5/b4v5getic.c,
+ * src/spicelib/devices/bsim4v5/b4v5ld.c,
+ * src/spicelib/devices/bsim4v5/b4v5pzld.c,
+ * src/spicelib/devices/bsim4v5/b4v5temp.c,
+ * src/spicelib/devices/bsim4v6/b4v6acld.c,
+ * src/spicelib/devices/bsim4v6/b4v6cvtest.c,
+ * src/spicelib/devices/bsim4v6/b4v6getic.c,
+ * src/spicelib/devices/bsim4v6/b4v6ld.c,
+ * src/spicelib/devices/bsim4v6/b4v6pzld.c,
+ * src/spicelib/devices/bsim4v6/b4v6temp.c:
+    white space changes
+
+2012-10-22  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/spicelib/devices/bsim3v1/ChangeLog,
+ * src/spicelib/devices/bsim4v4/ChangeLog:
+    bsim3v1/ChangeLog, bsim4v4/ChangeLog: cleanup
+
+2012-10-21  h_vogt <h_vogt>
+ * examples/xspice/xspice_c1.cir:
+    example input file as cited in manual
+
+2012-10-20  rlar <rlar>
+ * ChangeLog,
+ * src/frontend/inpcom.c,
+ * src/maths/misc/randnumb.c,
+ * src/spicelib/devices/bsim3soi/BsimTerms_use,
+ * src/spicelib/devices/bsim3soi_dd/BsimTerms_use,
+ * src/spicelib/devices/bsim3soi_fd/BsimTerms_use,
+ * src/spicelib/devices/bsim3soi_pd/BsimTerms_use,
+ * src/spicelib/devices/cpl/cplsetup.c,
+ * src/spicelib/devices/isrc/isrcacct.c,
+ * src/spicelib/devices/vsrc/vsrcacct.c:
+    use utf-8 encoding
+
+2012-10-20  rlar <rlar>
+ * INSTALL,
+ * contrib/mslib/COPYING,
+ * contrib/mslib/libprm_readme,
+ * contrib/mslib/mslib_readme,
+ * contrib/scripts/COPYING,
+ * contrib/scripts/libprm_readme,
+ * examples/Monte_Carlo/OpWien.sp,
+ * examples/control_structs/s-param.cir,
+ * examples/measure/simple-meas-tran.sp,
+ * src/spice.def:
+    missing newline at end of file
+
+2012-10-20  rlar <rlar>
+ * src/xspice/examples/rca3040.in,
+ * src/xspice/examples/rtlinv.in:
+    Changed line-ending from DOS to UNIX
+
+2012-10-17  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: require parentheses in ternary functions if numparam
+
+    parser is involved (no B sources)
+
+2012-10-17  rlar <rlar>
+ * src/frontend/postcoms.c:
+    com_print(), fix a memory leak
+
+2012-10-17  rlar <rlar>
+ * src/spicelib/analysis/dctrcurv.c:
+    DCtrCurv(), fix a memory leak
+
+2012-10-17  rlar <rlar>
+ * src/frontend/parse.c:
+    mkfnode(), fix a memory leak
+
+2012-10-15  rlar <rlar>
+ * src/frontend/postcoms.c:
+    com_write(), com_write_sparam(), fix a big memory leak
+
+2012-10-15  h_vogt <h_vogt>
+ * src/frontend/fourier.c:
+    fourier.c: rename stored vectors
+
+2012-10-15  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: plug small memory leak
+
+2012-10-13  rlar <rlar>
+ * src/frontend/vectors.c:
+    vector.c, rewrite vec_basename(), FIXME !
+
+    This rewritten code is functionally equivalent to the previous code,
+    yet the result is queer,
+    because the char *v_name slot of struct dvec is read
+    beyond its terminating '\0'
+
+    Is there indeed some code in ngspice which creates
+    v_name strings with an embedded '\0' ?
+
+2012-10-13  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, rewrite
+
+2012-10-13  h_vogt <h_vogt>
+ * src/frontend/fourier.c:
+    fourier.c: output also to vector feature request tracker no. 3575841
+
+2012-10-13  rlar <rlar>
+ * src/frontend/fourier.c:
+    fourier.c: remove even more memory leaks
+
+2012-10-13  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, use strchr() in favour of strstr()
+
+2012-10-13  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, inp_fix_ternary_operator_str(), use copy_substring()
+
+2012-10-13  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, inp_fix_ternary_operator_str(), rewrite
+
+2012-10-13  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, get_instance_subckt(), more carefull when there is trailing whitespace
+
+2012-10-13  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, get_instance_subckt(), rewrite
+
+2012-10-13  h_vogt <h_vogt>
+ * src/frontend/fourier.c:
+    fourier.c: remove memory leaks
+
+2012-10-13  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, make use of copy_substring()
+
+2012-10-13  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, rewrite
+
+2012-10-13  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, bug fix in inp_get_subckt_name()
+
+2012-10-12  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, rewrite
+
+2012-10-12  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, rewrite
+
+2012-10-12  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup
+
+2012-10-11  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, fix a bug
+
+    which was introduced in commit
+      skip-ws, #5/6, unify macro versions, obj not invariant
+    where the SKIP.*back.* macros have been unified
+
+    FIXME, the check for `\0' in the backwards direction if of course nonsense.
+    These backward functions either shall not check it at all (being optimistic),
+    or they shell check against a start of string pointer.
+
+2012-10-10  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup
+
+2012-10-09  h_vogt <h_vogt>
+ * examples/measure/simple-meas-tran.sp,
+ * src/frontend/plotting/gnuplot.c:
+    gnuplot.c: improve scaling of y axis
+
+2012-10-08  rlar <rlar>
+ * src/frontend/inpcom.c:
+    skip_ws(), #2/2, drop macros, obj-invariant
+
+2012-10-08  rlar <rlar>
+ * src/frontend/inpcom.c:
+    skip_ws(), #1/2, use functions instead of macros
+
+2012-10-07  rlar <rlar>
+ * src/frontend/inpcom.c:
+    skip-ws, #6/6, unify macro versions, obj-invariant
+
+    checked for object file invariance
+
+2012-10-07  rlar <rlar>
+ * src/frontend/inpcom.c:
+    skip-ws, #5/6, unify macro versions, obj not invariant
+
+2012-10-07  rlar <rlar>
+ * src/frontend/inpcom.c:
+    skip-ws, #4/6, use macros, obj-invariant
+
+    checked for object file invariance
+
+2012-10-07  rlar <rlar>
+ * src/frontend/inpcom.c:
+    skip-ws, #3/6, introduce macros, obj-invariant
+
+    checked for object file invariance
+
+2012-10-07  rlar <rlar>
+ * src/frontend/inpcom.c:
+    skip-ws, #2/6, prepare for rewrite, obj-invariant
+
+    checked for object file invariance
+
+2012-10-07  rlar <rlar>
+ * src/frontend/inpcom.c:
+    skip-ws, #1/6, prepare for rewrite, obj-invariant
+
+    checked for object file invariance
+
+2012-10-07  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: remove cccs from F, ccvs from H source
+
+2012-10-07  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: correct replacement of vccs, vcvs in E, G-sources
+
+    search for 'par(' instead of 'par'
+
+2012-10-06  rlar <rlar>
+ * src/frontend/com_fft.c,
+ * src/frontend/parse.c,
+ * src/frontend/parse.h,
+ * src/frontend/spec.c:
+    com_fft(), com_psd(), com_spec(), cleanup storage more thoroughly
+
+    use free_pnode() instead of free_pnode_o()
+    drop free_pnode_o()
+
+2012-10-06  rlar <rlar>
+ * src/frontend/misccoms.c:
+    invoke com_remcirc() in com_quit()
+
+2012-10-06  rlar <rlar>
+ * src/ngnutmeg.c,
+ * src/ngspice.c:
+    cleanup, whitespace
+
+2012-10-06  rlar <rlar>
+ * src/ngnutmeg.c:
+    cleanup, drop unused macros
+
+2012-10-06  rlar <rlar>
+ * src/frontend/com_measure2.h,
+ * src/ngnutmeg.c,
+ * src/ngspice.c,
+ * src/spicelib/parser/inp2n.c:
+    cleanup, ngspice/config.h is already in ngspice/ngspice.h, #2/2
+
+2012-10-06  rlar <rlar>
+ * src/frontend/com_ahelp.c,
+ * src/frontend/com_asciiplot.c,
+ * src/frontend/com_dump.c,
+ * src/frontend/com_echo.c,
+ * src/frontend/com_hardcopy.c,
+ * src/frontend/com_help.c,
+ * src/frontend/com_measure2.c,
+ * src/frontend/com_plot.c,
+ * src/frontend/com_rehash.c,
+ * src/frontend/com_set.c,
+ * src/frontend/com_shell.c,
+ * src/frontend/com_shift.c,
+ * src/frontend/com_state.c,
+ * src/frontend/com_strcmp.c,
+ * src/frontend/com_sysinfo.c,
+ * src/frontend/com_unset.c,
+ * src/frontend/help/help.c,
+ * src/frontend/help/provide.c,
+ * src/frontend/help/readhelp.c,
+ * src/frontend/help/x11disp.c,
+ * src/frontend/help/xdisplay.c,
+ * src/frontend/parser/backq.c,
+ * src/frontend/parser/complete.c,
+ * src/frontend/parser/glob.c,
+ * src/frontend/parser/input.c,
+ * src/frontend/parser/lexical.c,
+ * src/frontend/parser/numparse.c,
+ * src/frontend/parser/std.c,
+ * src/frontend/parser/unixcom.c,
+ * src/frontend/plotting/plotit.c,
+ * src/frontend/resource.c,
+ * src/frontend/streams.c,
+ * src/frontend/terminal.c,
+ * src/frontend/variable.c,
+ * src/maths/poly/interpolate.c,
+ * src/misc/dup2.c,
+ * src/misc/misc_time.c,
+ * src/misc/wlist.c,
+ * src/nghelp.c,
+ * src/ngproc2mod.c,
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/devices/cktask.c,
+ * src/spicelib/devices/cktbindnode.c,
+ * src/spicelib/devices/dev.c,
+ * src/spicelib/parser/inppas1.c,
+ * src/spicelib/parser/inppas3.c,
+ * src/spicelib/parser/ptfuncs.c:
+    cleanup, ngspice/config.h is already in ngspice/ngspice.h, #1/2 (easy ones)
+
+2012-10-03  h_vogt <h_vogt>
+ * src/frontend/outitf.c,
+ * src/frontend/typesdef.c,
+ * src/include/ngspice/sim.h:
+    outif.c, typesdef.c, sim.h: correct labeling of cap, cur, and charge data
+
+2012-10-03  h_vogt <h_vogt>
+ * src/spicelib/devices/bsim3/b3ld.c,
+ * src/spicelib/devices/bsim3v32/b3v32ld.c,
+ * src/spicelib/devices/bsim4/b4ld.c:
+    b3ld.c, b4ld.c, b3v32ld.c: enable capacitance calculation during dc sweep
+
+2012-10-01  h_vogt <h_vogt>
+ * src/spicelib/devices/bsim3v32/b3v32.c:
+    b3v32.c: make additional parameters accessible by @m1[par]
+
+2012-10-01  h_vogt <h_vogt>
+ * src/frontend/parser/complete.c:
+    prototype for controlled_exit()
+
+2012-10-01  rlar <rlar>
+ * src/frontend/postcoms.c:
+    com_write_sparam(), cleanup storage more thoroughly (`wl_sparam')
+
+2012-10-01  rlar <rlar>
+ * src/frontend/device.c:
+    com_alter_common(), cleanup storage more thoroughly (on error)
+
+2012-10-01  rlar <rlar>
+ * src/frontend/postcoms.c:
+    com_write(), com_write_sparam(), com_cross(), cleanup storage more thoroughly
+
+2012-10-01  rlar <rlar>
+ * src/frontend/com_fft.c:
+    com_psd(), cleanup storage more thoroughly (`win')
+
+2012-10-01  rlar <rlar>
+ * src/frontend/postcoms.c:
+    com_print(), cleanup storage more thoroughly
+
+2012-10-01  rlar <rlar>
+ * src/frontend/com_compose.c:
+    com_compose(), cleanup storage more thoroughly
+
+2012-10-01  rlar <rlar>
+ * src/frontend/cpitf.c,
+ * src/frontend/plotting/plotit.c,
+ * src/frontend/postcoms.c:
+    variable rename, unify the source
+
+    checked for object file invariance
+
+2012-10-01  rlar <rlar>
+ * src/frontend/postcoms.c:
+    com_print(), com_cross(), use for(;;) loops
+
+2012-09-30  h_vogt <h_vogt>
+ * src/spicelib/devices/bsim3/b3.c:
+    bsim3, make additonal parameters accessible with @m[par]
+
+2012-09-30  rlar <rlar>
+ * src/frontend/define.c:
+    variable rename, unify the source
+
+    checked for object file invariance
+
+2012-09-30  rlar <rlar>
+ * src/frontend/fourier.c:
+    fourier(), use for(;;) loops
+
+2012-09-30  rlar <rlar>
+ * src/frontend/fourier.c:
+    variable rename, unify the source
+
+    checked for object file invariance
+
+2012-09-30  rlar <rlar>
+ * src/frontend/fourier.c:
+    bug fix, fourier(), prevent endless loop when processing unexpected vectors
+
+2012-09-30  rlar <rlar>
+ * src/frontend/com_compose.c:
+    com_compose(), use for(;;) loops
+
+2012-09-30  rlar <rlar>
+ * src/frontend/com_compose.c:
+    variable rename, unify the source
+
+    checked for object file invariance
+
+2012-09-30  rlar <rlar>
+ * src/frontend/spec.c:
+    com_spec(), use for(;;) loops
+
+2012-09-30  rlar <rlar>
+ * src/frontend/spec.c:
+    variable rename, unify the source
+
+    checked for object file invariance
+
+2012-09-30  rlar <rlar>
+ * src/frontend/com_fft.c:
+    com_fft(), com_psd(), use for(;;) loops
+
+2012-09-30  rlar <rlar>
+ * src/frontend/com_fft.c,
+ * src/frontend/com_let.c:
+    variable rename, unify the source
+
+    checked for object file invariance
+
+2012-09-30  rlar <rlar>
+ * src/frontend/inp.c,
+ * src/frontend/parser/complete.c:
+    bug fix, invalid read when the title line is the empty
+
+2012-09-29  dwarning <dwarning>
+ * src/frontend/com_hardcopy.c,
+ * src/frontend/numparam/spicenum.c,
+ * src/frontend/numparam/xpressn.c,
+ * src/frontend/trannoise/1-f-code.c,
+ * src/frontend/trannoise/FastNorm3.c,
+ * src/frontend/trannoise/wallace.c,
+ * src/frontend/variable.c,
+ * src/spicelib/devices/hisim2/hsm2acld.c,
+ * src/spicelib/devices/hisim2/hsm2eval.c,
+ * src/spicelib/devices/hisim2/hsm2ld.c,
+ * src/spicelib/parser/inppas1.c,
+ * src/xspice/evt/evtbackup.c,
+ * src/xspice/evt/evtdeque.c,
+ * src/xspice/evt/evtdump.c,
+ * src/xspice/evt/evtinit.c,
+ * src/xspice/evt/evtiter.c,
+ * src/xspice/evt/evtload.c,
+ * src/xspice/evt/evtnext_time.c,
+ * src/xspice/evt/evtop.c,
+ * src/xspice/evt/evtplot.c,
+ * src/xspice/evt/evtprint.c,
+ * src/xspice/evt/evtqueue.c,
+ * src/xspice/evt/evtsetup.c,
+ * src/xspice/evt/evttermi.c,
+ * src/xspice/mif/mifdelete.c:
+    changed the #include order - ngspice.h must be first
+
+    because icc complains about declaration visibility of mmsghdr struct
+
+2012-09-29  dwarning <dwarning>
+ * src/spicelib/devices/bjt/bjttemp.c:
+    bjttemp.c: prevent uninitialized variables
+
+2012-09-27  rlar <rlar>
+ * src/spicelib/analysis/acan.c:
+    polish a very old and unused artifact in WANT_SENSE2
+
+2012-09-27  rlar <rlar>
+ * src/frontend/parse.c:
+    cleanup db_print_pnode_tree()
+
+2012-09-27  rlar <rlar>
+ * src/frontend/define.c:
+    bug fix, dvec in a `define' can't be member of any plot
+
+2012-09-27  rlar <rlar>
+ * src/frontend/vectors.c:
+    bug fix, avoid segfault when the refered plot is still empty
+
+2012-09-26  h_vogt <h_vogt>
+ * src/frontend/plotting/grid.c:
+    grid.c: prevent overflow of div_list
+
+2012-09-26  h_vogt <h_vogt>
+ * src/spicelib/parser/ifeval.c:
+    ifeval.c: reduce fudge factor for div and atanh
+
+2012-09-26  h_vogt <h_vogt>
+ * src/frontend/plotting/plotit.c:
+    grid.c: prevent crash if real low and high values are close
+
+2012-09-26  h_vogt <h_vogt>
+ * src/frontend/inp.c,
+ * src/include/ngspice/cktdefs.h,
+ * src/include/ngspice/optdefs.h,
+ * src/include/ngspice/tskdefs.h,
+ * src/spicelib/analysis/acan.c,
+ * src/spicelib/analysis/cktdojob.c,
+ * src/spicelib/analysis/cktntask.c,
+ * src/spicelib/analysis/cktsopt.c:
+    new option noopac, don't do op simulation before ac if circuit is linear
+
+    May simplify ac simulation of passive RLC networks
+    (No need to add series resistors in Ls, allows to C inseries)
+
+2012-09-25  rlar <rlar>
+ * src/frontend/misccoms.c:
+    disable some more cleanup code in com_quit()
+
+    destroy_ivars() is reported to freeze
+
+2012-09-22  rlar <rlar>
+ * src/frontend/subckt.c:
+    subckt.c, cleanup, use `for' instead of `while'
+
+2012-09-22  rlar <rlar>
+ * configure.ac:
+    automake 1.12 might need AM_PROG_AR, which is not available in 1.11
+
+2012-09-22  rlar <rlar>
+ * src/frontend/aspice.c,
+ * src/frontend/breakp.c,
+ * src/frontend/breakp2.c,
+ * src/frontend/circuits.c,
+ * src/frontend/com_ahelp.c,
+ * src/frontend/com_alias.c,
+ * src/frontend/com_asciiplot.c,
+ * src/frontend/com_cdump.c,
+ * src/frontend/com_chdir.c,
+ * src/frontend/com_compose.c,
+ * src/frontend/com_display.c,
+ * src/frontend/com_dl.c,
+ * src/frontend/com_dump.c,
+ * src/frontend/com_gnuplot.c,
+ * src/frontend/com_hardcopy.c,
+ * src/frontend/com_help.c,
+ * src/frontend/com_history.c,
+ * src/frontend/com_let.c,
+ * src/frontend/com_measure2.c,
+ * src/frontend/com_option.c,
+ * src/frontend/com_plot.c,
+ * src/frontend/com_rehash.c,
+ * src/frontend/com_set.c,
+ * src/frontend/com_shell.c,
+ * src/frontend/com_shift.c,
+ * src/frontend/com_state.c,
+ * src/frontend/com_strcmp.c,
+ * src/frontend/com_unset.c,
+ * src/frontend/com_xgraph.c,
+ * src/frontend/control.c,
+ * src/frontend/device.c,
+ * src/frontend/diff.c,
+ * src/frontend/dotcards.c,
+ * src/frontend/error.c,
+ * src/frontend/help/help.c,
+ * src/frontend/help/provide.c,
+ * src/frontend/help/readhelp.c,
+ * src/frontend/help/textdisp.c,
+ * src/frontend/help/x11disp.c,
+ * src/frontend/init.c,
+ * src/frontend/inpcom.c,
+ * src/frontend/interp.c,
+ * src/frontend/inventory.c,
+ * src/frontend/linear.c,
+ * src/frontend/nutinp.c,
+ * src/frontend/parser/complete.c,
+ * src/frontend/parser/cshpar.c,
+ * src/frontend/parser/unixcom.c,
+ * src/frontend/plotting/agraf.c,
+ * src/frontend/plotting/gnuplot.c,
+ * src/frontend/plotting/graf.c,
+ * src/frontend/plotting/grid.c,
+ * src/frontend/plotting/plotcurv.c,
+ * src/frontend/plotting/pvec.c,
+ * src/frontend/plotting/x11.c,
+ * src/frontend/plotting/xgraph.c,
+ * src/frontend/postcoms.c,
+ * src/frontend/quote.c,
+ * src/frontend/rawfile.c,
+ * src/frontend/resource.c,
+ * src/frontend/runcoms.c,
+ * src/frontend/runcoms2.c,
+ * src/frontend/signal_handler.c,
+ * src/frontend/spec.c,
+ * src/frontend/spiceif.c,
+ * src/frontend/subckt.c,
+ * src/frontend/terminal.c,
+ * src/frontend/trannoise/FastNorm3.c,
+ * src/frontend/trannoise/wallace.c,
+ * src/frontend/typesdef.c,
+ * src/frontend/vectors.c:
+    src/frontend/**  remove superfluous `return' invocations
+
+2012-09-22  rlar <rlar>
+ * src/frontend/arg.c,
+ * src/frontend/com_dl.h,
+ * src/frontend/com_dump.c,
+ * src/frontend/com_ghelp.c,
+ * src/frontend/com_history.c,
+ * src/frontend/com_measure2.c,
+ * src/frontend/com_rehash.c,
+ * src/frontend/com_shift.c,
+ * src/frontend/com_strcmp.c,
+ * src/frontend/control.h,
+ * src/frontend/define.h,
+ * src/frontend/help/help.c,
+ * src/frontend/help/provide.c,
+ * src/frontend/help/readhelp.c,
+ * src/frontend/help/textdisp.c,
+ * src/frontend/help/x11disp.c,
+ * src/frontend/help/xdisplay.c,
+ * src/frontend/hpgl.h,
+ * src/frontend/init.c,
+ * src/frontend/interp.c,
+ * src/frontend/inventory.c,
+ * src/frontend/linear.c,
+ * src/frontend/miscvars.c,
+ * src/frontend/numparam/general.h,
+ * src/frontend/postsc.c,
+ * src/frontend/rawfile.c,
+ * src/frontend/runcoms2.c,
+ * src/frontend/spiceif.c:
+    src/frontend/** whitespace, indentation, ...
+
+    checked for object file invariance on linux
+
+2012-09-22  rlar <rlar>
+ * src/frontend/misccoms.c:
+    invoke cleanup functions in com_quit()
+
+    trying to get the valgrind reports down.
+
+2012-09-21  rlar <rlar>
+ * src/frontend/misccoms.c,
+ * src/main.c,
+ * src/spicelib/devices/dev.c,
+ * src/spicelib/devices/dev.h:
+    free spice_init_devices() allocated memory in com_quit()
+
+2012-09-21  rlar <rlar>
+ * src/frontend/misccoms.c,
+ * src/frontend/postcoms.c,
+ * src/frontend/postcoms.h:
+    destroy `const' plot in com_quit()
+
+2012-09-21  rlar <rlar>
+ * src/frontend/postcoms.c:
+    drop a superfluous cast
+
+2012-09-20  dwarning <dwarning>
+ * src/spicelib/devices/dio/dioload.c,
+ * src/spicelib/devices/dio/diosetup.c,
+ * src/spicelib/devices/dio/diotemp.c:
+    correct the diode temperature model
+
+2012-09-20  rlar <rlar>
+ * src/frontend/dotcards.c,
+ * src/frontend/numparam/xpressn.c:
+    src/frontend/**, whitespace,
+
+    object files will change, due to __LINE__ usage
+
+2012-09-20  rlar <rlar>
+ * src/frontend/arg.c,
+ * src/frontend/aspice.c,
+ * src/frontend/breakp.c,
+ * src/frontend/breakp2.c,
+ * src/frontend/circuits.h,
+ * src/frontend/com_ahelp.c,
+ * src/frontend/com_alias.c,
+ * src/frontend/com_cdump.c,
+ * src/frontend/com_chdir.c,
+ * src/frontend/com_compose.c,
+ * src/frontend/com_display.c,
+ * src/frontend/com_dl.c,
+ * src/frontend/com_echo.c,
+ * src/frontend/com_fft.c,
+ * src/frontend/com_gnuplot.c,
+ * src/frontend/com_hardcopy.c,
+ * src/frontend/com_help.c,
+ * src/frontend/com_history.c,
+ * src/frontend/com_let.c,
+ * src/frontend/com_measure2.c,
+ * src/frontend/com_measure2.h,
+ * src/frontend/com_option.c,
+ * src/frontend/com_set.c,
+ * src/frontend/com_setscale.c,
+ * src/frontend/com_shell.c,
+ * src/frontend/com_sysinfo.c,
+ * src/frontend/com_xgraph.c,
+ * src/frontend/commands.c,
+ * src/frontend/control.c,
+ * src/frontend/cpitf.c,
+ * src/frontend/define.c,
+ * src/frontend/device.c,
+ * src/frontend/diff.c,
+ * src/frontend/dimens.c,
+ * src/frontend/dimens.h,
+ * src/frontend/display.c,
+ * src/frontend/dotcards.c,
+ * src/frontend/error.c,
+ * src/frontend/evaluate.c,
+ * src/frontend/evaluate.h,
+ * src/frontend/fourier.c,
+ * src/frontend/ftesopt.c,
+ * src/frontend/gens.c,
+ * src/frontend/hpgl.c,
+ * src/frontend/inp.c,
+ * src/frontend/inpcom.c,
+ * src/frontend/measure.c,
+ * src/frontend/misccoms.c,
+ * src/frontend/newcoms.c,
+ * src/frontend/numparam/general.h,
+ * src/frontend/numparam/mystring.c,
+ * src/frontend/numparam/numpaif.h,
+ * src/frontend/numparam/numparam.h,
+ * src/frontend/numparam/spicenum.c,
+ * src/frontend/numparam/xpressn.c,
+ * src/frontend/nutinp.c,
+ * src/frontend/options.c,
+ * src/frontend/outitf.c,
+ * src/frontend/outitf.h,
+ * src/frontend/parse.c,
+ * src/frontend/parser/backq.c,
+ * src/frontend/parser/backq.h,
+ * src/frontend/parser/complete.c,
+ * src/frontend/parser/complete.h,
+ * src/frontend/parser/cshpar.c,
+ * src/frontend/parser/glob.c,
+ * src/frontend/parser/glob.h,
+ * src/frontend/parser/input.c,
+ * src/frontend/parser/lexical.c,
+ * src/frontend/parser/numparse.c,
+ * src/frontend/parser/numparse.h,
+ * src/frontend/parser/unixcom.c,
+ * src/frontend/parser/unixcom.h,
+ * src/frontend/plotting/agraf.c,
+ * src/frontend/plotting/agraf.h,
+ * src/frontend/plotting/clip.c,
+ * src/frontend/plotting/gnuplot.c,
+ * src/frontend/plotting/gnuplot.h,
+ * src/frontend/plotting/graf.c,
+ * src/frontend/plotting/graf.h,
+ * src/frontend/plotting/graphdb.c,
+ * src/frontend/plotting/graphdb.h,
+ * src/frontend/plotting/grid.c,
+ * src/frontend/plotting/plot5.c,
+ * src/frontend/plotting/plot5.h,
+ * src/frontend/plotting/plotcurv.c,
+ * src/frontend/plotting/plotit.c,
+ * src/frontend/plotting/plotting.c,
+ * src/frontend/plotting/pvec.c,
+ * src/frontend/plotting/x11.c,
+ * src/frontend/plotting/x11.h,
+ * src/frontend/plotting/xgraph.c,
+ * src/frontend/plotting/xgraph.h,
+ * src/frontend/points.c,
+ * src/frontend/postcoms.c,
+ * src/frontend/postsc.c,
+ * src/frontend/quote.c,
+ * src/frontend/rawfile.c,
+ * src/frontend/resource.c,
+ * src/frontend/runcoms.c,
+ * src/frontend/runcoms2.c,
+ * src/frontend/shyu.c,
+ * src/frontend/signal_handler.c,
+ * src/frontend/spec.c,
+ * src/frontend/spec.h,
+ * src/frontend/spiceif.c,
+ * src/frontend/streams.c,
+ * src/frontend/subckt.c,
+ * src/frontend/terminal.c,
+ * src/frontend/testcommands.c,
+ * src/frontend/trannoise/1-f-code.c,
+ * src/frontend/trannoise/1-f-code_d.c,
+ * src/frontend/trannoise/FastNorm3.c,
+ * src/frontend/trannoise/wallace.c,
+ * src/frontend/typesdef.c,
+ * src/frontend/variable.c,
+ * src/frontend/variable.h,
+ * src/frontend/vectors.c,
+ * src/frontend/where.c:
+    src/frontend/**, whitespace, indentation, ...
+
+    untabify
+    delete-trailing-whitespace
+    braces
+    ...
+
+    checked for object file invariance on linux
+
+2012-09-19  rlar <rlar>
+ * src/frontend/control.c,
+ * src/frontend/inp.c,
+ * src/frontend/plotting/clip.c,
+ * src/frontend/plotting/graphdb.c,
+ * src/frontend/plotting/plot5.c,
+ * src/frontend/plotting/x11.c,
+ * src/frontend/rawfile.c,
+ * src/frontend/runcoms2.c,
+ * src/frontend/subckt.c:
+    cleanup some macros, try to be more careful
+
+2012-09-15  rlar <rlar>
+ * src/frontend/options.c,
+ * src/frontend/variable.c:
+    fix ownership of `cp_promptstring' and `cp_program'
+
+2012-09-14  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * configure.ac:
+    configure.ac, silent compilation (enabled by default) using AM_SILENT_RULES([yes])
+
+2012-09-13  rlar <rlar>
+ * src/frontend/define.c:
+    define.c, plug a memleak in com_undefine()
+
+2012-09-13  rlar <rlar>
+ * src/frontend/define.c:
+    define.c, cleanup
+
+2012-09-13  rlar <rlar>
+ * src/frontend/define.c:
+    define.c, cleanup
+
+2012-09-13  rlar <rlar>
+ * src/frontend/define.c:
+    define.c, whitespace cleanup
+
+2012-09-13  rlar <rlar>
+ * src/frontend/define.c:
+    define.c, bug fix, when undefining more than one udfunc
+
+2012-09-13  rlar <rlar>
+ * src/frontend/device.c,
+ * src/frontend/inp.c,
+ * src/frontend/inpcom.c,
+ * src/misc/ivars.c,
+ * src/misc/util.c:
+    api change for ngdirname() to fix a memory leak
+
+    ngdirname did `own' the returned string.
+    now the invoker is responsible for the returned string.
+
+    note, this is contrary to the POSIX dirname() implementation,
+       which *might* return pointers to statical allocated memory.
+
+2012-09-11  h_vogt <h_vogt>
+ * src/xspice/icm/xtradev/lcouple/cfunc.mod:
+    XSPICE lcouple: remove unused cm_analog_integrate
+
+2012-09-10  h_vogt <h_vogt>
+ * src/xspice/icm/xtradev/core/cfunc.mod,
+ * src/xspice/icm/xtradev/core/ifspec.ifs:
+    XSPICE core: remove memory leak
+
+2012-09-10  h_vogt <h_vogt>
+ * src/xspice/examples/analog_models4_transient.deck,
+ * src/xspice/icm/analog/square/cfunc.mod,
+ * src/xspice/icm/analog/square/ifspec.ifs:
+    XSPICE square: remove memory leak, initialize phase1
+
+2012-09-10  h_vogt <h_vogt>
+ * src/xspice/icm/analog/square/cfunc.mod:
+    XSPICE square: indentations
+
+2012-09-09  h_vogt <h_vogt>
+ * src/xspice/icm/analog/triangle/cfunc.mod,
+ * src/xspice/icm/analog/triangle/ifspec.ifs:
+    XSPICE triangle: remove memory leak remove initialization error for phase1 FIXME: there are still more initialization errors
+
+2012-09-09  h_vogt <h_vogt>
+ * src/xspice/icm/analog/triangle/cfunc.mod:
+    XSPICE triangle: indentations
+
+2012-09-09  h_vogt <h_vogt>
+ * src/xspice/icm/analog/oneshot/cfunc.mod,
+ * src/xspice/icm/analog/oneshot/ifspec.ifs:
+    XSPICE oneshot: remove memory leak remove using uninitialzed variable old_clock correct waveform shape by using permanent breakpoints
+
+2012-09-09  h_vogt <h_vogt>
+ * src/xspice/icm/analog/oneshot/cfunc.mod:
+    indentations
+
+2012-09-08  h_vogt <h_vogt>
+ * src/xspice/icm/analog/sine/cfunc.mod:
+    XSPICE sine: out-of-bounds removed
+
+2012-09-08  h_vogt <h_vogt>
+ * src/xspice/examples/analog_models4_transient.deck,
+ * src/xspice/icm/analog/sine/cfunc.mod,
+ * src/xspice/icm/analog/sine/ifspec.ifs:
+    XSPICE sine source: memory leak removed (bug no. 3564166)
+
+2012-09-07  h_vogt <h_vogt>
+ * src/spicelib/analysis/cktdest.c:
+    cktdest.c: reset for XSPICE allocated memory (not yet complete)
+
+2012-09-07  h_vogt <h_vogt>
+ * src/xspice/icm/analog/file_source/cfunc.mod,
+ * src/xspice/icm/analog/file_source/ifspec.ifs:
+    XSPICE filesource: remove segfault with op before tran
+
+2012-09-02  h_vogt <h_vogt>
+ * src/spicelib/analysis/cktload.c:
+    cktload.c, indentations
+
+2012-08-30  h_vogt <h_vogt>
+ * src/frontend/inp.c:
+    inp.c: unify syntax of .save and save commands: allow node1 and v(node1), v2#branch and i(v2), @dev[param]
+
+2012-08-27  h_vogt <h_vogt>
+ * src/xspice/evt/evtqueue.c:
+    evtqueue.c: plug memory leak
+
+2012-08-27  h_vogt <h_vogt>
+ * src/spicelib/devices/res/resask.c:
+    resask.c: avoid segfault if @R[i] is asked before analysis is run
+
+2012-08-26  h_vogt <h_vogt>
+ * src/frontend/vectors.c,
+ * src/spicelib/devices/res/resask.c:
+    vectors.c, resask.c: indentation
+
+2012-08-25  h_vogt <h_vogt>
+ * src/xspice/icm/digital/d_source/cfunc.mod,
+ * src/xspice/icm/digital/d_source/ifspec.ifs:
+    d_source: Use STATIC_VAR_TABLE to save memory
+
+2012-08-23  rlar <rlar>
+ * src/frontend/misccoms.c,
+ * src/frontend/parser/complete.c,
+ * src/include/ngspice/cpextern.h:
+    cleanup keyword databases on proram termination
+
+2012-08-23  rlar <rlar>
+ * src/frontend/inp.c,
+ * src/frontend/nutinp.c:
+    plug a memory leak in inp_spsource/inp_nutsource (deck title string)
+
+2012-08-23  rlar <rlar>
+ * src/frontend/misccoms.c,
+ * src/main.c,
+ * src/misc/ivars.c,
+ * src/misc/ivars.h:
+    cleanup ivars() related globals on program termination
+
+2012-08-22  h_vogt <h_vogt>
+ * src/xspice/icm/digital/d_source/cfunc.mod:
+    d_source: allow multiple instances
+
+2012-08-22  rlar <rlar>
+ * src/frontend/trannoise/wallace.c:
+    cleanup wallace arrays on program termination
+
+2012-08-20  rlar <rlar>
+ * src/frontend/display.c:
+    avoid error messages when finally closing the display device.
+
+    these messages creeped in with commit
+      2012-08-19 18:58:31
+      "plug memory leak in x11.c"
+
+    when the "printf" device Close and Update
+     functions might be invoked on program termination.
+
+    use the silent "nop" implementation
+    instead of the error reporting "nodev" implementation
+
+2012-08-20  h_vogt <h_vogt>
+ * src/xspice/icm/digital/d_source/cfunc.mod:
+    d_source cfunc.mod: plug memory leaks
+
+2012-08-19  h_vogt <h_vogt>
+ * src/xspice/icm/digital/d_source/cfunc.mod,
+ * src/xspice/icm/digital/d_source/ifspec.ifs:
+    bug no. 3456221: new d_source model
+
+2012-08-19  rlar <rlar>
+ * src/xspice/icm/digital/d_source/cfunc.mod:
+    cleanup, white space changes
+
+2012-08-19  rlar <rlar>
+ * src/frontend/display.c,
+ * src/frontend/misccoms.c,
+ * src/frontend/plotting/x11.c:
+    plug memory leak in x11.c
+
+    try to obey the Xt toolkit protocol when closing widgets and application
+
+2012-08-19  h_vogt <h_vogt>
+ * src/xspice/mif/mifgetvalue.c:
+    mifgetvalue.c: need a copy to allow freeing token
+
+2012-08-19  rlar <rlar>
+ * src/frontend/inp.c,
+ * src/frontend/terminal.c,
+ * src/include/ngspice/cpextern.h:
+    rewrite inp_list() avoid duplicate code
+
+2012-08-19  rlar <rlar>
+ * src/tclspice.c:
+    reimplement tcl_vfprintf()
+
+2012-08-19  rlar <rlar>
+ * src/frontend/terminal.c:
+    bug fix, out_send() erroneously interpreting printf %-style sequences
+
+2012-08-19  rlar <rlar>
+ * src/tclspice.c:
+    cleanup (checked for code invariance)
+
+2012-08-18  dwarning <dwarning>
+ * src/spicelib/devices/bjt/bjt.c,
+ * src/spicelib/devices/bjt/bjtdefs.h,
+ * src/spicelib/devices/bjt/bjtmask.c,
+ * src/spicelib/devices/bjt/bjtmpar.c,
+ * src/spicelib/devices/bjt/bjtsetup.c,
+ * src/spicelib/devices/bjt/bjttemp.c:
+    part of temperature level=3 model
+
+2012-08-18  rlar <rlar>
+ * src/include/ngspice/cpextern.h,
+ * src/ngsconvert.c:
+    out_printf() is not supposed to be a preprocessor macro
+
+2012-08-18  h_vogt <h_vogt>
+ * src/frontend/subckt.c,
+ * src/xspice/mif/mif_inp2.c:
+    subckt.c, mif_inp2.c: plug XSPICE setup memory leaks
+
+2012-08-18  rlar <rlar>
+ * src/frontend/inp.c,
+ * src/frontend/plotting/agraf.c,
+ * src/frontend/postcoms.c,
+ * src/frontend/terminal.c,
+ * src/frontend/variable.c,
+ * src/include/ngspice/cpextern.h,
+ * src/ngsconvert.c:
+    drop out_pbuf, which was an ancient workaround
+
+    obviously an old implementation of out_printf()
+      has been unreliable.
+
+2012-08-18  rlar <rlar>
+ * src/frontend/postcoms.c:
+    bug fix, print complex yet real valued frequency
+
+    when printing a complex frequency vector, yet with real value
+      some left over nonsens was printed instead of the actual real value.
+
+    this bug was introduced in commit:
+      Date:   Thu Jan 15 21:08:09 2009 +0000
+
+      Improvements in vector derivative computation and new functions to
+      compute group delay and moving average. From espice (A. Roldan).
+
+2012-08-15  h_vogt <h_vogt>
+ * src/frontend/subckt.c,
+ * src/xspice/mif/mif_inp2.c:
+    mif_inp2.c, subckt.c: plug memory leaks at XSPICE setup
+
+2012-08-15  rlar <rlar>
+ * src/frontend/misccoms.c:
+    rewrite com_quit()
+
+    emphasize user confirmation
+
+    and if we are going to remove dangling circuits,
+    then do so unconditionally
+
+2012-08-15  rlar <rlar>
+ * src/frontend/inp.c,
+ * src/frontend/shyu.c,
+ * src/spicelib/analysis/cktntask.c:
+    cleanup (checked for code invariance)
+
+2012-08-14  h_vogt <h_vogt>
+ * examples/xspice/delta-sigma/README,
+ * examples/xspice/delta-sigma/count-latch-dac.cir,
+ * examples/xspice/delta-sigma/counter-test.cir,
+ * examples/xspice/delta-sigma/delta-sigma-1.cir,
+ * examples/xspice/delta-sigma/mod1-ct-test.cir,
+ * examples/xspice/delta-sigma/mod1-ct.cir:
+    XSPICE example: delta-sigma converter
+
+2012-08-14  rlar <rlar>
+ * src/frontend/com_shell.c:
+    plug a memory leak when executing `shell'
+
+2012-08-14  rlar <rlar>
+ * src/frontend/variable.c:
+    plug a memory leak when (un)setting variables
+
+2012-08-14  rlar <rlar>
+ * src/frontend/spiceif.c:
+    spiceif.c, cleanup (checked for code invariance)
+
+2012-08-12  rlar <rlar>
+ * src/frontend/spiceif.c:
+    spiceif.c, cleanup (checked for code invariance)
+
+2012-08-12  rlar <rlar>
+ * src/frontend/options.c:
+    options.c cleanup
+
+2012-08-12  rlar <rlar>
+ * src/frontend/options.c:
+    options.c, whitespace
+
+2012-08-12  rlar <rlar>
+ * src/frontend/options.c:
+    cleanup, if_options() will copy() anyway
+
+2012-08-08  rlar <rlar>
+ * src/frontend/display.c:
+    display.c, cleanup
+
+2012-08-07  h_vogt <h_vogt>
+ * examples/measure/mos-meas-dc-control.sp:
+    demonstrate effect of W crossing binning limits
+
+2012-08-07  rlar <rlar>
+ * src/frontend/numparam/spicenum.c,
+ * src/main.c,
+ * src/maths/fft/fftext.c,
+ * src/maths/fft/fftlib.c,
+ * src/maths/ni/niiter.c,
+ * src/spicelib/analysis/cktncdump.c,
+ * src/spicelib/devices/bjt/bjtask.c,
+ * src/spicelib/devices/devsup.c,
+ * src/spicelib/devices/mos3/mos3load.c,
+ * src/spicelib/devices/mos9/mos9load.c,
+ * src/tclspice.c,
+ * src/winmain.c:
+    cancer of the semicolon
+
+2012-08-06  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/main.c,
+ * src/misc/string.c,
+ * src/spicelib/devices/asrc/asrcdest.c:
+    swallow warnings
+
+2012-08-06  rlar <rlar>
+ * src/frontend/measure.c:
+    avoid `meas' syntax error causing segfault
+
+    Invalid meas crashes ngspice with SIGSEV - ID: 3554330
+    http://sourceforge.net/tracker/?func=detail&aid=3554330&group_id=38962&atid=423915
+
+2012-08-04  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    plotit.c #9/9, whitespace
+
+2012-08-04  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    plotit.c #8/9, braces
+
+2012-08-04  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    plotit.c #7/9, braces
+
+2012-08-04  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    plotit.c #6/9, braces
+
+2012-08-04  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    plotit.c #5/9, localize
+
+2012-08-04  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    plotit.c #4/9, line wrap
+
+2012-08-04  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    plotit.c #3/9, drop some comments
+
+2012-08-04  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    plotit.c #2/9, emphasize maximize/minimize
+
+2012-08-04  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    plotit.c #1/9, think positive
+
+2012-08-05  h_vogt <h_vogt>
+ * examples/xspice/pll/test-f-p-det.cir:
+    add BSIM3 model parameters for loop filer with transistor charge pump
+
+2012-08-05  h_vogt <h_vogt>
+ * examples/measure/mos-meas-dc-control.sp:
+    example, add 'alter @m1[w]=11u' using binning and model change
+
+2012-08-05  h_vogt <h_vogt>
+ * src/frontend/com_measure2.c,
+ * src/frontend/measure.c:
+    com_measure2.c: enable 'meas dc' without 'from' and 'to' given
+    measure.c: no error printout during autostop
+
+2012-08-05  rlar <rlar>
+ * src/frontend/variable.c:
+    cleanup free_struct_variable()
+
+2012-08-05  rlar <rlar>
+ * src/frontend/variable.c:
+    variable.c, cleanup (mostly whitespace)
+
+2012-08-05  dwarning <dwarning>
+ * src/frontend/device.c,
+ * src/frontend/spiceif.c:
+    correct alter of mos geometries for binned models
+
+2012-08-05  dwarning <dwarning>
+ * examples/xspice/pll/test-f-p-det.cir,
+ * examples/xspice/pll/test_vco.cir:
+    correct the plot output
+
+2012-08-04  rlar <rlar>
+ * src/frontend/cpitf.c:
+    cp_oddcomm(), plug a memory leak
+
+2012-08-04  h_vogt <h_vogt>
+ * src/frontend/inpcom.c,
+ * src/frontend/plotting/plotit.c,
+ * src/frontend/subckt.c,
+ * src/xspice/mif/mif_inp2.c,
+ * src/xspice/mif/mifgetmod.c,
+ * src/xspice/mif/mifgetvalue.c:
+    remove memory leaks
+
+2012-08-04  dwarning <dwarning>
+ * src/spicelib/devices/cktfinddev.c,
+ * src/spicelib/parser/inpgmod.c:
+    indentation
+
+2012-08-04  rlar <rlar>
+ * src/misc/wlist.c:
+    wlist #3/3, whitespace
+
+2012-08-04  rlar <rlar>
+ * src/misc/wlist.c:
+    wlist #2/3, cleanup
+
+2012-08-04  rlar <rlar>
+ * src/misc/wlist.c:
+    wlist #1/3, cleanup
+
+2012-08-04  h_vogt <h_vogt>
+ * examples/xspice/pll/pll-xspice-fstep.cir,
+ * examples/xspice/pll/pll-xspice.cir,
+ * examples/xspice/pll/test_vco.cir:
+    pll: just include one of the two vco available
+
+    (avoid a bug which has been removed only recently)
+
+2012-08-03  h_vogt <h_vogt>
+ * examples/xspice/pll/README,
+ * examples/xspice/pll/loop-filter-2.cir,
+ * examples/xspice/pll/loop-filter.cir,
+ * examples/xspice/pll/pll-xspice-fstep.cir,
+ * examples/xspice/pll/pll-xspice.cir,
+ * examples/xspice/pll/test-f-p-det.cir,
+ * examples/xspice/pll/test_vco.cir,
+ * examples/xspice/pll/vco_sub.cir,
+ * examples/xspice/pll/vco_sub_new.cir:
+    update to XSPICE phase-locked loop example
+
+2012-08-03  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: safely uncomment unused subcircuits (top level only)
+
+    if they contain further nested subcircuits
+
+2012-08-03  rlar <rlar>
+ * src/include/ngspice/wordlist.h,
+ * src/misc/wlist.c:
+    wlist.c, `const' ness
+
+2012-08-03  rlar <rlar>
+ * src/frontend/device.c:
+    use wl_find()
+
+2012-08-03  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    cleanup, linewrap
+
+2012-08-03  rlar <rlar>
+ * src/frontend/inp.c:
+    cleanup, char 0
+
+2012-08-03  rlar <rlar>
+ * src/frontend/inp.c,
+ * src/frontend/plotting/plotit.c:
+    cleanup, void return
+
+2012-08-03  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical, use wl_append_word()
+
+2012-08-03  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #6/6, whitespace
+
+2012-08-03  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #5/6, cleanup
+
+2012-08-03  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #4/6, parentheses and braces
+
+2012-08-03  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #3/6, rewrite
+
+2012-08-03  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #2/6, linewrap
+
+2012-08-03  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #1/6, cleanup
+
+2012-08-03  h_vogt <h_vogt>
+ * src/misc/alloc.c:
+    alloc.c: exlude controlled_exit if not MS Windows
+
+    not available in some tests in cmaths and executable like ngproc2mod
+
+2012-08-02  rlar <rlar>
+ * src/frontend/parser/complete.c,
+ * src/frontend/parser/lexical.c:
+    lexical #3/3, collapse append(NULL) into cp_ccom()
+
+     the sequence
+       orig_wlist = wlist;
+       append(NULL);
+       cp_ccom(wlist, ...);
+     is transformed.
+
+     expressions to care about in cp_ccom()
+        C1 :=  (wlist->wl_next != NULL)
+        C2 :=  (wlist->wl_word != NULL)
+        C3 :=  wl_length(wlist)
+
+        D1 :=  (orig_wlist != NULL)
+        D2 :=  (orig_wlist->wl_word != NULL)
+        D3 :=  wl_length(orig_wlist);
+
+     cases and their significance in cp_ccom():
+        orig_wlist = NULL;
+        wlist = wl_cons(NULL, NULL);
+          C1 == false
+          D1 == false
+          C2,C3 dont care
+
+        orig_wlist = wl_cons(E1, wl_cons(E2, ... wl_cons(En, NULL)))
+        wlist = wl_cons(E1, wl_cons(E2, .... wl_cons(En, wl_cons(NULL, NULL))))
+         C1 == true
+         D1 == true
+         C2 === D2
+         C3 === D3 + 1
+
+2012-08-02  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #2/3, fix memory leaks
+
+2012-08-02  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #1/3, move append(NULL) invokations into position
+
+2012-08-01  h_vogt <h_vogt>
+ * src/misc/alloc.c:
+    undo controlled_exit: not compatible with ancient tests in cmath under LINUX
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #19/19, rewrite
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #18/19, rewrite
+
+      `cw' won't be looked at, thus the append + removal can be dropped
+      `wl_word' is already NULL
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #17/19, rewrite
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #16/19, transform append --> append(word)
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #15/19, drop `delayed' which is never zero ...
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #14/19, drop `delayed = 0' wherever its effect isn't visible
+
+    without effect, because we return or will overwrite it anyway
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #13/19, delay `append'
+
+      delay its execution, until
+        either `wlist' or `cw' will be accessed,
+      or
+        a return or goto nloop is inevitable
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #12/19, use `append'
+
+      some `assumption' are no longer valid
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #11/19, aproach `append' here
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #10/19, split off `append' from `newword'
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #9/19, aproach the `append'
+
+    cw has never been NULL here,
+       because we used to survive an update of cw->wl_next here
+
+    wlist hasn't been NULL either,
+      because there is no place where wlist becomes NULL without
+      setting cw to NULL as well. yet cw isn't NULL (see above)
+    aproach the `append'
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #8/19, express where `wlist' and `cw' start being != NULL
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #7/19, express verbosely where `wlist' and `cw' are NULL
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #6/19, express cp_ccom() property
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #5/19, collapse into `newword'
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #4/19, the `else' can take that job (unconditionally)
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #3/19, attach and instantly remove a NULL wl_word here
+
+    this modification is faithful iff cw != NULL  and  cw->wl_next == NULL
+      cw != NULL because we have just survived an update of cw->wl_word
+      cw->wl_next == NULL is witnessed by:
+        1) cw either NULL or pointing to a wl_cons(,NULL)
+        2) cw not being modified, and no wl_next being modified
+        3) check of all function invocations with wlist/cw argument
+             not to modify any wl_next slot
+    which are:
+      1) cp_ccom(wlist, ...)
+      2) wl_free() always followed by goto nloop, which does a cw = wl_cons(,NULL)
+
+    and cp_ccom() doesn't modify any wl_next slot
+
+    the first part of the patch is intentionally similar to newword
+    `i' and `buf' can be modified here, because we will inevitably `goto done'
+    attach and instantly remove a NULL wl_word here
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #2/19, rewrite the `else if'
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    lexical #1/19, use wl_cons
+
+2012-07-31  rlar <rlar>
+ * src/frontend/parser/lexical.c:
+    Revert "cleanup, use wl_cons()"
+
+    This reverts parts of commit 7a7250cdbdbd9f151d15fbe2142bde3a2dd81ca0.
+    There is a cleaner way to rewrite lexical.c
+
+2012-07-31  h_vogt <h_vogt>
+ * examples/xspice/pll/README,
+ * examples/xspice/pll/pll-xspice-fstep.cir:
+    pll-xspice-fstep.cir: pll with ref frequency steps
+
+2012-07-31  h_vogt <h_vogt>
+ * src/frontend/trannoise/1-f-code.c,
+ * src/misc/alloc.c,
+ * src/spicelib/analysis/cktsens.c,
+ * src/spicelib/devices/txl/txlacct.c,
+ * src/spicelib/devices/txl/txlsetup.c,
+ * src/spicelib/parser/inpgmod.c,
+ * src/spicelib/parser/inpptree.c,
+ * src/xspice/mif/mif_inp2.c:
+    controlled_exit() instead of exit()
+
+2012-07-31  h_vogt <h_vogt>
+ * examples/xspice/pll/pll-xspice.cir:
+    pll-xspice.cir: save command added
+
+2012-07-30  h_vogt <h_vogt>
+ * src/xspice/evt/evtprint.c:
+    evtprint.c: no node data: error message instead of seg fault
+
+2012-07-30  h_vogt <h_vogt>
+ * examples/xspice/pll/pll-xspice.cir:
+    new XSPICE example: use trtol=1
+
+    less ripple, but longer simulation time
+
+2012-07-29  h_vogt <h_vogt>
+ * examples/xspice/pll/README,
+ * examples/xspice/pll/f-p-det-d-sub.cir,
+ * examples/xspice/pll/loop-filter.cir,
+ * examples/xspice/pll/pll-xspice.cir,
+ * examples/xspice/pll/test-f-p-det.cir,
+ * examples/xspice/pll/test_vco.cir,
+ * examples/xspice/pll/vco_sub.cir:
+    new XSPICE example: mixed mode pll circuit
+
+2012-07-29  rlar <rlar>
+ * src/frontend/cpitf.c,
+ * src/frontend/plotting/plotit.c,
+ * src/frontend/streams.c,
+ * src/frontend/subckt.c:
+    use wl_delete_slice()
+
+2012-07-29  rlar <rlar>
+ * src/include/ngspice/wordlist.h,
+ * src/misc/wlist.c:
+    implement wl_delete_slice()
+
+2012-07-29  h_vogt <h_vogt>
+ * src/spicelib/analysis/cktdojob.c:
+    variable xtrtol may override the XSPICE reduction of trtol
+
+2012-07-28  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    plotit(), cleanup wordlist processing
+
+2012-07-28  rlar <rlar>
+ * src/misc/string.c:
+    copy(), allow NULL argument
+
+2012-07-28  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    fix typo in the commit `use wl_find()'
+
+2012-07-28  dwarning <dwarning>
+ * src/spicelib/parser/inpgmod.c:
+    inpgmod.c: correct the range check to prevent overlap
+
+2012-07-28  dwarning <dwarning>
+ * src/spicelib/parser/inpgmod.c,
+ * src/spicelib/parser/inpmkmod.c:
+    indentation
+
+2012-07-28  rlar <rlar>
+ * src/frontend/com_alias.c,
+ * src/frontend/control.c,
+ * src/frontend/device.c,
+ * src/frontend/plotting/plotit.c,
+ * src/frontend/subckt.c:
+    use wl_find()
+
+2012-07-28  rlar <rlar>
+ * src/include/ngspice/wordlist.h,
+ * src/misc/wlist.c:
+    implement wl_find()
+
+2012-07-28  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    plotit.c, prepare for usage of wl_find()
+
+2012-07-27  rlar <rlar>
+ * src/frontend/com_hardcopy.c,
+ * src/frontend/parser/lexical.c:
+    cleanup, use wl_cons()
+
+2012-07-25  h_vogt <h_vogt>
+ * src/xspice/enh/enhtrans.c:
+    enhtrans.c: indentations
+
+2012-07-25  h_vogt <h_vogt>
+ * src/spicelib/analysis/cktsetup.c:
+    message "OpenMP: %d threads are requested..." removed
+
+2012-07-24  h_vogt <h_vogt>
+ * src/xspice/enh/enhtrans.c:
+    enhtrans.c, improved error meassage upon non 'Exxx poly' line bug
+
+2012-07-23  h_vogt <h_vogt>
+ * src/frontend/measure.c:
+    measure.c: indentations
+
+2012-07-23  h_vogt <h_vogt>
+ * src/frontend/measure.c:
+    measure.c: Update on error message for .meas
+
+2012-07-23  h_vogt <h_vogt>
+ * src/frontend/com_measure2.c,
+ * src/frontend/measure.c:
+    measure, error message updated and return(NAN) in case of measure failure
+
+    test for failure with isnan()
+
+2012-07-23  rlar <rlar>
+ * src/frontend/plotting/plotit.c:
+    plotit.c, whitespace cleanup
+
+2012-07-22  rlar <rlar>
+ * src/frontend/streams.c:
+    rewrite using wl_ functions
+
+2012-07-22  rlar <rlar>
+ * src/frontend/streams.c:
+    bug fix, cp_ioreset(): fclosing an already closed stream
+
+    causing memory corruption when using `>&' stderr redirection
+
+2012-07-21  h_vogt <h_vogt>
+ * src/frontend/inp.c,
+ * src/frontend/inpcom.c,
+ * src/include/ngspice/stringutil.h,
+ * src/misc/string.c:
+    repair broken ternary function in B-Source
+
+    failed if parameters were included in function.
+    fixed by finding nested parens in gettok_char()
+
+2012-07-21  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    table: prevent crashes upon wrong inputs, allow time, temper, hertz as part of device or node name (e.g. Rtime), remove some memory leaks
+
+2012-07-21  rlar <rlar>
+ * src/frontend/com_alias.c,
+ * src/frontend/control.c:
+    rewrite using wl_ functions
+
+    this fixed following bug as well:
+       echo "echo abra ; ; echo kadabra" | ngspice -p
+    building a circular list and looping forever
+
+2012-07-21  rlar <rlar>
+ * src/frontend/subckt.c,
+ * src/include/ngspice/wordlist.h,
+ * src/misc/wlist.c:
+    implement wl_chop()
+
+2012-07-19  h_vogt <h_vogt>
+ * src/misc/string.c:
+    gettok_char(), return(NULL) if substring not found
+
+2012-07-19  rlar <rlar>
+ * src/frontend/cpitf.c,
+ * src/frontend/mw_coms.c:
+    untabify
+
+2012-07-19  rlar <rlar>
+ * src/frontend/mw_coms.c:
+    mw_coms.c, fix the cleanup using wl_cons()
+
+2012-07-19  rlar <rlar>
+ * src/frontend/cpitf.c:
+    cpif.c, whitespace, indentation, cleanups
+
+2012-07-19  rlar <rlar>
+ * src/frontend/cpitf.c:
+    cpitf.c, cleanup using wl_ functions
+
+2012-07-19  rlar <rlar>
+ * src/frontend/mw_coms.c:
+    mw_comms.c, whitespace, indentation, cleanups
+
+2012-07-19  rlar <rlar>
+ * src/frontend/mw_coms.c:
+    mw_coms.c, cleanup using wl_cons()
+
+2012-07-15  rlar <rlar>
+ * src/misc/wlist.c:
+    fix the fix wl_reverse() for empty lists
+
+2012-07-14  rlar <rlar>
+ * src/frontend/inp.c,
+ * src/frontend/nutinp.c,
+ * src/misc/wlist.c:
+    fix wl_reverse() for empty lists
+
+2012-07-14  rlar <rlar>
+ * src/misc/wlist.c:
+    comments for wl_cons(), wl_append_word() and wl_chop_rest()
+
+2012-07-14  rlar <rlar>
+ * src/frontend/arg.c,
+ * src/frontend/com_history.c,
+ * src/frontend/device.c,
+ * src/frontend/dotcards.c,
+ * src/frontend/help/readhelp.c,
+ * src/frontend/inp.c,
+ * src/frontend/inpcom.c,
+ * src/frontend/measure.c,
+ * src/frontend/nutinp.c,
+ * src/frontend/parser/backq.c,
+ * src/frontend/parser/complete.c,
+ * src/frontend/parser/glob.c,
+ * src/frontend/parser/lexical.c,
+ * src/frontend/plotting/plotit.c,
+ * src/frontend/rawfile.c,
+ * src/frontend/runcoms.c,
+ * src/frontend/subckt.c,
+ * src/frontend/variable.c,
+ * src/misc/wlist.c:
+    cleanup, use wl_cons(), wl_append_word() and wl_chop_rest()
+
+2012-07-14  rlar <rlar>
+ * src/include/ngspice/wordlist.h,
+ * src/misc/wlist.c:
+    implement wl_cons(), wl_append_word() and wl_chop_rest()
+
+2012-07-14  h_vogt <h_vogt>
+ * src/main.c:
+    remove second call to tmpfile()
+
+2012-07-12  rlar <rlar>
+ * src/frontend/device.c:
+    bug fix, missing update of a wordlist's wl_prev pointer
+
+2012-07-12  rlar <rlar>
+ * src/frontend/parser/complete.c:
+    bug fix, incorrect update of a wordlist's wl_prev pointer
+
+2012-07-11  h_vogt <h_vogt>
+ * src/xspice/evt/evtprint.c:
+    printf() ---> out_printf(): allow output redirection into file
+
+2012-07-07  rlar <rlar>
+ * src/spicelib/parser/inp.h,
+ * src/spicelib/parser/inp2u.c,
+ * src/spicelib/parser/inppas2.c:
+    emphasize the adms3 `U' device hijack
+
+2012-07-07  rlar <rlar>
+ * configure.ac,
+ * src/Makefile.am:
+    don't mess with libtools --enable-static / --enable-shared
+
+    tie libspice to -shared
+        ngspice et al to -static
+
+    and use $(STATIC) elsewhere
+      which is governed by configure.ac
+
+2012-07-07  rlar <rlar>
+ * src/ciderlib/input/Makefile.am,
+ * src/ciderlib/oned/Makefile.am,
+ * src/ciderlib/support/Makefile.am,
+ * src/ciderlib/twod/Makefile.am,
+ * src/frontend/Makefile.am,
+ * src/frontend/help/Makefile.am,
+ * src/frontend/numparam/Makefile.am,
+ * src/frontend/parser/Makefile.am,
+ * src/frontend/plotting/Makefile.am,
+ * src/frontend/trannoise/Makefile.am,
+ * src/frontend/wdisp/Makefile.am,
+ * src/maths/cmaths/Makefile.am,
+ * src/maths/deriv/Makefile.am,
+ * src/maths/fft/Makefile.am,
+ * src/maths/misc/Makefile.am,
+ * src/maths/ni/Makefile.am,
+ * src/maths/poly/Makefile.am,
+ * src/maths/sparse/Makefile.am,
+ * src/misc/Makefile.am,
+ * src/spicelib/analysis/Makefile.am,
+ * src/spicelib/devices/Makefile.am,
+ * src/spicelib/devices/adms/admst/ngspice.xml,
+ * src/spicelib/devices/adms/admst/ngspiceMakefile.am.xml,
+ * src/spicelib/devices/asrc/Makefile.am,
+ * src/spicelib/devices/bjt/Makefile.am,
+ * src/spicelib/devices/bsim1/Makefile.am,
+ * src/spicelib/devices/bsim2/Makefile.am,
+ * src/spicelib/devices/bsim3/Makefile.am,
+ * src/spicelib/devices/bsim3soi/Makefile.am,
+ * src/spicelib/devices/bsim3soi_dd/Makefile.am,
+ * src/spicelib/devices/bsim3soi_fd/Makefile.am,
+ * src/spicelib/devices/bsim3soi_pd/Makefile.am,
+ * src/spicelib/devices/bsim3v0/Makefile.am,
+ * src/spicelib/devices/bsim3v1/Makefile.am,
+ * src/spicelib/devices/bsim3v32/Makefile.am,
+ * src/spicelib/devices/bsim4/Makefile.am,
+ * src/spicelib/devices/bsim4v4/Makefile.am,
+ * src/spicelib/devices/bsim4v5/Makefile.am,
+ * src/spicelib/devices/bsim4v6/Makefile.am,
+ * src/spicelib/devices/cap/Makefile.am,
+ * src/spicelib/devices/cccs/Makefile.am,
+ * src/spicelib/devices/ccvs/Makefile.am,
+ * src/spicelib/devices/cpl/Makefile.am,
+ * src/spicelib/devices/csw/Makefile.am,
+ * src/spicelib/devices/dio/Makefile.am,
+ * src/spicelib/devices/hfet1/Makefile.am,
+ * src/spicelib/devices/hfet2/Makefile.am,
+ * src/spicelib/devices/hisim2/Makefile.am,
+ * src/spicelib/devices/hisimhv/Makefile.am,
+ * src/spicelib/devices/ind/Makefile.am,
+ * src/spicelib/devices/isrc/Makefile.am,
+ * src/spicelib/devices/jfet/Makefile.am,
+ * src/spicelib/devices/jfet2/Makefile.am,
+ * src/spicelib/devices/ltra/Makefile.am,
+ * src/spicelib/devices/mes/Makefile.am,
+ * src/spicelib/devices/mesa/Makefile.am,
+ * src/spicelib/devices/mos1/Makefile.am,
+ * src/spicelib/devices/mos2/Makefile.am,
+ * src/spicelib/devices/mos3/Makefile.am,
+ * src/spicelib/devices/mos6/Makefile.am,
+ * src/spicelib/devices/mos9/Makefile.am,
+ * src/spicelib/devices/nbjt/Makefile.am,
+ * src/spicelib/devices/nbjt2/Makefile.am,
+ * src/spicelib/devices/ndev/Makefile.am,
+ * src/spicelib/devices/numd/Makefile.am,
+ * src/spicelib/devices/numd2/Makefile.am,
+ * src/spicelib/devices/numos/Makefile.am,
+ * src/spicelib/devices/res/Makefile.am,
+ * src/spicelib/devices/soi3/Makefile.am,
+ * src/spicelib/devices/sw/Makefile.am,
+ * src/spicelib/devices/tra/Makefile.am,
+ * src/spicelib/devices/txl/Makefile.am,
+ * src/spicelib/devices/urc/Makefile.am,
+ * src/spicelib/devices/vbic/Makefile.am,
+ * src/spicelib/devices/vccs/Makefile.am,
+ * src/spicelib/devices/vcvs/Makefile.am,
+ * src/spicelib/devices/vsrc/Makefile.am,
+ * src/spicelib/parser/Makefile.am,
+ * src/xspice/cm/Makefile.am,
+ * src/xspice/enh/Makefile.am,
+ * src/xspice/evt/Makefile.am,
+ * src/xspice/idn/Makefile.am,
+ * src/xspice/ipc/Makefile.am,
+ * src/xspice/mif/Makefile.am:
+    introduce AM_CFLAGS = $(STATIC)
+
+2012-07-07  h_vogt <h_vogt>
+ * src/maths/sparse/spfactor.c:
+    spfactor.c, indentations
+
+2012-07-07  h_vogt <h_vogt>
+ * src/main.c:
+    Adding TD to the fopen() is sufficient in MS Windows
+
+    to reliably unlink the temporary file
+
+2012-07-04  dwarning <dwarning>
+ * src/spicelib/devices/dio/dioload.c:
+    no double count of area for capacitances
+
+2012-07-04  dwarning <dwarning>
+ * src/spicelib/devices/dio/dio.c,
+ * src/spicelib/devices/dio/dioacld.c,
+ * src/spicelib/devices/dio/dioask.c,
+ * src/spicelib/devices/dio/diodefs.h,
+ * src/spicelib/devices/dio/dioload.c,
+ * src/spicelib/devices/dio/diomask.c,
+ * src/spicelib/devices/dio/diompar.c,
+ * src/spicelib/devices/dio/dioparam.c,
+ * src/spicelib/devices/dio/diopzld.c,
+ * src/spicelib/devices/dio/diosetup.c,
+ * src/spicelib/devices/dio/diotemp.c:
+    new scalable diode model including tunnel component
+
+2012-07-03  h_vogt <h_vogt>
+ * src/main.c:
+    tmpfile() on MS Windows
+
+    create temporary files with Microsoft specific fopen() flags "TD"
+    and (propably redundant) remove them with an atexit() handler
+
+    see bug report #3535348
+      "sp*.tmp file created, but not deleted when Windows UAC is en"
+      https://sourceforge.net/tracker/?func=detail&atid=423915&aid=3535348&group_id=38962
+
+2012-06-28  h_vogt <h_vogt>
+ * src/include/ngspice/ngspice.h:
+    Visual Studio: isatty --> _isatty
+
+2012-06-26  h_vogt <h_vogt>
+ * src/frontend/com_measure2.c:
+    measure_at(), allow real valued data for meas ac
+
+2012-06-26  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    no exchange of ' ' by { }  inside .control section
+
+2012-06-25  h_vogt <h_vogt>
+ * src/main.c:
+    correct usage of `unlink()' error return value -1
+
+2012-06-25  dwarning <dwarning>
+ * src/spicelib/devices/dio/dioload.c,
+ * src/spicelib/devices/dio/diosetup.c:
+    dioload.c, diosetup.c, correct knee current parameter defaults
+
+2012-06-25  dwarning <dwarning>
+ * src/spicelib/devices/dio/dioload.c:
+    dio/dioload.c, whitespace change
+
+2012-06-22  rlar <rlar>
+ * configure.ac:
+    configure.ac, unify `x' escape of `test' expressions
+
+2012-06-22  rlar <rlar>
+ * configure.ac:
+    configure.ac, robustness
+
+    unify and honor some hints from
+      (info "(autoconf) Limitations of Builtins")
+
+    use shell || and && instead of test -o and test -a
+
+    ! test a = b    -->   test a != b
+
+    dont use ()
+
+    drop eval
+
+    missing quotes
+
+2012-06-21  rlar <rlar>
+ * configure.ac:
+    configure.ac, use AS_HELP_STRING
+
+2012-06-21  rlar <rlar>
+ * configure.ac:
+    configure.ac, cleanup
+
+2012-06-21  rlar <rlar>
+ * configure.ac:
+    configure.ac, comment style, (dnl -> #)
+
+2012-06-21  rlar <rlar>
+ * configure.ac:
+    configure.ac, whitespace cleanup
+
+2012-06-21  rlar <rlar>
+ * autogen.sh:
+    bug fix, first run libtoolize then aclocal
+
+    reported by Joseph Trebbien on
+      [Ngspice-devel] Build error "required file `./ltmain.sh' not found"
+
+2012-06-16  rlar <rlar>
+ * src/spicelib/devices/ltra/ltrapar.c,
+ * src/spicelib/devices/tra/traparam.c:
+    bug fix, ltra and tra, (initial conditions)
+
+    reported in
+      https://sourceforge.net/tracker/?func=detail&atid=423915&aid=3535544&group_id=38962
+
+    bug was introduced in this commit:
+      Date:   Wed Dec 31 17:02:46 2003 +0000
+      Cleaned up LTRA, TRA and URC code and updated DEVICES file.
+
+2012-06-15  dwarning <dwarning>
+ * src/spicelib/analysis/cktsetup.c,
+ * src/spicelib/devices/bsim3/b3set.c,
+ * src/spicelib/devices/bsim3/bsim3def.h,
+ * src/spicelib/devices/bsim3soi/b4soidef.h,
+ * src/spicelib/devices/bsim3soi/b4soiset.c,
+ * src/spicelib/devices/bsim4/b4set.c,
+ * src/spicelib/devices/bsim4/bsim4def.h,
+ * src/spicelib/devices/bsim4v6/b4v6set.c,
+ * src/spicelib/devices/bsim4v6/bsim4v6def.h:
+    call omp_set_num_threads once in central place instead in model routines
+
+2012-06-15  dwarning <dwarning>
+ * configure.ac:
+    mv ext_CFLAGS on the end for overwriting existing CFLAGS
+
+2012-06-12  rlar <rlar>
+ * src/xspice/icm/GNUmakefile.in,
+ * src/xspice/icm/makedefs.in:
+    xpsice, use the CFLAGS when linking .cm code models
+
+2012-06-13  dwarning <dwarning>
+ * src/spicelib/devices/bsim3/b3dest.c,
+ * src/spicelib/devices/bsim3/b3ld.c,
+ * src/spicelib/devices/bsim3/b3set.c,
+ * src/spicelib/devices/bsim3/bsim3def.h,
+ * src/spicelib/devices/bsim3soi/b4soidef.h,
+ * src/spicelib/devices/bsim3soi/b4soild.c,
+ * src/spicelib/devices/bsim3soi/b4soiset.c,
+ * src/spicelib/devices/bsim4/b4dest.c,
+ * src/spicelib/devices/bsim4/b4ld.c,
+ * src/spicelib/devices/bsim4/b4set.c,
+ * src/spicelib/devices/bsim4/bsim4def.h,
+ * src/spicelib/devices/bsim4v6/b4v6dest.c,
+ * src/spicelib/devices/bsim4v6/b4v6ld.c,
+ * src/spicelib/devices/bsim4v6/b4v6set.c,
+ * src/spicelib/devices/bsim4v6/bsim4v6def.h:
+    use unified macro USE_OMP and nthreads is set in setup once - not in load as clause
+
+2012-06-11  h_vogt <h_vogt>
+ * examples/memristor/memristor_x.sp:
+    memristor example, parameters changed
+
+2012-06-09  h_vogt <h_vogt>
+ * examples/memristor/memristor_x.sp,
+ * src/xspice/icm/xtradev/memristor/cfunc.mod:
+    add ac and dc simulation to memristor model
+
+2012-06-13  h_vogt <h_vogt>
+ * examples/memristor/memristor_x.sp,
+ * src/xspice/icm/xtradev/memristor/cfunc.mod,
+ * src/xspice/icm/xtradev/memristor/ifspec.ifs,
+ * src/xspice/icm/xtradev/modpath.lst:
+    memristor code model in extradev
+
+2012-06-08  h_vogt <h_vogt>
+ * src/spicelib/devices/bsim3v1/b3v1ld.c,
+ * src/spicelib/devices/mos6/mos6load.c:
+    FABS() --> fabs()
+
+2012-06-05  h_vogt <h_vogt>
+ * src/spicelib/parser/ptfuncs.c:
+    In B source the argument to 'log' may be 0 upon start of simulation, allow recovery like in function 'ln'
+
+2012-06-05  h_vogt <h_vogt>
+ * src/include/ngspice/inpptree.h,
+ * src/spicelib/parser/ifeval.c,
+ * src/spicelib/parser/inpptree.c:
+    enable B source debugging in behavioral models, exit on error if variable strict_errorhandling is set
+
+2012-06-05  h_vogt <h_vogt>
+ * examples/memristor/memristor.sp:
+    memristor subcircuit model example
+
+2012-05-30  rlar <rlar>
+ * configure.ac:
+    configure.ac, rewrite M4 Quotation (non zero diff)
+
+    small differences in the autogen.sh generated files
+
+2012-05-30  rlar <rlar>
+ * configure.ac:
+    configure.ac, rewrite M4 Quotation
+
+    verified for zero diff of the autogen.sh generated files
+
+2012-05-28  rlar <rlar>
+ * configure.ac:
+    configure.ac, use AC_OPENMP
+
+2012-05-27  h_vogt <h_vogt>
+ * visualc/vngspice.vcproj:
+    Visual Studio, increase Stack for 64 bits
+
+    from
+       standard (0)
+    to
+      StackReserveSize="4194304"
+      StackCommitSize="16384"
+
+2012-05-27  h_vogt <h_vogt>
+ * src/frontend/commands.c,
+ * src/frontend/spiceif.c,
+ * src/frontend/spiceif.h,
+ * src/main.c:
+    commands.c: 'options' equivalent to 'option' and allow 'loadsnap' and 'savesnap'
+
+    which have been EXPERIMENTAL_CODE so far
+
+2012-05-22  h_vogt <h_vogt>
+ * tests/bsim3/ac_sim/op-amp.out,
+ * tests/bsim3/tran_sim/comparator.out,
+ * tests/bsim3/tran_sim/one-shot.out,
+ * tests/xspice/digital/d_ram.out,
+ * tests/xspice/digital/d_source.out,
+ * tests/xspice/digital/d_state.out,
+ * tests/xspice/digital/spinit.in:
+    tests/bsim3, tests/xspice, update output files for comparison
+
+2012-05-22  h_vogt <h_vogt>
+ * tests/Makefile.am:
+    tests/Makefile.am: drop tests
+
+    keep tests only for
+      BSIM3 (old style), BSIM4, BSIMSOI4, HiSIM, HiSIMHV and XSPICE
+
+2012-05-22  h_vogt <h_vogt>
+ * .gitignore:
+    .gitignore: new name for local tclspice devel directory under MS Windows
+
+2012-05-21  dwarning <dwarning>
+ * tests/bsim3soi/nmos/reference/dcSweep01.standard,
+ * tests/bsim3soi/nmos/reference/dcSweep02.standard,
+ * tests/bsim3soi/nmos/reference/dcSweep03.standard,
+ * tests/bsim3soi/pmos/reference/dcSweep01.standard,
+ * tests/bsim3soi/pmos/reference/dcSweep02.standard,
+ * tests/bsim3soi/pmos/reference/dcSweep03.standard:
+    bsim3soi aka b4soi, ngspice makes correct dc loops - reference files now have 1.6V
+
+2012-05-21  dwarning <dwarning>
+ * tests/bin/run_cmc_check,
+ * tests/bin/spice.pm:
+    CMC tests, `spice' entry not needed
+
+2012-05-20  dwarning <dwarning>
+ * m4/.cvsignore:
+    remove  m4/.cvsignore
+
+2012-05-20  dwarning <dwarning>
+ * tests/bsim3soi/Makefile.am,
+ * tests/bsim3soi/inv_dc.cir,
+ * tests/bsim3soi/inv_dc.out,
+ * tests/bsim3soi/inv_tr.cir,
+ * tests/bsim3soi/inv_tr.out,
+ * tests/bsim3soi/nmos/parameters/nmosParameters,
+ * tests/bsim3soi/nmos/qaSpec,
+ * tests/bsim3soi/nmos/reference/acFreq01.standard,
+ * tests/bsim3soi/nmos/reference/acFreq02.standard,
+ * tests/bsim3soi/nmos/reference/acVd01.standard,
+ * tests/bsim3soi/nmos/reference/acVd02.standard,
+ * tests/bsim3soi/nmos/reference/dcSweep01.standard,
+ * tests/bsim3soi/nmos/reference/dcSweep02.standard,
+ * tests/bsim3soi/nmos/reference/dcSweep03.standard,
+ * tests/bsim3soi/nmos/reference/noise01.standard,
+ * tests/bsim3soi/nmos/reference/noise02.standard,
+ * tests/bsim3soi/nmos/reference/noise03.standard,
+ * tests/bsim3soi/nmos4p3.mod,
+ * tests/bsim3soi/pmos/parameters/pmosParameters,
+ * tests/bsim3soi/pmos/qaSpec,
+ * tests/bsim3soi/pmos/reference/acFreq01.standard,
+ * tests/bsim3soi/pmos/reference/acFreq02.standard,
+ * tests/bsim3soi/pmos/reference/acVd01.standard,
+ * tests/bsim3soi/pmos/reference/acVd02.standard,
+ * tests/bsim3soi/pmos/reference/dcSweep01.standard,
+ * tests/bsim3soi/pmos/reference/dcSweep02.standard,
+ * tests/bsim3soi/pmos/reference/dcSweep03.standard,
+ * tests/bsim3soi/pmos/reference/noise01.standard,
+ * tests/bsim3soi/pmos/reference/noise02.standard,
+ * tests/bsim3soi/pmos/reference/noise03.standard,
+ * tests/bsim3soi/pmos4p3.mod,
+ * tests/bsim3soi/ring51_41.cir,
+ * tests/bsim3soi/ring51_41.out,
+ * tests/bsim3soi/test1.cir,
+ * tests/bsim3soi/test1.out,
+ * tests/bsim3soi/test2.cir,
+ * tests/bsim3soi/test2.out,
+ * tests/bsim3soi/test3.cir,
+ * tests/bsim3soi/test3.out,
+ * tests/bsim3soi/test4.cir,
+ * tests/bsim3soi/test4.out,
+ * tests/bsim3soi/test5.cir,
+ * tests/bsim3soi/test5.out,
+ * tests/bsim3soi/test6.cir,
+ * tests/bsim3soi/test6.out,
+ * tests/bsim3soi/test7.cir,
+ * tests/bsim3soi/test7.out,
+ * tests/bsim3soi/test8.cir,
+ * tests/bsim3soi/test8.out:
+    new QA test for `bsim3soi' aka `b4soi'
+
+2012-05-20  dwarning <dwarning>
+ * src/spicelib/devices/bsim3soi/BsimTerms_use,
+ * src/spicelib/devices/bsim3soi/Makefile.am,
+ * src/spicelib/devices/bsim3soi/b4soi.c,
+ * src/spicelib/devices/bsim3soi/b4soiacld.c,
+ * src/spicelib/devices/bsim3soi/b4soiask.c,
+ * src/spicelib/devices/bsim3soi/b4soicheck.c,
+ * src/spicelib/devices/bsim3soi/b4soicvtest.c,
+ * src/spicelib/devices/bsim3soi/b4soidef.h,
+ * src/spicelib/devices/bsim3soi/b4soidel.c,
+ * src/spicelib/devices/bsim3soi/b4soidest.c,
+ * src/spicelib/devices/bsim3soi/b4soiext.h,
+ * src/spicelib/devices/bsim3soi/b4soigetic.c,
+ * src/spicelib/devices/bsim3soi/b4soiinit.c,
+ * src/spicelib/devices/bsim3soi/b4soiitf.h,
+ * src/spicelib/devices/bsim3soi/b4soild.c,
+ * src/spicelib/devices/bsim3soi/b4soimask.c,
+ * src/spicelib/devices/bsim3soi/b4soimdel.c,
+ * src/spicelib/devices/bsim3soi/b4soimpar.c,
+ * src/spicelib/devices/bsim3soi/b4soinoi.c,
+ * src/spicelib/devices/bsim3soi/b4soipar.c,
+ * src/spicelib/devices/bsim3soi/b4soipzld.c,
+ * src/spicelib/devices/bsim3soi/b4soiset.c,
+ * src/spicelib/devices/bsim3soi/b4soitemp.c,
+ * src/spicelib/devices/bsim3soi/b4soitrunc.c:
+    update `bsim3soi' aka `b4soi'
+
+2012-05-18  rlar <rlar>
+ * src/frontend/outitf.c:
+    outitf.c, cleanup
+
+2012-05-18  rlar <rlar>
+ * src/frontend/outitf.c:
+    outitf.c, cleanup cancer of the semicolon
+
+2012-05-18  rlar <rlar>
+ * src/frontend/outitf.c:
+    outitf.c, cleanup comment
+
+2012-05-18  rlar <rlar>
+ * src/frontend/outitf.c:
+    outitf.c, cleanup return
+
+2012-05-18  rlar <rlar>
+ * src/frontend/outitf.c:
+    outitf.c, whitespace
+
+2012-05-17  h_vogt <h_vogt>
+ * src/spicelib/parser/inppas3.c:
+    .nodeset all = value added to set all voltage nodes at once
+
+2012-05-17  rlar <rlar>
+ * src/spicelib/analysis/analysis.c,
+ * src/spicelib/analysis/analysis.h:
+    tiny cleanup
+
+2012-05-17  rlar <rlar>
+ * src/maths/cmaths/Makefile.am:
+    fix tcl module compilation
+
+    test programs don't compile when compiling for TCL_MODULE
+    due to redefinition of fprintf()
+
+2012-05-17  rlar <rlar>
+ * src/frontend/misccoms.c:
+    misccoms.c, com_quit(), implement exitcode
+
+2012-05-17  rlar <rlar>
+ * src/frontend/misccoms.c:
+    misccoms.c, tiny rewrite
+
+2012-05-17  rlar <rlar>
+ * src/frontend/misccoms.c:
+    misccoms.c, shrink scope
+
+2012-05-17  rlar <rlar>
+ * src/frontend/misccoms.c:
+    misccoms.c, collect byemessage()
+
+2012-05-17  rlar <rlar>
+ * src/frontend/misccoms.c:
+    misccoms.c, noask
+
+2012-05-17  rlar <rlar>
+ * src/frontend/misccoms.c:
+    misccoms.c, collapse strings
+
+2012-05-17  rlar <rlar>
+ * src/frontend/help/readhelp.c,
+ * src/frontend/misccoms.c,
+ * src/include/ngspice/ngspice.h:
+    misccoms.c, use strncasecmp()
+
+2012-05-17  rlar <rlar>
+ * src/frontend/misccoms.c:
+    misccoms.c, indentation and whitespace cleanup
+
+2012-05-12  h_vogt <h_vogt>
+ * compile_min.sh:
+    change comments, CVS --> git
+
+2012-05-09  rlar <rlar>
+ * src/spicelib/devices/adms/hicum2/adms3va/hicum2.va,
+ * src/spicelib/devices/adms/hicum2/admsva/hicum2.va,
+ * src/spicelib/devices/bsim3soi_dd/BsimTerms_use,
+ * src/spicelib/devices/bsim3soi_fd/BsimTerms_use,
+ * src/spicelib/devices/bsim3soi_pd/BsimTerms_use,
+ * src/xspice/examples/hybrid_models1_dc.deck,
+ * src/xspice/examples/initial_conditions.deck,
+ * src/xspice/examples/io_ordering.deck,
+ * src/xspice/examples/io_types.deck,
+ * src/xspice/examples/long_names.deck,
+ * src/xspice/examples/mixed_case.deck,
+ * src/xspice/examples/mixed_io_size.deck,
+ * src/xspice/examples/mixed_mode.deck,
+ * src/xspice/examples/mixed_ref.deck,
+ * src/xspice/examples/mosamp2.in,
+ * src/xspice/examples/mosmem.in,
+ * src/xspice/examples/param_defaults.deck,
+ * src/xspice/examples/param_types.deck,
+ * src/xspice/examples/parsing.deck,
+ * src/xspice/examples/polarity.deck,
+ * src/xspice/examples/schmitt.in,
+ * src/xspice/examples/spice3.deck,
+ * src/xspice/examples/suffixes.deck,
+ * src/xspice/examples/supply_ramping.deck,
+ * src/xspice/examples/user_defined_nodes.deck,
+ * src/xspice/examples/xspice.deck:
+    Changed line ending of several files from DOS to UNIX
+
+2012-05-09  rlar <rlar>
+ * examples/tclspice/tcl-testbench1/tcl-testbench1.tcl,
+ * examples/tclspice/tcl-testbench2/tcl-testbench2.tcl,
+ * examples/tclspice/tcl-testbench3/tcl-testbench3.tcl,
+ * examples/tclspice/tcl-testbench4/tcl-testbench4.tcl,
+ * examples/tclspice/tcl/test_vectoblt.tcl,
+ * src/frontend/com_dl.c,
+ * src/frontend/com_dl.h,
+ * src/include/ngspice/cm.h,
+ * src/include/ngspice/dllitf.h,
+ * src/include/ngspice/ipc.h,
+ * src/pkgIndex.tcl.in,
+ * src/spicelib/analysis/cluster.c,
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/pssaskq.c,
+ * src/spicelib/analysis/pssinit.c,
+ * src/spicelib/analysis/psssetp.c,
+ * src/spicelib/devices/cpl/Makefile.am,
+ * src/spicelib/devices/txl/Makefile.am,
+ * src/tclspice.c,
+ * src/xspice/Makefile.am,
+ * src/xspice/README,
+ * src/xspice/cm/Makefile.am,
+ * src/xspice/cm/cm.c,
+ * src/xspice/cm/cmevt.c,
+ * src/xspice/cm/cmexport.c,
+ * src/xspice/cm/cmmeters.c,
+ * src/xspice/cm/cmutil.c,
+ * src/xspice/cmpp/.cvsignore,
+ * src/xspice/cmpp/.gitignore,
+ * src/xspice/cmpp/cmpp.h,
+ * src/xspice/cmpp/ifs_lex.l,
+ * src/xspice/cmpp/ifs_yacc.y,
+ * src/xspice/cmpp/ifs_yacc_y.h,
+ * src/xspice/cmpp/main.c,
+ * src/xspice/cmpp/mod_lex.l,
+ * src/xspice/cmpp/mod_yacc.y,
+ * src/xspice/cmpp/mod_yacc_y.h,
+ * src/xspice/cmpp/pp_ifs.c,
+ * src/xspice/cmpp/pp_lst.c,
+ * src/xspice/cmpp/pp_mod.c,
+ * src/xspice/cmpp/read_ifs.c,
+ * src/xspice/cmpp/util.c,
+ * src/xspice/cmpp/writ_ifs.c,
+ * src/xspice/cmpp/ylwrap,
+ * src/xspice/enh/Makefile.am,
+ * src/xspice/enh/enh.c,
+ * src/xspice/enh/enhtrans.c,
+ * src/xspice/evt/Makefile.am,
+ * src/xspice/evt/evtaccept.c,
+ * src/xspice/evt/evtbackup.c,
+ * src/xspice/evt/evtcall_hybrids.c,
+ * src/xspice/evt/evtdeque.c,
+ * src/xspice/evt/evtdump.c,
+ * src/xspice/evt/evtinit.c,
+ * src/xspice/evt/evtiter.c,
+ * src/xspice/evt/evtload.c,
+ * src/xspice/evt/evtnext_time.c,
+ * src/xspice/evt/evtnode_copy.c,
+ * src/xspice/evt/evtop.c,
+ * src/xspice/evt/evtplot.c,
+ * src/xspice/evt/evtprint.c,
+ * src/xspice/evt/evtqueue.c,
+ * src/xspice/evt/evtsetup.c,
+ * src/xspice/evt/evttermi.c,
+ * src/xspice/examples/analog_models1_ac.deck,
+ * src/xspice/examples/analog_models1_dc.deck,
+ * src/xspice/examples/analog_models1_swept_dc.deck,
+ * src/xspice/examples/analog_models1_transient.deck,
+ * src/xspice/examples/analog_models2_ac.deck,
+ * src/xspice/examples/analog_models2_dc.deck,
+ * src/xspice/examples/analog_models2_swept_dc.deck,
+ * src/xspice/examples/analog_models2_transient.deck,
+ * src/xspice/examples/analog_models3_ac.deck,
+ * src/xspice/examples/analog_models3_dc.deck,
+ * src/xspice/examples/analog_models3_swept_dc.deck,
+ * src/xspice/examples/analog_models3_transient.deck,
+ * src/xspice/examples/analog_models4_ac.deck,
+ * src/xspice/examples/analog_models4_dc.deck,
+ * src/xspice/examples/analog_models4_swept_dc.deck,
+ * src/xspice/examples/analog_models4_transient.deck,
+ * src/xspice/examples/arbitrary_phase.deck,
+ * src/xspice/examples/bad_io.deck,
+ * src/xspice/examples/bad_io_type.deck,
+ * src/xspice/examples/bad_name.deck,
+ * src/xspice/examples/bad_param.deck,
+ * src/xspice/examples/bad_param_type.deck,
+ * src/xspice/examples/d_to_real/Makefile,
+ * src/xspice/examples/d_to_real/cfunc.mod,
+ * src/xspice/examples/d_to_real/ifspec.ifs,
+ * src/xspice/examples/diffpair.in,
+ * src/xspice/examples/digital_invert.deck,
+ * src/xspice/examples/digital_models.deck,
+ * src/xspice/examples/digital_models1.deck,
+ * src/xspice/examples/digital_models2.deck,
+ * src/xspice/examples/digital_models3.deck,
+ * src/xspice/examples/digital_models4.deck,
+ * src/xspice/examples/dot_model_ref.deck,
+ * src/xspice/examples/hybrid_models1_dc.deck,
+ * src/xspice/examples/hybrid_models1_transient.deck,
+ * src/xspice/examples/initial_conditions.deck,
+ * src/xspice/examples/io_ordering.deck,
+ * src/xspice/examples/io_types.deck,
+ * src/xspice/examples/long_names.deck,
+ * src/xspice/examples/mixed_case.deck,
+ * src/xspice/examples/mixed_io_size.deck,
+ * src/xspice/examples/mixed_mode.deck,
+ * src/xspice/examples/mixed_ref.deck,
+ * src/xspice/examples/mosamp2.in,
+ * src/xspice/examples/mosmem.in,
+ * src/xspice/examples/nco/Makefile,
+ * src/xspice/examples/nco/cfunc.mod,
+ * src/xspice/examples/nco/ifspec.ifs,
+ * src/xspice/examples/param_defaults.deck,
+ * src/xspice/examples/param_types.deck,
+ * src/xspice/examples/parsing.deck,
+ * src/xspice/examples/polarity.deck,
+ * src/xspice/examples/print_param_types/Makefile,
+ * src/xspice/examples/print_param_types/cfunc.mod,
+ * src/xspice/examples/print_param_types/ifspec.ifs,
+ * src/xspice/examples/rca3040.in,
+ * src/xspice/examples/real_delay/Makefile,
+ * src/xspice/examples/real_delay/cfunc.mod,
+ * src/xspice/examples/real_delay/ifspec.ifs,
+ * src/xspice/examples/real_gain/Makefile,
+ * src/xspice/examples/real_gain/cfunc.mod,
+ * src/xspice/examples/real_gain/ifspec.ifs,
+ * src/xspice/examples/real_to_v/Makefile,
+ * src/xspice/examples/real_to_v/cfunc.mod,
+ * src/xspice/examples/real_to_v/ifspec.ifs,
+ * src/xspice/examples/rtlinv.in,
+ * src/xspice/examples/schmitt.in,
+ * src/xspice/examples/spice3.deck,
+ * src/xspice/examples/suffixes.deck,
+ * src/xspice/examples/supply_ramping.deck,
+ * src/xspice/examples/user_defined_nodes.deck,
+ * src/xspice/examples/xspice.deck,
+ * src/xspice/idn/Makefile.am,
+ * src/xspice/idn/idndig.c,
+ * src/xspice/ipc/Makefile.am,
+ * src/xspice/ipc/ipc.c,
+ * src/xspice/ipc/ipcaegis.c,
+ * src/xspice/ipc/ipcsockets.c,
+ * src/xspice/ipc/ipcstdio.c,
+ * src/xspice/ipc/ipctiein.c,
+ * src/xspice/mif/Makefile.am,
+ * src/xspice/mif/mif.c,
+ * src/xspice/mif/mif_inp2.c,
+ * src/xspice/mif/mifask.c,
+ * src/xspice/mif/mifconvt.c,
+ * src/xspice/mif/mifdelete.c,
+ * src/xspice/mif/mifdestr.c,
+ * src/xspice/mif/mifgetmod.c,
+ * src/xspice/mif/mifgetvalue.c,
+ * src/xspice/mif/mifload.c,
+ * src/xspice/mif/mifmask.c,
+ * src/xspice/mif/mifmdelete.c,
+ * src/xspice/mif/mifmpara.c,
+ * src/xspice/mif/mifsetup.c,
+ * src/xspice/mif/miftrunc.c,
+ * src/xspice/mif/mifutil.c,
+ * src/xspice/xspice.c:
+    fix file modes
+
+2012-05-06  h_vogt <h_vogt>
+ * src/frontend/rawfile.c:
+    Exit with error if file not found: fgets() cannot read from NULL
+
+2012-05-06  rlar <rlar>
+ * src/spicelib/devices/nbjt/nbjtdump.c,
+ * src/spicelib/devices/nbjt2/nbt2dump.c,
+ * src/spicelib/devices/numd/numddump.c,
+ * src/spicelib/devices/numd2/nud2dump.c,
+ * src/spicelib/devices/numos/nummdump.c:
+    raw_write() always fopen("wb"),  even on windows use "\n" line termination
+
+2012-05-06  rlar <rlar>
+ * src/frontend/rawfile.c:
+    raw_read() always fopen("rb") even on windows, always swallow "\r"
+
+2012-05-06  rlar <rlar>
+ * src/spicelib/devices/numd/numddump.c:
+    Reverting "NUMDdump(): add binary mode"
+
+    This reverts commit 40e8f868da564c9c8999729bf53ed4fc748c3783
+
+2012-05-05  rlar <rlar>
+ * src/frontend/com_measure2.c,
+ * src/frontend/device.c,
+ * src/frontend/display.c,
+ * src/frontend/error.c,
+ * src/frontend/error.h,
+ * src/frontend/hpgl.c,
+ * src/frontend/inp.c,
+ * src/frontend/inpcom.c,
+ * src/frontend/measure.c,
+ * src/frontend/numparam/mystring.c,
+ * src/frontend/numparam/spicenum.c,
+ * src/frontend/numparam/xpressn.c,
+ * src/frontend/plotting/graf.c,
+ * src/frontend/plotting/graphdb.c,
+ * src/frontend/plotting/x11.c,
+ * src/frontend/postsc.c,
+ * src/frontend/spiceif.c,
+ * src/frontend/vectors.c,
+ * src/include/ngspice/fteext.h,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddld.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdld.c,
+ * src/spicelib/devices/cktask.c,
+ * src/spicelib/devices/cpl/cplload.c,
+ * src/spicelib/devices/cpl/cplsetup.c,
+ * src/spicelib/devices/txl/txlload.c,
+ * src/spicelib/devices/txl/txlsetup.c,
+ * src/spicelib/parser/inp2q.c,
+ * src/spicelib/parser/inp2u.c,
+ * src/spicelib/parser/inpdomod.c:
+    remove error.h, use fteext.h for controlled_exit()
+
+2012-05-05  rlar <rlar>
+ * src/frontend/inpcom.c:
+    avoid `ambiguous else' Warning
+
+2012-05-05  dwarning <dwarning>
+ * tests/bsim4/Makefile.am,
+ * tests/bsim4/comprt.cir,
+ * tests/bsim4/comprt.out,
+ * tests/bsim4/gstage.cir,
+ * tests/bsim4/gstage.out,
+ * tests/bsim4/modelcard.nmos,
+ * tests/bsim4/modelcard.pmos,
+ * tests/bsim4/nmos/parameters/nmosParameters,
+ * tests/bsim4/nmos/qaSpec,
+ * tests/bsim4/nmos/reference/acFreq.standard,
+ * tests/bsim4/nmos/reference/acFreq_acnqsmod.standard,
+ * tests/bsim4/nmos/reference/acFreq_capmod.standard,
+ * tests/bsim4/nmos/reference/acFreq_diomod.standard,
+ * tests/bsim4/nmos/reference/acFreq_geomod.standard,
+ * tests/bsim4/nmos/reference/acFreq_igcmod.standard,
+ * tests/bsim4/nmos/reference/acFreq_mobmod.standard,
+ * tests/bsim4/nmos/reference/acFreq_trnqsmod.standard,
+ * tests/bsim4/nmos/reference/acFreq_wpemod.standard,
+ * tests/bsim4/nmos/reference/acFreq_xpart.standard,
+ * tests/bsim4/nmos/reference/acVd.standard,
+ * tests/bsim4/nmos/reference/dcSweep_lw1.standard,
+ * tests/bsim4/nmos/reference/dcSweep_lw1_vb1.standard,
+ * tests/bsim4/nmos/reference/dcSweep_lw1_vb2.standard,
+ * tests/bsim4/nmos/reference/dcSweep_lw2.standard,
+ * tests/bsim4/nmos/reference/dcSweep_lw3.standard,
+ * tests/bsim4/nmos/reference/dcSweep_lw4.standard,
+ * tests/bsim4/nmos/reference/dcSweep_lw5.standard,
+ * tests/bsim4/nmos/reference/dcSweep_lw6.standard,
+ * tests/bsim4/nmos/reference/dcSweep_lw7.standard,
+ * tests/bsim4/nmos/reference/dcSweep_lw8.standard,
+ * tests/bsim4/nmos/reference/dcSweep_lw9.standard,
+ * tests/bsim4/nmos/reference/dcSweep_nrd.standard,
+ * tests/bsim4/nmos/reference/dcSweep_nrs.standard,
+ * tests/bsim4/nmos/reference/dcSweep_sa.standard,
+ * tests/bsim4/nmos/reference/dcSweep_sb.standard,
+ * tests/bsim4/nmos/reference/dcSweep_sca.standard,
+ * tests/bsim4/nmos/reference/dcSweep_scb.standard,
+ * tests/bsim4/nmos/reference/dcSweep_scc.standard,
+ * tests/bsim4/nmos/reference/noise1.standard,
+ * tests/bsim4/nmos/reference/noise2.standard,
+ * tests/bsim4/nmos/reference/noise3.standard,
+ * tests/bsim4/nmos/reference/noise4.standard,
+ * tests/bsim4/nmos/run,
+ * tests/bsim4/oneshot.cir,
+ * tests/bsim4/oneshot.out,
+ * tests/bsim4/opamp.cir,
+ * tests/bsim4/opamp.out,
+ * tests/bsim4/pmos/parameters/pmosParameters,
+ * tests/bsim4/pmos/qaSpec,
+ * tests/bsim4/pmos/reference/acFreq.standard,
+ * tests/bsim4/pmos/reference/acFreq_acnqsmod.standard,
+ * tests/bsim4/pmos/reference/acFreq_capmod.standard,
+ * tests/bsim4/pmos/reference/acFreq_diomod.standard,
+ * tests/bsim4/pmos/reference/acFreq_geomod.standard,
+ * tests/bsim4/pmos/reference/acFreq_igcmod.standard,
+ * tests/bsim4/pmos/reference/acFreq_mobmod.standard,
+ * tests/bsim4/pmos/reference/acFreq_trnqsmod.standard,
+ * tests/bsim4/pmos/reference/acFreq_wpemod.standard,
+ * tests/bsim4/pmos/reference/acFreq_xpart.standard,
+ * tests/bsim4/pmos/reference/acVd.standard,
+ * tests/bsim4/pmos/reference/dcSweep_lw1.standard,
+ * tests/bsim4/pmos/reference/dcSweep_lw1_vb1.standard,
+ * tests/bsim4/pmos/reference/dcSweep_lw1_vb2.standard,
+ * tests/bsim4/pmos/reference/dcSweep_lw2.standard,
+ * tests/bsim4/pmos/reference/dcSweep_lw3.standard,
+ * tests/bsim4/pmos/reference/dcSweep_lw4.standard,
+ * tests/bsim4/pmos/reference/dcSweep_lw5.standard,
+ * tests/bsim4/pmos/reference/dcSweep_lw6.standard,
+ * tests/bsim4/pmos/reference/dcSweep_lw7.standard,
+ * tests/bsim4/pmos/reference/dcSweep_lw8.standard,
+ * tests/bsim4/pmos/reference/dcSweep_lw9.standard,
+ * tests/bsim4/pmos/reference/dcSweep_nrd.standard,
+ * tests/bsim4/pmos/reference/dcSweep_nrs.standard,
+ * tests/bsim4/pmos/reference/dcSweep_sa.standard,
+ * tests/bsim4/pmos/reference/dcSweep_sb.standard,
+ * tests/bsim4/pmos/reference/dcSweep_sca.standard,
+ * tests/bsim4/pmos/reference/dcSweep_scb.standard,
+ * tests/bsim4/pmos/reference/dcSweep_scc.standard,
+ * tests/bsim4/pmos/reference/noise1.standard,
+ * tests/bsim4/pmos/reference/noise2.standard,
+ * tests/bsim4/pmos/reference/noise3.standard,
+ * tests/bsim4/pmos/reference/noise4.standard,
+ * tests/bsim4/pmos/run,
+ * tests/bsim4/ro_17.cir,
+ * tests/bsim4/ro_17.out,
+ * tests/bsim4/test1.cir,
+ * tests/bsim4/test1.out,
+ * tests/bsim4/test10.cir,
+ * tests/bsim4/test10.out,
+ * tests/bsim4/test11.cir,
+ * tests/bsim4/test11.out,
+ * tests/bsim4/test12.cir,
+ * tests/bsim4/test12.out,
+ * tests/bsim4/test13.cir,
+ * tests/bsim4/test13.out,
+ * tests/bsim4/test14.cir,
+ * tests/bsim4/test14.out,
+ * tests/bsim4/test2.cir,
+ * tests/bsim4/test2.out,
+ * tests/bsim4/test3.cir,
+ * tests/bsim4/test3.out,
+ * tests/bsim4/test4.cir,
+ * tests/bsim4/test4.out,
+ * tests/bsim4/test5.cir,
+ * tests/bsim4/test5.out,
+ * tests/bsim4/test6.cir,
+ * tests/bsim4/test6.out,
+ * tests/bsim4/test7.cir,
+ * tests/bsim4/test7.out,
+ * tests/bsim4/test8.cir,
+ * tests/bsim4/test8.out,
+ * tests/bsim4/test9.cir,
+ * tests/bsim4/test9.out:
+    tests/bsim4: use the standard CMC model check
+
+2012-05-05  h_vogt <h_vogt>
+ * src/xspice/README:
+    update `making xspice' within actual ngspice
+
+2012-05-05  h_vogt <h_vogt>
+ * src/spicelib/devices/numd/numddump.c:
+    NUMDdump(): add binary mode
+
+    fopen() with wb
+    write operating point (external state) for true binary output
+
+2012-05-01  h_vogt <h_vogt>
+ * src/frontend/outitf.c:
+    beautify code
+
+2012-05-01  h_vogt <h_vogt>
+ * src/spicelib/devices/cktask.c:
+    error return only if variable `error' is set
+
+2012-04-29  h_vogt <h_vogt>
+ * src/frontend/error.h,
+ * src/spicelib/analysis/acan.c,
+ * src/spicelib/devices/cktask.c:
+    prevent false outputs of @dev[param], when not defined in ac simulation
+
+2012-04-23  h_vogt <h_vogt>
+ * src/winmain.c:
+    Enable ctrl-c to interrupt a simulation also for Windows GUI
+
+2012-04-14  h_vogt <h_vogt>
+ * src/spicelib/parser/ifeval.c:
+    Independent variable `temper' now returns the temperature in degree C
+
+2012-04-14  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    allow `time', `temper', and `hertz' in expressions of behavioral R,L,C devices
+
+2012-04-14  rlar <rlar>
+ * src/frontend/subckt.c:
+    subckt.c, doit(): fix another memory leak
+
+2012-04-13  rlar <rlar>
+ * src/frontend/subckt.c:
+    subckt.c, doit(): fix a memory leak
+
+2012-04-08  h_vogt <h_vogt>
+ * src/frontend/spiceif.c:
+    exclude circuits with XSPICE 'A' devices from using 'savesnap'
+
+    XSPICE data storage is not yet implemented
+
+2012-04-07  rlar <rlar>
+ * src/include/ngspice/inpdefs.h,
+ * src/include/ngspice/inpptree.h,
+ * src/spicelib/devices/asrc/asrcdest.c,
+ * src/spicelib/parser/inpptree.c:
+    fix memory leaks in ASRC and in INPgetTree()
+
+    implement a reference counter `usecnt' for the elements
+      of the `INPparseTree'
+
+2012-04-07  rlar <rlar>
+ * src/spicelib/parser/inpptree.c:
+    INPgetTree(), express the live range of some globals
+
+2012-04-07  rlar <rlar>
+ * src/spicelib/parser/inpptree.c:
+    mkfnode(), minor rewrite
+
+2012-04-06  rlar <rlar>
+ * configure.ac,
+ * src/frontend/display.c:
+    configure.ac, fix `NO_X' and `has_no_help'
+
+    drop configure options `--enable-x' and `--disable-x'
+    use `--with-x' and `--without-x' provided by AC_PATH_X
+
+    bug tracker item:
+      [ngspice-Bugs-3515015] Startup error message without x11
+      https://sourceforge.net/tracker/index.php?func=detail&aid=3515015&group_id=38962&atid=423915
+
+2012-04-05  rlar <rlar>
+ * src/spicelib/parser/inpptree.c:
+    inpptree.c, fix differentiation of PTF_FLOOR PTF_CEIL and PTF_POW
+
+2012-04-05  rlar <rlar>
+ * src/frontend/parse-bison.c,
+ * src/frontend/parse-bison.h,
+ * src/spicelib/parser/inpptree-parser.c,
+ * src/spicelib/parser/inpptree-parser.h:
+    update bison generated files
+
+2012-04-05  rlar <rlar>
+ * src/spicelib/parser/inpptree-parser.y,
+ * src/spicelib/parser/inpptree.c:
+    fix memory leak in PTparse()
+
+2012-04-05  rlar <rlar>
+ * src/frontend/parse-bison.y,
+ * src/frontend/parse.c:
+    fix memory leak in PPparse()
+
+2012-04-05  rlar <rlar>
+ * src/frontend/variable.c:
+    fix memory leak in cp_vset()
+
+2012-04-05  rlar <rlar>
+ * src/spicelib/parser/inpptree.c:
+    inpptree.c, polish comments
+
+2012-04-05  rlar <rlar>
+ * src/spicelib/parser/inpptree.c:
+    inpptree.c, fix premature memory allocation
+
+2012-04-05  Michael Woodworth <mwoodworth>
+ * src/spicelib/parser/inpgmod.c:
+    fix a memory leak in parse_line()
+
+    This has a HUGE affect on memory usage
+
+2012-03-31  h_vogt <h_vogt>
+ * src/frontend/inpcom.c,
+ * src/spicelib/parser/inpeval.c:
+    bug_fix: R,L,C instantiations, tc1, tc2, numbers followed by `:'
+
+    Ternary function was not recognized in R, C, or L lines
+      if no voltage or current node was part of the expression,
+      because then B-Source is not used.
+    In these cases now inp_fix_ternary_operator_str() is called explicitly.
+
+    tc1, tc2 were sometimes recognized falsely,
+      if part of a token e.g. tc1end.
+
+    R, C, and L models are never commented out,
+      because their names may be token no. 4 or 5 in an R, C, or L line,
+      and will not be recognized if 5.
+
+    INPevaluate() will now correctly evaluate a number if followed by ':'
+      (number may be part of the ternary function).
+
+2012-03-30  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    bug fix, inp_bsource_compat(): `tc1=' `tc2=' `reciproctc=' `}'
+
+    don't substitute `tc1=' `tc2=' `reciproctc='
+    don't fail when processing tokens followed by `}' chars
+
+2012-03-27  rlar <rlar>
+ * src/frontend/plotting/grid.c:
+    lingrid(), avoid buffer overflow
+
+      Bug ID: `Buffer overflow detected - ID: 3510521'
+        reported by Zsolt Makaró
+
+      The variable `mag3' sometimes seems to take
+        unexpected values
+        (for example log10 can be -Inf, which will be casted to 0x80000000)
+      and seems then to have overflown a buffer buf[LABEL_CHARS]
+
+2012-03-25  rlar <rlar>
+ * src/frontend/subckt.c:
+    rewrite subckt.c
+
+      transform doit() into a true recursive version,
+        drop usage of global variables
+      reduce scope of many variables
+      cleanup and readability
+
+      FIXME,
+        an opportunity to plug a memory leak is visible now.
+
+2012-03-25  rlar <rlar>
+ * src/frontend/subckt.c:
+    bug fix, numnodes()
+
+      in response to the `ex-41.cir' test case
+        distilled from a Dietmar Warning Bug report in
+          "Subject: Re: subckt, param"
+
+      translate() is called recursively and depends on
+        `num of nodes' provided by numnodes().
+      numnodes() depends on availability of `su_numargs'.
+      But the processing allows non-processing of subckt instantiations
+        in inner recursions (which will be processed later)
+        which means `su_numargs' is not always available.
+
+2012-03-25  rlar <rlar>
+ * src/frontend/com_measure2.c:
+    round to next nearest integer for the rise, fall and cross arguments of `measure'
+
+    Simon Guan reported
+      Bug item #3509528, `Meas goes wrong when put in a while loop'
+
+    In a .control block a `let' variable was passed to the `measure' command.
+
+    The value of this variable would have been a plain integer,
+      yet it was converted internally to an internal ascii representation
+        with exponential representation  (203 ==> 2.03e2)
+      and then processed by `ft_numparse()' where it was converted back to
+        double floating point.
+      Because the intermediate 2.03 has
+        no exact representation in the space of double floating point numbers
+        this conversion was lossy and resulted in a non-integer value.
+      This non-integer was then truncated towards minus infinity in com_measure
+        yielding an error of -1
+
+    This commit implements round to nearest in com_measure2
+      to avoid the problem.
+
+    FIXME,
+      the internal intermediate conversion of double floating point machine
+        values to ascii representations must be dropped,
+      or replaced with an exact/lossless ascii representation.
+        (for example GNU printf/scanf %a or 64bit hexadecimal representation)
+
+2012-03-24  h_vogt <h_vogt>
+ * src/frontend/plotting/graf.c:
+    bug fix, iplot(): Buffer overflow
+
+    Thanks to Zsolt Makaró for the bug report in
+      Buffer overflow detected - ID: 3510521
+      http://sourceforge.net/tracker/?func=detail&aid=3510521&group_id=38962&atid=423915
+
+2012-03-24  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    bug fix, inp_fix_subckt(): problem when parsing a .subckt line
+
+    this worked
+      .subckt psub a b p2 = {p1*2-1} p1 = 1
+    but this failed
+      .subckt psub a b p2 = { p1 * 2 - 1 }  p1 = 1
+
+    thanks to Ivan Riis Nielsen for the report in Message
+      [Ngspice-devel] parsing problem (ngspice-24 tarball)
+
+2012-03-24  h_vogt <h_vogt>
+ * src/tclspice.c:
+    tclspice.c: new functions to get start and final time of a transient simulation
+
+2012-03-17  h_vogt <h_vogt>
+ * .gitignore:
+    .gitignore: exclude /release* and /debug* directories
+
+2012-03-17  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inp_fix_subckt(): allow spaces in an expression which acts as a parameter
+
+2012-03-10  h_vogt <h_vogt>
+ * .gitignore,
+ * visualc/vngspice.sln,
+ * visualc/vngspice.vcproj:
+    Visual Studio: console and GUI, 32 Bit and 64 Bit newly organized
+
+2012-03-01  dwarning <dwarning>
+ * src/spicelib/parser/inpgmod.c:
+    1. Correct the list of binable models. 2. Fix a problem with wrong MOS level entries.
+
+2012-02-26  rlar <rlar>
+ * .gitignore,
+ * src/xspice/.gitignore,
+ * src/xspice/cmpp/.gitignore,
+ * src/xspice/icm/analog/.gitignore,
+ * src/xspice/icm/digital/.gitignore,
+ * src/xspice/icm/spice2poly/.gitignore,
+ * src/xspice/icm/xtradev/.gitignore,
+ * src/xspice/icm/xtraevt/.gitignore,
+ * tests/.gitignore:
+    .gitignore files
+
 2012-02-19  Holger Vogt
  * com_cdump.c, commands.c, main.c:
    dummy functions for SMPprint() and SMPprintRHS() to allow making of ngnutmeg,
