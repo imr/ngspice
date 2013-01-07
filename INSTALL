@@ -653,3 +653,36 @@ Most of the options now following are not well maintained, are not tested or eve
  ./configure --enable-adms --enable-xspice --enable-cider --enable-openmp 
  --disable-debug CFLAGS=-m32 LDFLAGS=-m32 prefix=C:/Spice
  tested with TDM mingw.
+
+
+
+10 NGSPICE COMPILATION UNDER MAC OS X
+   ==================================
+
+10.1 Use precompiled binary package
+ 1. Install an X11 interface (like Xquartz)
+ 2. Install the downloaded NGSPICE package
+ 3. Open a terminal window and start using NGSPICE
+
+10.2 Compile NGSPICE manually from a tarball
+ 1. Install an X11 interface (like Xquartz)
+ 2. Install MacPorts from http://www.macports.org
+ 3. Execute this command:
+      sudo port install bison flex ncurses xorg-libXaw
+ 4. Configure NGSPICE invoking "./configure". A complete set of feature is:
+      ./configure --enable-cider --enable-xspice --enable-openmp --enable-pss --enable-debug=no
+ 5. Compile NGSPICE invoking "make"
+ 6. Install NGSPICE invoking "make install" or "sudo make install"
+
+10.3 Compile NGSPICE manually from git
+ 1. Install an X11 interface (like Xquartz)
+ 2. Install MacPorts from http://www.macports.org
+ 3. Execute this command:
+      sudo port install automake autoconf libtool bison flex ncurses xorg-libXaw
+ 4. Execute this command:
+      ./autogen.sh or ./autogen.sh --adms (if you want to enable ADMS)
+ 5. Configure NGSPICE invoking "./configure". A complete set of feature is:
+      ./configure --enable-cider --enable-xspice --enable-openmp --enable-pss --enable-debug=no
+      ./configure --enable-adms --enable-cider --enable-xspice --enable-openmp --enable-pss --enable-debug=no (if you want to enable ADMS)
+ 6. Compile NGSPICE invoking "make"
+ 7. Install NGSPICE invoking "make install" or "sudo make install"
