@@ -14,6 +14,10 @@ Modified: 2000  AlansFixes
 #include <math.h>
 #include "ngspice/complex.h"
 
+/* KCL Verification */
+int KCLverification (SMPmatrix *, double *, double *, double, int, double, double, double) ;
+/********************/
+
 int SMPaddElt( SMPmatrix *, int , int , double );
 double * SMPmakeElt( SMPmatrix * , int , int );
 void SMPcClear( SMPmatrix *);

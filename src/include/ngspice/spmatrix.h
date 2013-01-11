@@ -294,4 +294,8 @@ extern  void     spMultTransposed(MatrixPtr,spREAL*,spREAL*,spREAL*,spREAL*);
 extern  void     spSolve( MatrixPtr, spREAL*, spREAL*, spREAL*, spREAL* );
 extern  void     spSolveTransposed(MatrixPtr,spREAL*,spREAL*,spREAL*,spREAL*);
 
+/* KCL Verification */
+extern int KCL_verification (MatrixPtr, spREAL *, spREAL *, double, int, double, double, double) ;
+/********************/
+
 #endif  /* spOKAY */

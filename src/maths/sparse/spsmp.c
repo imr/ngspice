@@ -108,6 +108,14 @@ extern double logb(double);
 
 static void LoadGmin(SMPmatrix *eMatrix, double Gmin);
 
+/**
+ * Routine to Verify the KCL
+ */
+int
+KCLverification (SMPmatrix *Matrix, double *rhsOld, double *rhs, double gmin, int i, double RelTol, double AbsTol, double maximum)
+{
+    return KCL_verification (Matrix, rhsOld, rhs, gmin, i, RelTol, AbsTol, maximum) ;
+}
 
 /*
  * SMPaddElt()

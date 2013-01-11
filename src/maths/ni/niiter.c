@@ -37,6 +37,9 @@ NIiter(CKTcircuit *ckt, int maxIter)
     CKTnode *node; /* current matrix entry */
     double diff, maxdiff, damp_factor, *OldCKTstate0=NULL;
 
+    /* KCL_verified */
+    int KCL_verified ;
+
     if ( maxIter < 100 ) maxIter = 100; /* some convergence issues that get resolved by increasing max iter */
 
     iterno=0;
@@ -108,6 +111,16 @@ NIiter(CKTcircuit *ckt, int maxIter)
             if( (ckt->CKTmode & MODEINITJCT) ||
                     ( (ckt->CKTmode & MODEINITTRAN) && (iterno==1))) {
                 ckt->CKTniState |= NISHOULDREORDER;
+            }
+
+            /* KCL Verification */
+            if ((ckt->CKTnoncon == 0) && (iterno != 1))
+            {
+                KCL_verified = NIkclVerification (ckt) ;
+                if (KCL_verified) /* NOT VERIFIED */
+                    ckt->CKTnoncon = 1 ;
+                else
+                    ckt->CKTnoncon = 0 ;
             }
 
             if(ckt->CKTniState & NISHOULDREORDER) {

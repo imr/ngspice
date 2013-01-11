@@ -50,18 +50,6 @@ NIconvTest(CKTcircuit *ckt)
 		ckt->CKTtroubleElt = NULL;
                 return(1);
             }
-        } else {
-            tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
-                    ckt->CKTabstol;
-            if (fabs(new-old) >tol ) {
-#ifdef STEPDEBUG
-                printf(" non-convergence at node (type=%d) %s (fabs(new-old)>tol --> fabs(%g-%g)>%g)\n",node->type,CKTnodName(ckt,i),new,old,tol);
-		printf("    reltol: %g    abstol: %g   (tol=reltol*(MAX(fabs(old),fabs(new))) + abstol)\n",ckt->CKTreltol,ckt->CKTabstol);
-#endif /* STEPDEBUG */
-		ckt->CKTtroubleNode = i;
-		ckt->CKTtroubleElt = NULL;
-                return(1);
-            }
         }
     }
 
@@ -73,4 +61,42 @@ NIconvTest(CKTcircuit *ckt)
 #else /* NEWCONV */
     return(0);
 #endif /* NEWCONV */
+}
+
+
+/**
+ * Routine to Verify the KCL
+ */
+
+int NIkclVerification (CKTcircuit *ckt)
+{
+    int i, size ;
+    double maximum = 0 ;
+    CKTnode *node ;
+
+    size = SMPmatSize (ckt->CKTmatrix) ;
+
+    node = ckt->CKTnodes ;
+    for (i = 1 ; i <= size ; i++)
+    {
+        if (node->type == SP_CURRENT)
+        {
+            if (maximum < fabs (ckt->CKTrhsOld [i]))
+                maximum = fabs (ckt->CKTrhsOld [i]) ;
+        }
+        node = node->next ;
+    }
+
+    node = ckt->CKTnodes ;
+    for (i = 1 ; i <= size ; i++)
+    {
+        if (node->type == SP_VOLTAGE)
+        {
+            if (KCLverification (ckt->CKTmatrix, ckt->CKTrhsOld, ckt->CKTrhs, ckt->CKTdiagGmin, i, ckt->CKTreltol, ckt->CKTabstol, maximum))
+                return 1 ;
+        }
+        node = node->next ;
+    }
+
+    return 0 ;
 }

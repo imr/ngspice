@@ -9,6 +9,7 @@ libsparse_la_SOURCES = \
 	spdefs.h	\
 	spextra.c	\
 	spfactor.c	\
+	spkirch.c	\
 	spoutput.c	\
 	spsmp.c		\
 	spsolve.c	\
