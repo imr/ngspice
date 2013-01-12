@@ -629,6 +629,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
         stripped in the following code. */
     inp_stripcomments_deck(working);
 
+    prev = NULL;
     while (working) {
         for (s = working->li_line; (c = *s) != '\0' && c <= ' '; s++)
             ;
