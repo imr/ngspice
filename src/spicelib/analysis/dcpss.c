@@ -839,6 +839,7 @@ DCpss(CKTcircuit *ckt,
                 FREE (RHS_copy_der) ;
                 FREE (RHS_max) ;
                 FREE (RHS_min) ;
+                FREE (err_conv) ;
                 FREE (psstimes) ;
                 FREE (pssvalues) ;
                 return (E_PANIC) ; /* to be corrected with definition of new error macro in iferrmsg.h */
@@ -854,6 +855,7 @@ DCpss(CKTcircuit *ckt,
                 FREE (RHS_copy_der) ;
                 FREE (RHS_max) ;
                 FREE (RHS_min) ;
+                FREE (err_conv) ;
                 FREE (psstimes) ;
                 FREE (pssvalues) ;
                 return (E_PANIC) ; /* to be corrected with definition of new error macro in iferrmsg.h */
@@ -1116,6 +1118,7 @@ DCpss(CKTcircuit *ckt,
             FREE (RHS_copy_der) ;
             FREE (RHS_max) ;
             FREE (RHS_min) ;
+            FREE (err_conv) ;
             FREE (psstimes) ;
             FREE (pssvalues) ;
             return (OK) ;
