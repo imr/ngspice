@@ -101,6 +101,118 @@ static char *skip_ws(char *d)          { while (isspace(*d))        d++; return 
 static void inp_poly_err(struct line *deck);
 #endif
 
+
+static int
+find_lib_name(int i, char *s) {
+    int j;
+    for (j = 0; j < num_lib_names[i]; j++)
+        if (strcmp(library_name[i][j], s) == 0)
+            return j;
+    return -1;
+}
+
+
+static void
+new_lib_name(int i, char *y, struct line *c) {
+    library_ll_ptr[i][num_lib_names[i]] = c;
+    library_name[i][num_lib_names[i]++] = strdup(y);
+}
+
+
+static int
+expand_libs(int line_number)
+{
+    struct line *tmp_ptr = NULL, *prev;
+    bool found_lib_name = FALSE;
+    int i;
+
+    for (i = 0; i < num_libraries; i++) {
+        struct line *working = libraries[i];
+        while (working) {
+            char *buffer = working->li_line;
+
+            if (found_lib_name && ciprefix(".endl", buffer)) {
+
+                struct line *tmp_ptr2;
+
+                /* Make the .endl a comment */
+                *buffer = '*';
+                found_lib_name = FALSE;
+
+                /* set pointer and continue to avoid deleting below */
+                tmp_ptr2         = working->li_next;
+                working->li_next = tmp_ptr;
+                working          = tmp_ptr2;
+
+                /* end          = working;
+                 * working      = working->li_next;
+                 * end->li_next = NULL; */
+
+                continue;
+            }
+
+            if (ciprefix(".lib", buffer)) {
+
+                char keep_char;
+                int j;
+                char *s, *t;
+
+                if (found_lib_name == TRUE) {
+                    fprintf(stderr, "ERROR: .lib is missing .endl!\n");
+                    controlled_exit(EXIT_FAILURE);
+                }
+
+                s = skip_non_ws(buffer);           /* skip over .lib */
+                while (isspace(*s) || isquote(*s))
+                    s++;                           /* advance past space chars */
+                for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
+                    ;                              /* skip to end of word */
+                keep_char = *t;
+                *t = '\0';
+                /* see if library we want to copy */
+
+                j = find_lib_name(i, s);
+
+                found_lib_name = (j >= 0);
+
+                if (found_lib_name) {
+
+                    struct line *start_lib = working;
+                    int line_number_lib;
+
+                    /* make the .lib a comment */
+                    *buffer = '*';
+
+                    tmp_ptr = library_ll_ptr[i][j]->li_next;
+                    library_ll_ptr[i][j]->li_next = working;
+
+                    /* renumber lines */
+                    line_number_lib = 1;
+                    for (start_lib = working; !ciprefix(".endl", start_lib->li_line); start_lib = start_lib->li_next) {
+                        start_lib->li_linenum = line_number++;
+                        start_lib->li_linenum_orig = line_number_lib++;
+                    }
+                    start_lib->li_linenum = line_number++;  // renumber endl line
+                    start_lib->li_linenum_orig = line_number_lib++;
+                }
+                *t = keep_char;
+            }
+
+            prev = working;
+            working = working->li_next;
+
+            if (found_lib_name == FALSE) {
+                tfree(prev->li_line);
+                tfree(prev);
+            }
+
+        }
+    }
+
+    return line_number;
+}
+
+
 /*-------------------------------------------------------------------------
  Read the entire input file and return  a pointer to the first line of
  the linked list of 'card' records in data.  The pointer is stored in
@@ -145,8 +257,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
    comfile: in, TRUE if command file (e.g. spinit, .spiceinit
 */
 {
-    struct line *end = NULL, *cc = NULL, *prev = NULL, *working, *newcard, *start_lib, *global_card, *tmp_ptr = NULL, *tmp_ptr2 = NULL;
-    char *buffer = NULL, *s, *t, c;
+    struct line *end = NULL, *cc = NULL, *prev, *working, *newcard, *global_card;
+    char *buffer = NULL, c;
     /* segfault fix */
 #ifdef XSPICE
     char big_buff[5000];
@@ -157,7 +269,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 #endif
     char *new_title = NULL;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
-    int line_number_orig = 1, line_number_lib = 1, line_number_inc = 1;
+    int line_number_orig = 1, line_number_inc = 1;
     unsigned int no_braces = 0; /* number of '{' */
 
     size_t max_line_length; /* max. line length in input deck */
@@ -165,8 +277,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
     FILE *fdo;
     struct line *tmp_ptr1 = NULL;
 
-    int i, j;
-    bool found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
+    bool found_end = FALSE, shell_eol_continuation = FALSE;
 
     if (call_depth == 0) {
         num_subckt_w_params = 0;
@@ -177,11 +288,12 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
         inp_compat_mode = ngspice_compat_mode();
     }
 
-    /*   gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled   */
-#ifdef XSPICE
-
     /* First read in all lines & put them in the struct cc */
     for (;;) {
+
+#ifdef XSPICE
+        /* gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled */
+
         /* If IPC is not enabled, do equivalent of what SPICE did before */
         if (! g_ipc.enabled) {
             if (call_depth == 0 && line_count == 0) {
@@ -212,7 +324,11 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
         /* gtri - end - 12/12/90 */
 #else
-    while ((buffer = readline(fp)) != NULL) {
+
+        buffer = readline(fp);
+        if(!buffer)
+            break;
+
 #endif
 
 #ifdef TRACE
@@ -239,7 +355,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
         /* now handle .title statement */
         if (ciprefix(".title", buffer)) {
-            s = skip_non_ws(buffer);               /* skip over .title */
+            char *s;
+            s = skip_non_ws(buffer);   /* skip over .title */
             s = skip_ws(s);            /* advance past space chars */
 
             /* only the last title line remains valid */
@@ -256,9 +373,10 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
             char *y = NULL;     /* filename */
             char *z = NULL;     /* libname */
+            char *s, *t;
 
             inp_stripcomments_line(buffer);
-            s = skip_non_ws(buffer);               /* skip over .lib           */
+            s = skip_non_ws(buffer);   /* skip over .lib */
 
             s = strdup(s);
 
@@ -266,7 +384,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
             if (!y) {
                 fprintf(cp_err, "Error: .lib filename missing\n");
-                tfree(buffer);  /* was allocated by readline()           */
+                tfree(buffer);         /* was allocated by readline() */
                 controlled_exit(EXIT_FAILURE);
             }
 
@@ -277,6 +395,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                       inp_compat_mode == COMPATMODE_NATIVE)) { /* .lib <file name> <lib name> */
 
                 char *copyy = NULL;
+                int i;
 
                 if (*y == '~') {
                     copyy = cp_tildexpand(y); /* allocates memory, but can also return NULL */
@@ -347,6 +466,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
             char *copyy = NULL;
             char *y = NULL;
+            char *s, *t;
 
             inp_stripcomments_line(buffer);
 
@@ -445,6 +565,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
          premature end.  If premature end is reached, spew
          error and zap the line. */
         if (!ciprefix("write", buffer)) {    // exclude 'write' command so filename case preserved
+            char *s;
             for (s = buffer; *s && (*s != '\n'); s++)
                 *s = (char) tolower(*s);
             if (!*s) {
@@ -498,6 +619,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
     }
 
     if (call_depth == 0 && found_end == TRUE) {
+        struct line *prev;
         if (global == NULL) {
             global = TMALLOC(char, strlen(".global gnd") + 1);
             sprintf(global, ".global gnd");
@@ -519,94 +641,25 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
     /*
        add libraries
     */
-    found_lib_name = FALSE;
+
     if (call_depth == 0) {
-        for (i = 0; i < num_libraries; i++) {
-            working = libraries[i];
-            while (working) {
-                buffer = working->li_line;
+        line_number = expand_libs(line_number);
+    }
 
-                if (found_lib_name && ciprefix(".endl", buffer)) {
-                    /* Make the .endl a comment */
-                    *buffer = '*';
-                    found_lib_name = FALSE;
+    /*
+      add a terminal ".end" card
+    */
 
-                    /* set pointer and continue to avoid deleting below */
-                    tmp_ptr2         = working->li_next;
-                    working->li_next = tmp_ptr;
-                    working          = tmp_ptr2;
-
-                    /* end          = working;
-                     * working      = working->li_next;
-                     * end->li_next = NULL; */
-
-                    continue;
-                }   /* for ... */
-
-                if (ciprefix(".lib", buffer)) {
-
-                    char keep_char;
-
-                    if (found_lib_name == TRUE) {
-                        fprintf(stderr, "ERROR: .lib is missing .endl!\n");
-                        controlled_exit(EXIT_FAILURE);
-                    }
-
-                    s = skip_non_ws(buffer);       /* skip over .lib                        */
-                    while (isspace(*s) || isquote(*s))
-                        s++;    /* advance past space chars              */
-                    for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
-                        ;       /* skip to end of word                   */
-                    keep_char = *t;
-                    *t = '\0';
-                    /* see if library we want to copy */
-                    found_lib_name = FALSE;
-                    for (j = 0; j < num_lib_names[i]; j++) {
-                        if (strcmp(library_name[i][j], s) == 0) {
-                            found_lib_name = TRUE;
-                            start_lib      = working;
-
-                            /* make the .lib a comment */
-                            *buffer = '*';
-
-                            tmp_ptr = library_ll_ptr[i][j]->li_next;
-                            library_ll_ptr[i][j]->li_next = working;
-
-                            /* renumber lines */
-                            line_number_lib = 1;
-                            for (start_lib = working; !ciprefix(".endl", start_lib->li_line); start_lib = start_lib->li_next) {
-                                start_lib->li_linenum = line_number++;
-                                start_lib->li_linenum_orig = line_number_lib++;
-                            }
-                            start_lib->li_linenum = line_number++;  // renumber endl line
-                            start_lib->li_linenum_orig = line_number_lib++;
-                            break;
-                        }
-                    }
-                    *t = keep_char;
-                }
-                prev = working;
-                working = working->li_next;
-
-                if (found_lib_name == FALSE) {
-                    tfree(prev->li_line);
-                    tfree(prev);
-                }
-            } /* end while */
-        } /* end for */
-
+    if (call_depth == 0) {
         if (found_end == TRUE) {
             end->li_next = alloc(struct line);    /* create next card */
             end = end->li_next;                   /* point to next card */
-
-            buffer = TMALLOC(char, strlen(".end") + 1);
-            sprintf(buffer, ".end");
 
             /* now put buffer into li */
             end->li_next = NULL;
             end->li_error = NULL;
             end->li_actual = NULL;
-            end->li_line = buffer;
+            end->li_line = copy(".end");
             end->li_linenum = end->li_linenum_orig = line_number++;
             end->li_linenum_orig = line_number_orig++;
         }
@@ -631,6 +684,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
     prev = NULL;
     while (working) {
+        char *s;
+
         for (s = working->li_line; (c = *s) != '\0' && c <= ' '; s++)
             ;
 
@@ -2264,22 +2319,21 @@ inp_remove_excess_ws(struct line *deck)
 static void
 inp_determine_libraries(struct line *deck, char *lib_name)
 {
-    struct line *c = deck;
-    char *line, *s, *t, *y, *z, keep_char1, keep_char2;
-    int i, j;
-    bool found_lib_name = FALSE;
-    bool read_line = FALSE;
+    bool read_line = (lib_name == NULL);
 
-    if (lib_name == NULL)
-        read_line = TRUE;
+    struct line *c;
 
-    while (c != NULL) {
-        line = c->li_line;
+    for (c = deck; c; c = c->li_next) {
+
+        char *line = c->li_line;
 
         if (ciprefix(".endl", line) && lib_name != NULL)
             read_line = FALSE;
 
         if (ciprefix("*lib", line) || ciprefix(".lib", line)) {
+
+            char *s, *t, *y;
+
             s = skip_non_ws(line);
             while (isspace(*s) || isquote(*s))
                 s++;
@@ -2291,17 +2345,19 @@ inp_determine_libraries(struct line *deck, char *lib_name)
 
             /* .lib <lib name> */
             if (!*y) {
-                keep_char1 = *t;
+                char keep_char = *t;
                 *t = '\0';
 
                 if (lib_name != NULL && strcmp(lib_name, s) == 0)
                     read_line = TRUE;
-                *t = keep_char1;
+                *t = keep_char;
             }
             /* .lib <file name> <lib name> */
             else if (read_line == TRUE) {
 
-                char *copys = NULL;
+                char keep_char1, keep_char2;
+                char *z, *copys = NULL;
+                int i;
 
                 for (z = y; *z && !isspace(*z) && !isquote(*z); z++)
                     ;
@@ -2317,14 +2373,8 @@ inp_determine_libraries(struct line *deck, char *lib_name)
                 }
                 for (i = 0; i < num_libraries; i++)
                     if (cieq(library_file[i], s)) {
-                        found_lib_name = FALSE;
-                        for (j = 0; j < num_lib_names[i] && found_lib_name == FALSE; j++)
-                            if (strcmp(library_name[i][j], y) == 0)
-                                found_lib_name = TRUE;
-
-                        if (found_lib_name == FALSE) {
-                            library_ll_ptr[i][num_lib_names[i]] = c;
-                            library_name[i][num_lib_names[i]++] = strdup(y);
+                        if (find_lib_name(i, y) < 0) {
+                            new_lib_name(i, y, c);
                             /* see if other libraries referenced */
                             inp_determine_libraries(libraries[i], y);
                         }
@@ -2335,7 +2385,7 @@ inp_determine_libraries(struct line *deck, char *lib_name)
                 /* FIXME, copys not freed ?! */
             }
         }
-        c = c->li_next;
+
     }
 }
 
