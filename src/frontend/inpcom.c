@@ -107,7 +107,7 @@ find_lib_name(int i, char *s) {
     int j;
     for (j = 0; j < num_lib_names[i]; j++)
         if (strcmp(library_name[i][j], s) == 0)
-            break;
+            return j;
     return -1;
 }
 
