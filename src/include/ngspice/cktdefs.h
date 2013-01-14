@@ -110,6 +110,7 @@ struct CKTcircuit {
     double *CKTrhs;             /* current rhs value - being loaded */
     double *CKTrhsOld;          /* previous rhs value for convergence
                                    testing */
+    double *CKTfvk ;            /* KCL Verification array */
     double *CKTrhsSpare;        /* spare rhs value for reordering */
     double *CKTirhs;            /* current rhs value - being loaded
                                    (imag) */
@@ -428,6 +429,10 @@ extern void NInzIter(CKTcircuit *, int, int);
 #ifdef PREDICTOR
 extern int NIpred(CKTcircuit *ckt);
 #endif
+
+/* KCL Verification */
+extern int NIkclVerification (CKTcircuit *) ;
+/********************/
 
 extern IFfrontEnd *SPfrontEnd;
 
