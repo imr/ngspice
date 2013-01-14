@@ -121,6 +121,9 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
             *(here->INDibrPosptr) +=  1;
             *(here->INDibrNegptr) -=  1;
             *(here->INDibrIbrptr) -=  req;
+
+            *(ckt->CKTfvk+here->INDposNode) += *(ckt->CKTrhsOld+here->INDbrEq) ;
+            *(ckt->CKTfvk+here->INDnegNode) -= *(ckt->CKTrhsOld+here->INDbrEq) ;
         }
     }
     return(OK);
