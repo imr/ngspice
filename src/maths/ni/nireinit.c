@@ -29,6 +29,7 @@ NIreinit( CKTcircuit *ckt)
     size = SMPmatSize(ckt->CKTmatrix);
     CKALLOC(CKTrhs,size+1,double);
     CKALLOC(CKTrhsOld,size+1,double);
+    CKALLOC(CKTfvk,size+1,double);
     CKALLOC(CKTrhsSpare,size+1,double);
     CKALLOC(CKTirhs,size+1,double);
     CKALLOC(CKTirhsOld,size+1,double);

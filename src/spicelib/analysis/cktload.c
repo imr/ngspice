@@ -52,6 +52,7 @@ CKTload(CKTcircuit *ckt)
     size = SMPmatSize(ckt->CKTmatrix);
     for (i = 0; i <= size; i++) {
         ckt->CKTrhs[i] = 0;
+        ckt->CKTfvk[i] = 0;
     }
     SMPclear(ckt->CKTmatrix);
 #ifdef STEPDEBUG
