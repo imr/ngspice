@@ -386,6 +386,9 @@ loadDone:
             *(ckt->CKTrhs + (here->ISRCposNode)) += m * value;
             *(ckt->CKTrhs + (here->ISRCnegNode)) -= m * value;
 
+            *(ckt->CKTfvk + (here->ISRCposNode)) -= value;
+            *(ckt->CKTfvk + (here->ISRCnegNode)) += value;
+
 /* gtri - end - wbk - modify to process srcFact, etc. for all sources */
 
 #ifdef XSPICE
