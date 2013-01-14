@@ -37,6 +37,9 @@ CCVSload(GENmodel *inModel, CKTcircuit *ckt)
             *(here->CCVSibrPosptr) += 1.0 ;
             *(here->CCVSibrNegptr) -= 1.0 ;
             *(here->CCVSibrContBrptr) -= here->CCVScoeff ;
+
+            *(ckt->CKTfvk+here->CCVSposNode) += *(ckt->CKTrhsOld+here->CCVSbranch) ;
+            *(ckt->CKTfvk+here->CCVSnegNode) -= *(ckt->CKTrhsOld+here->CCVSbranch) ;
         }
     }
     return(OK);
