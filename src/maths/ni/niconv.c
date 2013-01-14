@@ -25,8 +25,22 @@ NIconvTest(CKTcircuit *ckt)
     double new;
     double tol;
 
+    /* KCL_verification */
+    double maximum = 0 ;
+
     node = ckt->CKTnodes;
     size = SMPmatSize(ckt->CKTmatrix);
+
+    for (i = 1 ; i <= size ; i++)
+    {
+        if (node->type == SP_CURRENT)
+        {
+            if (maximum < fabs (ckt->CKTrhsOld [i]))
+                maximum = fabs (ckt->CKTrhsOld [i]) ;
+        }
+        node = node->next ;
+    }
+
 #ifdef STEPDEBUG
     for (i=1;i<=size;i++) {
         new =  ckt->CKTrhs [i] ;
@@ -34,6 +48,8 @@ NIconvTest(CKTcircuit *ckt)
 	printf("chk for convergence:   %s    new: %g    old: %g\n",CKTnodName(ckt,i),new,old);
     }
 #endif /* STEPDEBUG */
+
+    node = ckt->CKTnodes ;
     for (i=1;i<=size;i++) {
         node = node->next;
         new =  ckt->CKTrhs [i] ;
@@ -50,6 +66,12 @@ NIconvTest(CKTcircuit *ckt)
 		ckt->CKTtroubleElt = NULL;
                 return(1);
             }
+
+            /* KCL Verification */
+//                printf ("Valore: %-.9g\tSoglia: %-.9g\n", fabs (ckt->CKTfvk [i] + ckt->CKTdiagGmin * ckt->CKTrhsOld [i]), (ckt->CKTreltol * maximum + ckt->CKTabstol)) ;
+//            if (fabs (ckt->CKTfvk [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
+            if (fabs (ckt->CKTfvk [i] + ckt->CKTdiagGmin * ckt->CKTrhsOld [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
+                return 1 ;
         }
     }
 
@@ -61,43 +83,4 @@ NIconvTest(CKTcircuit *ckt)
 #else /* NEWCONV */
     return(0);
 #endif /* NEWCONV */
-}
-
-
-/**
- * Routine to Verify the KCL
- */
-
-int NIkclVerification (CKTcircuit *ckt)
-{
-    int i, size ;
-    double maximum = 0 ;
-    CKTnode *node ;
-
-    size = SMPmatSize (ckt->CKTmatrix) ;
-
-    node = ckt->CKTnodes ;
-    for (i = 1 ; i <= size ; i++)
-    {
-        if (node->type == SP_CURRENT)
-        {
-            if (maximum < fabs (ckt->CKTrhsOld [i]))
-                maximum = fabs (ckt->CKTrhsOld [i]) ;
-        }
-        node = node->next ;
-    }
-
-    node = ckt->CKTnodes ;
-    for (i = 1 ; i <= size ; i++)
-    {
-        if (node->type == SP_VOLTAGE)
-        {
-            if ((ckt->CKTfvk [i] + ckt->CKTdiagGmin * ckt->CKTrhsOld [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
-//            if ((ckt->CKTfvk [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
-                return 1 ;
-        }
-        node = node->next ;
-    }
-
-    return 0 ;
 }

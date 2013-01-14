@@ -430,10 +430,6 @@ extern void NInzIter(CKTcircuit *, int, int);
 extern int NIpred(CKTcircuit *ckt);
 #endif
 
-/* KCL Verification */
-extern int NIkclVerification (CKTcircuit *) ;
-/********************/
-
 extern IFfrontEnd *SPfrontEnd;
 
 #endif
