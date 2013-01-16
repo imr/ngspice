@@ -33,13 +33,13 @@ MOS1load(GENmodel *inModel, CKTcircuit *ckt)
     double cbhat;
     double cdhat;
     double cdrain;
-    double cdreq;
+    double cdreq, cdreq_fvk ;
     double ceq;
-    double ceqbd;
-    double ceqbs;
-    double ceqgb;
-    double ceqgd;
-    double ceqgs;
+    double ceqbd, ceqbd_fvk ;
+    double ceqbs, ceqbs_fvk ;
+    double ceqgb, ceqgb_fvk ;
+    double ceqgd, ceqgd_fvk ;
+    double ceqgs, ceqgs_fvk ;
     double delvbd;
     double delvbs;
     double delvds;
@@ -847,10 +847,13 @@ next1:      if(vbs <= -3*vt) {
                  */
                 gcgs=0;
                 ceqgs=0;
+                ceqgs_fvk = 0 ;
                 gcgd=0;
                 ceqgd=0;
+                ceqgd_fvk = 0 ;
                 gcgb=0;
                 ceqgb=0;
+                ceqgb_fvk = 0 ;
             } else {
                 if(capgs == 0) *(ckt->CKTstate0 + here->MOS1cqgs) =0;
                 if(capgd == 0) *(ckt->CKTstate0 + here->MOS1cqgd) =0;
@@ -867,10 +870,13 @@ next1:      if(vbs <= -3*vt) {
                 if(error) return(error);
                 ceqgs=ceqgs-gcgs*vgs+ckt->CKTag[0]* 
 		    *(ckt->CKTstate0 + here->MOS1qgs);
+                ceqgs_fvk = *(ckt->CKTstate0 + here->MOS1cqgs) ;
                 ceqgd=ceqgd-gcgd*vgd+ckt->CKTag[0]*
 		    *(ckt->CKTstate0 + here->MOS1qgd);
+                ceqgd_fvk = *(ckt->CKTstate0 + here->MOS1cqgd) ;
                 ceqgb=ceqgb-gcgb*vgb+ckt->CKTag[0]*
 		    *(ckt->CKTstate0 + here->MOS1qgb);
+                ceqgb_fvk = *(ckt->CKTstate0 + here->MOS1cqgb) ;
             }
             /*
              *     store charge storage info for meyer's cap in lx table
@@ -881,18 +887,22 @@ next1:      if(vbs <= -3*vt) {
              */
             ceqbs = model->MOS1type * 
 		(here->MOS1cbs-(here->MOS1gbs)*vbs);
+            ceqbs_fvk = model->MOS1type * here->MOS1cbs ;
             ceqbd = model->MOS1type * 
 		(here->MOS1cbd-(here->MOS1gbd)*vbd);
+            ceqbd_fvk = model->MOS1type * here->MOS1cbd ;
             if (here->MOS1mode >= 0) {
                 xnrm=1;
                 xrev=0;
                 cdreq=model->MOS1type*(cdrain-here->MOS1gds*vds-
 				       here->MOS1gm*vgs-here->MOS1gmbs*vbs);
+                cdreq_fvk = model->MOS1type * cdrain ;
             } else {
                 xnrm=0;
                 xrev=1;
                 cdreq = -(model->MOS1type)*(cdrain-here->MOS1gds*(-vds)-
 					    here->MOS1gm*vgd-here->MOS1gmbs*vbd);
+                cdreq_fvk = - model->MOS1type * cdrain ;
             }
             *(ckt->CKTrhs + here->MOS1gNode) -= 
                 (model->MOS1type * (ceqgs + ceqgb + ceqgd));
@@ -934,6 +944,24 @@ next1:      if(vbs <= -3*vt) {
             *(here->MOS1SPbPtr) += (-here->MOS1gbs-(xnrm-xrev)*here->MOS1gmbs);
             *(here->MOS1SPdpPtr) += (-here->MOS1gds-xrev*
 				     (here->MOS1gm+here->MOS1gmbs));
+
+
+            /* KCL verification - Linear-Dynamic Part */
+            *(ckt->CKTfvk+here->MOS1gNode) += model->MOS1type * (ceqgs_fvk + ceqgb_fvk + ceqgd_fvk) ;
+            *(ckt->CKTfvk+here->MOS1bNode) += ceqbs_fvk + ceqbd_fvk - model->MOS1type * ceqgb_fvk ;
+            *(ckt->CKTfvk+here->MOS1dNodePrime) -= (ceqbd_fvk - cdreq_fvk + model->MOS1type * ceqgd_fvk) ;
+            *(ckt->CKTfvk+here->MOS1sNodePrime) -= (cdreq_fvk + ceqbs_fvk + model->MOS1type * ceqgs_fvk) ;
+
+
+            /* KCL verification - Linear-Static Part */
+            *(ckt->CKTfvk+here->MOS1dNode) += here->MOS1drainConductance * *(ckt->CKTrhsOld+here->MOS1dNode) ;
+            *(ckt->CKTfvk+here->MOS1sNode) += here->MOS1sourceConductance * *(ckt->CKTrhsOld+here->MOS1sNode) ;
+            *(ckt->CKTfvk+here->MOS1dNodePrime) += here->MOS1drainConductance * *(ckt->CKTrhsOld+here->MOS1dNodePrime) ;
+            *(ckt->CKTfvk+here->MOS1sNodePrime) += here->MOS1sourceConductance * *(ckt->CKTrhsOld+here->MOS1sNodePrime) ;
+            *(ckt->CKTfvk+here->MOS1dNode) -= here->MOS1drainConductance * *(ckt->CKTrhsOld+here->MOS1dNodePrime) ;
+            *(ckt->CKTfvk+here->MOS1sNode) -= here->MOS1sourceConductance * *(ckt->CKTrhsOld+here->MOS1sNodePrime) ;
+            *(ckt->CKTfvk+here->MOS1dNodePrime) -= here->MOS1drainConductance * *(ckt->CKTrhsOld+here->MOS1dNode) ;
+            *(ckt->CKTfvk+here->MOS1sNodePrime) -= here->MOS1sourceConductance * *(ckt->CKTrhsOld+here->MOS1sNode) ;
         }
     }
     return(OK);
