@@ -217,6 +217,7 @@ if [ "$ADMS" -gt 0 ]; then
     autoconf temp-adms.ac > configure \
         || error_and_exit "autoconf failed, with adms"
     rm -f temp-adms.ac
+    chmod +x configure
 else
     autoconf \
         || error_and_exit "autoconf failed"
