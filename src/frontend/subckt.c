@@ -1465,21 +1465,22 @@ gettrans(const char *name, const char *name_end)
     return (NULL);
 }
 
-
 /*
   check if current token matches model bin name -- <token>.[0-9]+
 */
 static bool
 model_bin_match(char *token, char *model_name)
 {
-    char *dot_char;
+    /* find last dot in model_name */
+	char *dot_char  = strrchr(model_name, '.');
     bool  flag = FALSE;
-    /* continue evaluation if toeken is part of model_name */
-    if (strncmp(model_name, token, strlen(token)) == 0) {
-        /* find last dot in model_name */
-        if ((dot_char = strrchr(model_name, '.')) != NULL) {
+    /* check if token is the part before last dot in model_name */
+	if(dot_char) {
+		char *mtoken = copy_substring(model_name, dot_char);
+		if (cieq(mtoken, token)) {
             flag = TRUE;
             dot_char++;
+			/* check if model_name has binning info (trailing digit(s)) */
             while (*dot_char != '\0') {
                 if (!isdigit(*dot_char)) {
                     flag = FALSE;
@@ -1488,6 +1489,7 @@ model_bin_match(char *token, char *model_name)
                 dot_char++;
             }
         }
+		tfree(mtoken);
     }
     return flag;
 }
