@@ -33,13 +33,13 @@ MOS6load(GENmodel *inModel, CKTcircuit *ckt)
     double cbhat;
     double cdhat;
     double cdrain;
-    double cdreq;
+    double cdreq, cdreq_fvk ;
     double ceq;
-    double ceqbd;
-    double ceqbs;
-    double ceqgb;
-    double ceqgd;
-    double ceqgs;
+    double ceqbd, ceqbd_fvk ;
+    double ceqbs, ceqbs_fvk ;
+    double ceqgb, ceqgb_fvk ;
+    double ceqgd, ceqgd_fvk ;
+    double ceqgs, ceqgs_fvk ;
     double delvbd;
     double delvbs;
     double delvds;
@@ -860,10 +860,13 @@ bypass:
                  */
                 gcgs=0;
                 ceqgs=0;
+                ceqgs_fvk = 0 ;
                 gcgd=0;
                 ceqgd=0;
+                ceqgd_fvk = 0 ;
                 gcgb=0;
                 ceqgb=0;
+                ceqgb_fvk = 0 ;
             } else {
                 if(capgs == 0) *(ckt->CKTstate0 + here->MOS6cqgs) =0;
                 if(capgd == 0) *(ckt->CKTstate0 + here->MOS6cqgd) =0;
@@ -880,10 +883,13 @@ bypass:
                 if(error) return(error);
                 ceqgs=ceqgs-gcgs*vgs+ckt->CKTag[0]* 
                         *(ckt->CKTstate0 + here->MOS6qgs);
+                ceqgs_fvk = *(ckt->CKTstate0 + here->MOS6cqgs) ;
                 ceqgd=ceqgd-gcgd*vgd+ckt->CKTag[0]*
                         *(ckt->CKTstate0 + here->MOS6qgd);
+                ceqgd_fvk = *(ckt->CKTstate0 + here->MOS6cqgd) ;
                 ceqgb=ceqgb-gcgb*vgb+ckt->CKTag[0]*
                         *(ckt->CKTstate0 + here->MOS6qgb);
+                ceqgb_fvk = *(ckt->CKTstate0 + here->MOS6cqgb) ;
             }
             /*
              *     store charge storage info for meyer's cap in lx table
@@ -897,18 +903,22 @@ bypass:
 
             ceqbs = model->MOS6type * 
                     (here->MOS6cbs-(here->MOS6gbs)*vbs);
+            ceqbs_fvk = model->MOS6type * here->MOS6cbs ;
             ceqbd = model->MOS6type * 
                     (here->MOS6cbd-(here->MOS6gbd)*vbd);
+            ceqbd_fvk = model->MOS6type * here->MOS6cbd ;
             if (here->MOS6mode >= 0) {
                 xnrm=1;
                 xrev=0;
                 cdreq=model->MOS6type*(cdrain-here->MOS6gds*vds-
                         here->MOS6gm*vgs-here->MOS6gmbs*vbs);
+                cdreq_fvk = model->MOS6type * cdrain ;
             } else {
                 xnrm=0;
                 xrev=1;
                 cdreq = -(model->MOS6type)*(cdrain-here->MOS6gds*(-vds)-
                         here->MOS6gm*vgd-here->MOS6gmbs*vbd);
+                cdreq_fvk = - (model->MOS6type * cdrain) ;
             }
             *(ckt->CKTrhs + here->MOS6gNode) -= 
                 m * (model->MOS6type * (ceqgs + ceqgb + ceqgd));
@@ -950,6 +960,24 @@ bypass:
             *(here->MOS6SPbPtr) += m * (-here->MOS6gbs-(xnrm-xrev)*here->MOS6gmbs);
             *(here->MOS6SPdpPtr) += m * (-here->MOS6gds-xrev*
                     (here->MOS6gm+here->MOS6gmbs));
+
+
+            /* KCL verification - Dynamic Part */
+            *(ckt->CKTfvk+here->MOS6gNode) += model->MOS6type * (ceqgs_fvk + ceqgb_fvk + ceqgd_fvk) ;
+            *(ckt->CKTfvk+here->MOS6bNode) += ceqbs_fvk + ceqbd_fvk - model->MOS6type * ceqgb_fvk ;
+            *(ckt->CKTfvk+here->MOS6dNodePrime) -= (ceqbd_fvk - cdreq_fvk + model->MOS6type * ceqgd_fvk) ;
+            *(ckt->CKTfvk+here->MOS6sNodePrime) -= (cdreq_fvk + ceqbs_fvk + model->MOS6type * ceqgs_fvk) ;
+
+
+            /* KCL verification - Linear and Static Part */
+            *(ckt->CKTfvk+here->MOS6dNode) += here->MOS6drainConductance * *(ckt->CKTrhsOld+here->MOS6dNode) ;
+            *(ckt->CKTfvk+here->MOS6sNode) += here->MOS6sourceConductance * *(ckt->CKTrhsOld+here->MOS6sNode) ;
+            *(ckt->CKTfvk+here->MOS6dNodePrime) += here->MOS6drainConductance * *(ckt->CKTrhsOld+here->MOS6dNodePrime) ;
+            *(ckt->CKTfvk+here->MOS6sNodePrime) += here->MOS6sourceConductance * *(ckt->CKTrhsOld+here->MOS6sNodePrime) ;
+            *(ckt->CKTfvk+here->MOS6dNode) -= here->MOS6drainConductance * *(ckt->CKTrhsOld+here->MOS6dNodePrime) ;
+            *(ckt->CKTfvk+here->MOS6sNode) -= here->MOS6sourceConductance * *(ckt->CKTrhsOld+here->MOS6sNodePrime) ;
+            *(ckt->CKTfvk+here->MOS6dNodePrime) -= here->MOS6drainConductance * *(ckt->CKTrhsOld+here->MOS6dNode) ;
+            *(ckt->CKTfvk+here->MOS6sNodePrime) -= here->MOS6sourceConductance * *(ckt->CKTrhsOld+here->MOS6sNode) ;
         }
     }
     return(OK);
