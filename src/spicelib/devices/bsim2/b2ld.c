@@ -40,13 +40,13 @@ B2load(GENmodel *inModel, CKTcircuit *ckt)
     double cd;
     double cdrain;
     double cdhat;
-    double cdreq;
+    double cdreq, cdreq_fvk ;
     double ceq;
-    double ceqbd;
-    double ceqbs;
-    double ceqqb;
-    double ceqqd;
-    double ceqqg;
+    double ceqbd, ceqbd_fvk ;
+    double ceqbs, ceqbs_fvk ;
+    double ceqqb, ceqqb_fvk ;
+    double ceqqd, ceqqd_fvk ;
+    double ceqqg, ceqqg_fvk ;
     double czbd;
     double czbdsw;
     double czbs;
@@ -628,7 +628,7 @@ line755:
 
 line850:
             /* initialize to zero charge conductance and current */
-            ceqqg = ceqqb = ceqqd = 0.0;
+            ceqqg = ceqqg_fvk = ceqqb = ceqqb_fvk = ceqqd = ceqqd_fvk = 0.0;
             gcdgb = gcddb = gcdsb = 0.0;
             gcsgb = gcsdb = gcssb = 0.0;
             gcggb = gcgdb = gcgsb = 0.0;
@@ -641,8 +641,11 @@ line860:
             cqbulk = *(ckt->CKTstate0 + here->B2iqb);
             cqdrn = *(ckt->CKTstate0 + here->B2iqd);
             ceqqg = cqgate - gcggb * vgb + gcgdb * vbd + gcgsb * vbs;
+            ceqqg_fvk = cqgate ;
             ceqqb = cqbulk - gcbgb * vgb + gcbdb * vbd + gcbsb * vbs;
+            ceqqb_fvk = cqbulk ;
             ceqqd = cqdrn - gcdgb * vgb + gcddb * vbd + gcdsb * vbs;
+            ceqqd_fvk = cqdrn ;
 
             if(ckt->CKTmode & MODEINITTRAN ) {  
                 *(ckt->CKTstate1 + here->B2iqb) =  
@@ -661,19 +664,25 @@ line900:
             m = here->B2m;
    
             ceqbs = model->B2type * (cbs-(gbs-ckt->CKTgmin)*vbs);
+            ceqbs_fvk = model->B2type * (cbs + ckt->CKTgmin * vbs) ;
             ceqbd = model->B2type * (cbd-(gbd-ckt->CKTgmin)*vbd);
-     
+            ceqbd_fvk = model->B2type * (cbd + ckt->CKTgmin * vbd) ;
             ceqqg = model->B2type * ceqqg;
+            ceqqg_fvk = model->B2type * ceqqg_fvk ;
             ceqqb = model->B2type * ceqqb;
+            ceqqb_fvk = model->B2type * ceqqb_fvk ;
             ceqqd =  model->B2type * ceqqd;
+            ceqqd_fvk = model->B2type * ceqqd_fvk ;
             if (here->B2mode >= 0) {
                 xnrm=1;
                 xrev=0;
                 cdreq=model->B2type*(cdrain-gds*vds-gm*vgs-gmbs*vbs);
+                cdreq_fvk = model->B2type * cdrain ;
             } else {
                 xnrm=0;
                 xrev=1;
                 cdreq = -(model->B2type)*(cdrain+gds*vds-gm*vgd-gmbs*vbd);
+                cdreq_fvk = - (model->B2type * cdrain) ;
             }
 
             *(ckt->CKTrhs + here->B2gNode) -= m * (ceqqg);
@@ -712,6 +721,23 @@ line900:
             *(here->B2SPbPtr) += m * (-gbs-(xnrm-xrev)*gmbs-gcsgb-gcsdb-gcssb);
             *(here->B2SPdpPtr) += m * (-gds-xrev*(gm+gmbs)+gcsdb);
 
+
+            /* KCL verification - Dynamic Part */
+            *(ckt->CKTfvk + here->B2gNode) += m * ceqqg_fvk ;
+            *(ckt->CKTfvk + here->B2bNode) += m * (ceqbs_fvk + ceqbd_fvk + ceqqb_fvk) ;
+            *(ckt->CKTfvk + here->B2dNodePrime) -= m * (ceqbd_fvk - cdreq_fvk - ceqqd_fvk) ;
+            *(ckt->CKTfvk + here->B2sNodePrime) -= m * (cdreq_fvk + ceqbs_fvk + ceqqg_fvk + ceqqb_fvk + ceqqd_fvk) ;
+
+
+            /* KCL verification - Linear and Static Part */
+            *(ckt->CKTfvk + here->B2dNode) += m * (here->B2drainConductance) * *(ckt->CKTrhsOld + here->B2dNode) ;
+            *(ckt->CKTfvk + here->B2sNode) += m * (here->B2sourceConductance) * *(ckt->CKTrhsOld + here->B2sNode) ;
+            *(ckt->CKTfvk + here->B2dNodePrime) += m * (here->B2drainConductance) * *(ckt->CKTrhsOld + here->B2dNodePrime) ;
+            *(ckt->CKTfvk + here->B2sNodePrime) += m * (here->B2sourceConductance) * *(ckt->CKTrhsOld + here->B2sNodePrime) ;
+            *(ckt->CKTfvk + here->B2dNode) += m * (-here->B2drainConductance) * *(ckt->CKTrhsOld + here->B2dNodePrime) ;
+            *(ckt->CKTfvk + here->B2sNode) += m * (-here->B2sourceConductance) * *(ckt->CKTrhsOld + here->B2sNodePrime) ;
+            *(ckt->CKTfvk + here->B2dNodePrime) += m * (-here->B2drainConductance) * *(ckt->CKTrhsOld + here->B2dNode) ;
+            *(ckt->CKTfvk + here->B2sNodePrime) += m * (-here->B2sourceConductance) * *(ckt->CKTrhsOld + here->B2sNode) ;
 
 line1000:  ;
 
