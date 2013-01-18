@@ -71,7 +71,8 @@ BSIM3instance *here;
 #endif
 double SourceSatCurrent, DrainSatCurrent;
 double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst;
-double cdrain, cdhat, cdreq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg, ceq, geq;
+double cdrain, cdhat, cdreq, cdreq_fvk, ceqbd, ceqbd_fvk, ceqbs, ceqbs_fvk, ceqqb, ceqqd, ceqqg, ceq, geq;
+double ceqqb_fvk, ceqqb_SnodePrime_fvk, ceqqd_fvk, ceqqd_SnodePrime_fvk, ceqqg_fvk, ceqqg_SnodePrime_fvk ;
 double czbd, czbdsw, czbdswg, czbs, czbssw, czbsswg, evbd, evbs, arg, sarg;
 double delvbd, delvbs, delvds, delvgd, delvgs;
 double Vfbeff, dVfbeff_dVg, dVfbeff_dVb, V3, V4;
@@ -153,7 +154,7 @@ double Leff, Weff, dWeff_dVg, dWeff_dVb;
 double AbulkCV, dAbulkCV_dVb;
 double qgdo, qgso, cgdo, cgso;
 
-double qcheq=0.0, qdef, gqdef=0.0, cqdef, cqcheq, gtau_diff, gtau_drift;
+double qcheq=0.0, qdef, gqdef=0.0, cqdef, cqdef_fvk, cqcheq, cqcheq_fvk, gtau_diff, gtau_drift;
 double gcqdb=0.0,gcqsb=0.0,gcqgb=0.0,gcqbb=0.0;
 double dxpart, sxpart, ggtg, ggtd, ggts, ggtb;
 double ddxpart_dVd, ddxpart_dVg, ddxpart_dVb, ddxpart_dVs;
@@ -2793,7 +2794,8 @@ line755:
               }
           }
 
-          cqdef = cqcheq = 0.0;
+	  cqdef = cqdef_fvk = cqcheq = cqcheq_fvk = 0.0;
+
           if (ByPass) goto line860;
 
           *(ckt->CKTstate0 + here->BSIM3qg) = qgate;
@@ -2852,8 +2854,8 @@ line755:
 
 line850:
           /* initialize to zero charge conductance and current */
-          ceqqg = ceqqb = ceqqd = 0.0;
-          cqcheq = cqdef = 0.0;
+          ceqqg = ceqqg_fvk = ceqqg_SnodePrime_fvk = ceqqb = ceqqb_fvk = ceqqb_SnodePrime_fvk = ceqqd = ceqqd_fvk = ceqqd_SnodePrime_fvk = 0.0;
+          cqcheq = cqcheq_fvk = cqdef = cqdef_fvk = 0.0;
 
           gcdgb = gcddb = gcdsb = 0.0;
           gcsgb = gcsdb = gcssb = 0.0;
@@ -2883,8 +2885,14 @@ line860:
           cqdrn = *(ckt->CKTstate0 + here->BSIM3cqd);
 
           ceqqg = cqgate - gcggb * vgb + gcgdb * vbd + gcgsb * vbs;
+          ceqqg_fvk = cqgate ;
+          ceqqg_SnodePrime_fvk = ceqqg ;
           ceqqb = cqbulk - gcbgb * vgb + gcbdb * vbd + gcbsb * vbs;
+          ceqqb_fvk = cqbulk ;
+          ceqqb_SnodePrime_fvk = ceqqb ;
           ceqqd = cqdrn - gcdgb * vgb + gcddb * vbd + gcdsb * vbs;
+          ceqqd_fvk = cqdrn ;
+          ceqqd_SnodePrime_fvk = ceqqd ;
 
           if (here->BSIM3nqsMod)
           {   T0 = ggtg * vgb - ggtd * vbd - ggts * vbs;
@@ -2893,8 +2901,10 @@ line860:
               ceqqd -= dxpart * T0 + T1 * (ddxpart_dVg * vgb - ddxpart_dVd
                     * vbd - ddxpart_dVs * vbs);
               cqdef = *(ckt->CKTstate0 + here->BSIM3cqcdump) - gqdef * qdef;
+              cqdef_fvk = *(ckt->CKTstate0 + here->BSIM3cqcdump) ;
               cqcheq = *(ckt->CKTstate0 + here->BSIM3cqcheq)
                      - (gcqgb * vgb - gcqdb * vbd  - gcqsb * vbs) + T0;
+              cqcheq_fvk = *(ckt->CKTstate0 + here->BSIM3cqcheq) ;
           }
 
           if (ckt->CKTmode & MODEINITTRAN)
@@ -2924,12 +2934,13 @@ line900:
               FwdSum = Gm + Gmbs;
               RevSum = 0.0;
               cdreq = model->BSIM3type * (cdrain - here->BSIM3gds * vds
-                    - Gm * vgs - Gmbs * vbs);
-
-              ceqbd = -model->BSIM3type * (here->BSIM3csub
-                    - here->BSIM3gbds * vds - here->BSIM3gbgs * vgs
-                    - here->BSIM3gbbs * vbs);
-              ceqbs = 0.0;
+		    - Gm * vgs - Gmbs * vbs);
+              cdreq_fvk = model->BSIM3type * cdrain ;
+              ceqbd = -model->BSIM3type * (here->BSIM3csub 
+		    - here->BSIM3gbds * vds - here->BSIM3gbgs * vgs
+		    - here->BSIM3gbbs * vbs);
+              ceqbd_fvk = - (model->BSIM3type * here->BSIM3csub) ;
+              ceqbs = ceqbs_fvk = 0.0;
 
               gbbdp = -here->BSIM3gbds;
               gbbsp = (here->BSIM3gbds + here->BSIM3gbgs + here->BSIM3gbbs);
@@ -2951,11 +2962,12 @@ line900:
               RevSum = -(Gm + Gmbs);
               cdreq = -model->BSIM3type * (cdrain + here->BSIM3gds * vds
                     + Gm * vgd + Gmbs * vbd);
-
-              ceqbs = -model->BSIM3type * (here->BSIM3csub
-                    + here->BSIM3gbds * vds - here->BSIM3gbgs * vgd
-                    - here->BSIM3gbbs * vbd);
-              ceqbd = 0.0;
+              cdreq_fvk = - (model->BSIM3type * cdrain) ;
+              ceqbs = -model->BSIM3type * (here->BSIM3csub 
+		    + here->BSIM3gbds * vds - here->BSIM3gbgs * vgd
+		    - here->BSIM3gbbs * vbd);
+              ceqbs_fvk = - (model->BSIM3type * here->BSIM3csub) ;
+              ceqbd = ceqbd_fvk = 0.0;
 
               gbbsp = -here->BSIM3gbds;
               gbbdp = (here->BSIM3gbds + here->BSIM3gbgs + here->BSIM3gbbs);
@@ -2971,26 +2983,38 @@ line900:
               gbspdp = -(gbspg + gbspsp + gbspb);
           }
 
-           if (model->BSIM3type > 0)
-           {   ceqbs += (here->BSIM3cbs - here->BSIM3gbs * vbs);
+	   if (model->BSIM3type > 0)
+	   {   ceqbs += (here->BSIM3cbs - here->BSIM3gbs * vbs);
+               ceqbs_fvk += here->BSIM3cbs ;
                ceqbd += (here->BSIM3cbd - here->BSIM3gbd * vbd);
-               /*
+               ceqbd_fvk += here->BSIM3cbd ;
+	       /*
                ceqqg = ceqqg;
                ceqqb = ceqqb;
                ceqqd = ceqqd;
                cqdef = cqdef;
                cqcheq = cqcheq;
-               */
-           }
-           else
-           {   ceqbs -= (here->BSIM3cbs - here->BSIM3gbs * vbs);
+	       */
+	   }
+	   else
+	   {   ceqbs -= (here->BSIM3cbs - here->BSIM3gbs * vbs); 
+               ceqbs_fvk -= here->BSIM3cbs ;
                ceqbd -= (here->BSIM3cbd - here->BSIM3gbd * vbd);
+               ceqbd_fvk -= here->BSIM3cbd ;
                ceqqg = -ceqqg;
+               ceqqg_fvk = - ceqqg_fvk ;
+               ceqqg_SnodePrime_fvk = - ceqqg_SnodePrime_fvk ;
                ceqqb = -ceqqb;
+               ceqqb_fvk = - ceqqb_fvk ;
+               ceqqb_SnodePrime_fvk = - ceqqb_SnodePrime_fvk ;
                ceqqd = -ceqqd;
+               ceqqd_fvk = - ceqqd_fvk ;
+               ceqqd_SnodePrime_fvk = - ceqqd_SnodePrime_fvk ;
                cqdef = -cqdef;
+               cqdef_fvk = - cqdef_fvk ;
                cqcheq = -cqcheq;
-           }
+               cqcheq_fvk = - cqcheq_fvk ;
+	   }
 
            m = here->BSIM3m;
 #ifdef USE_OMP
@@ -3117,6 +3141,51 @@ line900:
                *(here->BSIM3QspPtr) += m * (ggts - gcqsb);
                *(here->BSIM3QbPtr) += m * (ggtb - gcqbb);
            }
+
+
+            /* KCL verification - Dynamic Part */
+            *(ckt->CKTfvk+here->BSIM3gNode) += m * ceqqg_fvk ;
+            *(ckt->CKTfvk+here->BSIM3bNode) += m * (ceqbs_fvk + ceqbd_fvk + ceqqb_fvk) ;
+            *(ckt->CKTfvk+here->BSIM3dNodePrime) -= m * (ceqbd_fvk - cdreq_fvk - ceqqd_fvk) ;
+            *(ckt->CKTfvk+here->BSIM3sNodePrime) -= m * (cdreq_fvk + ceqbs_fvk + ceqqg_SnodePrime_fvk + ceqqb_SnodePrime_fvk + ceqqd_SnodePrime_fvk) ;
+            if (here->BSIM3nqsMod)
+                *(ckt->CKTfvk+here->BSIM3qNode) -= m * (cqcheq_fvk - cqdef_fvk) ;
+
+
+            /* KCL verification - Linear and Static Part */
+            *(ckt->CKTfvk+here->BSIM3dNode) += m * here->BSIM3drainConductance * *(ckt->CKTrhsOld+here->BSIM3dNode) ;
+            *(ckt->CKTfvk+here->BSIM3sNode) += m * here->BSIM3sourceConductance * *(ckt->CKTrhsOld+here->BSIM3sNode) ;
+            *(ckt->CKTfvk+here->BSIM3dNodePrime) += m * here->BSIM3drainConductance * *(ckt->CKTrhsOld+here->BSIM3dNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3sNodePrime) += m * here->BSIM3sourceConductance * *(ckt->CKTrhsOld+here->BSIM3sNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3dNode) -= m * here->BSIM3drainConductance * *(ckt->CKTrhsOld+here->BSIM3dNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3sNode) -= m * here->BSIM3sourceConductance * *(ckt->CKTrhsOld+here->BSIM3sNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3dNodePrime) -= m * here->BSIM3drainConductance * *(ckt->CKTrhsOld+here->BSIM3dNode) ;
+            *(ckt->CKTfvk+here->BSIM3sNodePrime) -= m * here->BSIM3sourceConductance * *(ckt->CKTrhsOld+here->BSIM3sNode) ;
+
+            if (here->BSIM3nqsMod) //DA RIVEDERE
+            {
+                *(here->BSIM3QqPtr) += m * (gqdef + here->BSIM3gtau);
+                *(here->BSIM3DPqPtr) += m * (dxpart * here->BSIM3gtau);
+                *(here->BSIM3SPqPtr) += m * (sxpart * here->BSIM3gtau);
+                *(here->BSIM3GqPtr) -= m * here->BSIM3gtau;
+            }
+
+
+            /* KCL verification - Linear and Dynamic Part ??? */
+            *(ckt->CKTfvk+here->BSIM3gNode) -= m * ggtg * *(ckt->CKTrhsOld+here->BSIM3gNode) ;
+            *(ckt->CKTfvk+here->BSIM3gNode) -= m * ggtb * *(ckt->CKTrhsOld+here->BSIM3bNode) ;
+            *(ckt->CKTfvk+here->BSIM3gNode) -= m * ggtd * *(ckt->CKTrhsOld+here->BSIM3dNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3gNode) -= m * ggts * *(ckt->CKTrhsOld+here->BSIM3sNodePrime) ;
+
+            *(ckt->CKTfvk+here->BSIM3dNodePrime) += m * (dxpart * ggtd + T1 * ddxpart_dVd) * *(ckt->CKTrhsOld+here->BSIM3dNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3dNodePrime) += m * (dxpart * ggtg + T1 * ddxpart_dVg) * *(ckt->CKTrhsOld+here->BSIM3gNode) ;
+            *(ckt->CKTfvk+here->BSIM3dNodePrime) -= m * (- dxpart * ggtb - T1 * ddxpart_dVb) * *(ckt->CKTrhsOld+here->BSIM3bNode) ;
+            *(ckt->CKTfvk+here->BSIM3dNodePrime) -= m * (- dxpart * ggts - T1 * ddxpart_dVs) * *(ckt->CKTrhsOld+here->BSIM3sNodePrime) ;
+
+            *(ckt->CKTfvk+here->BSIM3sNodePrime) += m * (gcssb + sxpart * ggts + T1 * dsxpart_dVs) * *(ckt->CKTrhsOld+here->BSIM3sNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3sNodePrime) += m * (gcsgb + sxpart * ggtg + T1 * dsxpart_dVg) * *(ckt->CKTrhsOld+here->BSIM3gNode) ;
+            *(ckt->CKTfvk+here->BSIM3sNodePrime) -= m * (gcsgb + gcsdb + gcssb - sxpart * ggtb - T1 * dsxpart_dVb) * *(ckt->CKTrhsOld+here->BSIM3bNode) ;
+            *(ckt->CKTfvk+here->BSIM3sNodePrime) -= m * (- gcsdb - sxpart * ggtd - T1 * dsxpart_dVd) * *(ckt->CKTrhsOld+here->BSIM3dNodePrime) ;
 #endif
 line1000:  ;
 #ifndef USE_OMP
