@@ -5,7 +5,8 @@ SUBDIRS =		\
 	bsim4		\
 	bsimsoi		\
 	hisim		\
-	hisimhv1
+	hisimhv1	\
+	regression
 
 if XSPICE_WANTED
 SUBDIRS += xspice
@@ -31,6 +32,7 @@ DIST_SUBDIRS =		\
 	mesa		\
 	mos6		\
 	polezero	\
+	regression	\
 	resistance	\
 	sensitivity	\
 	transient	\

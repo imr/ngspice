@@ -1,0 +1,33 @@
+ex1b, check lib processing
+
+I1    9 0  -1mA
+X1    9 0  sub1
+R2    9 0  4k
+X3    9 0  sub_in_lib
+
+Vcheck 9 check0  1.0V
+
+.subckt  sub1  n1 n2
+.lib 'ex1.lib' RES
+X1  n1 n2  sub_in_lib
+.ends
+
+.subckt  sub_in_lib  n1 n2
+R4   n1 n2   4k
+.ends
+
+.control
+op
+
+print v(check0)
+
+if abs(v(check0)) > 1e-9
+  quit 1
+end
+
+echo "INFO: ok"
+quit 0
+
+.endc
+
+.end
