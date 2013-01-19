@@ -1,0 +1,28 @@
+* -*- spice -*-
+
+.LIB MOS
+
+.subckt  sub1_in_lib  n1 n2
+.LIB 'ex2.lib' RES
+Xsub1  n1 n2  sub3_in_lib
+R1a    n1 n2  4k
+R1b    n1 n2  2k
+.ends
+
+.subckt  sub2_in_lib  n1 n2
+.LIB 'ex2.lib' RES
+Xsub2  n1 n2  sub3_in_lib
+R2     n1 n2  4k
+.ends
+
+.ENDL MOS
+
+
+
+.LIB RES
+
+.subckt  sub3_in_lib  n1 n2
+R3   n1 n2   4k
+.ends
+
+.ENDL RES

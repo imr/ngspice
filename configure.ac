@@ -1122,6 +1122,8 @@ AC_CONFIG_FILES([Makefile
                  tests/mesa/Makefile
                  tests/mos6/Makefile
                  tests/polezero/Makefile
+                 tests/regression/Makefile
+                 tests/regression/lib-processing/Makefile
                  tests/sensitivity/Makefile
                  tests/transient/Makefile
                  tests/transmission/Makefile

@@ -1,0 +1,33 @@
+ex2a, check lib processing
+
+I1    7 0  -1mA
+X1    7 0  sub1_in_lib
+
+Vcheck1  7 check1  1.0V
+
+I2    9 0  -1mA
+X2    9 0  sub2_in_lib
+
+Vcheck2  9 check2  2.0V
+
+.lib 'ex2.lib' MOS
+
+.control
+op
+
+print v(check1) v(check2)
+
+if abs(v(check1)) > 1e-9
+  quit 1
+end
+
+if abs(v(check2)) > 1e-9
+  quit 1
+end
+
+echo "INFO: ok"
+quit 0
+
+.endc
+
+.end
