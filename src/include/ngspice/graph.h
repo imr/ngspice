@@ -7,8 +7,8 @@ Author: 1988 Jeffrey M. Hsu
     This file contains the graph structure.
 */
 
-#ifndef _GRAPH_H
-#define _GRAPH_H
+#ifndef ngspice_GRAPH_H
+#define ngspice_GRAPH_H
 
 #include "ngspice/typedefs.h"
 #include "ngspice/grid.h"

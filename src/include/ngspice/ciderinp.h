@@ -4,8 +4,8 @@
  * CIDER input library header
  */
  
-#ifndef _CIDERINP_H
-#define _CIDERINP_H
+#ifndef ngspice_CIDERINP_H
+#define ngspice_CIDERINP_H
 
 
 /* externals for bdryset.c */

@@ -1,5 +1,5 @@
-#ifndef _DVEC_H
-#define _DVEC_H
+#ifndef ngspice_DVEC_H
+#define ngspice_DVEC_H
 
 #include "ngspice/complex.h"
 #include "ngspice/grid.h"

@@ -2,8 +2,8 @@
  * 2001 Paolo Nenzi
  */
  
-#ifndef _ONEDDEFS_H
-#define _ONEDDEFS_H
+#ifndef ngspice_ONEDDEFS_H
+#define ngspice_ONEDDEFS_H
 
 /* Debug statements */
 

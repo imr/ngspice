@@ -1,5 +1,5 @@
-#ifndef _SPDEFS_H
-#define _SPDEFS_H
+#ifndef ngspice_SPDEFS_H
+#define ngspice_SPDEFS_H
 /*
  *  DATA STRUCTURE AND MACRO DEFINITIONS for Sparse.
  *

@@ -1,5 +1,5 @@
-#ifndef _TERMINAL_H
-#define _TERMINAL_H
+#ifndef ngspice_TERMINAL_H
+#define ngspice_TERMINAL_H
 
 
 void outbufputc(void);

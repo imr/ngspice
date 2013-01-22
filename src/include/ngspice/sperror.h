@@ -3,8 +3,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#ifndef _SPERROR_H
-#define _SPERROR_H
+#ifndef ngspice_SPERROR_H
+#define ngspice_SPERROR_H
 
 #include "ngspice/iferrmsg.h"
 

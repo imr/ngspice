@@ -1,6 +1,6 @@
 
-#ifndef _COM_COMPOSE_H
-#define _COM_COMPOSE_H
+#ifndef ngspice_COM_COMPOSE_H
+#define ngspice_COM_COMPOSE_H
 
 #include "ngspice/wordlist.h"
 

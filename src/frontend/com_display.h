@@ -1,5 +1,5 @@
-#ifndef _COM_DISPLAY_H
-#define _COM_DISPLAY_H
+#ifndef ngspice_COM_DISPLAY_H
+#define ngspice_COM_DISPLAY_H
 
 #include "ngspice/wordlist.h"
 

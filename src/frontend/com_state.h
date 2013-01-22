@@ -1,5 +1,5 @@
-#ifndef _COM_STATE_H
-#define _COM_STATE_H
+#ifndef ngspice_COM_STATE_H
+#define ngspice_COM_STATE_H
 
 void com_state(wordlist *wl);
 

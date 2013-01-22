@@ -1,5 +1,5 @@
-#ifndef _HCOMP_H
-#define _HCOMP_H
+#ifndef ngspice_HCOMP_H
+#define ngspice_HCOMP_H
 
 
 int hcomp(const void *a, const void *b);

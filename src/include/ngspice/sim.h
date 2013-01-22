@@ -1,5 +1,5 @@
-#ifndef _SIM_H
-#define _SIM_H
+#ifndef ngspice_SIM_H
+#define ngspice_SIM_H
 
 enum simulation_types {
   SV_NOTYPE,

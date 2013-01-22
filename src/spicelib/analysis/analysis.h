@@ -1,5 +1,5 @@
-#ifndef _ANALYSIS_H
-#define _ANALYSIS_H
+#ifndef ngspice_ANALYSIS_H
+#define ngspice_ANALYSIS_H
 
 struct SPICEanalysis {
     IFanalysis if_analysis;

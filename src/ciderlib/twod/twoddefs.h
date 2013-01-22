@@ -2,8 +2,8 @@
  * 2001 Paolo Nenzi
  */
  
-#ifndef _TWODDEFS_H
-#define _TWODDEFS_H
+#ifndef ngspice_TWODDEFS_H
+#define ngspice_TWODDEFS_H
 
 /* Debug statements */
 

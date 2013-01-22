@@ -1,5 +1,5 @@
-#ifndef _GRID_H
-#define _GRID_H
+#ifndef ngspice_GRID_H
+#define ngspice_GRID_H
 
 #include "typedefs.h"
 

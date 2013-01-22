@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef _AGRAF_H
-#define _AGRAF_H
+#ifndef ngspice_AGRAF_H
+#define ngspice_AGRAF_H
 
 #include "ngspice/dvec.h"
 #include "ngspice/bool.h"

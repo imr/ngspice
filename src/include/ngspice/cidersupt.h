@@ -4,8 +4,8 @@
  * CIDER support library header
  */
  
-#ifndef _CIDERSUPT_H
-#define _CIDERSUPT_H
+#ifndef ngspice_CIDERSUPT_H
+#define ngspice_CIDERSUPT_H
 
 #include "ngspice/numglobs.h"
 #include "ngspice/material.h"

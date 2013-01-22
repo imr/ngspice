@@ -1,5 +1,5 @@
-#ifndef _COM_SETSCALE_H
-#define _COM_SETSCALE_H
+#ifndef ngspice_COM_SETSCALE_H
+#define ngspice_COM_SETSCALE_H
 
 #include "ngspice/wordlist.h"
 

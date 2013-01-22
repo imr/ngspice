@@ -1,5 +1,5 @@
-#ifndef _INPPAS2_H
-#define _INPPAS2_H
+#ifndef ngspice_INPPAS2_H
+#define ngspice_INPPAS2_H
 
 #include "ngspice/inpdefs.h"
 

@@ -10,8 +10,8 @@
  *  Copyright (C) University of California, Berkeley
  *
  */
-#ifndef _SWEC_H_
-#define _SWEC_H_
+#ifndef ngspice_SWEC_H_
+#define ngspice_SWEC_H_
 
 /************************************************************
  *

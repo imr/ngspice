@@ -1,5 +1,5 @@
-#ifndef _MEMORY_H
-#define _MEMORY_H
+#ifndef ngspice_MEMORY_H
+#define ngspice_MEMORY_H
 
 #include <stddef.h>
 
