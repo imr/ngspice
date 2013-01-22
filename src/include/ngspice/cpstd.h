@@ -8,8 +8,8 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
  * wlist.c
  */
 
-#ifndef _STD_H_
-#define _STD_H_
+#ifndef _CPSTD_H_
+#define _CPSTD_H_
 
 
 #ifndef FILE
@@ -34,4 +34,4 @@ extern int cp_numdgt;
 
 extern void cp_printword(char *string, FILE *fp);
 
-#endif /* _STD_H_*/
+#endif

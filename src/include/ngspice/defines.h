@@ -150,5 +150,5 @@
 
 
 
-#endif /* _DEFINES_H_ */
+#endif
 

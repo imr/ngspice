@@ -546,4 +546,4 @@ typedef struct {
 
 #endif /* _SPDEF_H */
 
-#endif /*_COMPLEX_H */
+#endif

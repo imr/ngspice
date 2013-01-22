@@ -15,8 +15,8 @@ Author: 1988 Jeffrey M. Hsu
     checkup_option is for handling and pending asynchonous events
 */
 
-#ifndef _INPUT_H_
-#define _INPUT_H_
+#ifndef _FTEINPUT_H_
+#define _FTEINPUT_H_
 
 
 #include <stdio.h>
@@ -44,4 +44,4 @@ typedef struct response {
     } reply;
 } RESPONSE;
 
-#endif  /* notdef _INPUT_H_ */
+#endif

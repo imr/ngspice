@@ -103,4 +103,4 @@
 #endif
 
 
-#endif /* _MACROS_H_ */
+#endif

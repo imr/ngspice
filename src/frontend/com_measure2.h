@@ -1,5 +1,5 @@
-#ifndef _COM_MEASURE_H
-#define _COM_MEASURE_H
+#ifndef _COM_MEASURE2_H
+#define _COM_MEASURE2_H
 
 
 extern int measure_get_precision(void);
