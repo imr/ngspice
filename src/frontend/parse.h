@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef _PARSE_H
-#define _PARSE_H
+#ifndef ngspice_PARSE_H
+#define ngspice_PARSE_H
 
 #include "ngspice/pnode.h"
 #include "ngspice/wordlist.h"

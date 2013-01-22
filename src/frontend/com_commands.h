@@ -1,5 +1,5 @@
-#ifndef _COM_COMMANDS_H
-#define _COM_COMMANDS_H
+#ifndef ngspice_COM_COMMANDS_H
+#define ngspice_COM_COMMANDS_H
 
 void com_showmod(wordlist *wl);
 void com_show(wordlist *wl);

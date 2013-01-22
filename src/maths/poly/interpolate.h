@@ -1,5 +1,5 @@
-#ifndef _INTERPOLATE_H
-#define _INTERPOLATE_H
+#ifndef ngspice_INTERPOLATE_H
+#define ngspice_INTERPOLATE_H
 
 #include "ngspice/bool.h"
 

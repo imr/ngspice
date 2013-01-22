@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef _EVALUATE_H
-#define _EVALUATE_H
+#ifndef ngspice_EVALUATE_H
+#define ngspice_EVALUATE_H
 
 #include "ngspice/dvec.h"
 #include "ngspice/pnode.h"

@@ -8,8 +8,8 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
  * wlist.c
  */
 
-#ifndef _CPSTD_H_
-#define _CPSTD_H_
+#ifndef ngspice_CPSTD_H_
+#define ngspice_CPSTD_H_
 
 
 #ifndef FILE

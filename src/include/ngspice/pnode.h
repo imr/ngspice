@@ -1,5 +1,5 @@
-#ifndef _PNODE_H
-#define _PNODE_H
+#ifndef ngspice_PNODE_H
+#define ngspice_PNODE_H
 
 struct pnode {
     char *pn_name;		/* If non-NULL, the name. */

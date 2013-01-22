@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef _DIFF_H
-#define _DIFF_H
+#ifndef ngspice_DIFF_H
+#define ngspice_DIFF_H
 
 #include "ngspice/wordlist.h"
 

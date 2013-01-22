@@ -2,8 +2,8 @@
  * Copyright (c) 1985 Thomas L. Quarles
  * Modified: 1999 Paolo Nenzi, 2000 Arno W. Peters
  */
-#ifndef _COMPLEX_H
-#define _COMPLEX_H
+#ifndef ngspice_COMPLEX_H
+#define ngspice_COMPLEX_H
 
 
 /* Complex numbers. */
@@ -284,7 +284,7 @@ typedef struct {
 	(A).imag = (B.imag) - (C.imag);					      \
     }
 
-#ifndef _SPDEFS_H
+#ifndef ngspice_SPDEFS_H
 
 /* Macro function that returns the approx absolute value of a complex
    number. */
@@ -544,6 +544,6 @@ typedef struct {
     }                                                                   \
 }
 
-#endif /* _SPDEF_H */
+#endif /* ngspice_SPDEF_H */
 
 #endif

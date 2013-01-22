@@ -1,5 +1,5 @@
-#ifndef _PLOT_H
-#define _PLOT_H
+#ifndef ngspice_PLOT_H
+#define ngspice_PLOT_H
 
 #include "ngspice/wordlist.h"
 #include "ngspice/bool.h"

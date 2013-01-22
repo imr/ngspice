@@ -1,5 +1,5 @@
-#ifndef _POLYFIT_H
-#define _POLYFIT_H
+#ifndef ngspice_POLYFIT_H
+#define ngspice_POLYFIT_H
 
 #include "ngspice/bool.h"
 

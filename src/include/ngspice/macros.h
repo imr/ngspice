@@ -9,8 +9,8 @@
  */
 
 
-#ifndef _MACROS_H_
-#define _MACROS_H_
+#ifndef ngspice_MACROS_H_
+#define ngspice_MACROS_H_
 
 /*
  *  #define-s that are always on

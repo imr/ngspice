@@ -2,8 +2,8 @@
   variable.h
 */
 
-#ifndef _VARIABLE_H
-#define _VARIABLE_H
+#ifndef ngspice_VARIABLE_H
+#define ngspice_VARIABLE_H
 
 #include "ngspice/cpextern.h"
 

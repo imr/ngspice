@@ -1,5 +1,5 @@
-#ifndef _PLOTIT_H
-#define _PLOTIT_H
+#ifndef ngspice_PLOTIT_H
+#define ngspice_PLOTIT_H
 
 bool plotit(wordlist *wl, char *hcopy, char *devname);
 

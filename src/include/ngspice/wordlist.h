@@ -1,5 +1,5 @@
-#ifndef _WORDLIST_H
-#define _WORDLIST_H
+#ifndef ngspice_WORDLIST_H
+#define ngspice_WORDLIST_H
 
 
 /* Doubly linked lists of words. */

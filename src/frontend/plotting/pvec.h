@@ -1,5 +1,5 @@
-#ifndef _PVEC_H
-#define _PVEC_H
+#ifndef ngspice_PVEC_H
+#define ngspice_PVEC_H
 
 #include "ngspice/dvec.h"
 

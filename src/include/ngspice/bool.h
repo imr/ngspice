@@ -1,5 +1,5 @@
-#ifndef _BOOL_H
-#define _BOOL_H
+#ifndef ngspice_BOOL_H
+#define ngspice_BOOL_H
 
 //typedef unsigned char bool;
 typedef int bool;

@@ -1,5 +1,5 @@
-#ifndef _COMMANDS_H
-#define _COMMANDS_H
+#ifndef ngspice_COMMANDS_H
+#define ngspice_COMMANDS_H
 
 
 extern struct comm spcp_coms[];

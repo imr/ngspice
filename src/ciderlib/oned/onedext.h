@@ -4,8 +4,8 @@
  
  /* External symbols for ONE Dimensional simulator */
 
-#ifndef _ONEDEXT_H
-#define _ONEDEXT_H
+#ifndef ngspice_ONEDEXT_H
+#define ngspice_ONEDEXT_H
 
 #include "ngspice/profile.h"
 #include "ngspice/onemesh.h"

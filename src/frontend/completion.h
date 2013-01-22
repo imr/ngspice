@@ -1,5 +1,5 @@
-#ifndef _COMPLETION_H
-#define _COMPLETION_H
+#ifndef ngspice_COMPLETION_H
+#define ngspice_COMPLETION_H
 
 /* The types for command completion keywords. Note that these
  * constants are built into cmdtab.c, so DON'T change them unless you

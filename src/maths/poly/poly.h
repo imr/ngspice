@@ -1,7 +1,7 @@
 /* The public interface to the polygon library. */
 
-#ifndef _POLY_H
-#define _POLY_H
+#ifndef ngspice_POLY_H
+#define ngspice_POLY_H
 
 #include "interpolate.h"
 #include "polyderiv.h"

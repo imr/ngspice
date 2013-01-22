@@ -4,8 +4,8 @@
  
  /* External symbols for Two Dimensional simulator */
  
-#ifndef _TWODEXT_H
-#define _TWODEXT_H
+#ifndef ngspice_TWODEXT_H
+#define ngspice_TWODEXT_H
 
 #include "ngspice/profile.h"
 #include "ngspice/twomesh.h"
