@@ -12,4 +12,4 @@
 extern void bernoulli (double, double *, double *, double *, 
                        double *, BOOLEAN);
 
-#endif /* BERNOULL_H */
+#endif

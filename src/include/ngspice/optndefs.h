@@ -57,4 +57,4 @@ typedef struct sOPTNcard {
 #define OPTN_IC_FILE     18
 #define OPTN_UNIQUE      19
 
-#endif /* OPTN_H */
+#endif

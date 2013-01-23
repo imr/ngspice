@@ -21,4 +21,4 @@ struct JOB {
 #define FREQUENCYDOMAIN 2
 #define SWEEPDOMAIN	3
 
-#endif /*JOBdef*/
+#endif

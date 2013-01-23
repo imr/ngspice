@@ -345,4 +345,4 @@ extern bool ft_setflag;
 /* error.c */
 extern void controlled_exit(int status);
 
-#endif /* FTEext_h */
+#endif

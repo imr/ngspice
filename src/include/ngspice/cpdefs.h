@@ -96,4 +96,4 @@ struct alias {
 
 #include "ngspice/cpextern.h"
 
-#endif /*CPDEFS*/
+#endif

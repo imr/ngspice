@@ -39,4 +39,4 @@ typedef struct sGENnumModel {	/* model structure for a numerical device */
     OUTPcard *GENoutputs;	/* list of output cards */
 } GENnumModel;
     
-#endif /* NUMGEN_H */
+#endif

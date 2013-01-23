@@ -502,4 +502,4 @@ Function:
 */
 
 
-#endif /* NGHASH_H */
+#endif

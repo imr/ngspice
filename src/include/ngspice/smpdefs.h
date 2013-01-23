@@ -40,4 +40,4 @@ int SMPcZeroCol(SMPmatrix *eMatrix, int Col);
 int SMPcAddCol(SMPmatrix *eMatrix, int Accum_Col, int Addend_Col);
 int SMPzeroRow(SMPmatrix *eMatrix, int Row);
 
-#endif /*SMP*/
+#endif

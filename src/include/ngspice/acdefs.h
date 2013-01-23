@@ -36,4 +36,4 @@ typedef struct {
 #define AC_STOP 5
 #define AC_STEPS 6
 
-#endif /*ACDEFS*/
+#endif

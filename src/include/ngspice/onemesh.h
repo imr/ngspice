@@ -127,4 +127,4 @@ typedef struct sONEnode {
 #define ONEnumNodeStates 5
 #define ONEnumEdgeStates 2
 
-#endif /* ONEMESH */
+#endif

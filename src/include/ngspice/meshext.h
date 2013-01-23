@@ -24,4 +24,4 @@ extern int MESHlocate( MESHcoord *, double );
 extern int MESHcheck( char, MESHcard * );
 extern int MESHsetup( char, MESHcard *, MESHcoord **, int * );
 
-#endif /* MESHEXT_H */
+#endif

@@ -14,4 +14,4 @@ extern double oneNorm(double *, int);
 extern double  l2Norm(double *, int);
 extern double     dot(double *, double *, int);
 
-#endif /* NORM_H */
+#endif

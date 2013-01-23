@@ -30,4 +30,4 @@ typedef struct sCONTcard {
 #define CONT_WORKFUN	5
 #define CONT_NUMBER	6
 
-#endif /* CONT_H */
+#endif

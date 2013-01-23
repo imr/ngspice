@@ -108,4 +108,4 @@ typedef struct sMIFmodel {
 
 
 
-#endif /* MIFDEFS */
+#endif

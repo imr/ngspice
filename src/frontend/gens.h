@@ -13,4 +13,4 @@ int dgen_for_n(dgen *dg, int n, int (*fn) (dgen*, IFparm*, int), IFparm *data, i
 void dgen_nth_next(dgen **dg, int n);
 
 
-#endif /* GENS_H_INCLUDED */
+#endif

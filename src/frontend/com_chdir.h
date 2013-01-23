@@ -9,4 +9,4 @@
 
 void com_chdir(wordlist *wl);
 
-#endif /* COM_CHDIR_H */
+#endif

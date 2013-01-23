@@ -22,4 +22,4 @@ typedef struct sFTESTATistics {
 #define FTEOPT_NLT    2
 #define FTEOPT_NPT    3
 
-#endif /*FTEOPT*/
+#endif

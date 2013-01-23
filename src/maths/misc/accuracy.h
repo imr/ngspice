@@ -19,4 +19,4 @@ extern double MuLim, MutLim;
 
 extern void evalAccLimits(void);
 
-#endif /* ACCURACY_H */
+#endif

@@ -68,4 +68,4 @@ struct TSKtask {
     unsigned int TSKnoopac:1; /* flag for no OP calculation before AC */
 };
 
-#endif /*TSK*/
+#endif

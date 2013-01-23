@@ -224,4 +224,4 @@ typedef struct {
 } Mif_Parse_Value_t;
 
 
-#endif /* MIFTYPES */
+#endif

@@ -79,4 +79,4 @@ typedef struct sMaterialInfo ONEmaterial;
 typedef struct sMaterialInfo TWOmaterial;
 typedef struct sMaterialInfo MATLmaterial;
 
-#endif /* MATERIAL_H */
+#endif

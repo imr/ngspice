@@ -67,4 +67,4 @@ struct SENstruct {
 #define SEN_DEV 4
 #define SEN_PARM 5
 
-#endif /* SENSTRUCTS */
+#endif

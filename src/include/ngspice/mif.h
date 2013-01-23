@@ -84,4 +84,4 @@ extern int MIFmSize;
 
 extern Mif_Info_t  g_mif_info;
 
-#endif  /* MIF */
+#endif

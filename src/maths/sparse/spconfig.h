@@ -399,4 +399,4 @@
 #define  FULL                   2
 
 #endif /* spINSIDE_SPARSE */
-#endif /* spCONFIG_DEFS */
+#endif

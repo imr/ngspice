@@ -21,4 +21,4 @@ typedef struct {
     char *JOBname;
 } OP;
 
-#endif /*DCOP*/
+#endif

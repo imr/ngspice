@@ -41,4 +41,4 @@ typedef struct sMESHcard {
 #define MESH_H_MAX	6
 #define MESH_RATIO	7
 
-#endif /* MESH_H */
+#endif

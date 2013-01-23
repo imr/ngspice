@@ -37,4 +37,4 @@ extern void spice_dstring_free(SPICE_DSTRINGPTR dsPtr) ;
 #define spice_dstring_space(x_xz) ((x_xz)->spaceAvl)
 #define spice_dstring_length(x_xz) ((x_xz)->length)
 
-#endif /* DSTRING_H */
+#endif

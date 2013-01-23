@@ -81,4 +81,4 @@ typedef struct sDOPcard {
 #define DOP_EXP_LAT	31
 #define DOP_DOMAIN	32
 
-#endif /* DOP_H */
+#endif

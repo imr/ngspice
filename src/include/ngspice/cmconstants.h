@@ -54,4 +54,4 @@ NON-STANDARD FEATURES
 #define EVENT        MIF_EVENT_DRIVEN
 
 
-#endif /* CMCONSTANTS_DEFINED */
+#endif

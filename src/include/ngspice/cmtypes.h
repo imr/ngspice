@@ -68,4 +68,4 @@ typedef struct {
 
 
 
-#endif /* CMTYPES_DEFINED */
+#endif

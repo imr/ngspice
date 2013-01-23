@@ -104,4 +104,4 @@ void  free_pj(void *ptr);
 
 FILE *fopen_with_path(const char *path, const char *mode);
 
-#endif /* CMPROTO_DEFINED */
+#endif

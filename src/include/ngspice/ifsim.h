@@ -486,4 +486,4 @@ struct IFfrontEnd {
 #define OUT_SCALE_LIN   1
 #define OUT_SCALE_LOG   2
 
-#endif /*IFSIMULATOR*/
+#endif

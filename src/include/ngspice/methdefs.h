@@ -42,4 +42,4 @@ typedef struct sMETHcard {
 #define METH_ITLIM      7
 #define METH_VOLTPRED	8
 
-#endif /* METH_H */
+#endif

@@ -60,4 +60,4 @@ struct circ {
 
 #include "ngspice/fteext.h"
 
-#endif /* FTEdefs_h */
+#endif

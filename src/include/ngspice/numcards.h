@@ -47,4 +47,4 @@ typedef struct sIFcardInfo {
 	/* routine to find out about a card's details */
 } IFcardInfo;
 
-#endif /* NUMCARDS_H */
+#endif

@@ -37,4 +37,4 @@ struct TFan {
 #define TF_OUTNAME 5
 
 
-#endif  /*TF*/
+#endif

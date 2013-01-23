@@ -126,4 +126,4 @@ void NevalSrc2 (double *, double *, CKTcircuit *, int, int, int, double, int, in
 void NevalSrcInstanceTemp (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param, double param2);
 double Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data);
 
-#endif /*NOISEDEFS*/
+#endif

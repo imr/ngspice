@@ -49,4 +49,4 @@ struct dbcomm {
     struct dbcomm *db_next; /* List of active debugging commands. */
 } ;
 
-#endif /* FTEDEBUG_H */
+#endif

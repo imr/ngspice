@@ -106,4 +106,4 @@ void ENHreport_conv_prob(Enh_Conv_Source_t type, char *name, char *msg);
 struct line *ENHtranslate_poly(struct line *deck);
 
 
-#endif /* ENH_HEADER */
+#endif

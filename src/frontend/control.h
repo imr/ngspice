@@ -48,4 +48,4 @@ extern struct control *control[CONTROLSTACKSIZE];
 extern struct control *cend[CONTROLSTACKSIZE];
 extern int stackp;
 
-#endif /* CONTROL_H */
+#endif

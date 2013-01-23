@@ -9,4 +9,4 @@
 
 void com_rehash(wordlist *wl);
 
-#endif /* COM_REHASH_H */
+#endif

@@ -159,4 +159,4 @@ extern Mif_Cntl_Src_Type_t MIFget_cntl_src_type(
 extern char *MIFcopy(char *);
 
 
-#endif  /* MIFPROTO */
+#endif

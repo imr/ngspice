@@ -51,4 +51,4 @@ typedef struct sMODLcard {
 #define MODL_AUGER	10
 #define MODL_AVAL	11
 
-#endif /* MODL_H */
+#endif

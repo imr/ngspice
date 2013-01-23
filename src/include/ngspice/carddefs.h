@@ -24,4 +24,4 @@ Authors :  1991 David Gates
 #include "ngspice/optndefs.h"
 #include "ngspice/outpdefs.h"
 
-#endif /* CARDDEFS_H */
+#endif

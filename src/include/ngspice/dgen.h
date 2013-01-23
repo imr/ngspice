@@ -28,4 +28,4 @@ struct st_dgen {
 
 extern dgen	*dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model);
 
-#endif /* DGEN_H */
+#endif

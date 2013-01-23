@@ -29,5 +29,5 @@ struct line {
 #define LS_PHYSICAL 2
 #define LS_DECK  3
 
-#endif /* FTEinput_h */
+#endif
 

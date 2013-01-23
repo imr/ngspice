@@ -134,4 +134,4 @@ int INPremTerm(char *token, INPtables *tab);
 
 
 
-#endif /*INP*/
+#endif
