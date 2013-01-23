@@ -3,8 +3,8 @@
  * 2002 R. Oktas, <roktas@omu.edu.tr>
  ************/
 
-#ifndef UTIL_H_INCLUDED
-#define UTIL_H_INCLUDED
+#ifndef ngspice_UTIL_H
+#define ngspice_UTIL_H
 
 char *canonicalize_pathname(char *path);
 char *absolute_pathname(char *string, char *dot_path);

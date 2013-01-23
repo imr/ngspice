@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef NUTMEGIF_H_INCLUDED
-#define NUTMEGIF_H_INCLUDED
+#ifndef ngspice_NUTMEGIF_H
+#define ngspice_NUTMEGIF_H
 
 
 

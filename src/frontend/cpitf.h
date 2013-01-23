@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef CPITF_H_INCLUDED
-#define CPITF_H_INCLUDED
+#ifndef ngspice_CPITF_H
+#define ngspice_CPITF_H
 
 
 

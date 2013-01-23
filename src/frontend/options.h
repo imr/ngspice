@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef OPTIONS_H_INCLUDED
-#define OPTIONS_H_INCLUDED
+#ifndef ngspice_OPTIONS_H
+#define ngspice_OPTIONS_H
 
 
 

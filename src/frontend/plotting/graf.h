@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef GRAF_H
-#define GRAF_H
+#ifndef ngspice_GRAF_H
+#define ngspice_GRAF_H
 
 #include "ngspice/graph.h"
 

@@ -1,5 +1,5 @@
-#ifndef PZDEFS_H
-#define PZDEFS_H
+#ifndef ngspice_PZDEFS_H
+#define ngspice_PZDEFS_H
 
     /* structure used to describe an PZ analysis to be performed */
 

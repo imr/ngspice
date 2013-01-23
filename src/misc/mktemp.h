@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef MKTEMP_H_INCLUDED
-#define MKTEMP_H_INCLUDED
+#ifndef ngspice_MKTEMP_H
+#define ngspice_MKTEMP_H
 
 char * smktemp(char *id);
 

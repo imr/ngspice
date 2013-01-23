@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef RESOURCES_H_INCLUDED
-#define RESOURCES_H_INCLUDED
+#ifndef ngspice_RESOURCE_H
+#define ngspice_RESOURCE_H
 
 void init_rlimits(void);
 void init_time(void);

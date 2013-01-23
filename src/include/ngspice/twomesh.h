@@ -11,8 +11,8 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
  * Two-Dimensional Element-based Simulation-Mesh Data Structures 
  */
  
-#ifndef TWOMESH_H
-#define TWOMESH_H
+#ifndef ngspice_TWOMESH_H
+#define ngspice_TWOMESH_H
 
 #include "ngspice/material.h"
 

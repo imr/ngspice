@@ -6,8 +6,8 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 /* Define various flags, constants, and indices */
 /* These variables are defined in support/globals.c */
 
-#ifndef NUMGLOBS_H
-#define NUMGLOBS_H
+#ifndef ngspice_NUMGLOBS_H
+#define ngspice_NUMGLOBS_H
 
 extern int BandGapNarrowing;
 extern int TempDepMobility;

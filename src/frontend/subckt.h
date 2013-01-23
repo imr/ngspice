@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef SUBCKT_H_INCLUDED
-#define SUBCKT_H_INCLUDED
+#ifndef ngspice_SUBCKT_H
+#define ngspice_SUBCKT_H
 
 struct line * inp_subcktexpand(struct line *deck);
 struct line * inp_deckcopy(struct line *deck);

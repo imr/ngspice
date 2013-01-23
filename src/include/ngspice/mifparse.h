@@ -1,5 +1,5 @@
-#ifndef MIFPARSE
-#define MIFPARSE
+#ifndef ngspice_MIFPARSE_H
+#define ngspice_MIFPARSE_H
 
 /* ===========================================================================
 FILE    MIFparse.h

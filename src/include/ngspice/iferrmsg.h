@@ -6,8 +6,8 @@ Author: 1986 Thomas L. Quarles
 /*
  */
 
-#ifndef IFERRMSGS
-#define IFERRMSGS
+#ifndef ngspice_IFERRMSG_H
+#define ngspice_IFERRMSG_H
 
 
     /* common error message descriptions */

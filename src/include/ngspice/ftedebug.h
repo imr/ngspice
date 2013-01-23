@@ -3,8 +3,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
-#ifndef FTEDEBUG_H
-#define FTEDEBUG_H
+#ifndef ngspice_FTEDEBUG_H
+#define ngspice_FTEDEBUG_H
 
 /*
  *

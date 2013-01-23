@@ -2,8 +2,8 @@
  * Header file for control.c
 **********/
 
-#ifndef CONTROL_H
-#define CONTROL_H
+#ifndef ngspice_CONTROL_H
+#define ngspice_CONTROL_H
 
 #include "ngspice/bool.h"
 

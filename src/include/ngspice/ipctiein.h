@@ -37,8 +37,8 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 
-#ifndef IPC_TIEIN_DEFINED
-#define IPC_TIEIN_DEFINED
+#ifndef ngspice_IPCTIEIN_H
+#define ngspice_IPCTIEIN_H
 
 
 #include "ngspice/ipc.h"

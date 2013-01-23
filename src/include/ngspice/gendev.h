@@ -7,8 +7,8 @@ Authors: 1992 David Gates
  * Version: 1b1
  */
 
-#ifndef GENDEV_H
-#define GENDEV_H
+#ifndef ngspice_GENDEV_H
+#define ngspice_GENDEV_H
 
 #include "ngspice/numenum.h"
 

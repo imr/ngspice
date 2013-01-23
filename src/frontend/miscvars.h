@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef MISCVARS_H_INCLUDED
-#define MISCVARS_H_INCLUDED
+#ifndef ngspice_MISCVARS_H
+#define ngspice_MISCVARS_H
 
 
 

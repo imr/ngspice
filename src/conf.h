@@ -1,5 +1,5 @@
-#ifndef __CONF_H
-#define __CONF_H
+#ifndef ngspice_CONF_H
+#define ngspice_CONF_H
 
 extern char Spice_Version[];
 extern char Spice_Notice[];

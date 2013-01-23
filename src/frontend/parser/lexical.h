@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef LEXICAL_H_INCLUDED
-#define LEXICAL_H_INCLUDED
+#ifndef ngspice_LEXICAL_H
+#define ngspice_LEXICAL_H
 
 
 int input(FILE *fp);

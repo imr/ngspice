@@ -2,8 +2,8 @@
  * Main header file for ngspice
  * 1999 E. Rouat
  ************/
-#ifndef NGSPICE_H_INCLUDED
-#define NGSPICE_H_INCLUDED
+#ifndef ngspice_NGSPICE_H
+#define ngspice_NGSPICE_H
 
 /* #include "memwatch.h"
  #define MEMWATCH */

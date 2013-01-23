@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef MISCCOMS_H_INCLUDED
-#define MISCCOMS_H_INCLUDED
+#ifndef ngspice_MISCCOMS_H
+#define ngspice_MISCCOMS_H
 
 void com_quit(wordlist *wl);
 void com_bug(wordlist *wl);

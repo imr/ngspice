@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef CMATH4_H_INCLUDED
-#define CMATH4_H_INCLUDED
+#ifndef ngspice_CMATH4_H
+#define ngspice_CMATH4_H
 
 void * cx_and(void *data1, void *data2, short int datatype1, short int datatype2, int length);
 void * cx_or(void *data1, void *data2, short int datatype1, short int datatype2, int length);

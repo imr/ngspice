@@ -1,5 +1,5 @@
-#ifndef CM_DEFINED
-#define CM_DEFINED
+#ifndef ngspice_CM_H
+#define ngspice_CM_H
 
 /* ===========================================================================
 FILE    CM.h

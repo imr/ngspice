@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef CMATH3_H_INCLUDED
-#define CMATH3_H_INCLUDED
+#ifndef ngspice_CMATH3_H
+#define ngspice_CMATH3_H
 
 
 void * cx_divide(void *data1, void *data2, short int datatype1, short int datatype2, int length);

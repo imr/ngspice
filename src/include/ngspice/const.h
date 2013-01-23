@@ -4,8 +4,8 @@ Author: 1985 Thomas L. Quarles
 **********/
 /*
  */
-#ifndef CONST_H
-#define CONST_H
+#ifndef ngspice_CONST_H
+#define ngspice_CONST_H
 
 #define CHARGE (1.6021918e-19)
 #define CONSTCtoK (273.15)

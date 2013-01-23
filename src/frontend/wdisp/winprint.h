@@ -2,8 +2,8 @@
 * Header file for winprint.c
 ************/
 
-#ifndef WINPRINT_H
-#define WINPRINT_H
+#ifndef ngspice_WINPRINT_H
+#define ngspice_WINPRINT_H
 
 void WPRINT_PrintInit(HWND hwnd);
 BOOL CALLBACK WPRINT_Abort( HDC hdc, int iError);

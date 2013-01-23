@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef DUP2_H_INCLUDED
-#define DUP2_H_INCLUDED
+#ifndef ngspice_DUP2_H
+#define ngspice_DUP2_H
 
 #ifndef HAVE_DUP2
 

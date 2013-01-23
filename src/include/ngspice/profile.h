@@ -10,8 +10,8 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 /*
  * Doping Profile Data Structures
  */
-#ifndef PROFILE_H
-#define PROFILE_H
+#ifndef ngspice_PROFILE_H
+#define ngspice_PROFILE_H
 
 typedef struct sDOPprofile {
     int type;                       /* Primary profile type UNIF, EXP, etc */

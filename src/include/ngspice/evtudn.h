@@ -1,5 +1,5 @@
-#ifndef EVTUDN_HEADER
-#define EVTUDN_HEADER x
+#ifndef ngspice_EVTUDN_H
+#define ngspice_EVTUDN_H
 
 /* ===========================================================================
 FILE    EVTudn.h

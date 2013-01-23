@@ -1,5 +1,5 @@
 #ifndef ngspice_COM_DL_H
-#define ngspice_COM_DL_H 1
+#define ngspice_COM_DL_H
 
 #ifdef XSPICE
 void com_codemodel(wordlist *wl);

@@ -7,8 +7,8 @@ Author:  1991 David Gates
  * Version: 1b1
  */
 
-#ifndef MESH_H
-#define MESH_H
+#ifndef ngspice_MESHDEFS_H
+#define ngspice_MESHDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
 

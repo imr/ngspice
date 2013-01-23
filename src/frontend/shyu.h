@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef SHYU_H_INCLUDED
-#define SHYU_H_INCLUDED
+#ifndef ngspice_SHYU_H
+#define ngspice_SHYU_H
 
 
 

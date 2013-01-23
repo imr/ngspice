@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef CSHPAR_H_INCLUDED
-#define CSHPAR_H_INCLUDED
+#ifndef ngspice_CSHPAR_H
+#define ngspice_CSHPAR_H
 
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef MIFCMDAT
-#define MIFCMDAT
+#ifndef ngspice_MIFCMDAT_H
+#define ngspice_MIFCMDAT_H
 
 /* ===========================================================================
 FILE    MIFcmdat.h

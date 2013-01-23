@@ -1,5 +1,5 @@
-#ifndef CMCONSTANTS_DEFINED
-#define CMCONSTANTS_DEFINED
+#ifndef ngspice_CMCONSTANTS_H
+#define ngspice_CMCONSTANTS_H
 
 /* ===========================================================================
 FILE    CMconstants.h

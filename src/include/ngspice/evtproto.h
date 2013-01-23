@@ -1,5 +1,5 @@
-#ifndef EVTPROTO_HEADER
-#define EVTPROTO_HEADER x
+#ifndef ngspice_EVTPROTO_H
+#define ngspice_EVTPROTO_H
 
 /* ===========================================================================
 FILE    EVTproto.h

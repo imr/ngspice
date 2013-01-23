@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef X11_H_INCLUDED
-#define X11_H_INCLUDED
+#ifndef ngspice_X11_H
+#define ngspice_X11_H
 
 #ifndef X_DISPLAY_MISSING
 

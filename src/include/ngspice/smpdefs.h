@@ -1,5 +1,5 @@
-#ifndef SMP
-#define SMP
+#ifndef ngspice_SMPDEFS_H
+#define ngspice_SMPDEFS_H
 
 typedef  struct MatrixFrame     SMPmatrix;
 typedef  struct MatrixElement  *SMPelement;

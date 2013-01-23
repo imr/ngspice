@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef POSTSC_H_INCLUDED
-#define POSTSC_H_INCLUDED
+#ifndef ngspice_POSTSC_H
+#define ngspice_POSTSC_H
 
 disp_fn_Init_t             PS_Init;
 disp_fn_NewViewport_t      PS_NewViewport;

@@ -1,5 +1,5 @@
-#ifndef CMTYPES_DEFINED
-#define CMTYPES_DEFINED
+#ifndef ngspice_CMTYPES_H
+#define ngspice_CMTYPES_H
 
 /* ===========================================================================
 FILE    CMtypes.h

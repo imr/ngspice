@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef COMPLETE_H_INCLUDED
-#define COMPLETE_H_INCLUDED
+#ifndef ngspice_COMPLETE_H
+#define ngspice_COMPLETE_H
 
 /* The data structure for the commands is as follows: every node has a pointer
  * to its leftmost child, where the children of a node are those of which

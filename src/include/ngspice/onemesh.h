@@ -11,8 +11,8 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
  * One-Dimensional Element-based Simulation-Mesh Data Structures 
  */
  
-#ifndef ONEMESH_H
-#define ONEMESH_H
+#ifndef ngspice_ONEMESH_H
+#define ngspice_ONEMESH_H
 
 #include "ngspice/material.h"
 

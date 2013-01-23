@@ -7,8 +7,8 @@ Authors :  1991 David Gates
  * Version: 1b1
  */
 
-#ifndef ELCT_H
-#define ELCT_H
+#ifndef ngspice_ELCTDEFS_H
+#define ngspice_ELCTDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
 

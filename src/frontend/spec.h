@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef SPEC_H_INCLUDED
-#define SPEC_H_INCLUDED
+#ifndef ngspice_SPEC_H
+#define ngspice_SPEC_H
 
 #ifdef HAS_WINDOWS
 extern void SetAnalyse(char *Analyse, int Percent);

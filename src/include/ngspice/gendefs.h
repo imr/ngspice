@@ -3,8 +3,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#ifndef GEN
-#define GEN
+#ifndef ngspice_GENDEFS_H
+#define ngspice_GENDEFS_H
 
 #include "ngspice/typedefs.h"
 #include "ngspice/ifsim.h"

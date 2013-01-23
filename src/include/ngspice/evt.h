@@ -1,5 +1,5 @@
-#ifndef EVT_HEADER
-#define EVT_HEADER x
+#ifndef ngspice_EVT_H
+#define ngspice_EVT_H
 
 /* ===========================================================================
 FILE    EVT.h

@@ -12,8 +12,8 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "ngspice/ifsim.h"
 
-#ifndef INP_PARSE
-#define INP_PARSE
+#ifndef ngspice_INPPTREE_H
+#define ngspice_INPPTREE_H
 
 
 /* This is the parameter value passed to the device routines.  To get the

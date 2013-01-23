@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef INP_H_INCLUDED
-#define INP_H_INCLUDED
+#ifndef ngspice_INP_H
+#define ngspice_INP_H
 
 void com_listing(wordlist *wl);
 void com_edit(wordlist *wl);

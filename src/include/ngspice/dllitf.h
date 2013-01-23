@@ -3,8 +3,8 @@
    (c)2000 Arpad Buermen
 */
 
-#ifndef ngspice__DLLITF_H
-#define ngspice__DLLITF_H
+#ifndef ngspice_DLLITF_H
+#define ngspice_DLLITF_H
 
 #include "ngspice/mifproto.h"
 #include "ngspice/cmproto.h"

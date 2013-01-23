@@ -3,8 +3,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#ifndef JOBdef
-#define JOBdef
+#ifndef ngspice_JOBDEFS_H
+#define ngspice_JOBDEFS_H
 
 
 #include "ngspice/typedefs.h"

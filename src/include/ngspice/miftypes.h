@@ -1,5 +1,5 @@
-#ifndef MIFTYPES
-#define MIFTYPES
+#ifndef ngspice_MIFTYPES_H
+#define ngspice_MIFTYPES_H
 
 /* ===========================================================================
 FILE    MIFtypes.h

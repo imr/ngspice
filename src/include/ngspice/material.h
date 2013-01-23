@@ -7,8 +7,8 @@ Authors :  1991 David Gates
  * Version: 1b1
  */
 
-#ifndef MATERIAL_H
-#define MATERIAL_H
+#ifndef ngspice_MATERIAL_H
+#define ngspice_MATERIAL_H
 
 #ifndef NUM_CARRIERS
 #include "ngspice/numenum.h"

@@ -3,8 +3,8 @@
  * and central typedefs which are not allowed to be repeated
  */
 
-#ifndef TYPEDEFS_H_INCLUDED
-#define TYPEDEFS_H_INCLUDED
+#ifndef ngspice_TYPEDEFS_H
+#define ngspice_TYPEDEFS_H
 
 
 typedef struct CKTcircuit CKTcircuit;

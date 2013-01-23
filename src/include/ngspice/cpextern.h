@@ -8,8 +8,8 @@ Modified: 2000  AlansFixes
  * Definitions for all external symbols in CP.
  */
 
-#ifndef CPEXTERN_H
-#define CPEXTERN_H
+#ifndef ngspice_CPEXTERN_H
+#define ngspice_CPEXTERN_H
 
 #include "ngspice/wordlist.h"
 #include "ngspice/bool.h"

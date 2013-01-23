@@ -3,8 +3,8 @@
  * 2008 Stefano Pedretti
  ************/
 
-#ifndef GNUPLOT_H_INCLUDED
-#define GNUPLOT_H_INCLUDED
+#ifndef ngspice_GNUPLOT_H
+#define ngspice_GNUPLOT_H
 
 void ft_gnuplot(double *xlims, double *ylims, char *filename, char *title,
                char *xlabel, char *ylabel, GRIDTYPE gridtype, PLOTTYPE plottype,

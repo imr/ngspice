@@ -2,8 +2,8 @@
 Author: 2010 Paolo Nenzi
 **********/
 
-#ifndef FTEOPT
-#define FTEOPT
+#ifndef ngspice_FTEOPTDEFS_H
+#define ngspice_FTEOPTDEFS_H
 
     /* Structure used to describe the frontend statistics to be collected */
     /* This is similar to the STATististics in optdefs.h but collects     */

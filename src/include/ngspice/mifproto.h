@@ -1,5 +1,5 @@
-#ifndef MIFPROTO
-#define MIFPROTO
+#ifndef ngspice_MIFPROTO_H
+#define ngspice_MIFPROTO_H
 
 /* ===========================================================================
 FILE    MIFproto.h

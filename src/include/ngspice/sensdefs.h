@@ -2,8 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
-#ifndef SENS_DEFS
-#define SENS_DEFS
+#ifndef ngspice_SENSDEFS_H
+#define ngspice_SENSDEFS_H
 
 #include "ngspice/jobdefs.h"
 

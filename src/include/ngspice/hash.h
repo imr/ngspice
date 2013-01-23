@@ -6,8 +6,8 @@ CONTENTS:
 DATE:	    Jul 17, 1988 - original coding
 REVISIONS:  Aug 21, 2009 - adapted for ngspice
 ----------------------------------------------------------------- */
-#ifndef NGHASH_H
-#define NGHASH_H
+#ifndef ngspice_HASH_H
+#define ngspice_HASH_H
 
 #include "ngspice/bool.h"
 #include <stdint.h>

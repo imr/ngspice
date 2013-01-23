@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef INPUT_H_INCLUDED
-#define INPUT_H_INCLUDED
+#ifndef ngspice_INPUT_H
+#define ngspice_INPUT_H
 
 
 int input(FILE *fp);

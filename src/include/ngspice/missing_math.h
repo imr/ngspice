@@ -4,8 +4,8 @@ Copyright 1999 Emmanuel Rouat
 
 /* Decl. for missing maths functions, if any */
 
-#ifndef MISSING_MATH_H_INCLUDED
-#define MISSING_MATH_H_INCLUDED
+#ifndef ngspice_MISSING_MATH_H
+#define ngspice_MISSING_MATH_H
 
 bool AlmostEqualUlps(double, double, int);
 

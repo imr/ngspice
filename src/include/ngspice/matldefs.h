@@ -7,8 +7,8 @@ Authors :  1991 David Gates
  * Version: 1b1
  */
 
-#ifndef MATL_H
-#define MATL_H
+#ifndef ngspice_MATLDEFS_H
+#define ngspice_MATLDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
 

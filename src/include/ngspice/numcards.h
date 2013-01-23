@@ -10,8 +10,8 @@ Authors: 1991 David Gates
  * Version: 1b1
  */
  
-#ifndef NUMCARDS_H
-#define NUMCARDS_H
+#ifndef ngspice_NUMCARDS_H
+#define ngspice_NUMCARDS_H
 
 #include "ngspice/ifsim.h"
 

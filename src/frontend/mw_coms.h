@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef MW_COMS_H_INCLUDED
-#define MW_COMS_H_INCLUDED
+#ifndef ngspice_MW_COMS_H
+#define ngspice_MW_COMS_H
 
 void com_removecirc(wordlist *wl);
 

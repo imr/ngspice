@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef CMATH2_H_INCLUDED
-#define CMATH2_H_INCLUDED
+#ifndef ngspice_CMATH2_H
+#define ngspice_CMATH2_H
 
 
 

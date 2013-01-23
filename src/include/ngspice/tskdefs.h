@@ -5,8 +5,8 @@ Modified: 2000 AlansFixes
 **********/
 /*
  */
-#ifndef TSK
-#define TSK
+#ifndef ngspice_TSKDEFS_H
+#define ngspice_TSKDEFS_H
 
 
 #include "ngspice/typedefs.h"

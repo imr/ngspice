@@ -2,8 +2,8 @@
 * Header file for com_rehsh.c
 ************/
 
-#ifndef COM_REHASH_H
-#define COM_REHASH_H
+#ifndef ngspice_COM_REHASH_H
+#define ngspice_COM_REHASH_H
 
 #include "ngspice/wordlist.h"
 

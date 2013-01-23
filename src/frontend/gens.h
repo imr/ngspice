@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef GENS_H_INCLUDED
-#define GENS_H_INCLUDED
+#ifndef ngspice_GENS_H
+#define ngspice_GENS_H
 
 #include "ngspice/dgen.h"
 
