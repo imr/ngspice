@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef PLOT5_H_INCLUDED
-#define PLOT5_H_INCLUDED
+#ifndef ngspice_PLOT5_H
+#define ngspice_PLOT5_H
 
 disp_fn_Init_t             Plt5_Init;
 disp_fn_NewViewport_t      Plt5_NewViewport;

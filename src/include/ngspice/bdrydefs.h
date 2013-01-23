@@ -8,8 +8,8 @@ Authors :  1991 David Gates
  */
 
 
-#ifndef BDRY_H
-#define BDRY_H
+#ifndef ngspice_BDRYDEFS_H
+#define ngspice_BDRYDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
 

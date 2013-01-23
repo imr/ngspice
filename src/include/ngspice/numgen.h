@@ -10,8 +10,8 @@ Authors: 1991 David Gates
 /*
  * Generic Numerical Model Structure
  */
-#ifndef NUMGEN_H
-#define NUMGEN_H
+#ifndef ngspice_NUMGEN_H
+#define ngspice_NUMGEN_H
 
 #include "ngspice/ifsim.h"
 #include "ngspice/cktdefs.h"

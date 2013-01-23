@@ -10,8 +10,8 @@
  */
 
 
-#ifndef ngspice_DEFINES_H_
-#define ngspice_DEFINES_H_
+#ifndef ngspice_DEFINES_H
+#define ngspice_DEFINES_H
 
 
 #ifndef	M_PI

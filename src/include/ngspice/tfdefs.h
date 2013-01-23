@@ -3,8 +3,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#ifndef TF
-#define TF
+#ifndef ngspice_TFDEFS_H
+#define ngspice_TFDEFS_H
 
 #include "ngspice/typedefs.h"
 #include "ngspice/jobdefs.h"

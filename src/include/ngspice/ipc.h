@@ -37,8 +37,8 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
-#ifndef IPC_DEFINED 
-#define IPC_DEFINED 
+#ifndef ngspice_IPC_H
+#define ngspice_IPC_H
 
 
 #define  IPC_MAX_LINE_LEN       80

@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef IVARS_H_INCLUDED
-#define IVARS_H_INCLUDED
+#ifndef ngspice_IVARS_H
+#define ngspice_IVARS_H
 
 
 void ivars(char*);

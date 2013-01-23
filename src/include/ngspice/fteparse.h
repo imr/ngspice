@@ -8,8 +8,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Stuff for parsing -- used by the parser and in ft_evaluate().
  */
 
-#ifndef FTEPARSE
-#define FTEPARSE
+#ifndef ngspice_FTEPARSE_H
+#define ngspice_FTEPARSE_H
 
 
 #include "ngspice/cpstd.h"

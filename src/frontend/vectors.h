@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef VECTORS_H_INCLUDED
-#define VECTORS_H_INCLUDED
+#ifndef ngspice_VECTORS_H
+#define ngspice_VECTORS_H
 
 #define vec_free(ptr)  vec_free_x(ptr); ptr=NULL
 

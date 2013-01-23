@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef DIMENS_H_INCLUDED
-#define DIMENS_H_INCLUDED
+#ifndef ngspice_DIMENS_H
+#define ngspice_DIMENS_H
 
 void dimstring(int *data, int length, char *retstring);
 void indexstring(int *data, int length, char *retstring);

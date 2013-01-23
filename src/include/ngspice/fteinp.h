@@ -8,8 +8,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Note that this definition must be the same as struct card in INPdefs.h...
  */
 
-#ifndef FTEinput_h
-#define FTEinput_h
+#ifndef ngspice_FTEINP_H
+#define ngspice_FTEINP_H
 
 #include "ngspice/inpdefs.h"
 

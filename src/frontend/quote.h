@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef QUOTE_H_INCLUDED
-#define QUOTE_H_INCLUDED
+#ifndef ngspice_QUOTE_H
+#define ngspice_QUOTE_H
 
 
 

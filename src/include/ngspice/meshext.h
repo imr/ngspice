@@ -10,8 +10,8 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 /**********
  Mesh Definitions and Declarations.
 **********/
-#ifndef MESHEXT_H
-#define MESHEXT_H
+#ifndef ngspice_MESHEXT_H
+#define ngspice_MESHEXT_H
 
 #include "ngspice/meshdefs.h"
 #include "ngspice/gendev.h"

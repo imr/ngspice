@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef OUTITF_H_INCLUDED
-#define OUTITF_H_INCLUDED
+#ifndef ngspice_OUTITF_H
+#define ngspice_OUTITF_H
 
 #include "ngspice/typedefs.h"
 

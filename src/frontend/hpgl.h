@@ -2,8 +2,8 @@
 * Header file for hpgl.c
 ************/
 
-#ifndef HPGH_H
-#define HPGH_H
+#ifndef ngspice_HPGL_H
+#define ngspice_HPGL_H
 
 disp_fn_Init_t             GL_Init;
 disp_fn_NewViewport_t      GL_NewViewport;

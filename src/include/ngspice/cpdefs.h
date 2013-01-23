@@ -8,8 +8,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  */
 
 /* Standard definitions */
-#ifndef CPDEFS
-#define CPDEFS
+#ifndef ngspice_CPDEFS_H
+#define ngspice_CPDEFS_H
 
 #include "ngspice/cpstd.h"
 

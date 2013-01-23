@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef NEWCOMS_H_INCLUDED
-#define NEWCOMS_H_INCLUDED
+#ifndef ngspice_NEWCOMS_H
+#define ngspice_NEWCOMS_H
 
 void com_reshape(wordlist *wl);
 

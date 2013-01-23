@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef WHERE_H_INCLUDED
-#define WHERE_H_INCLUDED
+#ifndef ngspice_WHERE_H
+#define ngspice_WHERE_H
 
 void com_where(wordlist *wl);
 

@@ -3,8 +3,8 @@
 	Stand: 21.05.95
 */
 
-#ifndef WSTDIO_H
-#define WSTDIO_H
+#ifndef ngspice_WSTDIO_H
+#define ngspice_WSTDIO_H
 #include <stdio.h>				/* original definitions */
 
 #undef getc					/* old macros removed */

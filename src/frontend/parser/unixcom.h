@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef UNIXCOM_H_INCLUDED
-#define UNIXCOM_H_INCLUDED
+#ifndef ngspice_UNIXCOM_H
+#define ngspice_UNIXCOM_H
 
 
 #endif

@@ -3,8 +3,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#ifndef DCOP
-#define DCOP
+#ifndef ngspice_OPDEFS_H
+#define ngspice_OPDEFS_H
 
 
 #include "ngspice/cktdefs.h"

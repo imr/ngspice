@@ -1,5 +1,5 @@
-#ifndef ngspice_CLUSTER_H_
-#define ngspice_CLUSTER_H_
+#ifndef ngspice_CLUSTER_H
+#define ngspice_CLUSTER_H
 #include "ngspice/cktdefs.h"
 
 /* Cluster definitions */

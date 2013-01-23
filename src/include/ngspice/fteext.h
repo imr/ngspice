@@ -8,8 +8,8 @@ Modified: 1999 Paolo Nenzi - 2000 AlansFixes
  * Definitions for all external symbols in FTE.
  */
 
-#ifndef FTEext_h
-#define FTEext_h
+#ifndef ngspice_FTEEXT_H
+#define ngspice_FTEEXT_H
 
 #include "ngspice/config.h"
 

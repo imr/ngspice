@@ -2,8 +2,8 @@
  * MW. Include for spice 
  */
 
-#ifndef DATADEF_INC
-#define DATADEF_INC
+#ifndef ngspice_DATADEF_H
+#define ngspice_DATADEF_H
 
 	/*
 	 * Program defaults

@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef NUTINP_H_INCLUDED
-#define NUTINP_H_INCLUDED
+#ifndef ngspice_NUTINP_H
+#define ngspice_NUTINP_H
 
 void nutinp_source(char *file);
 

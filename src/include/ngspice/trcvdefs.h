@@ -5,8 +5,8 @@ Modified: 1999 Paolo Nenzi
 **********/
 /*
  */
-#ifndef DCTR
-#define DCTR
+#ifndef ngspice_TRCVDEFS_H
+#define ngspice_TRCVDEFS_H
 
 
 #include "ngspice/jobdefs.h"

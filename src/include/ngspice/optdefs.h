@@ -4,8 +4,8 @@ Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
 **********/
 
-#ifndef OPT
-#define OPT
+#ifndef ngspice_OPTDEFS_H
+#define ngspice_OPTDEFS_H
 
     /* structure used to describe the statistics to be collected */
 

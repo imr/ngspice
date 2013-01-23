@@ -7,8 +7,8 @@ Authors :  1991 David Gates
  * Version: 1b1
  */
 
-#ifndef CONT_H
-#define CONT_H
+#ifndef ngspice_CONTDEFS_H
+#define ngspice_CONTDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
 

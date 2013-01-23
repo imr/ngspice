@@ -7,8 +7,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  *
  * General front end stuff.
  */
-#ifndef FTEdefs_h
-#define FTEdefs_h
+#ifndef ngspice_FTEDEFS_H
+#define ngspice_FTEDEFS_H
 
 #define DEF_WIDTH   80	/* Line printer width. */
 #define DEF_HEIGHT  60  /* Line printer height. */

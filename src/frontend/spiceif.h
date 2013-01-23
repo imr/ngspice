@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef SPICEIF_H_INCLUDED
-#define SPICEIF_H_INCLUDED
+#ifndef ngspice_SPICEIF_H
+#define ngspice_SPICEIF_H
 
 CKTcircuit * if_inpdeck(struct line *deck, INPtables **tab);
 int if_run(CKTcircuit *t, char *what, wordlist *args, INPtables *tab);

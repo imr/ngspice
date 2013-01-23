@@ -34,8 +34,8 @@
  */
 
 
-#ifndef spCONFIG_DEFS
-#define spCONFIG_DEFS
+#ifndef ngspice_SPCONFIG_H
+#define ngspice_SPCONFIG_H
 
 
 

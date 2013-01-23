@@ -7,8 +7,8 @@ Authors :  1991 David Gates
  * Version: 1b1
  */
 
-#ifndef MODL_H
-#define MODL_H
+#ifndef ngspice_MODLDEFS_H
+#define ngspice_MODLDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
 

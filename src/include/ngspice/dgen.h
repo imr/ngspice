@@ -1,5 +1,5 @@
-#ifndef DGEN_H
-#define DGEN_H
+#ifndef ngspice_DGEN_H
+#define ngspice_DGEN_H
 
 typedef struct st_dgen dgen;
 

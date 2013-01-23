@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef FOURIER_H_INCLUDED
-#define FOURIER_H_INCLUDED
+#ifndef ngspice_FOURIER_H
+#define ngspice_FOURIER_H
 
 void com_fourier(wordlist *wl);
 int fourier(wordlist *wl, struct plot *current);

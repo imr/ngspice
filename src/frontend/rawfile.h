@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef RAWFILE_H_INCLUDED
-#define RAWFILE_H_INCLUDED
+#ifndef ngspice_RAWFILE_H
+#define ngspice_RAWFILE_H
 
 
 

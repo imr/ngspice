@@ -7,8 +7,8 @@ Authors :  1991 David Gates
  * Version: 1b1
  */
 
-#ifndef MOB_H
-#define MOB_H
+#ifndef ngspice_MOBDEFS_H
+#define ngspice_MOBDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
 

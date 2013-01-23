@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef SIGNAL_HANDLER_H_INCLUDED
-#define SIGNAL_HANDLER_H_INCLUDED
+#ifndef ngspice_SIGNAL_HANDLER_H
+#define ngspice_SIGNAL_HANDLER_H
 
 RETSIGTYPE ft_sigintr(void);
 RETSIGTYPE sigfloat(int sig, int code);

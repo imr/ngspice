@@ -3,8 +3,8 @@ Copyright 1992 Regents of the University of California. All rights reserved.
 Authors:  1992 David Gates
 **********/
 
-#ifndef OUTP_H
-#define OUTP_H
+#ifndef ngspice_OUTPDEFS_H
+#define ngspice_OUTPDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
 

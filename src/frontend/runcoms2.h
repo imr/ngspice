@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef RUNCOMS2_H_INCLUDED
-#define RUNCOMS2_H_INCLUDED
+#ifndef ngspice_RUNCOMS2_H
+#define ngspice_RUNCOMS2_H
 
 void com_resume(wordlist *wl);
 void com_rset(wordlist *wl);

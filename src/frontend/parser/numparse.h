@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef NUMPARSE_H_INCLUDED
-#define NUMPARSE_H_INCLUDED
+#ifndef ngspice_NUMPARSE_H
+#define ngspice_NUMPARSE_H
 
 
 #endif

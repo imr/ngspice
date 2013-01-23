@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef DEFINE_H_INCLUDED
-#define DEFINE_H_INCLUDED
+#ifndef ngspice_DEFINE_H
+#define ngspice_DEFINE_H
 
 void com_define(wordlist *wlist);
 void com_undefine(wordlist *wlist);

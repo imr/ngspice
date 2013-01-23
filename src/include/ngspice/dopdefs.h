@@ -7,8 +7,8 @@ Authors :  1991 David Gates
  * Version: 1b1
  */
 
-#ifndef DOP_H
-#define DOP_H
+#ifndef ngspice_DOPDEFS_H
+#define ngspice_DOPDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
 

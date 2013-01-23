@@ -4,8 +4,8 @@ Author: 1988 Jaijeet S Roychowdhury
 Modified: 2000 AlansFixes
 **********/
 
-#ifndef DISTODEF
-#define DISTODEF
+#ifndef ngspice_DISTODEF_H
+#define ngspice_DISTODEF_H
 
 #ifdef D_DBG_ALLTIMES
 #define D_DBG_BLOCKTIMES

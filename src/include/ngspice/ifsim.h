@@ -3,8 +3,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1986 Thomas L. Quarles
 **********/
 
-#ifndef IFSIMULATOR
-#define IFSIMULATOR
+#ifndef ngspice_IFSIM_H
+#define ngspice_IFSIM_H
 
 #include "ngspice/typedefs.h"
 

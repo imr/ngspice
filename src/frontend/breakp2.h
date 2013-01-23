@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef BREAKP2_H_INCLUDED
-#define BREAKP2_H_INCLUDED
+#ifndef ngspice_BREAKP2_H
+#define ngspice_BREAKP2_H
 
 
 void com_save(wordlist *wl);

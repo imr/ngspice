@@ -7,8 +7,8 @@ Author: 1987 Jeffrey M. Hsu
     The display device structure.
 */
 
-#ifndef FTEDEV_H_INCLUDED
-#define FTEDEV_H_INCLUDED
+#ifndef ngspice_FTEDEV_H
+#define ngspice_FTEDEV_H
 
 struct graph;
 struct request;

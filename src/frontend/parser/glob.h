@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef GLOB_H_INCLUDED
-#define GLOB_H_INCLUDED
+#ifndef ngspice_GLOB_H
+#define ngspice_GLOB_H
 
 
 #endif

@@ -3,8 +3,8 @@
  * external interface to spice frontend  subckt.c
  */
 
-#ifndef NUMPAIF_H
-#define NUMPAIF_H
+#ifndef ngspice_NUMPAIF_H
+#define ngspice_NUMPAIF_H
 
 #define  NUPADECKCOPY 0
 #define  NUPASUBSTART 1

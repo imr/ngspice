@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef LINEAR_H_INCLUDED
-#define LINEAR_H_INCLUDED
+#ifndef ngspice_LINEAR_H
+#define ngspice_LINEAR_H
 
 void com_linearize(wordlist *wl);
 

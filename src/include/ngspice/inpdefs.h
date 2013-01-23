@@ -4,8 +4,8 @@ Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
 **********/
 
-#ifndef INP
-#define INP
+#ifndef ngspice_INPDEFS_H
+#define ngspice_INPDEFS_H
 
     /* structure declarations used by either/both input package */
 

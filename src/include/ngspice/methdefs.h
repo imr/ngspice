@@ -7,8 +7,8 @@ Authors :  1991 David Gates
  * Version: 1b1
  */
 
-#ifndef METH_H
-#define METH_H
+#ifndef ngspice_METHDEFS_H
+#define ngspice_METHDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
 

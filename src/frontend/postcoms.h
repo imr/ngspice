@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef POSTCOMS_H_INCLUDED
-#define POSTCOMS_H_INCLUDED
+#ifndef ngspice_POSTCOMS_H
+#define ngspice_POSTCOMS_H
 
 void com_unlet(wordlist *wl);
 void com_load(wordlist *wl);

@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef XGRAPH_H_INCLUDED
-#define XGRAPH_H_INCLUDED
+#ifndef ngspice_XGRAPH_H
+#define ngspice_XGRAPH_H
 
 void ft_xgraph(double *xlims, double *ylims, char *filename, char *title,
                char *xlabel, char *ylabel, GRIDTYPE gridtype, PLOTTYPE plottype,

@@ -7,8 +7,8 @@ Authors :  1991 David Gates
  * Version: 1b1
  */
 
-#ifndef DOMN_H
-#define DOMN_H
+#ifndef ngspice_DOMNDEFS_H
+#define ngspice_DOMNDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
 

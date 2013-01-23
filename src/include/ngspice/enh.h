@@ -1,5 +1,5 @@
-#ifndef ENH_HEADER
-#define ENH_HEADER x
+#ifndef ngspice_ENH_H
+#define ngspice_ENH_H
 
 /* ===========================================================================
 FILE    ENH.h

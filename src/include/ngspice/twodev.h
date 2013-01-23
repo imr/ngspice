@@ -11,8 +11,8 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
  * Two-Dimensional Numerical Device Data Structures 
  */
   
-#ifndef TWODEV_H
-#define TWODEV_H
+#ifndef ngspice_TWODEV_H
+#define ngspice_TWODEV_H
 
 #include "ngspice/gendev.h"
 #include "ngspice/smpdefs.h"

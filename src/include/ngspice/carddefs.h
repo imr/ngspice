@@ -7,8 +7,8 @@ Authors :  1991 David Gates
  * Version: 1b1
  */
 
-#ifndef CARDDEFS_H
-#define CARDDEFS_H
+#ifndef ngspice_CARDDEFS_H
+#define ngspice_CARDDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
 #include "ngspice/bdrydefs.h"

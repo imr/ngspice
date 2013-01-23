@@ -5,8 +5,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
  * SENdefs.h - structures for sensitivity package
  */
 
-#ifndef SENSTRUCTS
-#define SENSTRUCTS
+#ifndef ngspice_SEN2DEFS_H
+#define ngspice_SEN2DEFS_H
 
 
 #include "ngspice/smpdefs.h"

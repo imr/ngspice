@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef CMATH1_H_INCLUDED
-#define CMATH1_H_INCLUDED
+#ifndef ngspice_CMATH1_H
+#define ngspice_CMATH1_H
 
 
 void * cx_mag(void *data, short int type, int length, int *newlength, short int *newtype);

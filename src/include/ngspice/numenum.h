@@ -11,8 +11,8 @@ Authors: 1991 David Gates
  */
 
 
-#ifndef NUMENUM_H
-#define NUMENUM_H
+#ifndef ngspice_NUMENUM_H
+#define ngspice_NUMENUM_H
 
 /* Doping Profiles */
 #define UNIF         101

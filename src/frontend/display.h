@@ -4,8 +4,8 @@
  ************/
 
 /*  See if we have been already included  */
-#ifndef DISPLAY_H_INCLUDED
-#define DISPLAY_H_INCLUDED
+#ifndef ngspice_DISPLAY_H
+#define ngspice_DISPLAY_H
 
 /*  Include a bunch of other stuff to make display.h work  */
 #include "ngspice/ftedev.h"

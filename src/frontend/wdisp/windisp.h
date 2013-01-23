@@ -2,8 +2,8 @@
 * Header file for windisp.c
 ************/
 
-#ifndef WINDISP_H
-#define WINDISP_H
+#ifndef ngspice_WINDISP_H
+#define ngspice_WINDISP_H
 
 disp_fn_Init_t             WIN_Init;
 disp_fn_NewViewport_t      WIN_NewViewport;

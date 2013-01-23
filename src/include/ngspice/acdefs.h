@@ -3,8 +3,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#ifndef ACDEFS
-#define ACDEFS
+#ifndef ngspice_ACDEFS_H
+#define ngspice_ACDEFS_H
 
 #include "ngspice/jobdefs.h"
 

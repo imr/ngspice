@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef CLIP_H_INCLUDED
-#define CLIP_H_INCLUDED
+#ifndef ngspice_CLIP_H
+#define ngspice_CLIP_H
 
 
 

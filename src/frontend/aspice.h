@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef ASPICE_H_INCLUDED
-#define ASPICE_H_INCLUDED
+#ifndef ngspice_ASPICE_H
+#define ngspice_ASPICE_H
 
 
 void com_aspice(wordlist *wl);

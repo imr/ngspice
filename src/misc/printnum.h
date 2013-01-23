@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef PRINTNUM_H_INCLUDED
-#define PRINTNUM_H_INCLUDED
+#ifndef ngspice_PRINTNUM_H
+#define ngspice_PRINTNUM_H
 
 void printnum(char * buf, double num);
 

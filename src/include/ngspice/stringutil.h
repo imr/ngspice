@@ -6,8 +6,8 @@
 #include "ngspice/config.h"
 #include "ngspice/bool.h"
 
-#ifndef STRING_H_INCLUDED
-#define STRING_H_INCLUDED
+#ifndef ngspice_STRINGUTIL_H
+#define ngspice_STRINGUTIL_H
 
 int prefix(register char *p, register char *s);
 char * copy(const char *str);

@@ -1,6 +1,6 @@
 /*Include file to allow spice to export certain data */
-#ifndef TCLSPICE_H
-#define TCLSPICE_H
+#ifndef ngspice_TCLSPICE_H
+#define ngspice_TCLSPICE_H
 
 extern int steps_completed;
 extern void blt_init(void *run);

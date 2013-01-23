@@ -3,8 +3,8 @@
  * 2008 H. Vogt
  ************/
 
-#ifndef FFT_H_INCLUDED
-#define FFT_H_INCLUDED
+#ifndef ngspice_COM_FFT_H
+#define ngspice_COM_FFT_H
 
 void com_fft(wordlist *wl);
 void com_psd(wordlist *wl);

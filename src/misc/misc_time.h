@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef MISC_TIME_H_INCLUDED
-#define MISC_TIME_H_INCLUDED
+#ifndef ngspice_MISC_TIME_H
+#define ngspice_MISC_TIME_H
 
 char * datestring(void);
 double seconds(void);

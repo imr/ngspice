@@ -15,8 +15,8 @@ Author: 1988 Jeffrey M. Hsu
     checkup_option is for handling and pending asynchonous events
 */
 
-#ifndef ngspice_FTEINPUT_H_
-#define ngspice_FTEINPUT_H_
+#ifndef ngspice_FTEINPUT_H
+#define ngspice_FTEINPUT_H
 
 
 #include <stdio.h>

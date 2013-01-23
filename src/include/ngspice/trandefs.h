@@ -4,8 +4,8 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 
-#ifndef TRAN
-#define TRAN
+#ifndef ngspice_TRANDEFS_H
+#define ngspice_TRANDEFS_H
 
 
 #include "ngspice/cktdefs.h"

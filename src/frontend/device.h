@@ -4,8 +4,8 @@
  * Modified: 2000 AlansFixes
  ************/
 
-#ifndef DEVICE_H_INCLUDED
-#define DEVICE_H_INCLUDED
+#ifndef ngspice_DEVICE_H
+#define ngspice_DEVICE_H
 
 #define LEFT_WIDTH 11
 #define DEV_WIDTH 21

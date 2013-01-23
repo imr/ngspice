@@ -2,8 +2,8 @@
 * Header file for streams.c
 ************/
 
-#ifndef STREAMS_H
-#define STREAMS_H
+#ifndef ngspice_STREAMS_H
+#define ngspice_STREAMS_H
 
 #include "ngspice/bool.h"
 #include "ngspice/wordlist.h"

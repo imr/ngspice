@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef ARG_H_INCLUDED
-#define ARG_H_INCLUDED
+#ifndef ngspice_ARG_H
+#define ngspice_ARG_H
 
 char *prompt(FILE *fp);
 int countargs(wordlist *wl);

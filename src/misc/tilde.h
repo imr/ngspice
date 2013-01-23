@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef TILDE_H_INCLUDED
-#define TILDE_H_INCLUDED
+#ifndef ngspice_TILDE_H
+#define ngspice_TILDE_H
 
 char * tildexpand(char *string);
 

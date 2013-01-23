@@ -1,5 +1,5 @@
-#ifndef MIF
-#define MIF
+#ifndef ngspice_MIF_H
+#define ngspice_MIF_H
 
 /* ===========================================================================
 FILE    MIF.h

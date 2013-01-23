@@ -2,8 +2,8 @@
 * Header file for com_unset.c
 ************/
 
-#ifndef COM_UNSET_H
-#define COM_UNSET_H
+#ifndef ngspice_COM_UNSET_H
+#define ngspice_COM_UNSET_H
 
 #include "ngspice/wordlist.h"
 

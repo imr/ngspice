@@ -6,8 +6,8 @@
  * Bernoulli function
  */
  
-#ifndef NORM_H
-#define NORM_H
+#ifndef ngspice_NORM_H
+#define ngspice_NORM_H
 
 extern double maxNorm(double *, int);
 extern double oneNorm(double *, int);

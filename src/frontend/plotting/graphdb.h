@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef GRAPHDB_H_INCLUDED
-#define GRAPHDB_H_INCLUDED
+#ifndef ngspice_GRAPHDB_H
+#define ngspice_GRAPHDB_H
 
 int DestroyGraph(int id);
 void FreeGraphs(void);

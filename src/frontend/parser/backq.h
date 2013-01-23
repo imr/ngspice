@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef BACKQ_H_INCLUDED
-#define BACKQ_H_INCLUDED
+#ifndef ngspice_BACKQ_H
+#define ngspice_BACKQ_H
 
 
 #endif

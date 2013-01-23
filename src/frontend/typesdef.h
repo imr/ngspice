@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef TYPESDEF_H_INCLUDED
-#define TYPESDEF_H_INCLUDED
+#ifndef ngspice_TYPESDEF_H
+#define ngspice_TYPESDEF_H
 
 void com_dftype(wordlist *wl);
 void com_stype(wordlist *wl);

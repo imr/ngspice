@@ -1,7 +1,7 @@
 /*   dstring.h    */
 
-#ifndef DSTRING_H
-#define DSTRING_H
+#ifndef ngspice_DSTRING_H
+#define ngspice_DSTRING_H
 
 /* -----------------------------------------------------------------
  * This structure is modified from Tcl.   We do this to avoid a

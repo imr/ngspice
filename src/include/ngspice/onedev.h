@@ -11,8 +11,8 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
  * One Dimensional Numerical Device Data Structures
  */
  
-#ifndef ONEDEV_H
-#define ONEDEV_H
+#ifndef ngspice_ONEDEV_H
+#define ngspice_ONEDEV_H
 
 #include "ngspice/gendev.h"
 #include "ngspice/smpdefs.h"

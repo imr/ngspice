@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef PLOTCURV_H_INCLUDED
-#define PLOTCURV_H_INCLUDED
+#ifndef ngspice_PLOTCURV_H
+#define ngspice_PLOTCURV_H
 
 
 

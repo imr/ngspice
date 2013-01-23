@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef INPCOM_H_INCLUDED
-#define INPCOM_H_INCLUDED
+#ifndef ngspice_INPCOM_H
+#define ngspice_INPCOM_H
 
 
 #endif

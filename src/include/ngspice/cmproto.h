@@ -1,5 +1,5 @@
-#ifndef CMPROTO_DEFINED
-#define CMPROTO_DEFINED
+#ifndef ngspice_CMPROTO_H
+#define ngspice_CMPROTO_H
 
 /* ===========================================================================
 FILE    CMproto.h

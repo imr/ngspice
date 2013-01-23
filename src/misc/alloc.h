@@ -3,8 +3,8 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef ALLOC_H_INCLUDED
-#define ALLOC_H_INCLUDED
+#ifndef ngspice_ALLOC_H
+#define ngspice_ALLOC_H
 
 #ifndef HAVE_LIBGC
 void * tmalloc(size_t num);

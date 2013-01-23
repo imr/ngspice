@@ -7,8 +7,8 @@ Authors:  1991 David Gates
  * Version: 1b1
  */
 
-#ifndef OPTN_H
-#define OPTN_H
+#ifndef ngspice_OPTNDEFS_H
+#define ngspice_OPTNDEFS_H
 
 /* Data Structures and Definitions for Device Simulation Cards */
 

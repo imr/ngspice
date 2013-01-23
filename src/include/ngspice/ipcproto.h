@@ -1,5 +1,5 @@
-#ifndef IPCPROTO_H
-#define IPCPROTO_H
+#ifndef ngspice_IPCPROTO_H
+#define ngspice_IPCPROTO_H
 
 /* IPC.c */
 Ipc_Boolean_t kw_match (char *keyword , char *str );

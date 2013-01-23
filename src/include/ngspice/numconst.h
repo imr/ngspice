@@ -10,8 +10,8 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
  * Version: 1b1
  */
  
-#ifndef NUMCONST_H
-#define NUMCONST_H
+#ifndef ngspice_NUMCONST_H
+#define ngspice_NUMCONST_H
 
 /* Mathematical Constants */
 #ifdef PI

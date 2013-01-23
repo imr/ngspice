@@ -2,8 +2,8 @@
 * Header file for com_echo.c
 ************/
 
-#ifndef COM_ECHO_H
-#define COM_ECHO_H
+#ifndef ngspice_COM_ECHO_H
+#define ngspice_COM_ECHO_H
 
 #include "ngspice/wordlist.h"
 
