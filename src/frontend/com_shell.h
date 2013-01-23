@@ -7,4 +7,4 @@
 
 void com_shell(wordlist *wl);
 
-#endif /* COM_SHELL_H */
+#endif

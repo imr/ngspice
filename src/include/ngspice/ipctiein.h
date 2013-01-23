@@ -92,5 +92,5 @@ typedef struct {
 extern  Ipc_Tiein_t  g_ipc;
 
 
-#endif  /* IPC_TIEIN_DEFINED */
+#endif
 

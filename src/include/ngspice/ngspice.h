@@ -2,7 +2,7 @@
  * Main header file for ngspice
  * 1999 E. Rouat
  ************/
-#ifndef NGSPICE_H_INCLUDED /* va */
+#ifndef NGSPICE_H_INCLUDED
 #define NGSPICE_H_INCLUDED
 
 /* #include "memwatch.h"
@@ -254,4 +254,4 @@ extern int tcl_fprintf(FILE *f, const char *format, ...);
 #define NG_IGNOREABLE(x)  (void)x
 
 
-#endif /* NGSPICE_H_INCLUDED */
+#endif

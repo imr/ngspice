@@ -65,4 +65,4 @@ typedef struct sMOBcard {
 #define MOB_MATERIAL	16
 #define MOB_INIT	17
 
-#endif /* MOB_H */
+#endif

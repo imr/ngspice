@@ -371,4 +371,4 @@ typedef struct Mif_Private_s {
 
 
 
-#endif /* MIFCMDAT */
+#endif

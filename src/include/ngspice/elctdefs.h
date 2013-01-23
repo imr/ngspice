@@ -45,4 +45,4 @@ typedef struct sELCTcard {
 #define ELCT_IY_HIGH	8
 #define ELCT_NUMBER	9
 
-#endif /* ELCT_H */
+#endif

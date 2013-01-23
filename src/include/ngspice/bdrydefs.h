@@ -61,4 +61,4 @@ typedef struct sBDRYcard {
 #define BDRY_SP		13
 #define BDRY_LAYER	14
 
-#endif /* BDRY_H */
+#endif

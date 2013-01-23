@@ -31,5 +31,5 @@ void SaveText(GRAPH *graph, char *text, int x, int y);
 int DevSwitch(char *devname);
 
 
-#endif /* DISPLAY_H_INCLUDED */
+#endif
 

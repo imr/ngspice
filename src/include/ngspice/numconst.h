@@ -228,4 +228,4 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 #define DABSTOL1D   1.0e-12				/* --- */
 #define DABSTOL2D   1.0e-8				/* --- */
 
-#endif /* NUMCONST_H */
+#endif

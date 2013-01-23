@@ -104,4 +104,4 @@ typedef struct sOUTPcard {
 #define OUTP_MUN	30
 #define OUTP_MUP	31
 
-#endif /* OUTP_H */
+#endif

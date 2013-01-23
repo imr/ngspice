@@ -16,4 +16,4 @@ int  if_analQbyName(CKTcircuit *ckt, int which, JOB *anal, char *name, IFvalue *
 void com_snload(wordlist *wl);
 void com_snsave(wordlist *wl);
 
-#endif /* SPICEIF_H_INCLUDED */
+#endif

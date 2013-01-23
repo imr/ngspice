@@ -136,4 +136,4 @@ typedef struct {
 
 #define OPT_TOTALDEV 200 /* Total devices in the netlist */
 
-#endif /*OPT*/
+#endif

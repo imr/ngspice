@@ -32,4 +32,4 @@ typedef struct {
 #define TRAN_TSTEP 3
 #define TRAN_TMAX 4
 #define TRAN_UIC 5
-#endif /*TRAN*/
+#endif

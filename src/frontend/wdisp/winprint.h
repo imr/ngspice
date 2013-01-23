@@ -21,4 +21,4 @@ int WPRINT_SetColor( int color);
 int WPRINT_Update(void);
 int WPRINT_DiagramReady(void);
 
-#endif /* WINPRINT_H */
+#endif

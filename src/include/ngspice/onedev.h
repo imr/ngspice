@@ -70,4 +70,4 @@ typedef struct sONEcontact
     double workf;                   /* metal work function */
 } ONEcontact;
 
-#endif /* ONEDEV_H */
+#endif

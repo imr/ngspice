@@ -119,4 +119,4 @@ typedef struct sBoundaryInfo ONEboundary;
 typedef struct sBoundaryInfo TWOboundary;
 typedef struct sBoundaryInfo BDRYboundary;
 
-#endif /* GENDEV_H */
+#endif

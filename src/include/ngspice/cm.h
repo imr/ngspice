@@ -46,4 +46,4 @@ NON-STANDARD FEATURES
 #include "ngspice/mifcmdat.h"
 
 
-#endif /* CM_DEFINED */
+#endif

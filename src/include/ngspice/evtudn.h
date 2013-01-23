@@ -120,4 +120,4 @@ extern int             g_evt_num_udn_types;
 extern Evt_Udn_Info_t  **g_evt_udn_info;
 
 
-#endif /* EVTUDN_HEADER */
+#endif

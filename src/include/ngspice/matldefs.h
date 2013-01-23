@@ -90,4 +90,4 @@ typedef struct sMATLcard {
 #define MATL_DEGDC	28
 #define MATL_CREF_EG	29
 
-#endif /* MATL_H */
+#endif

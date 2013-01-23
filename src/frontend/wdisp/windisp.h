@@ -33,4 +33,4 @@ disp_fn_SetColor_t         WPRINT_SetColor;
 disp_fn_Update_t           WPRINT_Update;
 //extern int WIN_DiagramReady();
 
-#endif /* WINDISP_H */
+#endif

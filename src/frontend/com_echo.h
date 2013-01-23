@@ -9,4 +9,4 @@
 
 void com_echo(wordlist *wlist);
 
-#endif /* COM_ECHO_H */
+#endif

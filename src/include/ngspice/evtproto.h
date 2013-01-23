@@ -123,4 +123,4 @@ void EVTaccept(
 
 struct dvec *EVTfindvec(char *node);
 
-#endif /* EVTPROTO_HEADER */
+#endif

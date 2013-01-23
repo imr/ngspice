@@ -9,4 +9,4 @@
 
 void com_unset(wordlist *wl);
 
-#endif /* COM_UNSET_H */
+#endif

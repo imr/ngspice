@@ -49,4 +49,4 @@ typedef struct sDOMNcard {
 #define DOMN_MATERIAL	10
 
 
-#endif /* DOMN_H */
+#endif

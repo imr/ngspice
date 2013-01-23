@@ -90,4 +90,4 @@ Authors: 1991 David Gates
 #define STAT_TRAN	2
 #define STAT_AC		3
 
-#endif /* NUMENUM_H */
+#endif

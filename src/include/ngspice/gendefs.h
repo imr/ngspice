@@ -47,4 +47,4 @@ struct GENmodel {       /* model structure for a resistor */
     IFuid GENmodName;           /* pointer to character string naming this model */
 };
 
-#endif /*GEN*/
+#endif

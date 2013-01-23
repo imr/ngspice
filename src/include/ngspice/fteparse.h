@@ -103,4 +103,4 @@ struct element {
 #define PT_OP_TERNARY  23
 
 
-#endif /* FTEPARSE */
+#endif

@@ -7,4 +7,4 @@
 
 void com_shift(wordlist *wl);
 
-#endif /* COM_SHIFT_H */
+#endif

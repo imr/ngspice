@@ -54,4 +54,4 @@ typedef struct {
 #define DCT_NAME2 9
 #define DCT_TYPE2 10
 
-#endif /*DCTR*/
+#endif

@@ -10,4 +10,4 @@
 
 void fixdescriptors(void);
 
-#endif /* STREAMS_H */
+#endif

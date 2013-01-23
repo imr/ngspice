@@ -51,4 +51,4 @@ typedef struct sDOPtable {
 #define IMP_N_TYPE	5
 #define IMP_P_TYPE	6
 
-#endif /* PROFILE_H */
+#endif

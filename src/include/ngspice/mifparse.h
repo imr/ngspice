@@ -117,4 +117,4 @@ typedef struct Mif_Inst_Var_Info_s {
 } Mif_Inst_Var_Info_t;
 
 
-#endif /* MIFPARSE */
+#endif

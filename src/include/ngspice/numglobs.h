@@ -56,4 +56,4 @@ typedef struct sGLOBvalues
   double ENorm;
 } GLOBvalues;
 
-#endif /* NUMGLOBS_H */
+#endif

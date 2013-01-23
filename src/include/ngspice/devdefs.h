@@ -159,4 +159,4 @@ extern int        DEVmaxnum;    /* size of DEVices array */
 
 #define DEV_DEFAULT	0x1
 
-#endif /*DEV*/
+#endif

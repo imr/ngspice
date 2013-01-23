@@ -46,4 +46,4 @@ extern int isinf(double);
 #endif /* HAVE_ISINF */
 #endif /* HAVE_DECL_ISINF */
 
-#endif /* MISSING_MATH_H_INCLUDED */
+#endif

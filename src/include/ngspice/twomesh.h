@@ -209,4 +209,4 @@ typedef struct sTWOnode {
 #define TWOnumNodeStates 5
 #define TWOnumEdgeStates 2
 
-#endif /* TWOMESH_H */
+#endif

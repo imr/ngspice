@@ -55,4 +55,4 @@ extern char *errRtn;    /* name of the routine declaring error */
                         /* and thus can be set correctly even if we run out */
                         /* of memory */
 
-#endif /*IFERRMSGS*/
+#endif
