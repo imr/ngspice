@@ -3,8 +3,8 @@
  * Modified 1999 Paolo Nenzi - Removed non STDC definitions
  * Modified 2000 AlansFixes
  */
-#ifndef CKT_H
-#define CKT_H
+#ifndef ngspice_CKTDEFS_H
+#define ngspice_CKTDEFS_H
 
 #include "ngspice/typedefs.h"
 

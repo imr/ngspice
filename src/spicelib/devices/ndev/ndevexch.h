@@ -14,7 +14,7 @@
 #define NDEV_AC_LOAD            0x0010
 #define NDEV_PZ_LOAD            0x0020
 
-#ifndef CKT_H
+#ifndef ngspice_CKTDEFS_H
 /* defines for CKTmode */
 /* this should be the same as cktdefs.h */
 /* old 'mode' parameters */
