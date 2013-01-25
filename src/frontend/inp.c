@@ -445,7 +445,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 ld->li_next = dd->li_next;
                 line_free(dd, FALSE);
             } else {
-                /* lines .width, .four, .plot, .print,. save added to wl_first, removed from deck */
+                /* lines .width, .four, .plot, .print, .save added to wl_first, removed from deck */
                 /* lines .op, .meas, .tf added to wl_first */
                 inp_casefix(s); /* s: first token from line */
                 inp_casefix(dd->li_line);
@@ -527,7 +527,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 (void) fclose(fdo);
             }
             for (dd = deck; dd; dd = dd->li_next) {
-                /* get csparams and create vectors */
+                /* get csparams and create vectors, being
+                   available in .control section, in plot 'const' */
                 if (ciprefix(".csparam", dd->li_line)) {
                     wordlist *wlist = NULL;
                     wordlist *wl = NULL;
@@ -731,12 +732,14 @@ inp_dodeck(
         }
 
     if (reuse) {
+        /* re-use existing circuit structure */
         ct = ft_curckt;
     } else {
         if (ft_curckt) {
             ft_curckt->ci_devices = cp_kwswitch(CT_DEVNAMES, NULL);
             ft_curckt->ci_nodes   = cp_kwswitch(CT_NODENAMES, NULL);
         }
+        /* create new circuit structure */
         ft_curckt = ct = alloc(struct circ);
 
         /*PN FTESTATS*/
@@ -804,7 +807,9 @@ inp_dodeck(
         ckt = NULL;
     }
 
+    /* set ckt->CKTisLinear=1 if circuit only contains R, L, C */
     cktislinear(ckt, deck);
+    /* set some output terminal data */
     out_init();
 
     ft_curckt->FTEstats->FTESTATdeckNumLines = 0;
@@ -873,8 +878,8 @@ inp_dodeck(
         out_printf("\n");
     }
 
-    /* Add this circuit to the circuit list. If reuse is TRUE then use
-     * the ft_curckt structure.  */
+    /* Add this circuit to the circuit list. If reuse is TRUE
+       (command 'reset'), then use the existing ft_curckt structure.  */
     if (!reuse) {
         /* Be sure that ci_devices and ci_nodes are valid */
         ft_curckt->ci_devices = cp_kwswitch(CT_DEVNAMES, NULL);
