@@ -1474,7 +1474,7 @@ model_bin_match(char *token, char *model_name)
     /* find last dot in model_name */
 	char *dot_char  = strrchr(model_name, '.');
     bool  flag = FALSE;
-    /* check if token is the part before last dot in model_name */
+    /* check if token equals the substring before last dot in model_name */
 	if(dot_char) {
 		char *mtoken = copy_substring(model_name, dot_char);
 		if (cieq(mtoken, token)) {
