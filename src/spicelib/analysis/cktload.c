@@ -51,7 +51,7 @@ CKTload(CKTcircuit *ckt)
     startTime = SPfrontEnd->IFseconds();
     size = SMPmatSize(ckt->CKTmatrix);
     for (i = 0; i <= size; i++) {
-        *(ckt->CKTrhs+i) = 0;
+        ckt->CKTrhs[i] = 0;
     }
     SMPclear(ckt->CKTmatrix);
 #ifdef STEPDEBUG
@@ -109,11 +109,11 @@ CKTload(CKTcircuit *ckt)
                 if (node->nsGiven) {
                     if (ZeroNoncurRow(ckt->CKTmatrix, ckt->CKTnodes,
                                       node->number)) {
-                        *(ckt->CKTrhs+node->number) = 1.0e10 * node->nodeset *
+                        ckt->CKTrhs[node->number] = 1.0e10 * node->nodeset *
                                                       ckt->CKTsrcFact;
                         *(node->ptr) = 1e10;
                     } else {
-                        *(ckt->CKTrhs+node->number) = node->nodeset *
+                        ckt->CKTrhs[node->number] = node->nodeset *
                                                       ckt->CKTsrcFact;
                         *(node->ptr) = 1;
                     }
@@ -121,7 +121,7 @@ CKTload(CKTcircuit *ckt)
                      * revert to this.
                      */
                     /*
-                     *  *(ckt->CKTrhs+node->number) += 1.0e10 * node->nodeset;
+                     *  ckt->CKTrhs[node->number] += 1.0e10 * node->nodeset;
                      *  *(node->ptr) += 1.0e10;
                      */
                 }
@@ -133,23 +133,23 @@ CKTload(CKTcircuit *ckt)
                     if (ZeroNoncurRow(ckt->CKTmatrix, ckt->CKTnodes,
                                       node->number)) {
                         /* Original code:
-                         *(ckt->CKTrhs+node->number) += 1.0e10 * node->ic;
+                         ckt->CKTrhs[node->number] += 1.0e10 * node->ic;
                         */
-                        *(ckt->CKTrhs+node->number) = 1.0e10 * node->ic *
+                        ckt->CKTrhs[node->number] = 1.0e10 * node->ic *
                                                       ckt->CKTsrcFact;
                         *(node->ptr) += 1.0e10;
                     } else {
                         /* Original code:
-                          *(ckt->CKTrhs+node->number) = node->ic;
+                          ckt->CKTrhs[node->number] = node->ic;
                         */
-                        *(ckt->CKTrhs+node->number) = node->ic*ckt->CKTsrcFact; /* AlansFixes */
+                        ckt->CKTrhs[node->number] = node->ic*ckt->CKTsrcFact; /* AlansFixes */
                         *(node->ptr) = 1;
                     }
                     /* DAG: Original CIDER fix. If above fix doesn't work,
                      * revert to this.
                      */
                     /*
-                     *  *(ckt->CKTrhs+node->number) += 1.0e10 * node->ic;
+                     *  ckt->CKTrhs[node->number] += 1.0e10 * node->ic;
                      *  *(node->ptr) += 1.0e10;
                      */
                 }

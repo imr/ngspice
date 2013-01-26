@@ -272,8 +272,8 @@ void cm_triangle(ARGS)  /* structure holding parms,
 
         /* Retrieve x and y values. */
         for (i=0; i<cntl_size; i++) {
-            *(x+i) = PARAM(cntl_array[i]);
-            *(y+i) = PARAM(freq_array[i]);
+            x[i] = PARAM(cntl_array[i]);
+            y[i] = PARAM(freq_array[i]);
         }
 
         /* Retrieve cntl_input value. */
@@ -284,7 +284,7 @@ void cm_triangle(ARGS)  /* structure holding parms,
         /*** cntl_input below lowest cntl_voltage ***/
         if (cntl_input <= *x) {
 
-            dout_din = (*(y+1) - *y)/(*(x+1) - *x);
+            dout_din = (y[1] - y[0])/(x[1] - x[0]);
             freq = *y + (cntl_input - *x) * dout_din;
 
             if(freq <= 0) {
@@ -295,11 +295,11 @@ void cm_triangle(ARGS)  /* structure holding parms,
         } else
             /*** cntl_input above highest cntl_voltage ***/
 
-            if (cntl_input >= *(x+cntl_size-1)) {
-                dout_din = (*(y+cntl_size-1) - *(y+cntl_size-2)) /
-                           (*(x+cntl_size-1) - *(x+cntl_size-2));
-                freq = *(y+cntl_size-1) + (cntl_input - *(x+cntl_size-1)) * dout_din;
-                /* freq = *(y+cntl_size-1); */
+            if (cntl_input >= x[cntl_size-1]) {
+                dout_din = (y[cntl_size-1] - y[cntl_size-2]) /
+                           (x[cntl_size-1] - x[cntl_size-2]);
+                freq = y[cntl_size-1] + (cntl_input - x[cntl_size-1]) * dout_din;
+                /* freq = y[cntl_size-1]; */
 
             } else {
                 /*** cntl_input within bounds of end midpoints...
@@ -308,12 +308,12 @@ void cm_triangle(ARGS)  /* structure holding parms,
 
                 for (i=0; i<cntl_size-1; i++) {
 
-                    if ((cntl_input < *(x+i+1)) && (cntl_input >= *(x+i))) {
+                    if ((cntl_input < x[i+1]) && (cntl_input >= x[i])) {
 
                         /* Interpolate to the correct frequency value */
 
-                        freq = ((cntl_input - *(x+i))/(*(x+i+1) - *(x+i)))*
-                               (*(y+i+1)-*(y+i)) + *(y+i);
+                        freq = ((cntl_input - x[i])/(x[i+1] - x[i]))*
+                               (y[i+1]-y[i]) + y[i];
                     }
                 }
             }

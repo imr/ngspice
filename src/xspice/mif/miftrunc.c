@@ -172,7 +172,7 @@ static void MIFterr(
     /* Old code */
 /*
     volttol = ckt->CKTabstol + ckt->CKTreltol *
-            MAX( fabs(*(ckt->CKTstate0+ccap)), fabs(*(ckt->CKTstate1+ccap)));
+            MAX( fabs(ckt->CKTstate0[ccap]), fabs(ckt->CKTstate1[ccap]));
 */
 
     /* New code */

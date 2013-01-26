@@ -206,10 +206,10 @@ NOISEan (CKTcircuit *ckt, int restart)
 	 */
 
 	NIacIter(ckt);
-	realVal = *((ckt->CKTrhsOld) + posOutNode)
-		- *((ckt->CKTrhsOld) + negOutNode);
-	imagVal = *((ckt->CKTirhsOld) + posOutNode)
-		- *((ckt->CKTirhsOld) + negOutNode);
+	realVal = ckt->CKTrhsOld [posOutNode]
+		- ckt->CKTrhsOld [negOutNode];
+	imagVal = ckt->CKTirhsOld [posOutNode]
+		- ckt->CKTirhsOld [negOutNode];
 	data->GainSqInv = 1.0 / MAX(((realVal*realVal)
 		+ (imagVal*imagVal)),N_MINGAIN);
 	data->lnGainInv = log(data->GainSqInv);

@@ -163,7 +163,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
             if(!OldCKTstate0)
                 OldCKTstate0=TMALLOC(double, ckt->CKTnumStates + 1);
             for(i=0; i<ckt->CKTnumStates; i++) {
-                *(OldCKTstate0+i) = *(ckt->CKTstate0+i);
+                OldCKTstate0[i] = ckt->CKTstate0[i];
             }
 
             startTime = SPfrontEnd->IFseconds();
@@ -213,8 +213,8 @@ NIiter(CKTcircuit *ckt, int maxIter)
             maxdiff=0;
             for (node = ckt->CKTnodes->next; node; node = node->next) {
                 if(node->type == NODE_VOLTAGE) {
-                    diff = (ckt->CKTrhs)[node->number] -
-                           (ckt->CKTrhsOld)[node->number];
+                    diff = ckt->CKTrhs [node->number] -
+                           ckt->CKTrhsOld [node->number];
                     if (diff>maxdiff) maxdiff=diff;
                 }
             }
@@ -228,8 +228,8 @@ NIiter(CKTcircuit *ckt, int maxIter)
                                                 (damp_factor * diff);
                 }
                 for(i=0; i<ckt->CKTnumStates; i++) {
-                    diff = *(ckt->CKTstate0+i) - *(OldCKTstate0+i);
-                    *(ckt->CKTstate0+i) = *(OldCKTstate0+i) +
+                    diff = ckt->CKTstate0[i] - OldCKTstate0[i];
+                    ckt->CKTstate0[i] = OldCKTstate0[i] +
                                           (damp_factor * diff);
                 }
             }

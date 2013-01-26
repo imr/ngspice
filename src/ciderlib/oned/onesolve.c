@@ -714,12 +714,12 @@ ONEbiasSolve(ONEdevice *pDevice, int iterationLimit,
 	  pNode = pElem->pNodes[index];
 	  if (pNode->nodeType != CONTACT) {
 	    pNode->psi = solution[pNode->psiEqn];
-	    *(pDevice->devState0 + pNode->nodePsi) = pNode->psi;
+	    pDevice->devState0 [pNode->nodePsi] = pNode->psi;
 	    if (pElem->elemType == SEMICON) {
 	      pNode->nConc = solution[pNode->nEqn];
 	      pNode->pConc = solution[pNode->pEqn];
-	      *(pDevice->devState0 + pNode->nodeN) = pNode->nConc;
-	      *(pDevice->devState0 + pNode->nodeP) = pNode->pConc;
+	      pDevice->devState0 [pNode->nodeN] = pNode->nConc;
+	      pDevice->devState0 [pNode->nodeP] = pNode->pConc;
 	    }
 	  }
 	}
@@ -894,7 +894,7 @@ ONEpredict(ONEdevice *pDevice, ONEtranInfo *info)
     for (nIndex = 0; nIndex <= 1; nIndex++) {
       if (pElem->evalNodes[nIndex]) {
 	pNode = pElem->pNodes[nIndex];
-	pNode->psi = *(pDevice->devState1 + pNode->nodePsi);
+	pNode->psi = pDevice->devState1 [pNode->nodePsi];
 	if (pElem->elemType == SEMICON && pNode->nodeType != CONTACT) {
 	  pNode->nPred = predict(pDevice->devStates, info, pNode->nodeN);
 	  pNode->pPred = predict(pDevice->devStates, info, pNode->nodeP);
@@ -983,10 +983,10 @@ ONEsaveState(ONEdevice *pDevice)
     for (nIndex = 0; nIndex <= 1; nIndex++) {
       if (pElem->evalNodes[nIndex]) {
 	pNode = pElem->pNodes[nIndex];
-	pNode->psi = *(pDevice->devState1 + pNode->nodePsi);
+	pNode->psi = pDevice->devState1 [pNode->nodePsi];
 	if (pElem->elemType == SEMICON && pNode->nodeType != CONTACT) {
-	  pNode->nConc = *(pDevice->devState1 + pNode->nodeN);
-	  pNode->pConc = *(pDevice->devState1 + pNode->nodeP);
+	  pNode->nConc = pDevice->devState1 [pNode->nodeN];
+	  pNode->pConc = pDevice->devState1 [pNode->nodeP];
 	}
       }
     }

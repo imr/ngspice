@@ -92,8 +92,8 @@ DCop(CKTcircuit *ckt, int notused)
                                                               "-------------");
            for(node=ckt->CKTnodes->next;node;node=node->next) {
              if (strstr(node->name, "#branch") || !strstr(node->name, "#")) {
-               new =  *((ckt->CKTrhsOld) + i ) ;
-               old =  *((ckt->CKTrhs) + i ) ;
+               new =  ckt->CKTrhsOld [i] ;
+               old =  ckt->CKTrhs [i] ;
                fprintf(stdout,"%-30s %20g %20g", node->name, new, old);
                if(node->type == 3) {
                    tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
@@ -131,7 +131,7 @@ DCop(CKTcircuit *ckt, int notused)
          ckt->CKTsenInfo->SENmode = DCSEN;
          size = SMPmatSize(ckt->CKTmatrix);
          for(i = 1; i<=size ; i++){
-             *(ckt->CKTrhsOp + i) = *(ckt->CKTrhsOld + i);
+             ckt->CKTrhsOp[i] = ckt->CKTrhsOld[i];
          }
          if(error = CKTsenDCtran(ckt)) return(error);
          ckt->CKTmode = save;

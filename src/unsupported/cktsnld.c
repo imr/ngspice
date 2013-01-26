@@ -39,7 +39,7 @@ register CKTcircuit *ckt;
             (ckt->CKTsenInfo->SENmode == TRANSEN)) {
         for (col=0;col<=ckt->CKTsenInfo->SENparms;col++) {
             for(row=0;row<=size;row++){
-                *(ckt->CKTsenInfo->SEN_RHS[row] + col)= 0;
+                ckt->CKTsenInfo->SEN_RHS[row][col]= 0;
             }
         }
         for (i=0;i<DEVmaxnum;i++) {
@@ -51,8 +51,8 @@ register CKTcircuit *ckt;
     } else{ 
         for (col=0;col<=ckt->CKTsenInfo->SENparms;col++) {
             for(row=0;row<=size;row++){
-                *(ckt->CKTsenInfo->SEN_RHS[row] + col)= 0;
-                *(ckt->CKTsenInfo->SEN_iRHS[row] + col)= 0;
+                ckt->CKTsenInfo->SEN_RHS[row][col]= 0;
+                ckt->CKTsenInfo->SEN_iRHS[row][col]= 0;
             }
         }
         for (i=0;i<DEVmaxnum;i++) {

@@ -149,9 +149,9 @@ ONE_sysLoad(ONEdevice *pDevice, BOOLEAN tranAnalysis,
 	  netConc = pNode->netConc;
 	  dNd = 0.0;
 	  dNa = 0.0;
-	  psi = *(pDevice->devState0 + pNode->nodePsi);
-	  nConc = *(pDevice->devState0 + pNode->nodeN);
-	  pConc = *(pDevice->devState0 + pNode->nodeP);
+	  psi = pDevice->devState0 [pNode->nodePsi];
+	  nConc = pDevice->devState0 [pNode->nodeN];
+	  pConc = pDevice->devState0 [pNode->nodeP];
 	  
 	  
 	  if (FreezeOut) {
@@ -290,9 +290,9 @@ ONE_jacLoad(ONEdevice *pDevice)
 	  pEdge = pElem->pEdge;
 	  dNd = 0.0;
 	  dNa = 0.0;
-	  psi = *(pDevice->devState0 + pNode->nodePsi);
-	  nConc = *(pDevice->devState0 + pNode->nodeN);
-	  pConc = *(pDevice->devState0 + pNode->nodeP);
+	  psi = pDevice->devState0 [pNode->nodePsi];
+	  nConc = pDevice->devState0 [pNode->nodeN];
+	  pConc = pDevice->devState0 [pNode->nodeP];
 	  if (FreezeOut) {
 	    ONE_freezeOut(pNode, nConc, pConc, &fNd, &fNa, &fdNd, &fdNa);
 	    dNd = pNode->nd * fdNd;
@@ -418,9 +418,9 @@ ONE_rhsLoad(ONEdevice *pDevice, BOOLEAN tranAnalysis,
 	  netConc = pNode->netConc;
 	  dNd = 0.0;
 	  dNa = 0.0;
-	  psi = *(pDevice->devState0 + pNode->nodePsi);
-	  nConc = *(pDevice->devState0 + pNode->nodeN);
-	  pConc = *(pDevice->devState0 + pNode->nodeP);
+	  psi = pDevice->devState0 [pNode->nodePsi];
+	  nConc = pDevice->devState0 [pNode->nodeN];
+	  pConc = pDevice->devState0 [pNode->nodeP];
 	  if (FreezeOut) {
 	    ONE_freezeOut(pNode, nConc, pConc, &fNd, &fNa, &fdNd, &fdNa);
 	    netConc = pNode->nd * fNd - pNode->na * fNa;
@@ -543,10 +543,10 @@ ONE_commonTerms(ONEdevice *pDevice, BOOLEAN currentOnly,
 	  }
 	}
 	/* store info in the state tables */
-	*(pDevice->devState0 + pNode->nodePsi) = psi;
+	pDevice->devState0 [pNode->nodePsi] = psi;
 	if (pElem->elemType == SEMICON) {
-	  *(pDevice->devState0 + pNode->nodeN) = nConc;
-	  *(pDevice->devState0 + pNode->nodeP) = pConc;
+	  pDevice->devState0 [pNode->nodeN] = nConc;
+	  pDevice->devState0 [pNode->nodeP] = pConc;
 	  if (tranAnalysis && pNode->nodeType != CONTACT) {
 	    pNode->dNdT = integrate(pDevice->devStates, info, pNode->nodeN);
 	    pNode->dPdT = integrate(pDevice->devStates, info, pNode->nodeP);
@@ -568,7 +568,7 @@ ONE_commonTerms(ONEdevice *pDevice, BOOLEAN currentOnly,
       psi2 = pNode->psi;
     }
     pEdge->dPsi = psi2 - psi1;
-    *(pDevice->devState0 + pEdge->edgeDpsi) = pEdge->dPsi;
+    pDevice->devState0 [pEdge->edgeDpsi] = pEdge->dPsi;
   }
   /* calculate the current densities and mobility values */
   for (eIndex = 1; eIndex < pDevice->numNodes; eIndex++) {
@@ -579,10 +579,10 @@ ONE_commonTerms(ONEdevice *pDevice, BOOLEAN currentOnly,
       dPsiP = pEdge->dPsi - pEdge->dVBand;
       bernoulli(dPsiN, &bPsiN, &dbPsiN, &bMPsiN, &dbMPsiN, !currentOnly);
       bernoulli(dPsiP, &bPsiP, &dbPsiP, &bMPsiP, &dbMPsiP, !currentOnly);
-      nC = *(pDevice->devState0 + pElem->pLeftNode->nodeN);
-      nP1 = *(pDevice->devState0 + pElem->pRightNode->nodeN);
-      pC = *(pDevice->devState0 + pElem->pLeftNode->nodeP);
-      pP1 = *(pDevice->devState0 + pElem->pRightNode->nodeP);
+      nC = pDevice->devState0 [pElem->pLeftNode->nodeN];
+      nP1 = pDevice->devState0 [pElem->pRightNode->nodeN];
+      pC = pDevice->devState0 [pElem->pLeftNode->nodeP];
+      pP1 = pDevice->devState0 [pElem->pRightNode->nodeP];
       conc1 = pElem->pLeftNode->totalConc;
       conc2 = pElem->pRightNode->totalConc;
       pEdge->jn = (bPsiN * nP1 - bMPsiN * nC);

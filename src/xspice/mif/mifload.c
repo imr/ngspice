@@ -317,7 +317,7 @@ MIFload(
                         else if((ckt->CKTmode & MODEINITTRAN) ||
                                 (ckt->CKTmode & MODEINITPRED))
                             /* first iteration step at timepoint */
-                            fast->input.rvalue = *(ckt->CKTstate1 + fast->old_input);
+                            fast->input.rvalue = ckt->CKTstate1[fast->old_input];
                         else {
                             /* subsequent iterations */
 
@@ -369,7 +369,7 @@ MIFload(
                         } /* end else */
 
                         /* Save value of input for use with MODEINITTRAN */
-                        *(ckt->CKTstate0 + fast->old_input) = fast->input.rvalue;
+                        ckt->CKTstate0[fast->old_input] = fast->input.rvalue;
 
                     } /* end else analog type */
                 } /* end for number of ports */
@@ -599,27 +599,27 @@ MIFload(
                             switch(cntl_src_type) {
                             case MIF_VCVS:
                                 if(anal_type == MIF_AC) {
-                                   *(smp_ptr->e.branch_poscntl) -= ac_gain.real;
-                                   *(smp_ptr->e.branch_negcntl) += ac_gain.real;
-                                   *(smp_ptr->e.branch_poscntl+1) -= ac_gain.imag;
-                                   *(smp_ptr->e.branch_negcntl+1) += ac_gain.imag;
+                                   smp_ptr->e.branch_poscntl[0] -= ac_gain.real;
+                                   smp_ptr->e.branch_negcntl[0] += ac_gain.real;
+                                   smp_ptr->e.branch_poscntl[1] -= ac_gain.imag;
+                                   smp_ptr->e.branch_negcntl[1] += ac_gain.imag;
                                 }
                                 else {
-                                   *(smp_ptr->e.branch_poscntl) -= partial;
-                                   *(smp_ptr->e.branch_negcntl) += partial;
+                                   smp_ptr->e.branch_poscntl[0] -= partial;
+                                   smp_ptr->e.branch_negcntl[0] += partial;
                                    rhs[smp_data_out->branch] -= partial * cntl_input;
                                 }
                                 break;
                             case MIF_ICIS:
                                 if(anal_type == MIF_AC) {
-                                   *(smp_ptr->f.pos_ibranchcntl) += ac_gain.real;
-                                   *(smp_ptr->f.neg_ibranchcntl) -= ac_gain.real;
-                                   *(smp_ptr->f.pos_ibranchcntl+1) += ac_gain.imag;
-                                   *(smp_ptr->f.neg_ibranchcntl+1) -= ac_gain.imag;
+                                   smp_ptr->f.pos_ibranchcntl[0] += ac_gain.real;
+                                   smp_ptr->f.neg_ibranchcntl[0] -= ac_gain.real;
+                                   smp_ptr->f.pos_ibranchcntl[1] += ac_gain.imag;
+                                   smp_ptr->f.neg_ibranchcntl[1] -= ac_gain.imag;
                                 }
                                 else {
-                                   *(smp_ptr->f.pos_ibranchcntl) += partial;
-                                   *(smp_ptr->f.neg_ibranchcntl) -= partial;
+                                   smp_ptr->f.pos_ibranchcntl[0] += partial;
+                                   smp_ptr->f.neg_ibranchcntl[0] -= partial;
                                    temp = partial * cntl_input;
                                    rhs[smp_data_out->pos_node] += temp;
                                    rhs[smp_data_out->neg_node] -= temp;
@@ -627,20 +627,20 @@ MIFload(
                                 break;
                             case MIF_VCIS:
                                 if(anal_type == MIF_AC) {
-                                   *(smp_ptr->g.pos_poscntl) += ac_gain.real;
-                                   *(smp_ptr->g.pos_negcntl) -= ac_gain.real;
-                                   *(smp_ptr->g.neg_poscntl) -= ac_gain.real;
-                                   *(smp_ptr->g.neg_negcntl) += ac_gain.real;
-                                   *(smp_ptr->g.pos_poscntl+1) += ac_gain.imag;
-                                   *(smp_ptr->g.pos_negcntl+1) -= ac_gain.imag;
-                                   *(smp_ptr->g.neg_poscntl+1) -= ac_gain.imag;
-                                   *(smp_ptr->g.neg_negcntl+1) += ac_gain.imag;
+                                   smp_ptr->g.pos_poscntl[0] += ac_gain.real;
+                                   smp_ptr->g.pos_negcntl[0] -= ac_gain.real;
+                                   smp_ptr->g.neg_poscntl[0] -= ac_gain.real;
+                                   smp_ptr->g.neg_negcntl[0] += ac_gain.real;
+                                   smp_ptr->g.pos_poscntl[1] += ac_gain.imag;
+                                   smp_ptr->g.pos_negcntl[1] -= ac_gain.imag;
+                                   smp_ptr->g.neg_poscntl[1] -= ac_gain.imag;
+                                   smp_ptr->g.neg_negcntl[1] += ac_gain.imag;
                                 }
                                 else {
-                                   *(smp_ptr->g.pos_poscntl) += partial;
-                                   *(smp_ptr->g.pos_negcntl) -= partial;
-                                   *(smp_ptr->g.neg_poscntl) -= partial;
-                                   *(smp_ptr->g.neg_negcntl) += partial;
+                                   smp_ptr->g.pos_poscntl[0] += partial;
+                                   smp_ptr->g.pos_negcntl[0] -= partial;
+                                   smp_ptr->g.neg_poscntl[0] -= partial;
+                                   smp_ptr->g.neg_negcntl[0] += partial;
                                    temp = partial * cntl_input;
                                    rhs[smp_data_out->pos_node] += temp;
                                    rhs[smp_data_out->neg_node] -= temp;
@@ -648,11 +648,11 @@ MIFload(
                                 break;
                             case MIF_ICVS:
                                 if(anal_type == MIF_AC) {
-                                   *(smp_ptr->h.branch_ibranchcntl) -= ac_gain.real;
-                                   *(smp_ptr->h.branch_ibranchcntl+1) -= ac_gain.imag;
+                                   smp_ptr->h.branch_ibranchcntl[0] -= ac_gain.real;
+                                   smp_ptr->h.branch_ibranchcntl[1] -= ac_gain.imag;
                                 }
                                 else {
-                                   *(smp_ptr->h.branch_ibranchcntl) -= partial;
+                                   smp_ptr->h.branch_ibranchcntl[0] -= partial;
                                    rhs[smp_data_out->branch] -= partial * cntl_input;
                                 }
                                 break;

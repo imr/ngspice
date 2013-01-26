@@ -383,17 +383,17 @@ double cm_smooth_pwl(double x_input, double *x, double *y, int size,
 
     /* Determine segment boundaries within which x_input resides */
 
-    if (x_input <= (*(x+1) + *x)/2.0) {/*** x_input below lowest midpoint ***/
-        *dout_din = (*(y+1) - *y)/(*(x+1) - *x);
+    if (x_input <= (x[1] + x[0])/2.0) {/*** x_input below lowest midpoint ***/
+        *dout_din = (y[1] - y[0])/(x[1] - x[0]);
         out = *y + (x_input - *x) * *dout_din;
         return out;
     }
     else {
-        if (x_input >= (*(x+size-2) + *(x+size-1))/2.0) { 
+        if (x_input >= (x[size-2] + x[size-1])/2.0) { 
                                    /*** x_input above highest midpoint ***/
-            *dout_din = (*(y+size-1) - *(y+size-2)) /
-                          (*(x+size-1) - *(x+size-2));
-            out = *(y+size-1) + (x_input - *(x+size-1)) * *dout_din;
+            *dout_din = (y[size-1] - y[size-2]) /
+                          (x[size-1] - x[size-2]);
+            out = y[size-1] + (x_input - x[size-1]) * *dout_din;
             return out;
         }
         else { /*** x_input within bounds of end midpoints...     ***/
@@ -402,11 +402,11 @@ double cm_smooth_pwl(double x_input, double *x, double *y, int size,
 
             for (i=1; i<size; i++) {
 
-                if (x_input < (*(x+i) + *(x+i+1))/2.0) { 
+                if (x_input < (x[i] + x[i+1])/2.0) { 
                                    /* approximate position known...          */
              
-                    lower_seg = (*(x+i) - *(x+i-1));
-                    upper_seg = (*(x+i+1) - *(x+i));
+                    lower_seg = (x[i] - x[i-1]);
+                    upper_seg = (x[i+1] - x[i]);
 
 
                     /* Calculate input_domain about this region's breakpoint.*/
@@ -423,27 +423,27 @@ double cm_smooth_pwl(double x_input, double *x, double *y, int size,
                     
 
                     /* Set up threshold values about breakpoint... */
-                    threshold_lower = *(x+i) - input_domain;
-                    threshold_upper = *(x+i) + input_domain;
+                    threshold_lower = x[i] - input_domain;
+                    threshold_upper = x[i] + input_domain;
 
                     /* Determine where x_input is within region & determine */
                     /* output and partial values....                        */
                     if (x_input < threshold_lower) { /* Lower linear region */
-                        *dout_din = (*(y+i) - *(y+i-1))/lower_seg;
-                        out = *(y+i) + (x_input - *(x+i)) * *dout_din;
+                        *dout_din = (y[i] - y[i-1])/lower_seg;
+                        out = y[i] + (x_input - x[i]) * *dout_din;
                         return out;
                     }
                     else {        
                         if (x_input < threshold_upper) { /* Parabolic region */
-                            lower_slope = (*(y+i) - *(y+i-1))/lower_seg;
-                            upper_slope = (*(y+i+1) - *(y+i))/upper_seg;
-                            cm_smooth_corner(x_input,*(x+i),*(y+i),input_domain,
+                            lower_slope = (y[i] - y[i-1])/lower_seg;
+                            upper_slope = (y[i+1] - y[i])/upper_seg;
+                            cm_smooth_corner(x_input,x[i],y[i],input_domain,
                                         lower_slope,upper_slope,&out,dout_din);
                             return out;
                         }
                         else {        /* Upper linear region */
-                            *dout_din = (*(y+i+1) - *(y+i))/upper_seg;
-                            out = *(y+i) + (x_input - *(x+i)) * *dout_din;
+                            *dout_din = (y[i+1] - y[i])/upper_seg;
+                            out = y[i] + (x_input - x[i]) * *dout_din;
                             return out;
                         }
                     }

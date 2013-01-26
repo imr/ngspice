@@ -77,8 +77,8 @@ CKTdisto (CKTcircuit *ckt, int mode)
 
     size = SMPmatSize(ckt->CKTmatrix);
     for (i=0;i<=size;i++) {
-        *(ckt->CKTrhs+i)=0;
-        *(ckt->CKTirhs+i)=0;
+        ckt->CKTrhs[i]=0;
+        ckt->CKTirhs[i]=0;
 	}
 
     vcode = CKTtypelook("Vsource");
@@ -111,8 +111,8 @@ else if ((here->VSRCdF2given) && (mode == D_RHSF2)) {
 if (((here->VSRCdF1given) && (mode == D_RHSF1)) || 
 	((here->VSRCdF2given) && (mode == D_RHSF2))) {
    
-	*(ckt->CKTrhs + here->VSRCbranch) = 0.5*mag* cos(M_PI*phase/180.0);
-	*(ckt->CKTirhs + here->VSRCbranch) = 0.5*mag*sin(M_PI*phase/180.0); 
+	ckt->CKTrhs[here->VSRCbranch] = 0.5*mag* cos(M_PI*phase/180.0);
+	ckt->CKTirhs[here->VSRCbranch] = 0.5*mag*sin(M_PI*phase/180.0); 
 }
 
 
@@ -147,13 +147,13 @@ else if ((here->ISRCdF2given) && (mode == D_RHSF2)) {
 if (((here->ISRCdF1given) && (mode == D_RHSF1)) || 
 	((here->ISRCdF2given) && (mode == D_RHSF2))) {
    
-	*(ckt->CKTrhs + here->ISRCposNode) = - 0.5 * mag
+	ckt->CKTrhs[here->ISRCposNode] = - 0.5 * mag
 		* cos(M_PI*phase/180.0);
-        *(ckt->CKTrhs + here->ISRCnegNode) =   0.5 * mag * cos(
+        ckt->CKTrhs[here->ISRCnegNode] =   0.5 * mag * cos(
 		M_PI*phase/180.0);
-	*(ckt->CKTirhs + here->ISRCposNode) = - 0.5 * mag * sin(
+	ckt->CKTirhs[here->ISRCposNode] = - 0.5 * mag * sin(
 		M_PI*phase/180.0);
-	*(ckt->CKTirhs + here->ISRCnegNode) = 0.5 * mag * sin(
+	ckt->CKTirhs[here->ISRCnegNode] = 0.5 * mag * sin(
 		M_PI*phase/180.0); 
 }
                     }

@@ -38,7 +38,7 @@ IFvalue *INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables * tab)
 	    temp.v.numValue++;
 	    list =
 		TREALLOC(double, list, temp.v.numValue);
-	    *(list + temp.v.numValue - 1) = tmp;
+	    list[temp.v.numValue - 1] = tmp;
 	    tmp = INPevaluate(line, &error, 1);
 	}
 	temp.v.vec.rVec = list;
@@ -51,7 +51,7 @@ IFvalue *INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables * tab)
 	    temp.v.numValue++;
 	    ilist =
 		TREALLOC(int, ilist, temp.v.numValue);
-	    *(ilist + temp.v.numValue - 1) = (int) floor(0.5 + tmp);
+	    ilist[temp.v.numValue - 1] = (int) floor(0.5 + tmp);
 	    tmp = INPevaluate(line, &error, 1);
 	}
 	temp.v.vec.iVec = ilist;

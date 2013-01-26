@@ -19,6 +19,6 @@ CKTbreakDump(CKTcircuit *ckt)
 {
     int i;
     for(i=0;i<ckt->CKTbreakSize;i++) {
-        (void)printf("breakpoint table entry %d is %g\n",i,*(ckt->CKTbreaks+i));
+        (void)printf("breakpoint table entry %d is %g\n",i,ckt->CKTbreaks[i]);
     }
 }

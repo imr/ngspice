@@ -154,10 +154,10 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
     TMALLOC(double, ckt->CKTnumStates + 1);
 
   for (n = ckt->CKTnodes; n; n = n->next)
-	  *(ckt->CKTrhsOld + n->number) = 0;
+	  ckt->CKTrhsOld [n->number] = 0;
 
   for (i = 0; i < ckt->CKTnumStates; i++)
-	  *(ckt->CKTstate0 + i) = 0;
+	  ckt->CKTstate0 [i] = 0;
     
   factor = ckt->CKTgminFactor;
   OldGmin = 1e-2;
@@ -183,12 +183,12 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
 		} else {
 			i = 0;
 			for (n = ckt->CKTnodes; n; n = n->next){
-				OldRhsOld[i] = *(ckt->CKTrhsOld + n->number);
+				OldRhsOld[i] = ckt->CKTrhsOld[n->number];
 				i++;
 			}
 		
 			for (i = 0; i < ckt->CKTnumStates; i++){
-				*(OldCKTstate0 + i) = *(ckt->CKTstate0 + i);
+				OldCKTstate0[i] = ckt->CKTstate0[i];
 			}
 
 			if (iters <= (ckt->CKTdcTrcvMaxIter / 4)){
@@ -224,12 +224,12 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
 
 			i = 0;
 			for (n = ckt->CKTnodes; n; n = n->next){
-			  *(ckt->CKTrhsOld + n->number) = OldRhsOld[i];
+			  ckt->CKTrhsOld[n->number] = OldRhsOld[i];
 			  i++;
 			}
 
 			for (i = 0; i < ckt->CKTnumStates; i++){
-			  *(ckt->CKTstate0 + i) = *(OldCKTstate0 + i);
+			  ckt->CKTstate0[i] = OldCKTstate0[i];
 			}
 		}
 	}	
@@ -393,10 +393,10 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
     TMALLOC(double, ckt->CKTnumStates + 1);
 
   for (n = ckt->CKTnodes; n; n = n->next)
-      *(ckt->CKTrhsOld + n->number) = 0;
+      ckt->CKTrhsOld[n->number] = 0;
 
   for (i = 0; i < ckt->CKTnumStates; i++)
-      *(ckt->CKTstate0 + i) = 0;
+      ckt->CKTstate0[i] = 0;
 
 /*  First, try a straight solution with all sources at zero */
 
@@ -454,12 +454,12 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
   if (converged == 0){
 	i = 0;
 	for (n = ckt->CKTnodes; n; n = n->next){
-	  OldRhsOld[i] = *(ckt->CKTrhsOld + n->number);
+	  OldRhsOld[i] = ckt->CKTrhsOld[n->number];
 	  i++;
 	}
 
       for (i = 0; i < ckt->CKTnumStates; i++)
-		*(OldCKTstate0 + i) = *(ckt->CKTstate0 + i);
+		OldCKTstate0[i] = ckt->CKTstate0[i];
 	
 
       SPfrontEnd->IFerror (ERR_INFO,
@@ -491,12 +491,12 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
 	    i = 0;
 
 	    for (n = ckt->CKTnodes; n; n = n->next){
-			OldRhsOld[i] = *(ckt->CKTrhsOld + n->number);
+			OldRhsOld[i] = ckt->CKTrhsOld[n->number];
 			i++;
 		}
 
 	    for (i = 0; i < ckt->CKTnumStates; i++)
-			*(OldCKTstate0 + i) = *(ckt->CKTstate0 + i);
+			OldCKTstate0[i] = ckt->CKTstate0[i];
 
 	    SPfrontEnd->IFerror (ERR_INFO,
 				      "One successful source step",
@@ -528,12 +528,12 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
 	    i = 0;
 
 	    for (n = ckt->CKTnodes; n; n = n->next){
-			*(ckt->CKTrhsOld + n->number) = OldRhsOld[i];
+			ckt->CKTrhsOld[n->number] = OldRhsOld[i];
 			i++;
 		}
 
 	    for (i = 0; i < ckt->CKTnumStates; i++)
-			*(ckt->CKTstate0 + i) = *(OldCKTstate0 + i);
+			ckt->CKTstate0[i] = OldCKTstate0[i];
 	      
 	  }
 

@@ -69,7 +69,7 @@ com_meas(wordlist *wl)
         token = wl_index->wl_word;
         /* find the vector vec_found, next token after each '=' sign.
            May be in the next wl_word */
-        if (*(token + strlen(token) - 1) == '=') {
+        if (token[strlen(token) - 1] == '=') {
             wl_index = wl_index->wl_next;
             vec_found = wl_index->wl_word;
             /* token may be already a value, maybe 'LAST', which we have to keep, or maybe a vector */
@@ -173,7 +173,7 @@ get_double_value(
         return_val = FALSE;
     } else {
         /* see if '=' is last char of current token -- implies we need to read value in next token */
-        if (*(token + strlen(token) - 1) == '=') {
+        if (token[strlen(token) - 1] == '=') {
             txfree(token);
             junk = token = gettok(line);
 

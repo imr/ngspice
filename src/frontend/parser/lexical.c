@@ -378,7 +378,7 @@ prompt(void)
             fprintf(cp_out, "%d", cp_event);
             break;
         case '\\':
-            if (*(s + 1))
+            if (s[1])
                 (void) putc(strip(*++s), cp_out);
         default:
             (void) putc(strip(*s), cp_out);

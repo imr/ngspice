@@ -306,8 +306,8 @@ void cm_core(ARGS)  /* structure holding parms,
 
         /* Retrieve H and B values. */
         for (i=0; i<size; i++) {
-            *(H+i) = PARAM(H_array[i]);
-            *(B+i) = PARAM(B_array[i]);
+            H[i] = PARAM(H_array[i]);
+            B[i] = PARAM(B_array[i]);
         }
 
 
@@ -315,7 +315,7 @@ void cm_core(ARGS)  /* structure holding parms,
         /* breakpoint segments for violation of 50% rule...        */
         if (PARAM(fraction) == MIF_FALSE) {
             for (i=0; i<(size-1); i++) {
-                if ( (*(H+i+1) - *(H+i)) < (2.0*input_domain) ) {
+                if ( (H[i+1] - H[i]) < (2.0*input_domain) ) {
                     cm_message_send(limit_error);
                     return;
                 }
@@ -333,26 +333,26 @@ void cm_core(ARGS)  /* structure holding parms,
 
         /* Determine segment boundaries within which H_input resides */
 
-        if (H_input <= (*(H+1) + *H)/2.0) {/*** H_input below lowest midpoint ***/
-            dout_din = (*(B+1) - *B)/(*(H+1) - *H);
+        if (H_input <= (H[1] + H[0])/2.0) {/*** H_input below lowest midpoint ***/
+            dout_din = (B[1] - B[0])/(H[1] - H[0]);
             B_out = *B + (H_input - *H) * dout_din;
         } else {
-            if (H_input >= (*(H+size-2) + *(H+size-1))/2.0) {
+            if (H_input >= (H[size-2] + H[size-1])/2.0) {
                 /*** H_input above highest midpoint ***/
-                dout_din = (*(B+size-1) - *(B+size-2)) /
-                           (*(H+size-1) - *(H+size-2));
-                B_out = *(B+size-1) + (H_input - *(H+size-1)) * dout_din;
+                dout_din = (B[size-1] - B[size-2]) /
+                           (H[size-1] - H[size-2]);
+                B_out = B[size-1] + (H_input - H[size-1]) * dout_din;
             } else { /*** H_input within bounds of end midpoints...     ***/
                 /*** must determine position progressively & then  ***/
                 /*** calculate required output.                    ***/
 
                 for (i=1; i<size; i++) {
 
-                    if (H_input < (*(H+i) + *(H+i+1))/2.0) {
+                    if (H_input < (H[i] + H[i+1])/2.0) {
                         /* approximate position known...          */
 
-                        lower_seg = (*(H+i) - *(H+i-1));
-                        upper_seg = (*(H+i+1) - *(H+i));
+                        lower_seg = (H[i] - H[i-1]);
+                        upper_seg = (H[i+1] - H[i]);
 
 
                         /* Calculate input_domain about this region's breakpoint.*/
@@ -370,23 +370,23 @@ void cm_core(ARGS)  /* structure holding parms,
                         }
 
                         /* Set up threshold values about breakpoint... */
-                        threshold_lower = *(H+i) - input_domain;
-                        threshold_upper = *(H+i) + input_domain;
+                        threshold_lower = H[i] - input_domain;
+                        threshold_upper = H[i] + input_domain;
 
                         /* Determine where H_input is within region & determine     */
                         /* output and partial values....                            */
                         if (H_input < threshold_lower) { /* Lower linear region     */
-                            dout_din = (*(B+i) - *(B+i-1))/lower_seg;
-                            B_out = *(B+i) + (H_input - *(H+i)) * dout_din;
+                            dout_din = (B[i] - B[i-1])/lower_seg;
+                            B_out = B[i] + (H_input - H[i]) * dout_din;
                         } else {
                             if (H_input < threshold_upper) { /* Parabolic region */
-                                lower_slope = (*(B+i) - *(B+i-1))/lower_seg;
-                                upper_slope = (*(B+i+1) - *(B+i))/upper_seg;
-                                cm_smooth_corner(H_input,*(H+i),*(B+i),input_domain,
+                                lower_slope = (B[i] - B[i-1])/lower_seg;
+                                upper_slope = (B[i+1] - B[i])/upper_seg;
+                                cm_smooth_corner(H_input,H[i],B[i],input_domain,
                                                  lower_slope,upper_slope,&B_out,&dout_din);
                             } else {      /* Upper linear region */
-                                dout_din = (*(B+i+1) - *(B+i))/upper_seg;
-                                B_out = *(B+i) + (H_input - *(H+i)) * dout_din;
+                                dout_din = (B[i+1] - B[i])/upper_seg;
+                                B_out = B[i] + (H_input - H[i]) * dout_din;
                             }
                         }
                         break;  /* Break search loop...H_input has been found,   */

@@ -69,9 +69,9 @@ com_hardcopy(wordlist *wl)
         /* change .tmp to .ps */
         psfname = strchr(fname, '.');
         if (psfname) {
-            *(psfname + 1) = 'p';
-            *(psfname + 2) = 's';
-            *(psfname + 3) = '\0';
+            psfname[1] = 'p';
+            psfname[2] = 's';
+            psfname[3] = '\0';
         } else {
             fname = realloc(fname, strlen(fname)+4);
             strcat(fname, ".ps");

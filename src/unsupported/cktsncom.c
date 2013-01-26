@@ -50,15 +50,15 @@ register CKTcircuit *ckt;
 
         for (col=1;col<=info->SENparms;col++) {
             for(row=1;row<=size;row++){
-                *(ckt->CKTsenRhs + row ) = *(info->SEN_RHS[row] + col);
+                ckt->CKTsenRhs[row] = info->SEN_RHS[row][col];
             }
             /* solve for the sensitivity values */
             SMPsolve(ckt->CKTmatrix,ckt->CKTsenRhs,ckt->CKTrhsSpare); 
 
             /* store the sensitivity values */
             for(row=1;row<=size;row++){
-                *(info->SEN_Sap[row] + col) = *(ckt->CKTsenRhs+row);
-                *(info->SEN_RHS[row] + col) = *(ckt->CKTsenRhs+row);
+                info->SEN_Sap[row][col] = ckt->CKTsenRhs[row];
+                info->SEN_RHS[row][col] = ckt->CKTsenRhs[row];
             }
         }
 #ifdef SENSDEBUG
@@ -71,7 +71,7 @@ register CKTcircuit *ckt;
                 for (col=1;col<=info->SENparms;col++) {
                     printf("\t");
                     printf("Sap(%s,%d) = %.5e\t",rowe,col,
-                            *(info->SEN_Sap[row] + col));
+                            info->SEN_Sap[row][col]);
                 }
                 printf("\n\n");
             }
@@ -82,7 +82,7 @@ register CKTcircuit *ckt;
             for (col=1;col<=info->SENparms;col++) {
                 printf("  ");
                 printf("RHS(%d,%d) = %.7e ",row,col,
-                        *(info->SEN_RHS[row] + col));
+                        info->SEN_RHS[row][col]);
             }
             printf("\n");
         }
@@ -112,8 +112,8 @@ register CKTcircuit *ckt;
         for (col=1;col<=info->SENparms;col++) {
 
             for(row=1;row<=size;row++){
-                *(ckt->CKTsenRhs+row) = *(info->SEN_RHS[row] + col);
-                *(ckt->CKTseniRhs+row) = *(info->SEN_iRHS[row] + col);
+                ckt->CKTsenRhs[row] = info->SEN_RHS[row][col];
+                ckt->CKTseniRhs[row] = info->SEN_iRHS[row][col];
             }
 
             /* solve for the sensitivity values ( both real and imag parts)*/
@@ -122,8 +122,8 @@ register CKTcircuit *ckt;
 
             /* store the sensitivity values ( both real and imag parts)*/
             for(row=1;row<=size;row++){
-                *(info->SEN_RHS[row] + col) = *(ckt->CKTsenRhs+row);
-                *(info->SEN_iRHS[row] + col) = *(ckt->CKTseniRhs+row);
+                info->SEN_RHS[row][col] = ckt->CKTsenRhs[row];
+                info->SEN_iRHS[row][col] = ckt->CKTseniRhs[row];
             }   
         }
 #ifdef SENSDEBUG
@@ -135,8 +135,8 @@ register CKTcircuit *ckt;
             for (col=1;col<=info->SENparms;col++) {
                 printf("\t");
                 printf("RHS(%s,%d) = %.5e",rowe,col,
-                        *(info->SEN_RHS[row] + col));
-                printf(" + j %.5e\t",*(info->SEN_iRHS[row] + col));
+                        info->SEN_RHS[row][col]);
+                printf(" + j %.5e\t",info->SEN_iRHS[row][col]);
                 printf("\n\n");
 
             }
@@ -150,8 +150,8 @@ register CKTcircuit *ckt;
             for (col=1;col<=info->SENparms;col++) {
                 printf("  ");
                 printf("RHS(%d,%d) = %.7e ",row,col,
-                        *(info->SEN_RHS[row] + col));
-                printf("+j %.7e ",*(info->SEN_iRHS[row] + col));
+                        info->SEN_RHS[row][col]);
+                printf("+j %.7e ",info->SEN_iRHS[row][col]);
             }
             printf("\n");
         }

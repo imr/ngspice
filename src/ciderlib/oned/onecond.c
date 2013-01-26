@@ -104,10 +104,10 @@ NBJTconductance(ONEdevice *pDevice, BOOLEAN tranAnalysis, double *intCoeff,
   pNode = pBaseElem->pRightNode;
 
   if (pNode->baseType == N_TYPE) {
-    nConc = *(pDevice->devState0 + pNode->nodeN);
+    nConc = pDevice->devState0 [pNode->nodeN];
     pDevice->rhs[pNode->nEqn] = nConc * pNode->eg;
   } else if (pNode->baseType == P_TYPE) {
-    pConc = *(pDevice->devState0 + pNode->nodeP);
+    pConc = pDevice->devState0 [pNode->nodeP];
     pDevice->rhs[pNode->pEqn] = pConc * pNode->eg;
   } else {
     printf("NBJTconductance: unknown base type\n");

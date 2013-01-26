@@ -33,18 +33,18 @@ CKTsetBreak(CKTcircuit *ckt, double time)
         return(E_INTERN);
     }
     for(i=0;i<ckt->CKTbreakSize;i++) {
-        if(*(ckt->CKTbreaks+i)>time) { /* passed */
-            if((*(ckt->CKTbreaks+i)-time) <= ckt->CKTminBreak) {
+        if(ckt->CKTbreaks[i]>time) { /* passed */
+            if((ckt->CKTbreaks[i]-time) <= ckt->CKTminBreak) {
                 /* very close together - take earlier point */
 #ifdef TRACE_BREAKPOINT
                 printf("[t:%e] \t %e replaces %e\n", ckt->CKTtime, time,
-		*(ckt->CKTbreaks+i));
+		ckt->CKTbreaks[i]);
 		CKTbreakDump(ckt);
 #endif		
-                *(ckt->CKTbreaks+i) = time;
+                ckt->CKTbreaks[i] = time;
                 return(OK);
             }
-            if(i>0 && time-*(ckt->CKTbreaks+i-1) <= ckt->CKTminBreak) {
+            if(i>0 && time-ckt->CKTbreaks[i-1] <= ckt->CKTminBreak) {
                 /* very close together, but after, so skip */
 #ifdef TRACE_BREAKPOINT
                 printf("[t:%e] \t %e skipped\n", ckt->CKTtime, time);
@@ -56,15 +56,15 @@ CKTsetBreak(CKTcircuit *ckt, double time)
             tmp = TMALLOC(double, ckt->CKTbreakSize + 1);
             if(tmp == NULL) return(E_NOMEM);
             for(j=0;j<i;j++) {
-                *(tmp+j) = *(ckt->CKTbreaks+j);
+                tmp[j] = ckt->CKTbreaks[j];
             }
-            *(tmp+i)=time;
+            tmp[i]=time;
 #ifdef TRACE_BREAKPOINT
                 printf("[t:%e] \t %e added\n", ckt->CKTtime, time);
 		CKTbreakDump(ckt);
 #endif	    
             for(j=i;j<ckt->CKTbreakSize;j++) {
-                *(tmp+j+1) = *(ckt->CKTbreaks+j);
+                tmp[j+1] = ckt->CKTbreaks[j];
             }
             FREE(ckt->CKTbreaks);
             ckt->CKTbreakSize++;
