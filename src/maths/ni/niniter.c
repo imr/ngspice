@@ -25,12 +25,12 @@ NInzIter(CKTcircuit *ckt, int posDrive, int negDrive)
     /* clear out the right hand side vector */
 
     for (i = 0; i <= SMPmatSize(ckt->CKTmatrix); i++) {
-	*((ckt->CKTrhs) + i) = 0.0;
-	*((ckt->CKTirhs) + i) = 0.0;
+	ckt->CKTrhs [i] = 0.0;
+	ckt->CKTirhs [i] = 0.0;
     }
 
-    *((ckt->CKTrhs) + posDrive) = 1.0;     /* apply unit current excitation */
-    *((ckt->CKTrhs) + negDrive) = -1.0;
+    ckt->CKTrhs [posDrive] = 1.0;     /* apply unit current excitation */
+    ckt->CKTrhs [negDrive] = -1.0;
     SMPcaSolve(ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTirhs, ckt->CKTrhsSpare,
 	    ckt->CKTirhsSpare);
     *ckt->CKTrhs = 0.0;

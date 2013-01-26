@@ -628,7 +628,7 @@ TWObiasSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN tranAnalysis,
 	  pNode = pElem->pNodes[index];
 	  if (pNode->nodeType != CONTACT) {
 	    pNode->psi = pDevice->dcSolution[pNode->psiEqn];
-	    *(pDevice->devState0 + pNode->nodePsi) = pNode->psi;
+	    pDevice->devState0 [pNode->nodePsi] = pNode->psi;
 	    if (pElem->elemType == SEMICON) {
 	      if (!OneCarrier) {
 		pNode->nConc = pDevice->dcSolution[pNode->nEqn];
@@ -640,8 +640,8 @@ TWObiasSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN tranAnalysis,
 		pNode->pConc = pDevice->dcSolution[pNode->pEqn];
 		pNode->nConc = pNode->nie * exp(pNode->psi - refPsi);
 	      }
-	      *(pDevice->devState0 + pNode->nodeN) = pNode->nConc;
-	      *(pDevice->devState0 + pNode->nodeP) = pNode->pConc;
+	      pDevice->devState0 [pNode->nodeN] = pNode->nConc;
+	      pDevice->devState0 [pNode->nodeP] = pNode->pConc;
 	    }
 	  }
 	}
@@ -910,17 +910,17 @@ TWOpredict(TWOdevice *pDevice, TWOtranInfo *info)
     for (nIndex = 0; nIndex <= 3; nIndex++) {
       if (pElem->evalNodes[nIndex]) {
 	pNode = pElem->pNodes[nIndex];
-	pNode->psi = *(pDevice->devState1 + pNode->nodePsi);
+	pNode->psi = pDevice->devState1 [pNode->nodePsi];
 	if ((pElem->elemType == SEMICON) && (pNode->nodeType != CONTACT)) {
 	  if (!OneCarrier) {
 	    pNode->nPred = predict(pDevice->devStates, info, pNode->nodeN);
 	    pNode->pPred = predict(pDevice->devStates, info, pNode->nodeP);
 	  } else if (OneCarrier == N_TYPE) {
 	    pNode->nPred = predict(pDevice->devStates, info, pNode->nodeN);
-	    pNode->pPred = *(pDevice->devState1 + pNode->nodeP);
+	    pNode->pPred = pDevice->devState1 [pNode->nodeP];
 	  } else if (OneCarrier == P_TYPE) {
 	    pNode->pPred = predict(pDevice->devStates, info, pNode->nodeP);
-	    pNode->nPred = *(pDevice->devState1 + pNode->nodeN);
+	    pNode->nPred = pDevice->devState1 [pNode->nodeN];
 	  }
 	  pNode->nConc = pNode->nPred;
 	  pNode->pConc = pNode->pPred;
@@ -1019,10 +1019,10 @@ TWOsaveState(TWOdevice *pDevice)
     for (nIndex = 0; nIndex <= 3; nIndex++) {
       if (pElem->evalNodes[nIndex]) {
 	pNode = pElem->pNodes[nIndex];
-	pNode->psi = *(pDevice->devState1 + pNode->nodePsi);
+	pNode->psi = pDevice->devState1 [pNode->nodePsi];
 	if ((pElem->elemType == SEMICON) && (pNode->nodeType != CONTACT)) {
-	  pNode->nConc = *(pDevice->devState1 + pNode->nodeN);
-	  pNode->pConc = *(pDevice->devState1 + pNode->nodeP);
+	  pNode->nConc = pDevice->devState1 [pNode->nodeN];
+	  pNode->pConc = pDevice->devState1 [pNode->nodeP];
 	}
       }
     }

@@ -308,8 +308,8 @@ void
 	pRhs[ pNode->psiEqn ] += dx * pHEdge->qf;
 	pRhs[ pNode->psiEqn ] += dy * pVEdge->qf;
 	if ( pElem->elemType == SEMICON ) {
-	  nConc = *(pDevice->devState0 + pNode->nodeN);
-	  pConc = *(pDevice->devState0 + pNode->nodeP);
+	  nConc = pDevice->devState0 [pNode->nodeN];
+	  pConc = pDevice->devState0 [pNode->nodeP];
 
 	  *(pNode->fPsiN) += dxdy;
 	  *(pNode->fPsiPsi) += dxdy * pConc;
@@ -465,7 +465,7 @@ void
 	  } else {
 	    pVEdge = pREdge;
 	  }
-	  pConc = *(pDevice->devState0 + pNode->nodeP);
+	  pConc = pDevice->devState0 [pNode->nodeP];
 	  *(pNode->fPsiN) += dxdy;
 	  *(pNode->fPsiPsi) += dxdy * pConc;
 	  *(pNode->fNPsi) -= dy * pHEdge->dJnDpsiP1 + dx * pVEdge->dJnDpsiP1;
@@ -613,8 +613,8 @@ void
 	pRhs[ pNode->psiEqn ] += dx * pHEdge->qf;
 	pRhs[ pNode->psiEqn ] += dy * pVEdge->qf;
 	if ( pElem->elemType == SEMICON ) {
-	  nConc = *(pDevice->devState0 + pNode->nodeN);
-	  pConc = *(pDevice->devState0 + pNode->nodeP);
+	  nConc = pDevice->devState0 [pNode->nodeN];
+	  pConc = pDevice->devState0 [pNode->nodeP];
 	  pRhs[ pNode->psiEqn ] += dxdy * (pNode->netConc + pConc - nConc);
 	  
 	  /* Handle generation terms */
@@ -718,10 +718,10 @@ void
 	}
 	
 	/* store info in the state tables */
-	*(pDevice->devState0 + pNode->nodePsi) = psi;
+	pDevice->devState0 [pNode->nodePsi] = psi;
 	if ( pElem->elemType == SEMICON ) {
-	  *(pDevice->devState0 + pNode->nodeN) = nConc;
-	  *(pDevice->devState0 + pNode->nodeP) = pConc;
+	  pDevice->devState0 [pNode->nodeN] = nConc;
+	  pDevice->devState0 [pNode->nodeP] = pConc;
 	  if ( tranAnalysis && pNode->nodeType != CONTACT ) {
 	    pNode->dNdT = integrate( pDevice->devStates, info, pNode->nodeN );
 	  }
@@ -748,7 +748,7 @@ void
 	} else {
 	  pEdge->dPsi = psi1 - psi2;
 	}
-	*(pDevice->devState0 + pEdge->edgeDpsi) = pEdge->dPsi;
+	pDevice->devState0 [pEdge->edgeDpsi] = pEdge->dPsi;
 	
 	if ( pElem->elemType == SEMICON ) {
 	  /* Calculate weighted driving forces - wdfn & wdfp for the edge */

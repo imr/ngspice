@@ -1216,7 +1216,7 @@ OUTerror(int flags, char *format, IFuid *names)
             fprintf(cp_err, "%s: ", m->string);
 
     for (s = format, bptr = buf; *s; s++) {
-        if (*s == '%' && (s == format || *(s-1) != '%') && *(s+1) == 's') {
+        if (*s == '%' && (s == format || s[-1] != '%') && s[1] == 's') {
             if (names[nindex])
                 strcpy(bptr, names[nindex]);
             else

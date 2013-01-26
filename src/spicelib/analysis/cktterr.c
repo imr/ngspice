@@ -35,14 +35,14 @@ CKTterr(int qcap, CKTcircuit *ckt, double *timeStep)
     };
 
     volttol = ckt->CKTabstol + ckt->CKTreltol * 
-            MAX( fabs(*(ckt->CKTstate0+ccap)), fabs(*(ckt->CKTstate1+ccap)));
+            MAX( fabs(ckt->CKTstate0[ccap]), fabs(ckt->CKTstate1[ccap]));
             
-    chargetol = MAX(fabs(*(ckt->CKTstate0 +qcap)),fabs(*(ckt->CKTstate1+qcap)));
+    chargetol = MAX(fabs(ckt->CKTstate0[qcap]),fabs(ckt->CKTstate1[qcap]));
     chargetol = ckt->CKTreltol * MAX(chargetol,ckt->CKTchgtol)/ckt->CKTdelta;
     tol = MAX(volttol,chargetol);
     /* now divided differences */
     for(i=ckt->CKTorder+1;i>=0;i--) {
-        diff[i] = *(ckt->CKTstates[i] + qcap);
+        diff[i] = ckt->CKTstates[i][qcap];
     }
     for(i=0 ; i <= ckt->CKTorder ; i++) {
         deltmp[i] = ckt->CKTdeltaOld[i];

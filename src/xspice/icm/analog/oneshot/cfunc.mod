@@ -350,8 +350,8 @@ void cm_oneshot(ARGS)  /* structure holding parms,
 
             /* Retrieve control and pulse-width values. */
             for (i=0; i<cntl_size; i++) {
-                *(x+i) = PARAM(cntl_array[i]);
-                *(y+i) = PARAM(pw_array[i]);
+                x[i] = PARAM(cntl_array[i]);
+                y[i] = PARAM(pw_array[i]);
             }
 
             /* Retrieve cntl_input and clock value. */
@@ -365,7 +365,7 @@ void cm_oneshot(ARGS)  /* structure holding parms,
 
             /* Determine segment boundaries within which cntl_input resides */
             if (cntl_input <= *x) { /* cntl_input below lowest cntl_voltage */
-                dout_din = (*(y+1) - *y)/(*(x+1) - *x);
+                dout_din = (y[1] - y[0])/(x[1] - x[0]);
                 pw = *y + (cntl_input - *x) * dout_din;
 
                 if(pw < 0) {
@@ -375,10 +375,10 @@ void cm_oneshot(ARGS)  /* structure holding parms,
             } else
 
                 /*** cntl_input above highest cntl_voltage ***/
-                if (cntl_input >= *(x+cntl_size-1)) {
-                    dout_din = (*(y+cntl_size-1) - *(y+cntl_size-2)) /
-                               (*(x+cntl_size-1) - *(x+cntl_size-2));
-                    pw = *(y+cntl_size-1) + (cntl_input - *(x+cntl_size-1)) * dout_din;
+                if (cntl_input >= x[cntl_size-1]) {
+                    dout_din = (y[cntl_size-1] - y[cntl_size-2]) /
+                               (x[cntl_size-1] - x[cntl_size-2]);
+                    pw = y[cntl_size-1] + (cntl_input - x[cntl_size-1]) * dout_din;
 
                 } else {
                     /*** cntl_input within bounds of end midpoints...
@@ -386,10 +386,10 @@ void cm_oneshot(ARGS)  /* structure holding parms,
                     calculate required output.                    ***/
 
                     for (i=0; i<cntl_size-1; i++) {
-                        if ((cntl_input < *(x+i+1)) && (cntl_input >= *(x+i))) {
+                        if ((cntl_input < x[i+1]) && (cntl_input >= x[i])) {
                             /* Interpolate to get the correct pulse width value */
-                            pw = ((cntl_input - *(x+i))/(*(x+i+1) - *(x+i)))*
-                                 (*(y+i+1)-*(y+i)) + *(y+i);
+                            pw = ((cntl_input - x[i])/(x[i+1] - x[i]))*
+                                 (y[i+1]-y[i]) + y[i];
                         }
                     }
                 }

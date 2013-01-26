@@ -23,43 +23,43 @@ integrate(double **devStates, TranInfo *info, int qcap )
     case BDF:
 	switch( info->order ) {
 	case 1:
-	    value = coeff[0] * (*(devStates[0]+qcap)) +
-		    coeff[1] * (*(devStates[1]+qcap));
+	    value = coeff[0] * devStates[0][qcap] +
+		    coeff[1] * devStates[1][qcap];
 	    break;
 	case 2:
-	    value = coeff[0] * (*(devStates[0]+qcap)) +
-		    coeff[1] * (*(devStates[1]+qcap)) +
-		    coeff[2] * (*(devStates[2]+qcap));
+	    value = coeff[0] * devStates[0][qcap] +
+		    coeff[1] * devStates[1][qcap] +
+		    coeff[2] * devStates[2][qcap];
 	    break;
 	case 3:
-	    value = coeff[0] * (*(devStates[0]+qcap)) +
-		    coeff[1] * (*(devStates[1]+qcap)) +
-		    coeff[2] * (*(devStates[2]+qcap)) +
-		    coeff[3] * (*(devStates[3]+qcap));
+	    value = coeff[0] * devStates[0][qcap] +
+		    coeff[1] * devStates[1][qcap] +
+		    coeff[2] * devStates[2][qcap] +
+		    coeff[3] * devStates[3][qcap];
 	    break;
 	case 4:
-	    value = coeff[0] * (*(devStates[0]+qcap)) +
-		    coeff[1] * (*(devStates[1]+qcap)) +
-		    coeff[2] * (*(devStates[2]+qcap)) +
-		    coeff[3] * (*(devStates[3]+qcap)) +
-		    coeff[4] * (*(devStates[4]+qcap));
+	    value = coeff[0] * devStates[0][qcap] +
+		    coeff[1] * devStates[1][qcap] +
+		    coeff[2] * devStates[2][qcap] +
+		    coeff[3] * devStates[3][qcap] +
+		    coeff[4] * devStates[4][qcap];
 	    break;
 	case 5:
-	    value = coeff[0] * (*(devStates[0]+qcap)) +
-		    coeff[1] * (*(devStates[1]+qcap)) +
-		    coeff[2] * (*(devStates[2]+qcap)) +
-		    coeff[3] * (*(devStates[3]+qcap)) +
-		    coeff[4] * (*(devStates[4]+qcap)) +
-		    coeff[5] * (*(devStates[5]+qcap));
+	    value = coeff[0] * devStates[0][qcap] +
+		    coeff[1] * devStates[1][qcap] +
+		    coeff[2] * devStates[2][qcap] +
+		    coeff[3] * devStates[3][qcap] +
+		    coeff[4] * devStates[4][qcap] +
+		    coeff[5] * devStates[5][qcap];
 	    break;
 	case 6:
-	    value = coeff[0] * (*(devStates[0]+qcap)) +
-		    coeff[1] * (*(devStates[1]+qcap)) +
-		    coeff[2] * (*(devStates[2]+qcap)) +
-		    coeff[3] * (*(devStates[3]+qcap)) +
-		    coeff[4] * (*(devStates[4]+qcap)) +
-		    coeff[5] * (*(devStates[5]+qcap)) +
-		    coeff[6] * (*(devStates[6]+qcap));
+	    value = coeff[0] * devStates[0][qcap] +
+		    coeff[1] * devStates[1][qcap] +
+		    coeff[2] * devStates[2][qcap] +
+		    coeff[3] * devStates[3][qcap] +
+		    coeff[4] * devStates[4][qcap] +
+		    coeff[5] * devStates[5][qcap] +
+		    coeff[6] * devStates[6][qcap];
 	    break;
 	default:
 	    printf( "\n integration order %d !! STOP \n", info->order );
@@ -70,15 +70,15 @@ integrate(double **devStates, TranInfo *info, int qcap )
     default:
 	switch( info->order ) {
 	case 1:
-	    value = coeff[0] * (*(devStates[0]+qcap)) +
-		    coeff[1] * (*(devStates[1]+qcap));
-	    *(devStates[0]+ccap) = value;
+	    value = coeff[0] * devStates[0][qcap] +
+		    coeff[1] * devStates[1][qcap];
+	    devStates[0][ccap] = value;
 	    break;
 	case 2:
-	    value = coeff[0] * (*(devStates[0]+qcap)) +
-		    coeff[1] * (*(devStates[1]+qcap)) +
-		    coeff[2] * (*(devStates[1]+ccap));
-	    *(devStates[0]+ccap) = value;
+	    value = coeff[0] * devStates[0][qcap] +
+		    coeff[1] * devStates[1][qcap] +
+		    coeff[2] * devStates[1][ccap];
+	    devStates[0][ccap] = value;
             break;
         default:
 	    printf( "\n integration order %d !! STOP \n", info->order );
@@ -102,43 +102,43 @@ predict(double **devStates, TranInfo *info, int qcap )
     case BDF:	
 	switch( info->order ) {
 	case 1:
-	    value = coeff[0] * (*(devStates[1]+qcap)) +
-		    coeff[1] * (*(devStates[2]+qcap));
+	    value = coeff[0] * devStates[1][qcap] +
+		    coeff[1] * devStates[2][qcap];
 	    break;
 	case 2:
-	    value = coeff[0] * (*(devStates[1]+qcap)) +
-		    coeff[1] * (*(devStates[2]+qcap)) +
-		    coeff[2] * (*(devStates[3]+qcap));
+	    value = coeff[0] * devStates[1][qcap] +
+		    coeff[1] * devStates[2][qcap] +
+		    coeff[2] * devStates[3][qcap];
 	    break;
 	case 3:
-	    value = coeff[0] * (*(devStates[1]+qcap)) +
-		    coeff[1] * (*(devStates[2]+qcap)) +
-		    coeff[2] * (*(devStates[3]+qcap)) +
-		    coeff[3] * (*(devStates[4]+qcap));
+	    value = coeff[0] * devStates[1][qcap] +
+		    coeff[1] * devStates[2][qcap] +
+		    coeff[2] * devStates[3][qcap] +
+		    coeff[3] * devStates[4][qcap];
 	    break;
 	case 4:
-	    value = coeff[0] * (*(devStates[1]+qcap)) +
-		    coeff[1] * (*(devStates[2]+qcap)) +
-		    coeff[2] * (*(devStates[3]+qcap)) +
-		    coeff[3] * (*(devStates[4]+qcap)) +
-		    coeff[4] * (*(devStates[5]+qcap));
+	    value = coeff[0] * devStates[1][qcap] +
+		    coeff[1] * devStates[2][qcap] +
+		    coeff[2] * devStates[3][qcap] +
+		    coeff[3] * devStates[4][qcap] +
+		    coeff[4] * devStates[5][qcap];
 	    break;
 	case 5:
-	    value = coeff[0] * (*(devStates[1]+qcap)) +
-		    coeff[1] * (*(devStates[2]+qcap)) +
-		    coeff[2] * (*(devStates[3]+qcap)) +
-		    coeff[3] * (*(devStates[4]+qcap)) +
-		    coeff[4] * (*(devStates[5]+qcap)) +
-		    coeff[5] * (*(devStates[6]+qcap));
+	    value = coeff[0] * devStates[1][qcap] +
+		    coeff[1] * devStates[2][qcap] +
+		    coeff[2] * devStates[3][qcap] +
+		    coeff[3] * devStates[4][qcap] +
+		    coeff[4] * devStates[5][qcap] +
+		    coeff[5] * devStates[6][qcap];
 	    break;
 	case 6:
-	    value = coeff[0] * (*(devStates[1]+qcap)) +
-		    coeff[1] * (*(devStates[2]+qcap)) +
-		    coeff[2] * (*(devStates[3]+qcap)) +
-		    coeff[3] * (*(devStates[4]+qcap)) +
-		    coeff[4] * (*(devStates[5]+qcap)) +
-		    coeff[5] * (*(devStates[6]+qcap)) +
-		    coeff[6] * (*(devStates[7]+qcap));
+	    value = coeff[0] * devStates[1][qcap] +
+		    coeff[1] * devStates[2][qcap] +
+		    coeff[2] * devStates[3][qcap] +
+		    coeff[3] * devStates[4][qcap] +
+		    coeff[4] * devStates[5][qcap] +
+		    coeff[5] * devStates[6][qcap] +
+		    coeff[6] * devStates[7][qcap];
 	    break;
 	default:
 	    printf( "\n prediction order %d !! STOP \n", info->order );
@@ -149,17 +149,17 @@ predict(double **devStates, TranInfo *info, int qcap )
     default:
 	switch( info->order ) {
 	case 1:
-	    value = coeff[0] * (*(devStates[1]+qcap)) +
-		    coeff[1] * (*(devStates[2]+qcap));
+	    value = coeff[0] * devStates[1][qcap] +
+		    coeff[1] * devStates[2][qcap];
 	    break;
 	case 2:
-	    value = coeff[0] * (*(devStates[1]+qcap)) +
-		    coeff[1] * (*(devStates[2]+qcap)) +
-		    coeff[2] * (*(devStates[3]+qcap));
+	    value = coeff[0] * devStates[1][qcap] +
+		    coeff[1] * devStates[2][qcap] +
+		    coeff[2] * devStates[3][qcap];
 	    /*
-	    value = coeff[0] * (*(devStates[1]+qcap)) +
-		    coeff[1] * (*(devStates[2]+qcap)) +
-		    coeff[2] * (*(devStates[1]+ccap));
+	    value = coeff[0] * devStates[1][qcap] +
+		    coeff[1] * devStates[2][qcap] +
+		    coeff[2] * devStates[1][ccap];
 	    */
 	    break;
 	default:
@@ -244,37 +244,37 @@ integrateLin(double **devStates, TranInfo *info, int qcap )
     case BDF:
 	switch( info->order ) {
 	case 1:
-	    value = coeff[1] * (*(devStates[1]+qcap));
+	    value = coeff[1] * devStates[1][qcap];
 	    break;
 	case 2:
-	    value = coeff[1] * (*(devStates[1]+qcap)) +
-		    coeff[2] * (*(devStates[2]+qcap));
+	    value = coeff[1] * devStates[1][qcap] +
+		    coeff[2] * devStates[2][qcap];
 	    break;
 	case 3:
-	    value = coeff[1] * (*(devStates[1]+qcap)) +
-		    coeff[2] * (*(devStates[2]+qcap)) +
-		    coeff[3] * (*(devStates[3]+qcap));
+	    value = coeff[1] * devStates[1][qcap] +
+		    coeff[2] * devStates[2][qcap] +
+		    coeff[3] * devStates[3][qcap];
 	    break;
 	case 4:
-	    value = coeff[1] * (*(devStates[1]+qcap)) +
-		    coeff[2] * (*(devStates[2]+qcap)) +
-		    coeff[3] * (*(devStates[3]+qcap)) +
-		    coeff[4] * (*(devStates[4]+qcap));
+	    value = coeff[1] * devStates[1][qcap] +
+		    coeff[2] * devStates[2][qcap] +
+		    coeff[3] * devStates[3][qcap] +
+		    coeff[4] * devStates[4][qcap];
 	    break;
 	case 5:
-	    value = coeff[1] * (*(devStates[1]+qcap)) +
-		    coeff[2] * (*(devStates[2]+qcap)) +
-		    coeff[3] * (*(devStates[3]+qcap)) +
-		    coeff[4] * (*(devStates[4]+qcap)) +
-		    coeff[5] * (*(devStates[5]+qcap));
+	    value = coeff[1] * devStates[1][qcap] +
+		    coeff[2] * devStates[2][qcap] +
+		    coeff[3] * devStates[3][qcap] +
+		    coeff[4] * devStates[4][qcap] +
+		    coeff[5] * devStates[5][qcap];
 	    break;
 	case 6:
-	    value = coeff[1] * (*(devStates[1]+qcap)) +
-		    coeff[2] * (*(devStates[2]+qcap)) +
-		    coeff[3] * (*(devStates[3]+qcap)) +
-		    coeff[4] * (*(devStates[4]+qcap)) +
-		    coeff[5] * (*(devStates[5]+qcap)) +
-		    coeff[6] * (*(devStates[6]+qcap));
+	    value = coeff[1] * devStates[1][qcap] +
+		    coeff[2] * devStates[2][qcap] +
+		    coeff[3] * devStates[3][qcap] +
+		    coeff[4] * devStates[4][qcap] +
+		    coeff[5] * devStates[5][qcap] +
+		    coeff[6] * devStates[6][qcap];
 	    break;
 	default:
 	    printf( "\n integration order %d !! STOP \n", info->order );
@@ -285,11 +285,11 @@ integrateLin(double **devStates, TranInfo *info, int qcap )
     default:
 	switch( info->order ) {
 	case 1:
-	    value = coeff[1] * (*(devStates[1]+qcap));
+	    value = coeff[1] * devStates[1][qcap];
 	    break;
 	case 2:
-	    value = coeff[1] * (*(devStates[1]+qcap)) +
-		    coeff[2] * (*(devStates[1]+ccap));
+	    value = coeff[1] * devStates[1][qcap] +
+		    coeff[2] * devStates[1][ccap];
             break;
         default:
 	    printf( "\n integration order %d !! STOP \n", info->order );

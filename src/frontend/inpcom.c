@@ -579,7 +579,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
         /* find the true .end command out of .endc, .ends, .endl, .end (comments may follow) */
         if (ciprefix(".end", buffer))
-            if ((*(buffer+4) == '\0') || (isspace(*(buffer+4)))) {
+            if ((buffer[4] == '\0') || (isspace(buffer[4]))) {
                 found_end = TRUE;
                 *buffer   = '*';
             }
@@ -976,8 +976,8 @@ inp_fix_gnd_name(struct line *deck)
         }
         // replace "?gnd?" by "? 0 ?", ? being a ' '  ','  '('  ')'.
         while ((gnd = strstr(gnd, "gnd")) != NULL) {
-            if ((isspace(*(gnd-1)) || *(gnd-1) == '(' || *(gnd-1) == ',') &&
-                (isspace(*(gnd+3)) || *(gnd+3) == ')' || *(gnd+3) == ',')) {
+            if ((isspace(gnd[-1]) || gnd[-1] == '(' || gnd[-1] == ',') &&
+                (isspace(gnd[3]) || gnd[3] == ')' || gnd[3] == ',')) {
                 memcpy(gnd, " 0 ", 3);
             }
             gnd += 3;
@@ -1291,11 +1291,11 @@ inp_fix_macro_param_func_paren_io(struct line *begin_card)
                 if (str_ptr)
                     *str_ptr = ' ';
                 str_ptr = card->li_line + 1;
-                *str_ptr = 'f';
-                *(str_ptr+1) = 'u';
-                *(str_ptr+2) = 'n';
-                *(str_ptr+3) = 'c';
-                *(str_ptr+4) = ' ';
+                str_ptr[0] = 'f';
+                str_ptr[1] = 'u';
+                str_ptr[2] = 'n';
+                str_ptr[3] = 'c';
+                str_ptr[4] = ' ';
             }
         }
     }
@@ -2432,7 +2432,7 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
     while ((equal_ptr = strchr(line, '=')) != NULL) {
 
         // check for equality '=='
-        if (*(equal_ptr+1) == '=') {
+        if (equal_ptr[1] == '=') {
             line = equal_ptr+2;
             continue;
         }
@@ -2469,7 +2469,7 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
         *end = '\0';
 
         if (*value != '{' &&
-            !(isdigit(*value) || (*value == '.' && isdigit(*(value+1))))) {
+            !(isdigit(*value) || (*value == '.' && isdigit(value[1])))) {
             sprintf(tmp_str, "{%s}", value);
             value = tmp_str;
         }
@@ -2864,7 +2864,7 @@ inp_do_macro_param_replace(int fcn_number, char *params[])
                 before = '\0';
             else
                 before = *(param_ptr-1);
-            after  = *(param_ptr+strlen(func_params[fcn_number][i]));
+            after  = param_ptr [ strlen(func_params[fcn_number][i]) ];
             if (!(is_arith_char(before) || isspace(before) ||
                   before == ',' || before == '=' || (param_ptr-1) < curr_ptr) ||
                 !(is_arith_char(after) || isspace(after) ||
@@ -3160,18 +3160,18 @@ inp_fix_param_values(struct line *deck)
             // special case: .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN out_variable2=out_variable3
             // no braces around out_variable3. out_variable3 may be v(...) or i(...)
             if (ciprefix(".meas", line))
-                if (((*(equal_ptr+1) == 'v') || (*(equal_ptr+1) == 'i')) &&
-                    (*(equal_ptr+2) == '('))
+                if (((equal_ptr[1] == 'v') || (equal_ptr[1] == 'i')) &&
+                    (equal_ptr[2] == '('))
                 {
                     // find closing ')' and skip token v(...) or i(...)
-                    while (*equal_ptr != ')' && *(equal_ptr+1) != '\0')
+                    while (*equal_ptr != ')' && equal_ptr[1] != '\0')
                         equal_ptr++;
                     line = equal_ptr + 1;
                     continue;
                 }
 
             // skip over equality '=='
-            if (*(equal_ptr+1) == '=') {
+            if (equal_ptr[1] == '=') {
                 line += 2;
                 continue;
             }
@@ -3188,8 +3188,8 @@ inp_fix_param_values(struct line *deck)
                 *beg_of_str == '{' ||
                 *beg_of_str == '.' ||
                 *beg_of_str == '"' ||
-                (*beg_of_str == '-' && isdigit(*(beg_of_str+1))) ||
-                (*beg_of_str == '-' && *(beg_of_str+1) == '.' && isdigit(*(beg_of_str+2))) ||
+                (*beg_of_str == '-' && isdigit(beg_of_str[1])) ||
+                (*beg_of_str == '-' && beg_of_str[1] == '.' && isdigit(beg_of_str[2])) ||
                 ciprefix("true", beg_of_str) ||
                 ciprefix("false", beg_of_str))
             {
@@ -3212,7 +3212,7 @@ inp_fix_param_values(struct line *deck)
 
                     buffer = TMALLOC(char, strlen(natok) + 4);
                     if (isdigit(*natok) || *natok == '{' || *natok == '.' ||
-                        *natok == '"' || (*natok == '-' && isdigit(*(natok+1))) ||
+                        *natok == '"' || (*natok == '-' && isdigit(natok[1])) ||
                         ciprefix("true", natok) || ciprefix("false", natok) ||
                         eq(natok, "<") || eq(natok, ">"))
                     {
@@ -3221,8 +3221,8 @@ inp_fix_param_values(struct line *deck)
                         /* < xx and yy > have been dealt with before */
                         /* <xx */
                     } else if (*natok == '<') {
-                        if (isdigit(*(natok + 1)) ||
-                            (*(natok + 1) == '-' && isdigit(*(natok + 2))))
+                        if (isdigit(natok[1]) ||
+                            (natok[1] == '-' && isdigit(natok[2])))
                         {
                             (void) sprintf(buffer, "%s", natok);
                         } else {
@@ -3231,7 +3231,7 @@ inp_fix_param_values(struct line *deck)
                         }
                         /* yy> */
                     } else if (strchr(natok, '>')) {
-                        if (isdigit(*natok) || (*natok == '-' && isdigit(*(natok+1)))) {
+                        if (isdigit(*natok) || (*natok == '-' && isdigit(natok[1]))) {
                             (void) sprintf(buffer, "%s", natok);
                         } else {
                             whereisgt = strchr(natok, '>');
@@ -3279,7 +3279,7 @@ inp_fix_param_values(struct line *deck)
 
                     buffer = TMALLOC(char, strlen(natok) + 4);
                     if (isdigit(*natok) || *natok == '{' || *natok == '.' ||
-                        *natok == '"' || (*natok == '-' && isdigit(*(natok+1))) ||
+                        *natok == '"' || (*natok == '-' && isdigit(natok[1])) ||
                         ciprefix("true", natok) || ciprefix("false", natok))
                     {
                         (void) sprintf(buffer, "%s", natok);
@@ -3386,8 +3386,8 @@ inp_get_param_level(int param_num, char ***depends_on, char **param_names, char 
     int index1 = 0, comp_level = 0, temp_level = 0;
     int index2 = 0;
 
-    if (*(level+param_num) != -1)
-        return *(level+param_num);
+    if (level[param_num] != -1)
+        return level[param_num];
 
     while (depends_on[param_num][index1] != NULL) {
         index2 = 0;
@@ -3406,7 +3406,7 @@ inp_get_param_level(int param_num, char ***depends_on, char **param_names, char 
             comp_level = temp_level;
         index1++;
     }
-    *(level+param_num) = comp_level;
+    level[param_num] = comp_level;
     return comp_level;
 }
 
@@ -3618,9 +3618,9 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
             while ((param_ptr = strstr(param_str, param_name)) != NULL) {
                 ioff = (strchr(param_ptr, '}') != NULL ? 1 : 0);  /* want prevent wrong memory access below */
                 /* looking for curly braces or other string limiter */
-                if ((!isalnum(*(param_ptr-ioff)) && *(param_ptr-ioff) != '_' &&
-                     !isalnum(*(param_ptr+strlen(param_name))) &&
-                     *(param_ptr+strlen(param_name)) != '_') ||
+                if ((!isalnum(param_ptr[-ioff]) && param_ptr[-ioff] != '_' &&
+                     !isalnum(param_ptr[strlen(param_name)]) &&
+                     param_ptr[strlen(param_name)] != '_') ||
                     strcmp(param_ptr, param_name) == 0)
                 { /* this are cases without curly braces */
                     ind = 0;
@@ -3946,7 +3946,7 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
             counter = 0;
             while ((equal_ptr = strchr(curr_line, '=')) != NULL) {
                 // check for equality '=='
-                if (*(equal_ptr+1) == '=') {
+                if (equal_ptr[1] == '=') {
                     curr_line = equal_ptr+2;
                     continue;
                 }
@@ -3968,7 +3968,7 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
             counter   = 0;
             while (curr_line < card->li_line+strlen(card->li_line) && (equal_ptr = strchr(curr_line, '=')) != NULL) {
                 // check for equality '=='
-                if (*(equal_ptr+1) == '=') {
+                if (equal_ptr[1] == '=') {
                     curr_line = equal_ptr+2;
                     continue;
                 }
@@ -4134,11 +4134,11 @@ inp_compat(struct line *deck)
                -->
                Exxx n1 n2   vol={equation} */
             if ((str_ptr = strstr(curr_line, "value=")) != NULL) {
-                *str_ptr = ' ';
-                *(str_ptr + 1) = ' ';
-                *(str_ptr + 2) = 'v';
-                *(str_ptr + 3) = 'o';
-                *(str_ptr + 4) = 'l';
+                str_ptr[0] = ' ';
+                str_ptr[1] = ' ';
+                str_ptr[2] = 'v';
+                str_ptr[3] = 'o';
+                str_ptr[4] = 'l';
             }
             /* Exxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
                -->
@@ -4326,11 +4326,11 @@ inp_compat(struct line *deck)
                -->
                Gxxx n1 n2   cur={equation} */
             if ((str_ptr = strstr(curr_line, "value=")) != NULL) {
-                *str_ptr = ' ';
-                *(str_ptr + 1) = ' ';
-                *(str_ptr + 2) = 'c';
-                *(str_ptr + 3) = 'u';
-                *(str_ptr + 4) = 'r';
+                str_ptr[0] = ' ';
+                str_ptr[1] = ' ';
+                str_ptr[2] = 'c';
+                str_ptr[3] = 'u';
+                str_ptr[4] = 'r';
             }
 
             /* Gxxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
@@ -5171,10 +5171,10 @@ replace_token(char *string, char *token, int wherereplace, int total)
             txfree(gettok(&actstring));
         /* If token to be replaced at right position */
         if (ciprefix(token, actstring)) {
-            *actstring = ' ';
-            *(actstring + 1) = ' ';
-            *(actstring + 2) = ' ';
-            *(actstring + 3) = ' ';
+            actstring[0] = ' ';
+            actstring[1] = ' ';
+            actstring[2] = ' ';
+            actstring[3] = ' ';
         }
     }
 }
@@ -5251,7 +5251,7 @@ inp_bsource_compat(struct line *deck)
                     (actchar == '*') || (actchar == '/') || (actchar == '^') ||
                     (actchar == '+') || (actchar == '?') || (actchar == ':'))
                 {
-                    if ((actchar == '*') && (*(str_ptr+1) == '*')) {
+                    if ((actchar == '*') && (str_ptr[1] == '*')) {
                         actchar = '^';
                         str_ptr++;
                     }
@@ -5297,7 +5297,7 @@ inp_bsource_compat(struct line *deck)
                         i = 0;
                     }
 
-                    if (((actchar == 'v') || (actchar == 'i')) && (*(str_ptr+1) == '(')) {
+                    if (((actchar == 'v') || (actchar == 'i')) && (str_ptr[1] == '(')) {
                         while (*str_ptr != ')') {
                             buf[i] = *str_ptr;
                             i++;
@@ -5443,7 +5443,7 @@ inp_bsource_compat(struct line *deck)
                 controlled_exit(EXIT_FAILURE);
             }
             /* cut the tmp_char after the equal sign */
-            *(equal_ptr + 1) = '\0';
+            equal_ptr[1] = '\0';
             xlen = strlen(tmp_char) + strlen(new_str) + 2;
             final_str = TMALLOC(char, xlen);
             sprintf(final_str, "%s %s", tmp_char, new_str);

@@ -28,8 +28,8 @@ NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, 
     double imagVal;
     double gain;
 
-    realVal = *((ckt->CKTrhs) + node1) - *((ckt->CKTrhs) + node2);
-    imagVal = *((ckt->CKTirhs) + node1) - *((ckt->CKTirhs) + node2);
+    realVal = ckt->CKTrhs [node1] - ckt->CKTrhs [node2];
+    imagVal = ckt->CKTirhs [node1] - ckt->CKTirhs [node2];
     gain = (realVal*realVal) + (imagVal*imagVal);
     switch (type) {
 
@@ -87,10 +87,10 @@ double phi21)     /* Phase of signal 2 relative to signal 1 */
     double realOut, imagOut, param_gain;
     double T0, T1, T2, T3;
 
-    realVal1 = *((ckt->CKTrhs) + node1) - *((ckt->CKTrhs) + node2);
-    imagVal1 = *((ckt->CKTirhs) + node1) - *((ckt->CKTirhs) + node2);
-    realVal2 = *((ckt->CKTrhs) + node3) - *((ckt->CKTrhs) + node4);
-    imagVal2 = *((ckt->CKTirhs) + node3) - *((ckt->CKTirhs) + node4);
+    realVal1 = ckt->CKTrhs [node1] - ckt->CKTrhs [node2];
+    imagVal1 = ckt->CKTirhs [node1] - ckt->CKTirhs [node2];
+    realVal2 = ckt->CKTrhs [node3] - ckt->CKTrhs [node4];
+    imagVal2 = ckt->CKTirhs [node3] - ckt->CKTirhs [node4];
     T0 = sqrt(param1);
     T1 = sqrt(param2);
     T2 = T1 * cos(phi21);
@@ -134,8 +134,8 @@ NevalSrcInstanceTemp (double *noise, double *lnNoise, CKTcircuit *ckt, int type,
     double imagVal;
     double gain;
 
-    realVal = *((ckt->CKTrhs) + node1) - *((ckt->CKTrhs) + node2);
-    imagVal = *((ckt->CKTirhs) + node1) - *((ckt->CKTirhs) + node2);
+    realVal = ckt->CKTrhs [node1] - ckt->CKTrhs [node2];
+    imagVal = ckt->CKTirhs [node1] - ckt->CKTirhs [node2];
     gain = (realVal*realVal) + (imagVal*imagVal);
     switch (type) {
 

@@ -529,11 +529,11 @@ time1 = SPfrontEnd->IFseconds();
 	}
        for (i=0; i< displacement ; i++)
        {
-	DkerProc(D_TWOF1,*(job->r2H11stor + i),
-			     *(job->i2H11stor + i),
+	DkerProc(D_TWOF1,job->r2H11stor[i],
+			     job->i2H11stor[i],
 				 size, job);
-	ckt->CKTrhsOld = *((job->r2H11stor) + i);
-	ckt->CKTirhsOld = *((job->i2H11stor) + i);
+	ckt->CKTrhsOld = job->r2H11stor[i];
+	ckt->CKTirhsOld = job->i2H11stor[i];
 	error = CKTacDump(ckt,ckt->CKTrhsOld[0],acPlot);
         if(error) return(error);
 	}
@@ -551,11 +551,11 @@ time1 = SPfrontEnd->IFseconds();
             numNames, nameList, IF_COMPLEX, &acPlot);
        for (i=0; i< displacement ; i++)
        {
-	DkerProc(D_THRF1,*(job->r3H11stor + i),
-			     *(job->i3H11stor + i),
+	DkerProc(D_THRF1,job->r3H11stor[i],
+			     job->i3H11stor[i],
 				 size, job);
-	ckt->CKTrhsOld = *((job->r3H11stor) + i);
-	ckt->CKTirhsOld = *((job->i3H11stor) + i);
+	ckt->CKTrhsOld = job->r3H11stor[i];
+	ckt->CKTirhsOld = job->i3H11stor[i];
 	error = CKTacDump(ckt,ckt->CKTrhsOld[0],acPlot);
 	}
 	SPfrontEnd->OUTendPlot (acPlot);
@@ -575,11 +575,11 @@ time1 = SPfrontEnd->IFseconds();
             numNames, nameList, IF_COMPLEX, &acPlot);
 	   for (i=0; i< displacement ; i++)
 	   {
-	DkerProc(D_F1PF2,*(job->r2H12stor + i),
-			     *(job->i2H12stor + i),
+	DkerProc(D_F1PF2,job->r2H12stor[i],
+			     job->i2H12stor[i],
 				 size, job);
-	ckt->CKTrhsOld = *((job->r2H12stor) + i);
-	ckt->CKTirhsOld = *((job->i2H12stor) + i);
+	ckt->CKTrhsOld = job->r2H12stor[i];
+	ckt->CKTirhsOld = job->i2H12stor[i];
 	error = CKTacDump(ckt,ckt->CKTrhsOld[0],acPlot);
 	    if(error) return(error);
 	    }
@@ -598,11 +598,11 @@ time1 = SPfrontEnd->IFseconds();
 	   for (i=0; i< displacement ; i++)
 	   {
 	DkerProc(D_F1MF2,
-			    *(job->r2H1m2stor + i),
-			    *(job->i2H1m2stor + i),
+			    job->r2H1m2stor[i],
+			    job->i2H1m2stor[i],
 				 size, job);
-	ckt->CKTrhsOld = *((job->r2H1m2stor) + i);
-	ckt->CKTirhsOld = *((job->i2H1m2stor) + i);
+	ckt->CKTrhsOld = job->r2H1m2stor[i];
+	ckt->CKTirhsOld = job->i2H1m2stor[i];
 	error = CKTacDump(ckt,ckt->CKTrhsOld[0],acPlot);
 	    if(error) return(error);
 	    }
@@ -621,11 +621,11 @@ time1 = SPfrontEnd->IFseconds();
 	   for (i=0; i< displacement ; i++)
 	   {
 	DkerProc(D_2F1MF2,
-			*(job->r3H1m2stor + i),
-			*(job->i3H1m2stor + i),
+			job->r3H1m2stor[i],
+			job->i3H1m2stor[i],
 				 size, job);
-	ckt->CKTrhsOld = *((job->r3H1m2stor) + i);
-	ckt->CKTirhsOld = *((job->i3H1m2stor) + i);
+	ckt->CKTrhsOld = job->r3H1m2stor[i];
+	ckt->CKTirhsOld = job->i3H1m2stor[i];
 	error = CKTacDump(ckt,ckt->CKTrhsOld[0],acPlot);
 	    if(error) return(error);
 	    }

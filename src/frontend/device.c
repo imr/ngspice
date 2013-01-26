@@ -1333,7 +1333,7 @@ com_alter_common(wordlist *wl, int do_model)
                 /*printf(" returning vector value %g\n", tmp); */
                 i++;
                 list = TREALLOC(double, list, i);
-                *(list+i-1) = tmp;
+                list[i-1] = tmp;
                 tmp = INPevaluate(&xsbuf, &error, 1);
             }
             dv->v_realdata = list;

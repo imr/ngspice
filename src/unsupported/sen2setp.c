@@ -50,11 +50,11 @@ SENsetParm(ckt,anal,which,value)
             ((SENstruct *)anal)->SENparmNames = TREALLOC(char *, ((SENstruct *)anal)->SENparmNames, ((SENstruct *)anal)->SENnumVal) ;
             if( ((SENstruct *)anal)->SENparmNames == NULL) return(E_NOMEM);
         }
-        *(((SENstruct *)anal)->SENdevices+((SENstruct *)anal)->SENnumVal-1)=
+        ((SENstruct *)anal)->SENdevices [ ((SENstruct *)anal)->SENnumVal - 1 ] =
                 value->sValue;
         break;
     case SEN_PARM:
-        *(((SENstruct *)anal)->SENparmNames+((SENstruct *)anal)->SENnumVal-1)=
+        ((SENstruct *)anal)->SENparmNames [ ((SENstruct *)anal)->SENnumVal - 1 ] =
                 value->sValue;
         break;
 

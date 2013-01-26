@@ -385,7 +385,7 @@ vec_fromplot(char *word, struct plot *plot)
     /* scanf("%c(%s)" doesn't do what it should do. ) */
     if (!d && (sscanf(word, "%c(%s", /* ) */ &cc, buf) == 2) &&
         /* ( */ ((s = strrchr(buf, ')')) != NULL) &&
-        (*(s + 1) == '\0')) {
+        (s[1] == '\0')) {
         *s = '\0';
         if (prefix("i(", /* ) */ word) || prefix("I(", /* ) */ word)) {
             /* Spice dependency... */
@@ -581,7 +581,7 @@ vec_get(const char *vec_name)
             nv = vv->va_vlist;
             for (i = 1; ; i++) {
                 list = TREALLOC(double, list, i);
-                *(list+i-1) = nv->va_real;
+                list[i-1] = nv->va_real;
                 nv = nv->va_next;
                 if (!nv)
                     break;

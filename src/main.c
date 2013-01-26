@@ -540,7 +540,7 @@ prompt(void)
 #endif  /* HAVE_BSDEDITLINE*/
           break;
         case '\\':
-          if (*(s + 1))
+          if (s[1])
               p += sprintf(p, "%c", strip(*++s));
           default:
               *p = (char) strip(*s); ++p;

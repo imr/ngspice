@@ -407,8 +407,8 @@ CKTacLoad(CKTcircuit *ckt)
     startTime  = SPfrontEnd->IFseconds();
     size = SMPmatSize(ckt->CKTmatrix);
     for (i=0;i<=size;i++) {
-        *(ckt->CKTrhs+i)=0;
-        *(ckt->CKTirhs+i)=0;
+        ckt->CKTrhs[i]=0;
+        ckt->CKTirhs[i]=0;
     }
     SMPcClear(ckt->CKTmatrix);
 

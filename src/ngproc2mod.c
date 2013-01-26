@@ -104,7 +104,7 @@ main(void) {
             ncur = TMALLOC(nmod, 1);
             ncur->nnext = NULL;
             ncur->nname = typeline;
-            *(typeline+3) = '\0';
+            typeline[3] = '\0';
             typeline += 4;
             getdata(ncur->nparms,69,3);
             ncur->nnext = nlist;
@@ -113,7 +113,7 @@ main(void) {
             pcur = TMALLOC(pmod, 1);
             pcur->pnext = NULL;
             pcur->pname = typeline;
-            *(typeline+3) = '\0';
+            typeline[3] = '\0';
             typeline += 4;
             getdata(pcur->pparms,69,3);
             pcur->pnext = plist;
@@ -122,7 +122,7 @@ main(void) {
             ycur = TMALLOC(ymod, 1);
             ycur->ynext = NULL;
             ycur->yname = typeline;
-            *(typeline+3) = '\0';
+            typeline[3] = '\0';
             typeline += 4;
             getdata(ycur->yparms,10,5);
             ycur->ynext = ylist;
@@ -131,7 +131,7 @@ main(void) {
             dcur = TMALLOC(dmod, 1);
             dcur->dnext = NULL;
             dcur->dname = typeline;
-            *(typeline+3) = '\0';
+            typeline[3] = '\0';
             typeline += 4;
             getdata(dcur->dparms,10,5);
             dcur->dnext = dlist;
@@ -140,7 +140,7 @@ main(void) {
             mcur = TMALLOC(mmod, 1);
             mcur->mnext = NULL;
             mcur->mname = typeline;
-            *(typeline+3) = '\0';
+            typeline[3] = '\0';
             typeline += 4;
             getdata(mcur->mparms,10,5);
             mcur->mnext = mlist;

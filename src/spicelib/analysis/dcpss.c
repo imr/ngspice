@@ -305,8 +305,8 @@ DCpss(CKTcircuit *ckt,
                                                                "-------------");
             for(node=ckt->CKTnodes->next;node;node=node->next) {
                 if (strstr(node->name, "#branch") || !strstr(node->name, "#")) {
-                    new =  *((ckt->CKTrhsOld) + i ) ;
-                    old =  *((ckt->CKTrhs) + i ) ;
+                    new =  ckt->CKTrhsOld [i] ;
+                    old =  ckt->CKTrhs [i] ;
                     fprintf(stdout,"%-30s %20g %20g", node->name, new, old);
                     if(node->type == 3) {
                         tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +

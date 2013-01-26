@@ -25,7 +25,7 @@ CKTnames(CKTcircuit *ckt, int *numNames, IFuid **nameList)
     if ((*nameList) == NULL) return(E_NOMEM);
     i=0;
     for (here = ckt->CKTnodes->next; here; here = here->next)  {
-        *((*nameList)+i++) = here->name;
+        (*nameList) [i++] = here->name;
     }
     return(OK);
 }

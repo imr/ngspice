@@ -25,13 +25,13 @@ NIintegrate(CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap)
     case TRAPEZOIDAL:
         switch(ckt->CKTorder) {
         case 1:
-            *(ckt->CKTstate0+ccap) = ckt->CKTag[0] * (*(ckt->CKTstate0+qcap)) 
-                    + ckt->CKTag[1] * (*(ckt->CKTstate1+qcap));
+            ckt->CKTstate0[ccap] = ckt->CKTag[0] * ckt->CKTstate0[qcap] 
+                    + ckt->CKTag[1] * ckt->CKTstate1[qcap];
             break;
         case 2:
-            *(ckt->CKTstate0+ccap) = - *(ckt->CKTstate1+ccap) * ckt->CKTag[1] + 
+            ckt->CKTstate0[ccap] = - ckt->CKTstate1[ccap] * ckt->CKTag[1] + 
                     ckt->CKTag[0] * 
-                    ( *(ckt->CKTstate0+qcap) - *(ckt->CKTstate1+qcap) );
+                    ( ckt->CKTstate0[qcap] - ckt->CKTstate1[qcap] );
             break;
         default:
             errMsg = TMALLOC(char, strlen(ordmsg) + 1);
@@ -40,27 +40,27 @@ NIintegrate(CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap)
         }
         break;
     case GEAR:
-        *(ckt->CKTstate0+ccap)=0;
+        ckt->CKTstate0[ccap]=0;
         switch(ckt->CKTorder) {
 
         case 6:
-            *(ckt->CKTstate0+ccap) += ckt->CKTag[6]* *(ckt->CKTstate6+qcap);
+            ckt->CKTstate0[ccap] += ckt->CKTag[6]* ckt->CKTstate6[qcap];
             /* fall through */
         case 5:
-            *(ckt->CKTstate0+ccap) += ckt->CKTag[5]* *(ckt->CKTstate5+qcap);
+            ckt->CKTstate0[ccap] += ckt->CKTag[5]* ckt->CKTstate5[qcap];
             /* fall through */
         case 4:
-            *(ckt->CKTstate0+ccap) += ckt->CKTag[4]* *(ckt->CKTstate4+qcap);
+            ckt->CKTstate0[ccap] += ckt->CKTag[4]* ckt->CKTstate4[qcap];
             /* fall through */
         case 3:
-            *(ckt->CKTstate0+ccap) += ckt->CKTag[3]* *(ckt->CKTstate3+qcap);
+            ckt->CKTstate0[ccap] += ckt->CKTag[3]* ckt->CKTstate3[qcap];
             /* fall through */
         case 2:
-            *(ckt->CKTstate0+ccap) += ckt->CKTag[2]* *(ckt->CKTstate2+qcap);
+            ckt->CKTstate0[ccap] += ckt->CKTag[2]* ckt->CKTstate2[qcap];
             /* fall through */
         case 1:
-            *(ckt->CKTstate0+ccap) += ckt->CKTag[1]* *(ckt->CKTstate1+qcap);
-            *(ckt->CKTstate0+ccap) += ckt->CKTag[0]* *(ckt->CKTstate0+qcap);
+            ckt->CKTstate0[ccap] += ckt->CKTag[1]* ckt->CKTstate1[qcap];
+            ckt->CKTstate0[ccap] += ckt->CKTag[0]* ckt->CKTstate0[qcap];
             break;
 
         default:
@@ -74,7 +74,7 @@ NIintegrate(CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap)
         strcpy(errMsg,methodmsg);
         return(E_METHOD);
     }
-    *ceq = *(ckt->CKTstate0+ccap) - ckt->CKTag[0] * *(ckt->CKTstate0+qcap);
+    *ceq = ckt->CKTstate0[ccap] - ckt->CKTag[0] * ckt->CKTstate0[qcap];
     *geq = ckt->CKTag[0] * cap;
     return(OK);
 }

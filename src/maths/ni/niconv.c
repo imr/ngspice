@@ -29,15 +29,15 @@ NIconvTest(CKTcircuit *ckt)
     size = SMPmatSize(ckt->CKTmatrix);
 #ifdef STEPDEBUG
     for (i=1;i<=size;i++) {
-        new =  *((ckt->CKTrhs) + i ) ;
-        old =  *((ckt->CKTrhsOld) + i ) ;
+        new =  ckt->CKTrhs [i] ;
+        old =  ckt->CKTrhsOld [i] ;
 	printf("chk for convergence:   %s    new: %g    old: %g\n",CKTnodName(ckt,i),new,old);
     }
 #endif /* STEPDEBUG */
     for (i=1;i<=size;i++) {
         node = node->next;
-        new =  *((ckt->CKTrhs) + i ) ;
-        old =  *((ckt->CKTrhsOld) + i ) ;
+        new =  ckt->CKTrhs [i] ;
+        old =  ckt->CKTrhsOld [i] ;
         if(node->type == 3) {
             tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
                     ckt->CKTvoltTol;

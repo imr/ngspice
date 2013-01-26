@@ -39,13 +39,13 @@ SENstartup(ckt)
         type = -1;
         fast = NULL;
         err = CKTfndDev((GENERIC*)ckt,&type,(GENERIC**)&fast,
-            (*((ckt->CKTsenInfo->SENdevices)+i)), 
+            ((ckt->CKTsenInfo->SENdevices)[i]), 
             NULL, NULL);
         if(err != OK) return(err);
         err = CKTpName(
-        (*((ckt->CKTsenInfo->SENparmNames)+i)),
+        ((ckt->CKTsenInfo->SENparmNames)[i]),
             &parmtemp,ckt ,type,
-            (*((ckt->CKTsenInfo->SENdevices)+i)),
+            ((ckt->CKTsenInfo->SENdevices)[i]),
             &fast);
         if(err != OK) return(err);
     }
