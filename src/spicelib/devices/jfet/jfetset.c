@@ -3,8 +3,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
 Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
-	Laboratory for Communication Science Engineering
-	Sydney University Department of Electrical Engineering, Australia
+        Laboratory for Communication Science Engineering
+        Sydney University Department of Electrical Engineering, Australia
 **********/
 
 #include "ngspice/ngspice.h"
@@ -17,8 +17,8 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 
 int
 JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
-        /* load the diode structure with those pointers needed later 
-         * for fast matrix loading 
+        /* load the diode structure with those pointers needed later
+         * for fast matrix loading
          */
 {
     JFETmodel *model = (JFETmodel*)inModel;
@@ -62,25 +62,25 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->JFETdepletionCapCoeffGiven) {
             model->JFETdepletionCapCoeff = .5;
         }
-	if(!model->JFETfNcoefGiven) {
-	    model->JFETfNcoef = 0;
-	}
-	if(!model->JFETfNexpGiven) {
-	    model->JFETfNexp = 1;
-	}
+        if(!model->JFETfNcoefGiven) {
+            model->JFETfNcoef = 0;
+        }
+        if(!model->JFETfNexpGiven) {
+            model->JFETfNexp = 1;
+        }
 
-	/* Modification for Sydney University JFET model */
-	if(!model->JFETbGiven) {
-	    model->JFETb = 1.0;
-	}
-	/* end Sydney University mod */
+        /* Modification for Sydney University JFET model */
+        if(!model->JFETbGiven) {
+            model->JFETb = 1.0;
+        }
+        /* end Sydney University mod */
 
-	if(!model->JFETtcvGiven) {
-	    model->JFETtcv = 0.0;
-	}
-	if(!model->JFETbexGiven) {
-	    model->JFETbex = 0.0;
-	}
+        if(!model->JFETtcvGiven) {
+            model->JFETtcv = 0.0;
+        }
+        if(!model->JFETbexGiven) {
+            model->JFETbex = 0.0;
+        }
 
         if(model->JFETdrainResist != 0) {
             model->JFETdrainConduct = 1/model->JFETdrainResist;
@@ -96,7 +96,7 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* loop through all the instances of the model */
         for (here = model->JFETinstances; here != NULL ;
                 here=here->JFETnextInstance) {
-            
+
             if(!here->JFETareaGiven) {
                 here->JFETarea = 1;
             }
@@ -108,45 +108,45 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
             if(model->JFETsourceResist != 0) {
                 if(here->JFETsourcePrimeNode == 0) {
-                error = CKTmkVolt(ckt,&tmp,here->JFETname,"source");
-                if(error) return(error);
-                here->JFETsourcePrimeNode = tmp->number;
-                
-                if (ckt->CKTcopyNodesets) {
-		    CKTnode *tmpNode;
-		    IFuid tmpName;
-            
-                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
-                  }
+                    error = CKTmkVolt(ckt,&tmp,here->JFETname,"source");
+                    if(error) return(error);
+                    here->JFETsourcePrimeNode = tmp->number;
+
+                    if (ckt->CKTcopyNodesets) {
+                        CKTnode *tmpNode;
+                        IFuid tmpName;
+
+                        if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                            if (tmpNode->nsGiven) {
+                                tmp->nodeset=tmpNode->nodeset;
+                                tmp->nsGiven=tmpNode->nsGiven;
+                            }
+                        }
+                    }
                 }
-                }
-                
+
             } else {
                 here->JFETsourcePrimeNode = here->JFETsourceNode;
             }
             if(model->JFETdrainResist != 0) {
                 if(here->JFETdrainPrimeNode == 0) {
-                error = CKTmkVolt(ckt,&tmp,here->JFETname,"drain");
-                if(error) return(error);
-                here->JFETdrainPrimeNode = tmp->number;
-                
-                if (ckt->CKTcopyNodesets) {
-		    CKTnode *tmpNode;
-		    IFuid tmpName;
+                    error = CKTmkVolt(ckt,&tmp,here->JFETname,"drain");
+                    if(error) return(error);
+                    here->JFETdrainPrimeNode = tmp->number;
 
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
-                  }
+                    if (ckt->CKTcopyNodesets) {
+                        CKTnode *tmpNode;
+                        IFuid tmpName;
+
+                        if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                            if (tmpNode->nsGiven) {
+                                tmp->nodeset=tmpNode->nodeset;
+                                tmp->nsGiven=tmpNode->nsGiven;
+                            }
+                        }
+                    }
                 }
-                }
-                
+
             } else {
                 here->JFETdrainPrimeNode = here->JFETdrainNode;
             }
@@ -190,24 +190,24 @@ JFETunsetup(GENmodel *inModel, CKTcircuit *ckt)
     JFETinstance *here;
 
     for (model = (JFETmodel *)inModel; model != NULL;
-	    model = model->JFETnextModel)
+            model = model->JFETnextModel)
     {
         for (here = model->JFETinstances; here != NULL;
                 here=here->JFETnextInstance)
-	{
-	    if (here->JFETsourcePrimeNode
-		    && here->JFETsourcePrimeNode != here->JFETsourceNode)
-	    {
-		CKTdltNNum(ckt, here->JFETsourcePrimeNode);
-		here->JFETsourcePrimeNode = 0;
-	    }
-	    if (here->JFETdrainPrimeNode
-		    && here->JFETdrainPrimeNode != here->JFETdrainNode)
-	    {
-		CKTdltNNum(ckt, here->JFETdrainPrimeNode);
-		here->JFETdrainPrimeNode = 0;
-	    }
-	}
+        {
+            if (here->JFETsourcePrimeNode
+                    && here->JFETsourcePrimeNode != here->JFETsourceNode)
+            {
+                CKTdltNNum(ckt, here->JFETsourcePrimeNode);
+                here->JFETsourcePrimeNode = 0;
+            }
+            if (here->JFETdrainPrimeNode
+                    && here->JFETdrainPrimeNode != here->JFETdrainNode)
+            {
+                CKTdltNNum(ckt, here->JFETdrainPrimeNode);
+                here->JFETdrainPrimeNode = 0;
+            }
+        }
     }
     return OK;
 }

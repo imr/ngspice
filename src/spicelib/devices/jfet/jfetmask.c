@@ -2,8 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Mathew Lew and Thomas L. Quarles
 Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
-	Laboratory for Communication Science Engineering
-	Sydney University Department of Electrical Engineering, Australia
+        Laboratory for Communication Science Engineering
+        Sydney University Department of Electrical Engineering, Australia
 **********/
 /*
  */
@@ -39,11 +39,11 @@ JFETmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case JFET_MOD_LAMBDA:
             value->rValue = model->JFETlModulation;
             return(OK);
-	/* Modification for Sydney University JFET model */
-	case JFET_MOD_B:
-		value->rValue = model->JFETb;
-		return(OK);
-	/* end Sydney University mod */
+        /* Modification for Sydney University JFET model */
+        case JFET_MOD_B:
+            value->rValue = model->JFETb;
+            return(OK);
+        /* end Sydney University mod */
         case JFET_MOD_RD:
             value->rValue = model->JFETdrainResist;
             return(OK);
@@ -84,9 +84,9 @@ JFETmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
             value->rValue = model->JFETbex;
             return(OK);
         case JFET_MOD_TYPE:
-	    if (model->JFETtype == NJF)
+            if (model->JFETtype == NJF)
                 value->sValue = "njf";
-	    else
+            else
                 value->sValue = "pjf";
             return(OK);
         default:
@@ -94,4 +94,3 @@ JFETmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
     }
     /* NOTREACHED */
 }
-
