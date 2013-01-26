@@ -35,6 +35,7 @@ JFETnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
     double noizDens[JFETNSRCS];
     double lnNdens[JFETNSRCS];
     int i;
+    double vgs, vds, vgst, alpha, beta;
 
     /* define the names of the noise sources */
 
@@ -112,10 +113,26 @@ JFETnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
                                  inst->JFETsourceNode,model->JFETsourceConduct
                                  * inst->JFETarea * inst->JFETm);
 
-                    NevalSrc(&noizDens[JFETIDNOIZ],&lnNdens[JFETIDNOIZ],
-                                 ckt,THERMNOISE,inst->JFETdrainPrimeNode,
-                                 inst->JFETsourcePrimeNode,
-                                 (2.0/3.0 * inst->JFETm * fabs(*(ckt->CKTstate0 + inst->JFETgm))));
+                    if (model->JFETnlev < 3) {
+                        NevalSrc(&noizDens[JFETIDNOIZ],&lnNdens[JFETIDNOIZ],
+                                     ckt,THERMNOISE,inst->JFETdrainPrimeNode,
+                                     inst->JFETsourcePrimeNode,
+                                     (2.0/3.0 * inst->JFETm * fabs(*(ckt->CKTstate0 + inst->JFETgm))));
+                    } else {
+                        vgs = *(ckt->CKTstate0 + inst->JFETvgs);
+                        vds = vgs - *(ckt->CKTstate0 + inst->JFETvgd);
+                        vgst = vgs - inst->JFETtThreshold;
+                        if (vgst >= vds)
+                            alpha = 1 - vds/vgst; /* linear region */
+                        else
+                            alpha = 0;        /* saturation region */
+                        beta = inst->JFETtBeta * inst->JFETarea * inst->JFETm;
+
+                        NevalSrc(&noizDens[JFETIDNOIZ],&lnNdens[JFETIDNOIZ],
+                                     ckt,THERMNOISE,inst->JFETdrainPrimeNode,
+                                     inst->JFETsourcePrimeNode,
+                                     (2.0/3.0 * beta*vgst*(1+alpha+alpha*alpha)/(1+alpha)*model->JFETgdsnoi));
+                    }
 
                     NevalSrc(&noizDens[JFETFLNOIZ], NULL, ckt,
                                  N_GAIN,inst->JFETdrainPrimeNode,

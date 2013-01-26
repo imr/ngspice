@@ -81,6 +81,12 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->JFETbexGiven) {
             model->JFETbex = 0.0;
         }
+        if(!model->JFETnlevGiven) {
+            model->JFETnlev = 2;
+        }
+        if(!model->JFETgdsnoiGiven) {
+            model->JFETgdsnoi = 1.0;
+        }
 
         if(model->JFETdrainResist != 0) {
             model->JFETdrainConduct = 1/model->JFETdrainResist;

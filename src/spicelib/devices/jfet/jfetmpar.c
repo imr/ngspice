@@ -94,6 +94,14 @@ JFETmParam(int param, IFvalue *value, GENmodel *inModels)
             model->JFETbexGiven = TRUE;
             model->JFETbex = value->rValue;
             break;
+        case JFET_MOD_NLEV:
+            model->JFETnlevGiven = TRUE;
+            model->JFETnlev = value->iValue;
+            break;
+        case JFET_MOD_GDSNOI:
+            model->JFETgdsnoiGiven = TRUE;
+            model->JFETgdsnoi = value->rValue;
+            break;
         default:
             return(E_BADPARM);
     }
