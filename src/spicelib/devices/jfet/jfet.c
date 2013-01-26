@@ -70,7 +70,9 @@ IFparm JFETmPTable[] = { /* model parameters */
  IOP("kf",  JFET_MOD_KF, IF_REAL, "Flicker Noise Coefficient"),
  IOP("af",  JFET_MOD_AF, IF_REAL, "Flicker Noise Exponent"),
  IOP("tcv", JFET_MOD_TCV, IF_REAL, "Threshold voltage temperature coefficient"),
- IOP("bex", JFET_MOD_BEX, IF_REAL, "Mobility temperature exponent")
+ IOP("bex", JFET_MOD_BEX, IF_REAL, "Mobility temperature exponent"),
+ IOP("nlev",JFET_MOD_NLEV, IF_INTEGER, "Noise equation selector"),
+ IOP("gdsnoi", JFET_MOD_GDSNOI, IF_REAL, "Channel noise coefficient")
 };
 
 

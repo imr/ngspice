@@ -89,6 +89,12 @@ JFETmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
             else
                 value->sValue = "pjf";
             return(OK);
+        case JFET_MOD_NLEV:
+            value->iValue = model->JFETnlev;
+            return(OK);
+        case JFET_MOD_GDSNOI:
+            value->rValue = model->JFETgdsnoi;
+            return(OK);
         default:
             return(E_BADPARM);
     }

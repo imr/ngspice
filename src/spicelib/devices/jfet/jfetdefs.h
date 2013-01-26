@@ -188,7 +188,8 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
     double JFETdepletionCapCoeff;
     double JFETfNcoef;
     double JFETfNexp;
-
+    int JFETnlev;
+    double JFETgdsnoi;
 
     double JFETdrainConduct;
     double JFETsourceConduct;
@@ -218,6 +219,8 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
     unsigned JFETtnomGiven : 1; /* user specified Tnom for model */
     unsigned JFETfNcoefGiven : 1;
     unsigned JFETfNexpGiven : 1;
+    unsigned JFETnlevGiven : 1;
+    unsigned JFETgdsnoiGiven : 1;
     unsigned JFETtcvGiven : 1;
     unsigned JFETbexGiven : 1;
 
@@ -261,6 +264,8 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
 /* end Sydney University mod */
 #define JFET_MOD_TCV 117
 #define JFET_MOD_BEX 118
+#define JFET_MOD_NLEV 119
+#define JFET_MOD_GDSNOI 120
 
 /* device questions */
 #define JFET_DRAINNODE        301
