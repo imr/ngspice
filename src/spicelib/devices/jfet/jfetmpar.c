@@ -72,28 +72,28 @@ JFETmParam(int param, IFvalue *value, GENmodel *inModels)
                 model->JFETtype = PJF;
             }
             break;
-	case JFET_MOD_KF:
-	    model->JFETfNcoefGiven = TRUE;
-	    model->JFETfNcoef = value->rValue;
-	    break;
-	case JFET_MOD_AF:
-	    model->JFETfNexpGiven = TRUE;
-	    model->JFETfNexp = value->rValue;
-	    break;
-	/* Modification for Sydney University JFET model */
-	case JFET_MOD_B:
-	    model->JFETbGiven = TRUE;
-	    model->JFETb = value->rValue;
-	    return(OK);
-	/* end Sydney University mod */
-	case JFET_MOD_TCV:
-	    model->JFETtcvGiven = TRUE;
-	    model->JFETtcv = value->rValue;
-	    break;
-	case JFET_MOD_BEX:
-	    model->JFETbexGiven = TRUE;
-	    model->JFETbex = value->rValue;
-	    break;
+        case JFET_MOD_KF:
+            model->JFETfNcoefGiven = TRUE;
+            model->JFETfNcoef = value->rValue;
+            break;
+        case JFET_MOD_AF:
+            model->JFETfNexpGiven = TRUE;
+            model->JFETfNexp = value->rValue;
+            break;
+        /* Modification for Sydney University JFET model */
+        case JFET_MOD_B:
+            model->JFETbGiven = TRUE;
+            model->JFETb = value->rValue;
+            return(OK);
+        /* end Sydney University mod */
+        case JFET_MOD_TCV:
+            model->JFETtcvGiven = TRUE;
+            model->JFETtcv = value->rValue;
+            break;
+        case JFET_MOD_BEX:
+            model->JFETbexGiven = TRUE;
+            model->JFETbex = value->rValue;
+            break;
         default:
             return(E_BADPARM);
     }
