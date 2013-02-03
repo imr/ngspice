@@ -104,7 +104,7 @@ CKTsetup(CKTcircuit *ckt)
 
         /* Count number of voltage nodes in circuit */
         for(num_nodes = 0, node = ckt->CKTnodes; node; node = node->next)
-            if((node->type == NODE_VOLTAGE) && (node->number != 0))
+            if((node->type == SP_VOLTAGE) && (node->number != 0))
                 num_nodes++;
 
         /* Allocate space for the matrix diagonal data */
@@ -118,7 +118,7 @@ CKTsetup(CKTcircuit *ckt)
 
         /* Get/create matrix diagonal entry following what RESsetup does */
         for(i = 0, node = ckt->CKTnodes; node; node = node->next) {
-            if((node->type == NODE_VOLTAGE) && (node->number != 0)) {
+            if((node->type == SP_VOLTAGE) && (node->number != 0)) {
                 ckt->enh->rshunt_data.diag[i] =
                       SMPmakeElt(matrix,node->number,node->number);
                 i++;
