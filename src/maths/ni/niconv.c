@@ -38,7 +38,7 @@ NIconvTest(CKTcircuit *ckt)
         node = node->next;
         new =  ckt->CKTrhs [i] ;
         old =  ckt->CKTrhsOld [i] ;
-        if(node->type == 3) {
+        if(node->type == SP_VOLTAGE) {
             tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
                     ckt->CKTvoltTol;
             if (fabs(new-old) >tol ) {

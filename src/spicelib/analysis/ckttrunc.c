@@ -81,7 +81,7 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
                 tol = MAX( fabs(ckt->CKTrhs[i]),fabs(ckt->CKTpred[i]))*
                         ckt->CKTlteReltol+ckt->CKTlteAbstol;
                 node = node->next;
-                if(node->type!= 3) continue;
+                if(node->type!= SP_VOLTAGE) continue;
                 diff = ckt->CKTrhs[i]-ckt->CKTpred[i];
 #ifdef STEPDEBUG
                 printf("%s: cor=%g, pred=%g ",node->name,
@@ -106,7 +106,7 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
                 tol = MAX( fabs(ckt->CKTrhs[i]),fabs(ckt->CKTpred[i]))*
                         ckt->CKTlteReltol+ckt->CKTlteAbstol;
                 node = node->next;
-                if(node->type!= 3) continue;
+                if(node->type!= SP_VOLTAGE) continue;
                 diff = ckt->CKTrhs[i]-ckt->CKTpred[i];
 #ifdef STEPDEBUG
                 printf("%s: cor=%g, pred=%g ",node->name,ckt->CKTrhs[i],
@@ -141,7 +141,7 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
         }
         for(i=1;i<size;i++) {
             node = node->next;
-            if(node->type!= 3) continue;
+            if(node->type!= SP_VOLTAGE) continue;
             tol = MAX( fabs(ckt->CKTrhs[i]),fabs(ckt->CKTpred[i]))*
                     ckt->CKTlteReltol+ckt->CKTlteAbstol;
             diff = (ckt->CKTrhs[i]-ckt->CKTpred[i]);
