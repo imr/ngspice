@@ -237,7 +237,7 @@ DCtran(CKTcircuit *ckt,
                     new =  ckt->CKTrhsOld [i] ;
                     old =  ckt->CKTrhs [i] ;
                     fprintf(stdout,"%-30s %20g %20g", node->name, new, old);
-                    if(node->type == 3) {
+                    if(node->type == SP_VOLTAGE) {
                         tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
                                 ckt->CKTvoltTol;
                     } else {

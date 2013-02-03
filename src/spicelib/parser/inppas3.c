@@ -75,7 +75,7 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
                 if ( cieq(name, "all")) {
                     ptemp.rValue = INPevaluate(&line,&error,1);
                     for (node1 = ckt->CKTnodes; node1 != NULL; node1 = node1->next) {
-                        if ((node1->type == 3) && (node1->number > 0))
+                        if ((node1->type == SP_VOLTAGE) && (node1->number > 0))
                             IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
                     }
                     break;
