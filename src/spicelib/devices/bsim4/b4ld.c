@@ -114,7 +114,7 @@ double geltd, gcrg, gcrgg, gcrgd, gcrgs, gcrgb, ceqgcrg;
 double vges, vgms, vgedo, vgmdo, vged, vgmd, delvged, delvgmd;
 double delvges, delvgms, vgmb;
 double gcgmgmb=0.0, gcgmdb=0.0, gcgmsb=0.0, gcdgmb, gcsgmb;
-double gcgmbb=0.0, gcbgmb, qgmb, qgmid=0.0, ceqqgmid;
+double gcgmbb=0.0, gcbgmb, qgmb, qgmid=0.0, ceqqgmid, ceqqgmid_fvk ;
 
 double vbd, vbs, vds, vgb, vgd, vgs, vgdo;
 #ifndef PREDICTOR
@@ -126,8 +126,9 @@ double delvbd_jct, delvbs_jct, vbs_jct, vbd_jct;
 
 double SourceSatCurrent, DrainSatCurrent;
 double ag0, qgb, von, cbhat, VgstNVt, ExpVgst;
-double ceqqb, ceqqd, ceqqg, ceqqjd=0.0, ceqqjs=0.0, ceq, geq;
-double cdrain, cdhat, ceqdrn, ceqbd, ceqbs, ceqjd, ceqjs, gjbd, gjbs;
+double ceqqb, ceqqb_fvk, ceqqd, ceqqd_fvk, ceqqg, ceqqg_fvk, ceqqjd=0.0, ceqqjd_fvk = 0.0, ceqqjs=0.0, ceqqjs_fvk = 0.0, ceq, geq;
+double ceqqb_SnodePrime_fvk = 0.0, ceqqd_SnodePrime_fvk = 0.0, ceqqg_SnodePrime_fvk = 0.0, ceqqjd_SnodePrime_fvk = 0.0, ceqqjs_SnodePrime_fvk = 0.0 ;
+double cdrain, cdhat, ceqdrn, ceqdrn_fvk, ceqbd, ceqbd_fvk, ceqbs, ceqbs_fvk, ceqjd, ceqjd_fvk, ceqjs, ceqjs_fvk, gjbd, gjbs;
 double czbd, czbdsw, czbdswg, czbs, czbssw, czbsswg, evbd, evbs, arg, sarg;
 double delvbd, delvbs, delvds, delvgd, delvgs;
 double Vfbeff, dVfbeff_dVg, dVfbeff_dVb, V3, V4;
@@ -148,10 +149,10 @@ double Igs, dIgs_dVg, dIgs_dVs, Igd, dIgd_dVg, dIgd_dVd;
 double Igbacc, dIgbacc_dVg, dIgbacc_dVb;
 double Igbinv, dIgbinv_dVg, dIgbinv_dVd, dIgbinv_dVb;
 double Pigcd, dPigcd_dVg, dPigcd_dVd, dPigcd_dVb;
-double Istoteq, gIstotg, gIstotd, gIstots, gIstotb;
-double Idtoteq, gIdtotg, gIdtotd, gIdtots, gIdtotb;
-double Ibtoteq, gIbtotg, gIbtotd, gIbtots, gIbtotb;
-double Igtoteq, gIgtotg, gIgtotd, gIgtots, gIgtotb;
+double Istoteq, Istoteq_fvk, gIstotg, gIstotd, gIstots, gIstotb;
+double Idtoteq, Idtoteq_fvk, gIdtotg, gIdtotd, gIdtots, gIdtotb;
+double Ibtoteq, Ibtoteq_fvk, gIbtotg, gIbtotd, gIbtots, gIbtotb;
+double Igtoteq, Igtoteq_fvk, gIgtotg, gIgtotd, gIgtots, gIgtotb;
 double Igstot, cgshat, Igdtot, cgdhat, Igbtot, cgbhat;
 double Vgs_eff, Vfb=0.0, Vth_NarrowW;
 /* double Vgd_eff, dVgd_eff_dVg;          v4.7.0 */
@@ -216,7 +217,7 @@ double Rds, dRds_dVg, dRds_dVb, WVCox, WVCoxRds;
 double Vgst2Vtm, VdsatCV;
 double Leff, Weff, dWeff_dVg, dWeff_dVb;
 double AbulkCV, dAbulkCV_dVb;
-double qcheq, qdef, gqdef=0.0, cqdef=0.0, cqcheq=0.0;
+double qcheq, qdef, gqdef=0.0, cqdef=0.0, cqdef_fvk = 0.0, cqcheq=0.0, cqcheq_fvk = 0.0 ;
 double gcqdb=0.0, gcqsb=0.0, gcqgb=0.0, gcqbb=0.0;
 double dxpart, sxpart, ggtg, ggtd, ggts, ggtb;
 double ddxpart_dVd, ddxpart_dVg, ddxpart_dVb, ddxpart_dVs;
@@ -4573,9 +4574,9 @@ line755:
 
 line850:
           /* Zero gcap and ceqcap if (!ChargeComputationNeeded) */
-          ceqqg = ceqqb = ceqqd = 0.0;
-          ceqqjd = ceqqjs = 0.0;
-          cqcheq = cqdef = 0.0;
+          ceqqg = ceqqg_fvk = ceqqb = ceqqb_fvk = ceqqd = ceqqd_fvk = 0.0;
+          ceqqjd = ceqqjd_fvk = ceqqjs = ceqqjs_fvk = 0.0;
+          cqcheq = cqcheq_fvk = cqdef = cqdef_fvk = 0.0;
 
           gcdgb = gcddb = gcdsb = gcdbb = 0.0;
           gcsgb = gcsdb = gcssb = gcsbb = 0.0;
@@ -4583,7 +4584,7 @@ line850:
           gcbdb = gcbgb = gcbsb = gcbbb = 0.0;
 
           gcgmgmb = gcgmdb = gcgmsb = gcgmbb = 0.0;
-          gcdgmb = gcsgmb = gcbgmb = ceqqgmid = 0.0;
+          gcdgmb = gcsgmb = gcbgmb = ceqqgmid = ceqqgmid_fvk = 0.0;
           gcdbdb = gcsbsb = 0.0;
 
           gqdef = gcqgb = gcqdb = gcqsb = gcqbb = 0.0;
@@ -4612,21 +4613,33 @@ line860:
           cqdrn = *(ckt->CKTstate0 + here->BSIM4cqd);
 
           ceqqg = cqgate - gcggb * vgb + gcgdb * vbd + gcgsb * vbs;
+          ceqqg_fvk = cqgate ;
+          ceqqg_SnodePrime_fvk = ceqqg ;
           ceqqd = cqdrn - gcdgb * vgb - gcdgmb * vgmb + (gcddb + gcdbdb)
                 * vbd - gcdbdb * vbd_jct + gcdsb * vbs;
+          ceqqd_fvk = cqdrn ;
+          ceqqd_SnodePrime_fvk = ceqqd ;
           ceqqb = cqbody - gcbgb * vgb - gcbgmb * vgmb
                 + gcbdb * vbd + gcbsb * vbs;
-
+          ceqqb_fvk = cqbody - gcbgmb * vgmb ;
+          ceqqb_SnodePrime_fvk = ceqqb ;
 
           if (here->BSIM4rgateMod == 3)
+          {
               ceqqgmid = *(ckt->CKTstate0 + here->BSIM4cqgmid)
                        + gcgmdb * vbd + gcgmsb * vbs - gcgmgmb * vgmb;
-          else
-               ceqqgmid = 0.0;        
+              ceqqgmid_fvk = *(ckt->CKTstate0 + here->BSIM4cqgmid) ;
+          } else {
+               ceqqgmid = ceqqgmid_fvk = 0.0;
+          }
 
           if (here->BSIM4rbodyMod)
           {   ceqqjs = *(ckt->CKTstate0 + here->BSIM4cqbs) + gcsbsb * vbs_jct;
-              ceqqjd = *(ckt->CKTstate0 + here->BSIM4cqbd) + gcdbdb * vbd_jct; 
+              ceqqjs_fvk = *(ckt->CKTstate0 + here->BSIM4cqbs) ;
+              ceqqjs_SnodePrime_fvk = ceqqjs ;
+              ceqqjd = *(ckt->CKTstate0 + here->BSIM4cqbd) + gcdbdb * vbd_jct;
+              ceqqjd_fvk = *(ckt->CKTstate0 + here->BSIM4cqbd) ;
+              ceqqjd_SnodePrime_fvk = ceqqjd ;
           }
 
           if (here->BSIM4trnqsMod)
@@ -4636,8 +4649,10 @@ line860:
               ceqqd -= dxpart * T0 + T1 * (ddxpart_dVg * vgb - ddxpart_dVd
                      * vbd - ddxpart_dVs * vbs);
               cqdef = *(ckt->CKTstate0 + here->BSIM4cqcdump) - gqdef * qdef;
+              cqdef_fvk = *(ckt->CKTstate0 + here->BSIM4cqcdump) ;
               cqcheq = *(ckt->CKTstate0 + here->BSIM4cqcheq)
                      - (gcqgb * vgb - gcqdb * vbd - gcqsb * vbs) + T0;
+              cqcheq_fvk = *(ckt->CKTstate0 + here->BSIM4cqcheq) ;
           }
 
           if (ckt->CKTmode & MODEINITTRAN)
@@ -4674,13 +4689,15 @@ line900:
 
               ceqdrn = model->BSIM4type * (cdrain - here->BSIM4gds * vds
                      - Gm * vgs - Gmbs * vbs);
+              ceqdrn_fvk = model->BSIM4type * cdrain ;
               ceqbd = model->BSIM4type * (here->BSIM4csub + here->BSIM4Igidl
                     - (here->BSIM4gbds + here->BSIM4ggidld) * vds
                     - (here->BSIM4gbgs + here->BSIM4ggidlg) * vgs
                     - (here->BSIM4gbbs + here->BSIM4ggidlb) * vbs);
+              ceqbd_fvk = model->BSIM4type * (here->BSIM4csub + here->BSIM4Igidl) ;
               ceqbs = model->BSIM4type * (here->BSIM4Igisl + here->BSIM4ggisls * vds 
                           - here->BSIM4ggislg * vgd - here->BSIM4ggislb * vbd);
-
+              ceqbs_fvk = model->BSIM4type * here->BSIM4Igisl ;
               gbbdp = -(here->BSIM4gbds);
               gbbsp = here->BSIM4gbds + here->BSIM4gbgs + here->BSIM4gbbs; 
                     
@@ -4699,10 +4716,10 @@ line900:
                   gIstotd = here->BSIM4gIgcsd;
                   gIstots = here->BSIM4gIgss + here->BSIM4gIgcss;
                   gIstotb = here->BSIM4gIgcsb;
-                   Istoteq = model->BSIM4type * (here->BSIM4Igs + here->BSIM4Igcs
+                  Istoteq = model->BSIM4type * (here->BSIM4Igs + here->BSIM4Igcs
                             - gIstotg * vgs - here->BSIM4gIgcsd * vds
-                          - here->BSIM4gIgcsb * vbs);
-
+                            - here->BSIM4gIgcsb * vbs);
+                  Istoteq_fvk = model->BSIM4type * (here->BSIM4Igs + here->BSIM4Igcs) ;
                   gIdtotg = here->BSIM4gIgdg + here->BSIM4gIgcdg;
                   gIdtotd = here->BSIM4gIgdd + here->BSIM4gIgcdd;
                   gIdtots = here->BSIM4gIgcds;
@@ -4710,10 +4727,11 @@ line900:
                   Idtoteq = model->BSIM4type * (here->BSIM4Igd + here->BSIM4Igcd
                           - here->BSIM4gIgdg * vgd - here->BSIM4gIgcdg * vgs
                           - here->BSIM4gIgcdd * vds - here->BSIM4gIgcdb * vbs);
+                  Idtoteq_fvk = model->BSIM4type * (here->BSIM4Igd + here->BSIM4Igcd) ;
               }
               else
-              {   gIstotg = gIstotd = gIstots = gIstotb = Istoteq = 0.0;
-                  gIdtotg = gIdtotd = gIdtots = gIdtotb = Idtoteq = 0.0;
+              {   gIstotg = gIstotd = gIstots = gIstotb = Istoteq = Istoteq_fvk = 0.0;
+                  gIdtotg = gIdtotd = gIdtots = gIdtotb = Idtoteq = Idtoteq_fvk = 0.0;
               }
 
               if (model->BSIM4igbMod)
@@ -4724,19 +4742,21 @@ line900:
                   Ibtoteq = model->BSIM4type * (here->BSIM4Igb
                           - here->BSIM4gIgbg * vgs - here->BSIM4gIgbd * vds
                           - here->BSIM4gIgbb * vbs);
+                  Ibtoteq_fvk = model->BSIM4type * here->BSIM4Igb ;
               }
               else
-                  gIbtotg = gIbtotd = gIbtots = gIbtotb = Ibtoteq = 0.0;
+                  gIbtotg = gIbtotd = gIbtots = gIbtotb = Ibtoteq = Ibtoteq_fvk = 0.0;
 
               if ((model->BSIM4igcMod != 0) || (model->BSIM4igbMod != 0))
               {   gIgtotg = gIstotg + gIdtotg + gIbtotg;
                   gIgtotd = gIstotd + gIdtotd + gIbtotd ;
                   gIgtots = gIstots + gIdtots + gIbtots;
                   gIgtotb = gIstotb + gIdtotb + gIbtotb;
-                  Igtoteq = Istoteq + Idtoteq + Ibtoteq; 
+                  Igtoteq = Istoteq + Idtoteq + Ibtoteq;
+                  Igtoteq_fvk = Istoteq_fvk + Idtoteq_fvk + Ibtoteq_fvk ;
               }
               else
-                  gIgtotg = gIgtotd = gIgtots = gIgtotb = Igtoteq = 0.0;
+                  gIgtotg = gIgtotd = gIgtots = gIgtotb = Igtoteq = Igtoteq_fvk = 0.0;
 
 
               if (here->BSIM4rgateMod == 2)
@@ -4764,14 +4784,15 @@ line900:
 
               ceqdrn = -model->BSIM4type * (cdrain + here->BSIM4gds * vds
                      + Gm * vgd + Gmbs * vbd);
-
+              ceqdrn_fvk = -model->BSIM4type * cdrain ;
               ceqbs = model->BSIM4type * (here->BSIM4csub + here->BSIM4Igisl 
                     + (here->BSIM4gbds + here->BSIM4ggisls) * vds
                     - (here->BSIM4gbgs + here->BSIM4ggislg) * vgd
                     - (here->BSIM4gbbs + here->BSIM4ggislb) * vbd);
+              ceqbs_fvk = model->BSIM4type * (here->BSIM4csub + here->BSIM4Igisl) ;
               ceqbd = model->BSIM4type * (here->BSIM4Igidl - here->BSIM4ggidld * vds 
                               - here->BSIM4ggidlg * vgs - here->BSIM4ggidlb * vbs);
-
+              ceqbd_fvk = model->BSIM4type * here->BSIM4Igidl ;
               gbbsp = -(here->BSIM4gbds);
               gbbdp = here->BSIM4gbds + here->BSIM4gbgs + here->BSIM4gbbs; 
 
@@ -4791,20 +4812,21 @@ line900:
                   gIstots = here->BSIM4gIgss + here->BSIM4gIgcdd;
                   gIstotb = here->BSIM4gIgcdb;
                   Istoteq = model->BSIM4type * (here->BSIM4Igs + here->BSIM4Igcd
-                          - here->BSIM4gIgsg * vgs - here->BSIM4gIgcdg * vgd
-                          + here->BSIM4gIgcdd * vds - here->BSIM4gIgcdb * vbd);
-
+                            - here->BSIM4gIgsg * vgs - here->BSIM4gIgcdg * vgd
+                            + here->BSIM4gIgcdd * vds - here->BSIM4gIgcdb * vbd);
+                  Istoteq_fvk = model->BSIM4type * (here->BSIM4Igs + here->BSIM4Igcd) ;
                   gIdtotg = here->BSIM4gIgdg + here->BSIM4gIgcsg;
                   gIdtotd = here->BSIM4gIgdd + here->BSIM4gIgcss;
                   gIdtots = here->BSIM4gIgcsd;
                   gIdtotb = here->BSIM4gIgcsb;
                   Idtoteq = model->BSIM4type * (here->BSIM4Igd + here->BSIM4Igcs
-                          - (here->BSIM4gIgdg + here->BSIM4gIgcsg) * vgd
-                          + here->BSIM4gIgcsd * vds - here->BSIM4gIgcsb * vbd);
+                            - (here->BSIM4gIgdg + here->BSIM4gIgcsg) * vgd
+                            + here->BSIM4gIgcsd * vds - here->BSIM4gIgcsb * vbd);
+                  Idtoteq_fvk = model->BSIM4type * (here->BSIM4Igd + here->BSIM4Igcs) ;
               }
               else
-              {   gIstotg = gIstotd = gIstots = gIstotb = Istoteq = 0.0;
-                  gIdtotg = gIdtotd = gIdtots = gIdtotb = Idtoteq = 0.0;
+              {   gIstotg = gIstotd = gIstots = gIstotb = Istoteq = Istoteq_fvk = 0.0;
+                  gIdtotg = gIdtotd = gIdtots = gIdtotb = Idtoteq = Idtoteq_fvk = 0.0;
               }
 
               if (model->BSIM4igbMod)
@@ -4813,11 +4835,12 @@ line900:
                   gIbtots = here->BSIM4gIgbd;
                   gIbtotb = here->BSIM4gIgbb;
                   Ibtoteq = model->BSIM4type * (here->BSIM4Igb
-                          - here->BSIM4gIgbg * vgd + here->BSIM4gIgbd * vds
-                          - here->BSIM4gIgbb * vbd);
+                            - here->BSIM4gIgbg * vgd + here->BSIM4gIgbd * vds
+                            - here->BSIM4gIgbb * vbd);
+                  Ibtoteq_fvk = model->BSIM4type * here->BSIM4Igb ;
               }
               else
-                  gIbtotg = gIbtotd = gIbtots = gIbtotb = Ibtoteq = 0.0;
+                  gIbtotg = gIbtotd = gIbtots = gIbtotb = Ibtoteq = Ibtoteq_fvk = 0.0;
 
               if ((model->BSIM4igcMod != 0) || (model->BSIM4igbMod != 0))
               {   gIgtotg = gIstotg + gIdtotg + gIbtotg;
@@ -4825,9 +4848,10 @@ line900:
                   gIgtots = gIstots + gIdtots + gIbtots;
                   gIgtotb = gIstotb + gIdtotb + gIbtotb;
                   Igtoteq = Istoteq + Idtoteq + Ibtoteq;
+                  Igtoteq_fvk = Istoteq_fvk + Idtoteq_fvk + Ibtoteq_fvk ;
               }
               else
-                  gIgtotg = gIgtotd = gIgtots = gIgtotb = Igtoteq = 0.0;
+                  gIgtotg = gIgtotd = gIgtots = gIgtotb = Igtoteq = Igtoteq_fvk = 0.0;
 
 
               if (here->BSIM4rgateMod == 2)
@@ -4874,28 +4898,42 @@ line900:
 
            if (model->BSIM4type > 0)
            {   ceqjs = (here->BSIM4cbs - here->BSIM4gbs * vbs_jct);
+               ceqjs_fvk = here->BSIM4cbs ;
                ceqjd = (here->BSIM4cbd - here->BSIM4gbd * vbd_jct);
+               ceqjd_fvk = here->BSIM4cbd ;
            }
            else
-           {   ceqjs = -(here->BSIM4cbs - here->BSIM4gbs * vbs_jct); 
+           {   ceqjs = -(here->BSIM4cbs - here->BSIM4gbs * vbs_jct);
+               ceqjs_fvk = -here->BSIM4cbs ;
                ceqjd = -(here->BSIM4cbd - here->BSIM4gbd * vbd_jct);
+               ceqjd_fvk = -here->BSIM4cbd ;
                ceqqg = -ceqqg;
+               ceqqg_fvk = -ceqqg_fvk ;
                ceqqd = -ceqqd;
+               ceqqd_fvk = -ceqqd_fvk ;
                ceqqb = -ceqqb;
+               ceqqb_fvk = -ceqqb_fvk ;
                ceqgcrg = -ceqgcrg;
 
                if (here->BSIM4trnqsMod)
                {   cqdef = -cqdef;
+                   cqdef_fvk = -cqdef_fvk ;
                    cqcheq = -cqcheq;
+                   cqcheq_fvk = -cqcheq_fvk ;
                }
 
                if (here->BSIM4rbodyMod)
                {   ceqqjs = -ceqqjs;
+                   ceqqjs_fvk = -ceqqjs_fvk ;
                    ceqqjd = -ceqqjd;
+                   ceqqjd_fvk = -ceqqjd_fvk ;
                }
 
                if (here->BSIM4rgateMod == 3)
+               {
                    ceqqgmid = -ceqqgmid;
+                   ceqqgmid_fvk = -ceqqgmid_fvk ;
+               }
            }
 
 
@@ -4937,37 +4975,35 @@ line900:
         if (here->BSIM4trnqsMod)
            here->BSIM4rhsq = m * (cqcheq - cqdef);
 #else
-        (*(ckt->CKTrhs + here->BSIM4dNodePrime) += m * (ceqjd - ceqbd + ceqgdtot
-                                                    - ceqdrn - ceqqd + Idtoteq));
-        (*(ckt->CKTrhs + here->BSIM4gNodePrime) -= m * (ceqqg - ceqgcrg + Igtoteq));
+        (*(ckt->CKTrhs + here->BSIM4dNodePrime) += m * (ceqjd - ceqbd + ceqgdtot - ceqdrn - ceqqd + Idtoteq)); /* NO ceqgdtot in FVK */
+
+        (*(ckt->CKTrhs + here->BSIM4gNodePrime) -= m * (ceqqg - ceqgcrg + Igtoteq)); /* NO ceqgcrg in FVK */
 
         if (here->BSIM4rgateMod == 2)
-            (*(ckt->CKTrhs + here->BSIM4gNodeExt) -= m * ceqgcrg);
+            (*(ckt->CKTrhs + here->BSIM4gNodeExt) -= m * ceqgcrg); /* NO ceqgcrg in FVK */
         else if (here->BSIM4rgateMod == 3)
-            (*(ckt->CKTrhs + here->BSIM4gNodeMid) -= m * (ceqqgmid + ceqgcrg));
+            (*(ckt->CKTrhs + here->BSIM4gNodeMid) -= m * (ceqqgmid + ceqgcrg)); /* NO ceqgcrg in FVK */
 
         if (!here->BSIM4rbodyMod)
-        {   (*(ckt->CKTrhs + here->BSIM4bNodePrime) += m * (ceqbd + ceqbs - ceqjd
-                                                        - ceqjs - ceqqb + Ibtoteq));
-            (*(ckt->CKTrhs + here->BSIM4sNodePrime) += m * (ceqdrn - ceqbs + ceqjs 
-                              + ceqqg + ceqqb + ceqqd + ceqqgmid - ceqgstot + Istoteq));
+        {   (*(ckt->CKTrhs + here->BSIM4bNodePrime) += m * (ceqbd + ceqbs - ceqjd - ceqjs - ceqqb + Ibtoteq));
+            (*(ckt->CKTrhs + here->BSIM4sNodePrime) += m * (ceqdrn - ceqbs + ceqjs
+                           + ceqqg + ceqqb + ceqqd + ceqqgmid - ceqgstot + Istoteq)); /* NO ceqgstot in FVK */
         }
-
         else
         {   (*(ckt->CKTrhs + here->BSIM4dbNode) -= m * (ceqjd + ceqqjd));
             (*(ckt->CKTrhs + here->BSIM4bNodePrime) += m * (ceqbd + ceqbs - ceqqb + Ibtoteq));
             (*(ckt->CKTrhs + here->BSIM4sbNode) -= m * (ceqjs + ceqqjs));
-            (*(ckt->CKTrhs + here->BSIM4sNodePrime) += m * (ceqdrn - ceqbs + ceqjs + ceqqd 
-                + ceqqg + ceqqb + ceqqjd + ceqqjs + ceqqgmid - ceqgstot + Istoteq));
+            (*(ckt->CKTrhs + here->BSIM4sNodePrime) += m * (ceqdrn - ceqbs + ceqjs + ceqqd
+                           + ceqqg + ceqqb + ceqqjd + ceqqjs + ceqqgmid - ceqgstot + Istoteq)); /* NO ceqgstot in FVK */
         }
 
         if (model->BSIM4rdsMod)
-        {   (*(ckt->CKTrhs + here->BSIM4dNode) -= m * ceqgdtot); 
-            (*(ckt->CKTrhs + here->BSIM4sNode) += m * ceqgstot);
+        {   (*(ckt->CKTrhs + here->BSIM4dNode) -= m * ceqgdtot); /* NO ceqgdtot in FVK */
+            (*(ckt->CKTrhs + here->BSIM4sNode) += m * ceqgstot); /* NO ceqgstot in FVK */
         }
 
         if (here->BSIM4trnqsMod)
-            *(ckt->CKTrhs + here->BSIM4qNode) += m * (cqcheq - cqdef);
+            (*(ckt->CKTrhs + here->BSIM4qNode) += m * (cqcheq - cqdef));
 #endif
 
         /*
@@ -5167,7 +5203,7 @@ line900:
                (*(here->BSIM4GEbpPtr) += m * gcrgb);        
 
                (*(here->BSIM4GPgePtr) -= m * gcrg);
-               (*(here->BSIM4GPgpPtr) += m * (gcggb  - gcrgg - ggtg + gIgtotg));
+               (*(here->BSIM4GPgpPtr) += m * (gcggb - gcrgg - ggtg + gIgtotg));
                (*(here->BSIM4GPdpPtr) += m * (gcgdb - gcrgd - ggtd + gIgtotd));
                (*(here->BSIM4GPspPtr) += m * (gcgsb - gcrgs - ggts + gIgtots));
                (*(here->BSIM4GPbpPtr) += m * (gcgbb - gcrgb - ggtb + gIgtotb));
@@ -5309,8 +5345,268 @@ line900:
                (*(here->BSIM4SPqPtr) += m * sxpart * here->BSIM4gtau);
                (*(here->BSIM4GPqPtr) -= m * here->BSIM4gtau);
            }
-#endif
 
+///////////////////////////////////////////
+
+            /* KCL verification - Linear and Dynamic Part */
+            *(ckt->CKTfvk+here->BSIM4dNodePrime) -= m * (ceqjd_fvk - ceqbd_fvk - ceqdrn_fvk - ceqqd_fvk + Idtoteq_fvk) ;
+            *(ckt->CKTfvk+here->BSIM4dNodePrime) += m * (T1 * ddxpart_dVd + dxpart * ggtd) * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM4dNodePrime) -= m * gdtot * *(ckt->CKTrhsOld+here->BSIM4dNode) ;
+            *(ckt->CKTfvk+here->BSIM4dNodePrime) += m * (dxpart * ggtg + T1 * ddxpart_dVg) * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM4dNodePrime) -= m * (- dxpart * ggts - T1 * ddxpart_dVs) * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM4dNodePrime) -= m * (- T1 * ddxpart_dVb - dxpart * ggtb) * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;
+
+            *(ckt->CKTfvk+here->BSIM4gNodePrime) += m * (ceqqg_fvk + Igtoteq_fvk) ;
+
+            *(ckt->CKTfvk+here->BSIM4sNodePrime) -= m * (- gcsdb - T1 * dsxpart_dVd - sxpart * ggtd) * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM4sNodePrime) += m * (gcsgb + sxpart * ggtg + T1 * dsxpart_dVg) * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM4sNodePrime) += m * (T1 * dsxpart_dVs + gstot + gcssb + sxpart * ggts) * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM4sNodePrime) -= m * gstot * *(ckt->CKTrhsOld+here->BSIM4sNode) ;
+            *(ckt->CKTfvk+here->BSIM4sNodePrime) -= m * (gjbs - gcsbb - sxpart * ggtb - T1 * dsxpart_dVb) * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;
+
+            *(ckt->CKTfvk+here->BSIM4bNodePrime) += m * (- gjbd) * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM4bNodePrime) += m * (- gjbs) * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM4bNodePrime) += m * (gjbd + gjbs - gcbgmb) * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;
+
+            if (here->BSIM4rgateMod == 1)
+            {
+                *(ckt->CKTfvk+here->BSIM4gNodePrime) += m * (- ggtg + gIgtotg) * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;
+                *(ckt->CKTfvk+here->BSIM4gNodePrime) += m * (- ggtd + gIgtotd) * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;
+                *(ckt->CKTfvk+here->BSIM4gNodePrime) += m * (- ggts + gIgtots) * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;
+                *(ckt->CKTfvk+here->BSIM4gNodePrime) += m * (- ggtb + gIgtotb) * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;
+            }
+
+            if (!here->BSIM4rbodyMod)
+            {
+            } else {
+                *(ckt->CKTfvk+here->BSIM4dbNode) += m * (ceqjd_fvk + ceqqjd_fvk) ;
+
+                *(ckt->CKTfvk+here->BSIM4bNodePrime) -= m * (ceqbd_fvk + ceqbs_fvk - ceqqb_fvk + Ibtoteq_fvk) ;
+
+                *(ckt->CKTfvk+here->BSIM4sbNode) += m * (ceqjs_fvk + ceqqjs_fvk) ;
+
+                *(ckt->CKTfvk+here->BSIM4sNodePrime) -= m * (ceqdrn_fvk - ceqbs_fvk + ceqjs_fvk + ceqqd_SnodePrime_fvk + ceqqg_SnodePrime_fvk + ceqqb_SnodePrime_fvk + ceqqjd_SnodePrime_fvk + ceqqjs_SnodePrime_fvk + ceqqgmid_fvk + Istoteq_fvk) ;
+            }
+
+
+            /* KCL verification - Linear and Static Part */
+            if (here->BSIM4rgateMod == 1)
+            {
+                *(ckt->CKTfvk+here->BSIM4gNodeExt) += m * geltd * *(ckt->CKTrhsOld+here->BSIM4gNodeExt) ;
+                *(ckt->CKTfvk+here->BSIM4gNodePrime) -= m * geltd * *(ckt->CKTrhsOld+here->BSIM4gNodeExt) ;
+                *(ckt->CKTfvk+here->BSIM4gNodeExt) -= m * geltd * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;
+                *(ckt->CKTfvk+here->BSIM4gNodePrime) += m * geltd * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;
+            }
+
+            *(ckt->CKTfvk+here->BSIM4dNodePrime) += m * gdpr * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM4dNodePrime) -= m * gdpr * *(ckt->CKTrhsOld+here->BSIM4dNode) ;
+
+            *(ckt->CKTfvk+here->BSIM4dNode) -= m * gdpr * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM4dNode) += m * gdpr * *(ckt->CKTrhsOld+here->BSIM4dNode) ;
+
+            *(ckt->CKTfvk+here->BSIM4sNodePrime) += m * gspr * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM4sNodePrime) -= m * gspr * *(ckt->CKTrhsOld+here->BSIM4sNode) ;
+
+            *(ckt->CKTfvk+here->BSIM4sNode) -= m * gspr * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM4sNode) += m * gspr * *(ckt->CKTrhsOld+here->BSIM4sNode) ;
+
+            if (here->BSIM4rbodyMod)
+            {
+                *(ckt->CKTfvk+here->BSIM4sNodePrime) -= m * (- gcsbsb) * *(ckt->CKTrhsOld+here->BSIM4sbNode) ;
+
+                *(ckt->CKTfvk+here->BSIM4dbNode) += m * here->BSIM4grbdb * *(ckt->CKTrhsOld+here->BSIM4dbNode) ;
+                *(ckt->CKTfvk+here->BSIM4dbNode) -= m * here->BSIM4grbdb * *(ckt->CKTrhsOld+here->BSIM4bNode) ;
+                *(ckt->CKTfvk+here->BSIM4dbNode) += m * here->BSIM4grbpd * *(ckt->CKTrhsOld+here->BSIM4dbNode) ;
+                *(ckt->CKTfvk+here->BSIM4dbNode) -= m * here->BSIM4grbpd * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;
+
+                *(ckt->CKTfvk+here->BSIM4bNodePrime) -= m * here->BSIM4grbpd * *(ckt->CKTrhsOld+here->BSIM4dbNode) ;
+                *(ckt->CKTfvk+here->BSIM4bNodePrime) -= m * here->BSIM4grbpb * *(ckt->CKTrhsOld+here->BSIM4bNode) ;
+                *(ckt->CKTfvk+here->BSIM4bNodePrime) -= m * here->BSIM4grbps * *(ckt->CKTrhsOld+here->BSIM4sbNode) ;
+                *(ckt->CKTfvk+here->BSIM4bNodePrime) += m * (here->BSIM4grbpd + here->BSIM4grbps + here->BSIM4grbpb) * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;
+
+                *(ckt->CKTfvk+here->BSIM4sbNode) -= m * here->BSIM4grbps * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;
+                *(ckt->CKTfvk+here->BSIM4sbNode) -= m * here->BSIM4grbsb * *(ckt->CKTrhsOld+here->BSIM4bNode) ;
+                *(ckt->CKTfvk+here->BSIM4sbNode) += m * here->BSIM4grbsb * *(ckt->CKTrhsOld+here->BSIM4sbNode) ;
+                *(ckt->CKTfvk+here->BSIM4sbNode) += m * here->BSIM4grbps * *(ckt->CKTrhsOld+here->BSIM4sbNode) ;
+
+                *(ckt->CKTfvk+here->BSIM4bNode) -= m * here->BSIM4grbdb * *(ckt->CKTrhsOld+here->BSIM4dbNode) ;
+                *(ckt->CKTfvk+here->BSIM4bNode) -= m * here->BSIM4grbpb * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;
+                *(ckt->CKTfvk+here->BSIM4bNode) -= m * here->BSIM4grbsb * *(ckt->CKTrhsOld+here->BSIM4sbNode) ;
+                *(ckt->CKTfvk+here->BSIM4bNode) += m * (here->BSIM4grbsb + here->BSIM4grbdb + here->BSIM4grbpb) * *(ckt->CKTrhsOld+here->BSIM4bNode) ;
+            }
+
+
+//////////////////////////////////////////////
+
+
+            //A*V-B
+//            if (here->BSIM4rgateMod == 1)
+//            {
+//                *(ckt->CKTfvk+here->BSIM4gNodeExt) += m * geltd * *(ckt->CKTrhsOld+here->BSIM4gNodeExt) ;
+//                *(ckt->CKTfvk+here->BSIM4gNodePrime) -= m * geltd * *(ckt->CKTrhsOld+here->BSIM4gNodeExt) ;//
+//                *(ckt->CKTfvk+here->BSIM4gNodeExt) -= m * geltd * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;
+//                *(ckt->CKTfvk+here->BSIM4gNodePrime) += m * (gcggb - ggtg + gIgtotg) * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;//
+//                *(ckt->CKTfvk+here->BSIM4gNodePrime) += m * (gcgdb - ggtd + gIgtotd) * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;//
+//                *(ckt->CKTfvk+here->BSIM4gNodePrime) += m * (gcgsb - ggts + gIgtots) * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;//
+//                *(ckt->CKTfvk+here->BSIM4gNodePrime) += m * (gcgbb - ggtb + gIgtotb) * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;//
+//            }
+/*           else if (here->BSIM4rgateMod == 2)        
+           {   (*(here->BSIM4GEgePtr) += m * gcrg);
+               (*(here->BSIM4GEgpPtr) += m * gcrgg);
+               (*(here->BSIM4GEdpPtr) += m * gcrgd);
+               (*(here->BSIM4GEspPtr) += m * gcrgs);
+               (*(here->BSIM4GEbpPtr) += m * gcrgb);        
+
+               (*(here->BSIM4GPgePtr) -= m * gcrg);
+               (*(here->BSIM4GPgpPtr) += m * (gcggb - gcrgg - ggtg + gIgtotg));
+               (*(here->BSIM4GPdpPtr) += m * (gcgdb - gcrgd - ggtd + gIgtotd));
+               (*(here->BSIM4GPspPtr) += m * (gcgsb - gcrgs - ggts + gIgtots));
+               (*(here->BSIM4GPbpPtr) += m * (gcgbb - gcrgb - ggtb + gIgtotb));
+           }
+           else if (here->BSIM4rgateMod == 3)
+           {   (*(here->BSIM4GEgePtr) += m * geltd);
+               (*(here->BSIM4GEgmPtr) -= m * geltd);
+               (*(here->BSIM4GMgePtr) -= m * geltd);
+               (*(here->BSIM4GMgmPtr) += m * (geltd + gcrg + gcgmgmb));
+
+               (*(here->BSIM4GMdpPtr) += m * (gcrgd + gcgmdb));
+               (*(here->BSIM4GMgpPtr) += m * gcrgg);
+               (*(here->BSIM4GMspPtr) += m * (gcrgs + gcgmsb));
+               (*(here->BSIM4GMbpPtr) += m * (gcrgb + gcgmbb));
+
+               (*(here->BSIM4DPgmPtr) += m * gcdgmb);
+               (*(here->BSIM4GPgmPtr) -= m * gcrg);
+               (*(here->BSIM4SPgmPtr) += m * gcsgmb);
+               (*(here->BSIM4BPgmPtr) += m * gcbgmb);
+
+               (*(here->BSIM4GPgpPtr) += m * (gcggb - gcrgg - ggtg + gIgtotg));
+               (*(here->BSIM4GPdpPtr) += m * (gcgdb - gcrgd - ggtd + gIgtotd));
+               (*(here->BSIM4GPspPtr) += m * (gcgsb - gcrgs - ggts + gIgtots));
+               (*(here->BSIM4GPbpPtr) += m * (gcgbb - gcrgb - ggtb + gIgtotb));
+           }
+            else
+           {   (*(here->BSIM4GPgpPtr) += m * (gcggb - ggtg + gIgtotg));
+               (*(here->BSIM4GPdpPtr) += m * (gcgdb - ggtd + gIgtotd));
+               (*(here->BSIM4GPspPtr) += m * (gcgsb - ggts + gIgtots));
+               (*(here->BSIM4GPbpPtr) += m * (gcgbb - ggtb + gIgtotb));
+           }
+
+           if (model->BSIM4rdsMod)
+           {   (*(here->BSIM4DgpPtr) += m * gdtotg);
+               (*(here->BSIM4DspPtr) += m * gdtots);
+               (*(here->BSIM4DbpPtr) += m * gdtotb);
+               (*(here->BSIM4SdpPtr) += m * gstotd);
+               (*(here->BSIM4SgpPtr) += m * gstotg);
+               (*(here->BSIM4SbpPtr) += m * gstotb);
+           }
+*/
+//            *(ckt->CKTfvk+here->BSIM4dNodePrime) += m * (here->BSIM4gds + here->BSIM4gbd + T1 * ddxpart_dVd - gdtotd + RevSum + gcddb + gbdpdp + dxpart * ggtd - gIdtotd) * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4dNodePrime) -= m * gdtot * *(ckt->CKTrhsOld+here->BSIM4dNode) ;//
+//            *(ckt->CKTfvk+here->BSIM4dNodePrime) += m * (Gm + gcdgb - gdtotg + gbdpg - gIdtotg + dxpart * ggtg + T1 * ddxpart_dVg) * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4dNodePrime) -= m * (here->BSIM4gds + gdtots - dxpart * ggts + gIdtots - T1 * ddxpart_dVs + FwdSum - gcdsb - gbdpsp) * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4dNodePrime) -= m * (gjbd + gdtotb - Gmbs - gcdbb - gbdpb + gIdtotb - T1 * ddxpart_dVb - dxpart * ggtb) * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;//
+
+//            *(ckt->CKTfvk+here->BSIM4dNode) -= m * (gdpr - gdtotd) * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;
+//            *(ckt->CKTfvk+here->BSIM4dNode) += m * (gdpr + gdtot) * *(ckt->CKTrhsOld+here->BSIM4dNode) ;
+
+//            *(ckt->CKTfvk+here->BSIM4sNodePrime) -= m * (here->BSIM4gds + gstotd + RevSum - gcsdb - gbspdp - T1 * dsxpart_dVd - sxpart * ggtd + gIstotd) * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4sNodePrime) += m * (gcsgb - Gm - gstotg + gbspg + sxpart * ggtg + T1 * dsxpart_dVg - gIstotg) * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4sNodePrime) += m * (here->BSIM4gds + here->BSIM4gbs + T1 * dsxpart_dVs - gstots + FwdSum + gcssb + gbspsp + sxpart * ggts - gIstots) * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4sNodePrime) -= m * gstot * *(ckt->CKTrhsOld+here->BSIM4sNode) ;//
+//            *(ckt->CKTfvk+here->BSIM4sNodePrime) -= m * (gjbs + gstotb + Gmbs - gcsbb - gbspb - sxpart * ggtb - T1 * dsxpart_dVb + gIstotb) * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;//
+
+//            *(ckt->CKTfvk+here->BSIM4sNode) -= m * (gspr - gstots) * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;
+//            *(ckt->CKTfvk+here->BSIM4sNode) += m * (gspr + gstot) * *(ckt->CKTrhsOld+here->BSIM4sNode) ;
+
+//            *(ckt->CKTfvk+here->BSIM4bNodePrime) += m * (gcbdb - gjbd + gbbdp - gIbtotd) * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4bNodePrime) += m * (gcbgb - here->BSIM4gbgs - gIbtotg) * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4bNodePrime) += m * (gcbsb - gjbs + gbbsp - gIbtots) * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4bNodePrime) += m * (gjbd + gjbs + gcbbb - here->BSIM4gbbs - gIbtotb) * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;//
+
+
+            /* stamp gidl */
+//            *(ckt->CKTfvk+here->BSIM4dNodePrime) += m * ggidld * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4dNodePrime) += m * ggidlg * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4dNodePrime) -= m * (ggidlg + ggidld + ggidlb) * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4dNodePrime) += m * ggidlb * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;//
+
+//            *(ckt->CKTfvk+here->BSIM4bNodePrime) -= m * ggidld * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4bNodePrime) -= m * ggidlg * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4bNodePrime) += m * (ggidlg + ggidld + ggidlb) * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4bNodePrime) -= m * ggidlb * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;//
+
+            /* stamp gisl */
+//            *(ckt->CKTfvk+here->BSIM4sNodePrime) -= m * (ggisls + ggislg + ggislb) * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4sNodePrime) += m * ggislg * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4sNodePrime) += m * ggisls * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4sNodePrime) += m * ggislb * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;//
+
+//            *(ckt->CKTfvk+here->BSIM4bNodePrime) += m * (ggislg + ggisls + ggislb) * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4bNodePrime) -= m * ggislg * *(ckt->CKTrhsOld+here->BSIM4gNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4bNodePrime) -= m * ggisls * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;//
+//            *(ckt->CKTfvk+here->BSIM4bNodePrime) -= m * ggislb * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;//
+
+
+//            if (here->BSIM4rbodyMod)
+//            {
+//                *(ckt->CKTfvk+here->BSIM4dNodePrime) += m * (gcdbdb - here->BSIM4gbd) * *(ckt->CKTrhsOld+here->BSIM4dbNode) ;//
+
+//                *(ckt->CKTfvk+here->BSIM4sNodePrime) -= m * (here->BSIM4gbs - gcsbsb) * *(ckt->CKTrhsOld+here->BSIM4sbNode) ;//
+
+//                *(ckt->CKTfvk+here->BSIM4dbNode) += m * (gcdbdb - here->BSIM4gbd) * *(ckt->CKTrhsOld+here->BSIM4dNodePrime) ;//
+//                *(ckt->CKTfvk+here->BSIM4dbNode) += m * (here->BSIM4gbd - gcdbdb + here->BSIM4grbpd) * *(ckt->CKTrhsOld+here->BSIM4dbNode) ;//
+//                *(ckt->CKTfvk+here->BSIM4dbNode) -= m * here->BSIM4grbpd * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;//
+//                *(ckt->CKTfvk+here->BSIM4dbNode) -= m * here->BSIM4grbdb * *(ckt->CKTrhsOld+here->BSIM4bNode) ;//
+
+//                *(ckt->CKTfvk+here->BSIM4bNodePrime) -= m * here->BSIM4grbpd * *(ckt->CKTrhsOld+here->BSIM4dbNode) ;//
+//                *(ckt->CKTfvk+here->BSIM4bNodePrime) -= m * here->BSIM4grbpb * *(ckt->CKTrhsOld+here->BSIM4bNode) ;//
+//                *(ckt->CKTfvk+here->BSIM4bNodePrime) -= m * here->BSIM4grbps * *(ckt->CKTrhsOld+here->BSIM4sbNode) ;//
+//                *(ckt->CKTfvk+here->BSIM4bNodePrime) += m * (here->BSIM4grbpd + here->BSIM4grbps) * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;//
+
+//                *(ckt->CKTfvk+here->BSIM4sbNode) += m * (gcsbsb - here->BSIM4gbs) * *(ckt->CKTrhsOld+here->BSIM4sNodePrime) ;//
+//                *(ckt->CKTfvk+here->BSIM4sbNode) -= m * here->BSIM4grbps * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;//
+//                *(ckt->CKTfvk+here->BSIM4sbNode) -= m * here->BSIM4grbsb * *(ckt->CKTrhsOld+here->BSIM4bNode) ;//
+//                *(ckt->CKTfvk+here->BSIM4sbNode) += m * (here->BSIM4gbs - gcsbsb) * *(ckt->CKTrhsOld+here->BSIM4sbNode) ;//
+
+//                *(ckt->CKTfvk+here->BSIM4bNode) -= m * here->BSIM4grbdb * *(ckt->CKTrhsOld+here->BSIM4dbNode) ;
+//                *(ckt->CKTfvk+here->BSIM4bNode) -= m * here->BSIM4grbpb * *(ckt->CKTrhsOld+here->BSIM4bNodePrime) ;
+//                *(ckt->CKTfvk+here->BSIM4bNode) -= m * here->BSIM4grbsb * *(ckt->CKTrhsOld+here->BSIM4sbNode) ;
+//                *(ckt->CKTfvk+here->BSIM4bNode) += m * (here->BSIM4grbsb + here->BSIM4grbdb + here->BSIM4grbpb) * *(ckt->CKTrhsOld+here->BSIM4bNode) ;
+//            }
+
+
+//        *(ckt->CKTfvk + here->BSIM4dNodePrime) -= m * (ceqjd - ceqbd + ceqgdtot - ceqdrn - ceqqd + Idtoteq) ;//
+
+//        *(ckt->CKTfvk + here->BSIM4gNodePrime) += m * (ceqqg - ceqgcrg + Igtoteq) ;//
+
+        if (here->BSIM4rgateMod == 2)
+            *(ckt->CKTfvk + here->BSIM4gNodeExt) += m * ceqgcrg ;
+        else if (here->BSIM4rgateMod == 3)
+            *(ckt->CKTfvk + here->BSIM4gNodeMid) += m * (ceqqgmid + ceqgcrg) ;
+
+        if (!here->BSIM4rbodyMod)
+        {
+            *(ckt->CKTfvk + here->BSIM4bNodePrime) -= m * (ceqbd + ceqbs - ceqjd - ceqjs - ceqqb + Ibtoteq) ;
+            *(ckt->CKTfvk + here->BSIM4sNodePrime) -= m * (ceqdrn - ceqbs + ceqjs + ceqqg + ceqqb + ceqqd + ceqqgmid - ceqgstot + Istoteq) ;
+        }
+        else
+        {
+//            *(ckt->CKTfvk + here->BSIM4dbNode) += m * (ceqjd + ceqqjd) ;//
+//            *(ckt->CKTfvk + here->BSIM4bNodePrime) -= m * (ceqbd + ceqbs - ceqqb + Ibtoteq) ;//
+//            *(ckt->CKTfvk + here->BSIM4sbNode) += m * (ceqjs + ceqqjs) ;//
+//            *(ckt->CKTfvk + here->BSIM4sNodePrime) -= m * (ceqdrn - ceqbs + ceqjs + ceqqd + ceqqg + ceqqb + ceqqjd + ceqqjs + ceqqgmid - ceqgstot + Istoteq) ;//
+        }
+
+        if (model->BSIM4rdsMod)
+        {
+            *(ckt->CKTfvk + here->BSIM4dNode) += m * ceqgdtot ;
+            *(ckt->CKTfvk + here->BSIM4sNode) -= m * ceqgstot ;
+        }
+
+        if (here->BSIM4trnqsMod)
+            *(ckt->CKTfvk + here->BSIM4qNode) -= m * (cqcheq - cqdef) ;
+
+#endif
 line1000:  ;
 
 #ifndef USE_OMP
