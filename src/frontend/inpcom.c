@@ -103,6 +103,17 @@ static void inp_poly_err(struct line *deck);
 
 
 static int
+find_lib(char *s)
+{
+    int i;
+    for (i = 0; i < num_libraries; i++)
+        if (cieq(library_file[i], s))
+            return i;
+    return -1;
+}
+
+
+static int
 find_lib_name(int i, char *s) {
     int j;
     for (j = 0; j < num_lib_names[i]; j++)
@@ -400,7 +411,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 /* library section reference: `.lib <library-file> <section-name>' */
 
                 char *copyy = NULL;
-                int i;
 
                 if (*y == '~') {
                     copyy = cp_tildexpand(y); /* allocates memory, but can also return NULL */
@@ -408,11 +418,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                         y = copyy; /* reuse y, but remember, buffer still points to allocated memory */
                 }
 
-                for (i = 0; i < num_libraries; i++)
-                    if (cieq(library_file[i], y))
-                        break;
-
-                if (i >= num_libraries) {
+                if (find_lib(y) < 0) {
 
                     bool dir_name_flag = FALSE;
                     FILE *newfp = inp_pathopen(y, "r");
@@ -2382,11 +2388,8 @@ inp_determine_libraries(struct line *deck, char *lib_name)
                     if (copys)
                         s = copys;
                 }
-                for (i = 0; i < num_libraries; i++)
-                    if (cieq(library_file[i], s)) {
-                        break;
-                    }
-                if (i < num_libraries)
+                i = find_lib(s);
+                if (i >= 0)
                     if (find_lib_name(i, y) < 0) {
                         new_lib_name(i, y, c);
                         /* see if other libraries referenced */
