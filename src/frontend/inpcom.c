@@ -3413,7 +3413,7 @@ inp_get_param_level(int param_num, char ***depends_on, char **param_names, char 
         temp_level = inp_get_param_level(index2, depends_on, param_names, param_strs, total_params, level);
         temp_level++;
 
-        if (temp_level > comp_level)
+        if (comp_level < temp_level)
             comp_level = temp_level;
         index1++;
     }
@@ -3656,7 +3656,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     for (i = 0; i < num_params; i++) {
         level[i] = inp_get_param_level(i, depends_on, param_names, param_strs, num_params, level);
-        if (level[i] > max_level)
+        if (max_level < level[i])
             max_level = level[i];
     }
 
