@@ -153,6 +153,9 @@ expand_libs(int line_number)
 
             if (ciprefix(".lib", buffer)) {
 
+                /* here we expect a libray section definition */
+                /* library section definition: `.lib <section-name>' .. `.endl' */
+
                 char keep_char;
                 int j;
                 char *s, *t;
@@ -391,7 +394,10 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
             if (z && (inp_compat_mode == COMPATMODE_ALL ||
                       inp_compat_mode == COMPATMODE_HS  ||
-                      inp_compat_mode == COMPATMODE_NATIVE)) { /* .lib <file name> <lib name> */
+                      inp_compat_mode == COMPATMODE_NATIVE))
+            {
+                /* here we have a */
+                /* library section reference: `.lib <library-file> <section-name>' */
 
                 char *copyy = NULL;
                 int i;
@@ -452,7 +458,11 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 /* Make the .lib a comment */
                 *buffer = '*';
             } else if (inp_compat_mode == COMPATMODE_PS) {
-                /* .lib <file name> (no lib name given ) */
+                /* compatibility mode,
+                 *   this is neither a libray section definition nor a reference
+                 * interpret as old style
+                 *   .lib <file name> (no lib name given)
+                 */
                 fprintf(cp_err, "Warning: library name missing in line\n  %s", buffer);
                 fprintf(cp_err, "  File included as:   .inc %s\n", s);
                 memcpy(buffer, ".inc", 4);
@@ -2343,8 +2353,9 @@ inp_determine_libraries(struct line *deck, char *lib_name)
             while (isspace(*y) || isquote(*y))
                 y++;
 
-            /* .lib <lib name> */
             if (!*y) {
+                /* library section definition: `.lib <section-name>' .. `.endl' */
+
                 char keep_char = *t;
                 *t = '\0';
 
@@ -2352,8 +2363,8 @@ inp_determine_libraries(struct line *deck, char *lib_name)
                     read_line = TRUE;
                 *t = keep_char;
             }
-            /* .lib <file name> <lib name> */
             else if (read_line == TRUE) {
+                /* library section reference: `.lib <library-file> <section-name>' */
 
                 char keep_char1, keep_char2;
                 char *z, *copys = NULL;
