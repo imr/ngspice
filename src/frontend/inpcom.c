@@ -2389,6 +2389,7 @@ inp_determine_libraries(struct line *deck, char *lib_name)
                             /* see if other libraries referenced */
                             inp_determine_libraries(libraries[i], y);
                         }
+                        break;
                     }
                 *line = '*';  /* comment out .lib line */
                 *t = keep_char1;
