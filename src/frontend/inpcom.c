@@ -130,6 +130,61 @@ new_lib_name(int i, char *y, struct line *c) {
 }
 
 
+static bool
+read_a_lib(char *y, int call_depth, char *dir_name)
+{
+    char *copyy = NULL;
+
+    if (*y == '~') {
+        copyy = cp_tildexpand(y); /* allocates memory, but can also return NULL */
+        if (copyy)
+            y = copyy; /* reuse y, but remember, buffer still points to allocated memory */
+    }
+
+    if (find_lib(y) < 0) {
+
+        bool dir_name_flag = FALSE;
+        FILE *newfp = inp_pathopen(y, "r");
+
+        if (!newfp) {
+            char big_buff2[5000];
+
+            if (dir_name)
+                sprintf(big_buff2, "%s/%s", dir_name, y);
+            else
+                sprintf(big_buff2, "./%s", y);
+
+            newfp = inp_pathopen(big_buff2, "r");
+            if (!newfp) {
+                fprintf(cp_err, "Error: Could not find library file %s\n", y);
+                if (copyy)
+                    tfree(copyy); /* allocated by the cp_tildexpand() above */
+                return FALSE;
+            }
+
+            dir_name_flag = TRUE;
+        }
+
+        library_file[num_libraries++] = strdup(y);
+
+        if (dir_name_flag == FALSE) {
+            char *y_dir_name = ngdirname(y);
+            inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, y_dir_name, FALSE);
+            tfree(y_dir_name);
+        } else {
+            inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, dir_name, FALSE);
+        }
+
+        fclose(newfp);
+    }
+
+    if (copyy)
+        tfree(copyy);   /* allocated by the cp_tildexpand() above */
+
+    return TRUE;
+}
+
+
 static int
 expand_libs(int line_number)
 {
@@ -410,55 +465,12 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
                 /* here we have a */
                 /* library section reference: `.lib <library-file> <section-name>' */
 
-                char *copyy = NULL;
-
-                if (*y == '~') {
-                    copyy = cp_tildexpand(y); /* allocates memory, but can also return NULL */
-                    if (copyy)
-                        y = copyy; /* reuse y, but remember, buffer still points to allocated memory */
+                if(!read_a_lib(y, call_depth, dir_name)) {
+                    tfree(s);
+                    tfree(buffer);
+                    controlled_exit(EXIT_FAILURE);
                 }
 
-                if (find_lib(y) < 0) {
-
-                    bool dir_name_flag = FALSE;
-                    FILE *newfp = inp_pathopen(y, "r");
-
-                    if (!newfp) {
-                        char big_buff2[5000];
-
-                        if (dir_name)
-                            sprintf(big_buff2, "%s/%s", dir_name, y);
-                        else
-                            sprintf(big_buff2, "./%s", y);
-
-                        newfp = inp_pathopen(big_buff2, "r");
-                        if (!newfp) {
-                            fprintf(cp_err, "Error: Could not find library file %s\n", y);
-                            if (copyy)
-                                tfree(copyy); /* allocated by the cp_tildexpand() above */
-                            tfree(s);
-                            tfree(buffer);
-                            controlled_exit(EXIT_FAILURE);
-                        }
-
-                        dir_name_flag = TRUE;
-                    }
-
-                    library_file[num_libraries++] = strdup(y);
-
-                    if (dir_name_flag == FALSE) {
-                        char *y_dir_name = ngdirname(y);
-                        inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, y_dir_name, FALSE);
-                        tfree(y_dir_name);
-                    } else {
-                        inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, dir_name, FALSE);
-                    }
-
-                    fclose(newfp);
-                }
-
-                if (copyy)
-                    tfree(copyy);   /* allocated by the cp_tildexpand() above */
                 tfree(s);
 
                 /* Make the .lib a comment */
