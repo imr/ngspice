@@ -2384,12 +2384,13 @@ inp_determine_libraries(struct line *deck, char *lib_name)
                 }
                 for (i = 0; i < num_libraries; i++)
                     if (cieq(library_file[i], s)) {
-                        if (find_lib_name(i, y) < 0) {
-                            new_lib_name(i, y, c);
-                            /* see if other libraries referenced */
-                            inp_determine_libraries(libraries[i], y);
-                        }
                         break;
+                    }
+                if (i < num_libraries)
+                    if (find_lib_name(i, y) < 0) {
+                        new_lib_name(i, y, c);
+                        /* see if other libraries referenced */
+                        inp_determine_libraries(libraries[i], y);
                     }
                 *line = '*';  /* comment out .lib line */
                 *t = keep_char1;
