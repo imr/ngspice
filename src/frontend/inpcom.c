@@ -825,12 +825,12 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
     if (ft_ngdebug) {
         /*debug: print into file*/
-        FILE *fdo = fopen("debug-out.txt", "w");
-        struct line *tmp_ptr1;
-        for (tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
-            fprintf(fdo, "%d  %d  %s\n", tmp_ptr1->li_linenum_orig, tmp_ptr1->li_linenum, tmp_ptr1->li_line);
+        FILE *fd = fopen("debug-out.txt", "w");
+        struct line *t;
+        for (t = cc; t; t = t->li_next)
+            fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+        fclose(fd);
 
-        (void) fclose(fdo);
         fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
                 (int) max_line_length, no_braces, dynmaxline);
     }
