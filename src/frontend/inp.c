@@ -302,7 +302,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     char *dir_name = ngdirname(filename ? filename : ".");
 
     startTime = seconds();
-    inp_readall(fp, &deck, 0, dir_name, comfile);
+    deck = inp_readall(fp, 0, dir_name, comfile);
     endTime = seconds();
     tfree(dir_name);
 
