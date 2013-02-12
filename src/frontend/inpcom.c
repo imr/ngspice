@@ -169,10 +169,10 @@ read_a_lib(char *y, int call_depth, char *dir_name)
 
         if (dir_name_flag == FALSE) {
             char *y_dir_name = ngdirname(y);
-            inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, y_dir_name, FALSE);
+            libraries[num_libraries-1] = inp_readall(newfp, call_depth+1, y_dir_name, FALSE);
             tfree(y_dir_name);
         } else {
-            inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, dir_name, FALSE);
+            libraries[num_libraries-1] = inp_readall(newfp, call_depth+1, dir_name, FALSE);
         }
 
         fclose(newfp);
@@ -317,10 +317,9 @@ expand_libs(int line_number)
    ...
  debug printout to debug-out.txt
  *-------------------------------------------------------------------------*/
-void
-inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool comfile)
+struct line *
+inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile)
 /* fp: in, pointer to file to be read,
-   data: out, linked list of cards
    call_depth: in, nested call to fcn
    dir_name: in, name of directory of file to be read
    comfile: in, TRUE if command file (e.g. spinit, .spiceinit
@@ -541,10 +540,10 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
                 if (dir_name_flag == FALSE) {
                     char *y_dir_name = ngdirname(y);
-                    inp_readall(newfp, &newcard, call_depth+1, y_dir_name, FALSE);  /* read stuff in include file into netlist */
+                    newcard = inp_readall(newfp, call_depth+1, y_dir_name, FALSE);  /* read stuff in include file into netlist */
                     tfree(y_dir_name);
                 } else {
-                    inp_readall(newfp, &newcard, call_depth+1, dir_name, FALSE);  /* read stuff in include file into netlist */
+                    newcard = inp_readall(newfp, call_depth+1, dir_name, FALSE);  /* read stuff in include file into netlist */
                 }
 
                 (void) fclose(newfp);
@@ -640,10 +639,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
         tfree(buffer);
     }  /* end while ((buffer = readline(fp)) != NULL) */
 
-    if (!end) { /* No stuff here */
-        *data = NULL;
-        return;
-    }
+    if (!end) /* No stuff here */
+        return NULL;
 
     if (call_depth == 0 && found_end == TRUE) {
         struct line *prev;
@@ -772,11 +769,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
     /* The following processing of an input file is not required for command files
        like spinit or .spiceinit, so return command files here. */
-    if (comfile) {
-        /* save the return value (via **data) */
-        *data = cc;
-        return;
-    }
+    if (comfile)
+        return cc;
 
     working = cc->li_next;
 
@@ -825,9 +819,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
         inp_add_series_resistor(working);
     }
 
-    /* save the return value (via **data) */
-    *data = cc;
-
     /* get max. line length and number of lines in input deck,
        and renumber the lines,
        count the number of '{' per line as an upper estimate of the number
@@ -862,6 +853,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
         fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
                 (int) max_line_length, no_braces, dynmaxline);
     }
+
+    return cc;
 }
 
 

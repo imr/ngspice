@@ -206,7 +206,7 @@ extern void inp_source(char *file);
 void inp_spsource(FILE *fp, bool comfile, char *filename);
 extern void inp_casefix(char *string);
 extern void inp_list(FILE *file, struct line *deck, struct line *extras, int type);
-extern void inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool comfile);
+extern struct line *inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile);
 extern FILE *inp_pathopen(char *name, char *mode);
 
 /* nutinp.c */
