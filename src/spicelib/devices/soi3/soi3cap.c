@@ -32,7 +32,7 @@ ngspice integration
 void
 SOI3cap(double vgB, double Phiplusvsb, double gammaB,
            double paramargs[10],
-           double Bfargs[2], double alpha_args[2], double psi_st0args[5],
+           double Bfargs[2], double alpha_args[5], double psi_st0args[5],
            double vGTargs[5],
            double psi_sLargs[5], double psi_s0args[5],
            double ldargs[5],
