@@ -30,7 +30,8 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
     JOB		*job;
     double	startTime;
     int		error, i, error2;
-    int ANALmaxnum;
+
+    int         ANALmaxnum = spice_num_analysis();
 
 #ifdef WANT_SENSE2
     int		senflag;
@@ -44,8 +45,6 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
 	sens_num = i;
     }
 #endif
-
-    ANALmaxnum = spice_num_analysis();
 
     startTime = SPfrontEnd->IFseconds();
 
