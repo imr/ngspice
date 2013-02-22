@@ -8,6 +8,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/inpdefs.h"
+#include "ngspice/ftedefs.h"
 #include "inpxx.h"
 
 
@@ -19,11 +20,12 @@ void INPkillMods(void)
     INPmodel *prev = NULL;
 
     for (modtmp = modtab; modtmp != NULL; modtmp = modtmp->INPnextModel) {
-	if (prev)
-	    FREE(prev);
-	prev = modtmp;
+	    if (prev)
+	        FREE(prev);
+	    prev = modtmp;
     }
     if (prev)
-	FREE(prev);
+	    FREE(prev);
     modtab = NULL;
+    ft_curckt->ci_modtab = NULL;
 }

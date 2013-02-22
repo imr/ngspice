@@ -30,6 +30,7 @@ Modified: 2000 AlansFixes
 
 
 static int dosim(char *what, wordlist *wl);
+extern INPmodel *modtab;
 
 /* Routines for the commands op, tran, ac, dc, listing, device, state,
  * resume, stop, trace, run, end.  Op, tran, ac, and dc cause the action
@@ -103,6 +104,8 @@ com_scirc(wordlist *wl)
         ft_curckt->ci_nodes = cp_kwswitch(CT_NODENAMES, p->ci_nodes);
     }
     ft_curckt = p;
+    /* get the model table for the current circuit, store it in the global variable modtab */
+    modtab = ft_curckt->ci_modtab;
 }
 
 

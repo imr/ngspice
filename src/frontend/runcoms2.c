@@ -27,6 +27,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define RAWBUF_SIZE 32768
 extern char rawfileBuf[RAWBUF_SIZE];
 extern void line_free_x(struct line * deck, bool recurse);
+extern INPmodel *modtab;
 
 #define line_free(line, flag)                   \
     do {                                        \
@@ -246,4 +247,6 @@ com_remcirc(wordlist *wl)
 
     /* make first entry in ft_circuits the actual circuit (or NULL) */
     ft_curckt = ft_circuits;
+    if (ft_curckt)
+        modtab = ft_curckt->ci_modtab;
 }
