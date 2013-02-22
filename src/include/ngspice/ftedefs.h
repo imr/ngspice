@@ -31,6 +31,7 @@ struct circ {
     char *ci_name;    /* What the circuit can be called. */
     CKTcircuit *ci_ckt;      /* The CKTcircuit structure. */
     INPtables *ci_symtab;    /* The INP symbol table. */
+    INPmodel *ci_modtab;     /* The INP model table. */
     struct line *ci_deck;   /* The input deck. */
     struct line *ci_origdeck;/* The input deck, before subckt expansion. */
     struct line *ci_options;/* The .option cards from the deck... */

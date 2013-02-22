@@ -72,6 +72,7 @@ CDHW*/
 #include "ngspice/mif.h"
 #endif
 
+extern INPmodel *modtab;
 
 static struct variable *parmtovar(IFvalue *pv, IFparm *opt);
 static IFparm *parmlookup(IFdevice *dev, GENinstance **inptr, char *param,
@@ -159,12 +160,12 @@ if_inpdeck(struct line *deck, INPtables **tab)
 
     ft_curckt->ci_curTask = ft_curckt->ci_defTask;
 
+    /* reset the model table, will be filled in anew in INPpas1() */
+    modtab = NULL;
     INPpas1(ckt, (card *) deck->li_next, *tab);
+    /* store the new model table in the current circuit */
+    ft_curckt->ci_modtab = modtab;
     INPpas2(ckt, (card *) deck->li_next, *tab, ft_curckt->ci_defTask);
-
-    /* INPkillMods(); modtab removed later on the end of inp_spsource
-       because needed for alter geometry of binned MOS models,
-       see below if_setparam_model */
 
     /* INPpas2 has been modified to ignore .NODESET and .IC
      * cards. These are left till INPpas3 so that we can check for
@@ -876,7 +877,7 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val)
         INPgetModBin(ckt, modname, &inpmod, ft_curckt->ci_symtab, val);
     tfree(modname);
     if (inpmod == NULL) {
-        fprintf(cp_err, "Error: no such model %s.\n", val);
+        fprintf(cp_err, "Error: no model available for %s.\n", val);
         return;
     }
     newMod = inpmod->INPmodfast;
