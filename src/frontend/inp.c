@@ -365,6 +365,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
         /* do this here and in the 'else' branch of 'if (comfile)' */
         if (dbs)
             dbfree(dbs);
+        dbs = NULL;
         ft_dotsaves();
     } /* end if (comfile) */
 
@@ -661,6 +662,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
           (When controls are executed later on, also stores TRACE, IPLOT, and STOP data) */
         if (dbs)
             dbfree(dbs);
+        dbs = NULL;
         /* .save data stored in dbs.
            Do this here before controls are run: .save is thus recognized even if
            .control is used */
