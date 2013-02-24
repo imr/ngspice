@@ -103,31 +103,31 @@ static void inp_poly_err(struct line *deck);
 
 
 static int
-find_lib(char *s)
+find_lib(char *name)
 {
     int i;
     for (i = 0; i < num_libraries; i++)
-        if (cieq(library_name[i], s))
+        if (cieq(library_name[i], name))
             return i;
     return -1;
 }
 
 
 static int
-find_section(int i, char *s) {
+find_section(int lib_idx, char *section_name_) {
     int j;
-    for (j = 0; j < num_sections[i]; j++)
-        if (strcmp(section_name[i][j], s) == 0)
+    for (j = 0; j < num_sections[lib_idx]; j++)
+        if (strcmp(section_name[lib_idx][j], section_name_) == 0)
             return j;
     return -1;
 }
 
 
 static void
-remember_section_ref(int i, char *y, struct line *c) {
-    int k = num_sections[i]++;
-    section_ref[i][k] = c;
-    section_name[i][k] = strdup(y);
+remember_section_ref(int lib_idx, char *section_name_, struct line *deck) {
+    int section_idx = num_sections[lib_idx]++;
+    section_ref[lib_idx][section_idx] = deck;
+    section_name[lib_idx][section_idx] = strdup(section_name_);
 }
 
 
