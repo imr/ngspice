@@ -40,7 +40,7 @@ static char *library_name[1000][1000];
 static struct line *library_ll_ptr[1000][1000];
 static struct line *libraries[1000];
 static int  num_libraries;
-static int  num_lib_names[1000];
+static int  num_sections[1000];
 static      char *global;
 static char *subckt_w_params[1000];
 static int  num_subckt_w_params;
@@ -116,7 +116,7 @@ find_lib(char *s)
 static int
 find_section(int i, char *s) {
     int j;
-    for (j = 0; j < num_lib_names[i]; j++)
+    for (j = 0; j < num_sections[i]; j++)
         if (strcmp(library_name[i][j], s) == 0)
             return j;
     return -1;
@@ -125,8 +125,8 @@ find_section(int i, char *s) {
 
 static void
 remember_section_ref(int i, char *y, struct line *c) {
-    library_ll_ptr[i][num_lib_names[i]] = c;
-    library_name[i][num_lib_names[i]++] = strdup(y);
+    library_ll_ptr[i][num_sections[i]] = c;
+    library_name[i][num_sections[i]++] = strdup(y);
 }
 
 
@@ -2417,7 +2417,7 @@ inp_init_lib_data(void)
     int i;
 
     for (i = 0; i < num_libraries; i++)
-        num_lib_names[i] = 0;
+        num_sections[i] = 0;
 }
 
 
