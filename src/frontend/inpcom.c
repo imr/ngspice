@@ -190,10 +190,10 @@ static int
 expand_section_references(int line_number)
 {
     struct line *tmp_ptr = NULL, *prev;
-    bool found_section = FALSE;
     int lib_idx;
 
     for (lib_idx = 0; lib_idx < num_libraries; lib_idx++) {
+        bool found_section = FALSE;
         struct line *working = library_deck[lib_idx];
         while (working) {
             char *buffer = working->li_line;
@@ -282,8 +282,6 @@ expand_section_references(int line_number)
             fprintf(stderr, "ERROR: .lib is missing .endl!\n");
             controlled_exit(EXIT_FAILURE);
         }
-
-        found_section = FALSE;
     }
 
     return line_number;
