@@ -35,7 +35,7 @@ Author: 1985 Wayne A. Christopher
 /*#define TRACE*/
 
 /* globals -- wanted to avoid complicating inp_readall interface */
-static char *library_file[1000];
+static char *library_name[1000];
 static char *section_name[1000][1000];
 static struct line *section_ref[1000][1000];
 static struct line *library_deck[1000];
@@ -107,7 +107,7 @@ find_lib(char *s)
 {
     int i;
     for (i = 0; i < num_libraries; i++)
-        if (cieq(library_file[i], s))
+        if (cieq(library_name[i], s))
             return i;
     return -1;
 }
@@ -165,7 +165,7 @@ read_a_lib(char *y, int call_depth, char *dir_name)
             dir_name_flag = TRUE;
         }
 
-        library_file[num_libraries++] = strdup(y);
+        library_name[num_libraries++] = strdup(y);
 
         if (dir_name_flag == FALSE) {
             char *y_dir_name = ngdirname(y);
