@@ -191,10 +191,10 @@ expand_section_references(int line_number)
 {
     struct line *tmp_ptr = NULL, *prev;
     bool found_section = FALSE;
-    int i;
+    int lib_idx;
 
-    for (i = 0; i < num_libraries; i++) {
-        struct line *working = library_deck[i];
+    for (lib_idx = 0; lib_idx < num_libraries; lib_idx++) {
+        struct line *working = library_deck[lib_idx];
         while (working) {
             char *buffer = working->li_line;
 
@@ -224,7 +224,7 @@ expand_section_references(int line_number)
                 /* library section definition: `.lib <section-name>' .. `.endl' */
 
                 char keep_char;
-                int j;
+                int section_idx;
                 char *s, *t;
 
                 if (found_section) {
@@ -241,9 +241,9 @@ expand_section_references(int line_number)
                 *t = '\0';
                 /* see if library we want to copy */
 
-                j = find_section(i, s);
+                section_idx = find_section(lib_idx, s);
 
-                found_section = (j >= 0);
+                found_section = (section_idx >= 0);
 
                 if (found_section) {
 
@@ -253,8 +253,8 @@ expand_section_references(int line_number)
                     /* make the .lib a comment */
                     *buffer = '*';
 
-                    tmp_ptr = section_ref[i][j]->li_next;
-                    section_ref[i][j]->li_next = working;
+                    tmp_ptr = section_ref[lib_idx][section_idx]->li_next;
+                    section_ref[lib_idx][section_idx]->li_next = working;
 
                     /* renumber lines */
                     line_number_lib = 1;
