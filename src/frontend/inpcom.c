@@ -190,7 +190,7 @@ static int
 expand_section_references(int line_number)
 {
     struct line *tmp_ptr = NULL, *prev;
-    bool found_lib_name = FALSE;
+    bool found_section = FALSE;
     int i;
 
     for (i = 0; i < num_libraries; i++) {
@@ -198,13 +198,13 @@ expand_section_references(int line_number)
         while (working) {
             char *buffer = working->li_line;
 
-            if (found_lib_name && ciprefix(".endl", buffer)) {
+            if (found_section && ciprefix(".endl", buffer)) {
 
                 struct line *tmp_ptr2;
 
                 /* Make the .endl a comment */
                 *buffer = '*';
-                found_lib_name = FALSE;
+                found_section = FALSE;
 
                 /* set pointer and continue to avoid deleting below */
                 tmp_ptr2         = working->li_next;
@@ -227,7 +227,7 @@ expand_section_references(int line_number)
                 int j;
                 char *s, *t;
 
-                if (found_lib_name == TRUE) {
+                if (found_section) {
                     fprintf(stderr, "ERROR: .lib is missing .endl!\n");
                     controlled_exit(EXIT_FAILURE);
                 }
@@ -243,9 +243,9 @@ expand_section_references(int line_number)
 
                 j = find_section(i, s);
 
-                found_lib_name = (j >= 0);
+                found_section = (j >= 0);
 
-                if (found_lib_name) {
+                if (found_section) {
 
                     struct line *start_lib = working;
                     int line_number_lib;
@@ -271,7 +271,7 @@ expand_section_references(int line_number)
             prev = working;
             working = working->li_next;
 
-            if (found_lib_name == FALSE) {
+            if (!found_section) {
                 tfree(prev->li_line);
                 tfree(prev);
             }
