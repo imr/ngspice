@@ -36,7 +36,7 @@ Author: 1985 Wayne A. Christopher
 
 /* globals -- wanted to avoid complicating inp_readall interface */
 static char *library_file[1000];
-static char *library_name[1000][1000];
+static char *section_name[1000][1000];
 static struct line *section_ref[1000][1000];
 static struct line *library_deck[1000];
 static int  num_libraries;
@@ -117,7 +117,7 @@ static int
 find_section(int i, char *s) {
     int j;
     for (j = 0; j < num_sections[i]; j++)
-        if (strcmp(library_name[i][j], s) == 0)
+        if (strcmp(section_name[i][j], s) == 0)
             return j;
     return -1;
 }
@@ -126,7 +126,7 @@ find_section(int i, char *s) {
 static void
 remember_section_ref(int i, char *y, struct line *c) {
     section_ref[i][num_sections[i]] = c;
-    library_name[i][num_sections[i]++] = strdup(y);
+    section_name[i][num_sections[i]++] = strdup(y);
 }
 
 
