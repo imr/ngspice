@@ -125,8 +125,9 @@ find_section(int i, char *s) {
 
 static void
 remember_section_ref(int i, char *y, struct line *c) {
-    section_ref[i][num_sections[i]] = c;
-    section_name[i][num_sections[i]++] = strdup(y);
+    int k = num_sections[i]++;
+    section_ref[i][k] = c;
+    section_name[i][k] = strdup(y);
 }
 
 
