@@ -277,6 +277,13 @@ expand_section_references(int line_number)
             }
 
         }
+
+        if (found_section) {
+            fprintf(stderr, "ERROR: .lib is missing .endl!\n");
+            controlled_exit(EXIT_FAILURE);
+        }
+
+        found_section = FALSE;
     }
 
     return line_number;
