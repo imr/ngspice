@@ -38,7 +38,7 @@ Author: 1985 Wayne A. Christopher
 static char *library_file[1000];
 static char *library_name[1000][1000];
 static struct line *library_ll_ptr[1000][1000];
-static struct line *libraries[1000];
+static struct line *library_deck[1000];
 static int  num_libraries;
 static int  num_sections[1000];
 static      char *global;
@@ -169,10 +169,10 @@ read_a_lib(char *y, int call_depth, char *dir_name)
 
         if (dir_name_flag == FALSE) {
             char *y_dir_name = ngdirname(y);
-            libraries[num_libraries-1] = inp_readall(newfp, call_depth+1, y_dir_name, FALSE);
+            library_deck[num_libraries-1] = inp_readall(newfp, call_depth+1, y_dir_name, FALSE);
             tfree(y_dir_name);
         } else {
-            libraries[num_libraries-1] = inp_readall(newfp, call_depth+1, dir_name, FALSE);
+            library_deck[num_libraries-1] = inp_readall(newfp, call_depth+1, dir_name, FALSE);
         }
 
         fclose(newfp);
@@ -193,7 +193,7 @@ expand_libs(int line_number)
     int i;
 
     for (i = 0; i < num_libraries; i++) {
-        struct line *working = libraries[i];
+        struct line *working = library_deck[i];
         while (working) {
             char *buffer = working->li_line;
 
@@ -297,7 +297,7 @@ expand_libs(int line_number)
      store contents in string new_title
    process .lib lines
      read file and library name, open file using fcn inp_pathopen()
-     read file contents and put into struct libraries[], one entry per .lib line
+     read file contents and put into struct library_deck[], one entry per .lib line
    process .inc lines
      read file and library name, open file using fcn inp_pathopen()
      read file contents and add lines to cc
@@ -2398,7 +2398,7 @@ inp_determine_libraries(struct line *deck, char *lib_name)
                     if (find_section(i, y) < 0) {
                         remember_section_ref(i, y, c);
                         /* see if other libraries referenced */
-                        inp_determine_libraries(libraries[i], y);
+                        inp_determine_libraries(library_deck[i], y);
                     }
                 *line = '*';  /* comment out .lib line */
                 *t = keep_char1;
