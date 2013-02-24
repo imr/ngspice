@@ -200,16 +200,15 @@ expand_section_references(int line_number)
 
             if (found_section && ciprefix(".endl", buffer)) {
 
-                struct line *tmp_ptr2;
+                struct line *next = working->li_next;
 
                 /* Make the .endl a comment */
                 *buffer = '*';
                 found_section = FALSE;
 
                 /* set pointer and continue to avoid deleting below */
-                tmp_ptr2         = working->li_next;
                 working->li_next = tmp_ptr;
-                working          = tmp_ptr2;
+                working          = next;
 
                 /* end          = working;
                  * working      = working->li_next;
