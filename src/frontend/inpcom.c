@@ -243,6 +243,8 @@ expand_section_references(int line_number)
 
                 section_idx = find_section(lib_idx, s);
 
+                *t = keep_char;
+
                 found_section = (section_idx >= 0);
 
                 if (found_section) {
@@ -265,7 +267,6 @@ expand_section_references(int line_number)
                     c->li_linenum = line_number++;  // renumber endl line
                     c->li_linenum_orig = line_number_lib++;
                 }
-                *t = keep_char;
             }
 
             prev = working;
