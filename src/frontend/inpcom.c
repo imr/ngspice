@@ -2380,7 +2380,7 @@ collect_section_references(struct line *deck, char *section_name_)
 
                 char keep_char1, keep_char2;
                 char *z, *copys = NULL;
-                int i;
+                int lib_idx;
 
                 for (z = y; *z && !isspace(*z) && !isquote(*z); z++)
                     ;
@@ -2394,12 +2394,12 @@ collect_section_references(struct line *deck, char *section_name_)
                     if (copys)
                         s = copys;
                 }
-                i = find_lib(s);
-                if (i >= 0)
-                    if (find_section(i, y) < 0) {
-                        remember_section_ref(i, y, c);
+                lib_idx = find_lib(s);
+                if (lib_idx >= 0)
+                    if (find_section(lib_idx, y) < 0) {
+                        remember_section_ref(lib_idx, y, c);
                         /* see if other libraries referenced */
-                        collect_section_references(library_deck[i], y);
+                        collect_section_references(library_deck[lib_idx], y);
                     }
                 *line = '*';  /* comment out .lib line */
                 *t = keep_char1;
