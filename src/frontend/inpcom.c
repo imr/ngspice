@@ -114,7 +114,7 @@ find_lib(char *s)
 
 
 static int
-find_lib_name(int i, char *s) {
+find_section(int i, char *s) {
     int j;
     for (j = 0; j < num_lib_names[i]; j++)
         if (strcmp(library_name[i][j], s) == 0)
@@ -240,7 +240,7 @@ expand_libs(int line_number)
                 *t = '\0';
                 /* see if library we want to copy */
 
-                j = find_lib_name(i, s);
+                j = find_section(i, s);
 
                 found_lib_name = (j >= 0);
 
@@ -2395,7 +2395,7 @@ inp_determine_libraries(struct line *deck, char *lib_name)
                 }
                 i = find_lib(s);
                 if (i >= 0)
-                    if (find_lib_name(i, y) < 0) {
+                    if (find_section(i, y) < 0) {
                         new_lib_name(i, y, c);
                         /* see if other libraries referenced */
                         inp_determine_libraries(libraries[i], y);
