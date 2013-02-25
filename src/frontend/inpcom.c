@@ -206,14 +206,12 @@ expand_section_references(int line_number)
                 *buffer = '*';
                 found_section = FALSE;
 
-                /* set pointer and continue to avoid deleting below */
+                /* append the line following the library section reference */
                 working->li_next = tmp_ptr;
-                working          = next;
 
-                /* end          = working;
-                 * working      = working->li_next;
-                 * end->li_next = NULL; */
-
+                /* and continue with the line following */
+                /* the .endl of this section definition */
+                working = next;
                 continue;
             }
 
@@ -238,8 +236,8 @@ expand_section_references(int line_number)
                     ;                              /* skip to end of word */
                 keep_char = *t;
                 *t = '\0';
-                /* see if library we want to copy */
 
+                /* check if we remember this section having been referenced somewhere */
                 section_idx = find_section(lib_idx, s);
 
                 *t = keep_char;
@@ -251,10 +249,14 @@ expand_section_references(int line_number)
                     struct line *c;
                     int line_number_lib;
 
-                    /* make the .lib a comment */
+                    /* make the .lib of this library section definition a comment */
                     *buffer = '*';
 
+                    /* tmp_ptr is the line following the library section reference */
                     tmp_ptr = section_ref[lib_idx][section_idx]->li_next;
+
+                    /* insert the section definition here, */
+                    /* just behind the remembered section reference */
                     section_ref[lib_idx][section_idx]->li_next = working;
 
                     /* renumber lines */
@@ -269,6 +271,12 @@ expand_section_references(int line_number)
             }
 
             next = working->li_next;
+
+            /* drop this line in the current library file, if
+             *   it is outside a library section definition
+             * or
+             *   it is part of an unused library section definition
+             */
 
             if (!found_section) {
                 tfree(working->li_line);
@@ -2343,6 +2351,14 @@ inp_remove_excess_ws(struct line *deck)
 }
 
 
+/*
+ * recursively collect library section references,
+ * either
+ *    every library section reference (when the given section_name_ === NULL)
+ * or
+ *    just those references occuring in the given library section definition
+ */
+
 static void
 collect_section_references(struct line *deck, char *section_name_)
 {
@@ -2402,8 +2418,9 @@ collect_section_references(struct line *deck, char *section_name_)
                 lib_idx = find_lib(s);
                 if (lib_idx >= 0)
                     if (find_section(lib_idx, y) < 0) {
+                        /* remember this section having been referenced */
                         remember_section_ref(lib_idx, y, c);
-                        /* see if other libraries referenced */
+                        /* recursively check for nested section references */
                         collect_section_references(library_deck[lib_idx], y);
                     }
                 *line = '*';  /* comment out .lib line */
