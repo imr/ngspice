@@ -187,7 +187,7 @@ read_a_lib(char *y, int call_depth, char *dir_name)
 
 
 static int
-expand_libs(int line_number)
+expand_section_references(int line_number)
 {
     struct line *tmp_ptr = NULL, *prev;
     bool found_lib_name = FALSE;
@@ -668,7 +668,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile)
     */
 
     if (call_depth == 0) {
-        line_number = expand_libs(line_number);
+        line_number = expand_section_references(line_number);
     }
 
     /*
