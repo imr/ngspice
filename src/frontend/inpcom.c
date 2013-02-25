@@ -66,7 +66,7 @@ static void inp_stripcomments_deck(struct line *deck);
 static void inp_stripcomments_line(char *s);
 static void inp_fix_for_numparam(struct line *deck);
 static void inp_remove_excess_ws(struct line *deck);
-static void inp_determine_libraries(struct line *deck, char *lib_name);
+static void inp_determine_libraries(struct line *deck, char *section_name_);
 static void inp_init_lib_data(void);
 static void inp_grab_func(struct line *deck);
 static void inp_fix_inst_calls_for_numparam(struct line *deck);
@@ -2339,9 +2339,9 @@ inp_remove_excess_ws(struct line *deck)
 
 
 static void
-inp_determine_libraries(struct line *deck, char *lib_name)
+inp_determine_libraries(struct line *deck, char *section_name_)
 {
-    bool read_line = (lib_name == NULL);
+    bool read_line = (section_name_ == NULL);
 
     struct line *c;
 
@@ -2349,7 +2349,7 @@ inp_determine_libraries(struct line *deck, char *lib_name)
 
         char *line = c->li_line;
 
-        if (ciprefix(".endl", line) && lib_name != NULL)
+        if (ciprefix(".endl", line) && section_name_ != NULL)
             read_line = FALSE;
 
         if (ciprefix("*lib", line) || ciprefix(".lib", line)) {
@@ -2371,7 +2371,7 @@ inp_determine_libraries(struct line *deck, char *lib_name)
                 char keep_char = *t;
                 *t = '\0';
 
-                if (lib_name != NULL && strcmp(lib_name, s) == 0)
+                if (section_name_ != NULL && strcmp(section_name_, s) == 0)
                     read_line = TRUE;
                 *t = keep_char;
             }
