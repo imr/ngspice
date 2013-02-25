@@ -37,7 +37,7 @@ Author: 1985 Wayne A. Christopher
 /* globals -- wanted to avoid complicating inp_readall interface */
 static char *library_file[1000];
 static char *library_name[1000][1000];
-static struct line *library_ll_ptr[1000][1000];
+static struct line *section_ref[1000][1000];
 static struct line *library_deck[1000];
 static int  num_libraries;
 static int  num_sections[1000];
@@ -125,7 +125,7 @@ find_section(int i, char *s) {
 
 static void
 remember_section_ref(int i, char *y, struct line *c) {
-    library_ll_ptr[i][num_sections[i]] = c;
+    section_ref[i][num_sections[i]] = c;
     library_name[i][num_sections[i]++] = strdup(y);
 }
 
@@ -252,8 +252,8 @@ expand_libs(int line_number)
                     /* make the .lib a comment */
                     *buffer = '*';
 
-                    tmp_ptr = library_ll_ptr[i][j]->li_next;
-                    library_ll_ptr[i][j]->li_next = working;
+                    tmp_ptr = section_ref[i][j]->li_next;
+                    section_ref[i][j]->li_next = working;
 
                     /* renumber lines */
                     line_number_lib = 1;
