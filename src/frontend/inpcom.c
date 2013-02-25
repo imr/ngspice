@@ -247,7 +247,7 @@ expand_section_references(int line_number)
 
                 if (found_section) {
 
-                    struct line *start_lib = working;
+                    struct line *c;
                     int line_number_lib;
 
                     /* make the .lib a comment */
@@ -258,12 +258,12 @@ expand_section_references(int line_number)
 
                     /* renumber lines */
                     line_number_lib = 1;
-                    for (start_lib = working; !ciprefix(".endl", start_lib->li_line); start_lib = start_lib->li_next) {
-                        start_lib->li_linenum = line_number++;
-                        start_lib->li_linenum_orig = line_number_lib++;
+                    for (c = working; !ciprefix(".endl", c->li_line); c = c->li_next) {
+                        c->li_linenum = line_number++;
+                        c->li_linenum_orig = line_number_lib++;
                     }
-                    start_lib->li_linenum = line_number++;  // renumber endl line
-                    start_lib->li_linenum_orig = line_number_lib++;
+                    c->li_linenum = line_number++;  // renumber endl line
+                    c->li_linenum_orig = line_number_lib++;
                 }
                 *t = keep_char;
             }
