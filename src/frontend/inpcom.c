@@ -189,7 +189,7 @@ read_a_lib(char *y, int call_depth, char *dir_name)
 static int
 expand_section_references(int line_number)
 {
-    struct line *tmp_ptr = NULL, *prev;
+    struct line *tmp_ptr = NULL, *next;
     int lib_idx;
 
     for (lib_idx = 0; lib_idx < num_libraries; lib_idx++) {
@@ -268,14 +268,14 @@ expand_section_references(int line_number)
                 }
             }
 
-            prev = working;
-            working = working->li_next;
+            next = working->li_next;
 
             if (!found_section) {
-                tfree(prev->li_line);
-                tfree(prev);
+                tfree(working->li_line);
+                tfree(working);
             }
 
+            working = next;
         }
 
         if (found_section) {
