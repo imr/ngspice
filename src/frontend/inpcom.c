@@ -66,7 +66,7 @@ static void inp_stripcomments_deck(struct line *deck);
 static void inp_stripcomments_line(char *s);
 static void inp_fix_for_numparam(struct line *deck);
 static void inp_remove_excess_ws(struct line *deck);
-static void inp_determine_libraries(struct line *deck, char *section_name_);
+static void collect_section_references(struct line *deck, char *section_name_);
 static void inp_init_lib_data(void);
 static void inp_grab_func(struct line *deck);
 static void inp_fix_inst_calls_for_numparam(struct line *deck);
@@ -660,7 +660,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile)
         global_card->li_next = prev;
 
         inp_init_lib_data();
-        inp_determine_libraries(cc, NULL);
+        collect_section_references(cc, NULL);
     }
 
     /*
@@ -2339,7 +2339,7 @@ inp_remove_excess_ws(struct line *deck)
 
 
 static void
-inp_determine_libraries(struct line *deck, char *section_name_)
+collect_section_references(struct line *deck, char *section_name_)
 {
     bool read_line = (section_name_ == NULL);
 
@@ -2399,7 +2399,7 @@ inp_determine_libraries(struct line *deck, char *section_name_)
                     if (find_section(i, y) < 0) {
                         remember_section_ref(i, y, c);
                         /* see if other libraries referenced */
-                        inp_determine_libraries(library_deck[i], y);
+                        collect_section_references(library_deck[i], y);
                     }
                 *line = '*';  /* comment out .lib line */
                 *t = keep_char1;
