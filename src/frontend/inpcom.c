@@ -124,7 +124,7 @@ find_section(int i, char *s) {
 
 
 static void
-new_lib_name(int i, char *y, struct line *c) {
+remember_section_ref(int i, char *y, struct line *c) {
     library_ll_ptr[i][num_lib_names[i]] = c;
     library_name[i][num_lib_names[i]++] = strdup(y);
 }
@@ -2396,7 +2396,7 @@ inp_determine_libraries(struct line *deck, char *lib_name)
                 i = find_lib(s);
                 if (i >= 0)
                     if (find_section(i, y) < 0) {
-                        new_lib_name(i, y, c);
+                        remember_section_ref(i, y, c);
                         /* see if other libraries referenced */
                         inp_determine_libraries(libraries[i], y);
                     }
