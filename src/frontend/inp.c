@@ -49,7 +49,6 @@ Author: 1985 Wayne A. Christopher
 static char *upper(register char *string);
 static bool doedit(char *filename);
 static struct line *com_options = NULL;
-static wordlist *consaves(wordlist *wl);
 static void cktislinear(CKTcircuit *ckt, struct line *deck);
 
 void line_free_x(struct line *deck, bool recurse);
@@ -362,12 +361,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
         }
         /* free the control deck */
         line_free(deck, TRUE);
-        /* do this here and in the 'else' branch of 'if (comfile)' */
-/*
-        if (dbs)
-            dbfree(dbs);
- */
         /* set to NULL to allow generation of a new dbs */
+        /* do this here and in the 'else' branch of 'if (comfile)' */
         dbs = NULL;
         ft_dotsaves();
     } /* end if (comfile) */
@@ -663,21 +658,12 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
        /* linked list dbs is used to store the "save" or .save data (defined in breakp2.c),
           (When controls are executed later on, also stores TRACE, IPLOT, and STOP data) */
-/*
-        if (dbs)
-            dbfree(dbs);
- */
         /* set to NULL to allow generation of a new dbs */
         dbs = NULL;
         /* .save data stored in dbs.
            Do this here before controls are run: .save is thus recognized even if
            .control is used */
         ft_dotsaves();
-
-        /* run all 'save' commands upfront, allow same syntax as in .save,
-        then remove them from controls, store data in dbs. If controls contains
-        only 'save' commands, NULL is returned. */
-        controls = consaves(controls);
 
         /* Now that the deck is loaded, do the commands, if there are any */
         controls = wl_reverse(controls);
@@ -1137,45 +1123,6 @@ inp_source(char *file)
     static struct wordlist wl = { NULL, NULL, NULL };
     wl.wl_word = file;
     com_source(&wl);
-}
-
-
-/* find 'save' commands, retrive node name(s) and store
-   them in dbs (by com_save), like ft_dotsaves does with .save */
-static wordlist *
-consaves(wordlist *wl_control)
-{
-    wordlist *iline, *wl = NULL;
-    char *s;
-    bool onlysave = TRUE;
-
-    iline = wl_control;
-    while (iline) {
-        if (ciprefix("save", iline->wl_word)) {
-            wordlist *tmplist;
-            s = iline->wl_word;
-            (void) gettok(&s);
-            wl = wl_append(wl, gettoks(s));
-            tmplist = iline->wl_next;
-            wl_delete_slice(iline, iline->wl_next);
-            iline = tmplist;
-        }
-        else {
-            if (onlysave)
-                /* first occurence of a non 'save' line */
-                wl_control = iline;
-            iline = iline->wl_next;
-            onlysave = FALSE; /* we have lines other than save... */
-        }
-    }
-
-    com_save(wl);
-
-    /* If controls is eaten up without other than 'save...' lines, return NULL */
-    if (onlysave)
-        return (NULL);
-
-    return (wl_control);
 }
 
 
