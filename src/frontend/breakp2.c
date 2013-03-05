@@ -22,6 +22,8 @@ struct dbcomm *dbs = NULL;      /* export for iplot */
 /* used in breakp.c and breakp2.c */
 int debugnumber = 1;
 
+static char *copynode(char* s);
+
 
 /* Analyse the data given by the .save card or 'save' command.
    Store the data in the global dbs struct.
@@ -82,7 +84,8 @@ settrace(wordlist *wl, int what, char *name)
                 d->db_type = DB_SAVE;
                 break;
             }
-            d->db_nodename1 = copy(s);
+            /* v(2) --> 2, i(vds) --> vds#branch */
+            d->db_nodename1 = copynode(s);
             /* wrd_chtrace(s, TRUE, what); */
         }
 
@@ -130,4 +133,36 @@ ft_getSaves(struct save_info **savesp)
         }
 
     return (count);
+}
+
+
+/* v(2) --> 2, i(vds) --> vds#branch, 3 --> 3, @mn1[vth0] --> @mn1[vth0]
+ *   derived from wordlist *gettoks(char *s)
+ */
+
+static char*
+copynode(char *s)
+{
+    char *l, *r;
+    char *ret = NULL;
+
+    if (strstr(s, "("))
+        s = stripWhiteSpacesInsideParens(s);
+
+    l = strrchr(s, '('/*)*/);
+    if (!l) {
+        ret = copy(s);
+        return ret;
+    }
+
+    r = strchr(s, /*(*/')');
+    *r = '\0';
+    if (*(l - 1) == 'i' || *(l - 1) == 'I') {
+        char buf[513];
+        sprintf(buf, "%s#branch", l + 1);
+        ret = copy(buf);
+    } else
+        ret = copy(l + 1);
+
+    return ret;
 }
