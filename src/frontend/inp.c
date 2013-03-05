@@ -363,8 +363,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
         /* free the control deck */
         line_free(deck, TRUE);
         /* do this here and in the 'else' branch of 'if (comfile)' */
+/*
         if (dbs)
             dbfree(dbs);
+ */
+        /* set to NULL to allow generation of a new dbs */
         dbs = NULL;
         ft_dotsaves();
     } /* end if (comfile) */
@@ -660,8 +663,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
        /* linked list dbs is used to store the "save" or .save data (defined in breakp2.c),
           (When controls are executed later on, also stores TRACE, IPLOT, and STOP data) */
+/*
         if (dbs)
             dbfree(dbs);
+ */
+        /* set to NULL to allow generation of a new dbs */
         dbs = NULL;
         /* .save data stored in dbs.
            Do this here before controls are run: .save is thus recognized even if

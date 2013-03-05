@@ -142,7 +142,7 @@ com_stop(wordlist *wl)
                 ;
             d->db_next = thisone;
         } else {
-            dbs = thisone;
+            ft_curckt->ci_dbs = dbs = thisone;
         }
         (void) sprintf(buf, "%d", debugnumber);
         cp_addkword(CT_DBNUMS, buf);
@@ -200,7 +200,7 @@ com_iplot(wordlist *wl)
             ;
         td->db_next = currentdb;
     } else {
-        dbs = currentdb;
+        ft_curckt->ci_dbs = dbs = currentdb;
     }
 }
 
@@ -224,6 +224,7 @@ com_step(wordlist *wl)
  * off the event numbers (with UNIX, that is).  -- I don't like this.
  */
 
+#undef  isatty
 #define isatty(xxxx) 1
 
 
@@ -319,7 +320,7 @@ com_delete(wordlist *wl)
             d = dt->db_next;
             dbfree(dt);
         }
-        dbs = NULL;
+        ft_curckt->ci_dbs = dbs = NULL;
         return;
     } else if (!wl) {
         if (!dbs) {
@@ -352,7 +353,7 @@ com_delete(wordlist *wl)
                 if (dt)
                     dt->db_next = d->db_next;
                 else
-                    dbs = d->db_next;
+                    ft_curckt->ci_dbs = dbs = d->db_next;
                 dbfree(d);
                 (void) sprintf(buf, "%d", i);
                 cp_remkword(CT_DBNUMS, buf);
