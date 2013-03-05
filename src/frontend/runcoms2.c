@@ -250,6 +250,8 @@ com_remcirc(wordlist *wl)
 
     /* make first entry in ft_circuits the actual circuit (or NULL) */
     ft_curckt = ft_circuits;
-    if (ft_curckt)
+    if (ft_curckt) {
         modtab = ft_curckt->ci_modtab;
+        dbs = ft_curckt->ci_dbs;
+    }
 }
