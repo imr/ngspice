@@ -30,7 +30,8 @@ Modified: 2000 AlansFixes
 
 
 static int dosim(char *what, wordlist *wl);
-extern INPmodel *modtab;
+extern struct INPmodel *modtab;
+extern struct dbcomm *dbs;
 
 /* Routines for the commands op, tran, ac, dc, listing, device, state,
  * resume, stop, trace, run, end.  Op, tran, ac, and dc cause the action
@@ -106,6 +107,8 @@ com_scirc(wordlist *wl)
     ft_curckt = p;
     /* get the model table for the current circuit, store it in the global variable modtab */
     modtab = ft_curckt->ci_modtab;
+    /* get the database for save, iplot, stop */
+    dbs = ft_curckt->ci_dbs;
 }
 
 

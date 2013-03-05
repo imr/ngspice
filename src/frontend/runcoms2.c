@@ -204,6 +204,9 @@ com_remcirc(wordlist *wl)
         fprintf(cp_err, "Error: there is no circuit loaded.\n");
         return;
     }
+
+    dbfree(ft_curckt->ci_dbs);
+
     /* The next lines stem from com_rset */
     INPkillMods();
 

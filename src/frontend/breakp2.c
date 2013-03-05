@@ -93,7 +93,7 @@ settrace(wordlist *wl, int what, char *name)
                 ;
             td->db_next = d;
         } else {
-            dbs = d;
+            ft_curckt->ci_dbs = dbs = d;
         }
 
         wl = wl->wl_next;
