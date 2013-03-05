@@ -2511,7 +2511,7 @@ Spice_Init(Tcl_Interp *interp)
         TausSeed();
 
         /*parameter fetcher, used in show*/
-        if_getparam = spif_getparam;
+        if_getparam = spif_getparam_special;
 
         /* Get startup system limits */
         init_rlimits();
