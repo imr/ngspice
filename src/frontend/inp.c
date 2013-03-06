@@ -274,14 +274,16 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
 void
 line_free_x(struct line *deck, bool recurse)
 {
-    if (!deck)
-        return;
-    tfree(deck->li_line);
-    tfree(deck->li_error);
-    if (recurse)
-        line_free(deck->li_next, TRUE);
-    line_free(deck->li_actual, TRUE);
-    tfree(deck);
+    while (deck) {
+        struct line *next_deck = deck->li_next;
+        line_free_x(deck->li_actual, TRUE);
+        tfree(deck->li_line);
+        tfree(deck->li_error);
+        tfree(deck);
+        if (!recurse)
+            return;
+        deck = next_deck;
+    }
 }
 
 
