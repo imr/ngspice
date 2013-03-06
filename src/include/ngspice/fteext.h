@@ -203,11 +203,13 @@ extern bool gr_circular;
 void inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, 
 		struct line *options, char *filename);
 extern void inp_source(char *file);
-void inp_spsource(FILE *fp, bool comfile, char *filename);
+void inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile);
 extern void inp_casefix(char *string);
 extern void inp_list(FILE *file, struct line *deck, struct line *extras, int type);
-extern struct line *inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile);
+extern struct line *inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile);
 extern FILE *inp_pathopen(char *name, char *mode);
+
+extern char** circarray;
 
 /* nutinp.c */
 

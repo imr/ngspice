@@ -1222,10 +1222,10 @@ main(int argc, char **argv)
             if (tempfile && (!err || !ft_batchmode)) {
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
                 /* Copy the input file name for adding another file search path */
-                inp_spsource(tempfile, FALSE, dname);
+                inp_spsource(tempfile, FALSE, dname, FALSE);
                 tfree(dname);
 #else
-                inp_spsource(tempfile, FALSE, NULL);
+                inp_spsource(tempfile, FALSE, NULL, FALSE);
 #endif
                 gotone = TRUE;
             }
@@ -1236,7 +1236,7 @@ main(int argc, char **argv)
         }   /* ---  if (!ft_servermode) --- */
 
         if (!gotone && ft_batchmode)
-            inp_spsource(circuit_file, FALSE, NULL);
+            inp_spsource(circuit_file, FALSE, NULL, FALSE);
 
     }
 
