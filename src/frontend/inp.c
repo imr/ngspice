@@ -278,11 +278,12 @@ line_free_x(struct line *deck, bool recurse)
  * .plot, to perform after the run is over.
  * Then, we run dodeck, which parses up the deck.             */
 void
-inp_spsource(FILE *fp, bool comfile, char *filename)
+inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 /* arguments:
  *  *fp = pointer to the input file
  *  comfile = whether it is a command file.  Values are TRUE/FALSE
  *  *filename = name of input file
+ *  intfile = whether input is from internal array.  Values are TRUE/FALSE
  */
 {
     struct line *deck, *dd, *ld, *prev_param = NULL, *prev_card = NULL;
@@ -301,13 +302,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     char *dir_name = ngdirname(filename ? filename : ".");
 
     startTime = seconds();
-    deck = inp_readall(fp, 0, dir_name, comfile);
+    deck = inp_readall(fp, 0, dir_name, comfile, intfile);
     endTime = seconds();
     tfree(dir_name);
 
     /* if nothing came back from inp_readall, just close fp and return to caller */
     if (!deck) {        /* MW. We must close fp always when returning */
-        fclose(fp);
+        if (!intfile)
+            fclose(fp);
         return;
     }
 
@@ -321,7 +323,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
         if (!deck->li_next)
             fprintf(cp_err, "Warning: no lines in input\n");
     }
-    fclose(fp);
+    if (!intfile)
+        fclose(fp);
 
     /* Now save the IO context and start a new control set.  After we
        are done with the source we'll put the old file descriptors
@@ -976,7 +979,7 @@ com_edit(wordlist *wl)
             cp_interactive = inter;
             return;
         }
-        inp_spsource(fp, FALSE, wl->wl_word);
+        inp_spsource(fp, FALSE, wl->wl_word, FALSE);
     } else {
         /* If there is no circuit yet, then create one */
         if (ft_curckt && ft_curckt->ci_filename) {
@@ -1016,7 +1019,7 @@ com_edit(wordlist *wl)
             cp_interactive = inter;
             return;
         }
-        inp_spsource(fp, FALSE, permfile ? filename : NULL);
+        inp_spsource(fp, FALSE, permfile ? filename : NULL, FALSE);
 
         /* fclose(fp);  */
         /*      MW. inp_spsource already closed fp */
@@ -1107,9 +1110,9 @@ com_source(wordlist *wl)
 
     /* Don't print the title if this is a spice initialisation file. */
     if (ft_nutmeg || substring(INITSTR, owl->wl_word) || substring(ALT_INITSTR, owl->wl_word))
-        inp_spsource(fp, TRUE, tempfile ? NULL : wl->wl_word);
+        inp_spsource(fp, TRUE, tempfile ? NULL : wl->wl_word, FALSE);
     else
-        inp_spsource(fp, FALSE, tempfile ? NULL : wl->wl_word);
+        inp_spsource(fp, FALSE, tempfile ? NULL : wl->wl_word, FALSE);
 
     cp_interactive = inter;
     if (tempfile)
@@ -1160,4 +1163,46 @@ cktislinear(CKTcircuit *ckt, struct line *deck)
         }
 
     ckt->CKTisLinear = 1;
+}
+
+
+/* global array for assembling circuit lines entered by fcn circbyline
+   or receiving array from external caller. Array is created once per ngspice call.
+   Last line of the array has to get the value NULL */
+char **circarray;
+
+
+void
+create_circbyline(char *line)
+{
+    static int linec = 0;
+    static int memlen = 256;
+    FILE *fp = NULL;
+    if (!circarray)
+        circarray = TMALLOC(char*, memlen);
+    circarray[linec++] = line;
+    if (linec < memlen) {
+        if (ciprefix(".end", line) && (line[4] == '\0' || isspace(line[4]))) {
+            circarray[linec] = NULL;
+            inp_spsource(fp, FALSE, "", TRUE);
+            linec = 0;
+        }
+    }
+    else {
+        memlen += memlen;
+        circarray = TREALLOC(char*, circarray, memlen);
+    }
+}
+
+
+/* fcn called by command 'circbyline' */
+void
+com_circbyline(wordlist *wl)
+{
+    /* undo the automatic wordline creation.
+       wl_flatten allocates memory on the heap for each newline.
+       This memory will be released line by line in inp_source(). */
+
+    char *newline = wl_flatten(wl);
+    create_circbyline(newline);
 }

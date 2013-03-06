@@ -170,10 +170,10 @@ read_a_lib(char *y, int call_depth, char *dir_name)
 
         if (dir_name_flag == FALSE) {
             char *y_dir_name = ngdirname(y);
-            library_deck[num_libraries-1] = inp_readall(newfp, call_depth+1, y_dir_name, FALSE);
+            library_deck[num_libraries-1] = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);
             tfree(y_dir_name);
         } else {
-            library_deck[num_libraries-1] = inp_readall(newfp, call_depth+1, dir_name, FALSE);
+            library_deck[num_libraries-1] = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);
         }
 
         fclose(newfp);
@@ -332,11 +332,12 @@ expand_section_references(int line_number)
  debug printout to debug-out.txt
  *-------------------------------------------------------------------------*/
 struct line *
-inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile)
+inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 /* fp: in, pointer to file to be read,
    call_depth: in, nested call to fcn
    dir_name: in, name of directory of file to be read
-   comfile: in, TRUE if command file (e.g. spinit, .spiceinit
+   comfile: in, TRUE if command file (e.g. spinit, .spiceinit)
+   intfile: in, TRUE if deck is generated from internal circarray
 */
 {
     struct line *end = NULL, *cc = NULL, *prev, *working, *newcard, *global_card;
@@ -353,6 +354,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile)
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
     int line_number_orig = 1, line_number_inc = 1;
     unsigned int no_braces = 0; /* number of '{' */
+    int cirlinecount = 0; /* length of circarray */
 
     size_t max_line_length; /* max. line length in input deck */
 
@@ -371,46 +373,57 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile)
 
     /* First read in all lines & put them in the struct cc */
     for (;;) {
-
-#ifdef XSPICE
-        /* gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled */
-
-        /* If IPC is not enabled, do equivalent of what SPICE did before */
-        if (! g_ipc.enabled) {
-            if (call_depth == 0 && line_count == 0) {
-                line_count++;
-                if (fgets(big_buff, 5000, fp))
-                    buffer = copy(big_buff);
-            } else {
-                buffer = readline(fp);
-                if (!buffer)
-                    break;
-            }
-        } else {
-            /* else, get the line from the ipc channel. */
-            /* We assume that newlines are not sent by the client */
-            /* so we add them here */
-            ipc_status = ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
-            if (ipc_status == IPC_STATUS_END_OF_DECK) {
-                buffer = NULL;
+        /* derive lines from circarray */
+        if (intfile) {
+            buffer = circarray[cirlinecount++];
+            if (!buffer) {
+                tfree(circarray);
                 break;
-            } else if (ipc_status == IPC_STATUS_OK) {
-                buffer = TMALLOC(char, strlen(ipc_buffer) + 3);
-                strcpy(buffer, ipc_buffer);
-                strcat(buffer, "\n");
-            } else {            /* No good way to report this so just die */
-                controlled_exit(EXIT_FAILURE);
             }
         }
+        /* read lines from file fp */
+        else {
+
+#ifdef XSPICE
+            /* gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled */
+
+            /* If IPC is not enabled, do equivalent of what SPICE did before */
+            if (! g_ipc.enabled) {
+                if (call_depth == 0 && line_count == 0) {
+                    line_count++;
+                    if (fgets(big_buff, 5000, fp))
+                        buffer = copy(big_buff);
+                } else {
+                    buffer = readline(fp);
+                    if (!buffer)
+                        break;
+                }
+            } else {
+                /* else, get the line from the ipc channel. */
+                /* We assume that newlines are not sent by the client */
+                /* so we add them here */
+                ipc_status = ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
+                if (ipc_status == IPC_STATUS_END_OF_DECK) {
+                    buffer = NULL;
+                    break;
+                } else if (ipc_status == IPC_STATUS_OK) {
+                    buffer = TMALLOC(char, strlen(ipc_buffer) + 3);
+                    strcpy(buffer, ipc_buffer);
+                    strcat(buffer, "\n");
+                } else {            /* No good way to report this so just die */
+                    controlled_exit(EXIT_FAILURE);
+                }
+            }
 
         /* gtri - end - 12/12/90 */
 #else
 
-        buffer = readline(fp);
-        if(!buffer)
-            break;
+            buffer = readline(fp);
+            if(!buffer)
+                break;
 
 #endif
+        }
 
 #ifdef TRACE
         /* SDB debug statement */
@@ -554,10 +567,10 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile)
 
                 if (dir_name_flag == FALSE) {
                     char *y_dir_name = ngdirname(y);
-                    newcard = inp_readall(newfp, call_depth+1, y_dir_name, FALSE);  /* read stuff in include file into netlist */
+                    newcard = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);  /* read stuff in include file into netlist */
                     tfree(y_dir_name);
                 } else {
-                    newcard = inp_readall(newfp, call_depth+1, dir_name, FALSE);  /* read stuff in include file into netlist */
+                    newcard = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);  /* read stuff in include file into netlist */
                 }
 
                 (void) fclose(newfp);

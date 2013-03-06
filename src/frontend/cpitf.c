@@ -263,7 +263,7 @@ ft_cpinit(void)
             if ((fp = fopen(buf, "r")) != NULL) {
 
                 cp_interactive = FALSE;
-                inp_spsource(fp, TRUE, buf);
+                inp_spsource(fp, TRUE, buf, FALSE);
                 cp_interactive = TRUE;
                 found = TRUE;
                 break;
@@ -276,7 +276,7 @@ ft_cpinit(void)
             } else if ((fp = fopen("./spinit", "r")) != NULL) {
 #endif
                 cp_interactive = FALSE;
-                inp_spsource(fp, TRUE, buf);
+                inp_spsource(fp, TRUE, buf, FALSE);
                 cp_interactive = TRUE;
                 found = TRUE;
                 break;
