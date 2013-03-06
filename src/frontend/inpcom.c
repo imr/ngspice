@@ -287,17 +287,11 @@ static void
 delete_libs(void)
 {
     int i;
-    struct line *tmpdeck, *tmpdeck2;
     for (i = 0; i < N_LIBRARIES; i++) {
         if (libraries[i].name == NULL)
             continue;
         tfree(libraries[i].name);
-        tmpdeck = libraries[i].deck;
-        while (tmpdeck) { /* cannot use line_free_x(tmpdeck, TRUE); due to stack overflow */
-            tmpdeck2 = tmpdeck;
-            tmpdeck = tmpdeck->li_next;
-            line_free_x(tmpdeck2, FALSE);
-        }
+        line_free_x(libraries[i].deck, TRUE);
     }
 }
 
