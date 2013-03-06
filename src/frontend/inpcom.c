@@ -483,9 +483,6 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 #ifdef XSPICE
     char big_buff[5000];
     int line_count = 0;
-    Ipc_Status_t    ipc_status;
-    char            ipc_buffer[1025];  /* Had better be big enough */
-    int             ipc_len;
 #endif
     char *new_title = NULL;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
@@ -531,7 +528,10 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
                 /* else, get the line from the ipc channel. */
                 /* We assume that newlines are not sent by the client */
                 /* so we add them here */
-                ipc_status = ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
+                char         ipc_buffer[1025];  /* Had better be big enough */
+                int          ipc_len;
+                Ipc_Status_t ipc_status =
+                    ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
                 if (ipc_status == IPC_STATUS_END_OF_DECK) {
                     buffer = NULL;
                     break;
