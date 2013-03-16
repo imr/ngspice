@@ -160,11 +160,20 @@
   subscribe here, to follow the program development. May be used
   to send patches, and technical discussion on ngspice. 
   
-  Send an empty message to the following addresses to get information 
-  on subscription.  
+  Send an empty message with Subject "help" to the following addresses
+  to get instructions.
   
-  <ngspice-users-help@lists.sourceforge.net>
-  <ngspice-devel-help@lists.sourceforge.net>
+  <ngspice-users-request@lists.sourceforge.net>
+  <ngspice-devel-request@lists.sourceforge.net>
+
+  Send an empty message to the following address to Subscribe.
+
+  <ngspice-users-join@lists.sourceforge.net>
+  <ngspice-devel-join@lists.sourceforge.net>
+
+  Documentation about the user interface of
+  these mailing lists can be found at:
+     http://www.gnu.org/software/mailman/mailman-member
 
 
  1.8.  Are the mailing lists archived anywhere ?
