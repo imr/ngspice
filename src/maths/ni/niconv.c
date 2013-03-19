@@ -25,21 +25,7 @@ NIconvTest(CKTcircuit *ckt)
     double new;
     double tol;
 
-    /* KCL_verification */
-    double maximum = 0 ;
-
-    node = ckt->CKTnodes;
-    size = SMPmatSize(ckt->CKTmatrix);
-
-    for (i = 1 ; i <= size ; i++)
-    {
-        if (node->type == SP_CURRENT)
-        {
-            if (maximum < fabs (ckt->CKTrhsOld [i]))
-                maximum = fabs (ckt->CKTrhsOld [i]) ;
-        }
-        node = node->next ;
-    }
+    size = SMPmatSize (ckt->CKTmatrix) ;
 
 #ifdef STEPDEBUG
     for (i=1;i<=size;i++) {
@@ -66,9 +52,30 @@ NIconvTest(CKTcircuit *ckt)
 		ckt->CKTtroubleElt = NULL;
                 return(1);
             }
+        }
+    }
 
-            /* KCL Verification */
-//                printf ("Valore: %-.9g\tSoglia: %-.9g\n", fabs (ckt->CKTfvk [i] + ckt->CKTdiagGmin * ckt->CKTrhsOld [i]), (ckt->CKTreltol * maximum + ckt->CKTabstol)) ;
+    /* KCL Verification */
+    double maximum = 0 ;
+
+    node = ckt->CKTnodes ;
+    for (i = 1 ; i <= size ; i++)
+    {
+        node = node->next ;
+        if (node->type == SP_CURRENT)
+        {
+            if (maximum < fabs (ckt->CKTrhsOld [i]))
+                maximum = fabs (ckt->CKTrhsOld [i]) ;
+        }
+    }
+
+    node = ckt->CKTnodes ;
+    for (i = 1 ; i <= size ; i++)
+    {
+        node = node->next ;
+        if (node->type == SP_VOLTAGE)
+        {
+//            printf ("Valore: %-.9g\tSoglia: %-.9g\n", fabs (ckt->CKTfvk [i] + ckt->CKTdiagGmin * ckt->CKTrhsOld [i]), (ckt->CKTreltol * maximum + ckt->CKTabstol)) ;
 //            if (fabs (ckt->CKTfvk [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
             if (fabs (ckt->CKTfvk [i] + ckt->CKTdiagGmin * ckt->CKTrhsOld [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
                 return 1 ;
