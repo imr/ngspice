@@ -249,6 +249,36 @@ extern int tcl_fprintf(FILE *f, const char *format, ...);
 #undef perror
 #define perror(string) fprintf(stderr,"%s: %s\n",string,sys_errlist[errno])
 
+#elif defined SHARED_MODULE
+
+#include <errno.h>
+
+extern int sh_printf(const char *format, ...);
+extern int sh_fprintf(FILE *f, const char *format, ...);
+extern int sh_fputs(const char *input, FILE* outf);
+extern int sh_fputc(const char input, FILE* outf);
+extern int sh_putc(const char input, FILE* outf);
+extern void SetAnalyse(char *Analyse, int Percent);
+
+#define HAS_PROGREP
+
+#undef printf
+#define printf sh_printf
+
+#undef fprintf
+#define fprintf sh_fprintf
+
+#undef perror
+#define perror(string) fprintf(stderr,"%s: %s\n",string,sys_errlist[errno])
+
+#undef fputs
+#define fputs sh_fputs
+
+#undef fputc
+#define fputc sh_fputc
+
+#undef putc
+#define putc sh_putc
 #endif
 
 /* macro to ignore unused variables and parameters */
