@@ -60,6 +60,9 @@ static void freeRun(runDesc *run);
 /*Output data to spice module saj*/
 #ifdef TCL_MODULE
 #include "ngspice/tclspice.h"
+#elif defined SHARED_MODULE
+extern int sh_ExecutePerLoop(void);
+extern void sh_vecinit(runDesc *run);
 #endif
 /*saj*/
 
@@ -360,6 +363,8 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     /*Start BLT, initilises the blt vectors saj*/
 #ifdef TCL_MODULE
     blt_init(run);
+#elif defined SHARED_MODULE
+    sh_vecinit(run);
 #endif
 
     return (OK);
@@ -613,6 +618,8 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 
 #ifdef TCL_MODULE
     Tcl_ExecutePerLoop();
+#elif defined SHARED_MODULE
+    sh_ExecutePerLoop();
 #endif
 
     return (OK);
