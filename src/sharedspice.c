@@ -195,6 +195,8 @@ void shared_exit(int status);
 
 void sighandler_sharedspice(int num);
 
+void wl_delete_first(wordlist **wlstart, wordlist **wlend);
+
 #if !defined(low_latency)
 static char* outstorage(char*, bool);
 static void* printsend(void);
@@ -596,8 +598,17 @@ bot:
 #if !defined(low_latency)
     /* If caller has sent valid address for pfcn */
     if (!noprintfwanted)
+
+#ifdef HAVE_LIBPTHREAD
+        pthread_create(&tid, NULL, (void * (*)(void *)) printsend, NULL);
+#elif defined _MSC_VER || defined __MINGW32__
         printtid = (HANDLE)_beginthreadex(NULL, 0, (unsigned int (__stdcall *)(void *))printsend,
             (void*) NULL, 0, NULL);
+#else
+        printtid = CreateThread(NULL, 0, (PTHREAD_START_ROUTINE) printsend, NULL,
+                         0, NULL);
+#endif
+
 #endif
 
     return 0;
