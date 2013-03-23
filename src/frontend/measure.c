@@ -221,7 +221,7 @@ do_measure(
     wordlist    *measure_word_list;
     int         precision = measure_get_precision();
 
-#ifdef HAS_WINGUI
+#ifdef HAS_PROGREP
     if (!chk_only)
         SetAnalyse("meas", 0);
 #endif

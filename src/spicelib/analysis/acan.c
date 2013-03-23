@@ -341,7 +341,7 @@ ACan(CKTcircuit *ckt, int restart)
         case OCTAVE:
 
 /* inserted again 14.12.2001  */
-#ifdef HAS_WINGUI
+#ifdef HAS_PROGREP
             {
                 double endfreq   = job->ACstopFreq;
                 double startfreq = job->ACstartFreq;
@@ -360,7 +360,7 @@ ACan(CKTcircuit *ckt, int restart)
         break;
         case LINEAR:
 
-#ifdef HAS_WINGUI
+#ifdef HAS_PROGREP
 			 {
 				 double endfreq   = job->ACstopFreq;
 				 double startfreq = job->ACstartFreq;

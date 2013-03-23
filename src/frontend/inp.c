@@ -492,7 +492,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
            Go on if there is something left after the controls.*/
         if (deck->li_next) {
             fprintf(cp_out, "\nCircuit: %s\n\n", tt);
-#ifdef HAS_WINGUI
+#ifdef HAS_PROGREP
             SetAnalyse("Prepare Deck", 0);
 #endif
             /* Now expand subcircuit macros and substitute numparams.*/

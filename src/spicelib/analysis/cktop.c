@@ -22,7 +22,7 @@ CKTop (CKTcircuit * ckt, long int firstmode, long int continuemode,
        int iterlim)
 {
   int converged;
-#ifdef HAS_WINGUI
+#ifdef HAS_PROGREP
         SetAnalyse("op", 0);
 #endif
 ckt->CKTmode = firstmode;
