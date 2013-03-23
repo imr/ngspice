@@ -6,7 +6,8 @@
 Interface between a calling program (caller) and ngspice.dll (ngspice.so)
 
 **
-ngSpice_Init(SendChar*, SendStat*, ControlledExit*, void*)
+ngSpice_Init(SendChar*, SendStat*, ControlledExit*, SendData*, SendInitData*,
+             BGThreadRunning*, void)
 After caller has loaded ngspice.dll, the simulator has to be initialized
 by calling ngSpice_Init(). Address pointers of several callback functions
 defined in the caller are sent to ngspice.dll.
@@ -19,6 +20,10 @@ ControlledExit typedef of callback function for tranferring a signal upon
                to detach ngspice.dll.
 SendData       typedef of callback function for sending an array of structs containing
                data values of all vectors in the current plot (simulation output)
+SendInitData   typedef of callback function for sending an array of structs containing info on
+               all vectors in the current plot (immediately before simulation starts)
+BGThreadRunning typedef of callback function for sending a boolean signal (true if thread 
+                is running)
 
 The void pointer may contain the object address of the calling 
 function ('self' or 'this' pointer), so that the answer may be directed 
@@ -190,13 +195,14 @@ typedef int (SendData)(pvecvaluesall, int, void*);
 /* send back initailization vector data */
 typedef int (SendInitData)(pvecinfoall, void*);
 /*
-   vecinfoall* pointer to array of structs containing data from all vectors right afetr initialization
+   vecinfoall* pointer to array of structs containing data from all vectors right after initialization
    void*       return pointer received from caller
 */
-/* indicate if worker thread is running */
+
+/* indicate if background thread is running */
 typedef int (BGThreadRunning)(bool, void*);
 /*
-   vecinfoall* pointer to array of structs containing data from all vectors right afetr initialization
+   bool        true if background thraed is running
    void*       return pointer received from caller
 */
 
@@ -250,7 +256,7 @@ named by plotname */
 IMPEXP
 char** ngSpice_AllVecs(char* plotname);
 
-/* returns TRUE if ngspice is running in a second thread */
+/* returns TRUE if ngspice is running in a second (background) thread */
 IMPEXP
 bool ngSpice_running(void);
 
