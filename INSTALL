@@ -460,7 +460,7 @@ Most of the options now following are not well maintained, are not tested or eve
  $ cd ngspice-25
  $ mkdir release
  $ cd release
- $ ../configure --with-windows ...and other options
+ $ ../configure --with-wingui ...and other options
  $ make
  $ make install
 
@@ -473,7 +473,7 @@ Most of the options now following are not well maintained, are not tested or eve
  $ ./autogen.sh --adms
  $ mkdir release
  $ cd release
- $ ../configure --with-windows --enable-cider --disable-debug --enable-openmp --enable-xspice --enable-adms
+ $ ../configure --with-wingui --enable-cider --disable-debug --enable-openmp --enable-xspice --enable-adms
  $ make install
  
  However, to compile code extracted from the git repository the procedure is
@@ -505,7 +505,7 @@ Most of the options now following are not well maintained, are not tested or eve
  $ ./autogen.sh
  $ mkdir release
  $ cd release
- $ ../configure --enable-maintainer-mode --with-windows ...and other options
+ $ ../configure --enable-maintainer-mode --with-wingui ...and other options
  $ make
  $ make install
 
@@ -646,7 +646,7 @@ Most of the options now following are not well maintained, are not tested or eve
 
 9.4 ngspice console app with MINGW or CYGWIN
  
- Omitting the configure flag --with-windows will yield a console ngspice. 
+ Omitting the configure flag --with-wingui will yield a console ngspice. 
  You then will not have any graphics interface. In CYGWIN you may add --with-x 
  for the X11 graphics (not available in mingw). A typical configure command
  may look like

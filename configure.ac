@@ -278,7 +278,7 @@ AC_CANONICAL_HOST
 # Expand the prefix variable
 if test "x$prefix" = xNONE ; then
 #  with the MS WINDOWS executable we suggest C:/Spice/bin as *.exe-path
-    if test "x$with_windows" = xyes; then
+    if test "x$with_wingui" = xyes; then
         dprefix="C:/Spice"
         prefix=$dprefix
     else
@@ -462,18 +462,31 @@ AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 
 
-# --with-windows : the user wants to use generate the MS WINDOWS executable
-AC_MSG_CHECKING([whether windows code is enabled])
+# --with-windows : the user wants to use generate the MS WINDOWS GUI executable
+# old command version, deprecated, use --with-wingui
 AC_ARG_WITH([windows],
-    [AS_HELP_STRING([--with-windows], [MS WINDOWS executable])],
+    [AS_HELP_STRING([--with-windows], [MS WINDOWS GUI executable, deprecated])],
     [if test "x$with_windows" = xyes; then
-        AC_DEFINE([HAS_WINGUI], [1], [define to specify MS Windows executable])
+        AC_DEFINE([HAS_WINGUI], [1], [define to specify MS Windows executable with simple GUI])
     fi],
     [with_windows=no])
-AC_MSG_RESULT([$with_windows])
-AM_CONDITIONAL([WINDOWS], [test "x$with_windows" = xyes])
 
-case $with_windows in
+# --with-wingui : the user wants to use generate the MS WINDOWS GUI executable
+AC_MSG_CHECKING([whether windows code with gui is enabled])
+AC_ARG_WITH([wingui],
+    [AS_HELP_STRING([--with-wingui], [MS WINDOWS GUI executable])],
+    [if test "x$with_wingui" = xyes; then
+        AC_DEFINE([HAS_WINGUI], [1], [define to specify MS Windows executable with simple GUI])
+    fi],
+    [if test "x$with_windows" = xyes; then
+        with_wingui=yes
+    else
+        with_wingui=no
+    fi])
+AC_MSG_RESULT([$with_wingui])
+AM_CONDITIONAL([WINGUI], [test "x$with_wingui" = xyes])
+
+case $with_wingui in
     yes )
         AC_DEFINE([X_DISPLAY_MISSING])
         AC_MSG_RESULT([No X display!])
@@ -722,8 +735,8 @@ AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo $dprefix/bin`"], [Define the directo
 AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo $dprefix/share/ngspice`"], [Define the directory for architecture independent data files])
 AC_DEFINE_UNQUOTED([NGSPICEBUILDDATE], ["`date`"], [Define the build date])
 
-if test "x$with_windows" = xyes; then
-    AC_MSG_RESULT([WINDOWS code enabled])
+if test "x$with_wingui" = xyes; then
+    AC_MSG_RESULT([WINDOWS GUI code enabled])
     AC_CHECK_FUNCS([memmove])
 fi
 
