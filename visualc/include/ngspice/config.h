@@ -49,7 +49,7 @@
 /* CONSOLE flag set in configurations console_debug and console_release */
 #ifndef CONSOLE
 /* define to specify MS Windows GUI executable */
-#define HAS_WINDOWS 1
+#define HAS_WINGUI 1
 #endif
 
 /* Define to 1 if you have the `access' function. */

@@ -137,7 +137,7 @@
 #include <time.h>
 #endif
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 #include "ngspice/wstdio.h"
 #endif
 

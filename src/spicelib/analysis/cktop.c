@@ -16,7 +16,7 @@ static int spice3_gmin (CKTcircuit *, long int, long int, int);
 static int gillespie_src (CKTcircuit *, long int, long int, int);
 static int spice3_src (CKTcircuit *, long int, long int, int);
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 void SetAnalyse( char * Analyse, int Percent);
 #endif
 
@@ -25,7 +25,7 @@ CKTop (CKTcircuit * ckt, long int firstmode, long int continuemode,
        int iterlim)
 {
   int converged;
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
         SetAnalyse("op", 0);
 #endif
 ckt->CKTmode = firstmode;

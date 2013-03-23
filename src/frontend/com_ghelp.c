@@ -73,7 +73,7 @@ com_ghelp(wordlist *wl)
     hlp_main(path, wl);
     return;
 #endif /* X_DISPLAY_MISSING 1  */
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
     printf("Internal help is no longer avaialable!\n");
     printf("Please check for the actual ngspice manual at\n");
     printf("http://ngspice.sourceforge.net/docs/ngspice-manual.pdf\n");

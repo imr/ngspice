@@ -467,7 +467,7 @@ AC_MSG_CHECKING([whether windows code is enabled])
 AC_ARG_WITH([windows],
     [AS_HELP_STRING([--with-windows], [MS WINDOWS executable])],
     [if test "x$with_windows" = xyes; then
-        AC_DEFINE([HAS_WINDOWS], [1], [define to specify MS Windows executable])
+        AC_DEFINE([HAS_WINGUI], [1], [define to specify MS Windows executable])
     fi],
     [with_windows=no])
 AC_MSG_RESULT([$with_windows])

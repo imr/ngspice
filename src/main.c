@@ -44,7 +44,7 @@
 #include "misc/ivars.h"
 #include "misc/misc_time.h"
 
-#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
+#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__)
 # include "misc/mktemp.h"
 #endif
 
@@ -95,7 +95,7 @@ bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. TRUE = we've b
 bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt. */
 char *ft_rawfile = "rawspice.raw";
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
  extern void winmessage(char *new_msg); /* display a message box (defined in winmain.c)*/
  extern void SetSource( char *Name);    /* display the source file name in the source window */
  extern int  xmain(int argc, char **argv);
@@ -490,7 +490,7 @@ static void
 sp_shutdown(int exitval)
 {
     destroy_ivars();
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
     if (exitval == EXIT_BAD)
         winmessage("Fatal error in SPICE");
     else if (exitval == EXIT_INFO)
@@ -784,7 +784,7 @@ print_news(void)
 }
 
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 #define main xmain
 #endif
 
@@ -837,7 +837,7 @@ main(int argc, char **argv)
 
     circuit_file = stdin;
 
-#if defined(HAVE_ISATTY) && !defined(HAS_WINDOWS)
+#if defined(HAVE_ISATTY) && !defined(HAS_WINGUI)
     istty = (bool) isatty(fileno(stdin));
 #endif
 
@@ -989,7 +989,7 @@ main(int argc, char **argv)
         fprintf(stdout, "Comments and warnings go to log-file: %s\n\n", log_file);
 
         /* Open the log file */
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
         /* flogp used by winmain's putc which writes to file 'log_file' */
         flogp = fopen(log_file, "w");
         if (!flogp) {
@@ -1055,7 +1055,7 @@ main(int argc, char **argv)
 #ifdef SIGBUS
     signal(SIGBUS, (SIGNAL_FUNCTION) sigbus);
 #endif
-#if defined(SIGSEGV) && !defined(NGDEBUG) && defined(HAS_WINDOWS)
+#if defined(SIGSEGV) && !defined(NGDEBUG) && defined(HAS_WINGUI)
 /* Allow a comment and graceful shutdown after seg fault */
     signal(SIGSEGV, (SIGNAL_FUNCTION) sigsegv);
 #endif
@@ -1152,7 +1152,7 @@ main(int argc, char **argv)
 
             FILE *tempfile = tmpfile();
 
-#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
+#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__)
             char *dname = NULL;   /* input file*/
             char *tpf = NULL;     /* temporary file */
 
@@ -1201,12 +1201,12 @@ main(int argc, char **argv)
                     }
                 }
 
-#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
+#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__)
                 /* Copy the input file name which otherwise will be lost due to the
                    temporary file */
                 dname = copy(arg);
 #endif
-#if defined(HAS_WINDOWS)
+#if defined(HAS_WINGUI)
                 /* write source file name into source window */
                 SetSource(dname);
                 /* write source file name into a variable */
@@ -1220,7 +1220,7 @@ main(int argc, char **argv)
             fseek(tempfile, 0L, SEEK_SET);
 
             if (tempfile && (!err || !ft_batchmode)) {
-#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
+#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__)
                 /* Copy the input file name for adding another file search path */
                 inp_spsource(tempfile, FALSE, dname, FALSE);
                 tfree(dname);

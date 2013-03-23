@@ -28,16 +28,16 @@ char *hlp_filelist[] = { "ngspice", 0 };
 
 extern void ivars(char*);
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 FILE *flogp;  /* hvogt 15.12.2001 */
-#endif /* HAS_WINDOWS */
+#endif /* HAS_WINGUI */
 
 int
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 xmain(int ac, char **av)
 #else
 main(int ac, char **av)
-#endif /* HAS_WINDOWS */
+#endif /* HAS_WINGUI */
 {
     wordlist *wl = NULL;
 
@@ -83,11 +83,11 @@ out:
     }
 #endif /* X_DISPLAY_MISSING */
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 	/* Keep window open untill a key is pressed */
 	printf("Press a key to quit\n");
 	while( getchar() == EOF) {}
-#endif /* HAS_WINDOWS */
+#endif /* HAS_WINGUI */
 
     return EXIT_NORMAL;
 }

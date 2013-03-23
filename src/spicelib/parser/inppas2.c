@@ -16,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 /* gtri - end - wbk - 11/9/90 */
 #endif
 
-#ifdef HAS_WINDOWS    
+#ifdef HAS_WINGUI
 extern void SetAnalyse( char * Analyse, int Percent);
 #endif
 
@@ -35,7 +35,7 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
     char *gname;
     CKTnode *gnode;
     int error;			/* used by the macros defined above */
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
     int linecount = 0, actcount = 0;
 #endif
 
@@ -71,7 +71,7 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 #endif
 
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
     for (current = data; current != NULL; current = current->nextcard)
         linecount++;
 #endif
@@ -83,7 +83,7 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 	printf("In INPpas2, examining card %s . . .\n", current->line);
 #endif
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
    if (linecount > 0) {     
         SetAnalyse( "Circuit2", (int) (1000.*actcount/linecount));
         actcount++;

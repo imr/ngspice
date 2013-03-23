@@ -26,7 +26,7 @@ static wordlist *measure_parse_line(char *line);
 extern bool ft_batchmode;
 extern bool rflag;
 
-#ifdef HAS_WINDOWS    /* hvogt 10.03.99, nach W. Mues */
+#ifdef HAS_WINGUI    /* hvogt 10.03.99, nach W. Mues */
 extern void SetAnalyse(char *Analyse, int Percent);
 #endif
 
@@ -225,7 +225,7 @@ do_measure(
     wordlist    *measure_word_list;
     int         precision = measure_get_precision();
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
     if (!chk_only)
         SetAnalyse("meas", 0);
 #endif

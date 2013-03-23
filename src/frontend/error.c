@@ -17,7 +17,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 char ErrorMessage[1024];
 
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 void winmessage(char *new_msg);
 #endif
 
@@ -25,7 +25,7 @@ void winmessage(char *new_msg);
 void
 controlled_exit(int status)
 {
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
     if (status)
         winmessage("Fatal error in NGSPICE");
 #else

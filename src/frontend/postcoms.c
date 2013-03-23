@@ -906,7 +906,7 @@ static void
 DelPlotWindows(struct plot *pl)
 {
     /* do this only if windows or X11 is defined */
-#if defined(HAS_WINDOWS) || !defined(X_DISPLAY_MISSING)
+#if defined(HAS_WINGUI) || !defined(X_DISPLAY_MISSING)
     GRAPH *dgraph;
     int n;
     /* find and remove all graph structures derived from a given plot */

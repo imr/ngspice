@@ -458,7 +458,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                 /*  While we're looking at the reference value, print it to the screen
                     every quarter of a second, to give some feedback without using
                     too much CPU time  */
-#ifndef HAS_WINDOWS
+#ifndef HAS_WINGUI
                 currclock = clock();
                 if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                     fprintf(stderr, " Reference value : % 12.5e\r",
@@ -471,7 +471,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                 /*  And the same for a non-complex value  */
 
                 fileAddRealValue(run->fp, run->binary, refValue->rValue);
-#ifndef HAS_WINDOWS
+#ifndef HAS_WINGUI
                 currclock = clock();
                 if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                     fprintf(stderr, " Reference value : % 12.5e\r",
@@ -552,7 +552,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
         /*  This is interactive mode. Update the screen with the reference
             variable just the same  */
 
-#ifndef HAS_WINDOWS
+#ifndef HAS_WINGUI
         currclock = clock();
         if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
             if (run->isComplex) {

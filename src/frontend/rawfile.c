@@ -25,7 +25,7 @@ int raw_prec = -1;        /* How many sigfigs to use, default 15 (max).  */
 
 #define DEFPREC 15
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 #undef fscanf             /* redo I/O from WINMAIN.C here
                              otherwise reading ASCII will not work */
 #endif

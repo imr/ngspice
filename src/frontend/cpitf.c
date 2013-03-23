@@ -268,7 +268,7 @@ ft_cpinit(void)
                 found = TRUE;
                 break;
 
-#if defined(HAS_WINDOWS) || defined(__MINGW32__) || defined(_MSC_VER)
+#if defined(HAS_WINGUI) || defined(__MINGW32__) || defined(_MSC_VER)
                 /* search in local directory where ngspice.exe resides */
 #if defined TCL_MODULE
             } else if ((fp = fopen("./tclspinit", "r")) != NULL) {

@@ -219,7 +219,7 @@ com_version(wordlist *wl)
 #ifdef USE_OMP
             fprintf(cp_out, "** OpenMP multithreading for BSIM3, BSIM4 enabled\n");
 #endif
-#if defined(X_DISPLAY_MISSING) && !defined(HAS_WINDOWS)
+#if defined(X_DISPLAY_MISSING) && !defined(HAS_WINGUI)
             fprintf(cp_out, "** X11 interface not compiled into ngspice\n");
 #endif
 #ifdef NOBYPASS

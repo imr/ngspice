@@ -34,7 +34,7 @@ extern struct dbcomm *dbs;
 #include "ngspice/cluster.h"
 #endif
 
-#ifdef HAS_WINDOWS    /* hvogt 10.03.99, nach W. Mues */
+#ifdef HAS_WINGUI    /* hvogt 10.03.99, nach W. Mues */
 void SetAnalyse(char * Analyse, int Percent);
 #endif
 
@@ -508,7 +508,7 @@ resume:
         }
     }
 #endif
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
     if (ckt->CKTtime == 0.)
         SetAnalyse( "tran init", 0);
     else

@@ -5,7 +5,7 @@
     Stand: 17.10.2009
 */
 #include "ngspice/config.h"
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 
 #define STRICT              // strict type checking
 #define WIN32_LEAN_AND_MEAN
@@ -1415,5 +1415,5 @@ void winmessage(char* new_msg)
       MessageBox(NULL, new_msg, "Ngspice Info", MB_OK|MB_ICONERROR);
 }
 
-#endif /* HAS_WINDOWS */
+#endif /* HAS_WINGUI */
 

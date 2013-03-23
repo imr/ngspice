@@ -28,7 +28,7 @@ static int nodev(void);
 #include "plotting/x11.h"
 #endif
 
-#ifdef HAS_WINDOWS      /* Graphic-IO under MS Windows */
+#ifdef HAS_WINGUI      /* Graphic-IO under MS Windows */
 #include "wdisp/windisp.h"
 //#include "wdisp/winprint.h"
 #endif
@@ -60,7 +60,7 @@ DISPDEVICE device[] = {
       gen_DatatoScreen,},
 #endif
 
-#ifdef HAS_WINDOWS      /* Graphic-IO under MS Windows */
+#ifdef HAS_WINGUI      /* Graphic-IO under MS Windows */
     { "Windows", 0, 0, 1000, 1000, 0, 0,
       WIN_Init, WIN_NewViewport,
       WIN_Close, WIN_Clear,
@@ -174,7 +174,7 @@ DevInit(void)
 #endif
 
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
     if (!dispdev)
         dispdev = FindDev("Windows");
 #endif
@@ -187,7 +187,7 @@ DevInit(void)
 
     if (!dispdev) {
 
-#if !defined(HAS_WINDOWS) && !defined(TCL_MODULE) && (defined(_MSC_VER) || defined(__MINGW32__))
+#if !defined(HAS_WINGUI) && !defined(TCL_MODULE) && (defined(_MSC_VER) || defined(__MINGW32__))
         /* console application under MS Windows */
         fprintf
             (cp_err,

@@ -54,7 +54,7 @@ static void cktislinear(CKTcircuit *ckt, struct line *deck);
 void line_free_x(struct line *deck, bool recurse);
 
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 void SetAnalyse(char *Analyse, int Percent);
 #endif
 
@@ -497,7 +497,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
            Go on if there is something left after the controls.*/
         if (deck->li_next) {
             fprintf(cp_out, "\nCircuit: %s\n\n", tt);
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
             SetAnalyse("Prepare Deck", 0);
 #endif
             /* Now expand subcircuit macros and substitute numparams.*/
