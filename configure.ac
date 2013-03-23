@@ -464,7 +464,7 @@ AC_PROG_LIBTOOL
 # --with-windows : the user wants to use generate the MS WINDOWS GUI executable
 # old command version, deprecated, use --with-wingui
 AC_ARG_WITH([windows],
-    [AS_HELP_STRING([--with-windows], [MS WINDOWS GUI executable])],
+    [AS_HELP_STRING([--with-windows], [MS WINDOWS GUI executable, deprecated])],
     [if test "x$with_windows" = xyes; then
         AC_DEFINE([HAS_WINGUI], [1], [define to specify MS Windows executable with simple GUI])
     fi],
