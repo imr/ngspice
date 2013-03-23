@@ -187,7 +187,7 @@ DevInit(void)
 
     if (!dispdev) {
 
-#if !defined(HAS_WINGUI) && !defined(TCL_MODULE) && (defined(_MSC_VER) || defined(__MINGW32__))
+#if !defined(HAS_WINGUI) && !defined(TCL_MODULE) && !defined(SHARED_MODULE) && (defined(_MSC_VER) || defined(__MINGW32__))
         /* console application under MS Windows */
         fprintf
             (cp_err,
