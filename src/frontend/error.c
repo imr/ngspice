@@ -13,13 +13,14 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <signal.h>
 
 
-/* global error message buffer */
-char ErrorMessage[1024];
-
-
 #ifdef HAS_WINGUI
 void winmessage(char *new_msg);
+#elif defined SHARED_MODULE
+extern void shared_exit(int status);
 #endif
+
+/* global error message buffer */
+char ErrorMessage[1024];
 
 
 void
@@ -28,11 +29,15 @@ controlled_exit(int status)
 #ifdef HAS_WINGUI
     if (status)
         winmessage("Fatal error in NGSPICE");
+    exit(status);
+#elif defined SHARED_MODULE
+    /* do not exit, if shared ngspice, but call back */
+    shared_exit(status);
 #else
     if (status)
         fprintf(stderr, "\nERROR: fatal error in ngspice, exit(%d)\n", status);
-#endif
     exit(status);
+#endif
 }
 
 
@@ -62,7 +67,12 @@ fatal(void)
     (void) kill(getpid(), SIGQUIT);
 #endif
 
+#if defined SHARED_MODULE
+    /* do not exit, if shared ngspice, but call back */
+    shared_exit(EXIT_BAD);
+#else
     exit(EXIT_BAD);
+#endif
 }
 
 
