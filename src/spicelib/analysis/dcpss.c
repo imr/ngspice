@@ -27,10 +27,6 @@
 #include "ngspice/cluster.h"
 #endif
 
-#ifdef HAS_WINGUI    /* hvogt 10.03.99, nach W. Mues */
-void SetAnalyse(char * Analyse, int Percent);
-#endif
-
 
 #define INIT_STATS() \
 do { \

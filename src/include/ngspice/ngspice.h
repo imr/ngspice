@@ -139,6 +139,8 @@
 
 #ifdef HAS_WINGUI
 #include "ngspice/wstdio.h"
+#define HAS_PROGREP
+extern void SetAnalyse(char *Analyse, int Percent);
 #endif
 
 #if defined (__MINGW32__) || defined (__CYGWIN__) || defined (_MSC_VER)

@@ -18,10 +18,6 @@ Modified 2001: AlansFixes
 /* gtri - end - wbk */
 #endif
 
-#ifdef HAS_WINGUI
-void SetAnalyse( char * Analyse, int Percent);
-#endif
-
 
 #define INIT_STATS() \
 do { \

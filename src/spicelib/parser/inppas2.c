@@ -16,9 +16,6 @@ Author: 1985 Thomas L. Quarles
 /* gtri - end - wbk - 11/9/90 */
 #endif
 
-#ifdef HAS_WINGUI
-extern void SetAnalyse( char * Analyse, int Percent);
-#endif
 
 /* uncomment to trace in this file */
 /*#define TRACE*/
