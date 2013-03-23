@@ -16,9 +16,6 @@ static int spice3_gmin (CKTcircuit *, long int, long int, int);
 static int gillespie_src (CKTcircuit *, long int, long int, int);
 static int spice3_src (CKTcircuit *, long int, long int, int);
 
-#ifdef HAS_WINGUI
-void SetAnalyse( char * Analyse, int Percent);
-#endif
 
 int
 CKTop (CKTcircuit * ckt, long int firstmode, long int continuemode,

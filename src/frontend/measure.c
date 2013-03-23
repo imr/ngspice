@@ -26,10 +26,6 @@ static wordlist *measure_parse_line(char *line);
 extern bool ft_batchmode;
 extern bool rflag;
 
-#ifdef HAS_WINGUI    /* hvogt 10.03.99, nach W. Mues */
-extern void SetAnalyse(char *Analyse, int Percent);
-#endif
-
 
 /* measure in interactive mode:
    meas command inside .control ... .endc loop or manually entered.

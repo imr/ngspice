@@ -26,10 +26,6 @@ int nthreads;
             return(E_NOMEM);\
 }
 
-#ifdef HAS_WINGUI
-extern void SetAnalyse( char * Analyse, int Percent);
-#endif
-
 
 int
 CKTsetup(CKTcircuit *ckt)

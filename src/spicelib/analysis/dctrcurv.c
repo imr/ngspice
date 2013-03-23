@@ -25,7 +25,6 @@ Modified: 1999 Paolo Nenzi
 #include "ngspice/devdefs.h"
 
 #ifdef HAS_WINGUI
-void SetAnalyse( char * Analyse, int Percent);
 static double actval, actdiff; 
 #endif
 

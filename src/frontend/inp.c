@@ -54,10 +54,6 @@ static void cktislinear(CKTcircuit *ckt, struct line *deck);
 void line_free_x(struct line *deck, bool recurse);
 
 
-#ifdef HAS_WINGUI
-void SetAnalyse(char *Analyse, int Percent);
-#endif
-
 
 /*
  * create an unique artificial *unusable* FILE ptr
