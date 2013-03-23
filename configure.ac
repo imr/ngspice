@@ -178,6 +178,10 @@ AC_ARG_WITH([editline],
 AC_ARG_WITH([tcl],
     [AS_HELP_STRING([--with-tcl=tcldir], [Compiles  the tcl module instead,  experimental, see README.tcl])])
 
+# --with-ngshared: define SHARED_MODULE in the code. This is for ngspice as shared library (or dll)
+AC_ARG_WITH([ngshared],
+    [AS_HELP_STRING([--with-ngshared], [Compiles ngspice as shared library (dll)])])
+
 # readline and editline cannot both be enabled
 if test "x$with_editline" = xyes; then
     if test "x$with_readline" = xyes; then
@@ -290,6 +294,40 @@ fi
 
 ##########################################################################
 #
+# ngspice as shared library (ngspice.so or ngspice.dll)
+#
+##########################################################################
+
+if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
+    has_shared_module=true
+    AC_DEFINE([SHARED_MODULE], [1], [shared ngspice module])
+    case $host_os in
+        *mingw* )
+            has_shwin=true
+            has_no_help=true
+            AC_DEFINE([HAS_SHWIN], [1], [ngspice.dll Windows])
+            ;;
+        *cygwin* )
+            has_shcyg=true
+            AC_CHECK_LIB([pthread], [pthread_create])
+            ;;
+        *)
+            CFLAGS="$CFLAGS -fvisibility=hidden"
+            AC_CHECK_LIB([pthread], [pthread_create])
+            ;;
+    esac
+
+    with_x=no
+    with_windows=no
+
+    AC_SUBST([STATIC], [-shared])
+
+    TCL_PACKAGE_PATH=""
+    TCL_LIB_SPEC=""
+
+
+##########################################################################
+#
 # tcl libraries test
 #
 ##########################################################################
@@ -297,7 +335,7 @@ fi
 #
 # The tclSpice options
 #
-if test "x$with_tcl" != x  &&  test "x$with_tcl" != xno ; then
+elif test "x$with_tcl" != x  &&  test "x$with_tcl" != xno ; then
     has_tcl_module=true
     AC_DEFINE([TCL_MODULE], [1], [Tcl Module])
     case $host_os in
@@ -439,6 +477,10 @@ else
     AC_SUBST([STATIC], [-static])
 fi
 
+
+AM_CONDITIONAL([SHARED_MODULE], [test "x$has_shared_module" = xtrue])
+AM_CONDITIONAL([SHWIN], [test "x$has_shwin" = xtrue])
+AM_CONDITIONAL([SHCYG], [test "x$has_shcyg" = xtrue])
 AM_CONDITIONAL([TCL_MODULE], [test "x$has_tcl_module" = xtrue])
 AM_CONDITIONAL([TCLWIN], [test "x$has_tclwin" = xtrue])
 AM_CONDITIONAL([TCLCYG], [test "x$has_tclcyg" = xtrue])
@@ -705,6 +747,15 @@ AC_TRY_LINK([#include <setjmp.h>],[jmp_buf env; sigsetjmp(env, 1);],
         AC_DEFINE([HAVE_SIGSETJMP], [], [Define if we have sigsetjmp().])],
     [AC_MSG_RESULT([no])])
 
+# A mingw ngspice dll with linking against libiberty.a seems not to be possible.
+# Because there is a internal replacement for asprintf, and dirmane is not been used anywhere,
+# just skip it.
+case $host_os in
+        *mingw* )
+            AC_MSG_RESULT([Cannot make dll from libiberty.a, no check for headers])
+            ;;
+        * )
+
 # Check for some headers (asprintf, dirname, etc.)
 AC_CHECK_HEADERS([libiberty.h libgen.h])
 
@@ -713,6 +764,9 @@ AC_CHECK_FUNCS([asprintf], [],
     [AC_CHECK_LIB([iberty], [asprintf],
         [AC_DEFINE([HAVE_ASPRINTF], [1], [Have asprintf in libiberty])
          LIBS="$LIBS -liberty"])])
+
+            ;;
+esac
 
 # Check for the snprintf function:
 if test "x$ac_cv_func_asprintf" = xno ; then
