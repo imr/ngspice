@@ -508,7 +508,7 @@ resume:
     if (ckt->CKTtime == 0.)
         SetAnalyse( "tran init", 0);
     else
-        SetAnalyse( "tran", (int)((ckt->CKTtime * 1000.) / ckt->CKTfinalTime));
+        SetAnalyse( "tran", (int)((ckt->CKTtime * 1000.) / ckt->CKTfinalTime) + 0.5);
 #endif
     ckt->CKTdelta =
             MIN(ckt->CKTdelta,ckt->CKTmaxStep);
