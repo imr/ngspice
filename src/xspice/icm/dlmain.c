@@ -44,7 +44,14 @@ struct coreInfo_t *coreitf;
 #if defined (__MINGW32__) || defined (__CYGWIN__) || defined (_MSC_VER)
 #define CM_EXPORT __declspec(dllexport)
 #else
-#define CM_EXPORT
+  /* use with gcc flag -fvisibility=hidden */
+  #if __GNUC__ >= 4
+    #define CM_EXPORT __attribute__ ((visibility ("default")))
+    #define CM_EXPORT_LOCAL  __attribute__ ((visibility ("hidden")))
+  #else
+    #define CM_EXPORT
+    #define CM_EXPORT_LOCAL
+  #endif
 #endif
 
 extern CM_EXPORT void *CMdevs(void);
