@@ -24,7 +24,7 @@ Modified: 1999 Paolo Nenzi
 
 #include "ngspice/devdefs.h"
 
-#ifdef HAS_WINGUI
+#ifdef HAS_PROGREP
 static double actval, actdiff; 
 #endif
 
@@ -166,7 +166,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
 found:;
     }
 
-#ifdef HAS_WINGUI
+#ifdef HAS_PROGREP
     actval = job->TRCVvStart[job->TRCVnestLevel];
     actdiff = job->TRCVvStart[job->TRCVnestLevel] - job->TRCVvStop[job->TRCVnestLevel];
 #endif
@@ -518,7 +518,7 @@ nextstep:;
             job->TRCVnestState = i;
             return(E_PAUSE);
         }
-#ifdef HAS_WINGUI
+#ifdef HAS_PROGREP
         if (i == job->TRCVnestLevel) {
             actval += job->TRCVvStep[job->TRCVnestLevel];
             SetAnalyse( "dc", abs((int)(actval * 1000. / actdiff)));

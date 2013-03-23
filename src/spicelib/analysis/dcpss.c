@@ -1147,7 +1147,7 @@ resume:
         }
     }
 #endif
-#ifdef HAS_WINGUI
+#ifdef HAS_PROGREP
     if (ckt->CKTtime == 0.)
         SetAnalyse( "tran init", 0);
     else if ((pss_state != PSS) && (shooting_cycle_counter > 0))

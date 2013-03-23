@@ -68,7 +68,7 @@ CKTsetup(CKTcircuit *ckt)
 #endif
 
     for (i=0;i<DEVmaxnum;i++) {
-#ifdef HAS_WINGUI
+#ifdef HAS_PROGREP
         SetAnalyse( "Device Setup", 0 );
 #endif
         if ( DEVices[i] && DEVices[i]->DEVsetup && ckt->CKThead[i] ) {

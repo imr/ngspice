@@ -32,7 +32,7 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
     char *gname;
     CKTnode *gnode;
     int error;			/* used by the macros defined above */
-#ifdef HAS_WINGUI
+#ifdef HAS_PROGREP
     int linecount = 0, actcount = 0;
 #endif
 
@@ -68,7 +68,7 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 #endif
 
 
-#ifdef HAS_WINGUI
+#ifdef HAS_PROGREP
     for (current = data; current != NULL; current = current->nextcard)
         linecount++;
 #endif
@@ -80,7 +80,7 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 	printf("In INPpas2, examining card %s . . .\n", current->line);
 #endif
 
-#ifdef HAS_WINGUI
+#ifdef HAS_PROGREP
    if (linecount > 0) {     
         SetAnalyse( "Circuit2", (int) (1000.*actcount/linecount));
         actcount++;
