@@ -12,6 +12,7 @@ SUBDIRS += ciderlib
 endif
 
 if !TCL_MODULE
+if !SHARED_MODULE
 bin_PROGRAMS =  ngspice ngnutmeg
 
 if !WINGUI
@@ -22,11 +23,13 @@ if !NO_HELP
 bin_PROGRAMS += nghelp
 endif !NO_HELP
 endif !WINGUI
+endif !SHARED_MODULE
 endif !TCL_MODULE
 
 EXTRA_DIST = ngspice.txt setplot spectrum \
 	     devload devaxis ciderinit winmain.c winmain.h unsupported \
-	     tclspice.c tclspice.map pkgIndex.tcl.in spinit.in tclspinit.in main.c
+	     tclspice.c tclspice.map pkgIndex.tcl.in spinit.in tclspinit.in \
+	     main.c sharedspice.c
 
 
 initdatadir = $(pkgdatadir)/scripts
@@ -213,6 +216,7 @@ ngnutmeg_LDADD += \
 
 ## These programs are not required on Windows
 if !WINGUI
+if !SHWIN
 
 if !NO_X
 ngnutmeg_LDADD += \
@@ -277,6 +281,7 @@ ngmakeidx_SOURCES = makeidx.c
 ngspice.idx: ngmakeidx$(EXEEXT) $(srcdir)/ngspice.txt
 	./ngmakeidx$(EXEEXT) -o ngspice.idx $(srcdir)/ngspice.txt
 
+endif !SHWIN
 endif !WINGUI
 
 
@@ -435,7 +440,116 @@ pkgIndex.tcl : Makefile
 
 pkgIndex.tcl: $(srcdir)/pkgIndex.tcl.in
 
-
 endif TCL_MODULE
 
 EXTRA_DIST += spice.def
+
+
+
+## ngspice as shared module:
+
+if SHARED_MODULE
+lib_LTLIBRARIES = libngspice.la
+
+if SHWIN
+LIBS += -lpsapi
+endif
+
+libngspice_la_SOURCES = \
+	main.c \
+	conf.c \
+	conf.h \
+	ngspice.c \
+	sharedspice.c
+
+libngspice_la_CPPFLAGS = $(AM_CPPFLAGS)  -DSIMULATOR \
+	-DSHAREDSPICE_version="\"$(SHAREDSPICE_VERSION)\""
+
+libngspice_la_LIBADD = \
+	@X_LIBS@ \
+	frontend/libfte.la
+
+libngspice_la_LIBADD += \
+	frontend/plotting/libplotting.la
+
+if XSPICE_WANTED
+libngspice_la_LIBADD += \
+	xspice/cm/libcmxsp.la \
+	xspice/mif/libmifxsp.la
+endif
+
+libngspice_la_LIBADD += \
+	$(DYNAMIC_DEVICELIBS)
+
+if NDEV_WANTED
+libngspice_la_LIBADD += \
+	spicelib/devices/ndev/libndev.la
+endif
+
+if NUMDEV_WANTED
+libngspice_la_LIBADD += \
+	spicelib/devices/nbjt/libnbjt.la   \
+	spicelib/devices/nbjt2/libnbjt2.la \
+	spicelib/devices/numd/libnumd.la   \
+	spicelib/devices/numd2/libnumd2.la \
+	spicelib/devices/numos/libnumos.la
+endif
+
+libngspice_la_LIBADD += \
+	spicelib/analysis/libckt.la \
+	spicelib/devices/libdev.la
+
+if XSPICE_WANTED
+libngspice_la_LIBADD += \
+	xspice/evt/libevtxsp.la \
+	xspice/enh/libenhxsp.la \
+	xspice/ipc/libipcxsp.la \
+	xspice/idn/libidnxsp.la \
+	@XSPICEDLLIBS@
+endif
+
+libngspice_la_LIBADD += \
+	frontend/parser/libparser.la \
+	frontend/numparam/libnumparam.la \
+	frontend/trannoise/libtrannoise.la \
+	spicelib/parser/libinp.la
+
+if CIDER_WANTED
+libngspice_la_LIBADD += \
+	ciderlib/twod/libcidertwod.la     \
+	ciderlib/oned/libcideroned.la     \
+	ciderlib/input/libciderinput.la   \
+	ciderlib/support/libcidersuprt.la
+endif
+
+libngspice_la_LIBADD += \
+	maths/deriv/libderiv.la \
+	maths/cmaths/libcmaths.la \
+	maths/misc/libmathmisc.la \
+	maths/fft/libmathfft.la \
+	maths/poly/libpoly.la \
+	maths/ni/libni.la \
+	maths/sparse/libsparse.la \
+	misc/libmisc.la \
+	$(LIBS) \
+	$(OPENMP_CFLAGS)
+
+libngspice_la_CFLAGS = -shared
+
+libngspice_la_LDFLAGS =  -shared
+
+if SHWIN
+libngspice_la_LDFLAGS += -Wl,--output-def=ngspice.def  -Wl,--out-implib=ngspice.dll.a
+libngspice_la_LDFLAGS += -no-undefined
+EXTRA_DIST += ngspice.def
+endif
+
+if SHCYG
+libngspice_la_LDFLAGS += -Wl,--output-def=ngspice.def  -Wl,--out-implib=ngspice.dll.a
+libngspice_la_LDFLAGS += -no-undefined
+EXTRA_DIST += ngspice.def
+endif
+
+SHAREDSPICE_VERSION = @VERSION@
+
+endif SHARED_MODULE

@@ -103,6 +103,7 @@ include_HEADERS = \
 	sen2defs.h	\
 	sensdefs.h	\
 	sensgen.h	\
+	sharedspice.h	\
 	sim.h		\
 	smpdefs.h	\
 	sperror.h	\
