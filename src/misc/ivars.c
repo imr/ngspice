@@ -79,7 +79,7 @@ ivars(char *argv0)
     mkvar(&Spice_Path, Spice_Exec_Dir, "ngspice", "SPICE_PATH");
     /* may be used to store input files (*.lib, *.include, ...) */
     /* get directory where ngspice resides */
-#if defined (HAS_WINDOWS) || defined (__MINGW32__) || defined (_MSC_VER)
+#if defined (HAS_WINGUI) || defined (__MINGW32__) || defined (_MSC_VER)
     {
         char *ngpath = ngdirname(argv0);
         /* set path either to <ngspice-bin-directory>/input or,

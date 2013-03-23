@@ -897,7 +897,7 @@ inp_pathopen(char *name, char *mode)
     char buf[BSIZE_SP];
     struct variable *v;
 
-#if defined(HAS_WINDOWS)
+#if defined(HAS_WINGUI)
     char buf2[BSIZE_SP];
     /* search in the path where the source (input) file has been found,
        but only if "name" is just a file name */

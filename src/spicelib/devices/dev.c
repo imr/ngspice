@@ -40,13 +40,13 @@
 #ifdef XSPICE
 /*saj headers for xspice*/
 #include <string.h> /* for strcpy, strcat*/
-#if (!defined HAS_WINDOWS) && (!defined __MINGW32__) && (!defined _MSC_VER)
+#if (!defined HAS_WINGUI) && (!defined __MINGW32__) && (!defined _MSC_VER)
 #include <dlfcn.h> /* to load libraries*/
 typedef void *  funptr_t;
-#else /* ifdef HAS_WINDOWS */
+#else /* ifdef HAS_WINGUI */
 #undef BOOLEAN
 #include <windows.h>
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 #include "ngspice/wstdio.h"
 #endif
 typedef FARPROC funptr_t;
@@ -58,7 +58,7 @@ char *dlerror (void);
 #define RTLD_NOW	2	/* immediate function call binding */
 #define RTLD_GLOBAL	4	/* symbols in this dlopen'ed obj are visible to other dlopen'ed objs */
 static char errstr[128];
-#endif /* ifndef HAS_WINDOWS */
+#endif /* ifndef HAS_WINGUI */
 #include "ngspice/dllitf.h" /* the coreInfo Structure*/
 #include "ngspice/evtudn.h" /*Use defined nodes */
 
@@ -486,7 +486,7 @@ int load_opus(char *name){
   return 0;
 }
 
-#if defined(__MINGW32__) || defined(HAS_WINDOWS) || defined(_MSC_VER)
+#if defined(__MINGW32__) || defined(HAS_WINGUI) || defined(_MSC_VER)
 
 void *dlopen(const char *name,int type)
 {

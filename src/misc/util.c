@@ -188,7 +188,7 @@ basename(const char *name)
 */
 
 
-#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
+#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__)
 
 char *
 ngdirname(const char *name)

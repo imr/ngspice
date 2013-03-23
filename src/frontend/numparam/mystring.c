@@ -13,7 +13,7 @@
 #include <stdarg.h>
 
 #include "ngspice/config.h"
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 #include "ngspice/wstdio.h"
 #endif
 

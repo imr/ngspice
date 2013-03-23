@@ -24,7 +24,7 @@ Modified: 1999 Paolo Nenzi
 
 #include "ngspice/devdefs.h"
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 void SetAnalyse( char * Analyse, int Percent);
 static double actval, actdiff; 
 #endif
@@ -167,7 +167,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
 found:;
     }
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
     actval = job->TRCVvStart[job->TRCVnestLevel];
     actdiff = job->TRCVvStart[job->TRCVnestLevel] - job->TRCVvStop[job->TRCVnestLevel];
 #endif
@@ -519,7 +519,7 @@ nextstep:;
             job->TRCVnestState = i;
             return(E_PAUSE);
         }
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
         if (i == job->TRCVnestLevel) {
             actval += job->TRCVvStep[job->TRCVnestLevel];
             SetAnalyse( "dc", abs((int)(actval * 1000. / actdiff)));

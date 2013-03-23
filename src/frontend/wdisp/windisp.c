@@ -7,7 +7,7 @@
 
 #include "ngspice/ngspice.h"
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 
 #include "ngspice/graph.h"
 #include "ngspice/ftedev.h"
@@ -942,4 +942,4 @@ static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy)
 }
 
 
-#endif /* HAS_WINDOWS */
+#endif /* HAS_WINGUI */

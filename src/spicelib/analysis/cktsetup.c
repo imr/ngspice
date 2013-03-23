@@ -26,7 +26,7 @@ int nthreads;
             return(E_NOMEM);\
 }
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 extern void SetAnalyse( char * Analyse, int Percent);
 #endif
 
@@ -72,7 +72,7 @@ CKTsetup(CKTcircuit *ckt)
 #endif
 
     for (i=0;i<DEVmaxnum;i++) {
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
         SetAnalyse( "Device Setup", 0 );
 #endif
         if ( DEVices[i] && DEVices[i]->DEVsetup && ckt->CKThead[i] ) {

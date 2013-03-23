@@ -264,7 +264,7 @@ com_spec(wordlist *wl)
                 fdvec[i][j].cx_imag += value*sina;
             }
         }
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
         SetAnalyse("spec", (int)(j * 1000./ fpts));
 #endif
     }

@@ -33,7 +33,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #endif
 
 /* We might compile for Windows, but only as a console application (e.g. tcl) */
-#if defined(HAS_WINDOWS) || defined(__MINGW32__) || defined(_MSC_VER)
+#if defined(HAS_WINGUI) || defined(__MINGW32__) || defined(_MSC_VER)
 #define HAVE_WIN32
 #endif
 
@@ -176,7 +176,7 @@ ft_ckspace(void)
         return;
 
     old_usage = usage;
-#endif /* not HAS_WINDOWS */
+#endif /* not HAS_WINGUI */
 
     if ((double)usage > (double)limit * 0.9) {
         fprintf(cp_err, "Warning - approaching max data size: ");
@@ -362,7 +362,7 @@ printres(char *name)
            fprintmem(cp_out, all_memory.dt * 1024);
            fprintf(cp_out, ".\n"); */
 #endif  /* HAVE__PROC_MEMINFO */
-#else   /* HAS_WINDOWS or HAVE__PROC_MEMINFO */
+#else   /* HAS_WINGUI or HAVE__PROC_MEMINFO */
         fprintf(cp_out, "Current dynamic memory usage = ");
         fprintmem(cp_out, usage);
         fprintf(cp_out, ",\n");
@@ -495,7 +495,7 @@ fprintmem(FILE *stream, unsigned long long memory) {
 static int get_procm(struct proc_mem *memall) {
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
-#if (_WIN32_WINNT >= 0x0500) && defined(HAS_WINDOWS)
+#if (_WIN32_WINNT >= 0x0500) && defined(HAS_WINGUI)
 /* Use Windows API function to obtain size of memory - more accurate */
     HANDLE hProcess;
     PROCESS_MEMORY_COUNTERS pmc;
@@ -525,7 +525,7 @@ static int get_procm(struct proc_mem *memall) {
         memall->size = 0;       /* sure, it is more */
     memall->resident = 0;
     memall->trs = 0;
-#endif /* _WIN32_WINNT 0x0500 && HAS_WINDOWS */
+#endif /* _WIN32_WINNT 0x0500 && HAS_WINGUI */
 #else
 /* Use Linux/UNIX /proc/<pid>/statm file information */
     FILE *fp;

@@ -18,7 +18,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "signal_handler.h"
 #include "plotting/graf.h"
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 void winmessage(char* new_msg);
 #endif
 
@@ -144,7 +144,7 @@ RETSIGTYPE
 sigsegv(void)
 {
     fprintf(cp_err, "\ninternal error -- segmentation violation\n");
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
     winmessage("Fatal error in NGSPICE");
 #endif
     fatal();

@@ -6,7 +6,7 @@
 
 #include "ngspice/ngspice.h"
 
-#ifdef HAS_WINDOWS
+#ifdef HAS_WINGUI
 
 #include "ngspice/graph.h"
 #include "ngspice/ftedev.h"
@@ -473,5 +473,5 @@ int WPRINT_DiagramReady(void)
 	return 0;
 }
 
-#endif /* HAS_WINDOWS */
+#endif /* HAS_WINGUI */
 
