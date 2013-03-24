@@ -27,6 +27,31 @@ CKTop (CKTcircuit * ckt, long int firstmode, long int continuemode,
 #endif
     ckt->CKTmode = firstmode;
 
+#ifdef KLU
+    if (ckt->CKTmatrix->CKTkluMODE) {
+
+        int n  = ckt->CKTmatrix->CKTkluN ;
+        int nz = ckt->CKTmatrix->CKTklunz ;
+
+        ckt->CKTmatrix->CKTkluAp           = TMALLOC (int, n + 1) ;
+        ckt->CKTmatrix->CKTkluAi           = TMALLOC (int, nz) ;
+        ckt->CKTmatrix->CKTkluAx           = TMALLOC (double, nz) ;
+        ckt->CKTmatrix->CKTkluIntermediate = TMALLOC (double, n ) ;
+
+        ckt->CKTmatrix->CKTkluBind_Sparse  = TMALLOC (double *, nz) ;
+        ckt->CKTmatrix->CKTkluBind_KLU     = TMALLOC (double *, nz) ;
+
+        ckt->CKTmatrix->CKTkluDiag         = TMALLOC (double *, n) ;
+
+        SMPmatrix_CSC (ckt->CKTmatrix) ;
+
+        DEVices[13]->DEVbindklu (ckt->CKThead[13], ckt);
+        DEVices[17]->DEVbindklu (ckt->CKThead[17], ckt);
+        DEVices[40]->DEVbindklu (ckt->CKThead[40], ckt);
+        DEVices[48]->DEVbindklu (ckt->CKThead[48], ckt);
+    }
+#endif
+
     if (!ckt->CKTnoOpIter) {
 #ifdef XSPICE
         /* gtri - begin - wbk - add convergence problem reporting flags */

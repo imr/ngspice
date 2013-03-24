@@ -77,6 +77,25 @@ static void ExpandTranslationArrays( MatrixPtr, int );
 
 
 
+int WriteCol_original(MatrixPtr Matrix, int Col, spREAL *CSC_Element, int *CSC_Row, spREAL **bind_Sparse, spREAL **bind_KLU, spREAL **diag) {
+
+	int i=0;
+	ElementPtr current=Matrix->FirstInCol[Col];
+	while (current!=NULL) {
+//		spREAL element=current->Real;
+		bind_Sparse [i] = (double *)current ;
+//		CSC_Element[i]=element;
+		bind_KLU [i] = &(CSC_Element [i]) ;
+		CSC_Row[i]=(current->Row) - 1;
+		if (CSC_Row [i] == Col - 1) diag [0] = &(CSC_Element [i]) ;
+		i++;
+		current=current->NextInCol;
+	}
+
+	return i;
+}
+
+
 
 
 /*
