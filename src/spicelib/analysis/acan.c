@@ -242,6 +242,29 @@ ACan(CKTcircuit *ckt, int restart)
 
     ckt->CKTcurrentAnalysis = DOING_AC;
 
+#ifdef KLU
+   if (ckt->CKTmatrix->CKTkluMODE) {
+        int i, m;
+        double *temp;
+        temp = TMALLOC (double, 2 * ckt->CKTmatrix->CKTklunz) ;
+        ckt->CKTmatrix->CKTkluBind_KLU_Complex = TMALLOC (double *, ckt->CKTmatrix->CKTklunz) ;
+        ckt->CKTmatrix->CKTkluIntermediate_Complex = TMALLOC (double, 2 * ckt->CKTmatrix->CKTkluN) ;
+        m = 0;
+        for (i = 0 ; i < ckt->CKTmatrix->CKTklunz ; i++) {
+            ckt->CKTmatrix->CKTkluBind_KLU_Complex [i] = &(temp [m]) ;
+            m += 2;
+        }
+
+	DEVices[13]->DEVbindkluComplex (ckt->CKThead[13], ckt) ;
+	DEVices[17]->DEVbindkluComplex (ckt->CKThead[17], ckt) ;
+	DEVices[40]->DEVbindkluComplex (ckt->CKThead[40], ckt) ;
+	DEVices[48]->DEVbindkluComplex (ckt->CKThead[48], ckt) ;
+
+        free (ckt->CKTmatrix->CKTkluAx) ;
+        ckt->CKTmatrix->CKTkluAx = temp ;
+    }
+#endif
+
     /* main loop through all scheduled frequencies */
     while (freq <= job->ACstopFreq + freqTol) {
         if(SPfrontEnd->IFpauseTest()) {

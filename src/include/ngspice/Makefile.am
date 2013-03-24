@@ -64,6 +64,11 @@ include_HEADERS = \
 	ipcproto.h	\
 	ipctiein.h	\
 	jobdefs.h	\
+	amd.h		\
+	btf.h		\
+	colamd.h	\
+	klu.h		\
+	UFconfig.h	\
 	lsort.h		\
 	macros.h	\
 	material.h	\

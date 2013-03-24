@@ -18,6 +18,9 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/cktdefs.h"
 #include "ngspice/spmatrix.h"
 
+#ifdef KLU
+#include "ngspice/klu.h"
+#endif
 
 
 /* ARGSUSED */
@@ -32,22 +35,36 @@ CKTacct(CKTcircuit *ckt, JOB *anal, int which, IFvalue *val)
         val->iValue = ckt->CKTmaxEqNum;
         break;
     case OPT_ORIGNZ:
-	if ( ckt->CKTmatrix != NULL ) {
-	    val->iValue = spOriginalCount(ckt->CKTmatrix);
+	if ( ckt->CKTmatrix->SPmatrix != NULL ) {
+	    val->iValue = spOriginalCount(ckt->CKTmatrix->SPmatrix);
 	} else {
 	    val->iValue = 0;
 	}
         break;
     case OPT_FILLNZ:
-	if ( ckt->CKTmatrix != NULL ) {
-	    val->iValue = spFillinCount(ckt->CKTmatrix);
+	if ( ckt->CKTmatrix->SPmatrix != NULL ) {
+#ifdef KLU
+	    if (ckt->CKTmatrix->CKTkluMODE)
+		val->iValue = ckt->CKTmatrix->CKTkluNumeric->lnz + ckt->CKTmatrix->CKTkluNumeric->unz - ckt->CKTmatrix->CKTklunz;
+	    else
+		val->iValue = spFillinCount(ckt->CKTmatrix->SPmatrix);
+#else
+	    val->iValue = spFillinCount(ckt->CKTmatrix->SPmatrix);
+#endif
 	} else {
 	    val->iValue = 0;
 	}
         break;
     case OPT_TOTALNZ:
-	if ( ckt->CKTmatrix != NULL ) {
-	    val->iValue = spElementCount(ckt->CKTmatrix);
+	if ( ckt->CKTmatrix->SPmatrix != NULL ) {
+#ifdef KLU
+	    if (ckt->CKTmatrix->CKTkluMODE)
+		val->iValue = ckt->CKTmatrix->CKTkluNumeric->lnz + ckt->CKTmatrix->CKTkluNumeric->unz;
+	    else
+		val->iValue = spElementCount(ckt->CKTmatrix->SPmatrix);
+#else
+	    val->iValue = spElementCount(ckt->CKTmatrix->SPmatrix);
+#endif
 	} else {
 	    val->iValue = 0;
 	}
