@@ -1,6 +1,10 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
+/* for thread handling */
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#include <windows.h>
+#endif
 
 /*
  * Memory alloction functions
@@ -9,8 +13,29 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 /* We need this because some tests in cmaths and some executables other
    than ngspice and ngnutmeg under LINUX don't know about controlled_exit */
-#ifdef HAS_WINGUI
+#if defined(HAS_WINGUI) || defined(SHARED_MODULE)
 extern void controlled_exit(int status);
+#endif
+
+#ifdef SHARED_MODULE
+#ifndef HAVE_LIBPTHREAD
+#ifdef SRW
+#define mutex_lock(a) AcquireSRWLockExclusive(a)
+#define mutex_unlock(a) ReleaseSRWLockExclusive(a)
+typedef SRWLOCK mutexType;
+#else
+#define mutex_lock(a) EnterCriticalSection(a)
+#define mutex_unlock(a) LeaveCriticalSection(a)
+typedef CRITICAL_SECTION mutexType;
+#endif
+extern mutexType allocMutex;
+#else
+#include <pthread.h>
+#define mutex_lock(a) pthread_mutex_lock(a)
+#define mutex_unlock(a) pthread_mutex_unlock(a)
+typedef pthread_mutex_t mutexType;
+extern mutexType allocMutex;
+#endif
 #endif
 
 #ifndef HAVE_LIBGC
@@ -40,15 +65,19 @@ tmalloc(size_t num)
 /*saj*/
 #ifdef TCL_MODULE
   Tcl_MutexLock(alloc);
+#elif defined SHARED_MODULE
+  mutex_lock(&allocMutex);
 #endif
     s = calloc(num,1);
 /*saj*/
 #ifdef TCL_MODULE
   Tcl_MutexUnlock(alloc);
+#elif defined SHARED_MODULE
+  mutex_unlock(&allocMutex);
 #endif
     if (!s){
       fprintf(stderr,"malloc: Internal Error: can't allocate %ld bytes. \n",(long)num);
-#ifdef HAS_WINGUI
+#if defined(HAS_WINGUI) || defined(SHARED_MODULE)
       controlled_exit(EXIT_FAILURE);
 #else
       exit(EXIT_FAILURE);
@@ -79,16 +108,20 @@ trealloc(void *ptr, size_t num)
 /*saj*/
 #ifdef TCL_MODULE
     Tcl_MutexLock(alloc);
+#elif defined SHARED_MODULE
+  mutex_lock(&allocMutex);
 #endif
     s = realloc(ptr, num);
 /*saj*/
 #ifdef TCL_MODULE
   Tcl_MutexUnlock(alloc);
+#elif defined SHARED_MODULE
+  mutex_unlock(&allocMutex);
 #endif
   }
   if (!s) {
     fprintf(stderr,"realloc: Internal Error: can't allocate %ld bytes.\n", (long)num);
-#ifdef HAS_WINGUI
+#if defined(HAS_WINGUI) || defined(SHARED_MODULE)
       controlled_exit(EXIT_FAILURE);
 #else
       exit(EXIT_FAILURE);
@@ -96,7 +129,6 @@ trealloc(void *ptr, size_t num)
   }
   return(s);
 }
-
 
 void
 txfree(void *ptr)
@@ -107,11 +139,16 @@ txfree(void *ptr)
   alloc = Tcl_GetAllocMutex();
   Tcl_MutexLock(alloc);
 #endif
+#ifdef SHARED_MODULE
+  mutex_lock(&allocMutex);
+#endif
 	if (ptr)
 		free(ptr);
 /*saj*/
 #ifdef TCL_MODULE
   Tcl_MutexUnlock(alloc);
+#elif defined SHARED_MODULE
+  mutex_unlock(&allocMutex);
 #endif
 }
 
