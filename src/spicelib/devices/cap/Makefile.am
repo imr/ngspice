@@ -29,6 +29,9 @@ libcap_la_SOURCES =	\
 	captemp.c	\
 	captrunc.c
 
+if KLU_WANTED
+libcap_la_SOURCES += capbindklu.c
+endif
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include

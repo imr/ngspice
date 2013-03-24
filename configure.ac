@@ -1071,8 +1071,22 @@ if test "x$enable_pss" = "xyes"; then
     AC_MSG_RESULT([WARNING: PSS analysis enabled])
 fi
 
+# --enable-klu: Use KLU linear systems solver
+AC_ARG_ENABLE(klu,
+    AS_HELP_STRING([--enable-klu],[Use KLU linear systems solver]))
+
+# Add KLU solver to ngspice
+if test "$enable_klu" = "yes"; then
+    AC_DEFINE(KLU,[],[Define if we want KLU linear systems solver])
+    AC_MSG_RESULT(WARNING: KLU solver enabled)
+fi
+AM_CONDITIONAL([KLU_WANTED], [test "$enable_klu" = "yes"])
+
 # Output Files
 # ------------
+
+AM_COND_IF([KLU_WANTED],
+	[AC_CONFIG_FILES([src/maths/KLU/Makefile])])
 
 AC_CONFIG_FILES([Makefile
                  man/Makefile

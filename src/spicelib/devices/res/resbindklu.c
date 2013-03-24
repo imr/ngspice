@@ -23,26 +23,26 @@ RESbindklu(GENmodel *inModel, CKTcircuit *ckt)
 
 		i = 0 ;
 		if ((here->RESposNode != 0) && (here->RESposNode != 0)) {
-			while (here->RESposPosptr != ckt->CKTkluBind_Sparse [i]) i ++ ;
-			here->RESposPosptr = ckt->CKTkluBind_KLU [i] ;
+			while (here->RESposPosptr != ckt->CKTmatrix->CKTkluBind_Sparse [i]) i ++ ;
+			here->RESposPosptr = ckt->CKTmatrix->CKTkluBind_KLU [i] ;
 		}
 
 		i = 0 ;
 		if ((here->RESnegNode != 0) && (here->RESnegNode != 0)) {
-			while (here->RESnegNegptr != ckt->CKTkluBind_Sparse [i]) i ++ ;
-			here->RESnegNegptr = ckt->CKTkluBind_KLU [i] ;
+			while (here->RESnegNegptr != ckt->CKTmatrix->CKTkluBind_Sparse [i]) i ++ ;
+			here->RESnegNegptr = ckt->CKTmatrix->CKTkluBind_KLU [i] ;
 		}
 
 		i = 0 ;
 		if ((here->RESposNode != 0) && (here->RESnegNode != 0)) {
-			while (here->RESposNegptr != ckt->CKTkluBind_Sparse [i]) i ++ ;
-			here->RESposNegptr = ckt->CKTkluBind_KLU [i] ;
+			while (here->RESposNegptr != ckt->CKTmatrix->CKTkluBind_Sparse [i]) i ++ ;
+			here->RESposNegptr = ckt->CKTmatrix->CKTkluBind_KLU [i] ;
 		}
 
 		i = 0 ;
 		if ((here->RESnegNode != 0) && (here->RESposNode != 0)) {
-			while (here->RESnegPosptr != ckt->CKTkluBind_Sparse [i]) i ++ ;
-			here->RESnegPosptr = ckt->CKTkluBind_KLU [i] ;
+			while (here->RESnegPosptr != ckt->CKTmatrix->CKTkluBind_Sparse [i]) i ++ ;
+			here->RESnegPosptr = ckt->CKTmatrix->CKTkluBind_KLU [i] ;
 		}
 	}
     }
@@ -65,26 +65,26 @@ RESbindkluComplex(GENmodel *inModel, CKTcircuit *ckt)
 
 		i = 0 ;
 		if ((here->RESposNode != 0) && (here->RESposNode != 0)) {
-			while (here->RESposPosptr != ckt->CKTkluBind_KLU [i]) i ++ ;
-			here->RESposPosptr = ckt->CKTkluBind_KLU_Complex [i] ;
+			while (here->RESposPosptr != ckt->CKTmatrix->CKTkluBind_KLU [i]) i ++ ;
+			here->RESposPosptr = ckt->CKTmatrix->CKTkluBind_KLU_Complex [i] ;
 		}
 
 		i = 0 ;
 		if ((here->RESnegNode != 0) && (here->RESnegNode != 0)) {
-			while (here->RESnegNegptr != ckt->CKTkluBind_KLU [i]) i ++ ;
-			here->RESnegNegptr = ckt->CKTkluBind_KLU_Complex [i] ;
+			while (here->RESnegNegptr != ckt->CKTmatrix->CKTkluBind_KLU [i]) i ++ ;
+			here->RESnegNegptr = ckt->CKTmatrix->CKTkluBind_KLU_Complex [i] ;
 		}
 
 		i = 0 ;
 		if ((here->RESposNode != 0) && (here->RESnegNode != 0)) {
-			while (here->RESposNegptr != ckt->CKTkluBind_KLU [i]) i ++ ;
-			here->RESposNegptr = ckt->CKTkluBind_KLU_Complex [i] ;
+			while (here->RESposNegptr != ckt->CKTmatrix->CKTkluBind_KLU [i]) i ++ ;
+			here->RESposNegptr = ckt->CKTmatrix->CKTkluBind_KLU_Complex [i] ;
 		}
 
 		i = 0 ;
 		if ((here->RESnegNode != 0) && (here->RESposNode != 0)) {
-			while (here->RESnegPosptr != ckt->CKTkluBind_KLU [i]) i ++ ;
-			here->RESnegPosptr = ckt->CKTkluBind_KLU_Complex [i] ;
+			while (here->RESnegPosptr != ckt->CKTmatrix->CKTkluBind_KLU [i]) i ++ ;
+			here->RESnegPosptr = ckt->CKTmatrix->CKTkluBind_KLU_Complex [i] ;
 		}
 	}
     }

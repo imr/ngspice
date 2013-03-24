@@ -20,3 +20,8 @@ extern void RESsPrint(GENmodel*,CKTcircuit*);
 extern int RESsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int REStemp(GENmodel*,CKTcircuit*);
 extern int RESnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+
+#ifdef KLU
+extern int RESbindklu(GENmodel*,CKTcircuit*);
+extern int RESbindkluComplex(GENmodel*,CKTcircuit*);
+#endif

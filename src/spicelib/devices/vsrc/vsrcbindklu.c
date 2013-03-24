@@ -23,26 +23,26 @@ VSRCbindklu(GENmodel *inModel, CKTcircuit *ckt)
 
 		i = 0 ;
 		if ((here->VSRCposNode != 0) && (here->VSRCbranch != 0)) {
-			while (here->VSRCposIbrptr != ckt->CKTkluBind_Sparse [i]) i ++ ;
-			here->VSRCposIbrptr = ckt->CKTkluBind_KLU [i] ;
+			while (here->VSRCposIbrptr != ckt->CKTmatrix->CKTkluBind_Sparse [i]) i ++ ;
+			here->VSRCposIbrptr = ckt->CKTmatrix->CKTkluBind_KLU [i] ;
 		}
 
 		i = 0 ;
 		if ((here->VSRCnegNode != 0) && (here->VSRCbranch != 0)) {
-			while (here->VSRCnegIbrptr != ckt->CKTkluBind_Sparse [i]) i ++ ;
-			here->VSRCnegIbrptr = ckt->CKTkluBind_KLU [i] ;
+			while (here->VSRCnegIbrptr != ckt->CKTmatrix->CKTkluBind_Sparse [i]) i ++ ;
+			here->VSRCnegIbrptr = ckt->CKTmatrix->CKTkluBind_KLU [i] ;
 		}
 
 		i = 0 ;
 		if ((here->VSRCbranch != 0) && (here->VSRCnegNode != 0)) {
-			while (here->VSRCibrNegptr != ckt->CKTkluBind_Sparse [i]) i ++ ;
-			here->VSRCibrNegptr = ckt->CKTkluBind_KLU [i] ;
+			while (here->VSRCibrNegptr != ckt->CKTmatrix->CKTkluBind_Sparse [i]) i ++ ;
+			here->VSRCibrNegptr = ckt->CKTmatrix->CKTkluBind_KLU [i] ;
 		}
 
 		i = 0 ;
 		if ((here->VSRCbranch != 0) && (here->VSRCposNode != 0)) {
-			while (here->VSRCibrPosptr != ckt->CKTkluBind_Sparse [i]) i ++ ;
-			here->VSRCibrPosptr = ckt->CKTkluBind_KLU [i] ;
+			while (here->VSRCibrPosptr != ckt->CKTmatrix->CKTkluBind_Sparse [i]) i ++ ;
+			here->VSRCibrPosptr = ckt->CKTmatrix->CKTkluBind_KLU [i] ;
 		}
 	}
     }
@@ -65,26 +65,26 @@ VSRCbindkluComplex(GENmodel *inModel, CKTcircuit *ckt)
 
 		i = 0 ;
 		if ((here->VSRCposNode != 0) && (here->VSRCbranch != 0)) {
-			while (here->VSRCposIbrptr != ckt->CKTkluBind_KLU [i]) i ++ ;
-			here->VSRCposIbrptr = ckt->CKTkluBind_KLU_Complex [i] ;
+			while (here->VSRCposIbrptr != ckt->CKTmatrix->CKTkluBind_KLU [i]) i ++ ;
+			here->VSRCposIbrptr = ckt->CKTmatrix->CKTkluBind_KLU_Complex [i] ;
 		}
 
 		i = 0 ;
 		if ((here->VSRCnegNode != 0) && (here->VSRCbranch != 0)) {
-			while (here->VSRCnegIbrptr != ckt->CKTkluBind_KLU [i]) i ++ ;
-			here->VSRCnegIbrptr = ckt->CKTkluBind_KLU_Complex [i] ;
+			while (here->VSRCnegIbrptr != ckt->CKTmatrix->CKTkluBind_KLU [i]) i ++ ;
+			here->VSRCnegIbrptr = ckt->CKTmatrix->CKTkluBind_KLU_Complex [i] ;
 		}
 
 		i = 0 ;
 		if ((here->VSRCbranch != 0) && (here->VSRCnegNode != 0)) {
-			while (here->VSRCibrNegptr != ckt->CKTkluBind_KLU [i]) i ++ ;
-			here->VSRCibrNegptr = ckt->CKTkluBind_KLU_Complex [i] ;
+			while (here->VSRCibrNegptr != ckt->CKTmatrix->CKTkluBind_KLU [i]) i ++ ;
+			here->VSRCibrNegptr = ckt->CKTmatrix->CKTkluBind_KLU_Complex [i] ;
 		}
 
 		i = 0 ;
 		if ((here->VSRCbranch != 0) && (here->VSRCposNode != 0)) {
-			while (here->VSRCibrPosptr != ckt->CKTkluBind_KLU [i]) i ++ ;
-			here->VSRCibrPosptr = ckt->CKTkluBind_KLU_Complex [i] ;
+			while (here->VSRCibrPosptr != ckt->CKTmatrix->CKTkluBind_KLU [i]) i ++ ;
+			here->VSRCibrPosptr = ckt->CKTmatrix->CKTkluBind_KLU_Complex [i] ;
 		}
 	}
     }

@@ -77,6 +77,12 @@ CKTsetup(CKTcircuit *ckt)
             if(error) return(error);
         }
     }
+
+#ifdef KLU
+    if (ckt->CKTmatrix->CKTkluMODE)
+        SMPnnz (ckt->CKTmatrix) ;
+#endif
+
     for(i=0;i<=MAX(2,ckt->CKTmaxOrder)+1;i++) { /* dctran needs 3 states as minimum */
         CKALLOC(ckt->CKTstates[i],ckt->CKTnumStates,double);
     }
@@ -161,7 +167,7 @@ CKTunsetup(CKTcircuit *ckt)
 
     NIdestroy(ckt);
     /*
-    if (ckt->CKTmatrix)
+    if (ckt->CKTmatrix->SPmatrix)
         SMPdestroy(ckt->CKTmatrix);
     ckt->CKTmatrix = NULL;
     */

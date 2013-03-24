@@ -84,7 +84,9 @@ libKLU_complex_la_SOURCES = 	\
 libKLU_complex_la_CPPFLAGS = -I$(top_srcdir)/src/include -DCOMPLEX
 
 
-libKLU_la_SOURCES =
+libKLU_la_SOURCES =		\
+	klusmp.c
+
 libKLU_la_LIBADD =		\
 	libKLU_real.la		\
 	libKLU_complex.la
