@@ -18,3 +18,8 @@ extern int VSRCsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VSRCunsetup(GENmodel*,CKTcircuit*);
 extern int VSRCpzSetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VSRCtemp(GENmodel*,CKTcircuit*);
+
+#ifdef KLU
+extern int VSRCbindklu(GENmodel*,CKTcircuit*);
+extern int VSRCbindkluComplex(GENmodel*,CKTcircuit*);
+#endif

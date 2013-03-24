@@ -28,6 +28,9 @@ libbsim4v6_la_SOURCES =	\
 	bsim4v6init.h	\
 	bsim4v6itf.h
 
+if KLU_WANTED
+libbsim4v6_la_SOURCES += b4v6bindklu.c
+endif
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
