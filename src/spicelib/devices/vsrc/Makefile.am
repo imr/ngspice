@@ -23,6 +23,9 @@ libvsrc_la_SOURCES =	\
 	vsrcset.c	\
 	vsrctemp.c
 
+if KLU_WANTED
+libvsrc_la_SOURCES += vsrcbindklu.c
+endif
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include

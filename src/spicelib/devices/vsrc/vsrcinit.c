@@ -72,7 +72,12 @@ SPICEdev VSRCinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &VSRCiSize,
- /* DEVmodSize    */ &VSRCmSize
+ /* DEVmodSize    */ &VSRCmSize,
+#ifdef KLU
+ /* DEVbindklu        */ VSRCbindklu,
+ /* DEVbindkluComplex */ VSRCbindkluComplex,
+#endif
+
 };
 
 
