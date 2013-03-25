@@ -16,6 +16,8 @@
 #define STDERR_FILENO   2
 #endif
 
+//#define low_latency
+
 /**********************************************************************/
 /*              Header files for C functions                          */
 /**********************************************************************/
@@ -203,7 +205,7 @@ void wl_delete_first(wordlist **wlstart, wordlist **wlend);
 
 #if !defined(low_latency)
 static char* outstorage(char*, bool);
-static void* printsend(void);
+static void printsend(void);
 #endif
 
 #include "ngspice/sharedspice.h"
@@ -335,7 +337,7 @@ _thread_stop(void)
             ft_intrpt = TRUE;
             timeout++;
 #if defined(__MINGW32__) || defined(_MSC_VER)
-            Sleep(50); // va: windows native
+            Sleep(100); // va: windows native
 #else
             usleep(10000);
 #endif
@@ -960,7 +962,8 @@ static char* outstringerr = NULL;
 static char* outstringout = NULL;
 
 #ifdef low_latency
-
+/* using the strings by the caller sent directly to the caller 
+   has to fast enough (low latency) */
 int
 sh_fputsll(const char *input, FILE* outf)
 {
@@ -990,10 +993,7 @@ sh_fputsll(const char *input, FILE* outf)
                 strcat(prstring, "stderr ");
                 strcat(prstring, newstring);
 
-                printtid = (HANDLE)_beginthreadex(NULL, 0, (unsigned int (__stdcall *)(void *))printing, 
-                    (void*)prstring, 0, NULL);
-
-//                result = pfcn(prstring, userptr);
+                result = pfcn(prstring, userptr);
                 tfree(newstring);
                 tfree(prstring);
             }
@@ -1051,7 +1051,7 @@ sh_fputsll(const char *input, FILE* outf)
     return 0;
 }
 
-/* allow a lock around printing function */
+/* provide a lock around printing function */
 int
 sh_fputs(const char *input, FILE* outf)
 {
@@ -1070,7 +1070,7 @@ sh_fputs(const char *input, FILE* outf)
    again fcn outstoraghe(), top entry is deleted and string is 
    sent to caller in an endless loop by fcn printsend() */
 static wordlist *wlstart = NULL, *wlend = NULL;
-
+static bool printstopp = FALSE;
 
 
 int
@@ -1167,18 +1167,25 @@ sh_fputs(const char *input, FILE* outf)
     return 0;
 }
 
-/* Endless lop in its own thread for reading data from FIFO and sending to caller */
-static void *
+static char *outsend = NULL;
+
+/* Endless loop in its own thread for reading data from FIFO and sending to caller */
+static void
 printsend(void)
 {
-    char *outsend = NULL;
-
     for (;;) {
 #if defined(__MINGW32__) || defined(_MSC_VER)
-        Sleep(100);
+        Sleep(50);  // loop delay
 #else
-        usleep(100000);
+        usleep(50000);
 #endif
+        if (printstopp) {// issued by shared_exit()
+            // catch the final error message
+            mutex_lock(&fputsMutex);
+            outsend = outstorage(NULL, FALSE);
+            mutex_unlock(&fputsMutex);
+            break;
+        }
         mutex_lock(&fputsMutex);
         outsend = outstorage(NULL, FALSE);
         mutex_unlock(&fputsMutex);
@@ -1326,7 +1333,26 @@ void shared_exit(int status)
         coquit = FALSE;
         fprintf(stderr, "Error: ngspice.dll cannot recover and awaits to be detached\n");
     }
+#ifndef low_latency
+    // set flag to stop the printsend thread
+    printstopp = TRUE; 
+    // leave this thread for 100ms to stop the printsend thread
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    Sleep(100);
+#else
+    usleep(100000);
+#endif
+    // send the final error message already caught in printsend()
+    if (outsend) {
+        /* requires outsend to be copied by the caller, 
+        because it is freed immediately */
+        pfcn(outsend, userptr);
+        tfree(outsend);
+    }
+#endif
+    // set a flag in caller to detach ngspice.dll
     ngexit(status, immediate, coquit, userptr);
+    // jump back to finish the calling function
     if (!intermj)
         longjmp(errbufm,1); /* jump back to ngSpice_Circ() */
     else
