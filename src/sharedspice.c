@@ -239,6 +239,8 @@ mutexType fputsMutex;
 static bool is_initialized = FALSE;
 static char* no_init = "Error: ngspice is not initialized!\n   Run ngSpice_Init first";
 
+static bool printstopp = FALSE;
+
 static struct plot *
 get_plot_byname(char* plotname)
 {
@@ -360,10 +362,22 @@ runc(char* command)
     bool fl_bg = FALSE;
     command_id = threadid_self();
     /* run task in background if command is preceeded by "bg_" */
-    if (!cieq("bg_halt", command) && ciprefix("bg_", command)) {
+    if (!cieq("bg_halt", command) && !cieq("bg_pstop", command) && ciprefix("bg_", command)) {
         strncpy(buf, command+3, 1024);
         fl_bg = TRUE;
     }
+#ifndef low_latency
+    /* stop the printf thread 'printsend()' */
+    else if (cieq("bg_pstop", command)) {
+        printstopp = TRUE;
+#if defined __MINGW32__ || defined _MSC_VER
+        Sleep(100); // va: windows native
+#else
+        usleep(10000);
+#endif
+        return 2;
+    }
+#endif
     else
         strncpy(buf, command, 1024);
 #else
@@ -1047,7 +1061,7 @@ sh_fputs(const char *input, FILE* outf)
    again fcn outstoraghe(), top entry is deleted and string is
    sent to caller in an endless loop by fcn printsend() */
 static wordlist *wlstart = NULL, *wlend = NULL;
-static bool printstopp = FALSE;
+//static bool printstopp = FALSE;
 
 
 int
