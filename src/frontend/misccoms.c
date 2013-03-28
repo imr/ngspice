@@ -167,6 +167,17 @@ com_version(wordlist *wl)
         fprintf(cp_out,
                 "******\n"
                 "** %s-%s : %s\n"
+
+#if defined KLU
+                    "** Compiled with KLU Direct Linear Solver\n"
+#elif defined SuperLU
+                    "** Compiled with SuperLU Direct Linear Solver\n"
+#elif defined UMFPACK
+                    "** Compiled with UMFPACK Direct Linear Solver\n"
+#else
+                    "** Compiled with Sparse Direct Linear Solver\n"
+#endif
+
                 "** The U. C. Berkeley CAD Group\n"
                 "** Copyright 1985-1994, Regents of the University of California.\n"
                 "** %s\n",
