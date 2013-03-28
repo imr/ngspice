@@ -5423,6 +5423,11 @@
    Removed the PARALLEL_ARCH macro
    Removed the Combine algorithm from Sparse and Analyses
 
+2012-05-04  Francesco Lannutti
+ * src/frontend/misccoms.c
+  Added an hint about which solver has been compiled,
+   based on #ifdef
+
 2012-04-11  Francesco Lannutti
  * src/spicelib/analysis/cktacct.c
   Corrected a bug that caused segmentation fault
