@@ -195,6 +195,31 @@ typedef struct sMOS6instance {
 #define MOS6dphibs_dw MOS6sens + 68
 #define MOS6dphibd_dw MOS6sens + 69
 
+#ifdef KLU
+    BindElement *MOS6DdStructPtr ;
+    BindElement *MOS6GgStructPtr ;
+    BindElement *MOS6SsStructPtr ;
+    BindElement *MOS6BbStructPtr ;
+    BindElement *MOS6DPdpStructPtr ;
+    BindElement *MOS6SPspStructPtr ;
+    BindElement *MOS6DdpStructPtr ;
+    BindElement *MOS6GbStructPtr ;
+    BindElement *MOS6GdpStructPtr ;
+    BindElement *MOS6GspStructPtr ;
+    BindElement *MOS6SspStructPtr ;
+    BindElement *MOS6BdpStructPtr ;
+    BindElement *MOS6BspStructPtr ;
+    BindElement *MOS6DPspStructPtr ;
+    BindElement *MOS6DPdStructPtr ;
+    BindElement *MOS6BgStructPtr ;
+    BindElement *MOS6DPgStructPtr ;
+    BindElement *MOS6SPgStructPtr ;
+    BindElement *MOS6SPsStructPtr ;
+    BindElement *MOS6DPbStructPtr ;
+    BindElement *MOS6SPbStructPtr ;
+    BindElement *MOS6SPdpStructPtr ;
+#endif
+
 } MOS6instance ;
 
 #define MOS6vbd MOS6states+ 0   /* bulk-drain voltage */
