@@ -1268,7 +1268,6 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(B3SOIDDBspPtr, B3SOIDDbNode, B3SOIDDsNodePrime)
             TSTALLOC(B3SOIDDBbPtr, B3SOIDDbNode, B3SOIDDbNode)
 
-            TSTALLOC(B3SOIDDEbPtr, B3SOIDDeNode, B3SOIDDbNode)
             TSTALLOC(B3SOIDDEePtr, B3SOIDDeNode, B3SOIDDeNode)
 
             TSTALLOC(B3SOIDDGgPtr, B3SOIDDgNode, B3SOIDDgNode)
