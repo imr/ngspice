@@ -24,6 +24,17 @@ libnumos_la_SOURCES =	\
 	nummtrun.c
 
 
+if KLU_WANTED
+libnumos_la_SOURCES += numosbindCSC.c
+endif
+
+if SuperLU_WANTED
+libnumos_la_SOURCES += numosbindCSC.c
+endif
+
+if UMFPACK_WANTED
+libnumos_la_SOURCES += numosbindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

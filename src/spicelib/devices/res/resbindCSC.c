@@ -1,5 +1,5 @@
 /**********
-Author: 2012 Francesco Lannutti
+Author: 2013 Francesco Lannutti
 **********/
 
 #include "ngspice/ngspice.h"
@@ -32,43 +32,44 @@ RESbindCSC (GENmodel *inModel, CKTcircuit *ckt)
     BindStruct = ckt->CKTmatrix->CKTbindStruct ;
     nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
-    /* loop through all the resistor models */
+    /* loop through all the RES models */
     for ( ; model != NULL ; model = model->RESnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->RESinstances ; here != NULL ; here = here->RESnextInstance)
         {
-            if ((here->RESposNode != 0) && (here->RESposNode != 0))
+            if ((here-> RESposNode != 0) && (here-> RESposNode != 0))
             {
                 i = here->RESposPosptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
-                here->RESposPosStructPtr = matched ;
+                here->RESposPosptrStructPtr = matched ;
                 here->RESposPosptr = matched->CSC ;
             }
 
-            if ((here->RESnegNode != 0) && (here->RESnegNode != 0))
+            if ((here-> RESnegNode != 0) && (here-> RESnegNode != 0))
             {
                 i = here->RESnegNegptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
-                here->RESnegNegStructPtr = matched ;
+                here->RESnegNegptrStructPtr = matched ;
                 here->RESnegNegptr = matched->CSC ;
             }
 
-            if ((here->RESposNode != 0) && (here->RESnegNode != 0))
+            if ((here-> RESposNode != 0) && (here-> RESnegNode != 0))
             {
                 i = here->RESposNegptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
-                here->RESposNegStructPtr = matched ;
+                here->RESposNegptrStructPtr = matched ;
                 here->RESposNegptr = matched->CSC ;
             }
 
-            if ((here->RESnegNode != 0) && (here->RESposNode != 0))
+            if ((here-> RESnegNode != 0) && (here-> RESposNode != 0))
             {
                 i = here->RESnegPosptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
-                here->RESnegPosStructPtr = matched ;
+                here->RESnegPosptrStructPtr = matched ;
                 here->RESnegPosptr = matched->CSC ;
             }
+
         }
     }
 
@@ -83,23 +84,24 @@ RESbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
 
     NG_IGNORE (ckt) ;
 
-    /* loop through all the resistor models */
+    /* loop through all the RES models */
     for ( ; model != NULL ; model = model->RESnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->RESinstances ; here != NULL ; here = here->RESnextInstance)
         {
-            if ((here->RESposNode != 0) && (here->RESposNode != 0))
-                here->RESposPosptr = here->RESposPosStructPtr->CSC_Complex ;
+            if ((here-> RESposNode != 0) && (here-> RESposNode != 0))
+                here->RESposPosptr = here->RESposPosptrStructPtr->CSC_Complex ;
 
-            if ((here->RESnegNode != 0) && (here->RESnegNode != 0))
-                here->RESnegNegptr = here->RESnegNegStructPtr->CSC_Complex ;
+            if ((here-> RESnegNode != 0) && (here-> RESnegNode != 0))
+                here->RESnegNegptr = here->RESnegNegptrStructPtr->CSC_Complex ;
 
-            if ((here->RESposNode != 0) && (here->RESnegNode != 0))
-                here->RESposNegptr = here->RESposNegStructPtr->CSC_Complex ;
+            if ((here-> RESposNode != 0) && (here-> RESnegNode != 0))
+                here->RESposNegptr = here->RESposNegptrStructPtr->CSC_Complex ;
 
-            if ((here->RESnegNode != 0) && (here->RESposNode != 0))
-                here->RESnegPosptr = here->RESnegPosStructPtr->CSC_Complex ;
+            if ((here-> RESnegNode != 0) && (here-> RESposNode != 0))
+                here->RESnegPosptr = here->RESnegPosptrStructPtr->CSC_Complex ;
+
         }
     }
 
@@ -114,23 +116,24 @@ RESbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 
     NG_IGNORE (ckt) ;
 
-    /* loop through all the resistor models */
+    /* loop through all the RES models */
     for ( ; model != NULL ; model = model->RESnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->RESinstances ; here != NULL ; here = here->RESnextInstance)
         {
-            if ((here->RESposNode != 0) && (here->RESposNode != 0))
-                here->RESposPosptr = here->RESposPosStructPtr->CSC ;
+            if ((here-> RESposNode != 0) && (here-> RESposNode != 0))
+                here->RESposPosptr = here->RESposPosptrStructPtr->CSC ;
 
-            if ((here->RESnegNode != 0) && (here->RESnegNode != 0))
-                here->RESnegNegptr = here->RESnegNegStructPtr->CSC ;
+            if ((here-> RESnegNode != 0) && (here-> RESnegNode != 0))
+                here->RESnegNegptr = here->RESnegNegptrStructPtr->CSC ;
 
-            if ((here->RESposNode != 0) && (here->RESnegNode != 0))
-                here->RESposNegptr = here->RESposNegStructPtr->CSC ;
+            if ((here-> RESposNode != 0) && (here-> RESnegNode != 0))
+                here->RESposNegptr = here->RESposNegptrStructPtr->CSC ;
 
-            if ((here->RESnegNode != 0) && (here->RESposNode != 0))
-                here->RESnegPosptr = here->RESnegPosStructPtr->CSC ;
+            if ((here-> RESnegNode != 0) && (here-> RESposNode != 0))
+                here->RESnegPosptr = here->RESnegPosptrStructPtr->CSC ;
+
         }
     }
 

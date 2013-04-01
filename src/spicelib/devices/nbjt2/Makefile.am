@@ -24,6 +24,17 @@ libnbjt2_la_SOURCES =	\
 	nbt2trun.c
 
 
+if KLU_WANTED
+libnbjt2_la_SOURCES += nbjt2bindCSC.c
+endif
+
+if SuperLU_WANTED
+libnbjt2_la_SOURCES += nbjt2bindCSC.c
+endif
+
+if UMFPACK_WANTED
+libnbjt2_la_SOURCES += nbjt2bindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

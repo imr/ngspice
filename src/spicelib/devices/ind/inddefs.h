@@ -64,11 +64,11 @@ typedef struct sINDinstance {
             set equal to  0 if not a design parameter*/
 
 #ifdef KLU
-    BindElement *INDposIbrStructPtr ;
-    BindElement *INDnegIbrStructPtr ;
-    BindElement *INDibrPosStructPtr ;
-    BindElement *INDibrNegStructPtr ;
-    BindElement *INDibrIbrStructPtr ;
+    BindElement *INDposIbrptrStructPtr ;
+    BindElement *INDnegIbrptrStructPtr ;
+    BindElement *INDibrNegptrStructPtr ;
+    BindElement *INDibrPosptrStructPtr ;
+    BindElement *INDibrIbrptrStructPtr ;
 #endif
 
 } INDinstance ;

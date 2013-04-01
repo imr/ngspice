@@ -1,5 +1,5 @@
 /**********
-Author: 2012 Francesco Lannutti
+Author: 2013 Francesco Lannutti
 **********/
 
 #include "ngspice/ngspice.h"
@@ -7,88 +7,105 @@ Author: 2012 Francesco Lannutti
 #include "cswdefs.h"
 #include "ngspice/sperror.h"
 
+#include <stdlib.h>
+
+static
 int
-CSWbindCSC(GENmodel *inModel, CKTcircuit *ckt)
+BindCompare (const void *a, const void *b)
 {
-    CSWmodel *model = (CSWmodel *)inModel;
-    int i ;
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
 
-    /*  loop through all the csw models */
-    for( ; model != NULL; model = model->CSWnextModel ) {
-	CSWinstance *here;
-
-        /* loop through all the instances of the model */
-        for (here = model->CSWinstances; here != NULL ;
-	    here = here->CSWnextInstance) {
-
-		i = 0 ;
-		if ((here-> CSWposNode != 0) && (here-> CSWposNode != 0)) {
-			while (here->CSWposPosptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->CSWposPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> CSWposNode != 0) && (here-> CSWnegNode != 0)) {
-			while (here->CSWposNegptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->CSWposNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> CSWnegNode != 0) && (here-> CSWposNode != 0)) {
-			while (here->CSWnegPosptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->CSWnegPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> CSWnegNode != 0) && (here-> CSWnegNode != 0)) {
-			while (here->CSWnegNegptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->CSWnegNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-	}
-    }
-    return(OK);
+    return ((int)(A->Sparse - B->Sparse)) ;
 }
 
 int
-CSWbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
+CSWbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
-    CSWmodel *model = (CSWmodel *)inModel;
-    int i ;
+    CSWmodel *model = (CSWmodel *)inModel ;
+    CSWinstance *here ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-    /*  loop through all the csw models */
-    for( ; model != NULL; model = model->CSWnextModel ) {
-	CSWinstance *here;
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
+    /* loop through all the CSW models */
+    for ( ; model != NULL ; model = model->CSWnextModel)
+    {
         /* loop through all the instances of the model */
-        for (here = model->CSWinstances; here != NULL ;
-	    here = here->CSWnextInstance) {
+        for (here = model->CSWinstances ; here != NULL ; here = here->CSWnextInstance)
+        {
+            if ((here-> CSWposNode != 0) && (here-> CSWposNode != 0))
+            {
+                i = here->CSWposPosptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->CSWposPosptrStructPtr = matched ;
+                here->CSWposPosptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> CSWposNode != 0) && (here-> CSWposNode != 0)) {
-			while (here->CSWposPosptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->CSWposPosptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> CSWposNode != 0) && (here-> CSWnegNode != 0))
+            {
+                i = here->CSWposNegptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->CSWposNegptrStructPtr = matched ;
+                here->CSWposNegptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> CSWposNode != 0) && (here-> CSWnegNode != 0)) {
-			while (here->CSWposNegptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->CSWposNegptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> CSWnegNode != 0) && (here-> CSWposNode != 0))
+            {
+                i = here->CSWnegPosptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->CSWnegPosptrStructPtr = matched ;
+                here->CSWnegPosptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> CSWnegNode != 0) && (here-> CSWposNode != 0)) {
-			while (here->CSWnegPosptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->CSWnegPosptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> CSWnegNode != 0) && (here-> CSWnegNode != 0))
+            {
+                i = here->CSWnegNegptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->CSWnegNegptrStructPtr = matched ;
+                here->CSWnegNegptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> CSWnegNode != 0) && (here-> CSWnegNode != 0)) {
-			while (here->CSWnegNegptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->CSWnegNegptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-	}
+        }
     }
-    return(OK);
+
+    return (OK) ;
+}
+
+int
+CSWbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
+{
+    CSWmodel *model = (CSWmodel *)inModel ;
+    CSWinstance *here ;
+
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the CSW models */
+    for ( ; model != NULL ; model = model->CSWnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->CSWinstances ; here != NULL ; here = here->CSWnextInstance)
+        {
+            if ((here-> CSWposNode != 0) && (here-> CSWposNode != 0))
+                here->CSWposPosptr = here->CSWposPosptrStructPtr->CSC_Complex ;
+
+            if ((here-> CSWposNode != 0) && (here-> CSWnegNode != 0))
+                here->CSWposNegptr = here->CSWposNegptrStructPtr->CSC_Complex ;
+
+            if ((here-> CSWnegNode != 0) && (here-> CSWposNode != 0))
+                here->CSWnegPosptr = here->CSWnegPosptrStructPtr->CSC_Complex ;
+
+            if ((here-> CSWnegNode != 0) && (here-> CSWnegNode != 0))
+                here->CSWnegNegptr = here->CSWnegNegptrStructPtr->CSC_Complex ;
+
+        }
+    }
+
+    return (OK) ;
 }
 
 int
@@ -96,41 +113,27 @@ CSWbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     CSWmodel *model = (CSWmodel *)inModel ;
     CSWinstance *here ;
-    int i ;
 
-    /*  loop through all the csw models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the CSW models */
     for ( ; model != NULL ; model = model->CSWnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->CSWinstances ; here != NULL ; here = here->CSWnextInstance)
         {
-            i = 0 ;
-            if ((here->CSWposNode != 0) && (here->CSWposNode != 0))
-            {
-                while (here->CSWposPosptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->CSWposPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> CSWposNode != 0) && (here-> CSWposNode != 0))
+                here->CSWposPosptr = here->CSWposPosptrStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->CSWposNode != 0) && (here->CSWnegNode != 0))
-            {
-                while (here->CSWposNegptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->CSWposNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> CSWposNode != 0) && (here-> CSWnegNode != 0))
+                here->CSWposNegptr = here->CSWposNegptrStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->CSWnegNode != 0) && (here->CSWposNode != 0))
-            {
-                while (here->CSWnegPosptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->CSWnegPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> CSWnegNode != 0) && (here-> CSWposNode != 0))
+                here->CSWnegPosptr = here->CSWnegPosptrStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->CSWnegNode != 0) && (here->CSWnegNode != 0))
-            {
-                while (here->CSWnegNegptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->CSWnegNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> CSWnegNode != 0) && (here-> CSWnegNode != 0))
+                here->CSWnegNegptr = here->CSWnegNegptrStructPtr->CSC ;
+
         }
     }
 

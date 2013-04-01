@@ -2565,16 +2565,18 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
                 TSTALLOC(B4SOIGgePtr, B4SOIgNode, B4SOIgNodeExt)
                 TSTALLOC(B4SOIGEdpPtr, B4SOIgNodeExt, B4SOIdNodePrime)
                 TSTALLOC(B4SOIGEspPtr, B4SOIgNodeExt, B4SOIsNodePrime)
-                if (here->B4SOIsoiMod !=2) /* v3.2 */
+                if (here->B4SOIsoiMod !=2) {/* v3.2 */
                    TSTALLOC(B4SOIGEbPtr, B4SOIgNodeExt, B4SOIbNode)
+                }
 
                 TSTALLOC(B4SOIGMdpPtr, B4SOIgNodeMid, B4SOIdNodePrime)
                 TSTALLOC(B4SOIGMgPtr, B4SOIgNodeMid, B4SOIgNode)
                 TSTALLOC(B4SOIGMgmPtr, B4SOIgNodeMid, B4SOIgNodeMid)
                 TSTALLOC(B4SOIGMgePtr, B4SOIgNodeMid, B4SOIgNodeExt)
                 TSTALLOC(B4SOIGMspPtr, B4SOIgNodeMid, B4SOIsNodePrime)
-                if (here->B4SOIsoiMod !=2) /* v3.2 */
+                if (here->B4SOIsoiMod !=2) {/* v3.2 */
                    TSTALLOC(B4SOIGMbPtr, B4SOIgNodeMid, B4SOIbNode)
+                }
 
                 TSTALLOC(B4SOIGMePtr, B4SOIgNodeMid, B4SOIeNode)
                 TSTALLOC(B4SOIDPgmPtr, B4SOIdNodePrime, B4SOIgNodeMid)

@@ -114,6 +114,26 @@ typedef struct sNUMOSinstance {
   unsigned NUMOSicFileGiven:1;	/* flag to indicate init. cond. file given */
   unsigned NUMOSprintGiven:1;	/* flag to indicate print was given */
   unsigned NUMOStempGiven:1;	/* flag to indicate temp was given */
+
+#ifdef KLU
+    BindElement *NUMOSdrainDrainStructPtr ;
+    BindElement *NUMOSdrainSourceStructPtr ;
+    BindElement *NUMOSdrainGateStructPtr ;
+    BindElement *NUMOSdrainBulkStructPtr ;
+    BindElement *NUMOSsourceDrainStructPtr ;
+    BindElement *NUMOSsourceSourceStructPtr ;
+    BindElement *NUMOSsourceGateStructPtr ;
+    BindElement *NUMOSsourceBulkStructPtr ;
+    BindElement *NUMOSgateDrainStructPtr ;
+    BindElement *NUMOSgateSourceStructPtr ;
+    BindElement *NUMOSgateGateStructPtr ;
+    BindElement *NUMOSgateBulkStructPtr ;
+    BindElement *NUMOSbulkDrainStructPtr ;
+    BindElement *NUMOSbulkSourceStructPtr ;
+    BindElement *NUMOSbulkGateStructPtr ;
+    BindElement *NUMOSbulkBulkStructPtr ;
+#endif
+
 } NUMOSinstance;
 
 /* per model data */

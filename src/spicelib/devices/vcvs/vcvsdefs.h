@@ -51,6 +51,15 @@ typedef struct sVCVSinstance {
     int  VCVSsenParmNo;   /* parameter # for sensitivity use;
             set equal to  0 if not a design parameter*/
 
+#ifdef KLU
+    BindElement *VCVSposIbrptrStructPtr ;
+    BindElement *VCVSnegIbrptrStructPtr ;
+    BindElement *VCVSibrNegptrStructPtr ;
+    BindElement *VCVSibrPosptrStructPtr ;
+    BindElement *VCVSibrContPosptrStructPtr ;
+    BindElement *VCVSibrContNegptrStructPtr ;
+#endif
+
 } VCVSinstance ;
 
 #define VCVSvOld VCVSstates

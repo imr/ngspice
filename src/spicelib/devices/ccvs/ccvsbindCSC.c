@@ -1,5 +1,5 @@
 /**********
-Author: 2012 Francesco Lannutti
+Author: 2013 Francesco Lannutti
 **********/
 
 #include "ngspice/ngspice.h"
@@ -7,100 +7,116 @@ Author: 2012 Francesco Lannutti
 #include "ccvsdefs.h"
 #include "ngspice/sperror.h"
 
+#include <stdlib.h>
+
+static
 int
-CCVSbindCSC(GENmodel *inModel, CKTcircuit *ckt)
+BindCompare (const void *a, const void *b)
 {
-    CCVSmodel *model = (CCVSmodel *)inModel;
-    int i ;
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
 
-    /*  loop through all the ccvs models */
-    for( ; model != NULL; model = model->CCVSnextModel ) {
-	CCVSinstance *here;
-
-        /* loop through all the instances of the model */
-        for (here = model->CCVSinstances; here != NULL ;
-	    here = here->CCVSnextInstance) {
-
-		i = 0 ;
-		if ((here-> CCVSposNode != 0) && (here-> CCVSbranch != 0)) {
-			while (here->CCVSposIbrptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->CCVSposIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> CCVSnegNode != 0) && (here-> CCVSbranch != 0)) {
-			while (here->CCVSnegIbrptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->CCVSnegIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> CCVSbranch != 0) && (here-> CCVSnegNode != 0)) {
-			while (here->CCVSibrNegptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->CCVSibrNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> CCVSbranch != 0) && (here-> CCVSposNode != 0)) {
-			while (here->CCVSibrPosptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->CCVSibrPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> CCVSbranch != 0) && (here-> CCVScontBranch != 0)) {
-			while (here->CCVSibrContBrptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->CCVSibrContBrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-	}
-    }
-    return(OK);
+    return ((int)(A->Sparse - B->Sparse)) ;
 }
 
 int
-CCVSbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
+CCVSbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
-    CCVSmodel *model = (CCVSmodel *)inModel;
-    int i ;
+    CCVSmodel *model = (CCVSmodel *)inModel ;
+    CCVSinstance *here ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-    /*  loop through all the ccvs models */
-    for( ; model != NULL; model = model->CCVSnextModel ) {
-	CCVSinstance *here;
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
+    /* loop through all the CCVS models */
+    for ( ; model != NULL ; model = model->CCVSnextModel)
+    {
         /* loop through all the instances of the model */
-        for (here = model->CCVSinstances; here != NULL ;
-	    here = here->CCVSnextInstance) {
+        for (here = model->CCVSinstances ; here != NULL ; here = here->CCVSnextInstance)
+        {
+            if ((here-> CCVSposNode != 0) && (here-> CCVSbranch != 0))
+            {
+                i = here->CCVSposIbrptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->CCVSposIbrptrStructPtr = matched ;
+                here->CCVSposIbrptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> CCVSposNode != 0) && (here-> CCVSbranch != 0)) {
-			while (here->CCVSposIbrptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->CCVSposIbrptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> CCVSnegNode != 0) && (here-> CCVSbranch != 0))
+            {
+                i = here->CCVSnegIbrptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->CCVSnegIbrptrStructPtr = matched ;
+                here->CCVSnegIbrptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> CCVSnegNode != 0) && (here-> CCVSbranch != 0)) {
-			while (here->CCVSnegIbrptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->CCVSnegIbrptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> CCVSbranch != 0) && (here-> CCVSnegNode != 0))
+            {
+                i = here->CCVSibrNegptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->CCVSibrNegptrStructPtr = matched ;
+                here->CCVSibrNegptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> CCVSbranch != 0) && (here-> CCVSnegNode != 0)) {
-			while (here->CCVSibrNegptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->CCVSibrNegptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> CCVSbranch != 0) && (here-> CCVSposNode != 0))
+            {
+                i = here->CCVSibrPosptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->CCVSibrPosptrStructPtr = matched ;
+                here->CCVSibrPosptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> CCVSbranch != 0) && (here-> CCVSposNode != 0)) {
-			while (here->CCVSibrPosptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->CCVSibrPosptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> CCVSbranch != 0) && (here-> CCVScontBranch != 0))
+            {
+                i = here->CCVSibrContBrptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->CCVSibrContBrptrStructPtr = matched ;
+                here->CCVSibrContBrptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> CCVSbranch != 0) && (here-> CCVScontBranch != 0)) {
-			while (here->CCVSibrContBrptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->CCVSibrContBrptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-	}
+        }
     }
-    return(OK);
+
+    return (OK) ;
+}
+
+int
+CCVSbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
+{
+    CCVSmodel *model = (CCVSmodel *)inModel ;
+    CCVSinstance *here ;
+
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the CCVS models */
+    for ( ; model != NULL ; model = model->CCVSnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->CCVSinstances ; here != NULL ; here = here->CCVSnextInstance)
+        {
+            if ((here-> CCVSposNode != 0) && (here-> CCVSbranch != 0))
+                here->CCVSposIbrptr = here->CCVSposIbrptrStructPtr->CSC_Complex ;
+
+            if ((here-> CCVSnegNode != 0) && (here-> CCVSbranch != 0))
+                here->CCVSnegIbrptr = here->CCVSnegIbrptrStructPtr->CSC_Complex ;
+
+            if ((here-> CCVSbranch != 0) && (here-> CCVSnegNode != 0))
+                here->CCVSibrNegptr = here->CCVSibrNegptrStructPtr->CSC_Complex ;
+
+            if ((here-> CCVSbranch != 0) && (here-> CCVSposNode != 0))
+                here->CCVSibrPosptr = here->CCVSibrPosptrStructPtr->CSC_Complex ;
+
+            if ((here-> CCVSbranch != 0) && (here-> CCVScontBranch != 0))
+                here->CCVSibrContBrptr = here->CCVSibrContBrptrStructPtr->CSC_Complex ;
+
+        }
+    }
+
+    return (OK) ;
 }
 
 int
@@ -108,48 +124,30 @@ CCVSbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     CCVSmodel *model = (CCVSmodel *)inModel ;
     CCVSinstance *here ;
-    int i ;
 
-    /*  loop through all the CurrentControlledVoltageSource models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the CCVS models */
     for ( ; model != NULL ; model = model->CCVSnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->CCVSinstances ; here != NULL ; here = here->CCVSnextInstance)
         {
-            i = 0 ;
-            if ((here->CCVSposNode != 0) && (here->CCVSbranch != 0))
-            {
-                while (here->CCVSposIbrptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->CCVSposIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> CCVSposNode != 0) && (here-> CCVSbranch != 0))
+                here->CCVSposIbrptr = here->CCVSposIbrptrStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->CCVSnegNode != 0) && (here->CCVSbranch != 0))
-            {
-                while (here->CCVSnegIbrptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->CCVSnegIbrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> CCVSnegNode != 0) && (here-> CCVSbranch != 0))
+                here->CCVSnegIbrptr = here->CCVSnegIbrptrStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->CCVSbranch != 0) && (here->CCVSnegNode != 0))
-            {
-                while (here->CCVSibrNegptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->CCVSibrNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> CCVSbranch != 0) && (here-> CCVSnegNode != 0))
+                here->CCVSibrNegptr = here->CCVSibrNegptrStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->CCVSbranch != 0) && (here->CCVSposNode != 0))
-            {
-                while (here->CCVSibrPosptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->CCVSibrPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> CCVSbranch != 0) && (here-> CCVSposNode != 0))
+                here->CCVSibrPosptr = here->CCVSibrPosptrStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->CCVSbranch != 0) && (here->CCVScontBranch != 0))
-            {
-                while (here->CCVSibrContBrptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->CCVSibrContBrptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> CCVSbranch != 0) && (here-> CCVScontBranch != 0))
+                here->CCVSibrContBrptr = here->CCVSibrContBrptrStructPtr->CSC ;
+
         }
     }
 

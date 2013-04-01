@@ -1,5 +1,5 @@
 /**********
-Author: 2012 Francesco Lannutti
+Author: 2013 Francesco Lannutti
 **********/
 
 #include "ngspice/ngspice.h"
@@ -7,220 +7,226 @@ Author: 2012 Francesco Lannutti
 #include "jfetdefs.h"
 #include "ngspice/sperror.h"
 
+#include <stdlib.h>
+
+static
 int
-JFETbindCSC(GENmodel *inModel, CKTcircuit *ckt)
+BindCompare (const void *a, const void *b)
 {
-    JFETmodel *model = (JFETmodel *)inModel;
-    int i ;
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
 
-    /*  loop through all the jfet models */
-    for( ; model != NULL; model = model->JFETnextModel ) {
-	JFETinstance *here;
-
-        /* loop through all the instances of the model */
-        for (here = model->JFETinstances; here != NULL ;
-	    here = here->JFETnextInstance) {
-
-		i = 0 ;
-		if ((here->JFETdrainNode != 0) && (here->JFETdrainPrimeNode != 0)) {
-			while (here->JFETdrainDrainPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETdrainDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETgateNode != 0) && (here->JFETdrainPrimeNode != 0)) {
-			while (here->JFETgateDrainPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETgateDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETgateNode != 0) && (here->JFETsourcePrimeNode != 0)) {
-			while (here->JFETgateSourcePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETgateSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETsourceNode != 0) && (here->JFETsourcePrimeNode != 0)) {
-			while (here->JFETsourceSourcePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETsourceSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETdrainPrimeNode != 0) && (here->JFETdrainNode != 0)) {
-			while (here->JFETdrainPrimeDrainPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETdrainPrimeDrainPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETdrainPrimeNode != 0) && (here->JFETgateNode != 0)) {
-			while (here->JFETdrainPrimeGatePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETdrainPrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETdrainPrimeNode != 0) && (here->JFETsourcePrimeNode != 0)) {
-			while (here->JFETdrainPrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETdrainPrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETsourcePrimeNode != 0) && (here->JFETgateNode != 0)) {
-			while (here->JFETsourcePrimeGatePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETsourcePrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETsourcePrimeNode != 0) && (here->JFETsourceNode != 0)) {
-			while (here->JFETsourcePrimeSourcePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETsourcePrimeSourcePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETsourcePrimeNode != 0) && (here->JFETdrainPrimeNode != 0)) {
-			while (here->JFETsourcePrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETsourcePrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETdrainNode != 0) && (here->JFETdrainNode != 0)) {
-			while (here->JFETdrainDrainPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETdrainDrainPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETgateNode != 0) && (here->JFETgateNode != 0)) {
-			while (here->JFETgateGatePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETgateGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETsourceNode != 0) && (here->JFETsourceNode != 0)) {
-			while (here->JFETsourceSourcePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETsourceSourcePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETdrainPrimeNode != 0) && (here->JFETdrainPrimeNode != 0)) {
-			while (here->JFETdrainPrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETdrainPrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->JFETsourcePrimeNode != 0) && (here->JFETsourcePrimeNode != 0)) {
-			while (here->JFETsourcePrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->JFETsourcePrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-	}
-    }
-    return(OK);
+    return ((int)(A->Sparse - B->Sparse)) ;
 }
 
 int
-JFETbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
+JFETbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
-    JFETmodel *model = (JFETmodel *)inModel;
-    int i ;
+    JFETmodel *model = (JFETmodel *)inModel ;
+    JFETinstance *here ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-    /*  loop through all the jfet models */
-    for( ; model != NULL; model = model->JFETnextModel ) {
-	JFETinstance *here;
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
+    /* loop through all the JFET models */
+    for ( ; model != NULL ; model = model->JFETnextModel)
+    {
         /* loop through all the instances of the model */
-        for (here = model->JFETinstances; here != NULL ;
-	    here = here->JFETnextInstance) {
+        for (here = model->JFETinstances ; here != NULL ; here = here->JFETnextInstance)
+        {
+            if ((here->JFETdrainNode != 0) && (here->JFETdrainPrimeNode != 0))
+            {
+                i = here->JFETdrainDrainPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETdrainDrainPrimeStructPtr = matched ;
+                here->JFETdrainDrainPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETdrainNode != 0) && (here->JFETdrainPrimeNode != 0)) {
-			while (here->JFETdrainDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETdrainDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETgateNode != 0) && (here->JFETdrainPrimeNode != 0))
+            {
+                i = here->JFETgateDrainPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETgateDrainPrimeStructPtr = matched ;
+                here->JFETgateDrainPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETgateNode != 0) && (here->JFETdrainPrimeNode != 0)) {
-			while (here->JFETgateDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETgateDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETgateNode != 0) && (here->JFETsourcePrimeNode != 0))
+            {
+                i = here->JFETgateSourcePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETgateSourcePrimeStructPtr = matched ;
+                here->JFETgateSourcePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETgateNode != 0) && (here->JFETsourcePrimeNode != 0)) {
-			while (here->JFETgateSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETgateSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETsourceNode != 0) && (here->JFETsourcePrimeNode != 0))
+            {
+                i = here->JFETsourceSourcePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETsourceSourcePrimeStructPtr = matched ;
+                here->JFETsourceSourcePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETsourceNode != 0) && (here->JFETsourcePrimeNode != 0)) {
-			while (here->JFETsourceSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETsourceSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETdrainPrimeNode != 0) && (here->JFETdrainNode != 0))
+            {
+                i = here->JFETdrainPrimeDrainPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETdrainPrimeDrainStructPtr = matched ;
+                here->JFETdrainPrimeDrainPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETdrainPrimeNode != 0) && (here->JFETdrainNode != 0)) {
-			while (here->JFETdrainPrimeDrainPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETdrainPrimeDrainPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETdrainPrimeNode != 0) && (here->JFETgateNode != 0))
+            {
+                i = here->JFETdrainPrimeGatePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETdrainPrimeGateStructPtr = matched ;
+                here->JFETdrainPrimeGatePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETdrainPrimeNode != 0) && (here->JFETgateNode != 0)) {
-			while (here->JFETdrainPrimeGatePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETdrainPrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETdrainPrimeNode != 0) && (here->JFETsourcePrimeNode != 0))
+            {
+                i = here->JFETdrainPrimeSourcePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETdrainPrimeSourcePrimeStructPtr = matched ;
+                here->JFETdrainPrimeSourcePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETdrainPrimeNode != 0) && (here->JFETsourcePrimeNode != 0)) {
-			while (here->JFETdrainPrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETdrainPrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETsourcePrimeNode != 0) && (here->JFETgateNode != 0))
+            {
+                i = here->JFETsourcePrimeGatePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETsourcePrimeGateStructPtr = matched ;
+                here->JFETsourcePrimeGatePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETsourcePrimeNode != 0) && (here->JFETgateNode != 0)) {
-			while (here->JFETsourcePrimeGatePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETsourcePrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETsourcePrimeNode != 0) && (here->JFETsourceNode != 0))
+            {
+                i = here->JFETsourcePrimeSourcePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETsourcePrimeSourceStructPtr = matched ;
+                here->JFETsourcePrimeSourcePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETsourcePrimeNode != 0) && (here->JFETsourceNode != 0)) {
-			while (here->JFETsourcePrimeSourcePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETsourcePrimeSourcePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETsourcePrimeNode != 0) && (here->JFETdrainPrimeNode != 0))
+            {
+                i = here->JFETsourcePrimeDrainPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETsourcePrimeDrainPrimeStructPtr = matched ;
+                here->JFETsourcePrimeDrainPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETsourcePrimeNode != 0) && (here->JFETdrainPrimeNode != 0)) {
-			while (here->JFETsourcePrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETsourcePrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETdrainNode != 0) && (here->JFETdrainNode != 0))
+            {
+                i = here->JFETdrainDrainPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETdrainDrainStructPtr = matched ;
+                here->JFETdrainDrainPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETdrainNode != 0) && (here->JFETdrainNode != 0)) {
-			while (here->JFETdrainDrainPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETdrainDrainPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETgateNode != 0) && (here->JFETgateNode != 0))
+            {
+                i = here->JFETgateGatePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETgateGateStructPtr = matched ;
+                here->JFETgateGatePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETgateNode != 0) && (here->JFETgateNode != 0)) {
-			while (here->JFETgateGatePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETgateGatePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETsourceNode != 0) && (here->JFETsourceNode != 0))
+            {
+                i = here->JFETsourceSourcePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETsourceSourceStructPtr = matched ;
+                here->JFETsourceSourcePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETsourceNode != 0) && (here->JFETsourceNode != 0)) {
-			while (here->JFETsourceSourcePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETsourceSourcePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETdrainPrimeNode != 0) && (here->JFETdrainPrimeNode != 0))
+            {
+                i = here->JFETdrainPrimeDrainPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETdrainPrimeDrainPrimeStructPtr = matched ;
+                here->JFETdrainPrimeDrainPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETdrainPrimeNode != 0) && (here->JFETdrainPrimeNode != 0)) {
-			while (here->JFETdrainPrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETdrainPrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->JFETsourcePrimeNode != 0) && (here->JFETsourcePrimeNode != 0))
+            {
+                i = here->JFETsourcePrimeSourcePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->JFETsourcePrimeSourcePrimeStructPtr = matched ;
+                here->JFETsourcePrimeSourcePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->JFETsourcePrimeNode != 0) && (here->JFETsourcePrimeNode != 0)) {
-			while (here->JFETsourcePrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->JFETsourcePrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-	}
+        }
     }
-    return(OK);
+
+    return (OK) ;
+}
+
+int
+JFETbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
+{
+    JFETmodel *model = (JFETmodel *)inModel ;
+    JFETinstance *here ;
+
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the JFET models */
+    for ( ; model != NULL ; model = model->JFETnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->JFETinstances ; here != NULL ; here = here->JFETnextInstance)
+        {
+            if ((here->JFETdrainNode != 0) && (here->JFETdrainPrimeNode != 0))
+                here->JFETdrainDrainPrimePtr = here->JFETdrainDrainPrimeStructPtr->CSC_Complex ;
+
+            if ((here->JFETgateNode != 0) && (here->JFETdrainPrimeNode != 0))
+                here->JFETgateDrainPrimePtr = here->JFETgateDrainPrimeStructPtr->CSC_Complex ;
+
+            if ((here->JFETgateNode != 0) && (here->JFETsourcePrimeNode != 0))
+                here->JFETgateSourcePrimePtr = here->JFETgateSourcePrimeStructPtr->CSC_Complex ;
+
+            if ((here->JFETsourceNode != 0) && (here->JFETsourcePrimeNode != 0))
+                here->JFETsourceSourcePrimePtr = here->JFETsourceSourcePrimeStructPtr->CSC_Complex ;
+
+            if ((here->JFETdrainPrimeNode != 0) && (here->JFETdrainNode != 0))
+                here->JFETdrainPrimeDrainPtr = here->JFETdrainPrimeDrainStructPtr->CSC_Complex ;
+
+            if ((here->JFETdrainPrimeNode != 0) && (here->JFETgateNode != 0))
+                here->JFETdrainPrimeGatePtr = here->JFETdrainPrimeGateStructPtr->CSC_Complex ;
+
+            if ((here->JFETdrainPrimeNode != 0) && (here->JFETsourcePrimeNode != 0))
+                here->JFETdrainPrimeSourcePrimePtr = here->JFETdrainPrimeSourcePrimeStructPtr->CSC_Complex ;
+
+            if ((here->JFETsourcePrimeNode != 0) && (here->JFETgateNode != 0))
+                here->JFETsourcePrimeGatePtr = here->JFETsourcePrimeGateStructPtr->CSC_Complex ;
+
+            if ((here->JFETsourcePrimeNode != 0) && (here->JFETsourceNode != 0))
+                here->JFETsourcePrimeSourcePtr = here->JFETsourcePrimeSourceStructPtr->CSC_Complex ;
+
+            if ((here->JFETsourcePrimeNode != 0) && (here->JFETdrainPrimeNode != 0))
+                here->JFETsourcePrimeDrainPrimePtr = here->JFETsourcePrimeDrainPrimeStructPtr->CSC_Complex ;
+
+            if ((here->JFETdrainNode != 0) && (here->JFETdrainNode != 0))
+                here->JFETdrainDrainPtr = here->JFETdrainDrainStructPtr->CSC_Complex ;
+
+            if ((here->JFETgateNode != 0) && (here->JFETgateNode != 0))
+                here->JFETgateGatePtr = here->JFETgateGateStructPtr->CSC_Complex ;
+
+            if ((here->JFETsourceNode != 0) && (here->JFETsourceNode != 0))
+                here->JFETsourceSourcePtr = here->JFETsourceSourceStructPtr->CSC_Complex ;
+
+            if ((here->JFETdrainPrimeNode != 0) && (here->JFETdrainPrimeNode != 0))
+                here->JFETdrainPrimeDrainPrimePtr = here->JFETdrainPrimeDrainPrimeStructPtr->CSC_Complex ;
+
+            if ((here->JFETsourcePrimeNode != 0) && (here->JFETsourcePrimeNode != 0))
+                here->JFETsourcePrimeSourcePrimePtr = here->JFETsourcePrimeSourcePrimeStructPtr->CSC_Complex ;
+
+        }
+    }
+
+    return (OK) ;
 }
 
 int
@@ -228,76 +234,59 @@ JFETbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     JFETmodel *model = (JFETmodel *)inModel ;
     JFETinstance *here ;
-    int i ;
 
-    /*  loop through all the Jfet models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the JFET models */
     for ( ; model != NULL ; model = model->JFETnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->JFETinstances ; here != NULL ; here = here->JFETnextInstance)
         {
-            i = 0 ;
             if ((here->JFETdrainNode != 0) && (here->JFETdrainPrimeNode != 0))
-            {
-                while (here->JFETdrainDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->JFETdrainDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->JFETdrainDrainPrimePtr = here->JFETdrainDrainPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->JFETgateNode != 0) && (here->JFETdrainPrimeNode != 0))
-            {
-                while (here->JFETgateDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->JFETgateDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->JFETgateDrainPrimePtr = here->JFETgateDrainPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->JFETgateNode != 0) && (here->JFETsourcePrimeNode != 0))
-            {
-                while (here->JFETgateSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->JFETgateSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->JFETgateSourcePrimePtr = here->JFETgateSourcePrimeStructPtr->CSC ;
 
-            i = 0 ;
+            if ((here->JFETsourceNode != 0) && (here->JFETsourcePrimeNode != 0))
+                here->JFETsourceSourcePrimePtr = here->JFETsourceSourcePrimeStructPtr->CSC ;
+
             if ((here->JFETdrainPrimeNode != 0) && (here->JFETdrainNode != 0))
-            {
-                while (here->JFETdrainPrimeDrainPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->JFETdrainPrimeDrainPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->JFETdrainPrimeDrainPtr = here->JFETdrainPrimeDrainStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->JFETdrainPrimeNode != 0) && (here->JFETgateNode != 0))
-            {
-                while (here->JFETdrainPrimeGatePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->JFETdrainPrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->JFETdrainPrimeGatePtr = here->JFETdrainPrimeGateStructPtr->CSC ;
 
-            i = 0 ;
+            if ((here->JFETdrainPrimeNode != 0) && (here->JFETsourcePrimeNode != 0))
+                here->JFETdrainPrimeSourcePrimePtr = here->JFETdrainPrimeSourcePrimeStructPtr->CSC ;
+
             if ((here->JFETsourcePrimeNode != 0) && (here->JFETgateNode != 0))
-            {
-                while (here->JFETsourcePrimeGatePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->JFETsourcePrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->JFETsourcePrimeGatePtr = here->JFETsourcePrimeGateStructPtr->CSC ;
 
-            i = 0 ;
+            if ((here->JFETsourcePrimeNode != 0) && (here->JFETsourceNode != 0))
+                here->JFETsourcePrimeSourcePtr = here->JFETsourcePrimeSourceStructPtr->CSC ;
+
+            if ((here->JFETsourcePrimeNode != 0) && (here->JFETdrainPrimeNode != 0))
+                here->JFETsourcePrimeDrainPrimePtr = here->JFETsourcePrimeDrainPrimeStructPtr->CSC ;
+
             if ((here->JFETdrainNode != 0) && (here->JFETdrainNode != 0))
-            {
-                while (here->JFETdrainDrainPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->JFETdrainDrainPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->JFETdrainDrainPtr = here->JFETdrainDrainStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->JFETgateNode != 0) && (here->JFETgateNode != 0))
-            {
-                while (here->JFETgateGatePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->JFETgateGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->JFETgateGatePtr = here->JFETgateGateStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->JFETsourceNode != 0) && (here->JFETsourceNode != 0))
-            {
-                while (here->JFETsourceSourcePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->JFETsourceSourcePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->JFETsourceSourcePtr = here->JFETsourceSourceStructPtr->CSC ;
+
+            if ((here->JFETdrainPrimeNode != 0) && (here->JFETdrainPrimeNode != 0))
+                here->JFETdrainPrimeDrainPrimePtr = here->JFETdrainPrimeDrainPrimeStructPtr->CSC ;
+
+            if ((here->JFETsourcePrimeNode != 0) && (here->JFETsourcePrimeNode != 0))
+                here->JFETsourcePrimeSourcePrimePtr = here->JFETsourcePrimeSourcePrimeStructPtr->CSC ;
 
         }
     }
