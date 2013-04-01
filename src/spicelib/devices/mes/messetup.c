@@ -139,24 +139,18 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(MESdrainDrainPrimePtr,MESdrainNode,MESdrainPrimeNode)
             TSTALLOC(MESgateDrainPrimePtr,MESgateNode,MESdrainPrimeNode)
             TSTALLOC(MESgateSourcePrimePtr,MESgateNode,MESsourcePrimeNode)
-            TSTALLOC(MESsourceSourcePrimePtr,MESsourceNode,
-                    MESsourcePrimeNode)
+            TSTALLOC(MESsourceSourcePrimePtr,MESsourceNode,MESsourcePrimeNode)
             TSTALLOC(MESdrainPrimeDrainPtr,MESdrainPrimeNode,MESdrainNode)
             TSTALLOC(MESdrainPrimeGatePtr,MESdrainPrimeNode,MESgateNode)
-            TSTALLOC(MESdrainPrimeSourcePrimePtr,MESdrainPrimeNode,
-                    MESsourcePrimeNode)
+            TSTALLOC(MESdrainPrimeSourcePrimePtr,MESdrainPrimeNode,MESsourcePrimeNode)
             TSTALLOC(MESsourcePrimeGatePtr,MESsourcePrimeNode,MESgateNode)
-            TSTALLOC(MESsourcePrimeSourcePtr,MESsourcePrimeNode,
-                    MESsourceNode)
-            TSTALLOC(MESsourcePrimeDrainPrimePtr,MESsourcePrimeNode,
-                    MESdrainPrimeNode)
+            TSTALLOC(MESsourcePrimeSourcePtr,MESsourcePrimeNode,MESsourceNode)
+            TSTALLOC(MESsourcePrimeDrainPrimePtr,MESsourcePrimeNode,MESdrainPrimeNode)
             TSTALLOC(MESdrainDrainPtr,MESdrainNode,MESdrainNode)
             TSTALLOC(MESgateGatePtr,MESgateNode,MESgateNode)
             TSTALLOC(MESsourceSourcePtr,MESsourceNode,MESsourceNode)
-            TSTALLOC(MESdrainPrimeDrainPrimePtr,MESdrainPrimeNode,
-                    MESdrainPrimeNode)
-            TSTALLOC(MESsourcePrimeSourcePrimePtr,MESsourcePrimeNode,
-                    MESsourcePrimeNode)
+            TSTALLOC(MESdrainPrimeDrainPrimePtr,MESdrainPrimeNode,MESdrainPrimeNode)
+            TSTALLOC(MESsourcePrimeSourcePrimePtr,MESsourcePrimeNode,MESsourcePrimeNode)
         }
     }
     return(OK);

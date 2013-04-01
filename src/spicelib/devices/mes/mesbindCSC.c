@@ -1,5 +1,5 @@
 /**********
-Author: 2012 Francesco Lannutti
+Author: 2013 Francesco Lannutti
 **********/
 
 #include "ngspice/ngspice.h"
@@ -7,220 +7,226 @@ Author: 2012 Francesco Lannutti
 #include "mesdefs.h"
 #include "ngspice/sperror.h"
 
+#include <stdlib.h>
+
+static
 int
-MESbindCSC(GENmodel *inModel, CKTcircuit *ckt)
+BindCompare (const void *a, const void *b)
 {
-    MESmodel *model = (MESmodel *)inModel;
-    int i ;
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
 
-    /*  loop through all the mes models */
-    for( ; model != NULL; model = model->MESnextModel ) {
-	MESinstance *here;
-
-        /* loop through all the instances of the model */
-        for (here = model->MESinstances; here != NULL ;
-	    here = here->MESnextInstance) {
-
-		i = 0 ;
-		if ((here->MESdrainNode != 0) && (here->MESdrainPrimeNode != 0)) {
-			while (here->MESdrainDrainPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESdrainDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESgateNode != 0) && (here->MESdrainPrimeNode != 0)) {
-			while (here->MESgateDrainPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESgateDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESgateNode != 0) && (here->MESsourcePrimeNode != 0)) {
-			while (here->MESgateSourcePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESgateSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESsourceNode != 0) && (here->MESsourcePrimeNode != 0)) {
-			while (here->MESsourceSourcePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESsourceSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESdrainPrimeNode != 0) && (here->MESdrainNode != 0)) {
-			while (here->MESdrainPrimeDrainPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESdrainPrimeDrainPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESdrainPrimeNode != 0) && (here->MESgateNode != 0)) {
-			while (here->MESdrainPrimeGatePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESdrainPrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESdrainPrimeNode != 0) && (here->MESsourcePrimeNode != 0)) {
-			while (here->MESdrainPrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESdrainPrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESsourcePrimeNode != 0) && (here->MESgateNode != 0)) {
-			while (here->MESsourcePrimeGatePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESsourcePrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESsourcePrimeNode != 0) && (here->MESsourceNode != 0)) {
-			while (here->MESsourcePrimeSourcePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESsourcePrimeSourcePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESsourcePrimeNode != 0) && (here->MESdrainPrimeNode != 0)) {
-			while (here->MESsourcePrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESsourcePrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESdrainNode != 0) && (here->MESdrainNode != 0)) {
-			while (here->MESdrainDrainPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESdrainDrainPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESgateNode != 0) && (here->MESgateNode != 0)) {
-			while (here->MESgateGatePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESgateGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESsourceNode != 0) && (here->MESsourceNode != 0)) {
-			while (here->MESsourceSourcePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESsourceSourcePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESdrainPrimeNode != 0) && (here->MESdrainPrimeNode != 0)) {
-			while (here->MESdrainPrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESdrainPrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->MESsourcePrimeNode != 0) && (here->MESsourcePrimeNode != 0)) {
-			while (here->MESsourcePrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->MESsourcePrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-	}
-    }
-    return(OK);
+    return ((int)(A->Sparse - B->Sparse)) ;
 }
 
 int
-MESbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
+MESbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
-    MESmodel *model = (MESmodel *)inModel;
-    int i ;
+    MESmodel *model = (MESmodel *)inModel ;
+    MESinstance *here ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-    /*  loop through all the mes models */
-    for( ; model != NULL; model = model->MESnextModel ) {
-	MESinstance *here;
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
+    /* loop through all the MES models */
+    for ( ; model != NULL ; model = model->MESnextModel)
+    {
         /* loop through all the instances of the model */
-        for (here = model->MESinstances; here != NULL ;
-	    here = here->MESnextInstance) {
+        for (here = model->MESinstances ; here != NULL ; here = here->MESnextInstance)
+        {
+            if ((here->MESdrainNode != 0) && (here->MESdrainPrimeNode != 0))
+            {
+                i = here->MESdrainDrainPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESdrainDrainPrimeStructPtr = matched ;
+                here->MESdrainDrainPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESdrainNode != 0) && (here->MESdrainPrimeNode != 0)) {
-			while (here->MESdrainDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESdrainDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESgateNode != 0) && (here->MESdrainPrimeNode != 0))
+            {
+                i = here->MESgateDrainPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESgateDrainPrimeStructPtr = matched ;
+                here->MESgateDrainPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESgateNode != 0) && (here->MESdrainPrimeNode != 0)) {
-			while (here->MESgateDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESgateDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESgateNode != 0) && (here->MESsourcePrimeNode != 0))
+            {
+                i = here->MESgateSourcePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESgateSourcePrimeStructPtr = matched ;
+                here->MESgateSourcePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESgateNode != 0) && (here->MESsourcePrimeNode != 0)) {
-			while (here->MESgateSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESgateSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESsourceNode != 0) && (here->MESsourcePrimeNode != 0))
+            {
+                i = here->MESsourceSourcePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESsourceSourcePrimeStructPtr = matched ;
+                here->MESsourceSourcePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESsourceNode != 0) && (here->MESsourcePrimeNode != 0)) {
-			while (here->MESsourceSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESsourceSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESdrainPrimeNode != 0) && (here->MESdrainNode != 0))
+            {
+                i = here->MESdrainPrimeDrainPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESdrainPrimeDrainStructPtr = matched ;
+                here->MESdrainPrimeDrainPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESdrainPrimeNode != 0) && (here->MESdrainNode != 0)) {
-			while (here->MESdrainPrimeDrainPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESdrainPrimeDrainPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESdrainPrimeNode != 0) && (here->MESgateNode != 0))
+            {
+                i = here->MESdrainPrimeGatePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESdrainPrimeGateStructPtr = matched ;
+                here->MESdrainPrimeGatePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESdrainPrimeNode != 0) && (here->MESgateNode != 0)) {
-			while (here->MESdrainPrimeGatePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESdrainPrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESdrainPrimeNode != 0) && (here->MESsourcePrimeNode != 0))
+            {
+                i = here->MESdrainPrimeSourcePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESdrainPrimeSourcePrimeStructPtr = matched ;
+                here->MESdrainPrimeSourcePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESdrainPrimeNode != 0) && (here->MESsourcePrimeNode != 0)) {
-			while (here->MESdrainPrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESdrainPrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESsourcePrimeNode != 0) && (here->MESgateNode != 0))
+            {
+                i = here->MESsourcePrimeGatePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESsourcePrimeGateStructPtr = matched ;
+                here->MESsourcePrimeGatePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESsourcePrimeNode != 0) && (here->MESgateNode != 0)) {
-			while (here->MESsourcePrimeGatePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESsourcePrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESsourcePrimeNode != 0) && (here->MESsourceNode != 0))
+            {
+                i = here->MESsourcePrimeSourcePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESsourcePrimeSourceStructPtr = matched ;
+                here->MESsourcePrimeSourcePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESsourcePrimeNode != 0) && (here->MESsourceNode != 0)) {
-			while (here->MESsourcePrimeSourcePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESsourcePrimeSourcePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESsourcePrimeNode != 0) && (here->MESdrainPrimeNode != 0))
+            {
+                i = here->MESsourcePrimeDrainPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESsourcePrimeDrainPrimeStructPtr = matched ;
+                here->MESsourcePrimeDrainPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESsourcePrimeNode != 0) && (here->MESdrainPrimeNode != 0)) {
-			while (here->MESsourcePrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESsourcePrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESdrainNode != 0) && (here->MESdrainNode != 0))
+            {
+                i = here->MESdrainDrainPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESdrainDrainStructPtr = matched ;
+                here->MESdrainDrainPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESdrainNode != 0) && (here->MESdrainNode != 0)) {
-			while (here->MESdrainDrainPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESdrainDrainPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESgateNode != 0) && (here->MESgateNode != 0))
+            {
+                i = here->MESgateGatePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESgateGateStructPtr = matched ;
+                here->MESgateGatePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESgateNode != 0) && (here->MESgateNode != 0)) {
-			while (here->MESgateGatePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESgateGatePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESsourceNode != 0) && (here->MESsourceNode != 0))
+            {
+                i = here->MESsourceSourcePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESsourceSourceStructPtr = matched ;
+                here->MESsourceSourcePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESsourceNode != 0) && (here->MESsourceNode != 0)) {
-			while (here->MESsourceSourcePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESsourceSourcePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESdrainPrimeNode != 0) && (here->MESdrainPrimeNode != 0))
+            {
+                i = here->MESdrainPrimeDrainPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESdrainPrimeDrainPrimeStructPtr = matched ;
+                here->MESdrainPrimeDrainPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESdrainPrimeNode != 0) && (here->MESdrainPrimeNode != 0)) {
-			while (here->MESdrainPrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESdrainPrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->MESsourcePrimeNode != 0) && (here->MESsourcePrimeNode != 0))
+            {
+                i = here->MESsourcePrimeSourcePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->MESsourcePrimeSourcePrimeStructPtr = matched ;
+                here->MESsourcePrimeSourcePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->MESsourcePrimeNode != 0) && (here->MESsourcePrimeNode != 0)) {
-			while (here->MESsourcePrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->MESsourcePrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-	}
+        }
     }
-    return(OK);
+
+    return (OK) ;
+}
+
+int
+MESbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
+{
+    MESmodel *model = (MESmodel *)inModel ;
+    MESinstance *here ;
+
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the MES models */
+    for ( ; model != NULL ; model = model->MESnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->MESinstances ; here != NULL ; here = here->MESnextInstance)
+        {
+            if ((here->MESdrainNode != 0) && (here->MESdrainPrimeNode != 0))
+                here->MESdrainDrainPrimePtr = here->MESdrainDrainPrimeStructPtr->CSC_Complex ;
+
+            if ((here->MESgateNode != 0) && (here->MESdrainPrimeNode != 0))
+                here->MESgateDrainPrimePtr = here->MESgateDrainPrimeStructPtr->CSC_Complex ;
+
+            if ((here->MESgateNode != 0) && (here->MESsourcePrimeNode != 0))
+                here->MESgateSourcePrimePtr = here->MESgateSourcePrimeStructPtr->CSC_Complex ;
+
+            if ((here->MESsourceNode != 0) && (here->MESsourcePrimeNode != 0))
+                here->MESsourceSourcePrimePtr = here->MESsourceSourcePrimeStructPtr->CSC_Complex ;
+
+            if ((here->MESdrainPrimeNode != 0) && (here->MESdrainNode != 0))
+                here->MESdrainPrimeDrainPtr = here->MESdrainPrimeDrainStructPtr->CSC_Complex ;
+
+            if ((here->MESdrainPrimeNode != 0) && (here->MESgateNode != 0))
+                here->MESdrainPrimeGatePtr = here->MESdrainPrimeGateStructPtr->CSC_Complex ;
+
+            if ((here->MESdrainPrimeNode != 0) && (here->MESsourcePrimeNode != 0))
+                here->MESdrainPrimeSourcePrimePtr = here->MESdrainPrimeSourcePrimeStructPtr->CSC_Complex ;
+
+            if ((here->MESsourcePrimeNode != 0) && (here->MESgateNode != 0))
+                here->MESsourcePrimeGatePtr = here->MESsourcePrimeGateStructPtr->CSC_Complex ;
+
+            if ((here->MESsourcePrimeNode != 0) && (here->MESsourceNode != 0))
+                here->MESsourcePrimeSourcePtr = here->MESsourcePrimeSourceStructPtr->CSC_Complex ;
+
+            if ((here->MESsourcePrimeNode != 0) && (here->MESdrainPrimeNode != 0))
+                here->MESsourcePrimeDrainPrimePtr = here->MESsourcePrimeDrainPrimeStructPtr->CSC_Complex ;
+
+            if ((here->MESdrainNode != 0) && (here->MESdrainNode != 0))
+                here->MESdrainDrainPtr = here->MESdrainDrainStructPtr->CSC_Complex ;
+
+            if ((here->MESgateNode != 0) && (here->MESgateNode != 0))
+                here->MESgateGatePtr = here->MESgateGateStructPtr->CSC_Complex ;
+
+            if ((here->MESsourceNode != 0) && (here->MESsourceNode != 0))
+                here->MESsourceSourcePtr = here->MESsourceSourceStructPtr->CSC_Complex ;
+
+            if ((here->MESdrainPrimeNode != 0) && (here->MESdrainPrimeNode != 0))
+                here->MESdrainPrimeDrainPrimePtr = here->MESdrainPrimeDrainPrimeStructPtr->CSC_Complex ;
+
+            if ((here->MESsourcePrimeNode != 0) && (here->MESsourcePrimeNode != 0))
+                here->MESsourcePrimeSourcePrimePtr = here->MESsourcePrimeSourcePrimeStructPtr->CSC_Complex ;
+
+        }
+    }
+
+    return (OK) ;
 }
 
 int
@@ -228,76 +234,59 @@ MESbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     MESmodel *model = (MESmodel *)inModel ;
     MESinstance *here ;
-    int i ;
 
-    /*  loop through all the mes models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the MES models */
     for ( ; model != NULL ; model = model->MESnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->MESinstances ; here != NULL ; here = here->MESnextInstance)
         {
-            i = 0 ;
             if ((here->MESdrainNode != 0) && (here->MESdrainPrimeNode != 0))
-            {
-                while (here->MESdrainDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->MESdrainDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->MESdrainDrainPrimePtr = here->MESdrainDrainPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->MESgateNode != 0) && (here->MESdrainPrimeNode != 0))
-            {
-                while (here->MESgateDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->MESgateDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->MESgateDrainPrimePtr = here->MESgateDrainPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->MESgateNode != 0) && (here->MESsourcePrimeNode != 0))
-            {
-                while (here->MESgateSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->MESgateSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->MESgateSourcePrimePtr = here->MESgateSourcePrimeStructPtr->CSC ;
 
-            i = 0 ;
+            if ((here->MESsourceNode != 0) && (here->MESsourcePrimeNode != 0))
+                here->MESsourceSourcePrimePtr = here->MESsourceSourcePrimeStructPtr->CSC ;
+
             if ((here->MESdrainPrimeNode != 0) && (here->MESdrainNode != 0))
-            {
-                while (here->MESdrainPrimeDrainPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->MESdrainPrimeDrainPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->MESdrainPrimeDrainPtr = here->MESdrainPrimeDrainStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->MESdrainPrimeNode != 0) && (here->MESgateNode != 0))
-            {
-                while (here->MESdrainPrimeGatePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->MESdrainPrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->MESdrainPrimeGatePtr = here->MESdrainPrimeGateStructPtr->CSC ;
 
-            i = 0 ;
+            if ((here->MESdrainPrimeNode != 0) && (here->MESsourcePrimeNode != 0))
+                here->MESdrainPrimeSourcePrimePtr = here->MESdrainPrimeSourcePrimeStructPtr->CSC ;
+
             if ((here->MESsourcePrimeNode != 0) && (here->MESgateNode != 0))
-            {
-                while (here->MESsourcePrimeGatePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->MESsourcePrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->MESsourcePrimeGatePtr = here->MESsourcePrimeGateStructPtr->CSC ;
 
-            i = 0 ;
+            if ((here->MESsourcePrimeNode != 0) && (here->MESsourceNode != 0))
+                here->MESsourcePrimeSourcePtr = here->MESsourcePrimeSourceStructPtr->CSC ;
+
+            if ((here->MESsourcePrimeNode != 0) && (here->MESdrainPrimeNode != 0))
+                here->MESsourcePrimeDrainPrimePtr = here->MESsourcePrimeDrainPrimeStructPtr->CSC ;
+
             if ((here->MESdrainNode != 0) && (here->MESdrainNode != 0))
-            {
-                while (here->MESdrainDrainPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->MESdrainDrainPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->MESdrainDrainPtr = here->MESdrainDrainStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->MESgateNode != 0) && (here->MESgateNode != 0))
-            {
-                while (here->MESgateGatePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->MESgateGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->MESgateGatePtr = here->MESgateGateStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->MESsourceNode != 0) && (here->MESsourceNode != 0))
-            {
-                while (here->MESsourceSourcePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->MESsourceSourcePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->MESsourceSourcePtr = here->MESsourceSourceStructPtr->CSC ;
+
+            if ((here->MESdrainPrimeNode != 0) && (here->MESdrainPrimeNode != 0))
+                here->MESdrainPrimeDrainPrimePtr = here->MESdrainPrimeDrainPrimeStructPtr->CSC ;
+
+            if ((here->MESsourcePrimeNode != 0) && (here->MESsourcePrimeNode != 0))
+                here->MESsourcePrimeSourcePrimePtr = here->MESsourcePrimeSourcePrimeStructPtr->CSC ;
 
         }
     }
