@@ -41,15 +41,18 @@ libind_la_SOURCES =	\
 
 
 if KLU_WANTED
-libind_la_SOURCES += indMUTbindCSC.c
+libind_la_SOURCES += indbindCSC.c
+libind_la_SOURCES += mutbindCSC.c
 endif
 
 if SuperLU_WANTED
-libind_la_SOURCES += indMUTbindCSC.c
+libind_la_SOURCES += indbindCSC.c
+libind_la_SOURCES += mutbindCSC.c
 endif
 
 if UMFPACK_WANTED
-libind_la_SOURCES += indMUTbindCSC.c
+libind_la_SOURCES += indbindCSC.c
+libind_la_SOURCES += mutbindCSC.c
 endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
