@@ -166,6 +166,30 @@ typedef struct sBSIM1instance {
 	double **B1nVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *B1DdStructPtr ;
+    BindElement *B1GgStructPtr ;
+    BindElement *B1SsStructPtr ;
+    BindElement *B1BbStructPtr ;
+    BindElement *B1DPdpStructPtr ;
+    BindElement *B1SPspStructPtr ;
+    BindElement *B1DdpStructPtr ;
+    BindElement *B1GbStructPtr ;
+    BindElement *B1GdpStructPtr ;
+    BindElement *B1GspStructPtr ;
+    BindElement *B1SspStructPtr ;
+    BindElement *B1BdpStructPtr ;
+    BindElement *B1BspStructPtr ;
+    BindElement *B1DPspStructPtr ;
+    BindElement *B1DPdStructPtr ;
+    BindElement *B1BgStructPtr ;
+    BindElement *B1DPgStructPtr ;
+    BindElement *B1SPgStructPtr ;
+    BindElement *B1SPsStructPtr ;
+    BindElement *B1DPbStructPtr ;
+    BindElement *B1SPbStructPtr ;
+    BindElement *B1SPdpStructPtr ;
+#endif
 
 } B1instance ;
 
