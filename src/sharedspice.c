@@ -411,9 +411,7 @@ runc(char* command)
         }
         else
             fprintf(stdout, "Printsend thread stopped with timeout = %d\n", timeout);
-#ifdef HAVE_LIBPTHREAD
-        pthread_join(printtid, NULL);
-#endif
+
         printstopp = FALSE;
         return 2;
     }
