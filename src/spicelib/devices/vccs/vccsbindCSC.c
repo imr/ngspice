@@ -1,5 +1,5 @@
 /**********
-Author: 2012 Francesco Lannutti
+Author: 2013 Francesco Lannutti
 **********/
 
 #include "ngspice/ngspice.h"
@@ -7,82 +7,105 @@ Author: 2012 Francesco Lannutti
 #include "vccsdefs.h"
 #include "ngspice/sperror.h"
 
+#include <stdlib.h>
+
+static
 int
-VCCSbindCSC(GENmodel *inModel, CKTcircuit *ckt)
+BindCompare (const void *a, const void *b)
 {
-    VCCSmodel *model = (VCCSmodel *)inModel;
-    int i ;
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
 
-    /*  loop through all the vccs models */
-    for( ; model != NULL; model = model->VCCSnextModel ) {
-	VCCSinstance *here;
-
-        /* loop through all the instances of the model */
-        for (here = model->VCCSinstances; here != NULL ;
-	    here = here->VCCSnextInstance) {
-
-		i = 0 ;
-		if ((here-> VCCSposNode != 0) && (here-> VCCScontPosNode != 0)) {
-			while (here->VCCSposContPosptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->VCCSposContPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-		i = 0 ;
-		if ((here-> VCCSposNode != 0) && (here-> VCCScontNegNode != 0)) {
-			while (here->VCCSposContNegptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->VCCSposContNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-		i = 0 ;
-		if ((here-> VCCSnegNode != 0) && (here-> VCCScontPosNode != 0)) {
-			while (here->VCCSnegContPosptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->VCCSnegContPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-		i = 0 ;
-		if ((here-> VCCSnegNode != 0) && (here-> VCCScontNegNode != 0)) {
-			while (here->VCCSnegContNegptr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->VCCSnegContNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-	}
-    }
-    return(OK);
+    return ((int)(A->Sparse - B->Sparse)) ;
 }
 
 int
-VCCSbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
+VCCSbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
-    VCCSmodel *model = (VCCSmodel *)inModel;
-    int i ;
+    VCCSmodel *model = (VCCSmodel *)inModel ;
+    VCCSinstance *here ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-    /*  loop through all the vccs models */
-    for( ; model != NULL; model = model->VCCSnextModel ) {
-	VCCSinstance *here;
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
+    /* loop through all the VCCS models */
+    for ( ; model != NULL ; model = model->VCCSnextModel)
+    {
         /* loop through all the instances of the model */
-        for (here = model->VCCSinstances; here != NULL ;
-	    here = here->VCCSnextInstance) {
+        for (here = model->VCCSinstances ; here != NULL ; here = here->VCCSnextInstance)
+        {
+            if ((here-> VCCSposNode != 0) && (here-> VCCScontPosNode != 0))
+            {
+                i = here->VCCSposContPosptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->VCCSposContPosptrStructPtr = matched ;
+                here->VCCSposContPosptr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> VCCSposNode != 0) && (here-> VCCScontPosNode != 0)) {
-			while (here->VCCSposContPosptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->VCCSposContPosptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-		i = 0 ;
-		if ((here-> VCCSposNode != 0) && (here-> VCCScontNegNode != 0)) {
-			while (here->VCCSposContNegptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->VCCSposContNegptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-		i = 0 ;
-		if ((here-> VCCSnegNode != 0) && (here-> VCCScontPosNode != 0)) {
-			while (here->VCCSnegContPosptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->VCCSnegContPosptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-		i = 0 ;
-		if ((here-> VCCSnegNode != 0) && (here-> VCCScontNegNode != 0)) {
-			while (here->VCCSnegContNegptr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->VCCSnegContNegptr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-	}
+            if ((here-> VCCSposNode != 0) && (here-> VCCScontNegNode != 0))
+            {
+                i = here->VCCSposContNegptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->VCCSposContNegptrStructPtr = matched ;
+                here->VCCSposContNegptr = matched->CSC ;
+            }
+
+            if ((here-> VCCSnegNode != 0) && (here-> VCCScontPosNode != 0))
+            {
+                i = here->VCCSnegContPosptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->VCCSnegContPosptrStructPtr = matched ;
+                here->VCCSnegContPosptr = matched->CSC ;
+            }
+
+            if ((here-> VCCSnegNode != 0) && (here-> VCCScontNegNode != 0))
+            {
+                i = here->VCCSnegContNegptr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->VCCSnegContNegptrStructPtr = matched ;
+                here->VCCSnegContNegptr = matched->CSC ;
+            }
+
+        }
     }
-    return(OK);
+
+    return (OK) ;
+}
+
+int
+VCCSbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
+{
+    VCCSmodel *model = (VCCSmodel *)inModel ;
+    VCCSinstance *here ;
+
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the VCCS models */
+    for ( ; model != NULL ; model = model->VCCSnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->VCCSinstances ; here != NULL ; here = here->VCCSnextInstance)
+        {
+            if ((here-> VCCSposNode != 0) && (here-> VCCScontPosNode != 0))
+                here->VCCSposContPosptr = here->VCCSposContPosptrStructPtr->CSC_Complex ;
+
+            if ((here-> VCCSposNode != 0) && (here-> VCCScontNegNode != 0))
+                here->VCCSposContNegptr = here->VCCSposContNegptrStructPtr->CSC_Complex ;
+
+            if ((here-> VCCSnegNode != 0) && (here-> VCCScontPosNode != 0))
+                here->VCCSnegContPosptr = here->VCCSnegContPosptrStructPtr->CSC_Complex ;
+
+            if ((here-> VCCSnegNode != 0) && (here-> VCCScontNegNode != 0))
+                here->VCCSnegContNegptr = here->VCCSnegContNegptrStructPtr->CSC_Complex ;
+
+        }
+    }
+
+    return (OK) ;
 }
 
 int
@@ -90,41 +113,27 @@ VCCSbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     VCCSmodel *model = (VCCSmodel *)inModel ;
     VCCSinstance *here ;
-    int i ;
 
-    /*  loop through all the VoltageControlledCurrentSource models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the VCCS models */
     for ( ; model != NULL ; model = model->VCCSnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->VCCSinstances ; here != NULL ; here = here->VCCSnextInstance)
         {
-            i = 0 ;
-            if ((here->VCCSposNode != 0) && (here->VCCScontPosNode != 0))
-            {
-                while (here->VCCSposContPosptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->VCCSposContPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> VCCSposNode != 0) && (here-> VCCScontPosNode != 0))
+                here->VCCSposContPosptr = here->VCCSposContPosptrStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->VCCSposNode != 0) && (here->VCCScontNegNode != 0))
-            {
-                while (here->VCCSposContNegptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->VCCSposContNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> VCCSposNode != 0) && (here-> VCCScontNegNode != 0))
+                here->VCCSposContNegptr = here->VCCSposContNegptrStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->VCCSnegNode != 0) && (here->VCCScontPosNode != 0))
-            {
-                while (here->VCCSnegContPosptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->VCCSnegContPosptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> VCCSnegNode != 0) && (here-> VCCScontPosNode != 0))
+                here->VCCSnegContPosptr = here->VCCSnegContPosptrStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->VCCSnegNode != 0) && (here->VCCScontNegNode != 0))
-            {
-                while (here->VCCSnegContNegptr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->VCCSnegContNegptr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> VCCSnegNode != 0) && (here-> VCCScontNegNode != 0))
+                here->VCCSnegContNegptr = here->VCCSnegContNegptrStructPtr->CSC ;
+
         }
     }
 
