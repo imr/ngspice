@@ -117,12 +117,6 @@ TXLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
         /* loop through all the instances of the model */
         for (here = model->TXLinstances; here != NULL ;
                 here=here->TXLnextInstance) {
-            
-/* macro to make elements with built in test for out of memory */
-#define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
-    return(E_NOMEM);\
-}
 
             if (! here->TXLibr1Given) {
                     error = CKTmkCur(ckt, &tmp, here->TXLname, "branch1");
@@ -134,6 +128,12 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                     if (error) return (error);
                     here->TXLibr2 = tmp->number;
             }
+
+/* macro to make elements with built in test for out of memory */
+#define TSTALLOC(ptr,first,second) \
+if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+    return(E_NOMEM);\
+}
 
             TSTALLOC(TXLposPosptr, TXLposNode, TXLposNode);
             TSTALLOC(TXLposNegptr, TXLposNode, TXLnegNode);
@@ -150,9 +150,9 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(TXLibr1Ibr2ptr, TXLibr1, TXLibr2);
             TSTALLOC(TXLibr2Ibr1ptr, TXLibr2, TXLibr1);
 
-			here->in_node_name = CKTnodName(ckt,here->TXLposNode);
-			here->out_node_name = CKTnodName(ckt,here->TXLnegNode);
-			ReadTxL(here, ckt);
+            here->in_node_name = CKTnodName(ckt,here->TXLposNode);
+            here->out_node_name = CKTnodName(ckt,here->TXLnegNode);
+            ReadTxL(here, ckt);
 
         }
     }
