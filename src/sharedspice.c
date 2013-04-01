@@ -239,7 +239,6 @@ mutexType fputsMutex;
 static bool is_initialized = FALSE;
 static char* no_init = "Error: ngspice is not initialized!\n   Run ngSpice_Init first";
 
-static bool printstopp = FALSE;
 
 static struct plot *
 get_plot_byname(char* plotname)
@@ -269,6 +268,9 @@ static threadId_t tid, printtid, bgtid = (threadId_t) 0;
 
 static bool fl_running = FALSE;
 static bool fl_exited = TRUE;
+
+static bool printstopp = FALSE;
+static bool ps_exited = TRUE;
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
 #define EXPORT_FLAVOR WINAPI
@@ -358,6 +360,7 @@ runc(char* command)
     char buf[1024] = "";
     sighandler oldHandler;
 #ifdef THREADS
+    int timeout = 0;
     char *string;
     bool fl_bg = FALSE;
     command_id = threadid_self();
@@ -369,12 +372,26 @@ runc(char* command)
 #ifndef low_latency
     /* stop the printf thread 'printsend()' */
     else if (cieq("bg_pstop", command)) {
-        printstopp = TRUE;
+        while (!ps_exited && timeout < 100) {
+            printstopp = TRUE;
+
 #if defined __MINGW32__ || defined _MSC_VER
-        Sleep(100); // va: windows native
+            Sleep(100); // va: windows native
 #else
-        usleep(10000);
+            usleep(10000);
 #endif
+            timeout++;
+        }
+        if (!ps_exited) {
+            fprintf(stderr, "Error: Couldn't stop printsend thread\n");
+            return EXIT_BAD;
+        }
+        else
+            fprintf(stdout, "Printsend thread stopped with timeout = %d\n", timeout);
+#ifdef HAVE_LIBPTHREAD
+        pthread_join(printtid, NULL);
+#endif
+        printstopp = FALSE;
         return 2;
     }
 #endif
@@ -385,7 +402,7 @@ runc(char* command)
 #endif
 
     /* Catch Ctrl-C to break simulations */
-#if !defined(_MSC_VER) /*&& !defined(__MINGW32__) */
+#if 1 //!defined(_MSC_VER) /*&& !defined(__MINGW32__) */
     oldHandler = signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
     if (SETJMP(jbuf, 1) != 0) {
         signal(SIGINT, oldHandler);
@@ -603,7 +620,14 @@ bot:
     }
 #endif
 
-    com_version(NULL);
+//  com_version(NULL);
+    fprintf(cp_out,
+            "******\n"
+            "** %s-%s\n",
+            ft_sim->simulator, ft_sim->version);
+    if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
+        fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
+    fprintf(cp_out, "******\n");
 
     is_initialized = TRUE;
 
@@ -698,6 +722,7 @@ int ngSpice_Circ(char** circa){
 
     if ( ! setjmp(errbufm) ) {
         intermj = 0;
+        immediate = FALSE;
         /* count the entries */
         while (circa[entries]) {
             entries++;
@@ -1164,6 +1189,8 @@ static char *outsend = NULL;
 static void
 printsend(void)
 {
+    ps_exited = FALSE;
+    printstopp = FALSE;
     for (;;) {
 #if defined(__MINGW32__) || defined(_MSC_VER)
         Sleep(50);  // loop delay
@@ -1188,6 +1215,7 @@ printsend(void)
             tfree(outsend);
         }
     }
+    ps_exited = TRUE;
 }
 
 /* remove the first entry of a wordlist, but keep wl->wl_word */
