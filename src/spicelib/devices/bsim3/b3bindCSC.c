@@ -1,5 +1,5 @@
 /**********
-Author: 2012 Francesco Lannutti
+Author: 2013 Francesco Lannutti
 **********/
 
 #include "ngspice/ngspice.h"
@@ -7,412 +7,402 @@ Author: 2012 Francesco Lannutti
 #include "bsim3def.h"
 #include "ngspice/sperror.h"
 
+#include <stdlib.h>
+
+static
 int
-BSIM3bindCSC(GENmodel *inModel, CKTcircuit *ckt)
+BindCompare (const void *a, const void *b)
 {
-    BSIM3model *model = (BSIM3model *)inModel;
-    int i ;
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
 
-    /*  loop through all the b3 models */
-    for( ; model != NULL; model = model->BSIM3nextModel ) {
-	BSIM3instance *here;
-
-        /* loop through all the instances of the model */
-        for (here = model->BSIM3instances; here != NULL ;
-	    here = here->BSIM3nextInstance) {
-
-		i = 0 ;
-		if ((here-> BSIM3dNode != 0) && (here-> BSIM3dNode != 0)) {
-			while (here->BSIM3DdPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3DdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3gNode != 0) && (here-> BSIM3gNode != 0)) {
-			while (here->BSIM3GgPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3GgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3sNode != 0) && (here-> BSIM3sNode != 0)) {
-			while (here->BSIM3SsPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3SsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3bNode != 0) && (here-> BSIM3bNode != 0)) {
-			while (here->BSIM3BbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3BbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3dNodePrime != 0)) {
-			while (here->BSIM3DPdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3DPdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3sNodePrime != 0)) {
-			while (here->BSIM3SPspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3SPspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3dNode != 0) && (here-> BSIM3dNodePrime != 0)) {
-			while (here->BSIM3DdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3DdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3gNode != 0) && (here-> BSIM3bNode != 0)) {
-			while (here->BSIM3GbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3GbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3gNode != 0) && (here-> BSIM3dNodePrime != 0)) {
-			while (here->BSIM3GdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3GdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3gNode != 0) && (here-> BSIM3sNodePrime != 0)) {
-			while (here->BSIM3GspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3GspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3sNode != 0) && (here-> BSIM3sNodePrime != 0)) {
-			while (here->BSIM3SspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3SspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3bNode != 0) && (here-> BSIM3dNodePrime != 0)) {
-			while (here->BSIM3BdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3BdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3bNode != 0) && (here-> BSIM3sNodePrime != 0)) {
-			while (here->BSIM3BspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3BspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3sNodePrime != 0)) {
-			while (here->BSIM3DPspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3DPspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3dNode != 0)) {
-			while (here->BSIM3DPdPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3DPdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3bNode != 0) && (here-> BSIM3gNode != 0)) {
-			while (here->BSIM3BgPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3BgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3gNode != 0)) {
-			while (here->BSIM3DPgPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3DPgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3gNode != 0)) {
-			while (here->BSIM3SPgPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3SPgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3sNode != 0)) {
-			while (here->BSIM3SPsPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3SPsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3bNode != 0)) {
-			while (here->BSIM3DPbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3DPbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3bNode != 0)) {
-			while (here->BSIM3SPbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3SPbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3dNodePrime != 0)) {
-			while (here->BSIM3SPdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3SPdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3qNode != 0) && (here-> BSIM3qNode != 0)) {
-			while (here->BSIM3QqPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3QqPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3qNode != 0) && (here-> BSIM3dNodePrime != 0)) {
-			while (here->BSIM3QdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3QdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3qNode != 0) && (here-> BSIM3sNodePrime != 0)) {
-			while (here->BSIM3QspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3QspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3qNode != 0) && (here-> BSIM3gNode != 0)) {
-			while (here->BSIM3QgPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3QgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3qNode != 0) && (here-> BSIM3bNode != 0)) {
-			while (here->BSIM3QbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3QbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3qNode != 0)) {
-			while (here->BSIM3DPqPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3DPqPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3qNode != 0)) {
-			while (here->BSIM3SPqPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3SPqPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3gNode != 0) && (here-> BSIM3qNode != 0)) {
-			while (here->BSIM3GqPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3GqPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> BSIM3bNode != 0) && (here-> BSIM3qNode != 0)) {
-			while (here->BSIM3BqPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BSIM3BqPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-	}
-    }
-    return(OK);
+    return ((int)(A->Sparse - B->Sparse)) ;
 }
 
 int
-BSIM3bindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
+BSIM3bindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
-    BSIM3model *model = (BSIM3model *)inModel;
-    int i ;
+    BSIM3model *model = (BSIM3model *)inModel ;
+    BSIM3instance *here ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-    /*  loop through all the b3 models */
-    for( ; model != NULL; model = model->BSIM3nextModel ) {
-	BSIM3instance *here;
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
+    /* loop through all the BSIM3 models */
+    for ( ; model != NULL ; model = model->BSIM3nextModel)
+    {
         /* loop through all the instances of the model */
-        for (here = model->BSIM3instances; here != NULL ;
-	    here = here->BSIM3nextInstance) {
+        for (here = model->BSIM3instances ; here != NULL ; here = here->BSIM3nextInstance)
+        {
+            if ((here-> BSIM3dNode != 0) && (here-> BSIM3dNode != 0))
+            {
+                i = here->BSIM3DdPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3DdStructPtr = matched ;
+                here->BSIM3DdPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3dNode != 0) && (here-> BSIM3dNode != 0)) {
-			while (here->BSIM3DdPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3DdPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3gNode != 0))
+            {
+                i = here->BSIM3GgPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3GgStructPtr = matched ;
+                here->BSIM3GgPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3gNode != 0) && (here-> BSIM3gNode != 0)) {
-			while (here->BSIM3GgPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3GgPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3sNode != 0) && (here-> BSIM3sNode != 0))
+            {
+                i = here->BSIM3SsPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3SsStructPtr = matched ;
+                here->BSIM3SsPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3sNode != 0) && (here-> BSIM3sNode != 0)) {
-			while (here->BSIM3SsPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3SsPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3bNode != 0))
+            {
+                i = here->BSIM3BbPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3BbStructPtr = matched ;
+                here->BSIM3BbPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3bNode != 0) && (here-> BSIM3bNode != 0)) {
-			while (here->BSIM3BbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3BbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3dNodePrime != 0))
+            {
+                i = here->BSIM3DPdpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3DPdpStructPtr = matched ;
+                here->BSIM3DPdpPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3dNodePrime != 0)) {
-			while (here->BSIM3DPdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3DPdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3sNodePrime != 0))
+            {
+                i = here->BSIM3SPspPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3SPspStructPtr = matched ;
+                here->BSIM3SPspPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3sNodePrime != 0)) {
-			while (here->BSIM3SPspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3SPspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3dNode != 0) && (here-> BSIM3dNodePrime != 0))
+            {
+                i = here->BSIM3DdpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3DdpStructPtr = matched ;
+                here->BSIM3DdpPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3dNode != 0) && (here-> BSIM3dNodePrime != 0)) {
-			while (here->BSIM3DdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3DdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3bNode != 0))
+            {
+                i = here->BSIM3GbPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3GbStructPtr = matched ;
+                here->BSIM3GbPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3gNode != 0) && (here-> BSIM3bNode != 0)) {
-			while (here->BSIM3GbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3GbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3dNodePrime != 0))
+            {
+                i = here->BSIM3GdpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3GdpStructPtr = matched ;
+                here->BSIM3GdpPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3gNode != 0) && (here-> BSIM3dNodePrime != 0)) {
-			while (here->BSIM3GdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3GdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3sNodePrime != 0))
+            {
+                i = here->BSIM3GspPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3GspStructPtr = matched ;
+                here->BSIM3GspPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3gNode != 0) && (here-> BSIM3sNodePrime != 0)) {
-			while (here->BSIM3GspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3GspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3sNode != 0) && (here-> BSIM3sNodePrime != 0))
+            {
+                i = here->BSIM3SspPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3SspStructPtr = matched ;
+                here->BSIM3SspPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3sNode != 0) && (here-> BSIM3sNodePrime != 0)) {
-			while (here->BSIM3SspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3SspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3dNodePrime != 0))
+            {
+                i = here->BSIM3BdpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3BdpStructPtr = matched ;
+                here->BSIM3BdpPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3bNode != 0) && (here-> BSIM3dNodePrime != 0)) {
-			while (here->BSIM3BdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3BdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3sNodePrime != 0))
+            {
+                i = here->BSIM3BspPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3BspStructPtr = matched ;
+                here->BSIM3BspPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3bNode != 0) && (here-> BSIM3sNodePrime != 0)) {
-			while (here->BSIM3BspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3BspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3sNodePrime != 0))
+            {
+                i = here->BSIM3DPspPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3DPspStructPtr = matched ;
+                here->BSIM3DPspPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3sNodePrime != 0)) {
-			while (here->BSIM3DPspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3DPspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3dNode != 0))
+            {
+                i = here->BSIM3DPdPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3DPdStructPtr = matched ;
+                here->BSIM3DPdPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3dNode != 0)) {
-			while (here->BSIM3DPdPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3DPdPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3gNode != 0))
+            {
+                i = here->BSIM3BgPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3BgStructPtr = matched ;
+                here->BSIM3BgPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3bNode != 0) && (here-> BSIM3gNode != 0)) {
-			while (here->BSIM3BgPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3BgPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3gNode != 0))
+            {
+                i = here->BSIM3DPgPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3DPgStructPtr = matched ;
+                here->BSIM3DPgPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3gNode != 0)) {
-			while (here->BSIM3DPgPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3DPgPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3gNode != 0))
+            {
+                i = here->BSIM3SPgPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3SPgStructPtr = matched ;
+                here->BSIM3SPgPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3gNode != 0)) {
-			while (here->BSIM3SPgPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3SPgPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3sNode != 0))
+            {
+                i = here->BSIM3SPsPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3SPsStructPtr = matched ;
+                here->BSIM3SPsPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3sNode != 0)) {
-			while (here->BSIM3SPsPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3SPsPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3bNode != 0))
+            {
+                i = here->BSIM3DPbPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3DPbStructPtr = matched ;
+                here->BSIM3DPbPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3bNode != 0)) {
-			while (here->BSIM3DPbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3DPbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3bNode != 0))
+            {
+                i = here->BSIM3SPbPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3SPbStructPtr = matched ;
+                here->BSIM3SPbPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3bNode != 0)) {
-			while (here->BSIM3SPbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3SPbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3dNodePrime != 0))
+            {
+                i = here->BSIM3SPdpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3SPdpStructPtr = matched ;
+                here->BSIM3SPdpPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3dNodePrime != 0)) {
-			while (here->BSIM3SPdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3SPdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3qNode != 0))
+            {
+                i = here->BSIM3QqPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3QqStructPtr = matched ;
+                here->BSIM3QqPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3qNode != 0) && (here-> BSIM3qNode != 0)) {
-			while (here->BSIM3QqPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3QqPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3dNodePrime != 0))
+            {
+                i = here->BSIM3QdpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3QdpStructPtr = matched ;
+                here->BSIM3QdpPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3qNode != 0) && (here-> BSIM3dNodePrime != 0)) {
-			while (here->BSIM3QdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3QdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3gNode != 0))
+            {
+                i = here->BSIM3QgPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3QgStructPtr = matched ;
+                here->BSIM3QgPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3qNode != 0) && (here-> BSIM3sNodePrime != 0)) {
-			while (here->BSIM3QspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3QspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3sNodePrime != 0))
+            {
+                i = here->BSIM3QspPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3QspStructPtr = matched ;
+                here->BSIM3QspPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3qNode != 0) && (here-> BSIM3gNode != 0)) {
-			while (here->BSIM3QgPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3QgPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3bNode != 0))
+            {
+                i = here->BSIM3QbPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3QbStructPtr = matched ;
+                here->BSIM3QbPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3qNode != 0) && (here-> BSIM3bNode != 0)) {
-			while (here->BSIM3QbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3QbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3qNode != 0))
+            {
+                i = here->BSIM3DPqPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3DPqStructPtr = matched ;
+                here->BSIM3DPqPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3qNode != 0)) {
-			while (here->BSIM3DPqPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3DPqPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3qNode != 0))
+            {
+                i = here->BSIM3GqPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3GqStructPtr = matched ;
+                here->BSIM3GqPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3qNode != 0)) {
-			while (here->BSIM3SPqPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3SPqPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3qNode != 0))
+            {
+                i = here->BSIM3SPqPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3SPqStructPtr = matched ;
+                here->BSIM3SPqPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3gNode != 0) && (here-> BSIM3qNode != 0)) {
-			while (here->BSIM3GqPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3GqPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3qNode != 0))
+            {
+                i = here->BSIM3BqPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BSIM3BqStructPtr = matched ;
+                here->BSIM3BqPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here-> BSIM3bNode != 0) && (here-> BSIM3qNode != 0)) {
-			while (here->BSIM3BqPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BSIM3BqPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-	}
+        }
     }
-    return(OK);
+
+    return (OK) ;
+}
+
+int
+BSIM3bindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
+{
+    BSIM3model *model = (BSIM3model *)inModel ;
+    BSIM3instance *here ;
+
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the BSIM3 models */
+    for ( ; model != NULL ; model = model->BSIM3nextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->BSIM3instances ; here != NULL ; here = here->BSIM3nextInstance)
+        {
+            if ((here-> BSIM3dNode != 0) && (here-> BSIM3dNode != 0))
+                here->BSIM3DdPtr = here->BSIM3DdStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3gNode != 0))
+                here->BSIM3GgPtr = here->BSIM3GgStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3sNode != 0) && (here-> BSIM3sNode != 0))
+                here->BSIM3SsPtr = here->BSIM3SsStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3bNode != 0))
+                here->BSIM3BbPtr = here->BSIM3BbStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3dNodePrime != 0))
+                here->BSIM3DPdpPtr = here->BSIM3DPdpStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3sNodePrime != 0))
+                here->BSIM3SPspPtr = here->BSIM3SPspStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3dNode != 0) && (here-> BSIM3dNodePrime != 0))
+                here->BSIM3DdpPtr = here->BSIM3DdpStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3bNode != 0))
+                here->BSIM3GbPtr = here->BSIM3GbStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3dNodePrime != 0))
+                here->BSIM3GdpPtr = here->BSIM3GdpStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3sNodePrime != 0))
+                here->BSIM3GspPtr = here->BSIM3GspStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3sNode != 0) && (here-> BSIM3sNodePrime != 0))
+                here->BSIM3SspPtr = here->BSIM3SspStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3dNodePrime != 0))
+                here->BSIM3BdpPtr = here->BSIM3BdpStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3sNodePrime != 0))
+                here->BSIM3BspPtr = here->BSIM3BspStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3sNodePrime != 0))
+                here->BSIM3DPspPtr = here->BSIM3DPspStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3dNode != 0))
+                here->BSIM3DPdPtr = here->BSIM3DPdStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3gNode != 0))
+                here->BSIM3BgPtr = here->BSIM3BgStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3gNode != 0))
+                here->BSIM3DPgPtr = here->BSIM3DPgStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3gNode != 0))
+                here->BSIM3SPgPtr = here->BSIM3SPgStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3sNode != 0))
+                here->BSIM3SPsPtr = here->BSIM3SPsStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3bNode != 0))
+                here->BSIM3DPbPtr = here->BSIM3DPbStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3bNode != 0))
+                here->BSIM3SPbPtr = here->BSIM3SPbStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3dNodePrime != 0))
+                here->BSIM3SPdpPtr = here->BSIM3SPdpStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3qNode != 0))
+                here->BSIM3QqPtr = here->BSIM3QqStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3dNodePrime != 0))
+                here->BSIM3QdpPtr = here->BSIM3QdpStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3gNode != 0))
+                here->BSIM3QgPtr = here->BSIM3QgStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3sNodePrime != 0))
+                here->BSIM3QspPtr = here->BSIM3QspStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3bNode != 0))
+                here->BSIM3QbPtr = here->BSIM3QbStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3qNode != 0))
+                here->BSIM3DPqPtr = here->BSIM3DPqStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3qNode != 0))
+                here->BSIM3GqPtr = here->BSIM3GqStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3qNode != 0))
+                here->BSIM3SPqPtr = here->BSIM3SPqStructPtr->CSC_Complex ;
+
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3qNode != 0))
+                here->BSIM3BqPtr = here->BSIM3BqStructPtr->CSC_Complex ;
+
+        }
+    }
+
+    return (OK) ;
 }
 
 int
@@ -420,230 +410,108 @@ BSIM3bindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     BSIM3model *model = (BSIM3model *)inModel ;
     BSIM3instance *here ;
-    int i ;
 
-    /*  loop through all the bsim3 models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the BSIM3 models */
     for ( ; model != NULL ; model = model->BSIM3nextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->BSIM3instances ; here != NULL ; here = here->BSIM3nextInstance)
         {
-            i = 0 ;
-            if ((here->BSIM3dNode != 0) && (here->BSIM3dNode != 0))
-            {
-                while (here->BSIM3DdPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3DdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3dNode != 0) && (here-> BSIM3dNode != 0))
+                here->BSIM3DdPtr = here->BSIM3DdStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3gNode != 0) && (here->BSIM3gNode != 0))
-            {
-                while (here->BSIM3GgPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3GgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3gNode != 0))
+                here->BSIM3GgPtr = here->BSIM3GgStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3sNode != 0) && (here->BSIM3sNode != 0))
-            {
-                while (here->BSIM3SsPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3SsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3sNode != 0) && (here-> BSIM3sNode != 0))
+                here->BSIM3SsPtr = here->BSIM3SsStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3bNode != 0) && (here->BSIM3bNode != 0))
-            {
-                while (here->BSIM3BbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3BbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3bNode != 0))
+                here->BSIM3BbPtr = here->BSIM3BbStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3dNodePrime != 0) && (here->BSIM3dNodePrime != 0))
-            {
-                while (here->BSIM3DPdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3DPdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3dNodePrime != 0))
+                here->BSIM3DPdpPtr = here->BSIM3DPdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3sNodePrime != 0) && (here->BSIM3sNodePrime != 0))
-            {
-                while (here->BSIM3SPspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3SPspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3sNodePrime != 0))
+                here->BSIM3SPspPtr = here->BSIM3SPspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3dNode != 0) && (here->BSIM3dNodePrime != 0))
-            {
-                while (here->BSIM3DdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3DdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3dNode != 0) && (here-> BSIM3dNodePrime != 0))
+                here->BSIM3DdpPtr = here->BSIM3DdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3gNode != 0) && (here->BSIM3bNode != 0))
-            {
-                while (here->BSIM3GbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3GbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3bNode != 0))
+                here->BSIM3GbPtr = here->BSIM3GbStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3gNode != 0) && (here->BSIM3dNodePrime != 0))
-            {
-                while (here->BSIM3GdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3GdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3dNodePrime != 0))
+                here->BSIM3GdpPtr = here->BSIM3GdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3gNode != 0) && (here->BSIM3sNodePrime != 0))
-            {
-                while (here->BSIM3GspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3GspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3sNodePrime != 0))
+                here->BSIM3GspPtr = here->BSIM3GspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3sNode != 0) && (here->BSIM3sNodePrime != 0))
-            {
-                while (here->BSIM3SspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3SspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3sNode != 0) && (here-> BSIM3sNodePrime != 0))
+                here->BSIM3SspPtr = here->BSIM3SspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3bNode != 0) && (here->BSIM3dNodePrime != 0))
-            {
-                while (here->BSIM3BdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3BdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3dNodePrime != 0))
+                here->BSIM3BdpPtr = here->BSIM3BdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3bNode != 0) && (here->BSIM3sNodePrime != 0))
-            {
-                while (here->BSIM3BspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3BspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3sNodePrime != 0))
+                here->BSIM3BspPtr = here->BSIM3BspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3dNodePrime != 0) && (here->BSIM3sNodePrime != 0))
-            {
-                while (here->BSIM3DPspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3DPspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3sNodePrime != 0))
+                here->BSIM3DPspPtr = here->BSIM3DPspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3dNodePrime != 0) && (here->BSIM3dNode != 0))
-            {
-                while (here->BSIM3DPdPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3DPdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3dNode != 0))
+                here->BSIM3DPdPtr = here->BSIM3DPdStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3bNode != 0) && (here->BSIM3gNode != 0))
-            {
-                while (here->BSIM3BgPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3BgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3gNode != 0))
+                here->BSIM3BgPtr = here->BSIM3BgStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3dNodePrime != 0) && (here->BSIM3gNode != 0))
-            {
-                while (here->BSIM3DPgPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3DPgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3gNode != 0))
+                here->BSIM3DPgPtr = here->BSIM3DPgStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3sNodePrime != 0) && (here->BSIM3gNode != 0))
-            {
-                while (here->BSIM3SPgPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3SPgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3gNode != 0))
+                here->BSIM3SPgPtr = here->BSIM3SPgStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3sNodePrime != 0) && (here->BSIM3sNode != 0))
-            {
-                while (here->BSIM3SPsPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3SPsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3sNode != 0))
+                here->BSIM3SPsPtr = here->BSIM3SPsStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3dNodePrime != 0) && (here->BSIM3bNode != 0))
-            {
-                while (here->BSIM3DPbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3DPbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3bNode != 0))
+                here->BSIM3DPbPtr = here->BSIM3DPbStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3sNodePrime != 0) && (here->BSIM3bNode != 0))
-            {
-                while (here->BSIM3SPbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3SPbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3bNode != 0))
+                here->BSIM3SPbPtr = here->BSIM3SPbStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3sNodePrime != 0) && (here->BSIM3dNodePrime != 0))
-            {
-                while (here->BSIM3SPdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3SPdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3dNodePrime != 0))
+                here->BSIM3SPdpPtr = here->BSIM3SPdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3qNode != 0) && (here->BSIM3qNode != 0))
-            {
-                while (here->BSIM3QqPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3QqPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3qNode != 0))
+                here->BSIM3QqPtr = here->BSIM3QqStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3qNode != 0) && (here->BSIM3dNodePrime != 0))
-            {
-                while (here->BSIM3QdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3QdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3dNodePrime != 0))
+                here->BSIM3QdpPtr = here->BSIM3QdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3qNode != 0) && (here->BSIM3sNodePrime != 0))
-            {
-                while (here->BSIM3QspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3QspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3gNode != 0))
+                here->BSIM3QgPtr = here->BSIM3QgStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3qNode != 0) && (here->BSIM3gNode != 0))
-            {
-                while (here->BSIM3QgPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3QgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3sNodePrime != 0))
+                here->BSIM3QspPtr = here->BSIM3QspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3qNode != 0) && (here->BSIM3bNode != 0))
-            {
-                while (here->BSIM3QbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3QbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3qNode != 0) && (here-> BSIM3bNode != 0))
+                here->BSIM3QbPtr = here->BSIM3QbStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3dNodePrime != 0) && (here->BSIM3qNode != 0))
-            {
-                while (here->BSIM3DPqPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3DPqPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3dNodePrime != 0) && (here-> BSIM3qNode != 0))
+                here->BSIM3DPqPtr = here->BSIM3DPqStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3sNodePrime != 0) && (here->BSIM3qNode != 0))
-            {
-                while (here->BSIM3SPqPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3SPqPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3gNode != 0) && (here-> BSIM3qNode != 0))
+                here->BSIM3GqPtr = here->BSIM3GqStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3gNode != 0) && (here->BSIM3qNode != 0))
-            {
-                while (here->BSIM3GqPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3GqPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3sNodePrime != 0) && (here-> BSIM3qNode != 0))
+                here->BSIM3SPqPtr = here->BSIM3SPqStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->BSIM3bNode != 0) && (here->BSIM3qNode != 0))
-            {
-                while (here->BSIM3BqPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BSIM3BqPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> BSIM3bNode != 0) && (here-> BSIM3qNode != 0))
+                here->BSIM3BqPtr = here->BSIM3BqStructPtr->CSC ;
+
         }
     }
 

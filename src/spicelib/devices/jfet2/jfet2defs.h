@@ -155,6 +155,24 @@ typedef struct sJFET2instance {
     double JFET2d3;          /* Dual Power-law parameter */
     double JFET2alpha;       /* capacitance model transition parameter */
 
+#ifdef KLU
+    BindElement *JFET2drainDrainPrimeStructPtr ;
+    BindElement *JFET2gateDrainPrimeStructPtr ;
+    BindElement *JFET2gateSourcePrimeStructPtr ;
+    BindElement *JFET2sourceSourcePrimeStructPtr ;
+    BindElement *JFET2drainPrimeDrainStructPtr ;
+    BindElement *JFET2drainPrimeGateStructPtr ;
+    BindElement *JFET2drainPrimeSourcePrimeStructPtr ;
+    BindElement *JFET2sourcePrimeGateStructPtr ;
+    BindElement *JFET2sourcePrimeSourceStructPtr ;
+    BindElement *JFET2sourcePrimeDrainPrimeStructPtr ;
+    BindElement *JFET2drainDrainStructPtr ;
+    BindElement *JFET2gateGateStructPtr ;
+    BindElement *JFET2sourceSourceStructPtr ;
+    BindElement *JFET2drainPrimeDrainPrimeStructPtr ;
+    BindElement *JFET2sourcePrimeSourcePrimeStructPtr ;
+#endif
+
 } JFET2instance ;
 
 #define JFET2vgs      JFET2state 

@@ -1,5 +1,5 @@
 /**********
-Author: 2012 Francesco Lannutti
+Author: 2013 Francesco Lannutti
 **********/
 
 #include "ngspice/ngspice.h"
@@ -7,1096 +7,1053 @@ Author: 2012 Francesco Lannutti
 #include "hsmhvdef.h"
 #include "ngspice/sperror.h"
 
+#include <stdlib.h>
+
+static
 int
-HSMHVbindCSC(GENmodel *inModel, CKTcircuit *ckt)
+BindCompare (const void *a, const void *b)
 {
-    HSMHVmodel *model = (HSMHVmodel *)inModel;
-    int i ;
-
-    /*  loop through all the hsmhv models */
-    for( ; model != NULL; model = model->HSMHVnextModel ) {
-	HSMHVinstance *here;
-
-        /* loop through all the instances of the model */
-        for (here = model->HSMHVinstances; here != NULL ;
-	    here = here->HSMHVnextInstance) {
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVDPbpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDPbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVSPbpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSPbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVGPbpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVGPbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVBPdPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVBPdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVBPdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVBPdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVBPsPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVBPsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVBPspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVBPspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVBPgpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVBPgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVBPbpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVBPbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVDdPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVGPgpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVGPgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVSsPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVDPdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDPdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVSPspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSPspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVDdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVGPdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVGPdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVGPspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVGPspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVSspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVDPspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDPspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVDPdPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDPdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVDPgpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDPgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVSPgpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSPgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVSPsPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSPsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVSPdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSPdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNode != 0) && (here-> HSMHVgNode != 0)) {
-			while (here->HSMHVGgPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVGgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNode != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVGgpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVGgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVgNode != 0)) {
-			while (here->HSMHVGPgPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVGPgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVdbNode != 0)) {
-			while (here->HSMHVDdbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDdbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVsbNode != 0)) {
-			while (here->HSMHVSsbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSsbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdbNode != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVDBdPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDBdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdbNode != 0) && (here-> HSMHVdbNode != 0)) {
-			while (here->HSMHVDBdbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDBdbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdbNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVDBbpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDBbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdbNode != 0)) {
-			while (here->HSMHVBPdbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVBPdbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVbNode != 0)) {
-			while (here->HSMHVBPbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVBPbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsbNode != 0)) {
-			while (here->HSMHVBPsbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVBPsbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsbNode != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVSBsPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSBsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsbNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVSBbpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSBbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsbNode != 0) && (here-> HSMHVsbNode != 0)) {
-			while (here->HSMHVSBsbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSBsbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVBbpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVBbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNode != 0) && (here-> HSMHVbNode != 0)) {
-			while (here->HSMHVBbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVBbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVDgpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVDsPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVDbpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVDPsPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDPsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVSgpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVSdPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVSbpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVSPdPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSPdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVGPdPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVGPdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVGPsPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVGPsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-                if ( here->HSMHVsubNode > 0 ) { /* 5th substrate node */
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVsubNode != 0)) {
-			while (here->HSMHVDsubPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDsubPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsubNode != 0)) {
-			while (here->HSMHVDPsubPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDPsubPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVsubNode != 0)) {
-			while (here->HSMHVSsubPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSsubPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsubNode != 0)) {
-			while (here->HSMHVSPsubPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSPsubPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-                } /* IF */
-
-                if ( here->HSMHV_coselfheat >  0 ) { /* self heating */
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVTemptempPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVTemptempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVTempdPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVTempdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVTempdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVTempdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVTempsPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVTempsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVTempspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVTempspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVDPtempPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDPtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVSPtempPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSPtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVTempgpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVTempgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVTempbpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVTempbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVGPtempPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVGPtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVBPtempPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVBPtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdbNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVDBtempPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDBtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsbNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVSBtempPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSBtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVDtempPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVStempPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVStempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-                } /* IF */
-
-                if ( model->HSMHV_conqs ) { /* flat handling of NQS */
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVqiNode != 0)) {
-			while (here->HSMHVDPqiPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVDPqiPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVqiNode != 0)) {
-			while (here->HSMHVGPqiPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVGPqiPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVqbNode != 0)) {
-			while (here->HSMHVGPqbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVGPqbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVqiNode != 0)) {
-			while (here->HSMHVSPqiPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVSPqiPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVqbNode != 0)) {
-			while (here->HSMHVBPqbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVBPqbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqiNode != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVQIdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVQIdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqiNode != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVQIgpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVQIgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqiNode != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVQIspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVQIspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqiNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVQIbpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVQIbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqiNode != 0) && (here-> HSMHVqiNode != 0)) {
-			while (here->HSMHVQIqiPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVQIqiPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqbNode != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVQBdpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVQBdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqbNode != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVQBgpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVQBgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqbNode != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVQBspPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVQBspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqbNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVQBbpPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVQBbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqbNode != 0) && (here-> HSMHVqbNode != 0)) {
-			while (here->HSMHVQBqbPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVQBqbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-                if ( here->HSMHV_coselfheat >  0 ) { /* self heating */
-
-		i = 0 ;
-		if ((here-> HSMHVqiNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVQItempPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVQItempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqbNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVQBtempPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HSMHVQBtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-                }
-                }
-	}
-    }
-    return(OK);
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
+
+    return ((int)(A->Sparse - B->Sparse)) ;
 }
 
 int
-HSMHVbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
+HSMHVbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
-    HSMHVmodel *model = (HSMHVmodel *)inModel;
-    int i ;
+    HSMHVmodel *model = (HSMHVmodel *)inModel ;
+    HSMHVinstance *here ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-    /*  loop through all the hsmhv models */
-    for( ; model != NULL; model = model->HSMHVnextModel ) {
-	HSMHVinstance *here;
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
+    /* loop through all the HSMHV models */
+    for ( ; model != NULL ; model = model->HSMHVnextModel)
+    {
         /* loop through all the instances of the model */
-        for (here = model->HSMHVinstances; here != NULL ;
-	    here = here->HSMHVnextInstance) {
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVDPbpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDPbpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVSPbpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSPbpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVGPbpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVGPbpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVBPdPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVBPdPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVBPdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVBPdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVBPsPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVBPsPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVBPspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVBPspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVBPgpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVBPgpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVBPbpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVBPbpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVDdPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDdPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVGPgpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVGPgpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVSsPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSsPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVDPdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDPdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVSPspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSPspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVDdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVGPdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVGPdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVGPspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVGPspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVSspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVDPspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDPspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVDPdPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDPdPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVDPgpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDPgpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVSPgpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSPgpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVSPsPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSPsPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVSPdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSPdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNode != 0) && (here-> HSMHVgNode != 0)) {
-			while (here->HSMHVGgPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVGgPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNode != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVGgpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVGgpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVgNode != 0)) {
-			while (here->HSMHVGPgPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVGPgPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVdbNode != 0)) {
-			while (here->HSMHVDdbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDdbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVsbNode != 0)) {
-			while (here->HSMHVSsbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSsbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdbNode != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVDBdPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDBdPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdbNode != 0) && (here-> HSMHVdbNode != 0)) {
-			while (here->HSMHVDBdbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDBdbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdbNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVDBbpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDBbpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdbNode != 0)) {
-			while (here->HSMHVBPdbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVBPdbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVbNode != 0)) {
-			while (here->HSMHVBPbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVBPbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsbNode != 0)) {
-			while (here->HSMHVBPsbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVBPsbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsbNode != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVSBsPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSBsPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsbNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVSBbpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSBbpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsbNode != 0) && (here-> HSMHVsbNode != 0)) {
-			while (here->HSMHVSBsbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSBsbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVBbpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVBbpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNode != 0) && (here-> HSMHVbNode != 0)) {
-			while (here->HSMHVBbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVBbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVDgpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDgpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVDsPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDsPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVDbpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDbpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVDPsPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDPsPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVSgpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSgpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVSdPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSdPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVSbpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSbpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVSPdPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSPdPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVGPdPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVGPdPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVGPsPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVGPsPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-                if ( here->HSMHVsubNode > 0 ) { /* 5th substrate node */
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVsubNode != 0)) {
-			while (here->HSMHVDsubPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDsubPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsubNode != 0)) {
-			while (here->HSMHVDPsubPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDPsubPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVsubNode != 0)) {
-			while (here->HSMHVSsubPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSsubPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsubNode != 0)) {
-			while (here->HSMHVSPsubPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSPsubPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-                } /* IF */
-
-                if ( here->HSMHV_coselfheat >  0 ) { /* self heating */
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVTemptempPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVTemptempPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVdNode != 0)) {
-			while (here->HSMHVTempdPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVTempdPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVTempdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVTempdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVsNode != 0)) {
-			while (here->HSMHVTempsPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVTempsPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVTempspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVTempspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVDPtempPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDPtempPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVSPtempPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSPtempPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVTempgpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVTempgpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVtempNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVTempbpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVTempbpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVGPtempPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVGPtempPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVBPtempPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVBPtempPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdbNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVDBtempPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDBtempPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsbNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVSBtempPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSBtempPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVdNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVDtempPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDtempPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVStempPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVStempPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-                } /* IF */
-
-                if ( model->HSMHV_conqs ) { /* flat handling of NQS */
-
-		i = 0 ;
-		if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVqiNode != 0)) {
-			while (here->HSMHVDPqiPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVDPqiPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVqiNode != 0)) {
-			while (here->HSMHVGPqiPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVGPqiPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVqbNode != 0)) {
-			while (here->HSMHVGPqbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVGPqbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVqiNode != 0)) {
-			while (here->HSMHVSPqiPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVSPqiPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVqbNode != 0)) {
-			while (here->HSMHVBPqbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVBPqbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqiNode != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVQIdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVQIdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqiNode != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVQIgpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVQIgpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqiNode != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVQIspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVQIspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqiNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVQIbpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVQIbpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqiNode != 0) && (here-> HSMHVqiNode != 0)) {
-			while (here->HSMHVQIqiPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVQIqiPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqbNode != 0) && (here-> HSMHVdNodePrime != 0)) {
-			while (here->HSMHVQBdpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVQBdpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqbNode != 0) && (here-> HSMHVgNodePrime != 0)) {
-			while (here->HSMHVQBgpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVQBgpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqbNode != 0) && (here-> HSMHVsNodePrime != 0)) {
-			while (here->HSMHVQBspPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVQBspPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqbNode != 0) && (here-> HSMHVbNodePrime != 0)) {
-			while (here->HSMHVQBbpPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVQBbpPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqbNode != 0) && (here-> HSMHVqbNode != 0)) {
-			while (here->HSMHVQBqbPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVQBqbPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-                if ( here->HSMHV_coselfheat >  0 ) { /* self heating */
-
-		i = 0 ;
-		if ((here-> HSMHVqiNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVQItempPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVQItempPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here-> HSMHVqbNode != 0) && (here-> HSMHVtempNode != 0)) {
-			while (here->HSMHVQBtempPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HSMHVQBtempPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-                } /* IF */
-                } /* IF */
-	}
+        for (here = model->HSMHVinstances ; here != NULL ; here = here->HSMHVnextInstance)
+        {
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVbNodePrime != 0))
+            {
+                i = here->HSMHVDPbpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDPbpStructPtr = matched ;
+                here->HSMHVDPbpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVbNodePrime != 0))
+            {
+                i = here->HSMHVSPbpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSPbpStructPtr = matched ;
+                here->HSMHVSPbpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVbNodePrime != 0))
+            {
+                i = here->HSMHVGPbpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVGPbpStructPtr = matched ;
+                here->HSMHVGPbpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdNode != 0))
+            {
+                i = here->HSMHVBPdPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVBPdStructPtr = matched ;
+                here->HSMHVBPdPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsNode != 0))
+            {
+                i = here->HSMHVBPsPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVBPsStructPtr = matched ;
+                here->HSMHVBPsPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdNodePrime != 0))
+            {
+                i = here->HSMHVBPdpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVBPdpStructPtr = matched ;
+                here->HSMHVBPdpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsNodePrime != 0))
+            {
+                i = here->HSMHVBPspPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVBPspStructPtr = matched ;
+                here->HSMHVBPspPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVgNodePrime != 0))
+            {
+                i = here->HSMHVBPgpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVBPgpStructPtr = matched ;
+                here->HSMHVBPgpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVbNodePrime != 0))
+            {
+                i = here->HSMHVBPbpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVBPbpStructPtr = matched ;
+                here->HSMHVBPbpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVdNode != 0))
+            {
+                i = here->HSMHVDdPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDdStructPtr = matched ;
+                here->HSMHVDdPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVgNodePrime != 0))
+            {
+                i = here->HSMHVGPgpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVGPgpStructPtr = matched ;
+                here->HSMHVGPgpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVsNode != 0))
+            {
+                i = here->HSMHVSsPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSsStructPtr = matched ;
+                here->HSMHVSsPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVdNodePrime != 0))
+            {
+                i = here->HSMHVDPdpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDPdpStructPtr = matched ;
+                here->HSMHVDPdpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsNodePrime != 0))
+            {
+                i = here->HSMHVSPspPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSPspStructPtr = matched ;
+                here->HSMHVSPspPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVdNodePrime != 0))
+            {
+                i = here->HSMHVDdpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDdpStructPtr = matched ;
+                here->HSMHVDdpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVdNodePrime != 0))
+            {
+                i = here->HSMHVGPdpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVGPdpStructPtr = matched ;
+                here->HSMHVGPdpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVsNodePrime != 0))
+            {
+                i = here->HSMHVGPspPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVGPspStructPtr = matched ;
+                here->HSMHVGPspPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVsNodePrime != 0))
+            {
+                i = here->HSMHVSspPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSspStructPtr = matched ;
+                here->HSMHVSspPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsNodePrime != 0))
+            {
+                i = here->HSMHVDPspPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDPspStructPtr = matched ;
+                here->HSMHVDPspPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVdNode != 0))
+            {
+                i = here->HSMHVDPdPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDPdStructPtr = matched ;
+                here->HSMHVDPdPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVgNodePrime != 0))
+            {
+                i = here->HSMHVDPgpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDPgpStructPtr = matched ;
+                here->HSMHVDPgpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVgNodePrime != 0))
+            {
+                i = here->HSMHVSPgpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSPgpStructPtr = matched ;
+                here->HSMHVSPgpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsNode != 0))
+            {
+                i = here->HSMHVSPsPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSPsStructPtr = matched ;
+                here->HSMHVSPsPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVdNodePrime != 0))
+            {
+                i = here->HSMHVSPdpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSPdpStructPtr = matched ;
+                here->HSMHVSPdpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVgNode != 0) && (here-> HSMHVgNode != 0))
+            {
+                i = here->HSMHVGgPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVGgStructPtr = matched ;
+                here->HSMHVGgPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVgNode != 0) && (here-> HSMHVgNodePrime != 0))
+            {
+                i = here->HSMHVGgpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVGgpStructPtr = matched ;
+                here->HSMHVGgpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVgNode != 0))
+            {
+                i = here->HSMHVGPgPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVGPgStructPtr = matched ;
+                here->HSMHVGPgPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVdbNode != 0))
+            {
+                i = here->HSMHVDdbPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDdbStructPtr = matched ;
+                here->HSMHVDdbPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVsbNode != 0))
+            {
+                i = here->HSMHVSsbPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSsbStructPtr = matched ;
+                here->HSMHVSsbPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdbNode != 0) && (here-> HSMHVdNode != 0))
+            {
+                i = here->HSMHVDBdPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDBdStructPtr = matched ;
+                here->HSMHVDBdPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdbNode != 0) && (here-> HSMHVdbNode != 0))
+            {
+                i = here->HSMHVDBdbPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDBdbStructPtr = matched ;
+                here->HSMHVDBdbPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdbNode != 0) && (here-> HSMHVbNodePrime != 0))
+            {
+                i = here->HSMHVDBbpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDBbpStructPtr = matched ;
+                here->HSMHVDBbpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdbNode != 0))
+            {
+                i = here->HSMHVBPdbPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVBPdbStructPtr = matched ;
+                here->HSMHVBPdbPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVbNode != 0))
+            {
+                i = here->HSMHVBPbPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVBPbStructPtr = matched ;
+                here->HSMHVBPbPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsbNode != 0))
+            {
+                i = here->HSMHVBPsbPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVBPsbStructPtr = matched ;
+                here->HSMHVBPsbPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsbNode != 0) && (here-> HSMHVsNode != 0))
+            {
+                i = here->HSMHVSBsPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSBsStructPtr = matched ;
+                here->HSMHVSBsPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsbNode != 0) && (here-> HSMHVbNodePrime != 0))
+            {
+                i = here->HSMHVSBbpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSBbpStructPtr = matched ;
+                here->HSMHVSBbpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsbNode != 0) && (here-> HSMHVsbNode != 0))
+            {
+                i = here->HSMHVSBsbPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSBsbStructPtr = matched ;
+                here->HSMHVSBsbPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVbNode != 0) && (here-> HSMHVbNodePrime != 0))
+            {
+                i = here->HSMHVBbpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVBbpStructPtr = matched ;
+                here->HSMHVBbpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVbNode != 0) && (here-> HSMHVbNode != 0))
+            {
+                i = here->HSMHVBbPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVBbStructPtr = matched ;
+                here->HSMHVBbPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVgNodePrime != 0))
+            {
+                i = here->HSMHVDgpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDgpStructPtr = matched ;
+                here->HSMHVDgpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVsNode != 0))
+            {
+                i = here->HSMHVDsPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDsStructPtr = matched ;
+                here->HSMHVDsPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVbNodePrime != 0))
+            {
+                i = here->HSMHVDbpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDbpStructPtr = matched ;
+                here->HSMHVDbpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVsNodePrime != 0))
+            {
+                i = here->HSMHVDspPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDspStructPtr = matched ;
+                here->HSMHVDspPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsNode != 0))
+            {
+                i = here->HSMHVDPsPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVDPsStructPtr = matched ;
+                here->HSMHVDPsPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVgNodePrime != 0))
+            {
+                i = here->HSMHVSgpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSgpStructPtr = matched ;
+                here->HSMHVSgpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVdNode != 0))
+            {
+                i = here->HSMHVSdPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSdStructPtr = matched ;
+                here->HSMHVSdPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVbNodePrime != 0))
+            {
+                i = here->HSMHVSbpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSbpStructPtr = matched ;
+                here->HSMHVSbpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVdNodePrime != 0))
+            {
+                i = here->HSMHVSdpPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSdpStructPtr = matched ;
+                here->HSMHVSdpPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVdNode != 0))
+            {
+                i = here->HSMHVSPdPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVSPdStructPtr = matched ;
+                here->HSMHVSPdPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVdNode != 0))
+            {
+                i = here->HSMHVGPdPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVGPdStructPtr = matched ;
+                here->HSMHVGPdPtr = matched->CSC ;
+            }
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVsNode != 0))
+            {
+                i = here->HSMHVGPsPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HSMHVGPsStructPtr = matched ;
+                here->HSMHVGPsPtr = matched->CSC ;
+            }
+
+            if ( here->HSMHVsubNode > 0 ) 
+            {
+                if ((here-> HSMHVdNode != 0) && (here-> HSMHVsubNode != 0))
+                {
+                    i = here->HSMHVDsubPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVDsubStructPtr = matched ;
+                    here->HSMHVDsubPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsubNode != 0))
+                {
+                    i = here->HSMHVDPsubPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVDPsubStructPtr = matched ;
+                    here->HSMHVDPsubPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVsNode != 0) && (here-> HSMHVsubNode != 0))
+                {
+                    i = here->HSMHVSsubPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVSsubStructPtr = matched ;
+                    here->HSMHVSsubPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsubNode != 0))
+                {
+                    i = here->HSMHVSPsubPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVSPsubStructPtr = matched ;
+                    here->HSMHVSPsubPtr = matched->CSC ;
+                }
+
+            }
+            if ( here->HSMHV_coselfheat >  0 ) 
+            {
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVtempNode != 0))
+                {
+                    i = here->HSMHVTemptempPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVTemptempStructPtr = matched ;
+                    here->HSMHVTemptempPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVdNode != 0))
+                {
+                    i = here->HSMHVTempdPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVTempdStructPtr = matched ;
+                    here->HSMHVTempdPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVdNodePrime != 0))
+                {
+                    i = here->HSMHVTempdpPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVTempdpStructPtr = matched ;
+                    here->HSMHVTempdpPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVsNode != 0))
+                {
+                    i = here->HSMHVTempsPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVTempsStructPtr = matched ;
+                    here->HSMHVTempsPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVsNodePrime != 0))
+                {
+                    i = here->HSMHVTempspPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVTempspStructPtr = matched ;
+                    here->HSMHVTempspPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVtempNode != 0))
+                {
+                    i = here->HSMHVDPtempPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVDPtempStructPtr = matched ;
+                    here->HSMHVDPtempPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVtempNode != 0))
+                {
+                    i = here->HSMHVSPtempPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVSPtempStructPtr = matched ;
+                    here->HSMHVSPtempPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVgNodePrime != 0))
+                {
+                    i = here->HSMHVTempgpPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVTempgpStructPtr = matched ;
+                    here->HSMHVTempgpPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVbNodePrime != 0))
+                {
+                    i = here->HSMHVTempbpPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVTempbpStructPtr = matched ;
+                    here->HSMHVTempbpPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVtempNode != 0))
+                {
+                    i = here->HSMHVGPtempPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVGPtempStructPtr = matched ;
+                    here->HSMHVGPtempPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVtempNode != 0))
+                {
+                    i = here->HSMHVBPtempPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVBPtempStructPtr = matched ;
+                    here->HSMHVBPtempPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVdbNode != 0) && (here-> HSMHVtempNode != 0))
+                {
+                    i = here->HSMHVDBtempPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVDBtempStructPtr = matched ;
+                    here->HSMHVDBtempPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVsbNode != 0) && (here-> HSMHVtempNode != 0))
+                {
+                    i = here->HSMHVSBtempPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVSBtempStructPtr = matched ;
+                    here->HSMHVSBtempPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVdNode != 0) && (here-> HSMHVtempNode != 0))
+                {
+                    i = here->HSMHVDtempPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVDtempStructPtr = matched ;
+                    here->HSMHVDtempPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVsNode != 0) && (here-> HSMHVtempNode != 0))
+                {
+                    i = here->HSMHVStempPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVStempStructPtr = matched ;
+                    here->HSMHVStempPtr = matched->CSC ;
+                }
+
+            }
+            if ( model->HSMHV_conqs ) 
+            {
+                if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVqiNode != 0))
+                {
+                    i = here->HSMHVDPqiPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVDPqiStructPtr = matched ;
+                    here->HSMHVDPqiPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVqiNode != 0))
+                {
+                    i = here->HSMHVGPqiPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVGPqiStructPtr = matched ;
+                    here->HSMHVGPqiPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVqbNode != 0))
+                {
+                    i = here->HSMHVGPqbPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVGPqbStructPtr = matched ;
+                    here->HSMHVGPqbPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVqiNode != 0))
+                {
+                    i = here->HSMHVSPqiPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVSPqiStructPtr = matched ;
+                    here->HSMHVSPqiPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVqbNode != 0))
+                {
+                    i = here->HSMHVBPqbPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVBPqbStructPtr = matched ;
+                    here->HSMHVBPqbPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVdNodePrime != 0))
+                {
+                    i = here->HSMHVQIdpPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVQIdpStructPtr = matched ;
+                    here->HSMHVQIdpPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVgNodePrime != 0))
+                {
+                    i = here->HSMHVQIgpPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVQIgpStructPtr = matched ;
+                    here->HSMHVQIgpPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVsNodePrime != 0))
+                {
+                    i = here->HSMHVQIspPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVQIspStructPtr = matched ;
+                    here->HSMHVQIspPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVbNodePrime != 0))
+                {
+                    i = here->HSMHVQIbpPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVQIbpStructPtr = matched ;
+                    here->HSMHVQIbpPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVqiNode != 0))
+                {
+                    i = here->HSMHVQIqiPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVQIqiStructPtr = matched ;
+                    here->HSMHVQIqiPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVdNodePrime != 0))
+                {
+                    i = here->HSMHVQBdpPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVQBdpStructPtr = matched ;
+                    here->HSMHVQBdpPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVgNodePrime != 0))
+                {
+                    i = here->HSMHVQBgpPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVQBgpStructPtr = matched ;
+                    here->HSMHVQBgpPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVsNodePrime != 0))
+                {
+                    i = here->HSMHVQBspPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVQBspStructPtr = matched ;
+                    here->HSMHVQBspPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVbNodePrime != 0))
+                {
+                    i = here->HSMHVQBbpPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVQBbpStructPtr = matched ;
+                    here->HSMHVQBbpPtr = matched->CSC ;
+                }
+
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVqbNode != 0))
+                {
+                    i = here->HSMHVQBqbPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->HSMHVQBqbStructPtr = matched ;
+                    here->HSMHVQBqbPtr = matched->CSC ;
+                }
+
+                if ( here->HSMHV_coselfheat >  0 ) 
+                {
+                    if ((here-> HSMHVqiNode != 0) && (here-> HSMHVtempNode != 0))
+                    {
+                        i = here->HSMHVQItempPtr ;
+                        matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                        here->HSMHVQItempStructPtr = matched ;
+                        here->HSMHVQItempPtr = matched->CSC ;
+                    }
+
+                    if ((here-> HSMHVqbNode != 0) && (here-> HSMHVtempNode != 0))
+                    {
+                        i = here->HSMHVQBtempPtr ;
+                        matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                        here->HSMHVQBtempStructPtr = matched ;
+                        here->HSMHVQBtempPtr = matched->CSC ;
+                    }
+
+                }
+            }
+        }
     }
-    return(OK);
+
+    return (OK) ;
+}
+
+int
+HSMHVbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
+{
+    HSMHVmodel *model = (HSMHVmodel *)inModel ;
+    HSMHVinstance *here ;
+
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the HSMHV models */
+    for ( ; model != NULL ; model = model->HSMHVnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->HSMHVinstances ; here != NULL ; here = here->HSMHVnextInstance)
+        {
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVDPbpPtr = here->HSMHVDPbpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVSPbpPtr = here->HSMHVSPbpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVGPbpPtr = here->HSMHVGPbpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVBPdPtr = here->HSMHVBPdStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVBPsPtr = here->HSMHVBPsStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdNodePrime != 0))
+                here->HSMHVBPdpPtr = here->HSMHVBPdpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsNodePrime != 0))
+                here->HSMHVBPspPtr = here->HSMHVBPspStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVBPgpPtr = here->HSMHVBPgpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVBPbpPtr = here->HSMHVBPbpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVDdPtr = here->HSMHVDdStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVGPgpPtr = here->HSMHVGPgpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVSsPtr = here->HSMHVSsStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVdNodePrime != 0))
+                here->HSMHVDPdpPtr = here->HSMHVDPdpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsNodePrime != 0))
+                here->HSMHVSPspPtr = here->HSMHVSPspStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVdNodePrime != 0))
+                here->HSMHVDdpPtr = here->HSMHVDdpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVdNodePrime != 0))
+                here->HSMHVGPdpPtr = here->HSMHVGPdpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVsNodePrime != 0))
+                here->HSMHVGPspPtr = here->HSMHVGPspStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVsNodePrime != 0))
+                here->HSMHVSspPtr = here->HSMHVSspStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsNodePrime != 0))
+                here->HSMHVDPspPtr = here->HSMHVDPspStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVDPdPtr = here->HSMHVDPdStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVDPgpPtr = here->HSMHVDPgpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVSPgpPtr = here->HSMHVSPgpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVSPsPtr = here->HSMHVSPsStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVdNodePrime != 0))
+                here->HSMHVSPdpPtr = here->HSMHVSPdpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVgNode != 0) && (here-> HSMHVgNode != 0))
+                here->HSMHVGgPtr = here->HSMHVGgStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVgNode != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVGgpPtr = here->HSMHVGgpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVgNode != 0))
+                here->HSMHVGPgPtr = here->HSMHVGPgStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVdbNode != 0))
+                here->HSMHVDdbPtr = here->HSMHVDdbStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVsbNode != 0))
+                here->HSMHVSsbPtr = here->HSMHVSsbStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdbNode != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVDBdPtr = here->HSMHVDBdStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdbNode != 0) && (here-> HSMHVdbNode != 0))
+                here->HSMHVDBdbPtr = here->HSMHVDBdbStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdbNode != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVDBbpPtr = here->HSMHVDBbpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdbNode != 0))
+                here->HSMHVBPdbPtr = here->HSMHVBPdbStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVbNode != 0))
+                here->HSMHVBPbPtr = here->HSMHVBPbStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsbNode != 0))
+                here->HSMHVBPsbPtr = here->HSMHVBPsbStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsbNode != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVSBsPtr = here->HSMHVSBsStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsbNode != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVSBbpPtr = here->HSMHVSBbpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsbNode != 0) && (here-> HSMHVsbNode != 0))
+                here->HSMHVSBsbPtr = here->HSMHVSBsbStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVbNode != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVBbpPtr = here->HSMHVBbpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVbNode != 0) && (here-> HSMHVbNode != 0))
+                here->HSMHVBbPtr = here->HSMHVBbStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVDgpPtr = here->HSMHVDgpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVDsPtr = here->HSMHVDsStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVDbpPtr = here->HSMHVDbpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVsNodePrime != 0))
+                here->HSMHVDspPtr = here->HSMHVDspStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVDPsPtr = here->HSMHVDPsStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVSgpPtr = here->HSMHVSgpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVSdPtr = here->HSMHVSdStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVSbpPtr = here->HSMHVSbpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVdNodePrime != 0))
+                here->HSMHVSdpPtr = here->HSMHVSdpStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVSPdPtr = here->HSMHVSPdStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVGPdPtr = here->HSMHVGPdStructPtr->CSC_Complex ;
+
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVGPsPtr = here->HSMHVGPsStructPtr->CSC_Complex ;
+
+            if ( here->HSMHVsubNode > 0 ) 
+            {
+                if ((here-> HSMHVdNode != 0) && (here-> HSMHVsubNode != 0))
+                    here->HSMHVDsubPtr = here->HSMHVDsubStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsubNode != 0))
+                    here->HSMHVDPsubPtr = here->HSMHVDPsubStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVsNode != 0) && (here-> HSMHVsubNode != 0))
+                    here->HSMHVSsubPtr = here->HSMHVSsubStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsubNode != 0))
+                    here->HSMHVSPsubPtr = here->HSMHVSPsubStructPtr->CSC_Complex ;
+
+            }
+            if ( here->HSMHV_coselfheat >  0 ) 
+            {
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVTemptempPtr = here->HSMHVTemptempStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVdNode != 0))
+                    here->HSMHVTempdPtr = here->HSMHVTempdStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVdNodePrime != 0))
+                    here->HSMHVTempdpPtr = here->HSMHVTempdpStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVsNode != 0))
+                    here->HSMHVTempsPtr = here->HSMHVTempsStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVsNodePrime != 0))
+                    here->HSMHVTempspPtr = here->HSMHVTempspStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVDPtempPtr = here->HSMHVDPtempStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVSPtempPtr = here->HSMHVSPtempStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVgNodePrime != 0))
+                    here->HSMHVTempgpPtr = here->HSMHVTempgpStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVbNodePrime != 0))
+                    here->HSMHVTempbpPtr = here->HSMHVTempbpStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVGPtempPtr = here->HSMHVGPtempStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVBPtempPtr = here->HSMHVBPtempStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVdbNode != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVDBtempPtr = here->HSMHVDBtempStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVsbNode != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVSBtempPtr = here->HSMHVSBtempStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVdNode != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVDtempPtr = here->HSMHVDtempStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVsNode != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVStempPtr = here->HSMHVStempStructPtr->CSC_Complex ;
+
+            }
+            if ( model->HSMHV_conqs ) 
+            {
+                if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVqiNode != 0))
+                    here->HSMHVDPqiPtr = here->HSMHVDPqiStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVqiNode != 0))
+                    here->HSMHVGPqiPtr = here->HSMHVGPqiStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVqbNode != 0))
+                    here->HSMHVGPqbPtr = here->HSMHVGPqbStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVqiNode != 0))
+                    here->HSMHVSPqiPtr = here->HSMHVSPqiStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVqbNode != 0))
+                    here->HSMHVBPqbPtr = here->HSMHVBPqbStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVdNodePrime != 0))
+                    here->HSMHVQIdpPtr = here->HSMHVQIdpStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVgNodePrime != 0))
+                    here->HSMHVQIgpPtr = here->HSMHVQIgpStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVsNodePrime != 0))
+                    here->HSMHVQIspPtr = here->HSMHVQIspStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVbNodePrime != 0))
+                    here->HSMHVQIbpPtr = here->HSMHVQIbpStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVqiNode != 0))
+                    here->HSMHVQIqiPtr = here->HSMHVQIqiStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVdNodePrime != 0))
+                    here->HSMHVQBdpPtr = here->HSMHVQBdpStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVgNodePrime != 0))
+                    here->HSMHVQBgpPtr = here->HSMHVQBgpStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVsNodePrime != 0))
+                    here->HSMHVQBspPtr = here->HSMHVQBspStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVbNodePrime != 0))
+                    here->HSMHVQBbpPtr = here->HSMHVQBbpStructPtr->CSC_Complex ;
+
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVqbNode != 0))
+                    here->HSMHVQBqbPtr = here->HSMHVQBqbStructPtr->CSC_Complex ;
+
+                if ( here->HSMHV_coselfheat >  0 ) 
+                {
+                    if ((here-> HSMHVqiNode != 0) && (here-> HSMHVtempNode != 0))
+                        here->HSMHVQItempPtr = here->HSMHVQItempStructPtr->CSC_Complex ;
+
+                    if ((here-> HSMHVqbNode != 0) && (here-> HSMHVtempNode != 0))
+                        here->HSMHVQBtempPtr = here->HSMHVQBtempStructPtr->CSC_Complex ;
+
+                }
+            }
+        }
+    }
+
+    return (OK) ;
 }
 
 int
@@ -1104,663 +1061,290 @@ HSMHVbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     HSMHVmodel *model = (HSMHVmodel *)inModel ;
     HSMHVinstance *here ;
-    int i ;
 
-    /*  loop through all the hsmhv models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the HSMHV models */
     for ( ; model != NULL ; model = model->HSMHVnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->HSMHVinstances ; here != NULL ; here = here->HSMHVnextInstance)
         {
-            i = 0 ;
-            if ((here->HSMHVdNodePrime != 0) && (here->HSMHVbNodePrime != 0))
-            {
-                while (here->HSMHVDPbpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDPbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVDPbpPtr = here->HSMHVDPbpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNodePrime != 0) && (here->HSMHVbNodePrime != 0))
-            {
-                while (here->HSMHVSPbpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSPbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVSPbpPtr = here->HSMHVSPbpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVgNodePrime != 0) && (here->HSMHVbNodePrime != 0))
-            {
-                while (here->HSMHVGPbpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGPbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVGPbpPtr = here->HSMHVGPbpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVbNodePrime != 0) && (here->HSMHVdNode != 0))
-            {
-                while (here->HSMHVBPdPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBPdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVBPdPtr = here->HSMHVBPdStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVbNodePrime != 0) && (here->HSMHVdNodePrime != 0))
-            {
-                while (here->HSMHVBPdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBPdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVBPsPtr = here->HSMHVBPsStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVbNodePrime != 0) && (here->HSMHVsNode != 0))
-            {
-                while (here->HSMHVBPsPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBPsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdNodePrime != 0))
+                here->HSMHVBPdpPtr = here->HSMHVBPdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVbNodePrime != 0) && (here->HSMHVsNodePrime != 0))
-            {
-                while (here->HSMHVBPspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBPspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsNodePrime != 0))
+                here->HSMHVBPspPtr = here->HSMHVBPspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVbNodePrime != 0) && (here->HSMHVgNodePrime != 0))
-            {
-                while (here->HSMHVBPgpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBPgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVBPgpPtr = here->HSMHVBPgpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVbNodePrime != 0) && (here->HSMHVbNodePrime != 0))
-            {
-                while (here->HSMHVBPbpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBPbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVBPbpPtr = here->HSMHVBPbpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNode != 0) && (here->HSMHVdNode != 0))
-            {
-                while (here->HSMHVDdPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVDdPtr = here->HSMHVDdStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVgNodePrime != 0) && (here->HSMHVgNodePrime != 0))
-            {
-                while (here->HSMHVGPgpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGPgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVGPgpPtr = here->HSMHVGPgpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNode != 0) && (here->HSMHVsNode != 0))
-            {
-                while (here->HSMHVSsPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVSsPtr = here->HSMHVSsStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNodePrime != 0) && (here->HSMHVdNodePrime != 0))
-            {
-                while (here->HSMHVDPdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDPdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVdNodePrime != 0))
+                here->HSMHVDPdpPtr = here->HSMHVDPdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNodePrime != 0) && (here->HSMHVsNodePrime != 0))
-            {
-                while (here->HSMHVSPspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSPspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsNodePrime != 0))
+                here->HSMHVSPspPtr = here->HSMHVSPspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNode != 0) && (here->HSMHVdNodePrime != 0))
-            {
-                while (here->HSMHVDdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVdNodePrime != 0))
+                here->HSMHVDdpPtr = here->HSMHVDdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVgNodePrime != 0) && (here->HSMHVdNodePrime != 0))
-            {
-                while (here->HSMHVGPdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGPdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVdNodePrime != 0))
+                here->HSMHVGPdpPtr = here->HSMHVGPdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVgNodePrime != 0) && (here->HSMHVsNodePrime != 0))
-            {
-                while (here->HSMHVGPspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGPspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVsNodePrime != 0))
+                here->HSMHVGPspPtr = here->HSMHVGPspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNode != 0) && (here->HSMHVsNodePrime != 0))
-            {
-                while (here->HSMHVSspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVsNodePrime != 0))
+                here->HSMHVSspPtr = here->HSMHVSspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNodePrime != 0) && (here->HSMHVsNodePrime != 0))
-            {
-                while (here->HSMHVDPspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDPspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsNodePrime != 0))
+                here->HSMHVDPspPtr = here->HSMHVDPspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNodePrime != 0) && (here->HSMHVdNode != 0))
-            {
-                while (here->HSMHVDPdPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDPdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVDPdPtr = here->HSMHVDPdStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNodePrime != 0) && (here->HSMHVgNodePrime != 0))
-            {
-                while (here->HSMHVDPgpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDPgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVDPgpPtr = here->HSMHVDPgpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNodePrime != 0) && (here->HSMHVgNodePrime != 0))
-            {
-                while (here->HSMHVSPgpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSPgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVSPgpPtr = here->HSMHVSPgpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNodePrime != 0) && (here->HSMHVsNode != 0))
-            {
-                while (here->HSMHVSPsPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSPsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVSPsPtr = here->HSMHVSPsStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNodePrime != 0) && (here->HSMHVdNodePrime != 0))
-            {
-                while (here->HSMHVSPdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSPdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVdNodePrime != 0))
+                here->HSMHVSPdpPtr = here->HSMHVSPdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVgNode != 0) && (here->HSMHVgNode != 0))
-            {
-                while (here->HSMHVGgPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVgNode != 0) && (here-> HSMHVgNode != 0))
+                here->HSMHVGgPtr = here->HSMHVGgStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVgNode != 0) && (here->HSMHVgNodePrime != 0))
-            {
-                while (here->HSMHVGgpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVgNode != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVGgpPtr = here->HSMHVGgpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVgNodePrime != 0) && (here->HSMHVgNode != 0))
-            {
-                while (here->HSMHVGPgPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGPgPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVgNode != 0))
+                here->HSMHVGPgPtr = here->HSMHVGPgStructPtr->CSC ;
 
-/*            i = 0 ;
-            if ((here->HSMHVgNode != 0) && (here->HSMHVdNodePrime != 0))
-            {
-                while (here->HSMHVGdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVdbNode != 0))
+                here->HSMHVDdbPtr = here->HSMHVDdbStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVgNode != 0) && (here->HSMHVsNodePrime != 0))
-            {
-                while (here->HSMHVGspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVsbNode != 0))
+                here->HSMHVSsbPtr = here->HSMHVSsbStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVgNode != 0) && (here->HSMHVbNodePrime != 0))
-            {
-                while (here->HSMHVGbpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
-*/
-            i = 0 ;
-            if ((here->HSMHVdNode != 0) && (here->HSMHVdbNode != 0))
-            {
-                while (here->HSMHVDdbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDdbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdbNode != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVDBdPtr = here->HSMHVDBdStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNode != 0) && (here->HSMHVsbNode != 0))
-            {
-                while (here->HSMHVSsbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSsbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdbNode != 0) && (here-> HSMHVdbNode != 0))
+                here->HSMHVDBdbPtr = here->HSMHVDBdbStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdbNode != 0) && (here->HSMHVdNode != 0))
-            {
-                while (here->HSMHVDBdPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDBdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdbNode != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVDBbpPtr = here->HSMHVDBbpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdbNode != 0) && (here->HSMHVdbNode != 0))
-            {
-                while (here->HSMHVDBdbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDBdbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVdbNode != 0))
+                here->HSMHVBPdbPtr = here->HSMHVBPdbStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdbNode != 0) && (here->HSMHVbNodePrime != 0))
-            {
-                while (here->HSMHVDBbpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDBbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVbNode != 0))
+                here->HSMHVBPbPtr = here->HSMHVBPbStructPtr->CSC ;
 
-/*            i = 0 ;
-            if ((here->HSMHVdbNode != 0) && (here->HSMHVbNode != 0))
-            {
-                while (here->HSMHVDBbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDBbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
-*/
-            i = 0 ;
-            if ((here->HSMHVbNodePrime != 0) && (here->HSMHVdbNode != 0))
-            {
-                while (here->HSMHVBPdbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBPdbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVsbNode != 0))
+                here->HSMHVBPsbPtr = here->HSMHVBPsbStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVbNodePrime != 0) && (here->HSMHVbNode != 0))
-            {
-                while (here->HSMHVBPbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBPbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsbNode != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVSBsPtr = here->HSMHVSBsStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVbNodePrime != 0) && (here->HSMHVsbNode != 0))
-            {
-                while (here->HSMHVBPsbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBPsbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsbNode != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVSBbpPtr = here->HSMHVSBbpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsbNode != 0) && (here->HSMHVsNode != 0))
-            {
-                while (here->HSMHVSBsPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSBsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsbNode != 0) && (here-> HSMHVsbNode != 0))
+                here->HSMHVSBsbPtr = here->HSMHVSBsbStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsbNode != 0) && (here->HSMHVbNodePrime != 0))
-            {
-                while (here->HSMHVSBbpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSBbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVbNode != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVBbpPtr = here->HSMHVBbpStructPtr->CSC ;
 
-/*            i = 0 ;
-            if ((here->HSMHVsbNode != 0) && (here->HSMHVbNode != 0))
-            {
-                while (here->HSMHVSBbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSBbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
-*/
-            i = 0 ;
-            if ((here->HSMHVsbNode != 0) && (here->HSMHVsbNode != 0))
-            {
-                while (here->HSMHVSBsbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSBsbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVbNode != 0) && (here-> HSMHVbNode != 0))
+                here->HSMHVBbPtr = here->HSMHVBbStructPtr->CSC ;
 
-/*            i = 0 ;
-            if ((here->HSMHVbNode != 0) && (here->HSMHVdbNode != 0))
-            {
-                while (here->HSMHVBdbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBdbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
-*/
-            i = 0 ;
-            if ((here->HSMHVbNode != 0) && (here->HSMHVbNodePrime != 0))
-            {
-                while (here->HSMHVBbpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVDgpPtr = here->HSMHVDgpStructPtr->CSC ;
 
-/*            i = 0 ;
-            if ((here->HSMHVbNode != 0) && (here->HSMHVsbNode != 0))
-            {
-                while (here->HSMHVBsbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBsbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
-*/
-            i = 0 ;
-            if ((here->HSMHVbNode != 0) && (here->HSMHVbNode != 0))
-            {
-                while (here->HSMHVBbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVDsPtr = here->HSMHVDsStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNode != 0) && (here->HSMHVgNodePrime != 0))
-            {
-                while (here->HSMHVDgpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVDbpPtr = here->HSMHVDbpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNode != 0) && (here->HSMHVsNode != 0))
-            {
-                while (here->HSMHVDsPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdNode != 0) && (here-> HSMHVsNodePrime != 0))
+                here->HSMHVDspPtr = here->HSMHVDspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNode != 0) && (here->HSMHVbNodePrime != 0))
-            {
-                while (here->HSMHVDbpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVDPsPtr = here->HSMHVDPsStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNodePrime != 0) && (here->HSMHVsNode != 0))
-            {
-                while (here->HSMHVDPsPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDPsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVgNodePrime != 0))
+                here->HSMHVSgpPtr = here->HSMHVSgpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNode != 0) && (here->HSMHVgNodePrime != 0))
-            {
-                while (here->HSMHVSgpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVSdPtr = here->HSMHVSdStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNode != 0) && (here->HSMHVdNode != 0))
-            {
-                while (here->HSMHVSdPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVbNodePrime != 0))
+                here->HSMHVSbpPtr = here->HSMHVSbpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNode != 0) && (here->HSMHVbNodePrime != 0))
-            {
-                while (here->HSMHVSbpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsNode != 0) && (here-> HSMHVdNodePrime != 0))
+                here->HSMHVSdpPtr = here->HSMHVSdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNodePrime != 0) && (here->HSMHVdNode != 0))
-            {
-                while (here->HSMHVSPdPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSPdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVSPdPtr = here->HSMHVSPdStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVgNodePrime != 0) && (here->HSMHVdNode != 0))
-            {
-                while (here->HSMHVGPdPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGPdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVdNode != 0))
+                here->HSMHVGPdPtr = here->HSMHVGPdStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVgNodePrime != 0) && (here->HSMHVsNode != 0))
-            {
-                while (here->HSMHVGPsPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGPsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+            if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVsNode != 0))
+                here->HSMHVGPsPtr = here->HSMHVGPsStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNode != 0) && (here->HSMHVsubNode != 0))
+            if ( here->HSMHVsubNode > 0 ) 
             {
-                while (here->HSMHVDsubPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDsubPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVdNode != 0) && (here-> HSMHVsubNode != 0))
+                    here->HSMHVDsubPtr = here->HSMHVDsubStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNodePrime != 0) && (here->HSMHVsubNode != 0))
-            {
-                while (here->HSMHVDPsubPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDPsubPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVsubNode != 0))
+                    here->HSMHVDPsubPtr = here->HSMHVDPsubStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNode != 0) && (here->HSMHVsubNode != 0))
-            {
-                while (here->HSMHVSsubPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSsubPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVsNode != 0) && (here-> HSMHVsubNode != 0))
+                    here->HSMHVSsubPtr = here->HSMHVSsubStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNodePrime != 0) && (here->HSMHVsubNode != 0))
-            {
-                while (here->HSMHVSPsubPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSPsubPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVsubNode != 0))
+                    here->HSMHVSPsubPtr = here->HSMHVSPsubStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVtempNode != 0) && (here->HSMHVtempNode != 0))
-            {
-                while (here->HSMHVTemptempPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVTemptempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
             }
-
-            i = 0 ;
-            if ((here->HSMHVtempNode != 0) && (here->HSMHVdNode != 0))
+            if ( here->HSMHV_coselfheat >  0 ) 
             {
-                while (here->HSMHVTempdPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVTempdPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVTemptempPtr = here->HSMHVTemptempStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVtempNode != 0) && (here->HSMHVdNodePrime != 0))
-            {
-                while (here->HSMHVTempdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVTempdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVdNode != 0))
+                    here->HSMHVTempdPtr = here->HSMHVTempdStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVtempNode != 0) && (here->HSMHVsNode != 0))
-            {
-                while (here->HSMHVTempsPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVTempsPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVdNodePrime != 0))
+                    here->HSMHVTempdpPtr = here->HSMHVTempdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVtempNode != 0) && (here->HSMHVsNodePrime != 0))
-            {
-                while (here->HSMHVTempspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVTempspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVsNode != 0))
+                    here->HSMHVTempsPtr = here->HSMHVTempsStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNodePrime != 0) && (here->HSMHVtempNode != 0))
-            {
-                while (here->HSMHVDPtempPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDPtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVsNodePrime != 0))
+                    here->HSMHVTempspPtr = here->HSMHVTempspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNodePrime != 0) && (here->HSMHVtempNode != 0))
-            {
-                while (here->HSMHVSPtempPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSPtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVDPtempPtr = here->HSMHVDPtempStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVtempNode != 0) && (here->HSMHVgNodePrime != 0))
-            {
-                while (here->HSMHVTempgpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVTempgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVSPtempPtr = here->HSMHVSPtempStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVtempNode != 0) && (here->HSMHVbNodePrime != 0))
-            {
-                while (here->HSMHVTempbpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVTempbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVgNodePrime != 0))
+                    here->HSMHVTempgpPtr = here->HSMHVTempgpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVgNodePrime != 0) && (here->HSMHVtempNode != 0))
-            {
-                while (here->HSMHVGPtempPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGPtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVtempNode != 0) && (here-> HSMHVbNodePrime != 0))
+                    here->HSMHVTempbpPtr = here->HSMHVTempbpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVbNodePrime != 0) && (here->HSMHVtempNode != 0))
-            {
-                while (here->HSMHVBPtempPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBPtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVGPtempPtr = here->HSMHVGPtempStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdbNode != 0) && (here->HSMHVtempNode != 0))
-            {
-                while (here->HSMHVDBtempPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDBtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVBPtempPtr = here->HSMHVBPtempStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsbNode != 0) && (here->HSMHVtempNode != 0))
-            {
-                while (here->HSMHVSBtempPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSBtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVdbNode != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVDBtempPtr = here->HSMHVDBtempStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNode != 0) && (here->HSMHVtempNode != 0))
-            {
-                while (here->HSMHVDtempPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVsbNode != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVSBtempPtr = here->HSMHVSBtempStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNode != 0) && (here->HSMHVtempNode != 0))
-            {
-                while (here->HSMHVStempPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVStempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVdNode != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVDtempPtr = here->HSMHVDtempStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVdNodePrime != 0) && (here->HSMHVqiNode != 0))
-            {
-                while (here->HSMHVDPqiPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVDPqiPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVsNode != 0) && (here-> HSMHVtempNode != 0))
+                    here->HSMHVStempPtr = here->HSMHVStempStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVgNodePrime != 0) && (here->HSMHVqiNode != 0))
-            {
-                while (here->HSMHVGPqiPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGPqiPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
             }
-
-            i = 0 ;
-            if ((here->HSMHVgNodePrime != 0) && (here->HSMHVqbNode != 0))
+            if ( model->HSMHV_conqs ) 
             {
-                while (here->HSMHVGPqbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVGPqbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVqiNode != 0))
+                    here->HSMHVDPqiPtr = here->HSMHVDPqiStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVsNodePrime != 0) && (here->HSMHVqiNode != 0))
-            {
-                while (here->HSMHVSPqiPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVSPqiPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVqiNode != 0))
+                    here->HSMHVGPqiPtr = here->HSMHVGPqiStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVbNodePrime != 0) && (here->HSMHVqbNode != 0))
-            {
-                while (here->HSMHVBPqbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVBPqbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVqbNode != 0))
+                    here->HSMHVGPqbPtr = here->HSMHVGPqbStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVqiNode != 0) && (here->HSMHVdNodePrime != 0))
-            {
-                while (here->HSMHVQIdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVQIdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVsNodePrime != 0) && (here-> HSMHVqiNode != 0))
+                    here->HSMHVSPqiPtr = here->HSMHVSPqiStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVqiNode != 0) && (here->HSMHVgNodePrime != 0))
-            {
-                while (here->HSMHVQIgpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVQIgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVbNodePrime != 0) && (here-> HSMHVqbNode != 0))
+                    here->HSMHVBPqbPtr = here->HSMHVBPqbStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVqiNode != 0) && (here->HSMHVsNodePrime != 0))
-            {
-                while (here->HSMHVQIspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVQIspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVdNodePrime != 0))
+                    here->HSMHVQIdpPtr = here->HSMHVQIdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVqiNode != 0) && (here->HSMHVbNodePrime != 0))
-            {
-                while (here->HSMHVQIbpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVQIbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVgNodePrime != 0))
+                    here->HSMHVQIgpPtr = here->HSMHVQIgpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVqiNode != 0) && (here->HSMHVqiNode != 0))
-            {
-                while (here->HSMHVQIqiPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVQIqiPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVsNodePrime != 0))
+                    here->HSMHVQIspPtr = here->HSMHVQIspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVqbNode != 0) && (here->HSMHVdNodePrime != 0))
-            {
-                while (here->HSMHVQBdpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVQBdpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVbNodePrime != 0))
+                    here->HSMHVQIbpPtr = here->HSMHVQIbpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVqbNode != 0) && (here->HSMHVgNodePrime != 0))
-            {
-                while (here->HSMHVQBgpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVQBgpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVqiNode != 0) && (here-> HSMHVqiNode != 0))
+                    here->HSMHVQIqiPtr = here->HSMHVQIqiStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVqbNode != 0) && (here->HSMHVsNodePrime != 0))
-            {
-                while (here->HSMHVQBspPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVQBspPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVdNodePrime != 0))
+                    here->HSMHVQBdpPtr = here->HSMHVQBdpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVqbNode != 0) && (here->HSMHVbNodePrime != 0))
-            {
-                while (here->HSMHVQBbpPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVQBbpPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVgNodePrime != 0))
+                    here->HSMHVQBgpPtr = here->HSMHVQBgpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVqbNode != 0) && (here->HSMHVqbNode != 0))
-            {
-                while (here->HSMHVQBqbPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVQBqbPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVsNodePrime != 0))
+                    here->HSMHVQBspPtr = here->HSMHVQBspStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVqiNode != 0) && (here->HSMHVtempNode != 0))
-            {
-                while (here->HSMHVQItempPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVQItempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVbNodePrime != 0))
+                    here->HSMHVQBbpPtr = here->HSMHVQBbpStructPtr->CSC ;
 
-            i = 0 ;
-            if ((here->HSMHVqbNode != 0) && (here->HSMHVtempNode != 0))
-            {
-                while (here->HSMHVQBtempPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HSMHVQBtempPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
+                if ((here-> HSMHVqbNode != 0) && (here-> HSMHVqbNode != 0))
+                    here->HSMHVQBqbPtr = here->HSMHVQBqbStructPtr->CSC ;
+
+                if ( here->HSMHV_coselfheat >  0 ) 
+                {
+                    if ((here-> HSMHVqiNode != 0) && (here-> HSMHVtempNode != 0))
+                        here->HSMHVQItempPtr = here->HSMHVQItempStructPtr->CSC ;
+
+                    if ((here-> HSMHVqbNode != 0) && (here-> HSMHVtempNode != 0))
+                        here->HSMHVQBtempPtr = here->HSMHVQBtempStructPtr->CSC ;
+
+                }
             }
         }
     }

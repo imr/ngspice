@@ -77,10 +77,10 @@ typedef struct sVSRCinstance {
     unsigned VSRCrGiven      :1 ;  /* flag to indicate repeating pwl */
 
 #ifdef KLU
-    BindElement *VSRCposIbrStructPtr ;
-    BindElement *VSRCnegIbrStructPtr ;
-    BindElement *VSRCibrPosStructPtr ;
-    BindElement *VSRCibrNegStructPtr ;
+    BindElement *VSRCposIbrptrStructPtr ;
+    BindElement *VSRCnegIbrptrStructPtr ;
+    BindElement *VSRCibrNegptrStructPtr ;
+    BindElement *VSRCibrPosptrStructPtr ;
 #endif
 
 } VSRCinstance ;

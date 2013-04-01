@@ -1,5 +1,5 @@
 /**********
-Author: 2012 Francesco Lannutti
+Author: 2013 Francesco Lannutti
 **********/
 
 #include "ngspice/ngspice.h"
@@ -7,376 +7,369 @@ Author: 2012 Francesco Lannutti
 #include "hfetdefs.h"
 #include "ngspice/sperror.h"
 
+#include <stdlib.h>
+
+static
 int
-HFETAbindCSC(GENmodel *inModel, CKTcircuit *ckt)
+BindCompare (const void *a, const void *b)
 {
-    HFETAmodel *model = (HFETAmodel *)inModel;
-    int i ;
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
 
-    /*  loop through all the hfet models */
-    for( ; model != NULL; model = model->HFETAnextModel ) {
-	HFETAinstance *here;
-
-        /* loop through all the instances of the model */
-        for (here = model->HFETAinstances; here != NULL ;
-	    here = here->HFETAnextInstance) {
-
-		i = 0 ;
-		if ((here->HFETAdrainNode != 0) && (here->HFETAdrainPrimeNode != 0)) {
-			while (here->HFETAdrainDrainPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAdrainDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAgatePrimeNode != 0) && (here->HFETAdrainPrimeNode != 0)) {
-			while (here->HFETAgatePrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAgatePrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAgatePrimeNode != 0) && (here->HFETAsourcePrimeNode != 0)) {
-			while (here->HFETAgatePrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAgatePrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAsourceNode != 0) && (here->HFETAsourcePrimeNode != 0)) {
-			while (here->HFETAsourceSourcePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAsourceSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainNode != 0)) {
-			while (here->HFETAdrainPrimeDrainPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAdrainPrimeDrainPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAgatePrimeNode != 0)) {
-			while (here->HFETAdrainPrimeGatePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAdrainPrimeGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAsourcePrimeNode != 0)) {
-			while (here->HFETAdrainPrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAdrainPrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAgatePrimeNode != 0)) {
-			while (here->HFETAsourcePrimeGatePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAsourcePrimeGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourceNode != 0)) {
-			while (here->HFETAsourcePrimeSourcePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAsourcePrimeSourcePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAdrainPrimeNode != 0)) {
-			while (here->HFETAsourcePrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAsourcePrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAdrainNode != 0) && (here->HFETAdrainNode != 0)) {
-			while (here->HFETAdrainDrainPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAdrainDrainPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAgatePrimeNode != 0) && (here->HFETAgatePrimeNode != 0)) {
-			while (here->HFETAgatePrimeGatePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAgatePrimeGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAsourceNode != 0) && (here->HFETAsourceNode != 0)) {
-			while (here->HFETAsourceSourcePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAsourceSourcePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainPrimeNode != 0)) {
-			while (here->HFETAdrainPrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAdrainPrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourcePrimeNode != 0)) {
-			while (here->HFETAsourcePrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAsourcePrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainPrmPrmNode != 0)) {
-			while (here->HFETAdrainPrimeDrainPrmPrmPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAdrainPrimeDrainPrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAdrainPrimeNode != 0)) {
-			while (here->HFETAdrainPrmPrmDrainPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAdrainPrmPrmDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAgatePrimeNode != 0)) {
-			while (here->HFETAdrainPrmPrmGatePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAdrainPrmPrmGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAgatePrimeNode != 0) && (here->HFETAdrainPrmPrmNode != 0)) {
-			while (here->HFETAgatePrimeDrainPrmPrmPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAgatePrimeDrainPrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAdrainPrmPrmNode != 0)) {
-			while (here->HFETAdrainPrmPrmDrainPrmPrmPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAdrainPrmPrmDrainPrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourcePrmPrmNode != 0)) {
-			while (here->HFETAsourcePrimeSourcePrmPrmPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAsourcePrimeSourcePrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAsourcePrimeNode != 0)) {
-			while (here->HFETAsourcePrmPrmSourcePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAsourcePrmPrmSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAgatePrimeNode != 0)) {
-			while (here->HFETAsourcePrmPrmGatePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAsourcePrmPrmGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAgatePrimeNode != 0) && (here->HFETAsourcePrmPrmNode != 0)) {
-			while (here->HFETAgatePrimeSourcePrmPrmPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAgatePrimeSourcePrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAsourcePrmPrmNode != 0)) {
-			while (here->HFETAsourcePrmPrmSourcePrmPrmPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAsourcePrmPrmSourcePrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAgateNode != 0) && (here->HFETAgateNode != 0)) {
-			while (here->HFETAgateGatePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAgateGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAgateNode != 0) && (here->HFETAgatePrimeNode != 0)) {
-			while (here->HFETAgateGatePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAgateGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->HFETAgatePrimeNode != 0) && (here->HFETAgateNode != 0)) {
-			while (here->HFETAgatePrimeGatePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->HFETAgatePrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-	}
-    }
-    return(OK);
+    return ((int)(A->Sparse - B->Sparse)) ;
 }
 
 int
-HFETAbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
+HFETAbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
-    HFETAmodel *model = (HFETAmodel *)inModel;
-    int i ;
+    HFETAmodel *model = (HFETAmodel *)inModel ;
+    HFETAinstance *here ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-    /*  loop through all the hfet models */
-    for( ; model != NULL; model = model->HFETAnextModel ) {
-	HFETAinstance *here;
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
+    /* loop through all the HFETA models */
+    for ( ; model != NULL ; model = model->HFETAnextModel)
+    {
         /* loop through all the instances of the model */
-        for (here = model->HFETAinstances; here != NULL ;
-	    here = here->HFETAnextInstance) {
+        for (here = model->HFETAinstances ; here != NULL ; here = here->HFETAnextInstance)
+        {
+            if ((here->HFETAdrainNode != 0) && (here->HFETAdrainPrimeNode != 0))
+            {
+                i = here->HFETAdrainDrainPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAdrainDrainPrimeStructPtr = matched ;
+                here->HFETAdrainDrainPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAdrainNode != 0) && (here->HFETAdrainPrimeNode != 0)) {
-			while (here->HFETAdrainDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAdrainDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAgatePrimeNode != 0) && (here->HFETAdrainPrimeNode != 0))
+            {
+                i = here->HFETAgatePrimeDrainPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAgatePrimeDrainPrimeStructPtr = matched ;
+                here->HFETAgatePrimeDrainPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAgatePrimeNode != 0) && (here->HFETAdrainPrimeNode != 0)) {
-			while (here->HFETAgatePrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAgatePrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAgatePrimeNode != 0) && (here->HFETAsourcePrimeNode != 0))
+            {
+                i = here->HFETAgatePrimeSourcePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAgatePrimeSourcePrimeStructPtr = matched ;
+                here->HFETAgatePrimeSourcePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAgatePrimeNode != 0) && (here->HFETAsourcePrimeNode != 0)) {
-			while (here->HFETAgatePrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAgatePrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAsourceNode != 0) && (here->HFETAsourcePrimeNode != 0))
+            {
+                i = here->HFETAsourceSourcePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAsourceSourcePrimeStructPtr = matched ;
+                here->HFETAsourceSourcePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAsourceNode != 0) && (here->HFETAsourcePrimeNode != 0)) {
-			while (here->HFETAsourceSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAsourceSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainNode != 0))
+            {
+                i = here->HFETAdrainPrimeDrainPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAdrainPrimeDrainStructPtr = matched ;
+                here->HFETAdrainPrimeDrainPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainNode != 0)) {
-			while (here->HFETAdrainPrimeDrainPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAdrainPrimeDrainPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAgatePrimeNode != 0))
+            {
+                i = here->HFETAdrainPrimeGatePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAdrainPrimeGatePrimeStructPtr = matched ;
+                here->HFETAdrainPrimeGatePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAgatePrimeNode != 0)) {
-			while (here->HFETAdrainPrimeGatePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAdrainPrimeGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAsourcePrimeNode != 0))
+            {
+                i = here->HFETAdrainPrimeSourcePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAdrainPrimeSourcePrimeStructPtr = matched ;
+                here->HFETAdrainPrimeSourcePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAsourcePrimeNode != 0)) {
-			while (here->HFETAdrainPrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAdrainPrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAgatePrimeNode != 0))
+            {
+                i = here->HFETAsourcePrimeGatePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAsourcePrimeGatePrimeStructPtr = matched ;
+                here->HFETAsourcePrimeGatePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAgatePrimeNode != 0)) {
-			while (here->HFETAsourcePrimeGatePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAsourcePrimeGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourceNode != 0))
+            {
+                i = here->HFETAsourcePrimeSourcePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAsourcePrimeSourceStructPtr = matched ;
+                here->HFETAsourcePrimeSourcePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourceNode != 0)) {
-			while (here->HFETAsourcePrimeSourcePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAsourcePrimeSourcePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAdrainPrimeNode != 0))
+            {
+                i = here->HFETAsourcePrimeDrainPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAsourcePrimeDrainPrimeStructPtr = matched ;
+                here->HFETAsourcePrimeDrainPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAdrainPrimeNode != 0)) {
-			while (here->HFETAsourcePrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAsourcePrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAdrainNode != 0) && (here->HFETAdrainNode != 0))
+            {
+                i = here->HFETAdrainDrainPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAdrainDrainStructPtr = matched ;
+                here->HFETAdrainDrainPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAdrainNode != 0) && (here->HFETAdrainNode != 0)) {
-			while (here->HFETAdrainDrainPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAdrainDrainPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAgatePrimeNode != 0) && (here->HFETAgatePrimeNode != 0))
+            {
+                i = here->HFETAgatePrimeGatePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAgatePrimeGatePrimeStructPtr = matched ;
+                here->HFETAgatePrimeGatePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAgatePrimeNode != 0) && (here->HFETAgatePrimeNode != 0)) {
-			while (here->HFETAgatePrimeGatePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAgatePrimeGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAsourceNode != 0) && (here->HFETAsourceNode != 0))
+            {
+                i = here->HFETAsourceSourcePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAsourceSourceStructPtr = matched ;
+                here->HFETAsourceSourcePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAsourceNode != 0) && (here->HFETAsourceNode != 0)) {
-			while (here->HFETAsourceSourcePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAsourceSourcePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainPrimeNode != 0))
+            {
+                i = here->HFETAdrainPrimeDrainPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAdrainPrimeDrainPrimeStructPtr = matched ;
+                here->HFETAdrainPrimeDrainPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainPrimeNode != 0)) {
-			while (here->HFETAdrainPrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAdrainPrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourcePrimeNode != 0))
+            {
+                i = here->HFETAsourcePrimeSourcePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAsourcePrimeSourcePrimeStructPtr = matched ;
+                here->HFETAsourcePrimeSourcePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourcePrimeNode != 0)) {
-			while (here->HFETAsourcePrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAsourcePrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainPrmPrmNode != 0))
+            {
+                i = here->HFETAdrainPrimeDrainPrmPrmPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAdrainPrimeDrainPrmPrmStructPtr = matched ;
+                here->HFETAdrainPrimeDrainPrmPrmPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainPrmPrmNode != 0)) {
-			while (here->HFETAdrainPrimeDrainPrmPrmPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAdrainPrimeDrainPrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAdrainPrimeNode != 0))
+            {
+                i = here->HFETAdrainPrmPrmDrainPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAdrainPrmPrmDrainPrimeStructPtr = matched ;
+                here->HFETAdrainPrmPrmDrainPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAdrainPrimeNode != 0)) {
-			while (here->HFETAdrainPrmPrmDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAdrainPrmPrmDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAgatePrimeNode != 0))
+            {
+                i = here->HFETAdrainPrmPrmGatePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAdrainPrmPrmGatePrimeStructPtr = matched ;
+                here->HFETAdrainPrmPrmGatePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAgatePrimeNode != 0)) {
-			while (here->HFETAdrainPrmPrmGatePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAdrainPrmPrmGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAgatePrimeNode != 0) && (here->HFETAdrainPrmPrmNode != 0))
+            {
+                i = here->HFETAgatePrimeDrainPrmPrmPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAgatePrimeDrainPrmPrmStructPtr = matched ;
+                here->HFETAgatePrimeDrainPrmPrmPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAgatePrimeNode != 0) && (here->HFETAdrainPrmPrmNode != 0)) {
-			while (here->HFETAgatePrimeDrainPrmPrmPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAgatePrimeDrainPrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAdrainPrmPrmNode != 0))
+            {
+                i = here->HFETAdrainPrmPrmDrainPrmPrmPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAdrainPrmPrmDrainPrmPrmStructPtr = matched ;
+                here->HFETAdrainPrmPrmDrainPrmPrmPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAdrainPrmPrmNode != 0)) {
-			while (here->HFETAdrainPrmPrmDrainPrmPrmPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAdrainPrmPrmDrainPrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourcePrmPrmNode != 0))
+            {
+                i = here->HFETAsourcePrimeSourcePrmPrmPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAsourcePrimeSourcePrmPrmStructPtr = matched ;
+                here->HFETAsourcePrimeSourcePrmPrmPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourcePrmPrmNode != 0)) {
-			while (here->HFETAsourcePrimeSourcePrmPrmPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAsourcePrimeSourcePrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAsourcePrimeNode != 0))
+            {
+                i = here->HFETAsourcePrmPrmSourcePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAsourcePrmPrmSourcePrimeStructPtr = matched ;
+                here->HFETAsourcePrmPrmSourcePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAsourcePrimeNode != 0)) {
-			while (here->HFETAsourcePrmPrmSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAsourcePrmPrmSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAgatePrimeNode != 0))
+            {
+                i = here->HFETAsourcePrmPrmGatePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAsourcePrmPrmGatePrimeStructPtr = matched ;
+                here->HFETAsourcePrmPrmGatePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAgatePrimeNode != 0)) {
-			while (here->HFETAsourcePrmPrmGatePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAsourcePrmPrmGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAgatePrimeNode != 0) && (here->HFETAsourcePrmPrmNode != 0))
+            {
+                i = here->HFETAgatePrimeSourcePrmPrmPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAgatePrimeSourcePrmPrmStructPtr = matched ;
+                here->HFETAgatePrimeSourcePrmPrmPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAgatePrimeNode != 0) && (here->HFETAsourcePrmPrmNode != 0)) {
-			while (here->HFETAgatePrimeSourcePrmPrmPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAgatePrimeSourcePrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAsourcePrmPrmNode != 0))
+            {
+                i = here->HFETAsourcePrmPrmSourcePrmPrmPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAsourcePrmPrmSourcePrmPrmStructPtr = matched ;
+                here->HFETAsourcePrmPrmSourcePrmPrmPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAsourcePrmPrmNode != 0)) {
-			while (here->HFETAsourcePrmPrmSourcePrmPrmPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAsourcePrmPrmSourcePrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAgateNode != 0) && (here->HFETAgateNode != 0))
+            {
+                i = here->HFETAgateGatePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAgateGateStructPtr = matched ;
+                here->HFETAgateGatePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAgateNode != 0) && (here->HFETAgateNode != 0)) {
-			while (here->HFETAgateGatePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAgateGatePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAgateNode != 0) && (here->HFETAgatePrimeNode != 0))
+            {
+                i = here->HFETAgateGatePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAgateGatePrimeStructPtr = matched ;
+                here->HFETAgateGatePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAgateNode != 0) && (here->HFETAgatePrimeNode != 0)) {
-			while (here->HFETAgateGatePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAgateGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->HFETAgatePrimeNode != 0) && (here->HFETAgateNode != 0))
+            {
+                i = here->HFETAgatePrimeGatePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->HFETAgatePrimeGateStructPtr = matched ;
+                here->HFETAgatePrimeGatePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->HFETAgatePrimeNode != 0) && (here->HFETAgateNode != 0)) {
-			while (here->HFETAgatePrimeGatePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->HFETAgatePrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-	}
+        }
     }
-    return(OK);
+
+    return (OK) ;
+}
+
+int
+HFETAbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
+{
+    HFETAmodel *model = (HFETAmodel *)inModel ;
+    HFETAinstance *here ;
+
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the HFETA models */
+    for ( ; model != NULL ; model = model->HFETAnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->HFETAinstances ; here != NULL ; here = here->HFETAnextInstance)
+        {
+            if ((here->HFETAdrainNode != 0) && (here->HFETAdrainPrimeNode != 0))
+                here->HFETAdrainDrainPrimePtr = here->HFETAdrainDrainPrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAgatePrimeNode != 0) && (here->HFETAdrainPrimeNode != 0))
+                here->HFETAgatePrimeDrainPrimePtr = here->HFETAgatePrimeDrainPrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAgatePrimeNode != 0) && (here->HFETAsourcePrimeNode != 0))
+                here->HFETAgatePrimeSourcePrimePtr = here->HFETAgatePrimeSourcePrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAsourceNode != 0) && (here->HFETAsourcePrimeNode != 0))
+                here->HFETAsourceSourcePrimePtr = here->HFETAsourceSourcePrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainNode != 0))
+                here->HFETAdrainPrimeDrainPtr = here->HFETAdrainPrimeDrainStructPtr->CSC_Complex ;
+
+            if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAgatePrimeNode != 0))
+                here->HFETAdrainPrimeGatePrimePtr = here->HFETAdrainPrimeGatePrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAsourcePrimeNode != 0))
+                here->HFETAdrainPrimeSourcePrimePtr = here->HFETAdrainPrimeSourcePrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAgatePrimeNode != 0))
+                here->HFETAsourcePrimeGatePrimePtr = here->HFETAsourcePrimeGatePrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourceNode != 0))
+                here->HFETAsourcePrimeSourcePtr = here->HFETAsourcePrimeSourceStructPtr->CSC_Complex ;
+
+            if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAdrainPrimeNode != 0))
+                here->HFETAsourcePrimeDrainPrimePtr = here->HFETAsourcePrimeDrainPrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAdrainNode != 0) && (here->HFETAdrainNode != 0))
+                here->HFETAdrainDrainPtr = here->HFETAdrainDrainStructPtr->CSC_Complex ;
+
+            if ((here->HFETAgatePrimeNode != 0) && (here->HFETAgatePrimeNode != 0))
+                here->HFETAgatePrimeGatePrimePtr = here->HFETAgatePrimeGatePrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAsourceNode != 0) && (here->HFETAsourceNode != 0))
+                here->HFETAsourceSourcePtr = here->HFETAsourceSourceStructPtr->CSC_Complex ;
+
+            if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainPrimeNode != 0))
+                here->HFETAdrainPrimeDrainPrimePtr = here->HFETAdrainPrimeDrainPrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourcePrimeNode != 0))
+                here->HFETAsourcePrimeSourcePrimePtr = here->HFETAsourcePrimeSourcePrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainPrmPrmNode != 0))
+                here->HFETAdrainPrimeDrainPrmPrmPtr = here->HFETAdrainPrimeDrainPrmPrmStructPtr->CSC_Complex ;
+
+            if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAdrainPrimeNode != 0))
+                here->HFETAdrainPrmPrmDrainPrimePtr = here->HFETAdrainPrmPrmDrainPrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAgatePrimeNode != 0))
+                here->HFETAdrainPrmPrmGatePrimePtr = here->HFETAdrainPrmPrmGatePrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAgatePrimeNode != 0) && (here->HFETAdrainPrmPrmNode != 0))
+                here->HFETAgatePrimeDrainPrmPrmPtr = here->HFETAgatePrimeDrainPrmPrmStructPtr->CSC_Complex ;
+
+            if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAdrainPrmPrmNode != 0))
+                here->HFETAdrainPrmPrmDrainPrmPrmPtr = here->HFETAdrainPrmPrmDrainPrmPrmStructPtr->CSC_Complex ;
+
+            if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourcePrmPrmNode != 0))
+                here->HFETAsourcePrimeSourcePrmPrmPtr = here->HFETAsourcePrimeSourcePrmPrmStructPtr->CSC_Complex ;
+
+            if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAsourcePrimeNode != 0))
+                here->HFETAsourcePrmPrmSourcePrimePtr = here->HFETAsourcePrmPrmSourcePrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAgatePrimeNode != 0))
+                here->HFETAsourcePrmPrmGatePrimePtr = here->HFETAsourcePrmPrmGatePrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAgatePrimeNode != 0) && (here->HFETAsourcePrmPrmNode != 0))
+                here->HFETAgatePrimeSourcePrmPrmPtr = here->HFETAgatePrimeSourcePrmPrmStructPtr->CSC_Complex ;
+
+            if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAsourcePrmPrmNode != 0))
+                here->HFETAsourcePrmPrmSourcePrmPrmPtr = here->HFETAsourcePrmPrmSourcePrmPrmStructPtr->CSC_Complex ;
+
+            if ((here->HFETAgateNode != 0) && (here->HFETAgateNode != 0))
+                here->HFETAgateGatePtr = here->HFETAgateGateStructPtr->CSC_Complex ;
+
+            if ((here->HFETAgateNode != 0) && (here->HFETAgatePrimeNode != 0))
+                here->HFETAgateGatePrimePtr = here->HFETAgateGatePrimeStructPtr->CSC_Complex ;
+
+            if ((here->HFETAgatePrimeNode != 0) && (here->HFETAgateNode != 0))
+                here->HFETAgatePrimeGatePtr = here->HFETAgatePrimeGateStructPtr->CSC_Complex ;
+
+        }
+    }
+
+    return (OK) ;
 }
 
 int
@@ -384,209 +377,99 @@ HFETAbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     HFETAmodel *model = (HFETAmodel *)inModel ;
     HFETAinstance *here ;
-    int i ;
 
-    /*  loop through all the HfetA models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the HFETA models */
     for ( ; model != NULL ; model = model->HFETAnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->HFETAinstances ; here != NULL ; here = here->HFETAnextInstance)
         {
-            i = 0 ;
             if ((here->HFETAdrainNode != 0) && (here->HFETAdrainPrimeNode != 0))
-            {
-                while (here->HFETAdrainDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAdrainDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAdrainDrainPrimePtr = here->HFETAdrainDrainPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAgatePrimeNode != 0) && (here->HFETAdrainPrimeNode != 0))
-            {
-                while (here->HFETAgatePrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAgatePrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAgatePrimeDrainPrimePtr = here->HFETAgatePrimeDrainPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAgatePrimeNode != 0) && (here->HFETAsourcePrimeNode != 0))
-            {
-                while (here->HFETAgatePrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAgatePrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAgatePrimeSourcePrimePtr = here->HFETAgatePrimeSourcePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAsourceNode != 0) && (here->HFETAsourcePrimeNode != 0))
-            {
-                while (here->HFETAsourceSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAsourceSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAsourceSourcePrimePtr = here->HFETAsourceSourcePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainNode != 0))
-            {
-                while (here->HFETAdrainPrimeDrainPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAdrainPrimeDrainPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAdrainPrimeDrainPtr = here->HFETAdrainPrimeDrainStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAgatePrimeNode != 0))
-            {
-                while (here->HFETAdrainPrimeGatePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAdrainPrimeGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAdrainPrimeGatePrimePtr = here->HFETAdrainPrimeGatePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAsourcePrimeNode != 0))
-            {
-                while (here->HFETAdrainPrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAdrainPrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAdrainPrimeSourcePrimePtr = here->HFETAdrainPrimeSourcePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAgatePrimeNode != 0))
-            {
-                while (here->HFETAsourcePrimeGatePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAsourcePrimeGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAsourcePrimeGatePrimePtr = here->HFETAsourcePrimeGatePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourceNode != 0))
-            {
-                while (here->HFETAsourcePrimeSourcePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAsourcePrimeSourcePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAsourcePrimeSourcePtr = here->HFETAsourcePrimeSourceStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAdrainPrimeNode != 0))
-            {
-                while (here->HFETAsourcePrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAsourcePrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAsourcePrimeDrainPrimePtr = here->HFETAsourcePrimeDrainPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAdrainNode != 0) && (here->HFETAdrainNode != 0))
-            {
-                while (here->HFETAdrainDrainPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAdrainDrainPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAdrainDrainPtr = here->HFETAdrainDrainStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAgatePrimeNode != 0) && (here->HFETAgatePrimeNode != 0))
-            {
-                while (here->HFETAgatePrimeGatePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAgatePrimeGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAgatePrimeGatePrimePtr = here->HFETAgatePrimeGatePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAsourceNode != 0) && (here->HFETAsourceNode != 0))
-            {
-                while (here->HFETAsourceSourcePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAsourceSourcePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAsourceSourcePtr = here->HFETAsourceSourceStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainPrimeNode != 0))
-            {
-                while (here->HFETAdrainPrimeDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAdrainPrimeDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAdrainPrimeDrainPrimePtr = here->HFETAdrainPrimeDrainPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourcePrimeNode != 0))
-            {
-                while (here->HFETAsourcePrimeSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAsourcePrimeSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAsourcePrimeSourcePrimePtr = here->HFETAsourcePrimeSourcePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAdrainPrimeNode != 0) && (here->HFETAdrainPrmPrmNode != 0))
-            {
-                while (here->HFETAdrainPrimeDrainPrmPrmPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAdrainPrimeDrainPrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAdrainPrimeDrainPrmPrmPtr = here->HFETAdrainPrimeDrainPrmPrmStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAdrainPrimeNode != 0))
-            {
-                while (here->HFETAdrainPrmPrmDrainPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAdrainPrmPrmDrainPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAdrainPrmPrmDrainPrimePtr = here->HFETAdrainPrmPrmDrainPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAgatePrimeNode != 0))
-            {
-                while (here->HFETAdrainPrmPrmGatePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAdrainPrmPrmGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAdrainPrmPrmGatePrimePtr = here->HFETAdrainPrmPrmGatePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAgatePrimeNode != 0) && (here->HFETAdrainPrmPrmNode != 0))
-            {
-                while (here->HFETAgatePrimeDrainPrmPrmPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAgatePrimeDrainPrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAgatePrimeDrainPrmPrmPtr = here->HFETAgatePrimeDrainPrmPrmStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAdrainPrmPrmNode != 0) && (here->HFETAdrainPrmPrmNode != 0))
-            {
-                while (here->HFETAdrainPrmPrmDrainPrmPrmPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAdrainPrmPrmDrainPrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAdrainPrmPrmDrainPrmPrmPtr = here->HFETAdrainPrmPrmDrainPrmPrmStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAsourcePrimeNode != 0) && (here->HFETAsourcePrmPrmNode != 0))
-            {
-                while (here->HFETAsourcePrimeSourcePrmPrmPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAsourcePrimeSourcePrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAsourcePrimeSourcePrmPrmPtr = here->HFETAsourcePrimeSourcePrmPrmStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAsourcePrimeNode != 0))
-            {
-                while (here->HFETAsourcePrmPrmSourcePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAsourcePrmPrmSourcePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAsourcePrmPrmSourcePrimePtr = here->HFETAsourcePrmPrmSourcePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAgatePrimeNode != 0))
-            {
-                while (here->HFETAsourcePrmPrmGatePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAsourcePrmPrmGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAsourcePrmPrmGatePrimePtr = here->HFETAsourcePrmPrmGatePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAgatePrimeNode != 0) && (here->HFETAsourcePrmPrmNode != 0))
-            {
-                while (here->HFETAgatePrimeSourcePrmPrmPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAgatePrimeSourcePrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAgatePrimeSourcePrmPrmPtr = here->HFETAgatePrimeSourcePrmPrmStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAsourcePrmPrmNode != 0) && (here->HFETAsourcePrmPrmNode != 0))
-            {
-                while (here->HFETAsourcePrmPrmSourcePrmPrmPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAsourcePrmPrmSourcePrmPrmPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAsourcePrmPrmSourcePrmPrmPtr = here->HFETAsourcePrmPrmSourcePrmPrmStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAgateNode != 0) && (here->HFETAgateNode != 0))
-            {
-                while (here->HFETAgateGatePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAgateGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAgateGatePtr = here->HFETAgateGateStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAgateNode != 0) && (here->HFETAgatePrimeNode != 0))
-            {
-                while (here->HFETAgateGatePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAgateGatePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAgateGatePrimePtr = here->HFETAgateGatePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->HFETAgatePrimeNode != 0) && (here->HFETAgateNode != 0))
-            {
-                while (here->HFETAgatePrimeGatePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->HFETAgatePrimeGatePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->HFETAgatePrimeGatePtr = here->HFETAgatePrimeGateStructPtr->CSC ;
+
         }
     }
 

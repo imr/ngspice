@@ -1,5 +1,5 @@
 /**********
-Author: 2012 Francesco Lannutti
+Author: 2013 Francesco Lannutti
 **********/
 
 #include "ngspice/ngspice.h"
@@ -7,332 +7,314 @@ Author: 2012 Francesco Lannutti
 #include "bjtdefs.h"
 #include "ngspice/sperror.h"
 
+#include <stdlib.h>
+
+static
 int
-BJTbindCSC(GENmodel *inModel, CKTcircuit *ckt)
+BindCompare (const void *a, const void *b)
 {
-    BJTmodel *model = (BJTmodel *)inModel;
-    int i ;
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
 
-    /*  loop through all the bjt models */
-    for( ; model != NULL; model = model->BJTnextModel ) {
-	BJTinstance *here;
-
-        /* loop through all the instances of the model */
-        for (here = model->BJTinstances; here != NULL ;
-	    here = here->BJTnextInstance) {
-
-		i = 0 ;
-		if ((here->BJTcolNode != 0) && (here->BJTcolPrimeNode != 0)) {
-			while (here->BJTcolColPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTcolColPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTbaseNode != 0) && (here->BJTbasePrimeNode != 0)) {
-			while (here->BJTbaseBasePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTbaseBasePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTemitNode != 0) && (here->BJTemitPrimeNode != 0)) {
-			while (here->BJTemitEmitPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTemitEmitPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTcolPrimeNode != 0) && (here->BJTcolNode != 0)) {
-			while (here->BJTcolPrimeColPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTcolPrimeColPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTcolPrimeNode != 0) && (here->BJTbasePrimeNode != 0)) {
-			while (here->BJTcolPrimeBasePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTcolPrimeBasePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTcolPrimeNode != 0) && (here->BJTemitPrimeNode != 0)) {
-			while (here->BJTcolPrimeEmitPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTcolPrimeEmitPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTbasePrimeNode != 0) && (here->BJTbaseNode != 0)) {
-			while (here->BJTbasePrimeBasePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTbasePrimeBasePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTbasePrimeNode != 0) && (here->BJTcolPrimeNode != 0)) {
-			while (here->BJTbasePrimeColPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTbasePrimeColPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTbasePrimeNode != 0) && (here->BJTemitPrimeNode != 0)) {
-			while (here->BJTbasePrimeEmitPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTbasePrimeEmitPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTemitPrimeNode != 0) && (here->BJTemitNode != 0)) {
-			while (here->BJTemitPrimeEmitPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTemitPrimeEmitPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTemitPrimeNode != 0) && (here->BJTcolPrimeNode != 0)) {
-			while (here->BJTemitPrimeColPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTemitPrimeColPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTemitPrimeNode != 0) && (here->BJTbasePrimeNode != 0)) {
-			while (here->BJTemitPrimeBasePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTemitPrimeBasePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTcolNode != 0) && (here->BJTcolNode != 0)) {
-			while (here->BJTcolColPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTcolColPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTbaseNode != 0) && (here->BJTbaseNode != 0)) {
-			while (here->BJTbaseBasePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTbaseBasePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTemitNode != 0) && (here->BJTemitNode != 0)) {
-			while (here->BJTemitEmitPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTemitEmitPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTcolPrimeNode != 0) && (here->BJTcolPrimeNode != 0)) {
-			while (here->BJTcolPrimeColPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTcolPrimeColPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTbasePrimeNode != 0) && (here->BJTbasePrimeNode != 0)) {
-			while (here->BJTbasePrimeBasePrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTbasePrimeBasePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTemitPrimeNode != 0) && (here->BJTemitPrimeNode != 0)) {
-			while (here->BJTemitPrimeEmitPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTemitPrimeEmitPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTsubstNode != 0) && (here->BJTsubstNode != 0)) {
-			while (here->BJTsubstSubstPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTsubstSubstPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-            if (model -> BJTsubs == LATERAL) {
-              here -> BJTsubstConNode = here -> BJTbasePrimeNode;
-              here -> BJTsubstConSubstConPtr = here -> BJTbasePrimeBasePrimePtr;
-            } else {
-              here -> BJTsubstConNode = here -> BJTcolPrimeNode;
-              here -> BJTsubstConSubstConPtr = here -> BJTcolPrimeColPrimePtr;
-            }
-
-		i = 0 ;
-		if ((here->BJTsubstConNode != 0) && (here->BJTsubstNode != 0)) {
-			while (here->BJTsubstConSubstPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTsubstConSubstPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTsubstNode != 0) && (here->BJTsubstConNode != 0)) {
-			while (here->BJTsubstSubstConPtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTsubstSubstConPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTbaseNode != 0) && (here->BJTcolPrimeNode != 0)) {
-			while (here->BJTbaseColPrimePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTbaseColPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTcolPrimeNode != 0) && (here->BJTbaseNode != 0)) {
-			while (here->BJTcolPrimeBasePtr != ckt->CKTmatrix->CKTbind_Sparse [i]) i ++ ;
-			here->BJTcolPrimeBasePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-		}
-	}
-    }
-    return(OK);
+    return ((int)(A->Sparse - B->Sparse)) ;
 }
 
 int
-BJTbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt)
+BJTbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
-    BJTmodel *model = (BJTmodel *)inModel;
-    int i ;
+    BJTmodel *model = (BJTmodel *)inModel ;
+    BJTinstance *here ;
+    double *i ;
+    BindElement *matched, *BindStruct ;
+    size_t nz ;
 
-    /*  loop through all the bjt models */
-    for( ; model != NULL; model = model->BJTnextModel ) {
-	BJTinstance *here;
+    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
+    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
 
+    /* loop through all the BJT models */
+    for ( ; model != NULL ; model = model->BJTnextModel)
+    {
         /* loop through all the instances of the model */
-        for (here = model->BJTinstances; here != NULL ;
-	    here = here->BJTnextInstance) {
-
-		i = 0 ;
-		if ((here->BJTcolNode != 0) && (here->BJTcolPrimeNode != 0)) {
-			while (here->BJTcolColPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTcolColPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTbaseNode != 0) && (here->BJTbasePrimeNode != 0)) {
-			while (here->BJTbaseBasePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTbaseBasePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTemitNode != 0) && (here->BJTemitPrimeNode != 0)) {
-			while (here->BJTemitEmitPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTemitEmitPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTcolPrimeNode != 0) && (here->BJTcolNode != 0)) {
-			while (here->BJTcolPrimeColPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTcolPrimeColPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTcolPrimeNode != 0) && (here->BJTbasePrimeNode != 0)) {
-			while (here->BJTcolPrimeBasePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTcolPrimeBasePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTcolPrimeNode != 0) && (here->BJTemitPrimeNode != 0)) {
-			while (here->BJTcolPrimeEmitPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTcolPrimeEmitPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTbasePrimeNode != 0) && (here->BJTbaseNode != 0)) {
-			while (here->BJTbasePrimeBasePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTbasePrimeBasePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTbasePrimeNode != 0) && (here->BJTcolPrimeNode != 0)) {
-			while (here->BJTbasePrimeColPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTbasePrimeColPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTbasePrimeNode != 0) && (here->BJTemitPrimeNode != 0)) {
-			while (here->BJTbasePrimeEmitPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTbasePrimeEmitPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTemitPrimeNode != 0) && (here->BJTemitNode != 0)) {
-			while (here->BJTemitPrimeEmitPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTemitPrimeEmitPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTemitPrimeNode != 0) && (here->BJTcolPrimeNode != 0)) {
-			while (here->BJTemitPrimeColPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTemitPrimeColPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTemitPrimeNode != 0) && (here->BJTbasePrimeNode != 0)) {
-			while (here->BJTemitPrimeBasePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTemitPrimeBasePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTcolNode != 0) && (here->BJTcolNode != 0)) {
-			while (here->BJTcolColPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTcolColPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTbaseNode != 0) && (here->BJTbaseNode != 0)) {
-			while (here->BJTbaseBasePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTbaseBasePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTemitNode != 0) && (here->BJTemitNode != 0)) {
-			while (here->BJTemitEmitPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTemitEmitPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTcolPrimeNode != 0) && (here->BJTcolPrimeNode != 0)) {
-			while (here->BJTcolPrimeColPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTcolPrimeColPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTbasePrimeNode != 0) && (here->BJTbasePrimeNode != 0)) {
-			while (here->BJTbasePrimeBasePrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTbasePrimeBasePrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTemitPrimeNode != 0) && (here->BJTemitPrimeNode != 0)) {
-			while (here->BJTemitPrimeEmitPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTemitPrimeEmitPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-		i = 0 ;
-		if ((here->BJTsubstNode != 0) && (here->BJTsubstNode != 0)) {
-			while (here->BJTsubstSubstPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTsubstSubstPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-
-            if (model -> BJTsubs == LATERAL) {
-              here -> BJTsubstConNode = here -> BJTbasePrimeNode;
-              here -> BJTsubstConSubstConPtr = here -> BJTbasePrimeBasePrimePtr;
-            } else {
-              here -> BJTsubstConNode = here -> BJTcolPrimeNode;
-              here -> BJTsubstConSubstConPtr = here -> BJTcolPrimeColPrimePtr;
+        for (here = model->BJTinstances ; here != NULL ; here = here->BJTnextInstance)
+        {
+            if ((here->BJTcolNode != 0) && (here->BJTcolPrimeNode != 0))
+            {
+                i = here->BJTcolColPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTcolColPrimeStructPtr = matched ;
+                here->BJTcolColPrimePtr = matched->CSC ;
             }
 
-		i = 0 ;
-		if ((here->BJTsubstConNode != 0) && (here->BJTsubstNode != 0)) {
-			while (here->BJTsubstConSubstPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTsubstConSubstPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->BJTbaseNode != 0) && (here->BJTbasePrimeNode != 0))
+            {
+                i = here->BJTbaseBasePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTbaseBasePrimeStructPtr = matched ;
+                here->BJTbaseBasePrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->BJTsubstNode != 0) && (here->BJTsubstConNode != 0)) {
-			while (here->BJTsubstSubstConPtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTsubstSubstConPtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->BJTemitNode != 0) && (here->BJTemitPrimeNode != 0))
+            {
+                i = here->BJTemitEmitPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTemitEmitPrimeStructPtr = matched ;
+                here->BJTemitEmitPrimePtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->BJTbaseNode != 0) && (here->BJTcolPrimeNode != 0)) {
-			while (here->BJTbaseColPrimePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTbaseColPrimePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
+            if ((here->BJTcolPrimeNode != 0) && (here->BJTcolNode != 0))
+            {
+                i = here->BJTcolPrimeColPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTcolPrimeColStructPtr = matched ;
+                here->BJTcolPrimeColPtr = matched->CSC ;
+            }
 
-		i = 0 ;
-		if ((here->BJTcolPrimeNode != 0) && (here->BJTbaseNode != 0)) {
-			while (here->BJTcolPrimeBasePtr != ckt->CKTmatrix->CKTbind_CSC [i]) i ++ ;
-			here->BJTcolPrimeBasePtr = ckt->CKTmatrix->CKTbind_CSC_Complex [i] ;
-		}
-	}
+            if ((here->BJTcolPrimeNode != 0) && (here->BJTbasePrimeNode != 0))
+            {
+                i = here->BJTcolPrimeBasePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTcolPrimeBasePrimeStructPtr = matched ;
+                here->BJTcolPrimeBasePrimePtr = matched->CSC ;
+            }
+
+            if ((here->BJTcolPrimeNode != 0) && (here->BJTemitPrimeNode != 0))
+            {
+                i = here->BJTcolPrimeEmitPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTcolPrimeEmitPrimeStructPtr = matched ;
+                here->BJTcolPrimeEmitPrimePtr = matched->CSC ;
+            }
+
+            if ((here->BJTbasePrimeNode != 0) && (here->BJTbaseNode != 0))
+            {
+                i = here->BJTbasePrimeBasePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTbasePrimeBaseStructPtr = matched ;
+                here->BJTbasePrimeBasePtr = matched->CSC ;
+            }
+
+            if ((here->BJTbasePrimeNode != 0) && (here->BJTcolPrimeNode != 0))
+            {
+                i = here->BJTbasePrimeColPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTbasePrimeColPrimeStructPtr = matched ;
+                here->BJTbasePrimeColPrimePtr = matched->CSC ;
+            }
+
+            if ((here->BJTbasePrimeNode != 0) && (here->BJTemitPrimeNode != 0))
+            {
+                i = here->BJTbasePrimeEmitPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTbasePrimeEmitPrimeStructPtr = matched ;
+                here->BJTbasePrimeEmitPrimePtr = matched->CSC ;
+            }
+
+            if ((here->BJTemitPrimeNode != 0) && (here->BJTemitNode != 0))
+            {
+                i = here->BJTemitPrimeEmitPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTemitPrimeEmitStructPtr = matched ;
+                here->BJTemitPrimeEmitPtr = matched->CSC ;
+            }
+
+            if ((here->BJTemitPrimeNode != 0) && (here->BJTcolPrimeNode != 0))
+            {
+                i = here->BJTemitPrimeColPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTemitPrimeColPrimeStructPtr = matched ;
+                here->BJTemitPrimeColPrimePtr = matched->CSC ;
+            }
+
+            if ((here->BJTemitPrimeNode != 0) && (here->BJTbasePrimeNode != 0))
+            {
+                i = here->BJTemitPrimeBasePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTemitPrimeBasePrimeStructPtr = matched ;
+                here->BJTemitPrimeBasePrimePtr = matched->CSC ;
+            }
+
+            if ((here->BJTcolNode != 0) && (here->BJTcolNode != 0))
+            {
+                i = here->BJTcolColPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTcolColStructPtr = matched ;
+                here->BJTcolColPtr = matched->CSC ;
+            }
+
+            if ((here->BJTbaseNode != 0) && (here->BJTbaseNode != 0))
+            {
+                i = here->BJTbaseBasePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTbaseBaseStructPtr = matched ;
+                here->BJTbaseBasePtr = matched->CSC ;
+            }
+
+            if ((here->BJTemitNode != 0) && (here->BJTemitNode != 0))
+            {
+                i = here->BJTemitEmitPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTemitEmitStructPtr = matched ;
+                here->BJTemitEmitPtr = matched->CSC ;
+            }
+
+            if ((here->BJTcolPrimeNode != 0) && (here->BJTcolPrimeNode != 0))
+            {
+                i = here->BJTcolPrimeColPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTcolPrimeColPrimeStructPtr = matched ;
+                here->BJTcolPrimeColPrimePtr = matched->CSC ;
+            }
+
+            if ((here->BJTbasePrimeNode != 0) && (here->BJTbasePrimeNode != 0))
+            {
+                i = here->BJTbasePrimeBasePrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTbasePrimeBasePrimeStructPtr = matched ;
+                here->BJTbasePrimeBasePrimePtr = matched->CSC ;
+            }
+
+            if ((here->BJTemitPrimeNode != 0) && (here->BJTemitPrimeNode != 0))
+            {
+                i = here->BJTemitPrimeEmitPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTemitPrimeEmitPrimeStructPtr = matched ;
+                here->BJTemitPrimeEmitPrimePtr = matched->CSC ;
+            }
+
+            if ((here->BJTsubstNode != 0) && (here->BJTsubstNode != 0))
+            {
+                i = here->BJTsubstSubstPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTsubstSubstStructPtr = matched ;
+                here->BJTsubstSubstPtr = matched->CSC ;
+            }
+
+            if ((here->BJTsubstConNode != 0) && (here->BJTsubstNode != 0))
+            {
+                i = here->BJTsubstConSubstPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTsubstConSubstStructPtr = matched ;
+                here->BJTsubstConSubstPtr = matched->CSC ;
+            }
+
+            if ((here->BJTsubstNode != 0) && (here->BJTsubstConNode != 0))
+            {
+                i = here->BJTsubstSubstConPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTsubstSubstConStructPtr = matched ;
+                here->BJTsubstSubstConPtr = matched->CSC ;
+            }
+
+            if ((here->BJTbaseNode != 0) && (here->BJTcolPrimeNode != 0))
+            {
+                i = here->BJTbaseColPrimePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTbaseColPrimeStructPtr = matched ;
+                here->BJTbaseColPrimePtr = matched->CSC ;
+            }
+
+            if ((here->BJTcolPrimeNode != 0) && (here->BJTbaseNode != 0))
+            {
+                i = here->BJTcolPrimeBasePtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->BJTcolPrimeBaseStructPtr = matched ;
+                here->BJTcolPrimeBasePtr = matched->CSC ;
+            }
+
+        }
     }
-    return(OK);
+
+    return (OK) ;
+}
+
+int
+BJTbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
+{
+    BJTmodel *model = (BJTmodel *)inModel ;
+    BJTinstance *here ;
+
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the BJT models */
+    for ( ; model != NULL ; model = model->BJTnextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->BJTinstances ; here != NULL ; here = here->BJTnextInstance)
+        {
+            if ((here->BJTcolNode != 0) && (here->BJTcolPrimeNode != 0))
+                here->BJTcolColPrimePtr = here->BJTcolColPrimeStructPtr->CSC_Complex ;
+
+            if ((here->BJTbaseNode != 0) && (here->BJTbasePrimeNode != 0))
+                here->BJTbaseBasePrimePtr = here->BJTbaseBasePrimeStructPtr->CSC_Complex ;
+
+            if ((here->BJTemitNode != 0) && (here->BJTemitPrimeNode != 0))
+                here->BJTemitEmitPrimePtr = here->BJTemitEmitPrimeStructPtr->CSC_Complex ;
+
+            if ((here->BJTcolPrimeNode != 0) && (here->BJTcolNode != 0))
+                here->BJTcolPrimeColPtr = here->BJTcolPrimeColStructPtr->CSC_Complex ;
+
+            if ((here->BJTcolPrimeNode != 0) && (here->BJTbasePrimeNode != 0))
+                here->BJTcolPrimeBasePrimePtr = here->BJTcolPrimeBasePrimeStructPtr->CSC_Complex ;
+
+            if ((here->BJTcolPrimeNode != 0) && (here->BJTemitPrimeNode != 0))
+                here->BJTcolPrimeEmitPrimePtr = here->BJTcolPrimeEmitPrimeStructPtr->CSC_Complex ;
+
+            if ((here->BJTbasePrimeNode != 0) && (here->BJTbaseNode != 0))
+                here->BJTbasePrimeBasePtr = here->BJTbasePrimeBaseStructPtr->CSC_Complex ;
+
+            if ((here->BJTbasePrimeNode != 0) && (here->BJTcolPrimeNode != 0))
+                here->BJTbasePrimeColPrimePtr = here->BJTbasePrimeColPrimeStructPtr->CSC_Complex ;
+
+            if ((here->BJTbasePrimeNode != 0) && (here->BJTemitPrimeNode != 0))
+                here->BJTbasePrimeEmitPrimePtr = here->BJTbasePrimeEmitPrimeStructPtr->CSC_Complex ;
+
+            if ((here->BJTemitPrimeNode != 0) && (here->BJTemitNode != 0))
+                here->BJTemitPrimeEmitPtr = here->BJTemitPrimeEmitStructPtr->CSC_Complex ;
+
+            if ((here->BJTemitPrimeNode != 0) && (here->BJTcolPrimeNode != 0))
+                here->BJTemitPrimeColPrimePtr = here->BJTemitPrimeColPrimeStructPtr->CSC_Complex ;
+
+            if ((here->BJTemitPrimeNode != 0) && (here->BJTbasePrimeNode != 0))
+                here->BJTemitPrimeBasePrimePtr = here->BJTemitPrimeBasePrimeStructPtr->CSC_Complex ;
+
+            if ((here->BJTcolNode != 0) && (here->BJTcolNode != 0))
+                here->BJTcolColPtr = here->BJTcolColStructPtr->CSC_Complex ;
+
+            if ((here->BJTbaseNode != 0) && (here->BJTbaseNode != 0))
+                here->BJTbaseBasePtr = here->BJTbaseBaseStructPtr->CSC_Complex ;
+
+            if ((here->BJTemitNode != 0) && (here->BJTemitNode != 0))
+                here->BJTemitEmitPtr = here->BJTemitEmitStructPtr->CSC_Complex ;
+
+            if ((here->BJTcolPrimeNode != 0) && (here->BJTcolPrimeNode != 0))
+                here->BJTcolPrimeColPrimePtr = here->BJTcolPrimeColPrimeStructPtr->CSC_Complex ;
+
+            if ((here->BJTbasePrimeNode != 0) && (here->BJTbasePrimeNode != 0))
+                here->BJTbasePrimeBasePrimePtr = here->BJTbasePrimeBasePrimeStructPtr->CSC_Complex ;
+
+            if ((here->BJTemitPrimeNode != 0) && (here->BJTemitPrimeNode != 0))
+                here->BJTemitPrimeEmitPrimePtr = here->BJTemitPrimeEmitPrimeStructPtr->CSC_Complex ;
+
+            if ((here->BJTsubstNode != 0) && (here->BJTsubstNode != 0))
+                here->BJTsubstSubstPtr = here->BJTsubstSubstStructPtr->CSC_Complex ;
+
+            if ((here->BJTsubstConNode != 0) && (here->BJTsubstNode != 0))
+                here->BJTsubstConSubstPtr = here->BJTsubstConSubstStructPtr->CSC_Complex ;
+
+            if ((here->BJTsubstNode != 0) && (here->BJTsubstConNode != 0))
+                here->BJTsubstSubstConPtr = here->BJTsubstSubstConStructPtr->CSC_Complex ;
+
+            if ((here->BJTbaseNode != 0) && (here->BJTcolPrimeNode != 0))
+                here->BJTbaseColPrimePtr = here->BJTbaseColPrimeStructPtr->CSC_Complex ;
+
+            if ((here->BJTcolPrimeNode != 0) && (here->BJTbaseNode != 0))
+                here->BJTcolPrimeBasePtr = here->BJTcolPrimeBaseStructPtr->CSC_Complex ;
+
+        }
+    }
+
+    return (OK) ;
 }
 
 int
@@ -340,174 +322,84 @@ BJTbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 {
     BJTmodel *model = (BJTmodel *)inModel ;
     BJTinstance *here ;
-    int i ;
 
-    /*  loop through all the bjt models */
+    NG_IGNORE (ckt) ;
+
+    /* loop through all the BJT models */
     for ( ; model != NULL ; model = model->BJTnextModel)
     {
         /* loop through all the instances of the model */
         for (here = model->BJTinstances ; here != NULL ; here = here->BJTnextInstance)
         {
-            i = 0 ;
             if ((here->BJTcolNode != 0) && (here->BJTcolPrimeNode != 0))
-            {
-                while (here->BJTcolColPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTcolColPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTcolColPrimePtr = here->BJTcolColPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTbaseNode != 0) && (here->BJTbasePrimeNode != 0))
-            {
-                while (here->BJTbaseBasePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTbaseBasePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTbaseBasePrimePtr = here->BJTbaseBasePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTemitNode != 0) && (here->BJTemitPrimeNode != 0))
-            {
-                while (here->BJTemitEmitPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTemitEmitPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTemitEmitPrimePtr = here->BJTemitEmitPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTcolPrimeNode != 0) && (here->BJTcolNode != 0))
-            {
-                while (here->BJTcolPrimeColPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTcolPrimeColPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTcolPrimeColPtr = here->BJTcolPrimeColStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTcolPrimeNode != 0) && (here->BJTbasePrimeNode != 0))
-            {
-                while (here->BJTcolPrimeBasePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTcolPrimeBasePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTcolPrimeBasePrimePtr = here->BJTcolPrimeBasePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTcolPrimeNode != 0) && (here->BJTemitPrimeNode != 0))
-            {
-                while (here->BJTcolPrimeEmitPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTcolPrimeEmitPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTcolPrimeEmitPrimePtr = here->BJTcolPrimeEmitPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTbasePrimeNode != 0) && (here->BJTbaseNode != 0))
-            {
-                while (here->BJTbasePrimeBasePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTbasePrimeBasePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTbasePrimeBasePtr = here->BJTbasePrimeBaseStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTbasePrimeNode != 0) && (here->BJTcolPrimeNode != 0))
-            {
-                while (here->BJTbasePrimeColPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTbasePrimeColPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTbasePrimeColPrimePtr = here->BJTbasePrimeColPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTbasePrimeNode != 0) && (here->BJTemitPrimeNode != 0))
-            {
-                while (here->BJTbasePrimeEmitPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTbasePrimeEmitPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTbasePrimeEmitPrimePtr = here->BJTbasePrimeEmitPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTemitPrimeNode != 0) && (here->BJTemitNode != 0))
-            {
-                while (here->BJTemitPrimeEmitPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTemitPrimeEmitPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTemitPrimeEmitPtr = here->BJTemitPrimeEmitStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTemitPrimeNode != 0) && (here->BJTcolPrimeNode != 0))
-            {
-                while (here->BJTemitPrimeColPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTemitPrimeColPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTemitPrimeColPrimePtr = here->BJTemitPrimeColPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTemitPrimeNode != 0) && (here->BJTbasePrimeNode != 0))
-            {
-                while (here->BJTemitPrimeBasePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTemitPrimeBasePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTemitPrimeBasePrimePtr = here->BJTemitPrimeBasePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTcolNode != 0) && (here->BJTcolNode != 0))
-            {
-                while (here->BJTcolColPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTcolColPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTcolColPtr = here->BJTcolColStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTbaseNode != 0) && (here->BJTbaseNode != 0))
-            {
-                while (here->BJTbaseBasePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTbaseBasePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTbaseBasePtr = here->BJTbaseBaseStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTemitNode != 0) && (here->BJTemitNode != 0))
-            {
-                while (here->BJTemitEmitPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTemitEmitPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTemitEmitPtr = here->BJTemitEmitStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTcolPrimeNode != 0) && (here->BJTcolPrimeNode != 0))
-            {
-                while (here->BJTcolPrimeColPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTcolPrimeColPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTcolPrimeColPrimePtr = here->BJTcolPrimeColPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTbasePrimeNode != 0) && (here->BJTbasePrimeNode != 0))
-            {
-                while (here->BJTbasePrimeBasePrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTbasePrimeBasePrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTbasePrimeBasePrimePtr = here->BJTbasePrimeBasePrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTemitPrimeNode != 0) && (here->BJTemitPrimeNode != 0))
-            {
-                while (here->BJTemitPrimeEmitPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTemitPrimeEmitPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTemitPrimeEmitPrimePtr = here->BJTemitPrimeEmitPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTsubstNode != 0) && (here->BJTsubstNode != 0))
-            {
-                while (here->BJTsubstSubstPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTsubstSubstPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTsubstSubstPtr = here->BJTsubstSubstStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTsubstConNode != 0) && (here->BJTsubstNode != 0))
-            {
-                while (here->BJTsubstConSubstPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTsubstConSubstPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTsubstConSubstPtr = here->BJTsubstConSubstStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTsubstNode != 0) && (here->BJTsubstConNode != 0))
-            {
-                while (here->BJTsubstSubstConPtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTsubstSubstConPtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTsubstSubstConPtr = here->BJTsubstSubstConStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTbaseNode != 0) && (here->BJTcolPrimeNode != 0))
-            {
-                while (here->BJTbaseColPrimePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTbaseColPrimePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTbaseColPrimePtr = here->BJTbaseColPrimeStructPtr->CSC ;
 
-            i = 0 ;
             if ((here->BJTcolPrimeNode != 0) && (here->BJTbaseNode != 0))
-            {
-                while (here->BJTcolPrimeBasePtr != ckt->CKTmatrix->CKTbind_CSC_Complex [i]) i ++ ;
-                here->BJTcolPrimeBasePtr = ckt->CKTmatrix->CKTbind_CSC [i] ;
-            }
+                here->BJTcolPrimeBasePtr = here->BJTcolPrimeBaseStructPtr->CSC ;
+
         }
     }
 

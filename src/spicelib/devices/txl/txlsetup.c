@@ -150,9 +150,9 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(TXLibr1Ibr2ptr, TXLibr1, TXLibr2);
             TSTALLOC(TXLibr2Ibr1ptr, TXLibr2, TXLibr1);
 
-			here->in_node_name = CKTnodName(ckt,here->TXLposNode);
-			here->out_node_name = CKTnodName(ckt,here->TXLnegNode);
-			ReadTxL(here, ckt);
+            here->in_node_name = CKTnodName(ckt,here->TXLposNode);
+            here->out_node_name = CKTnodName(ckt,here->TXLnegNode);
+            ReadTxL(here, ckt);
 
         }
     }

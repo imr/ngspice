@@ -379,6 +379,73 @@ typedef struct sB3SOIPDinstance
         double **B3SOIPDnVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *B3SOIPDTemptempStructPtr ;
+    BindElement *B3SOIPDTempdpStructPtr ;
+    BindElement *B3SOIPDTempspStructPtr ;
+    BindElement *B3SOIPDTempgStructPtr ;
+    BindElement *B3SOIPDTempbStructPtr ;
+    BindElement *B3SOIPDGtempStructPtr ;
+    BindElement *B3SOIPDDPtempStructPtr ;
+    BindElement *B3SOIPDSPtempStructPtr ;
+    BindElement *B3SOIPDEtempStructPtr ;
+    BindElement *B3SOIPDBtempStructPtr ;
+    BindElement *B3SOIPDPtempStructPtr ;
+    BindElement *B3SOIPDBpStructPtr ;
+    BindElement *B3SOIPDPbStructPtr ;
+    BindElement *B3SOIPDPpStructPtr ;
+    BindElement *B3SOIPDEbStructPtr ;
+    BindElement *B3SOIPDGbStructPtr ;
+    BindElement *B3SOIPDDPbStructPtr ;
+    BindElement *B3SOIPDSPbStructPtr ;
+    BindElement *B3SOIPDBeStructPtr ;
+    BindElement *B3SOIPDBgStructPtr ;
+    BindElement *B3SOIPDBdpStructPtr ;
+    BindElement *B3SOIPDBspStructPtr ;
+    BindElement *B3SOIPDBbStructPtr ;
+    BindElement *B3SOIPDEgStructPtr ;
+    BindElement *B3SOIPDEdpStructPtr ;
+    BindElement *B3SOIPDEspStructPtr ;
+    BindElement *B3SOIPDGeStructPtr ;
+    BindElement *B3SOIPDDPeStructPtr ;
+    BindElement *B3SOIPDSPeStructPtr ;
+    BindElement *B3SOIPDEeStructPtr ;
+    BindElement *B3SOIPDGgStructPtr ;
+    BindElement *B3SOIPDGdpStructPtr ;
+    BindElement *B3SOIPDGspStructPtr ;
+    BindElement *B3SOIPDDPgStructPtr ;
+    BindElement *B3SOIPDDPdpStructPtr ;
+    BindElement *B3SOIPDDPspStructPtr ;
+    BindElement *B3SOIPDDPdStructPtr ;
+    BindElement *B3SOIPDSPgStructPtr ;
+    BindElement *B3SOIPDSPdpStructPtr ;
+    BindElement *B3SOIPDSPspStructPtr ;
+    BindElement *B3SOIPDSPsStructPtr ;
+    BindElement *B3SOIPDDdStructPtr ;
+    BindElement *B3SOIPDDdpStructPtr ;
+    BindElement *B3SOIPDSsStructPtr ;
+    BindElement *B3SOIPDSspStructPtr ;
+    BindElement *B3SOIPDVbsStructPtr ;
+    BindElement *B3SOIPDIdsStructPtr ;
+    BindElement *B3SOIPDIcStructPtr ;
+    BindElement *B3SOIPDIbsStructPtr ;
+    BindElement *B3SOIPDIbdStructPtr ;
+    BindElement *B3SOIPDIiiStructPtr ;
+    BindElement *B3SOIPDIgStructPtr ;
+    BindElement *B3SOIPDGiggStructPtr ;
+    BindElement *B3SOIPDGigdStructPtr ;
+    BindElement *B3SOIPDGigbStructPtr ;
+    BindElement *B3SOIPDIgidlStructPtr ;
+    BindElement *B3SOIPDItunStructPtr ;
+    BindElement *B3SOIPDIbpStructPtr ;
+    BindElement *B3SOIPDCbbStructPtr ;
+    BindElement *B3SOIPDCbdStructPtr ;
+    BindElement *B3SOIPDCbgStructPtr ;
+    BindElement *B3SOIPDQbfStructPtr ;
+    BindElement *B3SOIPDQjsStructPtr ;
+    BindElement *B3SOIPDQjdStructPtr ;
+#endif
+
 } B3SOIPDinstance ;
 
 struct b3soipdSizeDependParam
