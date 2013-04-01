@@ -1395,7 +1395,6 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
         TSTALLOC(B3SOIPDDPePtr, B3SOIPDdNodePrime, B3SOIPDeNode)
         TSTALLOC(B3SOIPDSPePtr, B3SOIPDsNodePrime, B3SOIPDeNode)
 
-        TSTALLOC(B3SOIPDEbPtr, B3SOIPDeNode, B3SOIPDbNode)
         TSTALLOC(B3SOIPDEePtr, B3SOIPDeNode, B3SOIPDeNode)
 
         TSTALLOC(B3SOIPDGgPtr, B3SOIPDgNode, B3SOIPDgNode)
