@@ -42,7 +42,7 @@ endif
 CMPP = $(top_builddir)/src/xspice/cmpp/cmpp
 
 # Flags to use when linking shared library
-LDFLAGS = -shared
+LDFLAGS = -shared -lm
 ifeq ($(ISMINGW), 1)
   LDFLAGS = -shared @LDFLAGS@
 endif
