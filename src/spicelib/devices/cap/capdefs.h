@@ -56,10 +56,10 @@ typedef struct sCAPinstance {
                 set equal to  0 if not a design parameter*/
 
 #ifdef KLU
-    BindElement *CAPposPosStructPtr ;
-    BindElement *CAPposNegStructPtr ;
-    BindElement *CAPnegPosStructPtr ;
-    BindElement *CAPnegNegStructPtr ;
+    BindElement *CAPposPosptrStructPtr ;
+    BindElement *CAPnegNegptrStructPtr ;
+    BindElement *CAPposNegptrStructPtr ;
+    BindElement *CAPnegPosptrStructPtr ;
 #endif
 
 } CAPinstance ;
