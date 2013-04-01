@@ -166,24 +166,18 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(JFETdrainDrainPrimePtr,JFETdrainNode,JFETdrainPrimeNode)
             TSTALLOC(JFETgateDrainPrimePtr,JFETgateNode,JFETdrainPrimeNode)
             TSTALLOC(JFETgateSourcePrimePtr,JFETgateNode,JFETsourcePrimeNode)
-            TSTALLOC(JFETsourceSourcePrimePtr,JFETsourceNode,
-                    JFETsourcePrimeNode)
+            TSTALLOC(JFETsourceSourcePrimePtr,JFETsourceNode,JFETsourcePrimeNode)
             TSTALLOC(JFETdrainPrimeDrainPtr,JFETdrainPrimeNode,JFETdrainNode)
             TSTALLOC(JFETdrainPrimeGatePtr,JFETdrainPrimeNode,JFETgateNode)
-            TSTALLOC(JFETdrainPrimeSourcePrimePtr,JFETdrainPrimeNode,
-                    JFETsourcePrimeNode)
+            TSTALLOC(JFETdrainPrimeSourcePrimePtr,JFETdrainPrimeNode,JFETsourcePrimeNode)
             TSTALLOC(JFETsourcePrimeGatePtr,JFETsourcePrimeNode,JFETgateNode)
-            TSTALLOC(JFETsourcePrimeSourcePtr,JFETsourcePrimeNode,
-                    JFETsourceNode)
-            TSTALLOC(JFETsourcePrimeDrainPrimePtr,JFETsourcePrimeNode,
-                    JFETdrainPrimeNode)
+            TSTALLOC(JFETsourcePrimeSourcePtr,JFETsourcePrimeNode,JFETsourceNode)
+            TSTALLOC(JFETsourcePrimeDrainPrimePtr,JFETsourcePrimeNode,JFETdrainPrimeNode)
             TSTALLOC(JFETdrainDrainPtr,JFETdrainNode,JFETdrainNode)
             TSTALLOC(JFETgateGatePtr,JFETgateNode,JFETgateNode)
             TSTALLOC(JFETsourceSourcePtr,JFETsourceNode,JFETsourceNode)
-            TSTALLOC(JFETdrainPrimeDrainPrimePtr,JFETdrainPrimeNode,
-                    JFETdrainPrimeNode)
-            TSTALLOC(JFETsourcePrimeSourcePrimePtr,JFETsourcePrimeNode,
-                    JFETsourcePrimeNode)
+            TSTALLOC(JFETdrainPrimeDrainPrimePtr,JFETdrainPrimeNode,JFETdrainPrimeNode)
+            TSTALLOC(JFETsourcePrimeSourcePrimePtr,JFETsourcePrimeNode,JFETsourcePrimeNode)
         }
     }
     return(OK);
