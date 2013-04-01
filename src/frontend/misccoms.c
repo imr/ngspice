@@ -170,10 +170,13 @@ com_version(wordlist *wl)
 
 #if defined KLU
                     "** Compiled with KLU Direct Linear Solver\n"
+                    "** (ASRC, CPL, NDEV and URC models not supported yet)\n"
 #elif defined SuperLU
                     "** Compiled with SuperLU Direct Linear Solver\n"
+                    "** (ASRC, CPL, NDEV and URC models not supported yet)\n"
 #elif defined UMFPACK
                     "** Compiled with UMFPACK Direct Linear Solver\n"
+                    "** (ASRC, CPL, NDEV and URC models not supported yet)\n"
 #else
                     "** Compiled with Sparse Direct Linear Solver\n"
 #endif
@@ -213,10 +216,13 @@ com_version(wordlist *wl)
 
 #if defined KLU
                     "** Compiled with KLU Direct Linear Solver\n"
+                    "** (ASRC, CPL, NDEV and URC models not supported yet)\n"
 #elif defined SuperLU
                     "** Compiled with SuperLU Direct Linear Solver\n"
+                    "** (ASRC, CPL, NDEV and URC models not supported yet)\n"
 #elif defined UMFPACK
                     "** Compiled with UMFPACK Direct Linear Solver\n"
+                    "** (ASRC, CPL, NDEV and URC models not supported yet)\n"
 #else
                     "** Compiled with Sparse Direct Linear Solver\n"
 #endif
