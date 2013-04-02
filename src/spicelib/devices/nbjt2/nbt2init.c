@@ -73,7 +73,13 @@ SPICEdev NBJT2info = {
 #endif  
                     
  /* DEVinstSize   */ &NBJT2iSize,
- /* DEVmodSize    */ &NBJT2mSize
+ /* DEVmodSize    */ &NBJT2mSize,
+
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
+ /* DEVbindCSC        */   NBJT2bindCSC,
+ /* DEVbindCSCComplex */   NBJT2bindCSCComplex,
+ /* DEVbindCSCComplexToReal */  NBJT2bindCSCComplexToReal,
+#endif
 
 };
 

@@ -73,7 +73,13 @@ SPICEdev NUMOSinfo = {
 #endif
                     
  /* DEVinstSize   */ &NUMOSiSize,
- /* DEVmodSize    */ &NUMOSmSize
+ /* DEVmodSize    */ &NUMOSmSize,
+
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
+ /* DEVbindCSC        */   NUMOSbindCSC,
+ /* DEVbindCSCComplex */   NUMOSbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  NUMOSbindCSCComplexToReal,
+#endif
 
 };
 
