@@ -23,5 +23,10 @@ extern int NBJTtrunc(GENmodel *, CKTcircuit *, double *);
 extern void NBJTdump(GENmodel *, CKTcircuit *);
 extern void NBJTacct(GENmodel *, CKTcircuit *, FILE *);
 
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
+extern int NBJTbindCSC (GENmodel*, CKTcircuit*) ;
+extern int NBJTbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int NBJTbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
 
 #endif /* NBJT_H */
