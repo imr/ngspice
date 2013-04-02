@@ -73,7 +73,13 @@ SPICEdev NUMDinfo = {
 #endif
                     
  /* DEVinstSize   */ &NUMDiSize,
- /* DEVmodSize    */ &NUMDmSize
+ /* DEVmodSize    */ &NUMDmSize,
+
+#if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
+ /* DEVbindCSC        */   NUMDbindCSC,
+ /* DEVbindCSCComplex */   NUMDbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  NUMDbindCSCComplexToReal,
+#endif
 
 };
 
