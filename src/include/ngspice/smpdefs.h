@@ -48,7 +48,7 @@ typedef struct sSMPmatrix {
     double **CKTdiag_CSC ;                /* KLU pointer to diagonal element to perform Gmin */
     int CKTkluN ;                         /* KLU N, copied */
     int CKTklunz ;                        /* KLU nz, copied for AC Analysis */
-    int CKTkluMODE ;                      /* KLU MODE parameter to enable KLU or not from the heuristic */
+    unsigned int CKTkluMODE:1 ;           /* KLU MODE parameter to enable KLU or not from the heuristic */
     #define CKTkluON 1                    /* KLU MODE ON definition */
     #define CKTkluOFF 0                   /* KLU MODE OFF definition */
 #elif defined(SuperLU)
@@ -71,7 +71,7 @@ typedef struct sSMPmatrix {
     double **CKTdiag_CSC ;
     int CKTsuperluN ;
     int CKTsuperlunz ;
-    int CKTsuperluMODE ;
+    unsigned int CKTsuperluMODE:1 ;
     #define CKTsuperluON 1		  /* SuperLU MODE ON definition */
     #define CKTsuperluOFF 0		  /* SuperLU MODE OFF definition */
 #elif defined(UMFPACK)
@@ -88,7 +88,7 @@ typedef struct sSMPmatrix {
     double **CKTdiag_CSC ;
     int CKTumfpackN ;
     int CKTumfpacknz ;
-    int CKTumfpackMODE ;
+    unsigned int CKTumfpackMODE:1 ;
     #define CKTumfpackON 1		  /* UMFPACK MODE ON definition */
     #define CKTumfpackOFF 0		  /* UMFPACK MODE OFF definition */
 #endif
