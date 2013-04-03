@@ -16,7 +16,9 @@
 #define STDERR_FILENO   2
 #endif
 
-//#define low_latency
+/* The Delphi Interface has high latency times during printing,
+   therefore undef the following line */
+#define low_latency
 
 /**********************************************************************/
 /*              Header files for C functions                          */
@@ -569,12 +571,9 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
         struct passwd *pw;
         pw = getpwuid(getuid());
 
-#ifdef HAVE_ASPRINTF
-        asprintf(&s, "%s%s", pw->pw_dir, INITSTR);
-#else
         s = TMALLOC(char, 1 + strlen(pw->pw_dir) + strlen(INITSTR));
         sprintf(s, "%s%s", pw->pw_dir, INITSTR);
-#endif
+
         if (access(s, 0) == 0)
             inp_source(s);
     }
@@ -637,7 +636,7 @@ bot:
     if (!noprintfwanted)
 
 #ifdef HAVE_LIBPTHREAD
-        pthread_create(&tid, NULL, (void * (*)(void *)) printsend, NULL);
+        pthread_create(&printtid, NULL, (void * (*)(void *))printsend, (void *)NULL);
 #elif defined _MSC_VER || defined __MINGW32__
         printtid = (HANDLE)_beginthreadex(NULL, 0, (unsigned int (__stdcall *)(void *))printsend,
             (void*) NULL, 0, NULL);
@@ -746,7 +745,7 @@ char* ngSpice_CurPlot(void)
 }
 
 /* return to the caller a pointer to an array of all plots created
-by ngspice.dll */
+by ngspice. Last entry in the array is NULL. */
 IMPEXP
 char** ngSpice_AllPlots(void)
 {
@@ -770,7 +769,7 @@ char** ngSpice_AllPlots(void)
 }
 
 /* return to the caller a pointer to an array of vector names in the plot
-named by plotname */
+named by plotname. Last entry in the array is NULL. */
 IMPEXP
 char** ngSpice_AllVecs(char* plotname)
 {
@@ -974,7 +973,7 @@ sh_fputc(int inp, FILE* f)
 static char* outstringerr = NULL;
 static char* outstringout = NULL;
 
-#ifdef low_latency
+#if defined low_latency || !defined THREADS
 
 /* using the strings by the caller sent directly to the caller
    has to fast enough (low latency) */
