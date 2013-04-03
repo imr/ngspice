@@ -110,6 +110,8 @@ CKTsetup(CKTcircuit *ckt)
 #if defined(KLU)
     if (ckt->CKTmatrix->CKTkluMODE)
     {
+        printf ("Using KLU as Direct Linear Solver\n") ;
+
         int i ;
         int n = SMPmatSize (ckt->CKTmatrix) ;
         ckt->CKTmatrix->CKTkluN = n ;
@@ -141,6 +143,8 @@ CKTsetup(CKTcircuit *ckt)
                 DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
 
         ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
+    } else {
+        printf ("Using SPARSE 1.3 as Direct Linear Solver\n") ;
     }
 #elif defined(SuperLU)
     if (ckt->CKTmatrix->CKTsuperluMODE)
