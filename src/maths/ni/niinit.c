@@ -45,7 +45,7 @@ NIinit(CKTcircuit *ckt)
     ckt->CKTmatrix->CKTdiag_CSC = NULL ;
     ckt->CKTmatrix->CKTkluN = 0 ;
     ckt->CKTmatrix->CKTklunz = 0 ;
-    ckt->CKTmatrix->CKTkluMODE = CKTkluON ; /* TO BE SUBSTITUTED WITH THE HEURISTICS */
+    ckt->CKTmatrix->CKTkluMODE = ckt->CKTkluMODE ; /* TO BE SUBSTITUTED WITH THE HEURISTICS */
 
     klu_defaults (ckt->CKTmatrix->CKTkluCommon) ;
 

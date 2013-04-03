@@ -281,6 +281,11 @@ struct CKTcircuit {
                                    contains only linear elements */
     unsigned int CKTnoopac:1; /* flag to indicate that OP will not be evaluated
                                  during AC simulation */
+
+#ifdef KLU
+    unsigned int CKTkluMODE:1 ;
+#endif
+
 };
 
 
