@@ -421,9 +421,6 @@ SMPdestroy (SMPmatrix *Matrix)
         free (Matrix->CKTkluAp) ;
         free (Matrix->CKTkluAi) ;
         free (Matrix->CKTkluAx) ;
-        free (Matrix->CKTbind_Sparse) ;
-        free (Matrix->CKTbind_CSC) ;
-        free (Matrix->CKTbind_CSC_Complex) ;
         free (Matrix->CKTdiag_CSC) ;
         free (Matrix->CKTkluIntermediate) ;
         free (Matrix->CKTkluIntermediate_Complex) ;

@@ -115,7 +115,7 @@ void
 SMPmatrix_CSC (SMPmatrix *Matrix)
 {
     spMatrix_CSC (Matrix->SPmatrix, Matrix->CKTsuperluAp, Matrix->CKTsuperluAi, Matrix->CKTsuperluAx,
-                  Matrix->CKTsuperluN, Matrix->CKTbind_Sparse, Matrix->CKTbind_CSC, Matrix->CKTdiag_CSC) ;
+                  Matrix->CKTsuperluN, Matrix->CKTbindStruct, Matrix->CKTdiag_CSC) ;
     return ;
 }
 
