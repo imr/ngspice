@@ -115,7 +115,7 @@ void
 SMPmatrix_CSC (SMPmatrix *Matrix)
 {
     spMatrix_CSC (Matrix->SPmatrix, Matrix->CKTumfpackAp, Matrix->CKTumfpackAi, Matrix->CKTumfpackAx,
-                  Matrix->CKTumfpackN, Matrix->CKTbind_Sparse, Matrix->CKTbind_CSC, Matrix->CKTdiag_CSC) ;
+                  Matrix->CKTumfpackN, Matrix->CKTbindStruct, Matrix->CKTdiag_CSC) ;
     return ;
 }
 

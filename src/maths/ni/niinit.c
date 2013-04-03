@@ -41,9 +41,6 @@ NIinit(CKTcircuit *ckt)
     ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
     ckt->CKTmatrix->CKTkluIntermediate = NULL ;
     ckt->CKTmatrix->CKTkluIntermediate_Complex = NULL ;
-    ckt->CKTmatrix->CKTbind_Sparse = NULL ;
-    ckt->CKTmatrix->CKTbind_CSC = NULL ;
-    ckt->CKTmatrix->CKTbind_CSC_Complex = NULL ;
     ckt->CKTmatrix->CKTbindStruct = NULL ;
     ckt->CKTmatrix->CKTdiag_CSC = NULL ;
     ckt->CKTmatrix->CKTkluN = 0 ;
@@ -61,9 +58,7 @@ NIinit(CKTcircuit *ckt)
     ckt->CKTmatrix->CKTsuperluInfo = 0 ;
     ckt->CKTmatrix->CKTsuperluEtree = NULL ;
     ckt->CKTmatrix->CKTsuperluIntermediate = NULL ;
-    ckt->CKTmatrix->CKTbind_Sparse = NULL ;
-    ckt->CKTmatrix->CKTbind_CSC = NULL ;
-    ckt->CKTmatrix->CKTbind_CSC_Complex = NULL ;
+    ckt->CKTmatrix->CKTbindStruct = NULL ;
     ckt->CKTmatrix->CKTdiag_CSC = NULL ;
     ckt->CKTmatrix->CKTsuperluN = 0 ;
     ckt->CKTmatrix->CKTsuperlunz = 0 ;
@@ -79,9 +74,7 @@ NIinit(CKTcircuit *ckt)
     ckt->CKTmatrix->CKTumfpackInfo = NULL ;
     ckt->CKTmatrix->CKTumfpackIntermediate = NULL ;
     ckt->CKTmatrix->CKTumfpackX = NULL ;
-    ckt->CKTmatrix->CKTbind_Sparse = NULL ;
-    ckt->CKTmatrix->CKTbind_CSC = NULL ;
-    ckt->CKTmatrix->CKTbind_CSC_Complex = NULL ;
+    ckt->CKTmatrix->CKTbindStruct = NULL ;
     ckt->CKTmatrix->CKTdiag_CSC = NULL ;
     ckt->CKTmatrix->CKTumfpackN = 0 ;
     ckt->CKTmatrix->CKTumfpacknz = 0 ;
