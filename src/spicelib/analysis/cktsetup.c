@@ -121,8 +121,6 @@ CKTsetup(CKTcircuit *ckt)
         ckt->CKTmatrix->CKTkluAx           = TMALLOC (double, nz) ;
         ckt->CKTmatrix->CKTkluIntermediate = TMALLOC (double, n) ;
 
-//        ckt->CKTmatrix->CKTbind_Sparse     = TMALLOC (double *, nz) ;
-//        ckt->CKTmatrix->CKTbind_CSC        = TMALLOC (double *, nz) ;
         ckt->CKTmatrix->CKTbindStruct      = TMALLOC (BindElement, nz) ;
 
         ckt->CKTmatrix->CKTdiag_CSC        = TMALLOC (double *, n) ;
@@ -162,8 +160,6 @@ CKTsetup(CKTcircuit *ckt)
 
 	ckt->CKTmatrix->CKTsuperluIntermediate = TMALLOC (double, n) ;
 
-//	ckt->CKTmatrix->CKTbind_Sparse = 	TMALLOC (double *, nz) ;
-//	ckt->CKTmatrix->CKTbind_CSC = 		TMALLOC (double *, nz) ;
         ckt->CKTmatrix->CKTbindStruct      = TMALLOC (BindElement, nz) ;
 
 	ckt->CKTmatrix->CKTdiag_CSC = 	TMALLOC (double *, n) ;
@@ -204,8 +200,6 @@ CKTsetup(CKTcircuit *ckt)
 
 	ckt->CKTmatrix->CKTumfpackX =			TMALLOC (double, n) ;
 
-//	ckt->CKTmatrix->CKTbind_Sparse =		TMALLOC (double *, nz) ;
-//	ckt->CKTmatrix->CKTbind_CSC =			TMALLOC (double *, nz) ;
         ckt->CKTmatrix->CKTbindStruct      = TMALLOC (BindElement, nz) ;
 
 	ckt->CKTmatrix->CKTdiag_CSC =			TMALLOC (double *, n) ;

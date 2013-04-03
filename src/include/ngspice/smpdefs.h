@@ -44,9 +44,6 @@ typedef struct sSMPmatrix {
     #define CKTkluMatrixComplex 1         /* KLU Matrix Complex definition */
     double *CKTkluIntermediate ;          /* KLU RHS Intermediate for Solve Real Step */
     double *CKTkluIntermediate_Complex ;  /* KLU iRHS Intermediate for Solve Complex Step */
-    double **CKTbind_Sparse ;             /* KLU Sparse original element position */
-    double **CKTbind_CSC ;                /* KLU new element position */
-    double **CKTbind_CSC_Complex ;        /* KLU new element position in Complex analysis */
     BindElement *CKTbindStruct ;          /* KLU - Sparse Binding Structure */
     double **CKTdiag_CSC ;                /* KLU pointer to diagonal element to perform Gmin */
     int CKTkluN ;                         /* KLU N, copied */
@@ -70,15 +67,13 @@ typedef struct sSMPmatrix {
     superlu_options_t CKTsuperluOptions ;
     SuperLUStat_t CKTsuperluStat ;
     double *CKTsuperluIntermediate ;
-    double **CKTbind_Sparse ;
-    double **CKTbind_CSC ;
-    double **CKTbind_CSC_Complex ;
+    BindElement *CKTbindStruct ;          /* SuperLU - Sparse Binding Structure */
     double **CKTdiag_CSC ;
     int CKTsuperluN ;
     int CKTsuperlunz ;
     int CKTsuperluMODE ;
-    #define CKTsuperluON 1		   /* SuperLU MODE ON definition */
-    #define CKTsuperluOFF 0		   /* SuperLU MODE OFF definition */
+    #define CKTsuperluON 1		  /* SuperLU MODE ON definition */
+    #define CKTsuperluOFF 0		  /* SuperLU MODE OFF definition */
 #elif defined(UMFPACK)
     int *CKTumfpackAp ;
     int *CKTumfpackAi ;
@@ -89,23 +84,21 @@ typedef struct sSMPmatrix {
     double *CKTumfpackInfo ;
     double *CKTumfpackIntermediate ;
     double *CKTumfpackX ;
-    double **CKTbind_Sparse ;
-    double **CKTbind_CSC ;
-    double **CKTbind_CSC_Complex ;
+    BindElement *CKTbindStruct ;          /* UMFPACK - Sparse Binding Structure */
     double **CKTdiag_CSC ;
     int CKTumfpackN ;
     int CKTumfpacknz ;
     int CKTumfpackMODE ;
-    #define CKTumfpackON 1		   /* UMFPACK MODE ON definition */
-    #define CKTumfpackOFF 0		   /* UMFPACK MODE OFF definition */
+    #define CKTumfpackON 1		  /* UMFPACK MODE ON definition */
+    #define CKTumfpackOFF 0		  /* UMFPACK MODE OFF definition */
 #endif
 
 } SMPmatrix ;
 
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
-void SMPmatrix_CSC ( SMPmatrix * ) ;
-void SMPnnz ( SMPmatrix * ) ;
+void SMPmatrix_CSC (SMPmatrix *) ;
+void SMPnnz (SMPmatrix *) ;
 #endif
 int SMPaddElt( SMPmatrix *, int , int , double );
 double * SMPmakeElt( SMPmatrix * , int , int );
