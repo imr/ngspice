@@ -5,7 +5,7 @@ Author: 1985 Thomas L. Quarles
 /*
  */
 
-#include "spice.h"
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
@@ -22,10 +22,9 @@ Author: 1985 Thomas L. Quarles
      */
 
 void
-CKTsenPrint(ckt)
-register CKTcircuit *ckt;
+CKTsenPrint(CKTcircuit *ckt)
 {
-    register int i;
+    int i;
 
     for (i=0;i<DEVmaxnum;i++) {
         if ( DEVices[i]->DEVsenPrint && ckt->CKThead[i] ) {

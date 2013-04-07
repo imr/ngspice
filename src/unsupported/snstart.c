@@ -3,11 +3,10 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include "spice.h"
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/ifsim.h"
 #include "ngspice/cktdefs.h"
-#include "util.h"
 #include "ngspice/const.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
@@ -17,14 +16,18 @@ Author: 1985 Thomas L. Quarles
  */
 
 int
-SENstartup(ckt)
-    CKTcircuit *ckt;
+SENstartup(CKTcircuit *ckt, int restart)
 {
     int i;
     int err;
     IFvalue parmtemp;
     int type;
     GENinstance *fast;
+
+    if (restart) {
+        fprintf(stderr, "unsupported code, (SENstartup), doesn't support restart\n");
+        exit(1);
+    }
 
 #ifdef SENSDEBUG 
     printf("SENstartup\n");
@@ -38,7 +41,7 @@ SENstartup(ckt)
     for(i=0;i<ckt->CKTsenInfo->SENnumVal;i++) {
         type = -1;
         fast = NULL;
-        err = CKTfndDev((GENERIC*)ckt,&type,(GENERIC**)&fast,
+        err = CKTfndDev(ckt, &type, &fast,
             ((ckt->CKTsenInfo->SENdevices)[i]), 
             NULL, NULL);
         if(err != OK) return(err);

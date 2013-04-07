@@ -3,7 +3,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include "spice.h"
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/ifsim.h"
 #include "ngspice/iferrmsg.h"
@@ -13,12 +13,12 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int 
-SENaskQuest(ckt,anal,which,value)
-    CKTcircuit *ckt;
-    JOB *anal;
-    int which;
-    IFvalue *value;
+SENaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    NG_IGNORE(ckt);
+    NG_IGNORE(anal);
+    NG_IGNORE(value);
+
     switch(which) {
 
     default:

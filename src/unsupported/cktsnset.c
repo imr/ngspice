@@ -13,7 +13,7 @@ Author: 1985 Thomas L. Quarles
  * in the given circuit 
  */
 
-#include "spice.h"
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
@@ -24,13 +24,11 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTsenSetup(ckt)
-register CKTcircuit *ckt;
-
+CKTsenSetup(CKTcircuit *ckt)
 {
-    register int i;
+    int i;
     int error;
-    register SENstruct *info;
+    SENstruct *info;
 #ifdef SENSDEBUG
     printf("CKTsenSetup\n");
 #endif /* SENSDEBUG */

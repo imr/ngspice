@@ -800,6 +800,7 @@ AC_MSG_RESULT([Settings which were chosen:])
 if test "x$enable_sense2" = xyes; then
     AC_DEFINE([WANT_SENSE2], [], [Define if we want spice2 sensitivity analysis])
     AC_MSG_RESULT([Spice2 sensitivity analysis enabled])
+    AC_MSG_WARN([This feature is UNSUPPORTED])
 fi
 if test "x$enable_nobypass" = xyes; then
     AC_DEFINE([NOBYPASS], [], [Define if we want NOBYPASS])
@@ -942,6 +943,8 @@ AM_CONDITIONAL([NUMDEV_WANTED], [test "x$enable_cider" = xyes])
 
 
 AM_CONDITIONAL([PSS_WANTED], [test "x$enable_pss" = xyes])
+
+AM_CONDITIONAL([SENSE2_WANTED], [test "x$enable_sense2" = xyes])
 
 # adms option
 if test "x$enable_adms" = xyes ; then
@@ -1167,6 +1170,7 @@ AC_CONFIG_FILES([Makefile
                  src/xspice/enh/Makefile
                  src/xspice/ipc/Makefile
                  src/xspice/idn/Makefile
+                 src/unsupported/Makefile
                  tests/Makefile
                  tests/bsim1/Makefile
                  tests/bsim2/Makefile

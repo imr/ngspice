@@ -10,7 +10,7 @@ Author: 1985 Thomas L. Quarles
  * of the given circuit 
  */
 
-#include "spice.h"
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
@@ -21,10 +21,9 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTsenComp(ckt)
-register CKTcircuit *ckt;
+CKTsenComp(CKTcircuit *ckt)
 {
-    register int size;
+    int size;
     int row;
     int col;
     SENstruct *info;

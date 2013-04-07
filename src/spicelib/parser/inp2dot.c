@@ -567,6 +567,8 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	int i;			/* generic loop variable */
 	char *token;		/* a token from the line */
 
+	NG_IGNORE(gnode);
+
 	/* .sens {AC} {DC} {TRAN} [dev=nnn parm=nnn]* */
 	which = -1;
 	for (i = 0; i < ft_sim->numAnalyses; i++) {
