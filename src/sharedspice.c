@@ -1539,7 +1539,6 @@ int sh_vecinit(runDesc *run)
        data will be sent from sh_ExecutePerLoop() via datfcn() */
     if (!curvecvalsall) {
         curvecvalsall = TMALLOC(vecvaluesall, 1);
-        curvecvalsall->veccount = veccount;
     }
     else {
         for (i = 0; i < curvecvalsall->veccount; i++)
@@ -1547,6 +1546,7 @@ int sh_vecinit(runDesc *run)
         tfree(curvecvalsall->vecsa);
     }
 
+    curvecvalsall->veccount = veccount;
     curvecvalsall->vecsa = TMALLOC(pvecvalues, veccount);
 
     for (i = 0, d = cur_run->runPlot->pl_dvecs; i < veccount; i++, d = d->v_next) {
