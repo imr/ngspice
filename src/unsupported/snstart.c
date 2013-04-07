@@ -29,31 +29,38 @@ SENstartup(CKTcircuit *ckt, int restart)
         exit(1);
     }
 
-#ifdef SENSDEBUG 
+#ifdef SENSDEBUG
     printf("SENstartup\n");
-#endif /* SENSDEBUG */ 
+#endif
+
     ckt->CKTsenInfo->SENstatus = NORMAL;
     ckt->CKTsenInfo->SENpertfac = 1e-4;
-    ckt->CKTsenInfo->SENinitflag = ON;/* allocate memory in
-    NIsenReinit */
+    ckt->CKTsenInfo->SENinitflag = ON; /* allocate memory in NIsenReinit */
 
     parmtemp.iValue = 1;
-    for(i=0;i<ckt->CKTsenInfo->SENnumVal;i++) {
+
+    for (i = 0; i < ckt->CKTsenInfo->SENnumVal; i++) {
         type = -1;
         fast = NULL;
+
         err = CKTfndDev(ckt, &type, &fast,
-            ((ckt->CKTsenInfo->SENdevices)[i]), 
-            NULL, NULL);
-        if(err != OK) return(err);
+                        ckt->CKTsenInfo->SENdevices[i],
+                        NULL, NULL);
+        if (err != OK)
+            return err;
+
         err = CKTpName(
-        ((ckt->CKTsenInfo->SENparmNames)[i]),
-            &parmtemp,ckt ,type,
-            ((ckt->CKTsenInfo->SENdevices)[i]),
+            ckt->CKTsenInfo->SENparmNames[i],
+            &parmtemp, ckt, type,
+            ckt->CKTsenInfo->SENdevices[i],
             &fast);
-        if(err != OK) return(err);
+        if (err != OK)
+            return err;
     }
-#ifdef SENSDEBUG 
+
+#ifdef SENSDEBUG
     printf("SENstartup end\n");
-#endif /* SENSDEBUG */ 
-    return(OK);
+#endif
+
+    return OK;
 }

@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include <stdio.h>
@@ -26,25 +24,23 @@ CKTsenAC(CKTcircuit *ckt)
 
 #ifdef SENSDEBUG
     printf("CKTsenAC\n");
-#endif /* SENSDEBUG */
-
+#endif
 
     error = CKTsenLoad(ckt);
     if (error)
-        return(error);
+        return error;
 
 #ifdef SENSDEBUG
     printf("after CKTsenLoad\n");
-#endif /* SENSDEBUG */
+#endif
 
     error = CKTsenComp(ckt);
     if (error)
-        return(error);
+        return error;
 
 #ifdef SENSDEBUG
     printf("after CKTsenComp\n");
-#endif /* SENSDEBUG */
+#endif
 
-    return(OK);
+    return OK;
 }
-

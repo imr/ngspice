@@ -11,8 +11,8 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/cktdefs.h"
 #include "ngspice/suffix.h"
 
-/* ARGSUSED */
-int 
+
+int
 SENaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     NG_IGNORE(ckt);
@@ -24,6 +24,6 @@ SENaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
     default:
         break;
     }
-    return(E_BADPARM);
-}
 
+    return E_BADPARM;
+}
