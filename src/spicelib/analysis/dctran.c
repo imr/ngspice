@@ -78,6 +78,8 @@ DCtran(CKTcircuit *ckt,
     int firsttime;
     int error;
 #ifdef WANT_SENSE2
+    int save, save2, size;
+    long save1;
 #ifdef SENSDEBUG
     FILE *outsen;
 #endif /* SENSDEBUG */
@@ -316,7 +318,10 @@ DCtran(CKTcircuit *ckt,
             save2 = ckt->CKTorder;
             ckt->CKTmode = save_mode;
             ckt->CKTorder = save_order;
-            if(error = CKTsenDCtran(ckt)) return(error);
+            error = CKTsenDCtran(ckt);
+            if (error)
+                return(error);
+
             ckt->CKTmode = save1;
             ckt->CKTorder = save2;
         }
@@ -792,7 +797,10 @@ resume:
                     save2 = ckt->CKTorder;
                     ckt->CKTmode = save_mode;
                     ckt->CKTorder = save_order;
-                    if(error = CKTsenDCtran(ckt)) return(error);
+                    error = CKTsenDCtran (ckt);
+                    if (error)
+                        return(error);
+
                     ckt->CKTmode = save1;
                     ckt->CKTorder = save2;
                 }
@@ -852,7 +860,10 @@ resume:
                     save2 = ckt->CKTorder;
                     ckt->CKTmode = save_mode;
                     ckt->CKTorder = save_order;
-                    if(error = CKTsenDCtran(ckt)) return(error);
+                    error = CKTsenDCtran(ckt);
+                    if (error)
+                        return (error);
+
                     ckt->CKTmode = save1;
                     ckt->CKTorder = save2;
                 }

@@ -382,10 +382,14 @@ extern int PZinit(CKTcircuit *);
 extern int PZpost(CKTcircuit *);
 extern int PZaskQuest(CKTcircuit *, JOB *, int , IFvalue *);
 extern int PZsetParm(CKTcircuit *, JOB *, int , IFvalue *);
+
+#ifdef WANT_SENSE2
 extern int SENaskQuest(CKTcircuit *, JOB *, int , IFvalue *);
 extern void SENdestroy(SENstruct *);
 extern int SENsetParm(CKTcircuit *, JOB *, int , IFvalue *);
-extern int SENstartup(CKTcircuit *);
+extern int SENstartup(CKTcircuit *, int);
+#endif
+
 extern int SPIinit(IFfrontEnd *, IFsimulator **);
 extern int TFanal(CKTcircuit *, int);
 extern int TFaskQuest(CKTcircuit *, JOB *, int , IFvalue *);

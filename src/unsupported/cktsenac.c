@@ -5,7 +5,7 @@ Author: 1985 Thomas L. Quarles
 /*
  */
 
-#include "spice.h"
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
@@ -20,8 +20,7 @@ Author: 1985 Thomas L. Quarles
  */
 
 int
-CKTsenAC(ckt)
-register CKTcircuit *ckt;
+CKTsenAC(CKTcircuit *ckt)
 {
     int error;
 
@@ -30,13 +29,17 @@ register CKTcircuit *ckt;
 #endif /* SENSDEBUG */
 
 
-    if(error = CKTsenLoad(ckt)) return(error);
+    error = CKTsenLoad(ckt);
+    if (error)
+        return(error);
 
 #ifdef SENSDEBUG
     printf("after CKTsenLoad\n");
 #endif /* SENSDEBUG */
 
-    if(error = CKTsenComp(ckt)) return(error);
+    error = CKTsenComp(ckt);
+    if (error)
+        return(error);
 
 #ifdef SENSDEBUG
     printf("after CKTsenComp\n");

@@ -9,20 +9,18 @@ Author: 1985 Thomas L. Quarles
      * given circuit 
      */
 
-#include "spice.h"
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/cktdefs.h"
 #include "ngspice/devdefs.h"
-#include "util.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
 void
-SENdestroy(info)
-    SENstruct *info;
+SENdestroy(SENstruct *info)
 {
-    register int i;
+    int i;
     int size;
 
 

@@ -43,7 +43,9 @@ CKTsetup(CKTcircuit *ckt)
 
 #ifdef WANT_SENSE2
     if(ckt->CKTsenInfo){
-        if (error = CKTsenSetup(ckt)) return(error);
+        error = CKTsenSetup(ckt);
+        if (error)
+            return(error);
     }
 #endif
 

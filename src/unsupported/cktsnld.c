@@ -12,7 +12,7 @@ Author: 1985 Thomas L. Quarles
  * in the given circuit 
  */
 
-#include "spice.h"
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
@@ -23,10 +23,9 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTsenLoad(ckt)
-register CKTcircuit *ckt;
+CKTsenLoad(CKTcircuit *ckt)
 {
-    register int i;
+    int i;
     int size,row,col;
     int error;
 

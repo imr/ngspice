@@ -10,7 +10,7 @@ Author: 1985 Thomas L. Quarles
  * calculations
  */
 
-#include "spice.h"
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
@@ -21,8 +21,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTsenDCtran(ckt)
-register CKTcircuit *ckt;
+CKTsenDCtran(CKTcircuit *ckt)
 {
     int error;
 

@@ -50,6 +50,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
     static runDesc *plot = NULL;
 
 #ifdef WANT_SENSE2
+    long save;
 #ifdef SENSDEBUG
     if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode&DCSEN) ){
         printf("\nDC Sensitivity Results\n\n");
@@ -458,7 +459,10 @@ resume:
             senmode = ckt->CKTsenInfo->SENmode;
             save = ckt->CKTmode;
             ckt->CKTsenInfo->SENmode = DCSEN;
-            if(error = CKTsenDCtran(ckt)) return (error);
+            error = CKTsenDCtran(ckt);
+            if (error)
+                return(error);
+
             ckt->CKTmode = save;
             ckt->CKTsenInfo->SENmode = senmode;
 
