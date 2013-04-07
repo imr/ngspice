@@ -16,47 +16,49 @@ Author: 1985 Thomas L. Quarles
 int
 SENsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
+    SENstruct *job = (SENstruct *) anal;
+
     NG_IGNORE(ckt);
 
     switch(which) {
 
     case SEN_DC:
         if (value->iValue)
-            ((SENstruct *)anal)->SENmode |= DCSEN;
+            job->SENmode |= DCSEN;
         break;
 
     case SEN_AC:
         if (value->iValue)
-            ((SENstruct *)anal)->SENmode |= ACSEN;
+            job->SENmode |= ACSEN;
         break;
 
     case SEN_TRAN:
         if (value->iValue)
-            ((SENstruct *)anal)->SENmode |= TRANSEN;
+            job->SENmode |= TRANSEN;
         break;
 
     case SEN_DEV:
-        ((SENstruct *)anal)->SENnumVal += 1;
-        if ( ! ((SENstruct *)anal)->SENdevices ) {
-            ((SENstruct *)anal)->SENdevices = TMALLOC(char *, ((SENstruct *)anal)->SENnumVal);
-            if (((SENstruct *)anal)->SENdevices == NULL)
+        job->SENnumVal += 1;
+        if (!job->SENdevices) {
+            job->SENdevices = TMALLOC(char *, job->SENnumVal);
+            if (job->SENdevices == NULL)
                 return E_NOMEM;
-            ((SENstruct *)anal)->SENparmNames = TMALLOC(char *, ((SENstruct *)anal)->SENnumVal);
-            if (((SENstruct *)anal)->SENparmNames == NULL)
+            job->SENparmNames = TMALLOC(char *, job->SENnumVal);
+            if (job->SENparmNames == NULL)
                 return E_NOMEM;
         } else {
-            ((SENstruct *)anal)->SENdevices = TREALLOC(char *, ((SENstruct *)anal)->SENdevices, ((SENstruct *)anal)->SENnumVal);
-            if (((SENstruct *)anal)->SENdevices == NULL)
+            job->SENdevices = TREALLOC(char *, job->SENdevices, job->SENnumVal);
+            if (job->SENdevices == NULL)
                 return E_NOMEM;
-            ((SENstruct *)anal)->SENparmNames = TREALLOC(char *, ((SENstruct *)anal)->SENparmNames, ((SENstruct *)anal)->SENnumVal);
-            if (((SENstruct *)anal)->SENparmNames == NULL)
+            job->SENparmNames = TREALLOC(char *, job->SENparmNames, job->SENnumVal);
+            if (job->SENparmNames == NULL)
                 return E_NOMEM;
         }
-        ((SENstruct *)anal)->SENdevices [ ((SENstruct *)anal)->SENnumVal - 1 ] = value->sValue;
+        job->SENdevices [job->SENnumVal - 1] = value->sValue;
         break;
 
     case SEN_PARM:
-        ((SENstruct *)anal)->SENparmNames [ ((SENstruct *)anal)->SENnumVal - 1 ] = value->sValue;
+        job->SENparmNames [job->SENnumVal - 1] = value->sValue;
         break;
 
     default:
