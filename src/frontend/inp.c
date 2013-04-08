@@ -52,8 +52,7 @@ static struct line *com_options = NULL;
 static void cktislinear(CKTcircuit *ckt, struct line *deck);
 
 void line_free_x(struct line *deck, bool recurse);
-void com_circbyline(wordlist *wl);
-
+void create_circbyline(char *line);
 
 
 /*
