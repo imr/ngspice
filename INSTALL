@@ -250,6 +250,15 @@ Most of the options now following are not well maintained, are not tested or eve
         "tclspice" is compiled and installed instead of
         plain ngspice.
 
+ --with-ngshared
+        This option let you compile ngspice as a shared
+        library or dll, allowing an application controlling
+        ngspice. This option excludes using --with-x or
+        --with-wingui. Useful additional options are
+        --enable-xspice --enable-cider --enable-openmp.
+        No graphics inetrface is provided, this has to be
+        handled by the controlling application.
+
         
 1.4.3 Options Useful for Debugging Ngspice
 
@@ -538,7 +547,7 @@ Most of the options now following are not well maintained, are not tested or eve
 
 9.2 make ngspice with MS Visual Studio 2008
 
- ngspice may be compiled with MS Visual Studio 2008.
+ ngspice may be compiled with MS Visual Studio 2008 or 2010.
 
  CIDER and XSPICE are included, but the code models for XSPICE
  (*.cm) are not (yet) made. You may however use the code models
