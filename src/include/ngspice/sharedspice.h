@@ -112,7 +112,9 @@ struct ngcomplex {
 typedef struct ngcomplex ngcomplex_t;
 #endif
 
-/* vector info obtained from any vector in ngspice.dll */
+/* vector info obtained from any vector in ngspice.dll.
+   Allows direct access to the ngspice internal vector structure,
+   as defined in include/ngspice/devc.h . */
 typedef struct vector_info {
     char *v_name;		/* Same as so_vname. */
     int v_type;			/* Same as so_vtype. */
@@ -132,8 +134,8 @@ typedef struct vecvalues {
 
 typedef struct vecvaluesall {
     int veccount;      /* number of vectors in plot */
-    int vecindex;      /* index of actual set of vectors */
-    pvecvalues *vecsa; /* values of actual set of vectors */
+    int vecindex;      /* index of actual set of vectors. i.e. the number of accepted data points */
+    pvecvalues *vecsa; /* values of actual set of vectors, indexed from 0 to veccount - 1 */
 } vecvaluesall, *pvecvaluesall;
 
 /* info for a specific vector */

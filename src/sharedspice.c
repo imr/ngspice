@@ -626,7 +626,7 @@ bot:
 //  com_version(NULL);
     fprintf(cp_out,
             "******\n"
-            "** %s-%s\n",
+            "** %s-%s shared library\n",
             ft_sim->simulator, ft_sim->version);
     if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
         fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
