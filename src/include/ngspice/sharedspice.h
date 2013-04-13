@@ -123,16 +123,17 @@ typedef struct vector_info {
 } vector_info, *pvector_info;
 
 typedef struct vecvalues {
-    char* name;
-    double creal;
-    double cimag;
-    bool is_scale;
-    bool is_complex;
+    char* name;        /* name of a specific vector */
+    double creal;      /* actual data value */
+    double cimag;      /* actual data value */
+    bool is_scale;     /* if 'name' is the scale vector */
+    bool is_complex;   /* if the data are complex numbers */
 } vecvalues, *pvecvalues;
 
 typedef struct vecvaluesall {
-    int veccount;
-    pvecvalues *vecsa;
+    int veccount;      /* number of vectors in plot */
+    int vecindex;      /* index of actual set of vectors */
+    pvecvalues *vecsa; /* values of actual set of vectors */
 } vecvaluesall, *pvecvaluesall;
 
 /* info for a specific vector */

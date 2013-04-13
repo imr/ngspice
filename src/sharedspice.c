@@ -366,7 +366,9 @@ runc(char* command)
     char buf[1024] = "";
     sighandler oldHandler;
 #ifdef THREADS
+#ifndef low_latency
     int timeout = 0;
+#endif
     char *string;
     bool fl_bg = FALSE;
     command_id = threadid_self();
@@ -1454,7 +1456,7 @@ int sh_ExecutePerLoop(void)
 {
     struct dvec *d;
     int i, veclen;
-    double testval;
+//  double testval;
     struct plot *pl = plot_cur;
     /* return immediately if callback not wanted */
     if (nodatawanted)
@@ -1462,11 +1464,12 @@ int sh_ExecutePerLoop(void)
 
     /* get the data of the last entry to the plot vector */
     veclen = pl->pl_dvecs->v_length - 1;
+    curvecvalsall->vecindex = veclen;
     for (d = pl->pl_dvecs, i = 0; d; d = d->v_next, i++) {
         /* test if real */
         if (d->v_flags & VF_REAL) {
             curvecvalsall->vecsa[i]->is_complex = FALSE;
-            testval = d->v_realdata[veclen];
+//          testval = d->v_realdata[veclen];
             curvecvalsall->vecsa[i]->creal = d->v_realdata[veclen];
             curvecvalsall->vecsa[i]->cimag = 0.;
         }
@@ -1484,7 +1487,7 @@ int sh_ExecutePerLoop(void)
 
 
 /* called once for a new plot from beginPlot() in outitf.c,
-   after the vectors in ngspice have been set.
+   after the vectors in ngspice for this plot have been set.
    Transfers vector information to the caller via callback datinitfcn()
    and sets transfer structure for use in sh_ExecutePerLoop() */
 int sh_vecinit(runDesc *run)
