@@ -2,7 +2,7 @@
 *Berkeley Spice Compatibility 
 * Lmin= .35 Lmax= 20 Wmin= .6 Wmax= 20
 .model N1 NMOS
-+Level=        8 version=3.2.2
++Level=        8 version=3.3.0
 +Tnom=27.0
 +Nch= 2.498E+17  Tox=9E-09 Xj=1.00000E-07
 +Lint=9.36e-8 Wint=1.47e-7
@@ -33,9 +33,3 @@
 +Ute=-1.48 
 +Ua1= 3.31E-10  Ub1= 2.61E-19 Uc1= -3.42e-10 
 +Kt1l=0 Prt=764.3
-
-
-
-
-
-

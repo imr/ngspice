@@ -28,8 +28,8 @@ Vdd Vdd 0 5
 Va A 0  pulse 0 5 10ns .1ns .1ns 15ns 30ns
 Vb B 0 0
 
-.model nmos nmos level=8 version=3.2.2
-.model pmos pmos level=8 version=3.2.2
+.model nmos nmos level=8 version=3.3.0
+.model pmos pmos level=8 version=3.3.0
 
 * transient analysis
 .tran 1ns 60ns
@@ -37,4 +37,3 @@ Vb B 0 0
 .print tran a b v(9) v(8) 
 
 .END
-
