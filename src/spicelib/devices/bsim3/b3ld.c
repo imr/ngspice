@@ -3142,6 +3142,45 @@ line900:
                *(here->BSIM3QbPtr) += m * (ggtb - gcqbb);
            }
 
+///////////////////////////////////////////////////////////////////////////////////
+/*
+            *(ckt->CKTfvk + here->BSIM3gNode) += m * ceqqg ;
+            *(ckt->CKTfvk + here->BSIM3bNode) += m * (ceqbs + ceqbd + ceqqb) ;
+            *(ckt->CKTfvk + here->BSIM3dNodePrime) -= m * (ceqbd - cdreq - ceqqd) ;
+            *(ckt->CKTfvk + here->BSIM3sNodePrime) -= m * (cdreq + ceqbs + ceqqg + ceqqb + ceqqd) ;
+
+
+            *(ckt->CKTfvk+here->BSIM3dNode) += m * here->BSIM3drainConductance * *(ckt->CKTrhsOld+here->BSIM3dNode) ;
+            *(ckt->CKTfvk+here->BSIM3gNode) += m * (gcggb - ggtg) * *(ckt->CKTrhsOld+here->BSIM3gNode) ;
+            *(ckt->CKTfvk+here->BSIM3sNode) += m * here->BSIM3sourceConductance * *(ckt->CKTrhsOld+here->BSIM3sNode) ;
+            *(ckt->CKTfvk+here->BSIM3bNode) += m * (here->BSIM3gbd + here->BSIM3gbs
+                                                    - gcbgb - gcbdb - gcbsb - here->BSIM3gbbs) * *(ckt->CKTrhsOld+here->BSIM3bNode) ;
+            *(ckt->CKTfvk+here->BSIM3dNodePrime) += m * (here->BSIM3drainConductance + here->BSIM3gds + here->BSIM3gbd + RevSum + gcddb
+                                                         + dxpart * ggtd + T1 * ddxpart_dVd + gbdpdp) * *(ckt->CKTrhsOld+here->BSIM3dNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3sNodePrime) += m * (here->BSIM3sourceConductance + here->BSIM3gds + here->BSIM3gbs + FwdSum + gcssb
+                                                         + sxpart * ggts + T1 * dsxpart_dVs + gbspsp) * *(ckt->CKTrhsOld+here->BSIM3sNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3dNode) -= m * here->BSIM3drainConductance * *(ckt->CKTrhsOld+here->BSIM3dNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3gNode) -= m * (gcggb + gcgdb + gcgsb + ggtb) * *(ckt->CKTrhsOld+here->BSIM3bNode) ;
+            *(ckt->CKTfvk+here->BSIM3gNode) += m * (gcgdb - ggtd) * *(ckt->CKTrhsOld+here->BSIM3dNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3gNode) += m * (gcgsb - ggts) * *(ckt->CKTrhsOld+here->BSIM3sNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3sNode) -= m * here->BSIM3sourceConductance * *(ckt->CKTrhsOld+here->BSIM3sNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3bNode) += m * (gcbgb - here->BSIM3gbgs) * *(ckt->CKTrhsOld+here->BSIM3gNode) ;
+            *(ckt->CKTfvk+here->BSIM3bNode) += m * (gcbdb - here->BSIM3gbd + gbbdp) * *(ckt->CKTrhsOld+here->BSIM3dNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3bNode) += m * (gcbsb - here->BSIM3gbs + gbbsp) * *(ckt->CKTrhsOld+here->BSIM3sNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3dNodePrime) -= m * here->BSIM3drainConductance * *(ckt->CKTrhsOld+here->BSIM3dNode) ;
+            *(ckt->CKTfvk+here->BSIM3dNodePrime) += m * (Gm + gcdgb + dxpart * ggtg + T1 * ddxpart_dVg + gbdpg) * *(ckt->CKTrhsOld+here->BSIM3gNode) ;
+            *(ckt->CKTfvk+here->BSIM3dNodePrime) -= m * (here->BSIM3gbd - Gmbs + gcdgb + gcddb + gcdsb - dxpart * ggtb
+                                                         - T1 * ddxpart_dVb - gbdpb) * *(ckt->CKTrhsOld+here->BSIM3bNode) ;
+            *(ckt->CKTfvk+here->BSIM3dNodePrime) -= m * (here->BSIM3gds + FwdSum - gcdsb - dxpart * ggts
+                                                         - T1 * ddxpart_dVs - gbdpsp) * *(ckt->CKTrhsOld+here->BSIM3sNodePrime) ;
+            *(ckt->CKTfvk+here->BSIM3sNodePrime) += m * (gcsgb - Gm + sxpart * ggtg + T1 * dsxpart_dVg + gbspg) * *(ckt->CKTrhsOld+here->BSIM3gNode) ;
+            *(ckt->CKTfvk+here->BSIM3sNodePrime) -= m * here->BSIM3sourceConductance * *(ckt->CKTrhsOld+here->BSIM3sNode) ;
+            *(ckt->CKTfvk+here->BSIM3sNodePrime) -= m * (here->BSIM3gbs + Gmbs + gcsgb + gcsdb + gcssb - sxpart * ggtb
+                                                         - T1 * dsxpart_dVb - gbspb) * *(ckt->CKTrhsOld+here->BSIM3bNode) ;
+            *(ckt->CKTfvk+here->BSIM3sNodePrime) -= m * (here->BSIM3gds + RevSum - gcsdb - sxpart * ggtd
+                                                         - T1 * dsxpart_dVd - gbspdp) * *(ckt->CKTrhsOld+here->BSIM3dNodePrime) ;
+*/
+
 
             /* KCL verification - Dynamic Part */
             *(ckt->CKTfvk+here->BSIM3gNode) += m * ceqqg_fvk ;
@@ -3186,6 +3225,7 @@ line900:
             *(ckt->CKTfvk+here->BSIM3sNodePrime) += m * (gcsgb + sxpart * ggtg + T1 * dsxpart_dVg) * *(ckt->CKTrhsOld+here->BSIM3gNode) ;
             *(ckt->CKTfvk+here->BSIM3sNodePrime) -= m * (gcsgb + gcsdb + gcssb - sxpart * ggtb - T1 * dsxpart_dVb) * *(ckt->CKTrhsOld+here->BSIM3bNode) ;
             *(ckt->CKTfvk+here->BSIM3sNodePrime) -= m * (- gcsdb - sxpart * ggtd - T1 * dsxpart_dVd) * *(ckt->CKTrhsOld+here->BSIM3dNodePrime) ;
+
 #endif
 line1000:  ;
 #ifndef USE_OMP
