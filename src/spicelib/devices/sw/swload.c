@@ -138,6 +138,7 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 // After analyzing the transient code, it seems that this is not a problem because state updating
 // occurs before the convergence loop in transient processing.
 			*(ckt->CKTstates[0] + here->SWstate) = current_state;
+			*(ckt->CKTstates[0] + here->SWstate + 1) = v_ctrl;
 
             if ((current_state == REALLY_ON) || (current_state == HYST_ON)) 
 				g_now = model->SWonConduct;
