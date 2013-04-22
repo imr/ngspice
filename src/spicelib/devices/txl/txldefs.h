@@ -47,7 +47,7 @@ typedef struct sTXLinstance {
 	unsigned TXLibr1Given : 1;
 	unsigned TXLibr2Given : 1;
 	unsigned TXLdcGiven : 1;
-        unsigned TXLlengthgiven : 1;   /* flag to indicate C was specified */
+	unsigned TXLlengthgiven : 1;   /* flag to indicate that instance parameter len is specified */
 
 } TXLinstance ;
 
@@ -71,7 +71,7 @@ typedef struct sTXLmodel {       /* model structure for a txl */
     unsigned Lgiven : 1;   /* flag to indicate L was specified */
     unsigned Ggiven : 1;   /* flag to indicate G was specified */
     unsigned Cgiven : 1;   /* flag to indicate C was specified */
-    unsigned lengthgiven : 1;   /* flag to indicate C was specified */
+    unsigned lengthgiven : 1;   /* flag to indicate length was specified */
 
 } TXLmodel;
 
