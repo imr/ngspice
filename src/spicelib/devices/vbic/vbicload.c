@@ -873,7 +873,6 @@ next1:
                         printf("gpi = %.7e\n", Ibe_Vbei);
                         printf("gmu = %.7e, gm = %.7e\n", Ibc_Vbci, Itzf_Vbei);
                         printf("go = %.7e, gx = %.7e\n", Itzf_Vbci, Irbi_Vrbi);
-                        printf("geqcb = %.7e, geqbx = %.7e\n", geqcb, geqbx);
                         printf("cc = %.7e, cb = %.7e\n", Ibe+Itzf, Ibe);
 #endif /* SENSDEBUG */
                         continue; /* go to 1000 */

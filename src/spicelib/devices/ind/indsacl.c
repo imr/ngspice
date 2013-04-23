@@ -150,9 +150,9 @@ INDsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
                 ival = cind * ckt->CKTomega ;
 
 #ifdef SENSDEBUG
-                fprintf(file,"cind = %.5e,icind = %.5e\n",cind,icind);
-                fprintf(file,"val = %.5e,ival = %.5e\n",val,ival);
-                fprintf(file,"brEq = %.5e,senparmno = %.5e\n",
+                fprintf(stdout,"cind = %.5e,icind = %.5e\n",cind,icind);
+                fprintf(stdout,"val = %.5e,ival = %.5e\n",val,ival);
+                fprintf(stdout,"brEq = %.5e,senparmno = %.5e\n",
                         here->INDbrEq,here->INDsenParmNo);
 #endif /* SENSDEBUG */
 

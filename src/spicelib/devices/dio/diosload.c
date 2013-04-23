@@ -56,10 +56,10 @@ DIOsLoad(GENmodel *inModel, CKTcircuit *ckt)
 
 #ifdef SENSDEBUG
     printf("DIOsenload\n");
-    fprintf(file,"DIOsenload\n");
-    fprintf(file,"CKTtime = %.5e\n",ckt->CKTtime);
-    fprintf(file,"CKTorder = %.5e\n",ckt->CKTorder);
-    fprintf(file,"tag0 = %.5e tag1 = %.5e\n",tag0,tag1);
+    fprintf(stdout,"DIOsenload\n");
+    fprintf(stdout,"CKTtime = %.5e\n",ckt->CKTtime);
+    fprintf(stdout,"CKTorder = %.5e\n",ckt->CKTorder);
+    fprintf(stdout,"tag0 = %.5e tag1 = %.5e\n",tag0,tag1);
 #endif /* SENSDEBUG */
 
     /*  loop through all the diode models */
@@ -70,7 +70,7 @@ DIOsLoad(GENmodel *inModel, CKTcircuit *ckt)
                 here=here->DIOnextInstance) {
 
 #ifdef SENSDEBUG
-            fprintf(file,"pos = %d , posprm = %d ,neg = %d, senparmno = %d\n",
+            fprintf(stdout,"pos = %d , posprm = %d ,neg = %d, senparmno = %d\n",
                     here->DIOposNode ,here->DIOposPrimeNode,here->DIOnegNode,
                     here->DIOsenParmNo);
 #endif /* SENSDEBUG */
@@ -94,7 +94,7 @@ DIOsLoad(GENmodel *inModel, CKTcircuit *ckt)
 
 
 #ifdef SENSDEBUG
-            fprintf(file,"cd0 = %.7e \n",cd0);
+            fprintf(stdout,"cd0 = %.7e \n",cd0);
 #endif /* SENSDEBUG */
 
             A0 = here->DIOarea;
@@ -120,9 +120,9 @@ DIOsLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->DIOdphidp) = DqdDp;
 
 #ifdef SENSDEBUG
-            fprintf(file,"cd0 = %.7e ,cd = %.7e,DcdDp=%.7e\n", cd0,cd,DcdDp);
-            fprintf(file,"cspr0 = %.7e ,DcsprDp=%.7e\n", cspr0,DcsprDp);
-            fprintf(file,"qd0 = %.7e ,qd = %.7e,DqdDp=%.7e\n", qd0,qd,DqdDp);
+            fprintf(stdout,"cd0 = %.7e ,cd = %.7e,DcdDp=%.7e\n", cd0,cd,DcdDp);
+            fprintf(stdout,"cspr0 = %.7e ,DcsprDp=%.7e\n", cspr0,DcsprDp);
+            fprintf(stdout,"qd0 = %.7e ,qd = %.7e,DqdDp=%.7e\n", qd0,qd,DqdDp);
 #endif /* SENSDEBUG */
 
             if((info->SENmode == TRANSEN) &&
@@ -152,12 +152,12 @@ next:
                         2*(iparmno - 1) + 1);
 
 #ifdef SENSDEBUG
-                fprintf(file,"\n iparmno=%d,Osxp=%.7e\n",iparmno,Osxp);
+                fprintf(stdout,"\n iparmno=%d,Osxp=%.7e\n",iparmno,Osxp);
 #endif /* SENSDEBUG */
 
                 if(iparmno == here->DIOsenParmNo) Osxp = Osxp - tag0 * DqdDp;
 #ifdef SENSDEBUG
-                fprintf(file,"Osxp=%.7e\n",Osxp);
+                fprintf(stdout,"Osxp=%.7e\n",Osxp);
 #endif /* SENSDEBUG */
 
                 *(info->SEN_RHS[here->DIOposPrimeNode] + iparmno) += Osxp;
