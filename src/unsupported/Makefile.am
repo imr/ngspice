@@ -9,6 +9,7 @@ libunsupported_la_SOURCES = \
 	cktsndct.c		\
 	cktsnset.c		\
 	cktsnld.c		\
+	cktsnprt.c		\
 	sen2dest.c		\
 	sen2setp.c		\
 	snaskq.c		\
