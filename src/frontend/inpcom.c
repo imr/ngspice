@@ -617,10 +617,23 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         /* loop through 'buffer' until end is reached.  Then test for
          premature end.  If premature end is reached, spew
          error and zap the line. */
-        if (!ciprefix("write", buffer)) {    // exclude 'write' command so filename case preserved
+        {
             char *s;
-            for (s = buffer; *s && (*s != '\n'); s++)
-                *s = (char) tolower(*s);
+
+            if ( !ciprefix("write", buffer) &&
+                 !ciprefix("codemodel", buffer) &&
+                 !ciprefix("use", buffer) &&
+                 !ciprefix("load", buffer)
+                )
+            {
+                for (s = buffer; *s && (*s != '\n'); s++)
+                    *s = (char) tolower(*s);
+            } else {
+                // exclude some commands to preserve filename case
+                for (s = buffer; *s && (*s != '\n'); s++)
+                    ;
+            }
+
             if (!*s) {
                 // fprintf(cp_err, "Warning: premature EOF\n");
             }
