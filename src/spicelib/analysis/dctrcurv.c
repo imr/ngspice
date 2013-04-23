@@ -451,7 +451,7 @@ resume:
             }
        if (job->TRCVvType[i] == TEMP_CODE) { /* Temperature */
                 printf("Current Circuit Temperature : %.5e C\n",
-                        ckt-CKTtemp - CONSTCtoK);
+                        ckt->CKTtemp - CONSTCtoK);
             }
        
 #endif /* SENSDEBUG */
