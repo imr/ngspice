@@ -272,8 +272,11 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
                 if( (model->DIOforwardKneeCurrent > 0.0) && (cd > 1.0e-18) ) {
                     ikf_area_m = here->DIOforwardKneeCurrent;
                     sqrt_ikf = sqrt(cd/ikf_area_m);
-                    gd = ((1+sqrt_ikf)*gd - cd*gd/(2*sqrt_ikf*ikf_area_m))/(1+2*sqrt_ikf + cd/ikf_area_m) + ckt->CKTgmin*vd;
-                    cd = cd/(1+sqrt_ikf) + ckt->CKTgmin;
+                    gd = ((1+sqrt_ikf)*gd - cd*gd/(2*sqrt_ikf*ikf_area_m))/(1+2*sqrt_ikf + cd/ikf_area_m) + ckt->CKTgmin;
+                    cd = cd/(1+sqrt_ikf) + ckt->CKTgmin*vd;
+                } else {
+                    gd = gd + ckt->CKTgmin;
+                    cd = cd + ckt->CKTgmin*vd;
                 }
 
             } else {            /* limit reverse */
@@ -281,8 +284,11 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
                 if( (model->DIOreverseKneeCurrent > 0.0) && (cd < -1.0e-18) ) {
                     ikr_area_m = here->DIOreverseKneeCurrent;
                     sqrt_ikr = sqrt(cd/(-ikr_area_m));
-                    gd = ((1+sqrt_ikr)*gd + cd*gd/(2*sqrt_ikr*ikr_area_m))/(1+2*sqrt_ikr - cd/ikr_area_m) + ckt->CKTgmin*vd;
-                    cd = cd/(1+sqrt_ikr) + ckt->CKTgmin;
+                    gd = ((1+sqrt_ikr)*gd + cd*gd/(2*sqrt_ikr*ikr_area_m))/(1+2*sqrt_ikr - cd/ikr_area_m) + ckt->CKTgmin;
+                    cd = cd/(1+sqrt_ikr) + ckt->CKTgmin*vd;
+                } else {
+                    gd = gd + ckt->CKTgmin;
+                    cd = cd + ckt->CKTgmin*vd;
                 }
 
             }
