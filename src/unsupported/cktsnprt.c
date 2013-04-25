@@ -25,6 +25,6 @@ CKTsenPrint(CKTcircuit *ckt)
     int i;
 
     for (i = 0; i < DEVmaxnum; i++)
-        if (DEVices[i]->DEVsenPrint && ckt->CKThead[i])
+        if (DEVices[i] && DEVices[i]->DEVsenPrint && ckt->CKThead[i])
             DEVices[i]->DEVsenPrint (ckt->CKThead[i], ckt);
 }

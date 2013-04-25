@@ -26,7 +26,7 @@ CKTsenUpdate(CKTcircuit *ckt)
     int error;
 
     for (i = 0; i < DEVmaxnum; i++)
-        if (DEVices[i]->DEVsenUpdate && ckt->CKThead[i]) {
+        if (DEVices[i] && DEVices[i]->DEVsenUpdate && ckt->CKThead[i]) {
             error = DEVices[i]->DEVsenUpdate (ckt->CKThead[i], ckt);
             if (error)
                 return error;

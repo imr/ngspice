@@ -28,7 +28,26 @@ CKTsenComp(CKTcircuit *ckt)
 
 #ifdef SENSDEBUG
     char *rowe;
-    SMPelement *elt;
+//    SMPelement *elt;
+    double *elt;
+/*
+in smpdefs.h steht:
+typedef  struct MatrixElement  *SMPelement;
+SMPelement * SMPfindElt( SMPmatrix *, int , int , int ); 
+(die Fkt. steht in spsmp.c und gibt einen auf SMPelement * gecasteten Elementptr. zurück)
+
+in sparse/spdefs.h steht:
+struct  MatrixElement
+{
+    RealNumber   Real;
+    RealNumber   Imag;
+    int          Row;
+    int          Col;
+    struct MatrixElement  *NextInRow;
+    struct MatrixElement  *NextInCol;
+};
+typedef  struct MatrixElement  *ElementPtr;
+*/
 #endif
 
 #ifdef SENSDEBUG
@@ -66,14 +85,14 @@ CKTsenComp(CKTcircuit *ckt)
 
         for (row = 1; row <= size; row++) {
             rowe = CKTnodName(ckt, row);
-            if (strcmp("4", rowe) == 0) {
+//            if (strcmp("4", rowe) == 0) {
                 for (col = 1; col <= info->SENparms; col++) {
                     printf("\t");
                     printf("Sap(%s,%d) = %.5e\t", rowe, col,
                            info->SEN_Sap[row][col]);
                 }
                 printf("\n\n");
-            }
+//            }
         }
 
         printf("  RHS matrix   :\n");
@@ -89,8 +108,10 @@ CKTsenComp(CKTcircuit *ckt)
         printf("      Jacobian  matrix :\n");
         for (row = 1; row <= size; row++) {
             for (col = 1; col <= size; col++)
-                if (elt = SMPfindElt(ckt->CKTmatrix, row , col , 0))
-                    printf("%.7e ", elt->SMPvalue);
+                if ((elt = (double *)SMPfindElt(ckt->CKTmatrix, row , col , 0)))
+//                    printf("%.7e ", elt->SMPvalue); ------> gibts nicht
+//                    printf("%.7e ", elt->Real); ------> gibts auch nicht
+                    printf("%.7e ", *elt); // ------> geht aber nur für real Werte
                 else
                     printf("0.0000000e+00 ");
             printf("\n");
@@ -154,9 +175,11 @@ CKTsenComp(CKTcircuit *ckt)
         printf("      Jacobian  matrix for AC :\n");
         for (row = 1; row <= size; row++) {
             for (col = 1; col <= size; col++) {
-                if (elt = SMPfindElt(ckt->CKTmatrix, row , col , 0)) {
-                    printf("%.7e ", elt->SMPvalue);
-                    printf("+j%.7e\t", elt->SMPiValue);
+                if ((elt = (double *)SMPfindElt(ckt->CKTmatrix, row , col , 0))) {
+//                    printf("%.7e ", elt->SMPvalue);
+//                    printf("+j%.7e\t", elt->SMPiValue);
+                    printf("%.7e ", *elt);
+                    printf("+j%.7e\t", *elt+1);
                 } else{
                     printf("0.0000000e+00 ");
                     printf("+j0.0000000e+00\t");

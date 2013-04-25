@@ -23,12 +23,12 @@ SENstartup(CKTcircuit *ckt, int restart)
     IFvalue parmtemp;
     int type;
     GENinstance *fast;
-
+/*
     if (restart) {
         fprintf(stderr, "unsupported code, (SENstartup), doesn't support restart\n");
         exit(1);
     }
-
+*/
 #ifdef SENSDEBUG
     printf("SENstartup\n");
 #endif
@@ -38,6 +38,7 @@ SENstartup(CKTcircuit *ckt, int restart)
     ckt->CKTsenInfo->SENinitflag = ON; /* allocate memory in NIsenReinit */
 
     parmtemp.iValue = 1;
+    parmtemp.rValue = 1.0;
 
     for (i = 0; i < ckt->CKTsenInfo->SENnumVal; i++) {
         type = -1;
@@ -49,6 +50,10 @@ SENstartup(CKTcircuit *ckt, int restart)
         if (err != OK)
             return err;
 
+#ifdef SENSDEBUG
+        printf("SENstartup Instance: %s Design parameter: %s\n", ckt->CKTsenInfo->SENdevices[i], 
+		                                                         ckt->CKTsenInfo->SENparmNames[i]);
+#endif
         err = CKTpName(
             ckt->CKTsenInfo->SENparmNames[i],
             &parmtemp, ckt, type,
