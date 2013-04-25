@@ -17,6 +17,22 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/trandefs.h"
 #include "ngspice/suffix.h"
 
+// #include "../maths/sparse/spdefs.h"
+//
+// this include file from `sparse' is incompatible
+//   with the rest of ngspice
+// so we can unfortunatly not include here
+// instead we cheat a bit and
+// introduce the opaque struct MatrixElement here
+//   (only the first struct members which are of importance to us)
+
+struct  MatrixElement
+{
+    double   Real;
+    double   Imag;
+    // ...
+};
+
 
 int
 CKTsenComp(CKTcircuit *ckt)
@@ -66,14 +82,14 @@ CKTsenComp(CKTcircuit *ckt)
 
         for (row = 1; row <= size; row++) {
             rowe = CKTnodName(ckt, row);
-            if (strcmp("4", rowe) == 0) {
+//          if (strcmp("4", rowe) == 0) {
                 for (col = 1; col <= info->SENparms; col++) {
                     printf("\t");
                     printf("Sap(%s,%d) = %.5e\t", rowe, col,
                            info->SEN_Sap[row][col]);
                 }
                 printf("\n\n");
-            }
+//          }
         }
 
         printf("  RHS matrix   :\n");
@@ -88,11 +104,13 @@ CKTsenComp(CKTcircuit *ckt)
 
         printf("      Jacobian  matrix :\n");
         for (row = 1; row <= size; row++) {
-            for (col = 1; col <= size; col++)
-                if (elt = SMPfindElt(ckt->CKTmatrix, row , col , 0))
-                    printf("%.7e ", elt->SMPvalue);
+            for (col = 1; col <= size; col++) {
+                elt = SMPfindElt(ckt->CKTmatrix, row , col , 0);
+                if (elt)
+                    printf("%.7e ", elt->Real);
                 else
                     printf("0.0000000e+00 ");
+            }
             printf("\n");
         }
 #endif
@@ -154,9 +172,10 @@ CKTsenComp(CKTcircuit *ckt)
         printf("      Jacobian  matrix for AC :\n");
         for (row = 1; row <= size; row++) {
             for (col = 1; col <= size; col++) {
-                if (elt = SMPfindElt(ckt->CKTmatrix, row , col , 0)) {
-                    printf("%.7e ", elt->SMPvalue);
-                    printf("+j%.7e\t", elt->SMPiValue);
+                elt = SMPfindElt(ckt->CKTmatrix, row , col , 0);
+                if (elt) {
+                    printf("%.7e ", elt->Real);
+                    printf("+j%.7e\t", elt->Imag);
                 } else{
                     printf("0.0000000e+00 ");
                     printf("+j0.0000000e+00\t");

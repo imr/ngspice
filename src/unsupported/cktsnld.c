@@ -41,7 +41,7 @@ CKTsenLoad(CKTcircuit *ckt)
                 ckt->CKTsenInfo->SEN_RHS[row][col] = 0;
 
         for (i = 0; i < DEVmaxnum; i++)
-            if (DEVices[i]->DEVsenLoad && ckt->CKThead[i]) {
+            if (DEVices[i] && DEVices[i]->DEVsenLoad && ckt->CKThead[i]) {
                 error = DEVices[i]->DEVsenLoad (ckt->CKThead[i], ckt);
                 if (error)
                     return error;
@@ -56,7 +56,7 @@ CKTsenLoad(CKTcircuit *ckt)
             }
 
         for (i = 0; i < DEVmaxnum; i++)
-            if (DEVices[i]->DEVsenAcLoad && ckt->CKThead[i]) {
+            if (DEVices[i] && DEVices[i]->DEVsenAcLoad && ckt->CKThead[i]) {
                 error = DEVices[i]->DEVsenAcLoad (ckt->CKThead[i], ckt);
                 if (error)
                     return error;

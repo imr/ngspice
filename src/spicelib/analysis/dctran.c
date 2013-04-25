@@ -80,9 +80,6 @@ DCtran(CKTcircuit *ckt,
 #ifdef WANT_SENSE2
     int save, save2, size;
     long save1;
-#ifdef SENSDEBUG
-    FILE *outsen;
-#endif /* SENSDEBUG */
 #endif
     int save_order;
     long save_mode;
@@ -484,9 +481,6 @@ DCtran(CKTcircuit *ckt,
 #ifdef WANT_SENSE2
         if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN)){
             ckt->CKTsenInfo->SENmode = save;
-#ifdef SENSDEBUG
-            fclose(outsen);
-#endif /* SENSDEBUG */
         }
 #endif
         return(OK);
