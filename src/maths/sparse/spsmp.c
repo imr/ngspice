@@ -464,7 +464,7 @@ SMPfindElt(SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
     Col = Matrix->ExtToIntColMap[Col];
     Element = Matrix->FirstInCol[Col];
     Element = spcFindElementInCol(Matrix, &Element, Row, Col, CreateIfMissing);
-    return (SMPelement *)Element;
+    return Element;
 }
 
 /* XXX The following should probably be implemented in spUtils */

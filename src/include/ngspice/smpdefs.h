@@ -2,7 +2,7 @@
 #define ngspice_SMPDEFS_H
 
 typedef  struct MatrixFrame     SMPmatrix;
-typedef  struct MatrixElement  *SMPelement;
+typedef  struct MatrixElement   SMPelement;
 
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.

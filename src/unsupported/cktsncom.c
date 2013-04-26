@@ -32,7 +32,7 @@ CKTsenComp(CKTcircuit *ckt)
     double *elt;
 /*
 in smpdefs.h steht:
-typedef  struct MatrixElement  *SMPelement;
+typedef  struct MatrixElement  SMPelement;
 SMPelement * SMPfindElt( SMPmatrix *, int , int , int ); 
 (die Fkt. steht in spsmp.c und gibt einen auf SMPelement * gecasteten Elementptr. zurück)
 
