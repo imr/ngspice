@@ -23,12 +23,11 @@ SENstartup(CKTcircuit *ckt, int restart)
     IFvalue parmtemp;
     int type;
     GENinstance *fast;
-/*
+
     if (restart) {
-        fprintf(stderr, "unsupported code, (SENstartup), doesn't support restart\n");
-        exit(1);
+        fprintf(stdout, "Sensitivity-2 analysis: unsupported code\n");
     }
-*/
+
 #ifdef SENSDEBUG
     printf("SENstartup\n");
 #endif

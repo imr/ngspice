@@ -26,7 +26,6 @@ Author: 1985 Thomas L. Quarles
 // introduce the opaque struct MatrixElement here
 //   (only the first struct members which are of importance to us)
 
-
 struct  MatrixElement
 {
     double   Real;
@@ -45,24 +44,6 @@ CKTsenComp(CKTcircuit *ckt)
 #ifdef SENSDEBUG
     char *rowe;
     SMPelement *elt;
-/*
-in smpdefs.h steht:
-typedef  struct MatrixElement  SMPelement;
-SMPelement * SMPfindElt( SMPmatrix *, int , int , int ); 
-(die Fkt. steht in spsmp.c und gibt einen auf SMPelement * gecasteten Elementptr. zurück)
-
-in sparse/spdefs.h steht:
-struct  MatrixElement
-{
-    RealNumber   Real;
-    RealNumber   Imag;
-    int          Row;
-    int          Col;
-    struct MatrixElement  *NextInRow;
-    struct MatrixElement  *NextInCol;
-};
-typedef  struct MatrixElement  *ElementPtr;
-*/
 #endif
 
 #ifdef SENSDEBUG
@@ -122,11 +103,13 @@ typedef  struct MatrixElement  *ElementPtr;
 
         printf("      Jacobian  matrix :\n");
         for (row = 1; row <= size; row++) {
-            for (col = 1; col <= size; col++)
-                if ((elt = SMPfindElt(ckt->CKTmatrix, row , col , 0)))
+            for (col = 1; col <= size; col++) {
+                elt = SMPfindElt(ckt->CKTmatrix, row , col , 0);
+                if (elt)
                     printf("%.7e ", elt->Real);
                 else
                     printf("0.0000000e+00 ");
+            }
             printf("\n");
         }
 #endif
@@ -188,7 +171,8 @@ typedef  struct MatrixElement  *ElementPtr;
         printf("      Jacobian  matrix for AC :\n");
         for (row = 1; row <= size; row++) {
             for (col = 1; col <= size; col++) {
-                if ((elt = SMPfindElt(ckt->CKTmatrix, row , col , 0))) {
+                elt = SMPfindElt(ckt->CKTmatrix, row , col , 0);
+                if (elt) {
                     printf("%.7e ", elt->Real);
                     printf("+j%.7e\t", elt->Imag);
                 } else{
