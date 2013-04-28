@@ -184,7 +184,7 @@ SMPcReorder(SMPmatrix *Matrix, double PivTol, double PivRel,
     *NumSwaps = 1;
     spSetComplex( Matrix );
     return spOrderAndFactor( Matrix, NULL,
-                             (spREAL)PivRel, (spREAL)PivTol, YES );
+                             PivRel, PivTol, YES );
 }
 
 /*
@@ -196,7 +196,7 @@ SMPreorder(SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
     spSetReal( Matrix );
     LoadGmin( Matrix, Gmin );
     return spOrderAndFactor( Matrix, NULL,
-                             (spREAL)PivRel, (spREAL)PivTol, YES );
+                             PivRel, PivTol, YES );
 }
 
 /*
