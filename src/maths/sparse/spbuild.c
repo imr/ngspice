@@ -184,7 +184,7 @@ RealNumber *
 spFindElement(MatrixPtr eMatrix, int Row, int Col)
 {
 MatrixPtr  Matrix = eMatrix;
-RealNumber  *pElement;
+ElementPtr pElement;
 
 /* Begin `spFindElement'. */
     assert( IS_SPARSE( Matrix ) && Row >= 0 && Col >= 0 );
@@ -211,7 +211,7 @@ RealNumber  *pElement;
  * is the first record in the MatrixElement structure.
  */
 
-    if ((Row != Col) || ((pElement = (RealNumber *)Matrix->Diag[Row]) == NULL))
+    if ((Row != Col) || ((pElement = Matrix->Diag[Row]) == NULL))
     {
 /*
  * Element does not exist or does not reside along diagonal.  Search
@@ -219,11 +219,11 @@ RealNumber  *pElement;
  * element which is returned by spcFindElementInCol is cast into a
  * pointer to Real, a RealNumber.
  */
-        pElement = (RealNumber*)spcFindElementInCol( Matrix,
+        pElement = spcFindElementInCol( Matrix,
                                                      &(Matrix->FirstInCol[Col]),
                                                      Row, Col, NO );
     }
-    return pElement;
+    return & pElement->Real;
 }
 
 
@@ -267,7 +267,7 @@ RealNumber *
 spGetElement(MatrixPtr eMatrix, int Row, int Col)
 {
     MatrixPtr  Matrix = eMatrix;
-    RealNumber  *pElement;
+    ElementPtr pElement;
 
     /* Begin `spGetElement'. */
     assert( IS_SPARSE( Matrix ) && Row >= 0 && Col >= 0 );
@@ -306,18 +306,18 @@ spGetElement(MatrixPtr eMatrix, int Row, int Col)
      * statement depends on the fact that Real is the first record in
      * the MatrixElement structure.  */
 
-    if ((Row != Col) || ((pElement = (RealNumber *)Matrix->Diag[Row]) == NULL))
+    if ((Row != Col) || ((pElement = Matrix->Diag[Row]) == NULL))
     {
 	/* Element does not exist or does not reside along diagonal.
 	 * Search column for element.  As in the if statement above,
 	 * the pointer to the element which is returned by
 	 * spcFindElementInCol is cast into a pointer to Real, a
 	 * RealNumber.  */
-	pElement = (RealNumber*)spcFindElementInCol( Matrix,
+	pElement = spcFindElementInCol( Matrix,
 						     &(Matrix->FirstInCol[Col]),
 						     Row, Col, YES );
     }
-    return pElement;
+    return & pElement->Real;
 }
 
 
@@ -1183,7 +1183,7 @@ spInitialize(MatrixPtr eMatrix, int (*pInit)(RealNumber*, void *InitInfo, int , 
             }
             else
             {
-		Error = pInit ((RealNumber *)pElement, pElement->pInitInfo,
+		Error = pInit (& pElement->Real, pElement->pInitInfo,
                                  Matrix->IntToExtRowMap[pElement->Row], Col);
                 if (Error)
                 {
