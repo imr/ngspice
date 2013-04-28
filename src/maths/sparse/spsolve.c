@@ -124,10 +124,10 @@ static void SolveComplexTransposedMatrix( MatrixPtr,
 /*VARARGS3*/
 
 void
-spSolve(MatrixPtr eMatrix, RealVector RHS, RealVector Solution,
+spSolve(MatrixPtr Matrix, RealVector RHS, RealVector Solution,
 	RealVector iRHS, RealVector iSolution)
 {
-    MatrixPtr  Matrix = eMatrix;
+
     ElementPtr  pElement;
     RealVector  Intermediate;
     RealNumber  Temp;
@@ -400,10 +400,10 @@ SolveComplexMatrix( MatrixPtr Matrix, RealVector RHS, RealVector Solution , Real
 /*VARARGS3*/
 
 void
-spSolveTransposed(MatrixPtr eMatrix, RealVector RHS, RealVector Solution,
+spSolveTransposed(MatrixPtr Matrix, RealVector RHS, RealVector Solution,
 		  RealVector iRHS, RealVector iSolution)
 {
-    MatrixPtr  Matrix = eMatrix;
+
     ElementPtr  pElement;
     RealVector  Intermediate;
     int  I, *pExtOrder, Size;

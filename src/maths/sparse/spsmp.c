@@ -420,9 +420,9 @@ SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
  */
 
 static void
-LoadGmin(SMPmatrix *eMatrix, double Gmin)
+LoadGmin(SMPmatrix *Matrix, double Gmin)
 {
-    MatrixPtr Matrix = eMatrix;
+
     int I;
     ArrayOfElementPtrs Diag;
     ElementPtr diag;
@@ -453,9 +453,9 @@ LoadGmin(SMPmatrix *eMatrix, double Gmin)
  */
 
 SMPelement *
-SMPfindElt(SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
+SMPfindElt(SMPmatrix *Matrix, int Row, int Col, int CreateIfMissing)
 {
-    MatrixPtr Matrix = eMatrix;
+
     ElementPtr Element;
 
     /* Begin `SMPfindElt'. */
@@ -473,9 +473,9 @@ SMPfindElt(SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
  * SMPcZeroCol()
  */
 int
-SMPcZeroCol(SMPmatrix *eMatrix, int Col)
+SMPcZeroCol(SMPmatrix *Matrix, int Col)
 {
-    MatrixPtr Matrix = eMatrix;
+
     ElementPtr	Element;
 
     Col = Matrix->ExtToIntColMap[Col];
@@ -495,9 +495,9 @@ SMPcZeroCol(SMPmatrix *eMatrix, int Col)
  * SMPcAddCol()
  */
 int
-SMPcAddCol(SMPmatrix *eMatrix, int Accum_Col, int Addend_Col)
+SMPcAddCol(SMPmatrix *Matrix, int Accum_Col, int Addend_Col)
 {
-    MatrixPtr Matrix = eMatrix;
+
     ElementPtr	Accum, Addend, *Prev;
 
     Accum_Col = Matrix->ExtToIntColMap[Accum_Col];
@@ -527,9 +527,9 @@ SMPcAddCol(SMPmatrix *eMatrix, int Accum_Col, int Addend_Col)
  * SMPzeroRow()
  */
 int
-SMPzeroRow(SMPmatrix *eMatrix, int Row)
+SMPzeroRow(SMPmatrix *Matrix, int Row)
 {
-    MatrixPtr Matrix = eMatrix;
+
     ElementPtr	Element;
 
     Row = Matrix->ExtToIntColMap[Row];
