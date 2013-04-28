@@ -106,7 +106,7 @@ extern double scalbn(double, int);
 extern double logb(double);
 #endif
 
-static void LoadGmin(SMPmatrix *eMatrix, double Gmin);
+static void LoadGmin(SMPmatrix *Matrix, double Gmin);
 
 
 /*
