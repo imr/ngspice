@@ -2087,7 +2087,7 @@ spRoundoff(MatrixPtr eMatrix, RealNumber Rho)
     assert( IS_SPARSE(Matrix) && IS_FACTORED(Matrix) );
 
     /* Compute Barlow's bound if it is not given. */
-    if (Rho < 0.0) Rho = spLargestElement( eMatrix );
+    if (Rho < 0.0) Rho = spLargestElement( Matrix );
 
     /* Find the maximum number of off-diagonals in L if not previously computed. */
     if (Matrix->MaxRowCountInLowerTri < 0)
