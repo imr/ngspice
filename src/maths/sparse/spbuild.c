@@ -96,7 +96,6 @@ static void ExpandTranslationArrays( MatrixPtr, int );
 void
 spClear(MatrixPtr Matrix)
 {
-
      ElementPtr  pElement;
      int  I;
 
@@ -183,7 +182,6 @@ spClear(MatrixPtr Matrix)
 RealNumber *
 spFindElement(MatrixPtr Matrix, int Row, int Col)
 {
-
 ElementPtr pElement;
 
 /* Begin `spFindElement'. */
@@ -266,7 +264,6 @@ ElementPtr pElement;
 RealNumber *
 spGetElement(MatrixPtr Matrix, int Row, int Col)
 {
-
     ElementPtr pElement;
 
     /* Begin `spGetElement'. */
@@ -1148,7 +1145,6 @@ spGetInitInfo(RealNumber *pElement)
 int
 spInitialize(MatrixPtr Matrix, int (*pInit)(RealNumber*, void *InitInfo, int , int Col))
 {
-
     ElementPtr pElement;
     int J, Error, Col;
 

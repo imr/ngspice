@@ -127,7 +127,6 @@ void
 spSolve(MatrixPtr Matrix, RealVector RHS, RealVector Solution,
 	RealVector iRHS, RealVector iSolution)
 {
-
     ElementPtr  pElement;
     RealVector  Intermediate;
     RealNumber  Temp;
@@ -403,7 +402,6 @@ void
 spSolveTransposed(MatrixPtr Matrix, RealVector RHS, RealVector Solution,
 		  RealVector iRHS, RealVector iSolution)
 {
-
     ElementPtr  pElement;
     RealVector  Intermediate;
     int  I, *pExtOrder, Size;
