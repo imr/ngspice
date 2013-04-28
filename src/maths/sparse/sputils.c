@@ -174,9 +174,9 @@ static void ComplexTransposedMatrixMultiply( MatrixPtr, RealVector, RealVector,
  */
 
 void
-spMNA_Preorder(MatrixPtr eMatrix)
+spMNA_Preorder(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
+
     int  J, Size;
     ElementPtr  pTwin1, pTwin2;
     int  Twins, StartAt = 1;
@@ -368,9 +368,9 @@ SwapCols( MatrixPtr Matrix, ElementPtr pTwin1, ElementPtr pTwin2 )
  */
 
 void
-spScale(MatrixPtr eMatrix, RealVector RHS_ScaleFactors, RealVector SolutionScaleFactors)
+spScale(MatrixPtr Matrix, RealVector RHS_ScaleFactors, RealVector SolutionScaleFactors)
 {
-    MatrixPtr  Matrix = eMatrix;
+
     ElementPtr  pElement;
     int  I, lSize, *pExtOrder;
     RealNumber  ScaleFactor;
@@ -571,14 +571,14 @@ MatrixPtr  Matrix;
  */
 
 void
-spMultiply(MatrixPtr eMatrix, RealVector RHS, RealVector Solution,
+spMultiply(MatrixPtr Matrix, RealVector RHS, RealVector Solution,
 	   RealVector iRHS, RealVector iSolution)
 {
     ElementPtr  pElement;
     RealVector  Vector;
     RealNumber  Sum;
     int  I, *pExtOrder;
-    MatrixPtr  Matrix = eMatrix;
+
 
     /* Begin `spMultiply'. */
     assert( IS_SPARSE( Matrix ) && !Matrix->Factored );
@@ -717,14 +717,14 @@ ComplexMatrixMultiply( MatrixPtr Matrix, RealVector RHS, RealVector Solution , R
  */
 
 void
-spMultTransposed(MatrixPtr eMatrix, RealVector RHS, RealVector Solution,
+spMultTransposed(MatrixPtr Matrix, RealVector RHS, RealVector Solution,
 		 RealVector iRHS, RealVector iSolution)
 {
     ElementPtr  pElement;
     RealVector  Vector;
     RealNumber  Sum;
     int  I, *pExtOrder;
-    MatrixPtr  Matrix = eMatrix;
+
 
     /* Begin `spMultTransposed'. */
     assert( IS_SPARSE( Matrix ) && !Matrix->Factored );
@@ -878,10 +878,10 @@ ComplexTransposedMatrixMultiply( MatrixPtr Matrix, RealVector RHS, RealVector So
  */
 
 void
-spDeterminant(MatrixPtr eMatrix, int *pExponent, RealNumber *pDeterminant,
+spDeterminant(MatrixPtr Matrix, int *pExponent, RealNumber *pDeterminant,
 	      RealNumber *piDeterminant)
 {
-    MatrixPtr  Matrix = eMatrix;
+
     int I, Size;
     RealNumber Norm, nr, ni;
     ComplexNumber Pivot, cDeterminant;
@@ -1037,9 +1037,9 @@ spDeterminant(MatrixPtr eMatrix, int *pExponent, RealNumber *pDeterminant,
  */
 
 void
-spStripFills(MatrixPtr eMatrix)
+spStripFills(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
+
     struct FillinListNodeStruct  *pListNode;
 
     /* Begin `spStripFills'. */
@@ -1109,9 +1109,9 @@ spStripFills(MatrixPtr eMatrix)
  * frame.  This assumes that the matrix will be replaced with one of
  * the same size.  */
 void
-spStripMatrix(MatrixPtr eMatrix)
+spStripMatrix(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
+
 
     /* Begin `spStripMatrix'. */
     assert( IS_SPARSE( Matrix ) );
@@ -1197,9 +1197,9 @@ spStripMatrix(MatrixPtr eMatrix)
  */
 
 void
-spDeleteRowAndCol(MatrixPtr eMatrix, int Row, int Col)
+spDeleteRowAndCol(MatrixPtr Matrix, int Row, int Col)
 {
-    MatrixPtr  Matrix = eMatrix;
+
     ElementPtr  pElement, *ppElement, pLastElement;
     int  Size, ExtRow, ExtCol;
     ElementPtr  spcFindElementInCol();
@@ -1310,9 +1310,9 @@ spDeleteRowAndCol(MatrixPtr eMatrix, int Row, int Col)
  *      Pointer to the matrix.  */
 
 RealNumber
-spPseudoCondition(MatrixPtr eMatrix)
+spPseudoCondition(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
+
     int I;
     ArrayOfElementPtrs Diag;
     RealNumber MaxPivot, MinPivot, Mag;
@@ -1401,9 +1401,9 @@ spPseudoCondition(MatrixPtr eMatrix)
  *  spNO_MEMORY */
 
 RealNumber
-spCondition(MatrixPtr eMatrix, RealNumber NormOfMatrix, int *pError)
+spCondition(MatrixPtr Matrix, RealNumber NormOfMatrix, int *pError)
 {
-    MatrixPtr  Matrix = eMatrix;
+
     ElementPtr pElement;
     RealVector T, Tm;
     int I, K, Row;
@@ -1829,9 +1829,9 @@ int *pError;
  */
 
 RealNumber
-spNorm(MatrixPtr eMatrix)
+spNorm(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
+
     ElementPtr pElement;
     int I;
     RealNumber Max = 0.0, AbsRowSum;
@@ -1947,9 +1947,9 @@ spNorm(MatrixPtr eMatrix)
  */
 
 RealNumber
-spLargestElement(MatrixPtr eMatrix)
+spLargestElement(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
+
     int I;
     RealNumber Mag, AbsColSum, Max = 0.0, MaxRow = 0.0, MaxCol = 0.0;
     RealNumber Pivot;
@@ -2076,9 +2076,9 @@ spLargestElement(MatrixPtr eMatrix)
  */
 
 RealNumber
-spRoundoff(MatrixPtr eMatrix, RealNumber Rho)
+spRoundoff(MatrixPtr Matrix, RealNumber Rho)
 {
-    MatrixPtr  Matrix = eMatrix;
+
     ElementPtr pElement;
     int Count, I, MaxCount = 0;
     RealNumber Reid, Gear;
