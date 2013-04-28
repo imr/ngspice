@@ -36,8 +36,8 @@ void SMPgetError( SMPmatrix *, int *, int *);
 int SMPcProdDiag( SMPmatrix *, SPcomplex *, int *);
 int SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent);
 SMPelement * SMPfindElt( SMPmatrix *, int , int , int );
-int SMPcZeroCol(SMPmatrix *eMatrix, int Col);
-int SMPcAddCol(SMPmatrix *eMatrix, int Accum_Col, int Addend_Col);
-int SMPzeroRow(SMPmatrix *eMatrix, int Row);
+int SMPcZeroCol(SMPmatrix *Matrix, int Col);
+int SMPcAddCol(SMPmatrix *Matrix, int Accum_Col, int Addend_Col);
+int SMPzeroRow(SMPmatrix *Matrix, int Row);
 
 #endif

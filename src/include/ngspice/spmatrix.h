@@ -261,7 +261,7 @@ extern  int      spFileMatrix( MatrixPtr, char *, char *, int, int, int );
 extern  int      spFileStats( MatrixPtr, char *, char * );
 extern  int      spFillinCount( MatrixPtr );
 extern  int      spGetAdmittance( MatrixPtr, int, int, struct spTemplate* );
-extern  spREAL  *spFindElement(MatrixPtr eMatrix, int Row, int Col );
+extern  spREAL  *spFindElement(MatrixPtr Matrix, int Row, int Col );
 extern  spREAL  *spGetElement(MatrixPtr, int, int );
 extern  void    *spGetInitInfo( spREAL* );
 extern  int      spGetOnes( MatrixPtr, int, int, int, struct spTemplate* );
