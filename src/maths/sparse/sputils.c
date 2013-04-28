@@ -1124,7 +1124,7 @@ spStripMatrix(MatrixPtr eMatrix)
 
     /* Reset the element lists. */
     {
-	ElementPtr  pElement;
+
 	struct ElementListNodeStruct  *pListNode;
 
         pListNode = Matrix->LastElementListNode = Matrix->FirstElementListNode;
@@ -1134,7 +1134,7 @@ spStripMatrix(MatrixPtr eMatrix)
 
     /* Reset the fill-in lists. */
     {
-	ElementPtr  pFillin;
+
 	struct FillinListNodeStruct  *pListNode;
 
         pListNode = Matrix->LastFillinListNode = Matrix->FirstFillinListNode;
