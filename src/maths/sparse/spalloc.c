@@ -190,7 +190,7 @@ spCreate(int Size, int Complex, int *pError)
     Matrix->ElementsRemaining = 0;
     Matrix->FillinsRemaining = 0;
 
-    RecordAllocation( Matrix, (void *)Matrix );
+    RecordAllocation( Matrix, Matrix );
     if (Matrix->Error == spNO_MEMORY) goto MemoryError;
 
     /* Take out the trash. */
@@ -311,7 +311,7 @@ spcGetElement(MatrixPtr Matrix)
     /* Allocate block of MatrixElements if necessary. */
     if (Matrix->ElementsRemaining == 0) {
 	pElements = SP_MALLOC(struct MatrixElement, ELEMENTS_PER_ALLOCATION);
-        RecordAllocation( Matrix, (void *)pElements );
+        RecordAllocation( Matrix, pElements );
         if (Matrix->Error == spNO_MEMORY) return NULL;
         Matrix->ElementsRemaining = ELEMENTS_PER_ALLOCATION;
         Matrix->NextAvailElement = pElements;
@@ -331,14 +331,14 @@ spcGetElement(MatrixPtr Matrix)
         } else {
 	    /* Allocate block of elements. */
             pElements = SP_MALLOC(struct MatrixElement, ELEMENTS_PER_ALLOCATION);
-            RecordAllocation( Matrix, (void *)pElements );
+            RecordAllocation( Matrix, pElements );
             if (Matrix->Error == spNO_MEMORY) return NULL;
             Matrix->ElementsRemaining = ELEMENTS_PER_ALLOCATION;
             Matrix->NextAvailElement = pElements;
 
 	    /* Allocate an element list structure. */
             pListNode->Next = SP_MALLOC(struct ElementListNodeStruct,1);
-            RecordAllocation( Matrix, (void *)pListNode->Next );
+            RecordAllocation( Matrix, pListNode->Next );
             if (Matrix->Error == spNO_MEMORY)
 		return NULL;
             Matrix->LastElementListNode = pListNode = pListNode->Next;
@@ -402,14 +402,14 @@ InitializeElementBlocks(MatrixPtr Matrix, int InitialNumberOfElements,
 
     /* Allocate block of MatrixElements for elements. */
     pElement = SP_MALLOC(struct MatrixElement, InitialNumberOfElements);
-    RecordAllocation( Matrix, (void *)pElement );
+    RecordAllocation( Matrix, pElement );
     if (Matrix->Error == spNO_MEMORY) return;
     Matrix->ElementsRemaining = InitialNumberOfElements;
     Matrix->NextAvailElement = pElement;
 
     /* Allocate an element list structure. */
     Matrix->FirstElementListNode = SP_MALLOC(struct ElementListNodeStruct,1);
-    RecordAllocation( Matrix, (void *)Matrix->FirstElementListNode );
+    RecordAllocation( Matrix, Matrix->FirstElementListNode );
     if (Matrix->Error == spNO_MEMORY) return;
     Matrix->LastElementListNode = Matrix->FirstElementListNode;
 
@@ -420,14 +420,14 @@ InitializeElementBlocks(MatrixPtr Matrix, int InitialNumberOfElements,
 
     /* Allocate block of MatrixElements for fill-ins. */
     pElement = SP_MALLOC(struct MatrixElement, NumberOfFillinsExpected);
-    RecordAllocation( Matrix, (void *)pElement );
+    RecordAllocation( Matrix, pElement );
     if (Matrix->Error == spNO_MEMORY) return;
     Matrix->FillinsRemaining = NumberOfFillinsExpected;
     Matrix->NextAvailFillin = pElement;
 
     /* Allocate a fill-in list structure. */
     Matrix->FirstFillinListNode = SP_MALLOC(struct FillinListNodeStruct,1);
-    RecordAllocation( Matrix, (void *)Matrix->FirstFillinListNode );
+    RecordAllocation( Matrix, Matrix->FirstFillinListNode );
     if (Matrix->Error == spNO_MEMORY) return;
     Matrix->LastFillinListNode = Matrix->FirstFillinListNode;
 
@@ -487,14 +487,14 @@ spcGetFillin(MatrixPtr Matrix)
         } else {
 	    /* Allocate block of fill-ins. */
             pFillins = SP_MALLOC(struct MatrixElement, ELEMENTS_PER_ALLOCATION);
-            RecordAllocation( Matrix, (void *)pFillins );
+            RecordAllocation( Matrix, pFillins );
             if (Matrix->Error == spNO_MEMORY) return NULL;
             Matrix->FillinsRemaining = ELEMENTS_PER_ALLOCATION;
             Matrix->NextAvailFillin = pFillins;
 
 	    /* Allocate a fill-in list structure. */
             pListNode->Next = SP_MALLOC(struct FillinListNodeStruct,1);
-            RecordAllocation( Matrix, (void *)pListNode->Next );
+            RecordAllocation( Matrix, pListNode->Next );
             if (Matrix->Error == spNO_MEMORY) return NULL;
             Matrix->LastFillinListNode = pListNode = pListNode->Next;
 
