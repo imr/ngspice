@@ -137,7 +137,6 @@ int Printer_Width = PRINTER_WIDTH;
 void
 spPrint(MatrixPtr Matrix, int PrintReordered, int Data, int Header)
 {
-
     int  J = 0;
     int I, Row, Col, Size, Top;
     int StartCol = 1, StopCol, Columns, ElementCount = 0;
@@ -441,7 +440,6 @@ int
 spFileMatrix(MatrixPtr Matrix, char *File, char *Label, int Reordered,
 	     int Data, int Header)
 {
-
     int  I, Size;
     ElementPtr  pElement;
     int  Row, Col, Err;
@@ -599,7 +597,6 @@ spFileMatrix(MatrixPtr Matrix, char *File, char *Label, int Reordered,
 int
 spFileVector(MatrixPtr Matrix, char *File, RealVector RHS, RealVector iRHS)
 {
-
     int  I, Size, Err;
     FILE  *pMatrixFile;
 
@@ -690,7 +687,6 @@ spFileVector(MatrixPtr Matrix, char *File, RealVector RHS, RealVector iRHS)
 int
 spFileStats(MatrixPtr Matrix, char *File, char *Label)
 {
-
     int  Size, I;
     ElementPtr  pElement;
     int NumberOfElements;

@@ -176,7 +176,6 @@ static void ComplexTransposedMatrixMultiply( MatrixPtr, RealVector, RealVector,
 void
 spMNA_Preorder(MatrixPtr Matrix)
 {
-
     int  J, Size;
     ElementPtr  pTwin1, pTwin2;
     int  Twins, StartAt = 1;
@@ -370,7 +369,6 @@ SwapCols( MatrixPtr Matrix, ElementPtr pTwin1, ElementPtr pTwin2 )
 void
 spScale(MatrixPtr Matrix, RealVector RHS_ScaleFactors, RealVector SolutionScaleFactors)
 {
-
     ElementPtr  pElement;
     int  I, lSize, *pExtOrder;
     RealNumber  ScaleFactor;
@@ -579,7 +577,6 @@ spMultiply(MatrixPtr Matrix, RealVector RHS, RealVector Solution,
     RealNumber  Sum;
     int  I, *pExtOrder;
 
-
     /* Begin `spMultiply'. */
     assert( IS_SPARSE( Matrix ) && !Matrix->Factored );
     if (!Matrix->RowsLinked)
@@ -724,7 +721,6 @@ spMultTransposed(MatrixPtr Matrix, RealVector RHS, RealVector Solution,
     RealVector  Vector;
     RealNumber  Sum;
     int  I, *pExtOrder;
-
 
     /* Begin `spMultTransposed'. */
     assert( IS_SPARSE( Matrix ) && !Matrix->Factored );
@@ -881,7 +877,6 @@ void
 spDeterminant(MatrixPtr Matrix, int *pExponent, RealNumber *pDeterminant,
 	      RealNumber *piDeterminant)
 {
-
     int I, Size;
     RealNumber Norm, nr, ni;
     ComplexNumber Pivot, cDeterminant;
@@ -1039,7 +1034,6 @@ spDeterminant(MatrixPtr Matrix, int *pExponent, RealNumber *pDeterminant,
 void
 spStripFills(MatrixPtr Matrix)
 {
-
     struct FillinListNodeStruct  *pListNode;
 
     /* Begin `spStripFills'. */
@@ -1111,8 +1105,6 @@ spStripFills(MatrixPtr Matrix)
 void
 spStripMatrix(MatrixPtr Matrix)
 {
-
-
     /* Begin `spStripMatrix'. */
     assert( IS_SPARSE( Matrix ) );
     if (Matrix->Elements == 0) return;
@@ -1124,7 +1116,6 @@ spStripMatrix(MatrixPtr Matrix)
 
     /* Reset the element lists. */
     {
-
 	struct ElementListNodeStruct  *pListNode;
 
         pListNode = Matrix->LastElementListNode = Matrix->FirstElementListNode;
@@ -1134,7 +1125,6 @@ spStripMatrix(MatrixPtr Matrix)
 
     /* Reset the fill-in lists. */
     {
-
 	struct FillinListNodeStruct  *pListNode;
 
         pListNode = Matrix->LastFillinListNode = Matrix->FirstFillinListNode;
@@ -1199,7 +1189,6 @@ spStripMatrix(MatrixPtr Matrix)
 void
 spDeleteRowAndCol(MatrixPtr Matrix, int Row, int Col)
 {
-
     ElementPtr  pElement, *ppElement, pLastElement;
     int  Size, ExtRow, ExtCol;
     ElementPtr  spcFindElementInCol();
@@ -1312,7 +1301,6 @@ spDeleteRowAndCol(MatrixPtr Matrix, int Row, int Col)
 RealNumber
 spPseudoCondition(MatrixPtr Matrix)
 {
-
     int I;
     ArrayOfElementPtrs Diag;
     RealNumber MaxPivot, MinPivot, Mag;
@@ -1403,7 +1391,6 @@ spPseudoCondition(MatrixPtr Matrix)
 RealNumber
 spCondition(MatrixPtr Matrix, RealNumber NormOfMatrix, int *pError)
 {
-
     ElementPtr pElement;
     RealVector T, Tm;
     int I, K, Row;
@@ -1831,7 +1818,6 @@ int *pError;
 RealNumber
 spNorm(MatrixPtr Matrix)
 {
-
     ElementPtr pElement;
     int I;
     RealNumber Max = 0.0, AbsRowSum;
@@ -1949,7 +1935,6 @@ spNorm(MatrixPtr Matrix)
 RealNumber
 spLargestElement(MatrixPtr Matrix)
 {
-
     int I;
     RealNumber Mag, AbsColSum, Max = 0.0, MaxRow = 0.0, MaxCol = 0.0;
     RealNumber Pivot;
@@ -2078,7 +2063,6 @@ spLargestElement(MatrixPtr Matrix)
 RealNumber
 spRoundoff(MatrixPtr Matrix, RealNumber Rho)
 {
-
     ElementPtr pElement;
     int Count, I, MaxCount = 0;
     RealNumber Reid, Gear;

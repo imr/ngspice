@@ -192,7 +192,6 @@ int
 spOrderAndFactor(MatrixPtr Matrix, RealNumber RHS[], RealNumber RelThreshold,
                  RealNumber AbsThreshold, int DiagPivoting)
 {
-
     ElementPtr  pPivot;
     int  Step, Size, ReorderingRequired;
     RealNumber LargestInCol;
@@ -323,7 +322,6 @@ Done:
 int
 spFactor(MatrixPtr Matrix)
 {
-
     ElementPtr  pElement;
     ElementPtr  pColumn;
     int  Step, Size;
@@ -571,7 +569,6 @@ FactorComplexMatrix( MatrixPtr Matrix )
 void
 spPartition(MatrixPtr Matrix, int Mode)
 {
-
     ElementPtr  pElement, pColumn;
     int  Step, Size;
     int  *Nc, *No, *Nm;

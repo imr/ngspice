@@ -648,7 +648,6 @@ AllocateBlockOfAllocationList(MatrixPtr Matrix)
 void
 spDestroy(MatrixPtr Matrix)
 {
-
     AllocationListPtr  ListPtr, NextListPtr;
 
 
@@ -743,8 +742,6 @@ spError(MatrixPtr Matrix )
 void
 spWhereSingular(MatrixPtr Matrix, int *pRow, int *pCol)
 {
-
-
     /* Begin `spWhereSingular'. */
     assert( IS_SPARSE( Matrix ) );
 
@@ -781,8 +778,6 @@ spWhereSingular(MatrixPtr Matrix, int *pRow, int *pCol)
 int
 spGetSize(MatrixPtr Matrix, int External)
 {
-
-
     /* Begin `spGetSize'. */
     assert( IS_SPARSE( Matrix ) );
 
