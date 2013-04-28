@@ -333,10 +333,10 @@ spFactor(MatrixPtr eMatrix)
     assert( IS_VALID(Matrix) && !Matrix->Factored);
 
     if (Matrix->NeedsOrdering) {
-        return spOrderAndFactor( eMatrix, NULL,
+        return spOrderAndFactor( Matrix, NULL,
                                  0.0, 0.0, DIAG_PIVOTING_AS_DEFAULT );
     }
-    if (!Matrix->Partitioned) spPartition( eMatrix, spDEFAULT_PARTITION );
+    if (!Matrix->Partitioned) spPartition( Matrix, spDEFAULT_PARTITION );
     if (Matrix->Complex)
         return FactorComplexMatrix( Matrix );
 
