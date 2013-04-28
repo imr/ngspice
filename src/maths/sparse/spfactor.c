@@ -603,8 +603,8 @@ spPartition(MatrixPtr eMatrix, int Mode)
         assert( Mode == spAUTO_PARTITION );
 
     /* Otherwise, count all operations needed in when factoring matrix. */
-    Nc = (int *)Matrix->MarkowitzRow;
-    No = (int *)Matrix->MarkowitzCol;
+    Nc = Matrix->MarkowitzRow;
+    No = Matrix->MarkowitzCol;
     Nm = (int *)Matrix->MarkowitzProd;
 
     /* Start mock-factorization. */
