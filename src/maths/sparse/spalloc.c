@@ -701,7 +701,7 @@ spDestroy(MatrixPtr Matrix)
  *      The error status of the given matrix.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (void *)
+ *  Matrix  <input>  (void *)
  *      The matrix for which the error status is desired.  */
 int
 spError(MatrixPtr Matrix )
@@ -732,7 +732,7 @@ spError(MatrixPtr Matrix )
  *  detected as singular or where a zero was detected on the diagonal.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (void *)
+ *  Matrix  <input>  (void *)
  *      The matrix for which the error status is desired.
  *  pRow  <output>  (int *)
  *      The row number.
@@ -769,7 +769,7 @@ spWhereSingular(MatrixPtr Matrix, int *pRow, int *pCol)
  *  the matrix is returned.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (void *)
+ *  Matrix  <input>  (void *)
  *      Pointer to matrix.
  *  External  <input>  (int)
  *      If External is set TRUE, the external size , i.e., the value of the
@@ -809,7 +809,7 @@ spGetSize(MatrixPtr Matrix, int External)
  *  Forces matrix to be either real or complex.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (void *)
+ *  Matrix  <input>  (void *)
  *      Pointer to matrix.
  */
 
@@ -850,7 +850,7 @@ spSetComplex(MatrixPtr Matrix)
  *  of original elements can be returned.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (void *)
+ *  Matrix  <input>  (void *)
  *      Pointer to matrix.
  */
 

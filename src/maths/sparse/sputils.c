@@ -151,7 +151,7 @@ static void ComplexTransposedMatrixMultiply( MatrixPtr, RealVector, RealVector,
  *  Tom Quarles.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix to be preordered.
  *
  *  >>> Local variables;
@@ -346,7 +346,7 @@ SwapCols( MatrixPtr Matrix, ElementPtr pTwin1, ElementPtr pTwin2 )
  *  should not be executed before the function spMNA_Preorder.
  *
  *  >>> Arguments:
- *  eMatrix  <input> (char *)
+ *  Matrix  <input> (char *)
  *      Pointer to the matrix to be scaled.
  *  SolutionScaleFactors  <input>  (RealVector)
  *      The array of Solution scale factors.  These factors scale the columns.
@@ -556,7 +556,7 @@ MatrixPtr  Matrix;
  *  before spMNA_Preorder().
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.
  *  RHS  <output>  (RealVector)
  *      RHS is the right hand side. This is what is being solved for.
@@ -702,7 +702,7 @@ ComplexMatrixMultiply( MatrixPtr Matrix, RealVector RHS, RealVector Solution , R
  *  before spMNA_Preorder().
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.
  *  RHS  <output>  (RealVector)
  *      RHS is the right hand side. This is what is being solved for.
@@ -854,7 +854,7 @@ ComplexTransposedMatrixMultiply( MatrixPtr Matrix, RealVector RHS, RealVector So
  *  reasonable value and the logarithm of the scale factor is returned.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      A pointer to the matrix for which the determinant is desired.
  *  pExponent  <output>  (int *)
  *      The logarithm base 10 of the scale factor for the determinant.  To find
@@ -1171,7 +1171,7 @@ spStripMatrix(MatrixPtr Matrix)
  *  doesn't exist.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix in which the row and column are to be deleted.
  *  Row  <input>  (int)
  *      Row to be deleted.
@@ -1306,7 +1306,7 @@ spDeleteRowAndCol(MatrixPtr Matrix, int Row, int Col)
  *  previous factorization.  If the matrix was singular, zero is returned.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.  */
 
 RealNumber
@@ -1388,7 +1388,7 @@ spPseudoCondition(MatrixPtr Matrix)
  *  zero is returned.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.
  *  NormOfMatrix  <input>  (RealNumber)
  *      The L-infinity norm of the unfactored matrix as computed by
@@ -1824,7 +1824,7 @@ int *pError;
  *  The largest absolute row sum of matrix.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.
  */
 
@@ -1942,7 +1942,7 @@ spNorm(MatrixPtr Matrix)
  *  largest element in any of the reduced submatrices is returned.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.
  */
 
@@ -2066,7 +2066,7 @@ spLargestElement(MatrixPtr Matrix)
  *  Returns a bound on the magnitude of the largest element in E = A - LU.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.
  *  Rho  <input>  (RealNumber)
  *      The bound on the magnitude of the largest element in any of the
@@ -2133,7 +2133,7 @@ spRoundoff(MatrixPtr Matrix, RealNumber Rho)
  *  error state of sparse.  No message is produced if there is no error.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *	Matrix for which the error message is to be printed.
  *  Stream  <input>  (FILE *)
  *	Stream to which the error message is to be printed.
