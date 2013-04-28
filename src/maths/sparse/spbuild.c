@@ -645,7 +645,7 @@ spGetQuad(MatrixPtr Matrix, int  Row1, int Row2, int Col1, int Col2,
         (Template->Element4Negated == NULL))
 	return spNO_MEMORY;
 
-    if (Template->Element1 == &((MatrixPtr)Matrix)->TrashCan.Real)
+    if (Template->Element1 == & Matrix->TrashCan.Real)
         SWAP( RealNumber *, Template->Element1, Template->Element2 );
 
     return spOKAY;
