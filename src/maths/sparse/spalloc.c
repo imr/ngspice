@@ -704,13 +704,13 @@ spDestroy(MatrixPtr Matrix)
  *  eMatrix  <input>  (void *)
  *      The matrix for which the error status is desired.  */
 int
-spError(MatrixPtr eMatrix )
+spError(MatrixPtr Matrix )
 {
     /* Begin `spError'. */
 
-    if (eMatrix != NULL) {
-	assert(eMatrix->ID == SPARSE_ID);
-        return eMatrix->Error;
+    if (Matrix != NULL) {
+	assert(Matrix->ID == SPARSE_ID);
+        return Matrix->Error;
     } else {
 	/* This error may actually be spPANIC, no way to tell. */
 	return spNO_MEMORY;
@@ -814,23 +814,23 @@ spGetSize(MatrixPtr Matrix, int External)
  */
 
 void
-spSetReal(MatrixPtr eMatrix)
+spSetReal(MatrixPtr Matrix)
 {
     /* Begin `spSetReal'. */
 
-    assert( IS_SPARSE( eMatrix ));
-    eMatrix->Complex = NO;
+    assert( IS_SPARSE( Matrix ));
+    Matrix->Complex = NO;
     return;
 }
 
 
 void
-spSetComplex(MatrixPtr eMatrix)
+spSetComplex(MatrixPtr Matrix)
 {
     /* Begin `spSetComplex'. */
 
-    assert( IS_SPARSE( eMatrix ));
-    eMatrix->Complex = YES;
+    assert( IS_SPARSE( Matrix ));
+    Matrix->Complex = YES;
     return;
 }
 
@@ -855,29 +855,29 @@ spSetComplex(MatrixPtr eMatrix)
  */
 
 int
-spFillinCount(MatrixPtr eMatrix)
+spFillinCount(MatrixPtr Matrix)
 {
     /* Begin `spFillinCount'. */
 
-    assert( IS_SPARSE( eMatrix ) );
-    return eMatrix->Fillins;
+    assert( IS_SPARSE( Matrix ) );
+    return Matrix->Fillins;
 }
 
 
 int
-spElementCount(MatrixPtr eMatrix)
+spElementCount(MatrixPtr Matrix)
 {
     /* Begin `spElementCount'. */
 
-    assert( IS_SPARSE( eMatrix ) );
-    return eMatrix->Elements;
+    assert( IS_SPARSE( Matrix ) );
+    return Matrix->Elements;
 }
 
 int
-spOriginalCount(MatrixPtr eMatrix)
+spOriginalCount(MatrixPtr Matrix)
 {
     /* Begin `spOriginalCount'. */
 
-    assert( IS_SPARSE( eMatrix ) );
-    return eMatrix->Originals;
+    assert( IS_SPARSE( Matrix ) );
+    return Matrix->Originals;
 }

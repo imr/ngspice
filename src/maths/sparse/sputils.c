@@ -2143,17 +2143,17 @@ spRoundoff(MatrixPtr Matrix, RealNumber Rho)
  */
 
 void
-spErrorMessage(MatrixPtr eMatrix, FILE *Stream, char *Originator)
+spErrorMessage(MatrixPtr Matrix, FILE *Stream, char *Originator)
 {
     int Row, Col, Error;
 
     /* Begin `spErrorMessage'. */
-    if (eMatrix == NULL)
+    if (Matrix == NULL)
 	Error = spNO_MEMORY;
     else
     {
-	assert(eMatrix->ID == SPARSE_ID);
-	Error = eMatrix->Error;
+	assert(Matrix->ID == SPARSE_ID);
+	Error = Matrix->Error;
     }
 
     if (Error == spOKAY) return;
@@ -2172,13 +2172,13 @@ spErrorMessage(MatrixPtr eMatrix, FILE *Stream, char *Originator)
 	fprintf( Stream, "insufficient memory available.\n");
     else if (Error == spSINGULAR)
     {
-	spWhereSingular( eMatrix, &Row, &Col );
+	spWhereSingular( Matrix, &Row, &Col );
 	fprintf( Stream, "singular matrix detected at row %d and column %d.\n",
 		 Row, Col);
     }
     else if (Error == spZERO_DIAG)
     {
-	spWhereSingular( eMatrix, &Row, &Col );
+	spWhereSingular( Matrix, &Row, &Col );
 	fprintf( Stream, "zero diagonal detected at row %d and column %d.\n",
 		 Row, Col);
     }
