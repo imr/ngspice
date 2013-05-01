@@ -36,9 +36,13 @@ IFparm CAPpTable[] = { /* parameters */
 IFparm CAPmPTable[] = { /* names of model parameters */
  IOPA( "cap",    CAP_MOD_CAP,      IF_REAL, "Model capacitance"),
  IOPA( "cj",     CAP_MOD_CJ,       IF_REAL, "Bottom Capacitance per area"),
+ IOPR( "cox",    CAP_MOD_CJ,       IF_REAL, "Bottom Capacitance per area"),
  IOPA( "cjsw",   CAP_MOD_CJSW,     IF_REAL, "Sidewall capacitance per meter"),
+ IOPR( "capsw",  CAP_MOD_CJSW,     IF_REAL, "Sidewall capacitance per meter"),
  IOPX( "defw",   CAP_MOD_DEFWIDTH, IF_REAL, "Default width"),
+ IOPR( "w",      CAP_MOD_DEFWIDTH, IF_REAL, "Default width"),
  IOPX( "defl",   CAP_MOD_DEFLENGTH,IF_REAL, "Default length"),
+ IOPR( "l",      CAP_MOD_DEFLENGTH,IF_REAL, "Default length"),
  IOPA( "narrow", CAP_MOD_NARROW,   IF_REAL, "width correction factor"),
  IOPA( "short",  CAP_MOD_SHORT,    IF_REAL, "length correction factor"),
  IOPA( "tc1",    CAP_MOD_TC1,      IF_REAL, "First order temp. coefficient"),

@@ -38,6 +38,10 @@ RESmParam(int param, IFvalue *value, GENmodel *inModel)
             model->RESdefWidth = value->rValue;
             model->RESdefWidthGiven = TRUE;
             break;
+        case RES_MOD_DEFLENGTH:
+            model->RESdefLength = value->rValue;
+            model->RESdefLengthGiven = TRUE;
+            break;
         case RES_MOD_NARROW:
             model->RESnarrow = value->rValue;
             model->RESnarrowGiven = TRUE;

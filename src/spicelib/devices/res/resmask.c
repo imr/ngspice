@@ -39,6 +39,9 @@ RESmodAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case RES_MOD_DEFWIDTH:
             value->rValue = model->RESdefWidth;
             return(OK);
+        case RES_MOD_DEFLENGTH:
+            value->rValue = model->RESdefLength;
+            return(OK);
         case RES_MOD_NARROW: 
             value->rValue = model->RESnarrow;
             return(OK);
