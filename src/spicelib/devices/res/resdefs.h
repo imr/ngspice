@@ -99,6 +99,7 @@ typedef struct sRESmodel {       /* model structure for a resistor */
     double REStempCoeff2;   /* second temperature coefficient of resistors */
     double RESsheetRes;     /* sheet resistance of devices in ohms/square */
     double RESdefWidth;     /* default width of a resistor */
+    double RESdefLength;    /* default length of a resistor */
     double RESnarrow;       /* amount by which device is narrower than drawn */
     double RESshort;        /* amount by which device is shorter than drawn */
     double RESfNcoef;       /* Flicker noise coefficient */
@@ -108,6 +109,7 @@ typedef struct sRESmodel {       /* model structure for a resistor */
     unsigned REStc2Given        :1; /* flag to indicate tc2 was specified */
     unsigned RESsheetResGiven   :1; /* flag to indicate sheet resistance given*/
     unsigned RESdefWidthGiven   :1; /* flag to indicate default width given */
+    unsigned RESdefLengthGiven  :1; /* flag to indicate default length given */
     unsigned RESnarrowGiven     :1; /* flag to indicate narrow effect given */
     unsigned RESshortGiven      :1; /* flag to indicate short effect given */
     unsigned RESfNcoefGiven     :1; /* flag to indicate kf given */
@@ -139,12 +141,13 @@ typedef struct sRESmodel {       /* model structure for a resistor */
 #define RES_MOD_TC2 102
 #define RES_MOD_RSH 103
 #define RES_MOD_DEFWIDTH 104
-#define RES_MOD_NARROW 105
-#define RES_MOD_R 106
-#define RES_MOD_TNOM 107
-#define RES_MOD_SHORT 108
-#define RES_MOD_KF 109
-#define RES_MOD_AF 110
+#define RES_MOD_DEFLENGTH 105
+#define RES_MOD_NARROW 106
+#define RES_MOD_R 107
+#define RES_MOD_TNOM 108
+#define RES_MOD_SHORT 109
+#define RES_MOD_KF 110
+#define RES_MOD_AF 111
 
 /* device questions */
 #define RES_QUEST_SENS_REAL      201

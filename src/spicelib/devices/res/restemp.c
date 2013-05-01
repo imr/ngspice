@@ -32,6 +32,7 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
         if(!model->REStnomGiven) model->REStnom         = ckt->CKTnomTemp;
         if(!model->RESsheetResGiven) model->RESsheetRes = 0.0;
         if(!model->RESdefWidthGiven) model->RESdefWidth = 10.e-6; /*M*/
+        if(!model->RESdefLengthGiven) model->RESdefLength = 10e-6;
         if(!model->REStc1Given) model->REStempCoeff1    = 0.0;
         if(!model->REStc2Given) model->REStempCoeff2    = 0.0;
         if(!model->RESnarrowGiven) model->RESnarrow     = 0.0;
@@ -55,7 +56,7 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 	     }
 	    
 	    if(!here->RESwidthGiven)   here->RESwidth  = model->RESdefWidth;
-            if(!here->RESlengthGiven)  here->RESlength = 0.0;
+            if(!here->RESlengthGiven)  here->RESlength = model->RESdefLength;
 	    if(!here->RESscaleGiven)   here->RESscale  = 1.0;
 	    if(!here->RESmGiven)       here->RESm      = 1.0;
             if(!here->RESnoisyGiven)   here->RESnoisy  = 1;
