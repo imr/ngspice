@@ -36,8 +36,8 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
         if(!model->REStc2Given) model->REStempCoeff2    = 0.0;
         if(!model->RESnarrowGiven) model->RESnarrow     = 0.0;
         if(!model->RESshortGiven) model->RESshort       = 0.0;
-	if(!model->RESfNcoefGiven) model->RESfNcoef     = 0.0;
-	if(!model->RESfNexpGiven) model->RESfNexp       = 1.0;
+        if(!model->RESfNcoefGiven) model->RESfNcoef     = 0.0;
+        if(!model->RESfNexpGiven) model->RESfNexp       = 1.0;
 
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
@@ -45,19 +45,19 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 
             /* Default Value Processing for Resistor Instance */
             
-	    if(!here->REStempGiven) {   
-	       here->REStemp   = ckt->CKTtemp;
-	       if(!here->RESdtempGiven)   here->RESdtemp  = 0.0;
-	     } else { /* REStempGiven */
-	       here->RESdtemp = 0.0;
-	       if (here->RESdtempGiven)
-	           printf("%s: Instance temperature specified, dtemp ignored\n", here->RESname);
-	     }
-	    
-	    if(!here->RESwidthGiven)   here->RESwidth  = model->RESdefWidth;
+            if(!here->REStempGiven) {   
+               here->REStemp   = ckt->CKTtemp;
+               if(!here->RESdtempGiven)   here->RESdtemp  = 0.0;
+             } else { /* REStempGiven */
+               here->RESdtemp = 0.0;
+               if (here->RESdtempGiven)
+                   printf("%s: Instance temperature specified, dtemp ignored\n", here->RESname);
+             }
+            
+            if(!here->RESwidthGiven)   here->RESwidth  = model->RESdefWidth;
             if(!here->RESlengthGiven)  here->RESlength = 0.0;
-	    if(!here->RESscaleGiven)   here->RESscale  = 1.0;
-	    if(!here->RESmGiven)       here->RESm      = 1.0;
+            if(!here->RESscaleGiven)   here->RESscale  = 1.0;
+            if(!here->RESmGiven)       here->RESm      = 1.0;
             if(!here->RESnoisyGiven)   here->RESnoisy  = 1;
             if(!here->RESresGiven)  {
                 if(model->RESsheetResGiven && (model->RESsheetRes != 0) &&
@@ -73,19 +73,19 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 
             difference = (here->REStemp + here->RESdtemp) - model->REStnom;
             
-	    factor = 1.0 + (model->REStempCoeff1)*difference + 
+            factor = 1.0 + (model->REStempCoeff1)*difference + 
                     (model->REStempCoeff2)*difference*difference;
 
             here -> RESconduct = (1.0/(here->RESresist * factor * here->RESscale));
-	    	    
-	    
-	    /* Paolo Nenzi:  AC value */
-	    if(here->RESacresGiven) 
-	       here->RESacConduct = (1.0/(here->RESacResist * factor * here->RESscale));
-	    else {
-	       here -> RESacConduct = here -> RESconduct;
-	       here -> RESacResist = here -> RESresist;
-	   }   
+                        
+            
+            /* Paolo Nenzi:  AC value */
+            if(here->RESacresGiven) 
+               here->RESacConduct = (1.0/(here->RESacResist * factor * here->RESscale));
+            else {
+               here -> RESacConduct = here -> RESconduct;
+               here -> RESacResist = here -> RESresist;
+           }   
         }
     }
     return(OK);
