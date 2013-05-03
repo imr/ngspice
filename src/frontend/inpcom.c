@@ -97,6 +97,8 @@ static char *skip_non_ws(char *d)      { while (*d && !isspace(*d)) d++; return 
 static char *skip_back_ws(char *d)     { while (isspace(*d))        d--; return d; }
 static char *skip_ws(char *d)          { while (isspace(*d))        d++; return d; }
 
+static void tprint(struct line *deck);
+
 #ifndef XSPICE
 static void inp_poly_err(struct line *deck);
 #endif
@@ -825,6 +827,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         inp_fix_macro_param_func_paren_io(working);
         inp_fix_ternary_operator(working);
+//      tprint(working);
         inp_grab_func(working);
 
         inp_expand_macros_in_func();
@@ -1788,6 +1791,8 @@ inp_fix_ternary_operator_str(char *line, bool all)
         return line;
     }
 
+    all = TRUE;
+
     // get conditional
     question = strchr(str_ptr, '?');
     str_ptr2 = skip_back_ws(question - 1);
@@ -1874,6 +1879,8 @@ inp_fix_ternary_operator_str(char *line, bool all)
             fprintf(stderr, "ERROR: problem parsing ternary line %s!\n", line);
             controlled_exit(EXIT_FAILURE);
         }
+        if (*str_ptr2 == '\0')
+            str_ptr2--;
         else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, str_ptr2), all);
         if (*str_ptr2 != '}')
             end_str = inp_fix_ternary_operator_str(strdup(str_ptr2+1), all);
@@ -5739,3 +5746,15 @@ inp_poly_err(struct line *deck)
     }
 }
 #endif
+
+
+static void
+tprint(struct line *deck)
+{
+    /*debug: print into file*/
+    FILE *fd = fopen("tprint-out.txt", "w");
+    struct line *t;
+    for (t = deck; t; t = t->li_next)
+        fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+    fclose(fd);
+}
