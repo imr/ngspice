@@ -77,3 +77,8 @@ int	RESpTSize = NUMELEMS(RESpTable);
 int	RESmPTSize = NUMELEMS(RESmPTable);
 int	RESiSize = sizeof(RESinstance);
 int	RESmSize = sizeof(RESmodel);
+
+#ifdef KLU
+int RESisLinear = 1 ;
+int RESisLinearStatic = 1 ;
+#endif

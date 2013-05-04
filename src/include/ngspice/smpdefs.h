@@ -25,28 +25,32 @@ Modified: 2000  AlansFixes
 
 /* SMPmatrix structure - Francesco Lannutti (2012-02) */
 typedef struct sSMPmatrix {
-    MatrixFrame *SPmatrix ;                /* pointer to sparse matrix */
+    MatrixFrame *SPmatrix ;                  /* pointer to sparse matrix */
 
 #ifdef KLU
-    klu_common *CKTkluCommon ;             /* KLU common object */
-    klu_symbolic *CKTkluSymbolic ;         /* KLU symbolic object */
-    klu_numeric *CKTkluNumeric ;           /* KLU numeric object */
-    int *CKTkluAp ;                        /* KLU column pointer */
-    int *CKTkluAi ;                        /* KLU row pointer */
-    double *CKTkluAx ;                     /* KLU Real Elements */
-    double *CKTkluAx_Complex ;             /* KLU Complex Elements */
-    unsigned int CKTkluMatrixIsComplex:1 ; /* KLU Matrix Is Complex Flag */
-    #define CKTkluMatrixReal 0             /* KLU Matrix Real definition */
-    #define CKTkluMatrixComplex 1          /* KLU Matrix Complex definition */
-    double *CKTkluIntermediate ;           /* KLU RHS Intermediate for Solve Real Step */
-    double *CKTkluIntermediate_Complex ;   /* KLU iRHS Intermediate for Solve Complex Step */
-    BindElement *CKTbindStruct ;           /* KLU - Sparse Binding Structure */
-    double **CKTdiag_CSC ;                 /* KLU pointer to diagonal element to perform Gmin */
-    int CKTkluN ;                          /* KLU N, copied */
-    int CKTklunz ;                         /* KLU nz, copied for AC Analysis */
-    unsigned int CKTkluMODE:1 ;            /* KLU MODE parameter to enable KLU or not from the heuristic */
-    #define CKTkluON 1                     /* KLU MODE ON definition */
-    #define CKTkluOFF 0                    /* KLU MODE OFF definition */
+    klu_common *CKTkluCommon ;               /* KLU common object */
+    klu_symbolic *CKTkluSymbolic ;           /* KLU symbolic object */
+    klu_numeric *CKTkluNumeric ;             /* KLU numeric object */
+    int *CKTkluAp ;                          /* KLU column pointer */
+    int *CKTkluAi ;                          /* KLU row pointer */
+    double *CKTkluAx ;                       /* KLU Real Elements */
+    double *CKTkluAx_LinearStatic ;          /* KLU Real Elements - Linear Static */
+    double *CKTkluAx_LinearDynamic ;         /* KLU Real Elements - Linear Dynamic */
+    double *CKTkluAx_Complex ;               /* KLU Complex Elements */
+    double *CKTkluAx_Complex_LinearStatic ;  /* KLU Complex Elements - Linear Static */
+    double *CKTkluAx_Complex_LinearDynamic ; /* KLU Complex Elements - Linear Dynamic */
+    unsigned int CKTkluMatrixIsComplex:1 ;   /* KLU Matrix Is Complex Flag */
+    #define CKTkluMatrixReal 0               /* KLU Matrix Real definition */
+    #define CKTkluMatrixComplex 1            /* KLU Matrix Complex definition */
+    double *CKTkluIntermediate ;             /* KLU RHS Intermediate for Solve Real Step */
+    double *CKTkluIntermediate_Complex ;     /* KLU iRHS Intermediate for Solve Complex Step */
+    BindElement *CKTbindStruct ;             /* KLU - Sparse Binding Structure */
+    double **CKTdiag_CSC ;                   /* KLU pointer to diagonal element to perform Gmin */
+    int CKTkluN ;                            /* KLU N, copied */
+    int CKTklunz ;                           /* KLU nz, copied for AC Analysis */
+    unsigned int CKTkluMODE:1 ;              /* KLU MODE parameter to enable KLU or not from the heuristic */
+    #define CKTkluON 1                       /* KLU MODE ON definition */
+    #define CKTkluOFF 0                      /* KLU MODE OFF definition */
 #endif
 
 } SMPmatrix ;

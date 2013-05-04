@@ -71,6 +71,8 @@ SPICEdev INDinfo = {
     .DEVbindCSC = INDbindCSC,
     .DEVbindCSCComplex = INDbindCSCComplex,
     .DEVbindCSCComplexToReal = INDbindCSCComplexToReal,
+    .DEVisLinear = &INDisLinear,
+    .DEVisLinearStatic = &INDisLinearStatic,
 #endif
 };
 
@@ -139,6 +141,8 @@ SPICEdev MUTinfo = {
     .DEVbindCSC = MUTbindCSC,
     .DEVbindCSCComplex = MUTbindCSCComplex,
     .DEVbindCSCComplexToReal = MUTbindCSCComplexToReal,
+    .DEVisLinear = &MUTisLinear,
+    .DEVisLinearStatic = &MUTisLinearStatic,
 #endif
 };
 

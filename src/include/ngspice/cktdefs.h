@@ -306,7 +306,12 @@ struct CKTcircuit {
 };
 
 
-/* Now function prottypes */
+/* Now function prototypes */
+
+/* Francesco Lannutti */
+extern int CKTloadLinearStatic (CKTcircuit *) ;
+extern int CKTloadLinearDynamic (CKTcircuit *) ;
+extern int CKTloadAssemble (CKTcircuit *) ;
 
 extern int ACan(CKTcircuit *, int);
 extern int ACaskQuest(CKTcircuit *, JOB *, int , IFvalue *);

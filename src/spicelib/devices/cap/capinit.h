@@ -10,4 +10,9 @@ extern int CAPnSize;
 extern int CAPiSize;
 extern int CAPmSize;
 
+#ifdef KLU
+extern int CAPisLinear ;
+extern int CAPisLinearStatic ;
+#endif
+
 #endif

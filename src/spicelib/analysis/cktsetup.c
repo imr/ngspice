@@ -118,17 +118,21 @@ CKTsetup(CKTcircuit *ckt)
         SMPnnz (ckt->CKTmatrix) ;
         int nz = ckt->CKTmatrix->CKTklunz ;
 
-        ckt->CKTmatrix->CKTkluAp           = TMALLOC (int, n + 1) ;
-        ckt->CKTmatrix->CKTkluAi           = TMALLOC (int, nz) ;
-        ckt->CKTmatrix->CKTkluAx           = TMALLOC (double, nz) ;
+        ckt->CKTmatrix->CKTkluAp = TMALLOC (int, n + 1) ;
+        ckt->CKTmatrix->CKTkluAi = TMALLOC (int, nz) ;
+        ckt->CKTmatrix->CKTkluAx = TMALLOC (double, nz) ;
+        ckt->CKTmatrix->CKTkluAx_LinearStatic = TMALLOC (double, nz) ;
+        ckt->CKTmatrix->CKTkluAx_LinearDynamic = TMALLOC (double, nz) ;
         ckt->CKTmatrix->CKTkluIntermediate = TMALLOC (double, n) ;
 
-        ckt->CKTmatrix->CKTbindStruct      = TMALLOC (BindElement, nz) ;
+        ckt->CKTmatrix->CKTbindStruct = TMALLOC (BindElement, nz) ;
 
-        ckt->CKTmatrix->CKTdiag_CSC        = TMALLOC (double *, n) ;
+        ckt->CKTmatrix->CKTdiag_CSC = TMALLOC (double *, n) ;
 
         /* Complex Stuff needed for AC Analysis */
         ckt->CKTmatrix->CKTkluAx_Complex = TMALLOC (double, 2 * nz) ;
+        ckt->CKTmatrix->CKTkluAx_Complex_LinearStatic = TMALLOC (double, 2 * nz) ;
+        ckt->CKTmatrix->CKTkluAx_Complex_LinearDynamic = TMALLOC (double, 2 * nz) ;
         ckt->CKTmatrix->CKTkluIntermediate_Complex = TMALLOC (double, 2 * n) ;
 
         /* Binding Table from Sparse to CSC Format Creation */

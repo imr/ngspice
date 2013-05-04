@@ -27,6 +27,66 @@ Modified: 2000 AlansFixes
 
 static int ZeroNoncurRow(SMPmatrix *matrix, CKTnode *nodes, int rownum);
 
+/* Francesco Lannutti */
+#ifdef KLU
+int
+CKTloadLinearStatic (CKTcircuit *ckt)
+{
+    int error, i, size ;
+
+    size = SMPmatSize (ckt->CKTmatrix) ;
+    for (i = 0 ; i <= size ; i++)
+        ckt->CKTmatrix->CKTkluAx_LinearStatic [i] = 0 ;
+
+    for (i = 0; i < DEVmaxnum; i++)
+    {
+        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead [i] && (*DEVices[i]->DEVisLinear) && (*DEVices[i]->DEVisLinearStatic))
+        {
+            error = DEVices[i]->DEVload (ckt->CKThead [i], ckt) ;
+
+            if (error)
+                return (error) ;
+        }
+    }
+
+    return 0 ;
+}
+
+int
+CKTloadLinearDynamic (CKTcircuit *ckt)
+{
+    int error, i, size ;
+
+    size = SMPmatSize (ckt->CKTmatrix) ;
+    for (i = 0 ; i <= size ; i++)
+        ckt->CKTmatrix->CKTkluAx_LinearDynamic [i] = 0 ;
+
+    for (i = 0; i < DEVmaxnum; i++)
+    {
+        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead [i] && *DEVices[i]->DEVisLinear && !(*DEVices[i]->DEVisLinearStatic))
+        {
+            error = DEVices[i]->DEVload (ckt->CKThead [i], ckt) ;
+
+            if (error)
+                return (error) ;
+        }
+    }
+
+    return 0 ;
+}
+
+int
+CKTloadAssemble (CKTcircuit *ckt)
+{
+    int i ;
+
+    for (i = 0 ; i < ckt->CKTmatrix->CKTklunz ; i++)
+        ckt->CKTmatrix->CKTkluAx [i] += (ckt->CKTmatrix->CKTkluAx_LinearStatic [i] + ckt->CKTmatrix->CKTkluAx_LinearDynamic [i]) ;
+
+    return 0 ;
+}
+#endif
+
 int
 CKTload(CKTcircuit *ckt)
 {
@@ -60,7 +120,14 @@ CKTload(CKTcircuit *ckt)
 #endif /* STEPDEBUG */
 
     for (i = 0; i < DEVmaxnum; i++) {
+
+        /* Francesco Lannutti */
+#ifdef KLU
+        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i] && !(*DEVices[i]->DEVisLinear)) {
+#else
         if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i]) {
+#endif
+
             error = DEVices[i]->DEVload (ckt->CKThead[i], ckt);
             if (ckt->CKTnoncon)
                 ckt->CKTtroubleNode = 0;
