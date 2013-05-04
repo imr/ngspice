@@ -52,3 +52,8 @@ int     VSRCpTSize = NUMELEMS(VSRCpTable);
 int     VSRCmPTSize = 0;
 int     VSRCiSize = sizeof(VSRCinstance);
 int     VSRCmSize = sizeof(VSRCmodel);
+
+#ifdef KLU
+int VSRCisLinear = 0 ;
+int VSRCisLinearStatic = 0 ;
+#endif

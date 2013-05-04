@@ -43,7 +43,7 @@ RESbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 i = here->RESposPosptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->RESposPosptrStructPtr = matched ;
-                here->RESposPosptr = matched->CSC ;
+                here->RESposPosptr = matched->CSC_LinearStatic ;
             }
 
             if ((here-> RESnegNode != 0) && (here-> RESnegNode != 0))
@@ -51,7 +51,7 @@ RESbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 i = here->RESnegNegptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->RESnegNegptrStructPtr = matched ;
-                here->RESnegNegptr = matched->CSC ;
+                here->RESnegNegptr = matched->CSC_LinearStatic ;
             }
 
             if ((here-> RESposNode != 0) && (here-> RESnegNode != 0))
@@ -59,7 +59,7 @@ RESbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 i = here->RESposNegptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->RESposNegptrStructPtr = matched ;
-                here->RESposNegptr = matched->CSC ;
+                here->RESposNegptr = matched->CSC_LinearStatic ;
             }
 
             if ((here-> RESnegNode != 0) && (here-> RESposNode != 0))
@@ -67,7 +67,7 @@ RESbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 i = here->RESnegPosptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->RESnegPosptrStructPtr = matched ;
-                here->RESnegPosptr = matched->CSC ;
+                here->RESnegPosptr = matched->CSC_LinearStatic ;
             }
 
         }
@@ -91,16 +91,16 @@ RESbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->RESinstances ; here != NULL ; here = here->RESnextInstance)
         {
             if ((here-> RESposNode != 0) && (here-> RESposNode != 0))
-                here->RESposPosptr = here->RESposPosptrStructPtr->CSC_Complex ;
+                here->RESposPosptr = here->RESposPosptrStructPtr->CSC_Complex_LinearStatic ;
 
             if ((here-> RESnegNode != 0) && (here-> RESnegNode != 0))
-                here->RESnegNegptr = here->RESnegNegptrStructPtr->CSC_Complex ;
+                here->RESnegNegptr = here->RESnegNegptrStructPtr->CSC_Complex_LinearStatic ;
 
             if ((here-> RESposNode != 0) && (here-> RESnegNode != 0))
-                here->RESposNegptr = here->RESposNegptrStructPtr->CSC_Complex ;
+                here->RESposNegptr = here->RESposNegptrStructPtr->CSC_Complex_LinearStatic ;
 
             if ((here-> RESnegNode != 0) && (here-> RESposNode != 0))
-                here->RESnegPosptr = here->RESnegPosptrStructPtr->CSC_Complex ;
+                here->RESnegPosptr = here->RESnegPosptrStructPtr->CSC_Complex_LinearStatic ;
 
         }
     }
@@ -123,16 +123,16 @@ RESbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->RESinstances ; here != NULL ; here = here->RESnextInstance)
         {
             if ((here-> RESposNode != 0) && (here-> RESposNode != 0))
-                here->RESposPosptr = here->RESposPosptrStructPtr->CSC ;
+                here->RESposPosptr = here->RESposPosptrStructPtr->CSC_LinearStatic ;
 
             if ((here-> RESnegNode != 0) && (here-> RESnegNode != 0))
-                here->RESnegNegptr = here->RESnegNegptrStructPtr->CSC ;
+                here->RESnegNegptr = here->RESnegNegptrStructPtr->CSC_LinearStatic ;
 
             if ((here-> RESposNode != 0) && (here-> RESnegNode != 0))
-                here->RESposNegptr = here->RESposNegptrStructPtr->CSC ;
+                here->RESposNegptr = here->RESposNegptrStructPtr->CSC_LinearStatic ;
 
             if ((here-> RESnegNode != 0) && (here-> RESposNode != 0))
-                here->RESnegPosptr = here->RESnegPosptrStructPtr->CSC ;
+                here->RESnegPosptr = here->RESnegPosptrStructPtr->CSC_LinearStatic ;
 
         }
     }

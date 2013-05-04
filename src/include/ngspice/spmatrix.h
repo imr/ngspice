@@ -302,15 +302,19 @@ extern  void     spSolveTransposed(MatrixPtr,spREAL*,spREAL*,spREAL*,spREAL*);
 typedef struct sBindElement {
     double *Sparse ;
     double *CSC ;
+    double *CSC_LinearStatic ;
+    double *CSC_LinearDynamic ;
     double *CSC_Complex ;
+    double *CSC_Complex_LinearStatic ;
+    double *CSC_Complex_LinearDynamic ;
 } BindElement ;
 
-extern int WriteCol_original (MatrixPtr, int, spREAL *, spREAL *, int *, BindElement *, spREAL **) ;
+extern int WriteCol_original (MatrixPtr, int, spREAL *, spREAL *, spREAL *, spREAL *, spREAL *, spREAL *, int *, BindElement *, spREAL **) ;
 extern int WriteCol_original_dump (MatrixPtr, int, spREAL *, int *) ;
-extern void spMatrix_CSC (MatrixPtr, int *, int *, double *, double *, int, BindElement *, double **) ;
+extern void spMatrix_CSC (MatrixPtr, int *, int *, double *, double *, double *, double *, double *, double *, int, BindElement *, double **) ;
 extern void spMatrix_CSC_dump (MatrixPtr, char *) ;
 extern void spRHS_CSC_dump (spREAL *, char *, MatrixPtr) ;
 #endif
-/* ------------------------------------------------------ */
+/* -------------------------------------------------- */
 
 #endif  /* spOKAY */

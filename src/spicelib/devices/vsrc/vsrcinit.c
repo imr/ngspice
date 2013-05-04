@@ -77,6 +77,8 @@ SPICEdev VSRCinfo = {
  /* DEVbindCSC        */ VSRCbindCSC,
  /* DEVbindCSCComplex */ VSRCbindCSCComplex,
  /* DEVbindCSCComplexToReal */  VSRCbindCSCComplexToReal,
+ /* DEVisLinear */ &VSRCisLinear,
+ /* DEVisLinearStatic */ &VSRCisLinearStatic,
 #endif
 
 };

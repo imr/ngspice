@@ -37,8 +37,12 @@ typedef struct sSMPmatrix {
     klu_numeric *CKTkluNumeric ;          /* KLU numeric object */
     int *CKTkluAp ;                       /* KLU column pointer */
     int *CKTkluAi ;                       /* KLU row pointer */
-    double *CKTkluAx ;                    /* KLU Real Elements */
-    double *CKTkluAx_Complex ;            /* KLU Complex Elements */
+    double *CKTkluAx ;                    /* KLU Real Elements - Non-Linear */
+    double *CKTkluAx_LinearStatic ;       /* KLU Real Elements - Linear Static */
+    double *CKTkluAx_LinearDynamic ;      /* KLU Real Elements - Linear Dynamic */
+    double *CKTkluAx_Complex ;               /* KLU Complex Elements - Non-Linear */
+    double *CKTkluAx_Complex_LinearStatic ;  /* KLU Complex Elements - Linear Static */
+    double *CKTkluAx_Complex_LinearDynamic ; /* KLU Complex Elements - Linear Dynamic */
     int CKTkluMatrixIsComplex ;           /* KLU Matrix Is Complex Flag */
     #define CKTkluMatrixReal 0            /* KLU Matrix Real definition */
     #define CKTkluMatrixComplex 1         /* KLU Matrix Complex definition */
