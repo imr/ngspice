@@ -39,11 +39,11 @@ INDbindCSC (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = INDinstances(model); here != NULL ; here = INDnextInstance(here))
         {
-            CREATE_KLU_BINDING_TABLE(INDposIbrPtr, INDposIbrBinding, INDposNode, INDbrEq);
-            CREATE_KLU_BINDING_TABLE(INDnegIbrPtr, INDnegIbrBinding, INDnegNode, INDbrEq);
-            CREATE_KLU_BINDING_TABLE(INDibrNegPtr, INDibrNegBinding, INDbrEq, INDnegNode);
-            CREATE_KLU_BINDING_TABLE(INDibrPosPtr, INDibrPosBinding, INDbrEq, INDposNode);
-            CREATE_KLU_BINDING_TABLE(INDibrIbrPtr, INDibrIbrBinding, INDbrEq, INDbrEq);
+            CREATE_KLU_BINDING_TABLE_DYNAMIC(INDposIbrPtr, INDposIbrBinding, INDposNode, INDbrEq);
+            CREATE_KLU_BINDING_TABLE_DYNAMIC(INDnegIbrPtr, INDnegIbrBinding, INDnegNode, INDbrEq);
+            CREATE_KLU_BINDING_TABLE_DYNAMIC(INDibrNegPtr, INDibrNegBinding, INDbrEq, INDnegNode);
+            CREATE_KLU_BINDING_TABLE_DYNAMIC(INDibrPosPtr, INDibrPosBinding, INDbrEq, INDposNode);
+            CREATE_KLU_BINDING_TABLE_DYNAMIC(INDibrIbrPtr, INDibrIbrBinding, INDbrEq, INDbrEq);
         }
     }
 
@@ -64,11 +64,11 @@ INDbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = INDinstances(model); here != NULL ; here = INDnextInstance(here))
         {
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(INDposIbrPtr, INDposIbrBinding, INDposNode, INDbrEq);
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(INDnegIbrPtr, INDnegIbrBinding, INDnegNode, INDbrEq);
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(INDibrNegPtr, INDibrNegBinding, INDbrEq, INDnegNode);
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(INDibrPosPtr, INDibrPosBinding, INDbrEq, INDposNode);
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(INDibrIbrPtr, INDibrIbrBinding, INDbrEq, INDbrEq);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(INDposIbrPtr, INDposIbrBinding, INDposNode, INDbrEq);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(INDnegIbrPtr, INDnegIbrBinding, INDnegNode, INDbrEq);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(INDibrNegPtr, INDibrNegBinding, INDbrEq, INDnegNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(INDibrPosPtr, INDibrPosBinding, INDbrEq, INDposNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(INDibrIbrPtr, INDibrIbrBinding, INDbrEq, INDbrEq);
         }
     }
 
@@ -89,11 +89,11 @@ INDbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = INDinstances(model); here != NULL ; here = INDnextInstance(here))
         {
-            CONVERT_KLU_BINDING_TABLE_TO_REAL(INDposIbrPtr, INDposIbrBinding, INDposNode, INDbrEq);
-            CONVERT_KLU_BINDING_TABLE_TO_REAL(INDnegIbrPtr, INDnegIbrBinding, INDnegNode, INDbrEq);
-            CONVERT_KLU_BINDING_TABLE_TO_REAL(INDibrNegPtr, INDibrNegBinding, INDbrEq, INDnegNode);
-            CONVERT_KLU_BINDING_TABLE_TO_REAL(INDibrPosPtr, INDibrPosBinding, INDbrEq, INDposNode);
-            CONVERT_KLU_BINDING_TABLE_TO_REAL(INDibrIbrPtr, INDibrIbrBinding, INDbrEq, INDbrEq);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(INDposIbrPtr, INDposIbrBinding, INDposNode, INDbrEq);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(INDnegIbrPtr, INDnegIbrBinding, INDnegNode, INDbrEq);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(INDibrNegPtr, INDibrNegBinding, INDbrEq, INDnegNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(INDibrPosPtr, INDibrPosBinding, INDbrEq, INDposNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(INDibrIbrPtr, INDibrIbrBinding, INDbrEq, INDbrEq);
         }
     }
 

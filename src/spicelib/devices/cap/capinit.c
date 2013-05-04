@@ -71,6 +71,8 @@ SPICEdev CAPinfo = {
     .DEVbindCSC = CAPbindCSC,
     .DEVbindCSCComplex = CAPbindCSCComplex,
     .DEVbindCSCComplexToReal = CAPbindCSCComplexToReal,
+    .DEVisLinear = &CAPisLinear,
+    .DEVisLinearStatic = &CAPisLinearStatic,
 #endif
 };
 

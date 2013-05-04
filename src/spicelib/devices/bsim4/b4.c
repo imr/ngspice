@@ -1099,3 +1099,8 @@ int	BSIM4pTSize = NUMELEMS(BSIM4pTable);
 int	BSIM4mPTSize = NUMELEMS(BSIM4mPTable);
 int	BSIM4iSize = sizeof(BSIM4instance);
 int	BSIM4mSize = sizeof(BSIM4model);
+
+#ifdef KLU
+int BSIM4isLinear = 0 ;
+int BSIM4isLinearStatic = 0 ;
+#endif

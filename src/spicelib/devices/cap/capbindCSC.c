@@ -39,10 +39,10 @@ CAPbindCSC (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = CAPinstances(model); here != NULL ; here = CAPnextInstance(here))
         {
-            CREATE_KLU_BINDING_TABLE(CAPposPosPtr, CAPposPosBinding, CAPposNode, CAPposNode);
-            CREATE_KLU_BINDING_TABLE(CAPnegNegPtr, CAPnegNegBinding, CAPnegNode, CAPnegNode);
-            CREATE_KLU_BINDING_TABLE(CAPposNegPtr, CAPposNegBinding, CAPposNode, CAPnegNode);
-            CREATE_KLU_BINDING_TABLE(CAPnegPosPtr, CAPnegPosBinding, CAPnegNode, CAPposNode);
+            CREATE_KLU_BINDING_TABLE_DYNAMIC(CAPposPosPtr, CAPposPosBinding, CAPposNode, CAPposNode);
+            CREATE_KLU_BINDING_TABLE_DYNAMIC(CAPnegNegPtr, CAPnegNegBinding, CAPnegNode, CAPnegNode);
+            CREATE_KLU_BINDING_TABLE_DYNAMIC(CAPposNegPtr, CAPposNegBinding, CAPposNode, CAPnegNode);
+            CREATE_KLU_BINDING_TABLE_DYNAMIC(CAPnegPosPtr, CAPnegPosBinding, CAPnegNode, CAPposNode);
         }
     }
 
@@ -63,10 +63,10 @@ CAPbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = CAPinstances(model); here != NULL ; here = CAPnextInstance(here))
         {
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(CAPposPosPtr, CAPposPosBinding, CAPposNode, CAPposNode);
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(CAPnegNegPtr, CAPnegNegBinding, CAPnegNode, CAPnegNode);
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(CAPposNegPtr, CAPposNegBinding, CAPposNode, CAPnegNode);
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(CAPnegPosPtr, CAPnegPosBinding, CAPnegNode, CAPposNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(CAPposPosPtr, CAPposPosBinding, CAPposNode, CAPposNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(CAPnegNegPtr, CAPnegNegBinding, CAPnegNode, CAPnegNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(CAPposNegPtr, CAPposNegBinding, CAPposNode, CAPnegNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(CAPnegPosPtr, CAPnegPosBinding, CAPnegNode, CAPposNode);
         }
     }
 
@@ -87,10 +87,10 @@ CAPbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = CAPinstances(model); here != NULL ; here = CAPnextInstance(here))
         {
-            CONVERT_KLU_BINDING_TABLE_TO_REAL(CAPposPosPtr, CAPposPosBinding, CAPposNode, CAPposNode);
-            CONVERT_KLU_BINDING_TABLE_TO_REAL(CAPnegNegPtr, CAPnegNegBinding, CAPnegNode, CAPnegNode);
-            CONVERT_KLU_BINDING_TABLE_TO_REAL(CAPposNegPtr, CAPposNegBinding, CAPposNode, CAPnegNode);
-            CONVERT_KLU_BINDING_TABLE_TO_REAL(CAPnegPosPtr, CAPnegPosBinding, CAPnegNode, CAPposNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(CAPposPosPtr, CAPposPosBinding, CAPposNode, CAPposNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(CAPnegNegPtr, CAPnegNegBinding, CAPnegNode, CAPnegNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(CAPposNegPtr, CAPposNegBinding, CAPposNode, CAPnegNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(CAPnegPosPtr, CAPnegPosBinding, CAPnegNode, CAPposNode);
         }
     }
 

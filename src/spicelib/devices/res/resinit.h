@@ -10,4 +10,9 @@ extern int RESnSize;
 extern int RESiSize;
 extern int RESmSize;
 
+#ifdef KLU
+extern int RESisLinear ;
+extern int RESisLinearStatic ;
+#endif
+
 #endif

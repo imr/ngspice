@@ -121,6 +121,10 @@ typedef struct SPICEdev {
         /* routine to convert Real CSC array to Complex CSC array */
     int (*DEVbindCSCComplexToReal)(GENmodel *, CKTcircuit *);
         /* routine to convert Complex CSC array to Real CSC array */
+    int *DEVisLinear ;
+        /* flag to indicate if device is linear or non-linear */
+    int *DEVisLinearStatic ;
+        /* flag to indicate if device is linear static or linear dynamic */
 #endif
 
 } SPICEdev;  /* instance of structure for each possible type of device */

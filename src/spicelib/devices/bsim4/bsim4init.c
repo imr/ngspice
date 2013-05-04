@@ -71,6 +71,8 @@ SPICEdev BSIM4info = {
     .DEVbindCSC = BSIM4bindCSC,
     .DEVbindCSCComplex = BSIM4bindCSCComplex,
     .DEVbindCSCComplexToReal = BSIM4bindCSCComplexToReal,
+    .DEVisLinear = &BSIM4isLinear,
+    .DEVisLinearStatic = &BSIM4isLinearStatic,
 #endif
 };
 

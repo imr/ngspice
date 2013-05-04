@@ -39,8 +39,8 @@ MUTbindCSC (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = MUTinstances(model); here != NULL ; here = MUTnextInstance(here))
         {
-            CREATE_KLU_BINDING_TABLE(MUTbr1br2Ptr, MUTbr1br2Binding, MUTind1->INDbrEq, MUTind2->INDbrEq);
-            CREATE_KLU_BINDING_TABLE(MUTbr2br1Ptr, MUTbr2br1Binding, MUTind2->INDbrEq, MUTind1->INDbrEq);
+            CREATE_KLU_BINDING_TABLE_DYNAMIC(MUTbr1br2Ptr, MUTbr1br2Binding, MUTind1->INDbrEq, MUTind2->INDbrEq);
+            CREATE_KLU_BINDING_TABLE_DYNAMIC(MUTbr2br1Ptr, MUTbr2br1Binding, MUTind2->INDbrEq, MUTind1->INDbrEq);
         }
     }
 
@@ -61,8 +61,8 @@ MUTbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = MUTinstances(model); here != NULL ; here = MUTnextInstance(here))
         {
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(MUTbr1br2Ptr, MUTbr1br2Binding, MUTind1->INDbrEq, MUTind2->INDbrEq);
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(MUTbr2br1Ptr, MUTbr2br1Binding, MUTind2->INDbrEq, MUTind1->INDbrEq);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(MUTbr1br2Ptr, MUTbr1br2Binding, MUTind1->INDbrEq, MUTind2->INDbrEq);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(MUTbr2br1Ptr, MUTbr2br1Binding, MUTind2->INDbrEq, MUTind1->INDbrEq);
         }
     }
 
@@ -83,8 +83,8 @@ MUTbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = MUTinstances(model); here != NULL ; here = MUTnextInstance(here))
         {
-            CONVERT_KLU_BINDING_TABLE_TO_REAL(MUTbr1br2Ptr, MUTbr1br2Binding, MUTind1->INDbrEq, MUTind2->INDbrEq);
-            CONVERT_KLU_BINDING_TABLE_TO_REAL(MUTbr2br1Ptr, MUTbr2br1Binding, MUTind2->INDbrEq, MUTind1->INDbrEq);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(MUTbr1br2Ptr, MUTbr1br2Binding, MUTind1->INDbrEq, MUTind2->INDbrEq);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(MUTbr2br1Ptr, MUTbr2br1Binding, MUTind2->INDbrEq, MUTind1->INDbrEq);
         }
     }
 

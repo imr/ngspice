@@ -63,6 +63,12 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
     /* OldCKTstate0 = TMALLOC(double, ckt->CKTnumStates + 1); */
 
+#ifdef KLU
+    /* Francesco Lannutti */
+    /* Loading the Linear Dynamic Part */
+    error = CKTloadLinearDynamic (ckt) ;
+#endif
+
     for (;;) {
 
         ckt->CKTnoncon = 0;
@@ -71,7 +77,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
         if (!(ckt->CKTmode & MODEINITPRED))
 #endif
         {
-
+            /* Loading the Non-Linear Part */
             error = CKTload(ckt);
             /* printf("loaded, noncon is %d\n", ckt->CKTnoncon); */
             /* fflush(stdout); */
@@ -84,6 +90,12 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 FREE(OldCKTstate0);
                 return (error);
             }
+
+#ifdef KLU
+            /* Francesco Lannutti */
+            /* Assembling the Linear and Non-Linear Part */
+            error = CKTloadAssemble (ckt) ;
+#endif
 
             /* printf("after loading, before solving\n"); */
             /* CKTdump(ckt); */

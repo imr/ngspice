@@ -63,6 +63,11 @@ int	INDmPTSize = NUMELEMS(INDmPTable);
 int	INDiSize = sizeof(INDinstance);
 int	INDmSize = sizeof(INDmodel);
 
+#ifdef KLU
+int INDisLinear = 1 ;
+int INDisLinearStatic = 0 ;
+#endif
+
 #ifdef MUTUAL
 
 IFparm MUTpTable[] = { /* parameters */
@@ -86,5 +91,10 @@ int	MUTpTSize = NUMELEMS(MUTpTable);
 int	MUTmPTSize = 0;
 int	MUTiSize = sizeof(INDinstance);
 int	MUTmSize = sizeof(INDmodel);
+
+#ifdef KLU
+int MUTisLinear = 1 ;
+int MUTisLinearStatic = 0 ;
+#endif
 
 #endif /*MUTUAL*/

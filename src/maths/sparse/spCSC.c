@@ -1,18 +1,18 @@
-/* Sparse Matrix to CSC Matrix Conversion Routines
- * Including Dump Routines
+/** Sparse Matrix to CSC Matrix Conversion Routines
+ *  Including Dump Routines
  *
- * Author: Francesco Lannutti 2011-2012
+ *  Author: Francesco Lannutti 2011-2012
  *
- * Instructions:
- * spMatrix_CSC_dump and spRHS_CSC_dump are the dump routines;
- * insert them in a point in your code after that the Sparse Matrix
- * is filled in to dump the whole matrix in the CSC format.
- * To solve correctly the resulting CSC linear system, it's crucial
- * to perform another inversion of the Solution Vector following this code:
+ *  Instructions:
+ *  spMatrix_CSC_dump and spRHS_CSC_dump are the dump routines;
+ *  insert them in a point in your code after that the Sparse Matrix
+ *  is filled in to dump the whole matrix in the CSC format.
+ *  To solve correctly the resulting CSC linear system, it's crucial
+ *  to perform another inversion of the Solution Vector following this code:
  *
- * pExtOrder = IntToExtColMap [n] ;
- * for (i = n - 1 ; i >= 0 ; i--)
- *     RHS [*(pExtOrder--)] = Intermediate [i] ;
+ *  pExtOrder = IntToExtColMap [n] ;
+ *  for (i = n - 1 ; i >= 0 ; i--)
+ *      RHS [*(pExtOrder--)] = Intermediate [i] ;
  */
 
 /* Includes */
@@ -21,7 +21,9 @@
 
 /* Body */
 int
-WriteCol_original (MatrixPtr Matrix, int Col, spREAL *CSC_Element, spREAL *CSC_Element_Complex, int *CSC_Row, BindElement *BindSparseCSC, spREAL **diag)
+WriteCol_original (MatrixPtr Matrix, int Col, spREAL *CSC_Element, spREAL *CSC_LinearStatic_Element, spREAL *CSC_LinearDynamic_Element,
+                   spREAL *CSC_Complex_Element, spREAL *CSC_Complex_LinearStatic_Element, spREAL *CSC_Complex_LinearDynamic_Element,
+                   int *CSC_Row, BindElement *BindSparseCSC, spREAL **diag)
 {
     int i ;
     ElementPtr current ;
@@ -32,7 +34,11 @@ WriteCol_original (MatrixPtr Matrix, int Col, spREAL *CSC_Element, spREAL *CSC_E
     while (current != NULL) {
         BindSparseCSC [i].Sparse = (double *)current ;
         BindSparseCSC [i].CSC = &(CSC_Element [i]) ;
-        BindSparseCSC [i].CSC_Complex = &(CSC_Element_Complex [2 * i]) ;
+        BindSparseCSC [i].CSC_LinearStatic = &(CSC_LinearStatic_Element [i]) ;
+        BindSparseCSC [i].CSC_LinearDynamic = &(CSC_LinearDynamic_Element [i]) ;
+        BindSparseCSC [i].CSC_Complex = &(CSC_Complex_Element [2 * i]) ;
+        BindSparseCSC [i].CSC_Complex_LinearStatic = &(CSC_Complex_LinearStatic_Element [2 * i]) ;
+        BindSparseCSC [i].CSC_Complex_LinearDynamic = &(CSC_Complex_LinearDynamic_Element [2 * i]) ;
         CSC_Row [i] = (current->Row) - 1 ;
         if (CSC_Row [i] == Col - 1)
             diag [0] = &(CSC_Element [i]) ;
@@ -69,17 +75,22 @@ WriteCol_original_dump (MatrixPtr Matrix, int Col, spREAL *CSC_Element, int *CSC
 }
 
 void
-spMatrix_CSC (MatrixPtr Matrix, int *Ap, int *Ai, double *Ax, double *Ax_Complex, int n, BindElement *BindSparseCSC, double **diag)
+spMatrix_CSC (MatrixPtr Matrix, int *Ap, int *Ai, double *Ax, double *Ax_LinearStatic, double *Ax_LinearDynamic,
+              double *Ax_Complex, double *Ax_Complex_LinearStatic, double *Ax_Complex_LinearDynamic, int n,
+              BindElement *BindSparseCSC, double **diag)
 {
     int offset, i ;
 
     offset = 0 ;
-    Ap[0] = offset ;
+    Ap [0] = offset ;
     for (i = 1 ; i <= n ; i++) {
-        offset += WriteCol_original (Matrix, i, (spREAL *)(Ax + offset), (spREAL *)(Ax_Complex + 2 * offset),
+        offset += WriteCol_original (Matrix, i, (spREAL *)(Ax + offset), (spREAL *)(Ax_LinearStatic + offset),
+                                     (spREAL *)(Ax_LinearDynamic + offset), (spREAL *)(Ax_Complex + 2 * offset),
+                                     (spREAL *)(Ax_Complex_LinearStatic + 2 * offset),
+                                     (spREAL *)(Ax_Complex_LinearDynamic + 2 * offset),
                                      (int *)(Ai + offset), BindSparseCSC + offset, (spREAL **)(diag + (i - 1))) ;
 
-        Ap[i] = offset ;
+        Ap [i] = offset ;
     }
 }
 
