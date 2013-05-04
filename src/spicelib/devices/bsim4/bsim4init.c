@@ -77,6 +77,8 @@ SPICEdev BSIM4info = {
     BSIM4bindCSC, /* DEVbindCSC */
     BSIM4bindCSCComplex, /* DEVbindCSCComplex */
     BSIM4bindCSCComplexToReal, /* DEVbindCSCComplexToReal */
+    &BSIM4isLinear, /* DEVisLinear */
+    &BSIM4isLinearStatic, /* DEVisLinearStatic */
 #endif
 
 };

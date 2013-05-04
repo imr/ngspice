@@ -36,8 +36,24 @@ ckt->CKTmode = firstmode;
 	ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
 /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
+
+#ifdef KLU
+        /* Francesco Lannutti */
+        /* Loading the Linear Static Part */
+        int error ;
+        error = CKTloadLinearStatic (ckt) ;
+#endif
+
       converged = NIiter (ckt, iterlim);
     } else {
+
+#ifdef KLU
+        /* Francesco Lannutti */
+        /* Loading the Linear Static Part */
+        int error ;
+        error = CKTloadLinearStatic (ckt) ;
+#endif
+
       converged = 1;		/* the 'go directly to gmin stepping' option */
 	}
 

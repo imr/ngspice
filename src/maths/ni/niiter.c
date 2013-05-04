@@ -75,6 +75,12 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
     /*    OldCKTstate0=TMALLOC(double, ckt->CKTnumStates + 1); */
 
+#ifdef KLU
+    /* Francesco Lannutti */
+    /* Loading the Linear Dynamic Part */
+    error = CKTloadLinearDynamic (ckt) ;
+#endif
+
     for(;;) {
         ckt->CKTnoncon=0;
 #ifdef NEWPRED
@@ -87,6 +93,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
 //            error = 0 ;
 //            if (!SMPreorderFromSMPluFac)
 //            {
+            /* Loading the Non-Linear Part */
                 error = CKTload (ckt) ;
                 iterno++ ;
 //            }
@@ -101,6 +108,13 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 FREE(OldCKTstate0);
                 return(error);
             }
+
+#ifdef KLU
+            /* Francesco Lannutti */
+            /* Assembling the Linear and Non-Linear Part */
+            error = CKTloadAssemble (ckt) ;
+#endif
+
             /*printf("after loading, before solving\n");*/
             /*CKTdump(ckt);*/
 

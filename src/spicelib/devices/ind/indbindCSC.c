@@ -43,7 +43,7 @@ INDbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 i = here->INDposIbrptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->INDposIbrptrStructPtr = matched ;
-                here->INDposIbrptr = matched->CSC ;
+                here->INDposIbrptr = matched->CSC_LinearDynamic ;
             }
 
             if ((here->INDnegNode != 0) && (here->INDbrEq != 0))
@@ -51,7 +51,7 @@ INDbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 i = here->INDnegIbrptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->INDnegIbrptrStructPtr = matched ;
-                here->INDnegIbrptr = matched->CSC ;
+                here->INDnegIbrptr = matched->CSC_LinearDynamic ;
             }
 
             if ((here->INDbrEq != 0) && (here->INDnegNode != 0))
@@ -59,7 +59,7 @@ INDbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 i = here->INDibrNegptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->INDibrNegptrStructPtr = matched ;
-                here->INDibrNegptr = matched->CSC ;
+                here->INDibrNegptr = matched->CSC_LinearDynamic ;
             }
 
             if ((here->INDbrEq != 0) && (here->INDposNode != 0))
@@ -67,7 +67,7 @@ INDbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 i = here->INDibrPosptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->INDibrPosptrStructPtr = matched ;
-                here->INDibrPosptr = matched->CSC ;
+                here->INDibrPosptr = matched->CSC_LinearDynamic ;
             }
 
             if ((here->INDbrEq != 0) && (here->INDbrEq != 0))
@@ -75,7 +75,7 @@ INDbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 i = here->INDibrIbrptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->INDibrIbrptrStructPtr = matched ;
-                here->INDibrIbrptr = matched->CSC ;
+                here->INDibrIbrptr = matched->CSC_LinearDynamic ;
             }
 
         }
@@ -99,19 +99,19 @@ INDbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->INDinstances ; here != NULL ; here = here->INDnextInstance)
         {
             if ((here->INDposNode != 0) && (here->INDbrEq != 0))
-                here->INDposIbrptr = here->INDposIbrptrStructPtr->CSC_Complex ;
+                here->INDposIbrptr = here->INDposIbrptrStructPtr->CSC_Complex_LinearDynamic ;
 
             if ((here->INDnegNode != 0) && (here->INDbrEq != 0))
-                here->INDnegIbrptr = here->INDnegIbrptrStructPtr->CSC_Complex ;
+                here->INDnegIbrptr = here->INDnegIbrptrStructPtr->CSC_Complex_LinearDynamic ;
 
             if ((here->INDbrEq != 0) && (here->INDnegNode != 0))
-                here->INDibrNegptr = here->INDibrNegptrStructPtr->CSC_Complex ;
+                here->INDibrNegptr = here->INDibrNegptrStructPtr->CSC_Complex_LinearDynamic ;
 
             if ((here->INDbrEq != 0) && (here->INDposNode != 0))
-                here->INDibrPosptr = here->INDibrPosptrStructPtr->CSC_Complex ;
+                here->INDibrPosptr = here->INDibrPosptrStructPtr->CSC_Complex_LinearDynamic ;
 
             if ((here->INDbrEq != 0) && (here->INDbrEq != 0))
-                here->INDibrIbrptr = here->INDibrIbrptrStructPtr->CSC_Complex ;
+                here->INDibrIbrptr = here->INDibrIbrptrStructPtr->CSC_Complex_LinearDynamic ;
 
         }
     }
@@ -134,19 +134,19 @@ INDbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->INDinstances ; here != NULL ; here = here->INDnextInstance)
         {
             if ((here->INDposNode != 0) && (here->INDbrEq != 0))
-                here->INDposIbrptr = here->INDposIbrptrStructPtr->CSC ;
+                here->INDposIbrptr = here->INDposIbrptrStructPtr->CSC_LinearDynamic ;
 
             if ((here->INDnegNode != 0) && (here->INDbrEq != 0))
-                here->INDnegIbrptr = here->INDnegIbrptrStructPtr->CSC ;
+                here->INDnegIbrptr = here->INDnegIbrptrStructPtr->CSC_LinearDynamic ;
 
             if ((here->INDbrEq != 0) && (here->INDnegNode != 0))
-                here->INDibrNegptr = here->INDibrNegptrStructPtr->CSC ;
+                here->INDibrNegptr = here->INDibrNegptrStructPtr->CSC_LinearDynamic ;
 
             if ((here->INDbrEq != 0) && (here->INDposNode != 0))
-                here->INDibrPosptr = here->INDibrPosptrStructPtr->CSC ;
+                here->INDibrPosptr = here->INDibrPosptrStructPtr->CSC_LinearDynamic ;
 
             if ((here->INDbrEq != 0) && (here->INDbrEq != 0))
-                here->INDibrIbrptr = here->INDibrIbrptrStructPtr->CSC ;
+                here->INDibrIbrptr = here->INDibrIbrptrStructPtr->CSC_LinearDynamic ;
 
         }
     }

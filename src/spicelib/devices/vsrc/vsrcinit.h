@@ -8,4 +8,9 @@ extern int VSRCnSize;
 extern int VSRCiSize;
 extern int VSRCmSize;
 
+#ifdef KLU
+extern int VSRCisLinear ;
+extern int VSRCisLinearStatic ;
+#endif
+
 #endif

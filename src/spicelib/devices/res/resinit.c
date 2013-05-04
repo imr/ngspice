@@ -77,6 +77,8 @@ SPICEdev RESinfo = {
  /* DEVbindCSC        */   RESbindCSC,
  /* DEVbindCSCComplex */   RESbindCSCComplex,
  /* DEVbindCSCComplexToReal */  RESbindCSCComplexToReal,
+ /* DEVisLinear */ &RESisLinear,
+ /* DEVisLinearStatic */ &RESisLinearStatic,
 #endif
 
 };

@@ -43,7 +43,7 @@ CAPbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 i = here->CAPposPosptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->CAPposPosptrStructPtr = matched ;
-                here->CAPposPosptr = matched->CSC ;
+                here->CAPposPosptr = matched->CSC_LinearDynamic ;
             }
 
             if ((here->CAPnegNode != 0) && (here->CAPnegNode != 0))
@@ -51,7 +51,7 @@ CAPbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 i = here->CAPnegNegptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->CAPnegNegptrStructPtr = matched ;
-                here->CAPnegNegptr = matched->CSC ;
+                here->CAPnegNegptr = matched->CSC_LinearDynamic ;
             }
 
             if ((here->CAPposNode != 0) && (here->CAPnegNode != 0))
@@ -59,7 +59,7 @@ CAPbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 i = here->CAPposNegptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->CAPposNegptrStructPtr = matched ;
-                here->CAPposNegptr = matched->CSC ;
+                here->CAPposNegptr = matched->CSC_LinearDynamic ;
             }
 
             if ((here->CAPnegNode != 0) && (here->CAPposNode != 0))
@@ -67,7 +67,7 @@ CAPbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 i = here->CAPnegPosptr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->CAPnegPosptrStructPtr = matched ;
-                here->CAPnegPosptr = matched->CSC ;
+                here->CAPnegPosptr = matched->CSC_LinearDynamic ;
             }
 
         }
@@ -91,16 +91,16 @@ CAPbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->CAPinstances ; here != NULL ; here = here->CAPnextInstance)
         {
             if ((here->CAPposNode != 0) && (here->CAPposNode != 0))
-                here->CAPposPosptr = here->CAPposPosptrStructPtr->CSC_Complex ;
+                here->CAPposPosptr = here->CAPposPosptrStructPtr->CSC_Complex_LinearDynamic ;
 
             if ((here->CAPnegNode != 0) && (here->CAPnegNode != 0))
-                here->CAPnegNegptr = here->CAPnegNegptrStructPtr->CSC_Complex ;
+                here->CAPnegNegptr = here->CAPnegNegptrStructPtr->CSC_Complex_LinearDynamic ;
 
             if ((here->CAPposNode != 0) && (here->CAPnegNode != 0))
-                here->CAPposNegptr = here->CAPposNegptrStructPtr->CSC_Complex ;
+                here->CAPposNegptr = here->CAPposNegptrStructPtr->CSC_Complex_LinearDynamic ;
 
             if ((here->CAPnegNode != 0) && (here->CAPposNode != 0))
-                here->CAPnegPosptr = here->CAPnegPosptrStructPtr->CSC_Complex ;
+                here->CAPnegPosptr = here->CAPnegPosptrStructPtr->CSC_Complex_LinearDynamic ;
 
         }
     }
@@ -123,16 +123,16 @@ CAPbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->CAPinstances ; here != NULL ; here = here->CAPnextInstance)
         {
             if ((here->CAPposNode != 0) && (here->CAPposNode != 0))
-                here->CAPposPosptr = here->CAPposPosptrStructPtr->CSC ;
+                here->CAPposPosptr = here->CAPposPosptrStructPtr->CSC_LinearDynamic ;
 
             if ((here->CAPnegNode != 0) && (here->CAPnegNode != 0))
-                here->CAPnegNegptr = here->CAPnegNegptrStructPtr->CSC ;
+                here->CAPnegNegptr = here->CAPnegNegptrStructPtr->CSC_LinearDynamic ;
 
             if ((here->CAPposNode != 0) && (here->CAPnegNode != 0))
-                here->CAPposNegptr = here->CAPposNegptrStructPtr->CSC ;
+                here->CAPposNegptr = here->CAPposNegptrStructPtr->CSC_LinearDynamic ;
 
             if ((here->CAPnegNode != 0) && (here->CAPposNode != 0))
-                here->CAPnegPosptr = here->CAPnegPosptrStructPtr->CSC ;
+                here->CAPnegPosptr = here->CAPnegPosptrStructPtr->CSC_LinearDynamic ;
 
         }
     }

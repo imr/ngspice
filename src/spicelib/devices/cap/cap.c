@@ -67,3 +67,8 @@ int	CAPpTSize = NUMELEMS(CAPpTable);
 int	CAPmPTSize = NUMELEMS(CAPmPTable);
 int	CAPiSize = sizeof(CAPinstance);
 int	CAPmSize = sizeof(CAPmodel);
+
+#ifdef KLU
+int CAPisLinear = 1 ;
+int CAPisLinearStatic = 0 ;
+#endif

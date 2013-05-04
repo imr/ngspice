@@ -16,4 +16,11 @@ extern int MUTpTSize;
 extern int MUTiSize;
 extern int MUTmSize;
 
+#ifdef KLU
+extern int INDisLinear ;
+extern int INDisLinearStatic ;
+extern int MUTisLinear ;
+extern int MUTisLinearStatic ;
+#endif
+
 #endif

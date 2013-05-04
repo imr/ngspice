@@ -10,4 +10,9 @@ extern int BSIM4nSize;
 extern int BSIM4iSize;
 extern int BSIM4mSize;
 
+#ifdef KLU
+extern int BSIM4isLinear ;
+extern int BSIM4isLinearStatic ;
+#endif
+
 #endif
