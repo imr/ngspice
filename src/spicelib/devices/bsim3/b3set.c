@@ -906,7 +906,7 @@ BSIM3instance **InstArray;
                 here->BSIM3m = 1;
 
             /* process drain series resistance */
-            if ((model->BSIM3sheetResistance > 0.0) && 
+            if ((model->BSIM3sheetResistance > 0.0) &&
                 (here->BSIM3drainSquares > 0.0 ))
             {
               if(here->BSIM3dNodePrime == 0) {
@@ -928,7 +928,7 @@ BSIM3instance **InstArray;
             }
 
             /* process source series resistance */
-            if ((model->BSIM3sheetResistance > 0.0) && 
+            if ((model->BSIM3sheetResistance > 0.0) &&
                 (here->BSIM3sourceSquares > 0.0 ))
             {
               if(here->BSIM3sNodePrime == 0) {
