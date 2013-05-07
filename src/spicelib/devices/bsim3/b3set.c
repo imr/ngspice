@@ -875,6 +875,10 @@ BSIM3instance **InstArray;
                 here->BSIM3drainPerimeter = 0.0;
             if (!here->BSIM3drainSquaresGiven)
                 here->BSIM3drainSquares = 1.0;
+            if (!here->BSIM3delvtoGiven)
+                here->BSIM3delvto = 0.0;
+            if (!here->BSIM3mulu0Given)
+                here->BSIM3mulu0 = 1.0;
             if (!here->BSIM3icVBSGiven)
                 here->BSIM3icVBS = 0.0;
             if (!here->BSIM3icVDSGiven)

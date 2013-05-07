@@ -65,6 +65,12 @@ BSIM3instance *here = (BSIM3instance*)inst;
         case BSIM3_ACNQSMOD:
             value->iValue = here->BSIM3acnqsMod;
             return(OK);
+        case BSIM3_DELVTO:
+            value->rValue = here->BSIM3delvto;
+            return(OK);
+        case BSIM3_MULU0:
+            value->rValue = here->BSIM3mulu0;
+            return(OK);
         case BSIM3_IC_VBS:
             value->rValue = here->BSIM3icVBS;
             return(OK);

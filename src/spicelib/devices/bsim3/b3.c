@@ -26,7 +26,9 @@ IOP( "nrs", BSIM3_NRS,    IF_REAL   , "Number of squares in source"),
 IOP( "off", BSIM3_OFF,    IF_FLAG   , "Device is initially off"),
 IOP( "nqsmod", BSIM3_NQSMOD, IF_INTEGER, "Non-quasi-static model selector"),
 IOP( "acnqsmod", BSIM3_ACNQSMOD, IF_INTEGER, "AC NQS model selector"),
-IP( "ic",   BSIM3_IC,     IF_REALVEC , "Vector of DS,GS,BS initial voltages"),
+IOP( "delvto", BSIM3_DELVTO, IF_REAL, "Zero bias threshold voltage variation"),
+IOP( "mulu0", BSIM3_MULU0, IF_REAL, "Low field mobility multiplier"),
+IP( "ic",  BSIM3_IC,     IF_REALVEC , "Vector of DS,GS,BS initial voltages"),
 OP( "gmbs",  BSIM3_GMBS,  IF_REAL,    "Gmb"),
 OP( "gm",    BSIM3_GM,    IF_REAL,    "Gm"),
 OP( "gds",   BSIM3_GDS,   IF_REAL,    "Gds"),
@@ -498,4 +500,6 @@ int        BSIM3pTSize = NUMELEMS(BSIM3pTable);
 int        BSIM3mPTSize = NUMELEMS(BSIM3mPTable);
 int        BSIM3iSize = sizeof(BSIM3instance);
 int        BSIM3mSize = sizeof(BSIM3model);
+
+
 

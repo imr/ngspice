@@ -795,6 +795,16 @@ int Size_Not_Found;
                   /* End of vfbzb */
               }
 
+              /* adding delvto  */
+              here->BSIM3vth0 = pParam->BSIM3vth0 + here->BSIM3delvto;
+              here->BSIM3vfb = pParam->BSIM3vfb + model->BSIM3type * here->BSIM3delvto;
+              here->BSIM3vfbzb = pParam->BSIM3vfbzb + model->BSIM3type * here->BSIM3delvto;
+
+              /* low field mobility multiplier */
+              here->BSIM3u0temp = pParam->BSIM3u0temp * here->BSIM3mulu0;
+              here->BSIM3tconst = here->BSIM3u0temp * pParam->BSIM3elm / (model->BSIM3cox
+                                    * pParam->BSIM3weffCV * pParam->BSIM3leffCV * T0);
+
               /* process source/drain series resistance */
               here->BSIM3drainConductance = model->BSIM3sheetResistance
                                               * here->BSIM3drainSquares;

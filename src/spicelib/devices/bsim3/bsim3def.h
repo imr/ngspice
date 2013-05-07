@@ -53,6 +53,13 @@ typedef struct sBSIM3instance
     double BSIM3sourcePerimeter;
     double BSIM3sourceConductance;
     double BSIM3drainConductance;
+    double BSIM3delvto;
+    double BSIM3mulu0;
+    double BSIM3vth0;
+    double BSIM3vfb;
+    double BSIM3vfbzb;
+    double BSIM3u0temp;
+    double BSIM3tconst;
 
     double BSIM3icVBS;
     double BSIM3icVDS;
@@ -122,6 +129,8 @@ typedef struct sBSIM3instance
     unsigned BSIM3sourceSquaresGiven :1;
     unsigned BSIM3drainPerimeterGiven    :1;
     unsigned BSIM3sourcePerimeterGiven   :1;
+    unsigned BSIM3delvtoGiven   :1;
+    unsigned BSIM3mulu0Given   :1;
     unsigned BSIM3dNodePrimeSet  :1;
     unsigned BSIM3sNodePrimeSet  :1;
     unsigned BSIM3icVBSGiven :1;
@@ -1278,7 +1287,6 @@ typedef struct sBSIM3model
 /* device parameters */
 #define BSIM3_W 1
 #define BSIM3_L 2
-#define BSIM3_M 16
 #define BSIM3_AS 3
 #define BSIM3_AD 4
 #define BSIM3_PS 5
@@ -1292,6 +1300,9 @@ typedef struct sBSIM3model
 #define BSIM3_IC 13
 #define BSIM3_NQSMOD 14
 #define BSIM3_ACNQSMOD 15
+#define BSIM3_M 16
+#define BSIM3_DELVTO 17
+#define BSIM3_MULU0 18
 
 /* model parameters */
 #define BSIM3_MOD_CAPMOD          101

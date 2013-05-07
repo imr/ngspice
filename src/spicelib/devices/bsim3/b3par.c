@@ -91,6 +91,14 @@ IFvalue *select)
             here->BSIM3acnqsMod = value->iValue;
             here->BSIM3acnqsModGiven = TRUE;
             break;
+        case BSIM3_DELVTO:
+            here->BSIM3delvto = value->rValue;
+            here->BSIM3delvtoGiven = TRUE;
+            break;
+        case BSIM3_MULU0:
+            here->BSIM3mulu0 = value->rValue;
+            here->BSIM3mulu0Given = TRUE;
+            break;
         case BSIM3_IC:
             switch(value->v.numValue){
                 case 3:
