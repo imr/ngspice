@@ -28,22 +28,10 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
                 here=here->RESnextInstance) {
-            
-/*
- * Paolo Nenzi 2003
- *  The following lines are needed if I will move the defaulting code
- *  from REStemp to RESsetup, as in other (more recent ?) spice devices
- *
- * ------------------------------------------LEGACY CODE - Francesco Lannutti - October 22, 2012
- * if (here->RESowner != ARCHme)
- *		goto matrixpointers;
- *
- * matrixpointers:
- * ------------------------------------------
- *
- * put here instance parameter defaulting.
- */
-	    
+
+            if(!here->RESmGiven)
+                here->RESm = 1.0;
+
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
