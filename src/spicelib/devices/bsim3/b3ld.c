@@ -212,7 +212,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
                   ((ckt->CKTmode & (MODETRAN | MODEAC|MODEDCOP |
                    MODEDCTRANCURVE)) || (!(ckt->CKTmode & MODEUIC))))
               {   vbs = 0.0;
-                  vgs = model->BSIM3type * pParam->BSIM3vth0 + 0.1;
+                  vgs = model->BSIM3type * here->BSIM3vth0 + 0.1;
                   vds = 0.1;
               }
           }
@@ -579,7 +579,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
           dDIBL_Sft_dVd = T3 * pParam->BSIM3theta0vb0;
           DIBL_Sft = dDIBL_Sft_dVd * Vds;
 
-          Vth = model->BSIM3type * pParam->BSIM3vth0 - pParam->BSIM3k1
+          Vth = model->BSIM3type * here->BSIM3vth0 - pParam->BSIM3k1
               * pParam->BSIM3sqrtPhi + pParam->BSIM3k1ox * sqrtPhis
               - pParam->BSIM3k2ox * Vbseff - Delt_vth - T2 + (pParam->BSIM3k3
               + pParam->BSIM3k3b * Vbseff) * tmp2 + T1 - DIBL_Sft;
@@ -614,7 +614,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
           }
 
 /* Poly Gate Si Depletion Effect */
-          T0 = pParam->BSIM3vfb + pParam->BSIM3phi;
+          T0 = here->BSIM3vfb + pParam->BSIM3phi;
           if ((pParam->BSIM3ngate > 1.e18) && (pParam->BSIM3ngate < 1.e25)
                && (Vgs > T0))
           /* added to avoid the problem caused by ngate */
@@ -816,7 +816,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
               dDenomi_dVb *= T9;
           }
 
-          here->BSIM3ueff = ueff = pParam->BSIM3u0temp / Denomi;
+          here->BSIM3ueff = ueff = here->BSIM3u0temp / Denomi;
           T9 = -ueff / Denomi;
           dueff_dVg = T9 * dDenomi_dVg;
           dueff_dVd = T9 * dDenomi_dVd;
@@ -1599,7 +1599,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
               } /* End of VgsteffCV */
 
               if (model->BSIM3capMod == 1)
-              {   Vfb = pParam->BSIM3vfbzb;
+              {   Vfb = here->BSIM3vfbzb;
                   Arg1 = Vgs_eff - VbseffCV - Vfb - Vgsteff;
 
                   if (Arg1 <= 0.0)
@@ -1761,7 +1761,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
               }
 
               else if (model->BSIM3capMod == 2)
-              {   Vfb = pParam->BSIM3vfbzb;
+              {   Vfb = here->BSIM3vfbzb;
                   V3 = Vfb - Vgs_eff + VbseffCV - DELTA_3;
                   if (Vfb <= 0.0)
                   {   T0 = sqrt(V3 * V3 - 4.0 * DELTA_3 * Vfb);
@@ -1925,24 +1925,24 @@ for (; model != NULL; model = model->BSIM3nextModel)
 
               /* New Charge-Thickness capMod (CTM) begins */
               else if (model->BSIM3capMod == 3)
-              {   V3 = pParam->BSIM3vfbzb - Vgs_eff + VbseffCV - DELTA_3;
-                  if (pParam->BSIM3vfbzb <= 0.0)
-                  {   T0 = sqrt(V3 * V3 - 4.0 * DELTA_3 * pParam->BSIM3vfbzb);
+              {   V3 = here->BSIM3vfbzb - Vgs_eff + VbseffCV - DELTA_3;
+                  if (here->BSIM3vfbzb <= 0.0)
+                  {   T0 = sqrt(V3 * V3 - 4.0 * DELTA_3 * here->BSIM3vfbzb);
                       T2 = -DELTA_3 / T0;
                   }
                   else
-                  {   T0 = sqrt(V3 * V3 + 4.0 * DELTA_3 * pParam->BSIM3vfbzb);
+                  {   T0 = sqrt(V3 * V3 + 4.0 * DELTA_3 * here->BSIM3vfbzb);
                       T2 = DELTA_3 / T0;
                   }
 
                   T1 = 0.5 * (1.0 + V3 / T0);
-                  Vfbeff = pParam->BSIM3vfbzb - 0.5 * (V3 + T0);
+                  Vfbeff = here->BSIM3vfbzb - 0.5 * (V3 + T0);
                   dVfbeff_dVg = T1 * dVgs_eff_dVg;
                   dVfbeff_dVb = -T1 * dVbseffCV_dVb;
 
                   Cox = model->BSIM3cox;
                   Tox = 1.0e8 * model->BSIM3tox;
-                  T0 = (Vgs_eff - VbseffCV - pParam->BSIM3vfbzb) / Tox;
+                  T0 = (Vgs_eff - VbseffCV - here->BSIM3vfbzb) / Tox;
                   dT0_dVg = dVgs_eff_dVg / Tox;
                   dT0_dVb = -dVbseffCV_dVb / Tox;
 
@@ -1979,7 +1979,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
                   dCoxeff_dVg *= dTcen_dVg;
                   CoxWLcen = CoxWL * Coxeff / Cox;
 
-                  Qac0 = CoxWLcen * (Vfbeff - pParam->BSIM3vfbzb);
+                  Qac0 = CoxWLcen * (Vfbeff - here->BSIM3vfbzb);
                   QovCox = Qac0 / Coxeff;
                   dQac0_dVg = CoxWLcen * dVfbeff_dVg
                             + QovCox * dCoxeff_dVg;
@@ -2032,7 +2032,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
                   VgDP = 0.5 * (T0 + T1);
                   dVgDP_dVg = 0.5 * (dT0_dVg + (T0 * dT0_dVg + 0.002) / T1);
 
-                  T3 = 4.0 * (Vth - pParam->BSIM3vfbzb - pParam->BSIM3phi);
+                  T3 = 4.0 * (Vth - here->BSIM3vfbzb - pParam->BSIM3phi);
                   Tox += Tox;
                   if (T3 >= 0.0)
                   {  T0 = (Vgsteff + T3) / Tox;
@@ -2424,9 +2424,9 @@ line755:
               here->BSIM3cqbb = -(here->BSIM3cqgb + here->BSIM3cqdb
                               + here->BSIM3cqsb);
 
-              gtau_drift = fabs(pParam->BSIM3tconst * qcheq) * ScalingFactor;
+              gtau_drift = fabs(here->BSIM3tconst * qcheq) * ScalingFactor;
               T0 = pParam->BSIM3leffCV * pParam->BSIM3leffCV;
-              gtau_diff = 16.0 * pParam->BSIM3u0temp * model->BSIM3vtm / T0
+              gtau_diff = 16.0 * here->BSIM3u0temp * model->BSIM3vtm / T0
                         * ScalingFactor;
               here->BSIM3gtau =  gtau_drift + gtau_diff;
               if (here->BSIM3acnqsMod)
@@ -2535,9 +2535,9 @@ line755:
               }
               else
               {   if (qcheq > 0.0)
-                      T0 = pParam->BSIM3tconst * qdef * ScalingFactor;
+                      T0 = here->BSIM3tconst * qdef * ScalingFactor;
                   else
-                      T0 = -pParam->BSIM3tconst * qdef * ScalingFactor;
+                      T0 = -here->BSIM3tconst * qdef * ScalingFactor;
                   ggtg = here->BSIM3gtg = T0 * here->BSIM3cqgb;
                   ggtd = here->BSIM3gtd = T0 * here->BSIM3cqdb;
                   ggts = here->BSIM3gts = T0 * here->BSIM3cqsb;
@@ -2651,9 +2651,9 @@ line755:
               }
               else
               {   if (qcheq > 0.0)
-                      T0 = pParam->BSIM3tconst * qdef * ScalingFactor;
+                      T0 = here->BSIM3tconst * qdef * ScalingFactor;
                   else
-                      T0 = -pParam->BSIM3tconst * qdef * ScalingFactor;
+                      T0 = -here->BSIM3tconst * qdef * ScalingFactor;
                   ggtg = here->BSIM3gtg = T0 * here->BSIM3cqgb;
                   ggts = here->BSIM3gtd = T0 * here->BSIM3cqdb;
                   ggtd = here->BSIM3gts = T0 * here->BSIM3cqsb;
@@ -2804,7 +2804,7 @@ line850:
           dsxpart_dVd = dsxpart_dVg = dsxpart_dVb = dsxpart_dVs = 0.0;
 
           if (here->BSIM3nqsMod)
-              here->BSIM3gtau = 16.0 * pParam->BSIM3u0temp * model->BSIM3vtm
+              here->BSIM3gtau = 16.0 * here->BSIM3u0temp * model->BSIM3vtm
                               / pParam->BSIM3leffCV / pParam->BSIM3leffCV
                               * ScalingFactor;
           else
