@@ -59,6 +59,14 @@ CAPparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         case CAP_CAP_SENS:
             here->CAPsenParmNo = value->iValue;
             break;
+        case CAP_TC1:
+            here->CAPtc1 = value->rValue;
+            here->CAPtc1Given = TRUE;
+            break;
+        case CAP_TC2:
+            here->CAPtc2 = value->rValue;
+            here->CAPtc2Given = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }

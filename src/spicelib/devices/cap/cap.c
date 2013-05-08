@@ -20,6 +20,8 @@ IFparm CAPpTable[] = { /* parameters */
  IOPAU("w",           CAP_WIDTH,           IF_REAL, "Device width"),
  IOPAU("l",           CAP_LENGTH,          IF_REAL, "Device length"),
  IOPU( "m",           CAP_M,               IF_REAL, "Parallel multiplier"),
+ IOPU( "tc1",         CAP_TC1,             IF_REAL, "First order temp. coefficient"),
+ IOPU( "tc2",         CAP_TC2,             IF_REAL, "Second order temp. coefficient"),
  IOPU( "scale",       CAP_SCALE,           IF_REAL, "Scale factor"),
  IP(   "sens_cap",    CAP_CAP_SENS,        IF_FLAG, "flag to request sens. WRT cap."),
  OP(   "i",           CAP_CURRENT,         IF_REAL, "Device current"),

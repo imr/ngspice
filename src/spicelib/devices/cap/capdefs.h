@@ -35,6 +35,8 @@ typedef struct sCAPinstance {
     double CAPlength;   /* length of the capacitor */
     double CAPscale;    /* scale factor */
     double CAPm;        /* parallel multiplier */
+    double CAPtc1;      /* first temperature coefficient of capacitors */
+    double CAPtc2;      /* second temperature coefficient of capacitors */
 
     double *CAPposPosptr;    /* pointer to sparse matrix diagonal at 
                               * (positive,positive) */
@@ -52,6 +54,8 @@ typedef struct sCAPinstance {
     unsigned CAPdtempGiven  : 1;   /* flag to indicate delta temp given */
     unsigned CAPscaleGiven  : 1;   /* flag to indicate scale factor given */
     unsigned CAPmGiven      : 1;   /* flag to indicate parallel multiplier given */ 
+    unsigned CAPtc1Given    : 1;   /* flag indicates tc1 was specified */
+    unsigned CAPtc2Given    : 1;   /* flag indicates tc2 was specified */
     int    CAPsenParmNo;         /* parameter # for sensitivity use;
                 set equal to  0 if not a design parameter*/
 
@@ -113,6 +117,8 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
 #define CAP_DTEMP 9
 #define CAP_SCALE 10 
 #define CAP_M 11
+#define CAP_TC1 12
+#define CAP_TC2 13
 
 /* model parameters */
 #define CAP_MOD_CJ 101

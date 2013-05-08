@@ -26,6 +26,7 @@ CAPtemp(GENmodel *inModel, CKTcircuit *ckt)
     CAPinstance *here;
     double difference;
     double factor;
+    double tc1, tc2;
 
     /*  loop through all the capacitor models */
     for( ; model != NULL; model = model->CAPnextModel ) {
@@ -66,10 +67,22 @@ CAPtemp(GENmodel *inModel, CKTcircuit *ckt)
 	    }
             
 	    difference = (here->CAPtemp + here->CAPdtemp) - model->CAPtnom;
-	    
-	    factor = 1.0 + (model->CAPtempCoeff1)*difference +
-	             (model->CAPtempCoeff2)*difference*difference;
             
+	    /* instance parameters tc1 and tc2 will override
+	       model parameters tc1 and tc2 */
+	    if (here->CAPtc1Given)
+		tc1 = here->CAPtc1; /* instance */
+	    else
+		tc1 = model->CAPtempCoeff1; /* model */
+
+	    if (here->CAPtc2Given)
+		tc2 = here->CAPtc2;
+	    else
+		tc2 = model->CAPtempCoeff2;
+
+	    factor = 1.0 + tc1*difference +
+		tc2*difference*difference;
+
 	    here->CAPcapac = here->CAPcapac * factor * here->CAPscale;     
 		     
 	}
