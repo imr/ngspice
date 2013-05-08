@@ -21,6 +21,7 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
     INDinstance *here;
     double difference;
     double factor;
+    double tc1, tc2;
 
     /*  loop through all the inductor models */
     for( ; model != NULL; model = model->INDnextModel ) {
@@ -52,9 +53,20 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
 		     here->INDinduct = model->INDmInd;     
             }
 	    difference = (here->INDtemp + here->INDdtemp) - model->INDtnom;
-	    
-	    factor = 1.0 + (model->INDtempCoeff1)*difference +
-	             (model->INDtempCoeff2)*difference*difference;
+
+	    /* instance parameters tc1 and tc2 will override
+	       model parameters tc1 and tc2 */
+	    if (here->INDtc1Given)
+		tc1 = here->INDtc1; /* instance */
+	    else
+		tc1 = model->INDtempCoeff1; /* model */
+
+	    if (here->INDtc2Given)
+		tc2 = here->INDtc2;
+	    else
+		tc2 = model->INDtempCoeff2;
+
+	    factor = 1.0 + tc1*difference + tc2*difference*difference;
             
 	    here->INDinduct = here->INDinduct * factor * here->INDscale;
 	    here->INDinduct = here->INDinduct / here->INDm;     

@@ -18,6 +18,8 @@ IFparm INDpTable[] = { /* parameters */
  IOPZ( "dtemp",     IND_DTEMP,    IF_REAL,
        "Instance temperature difference with the rest of the circuit"),
  IOPU( "m",         IND_M,        IF_REAL, "Multiplication Factor"),
+ IOPU( "tc1",       IND_TC1,      IF_REAL, "First order temp. coefficient"),
+ IOPU( "tc2",       IND_TC2,      IF_REAL, "Second order temp. coefficient"),
  IOPU( "scale",     IND_SCALE,    IF_REAL, "Scale factor"),
  IOP(  "nt",        IND_NT,       IF_REAL, "Number of turns"), 	
  OP(   "flux",      IND_FLUX,     IF_REAL, "Flux through inductor"),

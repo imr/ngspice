@@ -32,6 +32,8 @@ typedef struct sINDinstance {
     int INDbrEq;    /* number of the branch equation added for current */
     double INDinduct;    /* inductance */
     double INDm;         /* Parallel multiplier */
+    double INDtc1;       /* first temperature coefficient of resistors */
+    double INDtc2;       /* second temperature coefficient of resistors */
     double INDtemp;      /* Instance operating temperature */
     double INDdtemp;     /* Delta temp. of instance */
     double INDscale;     /* Scale factor */
@@ -52,6 +54,8 @@ typedef struct sINDinstance {
     unsigned INDindGiven   : 1;   /* flag to indicate inductance was specified */
     unsigned INDicGiven    : 1;   /* flag to indicate init. cond. was specified */
     unsigned INDmGiven     : 1;   /* flag to indicate multiplier given */
+    unsigned INDtc1Given   : 1;   /* indicates tc1 parameter specified */
+    unsigned INDtc2Given   : 1;   /* indicates tc2 parameter specified */
     unsigned INDtempGiven  : 1;   /* flag to indicate operating temp. given */
     unsigned INDdtempGiven : 1;   /* flag to indicate delta temp. given */
     unsigned INDscaleGiven : 1;   /* flag to indicate scale factor given */
@@ -155,6 +159,8 @@ typedef struct sMUTmodel {       /* model structure for a mutual inductor */
 #define IND_DTEMP 10
 #define IND_SCALE 11
 #define IND_NT 12
+#define IND_TC1 13
+#define IND_TC2 14
 
 /* model parameters */
 #define IND_MOD_IND    100

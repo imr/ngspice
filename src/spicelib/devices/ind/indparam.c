@@ -39,6 +39,14 @@ INDparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->INDm = value->rValue;
             here->INDmGiven = TRUE;
             break;
+        case IND_TC1:
+            here->INDtc1 = value->rValue;
+            here->INDtc1Given = TRUE;
+            break;
+        case IND_TC2:
+            here->INDtc2 = value->rValue;
+            here->INDtc2Given = TRUE;
+            break;
         case IND_SCALE:
             here->INDscale = value->rValue;
             here->INDscaleGiven = TRUE;
