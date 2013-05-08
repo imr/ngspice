@@ -16,8 +16,8 @@ Modified: September 2003 Paolo Nenzi
 /*ARGSUSED*/
 int
 CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
-        /* load the capacitor structure with those pointers needed later 
-         * for fast matrix loading 
+        /* load the capacitor structure with those pointers needed later
+         * for fast matrix loading
          */
 
 {
@@ -28,7 +28,7 @@ CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     for( ; model != NULL; model = model->CAPnextModel ) {
 
         /*Default Value Processing for Model Parameters */
-	if (!model->CAPmCapGiven) {
+        if (!model->CAPmCapGiven) {
             model->CAPmCap = 0.0;
         }
         if (!model->CAPcjswGiven){
@@ -37,7 +37,7 @@ CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if (!model->CAPdefWidthGiven) {
             model->CAPdefWidth = 10.e-6;
         }
-	if (!model->CAPdefLengthGiven) {
+        if (!model->CAPdefLengthGiven) {
             model->CAPdefLength = 0.0;
         }
         if (!model->CAPnarrowGiven) {
@@ -52,29 +52,28 @@ CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if (!model->CAPtc2Given) {
             model->CAPtempCoeff2 = 0.0;
         }
-	if (!model->CAPtnomGiven) {
+        if (!model->CAPtnomGiven) {
             model->CAPtnom = ckt->CKTnomTemp;
         }
-	if (!model->CAPdiGiven) {
+        if (!model->CAPdiGiven) {
             model->CAPdi = 0.0;
         }
-	if (!model->CAPthickGiven) {
+        if (!model->CAPthickGiven) {
             model->CAPthick = 0.0;
         }
-	
-	if (!model->CAPcjGiven) {
-	    if((model->CAPthickGiven) 
-	       && (model->CAPthick > 0.0)) {
-	       
-	       if (model->CAPdiGiven)
-	         model->CAPcj = (model->CAPdi * CONSTepsZero) / model->CAPthick;
-	       else
-	         model->CAPcj = CONSTepsSiO2 / model->CAPthick; 
-	    } else {
-	       model->CAPcj = 0.0;
-	    }
+
+        if (!model->CAPcjGiven) {
+            if((model->CAPthickGiven)
+               && (model->CAPthick > 0.0)) {
+               if (model->CAPdiGiven)
+                 model->CAPcj = (model->CAPdi * CONSTepsZero) / model->CAPthick;
+               else
+                 model->CAPcj = CONSTepsSiO2 / model->CAPthick;
+            } else {
+               model->CAPcj = 0.0;
+            }
         }
-	
+
         /* loop through all the instances of the model */
         for (here = model->CAPinstances; here != NULL ;
                 here=here->CAPnextInstance) {

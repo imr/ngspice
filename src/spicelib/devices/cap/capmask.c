@@ -24,43 +24,43 @@ CAPmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
     NG_IGNORE(ckt);
 
     switch(which) {
-        case CAP_MOD_TNOM:
-	    value->rValue = here->CAPtnom-CONSTCtoK;
-	    return(OK);
-	case CAP_MOD_TC1:
-	    value->rValue = here->CAPtempCoeff1;   
-	    return(OK);
-	case CAP_MOD_TC2:
-	    value->rValue = here->CAPtempCoeff2;   
-	    return(OK);  
-	case CAP_MOD_CAP:
-            value->rValue = here->CAPmCap;
-            return(OK);      
-        case CAP_MOD_CJ:
-            value->rValue = here->CAPcj;
-            return(OK);
-        case CAP_MOD_CJSW:
-            value->rValue = here->CAPcjsw;
-            return(OK);
-        case CAP_MOD_DEFWIDTH:
-            value->rValue = here->CAPdefWidth;
-            return(OK);
-        case CAP_MOD_DEFLENGTH:
-            value->rValue = here->CAPdefLength;
-            return(OK);	    
-        case CAP_MOD_NARROW:
-            value->rValue = here->CAPnarrow;
-            return(OK);
-	case CAP_MOD_SHORT:
-	    value->rValue = here->CAPshort;
-	    return(OK);    
-	case CAP_MOD_DI:
-	    value->rValue = here->CAPdi;
-	    return(OK);
-	case CAP_MOD_THICK:
-	    value->rValue = here->CAPthick;
-	    return(OK);        
-        default:  
-            return(E_BADPARM);
+    case CAP_MOD_TNOM:
+        value->rValue = here->CAPtnom-CONSTCtoK;
+        return(OK);
+    case CAP_MOD_TC1:
+        value->rValue = here->CAPtempCoeff1;
+        return(OK);
+    case CAP_MOD_TC2:
+        value->rValue = here->CAPtempCoeff2;
+        return(OK);
+    case CAP_MOD_CAP:
+        value->rValue = here->CAPmCap;
+        return(OK);
+    case CAP_MOD_CJ:
+        value->rValue = here->CAPcj;
+        return(OK);
+    case CAP_MOD_CJSW:
+        value->rValue = here->CAPcjsw;
+        return(OK);
+    case CAP_MOD_DEFWIDTH:
+        value->rValue = here->CAPdefWidth;
+        return(OK);
+    case CAP_MOD_DEFLENGTH:
+        value->rValue = here->CAPdefLength;
+        return(OK);
+    case CAP_MOD_NARROW:
+        value->rValue = here->CAPnarrow;
+        return(OK);
+    case CAP_MOD_SHORT:
+        value->rValue = here->CAPshort;
+        return(OK);
+    case CAP_MOD_DI:
+        value->rValue = here->CAPdi;
+        return(OK);
+    case CAP_MOD_THICK:
+        value->rValue = here->CAPthick;
+        return(OK);
+    default:
+        return(E_BADPARM);
     }
 }
