@@ -41,8 +41,8 @@ CAPload(GENmodel *inModel, CKTcircuit *ckt)
             for (here = model->CAPinstances; here != NULL ;
                     here=here->CAPnextInstance) {
                 
-		m = here->CAPm;
-		
+                m = here->CAPm;
+
                 if(cond1) {
                     vcap = here->CAPinitCond;
                 } else {
