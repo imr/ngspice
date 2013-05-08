@@ -31,47 +31,47 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
                 here=here->INDnextInstance) {
 
             /* Default Value Processing for Inductor Instance */
-	    
-	    if(!here->INDtempGiven) {
-               here->INDtemp = ckt->CKTtemp;
-               if(!here->INDdtempGiven)   here->INDdtemp  = 0.0;
-             } else { /* INDtempGiven */
-               here->INDdtemp = 0.0;
-               if (here->INDdtempGiven)
-                   printf("%s: Instance temperature specified, dtemp ignored\n",
-		          here->INDname);
-             }            
-             
-	     if (!here->INDscaleGiven) here->INDscale = 1.0;
-             if (!here->INDmGiven)     here->INDm     = 1.0;  
-	     if (!here->INDntGiven)    here->INDnt    = 0.0; 
-	     
-	     if (!here->INDindGiven) { /* No instance inductance given */
-	         if (here->INDntGiven)
-                     here->INDinduct = model->INDspecInd * here->INDnt * here->INDnt;
-		 else
-		     here->INDinduct = model->INDmInd;     
+
+            if(!here->INDtempGiven) {
+                here->INDtemp = ckt->CKTtemp;
+                if(!here->INDdtempGiven)   here->INDdtemp  = 0.0;
+            } else { /* INDtempGiven */
+                here->INDdtemp = 0.0;
+                if (here->INDdtempGiven)
+                    printf("%s: Instance temperature specified, dtemp ignored\n",
+                           here->INDname);
             }
-	    difference = (here->INDtemp + here->INDdtemp) - model->INDtnom;
 
-	    /* instance parameters tc1 and tc2 will override
-	       model parameters tc1 and tc2 */
-	    if (here->INDtc1Given)
-		tc1 = here->INDtc1; /* instance */
-	    else
-		tc1 = model->INDtempCoeff1; /* model */
+            if (!here->INDscaleGiven) here->INDscale = 1.0;
+            if (!here->INDmGiven)     here->INDm     = 1.0;
+            if (!here->INDntGiven)    here->INDnt    = 0.0;
 
-	    if (here->INDtc2Given)
-		tc2 = here->INDtc2;
-	    else
-		tc2 = model->INDtempCoeff2;
+            if (!here->INDindGiven) { /* No instance inductance given */
+                if (here->INDntGiven)
+                    here->INDinduct = model->INDspecInd * here->INDnt * here->INDnt;
+                else
+                    here->INDinduct = model->INDmInd;
+            }
+            difference = (here->INDtemp + here->INDdtemp) - model->INDtnom;
 
-	    factor = 1.0 + tc1*difference + tc2*difference*difference;
-            
-	    here->INDinduct = here->INDinduct * factor * here->INDscale;
-	    here->INDinduct = here->INDinduct / here->INDm;     
-	     
-	}
+            /* instance parameters tc1 and tc2 will override
+               model parameters tc1 and tc2 */
+            if (here->INDtc1Given)
+                tc1 = here->INDtc1; /* instance */
+            else
+                tc1 = model->INDtempCoeff1; /* model */
+
+            if (here->INDtc2Given)
+                tc2 = here->INDtc2;
+            else
+                tc2 = model->INDtempCoeff2;
+
+            factor = 1.0 + tc1*difference + tc2*difference*difference;
+
+            here->INDinduct = here->INDinduct * factor * here->INDscale;
+            here->INDinduct = here->INDinduct / here->INDm;
+
+        }
     }
     return(OK);
 }
