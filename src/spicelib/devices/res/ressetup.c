@@ -10,10 +10,10 @@ Modified: Apr 2000 Paolo Nenzi
 #include "ngspice/sperror.h"
 
 
-int 
+int
 RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
-        /* load the resistor structure with those pointers needed later 
-         * for fast matrix loading 
+        /* load the resistor structure with those pointers needed later
+         * for fast matrix loading
          */
 {
     RESmodel *model = (RESmodel *)inModel;

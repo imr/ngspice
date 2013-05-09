@@ -17,24 +17,24 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
 {
     RESmodel *model = (RESmodel *)inModel;
     double m;
-		
+
     /*  loop through all the resistor models */
     for( ; model != NULL; model = model->RESnextModel ) {
-	RESinstance *here;
+        RESinstance *here;
 
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
-	    here = here->RESnextInstance) {
+                here = here->RESnextInstance) {
 
-	    here->REScurrent = (*(ckt->CKTrhsOld+here->RESposNode) - 
-		*(ckt->CKTrhsOld+here->RESnegNode)) * here->RESconduct;
-	    
-	    m = (here->RESm);
+            here->REScurrent = (*(ckt->CKTrhsOld+here->RESposNode) -
+                                *(ckt->CKTrhsOld+here->RESnegNode)) * here->RESconduct;
 
-	    *(here->RESposPosptr) += m * here->RESconduct;
-	    *(here->RESnegNegptr) += m * here->RESconduct;
-	    *(here->RESposNegptr) -= m * here->RESconduct;
-	    *(here->RESnegPosptr) -= m * here->RESconduct;
+            m = (here->RESm);
+
+            *(here->RESposPosptr) += m * here->RESconduct;
+            *(here->RESnegNegptr) += m * here->RESconduct;
+            *(here->RESposNegptr) -= m * here->RESconduct;
+            *(here->RESnegPosptr) -= m * here->RESconduct;
         }
     }
     return(OK);
@@ -53,16 +53,17 @@ RESacload(GENmodel *inModel, CKTcircuit *ckt)
 
     /*  loop through all the resistor models */
     for( ; model != NULL; model = model->RESnextModel ) {
-	RESinstance *here;
+        RESinstance *here;
 
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
-	     here = here->RESnextInstance) {
-	    
-	    if(!here->RESmGiven)   here->RESm      = 1.0;
+             here = here->RESnextInstance) {
 
-	    m = (here->RESm);
-	    
+            if(!here->RESmGiven)
+                here->RESm = 1.0;
+
+            m = (here->RESm);
+
             if(here->RESacresGiven) {
                 *(here->RESposPosptr) += m * here->RESacConduct;
                 *(here->RESnegNegptr) += m * here->RESacConduct;

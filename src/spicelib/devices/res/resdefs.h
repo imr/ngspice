@@ -13,14 +13,14 @@ Modified: 2000 AlansFixes
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
 
-        /* definitions used to describe resistors */
+/* definitions used to describe resistors */
 
 
 /* information used to describe a single instance */
 
 typedef struct sRESinstance {
     struct sRESmodel *RESmodPtr;            /* backpointer to model */
-    struct sRESinstance *RESnextInstance;   /* pointer to next instance of 
+    struct sRESinstance *RESnextInstance;   /* pointer to next instance of
                                              * current model*/
 
     IFuid RESname;      /* pointer to character string naming this instance */
@@ -33,7 +33,7 @@ typedef struct sRESinstance {
     double RESconduct;  /* conductance at current analysis temperature */
     double RESresist;   /* resistance at temperature Tnom */
     double REScurrent;  /* The dc current in the resistor */
-/* serban */
+    /* serban */
     double RESacResist;             /* AC resistance, useful for fancy .ac analyses */
     double RESacConduct;            /* AC conductance */
     double RESwidth;                /* width of the resistor */
@@ -43,13 +43,13 @@ typedef struct sRESinstance {
     double REStc1;                  /* first temperature coefficient of resistors */
     double REStc2;                  /* second temperature coefficient of resistors */
     int    RESnoisy;                /* Set if the resistor generates noise */
-    double *RESposPosptr;           /* pointer to sparse matrix diagonal at 
+    double *RESposPosptr;           /* pointer to sparse matrix diagonal at
                                      * (positive,positive) */
-    double *RESnegNegptr;           /* pointer to sparse matrix diagonal at 
+    double *RESnegNegptr;           /* pointer to sparse matrix diagonal at
                                      * (negative,negative) */
-    double *RESposNegptr;           /* pointer to sparse matrix offdiagonal at 
+    double *RESposNegptr;           /* pointer to sparse matrix offdiagonal at
                                      * (positive,negative) */
-    double *RESnegPosptr;           /* pointer to sparse matrix offdiagonal at 
+    double *RESnegPosptr;           /* pointer to sparse matrix offdiagonal at
                                      * (negative,positive) */
     unsigned RESresGiven    : 1;    /* flag to indicate resistance was specified */
     unsigned RESwidthGiven  : 1;    /* flag to indicate width given */
@@ -57,7 +57,7 @@ typedef struct sRESinstance {
     unsigned RESscaleGiven  : 1;    /* flag to indicate scale given */
     unsigned REStempGiven   : 1;    /* indicates temperature specified */
     unsigned RESdtempGiven  : 1;    /* indicates delta-temp specified  */
-/* serban */
+    /* serban */
     unsigned RESacresGiven  : 1;    /* indicates AC value specified */
     unsigned RESmGiven      : 1;    /* indicates M parameter specified */
     unsigned REStc1Given    : 1;    /* indicates tc1 parameter specified */
@@ -66,7 +66,7 @@ typedef struct sRESinstance {
     int    RESsenParmNo;            /* parameter # for sensitivity use;
                                      * set equal to  0 if not a design parameter*/
 
-/* indices to array of RES noise sources */
+    /* indices to array of RES noise sources */
 
 #define RESTHNOIZ  0     /* Thermal noise source */
 #define RESFLNOIZ  1     /* Flicker noise source */
@@ -88,7 +88,7 @@ typedef struct sRESinstance {
 
 typedef struct sRESmodel {       /* model structure for a resistor */
     int RESmodType; /* type index of this device type */
-    struct sRESmodel *RESnextModel; /* pointer to next possible model in 
+    struct sRESmodel *RESnextModel; /* pointer to next possible model in
                                      * linked list */
     RESinstance * RESinstances; /* pointer to list of instances that have this
                                  * model */
