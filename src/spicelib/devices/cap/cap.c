@@ -47,6 +47,7 @@ IFparm CAPmPTable[] = { /* names of model parameters */
     IOPR( "l",      CAP_MOD_DEFLENGTH,IF_REAL, "Default length"),
     IOPA( "narrow", CAP_MOD_NARROW,   IF_REAL, "width correction factor"),
     IOPA( "short",  CAP_MOD_SHORT,    IF_REAL, "length correction factor"),
+    IOPA( "del",    CAP_MOD_DEL,      IF_REAL, "length and width correction factor"),
     IOPA( "tc1",    CAP_MOD_TC1,      IF_REAL, "First order temp. coefficient"),
     IOPA( "tc2",    CAP_MOD_TC2,      IF_REAL, "Second order temp. coefficient"),
     IOPXU("tnom",   CAP_MOD_TNOM,     IF_REAL, "Parameter measurement temperature"),

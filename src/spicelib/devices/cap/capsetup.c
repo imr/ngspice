@@ -46,6 +46,9 @@ CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if (!model->CAPshortGiven) {
             model->CAPshort = 0.0;
         }
+        if (!model->CAPdelGiven) {
+            model->CAPdel = 0.0;
+        }
         if (!model->CAPtc1Given) {
             model->CAPtempCoeff1 = 0.0;
         }
@@ -72,6 +75,13 @@ CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             } else {
                model->CAPcj = 0.0;
             }
+        }
+
+        if (model->CAPdelGiven) {
+            if (!model->CAPnarrowGiven)
+                model->CAPnarrow = 2 * model->CAPdel;
+            if (!model->CAPshortGiven)
+                model->CAPshort = 2 * model->CAPdel;
         }
 
         /* loop through all the instances of the model */

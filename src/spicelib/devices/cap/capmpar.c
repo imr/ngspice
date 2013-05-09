@@ -58,6 +58,10 @@ CAPmParam(int param, IFvalue *value, GENmodel *inModel)
         mod->CAPshort = value->rValue;
         mod->CAPshortGiven = TRUE;
         break;
+    case CAP_MOD_DEL:
+        mod->CAPdel = value->rValue;
+        mod->CAPdelGiven = TRUE;
+        break;
     case CAP_MOD_DI:
         mod->CAPdi = value->rValue;
         mod->CAPdiGiven = TRUE;

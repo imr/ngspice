@@ -88,6 +88,7 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
     double CAPdefLength;  /* the default length of a capacitor */
     double CAPnarrow;     /* amount by which width are less than drawn */
     double CAPshort;      /* amount by which length are less than drawn */
+    double CAPdel;        /* amount by which length and width are less than drawn */
     double CAPdi;         /* Relative dielectric constant */
     double CAPthick;      /* Insulator thickness */
     unsigned CAPmCapGiven      : 1;    /* flag indicates default capacitance given */
@@ -97,6 +98,7 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
     unsigned CAPdefLengthGiven : 1;    /* flag indicates deafult lenght given */
     unsigned CAPnarrowGiven    : 1;    /* flag indicates narrowing factor given */
     unsigned CAPshortGiven     : 1;    /* flag indicates shortening factor given */
+    unsigned CAPdelGiven       : 1;    /* flag indicates del factor given */
     unsigned CAPtnomGiven      : 1;    /* flag indicates nominal temp. given */
     unsigned CAPtc1Given       : 1;    /* flag indicates tc1 was specified */
     unsigned CAPtc2Given       : 1;    /* flag indicates tc2 was specified */
@@ -127,13 +129,14 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
 #define CAP_MOD_C 104
 #define CAP_MOD_NARROW 105
 #define CAP_MOD_SHORT 106
-#define CAP_MOD_TC1 107
-#define CAP_MOD_TC2 108
-#define CAP_MOD_TNOM 109
-#define CAP_MOD_DI 110
-#define CAP_MOD_THICK 111
-#define CAP_MOD_CAP 112
-#define CAP_MOD_DEFLENGTH 113
+#define CAP_MOD_DEL 107
+#define CAP_MOD_TC1 108
+#define CAP_MOD_TC2 109
+#define CAP_MOD_TNOM 110
+#define CAP_MOD_DI 111
+#define CAP_MOD_THICK 112
+#define CAP_MOD_CAP 113
+#define CAP_MOD_DEFLENGTH 114
 
 /* device questions */
 #define CAP_QUEST_SENS_REAL      201
