@@ -28,7 +28,7 @@ FILE *fplog;
 
   NG_IGNORE(ckt);
 
-  if ((fplog = fopen("b3v3check.log", "w")) != NULL)
+  if ((fplog = fopen("b3v32check.log", "w")) != NULL)
   {   pParam = here->pParam;
 
 	fprintf (fplog,
