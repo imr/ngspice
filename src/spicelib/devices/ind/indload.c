@@ -21,6 +21,7 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
     INDinstance *here;
     double veq;
     double req;
+    double m;
     int error;
 
 #ifdef MUTUAL
@@ -37,12 +38,14 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->INDinstances; here != NULL ;
                 here=here->INDnextInstance) {
 
+            m = (here->INDm);
+
             if(!(ckt->CKTmode & (MODEDC|MODEINITPRED))) {
                 if(ckt->CKTmode & MODEUIC && ckt->CKTmode & MODEINITTRAN) {
-                    *(ckt->CKTstate0 + here->INDflux) = here->INDinduct *
+                    *(ckt->CKTstate0 + here->INDflux) = here->INDinduct / m *
                                                         here->INDinitCond;
                 } else {
-                    *(ckt->CKTstate0 + here->INDflux) = here->INDinduct *
+                    *(ckt->CKTstate0 + here->INDflux) = here->INDinduct / m *
                                                         *(ckt->CKTrhsOld + here->INDbrEq);
                 }
             }
@@ -86,6 +89,7 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
                 req = 0.0;
                 veq = 0.0;
             } else {
+                double newmind;
 #ifndef PREDICTOR
                 if(ckt->CKTmode & MODEINITPRED) {
                     *(ckt->CKTstate0 + here->INDflux) =
@@ -99,7 +103,9 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
 #ifndef PREDICTOR
                 }
 #endif /*PREDICTOR*/
-                error=NIintegrate(ckt,&req,&veq,here->INDinduct,here->INDflux);
+                m = (here->INDm);
+                newmind = here->INDinduct/m;
+                error=NIintegrate(ckt,&req,&veq,newmind,here->INDflux);
                 if(error) return(error);
             }
 
