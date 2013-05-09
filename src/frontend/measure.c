@@ -239,6 +239,14 @@ do_measure(
         return (measures_passed);
     }
 
+    /* don't allow autostop if no .meas commands are given in the input file */
+    if ((cp_getvar("autostop", CP_BOOL, NULL)) && (ft_curckt->ci_meas == NULL)) {
+        fprintf(cp_err, "\nWarning: No .meas commands found!\n");
+        fprintf(cp_err, "  Option autostop is not available, ignored!\n\n");
+        cp_remvar("autostop");
+        return (FALSE);
+    }
+
     /* Evaluating the linked list of .meas cards, assembled from the input deck
        by fcn inp_spsource() in inp.c:575.
        A typical .meas card will contain:
