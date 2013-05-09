@@ -1816,6 +1816,7 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
 
         case 'r':
         case 'c':
+        case 'l':
             name = gettok(&t);  /* get refdes */
             (void) sprintf(buffer, "%s ", name);
             tfree(name);
