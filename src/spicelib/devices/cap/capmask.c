@@ -54,6 +54,9 @@ CAPmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
     case CAP_MOD_SHORT:
         value->rValue = here->CAPshort;
         return(OK);
+    case CAP_MOD_DEL:
+        value->rValue = here->CAPdel;
+        return(OK);
     case CAP_MOD_DI:
         value->rValue = here->CAPdi;
         return(OK);
