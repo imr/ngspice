@@ -31,10 +31,10 @@ FILE *fplog;
     
     NG_IGNORE(ckt);
 
-    if ((fplog = fopen("b3v3check.log", "w")) != NULL)
+    if ((fplog = fopen("b3v33check.log", "w")) != NULL)
     {   pParam = here->pParam;
         fprintf(fplog, "BSIM3v3.3.0 Parameter Checking.\n");
-        if ((strcmp(model->BSIM3version, "3.3.0")) && (strcmp(model->BSIM3version, "3.30")) && (strcmp(model->BSIM3version, "3.3")))
+        if ((strncmp(model->BSIM3version, "3.3.0", 5)) && (strncmp(model->BSIM3version, "3.30", 4)) && (strncmp(model->BSIM3version, "3.3", 3)))
         {  fprintf(fplog, "Warning: This model is BSIM3v3.3.0; you specified a wrong version number.\n");
            printf("Warning: This model is BSIM3v3.3.0; you specified a wrong version number.\n"); 
         }
