@@ -28,6 +28,7 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
     ISRCinstance *here;
     double value;
     double time;
+    double m;
 
     /*  loop through all the source models */
     for( ; model != NULL; model = model->ISRCnextModel ) {
@@ -35,6 +36,8 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->ISRCinstances; here != NULL ;
                 here=here->ISRCnextInstance) {
+
+            m = here->ISRCmValue;
 
             if( (ckt->CKTmode & (MODEDCOP | MODEDCTRANCURVE)) &&
                     here->ISRCdcGiven ) {
@@ -380,14 +383,14 @@ loadDone:
 #endif
 /* gtri - end - wbk - modify for supply ramping option */
 
-            *(ckt->CKTrhs + (here->ISRCposNode)) += value;
-            *(ckt->CKTrhs + (here->ISRCnegNode)) -= value;
+            *(ckt->CKTrhs + (here->ISRCposNode)) += m * value;
+            *(ckt->CKTrhs + (here->ISRCnegNode)) -= m * value;
 
 /* gtri - end - wbk - modify to process srcFact, etc. for all sources */
 
 #ifdef XSPICE
 /* gtri - begin - wbk - record value so it can be output if requested */
-            here->ISRCcurrent = value;
+            here->ISRCcurrent = m * value;
 /* gtri - end   - wbk - record value so it can be output if requested */
 #endif
         } // for loop instances

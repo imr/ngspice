@@ -33,6 +33,7 @@ typedef struct sISRCinstance {
     double *ISRCcoeffs; /* pointer to array of coefficients */
 
     double ISRCdcValue; /* DC and TRANSIENT value of source */
+    double ISRCmValue;  /* Parallel multiplier */
 
     double ISRCacPhase; /* AC phase angle */
     double ISRCacMag; /* AC magnitude */
@@ -56,6 +57,7 @@ typedef struct sISRCinstance {
 /* gtri - end - add member to hold current source value */
 
     unsigned ISRCdcGiven     :1 ;  /* flag to indicate dc value given */
+    unsigned ISRCmGiven      :1 ;  /* flag to indicate multiplier given */
     unsigned ISRCacGiven     :1 ;  /* flag to indicate ac keyword given */
     unsigned ISRCacMGiven    :1 ;  /* flag to indicate ac magnitude given */
     unsigned ISRCacPGiven    :1 ;  /* flag to indicate ac phase given */
@@ -94,31 +96,32 @@ typedef struct sISRCmodel {
 
 /* device parameters */
 #define ISRC_DC 1
-#define ISRC_AC_MAG 2
-#define ISRC_AC_PHASE 3
-#define ISRC_AC 4
-#define ISRC_PULSE 5
-#define ISRC_SINE 6
-#define ISRC_EXP 7
-#define ISRC_PWL 8
-#define ISRC_SFFM 9
-#define ISRC_NEG_NODE 10
-#define ISRC_POS_NODE 11
-#define ISRC_AC_REAL 12
-#define ISRC_AC_IMAG 13
-#define ISRC_FCN_TYPE 14
-#define ISRC_FCN_ORDER 15
-#define ISRC_FCN_COEFFS 16
-#define ISRC_POWER 17
-#define ISRC_D_F1 18
-#define ISRC_D_F2 19
-#define ISRC_VOLTS 20
+#define ISRC_M 2
+#define ISRC_AC_MAG 3
+#define ISRC_AC_PHASE 4
+#define ISRC_AC 5
+#define ISRC_PULSE 6
+#define ISRC_SINE 7
+#define ISRC_EXP 8
+#define ISRC_PWL 9
+#define ISRC_SFFM 10
+#define ISRC_NEG_NODE 11
+#define ISRC_POS_NODE 12
+#define ISRC_AC_REAL 13
+#define ISRC_AC_IMAG 14
+#define ISRC_FCN_TYPE 15
+#define ISRC_FCN_ORDER 16
+#define ISRC_FCN_COEFFS 17
+#define ISRC_POWER 18
+#define ISRC_D_F1 19
+#define ISRC_D_F2 20
+#define ISRC_VOLTS 21
 
-#define ISRC_AM 21
+#define ISRC_AM 22
 /* gtri - begin - add define for current source value */
 #ifdef XSPICE
 /* needed for outputting results */
-#define ISRC_CURRENT 22
+#define ISRC_CURRENT 23
 #endif
 /* gtri - end - add define for current source value */
 #define ISRC_TRNOISE 25

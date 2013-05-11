@@ -11,6 +11,7 @@ Author: 1987 Thomas L. Quarles
 
 IFparm ISRCpTable[] = { /* parameters */
  IOPP("dc",      ISRC_DC,        IF_REAL   ,"DC value of source"),
+ IOP ( "m",      ISRC_M,         IF_REAL   ,"Parallel multiplier"),
  IOPPA("acmag",   ISRC_AC_MAG,    IF_REAL   ,"AC Magnitude"),
  IOPAAU("acphase", ISRC_AC_PHASE,  IF_REAL   ,"AC Phase"),
  /* Modified to allow print @Iin[sin] A.Roldan */

@@ -15,6 +15,7 @@ ISRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     ISRCmodel *model = (ISRCmodel *) inModel;
     ISRCinstance *here;
+    double m;
 
     for( ; model != NULL; model = model->ISRCnextModel ) {
 
@@ -22,14 +23,16 @@ ISRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->ISRCinstances; here != NULL ;
                 here=here->ISRCnextInstance) {
 
+            m = here->ISRCmValue;
+
             *(ckt->CKTrhs + (here->ISRCposNode)) +=
-                here->ISRCacReal;
+                m * here->ISRCacReal;
             *(ckt->CKTrhs + (here->ISRCnegNode)) -=
-                here->ISRCacReal;
+                m * here->ISRCacReal;
             *(ckt->CKTirhs + (here->ISRCposNode)) +=
-                here->ISRCacImag;
+                m * here->ISRCacImag;
             *(ckt->CKTirhs + (here->ISRCnegNode)) -=
-                here->ISRCacImag;
+                m * here->ISRCacImag;
         }
     }
 
