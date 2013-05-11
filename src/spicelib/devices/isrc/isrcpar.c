@@ -45,6 +45,11 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->ISRCdcGiven = TRUE;
             break;
 
+        case ISRC_M:
+            here->ISRCmValue = value->rValue;
+            here->ISRCmGiven = TRUE;
+            break;
+
         case ISRC_AC_MAG:
             here->ISRCacMag = value->rValue;
             here->ISRCacMGiven = TRUE;
