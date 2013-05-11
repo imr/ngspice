@@ -36,12 +36,12 @@ double ScalingFactor = 1.0e-9;
 double m;
 
     omega = ckt->CKTomega;
-    for (; model != NULL; model = model->BSIM3v32nextModel) 
+    for (; model != NULL; model = model->BSIM3v32nextModel)
     {    for (here = model->BSIM3v32instances; here!= NULL;
-              here = here->BSIM3v32nextInstance) 
-	 { 
-	      if (here->BSIM3v32mode >= 0) 
-	      {   Gm = here->BSIM3v32gm;
+              here = here->BSIM3v32nextInstance)
+         {
+              if (here->BSIM3v32mode >= 0)
+              {   Gm = here->BSIM3v32gm;
                   Gmbs = here->BSIM3v32gmbs;
                   FwdSum = Gm + Gmbs;
                   RevSum = 0.0;
@@ -59,7 +59,7 @@ double m;
                   gbspb = 0.0;
                   gbspsp = 0.0;
 
-		  if (here->BSIM3v32nqsMod == 0)
+                  if (here->BSIM3v32nqsMod == 0)
                   {   cggb = here->BSIM3v32cggb;
                       cgsb = here->BSIM3v32cgsb;
                       cgdb = here->BSIM3v32cgdb;
@@ -73,70 +73,70 @@ double m;
                       cddb = here->BSIM3v32cddb;
 
                       xgtg = xgtd = xgts = xgtb = 0.0;
-		      sxpart = 0.6;
+                      sxpart = 0.6;
                       dxpart = 0.4;
-		      ddxpart_dVd = ddxpart_dVg = ddxpart_dVb 
-				  = ddxpart_dVs = 0.0;
-		      dsxpart_dVd = dsxpart_dVg = dsxpart_dVb
-				  = dsxpart_dVs = 0.0;
-                  }                  
+                      ddxpart_dVd = ddxpart_dVg = ddxpart_dVb
+                                  = ddxpart_dVs = 0.0;
+                      dsxpart_dVd = dsxpart_dVg = dsxpart_dVb
+                                  = dsxpart_dVs = 0.0;
+                  }
                   else
                   {   cggb = cgdb = cgsb = 0.0;
                       cbgb = cbdb = cbsb = 0.0;
                       cdgb = cddb = cdsb = 0.0;
 
-		      xgtg = here->BSIM3v32gtg;
+                      xgtg = here->BSIM3v32gtg;
                       xgtd = here->BSIM3v32gtd;
                       xgts = here->BSIM3v32gts;
-                      xgtb = here->BSIM3v32gtb; 
- 
+                      xgtb = here->BSIM3v32gtb;
+
                       xcqgb = here->BSIM3v32cqgb * omega;
                       xcqdb = here->BSIM3v32cqdb * omega;
                       xcqsb = here->BSIM3v32cqsb * omega;
                       xcqbb = here->BSIM3v32cqbb * omega;
 
-		      CoxWL = model->BSIM3v32cox * here->pParam->BSIM3v32weffCV
+                      CoxWL = model->BSIM3v32cox * here->pParam->BSIM3v32weffCV
                             * here->pParam->BSIM3v32leffCV;
-		      qcheq = -(here->BSIM3v32qgate + here->BSIM3v32qbulk);
-		      if (fabs(qcheq) <= 1.0e-5 * CoxWL)
-		      {   if (model->BSIM3v32xpart < 0.5)
-		          {   dxpart = 0.4;
-		          }
-		          else if (model->BSIM3v32xpart > 0.5)
-		          {   dxpart = 0.0;
-		          }
-		          else
-		          {   dxpart = 0.5;
-		          }
-		          ddxpart_dVd = ddxpart_dVg = ddxpart_dVb
-				      = ddxpart_dVs = 0.0;
-		      }
-		      else
-		      {   dxpart = here->BSIM3v32qdrn / qcheq;
-		          Cdd = here->BSIM3v32cddb;
-		          Csd = -(here->BSIM3v32cgdb + here->BSIM3v32cddb
-			      + here->BSIM3v32cbdb);
-		          ddxpart_dVd = (Cdd - dxpart * (Cdd + Csd)) / qcheq;
-		          Cdg = here->BSIM3v32cdgb;
-		          Csg = -(here->BSIM3v32cggb + here->BSIM3v32cdgb
-			      + here->BSIM3v32cbgb);
-		          ddxpart_dVg = (Cdg - dxpart * (Cdg + Csg)) / qcheq;
+                      qcheq = -(here->BSIM3v32qgate + here->BSIM3v32qbulk);
+                      if (fabs(qcheq) <= 1.0e-5 * CoxWL)
+                      {   if (model->BSIM3v32xpart < 0.5)
+                          {   dxpart = 0.4;
+                          }
+                          else if (model->BSIM3v32xpart > 0.5)
+                          {   dxpart = 0.0;
+                          }
+                          else
+                          {   dxpart = 0.5;
+                          }
+                          ddxpart_dVd = ddxpart_dVg = ddxpart_dVb
+                                      = ddxpart_dVs = 0.0;
+                      }
+                      else
+                      {   dxpart = here->BSIM3v32qdrn / qcheq;
+                          Cdd = here->BSIM3v32cddb;
+                          Csd = -(here->BSIM3v32cgdb + here->BSIM3v32cddb
+                              + here->BSIM3v32cbdb);
+                          ddxpart_dVd = (Cdd - dxpart * (Cdd + Csd)) / qcheq;
+                          Cdg = here->BSIM3v32cdgb;
+                          Csg = -(here->BSIM3v32cggb + here->BSIM3v32cdgb
+                              + here->BSIM3v32cbgb);
+                          ddxpart_dVg = (Cdg - dxpart * (Cdg + Csg)) / qcheq;
 
-		          Cds = here->BSIM3v32cdsb;
-		          Css = -(here->BSIM3v32cgsb + here->BSIM3v32cdsb
-			      + here->BSIM3v32cbsb);
-		          ddxpart_dVs = (Cds - dxpart * (Cds + Css)) / qcheq;
+                          Cds = here->BSIM3v32cdsb;
+                          Css = -(here->BSIM3v32cgsb + here->BSIM3v32cdsb
+                              + here->BSIM3v32cbsb);
+                          ddxpart_dVs = (Cds - dxpart * (Cds + Css)) / qcheq;
 
-		          ddxpart_dVb = -(ddxpart_dVd + ddxpart_dVg 
-				      + ddxpart_dVs);
-		      }
-		      sxpart = 1.0 - dxpart;
-		      dsxpart_dVd = -ddxpart_dVd;
-		      dsxpart_dVg = -ddxpart_dVg;
-		      dsxpart_dVs = -ddxpart_dVs;
-		      dsxpart_dVb = -(dsxpart_dVd + dsxpart_dVg + dsxpart_dVs);
+                          ddxpart_dVb = -(ddxpart_dVd + ddxpart_dVg
+                                      + ddxpart_dVs);
+                      }
+                      sxpart = 1.0 - dxpart;
+                      dsxpart_dVd = -ddxpart_dVd;
+                      dsxpart_dVg = -ddxpart_dVg;
+                      dsxpart_dVs = -ddxpart_dVs;
+                      dsxpart_dVb = -(dsxpart_dVd + dsxpart_dVg + dsxpart_dVs);
                   }
-              } 
+              }
               else
               {   Gm = -here->BSIM3v32gm;
                   Gmbs = -here->BSIM3v32gmbs;
@@ -156,7 +156,7 @@ double m;
                   gbspb = here->BSIM3v32gbbs;
                   gbspdp = -(gbspg + gbspsp + gbspb);
 
-		  if (here->BSIM3v32nqsMod == 0)
+                  if (here->BSIM3v32nqsMod == 0)
                   {   cggb = here->BSIM3v32cggb;
                       cgsb = here->BSIM3v32cgdb;
                       cgdb = here->BSIM3v32cgsb;
@@ -170,19 +170,19 @@ double m;
                       cddb = -(here->BSIM3v32cdsb + cgdb + cbdb);
 
                       xgtg = xgtd = xgts = xgtb = 0.0;
-		      sxpart = 0.4;
+                      sxpart = 0.4;
                       dxpart = 0.6;
-		      ddxpart_dVd = ddxpart_dVg = ddxpart_dVb 
-				  = ddxpart_dVs = 0.0;
-		      dsxpart_dVd = dsxpart_dVg = dsxpart_dVb
-				  = dsxpart_dVs = 0.0;
+                      ddxpart_dVd = ddxpart_dVg = ddxpart_dVb
+                                  = ddxpart_dVs = 0.0;
+                      dsxpart_dVd = dsxpart_dVg = dsxpart_dVb
+                                  = dsxpart_dVs = 0.0;
                   }
                   else
                   {   cggb = cgdb = cgsb = 0.0;
                       cbgb = cbdb = cbsb = 0.0;
                       cdgb = cddb = cdsb = 0.0;
 
-		      xgtg = here->BSIM3v32gtg;
+                      xgtg = here->BSIM3v32gtg;
                       xgtd = here->BSIM3v32gts;
                       xgts = here->BSIM3v32gtd;
                       xgtb = here->BSIM3v32gtb;
@@ -192,50 +192,50 @@ double m;
                       xcqsb = here->BSIM3v32cqdb * omega;
                       xcqbb = here->BSIM3v32cqbb * omega;
 
-		      CoxWL = model->BSIM3v32cox * here->pParam->BSIM3v32weffCV
+                      CoxWL = model->BSIM3v32cox * here->pParam->BSIM3v32weffCV
                             * here->pParam->BSIM3v32leffCV;
-		      qcheq = -(here->BSIM3v32qgate + here->BSIM3v32qbulk);
-		      if (fabs(qcheq) <= 1.0e-5 * CoxWL)
-		      {   if (model->BSIM3v32xpart < 0.5)
-		          {   sxpart = 0.4;
-		          }
-		          else if (model->BSIM3v32xpart > 0.5)
-		          {   sxpart = 0.0;
-		          }
-		          else
-		          {   sxpart = 0.5;
-		          }
-		          dsxpart_dVd = dsxpart_dVg = dsxpart_dVb
-				      = dsxpart_dVs = 0.0;
-		      }
-		      else
-		      {   sxpart = here->BSIM3v32qdrn / qcheq;
-		          Css = here->BSIM3v32cddb;
-		          Cds = -(here->BSIM3v32cgdb + here->BSIM3v32cddb
-			      + here->BSIM3v32cbdb);
-		          dsxpart_dVs = (Css - sxpart * (Css + Cds)) / qcheq;
-		          Csg = here->BSIM3v32cdgb;
-		          Cdg = -(here->BSIM3v32cggb + here->BSIM3v32cdgb
-			      + here->BSIM3v32cbgb);
-		          dsxpart_dVg = (Csg - sxpart * (Csg + Cdg)) / qcheq;
+                      qcheq = -(here->BSIM3v32qgate + here->BSIM3v32qbulk);
+                      if (fabs(qcheq) <= 1.0e-5 * CoxWL)
+                      {   if (model->BSIM3v32xpart < 0.5)
+                          {   sxpart = 0.4;
+                          }
+                          else if (model->BSIM3v32xpart > 0.5)
+                          {   sxpart = 0.0;
+                          }
+                          else
+                          {   sxpart = 0.5;
+                          }
+                          dsxpart_dVd = dsxpart_dVg = dsxpart_dVb
+                                      = dsxpart_dVs = 0.0;
+                      }
+                      else
+                      {   sxpart = here->BSIM3v32qdrn / qcheq;
+                          Css = here->BSIM3v32cddb;
+                          Cds = -(here->BSIM3v32cgdb + here->BSIM3v32cddb
+                              + here->BSIM3v32cbdb);
+                          dsxpart_dVs = (Css - sxpart * (Css + Cds)) / qcheq;
+                          Csg = here->BSIM3v32cdgb;
+                          Cdg = -(here->BSIM3v32cggb + here->BSIM3v32cdgb
+                              + here->BSIM3v32cbgb);
+                          dsxpart_dVg = (Csg - sxpart * (Csg + Cdg)) / qcheq;
 
-		          Csd = here->BSIM3v32cdsb;
-		          Cdd = -(here->BSIM3v32cgsb + here->BSIM3v32cdsb
-			      + here->BSIM3v32cbsb);
-		          dsxpart_dVd = (Csd - sxpart * (Csd + Cdd)) / qcheq;
+                          Csd = here->BSIM3v32cdsb;
+                          Cdd = -(here->BSIM3v32cgsb + here->BSIM3v32cdsb
+                              + here->BSIM3v32cbsb);
+                          dsxpart_dVd = (Csd - sxpart * (Csd + Cdd)) / qcheq;
 
-		          dsxpart_dVb = -(dsxpart_dVd + dsxpart_dVg 
-				      + dsxpart_dVs);
-		      }
-		      dxpart = 1.0 - sxpart;
-		      ddxpart_dVd = -dsxpart_dVd;
-		      ddxpart_dVg = -dsxpart_dVg;
-		      ddxpart_dVs = -dsxpart_dVs;
-		      ddxpart_dVb = -(ddxpart_dVd + ddxpart_dVg + ddxpart_dVs);
+                          dsxpart_dVb = -(dsxpart_dVd + dsxpart_dVg
+                                      + dsxpart_dVs);
+                      }
+                      dxpart = 1.0 - sxpart;
+                      ddxpart_dVd = -dsxpart_dVd;
+                      ddxpart_dVg = -dsxpart_dVg;
+                      ddxpart_dVs = -dsxpart_dVs;
+                      ddxpart_dVb = -(ddxpart_dVd + ddxpart_dVg + ddxpart_dVs);
                   }
               }
 
-	      T1 = *(ckt->CKTstate0 + here->BSIM3v32qdef) * here->BSIM3v32gtau;
+              T1 = *(ckt->CKTstate0 + here->BSIM3v32qdef) * here->BSIM3v32gtau;
               gdpr = here->BSIM3v32drainConductance;
               gspr = here->BSIM3v32sourceConductance;
               gds = here->BSIM3v32gds;
@@ -244,9 +244,9 @@ double m;
               capbd = here->BSIM3v32capbd;
               capbs = here->BSIM3v32capbs;
 
-	      GSoverlapCap = here->BSIM3v32cgso;
-	      GDoverlapCap = here->BSIM3v32cgdo;
-	      GBoverlapCap = here->pParam->BSIM3v32cgbo;
+              GSoverlapCap = here->BSIM3v32cgso;
+              GDoverlapCap = here->BSIM3v32cgdo;
+              GBoverlapCap = here->pParam->BSIM3v32cgbo;
 
               xcdgb = (cdgb - GDoverlapCap) * omega;
               xcddb = (cddb + capbd + GDoverlapCap) * omega;
@@ -255,106 +255,106 @@ double m;
               xcsdb = -(cgdb + cbdb + cddb) * omega;
               xcssb = (capbs + GSoverlapCap - (cgsb + cbsb + cdsb)) * omega;
               xcggb = (cggb + GDoverlapCap + GSoverlapCap + GBoverlapCap)
-		    * omega;
+                    * omega;
               xcgdb = (cgdb - GDoverlapCap ) * omega;
               xcgsb = (cgsb - GSoverlapCap) * omega;
               xcbgb = (cbgb - GBoverlapCap) * omega;
               xcbdb = (cbdb - capbd ) * omega;
               xcbsb = (cbsb - capbs ) * omega;
 
-	      m = here->BSIM3v32m;
+              m = here->BSIM3v32m;
 
-	      *(here->BSIM3v32GgPtr + 1) += m * xcggb;
-	      *(here->BSIM3v32BbPtr + 1) -=
-	      	m * (xcbgb + xcbdb + xcbsb);
-	      *(here->BSIM3v32DPdpPtr + 1) += m * xcddb;
-	      *(here->BSIM3v32SPspPtr + 1) += m * xcssb;
-	      *(here->BSIM3v32GbPtr + 1) -=
-	      	m * (xcggb + xcgdb + xcgsb);
-	      *(here->BSIM3v32GdpPtr + 1) += m * xcgdb;
-	      *(here->BSIM3v32GspPtr + 1) += m * xcgsb;
-	      *(here->BSIM3v32BgPtr + 1) += m * xcbgb;
-	      *(here->BSIM3v32BdpPtr + 1) += m * xcbdb;
-	      *(here->BSIM3v32BspPtr + 1) += m * xcbsb;
-	      *(here->BSIM3v32DPgPtr + 1) += m * xcdgb;
-	      *(here->BSIM3v32DPbPtr + 1) -=
-	      	m * (xcdgb + xcddb + xcdsb);
-	      *(here->BSIM3v32DPspPtr + 1) += m * xcdsb;
-	      *(here->BSIM3v32SPgPtr + 1) += m * xcsgb;
-	      *(here->BSIM3v32SPbPtr + 1) -=
-	      	m * (xcsgb + xcsdb + xcssb);
-	      *(here->BSIM3v32SPdpPtr + 1) += m * xcsdb;
-              
-	      *(here->BSIM3v32DdPtr) += m * gdpr;
-	      *(here->BSIM3v32SsPtr) += m * gspr;
-	      *(here->BSIM3v32BbPtr) +=
-	      	m * (gbd + gbs - here->BSIM3v32gbbs);
-	      *(here->BSIM3v32DPdpPtr) +=
-	      	m * (gdpr + gds + gbd + RevSum +
-	      	     dxpart * xgtd + T1 * ddxpart_dVd +
-	      	     gbdpdp);
-	      *(here->BSIM3v32SPspPtr) +=
-	      	m * (gspr + gds + gbs + FwdSum +
-	      	     sxpart * xgts + T1 * dsxpart_dVs +
-	      	     gbspsp);
-              
-	      *(here->BSIM3v32DdpPtr) -= m * gdpr;
-	      *(here->BSIM3v32SspPtr) -= m * gspr;
-              
-	      *(here->BSIM3v32BgPtr) -= m * here->BSIM3v32gbgs;
-	      *(here->BSIM3v32BdpPtr) -= m * (gbd - gbbdp);
-	      *(here->BSIM3v32BspPtr) -= m * (gbs - gbbsp);
-              
-	      *(here->BSIM3v32DPdPtr) -= m * gdpr;
-	      *(here->BSIM3v32DPgPtr) +=
-	      	m * (Gm + dxpart * xgtg + T1 * ddxpart_dVg +
-	      	     gbdpg);
-	      *(here->BSIM3v32DPbPtr) -=
-	      	m * (gbd - Gmbs - dxpart * xgtb -
-	      	     T1 * ddxpart_dVb - gbdpb);
-	      *(here->BSIM3v32DPspPtr) -=
-	      	m * (gds + FwdSum - dxpart * xgts -
-	      	     T1 * ddxpart_dVs - gbdpsp);
-              
-	      *(here->BSIM3v32SPgPtr) -=
-	      	m * (Gm - sxpart * xgtg - T1 * dsxpart_dVg -
-	      	     gbspg);
-	      *(here->BSIM3v32SPsPtr) -= m * gspr;
-	      *(here->BSIM3v32SPbPtr) -=
-	      	m * (gbs + Gmbs - sxpart * xgtb -
-	      	     T1 * dsxpart_dVb - gbspb);
-	      *(here->BSIM3v32SPdpPtr) -=
-	      	m * (gds + RevSum - sxpart * xgtd -
-	      	     T1 * dsxpart_dVd - gbspdp);
-              
-	      *(here->BSIM3v32GgPtr) -= m * xgtg;
-	      *(here->BSIM3v32GbPtr) -= m * xgtb;
-	      *(here->BSIM3v32GdpPtr) -= m * xgtd;
-	      *(here->BSIM3v32GspPtr) -= m * xgts;
-              
-	      if (here->BSIM3v32nqsMod)
-	      {
-	      	*(here->BSIM3v32QqPtr + 1) +=
-	      		m * omega * ScalingFactor;
-	      	*(here->BSIM3v32QgPtr + 1) -= m * xcqgb;
-	      	*(here->BSIM3v32QdpPtr + 1) -= m * xcqdb;
-	      	*(here->BSIM3v32QspPtr + 1) -= m * xcqsb;
-	      	*(here->BSIM3v32QbPtr + 1) -= m * xcqbb;
-              
-	      	*(here->BSIM3v32QqPtr) += m * here->BSIM3v32gtau;
-              
-	      	*(here->BSIM3v32DPqPtr) +=
-	      		m * (dxpart * here->BSIM3v32gtau);
-	      	*(here->BSIM3v32SPqPtr) +=
-	      		m * (sxpart * here->BSIM3v32gtau);
-	      	*(here->BSIM3v32GqPtr) -= m * here->BSIM3v32gtau;
-              
-	      	*(here->BSIM3v32QgPtr) += m * xgtg;
-	      	*(here->BSIM3v32QdpPtr) += m * xgtd;
-	      	*(here->BSIM3v32QspPtr) += m * xgts;
-	      	*(here->BSIM3v32QbPtr) += m * xgtb;
-	      }
-	 }
+              *(here->BSIM3v32GgPtr + 1) += m * xcggb;
+              *(here->BSIM3v32BbPtr + 1) -=
+                      m * (xcbgb + xcbdb + xcbsb);
+              *(here->BSIM3v32DPdpPtr + 1) += m * xcddb;
+              *(here->BSIM3v32SPspPtr + 1) += m * xcssb;
+              *(here->BSIM3v32GbPtr + 1) -=
+                      m * (xcggb + xcgdb + xcgsb);
+              *(here->BSIM3v32GdpPtr + 1) += m * xcgdb;
+              *(here->BSIM3v32GspPtr + 1) += m * xcgsb;
+              *(here->BSIM3v32BgPtr + 1) += m * xcbgb;
+              *(here->BSIM3v32BdpPtr + 1) += m * xcbdb;
+              *(here->BSIM3v32BspPtr + 1) += m * xcbsb;
+              *(here->BSIM3v32DPgPtr + 1) += m * xcdgb;
+              *(here->BSIM3v32DPbPtr + 1) -=
+                      m * (xcdgb + xcddb + xcdsb);
+              *(here->BSIM3v32DPspPtr + 1) += m * xcdsb;
+              *(here->BSIM3v32SPgPtr + 1) += m * xcsgb;
+              *(here->BSIM3v32SPbPtr + 1) -=
+                      m * (xcsgb + xcsdb + xcssb);
+              *(here->BSIM3v32SPdpPtr + 1) += m * xcsdb;
+
+              *(here->BSIM3v32DdPtr) += m * gdpr;
+              *(here->BSIM3v32SsPtr) += m * gspr;
+              *(here->BSIM3v32BbPtr) +=
+                      m * (gbd + gbs - here->BSIM3v32gbbs);
+              *(here->BSIM3v32DPdpPtr) +=
+                      m * (gdpr + gds + gbd + RevSum +
+                           dxpart * xgtd + T1 * ddxpart_dVd +
+                           gbdpdp);
+              *(here->BSIM3v32SPspPtr) +=
+                      m * (gspr + gds + gbs + FwdSum +
+                           sxpart * xgts + T1 * dsxpart_dVs +
+                           gbspsp);
+
+              *(here->BSIM3v32DdpPtr) -= m * gdpr;
+              *(here->BSIM3v32SspPtr) -= m * gspr;
+
+              *(here->BSIM3v32BgPtr) -= m * here->BSIM3v32gbgs;
+              *(here->BSIM3v32BdpPtr) -= m * (gbd - gbbdp);
+              *(here->BSIM3v32BspPtr) -= m * (gbs - gbbsp);
+
+              *(here->BSIM3v32DPdPtr) -= m * gdpr;
+              *(here->BSIM3v32DPgPtr) +=
+                      m * (Gm + dxpart * xgtg + T1 * ddxpart_dVg +
+                           gbdpg);
+              *(here->BSIM3v32DPbPtr) -=
+                      m * (gbd - Gmbs - dxpart * xgtb -
+                           T1 * ddxpart_dVb - gbdpb);
+              *(here->BSIM3v32DPspPtr) -=
+                      m * (gds + FwdSum - dxpart * xgts -
+                           T1 * ddxpart_dVs - gbdpsp);
+
+              *(here->BSIM3v32SPgPtr) -=
+                      m * (Gm - sxpart * xgtg - T1 * dsxpart_dVg -
+                           gbspg);
+              *(here->BSIM3v32SPsPtr) -= m * gspr;
+              *(here->BSIM3v32SPbPtr) -=
+                      m * (gbs + Gmbs - sxpart * xgtb -
+                           T1 * dsxpart_dVb - gbspb);
+              *(here->BSIM3v32SPdpPtr) -=
+                      m * (gds + RevSum - sxpart * xgtd -
+                           T1 * dsxpart_dVd - gbspdp);
+
+              *(here->BSIM3v32GgPtr) -= m * xgtg;
+              *(here->BSIM3v32GbPtr) -= m * xgtb;
+              *(here->BSIM3v32GdpPtr) -= m * xgtd;
+              *(here->BSIM3v32GspPtr) -= m * xgts;
+
+              if (here->BSIM3v32nqsMod)
+              {
+                      *(here->BSIM3v32QqPtr + 1) +=
+                              m * omega * ScalingFactor;
+                      *(here->BSIM3v32QgPtr + 1) -= m * xcqgb;
+                      *(here->BSIM3v32QdpPtr + 1) -= m * xcqdb;
+                      *(here->BSIM3v32QspPtr + 1) -= m * xcqsb;
+                      *(here->BSIM3v32QbPtr + 1) -= m * xcqbb;
+
+                      *(here->BSIM3v32QqPtr) += m * here->BSIM3v32gtau;
+
+                      *(here->BSIM3v32DPqPtr) +=
+                              m * (dxpart * here->BSIM3v32gtau);
+                      *(here->BSIM3v32SPqPtr) +=
+                              m * (sxpart * here->BSIM3v32gtau);
+                      *(here->BSIM3v32GqPtr) -= m * here->BSIM3v32gtau;
+
+                      *(here->BSIM3v32QgPtr) += m * xgtg;
+                      *(here->BSIM3v32QdpPtr) += m * xgtd;
+                      *(here->BSIM3v32QspPtr) += m * xgts;
+                      *(here->BSIM3v32QbPtr) += m * xgtb;
+              }
+         }
     }
     return(OK);
 }

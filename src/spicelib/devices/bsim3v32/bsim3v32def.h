@@ -14,7 +14,7 @@ File: bsim3v32def.h
 #include "ngspice/gendefs.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/complex.h"
-#include "ngspice/noisedef.h"         
+#include "ngspice/noisedef.h"
 
 typedef struct sBSIM3v32instance
 {
@@ -32,7 +32,7 @@ typedef struct sBSIM3v32instance
 
     /* MCJ */
     double BSIM3v32ueff;
-    double BSIM3v32thetavth; 
+    double BSIM3v32thetavth;
     double BSIM3v32von;
     double BSIM3v32vdsat;
     double BSIM3v32cgdo;
@@ -44,7 +44,7 @@ typedef struct sBSIM3v32instance
 
     double BSIM3v32l;
     double BSIM3v32w;
-    double BSIM3v32m;  
+    double BSIM3v32m;
     double BSIM3v32drainArea;
     double BSIM3v32sourceArea;
     double BSIM3v32drainSquares;
@@ -120,7 +120,7 @@ typedef struct sBSIM3v32instance
 
     unsigned BSIM3v32lGiven :1;
     unsigned BSIM3v32wGiven :1;
-    unsigned BSIM3v32mGiven :1;    
+    unsigned BSIM3v32mGiven :1;
     unsigned BSIM3v32drainAreaGiven :1;
     unsigned BSIM3v32sourceAreaGiven    :1;
     unsigned BSIM3v32drainSquaresGiven  :1;
@@ -217,29 +217,29 @@ struct bsim3v32SizeDependParam
     double Width;
     double Length;
 
-    double BSIM3v32cdsc;           
-    double BSIM3v32cdscb;    
-    double BSIM3v32cdscd;       
-    double BSIM3v32cit;           
-    double BSIM3v32nfactor;      
+    double BSIM3v32cdsc;
+    double BSIM3v32cdscb;
+    double BSIM3v32cdscd;
+    double BSIM3v32cit;
+    double BSIM3v32nfactor;
     double BSIM3v32xj;
-    double BSIM3v32vsat;         
-    double BSIM3v32at;         
-    double BSIM3v32a0;   
-    double BSIM3v32ags;      
-    double BSIM3v32a1;         
-    double BSIM3v32a2;         
-    double BSIM3v32keta;     
+    double BSIM3v32vsat;
+    double BSIM3v32at;
+    double BSIM3v32a0;
+    double BSIM3v32ags;
+    double BSIM3v32a1;
+    double BSIM3v32a2;
+    double BSIM3v32keta;
     double BSIM3v32nsub;
-    double BSIM3v32npeak;        
-    double BSIM3v32ngate;        
-    double BSIM3v32gamma1;      
-    double BSIM3v32gamma2;     
-    double BSIM3v32vbx;      
-    double BSIM3v32vbi;       
-    double BSIM3v32vbm;       
-    double BSIM3v32vbsc;       
-    double BSIM3v32xt;       
+    double BSIM3v32npeak;
+    double BSIM3v32ngate;
+    double BSIM3v32gamma1;
+    double BSIM3v32gamma2;
+    double BSIM3v32vbx;
+    double BSIM3v32vbi;
+    double BSIM3v32vbm;
+    double BSIM3v32vbsc;
+    double BSIM3v32xt;
     double BSIM3v32phi;
     double BSIM3v32litl;
     double BSIM3v32k1;
@@ -251,14 +251,14 @@ struct bsim3v32SizeDependParam
     double BSIM3v32k3b;
     double BSIM3v32w0;
     double BSIM3v32nlx;
-    double BSIM3v32dvt0;      
-    double BSIM3v32dvt1;      
-    double BSIM3v32dvt2;      
-    double BSIM3v32dvt0w;      
-    double BSIM3v32dvt1w;      
-    double BSIM3v32dvt2w;      
-    double BSIM3v32drout;      
-    double BSIM3v32dsub;      
+    double BSIM3v32dvt0;
+    double BSIM3v32dvt1;
+    double BSIM3v32dvt2;
+    double BSIM3v32dvt0w;
+    double BSIM3v32dvt1w;
+    double BSIM3v32dvt2w;
+    double BSIM3v32drout;
+    double BSIM3v32dsub;
     double BSIM3v32vth0;
     double BSIM3v32ua;
     double BSIM3v32ua1;
@@ -271,20 +271,20 @@ struct bsim3v32SizeDependParam
     double BSIM3v32voff;
     double BSIM3v32vfb;
     double BSIM3v32delta;
-    double BSIM3v32rdsw;       
-    double BSIM3v32rds0;       
-    double BSIM3v32prwg;       
-    double BSIM3v32prwb;       
-    double BSIM3v32prt;       
-    double BSIM3v32eta0;         
-    double BSIM3v32etab;         
-    double BSIM3v32pclm;      
-    double BSIM3v32pdibl1;      
-    double BSIM3v32pdibl2;      
-    double BSIM3v32pdiblb;      
-    double BSIM3v32pscbe1;       
-    double BSIM3v32pscbe2;       
-    double BSIM3v32pvag;       
+    double BSIM3v32rdsw;
+    double BSIM3v32rds0;
+    double BSIM3v32prwg;
+    double BSIM3v32prwb;
+    double BSIM3v32prt;
+    double BSIM3v32eta0;
+    double BSIM3v32etab;
+    double BSIM3v32pclm;
+    double BSIM3v32pdibl1;
+    double BSIM3v32pdibl2;
+    double BSIM3v32pdiblb;
+    double BSIM3v32pscbe1;
+    double BSIM3v32pscbe2;
+    double BSIM3v32pvag;
     double BSIM3v32wr;
     double BSIM3v32dwg;
     double BSIM3v32dwb;
@@ -327,14 +327,14 @@ struct bsim3v32SizeDependParam
     double BSIM3v32cgbo;
     double BSIM3v32tconst;
 
-    double BSIM3v32u0temp;       
-    double BSIM3v32vsattemp;   
-    double BSIM3v32sqrtPhi;   
-    double BSIM3v32phis3;   
-    double BSIM3v32Xdep0;          
-    double BSIM3v32sqrtXdep0;          
+    double BSIM3v32u0temp;
+    double BSIM3v32vsattemp;
+    double BSIM3v32sqrtPhi;
+    double BSIM3v32phis3;
+    double BSIM3v32Xdep0;
+    double BSIM3v32sqrtXdep0;
     double BSIM3v32theta0vb0;
-    double BSIM3v32thetaRout; 
+    double BSIM3v32thetaRout;
 
     double BSIM3v32cof1;
     double BSIM3v32cof2;
@@ -350,12 +350,12 @@ struct bsim3v32SizeDependParam
 };
 
 
-typedef struct sBSIM3v32model 
+typedef struct sBSIM3v32model
 {
     int BSIM3v32modType;
     struct sBSIM3v32model *BSIM3v32nextModel;
     BSIM3v32instance *BSIM3v32instances;
-    IFuid BSIM3v32modName; 
+    IFuid BSIM3v32modName;
     int BSIM3v32type;
 
     int    BSIM3v32mobMod;
@@ -364,39 +364,39 @@ typedef struct sBSIM3v32model
     int    BSIM3v32noiMod;
     int    BSIM3v32binUnit;
     int    BSIM3v32paramChk;
-    char   *BSIM3v32version;             
+    char   *BSIM3v32version;
     /* The following field is an integer coding
      * of BSIM3v32version.
-     */     
-    int    BSIM3v32intVersion;             
+     */
+    int    BSIM3v32intVersion;
 #define BSIM3v32V324  324       /* BSIM3v32 V3.2.4 */
 #define BSIM3v32V323  323       /* BSIM3v32 V3.2.3 */
 #define BSIM3v32V322  322       /* BSIM3v32 V3.2.2 */
 #define BSIM3v32V32   32        /* BSIM3v32 V3.2   */
 #define BSIM3v32V3OLD 0         /* Old model    */
-    double BSIM3v32tox;             
+    double BSIM3v32tox;
     double BSIM3v32toxm;
-    double BSIM3v32cdsc;           
-    double BSIM3v32cdscb; 
-    double BSIM3v32cdscd;          
-    double BSIM3v32cit;           
-    double BSIM3v32nfactor;      
+    double BSIM3v32cdsc;
+    double BSIM3v32cdscb;
+    double BSIM3v32cdscd;
+    double BSIM3v32cit;
+    double BSIM3v32nfactor;
     double BSIM3v32xj;
-    double BSIM3v32vsat;         
-    double BSIM3v32at;         
-    double BSIM3v32a0;   
-    double BSIM3v32ags;      
-    double BSIM3v32a1;         
-    double BSIM3v32a2;         
-    double BSIM3v32keta;     
+    double BSIM3v32vsat;
+    double BSIM3v32at;
+    double BSIM3v32a0;
+    double BSIM3v32ags;
+    double BSIM3v32a1;
+    double BSIM3v32a2;
+    double BSIM3v32keta;
     double BSIM3v32nsub;
-    double BSIM3v32npeak;        
-    double BSIM3v32ngate;        
-    double BSIM3v32gamma1;      
-    double BSIM3v32gamma2;     
-    double BSIM3v32vbx;      
-    double BSIM3v32vbm;       
-    double BSIM3v32xt;       
+    double BSIM3v32npeak;
+    double BSIM3v32ngate;
+    double BSIM3v32gamma1;
+    double BSIM3v32gamma2;
+    double BSIM3v32vbx;
+    double BSIM3v32vbm;
+    double BSIM3v32xt;
     double BSIM3v32k1;
     double BSIM3v32kt1;
     double BSIM3v32kt1l;
@@ -406,14 +406,14 @@ typedef struct sBSIM3v32model
     double BSIM3v32k3b;
     double BSIM3v32w0;
     double BSIM3v32nlx;
-    double BSIM3v32dvt0;      
-    double BSIM3v32dvt1;      
-    double BSIM3v32dvt2;      
-    double BSIM3v32dvt0w;      
-    double BSIM3v32dvt1w;      
-    double BSIM3v32dvt2w;      
-    double BSIM3v32drout;      
-    double BSIM3v32dsub;      
+    double BSIM3v32dvt0;
+    double BSIM3v32dvt1;
+    double BSIM3v32dvt2;
+    double BSIM3v32dvt0w;
+    double BSIM3v32dvt1w;
+    double BSIM3v32dvt2w;
+    double BSIM3v32drout;
+    double BSIM3v32dsub;
     double BSIM3v32vth0;
     double BSIM3v32ua;
     double BSIM3v32ua1;
@@ -425,19 +425,19 @@ typedef struct sBSIM3v32model
     double BSIM3v32ute;
     double BSIM3v32voff;
     double BSIM3v32delta;
-    double BSIM3v32rdsw;       
+    double BSIM3v32rdsw;
     double BSIM3v32prwg;
     double BSIM3v32prwb;
-    double BSIM3v32prt;       
-    double BSIM3v32eta0;         
-    double BSIM3v32etab;         
-    double BSIM3v32pclm;      
-    double BSIM3v32pdibl1;      
-    double BSIM3v32pdibl2;      
+    double BSIM3v32prt;
+    double BSIM3v32eta0;
+    double BSIM3v32etab;
+    double BSIM3v32pclm;
+    double BSIM3v32pdibl1;
+    double BSIM3v32pdibl2;
     double BSIM3v32pdiblb;
-    double BSIM3v32pscbe1;       
-    double BSIM3v32pscbe2;       
-    double BSIM3v32pvag;       
+    double BSIM3v32pscbe1;
+    double BSIM3v32pscbe2;
+    double BSIM3v32pvag;
     double BSIM3v32wr;
     double BSIM3v32dwg;
     double BSIM3v32dwb;
@@ -481,27 +481,27 @@ typedef struct sBSIM3v32model
     double BSIM3v32rsc;
 
     /* Length Dependence */
-    double BSIM3v32lcdsc;           
-    double BSIM3v32lcdscb; 
-    double BSIM3v32lcdscd;          
-    double BSIM3v32lcit;           
-    double BSIM3v32lnfactor;      
+    double BSIM3v32lcdsc;
+    double BSIM3v32lcdscb;
+    double BSIM3v32lcdscd;
+    double BSIM3v32lcit;
+    double BSIM3v32lnfactor;
     double BSIM3v32lxj;
-    double BSIM3v32lvsat;         
-    double BSIM3v32lat;         
-    double BSIM3v32la0;   
-    double BSIM3v32lags;      
-    double BSIM3v32la1;         
-    double BSIM3v32la2;         
-    double BSIM3v32lketa;     
+    double BSIM3v32lvsat;
+    double BSIM3v32lat;
+    double BSIM3v32la0;
+    double BSIM3v32lags;
+    double BSIM3v32la1;
+    double BSIM3v32la2;
+    double BSIM3v32lketa;
     double BSIM3v32lnsub;
-    double BSIM3v32lnpeak;        
-    double BSIM3v32lngate;        
-    double BSIM3v32lgamma1;      
-    double BSIM3v32lgamma2;     
-    double BSIM3v32lvbx;      
-    double BSIM3v32lvbm;       
-    double BSIM3v32lxt;       
+    double BSIM3v32lnpeak;
+    double BSIM3v32lngate;
+    double BSIM3v32lgamma1;
+    double BSIM3v32lgamma2;
+    double BSIM3v32lvbx;
+    double BSIM3v32lvbm;
+    double BSIM3v32lxt;
     double BSIM3v32lk1;
     double BSIM3v32lkt1;
     double BSIM3v32lkt1l;
@@ -511,14 +511,14 @@ typedef struct sBSIM3v32model
     double BSIM3v32lk3b;
     double BSIM3v32lw0;
     double BSIM3v32lnlx;
-    double BSIM3v32ldvt0;      
-    double BSIM3v32ldvt1;      
-    double BSIM3v32ldvt2;      
-    double BSIM3v32ldvt0w;      
-    double BSIM3v32ldvt1w;      
-    double BSIM3v32ldvt2w;      
-    double BSIM3v32ldrout;      
-    double BSIM3v32ldsub;      
+    double BSIM3v32ldvt0;
+    double BSIM3v32ldvt1;
+    double BSIM3v32ldvt2;
+    double BSIM3v32ldvt0w;
+    double BSIM3v32ldvt1w;
+    double BSIM3v32ldvt2w;
+    double BSIM3v32ldrout;
+    double BSIM3v32ldsub;
     double BSIM3v32lvth0;
     double BSIM3v32lua;
     double BSIM3v32lua1;
@@ -530,19 +530,19 @@ typedef struct sBSIM3v32model
     double BSIM3v32lute;
     double BSIM3v32lvoff;
     double BSIM3v32ldelta;
-    double BSIM3v32lrdsw;       
+    double BSIM3v32lrdsw;
     double BSIM3v32lprwg;
     double BSIM3v32lprwb;
-    double BSIM3v32lprt;       
-    double BSIM3v32leta0;         
-    double BSIM3v32letab;         
-    double BSIM3v32lpclm;      
-    double BSIM3v32lpdibl1;      
-    double BSIM3v32lpdibl2;      
+    double BSIM3v32lprt;
+    double BSIM3v32leta0;
+    double BSIM3v32letab;
+    double BSIM3v32lpclm;
+    double BSIM3v32lpdibl1;
+    double BSIM3v32lpdibl2;
     double BSIM3v32lpdiblb;
-    double BSIM3v32lpscbe1;       
-    double BSIM3v32lpscbe2;       
-    double BSIM3v32lpvag;       
+    double BSIM3v32lpscbe1;
+    double BSIM3v32lpscbe2;
+    double BSIM3v32lpvag;
     double BSIM3v32lwr;
     double BSIM3v32ldwg;
     double BSIM3v32ldwb;
@@ -568,27 +568,27 @@ typedef struct sBSIM3v32model
     double BSIM3v32lmoin;
 
     /* Width Dependence */
-    double BSIM3v32wcdsc;           
-    double BSIM3v32wcdscb; 
-    double BSIM3v32wcdscd;          
-    double BSIM3v32wcit;           
-    double BSIM3v32wnfactor;      
+    double BSIM3v32wcdsc;
+    double BSIM3v32wcdscb;
+    double BSIM3v32wcdscd;
+    double BSIM3v32wcit;
+    double BSIM3v32wnfactor;
     double BSIM3v32wxj;
-    double BSIM3v32wvsat;         
-    double BSIM3v32wat;         
-    double BSIM3v32wa0;   
-    double BSIM3v32wags;      
-    double BSIM3v32wa1;         
-    double BSIM3v32wa2;         
-    double BSIM3v32wketa;     
+    double BSIM3v32wvsat;
+    double BSIM3v32wat;
+    double BSIM3v32wa0;
+    double BSIM3v32wags;
+    double BSIM3v32wa1;
+    double BSIM3v32wa2;
+    double BSIM3v32wketa;
     double BSIM3v32wnsub;
-    double BSIM3v32wnpeak;        
-    double BSIM3v32wngate;        
-    double BSIM3v32wgamma1;      
-    double BSIM3v32wgamma2;     
-    double BSIM3v32wvbx;      
-    double BSIM3v32wvbm;       
-    double BSIM3v32wxt;       
+    double BSIM3v32wnpeak;
+    double BSIM3v32wngate;
+    double BSIM3v32wgamma1;
+    double BSIM3v32wgamma2;
+    double BSIM3v32wvbx;
+    double BSIM3v32wvbm;
+    double BSIM3v32wxt;
     double BSIM3v32wk1;
     double BSIM3v32wkt1;
     double BSIM3v32wkt1l;
@@ -598,14 +598,14 @@ typedef struct sBSIM3v32model
     double BSIM3v32wk3b;
     double BSIM3v32ww0;
     double BSIM3v32wnlx;
-    double BSIM3v32wdvt0;      
-    double BSIM3v32wdvt1;      
-    double BSIM3v32wdvt2;      
-    double BSIM3v32wdvt0w;      
-    double BSIM3v32wdvt1w;      
-    double BSIM3v32wdvt2w;      
-    double BSIM3v32wdrout;      
-    double BSIM3v32wdsub;      
+    double BSIM3v32wdvt0;
+    double BSIM3v32wdvt1;
+    double BSIM3v32wdvt2;
+    double BSIM3v32wdvt0w;
+    double BSIM3v32wdvt1w;
+    double BSIM3v32wdvt2w;
+    double BSIM3v32wdrout;
+    double BSIM3v32wdsub;
     double BSIM3v32wvth0;
     double BSIM3v32wua;
     double BSIM3v32wua1;
@@ -617,19 +617,19 @@ typedef struct sBSIM3v32model
     double BSIM3v32wute;
     double BSIM3v32wvoff;
     double BSIM3v32wdelta;
-    double BSIM3v32wrdsw;       
+    double BSIM3v32wrdsw;
     double BSIM3v32wprwg;
     double BSIM3v32wprwb;
-    double BSIM3v32wprt;       
-    double BSIM3v32weta0;         
-    double BSIM3v32wetab;         
-    double BSIM3v32wpclm;      
-    double BSIM3v32wpdibl1;      
-    double BSIM3v32wpdibl2;      
+    double BSIM3v32wprt;
+    double BSIM3v32weta0;
+    double BSIM3v32wetab;
+    double BSIM3v32wpclm;
+    double BSIM3v32wpdibl1;
+    double BSIM3v32wpdibl2;
     double BSIM3v32wpdiblb;
-    double BSIM3v32wpscbe1;       
-    double BSIM3v32wpscbe2;       
-    double BSIM3v32wpvag;       
+    double BSIM3v32wpscbe1;
+    double BSIM3v32wpscbe2;
+    double BSIM3v32wpvag;
     double BSIM3v32wwr;
     double BSIM3v32wdwg;
     double BSIM3v32wdwb;
@@ -655,27 +655,27 @@ typedef struct sBSIM3v32model
     double BSIM3v32wmoin;
 
     /* Cross-term Dependence */
-    double BSIM3v32pcdsc;           
-    double BSIM3v32pcdscb; 
-    double BSIM3v32pcdscd;          
-    double BSIM3v32pcit;           
-    double BSIM3v32pnfactor;      
+    double BSIM3v32pcdsc;
+    double BSIM3v32pcdscb;
+    double BSIM3v32pcdscd;
+    double BSIM3v32pcit;
+    double BSIM3v32pnfactor;
     double BSIM3v32pxj;
-    double BSIM3v32pvsat;         
-    double BSIM3v32pat;         
-    double BSIM3v32pa0;   
-    double BSIM3v32pags;      
-    double BSIM3v32pa1;         
-    double BSIM3v32pa2;         
-    double BSIM3v32pketa;     
+    double BSIM3v32pvsat;
+    double BSIM3v32pat;
+    double BSIM3v32pa0;
+    double BSIM3v32pags;
+    double BSIM3v32pa1;
+    double BSIM3v32pa2;
+    double BSIM3v32pketa;
     double BSIM3v32pnsub;
-    double BSIM3v32pnpeak;        
-    double BSIM3v32pngate;        
-    double BSIM3v32pgamma1;      
-    double BSIM3v32pgamma2;     
-    double BSIM3v32pvbx;      
-    double BSIM3v32pvbm;       
-    double BSIM3v32pxt;       
+    double BSIM3v32pnpeak;
+    double BSIM3v32pngate;
+    double BSIM3v32pgamma1;
+    double BSIM3v32pgamma2;
+    double BSIM3v32pvbx;
+    double BSIM3v32pvbm;
+    double BSIM3v32pxt;
     double BSIM3v32pk1;
     double BSIM3v32pkt1;
     double BSIM3v32pkt1l;
@@ -685,14 +685,14 @@ typedef struct sBSIM3v32model
     double BSIM3v32pk3b;
     double BSIM3v32pw0;
     double BSIM3v32pnlx;
-    double BSIM3v32pdvt0;      
-    double BSIM3v32pdvt1;      
-    double BSIM3v32pdvt2;      
-    double BSIM3v32pdvt0w;      
-    double BSIM3v32pdvt1w;      
-    double BSIM3v32pdvt2w;      
-    double BSIM3v32pdrout;      
-    double BSIM3v32pdsub;      
+    double BSIM3v32pdvt0;
+    double BSIM3v32pdvt1;
+    double BSIM3v32pdvt2;
+    double BSIM3v32pdvt0w;
+    double BSIM3v32pdvt1w;
+    double BSIM3v32pdvt2w;
+    double BSIM3v32pdrout;
+    double BSIM3v32pdsub;
     double BSIM3v32pvth0;
     double BSIM3v32pua;
     double BSIM3v32pua1;
@@ -707,16 +707,16 @@ typedef struct sBSIM3v32model
     double BSIM3v32prdsw;
     double BSIM3v32pprwg;
     double BSIM3v32pprwb;
-    double BSIM3v32pprt;       
-    double BSIM3v32peta0;         
-    double BSIM3v32petab;         
-    double BSIM3v32ppclm;      
-    double BSIM3v32ppdibl1;      
-    double BSIM3v32ppdibl2;      
+    double BSIM3v32pprt;
+    double BSIM3v32peta0;
+    double BSIM3v32petab;
+    double BSIM3v32ppclm;
+    double BSIM3v32ppdibl1;
+    double BSIM3v32ppdibl2;
     double BSIM3v32ppdiblb;
-    double BSIM3v32ppscbe1;       
-    double BSIM3v32ppscbe2;       
-    double BSIM3v32ppvag;       
+    double BSIM3v32ppscbe1;
+    double BSIM3v32ppscbe2;
+    double BSIM3v32ppvag;
     double BSIM3v32pwr;
     double BSIM3v32pdwg;
     double BSIM3v32pdwb;
@@ -794,7 +794,7 @@ typedef struct sBSIM3v32model
 
 /* Pre-calculated constants */
     /* MCJ: move to size-dependent param. */
-    double BSIM3v32vtm;   
+    double BSIM3v32vtm;
     double BSIM3v32cox;
     double BSIM3v32cof1;
     double BSIM3v32cof2;
@@ -811,13 +811,13 @@ typedef struct sBSIM3v32model
     double BSIM3v32unitLengthSidewallTempJctCap;
     double BSIM3v32unitLengthGateSidewallTempJctCap;
 
-    double BSIM3v32oxideTrapDensityA;      
-    double BSIM3v32oxideTrapDensityB;     
-    double BSIM3v32oxideTrapDensityC;  
-    double BSIM3v32em;  
-    double BSIM3v32ef;  
-    double BSIM3v32af;  
-    double BSIM3v32kf;  
+    double BSIM3v32oxideTrapDensityA;
+    double BSIM3v32oxideTrapDensityB;
+    double BSIM3v32oxideTrapDensityC;
+    double BSIM3v32em;
+    double BSIM3v32ef;
+    double BSIM3v32af;
+    double BSIM3v32kf;
 
     struct bsim3v32SizeDependParam *pSizeDependParamKnot;
 
@@ -844,7 +844,7 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32agsGiven   :1;
     unsigned  BSIM3v32a1Given   :1;
     unsigned  BSIM3v32a2Given   :1;
-    unsigned  BSIM3v32ketaGiven   :1;    
+    unsigned  BSIM3v32ketaGiven   :1;
     unsigned  BSIM3v32nsubGiven   :1;
     unsigned  BSIM3v32npeakGiven   :1;
     unsigned  BSIM3v32ngateGiven   :1;
@@ -862,14 +862,14 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32k3bGiven   :1;
     unsigned  BSIM3v32w0Given   :1;
     unsigned  BSIM3v32nlxGiven   :1;
-    unsigned  BSIM3v32dvt0Given   :1;   
-    unsigned  BSIM3v32dvt1Given   :1;     
-    unsigned  BSIM3v32dvt2Given   :1;     
-    unsigned  BSIM3v32dvt0wGiven   :1;   
-    unsigned  BSIM3v32dvt1wGiven   :1;     
-    unsigned  BSIM3v32dvt2wGiven   :1;     
-    unsigned  BSIM3v32droutGiven   :1;     
-    unsigned  BSIM3v32dsubGiven   :1;     
+    unsigned  BSIM3v32dvt0Given   :1;
+    unsigned  BSIM3v32dvt1Given   :1;
+    unsigned  BSIM3v32dvt2Given   :1;
+    unsigned  BSIM3v32dvt0wGiven   :1;
+    unsigned  BSIM3v32dvt1wGiven   :1;
+    unsigned  BSIM3v32dvt2wGiven   :1;
+    unsigned  BSIM3v32droutGiven   :1;
+    unsigned  BSIM3v32dsubGiven   :1;
     unsigned  BSIM3v32vth0Given   :1;
     unsigned  BSIM3v32uaGiven   :1;
     unsigned  BSIM3v32ua1Given   :1;
@@ -880,20 +880,20 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32u0Given   :1;
     unsigned  BSIM3v32uteGiven   :1;
     unsigned  BSIM3v32voffGiven   :1;
-    unsigned  BSIM3v32rdswGiven   :1;      
-    unsigned  BSIM3v32prwgGiven   :1;      
-    unsigned  BSIM3v32prwbGiven   :1;      
-    unsigned  BSIM3v32prtGiven   :1;      
-    unsigned  BSIM3v32eta0Given   :1;    
-    unsigned  BSIM3v32etabGiven   :1;    
-    unsigned  BSIM3v32pclmGiven   :1;   
-    unsigned  BSIM3v32pdibl1Given   :1;   
-    unsigned  BSIM3v32pdibl2Given   :1;  
-    unsigned  BSIM3v32pdiblbGiven   :1;  
-    unsigned  BSIM3v32pscbe1Given   :1;    
-    unsigned  BSIM3v32pscbe2Given   :1;    
-    unsigned  BSIM3v32pvagGiven   :1;    
-    unsigned  BSIM3v32deltaGiven  :1;     
+    unsigned  BSIM3v32rdswGiven   :1;
+    unsigned  BSIM3v32prwgGiven   :1;
+    unsigned  BSIM3v32prwbGiven   :1;
+    unsigned  BSIM3v32prtGiven   :1;
+    unsigned  BSIM3v32eta0Given   :1;
+    unsigned  BSIM3v32etabGiven   :1;
+    unsigned  BSIM3v32pclmGiven   :1;
+    unsigned  BSIM3v32pdibl1Given   :1;
+    unsigned  BSIM3v32pdibl2Given   :1;
+    unsigned  BSIM3v32pdiblbGiven   :1;
+    unsigned  BSIM3v32pscbe1Given   :1;
+    unsigned  BSIM3v32pscbe2Given   :1;
+    unsigned  BSIM3v32pvagGiven   :1;
+    unsigned  BSIM3v32deltaGiven  :1;
     unsigned  BSIM3v32wrGiven   :1;
     unsigned  BSIM3v32dwgGiven   :1;
     unsigned  BSIM3v32dwbGiven   :1;
@@ -906,7 +906,7 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32vfbGiven   :1;
 
     /* CV model */
-    unsigned  BSIM3v32elmGiven  :1;     
+    unsigned  BSIM3v32elmGiven  :1;
     unsigned  BSIM3v32cgslGiven   :1;
     unsigned  BSIM3v32cgdlGiven   :1;
     unsigned  BSIM3v32ckappaGiven   :1;
@@ -928,7 +928,7 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32tpbswgGiven :1;
 
     /* acm model */
-    unsigned  BSIM3v32hdifGiven  :1;     
+    unsigned  BSIM3v32hdifGiven  :1;
     unsigned  BSIM3v32ldifGiven   :1;
     unsigned  BSIM3v32ldGiven   :1;
     unsigned  BSIM3v32rdGiven   :1;
@@ -949,7 +949,7 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32lagsGiven   :1;
     unsigned  BSIM3v32la1Given   :1;
     unsigned  BSIM3v32la2Given   :1;
-    unsigned  BSIM3v32lketaGiven   :1;    
+    unsigned  BSIM3v32lketaGiven   :1;
     unsigned  BSIM3v32lnsubGiven   :1;
     unsigned  BSIM3v32lnpeakGiven   :1;
     unsigned  BSIM3v32lngateGiven   :1;
@@ -967,14 +967,14 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32lk3bGiven   :1;
     unsigned  BSIM3v32lw0Given   :1;
     unsigned  BSIM3v32lnlxGiven   :1;
-    unsigned  BSIM3v32ldvt0Given   :1;   
-    unsigned  BSIM3v32ldvt1Given   :1;     
-    unsigned  BSIM3v32ldvt2Given   :1;     
-    unsigned  BSIM3v32ldvt0wGiven   :1;   
-    unsigned  BSIM3v32ldvt1wGiven   :1;     
-    unsigned  BSIM3v32ldvt2wGiven   :1;     
-    unsigned  BSIM3v32ldroutGiven   :1;     
-    unsigned  BSIM3v32ldsubGiven   :1;     
+    unsigned  BSIM3v32ldvt0Given   :1;
+    unsigned  BSIM3v32ldvt1Given   :1;
+    unsigned  BSIM3v32ldvt2Given   :1;
+    unsigned  BSIM3v32ldvt0wGiven   :1;
+    unsigned  BSIM3v32ldvt1wGiven   :1;
+    unsigned  BSIM3v32ldvt2wGiven   :1;
+    unsigned  BSIM3v32ldroutGiven   :1;
+    unsigned  BSIM3v32ldsubGiven   :1;
     unsigned  BSIM3v32lvth0Given   :1;
     unsigned  BSIM3v32luaGiven   :1;
     unsigned  BSIM3v32lua1Given   :1;
@@ -985,20 +985,20 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32lu0Given   :1;
     unsigned  BSIM3v32luteGiven   :1;
     unsigned  BSIM3v32lvoffGiven   :1;
-    unsigned  BSIM3v32lrdswGiven   :1;      
-    unsigned  BSIM3v32lprwgGiven   :1;      
-    unsigned  BSIM3v32lprwbGiven   :1;      
-    unsigned  BSIM3v32lprtGiven   :1;      
-    unsigned  BSIM3v32leta0Given   :1;    
-    unsigned  BSIM3v32letabGiven   :1;    
-    unsigned  BSIM3v32lpclmGiven   :1;   
-    unsigned  BSIM3v32lpdibl1Given   :1;   
-    unsigned  BSIM3v32lpdibl2Given   :1;  
-    unsigned  BSIM3v32lpdiblbGiven   :1;  
-    unsigned  BSIM3v32lpscbe1Given   :1;    
-    unsigned  BSIM3v32lpscbe2Given   :1;    
-    unsigned  BSIM3v32lpvagGiven   :1;    
-    unsigned  BSIM3v32ldeltaGiven  :1;     
+    unsigned  BSIM3v32lrdswGiven   :1;
+    unsigned  BSIM3v32lprwgGiven   :1;
+    unsigned  BSIM3v32lprwbGiven   :1;
+    unsigned  BSIM3v32lprtGiven   :1;
+    unsigned  BSIM3v32leta0Given   :1;
+    unsigned  BSIM3v32letabGiven   :1;
+    unsigned  BSIM3v32lpclmGiven   :1;
+    unsigned  BSIM3v32lpdibl1Given   :1;
+    unsigned  BSIM3v32lpdibl2Given   :1;
+    unsigned  BSIM3v32lpdiblbGiven   :1;
+    unsigned  BSIM3v32lpscbe1Given   :1;
+    unsigned  BSIM3v32lpscbe2Given   :1;
+    unsigned  BSIM3v32lpvagGiven   :1;
+    unsigned  BSIM3v32ldeltaGiven  :1;
     unsigned  BSIM3v32lwrGiven   :1;
     unsigned  BSIM3v32ldwgGiven   :1;
     unsigned  BSIM3v32ldwbGiven   :1;
@@ -1010,7 +1010,7 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32lvfbGiven   :1;
 
     /* CV model */
-    unsigned  BSIM3v32lelmGiven  :1;     
+    unsigned  BSIM3v32lelmGiven  :1;
     unsigned  BSIM3v32lcgslGiven   :1;
     unsigned  BSIM3v32lcgdlGiven   :1;
     unsigned  BSIM3v32lckappaGiven   :1;
@@ -1036,7 +1036,7 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32wagsGiven   :1;
     unsigned  BSIM3v32wa1Given   :1;
     unsigned  BSIM3v32wa2Given   :1;
-    unsigned  BSIM3v32wketaGiven   :1;    
+    unsigned  BSIM3v32wketaGiven   :1;
     unsigned  BSIM3v32wnsubGiven   :1;
     unsigned  BSIM3v32wnpeakGiven   :1;
     unsigned  BSIM3v32wngateGiven   :1;
@@ -1054,14 +1054,14 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32wk3bGiven   :1;
     unsigned  BSIM3v32ww0Given   :1;
     unsigned  BSIM3v32wnlxGiven   :1;
-    unsigned  BSIM3v32wdvt0Given   :1;   
-    unsigned  BSIM3v32wdvt1Given   :1;     
-    unsigned  BSIM3v32wdvt2Given   :1;     
-    unsigned  BSIM3v32wdvt0wGiven   :1;   
-    unsigned  BSIM3v32wdvt1wGiven   :1;     
-    unsigned  BSIM3v32wdvt2wGiven   :1;     
-    unsigned  BSIM3v32wdroutGiven   :1;     
-    unsigned  BSIM3v32wdsubGiven   :1;     
+    unsigned  BSIM3v32wdvt0Given   :1;
+    unsigned  BSIM3v32wdvt1Given   :1;
+    unsigned  BSIM3v32wdvt2Given   :1;
+    unsigned  BSIM3v32wdvt0wGiven   :1;
+    unsigned  BSIM3v32wdvt1wGiven   :1;
+    unsigned  BSIM3v32wdvt2wGiven   :1;
+    unsigned  BSIM3v32wdroutGiven   :1;
+    unsigned  BSIM3v32wdsubGiven   :1;
     unsigned  BSIM3v32wvth0Given   :1;
     unsigned  BSIM3v32wuaGiven   :1;
     unsigned  BSIM3v32wua1Given   :1;
@@ -1072,20 +1072,20 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32wu0Given   :1;
     unsigned  BSIM3v32wuteGiven   :1;
     unsigned  BSIM3v32wvoffGiven   :1;
-    unsigned  BSIM3v32wrdswGiven   :1;      
-    unsigned  BSIM3v32wprwgGiven   :1;      
-    unsigned  BSIM3v32wprwbGiven   :1;      
-    unsigned  BSIM3v32wprtGiven   :1;      
-    unsigned  BSIM3v32weta0Given   :1;    
-    unsigned  BSIM3v32wetabGiven   :1;    
-    unsigned  BSIM3v32wpclmGiven   :1;   
-    unsigned  BSIM3v32wpdibl1Given   :1;   
-    unsigned  BSIM3v32wpdibl2Given   :1;  
-    unsigned  BSIM3v32wpdiblbGiven   :1;  
-    unsigned  BSIM3v32wpscbe1Given   :1;    
-    unsigned  BSIM3v32wpscbe2Given   :1;    
-    unsigned  BSIM3v32wpvagGiven   :1;    
-    unsigned  BSIM3v32wdeltaGiven  :1;     
+    unsigned  BSIM3v32wrdswGiven   :1;
+    unsigned  BSIM3v32wprwgGiven   :1;
+    unsigned  BSIM3v32wprwbGiven   :1;
+    unsigned  BSIM3v32wprtGiven   :1;
+    unsigned  BSIM3v32weta0Given   :1;
+    unsigned  BSIM3v32wetabGiven   :1;
+    unsigned  BSIM3v32wpclmGiven   :1;
+    unsigned  BSIM3v32wpdibl1Given   :1;
+    unsigned  BSIM3v32wpdibl2Given   :1;
+    unsigned  BSIM3v32wpdiblbGiven   :1;
+    unsigned  BSIM3v32wpscbe1Given   :1;
+    unsigned  BSIM3v32wpscbe2Given   :1;
+    unsigned  BSIM3v32wpvagGiven   :1;
+    unsigned  BSIM3v32wdeltaGiven  :1;
     unsigned  BSIM3v32wwrGiven   :1;
     unsigned  BSIM3v32wdwgGiven   :1;
     unsigned  BSIM3v32wdwbGiven   :1;
@@ -1097,7 +1097,7 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32wvfbGiven   :1;
 
     /* CV model */
-    unsigned  BSIM3v32welmGiven  :1;     
+    unsigned  BSIM3v32welmGiven  :1;
     unsigned  BSIM3v32wcgslGiven   :1;
     unsigned  BSIM3v32wcgdlGiven   :1;
     unsigned  BSIM3v32wckappaGiven   :1;
@@ -1123,7 +1123,7 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32pagsGiven   :1;
     unsigned  BSIM3v32pa1Given   :1;
     unsigned  BSIM3v32pa2Given   :1;
-    unsigned  BSIM3v32pketaGiven   :1;    
+    unsigned  BSIM3v32pketaGiven   :1;
     unsigned  BSIM3v32pnsubGiven   :1;
     unsigned  BSIM3v32pnpeakGiven   :1;
     unsigned  BSIM3v32pngateGiven   :1;
@@ -1141,14 +1141,14 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32pk3bGiven   :1;
     unsigned  BSIM3v32pw0Given   :1;
     unsigned  BSIM3v32pnlxGiven   :1;
-    unsigned  BSIM3v32pdvt0Given   :1;   
-    unsigned  BSIM3v32pdvt1Given   :1;     
-    unsigned  BSIM3v32pdvt2Given   :1;     
-    unsigned  BSIM3v32pdvt0wGiven   :1;   
-    unsigned  BSIM3v32pdvt1wGiven   :1;     
-    unsigned  BSIM3v32pdvt2wGiven   :1;     
-    unsigned  BSIM3v32pdroutGiven   :1;     
-    unsigned  BSIM3v32pdsubGiven   :1;     
+    unsigned  BSIM3v32pdvt0Given   :1;
+    unsigned  BSIM3v32pdvt1Given   :1;
+    unsigned  BSIM3v32pdvt2Given   :1;
+    unsigned  BSIM3v32pdvt0wGiven   :1;
+    unsigned  BSIM3v32pdvt1wGiven   :1;
+    unsigned  BSIM3v32pdvt2wGiven   :1;
+    unsigned  BSIM3v32pdroutGiven   :1;
+    unsigned  BSIM3v32pdsubGiven   :1;
     unsigned  BSIM3v32pvth0Given   :1;
     unsigned  BSIM3v32puaGiven   :1;
     unsigned  BSIM3v32pua1Given   :1;
@@ -1159,20 +1159,20 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32pu0Given   :1;
     unsigned  BSIM3v32puteGiven   :1;
     unsigned  BSIM3v32pvoffGiven   :1;
-    unsigned  BSIM3v32prdswGiven   :1;      
-    unsigned  BSIM3v32pprwgGiven   :1;      
-    unsigned  BSIM3v32pprwbGiven   :1;      
-    unsigned  BSIM3v32pprtGiven   :1;      
-    unsigned  BSIM3v32peta0Given   :1;    
-    unsigned  BSIM3v32petabGiven   :1;    
-    unsigned  BSIM3v32ppclmGiven   :1;   
-    unsigned  BSIM3v32ppdibl1Given   :1;   
-    unsigned  BSIM3v32ppdibl2Given   :1;  
-    unsigned  BSIM3v32ppdiblbGiven   :1;  
-    unsigned  BSIM3v32ppscbe1Given   :1;    
-    unsigned  BSIM3v32ppscbe2Given   :1;    
-    unsigned  BSIM3v32ppvagGiven   :1;    
-    unsigned  BSIM3v32pdeltaGiven  :1;     
+    unsigned  BSIM3v32prdswGiven   :1;
+    unsigned  BSIM3v32pprwgGiven   :1;
+    unsigned  BSIM3v32pprwbGiven   :1;
+    unsigned  BSIM3v32pprtGiven   :1;
+    unsigned  BSIM3v32peta0Given   :1;
+    unsigned  BSIM3v32petabGiven   :1;
+    unsigned  BSIM3v32ppclmGiven   :1;
+    unsigned  BSIM3v32ppdibl1Given   :1;
+    unsigned  BSIM3v32ppdibl2Given   :1;
+    unsigned  BSIM3v32ppdiblbGiven   :1;
+    unsigned  BSIM3v32ppscbe1Given   :1;
+    unsigned  BSIM3v32ppscbe2Given   :1;
+    unsigned  BSIM3v32ppvagGiven   :1;
+    unsigned  BSIM3v32pdeltaGiven  :1;
     unsigned  BSIM3v32pwrGiven   :1;
     unsigned  BSIM3v32pdwgGiven   :1;
     unsigned  BSIM3v32pdwbGiven   :1;
@@ -1184,7 +1184,7 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32pvfbGiven   :1;
 
     /* CV model */
-    unsigned  BSIM3v32pelmGiven  :1;     
+    unsigned  BSIM3v32pelmGiven  :1;
     unsigned  BSIM3v32pcgslGiven   :1;
     unsigned  BSIM3v32pcgdlGiven   :1;
     unsigned  BSIM3v32pckappaGiven   :1;
@@ -1217,15 +1217,15 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32bulkJctGateSideGradingCoeffGiven   :1;
     unsigned  BSIM3v32unitLengthGateSidewallJctCapGiven   :1;
     unsigned  BSIM3v32jctEmissionCoeffGiven :1;
-    unsigned  BSIM3v32jctTempExponentGiven	:1;
+    unsigned  BSIM3v32jctTempExponentGiven        :1;
 
-    unsigned  BSIM3v32oxideTrapDensityAGiven  :1;         
-    unsigned  BSIM3v32oxideTrapDensityBGiven  :1;        
-    unsigned  BSIM3v32oxideTrapDensityCGiven  :1;     
-    unsigned  BSIM3v32emGiven  :1;     
-    unsigned  BSIM3v32efGiven  :1;     
-    unsigned  BSIM3v32afGiven  :1;     
-    unsigned  BSIM3v32kfGiven  :1;     
+    unsigned  BSIM3v32oxideTrapDensityAGiven  :1;
+    unsigned  BSIM3v32oxideTrapDensityBGiven  :1;
+    unsigned  BSIM3v32oxideTrapDensityCGiven  :1;
+    unsigned  BSIM3v32emGiven  :1;
+    unsigned  BSIM3v32efGiven  :1;
+    unsigned  BSIM3v32afGiven  :1;
+    unsigned  BSIM3v32kfGiven  :1;
 
     unsigned  BSIM3v32LintGiven   :1;
     unsigned  BSIM3v32LlGiven   :1;
@@ -1286,8 +1286,8 @@ typedef struct sBSIM3v32model
 /* model parameters */
 #define BSIM3v32_MOD_CAPMOD          101
 #define BSIM3v32_MOD_ACMMOD          102
-#define BSIM3v32_MOD_MOBMOD          103    
-#define BSIM3v32_MOD_NOIMOD          104    
+#define BSIM3v32_MOD_MOBMOD          103
+#define BSIM3v32_MOD_NOIMOD          104
 
 #define BSIM3v32_MOD_TOX             105
 
@@ -1301,14 +1301,14 @@ typedef struct sBSIM3v32model
 #define BSIM3v32_MOD_A0              113
 #define BSIM3v32_MOD_A1              114
 #define BSIM3v32_MOD_A2              115
-#define BSIM3v32_MOD_KETA            116   
+#define BSIM3v32_MOD_KETA            116
 #define BSIM3v32_MOD_NSUB            117
 #define BSIM3v32_MOD_NPEAK           118
 #define BSIM3v32_MOD_NGATE           120
 #define BSIM3v32_MOD_GAMMA1          121
 #define BSIM3v32_MOD_GAMMA2          122
 #define BSIM3v32_MOD_VBX             123
-#define BSIM3v32_MOD_BINUNIT         124    
+#define BSIM3v32_MOD_BINUNIT         124
 
 #define BSIM3v32_MOD_VBM             125
 
@@ -1408,7 +1408,7 @@ typedef struct sBSIM3v32model
 #define BSIM3v32_MOD_LA0              258
 #define BSIM3v32_MOD_LA1              259
 #define BSIM3v32_MOD_LA2              260
-#define BSIM3v32_MOD_LKETA            261   
+#define BSIM3v32_MOD_LKETA            261
 #define BSIM3v32_MOD_LNSUB            262
 #define BSIM3v32_MOD_LNPEAK           263
 #define BSIM3v32_MOD_LNGATE           265
@@ -1476,7 +1476,7 @@ typedef struct sBSIM3v32model
 
 #define BSIM3v32_MOD_LCDSCD           327
 #define BSIM3v32_MOD_LAGS             328
-                                    
+
 
 #define BSIM3v32_MOD_LFRINGE          331
 #define BSIM3v32_MOD_LELM             332
@@ -1505,7 +1505,7 @@ typedef struct sBSIM3v32model
 #define BSIM3v32_MOD_WA0              388
 #define BSIM3v32_MOD_WA1              389
 #define BSIM3v32_MOD_WA2              390
-#define BSIM3v32_MOD_WKETA            391   
+#define BSIM3v32_MOD_WKETA            391
 #define BSIM3v32_MOD_WNSUB            392
 #define BSIM3v32_MOD_WNPEAK           393
 #define BSIM3v32_MOD_WNGATE           395
@@ -1602,7 +1602,7 @@ typedef struct sBSIM3v32model
 #define BSIM3v32_MOD_PA0              518
 #define BSIM3v32_MOD_PA1              519
 #define BSIM3v32_MOD_PA2              520
-#define BSIM3v32_MOD_PKETA            521   
+#define BSIM3v32_MOD_PKETA            521
 #define BSIM3v32_MOD_PNSUB            522
 #define BSIM3v32_MOD_PNPEAK           523
 #define BSIM3v32_MOD_PNGATE           525
@@ -1811,8 +1811,8 @@ typedef struct sBSIM3v32model
 #include "bsim3v32ext.h"
 
 extern void BSIM3v32evaluate(double,double,double,BSIM3v32instance*,BSIM3v32model*,
-        double*,double*,double*, double*, double*, double*, double*, 
-        double*, double*, double*, double*, double*, double*, double*, 
+        double*,double*,double*, double*, double*, double*, double*,
+        double*, double*, double*, double*, double*, double*, double*,
         double*, double*, double*, double*, CKTcircuit*);
 extern int BSIM3v32debug(BSIM3v32model*, BSIM3v32instance*, CKTcircuit*, int);
 extern int BSIM3v32checkModel(BSIM3v32model*, BSIM3v32instance*, CKTcircuit*);

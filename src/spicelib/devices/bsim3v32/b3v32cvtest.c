@@ -31,21 +31,21 @@ double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
     for (; model != NULL; model = model->BSIM3v32nextModel)
     {    /* loop through all the instances of the model */
          for (here = model->BSIM3v32instances; here != NULL ;
-              here=here->BSIM3v32nextInstance) 
-	 {    
-	      vbs = model->BSIM3v32type 
-		  * (*(ckt->CKTrhsOld+here->BSIM3v32bNode) 
-		  - *(ckt->CKTrhsOld+here->BSIM3v32sNodePrime));
+              here=here->BSIM3v32nextInstance)
+         {
+              vbs = model->BSIM3v32type
+                  * (*(ckt->CKTrhsOld+here->BSIM3v32bNode)
+                  - *(ckt->CKTrhsOld+here->BSIM3v32sNodePrime));
               vgs = model->BSIM3v32type
-		  * (*(ckt->CKTrhsOld+here->BSIM3v32gNode) 
-		  - *(ckt->CKTrhsOld+here->BSIM3v32sNodePrime));
+                  * (*(ckt->CKTrhsOld+here->BSIM3v32gNode)
+                  - *(ckt->CKTrhsOld+here->BSIM3v32sNodePrime));
               vds = model->BSIM3v32type
-		  * (*(ckt->CKTrhsOld+here->BSIM3v32dNodePrime) 
-		  - *(ckt->CKTrhsOld+here->BSIM3v32sNodePrime));
+                  * (*(ckt->CKTrhsOld+here->BSIM3v32dNodePrime)
+                  - *(ckt->CKTrhsOld+here->BSIM3v32sNodePrime));
               vbd = vbs - vds;
               vgd = vgs - vds;
-              vgdo = *(ckt->CKTstate0 + here->BSIM3v32vgs) 
-		   - *(ckt->CKTstate0 + here->BSIM3v32vds);
+              vgdo = *(ckt->CKTstate0 + here->BSIM3v32vgs)
+                   - *(ckt->CKTstate0 + here->BSIM3v32vds);
               delvbs = vbs - *(ckt->CKTstate0 + here->BSIM3v32vbs);
               delvbd = vbd - *(ckt->CKTstate0 + here->BSIM3v32vbd);
               delvgs = vgs - *(ckt->CKTstate0 + here->BSIM3v32vgs);
@@ -54,47 +54,47 @@ double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
 
               cd = here->BSIM3v32cd - here->BSIM3v32cbd;
               if (here->BSIM3v32mode >= 0)
-	      {   cd += here->BSIM3v32csub;
-		  cdhat = cd - here->BSIM3v32gbd * delvbd 
-			+ (here->BSIM3v32gmbs + here->BSIM3v32gbbs) * delvbs
-			+ (here->BSIM3v32gm + here->BSIM3v32gbgs) * delvgs
-			+ (here->BSIM3v32gds + here->BSIM3v32gbds) * delvds;
+              {   cd += here->BSIM3v32csub;
+                  cdhat = cd - here->BSIM3v32gbd * delvbd
+                        + (here->BSIM3v32gmbs + here->BSIM3v32gbbs) * delvbs
+                        + (here->BSIM3v32gm + here->BSIM3v32gbgs) * delvgs
+                        + (here->BSIM3v32gds + here->BSIM3v32gbds) * delvds;
               }
-	      else
-	      {   cdhat = cd + (here->BSIM3v32gmbs - here->BSIM3v32gbd) * delvbd 
-			+ here->BSIM3v32gm * delvgd - here->BSIM3v32gds * delvds;
+              else
+              {   cdhat = cd + (here->BSIM3v32gmbs - here->BSIM3v32gbd) * delvbd
+                        + here->BSIM3v32gm * delvgd - here->BSIM3v32gds * delvds;
               }
 
             /*
              *  check convergence
              */
               if ((here->BSIM3v32off == 0)  || (!(ckt->CKTmode & MODEINITFIX)))
-	      {   tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(cd))
-		      + ckt->CKTabstol;
+              {   tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(cd))
+                      + ckt->CKTabstol;
                   if (fabs(cdhat - cd) >= tol)
-		  {   ckt->CKTnoncon++;
+                  {   ckt->CKTnoncon++;
                       return(OK);
-                  } 
+                  }
                   cbs = here->BSIM3v32cbs;
                   cbd = here->BSIM3v32cbd;
                   if (here->BSIM3v32mode >= 0)
-		  {   cbhat = cbs + cbd - here->BSIM3v32csub
-			    + here->BSIM3v32gbd * delvbd 
-		            + (here->BSIM3v32gbs - here->BSIM3v32gbbs) * delvbs
-			    - here->BSIM3v32gbgs * delvgs
-			    - here->BSIM3v32gbds * delvds;
-		  }
-		  else
-		  {   cbhat = cbs + cbd - here->BSIM3v32csub 
-		            + here->BSIM3v32gbs * delvbs
-			    + (here->BSIM3v32gbd - here->BSIM3v32gbbs) * delvbd 
-			    - here->BSIM3v32gbgs * delvgd
-			    + here->BSIM3v32gbds * delvds;
-		  }
-                  tol = ckt->CKTreltol * MAX(fabs(cbhat), 
-			fabs(cbs + cbd - here->BSIM3v32csub)) + ckt->CKTabstol;
-                  if (fabs(cbhat - (cbs + cbd - here->BSIM3v32csub)) > tol) 
-		  {   ckt->CKTnoncon++;
+                  {   cbhat = cbs + cbd - here->BSIM3v32csub
+                            + here->BSIM3v32gbd * delvbd
+                            + (here->BSIM3v32gbs - here->BSIM3v32gbbs) * delvbs
+                            - here->BSIM3v32gbgs * delvgs
+                            - here->BSIM3v32gbds * delvds;
+                  }
+                  else
+                  {   cbhat = cbs + cbd - here->BSIM3v32csub
+                            + here->BSIM3v32gbs * delvbs
+                            + (here->BSIM3v32gbd - here->BSIM3v32gbbs) * delvbd
+                            - here->BSIM3v32gbgs * delvgd
+                            + here->BSIM3v32gbds * delvds;
+                  }
+                  tol = ckt->CKTreltol * MAX(fabs(cbhat),
+                        fabs(cbs + cbd - here->BSIM3v32csub)) + ckt->CKTabstol;
+                  if (fabs(cbhat - (cbs + cbd - here->BSIM3v32csub)) > tol)
+                  {   ckt->CKTnoncon++;
                       return(OK);
                   }
               }

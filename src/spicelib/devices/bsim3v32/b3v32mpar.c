@@ -3,7 +3,7 @@
 /**********
  * Copyright 2001 Regents of the University of California. All rights reserved.
  * File: b3mpar.c of BSIM3v3.2.4
- * Author: 1995 Min-Chie Jeng and Mansun Chan. 
+ * Author: 1995 Min-Chie Jeng and Mansun Chan.
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001  Xuemei Xi
  * Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
@@ -92,12 +92,12 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32a0 = value->rValue;
             mod->BSIM3v32a0Given = TRUE;
             break;
-        
+
         case BSIM3v32_MOD_AGS:
             mod->BSIM3v32ags= value->rValue;
             mod->BSIM3v32agsGiven = TRUE;
             break;
-        
+
         case BSIM3v32_MOD_A1:
             mod->BSIM3v32a1 = value->rValue;
             mod->BSIM3v32a1Given = TRUE;
@@ -113,7 +113,7 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v32_MOD_KETA:
             mod->BSIM3v32keta = value->rValue;
             mod->BSIM3v32ketaGiven = TRUE;
-            break;    
+            break;
         case BSIM3v32_MOD_NSUB:
             mod->BSIM3v32nsub = value->rValue;
             mod->BSIM3v32nsubGiven = TRUE;
@@ -121,14 +121,14 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v32_MOD_NPEAK:
             mod->BSIM3v32npeak = value->rValue;
             mod->BSIM3v32npeakGiven = TRUE;
-	    if (mod->BSIM3v32npeak > 1.0e20)
-		mod->BSIM3v32npeak *= 1.0e-6;
+            if (mod->BSIM3v32npeak > 1.0e20)
+                mod->BSIM3v32npeak *= 1.0e-6;
             break;
         case BSIM3v32_MOD_NGATE:
             mod->BSIM3v32ngate = value->rValue;
             mod->BSIM3v32ngateGiven = TRUE;
-	    if (mod->BSIM3v32ngate > 1.0e23)
-		mod->BSIM3v32ngate *= 1.0e-6;
+            if (mod->BSIM3v32ngate > 1.0e23)
+                mod->BSIM3v32ngate *= 1.0e-6;
             break;
         case BSIM3v32_MOD_GAMMA1:
             mod->BSIM3v32gamma1 = value->rValue;
@@ -186,35 +186,35 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32w0 = value->rValue;
             mod->BSIM3v32w0Given = TRUE;
             break;
-        case  BSIM3v32_MOD_DVT0:               
+        case  BSIM3v32_MOD_DVT0:
             mod->BSIM3v32dvt0 = value->rValue;
             mod->BSIM3v32dvt0Given = TRUE;
             break;
-        case  BSIM3v32_MOD_DVT1:             
+        case  BSIM3v32_MOD_DVT1:
             mod->BSIM3v32dvt1 = value->rValue;
             mod->BSIM3v32dvt1Given = TRUE;
             break;
-        case  BSIM3v32_MOD_DVT2:             
+        case  BSIM3v32_MOD_DVT2:
             mod->BSIM3v32dvt2 = value->rValue;
             mod->BSIM3v32dvt2Given = TRUE;
             break;
-        case  BSIM3v32_MOD_DVT0W:               
+        case  BSIM3v32_MOD_DVT0W:
             mod->BSIM3v32dvt0w = value->rValue;
             mod->BSIM3v32dvt0wGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_DVT1W:             
+        case  BSIM3v32_MOD_DVT1W:
             mod->BSIM3v32dvt1w = value->rValue;
             mod->BSIM3v32dvt1wGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_DVT2W:             
+        case  BSIM3v32_MOD_DVT2W:
             mod->BSIM3v32dvt2w = value->rValue;
             mod->BSIM3v32dvt2wGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_DROUT:             
+        case  BSIM3v32_MOD_DROUT:
             mod->BSIM3v32drout = value->rValue;
             mod->BSIM3v32droutGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_DSUB:             
+        case  BSIM3v32_MOD_DSUB:
             mod->BSIM3v32dsub = value->rValue;
             mod->BSIM3v32dsubGiven = TRUE;
             break;
@@ -265,55 +265,55 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v32_MOD_RDSW:
             mod->BSIM3v32rdsw = value->rValue;
             mod->BSIM3v32rdswGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_PRWG:
             mod->BSIM3v32prwg = value->rValue;
             mod->BSIM3v32prwgGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_PRWB:
             mod->BSIM3v32prwb = value->rValue;
             mod->BSIM3v32prwbGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_PRT:
             mod->BSIM3v32prt = value->rValue;
             mod->BSIM3v32prtGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_ETA0:
             mod->BSIM3v32eta0 = value->rValue;
             mod->BSIM3v32eta0Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_ETAB:
             mod->BSIM3v32etab = value->rValue;
             mod->BSIM3v32etabGiven = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PCLM:
             mod->BSIM3v32pclm = value->rValue;
             mod->BSIM3v32pclmGiven = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PDIBL1:
             mod->BSIM3v32pdibl1 = value->rValue;
             mod->BSIM3v32pdibl1Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PDIBL2:
             mod->BSIM3v32pdibl2 = value->rValue;
             mod->BSIM3v32pdibl2Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PDIBLB:
             mod->BSIM3v32pdiblb = value->rValue;
             mod->BSIM3v32pdiblbGiven = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PSCBE1:
             mod->BSIM3v32pscbe1 = value->rValue;
             mod->BSIM3v32pscbe1Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PSCBE2:
             mod->BSIM3v32pscbe2 = value->rValue;
             mod->BSIM3v32pscbe2Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PVAG:
             mod->BSIM3v32pvag = value->rValue;
             mod->BSIM3v32pvagGiven = TRUE;
-            break;                 
+            break;
         case  BSIM3v32_MOD_WR :
             mod->BSIM3v32wr = value->rValue;
             mod->BSIM3v32wrGiven = TRUE;
@@ -466,7 +466,7 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32rscGiven = TRUE;
             break;
 
-	/* Length dependence */
+        /* Length dependence */
         case  BSIM3v32_MOD_LCDSC :
             mod->BSIM3v32lcdsc = value->rValue;
             mod->BSIM3v32lcdscGiven = TRUE;
@@ -497,8 +497,8 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32lvsat = value->rValue;
             mod->BSIM3v32lvsatGiven = TRUE;
             break;
-        
-        
+
+
         case BSIM3v32_MOD_LA0:
             mod->BSIM3v32la0 = value->rValue;
             mod->BSIM3v32la0Given = TRUE;
@@ -522,7 +522,7 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v32_MOD_LKETA:
             mod->BSIM3v32lketa = value->rValue;
             mod->BSIM3v32lketaGiven = TRUE;
-            break;    
+            break;
         case BSIM3v32_MOD_LNSUB:
             mod->BSIM3v32lnsub = value->rValue;
             mod->BSIM3v32lnsubGiven = TRUE;
@@ -530,14 +530,14 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v32_MOD_LNPEAK:
             mod->BSIM3v32lnpeak = value->rValue;
             mod->BSIM3v32lnpeakGiven = TRUE;
-	    if (mod->BSIM3v32lnpeak > 1.0e20)
-		mod->BSIM3v32lnpeak *= 1.0e-6;
+            if (mod->BSIM3v32lnpeak > 1.0e20)
+                mod->BSIM3v32lnpeak *= 1.0e-6;
             break;
         case BSIM3v32_MOD_LNGATE:
             mod->BSIM3v32lngate = value->rValue;
             mod->BSIM3v32lngateGiven = TRUE;
-	    if (mod->BSIM3v32lngate > 1.0e23)
-		mod->BSIM3v32lngate *= 1.0e-6;
+            if (mod->BSIM3v32lngate > 1.0e23)
+                mod->BSIM3v32lngate *= 1.0e-6;
             break;
         case BSIM3v32_MOD_LGAMMA1:
             mod->BSIM3v32lgamma1 = value->rValue;
@@ -595,35 +595,35 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32lw0 = value->rValue;
             mod->BSIM3v32lw0Given = TRUE;
             break;
-        case  BSIM3v32_MOD_LDVT0:               
+        case  BSIM3v32_MOD_LDVT0:
             mod->BSIM3v32ldvt0 = value->rValue;
             mod->BSIM3v32ldvt0Given = TRUE;
             break;
-        case  BSIM3v32_MOD_LDVT1:             
+        case  BSIM3v32_MOD_LDVT1:
             mod->BSIM3v32ldvt1 = value->rValue;
             mod->BSIM3v32ldvt1Given = TRUE;
             break;
-        case  BSIM3v32_MOD_LDVT2:             
+        case  BSIM3v32_MOD_LDVT2:
             mod->BSIM3v32ldvt2 = value->rValue;
             mod->BSIM3v32ldvt2Given = TRUE;
             break;
-        case  BSIM3v32_MOD_LDVT0W:               
+        case  BSIM3v32_MOD_LDVT0W:
             mod->BSIM3v32ldvt0w = value->rValue;
             mod->BSIM3v32ldvt0wGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_LDVT1W:             
+        case  BSIM3v32_MOD_LDVT1W:
             mod->BSIM3v32ldvt1w = value->rValue;
             mod->BSIM3v32ldvt1wGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_LDVT2W:             
+        case  BSIM3v32_MOD_LDVT2W:
             mod->BSIM3v32ldvt2w = value->rValue;
             mod->BSIM3v32ldvt2wGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_LDROUT:             
+        case  BSIM3v32_MOD_LDROUT:
             mod->BSIM3v32ldrout = value->rValue;
             mod->BSIM3v32ldroutGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_LDSUB:             
+        case  BSIM3v32_MOD_LDSUB:
             mod->BSIM3v32ldsub = value->rValue;
             mod->BSIM3v32ldsubGiven = TRUE;
             break;
@@ -674,55 +674,55 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v32_MOD_LRDSW:
             mod->BSIM3v32lrdsw = value->rValue;
             mod->BSIM3v32lrdswGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_LPRWB:
             mod->BSIM3v32lprwb = value->rValue;
             mod->BSIM3v32lprwbGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_LPRWG:
             mod->BSIM3v32lprwg = value->rValue;
             mod->BSIM3v32lprwgGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_LPRT:
             mod->BSIM3v32lprt = value->rValue;
             mod->BSIM3v32lprtGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_LETA0:
             mod->BSIM3v32leta0 = value->rValue;
             mod->BSIM3v32leta0Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_LETAB:
             mod->BSIM3v32letab = value->rValue;
             mod->BSIM3v32letabGiven = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_LPCLM:
             mod->BSIM3v32lpclm = value->rValue;
             mod->BSIM3v32lpclmGiven = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_LPDIBL1:
             mod->BSIM3v32lpdibl1 = value->rValue;
             mod->BSIM3v32lpdibl1Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_LPDIBL2:
             mod->BSIM3v32lpdibl2 = value->rValue;
             mod->BSIM3v32lpdibl2Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_LPDIBLB:
             mod->BSIM3v32lpdiblb = value->rValue;
             mod->BSIM3v32lpdiblbGiven = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_LPSCBE1:
             mod->BSIM3v32lpscbe1 = value->rValue;
             mod->BSIM3v32lpscbe1Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_LPSCBE2:
             mod->BSIM3v32lpscbe2 = value->rValue;
             mod->BSIM3v32lpscbe2Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_LPVAG:
             mod->BSIM3v32lpvag = value->rValue;
             mod->BSIM3v32lpvagGiven = TRUE;
-            break;                 
+            break;
         case  BSIM3v32_MOD_LWR :
             mod->BSIM3v32lwr = value->rValue;
             mod->BSIM3v32lwrGiven = TRUE;
@@ -809,13 +809,13 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32lvoffcvGiven = TRUE;
             break;
 
-	/* Width dependence */
+        /* Width dependence */
         case  BSIM3v32_MOD_WCDSC :
             mod->BSIM3v32wcdsc = value->rValue;
             mod->BSIM3v32wcdscGiven = TRUE;
             break;
-       
-       
+
+
          case  BSIM3v32_MOD_WCDSCB :
             mod->BSIM3v32wcdscb = value->rValue;
             mod->BSIM3v32wcdscbGiven = TRUE;
@@ -865,7 +865,7 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v32_MOD_WKETA:
             mod->BSIM3v32wketa = value->rValue;
             mod->BSIM3v32wketaGiven = TRUE;
-            break;    
+            break;
         case BSIM3v32_MOD_WNSUB:
             mod->BSIM3v32wnsub = value->rValue;
             mod->BSIM3v32wnsubGiven = TRUE;
@@ -873,14 +873,14 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v32_MOD_WNPEAK:
             mod->BSIM3v32wnpeak = value->rValue;
             mod->BSIM3v32wnpeakGiven = TRUE;
-	    if (mod->BSIM3v32wnpeak > 1.0e20)
-		mod->BSIM3v32wnpeak *= 1.0e-6;
+            if (mod->BSIM3v32wnpeak > 1.0e20)
+                mod->BSIM3v32wnpeak *= 1.0e-6;
             break;
         case BSIM3v32_MOD_WNGATE:
             mod->BSIM3v32wngate = value->rValue;
             mod->BSIM3v32wngateGiven = TRUE;
-	    if (mod->BSIM3v32wngate > 1.0e23)
-		mod->BSIM3v32wngate *= 1.0e-6;
+            if (mod->BSIM3v32wngate > 1.0e23)
+                mod->BSIM3v32wngate *= 1.0e-6;
             break;
         case BSIM3v32_MOD_WGAMMA1:
             mod->BSIM3v32wgamma1 = value->rValue;
@@ -938,35 +938,35 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32ww0 = value->rValue;
             mod->BSIM3v32ww0Given = TRUE;
             break;
-        case  BSIM3v32_MOD_WDVT0:               
+        case  BSIM3v32_MOD_WDVT0:
             mod->BSIM3v32wdvt0 = value->rValue;
             mod->BSIM3v32wdvt0Given = TRUE;
             break;
-        case  BSIM3v32_MOD_WDVT1:             
+        case  BSIM3v32_MOD_WDVT1:
             mod->BSIM3v32wdvt1 = value->rValue;
             mod->BSIM3v32wdvt1Given = TRUE;
             break;
-        case  BSIM3v32_MOD_WDVT2:             
+        case  BSIM3v32_MOD_WDVT2:
             mod->BSIM3v32wdvt2 = value->rValue;
             mod->BSIM3v32wdvt2Given = TRUE;
             break;
-        case  BSIM3v32_MOD_WDVT0W:               
+        case  BSIM3v32_MOD_WDVT0W:
             mod->BSIM3v32wdvt0w = value->rValue;
             mod->BSIM3v32wdvt0wGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_WDVT1W:             
+        case  BSIM3v32_MOD_WDVT1W:
             mod->BSIM3v32wdvt1w = value->rValue;
             mod->BSIM3v32wdvt1wGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_WDVT2W:             
+        case  BSIM3v32_MOD_WDVT2W:
             mod->BSIM3v32wdvt2w = value->rValue;
             mod->BSIM3v32wdvt2wGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_WDROUT:             
+        case  BSIM3v32_MOD_WDROUT:
             mod->BSIM3v32wdrout = value->rValue;
             mod->BSIM3v32wdroutGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_WDSUB:             
+        case  BSIM3v32_MOD_WDSUB:
             mod->BSIM3v32wdsub = value->rValue;
             mod->BSIM3v32wdsubGiven = TRUE;
             break;
@@ -1017,55 +1017,55 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v32_MOD_WRDSW:
             mod->BSIM3v32wrdsw = value->rValue;
             mod->BSIM3v32wrdswGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_WPRWB:
             mod->BSIM3v32wprwb = value->rValue;
             mod->BSIM3v32wprwbGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_WPRWG:
             mod->BSIM3v32wprwg = value->rValue;
             mod->BSIM3v32wprwgGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_WPRT:
             mod->BSIM3v32wprt = value->rValue;
             mod->BSIM3v32wprtGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_WETA0:
             mod->BSIM3v32weta0 = value->rValue;
             mod->BSIM3v32weta0Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_WETAB:
             mod->BSIM3v32wetab = value->rValue;
             mod->BSIM3v32wetabGiven = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_WPCLM:
             mod->BSIM3v32wpclm = value->rValue;
             mod->BSIM3v32wpclmGiven = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_WPDIBL1:
             mod->BSIM3v32wpdibl1 = value->rValue;
             mod->BSIM3v32wpdibl1Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_WPDIBL2:
             mod->BSIM3v32wpdibl2 = value->rValue;
             mod->BSIM3v32wpdibl2Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_WPDIBLB:
             mod->BSIM3v32wpdiblb = value->rValue;
             mod->BSIM3v32wpdiblbGiven = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_WPSCBE1:
             mod->BSIM3v32wpscbe1 = value->rValue;
             mod->BSIM3v32wpscbe1Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_WPSCBE2:
             mod->BSIM3v32wpscbe2 = value->rValue;
             mod->BSIM3v32wpscbe2Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_WPVAG:
             mod->BSIM3v32wpvag = value->rValue;
             mod->BSIM3v32wpvagGiven = TRUE;
-            break;                 
+            break;
         case  BSIM3v32_MOD_WWR :
             mod->BSIM3v32wwr = value->rValue;
             mod->BSIM3v32wwrGiven = TRUE;
@@ -1152,7 +1152,7 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32wvoffcvGiven = TRUE;
             break;
 
-	/* Cross-term dependence */
+        /* Cross-term dependence */
         case  BSIM3v32_MOD_PCDSC :
             mod->BSIM3v32pcdsc = value->rValue;
             mod->BSIM3v32pcdscGiven = TRUE;
@@ -1208,7 +1208,7 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v32_MOD_PKETA:
             mod->BSIM3v32pketa = value->rValue;
             mod->BSIM3v32pketaGiven = TRUE;
-            break;    
+            break;
         case BSIM3v32_MOD_PNSUB:
             mod->BSIM3v32pnsub = value->rValue;
             mod->BSIM3v32pnsubGiven = TRUE;
@@ -1216,14 +1216,14 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v32_MOD_PNPEAK:
             mod->BSIM3v32pnpeak = value->rValue;
             mod->BSIM3v32pnpeakGiven = TRUE;
-	    if (mod->BSIM3v32pnpeak > 1.0e20)
-		mod->BSIM3v32pnpeak *= 1.0e-6;
+            if (mod->BSIM3v32pnpeak > 1.0e20)
+                mod->BSIM3v32pnpeak *= 1.0e-6;
             break;
         case BSIM3v32_MOD_PNGATE:
             mod->BSIM3v32pngate = value->rValue;
             mod->BSIM3v32pngateGiven = TRUE;
-	    if (mod->BSIM3v32pngate > 1.0e23)
-		mod->BSIM3v32pngate *= 1.0e-6;
+            if (mod->BSIM3v32pngate > 1.0e23)
+                mod->BSIM3v32pngate *= 1.0e-6;
             break;
         case BSIM3v32_MOD_PGAMMA1:
             mod->BSIM3v32pgamma1 = value->rValue;
@@ -1281,35 +1281,35 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32pw0 = value->rValue;
             mod->BSIM3v32pw0Given = TRUE;
             break;
-        case  BSIM3v32_MOD_PDVT0:               
+        case  BSIM3v32_MOD_PDVT0:
             mod->BSIM3v32pdvt0 = value->rValue;
             mod->BSIM3v32pdvt0Given = TRUE;
             break;
-        case  BSIM3v32_MOD_PDVT1:             
+        case  BSIM3v32_MOD_PDVT1:
             mod->BSIM3v32pdvt1 = value->rValue;
             mod->BSIM3v32pdvt1Given = TRUE;
             break;
-        case  BSIM3v32_MOD_PDVT2:             
+        case  BSIM3v32_MOD_PDVT2:
             mod->BSIM3v32pdvt2 = value->rValue;
             mod->BSIM3v32pdvt2Given = TRUE;
             break;
-        case  BSIM3v32_MOD_PDVT0W:               
+        case  BSIM3v32_MOD_PDVT0W:
             mod->BSIM3v32pdvt0w = value->rValue;
             mod->BSIM3v32pdvt0wGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_PDVT1W:             
+        case  BSIM3v32_MOD_PDVT1W:
             mod->BSIM3v32pdvt1w = value->rValue;
             mod->BSIM3v32pdvt1wGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_PDVT2W:             
+        case  BSIM3v32_MOD_PDVT2W:
             mod->BSIM3v32pdvt2w = value->rValue;
             mod->BSIM3v32pdvt2wGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_PDROUT:             
+        case  BSIM3v32_MOD_PDROUT:
             mod->BSIM3v32pdrout = value->rValue;
             mod->BSIM3v32pdroutGiven = TRUE;
             break;
-        case  BSIM3v32_MOD_PDSUB:             
+        case  BSIM3v32_MOD_PDSUB:
             mod->BSIM3v32pdsub = value->rValue;
             mod->BSIM3v32pdsubGiven = TRUE;
             break;
@@ -1360,55 +1360,55 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v32_MOD_PRDSW:
             mod->BSIM3v32prdsw = value->rValue;
             mod->BSIM3v32prdswGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_PPRWB:
             mod->BSIM3v32pprwb = value->rValue;
             mod->BSIM3v32pprwbGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_PPRWG:
             mod->BSIM3v32pprwg = value->rValue;
             mod->BSIM3v32pprwgGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_PPRT:
             mod->BSIM3v32pprt = value->rValue;
             mod->BSIM3v32pprtGiven = TRUE;
-            break;                     
+            break;
         case BSIM3v32_MOD_PETA0:
             mod->BSIM3v32peta0 = value->rValue;
             mod->BSIM3v32peta0Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PETAB:
             mod->BSIM3v32petab = value->rValue;
             mod->BSIM3v32petabGiven = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PPCLM:
             mod->BSIM3v32ppclm = value->rValue;
             mod->BSIM3v32ppclmGiven = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PPDIBL1:
             mod->BSIM3v32ppdibl1 = value->rValue;
             mod->BSIM3v32ppdibl1Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PPDIBL2:
             mod->BSIM3v32ppdibl2 = value->rValue;
             mod->BSIM3v32ppdibl2Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PPDIBLB:
             mod->BSIM3v32ppdiblb = value->rValue;
             mod->BSIM3v32ppdiblbGiven = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PPSCBE1:
             mod->BSIM3v32ppscbe1 = value->rValue;
             mod->BSIM3v32ppscbe1Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PPSCBE2:
             mod->BSIM3v32ppscbe2 = value->rValue;
             mod->BSIM3v32ppscbe2Given = TRUE;
-            break;                 
+            break;
         case BSIM3v32_MOD_PPVAG:
             mod->BSIM3v32ppvag = value->rValue;
             mod->BSIM3v32ppvagGiven = TRUE;
-            break;                 
+            break;
         case  BSIM3v32_MOD_PWR :
             mod->BSIM3v32pwr = value->rValue;
             mod->BSIM3v32pwrGiven = TRUE;
