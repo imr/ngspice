@@ -2648,8 +2648,9 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
     for (card = subckt_card->li_next;
          card != NULL && !ciprefix(".ends", card->li_line);
          card = card->li_next) {
-        /* no 'm' for B line or comment line */
-        if ((*(card->li_line) == '*') || (*(card->li_line) == 'b'))
+        /* no 'm' for B, I, V or comment line */
+        if ((*(card->li_line) == '*') || (*(card->li_line) == 'b') || (*(card->li_line) == 'v')
+             || (*(card->li_line) == 'i'))
             continue;
         /* no 'm' for model cards */
         if (ciprefix(".model", card->li_line))
