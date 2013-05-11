@@ -2608,6 +2608,9 @@ inp_fix_inst_line(char *inst_line,
 }
 
 
+/* If multiplier parameter 'm' is found on a X line, flag is set
+   to TRUE.
+   Function is called from inp_fix_inst_calls_for_numparam() */
 static bool
 found_mult_param(int num_params, char *param_names[])
 {
@@ -2622,6 +2625,13 @@ found_mult_param(int num_params, char *param_names[])
 }
 
 
+/* If a subcircuit invocation (X-line) is found, which contains the
+   multiplier parameter 'm', m is added to all lines inside
+   the corresponding subcircuit except of some excluded in the code below
+   (FIXME: It may be necessary to exclude more of them, at least
+   for all devices that are not supporting the 'm' parameter).
+
+   Function is called from inp_fix_inst_calls_for_numparam() */
 static int
 inp_fix_subckt_multiplier(struct line *subckt_card,
                           int num_subckt_params, char *subckt_param_names[], char *subckt_param_values[])
