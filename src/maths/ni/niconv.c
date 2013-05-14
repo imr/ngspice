@@ -64,8 +64,8 @@ NIconvTest(CKTcircuit *ckt)
         node = node->next ;
         if (node->type == SP_CURRENT)
         {
-            if (maximum < fabs (ckt->CKTrhsOld [i]))
-                maximum = fabs (ckt->CKTrhsOld [i]) ;
+            if (maximum < fabs (ckt->CKTrhs [i]))
+                maximum = fabs (ckt->CKTrhs [i]) ;
         }
     }
 
@@ -75,9 +75,7 @@ NIconvTest(CKTcircuit *ckt)
         node = node->next ;
         if (node->type == SP_VOLTAGE)
         {
-//            printf ("Valore: %-.9g\tSoglia: %-.9g\n", fabs (ckt->CKTfvk [i] + ckt->CKTdiagGmin * ckt->CKTrhsOld [i]), (ckt->CKTreltol * maximum + ckt->CKTabstol)) ;
-//            if (fabs (ckt->CKTfvk [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
-            if (fabs (ckt->CKTfvk [i] + ckt->CKTdiagGmin * ckt->CKTrhsOld [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
+            if (fabs (ckt->CKTfvk [i] + ckt->CKTdiagGmin * ckt->CKTrhs [i]) > maximum)
                 return 1 ;
         }
     }
