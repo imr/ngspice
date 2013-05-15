@@ -5,7 +5,9 @@
 /* Forward definition of main() */
 int xmain( int argc, char * argv[]);
 /* forward of Update function */
-//static char* rlead(char*);
+#ifdef __CYGWIN__
+static char* rlead(char*);
+#endif
 void winmessage(char*);
 
 static void HistoryInit(void);
