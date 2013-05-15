@@ -1384,8 +1384,11 @@ int system( const char * command)
 } // system Windows95
 #endif
 */
+
+#ifdef __CYGWIN__
 /* Strip leading spaces, return a copy of s */
-/*static char* rlead(char *s)
+static char*
+rlead(char *s)
 {
    int i,j=0;
    static char temp[512];
@@ -1406,7 +1409,7 @@ int system( const char * command)
    temp[j] = '\0';
    return copy(temp);
 } 
-*/
+#endif
 
 void winmessage(char* new_msg)
 {
