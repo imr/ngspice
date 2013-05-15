@@ -3,7 +3,7 @@
 /**********
  * Copyright 2001 Regents of the University of California. All rights reserved.
  * File: b3trunc.c of BSIM3v3.2.4
- * Author: 1995 Min-Chie Jeng and Mansun Chan. 
+ * Author: 1995 Min-Chie Jeng and Mansun Chan.
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001  Xuemei Xi
  * Modified by Poalo Nenzi 2002
@@ -28,8 +28,8 @@ BSIM3v32instance *here;
 
     for (; model != NULL; model = model->BSIM3v32nextModel)
     {    for (here = model->BSIM3v32instances; here != NULL;
-	      here = here->BSIM3v32nextInstance)
-	 {
+              here = here->BSIM3v32nextInstance)
+         {
 #ifdef STEPDEBUG
             debugtemp = *timeStep;
 #endif /* STEPDEBUG */
@@ -38,7 +38,7 @@ BSIM3v32instance *here;
             CKTterr(here->BSIM3v32qd,ckt,timeStep);
 #ifdef STEPDEBUG
             if(debugtemp != *timeStep)
-	    {  printf("device %s reduces step from %g to %g\n",
+            {  printf("device %s reduces step from %g to %g\n",
                        here->BSIM3v32name,debugtemp,*timeStep);
             }
 #endif /* STEPDEBUG */

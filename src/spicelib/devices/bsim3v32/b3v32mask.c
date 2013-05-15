@@ -24,24 +24,24 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 
     NG_IGNORE(ckt);
 
-    switch(which) 
+    switch(which)
     {   case BSIM3v32_MOD_MOBMOD:
-            value->iValue = model->BSIM3v32mobMod; 
+            value->iValue = model->BSIM3v32mobMod;
             return(OK);
         case BSIM3v32_MOD_PARAMCHK:
-            value->iValue = model->BSIM3v32paramChk; 
+            value->iValue = model->BSIM3v32paramChk;
             return(OK);
         case BSIM3v32_MOD_BINUNIT:
-            value->iValue = model->BSIM3v32binUnit; 
+            value->iValue = model->BSIM3v32binUnit;
             return(OK);
         case BSIM3v32_MOD_CAPMOD:
-            value->iValue = model->BSIM3v32capMod; 
+            value->iValue = model->BSIM3v32capMod;
             return(OK);
         case BSIM3v32_MOD_NOIMOD:
-            value->iValue = model->BSIM3v32noiMod; 
+            value->iValue = model->BSIM3v32noiMod;
             return(OK);
         case BSIM3v32_MOD_ACMMOD:
-            value->iValue = model->BSIM3v32acmMod; 
+            value->iValue = model->BSIM3v32acmMod;
             return(OK);
         case  BSIM3v32_MOD_VERSION :
           value->sValue = model->BSIM3v32version;
@@ -94,7 +94,7 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case BSIM3v32_MOD_KETA:
             value->rValue = model->BSIM3v32keta;
-            return(OK);   
+            return(OK);
         case BSIM3v32_MOD_NSUB:
             value->rValue = model->BSIM3v32nsub;
             return(OK);
@@ -146,50 +146,50 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case  BSIM3v32_MOD_NLX:
           value->rValue = model->BSIM3v32nlx;
             return(OK);
-        case  BSIM3v32_MOD_DVT0 :                
+        case  BSIM3v32_MOD_DVT0 :
           value->rValue = model->BSIM3v32dvt0;
             return(OK);
-        case  BSIM3v32_MOD_DVT1 :             
+        case  BSIM3v32_MOD_DVT1 :
           value->rValue = model->BSIM3v32dvt1;
             return(OK);
-        case  BSIM3v32_MOD_DVT2 :             
+        case  BSIM3v32_MOD_DVT2 :
           value->rValue = model->BSIM3v32dvt2;
             return(OK);
-        case  BSIM3v32_MOD_DVT0W :                
+        case  BSIM3v32_MOD_DVT0W :
           value->rValue = model->BSIM3v32dvt0w;
             return(OK);
-        case  BSIM3v32_MOD_DVT1W :             
+        case  BSIM3v32_MOD_DVT1W :
           value->rValue = model->BSIM3v32dvt1w;
             return(OK);
-        case  BSIM3v32_MOD_DVT2W :             
+        case  BSIM3v32_MOD_DVT2W :
           value->rValue = model->BSIM3v32dvt2w;
             return(OK);
-        case  BSIM3v32_MOD_DROUT :           
+        case  BSIM3v32_MOD_DROUT :
           value->rValue = model->BSIM3v32drout;
             return(OK);
-        case  BSIM3v32_MOD_DSUB :           
+        case  BSIM3v32_MOD_DSUB :
           value->rValue = model->BSIM3v32dsub;
             return(OK);
         case BSIM3v32_MOD_VTH0:
-            value->rValue = model->BSIM3v32vth0; 
+            value->rValue = model->BSIM3v32vth0;
             return(OK);
         case BSIM3v32_MOD_UA:
-            value->rValue = model->BSIM3v32ua; 
+            value->rValue = model->BSIM3v32ua;
             return(OK);
         case BSIM3v32_MOD_UA1:
-            value->rValue = model->BSIM3v32ua1; 
+            value->rValue = model->BSIM3v32ua1;
             return(OK);
         case BSIM3v32_MOD_UB:
-            value->rValue = model->BSIM3v32ub;  
+            value->rValue = model->BSIM3v32ub;
             return(OK);
         case BSIM3v32_MOD_UB1:
-            value->rValue = model->BSIM3v32ub1;  
+            value->rValue = model->BSIM3v32ub1;
             return(OK);
         case BSIM3v32_MOD_UC:
-            value->rValue = model->BSIM3v32uc; 
+            value->rValue = model->BSIM3v32uc;
             return(OK);
         case BSIM3v32_MOD_UC1:
-            value->rValue = model->BSIM3v32uc1; 
+            value->rValue = model->BSIM3v32uc1;
             return(OK);
         case BSIM3v32_MOD_U0:
             value->rValue = model->BSIM3v32u0;
@@ -204,44 +204,44 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->BSIM3v32delta;
             return(OK);
         case BSIM3v32_MOD_RDSW:
-            value->rValue = model->BSIM3v32rdsw; 
-            return(OK);             
+            value->rValue = model->BSIM3v32rdsw;
+            return(OK);
         case BSIM3v32_MOD_PRWG:
-            value->rValue = model->BSIM3v32prwg; 
-            return(OK);             
+            value->rValue = model->BSIM3v32prwg;
+            return(OK);
         case BSIM3v32_MOD_PRWB:
-            value->rValue = model->BSIM3v32prwb; 
-            return(OK);             
+            value->rValue = model->BSIM3v32prwb;
+            return(OK);
         case BSIM3v32_MOD_PRT:
-            value->rValue = model->BSIM3v32prt; 
-            return(OK);              
+            value->rValue = model->BSIM3v32prt;
+            return(OK);
         case BSIM3v32_MOD_ETA0:
-            value->rValue = model->BSIM3v32eta0; 
-            return(OK);               
+            value->rValue = model->BSIM3v32eta0;
+            return(OK);
         case BSIM3v32_MOD_ETAB:
-            value->rValue = model->BSIM3v32etab; 
-            return(OK);               
+            value->rValue = model->BSIM3v32etab;
+            return(OK);
         case BSIM3v32_MOD_PCLM:
-            value->rValue = model->BSIM3v32pclm; 
-            return(OK);               
+            value->rValue = model->BSIM3v32pclm;
+            return(OK);
         case BSIM3v32_MOD_PDIBL1:
-            value->rValue = model->BSIM3v32pdibl1; 
-            return(OK);               
+            value->rValue = model->BSIM3v32pdibl1;
+            return(OK);
         case BSIM3v32_MOD_PDIBL2:
-            value->rValue = model->BSIM3v32pdibl2; 
-            return(OK);               
+            value->rValue = model->BSIM3v32pdibl2;
+            return(OK);
         case BSIM3v32_MOD_PDIBLB:
-            value->rValue = model->BSIM3v32pdiblb; 
-            return(OK);               
+            value->rValue = model->BSIM3v32pdiblb;
+            return(OK);
         case BSIM3v32_MOD_PSCBE1:
-            value->rValue = model->BSIM3v32pscbe1; 
-            return(OK);               
+            value->rValue = model->BSIM3v32pscbe1;
+            return(OK);
         case BSIM3v32_MOD_PSCBE2:
-            value->rValue = model->BSIM3v32pscbe2; 
-            return(OK);               
+            value->rValue = model->BSIM3v32pscbe2;
+            return(OK);
         case BSIM3v32_MOD_PVAG:
-            value->rValue = model->BSIM3v32pvag; 
-            return(OK);               
+            value->rValue = model->BSIM3v32pvag;
+            return(OK);
         case BSIM3v32_MOD_WR:
             value->rValue = model->BSIM3v32wr;
             return(OK);
@@ -301,7 +301,7 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->BSIM3v32dlc;
             return(OK);
         case BSIM3v32_MOD_VFBCV:
-            value->rValue = model->BSIM3v32vfbcv; 
+            value->rValue = model->BSIM3v32vfbcv;
             return(OK);
         case BSIM3v32_MOD_ACDE:
             value->rValue = model->BSIM3v32acde;
@@ -334,30 +334,30 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->BSIM3v32tpbswg;
             return(OK);
 
-	/* acm model */
-	case BSIM3v32_MOD_HDIF:
-	    value->rValue = model->BSIM3v32hdif; 
-	    return(OK);
-	case BSIM3v32_MOD_LDIF:
-	    value->rValue = model->BSIM3v32ldif; 
-	    return(OK);
-	case BSIM3v32_MOD_LD:
-	    value->rValue = model->BSIM3v32ld; 
-	    return(OK);
-	case BSIM3v32_MOD_RD:
-	    value->rValue = model->BSIM3v32rd; 
-	    return(OK);
-	case BSIM3v32_MOD_RS:
-	    value->rValue = model->BSIM3v32rs; 
-	    return(OK);
-	case BSIM3v32_MOD_RDC:
-	    value->rValue = model->BSIM3v32rdc; 
-	    return(OK);
-	case BSIM3v32_MOD_RSC:
-	    value->rValue = model->BSIM3v32rsc; 
-	    return(OK);
+        /* acm model */
+        case BSIM3v32_MOD_HDIF:
+            value->rValue = model->BSIM3v32hdif;
+            return(OK);
+        case BSIM3v32_MOD_LDIF:
+            value->rValue = model->BSIM3v32ldif;
+            return(OK);
+        case BSIM3v32_MOD_LD:
+            value->rValue = model->BSIM3v32ld;
+            return(OK);
+        case BSIM3v32_MOD_RD:
+            value->rValue = model->BSIM3v32rd;
+            return(OK);
+        case BSIM3v32_MOD_RS:
+            value->rValue = model->BSIM3v32rs;
+            return(OK);
+        case BSIM3v32_MOD_RDC:
+            value->rValue = model->BSIM3v32rdc;
+            return(OK);
+        case BSIM3v32_MOD_RSC:
+            value->rValue = model->BSIM3v32rsc;
+            return(OK);
 
-	/* Length dependence */
+        /* Length dependence */
         case  BSIM3v32_MOD_LCDSC :
           value->rValue = model->BSIM3v32lcdsc;
             return(OK);
@@ -396,7 +396,7 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case BSIM3v32_MOD_LKETA:
             value->rValue = model->BSIM3v32lketa;
-            return(OK);   
+            return(OK);
         case BSIM3v32_MOD_LNSUB:
             value->rValue = model->BSIM3v32lnsub;
             return(OK);
@@ -448,50 +448,50 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case  BSIM3v32_MOD_LNLX:
           value->rValue = model->BSIM3v32lnlx;
             return(OK);
-        case  BSIM3v32_MOD_LDVT0:                
+        case  BSIM3v32_MOD_LDVT0:
           value->rValue = model->BSIM3v32ldvt0;
             return(OK);
-        case  BSIM3v32_MOD_LDVT1 :             
+        case  BSIM3v32_MOD_LDVT1 :
           value->rValue = model->BSIM3v32ldvt1;
             return(OK);
-        case  BSIM3v32_MOD_LDVT2 :             
+        case  BSIM3v32_MOD_LDVT2 :
           value->rValue = model->BSIM3v32ldvt2;
             return(OK);
-        case  BSIM3v32_MOD_LDVT0W :                
+        case  BSIM3v32_MOD_LDVT0W :
           value->rValue = model->BSIM3v32ldvt0w;
             return(OK);
-        case  BSIM3v32_MOD_LDVT1W :             
+        case  BSIM3v32_MOD_LDVT1W :
           value->rValue = model->BSIM3v32ldvt1w;
             return(OK);
-        case  BSIM3v32_MOD_LDVT2W :             
+        case  BSIM3v32_MOD_LDVT2W :
           value->rValue = model->BSIM3v32ldvt2w;
             return(OK);
-        case  BSIM3v32_MOD_LDROUT :           
+        case  BSIM3v32_MOD_LDROUT :
           value->rValue = model->BSIM3v32ldrout;
             return(OK);
-        case  BSIM3v32_MOD_LDSUB :           
+        case  BSIM3v32_MOD_LDSUB :
           value->rValue = model->BSIM3v32ldsub;
             return(OK);
         case BSIM3v32_MOD_LVTH0:
-            value->rValue = model->BSIM3v32lvth0; 
+            value->rValue = model->BSIM3v32lvth0;
             return(OK);
         case BSIM3v32_MOD_LUA:
-            value->rValue = model->BSIM3v32lua; 
+            value->rValue = model->BSIM3v32lua;
             return(OK);
         case BSIM3v32_MOD_LUA1:
-            value->rValue = model->BSIM3v32lua1; 
+            value->rValue = model->BSIM3v32lua1;
             return(OK);
         case BSIM3v32_MOD_LUB:
-            value->rValue = model->BSIM3v32lub;  
+            value->rValue = model->BSIM3v32lub;
             return(OK);
         case BSIM3v32_MOD_LUB1:
-            value->rValue = model->BSIM3v32lub1;  
+            value->rValue = model->BSIM3v32lub1;
             return(OK);
         case BSIM3v32_MOD_LUC:
-            value->rValue = model->BSIM3v32luc; 
+            value->rValue = model->BSIM3v32luc;
             return(OK);
         case BSIM3v32_MOD_LUC1:
-            value->rValue = model->BSIM3v32luc1; 
+            value->rValue = model->BSIM3v32luc1;
             return(OK);
         case BSIM3v32_MOD_LU0:
             value->rValue = model->BSIM3v32lu0;
@@ -506,44 +506,44 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->BSIM3v32ldelta;
             return(OK);
         case BSIM3v32_MOD_LRDSW:
-            value->rValue = model->BSIM3v32lrdsw; 
-            return(OK);             
+            value->rValue = model->BSIM3v32lrdsw;
+            return(OK);
         case BSIM3v32_MOD_LPRWB:
-            value->rValue = model->BSIM3v32lprwb; 
-            return(OK);             
+            value->rValue = model->BSIM3v32lprwb;
+            return(OK);
         case BSIM3v32_MOD_LPRWG:
-            value->rValue = model->BSIM3v32lprwg; 
-            return(OK);             
+            value->rValue = model->BSIM3v32lprwg;
+            return(OK);
         case BSIM3v32_MOD_LPRT:
-            value->rValue = model->BSIM3v32lprt; 
-            return(OK);              
+            value->rValue = model->BSIM3v32lprt;
+            return(OK);
         case BSIM3v32_MOD_LETA0:
-            value->rValue = model->BSIM3v32leta0; 
-            return(OK);               
+            value->rValue = model->BSIM3v32leta0;
+            return(OK);
         case BSIM3v32_MOD_LETAB:
-            value->rValue = model->BSIM3v32letab; 
-            return(OK);               
+            value->rValue = model->BSIM3v32letab;
+            return(OK);
         case BSIM3v32_MOD_LPCLM:
-            value->rValue = model->BSIM3v32lpclm; 
-            return(OK);               
+            value->rValue = model->BSIM3v32lpclm;
+            return(OK);
         case BSIM3v32_MOD_LPDIBL1:
-            value->rValue = model->BSIM3v32lpdibl1; 
-            return(OK);               
+            value->rValue = model->BSIM3v32lpdibl1;
+            return(OK);
         case BSIM3v32_MOD_LPDIBL2:
-            value->rValue = model->BSIM3v32lpdibl2; 
-            return(OK);               
+            value->rValue = model->BSIM3v32lpdibl2;
+            return(OK);
         case BSIM3v32_MOD_LPDIBLB:
-            value->rValue = model->BSIM3v32lpdiblb; 
-            return(OK);               
+            value->rValue = model->BSIM3v32lpdiblb;
+            return(OK);
         case BSIM3v32_MOD_LPSCBE1:
-            value->rValue = model->BSIM3v32lpscbe1; 
-            return(OK);               
+            value->rValue = model->BSIM3v32lpscbe1;
+            return(OK);
         case BSIM3v32_MOD_LPSCBE2:
-            value->rValue = model->BSIM3v32lpscbe2; 
-            return(OK);               
+            value->rValue = model->BSIM3v32lpscbe2;
+            return(OK);
         case BSIM3v32_MOD_LPVAG:
-            value->rValue = model->BSIM3v32lpvag; 
-            return(OK);               
+            value->rValue = model->BSIM3v32lpvag;
+            return(OK);
         case BSIM3v32_MOD_LWR:
             value->rValue = model->BSIM3v32lwr;
             return(OK);
@@ -609,7 +609,7 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->BSIM3v32lvoffcv;
             return(OK);
 
-	/* Width dependence */
+        /* Width dependence */
         case  BSIM3v32_MOD_WCDSC :
           value->rValue = model->BSIM3v32wcdsc;
             return(OK);
@@ -648,7 +648,7 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case BSIM3v32_MOD_WKETA:
             value->rValue = model->BSIM3v32wketa;
-            return(OK);   
+            return(OK);
         case BSIM3v32_MOD_WNSUB:
             value->rValue = model->BSIM3v32wnsub;
             return(OK);
@@ -700,50 +700,50 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case  BSIM3v32_MOD_WNLX:
           value->rValue = model->BSIM3v32wnlx;
             return(OK);
-        case  BSIM3v32_MOD_WDVT0:                
+        case  BSIM3v32_MOD_WDVT0:
           value->rValue = model->BSIM3v32wdvt0;
             return(OK);
-        case  BSIM3v32_MOD_WDVT1 :             
+        case  BSIM3v32_MOD_WDVT1 :
           value->rValue = model->BSIM3v32wdvt1;
             return(OK);
-        case  BSIM3v32_MOD_WDVT2 :             
+        case  BSIM3v32_MOD_WDVT2 :
           value->rValue = model->BSIM3v32wdvt2;
             return(OK);
-        case  BSIM3v32_MOD_WDVT0W :                
+        case  BSIM3v32_MOD_WDVT0W :
           value->rValue = model->BSIM3v32wdvt0w;
             return(OK);
-        case  BSIM3v32_MOD_WDVT1W :             
+        case  BSIM3v32_MOD_WDVT1W :
           value->rValue = model->BSIM3v32wdvt1w;
             return(OK);
-        case  BSIM3v32_MOD_WDVT2W :             
+        case  BSIM3v32_MOD_WDVT2W :
           value->rValue = model->BSIM3v32wdvt2w;
             return(OK);
-        case  BSIM3v32_MOD_WDROUT :           
+        case  BSIM3v32_MOD_WDROUT :
           value->rValue = model->BSIM3v32wdrout;
             return(OK);
-        case  BSIM3v32_MOD_WDSUB :           
+        case  BSIM3v32_MOD_WDSUB :
           value->rValue = model->BSIM3v32wdsub;
             return(OK);
         case BSIM3v32_MOD_WVTH0:
-            value->rValue = model->BSIM3v32wvth0; 
+            value->rValue = model->BSIM3v32wvth0;
             return(OK);
         case BSIM3v32_MOD_WUA:
-            value->rValue = model->BSIM3v32wua; 
+            value->rValue = model->BSIM3v32wua;
             return(OK);
         case BSIM3v32_MOD_WUA1:
-            value->rValue = model->BSIM3v32wua1; 
+            value->rValue = model->BSIM3v32wua1;
             return(OK);
         case BSIM3v32_MOD_WUB:
-            value->rValue = model->BSIM3v32wub;  
+            value->rValue = model->BSIM3v32wub;
             return(OK);
         case BSIM3v32_MOD_WUB1:
-            value->rValue = model->BSIM3v32wub1;  
+            value->rValue = model->BSIM3v32wub1;
             return(OK);
         case BSIM3v32_MOD_WUC:
-            value->rValue = model->BSIM3v32wuc; 
+            value->rValue = model->BSIM3v32wuc;
             return(OK);
         case BSIM3v32_MOD_WUC1:
-            value->rValue = model->BSIM3v32wuc1; 
+            value->rValue = model->BSIM3v32wuc1;
             return(OK);
         case BSIM3v32_MOD_WU0:
             value->rValue = model->BSIM3v32wu0;
@@ -758,44 +758,44 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->BSIM3v32wdelta;
             return(OK);
         case BSIM3v32_MOD_WRDSW:
-            value->rValue = model->BSIM3v32wrdsw; 
-            return(OK);             
+            value->rValue = model->BSIM3v32wrdsw;
+            return(OK);
         case BSIM3v32_MOD_WPRWB:
-            value->rValue = model->BSIM3v32wprwb; 
-            return(OK);             
+            value->rValue = model->BSIM3v32wprwb;
+            return(OK);
         case BSIM3v32_MOD_WPRWG:
-            value->rValue = model->BSIM3v32wprwg; 
-            return(OK);             
+            value->rValue = model->BSIM3v32wprwg;
+            return(OK);
         case BSIM3v32_MOD_WPRT:
-            value->rValue = model->BSIM3v32wprt; 
-            return(OK);              
+            value->rValue = model->BSIM3v32wprt;
+            return(OK);
         case BSIM3v32_MOD_WETA0:
-            value->rValue = model->BSIM3v32weta0; 
-            return(OK);               
+            value->rValue = model->BSIM3v32weta0;
+            return(OK);
         case BSIM3v32_MOD_WETAB:
-            value->rValue = model->BSIM3v32wetab; 
-            return(OK);               
+            value->rValue = model->BSIM3v32wetab;
+            return(OK);
         case BSIM3v32_MOD_WPCLM:
-            value->rValue = model->BSIM3v32wpclm; 
-            return(OK);               
+            value->rValue = model->BSIM3v32wpclm;
+            return(OK);
         case BSIM3v32_MOD_WPDIBL1:
-            value->rValue = model->BSIM3v32wpdibl1; 
-            return(OK);               
+            value->rValue = model->BSIM3v32wpdibl1;
+            return(OK);
         case BSIM3v32_MOD_WPDIBL2:
-            value->rValue = model->BSIM3v32wpdibl2; 
-            return(OK);               
+            value->rValue = model->BSIM3v32wpdibl2;
+            return(OK);
         case BSIM3v32_MOD_WPDIBLB:
-            value->rValue = model->BSIM3v32wpdiblb; 
-            return(OK);               
+            value->rValue = model->BSIM3v32wpdiblb;
+            return(OK);
         case BSIM3v32_MOD_WPSCBE1:
-            value->rValue = model->BSIM3v32wpscbe1; 
-            return(OK);               
+            value->rValue = model->BSIM3v32wpscbe1;
+            return(OK);
         case BSIM3v32_MOD_WPSCBE2:
-            value->rValue = model->BSIM3v32wpscbe2; 
-            return(OK);               
+            value->rValue = model->BSIM3v32wpscbe2;
+            return(OK);
         case BSIM3v32_MOD_WPVAG:
-            value->rValue = model->BSIM3v32wpvag; 
-            return(OK);               
+            value->rValue = model->BSIM3v32wpvag;
+            return(OK);
         case BSIM3v32_MOD_WWR:
             value->rValue = model->BSIM3v32wwr;
             return(OK);
@@ -861,7 +861,7 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->BSIM3v32wvoffcv;
             return(OK);
 
-	/* Cross-term dependence */
+        /* Cross-term dependence */
         case  BSIM3v32_MOD_PCDSC :
           value->rValue = model->BSIM3v32pcdsc;
             return(OK);
@@ -900,7 +900,7 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case BSIM3v32_MOD_PKETA:
             value->rValue = model->BSIM3v32pketa;
-            return(OK);   
+            return(OK);
         case BSIM3v32_MOD_PNSUB:
             value->rValue = model->BSIM3v32pnsub;
             return(OK);
@@ -952,50 +952,50 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case  BSIM3v32_MOD_PNLX:
           value->rValue = model->BSIM3v32pnlx;
             return(OK);
-        case  BSIM3v32_MOD_PDVT0 :                
+        case  BSIM3v32_MOD_PDVT0 :
           value->rValue = model->BSIM3v32pdvt0;
             return(OK);
-        case  BSIM3v32_MOD_PDVT1 :             
+        case  BSIM3v32_MOD_PDVT1 :
           value->rValue = model->BSIM3v32pdvt1;
             return(OK);
-        case  BSIM3v32_MOD_PDVT2 :             
+        case  BSIM3v32_MOD_PDVT2 :
           value->rValue = model->BSIM3v32pdvt2;
             return(OK);
-        case  BSIM3v32_MOD_PDVT0W :                
+        case  BSIM3v32_MOD_PDVT0W :
           value->rValue = model->BSIM3v32pdvt0w;
             return(OK);
-        case  BSIM3v32_MOD_PDVT1W :             
+        case  BSIM3v32_MOD_PDVT1W :
           value->rValue = model->BSIM3v32pdvt1w;
             return(OK);
-        case  BSIM3v32_MOD_PDVT2W :             
-          value->rValue = model->BSIM3v32pdvt2w;
+        case  BSIM3v32_MOD_PDVT2W :
+            value->rValue = model->BSIM3v32pdvt2w;
             return(OK);
-        case  BSIM3v32_MOD_PDROUT :           
-          value->rValue = model->BSIM3v32pdrout;
+        case  BSIM3v32_MOD_PDROUT :
+            value->rValue = model->BSIM3v32pdrout;
             return(OK);
-        case  BSIM3v32_MOD_PDSUB :           
-          value->rValue = model->BSIM3v32pdsub;
+        case  BSIM3v32_MOD_PDSUB :
+            value->rValue = model->BSIM3v32pdsub;
             return(OK);
         case BSIM3v32_MOD_PVTH0:
-            value->rValue = model->BSIM3v32pvth0; 
+            value->rValue = model->BSIM3v32pvth0;
             return(OK);
         case BSIM3v32_MOD_PUA:
-            value->rValue = model->BSIM3v32pua; 
+            value->rValue = model->BSIM3v32pua;
             return(OK);
         case BSIM3v32_MOD_PUA1:
-            value->rValue = model->BSIM3v32pua1; 
+            value->rValue = model->BSIM3v32pua1;
             return(OK);
         case BSIM3v32_MOD_PUB:
-            value->rValue = model->BSIM3v32pub;  
+            value->rValue = model->BSIM3v32pub;
             return(OK);
         case BSIM3v32_MOD_PUB1:
-            value->rValue = model->BSIM3v32pub1;  
+            value->rValue = model->BSIM3v32pub1;
             return(OK);
         case BSIM3v32_MOD_PUC:
-            value->rValue = model->BSIM3v32puc; 
+            value->rValue = model->BSIM3v32puc;
             return(OK);
         case BSIM3v32_MOD_PUC1:
-            value->rValue = model->BSIM3v32puc1; 
+            value->rValue = model->BSIM3v32puc1;
             return(OK);
         case BSIM3v32_MOD_PU0:
             value->rValue = model->BSIM3v32pu0;
@@ -1010,44 +1010,44 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->BSIM3v32pdelta;
             return(OK);
         case BSIM3v32_MOD_PRDSW:
-            value->rValue = model->BSIM3v32prdsw; 
-            return(OK);             
+            value->rValue = model->BSIM3v32prdsw;
+            return(OK);
         case BSIM3v32_MOD_PPRWB:
-            value->rValue = model->BSIM3v32pprwb; 
-            return(OK);             
+            value->rValue = model->BSIM3v32pprwb;
+            return(OK);
         case BSIM3v32_MOD_PPRWG:
-            value->rValue = model->BSIM3v32pprwg; 
-            return(OK);             
+            value->rValue = model->BSIM3v32pprwg;
+            return(OK);
         case BSIM3v32_MOD_PPRT:
-            value->rValue = model->BSIM3v32pprt; 
-            return(OK);              
+            value->rValue = model->BSIM3v32pprt;
+            return(OK);
         case BSIM3v32_MOD_PETA0:
-            value->rValue = model->BSIM3v32peta0; 
-            return(OK);               
+            value->rValue = model->BSIM3v32peta0;
+            return(OK);
         case BSIM3v32_MOD_PETAB:
-            value->rValue = model->BSIM3v32petab; 
-            return(OK);               
+            value->rValue = model->BSIM3v32petab;
+            return(OK);
         case BSIM3v32_MOD_PPCLM:
-            value->rValue = model->BSIM3v32ppclm; 
-            return(OK);               
+            value->rValue = model->BSIM3v32ppclm;
+            return(OK);
         case BSIM3v32_MOD_PPDIBL1:
-            value->rValue = model->BSIM3v32ppdibl1; 
-            return(OK);               
+            value->rValue = model->BSIM3v32ppdibl1;
+            return(OK);
         case BSIM3v32_MOD_PPDIBL2:
-            value->rValue = model->BSIM3v32ppdibl2; 
-            return(OK);               
+            value->rValue = model->BSIM3v32ppdibl2;
+            return(OK);
         case BSIM3v32_MOD_PPDIBLB:
-            value->rValue = model->BSIM3v32ppdiblb; 
-            return(OK);               
+            value->rValue = model->BSIM3v32ppdiblb;
+            return(OK);
         case BSIM3v32_MOD_PPSCBE1:
-            value->rValue = model->BSIM3v32ppscbe1; 
-            return(OK);               
+            value->rValue = model->BSIM3v32ppscbe1;
+            return(OK);
         case BSIM3v32_MOD_PPSCBE2:
-            value->rValue = model->BSIM3v32ppscbe2; 
-            return(OK);               
+            value->rValue = model->BSIM3v32ppscbe2;
+            return(OK);
         case BSIM3v32_MOD_PPVAG:
-            value->rValue = model->BSIM3v32ppvag; 
-            return(OK);               
+            value->rValue = model->BSIM3v32ppvag;
+            return(OK);
         case BSIM3v32_MOD_PWR:
             value->rValue = model->BSIM3v32pwr;
             return(OK);
@@ -1114,64 +1114,64 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
 
         case  BSIM3v32_MOD_TNOM :
-          value->rValue = model->BSIM3v32tnom;
+            value->rValue = model->BSIM3v32tnom;
             return(OK);
         case BSIM3v32_MOD_CGSO:
-            value->rValue = model->BSIM3v32cgso; 
+            value->rValue = model->BSIM3v32cgso;
             return(OK);
         case BSIM3v32_MOD_CGDO:
-            value->rValue = model->BSIM3v32cgdo; 
+            value->rValue = model->BSIM3v32cgdo;
             return(OK);
         case BSIM3v32_MOD_CGBO:
-            value->rValue = model->BSIM3v32cgbo; 
+            value->rValue = model->BSIM3v32cgbo;
             return(OK);
         case BSIM3v32_MOD_XPART:
-            value->rValue = model->BSIM3v32xpart; 
+            value->rValue = model->BSIM3v32xpart;
             return(OK);
         case BSIM3v32_MOD_RSH:
-            value->rValue = model->BSIM3v32sheetResistance; 
+            value->rValue = model->BSIM3v32sheetResistance;
             return(OK);
         case BSIM3v32_MOD_JS:
-            value->rValue = model->BSIM3v32jctSatCurDensity; 
+            value->rValue = model->BSIM3v32jctSatCurDensity;
             return(OK);
         case BSIM3v32_MOD_JSW:
-            value->rValue = model->BSIM3v32jctSidewallSatCurDensity; 
+            value->rValue = model->BSIM3v32jctSidewallSatCurDensity;
             return(OK);
         case BSIM3v32_MOD_PB:
-            value->rValue = model->BSIM3v32bulkJctPotential; 
+            value->rValue = model->BSIM3v32bulkJctPotential;
             return(OK);
         case BSIM3v32_MOD_MJ:
-            value->rValue = model->BSIM3v32bulkJctBotGradingCoeff; 
+            value->rValue = model->BSIM3v32bulkJctBotGradingCoeff;
             return(OK);
         case BSIM3v32_MOD_PBSW:
-            value->rValue = model->BSIM3v32sidewallJctPotential; 
+            value->rValue = model->BSIM3v32sidewallJctPotential;
             return(OK);
         case BSIM3v32_MOD_MJSW:
-            value->rValue = model->BSIM3v32bulkJctSideGradingCoeff; 
+            value->rValue = model->BSIM3v32bulkJctSideGradingCoeff;
             return(OK);
         case BSIM3v32_MOD_CJ:
-            value->rValue = model->BSIM3v32unitAreaJctCap; 
+            value->rValue = model->BSIM3v32unitAreaJctCap;
             return(OK);
         case BSIM3v32_MOD_CJSW:
-            value->rValue = model->BSIM3v32unitLengthSidewallJctCap; 
+            value->rValue = model->BSIM3v32unitLengthSidewallJctCap;
             return(OK);
         case BSIM3v32_MOD_PBSWG:
-            value->rValue = model->BSIM3v32GatesidewallJctPotential; 
+            value->rValue = model->BSIM3v32GatesidewallJctPotential;
             return(OK);
         case BSIM3v32_MOD_MJSWG:
-            value->rValue = model->BSIM3v32bulkJctGateSideGradingCoeff; 
+            value->rValue = model->BSIM3v32bulkJctGateSideGradingCoeff;
             return(OK);
         case BSIM3v32_MOD_CJSWG:
-            value->rValue = model->BSIM3v32unitLengthGateSidewallJctCap; 
+            value->rValue = model->BSIM3v32unitLengthGateSidewallJctCap;
             return(OK);
         case BSIM3v32_MOD_NJ:
-            value->rValue = model->BSIM3v32jctEmissionCoeff; 
+            value->rValue = model->BSIM3v32jctEmissionCoeff;
             return(OK);
         case BSIM3v32_MOD_XTI:
-            value->rValue = model->BSIM3v32jctTempExponent; 
+            value->rValue = model->BSIM3v32jctTempExponent;
             return(OK);
         case BSIM3v32_MOD_LINT:
-            value->rValue = model->BSIM3v32Lint; 
+            value->rValue = model->BSIM3v32Lint;
             return(OK);
         case BSIM3v32_MOD_LL:
             value->rValue = model->BSIM3v32Ll;
@@ -1238,11 +1238,11 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
 
         case BSIM3v32_MOD_XL:
-	    value->rValue = model->BSIM3v32xl; 
-	    return(OK);
+            value->rValue = model->BSIM3v32xl;
+            return(OK);
         case BSIM3v32_MOD_XW:
-	    value->rValue = model->BSIM3v32xw; 
-	    return(OK);
+            value->rValue = model->BSIM3v32xw;
+            return(OK);
 
         case BSIM3v32_MOD_NOIA:
             value->rValue = model->BSIM3v32oxideTrapDensityA;

@@ -23,7 +23,7 @@ BSIM3v32destroy (GENmodel **inModel)
     BSIM3v32model *oldmod = NULL;
 
     for (; mod ; mod = mod->BSIM3v32nextModel) {
-    /** added to get rid of link list pSizeDependParamKnot **/      
+    /** added to get rid of link list pSizeDependParamKnot **/
         struct bsim3v32SizeDependParam *pParam, *pParamOld=NULL;
 
         pParam = mod->pSizeDependParamKnot;

@@ -19,22 +19,22 @@
 
 int
 BSIM3v32ask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
-	  IFvalue *select)
+          IFvalue *select)
 {
 BSIM3v32instance *here = (BSIM3v32instance*)inst;
 
     NG_IGNORE(select);
 
-    switch(which) 
+    switch(which)
     {   case BSIM3v32_L:
             value->rValue = here->BSIM3v32l;
             return(OK);
         case BSIM3v32_W:
             value->rValue = here->BSIM3v32w;
             return(OK);
-	case BSIM3v32_M:
-	    value->rValue = here->BSIM3v32m;
-	    return (OK);
+        case BSIM3v32_M:
+            value->rValue = here->BSIM3v32m;
+            return (OK);
         case BSIM3v32_AS:
             value->rValue = here->BSIM3v32sourceArea;
             return(OK);
@@ -94,11 +94,11 @@ BSIM3v32instance *here = (BSIM3v32instance*)inst;
             return(OK);
         case BSIM3v32_SOURCECONDUCT:
             value->rValue = here->BSIM3v32sourceConductance;
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_DRAINCONDUCT:
             value->rValue = here->BSIM3v32drainConductance;
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_VBD:
             value->rValue = *(ckt->CKTstate0 + here->BSIM3v32vbd);
@@ -113,118 +113,118 @@ BSIM3v32instance *here = (BSIM3v32instance*)inst;
             value->rValue = *(ckt->CKTstate0 + here->BSIM3v32vds);
             return(OK);
         case BSIM3v32_CD:
-            value->rValue = here->BSIM3v32cd; 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = here->BSIM3v32cd;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CBS:
-            value->rValue = here->BSIM3v32cbs; 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = here->BSIM3v32cbs;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CBD:
-            value->rValue = here->BSIM3v32cbd; 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = here->BSIM3v32cbd;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_GM:
-            value->rValue = here->BSIM3v32gm; 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = here->BSIM3v32gm;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_GDS:
-            value->rValue = here->BSIM3v32gds; 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = here->BSIM3v32gds;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_GMBS:
-            value->rValue = here->BSIM3v32gmbs; 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = here->BSIM3v32gmbs;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_GBD:
-            value->rValue = here->BSIM3v32gbd; 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = here->BSIM3v32gbd;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_GBS:
-            value->rValue = here->BSIM3v32gbs; 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = here->BSIM3v32gbs;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_QB:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32qb); 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32qb);
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CQB:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32cqb); 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32cqb);
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_QG:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32qg); 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32qg);
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CQG:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32cqg); 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32cqg);
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_QD:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32qd); 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32qd);
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CQD:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32cqd); 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32cqd);
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CGG:
-            value->rValue = here->BSIM3v32cggb; 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = here->BSIM3v32cggb;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CGD:
             value->rValue = here->BSIM3v32cgdb;
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CGS:
             value->rValue = here->BSIM3v32cgsb;
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CDG:
-            value->rValue = here->BSIM3v32cdgb; 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = here->BSIM3v32cdgb;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CDD:
-            value->rValue = here->BSIM3v32cddb; 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = here->BSIM3v32cddb;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CDS:
-            value->rValue = here->BSIM3v32cdsb; 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = here->BSIM3v32cdsb;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CBG:
             value->rValue = here->BSIM3v32cbgb;
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CBDB:
             value->rValue = here->BSIM3v32cbdb;
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CBSB:
             value->rValue = here->BSIM3v32cbsb;
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CAPBD:
-            value->rValue = here->BSIM3v32capbd; 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = here->BSIM3v32capbd;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_CAPBS:
             value->rValue = here->BSIM3v32capbs;
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_VON:
-            value->rValue = here->BSIM3v32von; 
+            value->rValue = here->BSIM3v32von;
             return(OK);
         case BSIM3v32_VDSAT:
-            value->rValue = here->BSIM3v32vdsat; 
+            value->rValue = here->BSIM3v32vdsat;
             return(OK);
         case BSIM3v32_QBS:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32qbs); 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32qbs);
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         case BSIM3v32_QBD:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32qbd); 
-	    value->rValue *= here->BSIM3v32m;
+            value->rValue = *(ckt->CKTstate0 + here->BSIM3v32qbd);
+            value->rValue *= here->BSIM3v32m;
             return(OK);
         default:
             return(E_BADPARM);

@@ -20,7 +20,7 @@ extern void BSIM3v32mosCap(CKTcircuit*, double, double, double, double,
         double, double, double, double, double, double, double,
         double, double, double, double, double, double, double*,
         double*, double*, double*, double*, double*, double*, double*,
-        double*, double*, double*, double*, double*, double*, double*, 
+        double*, double*, double*, double*, double*, double*, double*,
         double*);
 extern int BSIM3v32param(int,IFvalue*,GENinstance*,IFvalue*);
 extern int BSIM3v32pzLoad(GENmodel*,CKTcircuit*,SPcomplex*);
