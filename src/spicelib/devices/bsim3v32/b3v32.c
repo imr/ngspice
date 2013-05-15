@@ -218,8 +218,8 @@ IOP( "ldif", BSIM3v32_MOD_LDIF, IF_REAL, "ACM Parameter: Length of LDD Gate-Sour
 IOP( "ld", BSIM3v32_MOD_LD, IF_REAL, "ACM Parameter: Length of LDD under Gate"),
 IOP( "rd", BSIM3v32_MOD_RD, IF_REAL, "ACM Parameter: Resistance of LDD drain side"),
 IOP( "rs", BSIM3v32_MOD_RS, IF_REAL, "ACM Parameter: Resistance of LDD source side"),
-IOP( "rdc", BSIM3v32_MOD_RS, IF_REAL, "ACM Parameter: Resistance contact drain side"),
-IOP( "rsc", BSIM3v32_MOD_RS, IF_REAL, "ACM Parameter: Resistance contact source side"),
+IOP( "rdc", BSIM3v32_MOD_RDC, IF_REAL, "ACM Parameter: Resistance contact drain side"),
+IOP( "rsc", BSIM3v32_MOD_RSC, IF_REAL, "ACM Parameter: Resistance contact source side"),
 
 IOP( "alpha0", BSIM3v32_MOD_ALPHA0, IF_REAL, "substrate current model parameter"),
 IOP( "alpha1", BSIM3v32_MOD_ALPHA1, IF_REAL, "substrate current model parameter"),
