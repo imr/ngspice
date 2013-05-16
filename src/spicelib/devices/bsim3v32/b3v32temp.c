@@ -963,25 +963,6 @@ int Size_Not_Found;
                                     + here->BSIM3v32drainPerimeter
                                     * model->BSIM3v32jctSidewallTempSatCurDensity;
                 }
-#if 0
-                if ((DrainSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
-                {   here->BSIM3v32vjdm = Nvtm * log(model->BSIM3v32ijth
-                                    / DrainSatCurrent + 1.0);
-                        /* Added revision dependent code */
-                        switch (model->BSIM3v32intVersion) {
-                        case BSIM3v32V324:
-                        case BSIM3v32V323:
-                        case BSIM3v32V322:
-                                here->BSIM3v32IsEvjdm =
-                                        DrainSatCurrent * exp(here->BSIM3v32vjdm / Nvtm);
-                                break;
-                        case BSIM3v32V32:
-                        default:
-                                /* Do nothing */
-                                break;
-                        }
-                }
-#endif
               }
               else
               {
@@ -1027,25 +1008,6 @@ int Size_Not_Found;
                 }
                 DrainSatCurrent = DrainSatCurrent + here->BSIM3v32drainPerimeter * model->BSIM3v32jctSidewallTempSatCurDensity;
                 if (DrainSatCurrent <= 0.0) DrainSatCurrent = 1.0e-14;
-#if 0
-                if ((DrainSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
-                {   here->BSIM3v32vjdm = Nvtm * log(model->BSIM3v32ijth
-                                    / DrainSatCurrent + 1.0);
-                    /* Added revision dependent code */
-                    switch (model->BSIM3v32intVersion) {
-                    case BSIM3v32V324:
-                    case BSIM3v32V323:
-                    case BSIM3v32V322:
-                            here->BSIM3v32IsEvjdm =
-                                    DrainSatCurrent * exp(here->BSIM3v32vjdm / Nvtm);
-                            break;
-                    case BSIM3v32V32:
-                    default:
-                            /* Do nothing */
-                        break;
-                    }
-                }
-#endif
               }
 
               if ((DrainSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
