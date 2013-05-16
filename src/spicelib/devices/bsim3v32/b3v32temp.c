@@ -935,25 +935,6 @@ int Size_Not_Found;
                                      + here->BSIM3v32sourcePerimeter
                                      * model->BSIM3v32jctSidewallTempSatCurDensity;
                 }
-#if 0
-                if ((SourceSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
-                {   here->BSIM3v32vjsm = Nvtm * log(model->BSIM3v32ijth
-                                    / SourceSatCurrent + 1.0);
-                        /* Added revision dependent code */
-                        switch (model->BSIM3v32intVersion) {
-                        case BSIM3v32V324:
-                        case BSIM3v32V323:
-                        case BSIM3v32V322:
-                                here->BSIM3v32IsEvjsm =
-                                        SourceSatCurrent * exp(here->BSIM3v32vjsm / Nvtm);
-                                break;
-                        case BSIM3v32V32:
-                        default:
-                                /* Do nothing */
-                                break;
-                        }
-                }
-#endif
 
                 if ((here->BSIM3v32drainArea <= 0.0) &&
                     (here->BSIM3v32drainPerimeter <= 0.0))
@@ -980,25 +961,6 @@ int Size_Not_Found;
                 }
                 SourceSatCurrent = SourceSatCurrent + here->BSIM3v32sourcePerimeter * model->BSIM3v32jctSidewallTempSatCurDensity;
                 if (SourceSatCurrent <= 0.0) SourceSatCurrent = 1.0e-14;
-#if 0
-                if ((SourceSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
-                {   here->BSIM3v32vjsm = Nvtm * log(model->BSIM3v32ijth
-                                    / SourceSatCurrent + 1.0);
-                    /* Added revision dependent code */
-                    switch (model->BSIM3v32intVersion) {
-                    case BSIM3v32V324:
-                    case BSIM3v32V323:
-                    case BSIM3v32V322:
-                            here->BSIM3v32IsEvjsm =
-                                    SourceSatCurrent * exp(here->BSIM3v32vjsm / Nvtm);
-                            break;
-                    case BSIM3v32V32:
-                    default:
-                            /* Do nothing */
-                        break;
-                    }
-                }
-#endif
 
                 DrainSatCurrent = 0.0;
                 if (!here->BSIM3v32drainAreaGiven)
