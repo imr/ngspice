@@ -351,6 +351,15 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
                   + here->BSIM3v32sourcePerimeter
                   * model->BSIM3v32jctSidewallTempSatCurDensity;
               }
+            if ((here->BSIM3v32drainArea <= 0.0) && (here->BSIM3v32drainPerimeter <= 0.0))
+            {   DrainSatCurrent = 1.0e-14;
+            }
+            else
+            {   DrainSatCurrent = here->BSIM3v32drainArea
+                                * model->BSIM3v32jctTempSatCurDensity
+                                + here->BSIM3v32drainPerimeter
+                                * model->BSIM3v32jctSidewallTempSatCurDensity;
+            }
           }
           else
           {
@@ -366,6 +375,18 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
             }
             SourceSatCurrent = SourceSatCurrent + here->BSIM3v32sourcePerimeter * model->BSIM3v32jctSidewallTempSatCurDensity;
             if (SourceSatCurrent <= 0.0) SourceSatCurrent = 1.0e-14;
+            DrainSatCurrent = 0.0;
+            if (!here->BSIM3v32drainAreaGiven)
+            {
+              here->BSIM3v32drainArea = 2.0 * model->BSIM3v32hdif * pParam->BSIM3v32weff;
+            }
+            DrainSatCurrent = here->BSIM3v32drainArea * model->BSIM3v32jctTempSatCurDensity;
+            if (!here->BSIM3v32drainPerimeterGiven)
+            {
+              here->BSIM3v32drainPerimeter = 4.0 * model->BSIM3v32hdif + 2.0 * pParam->BSIM3v32weff;
+            }
+            DrainSatCurrent = DrainSatCurrent + here->BSIM3v32drainPerimeter * model->BSIM3v32jctSidewallTempSatCurDensity;
+            if (DrainSatCurrent <= 0.0) DrainSatCurrent = 1.0e-14;
           }
           if (SourceSatCurrent <= 0.0)
           {   here->BSIM3v32gbs = ckt->CKTgmin;
@@ -408,34 +429,6 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
               }
           }
 
-          /* acm model */
-          if (model->BSIM3v32acmMod == 0)
-          {
-            if ((here->BSIM3v32drainArea <= 0.0) && (here->BSIM3v32drainPerimeter <= 0.0))
-            {   DrainSatCurrent = 1.0e-14;
-            }
-            else
-            {   DrainSatCurrent = here->BSIM3v32drainArea
-                                * model->BSIM3v32jctTempSatCurDensity
-                                + here->BSIM3v32drainPerimeter
-                                * model->BSIM3v32jctSidewallTempSatCurDensity;
-            }
-          }
-          else
-          {
-            DrainSatCurrent = 0.0;
-            if (!here->BSIM3v32drainAreaGiven)
-            {
-              here->BSIM3v32drainArea = 2.0 * model->BSIM3v32hdif * pParam->BSIM3v32weff;
-            }
-            DrainSatCurrent = here->BSIM3v32drainArea * model->BSIM3v32jctTempSatCurDensity;
-            if (!here->BSIM3v32drainPerimeterGiven)
-            {
-              here->BSIM3v32drainPerimeter = 4.0 * model->BSIM3v32hdif + 2.0 * pParam->BSIM3v32weff;
-            }
-            DrainSatCurrent = DrainSatCurrent + here->BSIM3v32drainPerimeter * model->BSIM3v32jctSidewallTempSatCurDensity;
-            if (DrainSatCurrent <= 0.0) DrainSatCurrent = 1.0e-14;
-          }
           if (DrainSatCurrent <= 0.0)
           {   here->BSIM3v32gbd = ckt->CKTgmin;
               here->BSIM3v32cbd = here->BSIM3v32gbd * vbd;
