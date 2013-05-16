@@ -363,30 +363,29 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
           }
           else
           {
-            SourceSatCurrent = 0.0;
-            if (!here->BSIM3v32sourceAreaGiven)
-            {
-              here->BSIM3v32sourceArea = 2.0 * model->BSIM3v32hdif * pParam->BSIM3v32weff;
-            }
-            SourceSatCurrent = here->BSIM3v32sourceArea * model->BSIM3v32jctTempSatCurDensity;
-            if (!here->BSIM3v32sourcePerimeterGiven)
-            {
-              here->BSIM3v32sourcePerimeter = 4.0 * model->BSIM3v32hdif + 2.0 * pParam->BSIM3v32weff;
-            }
-            SourceSatCurrent = SourceSatCurrent + here->BSIM3v32sourcePerimeter * model->BSIM3v32jctSidewallTempSatCurDensity;
-            if (SourceSatCurrent <= 0.0) SourceSatCurrent = 1.0e-14;
-            DrainSatCurrent = 0.0;
-            if (!here->BSIM3v32drainAreaGiven)
-            {
-              here->BSIM3v32drainArea = 2.0 * model->BSIM3v32hdif * pParam->BSIM3v32weff;
-            }
-            DrainSatCurrent = here->BSIM3v32drainArea * model->BSIM3v32jctTempSatCurDensity;
-            if (!here->BSIM3v32drainPerimeterGiven)
-            {
-              here->BSIM3v32drainPerimeter = 4.0 * model->BSIM3v32hdif + 2.0 * pParam->BSIM3v32weff;
-            }
-            DrainSatCurrent = DrainSatCurrent + here->BSIM3v32drainPerimeter * model->BSIM3v32jctSidewallTempSatCurDensity;
-            if (DrainSatCurrent <= 0.0) DrainSatCurrent = 1.0e-14;
+            error = ACM_saturationCurrents(
+            model->BSIM3v32acmMod,
+            model->BSIM3v32calcacm,
+            here->BSIM3v32geo,
+            model->BSIM3v32hdif,
+            model->BSIM3v32wmlt,
+            here->BSIM3v32w,
+            model->BSIM3v32xw,
+            model->BSIM3v32jctTempSatCurDensity,
+            model->BSIM3v32jctSidewallTempSatCurDensity,
+            here->BSIM3v32drainAreaGiven,
+            here->BSIM3v32drainArea,
+            here->BSIM3v32drainPerimeterGiven,
+            here->BSIM3v32drainPerimeter,
+            here->BSIM3v32sourceAreaGiven,
+            here->BSIM3v32sourceArea,
+            here->BSIM3v32sourcePerimeterGiven,
+            here->BSIM3v32sourcePerimeter,
+            &DrainSatCurrent,
+            &SourceSatCurrent
+            );
+            if (error)
+                return(error);
           }
           if (SourceSatCurrent <= 0.0)
           {   here->BSIM3v32gbs = ckt->CKTgmin;
@@ -2453,6 +2452,8 @@ finished:
                            along gate side
                */
 
+            if (model->BSIM3v32acmMod == 0)
+            {
               /* Added revision dependent code */
               switch (model->BSIM3v32intVersion) {
                 case BSIM3v32V324:
@@ -2528,6 +2529,36 @@ finished:
                         * pParam->BSIM3v32weff;
                   }
               }
+            } else {
+                  error = ACM_junctionCapacitances(
+                  model->BSIM3v32acmMod,
+                  model->BSIM3v32calcacm,
+                  here->BSIM3v32geo,
+                  model->BSIM3v32hdif,
+                  model->BSIM3v32wmlt,
+                  here->BSIM3v32w,
+                  model->BSIM3v32xw,
+                  here->BSIM3v32drainAreaGiven,
+                  here->BSIM3v32drainArea,
+                  here->BSIM3v32drainPerimeterGiven,
+                  here->BSIM3v32drainPerimeter,
+                  here->BSIM3v32sourceAreaGiven,
+                  here->BSIM3v32sourceArea,
+                  here->BSIM3v32sourcePerimeterGiven,
+                  here->BSIM3v32sourcePerimeter,
+                  model->BSIM3v32unitAreaTempJctCap,
+                  model->BSIM3v32unitLengthSidewallTempJctCap,
+                  model->BSIM3v32unitLengthGateSidewallJctCap,
+                  &czbd,
+                  &czbdsw,
+                  &czbdswg,
+                  &czbs,
+                  &czbssw,
+                  &czbsswg
+                  );
+                  if (error)
+                      return(error);
+            }
 
               MJ = model->BSIM3v32bulkJctBotGradingCoeff;
               MJSW = model->BSIM3v32bulkJctSideGradingCoeff;

@@ -43,6 +43,9 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case BSIM3v32_MOD_ACMMOD:
             value->iValue = model->BSIM3v32acmMod;
             return(OK);
+        case BSIM3v32_MOD_CALCACM:
+            value->iValue = model->BSIM3v32calcacm;
+            return(OK);
         case  BSIM3v32_MOD_VERSION :
           value->sValue = model->BSIM3v32version;
             return(OK);
@@ -334,7 +337,7 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->BSIM3v32tpbswg;
             return(OK);
 
-        /* acm model */
+        /* ACM model */
         case BSIM3v32_MOD_HDIF:
             value->rValue = model->BSIM3v32hdif;
             return(OK);
@@ -355,6 +358,9 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case BSIM3v32_MOD_RSC:
             value->rValue = model->BSIM3v32rsc;
+            return(OK);
+        case BSIM3v32_MOD_WMLT:
+            value->rValue = model->BSIM3v32wmlt;
             return(OK);
 
         /* Length dependence */

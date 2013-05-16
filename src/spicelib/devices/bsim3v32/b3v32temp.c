@@ -15,6 +15,7 @@
 #include "bsim3v32def.h"
 #include "ngspice/const.h"
 #include "ngspice/sperror.h"
+#include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
 
 #define Kb 1.3806226e-23
@@ -37,7 +38,7 @@ struct bsim3v32SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, Ldrn, Wdrn;
 double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 double Nvtm, SourceSatCurrent, DrainSatCurrent;
-int Size_Not_Found;
+int Size_Not_Found, error;
 
     /*  loop through all the BSIM3v32 device models */
     for (; model != NULL; model = model->BSIM3v32nextModel)
@@ -876,7 +877,7 @@ int Size_Not_Found;
                                     * pParam->BSIM3v32weffCV * pParam->BSIM3v32leffCV * T0);
 
               /* process source/drain series resistance */
-              /* acm model */
+              /* ACM model */
               if (model->BSIM3v32acmMod == 0)
               {
                  here->BSIM3v32drainConductance = model->BSIM3v32sheetResistance
@@ -884,28 +885,30 @@ int Size_Not_Found;
                  here->BSIM3v32sourceConductance = model->BSIM3v32sheetResistance
                                                   * here->BSIM3v32sourceSquares;
               }
-              else
+              else /* ACM > 0 */
               {
-                if (here->BSIM3v32drainSquaresGiven)
-                {
-                  here->BSIM3v32drainConductance = (model->BSIM3v32ld + model->BSIM3v32ldif)/(here->BSIM3v32w + model->BSIM3v32xw)*model->BSIM3v32rd
-                                               + model->BSIM3v32sheetResistance * here->BSIM3v32drainSquares + model->BSIM3v32rdc;
-                }
-                else
-                {
-                  here->BSIM3v32drainConductance = ((model->BSIM3v32ld + model->BSIM3v32ldif)*model->BSIM3v32rd
-                                               + model->BSIM3v32hdif*model->BSIM3v32sheetResistance)/(here->BSIM3v32w + model->BSIM3v32xw) + model->BSIM3v32rdc;
-                }
-                if (here->BSIM3v32sourceSquaresGiven)
-                {
-                  here->BSIM3v32sourceConductance = (model->BSIM3v32ld + model->BSIM3v32ldif)/(here->BSIM3v32w + model->BSIM3v32xw)*model->BSIM3v32rs
-                                               + model->BSIM3v32sheetResistance * here->BSIM3v32sourceSquares + model->BSIM3v32rsc;
-                }
-                else
-                {
-                  here->BSIM3v32sourceConductance = ((model->BSIM3v32ld + model->BSIM3v32ldif)*model->BSIM3v32rs
-                                               + model->BSIM3v32hdif*model->BSIM3v32sheetResistance)/(here->BSIM3v32w + model->BSIM3v32xw) + model->BSIM3v32rsc;
-                }
+                  error = ACM_SourceDrainResistances(
+                  model->BSIM3v32acmMod,
+                  model->BSIM3v32ld,
+                  model->BSIM3v32ldif,
+                  model->BSIM3v32hdif,
+                  model->BSIM3v32wmlt,
+                  here->BSIM3v32w,
+                  model->BSIM3v32xw,
+                  model->BSIM3v32sheetResistance,
+                  here->BSIM3v32drainSquaresGiven,
+                  model->BSIM3v32rd,
+                  model->BSIM3v32rdc,
+                  here->BSIM3v32drainSquares,
+                  here->BSIM3v32sourceSquaresGiven,
+                  model->BSIM3v32rs,
+                  model->BSIM3v32rsc,
+                  here->BSIM3v32sourceSquares,
+                  &(here->BSIM3v32drainConductance),
+                  &(here->BSIM3v32sourceConductance)
+                  );
+                  if (error)
+                      return(error);
               }
               if (here->BSIM3v32drainConductance > 0.0)
                   here->BSIM3v32drainConductance = 1.0
@@ -947,33 +950,31 @@ int Size_Not_Found;
                                     * model->BSIM3v32jctSidewallTempSatCurDensity;
                 }
               }
-              else
+              else /* ACM > 0 */
               {
-                SourceSatCurrent = 0.0;
-                if (!here->BSIM3v32sourceAreaGiven)
-                {
-                  here->BSIM3v32sourceArea = 2.0 * model->BSIM3v32hdif * pParam->BSIM3v32weff;
-                }
-                SourceSatCurrent = here->BSIM3v32sourceArea * model->BSIM3v32jctTempSatCurDensity;
-                if (!here->BSIM3v32sourcePerimeterGiven)
-                {
-                  here->BSIM3v32sourcePerimeter = 4.0 * model->BSIM3v32hdif + 2.0 * pParam->BSIM3v32weff;
-                }
-                SourceSatCurrent = SourceSatCurrent + here->BSIM3v32sourcePerimeter * model->BSIM3v32jctSidewallTempSatCurDensity;
-                if (SourceSatCurrent <= 0.0) SourceSatCurrent = 1.0e-14;
-
-                DrainSatCurrent = 0.0;
-                if (!here->BSIM3v32drainAreaGiven)
-                {
-                  here->BSIM3v32drainArea = 2.0 * model->BSIM3v32hdif * pParam->BSIM3v32weff;
-                }
-                DrainSatCurrent = here->BSIM3v32drainArea * model->BSIM3v32jctTempSatCurDensity;
-                if (!here->BSIM3v32drainPerimeterGiven)
-                {
-                  here->BSIM3v32drainPerimeter = 4.0 * model->BSIM3v32hdif + 2.0 * pParam->BSIM3v32weff;
-                }
-                DrainSatCurrent = DrainSatCurrent + here->BSIM3v32drainPerimeter * model->BSIM3v32jctSidewallTempSatCurDensity;
-                if (DrainSatCurrent <= 0.0) DrainSatCurrent = 1.0e-14;
+                error = ACM_saturationCurrents(
+                model->BSIM3v32acmMod,
+                model->BSIM3v32calcacm,
+                here->BSIM3v32geo,
+                model->BSIM3v32hdif,
+                model->BSIM3v32wmlt,
+                here->BSIM3v32w,
+                model->BSIM3v32xw,
+                model->BSIM3v32jctTempSatCurDensity,
+                model->BSIM3v32jctSidewallTempSatCurDensity,
+                here->BSIM3v32drainAreaGiven,
+                here->BSIM3v32drainArea,
+                here->BSIM3v32drainPerimeterGiven,
+                here->BSIM3v32drainPerimeter,
+                here->BSIM3v32sourceAreaGiven,
+                here->BSIM3v32sourceArea,
+                here->BSIM3v32sourcePerimeterGiven,
+                here->BSIM3v32sourcePerimeter,
+                &DrainSatCurrent,
+                &SourceSatCurrent
+                );
+                if (error)
+                    return(error);
               }
 
               if ((SourceSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))

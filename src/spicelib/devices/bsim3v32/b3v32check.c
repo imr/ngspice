@@ -178,7 +178,7 @@ FILE *fplog;
             printf("Warning: Pscbe2 = %g is not positive.\n", pParam->BSIM3v32pscbe2);
         }
 
-        /* acm model */
+        /* ACM model */
         if (model->BSIM3v32acmMod == 0) {
             if (model->BSIM3v32unitLengthSidewallJctCap > 0.0 ||
                   model->BSIM3v32unitLengthGateSidewallJctCap > 0.0)
@@ -196,6 +196,13 @@ FILE *fplog;
                          here->BSIM3v32sourcePerimeter);
                 }
             }
+        }
+
+        if ((model->BSIM3v32calcacm > 0) && (model->BSIM3v32acmMod != 12))
+        {   fprintf(fplog, "Warning: CALCACM = %d is wrong. Set back to 0.\n",
+                model->BSIM3v32calcacm);
+            printf("Warning: CALCACM = %d is wrong. Set back to 0.\n", model->BSIM3v32calcacm);
+            model->BSIM3v32calcacm = 0;
         }
 
         if (pParam->BSIM3v32noff < 0.1)

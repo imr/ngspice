@@ -32,6 +32,20 @@ double limitVgb( double, double, int * );
  
 
 
+/* Area Calculation Method (ACM) for MOS models (devsup.c) */
+int
+ACM_SourceDrainResistances(int, double, double, double, double, double,
+                           double, double, int, double, double, double,
+                           int, double, double, double, double *, double *);
+int
+ACM_saturationCurrents(int, int, int, double, double, double, double, double,
+                       double, int, double, int, double, int, double, int,
+                       double, double *, double *);
+int
+ACM_junctionCapacitances(int, int, int, double, double, double, double, int,
+                         double, int, double, int, double, int, double,
+                         double, double, double, double *, double *,
+                         double *, double *, double *, double *);
 
 typedef struct SPICEdev {
     IFdevice DEVpublic;

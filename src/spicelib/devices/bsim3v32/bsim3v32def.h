@@ -67,6 +67,7 @@ typedef struct sBSIM3v32instance
     int BSIM3v32off;
     int BSIM3v32mode;
     int BSIM3v32nqsMod;
+    int BSIM3v32geo;
 
     /* OP point */
     double BSIM3v32qinv;
@@ -135,6 +136,7 @@ typedef struct sBSIM3v32instance
     unsigned BSIM3v32icVDSGiven :1;
     unsigned BSIM3v32icVGSGiven :1;
     unsigned BSIM3v32nqsModGiven :1;
+    unsigned BSIM3v32geoGiven :1;
 
     double *BSIM3v32DdPtr;
     double *BSIM3v32GgPtr;
@@ -361,6 +363,7 @@ typedef struct sBSIM3v32model
     int    BSIM3v32mobMod;
     int    BSIM3v32capMod;
     int    BSIM3v32acmMod;
+    int    BSIM3v32calcacm;
     int    BSIM3v32noiMod;
     int    BSIM3v32binUnit;
     int    BSIM3v32paramChk;
@@ -471,7 +474,9 @@ typedef struct sBSIM3v32model
     double BSIM3v32tpbsw;
     double BSIM3v32tpbswg;
 
-    /* acm model */
+    /* ACM model */
+    double BSIM3v32xl;
+    double BSIM3v32xw;
     double BSIM3v32hdif;
     double BSIM3v32ldif;
     double BSIM3v32ld;
@@ -479,6 +484,7 @@ typedef struct sBSIM3v32model
     double BSIM3v32rs;
     double BSIM3v32rdc;
     double BSIM3v32rsc;
+    double BSIM3v32wmlt;
 
     /* Length Dependence */
     double BSIM3v32lcdsc;
@@ -788,10 +794,6 @@ typedef struct sBSIM3v32model
     double BSIM3v32Wmin;
     double BSIM3v32Wmax;
 
-    /* acm model */
-    double BSIM3v32xl;
-    double BSIM3v32xw;
-
 /* Pre-calculated constants */
     /* MCJ: move to size-dependent param. */
     double BSIM3v32vtm;
@@ -826,6 +828,7 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32binUnitGiven :1;
     unsigned  BSIM3v32capModGiven :1;
     unsigned  BSIM3v32acmModGiven :1;
+    unsigned  BSIM3v32calcacmGiven :1;
     unsigned  BSIM3v32paramChkGiven :1;
     unsigned  BSIM3v32noiModGiven :1;
     unsigned  BSIM3v32typeGiven   :1;
@@ -927,7 +930,9 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32tpbswGiven  :1;
     unsigned  BSIM3v32tpbswgGiven :1;
 
-    /* acm model */
+    /* ACM model */
+    unsigned  BSIM3v32xlGiven   :1;
+    unsigned  BSIM3v32xwGiven   :1;
     unsigned  BSIM3v32hdifGiven  :1;
     unsigned  BSIM3v32ldifGiven   :1;
     unsigned  BSIM3v32ldGiven   :1;
@@ -935,6 +940,7 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32rsGiven   :1;
     unsigned  BSIM3v32rdcGiven   :1;
     unsigned  BSIM3v32rscGiven   :1;
+    unsigned  BSIM3v32wmltGiven   :1;
 
     /* Length dependence */
     unsigned  BSIM3v32lcdscGiven   :1;
@@ -1251,10 +1257,6 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32WminGiven   :1;
     unsigned  BSIM3v32WmaxGiven   :1;
 
-    /* acm model */
-    unsigned  BSIM3v32xlGiven   :1;
-    unsigned  BSIM3v32xwGiven   :1;
-
 } BSIM3v32model;
 
 
@@ -1282,10 +1284,12 @@ typedef struct sBSIM3v32model
 #define BSIM3v32_M 15
 #define BSIM3v32_DELVTO 16
 #define BSIM3v32_MULU0 17
+#define BSIM3v32_GEO 18
 
 /* model parameters */
-#define BSIM3v32_MOD_CAPMOD          101
-#define BSIM3v32_MOD_ACMMOD          102
+#define BSIM3v32_MOD_CAPMOD          100
+#define BSIM3v32_MOD_ACMMOD          101
+#define BSIM3v32_MOD_CALCACM         102
 #define BSIM3v32_MOD_MOBMOD          103
 #define BSIM3v32_MOD_NOIMOD          104
 
@@ -1750,7 +1754,7 @@ typedef struct sBSIM3v32model
 #define BSIM3v32_MOD_WWC              701
 #define BSIM3v32_MOD_WWLC             702
 
-/* acm parameters */
+/* ACM parameters */
 #define BSIM3v32_MOD_XL               703
 #define BSIM3v32_MOD_XW               704
 
@@ -1761,6 +1765,7 @@ typedef struct sBSIM3v32model
 #define BSIM3v32_MOD_RS               715
 #define BSIM3v32_MOD_RDC              716
 #define BSIM3v32_MOD_RSC              717
+#define BSIM3v32_MOD_WMLT             718
 
 /* device questions */
 #define BSIM3v32_DNODE                751

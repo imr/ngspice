@@ -147,6 +147,382 @@ DEVfetlim(double vnew, double vold, double vto)
     return(vnew);
 }
 
+int
+ACM_SourceDrainResistances(
+int ACM,
+double LD,
+double LDIF,
+double HDIF,
+double WMLT,
+double w,
+double XW,
+double RSH,
+int drainSquaresGiven,
+double RD,
+double RDC,
+double drainSquares,
+int sourceSquaresGiven,
+double RS,
+double RSC,
+double sourceSquares,
+double *drainConductance,
+double *sourceConductance
+)
+{
+    switch (ACM)
+    {
+    case 1:
+    case 11:
+        *drainConductance = (LD + LDIF)/(w * WMLT + XW)*RD + RSH*drainSquares + RDC;
+        *sourceConductance = (LD + LDIF)/(w * WMLT + XW)*RS + RSH*sourceSquares + RSC;
+
+        break;
+
+    case 2:
+    case 12:
+    case 3:
+    case 13:
+        if (drainSquaresGiven)
+          *drainConductance = (LD + LDIF)/(w * WMLT + XW)*RD + RSH*drainSquares + RDC;
+        else
+          *drainConductance = ((LD + LDIF)*RD + (HDIF * WMLT)*RSH)/(w * WMLT + XW) + RDC;
+        if (sourceSquaresGiven)
+          *sourceConductance = (LD + LDIF)/(w * WMLT + XW)*RS + RSH*sourceSquares + RSC;
+        else
+          *sourceConductance = ((LD + LDIF)*RS + (HDIF * WMLT)*RSH)/(w * WMLT + XW) + RSC;
+
+        break;
+
+    default:
+        break;
+    }
+
+    return 0;
+}
+
+/* Area Calculation Method (ACM) for MOS models */
+int
+ACM_saturationCurrents(
+int ACM,
+int CALCACM,
+int GEO,
+double HDIF,
+double WMLT,
+double w,
+double XW,
+double jctTempSatCurDensity,
+double jctSidewallTempSatCurDensity,
+int drainAreaGiven,
+double drainArea,
+int drainPerimeterGiven,
+double drainPerimeter,
+int sourceAreaGiven,
+double sourceArea,
+int sourcePerimeterGiven,
+double sourcePerimeter,
+double *DrainSatCurrent,
+double *SourceSatCurrent
+)
+{
+    switch (ACM)
+    {
+    case 1:
+    case 11:
+        drainArea = (w * WMLT + XW) * WMLT;
+        drainPerimeter = (w * WMLT + XW);
+        *DrainSatCurrent = drainArea * jctTempSatCurDensity + drainPerimeter * jctSidewallTempSatCurDensity;
+        if (*DrainSatCurrent <= 0.0) *DrainSatCurrent = 1.0e-14;
+
+        sourceArea = (w * WMLT + XW) * WMLT;
+        sourcePerimeter = (w * WMLT + XW);
+        *SourceSatCurrent = sourceArea * jctTempSatCurDensity + sourcePerimeter * jctSidewallTempSatCurDensity;
+        if (*SourceSatCurrent <= 0.0) *SourceSatCurrent = 1.0e-14;
+
+        break;
+
+    case 2:
+    case 12:
+        if ((ACM == 2) || ((ACM == 12) && (CALCACM == 1))) {
+          if (!drainAreaGiven)
+            drainArea = 2.0 * (HDIF * WMLT) * (w * WMLT + XW);
+          else
+            drainArea = drainArea * WMLT * WMLT;
+          if (!drainPerimeterGiven)
+            drainPerimeter = 4.0 * (HDIF * WMLT) + 2.0 * (w * WMLT + XW);
+          else
+            drainPerimeter = drainPerimeter * WMLT;
+        }
+        *DrainSatCurrent = drainArea * jctTempSatCurDensity + drainPerimeter * jctSidewallTempSatCurDensity;
+        if (*DrainSatCurrent <= 0.0) *DrainSatCurrent = 1.0e-14;
+
+        if ((ACM == 2) || ((ACM == 12) && (CALCACM == 1))) {
+          if (!sourceAreaGiven)
+            sourceArea = 2.0 * (HDIF * WMLT) * (w * WMLT + XW);
+          else
+            sourceArea = sourceArea * WMLT * WMLT;
+          if (!sourcePerimeterGiven)
+            sourcePerimeter = 4.0 * (HDIF * WMLT) + 2.0 * (w * WMLT + XW);
+          else
+            sourcePerimeter = sourcePerimeter * WMLT;
+        }
+        *SourceSatCurrent = sourceArea * jctTempSatCurDensity + sourcePerimeter * jctSidewallTempSatCurDensity;
+        if (*SourceSatCurrent <= 0.0) *SourceSatCurrent = 1.0e-14;
+
+        break;
+
+    case 3:
+    case 13:
+        if (!drainAreaGiven)
+          if ((GEO == 0) || (GEO == 2))
+            drainArea = 2.0 * (HDIF * WMLT) * (w * WMLT + XW);
+          else
+            drainArea = (HDIF * WMLT) * (w * WMLT + XW);
+        else
+          drainArea = drainArea * WMLT * WMLT;
+        if (!drainPerimeterGiven)
+          if ((GEO == 0) || (GEO == 2))
+            drainPerimeter = 4.0 * (HDIF * WMLT) + (w * WMLT + XW);
+          else
+            drainPerimeter = 2.0 * (HDIF * WMLT);
+        else
+          drainPerimeter = drainPerimeter * WMLT;
+        *DrainSatCurrent = drainArea * jctTempSatCurDensity + drainPerimeter * jctSidewallTempSatCurDensity;
+        if (*DrainSatCurrent <= 0.0) *DrainSatCurrent = 1.0e-14;
+
+        if (!sourceAreaGiven)
+          if ((GEO == 0) || (GEO == 1))
+            sourceArea = 2.0 * (HDIF * WMLT) * (w * WMLT + XW);
+          else
+            sourceArea = (HDIF * WMLT) * (w * WMLT + XW);
+        else
+          sourceArea = sourceArea * WMLT * WMLT;
+        if (!sourcePerimeterGiven)
+          if ((GEO == 0) || (GEO == 1))
+            sourcePerimeter = 4.0 * (HDIF * WMLT) + (w * WMLT + XW);
+          else
+            sourcePerimeter = 2.0 * (HDIF * WMLT);
+        else
+          sourcePerimeter = sourcePerimeter * WMLT;
+        *SourceSatCurrent = sourceArea * jctTempSatCurDensity + sourcePerimeter * jctSidewallTempSatCurDensity;
+        if (*SourceSatCurrent <= 0.0) *SourceSatCurrent = 1.0e-14;
+
+        break;
+
+    default:
+        break;
+    }
+
+    return 0;
+}
+
+int
+ACM_junctionCapacitances(
+int ACM,
+int CALCACM,
+int GEO,
+double HDIF,
+double WMLT,
+double w,
+double XW,
+int drainAreaGiven,
+double drainArea,
+int drainPerimeterGiven,
+double drainPerimeter,
+int sourceAreaGiven,
+double sourceArea,
+int sourcePerimeterGiven,
+double sourcePerimeter,
+double CJ,
+double CJSW,
+double CJGATE,
+double *areaDrainBulkCapacitance,
+double *periDrainBulkCapacitance,
+double *gateDrainBulkCapacitance,
+double *areaSourceBulkCapacitance,
+double *periSourceBulkCapacitance,
+double *gateSourceBulkCapacitance
+)
+{
+    switch (ACM)
+    {
+    case 1:
+        drainArea = (w * WMLT + XW) * WMLT;
+        drainPerimeter = (w * WMLT + XW);
+        *areaDrainBulkCapacitance = drainArea * CJ;
+        *periDrainBulkCapacitance = drainPerimeter * CJSW;
+        *gateDrainBulkCapacitance = 0.0;
+
+        sourceArea = (w * WMLT + XW) * WMLT;
+        sourcePerimeter = (w * WMLT + XW);
+        *areaSourceBulkCapacitance = sourceArea * CJ;
+        *periSourceBulkCapacitance = sourcePerimeter * CJSW;
+        *gateSourceBulkCapacitance = 0.0;
+
+        break;
+
+    case 2:
+        if (!drainAreaGiven)
+          drainArea = 2.0 * (HDIF * WMLT) * (w * WMLT + XW);
+        else
+          drainArea = drainArea * WMLT * WMLT;
+        if (!drainPerimeterGiven)
+          drainPerimeter = 4.0 * (HDIF * WMLT) + 2.0 * (w * WMLT + XW);
+        else
+          drainPerimeter = drainPerimeter * WMLT;
+        *areaDrainBulkCapacitance = drainArea * CJ;
+        if (drainPerimeter > (w * WMLT + XW)) {
+          *periDrainBulkCapacitance = (drainPerimeter - (w * WMLT + XW)) * CJSW;
+          *gateDrainBulkCapacitance = (w * WMLT + XW) * CJGATE;
+        } else {
+          *periDrainBulkCapacitance = drainPerimeter * CJGATE;
+          *gateDrainBulkCapacitance = 0.0;
+        }
+
+        if (!sourceAreaGiven)
+          sourceArea = 2.0 * (HDIF * WMLT) * (w * WMLT + XW);
+        else
+          sourceArea = sourceArea * WMLT * WMLT;
+        if (!sourcePerimeterGiven)
+          sourcePerimeter = 4.0 * (HDIF * WMLT) + 2.0 * (w * WMLT + XW);
+        else
+          sourcePerimeter = sourcePerimeter * WMLT;
+        *areaSourceBulkCapacitance = sourceArea * CJ;
+        if (sourcePerimeter > (w * WMLT + XW)) {
+          *periSourceBulkCapacitance = (sourcePerimeter - (w * WMLT + XW)) * CJSW;
+          *gateSourceBulkCapacitance = (w * WMLT + XW) * CJGATE;
+        } else {
+          *periSourceBulkCapacitance = sourcePerimeter * CJGATE;
+          *gateSourceBulkCapacitance = 0.0;
+        }
+
+        break;
+
+    case 3:
+        if (!drainAreaGiven)
+          if ((GEO == 0) || (GEO == 2))
+            drainArea = 2.0 * (HDIF * WMLT) * (w * WMLT + XW);
+          else
+            drainArea = (HDIF * WMLT) * (w * WMLT + XW);
+        else
+          drainArea = drainArea * WMLT * WMLT;
+        if (!drainPerimeterGiven)
+          if ((GEO == 0) || (GEO == 2))
+            drainPerimeter = 4.0 * (HDIF * WMLT) + (w * WMLT + XW);
+          else
+            drainPerimeter = 2.0 * (HDIF * WMLT);
+        else
+          drainPerimeter = drainPerimeter * WMLT;
+        *areaDrainBulkCapacitance = drainArea * CJ;
+        *periDrainBulkCapacitance = drainPerimeter * CJSW ;
+        *gateDrainBulkCapacitance = (w * WMLT + XW) * CJGATE;
+
+        if (!sourceAreaGiven)
+          if ((GEO == 0) || (GEO == 1))
+            sourceArea = 2.0 * (HDIF * WMLT) * (w * WMLT + XW);
+          else
+            sourceArea = (HDIF * WMLT) * (w * WMLT + XW);
+        else
+          sourceArea = sourceArea * WMLT * WMLT;
+        if (!sourcePerimeterGiven)
+          if ((GEO == 0) || (GEO == 1))
+            sourcePerimeter = 4.0 * (HDIF * WMLT) + (w * WMLT + XW);
+          else
+            sourcePerimeter = 2.0 * (HDIF * WMLT);
+        else
+          sourcePerimeter = sourcePerimeter * WMLT;
+        *areaSourceBulkCapacitance = sourceArea * CJ;
+        *periSourceBulkCapacitance = sourcePerimeter * CJSW;
+        *gateSourceBulkCapacitance = (w * WMLT + XW) * CJGATE;
+
+        break;
+
+    case 11:
+        drainArea = (w * WMLT + XW) * WMLT;
+        drainPerimeter = (w * WMLT + XW);
+        *areaDrainBulkCapacitance = drainArea * CJ;
+        *periDrainBulkCapacitance = drainPerimeter * CJSW;
+        *gateDrainBulkCapacitance = 0.0;
+
+        sourceArea = (w * WMLT + XW) * WMLT;
+        sourcePerimeter = (w * WMLT + XW);
+        *areaSourceBulkCapacitance = sourceArea * CJ;
+        *periSourceBulkCapacitance = sourcePerimeter * CJSW;
+        *gateSourceBulkCapacitance = 0.0;
+
+        break;
+
+    case 12:
+        if (CALCACM == 1) {
+          if (!drainAreaGiven)
+            drainArea = 2.0 * (HDIF * WMLT) * (w * WMLT + XW);
+          else
+            drainArea = drainArea * WMLT * WMLT;
+          if (!drainPerimeterGiven)
+            drainPerimeter = 4.0 * (HDIF * WMLT) + 2.0 * (w * WMLT + XW);
+          else
+            drainPerimeter = drainPerimeter * WMLT;
+        }
+        *areaDrainBulkCapacitance = drainArea * CJ;
+        if (drainPerimeter > (w * WMLT + XW)) {
+          *periDrainBulkCapacitance = (drainPerimeter - (w * WMLT + XW)) * CJSW;
+          *gateDrainBulkCapacitance = (w * WMLT + XW) * CJGATE;
+        } else {
+          *periDrainBulkCapacitance = 0.0;
+          *gateDrainBulkCapacitance = drainPerimeter * CJGATE;
+        }
+
+        if (CALCACM == 1) {
+          if (!sourceAreaGiven)
+            sourceArea = 2.0 * (HDIF * WMLT) * (w * WMLT + XW);
+          else
+            sourceArea = sourceArea * WMLT * WMLT;
+          if (!sourcePerimeterGiven)
+            sourcePerimeter = 4.0 * (HDIF * WMLT) + 2.0 * (w * WMLT + XW);
+          else
+            sourcePerimeter = sourcePerimeter * WMLT;
+        }
+        *areaSourceBulkCapacitance = sourceArea * CJ;
+        if (sourcePerimeter > (w * WMLT + XW)) {
+          *periSourceBulkCapacitance = (sourcePerimeter - (w * WMLT + XW)) * CJSW;
+          *gateSourceBulkCapacitance = (w * WMLT + XW) * CJGATE;
+        } else {
+          *periSourceBulkCapacitance = 0.0;
+          *gateSourceBulkCapacitance = sourcePerimeter * CJGATE;
+        }
+
+        break;
+
+    case 13:
+        drainArea = drainArea * WMLT * WMLT;
+        drainPerimeter = drainPerimeter * WMLT;
+        *areaDrainBulkCapacitance = drainArea * CJ;
+        if (drainPerimeter > (w * WMLT + XW)) {
+          *periDrainBulkCapacitance = (drainPerimeter - (w * WMLT + XW)) * CJSW;
+          *gateDrainBulkCapacitance = (w * WMLT + XW) * CJGATE;
+        } else {
+          *periDrainBulkCapacitance = 0.0;
+          *gateDrainBulkCapacitance = drainPerimeter * CJGATE;
+        }
+
+        sourceArea = sourceArea * WMLT * WMLT;
+        sourcePerimeter = sourcePerimeter * WMLT;
+        *areaSourceBulkCapacitance = sourceArea * CJ;
+        if (sourcePerimeter > (w * WMLT + XW)) {
+          *periSourceBulkCapacitance = (sourcePerimeter - (w * WMLT + XW)) * CJSW;
+          *gateSourceBulkCapacitance = (w * WMLT + XW) * CJGATE;
+        } else {
+          *periSourceBulkCapacitance = 0.0;
+          *gateSourceBulkCapacitance = sourcePerimeter * CJGATE;
+        }
+
+        break;
+
+    default:
+        break;
+    }
+
+    return 0;
+}
 
 /* Compute the MOS overlap capacitances as functions of the device
  * terminal voltages

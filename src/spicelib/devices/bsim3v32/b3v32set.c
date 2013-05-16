@@ -54,6 +54,8 @@ IFuid tmpName;
             model->BSIM3v32capMod = 3;
         if (!model->BSIM3v32acmModGiven)
             model->BSIM3v32acmMod = 0;
+        if (!model->BSIM3v32calcacmGiven)
+            model->BSIM3v32calcacm = 0;
         if (!model->BSIM3v32noiModGiven)
             model->BSIM3v32noiMod = 1;
 
@@ -259,7 +261,7 @@ IFuid tmpName;
         if (!model->BSIM3v32tpbswgGiven)
             model->BSIM3v32tpbswg = 0.0;
 
-        /* acm model */
+        /* ACM model */
         if (!model->BSIM3v32hdifGiven)
           model->BSIM3v32hdif = 0.0;
         if (!model->BSIM3v32ldifGiven)
@@ -274,6 +276,8 @@ IFuid tmpName;
           model->BSIM3v32rdc = 0.0;
         if (!model->BSIM3v32rscGiven)
           model->BSIM3v32rsc = 0.0;
+        if (!model->BSIM3v32wmltGiven)
+          model->BSIM3v32wmlt = 1.0;
 
         /* Length dependence */
         if (!model->BSIM3v32lcdscGiven)
@@ -939,6 +943,8 @@ IFuid tmpName;
                 here->BSIM3v32w = 5.0e-6;
             if (!here->BSIM3v32nqsModGiven)
                 here->BSIM3v32nqsMod = 0;
+            if (!here->BSIM3v32geoGiven)
+                here->BSIM3v32geo = 0;
 
             if (!here->BSIM3v32mGiven)
                 here->BSIM3v32m = 1;
