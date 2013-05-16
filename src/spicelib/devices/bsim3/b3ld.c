@@ -387,6 +387,15 @@ for (; model != NULL; model = model->BSIM3nextModel)
                                + here->BSIM3sourcePerimeter
                                * model->BSIM3jctSidewallTempSatCurDensity;
           }
+          if ((here->BSIM3drainArea <= 0.0) && (here->BSIM3drainPerimeter <= 0.0))
+          {   DrainSatCurrent = 1.0e-14;
+          }
+          else
+          {   DrainSatCurrent = here->BSIM3drainArea
+                              * model->BSIM3jctTempSatCurDensity
+                              + here->BSIM3drainPerimeter
+                              * model->BSIM3jctSidewallTempSatCurDensity;
+          }
           if (SourceSatCurrent <= 0.0)
           {   here->BSIM3gbs = ckt->CKTgmin;
               here->BSIM3cbs = here->BSIM3gbs * vbs;
@@ -415,15 +424,6 @@ for (; model != NULL; model = model->BSIM3nextModel)
               }
           }
 
-          if ((here->BSIM3drainArea <= 0.0) && (here->BSIM3drainPerimeter <= 0.0))
-          {   DrainSatCurrent = 1.0e-14;
-          }
-          else
-          {   DrainSatCurrent = here->BSIM3drainArea
-                              * model->BSIM3jctTempSatCurDensity
-                              + here->BSIM3drainPerimeter
-                              * model->BSIM3jctSidewallTempSatCurDensity;
-          }
           if (DrainSatCurrent <= 0.0)
           {   here->BSIM3gbd = ckt->CKTgmin;
               here->BSIM3cbd = here->BSIM3gbd * vbd;
