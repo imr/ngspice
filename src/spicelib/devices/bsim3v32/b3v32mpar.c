@@ -41,6 +41,10 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32acmMod = value->iValue;
             mod->BSIM3v32acmModGiven = TRUE;
             break;
+        case BSIM3v32_MOD_CALCACM:
+            mod->BSIM3v32calcacm = value->iValue;
+            mod->BSIM3v32calcacmGiven = TRUE;
+            break;
         case  BSIM3v32_MOD_NOIMOD :
             mod->BSIM3v32noiMod = value->iValue;
             mod->BSIM3v32noiModGiven = TRUE;
@@ -464,6 +468,10 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v32_MOD_RSC:
             mod->BSIM3v32rsc = value->rValue;
             mod->BSIM3v32rscGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_WMLT:
+            mod->BSIM3v32wmlt = value->rValue;
+            mod->BSIM3v32wmltGiven = TRUE;
             break;
 
         /* Length dependence */

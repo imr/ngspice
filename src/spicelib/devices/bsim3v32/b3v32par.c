@@ -84,6 +84,10 @@ BSIM3v32param (int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->BSIM3v32nqsMod = value->iValue;
             here->BSIM3v32nqsModGiven = TRUE;
             break;
+        case BSIM3v32_GEO:
+            here->BSIM3v32geo = value->iValue;
+            here->BSIM3v32geoGiven = TRUE;
+            break;
         case BSIM3v32_DELVTO:
             here->BSIM3v32delvto = value->rValue;
             here->BSIM3v32delvtoGiven = TRUE;
