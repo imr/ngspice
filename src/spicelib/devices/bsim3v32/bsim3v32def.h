@@ -1757,7 +1757,6 @@ typedef struct sBSIM3v32model
 /* ACM parameters */
 #define BSIM3v32_MOD_XL               703
 #define BSIM3v32_MOD_XW               704
-
 #define BSIM3v32_MOD_HDIF             711
 #define BSIM3v32_MOD_LDIF             712
 #define BSIM3v32_MOD_LD               713

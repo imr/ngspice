@@ -880,10 +880,10 @@ int Size_Not_Found, error;
               /* ACM model */
               if (model->BSIM3v32acmMod == 0)
               {
-                 here->BSIM3v32drainConductance = model->BSIM3v32sheetResistance
-                                                 * here->BSIM3v32drainSquares;
-                 here->BSIM3v32sourceConductance = model->BSIM3v32sheetResistance
-                                                  * here->BSIM3v32sourceSquares;
+                  here->BSIM3v32drainConductance = model->BSIM3v32sheetResistance
+                                                  * here->BSIM3v32drainSquares;
+                  here->BSIM3v32sourceConductance = model->BSIM3v32sheetResistance
+                                                   * here->BSIM3v32sourceSquares;
               }
               else /* ACM > 0 */
               {
@@ -1012,7 +1012,6 @@ int Size_Not_Found, error;
                       break;
                   }
               }
-
          }
     }
     return(OK);

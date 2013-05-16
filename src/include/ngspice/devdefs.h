@@ -28,9 +28,6 @@ double limitJunctionVoltage( double, double, int * );
 double limitVbe( double, double, int * );
 double limitVce( double, double, int * );
 double limitVgb( double, double, int * );
- 
- 
-
 
 /* Area Calculation Method (ACM) for MOS models (devsup.c) */
 int
