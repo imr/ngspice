@@ -35,20 +35,26 @@ Author: 1985 Wayne A. Christopher
 /*#define TRACE*/
 
 /* globals -- wanted to avoid complicating inp_readall interface */
-static char *library_name[1000];
-static char *section_name[1000][1000];
-static struct line *section_ref[1000][1000];
-static struct line *library_deck[1000];
+#define N_LIBRARY         1000
+#define N_SECTIONS        1000
+#define N_FUNCS           1000
+#define N_PARAMS          1000
+#define N_SUBCKT_W_PARAMS 1000
+
+static char *library_name[N_LIBRARY];
+static char *section_name[N_LIBRARY][N_SECTIONS];
+static struct line *section_ref[N_LIBRARY][N_SECTIONS];
+static struct line *library_deck[N_LIBRARY];
 static int  num_libraries;
-static int  num_sections[1000];
+static int  num_sections[N_LIBRARY];
 static      char *global;
-static char *subckt_w_params[1000];
+static char *subckt_w_params[N_SUBCKT_W_PARAMS];
 static int  num_subckt_w_params;
-static char *func_names[1000];
-static char *func_params[1000][1000];
-static char *func_macro[5000];
+static char *func_names[N_FUNCS];
+static char *func_params[N_FUNCS][N_PARAMS];
+static char *func_macro[N_FUNCS];
 static int  num_functions;
-static int  num_parameters[1000];
+static int  num_parameters[N_FUNCS];
 static COMPATMODE_T inp_compat_mode;
 
 /* Collect information for dynamic allocation of numparam arrays */
@@ -128,6 +134,10 @@ find_section(int lib_idx, char *section_name_) {
 static void
 remember_section_ref(int lib_idx, char *section_name_, struct line *deck) {
     int section_idx = num_sections[lib_idx]++;
+    if (section_idx >= N_SECTIONS) {
+        fprintf(stderr, "ERROR, N_SECTIONS overflow\n");
+        controlled_exit(EXIT_FAILURE);
+    }
     section_ref[lib_idx][section_idx] = deck;
     section_name[lib_idx][section_idx] = strdup(section_name_);
 }
@@ -166,6 +176,11 @@ read_a_lib(char *y, int call_depth, char *dir_name)
             }
 
             dir_name_flag = TRUE;
+        }
+
+        if (num_libraries >= N_LIBRARY) {
+            fprintf(stderr, "ERROR, N_LIBRARY overflow\n");
+            controlled_exit(EXIT_FAILURE);
         }
 
         library_name[num_libraries++] = strdup(y);
@@ -2113,6 +2128,11 @@ inp_fix_subckt(char *s)
         for (ptr2 = ptr1; *ptr2 && !isspace(*ptr2) && !isquote(*ptr2); ptr2++)
             ;
 
+        if (num_subckt_w_params >= N_SUBCKT_W_PARAMS) {
+            fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
+            controlled_exit(EXIT_FAILURE);
+        }
+
         subckt_w_params[num_subckt_w_params++] = copy_substring(ptr1, ptr2);
 
         /* go to beginning of first parameter word  */
@@ -2646,6 +2666,10 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
     if (!strstr(subckt_card->li_line, "params:")) {
         new_str = TMALLOC(char, strlen(subckt_card->li_line) + 13);
         sprintf(new_str, "%s params: m=1", subckt_card->li_line);
+        if (num_subckt_w_params >= N_SUBCKT_W_PARAMS) {
+            fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
+            controlled_exit(EXIT_FAILURE);
+        }
         subckt_w_params[num_subckt_w_params++] = get_subckt_model_name(subckt_card->li_line);
     } else {
         new_str = TMALLOC(char, strlen(subckt_card->li_line) + 5);
@@ -2851,6 +2875,11 @@ inp_get_func_from_line(char *line)
         if (strcmp(func_names[i], line) == 0)
             break;
 
+    if (num_functions >= N_FUNCS) {
+        fprintf(stderr, "ERROR, N_FUNCS overflow\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+
     func_names[num_functions++] = strdup(line);
     *end = keep;
 
@@ -2864,8 +2893,13 @@ inp_get_func_from_line(char *line)
         ptr = end;
         while (!isspace(*end) && *end != ',' && *end != ')')
             end++;
-        if (end > ptr)
+        if (end > ptr) {
+            if (num_params >= N_PARAMS) {
+                fprintf(stderr, "ERROR, N_PARAMS overflow\n");
+                controlled_exit(EXIT_FAILURE);
+            }
             func_params[num_functions-1][num_params++] = copy_substring(ptr, end);
+        }
     }
     num_parameters[num_functions-1] = num_params;
 
@@ -3866,6 +3900,10 @@ inp_add_params_to_subckt(struct line *subckt_card)
             subckt_name = skip_non_ws(subckt_card->li_line);
             subckt_name = skip_ws(subckt_name);
             end_ptr = skip_non_ws(subckt_name);
+            if (num_subckt_w_params >= N_SUBCKT_W_PARAMS) {
+                fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
+                controlled_exit(EXIT_FAILURE);
+            }
             subckt_w_params[num_subckt_w_params++] = copy_substring(subckt_name, end_ptr);
         } else {
             new_line = TMALLOC(char, strlen(subckt_line) + strlen(param_ptr) + 2);
