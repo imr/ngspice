@@ -363,8 +363,7 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
           }
           else
           {
-            if (
-            ACM_saturationCurrents(
+            error = ACM_saturationCurrents(
             model->BSIM3v32acmMod,
             model->BSIM3v32calcacm,
             here->BSIM3v32geo,
@@ -384,7 +383,9 @@ for (; model != NULL; model = model->BSIM3v32nextModel)
             here->BSIM3v32sourcePerimeter,
             &DrainSatCurrent,
             &SourceSatCurrent
-            ) == 0) printf("load IDsat: %g ISsat: %g\n",DrainSatCurrent,SourceSatCurrent);
+            );
+            if (error)
+                return(error);
           }
           if (SourceSatCurrent <= 0.0)
           {   here->BSIM3v32gbs = ckt->CKTgmin;
@@ -2530,8 +2531,7 @@ finished:
                   }
 
               } else {
-                  if(
-                  ACM_junctionCapacitances(
+                  error = ACM_junctionCapacitances(
                   model->BSIM3v32acmMod,
                   model->BSIM3v32calcacm,
                   here->BSIM3v32geo,
@@ -2556,7 +2556,9 @@ finished:
                   &czbs,
                   &czbssw,
                   &czbsswg
-                  ) == 0) printf("load Cda: %g Cdsw: %g Cdswg: %g Csa: %g Cssw: %g Csswg %g\n",czbd,czbdsw,czbdswg,czbs,czbssw,czbsswg);
+                  );
+                  if (error)
+                      return(error);
               }
 
               MJ = model->BSIM3v32bulkJctBotGradingCoeff;

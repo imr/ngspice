@@ -38,7 +38,7 @@ struct bsim3v32SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, Ldrn, Wdrn;
 double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 double Nvtm, SourceSatCurrent, DrainSatCurrent;
-int Size_Not_Found;
+int Size_Not_Found, error;
 
     /*  loop through all the BSIM3v32 device models */
     for (; model != NULL; model = model->BSIM3v32nextModel)
@@ -887,8 +887,7 @@ int Size_Not_Found;
               }
               else /* ACM > 0 */
               {
-                  if (
-                  ACM_SourceDrainResistances(
+                  error = ACM_SourceDrainResistances(
                   model->BSIM3v32acmMod,
                   model->BSIM3v32ld,
                   model->BSIM3v32ldif,
@@ -907,7 +906,9 @@ int Size_Not_Found;
                   here->BSIM3v32sourceSquares,
                   &(here->BSIM3v32drainConductance),
                   &(here->BSIM3v32sourceConductance)
-                  ) == 0 ) printf("temp RD: %g RS: %g\n",here->BSIM3v32drainConductance,here->BSIM3v32sourceConductance);
+                  );
+                  if (error)
+                      return(error);
               }
               if (here->BSIM3v32drainConductance > 0.0)
                   here->BSIM3v32drainConductance = 1.0
@@ -951,8 +952,7 @@ int Size_Not_Found;
               }
               else /* ACM > 0 */
               {
-                if (
-                ACM_saturationCurrents(
+                error = ACM_saturationCurrents(
                 model->BSIM3v32acmMod,
                 model->BSIM3v32calcacm,
                 here->BSIM3v32geo,
@@ -972,8 +972,9 @@ int Size_Not_Found;
                 here->BSIM3v32sourcePerimeter,
                 &DrainSatCurrent,
                 &SourceSatCurrent
-                ) == 0) printf("temp IDsat: %g ISsat: %g\n",DrainSatCurrent,SourceSatCurrent);
-
+                );
+                if (error)
+                    return(error);
               }
               if ((SourceSatCurrent > 0.0) && (model->BSIM3v32ijth > 0.0))
               {   here->BSIM3v32vjsm = Nvtm * log(model->BSIM3v32ijth
