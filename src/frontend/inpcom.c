@@ -135,8 +135,8 @@ static void
 remember_section_ref(int lib_idx, char *section_name_, struct line *deck) {
     int section_idx = num_sections[lib_idx]++;
     if (section_idx >= N_SECTIONS) {
-        fprintf(stderr, "N_SECTIONS overflow\n");
-        exit(1);
+        fprintf(stderr, "ERROR, N_SECTIONS overflow\n");
+        controlled_exit(EXIT_FAILURE);
     }
     section_ref[lib_idx][section_idx] = deck;
     section_name[lib_idx][section_idx] = strdup(section_name_);
@@ -179,8 +179,8 @@ read_a_lib(char *y, int call_depth, char *dir_name)
         }
 
         if (num_libraries >= N_LIBRARY) {
-            fprintf(stderr, "N_LIBRARY overflow\n");
-            exit(1);
+            fprintf(stderr, "ERROR, N_LIBRARY overflow\n");
+            controlled_exit(EXIT_FAILURE);
         }
 
         library_name[num_libraries++] = strdup(y);
@@ -2122,8 +2122,8 @@ inp_fix_subckt(char *s)
             ;
 
         if (num_subckt_w_params >= N_SUBCKT_W_PARAMS) {
-            fprintf(stderr, "N_SUBCKT_W_PARMS overflow\n");
-            exit(1);
+            fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
+            controlled_exit(EXIT_FAILURE);
         }
 
         subckt_w_params[num_subckt_w_params++] = copy_substring(ptr1, ptr2);
@@ -2658,8 +2658,8 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
         new_str = TMALLOC(char, strlen(subckt_card->li_line) + 13);
         sprintf(new_str, "%s params: m=1", subckt_card->li_line);
         if (num_subckt_w_params >= N_SUBCKT_W_PARAMS) {
-            fprintf(stderr, "N_SUBCKT_W_PARMS overflow\n");
-            exit(1);
+            fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
+            controlled_exit(EXIT_FAILURE);
         }
         subckt_w_params[num_subckt_w_params++] = get_subckt_model_name(subckt_card->li_line);
     } else {
@@ -2866,10 +2866,9 @@ inp_get_func_from_line(char *line)
         if (strcmp(func_names[i], line) == 0)
             break;
 
-
     if (num_functions >= N_FUNCS) {
-        fprintf(stderr, "N_FUNCS overflow\n");
-        exit(1);
+        fprintf(stderr, "ERROR, N_FUNCS overflow\n");
+        controlled_exit(EXIT_FAILURE);
     }
 
     func_names[num_functions++] = strdup(line);
@@ -2887,8 +2886,8 @@ inp_get_func_from_line(char *line)
             end++;
         if (end > ptr) {
             if (num_params >= N_PARAMS) {
-                fprintf(stderr, "N_PARAMS overflow\n");
-                exit(1);
+                fprintf(stderr, "ERROR, N_PARAMS overflow\n");
+                controlled_exit(EXIT_FAILURE);
             }
             func_params[num_functions-1][num_params++] = copy_substring(ptr, end);
         }
@@ -3893,8 +3892,8 @@ inp_add_params_to_subckt(struct line *subckt_card)
             subckt_name = skip_ws(subckt_name);
             end_ptr = skip_non_ws(subckt_name);
             if (num_subckt_w_params >= N_SUBCKT_W_PARAMS) {
-                fprintf(stderr, "N_SUBCKT_W_PARMS overflow\n");
-                exit(1);
+                fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
+                controlled_exit(EXIT_FAILURE);
             }
             subckt_w_params[num_subckt_w_params++] = copy_substring(subckt_name, end_ptr);
         } else {
