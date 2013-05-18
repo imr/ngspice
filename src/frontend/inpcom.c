@@ -36,23 +36,23 @@ Author: 1985 Wayne A. Christopher
 /*#define TRACE*/
 
 /* globals -- wanted to avoid complicating inp_readall interface */
-#define N_LIBRARY         1000
+#define N_LIBRARIES       1000
 #define N_SECTIONS        1000
-#define N_FUNCS           1000
+#define N_FUNCTIONS       1000
 #define N_PARAMS          1000
 #define N_SUBCKT_W_PARAMS 4000
 
-static char *library_name[N_LIBRARY];
-static struct line *library_deck[N_LIBRARY];
+static char *library_name[N_LIBRARIES];
+static struct line *library_deck[N_LIBRARIES];
 static int  num_libraries;
 static      char *global;
 static char *subckt_w_params[N_SUBCKT_W_PARAMS];
 static int  num_subckt_w_params;
-static char *func_names[N_FUNCS];
-static char *func_params[N_FUNCS][N_PARAMS];
-static char *func_macro[N_FUNCS];
+static char *func_names[N_FUNCTIONS];
+static char *func_params[N_FUNCTIONS][N_PARAMS];
+static char *func_macro[N_FUNCTIONS];
 static int  num_functions;
-static int  num_parameters[N_FUNCS];
+static int  num_parameters[N_FUNCTIONS];
 static COMPATMODE_T inp_compat_mode;
 
 /* Collect information for dynamic allocation of numparam arrays */
@@ -191,8 +191,8 @@ read_a_lib(char *y, int call_depth, char *dir_name)
             dir_name_flag = TRUE;
         }
 
-        if (num_libraries >= N_LIBRARY) {
-            fprintf(stderr, "ERROR, N_LIBRARY overflow\n");
+        if (num_libraries >= N_LIBRARIES) {
+            fprintf(stderr, "ERROR, N_LIBRARIES overflow\n");
             controlled_exit(EXIT_FAILURE);
         }
 
@@ -2749,8 +2749,8 @@ inp_get_func_from_line(char *line)
         if (strcmp(func_names[i], line) == 0)
             break;
 
-    if (num_functions >= N_FUNCS) {
-        fprintf(stderr, "ERROR, N_FUNCS overflow\n");
+    if (num_functions >= N_FUNCTIONS) {
+        fprintf(stderr, "ERROR, N_FUNCTIONS overflow\n");
         controlled_exit(EXIT_FAILURE);
     }
 
