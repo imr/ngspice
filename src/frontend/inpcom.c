@@ -373,7 +373,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
     unsigned int no_braces = 0; /* number of '{' */
     int cirlinecount = 0; /* length of circarray */
 
-    size_t max_line_length; /* max. line length in input deck */
+    size_t max_line_length = 0; /* max. line length in input deck */
 
     struct line *tmp_ptr1 = NULL;
 
@@ -875,41 +875,41 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         }
 
         inp_add_series_resistor(working);
-    }
 
-    /* get max. line length and number of lines in input deck,
-       and renumber the lines,
-       count the number of '{' per line as an upper estimate of the number
-       of parameter substitutions in a line*/
-    dynmaxline = 0;
-    max_line_length = 0;
-    for (tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next) {
-        char *s;
-        unsigned int braces_per_line = 0;
-        /* count number of lines */
-        dynmaxline++;
-        /* renumber the lines of the processed input deck */
-        tmp_ptr1->li_linenum = dynmaxline;
-        if (max_line_length < strlen(tmp_ptr1->li_line))
-            max_line_length = strlen(tmp_ptr1->li_line);
-        /* count '{' */
-        for (s = tmp_ptr1->li_line; *s; s++)
-            if (*s == '{')
-                braces_per_line++;
-        if (no_braces <  braces_per_line)
-            no_braces = braces_per_line;
-    }
+        /* get max. line length and number of lines in input deck,
+           and renumber the lines,
+           count the number of '{' per line as an upper estimate of the number
+           of parameter substitutions in a line*/
+        dynmaxline = 0;
+        max_line_length = 0;
+        for (tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next) {
+            char *s;
+            unsigned int braces_per_line = 0;
+            /* count number of lines */
+            dynmaxline++;
+            /* renumber the lines of the processed input deck */
+            tmp_ptr1->li_linenum = dynmaxline;
+            if (max_line_length < strlen(tmp_ptr1->li_line))
+                max_line_length = strlen(tmp_ptr1->li_line);
+            /* count '{' */
+            for (s = tmp_ptr1->li_line; *s; s++)
+                if (*s == '{')
+                    braces_per_line++;
+            if (no_braces <  braces_per_line)
+                no_braces = braces_per_line;
+        }
 
-    if ((ft_ngdebug) && (call_depth == 0)) {
-        /*debug: print into file*/
-        FILE *fd = fopen("debug-out.txt", "w");
-        struct line *t;
-        for (t = cc; t; t = t->li_next)
-            fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
-        fclose(fd);
+        if (ft_ngdebug) {
+            /*debug: print into file*/
+            FILE *fd = fopen("debug-out.txt", "w");
+            struct line *t;
+            for (t = cc; t; t = t->li_next)
+                fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+            fclose(fd);
 
-        fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
-                (int) max_line_length, no_braces, dynmaxline);
+            fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
+                    (int) max_line_length, no_braces, dynmaxline);
+        }
     }
 
     return cc;
