@@ -20,6 +20,7 @@ Author: 1985 Wayne A. Christopher
 
 #include "inpcom.h"
 #include "variable.h"
+#include "subckt.h"
 #include "../misc/util.h" /* ngdirname() */
 #include "ngspice/stringutil.h"
 #include "ngspice/wordlist.h"
@@ -42,11 +43,8 @@ Author: 1985 Wayne A. Christopher
 #define N_SUBCKT_W_PARAMS 4000
 
 static char *library_name[N_LIBRARY];
-static char *section_name[N_LIBRARY][N_SECTIONS];
-static struct line *section_ref[N_LIBRARY][N_SECTIONS];
 static struct line *library_deck[N_LIBRARY];
 static int  num_libraries;
-static int  num_sections[N_LIBRARY];
 static      char *global;
 static char *subckt_w_params[N_SUBCKT_W_PARAMS];
 static int  num_subckt_w_params;
@@ -72,8 +70,7 @@ static void inp_stripcomments_deck(struct line *deck);
 static void inp_stripcomments_line(char *s);
 static void inp_fix_for_numparam(struct line *deck);
 static void inp_remove_excess_ws(struct line *deck);
-static void collect_section_references(struct line *deck, char *section_name_);
-static void inp_init_lib_data(void);
+static void expand_section_references(struct line *deck, int call_depth, char *dir_name);
 static void inp_grab_func(struct line *deck);
 static void inp_fix_inst_calls_for_numparam(struct line *deck);
 static void inp_expand_macros_in_func(void);
@@ -121,25 +118,41 @@ find_lib(char *name)
 }
 
 
-static int
-find_section(int lib_idx, char *section_name_) {
-    int j;
-    for (j = 0; j < num_sections[lib_idx]; j++)
-        if (strcmp(section_name[lib_idx][j], section_name_) == 0)
-            return j;
-    return -1;
-}
+static struct line *
+find_section_definition(struct line *deck, char *name)
+{
+    struct line *c;
 
+    for (c = deck; c; c = c->li_next) {
+        char *line = c->li_line;
+        if (ciprefix(".lib", line)) {
+            char *s, *t, *y;
+            s = skip_non_ws(line);
+            while (isspace(*s) || isquote(*s))
+                s++;
+            for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
+                ;
+            y = t;
+            while (isspace(*y) || isquote(*y))
+                y++;
 
-static void
-remember_section_ref(int lib_idx, char *section_name_, struct line *deck) {
-    int section_idx = num_sections[lib_idx]++;
-    if (section_idx >= N_SECTIONS) {
-        fprintf(stderr, "ERROR, N_SECTIONS overflow\n");
-        controlled_exit(EXIT_FAILURE);
+            if (!*y) {
+                /* library section definition: `.lib <section-name>' .. `.endl' */
+
+                char keep_char = *t;
+                *t = '\0';
+
+                if (strcasecmp(name, s) == 0) {
+                    *t = keep_char;
+                    return c;
+                }
+
+                *t = keep_char;
+            }
+        }
     }
-    section_ref[lib_idx][section_idx] = deck;
-    section_name[lib_idx][section_idx] = strdup(section_name_);
+
+    return NULL;
 }
 
 
@@ -200,116 +213,6 @@ read_a_lib(char *y, int call_depth, char *dir_name)
         tfree(copyy);   /* allocated by the cp_tildexpand() above */
 
     return TRUE;
-}
-
-
-static int
-expand_section_references(int line_number)
-{
-    struct line *tmp_ptr = NULL, *next;
-    int lib_idx;
-
-    for (lib_idx = 0; lib_idx < num_libraries; lib_idx++) {
-        bool found_section = FALSE;
-        struct line *working = library_deck[lib_idx];
-        while (working) {
-            char *buffer = working->li_line;
-
-            if (found_section && ciprefix(".endl", buffer)) {
-
-                struct line *next = working->li_next;
-
-                /* Make the .endl a comment */
-                *buffer = '*';
-                found_section = FALSE;
-
-                /* append the line following the library section reference */
-                working->li_next = tmp_ptr;
-
-                /* and continue with the line following */
-                /* the .endl of this section definition */
-                working = next;
-                continue;
-            }
-
-            if (ciprefix(".lib", buffer)) {
-
-                /* here we expect a libray section definition */
-                /* library section definition: `.lib <section-name>' .. `.endl' */
-
-                char keep_char;
-                int section_idx;
-                char *s, *t;
-
-                if (found_section) {
-                    fprintf(stderr, "ERROR: .lib is missing .endl!\n");
-                    controlled_exit(EXIT_FAILURE);
-                }
-
-                s = skip_non_ws(buffer);           /* skip over .lib */
-                while (isspace(*s) || isquote(*s))
-                    s++;                           /* advance past space chars */
-                for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
-                    ;                              /* skip to end of word */
-                keep_char = *t;
-                *t = '\0';
-
-                /* check if we remember this section having been referenced somewhere */
-                section_idx = find_section(lib_idx, s);
-
-                *t = keep_char;
-
-                found_section = (section_idx >= 0);
-
-                if (found_section) {
-
-                    struct line *c;
-                    int line_number_lib;
-
-                    /* make the .lib of this library section definition a comment */
-                    *buffer = '*';
-
-                    /* tmp_ptr is the line following the library section reference */
-                    tmp_ptr = section_ref[lib_idx][section_idx]->li_next;
-
-                    /* insert the section definition here, */
-                    /* just behind the remembered section reference */
-                    section_ref[lib_idx][section_idx]->li_next = working;
-
-                    /* renumber lines */
-                    line_number_lib = 1;
-                    for (c = working; !ciprefix(".endl", c->li_line); c = c->li_next) {
-                        c->li_linenum = line_number++;
-                        c->li_linenum_orig = line_number_lib++;
-                    }
-                    c->li_linenum = line_number++;  // renumber endl line
-                    c->li_linenum_orig = line_number_lib++;
-                }
-            }
-
-            next = working->li_next;
-
-            /* drop this line in the current library file, if
-             *   it is outside a library section definition
-             * or
-             *   it is part of an unused library section definition
-             */
-
-            if (!found_section) {
-                tfree(working->li_line);
-                tfree(working);
-            }
-
-            working = next;
-        }
-
-        if (found_section) {
-            fprintf(stderr, "ERROR: .lib is missing .endl!\n");
-            controlled_exit(EXIT_FAILURE);
-        }
-    }
-
-    return line_number;
 }
 
 
@@ -481,50 +384,13 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         /* now handle .lib statements */
         if (ciprefix(".lib", buffer)) {
-
-            char *y = NULL;     /* filename */
-            char *z = NULL;     /* libname */
-            char *s, *t;
-
-            inp_stripcomments_line(buffer);
-            s = skip_non_ws(buffer);   /* skip over .lib */
-
-            s = strdup(s);
-
-            t = get_quoted_token(s, &y);
-
-            if (!y) {
-                fprintf(cp_err, "Error: .lib filename missing\n");
-                tfree(buffer);         /* was allocated by readline() */
-                controlled_exit(EXIT_FAILURE);
-            }
-
-            t = get_quoted_token(t, &z);
-
-            if (z && (inp_compat_mode == COMPATMODE_ALL ||
-                      inp_compat_mode == COMPATMODE_HS  ||
-                      inp_compat_mode == COMPATMODE_NATIVE))
-            {
-                /* here we have a */
-                /* library section reference: `.lib <library-file> <section-name>' */
-
-                if(!read_a_lib(y, call_depth, dir_name)) {
-                    tfree(s);
-                    tfree(buffer);
-                    controlled_exit(EXIT_FAILURE);
-                }
-
-                tfree(s);
-
-                /* Make the .lib a comment */
-                *buffer = '*';
-            } else if (inp_compat_mode == COMPATMODE_PS) {
+            if (inp_compat_mode == COMPATMODE_PS) {
                 /* compatibility mode,
                  *   this is neither a libray section definition nor a reference
                  * interpret as old style
                  *   .lib <file name> (no lib name given)
                  */
-                fprintf(cp_err, "Warning: library name missing in line\n  %s", buffer);
+                char *s = skip_non_ws(buffer); /* skip over .lib */
                 fprintf(cp_err, "  File included as:   .inc %s\n", s);
                 memcpy(buffer, ".inc", 4);
             }
@@ -638,6 +504,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             char *s;
 
             if ( !ciprefix("write", buffer) &&
+                 !ciprefix(".lib", buffer) &&
                  !ciprefix("codemodel", buffer) &&
                  !ciprefix("use", buffer) &&
                  !ciprefix("load", buffer)
@@ -715,16 +582,13 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         cc->li_next          = global_card;
         global_card->li_next = prev;
 
-        inp_init_lib_data();
-        collect_section_references(cc, NULL);
-    }
-
-    /*
-       add libraries
-    */
-
-    if (call_depth == 0) {
-        line_number = expand_section_references(line_number);
+        if (inp_compat_mode == COMPATMODE_ALL ||
+            inp_compat_mode == COMPATMODE_HS  ||
+            inp_compat_mode == COMPATMODE_NATIVE)
+        {
+            /* process all library section references */
+            expand_section_references(cc, call_depth, dir_name);
+        }
     }
 
     /*
@@ -2345,7 +2209,7 @@ inp_fix_for_numparam(struct line *deck)
     char *str_ptr;
 
     while (c != NULL) {
-        if (ciprefix("*lib", c->li_line) || ciprefix("*inc", c->li_line)) {
+        if (ciprefix(".lib", c->li_line) || ciprefix("*lib", c->li_line) || ciprefix("*inc", c->li_line)) {
             c = c->li_next;
             continue;
         }
@@ -2405,7 +2269,7 @@ inp_remove_excess_ws(struct line *deck)
 
 
 /*
- * recursively collect library section references,
+ * recursively expand library section references,
  * either
  *    every library section reference (when the given section_name_ === NULL)
  * or
@@ -2413,20 +2277,15 @@ inp_remove_excess_ws(struct line *deck)
  */
 
 static void
-collect_section_references(struct line *deck, char *section_name_)
+expand_section_references(struct line *deck, int call_depth, char *dir_name)
 {
-    bool read_line = (section_name_ == NULL);
-
     struct line *c;
 
     for (c = deck; c; c = c->li_next) {
 
         char *line = c->li_line;
 
-        if (ciprefix(".endl", line) && section_name_ != NULL)
-            read_line = FALSE;
-
-        if (ciprefix("*lib", line) || ciprefix(".lib", line)) {
+        if (ciprefix(".lib", line)) {
 
             char *s, *t, *y;
 
@@ -2439,19 +2298,10 @@ collect_section_references(struct line *deck, char *section_name_)
             while (isspace(*y) || isquote(*y))
                 y++;
 
-            if (!*y) {
-                /* library section definition: `.lib <section-name>' .. `.endl' */
-
-                char keep_char = *t;
-                *t = '\0';
-
-                if (section_name_ != NULL && strcmp(section_name_, s) == 0)
-                    read_line = TRUE;
-                *t = keep_char;
-            }
-            else if (read_line == TRUE) {
+            if (*y) {
                 /* library section reference: `.lib <library-file> <section-name>' */
 
+                struct line *section_def;
                 char keep_char1, keep_char2;
                 char *z, *copys = NULL;
                 int lib_idx;
@@ -2468,14 +2318,48 @@ collect_section_references(struct line *deck, char *section_name_)
                     if (copys)
                         s = copys;
                 }
+
                 lib_idx = find_lib(s);
-                if (lib_idx >= 0)
-                    if (find_section(lib_idx, y) < 0) {
-                        /* remember this section having been referenced */
-                        remember_section_ref(lib_idx, y, c);
-                        /* recursively check for nested section references */
-                        collect_section_references(library_deck[lib_idx], y);
+
+                if (lib_idx < 0) {
+
+                    if(!read_a_lib(s, call_depth, dir_name))
+                        controlled_exit(EXIT_FAILURE);
+
+                    lib_idx = find_lib(s);
+                }
+
+                if (lib_idx < 0) {
+                    fprintf(stderr, "ERROR, library file %s not found\n", s);
+                    controlled_exit(EXIT_FAILURE);
+                }
+
+                section_def = find_section_definition(library_deck[lib_idx], y);
+
+                if (!section_def) {
+                    fprintf(stderr, "ERROR, library file %s, section definition %s not found\n", s, y);
+                    controlled_exit(EXIT_FAILURE);
+                }
+
+                /* insert the library section definition into `c' */
+                {
+                    struct line *t = inp_deckcopy(section_def);
+                    struct line *rest = c->li_next;
+                    c->li_next = t;
+                    t->li_line[0] = '*';
+                    t->li_line[1] = '<';
+                    for (; t; t=t->li_next)
+                        if(ciprefix(".endl", t->li_line))
+                            break;
+                    if (!t) {
+                        fprintf(stderr, "ERROR, .endl not found\n");
+                        controlled_exit(EXIT_FAILURE);
                     }
+                    t->li_line[0] = '*';
+                    t->li_line[1] = '>';
+                    t->li_next = rest;
+                }
+
                 *line = '*';  /* comment out .lib line */
                 *t = keep_char1;
                 *z = keep_char2;
@@ -2484,16 +2368,6 @@ collect_section_references(struct line *deck, char *section_name_)
         }
 
     }
-}
-
-
-static void
-inp_init_lib_data(void)
-{
-    int i;
-
-    for (i = 0; i < num_libraries; i++)
-        num_sections[i] = 0;
 }
 
 
