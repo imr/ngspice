@@ -118,14 +118,14 @@ static void inp_poly_err(struct line *deck);
 #endif
 
 
-static int
+static struct library *
 find_lib(char *name)
 {
     int i;
     for (i = 0; i < num_libraries; i++)
         if (cieq(libraries[i].name, name))
-            return i;
-    return -1;
+            return & libraries[i];
+    return NULL;
 }
 
 
@@ -178,7 +178,7 @@ read_a_lib(char *y, int call_depth, char *dir_name)
             y = copyy; /* reuse y, but remember, buffer still points to allocated memory */
     }
 
-    if (find_lib(y) < 0) {
+    if (!find_lib(y)) {
 
         bool dir_name_flag = FALSE;
         FILE *newfp = inp_pathopen(y, "r");
@@ -2315,7 +2315,7 @@ expand_section_references(struct line *deck, int call_depth, char *dir_name)
                 struct line *section_def;
                 char keep_char1, keep_char2;
                 char *z, *copys = NULL;
-                int lib_idx;
+                struct library *lib;
 
                 for (z = y; *z && !isspace(*z) && !isquote(*z); z++)
                     ;
@@ -2330,22 +2330,22 @@ expand_section_references(struct line *deck, int call_depth, char *dir_name)
                         s = copys;
                 }
 
-                lib_idx = find_lib(s);
+                lib = find_lib(s);
 
-                if (lib_idx < 0) {
+                if (!lib) {
 
                     if(!read_a_lib(s, call_depth, dir_name))
                         controlled_exit(EXIT_FAILURE);
 
-                    lib_idx = find_lib(s);
+                    lib = find_lib(s);
                 }
 
-                if (lib_idx < 0) {
+                if (!lib) {
                     fprintf(stderr, "ERROR, library file %s not found\n", s);
                     controlled_exit(EXIT_FAILURE);
                 }
 
-                section_def = find_section_definition(libraries[lib_idx].deck, y);
+                section_def = find_section_definition(lib->deck, y);
 
                 if (!section_def) {
                     fprintf(stderr, "ERROR, library file %s, section definition %s not found\n", s, y);
