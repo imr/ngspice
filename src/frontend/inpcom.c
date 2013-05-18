@@ -42,17 +42,28 @@ Author: 1985 Wayne A. Christopher
 #define N_PARAMS          1000
 #define N_SUBCKT_W_PARAMS 4000
 
-static char *library_name[N_LIBRARIES];
-static struct line *library_deck[N_LIBRARIES];
+static struct library {
+    char *name;
+    struct line *deck;
+} libraries[N_LIBRARIES];
+
 static int  num_libraries;
-static      char *global;
+
 static char *subckt_w_params[N_SUBCKT_W_PARAMS];
 static int  num_subckt_w_params;
-static char *func_names[N_FUNCTIONS];
-static char *func_params[N_FUNCTIONS][N_PARAMS];
-static char *func_macro[N_FUNCTIONS];
+
+static struct function {
+    char *name;
+    char *macro;
+    char *params[N_PARAMS];
+    int   num_parameters;
+} functions[N_FUNCTIONS];
+
 static int  num_functions;
-static int  num_parameters[N_FUNCTIONS];
+
+
+static  char *global;
+
 static COMPATMODE_T inp_compat_mode;
 
 /* Collect information for dynamic allocation of numparam arrays */
@@ -112,7 +123,7 @@ find_lib(char *name)
 {
     int i;
     for (i = 0; i < num_libraries; i++)
-        if (cieq(library_name[i], name))
+        if (cieq(libraries[i].name, name))
             return i;
     return -1;
 }
@@ -196,14 +207,14 @@ read_a_lib(char *y, int call_depth, char *dir_name)
             controlled_exit(EXIT_FAILURE);
         }
 
-        library_name[num_libraries++] = strdup(y);
+        libraries[num_libraries++].name = strdup(y);
 
         if (dir_name_flag == FALSE) {
             char *y_dir_name = ngdirname(y);
-            library_deck[num_libraries-1] = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);
+            libraries[num_libraries-1].deck = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);
             tfree(y_dir_name);
         } else {
-            library_deck[num_libraries-1] = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);
+            libraries[num_libraries-1].deck = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);
         }
 
         fclose(newfp);
@@ -231,7 +242,7 @@ read_a_lib(char *y, int call_depth, char *dir_name)
      store contents in string new_title
    process .lib lines
      read file and library name, open file using fcn inp_pathopen()
-     read file contents and put into struct library_deck[], one entry per .lib line
+     read file contents and put into struct libraries[].deck, one entry per .lib line
    process .inc lines
      read file and library name, open file using fcn inp_pathopen()
      read file contents and add lines to cc
@@ -2334,7 +2345,7 @@ expand_section_references(struct line *deck, int call_depth, char *dir_name)
                     controlled_exit(EXIT_FAILURE);
                 }
 
-                section_def = find_section_definition(library_deck[lib_idx], y);
+                section_def = find_section_definition(libraries[lib_idx].deck, y);
 
                 if (!section_def) {
                     fprintf(stderr, "ERROR, library file %s, section definition %s not found\n", s, y);
@@ -2746,7 +2757,7 @@ inp_get_func_from_line(char *line)
 
     /* see if already encountered this function */
     for (i = 0; i < num_functions; i++)
-        if (strcmp(func_names[i], line) == 0)
+        if (strcmp(functions[i].name, line) == 0)
             break;
 
     if (num_functions >= N_FUNCTIONS) {
@@ -2754,7 +2765,7 @@ inp_get_func_from_line(char *line)
         controlled_exit(EXIT_FAILURE);
     }
 
-    func_names[num_functions++] = strdup(line);
+    functions[num_functions++].name = strdup(line);
     *end = keep;
 
     num_params = 0;
@@ -2772,10 +2783,10 @@ inp_get_func_from_line(char *line)
                 fprintf(stderr, "ERROR, N_PARAMS overflow\n");
                 controlled_exit(EXIT_FAILURE);
             }
-            func_params[num_functions-1][num_params++] = copy_substring(ptr, end);
+            functions[num_functions-1].params[num_params++] = copy_substring(ptr, end);
         }
     }
-    num_parameters[num_functions-1] = num_params;
+    functions[num_functions-1].num_parameters = num_params;
 
     /* get function macro */
     str_len = 0;
@@ -2789,7 +2800,7 @@ inp_get_func_from_line(char *line)
     }
     temp_buf[str_len++] = '\0';
 
-    func_macro[num_functions-1] = strdup(temp_buf);
+    functions[num_functions-1].macro = strdup(temp_buf);
 }
 
 
@@ -2843,24 +2854,24 @@ inp_do_macro_param_replace(int fcn_number, char *params[])
     char keep, before, after;
     int  i;
 
-    if (num_parameters[fcn_number] == 0)
-        return strdup(func_macro[fcn_number]);
+    if (functions[fcn_number].num_parameters == 0)
+        return strdup(functions[fcn_number].macro);
 
-    for (i = 0; i < num_parameters[fcn_number]; i++) {
+    for (i = 0; i < functions[fcn_number].num_parameters; i++) {
         if (curr_str == NULL) {
-            search_ptr = curr_ptr = func_macro[fcn_number];
+            search_ptr = curr_ptr = functions[fcn_number].macro;
         } else {
             search_ptr = curr_ptr = curr_str;
             curr_str = NULL;
         }
-        while ((param_ptr = strstr(search_ptr, func_params[fcn_number][i])) != NULL) {
+        while ((param_ptr = strstr(search_ptr, functions[fcn_number].params[i])) != NULL) {
 
             /* make sure actually have the parameter name */
             if (param_ptr == search_ptr) /* no valid 'before' */
                 before = '\0';
             else
                 before = *(param_ptr-1);
-            after  = param_ptr [ strlen(func_params[fcn_number][i]) ];
+            after  = param_ptr [ strlen(functions[fcn_number].params[i]) ];
             if (!(is_arith_char(before) || isspace(before) ||
                   before == ',' || before == '=' || (param_ptr-1) < curr_ptr) ||
                 !(is_arith_char(after) || isspace(after) ||
@@ -2886,7 +2897,7 @@ inp_do_macro_param_replace(int fcn_number, char *params[])
             }
 
             *param_ptr = keep;
-            search_ptr = curr_ptr = param_ptr + strlen(func_params[fcn_number][i]);
+            search_ptr = curr_ptr = param_ptr + strlen(functions[fcn_number].params[i]);
         }
         if (param_ptr == NULL) {
             if (curr_str == NULL) {
@@ -2930,7 +2941,7 @@ inp_expand_macro_in_str(char *str)
         *open_paren_ptr = '\0';
 
         for (i = 0; i < num_functions; i++)
-            if (strcmp(func_names[i], fcn_name) == 0)
+            if (strcmp(functions[i].name, fcn_name) == 0)
                 break;
 
         *open_paren_ptr = '(';
@@ -2988,7 +2999,7 @@ inp_expand_macro_in_str(char *str)
                 inp_expand_macro_in_str(copy_substring(beg_parameter, curr_ptr));
         }
 
-        if (num_parameters[i] != num_params) {
+        if (functions[i].num_parameters != num_params) {
             fprintf(stderr, "ERROR: parameter mismatch for function call in str: %s\n", orig_str);
             controlled_exit(EXIT_FAILURE);
         }
@@ -3032,7 +3043,7 @@ inp_expand_macros_in_func(void)
     int  i;
 
     for (i = 0; i < num_functions; i++)
-        func_macro[i] = inp_expand_macro_in_str(func_macro[i]);
+        functions[i].macro = inp_expand_macro_in_str(functions[i].macro);
 }
 
 
@@ -3056,10 +3067,10 @@ inp_expand_macros_in_deck(struct line *deck)
         if (ciprefix(".ends", c->li_line)) {
             if (prev_num_functions != num_functions) {
                 for (i = prev_num_functions; i < num_functions; i++) {
-                    tfree(func_names[i]);
-                    tfree(func_macro[i]);
-                    for (j = 0; j < num_parameters[i]; j++)
-                        tfree(func_params[i][j]);
+                    tfree(functions[i].name);
+                    tfree(functions[i].macro);
+                    for (j = 0; j < functions[i].num_parameters; j++)
+                        tfree(functions[i].params[j]);
                     num_functions = prev_num_functions;
                 }
             }
