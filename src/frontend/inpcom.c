@@ -3081,7 +3081,7 @@ static void
 inp_expand_macros_in_deck(struct line *deck)
 {
     struct line *c = deck;
-    int         prev_num_functions = 0, i;
+    int         prev_num_functions = 0;
 
     while (c != NULL) {
         if (*c->li_line == '*') {
@@ -3095,11 +3095,10 @@ inp_expand_macros_in_deck(struct line *deck)
                 inp_expand_macros_in_func();
         }
         if (ciprefix(".ends", c->li_line)) {
-            if (prev_num_functions != num_functions) {
-                for (i = prev_num_functions; i < num_functions; i++)
-                    free_function(& functions[i]);
-                num_functions = prev_num_functions;
-            }
+            int i;
+            for (i = prev_num_functions; i < num_functions; i++)
+                free_function(& functions[i]);
+            num_functions = prev_num_functions;
         }
 
         if (*c->li_line != '*')
