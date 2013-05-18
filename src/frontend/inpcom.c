@@ -2756,6 +2756,7 @@ inp_get_func_from_line(char *line)
     *end = '\0';
 
     /* see if already encountered this function */
+    /* FIXME, this code is unused, which is probably a bug */
     for (i = 0; i < num_functions; i++)
         if (strcmp(functions[i].name, line) == 0)
             break;
