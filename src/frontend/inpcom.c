@@ -2760,6 +2760,19 @@ find_function(char *name)
 
 
 static void
+free_function(struct function *fcn)
+{
+    int i;
+
+    tfree(fcn->name);
+    tfree(fcn->macro);
+
+    for (i = 0; i < fcn->num_parameters; i++)
+        tfree(fcn->params[i]);
+}
+
+
+static void
 inp_get_func_from_line(char *line)
 {
     char *ptr, *end;
@@ -3068,7 +3081,7 @@ static void
 inp_expand_macros_in_deck(struct line *deck)
 {
     struct line *c = deck;
-    int         prev_num_functions = 0, i, j;
+    int         prev_num_functions = 0, i;
 
     while (c != NULL) {
         if (*c->li_line == '*') {
@@ -3083,13 +3096,9 @@ inp_expand_macros_in_deck(struct line *deck)
         }
         if (ciprefix(".ends", c->li_line)) {
             if (prev_num_functions != num_functions) {
-                for (i = prev_num_functions; i < num_functions; i++) {
-                    tfree(functions[i].name);
-                    tfree(functions[i].macro);
-                    for (j = 0; j < functions[i].num_parameters; j++)
-                        tfree(functions[i].params[j]);
-                    num_functions = prev_num_functions;
-                }
+                for (i = prev_num_functions; i < num_functions; i++)
+                    free_function(& functions[i]);
+                num_functions = prev_num_functions;
             }
         }
 
