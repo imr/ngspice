@@ -39,7 +39,7 @@ Author: 1985 Wayne A. Christopher
 #define N_SECTIONS        1000
 #define N_FUNCS           1000
 #define N_PARAMS          1000
-#define N_SUBCKT_W_PARAMS 1000
+#define N_SUBCKT_W_PARAMS 4000
 
 static char *library_name[N_LIBRARY];
 static char *section_name[N_LIBRARY][N_SECTIONS];
@@ -900,7 +900,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             no_braces = braces_per_line;
     }
 
-    if (ft_ngdebug) {
+    if ((ft_ngdebug) && (call_depth == 0)) {
         /*debug: print into file*/
         FILE *fd = fopen("debug-out.txt", "w");
         struct line *t;
