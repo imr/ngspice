@@ -2736,6 +2736,29 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
 }
 
 
+static struct function *
+new_function(void)
+{
+    if (num_functions >= N_FUNCTIONS) {
+        fprintf(stderr, "ERROR, N_FUNCTIONS overflow\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+
+    return & functions[num_functions++];
+}
+
+
+static struct function *
+find_function(char *name)
+{
+    int i;
+    for (i = 0; i < num_functions; i++)
+        if (strcmp(functions[i].name, name) == 0)
+            return & functions[i];
+    return NULL;
+}
+
+
 static void
 inp_get_func_from_line(char *line)
 {
@@ -2744,7 +2767,7 @@ inp_get_func_from_line(char *line)
     char temp_buf[5000];
     int  num_params = 0;
     int  str_len = 0;
-    int  i = 0;
+    struct function *function;
 
     /* get function name */
     line = skip_non_ws(line);
@@ -2757,16 +2780,11 @@ inp_get_func_from_line(char *line)
 
     /* see if already encountered this function */
     /* FIXME, this code is unused, which is probably a bug */
-    for (i = 0; i < num_functions; i++)
-        if (strcmp(functions[i].name, line) == 0)
-            break;
+    function = find_function(line);
 
-    if (num_functions >= N_FUNCTIONS) {
-        fprintf(stderr, "ERROR, N_FUNCTIONS overflow\n");
-        controlled_exit(EXIT_FAILURE);
-    }
+    function = new_function();
 
-    functions[num_functions++].name = strdup(line);
+    function->name = strdup(line);
     *end = keep;
 
     num_params = 0;
@@ -2784,10 +2802,10 @@ inp_get_func_from_line(char *line)
                 fprintf(stderr, "ERROR, N_PARAMS overflow\n");
                 controlled_exit(EXIT_FAILURE);
             }
-            functions[num_functions-1].params[num_params++] = copy_substring(ptr, end);
+            function->params[num_params++] = copy_substring(ptr, end);
         }
     }
-    functions[num_functions-1].num_parameters = num_params;
+    function->num_parameters = num_params;
 
     /* get function macro */
     str_len = 0;
@@ -2801,7 +2819,7 @@ inp_get_func_from_line(char *line)
     }
     temp_buf[str_len++] = '\0';
 
-    functions[num_functions-1].macro = strdup(temp_buf);
+    function->macro = strdup(temp_buf);
 }
 
 
@@ -2849,30 +2867,30 @@ inp_grab_subckt_func(struct line *subckt)
 
 
 static char*
-inp_do_macro_param_replace(int fcn_number, char *params[])
+inp_do_macro_param_replace(struct function *fcn, char *params[])
 {
     char *param_ptr, *curr_ptr, *new_str, *curr_str = NULL, *search_ptr;
     char keep, before, after;
     int  i;
 
-    if (functions[fcn_number].num_parameters == 0)
-        return strdup(functions[fcn_number].macro);
+    if (fcn->num_parameters == 0)
+        return strdup(fcn->macro);
 
-    for (i = 0; i < functions[fcn_number].num_parameters; i++) {
+    for (i = 0; i < fcn->num_parameters; i++) {
         if (curr_str == NULL) {
-            search_ptr = curr_ptr = functions[fcn_number].macro;
+            search_ptr = curr_ptr = fcn->macro;
         } else {
             search_ptr = curr_ptr = curr_str;
             curr_str = NULL;
         }
-        while ((param_ptr = strstr(search_ptr, functions[fcn_number].params[i])) != NULL) {
+        while ((param_ptr = strstr(search_ptr, fcn->params[i])) != NULL) {
 
             /* make sure actually have the parameter name */
             if (param_ptr == search_ptr) /* no valid 'before' */
                 before = '\0';
             else
                 before = *(param_ptr-1);
-            after  = param_ptr [ strlen(functions[fcn_number].params[i]) ];
+            after  = param_ptr [ strlen(fcn->params[i]) ];
             if (!(is_arith_char(before) || isspace(before) ||
                   before == ',' || before == '=' || (param_ptr-1) < curr_ptr) ||
                 !(is_arith_char(after) || isspace(after) ||
@@ -2898,7 +2916,7 @@ inp_do_macro_param_replace(int fcn_number, char *params[])
             }
 
             *param_ptr = keep;
-            search_ptr = curr_ptr = param_ptr + strlen(functions[fcn_number].params[i]);
+            search_ptr = curr_ptr = param_ptr + strlen(fcn->params[i]);
         }
         if (param_ptr == NULL) {
             if (curr_str == NULL) {
@@ -2918,7 +2936,7 @@ inp_do_macro_param_replace(int fcn_number, char *params[])
 static char*
 inp_expand_macro_in_str(char *str)
 {
-    int  i;
+    struct function *function;
     char *c;
     char *open_paren_ptr, *close_paren_ptr, *fcn_name, *params[1000];
     char *curr_ptr, *macro_str, *curr_str = NULL;
@@ -2941,13 +2959,11 @@ inp_expand_macro_in_str(char *str)
 
         *open_paren_ptr = '\0';
 
-        for (i = 0; i < num_functions; i++)
-            if (strcmp(functions[i].name, fcn_name) == 0)
-                break;
+        function = find_function(fcn_name);
 
         *open_paren_ptr = '(';
 
-        if (i >= num_functions)
+        if (!function)
             continue;
 
         /* find the closing paren */
@@ -3000,12 +3016,12 @@ inp_expand_macro_in_str(char *str)
                 inp_expand_macro_in_str(copy_substring(beg_parameter, curr_ptr));
         }
 
-        if (functions[i].num_parameters != num_params) {
+        if (function->num_parameters != num_params) {
             fprintf(stderr, "ERROR: parameter mismatch for function call in str: %s\n", orig_str);
             controlled_exit(EXIT_FAILURE);
         }
 
-        macro_str = inp_do_macro_param_replace(i, params);
+        macro_str = inp_do_macro_param_replace(function, params);
         keep  = *fcn_name;
         *fcn_name = '\0';
         {
