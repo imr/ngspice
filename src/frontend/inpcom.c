@@ -119,6 +119,18 @@ static void inp_poly_err(struct line *deck);
 
 
 static struct library *
+new_lib(void)
+{
+    if (num_libraries >= N_LIBRARIES) {
+        fprintf(stderr, "ERROR, N_LIBRARIES overflow\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+
+    return & libraries[num_libraries++];
+}
+
+
+static struct library *
 find_lib(char *name)
 {
     int i;
@@ -180,6 +192,8 @@ read_a_lib(char *y, int call_depth, char *dir_name)
 
     if (!find_lib(y)) {
 
+        struct library *lib;
+
         bool dir_name_flag = FALSE;
         FILE *newfp = inp_pathopen(y, "r");
 
@@ -202,19 +216,16 @@ read_a_lib(char *y, int call_depth, char *dir_name)
             dir_name_flag = TRUE;
         }
 
-        if (num_libraries >= N_LIBRARIES) {
-            fprintf(stderr, "ERROR, N_LIBRARIES overflow\n");
-            controlled_exit(EXIT_FAILURE);
-        }
+        lib = new_lib();
 
-        libraries[num_libraries++].name = strdup(y);
+        lib->name = strdup(y);
 
         if (dir_name_flag == FALSE) {
             char *y_dir_name = ngdirname(y);
-            libraries[num_libraries-1].deck = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);
+            lib->deck = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);
             tfree(y_dir_name);
         } else {
-            libraries[num_libraries-1].deck = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);
+            lib->deck = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);
         }
 
         fclose(newfp);
