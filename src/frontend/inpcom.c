@@ -963,7 +963,7 @@ create_new_card(char *card_str, int *line_number) {
     newcard->li_error   = NULL;
     newcard->li_actual  = NULL;
 
-    *line_number = *line_number + 1;
+    *line_number += 1;
 
     return newcard;
 }
@@ -1388,7 +1388,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                         have_subckt = TRUE;
                 if (!have_subckt) {
                     new_names[tmp_cnt++] = used_subckt_names[*num_used_subckt_names] = inst_subckt_name;
-                    *num_used_subckt_names = *num_used_subckt_names + 1;
+                    *num_used_subckt_names += 1;
                 } else {
                     tfree(inst_subckt_name);
                 }
@@ -1400,7 +1400,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                         found_model = TRUE;
                 if (!found_model) {
                     used_model_names[*num_used_model_names] = model_name;
-                    *num_used_model_names = *num_used_model_names + 1;
+                    *num_used_model_names += 1;
                 } else {
                     tfree(model_name);
                 }
@@ -1425,7 +1425,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                             if (strcmp(used_model_names[i], model_name) == 0) found_model = TRUE;
                         if (!found_model) {
                             used_model_names[*num_used_model_names] = model_name;
-                            *num_used_model_names = *num_used_model_names + 1;
+                            *num_used_model_names += 1;
                         } else {
                             tfree(model_name);
                         }
@@ -2577,7 +2577,7 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
 
     subckt_param_names[num_subckt_params]  = strdup("m");
     subckt_param_values[num_subckt_params] = strdup("1");
-    num_subckt_params = num_subckt_params + 1;
+    num_subckt_params ++;
 
     if (!strstr(subckt_card->li_line, "params:")) {
         new_str = TMALLOC(char, strlen(subckt_card->li_line) + 13);
@@ -3748,7 +3748,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
                 char after  = *(str_ptr+strlen(param_names[i]));
                 if (!(is_arith_char(before) || isspace(before) || (str_ptr-1) < curr_line) ||
                         !(is_arith_char(after)  || isspace(after)  || after == '\0')) {
-                    str_ptr = str_ptr + 1;
+                    str_ptr ++;
                     continue;
                 }
                 beg = str_ptr - 1;
