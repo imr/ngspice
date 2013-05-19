@@ -2679,8 +2679,11 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
         }
         if (ciprefix("x", inst_line)) {
             subckt_name = inp_get_subckt_name(inst_line);
-            for (i = 0; i < num_subckt_w_params; i++) {
-                if (strcmp(subckt_w_params[i], subckt_name) == 0) {
+            for (i = 0; i < num_subckt_w_params; i++)
+                if (strcmp(subckt_w_params[i], subckt_name) == 0)
+                    break;
+
+            if (i < num_subckt_w_params) {
                     sprintf(name_w_space, "%s ", subckt_name);
 
                     /* find .subckt line */
@@ -2740,8 +2743,6 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
                             break;
                         d = d->li_next;
                     }
-                    break;
-                }
             }
             tfree(subckt_name);
         }
