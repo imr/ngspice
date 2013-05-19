@@ -1998,6 +1998,18 @@ inp_change_quotes(char *s)
 }
 
 
+static void
+new_subckt_w_params(char *str)
+{
+    if (num_subckt_w_params >= N_SUBCKT_W_PARAMS) {
+        fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+
+    subckt_w_params[num_subckt_w_params++] = str;
+}
+
+
 static char*
 inp_fix_subckt(char *s)
 {
@@ -2014,12 +2026,7 @@ inp_fix_subckt(char *s)
         for (ptr2 = ptr1; *ptr2 && !isspace(*ptr2) && !isquote(*ptr2); ptr2++)
             ;
 
-        if (num_subckt_w_params >= N_SUBCKT_W_PARAMS) {
-            fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
-            controlled_exit(EXIT_FAILURE);
-        }
-
-        subckt_w_params[num_subckt_w_params++] = copy_substring(ptr1, ptr2);
+        new_subckt_w_params(copy_substring(ptr1, ptr2));
 
         /* go to beginning of first parameter word  */
         /* s    will contain only subckt definition */
@@ -2562,11 +2569,7 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
     if (!strstr(subckt_card->li_line, "params:")) {
         new_str = TMALLOC(char, strlen(subckt_card->li_line) + 13);
         sprintf(new_str, "%s params: m=1", subckt_card->li_line);
-        if (num_subckt_w_params >= N_SUBCKT_W_PARAMS) {
-            fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
-            controlled_exit(EXIT_FAILURE);
-        }
-        subckt_w_params[num_subckt_w_params++] = get_subckt_model_name(subckt_card->li_line);
+        new_subckt_w_params(get_subckt_model_name(subckt_card->li_line));
     } else {
         new_str = TMALLOC(char, strlen(subckt_card->li_line) + 5);
         sprintf(new_str, "%s m=1", subckt_card->li_line);
@@ -3821,11 +3824,7 @@ inp_add_params_to_subckt(struct line *subckt_card)
             subckt_name = skip_non_ws(subckt_card->li_line);
             subckt_name = skip_ws(subckt_name);
             end_ptr = skip_non_ws(subckt_name);
-            if (num_subckt_w_params >= N_SUBCKT_W_PARAMS) {
-                fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
-                controlled_exit(EXIT_FAILURE);
-            }
-            subckt_w_params[num_subckt_w_params++] = copy_substring(subckt_name, end_ptr);
+            new_subckt_w_params(copy_substring(subckt_name, end_ptr));
         } else {
             new_line = TMALLOC(char, strlen(subckt_line) + strlen(param_ptr) + 2);
             sprintf(new_line, "%s %s", subckt_line, param_ptr);
