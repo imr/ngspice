@@ -2010,6 +2010,19 @@ new_subckt_w_params(char *str)
 }
 
 
+static char **
+find_subckt_w_params(char *subckt_name)
+{
+    int i;
+
+    for (i = 0; i < num_subckt_w_params; i++)
+        if (strcmp(subckt_w_params[i], subckt_name) == 0)
+            return & subckt_w_params[i];
+
+    return NULL;
+}
+
+
 static char*
 inp_fix_subckt(char *s)
 {
@@ -2679,11 +2692,8 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
         }
         if (ciprefix("x", inst_line)) {
             subckt_name = inp_get_subckt_name(inst_line);
-            for (i = 0; i < num_subckt_w_params; i++)
-                if (strcmp(subckt_w_params[i], subckt_name) == 0)
-                    break;
 
-            if (i < num_subckt_w_params) {
+            if (find_subckt_w_params(subckt_name)) {
                     sprintf(name_w_space, "%s ", subckt_name);
 
                     /* find .subckt line */
