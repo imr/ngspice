@@ -1206,7 +1206,7 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 struct line *a_card, *model_card, *next_card;
                 char *str_ptr1, *str_ptr2, keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
                 char *node_str, *ctrl_node_str, *xy_str1, *model_name, *fcn_name;
-                char big_buf[1000];
+                char *m_instance, *m_model;
                 int  xy_count1, xy_count2;
 
                 str_ptr1 = skip_non_ws(line);
@@ -1262,15 +1262,15 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 if (xy_count1 != 2 && xy_count2 != 2)
                     fprintf(stderr, "ERROR: only expecting 2 pair values for multi-input vcvs!\n");
 
-                sprintf(big_buf, "%s %%vd[ %s ] %%vd( %s ) %s",
-                        model_name, ctrl_node_str, node_str, model_name);
-                a_card = xx_new_line(NULL, copy(big_buf), *(line_number)++, 0);
-                *a_card->li_line = 'a';
+                m_instance = tprintf("%s %%vd[ %s ] %%vd( %s ) %s",
+                                     model_name, ctrl_node_str, node_str, model_name);
+                m_instance[0] = 'a';
+                a_card = xx_new_line(NULL, m_instance, *(line_number)++, 0);
 
-                sprintf(big_buf, ".model %s multi_input_pwl ( x = [%s %s] y = [%s %s] model = \"%s\" )",
-                        model_name, xy_values1[0], xy_values2[0],
-                        xy_values1[1], xy_values2[1], fcn_name);
-                model_card = xx_new_line(NULL, copy(big_buf), (*line_number)++, 0);
+                m_model = tprintf(".model %s multi_input_pwl ( x = [%s %s] y = [%s %s] model = \"%s\" )",
+                                  model_name, xy_values1[0], xy_values2[0],
+                                  xy_values1[1], xy_values2[1], fcn_name);
+                model_card = xx_new_line(NULL, m_model, (*line_number)++, 0);
 
                 tfree(model_name);
                 tfree(node_str);
@@ -2495,7 +2495,6 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
     char *equal_ptr = strchr(line, '=');
     char *end, *name, *value;
     int  num_params = 0;
-    char tmp_str[1000];
     char keep;
     bool is_expression = FALSE;
 
@@ -2526,12 +2525,16 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
         keep = *end;
         *end = '\0';
 
-        if (*value != '{' &&
-            !(isdigit(*value) || (*value == '.' && isdigit(value[1])))) {
-            sprintf(tmp_str, "{%s}", value);
-            value = tmp_str;
+        if (*value == '{' ||
+            isdigit(*value) ||
+            (*value == '.' && isdigit(value[1])))
+        {
+            value = copy(value);
+        } else {
+            value = tprintf("{%s}", value);
         }
-        param_values[num_params-1] = strdup(value);
+
+        param_values[num_params-1] = value;
         *end = keep;
 
         line = end;
