@@ -751,31 +751,9 @@ AC_TRY_LINK([#include <setjmp.h>],[jmp_buf env; sigsetjmp(env, 1);],
         AC_DEFINE([HAVE_SIGSETJMP], [], [Define if we have sigsetjmp().])],
     [AC_MSG_RESULT([no])])
 
-# A mingw ngspice dll with linking against libiberty.a seems not to be possible.
-# Because there is a internal replacement for asprintf, and dirmane is not been used anywhere,
-# just skip it.
-case $host_os in
-        *mingw* )
-            AC_MSG_RESULT([Cannot make dll from libiberty.a, no check for headers])
-            ;;
-        * )
-
-# Check for some headers (asprintf, dirname, etc.)
-AC_CHECK_HEADERS([libiberty.h libgen.h])
-
-# Check for the asprintf function:
-AC_CHECK_FUNCS([asprintf], [],
-    [AC_CHECK_LIB([iberty], [asprintf],
-        [AC_DEFINE([HAVE_ASPRINTF], [1], [Have asprintf in libiberty])
-         LIBS="$LIBS -liberty"])])
-
-            ;;
-esac
 
 # Check for the snprintf function:
-if test "x$ac_cv_func_asprintf" = xno ; then
-    AC_CHECK_FUNCS([snprintf])
-fi
+AC_CHECK_FUNCS([snprintf])
 
 # Check for the dirname function:
 AC_CHECK_FUNCS([dirname], [],

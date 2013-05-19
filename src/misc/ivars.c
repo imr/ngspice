@@ -6,16 +6,6 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #include "ivars.h"
 #include "../misc/util.h" /* ngdirname() */
 
-#ifdef HAVE_ASPRINTF
-#ifdef HAVE_LIBIBERTY_H /* asprintf */
-#include <libiberty.h>
-#elif defined(__MINGW32__) || defined(__SUNPRO_C) /* we have asprintf, but not libiberty.h */
-#include <stdarg.h>
-extern int asprintf(char **out, const char *fmt, ...);
-extern int vasprintf(char **out, const char *fmt, va_list ap);
-#endif
-#endif
-
 char *Spice_Path;
 char *News_File;
 char *Help_Path;
@@ -34,26 +24,13 @@ env_overr(char **v, char *e)
 static void
 mkvar(char **p, char *path_prefix, char *var_dir, char *env_var)
 {
-    char *buffer;
-
     /* Override by environment variables */
-    buffer = getenv(env_var);
+    char *buffer = getenv(env_var);
 
-#ifdef HAVE_ASPRINTF
     if (buffer)
-        asprintf(p, "%s", buffer);
-    else
-        asprintf(p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir);
-#else /* ~ HAVE_ASPRINTF */
-    if (buffer){
         *p = tprintf("%s",buffer);
-        /* asprintf(p, "%s", buffer); */
-    }
-    else{
+    else
         *p = tprintf("%s%s%s", path_prefix, DIR_PATHSEP, var_dir);
-        /* asprintf(p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir); */
-    }
-#endif /* HAVE_ASPRINTF */
 }
 
 void

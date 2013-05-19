@@ -13,17 +13,6 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <stdarg.h>
 
 
-#ifdef HAVE_ASPRINTF
-#ifdef HAVE_LIBIBERTY_H /* asprintf */
-#include <libiberty.h>
-#elif defined(__MINGW32__) || defined(__SUNPRO_C)
-/* we have asprintf, but not libiberty.h */
-#include <stdarg.h>
-extern int asprintf(char **out, const char *fmt, ...);
-extern int vasprintf(char **out, const char *fmt, va_list ap);
-#endif
-#endif
-
 #ifdef HAVE_SGTTY_H
 #include <sgtty.h>
 #endif
@@ -262,20 +251,9 @@ out_send(char *string)
 void
 out_vprintf(const char *fmt, va_list ap)
 {
-#if defined(HAVE_ASPRINTF) /* seems the best solution */
-    char * tbuf;
-    vasprintf(&tbuf, fmt, ap);
+    char *tbuf = tvprintf(fmt, ap);
     out_send(tbuf);
     FREE(tbuf);
-#elif defined(HAVE_SNPRINTF) /* the second best */
-    static char out_pbuf[8*BSIZE_SP];
-    vsnprintf(out_pbuf, sizeof(out_pbuf), fmt, ap);
-    out_send(out_pbuf);
-#else /* guaranteed a bug for long messages */
-    static char out_pbuf[8*BSIZE_SP];
-    vsprintf(out_pbuf, fmt, ap);
-    out_send(out_pbuf);
-#endif
 }
 
 

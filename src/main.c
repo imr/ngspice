@@ -9,16 +9,6 @@
 
 #include "ngspice/ngspice.h"
 
-#ifdef HAVE_ASPRINTF
-# ifdef HAVE_LIBIBERTY_H /* asprintf */
-#  include <libiberty.h>
-# elif defined(__MINGW32__) || defined(__SUNPRO_C) /* we have asprintf, but not libiberty.h */
-#  include <stdarg.h>
-   extern int asprintf(char **out, const char *fmt, ...);
-   extern int vasprintf(char **out, const char *fmt, va_list ap);
-# endif
-#endif
-
 #include <setjmp.h>
 #include <signal.h>
 
@@ -742,13 +732,8 @@ read_initialisation_file(char *dir, char *name)
     if(dir == NULL || dir[0]=='\0') {
       path = name;
     } else {
-#ifdef HAVE_ASPRINTF
-      asprintf(&path, "%s" DIR_PATHSEP "%s", dir, name);
-      if(path==NULL) return FALSE;    /* memory allocation error */
-#else /* ~ HAVE_ASPRINTF */
       path = tprintf("%s" DIR_PATHSEP "%s", dir, name);
       if(path==NULL) return FALSE;    /* memory allocation error */
-#endif /* HAVE_ASPRINTF */
     }
 
     /* now access the file */
@@ -765,13 +750,8 @@ read_initialisation_file(char *dir, char *name)
         result = TRUE;  /* loaded okay */
     }
 
-    /* if dir was not NULL and not empty then we allocated memory above */
-    if(dir!=NULL && dir[0] !='\0')
-#ifdef HAVE_ASPRINTF
-        free(path);
-#else
-    tfree(path);
-#endif /* HAVE_ASPRINTF */
+    if (path != name)
+        tfree(path);
 
     return result;
 }

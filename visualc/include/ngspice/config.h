@@ -71,9 +71,6 @@
 /* Define to 1 if you have the `asinh' function. */
 /* #undef HAVE_ASINH */
 
-/* Define to 1 if you have the `asprintf' function. */
-/* #undef HAVE_ASPRINTF */
-
 /* Define to 1 if you have the `atanh' function. */
 /* #undef HAVE_ATANH */
 
@@ -170,12 +167,6 @@
 
 /* Define if we want garbage collection enabled */
 /* #undef HAVE_LIBGC */
-
-/* Define to 1 if you have the <libgen.h> header file. */
-/* #undef HAVE_LIBGEN_H */
-
-/* Define to 1 if you have the <libiberty.h> header file. */
-/* #undef HAVE_LIBIBERTY_H */
 
 /* Define to 1 if you have the <libintl.h> header file. */
 /* #undef HAVE_LIBINTL_H */

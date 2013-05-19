@@ -5,16 +5,6 @@ Author: 1988 Thomas L. Quarles
 
 #include "ngspice/ngspice.h"
 
-#ifdef HAVE_ASPRINTF
-#ifdef HAVE_LIBIBERTY_H /* asprintf */
-#include <libiberty.h>
-#elif defined(__MINGW32__) || defined(__SUNPRO_C) /* we have asprintf, but not libiberty.h */
-#include <stdarg.h>
-extern int asprintf(char **out, const char *fmt, ...);
-extern int vasprintf(char **out, const char *fmt, va_list ap);
-#endif
-#endif
-
 #include "ngspice/wordlist.h"
 #include "ngspice/bool.h"
 #include "ngspice/inpdefs.h"
@@ -35,21 +25,10 @@ IFnewUid(CKTcircuit *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
     char *newname;
     int error;
 
-    if (olduid) {
-#ifdef HAVE_ASPRINTF    	
-	asprintf(&newname, "%s#%s", olduid, suffix);
-#else /* ~ HAVE_ASPRINTF */   
-      newname = tprintf("%s#%s", olduid, suffix);
-#endif /* HAVE_ASPRINTF */			 
-
-    } else {
-    	
-#ifdef HAVE_ASPRINTF    	
-	asprintf(&newname, "%s", suffix);
-#else /* ~ HAVE_ASPRINTF */
-      newname = tprintf("%s", suffix);
-#endif /* HAVE_ASPRINTF */ 
-    }
+    if (olduid)
+        newname = tprintf("%s#%s", olduid, suffix);
+    else
+        newname = tprintf("%s", suffix);
 
     switch (type) {
     case UID_ANALYSIS:

@@ -9,16 +9,6 @@ Author: 1985 Thomas L. Quarles
 
 #include "ngspice/ngspice.h"
 
-#ifdef HAVE_ASPRINTF
-#ifdef HAVE_LIBIBERTY_H /* asprintf */
-#include <libiberty.h>
-#elif defined(__MINGW32__) || defined(__SUNPRO_C) /* we have asprintf, but not libiberty.h */
-#include <stdarg.h>
-extern int asprintf(char **out, const char *fmt, ...);
-extern int vasprintf(char **out, const char *fmt, va_list ap);
-#endif
-#endif
-
 #include "ngspice/fteext.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/iferrmsg.h"
@@ -41,18 +31,11 @@ char *INPerror(int type)
     if (!val)
         return NULL;
 
-#ifdef HAVE_ASPRINTF
     if (errRtn)
-        asprintf(&ebuf, "%s detected in routine \"%s\"\n", val, errRtn);
-    else
-        asprintf(&ebuf, "%s\n", val);
-#else /* ~ HAVE_ASPRINTF */
-    if (errRtn) {
         ebuf = tprintf("%s detected in routine \"%s\"\n", val, errRtn);
-    } else {
+    else
         ebuf = tprintf("%s\n", val);
-    }
-#endif /* HAVE_ASPRINTF */
+
     tfree(val);
     return ebuf;
 }

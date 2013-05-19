@@ -136,16 +136,6 @@ typedef void (*sighandler)(int);
 #define S_IRWXU _S_IWRITE
 #endif
 
-#ifdef HAVE_ASPRINTF
-#ifdef HAVE_LIBIBERTY_H /* asprintf */
-#include <libiberty.h>
-#elif defined(__MINGW32__) || defined(__SUNPRO_C) /* we have asprintf, but not libiberty.h */
-#include <stdarg.h>
-extern int asprintf(char **out, const char *fmt, ...);
-extern int vasprintf(char **out, const char *fmt, va_list ap);
-#endif
-#endif
-
 extern IFfrontEnd nutmeginfo;
 
 extern struct comm spcp_coms[ ];
@@ -2532,11 +2522,8 @@ Spice_Init(Tcl_Interp *interp)
             struct passwd *pw;
             pw = getpwuid(getuid());
 
-#ifdef HAVE_ASPRINTF
-            asprintf(&s, "%s%s", pw->pw_dir, INITSTR);
-#else
             s = tprintf("%s%s", pw->pw_dir, INITSTR);
-#endif
+
             if (access(s, 0) == 0)
                 inp_source(s);
         }
