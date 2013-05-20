@@ -507,7 +507,7 @@ resume:
     if (ckt->CKTtime == 0.)
         SetAnalyse( "tran init", 0);
     else
-        SetAnalyse( "tran", (int)((ckt->CKTtime * 1000.) / ckt->CKTfinalTime) + 0.5);
+        SetAnalyse( "tran", (int)((ckt->CKTtime * 1000.) / ckt->CKTfinalTime + 0.5));
 #endif
     ckt->CKTdelta =
             MIN(ckt->CKTdelta,ckt->CKTmaxStep);
@@ -545,6 +545,10 @@ resume:
             ckt->CKTbreaks[1] - ckt->CKTbreaks[0]));
 
         if(firsttime) {
+            /* set a breakpoint to reduce ringing of current in devices */
+            if (ckt->CKTmode & MODEUIC)
+                CKTsetBreak(ckt, ckt->CKTstep);
+
             ckt->CKTdelta /= 10;
 #ifdef STEPDEBUG
             (void)printf("delta cut for initial timepoint\n");
