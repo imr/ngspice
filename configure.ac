@@ -856,6 +856,7 @@ if test "x$enable_pzdebug" = xyes; then
 fi
 if test "x$enable_pss" = xyes; then
     AC_DEFINE([WITH_PSS], [], [Define if you want PSS analysis])
+    AC_MSG_RESULT([WARNING: PSS analysis enabled])
 fi
 if test "x$enable_blktmsdebug" = xyes; then
     AC_DEFINE([D_DBG_BLOCKTIMES], [], [Define if we want debug distortion analysis (BLOCKTIMES)])
@@ -1067,10 +1068,6 @@ if test "x$enable_openmp" = xyes; then
     AC_DEFINE([USE_OMP], [1], [OpenMP parallel processing])
     CFLAGS="$CFLAGS $OPENMP_CFLAGS"
     AC_MSG_RESULT([OpenMP feature enabled])
-fi
-
-if test "x$enable_pss" = "xyes"; then
-    AC_MSG_RESULT([WARNING: PSS analysis enabled])
 fi
 
 # Output Files
