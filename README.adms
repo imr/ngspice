@@ -22,6 +22,20 @@
 * 02110-1301  USA                                                         *
 ***************************************************************************
 
+WARNING!
+
+The text in this document has been prepared in 2006 and is outdated. It is
+provided here only for reference and may provide some (historical)
+information.
+
+Please refer to the ngspice adms web page at
+http://ngspice.sourceforge.net/admshowto.html
+for actual information on how to integrate Verilog A device models into
+ngspice.
+
+Holger Vogt, May 2013
+
+
 
 INTRODUCTION
 
