@@ -16,6 +16,7 @@ libbsim2_la_SOURCES =	\
 	b2mdel.c	\
 	b2moscap.c	\
 	b2mpar.c	\
+	b2node.c	\
 	b2noi.c		\
 	b2par.c		\
 	b2pzld.c	\

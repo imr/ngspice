@@ -21,6 +21,7 @@ libmos3_la_SOURCES =	\
 	mos3mask.c	\
 	mos3mdel.c	\
 	mos3mpar.c	\
+	mos3node.c	\
 	mos3noi.c	\
 	mos3par.c	\
 	mos3pzld.c	\

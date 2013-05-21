@@ -20,6 +20,7 @@ libmes_la_SOURCES =	\
 	mesmask.c	\
 	mesmdel.c	\
 	mesmpar.c	\
+	mesnode.c	\
 	mesnoise.c	\
 	mesparam.c	\
 	mespzld.c	\

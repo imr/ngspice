@@ -31,5 +31,6 @@ extern int BJTtrunc(GENmodel*,CKTcircuit*,double*);
 extern int BJTdisto(int,GENmodel*,CKTcircuit*);
 extern int BJTnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BJTdSetup(GENmodel*, register CKTcircuit*);
+extern int BJTnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
 
 #endif

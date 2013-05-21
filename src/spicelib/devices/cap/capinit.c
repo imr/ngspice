@@ -71,7 +71,8 @@ SPICEdev CAPinfo = {
  /* DEVacct       */ NULL,
 #endif    
  /* DEVinstSize   */ &CAPiSize,
- /* DEVmodSize    */ &CAPmSize
+ /* DEVmodSize    */ &CAPmSize,
+ /* DEVnodeIsNonLinear */ NULL
 };
 
 

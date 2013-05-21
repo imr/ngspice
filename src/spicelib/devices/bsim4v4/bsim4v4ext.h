@@ -29,5 +29,4 @@ extern int BSIM4v4temp(GENmodel*,CKTcircuit*);
 extern int BSIM4v4trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM4v4noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM4v4unsetup(GENmodel*,CKTcircuit*);
-
-
+extern int BSIM4v4nodeIsNonLinear (GENmodel *, CKTcircuit *) ;

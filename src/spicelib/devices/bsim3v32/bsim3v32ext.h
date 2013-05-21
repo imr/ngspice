@@ -29,3 +29,4 @@ extern int BSIM3v32temp(GENmodel*,CKTcircuit*);
 extern int BSIM3v32trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM3v32noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM3v32unsetup(GENmodel*,CKTcircuit*);
+extern int BSIM3v32nodeIsNonLinear (GENmodel *, CKTcircuit *) ;

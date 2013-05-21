@@ -18,6 +18,7 @@ libmesa_la_SOURCES =	\
 	mesamask.c	\
 	mesamdel.c	\
 	mesamparam.c	\
+	mesanode.c	\
 	mesaparam.c	\
 	mesapzl.c	\
 	mesasetup.c	\

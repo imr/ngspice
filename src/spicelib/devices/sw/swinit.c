@@ -73,7 +73,8 @@ SPICEdev SWinfo = {
  /* DEVacct       */ NULL,
 #endif /* CIDER */                        
  /* DEVinstSize   */ &SWiSize,
- /* DEVmodSize    */ &SWmSize
+ /* DEVmodSize    */ &SWmSize,
+ /* DEVnodeIsNonLinear */ NULL
 
 };
 

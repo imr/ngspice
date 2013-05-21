@@ -71,7 +71,8 @@ SPICEdev INDinfo = {
  /* DEVacct       */ NULL,
 #endif                       
  /* DEVinstSize   */ &INDiSize,
- /* DEVmodSize    */ &INDmSize
+ /* DEVmodSize    */ &INDmSize,
+ /* DEVnodeIsNonLinear */ NULL
 
 };
 
@@ -139,8 +140,9 @@ SPICEdev MUTinfo = {
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,
 #endif  
-    &MUTiSize,
-    &MUTmSize
+ /* DEVinstSize   */ &MUTiSize,
+ /* DEVmodSize    */ &MUTmSize,
+ /* DEVnodeIsNonLinear */ NULL
 
 };
 

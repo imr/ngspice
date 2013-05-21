@@ -77,7 +77,8 @@ SPICEdev VBICinfo = {
     NULL,         /* DEVacct       */
 #endif                                                         
     &VBICiSize,   /* DEVinstSize    */
-    &VBICmSize    /* DEVmodSize     */
+    &VBICmSize,   /* DEVmodSize     */
+    VBICnodeIsNonLinear /* DEVnodeIsNonLinear */
 
 };
 

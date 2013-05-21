@@ -72,7 +72,8 @@ SPICEdev TRAinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &TRAiSize,
- /* DEVmodSize    */ &TRAmSize
+ /* DEVmodSize    */ &TRAmSize,
+ /* DEVnodeIsNonLinear */ NULL
 
 };
 

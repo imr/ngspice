@@ -29,3 +29,4 @@ extern int B1temp(GENmodel*,CKTcircuit*);
 extern int B1trunc(GENmodel*,CKTcircuit*,double*);
 extern int B1disto(int,GENmodel*,CKTcircuit*);
 extern int B1dSetup(GENmodel*, register CKTcircuit*);
+extern int B1nodeIsNonLinear (GENmodel *, CKTcircuit *) ;

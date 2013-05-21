@@ -72,7 +72,8 @@ SPICEdev BSIM4v5info = {
     NULL,          /* DEVacct        */
 #endif
     &BSIM4v5iSize,   /* DEVinstSize    */
-    &BSIM4v5mSize    /* DEVmodSize     */
+    &BSIM4v5mSize,    /* DEVmodSize     */
+    BSIM4v5nodeIsNonLinear /* DEVnodeIsNonLinear */
 };
 
 

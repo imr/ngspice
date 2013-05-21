@@ -20,6 +20,7 @@ libjfet_la_SOURCES =	\
 	jfetmask.c	\
 	jfetmdel.c	\
 	jfetmpar.c	\
+	jfetnode.c	\
 	jfetnoi.c	\
 	jfetpar.c	\
 	jfetpzld.c	\

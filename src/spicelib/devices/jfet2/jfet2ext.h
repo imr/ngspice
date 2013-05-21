@@ -22,3 +22,4 @@ extern int JFET2unsetup(GENmodel*,CKTcircuit*);
 extern int JFET2temp(GENmodel*,CKTcircuit*);
 extern int JFET2trunc(GENmodel*,CKTcircuit*,double*);
 extern int JFET2noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+extern int JFET2nodeIsNonLinear (GENmodel *, CKTcircuit *) ;

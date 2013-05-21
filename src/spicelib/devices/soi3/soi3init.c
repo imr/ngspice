@@ -72,7 +72,8 @@ SPICEdev SOI3info = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &SOI3iSize,
- /* DEVmodSize    */ &SOI3mSize
+ /* DEVmodSize    */ &SOI3mSize,
+ /* DEVnodeIsNonLinear */ SOI3nodeIsNonLinear
 
 };
 

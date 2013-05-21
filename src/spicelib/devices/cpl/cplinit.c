@@ -72,7 +72,8 @@ SPICEdev CPLinfo = {
 /* DEVacct        */ NULL,
 #endif   
 /* DEVinstSize    */ &CPLiSize,
-/* DEVmodSize     */ &CPLmSize
+/* DEVmodSize     */ &CPLmSize,
+/* DEVnodeIsLinear */ NULL
 
 };
 

@@ -72,7 +72,8 @@ SPICEdev ISRCinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &ISRCiSize,
- /* DEVmodSize    */ &ISRCmSize
+ /* DEVmodSize    */ &ISRCmSize,
+ /* DEVnodeIsNonLinear */ NULL
 };
 
 

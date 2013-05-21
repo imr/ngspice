@@ -111,6 +111,7 @@ struct CKTcircuit {
     double *CKTrhsOld;          /* previous rhs value for convergence
                                    testing */
     double *CKTfvk ;            /* KCL Verification array */
+    int *CKTnodeIsLinear ;      /* Flag to indicate if a node is linear or non-linear */
     double *CKTrhsSpare;        /* spare rhs value for reordering */
     double *CKTirhs;            /* current rhs value - being loaded
                                    (imag) */

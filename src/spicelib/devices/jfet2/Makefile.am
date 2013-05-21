@@ -18,6 +18,7 @@ libjfet2_la_SOURCES =	\
 	jfet2mask.c	\
 	jfet2mdel.c	\
 	jfet2mpar.c	\
+	jfet2node.c	\
 	jfet2noi.c	\
 	jfet2par.c	\
 	jfet2parm.h	\

@@ -16,6 +16,7 @@ libmos6_la_SOURCES =	\
 	mos6load.c	\
 	mos6mask.c	\
 	mos6mpar.c	\
+	mos6node.c	\
 	mos6par.c	\
 	mos6set.c	\
 	mos6temp.c	\

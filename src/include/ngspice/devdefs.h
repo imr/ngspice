@@ -112,6 +112,10 @@ typedef struct SPICEdev {
     int *DEVinstSize;    /* size of an instance */
     int *DEVmodSize;     /* size of a model */
 
+    /* Francesco Lannutti */
+    int (*DEVnodeIsNonLinear)(GENmodel *, CKTcircuit *) ;
+        /* Routine to declare a node as NonLinear */
+
 } SPICEdev;  /* instance of structure for each possible type of device */
 
 

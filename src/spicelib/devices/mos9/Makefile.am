@@ -21,6 +21,7 @@ libmos9_la_SOURCES =	\
 	mos9mask.c	\
 	mos9mdel.c	\
 	mos9mpar.c	\
+	mos9node.c	\
 	mos9noi.c	\
 	mos9par.c	\
 	mos9pzld.c	\

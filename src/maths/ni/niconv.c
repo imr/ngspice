@@ -73,7 +73,7 @@ NIconvTest(CKTcircuit *ckt)
     for (i = 1 ; i <= size ; i++)
     {
         node = node->next ;
-        if (node->type == SP_VOLTAGE)
+        if ((node->type == SP_VOLTAGE) && (!ckt->CKTnodeIsLinear [i]))
         {
 
 #ifdef STEPDEBUG

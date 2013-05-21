@@ -127,6 +127,20 @@ CKTsetup(CKTcircuit *ckt)
 
     /* gtri - end - Setup for adding rshunt option resistors */
 #endif
+
+    /** Marking node as Non-Linear when needed
+     *  By default every node is Linear
+     */
+    for (i = 0 ; i < DEVmaxnum ; i++)
+    {
+        if (DEVices[i] && DEVices[i]->DEVnodeIsNonLinear && ckt->CKThead[i])
+        {
+            error = DEVices[i]->DEVnodeIsNonLinear (ckt->CKThead[i], ckt) ;
+            if (error)
+                return (error) ;
+        }
+    }
+
     return(OK);
 }
 

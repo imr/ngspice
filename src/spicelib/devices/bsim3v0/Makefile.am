@@ -14,6 +14,7 @@ libbsim3v0_la_SOURCES = \
 	b3v0mask.c	\
 	b3v0mdel.c	\
 	b3v0mpar.c	\
+	b3v0node.c	\
 	b3v0noi.c	\
 	b3v0par.c	\
 	b3v0pzld.c	\

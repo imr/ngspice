@@ -18,6 +18,7 @@ libhfet2_la_SOURCES =	\
 	hfet2mask.c	\
 	hfet2mdel.c	\
 	hfet2mpar.c	\
+	hfet2node.c	\
 	hfet2param.c	\
 	hfet2pzl.c	\
 	hfet2setup.c	\

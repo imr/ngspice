@@ -18,6 +18,7 @@ libhfet_la_SOURCES =	\
 	hfetmask.c	\
 	hfetmdel.c	\
 	hfetmpar.c	\
+	hfetnode.c	\
 	hfetparam.c	\
 	hfetpzl.c	\
 	hfetsetup.c	\

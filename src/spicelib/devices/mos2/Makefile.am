@@ -21,6 +21,7 @@ libmos2_la_SOURCES =	\
 	mos2mask.c	\
 	mos2mdel.c	\
 	mos2mpar.c	\
+	mos2node.c	\
 	mos2noi.c	\
 	mos2par.c	\
 	mos2pzld.c	\

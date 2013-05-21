@@ -72,7 +72,8 @@ SPICEdev URCinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &URCiSize,
- /* DEVmodSize    */ &URCmSize
+ /* DEVmodSize    */ &URCmSize,
+ /* DEVnodeIsNonLinear */ NULL
 
 };
 

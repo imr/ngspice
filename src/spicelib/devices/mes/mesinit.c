@@ -72,7 +72,8 @@ SPICEdev MESinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &MESiSize,
- /* DEVmodSize    */ &MESmSize
+ /* DEVmodSize    */ &MESmSize,
+ /* DEVnodeIsNonLinear */ MESnodeIsNonLinear
 
 };
 

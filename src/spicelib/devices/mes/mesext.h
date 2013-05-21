@@ -22,4 +22,4 @@ extern int MEStrunc(GENmodel*,CKTcircuit*,double*);
 extern int MESdisto(int,GENmodel*,CKTcircuit*);
 extern int MESnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int MESdSetup(GENmodel*,CKTcircuit*);
-
+extern int MESnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
