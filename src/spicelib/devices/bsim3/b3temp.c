@@ -808,14 +808,14 @@ int Size_Not_Found;
               /* process source/drain series resistance */
               here->BSIM3drainConductance = model->BSIM3sheetResistance
                                               * here->BSIM3drainSquares;
+              here->BSIM3sourceConductance = model->BSIM3sheetResistance
+                                              * here->BSIM3sourceSquares;
               if (here->BSIM3drainConductance > 0.0)
                   here->BSIM3drainConductance = 1.0
                                               / here->BSIM3drainConductance;
               else
                   here->BSIM3drainConductance = 0.0;
 
-              here->BSIM3sourceConductance = model->BSIM3sheetResistance
-                                           * here->BSIM3sourceSquares;
               if (here->BSIM3sourceConductance > 0.0)
                   here->BSIM3sourceConductance = 1.0
                                                / here->BSIM3sourceConductance;
