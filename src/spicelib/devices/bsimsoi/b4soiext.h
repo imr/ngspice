@@ -30,3 +30,4 @@ extern int B4SOItemp(GENmodel*,CKTcircuit*);
 extern int B4SOItrunc(GENmodel*,CKTcircuit*,double*);
 extern int B4SOInoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int B4SOIunsetup(GENmodel*,CKTcircuit*);
+extern int B4SOInodeIsNonLinear (GENmodel *, CKTcircuit *) ;

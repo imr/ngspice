@@ -74,7 +74,8 @@ SPICEdev CSWinfo = {
  /* DEVacct       */ NULL,
 #endif
  /* DEVinstSize   */ &CSWiSize,
- /* DEVmodSize    */ &CSWmSize
+ /* DEVmodSize    */ &CSWmSize,
+ /* DEVnodeIsLinear */ NULL
 
 };
 

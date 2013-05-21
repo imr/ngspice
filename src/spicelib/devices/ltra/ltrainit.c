@@ -72,7 +72,8 @@ SPICEdev LTRAinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &LTRAiSize,
- /* DEVmodSize    */ &LTRAmSize
+ /* DEVmodSize    */ &LTRAmSize,
+ /* DEVnodeIsNonLinear */ NULL
 
 };
 

@@ -28,4 +28,4 @@ extern int BSIM3v1temp(GENmodel *, CKTcircuit *);
 extern int BSIM3v1trunc(GENmodel *, CKTcircuit *, double *);
 extern int BSIM3v1noise(int, int, GENmodel *, CKTcircuit *, Ndata *, double *);
 extern int BSIM3v1unsetup(GENmodel *, CKTcircuit *);
-
+extern int BSIM3v1nodeIsNonLinear (GENmodel *, CKTcircuit *) ;

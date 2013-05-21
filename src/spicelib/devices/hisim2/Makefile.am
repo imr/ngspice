@@ -23,6 +23,7 @@ libhisim2_la_SOURCES =	hisim2.h	\
 			hsm2mask.c	\
 			hsm2mdel.c	\
 			hsm2mpar.c	\
+			hsm2node.c	\
 			hsm2noi.c	\
 			hsm2par.c	\
 			hsm2pzld.c	\

@@ -23,6 +23,7 @@ libhisimhv1_la_SOURCES = hisimhv.h	\
 			hsmhvmask.c 	\
 			hsmhvmdel.c 	\
 			hsmhvmpar.c 	\
+			hsmhvnode.c	\
 			hsmhvnoi.c 	\
 			hsmhvpar.c 	\
 			hsmhvpzld.c 	\

@@ -21,6 +21,7 @@ libmos1_la_SOURCES =	\
 	mos1mask.c	\
 	mos1mdel.c	\
 	mos1mpar.c	\
+	mos1node.c	\
 	mos1noi.c	\
 	mos1par.c	\
 	mos1pzld.c	\

@@ -28,4 +28,4 @@ extern int B3SOIFDtemp(GENmodel*,CKTcircuit*);
 extern int B3SOIFDtrunc(GENmodel*,CKTcircuit*,double*);
 extern int B3SOIFDnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int B3SOIFDunsetup(GENmodel*,CKTcircuit*);
-
+extern int B3SOIFDnodeIsNonLinear (GENmodel *, CKTcircuit *) ;

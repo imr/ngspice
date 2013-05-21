@@ -19,6 +19,7 @@ libbsim1_la_SOURCES =	\
 	b1moscap.c	\
 	b1mpar.c	\
 	b1par.c		\
+	b1node.c	\
 	b1noi.c		\
 	b1pzld.c	\
 	b1set.c		\

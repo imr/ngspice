@@ -21,6 +21,7 @@ libdio_la_SOURCES =	\
 	diomask.c	\
 	diomdel.c	\
 	diompar.c	\
+	dionode.c	\
 	dionoise.c	\
 	dioparam.c	\
 	diopzld.c	\

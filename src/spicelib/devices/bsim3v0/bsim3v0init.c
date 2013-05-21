@@ -70,7 +70,8 @@ SPICEdev B3v0info = {
  /* DEVacct       */ NULL,
 #endif                    
  /* DEVinstSize   */ &BSIM3v0iSize,
- /* DEVmodSize    */ &BSIM3v0mSize
+ /* DEVmodSize    */ &BSIM3v0mSize,
+ /* DEVnodeIsNonLinear */ BSIM3v0nodeIsNonLinear
 
 };
 

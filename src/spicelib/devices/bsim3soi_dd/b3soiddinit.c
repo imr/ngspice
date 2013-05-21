@@ -69,7 +69,8 @@ SPICEdev B3SOIDDinfo = {
  /* DEVacct       */ NULL,
 #endif
  /* DEVinstSize   */ &B3SOIDDiSize,
- /* DEVmodSize    */ &B3SOIDDmSize
+ /* DEVmodSize    */ &B3SOIDDmSize,
+ /* DEVnodeIsNonLinear */ B3SOIDDnodeIsNonLinear
 };
 
 SPICEdev *

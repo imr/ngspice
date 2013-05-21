@@ -19,6 +19,7 @@ libvbic_la_SOURCES =	\
 	vbicmask.c	\
 	vbicmdel.c	\
 	vbicmpar.c	\
+	vbicnode.c	\
 	vbicnoise.c	\
 	vbicparam.c	\
 	vbicpzld.c	\

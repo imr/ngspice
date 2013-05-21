@@ -72,7 +72,8 @@ SPICEdev MOS9info = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &MOS9iSize,
- /* DEVmodSize    */ &MOS9mSize
+ /* DEVmodSize    */ &MOS9mSize,
+ /* DEVnodeIsNonLinear */ MOS9nodeIsNonLinear
 
 };
 

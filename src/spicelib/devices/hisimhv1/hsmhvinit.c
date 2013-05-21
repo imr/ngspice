@@ -70,7 +70,8 @@ SPICEdev HSMHVinfo = {
  /* DEVacct       */ NULL,
 #endif
  /* DEVinstSize   */ &HSMHViSize,
- /* DEVmodSize    */ &HSMHVmSize
+ /* DEVmodSize    */ &HSMHVmSize,
+ /* DEVnodeIsNonLinear */ HSMHVnodeIsNonLinear
 
 };
 

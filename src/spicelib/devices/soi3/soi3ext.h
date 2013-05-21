@@ -65,3 +65,4 @@ extern int SOI3convTest(GENmodel*,CKTcircuit*);
 
 /* extern int SOI3disto(int,GENmodel*,CKTcircuit*); */
 extern int SOI3noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+extern int SOI3nodeIsNonLinear (GENmodel *, CKTcircuit *) ;

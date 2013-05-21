@@ -73,7 +73,8 @@ SPICEdev DIOinfo = {
  /* DEVacct       */ NULL,
 #endif                     
  /* DEVinstSize   */ &DIOiSize,
- /* DEVmodSize    */ &DIOmSize
+ /* DEVmodSize    */ &DIOmSize,
+ /* DEVnodeIsNonLinear */ DIOnodeIsNonLinear
 };
 
 

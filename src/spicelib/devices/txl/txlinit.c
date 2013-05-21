@@ -76,8 +76,9 @@ SPICEdev TXLinfo = {
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,  
 #endif
-    &TXLiSize,
-    &TXLmSize
+ /* DEVinstSize   */ &TXLiSize,
+ /* DEVmodSize    */ &TXLmSize,
+ /* DEVnodeIsNonLinear */ NULL
 
 };
 

@@ -20,6 +20,7 @@ libsoi3_la_SOURCES =	\
 	soi3mask.c	\
 	soi3mdel.c	\
 	soi3mpar.c	\
+	soi3node.c	\
 	soi3nois.c	\
 	soi3par.c	\
 	soi3set.c	\

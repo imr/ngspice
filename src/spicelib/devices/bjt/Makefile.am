@@ -22,6 +22,7 @@ libbjt_la_SOURCES =	\
 	bjtmask.c	\
 	bjtmdel.c	\
 	bjtmpar.c	\
+	bjtnode.c	\
 	bjtnoise.c	\
 	bjtparam.c	\
 	bjtpzld.c	\

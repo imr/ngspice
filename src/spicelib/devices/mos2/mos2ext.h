@@ -27,5 +27,5 @@ extern int MOS2temp(GENmodel*,CKTcircuit*);
 extern int MOS2trunc(GENmodel*,CKTcircuit*,double*);
 extern int MOS2disto(int,GENmodel*,CKTcircuit*);
 extern int MOS2noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
-
 extern int MOS2dSetup(GENmodel*,CKTcircuit*);
+extern int MOS2nodeIsNonLinear (GENmodel *, CKTcircuit *) ;

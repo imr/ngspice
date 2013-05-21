@@ -16,6 +16,7 @@ libbsim4v4_la_SOURCES =	\
 	b4v4mask.c	\
 	b4v4mdel.c	\
 	b4v4mpar.c	\
+	b4v4node.c	\
 	b4v4noi.c	\
 	b4v4par.c	\
 	b4v4pzld.c	\

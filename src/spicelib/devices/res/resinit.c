@@ -72,7 +72,8 @@ SPICEdev RESinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &RESiSize,
- /* DEVmodSize    */ &RESmSize
+ /* DEVmodSize    */ &RESmSize,
+ /* DEVnodeIsNonLinear */ NULL
 
 };
 

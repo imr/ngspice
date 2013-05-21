@@ -28,3 +28,4 @@ extern int MOS9trunc(GENmodel*,CKTcircuit*,double*);
 extern int MOS9disto(int,GENmodel*,CKTcircuit*);
 extern int MOS9noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int MOS9dSetup(GENmodel*,CKTcircuit*);
+extern int MOS9nodeIsNonLinear (GENmodel *, CKTcircuit *) ;

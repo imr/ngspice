@@ -72,8 +72,8 @@ SPICEdev VCCSinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &VCCSiSize,
- /* DEVmodSize    */ &VCCSmSize
-
+ /* DEVmodSize    */ &VCCSmSize,
+ /* DEVnodeIsNonLinear */ NULL
 
 };
 

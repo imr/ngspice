@@ -15,6 +15,7 @@ libbsim3v32_la_SOURCES = \
 	b3v32mask.c	\
 	b3v32mdel.c	\
 	b3v32mpar.c	\
+	b3v32node.c	\
 	b3v32noi.c	\
 	b3v32par.c	\
 	b3v32pzld.c	\

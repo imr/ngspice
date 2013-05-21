@@ -15,6 +15,7 @@ libbsim3_la_SOURCES =	\
 	b3mask.c	\
 	b3mdel.c	\
 	b3mpar.c	\
+	b3node.c	\
 	b3noi.c		\
 	b3par.c		\
 	b3pzld.c	\
