@@ -61,6 +61,10 @@ BSIM3instance **InstArray;
             model->BSIM3paramChk = 0;
         if (!model->BSIM3capModGiven)
             model->BSIM3capMod = 3;
+        if (!model->BSIM3acmModGiven)
+            model->BSIM3acmMod = 0;
+        if (!model->BSIM3calcacmGiven)
+            model->BSIM3calcacm = 0;
         if (!model->BSIM3noiModGiven)
             model->BSIM3noiMod = 1;
         if (!model->BSIM3acnqsModGiven)
@@ -246,6 +250,24 @@ BSIM3instance **InstArray;
             model->BSIM3tcjswg = 0.0;
         if (!model->BSIM3tpbswgGiven)
             model->BSIM3tpbswg = 0.0;
+
+        /* ACM model */
+        if (!model->BSIM3hdifGiven)
+          model->BSIM3hdif = 0.0;
+        if (!model->BSIM3ldifGiven)
+          model->BSIM3ldif = 0.0;
+        if (!model->BSIM3ldGiven)
+          model->BSIM3ld = 0.0;
+        if (!model->BSIM3rdGiven)
+          model->BSIM3rd = 0.0;
+        if (!model->BSIM3rsGiven)
+          model->BSIM3rs = 0.0;
+        if (!model->BSIM3rdcGiven)
+          model->BSIM3rdc = 0.0;
+        if (!model->BSIM3rscGiven)
+          model->BSIM3rsc = 0.0;
+        if (!model->BSIM3wmltGiven)
+          model->BSIM3wmlt = 1.0;
 
         /* Length dependence */
         if (!model->BSIM3lcdscGiven)
@@ -874,7 +896,12 @@ BSIM3instance **InstArray;
             if (!here->BSIM3drainPerimeterGiven)
                 here->BSIM3drainPerimeter = 0.0;
             if (!here->BSIM3drainSquaresGiven)
-                here->BSIM3drainSquares = 1.0;
+            {
+                if (model->BSIM3acmMod == 0)
+                  here->BSIM3drainSquares = 1.0;
+                else
+                  here->BSIM3drainSquares = 0.0;
+            }
             if (!here->BSIM3delvtoGiven)
                 here->BSIM3delvto = 0.0;
             if (!here->BSIM3mulu0Given)
@@ -892,7 +919,12 @@ BSIM3instance **InstArray;
             if (!here->BSIM3sourcePerimeterGiven)
                 here->BSIM3sourcePerimeter = 0.0;
             if (!here->BSIM3sourceSquaresGiven)
-                here->BSIM3sourceSquares = 1.0;
+            {
+                if (model->BSIM3acmMod == 0)
+                  here->BSIM3sourceSquares = 1.0;
+                else
+                  here->BSIM3sourceSquares = 0.0;
+            }
             if (!here->BSIM3wGiven)
                 here->BSIM3w = 5.0e-6;
             if (!here->BSIM3nqsModGiven)
@@ -905,13 +937,19 @@ BSIM3instance **InstArray;
                 model->BSIM3acnqsMod);
             }
 
+            if (!here->BSIM3geoGiven)
+                here->BSIM3geo = 0;
 
             if (!here->BSIM3mGiven)
                 here->BSIM3m = 1;
 
             /* process drain series resistance */
-            if ((model->BSIM3sheetResistance > 0.0) &&
-                (here->BSIM3drainSquares > 0.0 ))
+            if (  ((model->BSIM3sheetResistance > 0.0) && (here->BSIM3drainSquares > 0.0))
+                ||((model->BSIM3sheetResistance > 0.0) && (model->BSIM3hdif > 0.0))
+                ||((model->BSIM3rd > 0.0) && (model->BSIM3ldif > 0.0))
+                ||((model->BSIM3rd > 0.0) && (model->BSIM3ld > 0.0))
+                ||((model->BSIM3rdc > 0.0))
+               )
             {
               if(here->BSIM3dNodePrime == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"drain");
@@ -932,8 +970,12 @@ BSIM3instance **InstArray;
             }
 
             /* process source series resistance */
-            if ((model->BSIM3sheetResistance > 0.0) &&
-                (here->BSIM3sourceSquares > 0.0 ))
+            if (  ((model->BSIM3sheetResistance > 0.0) && (here->BSIM3sourceSquares > 0.0))
+                ||((model->BSIM3sheetResistance > 0.0) && (model->BSIM3hdif > 0.0))
+                ||((model->BSIM3rs > 0.0) && (model->BSIM3ldif > 0.0))
+                ||((model->BSIM3rs > 0.0) && (model->BSIM3ld > 0.0))
+                ||((model->BSIM3rsc > 0.0))
+               )
             {
               if(here->BSIM3sNodePrime == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"source");

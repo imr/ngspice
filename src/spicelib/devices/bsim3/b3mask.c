@@ -46,6 +46,12 @@ IFvalue *value)
         case BSIM3_MOD_ACNQSMOD:
             value->iValue = model->BSIM3acnqsMod; 
             return(OK);
+        case BSIM3_MOD_ACMMOD:
+            value->iValue = model->BSIM3acmMod;
+            return(OK);
+        case BSIM3_MOD_CALCACM:
+            value->iValue = model->BSIM3calcacm;
+            return(OK);
         case  BSIM3_MOD_VERSION :
           value->sValue = model->BSIM3version;
             return(OK);
@@ -335,6 +341,32 @@ IFvalue *value)
             return(OK);
         case BSIM3_MOD_TPBSWG:
             value->rValue = model->BSIM3tpbswg;
+            return(OK);
+
+        /* ACM model */
+        case BSIM3_MOD_HDIF:
+            value->rValue = model->BSIM3hdif;
+            return(OK);
+        case BSIM3_MOD_LDIF:
+            value->rValue = model->BSIM3ldif;
+            return(OK);
+        case BSIM3_MOD_LD:
+            value->rValue = model->BSIM3ld;
+            return(OK);
+        case BSIM3_MOD_RD:
+            value->rValue = model->BSIM3rd;
+            return(OK);
+        case BSIM3_MOD_RS:
+            value->rValue = model->BSIM3rs;
+            return(OK);
+        case BSIM3_MOD_RDC:
+            value->rValue = model->BSIM3rdc;
+            return(OK);
+        case BSIM3_MOD_RSC:
+            value->rValue = model->BSIM3rsc;
+            return(OK);
+        case BSIM3_MOD_WMLT:
+            value->rValue = model->BSIM3wmlt;
             return(OK);
 
 	/* Length dependence */

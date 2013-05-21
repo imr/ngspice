@@ -175,6 +175,8 @@ FILE *fplog;
             printf("Warning: Pscbe2 = %g is not positive.\n", pParam->BSIM3pscbe2);
         }
 
+    /* ACM model */
+    if (model->BSIM3acmMod == 0) {
       if (model->BSIM3unitLengthSidewallJctCap > 0.0 || 
             model->BSIM3unitLengthGateSidewallJctCap > 0.0)
       {
@@ -191,6 +193,14 @@ FILE *fplog;
 		    here->BSIM3sourcePerimeter);
 	}
       }
+    }
+
+        if ((model->BSIM3calcacm > 0) && (model->BSIM3acmMod != 12))
+        {   fprintf(fplog, "Warning: CALCACM = %d is wrong. Set back to 0.\n",
+                model->BSIM3calcacm);
+            printf("Warning: CALCACM = %d is wrong. Set back to 0.\n", model->BSIM3calcacm);
+            model->BSIM3calcacm = 0;
+        }
 
         if (pParam->BSIM3noff < 0.1)
         {   fprintf(fplog, "Warning: Noff = %g is too small.\n",

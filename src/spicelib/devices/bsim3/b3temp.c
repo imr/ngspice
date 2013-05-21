@@ -16,6 +16,7 @@
 #include "bsim3def.h"
 #include "ngspice/const.h"
 #include "ngspice/sperror.h"
+#include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
 
 #define Kb 1.3806226e-23
@@ -40,7 +41,7 @@ struct bsim3SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, Ldrn, Wdrn;
 double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 double Nvtm, SourceSatCurrent, DrainSatCurrent;
-int Size_Not_Found;
+int Size_Not_Found, error;
 
 /*  loop through all the BSIM3 device models */
     for (; model != NULL; model = model->BSIM3nextModel)
@@ -806,10 +807,39 @@ int Size_Not_Found;
                                     * pParam->BSIM3weffCV * pParam->BSIM3leffCV * T0);
 
               /* process source/drain series resistance */
+            /* ACM model */
+            if (model->BSIM3acmMod == 0)
+            {
               here->BSIM3drainConductance = model->BSIM3sheetResistance
                                               * here->BSIM3drainSquares;
               here->BSIM3sourceConductance = model->BSIM3sheetResistance
                                               * here->BSIM3sourceSquares;
+            }
+            else /* ACM > 0 */
+            {
+              error = ACM_SourceDrainResistances(
+              model->BSIM3acmMod,
+              model->BSIM3ld,
+              model->BSIM3ldif,
+              model->BSIM3hdif,
+              model->BSIM3wmlt,
+              here->BSIM3w,
+              model->BSIM3xw,
+              model->BSIM3sheetResistance,
+              here->BSIM3drainSquaresGiven,
+              model->BSIM3rd,
+              model->BSIM3rdc,
+              here->BSIM3drainSquares,
+              here->BSIM3sourceSquaresGiven,
+              model->BSIM3rs,
+              model->BSIM3rsc,
+              here->BSIM3sourceSquares,
+              &(here->BSIM3drainConductance),
+              &(here->BSIM3sourceConductance)
+              );
+              if (error)
+                  return(error);
+            }
               if (here->BSIM3drainConductance > 0.0)
                   here->BSIM3drainConductance = 1.0
                                               / here->BSIM3drainConductance;

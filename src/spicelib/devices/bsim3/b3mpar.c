@@ -39,6 +39,14 @@ GENmodel *inMod)
             mod->BSIM3capMod = value->iValue;
             mod->BSIM3capModGiven = TRUE;
             break;
+        case BSIM3_MOD_ACMMOD:
+            mod->BSIM3acmMod = value->iValue;
+            mod->BSIM3acmModGiven = TRUE;
+            break;
+        case BSIM3_MOD_CALCACM:
+            mod->BSIM3calcacm = value->iValue;
+            mod->BSIM3calcacmGiven = TRUE;
+            break;
         case  BSIM3_MOD_NOIMOD :
             mod->BSIM3noiMod = value->iValue;
             mod->BSIM3noiModGiven = TRUE;
@@ -436,6 +444,40 @@ GENmodel *inMod)
         case  BSIM3_MOD_TPBSWG :
             mod->BSIM3tpbswg = value->rValue;
             mod->BSIM3tpbswgGiven = TRUE;
+            break;
+
+          /* acm model */
+        case BSIM3_MOD_HDIF:
+            mod->BSIM3hdif = value->rValue;
+            mod->BSIM3hdifGiven = TRUE;
+            break;
+        case BSIM3_MOD_LDIF:
+            mod->BSIM3ldif = value->rValue;
+            mod->BSIM3ldifGiven = TRUE;
+            break;
+        case BSIM3_MOD_LD:
+            mod->BSIM3ld = value->rValue;
+            mod->BSIM3ldGiven = TRUE;
+            break;
+        case BSIM3_MOD_RD:
+            mod->BSIM3rd = value->rValue;
+            mod->BSIM3rdGiven = TRUE;
+            break;
+        case BSIM3_MOD_RS:
+            mod->BSIM3rs = value->rValue;
+            mod->BSIM3rsGiven = TRUE;
+            break;
+        case BSIM3_MOD_RDC:
+            mod->BSIM3rdc = value->rValue;
+            mod->BSIM3rdcGiven = TRUE;
+            break;
+        case BSIM3_MOD_RSC:
+            mod->BSIM3rsc = value->rValue;
+            mod->BSIM3rscGiven = TRUE;
+            break;
+        case BSIM3_MOD_WMLT:
+            mod->BSIM3wmlt = value->rValue;
+            mod->BSIM3wmltGiven = TRUE;
             break;
 
 	/* Length dependence */

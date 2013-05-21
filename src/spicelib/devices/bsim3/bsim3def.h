@@ -68,6 +68,7 @@ typedef struct sBSIM3instance
     int BSIM3mode;
     int BSIM3nqsMod;
     int BSIM3acnqsMod;
+    int BSIM3geo;
 
     /* OP point */
     double BSIM3qinv;
@@ -138,6 +139,7 @@ typedef struct sBSIM3instance
     unsigned BSIM3icVGSGiven :1;
     unsigned BSIM3nqsModGiven :1;
     unsigned BSIM3acnqsModGiven :1;
+    unsigned BSIM3geoGiven :1;
 
     double *BSIM3DdPtr;
     double *BSIM3GgPtr;
@@ -405,6 +407,8 @@ typedef struct sBSIM3model
 
     int    BSIM3mobMod;
     int    BSIM3capMod;
+    int    BSIM3acmMod;
+    int    BSIM3calcacm;
     int    BSIM3noiMod;
     int    BSIM3acnqsMod;
     int    BSIM3binUnit;
@@ -506,6 +510,18 @@ typedef struct sBSIM3model
     double BSIM3tpb;
     double BSIM3tpbsw;
     double BSIM3tpbswg;
+
+    /* ACM model */
+    double BSIM3xl;
+    double BSIM3xw;
+    double BSIM3hdif;
+    double BSIM3ldif;
+    double BSIM3ld;
+    double BSIM3rd;
+    double BSIM3rs;
+    double BSIM3rdc;
+    double BSIM3rsc;
+    double BSIM3wmlt;
 
     /* Length Dependence */
     double BSIM3lcdsc;
@@ -856,6 +872,8 @@ typedef struct sBSIM3model
     unsigned  BSIM3mobModGiven :1;
     unsigned  BSIM3binUnitGiven :1;
     unsigned  BSIM3capModGiven :1;
+    unsigned  BSIM3acmModGiven :1;
+    unsigned  BSIM3calcacmGiven :1;
     unsigned  BSIM3paramChkGiven :1;
     unsigned  BSIM3noiModGiven :1;
     unsigned  BSIM3acnqsModGiven :1;
@@ -958,6 +976,17 @@ typedef struct sBSIM3model
     unsigned  BSIM3tpbswGiven  :1;
     unsigned  BSIM3tpbswgGiven :1;
 
+    /* ACM model */
+    unsigned  BSIM3xlGiven   :1;
+    unsigned  BSIM3xwGiven   :1;
+    unsigned  BSIM3hdifGiven  :1;
+    unsigned  BSIM3ldifGiven   :1;
+    unsigned  BSIM3ldGiven   :1;
+    unsigned  BSIM3rdGiven   :1;
+    unsigned  BSIM3rsGiven   :1;
+    unsigned  BSIM3rdcGiven   :1;
+    unsigned  BSIM3rscGiven   :1;
+    unsigned  BSIM3wmltGiven   :1;
 
     /* Length dependence */
     unsigned  BSIM3lcdscGiven   :1;
@@ -1303,9 +1332,12 @@ typedef struct sBSIM3model
 #define BSIM3_M 16
 #define BSIM3_DELVTO 17
 #define BSIM3_MULU0 18
+#define BSIM3_GEO 19
 
 /* model parameters */
-#define BSIM3_MOD_CAPMOD          101
+#define BSIM3_MOD_CAPMOD          100
+#define BSIM3_MOD_ACMMOD          101
+#define BSIM3_MOD_CALCACM         102
 #define BSIM3_MOD_MOBMOD          103
 #define BSIM3_MOD_NOIMOD          104
 
@@ -1771,6 +1803,18 @@ typedef struct sBSIM3model
 #define BSIM3_MOD_WLC              700
 #define BSIM3_MOD_WWC              701
 #define BSIM3_MOD_WWLC             702
+
+/* ACM parameters */
+#define BSIM3_MOD_XL               703
+#define BSIM3_MOD_XW               704
+#define BSIM3_MOD_HDIF             711
+#define BSIM3_MOD_LDIF             712
+#define BSIM3_MOD_LD               713
+#define BSIM3_MOD_RD               714
+#define BSIM3_MOD_RS               715
+#define BSIM3_MOD_RDC              716
+#define BSIM3_MOD_RSC              717
+#define BSIM3_MOD_WMLT             718
 
 /* device questions */
 #define BSIM3_DNODE                751
