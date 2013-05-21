@@ -807,39 +807,39 @@ int Size_Not_Found, error;
                                     * pParam->BSIM3weffCV * pParam->BSIM3leffCV * T0);
 
               /* process source/drain series resistance */
-            /* ACM model */
-            if (model->BSIM3acmMod == 0)
-            {
-              here->BSIM3drainConductance = model->BSIM3sheetResistance
-                                              * here->BSIM3drainSquares;
-              here->BSIM3sourceConductance = model->BSIM3sheetResistance
-                                              * here->BSIM3sourceSquares;
-            }
-            else /* ACM > 0 */
-            {
-              error = ACM_SourceDrainResistances(
-              model->BSIM3acmMod,
-              model->BSIM3ld,
-              model->BSIM3ldif,
-              model->BSIM3hdif,
-              model->BSIM3wmlt,
-              here->BSIM3w,
-              model->BSIM3xw,
-              model->BSIM3sheetResistance,
-              here->BSIM3drainSquaresGiven,
-              model->BSIM3rd,
-              model->BSIM3rdc,
-              here->BSIM3drainSquares,
-              here->BSIM3sourceSquaresGiven,
-              model->BSIM3rs,
-              model->BSIM3rsc,
-              here->BSIM3sourceSquares,
-              &(here->BSIM3drainConductance),
-              &(here->BSIM3sourceConductance)
-              );
-              if (error)
-                  return(error);
-            }
+              /* ACM model */
+              if (model->BSIM3acmMod == 0)
+              {
+                  here->BSIM3drainConductance = model->BSIM3sheetResistance
+                                                  * here->BSIM3drainSquares;
+                  here->BSIM3sourceConductance = model->BSIM3sheetResistance
+                                               * here->BSIM3sourceSquares;
+              }
+              else /* ACM > 0 */
+              {
+                  error = ACM_SourceDrainResistances(
+                  model->BSIM3acmMod,
+                  model->BSIM3ld,
+                  model->BSIM3ldif,
+                  model->BSIM3hdif,
+                  model->BSIM3wmlt,
+                  here->BSIM3w,
+                  model->BSIM3xw,
+                  model->BSIM3sheetResistance,
+                  here->BSIM3drainSquaresGiven,
+                  model->BSIM3rd,
+                  model->BSIM3rdc,
+                  here->BSIM3drainSquares,
+                  here->BSIM3sourceSquaresGiven,
+                  model->BSIM3rs,
+                  model->BSIM3rsc,
+                  here->BSIM3sourceSquares,
+                  &(here->BSIM3drainConductance),
+                  &(here->BSIM3sourceConductance)
+                  );
+                  if (error)
+                      return(error);
+              }
               if (here->BSIM3drainConductance > 0.0)
                   here->BSIM3drainConductance = 1.0
                                               / here->BSIM3drainConductance;

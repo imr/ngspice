@@ -378,54 +378,54 @@ for (; model != NULL; model = model->BSIM3nextModel)
 
           /* Source/drain junction diode DC model begins */
           Nvtm = model->BSIM3vtm * model->BSIM3jctEmissionCoeff;
-        /* acm model */
-        if (model->BSIM3acmMod == 0)
-        {
-          if ((here->BSIM3sourceArea <= 0.0) && (here->BSIM3sourcePerimeter <= 0.0))
-          {   SourceSatCurrent = 1.0e-14;
+          /* acm model */
+          if (model->BSIM3acmMod == 0)
+          {
+            if ((here->BSIM3sourceArea <= 0.0) && (here->BSIM3sourcePerimeter <= 0.0))
+            {   SourceSatCurrent = 1.0e-14;
+            }
+            else
+            {   SourceSatCurrent = here->BSIM3sourceArea
+                                 * model->BSIM3jctTempSatCurDensity
+                                 + here->BSIM3sourcePerimeter
+                                 * model->BSIM3jctSidewallTempSatCurDensity;
+            }
+            if ((here->BSIM3drainArea <= 0.0) && (here->BSIM3drainPerimeter <= 0.0))
+            {   DrainSatCurrent = 1.0e-14;
+            }
+            else
+            {   DrainSatCurrent = here->BSIM3drainArea
+                                * model->BSIM3jctTempSatCurDensity
+                                + here->BSIM3drainPerimeter
+                                * model->BSIM3jctSidewallTempSatCurDensity;
+            }
           }
           else
-          {   SourceSatCurrent = here->BSIM3sourceArea
-                               * model->BSIM3jctTempSatCurDensity
-                               + here->BSIM3sourcePerimeter
-                               * model->BSIM3jctSidewallTempSatCurDensity;
+          {
+            error = ACM_saturationCurrents(
+            model->BSIM3acmMod,
+            model->BSIM3calcacm,
+            here->BSIM3geo,
+            model->BSIM3hdif,
+            model->BSIM3wmlt,
+            here->BSIM3w,
+            model->BSIM3xw,
+            model->BSIM3jctTempSatCurDensity,
+            model->BSIM3jctSidewallTempSatCurDensity,
+            here->BSIM3drainAreaGiven,
+            here->BSIM3drainArea,
+            here->BSIM3drainPerimeterGiven,
+            here->BSIM3drainPerimeter,
+            here->BSIM3sourceAreaGiven,
+            here->BSIM3sourceArea,
+            here->BSIM3sourcePerimeterGiven,
+            here->BSIM3sourcePerimeter,
+            &DrainSatCurrent,
+            &SourceSatCurrent
+            );
+            if (error)
+                return(error);
           }
-          if ((here->BSIM3drainArea <= 0.0) && (here->BSIM3drainPerimeter <= 0.0))
-          {   DrainSatCurrent = 1.0e-14;
-          }
-          else
-          {   DrainSatCurrent = here->BSIM3drainArea
-                              * model->BSIM3jctTempSatCurDensity
-                              + here->BSIM3drainPerimeter
-                              * model->BSIM3jctSidewallTempSatCurDensity;
-          }
-        }
-        else
-        {
-          error = ACM_saturationCurrents(
-          model->BSIM3acmMod,
-          model->BSIM3calcacm,
-          here->BSIM3geo,
-          model->BSIM3hdif,
-          model->BSIM3wmlt,
-          here->BSIM3w,
-          model->BSIM3xw,
-          model->BSIM3jctTempSatCurDensity,
-          model->BSIM3jctSidewallTempSatCurDensity,
-          here->BSIM3drainAreaGiven,
-          here->BSIM3drainArea,
-          here->BSIM3drainPerimeterGiven,
-          here->BSIM3drainPerimeter,
-          here->BSIM3sourceAreaGiven,
-          here->BSIM3sourceArea,
-          here->BSIM3sourcePerimeterGiven,
-          here->BSIM3sourcePerimeter,
-          &DrainSatCurrent,
-          &SourceSatCurrent
-          );
-          if (error)
-              return(error);
-        }
 
           if (SourceSatCurrent <= 0.0)
           {   here->BSIM3gbs = ckt->CKTgmin;
@@ -2268,66 +2268,66 @@ finished:
                            along gate side
                */
 
-            if (model->BSIM3acmMod == 0)
-            {
-              czbd = model->BSIM3unitAreaTempJctCap * here->BSIM3drainArea; /*bug fix */
-              czbs = model->BSIM3unitAreaTempJctCap * here->BSIM3sourceArea;
-              if (here->BSIM3drainPerimeter < pParam->BSIM3weff)
+              if (model->BSIM3acmMod == 0)
               {
-              czbdswg = model->BSIM3unitLengthGateSidewallTempJctCap
-                      * here->BSIM3drainPerimeter;
-              czbdsw = 0.0;
+                  czbd = model->BSIM3unitAreaTempJctCap * here->BSIM3drainArea; /*bug fix */
+                  czbs = model->BSIM3unitAreaTempJctCap * here->BSIM3sourceArea;
+                  if (here->BSIM3drainPerimeter < pParam->BSIM3weff)
+                  {
+                  czbdswg = model->BSIM3unitLengthGateSidewallTempJctCap
+                          * here->BSIM3drainPerimeter;
+                  czbdsw = 0.0;
+                  }
+                  else
+                  {
+                  czbdsw = model->BSIM3unitLengthSidewallTempJctCap
+                         * (here->BSIM3drainPerimeter - pParam->BSIM3weff);
+                  czbdswg = model->BSIM3unitLengthGateSidewallTempJctCap
+                          *  pParam->BSIM3weff;
+                  }
+                  if (here->BSIM3sourcePerimeter < pParam->BSIM3weff)
+                  {
+                  czbssw = 0.0;
+                  czbsswg = model->BSIM3unitLengthGateSidewallTempJctCap
+                          * here->BSIM3sourcePerimeter;
+                  }
+                  else
+                  {
+                  czbssw = model->BSIM3unitLengthSidewallTempJctCap
+                         * (here->BSIM3sourcePerimeter - pParam->BSIM3weff);
+                  czbsswg = model->BSIM3unitLengthGateSidewallTempJctCap
+                          *  pParam->BSIM3weff;
+                  }
+              } else {
+                  error = ACM_junctionCapacitances(
+                  model->BSIM3acmMod,
+                  model->BSIM3calcacm,
+                  here->BSIM3geo,
+                  model->BSIM3hdif,
+                  model->BSIM3wmlt,
+                  here->BSIM3w,
+                  model->BSIM3xw,
+                  here->BSIM3drainAreaGiven,
+                  here->BSIM3drainArea,
+                  here->BSIM3drainPerimeterGiven,
+                  here->BSIM3drainPerimeter,
+                  here->BSIM3sourceAreaGiven,
+                  here->BSIM3sourceArea,
+                  here->BSIM3sourcePerimeterGiven,
+                  here->BSIM3sourcePerimeter,
+                  model->BSIM3unitAreaTempJctCap,
+                  model->BSIM3unitLengthSidewallTempJctCap,
+                  model->BSIM3unitLengthGateSidewallJctCap,
+                  &czbd,
+                  &czbdsw,
+                  &czbdswg,
+                  &czbs,
+                  &czbssw,
+                  &czbsswg
+                  );
+                  if (error)
+                      return(error);
               }
-              else
-              {
-              czbdsw = model->BSIM3unitLengthSidewallTempJctCap
-                     * (here->BSIM3drainPerimeter - pParam->BSIM3weff);
-              czbdswg = model->BSIM3unitLengthGateSidewallTempJctCap
-                      *  pParam->BSIM3weff;
-              }
-              if (here->BSIM3sourcePerimeter < pParam->BSIM3weff)
-              {
-              czbssw = 0.0;
-              czbsswg = model->BSIM3unitLengthGateSidewallTempJctCap
-                      * here->BSIM3sourcePerimeter;
-              }
-              else
-              {
-              czbssw = model->BSIM3unitLengthSidewallTempJctCap
-                     * (here->BSIM3sourcePerimeter - pParam->BSIM3weff);
-              czbsswg = model->BSIM3unitLengthGateSidewallTempJctCap
-                      *  pParam->BSIM3weff;
-              }
-            } else {
-              error = ACM_junctionCapacitances(
-              model->BSIM3acmMod,
-              model->BSIM3calcacm,
-              here->BSIM3geo,
-              model->BSIM3hdif,
-              model->BSIM3wmlt,
-              here->BSIM3w,
-              model->BSIM3xw,
-              here->BSIM3drainAreaGiven,
-              here->BSIM3drainArea,
-              here->BSIM3drainPerimeterGiven,
-              here->BSIM3drainPerimeter,
-              here->BSIM3sourceAreaGiven,
-              here->BSIM3sourceArea,
-              here->BSIM3sourcePerimeterGiven,
-              here->BSIM3sourcePerimeter,
-              model->BSIM3unitAreaTempJctCap,
-              model->BSIM3unitLengthSidewallTempJctCap,
-              model->BSIM3unitLengthGateSidewallJctCap,
-              &czbd,
-              &czbdsw,
-              &czbdswg,
-              &czbs,
-              &czbssw,
-              &czbsswg
-              );
-              if (error)
-                  return(error);
-            }
 
               MJ = model->BSIM3bulkJctBotGradingCoeff;
               MJSW = model->BSIM3bulkJctSideGradingCoeff;
