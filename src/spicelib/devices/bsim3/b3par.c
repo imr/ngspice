@@ -91,6 +91,10 @@ IFvalue *select)
             here->BSIM3acnqsMod = value->iValue;
             here->BSIM3acnqsModGiven = TRUE;
             break;
+        case BSIM3_GEO:
+            here->BSIM3geo = value->iValue;
+            here->BSIM3geoGiven = TRUE;
+            break;
         case BSIM3_DELVTO:
             here->BSIM3delvto = value->rValue;
             here->BSIM3delvtoGiven = TRUE;

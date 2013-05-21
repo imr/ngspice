@@ -175,22 +175,31 @@ FILE *fplog;
             printf("Warning: Pscbe2 = %g is not positive.\n", pParam->BSIM3pscbe2);
         }
 
-      if (model->BSIM3unitLengthSidewallJctCap > 0.0 || 
-            model->BSIM3unitLengthGateSidewallJctCap > 0.0)
-      {
-        if (here->BSIM3drainPerimeter < pParam->BSIM3weff)
-        {   fprintf(fplog, "Warning: Pd = %g is less than W.\n",
-                    here->BSIM3drainPerimeter);
-            printf("Warning: Pd = %g is less than W.\n",
-                    here->BSIM3drainPerimeter);
+        /* ACM model */
+        if (model->BSIM3acmMod == 0) {
+            if (model->BSIM3unitLengthSidewallJctCap > 0.0 || 
+                  model->BSIM3unitLengthGateSidewallJctCap > 0.0)
+            {
+              if (here->BSIM3drainPerimeter < pParam->BSIM3weff)
+              {   fprintf(fplog, "Warning: Pd = %g is less than W.\n",
+                          here->BSIM3drainPerimeter);
+                  printf("Warning: Pd = %g is less than W.\n",
+                          here->BSIM3drainPerimeter);
+              }
+              if (here->BSIM3sourcePerimeter < pParam->BSIM3weff)
+              {   fprintf(fplog, "Warning: Ps = %g is less than W.\n",
+                          here->BSIM3sourcePerimeter);
+                  printf("Warning: Ps = %g is less than W.\n",
+                          here->BSIM3sourcePerimeter);
+              }
+            }
         }
-        if (here->BSIM3sourcePerimeter < pParam->BSIM3weff)
-        {   fprintf(fplog, "Warning: Ps = %g is less than W.\n",
-                    here->BSIM3sourcePerimeter);
-            printf("Warning: Ps = %g is less than W.\n",
-                    here->BSIM3sourcePerimeter);
+        if ((model->BSIM3calcacm > 0) && (model->BSIM3acmMod != 12))
+        {   fprintf(fplog, "Warning: CALCACM = %d is wrong. Set back to 0.\n",
+                model->BSIM3calcacm);
+            printf("Warning: CALCACM = %d is wrong. Set back to 0.\n", model->BSIM3calcacm);
+            model->BSIM3calcacm = 0;
         }
-      }
 
         if (pParam->BSIM3noff < 0.1)
         {   fprintf(fplog, "Warning: Noff = %g is too small.\n",
