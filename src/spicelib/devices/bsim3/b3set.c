@@ -802,6 +802,12 @@ BSIM3instance **InstArray;
            model->BSIM3dwc = model->BSIM3Wint;
         if (!model->BSIM3dlcGiven)
            model->BSIM3dlc = model->BSIM3Lint;
+
+        if (!model->BSIM3xlGiven)
+           model->BSIM3xl = 0.0;
+        if (!model->BSIM3xwGiven)
+           model->BSIM3xw = 0.0;
+
         if (!model->BSIM3cfGiven)
             model->BSIM3cf = 2.0 * EPSOX / PI
                            * log(1.0 + 0.4e-6 / model->BSIM3tox);
