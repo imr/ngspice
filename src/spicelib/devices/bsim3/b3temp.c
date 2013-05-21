@@ -193,7 +193,7 @@ int Size_Not_Found, error;
                        + model->BSIM3Wwlc / (T2 * T3);
                   pParam->BSIM3dwc = model->BSIM3dwc + tmp2;
 
-                  pParam->BSIM3leff = here->BSIM3l - 2.0 * pParam->BSIM3dl;
+                  pParam->BSIM3leff = here->BSIM3l + model->BSIM3xl - 2.0 * pParam->BSIM3dl;
                   if (pParam->BSIM3leff <= 0.0)
                   {   IFuid namarray[2];
                       namarray[0] = model->BSIM3modName;
@@ -204,7 +204,7 @@ int Size_Not_Found, error;
                       return(E_BADPARM);
                   }
 
-                  pParam->BSIM3weff = here->BSIM3w - 2.0 * pParam->BSIM3dw;
+                  pParam->BSIM3weff = here->BSIM3w + model->BSIM3xw - 2.0 * pParam->BSIM3dw;
                   if (pParam->BSIM3weff <= 0.0)
                   {   IFuid namarray[2];
                       namarray[0] = model->BSIM3modName;
@@ -215,7 +215,7 @@ int Size_Not_Found, error;
                       return(E_BADPARM);
                   }
 
-                  pParam->BSIM3leffCV = here->BSIM3l - 2.0 * pParam->BSIM3dlc;
+                  pParam->BSIM3leffCV = here->BSIM3l + model->BSIM3xl - 2.0 * pParam->BSIM3dlc;
                   if (pParam->BSIM3leffCV <= 0.0)
                   {   IFuid namarray[2];
                       namarray[0] = model->BSIM3modName;
@@ -226,7 +226,7 @@ int Size_Not_Found, error;
                       return(E_BADPARM);
                   }
 
-                  pParam->BSIM3weffCV = here->BSIM3w - 2.0 * pParam->BSIM3dwc;
+                  pParam->BSIM3weffCV = here->BSIM3w + model->BSIM3xw - 2.0 * pParam->BSIM3dwc;
                   if (pParam->BSIM3weffCV <= 0.0)
                   {   IFuid namarray[2];
                       namarray[0] = model->BSIM3modName;

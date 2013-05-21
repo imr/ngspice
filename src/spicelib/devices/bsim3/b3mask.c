@@ -1251,6 +1251,14 @@ IFvalue *value)
         case BSIM3_MOD_WMAX:
             value->rValue = model->BSIM3Wmax;
             return(OK);
+
+        case BSIM3_MOD_XL:
+            value->rValue = model->BSIM3xl;
+            return(OK);
+        case BSIM3_MOD_XW:
+            value->rValue = model->BSIM3xw;
+            return(OK);
+
         case BSIM3_MOD_NOIA:
             value->rValue = model->BSIM3oxideTrapDensityA;
             return(OK);

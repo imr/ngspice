@@ -185,6 +185,10 @@ IOP( "lwl",  BSIM3_MOD_LWL, IF_REAL, "Length reduction parameter"),
 IOP( "lwlc", BSIM3_MOD_LWLC, IF_REAL, "Length reduction parameter for CV"),
 IOP( "lmin", BSIM3_MOD_LMIN, IF_REAL, "Minimum length for the model"),
 IOP( "lmax", BSIM3_MOD_LMAX, IF_REAL, "Maximum length for the model"),
+
+IOP( "xl", BSIM3_MOD_XL, IF_REAL, "Length correction parameter"),
+IOP( "xw", BSIM3_MOD_XW, IF_REAL, "Width correction parameter"),
+
 IOP( "wr",   BSIM3_MOD_WR, IF_REAL, "Width dependence of rds"),
 IOP( "wint", BSIM3_MOD_WINT, IF_REAL, "Width reduction parameter"),
 IOP( "dwg",  BSIM3_MOD_DWG, IF_REAL, "Width reduction parameter"),

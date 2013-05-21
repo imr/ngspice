@@ -1678,6 +1678,15 @@ GENmodel *inMod)
             mod->BSIM3WmaxGiven = TRUE;
             break;
 
+       case BSIM3_MOD_XL:
+            mod->BSIM3xl = value->rValue;
+            mod->BSIM3xlGiven = TRUE;
+            break;
+       case BSIM3_MOD_XW:
+            mod->BSIM3xw = value->rValue;
+            mod->BSIM3xwGiven = TRUE;
+            break;
+
         case  BSIM3_MOD_NOIA :
             mod->BSIM3oxideTrapDensityA = value->rValue;
             mod->BSIM3oxideTrapDensityAGiven = TRUE;
