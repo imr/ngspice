@@ -75,7 +75,12 @@ NIconvTest(CKTcircuit *ckt)
         node = node->next ;
         if (node->type == SP_VOLTAGE)
         {
-            if (fabs (ckt->CKTfvk [i] + ckt->CKTdiagGmin * ckt->CKTrhs [i]) > maximum)
+
+#ifdef STEPDEBUG
+            fprintf (stderr, "Index: %d\tValue: %-.9g\tThreshold: %-.9g\n", i, fabs (ckt->CKTfvk [i]), ckt->CKTreltol * maximum + ckt->CKTabstol) ;
+#endif
+
+            if (fabs (ckt->CKTfvk [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
                 return 1 ;
         }
     }
