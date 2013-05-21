@@ -123,14 +123,14 @@ GENmodel *inMod)
         case BSIM3_MOD_NPEAK:
             mod->BSIM3npeak = value->rValue;
             mod->BSIM3npeakGiven = TRUE;
-	    if (mod->BSIM3npeak > 1.0e20)
-		mod->BSIM3npeak *= 1.0e-6;
+            if (mod->BSIM3npeak > 1.0e20)
+                mod->BSIM3npeak *= 1.0e-6;
             break;
         case BSIM3_MOD_NGATE:
             mod->BSIM3ngate = value->rValue;
             mod->BSIM3ngateGiven = TRUE;
-	    if (mod->BSIM3ngate > 1.0e23)
-		mod->BSIM3ngate *= 1.0e-6;
+            if (mod->BSIM3ngate > 1.0e23)
+                mod->BSIM3ngate *= 1.0e-6;
             break;
         case BSIM3_MOD_GAMMA1:
             mod->BSIM3gamma1 = value->rValue;
@@ -438,7 +438,7 @@ GENmodel *inMod)
             mod->BSIM3tpbswgGiven = TRUE;
             break;
 
-	/* Length dependence */
+        /* Length dependence */
         case  BSIM3_MOD_LCDSC :
             mod->BSIM3lcdsc = value->rValue;
             mod->BSIM3lcdscGiven = TRUE;
@@ -502,14 +502,14 @@ GENmodel *inMod)
         case BSIM3_MOD_LNPEAK:
             mod->BSIM3lnpeak = value->rValue;
             mod->BSIM3lnpeakGiven = TRUE;
-	    if (mod->BSIM3lnpeak > 1.0e20)
-		mod->BSIM3lnpeak *= 1.0e-6;
+            if (mod->BSIM3lnpeak > 1.0e20)
+                mod->BSIM3lnpeak *= 1.0e-6;
             break;
         case BSIM3_MOD_LNGATE:
             mod->BSIM3lngate = value->rValue;
             mod->BSIM3lngateGiven = TRUE;
-	    if (mod->BSIM3lngate > 1.0e23)
-		mod->BSIM3lngate *= 1.0e-6;
+            if (mod->BSIM3lngate > 1.0e23)
+                mod->BSIM3lngate *= 1.0e-6;
             break;
         case BSIM3_MOD_LGAMMA1:
             mod->BSIM3lgamma1 = value->rValue;
@@ -781,7 +781,7 @@ GENmodel *inMod)
             mod->BSIM3lvoffcvGiven = TRUE;
             break;
 
-	/* Width dependence */
+        /* Width dependence */
         case  BSIM3_MOD_WCDSC :
             mod->BSIM3wcdsc = value->rValue;
             mod->BSIM3wcdscGiven = TRUE;
@@ -845,14 +845,14 @@ GENmodel *inMod)
         case BSIM3_MOD_WNPEAK:
             mod->BSIM3wnpeak = value->rValue;
             mod->BSIM3wnpeakGiven = TRUE;
-	    if (mod->BSIM3wnpeak > 1.0e20)
-		mod->BSIM3wnpeak *= 1.0e-6;
+            if (mod->BSIM3wnpeak > 1.0e20)
+                mod->BSIM3wnpeak *= 1.0e-6;
             break;
         case BSIM3_MOD_WNGATE:
             mod->BSIM3wngate = value->rValue;
             mod->BSIM3wngateGiven = TRUE;
-	    if (mod->BSIM3wngate > 1.0e23)
-		mod->BSIM3wngate *= 1.0e-6;
+            if (mod->BSIM3wngate > 1.0e23)
+                mod->BSIM3wngate *= 1.0e-6;
             break;
         case BSIM3_MOD_WGAMMA1:
             mod->BSIM3wgamma1 = value->rValue;
@@ -1124,7 +1124,7 @@ GENmodel *inMod)
             mod->BSIM3wvoffcvGiven = TRUE;
             break;
 
-	/* Cross-term dependence */
+        /* Cross-term dependence */
         case  BSIM3_MOD_PCDSC :
             mod->BSIM3pcdsc = value->rValue;
             mod->BSIM3pcdscGiven = TRUE;
@@ -1188,14 +1188,14 @@ GENmodel *inMod)
         case BSIM3_MOD_PNPEAK:
             mod->BSIM3pnpeak = value->rValue;
             mod->BSIM3pnpeakGiven = TRUE;
-	    if (mod->BSIM3pnpeak > 1.0e20)
-		mod->BSIM3pnpeak *= 1.0e-6;
+            if (mod->BSIM3pnpeak > 1.0e20)
+                mod->BSIM3pnpeak *= 1.0e-6;
             break;
         case BSIM3_MOD_PNGATE:
             mod->BSIM3pngate = value->rValue;
             mod->BSIM3pngateGiven = TRUE;
-	    if (mod->BSIM3pngate > 1.0e23)
-		mod->BSIM3pngate *= 1.0e-6;
+            if (mod->BSIM3pngate > 1.0e23)
+                mod->BSIM3pngate *= 1.0e-6;
             break;
         case BSIM3_MOD_PGAMMA1:
             mod->BSIM3pgamma1 = value->rValue;
