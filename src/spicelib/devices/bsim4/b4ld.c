@@ -5439,35 +5439,36 @@ line900:
 //////////////////////////////////////////////
 
 // RHS
-        (*(ckt->CKTfvk + here->BSIM4dNodePrime) -= m * (ceqjd - ceqbd + ceqgdtot - ceqdrn - ceqqd + Idtoteq)); /* NO ceqgdtot in FVK */
+        *(ckt->CKTfvk + here->BSIM4dNodePrime) -= m * (ceqjd - ceqbd + ceqgdtot - ceqdrn - ceqqd + Idtoteq) ; /* NO ceqgdtot in FVK */
 
-        (*(ckt->CKTfvk + here->BSIM4gNodePrime) += m * (ceqqg - ceqgcrg + Igtoteq)); /* NO ceqgcrg in FVK */
+        *(ckt->CKTfvk + here->BSIM4gNodePrime) += m * (ceqqg - ceqgcrg + Igtoteq) ; /* NO ceqgcrg in FVK */
 
         if (here->BSIM4rgateMod == 2)
-            (*(ckt->CKTfvk + here->BSIM4gNodeExt) += m * ceqgcrg); /* NO ceqgcrg in FVK */
+            *(ckt->CKTfvk + here->BSIM4gNodeExt) += m * ceqgcrg ; /* NO ceqgcrg in FVK */
         else if (here->BSIM4rgateMod == 3)
-            (*(ckt->CKTfvk + here->BSIM4gNodeMid) += m * (ceqqgmid + ceqgcrg)); /* NO ceqgcrg in FVK */
+            *(ckt->CKTfvk + here->BSIM4gNodeMid) += m * (ceqqgmid + ceqgcrg) ; /* NO ceqgcrg in FVK */
 
         if (!here->BSIM4rbodyMod)
-        {   (*(ckt->CKTfvk + here->BSIM4bNodePrime) -= m * (ceqbd + ceqbs - ceqjd - ceqjs - ceqqb + Ibtoteq));
-            (*(ckt->CKTfvk + here->BSIM4sNodePrime) -= m * (ceqdrn - ceqbs + ceqjs
-                           + ceqqg + ceqqb + ceqqd + ceqqgmid - ceqgstot + Istoteq)); /* NO ceqgstot in FVK */
-        }
-        else
-        {   (*(ckt->CKTfvk + here->BSIM4dbNode) += m * (ceqjd + ceqqjd));
-            (*(ckt->CKTfvk + here->BSIM4bNodePrime) -= m * (ceqbd + ceqbs - ceqqb + Ibtoteq));
-            (*(ckt->CKTfvk + here->BSIM4sbNode) += m * (ceqjs + ceqqjs));
-            (*(ckt->CKTfvk + here->BSIM4sNodePrime) -= m * (ceqdrn - ceqbs + ceqjs + ceqqd
-                           + ceqqg + ceqqb + ceqqjd + ceqqjs + ceqqgmid - ceqgstot + Istoteq)); /* NO ceqgstot in FVK */
+        {
+            *(ckt->CKTfvk + here->BSIM4bNodePrime) -= m * (ceqbd + ceqbs - ceqjd - ceqjs - ceqqb + Ibtoteq) ;
+            *(ckt->CKTfvk + here->BSIM4sNodePrime) -= m * (ceqdrn - ceqbs + ceqjs
+                           + ceqqg + ceqqb + ceqqd + ceqqgmid - ceqgstot + Istoteq) ; /* NO ceqgstot in FVK */
+        } else {
+            *(ckt->CKTfvk + here->BSIM4dbNode) += m * (ceqjd + ceqqjd) ;
+            *(ckt->CKTfvk + here->BSIM4bNodePrime) -= m * (ceqbd + ceqbs - ceqqb + Ibtoteq) ;
+            *(ckt->CKTfvk + here->BSIM4sbNode) += m * (ceqjs + ceqqjs) ;
+            *(ckt->CKTfvk + here->BSIM4sNodePrime) -= m * (ceqdrn - ceqbs + ceqjs + ceqqd
+                           + ceqqg + ceqqb + ceqqjd + ceqqjs + ceqqgmid - ceqgstot + Istoteq) ; /* NO ceqgstot in FVK */
         }
 
         if (model->BSIM4rdsMod)
-        {   (*(ckt->CKTfvk + here->BSIM4dNode) += m * ceqgdtot); /* NO ceqgdtot in FVK */
-            (*(ckt->CKTfvk + here->BSIM4sNode) -= m * ceqgstot); /* NO ceqgstot in FVK */
+        {
+            *(ckt->CKTfvk + here->BSIM4dNode) += m * ceqgdtot ; /* NO ceqgdtot in FVK */
+            *(ckt->CKTfvk + here->BSIM4sNode) -= m * ceqgstot ; /* NO ceqgstot in FVK */
         }
 
         if (here->BSIM4trnqsMod)
-            (*(ckt->CKTfvk + here->BSIM4qNode) -= m * (cqcheq - cqdef));
+            *(ckt->CKTfvk + here->BSIM4qNode) -= m * (cqcheq - cqdef) ;
 
 
 // Matrice
@@ -5611,7 +5612,7 @@ line900:
                *(ckt->CKTfvk + here->BSIM4dbNode) -= m * here->BSIM4grbpd * *(ckt->CKTrhsOld + here->BSIM4bNodePrime) ;
                *(ckt->CKTfvk + here->BSIM4dbNode) -= m * here->BSIM4grbdb * *(ckt->CKTrhsOld + here->BSIM4bNode) ;
                *(ckt->CKTfvk + here->BSIM4bNodePrime) -= m * here->BSIM4grbpd * *(ckt->CKTrhsOld + here->BSIM4dbNode) ;
-               *(ckt->CKTfvk + here->BSIM4bNodePrime) -= m * here->BSIM4grbpb * *(ckt->CKTrhsOld + here->BSIM4dbNode) ;
+               *(ckt->CKTfvk + here->BSIM4bNodePrime) -= m * here->BSIM4grbpb * *(ckt->CKTrhsOld + here->BSIM4bNode) ;
                *(ckt->CKTfvk + here->BSIM4bNodePrime) -= m * here->BSIM4grbps * *(ckt->CKTrhsOld + here->BSIM4sbNode) ;
                *(ckt->CKTfvk + here->BSIM4bNodePrime) += m * (here->BSIM4grbpd + here->BSIM4grbps 
                                                       + here->BSIM4grbpb) * *(ckt->CKTrhsOld + here->BSIM4bNodePrime) ;
