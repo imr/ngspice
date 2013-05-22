@@ -1313,7 +1313,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     RANGECHECK(model->HSMHV_sub2l,      0.0,      1.0, "SUB2L") ;
     RANGECHECK(model->HSMHV_voverp,     0.0,      2.0, "VOVERP") ;
     RANGECHECK(model->HSMHV_qme1,       0.0, 300.0e-9, "QME1") ;
-    RANGECHECK(model->HSMHV_qme2,       0.0,      0.0, "QME2") ;
+    RANGECHECK(model->HSMHV_qme2,       0.0,      2.0, "QME2") ;
     RANGECHECK(model->HSMHV_qme3,       0.0,800.0e-12, "QME3") ;
     RANGECHECK(model->HSMHV_glpart1,    0.0,      1.0, "GLPART1") ;
     RANGECHECK(model->HSMHV_tnom,      22.0,     32.0, "TNOM") ;
