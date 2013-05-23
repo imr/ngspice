@@ -2865,16 +2865,15 @@ inp_get_func_from_line(char *line)
 // only grab global functions; skip subckt functions
 //
 static void
-inp_grab_func(struct line *deck)
+inp_grab_func(struct line *c)
 {
-    struct line *c        = deck;
     bool        is_subckt = FALSE;
 
-    while (c != NULL) {
-        if (*c->li_line == '*') {
-            c = c->li_next;
+    for (; c; c = c->li_next) {
+
+        if (*c->li_line == '*')
             continue;
-        }
+
         if (ciprefix(".subckt", c->li_line))
             is_subckt = TRUE;
         if (ciprefix(".ends", c->li_line))
@@ -2884,22 +2883,20 @@ inp_grab_func(struct line *deck)
             inp_get_func_from_line(c->li_line);
             *c->li_line = '*';
         }
-        c = c->li_next;
     }
 }
 
 
 static void
-inp_grab_subckt_func(struct line *subckt)
+inp_grab_subckt_func(struct line *c)
 {
-    struct line *c = subckt;
-
-    while (!ciprefix(".ends", c->li_line)) {
+    for (; c; c = c->li_next) {
+        if (ciprefix(".ends", c->li_line))
+            break;
         if (ciprefix(".func", c->li_line)) {
             inp_get_func_from_line(c->li_line);
             *c->li_line = '*';
         }
-        c = c->li_next;
     }
 }
 
@@ -3103,22 +3100,22 @@ inp_expand_macros_in_func(void)
 
 
 static void
-inp_expand_macros_in_deck(struct line *deck)
+inp_expand_macros_in_deck(struct line *c)
 {
-    struct line *c = deck;
     int         prev_num_functions = 0;
 
-    while (c != NULL) {
-        if (*c->li_line == '*') {
-            c = c->li_next;
+    for (; c; c = c->li_next) {
+
+        if (*c->li_line == '*')
             continue;
-        }
+
         if (ciprefix(".subckt", c->li_line)) {
             prev_num_functions = num_functions;
             inp_grab_subckt_func(c);
             if (prev_num_functions != num_functions)
                 inp_expand_macros_in_func();
         }
+
         if (ciprefix(".ends", c->li_line)) {
             int i;
             for (i = prev_num_functions; i < num_functions; i++)
@@ -3128,7 +3125,6 @@ inp_expand_macros_in_deck(struct line *deck)
 
         if (*c->li_line != '*')
             c->li_line = inp_expand_macro_in_str(c->li_line);
-        c = c->li_next;
     }
 }
 
