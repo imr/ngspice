@@ -84,8 +84,8 @@ static void inp_remove_excess_ws(struct line *deck);
 static void expand_section_references(struct line *deck, int call_depth, char *dir_name);
 static void inp_grab_func(struct line *deck);
 static void inp_fix_inst_calls_for_numparam(struct line *deck);
-static void inp_expand_macros_in_func(void);
-static void inp_expand_macros_in_deck(struct line *deck);
+static void inp_expand_macros_in_func(int from);
+static struct line *inp_expand_macros_in_deck(struct line *deck);
 static void inp_fix_param_values(struct line *deck);
 static void inp_reorder_params(struct line *deck, struct line *list_head, struct line *end);
 static int  inp_split_multi_param_lines(struct line *deck, int line_number);
@@ -731,7 +731,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 //      tprint(working);
         inp_grab_func(working);
 
-        inp_expand_macros_in_func();
+        inp_expand_macros_in_func(0);
         inp_expand_macros_in_deck(working);
         inp_fix_param_values(working);
 
@@ -2777,9 +2777,11 @@ static struct function *
 find_function(char *name)
 {
     int i;
-    for (i = 0; i < num_functions; i++)
+
+    for (i = num_functions; --i >= 0; i++)
         if (strcmp(functions[i].name, name) == 0)
             return & functions[i];
+
     return NULL;
 }
 
@@ -2867,7 +2869,7 @@ inp_get_func_from_line(char *line)
 static void
 inp_grab_func(struct line *c)
 {
-    bool        is_subckt = FALSE;
+    int nesting = 0;
 
     for (; c; c = c->li_next) {
 
@@ -2875,24 +2877,16 @@ inp_grab_func(struct line *c)
             continue;
 
         if (ciprefix(".subckt", c->li_line))
-            is_subckt = TRUE;
+            nesting++;
         if (ciprefix(".ends", c->li_line))
-            is_subckt = FALSE;
+            nesting--;
 
-        if (!is_subckt && ciprefix(".func", c->li_line)) {
-            inp_get_func_from_line(c->li_line);
-            *c->li_line = '*';
-        }
-    }
-}
-
-
-static void
-inp_grab_subckt_func(struct line *c)
-{
-    for (; c; c = c->li_next) {
-        if (ciprefix(".ends", c->li_line))
+        if (nesting < 0)
             break;
+
+        if (nesting > 0)
+            continue;
+
         if (ciprefix(".func", c->li_line)) {
             inp_get_func_from_line(c->li_line);
             *c->li_line = '*';
@@ -3090,19 +3084,19 @@ inp_expand_macro_in_str(char *str)
 
 
 static void
-inp_expand_macros_in_func(void)
+inp_expand_macros_in_func(int from)
 {
     int  i;
 
-    for (i = 0; i < num_functions; i++)
+    for (i = from; i < num_functions; i++)
         functions[i].macro = inp_expand_macro_in_str(functions[i].macro);
 }
 
 
-static void
+static struct line *
 inp_expand_macros_in_deck(struct line *c)
 {
-    int         prev_num_functions = 0;
+    int  prev_num_functions = num_functions;
 
     for (; c; c = c->li_next) {
 
@@ -3110,22 +3104,32 @@ inp_expand_macros_in_deck(struct line *c)
             continue;
 
         if (ciprefix(".subckt", c->li_line)) {
-            prev_num_functions = num_functions;
-            inp_grab_subckt_func(c);
-            if (prev_num_functions != num_functions)
-                inp_expand_macros_in_func();
-        }
-
-        if (ciprefix(".ends", c->li_line)) {
             int i;
+
+            prev_num_functions = num_functions;
+
+            inp_grab_func(c->li_next);
+
+            if (prev_num_functions != num_functions)
+                inp_expand_macros_in_func(prev_num_functions);
+
+            c = inp_expand_macros_in_deck(c->li_next);
+
+
             for (i = prev_num_functions; i < num_functions; i++)
                 free_function(& functions[i]);
             num_functions = prev_num_functions;
+
+            continue;
         }
 
-        if (*c->li_line != '*')
-            c->li_line = inp_expand_macro_in_str(c->li_line);
+        if (ciprefix(".ends", c->li_line))
+            return c;
+
+        c->li_line = inp_expand_macro_in_str(c->li_line);
     }
+
+    return c;
 }
 
 
