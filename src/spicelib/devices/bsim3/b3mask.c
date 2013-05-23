@@ -43,6 +43,9 @@ IFvalue *value)
         case BSIM3_MOD_NOIMOD:
             value->iValue = model->BSIM3noiMod; 
             return(OK);
+        case BSIM3_MOD_NQSMOD:
+            value->iValue = model->BSIM3nqsMod;
+            return(OK);
         case BSIM3_MOD_ACNQSMOD:
             value->iValue = model->BSIM3acnqsMod; 
             return(OK);

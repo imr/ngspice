@@ -67,6 +67,12 @@ BSIM3instance **InstArray;
             model->BSIM3calcacm = 0;
         if (!model->BSIM3noiModGiven)
             model->BSIM3noiMod = 1;
+        if (!model->BSIM3nqsModGiven)
+            model->BSIM3nqsMod = 0;
+        else if ((model->BSIM3nqsMod != 0) && (model->BSIM3nqsMod != 1))
+        {   model->BSIM3nqsMod = 0;
+            printf("Warning: nqsMod has been set to its default value: 0.\n");
+        }
         if (!model->BSIM3acnqsModGiven)
             model->BSIM3acnqsMod = 0;
         else if ((model->BSIM3acnqsMod != 0) && (model->BSIM3acnqsMod != 1))
@@ -934,7 +940,12 @@ BSIM3instance **InstArray;
             if (!here->BSIM3wGiven)
                 here->BSIM3w = 5.0e-6;
             if (!here->BSIM3nqsModGiven)
-                here->BSIM3nqsMod = 0;
+                here->BSIM3nqsMod = model->BSIM3nqsMod;
+            else if ((here->BSIM3nqsMod != 0) && (here->BSIM3nqsMod != 1))
+            {   here->BSIM3nqsMod = model->BSIM3nqsMod;
+                printf("Warning: nqsMod has been set to its global value %d.\n",
+                model->BSIM3nqsMod);
+            }
             if (!here->BSIM3acnqsModGiven)
                 here->BSIM3acnqsMod = model->BSIM3acnqsMod;
             else if ((here->BSIM3acnqsMod != 0) && (here->BSIM3acnqsMod != 1))

@@ -365,6 +365,7 @@ typedef struct sBSIM3v32model
     int    BSIM3v32acmMod;
     int    BSIM3v32calcacm;
     int    BSIM3v32noiMod;
+    int    BSIM3v32nqsMod;
     int    BSIM3v32binUnit;
     int    BSIM3v32paramChk;
     char   *BSIM3v32version;
@@ -831,6 +832,7 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32calcacmGiven :1;
     unsigned  BSIM3v32paramChkGiven :1;
     unsigned  BSIM3v32noiModGiven :1;
+    unsigned  BSIM3v32nqsModGiven :1;
     unsigned  BSIM3v32typeGiven   :1;
     unsigned  BSIM3v32toxGiven   :1;
     unsigned  BSIM3v32versionGiven   :1;
@@ -1292,22 +1294,23 @@ typedef struct sBSIM3v32model
 #define BSIM3v32_MOD_CALCACM         102
 #define BSIM3v32_MOD_MOBMOD          103
 #define BSIM3v32_MOD_NOIMOD          104
+#define BSIM3v32_MOD_NQSMOD          105
 
-#define BSIM3v32_MOD_TOX             105
+#define BSIM3v32_MOD_TOX             106
 
-#define BSIM3v32_MOD_CDSC            106
-#define BSIM3v32_MOD_CDSCB           107
-#define BSIM3v32_MOD_CIT             108
-#define BSIM3v32_MOD_NFACTOR         109
-#define BSIM3v32_MOD_XJ              110
-#define BSIM3v32_MOD_VSAT            111
-#define BSIM3v32_MOD_AT              112
-#define BSIM3v32_MOD_A0              113
-#define BSIM3v32_MOD_A1              114
-#define BSIM3v32_MOD_A2              115
-#define BSIM3v32_MOD_KETA            116
-#define BSIM3v32_MOD_NSUB            117
-#define BSIM3v32_MOD_NPEAK           118
+#define BSIM3v32_MOD_CDSC            107
+#define BSIM3v32_MOD_CDSCB           108
+#define BSIM3v32_MOD_CIT             109
+#define BSIM3v32_MOD_NFACTOR         110
+#define BSIM3v32_MOD_XJ              111
+#define BSIM3v32_MOD_VSAT            112
+#define BSIM3v32_MOD_AT              113
+#define BSIM3v32_MOD_A0              114
+#define BSIM3v32_MOD_A1              115
+#define BSIM3v32_MOD_A2              116
+#define BSIM3v32_MOD_KETA            117
+#define BSIM3v32_MOD_NSUB            118
+#define BSIM3v32_MOD_NPEAK           119
 #define BSIM3v32_MOD_NGATE           120
 #define BSIM3v32_MOD_GAMMA1          121
 #define BSIM3v32_MOD_GAMMA2          122
@@ -1316,7 +1319,7 @@ typedef struct sBSIM3v32model
 
 #define BSIM3v32_MOD_VBM             125
 
-#define BSIM3v32_MOD_XT              126
+#define BSIM3v32_MOD_XT              128
 #define BSIM3v32_MOD_K1              129
 #define BSIM3v32_MOD_KT1             130
 #define BSIM3v32_MOD_KT1L            131

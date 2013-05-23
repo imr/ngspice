@@ -49,6 +49,10 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32noiMod = value->iValue;
             mod->BSIM3v32noiModGiven = TRUE;
             break;
+        case  BSIM3v32_MOD_NQSMOD :
+            mod->BSIM3v32nqsMod = value->iValue;
+            mod->BSIM3v32nqsModGiven = TRUE;
+            break;
         case  BSIM3v32_MOD_VERSION :
             mod->BSIM3v32version = value->sValue;
             mod->BSIM3v32versionGiven = TRUE;

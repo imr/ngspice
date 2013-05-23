@@ -40,6 +40,9 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case BSIM3v32_MOD_NOIMOD:
             value->iValue = model->BSIM3v32noiMod;
             return(OK);
+        case BSIM3v32_MOD_NQSMOD:
+            value->iValue = model->BSIM3v32nqsMod;
+            return(OK);
         case BSIM3v32_MOD_ACMMOD:
             value->iValue = model->BSIM3v32acmMod;
             return(OK);

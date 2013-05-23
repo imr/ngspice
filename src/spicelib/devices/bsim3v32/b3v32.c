@@ -66,6 +66,7 @@ IFparm BSIM3v32mPTable[] = { /* model parameters */
 IOP( "capmod", BSIM3v32_MOD_CAPMOD, IF_INTEGER, "Capacitance model selector"),
 IOP( "mobmod", BSIM3v32_MOD_MOBMOD, IF_INTEGER, "Mobility model selector"),
 IOP( "noimod", BSIM3v32_MOD_NOIMOD, IF_INTEGER, "Noise model selector"),
+IOP( "nqsmod", BSIM3v32_MOD_NQSMOD, IF_INTEGER, "Non-quasi-static model selector"),
 IOP( "acm", BSIM3v32_MOD_ACMMOD, IF_INTEGER, "Area calculation method selector"),
 IOP( "calcacm", BSIM3v32_MOD_CALCACM, IF_INTEGER, "Area calculation method ACM=12"),
 IOP( "paramchk", BSIM3v32_MOD_PARAMCHK, IF_INTEGER, "Model parameter checking selector"),
