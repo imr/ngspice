@@ -410,6 +410,7 @@ typedef struct sBSIM3model
     int    BSIM3acmMod;
     int    BSIM3calcacm;
     int    BSIM3noiMod;
+    int    BSIM3nqsMod;
     int    BSIM3acnqsMod;
     int    BSIM3binUnit;
     int    BSIM3paramChk;
@@ -876,6 +877,7 @@ typedef struct sBSIM3model
     unsigned  BSIM3calcacmGiven :1;
     unsigned  BSIM3paramChkGiven :1;
     unsigned  BSIM3noiModGiven :1;
+    unsigned  BSIM3nqsModGiven :1;
     unsigned  BSIM3acnqsModGiven :1;
     unsigned  BSIM3typeGiven   :1;
     unsigned  BSIM3toxGiven   :1;
@@ -1449,7 +1451,8 @@ typedef struct sBSIM3model
 #define BSIM3_MOD_TPBSWG          207
 #define BSIM3_MOD_VOFFCV          208
 #define BSIM3_MOD_LINTNOI         209
-#define BSIM3_MOD_ACNQSMOD        210
+#define BSIM3_MOD_NQSMOD          210
+#define BSIM3_MOD_ACNQSMOD        211
 
 /* Length dependence */
 #define BSIM3_MOD_LCDSC            251

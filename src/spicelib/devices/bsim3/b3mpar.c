@@ -51,11 +51,15 @@ GENmodel *inMod)
             mod->BSIM3noiMod = value->iValue;
             mod->BSIM3noiModGiven = TRUE;
             break;
+        case  BSIM3_MOD_NQSMOD :
+            mod->BSIM3nqsMod = value->iValue;
+            mod->BSIM3nqsModGiven = TRUE;
+            break;
         case  BSIM3_MOD_ACNQSMOD :
             mod->BSIM3acnqsMod = value->iValue;
             mod->BSIM3acnqsModGiven = TRUE;
             break;
-         case  BSIM3_MOD_VERSION :
+        case  BSIM3_MOD_VERSION :
             mod->BSIM3version = value->sValue;
             mod->BSIM3versionGiven = TRUE;
             break;

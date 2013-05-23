@@ -58,6 +58,12 @@ IFuid tmpName;
             model->BSIM3v32calcacm = 0;
         if (!model->BSIM3v32noiModGiven)
             model->BSIM3v32noiMod = 1;
+        if (!model->BSIM3v32nqsModGiven)
+            model->BSIM3v32nqsMod = 0;
+        else if ((model->BSIM3v32nqsMod != 0) && (model->BSIM3v32nqsMod != 1))
+        {   model->BSIM3v32nqsMod = 0;
+            printf("Warning: nqsMod has been set to its default value: 0.\n");
+        }
 
         /* If the user does not provide the model revision,
          * we always choose the most recent.
@@ -942,7 +948,12 @@ IFuid tmpName;
             if (!here->BSIM3v32wGiven)
                 here->BSIM3v32w = 5.0e-6;
             if (!here->BSIM3v32nqsModGiven)
-                here->BSIM3v32nqsMod = 0;
+                here->BSIM3v32nqsMod = model->BSIM3v32nqsMod;
+            else if ((here->BSIM3v32nqsMod != 0) && (here->BSIM3v32nqsMod != 1))
+            {   here->BSIM3v32nqsMod = model->BSIM3v32nqsMod;
+                printf("Warning: nqsMod has been set to its global value %d.\n",
+                model->BSIM3v32nqsMod);
+            }
             if (!here->BSIM3v32geoGiven)
                 here->BSIM3v32geo = 0;
 
