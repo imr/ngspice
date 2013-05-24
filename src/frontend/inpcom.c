@@ -38,7 +38,6 @@ Author: 1985 Wayne A. Christopher
 /* globals -- wanted to avoid complicating inp_readall interface */
 #define N_LIBRARIES       1000
 #define N_SECTIONS        1000
-#define N_FUNCTIONS       1000
 #define N_PARAMS          1000
 #define N_SUBCKT_W_PARAMS 4000
 
@@ -56,9 +55,8 @@ struct function_env
 {
     struct function_env *up;
 
-    int  num_functions;
-
     struct function {
+        struct function *next;
         char *name;
         char *macro;
         char *params[N_PARAMS];
@@ -2765,24 +2763,24 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
 static struct function *
 new_function(struct function_env *env)
 {
-    if (env->num_functions >= N_FUNCTIONS) {
-        fprintf(stderr, "ERROR, N_FUNCTIONS overflow\n");
-        controlled_exit(EXIT_FAILURE);
-    }
+    struct function *f = TMALLOC(struct function, 1);
 
-    return & env->functions[env->num_functions++];
+    f -> next = env->functions;
+    env -> functions  = f;
+
+    return f;
 }
 
 
 static struct function *
 find_function(struct function_env *env, char *name)
 {
-    int i;
+    struct function *f;
 
     for (; env; env = env->up)
-        for (i = env->num_functions; --i >= 0; i++)
-            if (strcmp(env->functions[i].name, name) == 0)
-                return & env->functions[i];
+        for (f = env->functions; f; f = f->next)
+            if (strcmp(f->name, name) == 0)
+                return f;
 
     return NULL;
 }
@@ -3088,10 +3086,10 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
 static void
 inp_expand_macros_in_func(struct function_env *env)
 {
-    int  i;
+    struct function *f;
 
-    for (i = 0; i < env->num_functions; i++)
-        env->functions[i].macro = inp_expand_macro_in_str(env, env->functions[i].macro);
+    for (f = env->functions; f ; f = f->next)
+        f->macro = inp_expand_macro_in_str(env, f->macro);
 }
 
 
@@ -3101,8 +3099,7 @@ new_function_env(struct function_env *up)
     struct function_env *env = TMALLOC(struct function_env, 1);
 
     env -> up = up;
-    env -> num_functions = 0;
-    env -> functions = TMALLOC(struct function, N_FUNCTIONS);
+    env -> functions = NULL;
 
     return env;
 }
@@ -3111,12 +3108,14 @@ new_function_env(struct function_env *up)
 static struct function_env *
 delete_function_env(struct function_env *env)
 {
-    int i;
-
     struct function_env *up = env -> up;
+    struct function *f;
 
-    for (i = 0; i < env -> num_functions; i++)
-        free_function(& env -> functions[i]);
+    for (f = env -> functions; f; ) {
+        struct function *here = f;
+        f = f -> next;
+        free_function(here);
+    }
 
     tfree(env -> functions);
     tfree(env);
