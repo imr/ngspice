@@ -52,14 +52,19 @@ static int  num_libraries;
 static char *subckt_w_params[N_SUBCKT_W_PARAMS];
 static int  num_subckt_w_params;
 
-static struct function {
-    char *name;
-    char *macro;
-    char *params[N_PARAMS];
-    int   num_parameters;
-} functions[N_FUNCTIONS];
+struct function_env
+{
+    struct function_env *up;
 
-static int  num_functions;
+    int  num_functions;
+
+    struct function {
+        char *name;
+        char *macro;
+        char *params[N_PARAMS];
+        int   num_parameters;
+    } *functions;
+};
 
 
 static  char *global;
@@ -82,10 +87,10 @@ static void inp_stripcomments_line(char *s);
 static void inp_fix_for_numparam(struct line *deck);
 static void inp_remove_excess_ws(struct line *deck);
 static void expand_section_references(struct line *deck, int call_depth, char *dir_name);
-static void inp_grab_func(struct line *deck);
+static void inp_grab_func(struct function_env *, struct line *deck);
 static void inp_fix_inst_calls_for_numparam(struct line *deck);
-static void inp_expand_macros_in_func(int from);
-static struct line *inp_expand_macros_in_deck(struct line *deck);
+static void inp_expand_macros_in_func(struct function_env *);
+static struct line *inp_expand_macros_in_deck(struct function_env *, struct line *deck);
 static void inp_fix_param_values(struct line *deck);
 static void inp_reorder_params(struct line *deck, struct line *list_head, struct line *end);
 static int  inp_split_multi_param_lines(struct line *deck, int line_number);
@@ -307,7 +312,6 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
     if (call_depth == 0) {
         num_subckt_w_params = 0;
         num_libraries       = 0;
-        num_functions       = 0;
         global              = NULL;
         found_end           = FALSE;
         inp_compat_mode = ngspice_compat_mode();
@@ -728,12 +732,8 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         inp_fix_macro_param_func_paren_io(working);
         inp_fix_ternary_operator(working);
-//      tprint(working);
-        if (num_functions != 0) {
-            fprintf(stderr, "ERROR, internal error, unexpected num_functions = %d\n", num_functions);
-            controlled_exit(EXIT_FAILURE);
-        }
-        inp_expand_macros_in_deck(working);
+//tprint(working);
+        inp_expand_macros_in_deck(NULL, working);
         inp_fix_param_values(working);
 
         /* get end card as last card in list; end card pntr does not appear to always
@@ -2763,25 +2763,26 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
 
 
 static struct function *
-new_function(void)
+new_function(struct function_env *env)
 {
-    if (num_functions >= N_FUNCTIONS) {
+    if (env->num_functions >= N_FUNCTIONS) {
         fprintf(stderr, "ERROR, N_FUNCTIONS overflow\n");
         controlled_exit(EXIT_FAILURE);
     }
 
-    return & functions[num_functions++];
+    return & env->functions[env->num_functions++];
 }
 
 
 static struct function *
-find_function(char *name)
+find_function(struct function_env *env, char *name)
 {
     int i;
 
-    for (i = num_functions; --i >= 0; i++)
-        if (strcmp(functions[i].name, name) == 0)
-            return & functions[i];
+    for (; env; env = env->up)
+        for (i = env->num_functions; --i >= 0; i++)
+            if (strcmp(env->functions[i].name, name) == 0)
+                return & env->functions[i];
 
     return NULL;
 }
@@ -2801,7 +2802,7 @@ free_function(struct function *fcn)
 
 
 static void
-inp_get_func_from_line(char *line)
+inp_get_func_from_line(struct function_env *env, char *line)
 {
     char *ptr, *end;
     char keep;
@@ -2821,9 +2822,9 @@ inp_get_func_from_line(char *line)
 
     /* see if already encountered this function */
     /* FIXME, this code is unused, which is probably a bug */
-    function = find_function(line);
+    function = find_function(env, line);
 
-    function = new_function();
+    function = new_function(env);
 
     function->name = strdup(line);
     *end = keep;
@@ -2868,7 +2869,7 @@ inp_get_func_from_line(char *line)
 // only grab global functions; skip subckt functions
 //
 static void
-inp_grab_func(struct line *c)
+inp_grab_func(struct function_env *env, struct line *c)
 {
     int nesting = 0;
 
@@ -2889,7 +2890,7 @@ inp_grab_func(struct line *c)
             continue;
 
         if (ciprefix(".func", c->li_line)) {
-            inp_get_func_from_line(c->li_line);
+            inp_get_func_from_line(env, c->li_line);
             *c->li_line = '*';
         }
     }
@@ -2964,7 +2965,7 @@ inp_do_macro_param_replace(struct function *fcn, char *params[])
 
 
 static char*
-inp_expand_macro_in_str(char *str)
+inp_expand_macro_in_str(struct function_env *env, char *str)
 {
     struct function *function;
     char *c;
@@ -2989,7 +2990,7 @@ inp_expand_macro_in_str(char *str)
 
         *open_paren_ptr = '\0';
 
-        function = find_function(fcn_name);
+        function = find_function(env, fcn_name);
 
         *open_paren_ptr = '(';
 
@@ -3043,7 +3044,7 @@ inp_expand_macro_in_str(char *str)
                     break;
             }
             params[num_params++] =
-                inp_expand_macro_in_str(copy_substring(beg_parameter, curr_ptr));
+                inp_expand_macro_in_str(env, copy_substring(beg_parameter, curr_ptr));
         }
 
         if (function->num_parameters != num_params) {
@@ -3085,23 +3086,53 @@ inp_expand_macro_in_str(char *str)
 
 
 static void
-inp_expand_macros_in_func(int from)
+inp_expand_macros_in_func(struct function_env *env)
 {
     int  i;
 
-    for (i = from; i < num_functions; i++)
-        functions[i].macro = inp_expand_macro_in_str(functions[i].macro);
+    for (i = 0; i < env->num_functions; i++)
+        env->functions[i].macro = inp_expand_macro_in_str(env, env->functions[i].macro);
+}
+
+
+static struct function_env *
+new_function_env(struct function_env *up)
+{
+    struct function_env *env = TMALLOC(struct function_env, 1);
+
+    env -> up = up;
+    env -> num_functions = 0;
+    env -> functions = TMALLOC(struct function, N_FUNCTIONS);
+
+    return env;
+}
+
+
+static struct function_env *
+delete_function_env(struct function_env *env)
+{
+    int i;
+
+    struct function_env *up = env -> up;
+
+    for (i = 0; i < env -> num_functions; i++)
+        free_function(& env -> functions[i]);
+
+    tfree(env -> functions);
+    tfree(env);
+
+    return up;
 }
 
 
 static struct line *
-inp_expand_macros_in_deck(struct line *c)
+inp_expand_macros_in_deck(struct function_env *env, struct line *c)
 {
-    int  prev_num_functions = num_functions;
+    env = new_function_env(env);
 
-    inp_grab_func(c);
+    inp_grab_func(env, c);
 
-    inp_expand_macros_in_func(prev_num_functions);
+    inp_expand_macros_in_func(env);
 
     for (; c; c = c->li_next) {
 
@@ -3109,25 +3140,17 @@ inp_expand_macros_in_deck(struct line *c)
             continue;
 
         if (ciprefix(".subckt", c->li_line)) {
-            int i;
-
-            int prev_num_functions = num_functions;
-
-            c = inp_expand_macros_in_deck(c->li_next);
-
-            for (i = prev_num_functions; i < num_functions; i++)
-                free_function(& functions[i]);
-            num_functions = prev_num_functions;
-
+            c = inp_expand_macros_in_deck(env, c->li_next);
             continue;
         }
 
         if (ciprefix(".ends", c->li_line))
-            return c;
+            break;
 
-        c->li_line = inp_expand_macro_in_str(c->li_line);
+        c->li_line = inp_expand_macro_in_str(env, c->li_line);
     }
 
+    env = delete_function_env(env);
     return c;
 }
 
