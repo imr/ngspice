@@ -729,9 +729,10 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         inp_fix_macro_param_func_paren_io(working);
         inp_fix_ternary_operator(working);
 //      tprint(working);
-        inp_grab_func(working);
-
-        inp_expand_macros_in_func(0);
+        if (num_functions != 0) {
+            fprintf(stderr, "ERROR, internal error, unexpected num_functions = %d\n", num_functions);
+            controlled_exit(EXIT_FAILURE);
+        }
         inp_expand_macros_in_deck(working);
         inp_fix_param_values(working);
 
@@ -3098,6 +3099,10 @@ inp_expand_macros_in_deck(struct line *c)
 {
     int  prev_num_functions = num_functions;
 
+    inp_grab_func(c);
+
+    inp_expand_macros_in_func(prev_num_functions);
+
     for (; c; c = c->li_next) {
 
         if (*c->li_line == '*')
@@ -3106,15 +3111,9 @@ inp_expand_macros_in_deck(struct line *c)
         if (ciprefix(".subckt", c->li_line)) {
             int i;
 
-            prev_num_functions = num_functions;
-
-            inp_grab_func(c->li_next);
-
-            if (prev_num_functions != num_functions)
-                inp_expand_macros_in_func(prev_num_functions);
+            int prev_num_functions = num_functions;
 
             c = inp_expand_macros_in_deck(c->li_next);
-
 
             for (i = prev_num_functions; i < num_functions; i++)
                 free_function(& functions[i]);
