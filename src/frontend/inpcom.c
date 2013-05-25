@@ -2818,10 +2818,6 @@ inp_get_func_from_line(struct function_env *env, char *line)
     keep = *end;
     *end = '\0';
 
-    /* see if already encountered this function */
-    /* FIXME, this code is unused, which is probably a bug */
-    function = find_function(env, line);
-
     function = new_function(env);
 
     function->name = strdup(line);
