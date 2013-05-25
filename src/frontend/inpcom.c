@@ -1007,22 +1007,21 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
                 node_str  = strdup(str_ptr1);
                 *str_ptr2 = keep;
 
-                str_ptr1 = bool_ptr + 1;
-                while (*str_ptr1 != '(')
-                    str_ptr1++;
+                str_ptr1 = bool_ptr;
+                while (*++str_ptr1 != '(')
+                    ;
                 fcn_name = copy_substring(bool_ptr, str_ptr1);
                 str_ptr1  = strchr(str_ptr1, ')');
-                comma_ptr = str_ptr2 = strchr(line, ',');
+                comma_ptr = strchr(line, ',');
                 if (!str_ptr1 || !comma_ptr) {
                     fprintf(stderr, "ERROR: mal formed line: %s\n", line);
                     controlled_exit(EXIT_FAILURE);
                 }
                 str_ptr1 = skip_ws(str_ptr1 + 1);
-                xy_str1 = skip_back_ws(str_ptr2);
+                xy_str1 = skip_back_ws(comma_ptr);
                 if (xy_str1[-1] == '}') {
-                    xy_str1--;
-                    while (*xy_str1 != '{')
-                        xy_str1--;
+                    while (*--xy_str1 != '{')
+                        ;
                 } else {
                     xy_str1 = skip_back_non_ws(xy_str1);
                 }
@@ -1034,9 +1033,8 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
 
                 str_ptr1 = skip_ws(comma_ptr + 1);
                 if (*str_ptr1 == '{') {
-                    while (*str_ptr1 != '}')
-                        str_ptr1++;
-                    str_ptr1++;
+                    while (*str_ptr1++ != '}')
+                        ;
                 } else {
                     str_ptr1 = skip_non_ws(str_ptr1);
                 }
