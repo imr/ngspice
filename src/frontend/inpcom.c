@@ -2761,9 +2761,12 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
 
 
 static struct function *
-new_function(struct function_env *env)
+new_function(struct function_env *env, char *name)
 {
     struct function *f = TMALLOC(struct function, 1);
+
+    f -> name = name;
+    f -> num_parameters = 0;
 
     f -> next = env->functions;
     env -> functions  = f;
@@ -2800,55 +2803,57 @@ free_function(struct function *fcn)
 
 
 static void
+new_function_parameter(struct function *fcn, char *parameter)
+{
+    if (fcn->num_parameters >= N_PARAMS) {
+        fprintf(stderr, "ERROR, N_PARAMS overflow\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+
+    fcn->params[fcn->num_parameters++] = parameter;
+}
+
+
+static void
 inp_get_func_from_line(struct function_env *env, char *line)
 {
-    char *ptr, *end;
-    char keep;
+    char *end;
     char temp_buf[5000];
-    int  num_params = 0;
     int  str_len = 0;
     struct function *function;
 
-    /* get function name */
+    /* skip `.func' */
     line = skip_non_ws(line);
     line = skip_ws(line);
+
+    /* get function name */
     end = line;
-    while (!isspace(*end) && *end != '(')
+    while (*end && !isspace(*end) && *end != '(')
         end++;
-    keep = *end;
-    *end = '\0';
 
-    function = new_function(env);
+    function = new_function(env, copy_substring(line, end));
 
-    function->name = strdup(line);
-    *end = keep;
-
-    num_params = 0;
+    while (*end && *end != '(')
+        end++;
 
     /* get function parameters */
-    while (*end != '(')
-        end++;
-    while (*end != ')') {
-        end = skip_ws(end + 1);
-        ptr = end;
-        while (!isspace(*end) && *end != ',' && *end != ')')
+    while (*end && *end != ')') {
+        char *beg = skip_ws(end + 1);
+        end = beg;
+        while (*end && !isspace(*end) && *end != ',' && *end != ')')
             end++;
-        if (end > ptr) {
-            if (num_params >= N_PARAMS) {
-                fprintf(stderr, "ERROR, N_PARAMS overflow\n");
-                controlled_exit(EXIT_FAILURE);
-            }
-            function->params[num_params++] = copy_substring(ptr, end);
-        }
+        if (end > beg)
+            new_function_parameter(function, copy_substring(beg, end));
     }
-    function->num_parameters = num_params;
 
-    /* get function macro */
+
+    /* skip to the beinning of the function body */
+    while (*end && *end++ != '{')
+        ;
+
+    /* get function body */
     str_len = 0;
-    while (*end != '{')
-        end++;
-    end++;
-    while (*end  &&  *end != '}') {
+    while (*end  && *end != '}') {
         if (!isspace(*end))
             temp_buf[str_len++] = *end;
         end++;
@@ -2859,9 +2864,10 @@ inp_get_func_from_line(struct function_env *env, char *line)
 }
 
 
-//
-// only grab global functions; skip subckt functions
-//
+/*
+* grab functions at the current .subckt nesting level
+*/
+
 static void
 inp_grab_func(struct function_env *env, struct line *c)
 {
