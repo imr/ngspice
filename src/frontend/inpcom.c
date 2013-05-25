@@ -1017,15 +1017,16 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
                     fprintf(stderr, "ERROR: mal formed line: %s\n", line);
                     controlled_exit(EXIT_FAILURE);
                 }
-                str_ptr2 = skip_back_ws(str_ptr2 - 1);
+                str_ptr2 = skip_back_ws(str_ptr2 - 1) + 1;
                 str_ptr1 = skip_ws(str_ptr1 + 1);
-                if (*str_ptr2 == '}') {
+                if (str_ptr2[-1] == '}') {
+                    str_ptr2--;
                     while (*str_ptr2 != '{')
                         str_ptr2--;
                     xy_str1 = str_ptr2;
                     str_ptr2 = skip_back_ws(xy_str1 - 1) + 1;
                 } else {
-                    xy_str1 = skip_back_non_ws(str_ptr2) + 1;
+                    xy_str1 = skip_back_non_ws(str_ptr2 - 1) + 1;
                     str_ptr2 = skip_back_ws(xy_str1 - 1) + 1;
                 }
                 keep = *str_ptr2;
