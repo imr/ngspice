@@ -1024,11 +1024,10 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
                     while (*str_ptr2 != '{')
                         str_ptr2--;
                     xy_str1 = str_ptr2;
-                    str_ptr2 = skip_back_ws(xy_str1);
                 } else {
                     xy_str1 = skip_back_non_ws(str_ptr2);
-                    str_ptr2 = skip_back_ws(xy_str1);
                 }
+                str_ptr2 = skip_back_ws(xy_str1);
                 keep = *str_ptr2;
                 *str_ptr2 = '\0';
                 ctrl_node_str = strdup(str_ptr1);
@@ -1948,7 +1947,7 @@ inp_stripcomments_line(char *s)
         return;
     }
 
-    if (d>s) {
+    if (d > s) {
         d--;
         /* d now points to character just before comment */
 
@@ -2083,7 +2082,7 @@ inp_fix_subckt(char *s)
                 beg = ptr2;
             } else {
                 *ptr2 = '\0';
-                beg   = ptr2+1;
+                beg = ptr2 + 1;
             }
 
             newcard = alloc(struct line);
@@ -2442,12 +2441,12 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
 
         // check for equality '=='
         if (equal_ptr[1] == '=') {
-            line = equal_ptr+2;
+            line = equal_ptr + 2;
             continue;
         }
         // check for '!=', '<=', '>='
         if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>') {
-            line = equal_ptr+1;
+            line = equal_ptr + 1;
             continue;
         }
 
@@ -4023,12 +4022,12 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
             while ((equal_ptr = strchr(curr_line, '=')) != NULL) {
                 // check for equality '=='
                 if (equal_ptr[1] == '=') {
-                    curr_line = equal_ptr+2;
+                    curr_line = equal_ptr + 2;
                     continue;
                 }
                 // check for '!=', '<=', '>='
                 if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>') {
-                    curr_line = equal_ptr+1;
+                    curr_line = equal_ptr + 1;
                     continue;
                 }
                 counter++;
@@ -4045,12 +4044,12 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
             while (curr_line < card->li_line+strlen(card->li_line) && (equal_ptr = strchr(curr_line, '=')) != NULL) {
                 // check for equality '=='
                 if (equal_ptr[1] == '=') {
-                    curr_line = equal_ptr+2;
+                    curr_line = equal_ptr + 2;
                     continue;
                 }
                 // check for '!=', '<=', '>='
                 if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>') {
-                    curr_line = equal_ptr+1;
+                    curr_line = equal_ptr + 1;
                     continue;
                 }
 
