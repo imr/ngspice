@@ -1023,11 +1023,10 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
                     while (*str_ptr2 != '{')
                         str_ptr2--;
                     xy_str1 = str_ptr2;
-                    str_ptr2 = skip_back_ws(str_ptr2 - 1) + 1;
+                    str_ptr2 = skip_back_ws(xy_str1 - 1) + 1;
                 } else {
-                    str_ptr2 = skip_back_non_ws(str_ptr2);
-                    xy_str1 = str_ptr2 + 1;
-                    str_ptr2 = skip_back_ws(str_ptr2) + 1;
+                    xy_str1 = skip_back_non_ws(str_ptr2) + 1;
+                    str_ptr2 = skip_back_ws(xy_str1 - 1) + 1;
                 }
                 keep = *str_ptr2;
                 *str_ptr2 = '\0';
@@ -1274,8 +1273,8 @@ get_instance_subckt(char *line)
 
     // see if instance has parameters
     if (equal_ptr) {
-        end_ptr = skip_back_ws(equal_ptr - 1);
-        end_ptr = skip_back_non_ws(end_ptr) + 1;
+        end_ptr = skip_back_ws(equal_ptr - 1) + 1;
+        end_ptr = skip_back_non_ws(end_ptr - 1) + 1;
     } else {
         end_ptr = line + strlen(line);
     }
@@ -1695,10 +1694,10 @@ inp_fix_ternary_operator_str(char *line, bool all)
 
     // get conditional
     question = strchr(str_ptr, '?');
-    str_ptr2 = skip_back_ws(question - 1);
-    if (*str_ptr2 == ')') {
+    str_ptr2 = skip_back_ws(question - 1) + 1;
+    if (str_ptr2[-1] == ')') {
         count = 1;
-        str_ptr = str_ptr2;
+        str_ptr = str_ptr2 - 1;
         while ((count != 0) && (str_ptr != line)) {
             str_ptr--;
             if (*str_ptr == '(')
@@ -1707,7 +1706,6 @@ inp_fix_ternary_operator_str(char *line, bool all)
                 count++;
         }
     }
-    str_ptr2++;
     keep = *str_ptr2;
     *str_ptr2 = '\0';
     conditional = strdup(str_ptr);
@@ -1743,14 +1741,13 @@ inp_fix_ternary_operator_str(char *line, bool all)
             fprintf(stderr, "ERROR: problem parsing ternary string (finding ':') %s!\n", line);
             controlled_exit(EXIT_FAILURE);
         }
-        str_ptr2 = skip_back_ws(colon - 1);
+        str_ptr2 = skip_back_ws(colon - 1) + 1;
     } else if ((colon = strchr(str_ptr, ':')) != NULL) {
-        str_ptr2 = skip_back_ws(colon - 1);
+        str_ptr2 = skip_back_ws(colon - 1) + 1;
     } else {
         fprintf(stderr, "ERROR: problem parsing ternary string (missing ':') %s!\n", line);
         controlled_exit(EXIT_FAILURE);
     }
-    str_ptr2++;
     keep = *str_ptr2;
     *str_ptr2 = '\0';
     if_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
@@ -2043,10 +2040,9 @@ inp_fix_subckt(char *s)
         /* go to beginning of first parameter word  */
         /* s    will contain only subckt definition */
         /* beg  will point to start of param list   */
-        beg = skip_back_ws(equal - 1);
-        beg = skip_back_non_ws(beg);
-        *beg = '\0';
-        beg++;
+        beg = skip_back_ws(equal - 1) + 1;
+        beg = skip_back_non_ws(beg - 1) + 1;
+        beg[-1] = '\0';
 
         head = alloc(struct line);
         /* create list of parameters that need to get sorted */
@@ -2055,8 +2051,8 @@ inp_fix_subckt(char *s)
             /* alternative patch to cope with spaces:
                get expression between braces {...} */
             ptr2 = skip_ws(ptr1 + 1);
-            ptr1 = skip_back_ws(ptr1 - 1);
-            ptr1 = skip_back_non_ws(ptr1) + 1;
+            ptr1 = skip_back_ws(ptr1 - 1) + 1;
+            ptr1 = skip_back_non_ws(ptr1 - 1) + 1;
             /* ptr1 points to beginning of parameter */
 
             /* if parameter is an expression and starts with '{', find closing '}'
@@ -2418,8 +2414,8 @@ inp_get_subckt_name(char *s)
     char *subckt_name, *end_ptr = strchr(s, '=');
 
     if (end_ptr) {
-        end_ptr = skip_back_ws(end_ptr - 1);
-        end_ptr = skip_back_non_ws(end_ptr) + 1;
+        end_ptr = skip_back_ws(end_ptr - 1) + 1;
+        end_ptr = skip_back_non_ws(end_ptr - 1) + 1;
     } else {
         end_ptr = s + strlen(s);
     }
@@ -2457,9 +2453,8 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
         is_expression = FALSE;
 
         /* get parameter name */
-        name = skip_back_ws(equal_ptr - 1);
-        end  = name + 1;
-        name = skip_back_non_ws(name) + 1;
+        end = skip_back_ws(equal_ptr - 1) + 1;
+        name = skip_back_non_ws(end - 1) + 1;
 
         param_names[num_params++] = copy_substring(name, end);
 
@@ -2509,9 +2504,9 @@ inp_fix_inst_line(char *inst_line,
 
     end = strchr(inst_line, '=');
     if (end) {
-        end = skip_back_ws(end - 1);
-        end = skip_back_non_ws(end);
-        *end = '\0';
+        end = skip_back_ws(end - 1) + 1;
+        end = skip_back_non_ws(end - 1) + 1;
+        end[-1] = '\0';
     }
 
     for (i = 0; i < num_subckt_params; i++)
@@ -4058,8 +4053,8 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
                     continue;
                 }
 
-                beg_param = skip_back_ws(equal_ptr - 1);
-                beg_param = skip_back_non_ws(beg_param);
+                beg_param = skip_back_ws(equal_ptr - 1) + 1;
+                beg_param = skip_back_non_ws(beg_param - 1) + 1;
                 end_param = skip_ws(equal_ptr + 1);
                 while (*end_param != '\0' && (!isspace(*end_param) || get_expression || get_paren_expression)) {
                     if (*end_param == '{')
@@ -4072,7 +4067,6 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
                         get_paren_expression = FALSE;
                     end_param++;
                 }
-                beg_param++;
                 keep       = *end_param;
                 *end_param = '\0';
                 new_line   = TMALLOC(char, strlen(".param ") + strlen(beg_param) + 1);
