@@ -971,14 +971,11 @@ create_new_card(char *card_str, int *line_number) {
 static void
 inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
 {
-    struct line *c, *a_card, *model_card, *next_card;
-    char *line, *bool_ptr, *str_ptr1, *str_ptr2, keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
-    char *node_str, *ctrl_node_str, *xy_str1, *model_name, *fcn_name;
-    char big_buf[1000];
-    int  xy_count1 = 0, xy_count2 = 0, skip_control = 0;
+    int skip_control = 0;
+    struct line *c;
 
     for (c = deck; c != NULL; c = c->li_next) {
-        line = c->li_line;
+        char *line = c->li_line;
 
         /* there is no e source inside .control ... .endc */
         if (ciprefix(".control", line)) {
@@ -992,11 +989,20 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
         }
 
         if (*line == 'e') {
+
+            char *bool_ptr;
+
             if ((bool_ptr = strstr(line, "nand(")) != NULL ||
                 (bool_ptr = strstr(line, "and(")) != NULL ||
                 (bool_ptr = strstr(line, "nor(")) != NULL ||
                 (bool_ptr = strstr(line, "or(")) != NULL)
             {
+                struct line *a_card, *model_card, *next_card;
+                char *str_ptr1, *str_ptr2, keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
+                char *node_str, *ctrl_node_str, *xy_str1, *model_name, *fcn_name;
+                char big_buf[1000];
+                int  xy_count1, xy_count2;
+
                 str_ptr1 = skip_non_ws(line);
                 model_name = copy_substring(line, str_ptr1);
 
