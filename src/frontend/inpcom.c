@@ -1013,7 +1013,7 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
                 fcn_name = copy_substring(bool_ptr, str_ptr1);
                 str_ptr1  = strchr(str_ptr1, ')');
                 comma_ptr = str_ptr2 = strchr(line, ',');
-                if ((str_ptr1 == NULL)|| (str_ptr1 == NULL)) {
+                if (!str_ptr1 || !comma_ptr) {
                     fprintf(stderr, "ERROR: mal formed line: %s\n", line);
                     controlled_exit(EXIT_FAILURE);
                 }
