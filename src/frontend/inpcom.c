@@ -736,7 +736,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         /* get end card as last card in list; end card pntr does not appear to always
            be correct at this point */
-        for (newcard = working; newcard != NULL; newcard = newcard->li_next)
+        for (newcard = working; newcard; newcard = newcard->li_next)
             end = newcard;
 
         inp_reorder_params(working, cc, end);
@@ -767,7 +767,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
            of parameter substitutions in a line*/
         dynmaxline = 0;
         max_line_length = 0;
-        for (tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next) {
+        for (tmp_ptr1 = cc; tmp_ptr1; tmp_ptr1 = tmp_ptr1->li_next) {
             char *s;
             unsigned int braces_per_line = 0;
             /* count number of lines */
@@ -931,7 +931,7 @@ inp_fix_gnd_name(struct line *deck)
     struct line *c = deck;
     char *gnd;
 
-    while (c != NULL) {
+    while (c) {
         gnd = c->li_line;
         // if there is a comment or no gnd, go to next line
         if ((*gnd == '*') || (strstr(gnd, "gnd") == NULL)) {
@@ -974,7 +974,7 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
     int skip_control = 0;
     struct line *c;
 
-    for (c = deck; c != NULL; c = c->li_next) {
+    for (c = deck; c; c = c->li_next) {
         char *line = c->li_line;
 
         /* there is no e source inside .control ... .endc */
@@ -1094,7 +1094,7 @@ inp_add_control_section(struct line *deck, int *line_number)
     bool        found_end = FALSE;
     char        *op_line  = NULL, rawfile[1000], *line;
 
-    for (c = deck; c != NULL; c = c->li_next) {
+    for (c = deck; c; c = c->li_next) {
         if (*c->li_line == '*')
             continue;
         if (ciprefix(".op ", c->li_line)) {
@@ -1202,7 +1202,7 @@ inp_fix_macro_param_func_paren_io(struct line *begin_card)
     char        *str_ptr, *new_str;
     bool        is_func = FALSE;
 
-    for (card = begin_card; card != NULL; card = card->li_next) {
+    for (card = begin_card; card; card = card->li_next) {
 
         if (*card->li_line == '*')
             continue;
@@ -1363,7 +1363,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
     bool found_subckt = FALSE, have_subckt = FALSE, found_model = FALSE;
     int  i, num_terminals = 0, tmp_cnt = 0;
 
-    for (card = start_card; card != NULL; card = card->li_next) {
+    for (card = start_card; card; card = card->li_next) {
         line = card->li_line;
 
         if (*line == '*')
@@ -1491,7 +1491,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
     used_subckt_names = TMALLOC(char*, no_of_lines);
     used_model_names = TMALLOC(char*, no_of_lines);
 
-    for (card = start_card; card != NULL; card = card->li_next) {
+    for (card = start_card; card; card = card->li_next) {
         if (ciprefix(".model", card->li_line))
             has_models = TRUE;
         if (ciprefix(".cmodel", card->li_line))
@@ -1500,7 +1500,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             *card->li_line = '*';
     }
 
-    for (card = start_card; card != NULL; card = card->li_next) {
+    for (card = start_card; card; card = card->li_next) {
         line = card->li_line;
 
         if (*line == '*')
@@ -1591,7 +1591,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
              used_model_names, &num_used_model_names, has_models);
 
     /* comment out any unused subckts, currently only at top level */
-    for (card = start_card; card != NULL; card = card->li_next) {
+    for (card = start_card; card; card = card->li_next) {
         line = card->li_line;
 
         if (*line == '*')
@@ -1833,7 +1833,7 @@ inp_fix_ternary_operator(struct line *start_card)
     char        *line;
     bool found_control = FALSE;
 
-    for (card = start_card; card != NULL; card = card->li_next) {
+    for (card = start_card; card; card = card->li_next) {
         line = card->li_line;
 
         /* exclude replacement of ternary function between .control and .endc */
@@ -1894,7 +1894,7 @@ static void
 inp_stripcomments_deck(struct line *deck)
 {
     struct line *c = deck;
-    while (c != NULL) {
+    while (c) {
         inp_stripcomments_line(c->li_line);
         c = c->li_next;
     }
@@ -2248,7 +2248,7 @@ inp_fix_for_numparam(struct line *deck)
     struct line *c = deck;
     char *str_ptr;
 
-    while (c != NULL) {
+    while (c) {
         if (ciprefix(".lib", c->li_line) || ciprefix("*lib", c->li_line) || ciprefix("*inc", c->li_line)) {
             c = c->li_next;
             continue;
@@ -2287,7 +2287,7 @@ inp_remove_excess_ws(struct line *deck)
 {
     struct line *c = deck;
     bool found_control = FALSE;
-    while (c != NULL) {
+    while (c) {
         if (*c->li_line == '*') {
             c = c->li_next;
             continue;
@@ -2589,7 +2589,7 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
     subckt_card->li_line = new_str;
 
     for (card = subckt_card->li_next;
-         card != NULL && !ciprefix(".ends", card->li_line);
+         card && !ciprefix(".ends", card->li_line);
          card = card->li_next) {
         /* no 'm' for B, V, E, H or comment line */
         if ((*(card->li_line) == '*') || (*(card->li_line) == 'b') || (*(card->li_line) == 'v') ||
@@ -2631,7 +2631,7 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
 
     // first iterate through instances and find occurences where 'm' multiplier needs to be
     // added to the subcircuit -- subsequent instances will then need this parameter as well
-    for (c = deck; c != NULL; c = c->li_next) {
+    for (c = deck; c; c = c->li_next) {
         inst_line = c->li_line;
 
         if (*inst_line == '*')
@@ -2645,7 +2645,7 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
                 flag = FALSE;
                 // iterate through the deck to find the subckt (last one defined wins)
                 d = deck;
-                while (d != NULL) {
+                while (d) {
                     subckt_line = d->li_line;
                     if (ciprefix(".subckt", subckt_line)) {
                         subckt_line = skip_non_ws(subckt_line);
@@ -3177,7 +3177,7 @@ inp_fix_param_values(struct line *deck)
     wordlist *nwl;
     int parens;
 
-    while (c != NULL) {
+    while (c) {
         line = c->li_line;
 
         if (*line == '*' || (ciprefix(".param", line) && strchr(line, '{'))) {
@@ -3631,7 +3631,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     /* determine the number of lines with .param */
     ptr = start_card;
-    while (ptr != NULL) {
+    while (ptr) {
         if (strchr(ptr->li_line, '='))
             num_params++;
         ptr = ptr->li_next;
@@ -3657,7 +3657,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     ptr_array_ordered = TMALLOC(struct line *, arr_size);
 
     ptr = start_card;
-    while (ptr != NULL) {
+    while (ptr) {
         // ignore .param lines without '='
         if (strchr(ptr->li_line, '=')) {
             depends_on[num_params][0] = NULL;
