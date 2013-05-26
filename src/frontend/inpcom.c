@@ -211,8 +211,7 @@ read_a_lib(char *y, int call_depth, char *dir_name)
             newfp = inp_pathopen(big_buff2, "r");
             if (!newfp) {
                 fprintf(cp_err, "Error: Could not find library file %s\n", y);
-                if (copyy)
-                    tfree(copyy); /* allocated by the cp_tildexpand() above */
+                tfree(copyy); /* allocated by the cp_tildexpand() above */
                 return FALSE;
             }
 
@@ -234,8 +233,7 @@ read_a_lib(char *y, int call_depth, char *dir_name)
         fclose(newfp);
     }
 
-    if (copyy)
-        tfree(copyy);   /* allocated by the cp_tildexpand() above */
+    tfree(copyy);   /* allocated by the cp_tildexpand() above */
 
     return TRUE;
 }
@@ -395,8 +393,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             s = skip_ws(s);            /* advance past space chars */
 
             /* only the last title line remains valid */
-            if (new_title != NULL)
-                tfree(new_title);
+            tfree(new_title);
             new_title = copy(s);
             if ((s = strchr(new_title, '\n')) != NULL)
                 *s = ' ';
@@ -459,8 +456,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
                     newfp = inp_pathopen(big_buff2, "r");
                     if (!newfp) {
                         perror(y);
-                        if (copyy)
-                            tfree(copyy);       /* allocated by the cp_tildexpand() above */
+                        tfree(copyy);       /* allocated by the cp_tildexpand() above */
                         fprintf(cp_err, "Error: .include statement failed.\n");
                         tfree(buffer);          /* allocated by readline() above */
                         controlled_exit(EXIT_FAILURE);
@@ -480,8 +476,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
                 (void) fclose(newfp);
             }
 
-            if (copyy)
-                tfree(copyy);           /* allocated by the cp_tildexpand() above */
+            tfree(copyy);           /* allocated by the cp_tildexpand() above */
 
             /* Make the .include a comment */
             *buffer = '*';
@@ -633,7 +628,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
     /* Replace first line with the new title, if available */
     if (new_title != NULL) {
-        if (cc->li_line) tfree(cc->li_line);
+        tfree(cc->li_line);
         cc->li_line = new_title;
     }
 
@@ -1627,8 +1622,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                         model_bin_match(used_model_names[i], model_name))
                         found_model = TRUE;
             }
-            if (model_type)
-                tfree(model_type);
+            tfree(model_type);
             if (!found_model)
                 *line = '*';
             tfree(model_name);
@@ -1804,10 +1798,8 @@ inp_fix_ternary_operator_str(char *line, bool all)
     tfree(conditional);
     tfree(if_str);
     tfree(else_str);
-    if (beg_str != NULL)
-        tfree(beg_str);
-    if (end_str != NULL)
-        tfree(end_str);
+    tfree(beg_str);
+    tfree(end_str);
 
     return new_str;
 }
