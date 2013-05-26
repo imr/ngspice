@@ -931,11 +931,10 @@ inp_fix_gnd_name(struct line *deck)
     struct line *c = deck;
     char *gnd;
 
-    while (c) {
+    for (; c; c = c->li_next) {
         gnd = c->li_line;
         // if there is a comment or no gnd, go to next line
         if ((*gnd == '*') || (strstr(gnd, "gnd") == NULL)) {
-            c = c->li_next;
             continue;
         }
         // replace "?gnd?" by "? 0 ?", ? being a ' '  ','  '('  ')'.
@@ -948,7 +947,6 @@ inp_fix_gnd_name(struct line *deck)
         }
         // now remove the extra white spaces around 0
         c->li_line = inp_remove_ws(c->li_line);
-        c = c->li_next;
     }
 }
 
@@ -1894,9 +1892,8 @@ static void
 inp_stripcomments_deck(struct line *deck)
 {
     struct line *c = deck;
-    while (c) {
+    for (; c; c = c->li_next) {
         inp_stripcomments_line(c->li_line);
-        c = c->li_next;
     }
 }
 
@@ -2248,9 +2245,8 @@ inp_fix_for_numparam(struct line *deck)
     struct line *c = deck;
     char *str_ptr;
 
-    while (c) {
+    for (; c; c = c->li_next) {
         if (ciprefix(".lib", c->li_line) || ciprefix("*lib", c->li_line) || ciprefix("*inc", c->li_line)) {
-            c = c->li_next;
             continue;
         }
 
@@ -2260,7 +2256,6 @@ inp_fix_for_numparam(struct line *deck)
         if (ciprefix(".endc", c->li_line))
             found_control = FALSE;
         if (found_control) {
-            c = c->li_next;
             continue;
         }
 
@@ -2277,7 +2272,6 @@ inp_fix_for_numparam(struct line *deck)
         if (ciprefix(".subckt", c->li_line))
             c->li_line = inp_fix_subckt(c->li_line);
 
-        c = c->li_next;
     }
 }
 
@@ -2287,9 +2281,8 @@ inp_remove_excess_ws(struct line *deck)
 {
     struct line *c = deck;
     bool found_control = FALSE;
-    while (c) {
+    for (; c; c = c->li_next) {
         if (*c->li_line == '*') {
-            c = c->li_next;
             continue;
         }
 
@@ -2299,11 +2292,9 @@ inp_remove_excess_ws(struct line *deck)
         if (ciprefix(".endc", c->li_line))
             found_control = FALSE;
         if ((found_control) && (ciprefix("echo", c->li_line))) {
-            c = c->li_next;
             continue;
         }
         c->li_line = inp_remove_ws(c->li_line); /* freed in fcn */
-        c = c->li_next;
     }
 }
 
@@ -2644,8 +2635,7 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
             if (found_mult_param(num_inst_params, inst_param_names)) {
                 flag = FALSE;
                 // iterate through the deck to find the subckt (last one defined wins)
-                d = deck;
-                while (d) {
+                for (d = deck; d; d = d->li_next) {
                     subckt_line = d->li_line;
                     if (ciprefix(".subckt", subckt_line)) {
                         subckt_line = skip_non_ws(subckt_line);
@@ -2657,7 +2647,6 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
                             flag = TRUE;
                         }
                     }
-                    d = d->li_next;
                 }
                 if (flag) {
                     num_subckt_params = inp_get_params(p->li_line, subckt_param_names, subckt_param_values);
@@ -3177,34 +3166,34 @@ inp_fix_param_values(struct line *deck)
     wordlist *nwl;
     int parens;
 
-    while (c) {
+    for (; c; c = c->li_next) {
         line = c->li_line;
 
         if (*line == '*' || (ciprefix(".param", line) && strchr(line, '{'))) {
-            c = c->li_next;
             continue;
         }
 
         if (ciprefix(".control", line)) {
             control_section = TRUE;
-            c = c->li_next;
             continue;
         }
         if (ciprefix(".endc", line)) {
             control_section = FALSE;
-            c = c->li_next;
             continue;
         }
+
+        /* no handling of params in "option" lines */
         if (control_section || ciprefix(".option", line)) {
-            c = c->li_next;    /* no handling of params in "option" lines */
             continue;
         }
+
+        /* no handling of params in "set" lines */
         if (ciprefix("set", line)) {
-            c = c->li_next;    /* no handling of params in "set" lines */
             continue;
         }
+
+        /* no handling of params in B source lines */
         if (*line == 'b') {
-            c = c->li_next;    /* no handling of params in B source lines */
             continue;
         }
 
@@ -3216,7 +3205,6 @@ inp_fix_param_values(struct line *deck)
             *(++line) = 'e';
             *(++line) = 'l';
             *(++line) = ' ';
-            c = c->li_next;
             continue;
         }
 
@@ -3224,12 +3212,10 @@ inp_fix_param_values(struct line *deck)
         if (ciprefix(".model", line) && (strstr(line, "numos") || strstr(line, "numd") ||
                                          strstr(line, "nbjt") || strstr(line, "nbjt2") ||
                                          strstr(line, "numd2"))) {
-            c = c->li_next;
             continue;
         }
         /* exclude CIDER devices with ic.file parameter */
         if (strstr(line, "ic.file")) {
-            c = c->li_next;
             continue;
         }
 
@@ -3414,7 +3400,6 @@ inp_fix_param_values(struct line *deck)
                 tfree(old_str);
             }
         }
-        c = c->li_next;
     }
 }
 
@@ -3630,11 +3615,9 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
         return;
 
     /* determine the number of lines with .param */
-    ptr = start_card;
-    while (ptr) {
+    for (ptr = start_card; ptr; ptr = ptr->li_next) {
         if (strchr(ptr->li_line, '='))
             num_params++;
-        ptr = ptr->li_next;
     }
 
     arr_size = num_params;
@@ -3657,7 +3640,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     ptr_array_ordered = TMALLOC(struct line *, arr_size);
 
     ptr = start_card;
-    while (ptr) {
+    for (ptr = start_card; ptr; ptr = ptr->li_next) {
         // ignore .param lines without '='
         if (strchr(ptr->li_line, '=')) {
             depends_on[num_params][0] = NULL;
@@ -3667,7 +3650,6 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
             ptr_array[num_params++]   = ptr;
         }
-        ptr = ptr->li_next;
     }
     // look for duplicately defined parameters and mark earlier one to skip
     // param list is ordered as defined in netlist
