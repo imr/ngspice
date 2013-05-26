@@ -926,9 +926,8 @@ readline(FILE *fd)
 /* replace "gnd" by " 0 "
    Delimiters of gnd may be ' ' or ',' or '(' or ')' */
 static void
-inp_fix_gnd_name(struct line *deck)
+inp_fix_gnd_name(struct line *c)
 {
-    struct line *c = deck;
     char *gnd;
 
     for (; c; c = c->li_next) {
@@ -967,12 +966,11 @@ create_new_card(char *card_str, int *line_number) {
 
 
 static void
-inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
+inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 {
     int skip_control = 0;
-    struct line *c;
 
-    for (c = deck; c; c = c->li_next) {
+    for (; c; c = c->li_next) {
         char *line = c->li_line;
 
         /* there is no e source inside .control ... .endc */
@@ -1194,13 +1192,12 @@ chk_for_line_continuation(char *line)
 //        .param func1(x,y) = {x*y} --> .func func1(x,y) {x*y}
 
 static void
-inp_fix_macro_param_func_paren_io(struct line *begin_card)
+inp_fix_macro_param_func_paren_io(struct line *card)
 {
-    struct line *card;
     char        *str_ptr, *new_str;
     bool        is_func = FALSE;
 
-    for (card = begin_card; card; card = card->li_next) {
+    for (; card; card = card->li_next) {
 
         if (*card->li_line == '*')
             continue;
@@ -1825,13 +1822,12 @@ inp_fix_ternary_operator_str(char *line, bool all)
 
 
 static void
-inp_fix_ternary_operator(struct line *start_card)
+inp_fix_ternary_operator(struct line *card)
 {
-    struct line *card;
     char        *line;
     bool found_control = FALSE;
 
-    for (card = start_card; card; card = card->li_next) {
+    for (; card; card = card->li_next) {
         line = card->li_line;
 
         /* exclude replacement of ternary function between .control and .endc */
@@ -1889,9 +1885,8 @@ inp_casefix(char *string)
 
 /* Strip all end-of-line comments from a deck */
 static void
-inp_stripcomments_deck(struct line *deck)
+inp_stripcomments_deck(struct line *c)
 {
-    struct line *c = deck;
     for (; c; c = c->li_next) {
         inp_stripcomments_line(c->li_line);
     }
@@ -2239,10 +2234,9 @@ inp_remove_ws(char *s)
    No changes to lines in .control section !
 */
 static void
-inp_fix_for_numparam(struct line *deck)
+inp_fix_for_numparam(struct line *c)
 {
     bool found_control = FALSE;
-    struct line *c = deck;
     char *str_ptr;
 
     for (; c; c = c->li_next) {
@@ -2277,9 +2271,8 @@ inp_fix_for_numparam(struct line *deck)
 
 
 static void
-inp_remove_excess_ws(struct line *deck)
+inp_remove_excess_ws(struct line *c)
 {
-    struct line *c = deck;
     bool found_control = FALSE;
     for (; c; c = c->li_next) {
         if (*c->li_line == '*') {
@@ -2308,11 +2301,10 @@ inp_remove_excess_ws(struct line *deck)
  */
 
 static void
-expand_section_references(struct line *deck, int call_depth, char *dir_name)
+expand_section_references(struct line *c, int call_depth, char *dir_name)
 {
-    struct line *c;
 
-    for (c = deck; c; c = c->li_next) {
+    for (; c; c = c->li_next) {
 
         char *line = c->li_line;
 
@@ -4150,7 +4142,7 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
 
      */
 static void
-inp_compat(struct line *deck)
+inp_compat(struct line *card)
 {
     char *str_ptr, *cut_line, *title_tok, *node1, *node2;
     char *out_ptr, *exp_ptr, *beg_ptr, *end_ptr, *copy_ptr, *del_ptr;
@@ -4160,13 +4152,12 @@ inp_compat(struct line *deck)
     struct line *new_line, *tmp_ptr;
 
     struct line  *param_end = NULL, *param_beg = NULL;
-    struct line *card;
     int skip_control = 0;
 
     char *equation, *tc1_ptr = NULL, *tc2_ptr = NULL;
     double tc1 = 0.0, tc2 = 0.0;
 
-    for (card = deck; card; card = card->li_next) {
+    for (; card; card = card->li_next) {
 
         char *curr_line = card->li_line;
 
@@ -5251,18 +5242,18 @@ replace_token(char *string, char *token, int wherereplace, int total)
 */
 
 static void
-inp_bsource_compat(struct line *deck)
+inp_bsource_compat(struct line *card)
 {
     char *equal_ptr, *str_ptr, *tmp_char, *new_str, *final_str;
     char actchar;
-    struct line *card, *new_line, *tmp_ptr;
+    struct line *new_line, *tmp_ptr;
     wordlist *wl = NULL, *wlist = NULL;
     char buf[512];
     size_t i, xlen, ustate = 0;
     int skip_control = 0;
     int error1;
 
-    for (card = deck; card; card = card->li_next) {
+    for (; card; card = card->li_next) {
 
         char *curr_line = card->li_line;
 
@@ -5690,12 +5681,11 @@ inp_add_series_resistor(struct line *deck)
 
 #ifndef XSPICE
 static void
-inp_poly_err(struct line *deck)
+inp_poly_err(struct line *card)
 {
-    struct line *card;
 
     size_t skip_control = 0;
-    for (card = deck; card; card = card->li_next) {
+    for (; card; card = card->li_next) {
         char *curr_line = card->li_line;
         if (*curr_line == '*')
             continue;
@@ -5731,12 +5721,11 @@ inp_poly_err(struct line *deck)
 
 
 static void
-tprint(struct line *deck)
+tprint(struct line *t)
 {
     /*debug: print into file*/
     FILE *fd = fopen("tprint-out.txt", "w");
-    struct line *t;
-    for (t = deck; t; t = t->li_next)
+    for (; t; t = t->li_next)
         fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
     fclose(fd);
 }
