@@ -933,9 +933,9 @@ inp_fix_gnd_name(struct line *c)
     for (; c; c = c->li_next) {
         gnd = c->li_line;
         // if there is a comment or no gnd, go to next line
-        if ((*gnd == '*') || (strstr(gnd, "gnd") == NULL)) {
+        if ((*gnd == '*') || (strstr(gnd, "gnd") == NULL))
             continue;
-        }
+
         // replace "?gnd?" by "? 0 ?", ? being a ' '  ','  '('  ')'.
         while ((gnd = strstr(gnd, "gnd")) != NULL) {
             if ((isspace(gnd[-1]) || gnd[-1] == '(' || gnd[-1] == ',') &&
@@ -1887,9 +1887,8 @@ inp_casefix(char *string)
 static void
 inp_stripcomments_deck(struct line *c)
 {
-    for (; c; c = c->li_next) {
+    for (; c; c = c->li_next)
         inp_stripcomments_line(c->li_line);
-    }
 }
 
 
@@ -2240,18 +2239,16 @@ inp_fix_for_numparam(struct line *c)
     char *str_ptr;
 
     for (; c; c = c->li_next) {
-        if (ciprefix(".lib", c->li_line) || ciprefix("*lib", c->li_line) || ciprefix("*inc", c->li_line)) {
+        if (ciprefix(".lib", c->li_line) || ciprefix("*lib", c->li_line) || ciprefix("*inc", c->li_line))
             continue;
-        }
 
         /* exclude lines between .control and .endc from getting quotes changed */
         if (ciprefix(".control", c->li_line))
             found_control = TRUE;
         if (ciprefix(".endc", c->li_line))
             found_control = FALSE;
-        if (found_control) {
+        if (found_control)
             continue;
-        }
 
         inp_change_quotes(c->li_line);
 
@@ -2265,7 +2262,6 @@ inp_fix_for_numparam(struct line *c)
 
         if (ciprefix(".subckt", c->li_line))
             c->li_line = inp_fix_subckt(c->li_line);
-
     }
 }
 
@@ -2275,18 +2271,17 @@ inp_remove_excess_ws(struct line *c)
 {
     bool found_control = FALSE;
     for (; c; c = c->li_next) {
-        if (*c->li_line == '*') {
+        if (*c->li_line == '*')
             continue;
-        }
 
         /* exclude echo lines between .control and .endc from removing white spaces */
         if (ciprefix(".control", c->li_line))
             found_control = TRUE;
         if (ciprefix(".endc", c->li_line))
             found_control = FALSE;
-        if ((found_control) && (ciprefix("echo", c->li_line))) {
+        if ((found_control) && (ciprefix("echo", c->li_line)))
             continue;
-        }
+
         c->li_line = inp_remove_ws(c->li_line); /* freed in fcn */
     }
 }
@@ -2303,7 +2298,6 @@ inp_remove_excess_ws(struct line *c)
 static void
 expand_section_references(struct line *c, int call_depth, char *dir_name)
 {
-
     for (; c; c = c->li_next) {
 
         char *line = c->li_line;
@@ -3161,9 +3155,8 @@ inp_fix_param_values(struct line *deck)
     for (; c; c = c->li_next) {
         line = c->li_line;
 
-        if (*line == '*' || (ciprefix(".param", line) && strchr(line, '{'))) {
+        if (*line == '*' || (ciprefix(".param", line) && strchr(line, '{')))
             continue;
-        }
 
         if (ciprefix(".control", line)) {
             control_section = TRUE;
@@ -3175,19 +3168,16 @@ inp_fix_param_values(struct line *deck)
         }
 
         /* no handling of params in "option" lines */
-        if (control_section || ciprefix(".option", line)) {
+        if (control_section || ciprefix(".option", line))
             continue;
-        }
 
         /* no handling of params in "set" lines */
-        if (ciprefix("set", line)) {
+        if (ciprefix("set", line))
             continue;
-        }
 
         /* no handling of params in B source lines */
-        if (*line == 'b') {
+        if (*line == 'b')
             continue;
-        }
 
         /* for xspice .cmodel: replace .cmodel with .model and skip entire line) */
         if (ciprefix(".cmodel", line)) {
@@ -3203,13 +3193,14 @@ inp_fix_param_values(struct line *deck)
         /* exclude CIDER models */
         if (ciprefix(".model", line) && (strstr(line, "numos") || strstr(line, "numd") ||
                                          strstr(line, "nbjt") || strstr(line, "nbjt2") ||
-                                         strstr(line, "numd2"))) {
+                                         strstr(line, "numd2")))
+        {
             continue;
         }
+
         /* exclude CIDER devices with ic.file parameter */
-        if (strstr(line, "ic.file")) {
+        if (strstr(line, "ic.file"))
             continue;
-        }
 
         while ((equal_ptr = strchr(line, '=')) != NULL) {
 
@@ -3607,10 +3598,9 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
         return;
 
     /* determine the number of lines with .param */
-    for (ptr = start_card; ptr; ptr = ptr->li_next) {
+    for (ptr = start_card; ptr; ptr = ptr->li_next)
         if (strchr(ptr->li_line, '='))
             num_params++;
-    }
 
     arr_size = num_params;
     num_params = 0; /* This is just to keep the code in row 2907ff. */
@@ -3632,7 +3622,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     ptr_array_ordered = TMALLOC(struct line *, arr_size);
 
     ptr = start_card;
-    for (ptr = start_card; ptr; ptr = ptr->li_next) {
+    for (ptr = start_card; ptr; ptr = ptr->li_next)
         // ignore .param lines without '='
         if (strchr(ptr->li_line, '=')) {
             depends_on[num_params][0] = NULL;
@@ -3642,7 +3632,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
             ptr_array[num_params++]   = ptr;
         }
-    }
+
     // look for duplicately defined parameters and mark earlier one to skip
     // param list is ordered as defined in netlist
     for (i = 0; i < num_params; i++)
@@ -5683,7 +5673,6 @@ inp_add_series_resistor(struct line *deck)
 static void
 inp_poly_err(struct line *card)
 {
-
     size_t skip_control = 0;
     for (; card; card = card->li_next) {
         char *curr_line = card->li_line;
