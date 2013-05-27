@@ -72,7 +72,10 @@ SPICEdev BSIM3v32info = {
 #endif
  /* DEVinstSize   */ &BSIM3v32iSize,
  /* DEVmodSize    */ &BSIM3v32mSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ BSIM3v32nodeIsNonLinear
+#endif
 
 };
 

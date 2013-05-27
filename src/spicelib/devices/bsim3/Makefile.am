@@ -15,7 +15,6 @@ libbsim3_la_SOURCES =	\
 	b3mask.c	\
 	b3mdel.c	\
 	b3mpar.c	\
-	b3node.c	\
 	b3noi.c		\
 	b3par.c		\
 	b3pzld.c	\
@@ -29,6 +28,9 @@ libbsim3_la_SOURCES =	\
 	bsim3itf.h
 
 
+if KIRCHHOFF_WANTED
+libbsim3_la_SOURCES += b3node.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

@@ -961,7 +961,7 @@ bypass:
             *(here->MOS6SPdpPtr) += m * (-here->MOS6gds-xrev*
                     (here->MOS6gm+here->MOS6gmbs));
 
-
+#ifdef KIRCHHOFF
             /* KCL verification - Dynamic Part */
             *(ckt->CKTfvk+here->MOS6gNode) += model->MOS6type * (ceqgs_fvk + ceqgb_fvk + ceqgd_fvk) ;
             *(ckt->CKTfvk+here->MOS6bNode) += ceqbs_fvk + ceqbd_fvk - model->MOS6type * ceqgb_fvk ;
@@ -978,6 +978,8 @@ bypass:
             *(ckt->CKTfvk+here->MOS6sNode) -= here->MOS6sourceConductance * *(ckt->CKTrhsOld+here->MOS6sNodePrime) ;
             *(ckt->CKTfvk+here->MOS6dNodePrime) -= here->MOS6drainConductance * *(ckt->CKTrhsOld+here->MOS6dNode) ;
             *(ckt->CKTfvk+here->MOS6sNodePrime) -= here->MOS6sourceConductance * *(ckt->CKTrhsOld+here->MOS6sNode) ;
+#endif
+
         }
     }
     return(OK);

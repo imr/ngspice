@@ -73,7 +73,10 @@ SPICEdev CCVSinfo = {
 #endif
  /* DEVinstSize   */ &CCVSiSize,
  /* DEVmodSize    */ &CCVSmSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ NULL
+#endif
 
 };
 

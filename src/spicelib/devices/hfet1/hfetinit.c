@@ -73,7 +73,10 @@ SPICEdev HFETAinfo = {
 #endif    
  /* DEVinstSize   */ &HFETAiSize,
  /* DEVmodSize    */ &HFETAmSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ HFETAnodeIsNonLinear
+#endif
 
 };
 

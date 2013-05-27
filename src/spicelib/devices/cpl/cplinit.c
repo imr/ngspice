@@ -73,7 +73,10 @@ SPICEdev CPLinfo = {
 #endif   
 /* DEVinstSize    */ &CPLiSize,
 /* DEVmodSize     */ &CPLmSize,
+
+#ifdef KIRCHHOFF
 /* DEVnodeIsLinear */ NULL
+#endif
 
 };
 

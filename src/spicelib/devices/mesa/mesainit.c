@@ -73,7 +73,10 @@ SPICEdev MESAinfo = {
 #endif                        
  /* DEVinstSize   */ &MESAiSize,
  /* DEVmodSize    */ &MESAmSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ MESAnodeIsNonLinear
+#endif
 
 };
 

@@ -721,7 +721,7 @@ line900:
             *(here->B2SPbPtr) += m * (-gbs-(xnrm-xrev)*gmbs-gcsgb-gcsdb-gcssb);
             *(here->B2SPdpPtr) += m * (-gds-xrev*(gm+gmbs)+gcsdb);
 
-
+#ifdef KIRCHHOFF
             /* KCL verification - Dynamic Part */
             *(ckt->CKTfvk + here->B2gNode) += m * ceqqg_fvk ;
             *(ckt->CKTfvk + here->B2bNode) += m * (ceqbs_fvk + ceqbd_fvk + ceqqb_fvk) ;
@@ -738,6 +738,7 @@ line900:
             *(ckt->CKTfvk + here->B2sNode) += m * (-here->B2sourceConductance) * *(ckt->CKTrhsOld + here->B2sNodePrime) ;
             *(ckt->CKTfvk + here->B2dNodePrime) += m * (-here->B2drainConductance) * *(ckt->CKTrhsOld + here->B2dNode) ;
             *(ckt->CKTfvk + here->B2sNodePrime) += m * (-here->B2sourceConductance) * *(ckt->CKTrhsOld + here->B2sNode) ;
+#endif
 
 line1000:  ;
 

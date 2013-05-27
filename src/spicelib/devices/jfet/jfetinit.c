@@ -73,7 +73,10 @@ SPICEdev JFETinfo = {
 #endif                        
  /* DEVinstSize   */ &JFETiSize,
  /* DEVmodSize    */ &JFETmSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ JFETnodeIsNonLinear
+#endif
 
 };
 

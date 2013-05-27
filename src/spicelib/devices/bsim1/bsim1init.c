@@ -73,7 +73,10 @@ SPICEdev B1info = {
 #endif    
  /* DEVinstSize   */ &B1iSize,
  /* DEVmodSize    */ &B1mSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ B1nodeIsNonLinear
+#endif
 
 };
 

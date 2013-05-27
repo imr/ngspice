@@ -16,13 +16,15 @@ libmos6_la_SOURCES =	\
 	mos6load.c	\
 	mos6mask.c	\
 	mos6mpar.c	\
-	mos6node.c	\
 	mos6par.c	\
 	mos6set.c	\
 	mos6temp.c	\
 	mos6trun.c
 
 
+if KIRCHHOFF_WANTED
+libmos6_la_SOURCES += mos6node.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

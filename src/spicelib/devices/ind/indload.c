@@ -122,8 +122,11 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
             *(here->INDibrNegptr) -=  1;
             *(here->INDibrIbrptr) -=  req;
 
+#ifdef KIRCHHOFF
             *(ckt->CKTfvk+here->INDposNode) += *(ckt->CKTrhsOld+here->INDbrEq) ;
             *(ckt->CKTfvk+here->INDnegNode) -= *(ckt->CKTrhsOld+here->INDbrEq) ;
+#endif
+
         }
     }
     return(OK);

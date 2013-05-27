@@ -72,7 +72,10 @@ SPICEdev INDinfo = {
 #endif                       
  /* DEVinstSize   */ &INDiSize,
  /* DEVmodSize    */ &INDmSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ NULL
+#endif
 
 };
 
@@ -142,7 +145,10 @@ SPICEdev MUTinfo = {
 #endif  
  /* DEVinstSize   */ &MUTiSize,
  /* DEVmodSize    */ &MUTmSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ NULL
+#endif
 
 };
 

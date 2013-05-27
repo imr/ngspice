@@ -18,7 +18,6 @@ libhfet_la_SOURCES =	\
 	hfetmask.c	\
 	hfetmdel.c	\
 	hfetmpar.c	\
-	hfetnode.c	\
 	hfetparam.c	\
 	hfetpzl.c	\
 	hfetsetup.c	\
@@ -26,6 +25,9 @@ libhfet_la_SOURCES =	\
 	hfettrunc.c
 
 
+if KIRCHHOFF_WANTED
+libhfet_la_SOURCES += hfetnode.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

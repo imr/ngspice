@@ -18,7 +18,6 @@ libjfet2_la_SOURCES =	\
 	jfet2mask.c	\
 	jfet2mdel.c	\
 	jfet2mpar.c	\
-	jfet2node.c	\
 	jfet2noi.c	\
 	jfet2par.c	\
 	jfet2parm.h	\
@@ -29,7 +28,9 @@ libjfet2_la_SOURCES =	\
 	psmodel.h
 
 
-
+if KIRCHHOFF_WANTED
+libjfet2_la_SOURCES += jfet2node.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

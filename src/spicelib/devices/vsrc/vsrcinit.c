@@ -73,7 +73,11 @@ SPICEdev VSRCinfo = {
 #endif                        
  /* DEVinstSize   */ &VSRCiSize,
  /* DEVmodSize    */ &VSRCmSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ NULL
+#endif
+
 };
 
 
