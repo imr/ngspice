@@ -21,19 +21,27 @@ Author: 1985 Thomas L. Quarles
 int
 NIreinit( CKTcircuit *ckt)
 {
-    int i, size;
+    int size;
+
+#if defined(PREDICTOR) || defined(KIRCHHOFF)
+    int i;
+#endif
 
     size = SMPmatSize(ckt->CKTmatrix);
     CKALLOC(CKTrhs,size+1,double);
     CKALLOC(CKTrhsOld,size+1,double);
-    CKALLOC(CKTfvk,size+1,double);
     CKALLOC(CKTrhsSpare,size+1,double);
     CKALLOC(CKTirhs,size+1,double);
     CKALLOC(CKTirhsOld,size+1,double);
     CKALLOC(CKTirhsSpare,size+1,double);
+
+#ifdef KIRCHHOFF
+    CKALLOC(CKTfvk,size+1,double);
     CKALLOC(CKTnodeIsLinear,size+1,int);
     for (i = 0 ; i <= size ; i++)
         ckt->CKTnodeIsLinear [i] = 1 ;
+#endif
+
 #ifdef PREDICTOR
     CKALLOC(CKTpred,size+1,double);
     for( i=0;i<8;i++) {

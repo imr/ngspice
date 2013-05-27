@@ -386,8 +386,10 @@ loadDone:
             *(ckt->CKTrhs + (here->ISRCposNode)) += m * value;
             *(ckt->CKTrhs + (here->ISRCnegNode)) -= m * value;
 
+#ifdef KIRCHHOFF
             *(ckt->CKTfvk + (here->ISRCposNode)) -= value;
             *(ckt->CKTfvk + (here->ISRCnegNode)) += value;
+#endif
 
 /* gtri - end - wbk - modify to process srcFact, etc. for all sources */
 

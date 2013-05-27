@@ -72,8 +72,12 @@ SPICEdev BSIM4v4info = {
     NULL,          /* DEVacct        */
 #endif
     &BSIM4v4iSize,   /* DEVinstSize    */
-    &BSIM4v4mSize,    /* DEVmodSize     */
+    &BSIM4v4mSize,   /* DEVmodSize     */
+
+#ifdef KIRCHHOFF
     BSIM4v4nodeIsNonLinear /* DEVnodeIsNonLinear */
+#endif
+
 };
 
 

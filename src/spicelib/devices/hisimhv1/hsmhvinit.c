@@ -71,7 +71,10 @@ SPICEdev HSMHVinfo = {
 #endif
  /* DEVinstSize   */ &HSMHViSize,
  /* DEVmodSize    */ &HSMHVmSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ HSMHVnodeIsNonLinear
+#endif
 
 };
 

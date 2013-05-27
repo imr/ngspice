@@ -20,7 +20,6 @@ libsoi3_la_SOURCES =	\
 	soi3mask.c	\
 	soi3mdel.c	\
 	soi3mpar.c	\
-	soi3node.c	\
 	soi3nois.c	\
 	soi3par.c	\
 	soi3set.c	\
@@ -28,6 +27,9 @@ libsoi3_la_SOURCES =	\
 	soi3trun.c
 
 
+if KIRCHHOFF_WANTED
+libsoi3_la_SOURCES += soi3node.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

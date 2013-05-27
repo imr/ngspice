@@ -21,12 +21,16 @@ NIconvTest(CKTcircuit *ckt)
     int i; /* generic loop variable */
     int size;  /* size of the matrix */
     CKTnode *node; /* current matrix entry */
+
+//#ifndef KIRCHHOFF
     double old;
     double new;
     double tol;
+//#endif
 
     size = SMPmatSize (ckt->CKTmatrix) ;
 
+//#ifndef KIRCHHOFF
 #ifdef STEPDEBUG
     for (i=1;i<=size;i++) {
         new =  ckt->CKTrhs [i] ;
@@ -55,6 +59,8 @@ NIconvTest(CKTcircuit *ckt)
         }
     }
 
+//#else
+#ifdef KIRCHHOFF
     /* KCL Verification */
     double maximum = 0 ;
 
@@ -84,6 +90,7 @@ NIconvTest(CKTcircuit *ckt)
                 return 1 ;
         }
     }
+#endif
 
 #ifdef NEWCONV
     i = CKTconvTest(ckt);

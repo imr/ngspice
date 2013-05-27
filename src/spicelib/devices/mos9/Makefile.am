@@ -21,7 +21,6 @@ libmos9_la_SOURCES =	\
 	mos9mask.c	\
 	mos9mdel.c	\
 	mos9mpar.c	\
-	mos9node.c	\
 	mos9noi.c	\
 	mos9par.c	\
 	mos9pzld.c	\
@@ -35,6 +34,9 @@ libmos9_la_SOURCES =	\
 	mos9trun.c
 
 
+if KIRCHHOFF_WANTED
+libmos9_la_SOURCES += mos9node.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

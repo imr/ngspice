@@ -5346,6 +5346,7 @@ line900:
                (*(here->BSIM4GPqPtr) -= m * here->BSIM4gtau);
            }
 
+#ifdef KIRCHHOFF
 ///////////////////////////////////////////
 
             /* KCL verification - Linear and Dynamic Part */
@@ -5642,6 +5643,7 @@ line900:
                *(ckt->CKTfvk + here->BSIM4sNodePrime) += m * sxpart * here->BSIM4gtau * *(ckt->CKTrhsOld + here->BSIM4qNode) ;
                *(ckt->CKTfvk + here->BSIM4gNodePrime) -= m * here->BSIM4gtau * *(ckt->CKTrhsOld + here->BSIM4qNode) ;
            }
+#endif
 
 #endif
 line1000:  ;

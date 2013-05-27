@@ -70,7 +70,11 @@ SPICEdev B3SOIDDinfo = {
 #endif
  /* DEVinstSize   */ &B3SOIDDiSize,
  /* DEVmodSize    */ &B3SOIDDmSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ B3SOIDDnodeIsNonLinear
+#endif
+
 };
 
 SPICEdev *

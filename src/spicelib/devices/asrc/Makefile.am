@@ -17,12 +17,15 @@ libasrc_la_SOURCES =	\
 	asrcinit.h	\
 	asrcload.c	\
 	asrcmdel.c	\
-	asrcnode.c	\
 	asrcpar.c	\
 	asrcpzld.c	\
-	asrcset.c \
+	asrcset.c	\
 	asrctemp.c
 
+
+if KIRCHHOFF_WANTED
+libasrc_la_SOURCES += asrcnode.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

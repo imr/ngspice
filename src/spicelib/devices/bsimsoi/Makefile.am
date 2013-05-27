@@ -15,7 +15,6 @@ libbsim4soi_la_SOURCES =	\
 	b4soimask.c		\
 	b4soimdel.c		\
 	b4soimpar.c		\
-	b4soinode.c		\
 	b4soinoi.c		\
 	b4soipar.c		\
 	b4soipzld.c		\
@@ -29,6 +28,9 @@ libbsim4soi_la_SOURCES =	\
 	b4soiitf.h
 
 
+if KIRCHHOFF_WANTED
+libbsim4soi_la_SOURCES += b4soinode.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

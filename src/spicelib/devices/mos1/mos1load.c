@@ -945,7 +945,7 @@ next1:      if(vbs <= -3*vt) {
             *(here->MOS1SPdpPtr) += (-here->MOS1gds-xrev*
 				     (here->MOS1gm+here->MOS1gmbs));
 
-
+#ifdef KIRCHHOFF
             /* KCL verification - Linear-Dynamic Part */
             *(ckt->CKTfvk+here->MOS1gNode) += model->MOS1type * (ceqgs_fvk + ceqgb_fvk + ceqgd_fvk) ;
             *(ckt->CKTfvk+here->MOS1bNode) += ceqbs_fvk + ceqbd_fvk - model->MOS1type * ceqgb_fvk ;
@@ -962,6 +962,8 @@ next1:      if(vbs <= -3*vt) {
             *(ckt->CKTfvk+here->MOS1sNode) -= here->MOS1sourceConductance * *(ckt->CKTrhsOld+here->MOS1sNodePrime) ;
             *(ckt->CKTfvk+here->MOS1dNodePrime) -= here->MOS1drainConductance * *(ckt->CKTrhsOld+here->MOS1dNode) ;
             *(ckt->CKTfvk+here->MOS1sNodePrime) -= here->MOS1sourceConductance * *(ckt->CKTrhsOld+here->MOS1sNode) ;
+#endif
+
         }
     }
     return(OK);

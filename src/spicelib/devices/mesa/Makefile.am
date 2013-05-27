@@ -18,7 +18,6 @@ libmesa_la_SOURCES =	\
 	mesamask.c	\
 	mesamdel.c	\
 	mesamparam.c	\
-	mesanode.c	\
 	mesaparam.c	\
 	mesapzl.c	\
 	mesasetup.c	\
@@ -26,6 +25,9 @@ libmesa_la_SOURCES =	\
 	mesatrunc.c
 
 
+if KIRCHHOFF_WANTED
+libmesa_la_SOURCES += mesanode.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

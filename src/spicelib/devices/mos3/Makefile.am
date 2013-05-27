@@ -21,7 +21,6 @@ libmos3_la_SOURCES =	\
 	mos3mask.c	\
 	mos3mdel.c	\
 	mos3mpar.c	\
-	mos3node.c	\
 	mos3noi.c	\
 	mos3par.c	\
 	mos3pzld.c	\
@@ -34,6 +33,10 @@ libmos3_la_SOURCES =	\
 	mos3temp.c	\
 	mos3trun.c
 
+
+if KIRCHHOFF_WANTED
+libmos3_la_SOURCES += mos3node.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

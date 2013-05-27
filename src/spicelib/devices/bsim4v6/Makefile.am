@@ -16,7 +16,6 @@ libbsim4v6_la_SOURCES =	\
 	b4v6mask.c	\
 	b4v6mdel.c	\
 	b4v6mpar.c	\
-	b4v6node.c	\
 	b4v6noi.c	\
 	b4v6par.c	\
 	b4v6pzld.c	\
@@ -30,6 +29,9 @@ libbsim4v6_la_SOURCES =	\
 	bsim4v6itf.h
 
 
+if KIRCHHOFF_WANTED
+libbsim4v6_la_SOURCES += b4v6node.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

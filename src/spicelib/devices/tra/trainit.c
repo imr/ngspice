@@ -73,7 +73,10 @@ SPICEdev TRAinfo = {
 #endif                        
  /* DEVinstSize   */ &TRAiSize,
  /* DEVmodSize    */ &TRAmSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ NULL
+#endif
 
 };
 

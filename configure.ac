@@ -182,6 +182,10 @@ AC_ARG_WITH([tcl],
 AC_ARG_WITH([ngshared],
     [AS_HELP_STRING([--with-ngshared], [Compiles ngspice as shared library (dll)])])
 
+# --enable-kirchhoff: enable KCL
+AC_ARG_ENABLE([kirchhoff],
+    [AS_HELP_STRING([--enable-kirchhoff], [Enables the Kirchhoff Current Law Verification])])
+
 # readline and editline cannot both be enabled
 if test "x$with_editline" = xyes; then
     if test "x$with_readline" = xyes; then
@@ -879,6 +883,12 @@ fi
 
 AC_SUBST([XGRAPHDIR])
 AC_SUBST([NOTXGRAPH])
+
+if test "x$enable_kirchhoff" = xyes; then
+    AC_DEFINE([KIRCHHOFF], [], [Define if we want to enable the Kirchhoff Current Law Verification])
+    AC_MSG_RESULT([WARNING: Kirchhoff Current Law Verification Enabled (experimental)])
+fi
+AM_CONDITIONAL([KIRCHHOFF_WANTED], [test "x$enable_kirchhoff" = xyes])
 
 AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc])
 

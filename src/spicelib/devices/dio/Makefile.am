@@ -21,7 +21,6 @@ libdio_la_SOURCES =	\
 	diomask.c	\
 	diomdel.c	\
 	diompar.c	\
-	dionode.c	\
 	dionoise.c	\
 	dioparam.c	\
 	diopzld.c	\
@@ -34,6 +33,10 @@ libdio_la_SOURCES =	\
 	diotemp.c	\
 	diotrunc.c
 
+
+if KIRCHHOFF_WANTED
+libdio_la_SOURCES += dionode.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

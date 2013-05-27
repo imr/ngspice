@@ -128,6 +128,7 @@ CKTsetup(CKTcircuit *ckt)
     /* gtri - end - Setup for adding rshunt option resistors */
 #endif
 
+#ifdef KIRCHHOFF
     /** Marking node as Non-Linear when needed
      *  By default every node is Linear
      */
@@ -140,6 +141,7 @@ CKTsetup(CKTcircuit *ckt)
                 return (error) ;
         }
     }
+#endif
 
     return(OK);
 }

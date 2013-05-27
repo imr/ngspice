@@ -19,7 +19,6 @@ libvbic_la_SOURCES =	\
 	vbicmask.c	\
 	vbicmdel.c	\
 	vbicmpar.c	\
-	vbicnode.c	\
 	vbicnoise.c	\
 	vbicparam.c	\
 	vbicpzld.c	\
@@ -28,6 +27,9 @@ libvbic_la_SOURCES =	\
 	vbictrunc.c
 
 
+if KIRCHHOFF_WANTED
+libvbic_la_SOURCES += vbicnode.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

@@ -22,7 +22,6 @@ libbjt_la_SOURCES =	\
 	bjtmask.c	\
 	bjtmdel.c	\
 	bjtmpar.c	\
-	bjtnode.c	\
 	bjtnoise.c	\
 	bjtparam.c	\
 	bjtpzld.c	\
@@ -36,6 +35,9 @@ libbjt_la_SOURCES =	\
 	bjttrunc.c
 
 
+if KIRCHHOFF_WANTED
+libbjt_la_SOURCES += bjtnode.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

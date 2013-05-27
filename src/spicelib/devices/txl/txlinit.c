@@ -78,7 +78,10 @@ SPICEdev TXLinfo = {
 #endif
  /* DEVinstSize   */ &TXLiSize,
  /* DEVmodSize    */ &TXLmSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ NULL
+#endif
 
 };
 

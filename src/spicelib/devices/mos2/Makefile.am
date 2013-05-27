@@ -21,7 +21,6 @@ libmos2_la_SOURCES =	\
 	mos2mask.c	\
 	mos2mdel.c	\
 	mos2mpar.c	\
-	mos2node.c	\
 	mos2noi.c	\
 	mos2par.c	\
 	mos2pzld.c	\
@@ -34,6 +33,10 @@ libmos2_la_SOURCES =	\
 	mos2temp.c	\
 	mos2trun.c
 
+
+if KIRCHHOFF_WANTED
+libmos2_la_SOURCES += mos2node.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

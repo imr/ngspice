@@ -20,7 +20,6 @@ libmes_la_SOURCES =	\
 	mesmask.c	\
 	mesmdel.c	\
 	mesmpar.c	\
-	mesnode.c	\
 	mesnoise.c	\
 	mesparam.c	\
 	mespzld.c	\
@@ -29,6 +28,9 @@ libmes_la_SOURCES =	\
 	mestrunc.c
 
 
+if KIRCHHOFF_WANTED
+libmes_la_SOURCES += mesnode.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

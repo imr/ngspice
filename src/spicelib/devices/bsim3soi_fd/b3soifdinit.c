@@ -71,7 +71,11 @@ SPICEdev B3SOIFDinfo = {
 #endif    
  /* DEVinstSize*/	&B3SOIFDiSize,
  /* DEVmodSize*/	&B3SOIFDmSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ B3SOIFDnodeIsNonLinear
+#endif
+
 };
 
 

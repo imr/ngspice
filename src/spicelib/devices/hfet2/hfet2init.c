@@ -73,7 +73,10 @@ SPICEdev HFET2info = {
 #endif    
  /* DEVinstSize   */ &HFET2iSize,
  /* DEVmodSize    */ &HFET2mSize,
+
+#ifdef KIRCHHOFF
  /* DEVnodeIsNonLinear */ HFET2nodeIsNonLinear
+#endif
 
 };
 

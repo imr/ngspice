@@ -3142,6 +3142,7 @@ line900:
                *(here->BSIM3QbPtr) += m * (ggtb - gcqbb);
            }
 
+#ifdef KIRCHHOFF
 ///////////////////////////////////////////////////////////////////////////////////
 /*
             *(ckt->CKTfvk + here->BSIM3gNode) += m * ceqqg ;
@@ -3225,6 +3226,7 @@ line900:
             *(ckt->CKTfvk+here->BSIM3sNodePrime) += m * (gcsgb + sxpart * ggtg + T1 * dsxpart_dVg) * *(ckt->CKTrhsOld+here->BSIM3gNode) ;
             *(ckt->CKTfvk+here->BSIM3sNodePrime) -= m * (gcsgb + gcsdb + gcssb - sxpart * ggtb - T1 * dsxpart_dVb) * *(ckt->CKTrhsOld+here->BSIM3bNode) ;
             *(ckt->CKTfvk+here->BSIM3sNodePrime) -= m * (- gcsdb - sxpart * ggtd - T1 * dsxpart_dVd) * *(ckt->CKTrhsOld+here->BSIM3dNodePrime) ;
+#endif
 
 #endif
 line1000:  ;
