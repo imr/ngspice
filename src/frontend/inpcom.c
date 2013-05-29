@@ -4182,13 +4182,12 @@ inp_compat(struct line *card)
                         title_tok, node1, node2, title_tok);
                 // get the expression
                 str_ptr = gettok(&cut_line); /* ignore 'table' */
-                if (cieq(str_ptr, "table")) {
-                    tfree(str_ptr);
-                } else {
+                if (!cieq(str_ptr, "table")) {
                     fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
                         card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
+                tfree(str_ptr);
                 str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
                 expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
                 if ((!expression) || (!str_ptr)) {
@@ -4196,8 +4195,7 @@ inp_compat(struct line *card)
                         card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
-                else
-                    tfree(str_ptr);
+                tfree(str_ptr);
                 /* remove '{' and '}' from expression */
                 if ((str_ptr = strchr(expression, '{')) != NULL)
                     *str_ptr = ' ';
@@ -4375,13 +4373,12 @@ inp_compat(struct line *card)
                         title_tok, node1, node2, title_tok);
                 // get the expression
                 str_ptr = gettok(&cut_line); /* ignore 'table' */
-                if (cieq(str_ptr, "table")) {
-                    tfree(str_ptr);
-                } else {
+                if (!cieq(str_ptr, "table")) {
                     fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
                         card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
+                tfree(str_ptr);
                 str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
                 expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
                 if ((!expression) || (!str_ptr)) {
@@ -4389,8 +4386,7 @@ inp_compat(struct line *card)
                         card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
-                else
-                    tfree(str_ptr);
+                tfree(str_ptr);
                 /* remove '{' and '}' from expression */
                 if ((str_ptr = strchr(expression, '{')) != NULL)
                     *str_ptr = ' ';
