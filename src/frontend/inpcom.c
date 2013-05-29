@@ -892,8 +892,7 @@ readline(FILE *fd)
     while ((c = getc(fd)) != EOF) {
         if (strlen == 0 && (c == '\t' || c == ' ')) /* Leading spaces away */
             continue;
-        strptr[strlen] = (char) c;
-        strlen++;
+        strptr[strlen++] = (char) c;
         if (strlen >= memlen) {
             memlen += STRGROW;
             if ((strptr = TREALLOC(char, strptr, memlen + 1)) == NULL)
@@ -940,7 +939,8 @@ inp_fix_gnd_name(struct line *c)
 }
 
 static struct line*
-create_new_card(char *card_str, int *line_number) {
+create_new_card(char *card_str, int *line_number)
+{
     struct line *newcard = alloc(struct line);
 
     newcard->li_line    = strdup(card_str);
@@ -1215,7 +1215,7 @@ inp_fix_macro_param_func_paren_io(struct line *card)
             }
             if (*str_ptr == '(') {
                 *str_ptr = ' ';
-                while (*str_ptr && *str_ptr != '\0') {
+                while (*str_ptr != '\0') {
                     if (*str_ptr == ')') {
                         *str_ptr = ' ';
                         break;
@@ -1811,6 +1811,8 @@ inp_fix_ternary_operator(struct line *card)
     for (; card; card = card->li_next) {
         char *line = card->li_line;
 
+        if (*line == '*')
+            continue;
         /* exclude replacement of ternary function between .control and .endc */
         if (ciprefix(".control", line))
             found_control = TRUE;
@@ -1821,8 +1823,6 @@ inp_fix_ternary_operator(struct line *card)
 
         /* ternary operator for B source done elsewhere */
         if (*line == 'B' || *line == 'b')
-            continue;
-        if (*line == '*')
             continue;
         /* .param, .func, and .meas lines handled here (2nd argument FALSE) */
         if (strchr(line, '?') && strchr(line, ':'))
@@ -1954,7 +1954,7 @@ inp_change_quotes(char *s)
 {
     bool first_quote = FALSE;
 
-    while (*s) {
+    for (; *s; s++)
         if (*s == '\'') {
             if (first_quote == FALSE) {
                 *s = '{';
@@ -1964,8 +1964,6 @@ inp_change_quotes(char *s)
                 first_quote = FALSE;
             }
         }
-        s++;
-    }
 }
 
 
@@ -5664,7 +5662,8 @@ inp_poly_err(struct line *card)
         /* get the fourth token in a controlled source line and exit,
         if it is 'poly' */
         if ((ciprefix("e", curr_line)) || (ciprefix("g", curr_line)) ||
-            (ciprefix("f", curr_line)) || (ciprefix("h", curr_line))) {
+            (ciprefix("f", curr_line)) || (ciprefix("h", curr_line)))
+        {
             txfree(gettok(&curr_line));
             txfree(gettok(&curr_line));
             txfree(gettok(&curr_line));
