@@ -928,10 +928,9 @@ readline(FILE *fd)
 static void
 inp_fix_gnd_name(struct line *c)
 {
-    char *gnd;
 
     for (; c; c = c->li_next) {
-        gnd = c->li_line;
+        char *gnd = c->li_line;
         // if there is a comment or no gnd, go to next line
         if ((*gnd == '*') || (strstr(gnd, "gnd") == NULL))
             continue;
@@ -1195,7 +1194,6 @@ static void
 inp_fix_macro_param_func_paren_io(struct line *card)
 {
     char        *str_ptr, *new_str;
-    bool        is_func = FALSE;
 
     for (; card; card = card->li_next) {
 
@@ -1237,8 +1235,8 @@ inp_fix_macro_param_func_paren_io(struct line *card)
                 card->li_line = inp_remove_ws(card->li_line); /* remove the extra white spaces just introduced */
             }
         }
-        is_func = FALSE;
         if (ciprefix(".param", card->li_line)) {
+            bool is_func = FALSE;
             str_ptr = skip_non_ws(card->li_line);  // skip over .param
             str_ptr = skip_ws(str_ptr);
             while (!isspace(*str_ptr) && *str_ptr != '=') {
@@ -1354,12 +1352,12 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                         bool has_models)
 {
     struct line *card;
-    char *line = NULL, *curr_subckt_name, *inst_subckt_name, *model_name, *new_names[100];
+    char *curr_subckt_name, *inst_subckt_name, *model_name, *new_names[100];
     bool found_subckt = FALSE, have_subckt = FALSE, found_model = FALSE;
     int  i, num_terminals = 0, tmp_cnt = 0;
 
     for (card = start_card; card; card = card->li_next) {
-        line = card->li_line;
+        char *line = card->li_line;
 
         if (*line == '*')
             continue;
@@ -1474,7 +1472,7 @@ static void
 comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 {
     struct line *card;
-    char **used_subckt_names, **used_model_names, *line = NULL, *subckt_name, *model_name;
+    char **used_subckt_names, **used_model_names, *subckt_name, *model_name;
     int  num_used_subckt_names = 0, num_used_model_names = 0, i = 0, num_terminals = 0, tmp_cnt = 0;
     bool processing_subckt = FALSE, found_subckt = FALSE, remove_subckt = FALSE, found_model = FALSE, has_models = FALSE;
     int skip_control = 0, nested_subckt = 0;
@@ -1496,7 +1494,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
     }
 
     for (card = start_card; card; card = card->li_next) {
-        line = card->li_line;
+        char *line = card->li_line;
 
         if (*line == '*')
             continue;
@@ -1587,7 +1585,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 
     /* comment out any unused subckts, currently only at top level */
     for (card = start_card; card; card = card->li_next) {
-        line = card->li_line;
+        char *line = card->li_line;
 
         if (*line == '*')
             continue;
@@ -1824,11 +1822,10 @@ inp_fix_ternary_operator_str(char *line, bool all)
 static void
 inp_fix_ternary_operator(struct line *card)
 {
-    char        *line;
     bool found_control = FALSE;
 
     for (; card; card = card->li_next) {
-        line = card->li_line;
+        char *line = card->li_line;
 
         /* exclude replacement of ternary function between .control and .endc */
         if (ciprefix(".control", line))
@@ -2236,7 +2233,6 @@ static void
 inp_fix_for_numparam(struct line *c)
 {
     bool found_control = FALSE;
-    char *str_ptr;
 
     for (; c; c = c->li_next) {
         if (ciprefix(".lib", c->li_line) || ciprefix("*lib", c->li_line) || ciprefix("*inc", c->li_line))
@@ -2255,7 +2251,7 @@ inp_fix_for_numparam(struct line *c)
         if ((inp_compat_mode == COMPATMODE_ALL) || (inp_compat_mode == COMPATMODE_PS))
             if (ciprefix(".subckt", c->li_line) || ciprefix("x", c->li_line)) {
                /* remove params: */
-                str_ptr = strstr(c->li_line, "params:");
+                char *str_ptr = strstr(c->li_line, "params:");
                 if (str_ptr)
                     memcpy(str_ptr, "       ", 7);
             }
