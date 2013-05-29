@@ -52,8 +52,8 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
             TSTALLOC(VCVSposIbrptr, VCVSposNode, VCVSbranch)
             TSTALLOC(VCVSnegIbrptr, VCVSnegNode, VCVSbranch)
-            TSTALLOC(VCVSibrNegptr, VCVSbranch, VCVSnegNode)
             TSTALLOC(VCVSibrPosptr, VCVSbranch, VCVSposNode)
+            TSTALLOC(VCVSibrNegptr, VCVSbranch, VCVSnegNode)
             TSTALLOC(VCVSibrContPosptr, VCVSbranch, VCVScontPosNode)
             TSTALLOC(VCVSibrContNegptr, VCVSbranch, VCVScontNegNode)
         }
