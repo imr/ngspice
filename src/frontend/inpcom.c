@@ -945,10 +945,9 @@ inp_fix_gnd_name(struct line *c)
 
 static struct line*
 create_new_card(char *card_str, int *line_number) {
-    char        *str = strdup(card_str);
     struct line *newcard = alloc(struct line);
 
-    newcard->li_line    = str;
+    newcard->li_line    = strdup(card_str);
     newcard->li_linenum = *line_number;
     newcard->li_error   = NULL;
     newcard->li_actual  = NULL;
@@ -1317,15 +1316,14 @@ get_model_name(char *line, int num_terminals)
 static char*
 get_model_type(char *line)
 {
-    char *model_type, *beg_ptr;
+    char *beg_ptr;
     if (!(ciprefix(".model", line)))
         return NULL;
     beg_ptr = skip_non_ws(line); /* eat .model */
     beg_ptr = skip_ws(beg_ptr);
     beg_ptr = skip_non_ws(beg_ptr); /* eat model name */
     beg_ptr = skip_ws(beg_ptr);
-    model_type = gettok(&beg_ptr);
-    return model_type;
+    return gettok(&beg_ptr);
 }
 
 
@@ -2512,14 +2510,13 @@ inp_fix_inst_line(char *inst_line,
 static bool
 found_mult_param(int num_params, char *param_names[])
 {
-    bool found_mult = FALSE;
     int i;
 
     for (i = 0; i < num_params; i++)
         if (strcmp(param_names[i], "m") == 0)
-            found_mult = TRUE;
+            return TRUE;
 
-    return found_mult;
+    return FALSE;
 }
 
 
