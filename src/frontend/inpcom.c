@@ -888,7 +888,6 @@ readline(FILE *fd)
     char *strptr;
     int strlen;
 
-    strptr = NULL;
     strlen = 0;
     memlen = STRGROW;
     strptr = TMALLOC(char, memlen);
@@ -2572,7 +2571,7 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
 static void
 inp_fix_inst_calls_for_numparam(struct line *deck)
 {
-    struct line *c = deck;
+    struct line *c;
     struct line *d, *p = NULL;
     char *inst_line;
     char *subckt_line;
