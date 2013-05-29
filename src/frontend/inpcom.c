@@ -109,8 +109,8 @@ static char *get_quoted_token(char *string, char **token);
 static void replace_token(char *string, char *token, int where, int total);
 static void inp_add_series_resistor(struct line *deck);
 
-static char *skip_back_non_ws(char *d) { --d; while (*d && !isspace(*d)) d--; return d + 1; }
-static char *skip_back_ws(char *d)     { --d; while (isspace(*d))        d--; return d + 1; }
+static char *skip_back_non_ws(char *d) { while (d[-1] && !isspace(d[-1])) d--; return d; }
+static char *skip_back_ws(char *d)     { while (isspace(d[-1]))           d--; return d; }
 static char *skip_non_ws(char *d)      { while (*d && !isspace(*d)) d++; return d; }
 static char *skip_ws(char *d)          { while (isspace(*d))        d++; return d; }
 
