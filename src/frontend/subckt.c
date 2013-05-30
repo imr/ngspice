@@ -1996,6 +1996,10 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
                     (void) sprintf(buffer + strlen(buffer), "%s ", name);
                     tfree(name);
                     name = gettok(&t);
+                    if (name == NULL) {
+                        name = copy(""); /* allow 'tfree' */
+                        break;
+                    }
                 }
             }  /* while  */
 
