@@ -31,6 +31,9 @@ VCCSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
         case VCCS_TRANS:
             value->rValue = here->VCCScoeff;
             return (OK);
+        case VCCS_M:
+            value->rValue = here->VCCSmValue;
+            return (OK);
         case VCCS_POS_NODE:
             value->iValue = here->VCCSposNode;
             return (OK);
