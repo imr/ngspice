@@ -12,6 +12,7 @@ Author: 1987 Thomas L. Quarles
 IFparm CCCSpTable[] = { /* parameters */ 
  IOPU("gain",    CCCS_GAIN,    IF_REAL    ,"Gain of source"),
  IOPU("control", CCCS_CONTROL, IF_INSTANCE,"Name of controlling source"),
+ IOP ( "m",      CCCS_M,         IF_REAL   , "Parallel multiplier"),
  IP("sens_gain",CCCS_GAIN_SENS,IF_FLAG, "flag to request sensitivity WRT gain"),
  OPU("neg_node", CCCS_NEG_NODE,IF_INTEGER, "Negative node of source"),
  OPU("pos_node", CCCS_POS_NODE,IF_INTEGER, "Positive node of source"),

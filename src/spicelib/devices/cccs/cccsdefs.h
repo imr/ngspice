@@ -30,11 +30,14 @@ typedef struct sCCCSinstance {
 
     double CCCScoeff;   /* coefficient */
 
+    double CCCSmValue;  /* Parallel multiplier */
+
     double *CCCSposContBrptr;  /* pointer to sparse matrix element at 
                                      *(positive node, control branch eq)*/
     double *CCCSnegContBrptr;  /* pointer to sparse matrix element at 
                                      *(negative node, control branch eq)*/
     unsigned CCCScoeffGiven :1 ;   /* flag to indicate coeff given */
+    unsigned CCCSmGiven     :1 ;  /* flag to indicate multiplier given */
 
     int  CCCSsenParmNo;   /* parameter # for sensitivity use;
             set equal to  0 if not a design parameter*/
@@ -62,6 +65,7 @@ typedef struct sCCCSmodel {       /* model structure for a source */
 #define CCCS_CURRENT 7
 #define CCCS_POWER 8
 #define CCCS_VOLTS 9
+#define CCCS_M 10
 
 /* model parameters */
 
