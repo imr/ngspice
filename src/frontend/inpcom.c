@@ -2145,10 +2145,10 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
             if (new_str == NULL) {
                 new_str = strdup(c->li_line);
             } else {
-                char *str = new_str;
-                new_str = TMALLOC(char, strlen(str) + strlen(c->li_line) + 2);
-                sprintf(new_str, "%s %s", str, c->li_line);
-                tfree(str);
+                char *x = TMALLOC(char, strlen(new_str) + strlen(c->li_line) + 2);
+                sprintf(x, "%s %s", new_str, c->li_line);
+                tfree(new_str);
+                new_str = x;
             }
             tfree(c->li_line);
             head = c;
