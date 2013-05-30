@@ -11,6 +11,7 @@ Author: 1987 Thomas L. Quarles
 
 IFparm VCCSpTable[] = { /* parameters */ 
  IOPU("gain",       VCCS_TRANS, IF_REAL, "Transconductance of source (gain)"),
+ IOP ( "m",      VCCS_M,         IF_REAL   , "Parallel multiplier"),
  IP("sens_trans",  VCCS_TRANS_SENS,IF_FLAG,
         "flag to request sensitivity WRT transconductance"),
  OPU("pos_node",    VCCS_POS_NODE, IF_INTEGER, "Positive node of source"),

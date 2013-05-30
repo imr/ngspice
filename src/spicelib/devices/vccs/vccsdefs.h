@@ -31,6 +31,7 @@ typedef struct sVCCSinstance {
 
     double VCCSinitCond;    /* initial condition (of controlling source) */
     double VCCScoeff;       /* coefficient */
+    double VCCSmValue;      /* Parallel multiplier */
 
     double *VCCSposContPosptr;  /* pointer to sparse matrix element at 
                                  * (positive node, control positive node) */
@@ -41,6 +42,7 @@ typedef struct sVCCSinstance {
     double *VCCSnegContNegptr;  /* pointer to sparse matrix element at 
                                  * (negative node, control negative node) */
     unsigned VCCScoeffGiven :1 ;/* flag to indicate function coeffs given */
+    unsigned VCCSmGiven     :1 ;/* flag to indicate multiplier given */
 
     int  VCCSsenParmNo;   /* parameter # for sensitivity use;
             set equal to  0 if not a design parameter*/
@@ -73,6 +75,7 @@ typedef struct sVCCSmodel {       /* model structure for a source */
 #define VCCS_CURRENT 9
 #define VCCS_POWER 10
 #define VCCS_VOLTS 11
+#define VCCS_M 12
 
 /* model parameters */
 
