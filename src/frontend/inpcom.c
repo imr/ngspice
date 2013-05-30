@@ -601,16 +601,14 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         return NULL;
 
     if (call_depth == 0 && found_end == TRUE) {
-        struct line *prev;
         global_card = alloc(struct line);
         global_card->li_error   = NULL;
         global_card->li_actual  = NULL;
         global_card->li_line    = copy(".global gnd");
         global_card->li_linenum = 1;
 
-        prev                 = cc->li_next;
+        global_card->li_next = cc->li_next;
         cc->li_next          = global_card;
-        global_card->li_next = prev;
 
         if (inp_compat_mode == COMPATMODE_ALL ||
             inp_compat_mode == COMPATMODE_HS  ||
