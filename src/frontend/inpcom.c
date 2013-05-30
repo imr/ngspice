@@ -48,8 +48,10 @@ static struct library {
 
 static int  num_libraries;
 
-static char *subckt_w_params[N_SUBCKT_W_PARAMS];
-static int  num_subckt_w_params;
+struct names {
+    char *names[N_SUBCKT_W_PARAMS];
+    int  num_names;
+};
 
 struct function_env
 {
@@ -82,15 +84,15 @@ static char *readline(FILE *fd);
 static int  get_number_terminals(char *c);
 static void inp_stripcomments_deck(struct line *deck);
 static void inp_stripcomments_line(char *s);
-static void inp_fix_for_numparam(struct line *deck);
+static void inp_fix_for_numparam(struct names *subckt_w_params, struct line *deck);
 static void inp_remove_excess_ws(struct line *deck);
 static void expand_section_references(struct line *deck, int call_depth, char *dir_name);
 static void inp_grab_func(struct function_env *, struct line *deck);
-static void inp_fix_inst_calls_for_numparam(struct line *deck);
+static void inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck);
 static void inp_expand_macros_in_func(struct function_env *);
 static struct line *inp_expand_macros_in_deck(struct function_env *, struct line *deck);
 static void inp_fix_param_values(struct line *deck);
-static void inp_reorder_params(struct line *deck, struct line *list_head, struct line *end);
+static void inp_reorder_params(struct names *subckt_w_params, struct line *deck, struct line *list_head, struct line *end);
 static int  inp_split_multi_param_lines(struct line *deck, int line_number);
 static void inp_sort_params(struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c);
 static char *inp_remove_ws(char *s);
@@ -239,6 +241,23 @@ read_a_lib(char *y, int call_depth, char *dir_name)
 }
 
 
+static struct names *
+new_names(void)
+{
+    struct names *p = TMALLOC(struct names, 1);
+    p -> num_names = 0;
+
+    return p;
+}
+
+
+static void
+delete_names(struct names *p)
+{
+    tfree(p);
+}
+
+
 /*-------------------------------------------------------------------------
  Read the entire input file and return  a pointer to the first line of
  the linked list of 'card' records in data.  The pointer is stored in
@@ -306,7 +325,6 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
     bool found_end = FALSE, shell_eol_continuation = FALSE;
 
     if (call_depth == 0) {
-        num_subckt_w_params = 0;
         num_libraries       = 0;
         global              = NULL;
         found_end           = FALSE;
@@ -716,7 +734,9 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
     if (call_depth == 0) {
 
-        inp_fix_for_numparam(working);
+        struct names *subckt_w_params = new_names();
+
+        inp_fix_for_numparam(subckt_w_params, working);
         inp_remove_excess_ws(working);
 
         comment_out_unused_subckt_models(working, line_number);
@@ -734,8 +754,12 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         for (newcard = working; newcard; newcard = newcard->li_next)
             end = newcard;
 
-        inp_reorder_params(working, cc, end);
-        inp_fix_inst_calls_for_numparam(working);
+        inp_reorder_params(subckt_w_params, working, cc, end);
+        inp_fix_inst_calls_for_numparam(subckt_w_params, working);
+
+        delete_names(subckt_w_params);
+        subckt_w_params = NULL;
+
         inp_fix_gnd_name(working);
         inp_chk_for_multi_in_vcvs(working, &line_number);
 
@@ -1973,32 +1997,32 @@ inp_change_quotes(char *s)
 
 
 static void
-new_subckt_w_params(char *str)
+add_name(struct names *p, char *name)
 {
-    if (num_subckt_w_params >= N_SUBCKT_W_PARAMS) {
+    if (p->num_names >= N_SUBCKT_W_PARAMS) {
         fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
         controlled_exit(EXIT_FAILURE);
     }
 
-    subckt_w_params[num_subckt_w_params++] = str;
+    p->names[p->num_names++] = name;
 }
 
 
 static char **
-find_subckt_w_params(char *subckt_name)
+find_name(struct names *p, char *name)
 {
     int i;
 
-    for (i = 0; i < num_subckt_w_params; i++)
-        if (strcmp(subckt_w_params[i], subckt_name) == 0)
-            return & subckt_w_params[i];
+    for (i = 0; i < p->num_names; i++)
+        if (strcmp(p->names[i], name) == 0)
+            return & p->names[i];
 
     return NULL;
 }
 
 
 static char*
-inp_fix_subckt(char *s)
+inp_fix_subckt(struct names *subckt_w_params, char *s)
 {
     struct line *head = NULL, *newcard = NULL, *start_card = NULL, *end_card = NULL, *prev_card = NULL, *c = NULL;
     char *equal, *beg, *buffer, *ptr1, *ptr2, *str, *new_str = NULL;
@@ -2013,7 +2037,7 @@ inp_fix_subckt(char *s)
         for (ptr2 = ptr1; *ptr2 && !isspace(*ptr2) && !isquote(*ptr2); ptr2++)
             ;
 
-        new_subckt_w_params(copy_substring(ptr1, ptr2));
+        add_name(subckt_w_params, copy_substring(ptr1, ptr2));
 
         /* go to beginning of first parameter word  */
         /* s    will contain only subckt definition */
@@ -2217,7 +2241,7 @@ inp_remove_ws(char *s)
    No changes to lines in .control section !
 */
 static void
-inp_fix_for_numparam(struct line *c)
+inp_fix_for_numparam(struct names *subckt_w_params, struct line *c)
 {
     bool found_control = FALSE;
 
@@ -2244,7 +2268,7 @@ inp_fix_for_numparam(struct line *c)
             }
 
         if (ciprefix(".subckt", c->li_line))
-            c->li_line = inp_fix_subckt(c->li_line);
+            c->li_line = inp_fix_subckt(subckt_w_params, c->li_line);
     }
 }
 
@@ -2525,7 +2549,7 @@ found_mult_param(int num_params, char *param_names[])
 
    Function is called from inp_fix_inst_calls_for_numparam() */
 static int
-inp_fix_subckt_multiplier(struct line *subckt_card,
+inp_fix_subckt_multiplier(struct names *subckt_w_params, struct line *subckt_card,
                           int num_subckt_params, char *subckt_param_names[], char *subckt_param_values[])
 {
     struct line *card;
@@ -2538,7 +2562,7 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
     if (!strstr(subckt_card->li_line, "params:")) {
         new_str = TMALLOC(char, strlen(subckt_card->li_line) + 13);
         sprintf(new_str, "%s params: m=1", subckt_card->li_line);
-        new_subckt_w_params(get_subckt_model_name(subckt_card->li_line));
+        add_name(subckt_w_params, get_subckt_model_name(subckt_card->li_line));
     } else {
         new_str = TMALLOC(char, strlen(subckt_card->li_line) + 5);
         sprintf(new_str, "%s m=1", subckt_card->li_line);
@@ -2569,7 +2593,7 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
 
 
 static void
-inp_fix_inst_calls_for_numparam(struct line *deck)
+inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck)
 {
     struct line *c;
     struct line *d, *p = NULL;
@@ -2620,7 +2644,7 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
                     num_subckt_params = inp_get_params(p->li_line, subckt_param_names, subckt_param_values);
 
                     if (num_subckt_params == 0 || !found_mult_param(num_subckt_params, subckt_param_names))
-                        inp_fix_subckt_multiplier(p, num_subckt_params, subckt_param_names, subckt_param_values);
+                        inp_fix_subckt_multiplier(subckt_w_params, p, num_subckt_params, subckt_param_names, subckt_param_values);
                 }
             }
             tfree(subckt_name);
@@ -2647,7 +2671,7 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
         if (ciprefix("x", inst_line)) {
             subckt_name = inp_get_subckt_name(inst_line);
 
-            if (find_subckt_w_params(subckt_name)) {
+            if (find_name(subckt_w_params, subckt_name)) {
                     sprintf(name_w_space, "%s ", subckt_name);
 
                     /* find .subckt line */
@@ -3784,7 +3808,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
 
 static void
-inp_add_params_to_subckt(struct line *subckt_card)
+inp_add_params_to_subckt(struct names *subckt_w_params, struct line *subckt_card)
 {
     struct line *card        = subckt_card->li_next;
     char        *curr_line   = card->li_line;
@@ -3802,7 +3826,7 @@ inp_add_params_to_subckt(struct line *subckt_card)
             subckt_name = skip_non_ws(subckt_card->li_line);
             subckt_name = skip_ws(subckt_name);
             end_ptr = skip_non_ws(subckt_name);
-            new_subckt_w_params(copy_substring(subckt_name, end_ptr));
+            add_name(subckt_w_params, copy_substring(subckt_name, end_ptr));
         } else {
             new_line = TMALLOC(char, strlen(subckt_line) + strlen(param_ptr) + 2);
             sprintf(new_line, "%s %s", subckt_line, param_ptr);
@@ -3835,7 +3859,7 @@ inp_add_params_to_subckt(struct line *subckt_card)
  */
 
 static struct line *
-inp_reorder_params_subckt(struct line *subckt_card)
+inp_reorder_params_subckt(struct names *subckt_w_params, struct line *subckt_card)
 {
     struct line *first_param_card = NULL;
     struct line *last_param_card = NULL;
@@ -3854,7 +3878,7 @@ inp_reorder_params_subckt(struct line *subckt_card)
         }
 
         if (ciprefix(".subckt", curr_line)) {
-            prev_card = inp_reorder_params_subckt(c);
+            prev_card = inp_reorder_params_subckt(subckt_w_params, c);
             c         = prev_card->li_next;
             continue;
         }
@@ -3862,7 +3886,7 @@ inp_reorder_params_subckt(struct line *subckt_card)
         if (ciprefix(".ends", curr_line)) {
             if (first_param_card) {
                 inp_sort_params(first_param_card, last_param_card, subckt_card, subckt_card, c);
-                inp_add_params_to_subckt(subckt_card);
+                inp_add_params_to_subckt(subckt_w_params, subckt_card);
             }
             return c;
         }
@@ -3892,7 +3916,7 @@ inp_reorder_params_subckt(struct line *subckt_card)
 
 
 static void
-inp_reorder_params(struct line *deck, struct line *list_head, struct line *end)
+inp_reorder_params(struct names *subckt_w_params, struct line *deck, struct line *list_head, struct line *end)
 {
     struct line *first_param_card = NULL;
     struct line *last_param_card = NULL;
@@ -3911,7 +3935,7 @@ inp_reorder_params(struct line *deck, struct line *list_head, struct line *end)
         }
 
         if (ciprefix(".subckt", curr_line)) {
-            prev_card = inp_reorder_params_subckt(c);
+            prev_card = inp_reorder_params_subckt(subckt_w_params, c);
             c         = prev_card->li_next;
             continue;
         }
