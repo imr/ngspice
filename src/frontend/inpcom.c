@@ -67,8 +67,6 @@ struct function_env
 };
 
 
-static  char *global;
-
 static COMPATMODE_T inp_compat_mode;
 
 /* Collect information for dynamic allocation of numparam arrays */
@@ -326,7 +324,6 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
     if (call_depth == 0) {
         num_libraries       = 0;
-        global              = NULL;
         found_end           = FALSE;
         inp_compat_mode = ngspice_compat_mode();
     }
@@ -605,14 +602,10 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
     if (call_depth == 0 && found_end == TRUE) {
         struct line *prev;
-        if (global == NULL) {
-            global = TMALLOC(char, strlen(".global gnd") + 1);
-            sprintf(global, ".global gnd");
-        }
         global_card = alloc(struct line);
         global_card->li_error   = NULL;
         global_card->li_actual  = NULL;
-        global_card->li_line    = global;
+        global_card->li_line    = copy(".global gnd");
         global_card->li_linenum = 1;
 
         prev                 = cc->li_next;
