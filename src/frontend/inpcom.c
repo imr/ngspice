@@ -2016,7 +2016,7 @@ static char*
 inp_fix_subckt(struct names *subckt_w_params, char *s)
 {
     struct line *head = NULL, *newcard = NULL, *start_card = NULL, *end_card = NULL, *prev_card = NULL, *c = NULL;
-    char *equal, *beg, *buffer, *ptr1, *ptr2, *str, *new_str = NULL;
+    char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str = NULL;
     char keep;
     int  num_params = 0, i = 0, bracedepth = 0;
     /* find first '=' */
@@ -2079,9 +2079,8 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
             }
 
             newcard = alloc(struct line);
-            str     = strdup(ptr1);
 
-            newcard->li_line = str;
+            newcard->li_line = strdup(ptr1);
             newcard->li_next = NULL;
 
             if (start_card == NULL)
@@ -2117,9 +2116,8 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
                     beg = p1;
 
                     newcard = alloc(struct line);
-                    str     = buf;
 
-                    newcard->li_line = str;
+                    newcard->li_line = buf;
                     newcard->li_next = NULL;
 
                     if (start_card == NULL)
@@ -2147,7 +2145,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
             if (new_str == NULL) {
                 new_str = strdup(c->li_line);
             } else {
-                str     = new_str;
+                char *str = new_str;
                 new_str = TMALLOC(char, strlen(str) + strlen(c->li_line) + 2);
                 sprintf(new_str, "%s %s", str, c->li_line);
                 tfree(str);
