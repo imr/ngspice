@@ -1968,7 +1968,7 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
             name = gettok(&t);
 
             found = 0;
-            while (*t && !found) {
+            while (!found) {
                 /* Now, is this a subcircuit model? */
                 for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                     /* FIXME, probably too unspecific */
