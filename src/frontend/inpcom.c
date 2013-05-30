@@ -300,7 +300,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
    intfile: in, TRUE if deck is generated from internal circarray
 */
 {
-    struct line *end = NULL, *cc = NULL, *prev, *working, *newcard, *global_card;
+    struct line *end = NULL, *cc = NULL, *prev, *working, *newcard;
     char *buffer = NULL, c;
     /* segfault fix */
 #ifdef XSPICE
@@ -601,7 +601,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         return NULL;
 
     if (call_depth == 0 && found_end == TRUE) {
-        global_card = alloc(struct line);
+        struct line *global_card = alloc(struct line);
         global_card->li_error   = NULL;
         global_card->li_actual  = NULL;
         global_card->li_line    = copy(".global gnd");
