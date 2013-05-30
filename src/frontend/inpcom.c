@@ -714,10 +714,10 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
     working = cc->li_next;
 
-    inp_fix_for_numparam(working);
-    inp_remove_excess_ws(working);
-
     if (call_depth == 0) {
+
+        inp_fix_for_numparam(working);
+        inp_remove_excess_ws(working);
 
         comment_out_unused_subckt_models(working, line_number);
 
