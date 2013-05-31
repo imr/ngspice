@@ -94,6 +94,7 @@ PTeval(INPparseNode * tree, double gmin, double *res, double *vals)
         switch(tree->funcnum) {
        
         case PTF_POW:
+        case PTF_PWR:
         case PTF_MIN:
         case PTF_MAX:
             err = PTeval(tree->left->left, gmin, &r1, vals);
