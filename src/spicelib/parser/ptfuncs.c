@@ -84,6 +84,15 @@ PTpower(double arg1, double arg2)
 }
 
 double
+PTpwr(double arg1, double arg2)
+{
+    if (arg1 < 0.0)
+        return (-pow(-arg1, arg2));
+    else
+        return (pow(arg1, arg2));
+}
+
+double
 PTmin(double arg1, double arg2)
 {
     return arg1 > arg2 ? arg2 : arg1;

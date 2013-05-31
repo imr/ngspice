@@ -29,6 +29,7 @@ static INPparseNode *mksnode(const char *string, void *ckt);
 static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum);
 
 static void free_tree(INPparseNode *);
+static void printTree(INPparseNode *);
 
 
 /*
@@ -167,6 +168,7 @@ static struct func {
     { "ge0",    PTF_GE0,    (void(*)(void)) PTge0},
     { "le0",    PTF_LE0,    (void(*)(void)) PTle0},
     { "pow",    PTF_POW,    (void(*)(void)) PTpower},
+    { "pwr",    PTF_PWR,    (void(*)(void)) PTpwr},
     { "min",    PTF_MIN,    (void(*)(void)) PTmin},
     { "max",    PTF_MAX,    (void(*)(void)) PTmax},
 } ;
@@ -523,8 +525,6 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
             INPparseNode *b = p->left->right;
             int comparison = (p->funcnum == PTF_MIN) ? PTF_LT0 : PTF_GT0;
 #ifdef TRACE
-            extern void printTree(INPparseNode *);
-
             printf("debug: %s, PTF_MIN: ", __func__);
             printTree(p);
             printf("\n");
@@ -568,6 +568,11 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
                                      mkb(PT_POWER, p->left->left,
                                          mkcon(p->left->right->constant - 1))),
                              arg1);
+#ifdef TRACE
+            printf("pow, %s, returns; ", __func__);
+            printTree(newp);
+            printf("\n");
+#endif
             } else {
             /*
              * D(f^g) = D(exp(g*ln(f)))
@@ -583,6 +588,59 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
                                     mkb(PT_TIMES, p->left->right,
                                     mkb(PT_DIVIDE, arg1, p->left->left)),
                                     mkb(PT_TIMES, arg2, mkf(PTF_LN, p->left->left))));
+            }
+            return mkfirst(newp, p);
+        }
+
+        break;
+
+        case PTF_PWR:
+        {
+        /*
+        pwr(a,b)
+        p->left: ','    p->left->left: a       p->left->right: b
+        */
+
+            if (p->left->right->type == PT_CONSTANT) {
+                /*
+                 * f(a,b) = signum(a) * abs(a)^b
+                 * D(f(a,b)) = signum(a) * abs(a)^b * b / a
+                 *
+                 */
+                arg1 = PTdifferentiate(p->left->left, varnum);
+
+                newp = mkb(PT_TIMES,
+                           mkf(PTF_SGN, p->left->left),
+                           mkb(PT_DIVIDE, mkb(PT_TIMES,
+                                          mkcon(p->left->right->constant),
+                                          mkb(PT_POWER,
+                                              mkf(PTF_ABS, p->left->left),
+                                              mkcon(p->left->right->constant))),
+                               p->left->left));
+#ifdef TRACE
+            printf("pwr, %s, returns; ", __func__);
+            printTree(newp);
+            printf("\n");
+#endif
+            } else {
+            /*
+             * f(g) = signum(a) * abs(a)^g
+             * D(f^g) = signum(a) * D(exp(g*ln(f)))
+             *        = signum(a) * exp(g*ln(f)) * D(g*ln(f))
+             *        = signum(a) * exp(g*ln(f)) * (D(g)*ln(f) + g*D(f)/f)
+             */
+             arg1 = PTdifferentiate(p->left->left, varnum);
+             arg2 = PTdifferentiate(p->left->right, varnum);
+
+             newp = mkb(PT_TIMES,
+                        mkf(PTF_SGN, p->left->left),
+                        mkb(PT_TIMES, mkf(PTF_EXP, mkb(PT_TIMES,
+                                                p->left->right, mkf(PTF_LN,
+                                                p->left->left))),
+                                mkb(PT_PLUS,
+                                    mkb(PT_TIMES, p->left->right,
+                                    mkb(PT_DIVIDE, arg1, p->left->left)),
+                                    mkb(PT_TIMES, arg2, mkf(PTF_LN, p->left->left)))));
             }
             return mkfirst(newp, p);
         }
@@ -1386,8 +1444,6 @@ void free_tree(INPparseNode *pt)
 
 
 /* Debugging stuff. */
-
-void printTree(INPparseNode *);
 
 void INPptPrint(char *str, IFparseTree * ptree)
 {
