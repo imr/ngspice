@@ -96,6 +96,7 @@ static void inp_sort_params(struct line *start_card, struct line *end_card, stru
 static char *inp_remove_ws(char *s);
 static void inp_compat(struct line *deck);
 static void inp_bsource_compat(struct line *deck);
+static void inp_dot_if(struct line *deck);
 
 static bool chk_for_line_continuation(char *line);
 static void comment_out_unused_subckt_models(struct line *start_card, int no_of_lines);
@@ -736,7 +737,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         inp_fix_macro_param_func_paren_io(working);
         inp_fix_ternary_operator(working);
-//tprint(working);
+
         inp_expand_macros_in_deck(NULL, working);
         inp_fix_param_values(working);
 
@@ -744,8 +745,9 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
            be correct at this point */
         for (newcard = working; newcard; newcard = newcard->li_next)
             end = newcard;
-
+// tprint(cc);
         inp_reorder_params(subckt_w_params, working, cc, end);
+
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
 
         delete_names(subckt_w_params);
@@ -767,6 +769,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             working = cc->li_next;
             /* B source numparam compatibility transformation */
             inp_bsource_compat(working);
+            inp_dot_if(working);
         }
 
         inp_add_series_resistor(working);
@@ -5709,4 +5712,30 @@ tprint(struct line *t)
     for (; t; t = t->li_next)
         fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
     fclose(fd);
+}
+
+
+/* prepare .if and .elseif for numparam
+   .if(expression) --> .if{expression} */
+static void
+inp_dot_if(struct line *deck)
+{
+    struct line *card;
+
+    for (card = deck; card; card = card->li_next) {
+        char *curr_line = card->li_line;
+        if (*curr_line == '*')
+            continue;
+        if (ciprefix(".if", curr_line) || ciprefix(".elseif", curr_line)) {
+            char *firstbr = strchr(curr_line, '(');
+            char *lastbr = strrchr(curr_line, ')');
+            if ((!firstbr) || (!lastbr)) {
+                fprintf(cp_err, "Error in netlist line %d\n", card->li_linenum_orig);
+                fprintf(cp_err, "   Bad syntax: %s\n\n", curr_line);
+                controlled_exit(EXIT_BAD);
+            }
+            *firstbr = '{';
+            *lastbr = '}';
+        }
+    }
 }

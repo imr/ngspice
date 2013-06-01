@@ -50,6 +50,7 @@ static char *upper(register char *string);
 static bool doedit(char *filename);
 static struct line *com_options = NULL;
 static void cktislinear(CKTcircuit *ckt, struct line *deck);
+static void dotifeval(struct line *deck);
 
 void line_free_x(struct line *deck, bool recurse);
 void create_circbyline(char *line);
@@ -546,6 +547,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     wl_free(wlist);
                 }
             }
+
+            /* handle .if ... .elseif ... .else ... .endif statements. */
+            dotifeval(deck);
 
             /*merge the two option line structs*/
             if (!options && com_options)
@@ -1201,4 +1205,72 @@ com_circbyline(wordlist *wl)
 
     char *newline = wl_flatten(wl);
     create_circbyline(newline);
+}
+
+
+/* handle .if('expr') ... .elseif('expr') ... .else ... .endif statements.
+   numparam has evaluated .if('boolean expression') to
+   .if (   1.000000000e+000  ) or .elseif (   0.000000000e+000  ) */
+static void
+dotifeval(struct line *deck)
+{
+    int iftrue = 0, elseiftrue = 0, elsetrue = 0, iffound = 0, elseiffound = 0, elsefound = 0;
+    struct line *dd;
+    char *dottoken;
+    char *s, *t;
+
+    for (dd = deck; dd; dd = dd->li_next) {
+
+        s = t = dd->li_line;
+
+        if (*s == '*')
+            continue;
+
+        dottoken = gettok(&t);
+        /* find '.if' and read its parameter */
+        if (cieq(dottoken, ".if")) {
+            elsefound = 0;
+            elseiffound = 0;
+            iffound = 1;
+            *s = '*';
+            s = dd->li_line + 3;
+            iftrue = atoi(s);
+        }
+        else if (cieq(dottoken, ".elseif")) {
+            elsefound = 0;
+            elseiffound = 1;
+            iffound = 0;
+            *s = '*';
+            if (!iftrue) {
+                s = dd->li_line + 7;
+                elseiftrue = atoi(s);
+            }
+        }
+        else if (cieq(dottoken, ".else")) {
+            elsefound = 1;
+            elseiffound = 0;
+            iffound = 0;
+            if (!iftrue && !elseiftrue)
+                elsetrue = 1;
+            *s = '*';
+        }
+        else if (cieq(dottoken, ".endif")) {
+            elsefound = elseiffound = iffound = 0;
+            elsetrue = elseiftrue = iftrue = 0;
+            *s = '*';
+//          inp_subcktexpand(dd);
+        }
+        else {
+            if (iffound && !iftrue) {
+                *s = '*';
+            }
+            else if (elseiffound && !elseiftrue)  {
+                *s = '*';
+            }
+            else if (elsefound && !elsetrue)  {
+                *s = '*';
+            }
+        }
+        tfree(dottoken);
+    }
 }
