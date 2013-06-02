@@ -141,7 +141,12 @@ static char *skip_back_ws_(char *d, char *start)     { while (d > start && isspa
 
 void tprint(struct line *deck);
 
-static struct line *inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile);
+struct inp_read_t
+{ struct line *cc;
+    int line_number;
+};
+
+static struct inp_read_t inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile);
 
 
 #ifndef XSPICE
@@ -279,10 +284,10 @@ read_a_lib(char *y, char *dir_name)
 
     if (dir_name_flag == FALSE) {
         char *y_dir_name = ngdirname(y);
-        lib->deck = inp_read(newfp, 1 /*dummy*/, y_dir_name, FALSE, FALSE);
+        lib->deck = inp_read(newfp, 1 /*dummy*/, y_dir_name, FALSE, FALSE) . cc;
         tfree(y_dir_name);
     } else {
-        lib->deck = inp_read(newfp, 1 /*dummy*/, dir_name, FALSE, FALSE);
+        lib->deck = inp_read(newfp, 1 /*dummy*/, dir_name, FALSE, FALSE) . cc;
     }
 
     fclose(newfp);
@@ -462,18 +467,21 @@ struct line *
 inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
 {
     int call_depth = 0;
+    int line_number;
     struct line *cc;
 
     num_libraries = 0;
     inp_compat_mode = ngspice_compat_mode();
 
-    cc = inp_read(fp, call_depth, dir_name, comfile, intfile);
+    struct inp_read_t rv = inp_read(fp, call_depth, dir_name, comfile, intfile);
+    cc = rv . cc;
+    line_number = rv . line_number;
 
     return cc;
 }
 
 
-struct line *
+struct inp_read_t
 inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 /* fp: in, pointer to file to be read,
    call_depth: in, nested call to fcn
@@ -482,6 +490,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
    intfile: in, TRUE if deck is generated from internal circarray
 */
 {
+    struct inp_read_t rv;
     struct line *end = NULL, *cc = NULL;
     char *buffer = NULL;
     /* segfault fix */
@@ -657,10 +666,10 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 
                 if (dir_name_flag == FALSE) {
                     char *y_dir_name = ngdirname(y);
-                    newcard = inp_read(newfp, call_depth+1, y_dir_name, FALSE, FALSE);  /* read stuff in include file into netlist */
+                    newcard = inp_read(newfp, call_depth+1, y_dir_name, FALSE, FALSE) . cc;  /* read stuff in include file into netlist */
                     tfree(y_dir_name);
                 } else {
-                    newcard = inp_read(newfp, call_depth+1, dir_name, FALSE, FALSE);  /* read stuff in include file into netlist */
+                    newcard = inp_read(newfp, call_depth+1, dir_name, FALSE, FALSE) . cc;  /* read stuff in include file into netlist */
                 }
 
                 (void) fclose(newfp);
@@ -768,7 +777,11 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
     }  /* end while ((buffer = readline(fp)) != NULL) */
 
     if (!end) /* No stuff here */
-        return NULL;
+    {
+        rv . line_number = line_number;
+        rv . cc = NULL;
+        return rv;
+    }
 
     if (call_depth == 0 && found_end == TRUE) {
         cc->li_next = xx_new_line(cc->li_next, copy(".global gnd"), 1, 0);
@@ -924,7 +937,9 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         }
     }
 
-    return cc;
+    rv . line_number = line_number;
+    rv . cc = cc;
+    return rv;
 }
 
 
