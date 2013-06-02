@@ -4426,7 +4426,6 @@ inp_compat(struct line *card)
             */
             if ((str_ptr = strstr(curr_line, "cur")) != NULL) {
                 char *m_ptr, *m_token;
-                int m_len = 0;
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
@@ -4446,12 +4445,11 @@ inp_compat(struct line *card)
                 }
                 else
                     m_token = copy("1");
-                m_len = strlen(m_token);
                 // Gxxx  n1 n2 int1 0 1
                 // or
                 // Gxxx  n1 n2 int1 0 m='expr'
                 xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                       + 20 - 4*2 + m_len;
+                       + 20 - 4*2 + strlen(m_token);
                 ckt_array[0] = TMALLOC(char, xlen);
                 sprintf(ckt_array[0], "%s %s %s %s_int1 0 %s",
                         title_tok, node1, node2, title_tok, m_token);
