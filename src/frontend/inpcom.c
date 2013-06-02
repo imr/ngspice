@@ -467,7 +467,6 @@ struct line *
 inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
 {
     int call_depth = 0;
-    int line_number;
     struct line *cc;
 
     num_libraries = 0;
@@ -475,7 +474,6 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
 
     struct inp_read_t rv = inp_read(fp, call_depth, dir_name, comfile, intfile);
     cc = rv . cc;
-    line_number = rv . line_number;
 
     /* The following processing of an input file is not required for command files
        like spinit or .spiceinit, so return command files here. */
@@ -496,11 +494,11 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
 
         inp_remove_excess_ws(working);
 
-        comment_out_unused_subckt_models(working, line_number);
+        comment_out_unused_subckt_models(working, rv . line_number);
 
         subckt_params_to_param(working);
 
-        line_number = inp_split_multi_param_lines(working, line_number);
+        rv . line_number = inp_split_multi_param_lines(working, rv . line_number);
 
         inp_fix_macro_param_func_paren_io(working);
         inp_fix_ternary_operator(working);
@@ -521,10 +519,10 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
         subckt_w_params = NULL;
 
         inp_fix_gnd_name(working);
-        inp_chk_for_multi_in_vcvs(working, &line_number);
+        inp_chk_for_multi_in_vcvs(working, &rv. line_number);
 
         if (cp_getvar("addcontrol", CP_BOOL, NULL))
-            inp_add_control_section(working, &line_number);
+            inp_add_control_section(working, &rv . line_number);
 #ifndef XSPICE
         inp_poly_err(working);
 #endif
