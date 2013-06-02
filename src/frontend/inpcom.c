@@ -5071,7 +5071,7 @@ inp_compat(struct line *card)
                 card->li_line = inp_remove_ws(curr_line);
                 // insert new B source line immediately after current line
                 for (ii = paui; ii < pai; ii++) {
-                    struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+                    struct line *x = xx_new_line(NULL, ckt_array[ii], 0, 0);
 
                     if (param_end)
                         param_end->li_next = x;
