@@ -4495,6 +4495,7 @@ inp_compat(struct line *card)
                BGxxx int1 0 V = {equation}
             */
             if ((str_ptr = strstr(curr_line, "cur")) != NULL) {
+                char *m_ptr, *m_token;
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
@@ -4506,12 +4507,22 @@ inp_compat(struct line *card)
                     fprintf(stderr, "ERROR: mal formed G line: %s\n", curr_line);
                     controlled_exit(EXIT_FAILURE);
                 }
+                /* find multiplier m at end of line */
+                m_ptr = strstr(cut_line, "m=");
+                if (m_ptr) {
+                    m_token = copy(m_ptr);
+                    *m_ptr = '\0';
+                }
+                else
+                    m_token = copy("1");
                 // Gxxx  n1 n2 int1 0 1
+                // or
+                // Gxxx  n1 n2 int1 0 m='expr'
                 xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                       + 20 - 4*2 + 1;
+                       + 20 - 4*2 + strlen(m_token);
                 ckt_array[0] = TMALLOC(char, xlen);
-                sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
-                        title_tok, node1, node2, title_tok);
+                sprintf(ckt_array[0], "%s %s %s %s_int1 0 %s",
+                        title_tok, node1, node2, title_tok, m_token);
                 // BGxxx int1 0 V = {equation}
                 xlen = 2*strlen(title_tok) + strlen(str_ptr)
                        + 20 - 3*2 + 1;
@@ -4545,6 +4556,7 @@ inp_compat(struct line *card)
 
                 param_beg = param_end = NULL;
                 tfree(title_tok);
+                tfree(m_token);
                 tfree(node1);
                 tfree(node2);
             }
