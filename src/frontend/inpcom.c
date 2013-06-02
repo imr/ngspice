@@ -302,7 +302,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 */
 {
     struct line *end = NULL, *cc = NULL, *prev, *working, *newcard;
-    char *buffer = NULL, c;
+    char *buffer = NULL;
     /* segfault fix */
 #ifdef XSPICE
     char big_buff[5000];
@@ -313,13 +313,8 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 #endif
     char *new_title = NULL;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
-    int line_number_orig = 1, line_number_inc = 1;
-    unsigned int no_braces = 0; /* number of '{' */
+    int line_number_orig = 1;
     int cirlinecount = 0; /* length of circarray */
-
-    size_t max_line_length = 0; /* max. line length in input deck */
-
-    struct line *tmp_ptr1 = NULL;
 
     bool found_end = FALSE, shell_eol_continuation = FALSE;
 
@@ -517,9 +512,9 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             end->li_line = copy(buffer);
             end->li_linenum = end->li_linenum_orig = line_number++;
             if (newcard) {
+                int line_number_inc = 1;
                 end->li_next = newcard;
                 /* Renumber the lines */
-                line_number_inc = 1;
                 for (end = newcard; end && end->li_next; end = end->li_next) {
                     end->li_linenum = line_number++;
                     end->li_linenum_orig = line_number_inc++;
@@ -658,7 +653,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
     prev = NULL;
     while (working) {
-        char *s;
+        char *s, c;
 
         for (s = working->li_line; (c = *s) != '\0' && c <= ' '; s++)
             ;
@@ -726,6 +721,11 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
     if (call_depth == 0) {
 
+        unsigned int no_braces; /* number of '{' */
+        size_t max_line_length; /* max. line length in input deck */
+
+        struct line *tmp_ptr1;
+
         struct names *subckt_w_params = new_names();
 
         inp_fix_for_numparam(subckt_w_params, working);
@@ -780,6 +780,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
            of parameter substitutions in a line*/
         dynmaxline = 0;
         max_line_length = 0;
+        no_braces = 0;
         for (tmp_ptr1 = cc; tmp_ptr1; tmp_ptr1 = tmp_ptr1->li_next) {
             char *s;
             unsigned int braces_per_line = 0;
