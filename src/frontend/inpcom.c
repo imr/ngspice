@@ -3909,7 +3909,7 @@ inp_reorder_params(struct names *subckt_w_params, struct line *deck, struct line
 static int
 inp_split_multi_param_lines(struct line *deck, int line_num)
 {
-    struct line *card = deck, *param_end = NULL, *param_beg = NULL, *prev = NULL, *tmp_ptr;
+    struct line *card = deck, *param_end = NULL, *param_beg = NULL, *prev = NULL;
     char *curr_line, *equal_ptr, *beg_param, *end_param, *new_line;
     char *array[5000];
     int  counter = 0, i;
@@ -3995,9 +3995,8 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
             // comment out current multi-param line
             *(card->li_line)   = '*';
             // insert new param lines immediately after current line
-            tmp_ptr            = card->li_next;
+            param_end->li_next = card->li_next;
             card->li_next      = param_beg;
-            param_end->li_next = tmp_ptr;
             // point 'card' pointer to last in scalar list
             card               = param_end;
 
@@ -4075,7 +4074,7 @@ inp_compat(struct line *card)
     char *xline;
     size_t xlen, i, pai = 0, paui = 0, ii;
     char *ckt_array[100];
-    struct line *new_line, *tmp_ptr;
+    struct line *new_line;
 
     struct line  *param_end = NULL, *param_beg = NULL;
     int skip_control = 0;
@@ -4217,9 +4216,8 @@ inp_compat(struct line *card)
                 // comment out current variable e line
                 *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
-                tmp_ptr            = card->li_next;
+                param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
-                param_end->li_next = tmp_ptr;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
@@ -4275,9 +4273,8 @@ inp_compat(struct line *card)
                 // comment out current variable e line
                 *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
-                tmp_ptr            = card->li_next;
+                param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
-                param_end->li_next = tmp_ptr;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
@@ -4401,9 +4398,8 @@ inp_compat(struct line *card)
                 // comment out current variable e line
                 *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
-                tmp_ptr            = card->li_next;
+                param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
-                param_end->li_next = tmp_ptr;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
@@ -4470,9 +4466,8 @@ inp_compat(struct line *card)
                 // comment out current variable g line
                 *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
-                tmp_ptr            = card->li_next;
+                param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
-                param_end->li_next = tmp_ptr;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
@@ -4681,9 +4676,8 @@ inp_compat(struct line *card)
             // comment out current variable capacitor line
             *(card->li_line)   = '*';
             // insert new param lines immediately after current line
-            tmp_ptr            = card->li_next;
+            param_end->li_next = card->li_next;
             card->li_next      = param_beg;
-            param_end->li_next = tmp_ptr;
             // point 'card' pointer to last in scalar list
             card               = param_end;
 
@@ -4792,9 +4786,8 @@ inp_compat(struct line *card)
             // comment out current variable inductor line
             *(card->li_line)   = '*';
             // insert new param lines immediately after current line
-            tmp_ptr            = card->li_next;
+            param_end->li_next = card->li_next;
             card->li_next      = param_beg;
-            param_end->li_next = tmp_ptr;
             // point 'card' pointer to last in scalar list
             card               = param_end;
 
@@ -4961,9 +4954,8 @@ inp_compat(struct line *card)
                 }
 
                 // insert new param lines immediately after current line
-                tmp_ptr            = card->li_next;
+                param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
-                param_end->li_next = tmp_ptr;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
@@ -5079,9 +5071,8 @@ inp_compat(struct line *card)
                 // comment out current variable capacitor line
                 // *(ckt_array[0])   = '*';
                 // insert new param lines immediately after current line
-                tmp_ptr            = card->li_next;
+                param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
-                param_end->li_next = tmp_ptr;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
@@ -5475,7 +5466,7 @@ inp_add_series_resistor(struct line *deck)
     struct line *card;
     char *tmp_p, *title_tok, *node1, *node2, *rval = NULL;
     char *ckt_array[10];
-    struct line  *tmp_ptr, *param_end = NULL, *param_beg = NULL;
+    struct line  *param_end = NULL, *param_beg = NULL;
 
     for (card = deck; card; card = card->li_next) {
         char *curr_line = card->li_line;
@@ -5546,9 +5537,8 @@ inp_add_series_resistor(struct line *deck)
             // comment out current L line
             *(card->li_line)   = '*';
             // insert new new L and R lines immediately after current line
-            tmp_ptr            = card->li_next;
+            param_end->li_next = card->li_next;
             card->li_next      = param_beg;
-            param_end->li_next = tmp_ptr;
             // point 'card' pointer to last in scalar list
             card               = param_end;
             param_beg = param_end = NULL;
