@@ -477,6 +477,119 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
     cc = rv . cc;
     line_number = rv . line_number;
 
+    /* The following processing of an input file is not required for command files
+       like spinit or .spiceinit, so return command files here. */
+
+
+    if (call_depth == 0 && !comfile && cc) {
+
+        unsigned int no_braces; /* number of '{' */
+        size_t max_line_length; /* max. line length in input deck */
+        struct line *tmp_ptr1, *end;
+        struct names *subckt_w_params = new_names();
+
+        struct line *working = cc->li_next;
+
+        delete_libs();
+        inp_fix_for_numparam(subckt_w_params, working);
+
+
+        inp_remove_excess_ws(working);
+
+        comment_out_unused_subckt_models(working, line_number);
+
+        subckt_params_to_param(working);
+
+        line_number = inp_split_multi_param_lines(working, line_number);
+
+        inp_fix_macro_param_func_paren_io(working);
+        inp_fix_ternary_operator(working);
+        inp_fix_temper_in_param(working);
+
+        inp_expand_macros_in_deck(NULL, working);
+        inp_fix_param_values(working);
+
+        /* get end card as last card in list; end card pntr does not appear to always
+           be correct at this point */
+        for (end = cc; end->li_next; end = end->li_next)
+            ;
+
+        inp_reorder_params(subckt_w_params, working, cc, end);
+        inp_fix_inst_calls_for_numparam(subckt_w_params, working);
+
+        delete_names(subckt_w_params);
+        subckt_w_params = NULL;
+
+        inp_fix_gnd_name(working);
+        inp_chk_for_multi_in_vcvs(working, &line_number);
+
+        if (cp_getvar("addcontrol", CP_BOOL, NULL))
+            inp_add_control_section(working, &line_number);
+#ifndef XSPICE
+        inp_poly_err(working);
+#endif
+        if (inp_compat_mode != COMPATMODE_SPICE3) {
+            /* Do all the compatibility stuff here */
+            working = cc->li_next;
+            /* E, G, L, R, C compatibility transformations */
+            inp_compat(working);
+            working = cc->li_next;
+            /* B source numparam compatibility transformation */
+            inp_bsource_compat(working);
+            inp_dot_if(working);
+            inp_temper_compat(working);
+        }
+
+        inp_add_series_resistor(working);
+
+        /* get max. line length and number of lines in input deck,
+           and renumber the lines,
+           count the number of '{' per line as an upper estimate of the number
+           of parameter substitutions in a line*/
+        dynmaxline = 0;
+        max_line_length = 0;
+        no_braces = 0;
+        for (tmp_ptr1 = cc; tmp_ptr1; tmp_ptr1 = tmp_ptr1->li_next) {
+            char *s;
+            unsigned int braces_per_line = 0;
+            /* count number of lines */
+            dynmaxline++;
+            /* renumber the lines of the processed input deck */
+            tmp_ptr1->li_linenum = dynmaxline;
+            if (max_line_length < strlen(tmp_ptr1->li_line))
+                max_line_length = strlen(tmp_ptr1->li_line);
+            /* count '{' */
+            for (s = tmp_ptr1->li_line; *s; s++)
+                if (*s == '{')
+                    braces_per_line++;
+            if (no_braces <  braces_per_line)
+                no_braces = braces_per_line;
+        }
+
+        if (ft_ngdebug) {
+            /*debug: print into file*/
+            FILE *fd = fopen("debug-out.txt", "w");
+            struct line *t;
+            fprintf(fd, "**************** uncommented deck **************\n\n");
+            /* always print first line */
+            fprintf(fd, "%6d  %6d  %s\n", cc->li_linenum_orig, cc->li_linenum, cc->li_line);
+            /* here without out-commented lines */
+            for (t = cc->li_next; t; t = t->li_next) {
+                if (*(t->li_line) == '*')
+                    continue;
+                fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+            }
+            fprintf(fd, "\n****************** complete deck ***************\n\n");
+            /* now completely */
+            for (t = cc; t; t = t->li_next)
+                fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+            fclose(fd);
+
+            fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
+                    (int) max_line_length, no_braces, dynmaxline);
+        }
+    }
+
     return cc;
 }
 
@@ -823,119 +936,6 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
     inp_stripcomments_deck(cc->li_next, comfile);
 
     inp_stitch_continuation_lines(cc->li_next);
-
-    /* The following processing of an input file is not required for command files
-       like spinit or .spiceinit, so return command files here. */
-
-
-    if (call_depth == 0 && !comfile) {
-
-        unsigned int no_braces; /* number of '{' */
-        size_t max_line_length; /* max. line length in input deck */
-        struct line *tmp_ptr1, *end;
-        struct names *subckt_w_params = new_names();
-
-        struct line *working = cc->li_next;
-
-        delete_libs();
-        inp_fix_for_numparam(subckt_w_params, working);
-
-
-        inp_remove_excess_ws(working);
-
-        comment_out_unused_subckt_models(working, line_number);
-
-        subckt_params_to_param(working);
-
-        line_number = inp_split_multi_param_lines(working, line_number);
-
-        inp_fix_macro_param_func_paren_io(working);
-        inp_fix_ternary_operator(working);
-        inp_fix_temper_in_param(working);
-
-        inp_expand_macros_in_deck(NULL, working);
-        inp_fix_param_values(working);
-
-        /* get end card as last card in list; end card pntr does not appear to always
-           be correct at this point */
-        for (end = cc; end->li_next; end = end->li_next)
-            ;
-
-        inp_reorder_params(subckt_w_params, working, cc, end);
-        inp_fix_inst_calls_for_numparam(subckt_w_params, working);
-
-        delete_names(subckt_w_params);
-        subckt_w_params = NULL;
-
-        inp_fix_gnd_name(working);
-        inp_chk_for_multi_in_vcvs(working, &line_number);
-
-        if (cp_getvar("addcontrol", CP_BOOL, NULL))
-            inp_add_control_section(working, &line_number);
-#ifndef XSPICE
-        inp_poly_err(working);
-#endif
-        if (inp_compat_mode != COMPATMODE_SPICE3) {
-            /* Do all the compatibility stuff here */
-            working = cc->li_next;
-            /* E, G, L, R, C compatibility transformations */
-            inp_compat(working);
-            working = cc->li_next;
-            /* B source numparam compatibility transformation */
-            inp_bsource_compat(working);
-            inp_dot_if(working);
-            inp_temper_compat(working);
-        }
-
-        inp_add_series_resistor(working);
-
-        /* get max. line length and number of lines in input deck,
-           and renumber the lines,
-           count the number of '{' per line as an upper estimate of the number
-           of parameter substitutions in a line*/
-        dynmaxline = 0;
-        max_line_length = 0;
-        no_braces = 0;
-        for (tmp_ptr1 = cc; tmp_ptr1; tmp_ptr1 = tmp_ptr1->li_next) {
-            char *s;
-            unsigned int braces_per_line = 0;
-            /* count number of lines */
-            dynmaxline++;
-            /* renumber the lines of the processed input deck */
-            tmp_ptr1->li_linenum = dynmaxline;
-            if (max_line_length < strlen(tmp_ptr1->li_line))
-                max_line_length = strlen(tmp_ptr1->li_line);
-            /* count '{' */
-            for (s = tmp_ptr1->li_line; *s; s++)
-                if (*s == '{')
-                    braces_per_line++;
-            if (no_braces <  braces_per_line)
-                no_braces = braces_per_line;
-        }
-
-        if (ft_ngdebug) {
-            /*debug: print into file*/
-            FILE *fd = fopen("debug-out.txt", "w");
-            struct line *t;
-            fprintf(fd, "**************** uncommented deck **************\n\n");
-            /* always print first line */
-            fprintf(fd, "%6d  %6d  %s\n", cc->li_linenum_orig, cc->li_linenum, cc->li_line);
-            /* here without out-commented lines */
-            for (t = cc->li_next; t; t = t->li_next) {
-                if (*(t->li_line) == '*')
-                    continue;
-                fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
-            }
-            fprintf(fd, "\n****************** complete deck ***************\n\n");
-            /* now completely */
-            for (t = cc; t; t = t->li_next)
-                fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
-            fclose(fd);
-
-            fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
-                    (int) max_line_length, no_braces, dynmaxline);
-        }
-    }
 
     rv . line_number = line_number;
     rv . cc = cc;
