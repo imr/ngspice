@@ -317,7 +317,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
    intfile: in, TRUE if deck is generated from internal circarray
 */
 {
-    struct line *end = NULL, *cc = NULL, *prev, *working, *newcard;
+    struct line *end = NULL, *cc = NULL, *prev, *working;
     char *buffer = NULL;
     /* segfault fix */
 #ifdef XSPICE
@@ -451,6 +451,8 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             char *copyy = NULL;
             char *y = NULL;
             char *s, *t;
+
+            struct line *newcard;
 
             inp_stripcomments_line(buffer);
 
@@ -732,8 +734,9 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         /* get end card as last card in list; end card pntr does not appear to always
            be correct at this point */
-        for (newcard = working; newcard; newcard = newcard->li_next)
-            end = newcard;
+        if (working)
+            for (end = working; end->li_next; end = end->li_next)
+                ;
 // tprint(cc);
         inp_reorder_params(subckt_w_params, working, cc, end);
 
@@ -1974,7 +1977,7 @@ find_name(struct names *p, char *name)
 static char*
 inp_fix_subckt(struct names *subckt_w_params, char *s)
 {
-    struct line *head = NULL, *newcard = NULL, *start_card = NULL, *end_card = NULL, *prev_card = NULL, *c = NULL;
+    struct line *head = NULL, *start_card = NULL, *end_card = NULL, *prev_card = NULL, *c = NULL;
     char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str = NULL;
     char keep;
     int  num_params = 0, i = 0, bracedepth = 0;
@@ -2037,14 +2040,14 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
                 beg = ptr2 + 1;
             }
 
-            newcard = xx_new_line(NULL, strdup(ptr1), 0, 0);
+            end_card = xx_new_line(NULL, strdup(ptr1), 0, 0);
 
             if (start_card == NULL)
-                head->li_next = start_card = newcard;
+                head->li_next = start_card = end_card;
             else
-                prev_card->li_next = newcard;
+                prev_card->li_next = end_card;
 
-            prev_card = end_card = newcard;
+            prev_card = end_card;
             num_params++;
         }
 #else
@@ -2071,14 +2074,14 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
                     buf[buf_idx++] = '\0';
                     beg = p1;
 
-                    newcard = xx_new_line(NULL, buf, 0, 0);
+                    end_card = xx_new_line(NULL, buf, 0, 0);
 
                     if (start_card == NULL)
-                        head->li_next = start_card = newcard;
+                        head->li_next = start_card = end_card;
                     else
-                        prev_card->li_next = newcard;
+                        prev_card->li_next = end_card;
 
-                    prev_card = end_card = newcard;
+                    prev_card = end_card;
                     num_params++;
 
                     done = TRUE;
