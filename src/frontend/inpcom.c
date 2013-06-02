@@ -464,6 +464,9 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
     int call_depth = 0;
     struct line *cc;
 
+    num_libraries = 0;
+    inp_compat_mode = ngspice_compat_mode();
+
     cc = inp_read(fp, call_depth, dir_name, comfile, intfile);
 
     return cc;
@@ -492,11 +495,6 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
     int cirlinecount = 0; /* length of circarray */
 
     bool found_end = FALSE, shell_eol_continuation = FALSE;
-
-    if (call_depth == 0) {
-        num_libraries       = 0;
-        inp_compat_mode = ngspice_compat_mode();
-    }
 
     /* First read in all lines & put them in the struct cc */
     for (;;) {
