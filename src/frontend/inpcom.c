@@ -141,6 +141,9 @@ static char *skip_back_ws_(char *d, char *start)     { while (d > start && isspa
 
 void tprint(struct line *deck);
 
+static struct line *inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile);
+
+
 #ifndef XSPICE
 static void inp_poly_err(struct line *deck);
 #endif
@@ -276,10 +279,10 @@ read_a_lib(char *y, char *dir_name)
 
     if (dir_name_flag == FALSE) {
         char *y_dir_name = ngdirname(y);
-        lib->deck = inp_readall(newfp, 1 /*dummy*/, y_dir_name, FALSE, FALSE);
+        lib->deck = inp_read(newfp, 1 /*dummy*/, y_dir_name, FALSE, FALSE);
         tfree(y_dir_name);
     } else {
-        lib->deck = inp_readall(newfp, 1 /*dummy*/, dir_name, FALSE, FALSE);
+        lib->deck = inp_read(newfp, 1 /*dummy*/, dir_name, FALSE, FALSE);
     }
 
     fclose(newfp);
@@ -329,7 +332,7 @@ inp_stitch_continuation_lines(struct line *working)
 
 #ifdef TRACE
         /* SDB debug statement */
-        printf("In inp_readall, processing linked list element line = %d, s = %s . . . \n", working->li_linenum, s);
+        printf("In inp_read, processing linked list element line = %d, s = %s . . . \n", working->li_linenum, s);
 #endif
 
         switch (c) {
@@ -456,7 +459,19 @@ find_assignment(char *str)
   *-------------------------------------------------------------------------*/
 
 struct line *
-inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
+inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
+{
+    int call_depth = 0;
+    struct line *cc;
+
+    cc = inp_read(fp, call_depth, dir_name, comfile, intfile);
+
+    return cc;
+}
+
+
+struct line *
+inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 /* fp: in, pointer to file to be read,
    call_depth: in, nested call to fcn
    dir_name: in, name of directory of file to be read
@@ -542,7 +557,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
 #ifdef TRACE
         /* SDB debug statement */
-        printf("in inp_readall, just read   %s", buffer);
+        printf("in inp_read, just read   %s", buffer);
 #endif
 
         if (!buffer)
@@ -644,10 +659,10 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
                 if (dir_name_flag == FALSE) {
                     char *y_dir_name = ngdirname(y);
-                    newcard = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);  /* read stuff in include file into netlist */
+                    newcard = inp_read(newfp, call_depth+1, y_dir_name, FALSE, FALSE);  /* read stuff in include file into netlist */
                     tfree(y_dir_name);
                 } else {
-                    newcard = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);  /* read stuff in include file into netlist */
+                    newcard = inp_read(newfp, call_depth+1, dir_name, FALSE, FALSE);  /* read stuff in include file into netlist */
                 }
 
                 (void) fclose(newfp);
