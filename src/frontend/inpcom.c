@@ -122,6 +122,22 @@ static void inp_poly_err(struct line *deck);
 #endif
 
 
+static struct line *
+xx_new_line(struct line *next, char *line, int linenum, int linenum_orig)
+{
+    struct line *x = TMALLOC(struct line, 1);
+
+    x->li_next = next;
+    x->li_error = NULL;
+    x->li_actual = NULL;
+    x->li_line = line;
+    x->li_linenum = linenum;
+    x->li_linenum_orig = linenum_orig;
+
+    return x;
+}
+
+
 static struct library *
 new_lib(void)
 {
@@ -495,22 +511,20 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             /* Make the .include a comment */
             *buffer = '*';
 
-            /* now check if this is the first pass (i.e. end points to null) */
-            if (end) {                             /* end already exists */
-                end->li_next = alloc(struct line);  /* create next card */
-                end = end->li_next;                 /* make end point to next card */
-            } else {
-                end = cc = alloc(struct line);   /* create the deck & end.  cc will
-                                                    point to beginning of deck, end to
-                                                    the end */
+            /* append `buffer' to the (cc, end) chain of decks */
+            {
+                struct line *x = xx_new_line(NULL, copy(buffer), line_number, line_number);
+
+                if (end)
+                    end->li_next = x;
+                else
+                    cc = x;
+
+                end = x;
+
+                line_number++;
             }
 
-            /* now fill out rest of struct end. */
-            end->li_next = NULL;
-            end->li_error = NULL;
-            end->li_actual = NULL;
-            end->li_line = copy(buffer);
-            end->li_linenum = end->li_linenum_orig = line_number++;
             if (newcard) {
                 int line_number_inc = 1;
                 end->li_next = newcard;
@@ -574,22 +588,17 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         shell_eol_continuation = chk_for_line_continuation(buffer);
 
-        /* now check if this is the first pass (i.e. end points to null) */
-        if (end) {                             /* end already exists */
-            end->li_next = alloc(struct line); /* create next card */
-            end = end->li_next;                /* point to next card */
-        } else {                           /* End doesn't exist.  Create it. */
-            end = cc = alloc(struct line); /* note that cc points to beginning
-                                              of deck, end to the end */
+        {
+            struct line *x = xx_new_line(NULL, copy(buffer), line_number++, line_number_orig++);
+
+            if (end)
+                end->li_next = x;
+            else
+                cc = x;
+
+            end = x;
         }
 
-        /* now put buffer into li */
-        end->li_next = NULL;
-        end->li_error = NULL;
-        end->li_actual = NULL;
-        end->li_line = copy(buffer);
-        end->li_linenum = line_number++;
-        end->li_linenum_orig = line_number_orig++;
         tfree(buffer);
     }  /* end while ((buffer = readline(fp)) != NULL) */
 
@@ -597,14 +606,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         return NULL;
 
     if (call_depth == 0 && found_end == TRUE) {
-        struct line *global_card = alloc(struct line);
-        global_card->li_error   = NULL;
-        global_card->li_actual  = NULL;
-        global_card->li_line    = copy(".global gnd");
-        global_card->li_linenum = 1;
-
-        global_card->li_next = cc->li_next;
-        cc->li_next          = global_card;
+        cc->li_next = xx_new_line(cc->li_next, copy(".global gnd"), 1, 0);
 
         if (inp_compat_mode == COMPATMODE_ALL ||
             inp_compat_mode == COMPATMODE_HS  ||
@@ -621,16 +623,9 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
     if (call_depth == 0) {
         if (found_end == TRUE) {
-            end->li_next = alloc(struct line);    /* create next card */
-            end = end->li_next;                   /* point to next card */
-
-            /* now put buffer into li */
-            end->li_next = NULL;
-            end->li_error = NULL;
-            end->li_actual = NULL;
-            end->li_line = copy(".end");
-            end->li_linenum = end->li_linenum_orig = line_number++;
-            end->li_linenum_orig = line_number_orig++;
+            struct line *x = xx_new_line(NULL, copy(".end"), line_number++, line_number_orig++);
+            end->li_next = x;
+            end = x;
         }
     }
 
@@ -694,13 +689,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
                 end->li_next = working;
                 tfree(s);
             } else {
-                newcard = alloc(struct line);
-                newcard->li_linenum = prev->li_linenum;
-                newcard->li_line = s;
-                newcard->li_next = working;
-                newcard->li_error = NULL;
-                newcard->li_actual = NULL;
-                prev->li_actual = newcard;
+                prev->li_actual = xx_new_line(working, s, prev->li_linenum, 0);
             }
             working = prev->li_next;
             break;
@@ -960,21 +949,6 @@ inp_fix_gnd_name(struct line *c)
     }
 }
 
-static struct line*
-create_new_card(char *card_str, int *line_number)
-{
-    struct line *newcard = alloc(struct line);
-
-    newcard->li_line    = strdup(card_str);
-    newcard->li_linenum = *line_number;
-    newcard->li_error   = NULL;
-    newcard->li_actual  = NULL;
-
-    *line_number += 1;
-
-    return newcard;
-}
-
 
 static void
 inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
@@ -1065,13 +1039,13 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 
                 sprintf(big_buf, "%s %%vd[ %s ] %%vd( %s ) %s",
                         model_name, ctrl_node_str, node_str, model_name);
-                a_card = create_new_card(big_buf, line_number);
+                a_card = xx_new_line(NULL, copy(big_buf), *(line_number)++, 0);
                 *a_card->li_line = 'a';
 
                 sprintf(big_buf, ".model %s multi_input_pwl ( x = [%s %s] y = [%s %s] model = \"%s\" )",
                          model_name, xy_values1[0], xy_values2[0],
                          xy_values1[1], xy_values2[1], fcn_name);
-                model_card = create_new_card(big_buf, line_number);
+                model_card = xx_new_line(NULL, copy(big_buf), (*line_number)++, 0);
 
                 tfree(model_name);
                 tfree(node_str);
@@ -1096,7 +1070,7 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 static void
 inp_add_control_section(struct line *deck, int *line_number)
 {
-    struct line *c, *newcard, *prev_card = NULL;
+    struct line *c, *prev_card = NULL;
     bool        found_control = FALSE, found_run = FALSE;
     bool        found_end = FALSE;
     char        *op_line  = NULL, rawfile[1000], *line;
@@ -1119,56 +1093,37 @@ inp_add_control_section(struct line *deck, int *line_number)
             found_control = FALSE;
 
             if (!found_run) {
-                newcard            = create_new_card("run", line_number);
-                prev_card->li_next = newcard;
-                newcard->li_next   = c;
-                prev_card          = newcard;
-                found_run          = TRUE;
+                prev_card->li_next = xx_new_line(c, copy("run"), (*line_number)++, 0);
+                prev_card = prev_card->li_next;
+                found_run = TRUE;
             }
             if (cp_getvar("rawfile", CP_STRING, rawfile)) {
                 line = TMALLOC(char, strlen("write") + strlen(rawfile) + 2);
                 sprintf(line, "write %s", rawfile);
-                newcard            = create_new_card(line, line_number);
-                prev_card->li_next = newcard;
-                newcard->li_next   = c;
-                prev_card          = newcard;
-                tfree(line);
+                prev_card->li_next = xx_new_line(c, line, (*line_number)++, 0);
+                prev_card = prev_card->li_next;
             }
         }
         prev_card = c;
     }
+
     // check if need to add control section
     if (!found_run && found_end) {
-        prev_card        = deck->li_next;
-        newcard          = create_new_card(".endc", line_number);
-        deck->li_next    = newcard;
-        newcard->li_next = prev_card;
+
+        deck->li_next = xx_new_line(deck->li_next, copy(".endc"), (*line_number)++, 0);
 
         if (cp_getvar("rawfile", CP_STRING, rawfile)) {
             line = TMALLOC(char, strlen("write") + strlen(rawfile) + 2);
             sprintf(line, "write %s", rawfile);
-            prev_card        = deck->li_next;
-            newcard          = create_new_card(line, line_number);
-            deck->li_next    = newcard;
-            newcard->li_next = prev_card;
-            tfree(line);
-        }
-        if (op_line != NULL) {
-            prev_card        = deck->li_next;
-            newcard          = create_new_card(op_line, line_number);
-            deck->li_next    = newcard;
-            newcard->li_next = prev_card;
+            deck->li_next = xx_new_line(deck->li_next, line, (*line_number)++, 0);
         }
 
-        prev_card        = deck->li_next;
-        newcard          = create_new_card("run", line_number);
-        deck->li_next    = newcard;
-        newcard->li_next = prev_card;
+        if (op_line)
+            deck->li_next = xx_new_line(deck->li_next, copy(op_line), (*line_number)++, 0);
 
-        prev_card        = deck->li_next;
-        newcard          = create_new_card(".control", line_number);
-        deck->li_next    = newcard;
-        newcard->li_next = prev_card;
+        deck->li_next = xx_new_line(deck->li_next, copy("run"), (*line_number)++, 0);
+
+        deck->li_next = xx_new_line(deck->li_next, copy(".control"), (*line_number)++, 0);
     }
 }
 
@@ -2041,7 +1996,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         beg = skip_back_non_ws(beg);
         beg[-1] = '\0';
 
-        head = alloc(struct line);
+        head = xx_new_line(NULL, NULL, 0, 0);
         /* create list of parameters that need to get sorted */
         while (*beg && (ptr1 = strchr(beg, '=')) != NULL) {
 #ifndef NOBRACE
@@ -2082,10 +2037,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
                 beg = ptr2 + 1;
             }
 
-            newcard = alloc(struct line);
-
-            newcard->li_line = strdup(ptr1);
-            newcard->li_next = NULL;
+            newcard = xx_new_line(NULL, strdup(ptr1), 0, 0);
 
             if (start_card == NULL)
                 head->li_next = start_card = newcard;
@@ -2119,10 +2071,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
                     buf[buf_idx++] = '\0';
                     beg = p1;
 
-                    newcard = alloc(struct line);
-
-                    newcard->li_line = buf;
-                    newcard->li_next = NULL;
+                    newcard = xx_new_line(NULL, buf, 0, 0);
 
                     if (start_card == NULL)
                         head->li_next = start_card = newcard;
@@ -4043,17 +3992,14 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
             }
             tmp_ptr = card->li_next;
             for (i = 0; i < counter; i++) {
-                if (param_end) {
-                    param_end->li_next = alloc(struct line);
-                    param_end          = param_end->li_next;
-                } else {
-                    param_end = param_beg = alloc(struct line);
-                }
-                param_end->li_next    = NULL;
-                param_end->li_error   = NULL;
-                param_end->li_actual  = NULL;
-                param_end->li_line    = array[i];
-                param_end->li_linenum = line_num++;
+                struct line *x = xx_new_line(NULL, array[i], line_num++, 0);
+
+                if (param_end)
+                    param_end->li_next = x;
+                else
+                    param_beg = x;
+
+                param_end = x;
             }
             // comment out current multi-param line
             *(card->li_line)   = '*';
@@ -4269,17 +4215,14 @@ inp_compat(struct line *card)
                 // insert new B source line immediately after current line
                 tmp_ptr = card->li_next;
                 for (i = 0; i < 2; i++) {
-                    if (param_end) {
-                        param_end->li_next = alloc(struct line);
-                        param_end          = param_end->li_next;
-                    } else {
-                        param_end = param_beg = alloc(struct line);
-                    }
-                    param_end->li_next    = NULL;
-                    param_end->li_error   = NULL;
-                    param_end->li_actual  = NULL;
-                    param_end->li_line    = ckt_array[i];
-                    param_end->li_linenum = 0;
+                    struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                    if (param_end)
+                        param_end->li_next = x;
+                    else
+                        param_beg = x;
+
+                    param_end = x;
                 }
                 // comment out current variable e line
                 *(card->li_line)   = '*';
@@ -4331,17 +4274,14 @@ inp_compat(struct line *card)
                 // insert new B source line immediately after current line
                 tmp_ptr = card->li_next;
                 for (i = 0; i < 2; i++) {
-                    if (param_end) {
-                        param_end->li_next = alloc(struct line);
-                        param_end          = param_end->li_next;
-                    } else {
-                        param_end = param_beg = alloc(struct line);
-                    }
-                    param_end->li_next    = NULL;
-                    param_end->li_error   = NULL;
-                    param_end->li_actual  = NULL;
-                    param_end->li_line    = ckt_array[i];
-                    param_end->li_linenum = 0;
+                    struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                    if (param_end)
+                        param_end->li_next = x;
+                    else
+                        param_beg = x;
+
+                    param_end = x;
                 }
                 // comment out current variable e line
                 *(card->li_line)   = '*';
@@ -4461,17 +4401,14 @@ inp_compat(struct line *card)
                 // insert new B source line immediately after current line
                 tmp_ptr = card->li_next;
                 for (i = 0; i < 2; i++) {
-                    if (param_end) {
-                        param_end->li_next = alloc(struct line);
-                        param_end          = param_end->li_next;
-                    } else {
-                        param_end = param_beg = alloc(struct line);
-                    }
-                    param_end->li_next    = NULL;
-                    param_end->li_error   = NULL;
-                    param_end->li_actual  = NULL;
-                    param_end->li_line    = ckt_array[i];
-                    param_end->li_linenum = 0;
+                    struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                    if (param_end)
+                        param_end->li_next = x;
+                    else
+                        param_beg = x;
+
+                    param_end = x;
                 }
                 // comment out current variable e line
                 *(card->li_line)   = '*';
@@ -4534,17 +4471,14 @@ inp_compat(struct line *card)
                 // insert new B source line immediately after current line
                 tmp_ptr = card->li_next;
                 for (i = 0; i < 2; i++) {
-                    if (param_end) {
-                        param_end->li_next = alloc(struct line);
-                        param_end          = param_end->li_next;
-                    } else {
-                        param_end = param_beg = alloc(struct line);
-                    }
-                    param_end->li_next    = NULL;
-                    param_end->li_error   = NULL;
-                    param_end->li_actual  = NULL;
-                    param_end->li_line    = ckt_array[i];
-                    param_end->li_linenum = 0;
+                    struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                    if (param_end)
+                        param_end->li_next = x;
+                    else
+                        param_beg = x;
+
+                    param_end = x;
                 }
                 // comment out current variable g line
                 *(card->li_line)   = '*';
@@ -4649,18 +4583,12 @@ inp_compat(struct line *card)
             }
             tc1_ptr = NULL;
             tc2_ptr = NULL;
-            new_line = alloc(struct line);
-            new_line->li_next    = NULL;
-            new_line->li_error   = NULL;
-            new_line->li_actual  = NULL;
-            new_line->li_line    = xline;
-            new_line->li_linenum = 0;
+            new_line = xx_new_line(card->li_next, xline, 0, 0);
+
             // comment out current old R line
             *(card->li_line)   = '*';
             // insert new B source line immediately after current line
-            tmp_ptr           = card->li_next;
             card->li_next     = new_line;
-            new_line->li_next = tmp_ptr;
             // point 'card' pointer to the new line
             card              = new_line;
             tfree(title_tok);
@@ -4755,17 +4683,14 @@ inp_compat(struct line *card)
             // insert new B source line immediately after current line
             tmp_ptr = card->li_next;
             for (i = 0; i < 3; i++) {
-                if (param_end) {
-                    param_end->li_next = alloc(struct line);
-                    param_end          = param_end->li_next;
-                } else {
-                    param_end = param_beg = alloc(struct line);
-                }
-                param_end->li_next    = NULL;
-                param_end->li_error   = NULL;
-                param_end->li_actual  = NULL;
-                param_end->li_line    = ckt_array[i];
-                param_end->li_linenum = 0;
+                struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                if (param_end)
+                    param_end->li_next = x;
+                else
+                    param_beg = x;
+
+                param_end = x;
             }
             // comment out current variable capacitor line
             *(card->li_line)   = '*';
@@ -4870,17 +4795,14 @@ inp_compat(struct line *card)
             // insert new B source line immediately after current line
             tmp_ptr = card->li_next;
             for (i = 0; i < 3; i++) {
-                if (param_end) {
-                    param_end->li_next = alloc(struct line);
-                    param_end          = param_end->li_next;
-                } else {
-                    param_end = param_beg = alloc(struct line);
-                }
-                param_end->li_next    = NULL;
-                param_end->li_error   = NULL;
-                param_end->li_actual  = NULL;
-                param_end->li_line    = ckt_array[i];
-                param_end->li_linenum = 0;
+                struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                if (param_end)
+                    param_end->li_next = x;
+                else
+                    param_beg = x;
+
+                param_end = x;
             }
             // comment out current variable inductor line
             *(card->li_line)   = '*';
@@ -5044,17 +4966,14 @@ inp_compat(struct line *card)
                 // insert new B source line immediately after current line
                 tmp_ptr = card->li_next;
                 for (ii = paui; ii < pai; ii++) {
-                    if (param_end) {
-                        param_end->li_next = alloc(struct line);
-                        param_end          = param_end->li_next;
-                    } else {
-                        param_end = param_beg = alloc(struct line);
-                    }
-                    param_end->li_next    = NULL;
-                    param_end->li_error   = NULL;
-                    param_end->li_actual  = NULL;
-                    param_end->li_line    = ckt_array[ii];
-                    param_end->li_linenum = 0;
+                    struct line *x = xx_new_line(NULL, ckt_array[ii], 0, 0);
+
+                    if (param_end)
+                        param_end->li_next = x;
+                    else
+                        param_beg = x;
+
+                    param_end = x;
                 }
 
                 // insert new param lines immediately after current line
@@ -5165,17 +5084,14 @@ inp_compat(struct line *card)
                 // insert new B source line immediately after current line
                 tmp_ptr = card->li_next;
                 for (ii = paui; ii < pai; ii++) {
-                    if (param_end) {
-                        param_end->li_next = alloc(struct line);
-                        param_end          = param_end->li_next;
-                    } else {
-                        param_end = param_beg = alloc(struct line);
-                    }
-                    param_end->li_next    = NULL;
-                    param_end->li_error   = NULL;
-                    param_end->li_actual  = NULL;
-                    param_end->li_line    = ckt_array[ii];
-                    param_end->li_linenum = 0;
+                    struct line *x = xx_new_line(NULL, ckt_array[ii], 0, 0);
+
+                    if (param_end)
+                        param_end->li_next = x;
+                    else
+                        param_beg = x;
+
+                    param_end = x;
                 }
                 // comment out current variable capacitor line
                 // *(ckt_array[0])   = '*';
@@ -5243,7 +5159,7 @@ inp_bsource_compat(struct line *card)
 {
     char *equal_ptr, *str_ptr, *tmp_char, *new_str, *final_str;
     char actchar;
-    struct line *new_line, *tmp_ptr;
+    struct line *new_line;
     wordlist *wl = NULL, *wlist = NULL;
     char buf[512];
     size_t i, xlen, ustate = 0;
@@ -5495,20 +5411,13 @@ inp_bsource_compat(struct line *card)
             final_str = TMALLOC(char, xlen);
             sprintf(final_str, "%s %s", tmp_char, new_str);
 
-            new_line = alloc(struct line);
-            new_line->li_next    = NULL;
-            new_line->li_error   = NULL;
-            new_line->li_actual  = NULL;
-            new_line->li_line    = final_str;
             /* Copy old line numbers into new B source line */
-            new_line->li_linenum = card->li_linenum;
-            new_line->li_linenum_orig = card->li_linenum_orig;
+            new_line = xx_new_line(card->li_next, final_str, card->li_linenum, card->li_linenum_orig);
+
             // comment out current line (old B source line)
             *(card->li_line)   = '*';
             // insert new B source line immediately after current line
-            tmp_ptr           = card->li_next;
             card->li_next     = new_line;
-            new_line->li_next = tmp_ptr;
             // point 'card' pointer to the new line
             card              = new_line;
 
@@ -5643,17 +5552,14 @@ inp_add_series_resistor(struct line *deck)
             /* assemble new L and R lines */
             tmp_ptr = card->li_next;
             for (i = 0; i < 2; i++) {
-                if (param_end) {
-                    param_end->li_next = alloc(struct line);
-                    param_end          = param_end->li_next;
-                } else {
-                    param_end = param_beg = alloc(struct line);
-                }
-                param_end->li_next    = NULL;
-                param_end->li_error   = NULL;
-                param_end->li_actual  = NULL;
-                param_end->li_line    = ckt_array[i];
-                param_end->li_linenum = 0;
+                struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                if (param_end)
+                    param_end->li_next = x;
+                else
+                    param_beg = x;
+
+                param_end = x;
             }
             // comment out current L line
             *(card->li_line)   = '*';
