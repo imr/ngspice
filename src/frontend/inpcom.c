@@ -471,7 +471,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
    intfile: in, TRUE if deck is generated from internal circarray
 */
 {
-    struct line *end = NULL, *cc = NULL, *working;
+    struct line *end = NULL, *cc = NULL;
     char *buffer = NULL;
     /* segfault fix */
 #ifdef XSPICE
@@ -487,7 +487,6 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
     if (call_depth == 0) {
         num_libraries       = 0;
-        found_end           = FALSE;
         inp_compat_mode = ngspice_compat_mode();
     }
 
@@ -808,17 +807,15 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
     /* The following processing of an input file is not required for command files
        like spinit or .spiceinit, so return command files here. */
-    if (comfile)
-        return cc;
 
-    working = cc->li_next;
-
-    if (call_depth == 0) {
+    if (call_depth == 0 && !comfile) {
 
         unsigned int no_braces; /* number of '{' */
         size_t max_line_length; /* max. line length in input deck */
-        struct line *tmp_ptr1;
+        struct line *tmp_ptr1, *end;
         struct names *subckt_w_params = new_names();
+
+        struct line *working = cc->li_next;
 
         delete_libs();
         inp_fix_for_numparam(subckt_w_params, working);
@@ -841,9 +838,8 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         /* get end card as last card in list; end card pntr does not appear to always
            be correct at this point */
-        if (working)
-            for (end = working; end->li_next; end = end->li_next)
-                ;
+        for (end = cc; end->li_next; end = end->li_next)
+            ;
 
         inp_reorder_params(subckt_w_params, working, cc, end);
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
