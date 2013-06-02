@@ -3982,7 +3982,6 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
                 *end_param = keep;
                 curr_line = end_param;
             }
-            tmp_ptr = card->li_next;
             for (i = 0; i < counter; i++) {
                 struct line *x = xx_new_line(NULL, array[i], line_num++, 0);
 
@@ -4205,7 +4204,6 @@ inp_compat(struct line *card)
                         midline, lnumber + delta, lastlastno);
 
                 // insert new B source line immediately after current line
-                tmp_ptr = card->li_next;
                 for (i = 0; i < 2; i++) {
                     struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -4264,7 +4262,6 @@ inp_compat(struct line *card)
                         title_tok, title_tok, str_ptr);
 
                 // insert new B source line immediately after current line
-                tmp_ptr = card->li_next;
                 for (i = 0; i < 2; i++) {
                     struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -4391,7 +4388,6 @@ inp_compat(struct line *card)
                         midline, lnumber + delta, lastlastno);
 
                 // insert new B source line immediately after current line
-                tmp_ptr = card->li_next;
                 for (i = 0; i < 2; i++) {
                     struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -4461,7 +4457,6 @@ inp_compat(struct line *card)
                         title_tok, title_tok, str_ptr);
 
                 // insert new B source line immediately after current line
-                tmp_ptr = card->li_next;
                 for (i = 0; i < 2; i++) {
                     struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -4673,7 +4668,6 @@ inp_compat(struct line *card)
             tc1_ptr = NULL;
             tc2_ptr = NULL;
             // insert new B source line immediately after current line
-            tmp_ptr = card->li_next;
             for (i = 0; i < 3; i++) {
                 struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -4785,7 +4779,6 @@ inp_compat(struct line *card)
             tc1_ptr = NULL;
             tc2_ptr = NULL;
             // insert new B source line immediately after current line
-            tmp_ptr = card->li_next;
             for (i = 0; i < 3; i++) {
                 struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -4956,7 +4949,6 @@ inp_compat(struct line *card)
                 // remove white spaces
                 card->li_line = inp_remove_ws(curr_line);
                 // insert new B source line immediately after current line
-                tmp_ptr = card->li_next;
                 for (ii = paui; ii < pai; ii++) {
                     struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -5074,7 +5066,6 @@ inp_compat(struct line *card)
                 // remove white spaces
                 card->li_line = inp_remove_ws(curr_line);
                 // insert new B source line immediately after current line
-                tmp_ptr = card->li_next;
                 for (ii = paui; ii < pai; ii++) {
                     struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -5542,7 +5533,6 @@ inp_add_series_resistor(struct line *deck)
             sprintf(ckt_array[1], "R%s_intern__ %s_intern__ %s %s",
                     title_tok, node2, node2, rval);
             /* assemble new L and R lines */
-            tmp_ptr = card->li_next;
             for (i = 0; i < 2; i++) {
                 struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
