@@ -1317,7 +1317,7 @@ formula(tdico *dico, const char *s, bool *perror)
             }
             oper[level] = c;
 
-            if (level > topop)
+            if (topop < level)
                 topop = level;
         }
 
