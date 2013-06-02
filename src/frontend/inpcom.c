@@ -4311,6 +4311,7 @@ inp_compat(struct line *card)
              */
             if ((str_ptr = strstr(curr_line, "table")) != NULL) {
                 char *expression, *firstno, *ffirstno, *secondno, *midline, *lastno, *lastlastno;
+                char *m_ptr, *m_token;
                 double fnumber, lnumber, delta;
                 int nerror;
                 cut_line = curr_line;
@@ -4319,11 +4320,21 @@ inp_compat(struct line *card)
                 node1 =  gettok(&cut_line);
                 node2 =  gettok(&cut_line);
                 // Gxxx  n1 n2 int1 0 1
+                // or
+                // Gxxx  n1 n2 int1 0 m='expr'
+                /* find multiplier m at end of line */
+                m_ptr = strstr(cut_line, "m=");
+                if (m_ptr) {
+                    m_token = copy(m_ptr + 2);  // get only the expression
+                    *m_ptr = '\0';
+                }
+                else
+                    m_token = copy("1");
                 xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                       + 20 - 4*2 + 1;
+                       + 20 - 4*2 + strlen(m_token);
                 ckt_array[0] = TMALLOC(char, xlen);
-                sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
-                        title_tok, node1, node2, title_tok);
+                sprintf(ckt_array[0], "%s %s %s %s_int1 0 %s",
+                        title_tok, node1, node2, title_tok, m_token);
                 // get the expression
                 str_ptr = gettok(&cut_line); /* ignore 'table' */
                 if (!cieq(str_ptr, "table")) {
@@ -4417,6 +4428,7 @@ inp_compat(struct line *card)
                 tfree(title_tok);
                 tfree(node1);
                 tfree(node2);
+                tfree(m_token);
             }
             /*
                Gxxx n1 n2 CUR = {equation}
@@ -4440,7 +4452,7 @@ inp_compat(struct line *card)
                 /* find multiplier m at end of line */
                 m_ptr = strstr(cut_line, "m=");
                 if (m_ptr) {
-                    m_token = copy(m_ptr);
+                    m_token = copy(m_ptr + 2); //get only the expression
                     *m_ptr = '\0';
                 }
                 else
