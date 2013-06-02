@@ -600,49 +600,69 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
         pwr(a,b)
         p->left: ','    p->left->left: a       p->left->right: b
         */
-
-            if (p->left->right->type == PT_CONSTANT) {
-                /*
-                 * f(a,b) = signum(a) * abs(a)^b
-                 * D(f(a,b)) = signum(a) * abs(a)^b * b / a
+#define a  p->left->left
+#define b  p->left->right
+            if (b->type == PT_CONSTANT) {
+                /* b is a constant
                  *
+                 * f(a,b) = signum(a) * abs(a)^b
+                 *        = signum(a) * exp(b*ln(abs(a)))
+                 * D(f)   = signum(a) * D(exp(b*ln(abs(a))))
+                 *        = signum(a) * exp(b*ln(abs(a))) * D(b*ln(abs(a)))
+                 *        = signum(a) * abs(a)^b * D(b*ln(abs(a)))
+                 *        = signum(a) * abs(a)^b * b * 1/abs(a) * D(abs(a))
+                 *        = signum(a) * abs(a)^(b-1) * b * D(abs(a))
+                 *        = signum(a) * abs(a)^(b-1) * b * signum(a) * D(a)
+                 *        = abs(a)^(b-1) * b * D(a)
                  */
-                arg1 = PTdifferentiate(p->left->left, varnum);
+                arg1 = PTdifferentiate(a, varnum);
 
                 newp = mkb(PT_TIMES,
-                           mkf(PTF_SGN, p->left->left),
-                           mkb(PT_DIVIDE, mkb(PT_TIMES,
-                                          mkcon(p->left->right->constant),
-                                          mkb(PT_POWER,
-                                              mkf(PTF_ABS, p->left->left),
-                                              mkcon(p->left->right->constant))),
-                               p->left->left));
+                           mkb(PT_TIMES,
+                               mkcon(b->constant),
+                               mkb(PT_POWER,
+                                   mkf(PTF_ABS, a),
+                                   mkcon(b->constant - 1.0))),
+                           arg1);
 #ifdef TRACE
             printf("pwr, %s, returns; ", __func__);
             printTree(newp);
             printf("\n");
 #endif
             } else {
-            /*
-             * f(g) = signum(a) * abs(a)^g
-             * D(f^g) = signum(a) * D(exp(g*ln(f)))
-             *        = signum(a) * exp(g*ln(f)) * D(g*ln(f))
-             *        = signum(a) * exp(g*ln(f)) * (D(g)*ln(f) + g*D(f)/f)
+            /* b is a function
+             *
+             * f(a,b) = signum(a) * abs(a)^b
+             *        = signum(a) * exp(b*ln(abs(a)))
+             * D(f)   = signum(a) * D(exp(b*ln(abs(a))))
+             *        = signum(a) * exp(b*ln(abs(a))) * D(b*ln(abs(a)))
+             *        = signum(a) * exp(b*ln(abs(a))) * (D(b) * ln(abs(a)) + b * D(ln(abs(a))))
+             *        = signum(a) * exp(b*ln(abs(a))) * (D(b) * ln(abs(a)) + b * 1/abs(a) * D(abs(a)))
+             *        = signum(a) * exp(b*ln(abs(a))) * (D(b) * ln(abs(a)) + b * 1/abs(a) * signum(a)*D(a))
+             *        = signum(a) * exp(b*ln(abs(a))) * (D(b) * ln(abs(a)) + b/a*D(a))
+             *        = signum(a) * exp(b*ln(abs(a))) * D(b) * ln(abs(a) + signum(a) * exp(b*ln(abs(a))) / a * b * D(a)
+             *        = signum(a) * exp(b*ln(abs(a))) * D(b) * ln(abs(a) + abs(a)^(b-1) * b * D(a)
              */
-             arg1 = PTdifferentiate(p->left->left, varnum);
-             arg2 = PTdifferentiate(p->left->right, varnum);
-
-             newp = mkb(PT_TIMES,
-                        mkf(PTF_SGN, p->left->left),
-                        mkb(PT_TIMES, mkf(PTF_EXP, mkb(PT_TIMES,
-                                                p->left->right, mkf(PTF_LN,
-                                                p->left->left))),
-                                mkb(PT_PLUS,
-                                    mkb(PT_TIMES, p->left->right,
-                                    mkb(PT_DIVIDE, arg1, p->left->left)),
-                                    mkb(PT_TIMES, arg2, mkf(PTF_LN, p->left->left)))));
+             arg1 = PTdifferentiate(a, varnum);
+             arg2 = PTdifferentiate(b, varnum);
+             newp = mkb(PT_PLUS,
+                        mkb(PT_TIMES,
+                            mkf(PTF_SGN, a),
+                            mkb(PT_TIMES,
+                                mkb(PT_POWER, mkf(PTF_ABS, a), b),
+                                mkb(PT_TIMES, arg2,
+                                    mkf(PTF_LN, mkf(PTF_ABS, a))))),
+                        mkb(PT_TIMES,
+                            mkb(PT_TIMES,
+                                mkb(PT_POWER,
+                                    mkf(PTF_ABS, a),
+                                    mkb(PT_MINUS, b, mkcon(1.0))),
+                                b),
+                            arg1));
             }
             return mkfirst(newp, p);
+#undef b
+#undef a
         }
 
         default:
