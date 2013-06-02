@@ -467,11 +467,12 @@ struct line *
 inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
 {
     struct line *cc;
+    struct inp_read_t rv;
 
     num_libraries = 0;
     inp_compat_mode = ngspice_compat_mode();
 
-    struct inp_read_t rv = inp_read(fp, 0, dir_name, comfile, intfile);
+    rv = inp_read(fp, 0, dir_name, comfile, intfile);
     cc = rv . cc;
 
     /* The following processing of an input file is not required for command files
