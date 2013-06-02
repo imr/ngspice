@@ -505,8 +505,6 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
         inp_expand_macros_in_deck(NULL, working);
         inp_fix_param_values(working);
 
-        /* get end card as last card in list; end card pntr does not appear to always
-           be correct at this point */
         for (end = cc; end->li_next; end = end->li_next)
             ;
 
