@@ -140,6 +140,12 @@ BSIM4v6instance **InstArray;
         if (!model->BSIM4v6geoModGiven)
             model->BSIM4v6geoMod = 0;
 
+        if (!model->BSIM4v6rgeoModGiven)
+            model->BSIM4v6rgeoMod = 0;
+        else if ((model->BSIM4v6rgeoMod != 0) && (model->BSIM4v6rgeoMod != 1))
+        {   model->BSIM4v6rgeoMod = 1;
+            printf("Warning: rgeoMod has been set to its default value: 1.\n");
+        }
         if (!model->BSIM4v6fnoiModGiven) 
             model->BSIM4v6fnoiMod = 1;
         else if ((model->BSIM4v6fnoiMod != 0) && (model->BSIM4v6fnoiMod != 1))
@@ -2099,8 +2105,14 @@ BSIM4v6instance **InstArray;
 
             if (!here->BSIM4v6geoModGiven)
                 here->BSIM4v6geoMod = model->BSIM4v6geoMod;
+
             if (!here->BSIM4v6rgeoModGiven)
-                here->BSIM4v6rgeoMod = 0;
+                here->BSIM4v6rgeoMod = model->BSIM4v6rgeoMod;
+            else if ((here->BSIM4v6rgeoMod != 0) && (here->BSIM4v6rgeoMod != 1))
+            {   here->BSIM4v6rgeoMod = model->BSIM4v6rgeoMod;
+                printf("Warning: rgeoMod has been set to its global value %d.\n",
+                model->BSIM4v6rgeoMod);
+            }
             if (!here->BSIM4v6trnqsModGiven)
                 here->BSIM4v6trnqsMod = model->BSIM4v6trnqsMod;
             else if ((here->BSIM4v6trnqsMod != 0) && (here->BSIM4v6trnqsMod != 1))
