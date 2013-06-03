@@ -88,6 +88,10 @@ GENmodel *inMod)
             mod->BSIM4geoMod = value->iValue;
             mod->BSIM4geoModGiven = TRUE;
             break;
+        case  BSIM4_MOD_RGEOMOD :
+            mod->BSIM4rgeoMod = value->iValue;
+            mod->BSIM4rgeoModGiven = TRUE;
+            break;
         case  BSIM4_MOD_FNOIMOD :
             mod->BSIM4fnoiMod = value->iValue;
             mod->BSIM4fnoiModGiven = TRUE;

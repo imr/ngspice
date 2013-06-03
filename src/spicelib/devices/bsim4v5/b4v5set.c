@@ -122,6 +122,13 @@ JOB   *job;
         if (!model->BSIM4v5geoModGiven)
             model->BSIM4v5geoMod = 0;
 
+        if (!model->BSIM4v5rgeoModGiven)
+            model->BSIM4v5rgeoMod = 0;
+        else if ((model->BSIM4v5rgeoMod != 0) && (model->BSIM4v5rgeoMod != 1))
+        {   model->BSIM4v5rgeoMod = 1;
+            printf("Warning: rgeoMod has been set to its default value: 1.\n");
+        }
+
         if (!model->BSIM4v5fnoiModGiven) 
             model->BSIM4v5fnoiMod = 1;
         else if ((model->BSIM4v5fnoiMod != 0) && (model->BSIM4v5fnoiMod != 1))
@@ -1735,8 +1742,14 @@ JOB   *job;
 
             if (!here->BSIM4v5geoModGiven)
                 here->BSIM4v5geoMod = model->BSIM4v5geoMod;
+
             if (!here->BSIM4v5rgeoModGiven)
-                here->BSIM4v5rgeoMod = 0;
+                here->BSIM4v5rgeoMod = model->BSIM4v5rgeoMod;
+            else if ((here->BSIM4v5rgeoMod != 0) && (here->BSIM4v5rgeoMod != 1))
+            {   here->BSIM4v5rgeoMod = model->BSIM4v5rgeoMod;
+                printf("Warning: rgeoMod has been set to its global value %d.\n",
+                model->BSIM4v5rgeoMod);
+            }
             if (!here->BSIM4v5trnqsModGiven)
                 here->BSIM4v5trnqsMod = model->BSIM4v5trnqsMod;
             else if ((here->BSIM4v5trnqsMod != 0) && (here->BSIM4v5trnqsMod != 1))

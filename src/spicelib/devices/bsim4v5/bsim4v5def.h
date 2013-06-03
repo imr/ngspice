@@ -673,6 +673,7 @@ typedef struct sBSIM4v5model
     int    BSIM4v5rgateMod;
     int    BSIM4v5perMod;
     int    BSIM4v5geoMod;
+    int    BSIM4v5rgeoMod;
     int    BSIM4v5igcMod;
     int    BSIM4v5igbMod;
     int    BSIM4v5tempMod;
@@ -1486,6 +1487,7 @@ typedef struct sBSIM4v5model
     unsigned  BSIM4v5rgateModGiven :1;
     unsigned  BSIM4v5perModGiven :1;
     unsigned  BSIM4v5geoModGiven :1;
+    unsigned  BSIM4v5rgeoModGiven :1;
     unsigned  BSIM4v5paramChkGiven :1;
     unsigned  BSIM4v5trnqsModGiven :1;
     unsigned  BSIM4v5acnqsModGiven :1;
@@ -2310,9 +2312,10 @@ typedef struct sBSIM4v5model
 #define BSIM4v5_MOD_ACNQSMOD        92
 #define BSIM4v5_MOD_FNOIMOD         93
 #define BSIM4v5_MOD_RDSMOD          94
-#define BSIM4v5_MOD_DIOMOD          96
-#define BSIM4v5_MOD_PERMOD          97
-#define BSIM4v5_MOD_GEOMOD          98
+#define BSIM4v5_MOD_DIOMOD          95
+#define BSIM4v5_MOD_PERMOD          96
+#define BSIM4v5_MOD_GEOMOD          97
+#define BSIM4v5_MOD_RGEOMOD         98
 #define BSIM4v5_MOD_RGATEMOD        99
 #define BSIM4v5_MOD_RBODYMOD        100
 #define BSIM4v5_MOD_CAPMOD          101

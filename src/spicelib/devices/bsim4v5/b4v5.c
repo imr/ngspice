@@ -116,6 +116,7 @@ IOP( "rbodymod", BSIM4v5_MOD_RBODYMOD, IF_INTEGER, "Distributed body R model sel
 IOP( "rgatemod", BSIM4v5_MOD_RGATEMOD, IF_INTEGER, "Gate R model selector"),
 IOP( "permod", BSIM4v5_MOD_PERMOD, IF_INTEGER, "Pd and Ps model selector"),
 IOP( "geomod", BSIM4v5_MOD_GEOMOD, IF_INTEGER, "Geometry dependent parasitics model selector"),
+IOP( "rgeomod", BSIM4v5_MOD_RGEOMOD, IF_INTEGER, "S/D resistance and contact model selector"),
 IOP( "fnoimod", BSIM4v5_MOD_FNOIMOD, IF_INTEGER, "Flicker noise model selector"),
 IOP( "tnoimod", BSIM4v5_MOD_TNOIMOD, IF_INTEGER, "Thermal noise model selector"),
 IOP( "igcmod", BSIM4v5_MOD_IGCMOD, IF_INTEGER, "Gate-to-channel Ig model selector"),

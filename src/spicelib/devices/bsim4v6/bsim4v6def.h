@@ -814,6 +814,7 @@ typedef struct sBSIM4v6model
     int    BSIM4v6rgateMod;
     int    BSIM4v6perMod;
     int    BSIM4v6geoMod;
+    int    BSIM4v6rgeoMod;
     int    BSIM4v6mtrlMod;
     int    BSIM4v6igcMod;
     int    BSIM4v6igbMod;
@@ -1710,6 +1711,7 @@ typedef struct sBSIM4v6model
     unsigned  BSIM4v6rgateModGiven :1;
     unsigned  BSIM4v6perModGiven :1;
     unsigned  BSIM4v6geoModGiven :1;
+    unsigned  BSIM4v6rgeoModGiven :1;
     unsigned  BSIM4v6paramChkGiven :1;
     unsigned  BSIM4v6trnqsModGiven :1;
     unsigned  BSIM4v6acnqsModGiven :1;
@@ -2605,30 +2607,31 @@ typedef struct sBSIM4v6model
 #define BSIM4v6_M                   38
 
 /* Global parameters */
-#define BSIM4v6_MOD_TEMPEOT         66
-#define BSIM4v6_MOD_LEFFEOT         67
-#define BSIM4v6_MOD_WEFFEOT         68
-#define BSIM4v6_MOD_UCSTE           69
-#define BSIM4v6_MOD_LUCSTE          70
-#define BSIM4v6_MOD_WUCSTE          71
-#define BSIM4v6_MOD_PUCSTE          72
-#define BSIM4v6_MOD_UCS             73
-#define BSIM4v6_MOD_LUCS            74
-#define BSIM4v6_MOD_WUCS            75
-#define BSIM4v6_MOD_PUCS            76
-#define BSIM4v6_MOD_CVCHARGEMOD     77
-#define BSIM4v6_MOD_ADOS            78
-#define BSIM4v6_MOD_BDOS            79
-#define BSIM4v6_MOD_TEMPMOD         80
-#define BSIM4v6_MOD_MTRLMOD         81
-#define BSIM4v6_MOD_IGCMOD          82
-#define BSIM4v6_MOD_IGBMOD          83
-#define BSIM4v6_MOD_ACNQSMOD        84
-#define BSIM4v6_MOD_FNOIMOD         85
-#define BSIM4v6_MOD_RDSMOD          86
-#define BSIM4v6_MOD_DIOMOD          87
-#define BSIM4v6_MOD_PERMOD          88
-#define BSIM4v6_MOD_GEOMOD          89
+#define BSIM4v6_MOD_TEMPEOT         65
+#define BSIM4v6_MOD_LEFFEOT         66
+#define BSIM4v6_MOD_WEFFEOT         67
+#define BSIM4v6_MOD_UCSTE           68
+#define BSIM4v6_MOD_LUCSTE          69
+#define BSIM4v6_MOD_WUCSTE          70
+#define BSIM4v6_MOD_PUCSTE          71
+#define BSIM4v6_MOD_UCS             72
+#define BSIM4v6_MOD_LUCS            73
+#define BSIM4v6_MOD_WUCS            74
+#define BSIM4v6_MOD_PUCS            75
+#define BSIM4v6_MOD_CVCHARGEMOD     76
+#define BSIM4v6_MOD_ADOS            77
+#define BSIM4v6_MOD_BDOS            78
+#define BSIM4v6_MOD_TEMPMOD         79
+#define BSIM4v6_MOD_MTRLMOD         80
+#define BSIM4v6_MOD_IGCMOD          81
+#define BSIM4v6_MOD_IGBMOD          82
+#define BSIM4v6_MOD_ACNQSMOD        83
+#define BSIM4v6_MOD_FNOIMOD         84
+#define BSIM4v6_MOD_RDSMOD          85
+#define BSIM4v6_MOD_DIOMOD          86
+#define BSIM4v6_MOD_PERMOD          87
+#define BSIM4v6_MOD_GEOMOD          88
+#define BSIM4v6_MOD_RGEOMOD         89
 #define BSIM4v6_MOD_RGATEMOD        90
 #define BSIM4v6_MOD_RBODYMOD        91
 #define BSIM4v6_MOD_CAPMOD          92
