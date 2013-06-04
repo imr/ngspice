@@ -26,6 +26,8 @@ NIconvTest(CKTcircuit *ckt)
     double old;
     double new;
     double tol;
+#else
+    double maximum = 0 ;
 #endif
 
     size = SMPmatSize(ckt->CKTmatrix);
@@ -73,7 +75,6 @@ NIconvTest(CKTcircuit *ckt)
 #else
 
     /* KCL Verification */
-    double maximum = 0 ;
 
     node = ckt->CKTnodes ;
     for (i = 1 ; i <= size ; i++)
