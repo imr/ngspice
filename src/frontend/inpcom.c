@@ -3918,25 +3918,21 @@ inp_reorder_params(struct names *subckt_w_params, struct line *deck, struct line
 // split line up into multiple lines and place those new lines immediately
 // afetr the current multi-param line in the deck
 static int
-inp_split_multi_param_lines(struct line *deck, int line_num)
+inp_split_multi_param_lines(struct line *card, int line_num)
 {
-    struct line *card = deck, *param_end = NULL, *param_beg = NULL, *prev = NULL;
-    char *curr_line, *equal_ptr, *beg_param, *end_param, *new_line;
-    char *array[5000];
-    int  counter = 0, i;
-    bool get_expression = FALSE, get_paren_expression = FALSE;
-    char keep;
+    for (; card; card = card->li_next) {
 
-    while (card != NULL) {
-        curr_line = card->li_line;
+        char *curr_line = card->li_line;
 
-        if (*curr_line == '*') {
-            card = card->li_next;
+        if (*curr_line == '*')
             continue;
-        }
 
         if (ciprefix(".param", curr_line)) {
-            counter = 0;
+
+            struct line *param_end, *param_beg;
+            char *equal_ptr, *array[5000];
+            int i, counter = 0;
+
             while ((equal_ptr = strchr(curr_line, '=')) != NULL) {
                 // check for equality '=='
                 if (equal_ptr[1] == '=') {
@@ -3951,20 +3947,26 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
                 counter++;
                 curr_line = equal_ptr + 1;
             }
-            if (counter <= 1) {
-                card = card->li_next;
+
+            if (counter <= 1)
                 continue;
-            }
 
             // need to split multi param line
             curr_line = card->li_line;
             counter   = 0;
             while (curr_line < card->li_line+strlen(card->li_line) && (equal_ptr = strchr(curr_line, '=')) != NULL) {
+
+                char keep, *beg_param, *end_param, *new_line;
+
+                bool get_expression = FALSE;
+                bool get_paren_expression = FALSE;
+
                 // check for equality '=='
                 if (equal_ptr[1] == '=') {
                     curr_line = equal_ptr + 2;
                     continue;
                 }
+
                 // check for '!=', '<=', '>='
                 if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>') {
                     curr_line = equal_ptr + 1;
@@ -3993,6 +3995,9 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
                 *end_param = keep;
                 curr_line = end_param;
             }
+
+            param_beg = param_end = NULL;
+
             for (i = 0; i < counter; i++) {
                 struct line *x = xx_new_line(NULL, array[i], line_num++, 0);
 
@@ -4003,6 +4008,7 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
 
                 param_end = x;
             }
+
             // comment out current multi-param line
             *(card->li_line)   = '*';
             // insert new param lines immediately after current line
@@ -4010,16 +4016,9 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
             card->li_next      = param_beg;
             // point 'card' pointer to last in scalar list
             card               = param_end;
-
-            param_beg = param_end = NULL;
-        } // if (ciprefix(".param", curr_line))
-        prev = card;
-        card = card->li_next;
-    } // while (card != NULL)
-    if (param_end) {
-        prev->li_next = param_beg;
-        prev          = param_end;
+        }
     }
+
     return line_num;
 }
 
