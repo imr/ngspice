@@ -700,15 +700,13 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
     }
 
     /* Now clean up li: remove comments & stitch together continuation lines. */
-    working = cc->li_next;      /* cc points to head of deck.  Start with the
-                                   next card. */
 
     /* sjb - strip or convert end-of-line comments.
         This must be cone before stitching continuation lines.
         If the line only contains an end-of-line comment then it is converted
         into a normal comment with a '*' at the start.  This will then get
         stripped in the following code. */
-    inp_stripcomments_deck(working);
+    inp_stripcomments_deck(cc->li_next);
 
     inp_stitch_continuation_lines(cc->li_next);
 
