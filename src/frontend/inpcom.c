@@ -273,6 +273,68 @@ delete_names(struct names *p)
 }
 
 
+static void
+inp_stitch_continuation_lines(struct line *working)
+{
+    struct line *prev = NULL;
+
+    while (working) {
+        char *s, c, *buffer;
+
+        for (s = working->li_line; (c = *s) != '\0' && c <= ' '; s++)
+            ;
+
+#ifdef TRACE
+        /* SDB debug statement */
+        printf("In inp_readall, processing linked list element line = %d, s = %s . . . \n", working->li_linenum, s);
+#endif
+
+        switch (c) {
+        case '#':
+        case '$':
+        case '*':
+        case '\0':
+            /* this used to be commented out.  Why? */
+            /*  prev = NULL; */
+            working = working->li_next;  /* for these chars, go to next card */
+            break;
+
+        case '+':   /* handle continuation */
+            if (!prev) {
+                working->li_error = copy("Illegal continuation line: ignored.");
+                working = working->li_next;
+                break;
+            }
+
+            /* create buffer and write last and current line into it. */
+            buffer = TMALLOC(char, strlen(prev->li_line) + strlen(s) + 2);
+            (void) sprintf(buffer, "%s %s", prev->li_line, s + 1);
+
+            s = prev->li_line;
+            prev->li_line = buffer;
+            prev->li_next = working->li_next;
+            working->li_next = NULL;
+            if (prev->li_actual) {
+                struct line *end;
+                for (end = prev->li_actual; end->li_next; end = end->li_next)
+                    ;
+                end->li_next = working;
+                tfree(s);
+            } else {
+                prev->li_actual = xx_new_line(working, s, prev->li_linenum, 0);
+            }
+            working = prev->li_next;
+            break;
+
+        default:  /* regular one-line card */
+            prev = working;
+            working = working->li_next;
+            break;
+        }
+    }
+}
+
+
 /*-------------------------------------------------------------------------
  Read the entire input file and return  a pointer to the first line of
  the linked list of 'card' records in data.  The pointer is stored in
@@ -317,7 +379,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
    intfile: in, TRUE if deck is generated from internal circarray
 */
 {
-    struct line *end = NULL, *cc = NULL, *prev, *working;
+    struct line *end = NULL, *cc = NULL, *working;
     char *buffer = NULL;
     /* segfault fix */
 #ifdef XSPICE
@@ -648,60 +710,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         stripped in the following code. */
     inp_stripcomments_deck(working);
 
-    prev = NULL;
-    while (working) {
-        char *s, c;
-
-        for (s = working->li_line; (c = *s) != '\0' && c <= ' '; s++)
-            ;
-
-#ifdef TRACE
-        /* SDB debug statement */
-        printf("In inp_readall, processing linked list element line = %d, s = %s . . . \n", working->li_linenum, s);
-#endif
-
-        switch (c) {
-        case '#':
-        case '$':
-        case '*':
-        case '\0':
-            /* this used to be commented out.  Why? */
-            /*  prev = NULL; */
-            working = working->li_next;  /* for these chars, go to next card */
-            break;
-
-        case '+':   /* handle continuation */
-            if (!prev) {
-                working->li_error = copy("Illegal continuation line: ignored.");
-                working = working->li_next;
-                break;
-            }
-
-            /* create buffer and write last and current line into it. */
-            buffer = TMALLOC(char, strlen(prev->li_line) + strlen(s) + 2);
-            (void) sprintf(buffer, "%s %s", prev->li_line, s + 1);
-
-            s = prev->li_line;
-            prev->li_line = buffer;
-            prev->li_next = working->li_next;
-            working->li_next = NULL;
-            if (prev->li_actual) {
-                for (end = prev->li_actual; end->li_next; end = end->li_next)
-                    ;
-                end->li_next = working;
-                tfree(s);
-            } else {
-                prev->li_actual = xx_new_line(working, s, prev->li_linenum, 0);
-            }
-            working = prev->li_next;
-            break;
-
-        default:  /* regular one-line card */
-            prev = working;
-            working = working->li_next;
-            break;
-        }
-    }
+    inp_stitch_continuation_lines(cc->li_next);
 
     /* The following processing of an input file is not required for command files
        like spinit or .spiceinit, so return command files here. */
