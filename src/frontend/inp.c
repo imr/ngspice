@@ -1219,7 +1219,8 @@ dotifeval(struct line *deck)
     char *dottoken;
     char *s, *t;
 
-    for (dd = deck; dd; dd = dd->li_next) {
+    /* skip the first line (title line) */
+    for (dd = deck->li_next; dd; dd = dd->li_next) {
 
         s = t = dd->li_line;
 
