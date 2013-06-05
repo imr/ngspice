@@ -335,6 +335,38 @@ inp_stitch_continuation_lines(struct line *working)
 }
 
 
+/*
+ * search for `=' assignment operator
+ *   take care of `!=' `<=' `==' and `>='
+ */
+
+static char *
+find_assignment(char *str)
+{
+    char *p = str;
+
+    while ((p = strchr(p, '=')) != NULL) {
+
+        // check for equality '=='
+        if (p[1] == '=') {
+            p += 2;
+            continue;
+        }
+
+        // check for '!=', '<=', '>='
+        if (p > str)
+            if (p[-1] == '!' || p[-1] == '<' || p[-1] == '>') {
+                p += 1;
+                continue;
+            }
+
+        return p;
+    }
+
+    return NULL;
+}
+
+
 /*-------------------------------------------------------------------------
  Read the entire input file and return  a pointer to the first line of
  the linked list of 'card' records in data.  The pointer is stored in
@@ -2376,18 +2408,7 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
     char keep;
     bool is_expression = FALSE;
 
-    while ((equal_ptr = strchr(line, '=')) != NULL) {
-
-        // check for equality '=='
-        if (equal_ptr[1] == '=') {
-            line = equal_ptr + 2;
-            continue;
-        }
-        // check for '!=', '<=', '>='
-        if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>') {
-            line = equal_ptr + 1;
-            continue;
-        }
+    while ((equal_ptr = find_assignment(line)) != NULL) {
 
         is_expression = FALSE;
 
@@ -3160,7 +3181,7 @@ inp_fix_param_values(struct line *deck)
         if (strstr(line, "ic.file"))
             continue;
 
-        while ((equal_ptr = strchr(line, '=')) != NULL) {
+        while ((equal_ptr = find_assignment(line)) != NULL) {
 
             // special case: .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN out_variable2=out_variable3
             // no braces around out_variable3. out_variable3 may be v(...) or i(...)
@@ -3174,18 +3195,6 @@ inp_fix_param_values(struct line *deck)
                     line = equal_ptr + 1;
                     continue;
                 }
-
-            // skip over equality '=='
-            if (equal_ptr[1] == '=') {
-                line += 2;
-                continue;
-            }
-            // check for '!=', '<=', '>='
-            if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>')
-            {
-                line += 1;
-                continue;
-            }
 
             beg_of_str = skip_ws(equal_ptr + 1);
             /* all cases where no {} have to be put around selected token */
@@ -3940,17 +3949,7 @@ inp_split_multi_param_lines(struct line *card, int line_num)
             char *equal_ptr, *array[5000];
             int i, counter = 0;
 
-            while ((equal_ptr = strchr(curr_line, '=')) != NULL) {
-                // check for equality '=='
-                if (equal_ptr[1] == '=') {
-                    curr_line = equal_ptr + 2;
-                    continue;
-                }
-                // check for '!=', '<=', '>='
-                if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>') {
-                    curr_line = equal_ptr + 1;
-                    continue;
-                }
+            while ((equal_ptr = find_assignment(curr_line)) != NULL) {
                 counter++;
                 curr_line = equal_ptr + 1;
             }
@@ -3961,24 +3960,12 @@ inp_split_multi_param_lines(struct line *card, int line_num)
             // need to split multi param line
             curr_line = card->li_line;
             counter   = 0;
-            while (curr_line < card->li_line+strlen(card->li_line) && (equal_ptr = strchr(curr_line, '=')) != NULL) {
+            while ((equal_ptr = find_assignment(curr_line)) != NULL) {
 
                 char keep, *beg_param, *end_param, *new_line;
 
                 bool get_expression = FALSE;
                 bool get_paren_expression = FALSE;
-
-                // check for equality '=='
-                if (equal_ptr[1] == '=') {
-                    curr_line = equal_ptr + 2;
-                    continue;
-                }
-
-                // check for '!=', '<=', '>='
-                if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>') {
-                    curr_line = equal_ptr + 1;
-                    continue;
-                }
 
                 beg_param = skip_back_ws(equal_ptr);
                 beg_param = skip_back_non_ws(beg_param);
