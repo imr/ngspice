@@ -369,38 +369,38 @@ MESAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
 
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-  TSTALLOC(MESAdrainDrainPtr,MESAdrainNode,MESAdrainNode)
-  TSTALLOC(MESAdrainPrimeDrainPrimePtr,MESAdrainPrimeNode,MESAdrainPrimeNode)
-  TSTALLOC(MESAdrainPrmPrmDrainPrmPrmPtr,MESAdrainPrmPrmNode,MESAdrainPrmPrmNode)
-  TSTALLOC(MESAgateGatePtr,MESAgateNode,MESAgateNode)
-  TSTALLOC(MESAgatePrimeGatePrimePtr,MESAgatePrimeNode,MESAgatePrimeNode)
-  TSTALLOC(MESAsourceSourcePtr,MESAsourceNode,MESAsourceNode)
-  TSTALLOC(MESAsourcePrimeSourcePrimePtr,MESAsourcePrimeNode,MESAsourcePrimeNode)
-  TSTALLOC(MESAsourcePrmPrmSourcePrmPrmPtr,MESAsourcePrmPrmNode,MESAsourcePrmPrmNode)
-  TSTALLOC(MESAdrainDrainPrimePtr,MESAdrainNode,MESAdrainPrimeNode)
-  TSTALLOC(MESAdrainPrimeDrainPtr,MESAdrainPrimeNode,MESAdrainNode)
-  TSTALLOC(MESAgatePrimeDrainPrimePtr,MESAgatePrimeNode,MESAdrainPrimeNode)
-  TSTALLOC(MESAdrainPrimeGatePrimePtr,MESAdrainPrimeNode,MESAgatePrimeNode)
-  TSTALLOC(MESAgatePrimeSourcePrimePtr,MESAgatePrimeNode,MESAsourcePrimeNode)
-  TSTALLOC(MESAsourcePrimeGatePrimePtr,MESAsourcePrimeNode,MESAgatePrimeNode)  
-  TSTALLOC(MESAsourceSourcePrimePtr,MESAsourceNode,MESAsourcePrimeNode)
-  TSTALLOC(MESAsourcePrimeSourcePtr,MESAsourcePrimeNode,MESAsourceNode)
-  TSTALLOC(MESAdrainPrimeSourcePrimePtr,MESAdrainPrimeNode,MESAsourcePrimeNode)
-  TSTALLOC(MESAsourcePrimeDrainPrimePtr,MESAsourcePrimeNode,MESAdrainPrimeNode)
-  TSTALLOC(MESAgatePrimeGatePtr,MESAgatePrimeNode,MESAgateNode)
-  TSTALLOC(MESAgateGatePrimePtr,MESAgateNode,MESAgatePrimeNode)
-  TSTALLOC(MESAsourcePrmPrmSourcePrimePtr,MESAsourcePrmPrmNode,MESAsourcePrimeNode)
-  TSTALLOC(MESAsourcePrimeSourcePrmPrmPtr,MESAsourcePrimeNode,MESAsourcePrmPrmNode)
-  TSTALLOC(MESAsourcePrmPrmGatePrimePtr,MESAsourcePrmPrmNode,MESAgatePrimeNode)
-  TSTALLOC(MESAgatePrimeSourcePrmPrmPtr,MESAgatePrimeNode,MESAsourcePrmPrmNode)
-  TSTALLOC(MESAdrainPrmPrmDrainPrimePtr,MESAdrainPrmPrmNode,MESAdrainPrimeNode)
-  TSTALLOC(MESAdrainPrimeDrainPrmPrmPtr,MESAdrainPrimeNode,MESAdrainPrmPrmNode)
-  TSTALLOC(MESAdrainPrmPrmGatePrimePtr,MESAdrainPrmPrmNode,MESAgatePrimeNode)
-  TSTALLOC(MESAgatePrimeDrainPrmPrmPtr,MESAgatePrimeNode,MESAdrainPrmPrmNode)
+  TSTALLOC(MESAdrainDrainPtr,MESAdrainNode,MESAdrainNode);
+  TSTALLOC(MESAdrainPrimeDrainPrimePtr,MESAdrainPrimeNode,MESAdrainPrimeNode);
+  TSTALLOC(MESAdrainPrmPrmDrainPrmPrmPtr,MESAdrainPrmPrmNode,MESAdrainPrmPrmNode);
+  TSTALLOC(MESAgateGatePtr,MESAgateNode,MESAgateNode);
+  TSTALLOC(MESAgatePrimeGatePrimePtr,MESAgatePrimeNode,MESAgatePrimeNode);
+  TSTALLOC(MESAsourceSourcePtr,MESAsourceNode,MESAsourceNode);
+  TSTALLOC(MESAsourcePrimeSourcePrimePtr,MESAsourcePrimeNode,MESAsourcePrimeNode);
+  TSTALLOC(MESAsourcePrmPrmSourcePrmPrmPtr,MESAsourcePrmPrmNode,MESAsourcePrmPrmNode);
+  TSTALLOC(MESAdrainDrainPrimePtr,MESAdrainNode,MESAdrainPrimeNode);
+  TSTALLOC(MESAdrainPrimeDrainPtr,MESAdrainPrimeNode,MESAdrainNode);
+  TSTALLOC(MESAgatePrimeDrainPrimePtr,MESAgatePrimeNode,MESAdrainPrimeNode);
+  TSTALLOC(MESAdrainPrimeGatePrimePtr,MESAdrainPrimeNode,MESAgatePrimeNode);
+  TSTALLOC(MESAgatePrimeSourcePrimePtr,MESAgatePrimeNode,MESAsourcePrimeNode);
+  TSTALLOC(MESAsourcePrimeGatePrimePtr,MESAsourcePrimeNode,MESAgatePrimeNode)  ;
+  TSTALLOC(MESAsourceSourcePrimePtr,MESAsourceNode,MESAsourcePrimeNode);
+  TSTALLOC(MESAsourcePrimeSourcePtr,MESAsourcePrimeNode,MESAsourceNode);
+  TSTALLOC(MESAdrainPrimeSourcePrimePtr,MESAdrainPrimeNode,MESAsourcePrimeNode);
+  TSTALLOC(MESAsourcePrimeDrainPrimePtr,MESAsourcePrimeNode,MESAdrainPrimeNode);
+  TSTALLOC(MESAgatePrimeGatePtr,MESAgatePrimeNode,MESAgateNode);
+  TSTALLOC(MESAgateGatePrimePtr,MESAgateNode,MESAgatePrimeNode);
+  TSTALLOC(MESAsourcePrmPrmSourcePrimePtr,MESAsourcePrmPrmNode,MESAsourcePrimeNode);
+  TSTALLOC(MESAsourcePrimeSourcePrmPrmPtr,MESAsourcePrimeNode,MESAsourcePrmPrmNode);
+  TSTALLOC(MESAsourcePrmPrmGatePrimePtr,MESAsourcePrmPrmNode,MESAgatePrimeNode);
+  TSTALLOC(MESAgatePrimeSourcePrmPrmPtr,MESAgatePrimeNode,MESAsourcePrmPrmNode);
+  TSTALLOC(MESAdrainPrmPrmDrainPrimePtr,MESAdrainPrmPrmNode,MESAdrainPrimeNode);
+  TSTALLOC(MESAdrainPrimeDrainPrmPrmPtr,MESAdrainPrimeNode,MESAdrainPrmPrmNode);
+  TSTALLOC(MESAdrainPrmPrmGatePrimePtr,MESAdrainPrmPrmNode,MESAgatePrimeNode);
+  TSTALLOC(MESAgatePrimeDrainPrmPrmPtr,MESAgatePrimeNode,MESAdrainPrmPrmNode);
   }
   }
     return(OK);

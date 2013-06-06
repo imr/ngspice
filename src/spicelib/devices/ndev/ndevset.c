@@ -51,9 +51,9 @@ int NDEVsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states
 	    send(model->sock,&(here->Ndevinfo),sizeof(here->Ndevinfo),0);
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
 	    for(i=0;i<here->term;i++)
 	      for(j=0;j<here->term;j++)

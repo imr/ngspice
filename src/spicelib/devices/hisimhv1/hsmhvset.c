@@ -938,35 +938,35 @@ int HSMHVsetup(
       
       /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
+do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-      TSTALLOC(HSMHVDPbpPtr, HSMHVdNodePrime, HSMHVbNodePrime)
-      TSTALLOC(HSMHVSPbpPtr, HSMHVsNodePrime, HSMHVbNodePrime)
-      TSTALLOC(HSMHVGPbpPtr, HSMHVgNodePrime, HSMHVbNodePrime)
+      TSTALLOC(HSMHVDPbpPtr, HSMHVdNodePrime, HSMHVbNodePrime);
+      TSTALLOC(HSMHVSPbpPtr, HSMHVsNodePrime, HSMHVbNodePrime);
+      TSTALLOC(HSMHVGPbpPtr, HSMHVgNodePrime, HSMHVbNodePrime);
 
-      TSTALLOC(HSMHVBPdPtr,  HSMHVbNodePrime, HSMHVdNode)
-      TSTALLOC(HSMHVBPsPtr,  HSMHVbNodePrime, HSMHVsNode)
-      TSTALLOC(HSMHVBPdpPtr, HSMHVbNodePrime, HSMHVdNodePrime)
-      TSTALLOC(HSMHVBPspPtr, HSMHVbNodePrime, HSMHVsNodePrime)
-      TSTALLOC(HSMHVBPgpPtr, HSMHVbNodePrime, HSMHVgNodePrime)
-      TSTALLOC(HSMHVBPbpPtr, HSMHVbNodePrime, HSMHVbNodePrime)
+      TSTALLOC(HSMHVBPdPtr,  HSMHVbNodePrime, HSMHVdNode);
+      TSTALLOC(HSMHVBPsPtr,  HSMHVbNodePrime, HSMHVsNode);
+      TSTALLOC(HSMHVBPdpPtr, HSMHVbNodePrime, HSMHVdNodePrime);
+      TSTALLOC(HSMHVBPspPtr, HSMHVbNodePrime, HSMHVsNodePrime);
+      TSTALLOC(HSMHVBPgpPtr, HSMHVbNodePrime, HSMHVgNodePrime);
+      TSTALLOC(HSMHVBPbpPtr, HSMHVbNodePrime, HSMHVbNodePrime);
 
-      TSTALLOC(HSMHVDdPtr, HSMHVdNode, HSMHVdNode)
-      TSTALLOC(HSMHVGPgpPtr, HSMHVgNodePrime, HSMHVgNodePrime)
-      TSTALLOC(HSMHVSsPtr, HSMHVsNode, HSMHVsNode)
-      TSTALLOC(HSMHVDPdpPtr, HSMHVdNodePrime, HSMHVdNodePrime)
-      TSTALLOC(HSMHVSPspPtr, HSMHVsNodePrime, HSMHVsNodePrime)
-      TSTALLOC(HSMHVDdpPtr, HSMHVdNode, HSMHVdNodePrime)
-      TSTALLOC(HSMHVGPdpPtr, HSMHVgNodePrime, HSMHVdNodePrime)
-      TSTALLOC(HSMHVGPspPtr, HSMHVgNodePrime, HSMHVsNodePrime)
-      TSTALLOC(HSMHVSspPtr, HSMHVsNode, HSMHVsNodePrime)
-      TSTALLOC(HSMHVDPspPtr, HSMHVdNodePrime, HSMHVsNodePrime)
-      TSTALLOC(HSMHVDPdPtr, HSMHVdNodePrime, HSMHVdNode)
-      TSTALLOC(HSMHVDPgpPtr, HSMHVdNodePrime, HSMHVgNodePrime)
-      TSTALLOC(HSMHVSPgpPtr, HSMHVsNodePrime, HSMHVgNodePrime)
-      TSTALLOC(HSMHVSPsPtr, HSMHVsNodePrime, HSMHVsNode)
+      TSTALLOC(HSMHVDdPtr, HSMHVdNode, HSMHVdNode);
+      TSTALLOC(HSMHVGPgpPtr, HSMHVgNodePrime, HSMHVgNodePrime);
+      TSTALLOC(HSMHVSsPtr, HSMHVsNode, HSMHVsNode);
+      TSTALLOC(HSMHVDPdpPtr, HSMHVdNodePrime, HSMHVdNodePrime);
+      TSTALLOC(HSMHVSPspPtr, HSMHVsNodePrime, HSMHVsNodePrime);
+      TSTALLOC(HSMHVDdpPtr, HSMHVdNode, HSMHVdNodePrime);
+      TSTALLOC(HSMHVGPdpPtr, HSMHVgNodePrime, HSMHVdNodePrime);
+      TSTALLOC(HSMHVGPspPtr, HSMHVgNodePrime, HSMHVsNodePrime);
+      TSTALLOC(HSMHVSspPtr, HSMHVsNode, HSMHVsNodePrime);
+      TSTALLOC(HSMHVDPspPtr, HSMHVdNodePrime, HSMHVsNodePrime);
+      TSTALLOC(HSMHVDPdPtr, HSMHVdNodePrime, HSMHVdNode);
+      TSTALLOC(HSMHVDPgpPtr, HSMHVdNodePrime, HSMHVgNodePrime);
+      TSTALLOC(HSMHVSPgpPtr, HSMHVsNodePrime, HSMHVgNodePrime);
+      TSTALLOC(HSMHVSPsPtr, HSMHVsNodePrime, HSMHVsNode);
       TSTALLOC(HSMHVSPdpPtr, HSMHVsNodePrime, HSMHVdNodePrime);
 
       TSTALLOC(HSMHVGgPtr, HSMHVgNode, HSMHVgNode);
@@ -1019,44 +1019,44 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 	TSTALLOC(HSMHVSPsubPtr, HSMHVsNodePrime, HSMHVsubNode);
       }
       if ( here->HSMHV_coselfheat >  0 ) { /* self heating */
-	TSTALLOC(HSMHVTemptempPtr, HSMHVtempNode, HSMHVtempNode)
-	TSTALLOC(HSMHVTempdPtr, HSMHVtempNode, HSMHVdNode)
-	TSTALLOC(HSMHVTempdpPtr, HSMHVtempNode, HSMHVdNodePrime)
-	TSTALLOC(HSMHVTempsPtr, HSMHVtempNode, HSMHVsNode)
-	TSTALLOC(HSMHVTempspPtr, HSMHVtempNode, HSMHVsNodePrime)
-	TSTALLOC(HSMHVDPtempPtr, HSMHVdNodePrime, HSMHVtempNode)
-	TSTALLOC(HSMHVSPtempPtr, HSMHVsNodePrime, HSMHVtempNode)
+	TSTALLOC(HSMHVTemptempPtr, HSMHVtempNode, HSMHVtempNode);
+	TSTALLOC(HSMHVTempdPtr, HSMHVtempNode, HSMHVdNode);
+	TSTALLOC(HSMHVTempdpPtr, HSMHVtempNode, HSMHVdNodePrime);
+	TSTALLOC(HSMHVTempsPtr, HSMHVtempNode, HSMHVsNode);
+	TSTALLOC(HSMHVTempspPtr, HSMHVtempNode, HSMHVsNodePrime);
+	TSTALLOC(HSMHVDPtempPtr, HSMHVdNodePrime, HSMHVtempNode);
+	TSTALLOC(HSMHVSPtempPtr, HSMHVsNodePrime, HSMHVtempNode);
   
-        TSTALLOC(HSMHVTempgpPtr, HSMHVtempNode, HSMHVgNodePrime)
-	TSTALLOC(HSMHVTempbpPtr, HSMHVtempNode, HSMHVbNodePrime)
+        TSTALLOC(HSMHVTempgpPtr, HSMHVtempNode, HSMHVgNodePrime);
+	TSTALLOC(HSMHVTempbpPtr, HSMHVtempNode, HSMHVbNodePrime);
 
-	TSTALLOC(HSMHVGPtempPtr, HSMHVgNodePrime, HSMHVtempNode)
-	TSTALLOC(HSMHVBPtempPtr, HSMHVbNodePrime, HSMHVtempNode)
+	TSTALLOC(HSMHVGPtempPtr, HSMHVgNodePrime, HSMHVtempNode);
+	TSTALLOC(HSMHVBPtempPtr, HSMHVbNodePrime, HSMHVtempNode);
 
-	TSTALLOC(HSMHVDBtempPtr, HSMHVdbNode, HSMHVtempNode)
-	TSTALLOC(HSMHVSBtempPtr, HSMHVsbNode, HSMHVtempNode)
+	TSTALLOC(HSMHVDBtempPtr, HSMHVdbNode, HSMHVtempNode);
+	TSTALLOC(HSMHVSBtempPtr, HSMHVsbNode, HSMHVtempNode);
 	TSTALLOC(HSMHVDtempPtr, HSMHVdNode, HSMHVtempNode);
 	TSTALLOC(HSMHVStempPtr, HSMHVsNode, HSMHVtempNode);
       }
       if ( model->HSMHV_conqs ) { /* flat handling of NQS */
-	TSTALLOC(HSMHVDPqiPtr, HSMHVdNodePrime, HSMHVqiNode)
-	TSTALLOC(HSMHVGPqiPtr, HSMHVgNodePrime, HSMHVqiNode)
-	TSTALLOC(HSMHVGPqbPtr, HSMHVgNodePrime, HSMHVqbNode)
-	TSTALLOC(HSMHVSPqiPtr, HSMHVsNodePrime, HSMHVqiNode)
-	TSTALLOC(HSMHVBPqbPtr, HSMHVbNodePrime, HSMHVqbNode)
-	TSTALLOC(HSMHVQIdpPtr, HSMHVqiNode, HSMHVdNodePrime)
-	TSTALLOC(HSMHVQIgpPtr, HSMHVqiNode, HSMHVgNodePrime)
-	TSTALLOC(HSMHVQIspPtr, HSMHVqiNode, HSMHVsNodePrime)
-	TSTALLOC(HSMHVQIbpPtr, HSMHVqiNode, HSMHVbNodePrime)
-	TSTALLOC(HSMHVQIqiPtr, HSMHVqiNode, HSMHVqiNode)
-	TSTALLOC(HSMHVQBdpPtr, HSMHVqbNode, HSMHVdNodePrime)
-	TSTALLOC(HSMHVQBgpPtr, HSMHVqbNode, HSMHVgNodePrime)
-	TSTALLOC(HSMHVQBspPtr, HSMHVqbNode, HSMHVsNodePrime)
-	TSTALLOC(HSMHVQBbpPtr, HSMHVqbNode, HSMHVbNodePrime)
-	TSTALLOC(HSMHVQBqbPtr, HSMHVqbNode, HSMHVqbNode)
+	TSTALLOC(HSMHVDPqiPtr, HSMHVdNodePrime, HSMHVqiNode);
+	TSTALLOC(HSMHVGPqiPtr, HSMHVgNodePrime, HSMHVqiNode);
+	TSTALLOC(HSMHVGPqbPtr, HSMHVgNodePrime, HSMHVqbNode);
+	TSTALLOC(HSMHVSPqiPtr, HSMHVsNodePrime, HSMHVqiNode);
+	TSTALLOC(HSMHVBPqbPtr, HSMHVbNodePrime, HSMHVqbNode);
+	TSTALLOC(HSMHVQIdpPtr, HSMHVqiNode, HSMHVdNodePrime);
+	TSTALLOC(HSMHVQIgpPtr, HSMHVqiNode, HSMHVgNodePrime);
+	TSTALLOC(HSMHVQIspPtr, HSMHVqiNode, HSMHVsNodePrime);
+	TSTALLOC(HSMHVQIbpPtr, HSMHVqiNode, HSMHVbNodePrime);
+	TSTALLOC(HSMHVQIqiPtr, HSMHVqiNode, HSMHVqiNode);
+	TSTALLOC(HSMHVQBdpPtr, HSMHVqbNode, HSMHVdNodePrime);
+	TSTALLOC(HSMHVQBgpPtr, HSMHVqbNode, HSMHVgNodePrime);
+	TSTALLOC(HSMHVQBspPtr, HSMHVqbNode, HSMHVsNodePrime);
+	TSTALLOC(HSMHVQBbpPtr, HSMHVqbNode, HSMHVbNodePrime);
+	TSTALLOC(HSMHVQBqbPtr, HSMHVqbNode, HSMHVqbNode);
         if ( here->HSMHV_coselfheat >  0 ) { /* self heating */
-	  TSTALLOC(HSMHVQItempPtr, HSMHVqiNode, HSMHVtempNode)
-	  TSTALLOC(HSMHVQBtempPtr, HSMHVqbNode, HSMHVtempNode)
+	  TSTALLOC(HSMHVQItempPtr, HSMHVqiNode, HSMHVtempNode);
+	  TSTALLOC(HSMHVQBtempPtr, HSMHVqbNode, HSMHVtempNode);
         }
       }
 

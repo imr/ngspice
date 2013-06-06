@@ -848,43 +848,43 @@ IFuid tmpName;
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-            TSTALLOC(BSIM3v0DdPtr, BSIM3v0dNode, BSIM3v0dNode)
-            TSTALLOC(BSIM3v0GgPtr, BSIM3v0gNode, BSIM3v0gNode)
-            TSTALLOC(BSIM3v0SsPtr, BSIM3v0sNode, BSIM3v0sNode)
-            TSTALLOC(BSIM3v0BbPtr, BSIM3v0bNode, BSIM3v0bNode)
-            TSTALLOC(BSIM3v0DPdpPtr, BSIM3v0dNodePrime, BSIM3v0dNodePrime)
-            TSTALLOC(BSIM3v0SPspPtr, BSIM3v0sNodePrime, BSIM3v0sNodePrime)
-            TSTALLOC(BSIM3v0DdpPtr, BSIM3v0dNode, BSIM3v0dNodePrime)
-            TSTALLOC(BSIM3v0GbPtr, BSIM3v0gNode, BSIM3v0bNode)
-            TSTALLOC(BSIM3v0GdpPtr, BSIM3v0gNode, BSIM3v0dNodePrime)
-            TSTALLOC(BSIM3v0GspPtr, BSIM3v0gNode, BSIM3v0sNodePrime)
-            TSTALLOC(BSIM3v0SspPtr, BSIM3v0sNode, BSIM3v0sNodePrime)
-            TSTALLOC(BSIM3v0BdpPtr, BSIM3v0bNode, BSIM3v0dNodePrime)
-            TSTALLOC(BSIM3v0BspPtr, BSIM3v0bNode, BSIM3v0sNodePrime)
-            TSTALLOC(BSIM3v0DPspPtr, BSIM3v0dNodePrime, BSIM3v0sNodePrime)
-            TSTALLOC(BSIM3v0DPdPtr, BSIM3v0dNodePrime, BSIM3v0dNode)
-            TSTALLOC(BSIM3v0BgPtr, BSIM3v0bNode, BSIM3v0gNode)
-            TSTALLOC(BSIM3v0DPgPtr, BSIM3v0dNodePrime, BSIM3v0gNode)
-            TSTALLOC(BSIM3v0SPgPtr, BSIM3v0sNodePrime, BSIM3v0gNode)
-            TSTALLOC(BSIM3v0SPsPtr, BSIM3v0sNodePrime, BSIM3v0sNode)
-            TSTALLOC(BSIM3v0DPbPtr, BSIM3v0dNodePrime, BSIM3v0bNode)
-            TSTALLOC(BSIM3v0SPbPtr, BSIM3v0sNodePrime, BSIM3v0bNode)
-            TSTALLOC(BSIM3v0SPdpPtr, BSIM3v0sNodePrime, BSIM3v0dNodePrime)
+            TSTALLOC(BSIM3v0DdPtr, BSIM3v0dNode, BSIM3v0dNode);
+            TSTALLOC(BSIM3v0GgPtr, BSIM3v0gNode, BSIM3v0gNode);
+            TSTALLOC(BSIM3v0SsPtr, BSIM3v0sNode, BSIM3v0sNode);
+            TSTALLOC(BSIM3v0BbPtr, BSIM3v0bNode, BSIM3v0bNode);
+            TSTALLOC(BSIM3v0DPdpPtr, BSIM3v0dNodePrime, BSIM3v0dNodePrime);
+            TSTALLOC(BSIM3v0SPspPtr, BSIM3v0sNodePrime, BSIM3v0sNodePrime);
+            TSTALLOC(BSIM3v0DdpPtr, BSIM3v0dNode, BSIM3v0dNodePrime);
+            TSTALLOC(BSIM3v0GbPtr, BSIM3v0gNode, BSIM3v0bNode);
+            TSTALLOC(BSIM3v0GdpPtr, BSIM3v0gNode, BSIM3v0dNodePrime);
+            TSTALLOC(BSIM3v0GspPtr, BSIM3v0gNode, BSIM3v0sNodePrime);
+            TSTALLOC(BSIM3v0SspPtr, BSIM3v0sNode, BSIM3v0sNodePrime);
+            TSTALLOC(BSIM3v0BdpPtr, BSIM3v0bNode, BSIM3v0dNodePrime);
+            TSTALLOC(BSIM3v0BspPtr, BSIM3v0bNode, BSIM3v0sNodePrime);
+            TSTALLOC(BSIM3v0DPspPtr, BSIM3v0dNodePrime, BSIM3v0sNodePrime);
+            TSTALLOC(BSIM3v0DPdPtr, BSIM3v0dNodePrime, BSIM3v0dNode);
+            TSTALLOC(BSIM3v0BgPtr, BSIM3v0bNode, BSIM3v0gNode);
+            TSTALLOC(BSIM3v0DPgPtr, BSIM3v0dNodePrime, BSIM3v0gNode);
+            TSTALLOC(BSIM3v0SPgPtr, BSIM3v0sNodePrime, BSIM3v0gNode);
+            TSTALLOC(BSIM3v0SPsPtr, BSIM3v0sNodePrime, BSIM3v0sNode);
+            TSTALLOC(BSIM3v0DPbPtr, BSIM3v0dNodePrime, BSIM3v0bNode);
+            TSTALLOC(BSIM3v0SPbPtr, BSIM3v0sNodePrime, BSIM3v0bNode);
+            TSTALLOC(BSIM3v0SPdpPtr, BSIM3v0sNodePrime, BSIM3v0dNodePrime);
 
-            TSTALLOC(BSIM3v0QqPtr, BSIM3v0qNode, BSIM3v0qNode)
+            TSTALLOC(BSIM3v0QqPtr, BSIM3v0qNode, BSIM3v0qNode);
  
-            TSTALLOC(BSIM3v0QdpPtr, BSIM3v0qNode, BSIM3v0dNodePrime)
-            TSTALLOC(BSIM3v0QspPtr, BSIM3v0qNode, BSIM3v0sNodePrime)
-            TSTALLOC(BSIM3v0QgPtr, BSIM3v0qNode, BSIM3v0gNode)
-            TSTALLOC(BSIM3v0QbPtr, BSIM3v0qNode, BSIM3v0bNode)
-            TSTALLOC(BSIM3v0DPqPtr, BSIM3v0dNodePrime, BSIM3v0qNode)
-            TSTALLOC(BSIM3v0SPqPtr, BSIM3v0sNodePrime, BSIM3v0qNode)
-            TSTALLOC(BSIM3v0GqPtr, BSIM3v0gNode, BSIM3v0qNode)
-            TSTALLOC(BSIM3v0BqPtr, BSIM3v0bNode, BSIM3v0qNode)
+            TSTALLOC(BSIM3v0QdpPtr, BSIM3v0qNode, BSIM3v0dNodePrime);
+            TSTALLOC(BSIM3v0QspPtr, BSIM3v0qNode, BSIM3v0sNodePrime);
+            TSTALLOC(BSIM3v0QgPtr, BSIM3v0qNode, BSIM3v0gNode);
+            TSTALLOC(BSIM3v0QbPtr, BSIM3v0qNode, BSIM3v0bNode);
+            TSTALLOC(BSIM3v0DPqPtr, BSIM3v0dNodePrime, BSIM3v0qNode);
+            TSTALLOC(BSIM3v0SPqPtr, BSIM3v0sNodePrime, BSIM3v0qNode);
+            TSTALLOC(BSIM3v0GqPtr, BSIM3v0gNode, BSIM3v0qNode);
+            TSTALLOC(BSIM3v0BqPtr, BSIM3v0bNode, BSIM3v0qNode);
 
         }
     }

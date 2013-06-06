@@ -64,32 +64,32 @@ TRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-            TSTALLOC(TRAibr1Ibr2Ptr, TRAbrEq1, TRAbrEq2)
-            TSTALLOC(TRAibr1Int1Ptr, TRAbrEq1, TRAintNode1)
-            TSTALLOC(TRAibr1Neg1Ptr, TRAbrEq1, TRAnegNode1)
-            TSTALLOC(TRAibr1Neg2Ptr, TRAbrEq1, TRAnegNode2)
-            TSTALLOC(TRAibr1Pos2Ptr, TRAbrEq1, TRAposNode2)
-            TSTALLOC(TRAibr2Ibr1Ptr, TRAbrEq2, TRAbrEq1)
-            TSTALLOC(TRAibr2Int2Ptr, TRAbrEq2, TRAintNode2)
-            TSTALLOC(TRAibr2Neg1Ptr, TRAbrEq2, TRAnegNode1)
-            TSTALLOC(TRAibr2Neg2Ptr, TRAbrEq2, TRAnegNode2)
-            TSTALLOC(TRAibr2Pos1Ptr, TRAbrEq2, TRAposNode1)
-            TSTALLOC(TRAint1Ibr1Ptr, TRAintNode1, TRAbrEq1)
-            TSTALLOC(TRAint1Int1Ptr, TRAintNode1, TRAintNode1)
-            TSTALLOC(TRAint1Pos1Ptr, TRAintNode1, TRAposNode1)
-            TSTALLOC(TRAint2Ibr2Ptr, TRAintNode2, TRAbrEq2)
-            TSTALLOC(TRAint2Int2Ptr, TRAintNode2, TRAintNode2)
-            TSTALLOC(TRAint2Pos2Ptr, TRAintNode2, TRAposNode2)
-            TSTALLOC(TRAneg1Ibr1Ptr, TRAnegNode1, TRAbrEq1)
-            TSTALLOC(TRAneg2Ibr2Ptr, TRAnegNode2, TRAbrEq2)
-            TSTALLOC(TRApos1Int1Ptr, TRAposNode1, TRAintNode1)
-            TSTALLOC(TRApos1Pos1Ptr, TRAposNode1, TRAposNode1)
-            TSTALLOC(TRApos2Int2Ptr, TRAposNode2, TRAintNode2)
-            TSTALLOC(TRApos2Pos2Ptr, TRAposNode2, TRAposNode2)
+            TSTALLOC(TRAibr1Ibr2Ptr, TRAbrEq1, TRAbrEq2);
+            TSTALLOC(TRAibr1Int1Ptr, TRAbrEq1, TRAintNode1);
+            TSTALLOC(TRAibr1Neg1Ptr, TRAbrEq1, TRAnegNode1);
+            TSTALLOC(TRAibr1Neg2Ptr, TRAbrEq1, TRAnegNode2);
+            TSTALLOC(TRAibr1Pos2Ptr, TRAbrEq1, TRAposNode2);
+            TSTALLOC(TRAibr2Ibr1Ptr, TRAbrEq2, TRAbrEq1);
+            TSTALLOC(TRAibr2Int2Ptr, TRAbrEq2, TRAintNode2);
+            TSTALLOC(TRAibr2Neg1Ptr, TRAbrEq2, TRAnegNode1);
+            TSTALLOC(TRAibr2Neg2Ptr, TRAbrEq2, TRAnegNode2);
+            TSTALLOC(TRAibr2Pos1Ptr, TRAbrEq2, TRAposNode1);
+            TSTALLOC(TRAint1Ibr1Ptr, TRAintNode1, TRAbrEq1);
+            TSTALLOC(TRAint1Int1Ptr, TRAintNode1, TRAintNode1);
+            TSTALLOC(TRAint1Pos1Ptr, TRAintNode1, TRAposNode1);
+            TSTALLOC(TRAint2Ibr2Ptr, TRAintNode2, TRAbrEq2);
+            TSTALLOC(TRAint2Int2Ptr, TRAintNode2, TRAintNode2);
+            TSTALLOC(TRAint2Pos2Ptr, TRAintNode2, TRAposNode2);
+            TSTALLOC(TRAneg1Ibr1Ptr, TRAnegNode1, TRAbrEq1);
+            TSTALLOC(TRAneg2Ibr2Ptr, TRAnegNode2, TRAbrEq2);
+            TSTALLOC(TRApos1Int1Ptr, TRAposNode1, TRAintNode1);
+            TSTALLOC(TRApos1Pos1Ptr, TRAposNode1, TRAposNode1);
+            TSTALLOC(TRApos2Int2Ptr, TRAposNode2, TRAintNode2);
+            TSTALLOC(TRApos2Pos2Ptr, TRAposNode2, TRAposNode2);
 
             if(!here->TRAnlGiven) {
                 here->TRAnl = .25;

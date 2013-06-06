@@ -180,31 +180,31 @@ MOS1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
-            TSTALLOC(MOS1DdPtr,MOS1dNode,MOS1dNode)
-            TSTALLOC(MOS1GgPtr,MOS1gNode,MOS1gNode)
-            TSTALLOC(MOS1SsPtr,MOS1sNode,MOS1sNode)
-            TSTALLOC(MOS1BbPtr,MOS1bNode,MOS1bNode)
-            TSTALLOC(MOS1DPdpPtr,MOS1dNodePrime,MOS1dNodePrime)
-            TSTALLOC(MOS1SPspPtr,MOS1sNodePrime,MOS1sNodePrime)
-            TSTALLOC(MOS1DdpPtr,MOS1dNode,MOS1dNodePrime)
-            TSTALLOC(MOS1GbPtr,MOS1gNode,MOS1bNode)
-            TSTALLOC(MOS1GdpPtr,MOS1gNode,MOS1dNodePrime)
-            TSTALLOC(MOS1GspPtr,MOS1gNode,MOS1sNodePrime)
-            TSTALLOC(MOS1SspPtr,MOS1sNode,MOS1sNodePrime)
-            TSTALLOC(MOS1BdpPtr,MOS1bNode,MOS1dNodePrime)
-            TSTALLOC(MOS1BspPtr,MOS1bNode,MOS1sNodePrime)
-            TSTALLOC(MOS1DPspPtr,MOS1dNodePrime,MOS1sNodePrime)
-            TSTALLOC(MOS1DPdPtr,MOS1dNodePrime,MOS1dNode)
-            TSTALLOC(MOS1BgPtr,MOS1bNode,MOS1gNode)
-            TSTALLOC(MOS1DPgPtr,MOS1dNodePrime,MOS1gNode)
-            TSTALLOC(MOS1SPgPtr,MOS1sNodePrime,MOS1gNode)
-            TSTALLOC(MOS1SPsPtr,MOS1sNodePrime,MOS1sNode)
-            TSTALLOC(MOS1DPbPtr,MOS1dNodePrime,MOS1bNode)
-            TSTALLOC(MOS1SPbPtr,MOS1sNodePrime,MOS1bNode)
-            TSTALLOC(MOS1SPdpPtr,MOS1sNodePrime,MOS1dNodePrime)
+} } while(0)
+            TSTALLOC(MOS1DdPtr,MOS1dNode,MOS1dNode);
+            TSTALLOC(MOS1GgPtr,MOS1gNode,MOS1gNode);
+            TSTALLOC(MOS1SsPtr,MOS1sNode,MOS1sNode);
+            TSTALLOC(MOS1BbPtr,MOS1bNode,MOS1bNode);
+            TSTALLOC(MOS1DPdpPtr,MOS1dNodePrime,MOS1dNodePrime);
+            TSTALLOC(MOS1SPspPtr,MOS1sNodePrime,MOS1sNodePrime);
+            TSTALLOC(MOS1DdpPtr,MOS1dNode,MOS1dNodePrime);
+            TSTALLOC(MOS1GbPtr,MOS1gNode,MOS1bNode);
+            TSTALLOC(MOS1GdpPtr,MOS1gNode,MOS1dNodePrime);
+            TSTALLOC(MOS1GspPtr,MOS1gNode,MOS1sNodePrime);
+            TSTALLOC(MOS1SspPtr,MOS1sNode,MOS1sNodePrime);
+            TSTALLOC(MOS1BdpPtr,MOS1bNode,MOS1dNodePrime);
+            TSTALLOC(MOS1BspPtr,MOS1bNode,MOS1sNodePrime);
+            TSTALLOC(MOS1DPspPtr,MOS1dNodePrime,MOS1sNodePrime);
+            TSTALLOC(MOS1DPdPtr,MOS1dNodePrime,MOS1dNode);
+            TSTALLOC(MOS1BgPtr,MOS1bNode,MOS1gNode);
+            TSTALLOC(MOS1DPgPtr,MOS1dNodePrime,MOS1gNode);
+            TSTALLOC(MOS1SPgPtr,MOS1sNodePrime,MOS1gNode);
+            TSTALLOC(MOS1SPsPtr,MOS1sNodePrime,MOS1sNode);
+            TSTALLOC(MOS1DPbPtr,MOS1dNodePrime,MOS1bNode);
+            TSTALLOC(MOS1SPbPtr,MOS1sNodePrime,MOS1bNode);
+            TSTALLOC(MOS1SPdpPtr,MOS1sNodePrime,MOS1dNodePrime);
 
         }
     }

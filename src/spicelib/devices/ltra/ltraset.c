@@ -186,34 +186,34 @@ LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
       }
       /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-      TSTALLOC(LTRAibr1Pos1Ptr, LTRAbrEq1, LTRAposNode1)
-      TSTALLOC(LTRAibr1Neg1Ptr, LTRAbrEq1, LTRAnegNode1)
-      TSTALLOC(LTRAibr1Pos2Ptr, LTRAbrEq1, LTRAposNode2)
-      TSTALLOC(LTRAibr1Neg2Ptr, LTRAbrEq1, LTRAnegNode2)
-      TSTALLOC(LTRAibr1Ibr1Ptr, LTRAbrEq1, LTRAbrEq1)
-      TSTALLOC(LTRAibr1Ibr2Ptr, LTRAbrEq1, LTRAbrEq2)
-      TSTALLOC(LTRAibr2Pos1Ptr, LTRAbrEq2, LTRAposNode1)
-      TSTALLOC(LTRAibr2Neg1Ptr, LTRAbrEq2, LTRAnegNode1)
-      TSTALLOC(LTRAibr2Pos2Ptr, LTRAbrEq2, LTRAposNode2)
-      TSTALLOC(LTRAibr2Neg2Ptr, LTRAbrEq2, LTRAnegNode2)
-      TSTALLOC(LTRAibr2Ibr1Ptr, LTRAbrEq2, LTRAbrEq1)
-      TSTALLOC(LTRAibr2Ibr2Ptr, LTRAbrEq2, LTRAbrEq2)
-      TSTALLOC(LTRApos1Ibr1Ptr, LTRAposNode1, LTRAbrEq1)
-      TSTALLOC(LTRAneg1Ibr1Ptr, LTRAnegNode1, LTRAbrEq1)
-      TSTALLOC(LTRApos2Ibr2Ptr, LTRAposNode2, LTRAbrEq2)
-      TSTALLOC(LTRAneg2Ibr2Ptr, LTRAnegNode2, LTRAbrEq2)
+      TSTALLOC(LTRAibr1Pos1Ptr, LTRAbrEq1, LTRAposNode1);
+      TSTALLOC(LTRAibr1Neg1Ptr, LTRAbrEq1, LTRAnegNode1);
+      TSTALLOC(LTRAibr1Pos2Ptr, LTRAbrEq1, LTRAposNode2);
+      TSTALLOC(LTRAibr1Neg2Ptr, LTRAbrEq1, LTRAnegNode2);
+      TSTALLOC(LTRAibr1Ibr1Ptr, LTRAbrEq1, LTRAbrEq1);
+      TSTALLOC(LTRAibr1Ibr2Ptr, LTRAbrEq1, LTRAbrEq2);
+      TSTALLOC(LTRAibr2Pos1Ptr, LTRAbrEq2, LTRAposNode1);
+      TSTALLOC(LTRAibr2Neg1Ptr, LTRAbrEq2, LTRAnegNode1);
+      TSTALLOC(LTRAibr2Pos2Ptr, LTRAbrEq2, LTRAposNode2);
+      TSTALLOC(LTRAibr2Neg2Ptr, LTRAbrEq2, LTRAnegNode2);
+      TSTALLOC(LTRAibr2Ibr1Ptr, LTRAbrEq2, LTRAbrEq1);
+      TSTALLOC(LTRAibr2Ibr2Ptr, LTRAbrEq2, LTRAbrEq2);
+      TSTALLOC(LTRApos1Ibr1Ptr, LTRAposNode1, LTRAbrEq1);
+      TSTALLOC(LTRAneg1Ibr1Ptr, LTRAnegNode1, LTRAbrEq1);
+      TSTALLOC(LTRApos2Ibr2Ptr, LTRAposNode2, LTRAbrEq2);
+      TSTALLOC(LTRAneg2Ibr2Ptr, LTRAnegNode2, LTRAbrEq2);
       /*
        * the following are done so that SMPpreOrder does not screw up on
        * occasion - for example, when one end of the lossy line is hanging
        */
-      TSTALLOC(LTRApos1Pos1Ptr, LTRAposNode1, LTRAposNode1)
-      TSTALLOC(LTRAneg1Neg1Ptr, LTRAnegNode1, LTRAnegNode1)
-      TSTALLOC(LTRApos2Pos2Ptr, LTRAposNode2, LTRAposNode2)
-      TSTALLOC(LTRAneg2Neg2Ptr, LTRAnegNode2, LTRAnegNode2)
+      TSTALLOC(LTRApos1Pos1Ptr, LTRAposNode1, LTRAposNode1);
+      TSTALLOC(LTRAneg1Neg1Ptr, LTRAnegNode1, LTRAnegNode1);
+      TSTALLOC(LTRApos2Pos2Ptr, LTRAposNode2, LTRAposNode2);
+      TSTALLOC(LTRAneg2Neg2Ptr, LTRAnegNode2, LTRAnegNode2);
     }
   }
   return (OK);

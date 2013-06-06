@@ -535,32 +535,32 @@ B2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-            TSTALLOC(B2DdPtr, B2dNode, B2dNode)
-            TSTALLOC(B2GgPtr, B2gNode, B2gNode)
-            TSTALLOC(B2SsPtr, B2sNode, B2sNode)
-            TSTALLOC(B2BbPtr, B2bNode, B2bNode)
-            TSTALLOC(B2DPdpPtr, B2dNodePrime, B2dNodePrime)
-            TSTALLOC(B2SPspPtr, B2sNodePrime, B2sNodePrime)
-            TSTALLOC(B2DdpPtr, B2dNode, B2dNodePrime)
-            TSTALLOC(B2GbPtr, B2gNode, B2bNode)
-            TSTALLOC(B2GdpPtr, B2gNode, B2dNodePrime)
-            TSTALLOC(B2GspPtr, B2gNode, B2sNodePrime)
-            TSTALLOC(B2SspPtr, B2sNode, B2sNodePrime)
-            TSTALLOC(B2BdpPtr, B2bNode, B2dNodePrime)
-            TSTALLOC(B2BspPtr, B2bNode, B2sNodePrime)
-            TSTALLOC(B2DPspPtr, B2dNodePrime, B2sNodePrime)
-            TSTALLOC(B2DPdPtr, B2dNodePrime, B2dNode)
-            TSTALLOC(B2BgPtr, B2bNode, B2gNode)
-            TSTALLOC(B2DPgPtr, B2dNodePrime, B2gNode)
-            TSTALLOC(B2SPgPtr, B2sNodePrime, B2gNode)
-            TSTALLOC(B2SPsPtr, B2sNodePrime, B2sNode)
-            TSTALLOC(B2DPbPtr, B2dNodePrime, B2bNode)
-            TSTALLOC(B2SPbPtr, B2sNodePrime, B2bNode)
-            TSTALLOC(B2SPdpPtr, B2sNodePrime, B2dNodePrime)
+            TSTALLOC(B2DdPtr, B2dNode, B2dNode);
+            TSTALLOC(B2GgPtr, B2gNode, B2gNode);
+            TSTALLOC(B2SsPtr, B2sNode, B2sNode);
+            TSTALLOC(B2BbPtr, B2bNode, B2bNode);
+            TSTALLOC(B2DPdpPtr, B2dNodePrime, B2dNodePrime);
+            TSTALLOC(B2SPspPtr, B2sNodePrime, B2sNodePrime);
+            TSTALLOC(B2DdpPtr, B2dNode, B2dNodePrime);
+            TSTALLOC(B2GbPtr, B2gNode, B2bNode);
+            TSTALLOC(B2GdpPtr, B2gNode, B2dNodePrime);
+            TSTALLOC(B2GspPtr, B2gNode, B2sNodePrime);
+            TSTALLOC(B2SspPtr, B2sNode, B2sNodePrime);
+            TSTALLOC(B2BdpPtr, B2bNode, B2dNodePrime);
+            TSTALLOC(B2BspPtr, B2bNode, B2sNodePrime);
+            TSTALLOC(B2DPspPtr, B2dNodePrime, B2sNodePrime);
+            TSTALLOC(B2DPdPtr, B2dNodePrime, B2dNode);
+            TSTALLOC(B2BgPtr, B2bNode, B2gNode);
+            TSTALLOC(B2DPgPtr, B2dNodePrime, B2gNode);
+            TSTALLOC(B2SPgPtr, B2sNodePrime, B2gNode);
+            TSTALLOC(B2SPsPtr, B2sNodePrime, B2sNode);
+            TSTALLOC(B2DPbPtr, B2dNodePrime, B2bNode);
+            TSTALLOC(B2SPbPtr, B2sNodePrime, B2bNode);
+            TSTALLOC(B2SPdpPtr, B2sNodePrime, B2dNodePrime);
 
         }
     }

@@ -120,9 +120,9 @@ TXLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
             
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
             if (! here->TXLibr1Given) {
                     error = CKTmkCur(ckt, &tmp, here->TXLname, "branch1");

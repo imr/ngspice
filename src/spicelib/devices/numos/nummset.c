@@ -241,26 +241,26 @@ NUMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
       /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if ((inst->ptr = SMPmakeElt(matrix, inst->first, inst->second)) == NULL){\
+do { if ((inst->ptr = SMPmakeElt(matrix, inst->first, inst->second)) == NULL){\
   return(E_NOMEM);\
-}
+} } while(0)
 
-      TSTALLOC(NUMOSdrainDrainPtr, NUMOSdrainNode, NUMOSdrainNode)
-      TSTALLOC(NUMOSdrainSourcePtr, NUMOSdrainNode, NUMOSsourceNode)
-      TSTALLOC(NUMOSdrainGatePtr, NUMOSdrainNode, NUMOSgateNode)
-      TSTALLOC(NUMOSdrainBulkPtr, NUMOSdrainNode, NUMOSbulkNode)
-      TSTALLOC(NUMOSsourceDrainPtr, NUMOSsourceNode, NUMOSdrainNode)
-      TSTALLOC(NUMOSsourceSourcePtr, NUMOSsourceNode, NUMOSsourceNode)
-      TSTALLOC(NUMOSsourceGatePtr, NUMOSsourceNode, NUMOSgateNode)
-      TSTALLOC(NUMOSsourceBulkPtr, NUMOSsourceNode, NUMOSbulkNode)
-      TSTALLOC(NUMOSgateDrainPtr, NUMOSgateNode, NUMOSdrainNode)
-      TSTALLOC(NUMOSgateSourcePtr, NUMOSgateNode, NUMOSsourceNode)
-      TSTALLOC(NUMOSgateGatePtr, NUMOSgateNode, NUMOSgateNode)
-      TSTALLOC(NUMOSgateBulkPtr, NUMOSgateNode, NUMOSbulkNode)
-      TSTALLOC(NUMOSbulkDrainPtr, NUMOSbulkNode, NUMOSdrainNode)
-      TSTALLOC(NUMOSbulkSourcePtr, NUMOSbulkNode, NUMOSsourceNode)
-      TSTALLOC(NUMOSbulkGatePtr, NUMOSbulkNode, NUMOSgateNode)
-      TSTALLOC(NUMOSbulkBulkPtr, NUMOSbulkNode, NUMOSbulkNode)
+      TSTALLOC(NUMOSdrainDrainPtr, NUMOSdrainNode, NUMOSdrainNode);
+      TSTALLOC(NUMOSdrainSourcePtr, NUMOSdrainNode, NUMOSsourceNode);
+      TSTALLOC(NUMOSdrainGatePtr, NUMOSdrainNode, NUMOSgateNode);
+      TSTALLOC(NUMOSdrainBulkPtr, NUMOSdrainNode, NUMOSbulkNode);
+      TSTALLOC(NUMOSsourceDrainPtr, NUMOSsourceNode, NUMOSdrainNode);
+      TSTALLOC(NUMOSsourceSourcePtr, NUMOSsourceNode, NUMOSsourceNode);
+      TSTALLOC(NUMOSsourceGatePtr, NUMOSsourceNode, NUMOSgateNode);
+      TSTALLOC(NUMOSsourceBulkPtr, NUMOSsourceNode, NUMOSbulkNode);
+      TSTALLOC(NUMOSgateDrainPtr, NUMOSgateNode, NUMOSdrainNode);
+      TSTALLOC(NUMOSgateSourcePtr, NUMOSgateNode, NUMOSsourceNode);
+      TSTALLOC(NUMOSgateGatePtr, NUMOSgateNode, NUMOSgateNode);
+      TSTALLOC(NUMOSgateBulkPtr, NUMOSgateNode, NUMOSbulkNode);
+      TSTALLOC(NUMOSbulkDrainPtr, NUMOSbulkNode, NUMOSdrainNode);
+      TSTALLOC(NUMOSbulkSourcePtr, NUMOSbulkNode, NUMOSsourceNode);
+      TSTALLOC(NUMOSbulkGatePtr, NUMOSbulkNode, NUMOSgateNode);
+      TSTALLOC(NUMOSbulkBulkPtr, NUMOSbulkNode, NUMOSbulkNode);
     }
     /* Clean up lists */
     killCoordInfo(xCoordList);
