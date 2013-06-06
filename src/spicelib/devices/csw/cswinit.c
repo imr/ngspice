@@ -77,7 +77,7 @@ SPICEdev CSWinfo = {
  /* DEVmodSize    */ &CSWmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsLinear */ NULL
+ /* DEVnodeIsNonLinear */ NULL
 #endif
 
 };

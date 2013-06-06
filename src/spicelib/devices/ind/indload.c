@@ -125,6 +125,12 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
 #ifdef KIRCHHOFF
             *(ckt->CKTfvk+here->INDposNode) += *(ckt->CKTrhsOld+here->INDbrEq) ;
             *(ckt->CKTfvk+here->INDnegNode) -= *(ckt->CKTrhsOld+here->INDbrEq) ;
+
+            *(ckt->CKTvoltCurNode+here->INDposNode) = 1 ;
+            *(ckt->CKTvoltCurNode+here->INDnegNode) = 1 ;
+
+            *(here->KCLcurrentPos) = *(ckt->CKTrhsOld+here->INDbrEq) ;
+            *(here->KCLcurrentNeg) = -(*(ckt->CKTrhsOld+here->INDbrEq)) ;
 #endif
 
         }

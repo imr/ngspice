@@ -18,3 +18,7 @@ extern int VSRCsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VSRCunsetup(GENmodel*,CKTcircuit*);
 extern int VSRCpzSetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VSRCtemp(GENmodel*,CKTcircuit*);
+
+#ifdef KIRCHHOFF
+extern int VSRCnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

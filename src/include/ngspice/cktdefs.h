@@ -56,6 +56,12 @@ struct CKTnode {
 #define PARM_IC        2
 #define PARM_NODETYPE  3
 
+#ifdef KIRCHHOFF
+typedef struct sCKTmkCurKCLnode {
+    double KCLcurrent ;
+    struct sCKTmkCurKCLnode *next ;
+} CKTmkCurKCLnode ;
+#endif
 
 struct CKTcircuit {
 
@@ -114,6 +120,8 @@ struct CKTcircuit {
 #ifdef KIRCHHOFF
     double *CKTfvk ;            /* KCL Verification array */
     int *CKTnodeIsLinear ;      /* Flag to indicate if a node is linear or non-linear */
+    int *CKTvoltCurNode ;       /* Flag to indicate if a node contains some direct unknown currents */
+    CKTmkCurKCLnode **CKTmkCurKCLarray ; /* Array of KCL Currents */
 #endif
 
     double *CKTrhsSpare;        /* spare rhs value for reordering */
@@ -290,7 +298,11 @@ struct CKTcircuit {
 };
 
 
-/* Now function prottypes */
+/* Now function prototypes */
+
+#ifdef KIRCHHOFF
+extern int CKTmkCurKCL (CKTcircuit *, int, double **) ;
+#endif
 
 extern int ACan(CKTcircuit *, int);
 extern int ACaskQuest(CKTcircuit *, JOB *, int , IFvalue *);

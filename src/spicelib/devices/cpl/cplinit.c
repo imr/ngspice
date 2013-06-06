@@ -75,7 +75,7 @@ SPICEdev CPLinfo = {
 /* DEVmodSize     */ &CPLmSize,
 
 #ifdef KIRCHHOFF
-/* DEVnodeIsLinear */ NULL
+/* DEVnodeIsNonLinear */ NULL
 #endif
 
 };
