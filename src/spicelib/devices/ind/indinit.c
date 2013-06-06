@@ -74,7 +74,7 @@ SPICEdev INDinfo = {
  /* DEVmodSize    */ &INDmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ NULL
+ /* DEVnodeIsNonLinear */ INDnodeIsNonLinear
 #endif
 
 };

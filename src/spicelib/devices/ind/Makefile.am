@@ -40,6 +40,9 @@ libind_la_SOURCES =	\
 	muttemp.c
 
 
+if KIRCHHOFF_WANTED
+libind_la_SOURCES += indnode.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

@@ -24,6 +24,9 @@ libvsrc_la_SOURCES =	\
 	vsrctemp.c
 
 
+if KIRCHHOFF_WANTED
+libvsrc_la_SOURCES += vsrcnode.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

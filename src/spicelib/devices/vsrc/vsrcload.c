@@ -44,6 +44,12 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 #ifdef KIRCHHOFF
             *(ckt->CKTfvk+here->VSRCposNode) += *(ckt->CKTrhsOld+here->VSRCbranch) ;
             *(ckt->CKTfvk+here->VSRCnegNode) -= *(ckt->CKTrhsOld+here->VSRCbranch) ;
+
+            *(ckt->CKTvoltCurNode+here->VSRCposNode) = 1 ;
+            *(ckt->CKTvoltCurNode+here->VSRCnegNode) = 1 ;
+
+            *(here->KCLcurrentPos) = *(ckt->CKTrhsOld+here->VSRCbranch) ;
+            *(here->KCLcurrentNeg) = -(*(ckt->CKTrhsOld+here->VSRCbranch)) ;
 #endif
 
             if( (ckt->CKTmode & (MODEDCOP | MODEDCTRANCURVE)) &&
