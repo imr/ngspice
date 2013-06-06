@@ -39,7 +39,9 @@ CKTloadLinearStatic (CKTcircuit *ckt)
 
     for (i = 0; i < DEVmaxnum; i++)
     {
-        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead [i] && (*DEVices[i]->DEVisLinear) && (*DEVices[i]->DEVisLinearStatic))
+        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead [i] &&
+            DEVices[i]->DEVisLinear && (*DEVices[i]->DEVisLinear) &&
+            DEVices[i]->DEVisLinearStatic && (*DEVices[i]->DEVisLinearStatic))
         {
             error = DEVices[i]->DEVload (ckt->CKThead [i], ckt) ;
 
@@ -62,7 +64,9 @@ CKTloadLinearDynamic (CKTcircuit *ckt)
 
     for (i = 0; i < DEVmaxnum; i++)
     {
-        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead [i] && *DEVices[i]->DEVisLinear && !(*DEVices[i]->DEVisLinearStatic))
+        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead [i] &&
+            DEVices[i]->DEVisLinear && (*DEVices[i]->DEVisLinear) &&
+            DEVices[i]->DEVisLinearStatic && !(*DEVices[i]->DEVisLinearStatic))
         {
             error = DEVices[i]->DEVload (ckt->CKThead [i], ckt) ;
 
@@ -122,7 +126,8 @@ CKTload(CKTcircuit *ckt)
 
         /* Francesco Lannutti */
 #ifdef KLU
-        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i] && !(*DEVices[i]->DEVisLinear)) {
+        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i] &&
+            DEVices[i]->DEVisLinear && !(*DEVices[i]->DEVisLinear)) {
 #else
         if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i]) {
 #endif
